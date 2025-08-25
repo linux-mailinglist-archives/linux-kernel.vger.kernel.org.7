@@ -1,474 +1,227 @@
-Return-Path: <linux-kernel+bounces-785642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C8D7B34EE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:20:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D74A6B34EEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:21:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C9E57B4AE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:19:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 187BD3AE4C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7133F2367D3;
-	Mon, 25 Aug 2025 22:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2681223C503;
+	Mon, 25 Aug 2025 22:21:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eWjZuhEt"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VKesTbLe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B7B747F
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 22:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756160440; cv=fail; b=cpwZEkGXprIBJX6mHFHghUtBD0cTep5tu2pg53/cKFv6r/+pF/UJKhNaj92QK9ooHTFgbKY2Xns2ekTl0GMIFEygrv786ohm+jaHeHylvML15AljWehqaeBdprz9usXvf2LVzRoGVfmZGLv4NIa9aJPeDX2hrkFYshqPbLBCBng=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756160440; c=relaxed/simple;
-	bh=900aTwsvtTmBgcX9/4OInaIyMR0zcf+N6zzSkMdccuA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=us93f1M6r1alvzxeomFxeMdRtPQptmIRGhzEmspmdMJ768sX2P0xqSKK7RSSRUhVqlzmmfvjeTAgyHAIOHO39yCak1RaHI3BCTaUVstNgMI2Uux4UnPgDNOw81MIKsRPPjqFhoLS3EndtanuEVAbjiJtjeZCzMNv011AF+EOY68=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eWjZuhEt; arc=fail smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756160438; x=1787696438;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=900aTwsvtTmBgcX9/4OInaIyMR0zcf+N6zzSkMdccuA=;
-  b=eWjZuhEtcw5xZlKYnMgv0agKHyREfhi3697uvLNmv1+gVxetTcAY3Su5
-   6JIpXtPz8YMx1V7DKdu7twALvG9rAAWVz6LZrYbHXbs//4phy4FqveGvD
-   06WG9OSx60TxVz76TqkNb+F77rLQk+0l0HIpWTqJT5xildJAW+b5j/2OE
-   p83lzg14PAowBPjBmlBzLsQqSICCnG9QmMliEYqRqoe1MIqdcb0yGD/ja
-   rLxPWePIMaKH62mdATsmcWEqclhobjXf71bLl8Iixbt6mNwu2ntWmdTDS
-   znHwKE/JwF5MPjjLBU0vYqv1+WqwlRWod91gwa4byib/uSrlKBxrEfq52
-   A==;
-X-CSE-ConnectionGUID: SMc3vplfQDK0lmUCh+PD6g==
-X-CSE-MsgGUID: r4l/gcJeSWKRGXpc7GHWPA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62212829"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="62212829"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 15:20:37 -0700
-X-CSE-ConnectionGUID: Z5soPMcYSoi4b94n/EzFJQ==
-X-CSE-MsgGUID: O65r5N9XSIqR+J1+DUAxcw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="168618994"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 15:20:37 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Mon, 25 Aug 2025 15:20:37 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Mon, 25 Aug 2025 15:20:37 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (40.107.93.89) by
- edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Mon, 25 Aug 2025 15:20:36 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qnNwUJoapq6HFDIyLy781IilciD5pNIY2zXpu/XMpT0KynOUC1uHVZCs0Kmd+ymHKi/U65bEb1OYWo2kxVKiJQOEdDmphIAwsVgMx+6e3oSOKjf8z0SbgENgIIYrvQUfjrunxW98vOsllQupGmlvGpx7hL/tzxZYjij39HVB4iOXkU+A+3GNRlcn40d22NTzLJaByjRrPp7nEMUBUUNCN7/6qPqhdpNAJTgZUzVA0y//SQbIg+wJ9TJabNjcH93SoiX+0KVfKpZD6eOU52+Ye5WIcBeiSl4TqoiGO3uNPLf3Xz3rLoRlzkLk35RnFLq/hQVxVVVj36oQr790fWVMrg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=25FWSVGO3b2JI+IYhWBRIrHZ2TShdHulbGRp3eAT+8w=;
- b=fh3vpj1GHf9hSMX8mTF9e3Fp/Y5JvZWtrUmkhEPQ4E6FUk/QZW8ErVAF04s8A/df04y9xHvyL1aNyNtc6tgelOFiAMOfJ9UVUUYk20Erm3KaWVs67q+VeL+OFoF4DAO4s8s/b1gsF999b1WUxsNaYsjR9lZUIKzmcMcQ3NVTGng2ctN+jRvZO6tAz4svNHhgCtg6k8xLvn+EPbyjcp8RBc1KCJ0BXubIG5CYzmXK684qpQfM0vLXxsC/APpzEipD4+OcXNU5TjKg11ZbyBnoMesrfQ7cv4852uTrMZmCxF1Q4bkU/75sgeeTb+yD3cuAGhJX3zAyEBeM9M2BYmNFDw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
- by SJ2PR11MB7456.namprd11.prod.outlook.com (2603:10b6:a03:4cd::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Mon, 25 Aug
- 2025 22:20:34 +0000
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361%4]) with mapi id 15.20.9052.013; Mon, 25 Aug 2025
- 22:20:33 +0000
-Date: Mon, 25 Aug 2025 15:20:32 -0700
-From: "Luck, Tony" <tony.luck@intel.com>
-To: "Chatre, Reinette" <reinette.chatre@intel.com>, Fenghua Yu
-	<fenghuay@nvidia.com>, "Wieczor-Retman, Maciej"
-	<maciej.wieczor-retman@intel.com>, Peter Newman <peternewman@google.com>,
-	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>, "Drew
- Fustini" <dfustini@baylibre.com>, Dave Martin <Dave.Martin@arm.com>, "Chen,
- Yu C" <yu.c.chen@intel.com>
-CC: "x86@kernel.org" <x86@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "patches@lists.linux.dev"
-	<patches@lists.linux.dev>
-Subject: Re: [PATCH v8 00/32] x86,fs/resctrl telemetry monitoring
-Message-ID: <aKzhsOWp2TlFF5mK@agluck-desk3>
-References: <20250811181709.6241-1-tony.luck@intel.com>
- <c1d03d2c-9f5d-4fcf-91ba-dfe2c5907292@intel.com>
- <SJ1PR11MB6083A9FDABF6F33456CD14A4FC34A@SJ1PR11MB6083.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <SJ1PR11MB6083A9FDABF6F33456CD14A4FC34A@SJ1PR11MB6083.namprd11.prod.outlook.com>
-X-ClientProxiedBy: SJ0PR03CA0382.namprd03.prod.outlook.com
- (2603:10b6:a03:3a1::27) To SJ1PR11MB6083.namprd11.prod.outlook.com
- (2603:10b6:a03:48a::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 600E24A33;
+	Mon, 25 Aug 2025 22:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756160497; cv=none; b=g38jyYKxSpwEm1pwq09NlN7gFHshTVj7G4+L0rHpnVQ2LI81ZaFLyYtLo5QBYRNOX/2KP1ryAZaXoAZPaACwdifvRSNzjOka1xjZ32XTaX7V83H+Sxgc+WKhJtJsNUNmblOWIsdS/g7xCPMDxI1fHifhXaRM5B9fmyMlDZNp5BI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756160497; c=relaxed/simple;
+	bh=1L1AMdIXakqF4oFhemuvzl1klkE1NdZzGzIJyFFccH4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=lTBvRhQAhCr2NXyHLdXlM9AYtLrgkZWWlm3eEwlufixj/5cFWvSM9tpMccsjBffWCNnUq3aZR5hgB2WKZAtoMPO570u7gi9Hh2Nd4k+rPt5gQk1YZioY6gjv3hnmI5X5hBb4MwvmIbIF8AT28d3R0YpI8Zfhf6tw6tblScBk/VU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VKesTbLe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB690C4CEED;
+	Mon, 25 Aug 2025 22:21:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756160495;
+	bh=1L1AMdIXakqF4oFhemuvzl1klkE1NdZzGzIJyFFccH4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=VKesTbLeCYuq1TwE/MAEQ2ULIODY4Mo2e6+NWiSqA8IWwgfwiZYRP783bqAoUprla
+	 SMfxTllMwfDYNoJXY4BBMq2A0Svp0m8X3SYElrvKz07JNKApySlceic921u2aOMx6a
+	 TV942BsXs8q+vbOrosqx4o4S5o6Yinds2KTeizof0DwwJxoLdhDVeaz1Qow8O43uIO
+	 4/LObGqzcWiZtYNquiSIqAKle0eLZXFx4PIb+lGx0N6nUXeIeXMOvPhsOUzzsXwcBb
+	 /sbUAkFks7PDvR0K6wHdGZ53sfANkojvyw9Z0NqUqsJj8g5O0iPgeP/2vNke8OEGPQ
+	 CGxTPKLham6aA==
+Date: Mon, 25 Aug 2025 17:21:34 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	D Scott Phillips <scott@os.amperecomputing.com>,
+	Rio Liu <rio@r26.me>, Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Markus Elfring <Markus.Elfring@web.de>,
+	linux-kernel@vger.kernel.org,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] PCI: Fix failure detection during resource resize
+Message-ID: <20250825222134.GA802347@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PR11MB6083:EE_|SJ2PR11MB7456:EE_
-X-MS-Office365-Filtering-Correlation-Id: fdb6bc4f-54e4-406a-d71e-08dde4259be5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|921020;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?LHl9Ej4O8E4aIsDgE0YrksfpXg2V3r/0BgiFfcjX6YEJLAQJEKwV0TflIh4k?=
- =?us-ascii?Q?AnhXZ/mHhASD8L4OZnsT1F3/SARKNJnvHjbFDPYFfFDLF7foYtIjkT+n0hjX?=
- =?us-ascii?Q?BOY7lIq0E+tv8JZOxJ17n+5n3AhaDbZXDFuosTsIQEs3mkjl9Jp59BFS8tES?=
- =?us-ascii?Q?mmdsEjs8oHxZbfRN15BCGLNIVjJwHY66BRpiOHKfL45ynQdl4olHN9NDGCfM?=
- =?us-ascii?Q?6uefC/Mzl7yFohgB6/xJ93KzfOEIDxtdV8/DH/t2d3pajKsyhiBTrhAxX6lq?=
- =?us-ascii?Q?5B5lZv1nWXaR0vKoXeCUbRc/tnShfB3Pagsk/bKSGVb6UdBjtbbEgr0qZBtx?=
- =?us-ascii?Q?7NSORurce2EqJXs83QRiKYf2shCE2ELZQ+YxHDhCTtG09YVBKYa/kLESlbqC?=
- =?us-ascii?Q?69OYF1ZNB7IZ45o3I/C0Lsljgs3utiCm584AMMVO3i9zl412b6DqGmw1iT5X?=
- =?us-ascii?Q?fpmVE5ajAsIMCAtphUNI9YUswd+xPLt/DkDWKIZVGJl5zpVOG/kqdJIZLcfa?=
- =?us-ascii?Q?upNsZXpYiHkUiEYYYXdHd3dwkQLNDUZ8L0wuiRVXQxw874TRrWudSHiS3avp?=
- =?us-ascii?Q?1v2AptsR33Wuy5oQYReCYlVH4naayusca6jBo5yPUEg0PTR2kRmVSZurwyac?=
- =?us-ascii?Q?laVVOmsHus5TQO9VKvNXdnesT2Tg+UHbyOguHdH4CZEsoU8dPMWnMba+Kbk4?=
- =?us-ascii?Q?Mlp3t/N9lXokQwhPxhA2knxlQvpO9hSfxF9T5xfy/ACKUUDKujwTSksht6jr?=
- =?us-ascii?Q?J1Aplbc3N5L3XGvzSTndG+vAiTcIlwBIp6buw1S/b4b3tkSfR5r3Bs4IzJUc?=
- =?us-ascii?Q?Ko+ZZxgUlr+YPA4qU0v7vU7tsTA0NoW4PmMWG3UoDYRY4deX7yf1GgrjLdwQ?=
- =?us-ascii?Q?33YYfv8d2hPZhRzyXxVIEeYHQHA6bW402bTGRXGOfErQ3e1tFfYo1mdpUmew?=
- =?us-ascii?Q?L+7YjcHFXBhiGljWVyNdTbqG23VKQ7/kkB/mOzroeKrfyS9IU13IKEsQswdn?=
- =?us-ascii?Q?TAqUpVNHclSXzUzcm/f02IMIvGXWLR8QDgNIMr7CXLHHCHIY47WnwMrUwQUN?=
- =?us-ascii?Q?UFYRxt3pbgtE4UO39Dltoqk5kU8G5tozm84BiPKpvdYmI2K/hW/1d2EuNnWz?=
- =?us-ascii?Q?md0I1dKLs5ur4yQVJaOg1CgW7SGLd8smZwhl1cewsA77RTAkfYSYHH4/J+cm?=
- =?us-ascii?Q?9P1+AnXoRL8UexPZoSr6MoREySa8KY3QGs77cqzmXp3HkdEZPP31osfgtFUk?=
- =?us-ascii?Q?XifQ4fC3Vi1AH50/HlSOEQooEAKi1ejozgGVmbCVKU5xlH90V2oKCWJNVwDM?=
- =?us-ascii?Q?fYJE2pqqHqOejBvbwnsXOweYqMTjsxQMzu6LnLw5UkkdIsAXDbZPXSgLIghS?=
- =?us-ascii?Q?esSCFNqtz80gb7NzdykPF9ZfOgZLg7UQheqbG5S5hVojBWs+Bcwnfvt/tmqQ?=
- =?us-ascii?Q?2SFt6fTJJap4+wdz2BMt1jMnxO3NP5yBBAItt2VLHwJXyXxu6ORAMA=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?lTBRgViDgKK/J/HF6OohHcFfUijiSZTf4Dj5j6nwCdAQyVmvbEAT/Rg9tUKf?=
- =?us-ascii?Q?9PBxUOnwbhjCvLWbit9Te80/4PA3e5MarLRq7d1MwjfNPnK9pmSrYJTNeuPO?=
- =?us-ascii?Q?J3FNtDmJdbHaHQaK9JwRUCAk9WX2dXAFlHG8QBqXTZYgJ1RVNZ3+CrzUmLdf?=
- =?us-ascii?Q?VgR4Xo2O9KVLkkJ2okGqzMHut6/y3cEhYWC4DPmr3zhQ/+4cezQkEJpqI0qb?=
- =?us-ascii?Q?aewyqUw5/MT8w0rNuIXdXj6vRG8HsafKU5wNEtTVm51IXyWMmRp+AteWw5LC?=
- =?us-ascii?Q?ls5a6JIpkc3/ZB/Kg2ZfWifhh+doTcYrsNySChZaT2yD0fSwVy61Xc7ILOkY?=
- =?us-ascii?Q?3+tb2JVtiM+N2h4W3WsoMpt/RLIFeDsJUqA+mX6596Ac8dTu7/ywNuoItiGI?=
- =?us-ascii?Q?iwReHPbWb4NVUcklZgSbxDAI0vqwPXkZ3I8ZNgkKp0LG6pQMH6Sl46S1m/Oh?=
- =?us-ascii?Q?oP76GkWMJgtAy+PM8nKxfR9UWTUhdlQnhsZ/y3C0SxFc4PCmn8kPjrKbi03P?=
- =?us-ascii?Q?V1YXl7TRr9+kHHlBvF6SOizjIDX24R48gatc8G+VODzTEbrZq2dBPWNhgJ9m?=
- =?us-ascii?Q?1F6TuZjm5Um6FFGCoBBnxyVnxWenZyuP22rWAXSEGqkqcoWkm9HlTScL99w7?=
- =?us-ascii?Q?aJM2PSs2PUXgw5mJhIFtN3Rjtxw467TQf0iJCNThlm7lETw8Fxw8/3TRtS+7?=
- =?us-ascii?Q?XRg498mYwRTLkXxGsX4pxIZDhDKSxnKi1jfTyTZjlLQpofqXp8wopnoklv1a?=
- =?us-ascii?Q?CGhHxpAT2AvBmPDl7eq/9CJ/wPnTV/Bstb5StlRwrAyzNvQZPstRO4Jxl1vV?=
- =?us-ascii?Q?v8SvJFmNxsIL7sOyKHemDbV76dmXst4tv0WOYwVlSZ2aQGv2ut4VW7e5yhRf?=
- =?us-ascii?Q?Gnp/owqtHc93pF1aTPZ6tkYvM06mnl4qklKloH4YkTzwy3C4lWlcYCwkwmoP?=
- =?us-ascii?Q?miqCDp3zZzfjyB9fTXCxwSHyNAdlwfaMubOqIoIHarSXqXimuJbHQXnqUBZp?=
- =?us-ascii?Q?t22RRCSgasBh2KybcLxDRrgs2dBHV9syA4aE8cqYzUcf1FIYArR5k7Bghe/G?=
- =?us-ascii?Q?mieOpoWKRDmasn1U9ApOM+yZlQdoU4EeP5d4C6z97MppNsoVObX8g8vCps87?=
- =?us-ascii?Q?pDCIoDFZReif2/iUSO4G7tQZ3+4/dD6fXhEVoCHwuD4awZjjuxgQ61cnZ/+n?=
- =?us-ascii?Q?yWX82mtvBDRuTNXmBPxzqhjFwNSY4RwDYhaplPLIoU82cbMqmj1LqaidvR90?=
- =?us-ascii?Q?qaNZagGOTsh6Xvfywy2pcbAZkoQwiRQG8ja0Y4BsCzC0t0EaOdXjzAb5jppV?=
- =?us-ascii?Q?qJXjPA3E4+gzTCbEaa7fLilWmWfC44dx8IFL645qLVhvOMhFio4EzS7YMEAO?=
- =?us-ascii?Q?lYYynj87eCT4AIgFzhW6wRfpU5mjVOBYqFhzG0YCYpsME/10AV0SiuHYn2OI?=
- =?us-ascii?Q?lPDaNrIZIUeARR7UiRCM6dJ0cmW2peheUyN/NFyv6usujhU3hn0BvUAu6M3X?=
- =?us-ascii?Q?8+P68NcMGOqm+MRlZBvhNZRMTvrVF4IMHqTwLn6kYyZaIFUOsq+iTg4rYEbp?=
- =?us-ascii?Q?7d1kJcTKvu+0ifTqzhafIn1BgKhPhnFAZ0LMphpd?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: fdb6bc4f-54e4-406a-d71e-08dde4259be5
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 22:20:33.8490
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZfzSn6INYlZPGcv7ag4YxKngiCqS60dunWu7VtwoOG43Gjzg351OKx1jFAZ+hUSXDfKKgj4KWZZYFNLS+YhXtA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB7456
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250822123359.16305-4-ilpo.jarvinen@linux.intel.com>
 
-On Fri, Aug 15, 2025 at 03:47:17PM +0000, Luck, Tony wrote:
-> > I think this series is close to being ready to pass to the x86 maintainers.
-> > To that end I focused a lot on the changelogs with the goal to meet the
-> > tip requirements that mostly involved switching to imperative tone. I do not
-> > expect that I found all the cases though (and I may also have made some mistakes
-> > in my suggested text!) so please ensure the changelogs are in imperative tone
-> > and uses consistent terms throughout the series.
-> >
-> > If you disagree with any feedback or if any of the feedback is unclear please
-> > let us discuss before you spin a new version. Of course it is not required
-> > that you follow all feedback but if you don't I would like to learn why.
-> >
-> > Please note that I will be offline next week.
+On Fri, Aug 22, 2025 at 03:33:59PM +0300, Ilpo Järvinen wrote:
+> Since the commit 96336ec70264 ("PCI: Perform reset_resource() and build
+> fail list in sync") the failed list is always built and returned to let
+> the caller decide what to do with the failures. The caller may want to
+> retry resource fitting and assignment and before that can happen, the
+> resources should be restored to their original state (a reset
+> effectively clears the struct resource), which requires returning them
+> on the failed list so that the original state remains stored in the
+> associated struct pci_dev_resource.
 > 
-> Reinette,
+> Resource resizing is different from the ordinary resource fitting and
+> assignment in that it only considers part of the resources. This means
+> failures for other resource types are not relevant at all and should be
+> ignored. As resize doesn't unassign such unrelated resources, those
+> resource ending up into the failed list implies assignment of that
+> resource must have failed before resize too. The check in
+> pci_reassign_bridge_resources() to decide if the whole assignment is
+> successful, however, is based on list emptiness which will cause false
+> negatives when the failed list has resources with an unrelated type.
 > 
-> I took one fast pass through all your comments. I think they all
-> look good (and I believe I understand each one). Thanks for all
-> the suggestions.
+> If the failed list is not empty, call pci_required_resource_failed()
+> and extend it to be able to filter on specific resource types too (if
+> provided).
 > 
-> I'll try to keep (better) notes on what I change as I work through
-> each patch so I'll have a summary of any areas that I'm unsure
-> about for you to read when you get back before I post v9.
+> Calling pci_required_resource_failed() at this point is slightly
+> problematic because the resource itself is reset when the failed list
+> is constructed in __assign_resources_sorted(). As a result,
+> pci_resource_is_optional() does not have access to the original
+> resource flags. This could be worked around by restoring and
+> re-reseting the resource around the call to pci_resource_is_optional(),
+> however, it shouldn't cause issue as resource resizing is meant for
+> 64-bit prefetchable resources according to Christian König (see the
+> Link which unfortunately doesn't point directly to Christian's reply
+> because lore didn't store that email at all).
 > 
-> Enjoy your time away.
-
-Reinette,
-
-I've completed a longer, slower, pass through making changes to prepare
-for v9.  Summary of changes per patch below. I didn't disagree with any
-of your suggestions.
-
-The bulk of the changes are small, and localized to each patch. The
-exception being removal of pkg_mmio_info[] which dropped patch 18 (which
-just counted regions prior to allocation of pkg_mmio_info[]) and patch
-19 (which finished filling out the details.
-
-discover_events() is now named enable_events(), since there are almost
-no "steps" involved, it doesn't have a header comment. The name now
-describes what it does.
-
-Theoretically skip_this_region() might find some regions unusable, while
-others in the same pmt_feature_group are OK. To handle this I zero the
-telemetry_region::addr so that intel_aet_read_event() can easily skip
-"bad" regions.
-
-I've pushed a rdt-aet-v9-wip branch to:
-Link: https://git.kernel.org/pub/scm/linux/kernel/git/aegl/linux.git
-if you want to take a quick look at the end result before
-I patch bomb the list.
-
--Tony
-
---- cover ---
-INTEL_PMT_DISCOVERY -> INTEL_PMT_TELEMETRY
-
---- 1 ---
-No change
-
---- 2 ---
-No change
-
---- 3 ---
-No change
-
---- 4 ---
-No change
-
---- 5 ---
-"The "type" field provides" -> "rdt_domain_hdr::type provides"
-Update final paragraph of commit message as suggested.
-
---- 6 ---
-Code: in domain_add_cpu_mon() change WARN_ON_ONCE(1); in default case to
-pr_warn_once("Unknown resource rid=%d\n", r->rid);
-
-
---- 7 ---
-Code: in domain_remove_cpu_mon() move domain_header_is_valid()to
-immediately before container_of() and switch check from r->rid to
-hard-coded RDT_RESOURCE_L3.
-s/list_del_rcu(&d->hdr.list);/list_del_rcu(&hdr->list);/
-
-"separated" -> "separate"
-"can skip" -> "skips"
-
---- 8 ---
-Code: in domain_remove_cpu_ctrl()  move domain_header_is_valid()
-to immediately before container_of().
-s/list_del_rcu(&d->hdr.list);/list_del_rcu(&hdr->list);/
-(moved here from patch 9)
-
-"refactor" -> "refactor domain_remove_cpu_ctrl()"
-
-
---- 9 ---
-Change second paragraph of commit comment as suggested.
-
-"so the rmid_read::d field is replaced" -> "so replace the L3 specific domain
-pointer rmid_read::d with rmid_read::hdr that points to the generic domain
-header"
-
-Use imperative tone for last paragraph "Update kerneldoc for mon_data::sum ..."
-
---- 10 ---
-Change rdt_mon_domain to rdt_l3_mon_domain in comment above logical_rmid_to_physical_rmid()
-
-Replace entire commit comment with improved version.
-
---- 11 ---
-"different resources" -> "a different resource"
-"these functions" -> "the L3 resource specific functions"
-"Two groups of functions renamed here:" -> "Rename three groups of functions:"
-Added rdt_get_mon_l3_config() to list of renamed functions to put the "l3"
-before the "mon" for consistency.
-
-When changing names for resctrl_mon_resource_{init,exit} add the "l3_" before
-"mon" for consistency with other *l3_mon*" naming.
-
---- 12 ---
-"to lower levels" -> "via the mon_data and rmid_read structures to
-the functions finally reading the monitoring data."
-
-Replace 3rd paragraph of commit comment with supplied better version.
-
---- 13 ---
-Code: In cpu_on_correct_domain() s/return -EINVAL;/return false;/
-
---- 14 ---
-Code: Move definition of MAX_BINARY_BITS from <linux/resctrl.h> to
-fs/resctrl/internal.h.
-
-Be explicit in commit comment that the file system makes the determination
-on which events can be displayed in floating point format.
-
---- 15 ---
-"asyncronnous" -> "asynchronous"
-"for these drivers" -> "of these drivers"
-"are called" -> "completes"
-"But expectations" -> "Expectations"
-"The call is made with no locks held." -> "resctrl filesystem calls the
-hook with no locks held."
-
---- 16 ---
-s/CPU hotplug/CPU hot plug/
-Add Reinette's RB tag.
-
---- 17 ---
-Code:
-"OOBMSM" -> "INTEL_PMT_TELEMETRY"
-"INTEL_PMT_DISCOVERY" -> "INTEL_PMT_TELEMETRY"
-re-wrap comment for get_pmt_feature() to use 80 columns.
-"OOBMSM discovery" -> "INTEL_PMT_TELEMETRY"
-Add the intel_pmt_put_feature_group() calls to intel_aet_exit()
-to match the intel_pmt_get_regions_by_feature() calls in get_pmt_feature()
-using a new macro for_each_enabled_event_group().
-Rename discover_events() to enable_events()
-
-Add period at end of help text in arch/x86/Kconfig.
-
-"Data for telemetry events is collected by each CPU and sent" ->
-"Each CPU collects data for telemetry events that it sends"
-"is changed" -> "changes"
-"or when two milliseconds have elapsed" -> "or when a two millisecond timer expires"
-"mad" -> "made"
-"Enumeration of support for telemetry events is done" ->
-"The INTEL_PMT_TELEMETRY driver enumerates support for telemetry events."
-Drop references to INTEL_PMT_DISCOVERY driver.
-
-Merge last two paragraphs of commit message.
-
-Reformat commit to use more of page width.
-
-Add maintainer note about checkpatch complaints for DEFINE_FREE()
-
---- 18 ---
-Dropped. See new patch 0019
-
---- 19 ---
-Dropped. See new patch 0019
-
---- 20 ---
-Now 0018
-Rewrite opening paragraph to avoid "continuation of the subject"
-
-Add note/link on the source of the XML files that describe events.
-
---- 21 ---
-Now 0019
-Drop "vague first sentence" of second paragraph.
-
---- NEW 0020 ---
-Replaces most of parts 18/32 and 19/32.
-Contains skip_this_region() from patch 18/32, but skips all the
-code to count regions and allocat pkg_mmio_info[].
-
-Also includes event enabling code from 22/32
-
---- 22 ---
-Now 0021
-Modify intel_aet_read_event() to dig into pmt_event::pfg to
-find the MMIO base addresses that v8 patch stored in the pkg_mmio_info[]
-structures.
-
---- 23 ---
-Now 0022
-Add domain_header_is_valid() check in domain_remove_cpu_mon()
-before using container_of().
-
-"There are structures" -> "There are per domain structures ..."
-
-Replace my commit fix description with better version from Reinette.
-
---- 24 ---
-Unparseable last sentence of commit message replaced with details
-and examples.
-
---- 25 ---
-RMIDS -> RMIDs
-"Adjusted downwards ..." -> "May be adjusted downwards ..."
-check_rmid_count() -> all_regions_have_sufficient_rmid()
-"Potentially disable" -> "Disable"
-Add comment:
-/* e->num_rmids only adjusted lower if user forces an unusable region to be usable */
-
---- 26 ---
-Add "during resctrl initialization" and "during resctrl exit" to commit
-background statement.
-
-Add "closid_num_dirty_rmid[]" to be specific about what is being allocated/freed.
-
---- 27 ---
-"mon capable" -> "mon_capable" (three times)
-"alloc capable" -> "alloc_capable"
-"rdt_l3_mon_domain::states[]" -> "rdt_l3_mon_domain::mbm_states[] and
-+rdt_l3_mon_domain::rmid_busy_llc"
-
-"the number of RMIDs" -> "the system's number of RMIDs"
-
---- 28 ---
-Add comment to setup_rmid_lru_list() to note that rmid_ptrs[]
-is allocated of first mount and is reused on subsequent mounts.
-It is freed in resctrl_exit().
-
-Lock/unlock rdtgroup_mutex around body of free_rmid_lru_list()
-
-Rewrite commit based on suggestions with some modifications to explain
-why error paths in rdt_get_tree() do not call free_rmid_lru_list().
-
---- 29 ---
-TODO: recheck for use of "CPU hot plug notifiers" may have been called "hooks", "callbacks", and
-"handlers" through this series.
-
---- 30 ---
-"a resource" -> "a monitoring resource"
-
---- 31 ---
-"last_update_timestamp" -> "agg_last_update_timestamp" in commit comment
-
-Move creation of debugfs files to the end of enable_events().
-
-Rewrite to work based on event_group::pfg since event_group::pkginfo[] is gone.
-
-
---- 32 ---
-Describe "num_rmids" file values independently for L3 and telemetry.
-Move the note about upper bound on directory creation to its own
-paragraph to say it is the smaller of reported "num_rmids" values.
-
-"or of a processor package" -> "another for each processor package"
-
-Change paragraph about contents of subdirectories of mon_data to
-gize example file names instead of hard coding specifics.
-
-prescence -> presence
-will vary -> may vary
-last_update_timestamp -> agg_last_update_timestamp
-
-Simplify commit comment as suggested.
-
-
+> Fixes: 96336ec70264 ("PCI: Perform reset_resource() and build fail list in sync")
+> Link: https://lore.kernel.org/all/c5d1b5d8-8669-5572-75a7-0b480f581ac1@linux.intel.com/
+> Reported-by: D Scott Phillips <scott@os.amperecomputing.com>
+> Closes: https://lore.kernel.org/all/86plf0lgit.fsf@scott-ph-mail.amperecomputing.com/
+
+I'm trying to connect this fix with the Asynchronous SError Interrupt
+crash that Scott reported here.  From the call trace:
+
+  ...
+  arm64_serror_panic+0x6c/0x90
+  do_serror+0x58/0x60
+  el1h_64_error_handler+0x38/0x60
+  el1h_64_error+0x84/0x88
+  _raw_spin_lock_irqsave+0x34/0xb0 (P)
+  amdgpu_ih_process+0xf0/0x150 [amdgpu]
+  amdgpu_irq_handler+0x34/0xa0 [amdgpu]
+  __handle_irq_event_percpu+0x60/0x248
+  handle_irq_event+0x4c/0xc0
+  handle_fasteoi_irq+0xa0/0x1c8
+  handle_irq_desc+0x3c/0x68
+  generic_handle_domain_irq+0x24/0x40
+  __gic_handle_irq_from_irqson.isra.0+0x15c/0x260
+  gic_handle_irq+0x28/0x80
+  call_on_irq_stack+0x24/0x30
+  do_interrupt_handler+0x88/0xa0
+  el1_interrupt+0x44/0xd0
+  el1h_64_irq_handler+0x18/0x28
+  el1h_64_irq+0x84/0x88
+  amdgpu_device_rreg.part.0+0x4c/0x190 [amdgpu] (P)
+  amdgpu_device_rreg+0x24/0x40 [amdgpu]
+
+I guess something happened in amdgpu_device_rreg() that caused an
+interrupt, maybe a bogus virtual address for a register?
+
+And then amdgpu_ih_process() did something that caused the SError?  Or
+since it seems to be asynchronous, maybe the amdgpu_ih_process()
+connection is coincidental and the SError was a consequence of
+something else?
+
+I'd like to have a bread crumb here in the commit log that connects
+this fix with something a user might see, but I don't know what that
+would look like.
+
+> Tested-by: D Scott Phillips <scott@os.amperecomputing.com>
+> Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> Reviewed-by: D Scott Phillips <scott@os.amperecomputing.com>
+> Cc: Christian König <christian.koenig@amd.com>
+> Cc: <stable@vger.kernel.org>
+> ---
+>  drivers/pci/setup-bus.c | 26 ++++++++++++++++++--------
+>  1 file changed, 18 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+> index df5aec46c29d..def29506700e 100644
+> --- a/drivers/pci/setup-bus.c
+> +++ b/drivers/pci/setup-bus.c
+> @@ -28,6 +28,10 @@
+>  #include <linux/acpi.h>
+>  #include "pci.h"
+>  
+> +#define PCI_RES_TYPE_MASK \
+> +	(IORESOURCE_IO | IORESOURCE_MEM | IORESOURCE_PREFETCH |\
+> +	 IORESOURCE_MEM_64)
+> +
+>  unsigned int pci_flags;
+>  EXPORT_SYMBOL_GPL(pci_flags);
+>  
+> @@ -384,13 +388,19 @@ static bool pci_need_to_release(unsigned long mask, struct resource *res)
+>  }
+>  
+>  /* Return: @true if assignment of a required resource failed. */
+> -static bool pci_required_resource_failed(struct list_head *fail_head)
+> +static bool pci_required_resource_failed(struct list_head *fail_head,
+> +					 unsigned long type)
+>  {
+>  	struct pci_dev_resource *fail_res;
+>  
+> +	type &= PCI_RES_TYPE_MASK;
+> +
+>  	list_for_each_entry(fail_res, fail_head, list) {
+>  		int idx = pci_resource_num(fail_res->dev, fail_res->res);
+>  
+> +		if (type && (fail_res->flags & PCI_RES_TYPE_MASK) != type)
+> +			continue;
+> +
+>  		if (!pci_resource_is_optional(fail_res->dev, idx))
+>  			return true;
+>  	}
+> @@ -504,7 +514,7 @@ static void __assign_resources_sorted(struct list_head *head,
+>  	}
+>  
+>  	/* Without realloc_head and only optional fails, nothing more to do. */
+> -	if (!pci_required_resource_failed(&local_fail_head) &&
+> +	if (!pci_required_resource_failed(&local_fail_head, 0) &&
+>  	    list_empty(realloc_head)) {
+>  		list_for_each_entry(save_res, &save_head, list) {
+>  			struct resource *res = save_res->res;
+> @@ -1708,10 +1718,6 @@ static void __pci_bridge_assign_resources(const struct pci_dev *bridge,
+>  	}
+>  }
+>  
+> -#define PCI_RES_TYPE_MASK \
+> -	(IORESOURCE_IO | IORESOURCE_MEM | IORESOURCE_PREFETCH |\
+> -	 IORESOURCE_MEM_64)
+> -
+>  static void pci_bridge_release_resources(struct pci_bus *bus,
+>  					 unsigned long type)
+>  {
+> @@ -2450,8 +2456,12 @@ int pci_reassign_bridge_resources(struct pci_dev *bridge, unsigned long type)
+>  		free_list(&added);
+>  
+>  	if (!list_empty(&failed)) {
+> -		ret = -ENOSPC;
+> -		goto cleanup;
+> +		if (pci_required_resource_failed(&failed, type)) {
+> +			ret = -ENOSPC;
+> +			goto cleanup;
+> +		}
+> +		/* Only resources with unrelated types failed (again) */
+> +		free_list(&failed);
+>  	}
+>  
+>  	list_for_each_entry(dev_res, &saved, list) {
+> -- 
+> 2.39.5
+> 
 
