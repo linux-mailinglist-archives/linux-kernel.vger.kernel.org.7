@@ -1,138 +1,139 @@
-Return-Path: <linux-kernel+bounces-783926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CF65B33463
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 05:02:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A26DB33464
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 05:03:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B19327A3C30
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 03:01:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9C783B832A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 03:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D40838DD8;
-	Mon, 25 Aug 2025 03:02:39 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722BB22C355;
+	Mon, 25 Aug 2025 03:02:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="jUDtO3+j"
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B19E23ABB9
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 03:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01556A935
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 03:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756090958; cv=none; b=DgLjmQE5s7IU3o4tfnueqviwS5XP8WIqYyxoJ/AtB9BKzXgLjrCRDDe0doRj8+qCzTfx/TLlib7mI0IpEpJKnARkoO8fgUGQEOfc9o744/mBb0ry1hwhUrmYDi9Tfbd/2iYCXm5Oquob92mrc9XN8kt9xkJtBupEJS1Yv4EA+4c=
+	t=1756090977; cv=none; b=GUJl8411oY3Emjei8EDbR3kedM/j+/X6cFq/1xHNPvqKl/1+8pEw72TtuOfMJNudhJ7FbGgBheHUsEV3XbqQvwgScxgmjCuxV3AOrtXO5VxEbGk7mAbt74MyRQbUaMPycjXXkRA964ATk/vSOeXDYg8LS3poVqWE8ZAmPZM3n9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756090958; c=relaxed/simple;
-	bh=4EvB5Sl17xLgiHRIcTtMd7fiK41JtouMDEXa8ZRhXSU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QKYvdqlcqg0Ntlk4XxQLkCJM2AN7j6fRAuMEViWh9KISqK2i4Xkst8kZ4A0lm6yaZvxTR0mttbas//gHADk6Xuwy+sVuy5XXcxEkfiBYeJPcyoQRxGS4ncGpTD19BNFQIlnvrfzFUqEtwmVL+L9xVtoSMH6GOKuQUIfyV9UZ1P8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: ee08adec815f11f0b29709d653e92f7d-20250825
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:406728a0-26b9-4e5b-a5aa-ff1ba4498ec2,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:bda81044142043a00ecf4e221c9a24fe,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|83|102|850,TC:nil,Content:0|50,EDM
-	:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0
-	,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: ee08adec815f11f0b29709d653e92f7d-20250825
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <cuiguoqi@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 425965928; Mon, 25 Aug 2025 11:02:26 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 205FDE008FA3;
-	Mon, 25 Aug 2025 11:02:26 +0800 (CST)
-X-ns-mid: postfix-68ABD241-930007515
-Received: from localhost.localdomain (unknown [10.41.103.97])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 2A0E9E008FA2;
-	Mon, 25 Aug 2025 11:02:21 +0800 (CST)
-From: cuiguoqi <cuiguoqi@kylinos.cn>
-To: pmladek@suse.com
-Cc: akpm@linux-foundation.org,
-	bigeasy@linutronix.de,
-	catalin.marinas@arm.com,
-	clrkwllms@kernel.org,
-	cuiguoqi@kylinos.cn,
-	farbere@amazon.com,
-	feng.tang@linux.alibaba.com,
-	guoqi0226@163.com,
-	joel.granados@kernel.org,
-	john.ogness@linutronix.de,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev,
-	namcao@linutronix.de,
-	rostedt@goodmis.org,
-	sravankumarlpu@gmail.com,
-	takakura@valinux.co.jp,
-	tglx@linutronix.de,
-	will@kernel.org
-Subject: Re: [PATCH] drivers: example: fix memory leak
-Date: Mon, 25 Aug 2025 11:02:17 +0800
-Message-Id: <20250825030217.1663575-1-cuiguoqi@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <aKR-eBMoMBa4fnrF@pathway.suse.cz>
-References: <aKR-eBMoMBa4fnrF@pathway.suse.cz>
+	s=arc-20240116; t=1756090977; c=relaxed/simple;
+	bh=Yj3q1Sz4awXBFhyMHdtec8exSuUkQt0shYEf8GPbEeo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sdID8V4M1q9C7G0ZOjeFP5p3xtvdjjEhduaS18eVy33PwFowwUWxoNfVxpwIwqRjtaTceKZhyfue+5GLDtZMSpvuqE6uupRjOYvcVXKNzm8l43et6+0fzSh7NfZET4r82gUmGS+2JYnDFeZz6sgsJS6mlPgGOJLVZhvMj/mrmAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=jUDtO3+j; arc=none smtp.client-ip=115.124.30.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1756090973; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=YDyIr1bDDorwY28+AGmaE7j4FXIULd86PhLUjg5+Yc8=;
+	b=jUDtO3+jbT8AD3KfX7spJLLQrgLJEWVBb2k5R93YaPI+pcxanjNCqsiecRCKzkFHXdKYENaj9duQDPXb6lMPIy7h6NpGy3m7Bp2vxPO53l2yJUw54oJ52hrwo/0Q/pRsp1aoJ1uDAZ7lCwAsWIdlrBMhRqhp1VuKUlAm9Bj86ak=
+Received: from 30.74.144.124(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WmPuZG-_1756090970 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 25 Aug 2025 11:02:51 +0800
+Message-ID: <0fc6e083-b7be-4144-a50c-d1a7a2e1c3a5@linux.alibaba.com>
+Date: Mon, 25 Aug 2025 11:02:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/9] mm/shmem, swap: remove redundant error handling for
+ replacing folio
+To: Kairui Song <kasong@tencent.com>, linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>,
+ Chris Li <chrisl@kernel.org>, Barry Song <baohua@kernel.org>,
+ Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>,
+ Kemeng Shi <shikemeng@huaweicloud.com>,
+ Ying Huang <ying.huang@linux.alibaba.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, David Hildenbrand <david@redhat.com>,
+ Yosry Ahmed <yosryahmed@google.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
+ linux-kernel@vger.kernel.org
+References: <20250822192023.13477-1-ryncsn@gmail.com>
+ <20250822192023.13477-6-ryncsn@gmail.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20250822192023.13477-6-ryncsn@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Petr Mladek <pmladek@suse.com>
 
-Hi Petr:
-> How did you find this problem, please?
-> Were you investigating why a log was missing?
-> Or was is just be reading the code?
 
-  When I was developing the Linux real-time kernel, the system abnormally=
- crashed,=20
-and kdump triggered the inability to normally enter the second kernel for=
- demsg&vmcore saving.=20
-When an abnormal panic is triggered simultaneously, the abnormal scene an=
-d some of the jump logs
-of kexec are not output, which to some extent affects the efficiency of d=
-ebugging and testing
+On 2025/8/23 03:20, Kairui Song wrote:
+> From: Kairui Song <kasong@tencent.com>
+> 
+> Shmem may replace a folio in the swap cache if the cached one doesn't
+> fit the swapin's GFP zone. When doing so, shmem has already double
+> checked that the swap cache folio is locked, still has the swap cache
+> flag set, and contains the wanted swap entry. So it is impossible to
+> fail due to an Xarray mismatch. There is even a comment for that.
+> 
+> Delete the defensive error handling path, and add a WARN_ON instead:
+> if that happened, something has broken the basic principle of how the
+> swap cache works, we should catch and fix that.
+> 
+> Signed-off-by: Kairui Song <kasong@tencent.com>
+> ---
+>   mm/shmem.c | 28 +++-------------------------
+>   1 file changed, 3 insertions(+), 25 deletions(-)
+> 
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index b4d39f2a1e0a..e03793cc5169 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -2158,35 +2158,13 @@ static int shmem_replace_folio(struct folio **foliop, gfp_t gfp,
+>   	/* Swap cache still stores N entries instead of a high-order entry */
+>   	xa_lock_irq(&swap_mapping->i_pages);
+>   	for (i = 0; i < nr_pages; i++) {
+> -		void *item = xas_load(&xas);
+> -
+> -		if (item != old) {
+> -			error = -ENOENT;
+> -			break;
+> -		}
+> -
+> -		xas_store(&xas, new);
+> +		WARN_ON_ONCE(xas_store(&xas, new));
+>   		xas_next(&xas);
+>   	}
+> -	if (!error) {
+> -		mem_cgroup_replace_folio(old, new);
+> -		shmem_update_stats(new, nr_pages);
+> -		shmem_update_stats(old, -nr_pages);
+> -	}
 
-Motivation for the fix:
-1. For RT kernels with Kdump deployed, ensure that all relevant informati=
-on such as call stacks is fully
-output to the serial port during the entire process from panic occurrence=
- to transition to the second kernel,
- which can better enhance debugging efficiency.
+It looks like the shmem statistics update was mistakenly deleted?
 
-2. When Kdump is not deployed, the call stack can be directly output in R=
-T kernels as shown below:
-```c
-vpanic{
-+ printk_legacy_allow_panic_sync();
+( Continue to understand the whole series:) )
 
-+debug_locks_off();
-+console_flush_on_panic(CONSOLE_FLUSH_PENDING);
-+console_flush_on_panic(CONSOLE_FLUSH_PENDING);
-+nbcon_atomic_flush_unsafe();
-}
-```
+>   	xa_unlock_irq(&swap_mapping->i_pages);
+>   
+> -	if (unlikely(error)) {
+> -		/*
+> -		 * Is this possible?  I think not, now that our callers
+> -		 * check both the swapcache flag and folio->private
+> -		 * after getting the folio lock; but be defensive.
+> -		 * Reverse old to newpage for clear and free.
+> -		 */
+> -		old = new;
+> -	} else {
+> -		folio_add_lru(new);
+> -		*foliop = new;
+> -	}
+> +	folio_add_lru(new);
+> +	*foliop = new;
+>   
+>   	folio_clear_swapcache(old);
+>   	old->private = NULL;
 
-3. Therefore, currently I am wondering whether the issue lies with `debug=
-_locks_off();` or if there is an issue with=20
-the logical placement of `printk_legacy_allow_panic_sync();`.
-
-My understanding is that by the time we reach machine_kexec(kexec_crash_i=
-mage);
-other cores should have already been notified and shut down. Additionally=
-,=20
-since this is clearly an emergency situation, flushing the log buffer to =
-the terminal=20
-should not introduce further adverse effects.
-I would greatly appreciate your insights and guidance on this matter.
 
