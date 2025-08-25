@@ -1,197 +1,141 @@
-Return-Path: <linux-kernel+bounces-785571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 718BFB34DD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 23:23:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BE2BB34DDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 23:23:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 17AFD4E21E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 21:23:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23DF12429D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 21:23:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE5228BAB9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63BD228C84C;
 	Mon, 25 Aug 2025 21:22:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qQGskA9Q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qpnui3i6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400C827B335;
-	Mon, 25 Aug 2025 21:22:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA42E2882AA;
+	Mon, 25 Aug 2025 21:22:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756156974; cv=none; b=ctiJrdxX4PN+uGIPM9ONFKWUuHFx6+ZX4yx4P+5GUgxnslW+G4FaEWIzlHrPFPMah3w/EeIIP29iFWipzgs5Cei+bU4CFd+yLFurkqyc4hRl8rM3Z3D8dLRLlmGpQ/GrGyepwrcpjOzOZqgkjWkeg7A3Lt5Yl+Yy1RoOBuKzvLg=
+	t=1756156974; cv=none; b=a3dly9dtQLyZEII1TyK9San9Wk+srjcFMMvvBLBFoRrmtu7onL7eCahfCK9XziVR7FygoKTS1Nb9FJM9VZkNj4UbIs+kUSh4Zwp29JS1bx0EnBbetevKKLdmMXFD19LCasbi9E3XK50xtq6XE6VqCJLIb2sr1ck5puTt0MPvROc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756156974; c=relaxed/simple;
-	bh=+5nmEM33ey/GL8vLyxT9bwaxgy0hBiZbCrpZ8fNWBtE=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=Q2nTwkT40urL6Bz4OQM+SoJ2EYmDekihDBMwWWz0Qi3gG7ynWVEMsFfXUZMTIm4wuoCHfsKud2Nnm/MsSFRKVEUOUj+hvK+zhSQMk1EaoHjZfVotVdWcIZan0ds/+6wdf8/pxEXLZqSPeTSiwpz0Ri/Yqp38E8MCuOLwhMqsWD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qQGskA9Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DC79C4CEED;
-	Mon, 25 Aug 2025 21:22:53 +0000 (UTC)
+	bh=Cy47lc26STJx5l+f9M8q4OZm6Kg3jg1998oIbime1wA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fu3j5alLyhVgi+PJ3B5IjuU5yarFFVDPzjOb/e/6Ys+fjVerZgT4uCmh2oRp86j1IStwsNGbytlyNapt8YmI3jUakgInlbJVZoYlQIF8eD+Zu+OvP+r/SJz3SEjH57uDqlBUgra2wp9Av0eOpU90mp+TP03Gt8o9M7s1/tei9R0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qpnui3i6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DE42C113D0;
+	Mon, 25 Aug 2025 21:22:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756156973;
-	bh=+5nmEM33ey/GL8vLyxT9bwaxgy0hBiZbCrpZ8fNWBtE=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=qQGskA9QIwV8+i91aJTzyJoLJEaf6Aq/BuY4UWdDxSTrZpHYKOwCFBdRrXEm6eDxj
-	 9tIgs5qj5UutpuftJ/YCF6QTpDZuJvfMDutsvZwoC4/3gfWWn+wox0ZeyhgO95BVvF
-	 w7Idjboo5Bc4+D05zenMk8InhCm+nj+Kz+EDeXdwZCluE5sOflPNnwqUA0y9P/xzx7
-	 JLRJle2BRBItZhikdReCZYSJG6IpGBprNXDfQmAiMVwA6tzy8hwhZ0klsDZiqXOpXM
-	 gThzamU6gJXlPVUvXpO6CA3/IoJcTGD1+3ImmHsEhEK0IjVHv3jYK8E+5gdlpwaSx1
-	 f2aBoGZgkwT1A==
-Date: Mon, 25 Aug 2025 16:22:52 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1756156974;
+	bh=Cy47lc26STJx5l+f9M8q4OZm6Kg3jg1998oIbime1wA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qpnui3i6ORPp1aarx710P3I2B7R7T80KZucw9Fu1dWEYwdTUay++8eCtXnq1CHIJX
+	 jKnj47O4I7IMVPMUz8LIBFyctpaJG79TB8fJtk0cwBKMZmwjYGyOH61d28o4X/yeZW
+	 75iYI6sFysSobZfFenAtxJKQkP1jY2OI86rqu/Vx5vZfDI/H1XosYd0mpi01tNH2k/
+	 d/EX2UTFL5r4K9ypRfAiiAAE6y0N576mtEIn6cQUAsyHSgKYWuzUsd3zcABnJI2vcS
+	 URfZrX/tL1h61c4GHpm9vJ8w1e2DHGiyEllcRzC25gpUC3aVog4W77wyFfc/f+BMuu
+	 zwwiX4sE4KGzg==
+Date: Mon, 25 Aug 2025 14:22:53 -0700
+From: Kees Cook <kees@kernel.org>
+To: Ayash-Bera <ayashbera@gmail.com>
+Cc: shuah@kernel.org, luto@amacapital.net, wad@chromium.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests/seccomp: improve clarity of test messages and
+ comments
+Message-ID: <202508251422.2312EDDAAA@keescook>
+References: <20250817064252.40996-1-ayashbera@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- linux-kernel@vger.kernel.org, Georgi Djakov <djakov@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Odelu Kukatla <quic_okukatla@quicinc.com>, devicetree@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, 
- cros-qcom-dts-watchers@chromium.org
-To: Brian Norris <briannorris@chromium.org>
-In-Reply-To: <20250823123718.RFC.1.Idebf1d8bd8ff507462fef9dc1ff47e84c01e9b60@changeid>
-References: <20250823123718.RFC.1.Idebf1d8bd8ff507462fef9dc1ff47e84c01e9b60@changeid>
-Message-Id: <175615562406.578060.1964877608426663266.robh@kernel.org>
-Subject: Re: [RFC PATCH] arm64: dts: qcom: sc7280: Drop aggre{1,2}_noc QOS
- clocks on Herobrine
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250817064252.40996-1-ayashbera@gmail.com>
 
+On Sun, Aug 17, 2025 at 12:12:52PM +0530, Ayash-Bera wrote:
+> Replace ambiguous language in comments and test descriptions to improve
+> code readability and make test intentions clearer.
 
-On Sat, 23 Aug 2025 12:37:18 -0700, Brian Norris wrote:
-> Ever since these two commits
+Thanks; these are good clarifications. Can you please use checkpatch.pl
+and then wrap the long commit string?
+
+-Kees
+
 > 
->   fbd908bb8bc0 ("interconnect: qcom: sc7280: enable QoS configuration")
->   2b5004956aff ("arm64: dts: qcom: sc7280: Add clocks for QOS configuration")
+> Changes made:
+> - Make TODO comment more specific about 64-bit vs 32-bit argument
+>   handling test requirements  
+> - Clarify comment about task termination during syscall execution
+> - Replace vague "bad recv()" with specific "invalid recv() with NULL parameter"
+> - Replace informal "bad flags" with "invalid flags" for consistency
 > 
-> Herobrine systems fail to boot due to crashes like the following:
+> These improvements help maintainers and contributors better understand
+> the expected test behavior.
 > 
-> [    0.243171] Kernel panic - not syncing: Asynchronous SError Interrupt
-> [    0.243173] CPU: 7 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0 #1 c5464041cff584ced692726af2c4400fa2bde1db
-> [    0.243178] Hardware name: Qualcomm Technologies, Inc. sc7280 CRD platform (rev5+) (DT)
-> [    0.243180] Call trace:
-> [    0.243182]  dump_backtrace+0x104/0x128
-> [    0.243194]  show_stack+0x24/0x38
-> [    0.243202]  __dump_stack+0x28/0x38
-> [    0.243208]  dump_stack_lvl+0x28/0xb8
-> [    0.243211]  dump_stack+0x18/0x30
-> [    0.243215]  panic+0x134/0x340
-> [    0.243219]  nmi_panic+0x48/0x98
-> [    0.243227]  arm64_serror_panic+0x6c/0x80
-> [    0.243245]  arm64_is_fatal_ras_serror+0xd8/0xe0
-> [    0.243261]  do_serror+0x5c/0xa8
-> [    0.243265]  el1h_64_error_handler+0x34/0x48
-> [    0.243272]  el1h_64_error+0x7c/0x80
-> [    0.243285]  regmap_mmio_read+0x5c/0xc0
-> [    0.243289]  _regmap_bus_reg_read+0x78/0xf8
-> [    0.243296]  regmap_update_bits_base+0xec/0x3a8
-> [    0.243300]  qcom_icc_rpmh_probe+0x2d4/0x490
-> [    0.243308]  platform_probe+0xb4/0xe0
-> [...]
+> Signed-off-by: Ayash Bera <ayashbera@gmail.com>
 > 
-> Specifically, they fail in qcom_icc_set_qos() when trying to write the
-> QoS settings for qhm_qup1. Several of the previous nodes (qhm_qspi,
-> qhm_qup0, ...) seem to configure without crashing.
-> 
-> I don't really know what's unique about Herobrine systems vs other
-> sc7280 systems that presumably work fine. I'd guess there's some
-> conflict with something configured by the boot firmware.
-> 
-> I'm submitting as an RFC just to get thoughts from people who hopefully
-> know better than me what might be going wrong here.
-> 
-> Fixes: fbd908bb8bc0 ("interconnect: qcom: sc7280: enable QoS configuration")
-> Fixes: 2b5004956aff ("arm64: dts: qcom: sc7280: Add clocks for QOS configuration")
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
 > ---
+>  tools/testing/selftests/seccomp/seccomp_bpf.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
->  arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+> diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
+> index 61acbd45ffaa..bded07f86a54 100644
+> --- a/tools/testing/selftests/seccomp/seccomp_bpf.c
+> +++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
+> @@ -933,7 +933,7 @@ TEST(KILL_unknown)
+>  	ASSERT_EQ(SIGSYS, WTERMSIG(status));
+>  }
+>  
+> -/* TODO(wad) add 64-bit versus 32-bit arg tests. */
+> +/* TODO(wad) add tests for 64-bit versus 32-bit argument handling differences. */
+>  TEST(arg_out_of_range)
+>  {
+>  	struct sock_filter filter[] = {
+> @@ -3514,7 +3514,7 @@ TEST(user_notification_kill_in_middle)
+>  	ASSERT_GE(listener, 0);
+>  
+>  	/*
+> -	 * Check that nothing bad happens when we kill the task in the middle
+> +	 * Check that killing the task in the middle of a syscall does not cause crashes or hangs when we kill the task in the middle
+>  	 * of a syscall.
+>  	 */
+>  	pid = fork();
+> @@ -3798,7 +3798,7 @@ TEST(user_notification_fault_recv)
+>  	if (pid == 0)
+>  		exit(syscall(__NR_getppid) != USER_NOTIF_MAGIC);
+>  
+> -	/* Do a bad recv() */
+> +	/* Test invalid recv() with NULL parameter */
+>  	EXPECT_EQ(ioctl(listener, SECCOMP_IOCTL_NOTIF_RECV, NULL), -1);
+>  	EXPECT_EQ(errno, EFAULT);
+>  
+> @@ -4169,13 +4169,13 @@ TEST(user_notification_addfd)
+>  	addfd.id = req.id;
+>  	addfd.flags = 0x0;
+>  
+> -	/* Verify bad newfd_flags cannot be set */
+> +	/* Verify invalid newfd_flags cannot be set */
+>  	addfd.newfd_flags = ~O_CLOEXEC;
+>  	EXPECT_EQ(ioctl(listener, SECCOMP_IOCTL_NOTIF_ADDFD, &addfd), -1);
+>  	EXPECT_EQ(errno, EINVAL);
+>  	addfd.newfd_flags = O_CLOEXEC;
+>  
+> -	/* Verify bad flags cannot be set */
+> +	/* Verify invalid flags cannot be set */
+>  	addfd.flags = 0xff;
+>  	EXPECT_EQ(ioctl(listener, SECCOMP_IOCTL_NOTIF_ADDFD, &addfd), -1);
+>  	EXPECT_EQ(errno, EINVAL);
+> -- 
+> 2.50.1
 > 
 
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: tags/v6.17-rc1-15-g42feeddbbce6 (exact match)
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250823123718.RFC.1.Idebf1d8bd8ff507462fef9dc1ff47e84c01e9b60@changeid:
-
-arch/arm64/boot/dts/qcom/sc7280-herobrine-zombie.dtb: interconnect@16e0000 (qcom,sc7280-aggre1-noc): 'clocks' is a required property
-	from schema $id: http://devicetree.org/schemas/interconnect/qcom,sc7280-rpmh.yaml#
-arch/arm64/boot/dts/qcom/sc7280-herobrine-zombie.dtb: interconnect@1700000 (qcom,sc7280-aggre2-noc): 'clocks' is a required property
-	from schema $id: http://devicetree.org/schemas/interconnect/qcom,sc7280-rpmh.yaml#
-arch/arm64/boot/dts/qcom/sc7280-herobrine-crd-pro.dtb: interconnect@16e0000 (qcom,sc7280-aggre1-noc): 'clocks' is a required property
-	from schema $id: http://devicetree.org/schemas/interconnect/qcom,sc7280-rpmh.yaml#
-arch/arm64/boot/dts/qcom/sc7280-herobrine-crd-pro.dtb: interconnect@1700000 (qcom,sc7280-aggre2-noc): 'clocks' is a required property
-	from schema $id: http://devicetree.org/schemas/interconnect/qcom,sc7280-rpmh.yaml#
-arch/arm64/boot/dts/qcom/sc7280-herobrine-crd.dtb: interconnect@16e0000 (qcom,sc7280-aggre1-noc): 'clocks' is a required property
-	from schema $id: http://devicetree.org/schemas/interconnect/qcom,sc7280-rpmh.yaml#
-arch/arm64/boot/dts/qcom/sc7280-herobrine-crd.dtb: interconnect@1700000 (qcom,sc7280-aggre2-noc): 'clocks' is a required property
-	from schema $id: http://devicetree.org/schemas/interconnect/qcom,sc7280-rpmh.yaml#
-arch/arm64/boot/dts/qcom/sc7280-herobrine-evoker-lte.dtb: interconnect@16e0000 (qcom,sc7280-aggre1-noc): 'clocks' is a required property
-	from schema $id: http://devicetree.org/schemas/interconnect/qcom,sc7280-rpmh.yaml#
-arch/arm64/boot/dts/qcom/sc7280-herobrine-evoker-lte.dtb: interconnect@1700000 (qcom,sc7280-aggre2-noc): 'clocks' is a required property
-	from schema $id: http://devicetree.org/schemas/interconnect/qcom,sc7280-rpmh.yaml#
-arch/arm64/boot/dts/qcom/sc7280-herobrine-zombie-lte.dtb: interconnect@16e0000 (qcom,sc7280-aggre1-noc): 'clocks' is a required property
-	from schema $id: http://devicetree.org/schemas/interconnect/qcom,sc7280-rpmh.yaml#
-arch/arm64/boot/dts/qcom/sc7280-herobrine-zombie-lte.dtb: interconnect@1700000 (qcom,sc7280-aggre2-noc): 'clocks' is a required property
-	from schema $id: http://devicetree.org/schemas/interconnect/qcom,sc7280-rpmh.yaml#
-arch/arm64/boot/dts/qcom/sc7280-herobrine-herobrine-r1.dtb: interconnect@16e0000 (qcom,sc7280-aggre1-noc): 'clocks' is a required property
-	from schema $id: http://devicetree.org/schemas/interconnect/qcom,sc7280-rpmh.yaml#
-arch/arm64/boot/dts/qcom/sc7280-herobrine-herobrine-r1.dtb: interconnect@1700000 (qcom,sc7280-aggre2-noc): 'clocks' is a required property
-	from schema $id: http://devicetree.org/schemas/interconnect/qcom,sc7280-rpmh.yaml#
-arch/arm64/boot/dts/qcom/sc7280-herobrine-zombie-nvme-lte.dtb: interconnect@16e0000 (qcom,sc7280-aggre1-noc): 'clocks' is a required property
-	from schema $id: http://devicetree.org/schemas/interconnect/qcom,sc7280-rpmh.yaml#
-arch/arm64/boot/dts/qcom/sc7280-herobrine-zombie-nvme-lte.dtb: interconnect@1700000 (qcom,sc7280-aggre2-noc): 'clocks' is a required property
-	from schema $id: http://devicetree.org/schemas/interconnect/qcom,sc7280-rpmh.yaml#
-arch/arm64/boot/dts/qcom/sc7280-herobrine-evoker.dtb: interconnect@16e0000 (qcom,sc7280-aggre1-noc): 'clocks' is a required property
-	from schema $id: http://devicetree.org/schemas/interconnect/qcom,sc7280-rpmh.yaml#
-arch/arm64/boot/dts/qcom/sc7280-herobrine-evoker.dtb: interconnect@1700000 (qcom,sc7280-aggre2-noc): 'clocks' is a required property
-	from schema $id: http://devicetree.org/schemas/interconnect/qcom,sc7280-rpmh.yaml#
-arch/arm64/boot/dts/qcom/sc7280-herobrine-villager-r1.dtb: interconnect@16e0000 (qcom,sc7280-aggre1-noc): 'clocks' is a required property
-	from schema $id: http://devicetree.org/schemas/interconnect/qcom,sc7280-rpmh.yaml#
-arch/arm64/boot/dts/qcom/sc7280-herobrine-villager-r1.dtb: interconnect@1700000 (qcom,sc7280-aggre2-noc): 'clocks' is a required property
-	from schema $id: http://devicetree.org/schemas/interconnect/qcom,sc7280-rpmh.yaml#
-arch/arm64/boot/dts/qcom/sc7280-herobrine-zombie-nvme.dtb: interconnect@16e0000 (qcom,sc7280-aggre1-noc): 'clocks' is a required property
-	from schema $id: http://devicetree.org/schemas/interconnect/qcom,sc7280-rpmh.yaml#
-arch/arm64/boot/dts/qcom/sc7280-herobrine-zombie-nvme.dtb: interconnect@1700000 (qcom,sc7280-aggre2-noc): 'clocks' is a required property
-	from schema $id: http://devicetree.org/schemas/interconnect/qcom,sc7280-rpmh.yaml#
-arch/arm64/boot/dts/qcom/sc7280-herobrine-villager-r1-lte.dtb: interconnect@16e0000 (qcom,sc7280-aggre1-noc): 'clocks' is a required property
-	from schema $id: http://devicetree.org/schemas/interconnect/qcom,sc7280-rpmh.yaml#
-arch/arm64/boot/dts/qcom/sc7280-herobrine-villager-r1-lte.dtb: interconnect@1700000 (qcom,sc7280-aggre2-noc): 'clocks' is a required property
-	from schema $id: http://devicetree.org/schemas/interconnect/qcom,sc7280-rpmh.yaml#
-arch/arm64/boot/dts/qcom/sc7280-herobrine-villager-r0.dtb: interconnect@16e0000 (qcom,sc7280-aggre1-noc): 'clocks' is a required property
-	from schema $id: http://devicetree.org/schemas/interconnect/qcom,sc7280-rpmh.yaml#
-arch/arm64/boot/dts/qcom/sc7280-herobrine-villager-r0.dtb: interconnect@1700000 (qcom,sc7280-aggre2-noc): 'clocks' is a required property
-	from schema $id: http://devicetree.org/schemas/interconnect/qcom,sc7280-rpmh.yaml#
-
-
-
-
-
+-- 
+Kees Cook
 
