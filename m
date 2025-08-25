@@ -1,223 +1,122 @@
-Return-Path: <linux-kernel+bounces-785073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A739FB3457B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:19:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA064B3457D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:19:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 701C62A0A47
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:19:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B0435E01CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:19:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C2782FE574;
-	Mon, 25 Aug 2025 15:18:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD642FD1A9;
+	Mon, 25 Aug 2025 15:19:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Mfs8PI9E"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UsZXTCZj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B7D2FD7A0;
-	Mon, 25 Aug 2025 15:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7230F217705;
+	Mon, 25 Aug 2025 15:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756135123; cv=none; b=ICxMhYJUGIJ+s+H+7ESsnt7kp/8evPze3/T/xAh33fQ4VXaif4Di5xww5ueL91rl+DNro8BkyyZ2w4d98nnAURv2iILDzZ2Jw2EHhK3mSALQQ9hXEKdNnRmaKrRL3/5trYNh/zQNpxewwNYCVmcfolkRE6AeUU/hANnkRxiRrMs=
+	t=1756135141; cv=none; b=VXWwhewalE4tr3XFc/Gn7dJcX3zBs3vCS4ckrFfTBJu+Yd2sor+tUhgmzuWGS3NigUNPPyxmFRV6QzhGDKgZ40uWshEM68Au7O5puJxDtccbrBsUnrDV6eAWy3roDm2T/iEXYSQGou21O99cvq27NJxt9zhp6h7LxbqlOfWhcto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756135123; c=relaxed/simple;
-	bh=9jue979FcYfxOki+KK2bWILOLINI7UkesT2kcaszFMs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KcDS7TY0uOAV5so68r5FRKVPzPJ5nY8Nd6Ktslhv7zimJ9Ib4ZD/eh3uZUE8Hzrkg+Zt+8R3/eZOamqJ1IfqHk4s/6AQWnl+ZqEhZ6kGMGvx5QHCtlVXZBQgSdlV3OksTOfRmQVujqKPXuNB49rRUl+yrw2QLF4ok8R+2RJ70Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Mfs8PI9E; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57PBPvdq006945;
-	Mon, 25 Aug 2025 15:18:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=Yo1FPoaVzx2q+Fti4
-	CXZWKIPzgzsSpuXAaNRBu5K/5A=; b=Mfs8PI9E+x6FWpXrF57+BOiIrxx137p5G
-	RTlGy1tt+qXVQHdcBgyWPVxSIMTSpGzuft62UpkNFyd6YYpeLc8mQQAq7FZEn4UL
-	GCwFFcQm/1pEKUnAlFvUrD5+OiSA6Qz8JAfUOGmNPePFKkrvFmucd2G2SlQjVIgL
-	VXpShNm78XeoJ1/N8oU9wEbb6OaCp0fKxPI/YVbA0cYqRUlrPJlHkf7ifvRPEtXE
-	0LBQ6whQyjX7VJ9kAZJB5pzI7HQb5+MmXK2BKf1Qbtj5UesAD/bqqLKRpkogtXDM
-	k9YDEjQHhf8bbiBWd9b8kdLmGwDXDrtlImb1TEe3i+JeMJvDRpmuQ==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48q557srj5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Aug 2025 15:18:38 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57PEf8en002512;
-	Mon, 25 Aug 2025 15:18:37 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 48qt6m68w3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Aug 2025 15:18:37 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57PFIX9G34538030
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 25 Aug 2025 15:18:33 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A32E020049;
-	Mon, 25 Aug 2025 15:18:33 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0AABE20040;
-	Mon, 25 Aug 2025 15:18:33 +0000 (GMT)
-Received: from p-imbrenda (unknown [9.111.17.238])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 25 Aug 2025 15:18:32 +0000 (GMT)
-From: Claudio Imbrenda <imbrenda@linux.ibm.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-s390@vger.kernel.org, kvm@vger.kernel.org, david@redhat.com,
-        frankja@linux.ibm.com, seiden@linux.ibm.com, nsg@linux.ibm.com,
-        nrb@linux.ibm.com, schlameuss@linux.ibm.com, hca@linux.ibm.com,
-        mhartmay@linux.ibm.com, borntraeger@de.ibm.com
-Subject: [PATCH v3 2/2] KVM: s390: Fix FOLL_*/FAULT_FLAG_* confusion
-Date: Mon, 25 Aug 2025 17:18:31 +0200
-Message-ID: <20250825151831.78221-3-imbrenda@linux.ibm.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250825151831.78221-1-imbrenda@linux.ibm.com>
-References: <20250825151831.78221-1-imbrenda@linux.ibm.com>
+	s=arc-20240116; t=1756135141; c=relaxed/simple;
+	bh=nHuCQbrTPbcmXuutp5NmWaPpQuYwRH2Nm0kKtyCKxVM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HuacGNtuqsoEQ0pzuy/eR3zU9GuKxCxJRWnQBl5UHVU1tGD4kbPe+vL0JT36JnARUjV1AQ4wYk3xp9FRHCkgoHQG+yvy3PIdu7TWvtWvKqfqiS3NMEya+UZCr/5twYxbq1XuGEr7ywVp7Jdu+9uFIRPX+CRRVwxc+55CtwghKec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UsZXTCZj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 074AEC4CEED;
+	Mon, 25 Aug 2025 15:18:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756135141;
+	bh=nHuCQbrTPbcmXuutp5NmWaPpQuYwRH2Nm0kKtyCKxVM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UsZXTCZjKhznSyvwbIwFCXFzkzdukSZhWWYbG9lxGvSvJzJBOe+Ewe3WcdE/tQQqZ
+	 /RtW7YibalaIbJQzl+CTwjFQ3gzC1FdzJCt8wwf0QgIpR9NEPXJ1VKFPMDHd/9ymk5
+	 moD4K3zdtMRteagNBPxWyHoAhc24Q50iFbLY8a0fdFOuV5nHSyw0r+NwkmQlwRxCw+
+	 UjGCUXYJPXJStm3A/lIhB/p+Wuetp/GZGNwmrCidRdah+JuDcTuk3T/4cWL1eySU8K
+	 B1FXGQx4uyiZiiZZIdgQIaq/kPnuDtefDextHVnHCtxo78OVgeRhsC+FcxEGSm2JV2
+	 HAD08Xp0UiCbg==
+Date: Mon, 25 Aug 2025 16:18:32 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, Eugen Hristev <eugen.hristev@linaro.org>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Cai Huoqing <cai.huoqing@linux.dev>, Haibo Chen <haibo.chen@nxp.com>, Shawn
+ Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
+ <festevam@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Geert
+ Uytterhoeven <geert+renesas@glider.be>, Magnus Damm
+ <magnus.damm@gmail.com>, Lad Prabhakar
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>, Maxime Coquelin
+ <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, Chen-Yu Tsai <wens@csie.org>, Jernej
+ Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
+ Francesco Dolcini <francesco@dolcini.it>, =?UTF-8?B?Sm/Do28=?= Paulo
+ =?UTF-8?B?R29uw6dhbHZlcw==?= <jpaulo.silvagoncalves@gmail.com>, Rui Miguel
+ Silva <rmfrfs@gmail.com>, Jean-Baptiste Maneyrol
+ <jean-baptiste.maneyrol@tdk.com>, Subhajit Ghosh
+ <subhajit.ghosh@tweaklogic.com>, Gerald Loacker
+ <gerald.loacker@wolfvision.net>, Andreas Klinger <ak@it-klinger.de>, Crt
+ Mori <cmo@melexis.com>, Waqar Hameed <waqar.hameed@axis.com>, Julien
+ Stephan <jstephan@baylibre.com>, Peter Zijlstra <peterz@infradead.org>,
+ Greg KH <gregkh@linuxfoundation.org>, Bo Liu <liubo03@inspur.com>, Al Viro
+ <viro@zeniv.linux.org.uk>, Sean Nyekjaer <sean@geanix.com>, Frank Li
+ <Frank.Li@nxp.com>, Han Xu <han.xu@nxp.com>, Rayyan Ansari
+ <rayyan@ansari.sh>, Gustavo Vaz <gustavo.vaz@usp.br>, Matti Vaittinen
+ <mazziesaccount@gmail.com>, Alexandru Ardelean <aardelean@baylibre.com>,
+ "Jiri Slaby (SUSE)" <jirislaby@kernel.org>, "Rob Herring (Arm)"
+ <robh@kernel.org>, Fabrice Gasnier <fabrice.gasnier@foss.st.com>, Uwe
+ =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>, Olivier
+ Moysan <olivier.moysan@foss.st.com>, Christophe JAILLET
+ <christophe.jaillet@wanadoo.fr>, Marcelo Schmitt
+ <marcelo.schmitt1@gmail.com>, Vasileios Amoiridis <vassilisamir@gmail.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Hans de Goede
+ <hansg@kernel.org>, Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Abhash Jha <abhashkumarjha123@gmail.com>, chuguangqing
+ <chuguangqing@inspur.com>, Shreeya Patel <shreeya.patel@collabora.com>,
+ Per-Daniel Olsson <perdaniel.olsson@axis.com>, =?UTF-8?B?QmFybmFiw6FzIEN6?=
+ =?UTF-8?B?w6ltw6Fu?= <barnabas.czeman@mainlining.org>, Neil Armstrong
+ <neil.armstrong@linaro.org>, David Laight <david.laight@aculab.com>, Jakob
+ Hauser <jahau@rocketmail.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH v3 12/12] iio: temperature: Remove redundant
+ pm_runtime_mark_last_busy() calls
+Message-ID: <20250825161739.292542bf@jic23-huawei>
+In-Reply-To: <20250825135401.1765847-13-sakari.ailus@linux.intel.com>
+References: <20250825135401.1765847-1-sakari.ailus@linux.intel.com>
+	<20250825135401.1765847-13-sakari.ailus@linux.intel.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Dwi4QutgdwYqIGE9ccIXygT9ZEFCAov0
-X-Proofpoint-ORIG-GUID: Dwi4QutgdwYqIGE9ccIXygT9ZEFCAov0
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAyMSBTYWx0ZWRfX+Bxj+qb3lFAd
- WsyvUC24TVM5XApsgEKtcEfk8qvOr0RjOtBOxux9AZUEZ0YuCQ+C+UTvZf1HOBTIeENu8eHMPWG
- AQiRLKW8Q5KrcaYiPnunut6/Rakftzm6xhqwP9N7izARacCNBBFUGen6fKYOeDLiNMQuCopp3It
- r8HHHn9Sub/hX25X40x6BE7dXFEWReoL/EQjwXrUW0UqoJQMK/uoYkzRIzaawGfxg+tvFsyAd3Q
- sWKnu1+L1gongosv1cAxrhHY2xq0stnxljfP5/23tneBxwgKAggai+tEWzwlLeD6ch8/90QtZV4
- y1QVk2H0yuzM7njklAvESXGf0FHk5IGk/nxNNECbN6X3EOJ2ZUQYJEuMyNaFAC6eYEKDwAltDrR
- Q6U8VcjO
-X-Authority-Analysis: v=2.4 cv=A8ZsP7WG c=1 sm=1 tr=0 ts=68ac7ece cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=20KFwNOVAAAA:8 a=hH8_rHouDUwXcPhP104A:9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-25_07,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 adultscore=0 priorityscore=1501 suspectscore=0 clxscore=1015
- spamscore=0 impostorscore=0 malwarescore=0 bulkscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508230021
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Pass the right type of flag to vcpu_dat_fault_handler(); it expects a
-FOLL_* flag (in particular FOLL_WRITE), but FAULT_FLAG_WRITE is passed
-instead.
+On Mon, 25 Aug 2025 16:54:01 +0300
+Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
 
-This still works because they happen to have the same integer value,
-but it's a mistake, thus the fix.
+> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
+> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
+> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
+> pm_runtime_mark_last_busy().
+> 
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Acked-by: Crt Mori <cmo@melexis.com>
+Applied.
 
-Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
-Fixes: 05066cafa925 ("s390/mm/fault: Handle guest-related program interrupts in KVM")
-Acked-by: Christian Borntraeger <borntraeger@linux.ibm.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Reviewed-by: Steffen Eiden <seiden@linux.ibm.com>
----
- arch/s390/kvm/kvm-s390.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+thanks
 
-diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-index d5ad10791c25..4280b25b6b04 100644
---- a/arch/s390/kvm/kvm-s390.c
-+++ b/arch/s390/kvm/kvm-s390.c
-@@ -4863,12 +4863,12 @@ static void kvm_s390_assert_primary_as(struct kvm_vcpu *vcpu)
-  * @vcpu: the vCPU whose gmap is to be fixed up
-  * @gfn: the guest frame number used for memslots (including fake memslots)
-  * @gaddr: the gmap address, does not have to match @gfn for ucontrol gmaps
-- * @flags: FOLL_* flags
-+ * @foll: FOLL_* flags
-  *
-  * Return: 0 on success, < 0 in case of error.
-  * Context: The mm lock must not be held before calling. May sleep.
-  */
--int __kvm_s390_handle_dat_fault(struct kvm_vcpu *vcpu, gfn_t gfn, gpa_t gaddr, unsigned int flags)
-+int __kvm_s390_handle_dat_fault(struct kvm_vcpu *vcpu, gfn_t gfn, gpa_t gaddr, unsigned int foll)
- {
- 	struct kvm_memory_slot *slot;
- 	unsigned int fault_flags;
-@@ -4882,13 +4882,13 @@ int __kvm_s390_handle_dat_fault(struct kvm_vcpu *vcpu, gfn_t gfn, gpa_t gaddr, u
- 	if (!slot || slot->flags & KVM_MEMSLOT_INVALID)
- 		return vcpu_post_run_addressing_exception(vcpu);
- 
--	fault_flags = flags & FOLL_WRITE ? FAULT_FLAG_WRITE : 0;
-+	fault_flags = foll & FOLL_WRITE ? FAULT_FLAG_WRITE : 0;
- 	if (vcpu->arch.gmap->pfault_enabled)
--		flags |= FOLL_NOWAIT;
-+		foll |= FOLL_NOWAIT;
- 	vmaddr = __gfn_to_hva_memslot(slot, gfn);
- 
- try_again:
--	pfn = __kvm_faultin_pfn(slot, gfn, flags, &writable, &page);
-+	pfn = __kvm_faultin_pfn(slot, gfn, foll, &writable, &page);
- 
- 	/* Access outside memory, inject addressing exception */
- 	if (is_noslot_pfn(pfn))
-@@ -4904,7 +4904,7 @@ int __kvm_s390_handle_dat_fault(struct kvm_vcpu *vcpu, gfn_t gfn, gpa_t gaddr, u
- 			return 0;
- 		vcpu->stat.pfault_sync++;
- 		/* Could not setup async pfault, try again synchronously */
--		flags &= ~FOLL_NOWAIT;
-+		foll &= ~FOLL_NOWAIT;
- 		goto try_again;
- 	}
- 	/* Any other error */
-@@ -4924,7 +4924,7 @@ int __kvm_s390_handle_dat_fault(struct kvm_vcpu *vcpu, gfn_t gfn, gpa_t gaddr, u
- 	return rc;
- }
- 
--static int vcpu_dat_fault_handler(struct kvm_vcpu *vcpu, unsigned long gaddr, unsigned int flags)
-+static int vcpu_dat_fault_handler(struct kvm_vcpu *vcpu, unsigned long gaddr, unsigned int foll)
- {
- 	unsigned long gaddr_tmp;
- 	gfn_t gfn;
-@@ -4949,18 +4949,18 @@ static int vcpu_dat_fault_handler(struct kvm_vcpu *vcpu, unsigned long gaddr, un
- 		}
- 		gfn = gpa_to_gfn(gaddr_tmp);
- 	}
--	return __kvm_s390_handle_dat_fault(vcpu, gfn, gaddr, flags);
-+	return __kvm_s390_handle_dat_fault(vcpu, gfn, gaddr, foll);
- }
- 
- static int vcpu_post_run_handle_fault(struct kvm_vcpu *vcpu)
- {
--	unsigned int flags = 0;
-+	unsigned int foll = 0;
- 	unsigned long gaddr;
- 	int rc;
- 
- 	gaddr = current->thread.gmap_teid.addr * PAGE_SIZE;
- 	if (kvm_s390_cur_gmap_fault_is_write())
--		flags = FAULT_FLAG_WRITE;
-+		foll = FOLL_WRITE;
- 
- 	switch (current->thread.gmap_int_code & PGM_INT_CODE_MASK) {
- 	case 0:
-@@ -5002,7 +5002,7 @@ static int vcpu_post_run_handle_fault(struct kvm_vcpu *vcpu)
- 			send_sig(SIGSEGV, current, 0);
- 		if (rc != -ENXIO)
- 			break;
--		flags = FAULT_FLAG_WRITE;
-+		foll = FOLL_WRITE;
- 		fallthrough;
- 	case PGM_PROTECTION:
- 	case PGM_SEGMENT_TRANSLATION:
-@@ -5012,7 +5012,7 @@ static int vcpu_post_run_handle_fault(struct kvm_vcpu *vcpu)
- 	case PGM_REGION_SECOND_TRANS:
- 	case PGM_REGION_THIRD_TRANS:
- 		kvm_s390_assert_primary_as(vcpu);
--		return vcpu_dat_fault_handler(vcpu, gaddr, flags);
-+		return vcpu_dat_fault_handler(vcpu, gaddr, foll);
- 	default:
- 		KVM_BUG(1, vcpu->kvm, "Unexpected program interrupt 0x%x, TEID 0x%016lx",
- 			current->thread.gmap_int_code, current->thread.gmap_teid.val);
--- 
-2.51.0
-
+Jonathan
 
