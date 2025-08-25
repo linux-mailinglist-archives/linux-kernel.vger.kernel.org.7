@@ -1,143 +1,171 @@
-Return-Path: <linux-kernel+bounces-784973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A49D0B3441D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:37:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E511B34434
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:39:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFDB51A80F02
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:36:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2507C3B03A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:36:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 409272FF654;
-	Mon, 25 Aug 2025 14:32:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 214002FE565;
+	Mon, 25 Aug 2025 14:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n7YZsnMU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LWTOH8fY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05212FE581;
-	Mon, 25 Aug 2025 14:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E93E2FABE3;
+	Mon, 25 Aug 2025 14:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756132362; cv=none; b=rvaKFmxPUXNMBH2MAesz5Qlpp/xkFerUU/SKfTXcIoOtlqi/YtFO9qUgSjde1sEIck4M0f9LjgFbLzGFxb5rEvRBuXjB6DUdWyWUBhPQ8m85JpvwgUQojiBmfA/49tA3flosM8W6RLpXW2O3I2NrUXZNy4Z0HyIncL44H02QLBY=
+	t=1756132414; cv=none; b=mTLSDlP/KPr1+ySLl1n9Ea4tdE7umlqfs9MG81IHhtLJdOj2udxVuoEtW2q9T4qNDuLmhqRI0nzDpHbckuzzKxOQNEXBjhE0PNi86Zq17BJJ8ndC7EFRF3KIZDsbcwRF3RrkcBNwiQs1tqCNqMov6T4e+J4gt4drynksoAYtZXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756132362; c=relaxed/simple;
-	bh=DU+1S4Dtf6BzIA9TMfJpqm5TRVwGVofXB+Dj9RHsm1g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h5U2W8teEHwEHSAEReWUSuboArGJz/KcccWbLgRYbbEqsTqBX7LtXHdcNag1oRJzbwFhEryM52hhe0TnA5ZWLQyqFZVJgJ3hsiVibG+jzAkGTNAQkhNYKhjeeNexmu3cbMcSiMUUWrzRocKGYTpXeRxqMADeLqRxW5OjwxAsRf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n7YZsnMU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28395C4CEED;
-	Mon, 25 Aug 2025 14:32:23 +0000 (UTC)
+	s=arc-20240116; t=1756132414; c=relaxed/simple;
+	bh=xhSK8G/YNCbg2RlmI771QtKKh27941TambAywmDzy9c=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=d7uaJlCpgk98jI2XpP3pEN6OGuJIgslOKEenZ6xr7z/9ktcfVHL3afHe3H4sip77K4S2x4r1CAUneg2hXdNZJqY73O5Ig3BuAE7fR+QsyEtiLWs8Z0DtqhGJXFvEjc5E5bIQ/w6R9DwDnikXnFSaUFVYRYo71u1aTbKjOQvqesw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LWTOH8fY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0420C4CEED;
+	Mon, 25 Aug 2025 14:33:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756132360;
-	bh=DU+1S4Dtf6BzIA9TMfJpqm5TRVwGVofXB+Dj9RHsm1g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n7YZsnMUaPKieR6Aen8NXplrqXq649ng2cWds08Paw0ZE1V9/s04MYuzfMJunBPPM
-	 e9q5l/4IYbHR+zLW6tZ3Ain+SM/EPsptEidQNiwcBG+gIXbD0MDb3NpuMIodH9q/bK
-	 gfUkw7ZqtLUllteesZei9c9/9Nob4tERnp37xBWgOfA8ssretvfGAj7ddnS1nJ/eSw
-	 gYK9m1P9+EEv6DvwLeTd0I1ynl3rIVfEsEIPpMbPhXNcaQgQQCdndA/xeV7DIotpxx
-	 J60e7ZU1ZivKd3L40DdBa/CHbHS/SOS0E/lE/sJu2Rz1DevUCKw6IvTf/zpKfAvZXV
-	 BIxp/l6R3haNQ==
-Date: Mon, 25 Aug 2025 17:32:20 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: Mika =?iso-8859-1?Q?Penttil=E4?= <mpenttil@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	Alexander Potapenko <glider@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Brendan Jackman <jackmanb@google.com>,
-	Christoph Lameter <cl@gentwo.org>, Dennis Zhou <dennis@kernel.org>,
-	Dmitry Vyukov <dvyukov@google.com>, dri-devel@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org, iommu@lists.linux.dev,
-	io-uring@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>,
-	Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
-	John Hubbard <jhubbard@nvidia.com>, kasan-dev@googlegroups.com,
-	kvm@vger.kernel.org, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-arm-kernel@axis.com, linux-arm-kernel@lists.infradead.org,
-	linux-crypto@vger.kernel.org, linux-ide@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-mips@vger.kernel.org,
-	linux-mmc@vger.kernel.org, linux-mm@kvack.org,
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Marco Elver <elver@google.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Michal Hocko <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
-	netdev@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
-	Peter Xu <peterx@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
-	Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
-	virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
-	wireguard@lists.zx2c4.com, x86@kernel.org, Zi Yan <ziy@nvidia.com>
-Subject: Re: [PATCH RFC 10/35] mm/hugetlb: cleanup
- hugetlb_folio_init_tail_vmemmap()
-Message-ID: <aKxz9HLQTflFNYEu@kernel.org>
-References: <20250821200701.1329277-1-david@redhat.com>
- <20250821200701.1329277-11-david@redhat.com>
- <9156d191-9ec4-4422-bae9-2e8ce66f9d5e@redhat.com>
- <7077e09f-6ce9-43ba-8f87-47a290680141@redhat.com>
- <aKmDBobyvEX7ZUWL@kernel.org>
- <a90cf9a3-d662-4239-ad54-7ea917c802a5@redhat.com>
+	s=k20201202; t=1756132414;
+	bh=xhSK8G/YNCbg2RlmI771QtKKh27941TambAywmDzy9c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LWTOH8fY1roq57qXjs3WI/lZEP/bsdBR4bYrmPvYbrPLFt6yLQ3c5usp/ZS4fp+4C
+	 0CETysSPlzvQJshm9ZjJYT0swptyOBauYqtBfiZj/wEUHiIfZ/2GqHwONw8Np0WMwC
+	 n8couoUddgyHAxm/fZe5E3ZMg/XckhXsJ6jnHTdz5Bf95s+mQoTtE4Hoemyse0Ay6v
+	 ABD3S1/sD8MFHTpbxgnge0xtYfcqP0/5Qpd74bw3suZapCikWCEsQmGmXYXgImYPqg
+	 We4oJKxAo+3eWGsu15bK6ofIOpHwvsNd/xwExYoBHeYscFMBfekKqzqRhUFeqhnrfe
+	 ahigTTgSP3siA==
+Date: Mon, 25 Aug 2025 15:33:25 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Jonathan Santos <Jonathan.Santos@analog.com>
+Cc: <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <Michael.Hennerich@analog.com>,
+ <lars@metafoo.de>, <dlechner@baylibre.com>, <nuno.sa@analog.com>,
+ <andy@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+ <conor+dt@kernel.org>, <marcelo.schmitt1@gmail.com>
+Subject: Re: [PATCH v2 2/4] iio: adc: ad7768-1: introduce chip info for
+ future multidevice support
+Message-ID: <20250825153325.421d2a4d@jic23-huawei>
+In-Reply-To: <20250824040953.9547-1-Jonathan.Santos@analog.com>
+References: <20250824040953.9547-1-Jonathan.Santos@analog.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a90cf9a3-d662-4239-ad54-7ea917c802a5@redhat.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 25, 2025 at 02:48:58PM +0200, David Hildenbrand wrote:
-> On 23.08.25 10:59, Mike Rapoport wrote:
-> > On Fri, Aug 22, 2025 at 08:24:31AM +0200, David Hildenbrand wrote:
-> > > On 22.08.25 06:09, Mika Penttilä wrote:
-> > > > 
-> > > > On 8/21/25 23:06, David Hildenbrand wrote:
-> > > > 
-> > > > > All pages were already initialized and set to PageReserved() with a
-> > > > > refcount of 1 by MM init code.
-> > > > 
-> > > > Just to be sure, how is this working with MEMBLOCK_RSRV_NOINIT, where MM is supposed not to
-> > > > initialize struct pages?
-> > > 
-> > > Excellent point, I did not know about that one.
-> > > 
-> > > Spotting that we don't do the same for the head page made me assume that
-> > > it's just a misuse of __init_single_page().
-> > > 
-> > > But the nasty thing is that we use memblock_reserved_mark_noinit() to only
-> > > mark the tail pages ...
-> > 
-> > And even nastier thing is that when CONFIG_DEFERRED_STRUCT_PAGE_INIT is
-> > disabled struct pages are initialized regardless of
-> > memblock_reserved_mark_noinit().
-> > 
-> > I think this patch should go in before your updates:
-> 
-> Shouldn't we fix this in memblock code?
-> 
-> Hacking around that in the memblock_reserved_mark_noinit() user sound wrong
-> -- and nothing in the doc of memblock_reserved_mark_noinit() spells that
-> behavior out.
+On Sun, 24 Aug 2025 01:09:53 -0300
+Jonathan Santos <Jonathan.Santos@analog.com> wrote:
 
-We can surely update the docs, but unfortunately I don't see how to avoid
-hacking around it in hugetlb. 
-Since it's used to optimise HVO even further to the point hugetlb open
-codes memmap initialization, I think it's fair that it should deal with all
-possible configurations.
- 
-> -- 
-> Cheers
+> Add Chip info struct in SPI device to store channel information for
+> each supported part.
 > 
-> David / dhildenb
+> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
+> ---
+> v2 Changes:
+> * removed AD7768_CHAN_INFO_NONE macro.
+> * reordered fields in ad7768_chip_info struct.
+> * removed trailing comma.
+> ---
+>  drivers/iio/adc/ad7768-1.c | 75 ++++++++++++++++++++++++++------------
+>  1 file changed, 52 insertions(+), 23 deletions(-)
 > 
-> 
+> diff --git a/drivers/iio/adc/ad7768-1.c b/drivers/iio/adc/ad7768-1.c
+> index a2e061f0cb08..83b0907b068d 100644
+> --- a/drivers/iio/adc/ad7768-1.c
+> +++ b/drivers/iio/adc/ad7768-1.c
+> @@ -213,6 +213,13 @@ static const struct iio_scan_type ad7768_scan_type[] = {
+>  	},
+>  };
+>  
+> +struct ad7768_chip_info {
+> +	const char *name;
+> +	const unsigned long *available_masks;
+> +	const struct iio_chan_spec *channel_spec;
+> +	int num_channels;
+> +};
+> +
+>  struct ad7768_state {
+>  	struct spi_device *spi;
+>  	struct regmap *regmap;
+> @@ -234,6 +241,7 @@ struct ad7768_state {
+>  	struct gpio_desc *gpio_reset;
+>  	const char *labels[AD7768_MAX_CHANNELS];
+>  	struct gpio_chip gpiochip;
+> +	const struct ad7768_chip_info *chip;
+>  	bool en_spi_sync;
+>  	/*
+>  	 * DMA (thus cache coherency maintenance) may require the
+> @@ -750,24 +758,27 @@ static const struct iio_chan_spec_ext_info ad7768_ext_info[] = {
+>  	{ }
+>  };
+>  
+> +#define AD7768_CHAN(_idx, _msk_avail) {	\
 
--- 
-Sincerely yours,
-Mike.
+Check for consistency.  looks like you were aiming for 1 space before \ but didn't
+get it the same everywhere?
+
+> +	.type = IIO_VOLTAGE,\
+> +	.info_mask_separate_available = _msk_avail,\
+> +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),\
+> +	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) | \
+> +			BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY) | \
+> +			BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),\
+> +	.info_mask_shared_by_type_available = BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),\
+> +	.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ), \
+> +	.info_mask_shared_by_all_available = BIT(IIO_CHAN_INFO_SAMP_FREQ),\
+> +	.ext_info = ad7768_ext_info,\
+> +	.indexed = 1,\
+> +	.channel = _idx,\
+> +	.scan_index = _idx,\
+> +	.has_ext_scan_type = 1,\
+> +	.ext_scan_type = ad7768_scan_type,\
+> +	.num_ext_scan_type = ARRAY_SIZE(ad7768_scan_type),\
+> +}
+> +
+>  static const struct iio_chan_spec ad7768_channels[] = {
+> -	{
+> -		.type = IIO_VOLTAGE,
+> -		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+> -		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |
+> -					    BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY) |
+> -					    BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),
+> -		.info_mask_shared_by_type_available = BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),
+> -		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ),
+> -		.info_mask_shared_by_all_available = BIT(IIO_CHAN_INFO_SAMP_FREQ),
+> -		.ext_info = ad7768_ext_info,
+> -		.indexed = 1,
+> -		.channel = 0,
+> -		.scan_index = 0,
+> -		.has_ext_scan_type = 1,
+> -		.ext_scan_type = ad7768_scan_type,
+> -		.num_ext_scan_type = ARRAY_SIZE(ad7768_scan_type),
+> -	},
+> +	AD7768_CHAN(0, 0),
+>  };
+>  
+>  static int ad7768_read_raw(struct iio_dev *indio_dev,
+> @@ -1334,6 +1345,18 @@ static int ad7768_register_regulators(struct device *dev, struct ad7768_state *s
+>  	return 0;
+>  }
+>  
+> +static const unsigned long ad7768_channel_masks[] = {
+> +	BIT(0),
+
+That doesn't make a lot of sense. Don't provide one for devices with
+only one channel.  Leave it set to NULL and everything should just work.
+
+> +	0
+> +};
+
+
 
