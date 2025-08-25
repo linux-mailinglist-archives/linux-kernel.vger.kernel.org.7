@@ -1,82 +1,57 @@
-Return-Path: <linux-kernel+bounces-784648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A0A3B33F0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:13:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48699B33F1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:16:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9F34207937
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:12:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEA443B47A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:15:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB0A2C0F73;
-	Mon, 25 Aug 2025 12:12:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C15914A09C;
+	Mon, 25 Aug 2025 12:15:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="Oc+BeMLB";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="pIMB0pyT"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCDE926FA57;
-	Mon, 25 Aug 2025 12:12:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="oesLLvfI"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A931EA80;
+	Mon, 25 Aug 2025 12:15:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756123939; cv=none; b=SMN3vYTqV5OH/gxISmIjjOzMgXUPHkMK2fBa0GsFbXnz51fiMwVZ8B3cQHpFG3+BlEECv7e8r4XyuqSEGSBBumvHo+lvKxIx2g8NL9+Lf82Py9VkJFlJUwdOPqc757fc+8ai7ysPKL8u1yxKbZJ0EoURLrg+jyAYt6LkIemGuCE=
+	t=1756124145; cv=none; b=pXPtTlxQWKEMF+PIwQyDL7jo58IcwJo4sI+gSk7ZrLWYpvplkqLXqtJuAichOnOiQjQ+0MTiNNsXrWCQLPHqaLwpsJLujgyJlbJCurjRW9U5PN7u/tWPPeKEVw2iLqEuzjc93DnxISQNWco8Jy9q4up6SsWIMPy+FOllFV8mYmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756123939; c=relaxed/simple;
-	bh=4U9bVvwz/4NvnHCdp11J+Yuh+x5MC1T9tjtfK8agXDA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Rr9zxQYkbaOnE9mtxt/+fC1OOv0UImnSp6jWi4DgMeWe52fhTQhQk0KKBtd1IK+yHbuyLqHN5QIu2NU7oonpB1L3LYZL8fZxM/9o5fiQKJL7xLSr3I5wye48G2aIUWZ6u/q2eiiO8pDhy9IbvXQUUS7mV9pQ29Cwtr89N7pxwP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=Oc+BeMLB; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=pIMB0pyT reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1756123935; x=1787659935;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=X9+y2O9OmxOxX/zEOIoBycF6UqAOtVG8eEXojOig4yI=;
-  b=Oc+BeMLBf/UQWJdxGuUX8ZY9amXmC5GUih0HUagEk5wvAon/MXACJDaY
-   Tw60d3JCVZD3QHpItYnqisTLCKWbSgddPE+21NBeGl9c0Jgg3qr3h/2UG
-   4uMShrWHfTR6sCZhAIfmmEbEdKGt1C6uPtxIzi4sTbe7gsQwnBz1qfAqB
-   jyNQVAIzepGoeUouQ4aUMgsemF9xBksvASM7L2DFmcHCKOh9OYW7GcAYx
-   5U+GYBIapdnyGOYDN6gGCN3DRQYCqyV7DE4AI9mFWz4PrAfU9BYWCCdVO
-   Zs49RTw2g3IGFDW3aAF9EB0omJz+sWm4wpz8GJ7XLLmjfSy2Xc+HQVufl
-   Q==;
-X-CSE-ConnectionGUID: zg0bytcDSRGhJ3iD8qtdkQ==
-X-CSE-MsgGUID: VvlUDMQLR42OVmmbK81Exg==
-X-IronPort-AV: E=Sophos;i="6.17,312,1747692000"; 
-   d="scan'208";a="45893167"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 25 Aug 2025 14:12:10 +0200
-X-CheckPoint: {68AC531A-51-20CAA7DA-EC9DC758}
-X-MAIL-CPID: A576D94F7D758DC4C925CA782C60CC17_0
-X-Control-Analysis: str=0001.0A00211C.68AC531E.002E,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0369E1637A2;
-	Mon, 25 Aug 2025 14:12:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1756123926; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=X9+y2O9OmxOxX/zEOIoBycF6UqAOtVG8eEXojOig4yI=;
-	b=pIMB0pyTfFwshsr143kAZ41f239nMkXUqMRUe4chYF1iddy0ODQhW9wmej8XHPlcED7q2N
-	hGfaZSIi72fmNUqukxPQAiZLTFkewChZtRCxcCglv2wP7BvaS6l3QcTdWn+O3j54h28otw
-	8hBU20ZFVoWV2xx9X1Xwcm6Reqb3Vt79zxVXV2pmd6x4aFwaPe1D/0UW6Vi9Pl49xYK0Sm
-	yDKQ7z58GmGLxUIighQdvHrNTQDNSQKOjDDTFSHxboCwq44e7lt7kaOv1ghowH2CV7SoeW
-	7XnGnVUvWWugPnQwT2KkFgHkICCuK3KtnauUS4djAszRUPNARSeFAcDG8fMLzg==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Shenghao Ding <shenghao-ding@ti.com>,
-	Kevin Lu <kevin-lu@ti.com>,
-	Baojun Xu <baojun.xu@ti.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-	linux-sound@vger.kernel.org,
+	s=arc-20240116; t=1756124145; c=relaxed/simple;
+	bh=pQRUIrRaJ4WHpO9221p/eCIx31S0mIW0eHDvL9xlmjw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A73sK8LA5NYFuiI5nKoU5lVJUw8Yu11Xa9MCyrCu+kDVKPvqEukKRoj1EB7e8/cZe7Tbgcs8bNhWOIcNbvnda6IasxJXoWRPv5pjAxgV1E+uav1Id85TeR2C+jYPlWf28DiouA1Z6WdkFI6+s3hf/hQRk3U8TdrArj79ugzaHgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=oesLLvfI; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=wm
+	j5n76lJI+EQ4fSCNHd5tg/1m0AUVHlQPLj3ohhhUY=; b=oesLLvfIRErVrkDogt
+	a1OiIZOZxwCxnyD4vqmBrnVVnRE80lSQFCaARmR+gtW5WcBIqVPm0z8/9JginPJi
+	BJSCAAwBOWQ0Aaaza4t++VbR9D/xdZ4ULSDfoDFvbUDgzCkA4qdjYYMSMerFg3Sb
+	bq23otVjkEWrLMTDxEZQrHoFc=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wCn0LeWU6xoYo0IEQ--.6105S2;
+	Mon, 25 Aug 2025 20:14:15 +0800 (CST)
+From: Jinyu Tang <tjytimi@163.com>
+To: Anup Patel <anup@brainfault.org>,
+	Atish Patra <atish.patra@linux.dev>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Yong-Xuan Wang <yongxuan.wang@sifive.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Nutty Liu <nutty.liu@hotmail.com>
+Cc: kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Alexander Stein <alexander.stein@ew.tq-group.com>
-Subject: [PATCH 1/1] ASoC: tlv320aic32x4: use dev_err_probe() for regulators
-Date: Mon, 25 Aug 2025 14:11:38 +0200
-Message-ID: <20250825121139.2150099-1-alexander.stein@ew.tq-group.com>
+	Jinyu Tang <tjytimi@163.com>
+Subject: [PATCH v3] riscv: skip csr restore if vcpu preempted reload
+Date: Mon, 25 Aug 2025 20:14:11 +0800
+Message-ID: <20250825121411.86573-1-tjytimi@163.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -85,67 +60,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+X-CM-TRANSID:_____wCn0LeWU6xoYo0IEQ--.6105S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxuryrZw13Kr13uF15tw47Jwb_yoW5Ww48pF
+	W7urs09w48JrW7G342qrsY9F4F9rZYgrn3XryDWrWSyr1Utr9Yyr4kK3y7AFy5GryrZF1S
+	yFyDtFyIkFnYvwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piHa0PUUUUU=
+X-CM-SenderInfo: xwm13xlpl6il2tof0z/1tbipR+0eGisTjSwYwAAsb
 
-From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+The kvm_arch_vcpu_load() function is called in two cases for riscv:
+1. When entering KVM_RUN from userspace ioctl.
+2. When a preempted VCPU is scheduled back.
 
-Avoid error messages like the following when the regulators have not
-been probed yet:
+In the second case, if no other KVM VCPU has run on this CPU since the
+current VCPU was preempted, the guest CSR (including AIA CSRS and HGTAP) 
+values are still valid in the hardware and do not need to be restored.
 
-    tlv320aic32x4 0-0018: Missing supply 'iov'
-    tlv320aic32x4 0-0018: Failed to setup regulators
+This patch is to skip the CSR write path when:
+1. The VCPU was previously preempted
+(vcpu->scheduled_out == 1).
+2. It is being reloaded on the same physical CPU
+(vcpu->arch.last_exit_cpu == cpu).
+3. No other KVM VCPU has used this CPU in the meantime
+(vcpu == __this_cpu_read(kvm_former_vcpu)).
 
-Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+This reduces many CSR writes with frequent preemption on the same CPU.
+
+Signed-off-by: Jinyu Tang <tjytimi@163.com>
+Reviewed-by: Nutty Liu <nutty.liu@hotmail.com>
 ---
- sound/soc/codecs/tlv320aic32x4.c | 18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
+ v2 -> v3:
+ v2 was missing a critical check because I generated the patch from my
+ wrong (experimental) branch. This is fixed in v3. Sorry for my trouble.
 
-diff --git a/sound/soc/codecs/tlv320aic32x4.c b/sound/soc/codecs/tlv320aic32x4.c
-index 7399080f8580c..715a07ab97b9f 100644
---- a/sound/soc/codecs/tlv320aic32x4.c
-+++ b/sound/soc/codecs/tlv320aic32x4.c
-@@ -1277,8 +1277,8 @@ static int aic32x4_setup_regulators(struct device *dev,
- 	/* Check if the regulator requirements are fulfilled */
+ v1 -> v2:
+ Apply the logic to aia csr load. Thanks for
+ Andrew Jones's advice.
+
+ arch/riscv/kvm/vcpu.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
+index f001e5640..66bd3ddd5 100644
+--- a/arch/riscv/kvm/vcpu.c
++++ b/arch/riscv/kvm/vcpu.c
+@@ -25,6 +25,8 @@
+ #define CREATE_TRACE_POINTS
+ #include "trace.h"
  
- 	if (IS_ERR(aic32x4->supply_iov)) {
--		dev_err(dev, "Missing supply 'iov'\n");
--		return PTR_ERR(aic32x4->supply_iov);
-+		return dev_err_probe(dev, PTR_ERR(aic32x4->supply_iov),
-+				     "Missing supply 'iov'\n");
- 	}
++static DEFINE_PER_CPU(struct kvm_vcpu *, kvm_former_vcpu);
++
+ const struct _kvm_stats_desc kvm_vcpu_stats_desc[] = {
+ 	KVM_GENERIC_VCPU_STATS(),
+ 	STATS_DESC_COUNTER(VCPU, ecall_exit_stat),
+@@ -581,6 +583,10 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+ 	struct kvm_vcpu_csr *csr = &vcpu->arch.guest_csr;
+ 	struct kvm_vcpu_config *cfg = &vcpu->arch.cfg;
  
- 	if (IS_ERR(aic32x4->supply_ldo)) {
-@@ -1286,12 +1286,12 @@ static int aic32x4_setup_regulators(struct device *dev,
- 			return -EPROBE_DEFER;
++	if (vcpu->scheduled_out && vcpu == __this_cpu_read(kvm_former_vcpu) &&
++		vcpu->arch.last_exit_cpu == cpu)
++		goto csr_restore_done;
++
+ 	if (kvm_riscv_nacl_sync_csr_available()) {
+ 		nsh = nacl_shmem();
+ 		nacl_csr_write(nsh, CSR_VSSTATUS, csr->vsstatus);
+@@ -624,6 +630,9 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
  
- 		if (IS_ERR(aic32x4->supply_dv)) {
--			dev_err(dev, "Missing supply 'dv' or 'ldoin'\n");
--			return PTR_ERR(aic32x4->supply_dv);
-+			return dev_err_probe(dev, PTR_ERR(aic32x4->supply_dv),
-+					     "Missing supply 'dv' or 'ldoin'\n");
- 		}
- 		if (IS_ERR(aic32x4->supply_av)) {
--			dev_err(dev, "Missing supply 'av' or 'ldoin'\n");
--			return PTR_ERR(aic32x4->supply_av);
-+			return dev_err_probe(dev, PTR_ERR(aic32x4->supply_av),
-+					     "Missing supply 'av' or 'ldoin'\n");
- 		}
- 	} else {
- 		if (PTR_ERR(aic32x4->supply_dv) == -EPROBE_DEFER)
-@@ -1383,10 +1383,8 @@ int aic32x4_probe(struct device *dev, struct regmap *regmap,
- 	}
+ 	kvm_riscv_mmu_update_hgatp(vcpu);
  
- 	ret = aic32x4_setup_regulators(dev, aic32x4);
--	if (ret) {
--		dev_err(dev, "Failed to setup regulators\n");
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to setup regulators\n");
++	kvm_riscv_vcpu_aia_load(vcpu, cpu);
++
++csr_restore_done:
+ 	kvm_riscv_vcpu_timer_restore(vcpu);
  
- 	if (aic32x4->rstn_gpio) {
- 		ndelay(10);
+ 	kvm_riscv_vcpu_host_fp_save(&vcpu->arch.host_context);
+@@ -633,8 +642,6 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+ 	kvm_riscv_vcpu_guest_vector_restore(&vcpu->arch.guest_context,
+ 					    vcpu->arch.isa);
+ 
+-	kvm_riscv_vcpu_aia_load(vcpu, cpu);
+-
+ 	kvm_make_request(KVM_REQ_STEAL_UPDATE, vcpu);
+ 
+ 	vcpu->cpu = cpu;
+@@ -645,6 +652,8 @@ void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
+ 	void *nsh;
+ 	struct kvm_vcpu_csr *csr = &vcpu->arch.guest_csr;
+ 
++	__this_cpu_write(kvm_former_vcpu, vcpu);
++
+ 	vcpu->cpu = -1;
+ 
+ 	kvm_riscv_vcpu_aia_put(vcpu);
 -- 
 2.43.0
 
