@@ -1,216 +1,183 @@
-Return-Path: <linux-kernel+bounces-784248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44F1EB33896
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:18:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E82E7B33893
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:18:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4EDD3BDB05
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:18:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD1B3202323
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:18:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C3423185D;
-	Mon, 25 Aug 2025 08:18:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E793628C039;
+	Mon, 25 Aug 2025 08:18:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TdZTAG2F"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="cYG77BwA"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2066.outbound.protection.outlook.com [40.107.236.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87CD01FB3
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 08:18:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756109904; cv=none; b=QSDonGgBt/rt87OXD5YBiARouacnHB9yLDXRAX8Ksh9Jb5NT2jK3PRovP9I+7jqmS5UgaDJikn0Nm8rTRfUE5igK8l40g5T8ZYZjr8K09BLV05hOUmdoH5nyFEdq9EfXWXatTyOPvaDWfpe0jxuEevEEmSr6TkwDUBJW5WC8i8U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756109904; c=relaxed/simple;
-	bh=OkAcdd8J8Fjd6pXdPPl+yjjUVnoXGCuIN9KC8b/vjS0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OWhusaDuthMDiFByXbJ2yHYDXwYyd8bXIFMyiJF2ikziq6HPMQVXm99qC2zlJpquIuCCHttN66eAEjLTgfgqaPDf6FI7UUzDUYCqUxVuJN4mK8kne+0oh3RqpE+4hvEw/vVGkN/56JnWpeWiINbm8+y9MqxFSmmA0wXYhQ/z96s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TdZTAG2F; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-71d603a269cso31666167b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 01:18:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756109901; x=1756714701; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+0Oybj0M0yoKkhWS1OYGK0UFnQZogX/+t9MX3nl4xcE=;
-        b=TdZTAG2FK64axxkK0STNH2C0k0IpU6KHpFhG2+dYFoi+C6MWCVpecgiQd85ZskuV4Y
-         6wVjEbfVSz4mwVF84bV8+GI8i9nRWNVawvKbUzkag5GlfQx9ZcDoenMVj/6oPig3kWSY
-         WKWEf8yNFH9rV3o26XQaGAS3FCBL+AM9fBayGHAub8nf9rBp3U7Y+LZMuvvl5R4XhkqC
-         aw+JgUSJkjiJ/N7fvqi2h1UirNtBjvLh5MCyIrUu4UjbbFMOi+D6FUljZDaRsx1aSM5b
-         7mowil8SOTsTeRroBf/PYdaymiBhMxzx8FhkVlijlg3Hlhrdefqv7f5/VfIAMjD8vo8r
-         0tsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756109901; x=1756714701;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+0Oybj0M0yoKkhWS1OYGK0UFnQZogX/+t9MX3nl4xcE=;
-        b=TFeYZLH6n0YLp5e4DR3Lx8WgATrJBd1eBNt1ylYRkHuPDL3SLTrhHiMv0taip75sll
-         JxWvLMtyxewW4Tt754hqCLzug7sCV1FKEfURRXDt2bjWVmYDvtQEC7jscHlY7PbewPuE
-         JNq1DL4nbqdT+DgE/R7gO8xBUpc+6B/29fRo0/KPVVN2sx7lclri0u4b1ulqu/O5IMsb
-         fcEwtgqCnXu/IK8pYkMOtLTXnzw6CdYlha5Qh38oLv3Fs4nmf4oXocp5nt9lObXZ3Apm
-         mHZKk1M4ThBMWWHwWik/ONH6nMvJWspdxgoKXDFxGIjNqMAO4VOB/YKoIrhrR6RHDsJn
-         lTcw==
-X-Forwarded-Encrypted: i=1; AJvYcCUf3sRcnqrYp44Q1ox/Km1MD1G97K3xhabWuAtvBTdPRPbz6bZKr7SaD8UQeN9ASDe+b4xXl3Hv0Nf9MDI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtDvXj1HO7F1SbRcEBID6hC395XxjR/ZAHRf30ffb3/XzZuC6O
-	Zec+czQaJTl7xtkpQWXw32iIfMBjXCJmH7eIAmrRBeWxl5WziSro8sSiYx2itr9TebStxr8n5DK
-	TcqK8irupojEjkeYtXGtxGpGNmhglULD3NvAwey348A==
-X-Gm-Gg: ASbGncsGTM4oH4SavSzu10QBRu0ilMpdM264lIHGlEYf+mqMLNawKV5VKe3kHK8tF1C
-	AlrkTPCnG6bYNGZMBQD5lVHW0nzWDtEPMHWfr9IxZ/pzf+E9iYBywLxLLbIrmW21C5VvGb9udyh
-	l871hCxiBEFFNyj0vh1/hRxkk3ROMvGQ+8y17Iigo4RT0FCeGxxxC9Td1wYcRNKBfz0A7lbUlGG
-	ezz06U8E0l+64N1RbXlWymupxLHO2mfXvaCHNYqQvO3gIPi4CCcRHEwtK+g3uKfWjVT7wN0bxKV
-	xthhOEXXQMQFIBaFXlJCSuURSHFPoIiFvIsBPbXxyyDdolIoRel+I333N1SknTFJKLq5viuS0tt
-	MATzAdeUKz9jqDZNT/TM=
-X-Google-Smtp-Source: AGHT+IFlchCrXoWj4MOj8DWBnk7iM3uEWC5Al3yIogbIC43b2Wxo4c2bAsYc4GzxL9VpWzUBWRbHHvVjWH3UvaJFfQI=
-X-Received: by 2002:a05:690c:60c5:b0:71c:3fde:31b6 with SMTP id
- 00721157ae682-71fdc3d153cmr110423217b3.34.1756109901271; Mon, 25 Aug 2025
- 01:18:21 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B643A1FB3;
+	Mon, 25 Aug 2025 08:18:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756109895; cv=fail; b=ZJrhpOAhZyKt10yt9hXaN+TjmIHSqd8bKal26mWj7ZtpsvsDNJfr4v+VZuIqbWsK14EEGA/eJg6tUZ4amOPLYef6mbfsqly/lzdK5duTjHAXcCkSxjkHkTTaWjR4yCiq2psNeyAUDvthDYQDzw1xIN4dwoWrcder5chtIb9Fi5Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756109895; c=relaxed/simple;
+	bh=bAPu2S4pY8RAOww5avJOHshppSwX2HCFayBlXBBPWYI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=E35MJhDG4xxJ1s59//lOJd+sjMW1C5i5vA1W6/VuxU1mGDIFNDobeJnm50e4aJnIRtEtx7fEVJkr1iioyUGRMnR2H1zv+TcRozX4Bh/a/Bz8jp2Ae9pvdtbCui0mZ34cjQb9KKP2sPQdRojkGQD5T+HlPy11LQzX41lPj3RyUZ8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=cYG77BwA; arc=fail smtp.client-ip=40.107.236.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BjQrFsuwyYsAxGldVKWmrF/Wi3yYcG1sRBdG0ysy9iG/O4l6KuRvmg76crSvRgqbYiVLXVhCBX2ZufblhXthAy7b1XAWO5L5GGmTJ1te4HgN5DZRwx6lq0M17vyHfbh38orCgmPDifJURkEkigPBxaAUX48UWMIoEXCTYde3P56qs5rTJFT6+eihKGbCK6UHYtBwA2NJZNK9yTB207QyrDPzEQr93z1q3OXGymGyJseQX5EQ/y57hdlzZABUzVp6aNBNtO6FkZhCsUT6ZhSwUs6MLDfaKlO8bYy/Uye+SkFS3EqS5t+yMqEWYWiy7QnSvb8cZ1b+59PbohPkN5aEqQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=V2KZzo9RkfSTGwydaDkYH76GneYMcYK2yUFQjOYOyeU=;
+ b=DfEW3sGzNhKCuXvZ+CLrl4ccLE3Ut03OXd+YbRLu8Ff5YkQTD7rbzs9dMUEB+3Bctaq6+DOicJ2fbIWubGBB/Ff3TKJvt8IohzMY5ivfXrtwCUFj6jebvZABqtI9+SUN0J0908O2MF3ZIrKwutbK166RyHWhn889NhndY1E1UWEZhC9lUhLVu5OLrTd1gpASJe5xSp4w+Z+Bjsgjeea7bkaeBMz1k1aWai7DYzTc36Gyrewj2yhUmqLw9hHQtelKo+34hy3i+hII7J3lN7e0b+/Tz8/vA1WR7vISwNEFwVrHwJUhwGtDpc0GyUzYla/bZTU7X96Bmhzz+gWTTIJzYg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=V2KZzo9RkfSTGwydaDkYH76GneYMcYK2yUFQjOYOyeU=;
+ b=cYG77BwA85WfWZF3Ufgw80iuZQVafZLLDbq0IrVQ1kECaPtf0E6Mqi7L5iZp0+SZhaMTIPYs69nhF6tPZJZZebeis0cwtg3/4XAHlrzSCU73tdE6sz8chb1pyNOPl0psRSqVKzX6Fo4hF7tEfyPy8GTcQ9li42hADW+15QJuVLk=
+Received: from BL1PR13CA0434.namprd13.prod.outlook.com (2603:10b6:208:2c3::19)
+ by CH3PR12MB9729.namprd12.prod.outlook.com (2603:10b6:610:253::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Mon, 25 Aug
+ 2025 08:18:10 +0000
+Received: from BN3PEPF0000B36D.namprd21.prod.outlook.com
+ (2603:10b6:208:2c3:cafe::f6) by BL1PR13CA0434.outlook.office365.com
+ (2603:10b6:208:2c3::19) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.13 via Frontend Transport; Mon,
+ 25 Aug 2025 08:18:09 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ BN3PEPF0000B36D.mail.protection.outlook.com (10.167.243.164) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9094.0 via Frontend Transport; Mon, 25 Aug 2025 08:18:09 +0000
+Received: from Satlexmb09.amd.com (10.181.42.218) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 25 Aug
+ 2025 03:18:07 -0500
+Received: from SATLEXMB04.amd.com (10.181.40.145) by satlexmb09.amd.com
+ (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Mon, 25 Aug
+ 2025 01:18:07 -0700
+Received: from [172.31.184.125] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Mon, 25 Aug 2025 03:18:00 -0500
+Message-ID: <aa5cb79b-914a-474c-9015-e36d54149cf8@amd.com>
+Date: Mon, 25 Aug 2025 13:47:54 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1755969734.git.jan.kiszka@siemens.com> <445bbda26e505e06b9b830cb9938ac57e847b28e.1755969734.git.jan.kiszka@siemens.com>
-In-Reply-To: <445bbda26e505e06b9b830cb9938ac57e847b28e.1755969734.git.jan.kiszka@siemens.com>
-From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Date: Mon, 25 Aug 2025 11:17:45 +0300
-X-Gm-Features: Ac12FXw0L_5HY92V1wJ2FCWLVP6n9-dDpc8AyHfbxYYZN-5rou3wGiH51oh3ulU
-Message-ID: <CAC_iWjK69CjJq_ia0RG7DD5-EaQtVkBE_66RxaW1PCDaa_skSw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] efi: stmm: Drop unused EFI error from setup_mm_hdr arguments
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Masahisa Kojima <kojima.masahisa@socionext.com>, 
-	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Sumit Garg <sumit.garg@kernel.org>, Jens Wiklander <jens.wiklander@linaro.org>, 
-	Hua Qian Li <huaqian.li@siemens.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/4] x86/cpu/topology: Use initial APIC ID from
+ XTOPOLOGY leaf on AMD/HYGON
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>,
+	<x86@kernel.org>
+CC: Naveen rao <naveen.rao@amd.com>, Sairaj Kodilkar <sarunkod@amd.com>, "H.
+ Peter Anvin" <hpa@zytor.com>, "Peter Zijlstra (Intel)"
+	<peterz@infradead.org>, "Xin Li (Intel)" <xin@zytor.com>, Pawan Gupta
+	<pawan.kumar.gupta@linux.intel.com>, Tom Lendacky <thomas.lendacky@amd.com>,
+	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>, Mario Limonciello
+	<mario.limonciello@amd.com>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+	Babu Moger <babu.moger@amd.com>, Suravee Suthikulpanit
+	<suravee.suthikulpanit@amd.com>, Naveen N Rao <naveen@kernel.org>,
+	<stable@vger.kernel.org>
+References: <20250825075732.10694-1-kprateek.nayak@amd.com>
+ <20250825075732.10694-2-kprateek.nayak@amd.com>
+Content-Language: en-US
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <20250825075732.10694-2-kprateek.nayak@amd.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B36D:EE_|CH3PR12MB9729:EE_
+X-MS-Office365-Filtering-Correlation-Id: bd534f0f-afa7-448b-f830-08dde3afed42
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|82310400026|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eUxaM3FpSnVBYXE2d1dsaEJLRThHTGdqb2VWbGduT3JHQXZlaCtrY2VvMTRX?=
+ =?utf-8?B?OXBDc0pXVTQ5RU9RQTVnelh0MGR0VU4reVVESVMrbWJicU94Y2UySUpPTGIx?=
+ =?utf-8?B?Z3A1Njd1SUxmSFBwcStwSFhrTFlPR3JqdWNoeWR0amVSNHkxYllRRklOS2Vy?=
+ =?utf-8?B?UGRDZnVlQk5td2VOSHZLZ1FBNnlaQjQvT1JKUmFmcWxDUnk3SnRhaUxoQ2N3?=
+ =?utf-8?B?a0F0N1NDdi9MSnZ1K0t5eG9kUmhtSSs1VkgwVC9EUC9Fd1Y0M1VZVVRqb0U0?=
+ =?utf-8?B?RG0zUTh1Q0dpZkwwQ3Q2VDJOQXR5ZkhSenJhNUhjbWl2N05uTGZEVWJlamh5?=
+ =?utf-8?B?QzIvQi9DZzhsN1JqVjMwc2o2OHhHTjFYa1gxaWZ0VnZlaWZsczFQSFpTRi9L?=
+ =?utf-8?B?Rklqc2E0ZUdIZHVMZ0kxekh0bWxOcjhuaG5TbUxJbE8zQVV4WlJ5NUo1S3BI?=
+ =?utf-8?B?SG53aWxPUzZBTWJyV1JodWVoUFlucENvYzlKeC93VWRlTTArcjd4NHZpRURQ?=
+ =?utf-8?B?VTNFNk9IK3pvbGpxSU9jSWNLNUJCOGtvYWx2RUpVOWxkaitjeUJTcW1oaVlR?=
+ =?utf-8?B?UWI4N2R2dEtmcis4U1NLL3I4K2hVMGhNaWRCVmVyeStNT2hEWXFweFNYOTl4?=
+ =?utf-8?B?TnVsZzdQU1k2UlJZT1VJVk14NmxoeUZYWXFyWHJieEh1QkxGNmZDOTJaMWFF?=
+ =?utf-8?B?MGkrY2xJdU4xUGNTRXVKYmZzcms5Z1gzekhNQnVscFQrZmsxZUd2UnJhOFl6?=
+ =?utf-8?B?dStSRmx2Q0ZnbjZ2ODY0SFVBUWlKU3B3MHU2QyticWpkcGlvRy9iT3RzZHBZ?=
+ =?utf-8?B?dklNM3FBZmhsMXNEMWtNc3hqQlBtNGF6cVBVQWVEbitRaDNEV2hTaHhVM2xi?=
+ =?utf-8?B?SUV1czhYd2xqMVR0ZjREUnBJbUYrOFFrUGxOV1M4RDFmWFA1UjdiOHV5d2NW?=
+ =?utf-8?B?MjUxOFJubXVscjIwbS9wcHNhQ2Z2QkFHcWQ4Q3dBTy9ad0RCQUVIT084aFZ1?=
+ =?utf-8?B?S09mQ2V6VGl6clc1TmF4WDczN1hSUTZBdjJaNnB0VmNwamFNbjZSQ2ttSll1?=
+ =?utf-8?B?QlRlamlBbXMrUnBhaGs1dkgxdC92WG1BcHFaUHhwYURIbE51bzlyQWRlYldj?=
+ =?utf-8?B?WGxGc2JXcldkUGVNd1JXVlMvNDI5S2hXRmlTdjhyKzAxK3g5QWgwU25qcmhG?=
+ =?utf-8?B?OVgra0I5VkR0Wm90aEs1ZkF6VVJzWTVyblV3bDljRk5LZU1ucnJrSStKWmlK?=
+ =?utf-8?B?Qzdta3c2cnhUUlYrTHpTb21oUXU2ZXJsTU95WDVjME5xVDNuMld2TnBvejRE?=
+ =?utf-8?B?QTZvSW9mNXM3c1BEdHRkUG5kL0pNRERGMEpaajVVaVRVOS96aUY1d0JmVEdR?=
+ =?utf-8?B?ZGJIWmJpdWIvNFBHSmw1Q2M3TEN5TlJ6MUw3S2p0dHp4d3AybS9qbGpjQmFZ?=
+ =?utf-8?B?Z0tpZStIZnAyUlc2UFVEd2xvSndoeWc1SFZTeXc1QVBzNkxyMmV4OGpubS9N?=
+ =?utf-8?B?MHdoMnVDQnZkSEcxRTJPcS9LZ2dIdWV0MmpBNnlPU21SR0lrS1ZwTCtTZ0VH?=
+ =?utf-8?B?L3UzNGxnVndENENzS3FmaHo1RUl4dlBmOEVqaHlPWHAxK1phYTRpbkRtWWNL?=
+ =?utf-8?B?MHkzZXkzbWNSL1NMM0l5KzhvT21VMzc0bk80VVpvdXkxV0ZydlRPS3hoZFhL?=
+ =?utf-8?B?RXRSRlU2UzRianYvSUU2a1gyeHAyM0pHbnFYY1FRc0l0RTFNSXJyelBIamUx?=
+ =?utf-8?B?SnFvNjlEMk5IcEUyQlFBbEd2cXViak9YT1B3K05sLzVGR1AvN082UmNrVVFS?=
+ =?utf-8?B?QWRBbTVXbGtoN0N3VGh1czdQSWFnTFMyNElUdHc4YjZiVFhpOUJkek5sQTdn?=
+ =?utf-8?B?Q0tMVXZuQjhsbmZrNmIzT0kremtRZXZmZ0pWK1A0MkpjVHZEN0xxYkZ2emtB?=
+ =?utf-8?B?dTZOSzJ1RjJLZ011UVYwRW00RENSVlg1UCtSZ3FkUXJWa09maDdDaStvNU91?=
+ =?utf-8?B?emNIWk1RQkE5MXh0VW43UHV3Y2xtekcvWFd2UG85Y0J4YUo2dXpwRWU5d3BM?=
+ =?utf-8?Q?XnAJRV?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 08:18:09.5427
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bd534f0f-afa7-448b-f830-08dde3afed42
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B36D.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9729
 
-Hi Jan
+On 8/25/2025 1:27 PM, K Prateek Nayak wrote:
+> AMD64 Architecture Programmer's Manual Volume 2: System Programming Pub.
+> 24593 Rev. 3.42 [2] Section 16.12 "x2APIC_ID" mentions the Extended
+> Enumeration leaf 0x8000001e (which was later superseded by the extended
 
-On Sat, 23 Aug 2025 at 20:22, Jan Kiszka <jan.kiszka@siemens.com> wrote:
->
-> From: Jan Kiszka <jan.kiszka@siemens.com>
->
-> No caller evaluates it.
+The above should have been CPUID leaf 0xb (Fn0000_000B_EDX[31:0]) and
+not 0x8000001e. Sorry for the oversight.
 
-We need a better description on this one, other than that I am fine
-with the patch.
-Callers were never evaluating the ret, they just used the return value
-in case of an error
+> leaf 0x80000026) provides the full x2APIC ID under all circumstances
+> unlike the one reported by CPUID leaf 0x8000001e EAX which depends on
+> the mode in which APIC is configured.
+-- 
+Thanks and Regards,
+Prateek
 
-With that fixed
-Reviewed-by: Ilias Apalodimas <ilias.apalodimas@linaro.org>
->
-> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-> ---
->  drivers/firmware/efi/stmm/tee_stmm_efi.c | 25 ++++++++----------------
->  1 file changed, 8 insertions(+), 17 deletions(-)
->
-> diff --git a/drivers/firmware/efi/stmm/tee_stmm_efi.c b/drivers/firmware/efi/stmm/tee_stmm_efi.c
-> index 8501056ade8a..c2bc8467b099 100644
-> --- a/drivers/firmware/efi/stmm/tee_stmm_efi.c
-> +++ b/drivers/firmware/efi/stmm/tee_stmm_efi.c
-> @@ -154,11 +154,9 @@ static efi_status_t mm_communicate(u8 *comm_buf, size_t payload_size)
->   * @dptr:              pointer address to store allocated buffer
->   * @payload_size:      payload size
->   * @func:              standAloneMM function number
-> - * @ret:               EFI return code
->   * Return:             pointer to corresponding StandAloneMM function buffer or NULL
->   */
-> -static void *setup_mm_hdr(u8 **dptr, size_t payload_size, size_t func,
-> -                         efi_status_t *ret)
-> +static void *setup_mm_hdr(u8 **dptr, size_t payload_size, size_t func)
->  {
->         const efi_guid_t mm_var_guid = EFI_MM_VARIABLE_GUID;
->         struct efi_mm_communicate_header *mm_hdr;
-> @@ -173,16 +171,13 @@ static void *setup_mm_hdr(u8 **dptr, size_t payload_size, size_t func,
->         if (max_buffer_size &&
->             max_buffer_size < (MM_COMMUNICATE_HEADER_SIZE +
->                                MM_VARIABLE_COMMUNICATE_SIZE + payload_size)) {
-> -               *ret = EFI_INVALID_PARAMETER;
->                 return NULL;
->         }
->
->         comm_buf = alloc_pages_exact(COMM_BUF_SIZE(payload_size),
->                                      GFP_KERNEL | __GFP_ZERO);
-> -       if (!comm_buf) {
-> -               *ret = EFI_OUT_OF_RESOURCES;
-> +       if (!comm_buf)
->                 return NULL;
-> -       }
->
->         mm_hdr = (struct efi_mm_communicate_header *)comm_buf;
->         memcpy(&mm_hdr->header_guid, &mm_var_guid, sizeof(mm_hdr->header_guid));
-> @@ -192,7 +187,6 @@ static void *setup_mm_hdr(u8 **dptr, size_t payload_size, size_t func,
->         var_hdr->function = func;
->         if (dptr)
->                 *dptr = comm_buf;
-> -       *ret = EFI_SUCCESS;
->
->         return var_hdr->data;
->  }
-> @@ -215,8 +209,7 @@ static efi_status_t get_max_payload(size_t *size)
->
->         payload_size = sizeof(*var_payload);
->         var_payload = setup_mm_hdr(&comm_buf, payload_size,
-> -                                  SMM_VARIABLE_FUNCTION_GET_PAYLOAD_SIZE,
-> -                                  &ret);
-> +                                  SMM_VARIABLE_FUNCTION_GET_PAYLOAD_SIZE);
->         if (!var_payload)
->                 return EFI_DEVICE_ERROR;
->
-> @@ -262,7 +255,7 @@ static efi_status_t get_property_int(u16 *name, size_t name_size,
->
->         smm_property = setup_mm_hdr(
->                 &comm_buf, payload_size,
-> -               SMM_VARIABLE_FUNCTION_VAR_CHECK_VARIABLE_PROPERTY_GET, &ret);
-> +               SMM_VARIABLE_FUNCTION_VAR_CHECK_VARIABLE_PROPERTY_GET);
->         if (!smm_property)
->                 return EFI_DEVICE_ERROR;
->
-> @@ -318,7 +311,7 @@ static efi_status_t tee_get_variable(u16 *name, efi_guid_t *vendor,
->
->         payload_size = MM_VARIABLE_ACCESS_HEADER_SIZE + name_size + tmp_dsize;
->         var_acc = setup_mm_hdr(&comm_buf, payload_size,
-> -                              SMM_VARIABLE_FUNCTION_GET_VARIABLE, &ret);
-> +                              SMM_VARIABLE_FUNCTION_GET_VARIABLE);
->         if (!var_acc)
->                 return EFI_DEVICE_ERROR;
->
-> @@ -383,8 +376,7 @@ static efi_status_t tee_get_next_variable(unsigned long *name_size,
->
->         payload_size = MM_VARIABLE_GET_NEXT_HEADER_SIZE + out_name_size;
->         var_getnext = setup_mm_hdr(&comm_buf, payload_size,
-> -                                  SMM_VARIABLE_FUNCTION_GET_NEXT_VARIABLE_NAME,
-> -                                  &ret);
-> +                               SMM_VARIABLE_FUNCTION_GET_NEXT_VARIABLE_NAME);
->         if (!var_getnext)
->                 return EFI_DEVICE_ERROR;
->
-> @@ -440,7 +432,7 @@ static efi_status_t tee_set_variable(efi_char16_t *name, efi_guid_t *vendor,
->          * the properties, if the allocation fails
->          */
->         var_acc = setup_mm_hdr(&comm_buf, payload_size,
-> -                              SMM_VARIABLE_FUNCTION_SET_VARIABLE, &ret);
-> +                              SMM_VARIABLE_FUNCTION_SET_VARIABLE);
->         if (!var_acc)
->                 return EFI_DEVICE_ERROR;
->
-> @@ -495,8 +487,7 @@ static efi_status_t tee_query_variable_info(u32 attributes,
->
->         payload_size = sizeof(*mm_query_info);
->         mm_query_info = setup_mm_hdr(&comm_buf, payload_size,
-> -                               SMM_VARIABLE_FUNCTION_QUERY_VARIABLE_INFO,
-> -                               &ret);
-> +                               SMM_VARIABLE_FUNCTION_QUERY_VARIABLE_INFO);
->         if (!mm_query_info)
->                 return EFI_DEVICE_ERROR;
->
-> --
-> 2.43.0
->
 
