@@ -1,221 +1,203 @@
-Return-Path: <linux-kernel+bounces-785491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79CD9B34B7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:07:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61F4FB34B84
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:08:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 301893A7387
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:07:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D41B3A93C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FBEB309DDC;
-	Mon, 25 Aug 2025 20:06:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rqoAProS"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4730F2868BD;
+	Mon, 25 Aug 2025 20:07:17 +0000 (UTC)
+Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDACC304BB5
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 20:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91979285C8F;
+	Mon, 25 Aug 2025 20:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756152397; cv=none; b=VmWBrDRWjRWDo70zRgzNathw9JjmewCNj+yKZP1+lYZcZxEkMDvK2Jb+80ytiFvOWsydnaott+55/nSlNxTUE3GyTZGQkBfy1pdXmkwMXURj9H/47PYB3yHSBuhIv70bt6mAEg4jwmuXx63d2E+yCbdX5hl7na0KsHeu1Xa8Utw=
+	t=1756152436; cv=none; b=pxrNWNUUSfjVTXjVSVB/8gPbMSnyFziltDwDYN+wUWsW8m+JeS1vK8zadO4hUkV4mR16gt8NK/7JcURLiQpNnhz7QL4YN+Pv60vGgPEP9Dw7ShdB2Vlf2e2/p4/qLeR7bX4kHHlrbYhXgM/7FPFORJAycVft5bLo/FXx00Qx4zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756152397; c=relaxed/simple;
-	bh=3CyWxc3bBWcKOng0lDUJyf2wCvHLahNPzrrtR5W4C3U=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=V/IHv1IHiJStkP2S+q/zZ8zRRsydC+9HuYq5UneyrjcU9Vm9j1SfIUfDhB/j2364tqvUW1hCpp9cjisjDtU7s7jcioHRGIUhbWzuve8Qnqo5mvIGSnCT2F4WlBA3x4SR5ZjUUZ0ePtG++u+NR3Kmz9SCujTCp/U/3KA0a6zs0MU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rqoAProS; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-24458264c5aso52263345ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 13:06:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756152394; x=1756757194; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=CT7JgTEeo8ssIUb6BIDGd5TM5agUhLYUjQZKEJ9GRpQ=;
-        b=rqoAProSjLzJcNYSQ0Jvt+HVN9pMiePGmyD1VXKO6VTSY4eSKoTlOrb8AH4Ar5CqS5
-         b0Nvc/fYVkOSgREHh3S+Ky7XFR2rNguABL/lrBOOogGx4BrZd3/6HEEKHdmt13blM/sO
-         bMCC80oTywFsTHIUNL3pjKdW/W7SvFAletZZQLN2tHl6pBD4TWqYsS+6f+C4JgSBrIpH
-         T3atW9Ly7tE3ofqTlpntiWw6RJGiLBWVjNsr947+kmVlcRkTDjCEmdFrSdXHEoQlLIVf
-         0aShBlOOxCwRsgWoorQiSR+/+xiTV7f3L5oxMuS1BYcl3Lt9cKAE+Bw491cDnSSVuaiu
-         eUQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756152394; x=1756757194;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CT7JgTEeo8ssIUb6BIDGd5TM5agUhLYUjQZKEJ9GRpQ=;
-        b=f4IGwRkYUUF7WVgWiJpVIcggKCXwnKSpFN6RMMlC+jQKAqJQejgO9J2UJkmdA49oP5
-         BiusTS8jlZNw5KyD76QQt5QcEjlJRI+LfhPD8s+3eFO5et+RN+c8lnEKacydfGtWK5z4
-         9Pth2oo11wEqSmdCqBUvpg+w+oEmdza58QLGT31Y1D9CkvkYWEjn9y6ztQnDAN4KvRhL
-         hgYsLeh5IarTDsFQkL5JAUhV/lWfwHTfa4hy+LqlgoW+puyzIUAoBvKyaZt079I4wqpG
-         qmbvIJhegqFGVxDmH31zCF670FpTba6AVac8/SzIG+pqbHwJfVGlm+XBtRI/cgyqEjn0
-         dRSA==
-X-Gm-Message-State: AOJu0YyfjMb5UTWEvV8a4SxQr0jo8zxen/1RCcYXvx4iCNU8d2STtgPC
-	uTRVog1VKpvdmKa1mPkqGjEId8xAeiInIxMCE2b96dGxOSObmoV8o1bO2dBcnugdtZbmffX/q53
-	Dv+XJ2w==
-X-Google-Smtp-Source: AGHT+IHfBbVUXQztG4xcJ+8aXPPjjnJpBA+jqNiJZvuMravmup3swJ9oylnciy13R3aKiPcwGzmYXXd0xTE=
-X-Received: from pjvb15.prod.google.com ([2002:a17:90a:d88f:b0:311:c197:70a4])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:f611:b0:246:60d4:8708
- with SMTP id d9443c01a7336-24660d4883amr156063605ad.49.1756152394181; Mon, 25
- Aug 2025 13:06:34 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Mon, 25 Aug 2025 13:06:22 -0700
-In-Reply-To: <20250825200622.3759571-1-seanjc@google.com>
+	s=arc-20240116; t=1756152436; c=relaxed/simple;
+	bh=YCRhxx3RdlApPSKFaF9dmlJcjWTwvnvYlnLGiNohuss=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XLBP8IRAjHX52kpbmH9ASi4ZE2NDY8Yfeg79f2FikUAr2yhRYHocaIyD0PMFg3VYK6a8PO9jIp223XW4eYtJg+tVRJfdKex2g60EvVy8pXmFhDB0gpO2xg16GlCRuxkCCesLjNHs34X9AOz/6fRDB/Gzo0BYEHQmglc2iGYQ+4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
+Received: from [IPV6:2a02:8084:255b:aa00:5463:d190:b7cc:eed1] (unknown [IPv6:2a02:8084:255b:aa00:5463:d190:b7cc:eed1])
+	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id 8D1D340099;
+	Mon, 25 Aug 2025 20:07:11 +0000 (UTC)
+Authentication-Results: Plesk;
+        spf=pass (sender IP is 2a02:8084:255b:aa00:5463:d190:b7cc:eed1) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=[IPV6:2a02:8084:255b:aa00:5463:d190:b7cc:eed1]
+Received-SPF: pass (Plesk: connection is authenticated)
+Message-ID: <0165bf55-4a46-4e75-91df-644b0281b247@arnaud-lcm.com>
+Date: Mon, 25 Aug 2025 21:07:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250825200622.3759571-1-seanjc@google.com>
-X-Mailer: git-send-email 2.51.0.261.g7ce5a0a67e-goog
-Message-ID: <20250825200622.3759571-6-seanjc@google.com>
-Subject: [PATCH 5/5] Drivers: hv: Use common "entry virt" APIs to do work
- before running guest
-From: Sean Christopherson <seanjc@google.com>
-To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
-	Huacai Chen <chenhuacai@kernel.org>, Anup Patel <anup@brainfault.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Sean Christopherson <seanjc@google.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
-	Dexuan Cui <decui@microsoft.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Andy Lutomirski <luto@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Frederic Weisbecker <frederic@kernel.org>, Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Josh Triplett <josh@joshtriplett.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Uladzislau Rezki <urezki@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org, loongarch@lists.linux.dev, 
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	linux-hyperv@vger.kernel.org, rcu@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next RESEND v4 1/2] bpf: refactor max_depth
+ computation in bpf_get_stack()
+To: Yonghong Song <yonghong.song@linux.dev>,
+ Martin KaFai Lau <martin.lau@linux.dev>
+Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
+ daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com,
+ john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org,
+ linux-kernel@vger.kernel.org, sdf@fomichev.me,
+ syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com,
+ syzkaller-bugs@googlegroups.com, song@kernel.org
+References: <20250819162652.8776-1-contact@arnaud-lcm.com>
+ <3d8fe484-2889-4367-9405-91aeee7d2ef0@linux.dev>
+ <b15c8986-b407-4ae1-9e02-672c1cf9013f@arnaud-lcm.com>
+ <43b9d0ff-9922-490a-ac6b-7e8e7baa2247@linux.dev>
+Content-Language: en-US
+From: "Lecomte, Arnaud" <contact@arnaud-lcm.com>
+In-Reply-To: <43b9d0ff-9922-490a-ac6b-7e8e7baa2247@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: <175615243259.32519.10645825439471745222@Plesk>
+X-PPP-Vhost: arnaud-lcm.com
 
-Use the kernel's common "entry virt" APIs to handle pending work prior to
-(re)entering guest mode, now that the virt APIs don't have a superfluous
-dependency on KVM.
 
-No functional change intended.
-
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- drivers/hv/Kconfig          |  1 +
- drivers/hv/mshv.h           |  2 --
- drivers/hv/mshv_common.c    | 45 -------------------------------------
- drivers/hv/mshv_root_main.c |  9 +++++---
- 4 files changed, 7 insertions(+), 50 deletions(-)
-
-diff --git a/drivers/hv/Kconfig b/drivers/hv/Kconfig
-index 57623ca7f350..cdb210cd3710 100644
---- a/drivers/hv/Kconfig
-+++ b/drivers/hv/Kconfig
-@@ -66,6 +66,7 @@ config MSHV_ROOT
- 	# no particular order, making it impossible to reassemble larger pages
- 	depends on PAGE_SIZE_4KB
- 	select EVENTFD
-+	select VIRT_XFER_TO_GUEST_WORK
- 	default n
- 	help
- 	  Select this option to enable support for booting and running as root
-diff --git a/drivers/hv/mshv.h b/drivers/hv/mshv.h
-index db3aa3831c43..d4813df92b9c 100644
---- a/drivers/hv/mshv.h
-+++ b/drivers/hv/mshv.h
-@@ -25,6 +25,4 @@ int hv_call_set_vp_registers(u32 vp_index, u64 partition_id, u16 count,
- int hv_call_get_partition_property(u64 partition_id, u64 property_code,
- 				   u64 *property_value);
- 
--int mshv_do_pre_guest_mode_work(void);
--
- #endif /* _MSHV_H */
-diff --git a/drivers/hv/mshv_common.c b/drivers/hv/mshv_common.c
-index b953b5e21110..aa2be51979fd 100644
---- a/drivers/hv/mshv_common.c
-+++ b/drivers/hv/mshv_common.c
-@@ -138,48 +138,3 @@ int hv_call_get_partition_property(u64 partition_id,
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(hv_call_get_partition_property);
--
--/*
-- * Handle any pre-processing before going into the guest mode on this cpu, most
-- * notably call schedule(). Must be invoked with both preemption and
-- * interrupts enabled.
-- *
-- * Returns: 0 on success, -errno on error.
-- */
--static int __mshv_do_pre_guest_mode_work(ulong th_flags)
--{
--	if (th_flags & (_TIF_SIGPENDING | _TIF_NOTIFY_SIGNAL))
--		return -EINTR;
--
--	if (th_flags & (_TIF_NEED_RESCHED | _TIF_NEED_RESCHED_LAZY))
--		schedule();
--
--	if (th_flags & _TIF_NOTIFY_RESUME)
--		resume_user_mode_work(NULL);
--
--	return 0;
--}
--
--int mshv_do_pre_guest_mode_work(void)
--{
--	const ulong work_flags = _TIF_NOTIFY_SIGNAL | _TIF_SIGPENDING |
--				 _TIF_NEED_RESCHED  | _TIF_NEED_RESCHED_LAZY |
--				 _TIF_NOTIFY_RESUME;
--	ulong th_flags;
--
--	th_flags = read_thread_flags();
--	while (th_flags & work_flags) {
--		int ret;
--
--		/* nb: following will call schedule */
--		ret = __mshv_do_pre_guest_mode_work(th_flags);
--		if (ret)
--			return ret;
--
--		th_flags = read_thread_flags();
--	}
--
--	return 0;
--
--}
--EXPORT_SYMBOL_GPL(mshv_do_pre_guest_mode_work);
-diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
-index 6f677fb93af0..387491ca16d6 100644
---- a/drivers/hv/mshv_root_main.c
-+++ b/drivers/hv/mshv_root_main.c
-@@ -8,6 +8,7 @@
-  * Authors: Microsoft Linux virtualization team
-  */
- 
-+#include <linux/entry-virt.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/fs.h>
-@@ -507,9 +508,11 @@ static long mshv_run_vp_with_root_scheduler(struct mshv_vp *vp)
- 		u32 flags = 0;
- 		struct hv_output_dispatch_vp output;
- 
--		ret = mshv_do_pre_guest_mode_work();
--		if (ret)
--			break;
-+		if (__xfer_to_guest_mode_work_pending()) {
-+			ret = xfer_to_guest_mode_handle_work();
-+			if (ret)
-+				break;
-+		}
- 
- 		if (vp->run.flags.intercept_suspend)
- 			flags |= HV_DISPATCH_VP_FLAG_CLEAR_INTERCEPT_SUSPEND;
--- 
-2.51.0.261.g7ce5a0a67e-goog
-
+On 25/08/2025 19:27, Yonghong Song wrote:
+>
+>
+> On 8/25/25 9:39 AM, Lecomte, Arnaud wrote:
+>>
+>> On 19/08/2025 22:15, Martin KaFai Lau wrote:
+>>> On 8/19/25 9:26 AM, Arnaud Lecomte wrote:
+>>>> A new helper function stack_map_calculate_max_depth() that
+>>>> computes the max depth for a stackmap.
+>>>>
+>>>> Changes in v2:
+>>>>   - Removed the checking 'map_size % map_elem_size' from
+>>>>     stack_map_calculate_max_depth
+>>>>   - Changed stack_map_calculate_max_depth params name to be more 
+>>>> generic
+>>>>
+>>>> Changes in v3:
+>>>>   - Changed map size param to size in max depth helper
+>>>>
+>>>> Changes in v4:
+>>>>   - Fixed indentation in max depth helper for args
+>>>>
+>>>> Link to v3: 
+>>>> https://lore.kernel.org/all/09dc40eb-a84e-472a-8a68-36a2b1835308@linux.dev/
+>>>>
+>>>> Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
+>>>> Acked-by: Yonghong Song <yonghong.song@linux.dev>
+>>>> ---
+>>>>   kernel/bpf/stackmap.c | 30 ++++++++++++++++++++++++------
+>>>>   1 file changed, 24 insertions(+), 6 deletions(-)
+>>>>
+>>>> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+>>>> index 3615c06b7dfa..b9cc6c72a2a5 100644
+>>>> --- a/kernel/bpf/stackmap.c
+>>>> +++ b/kernel/bpf/stackmap.c
+>>>> @@ -42,6 +42,27 @@ static inline int stack_map_data_size(struct 
+>>>> bpf_map *map)
+>>>>           sizeof(struct bpf_stack_build_id) : sizeof(u64);
+>>>>   }
+>>>>   +/**
+>>>> + * stack_map_calculate_max_depth - Calculate maximum allowed stack 
+>>>> trace depth
+>>>> + * @size:  Size of the buffer/map value in bytes
+>>>> + * @elem_size:  Size of each stack trace element
+>>>> + * @flags:  BPF stack trace flags (BPF_F_USER_STACK, 
+>>>> BPF_F_USER_BUILD_ID, ...)
+>>>> + *
+>>>> + * Return: Maximum number of stack trace entries that can be 
+>>>> safely stored
+>>>> + */
+>>>> +static u32 stack_map_calculate_max_depth(u32 size, u32 elem_size, 
+>>>> u64 flags)
+>>>> +{
+>>>> +    u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
+>>>> +    u32 max_depth;
+>>>> +
+>>>> +    max_depth = size / elem_size;
+>>>> +    max_depth += skip;
+>>>> +    if (max_depth > sysctl_perf_event_max_stack)
+>>>> +        return sysctl_perf_event_max_stack;
+>>>
+>>> hmm... this looks a bit suspicious. Is it possible that 
+>>> sysctl_perf_event_max_stack is being changed to a larger value in 
+>>> parallel?
+>>>
+>> Hi Martin, this is a valid concern as sysctl_perf_event_max_stack can 
+>> be modified at runtime through /proc/sys/kernel/perf_event_max_stack.
+>> What we could maybe do instead is to create a copy: u32 current_max = 
+>> READ_ONCE(sysctl_perf_event_max_stack);
+>> Any thoughts on this ?
+>
+> There is no need to have READ_ONCE. Jut do
+>     int curr_sysctl_max_stack = sysctl_perf_event_max_stack;
+>     if (max_depth > curr_sysctl_max_stack)
+>       return curr_sysctl_max_stack;
+>
+> Because of the above change, the patch is not a refactoring change any 
+> more.
+>
+Why would you not consider it as a refactoring change anymore ?
+>>
+>>>> +
+>>>> +    return max_depth;
+>>>> +}
+>>>> +
+>>>>   static int prealloc_elems_and_freelist(struct bpf_stack_map *smap)
+>>>>   {
+>>>>       u64 elem_size = sizeof(struct stack_map_bucket) +
+>>>> @@ -406,7 +427,7 @@ static long __bpf_get_stack(struct pt_regs 
+>>>> *regs, struct task_struct *task,
+>>>>                   struct perf_callchain_entry *trace_in,
+>>>>                   void *buf, u32 size, u64 flags, bool may_fault)
+>>>>   {
+>>>> -    u32 trace_nr, copy_len, elem_size, num_elem, max_depth;
+>>>> +    u32 trace_nr, copy_len, elem_size, max_depth;
+>>>>       bool user_build_id = flags & BPF_F_USER_BUILD_ID;
+>>>>       bool crosstask = task && task != current;
+>>>>       u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
+>>>> @@ -438,10 +459,7 @@ static long __bpf_get_stack(struct pt_regs 
+>>>> *regs, struct task_struct *task,
+>>>>           goto clear;
+>>>>       }
+>>>>   -    num_elem = size / elem_size;
+>>>> -    max_depth = num_elem + skip;
+>>>> -    if (sysctl_perf_event_max_stack < max_depth)
+>>>> -        max_depth = sysctl_perf_event_max_stack;
+>>>> +    max_depth = stack_map_calculate_max_depth(size, elem_size, 
+>>>> flags);
+>>>>         if (may_fault)
+>>>>           rcu_read_lock(); /* need RCU for perf's callchain below */
+>>>> @@ -461,7 +479,7 @@ static long __bpf_get_stack(struct pt_regs 
+>>>> *regs, struct task_struct *task,
+>>>>       }
+>>>>         trace_nr = trace->nr - skip;
+>>>> -    trace_nr = (trace_nr <= num_elem) ? trace_nr : num_elem;
+>>>
+>>> I suspect it was fine because trace_nr was still bounded by num_elem.
+>>>
+>> We should bring back the num_elem bound as an additional safe net.
+>>>> +    trace_nr = min(trace_nr, max_depth - skip);
+>>>
+>>> but now the min() is also based on max_depth which could be 
+>>> sysctl_perf_event_max_stack.
+>>>
+>>> beside, if I read it correctly, in "max_depth - skip", the max_depth 
+>>> could also be less than skip. I assume trace->nr is bound by 
+>>> max_depth, so should be less of a problem but still a bit 
+>>> unintuitive to read.
+>>>
+>>>>       copy_len = trace_nr * elem_size;
+>>>>         ips = trace->ip + skip;
+>>>
+>
+>
 
