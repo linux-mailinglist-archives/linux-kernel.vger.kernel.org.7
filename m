@@ -1,94 +1,259 @@
-Return-Path: <linux-kernel+bounces-784626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02CB4B33EB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:05:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D2D8B33EF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:10:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A85FC17769B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:05:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB1D048833E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B87A26F296;
-	Mon, 25 Aug 2025 12:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="usN12V7H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719352EB854;
+	Mon, 25 Aug 2025 12:08:08 +0000 (UTC)
+Received: from ssh248.corpemail.net (ssh248.corpemail.net [210.51.61.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F9126D4EE;
-	Mon, 25 Aug 2025 12:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69AF2EAB98
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 12:08:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756123511; cv=none; b=HfXSjHdNzRiimG418fHJctGw4klMuNHWCSquB3QowaNmGUcy0C/MQSsI5CTMUVtvcQ131FfWowj1ETUIBLur8tPlpUD+t7ZD/IHmjdu7KzZmr/uVfNCMSPPr1u6cx5wyyK5OrHXTmOqW5RtkU4N+G5/54kbroliblBGOs6eckp4=
+	t=1756123687; cv=none; b=fYDDpZseRji6GucXf+RG8XZ7wltwSUFGYhW3U18PLytw1/PiubY/A1lHVEkmgs/gsxGXMz9WGcdSa+C4eS2gSlVPMzB7i16hKgar8nw3/2SyJa0l8/WLFes7AoAAk9b0yrJ7/dCZWBq7In4KnnvWNllLshoZl/7tj0a4BEMNj1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756123511; c=relaxed/simple;
-	bh=uvqbNT8E36EAqzzQ38xNPy0pyZIoO6YvsdgwWxIpF1M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BU7aG7+4gDReetRfNASm4ZREiHAkkn/sWfWU62zCNDL+7zVSHknn22VFLzOXaaZMyhZxIjR3EMCKruKGxN2FN+g6lhu0bgO1uNPLBZJTnAXjn3CHL4u4pD34jgaBpoSvP3CLDLa6tYvxsANCuU0Ruhc6Dc0eu/nGh/KVDcOIOIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=usN12V7H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2204C4CEED;
-	Mon, 25 Aug 2025 12:05:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756123510;
-	bh=uvqbNT8E36EAqzzQ38xNPy0pyZIoO6YvsdgwWxIpF1M=;
-	h=From:To:Cc:Subject:Date:From;
-	b=usN12V7HeYkBsI3ZAvbIU0wTNZYBusbBrX3brMUF9VIWpcXkZAJqBSocCgvYyEyOu
-	 qS9iwST1HdiedsE3tCiWIcWU1oXsO34YkX/XECg4Q1n/iU1GoFY3dR6g2vRmozpwW+
-	 AaCpbA9mnGFZVnp62csYzocT1ds/rYf2zkuh1Yei0y0mJgl2Dn3dRYIecxU1hON1Yj
-	 59EtYMBWU0ibvo9TWwchNzryQqJ5UgGB5YOn5rMkq4Jox51hRQUOnY6/T5Pl9nBQqP
-	 Et1qljnoJAq+i7WFtgBWLI1v5gJgcAC0qD8jzb4qqH6B1jq3d7gTs//L4vT5WY2eXb
-	 ZiX2QKak7dEjA==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1uqVwi-0000000GF0H-42YA;
-	Mon, 25 Aug 2025 14:05:08 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	"Jonathan Corbet" <corbet@lwn.net>,
-	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] docs: conf.py: drop xindy rule
-Date: Mon, 25 Aug 2025 14:04:55 +0200
-Message-ID: <83068bc31839e7095f1f408e49658362d467797e.1756123459.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1756123687; c=relaxed/simple;
+	bh=3skBRuwQGP4tnMw1c9oitFv5PUaUpDXrJMm8aRAaO1s=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=owiUBLFoAuccLCwlCA7svbhr9kYxm2K3rGpBUrAU85spEdYiVu7/qw7c93VvHBncFw8XwP1ehxnXVvcm2ZvitUsx/r7DqKvK/29MCjMCLmqeRZMR9kpkqtKsPN/P0aa6pWE5TJoDRfW6S7D4HIHhUcjE+dYOhgzIjAhcKSrbmSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from jtjnmail201610.home.langchao.com
+        by ssh248.corpemail.net ((D)) with ASMTP (SSL) id 202508252006433278;
+        Mon, 25 Aug 2025 20:06:43 +0800
+Received: from localhost.localdomain (10.94.4.237) by
+ jtjnmail201610.home.langchao.com (10.100.2.10) with Microsoft SMTP Server id
+ 15.1.2507.57; Mon, 25 Aug 2025 20:06:45 +0800
+From: Bo Liu <liubo03@inspur.com>
+To: <xiang@kernel.org>, <chao@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>, Bo Liu
+	<liubo03@inspur.com>
+Subject: [PATCH] erofs: Add support for FS_IOC_GETFSLABEL
+Date: Mon, 25 Aug 2025 08:06:17 -0400
+Message-ID: <20250825120617.19746-1-liubo03@inspur.com>
+X-Mailer: git-send-email 2.18.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Content-Type: text/plain
+tUid: 2025825200643879c5d1907785c46d1a62c5bb4ec3e08
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-The rule as-is is wrong, as it was inverted. Besides that, after
-retest building all repos with suggested LaTeX packages given
-by sphinx-pre-install, I was unable to reproduce the issues
-I saw with xindy in the past.
+From: Bo Liu (OpenAnolis) <liubo03@inspur.com>
 
-So, let's just drop. If anyone reports issues with xindy, we
-may need to readd, but at the right way, e.g. {options}{pkgname}.
+Add support for reading to the erofs volume label from the
+FS_IOC_GETFSLABEL ioctls.
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Signed-off-by: Bo Liu (OpenAnolis) <liubo03@inspur.com>
 ---
- Documentation/conf.py | 2 --
- 1 file changed, 2 deletions(-)
+ fs/erofs/Makefile   |  2 +-
+ fs/erofs/data.c     |  4 ++++
+ fs/erofs/dir.c      |  4 ++++
+ fs/erofs/inode.c    |  2 +-
+ fs/erofs/internal.h | 10 ++++++++++
+ fs/erofs/ioctl.c    | 47 +++++++++++++++++++++++++++++++++++++++++++++
+ fs/erofs/super.c    |  2 ++
+ fs/erofs/zdata.c    | 11 +++++++++++
+ 8 files changed, 80 insertions(+), 2 deletions(-)
+ create mode 100644 fs/erofs/ioctl.c
 
-diff --git a/Documentation/conf.py b/Documentation/conf.py
-index 8fcecdb927b1..574896cca198 100644
---- a/Documentation/conf.py
-+++ b/Documentation/conf.py
-@@ -458,8 +458,6 @@ latex_elements = {
-     "papersize": "a4paper",
-     "passoptionstopackages": dedent(r"""
-         \PassOptionsToPackage{svgnames}{xcolor}
--        % Avoid encoding troubles when creating indexes
--        \PassOptionsToPackage{xindy}{language=english,codepage=utf8,noautomatic}
-     """),
-     # The font size ('10pt', '11pt' or '12pt').
-     "pointsize": "11pt",
+diff --git a/fs/erofs/Makefile b/fs/erofs/Makefile
+index 549abc424763..5be6cc4acc1c 100644
+--- a/fs/erofs/Makefile
++++ b/fs/erofs/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ 
+ obj-$(CONFIG_EROFS_FS) += erofs.o
+-erofs-objs := super.o inode.o data.o namei.o dir.o sysfs.o
++erofs-objs := super.o inode.o data.o namei.o dir.o sysfs.o ioctl.o
+ erofs-$(CONFIG_EROFS_FS_XATTR) += xattr.o
+ erofs-$(CONFIG_EROFS_FS_ZIP) += decompressor.o zmap.o zdata.o zutil.o
+ erofs-$(CONFIG_EROFS_FS_ZIP_LZMA) += decompressor_lzma.o
+diff --git a/fs/erofs/data.c b/fs/erofs/data.c
+index 3b1ba571c728..8ca29962a3dd 100644
+--- a/fs/erofs/data.c
++++ b/fs/erofs/data.c
+@@ -475,6 +475,10 @@ static loff_t erofs_file_llseek(struct file *file, loff_t offset, int whence)
+ const struct file_operations erofs_file_fops = {
+ 	.llseek		= erofs_file_llseek,
+ 	.read_iter	= erofs_file_read_iter,
++	.unlocked_ioctl = erofs_ioctl,
++#ifdef CONFIG_COMPAT
++	.compat_ioctl   = erofs_compat_ioctl,
++#endif
+ 	.mmap_prepare	= erofs_file_mmap_prepare,
+ 	.get_unmapped_area = thp_get_unmapped_area,
+ 	.splice_read	= filemap_splice_read,
+diff --git a/fs/erofs/dir.c b/fs/erofs/dir.c
+index debf469ad6bd..32b4f5aa60c9 100644
+--- a/fs/erofs/dir.c
++++ b/fs/erofs/dir.c
+@@ -123,4 +123,8 @@ const struct file_operations erofs_dir_fops = {
+ 	.llseek		= generic_file_llseek,
+ 	.read		= generic_read_dir,
+ 	.iterate_shared	= erofs_readdir,
++	.unlocked_ioctl = erofs_ioctl,
++#ifdef CONFIG_COMPAT
++	.compat_ioctl   = erofs_compat_ioctl,
++#endif
+ };
+diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
+index 9a2f59721522..9248143e26df 100644
+--- a/fs/erofs/inode.c
++++ b/fs/erofs/inode.c
+@@ -214,7 +214,7 @@ static int erofs_fill_inode(struct inode *inode)
+ 	case S_IFREG:
+ 		inode->i_op = &erofs_generic_iops;
+ 		if (erofs_inode_is_data_compressed(vi->datalayout))
+-			inode->i_fop = &generic_ro_fops;
++			inode->i_fop = &z_erofs_file_fops;
+ 		else
+ 			inode->i_fop = &erofs_file_fops;
+ 		break;
+diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+index 4ccc5f0ee8df..2f874b920c8b 100644
+--- a/fs/erofs/internal.h
++++ b/fs/erofs/internal.h
+@@ -32,6 +32,8 @@ __printf(2, 3) void _erofs_printk(struct super_block *sb, const char *fmt, ...);
+ #define DBG_BUGON(x)            ((void)(x))
+ #endif	/* !CONFIG_EROFS_FS_DEBUG */
+ 
++#define EROFS_VOLUME_LABEL_LEN	16
++
+ /* EROFS_SUPER_MAGIC_V1 to represent the whole file system */
+ #define EROFS_SUPER_MAGIC   EROFS_SUPER_MAGIC_V1
+ 
+@@ -166,6 +168,9 @@ struct erofs_sb_info {
+ 	struct erofs_domain *domain;
+ 	char *fsid;
+ 	char *domain_id;
++
++	/* volume name */
++	u8 volume_label[EROFS_VOLUME_LABEL_LEN];
+ };
+ 
+ #define EROFS_SB(sb) ((struct erofs_sb_info *)(sb)->s_fs_info)
+@@ -404,6 +409,7 @@ extern const struct inode_operations erofs_dir_iops;
+ 
+ extern const struct file_operations erofs_file_fops;
+ extern const struct file_operations erofs_dir_fops;
++extern const struct file_operations z_erofs_file_fops;
+ 
+ extern const struct iomap_ops z_erofs_iomap_report_ops;
+ 
+@@ -535,6 +541,10 @@ static inline struct bio *erofs_fscache_bio_alloc(struct erofs_map_dev *mdev) {
+ static inline void erofs_fscache_submit_bio(struct bio *bio) {}
+ #endif
+ 
++long erofs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg);
++long erofs_compat_ioctl(struct file *filp, unsigned int cmd,
++			unsigned long arg);
++
+ #define EFSCORRUPTED    EUCLEAN         /* Filesystem is corrupted */
+ 
+ #endif	/* __EROFS_INTERNAL_H */
+diff --git a/fs/erofs/ioctl.c b/fs/erofs/ioctl.c
+new file mode 100644
+index 000000000000..10bfd593225f
+--- /dev/null
++++ b/fs/erofs/ioctl.c
+@@ -0,0 +1,47 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++#include <linux/fs.h>
++#include <linux/compat.h>
++#include <linux/file.h>
++
++#include "erofs_fs.h"
++#include "internal.h"
++
++static int erofs_ioctl_get_volume_label(struct inode *inode, void __user *arg)
++{
++	struct erofs_sb_info *sbi = EROFS_I_SB(inode);
++	size_t len;
++	int ret;
++	char label[EROFS_VOLUME_LABEL_LEN];
++
++	memcpy(label, sbi->volume_label, EROFS_VOLUME_LABEL_LEN);
++
++	len = strnlen(label, EROFS_VOLUME_LABEL_LEN);
++	if (len == EROFS_VOLUME_LABEL_LEN)
++		erofs_err(inode->i_sb, "label is too long, return the first %zu bytes",
++			  --len);
++
++	ret = copy_to_user(arg, label, len);
++
++	return ret ? -EFAULT : 0;
++}
++
++long erofs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
++{
++	struct inode *inode = file_inode(filp);
++	void __user *argp = (void __user *)arg;
++
++	switch (cmd) {
++	case FS_IOC_GETFSLABEL:
++		return erofs_ioctl_get_volume_label(inode, argp);
++	default:
++		return -ENOTTY;
++	}
++}
++
++#ifdef CONFIG_COMPAT
++long erofs_compat_ioctl(struct file *filp, unsigned int cmd,
++			unsigned long arg)
++{
++	return erofs_ioctl(filp, cmd, (unsigned long)compat_ptr(arg));
++}
++#endif
+diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+index 1b529ace4db0..e6ad6cf4ba82 100644
+--- a/fs/erofs/super.c
++++ b/fs/erofs/super.c
+@@ -343,6 +343,8 @@ static int erofs_read_superblock(struct super_block *sb)
+ 	sbi->fixed_nsec = le32_to_cpu(dsb->fixed_nsec);
+ 	super_set_uuid(sb, (void *)dsb->uuid, sizeof(dsb->uuid));
+ 
++	memcpy(sbi->volume_label, dsb->volume_name, EROFS_VOLUME_LABEL_LEN);
++
+ 	/* parse on-disk compression configurations */
+ 	ret = z_erofs_parse_cfgs(sb, dsb);
+ 	if (ret < 0)
+diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
+index 2d73297003d2..b612bf7b2f08 100644
+--- a/fs/erofs/zdata.c
++++ b/fs/erofs/zdata.c
+@@ -1931,3 +1931,14 @@ const struct address_space_operations z_erofs_aops = {
+ 	.read_folio = z_erofs_read_folio,
+ 	.readahead = z_erofs_readahead,
+ };
++
++const struct file_operations z_erofs_file_fops = {
++	.llseek		= generic_file_llseek,
++	.read_iter	= generic_file_read_iter,
++	.unlocked_ioctl	= erofs_ioctl,
++#ifdef CONFIG_COMPAT
++	.compat_ioctl	= erofs_compat_ioctl,
++#endif
++	.mmap		= generic_file_readonly_mmap,
++	.splice_read	= filemap_splice_read,
++};
 -- 
-2.51.0
+2.31.1
 
 
