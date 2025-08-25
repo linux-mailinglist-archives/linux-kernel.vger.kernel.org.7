@@ -1,47 +1,53 @@
-Return-Path: <linux-kernel+bounces-783910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2957B33417
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 04:51:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 144B5B3341A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 04:52:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92D4E16B72B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 02:51:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFA8316BACE
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 02:52:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C6E22D4DC;
-	Mon, 25 Aug 2025 02:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A702367D6;
+	Mon, 25 Aug 2025 02:52:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f2egZNsO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="bOJShy/v"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 890091CEAB2
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 02:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D5A38DD8;
+	Mon, 25 Aug 2025 02:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756090302; cv=none; b=Zm1oP27ULTiBoA6SJI1mON7ze8OqYl4fdScIQnn/Pm7ObKdfPr+qtb9iHi0vgFx99SGyZmPWXqaIYiLMtYoUiQP9EEh1kdZ5XQ4qubE88+sPFw3GV5gE0WkdRbN9W8vYVsdyIh/QA6AdjMgulyauaZwXH1lNpECVCaq6T4uqmO4=
+	t=1756090353; cv=none; b=f7bKO1iToPOG665XFubOgjOqvVATZztDwoGrrtPqvl+htTQEJgFrpKnxuqR+VCscnuV2goCvrB1I8NSAqns2Q2Nd8xyG5fMkfXn4EFZfE2T1FP4H3JazY7h92KVanbeheQYyg2kraPND3sPxBDVMEbEC7dm7M2kHlDPCgAYvcPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756090302; c=relaxed/simple;
-	bh=gs1lIouFKDtX2U9/1swxynxqEfsI77CRziNGYJWpxD8=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Be8so8dqYkJfMrn8qCqFWsp22oKfbQ0NEhmr5hHlizX69ulY2zNN/Vm3h8+0yLhJMWoozI2nHk/L2a76d7H8TM7F88dKJSS7DFT9Fz5WLBPteLD+FZG7Yt5pT1qK8rvatzzlA+glslZShZmtYLQTG1DdftnehTJwAjsRAs1SRjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f2egZNsO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92F81C4CEEB;
-	Mon, 25 Aug 2025 02:51:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756090302;
-	bh=gs1lIouFKDtX2U9/1swxynxqEfsI77CRziNGYJWpxD8=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=f2egZNsOG0l7DwAg6KmBrz4j4OaeMFehQrgtPrCgJmb8OOIGfuniX0xgU9UnFh9gA
-	 vvX8NZG6hEK0X8Ku/xFlONtyVg94r0li/8vWlQ5DxUUViUJSGHv2wNDYsCboKC5QNV
-	 zazEFsH1sQjo3ENbq+8Dbh/rQpknYdrj2LcVcKoWf3UEN5STBxajnoQx2IUTgd3+BL
-	 Tafz99At3OVxbX2GKoW9x8APAKS6SGpMPAECIeIEzedc2htrujxj+AKk6QMODwAnW+
-	 j6uwG74eWNVpy7NU1I6HV93cLgKZC2VuQnNL694ys7jNTGLleSDbMqmkT3F1QpB3Iv
-	 p5fhJNC4FdJPg==
-Message-ID: <894561d6-c0eb-4f58-ad3e-96797135e89b@kernel.org>
-Date: Mon, 25 Aug 2025 10:51:38 +0800
+	s=arc-20240116; t=1756090353; c=relaxed/simple;
+	bh=aQ3klEdpmWWkq5V7/ZmW5O2BmjonN+3JsZEFIImTQM4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZM838gkBgAX0CpZzzZV4yVQD3GZKaOITCjngXuaZMKZuTPpOeXuo7fUSBoah4m51K/sGQEdylvmCp9mn5AuqPHt2Z7shx7F8H6AVJG0meKjeltb6+YWkKpepSn0c/7JuLKzhLfeVq4edQlu4MSU5QIlvNWAIhtGCzLG+5x9j5kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=bOJShy/v; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 57P2pr1U255232
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Sun, 24 Aug 2025 19:51:54 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 57P2pr1U255232
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025082201; t=1756090317;
+	bh=lq00javG2UiQIbEp3w2ZdKaPm7rq/LpukSV6LTAhyLE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bOJShy/vbvo57MT6KNFG9ImSdy5kd/fM2Ee6qzLo/m7GXK1473Rt7f1eXehONvy1b
+	 y4BXqcMcW7CSMa6K11jLfS5bGCAreFjQD+iS87wz6Qo7ktuK8iV3xVBpLycO/Rg1K8
+	 EahjGNR0UfqeQ4m6bQGJmaGDAvdv+9Ll8V+5ukF8AIQeQm7p4HirUkTE0/rRGCYQS6
+	 ODYUKUH/OX2V/GIawNcAq7KDy0hnbw5c1MFOAw/nmGvarqI/UjNpQt+0qX0+56kHmI
+	 o0U97z7Kn9uzfD1unT4Zx7nG261i9ePDX2aehtv6wno5o/uBhRLD2cVq0GFdrtdj/C
+	 IoIVDTgkj2g8g==
+Message-ID: <2dd8c323-7654-4a28-86f1-d743b70d10b1@zytor.com>
+Date: Sun, 24 Aug 2025 19:51:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,234 +55,114 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org, bintian.wang@honor.com, feng.han@honor.com
-Subject: Re: [f2fs-dev] [PATCH] f2fs: reduce nat_tree_lock hold time when
- flush nat entries
-To: wangzijie <wangzijie1@honor.com>, jaegeuk@kernel.org
-References: <20250813040455.3900073-1-wangzijie1@honor.com>
+Subject: Re: [PATCH v6 06/20] KVM: VMX: Set FRED MSR intercepts
+To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Cc: pbonzini@redhat.com, seanjc@google.com, corbet@lwn.net, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+        x86@kernel.org, hpa@zytor.com, luto@kernel.org, peterz@infradead.org,
+        andrew.cooper3@citrix.com, chao.gao@intel.com, hch@infradead.org
+References: <20250821223630.984383-1-xin@zytor.com>
+ <20250821223630.984383-7-xin@zytor.com>
 Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20250813040455.3900073-1-wangzijie1@honor.com>
-Content-Type: text/plain; charset=UTF-8
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ xsDNBGUPz1cBDACS/9yOJGojBFPxFt0OfTWuMl0uSgpwk37uRrFPTTLw4BaxhlFL0bjs6q+0
+ 2OfG34R+a0ZCuj5c9vggUMoOLdDyA7yPVAJU0OX6lqpg6z/kyQg3t4jvajG6aCgwSDx5Kzg5
+ Rj3AXl8k2wb0jdqRB4RvaOPFiHNGgXCs5Pkux/qr0laeFIpzMKMootGa4kfURgPhRzUaM1vy
+ bsMsL8vpJtGUmitrSqe5dVNBH00whLtPFM7IbzKURPUOkRRiusFAsw0a1ztCgoFczq6VfAVu
+ raTye0L/VXwZd+aGi401V2tLsAHxxckRi9p3mc0jExPc60joK+aZPy6amwSCy5kAJ/AboYtY
+ VmKIGKx1yx8POy6m+1lZ8C0q9b8eJ8kWPAR78PgT37FQWKYS1uAroG2wLdK7FiIEpPhCD+zH
+ wlslo2ETbdKjrLIPNehQCOWrT32k8vFNEMLP5G/mmjfNj5sEf3IOKgMTMVl9AFjsINLHcxEQ
+ 6T8nGbX/n3msP6A36FDfdSEAEQEAAc0WWGluIExpIDx4aW5Aenl0b3IuY29tPsLBDQQTAQgA
+ NxYhBIUq/WFSDTiOvUIqv2u9DlcdrjdRBQJlD89XBQkFo5qAAhsDBAsJCAcFFQgJCgsFFgID
+ AQAACgkQa70OVx2uN1HUpgv/cM2fsFCQodLArMTX5nt9yqAWgA5t1srri6EgS8W3F+3Kitge
+ tYTBKu6j5BXuXaX3vyfCm+zajDJN77JHuYnpcKKr13VcZi1Swv6Jx1u0II8DOmoDYLb1Q2ZW
+ v83W55fOWJ2g72x/UjVJBQ0sVjAngazU3ckc0TeNQlkcpSVGa/qBIHLfZraWtdrNAQT4A1fa
+ sWGuJrChBFhtKbYXbUCu9AoYmmbQnsx2EWoJy3h7OjtfFapJbPZql+no5AJ3Mk9eE5oWyLH+
+ QWqtOeJM7kKvn/dBudokFSNhDUw06e7EoVPSJyUIMbYtUO7g2+Atu44G/EPP0yV0J4lRO6EA
+ wYRXff7+I1jIWEHpj5EFVYO6SmBg7zF2illHEW31JAPtdDLDHYcZDfS41caEKOQIPsdzQkaQ
+ oW2hchcjcMPAfyhhRzUpVHLPxLCetP8vrVhTvnaZUo0xaVYb3+wjP+D5j/3+hwblu2agPsaE
+ vgVbZ8Fx3TUxUPCAdr/p73DGg57oHjgezsDNBGUPz1gBDAD4Mg7hMFRQqlzotcNSxatlAQNL
+ MadLfUTFz8wUUa21LPLrHBkUwm8RujehJrzcVbPYwPXIO0uyL/F///CogMNx7Iwo6by43KOy
+ g89wVFhyy237EY76j1lVfLzcMYmjBoTH95fJC/lVb5Whxil6KjSN/R/y3jfG1dPXfwAuZ/4N
+ cMoOslWkfZKJeEut5aZTRepKKF54T5r49H9F7OFLyxrC/uI9UDttWqMxcWyCkHh0v1Di8176
+ jjYRNTrGEfYfGxSp+3jYL3PoNceIMkqM9haXjjGl0W1B4BidK1LVYBNov0rTEzyr0a1riUrp
+ Qk+6z/LHxCM9lFFXnqH7KWeToTOPQebD2B/Ah5CZlft41i8L6LOF/LCuDBuYlu/fI2nuCc8d
+ m4wwtkou1Y/kIwbEsE/6RQwRXUZhzO6llfoN96Fczr/RwvPIK5SVMixqWq4QGFAyK0m/1ap4
+ bhIRrdCLVQcgU4glo17vqfEaRcTW5SgX+pGs4KIPPBE5J/ABD6pBnUUAEQEAAcLA/AQYAQgA
+ JhYhBIUq/WFSDTiOvUIqv2u9DlcdrjdRBQJlD89ZBQkFo5qAAhsMAAoJEGu9DlcdrjdR4C0L
+ /RcjolEjoZW8VsyxWtXazQPnaRvzZ4vhmGOsCPr2BPtMlSwDzTlri8BBG1/3t/DNK4JLuwEj
+ OAIE3fkkm+UG4Kjud6aNeraDI52DRVCSx6xff3bjmJsJJMb12mWglN6LjdF6K+PE+OTJUh2F
+ dOhslN5C2kgl0dvUuevwMgQF3IljLmi/6APKYJHjkJpu1E6luZec/lRbetHuNFtbh3xgFIJx
+ 2RpgVDP4xB3f8r0I+y6ua+p7fgOjDLyoFjubRGed0Be45JJQEn7A3CSb6Xu7NYobnxfkwAGZ
+ Q81a2XtvNS7Aj6NWVoOQB5KbM4yosO5+Me1V1SkX2jlnn26JPEvbV3KRFcwV5RnDxm4OQTSk
+ PYbAkjBbm+tuJ/Sm+5Yp5T/BnKz21FoCS8uvTiziHj2H7Cuekn6F8EYhegONm+RVg3vikOpn
+ gao85i4HwQTK9/D1wgJIQkdwWXVMZ6q/OALaBp82vQ2U9sjTyFXgDjglgh00VRAHP7u1Rcu4
+ l75w1xInsg==
+In-Reply-To: <20250821223630.984383-7-xin@zytor.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 8/13/25 12:04, wangzijie wrote:
-> Sometimes I suffered the nat_tree_lock contention between f2fs_write_checkpoint
-> and f2fs_get_node_info. Commit a9419b6("f2fs: do not bother checkpoint by
-> f2fs_get_node_info") also mentioned that situation.
-> 
-> My idea is, when flush nat entries, we can use some structures to record nat
-> pages we may read, and readahead them before hold nat_tree_lock. Before
-> impletement code, I did some survey and found a submittion in community.
-> 
-> Subject: f2fs: use bucket sort to avoid tree lookup and list sort when nat flushing
-> Link: https://lore.kernel.org/linux-f2fs-devel/20170520122435.17574-2-houpengyang@huawei.com/
-> This patch aims to improve nat entry set sort by using bucket.
-> I steal that structure and readahead nat pages contain nat entry set which cannot be moved
-> to journal according to dirty nat entry set bucket.
-> 
-> By doing this, I think there are two benefits to reducing nat_tree_lock hold time when
-> when flush nat entries.
+On 8/21/2025 3:36 PM, Xin Li (Intel) wrote:
+> +	/*
+> +	 * MSR_IA32_FRED_RSP0 and MSR_IA32_PL0_SSP (aka MSR_IA32_FRED_SSP0) are
+> +	 * designated for event delivery while executing in userspace.  Since
+> +	 * KVM operates exclusively in kernel mode (the CPL is always 0 after
+> +	 * any VM exit), KVM can safely retain and operate with the guest-defined
+> +	 * values for MSR_IA32_FRED_RSP0 and MSR_IA32_PL0_SSP.
+> +	 *
+> +	 * Therefore, interception of MSR_IA32_FRED_RSP0 and MSR_IA32_PL0_SSP
+> +	 * is not required.
+> +	 *
+> +	 * Note, save and restore of MSR_IA32_PL0_SSP belong to CET supervisor
+> +	 * context management.  However the FRED SSP MSRs, including
+> +	 * MSR_IA32_PL0_SSP, are supported by any processor that enumerates FRED.
+> +	 * If such a processor does not support CET, FRED transitions will not
+> +	 * use the MSRs, but the MSRs would still be accessible using MSR-access
+> +	 * instructions (e.g., RDMSR, WRMSR).
+> +	 */
+> +	vmx_set_intercept_for_msr(vcpu, MSR_IA32_FRED_RSP0, MSR_TYPE_RW, intercept);
+> +	vmx_set_intercept_for_msr(vcpu, MSR_IA32_PL0_SSP, MSR_TYPE_RW, intercept);
 
-Zijie,
+Hi Sean,
 
-Can you please figure out some numbers for this patch? something like
-checkpoint latency or average or extreme time to grab nat_tree_lock...?
+I'd like to bring up an issue concerning MSR_IA32_PL0_SSP.
 
-> 1. avoid nat set tree lookup and sort
-> 2. readahead nat pages before holding nat_tree_lock
+The FRED spec claims:
 
-It may cause performance regression if it races w/ drop_caches?
+The FRED SSP MSRs are supported by any processor that enumerates
+CPUID.(EAX=7,ECX=1):EAX.FRED[bit 17] as 1. If such a processor does not
+support CET, FRED transitions will not use the MSRs (because shadow stacks
+are not enabled), but the MSRs would still be accessible using MSR-access
+instructions (e.g., RDMSR, WRMSR).
 
-Thanks,
 
-> 
-> Signed-off-by: wangzijie <wangzijie1@honor.com>
-> ---
->  fs/f2fs/f2fs.h |  1 +
->  fs/f2fs/node.c | 70 ++++++++++++++++++++++++--------------------------
->  fs/f2fs/node.h |  2 +-
->  3 files changed, 35 insertions(+), 38 deletions(-)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 46be75605..b27cc059f 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -975,6 +975,7 @@ struct f2fs_nm_info {
->  	struct radix_tree_root nat_set_root;/* root of the nat set cache */
->  	struct f2fs_rwsem nat_tree_lock;	/* protect nat entry tree */
->  	struct list_head nat_entries;	/* cached nat entry list (clean) */
-> +	struct list_head nat_dirty_set[NAT_ENTRY_PER_BLOCK + 1];	/* store dirty nat set */
->  	spinlock_t nat_list_lock;	/* protect clean nat entry list */
->  	unsigned int nat_cnt[MAX_NAT_STATE]; /* the # of cached nat entries */
->  	unsigned int nat_blocks;	/* # of nat blocks */
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index 27743b93e..87c975ee8 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -244,6 +244,12 @@ static void __del_from_nat_cache(struct f2fs_nm_info *nm_i, struct nat_entry *e)
->  	__free_nat_entry(e);
->  }
->  
-> +static void __relocate_nat_entry_set(struct f2fs_nm_info *nm_i,
-> +							struct nat_entry_set *set)
-> +{
-> +	list_move_tail(&set->set_list, &nm_i->nat_dirty_set[set->entry_cnt]);
-> +}
-> +
->  static struct nat_entry_set *__grab_nat_entry_set(struct f2fs_nm_info *nm_i,
->  							struct nat_entry *ne)
->  {
-> @@ -260,6 +266,7 @@ static struct nat_entry_set *__grab_nat_entry_set(struct f2fs_nm_info *nm_i,
->  		head->set = set;
->  		head->entry_cnt = 0;
->  		f2fs_radix_tree_insert(&nm_i->nat_set_root, set, head);
-> +		__relocate_nat_entry_set(nm_i, head);
->  	}
->  	return head;
->  }
-> @@ -279,8 +286,10 @@ static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
->  	 * 2. update old block address to new one;
->  	 */
->  	if (!new_ne && (get_nat_flag(ne, IS_PREALLOC) ||
-> -				!get_nat_flag(ne, IS_DIRTY)))
-> +				!get_nat_flag(ne, IS_DIRTY))) {
->  		head->entry_cnt++;
-> +		__relocate_nat_entry_set(nm_i, head);
-> +	}
->  
->  	set_nat_flag(ne, IS_PREALLOC, new_ne);
->  
-> @@ -309,6 +318,7 @@ static void __clear_nat_cache_dirty(struct f2fs_nm_info *nm_i,
->  
->  	set_nat_flag(ne, IS_DIRTY, false);
->  	set->entry_cnt--;
-> +	__relocate_nat_entry_set(nm_i, set);
->  	nm_i->nat_cnt[DIRTY_NAT]--;
->  	nm_i->nat_cnt[RECLAIMABLE_NAT]++;
->  }
-> @@ -2976,24 +2986,6 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
->  	up_write(&curseg->journal_rwsem);
->  }
->  
-> -static void __adjust_nat_entry_set(struct nat_entry_set *nes,
-> -						struct list_head *head, int max)
-> -{
-> -	struct nat_entry_set *cur;
-> -
-> -	if (nes->entry_cnt >= max)
-> -		goto add_out;
-> -
-> -	list_for_each_entry(cur, head, set_list) {
-> -		if (cur->entry_cnt >= nes->entry_cnt) {
-> -			list_add(&nes->set_list, cur->set_list.prev);
-> -			return;
-> -		}
-> -	}
-> -add_out:
-> -	list_add_tail(&nes->set_list, head);
-> -}
-> -
->  static void __update_nat_bits(struct f2fs_sb_info *sbi, nid_t start_nid,
->  		const struct f2fs_nat_block *nat_blk)
->  {
-> @@ -3095,6 +3087,7 @@ static int __flush_nat_entry_set(struct f2fs_sb_info *sbi,
->  
->  	/* Allow dirty nats by node block allocation in write_begin */
->  	if (!set->entry_cnt) {
-> +		list_del(&set->set_list);
->  		radix_tree_delete(&NM_I(sbi)->nat_set_root, set->set);
->  		kmem_cache_free(nat_entry_set_slab, set);
->  	}
-> @@ -3109,11 +3102,8 @@ int f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
->  	struct f2fs_nm_info *nm_i = NM_I(sbi);
->  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
->  	struct f2fs_journal *journal = curseg->journal;
-> -	struct nat_entry_set *setvec[NAT_VEC_SIZE];
->  	struct nat_entry_set *set, *tmp;
-> -	unsigned int found;
-> -	nid_t set_idx = 0;
-> -	LIST_HEAD(sets);
-> +	int i;
->  	int err = 0;
->  
->  	/*
-> @@ -3129,6 +3119,16 @@ int f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
->  	if (!nm_i->nat_cnt[DIRTY_NAT])
->  		return 0;
->  
-> +	/* readahead sets which cannot be moved to journal */
-> +	if (!__has_cursum_space(journal, nm_i->nat_cnt[DIRTY_NAT], NAT_JOURNAL)) {
-> +		for (i = MAX_NAT_JENTRIES(journal); i <= NAT_ENTRY_PER_BLOCK; i++) {
-> +			list_for_each_entry_safe(set, tmp, &nm_i->nat_dirty_set[i], set_list) {
-> +				f2fs_ra_meta_pages(sbi, set->set, 1,
-> +								META_NAT, true);
-> +			}
-> +		}
-> +	}
-> +
->  	f2fs_down_write(&nm_i->nat_tree_lock);
->  
->  	/*
-> @@ -3141,21 +3141,13 @@ int f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
->  			nm_i->nat_cnt[DIRTY_NAT], NAT_JOURNAL))
->  		remove_nats_in_journal(sbi);
->  
-> -	while ((found = __gang_lookup_nat_set(nm_i,
-> -					set_idx, NAT_VEC_SIZE, setvec))) {
-> -		unsigned idx;
-> -
-> -		set_idx = setvec[found - 1]->set + 1;
-> -		for (idx = 0; idx < found; idx++)
-> -			__adjust_nat_entry_set(setvec[idx], &sets,
-> -						MAX_NAT_JENTRIES(journal));
-> -	}
-> -
->  	/* flush dirty nats in nat entry set */
-> -	list_for_each_entry_safe(set, tmp, &sets, set_list) {
-> -		err = __flush_nat_entry_set(sbi, set, cpc);
-> -		if (err)
-> -			break;
-> +	for (i = 0; i <= NAT_ENTRY_PER_BLOCK; i++) {
-> +		list_for_each_entry_safe(set, tmp, &nm_i->nat_dirty_set[i], set_list) {
-> +			err = __flush_nat_entry_set(sbi, set, cpc);
-> +			if (err)
-> +				break;
-> +		}
->  	}
->  
->  	f2fs_up_write(&nm_i->nat_tree_lock);
-> @@ -3249,6 +3241,7 @@ static int init_node_manager(struct f2fs_sb_info *sbi)
->  	struct f2fs_nm_info *nm_i = NM_I(sbi);
->  	unsigned char *version_bitmap;
->  	unsigned int nat_segs;
-> +	int i;
->  	int err;
->  
->  	nm_i->nat_blkaddr = le32_to_cpu(sb_raw->nat_blkaddr);
-> @@ -3275,6 +3268,9 @@ static int init_node_manager(struct f2fs_sb_info *sbi)
->  	INIT_LIST_HEAD(&nm_i->nat_entries);
->  	spin_lock_init(&nm_i->nat_list_lock);
->  
-> +	for (i = 0; i <= NAT_ENTRY_PER_BLOCK; i++)
-> +		INIT_LIST_HEAD(&nm_i->nat_dirty_set[i]);
-> +
->  	mutex_init(&nm_i->build_lock);
->  	spin_lock_init(&nm_i->nid_list_lock);
->  	init_f2fs_rwsem(&nm_i->nat_tree_lock);
-> diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
-> index 030390543..d805d4ce7 100644
-> --- a/fs/f2fs/node.h
-> +++ b/fs/f2fs/node.h
-> @@ -158,7 +158,7 @@ enum mem_type {
->  };
->  
->  struct nat_entry_set {
-> -	struct list_head set_list;	/* link with other nat sets */
-> +	struct list_head set_list;	/* link with nat sets which have same entry_cnt */
->  	struct list_head entry_list;	/* link with dirty nat entries */
->  	nid_t set;			/* set number*/
->  	unsigned int entry_cnt;		/* the # of nat entries in set */
+It means KVM needs to handle MSR_IA32_PL0_SSP even when FRED is supported
+but CET is not.  And this can be broken down into two subtasks:
 
+1) Allow such a guest to access MSR_IA32_PL0_SSP w/o triggering #GP.  And
+this behavior is already implemented in patch 8 of this series.
+
+2) Save and restore MSR_IA32_PL0_SSP in both KVM and Qemu for such a guest.
+
+
+I have the patches for 2) but they are not included in this series, because
+
+1) how much do we care the value in MSR_IA32_PL0_SSP in such a guest?
+
+Yes, Chao told me that you are the one saying that MSRs can be used as
+clobber registers and KVM should preserve the value.  Does MSR_IA32_PL0_SSP
+in such a guest count?
+
+
+2) Saving/restoring MSR_IA32_PL0_SSP adds complexity, though it's seldom
+used.  Is it worth it?
+
+
+BTW I'm still working on a KVM unit test for it, using a L1 VMM that
+enumerates FRED but not CET.
+
+Thanks!
+     Xin
 
