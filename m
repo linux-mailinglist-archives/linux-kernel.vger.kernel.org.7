@@ -1,129 +1,219 @@
-Return-Path: <linux-kernel+bounces-784910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E708CB34374
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:22:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FCD0B343A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:26:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DCB01884B22
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:21:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17FF11692C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 889573002D2;
-	Mon, 25 Aug 2025 14:18:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE8392FAC06;
+	Mon, 25 Aug 2025 14:19:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="KwL9n18l"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ghY6Ai+e"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6806D3002AB
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 14:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4592FD7A5;
+	Mon, 25 Aug 2025 14:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756131511; cv=none; b=IbGnnhxXd3zswdxTAbh036fdl0zl7eHi+tXO5NmIRXBI/1zMxuG+NuP2BZWpwuAfv1EVIfJ7K7CyAT0YFv6YoxL/KINzdEuoM8XCXSlqpy9ghvw8kzcmL0/iZ/Em6wmeB3Zul5+JMHRYhDXGeI8Z8Sor4KFzRM7kmW4pW7b6sNo=
+	t=1756131552; cv=none; b=bFY2x3oiRNeFsrGHrV9cYUOBz1ewJDxaKjVywgHw6L/30g+5xGmdA+VUSBKSzjuTRIDoyz6fCI/QI7oPY68EF2PMGNOPInQSlZFgKipK3DFtryWjMWHzonRYThMHDWsU+jlN1cMPo/HC3R0KJYR/iZzNM63IEZBAHgZvU3xvgQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756131511; c=relaxed/simple;
-	bh=ItsVxMcWxDYHVWBaWDDZhd2R5FcKHvQsQp7/GQCZDWw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k2vpNdycwoJGXq81iOhyKUrLkKrJ1afjpO8JWIAL8PE/rX43myKt8mABB118cXmBznDTiwetktB/gkvdCFj2/SjfPy7NVX1mEvGBITuc+pbmpmF+jy3HeuQdGnP9/3rfpX4sISujE6WLAB+D722P4c2UwMk0GDLS0tFht7+lxxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=KwL9n18l; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1673040E0217;
-	Mon, 25 Aug 2025 14:18:27 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id tKpbBpDqu4bX; Mon, 25 Aug 2025 14:18:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1756131503; bh=bqdY0WhAtvp8cHP6dvUMlzIPIRxwctMFGQtIjBRr3tw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KwL9n18lowcfxL+hq0zpvEiRvyns+GLJ2fVosu7qUKagAwdDxr722tgM+wkwtV7WK
-	 2SFOwUaChmHZDGMP2xFlZFzXWBErO4V18BKW86xt6q8bHMvUmt9/egxS6Vk4MCU+Ro
-	 emQ/G3ZQvUoRNvFrtrB0Ypm3D3RmXSIZuLgnAw7ZBOtjVz4ltgXP9JIwPdsQ8b/a4T
-	 hMQbtiTpwN7XLSQoIQv0rcbztDwvBP8jv8PyEwaO8NE+2PX2hyw0O+jpLJd0ROT7BN
-	 W2CTpQmTvcJ47zb7oU1x3rFFTC0a4rNxYDxs1+8VRLYS136z9kIgnIi8AYQNqc1Yog
-	 +5DeAxmscx9e/9qN9UglMzWw3OpX1hQeRR8HEBR5dlhp3pnD1EwQq/kycYQBSkp++b
-	 CFPKmLqhkDthq0WA7MC1vWNkci9qHMpZx1dnJMMOHIfpoh7SM8JVgF6edi5nzgh+lf
-	 pOs7BVKbTLzc4C7u6g8T9rZeC+0R/1tHjRxDnsNxkEdsUuXlHsCdSAHcvMz/iV4tVz
-	 zjzh7AdmYdWEdv2flWY6Dk31yzjGkQ5KEnQkFj8cs4REK92PuZesTHZLsufd77l9z1
-	 9kGvl1vdr1YMsSipmwlx2u53qRVEQAkK0wcvVm6JC0D/32e5938aqImXe8DPKDAmHA
-	 5iB7/7e43xMKOQfoFSYyj4LM=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 903D140E0202;
-	Mon, 25 Aug 2025 14:18:09 +0000 (UTC)
-Date: Mon, 25 Aug 2025 16:18:03 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Ahmed S. Darwish" <darwi@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Sohil Mehta <sohil.mehta@intel.com>,
-	John Ogness <john.ogness@linutronix.de>, x86@kernel.org,
-	x86-cpuid@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 06/34] x86/cpuid: Introduce <asm/cpuid/leaf_types.h>
-Message-ID: <20250825141803.GUaKxwm1lAAugFJHVQ@fat_crate.local>
-References: <20250815070227.19981-1-darwi@linutronix.de>
- <20250815070227.19981-7-darwi@linutronix.de>
+	s=arc-20240116; t=1756131552; c=relaxed/simple;
+	bh=C5zZWTWYlh+QNTmHH9Ic/O5Vu74p1ZquZ/RNbhEemyI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=c0JAVCNwCSLDgzzGXTxp5nkFHf2iR/ZNw5CNbsblGTl8SHUDxnRjpA71Klp7IWzxPnspcCelpeKm45BNno3v0QReXRp2a3sh7dN2PXvezBKUb4Cb3B/Z/WkewsLlfJfU9rFX4zhhm/CQSvk8EQLXfmstEgqbV4MlatH0B+XV3Qg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ghY6Ai+e; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57PEIoTx825779;
+	Mon, 25 Aug 2025 09:18:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1756131530;
+	bh=cKW1+DgNKTcSFWZr2yMsUcLdmMBtGqV9lYdiIEUEmS8=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=ghY6Ai+egyXOxyJgqOh1EKEqMeEsvgGv4pdLj++9k4XPJpLC5tf/SIM1FXk8yvB0u
+	 +oNd1haUzQb5TQVWtrrx9zf9Un3ClBMOoAXs1fliZ5cfYNsffhC7LMZb5v3Y3PPyS2
+	 o+k8LBIwZlFtoI1mZcoEKWW0Ni+MiXfV14j12LPY=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57PEIoLM935796
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 25 Aug 2025 09:18:50 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 25
+ Aug 2025 09:18:49 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Mon, 25 Aug 2025 09:18:49 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57PEInL93738293;
+	Mon, 25 Aug 2025 09:18:49 -0500
+Message-ID: <edbdcd7c-8c96-4cbd-9740-1e1044fba3b0@ti.com>
+Date: Mon, 25 Aug 2025 09:18:49 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250815070227.19981-7-darwi@linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 01/33] arm64: dts: ti: k3-j7200: Enable remote
+ processors at board level
+To: Beleswar Padhi <b-padhi@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
+        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>
+CC: <u-kumar1@ti.com>, <hnagalla@ti.com>, <jm@ti.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20250823160901.2177841-1-b-padhi@ti.com>
+ <20250823160901.2177841-2-b-padhi@ti.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20250823160901.2177841-2-b-padhi@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Fri, Aug 15, 2025 at 09:01:59AM +0200, Ahmed S. Darwish wrote:
-> +struct leaf_0x1_0 {
-> +	// eax
-> +	u32	stepping			:  4, // Stepping ID
+On 8/23/25 11:08 AM, Beleswar Padhi wrote:
+> Remote Processors defined in top-level J7200 SoC dtsi files are
+> incomplete without the memory carveouts and mailbox assignments which
+> are only known at board integration level.
+> 
+> Therefore, disable the remote processors at SoC level and enable them at
+> board level where above information is available.
+> 
+> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+> ---
 
-All those bit names in all those leafs: are they taken from the official
-documentation?
+Small comment on the $subject, these all seem to be specific to the R5F
+cores, the other remote processors are already enabled at the board level.
+Suggest: "Enable R5F remote processors at board level"
 
-They should be.
+Otherwise this looks good to me, same for patches 2-12 in this series
+so feel free to add my ACK to those 12 patches when you spin v3,
 
-...
+Acked-by: Andrew Davis <afd@ti.com>
 
-> +/*
-> + * Leaf 0x5
-> + * MONITOR/MWAIT instructions enumeration
-				 ^^^^^^^^^^^
+> v2: Changelog:
+> 1. None
+> 
+> Link to v1:
+> https://lore.kernel.org/all/20250814223839.3256046-2-b-padhi@ti.com/
+> 
+>   arch/arm64/boot/dts/ti/k3-j7200-main.dtsi       | 3 +++
+>   arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi | 3 +++
+>   arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi     | 9 +++++++++
+>   3 files changed, 15 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi b/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
+> index 5ce5f0a3d6f5..628ff89dd72f 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
+> @@ -1516,6 +1516,7 @@ main_r5fss0: r5fss@5c00000 {
+>   		ranges = <0x5c00000 0x00 0x5c00000 0x20000>,
+>   			 <0x5d00000 0x00 0x5d00000 0x20000>;
+>   		power-domains = <&k3_pds 243 TI_SCI_PD_EXCLUSIVE>;
+> +		status = "disabled";
+>   
+>   		main_r5fss0_core0: r5f@5c00000 {
+>   			compatible = "ti,j7200-r5f";
+> @@ -1530,6 +1531,7 @@ main_r5fss0_core0: r5f@5c00000 {
+>   			ti,atcm-enable = <1>;
+>   			ti,btcm-enable = <1>;
+>   			ti,loczrama = <1>;
+> +			status = "disabled";
+>   		};
+>   
+>   		main_r5fss0_core1: r5f@5d00000 {
+> @@ -1545,6 +1547,7 @@ main_r5fss0_core1: r5f@5d00000 {
+>   			ti,atcm-enable = <1>;
+>   			ti,btcm-enable = <1>;
+>   			ti,loczrama = <1>;
+> +			status = "disabled";
+>   		};
+>   	};
+>   
+> diff --git a/arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi
+> index 56ab144fea07..692c4745040e 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi
+> @@ -612,6 +612,7 @@ mcu_r5fss0: r5fss@41000000 {
+>   		ranges = <0x41000000 0x00 0x41000000 0x20000>,
+>   			 <0x41400000 0x00 0x41400000 0x20000>;
+>   		power-domains = <&k3_pds 249 TI_SCI_PD_EXCLUSIVE>;
+> +		status = "disabled";
+>   
+>   		mcu_r5fss0_core0: r5f@41000000 {
+>   			compatible = "ti,j7200-r5f";
+> @@ -626,6 +627,7 @@ mcu_r5fss0_core0: r5f@41000000 {
+>   			ti,atcm-enable = <1>;
+>   			ti,btcm-enable = <1>;
+>   			ti,loczrama = <1>;
+> +			status = "disabled";
+>   		};
+>   
+>   		mcu_r5fss0_core1: r5f@41400000 {
+> @@ -641,6 +643,7 @@ mcu_r5fss0_core1: r5f@41400000 {
+>   			ti,atcm-enable = <1>;
+>   			ti,btcm-enable = <1>;
+>   			ti,loczrama = <1>;
+> +			status = "disabled";
+>   		};
+>   	};
+>   
+> diff --git a/arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi b/arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi
+> index 291ab9bb414d..90befcdc8d08 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi
+> @@ -254,20 +254,27 @@ mbox_main_r5fss0_core1: mbox-main-r5fss0-core1 {
+>   	};
+>   };
+>   
+> +&mcu_r5fss0 {
+> +	status = "okay";
+> +};
+> +
+>   &mcu_r5fss0_core0 {
+>   	mboxes = <&mailbox0_cluster0 &mbox_mcu_r5fss0_core0>;
+>   	memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
+>   			<&mcu_r5fss0_core0_memory_region>;
+> +	status = "okay";
+>   };
+>   
+>   &mcu_r5fss0_core1 {
+>   	mboxes = <&mailbox0_cluster0 &mbox_mcu_r5fss0_core1>;
+>   	memory-region = <&mcu_r5fss0_core1_dma_memory_region>,
+>   			<&mcu_r5fss0_core1_memory_region>;
+> +	status = "okay";
+>   };
+>   
+>   &main_r5fss0 {
+>   	ti,cluster-mode = <0>;
+> +	status = "okay";
+>   };
+>   
+>   /* Timers are used by Remoteproc firmware */
+> @@ -287,12 +294,14 @@ &main_r5fss0_core0 {
+>   	mboxes = <&mailbox0_cluster1 &mbox_main_r5fss0_core0>;
+>   	memory-region = <&main_r5fss0_core0_dma_memory_region>,
+>   			<&main_r5fss0_core0_memory_region>;
+> +	status = "okay";
+>   };
+>   
+>   &main_r5fss0_core1 {
+>   	mboxes = <&mailbox0_cluster1 &mbox_main_r5fss0_core1>;
+>   	memory-region = <&main_r5fss0_core1_dma_memory_region>,
+>   			<&main_r5fss0_core1_memory_region>;
+> +	status = "okay";
+>   };
+>   
+>   &main_i2c0 {
 
-Let's drop all those tautologies - it is absolutely clear that it is an
-enumeration so no need for it. Just keep the minimum text that is needed to
-describe the bit. People can always use that to find the official
-documentation of they need more info.
-
-...
-
-> +/*
-> + * Leaf 0x18
-> + * Intel determenestic address translation (TLB) parameters
-
-+ * Intel determenestic address translation (TLB) parameters
-Unknown word [determenestic] in comment.
-Suggestions: ['deterministic',...
-
-spellchecker please.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
