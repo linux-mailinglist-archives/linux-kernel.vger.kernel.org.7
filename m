@@ -1,84 +1,108 @@
-Return-Path: <linux-kernel+bounces-784259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84D2DB338B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:26:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41EB7B338B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:27:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 273981894743
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:27:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 026823A912A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:27:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A05629BD88;
-	Mon, 25 Aug 2025 08:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F21B29B8E6;
+	Mon, 25 Aug 2025 08:27:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pCBEu3Et"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JKRKjMaB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBEF9299928;
-	Mon, 25 Aug 2025 08:26:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF6B27FD5A;
+	Mon, 25 Aug 2025 08:27:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756110403; cv=none; b=DvisxtT51/0RrOeopyTGjFf4njQTYWb2/tnNXhpsRqeE6RcGk7thQgAVaHPlPytfdhofodQYARRAX1WRjDevM4oNJPbcpP5USKJyZv4wmF6pa80LWYv5bhGAb89UyM/MXzuWXDSs1+FxPKK7fURxgqKWSDJ6OMAUGUfFyEecOdU=
+	t=1756110450; cv=none; b=MS8ryn7X7t27TbZcix3o9ieaj6vF16SuVcMxeBXi0oMDDTkcdRf00MYiqdDkExOElER9RP36COuwYbknLydfU3Vlbb7+p0Vv8EJXMYtFCW7VRDz4I0rS2qX6IcqyD/j2k+0Dv3rBcyhCNUv1PvdOId/TKT8lL8iBzSQdwRuEmwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756110403; c=relaxed/simple;
-	bh=JhmYYHVQIIQ7Csurfk62kT6LMaFbd2N3YVxTtzBRMX4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YrCFKrI92QO5RwOTeJYIgBsjKkUrLF+ncXj2vRvj6YKk+enMovNwEntwhS2RoCfEFbmXwJ1xiXRLWQjQvm8tJL1CRMPVfSS/LyLizChlKxdSI8XcbCe/XOez7rXthdup5TqQDskmw7yh2culaETyD+ZV/WIx51LU3e4w6p2Ik9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pCBEu3Et; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E758FC4CEED;
-	Mon, 25 Aug 2025 08:26:38 +0000 (UTC)
+	s=arc-20240116; t=1756110450; c=relaxed/simple;
+	bh=MThLF13oP8kAhHUfPkaokmWovqJkKnUrqODR2st45Es=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xnd1i16pK8WWMsPzEJKUaGwzkwsp3ZPSuMNVZiPOWRPwr/ax1Z0zx8ziLbm+Bg3GYD/7pBoVeXopPZE0p6nbBKXBl4QDegm8DD3YSbu13OI83ebDhNYn9bB4S1RBucm8T2oREvuz7kIQNsr+QIV3RhGLCjgmyo/9xr4OTiUK498=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JKRKjMaB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A9D3C4CEED;
+	Mon, 25 Aug 2025 08:27:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756110403;
-	bh=JhmYYHVQIIQ7Csurfk62kT6LMaFbd2N3YVxTtzBRMX4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pCBEu3EtIW+SnXjYv65YO8vxgAisoOnQh0kf2IVKmspHprv9NmJzn1ygswz0UoYo9
-	 EXrPbSE8FSQDt+C/Wcgln7MkrLdxv/BuASxcNcjW/hRZUyjSCpE8h73SdOf47JuKmc
-	 2s9FwBz2tfBByWbbCNIx6z+UGemHhOI+YYp5JS3UijCduk398en3u6rJjzKwxk2FgH
-	 bR0p1XCod3qDjKYiwsgMwyKiNGCt8TEGoEoSOZVm3WWZnGgnJ0z+4qcS2a3zV5smcg
-	 AAyfMz/PfAPVchpsdZw6nH+hbfn3ClpEOPM1pEYSnCMJCK20U1i/pobzyKeVUcZjT3
-	 jhXhKgSE3XvbA==
-Date: Mon, 25 Aug 2025 09:26:34 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Salih Erim <salih.erim@amd.com>, conall.ogriofa@amd.com,
- nuno.sa@analog.com, andy@kernel.org, michal.simek@amd.com, krzk@kernel.org,
- linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2] MAINTAINERS: Update xilinx-ams driver maintainers
-Message-ID: <20250825092634.75230a7d@jic23-huawei>
-In-Reply-To: <e61c2e01-cd8d-4193-afcf-5ddaef34300e@baylibre.com>
-References: <20250820100519.2272509-1-salih.erim@amd.com>
-	<e61c2e01-cd8d-4193-afcf-5ddaef34300e@baylibre.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=k20201202; t=1756110449;
+	bh=MThLF13oP8kAhHUfPkaokmWovqJkKnUrqODR2st45Es=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JKRKjMaBmlKTxG95DhC8FbKhxi/QcYemBieWq9oFAr8wpwlA/HH57gPrixGa6Gneh
+	 gO3PGunR94J3ezDuSkIW+Be28rOH9fBq+jt6nJuG7w/JMQn9dI6SkymppN7P+xPOAf
+	 Sy5WB4oIS6p7KQnG6SIVwscMyZCOwILPBXv3bBTL173DkqVIUNrGu+pNe3zf4fRZTs
+	 jPIfCS3uot7mi8Lc3UPioNJlDJNYRo2VsSqOncw/ycd/ZnhY/hzsUmjx3pm3OjqMa3
+	 TDrrWmNERcGJDrFggkJx4QGkW2XSXEr+0fq2KuwXTxZ4Dq47+93XfddYj5PkdmUJvd
+	 TV3bkfY85LsvQ==
+Date: Mon, 25 Aug 2025 10:27:26 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: "Rafael V. Volkmer" <rafael.v.volkmer@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
+Subject: Re: [PATCH v5 1/6] pwm: tiehrpwm: use GENMASK()/FIELD_PREP() for
+ register fields
+Message-ID: <dithxhozx4k6n6xu7qrunsxec2wrklj2fipp3r24tlunmj7zid@vgqvfjw7onld>
+References: <20250822044024.4015-1-rafael.v.volkmer@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2aaouuvjthevybze"
+Content-Disposition: inline
+In-Reply-To: <20250822044024.4015-1-rafael.v.volkmer@gmail.com>
 
-On Sat, 23 Aug 2025 11:13:06 -0500
-David Lechner <dlechner@baylibre.com> wrote:
 
-> On 8/20/25 5:05 AM, Salih Erim wrote:
-> > Anand left AMD/Xilinx some time ago. Salih and Connall are new
-> > maintainers of xilinx-ams driver.
-> > 
-> > Signed-off-by: Salih Erim <salih.erim@amd.com>  
-> 
-> Looks like you forgot to pick up all of the trailers from v1.
-> 
-> Also, there should be a changelog of what changed from v1 to
-> v2. Just rewording the commit message, I assume.
-> 
-> 
-> 
+--2aaouuvjthevybze
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v5 1/6] pwm: tiehrpwm: use GENMASK()/FIELD_PREP() for
+ register fields
+MIME-Version: 1.0
 
-Looks to be just that. Something to fix for next time but
-for this one, applied (having dropped v1)
+Hello Rafael,
+
+On Fri, Aug 22, 2025 at 01:40:24AM -0300, Rafael V. Volkmer wrote:
+> Make register field definitions use GENMASK() and FIELD_PREP() across
+> AQCTL, AQCSFRC, and TBCTL. This clarifies bit layout, reduces hand-rolled
+> shift logic, and aligns the driver with common kernel patterns.
+>=20
+> No functional change intended.
+
+just a meta-comment without a deeper look into this series:
+
+There is another series touching this driver at
+https://lore.kernel.org/linux-pwm/cover.1754927682.git.u.kleine-koenig@bayl=
+ibre.com/
+that would be great to get some testing and that I tend to apply first
+given that is contains also fixes. I guess you dind't base your series
+on top of that?
+
+Best regards
+Uwe
+
+--2aaouuvjthevybze
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmisHmgACgkQj4D7WH0S
+/k7roQgAppnoXvecN/8m5PR11H4UdfLVaDm2QinOqwBRHXExK23ldkQ0364yRrHr
+lv+xiP+r58SWRAzOEzNvyO4Y8PctJpcQg74+0EbP9KdyhnsZbH0gnm3pYRaOKXdV
+G30P059lZoMNfORxNTo1JpOrG157cArSpTLl90C+UUWXfLKo2G8GHNNLl+LcpjeM
+0ukPSK8OxpUqj5B63tQNIJ6S9yYtjJ1v0g0tUr2lw17nWkezZ7kT74Kin12O7OxU
++pJsg20zqt9mq3pdydfKOY532qWRHe3ZcvqHhoy7J+QHftyGr7ctCVaS19qVkmVL
+JfM6d2zicycXXtbaes7xLVTNJSkkQg==
+=Ew6H
+-----END PGP SIGNATURE-----
+
+--2aaouuvjthevybze--
 
