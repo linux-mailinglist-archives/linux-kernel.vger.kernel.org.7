@@ -1,134 +1,311 @@
-Return-Path: <linux-kernel+bounces-784705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0454B34010
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:51:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3AECB34015
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:52:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8A101A835EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:51:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD92C167A1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4468257842;
-	Mon, 25 Aug 2025 12:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C4D25B1DC;
+	Mon, 25 Aug 2025 12:52:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="AMh285rd"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="YtWd7wd/"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BF2C1D5178
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 12:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53DE71EB36;
+	Mon, 25 Aug 2025 12:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756126258; cv=none; b=NJDFgV21JZawjLb9Yzjhq35PAdiOQl14zjbhoxHOOAe8XN/JYfl4SF03LqmEw7lRU5FuU3XkIKUybd/Tvg38ycnJ56pde+wTRjzQNcQuow8dImxhESmnP8R4+mo7vbSqjd9/vUDfgCwSV3Sn7IHYSoa2vAMhdjt4w7r2bUm8FKE=
+	t=1756126368; cv=none; b=OcesXZYG6UBjo/W1FucAye0LRIHoIivgeu2DKjK4/MjFv42RBFDQPcwtTyMdvcMQOA3GUHTJbBfnpcczX8NzKVT8UuyX04BMGGZGjtcuniUYOEncDkprn1KYXeNpXPRC6reitEX030BUI4O8f27qsAEJX9yhN5BlsYFhqqFNdks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756126258; c=relaxed/simple;
-	bh=PrWQKYuTQBEonO1XwozKv/FyqCzSqcNDCkgOqZLybHY=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=hASSG5vB7dLqtZXhujyd9t3HS6KvVw+vC30zXejJmioggqE/Hx044CmLWEtEUCqwFDrOFPnsZ6fzPEgs6LdWXBLGy9i0ZSK5oJ3vAkefDe7hukBARUd6TNm2hsPXvKvSiCzWWFdwcXw5T6nPVjAnIN/TX5u0meNMvXNkHRbboe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=AMh285rd; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250825125054epoutp03dfe9cf5c24cda44fd1f121eba24aecea~fA4YbvLQ20311903119epoutp03D
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 12:50:54 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250825125054epoutp03dfe9cf5c24cda44fd1f121eba24aecea~fA4YbvLQ20311903119epoutp03D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756126254;
-	bh=IyZaAnO05abMqFNQPoye38pNw/RRf81HOUABNDFs+ow=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=AMh285rdmU623jHntaAR4Uc/mjZOaKCdNV28Ulz6Y8YFW4MLqPqU9eQrLry+2PA5e
-	 ful1ZrE3jAecQhBtGRFTOPZ3iCsxrDZjsbVrnFoa/JIQ4nGUsxCSoecAGP75ts7x/3
-	 3eXVslFmwYW4edJjEgHeDXPOGDpotI/AG6N10jFc=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250825125053epcas5p294541daa3b844dd44558dd8ff6676e60~fA4XffRJ20205802058epcas5p2S;
-	Mon, 25 Aug 2025 12:50:53 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.88]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4c9Vyh1bXbz2SSKY; Mon, 25 Aug
-	2025 12:50:52 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250825125051epcas5p4f1fd9b26b26e388fdeef403aa802c252~fA4V6hK7A1505115051epcas5p4O;
-	Mon, 25 Aug 2025 12:50:51 +0000 (GMT)
-Received: from FDSFTE196 (unknown [107.116.189.214]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250825125047epsmtip11752ab6f3c0ad6db5a0093669b0fc3db~fA4SKmAoD3254932549epsmtip1I;
-	Mon, 25 Aug 2025 12:50:47 +0000 (GMT)
-From: "Inbaraj E" <inbaraj.e@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <mturquette@baylibre.com>,
-	<sboyd@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <s.nawrocki@samsung.com>, <s.hauer@pengutronix.de>,
-	<shawnguo@kernel.org>, <cw00.choi@samsung.com>, <rmfrfs@gmail.com>,
-	<laurent.pinchart@ideasonboard.com>, <martink@posteo.de>,
-	<mchehab@kernel.org>, <linux-fsd@tesla.com>, <will@kernel.org>,
-	<catalin.marinas@arm.com>, <pankaj.dubey@samsung.com>,
-	<shradha.t@samsung.com>, <ravi.patel@samsung.com>
-Cc: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <alim.akhtar@samsung.com>,
-	<linux-samsung-soc@vger.kernel.org>, <kernel@puri.sm>,
-	<kernel@pengutronix.de>, <festevam@gmail.com>,
-	<linux-media@vger.kernel.org>, <imx@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>
-In-Reply-To: <926e9bb2-cdde-4048-9ae2-159d088aa935@kernel.org>
-Subject: RE: [PATCH v2 03/12] dt-bindings: media: nxp: Add support for FSD
- SoC
-Date: Mon, 25 Aug 2025 18:20:46 +0530
-Message-ID: <016301dc15be$e3256300$a9702900$@samsung.com>
+	s=arc-20240116; t=1756126368; c=relaxed/simple;
+	bh=5XWcstv/n0jB+QypykxUok+dX73nLTfw2ADRcqaWENA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dieE1yK+qEI4DmhRwMuPe1AejR0YaNfC8eWWO5UJ5g3fecxwbu2Z4BudiwLiyy1MRgHAWhAmaLgebCmzkK8VF48TelyNYpCgJFLTUW+fmloFR5Xrd3ICo7wlcekLs8QMOJP9PdpaEIh0XSb/jqDpZX/Fz0X5nX+2rODDDHD5K90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=YtWd7wd/; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1756126364;
+	bh=5XWcstv/n0jB+QypykxUok+dX73nLTfw2ADRcqaWENA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=YtWd7wd/Do6104b1d43xPf32kEqsxn0ax0rbs1jHoUeav7dcdgR3puSSqsBE4hdyc
+	 bstHtSbFFuFMEBNTddQR9weAQHwYXS98MrEUIO24lf0yXeHBHkSs1zBaC+XYdCPosq
+	 Ka2NZ6ZKHSOSVQH1CDxlxUcEhNl3jTsTlX4ZXH8BVkmH62Huu487ybcpQdrNEOMeaB
+	 UCU1JVJ1WPuQGcIcY3xcSlc2rYY90dKKzokp9FjcpD9zl10b5yYgPXGUWr0gYcl/Xa
+	 0SOrXk0Z//US+n1EGoVE2trHxcjWYlH8YBTC8aFFkTd5SMCQ01h2xLjeuuTFndql2w
+	 ASPxPnnV5QXfg==
+Received: from laura.lan (unknown [IPv6:2001:b07:646b:e2:b1df:895a:e67b:5cd4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: laura.nao)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8A46D17E0478;
+	Mon, 25 Aug 2025 14:52:43 +0200 (CEST)
+From: Laura Nao <laura.nao@collabora.com>
+To: wenst@chromium.org
+Cc: angelogioacchino.delregno@collabora.com,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	guangjie.song@mediatek.com,
+	kernel@collabora.com,
+	krzk+dt@kernel.org,
+	laura.nao@collabora.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	matthias.bgg@gmail.com,
+	mturquette@baylibre.com,
+	netdev@vger.kernel.org,
+	nfraprado@collabora.com,
+	p.zabel@pengutronix.de,
+	richardcochran@gmail.com,
+	robh@kernel.org,
+	sboyd@kernel.org
+Subject: Re: [PATCH v4 07/27] clk: mediatek: clk-gate: Add ops for gates with HW voter
+Date: Mon, 25 Aug 2025 14:51:41 +0200
+Message-Id: <20250825125141.209860-1-laura.nao@collabora.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <CAGXv+5HRKFrdjjXkwN6=OLtk=bK3C3mBnrDtmkEWeuxjz0pFKg@mail.gmail.com>
+References: <CAGXv+5HRKFrdjjXkwN6=OLtk=bK3C3mBnrDtmkEWeuxjz0pFKg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQK5oFMD+tt4mLQU5V9KgVyIDaUIUQF6bLd9AsRKNAMBJ/ZVhAEp+FCyAvdCX9oBWhQiOgImNHTdsk/6UEA=
-Content-Language: en-in
-X-CMS-MailID: 20250825125051epcas5p4f1fd9b26b26e388fdeef403aa802c252
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250814141014epcas5p410d41ede7e8ae4f3cf8db6d041d03946
-References: <20250814140943.22531-1-inbaraj.e@samsung.com>
-	<CGME20250814141014epcas5p410d41ede7e8ae4f3cf8db6d041d03946@epcas5p4.samsung.com>
-	<20250814140943.22531-4-inbaraj.e@samsung.com>
-	<ac9769af-9ab6-4b48-9890-ec3bcda3b180@kernel.org>
-	<00d001dc136a$36ad7230$a4085690$@samsung.com>
-	<7b7f6958-3178-4c6f-8be3-f52ef77464f7@kernel.org>
-	<00d201dc136d$1fdd6bc0$5f984340$@samsung.com>
-	<926e9bb2-cdde-4048-9ae2-159d088aa935@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Krzysztof,
+On 8/15/25 05:37, Chen-Yu Tsai wrote:
+> On Tue, Aug 5, 2025 at 10:55 PM Laura Nao <laura.nao@collabora.com> wrote:
+>>
+>> MT8196 use a HW voter for gate enable/disable control. Voting is
+>> performed using set/clr regs, with a status bit used to verify the vote
+>> state. Add new set of gate clock operations with support for voting via
+>> set/clr regs.
+>>
+>> Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+>> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+>> ---
+>>  drivers/clk/mediatek/clk-gate.c | 77 +++++++++++++++++++++++++++++++--
+>>  drivers/clk/mediatek/clk-gate.h |  3 ++
+>>  2 files changed, 77 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/clk/mediatek/clk-gate.c b/drivers/clk/mediatek/clk-gate.c
+>> index 0375ccad4be3..426f3a25763d 100644
+>> --- a/drivers/clk/mediatek/clk-gate.c
+>> +++ b/drivers/clk/mediatek/clk-gate.c
+>> @@ -5,6 +5,7 @@
+>>   */
+>>
+>>  #include <linux/clk-provider.h>
+>> +#include <linux/dev_printk.h>
+>>  #include <linux/mfd/syscon.h>
+>>  #include <linux/module.h>
+>>  #include <linux/printk.h>
+>> @@ -12,14 +13,19 @@
+>>  #include <linux/slab.h>
+>>  #include <linux/types.h>
+>>
+>> +#include "clk-mtk.h"
+>>  #include "clk-gate.h"
+>>
+>>  struct mtk_clk_gate {
+>>         struct clk_hw   hw;
+>>         struct regmap   *regmap;
+>> +       struct regmap   *regmap_hwv;
+>>         int             set_ofs;
+>>         int             clr_ofs;
+>>         int             sta_ofs;
+>> +       unsigned int    hwv_set_ofs;
+>> +       unsigned int    hwv_clr_ofs;
+>> +       unsigned int    hwv_sta_ofs;
+>>         u8              bit;
+>>  };
+>>
+>> @@ -100,6 +106,28 @@ static void mtk_cg_disable_inv(struct clk_hw *hw)
+>>         mtk_cg_clr_bit(hw);
+>>  }
+>>
+>> +static int mtk_cg_hwv_set_en(struct clk_hw *hw, bool enable)
+>> +{
+>> +       struct mtk_clk_gate *cg = to_mtk_clk_gate(hw);
+>> +       u32 val;
+>> +
+>> +       regmap_write(cg->regmap_hwv, enable ? cg->hwv_set_ofs : cg->hwv_clr_ofs, BIT(cg->bit));
+>> +
+>> +       return regmap_read_poll_timeout_atomic(cg->regmap_hwv, cg->hwv_sta_ofs, val,
+>> +                                              val & BIT(cg->bit),
+>> +                                              0, MTK_WAIT_HWV_DONE_US);
+>> +}
+>> +
+>> +static int mtk_cg_hwv_enable(struct clk_hw *hw)
+>> +{
+>> +       return mtk_cg_hwv_set_en(hw, true);
+>> +}
+>> +
+>> +static void mtk_cg_hwv_disable(struct clk_hw *hw)
+>> +{
+>> +       mtk_cg_hwv_set_en(hw, false);
+>> +}
+>> +
+>>  static int mtk_cg_enable_no_setclr(struct clk_hw *hw)
+>>  {
+>>         mtk_cg_clr_bit_no_setclr(hw);
+>> @@ -124,6 +152,15 @@ static void mtk_cg_disable_inv_no_setclr(struct clk_hw *hw)
+>>         mtk_cg_clr_bit_no_setclr(hw);
+>>  }
+>>
+>> +static bool mtk_cg_uses_hwv(const struct clk_ops *ops)
+>> +{
+>> +       if (ops == &mtk_clk_gate_hwv_ops_setclr ||
+>> +           ops == &mtk_clk_gate_hwv_ops_setclr_inv)
+>> +               return true;
+>> +
+>> +       return false;
+>> +}
+>> +
+>>  const struct clk_ops mtk_clk_gate_ops_setclr = {
+>>         .is_enabled     = mtk_cg_bit_is_cleared,
+>>         .enable         = mtk_cg_enable,
+>> @@ -138,6 +175,20 @@ const struct clk_ops mtk_clk_gate_ops_setclr_inv = {
+>>  };
+>>  EXPORT_SYMBOL_GPL(mtk_clk_gate_ops_setclr_inv);
+>>
+>> +const struct clk_ops mtk_clk_gate_hwv_ops_setclr = {
+>> +       .is_enabled     = mtk_cg_bit_is_cleared,
+>> +       .enable         = mtk_cg_hwv_enable,
+>> +       .disable        = mtk_cg_hwv_disable,
+>> +};
+>> +EXPORT_SYMBOL_GPL(mtk_clk_gate_hwv_ops_setclr);
+>> +
+>> +const struct clk_ops mtk_clk_gate_hwv_ops_setclr_inv = {
+>> +       .is_enabled     = mtk_cg_bit_is_set,
+>> +       .enable         = mtk_cg_hwv_enable,
+>> +       .disable        = mtk_cg_hwv_disable,
+>> +};
+>> +EXPORT_SYMBOL_GPL(mtk_clk_gate_hwv_ops_setclr_inv);
+>> +
+>>  const struct clk_ops mtk_clk_gate_ops_no_setclr = {
+>>         .is_enabled     = mtk_cg_bit_is_cleared,
+>>         .enable         = mtk_cg_enable_no_setclr,
+>> @@ -153,8 +204,9 @@ const struct clk_ops mtk_clk_gate_ops_no_setclr_inv = {
+>>  EXPORT_SYMBOL_GPL(mtk_clk_gate_ops_no_setclr_inv);
+>>
+>>  static struct clk_hw *mtk_clk_register_gate(struct device *dev,
+>> -                                               const struct mtk_gate *gate,
+>> -                                               struct regmap *regmap)
+>> +                                           const struct mtk_gate *gate,
+>> +                                           struct regmap *regmap,
+>> +                                           struct regmap *regmap_hwv)
+>>  {
+>>         struct mtk_clk_gate *cg;
+>>         int ret;
+>> @@ -169,11 +221,22 @@ static struct clk_hw *mtk_clk_register_gate(struct device *dev,
+>>         init.parent_names = gate->parent_name ? &gate->parent_name : NULL;
+>>         init.num_parents = gate->parent_name ? 1 : 0;
+>>         init.ops = gate->ops;
+>> +       if (mtk_cg_uses_hwv(init.ops) && !regmap_hwv) {
+>> +               dev_err(dev, "regmap not found for hardware voter clocks\n");
+>> +               return ERR_PTR(-ENXIO);
+>
+> return dev_err_probe()?
+>
+> I believe the same applies to the previous patch.
+>
 
-> >
-> > Using tesla,syscon-csis results in a =22prefix not found=22 issue when
-> > running dtbs_check
-> Because you develop on ancient, 10 year old downstream kernel?
->=20
-> You really do not try enough and this is just wasting our time.
->=20
-> Please think and really carefully check your replies. What prefix do you =
-have
-> in compatible? This command:
-> git grep tesla, =7C wc -l
->=20
-> gives '99' results including obviously vendor prefix.
->=20
-> So your warning is basically impossible or your code is just broken.
-> Don't just ask maintainers on every little trouble you have. You must deb=
-ug
-> it. Not we.
->=20
+mtk_clk_register_gate and mtk_clk_register_mux actually both return a
+struct clk_hw *.
 
-Sorry, I made a mistake while  running dtbs_check. I'll use the tesla prefi=
-x in the next
-patchset
+>> +       }
+>>
+>>         cg->regmap = regmap;
+>> +       cg->regmap_hwv = regmap_hwv;
+>>         cg->set_ofs = gate->regs->set_ofs;
+>>         cg->clr_ofs = gate->regs->clr_ofs;
+>>         cg->sta_ofs = gate->regs->sta_ofs;
+>> +       if (gate->hwv_regs) {
+>> +               cg->hwv_set_ofs = gate->hwv_regs->set_ofs;
+>> +               cg->hwv_clr_ofs = gate->hwv_regs->clr_ofs;
+>> +               cg->hwv_sta_ofs = gate->hwv_regs->sta_ofs;
+>> +       }
+>> +
+>>         cg->bit = gate->shift;
+>>
+>>         cg->hw.init = &init;
+>> @@ -206,6 +269,7 @@ int mtk_clk_register_gates(struct device *dev, struct device_node *node,
+>>         int i;
+>>         struct clk_hw *hw;
+>>         struct regmap *regmap;
+>> +       struct regmap *regmap_hwv;
+>>
+>>         if (!clk_data)
+>>                 return -ENOMEM;
+>> @@ -216,6 +280,13 @@ int mtk_clk_register_gates(struct device *dev, struct device_node *node,
+>>                 return PTR_ERR(regmap);
+>>         }
+>>
+>> +       regmap_hwv = mtk_clk_get_hwv_regmap(node);
+>> +       if (IS_ERR(regmap_hwv)) {
+>> +               pr_err("Cannot find hardware voter regmap for %pOF: %pe\n",
+>> +                      node, regmap_hwv);
+>> +               return PTR_ERR(regmap_hwv);
+>
+> return dev_err_probe();
+>
 
-Regards,
-Inbaraj E
+Will do.
 
+Thanks,
+
+Laura
+
+> ChenYu
+>
+>> +       }
+>> +
+>>         for (i = 0; i < num; i++) {
+>>                 const struct mtk_gate *gate = &clks[i];
+>>
+>> @@ -225,7 +296,7 @@ int mtk_clk_register_gates(struct device *dev, struct device_node *node,
+>>                         continue;
+>>                 }
+>>
+>> -               hw = mtk_clk_register_gate(dev, gate, regmap);
+>> +               hw = mtk_clk_register_gate(dev, gate, regmap, regmap_hwv);
+>>
+>>                 if (IS_ERR(hw)) {
+>>                         pr_err("Failed to register clk %s: %pe\n", gate->name,
+>> diff --git a/drivers/clk/mediatek/clk-gate.h b/drivers/clk/mediatek/clk-gate.h
+>> index 1a46b4c56fc5..4f05b9855dae 100644
+>> --- a/drivers/clk/mediatek/clk-gate.h
+>> +++ b/drivers/clk/mediatek/clk-gate.h
+>> @@ -19,6 +19,8 @@ extern const struct clk_ops mtk_clk_gate_ops_setclr;
+>>  extern const struct clk_ops mtk_clk_gate_ops_setclr_inv;
+>>  extern const struct clk_ops mtk_clk_gate_ops_no_setclr;
+>>  extern const struct clk_ops mtk_clk_gate_ops_no_setclr_inv;
+>> +extern const struct clk_ops mtk_clk_gate_hwv_ops_setclr;
+>> +extern const struct clk_ops mtk_clk_gate_hwv_ops_setclr_inv;
+>>
+>>  struct mtk_gate_regs {
+>>         u32 sta_ofs;
+>> @@ -31,6 +33,7 @@ struct mtk_gate {
+>>         const char *name;
+>>         const char *parent_name;
+>>         const struct mtk_gate_regs *regs;
+>> +       const struct mtk_gate_regs *hwv_regs;
+>>         int shift;
+>>         const struct clk_ops *ops;
+>>         unsigned long flags;
+>> --
+>> 2.39.5
+>>
 
