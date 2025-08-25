@@ -1,155 +1,123 @@
-Return-Path: <linux-kernel+bounces-785542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EF99B34CD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:53:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 499E9B34CF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:55:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4EE81A83772
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:53:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF842177E83
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0776E29A307;
-	Mon, 25 Aug 2025 20:53:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8338A29AB1A;
+	Mon, 25 Aug 2025 20:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P49mH/My"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WS8WaGEL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F01428688E;
-	Mon, 25 Aug 2025 20:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D936C179BD;
+	Mon, 25 Aug 2025 20:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756155209; cv=none; b=BQ5Ni/ckgWrwf6n9yeqbm5gZsRurdBvu3kGdTDeogcaDulFjgk2PO+ZtXbFf3SjAHc1ux29/syQTap4NIothDoLhPlXk9yC0/ZwgJONH1Fu8ifwHE6DCjBKGv0YknIyTYwgaHD4uMHJxw0haZCB8g1HPxkHYR922qLddjHs7dUE=
+	t=1756155329; cv=none; b=aQpbFQDPlKT7qHGylpJkwQEKu1CLzpyM8ZhbagmtTJ6wYiTI60wcKdM2TP0Cmz5KI4j/rBuVP6Pu8q+HbrVvD6XNqPxwOxqaR9nKWtP7gBhomlDyTuSk9fteC6rrWcyeMzRx5DC+0w6Kjj50ASWNoXPLLU6w9gmr3kiWXyukTks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756155209; c=relaxed/simple;
-	bh=s3tmR7nxofceGS0RADamNfNDc9paoHZFEDJVu8jYTu8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TdWsa1eK/vx91q2p6zOzUmzLfPOmqf3KTHzM8egbJJA0veR2GtxrWze0ck7qQhfqeDBzBTGunrqvG8S+RaZlpMxxdLHTb9zBUcNoFC/Z7d85gyF+X8CsPgtOAL/qVRYB+DPvrgg8IeYBP/2LW4FjCF1OkVLJMASGh0jLduaHoPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P49mH/My; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756155209; x=1787691209;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=s3tmR7nxofceGS0RADamNfNDc9paoHZFEDJVu8jYTu8=;
-  b=P49mH/MyecKbEK3JICS+vRL+ppUb8iHHnZcb+m7txh9YTm3LgXRlJPyC
-   dvS5HMcH+sYwMJ0aMDBlWccUtV2ON5jbj9sTg23bGQ63dT8yATBb1hHN0
-   S7D6vP8bGRizHh3RbIjHLKzdUx+d4b+RYASWUlAhcotoIKNBrAes+132L
-   l18HnCcx1cV7liid0Zvr29u43YBlrx5L3ZsBMqzvZ7wFTq+54QDNS0myD
-   +YCMAoeEXPHSKbmNHYgfuV7Q1CKYyOrXUyg5m/KFQZ5miiKVEvbcsFXmA
-   JUY7Ey0Jp7wmsi2a4lhpNGsnpbWzAaxTSK65339rSkacsgpigzDGfpljf
-   w==;
-X-CSE-ConnectionGUID: o+9OSFHvRK2zlk53zvYocQ==
-X-CSE-MsgGUID: iXvPoQivSEq+4M/DQYhtKQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62205754"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="62205754"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 13:52:43 -0700
-X-CSE-ConnectionGUID: F+7z9UEqTpCLzRepANTSzQ==
-X-CSE-MsgGUID: hMmmi/nIT2mlfySCXjSzQg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="200286930"
-Received: from rvuia-mobl.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.157])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 13:52:39 -0700
-Received: from punajuuri.localdomain (unknown [192.168.240.130])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id 33C1C11FB0F;
-	Mon, 25 Aug 2025 23:52:36 +0300 (EEST)
-Received: from sailus by punajuuri.localdomain with local (Exim 4.98.2)
-	(envelope-from <sakari.ailus@linux.intel.com>)
-	id 1uqeBA-00000007PWX-0Pyt;
-	Mon, 25 Aug 2025 23:52:36 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	linux-iio@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Subject: [PATCH v4 1/1] iio: dac: Remove redundant pm_runtime_mark_last_busy() calls
-Date: Mon, 25 Aug 2025 23:52:35 +0300
-Message-ID: <20250825205235.1766401-1-sakari.ailus@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1756155329; c=relaxed/simple;
+	bh=JM6i/BBkoJtcy4KbG3Msr7B8vft4lS33A3YMhIcPYPY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vs5cOOnkjHg7ny5iUG/yCZE3UXS1zNmXq5ym7Rl/7Jf+5ItTuqN72Yls1b55v0z1WDPCHAID6sFtsAAS7sW04T4XiyZwHSCZVRF/s8P1V5bSFEGObONqC27x4MKBqiH+zr7/5YQccNiEZogE2EjmKDIQw7OS+Rsp6mLkGmxUb4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WS8WaGEL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E127FC4CEED;
+	Mon, 25 Aug 2025 20:55:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756155328;
+	bh=JM6i/BBkoJtcy4KbG3Msr7B8vft4lS33A3YMhIcPYPY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WS8WaGELzWx6JNeBXvzR0D1O5NKR6si6RJCL+ZYwcImmqVFMDQsGxpqpRGAXu/w4g
+	 lmLP5U9zoF3WMgJYXOKu9j1UoBTpdEUb4B5S7WfWbohDRiA+N9vlWQQZU/g2Ae3Bke
+	 LvfUa38rgtg33FGI0IXY8/jQa7orVNTV/kOb7a2dcwivnYgMQEae+tKYhlJ8b4XPLT
+	 3zZQYh/BIYe9gnjsQxplQT2L+1nxOtxQbXs/5odvSarD8VW/V9WNpXrsuBbS13yq/u
+	 1I4xF/1jFsn44qDR1JCPrNDChnsW6k/eRw4m7SdhEfcx3TlawnmRdccdYdmnSuBtoL
+	 qh04vuA/JrdtQ==
+Date: Mon, 25 Aug 2025 20:55:26 +0000
+From: Eric Biggers <ebiggers@kernel.org>
+To: Eric Dumazet <edumazet@google.com>
+Cc: Andrea Mayer <andrea.mayer@uniroma2.it>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	David Ahern <dsahern@kernel.org>, Simon Horman <horms@kernel.org>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	David Lebrun <dlebrun@google.com>,
+	Stefano Salsano <stefano.salsano@uniroma2.it>,
+	Paolo Lungaroni <paolo.lungaroni@uniroma2.it>,
+	Ahmed Abdelsalam <ahabdels.dev@gmail.com>, stable@vger.kernel.org
+Subject: Re: [PATCH net] ipv6: sr: fix destroy of seg6_hmac_info to prevent
+ HMAC data leak
+Message-ID: <20250825205526.GA2130842@google.com>
+References: <20250825190715.1690-1-andrea.mayer@uniroma2.it>
+ <CANn89i+UTv8nJ=cc67iKky=MLXOnzF5XyVRsV-TMXz7wUQ6Yvw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANn89i+UTv8nJ=cc67iKky=MLXOnzF5XyVRsV-TMXz7wUQ6Yvw@mail.gmail.com>
 
-pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
-pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
-to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
-pm_runtime_mark_last_busy().
+On Mon, Aug 25, 2025 at 12:33:26PM -0700, Eric Dumazet wrote:
+> On Mon, Aug 25, 2025 at 12:08 PM Andrea Mayer <andrea.mayer@uniroma2.it> wrote:
+> >
+> > The seg6_hmac_info structure stores information related to SRv6 HMAC
+> > configurations, including the secret key, HMAC ID, and hashing algorithm
+> > used to authenticate and secure SRv6 packets.
+> >
+> > When a seg6_hmac_info object is no longer needed, it is destroyed via
+> > seg6_hmac_info_del(), which eventually calls seg6_hinfo_release(). This
+> > function uses kfree_rcu() to safely deallocate memory after an RCU grace
+> > period has elapsed.
+> > The kfree_rcu() releases memory without sanitization (e.g., zeroing out
+> > the memory). Consequently, sensitive information such as the HMAC secret
+> > and its length may remain in freed memory, potentially leading to data
+> > leaks.
+> >
+> > To address this risk, we replaced kfree_rcu() with a custom RCU
+> > callback, seg6_hinfo_free_callback_rcu(). Within this callback, we
+> > explicitly sanitize the seg6_hmac_info object before deallocating it
+> > safely using kfree_sensitive(). This approach ensures the memory is
+> > securely freed and prevents potential HMAC info leaks.
+> > Additionally, in the control path, we ensure proper cleanup of
+> > seg6_hmac_info objects when seg6_hmac_info_add() fails: such objects are
+> > freed using kfree_sensitive() instead of kfree().
+> >
+> > Fixes: 4f4853dc1c9c ("ipv6: sr: implement API to control SR HMAC structure")
+> > Fixes: bf355b8d2c30 ("ipv6: sr: add core files for SR HMAC support")
+> 
+> Not sure if you are fixing a bug worth backports.
 
-Also clean up error handling in stm32_dac_set_enable_state().
+It can be considered a bug fix, or just hardening.  There are examples
+of both ways for this same type of issue.  I think the patch is fine
+as-is, though the commit message is a bit long.  Zeroizing crypto keys
+is a best practice that the kernel tries to follow elsewhere for all
+crypto keys, so this is nothing new.  The patch simply adds zeroization
+before freeing for a struct that contains a key.
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
-since v3:
+> >  static inline void seg6_hinfo_release(struct seg6_hmac_info *hinfo)
+> >  {
+> > -       kfree_rcu(hinfo, rcu);
+> > +       call_rcu(&hinfo->rcu, seg6_hinfo_free_callback_rcu);
+> >  }
+> 
+> If we worry a lot about sensitive data waiting too much in RCU land,
+> perhaps use call_rcu_hurry() here ?
 
-- Fix condition for calling pm_runtime_put_autosuspend().
+No, zeroization doesn't have stringent time constraints.  As long as it
+happens eventually it is fine.
 
- drivers/iio/dac/stm32-dac.c | 18 ++++--------------
- 1 file changed, 4 insertions(+), 14 deletions(-)
+Reviewed-by: Eric Biggers <ebiggers@kernel.org>
 
-diff --git a/drivers/iio/dac/stm32-dac.c b/drivers/iio/dac/stm32-dac.c
-index 344388338d9b..874e6dcc0d61 100644
---- a/drivers/iio/dac/stm32-dac.c
-+++ b/drivers/iio/dac/stm32-dac.c
-@@ -82,9 +82,9 @@ static int stm32_dac_set_enable_state(struct iio_dev *indio_dev, int ch,
- 
- 	ret = regmap_update_bits(dac->common->regmap, STM32_DAC_CR, msk, en);
- 	mutex_unlock(&dac->lock);
--	if (ret < 0) {
-+	if (ret) {
- 		dev_err(&indio_dev->dev, "%s failed\n", str_enable_disable(en));
--		goto err_put_pm;
-+		goto err_pm_put;
- 	}
- 
- 	/*
-@@ -95,18 +95,9 @@ static int stm32_dac_set_enable_state(struct iio_dev *indio_dev, int ch,
- 	if (en && dac->common->hfsel)
- 		udelay(1);
- 
--	if (!enable) {
--		pm_runtime_mark_last_busy(dev);
--		pm_runtime_put_autosuspend(dev);
--	}
--
--	return 0;
--
--err_put_pm:
--	if (enable) {
--		pm_runtime_mark_last_busy(dev);
-+err_pm_put:
-+	if (!enable || (enable && ret))
- 		pm_runtime_put_autosuspend(dev);
--	}
- 
- 	return ret;
- }
-@@ -349,7 +340,6 @@ static int stm32_dac_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto err_pm_put;
- 
--	pm_runtime_mark_last_busy(dev);
- 	pm_runtime_put_autosuspend(dev);
- 
- 	return 0;
--- 
-2.47.2
-
+- Eric
 
