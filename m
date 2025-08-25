@@ -1,143 +1,117 @@
-Return-Path: <linux-kernel+bounces-784099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99360B336B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:49:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F5FAB336BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:50:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23F5F7A4BD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 06:48:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0D4C7AA78C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 06:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301B7285061;
-	Mon, 25 Aug 2025 06:49:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA48F2874F3;
+	Mon, 25 Aug 2025 06:49:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="qqZ+t6hw";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="CBpO20Pm"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Uz8SK3iK"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37AB24728B
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 06:49:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2FD2868AC
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 06:49:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756104566; cv=none; b=rNwwzVEjPpgWlD3XBR48qfzyTcF/4EH0Ll/PQo2+Ibg9bKm1z4BQKBWwkNDQfal/jhXqLgoe5usHOxh6473HxFLIGVEpoJ7OjGkCvlPCcsxN4cOY0x0K9yXuDP77LdzIlyrpTC5WE6Vp0cIT/QyFmNSv4+I5eOKxJgrZZuOHSbw=
+	t=1756104586; cv=none; b=Tpnr7nG3yJJ8AMDaMI3iwvUuUkcLPzItk8jOR/YQViEjj0q5G2bdowmDsFbfV4C786qZB2wsZDANzFN0/gZBE1PIxR9ccvPl7anhzlMekV4WvBa0pjakh5Ysn7qL+r3tySqLT8QaLS9A7ZjieKWA/k4U/AwZbpGl/ldAze4/gLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756104566; c=relaxed/simple;
-	bh=JLCQzWdgBNRboFHztGRIV1Wy+5zAjnkyvrwBoiaKDTg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mkkxZ+rDySf0Y8mcIU5u3Mx7Ov6f1Gs107xRzP0SRrSUggv+nkM5dneGKp0h+nKpdFd2Tdp/QWbQl9BmW7X4Q0NK81AOsqoXhFjQZUBcn6z/Ub/BEmWk8VRFncanuURxmg8SAKR5xkfaEvuwVsQpeWnTypgQbFXCDxo/cyXKwag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=qqZ+t6hw; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=CBpO20Pm reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1756104564; x=1787640564;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=CPxnu8JjaM/yvdOpkZwcHlIZVYiDwFghDn0gsxBWGdg=;
-  b=qqZ+t6hwoHUICAELw+5nD3rUC8H21zNq7DYCLl8yUoVME1TYBeZg6L8V
-   6reCh34JI12YFioxHVTkdK6k1HfyVBPkZKiDHeuPSvbAixxJEqGjccyvE
-   GWZIaVLyPrqPh2fN2lDL34TH7GOymXLFfx1UbQIwdCxQRQsEzyVPvtIcU
-   B+Wg1xDLs+5ciJjlt5212edVcJsQamdGmNnmDsriR1WlvJBAe4CGJDkgi
-   90VSb0RMaqoZUx7JBObSawaEiqK4IF1vV3DpFA6Se5jsNcmwcXrkDsrT7
-   QamAdAmdlT8rSj0wsI1tdeXSdHbbWSNKGcx36Hq1/suPCNa+Kd+hVMnat
-   Q==;
-X-CSE-ConnectionGUID: EynKlmkURxCd3md4UWSzaw==
-X-CSE-MsgGUID: PvNnWamSSwO7tl4Zz/f09Q==
-X-IronPort-AV: E=Sophos;i="6.17,312,1747692000"; 
-   d="scan'208";a="45885091"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 25 Aug 2025 08:49:18 +0200
-X-CheckPoint: {68AC076E-8-20CAA7DA-EC9DC758}
-X-MAIL-CPID: 835B404CD54FE37D8B940634E0216E79_0
-X-Control-Analysis: str=0001.0A002116.68AC07A3.0064,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8DB3616626E;
-	Mon, 25 Aug 2025 08:49:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1756104553;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=CPxnu8JjaM/yvdOpkZwcHlIZVYiDwFghDn0gsxBWGdg=;
-	b=CBpO20PmHcjpgD0YMs8GbLgLQFIV7URaZdaqNCp8IXdnG3A714hhT3v1hWvc8p+1aIBsBc
-	O26e2nu+imD88hGNenwH8vM3KYdbiWwG3KJAETknhc6aw4GOjUigj373L+eMAgk38s8uaH
-	yIMmzKVKSHSMF/Q3+S78qNHfC531lVaj0AhE22VTq5WBOaXiwCcpK314/PAnZN+ilfbO77
-	vstrp5X9rCetDfMVO3dYoh5PvahixFSR5IxqCdXIRB1GM7zTvdQcysiKACsD3aUATWgx3t
-	eidBlT0T1SqKg611a2BpAyW14yYzAxAeYRL4RKyofriwVXfqZT/82ASKN84eqg==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] arm64: defconfig: enable backlight device class
-Date: Mon, 25 Aug 2025 08:49:12 +0200
-Message-ID: <5012214.GXAFRqVoOG@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <fozbq6otnko75e4zfsad4c3qp7zgh5n3r4yj3swjd24dxdg4ue@krbmtduwdapm>
-References:
- <20250408134249.1131127-1-alexander.stein@ew.tq-group.com>
- <2385138.ElGaqSPkdT@steina-w>
- <fozbq6otnko75e4zfsad4c3qp7zgh5n3r4yj3swjd24dxdg4ue@krbmtduwdapm>
+	s=arc-20240116; t=1756104586; c=relaxed/simple;
+	bh=fGXjVR47xmXCnKHaXH1JnYbajwgQhftGMW1OIzrqk/M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=E65jcHWweIKywJ9j+xvlpsHzDcPpv5/M2jf5namcglWmRe1jLiljyeLOmtOVrtbKd9pudh7psNabrciSdAPeuvoIVGcV8E1s3FWr4/XhDsUxFNXcTIQtcILWGWBJJc0bsIEJlM3BSm+y49JhSvVukYlA14hef1hNMWnf8bri62M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Uz8SK3iK; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250825064935epoutp033f1f1b4cbda36d295c026be82390eab7~e786rM4K22039420394epoutp03F
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 06:49:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250825064935epoutp033f1f1b4cbda36d295c026be82390eab7~e786rM4K22039420394epoutp03F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756104575;
+	bh=BvCmax7ffb3cXbAcpyJB3pHTDlaFx7rbmUGg3s54BhU=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=Uz8SK3iKcH3r2j4BEnzA0IjAtagCHegDJNfSIMtrcsiUPHGm7IKSoG5mbdAIY8HQD
+	 7zOikww4xXtW1PpGqwAGgTLICJbTksrYKX+FGHIz5qpzfie0fPNObHpu8Z/H5Ot2GB
+	 OnV7Vhtp1d63OLe8eYU9fEHT+wFEZYTxLrCtPV2c=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250825064934epcas2p3d2a77215f5e4ca5413e5ae1529090e68~e786FGRi72272422724epcas2p3R;
+	Mon, 25 Aug 2025 06:49:34 +0000 (GMT)
+Received: from epcas2p3.samsung.com (unknown [182.195.36.99]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4c9Lxp2fslz6B9mF; Mon, 25 Aug
+	2025 06:49:34 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250825064933epcas2p37665fae32f51b04a43e5395d76759143~e784xdhu70900609006epcas2p3a;
+	Mon, 25 Aug 2025 06:49:33 +0000 (GMT)
+Received: from asswp60 (unknown [10.229.9.60]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250825064933epsmtip128240768c19a2d7ff622f42d9a52d82d~e784qqAbX0875908759epsmtip1f;
+	Mon, 25 Aug 2025 06:49:33 +0000 (GMT)
+From: Shin Son <shin.son@samsung.com>
+To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Krzysztof Kozlowski
+	<krzk@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Lukasz Luba
+	<lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Shin Son <shin.son@samsung.com>, linux-pm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] Add exynosautov920 thermal support
+Date: Mon, 25 Aug 2025 15:49:26 +0900
+Message-ID: <20250825064929.188101-1-shin.son@samsung.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250825064933epcas2p37665fae32f51b04a43e5395d76759143
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250825064933epcas2p37665fae32f51b04a43e5395d76759143
+References: <CGME20250825064933epcas2p37665fae32f51b04a43e5395d76759143@epcas2p3.samsung.com>
 
-Hi,
+This patch series adds support for exynosautov920, automotive-grade
+processor. Although the exynosautov920's TMU hardware differs slightly
+from exisiting platform, its read and calibration logic closely follow
+our legacy TMU interface. To prevent runtime and build time errors,
+it is kept as a single change rather than being split.
 
-Am Freitag, 22. August 2025, 23:53:11 CEST schrieb Sebastian Reichel:
-> Hi,
->=20
-> On Fri, Aug 22, 2025 at 03:55:12PM +0200, Alexander Stein wrote:
-> > Am Dienstag, 8. April 2025, 15:42:48 CEST schrieb Alexander Stein:
-> > > CONFIG_DRM_PANEL_SIMPLE is enabled in this config. But it depends on
-> > > CONFIG_BACKLIGHT_CLASS_DEVICE which is only transitively enabled by
-> > > DRM_NOUVEAU, iff DRM_NOUVEAU_BACKLIGHT is enabled as well.
-> > > As simple-panel depends on backlight, enable this in defconfig as wel=
-l.
-> > >=20
-> > > Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> > > ---
-> > >  arch/arm64/configs/defconfig | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > >=20
-> > > diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defcon=
-fig
-> > > index 65ec5a5be407d..b70257878812e 100644
-> > > --- a/arch/arm64/configs/defconfig
-> > > +++ b/arch/arm64/configs/defconfig
-> > > @@ -963,6 +963,7 @@ CONFIG_DRM_POWERVR=3Dm
-> > >  CONFIG_FB=3Dy
-> > >  CONFIG_FB_EFI=3Dy
-> > >  CONFIG_FB_MODE_HELPERS=3Dy
-> > > +CONFIG_BACKLIGHT_CLASS_DEVICE=3Dm
-> > >  CONFIG_BACKLIGHT_PWM=3Dm
-> > >  CONFIG_BACKLIGHT_LP855X=3Dm
-> > >  CONFIG_LOGO=3Dy
-> > >=20
-> >=20
-> > gentle ping. Any feedback?
->=20
-> You want to resend with updated mail destination:
->=20
-> https://lore.kernel.org/all/20250818-arm64-defconfig-v1-1-f589553c3d72@co=
-llabora.com/
+This change merges the new exynosautov920-specific register definitions and
+timing parameters into the exynos-tmu driver, ensuring consistent behavior
+across all Exynos series. All new code paths have been tested on a
+exynosautov920 board and verified to correctly read temperatures and
+emulate behavior.
 
-=46ine by me. But this is not SoC-specific rather than a general change.
-So who should be addressed then?
+Shin Son (3):
+  dt-bindings: thermal: samsung: Add tmu-name and sensor-index-ranges
+    properties
+  thermal: exynos_tmu: Support new hardware and update TMU interface
+  arm64: dts: exynosautov920: Add tmu hardware binding
 
-Best regards
-Alexander
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
+ .../thermal/samsung,exynos-thermal.yaml       |  23 +-
+ .../boot/dts/exynos/exynosautov920-tmu.dtsi   |  92 +++++
+ .../arm64/boot/dts/exynos/exynosautov920.dtsi |  34 ++
+ drivers/thermal/samsung/exynos_tmu.c          | 336 ++++++++++++++++--
+ 4 files changed, 447 insertions(+), 38 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynosautov920-tmu.dtsi
 
+-- 
+2.50.1
 
 
