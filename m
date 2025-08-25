@@ -1,101 +1,131 @@
-Return-Path: <linux-kernel+bounces-784203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFAF8B33808
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:46:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07EF4B3380B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:47:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7C487A23BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 07:44:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DECDD172432
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 07:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34697299944;
-	Mon, 25 Aug 2025 07:46:14 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8156428C860;
+	Mon, 25 Aug 2025 07:46:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UjHepv8b"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4AB428F1;
-	Mon, 25 Aug 2025 07:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400CA28F1
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 07:46:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756107973; cv=none; b=tObDfS2jqgmSc/xQ/UBH1E7UfM4rWzQjl0qsqCa0n2o+PPxF45z3cmeaJQiHs2PNTiCOg+Fo3HoSSdClOFsJFvMSLfgfwIim9TedN7L8x386vP+EljpeZ5AeXzH1X4qpjjH5IsAuXPkVrdm1NIAklt5Z07jdBxNBC8FBVb/J4m8=
+	t=1756108013; cv=none; b=RgLdn9UpiPvYyRqQe+oqLe54Cktqw45OmceroX7i3RDpUb3vOFMAxNI2kUYiycLqwt3S3ODKfGLa4dqo+fRFmUcnIkenmCizMJcf+i9kVxm8sPJOP4aPkYqsN5V3yob0F4Hv1TyG5w3+TtOyvHU36xdzriPke3ORmcydM+TCzFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756107973; c=relaxed/simple;
-	bh=93dYZci4N9YyD6RIQ3oAlUCKKDLe2Eys9vqtOW0Sfe0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qIZci8QppxhXVn62t3PPteRRL2leXfwSpCPYZcCUlunC+RKeOr6MhYhmF43SJCu8zrVpNKNb1KpQp8/oiPXHCwKcwEQO73qpaHOHEPYxtu+l4kGo/AOglESPirzrJyj5gIu7BYCCjj5G8uHhYGwJFNfaSfyfeVwJPx0SS+KjXgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 1A94568AA6; Mon, 25 Aug 2025 09:46:07 +0200 (CEST)
-Date: Mon, 25 Aug 2025 09:46:06 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Keith Busch <kbusch@meta.com>
-Cc: linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, snitzer@kernel.org, axboe@kernel.dk,
-	dw@davidwei.uk, brauner@kernel.org, hch@lst.de,
-	martin.petersen@oracle.com, djwong@kernel.org,
-	linux-xfs@vger.kernel.org, viro@zeniv.linux.org.uk,
-	Keith Busch <kbusch@kernel.org>
-Subject: Re: [PATCHv3 3/8] block: align the bio after building it
-Message-ID: <20250825074606.GE20853@lst.de>
-References: <20250819164922.640964-1-kbusch@meta.com> <20250819164922.640964-4-kbusch@meta.com>
+	s=arc-20240116; t=1756108013; c=relaxed/simple;
+	bh=Nbzd19yUjVLxyR4RmsPuP6P/OEWa8peSA4D/Bsvo6QA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Nra5Xa9Yz99EfbrGD9DtZgI8loRdZTICgkheLAtxl+DZrC6rOuoXrhZFMzOK5/odAcksnZ2CicNlw+w7GYADCF2D3riTEhifnH4OuwCowBr3FHrKtNIduU4XPCup3O9Lq/yMZY0VGw3SYeFRvIWAPAL9hVJBq+AJc3seYkTqyXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UjHepv8b; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <4e7e7292-338d-4a57-84ec-ae7427f6ad7c@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756108009;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QuBezIELdTw6MY40H0rggeYKFrP3ZFapNdPV9JT04jc=;
+	b=UjHepv8bsjSnrSIiGUpmII7coGV4lqLR7tStk3RW3xsbEqWay19GTGYB6hzWxDOPHELs5q
+	Nst0pvGRUNWWzE2c6fJ1+9fMqcRyH+0tknS8BX+KolUbgA6aMS8dzVBlFv4NK3GQBRwdNi
+	VkO8N+/sY7CMZE/kTPsxoMb+areJTRw=
+Date: Mon, 25 Aug 2025 15:46:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250819164922.640964-4-kbusch@meta.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Subject: Re: [PATCH] atomic: Specify natural alignment for atomic_t
+Content-Language: en-US
+To: Finn Thain <fthain@linux-m68k.org>
+Cc: akpm@linux-foundation.org, geert@linux-m68k.org,
+ linux-kernel@vger.kernel.org, mhiramat@kernel.org, oak@helsinkinet.fi,
+ peterz@infradead.org, stable@vger.kernel.org, will@kernel.org,
+ Lance Yang <ioworker0@gmail.com>
+References: <7d9554bfe2412ed9427bf71ce38a376e06eb9ec4.1756087385.git.fthain@linux-m68k.org>
+ <20250825032743.80641-1-ioworker0@gmail.com>
+ <c8851682-25f1-f594-e30f-5b62e019d37b@linux-m68k.org>
+ <96ae7afc-c882-4c3d-9dea-3e2ae2789caf@linux.dev>
+ <5a44c60b-650a-1f8a-d5cb-abf9f0716817@linux-m68k.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <5a44c60b-650a-1f8a-d5cb-abf9f0716817@linux-m68k.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Aug 19, 2025 at 09:49:17AM -0700, Keith Busch wrote:
-> +/*
-> + * Aligns the bio size to the len_align_mask, releasing any excessive bio vecs
-> + * that  __bio_iov_iter_get_pages may have inserted and reverts that length for
-> + * the next iteration.
-> + */
-> +static int bio_align(struct bio *bio, struct iov_iter *iter,
-> +			    unsigned len_align_mask)
 
-I think the name is a bit too generic, as the function is very
-specific to the __bio_iov_iter_get_pages-path only releasing of
-pages, and also only aligns down.  Maybe name it
-bio_iov_iter_align_down or something like that?
 
-> +	size_t nbytes = bio->bi_iter.bi_size & len_align_mask;
-> +
-> +	if (!nbytes)
-> +		return 0;
-> +
-> +	iov_iter_revert(iter, nbytes);
-> +	bio->bi_iter.bi_size -= nbytes;
-> +	while (nbytes) {
-> +		struct bio_vec *bv = &bio->bi_io_vec[bio->bi_vcnt - 1];
-> +
-> +		if (nbytes < bv->bv_len) {
-> +			bv->bv_len -= nbytes;
-> +			nbytes = 0;
-> +		} else {
-> +			bio_release_page(bio, bv->bv_page);
-> +			bio->bi_vcnt--;
-> +			nbytes -= bv->bv_len;
-> +		}
-> +	}
+On 2025/8/25 14:17, Finn Thain wrote:
+> 
+> On Mon, 25 Aug 2025, Lance Yang wrote:
+> 
+>>
+>> What if we squash the runtime check fix into your patch?
+> 
+> Did my patch not solve the problem?
 
-Minor nitpicks on the loop:  it could be turned into a do { } while ()
-loop, because nbytes is already checked above.  And the condition that
-sets nbytes to 0 could just break out of the loo.
+Hmm... it should solve the problem for natural alignment, which is a
+critical fix.
 
-> +
-> +	if (!bio->bi_iter.bi_size)
-> +		return -EFAULT;
+But it cannot solve the problem of forced misalignment from drivers using
+#pragma pack(1). The runtime warning will still trigger in those cases.
 
-And as bi_size doesn't change in the loop, this should probably move
-above the loop.
+I built a simple test module on a kernel with your patch applied:
+
+```
+#include <linux/module.h>
+#include <linux/init.h>
+
+struct __attribute__((packed)) test_container {
+     char padding[49];
+     struct mutex io_lock;
+};
+
+static int __init alignment_init(void)
+{
+     struct test_container cont;
+     pr_info("io_lock address offset mod 4: %lu\n", (unsigned 
+long)&cont.io_lock % 4);
+     return 0;
+}
+
+static void __exit alignment_exit(void)
+{
+     pr_info("Module unloaded\n");
+}
+
+module_init(alignment_init);
+module_exit(alignment_exit);
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("x");
+MODULE_DESCRIPTION("x");
+```
+
+Result from dmesg:
+[Mon Aug 25 15:44:50 2025] io_lock address offset mod 4: 1
+
+As we can see, a packed struct can still force the entire mutex object
+to an unaligned address. With an address like this, the WARN_ON_ONCE
+can still be triggered.
+
+That's why I proposed squashing the runtime check fix into your patch.
+Then it can be cleanly backported to stop all the spurious warnings at
+once.
+
+I hope this clarifies things.
 
 
