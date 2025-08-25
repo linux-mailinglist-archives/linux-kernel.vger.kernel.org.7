@@ -1,153 +1,176 @@
-Return-Path: <linux-kernel+bounces-785037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74BA2B3450B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:04:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 968B4B3450F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:04:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FE0B206E48
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:02:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 013B25E1E05
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:03:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D132FF153;
-	Mon, 25 Aug 2025 14:59:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B7AD3002AC;
+	Mon, 25 Aug 2025 15:00:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jn0AZo3p"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WaOaKmoG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19FA619DF62;
-	Mon, 25 Aug 2025 14:59:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D01CF230BD9;
+	Mon, 25 Aug 2025 15:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756133980; cv=none; b=qYr26YGLLBA2DF4CLgY2tlsaN0Ubql442KwVdVO35eaU0X32lbAff34a9hYhkx1tkNYID0c8o0FcFzMaOKLPYtjMewHyzgu1Td2+UxOw+MUR51xgsDx8T1h0kWvmhS9a5kyXFfcmDiG6So2t7v8s4Fv2CKK6IV9PgXbQ+4qvsU8=
+	t=1756134052; cv=none; b=YnlIgPKHRBYctOyx0BaIWwoToGE6i+mCSAzz4o4T6vikKIHxILADdA0mOA4cSDlVWbrP6Z04YL+++Lfe6WSnjzFOxCYhurVzxllA1WStvx9MDRTTm+QVTDXCjnE6dUqAp7Hq/5yuLkJX9bFA9OZh/SkIziky1qKuJGnD2zaKwaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756133980; c=relaxed/simple;
-	bh=YtWwiemXxXk/HndwfafEfgJsQeylyFu02jnoMvbgzgo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YGCWp0A5VhuY724yB1LV0CFqLv+ny+x6qWXamyNo5yg00vIkF+lSv0u2Wdf1C2kRSxZBf5dNE1VlD2WIrODCGqRhJQQSOKfclLJKjrZutKBLumd9uYkJ+LnPexySPu11/BFElss08JOM39geZsUPYQ5fwBprxtfZ5uW9O2euhbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jn0AZo3p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B3D6C4CEED;
-	Mon, 25 Aug 2025 14:59:26 +0000 (UTC)
+	s=arc-20240116; t=1756134052; c=relaxed/simple;
+	bh=cr6KBROp1M55uUNu32ISj3IWnbsJZPYjC+bGhB9SQOc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=W4CaKtaxAmB8eYr0mSGFXL8+waCsBtcM/OnscYCGNIMfwlbgLaf9WbsXwNSyzlzNr3QkuEsZVhK1Yq5e2WilE2NBd7zt1KAtsgZ9A+n1ibr4c/5KS1T+hwqCbXnVKZsjbQRMreOb5yFh+ZqudMlzuy03AgshmhS8U3iLCRVeaVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WaOaKmoG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2DDCC116C6;
+	Mon, 25 Aug 2025 15:00:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756133979;
-	bh=YtWwiemXxXk/HndwfafEfgJsQeylyFu02jnoMvbgzgo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Jn0AZo3pPFK0BugUL3OMCDpCV1HmeNy40TLdNKtLX5SypUoRptbAF9EKk4ejmZPkz
-	 4+fhto2i95Q8o+P1Az66DJeNk8sJ/NyNwPVZIk6s6vBe389Ho9bI4oPnQEWOp80T7O
-	 GtLnp1xpVgMb/AC15WB27oS0HJcJwkR6UUktQVbU3ti8iXBP/sjXLozRWAuvgf0GjM
-	 wZgTeBgQn1M3OOuOkCDIwQMCPIaP4blPKHTb9cXNDnLZlHu07Wyh1OfkyGZAnS83zw
-	 dhcVTO4etdblD/32knv8disDXUulJuw7B97TzcOXKyT3A66aD23GWc4jfTztl6wlSw
-	 r5yMDLTA1mfKw==
-Date: Mon, 25 Aug 2025 17:59:22 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: Mika =?iso-8859-1?Q?Penttil=E4?= <mpenttil@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	Alexander Potapenko <glider@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Brendan Jackman <jackmanb@google.com>,
-	Christoph Lameter <cl@gentwo.org>, Dennis Zhou <dennis@kernel.org>,
-	Dmitry Vyukov <dvyukov@google.com>, dri-devel@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org, iommu@lists.linux.dev,
-	io-uring@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>,
-	Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
-	John Hubbard <jhubbard@nvidia.com>, kasan-dev@googlegroups.com,
-	kvm@vger.kernel.org, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-arm-kernel@axis.com, linux-arm-kernel@lists.infradead.org,
-	linux-crypto@vger.kernel.org, linux-ide@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-mips@vger.kernel.org,
-	linux-mmc@vger.kernel.org, linux-mm@kvack.org,
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Marco Elver <elver@google.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Michal Hocko <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
-	netdev@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
-	Peter Xu <peterx@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
-	Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
-	virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
-	wireguard@lists.zx2c4.com, x86@kernel.org, Zi Yan <ziy@nvidia.com>
-Subject: Re: [PATCH RFC 10/35] mm/hugetlb: cleanup
- hugetlb_folio_init_tail_vmemmap()
-Message-ID: <aKx6SlYrj_hiPXBB@kernel.org>
-References: <20250821200701.1329277-1-david@redhat.com>
- <20250821200701.1329277-11-david@redhat.com>
- <9156d191-9ec4-4422-bae9-2e8ce66f9d5e@redhat.com>
- <7077e09f-6ce9-43ba-8f87-47a290680141@redhat.com>
- <aKmDBobyvEX7ZUWL@kernel.org>
- <a90cf9a3-d662-4239-ad54-7ea917c802a5@redhat.com>
- <aKxz9HLQTflFNYEu@kernel.org>
- <a72080b4-5156-4add-ac7c-1160b44e0dfe@redhat.com>
+	s=k20201202; t=1756134051;
+	bh=cr6KBROp1M55uUNu32ISj3IWnbsJZPYjC+bGhB9SQOc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=WaOaKmoGlIlwlRdIoLyJtkubsH1CewYNTdrqKLHi8ddKVKCkemSeXe47xaQgg004d
+	 T3lmlEzwuKUifFLJ5PVs2+7TuPpeAnJQHzDfAbqNGwwaDneln+zYZ+84Adbp6iop94
+	 qAbjLfQYS3y2jaaSjgni6VgI4AlthAMuOlOMQv4+lVWBgKHJS4cif7DVs8iI7IPyjB
+	 eW2gmu7XTAl1p7046BsX5lOFUR7KVS6GesFnuVLNhIzWcrNNGIWkdas4VxAUPqXuUK
+	 6oyvuTPorCS5xBCrjb15JSBPvntgI78pfkGXUgLZ5NiXwoaFgIl3BBzKViqlJjM8fC
+	 287YGOTl/mxEg==
+Date: Mon, 25 Aug 2025 16:00:23 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, Eugen Hristev <eugen.hristev@linaro.org>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Cai Huoqing <cai.huoqing@linux.dev>, Haibo Chen <haibo.chen@nxp.com>, Shawn
+ Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
+ <festevam@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Geert
+ Uytterhoeven <geert+renesas@glider.be>, Magnus Damm
+ <magnus.damm@gmail.com>, Lad Prabhakar
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>, Maxime Coquelin
+ <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, Chen-Yu Tsai <wens@csie.org>, Jernej
+ Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
+ Francesco Dolcini <francesco@dolcini.it>, =?UTF-8?B?Sm/Do28=?= Paulo
+ =?UTF-8?B?R29uw6dhbHZlcw==?= <jpaulo.silvagoncalves@gmail.com>, Rui Miguel
+ Silva <rmfrfs@gmail.com>, Jean-Baptiste Maneyrol
+ <jean-baptiste.maneyrol@tdk.com>, Subhajit Ghosh
+ <subhajit.ghosh@tweaklogic.com>, Gerald Loacker
+ <gerald.loacker@wolfvision.net>, Andreas Klinger <ak@it-klinger.de>, Crt
+ Mori <cmo@melexis.com>, Waqar Hameed <waqar.hameed@axis.com>, Julien
+ Stephan <jstephan@baylibre.com>, Peter Zijlstra <peterz@infradead.org>,
+ Greg KH <gregkh@linuxfoundation.org>, Bo Liu <liubo03@inspur.com>, Al Viro
+ <viro@zeniv.linux.org.uk>, Sean Nyekjaer <sean@geanix.com>, Frank Li
+ <Frank.Li@nxp.com>, Han Xu <han.xu@nxp.com>, Rayyan Ansari
+ <rayyan@ansari.sh>, Gustavo Vaz <gustavo.vaz@usp.br>, Matti Vaittinen
+ <mazziesaccount@gmail.com>, Alexandru Ardelean <aardelean@baylibre.com>,
+ "Jiri Slaby (SUSE)" <jirislaby@kernel.org>, "Rob Herring (Arm)"
+ <robh@kernel.org>, Fabrice Gasnier <fabrice.gasnier@foss.st.com>, Uwe
+ =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>, Olivier
+ Moysan <olivier.moysan@foss.st.com>, Christophe JAILLET
+ <christophe.jaillet@wanadoo.fr>, Marcelo Schmitt
+ <marcelo.schmitt1@gmail.com>, Vasileios Amoiridis <vassilisamir@gmail.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Hans de Goede
+ <hansg@kernel.org>, Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Abhash Jha <abhashkumarjha123@gmail.com>, chuguangqing
+ <chuguangqing@inspur.com>, Shreeya Patel <shreeya.patel@collabora.com>,
+ Per-Daniel Olsson <perdaniel.olsson@axis.com>, =?UTF-8?B?QmFybmFiw6FzIEN6?=
+ =?UTF-8?B?w6ltw6Fu?= <barnabas.czeman@mainlining.org>, Neil Armstrong
+ <neil.armstrong@linaro.org>, David Laight <david.laight@aculab.com>, Jakob
+ Hauser <jahau@rocketmail.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH v3 05/12] iio: dac: Remove redundant
+ pm_runtime_mark_last_busy() calls
+Message-ID: <20250825160023.4070bbc1@jic23-huawei>
+In-Reply-To: <20250825135401.1765847-6-sakari.ailus@linux.intel.com>
+References: <20250825135401.1765847-1-sakari.ailus@linux.intel.com>
+	<20250825135401.1765847-6-sakari.ailus@linux.intel.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a72080b4-5156-4add-ac7c-1160b44e0dfe@redhat.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 25, 2025 at 04:38:03PM +0200, David Hildenbrand wrote:
-> On 25.08.25 16:32, Mike Rapoport wrote:
-> > On Mon, Aug 25, 2025 at 02:48:58PM +0200, David Hildenbrand wrote:
-> > > On 23.08.25 10:59, Mike Rapoport wrote:
-> > > > On Fri, Aug 22, 2025 at 08:24:31AM +0200, David Hildenbrand wrote:
-> > > > > On 22.08.25 06:09, Mika Penttilä wrote:
-> > > > > > 
-> > > > > > On 8/21/25 23:06, David Hildenbrand wrote:
-> > > > > > 
-> > > > > > > All pages were already initialized and set to PageReserved() with a
-> > > > > > > refcount of 1 by MM init code.
-> > > > > > 
-> > > > > > Just to be sure, how is this working with MEMBLOCK_RSRV_NOINIT, where MM is supposed not to
-> > > > > > initialize struct pages?
-> > > > > 
-> > > > > Excellent point, I did not know about that one.
-> > > > > 
-> > > > > Spotting that we don't do the same for the head page made me assume that
-> > > > > it's just a misuse of __init_single_page().
-> > > > > 
-> > > > > But the nasty thing is that we use memblock_reserved_mark_noinit() to only
-> > > > > mark the tail pages ...
-> > > > 
-> > > > And even nastier thing is that when CONFIG_DEFERRED_STRUCT_PAGE_INIT is
-> > > > disabled struct pages are initialized regardless of
-> > > > memblock_reserved_mark_noinit().
-> > > > 
-> > > > I think this patch should go in before your updates:
-> > > 
-> > > Shouldn't we fix this in memblock code?
-> > > 
-> > > Hacking around that in the memblock_reserved_mark_noinit() user sound wrong
-> > > -- and nothing in the doc of memblock_reserved_mark_noinit() spells that
-> > > behavior out.
-> > 
-> > We can surely update the docs, but unfortunately I don't see how to avoid
-> > hacking around it in hugetlb.
-> > Since it's used to optimise HVO even further to the point hugetlb open
-> > codes memmap initialization, I think it's fair that it should deal with all
-> > possible configurations.
-> 
-> Remind me, why can't we support memblock_reserved_mark_noinit() when
-> CONFIG_DEFERRED_STRUCT_PAGE_INIT is disabled?
+On Mon, 25 Aug 2025 16:53:54 +0300
+Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
 
-When CONFIG_DEFERRED_STRUCT_PAGE_INIT is disabled we initialize the entire
-memmap early (setup_arch()->free_area_init()), and we may have a bunch of
-memblock_reserved_mark_noinit() afterwards
- 
-> -- 
-> Cheers
+> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
+> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
+> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
+> pm_runtime_mark_last_busy().
 > 
-> David / dhildenb
+> Also clean up error handling in stm32_dac_set_enable_state().
 > 
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Hi Sakari,
 
--- 
-Sincerely yours,
-Mike.
+I don't follow this...
+
+> ---
+>  drivers/iio/dac/stm32-dac.c | 19 ++++---------------
+>  1 file changed, 4 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/iio/dac/stm32-dac.c b/drivers/iio/dac/stm32-dac.c
+> index 344388338d9b..e8688f9d6df7 100644
+> --- a/drivers/iio/dac/stm32-dac.c
+> +++ b/drivers/iio/dac/stm32-dac.c
+> @@ -82,9 +82,9 @@ static int stm32_dac_set_enable_state(struct iio_dev *indio_dev, int ch,
+>  
+>  	ret = regmap_update_bits(dac->common->regmap, STM32_DAC_CR, msk, en);
+>  	mutex_unlock(&dac->lock);
+> -	if (ret < 0) {
+> +	if (ret) {
+>  		dev_err(&indio_dev->dev, "%s failed\n", str_enable_disable(en));
+> -		goto err_put_pm;
+> +		goto err_pm_put;
+>  	}
+>  
+>  	/*
+> @@ -95,18 +95,8 @@ static int stm32_dac_set_enable_state(struct iio_dev *indio_dev, int ch,
+>  	if (en && dac->common->hfsel)
+>  		udelay(1);
+>  
+> -	if (!enable) {
+> -		pm_runtime_mark_last_busy(dev);
+> -		pm_runtime_put_autosuspend(dev);
+> -	}
+> -
+> -	return 0;
+> -
+> -err_put_pm:
+> -	if (enable) {
+> -		pm_runtime_mark_last_busy(dev);
+> -		pm_runtime_put_autosuspend(dev);
+> -	}
+> +err_pm_put:
+> +	pm_runtime_put_autosuspend(dev);
+
+now the put is here, whether or not there was ever a get as the get is gated on enable()
+
+
+>  
+>  	return ret;
+>  }
+> @@ -349,7 +339,6 @@ static int stm32_dac_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		goto err_pm_put;
+>  
+> -	pm_runtime_mark_last_busy(dev);
+>  	pm_runtime_put_autosuspend(dev);
+>  
+>  	return 0;
+
 
