@@ -1,151 +1,100 @@
-Return-Path: <linux-kernel+bounces-784514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91ACAB33CCA
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:30:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71291B33CD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:32:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 65E234E2FA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:30:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9BD91B261FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:31:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D7D2ED141;
-	Mon, 25 Aug 2025 10:25:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5772B2D12EB;
+	Mon, 25 Aug 2025 10:25:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VrLc2baW";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bjOQBmwW"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="rZ6GOAv6"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24242ECD13;
-	Mon, 25 Aug 2025 10:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABFE02D7DD4
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 10:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756117513; cv=none; b=j2QjmYc/OUpP4idRx97vQ7h8+b4dCRazS4wrGc6VJXLDqh/Z1PPNSrZrQ2WmI1P217pDjL4xTYdU0qUXKTqhjSEU0bsJvUJ0TFbNAj3L7SfVzGPNlvT6mYtv68zljT09Dm72Kit4Uiz+XEMqOaVhRIsCqNg1SqEP/zKcZGB73iQ=
+	t=1756117527; cv=none; b=ZMEj14wqjrcLlF7eaSDf/M/0kbzFGVOVWepO6itGap4cVcuI16z40KPVaSUXvgbxrgzsFIgFFPtj+wQVz73U/TcjbxwQqpL13gQmOdzt5G5ILOjjhVDriofpataCq6Vim8ZEGotnzIa0emBhIn84fj8zMjVbykIxiSSLO9dBUgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756117513; c=relaxed/simple;
-	bh=oQU45IFyIDhyK9CmiC3KJigsu0sONMEtKjRziiVe7BM=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=jLiklavf1BJ5ur3o4i2IDUDsaG9NgnAo2mmv29RjDRUYGXW9ovyBHUjJScRo4HRS9hQ38+blf38C7RV5sQbr3/0IGSla4V/4Lc2P5cnkl0IIBha0EIbgVfRDEp/sC+/i4ieyTRyfBoeiioEcpwU4wbHkNqXrZVZqlNUh1cb3C88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VrLc2baW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bjOQBmwW; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 25 Aug 2025 10:25:09 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756117510;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	s=arc-20240116; t=1756117527; c=relaxed/simple;
+	bh=KaOLmHjViwkxoihfBvJijmb+AB4Bem7L4iWvQKuY0Ac=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Y3GkYdTSc3Cs3eVVXuDw9Yh2QCzb4YdQeNHecB0GcT1tUKran/32CH3dg2WiNTRGtFc+2xSt9ytw5VB5dkszQ0yqqFH+1H1Js/byvZ/Q6KSLu3YjZSYS0vCNTY+x3/EQDHew9xYAuSxPLMD65rIn9zSHaXe0r8PY/FcZt9pG+g0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=rZ6GOAv6; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4c9Rkn68K9z9sXk;
+	Mon, 25 Aug 2025 12:25:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1756117522; h=from:from:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ex7lyt7Yu/2zY52yOjMi5p39cbf+JiAHbHdUL6P6cHw=;
-	b=VrLc2baWEILjukvY2LwWt8Flnnv7MzxaIt1n65ILXIdx1rDgkZcSatywR5aFPt+Dl4NmM5
-	d0CB9eLfYYT/XDTZiH46j+ANmLPhY1Xlj92xi05JGkNS5DzImTMEnHLh/h3qf6e/TzOgom
-	eXlHvTy9S+aEYuBeBqqpWW90MWgpWHYWfttcc/3NqkoMrGAEJ+NHzBx8VST5w4FkV+ltv6
-	OtuLFq/v5quZTWzOKoCGrXXo8Ncv1CWvEQ3PkGQEHMV+bZVoEGBMIAu74L29thK1pfjfpX
-	AAk6G/EuCN943YL5ATokgTbP2yuh0QSPCU8n9zvsE8wprRowniEeKDYyedLsaQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756117510;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ex7lyt7Yu/2zY52yOjMi5p39cbf+JiAHbHdUL6P6cHw=;
-	b=bjOQBmwWAllKPJ977wBromREUSLkJJb3UVHq7VJWHXZWM8RT8+nuevYMW61UfgKItDTJPp
-	2pxJ8gCyz4YuOvAA==
-From: "tip-bot2 for Jiri Olsa" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] uprobes: Remove breakpoint in unapply_uprobe under
- mmap_write_lock
-Cc: Jiri Olsa <jolsa@kernel.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Andrii Nakryiko <andrii@kernel.org>,
- "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
- Oleg Nesterov <oleg@redhat.com>, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250720112133.244369-2-jolsa@kernel.org>
-References: <20250720112133.244369-2-jolsa@kernel.org>
+	bh=KaOLmHjViwkxoihfBvJijmb+AB4Bem7L4iWvQKuY0Ac=;
+	b=rZ6GOAv6aAOu5wR1f2bNtYPctYxa+S5yZavg9XjYHkFxw1kIMlJKecMV+d2I2MfSfUUuPf
+	zRksQmq3TbjEmRQeSwbxI//6gL7kAVks1tLqrpaunCWjJqHMghlykx9ScJcfU6SEwcdtA0
+	s2+e8uZThG+uGozzKG9c3SPn99fNWZ1r0rBQgfgt90WiqlTMS7s6Pn9P8Ky78T+3+uGD2d
+	/IpZ0pdiRKfWkLscBawRKNSB8N8Ng0IkHZISx8s291X5VX0fjdyL8fcdeKwRkoh9p4Qc6o
+	OLN2+PeqFs09vRl7Eae4//rIJJO0yMzYP3IEKpdLRagu7k5FlZoenZNQZbK+Tg==
+Message-ID: <119cb44579d745ad3e47d649e6ee6fea9fd9d146.camel@mailbox.org>
+Subject: Re: [PATCH] drm/sched/tests: Remove redundant header files
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Markus Elfring <Markus.Elfring@web.de>, Liao Yuanhong
+	 <liaoyuanhong@vivo.com>, dri-devel@lists.freedesktop.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Christian =?ISO-8859-1?Q?K=F6nig?=
+ <ckoenig.leichtzumerken@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
+ David Airlie <airlied@gmail.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>,  =?ISO-8859-1?Q?Ma=EDra?= Canal
+ <mcanal@igalia.com>, Matthew Brost <matthew.brost@intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Philipp Stanner <phasta@kernel.org>, Simona Vetter
+ <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>, Tvrtko Ursulin
+ <tvrtko.ursulin@igalia.com>
+Date: Mon, 25 Aug 2025 12:25:14 +0200
+In-Reply-To: <acb4e709-a42f-4591-a406-7745bcd0422f@web.de>
+References: <20250819142630.368796-1-liaoyuanhong@vivo.com>
+	 <acb4e709-a42f-4591-a406-7745bcd0422f@web.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175611750907.1420.16310655013957778625.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+X-MBO-RS-ID: 2f8a2bff1c7e893a0bc
+X-MBO-RS-META: ajj4b1uysb5akw61sk99hyzimx7fd98c
 
-The following commit has been merged into the perf/core branch of tip:
+On Tue, 2025-08-19 at 18:15 +0200, Markus Elfring wrote:
+> > The header file <linux/atomic.h> is already included on line 8. Remove =
+the
+> > redundant include.
+>=20
+> You would like to omit a duplicate #include directive, don't you?
+> Will a corresponding refinement become helpful for the summary phrase
+> and change description?
 
-Commit-ID:     7769cb177b23142b83f22abd06e492cc25157893
-Gitweb:        https://git.kernel.org/tip/7769cb177b23142b83f22abd06e492cc251=
-57893
-Author:        Jiri Olsa <jolsa@kernel.org>
-AuthorDate:    Sun, 20 Jul 2025 13:21:11 +02:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Thu, 21 Aug 2025 20:09:18 +02:00
+I don't understand what you mean. Can you elaborate?
 
-uprobes: Remove breakpoint in unapply_uprobe under mmap_write_lock
+Both patch content and description are completely fine as far as I'm
+concerned.
 
-Currently unapply_uprobe takes mmap_read_lock, but it might call
-remove_breakpoint which eventually changes user pages.
+P.
 
-Current code writes either breakpoint or original instruction, so it can
-go away with read lock as explained in here [1]. But with the upcoming
-change that writes multiple instructions on the probed address we need
-to ensure that any update to mm's pages is exclusive.
+>=20
+> Regards,
+> Markus
 
-[1] https://lore.kernel.org/all/20240710140045.GA1084@redhat.com/
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Acked-by: Oleg Nesterov <oleg@redhat.com>
-Link: https://lore.kernel.org/r/20250720112133.244369-2-jolsa@kernel.org
----
- kernel/events/uprobes.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 7ca1940..1cbfe3c 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -482,7 +482,7 @@ remap:
-  * @opcode_vaddr: the virtual address to store the opcode.
-  * @opcode: opcode to be written at @opcode_vaddr.
-  *
-- * Called with mm->mmap_lock held for read or write.
-+ * Called with mm->mmap_lock held for write.
-  * Return 0 (success) or a negative errno.
-  */
- int uprobe_write_opcode(struct arch_uprobe *auprobe, struct vm_area_struct *=
-vma,
-@@ -1463,7 +1463,7 @@ static int unapply_uprobe(struct uprobe *uprobe, struct=
- mm_struct *mm)
- 	struct vm_area_struct *vma;
- 	int err =3D 0;
-=20
--	mmap_read_lock(mm);
-+	mmap_write_lock(mm);
- 	for_each_vma(vmi, vma) {
- 		unsigned long vaddr;
- 		loff_t offset;
-@@ -1480,7 +1480,7 @@ static int unapply_uprobe(struct uprobe *uprobe, struct=
- mm_struct *mm)
- 		vaddr =3D offset_to_vaddr(vma, uprobe->offset);
- 		err |=3D remove_breakpoint(uprobe, vma, vaddr);
- 	}
--	mmap_read_unlock(mm);
-+	mmap_write_unlock(mm);
-=20
- 	return err;
- }
 
