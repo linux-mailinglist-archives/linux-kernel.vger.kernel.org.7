@@ -1,108 +1,256 @@
-Return-Path: <linux-kernel+bounces-784260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41EB7B338B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:27:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96E2FB338C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:30:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 026823A912A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:27:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B676D1B21017
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F21B29B8E6;
-	Mon, 25 Aug 2025 08:27:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF29529D291;
+	Mon, 25 Aug 2025 08:30:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JKRKjMaB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="XEZR1DZV"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF6B27FD5A;
-	Mon, 25 Aug 2025 08:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756110450; cv=none; b=MS8ryn7X7t27TbZcix3o9ieaj6vF16SuVcMxeBXi0oMDDTkcdRf00MYiqdDkExOElER9RP36COuwYbknLydfU3Vlbb7+p0Vv8EJXMYtFCW7VRDz4I0rS2qX6IcqyD/j2k+0Dv3rBcyhCNUv1PvdOId/TKT8lL8iBzSQdwRuEmwI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756110450; c=relaxed/simple;
-	bh=MThLF13oP8kAhHUfPkaokmWovqJkKnUrqODR2st45Es=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xnd1i16pK8WWMsPzEJKUaGwzkwsp3ZPSuMNVZiPOWRPwr/ax1Z0zx8ziLbm+Bg3GYD/7pBoVeXopPZE0p6nbBKXBl4QDegm8DD3YSbu13OI83ebDhNYn9bB4S1RBucm8T2oREvuz7kIQNsr+QIV3RhGLCjgmyo/9xr4OTiUK498=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JKRKjMaB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A9D3C4CEED;
-	Mon, 25 Aug 2025 08:27:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756110449;
-	bh=MThLF13oP8kAhHUfPkaokmWovqJkKnUrqODR2st45Es=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JKRKjMaBmlKTxG95DhC8FbKhxi/QcYemBieWq9oFAr8wpwlA/HH57gPrixGa6Gneh
-	 gO3PGunR94J3ezDuSkIW+Be28rOH9fBq+jt6nJuG7w/JMQn9dI6SkymppN7P+xPOAf
-	 Sy5WB4oIS6p7KQnG6SIVwscMyZCOwILPBXv3bBTL173DkqVIUNrGu+pNe3zf4fRZTs
-	 jPIfCS3uot7mi8Lc3UPioNJlDJNYRo2VsSqOncw/ycd/ZnhY/hzsUmjx3pm3OjqMa3
-	 TDrrWmNERcGJDrFggkJx4QGkW2XSXEr+0fq2KuwXTxZ4Dq47+93XfddYj5PkdmUJvd
-	 TV3bkfY85LsvQ==
-Date: Mon, 25 Aug 2025 10:27:26 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: "Rafael V. Volkmer" <rafael.v.volkmer@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v5 1/6] pwm: tiehrpwm: use GENMASK()/FIELD_PREP() for
- register fields
-Message-ID: <dithxhozx4k6n6xu7qrunsxec2wrklj2fipp3r24tlunmj7zid@vgqvfjw7onld>
-References: <20250822044024.4015-1-rafael.v.volkmer@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBDE829BDA2;
+	Mon, 25 Aug 2025 08:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756110615; cv=pass; b=LSdMzyX4KxKgGYUrpCyJYZsOn20+ssBC60FUEBqbRpYeIHPhhY3xjshFCbxJCwqopFHNAWGeDlnPZnlXytzO/hHXq15Um1XrFVsKgRWHILFkeiaGkkjTgzyFu17qlutg2hiC5bWZD5DmKwF3IVgNXn50GdE/Z+c2de1qzt1zmNs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756110615; c=relaxed/simple;
+	bh=6XSD7X+RgLDbJmelrFUCemaN25GJQmoO86sqiNiHoGY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=BFWS+R/S/f0BXms38V21ppeyn1WOhBzpX3UzDsTo0og3dg9aWW6Biwy0lL8E98MYMGt456kR0xACCHCTOmU/dwgZ5DlF251hk9F8AKsk79/aLxSWDNixw8ErIcwvAA8VlTBAHfUyplDzokM5M7AkSc0fW16AvbrnYNZSLfkUNa4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=XEZR1DZV; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1756110534; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Kaj07l+KJHjwgrTN4ypGgxEUJROoxxzaBsZnD3OUf+5LDOOblsn6wic7dsefSAxyPDtLeAFyHyNj4MyNlFgYaJh6rL6EEaK2ap7IFl36mnCWMVIBkFIwFYhJKoaa1dFlSOgEBDriZ5ampiH3TQgtb0HWkQjW9DTEu6oqrrC9lIs=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756110534; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=7Fvpfg+PNyagHR37TkE0ZPNG3x9nZudXe4XKD4LHhxs=; 
+	b=OISu4RIgKAxjJ6YaqWywRv+alPbF+6bm5tW49+Hu42Rhbr8YbkOc5FLr6ktF4nBc6maYTwTa467/RzI0MVPBzUdvNcuXS2f6ByaS7WlAi3XL7A2RO+sp5CwMO3m94KBZERAoNX8dZxeokAgVACKgBBlaZV3qMZ7UZnBdmJAim6U=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756110534;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Reply-To;
+	bh=7Fvpfg+PNyagHR37TkE0ZPNG3x9nZudXe4XKD4LHhxs=;
+	b=XEZR1DZVfgAILwelSAZzqFJzCfY4YMXWOXBkoUa/GooArBWTMLDzJ2m7VYeOvBQT
+	itI76enUGOZQyHq6PoqNRc73MEwkuAtpxKglF/vgLCTyD92/uMzRh94Y+ih+OVxXidw
+	3qvKuI8g/IPc4ECDUqgjddCkbICkQkC3LnmOsoVU=
+Received: by mx.zohomail.com with SMTPS id 1756110531357309.34716059553057;
+	Mon, 25 Aug 2025 01:28:51 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Subject: [PATCH v3 00/20] BYEWORD_UPDATE: unifying (most) HIWORD_UPDATE
+ macros
+Date: Mon, 25 Aug 2025 10:28:20 +0200
+Message-Id: <20250825-byeword-update-v3-0-947b841cdb29@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2aaouuvjthevybze"
-Content-Disposition: inline
-In-Reply-To: <20250822044024.4015-1-rafael.v.volkmer@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKQerGgC/2XOTQ6DIBAF4KsY1qUB/E1XvUfTBeJQSVQsINUY7
+ 16KXTR1+SZ535sVWTAKLLokKzLglVV6CCE9JUi0fHgAVk3IiBGWk4ISXC/w0qbB09hwBzjLckE
+ AeFnSBoXSaECqOYK3+54NPKfguv2Iam4BC933yl2SAWaHo12xHH0KrbJOmyU+5GlsfLfZ/7anm
+ GCZcVlXskhpKq9Cdx2vteHnMBA5z34Ilh4IFgghqRSk4gzogdi27Q2HCXpbJAEAAA==
+X-Change-ID: 20250610-byeword-update-445c0eea771d
+To: Yury Norov <yury.norov@gmail.com>, 
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+ Jaehoon Chung <jh80.chung@samsung.com>, 
+ Ulf Hansson <ulf.hansson@linaro.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Shreeya Patel <shreeya.patel@collabora.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Sandy Huang <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Nicolas Frattaroli <frattaroli.nicolas@gmail.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Shawn Lin <shawn.lin@rock-chips.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+ MyungJoo Ham <myungjoo.ham@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, Qin Jian <qinjian@cqplus1.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org, 
+ linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, linux-media@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org, 
+ linux-sound@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, linux-pci@vger.kernel.org, 
+ linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, llvm@lists.linux.dev, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+X-Mailer: b4 0.14.2
 
+This series was spawned by [1], where I was asked to move every instance
+of HIWORD_UPDATE et al that I could find to a common macro in the same
+series that I am introducing said common macro.
 
---2aaouuvjthevybze
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 1/6] pwm: tiehrpwm: use GENMASK()/FIELD_PREP() for
- register fields
-MIME-Version: 1.0
+The first patch of the series introduces a new header file,
+hw_bitfield.h, which contains two new macros: FIELD_PREP_WM16 and
+FIELD_PREP_WM16_CONST. The latter can be used in initializers.
 
-Hello Rafael,
+I've cheekily added the hw_bitfield.h header to the BITMAP API section
+of the MAINTAINERS file.
 
-On Fri, Aug 22, 2025 at 01:40:24AM -0300, Rafael V. Volkmer wrote:
-> Make register field definitions use GENMASK() and FIELD_PREP() across
-> AQCTL, AQCSFRC, and TBCTL. This clarifies bit layout, reduces hand-rolled
-> shift logic, and aligns the driver with common kernel patterns.
->=20
-> No functional change intended.
+This macro definition checks that the mask fits, and that the value fits
+in the mask. Like FIELD_PREP, it also shifts the value up to the mask,
+so turning off a bit does not require using the mask as a value. Masks
+are also required to be contiguous, like with FIELD_PREP.
 
-just a meta-comment without a deeper look into this series:
+For each definition of such a macro, the driver(s) that used it were
+evaluated for three different treatments:
+ - full conversion to the new macro, for cases where replacing the
+   implementation of the old macro wouldn't have worked, or where the
+   conversion was trivial. These are the most complex patches in this
+   series, as they sometimes have to pull apart definitions of masks
+   and values due to the new semantics, which require a contiguous
+   mask and shift the value for us.
+ - replacing the implementation of the old macro with an instance of the
+   new macro, done where I felt it made the patch much easier to review
+   because I didn't want to drop a big diff on people.
+ - skipping conversion entirely, usually because the mask is
+   non-constant and it's not trivial to make it constant. Sometimes an
+   added complication is that said non-constant mask is either used in a
+   path where runtime overhead may not be desirable, or in an
+   initializer.
 
-There is another series touching this driver at
-https://lore.kernel.org/linux-pwm/cover.1754927682.git.u.kleine-koenig@bayl=
-ibre.com/
-that would be great to get some testing and that I tend to apply first
-given that is contains also fixes. I guess you dind't base your series
-on top of that?
+Left out of conversion:
+ - drivers/mmc/host/sdhci-of-arasan.c: mask is non-constant.
+ - drivers/phy/rockchip/phy-rockchip-inno-csidphy.c: mask is
+   non-constant likely by way of runtime pointer dereferencing, even if
+   struct and members are made const.
+ - drivers/clk/rockchip/clk.h: way too many clock drivers use non-const
+   masks in the context of an initializer.
 
-Best regards
-Uwe
+I will not be addressing these 3 remaining users in this series, as
+implementing a runtime checked version on top of this and verifying that
+it doesn't cause undue overhead just for 3 stragglers is a bit outside
+the scope of wanting to get my RK3576 PWM series unblocked. Please have
+mercy.
 
---2aaouuvjthevybze
-Content-Type: application/pgp-signature; name="signature.asc"
+In total, I count 19 different occurrences of such a macro fixed out of
+22 I found. The vast majority of these patches have either undergone
+static testing to ensure the values end up the same during development,
+or have been verified to not break the device the driver is for at
+runtime. Only a handful are just compile-tested, and the individual
+patches remark which ones those are.
 
------BEGIN PGP SIGNATURE-----
+This took a lot of manual work as this wasn't really something that
+could be automated: code had to be refactored to ensure masks were
+contiguous, made sense to how the hardware actually works and to human
+readers, were constant, and that the code uses unshifted values.
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmisHmgACgkQj4D7WH0S
-/k7roQgAppnoXvecN/8m5PR11H4UdfLVaDm2QinOqwBRHXExK23ldkQ0364yRrHr
-lv+xiP+r58SWRAzOEzNvyO4Y8PctJpcQg74+0EbP9KdyhnsZbH0gnm3pYRaOKXdV
-G30P059lZoMNfORxNTo1JpOrG157cArSpTLl90C+UUWXfLKo2G8GHNNLl+LcpjeM
-0ukPSK8OxpUqj5B63tQNIJ6S9yYtjJ1v0g0tUr2lw17nWkezZ7kT74Kin12O7OxU
-+pJsg20zqt9mq3pdydfKOY532qWRHe3ZcvqHhoy7J+QHftyGr7ctCVaS19qVkmVL
-JfM6d2zicycXXtbaes7xLVTNJSkkQg==
-=Ew6H
------END PGP SIGNATURE-----
+Please note that I will not be resending the whole series again for
+purely subjective cosmetic changes. This series touches a lot of
+subsystems, which means many clashing tastes. You've had a week's notice
+to get any low-effort naming nitpicks out of the way after v1. If you as
+a maintainer are unhappy with a commit prefix or such, then you have my
+express permission to modify it while applying the patch, so that I
+don't need to bombard everyone else's inboxes again.
 
---2aaouuvjthevybze--
+https://lore.kernel.org/all/aD8hB-qJ4Qm6IFuS@yury/ [1]
+
+Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+---
+Changes in v3:
+- Rebased onto next-20250825
+- Link to v2: https://lore.kernel.org/r/20250623-byeword-update-v2-0-cf1fc08a2e1f@collabora.com
+
+Changes in v2:
+- rebase onto next-20250623. This involved solving two conflicts in
+  pcie-dw-rockchip.
+- move new macros to a new hw_bitfield.h, and rename them to
+  FIELD_PREP_WM16*. All patches in the series have been updated to use
+  the new names.
+- hw_bitfield.h: fix macro param re-use in FIELD_PREP_WM16. I don't know
+  if there's any way to do the same in FIELD_PREP_WM16_CONST, but the
+  bitfield.h FIELD_PREP functions don't do it for either, so I'm already
+  strictly better anyway.
+- hw_bitfield.h: remove whitespace after cast operators.
+- change newly introduced U literal suffixes to UL, as they are more
+  commonly used in the kernel.
+- pcie-dw-rockchip: remove the legacy mode flag, as it's unused.
+- Link to v1: https://lore.kernel.org/r/20250612-byeword-update-v1-0-f4afb8f6313f@collabora.com
+
+---
+Nicolas Frattaroli (20):
+      bitmap: introduce hardware-specific bitfield operations
+      mmc: dw_mmc-rockchip: switch to FIELD_PREP_WM16 macro
+      soc: rockchip: grf: switch to FIELD_PREP_WM16_CONST macro
+      media: synopsys: hdmirx: replace macros with bitfield variants
+      drm/rockchip: lvds: switch to FIELD_PREP_WM16 macro
+      phy: rockchip-emmc: switch to FIELD_PREP_WM16 macro
+      drm/rockchip: dsi: switch to FIELD_PREP_WM16* macros
+      drm/rockchip: vop2: switch to FIELD_PREP_WM16 macro
+      phy: rockchip-samsung-dcphy: switch to FIELD_PREP_WM16 macro
+      drm/rockchip: dw_hdmi_qp: switch to FIELD_PREP_WM16 macro
+      drm/rockchip: inno-hdmi: switch to FIELD_PREP_WM16 macro
+      phy: rockchip-usb: switch to FIELD_PREP_WM16 macro
+      drm/rockchip: dw_hdmi: switch to FIELD_PREP_WM16* macros
+      ASoC: rockchip: i2s-tdm: switch to FIELD_PREP_WM16_CONST macro
+      net: stmmac: dwmac-rk: switch to FIELD_PREP_WM16 macro
+      PCI: rockchip: Switch to FIELD_PREP_WM16* macros
+      PCI: dw-rockchip: Switch to FIELD_PREP_WM16 macro
+      PM / devfreq: rockchip-dfi: switch to FIELD_PREP_WM16 macro
+      clk: sp7021: switch to FIELD_PREP_WM16 macro
+      phy: rockchip-pcie: switch to FIELD_PREP_WM16 macro
+
+ MAINTAINERS                                        |   1 +
+ drivers/clk/clk-sp7021.c                           |  22 ++--
+ drivers/devfreq/event/rockchip-dfi.c               |  27 ++--
+ drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c    | 142 ++++++++++-----------
+ drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c        |  80 ++++++------
+ drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c     |  68 +++++-----
+ drivers/gpu/drm/rockchip/inno_hdmi.c               |  11 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_vop2.h       |   1 -
+ drivers/gpu/drm/rockchip/rockchip_lvds.h           |  21 +--
+ drivers/gpu/drm/rockchip/rockchip_vop2_reg.c       |  15 ++-
+ .../media/platform/synopsys/hdmirx/snps_hdmirx.h   |   6 +-
+ drivers/mmc/host/dw_mmc-rockchip.c                 |   9 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c     |   3 +-
+ drivers/pci/controller/dwc/pcie-dw-rockchip.c      |  42 +++---
+ drivers/pci/controller/pcie-rockchip.h             |  35 ++---
+ drivers/phy/rockchip/phy-rockchip-emmc.c           |   3 +-
+ drivers/phy/rockchip/phy-rockchip-pcie.c           |  70 +++-------
+ drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c  |  11 +-
+ drivers/phy/rockchip/phy-rockchip-usb.c            |  51 +++-----
+ drivers/soc/rockchip/grf.c                         |  35 +++--
+ include/linux/hw_bitfield.h                        |  62 +++++++++
+ sound/soc/rockchip/rockchip_i2s_tdm.h              |   4 +-
+ 22 files changed, 366 insertions(+), 353 deletions(-)
+---
+base-commit: 0c5416a62c0e4df1b3f79b5c74c03cd48df51357
+change-id: 20250610-byeword-update-445c0eea771d
+
+Best regards,
+-- 
+Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+
 
