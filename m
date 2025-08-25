@@ -1,253 +1,215 @@
-Return-Path: <linux-kernel+bounces-784769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11521B340CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:33:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B63D7B340CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:34:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5C00189CDE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:34:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 714543ADF48
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:34:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E19CA927;
-	Mon, 25 Aug 2025 13:33:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9003627281E;
+	Mon, 25 Aug 2025 13:34:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="Lpe/1t5Y"
-Received: from relay11.grserver.gr (relay11.grserver.gr [78.46.171.57])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="nSoNGub+"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2E422C355
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 13:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.171.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212E11A9F89;
+	Mon, 25 Aug 2025 13:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756128813; cv=none; b=ksI6tlnjF8LNyimyUYb1eo6VIKpJIe1brPPJwcTxdPEVbzkZgtaZSiiRvZwCeVeEs/7jAyitpmw0DXA4SBkH0rWbs8fddXRjf1Mu/+2cQSSzHNivaR4Nu7R50SIHNFsOjb0RJqqH3OGLVdRzD2qUIIUUtxhE/aleydudz0OAZ60=
+	t=1756128861; cv=none; b=VlH6KHZZv739hrFZA+uwKPMgCf/6ET2GDoQt2ip2gzxjVr4K/CrU96iA8KEaj5Pf1AfJ6KGDLD2JIW7T8FX2bG2VlxRuNWMdFLs7WwQe2SCpNc9TvQIjmGnYxQBFpAGyBxWVNdxnkJq03CghNDWTcf9azLyZATL092l0qLM4MDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756128813; c=relaxed/simple;
-	bh=JknjaLBqAaY3J5C7MraGzNMj05jNvoV0YtiEYTFTBxc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=owJMh3Wwv/tK/iKGHvq12KgXRArMJ93Qe6RLMnpj2UYa6zypdbcv+RzxtJcwi6f9fMFnepVdRnz5dxOXjyuHXGzWNVlJowsCGlHZ1JBgvLFFxRXE9E4GnocfEg42RVdLDrvcR+Q32NcFTxnvYMDDRWkx+tJRq0Anq6ylHiDSgZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=Lpe/1t5Y; arc=none smtp.client-ip=78.46.171.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from relay11 (localhost.localdomain [127.0.0.1])
-	by relay11.grserver.gr (Proxmox) with ESMTP id D9CB1C66D0
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 16:33:20 +0300 (EEST)
-Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by relay11.grserver.gr (Proxmox) with ESMTPS id E7F12C66DC
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 16:33:19 +0300 (EEST)
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	by linux3247.grserver.gr (Postfix) with ESMTPSA id 661101FE3B3
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 16:33:19 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1756128799;
-	bh=1Ayp1Heh/2fLbjXf4cHFPifxx1SmJHDUVlKI1ZaQ5qY=;
-	h=Received:From:Subject:To;
-	b=Lpe/1t5YedcOOlKuN81CkTBqoa++Soq4lzffb/IKSQiZWRnUNHl7LfLcdGiN9xaMN
-	 9rRFHiAiNC/QpUKIMxJ6DLdkF9aZ8byR1uaBSFbzIktMy+d3cCoqN/WwS1tdqhO9gi
-	 QtpstsaxlXSpmoJgxkQRFOgzZllonjAttWPqv+xTV/MOpZjVJhDPIy/BD6zYNA57UA
-	 dUrOcIed4IVnmbePtUqa4CQpzRwWb5/GQRNp6teE02ths0a2KR96oPduiHW0AZVG5x
-	 ABjGmQm6VhQdrScDvsbzfhlgnLWXtEbc7w+dE9iTWk0LhKWkuv7tRTuXJTOX8Xqt0c
-	 ZbaqfOnEhCxBQ==
-Authentication-Results: linux3247.grserver.gr;
-        spf=pass (sender IP is 209.85.208.180) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f180.google.com
-Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
-Received: by mail-lj1-f180.google.com with SMTP id
- 38308e7fff4ca-3366be380e9so10915611fa.1
-        for <linux-kernel@vger.kernel.org>;
- Mon, 25 Aug 2025 06:33:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1;
- AJvYcCWDrL/8OJsTw9x21R3AVEkDPgHUrzyUARISQHOmC8fLcD305nfYcsbUgFjD4xjlg7JkTb0WhKQxkf9EWo0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxbe754Mn/fvY5OHLOykhMGqvI+WOp8vo26LdlfcgK7Bf3VT9my
-	qgOD6PFeH4cR5QapiNXAs+kqqJkPPwEgbl7dMn7QpZ1j4Bt30yku01YGmhPnUGNadPrQ153OL2E
-	sPaxbU3q2bNRLdI6sGon6fYH0ZcnsO+8=
-X-Google-Smtp-Source: 
- AGHT+IFTQfIh9tbdPxsjk001FQZfoh97ESjB8FWEr47zbRTqWm4AAqkvYDTTSYMKso5dttn4oDcVRBuiUtJw6ZNYxrc=
-X-Received: by 2002:a2e:ae10:0:b0:334:97:1105 with SMTP id
- 38308e7fff4ca-33650f8dc5cmr31975141fa.32.1756128798796;
- Mon, 25 Aug 2025 06:33:18 -0700 (PDT)
+	s=arc-20240116; t=1756128861; c=relaxed/simple;
+	bh=CCGJkYhHv6r53MD0QIkrv3WyoU2uM4jlc1ErpFQQMIg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oqFIz4PpnlzpHf2PM+zV92GVKp0hUENrmJOgpAW6CNt6LFJhHr473kTQKpaoi7GEoIyWb7eMh8yikCXHzis+M90W5D+7rxemOxGbK7+4pV8tpslYrESjs8W4+xp2PFkR9vSmjjINswpu3xDo2NMsdr9oLk2OvhM+d5wUO2FZReg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=nSoNGub+; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57PBD2cP019425;
+	Mon, 25 Aug 2025 13:34:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=33mw3k
+	9+Z7/3mpLUSaMOxp6CbqWVf4Vsc6++NrhwCSo=; b=nSoNGub+I/6+7orQEkiNXn
+	aUW+sOmvDRD5RlZki1ebFp9FYqLI/Toeb/ucedSF8xr0E4Lw5z6Msw+6p7fjt3r0
+	oNCOztHuqVBj+zu54I+iy4TQN5BHHS2cwjdatmLWg+Tl+vYVVbMWjUMwEE8HBq+B
+	6tytZfts4JMhY+tSSoudkCc4EyZgxAdY+xaBDXAUNLSnuv8XtkaO4PwQcZET8TAR
+	RjToHem5lKz59wrIbMCWSoBj+E0Tyr9bC8rd2QntBgJwd1gahkx0yQcSJFJYJwQW
+	5NcxIV1uxI3j7EXuZftzOHP6yAzZo3/DC+z1XjGFJn8j0ZLCBNqi/HwFxk/zzAVQ
+	==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48q557s701-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Aug 2025 13:34:16 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57PD93re007451;
+	Mon, 25 Aug 2025 13:34:15 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 48qqyu67xp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Aug 2025 13:34:15 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57PDYCPA20316726
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 25 Aug 2025 13:34:12 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 171A320043;
+	Mon, 25 Aug 2025 13:34:12 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4FFD320040;
+	Mon, 25 Aug 2025 13:34:11 +0000 (GMT)
+Received: from p-imbrenda (unknown [9.111.17.238])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with SMTP;
+	Mon, 25 Aug 2025 13:34:11 +0000 (GMT)
+Date: Mon, 25 Aug 2025 15:34:07 +0200
+From: Claudio Imbrenda <imbrenda@linux.ibm.com>
+To: Thomas Huth <thuth@redhat.com>
+Cc: Janosch Frank <frankja@linux.ibm.com>, kvm@vger.kernel.org,
+        Peter Xu
+ <peterx@redhat.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev
+ <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: s390: Fix access to unavailable adapter indicator
+ pages during postcopy
+Message-ID: <20250825153407.5337aaa6@p-imbrenda>
+In-Reply-To: <20250821152309.847187-1-thuth@redhat.com>
+References: <20250821152309.847187-1-thuth@redhat.com>
+Organization: IBM
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250824085351.454619-1-lkml@antheas.dev>
- <CADnq5_MEhMha47V25SK4cZkd8TLcizR_y0si2n9jSDjJTXeoRQ@mail.gmail.com>
-In-Reply-To: 
- <CADnq5_MEhMha47V25SK4cZkd8TLcizR_y0si2n9jSDjJTXeoRQ@mail.gmail.com>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Mon, 25 Aug 2025 15:33:06 +0200
-X-Gmail-Original-Message-ID: 
- <CAGwozwF=UKhG0HU_cxaY8957rscY=W4_VK+z==3vkKJJWZehzQ@mail.gmail.com>
-X-Gm-Features: Ac12FXwrppHPQ4K0JzNJk8TRd-B0XuTfCrXGZgdamz21UV6nQJlr5gtTJIyFJNI
-Message-ID: 
- <CAGwozwF=UKhG0HU_cxaY8957rscY=W4_VK+z==3vkKJJWZehzQ@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] drm/amdgpu/vpe: increase VPE_IDLE_TIMEOUT to fix
- hang on Strix Halo
-To: Alex Deucher <alexdeucher@gmail.com>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Harry Wentland <harry.wentland@amd.com>,
- Rodrigo Siqueira <siqueira@igalia.com>,
-	Mario Limonciello <mario.limonciello@amd.com>, Peyton Lee <peytolee@amd.com>,
- Lang Yu <lang.yu@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-PPP-Message-ID: 
- <175612879969.1319580.17655370381837295221@linux3247.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: dDvztKvdQcyIY1lgd-Kkk-12QFPLgLgS
+X-Proofpoint-ORIG-GUID: dDvztKvdQcyIY1lgd-Kkk-12QFPLgLgS
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAyMSBTYWx0ZWRfX5M9SoNFqepBS
+ FGGj8TizaT4m7vmTd/2jynReafkxR+GUmeESSL2tFW6+cMIzaWVgZRJ8ZjHckjuISROvMAL+wSo
+ gwi/tnPTvZp87o0m/YLMWDC+voFB/+GiiW+h8g4+T7e0isLDmp1nM6+GyjuYdfxxoDaIGg00yTD
+ UaQi5/Die8KKK3zoBQwp5wCdXglUAPLT7PBTGP1ueWkBYDvIHYLTarqFKdY6rFjVKSDYcbypJzp
+ 61CEotfB/o8rypLkK5+QROwJn+eB0Zip9eZ1MpVuXY1ut7SxjjtOQRp+NecHEu/troUiwyhDph/
+ CLbKgODCzWgQPQ4Al3i3DhqDeJ6TFScjxSvvEOXt+1ZulBNnIyIqjPVu306HEQ9mMSUNC+8xglP
+ tsMyCyLq
+X-Authority-Analysis: v=2.4 cv=A8ZsP7WG c=1 sm=1 tr=0 ts=68ac6658 cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=20KFwNOVAAAA:8 a=VnNF1IyMAAAA:8
+ a=quq3VhT3AGQ69vMGiI4A:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-25_06,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 adultscore=0 priorityscore=1501 suspectscore=0 clxscore=1015
+ spamscore=0 impostorscore=0 malwarescore=0 bulkscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508230021
 
-On Mon, 25 Aug 2025 at 15:20, Alex Deucher <alexdeucher@gmail.com> wrote:
->
-> On Mon, Aug 25, 2025 at 3:13=E2=80=AFAM Antheas Kapenekakis <lkml@antheas=
-.dev> wrote:
-> >
-> > On the Asus Z13 2025, which uses a Strix Halo platform, around 8% of th=
-e
-> > suspend resumes result in a soft lock around 1 second after the screen
-> > turns on (it freezes). This happens due to power gating VPE when it is
-> > not used, which happens 1 second after inactivity.
-> >
-> > Specifically, the VPE gating after resume is as follows: an initial
-> > ungate, followed by a gate in the resume process. Then,
-> > amdgpu_device_delayed_init_work_handler with a delay of 2s is scheduled
-> > to run tests, one of which is testing VPE in vpe_ring_test_ib. This
-> > causes an ungate, After that test, vpe_idle_work_handler is scheduled
-> > with VPE_IDLE_TIMEOUT (1s).
-> >
-> > When vpe_idle_work_handler runs and tries to gate VPE, it causes the
-> > SMU to hang and partially freezes half of the GPU IPs, with the thread
-> > that called the command being stuck processing it.
-> >
-> > Specifically, after that SMU command tries to run, we get the following=
-:
-> >
-> > snd_hda_intel 0000:c4:00.1: Refused to change power state from D0 to D3=
-hot
-> > ...
-> > xhci_hcd 0000:c4:00.4: Refused to change power state from D0 to D3hot
-> > ...
-> > amdgpu 0000:c4:00.0: amdgpu: SMU: I'm not done with your previous comma=
-nd: SMN_C2PMSG_66:0x00000032 SMN_C2PMSG_82:0x00000000
-> > amdgpu 0000:c4:00.0: amdgpu: Failed to power gate VPE!
-> > [drm:vpe_set_powergating_state [amdgpu]] *ERROR* Dpm disable vpe failed=
-, ret =3D -62.
-> > amdgpu 0000:c4:00.0: [drm] *ERROR* [CRTC:93:crtc-0] flip_done timed out
-> > amdgpu 0000:c4:00.0: amdgpu: SMU: I'm not done with your previous comma=
-nd: SMN_C2PMSG_66:0x00000032 SMN_C2PMSG_82:0x00000000
-> > amdgpu 0000:c4:00.0: amdgpu: Failed to power gate JPEG!
-> > [drm:jpeg_v4_0_5_set_powergating_state [amdgpu]] *ERROR* Dpm disable jp=
-eg failed, ret =3D -62.
-> > amdgpu 0000:c4:00.0: amdgpu: SMU: I'm not done with your previous comma=
-nd: SMN_C2PMSG_66:0x00000032 SMN_C2PMSG_82:0x00000000
-> > amdgpu 0000:c4:00.0: amdgpu: Failed to power gate VCN instance 0!
-> > [drm:vcn_v4_0_5_stop [amdgpu]] *ERROR* Dpm disable uvd failed, ret =3D =
--62.
-> > thunderbolt 0000:c6:00.5: 0: timeout reading config space 1 from 0xd3
-> > thunderbolt 0000:c6:00.5: 0: timeout reading config space 2 from 0x5
-> > thunderbolt 0000:c6:00.5: Refused to change power state from D0 to D3ho=
-t
-> > amdgpu 0000:c4:00.0: [drm] *ERROR* [CRTC:97:crtc-1] flip_done timed out
-> > amdgpu 0000:c4:00.0: amdgpu: SMU: I'm not done with your previous comma=
-nd: SMN_C2PMSG_66:0x00000032 SMN_C2PMSG_82:0x00000000
-> > amdgpu 0000:c4:00.0: amdgpu: Failed to power gate VCN instance 1!
-> >
-> > In addition to e.g., kwin errors in journalctl. 0000:c4.00.0 is the GPU=
-.
-> > Interestingly, 0000:c4.00.6, which is another HDA block, 0000:c4.00.5,
-> > a PCI controller, and 0000:c4.00.2, resume normally. 0x00000032 is the
-> > PowerDownVpe(50) command which is the common failure point in all
-> > failed resumes.
-> >
-> > On a normal resume, we should get the following power gates:
-> > amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownVpe(50) param: =
-0x00000000, resp: 0x00000001
-> > amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownJpeg0(33) param=
-: 0x00000000, resp: 0x00000001
-> > amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownJpeg1(38) param=
-: 0x00010000, resp: 0x00000001
-> > amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownVcn1(4) param: =
-0x00010000, resp: 0x00000001
-> > amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownVcn0(6) param: =
-0x00000000, resp: 0x00000001
-> > amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerUpVcn0(7) param: 0x=
-00000000, resp: 0x00000001
-> > amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerUpVcn1(5) param: 0x=
-00010000, resp: 0x00000001
-> > amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerUpJpeg0(34) param: =
-0x00000000, resp: 0x00000001
-> > amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerUpJpeg1(39) param: =
-0x00010000, resp: 0x00000001
-> >
-> > To fix this, increase VPE_IDLE_TIMEOUT to 2 seconds. This increases
-> > reliability from 4-25 suspends to 200+ (tested) suspends with a cycle
-> > time of 12s sleep, 8s resume. The suspected reason here is that 1s that
-> > when VPE is used, it needs a bit of time before it can be gated and
-> > there was a borderline delay before, which is not enough for Strix Halo=
-.
-> > When the VPE is not used, such as on resume, gating it instantly does
-> > not seem to cause issues.
->
-> This doesn't make much sense.  The VPE idle timeout is arbitrary.  The
-> VPE idle work handler checks to see if the block is idle before it
-> powers gates the block. If it's not idle, then the delayed work is
-> rescheduled so changing the timing should not make a difference.  We
-> are no powering down VPE while it still has active jobs.  It sounds
-> like there is some race condition somewhere else.
+On Thu, 21 Aug 2025 17:23:09 +0200
+Thomas Huth <thuth@redhat.com> wrote:
 
-On resume, the vpe is ungated and gated instantly, which does not
-cause any crashes, then the delayed work is scheduled to run two
-seconds later. Then, the tests run and finish, which start the gate
-timer. After the timer lapses and the kernel tries to gate VPE, it
-crashes. I logged all SMU commands and there is no difference between
-the ones in a crash and not, other than the fact the VPE gate command
-failed. Which becomes apparent when the next command runs. I will also
-note that until the idle timer lapses, the system is responsive
+> From: Thomas Huth <thuth@redhat.com>
+> 
+> When you run a KVM guest with vhost-net and migrate that guest to
+> another host, and you immediately enable postcopy after starting the
+> migration, there is a big chance that the network connection of the
+> guest won't work anymore on the destination side after the migration.
+> 
+> With a debug kernel v6.16.0, there is also a call trace that looks
+> like this:
+> 
+>  FAULT_FLAG_ALLOW_RETRY missing 881
+>  CPU: 6 UID: 0 PID: 549 Comm: kworker/6:2 Kdump: loaded Not tainted 6.16.0 #56 NONE
+>  Hardware name: IBM 3931 LA1 400 (LPAR)
+>  Workqueue: events irqfd_inject [kvm]
+>  Call Trace:
+>   [<00003173cbecc634>] dump_stack_lvl+0x104/0x168
+>   [<00003173cca69588>] handle_userfault+0xde8/0x1310
+>   [<00003173cc756f0c>] handle_pte_fault+0x4fc/0x760
+>   [<00003173cc759212>] __handle_mm_fault+0x452/0xa00
+>   [<00003173cc7599ba>] handle_mm_fault+0x1fa/0x6a0
+>   [<00003173cc73409a>] __get_user_pages+0x4aa/0xba0
+>   [<00003173cc7349e8>] get_user_pages_remote+0x258/0x770
+>   [<000031734be6f052>] get_map_page+0xe2/0x190 [kvm]
+>   [<000031734be6f910>] adapter_indicators_set+0x50/0x4a0 [kvm]
+>   [<000031734be7f674>] set_adapter_int+0xc4/0x170 [kvm]
+>   [<000031734be2f268>] kvm_set_irq+0x228/0x3f0 [kvm]
+>   [<000031734be27000>] irqfd_inject+0xd0/0x150 [kvm]
+>   [<00003173cc00c9ec>] process_one_work+0x87c/0x1490
+>   [<00003173cc00dda6>] worker_thread+0x7a6/0x1010
+>   [<00003173cc02dc36>] kthread+0x3b6/0x710
+>   [<00003173cbed2f0c>] __ret_from_fork+0xdc/0x7f0
+>   [<00003173cdd737ca>] ret_from_fork+0xa/0x30
+>  3 locks held by kworker/6:2/549:
+>   #0: 00000000800bc958 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work+0x7ee/0x1490
+>   #1: 000030f3d527fbd0 ((work_completion)(&irqfd->inject)){+.+.}-{0:0}, at: process_one_work+0x81c/0x1490
+>   #2: 00000000f99862b0 (&mm->mmap_lock){++++}-{3:3}, at: get_map_page+0xa8/0x190 [kvm]
+> 
+> The "FAULT_FLAG_ALLOW_RETRY missing" indicates that handle_userfaultfd()
+> saw a page fault request without ALLOW_RETRY flag set, hence userfaultfd
+> cannot remotely resolve it (because the caller was asking for an immediate
+> resolution, aka, FAULT_FLAG_NOWAIT, while remote faults can take time).
+> With that, get_map_page() failed and the irq was lost.
+> 
+> We should not be strictly in an atomic environment here and the worker
+> should be sleepable (the call is done during an ioctl from userspace),
+> so we can allow adapter_indicators_set() to just sleep waiting for the
+> remote fault instead.
+> 
+> Link: https://issues.redhat.com/browse/RHEL-42486
+> Signed-off-by: Peter Xu <peterx@redhat.com>
+> [thuth: Assembled patch description and fixed some cosmetical issues]
+> Signed-off-by: Thomas Huth <thuth@redhat.com>
 
-Since the VPE is ungated to run the tests, I assume that in my setup
-it is not used close to resume.
+Reviewed-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
 
-Antheas
-
-> Alex
->
-> >
-> > Fixes: 5f82a0c90cca ("drm/amdgpu/vpe: enable vpe dpm")
-> > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> > ---
-> >  drivers/gpu/drm/amd/amdgpu/amdgpu_vpe.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vpe.c b/drivers/gpu/drm/=
-amd/amdgpu/amdgpu_vpe.c
-> > index 121ee17b522b..24f09e457352 100644
-> > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vpe.c
-> > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vpe.c
-> > @@ -34,8 +34,8 @@
-> >  /* VPE CSA resides in the 4th page of CSA */
-> >  #define AMDGPU_CSA_VPE_OFFSET  (4096 * 3)
-> >
-> > -/* 1 second timeout */
-> > -#define VPE_IDLE_TIMEOUT       msecs_to_jiffies(1000)
-> > +/* 2 second timeout */
-> > +#define VPE_IDLE_TIMEOUT       msecs_to_jiffies(2000)
-> >
-> >  #define VPE_MAX_DPM_LEVEL                      4
-> >  #define FIXED1_8_BITS_PER_FRACTIONAL_PART      8
-> >
-> > base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
-> > --
-> > 2.50.1
-> >
-> >
->
+> ---
+>  Note: Instructions for reproducing the bug can be found in the ticket here:
+>  https://issues.redhat.com/browse/RHEL-42486?focusedId=26661116#comment-26661116
+> 
+>  arch/s390/kvm/interrupt.c | 15 +++++++++++----
+>  1 file changed, 11 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
+> index 60c360c18690f..dcce826ae9875 100644
+> --- a/arch/s390/kvm/interrupt.c
+> +++ b/arch/s390/kvm/interrupt.c
+> @@ -2777,12 +2777,19 @@ static unsigned long get_ind_bit(__u64 addr, unsigned long bit_nr, bool swap)
+>  
+>  static struct page *get_map_page(struct kvm *kvm, u64 uaddr)
+>  {
+> +	struct mm_struct *mm = kvm->mm;
+>  	struct page *page = NULL;
+> +	int locked = 1;
+> +
+> +	if (mmget_not_zero(mm)) {
+> +		mmap_read_lock(mm);
+> +		get_user_pages_remote(mm, uaddr, 1, FOLL_WRITE,
+> +				      &page, &locked);
+> +		if (locked)
+> +			mmap_read_unlock(mm);
+> +		mmput(mm);
+> +	}
+>  
+> -	mmap_read_lock(kvm->mm);
+> -	get_user_pages_remote(kvm->mm, uaddr, 1, FOLL_WRITE,
+> -			      &page, NULL);
+> -	mmap_read_unlock(kvm->mm);
+>  	return page;
+>  }
+>  
 
 
