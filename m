@@ -1,237 +1,226 @@
-Return-Path: <linux-kernel+bounces-784379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E6C2B33AAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:22:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E77AB33AAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:22:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D9FC1B2583D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:21:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C59F484149
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A175286D50;
-	Mon, 25 Aug 2025 09:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE3762BDC35;
+	Mon, 25 Aug 2025 09:22:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JRcRAPC6";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LN3a27CP"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Ktg4b7N5"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCFFA153BED;
-	Mon, 25 Aug 2025 09:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D8B298994
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 09:22:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756113656; cv=none; b=PNdMKPch6hqB0/v0ja+pudZSX9PZQX+YWcxGeAxh0poGvie0g7oK3f9T1qFcGIH+xY849BXwW0CfcyWUqaRo7ZojQsLiLKo8D4yXZjJ6GBO+qQchbEMxOEVgLWmgmzoHcDzMLk1zv+23vxIBvXQEj6hV84XDIphdHBRZaamDsW8=
+	t=1756113731; cv=none; b=qv1Q83vXwGd/IFmcjJsxXU+GTapzRDxalaeumSut7h9/Sg1jaLTPXsgHDfrPPR3AwzGXoFBfynsU1PL1tBLMTuL+zt6w8kvkG7IO7J80ncza6dtZ6vmVm1PJ31xY/kNM4Lj2bQtoBe7OlbC5YO0fYrS7nP6+wQBZxeXRH8AAfIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756113656; c=relaxed/simple;
-	bh=/UnZzcEBOG8IbUNq37NCuj1WryHrBMMhoM8FotSnrVI=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=FCD4uqxn1DSqm/baCfXvoweGZbJPXTNAoww6twgOGUPvRKHGrFqfGunyn/131mYpzzVU5dlGUtFXHSFkHpdCz6yzlw6wNR4sSEP9GF9cvo/wctv/RQAp6E6u75IZfrFJZ2gcF8l/Yk2K98StA23R3j7ZswHGiy+7beZzzF+pV30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JRcRAPC6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LN3a27CP; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 25 Aug 2025 09:20:48 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756113652;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A1Mo1Lorz/zCWI+Q67uVMdqU1QlYPmUJoZPKIFcW8Cc=;
-	b=JRcRAPC6Pv9GAy/vbtj4TPJnIelS8xAMyfnOYYvst2SOBF4Rbx+uD+avp5x3+FvSe/sn82
-	wKvpYEgu2kZe5nMBUKDyNUWeYhjHmZtYJvDjeycMJ0YICwvZqlxYl9rAWGiDkPWyxY+9Eo
-	TWdcl6xUQmIqaGY9bk5sxIi6XatGhL1vSMMvuFIySmbAqVM7QIQ1o9ArOruK+ixjTttsH0
-	stEJhI0p/PaideTqCeUKJnd6VYsfp4oGnBZ655zmS+3ASbwD7+pYm8pk1MzkPJ1RdKnseb
-	Xcr+vatNWrk3Aj35AAgGjhu1RJmwIuehbUrE82S3YTJWUAVcbW31JKmds9G8aw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756113652;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A1Mo1Lorz/zCWI+Q67uVMdqU1QlYPmUJoZPKIFcW8Cc=;
-	b=LN3a27CPARZ6phedqnwLeHM0DwzbnmbuYIPImuojL4lEZRpzOQhJfC2qBR0tp1pIF8zP5a
-	I1Vw/8gVF6xAskAQ==
-From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/apic] x86/apic: Make the ISR clearing sane
-Cc: Thomas Gleixner <tglx@linutronix.de>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <871ppwih4s.ffs@tglx>
-References: <871ppwih4s.ffs@tglx>
+	s=arc-20240116; t=1756113731; c=relaxed/simple;
+	bh=9bZNwRqzl8AWUYabscTcxNnDfMPP4awyOttaTxXW8yY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IlicirRobTvFZTVis3FwhRmnhwjq84wLnMX2+8EBMd6AQ5aZTf1T8QcNq0BYROBZ36Z5EUGzfYcXNgOE+Q1dKtviGX2jzlp+97b2nouYkBJBqHvDFRKLIYbBLkttEEWg+MQBJSeQr86ftGj5rhIdXBtYbLdP2pO0df21Uz+jsRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Ktg4b7N5; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57P8UqAr025091
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 09:22:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=uZhYIuZX4ATTadEC4VVuga/g
+	/sTYW1yNnMJwGqSFpK8=; b=Ktg4b7N5GiovvSel0DzO72aB5pzfkvic3nIrgaPJ
+	7d+zCHi/+NJ/DBhw4j+sawTKexH/VL/gLLN0XTo6m/OfdUtQtAzOzxFDjH7sMGES
+	OYee2Ct0Tvxq3sMUxVdUHpr5CKlB3oca9wf0rrU45ulfemQnA68h+Ryb5vYz2tVY
+	9sUKyZlF0jtDagdHlm6vvbKJogDm2ng2YeFkmFbddfDLADOJfKD0h2n7lfIkJb/1
+	yGcKiN0qTBSZazOBWMz6ZALRaYtx8BpM1J+P10eA9c7zVmFwwiq0ay+/YXKulY49
+	stjDXMNqTh6Krh46qHhsWYAmcDSwUBdwTq5KnPPG7xOonw==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5um4kdd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 09:22:08 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7e8704e0264so1087684185a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 02:22:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756113727; x=1756718527;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uZhYIuZX4ATTadEC4VVuga/g/sTYW1yNnMJwGqSFpK8=;
+        b=fKbKh40VDVJtUCgzbf0r4xSQHY3gtJJgMayjWhSxl2vQGXfFGGWu8WkRB7m8MUJFLz
+         9RYjkzeTqiCQmXHk7CEW30ruVB676O7sr7VzmGS2CpfOxsTJsEV/hmKd70CUoAAjKgBG
+         laCau8tqkYrbPx/RmUdo5lMV/ivOFHNUWmDFgnI7ocQRcgDek728368VG4NDSV7zzVR7
+         rU+iJp+N/ls6Xw0DEVMX6sEWswC5i9P9iInqepFabQe3P1sPqJnARRnZWgv/j48NtPae
+         0YbtQ3TU8eQG7kiGqC2QsVaSuyuxc5PUdwDeW0QpZReyeIpF2LwqOzSI4NKjejPRh7vV
+         STKg==
+X-Forwarded-Encrypted: i=1; AJvYcCVvAQjbmdO4WHh10vlBIWHFT8UjArXq0GcUx4zvazl0kSkay+oNwC7muuZBO5QoPURs+jDWRswaWQZGtHI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfJCUsxfB8U+q4iOWqzS5SsoHHlxcThtXHkFlfKcesvHd5K3wF
+	6F8SMO3CkpM9g+H0f1Hb0Gcmgj8Xcv4N9dQJMAHWfQzSEiW4TEV1bVosz0uVsf85IWhcyGsGy25
+	o2TMyTFmMnbDEocgoAATDxGweHM+tEpO07gTgqPaLRg9q5obOoO9dWqbYlvi2TEJZlHE=
+X-Gm-Gg: ASbGncsvdO6rAtdFcEy9MF65keKMN3s6uFEdSOsVzwNhPIlOFT2wb51JLxp5b7d27Yd
+	px5GvfiEa67/SPD1H7F+DfZ/nGrBbuggIdMAQO7fSZj4Xstw0NJqRL+uY1DL024JUkCFSqpxMvs
+	pLt7YJClZ4hKVjZiBbc+oWTXcFNDd9YjYFbBIlIidpXcrdo18meCg6Kz9s9dMdfm40z3BtxYphY
+	5AP6VYaYv8ml8ywDh3ofIyo4AVzhk160bRnLmuItT09UKedQVVLRl5gt82PygcP8W3ofha43uUm
+	qdsttdtha58U8B3FikzdpUQS8HqNqR8GtQj2qJaKCAbQJmi8WjJ/ZsFSasWDleb+W2QQ3ZWISHx
+	K/QA12QKIYHm5b/OtI24owOZJvgs8pBBHrewE00NgnaVfnPijFxSU
+X-Received: by 2002:ad4:5cc9:0:b0:707:4f43:eed6 with SMTP id 6a1803df08f44-70d97251887mr132407976d6.19.1756113727138;
+        Mon, 25 Aug 2025 02:22:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE3V/rbRFQBwL/w5qM/vQJMILCKP6viO2gUQG9twx32eTEgRqBXSWLUWk0D0/yPB9lV7rSK9w==
+X-Received: by 2002:ad4:5cc9:0:b0:707:4f43:eed6 with SMTP id 6a1803df08f44-70d97251887mr132407726d6.19.1756113726479;
+        Mon, 25 Aug 2025 02:22:06 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f39de534bsm1393060e87.127.2025.08.25.02.22.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Aug 2025 02:22:04 -0700 (PDT)
+Date: Mon, 25 Aug 2025 12:22:03 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Brian Norris <briannorris@chromium.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>,
+        Odelu Kukatla <quic_okukatla@quicinc.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>, cros-qcom-dts-watchers@chromium.org
+Subject: Re: [RFC PATCH] arm64: dts: qcom: sc7280: Drop aggre{1,2}_noc QOS
+ clocks on Herobrine
+Message-ID: <3i7pdzata6gxsc3svb3eygubfdfmnetlekxdd25bb4ljkdrlh7@bvufiwmdusqz>
+References: <20250823123718.RFC.1.Idebf1d8bd8ff507462fef9dc1ff47e84c01e9b60@changeid>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175611364865.1420.9416920361326381558.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250823123718.RFC.1.Idebf1d8bd8ff507462fef9dc1ff47e84c01e9b60@changeid>
+X-Authority-Analysis: v=2.4 cv=VtIjA/2n c=1 sm=1 tr=0 ts=68ac2b40 cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=cm27Pg_UAAAA:8 a=XzfyJc1qPjP2x_x8poUA:9 a=CjuIK1q_8ugA:10
+ a=bTQJ7kPSJx9SKPbeHEYW:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMiBTYWx0ZWRfX/Ysazlfk5TX7
+ Q0o3xZxn9zTjKWwl95ks8TZKOFePfuTEGsHCtr2guj7+8bK0cveAJp4uIln5xzKag3K1AxPZOaw
+ a8pbL65qaEPibEaYsg0LoD4w2YnlE/W0IzOo3Yh7DGi/MgmNtvAkdmJU2HOjPPtPbzqmAYGDPm5
+ YC3D+1IQDHk2McunmImHRYQpENkOLrwWA14vwmwAyRP89EhXas8sGJuUJz/c+gPm6nd0FY23kq9
+ u3CBGWMtexQw3OgdAJzpKbFX/WqX8z/WF0U2u255V+/dbIZOL0QhrbvgbnjNu0uIw3wknZ/pKX7
+ KG9lAR/TJ0n7HFrpVtCKUc0896qpYclTwebbz2KL9Nf4KF9uTzh+ioJtQWqf9Arkep0D8Msf7x3
+ FA33IU6L
+X-Proofpoint-GUID: zuFXu43WphkWEa9sbRhdqEpX9nlHp7YQ
+X-Proofpoint-ORIG-GUID: zuFXu43WphkWEa9sbRhdqEpX9nlHp7YQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-25_04,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 phishscore=0 priorityscore=1501 impostorscore=0 bulkscore=0
+ suspectscore=0 malwarescore=0 adultscore=0 spamscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508230032
 
-The following commit has been merged into the x86/apic branch of tip:
+On Sat, Aug 23, 2025 at 12:37:18PM -0700, Brian Norris wrote:
+> Ever since these two commits
+> 
+>   fbd908bb8bc0 ("interconnect: qcom: sc7280: enable QoS configuration")
+>   2b5004956aff ("arm64: dts: qcom: sc7280: Add clocks for QOS configuration")
+> 
+> Herobrine systems fail to boot due to crashes like the following:
 
-Commit-ID:     1b558e14f3c17dc29ce2e8cd0b8bd385e108734b
-Gitweb:        https://git.kernel.org/tip/1b558e14f3c17dc29ce2e8cd0b8bd385e10=
-8734b
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Thu, 31 Jul 2025 16:12:19 +02:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Mon, 25 Aug 2025 11:05:27 +02:00
+Nice to see somebody using these boards!
 
-x86/apic: Make the ISR clearing sane
+> 
+> [    0.243171] Kernel panic - not syncing: Asynchronous SError Interrupt
+> [    0.243173] CPU: 7 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0 #1 c5464041cff584ced692726af2c4400fa2bde1db
+> [    0.243178] Hardware name: Qualcomm Technologies, Inc. sc7280 CRD platform (rev5+) (DT)
+> [    0.243180] Call trace:
+> [    0.243182]  dump_backtrace+0x104/0x128
+> [    0.243194]  show_stack+0x24/0x38
+> [    0.243202]  __dump_stack+0x28/0x38
+> [    0.243208]  dump_stack_lvl+0x28/0xb8
+> [    0.243211]  dump_stack+0x18/0x30
+> [    0.243215]  panic+0x134/0x340
+> [    0.243219]  nmi_panic+0x48/0x98
+> [    0.243227]  arm64_serror_panic+0x6c/0x80
+> [    0.243245]  arm64_is_fatal_ras_serror+0xd8/0xe0
+> [    0.243261]  do_serror+0x5c/0xa8
+> [    0.243265]  el1h_64_error_handler+0x34/0x48
+> [    0.243272]  el1h_64_error+0x7c/0x80
+> [    0.243285]  regmap_mmio_read+0x5c/0xc0
+> [    0.243289]  _regmap_bus_reg_read+0x78/0xf8
+> [    0.243296]  regmap_update_bits_base+0xec/0x3a8
+> [    0.243300]  qcom_icc_rpmh_probe+0x2d4/0x490
+> [    0.243308]  platform_probe+0xb4/0xe0
+> [...]
+> 
+> Specifically, they fail in qcom_icc_set_qos() when trying to write the
+> QoS settings for qhm_qup1. Several of the previous nodes (qhm_qspi,
+> qhm_qup0, ...) seem to configure without crashing.
+> 
+> I don't really know what's unique about Herobrine systems vs other
+> sc7280 systems that presumably work fine. I'd guess there's some
+> conflict with something configured by the boot firmware.
 
-apic_pending_intr_clear() is fundamentally voodoo programming. It's primary
-purpose is to clear stale ISR bits in the local APIC, which would otherwise
-lock the corresponding interrupt priority level.
+I think it well might be that Herobrine's TZ doesn't export QoS regions
+to Linux.
 
-The comments and the implementation claim falsely that after clearing the
-stale ISR bits, eventually stale IRR bits would be turned into ISR bits and
-can be cleared as well. That's just wishful thinking because:
+> 
+> I'm submitting as an RFC just to get thoughts from people who hopefully
+> know better than me what might be going wrong here.
+> 
+> Fixes: fbd908bb8bc0 ("interconnect: qcom: sc7280: enable QoS configuration")
+> Fixes: 2b5004956aff ("arm64: dts: qcom: sc7280: Add clocks for QOS configuration")
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> ---
+> 
+>  arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi b/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi
+> index 2ba4ea60cb14..59203ce58c61 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi
+> @@ -394,6 +394,16 @@ &vreg_l2c_1p8 {
+>  
+>  /* ADDITIONS TO NODES DEFINED IN PARENT DEVICE TREE FILES */
+>  
+> +/* QoS seems to have conflicts with boot firmware on these devices. */
+> +&aggre1_noc {
+> +	/delete-property/ clocks;
 
-  1) If interrupts are disabled, the APIC does not propagate an IRR bit to
-     the ISR.
+While it might be enough for Linux to make it skip the QoS, I think a
+more correct fix would be to remove the 'reg' instead / in addition.
 
-  2) If interrupts are enabled, then the APIC propagates the IRR bit to the
-     ISR and raises the interrupt in the CPU, which means that code _cannot_
-     observe the ISR bit for any of those IRR bits.
+On the other hand, having those boards used by only a few people it
+might be easier to just pick up the simple fix rather than implementing
+a 'proper' one.
 
-Rename the function to reflect the purpose and make exactly _one_ attempt
-to EOI the pending ISR bits and add comments why traversing the pending bit
-map in low to high priority order is correct.
+Nevertheless, this would require changing the schema too, see
+Documentation/devicetree/bindings/interconnect/qcom,sc7280-rpmh.yaml
 
-Instead of trying to "clear" IRR bits, simply print a warning message when
-the IRR is not empty.
+> +};
+> +
+> +/* QoS seems to have conflicts with boot firmware on these devices. */
+> +&aggre2_noc {
+> +	/delete-property/ clocks;
+> +};
+> +
+>  &edp_panel {
+>  	/* Our board provides power to the qcard for the eDP panel. */
+>  	power-supply = <&vreg_edp_3p3>;
+> -- 
+> 2.51.0.rc2.233.g662b1ed5c5-goog
+> 
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lore.kernel.org/871ppwih4s.ffs@tglx
----
- arch/x86/kernel/apic/apic.c | 77 +++++++++++++++++-------------------
- 1 file changed, 37 insertions(+), 40 deletions(-)
-
-diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
-index d73ba5a..ff4029b 100644
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -1428,63 +1428,61 @@ union apic_ir {
- 	u32		regs[APIC_IR_REGS];
- };
-=20
--static bool apic_check_and_ack(union apic_ir *irr, union apic_ir *isr)
-+static bool apic_check_and_eoi_isr(union apic_ir *isr)
- {
- 	int i, bit;
-=20
--	/* Read the IRRs */
--	for (i =3D 0; i < APIC_IR_REGS; i++)
--		irr->regs[i] =3D apic_read(APIC_IRR + i * 0x10);
--
- 	/* Read the ISRs */
- 	for (i =3D 0; i < APIC_IR_REGS; i++)
- 		isr->regs[i] =3D apic_read(APIC_ISR + i * 0x10);
-=20
-+	/* If the ISR map empty, nothing to do here. */
-+	if (bitmap_empty(isr->map, APIC_IR_BITS))
-+		return true;
-+
- 	/*
--	 * If the ISR map is not empty. ACK the APIC and run another round
--	 * to verify whether a pending IRR has been unblocked and turned
--	 * into a ISR.
-+	 * There can be multiple ISR bits set when a high priority
-+	 * interrupt preempted a lower priority one. Issue an EOI for each
-+	 * set bit. The priority traversal order does not matter as there
-+	 * can't be new ISR bits raised at this point. What matters is that
-+	 * an EOI is issued for each ISR bit.
- 	 */
--	if (!bitmap_empty(isr->map, APIC_IR_BITS)) {
--		/*
--		 * There can be multiple ISR bits set when a high priority
--		 * interrupt preempted a lower priority one. Issue an ACK
--		 * per set bit.
--		 */
--		for_each_set_bit(bit, isr->map, APIC_IR_BITS)
--			apic_eoi();
--		return true;
--	}
-+	for_each_set_bit(bit, isr->map, APIC_IR_BITS)
-+		apic_eoi();
-=20
--	return !bitmap_empty(irr->map, APIC_IR_BITS);
-+	/* Reread the ISRs, they should be empty now */
-+	for (i =3D 0; i < APIC_IR_REGS; i++)
-+		isr->regs[i] =3D apic_read(APIC_ISR + i * 0x10);
-+
-+	return bitmap_empty(isr->map, APIC_IR_BITS);
- }
-=20
- /*
-- * After a crash, we no longer service the interrupts and a pending
-- * interrupt from previous kernel might still have ISR bit set.
-+ * If a CPU services an interrupt and crashes before issuing EOI to the
-+ * local APIC, the corresponding ISR bit is still set when the crashing CPU
-+ * jumps into a crash kernel. Read the ISR and issue an EOI for each set
-+ * bit to acknowledge it as otherwise these slots would be locked forever
-+ * waiting for an EOI.
-  *
-- * Most probably by now the CPU has serviced that pending interrupt and it
-- * might not have done the apic_eoi() because it thought, interrupt
-- * came from i8259 as ExtInt. LAPIC did not get EOI so it does not clear
-- * the ISR bit and cpu thinks it has already serviced the interrupt. Hence
-- * a vector might get locked. It was noticed for timer irq (vector
-- * 0x31). Issue an extra EOI to clear ISR.
-+ * If there are pending bits in the IRR, then they won't be converted into
-+ * ISR bits as the CPU has interrupts disabled. They will be delivered once
-+ * the CPU enables interrupts and there is nothing which can prevent that.
-  *
-- * If there are pending IRR bits they turn into ISR bits after a higher
-- * priority ISR bit has been acked.
-+ * In the worst case this results in spurious interrupt warnings.
-  */
--static void apic_pending_intr_clear(void)
-+static void apic_clear_isr(void)
- {
--	union apic_ir irr, isr;
-+	union apic_ir ir;
- 	unsigned int i;
-=20
--	/* 512 loops are way oversized and give the APIC a chance to obey. */
--	for (i =3D 0; i < 512; i++) {
--		if (!apic_check_and_ack(&irr, &isr))
--			return;
--	}
--	/* Dump the IRR/ISR content if that failed */
--	pr_warn("APIC: Stale IRR: %256pb ISR: %256pb\n", irr.map, isr.map);
-+	if (!apic_check_and_eoi_isr(&ir))
-+		pr_warn("APIC: Stale ISR: %256pb\n", ir.map);
-+
-+	for (i =3D 0; i < APIC_IR_REGS; i++)
-+		ir.regs[i] =3D apic_read(APIC_IRR + i * 0x10);
-+
-+	if (!bitmap_empty(ir.map, APIC_IR_BITS))
-+		pr_warn("APIC: Stale IRR: %256pb\n", ir.map);
- }
-=20
- /**
-@@ -1541,8 +1539,7 @@ static void setup_local_APIC(void)
- 	value |=3D 0x10;
- 	apic_write(APIC_TASKPRI, value);
-=20
--	/* Clear eventually stale ISR/IRR bits */
--	apic_pending_intr_clear();
-+	apic_clear_isr();
-=20
- 	/*
- 	 * Now that we are all set up, enable the APIC
+-- 
+With best wishes
+Dmitry
 
