@@ -1,179 +1,174 @@
-Return-Path: <linux-kernel+bounces-784101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6E30B336B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:50:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17102B336C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:52:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CE3417750F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 06:50:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E99A818948B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 06:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC332857FA;
-	Mon, 25 Aug 2025 06:49:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CE9286436;
+	Mon, 25 Aug 2025 06:52:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iJVhe7Ek"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GnBrQKDk"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1557B285C9D;
-	Mon, 25 Aug 2025 06:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E35541F19A;
+	Mon, 25 Aug 2025 06:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756104583; cv=none; b=Yvdfm/w8upzuJ9hQgs9VSDMXuPJbb0ABqFZjEBI5jyl1Ad5W83l2h6vZ0o4CIpKxgfx/RBgsoxENxSglMGe/mgscXvJzxvxuI+2G7kR+M2JAuPlHNBnVS9Hg0YdL1tQYje21kbT9rwayRYoh4Q5L6F2AfvoQujNykCmQ1OB16XU=
+	t=1756104770; cv=none; b=BDhAkYaBBShRqi0zK1vNQQzQkAnIANrJYW1xHATCq7nc4nAnNIxUB3AAV3Ec2c8OWxSIjPQZ+CbRMdHxUaGDudPq2VAznBVJ7Q+c9Mfsw+6tT3PL5FEfSy0sywNcXmp+3nDFgkEItYeS9LBum2tSyPtITSyuzu/4FQPGloSQFC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756104583; c=relaxed/simple;
-	bh=M86Jo2PYFFnxiVLjRD3/z4/leNvS3NHdWxrjhnhgyK0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=REHtEqGeO61TGB7Jg3MmwSI3iWcyvFccMu1LAXbCG7yYQrwypNJliXlL9UcDI3DSZMnOx8mG384BLt9MvScWAUU2Q2l9AsGPwgIx8iX6Aabhnn0OJypsmrGjcaYVXUqTeaxvTK2OlFa9IPRq/hQZIHllVVdLU1Z2rNkv8TB8ZV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iJVhe7Ek; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=7rgbHry8CsED6NN8pj2Gof0Dnk9pZPfECo312uCHp3Q=; b=iJVhe7Ek5d3k+k0koWDYcyBrFW
-	TZvY8ZwXtBVcw1+WMLxdN+IVqw3ksmHaRjbLdjjSxPn5Inlffq7dcLlG2i4nqPL+lhNynqTfqoq2u
-	hNAHEVk7TNxwPMhSPv5mje3+fZkJTUFxA2eE1oeY3I8S9ZvbBaYMkxfltzDaSQpO8I+cVEyH8mD32
-	WL8kPYF1egWzuQxuQuNVLOaOlOI/cwnywN8/92FJh+T74AUKphNUItgwOzo2Afj6FrOKOdWhfj6ou
-	YTBkjDWdwBvN/rAZwFJpat97zV4p1occr5xnoOznIPnJdCSJoksCEzF6UB4kwuk1m5cMVYPih19gR
-	dxn9St+g==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uqR1Q-000000074Hr-1fAe;
-	Mon, 25 Aug 2025 06:49:40 +0000
-Message-ID: <063b6127-57d9-4a5d-a1c9-971a0ae3f7c6@infradead.org>
-Date: Sun, 24 Aug 2025 23:49:39 -0700
+	s=arc-20240116; t=1756104770; c=relaxed/simple;
+	bh=K2v7R1fnPC1qc+/kMHnDAkvIsRAF1Md1L+qAzrjsaXw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uJ2O0+RK2S8CHs3RiSMTdCesjFlHdoduEBNLK5p4sraLL7sk/m/e2AkzE4m12srjs4Z3nBqAML/P9Pmdw9TG0GBJLYwniRnmWqojYynA8Qwe4Q7whuNjKn6S4RFymK3i7HXSV5Q2sMUveZd+S8gk0SGLCavzHPpHYuqyWYhHNXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GnBrQKDk; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-770305d333aso2302863b3a.0;
+        Sun, 24 Aug 2025 23:52:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756104768; x=1756709568; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nPSWsDoAmy8PQ775XW5/42G5LT1wuElB0TP9BhSo2b4=;
+        b=GnBrQKDknZ4pX5LLI5IOrVowM7sF/cwld99AnIyU/PDTOO61IVozhE6MtJrgqvuHOA
+         0T5H5X2yjuPkUcBXv7rJLv5g6O6GG2gBj+yrZ/F6WZyLDMgEHoM1XQxmVUyqaFe5U4+X
+         ZlJYIayLyNYLbLM/TjFrNnzoxmEAahs0P+zBCaEH5tOTukxoJSccYFf/9QPTVep/ITIY
+         q9Ww1YpdDpd3ijuIlFrn5aDEvYBGzVuc0MGQG6ryjTe0gt/ljGDU8K6foBTN+LQnVF4w
+         ypByChB15Mwzmjao4TuF+URiCMBertVwz6SR4zLFSVSJNdadLAPdPnqzK4z1ZjgvM42d
+         hRQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756104768; x=1756709568;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nPSWsDoAmy8PQ775XW5/42G5LT1wuElB0TP9BhSo2b4=;
+        b=NCJuFylK7gscwSAxUZhUh+FoWQyd/zXxXe0xtmjQB0ykcAwOF3W8YGCLoLlvPLCZUD
+         oq0WM+ujnI901vA/GHbcotAMST5wW3SkZa1NYTmZB1vCOjdejZ8dLcQozrbtDzsEFZiq
+         8SHefvgcNjYKUlRyIRx0XPwiwKyuplo1d4B2a/z22yjsZa3C1rf2FODCTyLKreNssVgS
+         5j6hnLMOdylXdUKCbhKZTHfLV/84nZli3+tVbtPJJjZzWHB/AkDAgwHAHvYav1oDy/RV
+         vRjRM+xTwXS5BGN/Og7d/0ZK3q2vKF24QB/vjjzRs5jV8Jsd3awPpbld95RDduwRZhqV
+         71RQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVnSNIiDS/NjTw8ShPuy8nk3miXsKiUx4R/+MrBymamfINsMg3MMH9Y5IheWslxx2ZRCwugj5Z6uwtageLc@vger.kernel.org, AJvYcCW5MIQeZWFoUbsYoJsxIj6/36lr3QcdIuPUKFox1rsj0TfWZdXnsLa/g4NdSuQqYax4tNEkbZrKsnQw@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3R7xMT5oMMZLSxtB/QsNWImcvtmjhFetvuxnVkAesLSo0tXQv
+	WweJsfkAnG/SUXNWbRQmVpDiSXzNSSBPGuG8W4heZeKHGKsirvQrYj6G
+X-Gm-Gg: ASbGncuQ//x5Teue0VLpubmU03n8Q0QzwHqvwKgGY2dPo6lHqSgJZveFDJ4DBBNb3DP
+	BO3f5l2nJzsFBANpa0My08njbjWzsA+JJFYQt1jBJd1hKGHOQ3UGo5M2wR8RZfHAMqFwg8ZO4jO
+	MGJYNEHgPiWO+Rov9254XYRgSB0Az0vGqPh+ZSie0lq7sU4z+1lOHP4M1u3/NVxFKhnQvRFLyeI
+	n4vhvWAVBKRfLF7nDZ7xLBTK/6pYqfqN1RuEvl8gl1Qb4AFuxdowdzdfVIPQXIsA3xdBtkaXR1W
+	r8FgnKpc9pLRxjrtdSOGK7uLkLFpeNUmQE+84Bz4SUlLKZSut8LiePEs90tW1a++kXMcCNmNeTn
+	blqdH2i/chnpIfoA6vFby
+X-Google-Smtp-Source: AGHT+IH0PqNjC6PoFYiYSzlQkFiRl1br9OBwRTA+P1HjLnfy+GnCt9CSGYrubD44ufk3hcYJLcLUDw==
+X-Received: by 2002:a05:6a21:33a0:b0:240:1a3a:d7ed with SMTP id adf61e73a8af0-24340d59ba3mr14443254637.41.1756104768135;
+        Sun, 24 Aug 2025 23:52:48 -0700 (PDT)
+Received: from rockpi-5b ([45.112.0.216])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-770401ecc51sm6604072b3a.75.2025.08.24.23.52.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 Aug 2025 23:52:46 -0700 (PDT)
+From: Anand Moon <linux.amoon@gmail.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Amlogic Meson SoC support),
+	linux-amlogic@lists.infradead.org (open list:ARM/Amlogic Meson SoC support),
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Anand Moon <linux.amoon@gmail.com>
+Subject: [PATCH v2 00/11] Add cache information to Amlogic SoC
+Date: Mon, 25 Aug 2025 12:21:40 +0530
+Message-ID: <20250825065240.22577-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] uapi/fcntl: conditionally define AT_RENAME* macros
-To: Amir Goldstein <amir73il@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>
-Cc: Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
- Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
- Alexander Aring <alex.aring@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
- Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
- linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
-References: <20250824221055.86110-1-rdunlap@infradead.org>
- <aKuedOXEIapocQ8l@casper.infradead.org>
- <9b2c8fe2-cf17-445b-abd7-a1ed44812a73@infradead.org>
- <CAOQ4uxiShq5gPCsRh5ZDNXbG4AGH5XpfHx0HXDWTS+5Y95hieQ@mail.gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <CAOQ4uxiShq5gPCsRh5ZDNXbG4AGH5XpfHx0HXDWTS+5Y95hieQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi Amir,
+Most publicly available Amlogic datasheets mention that the CPU employs
+a architecture, quad-core ARM Cortex-A53 and ARM Cortex A55 and
+Cortex-A73 and Cortex-A53 cluster, sharing a unified L2 cache to enhance
+overall system performance.
+
+However, these documents typically omit details regarding the sizes of the
+L1 data cache, L1 instruction cache, and L2 cache.
+
+The patches in question align with the cache specifications provided by
+ARM TRM for the respective CPU cores.
+
+ARM Cortex-A53
+L1: 32KB instruction + 32KB data cache
+L2: Unified 512KB cache
+L1 cache details, L2 cache details
+
+[1] https://developer.arm.com/documentation/ddi0500/j/Level-1-Memory-System/About-the-L1-memory-system?lang=en
+[2] https://developer.arm.com/documentation/ddi0500/j/Level-2-Memory-System/About-the-L2-memory-system?lang=en
+
+ARM Cortex-A55
+Cache sizes are implementation-dependent; refer to ARM documentation for configuration options.
+
+[3] https://developer.arm.com/documentation/100442/0200/Functional-description/Introduction-to-the-Cortex-A55-core/Implementation-options
+
+ARM Cortex-A73 (as used in Amlogic S922X and T7)
+L1: Configurable, typically 64KB instruction + 64KB data
+L2: Unified cache, configurable up to 1MB or more
+L2 cache details,
+4× Cortex-A73 cores (up to 1.8GHz) with 1MB shared L2 cache
+2× Cortex-A53 cores with 256KB shared L2 cache
+
+[4] https://developer.arm.com/documentation/100048/0100/level-1-memory-system/about-the-l1-memory-system?lang=enL2
+[5] https://developer.arm.com/documentation/100048/0100/level-2-memory-system/about-the-l2-memory-system?lang=en
+[6] https://androidpctv.com/comparative-amlogic-s922x/
+
+Changes:
+v2: Modified the commit message and added cache information few more SoC.
+
+v1: https://lists.infradead.org/pipermail/linux-arm-kernel/2024-February/901497.html
+
+Thanks
+-Anand
+
+Anand Moon (11):
+  arm64: dts: amlogic: Add cache information to the Amlogic GXBB and GXL
+    SoC
+  arm64: dts: amlogic: Add cache information to the Amlogic SM1 SoC
+  arm64: dts: amlogic: Add cache information to the Amlogic G12A SoCS
+  arm64: dts: amlogic: Add cache information to the Amlogic AXG SoCS
+  arm64: dts: amlogic: Add cache information to the Amlogic GXM SoCS
+  arm64: dts: amlogic: Add cache information to the Amlogic A1 SoC
+  arm64: dts: amlogic: Add cache information to the Amlogic A4 SoC
+  arm64: dts: amlogic: Add cache information to the Amlogic C3 SoC
+  arm64: dts: amlogic: Add cache information to the Amlogic S7 SoC
+  arm64: dts: amlogic: Add cache information to the Amlogic S922X SoC
+  arm64: dts: amlogic: Add cache information to the Amlogic T7 SoC
+
+ arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi | 37 +++++++++++
+ arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi | 23 +++++++
+ arch/arm64/boot/dts/amlogic/amlogic-s7.dtsi | 36 ++++++++++
+ arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi | 74 +++++++++++++++++++++
+ arch/arm64/boot/dts/amlogic/meson-a1.dtsi   | 15 +++++
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi  | 21 ++++++
+ arch/arm64/boot/dts/amlogic/meson-g12a.dtsi | 27 ++++++++
+ arch/arm64/boot/dts/amlogic/meson-g12b.dtsi | 62 +++++++++++++++--
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi   | 27 ++++++++
+ arch/arm64/boot/dts/amlogic/meson-gxm.dtsi  | 24 +++++++
+ arch/arm64/boot/dts/amlogic/meson-sm1.dtsi  | 27 ++++++++
+ 11 files changed, 366 insertions(+), 7 deletions(-)
 
 
-On 8/24/25 10:58 PM, Amir Goldstein wrote:
-> On Mon, Aug 25, 2025 at 1:54 AM Randy Dunlap <rdunlap@infradead.org> wrote:
->>
->>
->>
->> On 8/24/25 4:21 PM, Matthew Wilcox wrote:
->>> On Sun, Aug 24, 2025 at 03:10:55PM -0700, Randy Dunlap wrote:
->>>> Don't define the AT_RENAME_* macros when __USE_GNU is defined since
->>>> /usr/include/stdio.h defines them in that case (i.e. when _GNU_SOURCE
->>>> is defined, which causes __USE_GNU to be defined).
->>>>
->>>> Having them defined in 2 places causes build warnings (duplicate
->>>> definitions) in both samples/watch_queue/watch_test.c and
->>>> samples/vfs/test-statx.c.
->>>
->>> It does?  What flags?
->>>
->>
->> for samples/vfs/test-statx.c:
->>
->> In file included from ../samples/vfs/test-statx.c:23:
->> usr/include/linux/fcntl.h:159:9: warning: ‘AT_RENAME_NOREPLACE’ redefined
->>   159 | #define AT_RENAME_NOREPLACE     0x0001
->> In file included from ../samples/vfs/test-statx.c:13:
->> /usr/include/stdio.h:171:10: note: this is the location of the previous definition
->>   171 | # define AT_RENAME_NOREPLACE RENAME_NOREPLACE
->> usr/include/linux/fcntl.h:160:9: warning: ‘AT_RENAME_EXCHANGE’ redefined
->>   160 | #define AT_RENAME_EXCHANGE      0x0002
->> /usr/include/stdio.h:173:10: note: this is the location of the previous definition
->>   173 | # define AT_RENAME_EXCHANGE RENAME_EXCHANGE
->> usr/include/linux/fcntl.h:161:9: warning: ‘AT_RENAME_WHITEOUT’ redefined
->>   161 | #define AT_RENAME_WHITEOUT      0x0004
->> /usr/include/stdio.h:175:10: note: this is the location of the previous definition
->>   175 | # define AT_RENAME_WHITEOUT RENAME_WHITEOUT
->>
->> for samples/watch_queue/watch_test.c:
->>
->> In file included from usr/include/linux/watch_queue.h:6,
->>                  from ../samples/watch_queue/watch_test.c:19:
->> usr/include/linux/fcntl.h:159:9: warning: ‘AT_RENAME_NOREPLACE’ redefined
->>   159 | #define AT_RENAME_NOREPLACE     0x0001
->> In file included from ../samples/watch_queue/watch_test.c:11:
->> /usr/include/stdio.h:171:10: note: this is the location of the previous definition
->>   171 | # define AT_RENAME_NOREPLACE RENAME_NOREPLACE
->> usr/include/linux/fcntl.h:160:9: warning: ‘AT_RENAME_EXCHANGE’ redefined
->>   160 | #define AT_RENAME_EXCHANGE      0x0002
->> /usr/include/stdio.h:173:10: note: this is the location of the previous definition
->>   173 | # define AT_RENAME_EXCHANGE RENAME_EXCHANGE
->> usr/include/linux/fcntl.h:161:9: warning: ‘AT_RENAME_WHITEOUT’ redefined
->>   161 | #define AT_RENAME_WHITEOUT      0x0004
->> /usr/include/stdio.h:175:10: note: this is the location of the previous definition
->>   175 | # define AT_RENAME_WHITEOUT RENAME_WHITEOUT
->>
-
->>>
->>> I'm pretty sure C says that duplicate definitions are fine as long
->>> as they're identical.
->> The vales are identical but the strings are not identical.
->>
->> We can't fix stdio.h, but we could just change uapi/linux/fcntl.h
->> to match stdio.h. I suppose.
-> 
-> I do not specifically object to a patch like this (assuming that is works?):
-> 
-> --- a/include/uapi/linux/fcntl.h
-> +++ b/include/uapi/linux/fcntl.h
-> @@ -156,9 +156,9 @@
->   */
-> 
->  /* Flags for renameat2(2) (must match legacy RENAME_* flags). */
-> -#define AT_RENAME_NOREPLACE    0x0001
-> -#define AT_RENAME_EXCHANGE     0x0002
-> -#define AT_RENAME_WHITEOUT     0x0004
-> +#define AT_RENAME_NOREPLACE    RENAME_NOREPLACE
-> +#define AT_RENAME_EXCHANGE     RENAME_EXCHANGE
-> +#define AT_RENAME_WHITEOUT     RENAME_WHITEOUT
-> 
-
-I'll test that.
-
-> 
-> But to be clear, this is a regression introduced by glibc that is likely
-> to break many other builds, not only the kernel samples
-> and even if we fix linux uapi to conform to its downstream
-> copy of definitions, it won't help those users whose programs
-> build was broken until they install kernel headers, so feels like you
-> should report this regression to glibc and they'd better not "fix" the
-> regression by copying the current definition string as that may change as per
-> the patch above.
-> 
-
-I'll look into that also.
-
-> Why would a library copy definitions from kernel uapi without
-> wrapping them with #ifndef or #undef?
-
-To me it looks like they stuck them into the wrong file - stdio.h
-instead of fcntl.h.
-
-thanks.
+base-commit: 1b237f190eb3d36f52dffe07a40b5eb210280e00
 -- 
-~Randy
+2.50.1
 
 
