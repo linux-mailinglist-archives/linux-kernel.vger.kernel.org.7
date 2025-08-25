@@ -1,128 +1,196 @@
-Return-Path: <linux-kernel+bounces-784407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8CE0B33B47
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:39:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57115B33B4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:40:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80451177260
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:39:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21F6C17890E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63C402C3756;
-	Mon, 25 Aug 2025 09:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745B82D0610;
+	Mon, 25 Aug 2025 09:40:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NtXjGPo7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="SC7bCRpG";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="hWMraJX3"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A5632C3244
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 09:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756114780; cv=none; b=ZDzfJtarv7LWT61pNgihAewT7gVs52EfdIeW1/w835s3iIQu6jW6wvIRm9R+ltat3VmTbLP7RWX1Rhi8vy4j2Ww89dp/BgISmeMZLebmIpiIhLmKi3p0RPanqQYZZfmRw6ebFWwyKGE/S3zdMAtyDm+Prt362yXkJdIHJo9A1ig=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756114780; c=relaxed/simple;
-	bh=YGZk/doqSOcdaAjiIfjwSjHMKZj2laCWPqcCdAbOjKw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hE32a38I7RmcizXSWA3R5/JzjQbqR6IGTuLmLoQh33Vk+coa33R+/vHCL3c6Mok7osnG3bjylGkj6DOWLpRcCPbmby/dqIWrtIj04fVeFTVDSStUewqbJU6bnqY7WxGXdTnRJpuDHw/krosNocBvHjhEyOk7GPG2d5fAbFtGwMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NtXjGPo7; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756114778;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SEwlDpD+C/EtRZv27QcaLtBUwUyBdktuJKWqODYJttI=;
-	b=NtXjGPo7appZnmZeKBvWnqu7X277SkOqo7fu+SD26Rvcp2HVSoLiOnpWDo8M/dedlhf+d2
-	+qzpL/99GaSmWl64sc8rwqyqcdYrTIkGDq0b9BUYEDrd+3RT4jMIpe68mLtkD+zmRrSkga
-	kUQKiuT9SEWnKhugoRKk426lRypf6xc=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-33-mnd5_XyLMPSzPB5s5xNMDA-1; Mon,
- 25 Aug 2025 05:39:31 -0400
-X-MC-Unique: mnd5_XyLMPSzPB5s5xNMDA-1
-X-Mimecast-MFC-AGG-ID: mnd5_XyLMPSzPB5s5xNMDA_1756114767
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4B2091800342;
-	Mon, 25 Aug 2025 09:39:26 +0000 (UTC)
-Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.44.32.136])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D31AF1955F24;
-	Mon, 25 Aug 2025 09:39:14 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: Andy Lutomirski <luto@amacapital.net>,  Jann Horn <jannh@google.com>,
-  Al Viro <viro@zeniv.linux.org.uk>,  Christian Brauner
- <brauner@kernel.org>,  Kees Cook <keescook@chromium.org>,  Paul Moore
- <paul@paul-moore.com>,  Serge Hallyn <serge@hallyn.com>,  Andy Lutomirski
- <luto@kernel.org>,  Arnd Bergmann <arnd@arndb.de>,  Christian Heimes
- <christian@python.org>,  Dmitry Vyukov <dvyukov@google.com>,  Elliott
- Hughes <enh@google.com>,  Fan Wu <wufan@linux.microsoft.com>,  Jeff Xu
- <jeffxu@google.com>,  Jonathan Corbet <corbet@lwn.net>,  Jordan R Abrahams
- <ajordanr@google.com>,  Lakshmi Ramasubramanian
- <nramas@linux.microsoft.com>,  Luca Boccassi <bluca@debian.org>,  Matt
- Bobrowski <mattbobrowski@google.com>,  Miklos Szeredi
- <mszeredi@redhat.com>,  Mimi Zohar <zohar@linux.ibm.com>,  Nicolas
- Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,  Robert Waite
- <rowait@microsoft.com>,  Roberto Sassu <roberto.sassu@huawei.com>,  Scott
- Shell <scottsh@microsoft.com>,  Steve Dower <steve.dower@python.org>,
-  Steve Grubb <sgrubb@redhat.com>,  kernel-hardening@lists.openwall.com,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  linux-integrity@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-security-module@vger.kernel.org,  Jeff Xu <jeffxu@chromium.org>
-Subject: Re: [RFC PATCH v1 1/2] fs: Add O_DENY_WRITE
-In-Reply-To: <20250825.mahNeel0dohz@digikod.net> (=?utf-8?Q?=22Micka=C3=AB?=
- =?utf-8?Q?l_Sala=C3=BCn=22's?= message
-	of "Mon, 25 Aug 2025 11:31:42 +0200")
-References: <20250822170800.2116980-1-mic@digikod.net>
-	<20250822170800.2116980-2-mic@digikod.net>
-	<CAG48ez1XjUdcFztc_pF2qcoLi7xvfpJ224Ypc=FoGi-Px-qyZw@mail.gmail.com>
-	<20250824.Ujoh8unahy5a@digikod.net>
-	<CALCETrWwd90qQ3U2nZg9Fhye6CMQ6ZF20oQ4ME6BoyrFd0t88Q@mail.gmail.com>
-	<20250825.mahNeel0dohz@digikod.net>
-Date: Mon, 25 Aug 2025 11:39:11 +0200
-Message-ID: <lhuikibbv0g.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8922C3756;
+	Mon, 25 Aug 2025 09:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.149.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756114827; cv=fail; b=DyOhsr9mRRRtNk5cZglxdhWO3B6Ew0pCaqj4oF7M89AMHY6MF6Z8usJwV0OPgflYmYef4930RIqODZ8tVH1tXN7CY0z+UXs5H6HUxE3xc7Ys4nEMH6RSiAfZHO7gkbJqDOCdCxfW4zT4xH32MQhqM9a6tzyagMPP1ETM/BDns9o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756114827; c=relaxed/simple;
+	bh=bBZjP1ZteDJZXJFe4Q5GKKm8vkDfS9DvqKWNMBoOdCs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oUbxOXDynMw778ET7gz9ARvEjou5w1FyL4jj1MkMCAOi+HC8Fvn2HhjpU/9+HNMAdjCxwgRjUALYuWfLjdY2g8uO9FAzuukQ+u/15MkuDzN4gajXOcTbL+X+1CiS2w+BwxpKRWxmq0JkCXEXzTrbnvpO6T/gXv8AEO8suKqPsJ8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=SC7bCRpG; dkim=fail (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=hWMraJX3 reason="signature verification failed"; arc=fail smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 57P48FNC102372;
+	Mon, 25 Aug 2025 04:40:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	PODMain02222019; bh=yh0lSvSZRjOFRRePI8Jmy8HHdoPKox4MBryQK2tfXKQ=; b=
+	SC7bCRpG6wMMxeGXD/n0i6yWxVyGlSb4wHZ4ARgNK15rMDHUHiuOQ4esHmQsgxjm
+	Y3qTQ58EnExLNQlW/cw4wmLDBUj9qmWZuLJln8DmTcvIlpXEgo645YVxQfynBRBW
+	8lv1/nTQzhO0nSq1YjcYauDjVQKvU8VLh3SEEViMUtgPpPOA449ZUH5nhjqOPrt5
+	7YZhhm4OnGi0UwhNh08iiLDAyOT03U9ZCRLBRa6hok8oWkJjTuxZVsKG1sIOgDQQ
+	Diz61dwsJP7YtQw1gtOKSr9ooNQrWMwo8kv5fSniprf+faQnH/vBfRh4oXgpSgcD
+	WihQ7LVk5bIoGsPRgJMfVQ==
+Received: from nam04-dm6-obe.outbound.protection.outlook.com (mail-dm6nam04on2090.outbound.protection.outlook.com [40.107.102.90])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 48qb209y3j-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Mon, 25 Aug 2025 04:40:10 -0500 (CDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IzBHZkKhNKPpAVanNtEK3q42GgCOAjHpLgpOlJAAxX/YqPCYsQv6/uZoCfu6c6xBCtw+VGgU/51LCmF16QUGwQnhArUFrgc5NjVKG/GLUOpYwiZ5rcceFei3RlTWjm6qlO4BlaHPWVXqwkofXc1NrG/Vxa0WbPJeAlWChyuTHlhBifiVl+oix4yg53LZOdd4Sfo8FUh3yDzWdhEQQBJwZsvsgMCBQ/UFWrsTkyYt8SL7oesnHv6PjyT0mRELY/7wQ8N9XJz9IKCRmsp9PDLpTznJbKGEZ13pSXeFHSE772sogg/qoEjgX0UXIZThL4nStT5xQo0xT+FRjr4+KDCi/A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=P2i6xD8B1akasXK+kf5JNEQWSIjJ05NgS5X962ladtM=;
+ b=O99ui+FkToXE2WKNHuhIspNKiqbSzJyuq+CWkBbh/L7CJmuUEkIGmdyxGUe3aLfq0c4mPr2Ksd8TFzTXUrIIXmsLrFDsrgorISzV6sRlIWwLYogLYBPu0Tn24luCk/LFjRuTpsr/g7Glog4BuJ5AHXmz0jLIqlzf14QF/Lo/Wxj+HtyYouanHsv9IMeWC8eM6DlZqO5B9xlLlKbII30BvTxxrcNmfiQXLD2HIzEwir/l4UWFu/IKPSCX41dCxC/yGz4XHgXmLxKnEG3WxbaEUgz+it/OwZw7D242Vc6nVVj8P3MOarSgTIQFP0ssgqpOV8/5H4lRuuCI6RfQ2fNoNg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 84.19.233.75) smtp.rcpttodomain=cirrus.com
+ smtp.mailfrom=opensource.cirrus.com; dmarc=fail (p=reject sp=reject pct=100)
+ action=oreject header.from=opensource.cirrus.com; dkim=none (message not
+ signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=P2i6xD8B1akasXK+kf5JNEQWSIjJ05NgS5X962ladtM=;
+ b=hWMraJX3J9beGizto0dtgFzax7Xj8zYyDE6MyHhi1vInTPlMI7qpfyWK0TmvFGykK5k0XgcvDptQe5ozUhJB1HN+YRSW8DnZfXO9p+JQOS5OlO/CvseUC02QAoAdu5Ve25EsjW5kymNgUdyCQ8NOY/AXrxaPVlWhiN9+c9P/pHY=
+Received: from MW4PR03CA0050.namprd03.prod.outlook.com (2603:10b6:303:8e::25)
+ by LV3PR19MB8478.namprd19.prod.outlook.com (2603:10b6:408:212::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.19; Mon, 25 Aug
+ 2025 09:40:06 +0000
+Received: from CO1PEPF000075F1.namprd03.prod.outlook.com
+ (2603:10b6:303:8e:cafe::82) by MW4PR03CA0050.outlook.office365.com
+ (2603:10b6:303:8e::25) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.21 via Frontend Transport; Mon,
+ 25 Aug 2025 09:40:06 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 84.19.233.75)
+ smtp.mailfrom=opensource.cirrus.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=oreject header.from=opensource.cirrus.com;
+Received-SPF: Fail (protection.outlook.com: domain of opensource.cirrus.com
+ does not designate 84.19.233.75 as permitted sender)
+ receiver=protection.outlook.com; client-ip=84.19.233.75;
+ helo=edirelay1.ad.cirrus.com;
+Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
+ CO1PEPF000075F1.mail.protection.outlook.com (10.167.249.40) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.11
+ via Frontend Transport; Mon, 25 Aug 2025 09:40:04 +0000
+Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id C5A8E406547;
+	Mon, 25 Aug 2025 09:40:02 +0000 (UTC)
+Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPSA id A1C6E82024A;
+	Mon, 25 Aug 2025 09:40:02 +0000 (UTC)
+Date: Mon, 25 Aug 2025 10:40:01 +0100
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Maciej Strozek <mstrozek@opensource.cirrus.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+        Robert Moore <robert.moore@intel.com>, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, acpica-devel@lists.linux.dev,
+        patches@opensource.cirrus.com
+Subject: Re: [PATCH v3] ACPICA: Add SoundWire File Table (SWFT) signature
+Message-ID: <aKwvcaCGuKGCXosa@opensource.cirrus.com>
+References: <20250811134505.1162661-1-mstrozek@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250811134505.1162661-1-mstrozek@opensource.cirrus.com>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000075F1:EE_|LV3PR19MB8478:EE_
+X-MS-Office365-Filtering-Correlation-Id: c131b913-1477-4007-9ba6-08dde3bb5ec4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|61400799027|376014|36860700013|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?iso-8859-1?Q?n8jK2mY5HJJemiB5hX6d8b3ZLFewtOcvpVGZiKvDOZ0qsXI8zSAqSVdhH0?=
+ =?iso-8859-1?Q?vaNy9oDQv5uNbsdtC95B4q6ku+HvcgMgkgz5XfioayvUybWAep/Rtyj5Xy?=
+ =?iso-8859-1?Q?erd27Mx3T5tKTsnGyTFadKs0mxN+zJhXsuhOJ5dKBQiCIt5agoSYXTkl0o?=
+ =?iso-8859-1?Q?loQeKHwwm87iArjJpuIwmd0xv2ZrOdwyv6miGHQlBhDocw/dL9EtbROELu?=
+ =?iso-8859-1?Q?8dDC+T6hq2HFBYBvxnOQN80LLcQY6IXSa3E1iYXHTKZJEhpjZfbwXR+rG0?=
+ =?iso-8859-1?Q?qN718YIFgV1sGiWKskit4BcWoYQs9n/oJKJCebLLiW7n2YCmIayP2CQt03?=
+ =?iso-8859-1?Q?Sq++cMjKjlklHlsRtn/4RklN8r354OaS7eVh8aoj7w0BoWK3SbjWpx+Bqj?=
+ =?iso-8859-1?Q?xtN1yOKVuOSWpGIStpMW2rpr8VNFQNN86tlGHvX2yy6jHU1PGjPCoPyuDC?=
+ =?iso-8859-1?Q?yl19Tfrg5SoNezxe6cQCgURbF5x5X/oN39EjC44+Aeku0CLEk3HNsyz9NJ?=
+ =?iso-8859-1?Q?wnw+UvZ1HSAvpfjsiw4AwYcUHqlqGG6QlLEIwQXCSTZ+4qLT62mKOJl97u?=
+ =?iso-8859-1?Q?BaA+6OnXQOAeJGzNVfd4sMzVvIFMiJvKydboo/nQkkob+0oJ/MxWvdIMh2?=
+ =?iso-8859-1?Q?XX1eU8+c+D9fL8Jp6z5VONX9n1OBzVKudCH9HpGLtYo05hxjXxonjzvKWl?=
+ =?iso-8859-1?Q?f/gv2WxUuTgY6cBuDAMNm9nOdIzcAL+DAoeZgFdFJp3Xq0AOilPc43YQB/?=
+ =?iso-8859-1?Q?LrOAfa/Ay7iRt44WXwLIUcYM2+0lK9p0EJ7niK4nJ36PFOeZV6h9z2egUr?=
+ =?iso-8859-1?Q?KyBMN2kplufj14orGm4XpXx7l2CvMm8Zsk/cZM+UApgBhTWudq78B2frCM?=
+ =?iso-8859-1?Q?xhRmohg+U+TM/APc/H3RXxVJyhiY2Kl7idxuqBlHH1iUeCRfV+xn77dieA?=
+ =?iso-8859-1?Q?GwxhrMIynG2FFhKZo6nF1upl3K1E8oJQ6d2IRu57s00HSyerGdDgRAPZBI?=
+ =?iso-8859-1?Q?u8K5R6S7jJRk4jHCna0qu9g7YgqvLBBEmUNu4sJ+Kgek1i6P96kAyLVTSS?=
+ =?iso-8859-1?Q?/FkFVq5yAA8AzNySXjdde0u+mCcmpv7K0NZq0zOQ3Rf+KFoh52gd5vv53e?=
+ =?iso-8859-1?Q?DsoKsM1a6uw9x3vkdExV+HZx1QqW22WSHfo084R0W684hm044mKhNxJ2df?=
+ =?iso-8859-1?Q?xfwqt1pqZV+Oz3zGJq4D91Y4ZUnVRuvY/SIjj8W8u2GlKdUFW+63tEgKVC?=
+ =?iso-8859-1?Q?4O3zIyeeoLXjqMu9PI7EsxsJx+dB6XdOK+tcbcp/T6v2OOi4BxMZhLXDq4?=
+ =?iso-8859-1?Q?7NzqzjICGMl17w1fnocm+/eWKg2ZWGQB7iQzOVpY/2+j10KYQyrgGdbzOT?=
+ =?iso-8859-1?Q?8pCHK79QkY/8dWHj3jiF+TTciU0xmWsXQgjSzUaXeeYiuCr53sDmYHdGlM?=
+ =?iso-8859-1?Q?rWow4isG2tQGCBazn3ET8dco/WwlxeZs1f418DSGF/p5CBNItuRBYUSDUt?=
+ =?iso-8859-1?Q?xzKHmQrdm1f0Q1piq6XKTjmGnqHviNoAaWjJukCIOymA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(82310400026)(61400799027)(376014)(36860700013)(13003099007);DIR:OUT;SFP:1102;
+X-OriginatorOrg: opensource.cirrus.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 09:40:04.1536
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c131b913-1477-4007-9ba6-08dde3bb5ec4
+X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000075F1.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR19MB8478
+X-Authority-Analysis: v=2.4 cv=GbkXnRXL c=1 sm=1 tr=0 ts=68ac2f7a cx=c_pps
+ a=OkheQ7YMNxSF7aQwypjV+w==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=8nJEP1OIZ-IA:10 a=2OwXVqhp2XgA:10
+ a=RWc_ulEos4gA:10 a=NEAV23lmAAAA:8 a=w1d2syhTAAAA:8 a=JQJDhRPD3OthYt_GnVkA:9
+ a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI1MDA4NiBTYWx0ZWRfX/7HRzKq5/RF2
+ DqTSdPTt1al6f1G0b3rMntH/9fJehrjY4KU0S0QT5e3sC9eVXBrA92+MmQ3Ry46d4zFAl9vFWzi
+ TgZkdBvJLjCc+Qu5A/NEiYcYPNMcv7Adz77SClQFy3ppXvhFKpFEBWuoW73p/YIAGk1XXWBngD9
+ lhKhlTjgugi42is02lkNuAHMklXg0NAcHE7UzGJX3Oq0vxJ+R6y4FjDCoX1E5RqNO3r9tyQl5mO
+ ttZdnXQTgai0mfyQtrlEP+Y8n9Hyhkpmqxs2XCqUgfJjyK0X5Dypsa6RxVCARyhzmS2klI1qLM5
+ ZRG/Zm36Ad9brpN2fYFk0ql+/8U/EkVsE9+gkedoIckQJOG5/mDD67PeX6vL58=
+X-Proofpoint-ORIG-GUID: T2FXsJZzuDvvbrDaJ9lej9uSyeOhq22Z
+X-Proofpoint-GUID: T2FXsJZzuDvvbrDaJ9lej9uSyeOhq22Z
+X-Proofpoint-Spam-Reason: safe
 
-* Micka=C3=ABl Sala=C3=BCn:
+On Mon, Aug 11, 2025 at 02:45:05PM +0100, Maciej Strozek wrote:
+> The File Download (FDL) process of SoundWire Class Audio (SDCA) driver,
+> which provides code/data which may be required by an SDCA device,
+> utilizes SWFT to obtain that code/data. There is a single SWFT for the
+> system, and SWFT can contain multiple files (information about the file
+> as well as its binary contents). The SWFT has a standard ACPI Descriptor
+> Table Header, followed by SoundWire File definitions as described in
+> Discovery and Configuration (DisCo) Specification for SoundWire®
+> 
+> Link: https://github.com/acpica/acpica/commit/18c96022
+> Signed-off-by: Maciej Strozek <mstrozek@opensource.cirrus.com>
+> ---
 
-> The order of checks would be:
-> 1. open script with O_DENY_WRITE
-> 2. check executability with AT_EXECVE_CHECK
-> 3. read the content and interpret it
->
-> The deny-write feature was to guarantee that there is no race condition
-> between step 2 and 3.  All these checks are supposed to be done by a
-> trusted interpreter (which is allowed to be executed).  The
-> AT_EXECVE_CHECK call enables the caller to know if the kernel (and
-> associated security policies) allowed the *current* content of the file
-> to be executed.  Whatever happen before or after that (wrt.
-> O_DENY_WRITE) should be covered by the security policy.
-
-Why isn't it an improper system configuration if the script file is
-writable?
-
-In the past, the argument was that making a file (writable and)
-executable was an auditable even, and that provided enough coverage for
-those people who are interested in this.
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
 Thanks,
-Florian
-
+Charles
 
