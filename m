@@ -1,235 +1,182 @@
-Return-Path: <linux-kernel+bounces-784172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7998CB33791
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:15:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD175B3379D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:18:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE2323AFB6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 07:15:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8508A1B20EF4
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 07:19:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC9882882DB;
-	Mon, 25 Aug 2025 07:15:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED0B28724B;
+	Mon, 25 Aug 2025 07:18:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mrdZzdNl";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HWVYz0Cn"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="SahAc3yY"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2055.outbound.protection.outlook.com [40.107.237.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7392877F5
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 07:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756106104; cv=none; b=rk8T3U/Fv4qGE8tOK//q6hsh6Iqg/xnswb7YLWEPE4wPnCxjtGw+OZwDEh8dtaC7KfSZ6odmIPPqm2fyoJS2ybFWZxdmf5rYrg2jcKeFmynZqvdCyTuuXuRjQvbXftFIPHrU+uSPBXTgWbUrWr7hwClNFp6w4MZ91DdgQjzpJqM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756106104; c=relaxed/simple;
-	bh=x+/wG4kd22HNH/xFh6XIJg3dd2eG04/uZnQZBnlZHrw=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
-	 Content-Type; b=JwRFh06fjrI8c8qE15r6BCMaEXk1aggTwhp4eq8xnZW/FTWkAgajXfTogQDr5/HKPF213o9ACaeCdHWGtsN2Gohcb/oDhn0vIC/ZV95UtL/Wm32r9tyVfQ6g9dMyxbO3Dv3SyFTxoF6VWh7hoCdUXD78b8KvZgz4FVmiV6685B0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mrdZzdNl; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HWVYz0Cn; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756106100;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=HRF7iy6h0BsCSFLXqGnF+qkgmpUo0BUo5JJ7GwCl0bg=;
-	b=mrdZzdNlcVzDsDnOHBlUDhrVNgqRak4M+wlEt+0E8wcj0Ewt4d5ut2i76UerlWfMGbDeqX
-	erN3R057Ir57ZoYYB6BC5xpiiPpLps+H/XhnCAjeNWOHEgh0ajQ2gqEbWVrm12rZpjw1eU
-	VrgAg7xAOHC3+a8vBCq/BqvL91HXW95OqzLjmLf/WuM4VtFexG2U1qskLdctFZ8eIQEXLR
-	oAXO72+Go45qZkMIhRhEq+oVhkocPmofvE4Nc9t0WSsAthFvLfex8Ehm0Oh8pVW7W465rT
-	ZFUIflB1GbgEUPAWfoVFmTViQiYqVTXxNEoDcZUP2hnhousGOx2s28JB0g8o5g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756106100;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=HRF7iy6h0BsCSFLXqGnF+qkgmpUo0BUo5JJ7GwCl0bg=;
-	b=HWVYz0Cnlj2K/lZUZDgpecC9Eo3d6mvKnAnPMObRpaBitwGdMeEcJM1u70XnzIYDARub2U
-	oFh8FBNz8NHzORBA==
-To: Jirka Hladky <jhladky@redhat.com>, linux-kernel
- <linux-kernel@vger.kernel.org>, john.stultz@linaro.org,
- anna-maria@linutronix.de
-Cc: Philip Auld <pauld@redhat.com>, Prarit Bhargava <prarit@redhat.com>,
- Luis Goncalves <lgoncalv@redhat.com>, Miroslav Lichvar
- <mlichvar@redhat.com>, Luke Yang <luyang@redhat.com>, Jan Jurca
- <jjurca@redhat.com>, Joe Mario <jmario@redhat.com>
-Subject: Re: [REGRESSION] 76% performance loss in timer workloads caused by
- 513793bc6ab3 "posix-timers: Make signal delivery consistent"
-In-Reply-To: <87sehh2gw8.ffs@tglx>
-Date: Mon, 25 Aug 2025 09:14:58 +0200
-Message-ID: <87cy8j3ma5.ffs@tglx>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E469345009;
+	Mon, 25 Aug 2025 07:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756106318; cv=fail; b=cLg8B9xdWdzUs3pipQ1k2wyzxB+t6HBshadWaDaoD1xUt6FyKEgMNEPHDHpZr+WaaB8o44Ur+yuCd/sjUgodfbWbLxcKbPKl9q6UjBAlkyKnj6PHr0YcNQ33tKRjw0m24IPZK9WSC1ZyJqfBV7ixDMMobJGG/mSfTCZTWYszsXE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756106318; c=relaxed/simple;
+	bh=1DdhP1tvIWH8FfzpUWOrXKMVEwVOxzoCnFC+jccJYzw=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=P1jpibJ/oBNwO65/9tyq+X5W2Dnk6s/aX24/yNcnzBVOCfvBAAV0e0TkqIiTK5bmU2+IKG+nmZmCMYjtvSGuL2DSU8fVhfpGTiIawqXXQuGsPqE0PDjz+21/JhVru8Ezw9DwuUuzcKgahAw01Qm0HJBee9cuPmc/hX33MLdOmB4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=SahAc3yY; arc=fail smtp.client-ip=40.107.237.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aOKaAgZe6LRMmj53ZA6OZeysIFB0vFCK6JGGRfxgtwwelUOu7jf4hzImbyyBrG8W4SVXzhLuGRK1OjKaQm9U6YQ/dtO8oztGxgG3UB+NrCWrYjdWZadBmJC4TTrU6GqYzxjbY7UfkK9ZT0PoFgyFE4IuYEexvw2hOd5S3UDa2tfNZMFFGuKmgCc10KO61UeRCrAy8C/Ru12xhyDT29xLxy99fA5d5qzOZ9rRI5iyasoDVpYcGR8Gf5DRnRLOROqmzI+2QH4Jjv3Dks+/U/NFPVSvcBAyLqwnPtryb7vxeSyAWRpU2aJ745yJnxBvwAnboF27NGP6uTwRcT2JF4E4UA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=edAsFy7J0gQ3mlopnOWmMNie/me7PBydlTDR8KsRKN8=;
+ b=XFjyMyLUUNuem+BFCj7b3Tukuvr9g9AFZu0Iqx25WIWDTttEJDqVZmqYaDHpByEMVKBcwSKTRHGLXsEXeiza42sQeFd1pDW6MEU+35Mt2QgzbIux8rhDUx9fbxBTJycB6giC862yTOU74BeelMwBDLQvp5womjlOLaInCDmLwSC/4zQYvZ8cAg7J6sasnYpAFRCazSxmZJepx5trz4vnRJ3TuPboZNbLW9UHQhCSZ8Fauk98/pGJLk4A8hhzWLv+HbY4nlV9NfzjWxKMZLKue3q2Qh1mGe4xJOF7KN6RAN8OfDnJFHj+SNQxRNUlTu6or3lw5m/GcrbiSV/cTcuHOQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
+ dkim=pass header.d=altera.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=edAsFy7J0gQ3mlopnOWmMNie/me7PBydlTDR8KsRKN8=;
+ b=SahAc3yYBwI//OLMDLcOs3AeopGO/HN9qKMYLVdoLA8Q4cvvZI6S8o+13fbmWO3/tXJU/qPJC4WtjDRCv5nxXFzs9X82MoiG6vDZQSjq99WXH/FRdTNkYmxy8ovYaNzfQS/UI5/96GcEfPWdanypVeHdb4HrawWcS6HQNsL72LeFqpRz30GBxm9vX9AEWLFUMXfi/sYyQye6wjJ6plTKsoL/nxkX/YYMkrVYi6EzLd6VOXjVsch/rEjkCBDihVk6TrpTqC4J33RcRgoXOntGojvME+rrZV+av89F68lYATTDPCjj5Ndd5K5jtjodEor0oHMosARaDPJkrEdy+lfC/w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=altera.com;
+Received: from DM8PR03MB6230.namprd03.prod.outlook.com (2603:10b6:8:3c::13) by
+ CO1PR03MB5940.namprd03.prod.outlook.com (2603:10b6:303:93::12) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9073.11; Mon, 25 Aug 2025 07:18:34 +0000
+Received: from DM8PR03MB6230.namprd03.prod.outlook.com
+ ([fe80::c297:4c45:23cb:7f71]) by DM8PR03MB6230.namprd03.prod.outlook.com
+ ([fe80::c297:4c45:23cb:7f71%2]) with mapi id 15.20.9052.014; Mon, 25 Aug 2025
+ 07:18:34 +0000
+From: adrianhoyin.ng@altera.com
+To: linux-kernel@vger.kernel.org,
+	mun.yew.tham@intel.com,
+	linus.walleij@linaro.org,
+	brgl@bgdev.pl,
+	linux-gpio@vger.kernel.org
+Cc: adrianhoyin.ng@altera.com
+Subject: [PATCH] MAINTAINERS: Change Altera-PIO driver maintainer
+Date: Mon, 25 Aug 2025 15:16:37 +0800
+Message-ID: <20250825071637.40441-1-adrianhoyin.ng@altera.com>
+X-Mailer: git-send-email 2.49.GIT
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR03CA0108.apcprd03.prod.outlook.com
+ (2603:1096:4:7c::36) To DM8PR03MB6230.namprd03.prod.outlook.com
+ (2603:10b6:8:3c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM8PR03MB6230:EE_|CO1PR03MB5940:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1d00de93-26cd-4bf8-1c85-08dde3a79a01
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?uRhZhkQK7Wuf7LItH/DvX5lko97f7NlBqSk6XwOoNgjdnzUO9MErq4g904u3?=
+ =?us-ascii?Q?oQwRKz6wtUdMYk3VhsBN0MniXSbhd+DW7mJWBKwdiQgBWf+USiUdswzI5kis?=
+ =?us-ascii?Q?L8IdTPSkMowVn4CxXKBNXbbvU23aeMxS9gXeelnL1pTR44gTuhd0Z6Apt7Gx?=
+ =?us-ascii?Q?STkbSg1WqPVM8mDQThZOkFr7GEQc9Nldl9mJFPjEoTG4kV8/UofrQnmegFzJ?=
+ =?us-ascii?Q?az6ACigT4tL4U0NoeI5wg4uRLXnxiuffNhJK2Y038+D0vWbJ3LE/IlkKGglc?=
+ =?us-ascii?Q?UWAxpPf2ua2DoNZ6o7Jxc1PatoK4eQ9lyvNBg/sksSWhu+MWzJsidbhZrS1C?=
+ =?us-ascii?Q?4BJhQzX33rFyuH/1pABxwVC6YWt/5kYkS2/iOiWOJ2vrHcL1mb6m35FGhEbA?=
+ =?us-ascii?Q?zr7G4L/Q/RbqZfS4Ciy2BvAllrgmQ82sltfetA2Z2lZn0/lUnxs/xKgzPk4u?=
+ =?us-ascii?Q?r58dN6p8BZusUgbmQgH+QZBm4iFlvXJWKYiHyOLQtPj5c4Q1oogUf/7KeciX?=
+ =?us-ascii?Q?vi/ewS3wj3sDsuzqB8dB/TnIi6TdA8GA0xfC6HiiTNF5cbYO9tLcWLhWlfgi?=
+ =?us-ascii?Q?vgWcX3WcMRtQgzGW+w92k3VdyjelwzMTBanXhWGpgAzUJLQNQA+9tBT+uxOf?=
+ =?us-ascii?Q?J8Y7pSJV99v/DSMA3aaqcS+IGIp8hKzG/8zjAJ7Bs9K2EjsbBU9+xvnAjURC?=
+ =?us-ascii?Q?hx82qSM+TIAVq5yHO+Ls3HXp9pBMRzu+VvvCAkRfjDCDEYtiyzGnncGk9zGf?=
+ =?us-ascii?Q?ZnrGYQJ8iJ6SE2p23tP9CmCcMISGXtKzE1i5d7EslGIPTVvZVvf+gPLFjzaY?=
+ =?us-ascii?Q?1CGak/ICxC+zaPcGIoMKYVdf3MUyQi63r32sW4RblHeVtaiBkwGeM9VzTs25?=
+ =?us-ascii?Q?OFirtCoBrwgkDy1+drCQfMUxKJeNcE8Ehjo8BAHb5wXHXDuyhMt79EXLTsbC?=
+ =?us-ascii?Q?8jguMYnNEgV6x1/ndiW3xw8d8WrBtw4LzIwyRu+xeqqZD1zRmwaGRpY89tX1?=
+ =?us-ascii?Q?Ht+HjYZl/beVFw8usHQPbBZTm4h3Ms7J2BPJKKjVYs7INK/KfRi7gR84DouA?=
+ =?us-ascii?Q?8Hd+QNHf5yF43moANSu89i8YN8Y+nX1FyY+1QAyjBeDDtxQE3Uhew7XizvmJ?=
+ =?us-ascii?Q?TD9MiqEFzi3zj2qepv4uQ+ujPzON9g0uWZARBqZlvjdlDgkPGAvL7Kwsnpln?=
+ =?us-ascii?Q?I4EoZ1c9P6w6hTFYk/eAxUmdlS4Poe+fkNSREHUITH1Cbeo6C0oID1MbXmtv?=
+ =?us-ascii?Q?fuMtXwqKO0Q+H3SE2eX3B9nTquZdt+k6hrcn0aT/+8RIBxs1EZYjx3Q9VJDS?=
+ =?us-ascii?Q?YvdA+KVbrKxZCkJHcDtBemnh2zA5AX1T+Tv25Z6FGBve8O2Ip8HgmOYzbWYL?=
+ =?us-ascii?Q?+5OZHlSVg0FhuxMnbXg4nrdJoZiHWe4UGhmvddGrAqja0YX55W5GRHRvFz8Z?=
+ =?us-ascii?Q?uWC/F5KkgCY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR03MB6230.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Gz1+56LPnFlVrGqpWV0oSG/GiB1c0s6WrBMRZ5G6Gvu2VRwu+wiMbknPtoGw?=
+ =?us-ascii?Q?Vxw18h8KLCCE0YQk9P+68K4OICEYuoaMkiTYZx0Fl9tq8KJ4+zaK+5MiU2io?=
+ =?us-ascii?Q?BWb8pzKFfGZVz+hb9Y4RZnx1OxyFZGOAtIYPeuiU8rteFKCjT/tkSzfWvhKx?=
+ =?us-ascii?Q?Y/5dYzXpeodIsjiVvNhxwOSO6W+sFP7FRE5zwONRe6RlNBQGi+V4bOLO2OiR?=
+ =?us-ascii?Q?QC5IJM3soRY0xJVnyp4vPB29jCnk9TuKxnxgnLqQ4RaY+sPcj0Ol3bwI+DD2?=
+ =?us-ascii?Q?nj1s0MVLIYmpZeU1K+qX0b9GOP6IN6m7076jQqk7Ydwppf+3id9P6uSf6dUh?=
+ =?us-ascii?Q?mIIQC2AZZnf7FkzC6o6gOeRy+M2ojvgEAhJZlp2k0k/dBbyE8Quy78VeSztU?=
+ =?us-ascii?Q?Aa/5MbMB7D9T6hMOyWigrE+/vp7lSxCq44pP30RihqKHcjL7eKwlJHkM0M+I?=
+ =?us-ascii?Q?zQVAxk/cQ+BmRXGJwGzRSE6sPy6fU2OkwZMZS8tc8TaWJkrTeGOoISORm2zG?=
+ =?us-ascii?Q?+fkJBWdXejswmqDqFEa+qWSvZf24pfZ5I6R7F89/SMn0DCFLiGUatD+uiuBR?=
+ =?us-ascii?Q?WLZ0qQh6flNkJBh67mOdhm/82Xotx9G5axyuKEtizBQEsBOZCvPwsp/9a10F?=
+ =?us-ascii?Q?kofGoA8kWLaCTTzz8M4WtcwM9B+cS2fcBVsKglbFwCwLOp7hGxb/ezBvFDeT?=
+ =?us-ascii?Q?aImGSz4ApHk5W/J+GS/5CB2Mgv022ej6VdGSVIXfWaMzSqOECxuCnfjp3nzI?=
+ =?us-ascii?Q?rMkJ9COTt+1h1bwMwSkbXDlLE8E5gN9ggmxLRJFTn90o5aSheuH1aBd4NDDq?=
+ =?us-ascii?Q?dcNuSCmrZE2ZWA3Odty7yYxVrKzEUTbRSl8/klj4jKKQj0Y4F4v4gdqeJmjr?=
+ =?us-ascii?Q?kHjZOU19kwn8bbYkTWZUaFwlT1b5bB4ZWjsjLS2K9g0BXxsK23TQqut4zI9A?=
+ =?us-ascii?Q?F0SnERd6S2OG1hTlcbCUaQtELxOmyFEsbidLdlrId/AhmZEjcdu8AniqelFI?=
+ =?us-ascii?Q?zFP1oobBowzo4ZjthH3ZkoKRx8W+9U1wKIlIOogbJd6FOKhtX6FFzQO+7nOt?=
+ =?us-ascii?Q?zR9SBZXd6b+JHscVe1HQc3wVdbmK+//VpqbpVBB62Lrj50zvw2UeSoNbvH4G?=
+ =?us-ascii?Q?zbVic6v1wuuGFcQg1+MfWLv+YqHlIaD4Xg4jYtOWrKLXv+dElwcrHt2x7AKi?=
+ =?us-ascii?Q?3YUOZE7FMYjWBUqbfTVYGfdkcFVEmArKlVgPNZsHwbrVjEVskojW5r0WIq4p?=
+ =?us-ascii?Q?foeiQV5kGW6QdrwHbvWZRmDVqBgHF1r1m6t7xDgPGfuL2pRW1I1iwBiBfrr4?=
+ =?us-ascii?Q?2HZMxMAo59GiFGc3IbanlRv92G9yAwY+BoR5V7EUz+mzkP8XsVSaEUFrx+/1?=
+ =?us-ascii?Q?JT2ehfp8I8L39IWjZb/3UwsNDHWOE5IVvHlSztZVEFBnfZngCtLJnFxf4gCo?=
+ =?us-ascii?Q?HFQteGqej/zyCMsXduet/gY5nCot7S2PTK7mM2tp/CWzLYiYV4J+bXA8SwaI?=
+ =?us-ascii?Q?NR9ptMrPFImi8gEChFlhZXhcqNJPzfyjSApHs2rraCxwVS2u+Fi351t6ewgx?=
+ =?us-ascii?Q?PlRxJmK2Q4aXoaRwoUp/xdGRUHk70sI7AELIgFecgYQH5gduCUWFChPXW+Hw?=
+ =?us-ascii?Q?eA=3D=3D?=
+X-OriginatorOrg: altera.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1d00de93-26cd-4bf8-1c85-08dde3a79a01
+X-MS-Exchange-CrossTenant-AuthSource: DM8PR03MB6230.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 07:18:34.3352
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: KNfS/RARzLVh6gNaFXVmK6jQOiEsNiusS7gaHdyWVHsTA/mHq1wplfDWn64iwLR59HrFCEmFPwk0TavYx5kirWtKJteofE5uAwTXaNNXNpk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR03MB5940
 
-On Sun, Aug 24 2025 at 11:44, Thomas Gleixner wrote:
-> On Sat, Aug 16 2025 at 18:38, Jirka Hladky wrote:
-> And this has nothing to do with timer migration or whatever, that's just
-> a matter of correctness.
+From: Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
 
-Just to come back to timer migration. That's completely irrelevant here
-because /proc/sys/kernel/timer_migration only affects the timer wheel
-and _not_ hrtimers, which are used here.
+Update Altera-PIO Driver maintainer from <mun.yew.tham@intel.com> to
+<adrianhoyin.ng@altera.com> as Mun Yew is no longer with Altera.
 
-And just a few more comments about your findings:
+Signed-off-by: Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> grep -c hrtimer_start hrtimer*txt
-> 6.12: 10898132
-> 6.13: 17105314
-> 
-> grep -c hrtimer_expire_entry hrtimer-6.12.0-33.el10.x86_64.txt
-> hrtimer-6.13.0-0.rc2.22.eln144.x86_64.txt
-> 6.12: 8358469
-> 6.13: 3476757
-> 
-> The number of timers started increased significantly in 6.13, but most
-> timers do not expire. Completion rate went down from 76% to 20%
-
-Did you actually look _which_ timers were started and which ones did
-expire and which ones not?
-
-Data for a 2 seconds run (couldn't be bothered to wait 23 seconds)
-
-On 6.10:
-
-All start/expire:
-
-# grep -c 'hrtimer_start' t.txt 
-248039
-# grep -c 'hrtimer_expire' t.txt 
-247530
-
-stress-ng Posix timer related:
-
-# grep -c 'hrtimer_start.*function=posix_timer_fn' t.txt 
-246739
-# grep -c 'hrtimer_expire.*function=posix_timer_fn' t.txt 
-246739
-
-stress-ng nanosleep related:
-
-# grep -c 'hrtimer_start.*function=hrtimer_wakeup' t.txt 
-2
-# grep -c 'hrtimer_expire.*function=hrtimer_wakeup' t.txt 
-2
-
-On 6.17-rc1:
-
-All start/expire:
-
-# grep -c 'hrtimer_start' t.txt 
-457456
-# grep -c 'hrtimer_expire' t.txt 
-304959
-
-stress-ng Posix timer related:
-
-# grep -c 'hrtimer_start.*function=posix_timer_fn' t.txt 
-304673
-# grep -c 'hrtimer_expire.*function=posix_timer_fn' t.txt 
-304674
-
-stress-ng nanosleep related:
-
-# grep -c 'hrtimer_start.*function=hrtimer_wakeup' t.txt 
-152241
-# grep -c 'hrtimer_expire.*function=hrtimer_wakeup' t.txt 
-1
-
-The 150k timers which do not expire are related to the restarted
-nanosleep(), because the nanosleep is canceled due to the signal and has
-to be re-started.
-
-On 6.10 that does not even reach the nanosleep in the test thread
-because the thing is too busy with bogus signal handling.
-
-Trace for 6.10
-
- stress-ng-timer-2229    [110] .....   187.938505: sys_timer_settime(timer_id: 0, flags: 0, new_setting: 7f7880228ec0, old_setting: 0)
- stress-ng-timer-2229    [110] d..2.   187.938505: hrtimer_start: hrtimer=0000000023e2c3e0 function=posix_timer_fn expires=186716941003 softexpires=186716941003 mode=ABS
-
-Signal handler re-arms the timer
-
- stress-ng-timer-2229    [110] .....   187.938505: sys_timer_settime -> 0x0
- stress-ng-timer-2229    [110] .....   187.938506: sys_rt_sigreturn()
-
-Returns from signal handler
-
- stress-ng-timer-2229    [110] d..1.   187.938506: posixtimer_rearm <-dequeue_signal
-
-Dequeues the signal which was related to the arming _before_ the signal
-handler re-arms it. So it's incorrectly delivered.
-
- stress-ng-timer-2229    [110] d.h..   187.938507: hrtimer_expire_entry: hrtimer=0000000023e2c3e0 function=posix_timer_fn now=186716941468
-
-Now the timer which was armed in the signal handler above expires
-
- stress-ng-timer-2229    [110] .....   187.938507: sys_timer_getoverrun(timer_id: 0)
- stress-ng-timer-2229    [110] .....   187.938507: sys_timer_getoverrun -> 0x0
-
-While the signal handler handles the bogus left over signal
-
-Lather, rinse and repeat.
-
- stress-ng-timer-2229    [110] .....   187.938508: sys_timer_settime(timer_id: 0, flags: 0, new_setting: 7f7880228ec0, old_setting: 0)
- stress-ng-timer-2229    [110] d..2.   187.938508: hrtimer_start: hrtimer=0000000023e2c3e0 function=posix_timer_fn expires=186716943483 softexpires=186716943483 mode=ABS
- stress-ng-timer-2229    [110] .....   187.938508: sys_timer_settime -> 0x0
- stress-ng-timer-2229    [110] .....   187.938508: sys_rt_sigreturn()
- stress-ng-timer-2229    [110] d..1.   187.938508: posixtimer_rearm <-dequeue_signal
- stress-ng-timer-2229    [110] d.h..   187.938509: hrtimer_expire_entry: hrtimer=0000000023e2c3e0 function=posix_timer_fn now=186716943952
-
-vs. 6.17
-
- stress-ng-timer-1828    [029] .....    84.089978: sys_rt_sigreturn()
- stress-ng-timer-1828    [029] d..1.    84.089979: posixtimer_deliver_signal <-dequeue_signal
-
-Signal, which was generated by the original armed timer is correctly ignored
-
- stress-ng-timer-1828    [029] d..1.    84.089979: hrtimer_start: hrtimer=0000000081582a37 function=hrtimer_wakeup expires=83144889279 softexpires=83144839279 mode=REL
-
-Nanosleep is restarted
-
-          <idle>-0       [029] d.h1.    84.089980: hrtimer_expire_entry: hrtimer=000000009e0c5084 function=posix_timer_fn now=83134840265
-
-Timer which was armed in the signal handler expires
-
- stress-ng-timer-1828    [029] d..1.    84.089981: posixtimer_deliver_signal <-dequeue_signal
-
-Signal is delivered and timer is re-armed:
-
- stress-ng-timer-1828    [029] d..2.    84.089981: hrtimer_start: hrtimer=000000009e0c5084 function=posix_timer_fn expires=83134842396 softexpires=83134842396 mode=ABS
-
-Signal is handled
-
- stress-ng-timer-1828    [029] .....    84.089982: sys_timer_getoverrun(timer_id: 0)
- stress-ng-timer-1828    [029] .....    84.089982: sys_timer_getoverrun -> 0x2
- stress-ng-timer-1828    [029] d.h..    84.089983: hrtimer_expire_entry: hrtimer=000000009e0c5084 function=posix_timer_fn now=83134842856
-
-Re-armed timer expires and queues a signal
-
- stress-ng-timer-1828    [029] .....    84.089983: sys_timer_settime(timer_id: 0, flags: 0, new_setting: 7f7cccf7dec0, old_setting: 0)
-
-Timer is re-armed
-
- stress-ng-timer-1828    [029] d..2.    84.089983: hrtimer_start: hrtimer=000000009e0c5084 function=posix_timer_fn expires=83134844444 softexpires=83134844444 mode=ABS
- stress-ng-timer-1828    [029] .....    84.089983: sys_timer_settime -> 0x0
- stress-ng-timer-1828    [029] .....    84.089983: sys_rt_sigreturn()
-
-Signal, which was generated by the timer armed on signal dequeue is
-correctly ignored
-
- stress-ng-timer-1828    [029] d..1.    84.089984: posixtimer_deliver_signal <-dequeue_signal
-
-
-Thanks,
-
-        tglx
+diff --git a/MAINTAINERS b/MAINTAINERS
+index fed6cd812d79..5b3f80f42f3c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -931,7 +931,7 @@ F:	Documentation/devicetree/bindings/dma/altr,msgdma.yaml
+ F:	drivers/dma/altera-msgdma.c
+ 
+ ALTERA PIO DRIVER
+-M:	Mun Yew Tham <mun.yew.tham@intel.com>
++M:	Adrian Ng <adrianhoyin.ng@altera.com>
+ L:	linux-gpio@vger.kernel.org
+ S:	Maintained
+ F:	drivers/gpio/gpio-altera.c
+-- 
+2.49.GIT
 
 
