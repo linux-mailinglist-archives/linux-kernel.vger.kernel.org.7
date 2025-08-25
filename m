@@ -1,227 +1,212 @@
-Return-Path: <linux-kernel+bounces-785162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F307B346C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:08:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50379B346C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:09:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EC825E6093
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:08:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 077785E659E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:08:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC7032FF653;
-	Mon, 25 Aug 2025 16:08:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE3782FF65B;
+	Mon, 25 Aug 2025 16:08:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="lovFMvmc"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010005.outbound.protection.outlook.com [52.101.69.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="NcRUClF4"
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A29202FFDE2;
-	Mon, 25 Aug 2025 16:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.5
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756138095; cv=fail; b=i+CBBDXEUeSqXtwbm2QLFnoL5YbBPC5gQkV84SRBlKhknziSr+hVQUn98jF+Jt/O5acJJGqYtFK7qzCC4hoi/K6AB24OcPJfwxXVOKLNnx35Z7cdRR1648phi6bP72n/FN0v1BkOICbYZZtuCV4Wkg1R49ME/4IJWiOI8FmOB6Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756138095; c=relaxed/simple;
-	bh=gZcVgC/eRJrfzqyDsRVJx1tRcRdxER3g5XhiLn1Ufis=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=GOnkzDaXGdYSwJr90RJO2EnA7EChhHmy3xDg5tsntW8S/1iX7wNOaaz/CHAMoHZu1njqos4ja8XcPtiQeqOWcp8LAure22BsTITiLM5nP1o780hqnsPLmiy3aKtdvhWCDPvgBnjAp3/U5yxNs4E7B7pnUQaLmBgSFfg+oQaWvzE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=fail (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=lovFMvmc reason="signature verification failed"; arc=fail smtp.client-ip=52.101.69.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aO1tcp4r2ESgrNO6HK18TdDwm1JNOmrjm6YcgB7UPuF9N0civeBdwMUgpdjCJ+lMcA8s7PvkgqUjKfwtW9Ysbq2eMQnArqOyFmRX5e1uJSShAL29FfW7kt1fsRBcdITIQ1C2KWtlThB0aZa/SibY1NvURH26pwSyszWio1SDfvNJ7erhEOfYwCptQCYJo5kFZrm3Jna24CIdWTJzPd9EiamrRU2FMEIoZC01gbtlwSBspUOydtDVUQ8KKrcScoj5VXwODYz9DfZmQScHb5ACkEQqlMrSOt5ii6F5G+C2QnpM5bbBY0fbMcZJnyXhUjST3he19YfKCA/Jiib4eP7CNQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kz9TSxOIsaW8YkK1PBJNMEQ6ltqjH1bLP07aq70YU9Y=;
- b=teKkKKPYv70nXr2yzNmmYoJ1m1x+6ZFDEjOeoYyfAuqLc8IDmBlbISSws1rzpxvPS+KqjehCGsPg89UHLrf8hB+UtPQkOVOB413pjLgHT93xlz6lLmtnNf792Sccw2/fWRj2z/76/qFWWu5/u+cU07WIeGOvHjllAWxqcjziuoCUmgZae5wF4pJpH94unaHN4cD4/8W5ie0t0WpAGrpGGGmuhG0Mr7Td4qQSMMyYBoFwbk2CV55upM8RQf7x+5Cux9RhygdhL+FlgvNRth7uDFeAgx6izT8zMma0oNjb7VfF6DZrfN2x+AFleFWX7ScCzS+heGk01qDmbA/4+KxjVA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kz9TSxOIsaW8YkK1PBJNMEQ6ltqjH1bLP07aq70YU9Y=;
- b=lovFMvmc2LAb9d4VsZeH4gJ2B4zMrcBu3/JM1zdWS0pNPPA6LAHIjTKmSZ97omDzp6bbJmfTKhQxghWHSACCJZ7z9Jq7FimMcqxIrMzUy+HtyNEkclu9ubYS+FFj7+J1jS1EGx9d51Oh1zSB3Vrc9NiPj2/de6uT8Ru7Tbc7FRL9YQ7CQ3MNouVkbzu78IDKfew+X3Ghj2eh6dm9hmGFPlctMAQmn+0Sea9q38vStOs8Z6J0LbwVeNO736p0cWheUwlyiL9pqI1+qnZ5jGemBypJlldJ7u3CJeUEBJNW51osIUjTMBBMfIZ8lkULuz7zyOAe3Dc6kiabxGzq+CwajQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
- by DB9PR04MB9703.eurprd04.prod.outlook.com (2603:10a6:10:302::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.10; Mon, 25 Aug
- 2025 16:08:09 +0000
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::e81:b393:ebc5:bc3d]) by DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::e81:b393:ebc5:bc3d%5]) with mapi id 15.20.9073.009; Mon, 25 Aug 2025
- 16:08:09 +0000
-Date: Mon, 25 Aug 2025 12:08:04 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev
-Subject: Re: [PATCH v3 0/4] ARM: dts: clean up most ls1021a CHECK_DTB warning
-Message-ID: <aKyKZM5TRdZ392pI@lizhi-Precision-Tower-5810>
-References: <20250822-ls1021a_dts_warning-v3-0-6b611a2f23a4@nxp.com>
- <6192530.lOV4Wx5bFT@steina-w>
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6192530.lOV4Wx5bFT@steina-w>
-X-ClientProxiedBy: AS4PR09CA0025.eurprd09.prod.outlook.com
- (2603:10a6:20b:5d4::15) To DB9PR04MB9626.eurprd04.prod.outlook.com
- (2603:10a6:10:309::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7266A2ECE8A
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 16:08:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756138131; cv=none; b=sHn9A/4XuXpdQrSnIAj+oIzXo/fNsBbTKgk/qB3MkpIFqeAJVxjhgUSCprXiQXyAE4bpgl4ELCO5ip2WTK6VQnM5n16nGOX220rfK6kWMLreOggH1W8Fc9EhweBEVuEaIwHVAkt70k34vlvK6H8laEbkdaxOoztATlfy3TJTwas=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756138131; c=relaxed/simple;
+	bh=IRrGnU8GP7ncfbvvMS5DUsPXlS3sX82/pTTFd6SsTjo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uOqTfwnGao0abA4VNGAiXdVWuOhuCRHy5pJq9nSaDDuv7aWatkDYXNXqIHtIZ0KEOY2ZdenEJ5+2+nXXaVnIyMQr19kENBkQ23cvRXaic+6D6iTRzHD7JdcBiKnUFhGJ6v9ec6JYjhF6XaGRy5gpaAby7Y9ms+fdE91ALOFHVYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=NcRUClF4; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-88432e6700dso71352739f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 09:08:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1756138127; x=1756742927; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=q0cjzzyWOyZks1nTu1rGjk9KV3egwe1aayyTboNLSe0=;
+        b=NcRUClF4419uY9or4sIjWjpe2GdaATVJjBxK4U7L51C+XrN5OwSTdFTJOvwO7vCWTW
+         UejXSVD1wsvJ8mAsOnBWRRHqMHEpU0JpxXiy5UgVtDTjh3HAg1zi21rTUb44hRBP/JsD
+         oBeZ1J74XRbVay2JBPWn8ycznjRN48VGc6ElCxnJc/pmpKoEqi+UCk0KrBEtkuTRd4ci
+         RiHMfjRwvAHuo8WlYgS/vN0RSYVXdY2iWrh1ABozpTRl/HQ8DKT8++KjBi2U39ucjmQw
+         WqV3hH3+/fb2dZigWqt9a+mzLxQSxa8IqCQukly+IOOd+i4KMVbZ4TkpfbS2YjgGOSrA
+         8yEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756138127; x=1756742927;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=q0cjzzyWOyZks1nTu1rGjk9KV3egwe1aayyTboNLSe0=;
+        b=qi65sNulfQzvBjfkMxQVLOV+T6cITayXRHKbPbsDCDApQAfv2+x5/9zf8psvwNhfIU
+         aZZW4B/oBdPU5l6Hd+i1SAXKs3cCr3LrMaLO/WI16rRxt/4Zuq2eLWrxrCJce4lINYdv
+         HKHyVrYkPQr8S14IHcYiMufTBkOEKEXI+SJF5CUhDLnSunSkNb5X56PpMDTJCeWSL5h+
+         gnPJu5zu+WLLYWa3fJnB41Hb0V+WEKzv6UOlg6GFutGgTpuskF/Ok5v55h4nsr1Dj/hy
+         w1lu5nZq5MKYT77gb6IGPMF7KC1E5TnoqeYo8OqyIiIVRfytymSqysVuymOr3Gb0PYpN
+         /thQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXIufAkJTY2phBo4KouKQyNVUg2A/dnA8JcfoLT/w6edlAegq/RoNXqdFwhwoeblKzYgN7hOD2EczjywcA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNGLV1Kx448UpmfsTHH7Xf74Atmyt4ajGabrAs0Kcn/b76odkS
+	WuKMCmI2vU/q21XK3e3Nsp/QCkj7/qHMqv+Cl3K0ITkeTeQHkHdyx4TJD/7v67vkhNo=
+X-Gm-Gg: ASbGncu99YH66SXnfOP2pIu6/FAy/vd0tUkeDgIUNgvs+Zxp2YiI0tZEiQlH6Y5EPm0
+	V1eUs96ifavZjpoGntIdbGQS3JnMyVQCTDaQWUPFuc+lkVIa/yBAOUXrsdBKPt0efamBsx8sPXz
+	O2cHBoRSqZLMCkSbraUdFs97QAIUNY96bAIoCkCtcpN2P+WpuTy45Ms4WgqidFAxd5qpTG910Uv
+	QcQRcM72Rfp80kSlM8rSfR8/xwDijif0szodt2CP/JaOaTAhvRWqqrWhbU2TCEZJrFxuXW6aVAt
+	oVtHYVS9DV3NtcN3X8v/XG/oVoD72MhfgtErsJ2Nmm/bCDrO5OXhQjT2VxShD2nkHZdpegq4J9v
+	8ZQJuSllE7YFwB42sDzZOBMV45jx/LNsi+cRQHMlD3MdooN/zQyxek92xMC7+Zg==
+X-Google-Smtp-Source: AGHT+IEL2QvsFMnDcZXTzmhm/4l1RIr9WfujVlwMQrzr/6F7bd2mjY4YQv7lvRHHyhZ+U5TJ7ij4Pw==
+X-Received: by 2002:a05:6602:2b07:b0:886:c53c:9172 with SMTP id ca18e2360f4ac-886c53c932cmr1606713739f.18.1756138127315;
+        Mon, 25 Aug 2025 09:08:47 -0700 (PDT)
+Received: from [172.22.22.28] (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-886c8f0a83esm502245639f.10.2025.08.25.09.08.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Aug 2025 09:08:46 -0700 (PDT)
+Message-ID: <b387ebdd-ae5d-4711-9e10-c61cb06f4b5b@riscstar.com>
+Date: Mon, 25 Aug 2025 11:08:45 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|DB9PR04MB9703:EE_
-X-MS-Office365-Filtering-Correlation-Id: 72bb1be6-9946-4b3a-9e12-08dde3f19539
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|19092799006|376014|52116014|38350700014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?iso-8859-1?Q?HoOgV/Dy/Cv93wk8TTk6V/p6syZMtpFao6rBlniua3dhXkhKnCDBQj+ei0?=
- =?iso-8859-1?Q?2YTes7lhTO7/RHda3LROCGDJIbrEryJqqpwtnsNr0Y3rMT0MYa2Wg3zEDL?=
- =?iso-8859-1?Q?AmaRMdt0nGPhg4T81GLXFQXLEAkYY2d2fOlKCEKRblClQkU5EfFiNM45Xc?=
- =?iso-8859-1?Q?dSXq1s/L80xc6IQPcIE3nykfcOk0CJ+g2lNU83LozXMkO/bWSQ77Fuz4U7?=
- =?iso-8859-1?Q?sMcHJJ0ryw32skCEiiqwKeGWMlCuErdl1y57kdRnlMfBv6cEJ4vTrQ0Iiu?=
- =?iso-8859-1?Q?vIEW8BYRQAQW376Wrotjz31DCp1I31XgyxSO7O/TuYlZjsQB5Gz7AfTZzs?=
- =?iso-8859-1?Q?oKnvPMQUZtRzsUtRRvVnaRQWkT9ROxysjlqUA+EXzJ0LPO5ib136AHLItu?=
- =?iso-8859-1?Q?fZqovEG/q7CYBPLPstVtR+RPH/0rm2Ev90RLpD1d4yjtvJ6Sszl4+35NjR?=
- =?iso-8859-1?Q?5pk3Qvg6q96DByi8YOi/DmXQLZZVXnZ6HQkU9/U4cVAjkptT1MQpEb5+V0?=
- =?iso-8859-1?Q?QDGVKXNi0TQxZcH/9OmM/a342JdgZplEDUK2bX5BgPTyS3Ku+A2n+aByur?=
- =?iso-8859-1?Q?pfmKmO9eZXJ0rnR1CF4tM2Se4gthFknvKAHIfBdSigOwJBPVUH6uoll/nn?=
- =?iso-8859-1?Q?sUOT2rcU7+WnN3cKBimUr1w7ARgHk/7d3rddhVypazQyrqmwxankDS/8ko?=
- =?iso-8859-1?Q?qNFZMD45IXBUSOArnkp10ijqSl/QZ6Qz28V2OCsNTtzCMpyuKEAkX0vbBl?=
- =?iso-8859-1?Q?C/rP3gJOqNxwRmMssl0eYUJGEoJ0KbVMrvi1NFf5y8badsoYuG4a0b/NWO?=
- =?iso-8859-1?Q?kx1IOHzlf0OC+6suBU1hnJMbvr7rgyKqrTnWO7DxNYGZ8qiqNoQ1LdXYNC?=
- =?iso-8859-1?Q?g+y7IzKgCXAXBTQidfWc+Ggc97Ql1YoQlrQonsEKzBlY+vEAu2tTqLgTYL?=
- =?iso-8859-1?Q?8kiLgYIUEvndBO/MQOd3QoqQVQZj238ERZnCn/htymHviFzb5RVrQD/hEY?=
- =?iso-8859-1?Q?L4aB/xnUQCAhBSc61os3xwz+0y+KFpZkAwEwt4LxgeMdB2kldrRQLvbpHa?=
- =?iso-8859-1?Q?S2/V1x7KrNYhopFdiHgCPCIzXcxdjFPtwk74zlti53Bel1sOzt1okYC5vw?=
- =?iso-8859-1?Q?s4Dd4ET7753WjgogcujQnAhZBqX9vgrfUAt4Ew65mvt2XeSyL+gknA5COb?=
- =?iso-8859-1?Q?IVgqtCZF9k0CZ7cn7kU3Of+2exC6OYiBamB0hhK6VXyWDJWnoTA+IKgVuq?=
- =?iso-8859-1?Q?o8Z1aMtg0kCCmq0iPumP0Vxvw6FWaCOI1UYrrlUFgw4XaLlNB2e72tMBXv?=
- =?iso-8859-1?Q?kVaClw1BF2xt2Z8y8e86zH4WRgte8V1MPZYUlNfn8iF2rE9+nO4oRdB0WC?=
- =?iso-8859-1?Q?qi47p75tZ2pxHBsBlPDhoHYzMwX9ytmtJltMyUAqrFbvMSNz7VK9WBshs3?=
- =?iso-8859-1?Q?XkZpDaa2vOyHbYwx+oTqIxzfCwOKdeP0VTICnQopIgsy1yN6be0Iy6j3C1?=
- =?iso-8859-1?Q?s=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(19092799006)(376014)(52116014)(38350700014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?iso-8859-1?Q?PcDZw6uPpcl757wNTR2p3vJvoaV7rEM0ZiUAHigkOxOAVvk/P2mtKu9gYD?=
- =?iso-8859-1?Q?tvqLWyrcRv0B8wJxk1hBRnoZsdhw9mWY7vg0NZpJpfzxLflKMxd57Uj6se?=
- =?iso-8859-1?Q?+truE1n+eaTE9e8hlYnEaK+Xf9MswKyez1GHBdcEfRrpQ2z4TO+TIhDFU/?=
- =?iso-8859-1?Q?AlPZRul1+BEfUhpxF+r/aN64GXnys69FxZo9z2lUtxMRfDatlLgoGQqiBB?=
- =?iso-8859-1?Q?rZdAZiFbJDP2kZHEBDt5r4Ik21079i/6mQ+FPNvCMEkOUd6eYWO4ONJVnR?=
- =?iso-8859-1?Q?zQR2Aa30o2Pq7PM7myMYLkBMAUKH0lh/DlSOCUhOIHAcx8o/n3IFk2RuTU?=
- =?iso-8859-1?Q?783Eu9b3SUNBXp2xxoOKNNF38mltE+OzUht/DnvEyc5kTBYcxN44NrnsdV?=
- =?iso-8859-1?Q?532k362OzUKUZWVkY+VsildtyDbtOfk3tWJN5qX5Q9paOtdTUrD5d76Ghx?=
- =?iso-8859-1?Q?luj6M3uUG2+Vi2lulRT5MEgsPRTPR9uS1JKbEVzV5/LaI+RZM0nDt1AU4H?=
- =?iso-8859-1?Q?tJ6apJQh1AxFminMOmnvOS2dllz/WHpRGseU3EbNEbcRILMryZIsnuOSyS?=
- =?iso-8859-1?Q?1vxdHciNajvWGRaxEfxFIcVISSBkk5I16hOVjUOq1GHqIey8w1G81pl+Nq?=
- =?iso-8859-1?Q?hTrrrUdkcAzDiik3CvIInA65BC0FcUvPqGjS+Ce84Pfd8OQTW9Ka8kzF/C?=
- =?iso-8859-1?Q?lE4epb+fpuKndwBrVLLpF1i/BlIaxKFL5Da7OfD5uv0prSuYxNKcq5TW9u?=
- =?iso-8859-1?Q?N6hNDDBdhT3+241zeuP0rGD26OuyblmJ7SQQsQcZHYWePrPzdzz2oY6kXZ?=
- =?iso-8859-1?Q?/RKXHswJjMA2RgGZV/Wy9I5PBcmXfJc+RqYFx3NGzsOLJCS/tSqnQPYui0?=
- =?iso-8859-1?Q?xsoKAT8zUnl0uSZIGfXx5wQYKLUCZ9sNiZTlN1p/OkmeZgueg95xc5icc4?=
- =?iso-8859-1?Q?r/r3WBmIPP3T8dWVAvvWYuC08KY9KPYw1gAjBGeymAZw85dgP16tqocd2V?=
- =?iso-8859-1?Q?GbVSTzYIUNCco2Kt+2RftgxQ5rFOxol4Y7QFuZUpAeKs1m0NKNZhvEJSAo?=
- =?iso-8859-1?Q?9/S1xzrFA4EhHXhxj3i9bAvjfYnRlFv29Sh2MSj1knTB2J3612BV+ZFy5Q?=
- =?iso-8859-1?Q?2hUt4HBBVUkb1DVUiQdo+ZoXZizw9ZOi0kQVp9F/nolD8/xWzx9dtU0mne?=
- =?iso-8859-1?Q?4x17MTkmo6kqpvQpR7EEr5OfM0555lc3L5e4p2yOLEpukvm5vV0zP5e5yx?=
- =?iso-8859-1?Q?b7iiuAyONIEEYeKQZEbYcVU9CV9IMMDLajDNjLeEoEUXOj6ibPClZZIlHh?=
- =?iso-8859-1?Q?19OCWQw24Ns+5M+dCPKmHHEaa+loppKfbTOV/KRSPJsB2YU4j1UrHOMPW/?=
- =?iso-8859-1?Q?7fVFHtIwJt1zalZDoARKFE8G9c1Gs+zNPmu94VhuDDzPxr+RcordUgWAVy?=
- =?iso-8859-1?Q?QPgCcJzutwIi/LZ8t0lU/HdrB9SSlWXjJfI+8WpTVWnPqmrYYdOgF3e1gW?=
- =?iso-8859-1?Q?1YMu1xb/S6Mogz9BS6iWQkZCnbPYM39bar3xFgVcoXrWeZoWNpbIF7ENHi?=
- =?iso-8859-1?Q?ye0nHcCp6c6qaIpEtX0EKfY2X9WqtlUyWc1pb/yKRaCg7RpHupFV9QBKO/?=
- =?iso-8859-1?Q?xhczQLr/aBM04SXJkb0VBrLVcvXN2hJxe0?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 72bb1be6-9946-4b3a-9e12-08dde3f19539
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 16:08:08.9996
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: b1U8TyaqkO+gCbNrIYcAYptDsfUiUcUScRxApP2roJRcXAKZCigiEpgfQt4bAFjuefh8uNthcm3Sdq4CONk6nA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9703
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 2/7] mfd: simple-mfd-i2c: add SpacemiT P1 support
+To: Troy Mitchell <troy.mitchell@linux.spacemit.com>, lee@kernel.org,
+ lgirdwood@gmail.com, broonie@kernel.org, alexandre.belloni@bootlin.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: mat.jonczyk@o2.pl, dlan@gentoo.org, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+ linux.amoon@gmail.com, troymitchell988@gmail.com, guodong@riscstar.com,
+ linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250813024509.2325988-1-elder@riscstar.com>
+ <20250813024509.2325988-3-elder@riscstar.com>
+ <089D29348F246F2C+aJ6bPgJsp5GjhDs5@LT-Guozexi>
+Content-Language: en-US
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <089D29348F246F2C+aJ6bPgJsp5GjhDs5@LT-Guozexi>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 25, 2025 at 08:30:17AM +0200, Alexander Stein wrote:
-> Hi Frank,
-> Am Freitag, 22. August 2025, 16:49:57 CEST schrieb Frank Li:
-> > clean up most ls1021a CHECK_DTB warning.
-> >
-> > Old uboot check esdhc@1560000. The new uboot already switch to check both
-> > esdhc@1560000 and mmc@1560000. So we can rename it now.
->
-> Please be aware you are not the only vendor. Do you have a link for
-> the corresponding change, so other can easily keep up?
+On 8/14/25 9:28 PM, Troy Mitchell wrote:
+> Hi, Alex,
+> 
+> I did not find any accesses to the P1 shutdown or reboot registers here.
+> Does this mean that the current series does not support reboot or shutdown?
 
-https://github.com/nxp-imx/uboot-imx/commit/83862cd15951489d0eb75a1fa6d0e757142e3ce9
+Yes, that is correct.
 
-ARM64 platfrom already change to mmc@* for a whole.
+> If so, do you have any plans to support this functionality?
 
-Frank
+At this time I personally don't have any plans to add this, but
+it could be added later (by anyone).
 
+I actually attempted to do this initially, but gave up.  The PMIC
+is accessed via I2C, and I needed to implement a non-blocking
+version of the I2C register write operation.  I tried that, but
+then found that the shutdown or reboot still did not work reliably.
+As it was, this was more than I originally planned to do, so I just
+implemented the simple RTC operations instead.
 
->
+					-Alex
+
+> If I have misunderstood, please correct me.
+> 
 > Best regards,
-> Alexander
->
-> >
-> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > ---
-> > Changes in v3:
-> > - rebase guoshawn/imx/dt tree. Remove patches that were already merged.
-> > - Link to v2: https://lore.kernel.org/r/20250820-ls1021a_dts_warning-v2-0-2e39648a32b7@nxp.com
-> >
-> > Changes in v2:
-> > - squash rename to flash patches
-> > - remove duplicate patches already post in
-> > https://lore.kernel.org/linux-devicetree/20250725061339.266125-1-alexander.stein@ew.tq-group.com/
-> > - Link to v1: https://lore.kernel.org/r/20250818-ls1021a_dts_warning-v1-0-7a79b6b4a0e2@nxp.com
-> >
-> > ---
-> > Frank Li (4):
-> >       ARM: dts: ls1021a: Rename node name nor to flash
-> >       ARM: dts: ls1021a: Rename 'mdio-mux-emi1' to 'mdio-mux@54'
-> >       ARM: dts: ls1021a: Rename esdhc@1560000 to mmc@1560000
-> >       ARM: dts: ls1021a-tsn: Remove redundant #address-cells for ethernet-switch@1
-> >
-> >  arch/arm/boot/dts/nxp/ls/ls1021a-qds.dts | 8 ++++----
-> >  arch/arm/boot/dts/nxp/ls/ls1021a-tsn.dts | 2 --
-> >  arch/arm/boot/dts/nxp/ls/ls1021a-twr.dts | 2 +-
-> >  arch/arm/boot/dts/nxp/ls/ls1021a.dtsi    | 2 +-
-> >  4 files changed, 6 insertions(+), 8 deletions(-)
-> > ---
-> > base-commit: 75ad5f47c58aee30248d294a58c8ee52e079a8e3
-> > change-id: 20250818-ls1021a_dts_warning-fff933bd83da
-> >
-> > Best regards,
-> > --
-> > Frank Li <Frank.Li@nxp.com>
-> >
-> >
-> >
->
->
-> --
-> TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
-> Amtsgericht München, HRB 105018
-> Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
-> http://www.tq-group.com/
->
->
+> Troy
+> 
+> 
+> On Tue, Aug 12, 2025 at 09:45:03PM -0500, Alex Elder wrote:
+>> Enable support for the RTC and regulators found in the SpacemiT P1
+>> PMIC.  Support is implemented by the simple I2C MFD driver.
+>>
+>> The P1 PMIC is normally implemented with the SpacemiT K1 SoC.  This
+>> PMIC provides 6 buck converters and 12 LDO regulators.  It also
+>> implements a switch, watchdog timer, real-time clock, and more.
+>> Initially its RTC and regulators are supported.
+>>
+>> Signed-off-by: Alex Elder <elder@riscstar.com>
+>> ---
+>>   drivers/mfd/Kconfig          | 11 +++++++++++
+>>   drivers/mfd/simple-mfd-i2c.c | 18 ++++++++++++++++++
+>>   2 files changed, 29 insertions(+)
+>>
+>> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+>> index 425c5fba6cb1e..4d6a5a3a27220 100644
+>> --- a/drivers/mfd/Kconfig
+>> +++ b/drivers/mfd/Kconfig
+>> @@ -1238,6 +1238,17 @@ config MFD_QCOM_RPM
+>>   	  Say M here if you want to include support for the Qualcomm RPM as a
+>>   	  module. This will build a module called "qcom_rpm".
+>>   
+>> +config MFD_SPACEMIT_P1
+>> +	tristate "SpacemiT P1 PMIC"
+>> +	depends on I2C
+>> +	select MFD_SIMPLE_MFD_I2C
+>> +	help
+>> +	  This option supports the I2C-based SpacemiT P1 PMIC, which
+>> +	  contains regulators, a power switch, GPIOs, an RTC, and more.
+>> +	  This option is selected when any of the supported sub-devices
+>> +	  is configured.  The basic functionality is implemented by the
+>> +	  simple MFD I2C driver.
+>> +
+>>   config MFD_SPMI_PMIC
+>>   	tristate "Qualcomm SPMI PMICs"
+>>   	depends on ARCH_QCOM || COMPILE_TEST
+>> diff --git a/drivers/mfd/simple-mfd-i2c.c b/drivers/mfd/simple-mfd-i2c.c
+>> index 22159913bea03..47ffaac035cae 100644
+>> --- a/drivers/mfd/simple-mfd-i2c.c
+>> +++ b/drivers/mfd/simple-mfd-i2c.c
+>> @@ -93,12 +93,30 @@ static const struct simple_mfd_data maxim_mon_max77705 = {
+>>   	.mfd_cell_size = ARRAY_SIZE(max77705_sensor_cells),
+>>   };
+>>   
+>> +
+>> +static const struct regmap_config spacemit_p1_regmap_config = {
+>> +	.reg_bits = 8,
+>> +	.val_bits = 8,
+>> +};
+>> +
+>> +static const struct mfd_cell spacemit_p1_cells[] = {
+>> +	{ .name = "spacemit-p1-regulator", },
+>> +	{ .name = "spacemit-p1-rtc", },
+>> +};
+>> +
+>> +static const struct simple_mfd_data spacemit_p1 = {
+>> +	.regmap_config = &spacemit_p1_regmap_config,
+>> +	.mfd_cell = spacemit_p1_cells,
+>> +	.mfd_cell_size = ARRAY_SIZE(spacemit_p1_cells),
+>> +};
+>> +
+>>   static const struct of_device_id simple_mfd_i2c_of_match[] = {
+>>   	{ .compatible = "kontron,sl28cpld" },
+>>   	{ .compatible = "silergy,sy7636a", .data = &silergy_sy7636a},
+>>   	{ .compatible = "maxim,max5970", .data = &maxim_max5970},
+>>   	{ .compatible = "maxim,max5978", .data = &maxim_max5970},
+>>   	{ .compatible = "maxim,max77705-battery", .data = &maxim_mon_max77705},
+>> +	{ .compatible = "spacemit,p1", .data = &spacemit_p1, },
+>>   	{}
+>>   };
+>>   MODULE_DEVICE_TABLE(of, simple_mfd_i2c_of_match);
+>> -- 
+>> 2.48.1
+>>
+>>
+>> _______________________________________________
+>> linux-riscv mailing list
+>> linux-riscv@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-riscv
+
 
