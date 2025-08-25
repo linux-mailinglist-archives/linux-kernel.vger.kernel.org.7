@@ -1,280 +1,269 @@
-Return-Path: <linux-kernel+bounces-784709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9CB4B34025
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:55:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44ABDB34020
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:55:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F03BB3B7693
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:55:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E84316C721
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:55:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB93E23D297;
-	Mon, 25 Aug 2025 12:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8671521C161;
+	Mon, 25 Aug 2025 12:55:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Wp4RD6ok"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XhEYek19"
+Received: from mail-wr1-f67.google.com (mail-wr1-f67.google.com [209.85.221.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA60923507E;
-	Mon, 25 Aug 2025 12:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB47F22F177
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 12:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756126540; cv=none; b=GAz5C48K8fkykUD7knuuLBdpXnVH2jK7GCqfoXozoH/0aPErs2l2mc6TEGHjf6/huLDbtSxoCjVh5ZV02ShcnaI5s0m/U1Z0kXg1RTid1Dl9jdJbggMQ+LlGqvKsJC09Sa7HOCHs9LMSH319RuuX4TEzbzy0RkjzQgPSmcid0bY=
+	t=1756126513; cv=none; b=h31NsV3wlSWuZic2/2NAV3stGpxJR7CtZq9i6ceod0BqyKwN/a0Dvi+2woM9bG4pPv8gigdFU/YpzT2jy4nvIBTQxZBjtE9TlzXInNu3XDHbFmS+tqbuHtALj0bsjgh95xPmhDwXWzaxMxl6r4orm6W6/0prleiALAa0Et61vyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756126540; c=relaxed/simple;
-	bh=jVaErzpkbBb5kQVUHxnb7jL9Y9M/5d+ZZP5UlZ/Us0o=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OpMfxjqmE/jgrFiR+vMtHmw3OrXcxvtwejHpuD5Yfp+SnebDwfZyHMJguD/cD1ZeRCNntHVT/N+v8ho/qAJwDvS1QwjA6h6TXqDbUvBiSBtya3O0/53kAZRby8xDDHuy4D6yGx71Er5k3DokKhP7SPB38UmgpqvUqeg6DrGsbr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Wp4RD6ok; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1756126536;
-	bh=jVaErzpkbBb5kQVUHxnb7jL9Y9M/5d+ZZP5UlZ/Us0o=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Wp4RD6okHgd1+oa9kr5BJhRxkSudWhgt0gxErtIF77SMtmVowdSnjBKcTMOgz6q6Q
-	 c+ouGWUc0V3qil0CbYY6Jc83PP6hUVrH0bndU7BzUTpTC963gXN4/moGlaTUM1ZHl7
-	 YXZYhRlwOoQ7pLpLcWhWQcOa5uIGY0hGBj9AcQn7Lsy72M/NL4QchXTSyHzFGsLMp7
-	 8+fMnQwO90GamZEfsguUuxCJTIPjbU5DcXUOHMvWwglpOkPTwK4sihrVg5lkTu1+VS
-	 Aqk1s+4WCAf/KLOMF+oTKCU8kwDQsm4OMpANbNMf/ut573xmTDIa4NnIXfJ6HVV54j
-	 JV5/PnGHw5vkg==
-Received: from laura.lan (unknown [IPv6:2001:b07:646b:e2:b1df:895a:e67b:5cd4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laura.nao)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 31E3D17E0478;
-	Mon, 25 Aug 2025 14:55:35 +0200 (CEST)
-From: Laura Nao <laura.nao@collabora.com>
-To: wenst@chromium.org
-Cc: angelogioacchino.delregno@collabora.com,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	guangjie.song@mediatek.com,
-	kernel@collabora.com,
-	krzk+dt@kernel.org,
-	laura.nao@collabora.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	matthias.bgg@gmail.com,
-	mturquette@baylibre.com,
-	netdev@vger.kernel.org,
-	nfraprado@collabora.com,
-	p.zabel@pengutronix.de,
-	richardcochran@gmail.com,
-	robh@kernel.org,
-	sboyd@kernel.org
-Subject: Re: [PATCH v4 15/27] clk: mediatek: Add MT8196 ufssys clock support
-Date: Mon, 25 Aug 2025 14:54:25 +0200
-Message-Id: <20250825125425.210123-1-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <CAGXv+5GH6ypcuXn9+XED7du_CJaeDs3M1ODjtN7pDH_FA0gmjg@mail.gmail.com>
-References: <CAGXv+5GH6ypcuXn9+XED7du_CJaeDs3M1ODjtN7pDH_FA0gmjg@mail.gmail.com>
+	s=arc-20240116; t=1756126513; c=relaxed/simple;
+	bh=p6Zmaj5smnWJq2PWn5FiDiA6cSwI6w5qSVM1iEtB1lM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BOcXaj+JRv8nBqV35CGX8sbrKB2mQlpAU0ppzDZ2XoWS7KkGOGV4cBKL3R2Nesr072nt7rdcgE56j+OJgwZPjXa0gJ2CQe/UvwRHGD4bSMuNGchEF2/M28T6a0RTJ5MKl9R82uGW2ecbT8NyuG1u3rWVHMFxDcWw2dsuluSPF0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XhEYek19; arc=none smtp.client-ip=209.85.221.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f67.google.com with SMTP id ffacd0b85a97d-3c380aa1ad0so2123109f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 05:55:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756126510; x=1756731310; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nyb7W0i1P3IjF0jcI+ICuOqZQ1VFzRLlpkO8ArSEv2U=;
+        b=XhEYek19T5/sOMJKe+Xz4/zVwm71KDg/IEs2q2n0mApkAfodD9NJ7S5McLDgflqOOB
+         vVeH1UUGz5sOuFNPJgLbnSSefMyh5FfHHbm9fY5KHLBt4MN2d4t9kieYx+Spt0B5Bv3G
+         yyk+PJDpdnsvaYQhK2RRdvoQIEA8uFDqOLnYfIh/0nkJI6QfqL0IW4H+ayMC+kVB3mfD
+         vSmeBya6U8JknaHWogW1GW3gEM6N+lpLOWSuLzsn7mZNfVbC0aGdxAMGCzdwbQGLK6PV
+         iCcDaPWN0bwDNG4DqdMQWTCha0tI6rojMVmcCfgF5eX8G+ky9tXQ7KRcHFEVofARS5RK
+         uSYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756126510; x=1756731310;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nyb7W0i1P3IjF0jcI+ICuOqZQ1VFzRLlpkO8ArSEv2U=;
+        b=jOzJZKz/tEVb8vpTsLii3SPJEzeJzPXM6F5B4dIs51TkieFtwVhX1YsKPKznANRUvs
+         CZTGs0rDy+FrQeGgmDLlPr/W8o3liPSEABaE3+p4bC9Hm6MbEFseK4cISgohR9KaScpz
+         Ut9NCDoDC2Fsgj1uzv4n7pEVFkTatd+lOS74L/GibEOL+KO8SFZUzFPDhot3RKOtXiCk
+         4GnhHB9/35iLi9KkDu56NgZj4ocQM3fRhiF+fu2+I+a97sySsyYF3wtwPqGua4XK10g0
+         PvN6YqbO+kBwR06EuBb8QFasT6oO+oMvB7160wLzI3jVJsKs1ub3LHfe9CmUrKbQ0gKY
+         amtw==
+X-Gm-Message-State: AOJu0YxSaZPsSekpENJRQ6l02wVziZmnR2aNMXV64voo721MfPiYREPO
+	MHJYO6V3MOpFj+QN4ArG4o36bBVDN+23gC2m9TufK0PgS4jPiEYAJeemmTbTx43+KWY=
+X-Gm-Gg: ASbGnctuz6zS7YgvRyAbAi1v14iIYMdkcZ3A9oraFjQB3kgQzujekbrRxMEvpfvXaEr
+	AANRoFV8QMnG5eplfT2k833hgH07rqX7uRGJlddWYE+bmI22dCs7nbhHr/JcJOQfck5OElI8pLS
+	L12/ov6TDkc8fDw8hIN1fGtBvX//P+6+VRvE0isghwo3GE/CVy+VMvFs4I7VVHJlOFfTstgJyOq
+	APnH+Y0R1T0OvnjdQkUXMmU4RfFQizSNtNDSR31MoovRkDx5iuTdOvSIw/NE5nxcANQ9jg0Aoxc
+	qHu3qIJXiX8geRpKCgiKsZODnW86weDgLu/tKHrTJ0P5l9BfL/LtNHz8ei6cuAxKNf/vcRpd8ni
+	8feeZ++DRvugjoP0bEuGMMtK/yl2NMw==
+X-Google-Smtp-Source: AGHT+IGiatYdBiQIlX08WDb3q8TgWhNu9cU7pZ5BZYgWH52vQcA/WE9cIPHsPYf1nJo7amAILSvRZA==
+X-Received: by 2002:a05:6000:40dd:b0:3a4:d6ed:8df8 with SMTP id ffacd0b85a97d-3c5dc734927mr8857444f8f.39.1756126509927;
+        Mon, 25 Aug 2025 05:55:09 -0700 (PDT)
+Received: from [192.168.0.24] ([82.76.24.202])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b57487910sm107774225e9.15.2025.08.25.05.55.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Aug 2025 05:55:09 -0700 (PDT)
+Message-ID: <64a93c4a-5619-4208-9e9f-83848206d42b@linaro.org>
+Date: Mon, 25 Aug 2025 15:55:07 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC][PATCH v2 22/29] mm/numa: Register information into Kmemdump
+To: David Hildenbrand <david@redhat.com>, Michal Hocko <mhocko@suse.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-mm@kvack.org, tglx@linutronix.de,
+ andersson@kernel.org, pmladek@suse.com,
+ linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
+ corbet@lwn.net, mojha@qti.qualcomm.com, rostedt@goodmis.org,
+ jonechou@google.com, tudor.ambarus@linaro.org,
+ Christoph Hellwig <hch@infradead.org>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>
+References: <20250724135512.518487-1-eugen.hristev@linaro.org>
+ <20250724135512.518487-23-eugen.hristev@linaro.org>
+ <ffc43855-2263-408d-831c-33f518249f96@redhat.com>
+ <e66f29c2-9f9f-4b04-b029-23383ed4aed4@linaro.org>
+ <751514db-9e03-4cf3-bd3e-124b201bdb94@redhat.com>
+ <aJCRgXYIjbJ01RsK@tiehlicka>
+ <e2c031e8-43bd-41e5-9074-c8b1f89e04e6@linaro.org>
+ <23e7ec80-622e-4d33-a766-312c1213e56b@redhat.com>
+ <f43a61b4-d302-4009-96ff-88eea6651e16@linaro.org>
+ <77d17dbf-1609-41b1-9244-488d2ce75b33@redhat.com>
+ <ecd33fa3-8362-48f0-b3c2-d1a11d8b02e3@linaro.org>
+ <9f13df6f-3b76-4d02-aa74-40b913f37a8a@redhat.com>
+From: Eugen Hristev <eugen.hristev@linaro.org>
+Content-Language: en-US
+In-Reply-To: <9f13df6f-3b76-4d02-aa74-40b913f37a8a@redhat.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 8/15/25 05:50, Chen-Yu Tsai wrote:
-> On Tue, Aug 5, 2025 at 10:55 PM Laura Nao <laura.nao@collabora.com> wrote:
+
+
+On 8/4/25 16:26, David Hildenbrand wrote:
+> On 04.08.25 15:03, Eugen Hristev wrote:
 >>
->> Add support for the MT8196 ufssys clock controller, which provides clock
->> gate control for UFS.
 >>
->> Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
->> Co-developed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> Signed-off-by: Laura Nao <laura.nao@collabora.com>
->> ---
->>  drivers/clk/mediatek/Kconfig             |   7 ++
->>  drivers/clk/mediatek/Makefile            |   1 +
->>  drivers/clk/mediatek/clk-mt8196-ufs_ao.c | 109 +++++++++++++++++++++++
->>  3 files changed, 117 insertions(+)
->>  create mode 100644 drivers/clk/mediatek/clk-mt8196-ufs_ao.c
+>> On 8/4/25 15:49, David Hildenbrand wrote:
+>>> On 04.08.25 14:29, Eugen Hristev wrote:
+>>>>
+>>>>
+>>>> On 8/4/25 15:18, David Hildenbrand wrote:
+>>>>> On 04.08.25 13:06, Eugen Hristev wrote:
+>>>>>>
+>>>>>>
+>>>>>> On 8/4/25 13:54, Michal Hocko wrote:
+>>>>>>> On Wed 30-07-25 16:04:28, David Hildenbrand wrote:
+>>>>>>>> On 30.07.25 15:57, Eugen Hristev wrote:
+>>>>>>> [...]
+>>>>>>>>> Yes, registering after is also an option. Initially this is how I
+>>>>>>>>> designed the kmemdump API, I also had in mind to add a flag, but, after
+>>>>>>>>> discussing with Thomas Gleixner, he came up with the macro wrapper idea
+>>>>>>>>> here:
+>>>>>>>>> https://lore.kernel.org/lkml/87ikkzpcup.ffs@tglx/
+>>>>>>>>> Do you think we can continue that discussion , or maybe start it here ?
+>>>>>>>>
+>>>>>>>> Yeah, I don't like that, but I can see how we ended up here.
+>>>>>>>>
+>>>>>>>> I also don't quite like the idea that we must encode here what to include in
+>>>>>>>> a dump and what not ...
+>>>>>>>>
+>>>>>>>> For the vmcore we construct it at runtime in crash_save_vmcoreinfo_init(),
+>>>>>>>> where we e.g., have
+>>>>>>>>
+>>>>>>>> VMCOREINFO_STRUCT_SIZE(pglist_data);
+>>>>>>>>
+>>>>>>>> Could we similar have some place where we construct what to dump similarly,
+>>>>>>>> just not using the current values, but the memory ranges?
+>>>>>>>
+>>>>>>> All those symbols are part of kallsyms, right? Can we just use kallsyms
+>>>>>>> infrastructure and a list of symbols to get what we need from there?
+>>>>>>>
+>>>>>>> In other words the list of symbols to be completely external to the code
+>>>>>>> that is defining them?
+>>>>>>
+>>>>>> Some static symbols are indeed part of kallsyms. But some symbols are
+>>>>>> not exported, for example patch 20/29, where printk related symbols are
+>>>>>> not to be exported. Another example is with static variables, like in
+>>>>>> patch 17/29 , not exported as symbols, but required for the dump.
+>>>>>> Dynamic memory regions are not have to also be considered, have a look
+>>>>>> for example at patch 23/29 , where dynamically allocated memory needs to
+>>>>>> be registered.
+>>>>>>
+>>>>>> Do you think that I should move all kallsyms related symbols annotation
+>>>>>> into a separate place and keep it for the static/dynamic regions in place ?
+>>>>>
+>>>>> If you want to use a symbol from kmemdump, then make that symbol
+>>>>> available to kmemdump.
+>>>>
+>>>> That's what I am doing, registering symbols with kmemdump.
+>>>> Maybe I do not understand what you mean, do you have any suggestion for
+>>>> the static variables case (symbols not exported) ?
+>>>
+>>> Let's use patch #20 as example:
+>>>
+>>> What I am thinking is that you would not include "linux/kmemdump.h" and
+>>> not leak all of that KMEMDUMP_ stuff in all these files/subsystems that
+>>> couldn't less about kmemdump.
+>>>
+>>> Instead of doing
+>>>
+>>> static struct printk_ringbuffer printk_rb_dynamic;
+>>>
+>>> You'd do
+>>>
+>>> struct printk_ringbuffer printk_rb_dynamic;
+>>>
+>>> and have it in some header file, from where kmemdump could lookup the
+>>> address.
+>>>
+>>> So you move the logic of what goes into a dump from the subsystems to
+>>> the kmemdump core.
+>>>
 >>
->> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
->> index 1e0c6f177ecd..d99c39a7f10e 100644
->> --- a/drivers/clk/mediatek/Kconfig
->> +++ b/drivers/clk/mediatek/Kconfig
->> @@ -1010,6 +1010,13 @@ config COMMON_CLK_MT8196
->>         help
->>           This driver supports MediaTek MT8196 basic clocks.
+>> That works if the people maintaining these systems agree with it.
+>> Attempts to export symbols from printk e.g. have been nacked :
 >>
->> +config COMMON_CLK_MT8196_UFSSYS
->> +       tristate "Clock driver for MediaTek MT8196 ufssys"
->> +       depends on COMMON_CLK_MT8196
->> +       default COMMON_CLK_MT8196
->> +       help
->> +         This driver supports MediaTek MT8196 ufssys clocks.
->> +
->>  config COMMON_CLK_MT8365
->>         tristate "Clock driver for MediaTek MT8365"
->>         depends on ARCH_MEDIATEK || COMPILE_TEST
->> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
->> index 8888ffd3d7ba..1a497de00846 100644
->> --- a/drivers/clk/mediatek/Makefile
->> +++ b/drivers/clk/mediatek/Makefile
->> @@ -153,6 +153,7 @@ obj-$(CONFIG_COMMON_CLK_MT8195_WPESYS) += clk-mt8195-wpe.o
->>  obj-$(CONFIG_COMMON_CLK_MT8196) += clk-mt8196-apmixedsys.o clk-mt8196-topckgen.o \
->>                                    clk-mt8196-topckgen2.o clk-mt8196-vlpckgen.o \
->>                                    clk-mt8196-peri_ao.o
->> +obj-$(CONFIG_COMMON_CLK_MT8196_UFSSYS) += clk-mt8196-ufs_ao.o
->>  obj-$(CONFIG_COMMON_CLK_MT8365) += clk-mt8365-apmixedsys.o clk-mt8365.o
->>  obj-$(CONFIG_COMMON_CLK_MT8365_APU) += clk-mt8365-apu.o
->>  obj-$(CONFIG_COMMON_CLK_MT8365_CAM) += clk-mt8365-cam.o
->> diff --git a/drivers/clk/mediatek/clk-mt8196-ufs_ao.c b/drivers/clk/mediatek/clk-mt8196-ufs_ao.c
->> new file mode 100644
->> index 000000000000..858706b3ba6f
->> --- /dev/null
->> +++ b/drivers/clk/mediatek/clk-mt8196-ufs_ao.c
->> @@ -0,0 +1,109 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Copyright (c) 2025 MediaTek Inc.
->> + *                    Guangjie Song <guangjie.song@mediatek.com>
->> + * Copyright (c) 2025 Collabora Ltd.
->> + *                    Laura Nao <laura.nao@collabora.com>
->> + */
->> +#include <dt-bindings/clock/mediatek,mt8196-clock.h>
->> +#include <dt-bindings/reset/mediatek,mt8196-resets.h>
->
-> Nit: add empty line here for separation.
->
+>>   https://lore.kernel.org/all/20250218-175733-neomutt-senozhatsky@chromium.org/
+> 
+> Do you really need the EXPORT_SYMBOL?
+> 
+> Can't you just not export symbols, building the relevant kmemdump part 
+> into the core not as a module.
+> 
+> IIRC, kernel/vmcore_info.c is never built as a module, as it also 
+> accesses non-exported symbols.
 
-Ack.
+Hello David,
 
->> +#include <linux/clk-provider.h>
->> +#include <linux/module.h>
->> +#include <linux/of_device.h>
->> +#include <linux/platform_device.h>
->> +
->> +#include "clk-gate.h"
->> +#include "clk-mtk.h"
->> +
->> +#define MT8196_UFSAO_RST0_SET_OFFSET   0x48
->> +#define MT8196_UFSAO_RST1_SET_OFFSET   0x148
->> +
->> +static const struct mtk_gate_regs ufsao0_cg_regs = {
->> +       .set_ofs = 0x108,
->> +       .clr_ofs = 0x10c,
->> +       .sta_ofs = 0x104,
->> +};
->> +
->> +static const struct mtk_gate_regs ufsao1_cg_regs = {
->> +       .set_ofs = 0x8,
->> +       .clr_ofs = 0xc,
->> +       .sta_ofs = 0x4,
->> +};
->> +
->> +#define GATE_UFSAO0(_id, _name, _parent, _shift) {     \
->> +               .id = _id,                              \
->> +               .name = _name,                          \
->> +               .parent_name = _parent,                 \
->> +               .regs = &ufsao0_cg_regs,                \
->> +               .shift = _shift,                        \
->> +               .flags = CLK_OPS_PARENT_ENABLE,         \
->
-> This probably doesn't work correctly, since not every clock defined
-> below has the "ufs" clock as its parent. If the requirement is that
-> the "ufs" clock be enabled for accessing this register, it is going
-> to fail (badly).
->
+I am looking again into this, and there are some things which in my
+opinion would be difficult to achieve.
+For example I looked into my patch #11 , which adds the `runqueues` into
+kmemdump.
 
-Thanks for pointing this out - I missed this because, as you noted,
-other drivers using this flag defined gates with the same parent and
-worked correctly (i.e., I2C). I don’t have a way to justify keeping this
-flag at the moment, and I can’t test whether the ufs clock is required
-for register access at this stage of upstream support (same goes for the
-other drivers with this issue).
+The runqueues is a variable of `struct rq` which is defined in
+kernel/sched/sched.h , which is not supposed to be included outside of
+sched.
+Now moving all the struct definition outside of sched.h into another
+public header would be rather painful and I don't think it's a really
+good option (The struct would be needed to compute the sizeof inside
+vmcoreinfo). Secondly, it would also imply moving all the nested struct
+definitions outside as well. I doubt this is something that we want for
+the sched subsys. How the subsys is designed, out of my understanding,
+is to keep these internal structs opaque outside of it.
 
-I’m thinking of removing it here and in the other affected drivers, and
-revisit the issue once we have actual users for these clocks upstream.
+From my perspective it's much simpler and cleaner to just add the
+kmemdump annotation macro inside the sched/core.c as it's done in my
+patch. This macro translates to a noop if kmemdump is not selected.
 
-Best,
+How do you see this done another way ?
 
-Laura
-
-> ChenYu
->
->> +               .ops = &mtk_clk_gate_ops_setclr,        \
->> +       }
->> +
->> +#define GATE_UFSAO1(_id, _name, _parent, _shift) {     \
->> +               .id = _id,                              \
->> +               .name = _name,                          \
->> +               .parent_name = _parent,                 \
->> +               .regs = &ufsao1_cg_regs,                \
->> +               .shift = _shift,                        \
->> +               .flags = CLK_OPS_PARENT_ENABLE,         \
->> +               .ops = &mtk_clk_gate_ops_setclr,        \
->> +       }
->> +
->> +static const struct mtk_gate ufsao_clks[] = {
->> +       /* UFSAO0 */
->> +       GATE_UFSAO0(CLK_UFSAO_UFSHCI_UFS, "ufsao_ufshci_ufs", "ufs", 0),
->> +       GATE_UFSAO0(CLK_UFSAO_UFSHCI_AES, "ufsao_ufshci_aes", "aes_ufsfde", 1),
->> +       /* UFSAO1 */
->> +       GATE_UFSAO1(CLK_UFSAO_UNIPRO_TX_SYM, "ufsao_unipro_tx_sym", "clk26m", 0),
->> +       GATE_UFSAO1(CLK_UFSAO_UNIPRO_RX_SYM0, "ufsao_unipro_rx_sym0", "clk26m", 1),
->> +       GATE_UFSAO1(CLK_UFSAO_UNIPRO_RX_SYM1, "ufsao_unipro_rx_sym1", "clk26m", 2),
->> +       GATE_UFSAO1(CLK_UFSAO_UNIPRO_SYS, "ufsao_unipro_sys", "ufs", 3),
->> +       GATE_UFSAO1(CLK_UFSAO_UNIPRO_SAP, "ufsao_unipro_sap", "clk26m", 4),
->> +       GATE_UFSAO1(CLK_UFSAO_PHY_SAP, "ufsao_phy_sap", "clk26m", 8),
->> +};
->> +
->> +static u16 ufsao_rst_ofs[] = {
->> +       MT8196_UFSAO_RST0_SET_OFFSET,
->> +       MT8196_UFSAO_RST1_SET_OFFSET
->> +};
->> +
->> +static u16 ufsao_rst_idx_map[] = {
->> +       [MT8196_UFSAO_RST0_UFS_MPHY] = 8,
->> +       [MT8196_UFSAO_RST1_UFS_UNIPRO] = 1 * RST_NR_PER_BANK + 0,
->> +       [MT8196_UFSAO_RST1_UFS_CRYPTO] = 1 * RST_NR_PER_BANK + 1,
->> +       [MT8196_UFSAO_RST1_UFSHCI] = 1 * RST_NR_PER_BANK + 2,
->> +};
->> +
->> +static const struct mtk_clk_rst_desc ufsao_rst_desc = {
->> +       .version = MTK_RST_SET_CLR,
->> +       .rst_bank_ofs = ufsao_rst_ofs,
->> +       .rst_bank_nr = ARRAY_SIZE(ufsao_rst_ofs),
->> +       .rst_idx_map = ufsao_rst_idx_map,
->> +       .rst_idx_map_nr = ARRAY_SIZE(ufsao_rst_idx_map),
->> +};
->> +
->> +static const struct mtk_clk_desc ufsao_mcd = {
->> +       .clks = ufsao_clks,
->> +       .num_clks = ARRAY_SIZE(ufsao_clks),
->> +       .rst_desc = &ufsao_rst_desc,
->> +};
->> +
->> +static const struct of_device_id of_match_clk_mt8196_ufs_ao[] = {
->> +       { .compatible = "mediatek,mt8196-ufscfg-ao", .data = &ufsao_mcd },
->> +       { /* sentinel */ }
->> +};
->> +MODULE_DEVICE_TABLE(of, of_match_clk_mt8196_ufs_ao);
->> +
->> +static struct platform_driver clk_mt8196_ufs_ao_drv = {
->> +       .probe = mtk_clk_simple_probe,
->> +       .remove = mtk_clk_simple_remove,
->> +       .driver = {
->> +               .name = "clk-mt8196-ufs-ao",
->> +               .of_match_table = of_match_clk_mt8196_ufs_ao,
->> +       },
->> +};
->> +
->> +module_platform_driver(clk_mt8196_ufs_ao_drv);
->> +MODULE_DESCRIPTION("MediaTek MT8196 ufs_ao clocks driver");
->> +MODULE_LICENSE("GPL");
->> --
->> 2.39.5
+> 
 >>
+>> So I am unsure whether just removing the static and adding them into
+>> header files would be more acceptable.
+>>
+>> Added in CC Cristoph Hellwig and Sergey Senozhatsky maybe they could
+>> tell us directly whether they like or dislike this approach, as kmemdump
+>> would be builtin and would not require exports.
+>>
+>> One other thing to mention is the fact that the printk code dynamically
+>> allocates memory that would need to be registered. There is no mechanism
+>> for kmemdump to know when this process has been completed (or even if it
+>> was at all, because it happens on demand in certain conditions).
+> 
+> If we are talking about memblock allocations, they sure are finished at 
+> the time ... the buddy is up.
+> 
+> So it's just a matter of placing yourself late in the init stage where 
+> the buddy is already up and running.
+> 
+> I assume dumping any dynamically allocated stuff through the buddy is 
+> out of the picture for now.
+> 
+
+The dumping mechanism needs to work for dynamically allocated stuff, and
+right now, it works for e.g. printk, if the buffer is dynamically
+allocated later on in the boot process.
+
+To have this working outside of printk, it would be required to walk
+through all the printk structs/allocations and select the required info.
+Is this something that we want to do outside of printk ? E.g. for the
+printk panic-dump case, the whole dumping is done by registering a
+dumper that does the job inside printk. There is no mechanism walking
+through printk data in another subsystem (in my example, pstore).
+So for me it is logical to register the data inside the printk.
+
+Does this make sense ?
+
 
