@@ -1,70 +1,58 @@
-Return-Path: <linux-kernel+bounces-785682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AB2FB34F7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 01:04:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F522B34F92
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 01:11:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48EBF176CBD
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 23:04:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C7842A2D92
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 23:11:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF25F29B8D8;
-	Mon, 25 Aug 2025 23:04:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF492C08CE;
+	Mon, 25 Aug 2025 23:11:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kFZV2iQm"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ZM1h3CDO"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E713E4A33
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 23:04:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA651227EB9;
+	Mon, 25 Aug 2025 23:11:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756163084; cv=none; b=gLWHCockOu40ecd6P5atMDFlO3O8z0iuFtw+KYMUc0t9dj5vngtg/KhfxkBu6p1vINMNghsvQCgKFMz80xw+HyU7W+24K5pb3YASJhZ9zFjHGJ4D+zAdBcCZckFnBDIqxYrc+/tro5E1nqzhGfAsvhTRfGunkwu5NFR8uo8WPt8=
+	t=1756163495; cv=none; b=opkP5QU6rh7ysvlWE45lh7oIXTaYuH7eP0/EYkUr9Pg/Vqe9dLSIpH8b0axh/JmtoS0HnrijuS/YAaxCH8jZcg/jZ2lRdH+fJYSqFmDJJ/30+OXZvkWL8FiOY3euuWnp3zlyPzwXvAEMnQ21Dwchu6oib2p0NiAgy/BjNwifi9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756163084; c=relaxed/simple;
-	bh=m7yzx2gp8xPIyUKkpJ4QuXt629TP/wdXn0zVxJ0dZNo=;
+	s=arc-20240116; t=1756163495; c=relaxed/simple;
+	bh=dX0WPvw6Z2duV/oMvI6uF8YtaW7C+G9cXZzIwVXrqwA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AuzPNMa8qnIIIbXAF2Q69c8h26d2Chc1owYsuCmRHXfBz/sNTjf2FWtn1e54itd/B6++3lLVsI63hT/6UPCZTFwPdoNVZFenisOrOb+NPRymfTE/O8L7nSloasYBk4ua+L/wqk68rjHp951JcufrCl+A8lv3Wgzm7yZIDyyfkAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kFZV2iQm; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756163083; x=1787699083;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=m7yzx2gp8xPIyUKkpJ4QuXt629TP/wdXn0zVxJ0dZNo=;
-  b=kFZV2iQm/vEKGPCfOH8dSeQVcueMXlgJlG5Rv8nFND9MDQtKN3igsu1z
-   s2HYp3iKCkB4TOIO4O/OrYXtGxsFAI9FiP3cGSZZXX/fAf6NyZ7qOumxl
-   r8adjxB0w9l+ejudV4iPwgWlyPhEc8x+dNp/TYFQyAi4+n4YaqdBjCrDv
-   zKS//LbRQV7Pza0KsKDgkpvqM/TIlUqEryotBrhE5bEP8ZQ9w94oBiLLd
-   w9CSRDprmqEy1HzoUAZsPTOI0NFvEH8Q9JpXY6Y9yGF908fBmnHsHpy+W
-   BHewrXXiUn0eIa02RRM5TH1L24f3qdztyc1V29bGuLPjIxoDY7eJx1Jhx
-   g==;
-X-CSE-ConnectionGUID: KfFjKVC8TRmgpURUn9RoLw==
-X-CSE-MsgGUID: oaMdHE+sSBaDikmdih5dhA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11533"; a="58489144"
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="58489144"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 16:04:42 -0700
-X-CSE-ConnectionGUID: fdJnNPxSQPiyzcdW/RHG0A==
-X-CSE-MsgGUID: SozrkSyBSG+9zKftYPHD9A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="174692173"
-Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 16:04:42 -0700
-Date: Mon, 25 Aug 2025 16:10:54 -0700
-From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: ricardo.neri@intel.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] genirq/debugfs: Fix a typo in IRQ effective affinity
-Message-ID: <20250825231054.GA25222@ranerica-svr.sc.intel.com>
-References: <20250812-rneri-irq-debugfs-typo-v1-1-f29777b4024d@linux.intel.com>
- <87ikievsh3.ffs@tglx>
+	 Content-Type:Content-Disposition:In-Reply-To; b=B3yWmI0prOQ4mxQYuT3S/z8G2IP5MRJ7QP0ycLiTZZIFmA+knaXK9Sn0dHOxh+jqvWe65iLjHgbOZWTSeG3ts/+JnZcRJ2XrUkYY5SuiWiHMK41oKqncJDkFsMAplG103ZftjfGSGhwubjg3nNXbZq6uhJ78RmbCIenpT7zF2L0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ZM1h3CDO; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=O+51kTZ62ru3n3XCOY5pFCT7+kOe09oJo7Lbf7jNWik=; b=ZM1h3CDO3aqr62912jrjY9rQ6p
+	XjER8woQtaKLo85x5QU057HozW568CpY10uW92Rnx456I6JrbWLfD0BD1FjHJnQ03dY5a+QEC5Qg1
+	IoZAq4cXQNPmsbLYl2LUTV50EfnwsfGZIE7QeGvadB+wBfeRkgCnaMNPq7QAkF6pzNmo=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uqgLM-0060PS-2T; Tue, 26 Aug 2025 01:11:16 +0200
+Date: Tue, 26 Aug 2025 01:11:16 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Aleksander Jan Bajkowski <olek2@wp.pl>
+Cc: hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	michael@fossekall.de, daniel@makrotopia.org,
+	daniel.braunwarth@kuka.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: phy: realtek: support for
+ TRIGGER_NETDEV_LINK on RTL8211E and RTL8211F
+Message-ID: <ab856e5a-2a30-47f9-abc3-0c372017b10f@lunn.ch>
+References: <20250825211059.143231-1-olek2@wp.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,26 +61,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87ikievsh3.ffs@tglx>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20250825211059.143231-1-olek2@wp.pl>
 
-On Sat, Aug 23, 2025 at 07:49:12PM +0200, Thomas Gleixner wrote:
-> On Tue, Aug 12 2025 at 14:00, Ricardo Neri wrote:
-> > Fix a typo in the line that prints the effective affinity of the IRQ.
+On Mon, Aug 25, 2025 at 11:09:49PM +0200, Aleksander Jan Bajkowski wrote:
+> This patch adds support for the TRIGGER_NETDEV_LINK trigger. It activates
+> the LED when a link is established, regardless of the speed.
 > 
-> It's not a typo. It's intentionally shortened to make the output
-> tabular, which makes it more readable.
-
-Ah, I didn't see it this way.
-
+> Tested on Orange Pi PC2 with RTL8211E PHY.
 > 
-> If you want 'effective' then please adjust 'affinity:' with an extra
-> space so it stays that way.
+> Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
 
-Sure. I can do this.
 
-Thanks for your reply!
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-BR,
-Ricardo
+    Andrew
 
