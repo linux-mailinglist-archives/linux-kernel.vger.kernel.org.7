@@ -1,142 +1,114 @@
-Return-Path: <linux-kernel+bounces-785006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 182A7B344A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:53:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 798BFB344B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:55:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BD6F5E1323
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:53:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 411EF17987C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D4472FC011;
-	Mon, 25 Aug 2025 14:53:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3ED2FD7D5;
+	Mon, 25 Aug 2025 14:54:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sm6BrVYa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="B+y3ZhTg"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2BDE86250;
-	Mon, 25 Aug 2025 14:53:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907622FC873;
+	Mon, 25 Aug 2025 14:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756133623; cv=none; b=BmB1RK0FbIQMEv/M0De3Rl7n7/S4RMaVkQKaMkRYSFlRK+UbTug5WycKqImuImzV+F/a38iAy5b2DMnXhljnvAKt4evg2nRiRMqbE7p7Q6ple4Ila5rqxxgV5R0DaDt7T0ZuUpxzPFNAQjYg2GBbncEc3rYz7Qs2AP4YN8DPrZ4=
+	t=1756133663; cv=none; b=otvkH3fvY103hpxao0csM1QndV7ASj7NPRpVTlGKMahOdYgSwL7iC3+Nla5M68n3iHbcwPF32iAb+/c0MdozCQhw+o+LmYiP4saq9BzxfcXx23Ey4SMA/aGVih0P7ovSbcn5LfBqbE8Wzv1pEeiqDe8vVXh2S8fm8IV9kcmWWHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756133623; c=relaxed/simple;
-	bh=rvSkBlgHXvVyOVF6z+Syfl+8sP5Q6VJ3ma8KracCPto=;
+	s=arc-20240116; t=1756133663; c=relaxed/simple;
+	bh=27lu/Fxra3OrCCTNVCgoKqZX1LjKOWf5Tbhd/BUiLAY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N0sPt02zenm0QRvz+YqJeEZhLvRkkCO5cXEUPMdEJYKqEoTGI+NCVk07Jon7ebdIYYmpEcIrYRrDf6HCgnbOakdhb/DjNPoGOrrOFBxyAsC05BJgv22GFoFV7EZo2UFvmPQKOBDA3RM4uYZISTYJRYr0HAJawuWSzXnWltLwee0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sm6BrVYa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9690AC4CEED;
-	Mon, 25 Aug 2025 14:53:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756133622;
-	bh=rvSkBlgHXvVyOVF6z+Syfl+8sP5Q6VJ3ma8KracCPto=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vu5HjsmImHEzLgmf2B7BhFdPURM9AZeXO2LGAtVXaY8sv9eEMema36lmTAgoLM5yoFwQP2PCFtJoHCIfKw1jhuFZXTXL1mxz414YOGQLEX5mcoMbxk5S+WePdbZMuylrkYajBurJU961SNooOo4+XeuqpmbPoDnJtA38XG1UbQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=B+y3ZhTg; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 52F3C40E0286;
+	Mon, 25 Aug 2025 14:54:18 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 2WOTSlRdqRJD; Mon, 25 Aug 2025 14:54:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1756133654; bh=8VV4pEI7u0jKSm7odI+J0qCqX1OEfjTGpTffiSpKExQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Sm6BrVYa9/c1MVTPYHPv5SPROdM0sxumHFmknVIZd93l7YwUB9cfMJIFL5zXlhwYo
-	 K6a8cEkh2PMpf1wXqjScjo1Apm5vnfaJerx85k4LHZGn4JyWGeq9gkoo53jHFmnU8t
-	 jpGLxt4CRlZnOQP0TKD0Fl6m/+9ZT0CwUFKc+j65i0rUfaMhHLw7dhc7BhsQgvRRCS
-	 4vj/qTn8GUcuWUgr6RUQcvRgl1Rl6RL9/fWVPOA3aXbInBxemJasvXsd4MtB4hPiyv
-	 XaLpymDNR8aYEoEjgJQ1ZQy815pS4x0iGHL8tWGHCC38OjoHS8kNMY2kDaoDhKlxS+
-	 YQT+cYOVVTrIw==
-Date: Mon, 25 Aug 2025 08:53:39 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Ritesh Harjani <ritesh.list@gmail.com>, Keith Busch <kbusch@meta.com>,
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
-	snitzer@kernel.org, axboe@kernel.dk, dw@davidwei.uk,
-	brauner@kernel.org, hch@lst.de, martin.petersen@oracle.com,
-	djwong@kernel.org, linux-xfs@vger.kernel.org,
-	viro@zeniv.linux.org.uk, Jan Kara <jack@suse.com>
-Subject: Re: [PATCHv3 0/8] direct-io: even more flexible io vectors
-Message-ID: <aKx485EMthHfBWef@kbusch-mbp>
-References: <20250819164922.640964-1-kbusch@meta.com>
- <87a53ra3mb.fsf@gmail.com>
- <g35u5ugmyldqao7evqfeb3hfcbn3xddvpssawttqzljpigy7u4@k3hehh3grecq>
+	b=B+y3ZhTgSdfhkUGCZ8BE26pW/VKG0rdX9tkLjUb2SSq5rTm4+bBDdHx/+yhWbKXt5
+	 uEQrxexcf5HwDVfo3jQiv+Sk+U3d/PPjzqLRbN3lzRAVJ3POxYxtv2EsbAOVv4AYYa
+	 /nGDW4KVhUPt+BCQWAtwW3WgTzeV1KvqOlkMicsYmUDWaAZo6pCsWCMmFEnAmraH0l
+	 CHRodDCzoy87woQXjTgGTnWTRSs99rYI6lCclajP8NjV1oBmRBDfh5agafsXDscr/y
+	 eArKYmonLvgcWo8j1D+y5mzraqqD3SKq770viiths+nSKKGaDUXElRCUMaSFOGI/J3
+	 fS9qXqDLsdmmoP6dSQSv2q5SRCVYjAWG0GWQ/WRauoybwk+DixvnWiGlWHyQGecDGQ
+	 BYGWSMT3NCINJfGgvk5nJQp+MFvTJUQ783SwCOv5HgWO7K6ifEgHNhj+9Vm5tkxzck
+	 LiDhSzvUUk/Z6k1yRVKXwiJ8PUQ8YX6UvLp29hNydQ4LXTu1iwDrKy/eM7fTCTEERO
+	 uYz/yu061QsbN1ezGxJ+7hpJqLzjk4ZNtyTrws0+DfE6i49IYbwjkaUAYXZck/HxK+
+	 vevVz4FkbQR6NxDPGPJyR3DIpeLF34KVlGlIIYim9z+BpidF2Ha77PxWbEZDQWYZD8
+	 QKDmm2nNQaaYisWOhSU6Pki0=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7DBC740E01A1;
+	Mon, 25 Aug 2025 14:53:52 +0000 (UTC)
+Date: Mon, 25 Aug 2025 16:53:51 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Upadhyay, Neeraj" <neeraj.upadhyay@amd.com>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com,
+	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com,
+	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org,
+	hpa@zytor.com, peterz@infradead.org, seanjc@google.com,
+	pbonzini@redhat.com, kvm@vger.kernel.org,
+	kirill.shutemov@linux.intel.com, huibo.wang@amd.com,
+	naveen.rao@amd.com, francescolavra.fl@gmail.com,
+	tiala@microsoft.com
+Subject: Re: [PATCH v9 09/18] x86/sev: Initialize VGIF for secondary VCPUs
+ for Secure AVIC
+Message-ID: <20250825145351.GWaKx4_48rQOqUYvZr@fat_crate.local>
+References: <20250811094444.203161-1-Neeraj.Upadhyay@amd.com>
+ <20250811094444.203161-10-Neeraj.Upadhyay@amd.com>
+ <20250822172820.GSaKiotPxNu-H9rYve@fat_crate.local>
+ <a91b5470-33a0-4a23-ac1a-a7f1d4559cc1@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <g35u5ugmyldqao7evqfeb3hfcbn3xddvpssawttqzljpigy7u4@k3hehh3grecq>
+In-Reply-To: <a91b5470-33a0-4a23-ac1a-a7f1d4559cc1@amd.com>
 
-On Mon, Aug 25, 2025 at 02:07:15PM +0200, Jan Kara wrote:
-> On Fri 22-08-25 18:57:08, Ritesh Harjani wrote:
-> > Keith Busch <kbusch@meta.com> writes:
-> > >
-> > >   - EXT4 falls back to buffered io for writes but not for reads.
-> > 
-> > ++linux-ext4 to get any historical context behind why the difference of
-> > behaviour in reads v/s writes for EXT4 DIO. 
+On Mon, Aug 25, 2025 at 11:55:44AM +0530, Upadhyay, Neeraj wrote:
+> Ok. Below is the updated description:
 > 
-> Hum, how did you test? Because in the basic testing I did (with vanilla
-> kernel) I get EINVAL when doing unaligned DIO write in ext4... We should be
-> falling back to buffered IO only if the underlying file itself does not
-> support any kind of direct IO.
+> Virtual GIF (VGIF) providing masking capability for when virtual interrupts
+> (virtual maskable interrupts, virtual NMIs) can be taken by the guest vCPU.
+> Secure AVIC hardware reads VGIF state from the vCPU's VMSA. So, set VGIF for
+> secondary CPUs (the configuration for boot CPU is done by the hypervisor),
+> to unmask delivery of virtual interrupts  to the vCPU.
 
-Simple test case (dio-offset-test.c) below.
+Yap.
 
-I also ran this on vanilla kernel and got these results:
+> I also don't see an explicit mention. I will check on documenting it in the
+> APM. However, there are references to virtual interrupts (V_NMI, V_INTR)
+> (which requires VGIF support)
 
-  # mkfs.ext4 /dev/vda
-  # mount /dev/vda /mnt/ext4/
-  # make dio-offset-test
-  # ./dio-offset-test /mnt/ext4/foobar
-  write: Success
-  read: Invalid argument
+Oh, I don't doubt that SAVIC requires VGIF - I just spotted a documentation
+hole here so let's start the process of documenting this internally.
 
-I tracked the "write: Success" down to ext4's handling for the "special"
--ENOTBLK error after ext4_want_directio_fallback() returns "true".
+-- 
+Regards/Gruss,
+    Boris.
 
-dio-offset-test.c:
----
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-
-#include <sys/uio.h>
-#include <err.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-
-int main(int argc, char **argv)
-{
-	unsigned int pagesize;
-	struct iovec iov[2];
-	int ret, fd;
-	void *buf;
-
-	if (argc < 2)
-		err(EINVAL, "usage: %s <file>", argv[0]);
-	
-	pagesize = sysconf(_SC_PAGE_SIZE);
-	ret = posix_memalign((void **)&buf, pagesize, 2 * pagesize);
-	if (ret)
-		err(errno, "%s: failed to allocate buf", __func__);
-	
-	fd = open(argv[1], O_RDWR | O_CREAT | O_TRUNC | O_DIRECT);
-	if (fd < 0)
-		err(errno, "%s: failed to open %s", __func__, argv[1]);
-	
-	iov[0].iov_base = buf;
-	iov[0].iov_len = 256;
-	iov[1].iov_base = buf + pagesize;
-	iov[1].iov_len = 256;
-	ret = pwritev(fd, iov, 2, 0);
-	perror("write");
-	
-	ret = preadv(fd, iov, 2, 0);
-	perror("read");
-	
-	return 0;
-}
---
+https://people.kernel.org/tglx/notes-about-netiquette
 
