@@ -1,98 +1,98 @@
-Return-Path: <linux-kernel+bounces-785686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5076B34F8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 01:10:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AB2FB34F7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 01:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 938633B4C72
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 23:10:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48EBF176CBD
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 23:04:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2992C15AA;
-	Mon, 25 Aug 2025 23:10:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF25F29B8D8;
+	Mon, 25 Aug 2025 23:04:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vCWYb5a+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kFZV2iQm"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25CFD2C033C;
-	Mon, 25 Aug 2025 23:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E713E4A33
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 23:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756163402; cv=none; b=uKHG46IJZNq+gR4KaxOiUNDbrDlUWfCTMafGNIPrPUUITQzj9nUbhGm2us9nTIG8vr97cUR8m1SNemT5/vOwBtdgetzYnhUvbWP1a/CA7d427PnhcSOVmG8uVDOX74ULGd1ZSwSikRs4zq5AKaPNFhMxlvZloIqSWZHNTVU5smQ=
+	t=1756163084; cv=none; b=gLWHCockOu40ecd6P5atMDFlO3O8z0iuFtw+KYMUc0t9dj5vngtg/KhfxkBu6p1vINMNghsvQCgKFMz80xw+HyU7W+24K5pb3YASJhZ9zFjHGJ4D+zAdBcCZckFnBDIqxYrc+/tro5E1nqzhGfAsvhTRfGunkwu5NFR8uo8WPt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756163402; c=relaxed/simple;
-	bh=tzXq4twNoex0WercRwFPA3AFqoDMKErjDAjo9XOfCh8=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Ko5cyu+xgtjFxrVVNQuvBX81iRiWnrUmyLs506IvUY1DvAlR1nLU7Gsfxk4CogAxx+rIPFXfLfWonIh6a4Wf/1qQJJ+m8g2/oRx52uhHJMhdXAs/Wl6ihVqXtJQWFtTy1bHTIOLtNv2NdWHdxG42wToxqm3XuC1TJ77VX7jljcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vCWYb5a+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BFE2C4CEED;
-	Mon, 25 Aug 2025 23:10:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756163401;
-	bh=tzXq4twNoex0WercRwFPA3AFqoDMKErjDAjo9XOfCh8=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=vCWYb5a+m6HPjw3SQWqnkit4NoKO+144n2Pg2Ivdjq6oaT7evYlrvyqbvFH7oANw+
-	 mNtITivMaHMpsytWrbuj9kfHof3hmztgH/z/Et0yucNn8AupPA9R4pbzjF1caj3+zu
-	 xRS05/gKXcvJOTocIvOOjeMet+TaVojV9ZVnT+LFj+bZgCPec1dXG2rnwuuFuitw/h
-	 GoG9a3fFunrAK83gUk0qv0suVamCXpOH3acdP5LLYbkH7NH0N4cv+t45UlowNJ1UZQ
-	 6itPRII68w7/GlwBSREbahq8DRtSO+f0er2QltU2SytFmGfMuNbNcHSeycQgKHYdsh
-	 3447uLnrSYtpg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADFD0383BF70;
-	Mon, 25 Aug 2025 23:10:10 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1756163084; c=relaxed/simple;
+	bh=m7yzx2gp8xPIyUKkpJ4QuXt629TP/wdXn0zVxJ0dZNo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AuzPNMa8qnIIIbXAF2Q69c8h26d2Chc1owYsuCmRHXfBz/sNTjf2FWtn1e54itd/B6++3lLVsI63hT/6UPCZTFwPdoNVZFenisOrOb+NPRymfTE/O8L7nSloasYBk4ua+L/wqk68rjHp951JcufrCl+A8lv3Wgzm7yZIDyyfkAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kFZV2iQm; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756163083; x=1787699083;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=m7yzx2gp8xPIyUKkpJ4QuXt629TP/wdXn0zVxJ0dZNo=;
+  b=kFZV2iQm/vEKGPCfOH8dSeQVcueMXlgJlG5Rv8nFND9MDQtKN3igsu1z
+   s2HYp3iKCkB4TOIO4O/OrYXtGxsFAI9FiP3cGSZZXX/fAf6NyZ7qOumxl
+   r8adjxB0w9l+ejudV4iPwgWlyPhEc8x+dNp/TYFQyAi4+n4YaqdBjCrDv
+   zKS//LbRQV7Pza0KsKDgkpvqM/TIlUqEryotBrhE5bEP8ZQ9w94oBiLLd
+   w9CSRDprmqEy1HzoUAZsPTOI0NFvEH8Q9JpXY6Y9yGF908fBmnHsHpy+W
+   BHewrXXiUn0eIa02RRM5TH1L24f3qdztyc1V29bGuLPjIxoDY7eJx1Jhx
+   g==;
+X-CSE-ConnectionGUID: KfFjKVC8TRmgpURUn9RoLw==
+X-CSE-MsgGUID: oaMdHE+sSBaDikmdih5dhA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11533"; a="58489144"
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="58489144"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 16:04:42 -0700
+X-CSE-ConnectionGUID: fdJnNPxSQPiyzcdW/RHG0A==
+X-CSE-MsgGUID: SozrkSyBSG+9zKftYPHD9A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="174692173"
+Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 16:04:42 -0700
+Date: Mon, 25 Aug 2025 16:10:54 -0700
+From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: ricardo.neri@intel.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] genirq/debugfs: Fix a typo in IRQ effective affinity
+Message-ID: <20250825231054.GA25222@ranerica-svr.sc.intel.com>
+References: <20250812-rneri-irq-debugfs-typo-v1-1-f29777b4024d@linux.intel.com>
+ <87ikievsh3.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 1/2] dt-bindings: net: litex,liteeth: Correct example
- indentation
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175616340924.3590689.9893533056849831270.git-patchwork-notify@kernel.org>
-Date: Mon, 25 Aug 2025 23:10:09 +0000
-References: <20250821083038.46274-3-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20250821083038.46274-3-krzysztof.kozlowski@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, kgugala@antmicro.com, mholenko@antmicro.com,
- gsomlo@gmail.com, joel@jms.id.au, Steen.Hegelund@microchip.com,
- daniel.machon@microchip.com, UNGLinuxDriver@microchip.com,
- lars.povlsen@microchip.com, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87ikievsh3.ffs@tglx>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Thu, 21 Aug 2025 10:30:39 +0200 you wrote:
-> DTS example in the bindings should be indented with 2- or 4-spaces, so
-> correct a mixture of different styles to keep consistent 4-spaces.
+On Sat, Aug 23, 2025 at 07:49:12PM +0200, Thomas Gleixner wrote:
+> On Tue, Aug 12 2025 at 14:00, Ricardo Neri wrote:
+> > Fix a typo in the line that prints the effective affinity of the IRQ.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../devicetree/bindings/net/litex,liteeth.yaml         | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+> It's not a typo. It's intentionally shortened to make the output
+> tabular, which makes it more readable.
 
-Here is the summary with links:
-  - [1/2] dt-bindings: net: litex,liteeth: Correct example indentation
-    https://git.kernel.org/netdev/net-next/c/bc2741b032f8
-  - [2/2] dt-bindings: net: Drop vim style annotation
-    https://git.kernel.org/netdev/net-next/c/7f052126ff38
+Ah, I didn't see it this way.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+> 
+> If you want 'effective' then please adjust 'affinity:' with an extra
+> space so it stays that way.
 
+Sure. I can do this.
 
+Thanks for your reply!
+
+BR,
+Ricardo
 
