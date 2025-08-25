@@ -1,107 +1,155 @@
-Return-Path: <linux-kernel+bounces-785541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01BF8B34CC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:52:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EF99B34CD7
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:53:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1ABC57A29AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:50:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4EE81A83772
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C851629992A;
-	Mon, 25 Aug 2025 20:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0776E29A307;
+	Mon, 25 Aug 2025 20:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="KOTwHdFw"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P49mH/My"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5DF28688E;
-	Mon, 25 Aug 2025 20:52:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F01428688E;
+	Mon, 25 Aug 2025 20:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756155134; cv=none; b=OR2dvVpb1z4uiSly72RHS15Mh2Fi5/2kRdbmUkGazoSTUNCDAfsLbREll9KC/i3Hmm2l07ig9VPugyJWH3J+Pl4vdA0t+y/DPvaESLwlutOITVuiTB339JQhDQeSUZdPfBNH+52JEIQqxCmqd4QP4ieH1D2jKDTJCacYb21o3to=
+	t=1756155209; cv=none; b=BQ5Ni/ckgWrwf6n9yeqbm5gZsRurdBvu3kGdTDeogcaDulFjgk2PO+ZtXbFf3SjAHc1ux29/syQTap4NIothDoLhPlXk9yC0/ZwgJONH1Fu8ifwHE6DCjBKGv0YknIyTYwgaHD4uMHJxw0haZCB8g1HPxkHYR922qLddjHs7dUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756155134; c=relaxed/simple;
-	bh=9DEL2Oo+Nr3m/HuNqtk5iDSfuOk2l+HqodByEWatvqY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NOcgyHtE5S1kKiT09m8X7409Il+2n7bmUhJHk0uxH1DT2/Qcg6U/KJEWrCuX0xkqISkRsEyeKTGxQcUz79UPi0I9MpUzQXAOZcp2BwnSTEFVqO+P9f7IX71mOS0C5tYERm2m0Sa3kJrbxOcpx9lCS1m+ji7A3nmnmQxclVe36hM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=KOTwHdFw; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id C277FA0D0C;
-	Mon, 25 Aug 2025 22:52:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=Qx/nBrJgEy4ACj8BLrfZ
-	hPmHWNsIJJlIdSPVY29XGDo=; b=KOTwHdFwrlssuKhGmYQi1pNHWmLpcDzUjzuD
-	5aSkfx5fPlX5pUFG2CmstfASRrQ63+dQM5mTlVid5T6muXMYB1NQQUAAIcxcfrzy
-	wHUURmxj/lFJZAf9AZ1E5GPMpW8r0RLdLBSOwLv/moIdG/Q3qaT908u6u1oIgu9b
-	PskeO6wLgT32xzj9mL/h7ao0HKZxhnR/sjaTDQ2sG3vLM4aOncH4LGfBi7Jx7DV3
-	LKXZRwYxi9Q5XbgRNzrXFTTkRSG1Y5FAbUa1UB7b+nUTSwWc1gTqNOsr364oQfPL
-	bctg3oo0ldAphuHR+xxR6pWRCdWendzWdkuHtkXYvmZdnkyoZUElOPHQgszzQzeo
-	CrN51MHMVNPoIq5z/1oRqDhsoVFxFXAcYLVnYeE7H4GvXVtuMemZhTqD+BA/6NwT
-	SqTUsy33vVPmSFJjmn/tvfSVIgrlhtwm6JkSpb07cPbNQMeKU/GxTB2LFnXGrdr/
-	wAwHDZztY0tpsDvixH8M6s2lGM/0u1DDmCxHziFGkzW/J6/LevhVXjR4FN7XRU0w
-	IxboxRGK2GlTkinQ2lm+ZQT8pormbrRNl14AqXHt6qooU9worejDL6dKUzG5O3S3
-	+0g/e1RMg1vpECBPGfocTU2K7/5W0JRByN/Hk/LW6RsMP3DFBCW8B589f4RdeBzx
-	KjxnBXU=
-Message-ID: <8d951db9-80a5-4209-ada5-6bba854e994d@prolan.hu>
-Date: Mon, 25 Aug 2025 22:52:06 +0200
+	s=arc-20240116; t=1756155209; c=relaxed/simple;
+	bh=s3tmR7nxofceGS0RADamNfNDc9paoHZFEDJVu8jYTu8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TdWsa1eK/vx91q2p6zOzUmzLfPOmqf3KTHzM8egbJJA0veR2GtxrWze0ck7qQhfqeDBzBTGunrqvG8S+RaZlpMxxdLHTb9zBUcNoFC/Z7d85gyF+X8CsPgtOAL/qVRYB+DPvrgg8IeYBP/2LW4FjCF1OkVLJMASGh0jLduaHoPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P49mH/My; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756155209; x=1787691209;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=s3tmR7nxofceGS0RADamNfNDc9paoHZFEDJVu8jYTu8=;
+  b=P49mH/MyecKbEK3JICS+vRL+ppUb8iHHnZcb+m7txh9YTm3LgXRlJPyC
+   dvS5HMcH+sYwMJ0aMDBlWccUtV2ON5jbj9sTg23bGQ63dT8yATBb1hHN0
+   S7D6vP8bGRizHh3RbIjHLKzdUx+d4b+RYASWUlAhcotoIKNBrAes+132L
+   l18HnCcx1cV7liid0Zvr29u43YBlrx5L3ZsBMqzvZ7wFTq+54QDNS0myD
+   +YCMAoeEXPHSKbmNHYgfuV7Q1CKYyOrXUyg5m/KFQZ5miiKVEvbcsFXmA
+   JUY7Ey0Jp7wmsi2a4lhpNGsnpbWzAaxTSK65339rSkacsgpigzDGfpljf
+   w==;
+X-CSE-ConnectionGUID: o+9OSFHvRK2zlk53zvYocQ==
+X-CSE-MsgGUID: iXvPoQivSEq+4M/DQYhtKQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62205754"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="62205754"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 13:52:43 -0700
+X-CSE-ConnectionGUID: F+7z9UEqTpCLzRepANTSzQ==
+X-CSE-MsgGUID: hMmmi/nIT2mlfySCXjSzQg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="200286930"
+Received: from rvuia-mobl.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.157])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 13:52:39 -0700
+Received: from punajuuri.localdomain (unknown [192.168.240.130])
+	by kekkonen.fi.intel.com (Postfix) with ESMTP id 33C1C11FB0F;
+	Mon, 25 Aug 2025 23:52:36 +0300 (EEST)
+Received: from sailus by punajuuri.localdomain with local (Exim 4.98.2)
+	(envelope-from <sakari.ailus@linux.intel.com>)
+	id 1uqeBA-00000007PWX-0Pyt;
+	Mon, 25 Aug 2025 23:52:36 +0300
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	linux-iio@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Subject: [PATCH v4 1/1] iio: dac: Remove redundant pm_runtime_mark_last_busy() calls
+Date: Mon, 25 Aug 2025 23:52:35 +0300
+Message-ID: <20250825205235.1766401-1-sakari.ailus@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ARM: dts: imx6-hummingboard: Replace license text
- comment with SPDX identifier
-To: Russell King <linux@armlinux.org.uk>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
-	<festevam@gmail.com>
-CC: <devicetree@vger.kernel.org>, <imx@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	Rabeeh Khoury <rabeeh@solid-run.com>
-References: <20250709-hb-dts-lic-v2-1-a168bd9d24bd@prolan.hu>
-Content-Language: en-US
-From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
-In-Reply-To: <20250709-hb-dts-lic-v2-1-a168bd9d24bd@prolan.hu>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: sinope.intranet.prolan.hu (10.254.0.237) To
- ATLAS.intranet.prolan.hu (10.254.0.229)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A296767155E60706B
 
-Hi,
+pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
+pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
+to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
+pm_runtime_mark_last_busy().
 
-On 2025. 07. 09. 9:28, Bence Csókás wrote:
-> Replace verbatim license text with a `SPDX-License-Identifier`
-> 
-> The comment header mis-attributes this license to be "X11", but the
-> license text does not include the last line "Except as contained in this
-> notice, the name of the X Consortium shall not be used in advertising or
-> otherwise to promote the sale, use or other dealings in this Software
-> without prior written authorization from the X Consortium.". Therefore,
-> this license is actually equivalent to the SPDX "MIT" license (confirmed
-> by text diffing).
-> 
-> On top, half of the files have the fragment "either version 2 of the
-> License" for some reason, and not follow up with "or any later version".
-> So the resulting SPDX license is still "GPL-2.0-only".
-> 
-> Cc: Rabeeh Khoury <rabeeh@solid-run.com>
-> Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
+Also clean up error handling in stm32_dac_set_enable_state().
 
-So, Rabeeh, Russell, what do you think? Is there something else I need 
-to change?
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+---
+since v3:
 
-Bence
+- Fix condition for calling pm_runtime_put_autosuspend().
+
+ drivers/iio/dac/stm32-dac.c | 18 ++++--------------
+ 1 file changed, 4 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/iio/dac/stm32-dac.c b/drivers/iio/dac/stm32-dac.c
+index 344388338d9b..874e6dcc0d61 100644
+--- a/drivers/iio/dac/stm32-dac.c
++++ b/drivers/iio/dac/stm32-dac.c
+@@ -82,9 +82,9 @@ static int stm32_dac_set_enable_state(struct iio_dev *indio_dev, int ch,
+ 
+ 	ret = regmap_update_bits(dac->common->regmap, STM32_DAC_CR, msk, en);
+ 	mutex_unlock(&dac->lock);
+-	if (ret < 0) {
++	if (ret) {
+ 		dev_err(&indio_dev->dev, "%s failed\n", str_enable_disable(en));
+-		goto err_put_pm;
++		goto err_pm_put;
+ 	}
+ 
+ 	/*
+@@ -95,18 +95,9 @@ static int stm32_dac_set_enable_state(struct iio_dev *indio_dev, int ch,
+ 	if (en && dac->common->hfsel)
+ 		udelay(1);
+ 
+-	if (!enable) {
+-		pm_runtime_mark_last_busy(dev);
+-		pm_runtime_put_autosuspend(dev);
+-	}
+-
+-	return 0;
+-
+-err_put_pm:
+-	if (enable) {
+-		pm_runtime_mark_last_busy(dev);
++err_pm_put:
++	if (!enable || (enable && ret))
+ 		pm_runtime_put_autosuspend(dev);
+-	}
+ 
+ 	return ret;
+ }
+@@ -349,7 +340,6 @@ static int stm32_dac_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto err_pm_put;
+ 
+-	pm_runtime_mark_last_busy(dev);
+ 	pm_runtime_put_autosuspend(dev);
+ 
+ 	return 0;
+-- 
+2.47.2
 
 
