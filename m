@@ -1,149 +1,243 @@
-Return-Path: <linux-kernel+bounces-784666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39885B33F5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:28:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B25EAB33F63
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:28:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F4AB1A824EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:28:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 935471A821A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:28:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA7425334B;
-	Mon, 25 Aug 2025 12:28:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8131244662;
+	Mon, 25 Aug 2025 12:28:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Of7GO0su"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E8mlG+vf"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A14393DCA
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 12:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C147393DCB
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 12:28:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756124891; cv=none; b=PDMn6duwSHJIOqLjq/JZ+W48eWxhnk7gvZR1plpkUytsDC5I8TZQn9iWmNwlEYkV/zgNZVLflwhjvHMr/1vLEgCy2gRpa6D8NACTxF25Se9E5/0G/YMP0q7Dp/gv8TjLFNVpf7v9AR7iIgnt6gxG49SNqaKgyDXEZi1abArqYOk=
+	t=1756124901; cv=none; b=Qmshy017xNukeCgsPt/R4lafFhw5p5BTESomNcWi6okDIyuAmZrTMrjhPk0XVXJO+DSubBFeSSa9zDV+SLzAJR4mvV1GatOysvCur0Mig2Z7GhI6Ztu3Avij51xlUTxNcJvoWR2VSebMNp2GGYziGiIHp7qb4P94JhBm/lR8hD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756124891; c=relaxed/simple;
-	bh=s1PgCLxziYv3zEZVYuVsMh01+gdUdF0MsmjAHhr7TLM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fo9kzq0axWQCrmvRZVadgznNvxK1ZqYBJHokxA9G1nWKi67wzUW8m2j8Y8iC28idgwJabqwJ5g4vvYlR1dqnMZBi0q5DsJ6v11dTVuF+4c1/MwY6/XwJcC9WNDV142qq7VJ4PqP/doS2bsLtxhg09rAj5Yb5DANyLE9BL/SR9C0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Of7GO0su; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45b55ed86b9so12806945e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 05:28:09 -0700 (PDT)
+	s=arc-20240116; t=1756124901; c=relaxed/simple;
+	bh=OvKjzrztyO2BYir6lukFD8Gzi7C40pSWjuZ24qRh4dY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p0xpfSIGCKf3pgyMDDKAJ2mnNaxPO0YH5XQID5AVWmQURXWwYia0cjXMmpGzjFdgm7GUy5LNNJAbshDM2LUqr7uvHKbICtbE+kfmJK73+InzptDR+Ddi5ofhB3B4UrtIyMK/q1b3ceeiI4ES6VfjUzN1KOHW965BJwpyk5HoHE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E8mlG+vf; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3c98b309804so733672f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 05:28:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756124888; x=1756729688; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kPfDBfbpwUW+KOvZVoZK+orl1I1HkIgHCfW1U8nixbM=;
-        b=Of7GO0su89bjnLiEObgnysXo8dyWKJ5vkAj4KHa1hCF3aUyzCUBScY99XxM8O80GGm
-         2JiinDCRMxj/wymAZXHdvbbHnipIQrqY/5GCPL41iL7uJ4Wx8OOev6ANzl718HpTt/4N
-         VMQdKJ2gE98vIQpayAjRlcUyBu5HUBtdemIBw2ExEfaPXZypx0fSrlbhdayRnO/6yer+
-         26tvyeSH/xy9CCGrrEWZNTs8XzfuGMDcJ6KG4qY9/ETqs7CBLS+SHGHkv+l2kObLZXs4
-         K4zr6scRbHza8x55qp3zd838nutekHvRKYQ//WP0M9nO8kGQh5NFTLszuoqJ9Y2ZVbbO
-         BDTQ==
+        d=linaro.org; s=google; t=1756124898; x=1756729698; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aEci9uMjZdI28rwm3iBkZ0dPmOuD039KbuybMmsaWKg=;
+        b=E8mlG+vftYM0fkfhtf5ocxo2E2PZABtzy82EC37Fnwr5AU2PYei2oi/6UjlUTZtSGV
+         ixsNty1R8diXVVBpUrwKy93aIDo2LTuRr3gFf7S9ywkZMi+oJpXNhIFxNO0j22iOV6j4
+         vZAdWICuGwCG3FYAziaLZTsHHTkpaQaP7Fg44iH3g8ZuerQPa8ZvBWaqnUNyQ2BhPrMt
+         gCPxO9KM3AiD06IenkIAjqOOzKdsvmbFv24bN9giV8ELI7QoGVoXbwg6UzG2PdwpXqlk
+         kFpP+eM70NVHgxzZMgTsAqzQEjyiZaBrhZYMpImfw+eik4efiTrF4P2In5OQJuvImuV3
+         x0Tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756124888; x=1756729688;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kPfDBfbpwUW+KOvZVoZK+orl1I1HkIgHCfW1U8nixbM=;
-        b=XjEJFMwwXazl+eJQ9chKs2mVuofiVIZroF6vB/p//91c+fjsWL2HRWjwfyI4hS6XBl
-         5kwCVf/LrNVxg839BZiwaq6ew9Y4muO3ntHtN9TI59R563S6/Bd66it29WLdJzTNuGRn
-         Xv11VTvYPJNcrR0J0Pdg6b5iCgkqOZpT3uFoMxG7nXLdUW5BSdLPSsnarSomxT214v4D
-         gzbIVQDMPlGLtz0bC18W5tToWu0DtqU4DduiEj6OFeNUm/jA8y93gtoeYd5FG5b4bZ6B
-         8tew1adxAx0b5468kjWJz4jjkn3DON9WD7YCO6gD2UggIITN+RZ/eyTCFq7TIxcT7F6F
-         yL/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWqDFXygrPuwoFOFp3pdN2KXhqZ671Mr7zp7kz0Au1D7YvWNFcTwK+vxlXyR3cjOPOLUBcFwS1ZIsis2RM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyewA7WeJBgJFvGKmA4R5OBD+p2dblqH51uZqaSorN2eXaXNpRb
-	NacXrU/LVIYaPc8nEOmL+JIJgBNfkwXQu645yikFDYUSotSemCNTOIj6sz5zNg==
-X-Gm-Gg: ASbGncvAtmW3yhomos1vPBOSndmaQxuQffQ75B2NVzswS6Edc9yl+FGavGSfd/N1J6v
-	28Z4R90BiI2LlULxQMIx9MG881mYiXZcGPO776h/P47H14IYsC+TWQF7gpuSv5Px6x4yKcds1ni
-	Wh31S5TsrofyoOLYvLDjkT9spBrMRrcV9z3XNRpyzCRRoDnpW7pqsU/tj3gackiReqIhWseCwW3
-	uq0XSk/zlFpc9aKKDo5RH6o53ds4zI+Imj8l58Tsl2DyQJzDsrQYM7vCZljxURt1Yz1qrl3O2lS
-	H3GCZzscgbYdTWFu50XX6xAQvvZ1VgTBMue9iFYLrX4KvD87oWM5rU28nJ3aLc6HP0UlyWdfNyk
-	uwxYrp5SkIoK7CT/d9Y9mrNLuWdjH5HwJZYU=
-X-Google-Smtp-Source: AGHT+IESgx9HYKPain/SQOUHC5A3qxDYmJ3/amsQb6PIdB8JBVmGFTgZXWbCC7qK1K4LPP+7blyqdQ==
-X-Received: by 2002:a05:6000:2585:b0:3b9:16a3:cf9b with SMTP id ffacd0b85a97d-3c5da64a8fbmr10103861f8f.5.1756124888325;
-        Mon, 25 Aug 2025 05:28:08 -0700 (PDT)
-Received: from f (cst-prg-2-200.cust.vodafone.cz. [46.135.2.200])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b5753adf7sm107780735e9.7.2025.08.25.05.28.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 05:28:07 -0700 (PDT)
-Date: Mon, 25 Aug 2025 14:27:58 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] mm: readahead: improve mmap_miss heuristic for
- concurrent faults
-Message-ID: <ynl23xmeglxarrkrmh4r3sj3idvqbofwatrnhgx6tsl4zfrsxp@juc5kmjelwjn>
-References: <20250815183224.62007-1-roman.gushchin@linux.dev>
+        d=1e100.net; s=20230601; t=1756124898; x=1756729698;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aEci9uMjZdI28rwm3iBkZ0dPmOuD039KbuybMmsaWKg=;
+        b=h0TSfvdgDjJlSNUoEpHEbTaGlGJrJYhxMZlArAl+0YXI0LgzM9x4p2IOPsWEYx+Sdv
+         0tgTJWfm+kWEBTe/PQ2xpJAhLXm7Gu0koZQZwcQfsBJS7DTDbqKSagk9MMXpCOXEzPbT
+         qmKUDjoUK6oxB8MpemUOOJ/BAx3NTSmUo8nWERvWRCNSEJcSU3TqP0xMSZgx3dcmndDS
+         zR4WOPlz2SHYaFZp5RogThSNbUUcDTo5HCdbtDQW5vrQkHaVKAV0oZBiQLQQ9034lvsq
+         rp9ysAA3VHoUhWnjJHGcBcBQpFjuaZCD8cjgEeGqgXM2Y16IrW/PsCgI+Vl++iTc7UGn
+         uGGA==
+X-Gm-Message-State: AOJu0YwFeMoZmgB6TWLvu3UyXWHM4TaQAfku5nxbloeNCmDNE8xtfuyW
+	5nHgmuIWt1aymYD9vAjxMuGgBw9yVfxE3QimUhWlrY7WrteGCeEVXyDrCb/MVtnfgGY=
+X-Gm-Gg: ASbGncum26am8wb3rzZow1239Vc04oGrpat/20GS41v4+p9i4wKMsVh3CKOYk5UNyaV
+	gMWwngE93Qpn685+gF48o/RyQaTPZl5EmT39D/MKI/gxSmgAD38w9BNgqzxpCKFHY+j0iC5hhWO
+	+1mi+yC8wt+rMbR9aXs3pY72dc1hU6edFOGDwSzDbiggUnUIF+JZ3PoO0+4x8Wf3Ele4k0DjVYq
+	6eH6VNJaH7OLvYBN70ZAX6tpcRweIJXUPGyHtdB6b/GgAdtWyWpvIe1oLIQplviO6c4Th+IAdMw
+	YVQlkpFg1DKXJwX6cRo7nU5M9HTgPZxryDnC4asUSGSLlD0ZaW+zTDDtM1xPgoY5MlM6qor576L
+	BSzzGn7uDXiakEPcExBVDdRTmTvMjpuk=
+X-Google-Smtp-Source: AGHT+IFIp/SnHEdMPilDFNbxP0Dbi82GGffS4GH1XlIR8cNBhKEBrJgtBQ7C69WSa2euQj37PuOC5A==
+X-Received: by 2002:a05:6000:288d:b0:3c7:36f3:c352 with SMTP id ffacd0b85a97d-3c736f3c4c0mr6600072f8f.59.1756124898359;
+        Mon, 25 Aug 2025 05:28:18 -0700 (PDT)
+Received: from [192.168.0.251] ([82.76.204.34])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c7119c4200sm11315101f8f.53.2025.08.25.05.28.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Aug 2025 05:28:17 -0700 (PDT)
+Message-ID: <6a52b243-11b1-4740-9d15-dcda7bf79777@linaro.org>
+Date: Mon, 25 Aug 2025 13:28:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250815183224.62007-1-roman.gushchin@linux.dev>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] clk: samsung: add Exynos ACPM clock driver
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
+References: <20250819-acpm-clk-v1-0-6bbd97474671@linaro.org>
+ <20250819-acpm-clk-v1-3-6bbd97474671@linaro.org>
+ <e17ea82b-fb3e-45d2-a168-3b917816fe7b@kernel.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <e17ea82b-fb3e-45d2-a168-3b917816fe7b@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 15, 2025 at 11:32:24AM -0700, Roman Gushchin wrote:
-> If two or more threads of an application faulting on the same folio,
-> the mmap_miss counter can be decreased multiple times. It breaks the
-> mmap_miss heuristic and keeps the readahead enabled even under extreme
-> levels of memory pressure.
-> 
-> It happens often if file folios backing a multi-threaded application
-> are getting evicted and re-faulted.
-> 
-> Fix it by skipping decreasing mmap_miss if the folio is locked.
-> 
-> This change was evaluated on several hundred thousands hosts in Google's
-> production over a couple of weeks. The number of containers being
-> stuck in a vicious reclaim cycle for a long time was reduced several
-> fold (~10-20x), as well as the overall fleet-wide cpu time spent in
-> direct memory reclaim was meaningfully reduced. No regressions were
-> observed.
-> 
-> Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
-> Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: linux-mm@kvack.org
-> ---
->  mm/filemap.c | 14 +++++++++++---
->  1 file changed, 11 insertions(+), 3 deletions(-)
-> 
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index c21e98657e0b..983ba1019674 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -3324,9 +3324,17 @@ static struct file *do_async_mmap_readahead(struct vm_fault *vmf,
->  	if (vmf->vma->vm_flags & VM_RAND_READ || !ra->ra_pages)
->  		return fpin;
->  
-> -	mmap_miss = READ_ONCE(ra->mmap_miss);
-> -	if (mmap_miss)
-> -		WRITE_ONCE(ra->mmap_miss, --mmap_miss);
-> +	/*
-> +	 * If the folio is locked, we're likely racing against another fault.
-> +	 * Don't touch the mmap_miss counter to avoid decreasing it multiple
-> +	 * times for a single folio and break the balance with mmap_miss
-> +	 * increase in do_sync_mmap_readahead().
-> +	 */
-> +	if (likely(!folio_test_locked(folio))) {
-> +		mmap_miss = READ_ONCE(ra->mmap_miss);
-> +		if (mmap_miss)
-> +			WRITE_ONCE(ra->mmap_miss, --mmap_miss);
-> +	}
 
-I'm not an mm person.
 
-The comment implies the change fixes the race, but it is not at all
-clear to me how.
+On 8/24/25 6:10 PM, Krzysztof Kozlowski wrote:
+> On 19/08/2025 13:45, Tudor Ambarus wrote:
+>> +
+>> +static int acpm_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+>> +			     unsigned long parent_rate)
+>> +{
+>> +	struct acpm_clk *clk = to_acpm_clk(hw);
+>> +
+>> +	return clk->handle->ops.dvfs_ops.set_rate(clk->handle,
+>> +					clk->acpm_chan_id, clk->id, rate);
+>> +}
+>> +
+>> +static const struct clk_ops acpm_clk_ops = {
+>> +	.recalc_rate = acpm_clk_recalc_rate,
+>> +	.round_rate = acpm_clk_round_rate,
+> 
+> This should be determine_rate. Check recent patchset from Brian Masney.
+> I applied the samsung bits from it to samsung soc tree.
 
-Does it merely make it significantly less likely?
+Will do.
+
+> 
+> ...
+> 
+>> +
+>> +static int __init acpm_clk_probe(struct platform_device *pdev)
+> 
+> module probe for sure should not be __init.
+
+Ah, indeed, both __init and __refdata are wrong here, my appologies.
+I assume they came from the time I considered the driver only needed
+at boot time. Will drop them.
+> 
+>> +{
+>> +	const struct acpm_clk_match_data *match_data;
+>> +	const struct acpm_handle *acpm_handle;
+>> +	struct clk_hw_onecell_data *clk_data;
+>> +	struct clk_hw **hws;
+>> +	struct device *dev = &pdev->dev;
+>> +	struct acpm_clk *aclks;
+>> +	unsigned int acpm_chan_id;
+>> +	int i, err, count;
+>> +
+>> +	acpm_handle = devm_acpm_get_by_node(dev, dev->parent->of_node);
+>> +	if (IS_ERR(acpm_handle))
+>> +		return dev_err_probe(dev, PTR_ERR(acpm_handle),
+>> +				     "Failed to get acpm handle.\n");
+>> +
+>> +	match_data = of_device_get_match_data(dev);
+>> +	if (!match_data)
+>> +		return dev_err_probe(dev, -EINVAL,
+>> +				     "Failed to get match data.\n");
+>> +
+>> +	count = match_data->nr_clks;
+>> +	acpm_chan_id = match_data->acpm_chan_id;
+>> +
+>> +	clk_data = devm_kzalloc(dev, struct_size(clk_data, hws, count),
+>> +				GFP_KERNEL);
+>> +	if (!clk_data)
+>> +		return -ENOMEM;
+>> +
+>> +	clk_data->num = count;
+>> +	hws = clk_data->hws;
+>> +
+>> +	aclks = devm_kcalloc(dev, count, sizeof(*aclks), GFP_KERNEL);
+>> +	if (!aclks)
+>> +		return -ENOMEM;
+>> +
+>> +	for (i = 0; i < count; i++) {
+>> +		const struct acpm_clk_variant *variant = &match_data->clks[i];
+>> +		struct acpm_clk *aclk = &aclks[i];
+>> +
+>> +		hws[i] = &aclk->hw;
+>> +
+>> +		aclk->id = variant->id;
+>> +		aclk->handle = acpm_handle;
+>> +		aclk->acpm_chan_id = acpm_chan_id;
+>> +
+>> +		err = acpm_clk_ops_init(dev, aclk, variant->name);
+>> +		if (err)
+>> +			return dev_err_probe(dev, err,
+>> +					     "Failed to register clock.\n");
+>> +	}
+>> +
+>> +	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+>> +					   clk_data);
+>> +}
+>> +
+>> +#define ACPM_CLK(_id, cname)					\
+>> +	{							\
+>> +		.id		= _id,				\
+>> +		.name		= cname,			\
+>> +	}
+>> +
+>> +static const struct acpm_clk_variant gs101_acpm_clks[] __initconst = {
+> 
+> This goes to top of the file, after struct declarations.
+
+Okay, will do.
+> 
+>> +	ACPM_CLK(CLK_ACPM_DVFS_MIF, "mif"),
+>> +	ACPM_CLK(CLK_ACPM_DVFS_INT, "int"),
+>> +	ACPM_CLK(CLK_ACPM_DVFS_CPUCL0, "cpucl0"),
+>> +	ACPM_CLK(CLK_ACPM_DVFS_CPUCL1, "cpucl1"),
+>> +	ACPM_CLK(CLK_ACPM_DVFS_CPUCL2, "cpucl2"),
+>> +	ACPM_CLK(CLK_ACPM_DVFS_G3D, "g3d"),
+>> +	ACPM_CLK(CLK_ACPM_DVFS_G3DL2, "g3dl2"),
+>> +	ACPM_CLK(CLK_ACPM_DVFS_TPU, "tpu"),
+>> +	ACPM_CLK(CLK_ACPM_DVFS_INTCAM, "intcam"),
+>> +	ACPM_CLK(CLK_ACPM_DVFS_TNR, "tnr"),
+>> +	ACPM_CLK(CLK_ACPM_DVFS_CAM, "cam"),
+>> +	ACPM_CLK(CLK_ACPM_DVFS_MFC, "mfc"),
+>> +	ACPM_CLK(CLK_ACPM_DVFS_DISP, "disp"),
+>> +	ACPM_CLK(CLK_ACPM_DVFS_BO, "b0"),
+>> +};
+>> +
+>> +static const struct acpm_clk_match_data acpm_clk_gs101 __initconst = {
+> 
+> Are you going to have more of such clk_match_data? More variants?
+
+I see downstream that gs101 and gs201 have the same clock IDs, clock names
+and acpm_chan_id. But I can't tell about others. I assume it's safer to
+assume there will be other variants.
+
+Anyway, I'll pass this as platform data, if I understood correctly.
+
+Thanks,
+ta
+> 
+>> +	.clks = gs101_acpm_clks,
+>> +	.nr_clks = ARRAY_SIZE(gs101_acpm_clks),
+>> +	.acpm_chan_id = 0,
+>> +};
+>> +
+
+
+
 
