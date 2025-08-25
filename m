@@ -1,234 +1,238 @@
-Return-Path: <linux-kernel+bounces-784446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD872B33BFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:57:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01EA3B33C0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:58:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6503F3B2B26
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:57:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B19A1188410B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:58:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C3552D3228;
-	Mon, 25 Aug 2025 09:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC7A2D8782;
+	Mon, 25 Aug 2025 09:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oQlDCHn2";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vXkJ7c72"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DyDKJ/+O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A8242D5C61;
-	Mon, 25 Aug 2025 09:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A183328B3EB;
+	Mon, 25 Aug 2025 09:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756115759; cv=none; b=bTUwzBmDm619yDudTLD8mtPjAbrbgaNXI1uHUwpKN13YWiJDhwbiz1WFyQBE8O9vUcLAE82/sgxZ1AY5DYtr5NSzHuCI+2pU4Hki8UYIM7NHCvkh3QhJ012xDn544GBDzNBya1+ZcnvqPgBeB05Nsr4Wz87d5KMYCAILPMxtI5w=
+	t=1756115841; cv=none; b=czAe9Qdwz/WNsxI0okaOn2LQFUL1mfcoKzw8Ila9wZiyCGRFR+batiLxgb4ljFz53/mX08ELyEtzfwz46peD2Jt4JLmqTqWeyWsDJXay9UvlpKxdD817Ss+vw5fTYFqyivpYZBHL+FQJnD+9Cy7um1+wr58qig2iu/sx5Ujwp7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756115759; c=relaxed/simple;
-	bh=lGtfrfvnQoIdGQLhHh0iDxDrXu9sMFUP/0SzVV1kF0Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pEfFdPgRYE+PFsGb24B9FjUyb7bRAkYNbilib/inqMwjp3MQJ+ojlqTWEVorxhtHuae8lcLrwoKwSMyULMSDfwupRtfekRVyJVprA5SIgGduAnxB7pAboUF6lMe3vyhprktdr8h9aMXwUvrr2OTEQfEl26ZbiZaG5hQ14rw78IU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oQlDCHn2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vXkJ7c72; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 25 Aug 2025 11:55:54 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756115755;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CsNwdNgt3Cei2kSkCLTX8Ma530gKjb02dgxqfB6hDPI=;
-	b=oQlDCHn2OlPwtBW4P3lwkPyqzKy+TavDqQ12oRJV84vXGaoH6cqInOnH5/Jqo0+NDBwk4J
-	e28JIQoiP8E2HtD2JKFT3qdBOhd1ICO8WkWFoGs1Xi4NMs8NZC/EDXzIq+ade/xbn006oQ
-	qM94cXEGYZR97eyinNcOCjUgVQp40YYpnxHi94H09VAznHJL4wWrGb3I7D7qUFFpxD7865
-	+jXKxkgFYNXjGGrUSE+Ompad7OLMnI7bGObcIc8ydnx28YbXshTndofCT1jKRFTi6huDoH
-	CwberaSkf6ia8DQL+Xot7+0DLcKulEEr0Rfnl682/dmhqQml/0obR8HG2ayiUA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756115755;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CsNwdNgt3Cei2kSkCLTX8Ma530gKjb02dgxqfB6hDPI=;
-	b=vXkJ7c72/7t9acwpYY6I7dtH+Gwgqgu26Ya7jWua/R5DRIS5ecsDJG3sTUCOOBrpih8SOH
-	NJLPkSX+tZvzonDw==
-From: Nam Cao <namcao@linutronix.de>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-	linux-trace-kernel@vger.kernel.org,
-	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
-	Clark Williams <williams@redhat.com>,
-	John Kacur <jkacur@redhat.com>
-Subject: Re: [RFC PATCH 10/17] verification/rvgen: Add support for Hybrid
- Automata
-Message-ID: <20250825095554.NrT5tNY8@linutronix.de>
-References: <20250814150809.140739-1-gmonaco@redhat.com>
- <20250814150809.140739-11-gmonaco@redhat.com>
+	s=arc-20240116; t=1756115841; c=relaxed/simple;
+	bh=vwlBq4Owr1jO686WKV4W+2f+92H7k6xFVx9ZJIbVCEo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qpQyDuCv430cqjD1ba220b1ilraEqzYZfr3v5Rp1Owe/c3IljcjPgzKtS/GP3tUlmsmPqdp2XKjLeu87jO5ueCxQehb6nc5vM0KkOzqN9kRXK0yovb28YRqvz13ORhZh58WVopfpiMcgeZukOE5H48RPtsqu7p1ZA+bgkEXte0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DyDKJ/+O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC352C4CEED;
+	Mon, 25 Aug 2025 09:57:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756115841;
+	bh=vwlBq4Owr1jO686WKV4W+2f+92H7k6xFVx9ZJIbVCEo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DyDKJ/+OuRnW/tTwGN5+5T5WW/IEo5+MfLUWDUmCFhhFRVmMQt5QGGiVVzHlCWgU/
+	 iISpJ+nWhEiOexMxD77RnNlHdg9H4hjlbHqQuwowGdjAzyYwP0BQtJRWXvAI9a0HY+
+	 QN1Kzt4mGSq6r4W1dABWgCOiL8sm+LgIGWW3maHBT6rmGT9VRQcwwpuWlIM9MQg5dl
+	 TSTFuO6X78FEqXkZkwIb1boGgYSNYAdAEJ1tCbLfzA9w2HqIK3zgbX8Fl3YBBykf1Z
+	 6ORUVs2Iu2nLSrq1EMuk+hPEtJxgJ4VXD/Hey8o6F0atmc8h4myDUMXM67Ojy9VakR
+	 nsfnyrRgh3fFw==
+Date: Mon, 25 Aug 2025 10:57:12 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Antoniu Miclaus <antoniu.miclaus@analog.com>, conor+dt@kernel.org,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 3/5] dt-bindings: iio: adc: add ade9000
+Message-ID: <20250825105712.3c9a3776@jic23-huawei>
+In-Reply-To: <20250820210340.GB986565-robh@kernel.org>
+References: <20250815095713.9830-1-antoniu.miclaus@analog.com>
+	<20250815095713.9830-4-antoniu.miclaus@analog.com>
+	<20250816175258.42286693@jic23-huawei>
+	<20250820210340.GB986565-robh@kernel.org>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814150809.140739-11-gmonaco@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 14, 2025 at 05:08:02PM +0200, Gabriele Monaco wrote:
->                  for i in event.split("\\n"):
-> +                    if ";" in i:
-> +                        # if the event contains a constraint (hybrid automata),
-> +                        # it will be separated by a ";":
-> +                        # "sched_switch;x<1000;reset(x)"
-> +                        line = i.split(";")
-> +                        i = line.pop(0)
-> +                        if len(line) > 2:
-> +                            raise ValueError("Only 1 constraint and 1 reset are supported")
-> +                        envs += self.__extract_env_var(line)
->                      events.append(i)
+On Wed, 20 Aug 2025 16:03:40 -0500
+Rob Herring <robh@kernel.org> wrote:
 
-How about we get rid of the (if ";"), and just split it:
+> On Sat, Aug 16, 2025 at 05:52:58PM +0100, Jonathan Cameron wrote:
+> > On Fri, 15 Aug 2025 09:56:36 +0000
+> > Antoniu Miclaus <antoniu.miclaus@analog.com> wrote:
+> >  =20
+> > > Add devicetree bindings support for ade9000.
+> > >=20
+> > > Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com> =20
+> >=20
+> > Hi Antoniu,
+> > Sorry I missed v3 last week. Garage door crisis ate up my review time!
+> >=20
+> > A few minor comments inline.
+> >=20
+> > Jonathan
+> >  =20
+> > > ---
+> > > changes in v4:
+> > >  - improve description formatting (remove unnecessary pipe symbols)
+> > >  - move $ref to end and remove allOf section for cleaner structure
+> > >  .../bindings/iio/adc/adi,ade9000.yaml         | 108 ++++++++++++++++=
+++
+> > >  1 file changed, 108 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ade=
+9000.yaml
+> > >=20
+> > > diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ade9000.ya=
+ml b/Documentation/devicetree/bindings/iio/adc/adi,ade9000.yaml
+> > > new file mode 100644
+> > > index 000000000000..bd374c0d57d4
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/iio/adc/adi,ade9000.yaml
+> > > @@ -0,0 +1,108 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > > +# Copyright 2025 Analog Devices Inc.
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/iio/adc/adi,ade9000.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: Analog Devices ADE9000 High Performance, Polyphase Energy Met=
+ering driver
+> > > +
+> > > +maintainers:
+> > > +  - Antoniu Miclaus <antoniu.miclaus@analog.com>
+> > > +
+> > > +description: |
+> > > +  The ADE9000 s a highly accurate, fully integrated, multiphase ener=
+gy and power =20
+> >=20
+> > is a=20
+> >  =20
+> > > +  quality monitoring device. Superior analog performance and a digit=
+al signal
+> > > +  processing (DSP) core enable accurate energy monitoring over a wid=
+e dynamic
+> > > +  range. An integrated high end reference ensures low drift over tem=
+perature
+> > > +  with a combined drift of less than =C2=B125 ppm/=C2=B0C maximum fo=
+r the entire channel
+> > > +  including a programmable gain amplifier (PGA) and an analog-to- di=
+gital =20
+> > analog-to-digital
+> >  =20
+> > > +  converter (ADC).
+> > > +
+> > > +  https://www.analog.com/media/en/technical-documentation/data-sheet=
+s/ADE9000.pdf
+> > > +
+> > > +$ref: /schemas/spi/spi-peripheral-props.yaml#
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    enum:
+> > > +      - adi,ade9000
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > > +  spi-max-frequency:
+> > > +    maximum: 20000000
+> > > +
+> > > +  interrupts:
+> > > +    maxItems: 3
+> > > +
+> > > +  interrupt-names:
+> > > +    items:
+> > > +      - const: irq0
+> > > +      - const: irq1
+> > > +      - const: dready =20
+> >=20
+> > I always forget how these work.  Does this allow me to say irq1 and dre=
+ady
+> > are wired but not irq0?=20
+> >=20
+> > Similar to question on interrupts being required below, if it is plausi=
+ble
+> > the driver could be modified to work with a lesser set, the binding sho=
+uld allow
+> > it.
+> >  =20
+> > > +
+> > > +  reset-gpios:
+> > > +    description:
+> > > +      Must be the device tree identifier of the RESET pin. As the li=
+ne is
+> > > +      active low, it should be marked GPIO_ACTIVE_LOW.
+> > > +    maxItems: 1
+> > > +
+> > > +  vdd-supply: true
+> > > +
+> > > +  vref-supply: true
+> > > +
+> > > +  clocks:
+> > > +    description: External clock source when not using crystal
+> > > +    maxItems: 1
+> > > +
+> > > +  clock-names:
+> > > +    items:
+> > > +      - const: clkin
+> > > +
+> > > +  "#clock-cells":
+> > > +    description:
+> > > +      ADE9000 can provide clock output via CLKOUT pin with external =
+buffer.
+> > > +    const: 0
+> > > +
+> > > +  clock-output-names:
+> > > +    items:
+> > > +      - const: clkout
+> > > +
+> > > +required:
+> > > +  - compatible
+> > > +  - reg
+> > > +  - reset-gpios =20
+> >=20
+> > As with interrupts, can we not use it at all if the reset line is tied
+> > to not reset?   Or is it a driver limitation (which is fine to have but=
+ shouldn't
+> > affect the binding).
+> >  =20
+> > > +  - interrupts
+> > > +  - interrupt-names =20
+> > My usual question on interrupts.  Is the device completely useless with=
+out them or
+> > is it just the case that we currently require them in the driver becaus=
+e we don't
+> > poll for completion as an alternative?  Fine to require them in the dri=
+ver even
+> > if the binding doesn't require them. =20
+>=20
+> That sounds to me the wrong way around. A driver is free to not require=20
+> a property that the binding requires. They should only be not required=20
+> if not hooking them up on the board design is valid (which would then=20
+> imply a driver should be possible without them (or the h/w designer is=20
+> incompetent)).
 
-for i in event.split("\\n"):
-    # if the event contains a constraint (hybrid automata),
-    # it will be separated by a ";":
-    # "sched_switch;x<1000;reset(x)"
-    line = i.split(";")
-    events.append(line.pop(0))
-    if len(line) > 2:
-            raise ValueError("Only 1 constraint and 1 reset are supported")
-        envs += self.__extract_env_var(line)
+I think we are saying the same thing in different ways.
+The not wired being fine was what I was referring to.  That is very common
+for these sorts of devices. That is the case even if the driver today does
+not deal with that case and will fail to probe.  So a driver can require
+an optional property if it is possible to write a driver that does not
+(or alternatively make the driver more flexible in future)
 
-> +            else:
-> +                # state labels have the format:
-> +                # "enable_fired" [label = "enable_fired\ncondition"];
-> +                #  ----- label is here -----^^^^^
-> +                # label and node name must be the same, condition is optional
-> +                state = self.__dot_lines[cursor].split("label")[1].split('"')[1]
+Jonathan
 
-I know I complained about regex last week, but for this case I think regex
-is more suitable:
+>=20
+> Rob
+>=20
 
-state = re.findall(r'".*?" \[label = "([^"]*)"\]', self.__dot_lines[cursor])[0]
-
-> +                if "\\n" in state:
-> +                    line = state.split("\\n")
-> +                    line.pop(0)
-> +                    if len(line) > 1:
-> +                        raise ValueError("Only 1 constraint is supported in the state")
-> +                    envs += self.__extract_env_var([line[0].replace(" ", "")])
-
-Same as above, I think we can just split without the if check.
-
->              cursor += 1
->  
-> -        return sorted(set(events))
-> -
-> -    def __create_matrix(self):
-> +        return sorted(set(events)), sorted(set(envs))
-> +
-> +    def _split_constraint_expr(self, constr: list[str]) -> Iterator[tuple[str,
-> +                                                                          str | None]]:
-> +        """
-> +        Get a list of strings of the type constr1 && constr2 and returns a list of
-> +        constraints and separators: [[constr1,"&&"],[constr2,None]]
-> +        """
-> +        exprs = []
-> +        seps = []
-> +        for c in constr:
-> +            while "&&" in c or "||" in c:
-> +                a = c.find("&&")
-> +                o = c.find("||")
-> +                pos = a if o < 0 or 0 < a < o else o
-> +                exprs.append(c[:pos].replace(" ", ""))
-> +                seps.append(c[pos:pos+2].replace(" ", ""))
-> +                c = c[pos+2:].replace(" ", "")
-> +            exprs.append(c)
-> +            seps.append(None)
-> +        return zip(exprs, seps)
-
-If && and || are the only things you intend to support, then this is
-probably okay. But if the syntax will ever be extended (e.g. brackets),
-this becomes unreadable really fast.
-
-Perhaps a "real" parser which converts the input string into abstract
-syntax tree is something worth considering.
-
-> +    def is_event_constraint(self, key: tuple[int, int] | int) -> bool:
-> +        """
-> +        Given the key in self.constraints return true if it is an event
-> +        constraint, false if it is a state constraint
-> +        """
-> +        return isinstance(key, tuple)
-
-I don't love this. A few years from now, someone could change state
-constraint to be a tuple, or change event contraint to not be tuple, and
-things break in confusing ways.
-
-Perhaps an explicit variable to store contraint type information instead?
-
-> -    def __get_enum_states_content(self):
-> +    def __get_enum_states_content(self) -> list[str]:
->          buff = []
->          buff.append("\t%s%s = 0," % (self.initial_state, self.enum_suffix))
->          for state in self.states:
-> @@ -36,7 +37,7 @@ class Dot2c(Automata):
->  
->          return buff
->  
-> -    def format_states_enum(self):
-> +    def format_states_enum(self) -> list[str]:
->          buff = []
->          buff.append("enum %s {" % self.enum_states_def)
->          buff += self.__get_enum_states_content()
-> @@ -58,7 +59,7 @@ class Dot2c(Automata):
->  
->          return buff
->  
-> -    def format_events_enum(self):
-> +    def format_events_enum(self) -> list[str]:
-
-These changes should be in your type annotation patch?
-
->          buff = []
->          buff.append("enum %s {" % self.enum_events_def)
->          buff += self.__get_enum_events_content()
-> @@ -66,7 +67,43 @@ class Dot2c(Automata):
->  
->          return buff
->  
-> -    def get_minimun_type(self):
-> +    def __get_non_stored_envs(self) -> list[str]:
-> +        return [ e for e in self.envs if e not in self.env_stored ]
-> +
-> +    def __get_enum_envs_content(self) -> list[str]:
-> +        buff = []
-> +        first = True
-> +        # We first place env variables that have a u64 storage.
-> +        # Those are limited by MAX_HA_ENV_LEN, other variables
-> +        # are read only and don't require a storage.
-> +        unstored = self.__get_non_stored_envs()
-> +        for env in list(self.env_stored) + unstored:
-> +            if first:
-> +                buff.append("\t%s%s = 0," % (env, self.enum_suffix))
-> +                first = False
-> +            else:
-> +                buff.append("\t%s%s," % (env, self.enum_suffix))
-
-The "= 0" assignment for the first enum is not required right? Perhaps you
-can get rid of the 'first" thingy, and just do
-
-for env in list(self.env_stored) + unstored:
-    buff.append("\t%s%s," % (env, self.enum_suffix))
-
-> +        match unit:
-> +            case "us":
-> +                value *= 1000
-> +            case "ms":
-> +                value *= 1000000
-> +            case "s":
-> +                value *= 1000000000
-
-Since when did Python have this? Nice!
-
-Nam
 
