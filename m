@@ -1,149 +1,112 @@
-Return-Path: <linux-kernel+bounces-784453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A5A0B33C21
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:06:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E24DAB33C23
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:06:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8CE93A66E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:06:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5F0518908A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E8AD2D97BE;
-	Mon, 25 Aug 2025 10:06:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E9F2D97BD;
+	Mon, 25 Aug 2025 10:06:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="GhjuDSTj"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="K0BB1y3A";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Pkeg4IQY"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818582D480D
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 10:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2613C2D3A69;
+	Mon, 25 Aug 2025 10:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756116365; cv=none; b=sxNISW/SnFf7dEZ/dywD96azX63/3KUTXr52ZgPpAZS3qlG8Dif0WVmIyBz4NPE2nyO2KCKhoJt1TP98IUxph3oLXd4hayQ33Boh7RFO7afOWK0EhY0X13k22UeS1w97BM7/TxGhCOdZUba3iT3nL0bh5KFnrv5pFK0/5XW9ojU=
+	t=1756116397; cv=none; b=ZkUYRC5T6ZXb+3zSoAZbI/NkIEoZfVH8l0dQH1IInNsyeOkF9l1uAz4vzh3r+YxPeMbZlmrre9xajXkOo3IDlbHMislI93iCOrqk154NrGsP7kHtV5VbYCCzKULF6eBBb9jeIaMY8nq+YxJhoNHKterzkmnWapZZqk82KrEZQA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756116365; c=relaxed/simple;
-	bh=/WoMjBZkgovZ6rm/ZceYUZ6EzVaLu8EL3FycFjx7JII=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sAGT5r22SSU/aIK9ltf4WpcxkgjvE1M6/0Wr1QkIQpj4fAmOS/t/KAXGqk4kQAgSrobMQpuO2Zt2F4xKrQ8kSNra5CDQq5BOThw852O8IOalsvsoA/81B4oMw3RemMQEdln0fRywEwBlJXrka3zMPOlmuWAOzCHgo1t8HG34FK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=GhjuDSTj; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45a1b05a59fso33015005e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 03:06:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756116360; x=1756721160; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=09DtYv4WNzf78Fw81VXM88NLotx0thkz5LaiABUFgy0=;
-        b=GhjuDSTj1L8H61jekJg2ze0a3J43Sqk/QsOg30NMvIk/ggQSBtq5Rtm44/KxzbQk8Y
-         ZSb1xWhnen/RLqQi4qkm+hV0V4wt0DrYnC7FteFFYyxC4yeu5vEbdULKd0bPzp9UIlgN
-         LYVfnS0gUVk//SwR1USK0rCd4mjaeDxMelTmTkClttBtRWW5fH2MYh+TB+B0grRVvbb2
-         7yYgyOx+Hvcb93/PASxMRU2rhpkdFPMFO4081tR/7HUvysK2V477vzyGbqeveITY7498
-         FxHZF8sHI5u6GnVCntLDyCO9UIOcV/YOLh7Rx5PAV3RoqJvwIw+LcwIo3V+wpINcFwwL
-         mX7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756116360; x=1756721160;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=09DtYv4WNzf78Fw81VXM88NLotx0thkz5LaiABUFgy0=;
-        b=ieyLxPRT6UOrBLX0v3n72IGbRewyHg5ETnYPQ0rHEEDpYGu+YeLyEv2ByWhDOyRdCs
-         Ft23ZQ3VQRqNp/xZCkxAwpdBClr+nGKgujj+D/y533Wd+5wykWw/hzFTqGTrBALZZl4+
-         KoCS+90pVtzPZcmTnxwp8uEFoeE22GnwkJZO4aaDrzKKWVUoqYOGUEs8lXKpPz37VD/Z
-         IcECyWsHBt79QbZqfoac8r2DEr9JMTZhb1fNw8OymVeoqDy4QzBrFlEQcy/vm+6Jn43n
-         xAX/ZKYLX46N5+/MhqlTSJE0YKWPP2MRpP0AmeISVyouvOupGEmVxneX+2+rB8/10GB6
-         I+xg==
-X-Forwarded-Encrypted: i=1; AJvYcCV4MlQ0U6gtQng9NJR0vg5YR7LLv0YzONmABOaYmaCua/mwnoIj4/j+hmrFYD0QTYfYyg1f5F4jZftJfa8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyA5O+mTUIuOgR92UUsduS8IpHzN3jSGYcqXQoMEjw4UADHaRgD
-	A9PTDoVBu9EIUKsZVArf1/eoH0eaxy2rbFGUA+yPPFnQGnHOKy0aP3foYlXP7/w5dCc=
-X-Gm-Gg: ASbGncsR+5rNfIUeF+cmt0K/rLllEEG0FEH1wHhMwbxpfYWh+vZjy+sJSLjY7DS0rTE
-	uJ2R52rskdfB6icRsRAyuOWrFCiut1zb737X6nQvSceJNzfMgA1EFt5NTv7MlU9UdwgxrVuDV4y
-	GuSXTpEUTZxwNWbHMEKf5tQq4XoLQFnvFUvYXzV9d/0mNVvdlB4n4ntkH9f8pik71xNo/v6EFFg
-	XSryHkR7E5huWaKTP0Tavh/7FQ5SXWi8o8Pyc2zcSbddZHJ3yj5hNAebLCBcSoADrluKioHq1GH
-	ggvMZCl9QUdpdVQKIwURCVO/gQlPtAB4MuSIJhH939x5b/baMRTs8J1hrEv7Y9udQXlomM0OTjr
-	fJ0MnnSqsW0k7P7kPk6t7cq/N3SF6/nTVisw=
-X-Google-Smtp-Source: AGHT+IHtwUobtrBAAUNAESRarPU1shgTUZThuJWfmTXbgJ1FgKhgwZ2puOsxCchkyUiwhnhMSjawnA==
-X-Received: by 2002:a05:600c:19cb:b0:458:6733:fb5c with SMTP id 5b1f17b1804b1-45b517d2751mr91939255e9.28.1756116359732;
-        Mon, 25 Aug 2025 03:05:59 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:ef52:fc8d:34ad:9bfe])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b5753ae41sm102900375e9.9.2025.08.25.03.05.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 03:05:59 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Yinbo Zhu <zhuyinbo@loongson.cn>,
-	Hoan Tran <hoan@os.amperecomputing.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Yang Shen <shenyang39@huawei.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-unisoc@lists.infradead.org
-Subject: Re: [PATCH RESEND 00/14] gpio: replace legacy bgpio_init() with its modernized alternative
-Date: Mon, 25 Aug 2025 12:05:58 +0200
-Message-ID: <175611634833.31529.17151272315395600143.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250825-gpio-mmio-gpio-conv-v1-0-356b4b1d5110@linaro.org>
-References: <20250825-gpio-mmio-gpio-conv-v1-0-356b4b1d5110@linaro.org>
+	s=arc-20240116; t=1756116397; c=relaxed/simple;
+	bh=ovBPuF4X5ABp0nuv52TJYGVcRNTqkSGYkjl/JQsyAlg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pH5zdEuZmOVbnqPljU1zegy4+3atJhsEQZivT815CrgR2JlwMhOduoR3rmmwM0UCZROJlkRgOFrg9zhI679QEf0XJpF81yPeC3N80XTeFsHaRWOlvKYkhGO8yEOPSSzkbapD8NObFGsqhezhJGcFMrRrwPasNi8+APMf7mdiJ0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=K0BB1y3A; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Pkeg4IQY; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 25 Aug 2025 12:06:31 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756116392;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hBX/CMBtB58CvR7/q9l30OpA0bAkfhgvc3RLehTnQPY=;
+	b=K0BB1y3AHrqrj1/KLL6SZsDN0GoEKWnyEpBQfmXhhgw3dshM3SwNaWAysTRuNQge6x4C1L
+	n2OM8aehvgtLbiaEOqOQqpKQyz1p/hXcb+w9KqWISMzQx86/Almf5TR/AoJhX45E1j/NNd
+	LAW8mlVgwCBPUsMh4Z+VE+K6fDeeXt849IlYO11jUTjHK26FwHMafuJvKa9CH++QquJJm7
+	WuS0CnGgfxyxWwdGKyzhE2lHa946s8knDXYWKJCFcWxKHrfiKDUgBE8iWKXiVjlrCt6HwR
+	6POqGuAd0KBmkhwNxAIMkMQiBB30jBN7RGIwb8RcPratMcEqcz3dAS+vI6081w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756116392;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hBX/CMBtB58CvR7/q9l30OpA0bAkfhgvc3RLehTnQPY=;
+	b=Pkeg4IQYxwdsiYDYCA8KNWfu5+TnWGKBJfkIj2APdMg+CPI4/bRnBx/32Kx7jZwzySuSQV
+	Ozd4oUTJ2ubQZ9BA==
+From: Nam Cao <namcao@linutronix.de>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+	linux-trace-kernel@vger.kernel.org,
+	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
+	Clark Williams <williams@redhat.com>,
+	John Kacur <jkacur@redhat.com>
+Subject: Re: [RFC PATCH 10/17] verification/rvgen: Add support for Hybrid
+ Automata
+Message-ID: <20250825100631.uTAyvLwP@linutronix.de>
+References: <20250814150809.140739-1-gmonaco@redhat.com>
+ <20250814150809.140739-11-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814150809.140739-11-gmonaco@redhat.com>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Thu, Aug 14, 2025 at 05:08:02PM +0200, Gabriele Monaco wrote:
+> +    def fill_constr_func(self) -> list[str]:
+> +        buff = []
+> +        if self.constraints:
+> +            buff.append(
+> +"""/*
+> + * This function is used to validate state transitions.
+> + *
+> + * It is generated by parsing the model, there is usually no need to change it,
+> + * unless conditions were incorrectly specified
 
+If the conditions were incorrectly specified, then they should be fixed in
+the automaton, not fixed in this generated C code.
 
-On Mon, 25 Aug 2025 11:48:41 +0200, Bartosz Golaszewski wrote:
-> Resending due to some patches missing in lore.
-> 
-> This is the first round of GPIO driver conversions to using the
-> modernized variant of the gpio-mmio API.
-> 
-> While at it: sprinkle in some additional tweaks and refactoring.
-> 
-> [...]
+> or too complex for the parser.
 
-Applied, thanks!
+Do you have examples of these "too complex" cases? Is there a plan to
+handle them?
 
-[01/14] gpio: generic: provide to_gpio_generic_chip()
-        https://git.kernel.org/brgl/linux/c/6e376f245f19feeadddafb2c3fa5fbd6469ecdfe
-[02/14] gpio: generic: provide helpers for reading and writing registers
-        https://git.kernel.org/brgl/linux/c/16397871b6e35fa46a2bec27b3558f93b050c6fc
-[03/14] gpio: hisi: use the BGPIOF_UNREADABLE_REG_DIR flag
-        https://git.kernel.org/brgl/linux/c/13ba232ed8455a5decb187d509a0d326fd326b19
-[04/14] gpio: ts4800: remove the unnecessary call to platform_set_drvdata()
-        https://git.kernel.org/brgl/linux/c/d6307707d50b468d614a80daf60ead8b7036f156
-[05/14] gpio: ts4800: use generic device properties
-        https://git.kernel.org/brgl/linux/c/8a8e9a1a9272f262699960ca2782de87ea69dd32
-[06/14] gpio: ts4800: use dev_err_probe()
-        https://git.kernel.org/brgl/linux/c/ac1eca3ab9fc4d17b59da12597c671df7739f934
-[07/14] gpio: ts4800: use new generic GPIO chip API
-        https://git.kernel.org/brgl/linux/c/9215a4fb59425588233d3362e886dc156c1739af
-[08/14] gpio: loongson-64bit: use new generic GPIO chip API
-        https://git.kernel.org/brgl/linux/c/4ba2193ce0b94c28ec2095a1bb79353c82214d35
-[09/14] gpio: dwapb: use new generic GPIO chip API
-        https://git.kernel.org/brgl/linux/c/84bebb7e7ed000a2c4786094698536a3a3f67083
-[10/14] gpio: amdpt: use new generic GPIO chip API
-        https://git.kernel.org/brgl/linux/c/728e0ca4e196d65e00775ea3f7a49ce008fbd3a7
-[11/14] gpio: rda: use new generic GPIO chip API
-        https://git.kernel.org/brgl/linux/c/ebd63ab0f20f4e1960191da6989797ac78fedc4c
-[12/14] gpio: grgpio: use new generic GPIO chip API
-        https://git.kernel.org/brgl/linux/c/67e4be48f409ba70738eef3c195a81455f526f83
-[13/14] gpio: mpc8xxx: use new generic GPIO chip API
-        https://git.kernel.org/brgl/linux/c/90ab7050358ffd3311c23b1697df2ba3c8f840c6
-[14/14] gpio: ge: use new generic GPIO chip API
-        https://git.kernel.org/brgl/linux/c/56f548840ed90c30269f29c3bdf6037a8a9414a6
+> + * If the monitor requires a timer, this function is responsible to arm it when
+> + * the next state has a constraint and cancel it in any other case. Transitions
+> + * to the same state never affect timers.
+> + */
+> +static bool ha_verify_constraint(struct ha_monitor *ha_mon,
+> +\t\t\t\t enum %s curr_state, enum %s event,
+> +\t\t\t\t enum %s next_state)
+> +{
+> +\tbool res = true;
+> +""" % (self.enum_states_def, self.enum_events_def, self.enum_states_def))
+> +            buff += self.__get_constr_condition()
+> +            buff += self.__get_state_constr_condition()
+> +            buff.append("""\treturn res;
+> +}\n""")
+> +        return buff
 
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Nam
 
