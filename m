@@ -1,105 +1,95 @@
-Return-Path: <linux-kernel+bounces-783994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD0C6B33520
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 06:36:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FE2BB3352B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 06:37:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A26517AF85
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 04:36:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96A8F17BDA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 04:37:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CA527510E;
-	Mon, 25 Aug 2025 04:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="WDEOiJz5"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6634523D288;
-	Mon, 25 Aug 2025 04:36:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 467D427B51C;
+	Mon, 25 Aug 2025 04:36:42 +0000 (UTC)
+Received: from mx.socionext.com (mx.socionext.com [202.248.49.38])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 414882701B4;
+	Mon, 25 Aug 2025 04:36:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.248.49.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756096590; cv=none; b=LIXI14++qV/BM8yymGx+1p+w9GipTrIL0aRpjeEWISd9dbCX9cQbvVHZ1o+mNSicOXTTX2MtL/GXaanxgYmD/YH0bETwG1DmLqLFupzZppdoNgQ4W3WQ2ZR8NLpZ393eLR4QAhwvBs3XEzjHkeMmafiO0/oPyZpS+wfOcbsO/Lc=
+	t=1756096601; cv=none; b=mgt3MjZFlvi1RikMzl2DpQ6+hcNHB+D/VvkVX2bAHMar7ZQe9aGzLPyGCsWFN4mFwz8k6rvAtvQJH6StyF7IO8Xzvzuakb9uWvknBq6LXLj0KwQHh5sF94cEWWutss5FtYu6/fR0VGyXPaNTSf+oQxxONdyspB2jYbbdAyKw2Sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756096590; c=relaxed/simple;
-	bh=sTunfMCq4/E9IlV0C2VSUlNM33ne8GOa5NtUxLEAanA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BYLUHM+4T0ryby+KPjJy4gn+0RDskP25CZVj5V4K1hSK2hDw/wiLpA03qZ+97WoiE1/2glwiqa8VxHjd0eUgg2U5KnhtQyZwpuDLk6jUh9GMygRx88tP3GNobjfhu31Qppl0NbOzJwMpE/RWmTUM8m/c6utmJoUNq/gWz/3JSK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=WDEOiJz5; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=CAAF7pgkMZz/jA5UL8kzFkhd0KBcVmgKgcH+O4+CyTM=; b=WDEOiJz581vzbKXVFX10mc6NpP
-	E2f33ybgUXFgTEvInxeMlodeSZEK5LLXRZH0kBhlj+LLzMDpdxwjzSVozBt7BGTB78Kdsc0cXJM/1
-	jvvjARE7nd/ddUuwRHNvh89EMIhbO4hD9p1fHpc51ICqXCqW4+y84KWDV7cGYvTdpKt+yHjKDB9fe
-	o34Dge1KhGDIO5QBUU5Lv/+/a94VaZmuzOdzrYbjO/IPADJrCVjOTm5UBTFyWUJ0C+6yk3zBv1dG2
-	ZkO1JIIz2qa68a5VG5I48RNlFEK53xr9QqeKFY8dzg2/Pk+V3RDRS4VEEj8KBMaIskQMdY3LzOd6g
-	ZFNURwsw==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1uqOgs-00GzL2-26;
-	Mon, 25 Aug 2025 12:36:16 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Mon, 25 Aug 2025 12:36:15 +0800
-Date: Mon, 25 Aug 2025 12:36:15 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Chenghai Huang <huangchenghai2@huawei.com>
-Cc: davem@davemloft.net, linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org, qianweili@huawei.com,
-	linwenkai6@hisilicon.com, wangzhou1@hisilicon.com,
-	taoqi10@huawei.com
-Subject: Re: [PATCH v2 0/3] crypto: hisilicon - add fallback function for
- hisilicon accelerater driver
-Message-ID: <aKvoPwhKyoVz8Yta@gondor.apana.org.au>
-References: <20250818065714.1916898-1-huangchenghai2@huawei.com>
+	s=arc-20240116; t=1756096601; c=relaxed/simple;
+	bh=2UQdjiqd7O8IFLfGKPYuGC0jAgyCtp0zgSm8CQIH+Nk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=XOqHb27MH5meVW9CA0IzvxNhMHITIUOJArq897n/ehFVVMb7M0loUPf88MYle8gTcYgIFgOTPTNZq7ynDzYjFe6YOPJ2wBg15WJwPiS3nEVa3o4kygulgvb3OT3hj9kmB6titjzZe5W4EqsououzG7IwkjZqaPFbEEdImw0RrT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=socionext.com; spf=pass smtp.mailfrom=socionext.com; arc=none smtp.client-ip=202.248.49.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=socionext.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=socionext.com
+Received: from unknown (HELO iyokan3-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 25 Aug 2025 13:36:29 +0900
+Received: from mail.mfilter.local (mail-arc01.css.socionext.com [10.213.46.36])
+	by iyokan3-ex.css.socionext.com (Postfix) with ESMTP id 5C1832091489;
+	Mon, 25 Aug 2025 13:36:29 +0900 (JST)
+Received: from iyokan3.css.socionext.com ([172.31.9.53]) by m-FILTER with ESMTP; Mon, 25 Aug 2025 13:36:29 +0900
+Received: from [10.213.136.107] (unknown [10.213.136.107])
+	by iyokan3.css.socionext.com (Postfix) with ESMTP id EF23410A016;
+	Mon, 25 Aug 2025 13:36:28 +0900 (JST)
+Message-ID: <cb453b09-4aa0-45f4-8cf6-abcf5c625007@socionext.com>
+Date: Mon, 25 Aug 2025 13:36:28 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250818065714.1916898-1-huangchenghai2@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] arm64: dts: socionext: uniphier-ld20: Add default PCI
+ interrup controller address cells
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20250822133318.312232-3-krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250822133318.312232-3-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 18, 2025 at 02:57:11PM +0800, Chenghai Huang wrote:
-> Support fallback for zip/sec2/hpre when device is busy.
-> 
-> V1: https://lore.kernel.org/all/20250809070829.47204-1-huangchenghai2@huawei.com/
-> Updates:
-> - Remove unnecessary callback completions.
-> - Add CRYPTO_ALG_NEED_FALLBACK to hisi_zip's cra_flags.
-> 
-> Chenghai Huang (1):
->   crypto: hisilicon/zip - support fallback for zip
-> 
-> Qi Tao (1):
->   crypto: hisilicon/sec2 - support skcipher/aead fallback for hardware
->     queue unavailable
-> 
-> Weili Qian (1):
->   crypto: hisilicon/hpre - support the hpre algorithm fallback
-> 
->  drivers/crypto/hisilicon/Kconfig            |   1 +
->  drivers/crypto/hisilicon/hpre/hpre_crypto.c | 314 +++++++++++++++++---
->  drivers/crypto/hisilicon/qm.c               |   4 +-
->  drivers/crypto/hisilicon/sec2/sec_crypto.c  |  62 +++-
->  drivers/crypto/hisilicon/zip/zip_crypto.c   |  52 +++-
->  5 files changed, 360 insertions(+), 73 deletions(-)
+Hi Krzysztof,
 
-Are you mapping one hardware queue to a single tfm object?
+On 2025/08/22 22:33, Krzysztof Kozlowski wrote:
+> Add missing address-cells 0 to the PCI interrupt node to silence W=1
+> warning:
+> 
+>    uniphier-ld20.dtsi:941.4-944.29: Warning (interrupt_map):
+> /soc@0/pcie@66000000:interrupt-map:
+>      Missing property '#address-cells' in node
+> /soc@0/pcie@66000000/legacy-interrupt-controller, using 0 as fallback
+> 
+> Value '0' is correct because:
+> 1. GIC interrupt controller does not have children,
+> 2. interrupt-map property (in PCI node) consists of five components and
+>     the fourth component "parent unit address", which size is defined by
+>     '#address-cells' of the node pointed to by the interrupt-parent
+>     component, is not used (=0)
 
-Hardware queues should be shared between tfm objects.
+I understand that "parent unit address" is omitted, and according to
+the devicetree specification, "#address-cells" define the the size of
+the address. However, GIC doesn't specify the address, so this line
+is needed to indicate it.
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+For both patches,
+Reviewed-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+
+There is no tree to manage the SoC-specified commits, so please apply
+this series into the DT tree.
+
+Thank you,
+
+---
+Best Regards
+Kunihiko Hayashi
 
