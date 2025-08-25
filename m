@@ -1,89 +1,74 @@
-Return-Path: <linux-kernel+bounces-784234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BBAFB33870
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:04:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 935CEB33872
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:07:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB3AD483C66
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:04:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66AE017A06D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC3D229993A;
-	Mon, 25 Aug 2025 08:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="Iox7DYui"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00B14299A85;
+	Mon, 25 Aug 2025 08:07:18 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C77D1FB3;
-	Mon, 25 Aug 2025 08:04:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E4D291C1F;
+	Mon, 25 Aug 2025 08:07:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756109075; cv=none; b=opn0tbl4Uxo6hbgn2zIbQFrmp3OekvnGux90z6idaknoAFFyufo6pqR+mYEERyBfK5mzaZ0zBzqUs6R052c0GmekPueujAYXUoQpQa8RmjwQZuPLZKxhm9pScWnFCyInhlC6WSP6f9MYYqF/419cKaFaKiAyIGPwSlZBcwniDPs=
+	t=1756109237; cv=none; b=ObsEFE5GSXeY8KcA+W0/Z89Pty6Vb1ugx40qdMrz695+u37tr9rX0pYqynGYoVc+YtZ29IscG8XGj8H3ZmQBAGC6ygQNgX/RgIR9V/Ifoyz9PODaMPv8K6liiEd7N2EuTkr1fM5ljFyPhtp7jaMf0gYT8jrjYZLi5FVM/vYL15M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756109075; c=relaxed/simple;
-	bh=peNwNNw8JLZDy471vYW8nsDvVgGNgANo6uUwXbjULo4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oOvuEOek+YWga9DpZjFoOj/31ki01ygLxYJ6zELeh79WZ7STuTdKZ2ieLUSW9W8DX9HK4HujZHd+l6WZpmKWRBJSGeQayzoE1ecVQ1xxqXQ4t8cQ+U6HkL4+jnf9YDXqplGx0ut8dgME0fNjp5MT1F82/HrM/qOUxWQ23Tvy81U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=Iox7DYui; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=peNwNNw8JLZDy471vYW8nsDvVgGNgANo6uUwXbjULo4=;
-	t=1756109073; x=1757318673; b=Iox7DYuiHcSOFj5pRibSvYMTDqpRjUO9BRqcR4l77l3t1Uq
-	J6H8cfm/ffPwaIZ9buc043YS29mKKFfeXdvfoBOWLGWeQtld6zbiJUTKdT1VXbQ6XGbfzo65dYlag
-	r+Z3g6vSLPKdj5YVUA56mWF2F+1sgePS91NdnfnwN9v2L3AD1eemP6KtMoCnOtT7av+t51XCzrHGr
-	uzjsGkGtSfK0x+4QtCDxh4EYqvkLHR7OAUFJ0FLkchZ5xIhA1JX42jgPeyjTbArf2iwNn04Iu5LBn
-	IZu4SMlf1YgKBk1iiS4DGKhlU8MktprDxeoVC2oDtJ3kqtB1dw5hS7CeRErdbU1Q==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1uqSBX-00000001avw-1ago;
-	Mon, 25 Aug 2025 10:04:11 +0200
-Message-ID: <3a7022fcd18fdaf98044f8a3a21b09a2f7cba914.camel@sipsolutions.net>
-Subject: Re: [PATCH v2] wifi: mwifiex: use kcalloc to apply for chan_stats
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Markus Elfring <Markus.Elfring@web.de>, Qianfeng Rong	
- <rongqianfeng@vivo.com>, linux-wireless@vger.kernel.org, Aditya Kumar Singh
-	 <quic_adisi@quicinc.com>, Avinash Patil <patila@marvell.com>, Bert
- Karwatzki	 <spasswolf@web.de>, Brian Norris <briannorris@chromium.org>,
- Cathy Luo	 <cluo@marvell.com>, Christophe Jaillet
- <christophe.jaillet@wanadoo.fr>,  Francesco Dolcini <francesco@dolcini.it>,
- Jason Xing <kerneljasonxing@gmail.com>, Jinjie Ruan
- <ruanjinjie@huawei.com>,  "John W. Linville" <linville@tuxdriver.com>,
- Kalle Valo <kvalo@kernel.org>, Rameshkumar Sundaram
- <quic_ramess@quicinc.com>,  Roopni Devanathan <quic_rdevanat@quicinc.com>,
- Sascha Hauer <s.hauer@pengutronix.de>, Thomas Gleixner	
- <tglx@linutronix.de>, Xinmin Hu <huxm@marvell.com>
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Dan
- Carpenter	 <dan.carpenter@linaro.org>
-Date: Mon, 25 Aug 2025 10:04:09 +0200
-In-Reply-To: <486183c0-0086-4168-bc90-1df92bfbc1d3@web.de>
-References: <20250814131536.231945-1-rongqianfeng@vivo.com>
-	 <486183c0-0086-4168-bc90-1df92bfbc1d3@web.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1756109237; c=relaxed/simple;
+	bh=IBIp2gvwdN7Gzu3Imd4BXP9l50KbPoLZlLKeiU+y9wQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bx37Zvm9FrJyx3zwQ7lp2rCCGAyV1eC70RF09WCC5p5Rr9x2WeTZQ0l5xzUiOL1ClYSo7Q6SURnYEr5DBFgmzYfKh/KuUHTdSVA6fAvGPSzzcyiXcbO/XyzHdYcSTrVTR3wYH+2qP0hv/i+A1NxuPvhF/HpUyHa4G1sDKluM0Xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 9E63768AA6; Mon, 25 Aug 2025 10:07:10 +0200 (CEST)
+Date: Mon, 25 Aug 2025 10:07:10 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Nick Chan <towinchenmi@gmail.com>
+Cc: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>, Jassi Brar <jassisinghbrar@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Hector Martin <marcan@marcan.st>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	iommu@lists.linux.dev, linux-nvme@lists.infradead.org
+Subject: Re: [PATCH v3 7/9] nvme: apple: Add Apple A11 support
+Message-ID: <20250825080710.GA23193@lst.de>
+References: <20250821-t8015-nvme-v3-0-14a4178adf68@gmail.com> <20250821-t8015-nvme-v3-7-14a4178adf68@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821-t8015-nvme-v3-7-14a4178adf68@gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Thu, 2025-08-14 at 16:33 +0200, Markus Elfring wrote:
-> > Use kcalloc to allocate 'adapter->chan_stats' memory =E2=80=A6
->=20
-> I find the summary phrase and change description improvable.
+On Thu, Aug 21, 2025 at 11:56:44PM +0800, Nick Chan wrote:
+> +		writel(anv->hw->max_queue_depth | (anv->hw->max_queue_depth << 16),
 
-We all find your behaviour improvable. Go away and leave the wireless
-list alone.
+One long line left here.
 
-johannes
+Otherwise this looks fine to me.
+
+Do you want to merge this through the apple SOC tree?  If so:
+
+Acked-by: Christoph Hellwig <hch@lst.de>
+
 
