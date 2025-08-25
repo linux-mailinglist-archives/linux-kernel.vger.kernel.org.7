@@ -1,112 +1,180 @@
-Return-Path: <linux-kernel+bounces-784703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4718BB34006
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:50:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 473B6B3400B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:50:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47EFD1A83591
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:50:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DB551A80EBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACDEF219319;
-	Mon, 25 Aug 2025 12:49:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33026231856;
+	Mon, 25 Aug 2025 12:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="Hgz/7Tvh";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="oplpzs3E"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="fb/dQwQE"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5578A6BFCE;
-	Mon, 25 Aug 2025 12:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B9231E3DFE;
+	Mon, 25 Aug 2025 12:50:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756126173; cv=none; b=fSEkQctzw7IAK9TdrLPngX+nWkMI3SxqNqENXszP4bjZ4emAMECfWvxKn23Yq+0MU9seEI0qpJnzO1plbE4pdARJsMe+ACR2sQ6Gl+LWJZAybUBZDvR3lAaaA+RIHbFZFghqgs7Qzw21szjT11DGhd4lFBUlqcRb0m34TpOfEHU=
+	t=1756126221; cv=none; b=oOJJBOQwIeKXD7336i4qznXGTi4NKVtJsfd3aZ7PnKciflfO4PFuV8dD9cqAxWRFzP/hQCqR8EMyca5M9XUtynv/LyzR+gaPYThszcnFEBlJFiIGlp1d0z+N546EZ5egIYc2UNZ2H0PKH6aQbUbfY2X52Bysi+IqX8pda52lSa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756126173; c=relaxed/simple;
-	bh=IQKOOFlqFAtLTzqwcUqS5SNkGjI4OBb8Q9xA9VpRGko=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z0xu+N/v1iD0AGxNex7g7wXsIc7jDDkez//UQ7j91hxDQk188Rq3jweccr4IrWdirn8wMlNwyvCbFkDXOLuVlnmputrW8azMDw2dK0b/j2raIGWTDMc9Le8Gw4nZvopqCi1CG++o6nAu411MUBqXPKt8v1M+E1tGbNFcirZ/ON4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=Hgz/7Tvh; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=oplpzs3E reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1756126168; x=1787662168;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=gaQtNdcQBw6TkuqQOMHaCaeCRNbn0y4lit9cmniz650=;
-  b=Hgz/7TvhTs5V9IiLufYlzfL2GuzK3eKx3qjFz5tO1y+dKGesnN1HQlmy
-   71HxxkPBk5IjbAs+mMtGyYd2jju/LyPog5brK6lb20HAQ2kTtEeUaLt12
-   GBLEZPxml8UPISqj5XwNMzk5O3fV7czvsPNyXay9pZcJkWcK7QKQe4QYh
-   EufLcobj0nN15+moy2qst/MHzk5nltnGcMm8jsQKj34uftGVpgkSTPPlV
-   lxeIw3WVpxp0w0Rkogf6DUWFdHnBkBLiaxi7FEhItRTj5BNC2n7fIbgkP
-   Kgjgg/fXIbBhl3RdB4+MwX3iwLsMuDjCCHeKIckENUbPBW4igQCYFWRof
-   A==;
-X-CSE-ConnectionGUID: pJelOCvFSz2XARN0aE7ROQ==
-X-CSE-MsgGUID: 17NcARDYRgGqhtmNI6XchA==
-X-IronPort-AV: E=Sophos;i="6.18,213,1751234400"; 
-   d="scan'208";a="45893996"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 25 Aug 2025 14:49:12 +0200
-X-CheckPoint: {68AC5BC8-37-299FBAB0-EF52EDE7}
-X-MAIL-CPID: 1C9800A739D44A8B67B14F2EC758D138_5
-X-Control-Analysis: str=0001.0A002108.68AC5B6F.006B,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 175AB166EEF;
-	Mon, 25 Aug 2025 14:49:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1756126148; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=gaQtNdcQBw6TkuqQOMHaCaeCRNbn0y4lit9cmniz650=;
-	b=oplpzs3EqosJx63n/4EpCqhJ3g9eyh+vRg5k40QFy4vlKzYTwpTd1GLnbghXWouiPcWES7
-	DmAsx0qWN+G8xxmrjCjcu+chwHC1bXiN2J7p/e77tPUMbz30Bq8AW3ZMk9PIS3oJONqpwa
-	zlAt00ETMwAaBiM89dzF6eky82y+InLe2kVWQow4nhBoqAtTwaqiY2GFkcOY9B6o8X4BDE
-	QVomUKGgdlnY1xA4arEKaUZk5WZp8PqRJY5nYgQAFg26B4xnPBh1qdbsl7n9emFLxnHycP
-	DQHtz29h66hBKh7nEdtVU5MMxV+yYZJdOp3knS1lnS9Ov4BgZqP2tOQloF+ozw==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Bin Liu <b-liu@ti.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Matthias Schiffer <matthias.schiffer@tq-group.com>,
-	linux-usb@vger.kernel.org,
+	s=arc-20240116; t=1756126221; c=relaxed/simple;
+	bh=UVJPdiqJAwlNJSMs+WTVCoHBLtI29kqg/HsLe9G8lgk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PAT7QVRjmhIMhDOdtB7Kgis2F3guh6cWupBchtlGr/ipf9JW9lQGsta5hTSd1gqdys5wVxcpGpnAHkcJxYWwt/w4a4WeBq6hircSocjnVNKcU2bSq8HWPP1nBM2Fw07I82qpRYRjwljFWqDoPZOuYyS1w9dJ+TbbfEfkhK991Zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=fb/dQwQE; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1756126218;
+	bh=UVJPdiqJAwlNJSMs+WTVCoHBLtI29kqg/HsLe9G8lgk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=fb/dQwQEQErrvatkebCZRMmRsZ9gWRIfTk/rSJvIMBEyKLGM/iLeiV9CMeQnf7VGS
+	 quo5slxDPnXNxaIIhkYrs9GGWjuSuPKJ2BJfqj8VsEzNZkW+DQalvdvJSE6/yySxfb
+	 clXVceBVCD07LsjoUfLY3S+0hRyn1s9ixkuTYdj42px8KxDReqPtw/E3L1eWFOs+ll
+	 WTmcAi9YeiEvzSjZXSeXGBJBPQiujdxzNKYolhLIRNs3/AuTtnHL+KTTq3Vz5GIeY4
+	 WoMuz3uZZXtIvqa+ndgImrQVhf1E5WN6SmFnrJR3cRv+vgT5fvvgsg+4AOT0N2hU8X
+	 r8mWiW9xneSLw==
+Received: from laura.lan (unknown [IPv6:2001:b07:646b:e2:b1df:895a:e67b:5cd4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: laura.nao)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1FB9317E0478;
+	Mon, 25 Aug 2025 14:50:17 +0200 (CEST)
+From: Laura Nao <laura.nao@collabora.com>
+To: wenst@chromium.org
+Cc: angelogioacchino.delregno@collabora.com,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	guangjie.song@mediatek.com,
+	kernel@collabora.com,
+	krzk+dt@kernel.org,
+	laura.nao@collabora.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Alexander Stein <alexander.stein@ew.tq-group.com>
-Subject: [PATCH 1/1] usb: musb: dsps: use platform_get_irq_byname_optional() for vbus IRQ
+	linux-mediatek@lists.infradead.org,
+	matthias.bgg@gmail.com,
+	mturquette@baylibre.com,
+	netdev@vger.kernel.org,
+	nfraprado@collabora.com,
+	p.zabel@pengutronix.de,
+	richardcochran@gmail.com,
+	robh@kernel.org,
+	sboyd@kernel.org
+Subject: Re: [PATCH v4 06/27] clk: mediatek: clk-gate: Refactor mtk_clk_register_gate to use mtk_gate struct
 Date: Mon, 25 Aug 2025 14:49:00 +0200
-Message-ID: <20250825124901.2190539-1-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.43.0
+Message-Id: <20250825124900.209515-1-laura.nao@collabora.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <CAGXv+5GxJs03EcMt0jm-x_fDuy_RtCrnOmyJvVVgAP9O9R6E2Q@mail.gmail.com>
+References: <CAGXv+5GxJs03EcMt0jm-x_fDuy_RtCrnOmyJvVVgAP9O9R6E2Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
 
-From: Matthias Schiffer <matthias.schiffer@tq-group.com>
+On 8/15/25 05:42, Chen-Yu Tsai wrote:
+> On Tue, Aug 5, 2025 at 10:55 PM Laura Nao <laura.nao@collabora.com> wrote:
+>>
+>> MT8196 uses a HW voter for gate enable/disable control, with
+>> set/clr/sta registers located in a separate regmap. Refactor
+>> mtk_clk_register_gate() to take a struct mtk_gate instead of individual
+>> parameters, avoiding the need to add three extra arguments to support
+>> HW voter register offsets.
+>>
+>> Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+>> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+>> ---
+>>  drivers/clk/mediatek/clk-gate.c | 35 ++++++++++++---------------------
+>>  1 file changed, 13 insertions(+), 22 deletions(-)
+>>
+>> diff --git a/drivers/clk/mediatek/clk-gate.c b/drivers/clk/mediatek/clk-gate.c
+>> index 67d9e741c5e7..0375ccad4be3 100644
+>> --- a/drivers/clk/mediatek/clk-gate.c
+>> +++ b/drivers/clk/mediatek/clk-gate.c
+>> @@ -152,12 +152,9 @@ const struct clk_ops mtk_clk_gate_ops_no_setclr_inv = {
+>>  };
+>>  EXPORT_SYMBOL_GPL(mtk_clk_gate_ops_no_setclr_inv);
+>>
+>> -static struct clk_hw *mtk_clk_register_gate(struct device *dev, const char *name,
+>> -                                        const char *parent_name,
+>> -                                        struct regmap *regmap, int set_ofs,
+>> -                                        int clr_ofs, int sta_ofs, u8 bit,
+>> -                                        const struct clk_ops *ops,
+>> -                                        unsigned long flags)
+>> +static struct clk_hw *mtk_clk_register_gate(struct device *dev,
+>> +                                               const struct mtk_gate *gate,
+>> +                                               struct regmap *regmap)
+>>  {
+>>         struct mtk_clk_gate *cg;
+>>         int ret;
+>> @@ -167,17 +164,17 @@ static struct clk_hw *mtk_clk_register_gate(struct device *dev, const char *name
+>>         if (!cg)
+>>                 return ERR_PTR(-ENOMEM);
+>>
+>> -       init.name = name;
+>> -       init.flags = flags | CLK_SET_RATE_PARENT;
+>> -       init.parent_names = parent_name ? &parent_name : NULL;
+>> -       init.num_parents = parent_name ? 1 : 0;
+>> -       init.ops = ops;
+>> +       init.name = gate->name;
+>> +       init.flags = gate->flags | CLK_SET_RATE_PARENT;
+>> +       init.parent_names = gate->parent_name ? &gate->parent_name : NULL;
+>> +       init.num_parents = gate->parent_name ? 1 : 0;
+>> +       init.ops = gate->ops;
+>>
+>>         cg->regmap = regmap;
+>> -       cg->set_ofs = set_ofs;
+>> -       cg->clr_ofs = clr_ofs;
+>> -       cg->sta_ofs = sta_ofs;
+>> -       cg->bit = bit;
+>> +       cg->set_ofs = gate->regs->set_ofs;
+>> +       cg->clr_ofs = gate->regs->clr_ofs;
+>> +       cg->sta_ofs = gate->regs->sta_ofs;
+>> +       cg->bit = gate->shift;
+>
+> I'd rather see |struct mtk_clk_gate| (the runtime data) gain a pointer
+> to the static data |struct mtk_gate| instead of doing all the copying.
+> This is just needless duplication.
+>
 
-The vbus IRQ is optional, so no error message should be printed if it is
-not available.
+Ack - I'll refactor this in the next revision.
 
-Signed-off-by: Matthias Schiffer <matthias.schiffer@tq-group.com>
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
- drivers/usb/musb/musb_dsps.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks,
 
-diff --git a/drivers/usb/musb/musb_dsps.c b/drivers/usb/musb/musb_dsps.c
-index 12f587ab85117..a08ce96c08d3a 100644
---- a/drivers/usb/musb/musb_dsps.c
-+++ b/drivers/usb/musb/musb_dsps.c
-@@ -839,7 +839,7 @@ static int dsps_setup_optional_vbus_irq(struct platform_device *pdev,
- {
- 	int error;
- 
--	glue->vbus_irq = platform_get_irq_byname(pdev, "vbus");
-+	glue->vbus_irq = platform_get_irq_byname_optional(pdev, "vbus");
- 	if (glue->vbus_irq == -EPROBE_DEFER)
- 		return -EPROBE_DEFER;
- 
--- 
-2.43.0
+Laura
 
+> ChenYu
+>
+>>         cg->hw.init = &init;
+>>
+>> @@ -228,13 +225,7 @@ int mtk_clk_register_gates(struct device *dev, struct device_node *node,
+>>                         continue;
+>>                 }
+>>
+>> -               hw = mtk_clk_register_gate(dev, gate->name, gate->parent_name,
+>> -                                           regmap,
+>> -                                           gate->regs->set_ofs,
+>> -                                           gate->regs->clr_ofs,
+>> -                                           gate->regs->sta_ofs,
+>> -                                           gate->shift, gate->ops,
+>> -                                           gate->flags);
+>> +               hw = mtk_clk_register_gate(dev, gate, regmap);
+>>
+>>                 if (IS_ERR(hw)) {
+>>                         pr_err("Failed to register clk %s: %pe\n", gate->name,
+>> --
+>> 2.39.5
+>>
 
