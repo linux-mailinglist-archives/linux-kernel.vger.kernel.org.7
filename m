@@ -1,398 +1,209 @@
-Return-Path: <linux-kernel+bounces-784943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00901B343EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:32:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 880A6B34410
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:36:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87B3F5E52A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:28:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E09DE163C6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:31:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90D62FDC5D;
-	Mon, 25 Aug 2025 14:26:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79EED2FC87E;
+	Mon, 25 Aug 2025 14:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BA5j8v/d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="CGc2p8Qq"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94CC62FF64C;
-	Mon, 25 Aug 2025 14:26:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124F62EF66B
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 14:27:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756131977; cv=none; b=lhMtBezhpJxlM5gVmOmC6BdRUEzSCKHY1gTWdsl+aGIhcwZVsnz4RCpTpMWiq8zOGSeibP9poilLDJY4qhPMwzWRCE0NOM4PhzoLryfzZ7q0CD5rDFHSdFT4QeejDxDn3VTT8mBiPJv+ZLnczSM8mr7DIblf3waaBAkNSqHamtU=
+	t=1756132031; cv=none; b=ACb/5+CWoCiJt0PaXFBL3+hEEry1hOFl2HEQV4f6yBegR4wfvo7YX1eIOFYutNIsPBS1DaY/tbJZ6Z6zEByy95ulmvurFdNH9bVfJccOiOpxlG50DHFxd9isdvh9k5R7KoL86AKurdpd1Q9Zhbc+nqfIKQnYsOR1GKM6SzzIjsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756131977; c=relaxed/simple;
-	bh=BVn/Lrf+nq8C1Bil6LvGOFtBUm06xHJUyJev7CoLF6Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZyQhQkK/exLPFN04n0zpgRKdirqgwH2Y3yQWBwZ4+IoqBfH8JnAYumy9eGRBbec6E9y8YY+N1fzQyZMUbyszKmaw+0vF0LH7oVnyFMI1nctm+widytydejBGpYrEsAb4OkqNR9nV7HF9WpL2N3xS7CxXqVX59bqifb3qOzvUkdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BA5j8v/d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F58DC113D0;
-	Mon, 25 Aug 2025 14:26:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756131977;
-	bh=BVn/Lrf+nq8C1Bil6LvGOFtBUm06xHJUyJev7CoLF6Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BA5j8v/dm3IduJgaWuZACJU8XMjSPVUwmQL7voySO4B4AKdPwZd9llA7wdjl/tpaS
-	 kIN/8YYwXye7aN6ItDvOpHhxWSv5BVyJA9TIHd+A1Z3Hp8bygjUJMzjWbcEFJGjlso
-	 20SKMg8hoTivfszZ5PaNUWFfi2x3QDXI5RZrecVdTOywCE55hDzfb4UAPGgcmL4WXP
-	 LLGn0akS2caEY0XbLdUartETPgOGnWsgrKB9t2ZgcY5cLoplwjOK0wTdZ+rjBK5JqQ
-	 g6YHaso9GEbxR84ZSVWYverHVBNZ3BbJc/lb+87+AkzKxpY7Uunl2NT+0tC41Dz+xe
-	 14SJABLiMr5Vg==
-Date: Mon, 25 Aug 2025 15:26:08 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Akshay Jindal <akshayaj.lkd@gmail.com>
-Cc: anshulusr@gmail.com, dlechner@baylibre.com, nuno.sa@analog.com,
- andy@kernel.org, shuah@kernel.org, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: light: ltr390: Add runtime PM support
-Message-ID: <20250825152608.6468c27b@jic23-huawei>
-In-Reply-To: <20250822180335.362979-1-akshayaj.lkd@gmail.com>
-References: <20250822180335.362979-1-akshayaj.lkd@gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756132031; c=relaxed/simple;
+	bh=vxjTLfTS0NUMwpDSn+HN798wL4RTF+UPuBLyZzIgJGQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=UACTrDjUcDFKDDedB6DsQzBKj+/K1Y41dUh0S/ZKdQFrkDOeW3fpCYlmrGDwMV+HhA7uwJY9Esq3+kc4dliTWyrylgH0Jh7tmZgkn5LMnsgjgpf8ft9/pDODWLtNoS8qEzyMjpa3nFNIc34a2hUD2RERH+ErbkDWAHmJh+ZpGCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=CGc2p8Qq; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3c79f0a5fe0so1139256f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 07:27:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756132026; x=1756736826; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4Lg1z3zn/UH4r0LtOjxUmVsZgN3Hor8KuWD/ZELRBh0=;
+        b=CGc2p8Qqf0YQbJU7cyRMzo/2KydF4gXUB3aYGwmkqoOI5m0hvTric2XqjtDbECP/wQ
+         N/aCpOVm3hQoWyCcYA7fm7BYF2QsIb6zQVV7HR7+fPSs+Xs+5zQ7SG7b0RyDx5TM0WyK
+         H6xtT74EFFKpnMv+DbIRSrubnJoP9obf5bNbFNieuPAl/90vhdG1s5K1hiyjjT6hkfwD
+         l9ATtVrURUpBun5kpaJBHcNBdzlrfRUwz+ynpVXM1t0g4YNMDkZ2rJM4yKfN2/Y00fNu
+         tQeH1qKnY+nQaiqOmesP7AGktBhZezTh9wqEEzn821wQLnJMlmIFljhW8Py4yI8NTnLl
+         tVPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756132026; x=1756736826;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4Lg1z3zn/UH4r0LtOjxUmVsZgN3Hor8KuWD/ZELRBh0=;
+        b=KSxcT98HhHh2f+UdqTEQr2rD0G2CiKBhoQ2svcfySVHbL4HDDcKAhpmoEogwBVjMvU
+         cnBZKbrFnZFumdvN1OkH5/xJmbR1a81AFCur2YBOi5AdKxH4K+Z+eloD+Bldu+lMJA4o
+         uCGovdDOZoiNpJfsiEfaCYUwJjfYtgcBuOAGcMNHboKlZRMm0quF5fVX2bmhXxXkjIxG
+         osJcvcpIyXFabC7CYSFdf1X2GzcYEVgIIBx8oj7IcpfO7EkO7x7Z0+O38LhCQllvgcnU
+         MIEviRPOIG7WM5H6hfRZ5u4J/o8cywBGfgrtsGve94b/iFigvVQjhicedL33ADT6B+O4
+         Qhlw==
+X-Forwarded-Encrypted: i=1; AJvYcCV+3BUZHvg24XC9Qpt+LoXFyu0H5ij2uRcazWONOiVuNQ3Ix9/gtRUlB45x5P1k4v1GyvM0AIK4/MDusqc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJsgGT0nVliCtzIgYQwztpyW7AKPrmfosVp5yM27wb+cpNUivv
+	wxY8I/MawsDL/RNV6YGuzYVkLxnrBZ777zBnRGV8cLhEWIbPNTFXJ7vjfU/L7VSnZUU=
+X-Gm-Gg: ASbGncuD2zQNzn6a4EAqf7oVLwlV6K94W/rsOyfvh49xeXHBK1n/l9QWmf3mibRPAZf
+	nVOFyko1G4vbBVuuyYiXh5jZkWx0kTDlolqsRq/jYFEPDnuVVQxl3UGGhl5mWjet1By2FqfdiMU
+	dT0X92/MRR6q2g4oFIQ2jmJflGdTFM+C82gaEG1e0HTK1e2UoV07FyVJZX3ZWECvNTxDyubnNc5
+	twjbBqfDZajnoLPRokX6GQA7ExkCxhXot6TO5+GqyrD0p0r+gbsJJQYG5dA+S/vmqByASqNxRPH
+	sXjYdLfT0W9BnowkA1GOboOXuMrScAo8o+VeNe/TrfSHRrdszP4DDAVIYD9jS++TotEsxHINqjJ
+	SGWJBdC2eUWmSL2IODZvZYc21YGo/TsGWo6wM
+X-Google-Smtp-Source: AGHT+IGIm5HhkMTlZpIc0I/Aq/oUEmfvFMlFEP9hvRASgNmV8E2415cUxZAc6AkOB9k80NT/htY1CA==
+X-Received: by 2002:a05:6000:2891:b0:3b7:6d94:a032 with SMTP id ffacd0b85a97d-3c5da73f498mr8433827f8f.3.1756132026099;
+        Mon, 25 Aug 2025 07:27:06 -0700 (PDT)
+Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:b261:baab:ed3d:3cb6])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3c70e4b9e1fsm12634462f8f.14.2025.08.25.07.27.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Aug 2025 07:27:05 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: [PATCH v2 00/12] clk: amlogic: clock controllers clean-up and
+ factorisation
+Date: Mon, 25 Aug 2025 16:26:25 +0200
+Message-Id: <20250825-meson-clk-cleanup-24-v2-0-0f402f01e117@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJFyrGgC/22NwQ6CMBBEf4Xs2ZruWjF48j8Mh1IX2QgtaZVIC
+ P9u4exhDm+SebNA4iic4FosEHmSJMFnoEMBrrP+yUoemYE0GSRENXAKXrn+lcPWf0ZFRhl0DWN
+ FpsQK8nSM3Mp3197rzJ2kd4jz/jLh1m7Cs75o+i+cUGnFWJ5cZbF1hLfGzr00kY8uDFCv6/oD+
+ S/mI7sAAAA=
+X-Change-ID: 20241211-meson-clk-cleanup-24-41cbe1924619
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>, 
+ Chuan Liu <chuan.liu@amlogic.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4396; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=vxjTLfTS0NUMwpDSn+HN798wL4RTF+UPuBLyZzIgJGQ=;
+ b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBorHKt5oWOLMmGYVXWzR3WIlcusXMT3KwLXhoY2
+ cVnl8ZqDrmJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCaKxyrQAKCRDm/A8cN/La
+ hQRfD/92fDnjytwS3w66LZUOZp6IeRquIYzWA9QPc4ipZVKAOww1Wc5099xHqaEJiUCkRvD6d3r
+ 5jU/DFZWZxYcgfDCZt1efmzbxd6d+U9GWX7EJDE9vpEaZ2Zoc0QBDVyp/YyxWqEn8EZ4sVwNp+K
+ 5qZgAd2bOdvDfbtG/8IXAeLFwd0PSuj8WT1z4BVvOgW8bOKxx2YvCSzcXQPVJEY+LQQpso9tMI1
+ xiOh4AEGmpoMWCWid1iwlAgc40Q9OvN3cIGBri5N336/113HJ+mlTqsOK3XKcPhjIG0Abjk7QI2
+ 2YGrpbbRjMp8QgR+P1MI9JzWgX6CJ3aL4TG4yyjMCfCqGNebGhyBlBte5DpqDLfIVYqN/5cQUSn
+ flssKpdR8AahvURmLwSSkPcA6URbiJsi72JitUplD205OPVc8a5UZBVd35b+v6uZvnbrSCtQ5Gf
+ P5SFTUNeUYPFodTF9fmqGt2vlN0XgqnZDl76f7aHtz8JrTmCy3ApHdHShDKVrFqOQ6X2U11JTNy
+ 57TzyJcIj1XwLev+vIpTBMgkTSMrmRILViGJ9zE7KhzrHalOc7jFtCBjtSBSwMIXVKMPe9tqEp9
+ 61PpYQJr2u2zFMV25I5e1OQhXIZuA1hSYPWVXLWbvkzTSBH7NCRl2BXlfCeMXnqvk7ZCsNYCLzq
+ NCtHyu9uVGriZGw==
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-On Fri, 22 Aug 2025 23:33:26 +0530
-Akshay Jindal <akshayaj.lkd@gmail.com> wrote:
+The work on this patchset started with the submission of the Amlogic t7
+peripheral clock controller [1]. This controller is fairly similar to
+existing controllers. Once again, it redefined the peripheral clock macro,
+the probe function and composite clock helpers, even if it is almost the
+same as in other controllers. This code duplication trend has been going on
+for too long and now is the time to properly address the problem.
 
-> Implement runtime power management for the LTR390 sensor.
-> The device would now autosuspend after 1s of idle time.
-> This would save the overall power consumption by the sensor.
->=20
-> Ensure that interrupts continue to be delivered during
-> runtime suspend by disabling the sensor only when no
-> interrupts are enabled. This prevents loss of events
-> while still allowing power savings when IRQs are unused.
+There is clearly 3 parts in this patchset. These had been sent together for v1
+to show why what the ugly first part is useful. I was initially planning to
+split that for v2 but, given the minor changes since v1, I did not bother.
 
-Wrap closer to 75 chars.
+While all controllers are doing more or less the same things, tiny and
+often pointless differences have emerged between the controllers. This
+makes it harder to exploit SoC commonalities. The changes to realign things
+up have been applied and squashed. Now it is possible to focus on
+the (slightly more) interesting stuff.
 
-Main comment that follows is that runtime pm is reference
-counted.  That is you can take multiple references in different
-paths at the same time and only when they are all released does
-the put actually cause it to be suspended.  So for events
-just grab an extra reference.  Lots of drivers do this in the
-buffer enables for example - probably some in event handling
-as well I just can't remember which one right now and am too lazy
-to go find out.
+First is the factorisation of the probe functions so those stop being
+copy/pasted in each clock controller drivers.
 
+Then the clean-up and factorisation for the PCLK macros, again to stop
+copy/paste but also remove the silent use CLK_IGNORE_UNUSED.
 
->=20
-> Signed-off-by: Akshay Jindal <akshayaj.lkd@gmail.com>
-> ---
->=20
-> Testing summary:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> -> Tested on Raspberrypi 4B. Following tests were performed. =20
-> 1. Verified that /sys/bus/i2c/devices/i2c-1/1-0053/power/control contains=
- =E2=80=98auto=E2=80=99 value.
-> 2. Verified the /sys/bus/i2c/devices/i2c-1/1-0053/power/autosuspend_delay=
-_ms contains 1000 which is assigned by the driver.
-> 3. Changed the autosuspend_delay_ms value from 1000 to 2000ms and verifie=
-d it.
-> 	3.1 Verified through the timestamp that whatever autosuspend_delay_ms is=
- set, it is being honoured.
-> 4. Verified that runtime_suspend and runtime_resume callbacks are called =
-whenever any IO is done on a channel attribute.
-> 	4.1 Verified that power/runtime_status first becomes active and then bec=
-omes suspended.
-> 	4.2 Verified that power/runtime_active_time keeps on increasing with a d=
-elta of autosuspend_delay_ms.
->=20
-> Interrupt Handling Verification:
-> --------------------------------
-> 1. Verified that when interrupts are enabled on the device, then the devi=
-ce does not get put in standby mode and keeps sampling.
-> 	a. As a result interrupts are delivered to the driver and are handled.
-> 2. Verified that when interrupts are disabled, the device is put in stand=
-by mode and stops sampling.
-> 	a.Since there is no sampling, so no IRQs will be generated. They are onl=
-y generated when the device is resumed due to I/O on some sysfs attribute f=
-rom userspace.
->=20
->  drivers/iio/light/ltr390.c | 246 +++++++++++++++++++++++++++++--------
->  1 file changed, 193 insertions(+), 53 deletions(-)
->=20
-> diff --git a/drivers/iio/light/ltr390.c b/drivers/iio/light/ltr390.c
-> index 2e1cf62e8201..9e2f33a401f2 100644
-> --- a/drivers/iio/light/ltr390.c
-> +++ b/drivers/iio/light/ltr390.c
-> @@ -30,6 +30,7 @@
-> =20
->  #include <linux/iio/iio.h>
->  #include <linux/iio/events.h>
-> +#include <linux/pm_runtime.h>
-> =20
->  #include <linux/unaligned.h>
-> =20
-> @@ -105,6 +106,7 @@ struct ltr390_data {
->  	enum ltr390_mode mode;
->  	int gain;
->  	int int_time_us;
-> +	bool irq_enabled;
->  };
-> =20
->  static const struct regmap_range ltr390_readable_reg_ranges[] =3D {
-> @@ -154,6 +156,25 @@ static const int ltr390_samp_freq_table[][2] =3D {
->  		[7] =3D { 500, 2000 },
->  };
-> =20
-> +static int ltr390_set_power_state(struct ltr390_data *data, bool on)
-> +{
-> +	struct device *dev =3D &data->client->dev;
-> +	int ret =3D 0;
-> +
-> +	if (on) {
-> +		ret =3D pm_runtime_resume_and_get(dev);
+Finally the introduction of macros for composite clock definitions. The
+same duplication pattern as the for the PCLKs started to appear on s4, c3
+and t7 composite clocks. Done properly, this could also help reduce the
+verbosity of the older controllers.
 
-David touched on this.  Put the calls inline - there is no benefit to this
-function as it calls one of two unrelated paths at each call site.
+With this, the c3-peripherals controller may be used as an example of what
+future similar controllers should look like.
 
-> +		if (ret) {
-> +			dev_err(dev, "failed to resume runtime PM: %d\n", ret);
-> +			return ret;
-> +		}
-> +	} else {
-> +		pm_runtime_mark_last_busy(dev);
-> +		pm_runtime_put_autosuspend(dev);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
->  static int ltr390_register_read(struct ltr390_data *data, u8 register_ad=
-dress)
->  {
->  	struct device *dev =3D &data->client->dev;
-> @@ -223,61 +244,76 @@ static int ltr390_read_raw(struct iio_dev *iio_devi=
-ce,
->  	struct ltr390_data *data =3D iio_priv(iio_device);
-> =20
->  	guard(mutex)(&data->lock);
-> +
-> +	ltr390_set_power_state(data, true);
-Can fail so you should check.
+After this, there is still some house keeping to be done in the amlogic
+clock drivers:
+- Moving remaining reset drivers to the reset subsystem
+- Proper decoupling of clk-regmap from the clock controllers
+- Reduce verbosity of older controllers with the composite macros, where it
+  makes sense.
 
-Wrap ltr390_register_read() in an outer function that does the powerstate
-management.  Then no need to have all the gotos in here.
+[1]: https://lore.kernel.org/linux-clk/20250108094025.2664201-6-jian.hu@amlogic.com/
 
-I am intending to see what appetite there is for a ACQUIRE() conditional
-guard set of macros around autosuspend, but for now a separate wrapper func=
-tion
-is the cleanest path. Be careful with the locking though.
+Changes in v2:
+- Dropped applied changes
+- Put regmap config on stack in patch 2
+- Link to v1: https://lore.kernel.org/r/20250702-meson-clk-cleanup-24-v1-0-e163c9a1fc21@baylibre.com
 
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+Jerome Brunet (12):
+      clk: amlogic: drop meson-clkcee
+      clk: amlogic: add probe helper for mmio based controllers
+      clk: amlogic: use probe helper in mmio based controllers
+      clk: amlogic: aoclk: use clkc-utils syscon probe
+      clk: amlogic: move PCLK definition to clkc-utils
+      clk: amlogic: drop CLK_SET_RATE_PARENT from peripheral clocks
+      clk: amlogic: pclk explicitly use CLK_IGNORE_UNUSED
+      clk: amlogic: introduce a common pclk definition
+      clk: amlogic: use the common pclk definition
+      clk: amlogic: add composite clock helpers
+      clk: amlogic: align s4 and c3 pwm clock descriptions
+      clk: amlogic: c3-peripherals: use helper for basic composite clocks
 
-> +
->  	switch (mask) {
->  	case IIO_CHAN_INFO_RAW:
->  		switch (chan->type) {
->  		case IIO_UVINDEX:
->  			ret =3D ltr390_set_mode(data, LTR390_SET_UVS_MODE);
->  			if (ret < 0)
-> -				return ret;
-> +				goto handle_pm;
-> =20
->  			ret =3D ltr390_register_read(data, LTR390_UVS_DATA);
->  			if (ret < 0)
-> -				return ret;
-> +				goto handle_pm;
->  			break;
-> =20
->  		case IIO_LIGHT:
->  			ret =3D ltr390_set_mode(data, LTR390_SET_ALS_MODE);
->  			if (ret < 0)
-> -				return ret;
-> +				goto handle_pm;
-> =20
->  			ret =3D ltr390_register_read(data, LTR390_ALS_DATA);
->  			if (ret < 0)
-> -				return ret;
-> +				goto handle_pm;
->  			break;
-> =20
->  		default:
-> -			return -EINVAL;
-> +			ret =3D -EINVAL;
-> +			goto handle_pm;
->  		}
->  		*val =3D ret;
-> -		return IIO_VAL_INT;
-> +		ret =3D IIO_VAL_INT;
-> +		break;
-> +
->  	case IIO_CHAN_INFO_SCALE:
->  		switch (chan->type) {
->  		case IIO_UVINDEX:
->  			*val =3D LTR390_WINDOW_FACTOR * LTR390_FRACTIONAL_PRECISION;
->  			*val2 =3D ltr390_counts_per_uvi(data);
-> -			return IIO_VAL_FRACTIONAL;
-> +			ret =3D IIO_VAL_FRACTIONAL;
-> +			break;
-> =20
->  		case IIO_LIGHT:
->  			*val =3D LTR390_WINDOW_FACTOR * 6 * 100;
->  			*val2 =3D data->gain * data->int_time_us;
-> -			return IIO_VAL_FRACTIONAL;
-> +			ret =3D IIO_VAL_FRACTIONAL;
-> +			break;
-> =20
->  		default:
-> -			return -EINVAL;
-> +			ret =3D -EINVAL;
->  		}
-> +		break;
-> =20
->  	case IIO_CHAN_INFO_INT_TIME:
->  		*val =3D data->int_time_us;
-> -		return IIO_VAL_INT;
-> +		ret =3D IIO_VAL_INT;
-> +		break;
-> =20
->  	case IIO_CHAN_INFO_SAMP_FREQ:
->  		*val =3D ltr390_get_samp_freq_or_period(data, LTR390_GET_FREQ);
-> -		return IIO_VAL_INT;
-> +		ret =3D IIO_VAL_INT;
-> +		break;
-> =20
->  	default:
-> -		return -EINVAL;
-> +		ret =3D -EINVAL;
->  	}
-> +
-> +handle_pm:
-> +	ltr390_set_power_state(data, false);
-> +	return ret;
->  }
+ drivers/clk/meson/Kconfig            |   13 +-
+ drivers/clk/meson/Makefile           |    1 -
+ drivers/clk/meson/a1-peripherals.c   |  177 ++---
+ drivers/clk/meson/a1-pll.c           |   52 +-
+ drivers/clk/meson/axg-aoclk.c        |   45 +-
+ drivers/clk/meson/axg.c              |  118 +--
+ drivers/clk/meson/c3-peripherals.c   | 1338 ++++------------------------------
+ drivers/clk/meson/c3-pll.c           |   49 +-
+ drivers/clk/meson/clk-regmap.h       |   20 -
+ drivers/clk/meson/g12a-aoclk.c       |   73 +-
+ drivers/clk/meson/g12a.c             |  206 +++---
+ drivers/clk/meson/gxbb-aoclk.c       |   43 +-
+ drivers/clk/meson/gxbb.c             |  204 +++---
+ drivers/clk/meson/meson-aoclk.c      |   32 +-
+ drivers/clk/meson/meson-aoclk.h      |    2 +-
+ drivers/clk/meson/meson-clkc-utils.c |   86 ++-
+ drivers/clk/meson/meson-clkc-utils.h |   89 +++
+ drivers/clk/meson/meson-eeclk.c      |   60 --
+ drivers/clk/meson/meson-eeclk.h      |   24 -
+ drivers/clk/meson/meson8-ddr.c       |   57 +-
+ drivers/clk/meson/meson8b.c          |  190 ++---
+ drivers/clk/meson/s4-peripherals.c   |  678 +++--------------
+ drivers/clk/meson/s4-pll.c           |   60 +-
+ 23 files changed, 1034 insertions(+), 2583 deletions(-)
+---
+base-commit: 4c4e17f2701316e0cac16e19366056f464feded5
+change-id: 20241211-meson-clk-cleanup-24-41cbe1924619
 
-> @@ -595,32 +670,43 @@ static int ltr390_write_event_config(struct iio_dev=
- *indio_dev,
->  	struct ltr390_data *data =3D iio_priv(indio_dev);
->  	int ret;
-> =20
-> -	if (!state)
-> -		return regmap_clear_bits(data->regmap, LTR390_INT_CFG, LTR390_LS_INT_E=
-N);
-> +	ltr390_set_power_state(data, true);
-> =20
->  	guard(mutex)(&data->lock);
-> +
-> +	if (!state) {
-> +		ret =3D regmap_clear_bits(data->regmap, LTR390_INT_CFG, LTR390_LS_INT_=
-EN);
-> +		data->irq_enabled =3D false;
-
-Just take an extra reference to runtime pm on enable of event and put it di=
-sable.
-Then no need for special handling with a local flag etc.
-
-
-
-> +static int ltr390_pm_init(struct ltr390_data *data)
-> +{
-> +	int ret;
-> +	struct device *dev =3D &data->client->dev;
-> +
-> +	ret =3D pm_runtime_set_active(dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D devm_pm_runtime_enable(dev);
-
-devm_pm_runtime_set_active_enabled() I think would work here.
-
-That shortens this setup enough I'd not bother with this function.
-
-> +	if (ret)
-> +		return dev_err_probe(dev, ret,
-> +					"failed to enable powermanagement\n");
-> +
-> +	pm_runtime_set_autosuspend_delay(dev, 1000);
-> +	pm_runtime_use_autosuspend(dev);
-> +	return 0;
-> +}
-> +
->  static int ltr390_probe(struct i2c_client *client)
->  {
->  	struct ltr390_data *data;
-> @@ -708,6 +820,8 @@ static int ltr390_probe(struct i2c_client *client)
->  	if (!indio_dev)
->  		return -ENOMEM;
-> =20
-> +	i2c_set_clientdata(client, indio_dev);
-> +
->  	data =3D iio_priv(indio_dev);
->  	data->regmap =3D devm_regmap_init_i2c(client, &ltr390_regmap_config);
->  	if (IS_ERR(data->regmap))
-> @@ -721,6 +835,8 @@ static int ltr390_probe(struct i2c_client *client)
->  	data->gain =3D 3;
->  	/* default mode for ltr390 is ALS mode */
->  	data->mode =3D LTR390_SET_ALS_MODE;
-> +	/* default irq_enabled is false */
-> +	data->irq_enabled =3D false;
-> =20
->  	mutex_init(&data->lock);
-> =20
-> @@ -763,6 +879,7 @@ static int ltr390_probe(struct i2c_client *client)
->  					     "request irq (%d) failed\n", client->irq);
->  	}
-> =20
-> +	ltr390_pm_init(data);
->  	return devm_iio_device_register(dev, indio_dev);
->  }
-> =20
-> @@ -784,7 +901,30 @@ static int ltr390_resume(struct device *dev)
->  				LTR390_SENSOR_ENABLE);
->  }
-> =20
-> -static DEFINE_SIMPLE_DEV_PM_OPS(ltr390_pm_ops, ltr390_suspend, ltr390_re=
-sume);
-> +static int ltr390_runtime_suspend(struct device *dev)
-> +{
-> +	struct iio_dev *indio_dev =3D dev_get_drvdata(dev);
-> +	struct ltr390_data *data =3D iio_priv(indio_dev);
-> +
-> +	guard(mutex)(&data->lock);
-> +	if (data->irq_enabled)
-
-As above. When you have events enabled, grab an extra reference and don't
-put it until you disable the event. That way we never enter
-runtime_suspend whilst they are enabled.
-
-> +		return 0;
-> +	return regmap_clear_bits(data->regmap, LTR390_MAIN_CTRL,
-> +				LTR390_SENSOR_ENABLE);
-> +}
-> +
-> +static int ltr390_runtime_resume(struct device *dev)
-> +{
-> +	struct iio_dev *indio_dev =3D dev_get_drvdata(dev);
-> +	struct ltr390_data *data =3D iio_priv(indio_dev);
-> +
-> +	return regmap_set_bits(data->regmap, LTR390_MAIN_CTRL,
-> +				LTR390_SENSOR_ENABLE);
-> +}
-> +
-> +static _DEFINE_DEV_PM_OPS(ltr390_pm_ops,
-> +		ltr390_suspend, ltr390_resume,
-> +		ltr390_runtime_suspend, ltr390_runtime_resume, NULL);
-> =20
->  static const struct i2c_device_id ltr390_id[] =3D {
->  	{ "ltr390" },
-> @@ -802,7 +942,7 @@ static struct i2c_driver ltr390_driver =3D {
->  	.driver =3D {
->  		.name =3D "ltr390",
->  		.of_match_table =3D ltr390_of_table,
-> -		.pm =3D pm_sleep_ptr(&ltr390_pm_ops),
-> +		.pm =3D pm_ptr(&ltr390_pm_ops),
->  	},
->  	.probe =3D ltr390_probe,
->  	.id_table =3D ltr390_id,
+Best regards,
+-- 
+Jerome
 
 
