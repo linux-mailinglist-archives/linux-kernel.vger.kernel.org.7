@@ -1,172 +1,155 @@
-Return-Path: <linux-kernel+bounces-784372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 249C0B33A94
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:20:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 38605B33A76
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B0E23AC056
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:19:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12667481264
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:16:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A8A2D5C68;
-	Mon, 25 Aug 2025 09:16:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E63AF2D060B;
+	Mon, 25 Aug 2025 09:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jkk8khYH"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WWlYhSR6"
+Received: from mail-pg1-f196.google.com (mail-pg1-f196.google.com [209.85.215.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915AB2D23AD;
-	Mon, 25 Aug 2025 09:16:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A090C2C326A
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 09:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756113388; cv=none; b=AOFMsg1sJmOIWtzDxJVrjpfyIKTPhJX9xUCC86RJDs/HX7t9JOp/HEgehF9+AP1IulfIv/5YYpIdhk6UYyb4ZEJWBhkEoEHLOWoS/+KDKAUYr7h5hoHhV2CcFftZpkbFIxGHth/++LI5kD5SPi8V4Y8DAUpvKbujwtwJUnaTn9I=
+	t=1756113324; cv=none; b=Q+0b9MUilKquZ0GzxvcWAmotd86DopyCuOZlq4PuzLzxnN9Y7M1tm5e8Qd4KRtSeK70qLj+zjHVa2SfgZE346gzRvFAmV8uM93JW7eokcH7ry2SxvWfb3FIcwRPjNwk7Fi0ZM/F92kqY+1Qd50BLxq7+0VUH5Y4K9fCMLnKj9Jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756113388; c=relaxed/simple;
-	bh=n0GU3aHOIbzcpxdfkfvKoQ2JdbUFCoeF/xHA7QnVC2k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gJiD5IkNdn5PatZ/Cl2OLSLgDzP0uVl0zii0ijLKQVaqUP3xRK8BWHWAESV3+Kbofr4hlHCJaA0mFensLwrELksalEpDiEpkHxhdLmMPHNlOQxgNM8/0dq7RC821gugpvgKgJrmHYfX/0iyRaYXRI41JqxaG3SCro7z0LXcjJuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jkk8khYH; arc=none smtp.client-ip=209.85.214.170
+	s=arc-20240116; t=1756113324; c=relaxed/simple;
+	bh=frWilHKtOC7ibOioFIhO93e3vGAB4SI1rbdEQyYyVJ4=;
+	h=From:Date:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=rpDVz5jFrzWBxbuRIUJAAtkJrRqcgPTt8kgecptWpTSLCC6JFwyZF33SML1592eZjwViW1iL2yYXMZWmFE6Upa6cD02/gH7mL1JYGzmozk0Og5A0+WrTkcxrWsqmvIjwoOf7ZA59sbFwP/O0qfWzvz1Z8y49jsUr86WkCUr5cDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WWlYhSR6; arc=none smtp.client-ip=209.85.215.196
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-24639fbdd87so19711585ad.1;
-        Mon, 25 Aug 2025 02:16:26 -0700 (PDT)
+Received: by mail-pg1-f196.google.com with SMTP id 41be03b00d2f7-b474d0f1d5eso2753773a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 02:15:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756113386; x=1756718186; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CLgKkUt/EORHceeO89abTN08otZovq/goeI6WeVPzj4=;
-        b=jkk8khYHdi0AoLkE0aZ5BP/cswsV137xptcmCvAAXom3fQiUDQXIeFaGH9JDcGG0l1
-         PPNUkwOASevexJlcvYJfWnsmCqA0aehkLKPDFKy5bNHTw9J/0/Fa2RveTykpcnizpQYg
-         TvrUNj1RR8PFdKUwpp8ZPsxi+8eJP5taeb69HeuF0LiAXXbyVGd+SXIbfZR+pAtRrsGb
-         seyC+/3k+yp3ZVLgPHVv/oUbUqAvsWCikHCWnLZFqlvqz19C95cIs/v+J3oGrwr3EmaS
-         cxjTY+8qGWMXcFZ5dRHvV+ZsGKw/wwtfkMtrHAaDcyaEArkVXfZ6g7T8weNdzjNIYLab
-         LX4g==
+        d=gmail.com; s=20230601; t=1756113322; x=1756718122; darn=vger.kernel.org;
+        h=content-disposition:mime-version:mail-followup-to:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1EfPpvJ6+WhTEmPpSG5PEfw+gk8iXNJsS1zHeL+VA0I=;
+        b=WWlYhSR6qngtgAgckhq286Rxjv2HuMTS6AnZsgMz1GaVazROg/KqFhk6Dqd+NoA3Du
+         Jg/0LBSVO5F5K4dkOVC6r6V0maQ6AyWelNaWaxyJT/3IphW5cSjb32292uD7h9wVmwJr
+         awG7urhTK+xnxjmFntLc/BL+Rc4ezY3YG67zV3ey5NRbklR1NaqtOnIDJSb8usljwZ+6
+         ZEQN0Xed2zirnZYZYy9qlKBSoty4OAitCkY2uOIWxexbe+4BHLjtXfufQxpvwx047qip
+         Db+TNDJE6PEMlaA1HofSCiHTwn91GNM+E9+LHHgWuWYw8TKFYGXcw+mjv6BAb9AbNo8W
+         nmzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756113386; x=1756718186;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CLgKkUt/EORHceeO89abTN08otZovq/goeI6WeVPzj4=;
-        b=VzJjPaLaQkJmKseHR5gxH4lFFtsD0vRrXmGjLq1tczwwiEF75/Fs348EdsXWVylBi7
-         4amcj6PR6SP3YH8ZjSeDnHQJ8CriLJzuoPIFG0YjLOQQKyjkF7UaOEV56+402vLYit5r
-         PVdho+G0OCodCrnUfkpJpXFk37vlTpA3dk0wQd/zp0jtsonEoU8U4VTIcsice9l5d9dy
-         wB+Av25ZAtKSETXbYpbiXuK91UCUkCUgbxTpt5i2IC6nHwg5xy6uvBnkvfUZFFW48rp/
-         3EXLcMqmc6I5kHe7KRgX0hKVXUMlpUtVvwnovYaEuYL3TXGayQf/wTU4M9+bQsFrnBu7
-         9HfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUX07BZBG7oKkqltsFwCdUIVuwPjPDbLDY+6y9sEE4bZESkXnLGbrR2mKhau7Zr4znnNb9viOJijxtXFgJN@vger.kernel.org, AJvYcCVO3b5NDZhU6ylh5bXaEibfahHb+a0RDsuXkRHdJd/naAhEGm5PYGcX/w/+L/OCLaZQ2UMQuI8b0bKG@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDjkl4vFWJYuunMSOer6xi41tcrhs4y6YKaaDXLBLoAsSe0sPU
-	/+iR37al2m93XiWsSJChq/y5CDN6dL/8IBwfaPHiMdRVq5FbL56f8g3G
-X-Gm-Gg: ASbGncvQEWK9Y0Y7sgc9K28tAr0KvaP7q837w+mBYrMuXN9tkVu+WbX/IGNx6REkLuT
-	jkbk5YHbtERFElt3OjZH2+0iSwmKOuh6XHv3Rkm1P/LQrk0bVN1ooHDOabxFmCtnj9ga11Kzzj8
-	oH0BzBvAy8sTVgYFRHoBMPMnwO8D8YRpbk4KPES3kFuBxvxjftezVMaHWRSqYU62eVc6I+JoW2g
-	ZqAOEbnQsyQ/kKtUkGamfQnhmKWr0das1jTDdrKNodmm/rQ/Vai0Javzubg0k2wWne2cgl8jyT6
-	alu/wGvZj0ZohoXXDKSWYXMfDg90bRHgWTuL5Qr5tA56ILrNBPQB2Li/CbIhwRCORxYWpvf9WT6
-	jR3Y/BYSPGHePDC2m+86QP69urhk=
-X-Google-Smtp-Source: AGHT+IHgizChUVDS7mx0qvkliQW47KxLTLpcVKppDYz0nFP6cUthwlUhWYvTA6G9L8vEDxCRdxjvFQ==
-X-Received: by 2002:a17:902:e888:b0:240:4d19:8774 with SMTP id d9443c01a7336-24633d6a31amr135180055ad.24.1756113385707;
-        Mon, 25 Aug 2025 02:16:25 -0700 (PDT)
-Received: from [127.0.1.1] ([59.188.211.98])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-2466887fc8dsm62873875ad.122.2025.08.25.02.16.21
+        d=1e100.net; s=20230601; t=1756113322; x=1756718122;
+        h=content-disposition:mime-version:mail-followup-to:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1EfPpvJ6+WhTEmPpSG5PEfw+gk8iXNJsS1zHeL+VA0I=;
+        b=w2zBKF7UxU7e8m0u0UZWF8uUFNeIBMt3Rkp+Bp+Z4ZugTTSs1B0gcxH1AwnBurCpCe
+         9J/XUNpzL54FliWsGsVUDWSu7yFH5XZfjsiZZhbuTS8RKJNagfZubD0pVFyj3jiqXdpg
+         ZWLYrBGvjxADRhvsoXQkjcaJ8PMLjxR73yQAzXAA+2iXC9CVSUky49E+n6eDGJB3QviU
+         9qnchza6Q2W/EM835UfAg+ztPqbMyCrZ6bNYooJ5ZMzSF4DIK16mo0bK5YoPNrwjnm70
+         1pFvBbehX0IvoujKuGllYbt8ikv2QDRUjCcZe8mHBlK7Q/uMbgJU5+QRyW2gZLGiMBJ3
+         F5mA==
+X-Forwarded-Encrypted: i=1; AJvYcCVLQRgz/rKGDOvCp7T/kSGYiB740q+Q/AWkCrOELooeQfb2ARjcskROULxJb9gA/Ssc0BRj0GOP1VQKsOM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZtiRJRmmrZTYX0+l73MSrV7JX+WEvuJdJt2TYomhginyUuJj1
+	xYuO85YQbpH763/45LztnvYICZ6KVESmO+1dKjzDPTX5Sb6Kc0+ntsfH9KBtciHmSBCF
+X-Gm-Gg: ASbGnctb/meTjoiXJ14P5oVJdAtkH2h1fJxmDiFd1FGeBCF+wm+g5C+ye8ymzee80BF
+	C/pnQuO+dtobKSQIZMzgniq81ts90ieSk4WWXn1/JNb1nRz8m2Q9LOJD+CW0h+H8ESmSyYoq4U+
+	9B+f04uiKuLteqWeZc5d1Bs9I00unWJ1FtWMaVQLjK8Bd7BgG7qoTu9RxMucHVgooqftJpn2nAO
+	+u0zfPRDlUsK8FBuuGTVJPZksocZbYOuZAPb6ehzTWa/gXVyQQ7JCigyVAqkA1Z2xLWVMelyQ3K
+	Zxz3eyD6ae8KPBjDHEuMbERqDLad+FY/hcu0ItOvfCRznLJRgwnUxT5zAfjWSvxZrf38aBZqleV
+	DsKA4qTMCrFEBTrYSjuv8MjmAViqRI+K6buEpf3QYa+mDpGDzIE5QTrJLGSc=
+X-Google-Smtp-Source: AGHT+IGM+hvjIncidO6+06hwgjNzVfwutWvQvN1StGNPqmAytpX8YR1SEbFsIYGuWTIGKBQS+eJdCA==
+X-Received: by 2002:a17:902:d486:b0:246:b46b:1b09 with SMTP id d9443c01a7336-246b46b2296mr52545635ad.30.1756113321877;
+        Mon, 25 Aug 2025 02:15:21 -0700 (PDT)
+Received: from didi-ThinkCentre-M930t-N000 ([46.232.49.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2466877a04dsm63318855ad.21.2025.08.25.02.15.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 02:16:25 -0700 (PDT)
-From: Nick Chan <towinchenmi@gmail.com>
-Date: Mon, 25 Aug 2025 17:15:07 +0800
-Subject: [PATCH v4 4/4] arm64: dts: apple: t8015: Add NVMe nodes
+        Mon, 25 Aug 2025 02:15:20 -0700 (PDT)
+From: fuyuanli <fuyuanli0722@gmail.com>
+X-Google-Original-From: fuyuanli <fuyuanli@didiglobal.com>
+Date: Mon, 25 Aug 2025 17:15:08 +0800
+To: jdmason@kudzu.us, dave.jiang@intel.com, allenbh@gmail.com
+Cc: ntb@lists.linux.dev, linux-kernel@vger.kernel.org,
+	fuyuanli0722@gmail.com
+Subject: [PATCH v2] ntb: Add mutex to make link_event_callback executed
+ linearly.
+Message-ID: <aKwpnFtdtBlDv69O@didi-ThinkCentre-M930t-N000>
+Mail-Followup-To: jdmason@kudzu.us, dave.jiang@intel.com, allenbh@gmail.com,
+	ntb@lists.linux.dev, linux-kernel@vger.kernel.org,
+	fuyuanli0722@gmail.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250825-t8015-nvme-v4-4-6ffc8f891b6e@gmail.com>
-References: <20250825-t8015-nvme-v4-0-6ffc8f891b6e@gmail.com>
-In-Reply-To: <20250825-t8015-nvme-v4-0-6ffc8f891b6e@gmail.com>
-To: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Keith Busch <kbusch@kernel.org>, 
- Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, 
- Sagi Grimberg <sagi@grimberg.me>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-nvme@lists.infradead.org, Nick Chan <towinchenmi@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1720; i=towinchenmi@gmail.com;
- h=from:subject:message-id; bh=n0GU3aHOIbzcpxdfkfvKoQ2JdbUFCoeF/xHA7QnVC2k=;
- b=owEBbQKS/ZANAwAKAQHKCLemxQgkAcsmYgBorCnSx5G1CCbpODc4cRGWNpyxqthUZtzEbbGT/
- r5lqX9uaO2JAjMEAAEKAB0WIQRLUnh4XJes95w8aIMBygi3psUIJAUCaKwp0gAKCRABygi3psUI
- JD3zEAC08M/q+crYeSCt61tg18W8wh96uLThiPK1oIN8cT6sza82FbzzE5tZz/JAkuOxmeDT1Jr
- /TniRuMWHcR1ABZzQxNSzoTEO4kDKwoVl01F7A9eG3xSG1hMcoBpFOefCD5ZJwKsBJPSkJazMy3
- Uq0MfkxY4vsMHJVTCxXczUZySYl1MGa81GLOqKcR6LsfzsGWbolmfH4Bvlrv63vGBd6i2uKMNSy
- fdK46uREg0LZfa4l+E2LsjiNk1Lvk/Ovb1qje+vjYfqB16/DJDGiUk1IJC1q1J8iLBJouyfYiyI
- upg9pcjsYb3xsOMcPmXcyI7W33LjCjhHYkXcBBaugqQ+7HoAL0CjS4Cuw879KYuOvHDYAnOofXX
- zgHTKr4XwyWQVB2Hd/pHthOiIc0D7OkpdL3314KaflUBRiL4obg5fFz0/bSdKCIiaUM6pLMrvi6
- QI4FyM/whrJYY1u8pstsdOD4XjPronxD/nneGpr2t/2PPPe9M+Mysse3MPo8XTSvv2x+fujb0Pt
- XXqVoAUsgTBLN+3i8QipITSrYbBSLnf71cWLXHNaq7ybKg8dwvWq/861T9M74mlfROH3n1XyuuW
- 0+ijxGn5++G6PNnwvO6tlJDjihhJtLhSTijTfaQiQ4gNYR6XRlruP1e+rSTQUO+CCN9dSvktcMM
- QAlh8/SxgKhfv6Q==
-X-Developer-Key: i=towinchenmi@gmail.com; a=openpgp;
- fpr=4B5278785C97ACF79C3C688301CA08B7A6C50824
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Add nodes for NVMe and associated mailbox and sart for Apple A11 SoC.
+Since the CPU selected by schedule_work is uncertain, multiple link_event
+callbacks may be executed at same time. For example, after peer's link is
+up, it is down quickly before local link_work completed. If link_cleanup
+is added to the workqueue of another CPU, then link_work and link_cleanup
+may be executed at the same time. So add a mutex to prevent them from being
+executed concurrently.
 
-Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+Signed-off-by: fuyuanli <fuyuanli@didiglobal.com>
 ---
- arch/arm64/boot/dts/apple/t8015.dtsi | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+v2:
+1) use guard() instead of lock & unlock functions.
 
-diff --git a/arch/arm64/boot/dts/apple/t8015.dtsi b/arch/arm64/boot/dts/apple/t8015.dtsi
-index 12acf8fc8bc6bcde6b11773cadd97e9ee115f510..84acf2839fb6279dcc956e1f4cee1afa909d2f27 100644
---- a/arch/arm64/boot/dts/apple/t8015.dtsi
-+++ b/arch/arm64/boot/dts/apple/t8015.dtsi
-@@ -402,6 +402,40 @@ pinctrl_smc: pinctrl@236024000 {
- 			 */
- 			status = "disabled";
- 		};
-+
-+		ans_mbox: mbox@257008000 {
-+			compatible = "apple,t8015-asc-mailbox";
-+			reg = <0x2 0x57008000 0x0 0x4000>;
-+			interrupt-parent = <&aic>;
-+			interrupts = <AIC_IRQ 265 IRQ_TYPE_LEVEL_HIGH>,
-+				<AIC_IRQ 266 IRQ_TYPE_LEVEL_HIGH>,
-+				<AIC_IRQ 267 IRQ_TYPE_LEVEL_HIGH>,
-+				<AIC_IRQ 268 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "send-empty", "send-not-empty",
-+				"recv-empty", "recv-not-empty";
-+			#mbox-cells = <0>;
-+			power-domains = <&ps_ans2>;
-+		};
-+
-+		sart: iommu@259c50000 {
-+			compatible = "apple,t8015-sart";
-+			reg = <0x2 0x59c50000 0x0 0x10000>;
-+			power-domains = <&ps_ans2>;
-+		};
-+
-+		nvme@259cc0000 {
-+			compatible = "apple,t8015-nvme-ans2";
-+			reg = <0x2 0x59cc0000 0x0 0x40000>,
-+				<0x2 0x59d20000 0x0 0x2000>;
-+			reg-names = "nvme", "ans";
-+			interrupt-parent = <&aic>;
-+			interrupts = <AIC_IRQ 270 IRQ_TYPE_LEVEL_HIGH>;
-+			mboxes = <&ans_mbox>;
-+			apple,sart = <&sart>;
-+			power-domains = <&ps_ans2>, <&ps_pcie>;
-+			power-domain-names = "ans", "apcie0";
-+			resets = <&ps_ans2>;
-+		};
- 	};
+v1:
+Link: https://lore.kernel.org/all/aKiBi4ZDlbgzed%2Fz@didi-ThinkCentre-M930t-N000/
+---
+ drivers/ntb/ntb_transport.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/ntb/ntb_transport.c b/drivers/ntb/ntb_transport.c
+index 4f775c3e218f..eb875e3db2e3 100644
+--- a/drivers/ntb/ntb_transport.c
++++ b/drivers/ntb/ntb_transport.c
+@@ -59,6 +59,7 @@
+ #include <linux/slab.h>
+ #include <linux/types.h>
+ #include <linux/uaccess.h>
++#include <linux/mutex.h>
+ #include "linux/ntb.h"
+ #include "linux/ntb_transport.h"
  
- 	timer {
-
+@@ -241,6 +242,9 @@ struct ntb_transport_ctx {
+ 	struct work_struct link_cleanup;
+ 
+ 	struct dentry *debugfs_node_dir;
++
++	/* Make sure workq of link event be executed serially */
++	struct mutex link_event_lock;
+ };
+ 
+ enum {
+@@ -1024,6 +1028,7 @@ static void ntb_transport_link_cleanup_work(struct work_struct *work)
+ 	struct ntb_transport_ctx *nt =
+ 		container_of(work, struct ntb_transport_ctx, link_cleanup);
+ 
++	guard(mutex)(&nt->link_event_lock);
+ 	ntb_transport_link_cleanup(nt);
+ }
+ 
+@@ -1047,6 +1052,8 @@ static void ntb_transport_link_work(struct work_struct *work)
+ 	u32 val;
+ 	int rc = 0, i, spad;
+ 
++	guard(mutex)(&nt->link_event_lock);
++
+ 	/* send the local info, in the opposite order of the way we read it */
+ 
+ 	if (nt->use_msi) {
 -- 
-2.51.0
+2.34.1
 
 
