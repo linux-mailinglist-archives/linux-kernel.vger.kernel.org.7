@@ -1,85 +1,62 @@
-Return-Path: <linux-kernel+bounces-785057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D756B34545
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:11:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20867B3454B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:12:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8DD81728A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:11:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E330A172D66
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803B82F360C;
-	Mon, 25 Aug 2025 15:11:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9482797AC;
+	Mon, 25 Aug 2025 15:12:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KYLoyNCk"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RiRrf02A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FE5B2F83BA
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 15:11:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5B21917E3;
+	Mon, 25 Aug 2025 15:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756134684; cv=none; b=fzCELH+RSKHQlcD7MlzDnlTmAp2RSmVChAjjTrsdHwmtuPzKxRO4j0ycQhOF7Q91JwfIjtKODUOUWrRF4sXVwWiuFrigDNViuJu8r6nVotGm+n7ysLfkl7d2bpvc0PT7suAk4dICDvrDLTez5MIiw0KgELzzdV3pZVQVbhzMkUI=
+	t=1756134728; cv=none; b=Dy74x4LiX68WsMCUkHlb2wBKfw+c77EdstlkhaQq7a7PhQMRa9JPOe/ycghwoKfd9rOrYo+UVc8TpM9Yy6nRJjG9A+J9kDgp/9HjhVj4CT5Z06KcvrI6BRqY9BujxVlbUpvuR8mxKYiL8lTU5Cd7WEjCmsaj1t0munwKJQLYbm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756134684; c=relaxed/simple;
-	bh=6aWYKlqmLmN65SZrSdpzfteiFn/NWrcOVSYzCVaVo8k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Rz/BEA7RVHd14+BqUfcWjloO0Rzg5kolDdYDCjBOCTEUUI+NDOt64OFnhmgs6GZLgUYvjm0NeemzXAj4ByasXofQwPjj2ulqOF8yjzhNZO2+7sBpwktL42E0jLE2SkXIg1xyIEVfbO4nmm62M83NMXyqj+W/UAXXQuK1Tp04V+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=KYLoyNCk; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-76e4fc419a9so3998216b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 08:11:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1756134681; x=1756739481; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UYv1SFw8KHRTBAs11RxrIjSXI0+Dq/l8nNXuXGxjK1Y=;
-        b=KYLoyNCkbbNHWe05MTlksYWH/jJao9Nks6d8wYamyAvmlfXiZKeb1Og7Uasz0EbFdO
-         rVq9q9K/MYiaRA+J31+sHtqEA8NaRlkc4UdSudsvJ3Hl+9BGLCZGoSBEbuQNEs+pc+iM
-         MQl/x2ugqT98WbVX8DBqdiDRxyv2AGuQD87J4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756134681; x=1756739481;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UYv1SFw8KHRTBAs11RxrIjSXI0+Dq/l8nNXuXGxjK1Y=;
-        b=fUV8XwJ3wnG28ECYm117TfGQMI5LNwGelcWPryzOUEshJblSlmtJqL+lDHglilW2UD
-         7o4xv/0+G5ltnsnakjprCb/mMJazkngLbDm/QVVefZKP8ZPF5owIOPF893k6c2VCrOAT
-         wiUHOUCcOZ4zo52U0hTeWJZ/Q9ouh8uiDquC6SGr7kCsnVjZF8EesXsypRVqCLA7o6zR
-         mJAXF9JHDYf769MYl/OI9JBdvMwQH4h3L3RHbuLuyVFmSBfZC6wHvvoI9abY0W/o/RVD
-         56+cGDGtNbjuws2f1cu88IfIUECswQY6z8+IUv9Hk5HChLgfpDF3NnoI5lg8R3bmeVmD
-         bo6g==
-X-Forwarded-Encrypted: i=1; AJvYcCU9o/RXjGrK3/D5UR8SBs8mGlK78LUFV6u7kVu3cy9gATKL1OvMUag4frFqDPrF8LMXV6cnYa6RnLkmj4I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiSg5UYLLS+McZ9sAiINSXjUns3mHJNyHYHHkskHR7DwLPq/t8
-	9+yTHzqN3pCMiO4GXeYY5mTQS9HqO7i88e08MffDD1FEeDxaW0FwynK1oe19KtxFmA==
-X-Gm-Gg: ASbGncvPSeLeNgdJTbtvJxtZQCL+eBFlsji1u9QVUUd9PcdAKQEAvGW9jbs08g7iiHa
-	fYPFkTdZNAzD72cACrFkI5dbiHdxBI0MEKEx+iLawWAPPKktnSQYjVRs8nmhgCEFb3T3lhCtOO+
-	1vBFuNN1To1ZOYUJhuGF42VkEoqWlFBa7ai98XbxnIfAad8BYzUD6an/aDMB5inytP94i1sBlhD
-	utz/5wtyS0U5Rb6AwGIGFirx0RFRCXWxrE0glDRvJ+DuW4lUMiO3gigXF2nDI/uzzYz3gdUjjQg
-	fmhUiMzuBkbGptYkKfmlFdxxVxVOxIerUUPnYCZJFSHTD7MszhNZzcm7pqwM/lP/ofzjhCxBe3x
-	aclY+csIMl55MvMXUI2GA1L0QbmLHwfYDoFyq1ho+
-X-Google-Smtp-Source: AGHT+IEdQuMc4qvfjOIBTCp/6aJwd6EcXET57GS+m3OZRdtWe1hoQXNFWqvIycN2W/2OBfSyp1B9yg==
-X-Received: by 2002:a05:6a20:7f85:b0:240:30c:273e with SMTP id adf61e73a8af0-24340c42b16mr19202183637.15.1756134680661;
-        Mon, 25 Aug 2025 08:11:20 -0700 (PDT)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:d5a9:711e:13f5:e60f])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b49cb88fac4sm6956517a12.9.2025.08.25.08.11.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 08:11:20 -0700 (PDT)
-From: Chen-Yu Tsai <wenst@chromium.org>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: Chen-Yu Tsai <wenst@chromium.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] ASoC: mediatek: common: Switch to for_each_available_child_of_node_scoped()
-Date: Mon, 25 Aug 2025 23:11:09 +0800
-Message-ID: <20250825151111.3696404-1-wenst@chromium.org>
-X-Mailer: git-send-email 2.51.0.261.g7ce5a0a67e-goog
+	s=arc-20240116; t=1756134728; c=relaxed/simple;
+	bh=RCzfFRa9bhcrr9RKjF/YQSphWZ97OW8ZYfBC6HmBfP0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=gkiK1/cd3aZd5jF+jTQSihHFTS4ye8XTu5cXguJLM+92/6JPVk9qlO8TFpH43Wie8U911/jZdc+CIU2HEjyZ4J35KPKArKPr92w0feBrfGShH7p0/3fOqU+mDcwz8jrBSfYydlBSHVQlVxCvb4in8CfoB6BRDSISvlXsnh0ojtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RiRrf02A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B88D3C4CEED;
+	Mon, 25 Aug 2025 15:12:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756134727;
+	bh=RCzfFRa9bhcrr9RKjF/YQSphWZ97OW8ZYfBC6HmBfP0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=RiRrf02AmMTYLGGM314qi6OKtLmE6osCEHMol980vuE6MQZuBnyse61RheqKkDlUQ
+	 DtzLAiVgHeU48Pn5/tfFdDsTQMwCRVTiwKkR7DtAgR7VYPleF12dtPRgAtfyrnktI/
+	 fUznpf/s6C3U80anf45FZgF4TAgBLVUflzRM7XxS8XIoNPkaLm6qvuPnVlgP+Njl1m
+	 t2Mbt9hF06AWNNQvG/qU2TG5tWL1oUgpULkhftHzVmpnZwVhgwIHHN3jKzm+bakEv+
+	 q0WDSSspIeZ2vtGC0PaSU9L55d2dmZ4Bb/c52lJ+EgYLwkCNnxtkSVd7JtHn//N6P5
+	 qZdMt+Ax8S94g==
+From: SeongJae Park <sj@kernel.org>
+To: Quanmin Yan <yanquanmin1@huawei.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	akpm@linux-foundation.org,
+	damon@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	wangkefeng.wang@huawei.com,
+	zuoze1@huawei.com,
+	kernel-team@meta.com,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v2 03/11] mm/damon/paddr: support addr_unit for DAMOS_PAGEOUT
+Date: Mon, 25 Aug 2025 08:12:05 -0700
+Message-Id: <20250825151205.36288-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250822093420.2103803-4-yanquanmin1@huawei.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,73 +65,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Using for_each_available_child_of_node_scoped() allows us to get rid of
-of_node_put() calls from early returns or breaks in the loop. It also
-fixes issues with missing of_node_put() calls.
+On Fri, 22 Aug 2025 17:34:11 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
 
-Switch to for_each_available_child_of_node_scoped() in parse_dai_link_info().
-Also drop the braces around if blocks now that the inner block is just
-one statement.
+> From: SeongJae Park <sj@kernel.org>
+> 
+> Add support of addr_unit for DAMOS_PAGEOUT action handling from the
+> DAMOS operation implementation for the physical address space.
+[...]
+> -	return applied * PAGE_SIZE;
+> +	return applied * PAGE_SIZE / addr_unit;
+>  }
 
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+Kernel test robot [1] found this can cause __udivdi3 linking issue.  Andrew,
+could you please add the below attached fixup?
+
+[1] https://lore.kernel.org/oe-kbuild-all/202508241831.EKwdwXZL-lkp@intel.com/
+
+
+Thanks,
+SJ
+
+[...]
+
+==== Attachment 0 (0001-mm-damon-paddr-use-do_div-on-i386-for-damon_pa_pageo.patch) ====
+From hackermail Thu Jan  1 00:00:00 1970
+From: SeongJae Park <sj@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: SeongJae Park <sj@kernel.org>
+Cc: damon@lists.linux.dev
+Cc: kernel-team@meta.com
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org
+Date: Mon, 25 Aug 2025 07:41:33 -0700
+Subject: [PATCH 1/3] mm/damon/paddr: use do_div() on i386 for damon_pa_pageout()
+         return value
+
+Otherwise, __udidi3 linking problem happens on certain configs.
+
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202508241831.EKwdwXZL-lkp@intel.com/
+Signed-off-by: SeongJae Park <sj@kernel.org>
 ---
-Changes since v1:
-- Dropped unused variable
----
- .../mediatek/common/mtk-soundcard-driver.c    | 19 +++++--------------
- 1 file changed, 5 insertions(+), 14 deletions(-)
+ mm/damon/paddr.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/mediatek/common/mtk-soundcard-driver.c b/sound/soc/mediatek/common/mtk-soundcard-driver.c
-index 95a083939f3e..a2a30a87a359 100644
---- a/sound/soc/mediatek/common/mtk-soundcard-driver.c
-+++ b/sound/soc/mediatek/common/mtk-soundcard-driver.c
-@@ -89,40 +89,31 @@ static int set_dailink_daifmt(struct snd_soc_card *card,
- int parse_dai_link_info(struct snd_soc_card *card)
- {
- 	struct device *dev = card->dev;
--	struct device_node *sub_node;
- 	struct snd_soc_dai_link *dai_link;
- 	const char *dai_link_name;
- 	int ret, i;
+diff --git a/mm/damon/paddr.c b/mm/damon/paddr.c
+index 5fad2f9a99a0..09c87583af6c 100644
+--- a/mm/damon/paddr.c
++++ b/mm/damon/paddr.c
+@@ -135,6 +135,18 @@ static bool damon_pa_invalid_damos_folio(struct folio *folio, struct damos *s)
+ 	return false;
+ }
  
- 	/* Loop over all the dai link sub nodes */
--	for_each_available_child_of_node(dev->of_node, sub_node) {
-+	for_each_available_child_of_node_scoped(dev->of_node, sub_node) {
- 		if (of_property_read_string(sub_node, "link-name",
--					    &dai_link_name)) {
--			of_node_put(sub_node);
-+					    &dai_link_name))
- 			return -EINVAL;
--		}
++/* convert physical address to core-layer address */
++static unsigned long damon_pa_core_addr(phys_addr_t pa,
++		unsigned long addr_unit)
++{
++#ifdef __i386__
++	do_div(pa, addr_unit);
++	return pa;
++#else
++	return pa / addr_unit;
++#endif
++}
++
+ static unsigned long damon_pa_pageout(struct damon_region *r,
+ 		unsigned long addr_unit, struct damos *s,
+ 		unsigned long *sz_filter_passed)
+@@ -190,7 +202,7 @@ static unsigned long damon_pa_pageout(struct damon_region *r,
+ 	applied = reclaim_pages(&folio_list);
+ 	cond_resched();
+ 	s->last_applied = folio;
+-	return applied * PAGE_SIZE / addr_unit;
++	return damon_pa_core_addr(applied * PAGE_SIZE, addr_unit);
+ }
  
- 		for_each_card_prelinks(card, i, dai_link) {
- 			if (!strcmp(dai_link_name, dai_link->name))
- 				break;
- 		}
- 
--		if (i >= card->num_links) {
--			of_node_put(sub_node);
-+		if (i >= card->num_links)
- 			return -EINVAL;
--		}
- 
- 		ret = set_card_codec_info(card, sub_node, dai_link);
--		if (ret < 0) {
--			of_node_put(sub_node);
-+		if (ret < 0)
- 			return ret;
--		}
- 
- 		ret = set_dailink_daifmt(card, sub_node, dai_link);
--		if (ret < 0) {
--			of_node_put(sub_node);
-+		if (ret < 0)
- 			return ret;
--		}
- 	}
- 
- 	return 0;
+ static inline unsigned long damon_pa_mark_accessed_or_deactivate(
 -- 
-2.51.0.261.g7ce5a0a67e-goog
-
+2.39.5
 
