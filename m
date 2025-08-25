@@ -1,89 +1,125 @@
-Return-Path: <linux-kernel+bounces-785008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EFA5B344A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:54:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85CB0B344B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:54:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7538D1892E13
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:54:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7690318885C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:55:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E563A2FCBE1;
-	Mon, 25 Aug 2025 14:54:06 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE6CA2FD1BF;
+	Mon, 25 Aug 2025 14:54:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Ii8xug9m"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A83A2FC022
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 14:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D1E2F9C29;
+	Mon, 25 Aug 2025 14:54:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756133646; cv=none; b=RdR4dOIKCiLolfyUyXALogOdlU50VCbYztvtUcczBG9OAgAXifMo4AivsgbNveDiVHoRH/rBh3MN8r1iSZue75Eww7M77xTxgHVvH5Le0uxWqiaV/j8bwkiFSsYV7suX8bE+XizwcMD4H2nz3QkLq0gd2+cfnxoZhNtx/psE/tA=
+	t=1756133658; cv=none; b=j5fBcW3DuHRw2xYoGDUDwJSpfjD5ycQglnWhsOdq25vTOemz4Dkir/TOMDNltMu13p7gu+uC/Vt+qBw601N3X+fIxVKnejzX2aHgrAQ4X+ehUILusFqN4ahd1pgstePoYrkhvGbuiYnArmpygMO4HRnF0jvtudnZKyZ5UQ34+CA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756133646; c=relaxed/simple;
-	bh=RYFQttZPQBLdTyL00fjIksscvOx7+ZWQBTuIJxy7cw0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=RnKPRsdxNFYGNxkLo58eGCuy55+Unsw/ybKkfhTdgzEv97UKkT6La2/rzyQaqY2jzIkv1YvM2XCCu4H2bVs6wzFtticbjkHlYeXsDt6RKgGVW2oktm5qNCJ3BqapcS1Z8cLM4RM0Yn4617vZQLC+bgE+dmwa3nyoSjw3ggUUxMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3e671c9e964so46096255ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 07:54:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756133644; x=1756738444;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ks23e8Q91CQ7KaAQ1Tjq9eK94AD7/WwIK7YtecKc1XM=;
-        b=mp9asCxcq3D0UukSmFx+3RCKYg5fM2CxKvseiqmiFTB7On4TnhpEpje6HFoN4VSWph
-         Sgzu+iLevYexpt8/O5HY78ZPzts7ifnqfaf1Bjf5oQow5a4dfCQK5xH+W2v5Ua7rRhUX
-         lbPq45l1mN7hvb81JjEzrUQfevOTobCGVf/M75/CEjC9BQyjQ32vgUsgSKNPQCP5gdj0
-         BKivl2xR/uzSM6O55kK7pU8puD4n9t0ro48HujS2GCVar2lspmZKcokDasjxjXJvQMa5
-         HW0LBXscDhreVpnZvRgU8pT5h+kuH5qa3ySRsnC62kucd2s+kIq2iGZKVI456RnVINQH
-         FLjA==
-X-Forwarded-Encrypted: i=1; AJvYcCVM5nlR7PrRd19/67SUMuUemMELrR162CpllO/8T6XQxsxr9vop8bwQ5OEPPOgMX1k/HsqvL1OxHHs9f2I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiXjwtVSgSLkZbcLBltUsDs4g67qMzRJ/dIx1wWFZCYBpGV44y
-	riax4jT7WgfMfEFXPCn2mtGj9eNtVYNmFXdahki3efSsrb6ESWLaVmfqwM+YL3d7Ew+9m5aLLP6
-	WLKoCMG7Rs3z5bCh9FdwFt4Vq70twB0QLMSWwxM4hBfBN13wvoGTuQ57ZFcQ=
-X-Google-Smtp-Source: AGHT+IEV+VyyptRyr/7EBnA/JSPf8pu7sBw+c/GLiXBPcD6TdhCdNFG/G0lngV0hKVH63z5s5QlSb2A2h86r6wPSk1CAJDXfK+QI
+	s=arc-20240116; t=1756133658; c=relaxed/simple;
+	bh=kU5NffYo6z7siXKutRKlSBWEEkjrHDU5wEaZXOeH1qE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q0xX2CjsC7NdbJga9TRZCNGB5bHOp811JVcXVmmyxXpNUvfqY1Elzv9sy60jIoHONzwa2Cy+N76TwP+JXy4TnAju4DKrUeGe9SWacv67Yguh15MBhtoN70iAjgtiHE/9GmKx9hHwXenzeIjvTEQV6JLsmBMzkt2syaYPWkZxMu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Ii8xug9m; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=/MDZLJVE8OPf4cqXc8XG53ybrbOv5YqoOYJd4mZDqNI=; b=Ii8xug9mYRGJW3B9t9qms0CB1T
+	D+wc3s4SyIcTmik+IEMZF5AhBGzWHP86AhexiFdDef3GZLftjCSRRMg4771nzvuhSR7qwkUDHm71p
+	Oy3cYkxudhaDFccZ2aPNhyXXvwkRW1hHXQfmMxFcYWWnSayGBpRUB7BzlTRu78zRxXhZgziA8bYK0
+	cbKsU+EN6YyKQ8crxjFFtiFhfbShYnhxVp3+GBWAO6tCSCjoOuMBWrJlCtxTKzC5kv3MspZ9GluIZ
+	8OhbWTQBNh/dGb0av4Z6ftFzA5HG3h6Ess4ECnFvjY1zrncb7QdaERK/FE/vE3mby+u1uPvt+PoI3
+	RSL2VaIQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:54734)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uqYaG-000000006dz-08AH;
+	Mon, 25 Aug 2025 15:54:08 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uqYaD-000000008GB-1DUp;
+	Mon, 25 Aug 2025 15:54:05 +0100
+Date: Mon, 25 Aug 2025 15:54:05 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: =?iso-8859-1?B?Q3Pza+Fz?= Bence <csokas.bence@prolan.hu>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: mdiobus: Move all reset registration to
+ `mdiobus_register_reset()`
+Message-ID: <aKx5DX09QZcbrXA6@shell.armlinux.org.uk>
+References: <20250825-b4-phy-rst-mv-prep-v1-1-6298349df7ca@prolan.hu>
+ <aKxwVNffu9w8Mepl@shell.armlinux.org.uk>
+ <724f69f0-7eab-40aa-84f0-07055f051175@prolan.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1688:b0:3eb:e261:15e0 with SMTP id
- e9e14a558f8ab-3ebe2611d45mr77989085ab.28.1756133644131; Mon, 25 Aug 2025
- 07:54:04 -0700 (PDT)
-Date: Mon, 25 Aug 2025 07:54:04 -0700
-In-Reply-To: <0d6d8778-a45e-498f-9e31-1d926f582d7e@rowland.harvard.edu>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ac790c.050a0220.37038e.0095.GAE@google.com>
-Subject: Re: [syzbot] [usb?] BUG: sleeping function called from invalid
- context in dummy_dequeue
-From: syzbot <syzbot+8baacc4139f12fa77909@syzkaller.appspotmail.com>
-To: bigeasy@linutronix.de, gregkh@linuxfoundation.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	stern@rowland.harvard.edu, syzkaller-bugs@googlegroups.com, ysk@kzalloc.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <724f69f0-7eab-40aa-84f0-07055f051175@prolan.hu>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Hello,
+On Mon, Aug 25, 2025 at 04:39:12PM +0200, Csókás Bence wrote:
+> Hi,
+> 
+> On 2025. 08. 25. 16:16, Russell King (Oracle) wrote:
+> > On Mon, Aug 25, 2025 at 04:09:34PM +0200, Bence Csókás wrote:
+> > > Make `mdiobus_register_reset()` function handle both gpiod and
+> > > reset-controller-based reset registration.
+> > 
+> > The commit description should include not only _what_ is being done but
+> > also _why_.
+> 
+> Well, my question was, when I saw this part of code: why have it separate?
+> Users shouldn't care whether a device uses gpiod or reset-controller when
+> they call `mdio_device_reset()`, so why should they have to care here and
+> call two separate register functions, one after another? In fact, the whole
+> thing should be moved to mdio_device.c honestly. Along with the setting of
+> mdiodev->reset_{,de}assert_delay.
+> 
+> The end goal is fixing this "Can't read PHY ID because the PHY was never
+> reset" bug that's been plaguing users for years.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+I wasn't asking for an explanation in reply to my comment. I was
+telling you that you had to do something to modify your commit message
+to make your patch acceptable.
 
-Reported-by: syzbot+8baacc4139f12fa77909@syzkaller.appspotmail.com
-Tested-by: syzbot+8baacc4139f12fa77909@syzkaller.appspotmail.com
+Now, I could nitpick your "because the PHY was never reset" - that's
+untrue. The common problem is the PHY is _held_ in reset mode making
+the PHY unresponsive on the MDIO bus.
 
-Tested on:
+If your goal is to fix this, then rather than submitting piecemeal
+patches with no explanation, I suggest you work on the problem and
+come up with a solution as a series of patches (with commit
+descriptions that explain _what_ and _why_ changes are being made)
+and submit it with a cover message explaining the overall issue
+that is being addressed.
 
-commit:         8d245acc Merge tag 'char-misc-6.17-rc3' of git://git.k..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/
-console output: https://syzkaller.appspot.com/x/log.txt?x=17b38462580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e1e1566c7726877e
-dashboard link: https://syzkaller.appspot.com/bug?extid=8baacc4139f12fa77909
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=15ee6862580000
+That means we can review the patch series as a whole rather than
+being drip-fed individual patches, which is going to take a very
+long time to make forward progress.
 
-Note: testing is done by a robot and is best-effort only.
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
