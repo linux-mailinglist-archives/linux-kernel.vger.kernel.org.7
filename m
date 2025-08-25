@@ -1,129 +1,304 @@
-Return-Path: <linux-kernel+bounces-784715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96BEAB34036
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:59:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50E6FB3403A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:00:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DFE5189D340
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:00:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A974206C7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6CF523E359;
-	Mon, 25 Aug 2025 12:59:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E894374C4;
+	Mon, 25 Aug 2025 13:00:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JIeiA0dD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jA7KjOnd"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9576B1E6DC5
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 12:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A2C29CE1
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 13:00:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756126789; cv=none; b=Qhr2WzGO/aF3/xI/svCnM7wsQu2I4M4ah8HTqiKR/F5Zh2oh++akFrSfmWUYE4LeAFPplwT1e0CmyQQ4F8fk8p0Hdau3Xf3CJHugfcs9XMc5DyJN+spl7/YTuYo+PNSkvyRTs92yQAg9GsZcNt9sBdoLaMuHkFH+5CiOJg+7x9A=
+	t=1756126843; cv=none; b=XBeZw+cuf49Hixg8GM3xelve98fa1sznCZ0ys8vkMGtRz+j/RjXwsWGpjxr7bwWYADm4m1xltkuZcU8PZhnZ03ht76iu02i88APONduDINzWb/MH+A0jwx/egan+omAc8A3WqOSPseGbYgVLRVYxp1+yj3os6+UwX0HzLGhdiDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756126789; c=relaxed/simple;
-	bh=iGF3Ty+r7ofrqLuDIz+M4/R+aLKluW2Zd4ZasASSJss=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=WTHFaFxYdKBFXBy6RITzWCQZdYUv+QUaJmUDhTByY5UE77cv8Js90q8fVC4dQw78vFakqKotrpFD/Jb3bHKZJ7JLP6sc3ZybkSnnd7CLWqWKmXJQiCivh9UOWcvcAn9t1A67kHScOPX2QNDS+Sy4CUxqwRS1UFCK5f1LaHvd0to=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JIeiA0dD; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756126786;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=jJKCjDL06Zvlad/zq74VP/8/pkLusWhDPD7bZSNNC80=;
-	b=JIeiA0dDGRsDF6R26o+66ldnzS4kr2X3x7oxZmXK7g0QHhG5d6VpEol026LBmQBsvC901D
-	qcltQD9hyP8wZETx3HKSH3Ks3GMjfYTo4zHwN53SZ9hpHfIW+CXqeEhc+Irj8SqtiXVQ89
-	mvtmZv6vKIdTN2SYnNRSBojqqaWFHgo=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-428-UWYJL6GsMfavtmYJJV1Lgg-1; Mon,
- 25 Aug 2025 08:59:41 -0400
-X-MC-Unique: UWYJL6GsMfavtmYJJV1Lgg-1
-X-Mimecast-MFC-AGG-ID: UWYJL6GsMfavtmYJJV1Lgg_1756126780
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F1C30180036E;
-	Mon, 25 Aug 2025 12:59:39 +0000 (UTC)
-Received: from wcosta-thinkpadt14gen4.rmtbr.csb (unknown [10.22.88.151])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 66C951955F24;
-	Mon, 25 Aug 2025 12:59:35 +0000 (UTC)
-From: Wander Lairson Costa <wander@redhat.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Martin Liu <liumartin@google.com>,
-	David Rientjes <rientjes@google.com>,
-	David Hildenbrand <david@redhat.com>,
-	Zi Yan <ziy@nvidia.com>,
-	Wander Lairson Costa <wander@redhat.com>,
-	linux-kernel@vger.kernel.org (open list:TRACING),
-	linux-trace-kernel@vger.kernel.org (open list:TRACING)
-Subject: [RESEND PATCH] kmem/tracing: Add kmem name to kmem_cache_alloc tracepoint
-Date: Mon, 25 Aug 2025 09:59:26 -0300
-Message-ID: <20250825125927.59816-1-wander@redhat.com>
+	s=arc-20240116; t=1756126843; c=relaxed/simple;
+	bh=xf3DOQMVrG91iKbl7ipebCFVekmIKqtuQ81G7G/taU4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=AX3uFDt9XwzOtpMVvDPLUh0TuqvSD7eWDwiqCi1sAGjKAf98uy6BD/EgZ++aEWmaGz5/o74bmurBJdnhYLVg+I2W/ZXwX2AiWiyUXoXOMJNimZ0U27IFwUKeIEJvn8mYJrwct/JmASU/ENtqHFp8UodidEeZJ6sAbyf+d3Zh2Lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jA7KjOnd; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3c79f0a604aso1010990f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 06:00:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756126840; x=1756731640; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/0VK2T6V+Aj0ASKId11YflidkPTxQI3Y2JHVgkJXJUY=;
+        b=jA7KjOndeExACc7SNVI2FNv3CzXKqGm/L2ZeQEo+2VyXbJEfySb6oLAQhopEytpuwi
+         YllYjy3DU2YHtWOHM3iAz1g03YrqDRbKcz3l+owhbpa+44GX58q7ftWZvcYiQcVg/CDb
+         VTbIRKpRo8o8WuAD0hAA2GBMx4rtET9lX4djVQPWQwrje7tJkb63rPjesGjSFH4oOXh9
+         Oj2GKt5VwPZvR4vh+XfFZSVH6pC4ni5Kq0gltsGqHVwdMQ6OU8BzlQdntQg86girHsAy
+         GXwOAG+RrB5TXrEcw75X5/RkS4O7OVj/d6qHGgNLAQafYR8NyaeZeYaZSORGrz+rrpuz
+         yHoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756126840; x=1756731640;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/0VK2T6V+Aj0ASKId11YflidkPTxQI3Y2JHVgkJXJUY=;
+        b=Ckr7syWxDupCJ4nXk2+ORpAtT/gZYDbjtYhkudRcZPlxQKQ0wwChTk+FqjxP1L2Rkr
+         WkWXQymwRfYkhaqT68OWqeTo/8QB3LjZ3KZnrALDAWn+mD/BxgIDeUDNQ2NbYNLnZ2Vf
+         3mRQHJ9s7TDODuy8o6RA9CE2WfCv9gG0lAOUBPFIi2rLNOnkt3dO+i8lQfcveeUc78a0
+         60SCXzTUU/lz7fkckFNCc2o+YNkQyfLBbBkB7B1EzzDh0fYC+r0VohhQihn74KSuSRll
+         ccvVLo9CwrXhI/ju6hblUdS66vPqmuDb+69KmoIjTqqMweNQOIxXFvxXH0f7czZ5Zon7
+         evsg==
+X-Forwarded-Encrypted: i=1; AJvYcCVViyrUk6fkWszyNDs5AXftE/XRbngPnb1bGUQ8XnymSa40Ci7f1OwEL4vAAwWHwJiV8+2ZB01Hvq3eZZc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyynVeH4CcTYOPnZaGKY43JBHyHIGadvLOGAMnT+CVUQQ1ZXyvH
+	XRV8FPJqjmxTxMLNVKs9POSP0kvV5/Bv0pnYpe/JdpHz35nClbMF7YmHiPacmBc8ilw=
+X-Gm-Gg: ASbGncuS99LzwgZWm5otRtMF8oIY1cdrn6iN7ik7JHju2nHl9xHcvoYon2H7sU5TL2w
+	SlNhdidLPpzcrgZr23JM3rVWNhW4v/ncPD2u4d02v0qgsptIUpGTqRtVAieAWYJrPVBPZGM8kSr
+	oO5ve89NRimYCP2HMPM8M1HmT5M5TvuXcXtfFnakbxPSsekLhLds0T9jHvFMqS9bPcDDwj0GXlk
+	HqlngQQ1MjDBgd+aLYbcrvEBMNf1fFMswMXOcWEr1Ng3Ooal/8FWm2GCfkXJkl3eIPyY3iGo/vR
+	71fRHArQVfSssuaZOUX5KWhGY1B4O2P1pzxWso6zaCoAovCQj++KQwS+cu3bFsqXNASLFXFyZK/
+	Cqg+3wKANZiGHCvf0mkb1TWGLbPV7so79IS1oxQ==
+X-Google-Smtp-Source: AGHT+IFKESXASQM+VKjSbNLcCSsxhZD3d1Nqd+0rOXEx7HybgyHMMHJuEk3zwIeA8eDEbkWtc7wtdQ==
+X-Received: by 2002:a05:6000:2dc2:b0:3a1:f5c4:b81b with SMTP id ffacd0b85a97d-3c5daefc754mr9642267f8f.23.1756126839858;
+        Mon, 25 Aug 2025 06:00:39 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3c7112129b9sm11538216f8f.34.2025.08.25.06.00.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Aug 2025 06:00:39 -0700 (PDT)
+Date: Mon, 25 Aug 2025 16:00:35 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Antoniu Miclaus <antoniu.miclaus@analog.com>,
+	jic23@kernel.org, robh@kernel.org, conor+dt@kernel.org,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	Antoniu Miclaus <antoniu.miclaus@analog.com>
+Subject: Re: [PATCH v5 4/6] iio: adc: add ade9000 support
+Message-ID: <202508250158.KQ6WdkKh-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250822160157.5092-5-antoniu.miclaus@analog.com>
 
-The kmem_cache_free tracepoint includes a "name" field, which allows
-for easy identification and filtering of specific kmem's. However, the
-kmem_cache_alloc tracepoint lacks this field, making it difficult to
-pair corresponding alloc and free events for analysis.
+Hi Antoniu,
 
-Add the "name" field to kmem_cache_alloc to enable consistent tracking
-and correlation of kmem alloc and free events.
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: Wander Lairson Costa <wander@redhat.com>
----
- include/trace/events/kmem.h | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/include/trace/events/kmem.h b/include/trace/events/kmem.h
-index 474358773abe..7f93e754da5c 100644
---- a/include/trace/events/kmem.h
-+++ b/include/trace/events/kmem.h
-@@ -22,6 +22,7 @@ TRACE_EVENT(kmem_cache_alloc,
- 	TP_STRUCT__entry(
- 		__field(	unsigned long,	call_site	)
- 		__field(	const void *,	ptr		)
-+		__string(	name,		s->name		)
- 		__field(	size_t,		bytes_req	)
- 		__field(	size_t,		bytes_alloc	)
- 		__field(	unsigned long,	gfp_flags	)
-@@ -32,6 +33,7 @@ TRACE_EVENT(kmem_cache_alloc,
- 	TP_fast_assign(
- 		__entry->call_site	= call_site;
- 		__entry->ptr		= ptr;
-+		__assign_str(name);
- 		__entry->bytes_req	= s->object_size;
- 		__entry->bytes_alloc	= s->size;
- 		__entry->gfp_flags	= (__force unsigned long)gfp_flags;
-@@ -41,9 +43,10 @@ TRACE_EVENT(kmem_cache_alloc,
- 					  (s->flags & SLAB_ACCOUNT)) : false;
- 	),
- 
--	TP_printk("call_site=%pS ptr=%p bytes_req=%zu bytes_alloc=%zu gfp_flags=%s node=%d accounted=%s",
-+	TP_printk("call_site=%pS ptr=%p name=%s bytes_req=%zu bytes_alloc=%zu gfp_flags=%s node=%d accounted=%s",
- 		(void *)__entry->call_site,
- 		__entry->ptr,
-+		__get_str(name),
- 		__entry->bytes_req,
- 		__entry->bytes_alloc,
- 		show_gfp_flags(__entry->gfp_flags),
+url:    https://github.com/intel-lab-lkp/linux/commits/Antoniu-Miclaus/iio-add-IIO_ALTCURRENT-channel-type/20250823-001017
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/20250822160157.5092-5-antoniu.miclaus%40analog.com
+patch subject: [PATCH v5 4/6] iio: adc: add ade9000 support
+config: arm-randconfig-r072-20250824 (https://download.01.org/0day-ci/archive/20250825/202508250158.KQ6WdkKh-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 8.5.0
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202508250158.KQ6WdkKh-lkp@intel.com/
+
+New smatch warnings:
+drivers/iio/adc/ade9000.c:1009 ade9000_irq1_thread() warn: right shifting more than type allows 16 vs 20
+drivers/iio/adc/ade9000.c:1505 ade9000_write_event_config() error: uninitialized symbol 'tmp'.
+drivers/iio/adc/ade9000.c:1554 ade9000_write_event_config() error: uninitialized symbol 'interrupts'.
+
+Old smatch warnings:
+drivers/iio/adc/ade9000.c:1018 ade9000_irq1_thread() warn: right shifting more than type allows 16 vs 20
+drivers/iio/adc/ade9000.c:1027 ade9000_irq1_thread() warn: right shifting more than type allows 16 vs 20
+drivers/iio/adc/ade9000.c:1036 ade9000_irq1_thread() warn: right shifting more than type allows 16 vs 20
+drivers/iio/adc/ade9000.c:1045 ade9000_irq1_thread() warn: right shifting more than type allows 16 vs 20
+drivers/iio/adc/ade9000.c:1054 ade9000_irq1_thread() warn: right shifting more than type allows 16 vs 20
+
+vim +1009 drivers/iio/adc/ade9000.c
+
+b695e630eecec70 Antoniu Miclaus 2025-08-22   998  		case ADE9000_ST1_ZXIC_BIT:
+b695e630eecec70 Antoniu Miclaus 2025-08-22   999  			iio_push_event(indio_dev,
+b695e630eecec70 Antoniu Miclaus 2025-08-22  1000  				       IIO_UNMOD_EVENT_CODE(IIO_CURRENT,
+b695e630eecec70 Antoniu Miclaus 2025-08-22  1001  							    ADE9000_ST1_ZXIC_BIT,
+b695e630eecec70 Antoniu Miclaus 2025-08-22  1002  							    IIO_EV_TYPE_THRESH,
+b695e630eecec70 Antoniu Miclaus 2025-08-22  1003  							    IIO_EV_DIR_EITHER),
+b695e630eecec70 Antoniu Miclaus 2025-08-22  1004  				       timestamp);
+b695e630eecec70 Antoniu Miclaus 2025-08-22  1005  			handled_irq |= ADE9000_ST1_ZXIC_BIT;
+b695e630eecec70 Antoniu Miclaus 2025-08-22  1006  			break;
+b695e630eecec70 Antoniu Miclaus 2025-08-22  1007  		case ADE9000_ST1_SWELLA_BIT:
+b695e630eecec70 Antoniu Miclaus 2025-08-22  1008  			iio_push_event(indio_dev,
+b695e630eecec70 Antoniu Miclaus 2025-08-22 @1009  				       IIO_UNMOD_EVENT_CODE(IIO_VOLTAGE,
+b695e630eecec70 Antoniu Miclaus 2025-08-22  1010  							    ADE9000_ST1_SWELLA_BIT >> 20,
+
+This is a kind of macro expansion bug:
+
+include/linux/iio/events.h
+    27  #define _IIO_EVENT_CODE(chan_type, diff, modifier, direction,           \
+    28                          type, chan, chan1, chan2)                       \
+    29          (((u64)type << 56) | ((u64)diff << 55) |                        \
+    30           ((u64)direction << 48) | ((u64)modifier << 40) |               \
+    31           ((u64)chan_type << 32) | (((u16)chan2) << 16) | ((u16)chan1) | \
+    32           ((u16)chan))
+
+There should be parenthese around "chan" on line 32.
+
+	((u16)(chan)))
+
+Otherwise it's a precendent bug and  we end up doing the cast before we
+do the ">> 20".  Probably around the others as well?  Probably best if
+someone tests this.
+
+
+drivers/iio/adc/ade9000.c
+  1425  static int ade9000_write_event_config(struct iio_dev *indio_dev,
+  1426                                        const struct iio_chan_spec *chan,
+  1427                                        enum iio_event_type type,
+  1428                                        enum iio_event_direction dir,
+  1429                                        bool state)
+  1430  {
+  1431          struct ade9000_state *st = iio_priv(indio_dev);
+  1432          u32 interrupts, tmp;
+  1433          int ret;
+  1434  
+  1435          /* Clear all pending events in STATUS1 register (write 1 to clear) */
+  1436          ret = regmap_write(st->regmap, ADE9000_REG_STATUS1, GENMASK(31, 0));
+  1437          if (ret)
+  1438                  return ret;
+  1439  
+  1440          if (type == IIO_EV_TYPE_MAG) {
+  1441                  ret = regmap_update_bits(st->regmap, ADE9000_REG_STATUS0,
+  1442                                           ADE9000_ST0_EGYRDY, ADE9000_ST0_EGYRDY);
+  1443                  if (ret)
+  1444                          return ret;
+  1445                  return regmap_update_bits(st->regmap, ADE9000_REG_MASK0,
+  1446                                           ADE9000_ST0_EGYRDY,
+  1447                                           state ? ADE9000_ST1_SEQERR_BIT : 0);
+  1448          }
+  1449  
+  1450          if (type == IIO_EV_TYPE_CHANGE)
+  1451                  return regmap_update_bits(st->regmap, ADE9000_REG_MASK1,
+  1452                                           ADE9000_ST1_SEQERR_BIT,
+  1453                                           state ? ADE9000_ST1_SEQERR_BIT : 0);
+  1454  
+  1455          if (dir == IIO_EV_DIR_EITHER) {
+  1456                  static const struct {
+  1457                          u32 irq;
+  1458                          u32 wfb_trg;
+  1459                  } trig_arr[6] = {
+  1460                          {
+  1461                                  .irq = ADE9000_ST1_ZXVA_BIT,
+  1462                                  .wfb_trg = ADE9000_WFB_TRG_ZXVA_BIT
+  1463                          }, {
+  1464                                  .irq = ADE9000_ST1_ZXIA_BIT,
+  1465                                  .wfb_trg = ADE9000_WFB_TRG_ZXIA_BIT
+  1466                          }, {
+  1467                                  .irq = ADE9000_ST1_ZXVB_BIT,
+  1468                                  .wfb_trg = ADE9000_WFB_TRG_ZXVB_BIT
+  1469                          }, {
+  1470                                  .irq = ADE9000_ST1_ZXIB_BIT,
+  1471                                  .wfb_trg = ADE9000_WFB_TRG_ZXIB_BIT
+  1472                          }, {
+  1473                                  .irq = ADE9000_ST1_ZXVC_BIT,
+  1474                                  .wfb_trg = ADE9000_WFB_TRG_ZXVC_BIT
+  1475                          }, {
+  1476                                  .irq = ADE9000_ST1_ZXIC_BIT,
+  1477                                  .wfb_trg = ADE9000_WFB_TRG_ZXIC_BIT
+  1478                          },
+  1479                  };
+  1480                  if (state) {
+  1481                          interrupts |= trig_arr[chan->channel * 2 + chan->type].irq;
+  1482                          st->wfb_trg |= trig_arr[chan->channel * 2 + chan->type].wfb_trg;
+  1483                  } else {
+  1484                          interrupts &= ~trig_arr[chan->channel * 2 + chan->type].irq;
+  1485                          st->wfb_trg &= ~trig_arr[chan->channel * 2 + chan->type].wfb_trg;
+  1486                  }
+  1487          }
+  1488  
+  1489          if (dir == IIO_EV_DIR_NONE) {
+  1490                  switch (chan->channel) {
+  1491                  case ADE9000_PHASE_A_NR:
+  1492                          tmp |= ADE9000_ST1_ZXTOVA_BIT;
+
+You can |= an uninitialized variable.
+
+  1493                          break;
+  1494                  case ADE9000_PHASE_B_NR:
+  1495                          tmp |= ADE9000_ST1_ZXTOVB_BIT;
+  1496                          break;
+  1497                  case ADE9000_PHASE_C_NR:
+  1498                          tmp |= ADE9000_ST1_ZXTOVC_BIT;
+  1499                          break;
+  1500                  default:
+  1501                          break;
+  1502                  }
+  1503  
+  1504                  if (state)
+  1505                          interrupts |= tmp;
+
+Same.
+
+  1506                  else
+  1507                          interrupts &= ~tmp;
+  1508          } else if (dir == IIO_EV_DIR_RISING) {
+  1509                  switch (chan->channel) {
+  1510                  case ADE9000_PHASE_A_NR:
+  1511                          tmp |= ADE9000_ST1_SWELLA_BIT;
+  1512                          break;
+  1513                  case ADE9000_PHASE_B_NR:
+  1514                          tmp |= ADE9000_ST1_SWELLB_BIT;
+  1515                          break;
+  1516                  case ADE9000_PHASE_C_NR:
+  1517                          tmp |= ADE9000_ST1_SWELLC_BIT;
+  1518                          break;
+  1519                  default:
+  1520                          break;
+  1521                  }
+  1522  
+  1523                  if (state) {
+  1524                          interrupts |= tmp;
+  1525                          st->wfb_trg |= ADE9000_WFB_TRG_SWELL_BIT;
+  1526                  } else {
+  1527                          interrupts &= ~tmp;
+  1528                          st->wfb_trg &= ~ADE9000_WFB_TRG_SWELL_BIT;
+  1529                  }
+  1530          } else if (dir == IIO_EV_DIR_FALLING) {
+  1531                  switch (chan->channel) {
+  1532                  case ADE9000_PHASE_A_NR:
+  1533                          tmp |= ADE9000_ST1_DIPA_BIT;
+  1534                          break;
+  1535                  case ADE9000_PHASE_B_NR:
+  1536                          tmp |= ADE9000_ST1_DIPB_BIT;
+  1537                          break;
+  1538                  case ADE9000_PHASE_C_NR:
+  1539                          tmp |= ADE9000_ST1_DIPC_BIT;
+  1540                          break;
+  1541                  default:
+  1542                          break;
+  1543                  }
+  1544  
+  1545                  if (state) {
+  1546                          interrupts |= tmp;
+  1547                          st->wfb_trg |= ADE9000_WFB_TRG_DIP_BIT;
+  1548                  } else {
+  1549                          interrupts &= ~tmp;
+  1550                          st->wfb_trg &= ~ADE9000_WFB_TRG_DIP_BIT;
+  1551                  }
+  1552          }
+  1553  
+  1554          return regmap_update_bits(st->regmap, ADE9000_REG_MASK1, interrupts,
+  1555                                    interrupts);
+  1556  }
+
 -- 
-2.51.0
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
