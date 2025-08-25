@@ -1,62 +1,44 @@
-Return-Path: <linux-kernel+bounces-784017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D91FB3355B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 06:43:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30EC0B33567
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 06:44:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32D371B2349E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 04:42:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CB9117D044
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 04:42:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4696F28003A;
-	Mon, 25 Aug 2025 04:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="zNfKKnm6"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8B8279DB3;
+	Mon, 25 Aug 2025 04:40:00 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B8D265637;
-	Mon, 25 Aug 2025 04:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D2F23B63C;
+	Mon, 25 Aug 2025 04:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756096802; cv=none; b=TuLyu1FZ7zM897G/IYCQjL4uB018rPvtTLEVCJ+jd5c41xYL6XsMKzMrJNT278GrcF+gx4YGT2XR1l8MxR5p63H54iuti7Zt1+q/Rtw83+9EjRe6Kw/JEJY3hxjU9vsr30lWqaH0/CECy/EOeyUsWYPeKui4FGiQ7/y6IaZ9vwM=
+	t=1756096800; cv=none; b=qbXAPvvGuE3XGY2iOclaZvzKQ6uFR8V4BMgBS0BDNHBetL2DPQzcRLq+IQQRMOBuKBWExVLlI/GaMLVYXyyIRHG7y8+BiKj9MALAxujWpaPiNyjhHTDogB7xhsqlLuzXD1ZRzH93Uzs5YnPtzF/BccY3AhSpBMnrtdnQedpz8N4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756096802; c=relaxed/simple;
-	bh=2bS2WCOiM9KnUbU7WqB/GMBmRW+z+aKD0eB9g9X0apM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qOCNWELkULeDMgNKLwTnr/EqyD1ZzB4QiZ7vga0y61V4h8yhmxbxEk8M8C7Pk8hoNWvS/xKqTa+WSEePkyYyqRUkvyrMg9YRciUmsm73WrRc482VsBWCyevrii/tNTp36/xws8aP8VG+v7PvHMFK6zjuFPF+qpNRGrWMy/qgldQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=zNfKKnm6; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57P4dQKX1195045;
-	Sun, 24 Aug 2025 23:39:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1756096766;
-	bh=JyUP00cWbb14rAirUBQRIORCjenMTRA6DeX7+PzevOE=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=zNfKKnm6hktqPhTyiEO8kv550jEw4hSHeQggowdjiX8sRLfYkdwXokFiB0VDq9WQI
-	 WKuGaA87pYkkJjFl314qmptUkXxyg+XweHlWH9bwuqGCZnsseh62rTzGld45pH1ZNa
-	 Z4735O329PTJJkmmWGNeJSe6UKacFoeQHJ+zoO2Y=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57P4dQbn609297
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Sun, 24 Aug 2025 23:39:26 -0500
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Sun, 24
- Aug 2025 23:39:25 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Sun, 24 Aug 2025 23:39:25 -0500
-Received: from [172.24.234.212] (uda0510294.dhcp.ti.com [172.24.234.212])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57P4dKiC3303762;
-	Sun, 24 Aug 2025 23:39:21 -0500
-Message-ID: <c56a779f-d4dc-49ce-874a-30ef96a0a1f0@ti.com>
-Date: Mon, 25 Aug 2025 10:09:20 +0530
+	s=arc-20240116; t=1756096800; c=relaxed/simple;
+	bh=sRi0BdywOkFVtpyesp1SmdY4RAR58yVQ7CfD8V/yBMs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=btLWw0PEz+Vcj127IFSU6Hc4/AcaVhJDYTQFxPlBLjyo92Zk0rY8nkrQJpG8V9WhKMPCAOiKT1AlnynnUdN8gFTHzQZuADA+/jGr2KXWa4pUC6Y5kPkAm5R/R/02MIKWth7Pk87tn/hBAZYB6HZBlxRl8aGFUtZsyxl0axACyS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c9J4B6HfZzYQvLt;
+	Mon, 25 Aug 2025 12:39:54 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 6A0531A0CC5;
+	Mon, 25 Aug 2025 12:39:53 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgAncY0W6atoqvLYAA--.56226S3;
+	Mon, 25 Aug 2025 12:39:52 +0800 (CST)
+Message-ID: <ad0e8cea-64fb-44f7-abf2-30ad5fc07a4c@huaweicloud.com>
+Date: Mon, 25 Aug 2025 12:39:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,108 +46,111 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 16/33] arm64: dts: ti: k3-am62p-verdin: Add missing cfg
- for TI IPC Firmware
-To: Francesco Dolcini <francesco@dolcini.it>
-CC: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <afd@ti.com>,
-        <u-kumar1@ti.com>, <hnagalla@ti.com>, <jm@ti.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Francesco Dolcini <francesco.dolcini@toradex.com>,
-        Emanuele Ghidoli
-	<emanuele.ghidoli@toradex.com>,
-        Parth Pancholi <parth.pancholi@toradex.com>,
-        Jo_o Paulo Gon_alves <joao.goncalves@toradex.com>
-References: <20250814223839.3256046-1-b-padhi@ti.com>
- <20250814223839.3256046-17-b-padhi@ti.com>
- <20250821060629.GB7503@francesco-nb>
- <ecff956d-1019-41d0-9bfc-b0bdc30e87ba@ti.com>
- <aKnvrh2TSksb_39i@livingston.pivistrello.it>
+Subject: Re: [PATCH] ext4: fix potential null deref in ext4_mb_init()
+To: libaokun@huaweicloud.com, linux-ext4@vger.kernel.org
+Cc: tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz,
+ linux-kernel@vger.kernel.org, yangerkun@huawei.com, libaokun1@huawei.com,
+ syzbot+1713b1aa266195b916c2@syzkaller.appspotmail.com
+References: <20250825033830.2230202-1-libaokun@huaweicloud.com>
 Content-Language: en-US
-From: Beleswar Prasad Padhi <b-padhi@ti.com>
-In-Reply-To: <aKnvrh2TSksb_39i@livingston.pivistrello.it>
-Content-Type: text/plain; charset="UTF-8"
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <20250825033830.2230202-1-libaokun@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-CM-TRANSID:gCh0CgAncY0W6atoqvLYAA--.56226S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxAw48WryxurWfWFyrtw4Dtwb_yoW5WF4fp3
+	ZrAFyxKr4UGFyDCa1xW3WYqw4Fga18WF1UJ34fWF1rXF1Utryvka92gr1UCFyUKrWDA3Z7
+	JF9Fqr45tw48CaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
+On 8/25/2025 11:38 AM, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
+> 
+> In ext4_mb_init(), ext4_mb_avg_fragment_size_destroy() may be called
+> when sbi->s_mb_avg_fragment_size remains uninitialized (e.g., if groupinfo
+> slab cache allocation fails). Since ext4_mb_avg_fragment_size_destroy()
+> lacks null pointer checking, this leads to a null pointer dereference.
+> 
+> ==================================================================
+> EXT4-fs: no memory for groupinfo slab cache
+> BUG: kernel NULL pointer dereference, address: 0000000000000000
+> PGD 0 P4D 0
+> Oops: Oops: 0002 [#1] SMP PTI
+> CPU:2 UID: 0 PID: 87 Comm:mount Not tainted 6.17.0-rc2 #1134 PREEMPT(none)
+> RIP: 0010:_raw_spin_lock_irqsave+0x1b/0x40
+> Call Trace:
+>  <TASK>
+>  xa_destroy+0x61/0x130
+>  ext4_mb_init+0x483/0x540
+>  __ext4_fill_super+0x116d/0x17b0
+>  ext4_fill_super+0xd3/0x280
+>  get_tree_bdev_flags+0x132/0x1d0
+>  vfs_get_tree+0x29/0xd0
+>  do_new_mount+0x197/0x300
+>  __x64_sys_mount+0x116/0x150
+>  do_syscall_64+0x50/0x1c0
+>  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> ==================================================================
+> 
+> Therefore, add necessary null check to ext4_mb_avg_fragment_size_destroy()
+> to prevent this issue. The same fix is also applied to
+> ext4_mb_largest_free_orders_destroy().
+> 
+> Reported-by: syzbot+1713b1aa266195b916c2@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=1713b1aa266195b916c2
+> Fixes: f7eaacbb4e54 ("ext4: convert free groups order lists to xarrays")
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
 
-On 23/08/25 22:13, Francesco Dolcini wrote:
-> On Fri, Aug 22, 2025 at 10:09:48PM +0530, Beleswar Prasad Padhi wrote:
->> On 8/21/2025 11:36 AM, Francesco Dolcini wrote:
->>> On Fri, Aug 15, 2025 at 04:08:22AM +0530, Beleswar Padhi wrote:
->>>> The wkup_r5fss0_core0_memory_region is used to store the text/data
->>>> sections of the Device Manager (DM) firmware itself and is necessary for
->>>> platform boot. Whereas the wkup_r5fss0_core0_dma_memory_region is used
->>>> for allocating the Virtio buffers needed for IPC with the DM core which
->>>> could be optional. The labels were incorrectly used in the
->>>> k3-am62p-verdin.dtsi file. Correct the firmware memory region label.
->>>>
->>>> Currently, only mailbox node is enabled with FIFO assignment. However,
->>>> there are no users of the enabled mailboxes. Add the missing carveouts
->>>> for WKUP and MCU R5F remote processors, and enable those by associating
->>>> to the above carveout and mailboxes. This config aligns with other AM62P
->>>> boards and can be refactored out later.
->>>>
->>>> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
->>>> ---
->>>> Cc: Francesco Dolcini <francesco.dolcini@toradex.com>
->>>> Cc: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
->>>> Cc: Parth Pancholi <parth.pancholi@toradex.com>
->>>> Cc: Jo_o Paulo Gon_alves <joao.goncalves@toradex.com>
->>>> Requesting for a review/test.
->>>>
->>>>   arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi | 42 ++++++++++++++++++++-
->>>>   1 file changed, 41 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi
->>>> index 6a04b370d149..0687debf3bbb 100644
->>>> --- a/arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi
->>>> +++ b/arch/arm64/boot/dts/ti/k3-am62p-verdin.dtsi
->>>> @@ -162,7 +162,25 @@ secure_ddr: optee@9e800000 {
->>>>   			no-map;
->>>>   		};
->>>> -		wkup_r5fss0_core0_memory_region: r5f-dma-memory@9c900000 {
->>>> +		mcu_r5fss0_core0_dma_memory_region: mcu-r5fss-dma-memory-region@9b800000 {
->>>> +			compatible = "shared-dma-pool";
->>>> +			reg = <0x00 0x9b800000 0x00 0x100000>;
->>>> +			no-map;
->>>> +		};
->>>> +
->>>> +		mcu_r5fss0_core0_memory_region: mcu-r5fss-memory-region@9b900000 {
->>> Node name should be generic, `memory@9b900000` ?
->>
->> Humm, that memory is reserved and has the 'no-map' property. So it
->> technically is only used by the node which references it (a particular
->> rproc in this case), and never used by Linux for any allocations. So it
->> is not generic memory per say...
->>
->> So I was inclined for putting the specific node name which uses the
->> carveout in the label. What do you think?
-> My understanding is that the node name must be generic, as required by
-> the DT specification. What matters is that this is memory, not what is used
-> for.
+Looks good to me.
 
+Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
 
-Sorry, I misinterpreted node name with label. I will fix this in v3
-Will wait for any other comments on v2:
-https://lore.kernel.org/all/20250823160901.2177841-1-b-padhi@ti.com/
+> ---
+>  fs/ext4/mballoc.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+> index 5898d92ba19f..6070d3c86678 100644
+> --- a/fs/ext4/mballoc.c
+> +++ b/fs/ext4/mballoc.c
+> @@ -3655,16 +3655,26 @@ static void ext4_discard_work(struct work_struct *work)
+>  
+>  static inline void ext4_mb_avg_fragment_size_destroy(struct ext4_sb_info *sbi)
+>  {
+> +	if (!sbi->s_mb_avg_fragment_size)
+> +		return;
+> +
+>  	for (int i = 0; i < MB_NUM_ORDERS(sbi->s_sb); i++)
+>  		xa_destroy(&sbi->s_mb_avg_fragment_size[i]);
+> +
+>  	kfree(sbi->s_mb_avg_fragment_size);
+> +	sbi->s_mb_avg_fragment_size = NULL;
+>  }
+>  
+>  static inline void ext4_mb_largest_free_orders_destroy(struct ext4_sb_info *sbi)
+>  {
+> +	if (!sbi->s_mb_largest_free_orders)
+> +		return;
+> +
+>  	for (int i = 0; i < MB_NUM_ORDERS(sbi->s_sb); i++)
+>  		xa_destroy(&sbi->s_mb_largest_free_orders[i]);
+> +
+>  	kfree(sbi->s_mb_largest_free_orders);
+> +	sbi->s_mb_largest_free_orders = NULL;
+>  }
+>  
+>  int ext4_mb_init(struct super_block *sb)
 
-Thanks,
-Beleswar
-
->
->
-> So it should be something like
->
->
-> mcu_r5fss0_core0_dma_memory: memory@9c900000 {
-> 	compatible = "shared-dma-pool";
-> 	reg = <0x00 0x9b800000 0x00 0x100000>;
-> 	no-map;
-> };
->
->
-> Francesco
->
 
