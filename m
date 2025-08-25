@@ -1,264 +1,193 @@
-Return-Path: <linux-kernel+bounces-785693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EAFBB34FA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 01:20:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80383B34FAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 01:27:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E2B704E22C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 23:20:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E314B1B26CC8
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 23:27:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D0EE2594B4;
-	Mon, 25 Aug 2025 23:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8963D29BDA9;
+	Mon, 25 Aug 2025 23:26:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=weathered-steel.dev header.i=@weathered-steel.dev header.b="Kw7HvHkO"
-Received: from mail-43170.protonmail.ch (mail-43170.protonmail.ch [185.70.43.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="maQSuN8y"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FEEFA92E
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 23:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1868281720;
+	Mon, 25 Aug 2025 23:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756164040; cv=none; b=lNeA758wrFOJbLN1OkEdhf8v7ZEXr9v494I81svFrJt+XZxXyeKEkX3sOuGtkeaKS1IfTWOaHn5w/UkUGX0Ekxi69BQN25mt1f1FxtogZ0h0JsR0BmVTPum3jC0wk+GsD8aXGIa8aL1MpjZD4/YMhZRNS/uobKjVHOdyZWloXlA=
+	t=1756164406; cv=none; b=Urd9FysU+hoCCws5sV7s7+UOk03H0uMOayKY9rLYpsjeIHKg8VaWxkGs9++E9e0GJuvdSdUa47z6ayN2+j+18WR5BLEMxQLNqmeuVUPpHh50HBoFf/290slv58rECR9WacETaKZ7COA7OqYfCYv0b337fNlFMr+EhmQwN2RQ+s8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756164040; c=relaxed/simple;
-	bh=gbTmdVfYx6WD/wWYJEFXu2sOB9/ZLFj1eXj5NVqzxQQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oeZs15DWR7pti2Ktnfj6nuYi0qmXczSQJe43Lb2+AQJJ+7xW8YY00dQ5zKoQ/quxt0P6dwFiofBYR5qGp84PiDv4bUp1XygUmbgbdJHGL9F4rYDFMxqtnCPuXkpAkC0Q99O+W6stXG3pX5729ATdLaTaCvdLa0QOafOQDxk2n6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weathered-steel.dev; spf=pass smtp.mailfrom=weathered-steel.dev; dkim=pass (2048-bit key) header.d=weathered-steel.dev header.i=@weathered-steel.dev header.b=Kw7HvHkO; arc=none smtp.client-ip=185.70.43.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weathered-steel.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weathered-steel.dev
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=weathered-steel.dev;
-	s=protonmail3; t=1756164027; x=1756423227;
-	bh=dbfxHDr+4prCVmBev/sJiog2Lc66l2bjBKk57p6NvnI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:In-Reply-To:From:To:
-	 Cc:Date:Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=Kw7HvHkOW/t/7aBcbbaxEWgJIAosTbK9FiF/6CDyQESX2BXBlTRAFBUsx8tZMfYAr
-	 db6I272BNYVLGhyhLUyUt86/sxo7RmXvwpjm8C+Jjkr6JyInW0/IQOAJVfpeF90Zzj
-	 5+nWo4hHFKRADJMvcZTjlkhAKamuNUw58vSUs7fVOJwNUZ+ypNoX6ybtgrOTqt75Yx
-	 yea2VWK69D3FhqUjpwyABmkcfz2XUDQq1VoKse3WnJus3t53cG1bvF/aEuAhTVNkiR
-	 BfCPH2IfwZzREM40vUa2Qc7C0DylCv6VtERKOBfbExqguu0BHpwvtB36zuKpOjPWJ6
-	 8cI9ZlrrjiWNA==
-X-Pm-Submission-Id: 4c9mx60wYnz1DDLJ
-Date: Mon, 25 Aug 2025 23:20:22 +0000
-From: Elle Rhumsaa <elle@weathered-steel.dev>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, Danilo Krummrich <dakr@kernel.org>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Alistair Popple <apopple@nvidia.com>, nouveau@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 1/2] nova-core: Add a library for bitfields in Rust
- structs
-Message-ID: <aKzvpFf9PkTHYNet@archiso>
-References: <20250824135954.2243774-1-joelagnelf@nvidia.com>
+	s=arc-20240116; t=1756164406; c=relaxed/simple;
+	bh=JG18q78ZVkG4W76knSsJW1ICQmeXz/fQ1c5jpSC+ai8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TEAnByhEPbCanZfbdnAP6TAlVhAJVyDXolAxLaMvVI72xL7ZuVQH61RqQUTaVPl/EyLeX7PNGlPZtuecV3ZyU1mlT0Ia8An0C/TOTqP4uVnLhkykbkJLZ8u2I6bhzwKqd2p+H08OD+iSVsfaT5xmTM9/u95F19TF10AMriOp9es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=maQSuN8y; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3c7aa4ce823so1513678f8f.0;
+        Mon, 25 Aug 2025 16:26:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756164403; x=1756769203; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JG18q78ZVkG4W76knSsJW1ICQmeXz/fQ1c5jpSC+ai8=;
+        b=maQSuN8yROjE/KD00Y7bwf1xPaywL9F5vFGZG63KniYeOLAG1pToyQxkT+T1c99aiC
+         NgiaI9AgrvaZqdJpZLDyjeUaqcEzlRR7icjX8arhba2GkGaDiURH3VXkZO1o1TifBx6y
+         ieEQUgHW7DxNYQ6TpymO0I+46PpIbHzksB8E5X+MuNwiI90DMv2yAhLYQUrcIFbijlP6
+         qDdkdfpc873JupX0Znso8jB5gVzY5+WjUOcf+UkEtk5AvUEmTKaiazF0ISCle1vYTQLd
+         sWjUpVQ0srpi3icdU3qlXFy9Oe7OlQWUYDZLbt7NG+eBtczBglfXrOK83kr1XtvBMCFq
+         WbpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756164403; x=1756769203;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JG18q78ZVkG4W76knSsJW1ICQmeXz/fQ1c5jpSC+ai8=;
+        b=WvQzOpyoniBcOap/dFX/e6X0k4ZgxTg2iJdRYboG/Q2y17FFjK7B5Fla8DpqPJ6Wpc
+         l07CB6kUlhBwe2BbKygAQEbiuL6A4Pq2zaOTy32yrctAvHYIPDDxgx1stKI9CD9yeig7
+         cuOaYyJiEZkz6beIs0B8GMPG13I92bi+j/wvMBNwW8XjUSga8mU60Nb+Vnj8BAlsI5Ga
+         36aqLAIjsC9L7uxsnkRnerz6ODBzBcu7QO+NTjwF8Qceq1XdrF8u79SEWDrB1pOgqtnI
+         FN26vea7cAl61rrDy8DDrERM3/3as+5B7NSWqr3vUyDSjeKQIEZPXNcUbe0j2c3qf1sr
+         68bA==
+X-Forwarded-Encrypted: i=1; AJvYcCV3hthbKgtMEX5W5cCdoHRt4kQdjM1GNAiHfgAnCWy0ppixvfmcGvWT10qkP+5XbZvuiA66JK9leaJ+0Fw=@vger.kernel.org, AJvYcCVpllZ6XJZypLCwlpLYzsZg0Smv8A8WwoDMMj8sI8OKipAMiXLzQ4jT3VHJIYuzssTPPKU8KOnk@vger.kernel.org
+X-Gm-Message-State: AOJu0YwckJDId39Ul9fNsunP4dsiKUFBQlCzrXxOhBizUz4axqHj+4Dn
+	iTIJ4FRkhFRSj5wD2dXDGxC7j0bMOwjYB7wTXsv5ByR4NTH3xG6uHqB1aC9F3aNrYKTu+iv0KST
+	G5aygvP33dfVztOIzd/pgPTxuqLmyc5o=
+X-Gm-Gg: ASbGncuoebKanZrK1QNuMuDRtrATFJkMzCLOkHwxhbY1bzh4/wM/PySLNiafG/txaei
+	RgIAdXssQ3mzVHNw3kK4SEZHNDl1Zem5/HGbcnv0aercwyK+1LUmesDaNUgKdi4SNJAGSkW+0h5
+	FwvQxc0fYBTE/zXK8d6rMQaKtYv7GiEeFZf6EMkqLg50lI1YQpSHUkNjrYfhyBmQUohtb30Kn9+
+	L/Wo5/5Vboxxmf2r3YMw92YwJUTAdepq051HHhbxNKJT58K41gia0OQ2uJM85poZKhN7NSjoled
+	QlINtB8=
+X-Google-Smtp-Source: AGHT+IH1DfEr+Lu3NtBpYyp3/OYkyFwA5ty+ZQKhZUgugEu1nKOFeJs8vUUL857y82BshZV21sS4nTMdByEDq1urCgs=
+X-Received: by 2002:a05:6000:4383:b0:3b7:882c:790 with SMTP id
+ ffacd0b85a97d-3c5dc73625cmr10812283f8f.37.1756164403017; Mon, 25 Aug 2025
+ 16:26:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250824135954.2243774-1-joelagnelf@nvidia.com>
+References: <20250822041526.467434-1-CFSworks@gmail.com> <CAMj1kXH38gOUpDDdarCXPAY3BHBbuFzdD=Dq7Knsg-qHJoNqzQ@mail.gmail.com>
+ <CAH5Ym4gTTLcyucnXjxFtNutVR1HQ0G2k_YBSNO-7G3-4YXUtag@mail.gmail.com>
+ <CAMj1kXF00Y0=67apXVbOC+rpbEEvyEovFYf4r_edr6mXjrj0+A@mail.gmail.com>
+ <CAH5Ym4h+2w6aayzsVu__3qu3-6ETq1HK7u18yGzOrRqZ--2H9w@mail.gmail.com>
+ <874itx14l5.wl-maz@kernel.org> <CAH5Ym4iqvQuO6JxO-jypTp05Ug_2vDokCDoBgGB+cOzgmTQpkQ@mail.gmail.com>
+ <871poz2299.wl-maz@kernel.org>
+In-Reply-To: <871poz2299.wl-maz@kernel.org>
+From: Sam Edwards <cfsworks@gmail.com>
+Date: Mon, 25 Aug 2025 16:26:31 -0700
+X-Gm-Features: Ac12FXymuHj_F3D9l2e_hmE46sF5hQJvepyvPpmnqbK0RbrKURVSn9TFQXq54tw
+Message-ID: <CAH5Ym4hgOCMggPTmdmmEObupzbHm+w6=J_7u+skOxRHE3Z9VnQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64/boot: Zero-initialize idmap PGDs before use
+To: Marc Zyngier <maz@kernel.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Anshuman Khandual <anshuman.khandual@arm.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Baruch Siach <baruch@tkos.co.il>, Kevin Brodsky <kevin.brodsky@arm.com>, 
+	Joey Gouly <joey.gouly@arm.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Aug 24, 2025 at 09:59:52AM -0400, Joel Fernandes wrote:
-> Add a minimal bitfield library for defining in Rust structures (called
-> bitstruct), similar in concept to bit fields in C structs. This will be used
-> for defining page table entries and other structures in nova-core.
-> 
-> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
-> ---
->  drivers/gpu/nova-core/bitstruct.rs | 149 +++++++++++++++++++++++++++++
->  drivers/gpu/nova-core/nova_core.rs |   1 +
->  2 files changed, 150 insertions(+)
->  create mode 100644 drivers/gpu/nova-core/bitstruct.rs
-> 
-> diff --git a/drivers/gpu/nova-core/bitstruct.rs b/drivers/gpu/nova-core/bitstruct.rs
-> new file mode 100644
-> index 000000000000..661a75da0a9c
-> --- /dev/null
-> +++ b/drivers/gpu/nova-core/bitstruct.rs
-> @@ -0,0 +1,149 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +//
-> +// bitstruct.rs — C-style library for bitfield-packed Rust structures
-> +//
-> +// A library that provides support for defining bit fields in Rust
-> +// structures to circumvent lack of native language support for this.
-> +//
-> +// Similar usage syntax to the register! macro.
-> +
-> +use kernel::prelude::*;
-> +
-> +/// Macro for defining bitfield-packed structures in Rust.
-> +/// The size of the underlying storage type is specified with #[repr(TYPE)].
-> +///
-> +/// # Example (just for illustration)
-> +/// ```rust
-> +/// bitstruct! {
-> +///     #[repr(u64)]
-> +///     pub struct PageTableEntry {
-> +///         0:0       present     as bool,
-> +///         1:1       writable    as bool,
-> +///         11:9      available   as u8,
-> +///         51:12     pfn         as u64,
-> +///         62:52     available2  as u16,
-> +///         63:63     nx          as bool,
-> +///     }
-> +/// }
-> +/// ```
-> +///
-> +/// This generates a struct with methods:
-> +/// - Constructor: `default()` sets all bits to zero.
-> +/// - Field accessors: `present()`, `pfn()`, etc.
-> +/// - Field setters: `set_present()`, `set_pfn()`, etc.
-> +/// - Builder methods: `with_present()`, `with_pfn()`, etc.
-> +/// - Raw conversion: `from_raw()`, `into_raw()`
-> +#[allow(unused_macros)]
-> +macro_rules! bitstruct {
-> +    (
-> +        #[repr($storage:ty)]
-> +        $vis:vis struct $name:ident {
-> +            $(
-> +                $hi:literal : $lo:literal $field:ident as $field_type:tt
-> +            ),* $(,)?
-> +        }
-> +    ) => {
-> +        #[repr(transparent)]
-> +        #[derive(Copy, Clone, Default)]
-> +        $vis struct $name($storage);
-> +
-> +        impl $name {
-> +            /// Create from raw value
-> +            #[inline(always)]
-> +            $vis const fn from_raw(val: $storage) -> Self {
-> +                Self(val)
-> +            }
-> +
-> +            /// Get raw value
-> +            #[inline(always)]
-> +            $vis const fn into_raw(self) -> $storage {
-> +                self.0
-> +            }
-> +        }
-> +
-> +        impl core::fmt::Debug for $name {
-> +            fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-> +                write!(f, "{}({:#x})", stringify!($name), self.0)
-> +            }
-> +        }
-> +
-> +        // Generate all field methods
-> +        $(
-> +            bitstruct_field_impl!($vis, $name, $storage, $hi, $lo, $field as $field_type);
-> +        )*
-> +    };
-> +}
-> +
-> +/// Helper to calculate mask for bit fields
-> +#[allow(unused_macros)]
-> +macro_rules! bitstruct_mask {
-> +    ($hi:literal, $lo:literal, $storage:ty) => {{
-> +        let width = ($hi - $lo + 1) as usize;
-> +        let storage_bits = 8 * core::mem::size_of::<$storage>();
-> +        if width >= storage_bits {
-> +            <$storage>::MAX
-> +        } else {
-> +            ((1 as $storage) << width) - 1
-> +        }
-> +    }};
-> +}
-> +
-> +#[allow(unused_macros)]
-> +macro_rules! bitstruct_field_impl {
-> +    ($vis:vis, $struct_name:ident, $storage:ty, $hi:literal, $lo:literal, $field:ident as $field_type:tt) => {
-> +        impl $struct_name {
-> +            #[inline(always)]
-> +            $vis const fn $field(&self) -> $field_type {
-> +                let field_val = (self.0 >> $lo) & bitstruct_mask!($hi, $lo, $storage);
-> +                bitstruct_cast_value!(field_val, $field_type)
-> +            }
-> +        }
-> +        bitstruct_make_setters!($vis, $struct_name, $storage, $hi, $lo, $field, $field_type);
-> +    };
-> +}
-> +
-> +/// Helper macro to convert extracted value to target type
-> +///
-> +/// Special handling for bool types is required because the `as` keyword
-> +/// cannot be used to convert to bool in Rust. For bool fields, we check
-> +/// if the extracted value is non-zero. For all other types, we use the
-> +/// standard `as` conversion.
-> +#[allow(unused_macros)]
-> +macro_rules! bitstruct_cast_value {
-> +    ($field_val:expr, bool) => {
-> +        $field_val != 0
-> +    };
-> +    ($field_val:expr, $field_type:tt) => {
-> +        $field_val as $field_type
-> +    };
-> +}
-> +
-> +#[allow(unused_macros)]
-> +macro_rules! bitstruct_write_bits {
-> +    ($raw:expr, $hi:literal, $lo:literal, $val:expr, $storage:ty) => {{
-> +        let mask = bitstruct_mask!($hi, $lo, $storage);
-> +        ($raw & !(mask << $lo)) | ((($val as $storage) & mask) << $lo)
-> +    }};
-> +}
-> +
-> +#[allow(unused_macros)]
-> +macro_rules! bitstruct_make_setters {
-> +    ($vis:vis, $struct_name:ident, $storage:ty, $hi:literal, $lo:literal, $field:ident, $field_type:tt) => {
-> +        ::kernel::macros::paste! {
-> +            impl $struct_name {
-> +                #[inline(always)]
-> +                #[allow(dead_code)]
-> +                $vis fn [<set_ $field>](&mut self, val: $field_type) {
-> +                    self.0 = bitstruct_write_bits!(self.0, $hi, $lo, val, $storage);
-> +                }
-> +
-> +                #[inline(always)]
-> +                #[allow(dead_code)]
-> +                $vis const fn [<with_ $field>](mut self, val: $field_type) -> Self {
-> +                    self.0 = bitstruct_write_bits!(self.0, $hi, $lo, val, $storage);
-> +                    self
-> +                }
-> +            }
-> +        }
-> +    };
-> +}
+On Mon, Aug 25, 2025 at 2:12=E2=80=AFAM Marc Zyngier <maz@kernel.org> wrote=
+:
+> > So: where do the terms P4D, PUD, and PMD fit in here? And which one's
+> > our missing fencepost?
+> > PGD ----> ??? ----> ??? ----> ??? ----> ??? ----> PTE (|| low VA bits
+> > =3D final PA)
+>
+> I'm struggling to see what you consider a problem, really. For me, the
+> original mistake is that you seem to have started off the LSBs of the
+> VA, instead of the MSBs.
 
-This is awesome. Is there a place for this to live outside of
-`nova-core`? I would think this would be extremely useful as a general
-helper for bitfield struct definitions.
+Right; I did my example MMU walk in reverse to start with the levels
+that are never folded and work my way up to the PGD level, since I was
+trying to deduce PTRS_PER_PGD, essentially.
 
-> diff --git a/drivers/gpu/nova-core/nova_core.rs b/drivers/gpu/nova-core/nova_core.rs
-> index cb2bbb30cba1..54505cad4a73 100644
-> --- a/drivers/gpu/nova-core/nova_core.rs
-> +++ b/drivers/gpu/nova-core/nova_core.rs
-> @@ -2,6 +2,7 @@
->  
->  //! Nova Core GPU Driver
->  
-> +mod bitstruct;
->  mod dma;
->  mod driver;
->  mod falcon;
-> -- 
-> 2.34.1
+As for the ultimate source of my confusion, it's best explained in
+this paragraph from the paging documentation [0] (emphasis my own):
 
-Reviewed-by: Elle Rhumsaa <elle@weathered-steel.dev>
+The entry part of the name is a bit confusing because while in Linux 1.0
+this did refer to a single page table entry in the single top level page ta=
+ble,
+it was retrofitted to be an array of mapping elements when two-level page
+tables were first introduced, ***so the pte is the lowermost page table, no=
+t
+a page table entry.***
+
+As I see it, this creates a habit of using the names for the table
+entries and the tables themselves interchangeably. Kernel folk who
+don't work on the MM subsystem much (like myself) don't share this
+habit. So when I say something like "an 'array of PGDs' is nonsense,"
+I mean "an 'array of top-level page tables' is an oxymoron: if there's
+an array of them, they aren't top-level." But someone more seasoned
+like you thinks I'm saying "array of PGD entries" and asks "What's the
+problem? That's, tautologically, what the PGD is..."
+
+It's absolutely on me for not thinking to RTFM earlier. Thank you for
+your patience. In my defense, I don't think there's any way I could
+have known that "PTE" was a misnomer. The RISC-V team added a few
+helpful comments in their pgtable*.h that probably helps people
+encountering these MM terms for the first time through those files.
+I'm considering sending a patch to clarify the comments on the ARM64
+#defines similarly.
+
+I've included a glossary of terms [1] in case this confusion comes up
+again with somebody else.
+
+> I find it much easier to reason about a start level (anywhere from -1
+> to 2, depending on the page size and the number of VA bits), and the
+> walk to always finish at level 3. The x86 naming is just compatibility
+> cruft that I tend to ignore.
+
+Indeed, I think this is probably what most seasoned ARM people do.
+People who are first mentally visualizing the tree -- and specifically
+Linux's intent with the tree -- will probably still be relying on the
+PxD terms to bootstrap their understanding, however.
+
+Thank you once again for your patience,
+Sam
+
+[0]: https://docs.kernel.org/mm/page_tables.html
+[1]:
+"PTE"
+A newcomer probably thinks: "Page Table Entry, the final descriptor at
+the end of an MMU walk."
+Actual meaning: Bottom-most translation table *OR* an entry of that
+table. It was once an initialism, but it's taken on a meaning of its
+own.
+
+"PGD"
+A newcomer probably thinks: "Page Global Directory, or the pointer
+thereto -- the thing you find in TTBRn_ELx"
+Actual meaning: Page Global Directory or the pointer thereto *OR* Page
+Global Descriptor: an entry of the Page Global Directory, which
+encodes a pointer to the P4DIR if 5-level translation is enabled, or a
+lower PxDIR if not.
+
+#define PTRS_PER_PTE
+A newcomer probably thinks: "Number of frames pointed from a single
+Page Table Entry (so... er... 1???)"
+Actual meaning: Number of entries in the "PTE," the final translation table=
+.
+
+#define PGDIR_SIZE
+A newcomer probably thinks: "Number of bytes of VM represented by one
+PGDIR." (or even "Number of bytes the top-level page table occupies in
+memory.")
+Actual meaning: Number of bytes of VM represented by *one entry* of
+the PGDIR. The 'DIR' is a misnomer here.
+
+#define PGD_SIZE
+Actual meaning: Number of bytes the top-level page table occupies in
+memory. Defined separately from PAGE_SIZE because it may be smaller
+(never larger).
 
