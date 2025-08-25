@@ -1,93 +1,70 @@
-Return-Path: <linux-kernel+bounces-784232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C670B3386B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:03:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33B85B3386C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:04:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 041EC178B56
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:03:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 392D7189BDEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:04:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A9AC28CF76;
-	Mon, 25 Aug 2025 08:03:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19282298CD5;
+	Mon, 25 Aug 2025 08:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gzDmK5Nt"
-Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hZpA1743";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8uOkEfYL"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177601FB3;
-	Mon, 25 Aug 2025 08:03:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A0428CF5F;
+	Mon, 25 Aug 2025 08:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756109020; cv=none; b=n2ZxVcL1o86RJY7923U5zdhW0esZGStyfrMFPEASEvCO2bOLtwr6YByL+53rCoumUC2C5v3kwv+zkY4+YTq5koWf5dX54JbLCeNkgD/ZGXFK9D12yzkmRbd/GWtrLRmRk0MmjvdLPz7ujUmq0inwhyB+3jj5t+fosVoPEyhiniw=
+	t=1756109041; cv=none; b=tgSns0srBLgCEQPtoVpsJs15rr6fVLEaEOPRu6hDKMBVbLMc3RIGA6xXw82uaT/n8RPViDsVkyG66qoPkoOIxk8hR1BA+OsBVkvhS5W8QZIt2BITKW+sjDeVZc8qF+Zrknp151T0pvagbCth+tvHlR+BYuvmyzAFdQ3aB9IGvcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756109020; c=relaxed/simple;
-	bh=mvmq5rwqiWBHURNUX+Nja686kD0FUynMAYpWQ7S0jrQ=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=r5a9PlMZmYCBj09VTyJp+GkRHadP1pTo+ja9gv9asFzFK++KP2FicTsTQL4ekJ4g50GtWiVtPczhVjv5+LIN6jqRC0bG6MCppQXKYAGsVMFwWVa3hFvylV1FyLXIdS3E82SWW0jnkv59RM0CS78eD0I5zdRQxbpnSuEZNFuwJz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gzDmK5Nt; arc=none smtp.client-ip=202.12.124.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id C2F837A0138;
-	Mon, 25 Aug 2025 04:03:36 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Mon, 25 Aug 2025 04:03:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1756109016; x=1756195416; bh=LV8nmb1e2FEh9yr5rX4WxOJTjRfi9VaYMx6
-	rSASEwDk=; b=gzDmK5NteI6JjDK2LUeWse+V9cK3gpiz/p22O5LM4/uqzUrd5BU
-	LOz9dPpLLWnnAr5MQdayJN9nw7dt2el9/Cqb5Ml5zo9BqnS3RZY5A+1eGcd71B0J
-	zIBH4hsLMT4EBuNdVHsyYPABF2RU3vxUFqyYq3gf6qqrNT+ap91sXG9ufHe1kCnF
-	Ni0IqV463rC6z6tHc3P5C6j0GBHrDWi0BtM03qahHLf+hc8+/0wMmj6GUW9NVzwu
-	iGsrpbeWtBnQ/U5VcN/Vhp4/QVhDIp8SPSthh5fjum+DrLEFEVam4Ev1tkyF8yl9
-	SQjngi0bQXaWbJxEO+pdB/XuBvCvleiJ0Vw==
-X-ME-Sender: <xms:1xisaBMJervUYei5VBQbqX6tHlujDfXVDMAexO_DhtAI-fegSG9drQ>
-    <xme:1xisaOkeIdCy6HXPWgdPOfe5D7e4VfnpJOZVlQMrHSvOED4MtjeerKdog6g7TkHMF
-    bRZCbYzGLqKIpPg1Ps>
-X-ME-Received: <xmr:1xisaGQ1Tf4xhg92H_kQxRFfdxHIw5in3Tr-UEQwkqHvLRmVe6mq8xHeLVvV10oFS77ToOpPH8EnapncqRopgylGLKXVkMH5Mn4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddujedukeeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefhihhnnhcuvfhh
-    rghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrghtth
-    gvrhhnpeelueehleehkefgueevtdevteejkefhffekfeffffdtgfejveekgeefvdeuheeu
-    leenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehfth
-    hhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggprhgtphhtthhopeelpdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdroh
-    hrghdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhg
-    pdhrtghpthhtoheplhgrnhgtvgdrhigrnhhgsehlihhnuhigrdguvghvpdhrtghpthhtoh
-    epghgvvghrtheslhhinhhugidqmheikehkrdhorhhgpdhrtghpthhtohepmhhhihhrrghm
-    rghtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehorghksehhvghlshhinhhkihhnvg
-    htrdhfihdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    shhtrggslhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugi
-    dqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:1xisaNWPDl6CzRt0Ngt7QSjvNgLfmK1qDto-Nwmq11Btm3mTsWJx7Q>
-    <xmx:1xisaKKClOeZKju0QkNIMzpMe0uWbY5w0vJNcwpK4k1BCrzWveiZ8Q>
-    <xmx:1xisaN1jl2TZv2wuFnJHUzVpDEuWKNw4VshF1SYu8Jut62JYKTNBPw>
-    <xmx:1xisaHIUX74C1VurJ1l_qvQI-OqE2k8EqDLKT7vGTw5vsrV2RG5uOw>
-    <xmx:2BisaD1twva0Q_oTYCUWBNKyOG030xMSPAay0FI1M-vf6xFM193Qq80C>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 25 Aug 2025 04:03:32 -0400 (EDT)
-Date: Mon, 25 Aug 2025 18:03:23 +1000 (AEST)
-From: Finn Thain <fthain@linux-m68k.org>
-To: Peter Zijlstra <peterz@infradead.org>
-cc: Andrew Morton <akpm@linux-foundation.org>, 
-    Lance Yang <lance.yang@linux.dev>, 
-    Geert Uytterhoeven <geert@linux-m68k.org>, 
-    Masami Hiramatsu <mhiramat@kernel.org>, Eero Tamminen <oak@helsinkinet.fi>, 
-    Will Deacon <will@kernel.org>, stable@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] atomic: Specify natural alignment for atomic_t
-In-Reply-To: <20250825071247.GO3245006@noisy.programming.kicks-ass.net>
-Message-ID: <58dac4d0-2811-182a-e2c1-4edfe4759759@linux-m68k.org>
-References: <7d9554bfe2412ed9427bf71ce38a376e06eb9ec4.1756087385.git.fthain@linux-m68k.org> <20250825071247.GO3245006@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1756109041; c=relaxed/simple;
+	bh=dw3CBLRrWK4mJIlC3s88BsZNO0LmaZGmrT2p8QPgBt8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kbP5TWm6SB/NmP0yibRbnlpBYOWoUzHc87a/1FKAi5dbYbe63to29y6lLswfRPX8Gvzsdd7lc84UtAJkOp/32YgKerzULwxEe819/99DY7BO+FX3zI4o9mp0lj9wqLKVSOqoRCLtb4MkxFghMSXUEogUjW3d5aJPYw+ozErcDws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hZpA1743; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8uOkEfYL; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 25 Aug 2025 10:03:56 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756109037;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9Xx+e1Ihw4PZ+dDnYVImDCCdM/CTodXvc11zucdGncE=;
+	b=hZpA1743KBgteEbHFOMGJX+QUboEFCmZ8hGziffBoGh44zqoLUyR1WYxiPI+ESev6pGhJu
+	j5ZvbIK9RQUxydhyQLWQrWiwUrvNWsnHECQkfBGpNsxqrmbZtIbzsuVFJbL8vqr2uuEXO4
+	LaBK8CoMFcTMXD6WeK/i/VdOcBMvWf4+DGVoD1vGSFn6QjZVMCAalyBrKYo6iTWW3V4HA0
+	7d2dExza9von7GOG1HG5ELwy7knafNutB54mqM4xNELOE1z+jKKF92n77RxAOuQysmDvq7
+	ggGpBLHBQUzaDHJG4KuvP/30yNSBCyyyOWEkmtTjqd5bADXa2tk5egdAqqwi2g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756109037;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9Xx+e1Ihw4PZ+dDnYVImDCCdM/CTodXvc11zucdGncE=;
+	b=8uOkEfYLLNda2+9L5HpSjlQueBqyT35BQHivZSejzeOHBV/lLHay9kJQmZFDkJBukmSF+7
+	8SMgdOcH+SJS9vAg==
+From: Nam Cao <namcao@linutronix.de>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-trace-kernel@vger.kernel.org,
+	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
+	Clark Williams <williams@redhat.com>,
+	John Kacur <jkacur@redhat.com>
+Subject: Re: [RFC PATCH 01/17] rv: Refactor da_monitor to minimise macros
+Message-ID: <20250825080356.VOaAyf_7@linutronix.de>
+References: <20250814150809.140739-1-gmonaco@redhat.com>
+ <20250814150809.140739-2-gmonaco@redhat.com>
+ <20250821081405.RQhrWVKp@linutronix.de>
+ <d790d27cbe83a1c71dca88cf5e75af14ae214fbd.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,13 +72,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d790d27cbe83a1c71dca88cf5e75af14ae214fbd.camel@redhat.com>
 
+On Thu, Aug 21, 2025 at 10:49:05AM +0200, Gabriele Monaco wrote:
+> On Thu, 2025-08-21 at 10:14 +0200, Nam Cao wrote:
+> > On Thu, Aug 14, 2025 at 05:07:53PM +0200, Gabriele Monaco wrote:
+> I think the reason was mostly laziness / wish to change less things.
 
-On Mon, 25 Aug 2025, Peter Zijlstra wrote:
+Laziness is contagious, maybe you got it from me.
 
+> > > +/*
+> > > + * model_get_state_name - return the (string) name of the given
+> > > state
+> > > + */
+> > > +static char *model_get_state_name(enum states state)
+> > > +{
+> > > +	if ((state < 0) || (state >= STATE_MAX))
+> > > +		return "INVALID";
+> >
+> > Just notice that this probably should be
+> > 	if (BUG_ON((state < 0) || (state >= STATE_MAX)))
+> >
+> > You shouldn't do it in this patch of course. I just want to note it
+> > down.
 > 
-> And your architecture doesn't trap on unaligned atomic access ?!!?!
+> Mmh, I'm not quite sure about this one, sure it's not a good thing when
+> we try to get an invalid state/event, but isn't BUG a bit too much here?
+> We're handling things gracefully so the kernel is not broken (although
+> rv likely is).
 > 
+> If you really think we should note that, what about just WARN/WARN_ONCE ?
 
-Right. This port doesn't do SMP.
+I think that if RV is run, then the system is just being tested, and
+therefore it is not a big problem if the kernel crashes.
+
+But WARN_ONCE is fine too.
+
+Nam
 
