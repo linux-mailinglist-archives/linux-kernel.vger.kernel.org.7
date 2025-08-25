@@ -1,65 +1,66 @@
-Return-Path: <linux-kernel+bounces-785423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CDD6B34A76
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:35:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 132AFB34A7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:36:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A51D1A87DD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:35:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E1027B3BA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:34:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC78303CA1;
-	Mon, 25 Aug 2025 18:35:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 201163054EB;
+	Mon, 25 Aug 2025 18:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="WMZQDeWK"
-Received: from CAN01-YQB-obe.outbound.protection.outlook.com (mail-yqbcan01on2115.outbound.protection.outlook.com [40.107.116.115])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="BUlTpSIL"
+Received: from CAN01-YQB-obe.outbound.protection.outlook.com (mail-yqbcan01on2104.outbound.protection.outlook.com [40.107.116.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 362A623E340
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 18:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.116.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4550319D071
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 18:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.116.104
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756146905; cv=fail; b=ICXfSVEajCKVG53f7qBw65TQWdKGY7sSp5rg2Gnv/GW4t3+FfaxC9o7wAin2O5Y+V0s9XzTLaSuVNmLlkrDJFrD+D16UhNMbFmfd4wy0nrwZ0HApycImcTGxCo34DpU5GZq/uefFFpClMCydxOHPXmee2ULZRRB3l0VVBu17+VE=
+	t=1756146984; cv=fail; b=f1MCq3WdyTfE9/lHKE2rtrQtivuxyu2lG4jAwK/g6XkeTeAUNT1P8ODQPRxAxPkexCDM52MTlYi7l7PDXmkS+yNyAwZS6vElxwLZco6Es/EWVKAlo9XTIQzG541WbHc8jej8qp8SR33/tW3tfcTou9JKYukM6BqcWnAEp7+upO8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756146905; c=relaxed/simple;
-	bh=uCHsWIvchOHmDea8XhhsarbG3CpFBsZUp6Nt5sCtPN8=;
+	s=arc-20240116; t=1756146984; c=relaxed/simple;
+	bh=9F3zzW+/QODSuvm3hFKq9GiUYayC0/LXetddOjO1Yg0=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=P+hqOhwCgL3chdBBVKwlnPyFZK2McmPERlugRPQW64ofGp8V06pJAbGuJOYf84ts3UOSSyMbdZVkmP+iUZdDsLXVZRfvM8gbjAsQmvow70H4T5Ll1G0D0bO6sMN7VLbu6eyd0pN/t+vu9D/IRt9yECFUJ2RmBt3WE+8xF4mSGVo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=WMZQDeWK; arc=fail smtp.client-ip=40.107.116.115
+	 Content-Type:MIME-Version; b=F6j5Jbu4sF/OgP9K+2ZQiRRVMiVnXizCwRAQo74XEzHtRSEfR69ppEXqzzBF0IAy2MzgEyF5Ca5jFIWHG/xQQBkiGEC4drEn4gucbfAdlPGQc3HfCE3dtkH7x9US57Mz23Whl8uLp6jNfIm12CodhOoEGK8AECmEvQnDO5DfeeU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=BUlTpSIL; arc=fail smtp.client-ip=40.107.116.104
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=R5nhj20G+ikfFr19dWBPVfaIGsWPBrrS/emejpmnJmQtYnWizsVWHRvJLwxVe9GKFUCX98BCUytvzZC35kGYoUMNvfiSyRJecj1kMkeq+9qw6cMMtt3xqQfA4jzSW5Zq2WMz4KqRGDV5PS/jb4JpSuY1BTGG1rkSEqcEDXRkCgYKKZHQmX/UKGRjQHyxMCFIuy5TeJn7TD6HQMJb5i3xz/wqwSih8Tdfmfrv+mxhCP2fEVOTvgLa/O8VIozUKzJwAjIVcj8ZX31nMJug7wJv0sUY3EsujA9hUazwjOBd5Z9CS3Vr5IqFsZBhpqe9nQK8TZMQ580TULi3V2+u1puO9g==
+ b=MsUl5N8FQuzUz+adpNy2jyvq8AZUIKxBB9S2p2uklEflFJMicNkFxtKhwGrVpVzaEN+J2JEfGQOD+j4V4Spp8XHaLi57uVrP6ypCHFB0ewU59JwG1JPNkv3Xvmj0NXcUrbfPLWwVj9gtQ1xrHv6Z8QU7Ff/qSFvmlNTiUDVcUahkJOOs7ZYOnSnYYY7u9XBvLQRdWV8lbk8PoQpgIxtNKR2/PMFz2X0E5rCn48djaGyQWmYptVXH1NV97EOWtg7ysiqX8xQc+7WqlZGAmWVVJ4HLSvX1CI+GaWk0YDbB6ySLbKvxVCwc5eJV7SmbNZ1lkp91XRwB9hz6yvCL6io0rQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dY02eAZBNQURircGhltQj8yHIXZFWsvoMnjW/hBbVyY=;
- b=vypGL1IbcWiAjN1SGv+oyU66D+SioYxoFIdhnxPZbkjptC6a+iI2UVToedVsrxwpejrgrYsdWfcktKyQ8uh6wFOnVFaFMItzcGFuY6+7S2yVsWcG03OorEBRiuLwJJIFHqtQM5Gb+nSxYFr2fmq907QH4LfnsFT/FI1Hxhqr+JpGX1ulp8KAQsEMo/gPOxCElyStUk7Yjje29XMsIJNm1YS7BzObdrDxkg4ObdEYGhMm3ILm/va9aq/wiEIDxpND5Dnf4aoPpd7a8uvj6IKD6IFRoct4lu04WxZ9ZFrvz1VzoLR/D6IKaI7lV/sb+HshWL0gH7sH6z7Qz3OZ6QbscQ==
+ bh=MML4aJelrkrrzcxufiS+MQMQPMVR8NXFHZASVOnxgow=;
+ b=ny4yqweJUnAjBECOluicPmc9h5vJ0LNvcGGyx72UUcnr4zXgWRWwD5wuZI3PDvr3FNiWZJYONhBqFCl4iudwX+9gb8ePpflm3tf2NTwYpMGhPKWrJ8NH7l5kKEKP9QLQ9WqCJ1hMSins2egTe7TDgye6yUV0KT7cf6jVea2hxF+JKolDooIrAxnmq9ZdsJSg9FL4gamgvy0eTGwnHRxx4RUHDVxKtB6h0gz99/I0ujUhJAbUA4EsecE1ZxF8mbdP9dbh+5S7zuGPj4WbaHtA81m2k5cnQP4tZuPlZw8ryIw5xQ1RpthBA3gxCAWhCCl8TfGKUP40Oe1a1pYjCsdvhw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
  dkim=pass header.d=efficios.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dY02eAZBNQURircGhltQj8yHIXZFWsvoMnjW/hBbVyY=;
- b=WMZQDeWKwhAuWoAd+KlH6p3L3IgqVNp4DGibbMX3pPk1wUQlSjwM8Wp+NKmRnu7DG3cgwxr45EyChybqtiTLfX/7NQ2w7HDSRcb4bUj0sn19toep8R++FEH+Qz/HRYxTUm51LSuXVXA/uDHJ+BjQSnDZBQj8Hb+et0YcfpwKhv26c9/nMLOFB12m8/lzhE+emVA1ZlOQmyTUygFOOZ8MZl3R4OxqT6OHZqTs9c92sMiKbesa6auRaHNXWxj4wY2S/KJmQzgB6+HDOgPkX70zAdA+QWRiWwTl/VazTIojjRrNotafNIZYGVnr7rNMDl/HX2y1nthXA+eIPKZuLgaHAA==
+ bh=MML4aJelrkrrzcxufiS+MQMQPMVR8NXFHZASVOnxgow=;
+ b=BUlTpSILBBxo6e/OoweZW7CYbA5PPyTtj9J51pfj8gYAg4qyPZ3dOqCLT2oULJOs4BJTThF3ZBJG6QIYGWQYQcmmc3o6jxsBLV3Pp/Qu49rN3H6td4XB0IHGSuWADJ6evAKW11Lo5X+aHM6RJ8Gyc3UEEQIH4jx4t1vovA5ZsRNikRA7T6hsvzKuDhxIif8uOmFQB95B+anAIFnLhLI+Zk9ByppkDOMFD7xCDidLz25kFsOrrWUrTHXrS9PnE9XqWXEzGo3Vwu9+p7BZ9pnlXSCrPILf96Z9qxZvOumzUHCBMNKkSIj109MX3nSwC013OvG+cDFpJsGjNtGBXFUOGw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=efficios.com;
 Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
  by YT2PR01MB9478.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:a6::11) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.20; Mon, 25 Aug
- 2025 18:35:01 +0000
+ 2025 18:36:20 +0000
 Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
  ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
  ([fe80::50f1:2e3f:a5dd:5b4%3]) with mapi id 15.20.9052.021; Mon, 25 Aug 2025
- 18:34:59 +0000
-Message-ID: <885d6f67-f0e7-43c1-a173-740586cc0da5@efficios.com>
-Date: Mon, 25 Aug 2025 14:34:57 -0400
+ 18:36:20 +0000
+Message-ID: <9df7c462-f77e-4d48-a220-aa9486f4e53c@efficios.com>
+Date: Mon, 25 Aug 2025 14:36:18 -0400
 User-Agent: Mozilla Thunderbird
-Subject: Re: [patch V2 17/37] rseq: Expose lightweight statistics in debugfs
+Subject: Re: [patch V2 18/37] rseq: Provide static branch for runtime
+ debugging
 To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
 Cc: Jens Axboe <axboe@kernel.dk>, Peter Zijlstra <peterz@infradead.org>,
  "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
@@ -71,14 +72,14 @@ Cc: Jens Axboe <axboe@kernel.dk>, Peter Zijlstra <peterz@infradead.org>,
  Sven Schnelle <svens@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>,
  Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>
 References: <20250823161326.635281786@linutronix.de>
- <20250823161654.357235187@linutronix.de>
+ <20250823161654.421576400@linutronix.de>
 From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Content-Language: en-US
-In-Reply-To: <20250823161654.357235187@linutronix.de>
+In-Reply-To: <20250823161654.421576400@linutronix.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YQZPR01CA0133.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:87::25) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+X-ClientProxiedBy: YQZPR01CA0136.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:87::7) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
  (2603:10b6:b01:be::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -88,371 +89,290 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT2PR01MB9478:EE_
-X-MS-Office365-Filtering-Correlation-Id: 68646207-a327-4f05-bb3e-08dde4061873
+X-MS-Office365-Filtering-Correlation-Id: 84ae5bb8-8896-453b-a6c5-08dde40648e5
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WUUrTy80cGE1UG5LQzBDWmlJd3pnMFpqNVBXd1Q2b05ERVVnV1ZCMVA0RTNz?=
- =?utf-8?B?SVJKR1VLcVNNaDBRTGRIVlZRVm5IY2NTa0g3bndxRWVMU1pFdDMreWxaUHJl?=
- =?utf-8?B?dExYWkxtVlpUUGlTU2kxWFNLam43Z0RjSCtlVDAxL09obTNaSmkwZEFWTXI1?=
- =?utf-8?B?UGttU2wwcDlkRTVBOVhsRG5oaVFycnJzUjFjcnVxclBCUTdvK24xNnRxaGJx?=
- =?utf-8?B?ODBQRWhoODZ6NWxHS3hqY3EzRXNucjVvbXpkK0VHL256RzM3cVcvaldMM3VT?=
- =?utf-8?B?MnNpbGRBNTJGN1piRXRZMW90bmFUUXhxTWJDOFZPa0dnK1lIc1BsYVQ1dFlw?=
- =?utf-8?B?VXNJZElYYVlCUWtQZEhnL0RBZ0JkbDE5NEtPMFp5YjIvaE15Nm4wOHdUeXVY?=
- =?utf-8?B?THV0anNlamo1WVhUYXlQSW9DTjBvNDJleEF1K3QzaW1UUjl0RTJUUUppbjkw?=
- =?utf-8?B?cHAyamo0Q3FZRk1ISzNQS1hWLzVWMkFubDhtajQ0ZTl0S1J2RmUvZnByRWV4?=
- =?utf-8?B?amRXcXliQ0d2VWNzMm42YnVvcFZhOW1raUhKSCsySW81T09kYitOVit2dnBP?=
- =?utf-8?B?K3I4Y0NrTHRnY2k0REt4SmVQUnE3cWJGSm51djFxUjBmblRYWm9ZWTFkek9n?=
- =?utf-8?B?ajJXMnJNZ0phUEh2aVl5UGROSnYrRkYxUk9GK0NVUkY0cFNwZEQ0bG0wa0hI?=
- =?utf-8?B?SHVJV0pDMkR4VlJHL1dnZjNkeGhMMFFEOE1iS0t1WUlSMklLS3dEcnRTYkpV?=
- =?utf-8?B?YXBEREkwdHpBb0MydmcrdTdDVk80NnNsR1kxamdaSFhXdk1UcnRxa3I3bXdZ?=
- =?utf-8?B?aHlXQ3AyR3UvSGwxOE81dGZYeDRSOEN3YnZaVkpJK2ZId3FJYzkzV3RaZGJE?=
- =?utf-8?B?VjZoL08yMXp5THZkQmVXVmVlajZjeUVtOFdYREVwVERydFp4Qlo4Y0QvbDBz?=
- =?utf-8?B?RXBFYkN6VU42L2lCUFJrUm9ud3pvT0k4WXVKaTgvZUtzSnkxU3hwMyt6TDlu?=
- =?utf-8?B?UHE0dU9yUzRHbUZiaFFTL2VWeDkvdXdMazQyMWhmemJqRlIxNjBkdkdWRnVL?=
- =?utf-8?B?VVN1V3NkT1M5RHNpNHRlcVVDRSsyam9NUUVVYThucFFyRXpQU2ExL3dRRjBR?=
- =?utf-8?B?aTZtUHl5MThybFJDdU1UZDVGZHBlV056UVdqajRweWJMNUdaR3oyR3R0T3lP?=
- =?utf-8?B?RFh3aExNdk1CenBFTUZYc2hwRlBDb2tuWXQ4MUxqdk1yVWw0bTF1K2JyT3Zz?=
- =?utf-8?B?ZU9Jb0ZIT2ovMk5Kc004WmI1YVJQSlgwdFRQa0hYTWZqcUFWOHc2dm00bWlB?=
- =?utf-8?B?NlczS2I4cUVaZW1mUVdQb2lYSEtjaHRpaE1RVlV2a09DeTM5WHZKaXUvYnpi?=
- =?utf-8?B?eGFwWW9QN3dOWk5YNTkzejZ2TlJtbTFrRUZOQWdtb1lqd0JYOXIyc2toRTNm?=
- =?utf-8?B?ZUhPSTdRbVN1QzRyemE2TUpWcHdrdHQ2WW9iR0pvM3RUeHBoUDluRHhkUEEz?=
- =?utf-8?B?UnVFVUQ4MUFCSERaa3FHeFJtRElyZ1ppNTFNb0JBOTNVYmVsWGxtZUdjdUpI?=
- =?utf-8?B?bmcrL0dQajhJejhON3dxbE82QTZ2WlN2cldpdHNKU1BDUFVublkxek01NDQ2?=
- =?utf-8?B?bjBPeGJ3Q1VPNGFjeUFqR09HNGRSZkxtcHl5YnFrc2k2am1YRE4xS0tFTXE2?=
- =?utf-8?B?M1BWQkh0dkdJQXRvYzNFOFFVWlB6YUxySGErbTNyTkhkNGFrcit5Skp4eFZ0?=
- =?utf-8?B?SzMxN2dMYmFaREo5YjJzMVI5U2J3Nm5hcmFLM1hUazNDOEVLRloyQ1AxbC8v?=
- =?utf-8?Q?PzVD6s3AEr4TnBZfN3SmmTk/zFztu7nw/Z6og=3D?=
+	=?utf-8?B?ajhiKythQjV5Y1ZkSUZlUXNMT1JrT3E1eisxM2x1Nnd3YnZJOSttek50b1Jm?=
+ =?utf-8?B?bFQzUCtSRnBpcFg3THVHV0d4aFpmZXMzWGxJL2F1Q1hNbFEzTDhYRHJud3dz?=
+ =?utf-8?B?a0FpTHFUWG93ckdMU2F3cGc5T3FtQTdwMFdNRmZNbmxoL0ZWQ0xvd0cyemJO?=
+ =?utf-8?B?MzBSTTRYbnF3b2g4cTdKT0wzTFozZENPVjhsN2dwS3RxMEFmNlM2bFJONU9z?=
+ =?utf-8?B?emg5TTIzN2NZdE92OTZXTXRuc1pRUXhxL0J2VmNIZmlYNTVRNDc3QUFUUkM3?=
+ =?utf-8?B?TnRQWXl5QzF1M2NZNzh4YXRkdkxGNWxBUUx4QTBldlhuODF6TCtuaDVWbzZt?=
+ =?utf-8?B?akMvUm42YW9JanQ4djQ3TjJGaUFKVDdLZW9LdjcxS29HR1FNK0lGRUtDZzBq?=
+ =?utf-8?B?eWxnOGxYMDVGR0tTTEZ6WmVrd25Ub0pXYmhKTGkxL01IcjRrdmhlWEFlbzh4?=
+ =?utf-8?B?R3FLYU9OYjBZM1haQkZVUXRhSUo4SmllUzBQYzlMUUphK2tBeENLVTE5cElz?=
+ =?utf-8?B?NnBzeFJrcmZIMXNvQnRURlQ5b3I3L3BRMTlhQXlrMlhQUlVzUFBCNEgydEZI?=
+ =?utf-8?B?M0kyQnM0by8veHpKbmx3Z05PZ1BjN3VwVXBhMUYxekFTd1lMNHRINkxlc2lH?=
+ =?utf-8?B?ZFIyVVJ0NzA5UTkvRmhzVHpscXhXODd5K3dLSTF3Z2MvakhmY2MrdnFiYkNF?=
+ =?utf-8?B?TWRnclgxY3hnR0daU1NQQ0VJN1k2NXFYNlBJZ1dZNlF1dE5rQW52RmpvSlo0?=
+ =?utf-8?B?MWF3Yi93RFRoVUdtUzg1bEYwOUJNSWZaTnhKanZ1OStET0FEWjNVaEJwOUdt?=
+ =?utf-8?B?Rk11K3NiSlMvYWxLenFTWDd2MnYwL0g1Zko4UkpLZkdwWENMcnEzVkpmY1NI?=
+ =?utf-8?B?RWgwY21GL3dTNU0zdWRWM1BhcHVkNFBpV09jV1E0bTQvekhFaHB3ZllRZkdR?=
+ =?utf-8?B?ejJIRkQzZ29ncCtxMDBrQ0hJZmUyYUpBcG1BRGU4RFUzWXJ6OGlFbGlSWFo2?=
+ =?utf-8?B?bmFxSTZSOXJNN1BMMHBWeUVaL01PUkgzdEd3d1VJdzNuTWZkUEVRNzllZTk0?=
+ =?utf-8?B?ZWFsWE12QjdHb24yZVRFVUIvUVBhMHhkQWJ2UzBMdi92TmFZZStMN1E0UkMw?=
+ =?utf-8?B?elRDblhmU3JUTHNmOHVUTmJaWGRXcWpxVHgxZmlkVVZBSGpRVjhIdk1pZSt2?=
+ =?utf-8?B?VG5NWmtXZkVWMlNhT0Y4MjZmaExaSnFYWm40UzkyTU9kZEx4TlF0WnFBUmJU?=
+ =?utf-8?B?SXJqdHNUQzY5SjV0UHIwdG9vR3lyWllhQ3R5Zlpvd3hGZmNGVm9mK1p6SkFk?=
+ =?utf-8?B?K1NBTVpYSkZlOWVTTmxOMkRvYVVWMEhzSHVaQnExWjhRckNMOE1SQ0kxQ2hB?=
+ =?utf-8?B?T2orRHlpKzN0cDErbE1QR0oxeGdOSldHeUFGdmx5amJDaUt3NUxvM25ZNGl2?=
+ =?utf-8?B?QllSZXlzU2Y1ZUhmbWZQWEJqVkpYaHNiM1JTUzJKdE9CRERYY253dVNzN0Ry?=
+ =?utf-8?B?VFZ0WE41Vm1KczlNeXZKT3pUN2t1SFAvMDIyK2xtY1cveVBoZWJpcWZ1c00y?=
+ =?utf-8?B?dUw3RDZTb0V5QWJSRUxrR3hWUTVJSnVIV1ZHcVZndG96Z2YzUStlOE56ZkJG?=
+ =?utf-8?B?UXY1MmhpdTdXYXpyblZodWt0Tzl6MXNKN2NoalFmdWw4YW5uWWRmZ0lOM3k1?=
+ =?utf-8?B?TVB4V1N4QjV4cjY1SnpyeXFoN2w0VUlYbUFNYkw4V2wyOVRSMzBoWkxERndz?=
+ =?utf-8?B?WklnQWN4a1J0N3NPNEx3Nm43bnN3VG0yUzRycVdWK1dhMVN4MWgxY0dCZUJX?=
+ =?utf-8?Q?z5GJaHO73Y3chkDfq2lyrTP8tcz5F//sxa6MQ=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(7053199007);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YjIvVUdTZVdQU3ZzeHIvczhQOURPS05Md3NEd21yRU92Yys5L0pvZXZSSTM2?=
- =?utf-8?B?Yi9Jb1RlQjlMeWs2L2hoN1phUEpOUVBkZktMWXdnVXE5M1lxK0ZJbVZFUFdt?=
- =?utf-8?B?UTIrMzRKMm4zU2VDelQ0c2FRdmpUSVE0bXRXT3FRRWx0WHJnYS9ZdnVLdGNa?=
- =?utf-8?B?MlJsY0JNRXpuRVJCTENiQVpEYkxZSW1vUEpjOWErbjd2U25ja2J4RzRKQVJl?=
- =?utf-8?B?UmFoT1VaczR6Lzh5cFcrOTNpeEpST2VkOVNJVUNTTmlSMTlabDhkM0QzdjR2?=
- =?utf-8?B?dkNCbUZtNWNIWWNiM1Baa21vUkZFWmpUbVhWemdEajEyUHFCUUd3dG45NFlK?=
- =?utf-8?B?Y0RIcEN4K3VzcWpmY0t2M3UzVGwxcllaTFA4SGxId01lWUd6aWwySEFXK2Mw?=
- =?utf-8?B?WGk5dW55VTlVUEZEWUJuZSt6QTVJQ25OWTJGU3l1TXZicENRK1pESUtuSWdW?=
- =?utf-8?B?R2NOK0VIek55UUdQeCtRRmtESEJUbWo5aDEvM08xd3lxQUZNdHQ0WS9USVZl?=
- =?utf-8?B?a1dUMFJHaDFxcHloaGtIOXpvdC93dXJsWUljV0lWRzRER0ZWZUhBQnU0blR2?=
- =?utf-8?B?akdTMWlkRGFyd2hTWW5FRzJiTkZnWlFiTEMvc2pWZ1JldTdMSjNwVHhDS0w4?=
- =?utf-8?B?TXV3ZUtmNVkwYmZ5emlkS09zSDNob1ZveElXa3AxY2NYb3ZIYTJDQ2x5cjVs?=
- =?utf-8?B?RndQRDV1aFZTQnU0VW4zZFRrQzRUSHBWWDJnRUhYc2UrcWlhZXI3U1NSRDEv?=
- =?utf-8?B?R2ZaV0g0UkQxVE1vUkEyeGw4L0JLQm5Eb1hZOExkZ0FhVkhYcnBMamRNVjVL?=
- =?utf-8?B?UzJXM1A4aXdsUzMwYkk0VmdmU3F1RFR0RWcyS0R0d2dTZVZQaUxmdnY5R004?=
- =?utf-8?B?dWZMQ1ZPbzdSMjM5eVp0RkZnVkM5OXZIaVVBRytrRHhVQ09uNHp3SS9HeXhE?=
- =?utf-8?B?eXROVU1NTlorZDIzUHR4WXZURlozQWErZmJxc3ZFR01pU0prTW4zTE45MU4z?=
- =?utf-8?B?c3VJNU9WTE00bC8ybTFPWlRFcGlEM2pWN0NNYm9ROEFOSllUb3FiOTZxU09z?=
- =?utf-8?B?YllZcGxJS0FIZHFIa3Y1OWxiSVlqRUJQRnAxVnJYSThpckQwTG9xeGh6bFVG?=
- =?utf-8?B?TWJrS05tTy9kZ3hiYWhqMVJLbTF4cVJhRFlYVWwzdTYyb2dkSjJRUStZSE41?=
- =?utf-8?B?WlRRNkw3bnpxa2NzcWIvTkxHRG1HZlNpem80Smo1VDBETG5YT2pxaVFURkFR?=
- =?utf-8?B?TFNBdHJYOWwva0RPNHJVa1A5UEo0SlBidGZOVXZiMm1qYzJwa2RWVzV3ZW1o?=
- =?utf-8?B?OEg2Yjh5MnlGU1J2dno2MWNFelFVazY2NkVzdEk5Wk1kdEJza0hScm9WZUwy?=
- =?utf-8?B?NG5lQWVmMjVTeGZhZDNQMDdjTnZ3UlNLTm9uVit3RlpjOVV1emdCRDJKaGVY?=
- =?utf-8?B?cWFVeCtMYTFRT0JqclBmMXR4N3FKVm15aThBRVpDMGV0Q25wVVVmN25pZTNx?=
- =?utf-8?B?a2JpOFl4LzdmUE02ZWlHMTFJNkhDTDdOelQzaTlaUlF3dCtTYXlCWlpLR29K?=
- =?utf-8?B?TUpYTFNLOTZYVXRRL2pxNjNXeUtOUVZud2lmMkpvZ09uYXdoeDhHTG8vVXRa?=
- =?utf-8?B?eVFORGVqeEVVUTBvRWhDemdoVEJpOXNBTVEwTmtwM1BDeXV1YVp3LzFkZlRH?=
- =?utf-8?B?MERDSWVqc0dGT3BWc0gvUTdaZm01Y0FlcTIrenUrN28rTkMzVlFSallaNFpr?=
- =?utf-8?B?NUNZcllqN2FlcDA4TVBydXNCc0lVbVNEUkdIWjl5NFR3TzJzQytsRHowWHF5?=
- =?utf-8?B?RU5IWkxPdUJlQURuVUxTUzBkQnBweDJZRnJLWjF1MEo0bFBhSWlkcGc1Umxy?=
- =?utf-8?B?LzZRR1E3dWpPc3M3OHJUZGNjWXNjaHA3bzJDM091am1sN080TU5MTTczNmlC?=
- =?utf-8?B?N3pubTJRd2lKNHFGeVZ5RUtNNXhwbDBGUklrODJCOVJtVmVNNktJdzdyaW1z?=
- =?utf-8?B?M2VIanlVTFZNalJnRzd3OXcwQXQ1NUkwK1JGQUloSlVucUdoTU4vZ0hwamhj?=
- =?utf-8?B?SUVONzUwUlc2NjZqMWM5Z2ZwY0o3cmcrSnlBZ3E2ZzlYUFhFaXpITXRqWTMy?=
- =?utf-8?B?QnNkT05MRFlLNlo0cWNtMC9MRThReGgzSDBWSEJXMzJpdm14MW1zZzV5VjRw?=
- =?utf-8?Q?NX2k3xh/XLZ5mcQ7zpuLlME=3D?=
+	=?utf-8?B?QTNnU0Z5QitFMVpJZHllR3UvM1lTQWViYlk1RVBFY0hYZ3ZHZzhSMmM1L2dZ?=
+ =?utf-8?B?MDFFUE5PNGQ2KzgvcVlCZHVQNUVEdlhyN1dpOGlyTTZ4SWE0ZDVVUkU4WEYx?=
+ =?utf-8?B?N1hOVTRnd3ZQbmFQSTZmbUJpVGpacWVhdWdYb2Q0KzRHRklUYXZPT2pUR0k2?=
+ =?utf-8?B?Q2J3TmM2ZE1CMjVEei95NDRiY1pIYlJQLzNsR0VNZHhUMjVZaGRhTTYyTnF5?=
+ =?utf-8?B?R3FqY0MrWFlVWXl1ZGU0dDZGMzRZMStZYXRaMSsvOVlkNHFTOEJKVmdRbElZ?=
+ =?utf-8?B?Qm9CNjEvS1djbG9RVkU0ejd3elVPYlprSjBOZFdqaFBkWFQxT2c1NktmZDFj?=
+ =?utf-8?B?OXpaaXJkKy9SYUxDWVd1djQ3M2dZNnRzV1VtSWFoSTFoaWRXZS9JUFZrYWlK?=
+ =?utf-8?B?MS9GSG5yelRVbjZRQjFJRnpOWXljTFBRUWVWZjdYckJNSlNNWkRYeEQ0a3hI?=
+ =?utf-8?B?NTRwWFNsaFo1U1EwcUxPQ3Z5bWtMdTRlM3pkVVBXV25JQXFYRWhUbGVpaW9M?=
+ =?utf-8?B?a1VpTlVnbVF5bVpoYWRqZ09mOGNmTU9ubmdTU1Z4Y2lhL1pDUTQ0aHdzSnNT?=
+ =?utf-8?B?QWNlbm9qUHllZkozNXdQU09semYwcnJLSytYc3FrZ2V6UjJCOE1DMThqcGNK?=
+ =?utf-8?B?dnErM0pxRjU2OUxGNGpLUHBXaWxBQ28ramMxNWpWTEFLTURoMTRETHpjSndi?=
+ =?utf-8?B?SnE4S0tRSFFtMnFuSEtqR3UxbGpQUExrSkJoRTNMdVErMmFOUkJ3TVN1c1F5?=
+ =?utf-8?B?VVI2a2NVeTIxRmVSS0Z2SWFKZGxrNWl0MXIwOWE1MTlKUFY3eTVyOVYzSHgx?=
+ =?utf-8?B?Q0NIbDN4c3p0bGJteURVd3RHcDBLUHl5S2pRdEY2TGVaS01SV0ZGMnY5VFBm?=
+ =?utf-8?B?bDZQZEEwUXNSckk5WmY4VWpHS1RQbm9nTXRGVmxHaFVKd1JpTGViOE9hcXlj?=
+ =?utf-8?B?MFU5S05GMGZqaldKR0F2MUpEY0pURVY4UWtDazRLWGxhUlpIeWRqZ3JzMzVM?=
+ =?utf-8?B?ei9oclFoUExFbEdhYzJDWHk4eDU4UzgyenNzRkdpbHNyYUYzNDRYWW0zRTIr?=
+ =?utf-8?B?SmVub2Y0eElheDk4N1VIeXFaZTd1VUViTjRzcjRQUEJCMGppTEUrSEpCVE4z?=
+ =?utf-8?B?RE1MbTRGeE1BWHdTdk1WZWorVksrWDlVVFhmM2ZoL0M4Q0tCTVUxcndhcG44?=
+ =?utf-8?B?M0o2MjU0bk1YQkJ0ZUxaNjV6MXVBVmFBZDBNOG54Zk4yUEt1SDNRWHJlVmdu?=
+ =?utf-8?B?SnhoM3hWd2ViTjNkUEhSVm43eXhTTGFOVzZvK1psRVNzUTlkdkJ1cXFYZC9k?=
+ =?utf-8?B?c1d1VEhzQ3ZIc2hXWGNYVjhkUkNhUDdjLy9TaTFqR3ZqMERkYnl6WCtram9P?=
+ =?utf-8?B?eGZnSTY1eDZXQ21oTHJIOStQcUl2Vi9jUXI1WjF2eCt2U3A2bUNUdGRVbmFl?=
+ =?utf-8?B?dzN0cU4xcStNOFoxTzNLSjR6ckVGNjVCaTRXYzFEWHlDRE1sM203SUptckk3?=
+ =?utf-8?B?RXdpV3FZN3hsNmpYSkdFdTZkU20rM2ZhbmtFQldRbi8zcEU1VmFkOEpvSGJy?=
+ =?utf-8?B?am5XQXFJenpjZ2lVRVBXTmpPNHVIRzU2R2FhUG5OUVJYK0FQYmJ3cnpDeitM?=
+ =?utf-8?B?enNuWHAwU2RhT2NjMG53V2Y1SHdZUlJnQ0JOZmNyd2RLejhvL0Q3d01FZTNj?=
+ =?utf-8?B?Qy9keG4wZTRyNFRWWGViTFNxZFhTaDdTUWpmT25wUmJLSFUrOUlaTk9GdmYv?=
+ =?utf-8?B?bS9wUCszMFY2Qkd0U0wxUHlybnhQRHZ6NUdCQ0NKWFQwcjhSTkw1TFZHbUtQ?=
+ =?utf-8?B?SUIvdzd0WjBzdUJZWU5lSzhDVWNhaXlTNTVEMElabjNZRDVIU1UzS25LMnMy?=
+ =?utf-8?B?UnNNTU1oWGFpelBuUFJTS0NLQzg1dkhudEpmZjJ5N3EzQndBMVZBeE9DR1pl?=
+ =?utf-8?B?cHp0VWwwZDdFMGpqQktrUUcvQWNlSVV6NHppWHkzbjdQc3hTZjRaQTlXNGZW?=
+ =?utf-8?B?MWZNSVBPMC9BYW9qNExnUkRJekdMa0IvOW1MV3hnL2FJcVVVbi9EN0F4dHF2?=
+ =?utf-8?B?cm1QTDRiYmg5NFc0bVVPZzRYNVozMm9nczIrNW84U2lWUWdCVjZZY2UxclNB?=
+ =?utf-8?B?U3BkMC85L0hrZ2k4aVdzUEF1UFRCa2JMb1RNUzV6REZLK09Vbys1Y2ljc2p3?=
+ =?utf-8?Q?IaBiCoqsF2+wGAFXCAJGE/E=3D?=
 X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 68646207-a327-4f05-bb3e-08dde4061873
+X-MS-Exchange-CrossTenant-Network-Message-Id: 84ae5bb8-8896-453b-a6c5-08dde40648e5
 X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 18:34:58.9991
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 18:36:20.2605
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EiugFhVUsN2urVwcgecrFNM0fXf8vAsMOFkzN2DxEAGKYG2Eq+aRkHUAlcI+i0XKb+JU0Ke87GTC1hpv68Das82LN3OHs7xB6X3LCbBOEFw=
+X-MS-Exchange-CrossTenant-UserPrincipalName: aTReKFSBlOtiEpN+tU+UtPLAqT3LA1d1WDOY9Ndt/44iCfbtAUwZnX9FzzFXtGq7KqdFinErYvNTF4QU5TUIWRUdkrdlQ1I0MefTiHFuCFc=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT2PR01MB9478
 
 On 2025-08-23 12:39, Thomas Gleixner wrote:
-> Analyzing the call frequency without actually using tracing is helpful for
-> analysis of this infrastructure. The overhead is minimal as it just
-> increments a per CPU counter associated to each operation.
+> Config based debug is rarely turned on and is not available easily when
+> things go wrong.
 > 
-> The debugfs readout provides a racy sum of all counters.
+> Provide a static branch to allow permanent integration of debug mechanisms
+> along with the usual toggles in Kconfig, command line and debugfs.
+> 
+> Requested-by: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
 Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 > ---
->   include/linux/rseq.h       |   16 ---------
->   include/linux/rseq_entry.h |   49 +++++++++++++++++++++++++++
->   init/Kconfig               |   12 ++++++
->   kernel/rseq.c              |   79 +++++++++++++++++++++++++++++++++++++++++----
->   4 files changed, 133 insertions(+), 23 deletions(-)
+>   Documentation/admin-guide/kernel-parameters.txt |    4 +
+>   include/linux/rseq_entry.h                      |    3
+>   init/Kconfig                                    |   14 ++++
+>   kernel/rseq.c                                   |   73 ++++++++++++++++++++++--
+>   4 files changed, 90 insertions(+), 4 deletions(-)
 > 
-> --- a/include/linux/rseq.h
-> +++ b/include/linux/rseq.h
-> @@ -29,21 +29,6 @@ static inline void rseq_sched_switch_eve
->   	}
->   }
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -6443,6 +6443,10 @@
+>   			Memory area to be used by remote processor image,
+>   			managed by CMA.
 >   
-> -static __always_inline void rseq_exit_to_user_mode(void)
-> -{
-> -	struct rseq_event *ev = &current->rseq_event;
-> -
-> -	if (IS_ENABLED(CONFIG_DEBUG_RSEQ))
-> -		WARN_ON_ONCE(ev->sched_switch);
-> -
-> -	/*
-> -	 * Ensure that event (especially user_irq) is cleared when the
-> -	 * interrupt did not result in a schedule and therefore the
-> -	 * rseq processing did not clear it.
-> -	 */
-> -	ev->events = 0;
-> -}
-> -
->   /*
->    * KVM/HYPERV invoke resume_user_mode_work() before entering guest mode,
->    * which clears TIF_NOTIFY_RESUME. To avoid updating user space RSEQ in
-> @@ -97,7 +82,6 @@ static inline void rseq_sched_switch_eve
->   static inline void rseq_virt_userspace_exit(void) { }
->   static inline void rseq_fork(struct task_struct *t, unsigned long clone_flags) { }
->   static inline void rseq_execve(struct task_struct *t) { }
-> -static inline void rseq_exit_to_user_mode(void) { }
->   #endif  /* !CONFIG_RSEQ */
->   
->   #ifdef CONFIG_DEBUG_RSEQ
+> +	rseq_debug=	[KNL] Enable or disable restartable sequence
+> +			debug mode. Defaults to CONFIG_RSEQ_DEBUG_DEFAULT_ENABLE.
+> +			Format: <bool>
+> +
+>   	rt_group_sched=	[KNL] Enable or disable SCHED_RR/FIFO group scheduling
+>   			when CONFIG_RT_GROUP_SCHED=y. Defaults to
+>   			!CONFIG_RT_GROUP_SCHED_DEFAULT_DISABLED.
 > --- a/include/linux/rseq_entry.h
 > +++ b/include/linux/rseq_entry.h
-> @@ -2,6 +2,37 @@
->   #ifndef _LINUX_RSEQ_ENTRY_H
->   #define _LINUX_RSEQ_ENTRY_H
+> @@ -34,6 +34,7 @@ DECLARE_PER_CPU(struct rseq_stats, rseq_
+>   #endif /* !CONFIG_RSEQ_STATS */
 >   
-> +/* Must be outside the CONFIG_RSEQ guard to resolve the stubs */
-> +#ifdef CONFIG_RSEQ_STATS
-> +#include <linux/percpu.h>
-> +
-> +struct rseq_stats {
-> +	unsigned long	exit;
-> +	unsigned long	signal;
-> +	unsigned long	slowpath;
-> +	unsigned long	ids;
-> +	unsigned long	cs;
-> +	unsigned long	clear;
-> +	unsigned long	fixup;
-> +};
-> +
-> +DECLARE_PER_CPU(struct rseq_stats, rseq_stats);
-> +
-> +/*
-> + * Slow path has interrupts and preemption enabled, but the fast path
-> + * runs with interrupts disabled so there is no point in having the
-> + * preemption checks implied in __this_cpu_inc() for every operation.
-> + */
-> +#ifdef RSEQ_BUILD_SLOW_PATH
-> +#define rseq_stat_inc(which)	this_cpu_inc((which))
-> +#else
-> +#define rseq_stat_inc(which)	raw_cpu_inc((which))
-> +#endif
-> +
-> +#else /* CONFIG_RSEQ_STATS */
-> +#define rseq_stat_inc(x)	do { } while (0)
-> +#endif /* !CONFIG_RSEQ_STATS */
-> +
 >   #ifdef CONFIG_RSEQ
+> +#include <linux/jump_label.h>
 >   #include <linux/rseq.h>
 >   
-> @@ -41,8 +72,26 @@ static __always_inline void rseq_note_us
->   		current->rseq_event.user_irq = true;
->   }
+>   #include <linux/tracepoint-defs.h>
+> @@ -66,6 +67,8 @@ static inline void rseq_trace_ip_fixup(u
+>   				       unsigned long offset, unsigned long abort_ip) { }
+>   #endif /* !CONFIG_TRACEPOINT */
 >   
-> +static __always_inline void rseq_exit_to_user_mode(void)
-> +{
-> +	struct rseq_event *ev = &current->rseq_event;
+> +DECLARE_STATIC_KEY_MAYBE(CONFIG_RSEQ_DEBUG_DEFAULT_ENABLE, rseq_debug_enabled);
 > +
-> +	rseq_stat_inc(rseq_stats.exit);
-> +
-> +	if (IS_ENABLED(CONFIG_DEBUG_RSEQ))
-> +		WARN_ON_ONCE(ev->sched_switch);
-> +
-> +	/*
-> +	 * Ensure that event (especially user_irq) is cleared when the
-> +	 * interrupt did not result in a schedule and therefore the
-> +	 * rseq processing did not clear it.
-> +	 */
-> +	ev->events = 0;
-> +}
-> +
->   #else /* CONFIG_RSEQ */
->   static inline void rseq_note_user_irq_entry(void) { }
-> +static inline void rseq_exit_to_user_mode(void) { }
->   #endif /* !CONFIG_RSEQ */
->   
->   #endif /* _LINUX_RSEQ_ENTRY_H */
+>   static __always_inline void rseq_note_user_irq_entry(void)
+>   {
+>   	if (IS_ENABLED(CONFIG_GENERIC_IRQ_ENTRY))
 > --- a/init/Kconfig
 > +++ b/init/Kconfig
-> @@ -1883,6 +1883,18 @@ config RSEQ
+> @@ -1893,10 +1893,24 @@ config RSEQ_STATS
 >   
->   	  If unsure, say Y.
+>   	  If unsure, say N.
 >   
-> +config RSEQ_STATS
+> +config RSEQ_DEBUG_DEFAULT_ENABLE
 > +	default n
-> +	bool "Enable lightweight statistics of restartable sequences" if EXPERT
-> +	depends on RSEQ && DEBUG_FS
+> +	bool "Enable restartable sequences debug mode by default" if EXPERT
+> +	depends on RSEQ
 > +	help
-> +	  Enable lightweight counters which expose information about the
-> +	  frequency of RSEQ operations via debugfs. Mostly interesting for
-> +	  kernel debugging or performance analysis. While lightweight it's
-> +	  still adding code into the user/kernel mode transitions.
+> +	  This enables the static branch for debug mode of restartable
+> +	  sequences.
+> +
+> +	  This also can be controlled on the kernel command line via the
+> +	  command line parameter "rseq_debug=0/1" and through debugfs.
 > +
 > +	  If unsure, say N.
 > +
 >   config DEBUG_RSEQ
 >   	default n
 >   	bool "Enable debugging of rseq() system call" if EXPERT
+>   	depends on RSEQ && DEBUG_KERNEL
+> +	select RSEQ_DEBUG_DEFAULT_ENABLE
+>   	help
+>   	  Enable extra debugging checks for the rseq system call.
+>   
 > --- a/kernel/rseq.c
 > +++ b/kernel/rseq.c
-> @@ -67,12 +67,16 @@
->    *   F1. <failure>
->    */
+> @@ -95,6 +95,27 @@
+>   				  RSEQ_CS_FLAG_NO_RESTART_ON_SIGNAL | \
+>   				  RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE)
 >   
-> +/* Required to select the proper per_cpu ops for rseq_stats_inc() */
-> +#define RSEQ_BUILD_SLOW_PATH
+> +DEFINE_STATIC_KEY_MAYBE(CONFIG_RSEQ_DEBUG_DEFAULT_ENABLE, rseq_debug_enabled);
 > +
-> +#include <linux/debugfs.h>
-> +#include <linux/ratelimit.h>
-> +#include <linux/rseq_entry.h>
->   #include <linux/sched.h>
-> -#include <linux/uaccess.h>
->   #include <linux/syscalls.h>
-> -#include <linux/rseq.h>
-> +#include <linux/uaccess.h>
->   #include <linux/types.h>
-> -#include <linux/ratelimit.h>
->   #include <asm/ptrace.h>
->   
->   #define CREATE_TRACE_POINTS
-> @@ -108,6 +112,56 @@ void __rseq_trace_ip_fixup(unsigned long
+> +static inline void rseq_control_debug(bool on)
+> +{
+> +	if (on)
+> +		static_branch_enable(&rseq_debug_enabled);
+> +	else
+> +		static_branch_disable(&rseq_debug_enabled);
+> +}
+> +
+> +static int __init rseq_setup_debug(char *str)
+> +{
+> +	bool on;
+> +
+> +	if (kstrtobool(str, &on))
+> +		return -EINVAL;
+> +	rseq_control_debug(on);
+> +	return 0;
+> +}
+> +__setup("rseq_debug=", rseq_setup_debug);
+> +
+>   #ifdef CONFIG_TRACEPOINTS
+>   /*
+>    * Out of line, so the actual update functions can be in a header to be
+> @@ -112,10 +133,11 @@ void __rseq_trace_ip_fixup(unsigned long
 >   }
 >   #endif /* CONFIG_TRACEPOINTS */
 >   
-> +#ifdef CONFIG_RSEQ_STATS
-> +DEFINE_PER_CPU(struct rseq_stats, rseq_stats);
-> +
-> +static int rseq_debug_show(struct seq_file *m, void *p)
+> +#ifdef CONFIG_DEBUG_FS
+>   #ifdef CONFIG_RSEQ_STATS
+>   DEFINE_PER_CPU(struct rseq_stats, rseq_stats);
+>   
+> -static int rseq_debug_show(struct seq_file *m, void *p)
+> +static int rseq_stats_show(struct seq_file *m, void *p)
+>   {
+>   	struct rseq_stats stats = { };
+>   	unsigned int cpu;
+> @@ -140,14 +162,56 @@ static int rseq_debug_show(struct seq_fi
+>   	return 0;
+>   }
+>   
+> +static int rseq_stats_open(struct inode *inode, struct file *file)
 > +{
-> +	struct rseq_stats stats = { };
-> +	unsigned int cpu;
-> +
-> +	for_each_possible_cpu(cpu) {
-> +		stats.exit	+= data_race(per_cpu(rseq_stats.exit, cpu));
-> +		stats.signal	+= data_race(per_cpu(rseq_stats.signal, cpu));
-> +		stats.slowpath	+= data_race(per_cpu(rseq_stats.slowpath, cpu));
-> +		stats.ids	+= data_race(per_cpu(rseq_stats.ids, cpu));
-> +		stats.cs	+= data_race(per_cpu(rseq_stats.cs, cpu));
-> +		stats.clear	+= data_race(per_cpu(rseq_stats.clear, cpu));
-> +		stats.fixup	+= data_race(per_cpu(rseq_stats.fixup, cpu));
-> +	}
-> +
-> +	seq_printf(m, "exit:   %16lu\n", stats.exit);
-> +	seq_printf(m, "signal: %16lu\n", stats.signal);
-> +	seq_printf(m, "slowp:  %16lu\n", stats.slowpath);
-> +	seq_printf(m, "ids:    %16lu\n", stats.ids);
-> +	seq_printf(m, "cs:     %16lu\n", stats.cs);
-> +	seq_printf(m, "clear:  %16lu\n", stats.clear);
-> +	seq_printf(m, "fixup:  %16lu\n", stats.fixup);
-> +	return 0;
+> +	return single_open(file, rseq_stats_show, inode->i_private);
 > +}
 > +
-> +static int rseq_debug_open(struct inode *inode, struct file *file)
-> +{
-> +	return single_open(file, rseq_debug_show, inode->i_private);
-> +}
-> +
-> +static const struct file_operations dfs_ops = {
-> +	.open		= rseq_debug_open,
+> +static const struct file_operations stat_ops = {
+> +	.open		= rseq_stats_open,
 > +	.read		= seq_read,
 > +	.llseek		= seq_lseek,
 > +	.release	= single_release,
 > +};
 > +
-> +static int __init rseq_debugfs_init(void)
+> +static int __init rseq_stats_init(struct dentry *root_dir)
 > +{
-> +	struct dentry *root_dir = debugfs_create_dir("rseq", NULL);
-> +
-> +	debugfs_create_file("stats", 0444, root_dir, NULL, &dfs_ops);
+> +	debugfs_create_file("stats", 0444, root_dir, NULL, &stat_ops);
 > +	return 0;
 > +}
-> +__initcall(rseq_debugfs_init);
+> +#else
+> +static inline void rseq_stats_init(struct dentry *root_dir) { }
 > +#endif /* CONFIG_RSEQ_STATS */
 > +
+> +static int rseq_debug_show(struct seq_file *m, void *p)
+> +{
+> +	bool on = static_branch_unlikely(&rseq_debug_enabled);
+> +
+> +	seq_printf(m, "%d\n", on);
+> +	return 0;
+> +}
+> +
+> +static ssize_t rseq_debug_write(struct file *file, const char __user *ubuf,
+> +			    size_t count, loff_t *ppos)
+> +{
+> +	bool on;
+> +
+> +	if (kstrtobool_from_user(ubuf, count, &on))
+> +		return -EINVAL;
+> +
+> +	rseq_control_debug(on);
+> +	return count;
+> +}
+> +
+>   static int rseq_debug_open(struct inode *inode, struct file *file)
+>   {
+>   	return single_open(file, rseq_debug_show, inode->i_private);
+>   }
+>   
+> -static const struct file_operations dfs_ops = {
+> +static const struct file_operations debug_ops = {
+>   	.open		= rseq_debug_open,
+>   	.read		= seq_read,
+> +	.write		= rseq_debug_write,
+>   	.llseek		= seq_lseek,
+>   	.release	= single_release,
+>   };
+> @@ -156,11 +220,12 @@ static int __init rseq_debugfs_init(void
+>   {
+>   	struct dentry *root_dir = debugfs_create_dir("rseq", NULL);
+>   
+> -	debugfs_create_file("stats", 0444, root_dir, NULL, &dfs_ops);
+> +	debugfs_create_file("debug", 0644, root_dir, NULL, &debug_ops);
+> +	rseq_stats_init(root_dir);
+>   	return 0;
+>   }
+>   __initcall(rseq_debugfs_init);
+> -#endif /* CONFIG_RSEQ_STATS */
+> +#endif /* CONFIG_DEBUG_FS */
+>   
 >   #ifdef CONFIG_DEBUG_RSEQ
 >   static struct rseq *rseq_kernel_fields(struct task_struct *t)
->   {
-> @@ -187,12 +241,13 @@ static int rseq_update_cpu_node_id(struc
->   	u32 node_id = cpu_to_node(cpu_id);
->   	u32 mm_cid = task_mm_cid(t);
->   
-> -	/*
-> -	 * Validate read-only rseq fields.
-> -	 */
-> +	rseq_stat_inc(rseq_stats.ids);
-> +
-> +	/* Validate read-only rseq fields on debug kernels */
->   	if (rseq_validate_ro_fields(t))
->   		goto efault;
->   	WARN_ON_ONCE((int) mm_cid < 0);
-> +
->   	if (!user_write_access_begin(rseq, t->rseq_len))
->   		goto efault;
->   
-> @@ -403,6 +458,8 @@ static int rseq_ip_fixup(struct pt_regs
->   	struct rseq_cs rseq_cs;
->   	int ret;
->   
-> +	rseq_stat_inc(rseq_stats.cs);
-> +
->   	ret = rseq_get_rseq_cs(t, &rseq_cs);
->   	if (ret)
->   		return ret;
-> @@ -412,8 +469,10 @@ static int rseq_ip_fixup(struct pt_regs
->   	 * If not nested over a rseq critical section, restart is useless.
->   	 * Clear the rseq_cs pointer and return.
->   	 */
-> -	if (!in_rseq_cs(ip, &rseq_cs))
-> +	if (!in_rseq_cs(ip, &rseq_cs)) {
-> +		rseq_stat_inc(rseq_stats.clear);
->   		return clear_rseq_cs(t->rseq);
-> +	}
->   	ret = rseq_check_flags(t, rseq_cs.flags);
->   	if (ret < 0)
->   		return ret;
-> @@ -422,6 +481,7 @@ static int rseq_ip_fixup(struct pt_regs
->   	ret = clear_rseq_cs(t->rseq);
->   	if (ret)
->   		return ret;
-> +	rseq_stat_inc(rseq_stats.fixup);
->   	trace_rseq_ip_fixup(ip, rseq_cs.start_ip, rseq_cs.post_commit_offset,
->   			    rseq_cs.abort_ip);
->   	instruction_pointer_set(regs, (unsigned long)rseq_cs.abort_ip);
-> @@ -462,6 +522,11 @@ void __rseq_handle_notify_resume(struct
->   	if (unlikely(t->flags & PF_EXITING))
->   		return;
->   
-> +	if (ksig)
-> +		rseq_stat_inc(rseq_stats.signal);
-> +	else
-> +		rseq_stat_inc(rseq_stats.slowpath);
-> +
->   	/*
->   	 * Read and clear the event pending bit first. If the task
->   	 * was not preempted or migrated or a signal is on the way,
 > 
 
 
