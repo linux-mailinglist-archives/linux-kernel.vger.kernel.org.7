@@ -1,315 +1,98 @@
-Return-Path: <linux-kernel+bounces-784398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2EB1B33B18
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:29:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2A99B33B12
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:28:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BC513B67D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:28:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBB64202149
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:27:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6182765D6;
-	Mon, 25 Aug 2025 09:28:51 +0000 (UTC)
-Received: from bregans-0.gladserv.net (bregans-0.gladserv.net [185.128.210.58])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93D932C08CA;
+	Mon, 25 Aug 2025 09:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WO2ZIclx"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57834189F43;
-	Mon, 25 Aug 2025 09:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.128.210.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0313E2C027B
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 09:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756114130; cv=none; b=Pt85NGpoPrTe832cr7XFhH0VdmRN2RH9k7oI/C6C91ruBkO3hpRXut2a22IDHvcX/4R2beF5lLMwVUiVcOwp+XeDwNQXlIS05NlHyGfv2yMG5m1Irc5+zj3LKd73/bxPkjxpqEzfThmkK+R1xcL2rzvaiZP73N7yUckm/AdxuS0=
+	t=1756113984; cv=none; b=MGheEwc7MuijfsSFKUKnMtoUqA/SYDLy3t/X3wxAbvtAOnklnJgb4yMaHK8m44bAq5gZ/JMCTNxz9aEbv1MOOtNfxoRuBKZtUXSrEGHkdd7M+O+Vq3OR0OaILHS2mUTOh03FLQrE0KoktrYG85PJ7WfxZwka3l/X7I8i7oK3E1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756114130; c=relaxed/simple;
-	bh=d5jzDFQ22q5o3bHdowsl+6quFXOdNry3c0jWYQH8vMU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZAHH4S6nXpckwe+gajJzQIXc7JcSRpkEAFDHf4MdmoQfDJkq7ZlQg3N6MaJLk3Ivw9ZaU5CfVQFXNpqo3KMsRFrC2aBr2w4c9wBqHLwNHyAal0gO5S2kIohU4N7wIMAHz9znFFbVZqElW0zNxEVk2bJLx3VG7mRABxTxqD4UYKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=librecast.net; spf=pass smtp.mailfrom=librecast.net; arc=none smtp.client-ip=185.128.210.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=librecast.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=librecast.net
-From: Brett A C Sheffield <bacs@librecast.net>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: Brett A C Sheffield <bacs@librecast.net>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Willem de Bruijn <willemb@google.com>
-Subject: [PATCH net-next] selftests: net: add test for ipv6 fragmentation
-Date: Mon, 25 Aug 2025 09:25:32 +0000
-Message-ID: <20250825092548.4436-3-bacs@librecast.net>
-X-Mailer: git-send-email 2.49.1
+	s=arc-20240116; t=1756113984; c=relaxed/simple;
+	bh=cIzdmcvXdg7hxkkZDexpcsEff8DWNSt3EqI8LIw59v8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=kP34SVJYhJrtTC1wdB8bB7sk8O1DxDk4rOGZWBwVtVnEBe61o+LTi9ZYf093NMgrfRDMmwH99fMq/k+yx1LWh7e02wXAtKlXiMRIEJOVevo3mp707zm99nCo84wFQxl+0CZUP0Jy0k6efJnJFr2IHPh3wzAJCrA/jKhqdCxQosA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WO2ZIclx; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756113979;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=58sTOuEGPWt/oh3phiU0Ohm2TNJomRF2T7ceM8gERPs=;
+	b=WO2ZIclx7JFGeE5p1QwUWOJ3PJqYWGrDGP/ps7Pne7L31r0CAEeUQwfoNeFUe/0CpKWAKl
+	V6ysu4jbPdN6O296+wqa6QC5eSm+7gJtMwHCmgx7W8jcYuvJ2fOuAy1dTy9BP3goj/Nnqw
+	dnsE1U5NAqAlE40nZMiSyEwKZsdVKWE=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-682-OVttxm5WMLqfO-Nw3GtKtw-1; Mon,
+ 25 Aug 2025 05:26:17 -0400
+X-MC-Unique: OVttxm5WMLqfO-Nw3GtKtw-1
+X-Mimecast-MFC-AGG-ID: OVttxm5WMLqfO-Nw3GtKtw_1756113976
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 04627180028D;
+	Mon, 25 Aug 2025 09:26:16 +0000 (UTC)
+Received: from localhost (unknown [10.43.135.229])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A0B5E1800447;
+	Mon, 25 Aug 2025 09:26:14 +0000 (UTC)
+Date: Mon, 25 Aug 2025 11:26:12 +0200
+From: Miroslav Lichvar <mlichvar@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, john.stultz@linaro.org
+Subject: CLOCK_AUX stepping
+Message-ID: <aKwsNNWsHJg8IKzj@localhost>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Add selftest for the IPv6 fragmentation regression which affected
-several stable kernels.
+There is an issue with the new system auxiliary clocks. When I make
+a larger step of a CLOCK_AUX clock (by clock_settime() or
+adjtimex(ADJ_SETOFFSET)), the system slows down significantly to
+almost being unusable. This didn't happen with the original
+tglx/timers/ptp/driver-auxclock branch, but happens with 6.17-rc1
+and later.
 
-Commit a18dfa9925b9 ("ipv6: save dontfrag in cork") was backported to
-stable without some prerequisite commits.  This caused a regression when
-sending IPv6 UDP packets by preventing fragmentation and instead
-returning -1 (EMSGSIZE).
+Reproducer:
+- echo 1 > /sys/kernel/time/aux_clocks/0/aux_clock_enable
+- git clone -b staging https://github.com/mlichvar/linuxptp.git
+- cd linuxptp && make
+- ./phc_ctl CLOCK_AUX0 set
 
-Add selftest to check for this issue by attempting to send a packet
-larger than the interface MTU. The packet will be fragmented on a
-working kernel, with sendmsg(2) correctly returning the expected number
-of bytes sent.  When the regression is present, sendmsg returns -1 and
-sets errno to EMSGSIZE.
+"echo 0 > .../aux_clock_enable" revives the system.
 
-Signed-off-by: Brett A C Sheffield <bacs@librecast.net>
-Link: https://lore.kernel.org/stable/aElivdUXqd1OqgMY@karahi.gladserv.com
----
- tools/testing/selftests/net/.gitignore        |   1 +
- tools/testing/selftests/net/Makefile          |   1 +
- .../selftests/net/ipv6_fragmentation.c        | 204 ++++++++++++++++++
- 3 files changed, 206 insertions(+)
- create mode 100644 tools/testing/selftests/net/ipv6_fragmentation.c
+I'm not sure if this isn't just a symptom, but the top functions
+reported by perf are:
+  87.10%  swapper          [kernel.kallsyms]       [k] queued_spin_lock_slowpath                                    
+   6.84%  rcu_exp_gp_kthr  [kernel.kallsyms]       [k] queued_spin_lock_slowpath                                    
+   1.90%  rcu_exp_gp_kthr  [kernel.kallsyms]       [k] smp_call_function_single                                     
 
-diff --git a/tools/testing/selftests/net/.gitignore b/tools/testing/selftests/net/.gitignore
-index 47c293c2962f..3d4b4a53dfda 100644
---- a/tools/testing/selftests/net/.gitignore
-+++ b/tools/testing/selftests/net/.gitignore
-@@ -16,6 +16,7 @@ ip_local_port_range
- ipsec
- ipv6_flowlabel
- ipv6_flowlabel_mgr
-+ipv6_fragmentation
- log.txt
- msg_oob
- msg_zerocopy
-diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selftests/net/Makefile
-index b31a71f2b372..f83f91b758ae 100644
---- a/tools/testing/selftests/net/Makefile
-+++ b/tools/testing/selftests/net/Makefile
-@@ -117,6 +117,7 @@ TEST_GEN_FILES += tfo
- TEST_PROGS += tfo_passive.sh
- TEST_PROGS += broadcast_pmtu.sh
- TEST_PROGS += ipv6_force_forwarding.sh
-+TEST_GEN_PROGS += ipv6_fragmentation
- 
- # YNL files, must be before "include ..lib.mk"
- YNL_GEN_FILES := busy_poller netlink-dumps
-diff --git a/tools/testing/selftests/net/ipv6_fragmentation.c b/tools/testing/selftests/net/ipv6_fragmentation.c
-new file mode 100644
-index 000000000000..21e1a3cdc63d
---- /dev/null
-+++ b/tools/testing/selftests/net/ipv6_fragmentation.c
-@@ -0,0 +1,204 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Author: Brett A C Sheffield <bacs@librecast.net>
-+ *
-+ * Kernel selftest for the IPv6 fragmentation regression which affected
-+ * stable kernels:
-+ *
-+ *   https://lore.kernel.org/stable/aElivdUXqd1OqgMY@karahi.gladserv.com
-+ *
-+ * Commit:
-+ *   a18dfa9925b9 ("ipv6: save dontfrag in cork")
-+ * was backported to stable without some prerequisite commits.
-+ *
-+ * This caused a regression when sending IPv6 UDP packets by preventing
-+ * fragmentation and instead returning -1 (EMSGSIZE).
-+ *
-+ * This selftest demonstrates the issue. sendmsg returns correctly (8192)
-+ * on a working kernel, and returns -1 (EMSGSIZE) when the regression is
-+ * present.
-+ *
-+ * The regression was not present in the mainline kernel, but add this test to
-+ * catch similar breakage in future.
-+ */
-+
-+#define _GNU_SOURCE
-+
-+#include <fcntl.h>
-+#include <linux/if_tun.h>
-+#include <net/if.h>
-+#include <netinet/in.h>
-+#include <sched.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+#include <sys/socket.h>
-+#include <unistd.h>
-+
-+#define MTU 1500
-+#define LARGER_THAN_MTU 8192
-+
-+/* ensure MTU is smaller than what we plan to send */
-+static int set_mtu(int ctl, char *ifname, struct ifreq *ifr)
-+{
-+	ifr->ifr_mtu = MTU;
-+	return ioctl(ctl, SIOCSIFMTU, ifr);
-+}
-+
-+/* bring up interface */
-+static int interface_up(int ctl, char *ifname, struct ifreq *ifr)
-+{
-+	if (ioctl(ctl, SIOCGIFFLAGS, ifr) == -1) {
-+		perror("ioctl SIOCGIFFLAGS");
-+		return -1;
-+	}
-+	ifr->ifr_flags = ifr->ifr_flags | IFF_UP;
-+	return ioctl(ctl, SIOCSIFFLAGS, ifr);
-+}
-+
-+/* no need to wait for DAD in our namespace */
-+static int disable_dad(char *ifname)
-+{
-+	char sysvar[] = "/proc/sys/net/ipv6/conf/%s/accept_dad";
-+	char fname[IFNAMSIZ + sizeof(sysvar)];
-+	int fd;
-+
-+	snprintf(fname, sizeof(fname), sysvar, ifname);
-+	fd = open(fname, O_WRONLY);
-+	if (fd == -1) {
-+		perror("open accept_dad");
-+		return -1;
-+	}
-+	if (write(fd, "0", 1) != 1) {
-+		perror("write");
-+		return -1;
-+	}
-+	return close(fd);
-+}
-+
-+/* create TAP interface that will be deleted when this process exits */
-+static int create_interface(int ctl, char *ifname, struct ifreq *ifr)
-+{
-+	int fd;
-+
-+	fd = open("/dev/net/tun", O_RDWR);
-+	if (fd == -1) {
-+		perror("open tun");
-+		return -1;
-+	}
-+
-+	ifr->ifr_flags = IFF_TAP | IFF_NO_PI;
-+	if (ioctl(fd, TUNSETIFF, (void *)ifr) == -1) {
-+		close(fd);
-+		perror("ioctl: TUNSETIFF");
-+		return -1;
-+	}
-+	strcpy(ifname, ifr->ifr_name);
-+
-+	return fd;
-+}
-+
-+/* we need to set MTU, so do this in a namespace to play nicely */
-+static int create_namespace(void)
-+{
-+	const char *netns_path = "/proc/self/ns/net";
-+	int fd;
-+
-+	if (unshare(CLONE_NEWNET) != 0) {
-+		perror("unshare");
-+		return -1;
-+	}
-+
-+	fd = open(netns_path, O_RDONLY);
-+	if (fd == -1) {
-+		perror("open");
-+		return -1;
-+	}
-+
-+	if (setns(fd, CLONE_NEWNET)) {
-+		perror("setns");
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-+
-+static int setup(void)
-+{
-+	struct ifreq ifr = {0};
-+	char ifname[IFNAMSIZ];
-+	int fd = -1;
-+	int ctl;
-+
-+	if (create_namespace() == -1)
-+		return -1;
-+
-+	ctl = socket(AF_LOCAL, SOCK_STREAM, 0);
-+	if (ctl == -1)
-+		return -1;
-+
-+	memset(ifname, 0, sizeof(ifname));
-+	fd = create_interface(ctl, ifname, &ifr);
-+	if (fd == -1)
-+		goto err_close_ctl;
-+	if (disable_dad(ifname) == -1)
-+		goto err_close_fd;
-+	if (interface_up(ctl, ifname, &ifr) == -1)
-+		goto err_close_fd;
-+	if (set_mtu(ctl, ifname, &ifr) == -1)
-+		goto err_close_fd;
-+	usleep(10000); /* give interface a moment to wake up */
-+	goto err_close_ctl;
-+err_close_fd:
-+	close(fd);
-+	fd = -1;
-+err_close_ctl:
-+	close(ctl);
-+	return fd;
-+}
-+
-+int main(void)
-+{
-+	/* address doesn't matter, use an IPv6 multicast address for simplicity */
-+	struct in6_addr addr = {
-+		.s6_addr[0] = 0xff, /* multicast */
-+		.s6_addr[1] = 0x12, /* set flags (T, link-local) */
-+	};
-+	struct sockaddr_in6 sa = {
-+		.sin6_family = AF_INET6,
-+		.sin6_addr = addr,
-+		.sin6_port = 4242
-+	};
-+	char buf[LARGER_THAN_MTU] = {0};
-+	struct iovec iov = { .iov_base = buf, .iov_len = sizeof(buf)};
-+	struct msghdr msg = {
-+		.msg_iov = &iov,
-+		.msg_iovlen = 1,
-+		.msg_name = (struct sockaddr *)&sa,
-+		.msg_namelen = sizeof(sa),
-+	};
-+	ssize_t rc;
-+	int ns_fd;
-+	int s;
-+
-+	printf("Testing IPv6 fragmentation\n");
-+	ns_fd = setup();
-+	if (ns_fd == -1)
-+		return 1;
-+	s = socket(AF_INET6, SOCK_DGRAM, 0);
-+	msg.msg_name = (struct sockaddr *)&sa;
-+	msg.msg_namelen = sizeof(sa);
-+	rc = sendmsg(s, &msg, 0);
-+	if (rc == -1) {
-+		perror("send");
-+		return 1;
-+	} else if (rc != LARGER_THAN_MTU) {
-+		fprintf(stderr, "send() returned %zi\n", rc);
-+		return 1;
-+	}
-+	close(s);
-+	close(ns_fd);
-+
-+	return 0;
-+}
 -- 
-2.49.1
+Miroslav Lichvar
 
 
