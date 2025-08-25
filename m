@@ -1,421 +1,224 @@
-Return-Path: <linux-kernel+bounces-785230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB076B347DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:45:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F2E1B347E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:46:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 107BB2A0B16
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:45:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C81E75E685E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:45:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9512C3019A0;
-	Mon, 25 Aug 2025 16:44:52 +0000 (UTC)
-Received: from vps-ovh.mhejs.net (vps-ovh.mhejs.net [145.239.82.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98242FE059;
+	Mon, 25 Aug 2025 16:45:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ufErNscx"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2080.outbound.protection.outlook.com [40.107.100.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E896622F74F;
-	Mon, 25 Aug 2025 16:44:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=145.239.82.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756140292; cv=none; b=TEVg6WYQ42hjCYptVdCSZOMLr2M3vrsm8uDA/Ty5OvI7E31RTGycVQx7MHkKR0E4briAbB4p/UYqmxG1/Fo9DUHzd9HdiG2JdbreQA7SnhOSgpcEmDSThBWewHXVVUDg2zeagPEvxp0c2PEAXwTAc9vcI2bfAZdNDofjjsX9jNk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756140292; c=relaxed/simple;
-	bh=5FmImHnUOWdxWyAPXcYAKJD4BB8uHyMkPtJdygLfggM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VBvGjbxR9RsWMXOGUDlvpPKxX6m2EVgDgL8Cqe5R1DoQ06JR8rM70uhNbNF5/Re1Ug2hZTVCFb93zFiZ0JOITJ84uetNjHr9eTZnm5JpqrEaRDbJLGaN2UiJXv3bclMG2VoghrVcWJXPoXyEuua5jczCUqqmuTxV8yhr+iXGky0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name; spf=pass smtp.mailfrom=vps-ovh.mhejs.net; arc=none smtp.client-ip=145.239.82.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vps-ovh.mhejs.net
-Received: from MUA
-	by vps-ovh.mhejs.net with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <mhej@vps-ovh.mhejs.net>)
-	id 1uqaJJ-00000001lNz-2mnE;
-	Mon, 25 Aug 2025 18:44:45 +0200
-From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-To: Paolo Bonzini <pbonzini@redhat.com>,
-	Sean Christopherson <seanjc@google.com>
-Cc: Maxim Levitsky <mlevitsk@redhat.com>,
-	Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	Alejandro Jimenez <alejandro.j.jimenez@oracle.com>,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] KVM: selftests: Test TPR / CR8 sync and interrupt masking
-Date: Mon, 25 Aug 2025 18:44:29 +0200
-Message-ID: <a5efbf76990d023c7cf21c5a4c170f4ad0234d85.1756139678.git.maciej.szmigiero@oracle.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <cover.1756139678.git.maciej.szmigiero@oracle.com>
-References: <cover.1756139678.git.maciej.szmigiero@oracle.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124D83019BE
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 16:45:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756140330; cv=fail; b=EzXDuPHo1tq9/FVqBSwdCJ+cgZ71MGFMF20nOsiNILGrqXpmegKPgNw1du6N1uFMP7CwpjPeh6vRSnGOrosw1/RDi0WEBmhTQtFXEove1OlTBtKoABQNiELpyrOJcukicJQDnRVrHh27V0IQ8U4GyG84jvXZux9f0mMynWhS1dM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756140330; c=relaxed/simple;
+	bh=WQFB0stHoO4yIgACMDozmCX1WkHo7gb2eiiH7jNI9LI=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=bA/jJMnyYeFliFguQPEuBQeA5skjBhm0oCC54Sk7i9F//D/mY4s1Zy/ihbEbfOwdZQrA40kM9OJc5RdBae3jtt1Kk/ruSR1J/T4DGNn3TBproWpdJjHasZbZYsKm0oq/KEiXxwky/8LYCvno7JeLmP3R/LfnZHi5aiBGvOEJWsE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ufErNscx; arc=fail smtp.client-ip=40.107.100.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HJZKJeplvdeuCyCu09k+LDKXcH9DEF1KmrVcz+DGQvy3Y/ned11/kAQnkMF3Ii900s0gNL+0a2P7mdnkM8n8A1P6OZl25QnpwItGd6C4A3fLhjJLZQfnn5P5OY+EP9w/BJojDsUoJG0NSh+pWm+opebefJX/nz63xvN/x+/y/mEAZJCMPIsEYA+kC9zeDnpCiBlljiCVx01JEw8sQuhTmIkUOviEmAxRdEv7FdtPNDEAbax2drxUIZUKg9f1XiFUUU1vyelzE+51MjAM7Krg0P9laVtYTBrDTk1RuiFleUH86YYjH2P6p7BXUyP87Wg32CwkjwtC+e275+yFCS6e8g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MVt5Ftq9InXzl51JXjAhwheYcznIKudIcznmiD2i8vE=;
+ b=hj04TY54TIV097K2+0B8SPaWVSeL9FotgrC/35CrHSHLKBwLlj5wlt8M/EOzvun488A77Ll+Q8U2fEUSb8i2gzPx5PQqLQm+41HLyxmRd0OMbj6YTxVyJngn9XPUNxL4RUI/2ZDIM6BIvTNosecu8/6tWKp7y6kB7yZgKYmZ9oXKAnPT9YJg/YSagtzg6/P4uQDFG769cPcC6zQJePRPilzbxYGPFmkrmdsp+NtL+W7MSmdUON5akt+PWCdVddbfv+hfgO4nj35tVzSoxif/kRXT9oCG6GyEIvNBDwySmUhZ6tj2RfJ4UlBtVgcIbu2/5BgMGDXDRvFRpG6MW/K/Hw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MVt5Ftq9InXzl51JXjAhwheYcznIKudIcznmiD2i8vE=;
+ b=ufErNscxEoRzjAuz1gfUqNEAutDZ7cvH6K5b8NN+Ib4ZseRD77LiLE1aqzQ7RDxFzK1tGKgyVyL7fSDIs9QQuNCFQwDr6u5CPxBJqTWWaWynTGwfafLtOw6p8OOLm1jJ6RcuJen4kav283HTUN/pmEEFp0QAF4JuZ+4pUu/ezLs=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by SA1PR12MB8844.namprd12.prod.outlook.com (2603:10b6:806:378::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Mon, 25 Aug
+ 2025 16:45:22 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.9052.017; Mon, 25 Aug 2025
+ 16:45:22 +0000
+Message-ID: <a24a7cd1-2281-4d98-8b68-a75e85c22dd5@amd.com>
+Date: Mon, 25 Aug 2025 11:45:19 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 0/5] drm: panel-backlight-quirks: Do partial refactor
+ and apply OLED fix
+To: Antheas Kapenekakis <lkml@antheas.dev>, amd-gfx@lists.freedesktop.org
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ philm@manjaro.org, Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+References: <20250824200202.1744335-1-lkml@antheas.dev>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20250824200202.1744335-1-lkml@antheas.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA1P222CA0051.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:806:2d0::24) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: mhej@vps-ovh.mhejs.net
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|SA1PR12MB8844:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9c400dae-5215-4ec9-7c2d-08dde3f6c86b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cFFnOUZmak82OENFWTZSZ2lybzdLOC9sNWljbzcwTlBKUklkNHhsNmxhWVFv?=
+ =?utf-8?B?bkV3RTVlSE1EMXJVcjYwSGRtM2xVY28xcWlFdjNzSlJDOWdlbHQrSm1kd3RQ?=
+ =?utf-8?B?ZnZKWktlYmY2ZTFXc1VSYWFyZWNCVzN4SUNIcjZlMTE5U0FraTNqUkx2d2Jo?=
+ =?utf-8?B?R0tYZlJ4V3BZMjF5OUFvN3NZckVSLysrcTkxbWZaMEFUd2xIemxpeW51Nktk?=
+ =?utf-8?B?dXBoSCs0YU05N3F6MmNGRVJyNE50SllMbHhLbzVCK0RwdTN4eFNrUWw1MUh3?=
+ =?utf-8?B?NVR4NE5rZlIzZzJpSE01SHA3anVtMktFcGd0dFhiOE9aWnlycEQ0VE9aeUNs?=
+ =?utf-8?B?TWt1Q1p5ekdQZ09ZbGVLZUFxRVVxR25IczBTRVdWZUZpZmF6cUNnYjZLZlE2?=
+ =?utf-8?B?Mlp5V1FhdnZoWVVRZk5pcEtZTmxIUHVZeHE3eFJmeGJuSkVQeXkxR050d3A4?=
+ =?utf-8?B?bUJKQ00zdVRURERXdkJheWdOZGk3N2R1cHFtMFFGMnU1Y0RkY3A5RC9zV1Mv?=
+ =?utf-8?B?ZHl5QjlFei80RkZJRGVPOUZxcnd4Z1BJQlFyNGdUMmRMcVJGWWpWMURRUmFq?=
+ =?utf-8?B?MEYyVUJBNS8xZlRTSnlESkV3VG9jazlMRWdQcVVlUnRlUnhDOXhOM1BnT0hC?=
+ =?utf-8?B?R2taeWM3MFFwVkRXSnRtUDVad3VpWmxtc2JPMU4zZkdnbEhZazdXVGNQbUVy?=
+ =?utf-8?B?ZXJucXl2QlRWWVhmQjgxK1p6a2JKazFTM2hPTjllbWduTEFwWGZ3cFpMTG5J?=
+ =?utf-8?B?QVF6QlA0SDhTS2FVRkpER25STm1mVUpZVHFRdEo2Njc5blpZVHM2R1l5TUpM?=
+ =?utf-8?B?RlJpV3hDMEFIcGNtbnpnSUJLbGl4UzUvTmx2VVZMUFA3R1Q2b3ZaNlhma3FL?=
+ =?utf-8?B?Nys0MmxvS0NZM1pTaGZmSjQ2VlVxbjY3MmpzdDFzRUEwTE8wS0pOMTluU0NP?=
+ =?utf-8?B?eWxxVUtnYTdmYWhYS2VrUld4LzRxK3Uxd3dDTXEzakVlaGhrRE52S282TXQ0?=
+ =?utf-8?B?dE83elQ4Tml1SnpaMHd6WFNrKzdPd2tBL0RUbG9vdlJvaTNQZHdpcWIrNVd1?=
+ =?utf-8?B?bWg2UkZpWkVaNHZlRjY0MlJNd0FITGs3WW1Ucnc3VHhCbHBVd0dYWmFmZXg3?=
+ =?utf-8?B?b1BjTVlRSzFEV2dmMFpkZGRWc3h0Y0wvclRTNU1YaENLQVlsWlZDVVIxQ2g2?=
+ =?utf-8?B?YWQvZWlyYjNNY0hOQmVDdnVhRHE5OGNuVHhvTjloRlNBbWNMVzNUbFdWNmJS?=
+ =?utf-8?B?VHAvVElOMjI2N3VFMWZhN3FzVFlmUXVoZjg5bjJkV1daNUtMdXNxQ1craERG?=
+ =?utf-8?B?emsxcFV1dVlvNmVETEMzV25CcURScFVQbGFiVGx4WnVlNVJwUlltd3V3OE9l?=
+ =?utf-8?B?YjUvRjdoVlhmTnk5eG4zVHRZTGV2TmxFcTg5bEhmZ2JaN1NKRm9nQ0JKQ2Jp?=
+ =?utf-8?B?QTg4RFh6bC9jUkMwVmVjRGtTaC81NDkyQnJhQVJNNndFRTZsZ01NSlBVcWRO?=
+ =?utf-8?B?RlFYeEpkNlBPUUdsSVNya3lBaU4rS3dOZXlZcTFvMForaUYzRXF2ZDIvcUF5?=
+ =?utf-8?B?QkY5Wk5ENkZYbjVISFQrYVBYb1BmZis4MElGc0oyblZVMVlRciswbi9VR0VK?=
+ =?utf-8?B?bktycGRRc3M0UVh5NGpwTXBKOEwzRXhXaitaTVFuQlRuRU5QRUJhWmliZXdM?=
+ =?utf-8?B?Z3hLV1NScE54QUtVWCtqWVZkVG45RGNPUFJlT3hlNy9aWFJTVnNBTlhpRm15?=
+ =?utf-8?B?bldtc0M4bEhNL04yWmdkK0pwb0taMUpPYnZGN0tVb1dOMUwrZ3owZWYvUWVo?=
+ =?utf-8?Q?hA2WoaA7y7Tc/5E1J5SJpgz51BpbyB3TBnYbc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WnJJQUdhTTJtTmNZN3BQWTlvd1Bsd3VkNVpDa0NBVXd1WlM5ck56YzJDRlBD?=
+ =?utf-8?B?ZUN5RDNMNmgrUmhSM25qc2VTVmRXdXRXUnFYUURKdlJCTmthR1lVZjZCaFd1?=
+ =?utf-8?B?ay9KNEZ3LzREazE1Rk9vQUJ5OFFtQTlnMUNadDIvZTlVdVBaVk5qamxXSUNN?=
+ =?utf-8?B?MXVQdVJ6a05lT09BNzJVQ0NFeVRlSHgreXVFc2VRZ1doZGNGMTRuWFplaE5v?=
+ =?utf-8?B?SFg2OFdiRVRkZWFPTVovTUZvU1FVTGY1UDBGQzBWRVJpMVZUa0o4Z2dsODY0?=
+ =?utf-8?B?OTJEZjQzTUJqajRuMDhkelZQTHdtaG1KU1krQW1lNUErRFNCa0ZaMnR1bndz?=
+ =?utf-8?B?SEU2S0ZtMzZhaG84Rm5FNVViNkFmZ1BaTzQ5Ry93K251eFpYMDQ3bVhHREU4?=
+ =?utf-8?B?WVVTc3grZ2VHRFJTUmR3ZCtxV2FMNHcydGJzZTlBNlN4MkMxejcwcXBTWjJi?=
+ =?utf-8?B?VkdMaStQNkRUaWh1aURXUmYzQW9kZG51UUpuUjlYK1o3L2dJbkMvbnZnbWRP?=
+ =?utf-8?B?NHFjbUdFNFVHRUpXcG9WRGdZVUVFcWdockVHNXVrZ0NaYkl0b0JQSmpaeHlX?=
+ =?utf-8?B?RDhqMnVDZTRxa0hSdkROVExKS2c0ZXEybE1wMmhmb2p2Y0doc09tYldNRm1v?=
+ =?utf-8?B?OXd2WXBFb2w4RzJKQ0MrYkVXR3VMd2VrekNoeTlFMXZPc3BZZllIeUtpS3NZ?=
+ =?utf-8?B?VW9jbEFLSWM1a3NrdWhySktGeUJGZjgxNWFmV25pdTk3VFhzN1p2SC9jWEpj?=
+ =?utf-8?B?TVhCSmpKWXdJVG05ejdzZTE0M1YvSkxER2RSOGlvaWlZbmI0REQzMVNVYURF?=
+ =?utf-8?B?U25kWjJSY0ZEbmd4YUxRdHVhdDRDV1ZWY1ZLUWJYODJpbUp4ZDZUVHJHZHdP?=
+ =?utf-8?B?aU9uUVJaeFB0ZlNxRGpvOHAxR3JpWFp6a0tVa0Nmb1YrTlFmSnpldTlQRmZ4?=
+ =?utf-8?B?STNTaEJvbGdTdmxJbWViZ3kxaGdxajVsempOQmNoN3EyRUNmVEFFZ3JKTW00?=
+ =?utf-8?B?MHlLVWNuVXd1QUVacTYyaDdFU2tGM2FVTHJwUHZXQ1hzbVBOL2p5MldubXQy?=
+ =?utf-8?B?SnFNd0VyekEvcWpRdE5rOXJtY3VkZy9wbXA5WFJIaUM5Zld6WWRWTStsVzJU?=
+ =?utf-8?B?M1pzWjZzTVY1VGIwV1cvUGduVzBRamFxYkNnSTNHL1VBNExvUW1DOXI5TzVx?=
+ =?utf-8?B?ZGExOUhTWkFVZktaeWVRcnc1amNkNytjSUxPUitjV2g4bWxLV1ZGOVNPSVUw?=
+ =?utf-8?B?Y1NNcWZoQmN5ZzI2N2VjeCt6U0I5V1prR3JkUk9EZHA4OGJ0MWhCYnR2NlFm?=
+ =?utf-8?B?ZHdVaGNRNEpRajg5dGNuejkyRytKNUpHc2NENHVEakhFWXB0SE9GM05sSUN0?=
+ =?utf-8?B?S3FoWGFtTE0yQUE5ZkpBSlpiL20zcnVQUlBBS0JURDU4Mk5KSGt1SVFwMlQx?=
+ =?utf-8?B?b055R01MalRzRkJoWmxUczYxaG9nbkw4YjhscjRjZGlSNjdteW5GOXJqanJn?=
+ =?utf-8?B?cVhpUnh2dnpPS1p4VnhHSFhPN2c0UWxqbUdVcS9tYWxqVFBBa2F0QzlvcE5h?=
+ =?utf-8?B?VzFYZWlIemI2Z0gySitlN2FybjBjUHM0TDFmc21RUFV0QnFheEtQMEF1Z0s3?=
+ =?utf-8?B?WCs0NjJCY3R5MUJ3KzZGWnZZem12SDN0WXBLb1VyUVpPRTlNelB3ZXFYTW1N?=
+ =?utf-8?B?eVprWDNKTGtUbUxVL1pQbW84NGJZSkplZlUvOXROREczeWFwTWZpMjcrazBh?=
+ =?utf-8?B?SUhWTEc4WTZCTWEzN2lYTEhUVE0xaExZcHo5NkwzZSsvQUdoQ29Ddm40QUc5?=
+ =?utf-8?B?VmpkTXBsa0dvU1ljRWlOZHlwZC9rV2RQMklGSVRKb01DODZZZnlZb0ZXcWZO?=
+ =?utf-8?B?Q3hiaXRHZ2RtRWZmSDhwNXJmY2xxNmdyVzRWbnNqaGF6V2RHOG4zcHg0OUx0?=
+ =?utf-8?B?SEw1aVQ2RTNyNGxrWnY2WmorMjZGYzUrR28xMFJCS2VXM1drb0V5bERDY1ND?=
+ =?utf-8?B?RXdqcXlSWWZuWmVOcDlqc1BWOElZSXRoNWV3YTRaYW5rSzUxWkJkOGhlYU5X?=
+ =?utf-8?B?OStnVTRsZDVpNzUvSUJCdFpKNFBtTnRFK2lObmJ3bVIwQmFpNUZTNWZzUnVa?=
+ =?utf-8?Q?G5rYkPZuGxTcgzfR2Vimg90pM?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9c400dae-5215-4ec9-7c2d-08dde3f6c86b
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 16:45:22.2736
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /76dxXJSL5O6kBuTzMQF2gTlYyucU4YGvDtjQCt/zIexLovN5AQ34363z/JSl7H8zVcsjBNC0AF9MoJgRdKcSQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8844
 
-From: "Maciej S. Szmigiero" <maciej.szmigiero@oracle.com>
+On 8/24/2025 3:01 PM, Antheas Kapenekakis wrote:
+> This is an alternative to [1], since Phil found out there are still invalid
+> values. I made this series before the one I sent today, and I have to say
+> I tested it much less. Because I did not think it was very viable to
+> upstream. 
 
-Add a few extra TPR / CR8 tests to x86's xapic_state_test to see if:
-* TPR is 0 on reset,
-* TPR, PPR and CR8 are equal inside the guest,
-* TPR and CR8 read equal by the host after a VMExit
-* TPR borderline values set by the host correctly mask interrupts in the
-guest.
+I'll look through and may leave some comments on individual patches.
 
-These hopefully will catch the most obvious cases of improper TPR sync or
-interrupt masking.
+But I do want to say because platforms can share panels or can have 
+multiple sources we very likely should be keeping matching that does 
+SMBIOS data and panel data together.
 
-Do these tests both in x2APIC and xAPIC modes.
-The x2APIC mode uses SELF_IPI register to trigger interrupts to give it a
-bit of exercise too.
+It's also completely feasible to launch another second source or third 
+source panel later on which might not require the same quirks as the first.
 
-Signed-off-by: Maciej S. Szmigiero <maciej.szmigiero@oracle.com>
----
- .../testing/selftests/kvm/include/x86/apic.h  |   5 +
- .../selftests/kvm/x86/xapic_state_test.c      | 265 +++++++++++++++++-
- 2 files changed, 267 insertions(+), 3 deletions(-)
+Then lastly there are companies (IE Framework) that actively let people 
+change out their panel for another.
 
-diff --git a/tools/testing/selftests/kvm/include/x86/apic.h b/tools/testing/selftests/kvm/include/x86/apic.h
-index 80fe9f69b38d..67285e533e14 100644
---- a/tools/testing/selftests/kvm/include/x86/apic.h
-+++ b/tools/testing/selftests/kvm/include/x86/apic.h
-@@ -27,7 +27,11 @@
- #define	APIC_LVR	0x30
- #define		GET_APIC_ID_FIELD(x)	(((x) >> 24) & 0xFF)
- #define	APIC_TASKPRI	0x80
-+#define		APIC_TASKPRI_TP_SHIFT	4
-+#define		APIC_TASKPRI_TP_MASK	GENMASK(7, 4)
- #define	APIC_PROCPRI	0xA0
-+#define		APIC_PROCPRI_PP_SHIFT	4
-+#define		APIC_PROCPRI_PP_MASK	GENMASK(7, 4)
- #define	APIC_EOI	0xB0
- #define	APIC_SPIV	0xF0
- #define		APIC_SPIV_FOCUS_DISABLED	(1 << 9)
-@@ -67,6 +71,7 @@
- #define	APIC_TMICT	0x380
- #define	APIC_TMCCT	0x390
- #define	APIC_TDCR	0x3E0
-+#define	APIC_SELF_IPI	0x3F0
- 
- void apic_disable(void);
- void xapic_enable(void);
-diff --git a/tools/testing/selftests/kvm/x86/xapic_state_test.c b/tools/testing/selftests/kvm/x86/xapic_state_test.c
-index fdebff1165c7..968e5e539a1a 100644
---- a/tools/testing/selftests/kvm/x86/xapic_state_test.c
-+++ b/tools/testing/selftests/kvm/x86/xapic_state_test.c
-@@ -1,9 +1,11 @@
- // SPDX-License-Identifier: GPL-2.0-only
- #include <fcntl.h>
-+#include <stdatomic.h>
- #include <stdio.h>
- #include <stdlib.h>
- #include <string.h>
- #include <sys/ioctl.h>
-+#include <unistd.h>
- 
- #include "apic.h"
- #include "kvm_util.h"
-@@ -16,6 +18,245 @@ struct xapic_vcpu {
- 	bool has_xavic_errata;
- };
- 
-+#define IRQ_VECTOR 0x20
-+
-+/* See also the comment at similar assertion in memslot_perf_test.c */
-+static_assert(ATOMIC_INT_LOCK_FREE == 2, "atomic int is not lockless");
-+
-+static atomic_uint tpr_guest_irq_sync_val;
-+
-+static void tpr_guest_irq_sync_flag_reset(void)
-+{
-+	atomic_store_explicit(&tpr_guest_irq_sync_val, 0,
-+			      memory_order_release);
-+}
-+
-+static unsigned int tpr_guest_irq_sync_val_get(void)
-+{
-+	return atomic_load_explicit(&tpr_guest_irq_sync_val,
-+				    memory_order_acquire);
-+}
-+
-+static void tpr_guest_irq_sync_val_inc(void)
-+{
-+	atomic_fetch_add_explicit(&tpr_guest_irq_sync_val, 1,
-+				  memory_order_acq_rel);
-+}
-+
-+static void tpr_guest_irq_handler_xapic(struct ex_regs *regs)
-+{
-+	tpr_guest_irq_sync_val_inc();
-+
-+	xapic_write_reg(APIC_EOI, 0);
-+}
-+
-+static void tpr_guest_irq_handler_x2apic(struct ex_regs *regs)
-+{
-+	tpr_guest_irq_sync_val_inc();
-+
-+	x2apic_write_reg(APIC_EOI, 0);
-+}
-+
-+static void tpr_guest_irq_queue(bool x2apic)
-+{
-+	if (x2apic) {
-+		x2apic_write_reg(APIC_SELF_IPI, IRQ_VECTOR);
-+	} else {
-+		uint32_t icr, icr2;
-+
-+		icr = APIC_DEST_SELF | APIC_DEST_PHYSICAL | APIC_DM_FIXED |
-+			IRQ_VECTOR;
-+		icr2 = 0;
-+
-+		xapic_write_reg(APIC_ICR2, icr2);
-+		xapic_write_reg(APIC_ICR, icr);
-+	}
-+}
-+
-+static uint8_t tpr_guest_tpr_get(bool x2apic)
-+{
-+	uint32_t taskpri;
-+
-+	if (x2apic)
-+		taskpri = x2apic_read_reg(APIC_TASKPRI);
-+	else
-+		taskpri = xapic_read_reg(APIC_TASKPRI);
-+
-+	return (taskpri & APIC_TASKPRI_TP_MASK) >> APIC_TASKPRI_TP_SHIFT;
-+}
-+
-+static uint8_t tpr_guest_ppr_get(bool x2apic)
-+{
-+	uint32_t procpri;
-+
-+	if (x2apic)
-+		procpri = x2apic_read_reg(APIC_PROCPRI);
-+	else
-+		procpri = xapic_read_reg(APIC_PROCPRI);
-+
-+	return (procpri & APIC_PROCPRI_PP_MASK) >> APIC_PROCPRI_PP_SHIFT;
-+}
-+
-+static uint8_t tpr_guest_cr8_get(void)
-+{
-+	uint64_t cr8;
-+
-+	asm volatile ("mov %%cr8, %[cr8]\n\t" : [cr8] "=r"(cr8));
-+
-+	return cr8 & GENMASK(3, 0);
-+}
-+
-+static void tpr_guest_check_tpr_ppr_cr8_equal(bool x2apic)
-+{
-+	uint8_t tpr;
-+
-+	tpr = tpr_guest_tpr_get(x2apic);
-+
-+	GUEST_ASSERT_EQ(tpr_guest_ppr_get(x2apic), tpr);
-+	GUEST_ASSERT_EQ(tpr_guest_cr8_get(), tpr);
-+}
-+
-+static void tpr_guest_code(uint64_t x2apic)
-+{
-+	cli();
-+
-+	if (x2apic)
-+		x2apic_enable();
-+	else
-+		xapic_enable();
-+
-+	tpr_guest_check_tpr_ppr_cr8_equal(x2apic);
-+
-+	tpr_guest_irq_queue(x2apic);
-+
-+	/* TPR = 0 but IRQ masked by IF=0, should not fire */
-+	udelay(1000);
-+	GUEST_ASSERT_EQ(tpr_guest_irq_sync_val_get(), 0);
-+
-+	sti();
-+
-+	/* IF=1 now, IRQ should fire */
-+	while (tpr_guest_irq_sync_val_get() == 0)
-+		cpu_relax();
-+	GUEST_ASSERT_EQ(tpr_guest_irq_sync_val_get(), 1);
-+
-+	GUEST_SYNC(0);
-+	tpr_guest_check_tpr_ppr_cr8_equal(x2apic);
-+
-+	tpr_guest_irq_queue(x2apic);
-+
-+	/* IRQ masked by barely high enough TPR now, should not fire */
-+	udelay(1000);
-+	GUEST_ASSERT_EQ(tpr_guest_irq_sync_val_get(), 1);
-+
-+	GUEST_SYNC(1);
-+	tpr_guest_check_tpr_ppr_cr8_equal(x2apic);
-+
-+	/* TPR barely low enough now to unmask IRQ, should fire */
-+	while (tpr_guest_irq_sync_val_get() == 1)
-+		cpu_relax();
-+	GUEST_ASSERT_EQ(tpr_guest_irq_sync_val_get(), 2);
-+
-+	GUEST_DONE();
-+}
-+
-+static uint8_t lapic_tpr_get(struct kvm_lapic_state *xapic)
-+{
-+	return (*((u32 *)&xapic->regs[APIC_TASKPRI]) & APIC_TASKPRI_TP_MASK) >>
-+		APIC_TASKPRI_TP_SHIFT;
-+}
-+
-+static void lapic_tpr_set(struct kvm_lapic_state *xapic, uint8_t val)
-+{
-+	*((u32 *)&xapic->regs[APIC_TASKPRI]) &= ~APIC_TASKPRI_TP_MASK;
-+	*((u32 *)&xapic->regs[APIC_TASKPRI]) |= val << APIC_TASKPRI_TP_SHIFT;
-+}
-+
-+static uint8_t sregs_tpr(struct kvm_sregs *sregs)
-+{
-+	return sregs->cr8 & GENMASK(3, 0);
-+}
-+
-+static void test_tpr_check_tpr_zero(struct kvm_vcpu *vcpu)
-+{
-+	struct kvm_lapic_state xapic;
-+
-+	vcpu_ioctl(vcpu, KVM_GET_LAPIC, &xapic);
-+
-+	TEST_ASSERT_EQ(lapic_tpr_get(&xapic), 0);
-+}
-+
-+static void test_tpr_check_tpr_cr8_equal(struct kvm_vcpu *vcpu)
-+{
-+	struct kvm_sregs sregs;
-+	struct kvm_lapic_state xapic;
-+
-+	vcpu_sregs_get(vcpu, &sregs);
-+	vcpu_ioctl(vcpu, KVM_GET_LAPIC, &xapic);
-+
-+	TEST_ASSERT_EQ(sregs_tpr(&sregs), lapic_tpr_get(&xapic));
-+}
-+
-+static void test_tpr_mask_irq(struct kvm_vcpu *vcpu, bool mask)
-+{
-+	struct kvm_lapic_state xapic;
-+	uint8_t tpr;
-+
-+	static_assert(IRQ_VECTOR >= 16, "invalid IRQ vector number");
-+	tpr = IRQ_VECTOR / 16;
-+	if (!mask)
-+		tpr--;
-+
-+	vcpu_ioctl(vcpu, KVM_GET_LAPIC, &xapic);
-+	lapic_tpr_set(&xapic, tpr);
-+	vcpu_ioctl(vcpu, KVM_SET_LAPIC, &xapic);
-+}
-+
-+static void test_tpr(struct kvm_vcpu *vcpu, bool x2apic)
-+{
-+	bool run_guest = true;
-+
-+	vcpu_args_set(vcpu, 1, (uint64_t)x2apic);
-+
-+	/* According to the SDM/APM the TPR value at reset is 0 */
-+	test_tpr_check_tpr_zero(vcpu);
-+	test_tpr_check_tpr_cr8_equal(vcpu);
-+
-+	tpr_guest_irq_sync_flag_reset();
-+
-+	while (run_guest) {
-+		struct ucall uc;
-+
-+		alarm(2);
-+		vcpu_run(vcpu);
-+		alarm(0);
-+
-+		switch (get_ucall(vcpu, &uc)) {
-+		case UCALL_ABORT:
-+			REPORT_GUEST_ASSERT(uc);
-+			break;
-+		case UCALL_DONE:
-+			test_tpr_check_tpr_cr8_equal(vcpu);
-+
-+			run_guest = false;
-+			break;
-+		case UCALL_SYNC:
-+			test_tpr_check_tpr_cr8_equal(vcpu);
-+
-+			if (uc.args[1] == 0)
-+				test_tpr_mask_irq(vcpu, true);
-+			else if (uc.args[1] == 1)
-+				test_tpr_mask_irq(vcpu, false);
-+			else
-+				TEST_FAIL("Unknown SYNC %lu", uc.args[1]);
-+			break;
-+		default:
-+			TEST_FAIL("Unknown ucall result 0x%lx", uc.cmd);
-+			break;
-+		}
-+	}
-+}
-+
- static void xapic_guest_code(void)
- {
- 	cli();
-@@ -195,6 +436,12 @@ static void test_apic_id(void)
- 	kvm_vm_free(vm);
- }
- 
-+static void clear_x2apic_cap_map_apic(struct kvm_vm *vm, struct kvm_vcpu *vcpu)
-+{
-+	vcpu_clear_cpuid_feature(vcpu, X86_FEATURE_X2APIC);
-+	virt_pg_map(vm, APIC_DEFAULT_GPA, APIC_DEFAULT_GPA);
-+}
-+
- static void test_x2apic_id(void)
- {
- 	struct kvm_lapic_state lapic = {};
-@@ -230,10 +477,17 @@ int main(int argc, char *argv[])
- 	};
- 	struct kvm_vm *vm;
- 
-+	/* x2APIC tests */
-+
- 	vm = vm_create_with_one_vcpu(&x.vcpu, x2apic_guest_code);
- 	test_icr(&x);
- 	kvm_vm_free(vm);
- 
-+	vm = vm_create_with_one_vcpu(&x.vcpu, tpr_guest_code);
-+	vm_install_exception_handler(vm, IRQ_VECTOR, tpr_guest_irq_handler_x2apic);
-+	test_tpr(x.vcpu, true);
-+	kvm_vm_free(vm);
-+
- 	/*
- 	 * Use a second VM for the xAPIC test so that x2APIC can be hidden from
- 	 * the guest in order to test AVIC.  KVM disallows changing CPUID after
-@@ -251,12 +505,17 @@ int main(int argc, char *argv[])
- 	x.has_xavic_errata = host_cpu_is_amd &&
- 			     get_kvm_amd_param_bool("avic");
- 
--	vcpu_clear_cpuid_feature(x.vcpu, X86_FEATURE_X2APIC);
--
--	virt_pg_map(vm, APIC_DEFAULT_GPA, APIC_DEFAULT_GPA);
-+	clear_x2apic_cap_map_apic(vm, x.vcpu);
- 	test_icr(&x);
- 	kvm_vm_free(vm);
- 
-+	/* Also do a TPR non-x2APIC test */
-+	vm = vm_create_with_one_vcpu(&x.vcpu, tpr_guest_code);
-+	clear_x2apic_cap_map_apic(vm, x.vcpu);
-+	vm_install_exception_handler(vm, IRQ_VECTOR, tpr_guest_irq_handler_xapic);
-+	test_tpr(x.vcpu, false);
-+	kvm_vm_free(vm);
-+
- 	test_apic_id();
- 	test_x2apic_id();
- }
+>  I was also not aware of [2] and [3] since they are not in a
+> public bug tracker such as amddrm and my issue there [4] remains closed.
+> 
+> I lower the cc'd here since this is a draft. 
+
+You should make it "RFC".
+
+> But this could have some
+> viability. Especially since I can stop carrying the dodgy patches from
+> SteamOS so that the SD OLED has a 0 brightness min.
+> 
+> [1] https://lore.kernel.org/all/20250824085351.454619-2-lkml@antheas.dev/
+> [2] https://gitlab.manjaro.org/packages/core/linux616/-/blob/master/0001-drm-amd-display-Add-a-quirk-for-the-Zotac-Zone.patch
+> [3] https://gitlab.manjaro.org/packages/core/linux616/-/blob/master/0004-TEMPORARY-terrible-hack-for-zotac-screen-while-debug.patch
+> [4] https://gitlab.freedesktop.org/drm/amd/-/issues/3803
+> 
+> Antheas Kapenekakis (5):
+>    drm: panel-backlight-quirks: Make ident optional
+>    drm: panel-backlight-quirks: Convert brightness quirk to generic
+>      structure
+>    drm: panel-backlight-quirks: Add secondary DMI match
+>    drm: panel-backlight-quirks: Add brightness mask quirk
+>    drm: panel-backlight-quirks: Add Steam Decks
+> 
+>   .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |  19 +++-
+>   .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h |   6 +
+>   .../link/protocols/link_edp_panel_control.c   |   2 +-
+>   drivers/gpu/drm/drm_panel_backlight_quirks.c  | 106 +++++++++++++-----
+>   include/drm/drm_utils.h                       |   8 +-
+>   5 files changed, 109 insertions(+), 32 deletions(-)
+> 
+> 
+> base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+
 
