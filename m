@@ -1,183 +1,139 @@
-Return-Path: <linux-kernel+bounces-784713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AEE2B34033
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:58:15 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA975B34035
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:58:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 328661A84264
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:58:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A00C34E2F8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:58:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61BBE26059B;
-	Mon, 25 Aug 2025 12:58:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B03931E6DC5;
+	Mon, 25 Aug 2025 12:58:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OdMz6ZKv"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nfRP95SR"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306E8393DCA;
-	Mon, 25 Aug 2025 12:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63488393DCA
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 12:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756126687; cv=none; b=U7yQuVLYhAS9PeTDkHpW6rh6A5uGo9H5oQ2b5bFffkfC4SMVISoznCCQBuXznWfwANzKOCmztCUHj1VySRlupld2XNWACxJH1lU0VJgOxENmZKR0gebjHLjRcETdEIBhSael1qv/T8klDRpwZFnIu/UYOIwlOFwuCybd7CrNvHw=
+	t=1756126719; cv=none; b=NCh1TMJdCPPovNTdA+IBD4H2nAWP+nzD7rxg/k1Eb2rqM+NwoiKEEK9qADqS+hPlqTCKUyZ9jwUpXjmmtG61xgZK9m1WcQoul3ZCJhYdfaGdBe6lZr45X4Dcc+g+O5U4KgFu2RdzKj3DazVywDadMnrJi6Vw1kjjB05wEvM2COI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756126687; c=relaxed/simple;
-	bh=11VHbwvlKQoLCv/nWEKxikxqyFyxL4l99GtfkKSEPNc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZDKSLxJcK0itBgQi6tj5RX3FyqXRi7D5eMG02F5q/5gj1YsOhc3hSPoLj5dd+sSq/6GRDoqdxn6EORu0UeItFHI8ph3ANvVB5qzqk6rId4LBbQ40noG5T8EdtzObASQ/QM5/b6Hr0nqMfo2jqjj6DxM5uZFj+X0QaOECq7L67M8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OdMz6ZKv; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-61c51e5e826so2340059a12.2;
-        Mon, 25 Aug 2025 05:58:03 -0700 (PDT)
+	s=arc-20240116; t=1756126719; c=relaxed/simple;
+	bh=IM9iJO7UIYdkAwSAqbmV9tDKxFnqhLDvSUZ9NJuIE90=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=kpEWBwfrdgcvX1DUvUrtOJRZOggl9fMs3GenmrSdQg516Pi2rtipYxbGEmEmYrlun2eGbmtI9GJzdQRVBqQiImS3SfibiF/eFaNqitjt6r84VFepFpJxt6LXsPKKzPNM3Y9XZ7VZdurs8UzCxK5YgEsvYJzQbsNW9QWMuZEPFhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nfRP95SR; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-333f901b229so36232481fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 05:58:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756126682; x=1756731482; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OarwR/ERDNc0Ml+9OWlKLdmjV+iAjoP8ec7vM3/HCIc=;
-        b=OdMz6ZKvFrZhTtPdU4XbJI/bQvPQyN6mIZxMe8CYWPgnhZgYG4GxzEg5/l5rIYh04N
-         5LbymGwz6Bh9i1caz9/uJRjinXSwnAfnTYoyR6YKRmlu88O7JL093TFZ2rzik737rpqm
-         8X5cR+pKL7mBv3Fm9cruazjxHruMGNzbdHpTQ2+Izg2/q+zxdL+vTWQscRMPs0s7p4/4
-         ptCcJKBJyAQMWnIemoUTh9PPlJ8U3z6xXDkBWAy0x+1DEftw9aXSVlN/Je1CBKt14R/0
-         652uAVhyvaYRUkqSd6hTZJg7vWS5Uk1Rx0580e+TnJfv2O+fhGe35LIuUqjYIKwECbgH
-         vxmA==
+        d=linaro.org; s=google; t=1756126716; x=1756731516; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=h2y2NsC9oaR3662j4IuBMxoGBjdUhWRZWEFVHsbKjJU=;
+        b=nfRP95SRLvhAd5TPDrjslwETAD9ZKQQqLmBdd6UpXO8ooLOv5Q1u+JI2CgzQrTw8eq
+         UDgu0PTmIeGdU56Tzaj8MCDJSSu4D/7FHSAZae5vAb66A+HIPMlfffoLxn8Y9jFoTep+
+         sE95cTCS4LoUQVTbswymS8APynZ5hhz65kCqMSbnmaPXOKZjdO17v/ehS2KJSBWZfSdY
+         VQmOWOHKr5GQ71dnUCxf3+qMg2LKGPqs37ToHX7hk+zMA0yhwOcsH6iBYbakEclvrcS5
+         MAn/zI/K2mR62bv8l8z/Mr5ThawFe09JC2icLZPYKyw6nc4cIx/1/2Sfm6/kHEfAunYZ
+         ZO4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756126682; x=1756731482;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OarwR/ERDNc0Ml+9OWlKLdmjV+iAjoP8ec7vM3/HCIc=;
-        b=byuq2xUlDy9QzmSfDDb/IjBVkFaCKMyNnmd/0hVIQOObeZQ48rGYjzgBMiobPBPrzo
-         dsjfVHvO6u57D6piauxBT5K0z3GaAEaEQxjvgo+z2Cxyi++/v1uK2/o8UY7XmpquPbZc
-         4E4vWORECT7jtAkxAW4BfUhcr7GA3smTdlnFo1CtIEkeBwQt+Mer0eeINVG14DMnUDFT
-         bhQaWh1Bk2zFaWjrRcR3OCLvUmMleBHKZRgkdd2mlIEesN4Vo2QPEmNO8Ku3TPLGN4yW
-         6PUlwmIbUuWiSllojM918wfsjLSO2j+wFuXdEidtNPsvKKBUjHZ4mnXvQ7J86Jy2ZUVA
-         rohw==
-X-Forwarded-Encrypted: i=1; AJvYcCU3yugIxMauEskSHouvZgquvuJMROr6ioSSwc4iIckOmucIg1U+4R7sEtzC61DPakrSMuHrfX02NxsX@vger.kernel.org, AJvYcCWzzm70pM36fSngIU3vIJ1GeiPjUpPqPOKWyNbOf5A462LEzUxDkyJ0YgHLx3kVXL+RKHACSAJy6NXVcrPL@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJfMRRON3RY12gLol4klXQsFzR/IK3eQDkcJoSfuJkCYdK6jCC
-	ip26oQZfpP+eMkyzs8N+J1u4v8VCa4fVqjiqxyh1t5Gs19NKAeTUVSqptW0sWieryQjfq75y2pm
-	7Af7W2QzBH78zgfhyJ9fR7KG+eC4c/rU=
-X-Gm-Gg: ASbGncsCVocO73mUYB3qrYQAKFB9Bj+CPhDDUUK+IL1Kf8Te+rxjMjhiy7Q/OBflX7k
-	62537e+Y4E0hPPkdPyPXVg3nd6drToUSS21kuxm64CuDet3hBm3xXjc4i8vOxuZ7OOtnagzQJnd
-	1bqfahS6UjR5QO+YKsQcwxWH/0JfdOLI9SUFBnBtkrno1o8+h0fNJQGlGKXf84gG4WWxqtkdKMD
-	pEGaw==
-X-Google-Smtp-Source: AGHT+IHaOgzAzLmJeyLPt5DqrZUSYGHwc/5ongY9XyH18a2Jkpiqoy7KErW13Szg0Ppe2orviqO2JQkWL38+o+volS0=
-X-Received: by 2002:a17:907:3e1c:b0:ae0:d4b1:b5f0 with SMTP id
- a640c23a62f3a-afe29548f25mr992674266b.35.1756126682080; Mon, 25 Aug 2025
- 05:58:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756126716; x=1756731516;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=h2y2NsC9oaR3662j4IuBMxoGBjdUhWRZWEFVHsbKjJU=;
+        b=QAsTQgxhIjoIBmW7tt1pXHQiP3HoIFJ6pQhp6tNCJFUUeas96M5kY4eHXeMVinRqVG
+         o1O0J5nCHEpt3AtTKmfSAeI/1BdYaNIJzDHyCTO/Pu+JvfEw2MKf4mw47hIGV3zWK+QZ
+         WCKQU4FBUvnXjAX+Ewzr8CaT8JxGiVGJstmMk6yV6vXTplJ4JgdeJYDkA8T+Y+INNAWc
+         CDUUEevuUT1JZc6C1lT+3E04xnOWQ9Wy6euCtTOImuMF/tV55IKbOY67R+pjAPsI++LF
+         06g7mzFJgpVzPpRa1tCsUkDRg36pkQmldfOaYS2YQuzCS2Hv+0lMlLKJHBOraPqaLth/
+         uhqg==
+X-Gm-Message-State: AOJu0Yzi3ow7kk/9vCMmQKfDuZwqhEHlhVz4DFrbhH/nwgK0nZvz/TuG
+	oTpR34w25R6YN7LxKRlYDUV1Ii8SEOgACYBX308/fQxjuoiOzBnMXbSyj7f/p1V1yYeyTOajuva
+	5L5POISu0pwbnaJYGSNM6XupRnPfSPfRWe/j82KreKQ==
+X-Gm-Gg: ASbGncuELt+IbO3alEVVbAZ2NrX8+3+XLMxxk4RO/b7RypFnoCb9/GeXDVY/20ePr4o
+	Oi4C2ZR2SVWFJXUEzTOOgp2NvnEa6Hu9Jsh8Qt6C60ZXO8lYMP+iGFqafrBSmWEcsHOleAnjzEn
+	7hFYIngKmzcZLzOm1aSUKSSlIkfyBZpNxM67h04ZiDYXbav5tYOSmeZ4SlRXfuoBB8GFdOoio8O
+	LlGDS0=
+X-Google-Smtp-Source: AGHT+IEM8Ta/aMlYhdX2kyS2KdDJN8sJsB7fP7RconVSabr+2MrjSO9P2xauUdSFKN0AK/LYT3T5QmMf3jjBlZqu/Rs=
+X-Received: by 2002:a05:651c:31c5:b0:334:390:d92e with SMTP id
+ 38308e7fff4ca-33650e3ae24mr35592811fa.7.1756126715536; Mon, 25 Aug 2025
+ 05:58:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250825065240.22577-1-linux.amoon@gmail.com> <20250825065240.22577-2-linux.amoon@gmail.com>
- <19AB5D06-DEB6-4C38-B90D-FCDD9719312C@hewittfamily.org.uk>
-In-Reply-To: <19AB5D06-DEB6-4C38-B90D-FCDD9719312C@hewittfamily.org.uk>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Mon, 25 Aug 2025 18:27:44 +0530
-X-Gm-Features: Ac12FXwRodlBz_UjLLJd6RTuYXAAOzs3SHAzCQ_66M5mw-OW-pZnPXMBgXjfwxw
-Message-ID: <CANAwSgQT7Y9_TKsYVignTOX1AWpcK6xEEU5+Dhy6Yd=ZG4qCjw@mail.gmail.com>
-Subject: Re: [PATCH v2 01/11] arm64: dts: amlogic: Add cache information to
- the Amlogic GXBB and GXL SoC
-To: Christian Hewitt <christian@hewittfamily.org.uk>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"moderated list:ARM/Amlogic Meson SoC support" <linux-arm-kernel@lists.infradead.org>, 
-	"open list:ARM/Amlogic Meson SoC support" <linux-amlogic@lists.infradead.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 25 Aug 2025 14:58:24 +0200
+X-Gm-Features: Ac12FXwpYrX8dlNs7pqV067CILDapuc-jiI-uPN-PFTU4ngTPdYVQHt2d9IqhBE
+Message-ID: <CACRpkdbMXvpwgniKeyJ47-t0X+ekkJ1r8RpDFJRsd+g9id+ruQ@mail.gmail.com>
+Subject: [GIT PULL] pin control fixes for v6.17
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, 
+	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Christian,
+Hi Linus,
 
-On Mon, 25 Aug 2025 at 13:29, Christian Hewitt
-<christian@hewittfamily.org.uk> wrote:
->
-> > On 25 Aug 2025, at 10:51=E2=80=AFam, Anand Moon <linux.amoon@gmail.com>=
- wrote:
-> >
-> > As per S905 and S905X datasheet add missing cache information to
-> > the Amlogic GXBB and GXL SoC.
-> >
-> > - Each Cortex-A53 core has 32KB of L1 instruction cache available and
-> > 32KB of L1 data cache available.
-> > - Along with 512KB Unified L2 cache.
-> >
-> > Cache memory significantly reduces the time it takes for the CPU
-> > to access data and instructions, leading to faster program execution
-> > and overall system responsiveness.
->
-> Hello Anand,
->
-> I=E2=80=99m wondering if we are =E2=80=9Cenabling caching=E2=80=9D in the=
-se patches (could be
-> a significant gain, as per text) or we are =E2=80=9Coptimising caching=E2=
-=80=9D meaning
-> the kernel currently assumes generic/safe defaults so having accurate
-> descriptions in dt allows better efficiency (marginal gain)?
->
-> Stats are also subjective to the workload used, but do you have any
-> kind of before/after benchmarks? (for any of the SoCs in the patchset)
->
+here are some quick pin control fixes.
 
-This is a fundamental feature of Arm64 CPUs that tracks active instructions
-and data within cache-mapped memory pages.
-Enabling it can significantly enhance overall system performance.
+Nothing special, just driver fixes.
 
-We can configure more l2 cache memory which is confribable as per the
-Arm TRM document.
-Arm Cortex - A53  - Configurable L2 cache size of 128KB, 256KB, 512KB,
-1MB and 2MB.
-Arm Cortex - A55  - Configurable L2 cache size of 64KB, 128KB, or 256KB
-Arm Cortex - A73 -  Configurable L2 cache size of 256KB, 512KB, 1MB,
-2MB, 4MB, or 8MB.
+Please pull them in!
 
-Here's an article that provides detailed insights into the cache feature.
-[0] http://jake.dothome.co.kr/cache4/
+Yours,
+Linus Walleij
 
-I tested with a small benchmark to test factorial.
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
-Before:>
-alarm@archl-librecm:~$ sudo perf stat -e cache-references,cache-misses ./te=
-st
-Simulated Cache Miss Time (avg): 589 ns
-Factorial(10) =3D 3628800
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
 
- Performance counter stats for './test':
+are available in the Git repository at:
 
-           3017286      cache-references
-             45414      cache-misses                     #    1.51% of
-all cache refs
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v6.17-2
 
-       0.054512394 seconds time elapsed
+for you to fetch changes up to 563fcd6475931c5c8c652a4dd548256314cc87ed:
 
-       0.004209000 seconds user
-       0.041866000 seconds sys
+  pinctrl: airoha: Fix return value in pinconf callbacks (2025-08-22
+15:08:58 +0200)
 
-After:>
- # sudo perf stat -e cache-references,cache-misses ./test
-Simulated Cache Miss Time (avg): 426 ns
-Factorial(10) =3D 3628800
+----------------------------------------------------------------
+Pin control fixes for the v6.17 series:
 
- Performance counter stats for './test':
+- Module macro parameter fix for the meson driver so that
+  it actually modprobes.
 
-           2814633      cache-references
-             27054      cache-misses                     #    0.96% of
-all cache refs
+- ACPI quirk for the ASUS ProArt PX13
 
-       0.041041585 seconds time elapsed
+- Build dependency for the STMFX driver.
 
-       0.007976000 seconds user
-       0.032009000 seconds sys
+- Proper return value for the pinconf callbacks in the
+  Airhoa driver.
 
-> Christian
+----------------------------------------------------------------
+Alexey Gladkov (1):
+      pinctrl: meson: Fix typo in device table macro
 
-Thanks
--Anand
+Lorenzo Bianconi (1):
+      pinctrl: airoha: Fix return value in pinconf callbacks
+
+Mario Limonciello (AMD) (1):
+      gpiolib: acpi: Add quirk for ASUS ProArt PX13
+
+Randy Dunlap (1):
+      pinctrl: STMFX: add missing HAS_IOMEM dependency
+
+ drivers/gpio/gpiolib-acpi-quirks.c         | 14 ++++++++++++++
+ drivers/pinctrl/Kconfig                    |  1 +
+ drivers/pinctrl/mediatek/pinctrl-airoha.c  |  8 ++++----
+ drivers/pinctrl/meson/pinctrl-amlogic-a4.c |  2 +-
+ 4 files changed, 20 insertions(+), 5 deletions(-)
 
