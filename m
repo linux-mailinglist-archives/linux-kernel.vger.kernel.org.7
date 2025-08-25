@@ -1,171 +1,201 @@
-Return-Path: <linux-kernel+bounces-784616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10602B33E85
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:56:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39F3EB33E86
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:57:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D7337B1105
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:55:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00402164175
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:57:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B82A82E3705;
-	Mon, 25 Aug 2025 11:56:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 029882E2DD8;
+	Mon, 25 Aug 2025 11:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="RQ1TbUqC"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98AC72C15B6;
-	Mon, 25 Aug 2025 11:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FH90YvN/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1562D543A
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 11:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756122989; cv=none; b=LfzVfKdXfYR6tKvUkkhIEU9TpnHNkhNkt4T4NNYPccWPPRChXF/8PTbK3tprLetzKANKJUBelGZz32d/IGG7P/li62lRv4XVvFfJYht98dKFoMMAnLRXfL6RJ2Ur5S+h96pQ8w1Z7qtrKFBFUUHR5BINZpeYr6SpDfU3kICNrWM=
+	t=1756123028; cv=none; b=rX/neyBA1cScfleh9hK8puDI+gxT1Y8kfXJ8C7zbG7ha9Odbd+1ZtXEutZz4NHZyvWYcotTXXMvf67ZYpBMsJFcRZHYAxpHO1z/iGLmRsvlHplkFwi/W6uzo2KFQijgVi3ggqOoyCkzCf9iU9dCnMTy3dSdJoKzrOsuKMl8RTlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756122989; c=relaxed/simple;
-	bh=+UyVJcftW8wy1kqNJFR4cziUxI4qiB8Q+yu4CtBFzas=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=fDaxa6iVWLAVh2x9SKF5f8QJ7B4AVgz3aaK3w3tsibGqafEZV0a4oo4mCqwXpElm+9cvMgKt9Z/rpeXk6FKvM0AiUcPf7Rs0A0ICuPiIxhqksQIxosJ0t1fu5fkEvGZ5Kuzob0e0OCL6vrBzCRDSLY2ncGnl49Duna+80cXffWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=RQ1TbUqC; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1204)
-	id 3B63021175A9; Mon, 25 Aug 2025 04:56:27 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3B63021175A9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1756122987;
-	bh=r2QJ4yqs6HxKoAH1VttKGbQwT/tvDfkSW+pvLpawz9E=;
-	h=Date:From:To:Subject:From;
-	b=RQ1TbUqCbRrJ7NV40HuiCbFKF24VOu3KRKqxR1bQ6UL2hipLYvx4HAL6io/E+j/dc
-	 2TxennbuuLx5XX4TmTc1zk60iIkOjHKTyYo1PEnSBM+bhzqXahxHqfScxJylK+zlve
-	 1siXccBAUP3TlOX7irEWiCE2tCG9T/Xq3WB3GwII=
-Date: Mon, 25 Aug 2025 04:56:27 -0700
-From: Dipayaan Roy <dipayanroy@linux.microsoft.com>
-To: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dipayanroy@micorsoft.com,
-	ssengar@linux.microsoft.com
-Subject: [PATCH net] net: hv_netvsc: fix loss of early receive events from
- host during channel open.
-Message-ID: <20250825115627.GA32189@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+	s=arc-20240116; t=1756123028; c=relaxed/simple;
+	bh=70glNQzfZQ9sUoc7Lv6/55HfDV+Zwa2VwpWFwEROWEM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MWBzHfiS4pFaiFWaMjf6apte3TusPeAlNmf7jgsoOtM1YCMJ0kiai/mCDPlSnvE2x61brMUb61qi3vC4SyAnUuhYMKllSnXlqCxM1dzHBOxXEIXwU6BnDHQT88lu5v7YdLM01f2V/ru9dMil3iDzc/Gg77xBtqlqkcJJWeH740A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FH90YvN/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756123022;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M7xciFnf3JU7UC+A3w6NhKnJ8AVh21NQDSF78Yj4PwU=;
+	b=FH90YvN/C/lE/WUjQCZvCreAF6WX9tXHfLB41yWLlnnw5nDfVyxwwxnmVouvj8NTmEYDrC
+	vSvOKrlOEe7+lyyBufhzvJcL/CZ7BSQpQWJcMfYBj+gUCmJqrbCq3U0O+gZ0d9GgeHLLNf
+	ZKVvmfGolAlkZwoDqnvJI8RUqcDl450=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-344-txdtu701NQiToqvetNnMDQ-1; Mon, 25 Aug 2025 07:56:55 -0400
+X-MC-Unique: txdtu701NQiToqvetNnMDQ-1
+X-Mimecast-MFC-AGG-ID: txdtu701NQiToqvetNnMDQ_1756123014
+Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-55f3b0fb5d0so1143558e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 04:56:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756123014; x=1756727814;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=M7xciFnf3JU7UC+A3w6NhKnJ8AVh21NQDSF78Yj4PwU=;
+        b=kt+1LKKN+Hugat62+j8VNpx+LcPY1Da63NMFTTSAP8327pd83g0Y2P8J+izsqU/53I
+         vjcjFlQWr/pwkgz7eJKDDKt2fcj6zOqVSigIvQCEsrsaRqzNMdhN05EJ8i93ZzmNoSF2
+         cMh896EHczwBvINw3OghVkMOLN6WxzK3mCqXkYbHU5XzdJYQuOVsCR5UQ7qOvAzgaU38
+         dSxekWtQ1BZLwkjdywj/3nOEjQINoFWNdsrSY8zeBawhagqNT6iO8SQ52/OSdkNqnkdp
+         vWYilXcWQo0msHADdj0UEqL2x9PYdlPjMIyyKoVHzOQnOviCDKiiD0S3XX5qJVun9Yfi
+         uNkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXdMjjtNn+WaqO1/w6iwqQj846Fxa0GZV1TOWrKlww1uBcoKNMV8ZlOjCAuUzyhpaQ1/n4hMVb4KbZYR30=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPhMIoWKWuC4j+AK1HoON150LR42FUgWAy7PQObLTQy1+CpIFM
+	9GEQm96C5IIavk66zQS1UnzlvRpkMl+qK2syGPu119DZXdT17U12gO/FbOcWHciIseIqIHG/29p
+	RIc5+T17wqjAgHdMToT6qCIa4FO4rRphryexnkd1HPlQbOiUYZejsj6BYu2CmzOiDbTcJcVeVah
+	M/Vb45h2N6odEwdO5eMzFZiZ4TIAAywCkyr6uCP8A+
+X-Gm-Gg: ASbGncsSs9D7+gv9ZxvndutQwJc1PsjanyVrPTuSLuSx3M/hpU4x21n5TEhedvKWbfL
+	o2Jbk+IXhDOsii/IPvpITLCbqR43AwwbyJ+FCqZ1H9Qyq/wscMKryOsuWKDpFJ6S4LR1Yb3eHAX
+	W7Z6D+VAaUlD5rGxjcgdAS
+X-Received: by 2002:a05:6512:440e:b0:55f:4361:890e with SMTP id 2adb3069b0e04-55f43619020mr1248006e87.15.1756123013888;
+        Mon, 25 Aug 2025 04:56:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGfeIlx+X23sTdUFzeBXCz5uJqvYj6sRUTepfBg3dXJE7i7XGGv4QCwhZ9EITzLfumevSxN2UV92Dcs6XFfKuo=
+X-Received: by 2002:a05:6512:440e:b0:55f:4361:890e with SMTP id
+ 2adb3069b0e04-55f43619020mr1247988e87.15.1756123013445; Mon, 25 Aug 2025
+ 04:56:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <20250704170748.97632-1-wander@redhat.com> <20250704170748.97632-3-wander@redhat.com>
+ <20250707112003.GY1613376@noisy.programming.kicks-ass.net>
+ <33jax5mmu7mdt6ph5t5bb7fvprbypxhefrvgrc2ru4p2dpqldg@d6af6oc6442r>
+ <20250708185412.GC477119@noisy.programming.kicks-ass.net> <CAAq0SUkYr=aHTaDxm0KJek+JTUQ6gBN1PB24yfrVCNryA8jE_w@mail.gmail.com>
+In-Reply-To: <CAAq0SUkYr=aHTaDxm0KJek+JTUQ6gBN1PB24yfrVCNryA8jE_w@mail.gmail.com>
+From: Wander Lairson Costa <wander@redhat.com>
+Date: Mon, 25 Aug 2025 08:56:42 -0300
+X-Gm-Features: Ac12FXxfV87YOE5tHwnZyz_2gpZXfYSy4LPcGKEHrAVPNMONGzjNSEXh3mmyVY0
+Message-ID: <CAAq0SUmEL4W+Fb4Q3q0SYO8LHzoQH1O+eCU7tFH7p5YS_y_DdA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] tracing/preemptirq: Optimize preempt_disable/enable()
+ tracepoint overhead
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, David Woodhouse <dwmw@amazon.co.uk>, 
+	Thomas Gleixner <tglx@linutronix.de>, Boqun Feng <boqun.feng@gmail.com>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"open list:TRACING" <linux-trace-kernel@vger.kernel.org>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Clark Williams <williams@redhat.com>, 
+	Gabriele Monaco <gmonaco@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The hv_netvsc driver currently enables NAPI after opening the primary and
-subchannels. This ordering creates a race: if the Hyper-V host places data
-in the host -> guest ring buffer and signals the channel before
-napi_enable() has been called, the channel callback will run but
-napi_schedule_prep() will return false. As a result, the NAPI poller never
-gets scheduled, the data in the ring buffer is not consumed, and the
-receive queue may remain permanently stuck until another interrupt happens
-to arrive.
+Resending in case people missed the previous message.
 
-Fix this by enabling NAPI and registering it with the RX/TX queues before
-vmbus channel is opened. This guarantees that any early host signal after
-open will correctly trigger NAPI scheduling and the ring buffer will be
-drained.
-
-Fixes: 76bb5db5c749d ("netvsc: fix use after free on module removal")
-Signed-off-by: Dipayaan Roy <dipayanroy@linux.microsoft.com>
----
- drivers/net/hyperv/netvsc.c       | 17 ++++++++---------
- drivers/net/hyperv/rndis_filter.c | 23 ++++++++++++++++-------
- 2 files changed, 24 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/net/hyperv/netvsc.c b/drivers/net/hyperv/netvsc.c
-index 720104661d7f..60a4629fe6ba 100644
---- a/drivers/net/hyperv/netvsc.c
-+++ b/drivers/net/hyperv/netvsc.c
-@@ -1812,6 +1812,11 @@ struct netvsc_device *netvsc_device_add(struct hv_device *device,
- 
- 	/* Enable NAPI handler before init callbacks */
- 	netif_napi_add(ndev, &net_device->chan_table[0].napi, netvsc_poll);
-+	napi_enable(&net_device->chan_table[0].napi);
-+	netif_queue_set_napi(ndev, 0, NETDEV_QUEUE_TYPE_RX,
-+			     &net_device->chan_table[0].napi);
-+	netif_queue_set_napi(ndev, 0, NETDEV_QUEUE_TYPE_TX,
-+			     &net_device->chan_table[0].napi);
- 
- 	/* Open the channel */
- 	device->channel->next_request_id_callback = vmbus_next_request_id;
-@@ -1831,12 +1836,6 @@ struct netvsc_device *netvsc_device_add(struct hv_device *device,
- 	/* Channel is opened */
- 	netdev_dbg(ndev, "hv_netvsc channel opened successfully\n");
- 
--	napi_enable(&net_device->chan_table[0].napi);
--	netif_queue_set_napi(ndev, 0, NETDEV_QUEUE_TYPE_RX,
--			     &net_device->chan_table[0].napi);
--	netif_queue_set_napi(ndev, 0, NETDEV_QUEUE_TYPE_TX,
--			     &net_device->chan_table[0].napi);
--
- 	/* Connect with the NetVsp */
- 	ret = netvsc_connect_vsp(device, net_device, device_info);
- 	if (ret != 0) {
-@@ -1854,14 +1853,14 @@ struct netvsc_device *netvsc_device_add(struct hv_device *device,
- 
- close:
- 	RCU_INIT_POINTER(net_device_ctx->nvdev, NULL);
--	netif_queue_set_napi(ndev, 0, NETDEV_QUEUE_TYPE_TX, NULL);
--	netif_queue_set_napi(ndev, 0, NETDEV_QUEUE_TYPE_RX, NULL);
--	napi_disable(&net_device->chan_table[0].napi);
- 
- 	/* Now, we can close the channel safely */
- 	vmbus_close(device->channel);
- 
- cleanup:
-+	netif_queue_set_napi(ndev, 0, NETDEV_QUEUE_TYPE_TX, NULL);
-+	netif_queue_set_napi(ndev, 0, NETDEV_QUEUE_TYPE_RX, NULL);
-+	napi_disable(&net_device->chan_table[0].napi);
- 	netif_napi_del(&net_device->chan_table[0].napi);
- 
- cleanup2:
-diff --git a/drivers/net/hyperv/rndis_filter.c b/drivers/net/hyperv/rndis_filter.c
-index 9e73959e61ee..ed67b1e1293a 100644
---- a/drivers/net/hyperv/rndis_filter.c
-+++ b/drivers/net/hyperv/rndis_filter.c
-@@ -1252,17 +1252,26 @@ static void netvsc_sc_open(struct vmbus_channel *new_sc)
- 	new_sc->rqstor_size = netvsc_rqstor_size(netvsc_ring_bytes);
- 	new_sc->max_pkt_size = NETVSC_MAX_PKT_SIZE;
- 
-+	/* Enable napi before opening the vmbus channel to avoid races
-+	 * as the host placing data on the host->guest ring may be left
-+	 * out if napi was not enabled.
-+	 */
-+	napi_enable(&nvchan->napi);
-+	netif_queue_set_napi(ndev, chn_index, NETDEV_QUEUE_TYPE_RX,
-+			     &nvchan->napi);
-+	netif_queue_set_napi(ndev, chn_index, NETDEV_QUEUE_TYPE_TX,
-+			     &nvchan->napi);
-+
- 	ret = vmbus_open(new_sc, netvsc_ring_bytes,
- 			 netvsc_ring_bytes, NULL, 0,
- 			 netvsc_channel_cb, nvchan);
--	if (ret == 0) {
--		napi_enable(&nvchan->napi);
--		netif_queue_set_napi(ndev, chn_index, NETDEV_QUEUE_TYPE_RX,
--				     &nvchan->napi);
--		netif_queue_set_napi(ndev, chn_index, NETDEV_QUEUE_TYPE_TX,
--				     &nvchan->napi);
--	} else {
-+	if (ret != 0) {
- 		netdev_notice(ndev, "sub channel open failed: %d\n", ret);
-+		netif_queue_set_napi(ndev, chn_index, NETDEV_QUEUE_TYPE_TX,
-+				     NULL);
-+		netif_queue_set_napi(ndev, chn_index, NETDEV_QUEUE_TYPE_RX,
-+				     NULL);
-+		napi_disable(&nvchan->napi);
- 	}
- 
- 	if (atomic_inc_return(&nvscdev->open_chn) == nvscdev->num_chn)
--- 
-2.43.0
+On Fri, Aug 1, 2025 at 10:30=E2=80=AFAM Wander Lairson Costa <wander@redhat=
+.com> wrote:
+>
+> On Tue, Jul 8, 2025 at 3:54=E2=80=AFPM Peter Zijlstra <peterz@infradead.o=
+rg> wrote:
+> >
+> > On Tue, Jul 08, 2025 at 09:54:06AM -0300, Wander Lairson Costa wrote:
+> > > O Mon, Jul 07, 2025 at 01:20:03PM +0200, Peter Zijlstra wrote:
+> > > > On Fri, Jul 04, 2025 at 02:07:43PM -0300, Wander Lairson Costa wrot=
+e:
+> > > > > Similar to the IRQ tracepoint, the preempt tracepoints are typica=
+lly
+> > > > > disabled in production systems due to the significant overhead th=
+ey
+> > > > > introduce even when not in use.
+> > > > >
+> > > > > The overhead primarily comes from two sources: First, when tracep=
+oints
+> > > > > are compiled into the kernel, preempt_count_add() and preempt_cou=
+nt_sub()
+> > > > > become external function calls rather than inlined operations. Se=
+cond,
+> > > > > these functions perform unnecessary preempt_count() checks even w=
+hen the
+> > > > > tracepoint itself is disabled.
+> > > > >
+> > > > > This optimization introduces an early check of the tracepoint sta=
+tic key,
+> > > > > which allows us to skip both the function call overhead and the r=
+edundant
+> > > > > preempt_count() checks when tracing is disabled. The change maint=
+ains all
+> > > > > existing functionality when tracing is active while significantly
+> > > > > reducing overhead for the common case where tracing is inactive.
+> > > > >
+> > > >
+> > > > This one in particular I worry about the code gen impact. There are=
+ a
+> > > > *LOT* of preempt_{dis,en}able() sites in the kernel and now they al=
+l get
+> > > > this static branch and call crud on.
+> > > >
+> > > > We spend significant effort to make preempt_{dis,en}able() as small=
+ as
+> > > > possible.
+> > > >
+> > >
+> > > Thank you for the feedback, it's much appreciated. I just want to mak=
+e sure
+> > > I'm on the right track. If I understand your concern correctly, it re=
+volves
+> > > around the overhead this patch might introduce???specifically to the =
+binary
+> > > size and its effect on the iCache???when the kernel is built with pre=
+empt
+> > > tracepoints enabled. Is that an accurate summary?
+> >
+> > Yes, specifically:
+> >
+> > preempt_disable()
+> >         incl    %gs:__preempt_count
+> >
+> >
+> >
+> > preempt_enable()
+> >         decl    %gs:__preempt_count
+> >         jz      do_schedule
+> > 1:      ...
+> >
+> > do_schedule:
+> >         call    __SCT__preemptible_schedule
+> >         jmp     1
+> >
+> >
+> > your proposal adds significantly to this.
+> >
+>
+Here is a breakdown of the patch's behavior under the different kernel
+configurations:
+* When DEBUG_PREEMPT is defined, the behavior is identical to the
+current implementation, with calls to preempt_count_add/sub().
+* When both DEBUG_PREEMPT and TRACE_PREEMPT_TOGGLE are disabled, the
+generated code is also unchanged.
+* The primary change occurs when only TRACE_PREEMPT_TOGGLE is defined.
+In this case, the code uses a static key test instead of a function
+call. As the benchmarks show, this approach is faster when the
+tracepoints are disabled.
+The main trade-off is that enabling or disabling these tracepoints
+will require the kernel to patch more code locations due to the use of
+static keys.
 
 
