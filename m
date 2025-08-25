@@ -1,171 +1,148 @@
-Return-Path: <linux-kernel+bounces-784974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E511B34434
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:39:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08E49B34437
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:40:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2507C3B03A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:36:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04CDA3AB8E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:36:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 214002FE565;
-	Mon, 25 Aug 2025 14:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4C622FD7DD;
+	Mon, 25 Aug 2025 14:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LWTOH8fY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fovoz/Vp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E93E2FABE3;
-	Mon, 25 Aug 2025 14:33:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1111F2EFDBB;
+	Mon, 25 Aug 2025 14:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756132414; cv=none; b=mTLSDlP/KPr1+ySLl1n9Ea4tdE7umlqfs9MG81IHhtLJdOj2udxVuoEtW2q9T4qNDuLmhqRI0nzDpHbckuzzKxOQNEXBjhE0PNi86Zq17BJJ8ndC7EFRF3KIZDsbcwRF3RrkcBNwiQs1tqCNqMov6T4e+J4gt4drynksoAYtZXA=
+	t=1756132452; cv=none; b=fHOB357HqkimVEqVsaasSR6sPro8CxFFMDLiB5lpxqbINozJEGkSJcxBOsnLuFl03+GzngiVTFwoT7JiG7hU0fSLA1AtwBHs6wwXfeGXHgjNcD+Z0RVeA17DOtqWIoHvHPLaDvwznzKvkxYrAGUm/xrzNfeUNkCSc1ts5yEv2Vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756132414; c=relaxed/simple;
-	bh=xhSK8G/YNCbg2RlmI771QtKKh27941TambAywmDzy9c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d7uaJlCpgk98jI2XpP3pEN6OGuJIgslOKEenZ6xr7z/9ktcfVHL3afHe3H4sip77K4S2x4r1CAUneg2hXdNZJqY73O5Ig3BuAE7fR+QsyEtiLWs8Z0DtqhGJXFvEjc5E5bIQ/w6R9DwDnikXnFSaUFVYRYo71u1aTbKjOQvqesw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LWTOH8fY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0420C4CEED;
-	Mon, 25 Aug 2025 14:33:29 +0000 (UTC)
+	s=arc-20240116; t=1756132452; c=relaxed/simple;
+	bh=HB6pULNDXxeh1etg0zy/YFv/qO0C+90ihk/cMS1ozcE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=TjTh0yINfL/gC1CdFobKuBuBPIDqamfLryJU2VYuVrPbYrbN8Mst1Leg2Ez5UI0yjp+9f6CF0CLbq7nlZUmT7pQATURYSYRhjrbHoQdun5Jdbyai0mDm3yQCQEXwueW+ILS/pIADiRmKSFHBhKlhYuE+xGDfEkjWZTzsrsl+6mY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fovoz/Vp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C37EC4CEF4;
+	Mon, 25 Aug 2025 14:34:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756132414;
-	bh=xhSK8G/YNCbg2RlmI771QtKKh27941TambAywmDzy9c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=LWTOH8fY1roq57qXjs3WI/lZEP/bsdBR4bYrmPvYbrPLFt6yLQ3c5usp/ZS4fp+4C
-	 0CETysSPlzvQJshm9ZjJYT0swptyOBauYqtBfiZj/wEUHiIfZ/2GqHwONw8Np0WMwC
-	 n8couoUddgyHAxm/fZe5E3ZMg/XckhXsJ6jnHTdz5Bf95s+mQoTtE4Hoemyse0Ay6v
-	 ABD3S1/sD8MFHTpbxgnge0xtYfcqP0/5Qpd74bw3suZapCikWCEsQmGmXYXgImYPqg
-	 We4oJKxAo+3eWGsu15bK6ofIOpHwvsNd/xwExYoBHeYscFMBfekKqzqRhUFeqhnrfe
-	 ahigTTgSP3siA==
-Date: Mon, 25 Aug 2025 15:33:25 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Jonathan Santos <Jonathan.Santos@analog.com>
-Cc: <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <Michael.Hennerich@analog.com>,
- <lars@metafoo.de>, <dlechner@baylibre.com>, <nuno.sa@analog.com>,
- <andy@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
- <conor+dt@kernel.org>, <marcelo.schmitt1@gmail.com>
-Subject: Re: [PATCH v2 2/4] iio: adc: ad7768-1: introduce chip info for
- future multidevice support
-Message-ID: <20250825153325.421d2a4d@jic23-huawei>
-In-Reply-To: <20250824040953.9547-1-Jonathan.Santos@analog.com>
-References: <20250824040953.9547-1-Jonathan.Santos@analog.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=k20201202; t=1756132451;
+	bh=HB6pULNDXxeh1etg0zy/YFv/qO0C+90ihk/cMS1ozcE=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=fovoz/VpGa+QTUk+5KXZSXNiPVdjQP1Zg9pQ6OSV/sR/cNir2T17xgdhzhpl4dATv
+	 FgKyFIUtP4I/NPn4n2Ubw45486K/QKUsbVwI9rE5BzSbBxXJvtTSZx+I8To1Iy6ybB
+	 CeH5AETuwZlmdlGZuFiV9JRSawjcO8AY9w7np8CxVci4tbCDAlcwc50gVRzLwRHSPu
+	 4Raca3x0eeu1xyFA9Bhjyt6oN83dWRr+Jxlu2skfJU3JMrE8tiRwDWthM4rujNhAE5
+	 zukA2KCJHa4/XZYPtvh5aD+SiPZNkjmWvmjt9p6ZKJr/tl+avzp5uHKCgo5B0VBDlX
+	 /TuZJBBWf3UEQ==
+Message-ID: <ea673976-49a6-44f6-8e6c-8d11abe46620@kernel.org>
+Date: Mon, 25 Aug 2025 16:34:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+From: Hans Verkuil <hverkuil+cisco@kernel.org>
+Subject: Re: [PATCH V2 0/4] Add support for VIP
+To: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>, mchehab@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: linux@armlinux.org.uk, ardb@kernel.org, ebiggers@kernel.org,
+ geert+renesas@glider.be, claudiu.beznea@tuxon.dev, bparrot@ti.com,
+ andre.draszik@linaro.org, kuninori.morimoto.gx@renesas.com,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, heikki.krogerus@linux.intel.com,
+ kory.maincent@bootlin.com, florian.fainelli@broadcom.com, lumag@kernel.org,
+ dale@farnsworth.org, sbellary@baylibre.com, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, dagriego@biglakesoftware.com,
+ u-kumar1@ti.com
+References: <20250716111912.235157-1-y-abhilashchandra@ti.com>
+Content-Language: en-US, nl
+In-Reply-To: <20250716111912.235157-1-y-abhilashchandra@ti.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Sun, 24 Aug 2025 01:09:53 -0300
-Jonathan Santos <Jonathan.Santos@analog.com> wrote:
+Hi Yemike,
 
-> Add Chip info struct in SPI device to store channel information for
-> each supported part.
+On 16/07/2025 13:19, Yemike Abhilash Chandra wrote:
+> This patch series add support for the TI VIP video capture engine.
+> VIP stands for Video Input Port, it can be found on devices such as
+> DRA7xx and provides a parallel interface to a video source such as
+> a sensor or TV decoder. 
 > 
-> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
-> ---
-> v2 Changes:
-> * removed AD7768_CHAN_INFO_NONE macro.
-> * reordered fields in ad7768_chip_info struct.
-> * removed trailing comma.
-> ---
->  drivers/iio/adc/ad7768-1.c | 75 ++++++++++++++++++++++++++------------
->  1 file changed, 52 insertions(+), 23 deletions(-)
+> Each VIP can support two inputs (slices) and a SoC can be configured
+> with a variable number of VIP's. Each slice can support two ports
+> each connected to its own sub-device.
 > 
-> diff --git a/drivers/iio/adc/ad7768-1.c b/drivers/iio/adc/ad7768-1.c
-> index a2e061f0cb08..83b0907b068d 100644
-> --- a/drivers/iio/adc/ad7768-1.c
-> +++ b/drivers/iio/adc/ad7768-1.c
-> @@ -213,6 +213,13 @@ static const struct iio_scan_type ad7768_scan_type[] = {
->  	},
->  };
->  
-> +struct ad7768_chip_info {
-> +	const char *name;
-> +	const unsigned long *available_masks;
-> +	const struct iio_chan_spec *channel_spec;
-> +	int num_channels;
-> +};
-> +
->  struct ad7768_state {
->  	struct spi_device *spi;
->  	struct regmap *regmap;
-> @@ -234,6 +241,7 @@ struct ad7768_state {
->  	struct gpio_desc *gpio_reset;
->  	const char *labels[AD7768_MAX_CHANNELS];
->  	struct gpio_chip gpiochip;
-> +	const struct ad7768_chip_info *chip;
->  	bool en_spi_sync;
->  	/*
->  	 * DMA (thus cache coherency maintenance) may require the
-> @@ -750,24 +758,27 @@ static const struct iio_chan_spec_ext_info ad7768_ext_info[] = {
->  	{ }
->  };
->  
-> +#define AD7768_CHAN(_idx, _msk_avail) {	\
+> The first patch in this series updates the outdated MAINTAINERS entry
+> for the TI VPE and CAL drivers. The subsequent three patches introduce
+> support for the TI VIP (Video Input Port) driver.
 
-Check for consistency.  looks like you were aiming for 1 space before \ but didn't
-get it the same everywhere?
+I'll pick up the MAINTAINERS patch, but the others need more work, so
+v3 is needed for that.
 
-> +	.type = IIO_VOLTAGE,\
-> +	.info_mask_separate_available = _msk_avail,\
-> +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),\
-> +	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) | \
-> +			BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY) | \
-> +			BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),\
-> +	.info_mask_shared_by_type_available = BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),\
-> +	.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ), \
-> +	.info_mask_shared_by_all_available = BIT(IIO_CHAN_INFO_SAMP_FREQ),\
-> +	.ext_info = ad7768_ext_info,\
-> +	.indexed = 1,\
-> +	.channel = _idx,\
-> +	.scan_index = _idx,\
-> +	.has_ext_scan_type = 1,\
-> +	.ext_scan_type = ad7768_scan_type,\
-> +	.num_ext_scan_type = ARRAY_SIZE(ad7768_scan_type),\
-> +}
-> +
->  static const struct iio_chan_spec ad7768_channels[] = {
-> -	{
-> -		.type = IIO_VOLTAGE,
-> -		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-> -		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |
-> -					    BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY) |
-> -					    BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),
-> -		.info_mask_shared_by_type_available = BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),
-> -		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ),
-> -		.info_mask_shared_by_all_available = BIT(IIO_CHAN_INFO_SAMP_FREQ),
-> -		.ext_info = ad7768_ext_info,
-> -		.indexed = 1,
-> -		.channel = 0,
-> -		.scan_index = 0,
-> -		.has_ext_scan_type = 1,
-> -		.ext_scan_type = ad7768_scan_type,
-> -		.num_ext_scan_type = ARRAY_SIZE(ad7768_scan_type),
-> -	},
-> +	AD7768_CHAN(0, 0),
->  };
->  
->  static int ad7768_read_raw(struct iio_dev *indio_dev,
-> @@ -1334,6 +1345,18 @@ static int ad7768_register_regulators(struct device *dev, struct ad7768_state *s
->  	return 0;
->  }
->  
-> +static const unsigned long ad7768_channel_masks[] = {
-> +	BIT(0),
+> 
+> Link for v1: https://lore.kernel.org/all/20200522225412.29440-1-bparrot@ti.com/
+> The v1 patch series was posted in the year 2020. This v2 series resumes the
+> effort to upstream VIP support by addressing all previous review comments
+> 
+> Changelog:
+> Changes in v2:
+> - Remove array and just use hsync: true in bindings (Patch 3/5)
+> - Remove array and use enum for bus width in bindings (Patch 3/5)
+> - Use pattern properties since properties across ports are same (Patch 3/5)
+> - Remove vip_dbg, vip_info, vip_err aliases and just use v4l2_dbg, v4l2_info
+>   and v4l2_err instead (Patch 4/5)
+> - Remove color space information from vip_formats struct (Patch 4/5)
+> - Use g_std instead of g_std_output (Patch 4/5)
+> - Do not touch pix.priv (Patch 4/5)
+> - Remove all comments with just register values (Patch 4/5)
+> - Remove support for vidioc_default ioctl (Patch 4/5)
+> - In case of any error while streaming, push all pending buffers to vb2 (Patch 4/5)
+> - Address some minor comments made by Hans throughout the driver (Patch 4/5)
+> - Update copyright year at various places
+> 
+> v4l2-compliance output: https://gist.github.com/Yemike-Abhilash-Chandra/b0791cb465fadc11d4c995197cb22f29
 
-That doesn't make a lot of sense. Don't provide one for devices with
-only one channel.  Leave it set to NULL and everything should just work.
+Also run v4l2-compliance with the -s option to check compliance while streaming.
 
-> +	0
-> +};
+Regards,
 
+	Hans
+
+> 
+> v4l2-compliance cropping and composing tests are failing likely
+> due to OV10635 sensor supporting several discrete frame sizes,
+> fail: v4l2-test-formats.cpp(1560): node->frmsizes_count[pixfmt] > 1
+> 
+> Test logs: https://gist.github.com/Yemike-Abhilash-Chandra/98504ab56416aef38b851036aef5eeb1
+> 
+> Dale Farnsworth (2):
+>   dt-bindings: media: ti: vpe: Add bindings for Video Input Port
+>   media: ti-vpe: Add the VIP driver
+> 
+> Yemike Abhilash Chandra (2):
+>   MAINTAINERS: Update maintainers of TI VPE and CAL
+>   Revert "media: platform: ti: Remove unused vpdma_update_dma_addr"
+> 
+>  .../devicetree/bindings/media/ti,vip.yaml     |  211 +
+>  MAINTAINERS                                   |    3 +-
+>  drivers/media/platform/ti/Kconfig             |   13 +
+>  drivers/media/platform/ti/vpe/Makefile        |    2 +
+>  drivers/media/platform/ti/vpe/vip.c           | 3824 +++++++++++++++++
+>  drivers/media/platform/ti/vpe/vip.h           |  719 ++++
+>  drivers/media/platform/ti/vpe/vpdma.c         |   32 +
+>  drivers/media/platform/ti/vpe/vpdma.h         |    3 +
+>  8 files changed, 4806 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/devicetree/bindings/media/ti,vip.yaml
+>  create mode 100644 drivers/media/platform/ti/vpe/vip.c
+>  create mode 100644 drivers/media/platform/ti/vpe/vip.h
+> 
 
 
