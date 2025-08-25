@@ -1,170 +1,192 @@
-Return-Path: <linux-kernel+bounces-785214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13994B347A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:37:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAFD7B347A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:38:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B79B52A5EEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:37:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CCD9680A1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:38:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CE403009E6;
-	Mon, 25 Aug 2025 16:37:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC525289802;
+	Mon, 25 Aug 2025 16:37:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q+pRLAoe"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AXjDp+G6"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A1D289802
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 16:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43ACE10E0;
+	Mon, 25 Aug 2025 16:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756139849; cv=none; b=mICLuPjo+W1tvdam/Od5sIhLAUxLstLLuAkV8Qt9HW2x/wpQnXeyRbaFAOVD76O5HJhoIcHcYx9OikJRF+Kf39OHmSqivpgVc+pYxssGCahqhjn5ygZq2PoLg69rtp6vjSCyDQ6Xlb3zTJZop6xTvoGZ4e3lcT6qfIjtmqSbvd0=
+	t=1756139875; cv=none; b=tNX6Gr11j15Z6UDGfxDVbNduRQ1w47vd/8vqVGKx8Y8Len8QWQ/Ot/FztQvNrpm5F3dszxhwEUQT7RAragb2BanGkijNpSDqBq8kkpIgljWQKKQyq6QzQ4OaNhNVD8UAb8NN35tLa6TNnJXskJL7FkiR81M3sD3EaBuUqpHvwP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756139849; c=relaxed/simple;
-	bh=BHA8j6itK3Xz5hCcAHmxdo8MDOWaiHqgIPvbsOFE7+s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bNEsq21Xqk5UlYZfXZt8LA0eRSX3dyKQLFf8Yd7OlT5obMTDtxid+56PXVzCUYXE/8w56/nXJSL61YyOPEqpMIZVDnJ99Ug4FQT5wy9Zx1Mq7nz3VWaHuFoxGRR3wCsb0gzfN32024TdadmWz6YpXnOnNHXEQJBSqpilDyipT7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q+pRLAoe; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b47173749dbso3249636a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 09:37:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756139848; x=1756744648; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9VWBN5hI6vm4GSJb+4hWySQHfw8R9VEOfGfW5RFaYvQ=;
-        b=Q+pRLAoeyUW+t0Svf0r0QY8NF3oCgKs+CPeWIPyPndYkWG7WCl3t3CbWzA2MIij3w2
-         PNBjYRgShVJy6t1uyIBao5p9sLgheV5poPssQs0WzVGoM1YRyH2KLaaBca0QC6JUsdFV
-         g3XneLy0TVAPKOqUgrHB5D2nh7/T0azU5VlNjar1Me9SMsAwor7JYfgLgHmDoFEHJGMl
-         Ay+xZ8iYMw7lEZIDmr2Uyondcr4FGsmyS2EBnUkifyHOBwowWwrH1tuv8SXd+GG7c9Z7
-         i+og0rn0b1RWgjxzAd8K+ypH5rlk3fRNick+v+YTcIFYzHQLSEaGX5DuiGLjSY6vY4+W
-         z8NA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756139848; x=1756744648;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9VWBN5hI6vm4GSJb+4hWySQHfw8R9VEOfGfW5RFaYvQ=;
-        b=r1S3aiB76R18KmfBpazH6joau4c3tLFRvgP8LiFxMBWBr+ZsDHr0tXj7/jVjZ14jLQ
-         O8O8iRkLy23/FvlnVFOXhQZrK3NHGS2eHOLoHF2O8ImjIonTfWTwX5Y48URF4jTOPAFH
-         6fyPKW7f8CzKhEHugHsTRyixNFHFhHe/7+ympbH2FfEATwSI/+7jOXr3kk8/pROtLsNj
-         L5oltpbCi3iOTVGlIneL9MlF5ha7pg1KirTzEyB8Cb+pGpuRVbKM/IDWqqtMBp0BNXNf
-         cq8nZS1ti0wnooblGUO7mKYHwyQkbHJUqj4Y9tR0IdQlGv7ljIff8IkS82nMLWVGG4FU
-         aM4g==
-X-Forwarded-Encrypted: i=1; AJvYcCXLcsTBWoVMCuyttcyGegeS+i6pBQFyT7urzrRbeL5WhS8TtQyeBz/s5IJZeAAriGLIqYpmFaGulr3LUFw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiwI8S/1t6oKwFhBcp5vzFsKYvo8d/citin4lwc2z2oBMW63VU
-	HQQtiTDZKduT1hgkFKq74SweZqsYvCX4OoAGeyJbKaX+cD0RDII7rbejTUf4gPA7LiQ=
-X-Gm-Gg: ASbGncukR3KIL0OrKAiySWUq9iXNnBbcy+5eWZAelNCU4isxjxsMXZ9Zv5eMg+XGkEc
-	Iv47b+WR5/Or53ak2An2mmXit1BJz83uQiDbhRaZMQt/GtorZuWhiM6rmKyteUGf0NfhAeiGygx
-	SwB3tAw/zc9UlbIbWPYwJXolEeLN/EZHuGPeA7k3RfX6gWNryVDGokdq0vb2O0opr7EM4k0m4qN
-	3PAc9xRUJXM/oTrpbwNyN0q4LY1Kf0TrUgzVPDP88cbQkpLghiuTtuUhSZYXPEt7XcHW36DPlUL
-	+jFRbXqzq0xO5GXFu0aardm/JXddna3s1SvLUlL8ZKYoBDHwIH89hKBz9kWXx6KsXdhw79rJf+x
-	cFwnF9+w2VJx+bM1bJHU+ACUiFAylaemyRRIgGoHUamQ=
-X-Google-Smtp-Source: AGHT+IGMln+AnEhe4Xop32BwsGkP1vKS/jDJKfzqYQDYkoJiSelQYB6QRw5vsdnxLnjupDrzw+FuiA==
-X-Received: by 2002:a17:903:1ca:b0:235:779:edfa with SMTP id d9443c01a7336-2462ef219dfmr135753915ad.32.1756139847374;
-        Mon, 25 Aug 2025 09:37:27 -0700 (PDT)
-Received: from KASONG-MC4.tencent.com ([101.32.222.185])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2466877a01fsm73382505ad.16.2025.08.25.09.37.25
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 25 Aug 2025 09:37:26 -0700 (PDT)
-From: Kairui Song <ryncsn@gmail.com>
-To: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	linux-kernel@vger.kernel.org,
-	Kairui Song <kasong@tencent.com>
-Subject: [PATCH v2] mm/page-writeback: drop usage of folio_index
-Date: Tue, 26 Aug 2025 00:37:21 +0800
-Message-ID: <20250825163721.17734-1-ryncsn@gmail.com>
-X-Mailer: git-send-email 2.51.0
-Reply-To: Kairui Song <kasong@tencent.com>
+	s=arc-20240116; t=1756139875; c=relaxed/simple;
+	bh=49R1XUoVprLMJDRl704H1HRBpYFddqWu0RvHcoPBUlY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ImoMFq0DUxNhx+sOLvj6ApBzFYbm3tw2pdaedt9VvGO5o/DYZ8JhRLn2l9q4KhOEa7qKiH0cObPyHu5AdTHTlmQ0nsFMctlbyhRw2ps/jN8D9AtQ/nesIcvJYYF78k8urMRu+/H/XyP7bebfeBnAIuR/JVcN1eFnIMz11bqnEuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AXjDp+G6; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <316f57e3-5953-4db6-84aa-df9278461d30@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756139870;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=irO/0C7BR+axJtgXqBSOvuib9XTOGqEywKCWh0ZA8Ow=;
+	b=AXjDp+G6ZFTa4wnUJLVDBSLiLa/JC3S7lCg+Dc/OUA1Xw/gXWpRaT+ZsqO86MNvaeyIRf3
+	c3/7p59iH1LNGAPc8xfbTR7EyMzLYLYmrqkzG13zC6+QXd16PlYuMAABRIuIeELfBSResh
+	Csb5N9uB9tfqnQniqPTBBYcvtTT7jSE=
+Date: Mon, 25 Aug 2025 17:37:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v7 4/5] net: rnpgbe: Add basic mbx_fw support
+To: Dong Yibo <dong100@mucse.com>, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, corbet@lwn.net, gur.stavi@huawei.com,
+ maddy@linux.ibm.com, mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+ gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+ Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+ alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
+ gustavoars@kernel.org
+Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20250822023453.1910972-1-dong100@mucse.com>
+ <20250822023453.1910972-5-dong100@mucse.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20250822023453.1910972-5-dong100@mucse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-From: Kairui Song <kasong@tencent.com>
+On 22/08/2025 03:34, Dong Yibo wrote:
 
-folio_index is only needed for mixed usage of page cache and swap cache.
-The remaining three caller in page-writeback are for page cache tag
-marking. Swap cache space doesn't use tag (explicitly sets
-mapping_set_no_writeback_tags), so use folio->index here directly.
+[...]
+> +/**
+> + * mucse_mbx_fw_post_req - Posts a mbx req to firmware and wait reply
+> + * @hw: pointer to the HW structure
+> + * @req: pointer to the cmd req structure
+> + * @cookie: pointer to the req cookie
+> + *
+> + * mucse_mbx_fw_post_req posts a mbx req to firmware and wait for the
+> + * reply. cookie->wait will be set in irq handler.
+> + *
+> + * @return: 0 on success, negative on failure
+> + **/
+> +static int mucse_mbx_fw_post_req(struct mucse_hw *hw,
+> +				 struct mbx_fw_cmd_req *req,
+> +				 struct mbx_req_cookie *cookie)
+> +{
+> +	int len = le16_to_cpu(req->datalen);
+> +	int err;
+> +
+> +	cookie->errcode = 0;
+> +	cookie->done = 0;
+> +	init_waitqueue_head(&cookie->wait);
+> +	err = mutex_lock_interruptible(&hw->mbx.lock);
+> +	if (err)
+> +		return err;
+> +	err = mucse_write_mbx_pf(hw, (u32 *)req, len);
+> +	if (err)
+> +		goto out;
+> +	/* if write succeeds, we must wait for firmware response or
+> +	 * timeout to avoid using the already freed cookie->wait
+> +	 */
+> +	err = wait_event_timeout(cookie->wait,
+> +				 cookie->done == 1,
+> +				 cookie->timeout_jiffies);
 
-Signed-off-by: Kairui Song <kasong@tencent.com>
+it's unclear to me, what part of the code is managing values of cookie
+structure? I didn't get the reason why are you putting the address of
+cookie structure into request which is then directly passed to the FW.
+Is the FW supposed to change values in cookie?
 
----
+> +
+> +	if (!err)
+> +		err = -ETIMEDOUT;
+> +	else
+> +		err = 0;
+> +	if (!err && cookie->errcode)
+> +		err = cookie->errcode;
+> +out:
+> +	mutex_unlock(&hw->mbx.lock);
+> +	return err;
+> +}
 
-Changes in V2:
-- Add a VM_WARN_ON_ONCE and some comment about why we don't use
-  folio_index for __folio_mark_dirty. Other helpers all calls
-  mapping_use_writeback_tags which tells the reason clearly.
-- V1: https://lore.kernel.org/linux-mm/20250815121252.41315-1-ryncsn@gmail.com/
+[...]
 
- mm/page-writeback.c | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+> +struct mbx_fw_cmd_req {
+> +	__le16 flags;
+> +	__le16 opcode;
+> +	__le16 datalen;
+> +	__le16 ret_value;
+> +	union {
+> +		struct {
+> +			__le32 cookie_lo;
+> +			__le32 cookie_hi;
+> +		};
+> +
+> +		void *cookie;
+> +	};
+> +	__le32 reply_lo;
+> +	__le32 reply_hi;
 
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index 7e1e798e7213..5f90fd6a7137 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -38,10 +38,10 @@
- #include <linux/sched/rt.h>
- #include <linux/sched/signal.h>
- #include <linux/mm_inline.h>
-+#include <linux/shmem_fs.h>
- #include <trace/events/writeback.h>
- 
- #include "internal.h"
--#include "swap.h"
- 
- /*
-  * Sleep at most 200ms at a time in balance_dirty_pages().
-@@ -2705,12 +2705,18 @@ void __folio_mark_dirty(struct folio *folio, struct address_space *mapping,
- {
- 	unsigned long flags;
- 
-+	/*
-+	 * Shmem writeback relies on swap, and swap writeback is LRU based,
-+	 * not using the dirty mark.
-+	 */
-+	VM_WARN_ON_ONCE(folio_test_swapcache(folio) || shmem_mapping(mapping));
-+
- 	xa_lock_irqsave(&mapping->i_pages, flags);
- 	if (folio->mapping) {	/* Race with truncate? */
- 		WARN_ON_ONCE(warn && !folio_test_uptodate(folio));
- 		folio_account_dirtied(folio, mapping);
--		__xa_set_mark(&mapping->i_pages, folio_index(folio),
--				PAGECACHE_TAG_DIRTY);
-+		__xa_set_mark(&mapping->i_pages, folio->index,
-+			      PAGECACHE_TAG_DIRTY);
- 	}
- 	xa_unlock_irqrestore(&mapping->i_pages, flags);
- }
-@@ -2989,7 +2995,7 @@ bool __folio_end_writeback(struct folio *folio)
- 
- 		xa_lock_irqsave(&mapping->i_pages, flags);
- 		ret = folio_xor_flags_has_waiters(folio, 1 << PG_writeback);
--		__xa_clear_mark(&mapping->i_pages, folio_index(folio),
-+		__xa_clear_mark(&mapping->i_pages, folio->index,
- 					PAGECACHE_TAG_WRITEBACK);
- 		if (bdi->capabilities & BDI_CAP_WRITEBACK_ACCT) {
- 			struct bdi_writeback *wb = inode_to_wb(inode);
-@@ -3026,7 +3032,7 @@ void __folio_start_writeback(struct folio *folio, bool keep_write)
- 	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
- 
- 	if (mapping && mapping_use_writeback_tags(mapping)) {
--		XA_STATE(xas, &mapping->i_pages, folio_index(folio));
-+		XA_STATE(xas, &mapping->i_pages, folio->index);
- 		struct inode *inode = mapping->host;
- 		struct backing_dev_info *bdi = inode_to_bdi(inode);
- 		unsigned long flags;
--- 
-2.51.0
+what do these 2 fields mean? are you going to provide reply's buffer
+address directly to FW?
 
+> +	union {
+> +		u8 data[32];
+> +		struct {
+> +			__le32 version;
+> +			__le32 status;
+> +		} ifinsmod;
+> +		struct {
+> +			__le32 port_mask;
+> +			__le32 pfvf_num;
+> +		} get_mac_addr;
+> +	};
+> +} __packed;
+> +
+> +struct mbx_fw_cmd_reply {
+> +	__le16 flags;
+> +	__le16 opcode;
+> +	__le16 error_code;
+> +	__le16 datalen;
+> +	union {
+> +		struct {
+> +			__le32 cookie_lo;
+> +			__le32 cookie_hi;
+> +		};
+> +		void *cookie;
+> +	};
+
+This part looks like the request, apart from datalen and error_code are
+swapped in the header. And it actually means that the FW will put back
+the address of provided cookie into reply, right? If yes, then it
+doesn't look correct at all...
+
+> +	union {
+> +		u8 data[40];
+> +		struct mac_addr {
+> +			__le32 ports;
+> +			struct _addr {
+> +				/* for macaddr:01:02:03:04:05:06
+> +				 * mac-hi=0x01020304 mac-lo=0x05060000
+> +				 */
+> +				u8 mac[8];
+> +			} addrs[4];
+> +		} mac_addr;
+> +		struct hw_abilities hw_abilities;
+> +	};
+> +} __packed;
 
