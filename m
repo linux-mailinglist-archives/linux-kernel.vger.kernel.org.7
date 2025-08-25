@@ -1,224 +1,217 @@
-Return-Path: <linux-kernel+bounces-785227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E1EFB347D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:44:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E42FB347D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:44:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9AAF5E41EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:43:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C64D1B255A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81136301014;
-	Mon, 25 Aug 2025 16:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F40A301466;
+	Mon, 25 Aug 2025 16:44:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b="LJBtn8hz"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dkEjYpXW"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B7C301012
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 16:43:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F39301012
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 16:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756140227; cv=none; b=dDZi3wwINVouqCl40QH8SNduzvgFIk0raCHbhdpH8+mbW0HX/sBVjDwgwckDC/KkPfJRN9lGmOpmg8iiBqHbEIAbehJrhRPN4YBtd1JntpPsgwjX0hkK2tpA7GSARy4gwz09XPBc/pGWHjnWS0NLhRCJrxc74As5NX9hWtcoapc=
+	t=1756140253; cv=none; b=TXdFi2zUWMEHLSvdhwXaORToz1Y7EM1LbL8xnfkBJE4iZtSjpNzQpHQm/7OKsucysUdU+NcOdfT2P5+BWwIBltbsAUFTAE+df8gJ1foJuACKVyJKCFSL5IDhO5MLKaudf+Dg7yEMcFlQNdrqSISGZ2iowj/jqr7VvXttgdxT5nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756140227; c=relaxed/simple;
-	bh=mrvVK8/Xsrljs2OlTw2saC30UIQ8XhkSiEQOYrZEW8Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jy3HBTBUJ3pRuZyxaLCSD0r5gADiKhulOq9madiPHzB6NwyTX9VfTyN2kF7xch3pvVrkGz/R2IQByk1cO7YSt5/5y7ScslLshWz8qkNlHkzj0rvACCy1E7kk2g3oSn9f6tv0MCqLoY7C2R+wWQ5mvncHRi2itN/Xn97hcsNFRCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net; spf=pass smtp.mailfrom=amacapital.net; dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b=LJBtn8hz; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amacapital.net
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-333f918d71eso32651391fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 09:43:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20230601.gappssmtp.com; s=20230601; t=1756140224; x=1756745024; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7PLv6y/UhSOB8bdOkGYyaQMgyRuq9HEBdk6Xh5IVulM=;
-        b=LJBtn8hz9+1q0YtwAmqQoOT4NrmZQ2SKq2o/M1bmIOD8I7C0es7ckJbRx/MOsfdmK6
-         MgmVBU9kkITmd8wHsdZGW1WCqOCLFGo44p7hgKXyb53xCpqlhlrbKYk/UfVp4IoiAGQl
-         DcSx6PbRN6eNvl+q38qNWi1twzzm+8oeiKRvoIr3wmC4XN/mQS5IrDEOQ0t2HkCYkbS3
-         IEOjewoT1zuKhaMU75icXZWujI8GwB8CEIOTKJuwXuCYk0WIkvgaMXDOJ5Fo+v5oPQDn
-         VvJcIlFEWgd3h4CAWTuHai2S2TkozFw1Nl/RZ/O+XUS5hxyTTKwxZNHE4ADffnjQg3TN
-         3+Gg==
+	s=arc-20240116; t=1756140253; c=relaxed/simple;
+	bh=4+DrdL61UaJwKBOPyjvDbGLxMCh1l0N12pclwMqiu1I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dX55FP6dsLQzD58bhYffsT+0Q9ByyM6tuGbrQ4gAV3+mJ6fsJJUckqSkr4quM+/bVmuVcrHNQIs15ACs7Vc2mXeYSUqUv5hp7i2nDuOgyJ/xCS6sQuHVtRYy2pCsiQOm2OjfPl06aiaGqv/YKA6u6V26BLbZyqelbbq3UM0JveE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dkEjYpXW; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57PGNg1p027928
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 16:44:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	VkXgtXV7f37xL22OCgZ71BFwpcYjM8tCLgUNGf2Ra+o=; b=dkEjYpXW5sHvhH4g
+	ghdGqvR2iEkwBjqgPHURmzUcyhmYK8tF82KGlkDrORTWNR4SG57jWfIaHY2KaQdA
+	skJ0p0qxEMGw+SJUBJMU1PD6VEJ1K2hq1Fjr71j60nZMgQpCMbEd0uNYHfYu3jXL
+	QzCZm9inT7LXSNVCD8A32S60W7XMHp8Lrc2VTsw8qWX+SMMAFNXK4E1U4bWMtRWo
+	UHzS/AHSZK/LvzO8crc23P3sL81Uz1mfkM64PNaBzSjctycOZQoj8dmuaNSnv6TS
+	Fvuzst8IlOfMdfzazl8DSqImr0yzwYCIFf5JJXqVS2MZ0qiZR56mBVdlVxn6+bTG
+	cerzGg==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5wdwqb5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 16:44:10 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2460e91cf43so33895625ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 09:44:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756140224; x=1756745024;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7PLv6y/UhSOB8bdOkGYyaQMgyRuq9HEBdk6Xh5IVulM=;
-        b=idWQ0YpxMktA6Jabhugfj3uMTeM6Vdb56IbhvqJSdvcN0e+31m+hp5vuKRN8vj0oQK
-         1kqDSh5CNo/m6ew+v0t809b7n46vW99Cze7d29PF+ZA9EM/sLJfb8FVpZpGNriCSys1C
-         P2fPtzpAL4A7CYHpfPaj9wfV5n+IGMC3nZzjivodjKog05bU08LhUgHbFwfAf7BjlRbz
-         9avkurz6+RM+EC8JLp7HKeEHMjgEVajV7V/2S320dr0YNJdh5Sx0NbQpcIsqTUoX0OYW
-         KtKg8vyrDUnDV4O33GHhXypKqiH1kSKplOLaLTdYjdKvuZ4lFndoBsXLit+vx8pABVO5
-         xqmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVLLOrrmRRQ7iIn1SiadedCXGyezJDzvkIxs8s0dU5At1i00tOd0uvDbAki3cYWPoFxiU+yMc4InBhSLcE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeKxGSngfN2+7UIVC2stke2M7vis2Ppl1UjTFCTF5PUjMAXAij
-	oSgKY7R8qt8zHSs5kEA/o//9awKUDubEgtcvxfGWwBume37zKl7c14NPlcF/CsOCiyGJ5Hu642W
-	f5GB8dwoonsxY995egtmDCDpoBJ5LQYTmK0dVRubB
-X-Gm-Gg: ASbGnctRjqK0yGXqqne39x1i05F4RdOtT22EaOL4cW0FF+SZV9BZva6+nHrHEDdqgP5
-	UkIK5mhGA+d+K7zEeEFTkjN2Mpt9XrvpSVDQdK9VsEoBvj6kV1FspcpTjbhnkuir/1X+1sx2HFD
-	irTczTyV7tY+PRjW/+FxzxbzFpMu1rQVI7pU3QLkJ9tRcA65aZIoKfzLx1jRGzuwvn6opaHwt3R
-	LkuDA==
-X-Google-Smtp-Source: AGHT+IEMdqK/C2LpKtNe8HwPygFUadpsqtunEn/HXVLtMBboXyEX1vSk+kxH2wVSUzVD8p+wSlL+I8mi2gjoh9eWb18=
-X-Received: by 2002:a2e:a018:0:b0:330:d981:1755 with SMTP id
- 38308e7fff4ca-33650de81e9mr24090271fa.6.1756140223780; Mon, 25 Aug 2025
- 09:43:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756140249; x=1756745049;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VkXgtXV7f37xL22OCgZ71BFwpcYjM8tCLgUNGf2Ra+o=;
+        b=aCkx3+wcwArxTmuucH2HCjI+J8i4qDUfdkLpJMudn1aEjqtMD21s9kytjEyafABFij
+         7tf4plsekes1E9GVLqIaL3ljsWQXKsK8KvJikcrVCF8vmhyzNIPwUQWzWflYzWMUjHQa
+         qsyYLDAzo31Vrhlm376S2dkX74I2SGq4jmoV3BveQ6kESQvi6uxTtXFOygI95/Q3wByl
+         CIw0qzsZK5FY8lUxwC3r4/5y2Tt7O+hB7Kfd+mpWgHY76F8OYUmejXUa8iRAII/JbdUD
+         IT8dvU6LH1s1fnxElmGugQOZc5VHlfViFLVF3EsDW3YFYw2XZ0chCp76hcwri5EdMavd
+         2U4A==
+X-Forwarded-Encrypted: i=1; AJvYcCV5DG5P4+arxePsfJdEB/c7raeofwi1996gtEwYfH1zAz/qdGCR8SV3Rj3tUcNT8egb8jgfWrRi7Xh1u4Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7OWDBC+vi1AmCdFr72dH6GUz+9o1nbOYkjf/KzXPyIjNWzf6u
+	1VFZrNyhNMkZF9l+GXL9NLfPFwIht8xW+ljDhlAPQa5hCin9jmXVlXSRz94ZnGWEWB53YjrO2tn
+	t8Wyh08Y4LOLBLbHRVloo9lcJUfjVK0Ri8DZuum3qVPzYbwDQEV2WSI61k55Z6D1+Hg0=
+X-Gm-Gg: ASbGncuaaTCG9CJHc6dlBcVp0AE2F/2cDriXCZbUY1/dqGGkh8mdWsFL7ksi1yf3Z20
+	7fATM1phFbOr9JJYmatk9PmksbbARN6XQO32FC8AYdQiwX+Mw+jqvxU30NH5AT+2iKq1P/nI6lp
+	wXKr0Q2N0KAzD6+koTZFlBK0yE7WMToHidicsEW5ZJVQ8aiALyxdAoGYzZ1eJjOU2IXQjdK222u
+	FinPtfT78viP7G8jpQmlzuOCuiHcvB0Fl06wsqoNswXwtWXuryF479OGpM6wuiwaUAYy+JzIQn+
+	pMSrCX90FwmXqdHNMI+aPb9p2nChRPCTJuFbO1JTiw6vnwzA5QQueHAtRoa6a5hiCi/e
+X-Received: by 2002:a17:902:ce8b:b0:240:52c8:2564 with SMTP id d9443c01a7336-2462ee8e8f4mr191030485ad.26.1756140249193;
+        Mon, 25 Aug 2025 09:44:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG+qUQTI7dH9WfoK+mxz4DLGdk08USfScffsegOK+mgoCLUWBBdePL8ik/Y/ki6NK0tKflmSw==
+X-Received: by 2002:a17:902:ce8b:b0:240:52c8:2564 with SMTP id d9443c01a7336-2462ee8e8f4mr191030065ad.26.1756140248682;
+        Mon, 25 Aug 2025 09:44:08 -0700 (PDT)
+Received: from hu-wasimn-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24668889dbbsm72715395ad.132.2025.08.25.09.44.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Aug 2025 09:44:08 -0700 (PDT)
+Date: Mon, 25 Aug 2025 22:14:01 +0530
+From: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+        Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 0/7] OPP: Add support to find OPP for a set of keys
+Message-ID: <aKyS0RGZX4bxbjDj@hu-wasimn-hyd.qualcomm.com>
+References: <20250820-opp_pcie-v4-0-273b8944eed0@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822170800.2116980-1-mic@digikod.net> <20250822170800.2116980-2-mic@digikod.net>
- <CAG48ez1XjUdcFztc_pF2qcoLi7xvfpJ224Ypc=FoGi-Px-qyZw@mail.gmail.com>
- <20250824.Ujoh8unahy5a@digikod.net> <CALCETrWwd90qQ3U2nZg9Fhye6CMQ6ZF20oQ4ME6BoyrFd0t88Q@mail.gmail.com>
- <20250825.mahNeel0dohz@digikod.net>
-In-Reply-To: <20250825.mahNeel0dohz@digikod.net>
-From: Andy Lutomirski <luto@amacapital.net>
-Date: Mon, 25 Aug 2025 09:43:31 -0700
-X-Gm-Features: Ac12FXyB6lzRP1sYgoa00swEucBzjGB4o1VKS2fSTUJC8HJqzdooeCFOZN6Irw4
-Message-ID: <CALCETrX+OpkRSvOZhaWiqOsAPr-hRb+kY5=Hh5LU3H+1xPb3qg@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 1/2] fs: Add O_DENY_WRITE
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Jann Horn <jannh@google.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>, 
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
-	Luca Boccassi <bluca@debian.org>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Robert Waite <rowait@microsoft.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Scott Shell <scottsh@microsoft.com>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
-	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	Jeff Xu <jeffxu@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250820-opp_pcie-v4-0-273b8944eed0@oss.qualcomm.com>
+X-Proofpoint-GUID: 0evMSSqqF-YMeaZe95ThIErGwNbo9svS
+X-Proofpoint-ORIG-GUID: 0evMSSqqF-YMeaZe95ThIErGwNbo9svS
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMyBTYWx0ZWRfX5wTxtZMRe1NX
+ aJZrbaztrhEkExVXY5iA16SDCBiVjztg/iq80P7B6hef9cQgE+UgBSU/1h6WgiuMfKyV38Y/bYW
+ ONMmi+skAQILXQ8YNS8C2mhtITM0wKmFjmZ+EDJfGqvTUzilWfvvGVNVVShc3Vp8QsADUU7ydJI
+ giIr/Mn7hRWwF78qsfcYYLCZaMzYBl/Yp2dTDbrsEMtHdtTlXGGxJxPm0UmBuKap4Ph6bkM3T6l
+ fDVejOSWjblj3eOeZSM8OKP9nPW996PSUc1CpD0/ysV1ykxBd79FKnc44aH2Eh3TdVd37XlMxdx
+ HXr5a1fcAIMBcTyuW+KbOkdT5BQhjSpKMPdrE67n4ve2vB+UABJY5SUTAmHe7QRg0iXdgH/PMqs
+ 22UfkKsy
+X-Authority-Analysis: v=2.4 cv=BJazrEQG c=1 sm=1 tr=0 ts=68ac92da cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=76l3OPsZB85xAofE:21 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8
+ a=EUspDBNiAAAA:8 a=1xens5CjvSCak2KtytIA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=GvdueXVYPmCkWapjIL-Q:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-25_08,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 priorityscore=1501 clxscore=1015 impostorscore=0
+ bulkscore=0 phishscore=0 suspectscore=0 spamscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508230033
 
-On Mon, Aug 25, 2025 at 2:31=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
-od.net> wrote:
->
-> On Sun, Aug 24, 2025 at 11:04:03AM -0700, Andy Lutomirski wrote:
-> > On Sun, Aug 24, 2025 at 4:03=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@d=
-igikod.net> wrote:
-> > >
-> > > On Fri, Aug 22, 2025 at 09:45:32PM +0200, Jann Horn wrote:
-> > > > On Fri, Aug 22, 2025 at 7:08=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <m=
-ic@digikod.net> wrote:
-> > > > > Add a new O_DENY_WRITE flag usable at open time and on opened fil=
-e (e.g.
-> > > > > passed file descriptors).  This changes the state of the opened f=
-ile by
-> > > > > making it read-only until it is closed.  The main use case is for=
- script
-> > > > > interpreters to get the guarantee that script' content cannot be =
-altered
-> > > > > while being read and interpreted.  This is useful for generic dis=
-tros
-> > > > > that may not have a write-xor-execute policy.  See commit a5874fd=
-e3c08
-> > > > > ("exec: Add a new AT_EXECVE_CHECK flag to execveat(2)")
-> > > > >
-> > > > > Both execve(2) and the IOCTL to enable fsverity can already set t=
-his
-> > > > > property on files with deny_write_access().  This new O_DENY_WRIT=
-E make
-> > > >
-> > > > The kernel actually tried to get rid of this behavior on execve() i=
-n
-> > > > commit 2a010c41285345da60cece35575b4e0af7e7bf44.; but sadly that ha=
-d
-> > > > to be reverted in commit 3b832035387ff508fdcf0fba66701afc78f79e3d
-> > > > because it broke userspace assumptions.
-> > >
-> > > Oh, good to know.
-> > >
-> > > >
-> > > > > it widely available.  This is similar to what other OSs may provi=
-de
-> > > > > e.g., opening a file with only FILE_SHARE_READ on Windows.
-> > > >
-> > > > We used to have the analogous mmap() flag MAP_DENYWRITE, and that w=
-as
-> > > > removed for security reasons; as
-> > > > https://man7.org/linux/man-pages/man2/mmap.2.html says:
-> > > >
-> > > > |        MAP_DENYWRITE
-> > > > |               This flag is ignored.  (Long ago=E2=80=94Linux 2.0 =
-and earlier=E2=80=94it
-> > > > |               signaled that attempts to write to the underlying f=
-ile
-> > > > |               should fail with ETXTBSY.  But this was a source of=
- denial-
-> > > > |               of-service attacks.)"
-> > > >
-> > > > It seems to me that the same issue applies to your patch - it would
-> > > > allow unprivileged processes to essentially lock files such that ot=
-her
-> > > > processes can't write to them anymore. This might allow unprivilege=
-d
-> > > > users to prevent root from updating config files or stuff like that=
- if
-> > > > they're updated in-place.
-> > >
-> > > Yes, I agree, but since it is the case for executed files I though it
-> > > was worth starting a discussion on this topic.  This new flag could b=
-e
-> > > restricted to executable files, but we should avoid system-wide locks
-> > > like this.  I'm not sure how Windows handle these issues though.
-> > >
-> > > Anyway, we should rely on the access control policy to control write =
-and
-> > > execute access in a consistent way (e.g. write-xor-execute).  Thanks =
-for
-> > > the references and the background!
-> >
-> > I'm confused.  I understand that there are many contexts in which one
-> > would want to prevent execution of unapproved content, which might
-> > include preventing a given process from modifying some code and then
-> > executing it.
-> >
-> > I don't understand what these deny-write features have to do with it.
-> > These features merely prevent someone from modifying code *that is
-> > currently in use*, which is not at all the same thing as preventing
-> > modifying code that might get executed -- one can often modify
-> > contents *before* executing those contents.
->
-> The order of checks would be:
-> 1. open script with O_DENY_WRITE
-> 2. check executability with AT_EXECVE_CHECK
-> 3. read the content and interpret it
+On Wed, Aug 20, 2025 at 01:58:46PM +0530, Krishna Chaitanya Chundru wrote:
+> The existing OPP table in the device tree for PCIe is shared across
+> different link configurations such as data rates 8GT/s x2 and 16GT/s x1.
+> These configurations often operate at the same frequency, allowing them
+> to reuse the same OPP entries. However, 8GT/s and 16 GT/s may have
+> different characteristics beyond frequency—such as RPMh votes in QCOM
+> case, which cannot be represented accurately when sharing a single OPP.
+> 
+> In such cases, frequency alone is not sufficient to uniquely identify
+> an OPP. To support these scenarios, introduce a new API
+> dev_pm_opp_find_key_exact() that allows OPP lookup for set of keys like
+> frequency, level & bandwidth.
+> 
+> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> ---
+> Changes in v4:
+> - Included dtsi changes for all platforms.
+> - Made the changes as requested by Viresh like adding comments, some
+>   coding styles etc.
+> - Link to v3: https://lore.kernel.org/r/20250819-opp_pcie-v3-0-f8bd7e05ce41@oss.qualcomm.com
+> 
+> Changes in v3:
+> - Always check for frequency match unless user doesn't pass it (Viresh).
+> - Make dev_pm_opp_key public and let user pass the key (Viresh).
+> - Include bandwidth as part of dev_pm_opp_key (Viresh).
+> - Link to v2: https://lore.kernel.org/r/20250818-opp_pcie-v2-0-071524d98967@oss.qualcomm.com
+> 
+> Changes in v2:
+> - Use opp-level to indentify data rate and use both frequency and level
+>   to identify the OPP. (Viresh)
+> - Link to v1: https://lore.kernel.org/r/20250717-opp_pcie-v1-0-dde6f452571b@oss.qualcomm.com
+> 
+> ---
+> Krishna Chaitanya Chundru (7):
+>       OPP: Add support to find OPP for a set of keys
+>       OPP: Move refcount and key update for readability in _opp_table_find_key()
 
-Hmm.  Common LSM configurations should be able to handle this without
-deny write, I think.  If you don't want a program to be able to make
-their own scripts, then don't allow AT_EXECVE_CHECK to succeed on a
-script that the program can write.
+Hi Krishna,
 
-Keep in mind that trying to lock this down too hard is pointless for
-users who are allowed to to ptrace-write to their own processes.  Or
-for users who can do JIT, or for users who can run a REPL, etc.
+Patch 2/7 is applied in linux-next (20250825) as commit
+b5323835f050 (OPP: Reorganize _opp_table_find_key()) which is causing
+regression on my board (lemans-evk (arm64)).
+Reverting the change is resolving the issue.
 
-> > But maybe a less kludgy version could be used for real.  What if there
-> > was a syscall that would take an fd and make a snapshot of the file?
->
-> Yes, that would be a clean solution.  I don't think this is achievable
-> in an efficient way without involving filesystem implementations though.
+Kernel log:
+Unable to handle kernel NULL pointer dereference at virtual address 0000000000000016
+...
+Call trace:
+ _read_bw+0x0/0x10 (P)
+ _find_key+0xb8/0x194
+ dev_pm_opp_find_bw_floor+0x54/0x8c
+ bwmon_intr_thread+0x84/0x284 [icc_bwmon]
+ irq_thread_fn+0x2c/0xa8
+ irq_thread+0x174/0x334
+ kthread+0x134/0x208
+ ret_from_fork+0x10/0x20
 
-It wouldn't be so terrible to involve filesystem implementations.
-Most of the filesystems that people who care at all about security run
-their binaries from either support reflinks or are immutable.  Things
-like OCI implementations may already fit meet those criteria, and it
-would be pretty nifty if the kernel was actually aware that OCI layers
-are intended to be immutable.  We could even have an API to
-generically query the hash of an immutable file and to ask the kernel
-if it's validating the hash on reads.
+>       arm64: dts: qcom: sm8450: Add opp-level to indicate PCIe data rates
+>       arm64: dts: qcom: sm8550: Add opp-level to indicate PCIe data rates
+>       arm64: dts: qcom: sm8650: Add opp-level to indicate PCIe data rates
+>       arm64: dts: qcom: x1e80100: Add opp-level to indicate PCIe data rates
+>       PCI: qcom: Use frequency and level based OPP lookup
+> 
+>  arch/arm64/boot/dts/qcom/sm8450.dtsi   |  41 ++++++++++---
+>  arch/arm64/boot/dts/qcom/sm8550.dtsi   |  63 ++++++++++++++-----
+>  arch/arm64/boot/dts/qcom/sm8650.dtsi   |  63 ++++++++++++++-----
+>  arch/arm64/boot/dts/qcom/x1e80100.dtsi |  90 ++++++++++++++++++++++-----
+>  drivers/opp/core.c                     | 107 +++++++++++++++++++++++++++++++--
+>  drivers/pci/controller/dwc/pcie-qcom.c |   7 ++-
+>  include/linux/pm_opp.h                 |  30 +++++++++
+>  7 files changed, 341 insertions(+), 60 deletions(-)
+> ---
+> base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+> change-id: 20250717-opp_pcie-793160b2b113
+> 
+> Best regards,
+> -- 
+> Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> 
+
+-- 
+Regards,
+Wasim
 
