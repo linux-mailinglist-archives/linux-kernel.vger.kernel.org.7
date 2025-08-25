@@ -1,177 +1,527 @@
-Return-Path: <linux-kernel+bounces-784384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D75F8B33ABB
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:24:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6509EB33B07
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:27:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0482203706
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:24:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 384C67A12A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:26:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD6E32BF009;
-	Mon, 25 Aug 2025 09:24:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 364342D6E40;
+	Mon, 25 Aug 2025 09:24:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RWnzqxDi"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EPKzr0QQ"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A445B29D270
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 09:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF9E2D5C83;
+	Mon, 25 Aug 2025 09:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756113850; cv=none; b=k4+NCe8vb9gumT7lK4v/umvqRDMRA76xQuBDWqqPcp3Go5EBfwxASsLOUYy1x8U4eY25mte3Q60vkIHf+yjJ8P+eVFqSn9HYbmjoWbtGmAyCMs7SrDcbZUMh2ICuKO6Lw4shOmyk4WEWlpeKHOSUpxu78c0QFdEt5fUVlBOPgA0=
+	t=1756113889; cv=none; b=mFcj4f1SuWwUU7lbjIu552lWobcUwrwBrTyh2M0Bmvsv9yngdXgUbm/Z541HFvu44sulC4KL2ssJQ0j92TlMMdMxjjljuoLsDNBxw8hVnSt6hZ5+6jMcRKxU+msQ6QNFmBxqVNLlWMuIQvbtsEk9XyIALuDu4iyJAltdLVyLjYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756113850; c=relaxed/simple;
-	bh=b2EDQMgIJW/BbvJCKvsn+1m1vJhpeJsz1lWiTiulmsA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=klmMBDDCCR9Z7qUWMbUIXk007ON3eIASAKRvLTEx0sUJOJjOjLCc5NXiJtJgTBZtF79EimLdfNMU3QlY0uu1/hWfYnDLcYEOioVLYDvE4rocu3pdQKJvM48xE/SJmLC9Zw7Q680i3Gx4aGn1LWbQW5fCHRA5+RNqv1DdXvicl4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RWnzqxDi; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57P8MFNm004082
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 09:24:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=AT6FII3PRnGlX4a1qfX1+I0s
-	GPeMrRjRAQ41zyHfCGM=; b=RWnzqxDiDyxxzeQAFtb+eDIoCyR8NHZ6VNb9sF8J
-	jDadzd1bTuX2tLbaS4rysvu+kllLiBRG7QemuwKSVBYCEOrTkM6RtLP/seaV+qCo
-	c3RnN/w9V9BkEVwUPH5GWd69n4Bl/nvjC6i01GQgqa22IvbrEhU6EHovW/kL2N5/
-	A5n29nBjzZ3+nEPCTs5nqCdvffDt5nNvSCMq8UX/BN+yM/ThoJIlQ3agAAfrYiSO
-	LkRaxAcGYymw6Ow9wcJrSqcnYVNQ3vvgNIGSGvYJBa3ngFbnun5DYRUDkoHD1E1A
-	HT40jcUpwOUK00z4JvtB7ys53thHrefHPyMNSZZh7MSpSQ==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5xpmm8e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 09:24:07 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-70d9eb2eb9bso55848806d6.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 02:24:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756113846; x=1756718646;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1756113889; c=relaxed/simple;
+	bh=HBv1KgP0Vd0KcWEoh0UfygcjP7f3T2S9yGCvHObrHa4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=HnriUF1Ix/03wUX/BfnegHjsz7pVJPU+cLyN+ZuP04G3Lv0+PHVDaZJLODTMt2v6WkeWYM6cd+ZWWybOWdhNnKE0Qn5kK3MlA/DHFXsJgVxozETz755/C5XJeupe73LDJnRci41Vf5B1tajUhkTASx7bqnPQAiH8BRbdo1Yd3ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EPKzr0QQ; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-32519b32b6cso2034621a91.0;
+        Mon, 25 Aug 2025 02:24:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756113886; x=1756718686; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AT6FII3PRnGlX4a1qfX1+I0sGPeMrRjRAQ41zyHfCGM=;
-        b=fhbdPSwtv9Ub3EunAkC0mLoI5xsPyWHkcOk1H5NszN71r/OM7bPGkLREoEMLZyZudl
-         dL8aqquqDtszycYQAYqBw+4cFH55Z4gQ7Mu7iNTBskSvdiw8W1/x8TOHvpu97fJ4gk9Z
-         slrQgok2gL8/Xm3bBDS2Uai7O7FYX2DQy6fhGyu/j0laSbAY8KtIJYgC58bF6/ErIRGt
-         WM4G4O9tY5pI1Jq0vLSUYfhnJWabgefRV1dZ95o4YMvMO5ttvrbdsaRamENFbq6lSIty
-         +un/jKSpaVkqrC5KYjaYB4H6+PULFTJ7VUS6k/lG54zf/xcz3Abp92hMI12kXBk7lgpG
-         T8MA==
-X-Forwarded-Encrypted: i=1; AJvYcCX+eta8v0XxrjqFOZUoQ6Lu279s8UjMmc7Dvqlv4JwdKhOpgfrLsuc929WcS2FLjpvfkIa2vyqtRTWc1jI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywxuxnc1BefnqyEuv3QCGtPEqArOn/R5qeMcDoJ6ffu/42Pyoij
-	DulgqLICC2QUSzhbTjKsLeX3PWenK/EM0pvspPfIl5vFjIXOixhb9WEUdK/0HxkaVfK6uo3ssK5
-	FA/aprAI5ACHtm7zfn0zLnKPLEoy5tY7l5KwRiLFz37N0r5tp0BhS5ZKgBbfRy452sH4=
-X-Gm-Gg: ASbGncsRGbAqyPv4kl2wgPkcF/0CHpXfowLJExt7WiGKQYQuoBsfOKm3jQnTp6O+Rp/
-	oLv6lPWDFN3/fSvsgSPToQhvG7/NJloPsuqkS5rk2baN3Q5gZRlOuXKuh3dIcKYhDoM1bMjWAYd
-	PJdbcYr7rbjab6Jry82rVLSybNG2qBIAfuLa/P8ZWco/TZjD0VN91/ta9dD9ANv3VzJvRvC//kk
-	nnCi7q+QEoE0H7EGeYK1//daA8DF7gvSgTPrUBXooafNhHy5nuIxwMDsrO1X2IDxwdG/i3FEWj8
-	MRyaX3bB5tBqAegJ0rubkzDt2b4J4iQJRsXEyFPfBlTltS2tn2bfJ+PnapJjYqayI/S3IRtpzss
-	ZFppeANjdM7dKKhelodEwu6YQDjxcAEdslsuTu470APYj6/EAHTfk
-X-Received: by 2002:ad4:5bc5:0:b0:70d:6de2:1b35 with SMTP id 6a1803df08f44-70d9723e568mr105994856d6.65.1756113846195;
-        Mon, 25 Aug 2025 02:24:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF9KdiFDmptPVEofCOhzPmh2gkvGoRl091r38GytacLaqu0DbZGgyFkNfMNserqEeK0yyOrKg==
-X-Received: by 2002:ad4:5bc5:0:b0:70d:6de2:1b35 with SMTP id 6a1803df08f44-70d9723e568mr105994626d6.65.1756113845564;
-        Mon, 25 Aug 2025 02:24:05 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f35c9a21fsm1548650e87.128.2025.08.25.02.24.04
+        bh=b+DpNvLfZgXJbSyo/1KPV0nPQcd/neSkyFRkxB2AOkE=;
+        b=EPKzr0QQMUTVKl0KPnVBuaHeIQnsBkhrCpF6Mn0OzE1kFbGd7MVoXwX1iv2zfmUjnD
+         78SDkFHdmSgDASnYB2XC7gmOgbxpVKCzqzg+SN2JqveTRe3iSnmRLWPJqn9lnNKIqtQU
+         y8CoC5JruZiK+FVRuR4/Iw5oSFIFIJBu6hlRhV7EzWuXUrxoGLktTN1qUB+OZgnKlMkd
+         33JWRrqWNgJT2xDS9PdLIZVBinlyI/p7jBG6uRAsw2eH2rEfXl2oxt/5mX32DKNj+OwK
+         UZSsjRs90hyGZ1xbouDi2R30p2qorZ9hkN/G1bMgrjsZM5BF/Qqb1XgU2r+UERBQxF6L
+         rkZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756113886; x=1756718686;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=b+DpNvLfZgXJbSyo/1KPV0nPQcd/neSkyFRkxB2AOkE=;
+        b=izE3WU5RSfdWZAwibQo9OHOfOn3I6DdrmxbkZZvt1chBFONJms8ux3BYRytTyMoqWI
+         pUuDa+Q6bTOi4KvkHC8RtrDX6SenM/8JJzk9hwVwvCxR2DFow8ztKr3lYsxlg/WbAeET
+         MfoOPx4bozcoJGdC9CP5+aAZWArUlz/P0w/GN1gkHGYs4NG6AASGBlQ30og2XjjetW6K
+         OisAhas8Ib1pCvBOse55lBH4LO/tOMQ7VGVF4rHNOWYdZtnG3DFU6TAV30d+ERofGPsX
+         SzOd8a7NxLms+ayA5Ngtk6LfEt+T1ZxZgMuTWzaGxsmS7d8PyGoKn3sE6BmlvY/XD151
+         pm0w==
+X-Forwarded-Encrypted: i=1; AJvYcCUsuV2Zgg8TzJKtNRISItNoYh3kXesb2CJ6Lvyb02UpXsYTi70MsnHYciZ/8IIUND1aMC/6aIMJ@vger.kernel.org, AJvYcCUxzNrwK/jnhnIwbXodWuyKy2IIlsUuSdqxD3AnUSxg5kX1ONlD5rUGqmDn+dOqu1vBE2qxxy67VV4oBQ==@vger.kernel.org, AJvYcCVFsms9SbDsFc4lF4gFWKzMHTUr2wpxtnG2YU+MftVbzzFg8oEqVKJLBahskRcFZrw2Rqqg86LhseFSEYkgV8k=@vger.kernel.org, AJvYcCVuPaN8oSGbfyyh+kczFrZjz2OqK65YwL6TgsrBBbTF9Sum3hojqgZBDo0Zbs7KFQq1oJJ3WDrX7Xo=@vger.kernel.org, AJvYcCWYyTvvOkLjQZLpaU3QPBj5B1g+bsPaU9uzQE47iEz+wWcvVCQlfz11arg+3qAyLyJ4ArfZ9qLQDeWAbGs=@vger.kernel.org, AJvYcCX+rPolIFii2leV5OB1PGsUMG6q1uk3Sx6KQnQikzrRhuJR4Guaw9m31dpSWH+eeqShXtXT0wKGhR2E@vger.kernel.org, AJvYcCX/fAz3ij0B2Hb2ADDif+YJ+ek5OVtWwXm7bxcmvxQFTaaNhSy1xIe7V1VEpIBfEMxRbpfH66cij3P7@vger.kernel.org, AJvYcCXN9PcBqOuo7DXSL7W2fXKjzRb4HQcEOAntUWZ81sXRVwY6MUVgd6JFRZf6445u0/7/W16VIfKMVW9/@vger.kernel.org
+X-Gm-Message-State: AOJu0YygtnZZsxN1r1th0wEW5TZg5sDElHNKse1tislYYsOBoqamLBI2
+	cGuuBlImD38p7fmF3GGmCC17f8e89hzIbZqwwoayDsCPWxMKgCL7nbIJ
+X-Gm-Gg: ASbGncsGDlCu6vrBAomlROci8/Hj0u3ipl7u5Cw598jtBnVOLA+faRE3dSozYrcqWZb
+	gNCrCohQ1j2bnGAd5u13EpTOlL+Uvv1CC98sxNcUGx1KSXWxNx9PTtQ7QWVsr4v0nZotDIT/2kL
+	8wesnOQaoN7lnSDSZ1KCBi/EPSm3wx4y+o/+9BpFqBivMogISqaYuPTR4/b99eMaJfp/mPsVroe
+	02VQMAftuY/4Q6We562QlzKbmeuyGyHsG5f6W0mAyF00rYihw6AxP46vo+yy4XUg2jvwCKqwSgZ
+	Z9JoRj06v9NmttS+c8hBcQpIbmjxqJWCnXU1OS2UnYEQ/ZSV5pRmXzXCgLd5OD8oNzhD09CPY8h
+	M/IdcwZMLsEPOvhHreLC95eDUgyzxjtYSrpedgUMJ/zKdGYA6hVX/86nK35aDpOkm5NJLp5y9Qq
+	WX
+X-Google-Smtp-Source: AGHT+IHk1120RSlwVhFb9lSmXk3YFfH5Uc6wjDFFQ5B7eX3Ftp7khdUZ0NZYE01xgxpR+ybZFXSLkw==
+X-Received: by 2002:a17:90b:1b11:b0:325:42f8:d73f with SMTP id 98e67ed59e1d1-32542f8d954mr12219298a91.17.1756113885959;
+        Mon, 25 Aug 2025 02:24:45 -0700 (PDT)
+Received: from hcdev-d520mt2.. (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3254ae8a2d9sm6552747a91.8.2025.08.25.02.24.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 02:24:04 -0700 (PDT)
-Date: Mon, 25 Aug 2025 12:24:02 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Yijie Yang <yijie.yang@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Quill Qi <le.qi@oss.qualcomm.com>, Jie Zhang <quic_jiezh@quicinc.com>,
-        Shuai Zhang <quic_shuaz@quicinc.com>,
-        Yongxing Mou <quic_yongmou@quicinc.com>
-Subject: Re: [PATCH v6 3/3] arm64: dts: qcom: Add base HAMOA-IOT-EVK board
-Message-ID: <qlyqobhy2wjwpp437qwyk3zs6gqp47sremvdud674ygjbeziag@motnuwsalpvj>
-References: <20250821-hamoa_initial-v6-0-72e4e01a55d0@oss.qualcomm.com>
- <20250821-hamoa_initial-v6-3-72e4e01a55d0@oss.qualcomm.com>
- <jj3mvad27kdpfxo4p2c3jfpjq2icao6mltpx4uu3sretqgkfap@vpqgfwzl3sjs>
- <33ac5fef-f855-46f3-acd3-daa8fc34d918@oss.qualcomm.com>
+        Mon, 25 Aug 2025 02:24:45 -0700 (PDT)
+From: a0282524688@gmail.com
+To: tmyu0@nuvoton.com,
+	lee@kernel.org,
+	linus.walleij@linaro.org,
+	brgl@bgdev.pl,
+	andi.shyti@kernel.org,
+	mkl@pengutronix.de,
+	mailhol.vincent@wanadoo.fr,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	wim@linux-watchdog.org,
+	linux@roeck-us.net,
+	jdelvare@suse.com,
+	alexandre.belloni@bootlin.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-can@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	linux-rtc@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	Ming Yu <a0282524688@gmail.com>
+Subject: [PATCH RESEND v14 7/7] rtc: Add Nuvoton NCT6694 RTC support
+Date: Mon, 25 Aug 2025 17:24:03 +0800
+Message-Id: <20250825092403.3301266-8-a0282524688@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250825092403.3301266-1-a0282524688@gmail.com>
+References: <20250825092403.3301266-1-a0282524688@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <33ac5fef-f855-46f3-acd3-daa8fc34d918@oss.qualcomm.com>
-X-Authority-Analysis: v=2.4 cv=KOlaDEFo c=1 sm=1 tr=0 ts=68ac2bb7 cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=PfjXB2Kww6_2cIryhmQA:9
- a=CjuIK1q_8ugA:10 a=OIgjcC2v60KrkQgK7BGD:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: iSZ5jw764fLQuZQ4yf70IsErpzzNGGDb
-X-Proofpoint-ORIG-GUID: iSZ5jw764fLQuZQ4yf70IsErpzzNGGDb
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMyBTYWx0ZWRfX3eboTLgCPQdx
- z35Idb7zDy1U4Brn47cbhSwXhzEg6reuwUG6I8d1W3kYrtdD07HnTWhBr9G+zqXWodr3T5v8Dmf
- u0C1780FkzrYRqM29M0wCMSgKHUNmZzrKouHh9Rgl+8/K5jGS629BPR0rooedEOTPCS7tLXHTJr
- 9y6KVtSNVpJpCyMTox56hUqDO9qZe9NceHg1gBcYg0kGhstkWhJYf9AIjwoYph8hSX+jOlwy1qu
- EgqHUAnlNERqHbzS+oz4Z0SF47wGWkF95QLOLofOT2xIfUelfGjJWotWP0aBufu+5zW6fxxwpNM
- bvMRzcQWxpM5t/G/wm2h/WtaMZFySvjh1UewjqeLLkc9Dac5qgRebM0W8MlXAADCLMznYBH47Jh
- 0s3/afXA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-25_04,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 clxscore=1015 bulkscore=0 adultscore=0 phishscore=0
- impostorscore=0 spamscore=0 suspectscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230033
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 25, 2025 at 10:47:22AM +0800, Yijie Yang wrote:
-> 
-> 
-> On 2025-08-22 19:56, Dmitry Baryshkov wrote:
-> > On Thu, Aug 21, 2025 at 04:20:24PM +0800, Yijie Yang wrote:
-> > > The HAMOA-IOT-EVK is an evaluation platform for IoT products, composed of
-> > > the Hamoa IoT SoM and a carrier board. Together, they form a complete
-> > > embedded system capable of booting to UART.
-> > > 
-> > > This change enables the following peripherals on the carrier board:
-> > > - UART
-> > > - On-board regulators
-> > > - USB Type-C mux
-> > > - Pinctrl
-> > > - Embedded USB (EUSB) repeaters
-> > > - NVMe
-> > > - pmic-glink
-> > > - USB DisplayPorts
-> > > - Bluetooth
-> > > - Graphic
-> > > - Audio
-> > 
-> > No WiFi?
-> It's in patch 2/3.>
+From: Ming Yu <a0282524688@gmail.com>
 
-No, it's not. It has PCIe4, but not a WiFi (which makes sense since WiFI
-is not present on the SoM).
+This driver supports RTC functionality for NCT6694 MFD device
+based on USB interface.
 
-> > > 
-> > > Co-developed-by: Quill Qi <le.qi@oss.qualcomm.com> # Audio
-> > > Signed-off-by: Quill Qi <le.qi@oss.qualcomm.com>
-> > > Co-developed-by: Jie Zhang <quic_jiezh@quicinc.com> # Graphic
-> > > Signed-off-by: Jie Zhang <quic_jiezh@quicinc.com>
-> > > Co-developed-by: Shuai Zhang <quic_shuaz@quicinc.com> # Bluetooth
-> > > Signed-off-by: Shuai Zhang <quic_shuaz@quicinc.com>
-> > > Co-developed-by: Yongxing Mou <quic_yongmou@quicinc.com> # USB DisplayPorts
-> > > Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
-> > > Signed-off-by: Yijie Yang <yijie.yang@oss.qualcomm.com>
-> > > ---
-> > >   arch/arm64/boot/dts/qcom/Makefile          |    1 +
-> > >   arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts | 1247 ++++++++++++++++++++++++++++
-> > >   2 files changed, 1248 insertions(+)
-> > > 
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Ming Yu <a0282524688@gmail.com>
+---
+Changes since version 13:
 
+Changes since version 12:
+- Use same email address in the signature
+
+Changes since version 11:
+
+Changes since version 10:
+
+Changes since version 9:
+- Add devm_add_action_or_reset() to dispose irq mapping
+
+Changes since version 8:
+- Modify the signed-off-by with my work address
+- Add irq_dispose_mapping() in the error handling path and in the remove
+  function
+
+Changes since version 7:
+
+Changes since version 6:
+
+Changes since version 5:
+- Modify the module name and the driver name consistently
+
+Changes since version 4:
+- Modify arguments in read/write function to a pointer to cmd_header
+- Modify all callers that call the read/write function
+
+Changes since version 3:
+- Modify array buffer to structure
+- Fix defines and comments
+- Drop private mutex and use rtc core lock
+- Modify device_set_wakeup_capable() to device_init_wakeup()
+
+Changes since version 2:
+- Add MODULE_ALIAS()
+
+Changes since version 1:
+- Add each driver's command structure
+- Fix platform driver registration
+- Drop unnecessary logs
+- Fix overwrite error return values
+- Modify to use dev_err_probe API
+
+ MAINTAINERS               |   1 +
+ drivers/rtc/Kconfig       |  10 ++
+ drivers/rtc/Makefile      |   1 +
+ drivers/rtc/rtc-nct6694.c | 297 ++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 309 insertions(+)
+ create mode 100644 drivers/rtc/rtc-nct6694.c
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 1bb97ee6a11b..e5edd911a28e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -17823,6 +17823,7 @@ F:	drivers/hwmon/nct6694-hwmon.c
+ F:	drivers/i2c/busses/i2c-nct6694.c
+ F:	drivers/mfd/nct6694.c
+ F:	drivers/net/can/usb/nct6694_canfd.c
++F:	drivers/rtc/rtc-nct6694.c
+ F:	drivers/watchdog/nct6694_wdt.c
+ F:	include/linux/mfd/nct6694.h
+ 
+diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+index 9aec922613ce..7fd2439436c1 100644
+--- a/drivers/rtc/Kconfig
++++ b/drivers/rtc/Kconfig
+@@ -416,6 +416,16 @@ config RTC_DRV_NCT3018Y
+ 	   This driver can also be built as a module, if so, the module will be
+ 	   called "rtc-nct3018y".
+ 
++config RTC_DRV_NCT6694
++	tristate "Nuvoton NCT6694 RTC support"
++	depends on MFD_NCT6694
++	help
++	  If you say yes to this option, support will be included for Nuvoton
++	  NCT6694, a USB device to RTC.
++
++	  This driver can also be built as a module. If so, the module will
++	  be called rtc-nct6694.
++
+ config RTC_DRV_RK808
+ 	tristate "Rockchip RK805/RK808/RK809/RK817/RK818 RTC"
+ 	depends on MFD_RK8XX
+diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
+index 4619aa2ac469..f564f9a9fa5e 100644
+--- a/drivers/rtc/Makefile
++++ b/drivers/rtc/Makefile
+@@ -119,6 +119,7 @@ obj-$(CONFIG_RTC_DRV_MXC)	+= rtc-mxc.o
+ obj-$(CONFIG_RTC_DRV_MXC_V2)	+= rtc-mxc_v2.o
+ obj-$(CONFIG_RTC_DRV_GAMECUBE)	+= rtc-gamecube.o
+ obj-$(CONFIG_RTC_DRV_NCT3018Y)	+= rtc-nct3018y.o
++obj-$(CONFIG_RTC_DRV_NCT6694)	+= rtc-nct6694.o
+ obj-$(CONFIG_RTC_DRV_NTXEC)	+= rtc-ntxec.o
+ obj-$(CONFIG_RTC_DRV_OMAP)	+= rtc-omap.o
+ obj-$(CONFIG_RTC_DRV_OPAL)	+= rtc-opal.o
+diff --git a/drivers/rtc/rtc-nct6694.c b/drivers/rtc/rtc-nct6694.c
+new file mode 100644
+index 000000000000..35401a0d9cf5
+--- /dev/null
++++ b/drivers/rtc/rtc-nct6694.c
+@@ -0,0 +1,297 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Nuvoton NCT6694 RTC driver based on USB interface.
++ *
++ * Copyright (C) 2025 Nuvoton Technology Corp.
++ */
++
++#include <linux/bcd.h>
++#include <linux/irqdomain.h>
++#include <linux/kernel.h>
++#include <linux/mfd/nct6694.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/rtc.h>
++#include <linux/slab.h>
++
++/*
++ * USB command module type for NCT6694 RTC controller.
++ * This defines the module type used for communication with the NCT6694
++ * RTC controller over the USB interface.
++ */
++#define NCT6694_RTC_MOD		0x08
++
++/* Command 00h - RTC Time */
++#define NCT6694_RTC_TIME	0x0000
++#define NCT6694_RTC_TIME_SEL	0x00
++
++/* Command 01h - RTC Alarm */
++#define NCT6694_RTC_ALARM	0x01
++#define NCT6694_RTC_ALARM_SEL	0x00
++
++/* Command 02h - RTC Status */
++#define NCT6694_RTC_STATUS	0x02
++#define NCT6694_RTC_STATUS_SEL	0x00
++
++#define NCT6694_RTC_IRQ_INT_EN	BIT(0)	/* Transmit a USB INT-in when RTC alarm */
++#define NCT6694_RTC_IRQ_GPO_EN	BIT(5)	/* Trigger a GPO Low Pulse when RTC alarm */
++
++#define NCT6694_RTC_IRQ_EN	(NCT6694_RTC_IRQ_INT_EN | NCT6694_RTC_IRQ_GPO_EN)
++#define NCT6694_RTC_IRQ_STS	BIT(0)	/* Write 1 clear IRQ status */
++
++struct __packed nct6694_rtc_time {
++	u8 sec;
++	u8 min;
++	u8 hour;
++	u8 week;
++	u8 day;
++	u8 month;
++	u8 year;
++};
++
++struct __packed nct6694_rtc_alarm {
++	u8 sec;
++	u8 min;
++	u8 hour;
++	u8 alarm_en;
++	u8 alarm_pend;
++};
++
++struct __packed nct6694_rtc_status {
++	u8 irq_en;
++	u8 irq_pend;
++};
++
++union __packed nct6694_rtc_msg {
++	struct nct6694_rtc_time time;
++	struct nct6694_rtc_alarm alarm;
++	struct nct6694_rtc_status sts;
++};
++
++struct nct6694_rtc_data {
++	struct nct6694 *nct6694;
++	struct rtc_device *rtc;
++	union nct6694_rtc_msg *msg;
++	int irq;
++};
++
++static int nct6694_rtc_read_time(struct device *dev, struct rtc_time *tm)
++{
++	struct nct6694_rtc_data *data = dev_get_drvdata(dev);
++	struct nct6694_rtc_time *time = &data->msg->time;
++	static const struct nct6694_cmd_header cmd_hd = {
++		.mod = NCT6694_RTC_MOD,
++		.cmd = NCT6694_RTC_TIME,
++		.sel = NCT6694_RTC_TIME_SEL,
++		.len = cpu_to_le16(sizeof(*time))
++	};
++	int ret;
++
++	ret = nct6694_read_msg(data->nct6694, &cmd_hd, time);
++	if (ret)
++		return ret;
++
++	tm->tm_sec = bcd2bin(time->sec);		/* tm_sec expect 0 ~ 59 */
++	tm->tm_min = bcd2bin(time->min);		/* tm_min expect 0 ~ 59 */
++	tm->tm_hour = bcd2bin(time->hour);		/* tm_hour expect 0 ~ 23 */
++	tm->tm_wday = bcd2bin(time->week) - 1;		/* tm_wday expect 0 ~ 6 */
++	tm->tm_mday = bcd2bin(time->day);		/* tm_mday expect 1 ~ 31 */
++	tm->tm_mon = bcd2bin(time->month) - 1;		/* tm_month expect 0 ~ 11 */
++	tm->tm_year = bcd2bin(time->year) + 100;	/* tm_year expect since 1900 */
++
++	return ret;
++}
++
++static int nct6694_rtc_set_time(struct device *dev, struct rtc_time *tm)
++{
++	struct nct6694_rtc_data *data = dev_get_drvdata(dev);
++	struct nct6694_rtc_time *time = &data->msg->time;
++	static const struct nct6694_cmd_header cmd_hd = {
++		.mod = NCT6694_RTC_MOD,
++		.cmd = NCT6694_RTC_TIME,
++		.sel = NCT6694_RTC_TIME_SEL,
++		.len = cpu_to_le16(sizeof(*time))
++	};
++
++	time->sec = bin2bcd(tm->tm_sec);
++	time->min = bin2bcd(tm->tm_min);
++	time->hour = bin2bcd(tm->tm_hour);
++	time->week = bin2bcd(tm->tm_wday + 1);
++	time->day = bin2bcd(tm->tm_mday);
++	time->month = bin2bcd(tm->tm_mon + 1);
++	time->year = bin2bcd(tm->tm_year - 100);
++
++	return nct6694_write_msg(data->nct6694, &cmd_hd, time);
++}
++
++static int nct6694_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
++{
++	struct nct6694_rtc_data *data = dev_get_drvdata(dev);
++	struct nct6694_rtc_alarm *alarm = &data->msg->alarm;
++	static const struct nct6694_cmd_header cmd_hd = {
++		.mod = NCT6694_RTC_MOD,
++		.cmd = NCT6694_RTC_ALARM,
++		.sel = NCT6694_RTC_ALARM_SEL,
++		.len = cpu_to_le16(sizeof(*alarm))
++	};
++	int ret;
++
++	ret = nct6694_read_msg(data->nct6694, &cmd_hd, alarm);
++	if (ret)
++		return ret;
++
++	alrm->time.tm_sec = bcd2bin(alarm->sec);
++	alrm->time.tm_min = bcd2bin(alarm->min);
++	alrm->time.tm_hour = bcd2bin(alarm->hour);
++	alrm->enabled = alarm->alarm_en;
++	alrm->pending = alarm->alarm_pend;
++
++	return ret;
++}
++
++static int nct6694_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
++{
++	struct nct6694_rtc_data *data = dev_get_drvdata(dev);
++	struct nct6694_rtc_alarm *alarm = &data->msg->alarm;
++	static const struct nct6694_cmd_header cmd_hd = {
++		.mod = NCT6694_RTC_MOD,
++		.cmd = NCT6694_RTC_ALARM,
++		.sel = NCT6694_RTC_ALARM_SEL,
++		.len = cpu_to_le16(sizeof(*alarm))
++	};
++
++	alarm->sec = bin2bcd(alrm->time.tm_sec);
++	alarm->min = bin2bcd(alrm->time.tm_min);
++	alarm->hour = bin2bcd(alrm->time.tm_hour);
++	alarm->alarm_en = alrm->enabled ? NCT6694_RTC_IRQ_EN : 0;
++	alarm->alarm_pend = 0;
++
++	return nct6694_write_msg(data->nct6694, &cmd_hd, alarm);
++}
++
++static int nct6694_rtc_alarm_irq_enable(struct device *dev, unsigned int enabled)
++{
++	struct nct6694_rtc_data *data = dev_get_drvdata(dev);
++	struct nct6694_rtc_status *sts = &data->msg->sts;
++	static const struct nct6694_cmd_header cmd_hd = {
++		.mod = NCT6694_RTC_MOD,
++		.cmd = NCT6694_RTC_STATUS,
++		.sel = NCT6694_RTC_STATUS_SEL,
++		.len = cpu_to_le16(sizeof(*sts))
++	};
++
++	if (enabled)
++		sts->irq_en |= NCT6694_RTC_IRQ_EN;
++	else
++		sts->irq_en &= ~NCT6694_RTC_IRQ_EN;
++
++	sts->irq_pend = 0;
++
++	return nct6694_write_msg(data->nct6694, &cmd_hd, sts);
++}
++
++static const struct rtc_class_ops nct6694_rtc_ops = {
++	.read_time = nct6694_rtc_read_time,
++	.set_time = nct6694_rtc_set_time,
++	.read_alarm = nct6694_rtc_read_alarm,
++	.set_alarm = nct6694_rtc_set_alarm,
++	.alarm_irq_enable = nct6694_rtc_alarm_irq_enable,
++};
++
++static irqreturn_t nct6694_irq(int irq, void *dev_id)
++{
++	struct nct6694_rtc_data *data = dev_id;
++	struct nct6694_rtc_status *sts = &data->msg->sts;
++	static const struct nct6694_cmd_header cmd_hd = {
++		.mod = NCT6694_RTC_MOD,
++		.cmd = NCT6694_RTC_STATUS,
++		.sel = NCT6694_RTC_STATUS_SEL,
++		.len = cpu_to_le16(sizeof(*sts))
++	};
++	int ret;
++
++	rtc_lock(data->rtc);
++
++	sts->irq_en = NCT6694_RTC_IRQ_EN;
++	sts->irq_pend = NCT6694_RTC_IRQ_STS;
++	ret = nct6694_write_msg(data->nct6694, &cmd_hd, sts);
++	if (ret) {
++		rtc_unlock(data->rtc);
++		return IRQ_NONE;
++	}
++
++	rtc_update_irq(data->rtc, 1, RTC_IRQF | RTC_AF);
++
++	rtc_unlock(data->rtc);
++
++	return IRQ_HANDLED;
++}
++
++static void nct6694_irq_dispose_mapping(void *d)
++{
++	struct nct6694_rtc_data *data = d;
++
++	irq_dispose_mapping(data->irq);
++}
++
++static int nct6694_rtc_probe(struct platform_device *pdev)
++{
++	struct nct6694_rtc_data *data;
++	struct nct6694 *nct6694 = dev_get_drvdata(pdev->dev.parent);
++	int ret;
++
++	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	data->msg = devm_kzalloc(&pdev->dev, sizeof(union nct6694_rtc_msg),
++				 GFP_KERNEL);
++	if (!data->msg)
++		return -ENOMEM;
++
++	data->irq = irq_create_mapping(nct6694->domain, NCT6694_IRQ_RTC);
++	if (!data->irq)
++		return -EINVAL;
++
++	ret = devm_add_action_or_reset(&pdev->dev, nct6694_irq_dispose_mapping,
++				       data);
++	if (ret)
++		return ret;
++
++	ret = devm_device_init_wakeup(&pdev->dev);
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret, "Failed to init wakeup\n");
++
++	data->rtc = devm_rtc_allocate_device(&pdev->dev);
++	if (IS_ERR(data->rtc))
++		return PTR_ERR(data->rtc);
++
++	data->nct6694 = nct6694;
++	data->rtc->ops = &nct6694_rtc_ops;
++	data->rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
++	data->rtc->range_max = RTC_TIMESTAMP_END_2099;
++
++	platform_set_drvdata(pdev, data);
++
++	ret = devm_request_threaded_irq(&pdev->dev, data->irq, NULL,
++					nct6694_irq, IRQF_ONESHOT,
++					"rtc-nct6694", data);
++	if (ret < 0)
++		return dev_err_probe(&pdev->dev, ret, "Failed to request irq\n");
++
++	return devm_rtc_register_device(data->rtc);
++}
++
++static struct platform_driver nct6694_rtc_driver = {
++	.driver = {
++		.name	= "nct6694-rtc",
++	},
++	.probe		= nct6694_rtc_probe,
++};
++
++module_platform_driver(nct6694_rtc_driver);
++
++MODULE_DESCRIPTION("USB-RTC driver for NCT6694");
++MODULE_AUTHOR("Ming Yu <tmyu0@nuvoton.com>");
++MODULE_LICENSE("GPL");
++MODULE_ALIAS("platform:nct6694-rtc");
 -- 
-With best wishes
-Dmitry
+2.34.1
+
 
