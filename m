@@ -1,137 +1,215 @@
-Return-Path: <linux-kernel+bounces-784305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB4E7B339C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:44:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADB23B339DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:47:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A53E93B95D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:44:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8167D188965C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:48:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054D12C0F96;
-	Mon, 25 Aug 2025 08:41:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5146A29D295;
+	Mon, 25 Aug 2025 08:47:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="aZ3knCbI"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cv3PLodc"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E542C0F7B
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 08:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB88713959D;
+	Mon, 25 Aug 2025 08:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756111296; cv=none; b=c4LbDps2qDVxnZE4VVbNp4VXvZbRebUieJ0d8fc1cVsGGblgCHzLGSnKn4BB8nqlAzSs1fOvD85Boq3LkqfReYzjCjXbTzYJeynG7yQckeKbYWUdsyyWKGeJLzQBlubbGpD+zwDP3t+BJ7VbuFop65F7pMo11SJ+C/f+FgVhiM0=
+	t=1756111653; cv=none; b=S9DfWxl45CGd1M4BQ3C3kDz0q4g2xsae5pvc/59EiybHxqQpRFigYNjkn4cBjttyXfEPomm3xWyOPXdmbOPb6BtRh4qCoxphbfyricPvY4JRw8DWdYpKUDN7z6JUZksPxozXyyXSelGGORWg38ApNW5N5d5UI6FM6mAHPct8Gc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756111296; c=relaxed/simple;
-	bh=Jfa1THEcp2NSGVGu9eZpmlzsfemWMV56Bx1xwURGSvc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L0jruYUNMkDBbH/Mv+ZbDYoE3px/KX7cuYph/6glshRLuUu94DQUP7El01ZlD1C1yHKe/a4Az+29WJrukIV+OZp9jFoJF2Q7avNeCtantTRmyuc5LU+S+61Omt3CZLG99w/KI/lQ1ix3FMEG43W70C7GnTXwPz+ZZi6nkpqL1oU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=aZ3knCbI; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 4b54a67a818f11f0b33aeb1e7f16c2b6-20250825
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=Tj8a6GPuOmdWC97QKAJpys6LnXM9wpEnatX8NPRY2Qw=;
-	b=aZ3knCbI68NQGGZOMKsi5/62yK9Gogkbn9hXqdtYGeWKSuFDuv0J/ULiNlbWlUjy+svS3umeQz5FrTB2BZlGIj1T+Y0khjouZJw7d6AGX9HdZQXuyYXtyVmEx+ijF5nuNDhCMDdpAMcgGtBUzYHNa+eRwmjywXoUkaRQVsL7MOM=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.3,REQID:dafbeef3-e35e-4499-b7cb-05f520da4fa7,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:f1326cf,CLOUDID:f4e87e7a-966c-41bd-96b5-7d0b3c22e782,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:-5,Content:0|15|50,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 3,DMD|SSN|SDN
-X-CID-BAS: 3,DMD|SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 4b54a67a818f11f0b33aeb1e7f16c2b6-20250825
-Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw02.mediatek.com
-	(envelope-from <xion.wang@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 263565723; Mon, 25 Aug 2025 16:41:29 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Mon, 25 Aug 2025 16:41:28 +0800
-Received: from mbjsdccf07.gcn.mediatek.inc (10.15.20.246) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Mon, 25 Aug 2025 16:41:27 +0800
-From: <xion.wang@mediatek.com>
-To: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-CC: <wsd_upstream@mediatek.com>, <huadian.liu@mediatek.com>, Xion Wang
-	<xion.wang@mediatek.com>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
-Subject: [PATCH 1/1] misc: Prevent double registration and deregistration of miscdevice
-Date: Mon, 25 Aug 2025 16:45:47 +0800
-Message-ID: <20250825084556.10358-2-xion.wang@mediatek.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250825084556.10358-1-xion.wang@mediatek.com>
-References: <20250825084556.10358-1-xion.wang@mediatek.com>
+	s=arc-20240116; t=1756111653; c=relaxed/simple;
+	bh=bPVNpV6nMN5xahOwuEGChnOhxKBoMGh0YVXl92nUSSY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z0Xy2ztxjXnzO7mrN9zCzGZDYPJw6Cfo5sYfpyjRRwH2Ozl5i3MkbQIYt+8NxD9j5WslRzTI0Yrf9XKJPEV0WKj5Wg7CGS2BTqSYfSfvVLAxZzJz67a7QPqLV+eB5SU4kktnb1wwutRUl/vLr1Ew3ma2QFJAW7e0D422F5vMaH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cv3PLodc; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756111652; x=1787647652;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=bPVNpV6nMN5xahOwuEGChnOhxKBoMGh0YVXl92nUSSY=;
+  b=cv3PLodchH2BPbAF9V+5f3d6Z1TYB+OGNVAjDv8y11gnc5CKD07ohLKI
+   vx8BAfk+n+fyH0GRrG+X+D4TxnUZWzDbJGdxiMzcYEWGoDUWl4bpK4IzP
+   Uh59tKPYBlSNoOrge+MvY1TkPHV3XwzGKNPSDfvSSyYhgqOGcjgnlwKiQ
+   vkHM0W29UdVY34GCgWu4E0/Rms4bXPhh3ZvK5oVV9ba6nCxEQDZgNmxsI
+   21lTe93FTixb0DK9apCxjKxRcarz0fKR9CqFVUqWwHWsKdezvaqgsYvKa
+   FwbsHZLf+VeU5mNo0RE4/FgNPoISighk1sImQrdJYRVpTvajnp6NXYTMp
+   g==;
+X-CSE-ConnectionGUID: zJWErrChQQCzq//vzla5cg==
+X-CSE-MsgGUID: 5zwtZ7KJS8qn39mr0b07vw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11532"; a="62133706"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="62133706"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 01:47:31 -0700
+X-CSE-ConnectionGUID: EHKU6I3xQgyx4nNPByQ0/A==
+X-CSE-MsgGUID: 6v+ucBATRY+7FVaT1s8goA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="169133596"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa007.jf.intel.com with ESMTP; 25 Aug 2025 01:47:29 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uqSrH-000NWx-3A;
+	Mon, 25 Aug 2025 08:47:21 +0000
+Date: Mon, 25 Aug 2025 16:47:07 +0800
+From: kernel test robot <lkp@intel.com>
+To: Osama Abdelkader <osama.abdelkader@gmail.com>, tytso@mit.edu,
+	Jason@zx2c4.com
+Cc: oe-kbuild-all@lists.linux.dev, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Osama Abdelkader <osama.abdelkader@gmail.com>
+Subject: Re: [PATCH] drivers/char/random.c: Clean up style issues
+Message-ID: <202508251623.uUGghjhZ-lkp@intel.com>
+References: <20250820170359.78811-1-osama.abdelkader@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820170359.78811-1-osama.abdelkader@gmail.com>
 
-From: Xion Wang <xion.wang@mediatek.com>
+Hi Osama,
 
-When repeated calls to misc_register() or misc_deregister() on the
-same miscdevice could lead to kernel crashes or misc_list corruption due to
-multiple INIT_LIST_HEAD or list_del operations on the same list node.
+kernel test robot noticed the following build warnings:
 
-This patch improves the robustness of the misc device driver by preventing
-both double registration and double deregistration of miscdevice instances.
+[auto build test WARNING on v6.17-rc2]
+[also build test WARNING on linus/master]
+[cannot apply to crng-random/master next-20250822]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Signed-off-by: Xion Wang <xion.wang@mediatek.com>
----
- drivers/char/misc.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+url:    https://github.com/intel-lab-lkp/linux/commits/Osama-Abdelkader/drivers-char-random-c-Clean-up-style-issues/20250821-010651
+base:   v6.17-rc2
+patch link:    https://lore.kernel.org/r/20250820170359.78811-1-osama.abdelkader%40gmail.com
+patch subject: [PATCH] drivers/char/random.c: Clean up style issues
+config: sparc-randconfig-r071-20250825 (https://download.01.org/0day-ci/archive/20250825/202508251623.uUGghjhZ-lkp@intel.com/config)
+compiler: sparc-linux-gcc (GCC) 8.5.0
 
-diff --git a/drivers/char/misc.c b/drivers/char/misc.c
-index 558302a64dd9..2f8666312966 100644
---- a/drivers/char/misc.c
-+++ b/drivers/char/misc.c
-@@ -210,6 +210,9 @@ int misc_register(struct miscdevice *misc)
- 	int err = 0;
- 	bool is_dynamic = (misc->minor == MISC_DYNAMIC_MINOR);
- 
-+	if (WARN_ON(misc->this_device))
-+		return -EEXIST;
-+
- 	INIT_LIST_HEAD(&misc->list);
- 
- 	mutex_lock(&misc_mtx);
-@@ -251,6 +254,7 @@ int misc_register(struct miscdevice *misc)
- 			misc->minor = MISC_DYNAMIC_MINOR;
- 		}
- 		err = PTR_ERR(misc->this_device);
-+		misc->this_device = NULL;
- 		goto out;
- 	}
- 
-@@ -275,12 +279,13 @@ EXPORT_SYMBOL(misc_register);
- 
- void misc_deregister(struct miscdevice *misc)
- {
--	if (WARN_ON(list_empty(&misc->list)))
-+	if (WARN_ON(!misc->this_device))
- 		return;
- 
- 	mutex_lock(&misc_mtx);
- 	list_del(&misc->list);
- 	device_destroy(&misc_class, MKDEV(MISC_MAJOR, misc->minor));
-+	misc->this_device = NULL;
- 	misc_minor_free(misc->minor);
- 	mutex_unlock(&misc_mtx);
- }
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508251623.uUGghjhZ-lkp@intel.com/
+
+smatch warnings:
+drivers/char/random.c:325 crng_fast_key_erasure() warn: inconsistent indenting
+drivers/char/random.c:349 crng_make_state() warn: inconsistent indenting
+
+vim +325 drivers/char/random.c
+
+   304	
+   305	/*
+   306	 * This generates a ChaCha block using the provided key, and then
+   307	 * immediately overwrites that key with half the block. It returns
+   308	 * the resultant ChaCha state to the user, along with the second
+   309	 * half of the block containing 32 bytes of random data that may
+   310	 * be used; random_data_len may not be greater than 32.
+   311	 *
+   312	 * The returned ChaCha state contains within it a copy of the old
+   313	 * key value, at index 4, so the state should always be zeroed out
+   314	 * immediately after using in order to maintain forward secrecy.
+   315	 * If the state cannot be erased in a timely manner, then it is
+   316	 * safer to set the random_data parameter to &chacha_state->x[4]
+   317	 * so that this function overwrites it before returning.
+   318	 */
+   319	static void crng_fast_key_erasure(u8 key[CHACHA_KEY_SIZE],
+   320					  struct chacha_state *chacha_state,
+   321					  u8 *random_data, size_t random_data_len)
+   322	{
+   323		u8 first_block[CHACHA_BLOCK_SIZE];
+   324	
+ > 325			WARN_ON_ONCE(random_data_len > 32);
+   326			if (random_data_len > 32)
+   327				return;
+   328		chacha_init_consts(chacha_state);
+   329		memcpy(&chacha_state->x[4], key, CHACHA_KEY_SIZE);
+   330		memset(&chacha_state->x[12], 0, sizeof(u32) * 4);
+   331		chacha20_block(chacha_state, first_block);
+   332	
+   333		memcpy(key, first_block, CHACHA_KEY_SIZE);
+   334		memcpy(random_data, first_block + CHACHA_KEY_SIZE, random_data_len);
+   335		memzero_explicit(first_block, sizeof(first_block));
+   336	}
+   337	
+   338	/*
+   339	 * This function returns a ChaCha state that you may use for generating
+   340	 * random data. It also returns up to 32 bytes on its own of random data
+   341	 * that may be used; random_data_len may not be greater than 32.
+   342	 */
+   343	static void crng_make_state(struct chacha_state *chacha_state,
+   344				    u8 *random_data, size_t random_data_len)
+   345	{
+   346		unsigned long flags;
+   347		struct crng *crng;
+   348	
+ > 349			WARN_ON_ONCE(random_data_len > 32);
+   350			if (random_data_len > 32)
+   351				return;
+   352		/*
+   353		 * For the fast path, we check whether we're ready, unlocked first, and
+   354		 * then re-check once locked later. In the case where we're really not
+   355		 * ready, we do fast key erasure with the base_crng directly, extracting
+   356		 * when crng_init is CRNG_EMPTY.
+   357		 */
+   358		if (!crng_ready()) {
+   359			bool ready;
+   360	
+   361			spin_lock_irqsave(&base_crng.lock, flags);
+   362			ready = crng_ready();
+   363			if (!ready) {
+   364				if (crng_init == CRNG_EMPTY)
+   365					extract_entropy(base_crng.key, sizeof(base_crng.key));
+   366				crng_fast_key_erasure(base_crng.key, chacha_state,
+   367						      random_data, random_data_len);
+   368			}
+   369			spin_unlock_irqrestore(&base_crng.lock, flags);
+   370			if (!ready)
+   371				return;
+   372		}
+   373	
+   374		local_lock_irqsave(&crngs.lock, flags);
+   375		crng = raw_cpu_ptr(&crngs);
+   376	
+   377		/*
+   378		 * If our per-cpu crng is older than the base_crng, then it means
+   379		 * somebody reseeded the base_crng. In that case, we do fast key
+   380		 * erasure on the base_crng, and use its output as the new key
+   381		 * for our per-cpu crng. This brings us up to date with base_crng.
+   382		 */
+   383		if (unlikely(crng->generation != READ_ONCE(base_crng.generation))) {
+   384			spin_lock(&base_crng.lock);
+   385			crng_fast_key_erasure(base_crng.key, chacha_state,
+   386					      crng->key, sizeof(crng->key));
+   387			crng->generation = base_crng.generation;
+   388			spin_unlock(&base_crng.lock);
+   389		}
+   390	
+   391		/*
+   392		 * Finally, when we've made it this far, our per-cpu crng has an up
+   393		 * to date key, and we can do fast key erasure with it to produce
+   394		 * some random data and a ChaCha state for the caller. All other
+   395		 * branches of this function are "unlikely", so most of the time we
+   396		 * should wind up here immediately.
+   397		 */
+   398		crng_fast_key_erasure(crng->key, chacha_state, random_data, random_data_len);
+   399		local_unlock_irqrestore(&crngs.lock, flags);
+   400	}
+   401	
+
 -- 
-2.45.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
