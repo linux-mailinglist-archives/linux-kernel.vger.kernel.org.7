@@ -1,106 +1,93 @@
-Return-Path: <linux-kernel+bounces-785100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ADD1B345F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:36:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5439B34603
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:38:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DEC22A24CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:36:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FA487ABB4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF893002B9;
-	Mon, 25 Aug 2025 15:35:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5242FDC5C;
+	Mon, 25 Aug 2025 15:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="j/08ylrY"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j7dnuw1w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5B12FF64F;
-	Mon, 25 Aug 2025 15:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CB922FD1B1;
+	Mon, 25 Aug 2025 15:38:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756136103; cv=none; b=DPwOd0npqv/W/K0cmlxki/0IFxMGo8IWnab74y6RhHcwZAT45p7Pe3tnP1zwvV1ILll47hiGsjDX3xn5XueBVTi9Nthp2EAQAFwQIwKDBrnz9MJDu/Xi+hi7/xkWOnnBJ/AFn/yT5JoU156NtpxeQVF483KS339oIgSEyRBIGtI=
+	t=1756136286; cv=none; b=HClwoZ3Be8p1dnSsoG8CWlE3Z8IAnc7eSc+8/L+4o+nhPetEv/ibcyoz8Cv4SJ+0qAIX4/VuOTmdpBV63DUVxieuNVv7QQTolJ2KZrNsn2FRmbxYGIhgMNQY3QQeyYeeHFMqTYsJg4m9zGFFGV+E1t3zZnHgnhlF8RQezGBB8/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756136103; c=relaxed/simple;
-	bh=VZpxXp1Jtzbp9ZUOGZItTruBz4DIlQiezPNirCtZH9E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DnyeUEcIldsEmprsd5HcGP6IlK7Y9U1+q7OlGSFhvjS45NQshHc6rdQZ//8bMru7Jg5d1dRwUEHN8LoUeTHvdd2TwG7BNMmes0TsvLjhEiRLpbZt2s9oObsWShdcrrnLcWFniuSpbniJYk/TYbbw47YauFCh0M0RrHfhPb1wc1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=j/08ylrY; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1756136100;
-	bh=VZpxXp1Jtzbp9ZUOGZItTruBz4DIlQiezPNirCtZH9E=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=j/08ylrY+Db2hGxduhX/mwuJ5EBmKAmUt0Q49EXbG7FDU+NOcfyxrCVEpQYhh5D/C
-	 Ho6+3mamprwWtZXSR01Rns/vw0UB10PC4l1LPBL1ZFZ7d08p2985ZvRdDu+iqD5aWI
-	 uxNZN4puOsukeSzwx+te86y6/BRmc23Q9/lx644Wod5/yiurkRcsyfpt8twggNa9vf
-	 90Jhv1X1AJpJlnkQ01M19wBLKuc7xKaB0tWjG6a29C7pgOuCXPsm5MtX+8YsJU0bKB
-	 xWNuEi8FUSkdIOgVL/1/Umdq9nnIvAg0UzPdwBiW+W2vKE9HH+58KIU8FCjWmsX6xi
-	 an4zfzCyerTjw==
-Received: from benjamin-XPS-13-9310.. (unknown [IPv6:2a01:e0a:120:3210:f39:d9a9:8ef1:f69a])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: benjamin.gaignard)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9260F17E0A28;
-	Mon, 25 Aug 2025 17:34:59 +0200 (CEST)
-From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-To: joro@8bytes.org,
-	will@kernel.org,
-	robin.murphy@arm.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	heiko@sntech.de,
-	nicolas.dufresne@collabora.com,
-	jgg@ziepe.ca,
-	p.zabel@pengutronix.de,
-	mchehab@kernel.org
-Cc: iommu@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	kernel@collabora.com,
-	linux-media@vger.kernel.org,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>
-Subject: [PATCH v7 6/6] arm64: defconfig: enable Verisilicon IOMMU
-Date: Mon, 25 Aug 2025 17:34:45 +0200
-Message-ID: <20250825153450.150071-7-benjamin.gaignard@collabora.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250825153450.150071-1-benjamin.gaignard@collabora.com>
-References: <20250825153450.150071-1-benjamin.gaignard@collabora.com>
+	s=arc-20240116; t=1756136286; c=relaxed/simple;
+	bh=8dSso2N5KSmgLAtF6av/17DEDuEYDtbG1/oPAIfoiKc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q8iWwFwFuf5KD0QVF/rmqz+07w0yVmAQinJSJn14seHeTwtKLCNtRrYJSPOjERJzomA71EVyNbPa38TY9d5vr+XCQGq42hMopgRIetqaSvvbFBeIwjBZLA4rfo8OelkapsxaI7kMpKqWODhviFcqWkDl63PgqXJ2tDf56EF0fT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j7dnuw1w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62D9DC4CEED;
+	Mon, 25 Aug 2025 15:38:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756136285;
+	bh=8dSso2N5KSmgLAtF6av/17DEDuEYDtbG1/oPAIfoiKc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=j7dnuw1w/7MAem+AcLipOzAy0iCDUH7w4/SZXtFKRKsqZZJO2yeqW0wyYd0G1i42h
+	 DfRZNdI5NHreSJjkOmj3LSlewz5Y7TcKmqhxV6P+SWJkRBKM2wQ0l48LrHvSJ7wTun
+	 5SrD9iAZNhItWJ3tPrkNqRDuRQ3ble0YbzwYeEmulYrKY1R5x7KZvnWtktzDGJDXTj
+	 XERIdtUaRD2on5rAuMD04elNh7XXjibF8yZLf7qANzMqeC5+OtTS0Nq+UIGa4r6GnR
+	 w4PHpS5KN/fk81JazgwrWcCy13+pfrVy00v43ibaGCNpEsnX9JcfGupQFGPB4efdr4
+	 ifYM7iNhRRDzQ==
+Date: Mon, 25 Aug 2025 16:38:01 +0100
+From: Mark Brown <broonie@kernel.org>
+To: "Nikola Z. Ivanov" <zlatistiv@gmail.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, shuah@kernel.org,
+	ebiggers@google.com, martin.petersen@oracle.com, ardb@kernel.org,
+	thiago.bauermann@linaro.org, linux-kselftest@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev
+Subject: Re: [PATCH] selftests/arm64: Fix typos in malloc return value check
+Message-ID: <aKyDWRkgv-BAtuDc@finisterre.sirena.org.uk>
+References: <20250824131647.490439-1-zlatistiv@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="miGEQnQWrbritfVa"
+Content-Disposition: inline
+In-Reply-To: <20250824131647.490439-1-zlatistiv@gmail.com>
+X-Cookie: Filmed before a live audience.
 
-Enable Verisilicon IOMMU used by RK3588 AV1 hardware codec.
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+--miGEQnQWrbritfVa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 58f87d09366c..04547bcc904b 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1470,6 +1470,7 @@ CONFIG_ARM_SMMU=y
- CONFIG_ARM_SMMU_V3=y
- CONFIG_MTK_IOMMU=y
- CONFIG_QCOM_IOMMU=y
-+CONFIG_VSI_IOMMU=m
- CONFIG_REMOTEPROC=y
- CONFIG_IMX_REMOTEPROC=y
- CONFIG_MTK_SCP=m
--- 
-2.43.0
+On Sun, Aug 24, 2025 at 04:16:47PM +0300, Nikola Z. Ivanov wrote:
+> Fix double "-ed" in malloc return value check
 
+Reviewed-by: Mark Brown <broonie@kernel.org>
+
+
+--miGEQnQWrbritfVa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmisg1UACgkQJNaLcl1U
+h9ASfgf/YGmdSiL8/P92y//a3VVs5MwJXjfBPqxoEYDuK+QDU7k3D/eZ5UdyAuP6
+lpxJgjVLT23t/D2DLtfcjpfBEtfbs2iEz7gRMALdMqEM8OeVZfiVqGygYiCT4ggM
+zPGq8BSie2C3C0SNP5z219ldAPWl2bLLF6RqqV6RtaZWXpuf54VBGblB2+cTp+X5
+OqOWOjf/ese9TE+bNTO+cOTm60SdJanRrBGG69YPvQfWGdKsBBE3yTxE5JHK2E4L
+Qbvw4tFGrzQfqYb+FWu96LFETn9Mpg0cLybpJgXPBt8hcmjXcn3n7KDI7D9GQiOq
+8OvI3cKjYTPX9tWlyh3T49v6HJ/EMg==
+=aEbu
+-----END PGP SIGNATURE-----
+
+--miGEQnQWrbritfVa--
 
