@@ -1,57 +1,94 @@
-Return-Path: <linux-kernel+bounces-783964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D20E8B334C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 05:39:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE9D3B3347C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 05:28:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35E1B7A324D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 03:37:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93A913B4A0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 03:28:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A850D26CE3B;
-	Mon, 25 Aug 2025 03:38:47 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FEE7241139;
+	Mon, 25 Aug 2025 03:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MapA4Qaj"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27EDF23C8CD;
-	Mon, 25 Aug 2025 03:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F7CA18FC91;
+	Mon, 25 Aug 2025 03:27:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756093127; cv=none; b=ahywDSdWLFov11Ri9pY1IIE/XoJEx4QwzhQIb2NB1r/vCfG+0m5fzxQ6rax4ZvRBcgULLMQ0+3EmS88pkoUBwzFD8+hHwmC06ARrwHt3PfBLofRDLukqTI+DZZsJcmzr2vfNnukaNFTltE38iq0GE2p6XQVZNjqXJ3vCpDCdcek=
+	t=1756092474; cv=none; b=ULuc6xElAIsarPd2oWVQRX1vE0cNPSc7SOV6eCS8eqTUGXX4BxsbLkxz2cgV62K3C1AxQPrPk2HmZ5zevgN8v2A3utbJnukf72j6pAo+3bhRtGk4AhvqejYwOht50HeO2Io2QlVbqe1bAHomX6hR4JwKTKkRj6mxj00Gy4fWU00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756093127; c=relaxed/simple;
-	bh=A5HIS079uYJ7RV0VnuE/qTCM1zQzWFkIMVUsGbNJH/Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GA1YEV/Wq6wwIxLGfmmiwvD8exFrM+AvaK/qDmdlHCJAVWdKpGiv7N53qRo0VzaZ5YBhez93TdbHWhdV0TUvQ7Dh2bZzaCC7SrpmkhBwWNx9izHyrz3YpF6ygby1+7TS0PAOBuocYwwBIrDgZgXaxi+JALb2+bBA7ctELV/DAs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c9Gjb2XvFzYQvGM;
-	Mon, 25 Aug 2025 11:38:43 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id DD3931A1262;
-	Mon, 25 Aug 2025 11:38:41 +0800 (CST)
-Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
-	by APP4 (Coremail) with SMTP id gCh0CgDXII2x2qtoTBLUAA--.30877S5;
-	Mon, 25 Aug 2025 11:38:41 +0800 (CST)
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: longman@redhat.com,
-	tj@kernel.org,
-	hannes@cmpxchg.org,
-	mkoutny@suse.com
-Cc: cgroups@vger.kernel.org,
+	s=arc-20240116; t=1756092474; c=relaxed/simple;
+	bh=nUxe3lSxwuyyKWXdqrX6byaN+Kz7apsi4XZf32m/e3s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Os2zfFOJBeLLQNfVZg9lO40lOT64k8IstDRXSI9oeVIn3BAsT3XlZiGoUDrqmvUFljXIzj0doUwCQUnXZ371uTmJzTF3ejnM0LMP1JtWsTfa5YKuJKMLETAIGSq7Pcu1O1ZYL8UFnPJP7lS7xNX0VFMDU625w9SFRDz30/azBcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MapA4Qaj; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3c6ae25978bso1489346f8f.0;
+        Sun, 24 Aug 2025 20:27:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756092471; x=1756697271; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jerr00v6pjlEVXRP5Dl23B9B9cCcjX8VSV7tuhNw5dk=;
+        b=MapA4QajtaD9eiAMqSEwm4HgIZ5OypZGRsOBnPR86ANBSxSQzgDIm8/8smSDwGUqZd
+         zzOB8ECuPX507rCIqds/DwTPWy+1fzLRijGl5aHZuy+PA+1s9e6Vx5xng63xTXdFBqFp
+         6V27AJL+f+6H0vQyOKe63oaKCdyE6hj3B+Bs8PvlHXOb+Tthj+nBlnnsBoGrTKA3l1yg
+         C89qRE3iue3cuEGbwiUl73Qj8rwWYf3Nx8dSL+zL7+rIcP0lVtC9qsGb8WC70/qYjwow
+         v746A1y09AMIomOglbm6JA8AkcgUGwW1+AiHeUznDb0r9mmgdYWlPqK/Qz0tnpvSbL9J
+         aqZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756092471; x=1756697271;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jerr00v6pjlEVXRP5Dl23B9B9cCcjX8VSV7tuhNw5dk=;
+        b=po70ZakFSKuh24TN7AKlwqXOekdW8wnHs8oE6i8rcBiLK1fgzmCd7Rr42jRW+ikZXZ
+         sjLBJR0JU7ZZmeyM00SIO8UMrvrClPEbL4Rw8bJtlggAJs3VrKbApDx7CsGteAY3fntQ
+         UpxKKWy0gMoD9pMIF0cRP9IZ+nRaUkiJmgd6r+fkoV4hdoEJQOzPd/jOKfle7HcYtWyC
+         TSm8mHMbtkNsH0Mm5z45AFrqiSFFzAPBy+4fg9xbuQtobrvxnXkxEIQNw8yRNj3bHYlf
+         DfcDl07QfbYnvYGtt8r43qbAYps9cYav5fk7o8GHA87k8l0Z0ohovyCD2mCknVqAVXRW
+         9oRg==
+X-Forwarded-Encrypted: i=1; AJvYcCWqgPITBaNz7gmJ+am++Y3cQaW4EVWb0c7Fg7r3BCOiKyr8a5ri330fPqIvitts3eXx0G72pSoSNsgKcc8=@vger.kernel.org, AJvYcCX9a3ubQdJLsaZHQBuepJfTUIxrvgQN+OmA6csM0JmxFVe3JYQyp9h8VwauPqJEkpDGEmdZTPed@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzluzClP0+avF61k/LupZimVIhmu8zAXeWRXF3QYBIQtXPsbki
+	aa1rWycubzGP87ll8Usa7HBrtxS03TrYQ7vDciX+IVdEW7A6rsUTqp3n
+X-Gm-Gg: ASbGncvqSiLzbhyNL1eRmjEY3gMHsMc4T6KHcb0o9f+ms+OTeqsEf0L7XNz7v+TM31R
+	ZCMTqYZvvRjnMPPIILekVohLfTSLxInGw8H8wBMO1eBA6tCpeBOEweNJ6qxKn/lopGCBNc50KIa
+	2VlFZLqd13tJOxwYoXtvaduoddewQpZipxH2H4DTCJ4ZmtiknSrpxoYObulwl2+xZvuhfoFnQf9
+	PI2P7BXn3VLMi+o2s4Lflx3B3nOsaipXZU8ui5OemKD3pkSBIgJJavWSNf33VzZhmF8DIedEzEo
+	mso3+3LeEj0PjZ7bTnNS8vGARyHdAmYgdZisbPx7bUvjHq7w1jIRYwTSAAnTqyPsrhv7lofAlq0
+	NPUUHyvyqN84=
+X-Google-Smtp-Source: AGHT+IH5v4zWHRqDVHmkLqW/uf+Xt5VdTLSGqts9jlByiTv9ftfD5HIUCezlI9NHZqMoOMQWCAbb3Q==
+X-Received: by 2002:a05:6000:238a:b0:3b6:1a8c:569f with SMTP id ffacd0b85a97d-3c5dac171cemr7429530f8f.1.1756092471145;
+        Sun, 24 Aug 2025 20:27:51 -0700 (PDT)
+Received: from EBJ9932692.tcent.cn ([2a09:0:1:2::302c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c7116e1397sm9533947f8f.49.2025.08.24.20.27.46
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sun, 24 Aug 2025 20:27:50 -0700 (PDT)
+From: Lance Yang <ioworker0@gmail.com>
+To: fthain@linux-m68k.org
+Cc: akpm@linux-foundation.org,
+	geert@linux-m68k.org,
+	lance.yang@linux.dev,
 	linux-kernel@vger.kernel.org,
-	lujialin4@huawei.com,
-	chenridong@huawei.com
-Subject: [PATCH -next v5 3/3] cpuset: add helpers for cpus read and cpuset_mutex locks
-Date: Mon, 25 Aug 2025 03:23:52 +0000
-Message-Id: <20250825032352.1703602-4-chenridong@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250825032352.1703602-1-chenridong@huaweicloud.com>
-References: <20250825032352.1703602-1-chenridong@huaweicloud.com>
+	mhiramat@kernel.org,
+	oak@helsinkinet.fi,
+	peterz@infradead.org,
+	stable@vger.kernel.org,
+	will@kernel.org
+Subject: Re: [PATCH] atomic: Specify natural alignment for atomic_t
+Date: Mon, 25 Aug 2025 11:27:43 +0800
+Message-ID: <20250825032743.80641-1-ioworker0@gmail.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <7d9554bfe2412ed9427bf71ce38a376e06eb9ec4.1756087385.git.fthain@linux-m68k.org>
+References: <7d9554bfe2412ed9427bf71ce38a376e06eb9ec4.1756087385.git.fthain@linux-m68k.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,237 +96,82 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDXII2x2qtoTBLUAA--.30877S5
-X-Coremail-Antispam: 1UD129KBjvJXoWxuFW3ZFyrXr4DArWxZF1DJrb_yoW7KF4UpF
-	yq9rW7tayUtr4Duw13Ga4Dur1rKw1j9FWUGFn5J3WrAFy2yF429F1DCF9xWr15GryxCrn8
-	Wasrur4Y9a1DGrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Kb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUWw
-	A2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMc
-	Ij6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_
-	Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr4
-	1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK
-	67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI
-	8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAv
-	wI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14
-	v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUrbyCDUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-From: Chen Ridong <chenridong@huawei.com>
+Hi Finn,
 
-cpuset: add helpers for cpus_read_lock and cpuset_mutex locks.
+Nice work, thanks for your patch!
 
-Replace repetitive locking patterns with new helpers:
-- cpuset_full_lock()
-- cpuset_full_unlock()
+On 2025/8/25 10:03, Finn Thain wrote:
+> Some recent commits incorrectly assumed the natural alignment of locks.
+> That assumption fails on Linux/m68k (and, interestingly, would have failed
+> on Linux/cris also). This leads to spurious warnings from the hang check
+> code. Fix this bug by adding the necessary 'aligned' attribute.
+> 
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Lance Yang <lance.yang@linux.dev>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Cc: Eero Tamminen <oak@helsinkinet.fi>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: stable@vger.kernel.org
+> Reported-by: Eero Tamminen <oak@helsinkinet.fi>
+> Closes: https://lore.kernel.org/lkml/CAMuHMdW7Ab13DdGs2acMQcix5ObJK0O2dG_Fxzr8_g58Rc1_0g@mail.gmail.com/
+> Fixes: e711faaafbe5 ("hung_task: replace blocker_mutex with encoded blocker")
+> Signed-off-by: Finn Thain <fthain@linux-m68k.org>
+> ---
+> I tested this on m68k using GCC and it fixed the problem for me. AFAIK,
+> the other architectures naturally align ints already so I'm expecting to
+> see no effect there.
 
-This makes the code cleaner and ensures consistent lock ordering.
+Yeah, it is the correct approach for the spurious warnings on architectures
+like m68k, where the natural alignment of types can be less than 4 bytes.
 
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
-Reviewed-by: Waiman Long <longman@redhat.com>
----
- kernel/cgroup/cpuset-internal.h |  2 ++
- kernel/cgroup/cpuset-v1.c       | 12 +++----
- kernel/cgroup/cpuset.c          | 60 +++++++++++++++++++--------------
- 3 files changed, 40 insertions(+), 34 deletions(-)
+> ---
+>   include/linux/types.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/types.h b/include/linux/types.h
+> index 6dfdb8e8e4c3..cd5b2b0f4b02 100644
+> --- a/include/linux/types.h
+> +++ b/include/linux/types.h
+> @@ -179,7 +179,7 @@ typedef phys_addr_t resource_size_t;
+>   typedef unsigned long irq_hw_number_t;
+>   
+>   typedef struct {
+> -	int counter;
+> +	int counter __aligned(sizeof(int));
+>   } atomic_t;
+>   
+>   #define ATOMIC_INIT(i) { (i) }
 
-diff --git a/kernel/cgroup/cpuset-internal.h b/kernel/cgroup/cpuset-internal.h
-index 75b3aef39231..337608f408ce 100644
---- a/kernel/cgroup/cpuset-internal.h
-+++ b/kernel/cgroup/cpuset-internal.h
-@@ -276,6 +276,8 @@ int cpuset_update_flag(cpuset_flagbits_t bit, struct cpuset *cs, int turning_on)
- ssize_t cpuset_write_resmask(struct kernfs_open_file *of,
- 				    char *buf, size_t nbytes, loff_t off);
- int cpuset_common_seq_show(struct seq_file *sf, void *v);
-+void cpuset_full_lock(void);
-+void cpuset_full_unlock(void);
- 
- /*
-  * cpuset-v1.c
-diff --git a/kernel/cgroup/cpuset-v1.c b/kernel/cgroup/cpuset-v1.c
-index b69a7db67090..12e76774c75b 100644
---- a/kernel/cgroup/cpuset-v1.c
-+++ b/kernel/cgroup/cpuset-v1.c
-@@ -169,8 +169,7 @@ static int cpuset_write_s64(struct cgroup_subsys_state *css, struct cftype *cft,
- 	cpuset_filetype_t type = cft->private;
- 	int retval = -ENODEV;
- 
--	cpus_read_lock();
--	cpuset_lock();
-+	cpuset_full_lock();
- 	if (!is_cpuset_online(cs))
- 		goto out_unlock;
- 
-@@ -184,8 +183,7 @@ static int cpuset_write_s64(struct cgroup_subsys_state *css, struct cftype *cft,
- 		break;
- 	}
- out_unlock:
--	cpuset_unlock();
--	cpus_read_unlock();
-+	cpuset_full_unlock();
- 	return retval;
- }
- 
-@@ -454,8 +452,7 @@ static int cpuset_write_u64(struct cgroup_subsys_state *css, struct cftype *cft,
- 	cpuset_filetype_t type = cft->private;
- 	int retval = 0;
- 
--	cpus_read_lock();
--	cpuset_lock();
-+	cpuset_full_lock();
- 	if (!is_cpuset_online(cs)) {
- 		retval = -ENODEV;
- 		goto out_unlock;
-@@ -498,8 +495,7 @@ static int cpuset_write_u64(struct cgroup_subsys_state *css, struct cftype *cft,
- 		break;
- 	}
- out_unlock:
--	cpuset_unlock();
--	cpus_read_unlock();
-+	cpuset_full_unlock();
- 	return retval;
- }
- 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 7b0b81c835bf..a78ccd11ce9b 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -250,6 +250,12 @@ static struct cpuset top_cpuset = {
- 
- static DEFINE_MUTEX(cpuset_mutex);
- 
-+/**
-+ * cpuset_lock - Acquire the global cpuset mutex
-+ *
-+ * This locks the global cpuset mutex to prevent modifications to cpuset
-+ * hierarchy and configurations. This helper is not enough to make modification.
-+ */
- void cpuset_lock(void)
+However, as we've seen from the kernel test robot's report on mt6660_chip,
+this won't solve the cases where a lock is forced to be unaligned by
+#pragma pack(1). That will still trigger warnings, IIUC.
+
+Perhaps we should also apply the follwoing?
+
+diff --git a/include/linux/hung_task.h b/include/linux/hung_task.h
+index 34e615c76ca5..940f8f3558f6 100644
+--- a/include/linux/hung_task.h
++++ b/include/linux/hung_task.h
+@@ -45,7 +45,7 @@ static inline void hung_task_set_blocker(void *lock, unsigned long type)
+ 	 * If the lock pointer matches the BLOCKER_TYPE_MASK, return
+ 	 * without writing anything.
+ 	 */
+-	if (WARN_ON_ONCE(lock_ptr & BLOCKER_TYPE_MASK))
++	if (lock_ptr & BLOCKER_TYPE_MASK)
+ 		return;
+
+ 	WRITE_ONCE(current->blocker, lock_ptr | type);
+@@ -53,8 +53,6 @@ static inline void hung_task_set_blocker(void *lock, unsigned long type)
+
+ static inline void hung_task_clear_blocker(void)
  {
- 	mutex_lock(&cpuset_mutex);
-@@ -260,6 +266,24 @@ void cpuset_unlock(void)
- 	mutex_unlock(&cpuset_mutex);
- }
- 
-+/**
-+ * cpuset_full_lock - Acquire full protection for cpuset modification
-+ *
-+ * Takes both CPU hotplug read lock (cpus_read_lock()) and cpuset mutex
-+ * to safely modify cpuset data.
-+ */
-+void cpuset_full_lock(void)
-+{
-+	cpus_read_lock();
-+	mutex_lock(&cpuset_mutex);
-+}
-+
-+void cpuset_full_unlock(void)
-+{
-+	mutex_unlock(&cpuset_mutex);
-+	cpus_read_unlock();
-+}
-+
- static DEFINE_SPINLOCK(callback_lock);
- 
- void cpuset_callback_lock_irq(void)
-@@ -3234,8 +3258,7 @@ ssize_t cpuset_write_resmask(struct kernfs_open_file *of,
- 	int retval = -ENODEV;
- 
- 	buf = strstrip(buf);
--	cpus_read_lock();
--	mutex_lock(&cpuset_mutex);
-+	cpuset_full_lock();
- 	if (!is_cpuset_online(cs))
- 		goto out_unlock;
- 
-@@ -3264,8 +3287,7 @@ ssize_t cpuset_write_resmask(struct kernfs_open_file *of,
- 	if (force_sd_rebuild)
- 		rebuild_sched_domains_locked();
- out_unlock:
--	mutex_unlock(&cpuset_mutex);
--	cpus_read_unlock();
-+	cpuset_full_unlock();
- 	flush_workqueue(cpuset_migrate_mm_wq);
- 	return retval ?: nbytes;
- }
-@@ -3368,12 +3390,10 @@ static ssize_t cpuset_partition_write(struct kernfs_open_file *of, char *buf,
- 	else
- 		return -EINVAL;
- 
--	cpus_read_lock();
--	mutex_lock(&cpuset_mutex);
-+	cpuset_full_lock();
- 	if (is_cpuset_online(cs))
- 		retval = update_prstate(cs, val);
--	mutex_unlock(&cpuset_mutex);
--	cpus_read_unlock();
-+	cpuset_full_unlock();
- 	return retval ?: nbytes;
- }
- 
-@@ -3498,9 +3518,7 @@ static int cpuset_css_online(struct cgroup_subsys_state *css)
- 	if (!parent)
- 		return 0;
- 
--	cpus_read_lock();
--	mutex_lock(&cpuset_mutex);
+-	WARN_ON_ONCE(!READ_ONCE(current->blocker));
 -
-+	cpuset_full_lock();
- 	if (is_spread_page(parent))
- 		set_bit(CS_SPREAD_PAGE, &cs->flags);
- 	if (is_spread_slab(parent))
-@@ -3552,8 +3570,7 @@ static int cpuset_css_online(struct cgroup_subsys_state *css)
- 	cpumask_copy(cs->effective_cpus, parent->cpus_allowed);
- 	spin_unlock_irq(&callback_lock);
- out_unlock:
--	mutex_unlock(&cpuset_mutex);
--	cpus_read_unlock();
-+	cpuset_full_unlock();
- 	return 0;
+ 	WRITE_ONCE(current->blocker, 0UL);
  }
- 
-@@ -3568,16 +3585,12 @@ static void cpuset_css_offline(struct cgroup_subsys_state *css)
- {
- 	struct cpuset *cs = css_cs(css);
- 
--	cpus_read_lock();
--	mutex_lock(&cpuset_mutex);
--
-+	cpuset_full_lock();
- 	if (!cpuset_v2() && is_sched_load_balance(cs))
- 		cpuset_update_flag(CS_SCHED_LOAD_BALANCE, cs, 0);
- 
- 	cpuset_dec();
--
--	mutex_unlock(&cpuset_mutex);
--	cpus_read_unlock();
-+	cpuset_full_unlock();
- }
- 
- /*
-@@ -3589,16 +3602,11 @@ static void cpuset_css_killed(struct cgroup_subsys_state *css)
- {
- 	struct cpuset *cs = css_cs(css);
- 
--	cpus_read_lock();
--	mutex_lock(&cpuset_mutex);
--
-+	cpuset_full_lock();
- 	/* Reset valid partition back to member */
- 	if (is_partition_valid(cs))
- 		update_prstate(cs, PRS_MEMBER);
--
--	mutex_unlock(&cpuset_mutex);
--	cpus_read_unlock();
--
-+	cpuset_full_unlock();
- }
- 
- static void cpuset_css_free(struct cgroup_subsys_state *css)
--- 
-2.34.1
 
+Let the feature gracefully do nothing on that ;)
 
