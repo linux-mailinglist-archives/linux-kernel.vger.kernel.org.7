@@ -1,126 +1,280 @@
-Return-Path: <linux-kernel+bounces-784707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E79A8B34016
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:53:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9CB4B34025
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:55:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DA0FB4E285F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:53:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F03BB3B7693
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:55:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A3E21A453;
-	Mon, 25 Aug 2025 12:53:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB93E23D297;
+	Mon, 25 Aug 2025 12:55:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Wp4RD6ok"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A966D217F36
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 12:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA60923507E;
+	Mon, 25 Aug 2025 12:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756126385; cv=none; b=ryWUOUxeKmy1FJqhHvZjPvoTa0V3QQD5k60+8pNNkwKJBy6g0HmcIo4DBDurvJ378VCnuXvuw/Nj5A0szrhH+bPwZUKfjplTYwVcQQLH8QjCfXWYiWUGP/PDHaEnyM3BZV4pAXbzyJ5lybxgJy3wQXvGZ2JTcW1gIUZGU8c6iZA=
+	t=1756126540; cv=none; b=GAz5C48K8fkykUD7knuuLBdpXnVH2jK7GCqfoXozoH/0aPErs2l2mc6TEGHjf6/huLDbtSxoCjVh5ZV02ShcnaI5s0m/U1Z0kXg1RTid1Dl9jdJbggMQ+LlGqvKsJC09Sa7HOCHs9LMSH319RuuX4TEzbzy0RkjzQgPSmcid0bY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756126385; c=relaxed/simple;
-	bh=81kL3J2V1N6FXIm5WMNhZF8RHen8YLtBNuA8rDrU5ek=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ndhqXoXQEqSm9lhwUndc/5yKGy4+8U70WNcqFwfuoI626GLpOUBnRiekhRs4l75j1hGtPcTR5ca0BNUfJ8/T39MFQX1NewAbNQjfFs+CihXf5qx0B+ceFKxAVUNyZ4XVId0xR5N0IWOL0N6Fn01ZRbGM/+pSmyoUcxBHgYCt8WM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3ea2bd7b667so82966815ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 05:53:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756126383; x=1756731183;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lkTreR6OCx3H+Pw90Y+LT36zIuTvnfylxeDrKRmFiAo=;
-        b=ZEZs0eDirWZzWG79a1uA9bqbEfmoV7JWhlOMt0JaEcDO6//lBhfK61+YbUXYtLgL5O
-         cXYH6I1P1FdzxApK3wz7TrXo8kvmuWq6spOnQZTY5bts7OeWmIh9HdGG3ikCYcKLHwaA
-         j3yid4utlYDn47m19stQeaaEPn4sO9IxFShSY76GH7gIACqw+NVkGhzhS04BQlOq6l7L
-         Xw3aLfvbrW2MayjZoWBcNWall11h8+IuAEXWIzcvV1848aaI3R78ofVA25VZKBn5lSCM
-         tychqoUbj1MX/i6yuH62acjDBvXFmwvN8BVbtqDRAToSaZjSJvNsFsWw4g+/enPGqFFM
-         2sVA==
-X-Forwarded-Encrypted: i=1; AJvYcCVU4ZB0GyrHUpGDgVitdnh2RuRgynJQCsKKujQtaM0pH3Zvd7p2mIVC+jZEdB/1uQ1b0fYbpXI1tAqHi2c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2i8LPiI538NzzkgSywXtFlC4Y1EF2iD6BgiLC6HbmZ1mfSm4h
-	cwJJC3nxLyVn6j4+HRyBcVq68Z2oUl72/F7ZV9DgpHkxcQsNZNQwvnPapWA4omQGlwaoB8dRCkh
-	wNJuqm5JldhwcGTXS/xeLzv0yCZS/ErCJFAeYTm8XiQs5EBypxc7fg0ALkD4=
-X-Google-Smtp-Source: AGHT+IH9VM7WDMbdKwJ6HfIcd1PSIxf58Q5RRWOrthTN2CgvCb8nE/O/LyiLEn2k6ILdUdQyR/cyOpLhERhEKuuxgq48n00klPqF
+	s=arc-20240116; t=1756126540; c=relaxed/simple;
+	bh=jVaErzpkbBb5kQVUHxnb7jL9Y9M/5d+ZZP5UlZ/Us0o=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OpMfxjqmE/jgrFiR+vMtHmw3OrXcxvtwejHpuD5Yfp+SnebDwfZyHMJguD/cD1ZeRCNntHVT/N+v8ho/qAJwDvS1QwjA6h6TXqDbUvBiSBtya3O0/53kAZRby8xDDHuy4D6yGx71Er5k3DokKhP7SPB38UmgpqvUqeg6DrGsbr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Wp4RD6ok; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1756126536;
+	bh=jVaErzpkbBb5kQVUHxnb7jL9Y9M/5d+ZZP5UlZ/Us0o=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Wp4RD6okHgd1+oa9kr5BJhRxkSudWhgt0gxErtIF77SMtmVowdSnjBKcTMOgz6q6Q
+	 c+ouGWUc0V3qil0CbYY6Jc83PP6hUVrH0bndU7BzUTpTC963gXN4/moGlaTUM1ZHl7
+	 YXZYhRlwOoQ7pLpLcWhWQcOa5uIGY0hGBj9AcQn7Lsy72M/NL4QchXTSyHzFGsLMp7
+	 8+fMnQwO90GamZEfsguUuxCJTIPjbU5DcXUOHMvWwglpOkPTwK4sihrVg5lkTu1+VS
+	 Aqk1s+4WCAf/KLOMF+oTKCU8kwDQsm4OMpANbNMf/ut573xmTDIa4NnIXfJ6HVV54j
+	 JV5/PnGHw5vkg==
+Received: from laura.lan (unknown [IPv6:2001:b07:646b:e2:b1df:895a:e67b:5cd4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: laura.nao)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 31E3D17E0478;
+	Mon, 25 Aug 2025 14:55:35 +0200 (CEST)
+From: Laura Nao <laura.nao@collabora.com>
+To: wenst@chromium.org
+Cc: angelogioacchino.delregno@collabora.com,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	guangjie.song@mediatek.com,
+	kernel@collabora.com,
+	krzk+dt@kernel.org,
+	laura.nao@collabora.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	matthias.bgg@gmail.com,
+	mturquette@baylibre.com,
+	netdev@vger.kernel.org,
+	nfraprado@collabora.com,
+	p.zabel@pengutronix.de,
+	richardcochran@gmail.com,
+	robh@kernel.org,
+	sboyd@kernel.org
+Subject: Re: [PATCH v4 15/27] clk: mediatek: Add MT8196 ufssys clock support
+Date: Mon, 25 Aug 2025 14:54:25 +0200
+Message-Id: <20250825125425.210123-1-laura.nao@collabora.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <CAGXv+5GH6ypcuXn9+XED7du_CJaeDs3M1ODjtN7pDH_FA0gmjg@mail.gmail.com>
+References: <CAGXv+5GH6ypcuXn9+XED7du_CJaeDs3M1ODjtN7pDH_FA0gmjg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:258b:b0:3e9:eec4:9b53 with SMTP id
- e9e14a558f8ab-3e9eec49f04mr145733835ab.26.1756126382783; Mon, 25 Aug 2025
- 05:53:02 -0700 (PDT)
-Date: Mon, 25 Aug 2025 05:53:02 -0700
-In-Reply-To: <20250825102648.5395-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ac5cae.a70a0220.303e5.0002.GAE@google.com>
-Subject: Re: [syzbot] [usb?] BUG: sleeping function called from invalid
- context in dummy_dequeue
-From: syzbot <syzbot+8baacc4139f12fa77909@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 8/15/25 05:50, Chen-Yu Tsai wrote:
+> On Tue, Aug 5, 2025 at 10:55 PM Laura Nao <laura.nao@collabora.com> wrote:
+>>
+>> Add support for the MT8196 ufssys clock controller, which provides clock
+>> gate control for UFS.
+>>
+>> Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+>> Co-developed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+>> ---
+>>  drivers/clk/mediatek/Kconfig             |   7 ++
+>>  drivers/clk/mediatek/Makefile            |   1 +
+>>  drivers/clk/mediatek/clk-mt8196-ufs_ao.c | 109 +++++++++++++++++++++++
+>>  3 files changed, 117 insertions(+)
+>>  create mode 100644 drivers/clk/mediatek/clk-mt8196-ufs_ao.c
+>>
+>> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+>> index 1e0c6f177ecd..d99c39a7f10e 100644
+>> --- a/drivers/clk/mediatek/Kconfig
+>> +++ b/drivers/clk/mediatek/Kconfig
+>> @@ -1010,6 +1010,13 @@ config COMMON_CLK_MT8196
+>>         help
+>>           This driver supports MediaTek MT8196 basic clocks.
+>>
+>> +config COMMON_CLK_MT8196_UFSSYS
+>> +       tristate "Clock driver for MediaTek MT8196 ufssys"
+>> +       depends on COMMON_CLK_MT8196
+>> +       default COMMON_CLK_MT8196
+>> +       help
+>> +         This driver supports MediaTek MT8196 ufssys clocks.
+>> +
+>>  config COMMON_CLK_MT8365
+>>         tristate "Clock driver for MediaTek MT8365"
+>>         depends on ARCH_MEDIATEK || COMPILE_TEST
+>> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+>> index 8888ffd3d7ba..1a497de00846 100644
+>> --- a/drivers/clk/mediatek/Makefile
+>> +++ b/drivers/clk/mediatek/Makefile
+>> @@ -153,6 +153,7 @@ obj-$(CONFIG_COMMON_CLK_MT8195_WPESYS) += clk-mt8195-wpe.o
+>>  obj-$(CONFIG_COMMON_CLK_MT8196) += clk-mt8196-apmixedsys.o clk-mt8196-topckgen.o \
+>>                                    clk-mt8196-topckgen2.o clk-mt8196-vlpckgen.o \
+>>                                    clk-mt8196-peri_ao.o
+>> +obj-$(CONFIG_COMMON_CLK_MT8196_UFSSYS) += clk-mt8196-ufs_ao.o
+>>  obj-$(CONFIG_COMMON_CLK_MT8365) += clk-mt8365-apmixedsys.o clk-mt8365.o
+>>  obj-$(CONFIG_COMMON_CLK_MT8365_APU) += clk-mt8365-apu.o
+>>  obj-$(CONFIG_COMMON_CLK_MT8365_CAM) += clk-mt8365-cam.o
+>> diff --git a/drivers/clk/mediatek/clk-mt8196-ufs_ao.c b/drivers/clk/mediatek/clk-mt8196-ufs_ao.c
+>> new file mode 100644
+>> index 000000000000..858706b3ba6f
+>> --- /dev/null
+>> +++ b/drivers/clk/mediatek/clk-mt8196-ufs_ao.c
+>> @@ -0,0 +1,109 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Copyright (c) 2025 MediaTek Inc.
+>> + *                    Guangjie Song <guangjie.song@mediatek.com>
+>> + * Copyright (c) 2025 Collabora Ltd.
+>> + *                    Laura Nao <laura.nao@collabora.com>
+>> + */
+>> +#include <dt-bindings/clock/mediatek,mt8196-clock.h>
+>> +#include <dt-bindings/reset/mediatek,mt8196-resets.h>
+>
+> Nit: add empty line here for separation.
+>
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in dummy_dequeue
+Ack.
 
-------------[ cut here ]------------
-raw_local_irq_restore() called with IRQs enabled
-WARNING: CPU: 0 PID: 6659 at kernel/locking/irqflag-debug.c:10 warn_bogus_irq_restore+0x2a/0x40 kernel/locking/irqflag-debug.c:10
-Modules linked in:
-CPU: 0 UID: 0 PID: 6659 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-RIP: 0010:warn_bogus_irq_restore+0x2a/0x40 kernel/locking/irqflag-debug.c:10
-Code: f3 0f 1e fa 90 80 3d 83 fb 10 04 00 74 07 90 c3 cc cc cc cc cc c6 05 73 fb 10 04 01 90 48 c7 c7 40 ee 0a 8b e8 d7 dc 8c f6 90 <0f> 0b 90 90 90 e9 cc ad 03 00 cc cc cc cc cc cc cc cc cc cc cc cc
-RSP: 0018:ffffc900041378f8 EFLAGS: 00010246
-RAX: 7b813d5b6b8f1700 RBX: 0000000000000000 RCX: ffff888036dc9dc0
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc900041379d8 R08: 0000000000000000 R09: 0000000000000000
-R10: dffffc0000000000 R11: ffffed1017104863 R12: dffffc0000000000
-R13: ffff8880374cde64 R14: 1ffff92000826f28 R15: 0000000000000200
-FS:  00007f4ab96ee6c0(0000) GS:ffff8881268c2000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b34363fff CR3: 000000001da8c000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- dummy_dequeue+0x2d7/0x3d0 drivers/usb/gadget/udc/dummy_hcd.c:786
- usb_ep_dequeue+0x66/0x250 drivers/usb/gadget/udc/core.c:330
- raw_process_ep_io+0x5a3/0xaf0 drivers/usb/gadget/legacy/raw_gadget.c:1124
- raw_ioctl_ep_write drivers/usb/gadget/legacy/raw_gadget.c:1152 [inline]
- raw_ioctl+0x22dc/0x3ba0 drivers/usb/gadget/legacy/raw_gadget.c:1324
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:598 [inline]
- __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:584
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f4aba07e7eb
-Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
-RSP: 002b:00007f4ab96ecf70 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000044 RCX: 00007f4aba07e7eb
-RDX: 00007f4ab96ecff0 RSI: 0000000040085507 RDI: 0000000000000003
-RBP: 0000000000000003 R08: 00007f4aba3d0320 R09: 0000000000000000
-R10: 0000000000000003 R11: 0000000000000246 R12: 0000200000000080
-R13: 000000000000000a R14: 00007f4aba2a5fa0 R15: 00007ffc6e132658
- </TASK>
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of_device.h>
+>> +#include <linux/platform_device.h>
+>> +
+>> +#include "clk-gate.h"
+>> +#include "clk-mtk.h"
+>> +
+>> +#define MT8196_UFSAO_RST0_SET_OFFSET   0x48
+>> +#define MT8196_UFSAO_RST1_SET_OFFSET   0x148
+>> +
+>> +static const struct mtk_gate_regs ufsao0_cg_regs = {
+>> +       .set_ofs = 0x108,
+>> +       .clr_ofs = 0x10c,
+>> +       .sta_ofs = 0x104,
+>> +};
+>> +
+>> +static const struct mtk_gate_regs ufsao1_cg_regs = {
+>> +       .set_ofs = 0x8,
+>> +       .clr_ofs = 0xc,
+>> +       .sta_ofs = 0x4,
+>> +};
+>> +
+>> +#define GATE_UFSAO0(_id, _name, _parent, _shift) {     \
+>> +               .id = _id,                              \
+>> +               .name = _name,                          \
+>> +               .parent_name = _parent,                 \
+>> +               .regs = &ufsao0_cg_regs,                \
+>> +               .shift = _shift,                        \
+>> +               .flags = CLK_OPS_PARENT_ENABLE,         \
+>
+> This probably doesn't work correctly, since not every clock defined
+> below has the "ufs" clock as its parent. If the requirement is that
+> the "ufs" clock be enabled for accessing this register, it is going
+> to fail (badly).
+>
 
+Thanks for pointing this out - I missed this because, as you noted,
+other drivers using this flag defined gates with the same parent and
+worked correctly (i.e., I2C). I don’t have a way to justify keeping this
+flag at the moment, and I can’t test whether the ufs clock is required
+for register access at this stage of upstream support (same goes for the
+other drivers with this issue).
 
-Tested on:
+I’m thinking of removing it here and in the other affected drivers, and
+revisit the issue once we have actual users for these clocks upstream.
 
-commit:         1b237f19 Linux 6.17-rc3
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=144a6862580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e1e1566c7726877e
-dashboard link: https://syzkaller.appspot.com/bug?extid=8baacc4139f12fa77909
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=174aec42580000
+Best,
 
+Laura
+
+> ChenYu
+>
+>> +               .ops = &mtk_clk_gate_ops_setclr,        \
+>> +       }
+>> +
+>> +#define GATE_UFSAO1(_id, _name, _parent, _shift) {     \
+>> +               .id = _id,                              \
+>> +               .name = _name,                          \
+>> +               .parent_name = _parent,                 \
+>> +               .regs = &ufsao1_cg_regs,                \
+>> +               .shift = _shift,                        \
+>> +               .flags = CLK_OPS_PARENT_ENABLE,         \
+>> +               .ops = &mtk_clk_gate_ops_setclr,        \
+>> +       }
+>> +
+>> +static const struct mtk_gate ufsao_clks[] = {
+>> +       /* UFSAO0 */
+>> +       GATE_UFSAO0(CLK_UFSAO_UFSHCI_UFS, "ufsao_ufshci_ufs", "ufs", 0),
+>> +       GATE_UFSAO0(CLK_UFSAO_UFSHCI_AES, "ufsao_ufshci_aes", "aes_ufsfde", 1),
+>> +       /* UFSAO1 */
+>> +       GATE_UFSAO1(CLK_UFSAO_UNIPRO_TX_SYM, "ufsao_unipro_tx_sym", "clk26m", 0),
+>> +       GATE_UFSAO1(CLK_UFSAO_UNIPRO_RX_SYM0, "ufsao_unipro_rx_sym0", "clk26m", 1),
+>> +       GATE_UFSAO1(CLK_UFSAO_UNIPRO_RX_SYM1, "ufsao_unipro_rx_sym1", "clk26m", 2),
+>> +       GATE_UFSAO1(CLK_UFSAO_UNIPRO_SYS, "ufsao_unipro_sys", "ufs", 3),
+>> +       GATE_UFSAO1(CLK_UFSAO_UNIPRO_SAP, "ufsao_unipro_sap", "clk26m", 4),
+>> +       GATE_UFSAO1(CLK_UFSAO_PHY_SAP, "ufsao_phy_sap", "clk26m", 8),
+>> +};
+>> +
+>> +static u16 ufsao_rst_ofs[] = {
+>> +       MT8196_UFSAO_RST0_SET_OFFSET,
+>> +       MT8196_UFSAO_RST1_SET_OFFSET
+>> +};
+>> +
+>> +static u16 ufsao_rst_idx_map[] = {
+>> +       [MT8196_UFSAO_RST0_UFS_MPHY] = 8,
+>> +       [MT8196_UFSAO_RST1_UFS_UNIPRO] = 1 * RST_NR_PER_BANK + 0,
+>> +       [MT8196_UFSAO_RST1_UFS_CRYPTO] = 1 * RST_NR_PER_BANK + 1,
+>> +       [MT8196_UFSAO_RST1_UFSHCI] = 1 * RST_NR_PER_BANK + 2,
+>> +};
+>> +
+>> +static const struct mtk_clk_rst_desc ufsao_rst_desc = {
+>> +       .version = MTK_RST_SET_CLR,
+>> +       .rst_bank_ofs = ufsao_rst_ofs,
+>> +       .rst_bank_nr = ARRAY_SIZE(ufsao_rst_ofs),
+>> +       .rst_idx_map = ufsao_rst_idx_map,
+>> +       .rst_idx_map_nr = ARRAY_SIZE(ufsao_rst_idx_map),
+>> +};
+>> +
+>> +static const struct mtk_clk_desc ufsao_mcd = {
+>> +       .clks = ufsao_clks,
+>> +       .num_clks = ARRAY_SIZE(ufsao_clks),
+>> +       .rst_desc = &ufsao_rst_desc,
+>> +};
+>> +
+>> +static const struct of_device_id of_match_clk_mt8196_ufs_ao[] = {
+>> +       { .compatible = "mediatek,mt8196-ufscfg-ao", .data = &ufsao_mcd },
+>> +       { /* sentinel */ }
+>> +};
+>> +MODULE_DEVICE_TABLE(of, of_match_clk_mt8196_ufs_ao);
+>> +
+>> +static struct platform_driver clk_mt8196_ufs_ao_drv = {
+>> +       .probe = mtk_clk_simple_probe,
+>> +       .remove = mtk_clk_simple_remove,
+>> +       .driver = {
+>> +               .name = "clk-mt8196-ufs-ao",
+>> +               .of_match_table = of_match_clk_mt8196_ufs_ao,
+>> +       },
+>> +};
+>> +
+>> +module_platform_driver(clk_mt8196_ufs_ao_drv);
+>> +MODULE_DESCRIPTION("MediaTek MT8196 ufs_ao clocks driver");
+>> +MODULE_LICENSE("GPL");
+>> --
+>> 2.39.5
+>>
 
