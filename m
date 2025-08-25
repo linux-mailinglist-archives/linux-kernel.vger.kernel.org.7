@@ -1,181 +1,139 @@
-Return-Path: <linux-kernel+bounces-784543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F11CB33D2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:50:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68382B33D2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:52:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EDE83A6B30
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:49:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E879189F47F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:53:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C54B2D94AD;
-	Mon, 25 Aug 2025 10:49:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E575A2DC349;
+	Mon, 25 Aug 2025 10:52:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="k3xX7Spl"
-Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="DqBu30c6"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6818D2D73AA;
-	Mon, 25 Aug 2025 10:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D30131A9F8F;
+	Mon, 25 Aug 2025 10:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756118991; cv=none; b=BrYyJPwHmH3vLqxKV5D5MA4/fIR8ahm7XmOmrK025sKoHzCaEryIiJLQ+gkpUtH5yAGrmOOsmYegXD/5SpfkEtyCHSBB+JE2H3pxm7VtXDx3jFkn+dVWbGgorNa9vzHujDiVAfwpPik6OKvNWnJd7BlhvQigZuo3HFYuqchKnGI=
+	t=1756119167; cv=none; b=K4EZfVdGHrcTTZRRhVK84mhUvOBjMQtuse96IIsQ04YTNOvZbV1CJbXNMCMTv38hKpaGwrUGqoHq3msGYtKN9hpFA+VqOgCfNjc4VkcDkI3phNwcO8ojzUSgS5iynO90K9TusqulsyE7ujupmlt6hvIaI/gYa/mc0M1R3XAV9r0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756118991; c=relaxed/simple;
-	bh=A5e0g3A5w23DzIM9o26RbMYH8roh80cNhkZmB5++jQ0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=EdmFnXup/4SnevySFqwJfcbiPoKoi/XTi9sPAYNzpyKFsPyjQmvW3TjAS7UlRIuNAmXEHTENAflb+8uLlgFg43qRxwFOTBQghiYB6Q9dr179va8x8qrK/7J/UBv5xZty2sTld5O1yjuEDVz9yZK4zPz5a4BVmnx/A17Q4y/u7CQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=k3xX7Spl; arc=none smtp.client-ip=202.12.124.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 2136F7A00B5;
-	Mon, 25 Aug 2025 06:49:48 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Mon, 25 Aug 2025 06:49:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1756118987; x=1756205387; bh=10eh3N4jyDTXYO/BHE5C2RtFW5688leWuGj
-	xIzsegzs=; b=k3xX7SplGmP8SSjuwtxnU+ZAhbUb3o3mZNvPMAZgpqkhHwWyd7q
-	z9OzNupyrVXXTvBNvdiJThDWrf7wEr9njNAl1G4x8jV5Ze2TM3W3WyBKuq1+Ax6S
-	PwZMaPEXvKw0kwyqYW8XBVPb3EEQG5Fh0hZkNThTqb/fTAj6XX2bj4DN9NH95zFJ
-	mlEbrYJpb4mOx6zhzAJ8ZsoPcRUmRh3o/69WoLPFfQS0hRg71hR9LXTEabGneLBV
-	H0XSPk/wsHZU4aJeTCB9lP3w3jNzm37BdCQRLSse9YTETyzsicwJOWMMDmiqzA8D
-	XUJAO4quV979lIG4TiUdLfJc2cTGMVhUjnQ==
-X-ME-Sender: <xms:yj-saFbeGFsZBoYb7E_JIts9CVvFXt9msvSnS5QT7PbxZi6mHQGR3g>
-    <xme:yj-saLkJa3xlhedfamF1g8lOHfQkR89ihgSFdStgMjymAfcq3_Yi0-gFEnZvrVngp
-    QCsHMZK1a4AeyWAgJ4>
-X-ME-Received: <xmr:yj-saKrEDEaaJl1vOcIwwSoCXcfB0D_KHWIdoIWhDroPMN39zDyQGcaeb66y1wWVeQaI1cx5jZ2b8FYOOOtDHnMUZCbI2My-N9s>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddujedvudelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefhihhnnhcuvfhh
-    rghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrghtth
-    gvrhhnpeelueehleehkefgueevtdevteejkefhffekfeffffdtgfejveekgeefvdeuheeu
-    leenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehfth
-    hhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggprhgtphhtthhopeduuddpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtoheplhgrnhgtvgdrhigrnhhgsehlihhnuhigrd
-    guvghvpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhr
-    ghdprhgtphhtthhopehgvggvrhhtsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtth
-    hopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehmhhhirhgrmhgrtheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepohgrkheshh
-    gvlhhsihhnkhhinhgvthdrfhhipdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggv
-    rggurdhorhhgpdhrtghpthhtohepshhtrggslhgvsehvghgvrhdrkhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:yj-saNCxKc2O3YWu30nvgu472OnYnqOMCyNFDkFqAUYpHXBkDr0blg>
-    <xmx:yj-saNHS705Fyzu_Vq6MoYEBPPQr1bKPkfwXlSReP8YKVmtXiE0p9g>
-    <xmx:yj-saH0fu_C5itZIZ9xugF600fHPZiLmo9y-84tPu04M6IEfit0Xyg>
-    <xmx:yj-saOOHMTbr5Lj-uOR-7jSqrAuKbdJtU4mdKnvkaYluZKHIT61Hkw>
-    <xmx:yz-saAmMSdqEDrRBRD3yWUDoQxZC_q6RocuMBVzkzBly6rqS1CVTlt-Z>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 25 Aug 2025 06:49:43 -0400 (EDT)
-Date: Mon, 25 Aug 2025 20:49:38 +1000 (AEST)
-From: Finn Thain <fthain@linux-m68k.org>
-To: Lance Yang <lance.yang@linux.dev>
-cc: akpm@linux-foundation.org, geert@linux-m68k.org, 
-    linux-kernel@vger.kernel.org, mhiramat@kernel.org, oak@helsinkinet.fi, 
-    peterz@infradead.org, stable@vger.kernel.org, will@kernel.org, 
-    Lance Yang <ioworker0@gmail.com>, linux-m68k@lists.linux-m68k.org
-Subject: Re: [PATCH] atomic: Specify natural alignment for atomic_t
-In-Reply-To: <4e7e7292-338d-4a57-84ec-ae7427f6ad7c@linux.dev>
-Message-ID: <d07778f8-8990-226b-5171-4a36e6e18f32@linux-m68k.org>
-References: <7d9554bfe2412ed9427bf71ce38a376e06eb9ec4.1756087385.git.fthain@linux-m68k.org> <20250825032743.80641-1-ioworker0@gmail.com> <c8851682-25f1-f594-e30f-5b62e019d37b@linux-m68k.org> <96ae7afc-c882-4c3d-9dea-3e2ae2789caf@linux.dev>
- <5a44c60b-650a-1f8a-d5cb-abf9f0716817@linux-m68k.org> <4e7e7292-338d-4a57-84ec-ae7427f6ad7c@linux.dev>
+	s=arc-20240116; t=1756119167; c=relaxed/simple;
+	bh=yhj1fsPc0ISd+iZXugAjGoFmWUvsklY4IxFvmTdTMA0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lOw5LdUimBxaNaWmXfjueQFDa+YOn3KbasjMYM8O539URwMhEOjX/Q++Yi///DIICwY7BwZ4TtsQJSmcvMLOpn2Y4i9ofQ5GKh1mptQ6fkg3HX/DDTlcH9GjTks9I+OVCQuCft9fdrL1APyW++HWyrV5OxSTnrIzTpBS/FIfDEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=DqBu30c6; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57P70sLM010697;
+	Mon, 25 Aug 2025 06:52:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=A3LnrByoROS6g+R/6qcQQeQnfUR
+	ewxjQr6VYvkuY4mU=; b=DqBu30c65Fl29Q5D6RlhyshdNdlev+icIJA9qQAXSfP
+	c8+y+fyhAdEyWXp6/oSIZV03UKe2KZCbqHHvqYLxucXf1B1nqfua9t/sRKJoW8ey
+	RchylMGlXwi8SnRQehUtZhRhGaK8YE8uWN6Mcv6+OtytRzBKgr4hkR5ErgDc3W01
+	Cp1IxR0CQg0ONYrFAUvyS5RoHda1Wm3EyqHLf21FI9COPh1cUtQbBaSeAJvVojBL
+	+02RX5ZaGLN6k2hLeoXlyYPCoPB8KZd4dKPQL1+dwZUu92cXfSD1KqbVL1IJOPf6
+	dL3VVQiTm06geibYY0s30ywvuh5sagtFoI3PhOHjtPA==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 48quyew2f6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Aug 2025 06:52:19 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 57PAqIOl038553
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 25 Aug 2025 06:52:18 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 25 Aug
+ 2025 06:52:17 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Mon, 25 Aug 2025 06:52:18 -0400
+Received: from IRISTEIU-L01.ad.analog.com ([10.65.213.1])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 57PAq607026383;
+	Mon, 25 Aug 2025 06:52:09 -0400
+From: Ioana Risteiu <Ioana.Risteiu@analog.com>
+To: Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich
+	<Michael.Hennerich@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        David
+ Lechner <dlechner@baylibre.com>,
+        =?UTF-8?q?Nuno=20S=C3=A1?=
+	<nuno.sa@analog.com>,
+        Andy Shevchenko <andy@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Ramona Nechita <ramona.nechita@analog.com>,
+        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Ioana Risteiu <Ioana.Risteiu@analog.com>
+Subject: [PATCH v5 0/4] Add IIO backend support for AD7779
+Date: Mon, 25 Aug 2025 13:51:15 +0300
+Message-ID: <20250825105121.19848-1-Ioana.Risteiu@analog.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: iYYEgIprHFqg65jozGMWUEFj7Sk5S3Z-
+X-Authority-Analysis: v=2.4 cv=DLSP4zNb c=1 sm=1 tr=0 ts=68ac4063 cx=c_pps
+ a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17
+ a=2OwXVqhp2XgA:10 a=nAsWaW9lDWL_MRO3WFIA:9
+X-Proofpoint-GUID: iYYEgIprHFqg65jozGMWUEFj7Sk5S3Z-
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI0MDA0MiBTYWx0ZWRfXyAjOR+rbbGrQ
+ Gawh/3rfp/ZVWPYhmziV46VyBhzAgzbLXppW89s3TuBbIHhEKIBpNlZp61s4UhGTJ0dfp108qtu
+ KY4uhfI07tnmM4cK6Mm/rhsIsmIMqZZKFoScvLSCWFAM3auSWKwSYG/0yJlVzvl8PMloI3nf9IC
+ n4gCFO9QGhnCDtQpBrBi37Knspk4Nl2YlxElNZDHNhtHvlJvipKuFXpap7+WXG9EeKmpRwU7WH6
+ 0o28SWLIo9hbFaD618r7tQTx+2j9GVfjyXZHT2DyptLeo8ZArU08XSQyhph0rMyyib5aI/ar8ZW
+ Ua6YisUNk+M2uLDYj7GOixWuPFvZGZOak8LgBcUmhZwdKRHyxxK9C5YCOd+VICKCFHdna9jixXS
+ YjA8VLsD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-25_05,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 impostorscore=0 phishscore=0 bulkscore=0 clxscore=1015
+ suspectscore=0 adultscore=0 priorityscore=1501 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508240042
 
+  - Add axi_adc_num_lanes_set in the adi_axi_adc_ops structure to support
+  setting number of lanes used by AXI ADC.
+  - Add the generic io-backends property to the AD7779 binding to enable
+  support for the IIO backend framework.
+  - Add the adi,num-lanes property to set the number of lanes used by
+  AD7779.
+  - Move the initialization specific to communication without iio-backend
+  into a separate setup function.
+  - Add a new functionality to ad7779 driver that streams data through data
+  output interface using IIO backend interface.
 
-[Belated Cc linux-m68k...]
+Ioana Risteiu (4):
+  iio: adc: adi-axi-adc: add axi_adc_num_lanes_set
+  dt-bindings: iio: adc: add IIO backend support
+  iio: adc: extract setup function without backend
+  iio: adc: update ad7779 to use IIO backend
 
-On Mon, 25 Aug 2025, Lance Yang wrote:
+ .../bindings/iio/adc/adi,ad7779.yaml          |  44 +++-
+ drivers/iio/adc/ad7779.c                      | 197 ++++++++++++++----
+ drivers/iio/adc/adi-axi-adc.c                 |   1 +
+ 3 files changed, 202 insertions(+), 40 deletions(-)
 
-> 
-> On 2025/8/25 14:17, Finn Thain wrote:
-> > 
-> > On Mon, 25 Aug 2025, Lance Yang wrote:
-> > 
-> >>
-> >> What if we squash the runtime check fix into your patch?
-> > 
-> > Did my patch not solve the problem?
-> 
-> Hmm... it should solve the problem for natural alignment, which is a 
-> critical fix.
-> 
-> But it cannot solve the problem of forced misalignment from drivers 
-> using #pragma pack(1). The runtime warning will still trigger in those 
-> cases.
-> 
-> I built a simple test module on a kernel with your patch applied:
-> 
-> ```
-> #include <linux/module.h>
-> #include <linux/init.h>
-> 
-> struct __attribute__((packed)) test_container {
->     char padding[49];
->     struct mutex io_lock;
-> };
-> 
-> static int __init alignment_init(void)
-> {
->     struct test_container cont;
->     pr_info("io_lock address offset mod 4: %lu\n", (unsigned long)&cont.io_lock % 4);
->     return 0;
-> }
-> 
-> static void __exit alignment_exit(void)
-> {
->     pr_info("Module unloaded\n");
-> }
-> 
-> module_init(alignment_init);
-> module_exit(alignment_exit);
-> MODULE_LICENSE("GPL");
-> MODULE_AUTHOR("x");
-> MODULE_DESCRIPTION("x");
-> ```
-> 
-> Result from dmesg:
-> [Mon Aug 25 15:44:50 2025] io_lock address offset mod 4: 1
-> 
+-- 
+2.47.2
 
-Thanks for sending code to illustrate your point. Unfortunately, I was not 
-able to reproduce your results. Tested on x86, your test module shows no 
-misalignment:
-
-[131840.349042] io_lock address offset mod 4: 0
-
-Tested on m68k I also get 0, given the patch at the top of this thread:
-
-[    0.400000] io_lock address offset mod 4: 0
-
-> 
-> As we can see, a packed struct can still force the entire mutex object 
-> to an unaligned address. With an address like this, the WARN_ON_ONCE can 
-> still be triggered.
-
-I don't think so. But there is something unexpected going on here -- the 
-output from pahole appears to say io_lock is at offset 49, which seems to 
-contradict the printk() output above.
-
-struct test_container {
-        char                       padding[49];          /*     0    49 */
-        struct mutex               io_lock __attribute__((__aligned__(1))); /*    49    12 */
-
-        /* size: 61, cachelines: 1, members: 2 */
-        /* forced alignments: 1 */
-        /* last cacheline: 61 bytes */
-} __attribute__((__packed__));
 
