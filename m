@@ -1,130 +1,88 @@
-Return-Path: <linux-kernel+bounces-784559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 777FCB33D60
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:58:33 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B662BB33D6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:59:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CB2E486AB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:58:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A13674E302B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:59:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3EC92DE71B;
-	Mon, 25 Aug 2025 10:58:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 837A32E03E1;
+	Mon, 25 Aug 2025 10:59:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iOIpUl4N"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UCLr83Gw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C30F82DCF50;
-	Mon, 25 Aug 2025 10:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6ED02DF6F6;
+	Mon, 25 Aug 2025 10:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756119506; cv=none; b=Jzwur6xEJqTa5CCfmAwflp6aYIHoOjqe7w2yqjPWgwOsE0iZvKtmwQzJ2KjC3W36N6uMpENDHenMMHPYivfPQRM/CXrxhAkl7n2d77MZFPsTNzSI0Xc4JnZBZyANwlceHW2dlbOt44dGEZf+d4OC1P3ayfhridMzQjAdt4sFetM=
+	t=1756119589; cv=none; b=JbNqnzXj3T0qj8dkcf0WQPFnleY7m3aKB8c3Rl+XWBeHzSiDqQokfuRefA0HnsmUA0Ckgl2dOowobn8WY9ohnEBHTwWEoC7YGLW1DLooa5UC0TX6iMD68dpwlBDZBKXKSs0HZ6uOr+tYxtVIinLPUHy//1GW67RbdOkXGyuT6QA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756119506; c=relaxed/simple;
-	bh=/nWAv21uUwIg6I+Yt9bRMTJHK+0bLZc8dmTqYN1EitI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mtlrDYqsMkfvPIl25zXwGH5Rmyduau3bg3ZpFCGWfoa10gIZ9Gs42oWxqddNZZEGlO9FTurAW5OJo1lVkEPYvlqxVghzpMdz6bQnTQAvyMw3QSk3eL+7PqpNcEp+SOyvq178TIedXtvMQc9QKLoZtYmb9ngtxeWwfF08luUfBgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iOIpUl4N; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756119505; x=1787655505;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/nWAv21uUwIg6I+Yt9bRMTJHK+0bLZc8dmTqYN1EitI=;
-  b=iOIpUl4N28b5mM0GDmT+UWJ22CDkGS/CXSPweI37clxWYFh1VdlGUYsU
-   A+xLGgiCwWz43VHnbi1S0NOoPw/X/82etTR+W4iIipf/6LG+cuksZe+ET
-   oAri9yAt2ElkvD88Nr6tieUWw/SAERh320J+jihUZesm13AI/tsOwqvLg
-   2PLglmE16ihfm1qraYquzQ4eBGedx6N44mpHKqAMzvMWG7zEbcyxcmO3C
-   kqLLMk4yYpfXQmZxs2PL7komQyg8vohqFYZYtQleQTdTkARmYTWrub2+r
-   92mXv+UpPdC1hvPn6uDT+3V2rsfVjBppkZGKVCl3S67m4VabB4cmxzhkl
-   A==;
-X-CSE-ConnectionGUID: cB2RwpRcSRytGvpfdaCCCA==
-X-CSE-MsgGUID: H1cuzTfHSXy/MWDjDzSusw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11532"; a="58398632"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="58398632"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 03:58:24 -0700
-X-CSE-ConnectionGUID: K3S/DeXlTSyNZC63BVA/Jw==
-X-CSE-MsgGUID: dtKb/MJJSWaE0WolSmIOOg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="168510744"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 03:58:22 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uqUu2-00000008TXx-0PSP;
-	Mon, 25 Aug 2025 13:58:18 +0300
-Date: Mon, 25 Aug 2025 13:58:17 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Zhang Heng <zhangheng@kylinos.cn>
-Cc: axboe@kernel.dk, phasta@kernel.org, broonie@kernel.org,
-	lizetao1@huawei.com, viro@zeniv.linux.org.uk,
-	fourier.thomas@gmail.com, anuj20.g@samsung.com,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] block: mtip32xx: Prioritize state cleanup over memory
- freeing in the mtip_pci_probe error path.
-Message-ID: <aKxByRMFizjnhgn4@smile.fi.intel.com>
-References: <20250823083222.3137817-1-zhangheng@kylinos.cn>
- <aKxBd1uFldjopX3T@smile.fi.intel.com>
+	s=arc-20240116; t=1756119589; c=relaxed/simple;
+	bh=EOtA8SKJ/vn/02jndM1Pn0wXRabI3Xe7rGLvRvp8CoQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bKF82wEvjYCS185qCTyvSrtHj+xO578cd/6/YiRkwFITkqrVSd1pF2CkVKz5R7KOTAcFPLVGCDjxb/N8qkKUELzwEcDIk/L/8pkTuyjkJDZtXaDmgupd9vWHVG9TS/RNf6vWKZjR5tbTh1AhaS0O63KaUAORfEqowQbPhaAgqEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UCLr83Gw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A7CAC4CEED;
+	Mon, 25 Aug 2025 10:59:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756119588;
+	bh=EOtA8SKJ/vn/02jndM1Pn0wXRabI3Xe7rGLvRvp8CoQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UCLr83GwUsc21vVMFNXDz14gxt+XNXS0AEO4hBQTs5yyKLkq18/+6nVkZZLKOhF27
+	 C+eJ7lqID1TIxUxLFUyOU+h1hP9BcGfJlnb2Cx3J5wc7j4tgFe1RkEkwW4idlDDtzH
+	 rugFmgigH+DvKnXGC8he5Bz/jxHnHzftcr8j8BWsOgzE8MYNNRm696HYX0MLu+yVU9
+	 fynz3ourbUA3RYdYwqlUpLgsUjjYPx8iYFwj43B9AadrLeXHiJs2UaiN8WXGHbhj1p
+	 2uSM6ZkwJnHvLDOTnwYBctPlJSTyUptvNpW+D3TCdmbrofDxdVbI2T6S2RzJytMidC
+	 Q8GR27k+QvHFg==
+Date: Mon, 25 Aug 2025 11:59:39 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org, Kim Seer Paller
+ <kimseer.paller@analog.com>, Conor Dooley <conor+dt@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Michael Hennerich
+ <michael.hennerich@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>, linux-kernel@vger.kernel.org, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, David Lechner
+ <dlechner@baylibre.com>
+Subject: Re: [PATCH] dt-bindings: iio: adi,ltc2664: Minor whitespace cleanup
+ in example
+Message-ID: <20250825115939.4c1ed3b7@jic23-huawei>
+In-Reply-To: <175589097127.178922.52729764188594464.robh@kernel.org>
+References: <20250821083150.46554-2-krzysztof.kozlowski@linaro.org>
+	<175589097127.178922.52729764188594464.robh@kernel.org>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aKxBd1uFldjopX3T@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 25, 2025 at 01:56:55PM +0300, Andy Shevchenko wrote:
-> On Sat, Aug 23, 2025 at 04:32:22PM +0800, Zhang Heng wrote:
-> > The original sequence kfree(dd); pci_set_drvdata(pdev, NULL); creates a
-> > theoretical race condition window. Between these two calls, the pci_dev
-> > structure retains a dangling pointer to the already-freed device private
-> > data (dd). Any concurrent access to the drvdata (e.g., from an interrupt
-> > handler or an unexpected call to remove) would lead to a use-after-free
-> > kernel oops.
+On Fri, 22 Aug 2025 14:29:31 -0500
+"Rob Herring (Arm)" <robh@kernel.org> wrote:
+
+> On Thu, 21 Aug 2025 10:31:51 +0200, Krzysztof Kozlowski wrote:
+> > The DTS code coding style expects exactly one space around '='
+> > character.
 > > 
-> > Changes made:
-> > 1. `pci_set_drvdata(pdev, NULL);` - First, atomically sever the link
-> > from the pci_dev.
-> > 2. `kfree(dd);` - Then, safely free the private memory.
-> > 
-> > This ensures the kernel state is always consistent before resources
-> > are released, adhering to defensive programming principles.
-
-...
-
-> >  iomap_err:
-> > -	kfree(dd);
-> >  	pci_set_drvdata(pdev, NULL);
-> > -	return rv;
-> > +	kfree(dd);
+> > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > ---
+> >  Documentation/devicetree/bindings/iio/dac/adi,ltc2664.yaml | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >   
 > 
-> These two seems to me unrelated. How do you possible have a race? What's racy
-> there? (Yes, I have read the commit message, but I fail to see how it may lead
-> to anything here. My question in one of the previous patches was about needless
-> pci_set_drvdata() call. Do we even need that one?
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
 > 
-> >  done:
-> >  	return rv;
+> 
 
-Also note, 99.99% of the drivers do that cleanup in the driver core whenever it
-considers the best to do a such. So if you see an issue in this driver, the commit
-message should really explain much more.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Applied. thanks
 
