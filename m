@@ -1,182 +1,200 @@
-Return-Path: <linux-kernel+bounces-784173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD175B3379D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:18:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C0FCB337B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:23:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8508A1B20EF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 07:19:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E0357A1DF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 07:21:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED0B28724B;
-	Mon, 25 Aug 2025 07:18:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3944E28A72F;
+	Mon, 25 Aug 2025 07:23:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="SahAc3yY"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2055.outbound.protection.outlook.com [40.107.237.55])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="JMAenzuY"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E469345009;
-	Mon, 25 Aug 2025 07:18:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756106318; cv=fail; b=cLg8B9xdWdzUs3pipQ1k2wyzxB+t6HBshadWaDaoD1xUt6FyKEgMNEPHDHpZr+WaaB8o44Ur+yuCd/sjUgodfbWbLxcKbPKl9q6UjBAlkyKnj6PHr0YcNQ33tKRjw0m24IPZK9WSC1ZyJqfBV7ixDMMobJGG/mSfTCZTWYszsXE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756106318; c=relaxed/simple;
-	bh=1DdhP1tvIWH8FfzpUWOrXKMVEwVOxzoCnFC+jccJYzw=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=P1jpibJ/oBNwO65/9tyq+X5W2Dnk6s/aX24/yNcnzBVOCfvBAAV0e0TkqIiTK5bmU2+IKG+nmZmCMYjtvSGuL2DSU8fVhfpGTiIawqXXQuGsPqE0PDjz+21/JhVru8Ezw9DwuUuzcKgahAw01Qm0HJBee9cuPmc/hX33MLdOmB4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=SahAc3yY; arc=fail smtp.client-ip=40.107.237.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aOKaAgZe6LRMmj53ZA6OZeysIFB0vFCK6JGGRfxgtwwelUOu7jf4hzImbyyBrG8W4SVXzhLuGRK1OjKaQm9U6YQ/dtO8oztGxgG3UB+NrCWrYjdWZadBmJC4TTrU6GqYzxjbY7UfkK9ZT0PoFgyFE4IuYEexvw2hOd5S3UDa2tfNZMFFGuKmgCc10KO61UeRCrAy8C/Ru12xhyDT29xLxy99fA5d5qzOZ9rRI5iyasoDVpYcGR8Gf5DRnRLOROqmzI+2QH4Jjv3Dks+/U/NFPVSvcBAyLqwnPtryb7vxeSyAWRpU2aJ745yJnxBvwAnboF27NGP6uTwRcT2JF4E4UA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=edAsFy7J0gQ3mlopnOWmMNie/me7PBydlTDR8KsRKN8=;
- b=XFjyMyLUUNuem+BFCj7b3Tukuvr9g9AFZu0Iqx25WIWDTttEJDqVZmqYaDHpByEMVKBcwSKTRHGLXsEXeiza42sQeFd1pDW6MEU+35Mt2QgzbIux8rhDUx9fbxBTJycB6giC862yTOU74BeelMwBDLQvp5womjlOLaInCDmLwSC/4zQYvZ8cAg7J6sasnYpAFRCazSxmZJepx5trz4vnRJ3TuPboZNbLW9UHQhCSZ8Fauk98/pGJLk4A8hhzWLv+HbY4nlV9NfzjWxKMZLKue3q2Qh1mGe4xJOF7KN6RAN8OfDnJFHj+SNQxRNUlTu6or3lw5m/GcrbiSV/cTcuHOQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
- dkim=pass header.d=altera.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=edAsFy7J0gQ3mlopnOWmMNie/me7PBydlTDR8KsRKN8=;
- b=SahAc3yYBwI//OLMDLcOs3AeopGO/HN9qKMYLVdoLA8Q4cvvZI6S8o+13fbmWO3/tXJU/qPJC4WtjDRCv5nxXFzs9X82MoiG6vDZQSjq99WXH/FRdTNkYmxy8ovYaNzfQS/UI5/96GcEfPWdanypVeHdb4HrawWcS6HQNsL72LeFqpRz30GBxm9vX9AEWLFUMXfi/sYyQye6wjJ6plTKsoL/nxkX/YYMkrVYi6EzLd6VOXjVsch/rEjkCBDihVk6TrpTqC4J33RcRgoXOntGojvME+rrZV+av89F68lYATTDPCjj5Ndd5K5jtjodEor0oHMosARaDPJkrEdy+lfC/w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=altera.com;
-Received: from DM8PR03MB6230.namprd03.prod.outlook.com (2603:10b6:8:3c::13) by
- CO1PR03MB5940.namprd03.prod.outlook.com (2603:10b6:303:93::12) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9073.11; Mon, 25 Aug 2025 07:18:34 +0000
-Received: from DM8PR03MB6230.namprd03.prod.outlook.com
- ([fe80::c297:4c45:23cb:7f71]) by DM8PR03MB6230.namprd03.prod.outlook.com
- ([fe80::c297:4c45:23cb:7f71%2]) with mapi id 15.20.9052.014; Mon, 25 Aug 2025
- 07:18:34 +0000
-From: adrianhoyin.ng@altera.com
-To: linux-kernel@vger.kernel.org,
-	mun.yew.tham@intel.com,
-	linus.walleij@linaro.org,
-	brgl@bgdev.pl,
-	linux-gpio@vger.kernel.org
-Cc: adrianhoyin.ng@altera.com
-Subject: [PATCH] MAINTAINERS: Change Altera-PIO driver maintainer
-Date: Mon, 25 Aug 2025 15:16:37 +0800
-Message-ID: <20250825071637.40441-1-adrianhoyin.ng@altera.com>
-X-Mailer: git-send-email 2.49.GIT
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR03CA0108.apcprd03.prod.outlook.com
- (2603:1096:4:7c::36) To DM8PR03MB6230.namprd03.prod.outlook.com
- (2603:10b6:8:3c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 693EE18FC91
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 07:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756106604; cv=none; b=EJN6SYPcnSS0Pc6gZiY8gssceGvfAGtWdAaArZ+Eb967UdQjGTumW63Nw2g8yyUKr2BckfmR/Y0V2SH5k2B+bKt5GPXi7R/fjSUTY+r56lx5/bQBdQT2lsS3jfBffVKZcfxBK8viFv3Ic51xWb5jazVOWbyRWy4almYcbc0GHzs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756106604; c=relaxed/simple;
+	bh=xJBDrKc8H/7bg/wbgXhECC9ZCIwGqSWNHDfSDuOe+ZI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=Xej/XfZ9lhdKYif+F2jtL2jd39H0R4PpWY/IlYQizjHXg0LhJA+v+Hgaarn3Z6INVEcRPNXMJelJp5CoB3HBOta00uPDPFjAwKjSWGmhMnqfgszBiTxkFWzO9rhoEHmohbGC8MkyiE2G6KMq09TMZbcDSQ45asxdlLbAOJxQ3BI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=JMAenzuY; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250825072313euoutp01e32d8965b7f903418382f838258be479~e8aSMNCP-2064820648euoutp01V
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 07:23:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250825072313euoutp01e32d8965b7f903418382f838258be479~e8aSMNCP-2064820648euoutp01V
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756106593;
+	bh=CCwjQpVxAwYaUkMfuZFn5zd3paQxpIxh6PvIqoPaH2Y=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=JMAenzuYyAApWweTnMU50LL7DXqexmJjg2nk4AHbF9QHHMrYEzA7FSoxXofBiFc3k
+	 jPfyWRMlsYYyt8YZR0L6d9CVpDFR+GwO+CD9HGoNMfKVH+XtOZZ3d9JwhmnWM60Ars
+	 WuEIgGMRc/3pjyy9yO1Y83W90A3tcPBCxjHV7Mbg=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250825072312eucas1p2d4751199c0ea069c7938218be60e5e93~e8aRbQSdO2516025160eucas1p2z;
+	Mon, 25 Aug 2025 07:23:12 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250825072311eusmtip29de257b9d550c8b3809c733e1b5949a3~e8aP3cLdT1101011010eusmtip22;
+	Mon, 25 Aug 2025 07:23:11 +0000 (GMT)
+Message-ID: <a30a8c97-6b96-45ba-bad7-8a40401babc2@samsung.com>
+Date: Mon, 25 Aug 2025 09:23:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM8PR03MB6230:EE_|CO1PR03MB5940:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1d00de93-26cd-4bf8-1c85-08dde3a79a01
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?uRhZhkQK7Wuf7LItH/DvX5lko97f7NlBqSk6XwOoNgjdnzUO9MErq4g904u3?=
- =?us-ascii?Q?oQwRKz6wtUdMYk3VhsBN0MniXSbhd+DW7mJWBKwdiQgBWf+USiUdswzI5kis?=
- =?us-ascii?Q?L8IdTPSkMowVn4CxXKBNXbbvU23aeMxS9gXeelnL1pTR44gTuhd0Z6Apt7Gx?=
- =?us-ascii?Q?STkbSg1WqPVM8mDQThZOkFr7GEQc9Nldl9mJFPjEoTG4kV8/UofrQnmegFzJ?=
- =?us-ascii?Q?az6ACigT4tL4U0NoeI5wg4uRLXnxiuffNhJK2Y038+D0vWbJ3LE/IlkKGglc?=
- =?us-ascii?Q?UWAxpPf2ua2DoNZ6o7Jxc1PatoK4eQ9lyvNBg/sksSWhu+MWzJsidbhZrS1C?=
- =?us-ascii?Q?4BJhQzX33rFyuH/1pABxwVC6YWt/5kYkS2/iOiWOJ2vrHcL1mb6m35FGhEbA?=
- =?us-ascii?Q?zr7G4L/Q/RbqZfS4Ciy2BvAllrgmQ82sltfetA2Z2lZn0/lUnxs/xKgzPk4u?=
- =?us-ascii?Q?r58dN6p8BZusUgbmQgH+QZBm4iFlvXJWKYiHyOLQtPj5c4Q1oogUf/7KeciX?=
- =?us-ascii?Q?vi/ewS3wj3sDsuzqB8dB/TnIi6TdA8GA0xfC6HiiTNF5cbYO9tLcWLhWlfgi?=
- =?us-ascii?Q?vgWcX3WcMRtQgzGW+w92k3VdyjelwzMTBanXhWGpgAzUJLQNQA+9tBT+uxOf?=
- =?us-ascii?Q?J8Y7pSJV99v/DSMA3aaqcS+IGIp8hKzG/8zjAJ7Bs9K2EjsbBU9+xvnAjURC?=
- =?us-ascii?Q?hx82qSM+TIAVq5yHO+Ls3HXp9pBMRzu+VvvCAkRfjDCDEYtiyzGnncGk9zGf?=
- =?us-ascii?Q?ZnrGYQJ8iJ6SE2p23tP9CmCcMISGXtKzE1i5d7EslGIPTVvZVvf+gPLFjzaY?=
- =?us-ascii?Q?1CGak/ICxC+zaPcGIoMKYVdf3MUyQi63r32sW4RblHeVtaiBkwGeM9VzTs25?=
- =?us-ascii?Q?OFirtCoBrwgkDy1+drCQfMUxKJeNcE8Ehjo8BAHb5wXHXDuyhMt79EXLTsbC?=
- =?us-ascii?Q?8jguMYnNEgV6x1/ndiW3xw8d8WrBtw4LzIwyRu+xeqqZD1zRmwaGRpY89tX1?=
- =?us-ascii?Q?Ht+HjYZl/beVFw8usHQPbBZTm4h3Ms7J2BPJKKjVYs7INK/KfRi7gR84DouA?=
- =?us-ascii?Q?8Hd+QNHf5yF43moANSu89i8YN8Y+nX1FyY+1QAyjBeDDtxQE3Uhew7XizvmJ?=
- =?us-ascii?Q?TD9MiqEFzi3zj2qepv4uQ+ujPzON9g0uWZARBqZlvjdlDgkPGAvL7Kwsnpln?=
- =?us-ascii?Q?I4EoZ1c9P6w6hTFYk/eAxUmdlS4Poe+fkNSREHUITH1Cbeo6C0oID1MbXmtv?=
- =?us-ascii?Q?fuMtXwqKO0Q+H3SE2eX3B9nTquZdt+k6hrcn0aT/+8RIBxs1EZYjx3Q9VJDS?=
- =?us-ascii?Q?YvdA+KVbrKxZCkJHcDtBemnh2zA5AX1T+Tv25Z6FGBve8O2Ip8HgmOYzbWYL?=
- =?us-ascii?Q?+5OZHlSVg0FhuxMnbXg4nrdJoZiHWe4UGhmvddGrAqja0YX55W5GRHRvFz8Z?=
- =?us-ascii?Q?uWC/F5KkgCY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR03MB6230.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Gz1+56LPnFlVrGqpWV0oSG/GiB1c0s6WrBMRZ5G6Gvu2VRwu+wiMbknPtoGw?=
- =?us-ascii?Q?Vxw18h8KLCCE0YQk9P+68K4OICEYuoaMkiTYZx0Fl9tq8KJ4+zaK+5MiU2io?=
- =?us-ascii?Q?BWb8pzKFfGZVz+hb9Y4RZnx1OxyFZGOAtIYPeuiU8rteFKCjT/tkSzfWvhKx?=
- =?us-ascii?Q?Y/5dYzXpeodIsjiVvNhxwOSO6W+sFP7FRE5zwONRe6RlNBQGi+V4bOLO2OiR?=
- =?us-ascii?Q?QC5IJM3soRY0xJVnyp4vPB29jCnk9TuKxnxgnLqQ4RaY+sPcj0Ol3bwI+DD2?=
- =?us-ascii?Q?nj1s0MVLIYmpZeU1K+qX0b9GOP6IN6m7076jQqk7Ydwppf+3id9P6uSf6dUh?=
- =?us-ascii?Q?mIIQC2AZZnf7FkzC6o6gOeRy+M2ojvgEAhJZlp2k0k/dBbyE8Quy78VeSztU?=
- =?us-ascii?Q?Aa/5MbMB7D9T6hMOyWigrE+/vp7lSxCq44pP30RihqKHcjL7eKwlJHkM0M+I?=
- =?us-ascii?Q?zQVAxk/cQ+BmRXGJwGzRSE6sPy6fU2OkwZMZS8tc8TaWJkrTeGOoISORm2zG?=
- =?us-ascii?Q?+fkJBWdXejswmqDqFEa+qWSvZf24pfZ5I6R7F89/SMn0DCFLiGUatD+uiuBR?=
- =?us-ascii?Q?WLZ0qQh6flNkJBh67mOdhm/82Xotx9G5axyuKEtizBQEsBOZCvPwsp/9a10F?=
- =?us-ascii?Q?kofGoA8kWLaCTTzz8M4WtcwM9B+cS2fcBVsKglbFwCwLOp7hGxb/ezBvFDeT?=
- =?us-ascii?Q?aImGSz4ApHk5W/J+GS/5CB2Mgv022ej6VdGSVIXfWaMzSqOECxuCnfjp3nzI?=
- =?us-ascii?Q?rMkJ9COTt+1h1bwMwSkbXDlLE8E5gN9ggmxLRJFTn90o5aSheuH1aBd4NDDq?=
- =?us-ascii?Q?dcNuSCmrZE2ZWA3Odty7yYxVrKzEUTbRSl8/klj4jKKQj0Y4F4v4gdqeJmjr?=
- =?us-ascii?Q?kHjZOU19kwn8bbYkTWZUaFwlT1b5bB4ZWjsjLS2K9g0BXxsK23TQqut4zI9A?=
- =?us-ascii?Q?F0SnERd6S2OG1hTlcbCUaQtELxOmyFEsbidLdlrId/AhmZEjcdu8AniqelFI?=
- =?us-ascii?Q?zFP1oobBowzo4ZjthH3ZkoKRx8W+9U1wKIlIOogbJd6FOKhtX6FFzQO+7nOt?=
- =?us-ascii?Q?zR9SBZXd6b+JHscVe1HQc3wVdbmK+//VpqbpVBB62Lrj50zvw2UeSoNbvH4G?=
- =?us-ascii?Q?zbVic6v1wuuGFcQg1+MfWLv+YqHlIaD4Xg4jYtOWrKLXv+dElwcrHt2x7AKi?=
- =?us-ascii?Q?3YUOZE7FMYjWBUqbfTVYGfdkcFVEmArKlVgPNZsHwbrVjEVskojW5r0WIq4p?=
- =?us-ascii?Q?foeiQV5kGW6QdrwHbvWZRmDVqBgHF1r1m6t7xDgPGfuL2pRW1I1iwBiBfrr4?=
- =?us-ascii?Q?2HZMxMAo59GiFGc3IbanlRv92G9yAwY+BoR5V7EUz+mzkP8XsVSaEUFrx+/1?=
- =?us-ascii?Q?JT2ehfp8I8L39IWjZb/3UwsNDHWOE5IVvHlSztZVEFBnfZngCtLJnFxf4gCo?=
- =?us-ascii?Q?HFQteGqej/zyCMsXduet/gY5nCot7S2PTK7mM2tp/CWzLYiYV4J+bXA8SwaI?=
- =?us-ascii?Q?NR9ptMrPFImi8gEChFlhZXhcqNJPzfyjSApHs2rraCxwVS2u+Fi351t6ewgx?=
- =?us-ascii?Q?PlRxJmK2Q4aXoaRwoUp/xdGRUHk70sI7AELIgFecgYQH5gduCUWFChPXW+Hw?=
- =?us-ascii?Q?eA=3D=3D?=
-X-OriginatorOrg: altera.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1d00de93-26cd-4bf8-1c85-08dde3a79a01
-X-MS-Exchange-CrossTenant-AuthSource: DM8PR03MB6230.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 07:18:34.3352
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KNfS/RARzLVh6gNaFXVmK6jQOiEsNiusS7gaHdyWVHsTA/mHq1wplfDWn64iwLR59HrFCEmFPwk0TavYx5kirWtKJteofE5uAwTXaNNXNpk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR03MB5940
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH net-next v3] net: ethernet: stmmac: dwmac-rk: Make the
+ clk_phy could be used for external phy
+To: Chaoyi Chen <kernel@airkyi.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Maxime
+	Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+	<alexandre.torgue@foss.st.com>, "Russell King (Oracle)"
+	<rmk+kernel@armlinux.org.uk>, Jonas Karlman <jonas@kwiboo.se>, David Wu
+	<david.wu@rock-chips.com>
+Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, Chaoyi Chen <chaoyi.chen@rock-chips.com>
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20250815023515.114-1-kernel@airkyi.com>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20250825072312eucas1p2d4751199c0ea069c7938218be60e5e93
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250825072312eucas1p2d4751199c0ea069c7938218be60e5e93
+X-EPHeader: CA
+X-CMS-RootMailID: 20250825072312eucas1p2d4751199c0ea069c7938218be60e5e93
+References: <20250815023515.114-1-kernel@airkyi.com>
+	<CGME20250825072312eucas1p2d4751199c0ea069c7938218be60e5e93@eucas1p2.samsung.com>
 
-From: Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
+On 15.08.2025 04:35, Chaoyi Chen wrote:
+> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+>
+> For external phy, clk_phy should be optional, and some external phy
+> need the clock input from clk_phy. This patch adds support for setting
+> clk_phy for external phy.
+>
+> Signed-off-by: David Wu <david.wu@rock-chips.com>
+> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+> ---
+>
+> Changes in v3:
+> - Link to V2: https://lore.kernel.org/netdev/20250812012127.197-1-kernel@airkyi.com/
+> - Rebase to net-next/main
+>
+> Changes in v2:
+> - Link to V1: https://lore.kernel.org/netdev/20250806011405.115-1-kernel@airkyi.com/
+> - Remove get clock frequency from DT prop
+>
+>   drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c | 11 +++++++----
+>   1 file changed, 7 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+> index ac8288301994..5d921e62c2f5 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
+> @@ -1412,12 +1412,15 @@ static int rk_gmac_clk_init(struct plat_stmmacenet_data *plat)
+>   		clk_set_rate(plat->stmmac_clk, 50000000);
+>   	}
+>   
+> -	if (plat->phy_node && bsp_priv->integrated_phy) {
+> +	if (plat->phy_node) {
+>   		bsp_priv->clk_phy = of_clk_get(plat->phy_node, 0);
+>   		ret = PTR_ERR_OR_ZERO(bsp_priv->clk_phy);
+> -		if (ret)
+> -			return dev_err_probe(dev, ret, "Cannot get PHY clock\n");
+> -		clk_set_rate(bsp_priv->clk_phy, 50000000);
+> +		/* If it is not integrated_phy, clk_phy is optional */
+> +		if (bsp_priv->integrated_phy) {
+> +			if (ret)
+> +				return dev_err_probe(dev, ret, "Cannot get PHY clock\n");
+> +			clk_set_rate(bsp_priv->clk_phy, 50000000);
+> +		}
+>   	}
+>   
+>   	return 0;
 
-Update Altera-PIO Driver maintainer from <mun.yew.tham@intel.com> to
-<adrianhoyin.ng@altera.com> as Mun Yew is no longer with Altera.
+The above change lacks the following check ingmac_clk_enable(): if (!bsp_priv->integrated_phy) return 0;
 
-Signed-off-by: Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Otherwise it blows on machines with integrated PHY, like Hardkernel's Odroid-M1 (RK3568 based):
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fed6cd812d79..5b3f80f42f3c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -931,7 +931,7 @@ F:	Documentation/devicetree/bindings/dma/altr,msgdma.yaml
- F:	drivers/dma/altera-msgdma.c
- 
- ALTERA PIO DRIVER
--M:	Mun Yew Tham <mun.yew.tham@intel.com>
-+M:	Adrian Ng <adrianhoyin.ng@altera.com>
- L:	linux-gpio@vger.kernel.org
- S:	Maintained
- F:	drivers/gpio/gpio-altera.c
+rk_gmac-dwmac fe2a0000.ethernet: IRQ eth_lpi not found
+rk_gmac-dwmac fe2a0000.ethernet: IRQ sfty not found
+rk_gmac-dwmac fe2a0000.ethernet: clock input or output? (output).
+rk_gmac-dwmac fe2a0000.ethernet: TX delay(0x4f).
+rk_gmac-dwmac fe2a0000.ethernet: RX delay(0x2d).
+rk_gmac-dwmac fe2a0000.ethernet: integrated PHY? (no).
+Unable to handle kernel paging request at virtual address fffffffffffffffe
+Mem abort info:
+   ESR = 0x0000000096000006
+   EC = 0x25: DABT (current EL), IL = 32 bits
+   SET = 0, FnV = 0
+   EA = 0, S1PTW = 0
+   FSC = 0x06: level 2 translation fault
+Data abort info:
+   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
+   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+swapper pgtable: 4k pages, 48-bit VAs, pgdp=000000000249e000
+[fffffffffffffffe] pgd=0000000000000000, p4d=000000000376f403, pud=0000000003770403, pmd=0000000000000000
+Internal error: Oops: 0000000096000006 [#1]  SMP
+Modules linked in: snd_soc_rockchip_i2s_tdm snd_soc_rk817 snd_soc_core snd_compress snd_pcm_dmaengine rockchip_thermal snd_pcm dwmac_rk(+) hantro_vpu rockchip_saradc industrialio_triggered_buffer kfifo_buf stmmac_platform rockchip_rga v4l2_vp9 stmmac spi_rockchip_sfc(+) v4l2_h264 snd_timer pcs_xpcs rockchipdrm(+) videobuf2_dma_sg v4l2_jpeg rk805_pwrkey v4l2_mem2mem videobuf2_dma_contig dw_hdmi_qp rockchip_dfi rk817_charger videobuf2_memops analogix_dp videobuf2_v4l2 dw_mipi_dsi panfrost snd rtc_rk808 drm_dp_aux_bus videodev drm_shmem_helper soundcore dw_hdmi videobuf2_common drm_display_helper mc gpu_sched ahci_dwc ipv6
+CPU: 3 UID: 0 PID: 154 Comm: systemd-udevd Not tainted 6.17.0-rc1+ #10875 PREEMPT
+Hardware name: Hardkernel ODROID-M1 (DT)
+pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : clk_prepare+0x18/0x44
+lr : gmac_clk_enable+0xf8/0x188 [dwmac_rk]
+..
+Call trace:
+  clk_prepare+0x18/0x44 (P)
+  gmac_clk_enable+0xf8/0x188 [dwmac_rk]
+  rk_gmac_powerup+0x4c/0x1f0 [dwmac_rk]
+  rk_gmac_probe+0x3b4/0x5c8 [dwmac_rk]
+  platform_probe+0x5c/0xac
+  really_probe+0xbc/0x298
+  __driver_probe_device+0x78/0x12c
+  driver_probe_device+0x40/0x164
+  __driver_attach+0x9c/0x1ac
+  bus_for_each_dev+0x74/0xd0
+  driver_attach+0x24/0x30
+  bus_add_driver+0xe4/0x208
+  driver_register+0x60/0x128
+  __platform_driver_register+0x24/0x30
+  rk_gmac_dwmac_driver_init+0x20/0x1000 [dwmac_rk]
+  do_one_initcall+0x64/0x308
+  do_init_module+0x58/0x23c
+  load_module+0x1b48/0x1dc4
+  init_module_from_file+0x84/0xc4
+  idempotent_init_module+0x188/0x280
+  __arm64_sys_finit_module+0x68/0xac
+  invoke_syscall+0x48/0x110
+  el0_svc_common.constprop.0+0xc8/0xe8
+  do_el0_svc+0x20/0x2c
+  el0_svc+0x4c/0x160
+  el0t_64_sync_handler+0xa0/0xe4
+  el0t_64_sync+0x198/0x19c
+Code: 910003fd f9000bf3 52800013 b40000e0 (f9400013)
+---[ end trace 0000000000000000 ]---
+
+Best regards
 -- 
-2.49.GIT
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
 
