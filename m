@@ -1,125 +1,142 @@
-Return-Path: <linux-kernel+bounces-784185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CC0EB337C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:28:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F7BAB337CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:28:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21A697ADCD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 07:26:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6385B48122F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 07:28:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF6E28BAB9;
-	Mon, 25 Aug 2025 07:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91EA328C5BE;
+	Mon, 25 Aug 2025 07:28:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="Idm4c4//"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hj5sfPcu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F6E4215F6C;
-	Mon, 25 Aug 2025 07:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756106878; cv=pass; b=jNpD64a4HErschxyxCteKN6I/K3PMg1JqGsFniLvSqDp8tbRN7cVJMzehdAjxY6+Y6MoBQZUUFD+kQ11gZBTIvdwWopvu7ksSVqbPGwl/43TBvUpw6bWgkKYpmxRnYxtLwOWuVWUy+eqxGf+ZQqq8Z9FV4/9n5BrbJQyMBL8f0U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756106878; c=relaxed/simple;
-	bh=fML6cRwp09iRLePqjQLtm24QRVBOlZ/sxCYg557xLP8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YQPcKz5rUiDNAd1FDmcIdrOVE5iKduUZ00jmKmDCb5fhrXnlB/QBBW6gQ+JmTF6u5LoHZePXlZbkyEoxLH4st2ERCDnUDlnPsrbJLTbOQ3v0NW5jmXDBIfnFcihojqYL9eDaG5z//EFVbc0510TVdOAR2mXiml4F7bjYtPWfBl0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=Idm4c4//; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1756106849; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=mEPfe+LalKrrED4ZK5hjFQelQk78dSO66JLcyZz+RAmvLO3g8HM5Pm3SbGFXG4yOXX0/Rm7cmtOYhbujBqyAun+tKkJPoRckkoDxuUeNcbx4nnvdX25nKAu1Cqv2BY9PlDQS+onShisZ3icAiCmCL2EJDB/MDr9s+z0PS3w9Rbs=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1756106849; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=M/TwANByS8GbPPy4BtdqH5o/3ijPPSO7Y5K83ExNaD4=; 
-	b=VRMDlxMy6Ow3JvjULJlwASYl3/3F86yEo/usN9SjmdntDVkrDTuXlzJFwEUZ9lGn0SO7+cT/so7iiCRdaouujuyDCRcbCxc/nfptf9efCvtpWnkz7V1i7rdPnFqbcJ7p0lOdv9l4cz5J5qEaLvf7ihGk3PNoooMjpAzHTzZSeps=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756106849;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:To:To:Cc:Cc:Reply-To;
-	bh=M/TwANByS8GbPPy4BtdqH5o/3ijPPSO7Y5K83ExNaD4=;
-	b=Idm4c4//UOrazztLZtVF9PkLSf/WuAxutdVS1v3bOR/RjiHPa2EHOZffvBd+fMPx
-	My2PtOpzd3oV12TdAHpylBo0CGEjrjW9fawJAi5FzPxPysZ86eABz47sj6Yhhm94Ii7
-	aPDtWeWom/MbM+6bfYIotPgU0XXTx9kPzqPYh+H4=
-Received: by mx.zohomail.com with SMTPS id 175610684796468.22818037101536;
-	Mon, 25 Aug 2025 00:27:27 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Date: Mon, 25 Aug 2025 09:27:08 +0200
-Subject: [PATCH] arm64: dts: rockchip: fix USB on RADXA ROCK 5T
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4DB22B8BD;
+	Mon, 25 Aug 2025 07:28:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756106921; cv=none; b=e18j9AvxVUFfcdFTs8pYH92c5aIyUTYb/T+WlmpjoRj0ne5TMhJ1d84EqOq06+PeP4BOw8oeE/LQKJCG4iX7D1eNKmjpuaMx1yNhDMKM27h7XAalIQJWtJRsA19+eHyV1NDckivpfwW882xNvFyGnJZylaqeGOPm+IWC6OtSmHk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756106921; c=relaxed/simple;
+	bh=OHl2l7fwcSBs2PnP0cy1ul4eRIrzpQHu81WxmlH2tY8=;
+	h=Content-Type:Date:Message-Id:Cc:From:To:Subject:References:
+	 In-Reply-To; b=r9Lzc736EwNJgav1ldvb2tJW1x3BxK8AsD5J/Bn1AJq9UABWBFDWZhFi6UGuOt7TV8jGBbSC5+4Lfr2G3lE86V1+fyKHMNeJ0w03axSvWpK1kxc1b+5GexAbpFEjyDl+tsi3Xq7ifhxwuE7aeWUTaRkLWdB8sdKaWv1ZoBJmSOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hj5sfPcu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C98EC4CEED;
+	Mon, 25 Aug 2025 07:28:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756106920;
+	bh=OHl2l7fwcSBs2PnP0cy1ul4eRIrzpQHu81WxmlH2tY8=;
+	h=Date:Cc:From:To:Subject:References:In-Reply-To:From;
+	b=Hj5sfPcu+0GZO8ZMxzNtpk2D3hDwuorOx/VaVXaSdlFYUg25YCacBi2RzIKDjLwc9
+	 OSxoJ3BfdjPKlCKrQQA5vb1iWAEobDoaM4vFbHlTGtIrr4o/C903UnkugX2HW65tej
+	 R1e3GzYuyURQoJdYO0llKI6gxDPC8MHc77Xw+AgADdLcO7Hv/RjckYy+t5u8PBuMpq
+	 GVSeBvBT5ikpD6pNNMSamc0FY9j/vF/UgYhUYISaU+2JejMF7xwI2SBZTGOVtybrlv
+	 BUQwQnMyz9fMU/9kCIjr8MZp3j7BZa1HPKMZ++pvva+t+UuIq3w7YPyj95aiJYicbB
+	 qzzCyqE4DRYXA==
+Content-Type: multipart/signed;
+ boundary=fd4931382990d6306de8142488bafb3cdc9bb19db8a764e4efedf063a500;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Mon, 25 Aug 2025 09:28:36 +0200
+Message-Id: <DCBBY4827XAZ.11UHI6NWP7RT0@kernel.org>
+Cc: "Vignesh Raghavendra" <vigneshr@ti.com>, "Tero Kristo"
+ <kristo@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Jean Delvare"
+ <jdelvare@suse.com>, "Guenter Roeck" <linux@roeck-us.net>, "Lee Jones"
+ <lee@kernel.org>, "Srinivas Kandagatla" <srini@kernel.org>, "Wim Van
+ Sebroeck" <wim@linux-watchdog.org>, <linux-arm-kernel@lists.infradead.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-hwmon@vger.kernel.org>, <linux-watchdog@vger.kernel.org>
+From: "Michael Walle" <mwalle@kernel.org>
+To: "Nishanth Menon" <nm@ti.com>
+Subject: Re: [PATCH v1 0/7] Initial Kontron SMARC-sAM67 support
+X-Mailer: aerc 0.16.0
+References: <20250822131531.1366437-1-mwalle@kernel.org>
+ <20250822152313.vjzjtzik2q5ek5kq@sadly>
+In-Reply-To: <20250822152313.vjzjtzik2q5ek5kq@sadly>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250825-rock5t-usb-fix-v1-1-de71954a1bb5@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAEsQrGgC/yWMQQ6CMBAAv9Ls2TVttWj4iuHQllU3BqrbQkwIf
- 6eB40wys0AmYcrQqgWEZs6cxgrmpCC+/fgi5L4yWG2dvluHkuLHFZxywCf/sQm611ey5MlAjb5
- CVe/DR3ew0G+q33JICD4TxjQMXFo1N2dzQ4kX6NZ1A18a/nONAAAA
-X-Change-ID: 20250825-rock5t-usb-fix-6b0d04e2eae1
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
-Cc: FUKAUMI Naoki <naoki@radxa.com>, kernel@collabora.com, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-X-Mailer: b4 0.14.2
 
-The RADXA ROCK 5T board uses the same GPIO pin for controlling the USB
-host port regulator. This control pin was mistakenly left out of the
-ROCK 5T device tree.
+--fd4931382990d6306de8142488bafb3cdc9bb19db8a764e4efedf063a500
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-Reported-by: FUKAUMI Naoki <naoki@radxa.com>
-Closes: https://libera.catirclogs.org/linux-rockchip/2025-08-25#38609886;
-Fixes: 0ea651de9b79 ("arm64: dts: rockchip: add ROCK 5T device tree")
-Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
----
- arch/arm64/boot/dts/rockchip/rk3588-rock-5t.dts | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+On Fri Aug 22, 2025 at 5:23 PM CEST, Nishanth Menon wrote:
+> On 15:15-20250822, Michael Walle wrote:
+> > Now that the PMIC support is there, we can finally, upstream the
+> > support for this board. Besides the usual device tree, this
+> > patchset contains the support for the on-board house keeping MCU. It
+> > make extensive reuse of the drivers for the former SMARC-sAL28
+> > board. Besides different hwmon sensors, all the dt binding patches
+> > will just add a board specific compatible (in addition to the old
+> > sl28 compatible) to make any future board specific quirks possible.
+> >=20
+> > I'm aware that there is a patch [1] which moves the sl28cpld MFD
+> > schema to a different directory. Once that patch is merged, I'll
+> > repost this series. But I already want to get some early feedback.
+> >=20
+> > [1] https://lore.kernel.org/r/20250822075712.27314-2-krzysztof.kozlowsk=
+i@linaro.org/
+> >=20
+> > Michael Walle (7):
+> >   dt-bindings: arm: ti: Add bindings for Kontron SMARC-sAM67 module
+> >   dt-bindings: mfd: sl28cpld: add sa67mcu compatible
+> >   dt-bindings: hwmon: sl28cpld: add sa67mcu compatible
+> >   dt-bindings: watchdog: add SMARC-sAM67 support
+> >   dt-bindings: nvmem: sl28cpld: add sa67mcu compatible
+> >   hwmon: sl28cpld: add SMARC-sAM67 support
+> >   arm64: dts: ti: Add support for Kontron SMARC-sAM67
+>
+> Since this goes through multiple maintainers, may I suggest the
+> following strategy?
+>
+> for this window:
+> * send dts and board binding changes dropping the nodes that are yet to
+>  be upstream
+> * send the compatible changes to each of the maintainers
+>
+> Next window:
+> * add the nodes based on acceptance of the driver bindings
+>
+> This removes multiple maintainers needing to give me immutable tags etc.
+>
+> What do you think?
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5t.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5t.dts
-index 258c7400301d7f77517197ab433946bbfa39cf63..6acc7a8a5a12eee9cd3506910b40235813ec43b1 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5t.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5t.dts
-@@ -95,6 +95,12 @@ hp_detect: hp-detect {
- 			rockchip,pins = <4 RK_PC3 RK_FUNC_GPIO &pcfg_pull_none>;
- 		};
- 	};
-+
-+	usb {
-+		vcc5v0_host_en: vcc5v0-host-en {
-+			rockchip,pins = <1 RK_PA1 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
- };
- 
- &vcc3v3_pcie2x1l0 {
-@@ -103,3 +109,10 @@ &vcc3v3_pcie2x1l0 {
- 	pinctrl-0 = <&pcie2_0_vcc3v3_en>;
- 	status = "okay";
- };
-+
-+&vcc5v0_host {
-+	enable-active-high;
-+	gpio = <&gpio1 RK_PA1 GPIO_ACTIVE_HIGH>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&vcc5v0_host_en>;
-+};
+Not sure, if this needs an IB anyway or if the DTS can be pulled by
+the corresponding SoC subsys and the DT binding can go through
+another tree in the same cycle. If not, I can certainly split the
+device tree (to my knowledge, it was said that it should be a
+complete description :).
 
----
-base-commit: 89d926fa53d0a6c257c4e8ac1c00c3d9a194ef31
-change-id: 20250825-rock5t-usb-fix-6b0d04e2eae1
+I'd expect that Lee is picking up the first 6 patches after they got
+an ACK. Please correct me if I'm wrong, Lee.
 
-Best regards,
--- 
-Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+In any case, I'd give this v1 some time to get some feedback on the
+patches.
 
+-michael
+
+--fd4931382990d6306de8142488bafb3cdc9bb19db8a764e4efedf063a500
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaKwQpRIcbXdhbGxlQGtl
+cm5lbC5vcmcACgkQEic87j4CH/hMEAF/Vhvuizfo2QflfI6C2/jHtRw3dLRPlo28
+HIDgT2LP6cbtUavEPx2nq1ESho4HXf7EAYCPD4RX3DAZ96VoKuiMPWtrhByKmEo8
+LvQhb/8169l6w+5b/5Suq4WzzVE4BArZHes=
+=DIAl
+-----END PGP SIGNATURE-----
+
+--fd4931382990d6306de8142488bafb3cdc9bb19db8a764e4efedf063a500--
 
