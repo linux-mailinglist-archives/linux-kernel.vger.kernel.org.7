@@ -1,131 +1,172 @@
-Return-Path: <linux-kernel+bounces-784244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8F67B3388C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:13:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 692FFB3388E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:15:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4EA83BF89C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:13:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 816AB3AEEA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:14:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F0329BD94;
-	Mon, 25 Aug 2025 08:13:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A274429B793;
+	Mon, 25 Aug 2025 08:14:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sV8pxECP";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XgI0U9v8"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E+dJnLbk"
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F6329B8DD;
-	Mon, 25 Aug 2025 08:13:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603FD1F0E55
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 08:14:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756109605; cv=none; b=gUeNJ/hYPN8KQiWT4fS5Aq8DV0jJObYsFnn/3cEUiOmVQ1C3LCEIN89TauZiKG5B60oRmHp/sVN9xC63ZA740vuQLMEjWzyLfNdWQ2Cmz+txyJLEBPEe93G7DyYkZPtiSPgXmHvMnkZF9rymcTniS6NwibMYP0F0P2CH7ozwYCI=
+	t=1756109691; cv=none; b=eK1ncR1bxSGoLiEApAwMApIWZxc9fRHLhoOWLR7gzjC0v3f6S1dLkY8MUUK/NXv0I7eFuOEJaLo1ZM46qFTo0F58gLs+5+J3XsJgZ6xZrY0WMMD7jdt8X+B4NX6/uaMFmUxOz7SVKk8Wk3jkwuSuYlNPcQDh/1/Xp5kvjE4gTyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756109605; c=relaxed/simple;
-	bh=GKGj+zHAf9pKKfmCORpg4LcpDNqFSw8bG579p8awKu0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TEtDAU76tNY2fVmlDtV3y9SjYH00DXLQcHPnVJDOyMSfPNB+Prmo/lPC6jip6i/SY9QmCNJyk+oHSL4NR8mONZhVzvV277ZK3pfadZ78yF/u5JamkZ6oimKbgtTfwQf6uR/dty7mhB2VV7NBo42sl61Fp8oODysyiEr9mgXGIF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sV8pxECP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XgI0U9v8; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 25 Aug 2025 10:13:20 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756109602;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=94+RozVYHYhOvbwTo3+5fGuCmQswZmX4YY/OVqWHeuk=;
-	b=sV8pxECPS/7vBVMpRaRop8OQas4ch8+z0VHSgSFpZTPmNlnY/Y1HYsMj6/KaSYXwPvuxbg
-	PLYqoLtrb15u25MYMVAyQZI2IbJLSq0OghZyXS8etMfeWqRfKvyMAHk5Xw7189IJsg9+1Q
-	Uh4wdCnnH939+iloZBbw3XuzkGB+84OcApT4uZONMOKT15Y72AtZzk5P4NUvhj1+gK9h/1
-	M+Ro6HWSq+FjShYGuZIM+Ttg0o3VvPrQdXLei10hBEfq3Qyujy5HyNcrJmCRFxGgoweu1N
-	hUJABaubUHV7H/Ayj1/s9yNV7TeeuLDXv77Ay7OcgDPjQzoA7eUwqpHU+MA/Wg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756109602;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=94+RozVYHYhOvbwTo3+5fGuCmQswZmX4YY/OVqWHeuk=;
-	b=XgI0U9v8BxLnhmTTL2FxW2t8scmA5p6/JOx7LlhjErO1HL1NtCZUT6SoBeCjqaj7d1HXLZ
-	aecRwfnBDSV96UDA==
-From: Nam Cao <namcao@linutronix.de>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-trace-kernel@vger.kernel.org,
-	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
-	Clark Williams <williams@redhat.com>,
-	John Kacur <jkacur@redhat.com>
-Subject: Re: [RFC PATCH 08/17] rv: Add Hybrid Automata monitor type
-Message-ID: <20250825081320.syZmsSiH@linutronix.de>
-References: <20250814150809.140739-1-gmonaco@redhat.com>
- <20250814150809.140739-9-gmonaco@redhat.com>
- <20250821121846.N0S9tb6x@linutronix.de>
- <fd9dc21acd4fac68a3948ded59cf9235f0e4bb7f.camel@redhat.com>
+	s=arc-20240116; t=1756109691; c=relaxed/simple;
+	bh=N5DMMmJ5lVitZCWlLJnlB+ZjU9uShksE7d/gHrj7X5Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oczk3JKQOdEnqL3wJtdaUuuSpOB9+myz6bY/ANR97CtLUqkTpPngsCkKsJVNgtmothfUwWAxzf9gEnxyh11Z8WJPCSMk0qWQCS/Kip+EAsNskJtGhwqgcg3WV2AHf+5rVlAi7z8kIJquMwjpm0F0z2txvgr4LEUUDgIDQ90jXYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E+dJnLbk; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e95346fa32aso1142959276.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 01:14:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756109688; x=1756714488; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=DWcYU6uY9KTc1S160H4P3qDdzH2WP9qP0P5gGV0wL5c=;
+        b=E+dJnLbk4eBxqLmsQZvB4qWMK0qSW7Ce4X8/XMw5onlmSkF+YwoLjuBcq6C6BbWHBi
+         /Au8Pg6SbZoXreVBn37kQ5GRUQPmUy2/Q5LGbXKyQSIVr2JNLQUfSMcC1mW+0O2uSxVM
+         TvZKoZxZ15OiflZhuhXFaIJUD6nv9QXRcnOaDqWF7x4FHw584fLL7TcWIQRfBjGgDIo3
+         4Wx/ZISLGFQKZ8aEW0y5GgK9WOTPGmOnPFGsw1kzDAgJo+m7qhkPmO2GUgBns2QH7sna
+         asVYSuF53LIv2aP1uyDnwJHeXwlzMtDboNktkB+oonsRLC9bS8iypWtmvVQXJUnbftsY
+         kkjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756109688; x=1756714488;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DWcYU6uY9KTc1S160H4P3qDdzH2WP9qP0P5gGV0wL5c=;
+        b=lgkHWRS+bljEDqF768OBD8LlvjG8yWD5Z0q5zOfeieF9ws8hXcUKmy9ZwzxR7swXjL
+         gp+j3eHaop4rsr3hhHXmrvAMr25LYjVWG0gMSKih1CYb7iO3Z5hNHLE39jnzHtof7d4m
+         tL79NrF5QSUuhOlT6AwZW41sGxAe2WOsgHZMPhprjHHPT3HE8upqsnNW3iQQHeJp2Zgt
+         vlsfUsg2POslbX5eQRIhfG0+mFjwRzAhI7lM8rEOno5nZZ/b+11kay+Xol9HpZHzHQlA
+         P51FibQwKA9StqeKctvt3UR8Un2wbQ/vcWH8bB4mVr3iIEhwkEiMUj8Vwr05seRpuE5p
+         VRTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUNPYphWklZShVouchlNGXmYH70EAUrunH9HeooU3xnhJ9uWldbVvubgA7kVsw2/7rxOsdXOTCMGIvjarU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEllwDnbYUE7/GjkNmxH4r5kbmWxehf3Bh6D71J5lpGq7USrtW
+	HQ/ug0gtci+GEeCLcs9aVwtFG8xnEo9m9p4IsL8WrXZdFAAqTNYM+6FTXZvJMsSvPXwXLkfBwb7
+	ZiELWcWtQUZ13QXlZPw6fFRkYLXJG0gXDQht485/lSg==
+X-Gm-Gg: ASbGncsIdaPkX1WTlY9XIpS6eJdcMvvLfpqNxcWEponSY0uPMvyWZOgPqTFDbZi1/+P
+	EEdzCxcxjOquN2rRvyRnFtLkky3iBG3w/YIIZAVAu38zyq+pxbzXUKELfXBtKy1F8PqdKFQvzCC
+	0dtuP+1D9nzGGsHmPRcv8Yxa7Eb7UA/yZNqPgXiyr+D1jQUyEXeS4jruWI29NWQt0C5ejpw0HDx
+	m6MYHjz8D6zQUXOTZq8kvlPd4EL3lE5VXYs8GS5DlB7xv34PFj1daCCYrz0oEQD02T4O6lI3s5W
+	PVqQOxS8xuiZsiqb7JS+2whr/40voxDQ3M+zleuk1Iuq0bAwdcajFr+kMMHnbeU97uP9bHIVKJP
+	sAxmS0jUu1YDv9W22JWk=
+X-Google-Smtp-Source: AGHT+IFWVvOdiwbaW+PgOu91YQeRhbmYRJspNugm4twgh9eTZ4FBQF/Nt9r+Q5ljCpPo3ammbd5nMdZQIwqQDhKBO4U=
+X-Received: by 2002:a05:6902:1144:b0:e95:3788:4d1a with SMTP id
+ 3f1490d57ef6-e9537884fc3mr7991770276.12.1756109688344; Mon, 25 Aug 2025
+ 01:14:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fd9dc21acd4fac68a3948ded59cf9235f0e4bb7f.camel@redhat.com>
+References: <cover.1755969734.git.jan.kiszka@siemens.com> <9c9a688c91140b3a62c753f14b8d1eb1c87c51d7.1755969734.git.jan.kiszka@siemens.com>
+In-Reply-To: <9c9a688c91140b3a62c753f14b8d1eb1c87c51d7.1755969734.git.jan.kiszka@siemens.com>
+From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Date: Mon, 25 Aug 2025 11:14:11 +0300
+X-Gm-Features: Ac12FXxsCgtaaA9_yOclBjOk4hFo95aZBfORuw5aXXfV_NwfyspRIBAYs3IxwPw
+Message-ID: <CAC_iWjL2HcHaz7CzvMTuHDH5TxoV+pVypLk+B0bWe7GJGvwP6A@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] efi: stmm: Do not return EFI_OUT_OF_RESOURCES on
+ internal errors
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>, Masahisa Kojima <kojima.masahisa@socionext.com>, 
+	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Sumit Garg <sumit.garg@kernel.org>, Jens Wiklander <jens.wiklander@linaro.org>, 
+	Hua Qian Li <huaqian.li@siemens.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Aug 25, 2025 at 09:48:23AM +0200, Gabriele Monaco wrote:
-> On Thu, 2025-08-21 at 14:18 +0200, Nam Cao wrote:
-> > On Thu, Aug 14, 2025 at 05:08:00PM +0200, Gabriele Monaco wrote:
-> > > Deterministic automata define which events are allowed in every
-> > > state,
-> > > but cannot define more sophisticated constraint taking into account
-> > > the
-> > > system's environment (e.g. time or other states not producing
-> > > events).
-> > > 
-> > > Add the Hybrid Automata monitor type as an extension of
-> > > Deterministic
-> > > automata where each state transition is validating a constraint on
-> > > a finite number of environment variables.
-> > > Hybrid automata can be used to implement timed automata, where the
-> > > environment variables are clocks.
-> > > 
-> > > Also implement the necessary functionality to handle clock
-> > > constraints (ns or jiffy granularity) on state and events.
-> > > 
-> > > Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
-> > 
-> > So you have figured out how to deal with the time problem. Cool!
-> > 
-> > I'm curious, instead of a new monitor type, would the entire thing be
-> > simpler if these new features are added as extension to DA monitor
-> > instead?
-> > 
-> > The existing "pure DA" monitors would just not use the constraint and
-> > timer stuffs and would behave same as before.
-> > 
-> > Just an idea, I'm not sure how it would look like. But I think we
-> > might reduce some line count.
-> 
-> Mmh, that might save some lines, especially the *_hooks() macros.
-> The few functions that are now duplicated would end up together with a
-> condition, though.
-> 
-> I'm however not too fond of forcing any DA user to allocate space for a
-> timer. Imagine a custom kernel for an embedded device trying to squeeze
-> some RV monitors in tasks and ending up requiring 64 bytes per monitor
-> instead of 8.
+On Sat, 23 Aug 2025 at 20:22, Jan Kiszka <jan.kiszka@siemens.com> wrote:
+>
+> From: Jan Kiszka <jan.kiszka@siemens.com>
+>
+> When we are low on memory or when the internal API is violated, we
+> cannot return EFI_OUT_OF_RESOURCES. According to the UEFI standard, that
+> error code is either related to persistent storage used for the variable
+> or even not foreseen as possible error (GetVariable e.g.). Use the not
+> fully accurate but compliant error code EFI_DEVICE_ERROR in those cases.
 
-I'm not sure if I follow. We put "union rv_task_monitor" in task_struct, so
-we always require 64 bytes, regardless of the monitor type?
-
-> If this doesn't look confusing to you, I'd prefer them separate at
-> least there.
-
-The current implementation is fine. It is just an thought that I think may
-be worth considering. But I trust you know best what to do here.
-
-Nam
+Yea it's not ideal, but we are still limited by the EFI spec
+Reviewed-by: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+>
+> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> ---
+>  drivers/firmware/efi/stmm/tee_stmm_efi.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/firmware/efi/stmm/tee_stmm_efi.c b/drivers/firmware/efi/stmm/tee_stmm_efi.c
+> index e15d11ed165e..8501056ade8a 100644
+> --- a/drivers/firmware/efi/stmm/tee_stmm_efi.c
+> +++ b/drivers/firmware/efi/stmm/tee_stmm_efi.c
+> @@ -218,7 +218,7 @@ static efi_status_t get_max_payload(size_t *size)
+>                                    SMM_VARIABLE_FUNCTION_GET_PAYLOAD_SIZE,
+>                                    &ret);
+>         if (!var_payload)
+> -               return EFI_OUT_OF_RESOURCES;
+> +               return EFI_DEVICE_ERROR;
+>
+>         ret = mm_communicate(comm_buf, payload_size);
+>         if (ret != EFI_SUCCESS)
+> @@ -264,7 +264,7 @@ static efi_status_t get_property_int(u16 *name, size_t name_size,
+>                 &comm_buf, payload_size,
+>                 SMM_VARIABLE_FUNCTION_VAR_CHECK_VARIABLE_PROPERTY_GET, &ret);
+>         if (!smm_property)
+> -               return EFI_OUT_OF_RESOURCES;
+> +               return EFI_DEVICE_ERROR;
+>
+>         memcpy(&smm_property->guid, vendor, sizeof(smm_property->guid));
+>         smm_property->name_size = name_size;
+> @@ -320,7 +320,7 @@ static efi_status_t tee_get_variable(u16 *name, efi_guid_t *vendor,
+>         var_acc = setup_mm_hdr(&comm_buf, payload_size,
+>                                SMM_VARIABLE_FUNCTION_GET_VARIABLE, &ret);
+>         if (!var_acc)
+> -               return EFI_OUT_OF_RESOURCES;
+> +               return EFI_DEVICE_ERROR;
+>
+>         /* Fill in contents */
+>         memcpy(&var_acc->guid, vendor, sizeof(var_acc->guid));
+> @@ -386,7 +386,7 @@ static efi_status_t tee_get_next_variable(unsigned long *name_size,
+>                                    SMM_VARIABLE_FUNCTION_GET_NEXT_VARIABLE_NAME,
+>                                    &ret);
+>         if (!var_getnext)
+> -               return EFI_OUT_OF_RESOURCES;
+> +               return EFI_DEVICE_ERROR;
+>
+>         /* Fill in contents */
+>         memcpy(&var_getnext->guid, guid, sizeof(var_getnext->guid));
+> @@ -442,7 +442,7 @@ static efi_status_t tee_set_variable(efi_char16_t *name, efi_guid_t *vendor,
+>         var_acc = setup_mm_hdr(&comm_buf, payload_size,
+>                                SMM_VARIABLE_FUNCTION_SET_VARIABLE, &ret);
+>         if (!var_acc)
+> -               return EFI_OUT_OF_RESOURCES;
+> +               return EFI_DEVICE_ERROR;
+>
+>         /*
+>          * The API has the ability to override RO flags. If no RO check was
+> @@ -498,7 +498,7 @@ static efi_status_t tee_query_variable_info(u32 attributes,
+>                                 SMM_VARIABLE_FUNCTION_QUERY_VARIABLE_INFO,
+>                                 &ret);
+>         if (!mm_query_info)
+> -               return EFI_OUT_OF_RESOURCES;
+> +               return EFI_DEVICE_ERROR;
+>
+>         mm_query_info->attr = attributes;
+>         ret = mm_communicate(comm_buf, payload_size);
+> --
+> 2.43.0
+>
 
