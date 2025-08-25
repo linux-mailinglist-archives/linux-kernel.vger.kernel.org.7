@@ -1,307 +1,407 @@
-Return-Path: <linux-kernel+bounces-785349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99C98B34966
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:54:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 86F4BB34964
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:54:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EC665E6729
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:54:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8C165E6153
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:54:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32336306D35;
-	Mon, 25 Aug 2025 17:54:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27FC3054EE;
+	Mon, 25 Aug 2025 17:54:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b="pT/PWCHi";
-	dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b="pT/PWCHi"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11020100.outbound.protection.outlook.com [52.101.69.100])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="tDMVb/aG"
+Received: from CAN01-YQB-obe.outbound.protection.outlook.com (mail-yqbcan01on2108.outbound.protection.outlook.com [40.107.116.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA42A306D3F;
-	Mon, 25 Aug 2025 17:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.100
-ARC-Seal:i=4; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756144475; cv=fail; b=ZDsLMr3rZ8ORwea3HA3REhMRFGI/yCKhUtodHr9Md5BghQ09aYj5PcXZZk6Sixej4C4Bnsk06xNGQkW19rzLIyr6UtsXuBuuiEJwl1U1UK/9+n3uwAwp623dpw7PgT3b82/MKkVvQfBGncHXiZjwDFInbYAOmszck2gOMDaAKDs=
-ARC-Message-Signature:i=4; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756144475; c=relaxed/simple;
-	bh=faBKK/nDRFKnTIarxI2yfulUPEijinPCnCOBJpYhzkg=;
-	h=From:Date:Subject:Content-Type:Message-Id:To:Cc:MIME-Version; b=JR9bm+epnZk6yShawuZOuwQf/Md408HP0P0htzy/cQSTTkPyE9TSq83gTC4S0Ydv37WoL6KwGNKuzAUVuTTyIL/CXeem3YuyqD2MDKQltpfpiUrLdf4cQ5WH2ktR9SCqz7wKs4v/IW1Ma5dPD5Rj6c5z8dhD0YeXoqrpyObEb9g=
-ARC-Authentication-Results:i=4; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com; spf=pass smtp.mailfrom=solid-run.com; dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b=pT/PWCHi; dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b=pT/PWCHi; arc=fail smtp.client-ip=52.101.69.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=solid-run.com
-ARC-Seal: i=3; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=qi8B7Rneh2CXaAv8jEkAbPCjKLSOE6ALHFv68mvAUZyt9K5xpwaOOQ2nRqbVCgiRl0jjiKpcLZgAAwwqdYvDNxPXhPGlWdpV713eExL8f9beXueUjt09TgVY1DAb+ptVRBDU8/9qPdKZhVbECkZTYpinFRu7qQxUN0xmW9LERDhkqO3Fy3X/++f2oCoYaZU//ZpS1S+fGmUNMLJPxwPM2981BSre2Ixx50n1Vo8K4LOtGEi7mbSqd/aEf/N+uiJJvM6kCzuAQXL3K+mxk2nWEbFFk+4FEbCY6H+zuXYuCokcXXwvT7PhOyzkdOAlZgZW1pbgEF+f5Kh8cLY4mJ7HEA==
-ARC-Message-Signature: i=3; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JCZ5hBC4vS4isaE3e8lk1/JCLbqblxBQlEEAmWJTC1g=;
- b=Tsz/eQGXL68k2gRJq9fJuQW/eKX3FGKNd+jCAu46fJit8cK7HwUpYDSLkDF0wjZossOk/gYsFW55VuYgaZj8VomUDaConk/Wm1EzfS7n+OGGutTgngx2SUwk6N05igg8zHTWxm+UhpoAN7jSe/kkrS1aOvG5j3gJYuTOxXSjsp9dl8tlw2Lu39fwp8OX1R/axgHutTECry75q6kgt+BfYs9nw/zpwT+6D2mwBECQnsLHNxC3lIyerRXl7P1hNNdWZEmBwwsnk9SLSKcq/283yLnVJAtNM/B3mBBprqS6ZrGIB4QpQ4mWk/Nv+3yNzbqauWOSfolwSPZ0CtZ4/tfURw==
-ARC-Authentication-Results: i=3; mx.microsoft.com 1; spf=fail (sender ip is
- 52.17.62.50) smtp.rcpttodomain=bootlin.com smtp.mailfrom=solid-run.com;
- dmarc=fail (p=none sp=none pct=100) action=none header.from=solid-run.com;
- dkim=pass (signature was verified) header.d=solidrn.onmicrosoft.com; arc=pass
- (0 oda=1 ltdi=1 spf=[1,1,smtp.mailfrom=solid-run.com]
- dkim=[1,1,header.d=solid-run.com] dmarc=[1,1,header.from=solid-run.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=solidrn.onmicrosoft.com; s=selector1-solidrn-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JCZ5hBC4vS4isaE3e8lk1/JCLbqblxBQlEEAmWJTC1g=;
- b=pT/PWCHif2r/sDk6sICXBN9UAZ6dZhX1xhU/9aI4WuKIECnOPTjMm9PO3Y3riArUvFoAarqxbEiIAkpHrjzOI0XXJCruJaPqjpn0y3uIZiXMlu7haZVVWAWQWLtufsCT99xoFwg8Hlelzhrx3eYNcUNziX45LUm7e4yvJTP4l8s=
-Received: from AM8P251CA0017.EURP251.PROD.OUTLOOK.COM (2603:10a6:20b:21b::22)
- by VI0PR04MB11071.eurprd04.prod.outlook.com (2603:10a6:800:262::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.12; Mon, 25 Aug
- 2025 17:54:28 +0000
-Received: from AMS0EPF0000019E.eurprd05.prod.outlook.com
- (2603:10a6:20b:21b:cafe::91) by AM8P251CA0017.outlook.office365.com
- (2603:10a6:20b:21b::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.21 via Frontend Transport; Mon,
- 25 Aug 2025 17:54:28 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 52.17.62.50)
- smtp.mailfrom=solid-run.com; dkim=pass (signature was verified)
- header.d=solidrn.onmicrosoft.com;dmarc=fail action=none
- header.from=solid-run.com;
-Received-SPF: Fail (protection.outlook.com: domain of solid-run.com does not
- designate 52.17.62.50 as permitted sender) receiver=protection.outlook.com;
- client-ip=52.17.62.50; helo=eu-dlp.cloud-sec-av.com;
-Received: from eu-dlp.cloud-sec-av.com (52.17.62.50) by
- AMS0EPF0000019E.mail.protection.outlook.com (10.167.16.250) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.11
- via Frontend Transport; Mon, 25 Aug 2025 17:54:28 +0000
-Received: from emails-9722785-12-mt-prod-cp-eu-2.checkpointcloudsec.com (ip-10-20-6-81.eu-west-1.compute.internal [10.20.6.81])
-	by mta-outgoing-dlp-141-mt-prod-cp-eu-2.checkpointcloudsec.com (Postfix) with ESMTPS id 3802080083;
-	Mon, 25 Aug 2025 17:54:28 +0000 (UTC)
-ARC-Authentication-Results: i=2; mx.checkpointcloudsec.com; arc=pass;
-  dkim=none header.d=none
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed;
- d=checkpointcloudsec.com; s=arcselector01; t=1756144468; h=from : to :
- subject : date : message-id : content-type : mime-version;
- bh=JCZ5hBC4vS4isaE3e8lk1/JCLbqblxBQlEEAmWJTC1g=;
- b=qx7yhMlsOPqIHQTbjZigIq9nGFyy3PtNlHRby5E8CZdM/Hipu9WS37RRTG5HUzemw6Fzw
- qlhOGhwagUzpKUOFzXM1knzePqFjXU298XMv9OejHWVe9WyWNMAx69FlfVr77Vprc0kfoBM
- FjGCksPXPDZs0KxC2yn6nKLkMDR1RVo=
-ARC-Seal: i=2; cv=pass; a=rsa-sha256; d=checkpointcloudsec.com;
- s=arcselector01; t=1756144468;
- b=PSmFPO0J/vSv8LXHEDYksEnS/j5P9yUKnjWsS8y1aN44+CPEBZ5hbSSxt1k8wFRSsDjWv
- zSsFIjJ+YrSAghrj7j6cmQMrHtNNJslUO+RTRCtHc7kV0ntTlECjARXw5+hmmGVgrI7Spem
- 9zHyTmHYHrRmzy4Uu4XV0exemheXtvI=
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5B473074AA
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 17:54:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.116.108
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756144466; cv=fail; b=b6toze6BkHWtkIliZQW5io9nLjXulRtmLLSj8dUwFP2mXRZl3VfG4VtmIeB0NEAscqX3E6N3UCWDliBSIG+1CvmoyFTOGbJjxO6Pq5VAlPgnnSkArUJRq1XDrLQpgLbhc56Ueus4nkiTZWNFYSYI9g5xFBak2v6mefSDBea/XPc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756144466; c=relaxed/simple;
+	bh=LXfqPoLXyko3HLbPIRTO6//UR8bUd8/aZ/CRRzwE6cc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=L2s+QzWGfxTbw02GY3lBjvVSQOa6AdSOI5Py0j8Y6WNqyYvsVQP6XNNs513yvOuYuE+RjAJmA4Sk6Uu3blJhgcHzn5WP8ClUtYmOoZeg3aGAHXvytkzijG1+eWvQNYpK92k9P1uxIPWSaNRQhMPZAFtO+VXYv86eh9XWRjTBvMY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=tDMVb/aG; arc=fail smtp.client-ip=40.107.116.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZEHpkpwqeacytbi0Qe9zYxcIGiwt0WMvsHkAJT71Ix5/UfT5c9qq3HNfsBeAq3u4sTzEJ7bxjzunT+NGg/t2e/Kp2TJT2qbCxHCU+GEuFYrAtNES4SdQbEM7ynngYtGo9zAUpSXZOz7XBMzVLLylKPBwNiWmyvdaPJPnc01xHBZlXgYlDjC86Pf33HbcPV7Ai24hvgH6y2DnsNNmjNQhVI20NTWW1FOyChtycNkk/SfZlehgTCfhYPebxBPdcBmmo2gaCvBeUgPKCZgJ52TdId02oZ+yDlZJQ7wj0e2R/4ViTN+++h95cQ1XwWxJzdDNIinGeXsJgv/k/yn7s0ScQw==
+ b=A4abzPpYcaRTXtulXhFXfyT6kDFOhgD5JqMQDSe9KaJQOexCuTGoAc2mF9SsYzw9OwGpd6ZKn7o7oeoDzcBDFiVgIgAH4JI+E2qxwoNbBNXydBTnW3EYFsaoYT5/R2ox96dOH9NmpmQgNVRdkFTle4jMm+9xuDDjUM2FV9GRMCkWDMbVGtQDwZZf4bvNUYJweiWuLBkXzsEqrrxDzeylf9bWOxJ6mGKoIJuAa25vKxnZFpnv6hr+PfSVMe7AfAOW4A+y4MHy4RMr7k2tBVSa8ofUINts+B1Z+K2RG3R5p1b/VHOY3VLvotZPqow7kG3jpHWgNocZ1fBk6MukPu60Tg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JCZ5hBC4vS4isaE3e8lk1/JCLbqblxBQlEEAmWJTC1g=;
- b=EV5/yOJIYO+BkErC7PdPouYB3zJuZOzxB/dwFhApC7jJimhekpwy1wVgaHTjt4P9BWRdxDRbHZDRln6oarr5GAXxwZLf1GOK0evGH2TxiBYSYbAiWLIymbujSzERVj02ywDP6yY5/BGBwEonEzfQVqp1WxT9JysQZUtIHaylOwiT9PpCVhTM833s6b5UFiPribrOLjJEmjTeGSM9ge2wlemv8ViBmc8FXDoIylr9+yibEgKL3wEdmfh6do0dkA6P+FbqNNmZU8JzQaYgk0nKo4ouM9mABFnK3M64Ww2I4LVCveBB9Dz+HwyKIWawE8P5zF0um8tu8RI5QE0pzvMJUA==
+ bh=zUvAzUZLg4k/FPTnmHlgUOHLZcEQgIw8AjZRlIzeAA0=;
+ b=Tq4woQpjJ52MOZbDW/QElJq0yh72djCBPo0EhYmh7ZWrcJ0WgHNntK/Vwyqt+nvNDRB3M6t61DmTXuLz1nhJmVrd9WsWAPp5gIWElK3KDjCEn0ufsWjL89F7Aa/jDvwMItR/ZDcazOyBFhmNXbXDBhlFntnDTha7EfRJbAl+dlZX2FPT6K/8DTP0TS7i6cct5c1rqPBpQ+xIqAtHJHfM8KA8HdLnKaVZlGyw94bDj5K1x/0CGoWHaqZHbS2kA9aoaLZTJ0ihDcLdeAj+DM6w0cOLIFGSobv7M3RxgNgr2NAJI+prWSATpmzVoCEP6OWw8ON9GMAwxJnJFptabYmIzQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=solid-run.com; dmarc=pass action=none
- header.from=solid-run.com; dkim=pass header.d=solid-run.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=solidrn.onmicrosoft.com; s=selector1-solidrn-onmicrosoft-com;
+ smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
+ dkim=pass header.d=efficios.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JCZ5hBC4vS4isaE3e8lk1/JCLbqblxBQlEEAmWJTC1g=;
- b=pT/PWCHif2r/sDk6sICXBN9UAZ6dZhX1xhU/9aI4WuKIECnOPTjMm9PO3Y3riArUvFoAarqxbEiIAkpHrjzOI0XXJCruJaPqjpn0y3uIZiXMlu7haZVVWAWQWLtufsCT99xoFwg8Hlelzhrx3eYNcUNziX45LUm7e4yvJTP4l8s=
-Received: from PAXPR04MB8749.eurprd04.prod.outlook.com (2603:10a6:102:21f::22)
- by PA1PR04MB11405.eurprd04.prod.outlook.com (2603:10a6:102:4f0::20) with
+ bh=zUvAzUZLg4k/FPTnmHlgUOHLZcEQgIw8AjZRlIzeAA0=;
+ b=tDMVb/aGmU225jKbTVYpE512pHCCXIc64NF7bXk4EJzOgUSpMNXEOJkak30jiAxgTwL2Tei8SgcqO2EaKN4eHXlg0ywdyL7xftk3FuptEmMAxmo4vLAtH/kgXnS0GohzgcNAhy1nlg2qVzcukEn9x0octi2kPqtqteZCTn39fRJx/D3UTGpKpwUZ9a4xw1qgNPOfqxOzXV39l1l1Y0iJceO+8C9B4oT0wQ38+FjYMhUlBd1vkMOKLExIc5ZucFMSdeb1TBRp2SQpnigAVCx7CCq7SY8qPIme1+BbwiHk1BcubROn/CCbMtl4j2GtnqtrgI/dY3cy9v+SYxB5CpJAuA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=efficios.com;
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
+ by YT3PR01MB5331.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:63::9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.12; Mon, 25 Aug
- 2025 17:54:17 +0000
-Received: from PAXPR04MB8749.eurprd04.prod.outlook.com
- ([fe80::aa83:81a0:a276:51f6]) by PAXPR04MB8749.eurprd04.prod.outlook.com
- ([fe80::aa83:81a0:a276:51f6%4]) with mapi id 15.20.9073.010; Mon, 25 Aug 2025
- 17:54:16 +0000
-From: Josua Mayer <josua@solid-run.com>
-Date: Mon, 25 Aug 2025 19:54:09 +0200
-Subject: [PATCH] rtc: pcf2127: clear minute/second interrupt
-Content-Type: text/plain; charset="utf-8"
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Mon, 25 Aug
+ 2025 17:54:21 +0000
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4%3]) with mapi id 15.20.9052.021; Mon, 25 Aug 2025
+ 17:54:21 +0000
+Message-ID: <d8c69b7a-43ca-41b7-af8a-6eb1772c55a4@efficios.com>
+Date: Mon, 25 Aug 2025 13:54:19 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [patch V2 07/37] rseq, virt: Retrigger RSEQ after vcpu_run()
+To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Paolo Bonzini <pbonzini@redhat.com>,
+ Sean Christopherson <seanjc@google.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>, Peter Zijlstra <peterz@infradead.org>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ x86@kernel.org, Arnd Bergmann <arnd@arndb.de>,
+ Heiko Carstens <hca@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>
+References: <20250823161326.635281786@linutronix.de>
+ <20250823161653.711118277@linutronix.de>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20250823161653.711118277@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250825-rtc-irq-v1-1-0133319406a7@solid-run.com>
-X-B4-Tracking: v=1; b=H4sIAECjrGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDCyNT3aKSZN3MokJdkxRD8yRTUyMDk9QkJaDqgqLUtMwKsEnRsbW1AO6
- 53a5ZAAAA
-X-Change-ID: 20250825-rtc-irq-4d17b55204eb
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Josua Mayer <josua@solid-run.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: FR0P281CA0009.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:15::14) To PAXPR04MB8749.eurprd04.prod.outlook.com
- (2603:10a6:102:21f::22)
+X-ClientProxiedBy: YQZPR01CA0175.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:8b::21) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:be::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	PAXPR04MB8749:EE_|PA1PR04MB11405:EE_|AMS0EPF0000019E:EE_|VI0PR04MB11071:EE_
-X-MS-Office365-Filtering-Correlation-Id: 74d46bdd-7140-4fb4-fe79-08dde4006fec
-X-CLOUD-SEC-AV-Info: solidrun,office365_emails,sent,inline
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT3PR01MB5331:EE_
+X-MS-Office365-Filtering-Correlation-Id: b424d052-76c2-469c-401a-08dde4006b65
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted:
- BCL:0;ARA:13230040|366016|1800799024|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info-Original:
- =?utf-8?B?cmplbGl2TDZJZmlKSmh1VFBUYUdjVzQ2MFg1NWt0THNWak5wRUNHL1pMcHAx?=
- =?utf-8?B?VU1ZT0tYWWJ0Mm10OXJlajhTV2hsQnRtanhaYU5SeVZDOWV6MmI1RFhBYTJR?=
- =?utf-8?B?cnlEWnlKZjJMTVZJd1k1UnY5Qk9lMitjMmY2SkJWSnhGWjlHWHR2SDViVkZC?=
- =?utf-8?B?THhZU0hzbmVUMlFSTzNNYVRGbnF4aWJIencybG1JcEQ1SHhZNjFDMVg4YTFu?=
- =?utf-8?B?TWdlTGh5UWF4U2VLN1dHTXQyL3dBRTY0bHdhYktaYitvZU93cmlwaGdHcUF0?=
- =?utf-8?B?WG1LbHl4Um5YY21hYlNuUmJHTXF1QW02WmpKYy9XRW9XdEticjJTczZNbGMw?=
- =?utf-8?B?TWhIWnp0ajVjUUdmbnc5bWVSdU00L3d1OVdBUE5GNzgvMnpWNUFQMWpRcm04?=
- =?utf-8?B?N0RhdjcreFM2dWt0M3hJajhCRDJpMWlpc3FTcWUwRHhERjRzVFlCNC9RQ3NP?=
- =?utf-8?B?a3hFOEhCdlllWXY1VGdqOEsyTFVqSUk5VWJaUm8rYlZnSC9WUkYvUnFrZFNj?=
- =?utf-8?B?WEV2c3lQc2JYeE56Y1hKMlVZeXhyeDl5WE53WmY4QThYRDB3bGNyMWJWRkdr?=
- =?utf-8?B?ZnM3enRCZVZwNTRNWU5NbHZFZ2JTSkFaczBDLy84SWdPS05aTlRYN3BnYXN0?=
- =?utf-8?B?VUdGZmxwZzY1M2hTT3gyUGNNN1NOK1RwRWlMamUrSXh5NGZ1Z1BOcUFnYldQ?=
- =?utf-8?B?K2cwcG9wazdJak91WmtyZjFINmxHQngwbU54b1VXUW9UdFJxL1ovZmdoUldC?=
- =?utf-8?B?c3pjNW5OU1NDSVVVL3NTWVduTWtMd1pUTGlpMFJEd0tzdnFUVmVia1Y4TkM3?=
- =?utf-8?B?ZnlsM3pHQm5pMEJ3eFlBNkdWMEZidy9RdW81WlloUVZ1N215aEJoM2V2a0ZZ?=
- =?utf-8?B?SDBQc0w5b0FMSHVZb3A0dUgrM3B6REI1eE9UY2NTK3VCdTJtS2ltRFluWmty?=
- =?utf-8?B?OTBjQlk1QWZPY0dldk5zSXdoZytlMFRtRXlFaDVhd2ZXWVVSazlpUHlwUjBq?=
- =?utf-8?B?WVdtUHFlMHFaVE9YSmF6cW9FeG5zNXRpMVd5WlJuRTZLSEhmbEkrdFZ3RWV5?=
- =?utf-8?B?NC9tSWtSaVdydCt5VUF5Z1k1SjhVV0N2V3FJT2dDTlRwLzUySzVuV1krUVhJ?=
- =?utf-8?B?QVQ1WS9yNjZyOVY3U25CZjN2L1BQd01aOHhaeWJWNGFsWGpxWU91QXNYc0FQ?=
- =?utf-8?B?eGJQZldrS2VpUnJOWGEyRE5pNmVVNDJidlVDWGFUUXdPUWFZVFlieDIwT2Vj?=
- =?utf-8?B?V2lzUDNKYzdtdWRiZjdobWM4VlA4RS9UTFc0aHgwTnlwdnVkelE0UTlURmNl?=
- =?utf-8?B?YWFyS1pIQTN3dW04aUlZU0FDRWhTM1V5SW56eERkc3htdVh1WFVyQzVZM1Zw?=
- =?utf-8?B?dW56Yi9SUUphMXVkVVphNDNpbVN1UG1oS2JJVE9XQ2lPQ0MyUExiUURDWGNC?=
- =?utf-8?B?K1A1YXN2NjFLcWxaR2Jsd1lGczY1L295S3pTRzBHNTRSM0paNitvN0NTOUx4?=
- =?utf-8?B?S0dZNlh2UnhaOHpWajhVaFNWbVJyb005cnoydmxnRWNaa2dMQTg2R3hhNkp2?=
- =?utf-8?B?RFBiaG9qcUhaS0EzWnBDMG95VGszUWFUZnIzUUkwOUFnSGYwZXZHR1FMeTYy?=
- =?utf-8?B?bUdIaHpNdUtmeHZRSHFrNnVWTVoySDd6VGVQa1R4ekNCaW1oYzFCdmUydTY5?=
- =?utf-8?B?M054MjkxcFdSNUJOMHNvdi93T21qNmE5Qy8vbXZKR0FJSG10N01vVkdRZ1Bk?=
- =?utf-8?B?YmNFOEtzZ1RFbkMrTkMvK2cveFhkR0tvTm5Gc0pJaHlaNUlJeWxQWXZ2NjFH?=
- =?utf-8?B?akpPQTIrZFovaW1Xb1NKRzhuRWJ6anRrNE04U3NmVVVJeVBPdEd1NHdJaEFX?=
- =?utf-8?B?R3IvZTl6QUFxQ0Nyak82ZkFLa241eXNPVHdoeE9GREVScVdXWU5yYmFOQVIw?=
- =?utf-8?B?cDlhYzdRRzNHKzNOTzBBYUFtTExGaFhhTVVlVFBNc29BMVZoZkdzL2YzVGtX?=
- =?utf-8?B?U3VCTE51aU5RPT0=?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8749.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB11405
-X-CLOUD-SEC-AV-INT-Relay: sent<mta-outgoing-dlp-mt-prod-cp-eu-2.checkpointcloudsec.com>
-X-CLOUD-SEC-AV-UUID: a5741bd4f17e44ea8643f3bc4a3bd377:solidrun,office365_emails,sent,inline:43f71f6f1701830a8f606ee4f95e7c86
-Authentication-Results-Original: mx.checkpointcloudsec.com; arc=pass;
- dkim=none header.d=none
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- AMS0EPF0000019E.eurprd05.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	44aae24e-8af7-4f29-692f-08dde40068da
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|82310400026|14060799003|36860700013|35042699022;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?STlralJYb05DWXVaTFBCMGlHVVdRdVRDZC80VEkwVnJzNnNNQVpGSmJLMGNT?=
- =?utf-8?B?OXBmNjg5U0wwcGtOYXpoUjlWdW01SG91Qm1vYVNvUmI2bHV5OG1hNkxXN09p?=
- =?utf-8?B?NTErWXE1eDcvM2NoOTBSSEQvR1VuU3g4eTBPdGs3dlo3T2hTcjg2aHVqdlFq?=
- =?utf-8?B?Uk9sbnVXbHB3VVFUOStLZC9rNm05bjl1RW04V25iV1BEYkYzRTcxcjVWaldt?=
- =?utf-8?B?aE9SQVRJVmI1czZXY1E0VnhVbjY2aW14NmpjYjhVRTRPc01YSkIwTzRpZCt5?=
- =?utf-8?B?Y0M3WlFPQ1hpNmZzdmVtZ3F3VGhzTGRDbXFyN3MrWUl0S0NMK0NnL1pFdC9S?=
- =?utf-8?B?WWE2RkNNWUJOenoxbGp0ZTBzeFdwNmpjSTBBN1JRYzB5WnZiWTNqa0wvNW9V?=
- =?utf-8?B?K3JyUmxvZ2wrZ2ZsaWVIUjF5ZXNERjUxdlR6b1JIYkQ4bXFLUDIreGY0SjZj?=
- =?utf-8?B?a0YybUUwN21Iay9CT3Y0ays1MTdYZ0J4TkpvS2dVQWt0bk1WY0tTWmRmOERo?=
- =?utf-8?B?eC92U0dPYlQ2Y05YS0FVWjNlc0hFV1N0dy9ZNDFaUnYyeVRyZEtUdFpwTVk2?=
- =?utf-8?B?ZDF3aS9kTFQvakI1UzMxRnZjaEVYZHlLeWFYcVl4ZjN2eEl1OWk3SER2a1JB?=
- =?utf-8?B?Q3BURjNvS2pGTVJrNkZrSmkyUTZTTUJsUTlCSFIrOHNKTWpvWXU1RWtuM3Rn?=
- =?utf-8?B?M1Y3Z3ZhQXlzRStmWFZDZEdrZStmcklJdFhnZmhLRkJiR2Nsb0lHNTdCU0gr?=
- =?utf-8?B?VFkrUndNOWFpYmJkbnd5WlN0UEZQd3FNMVdvZ2hzTDhGK2dhTUVTdUNsNisz?=
- =?utf-8?B?c0dacXhqNXc0eFVIYVhRbG45a3drY1hGa2RFZlN1SlRVbERwdk4vWU5RQXR5?=
- =?utf-8?B?ZlYwZEMwM1FWR1VwZjcrTHUwMVVLUHY0cXY5RjJsZzNzaU82a2pFSSsrY2Jo?=
- =?utf-8?B?MzM2V1JOR2lzKzV6c3NaTjFVSWlVVnFTR01IdzM3c29zSGIyQjZwcjFsSGJv?=
- =?utf-8?B?N3pHNVpiOEplSTlKdE1oWWlJMXFnT2FOeVRLN0FsbHpZT2Y4RTZNcUh5OGw0?=
- =?utf-8?B?RUJzMkpRR1Q0NG5kS0k1NzZDTTg3Sm1YOEhIajd6MUwraTVwd0R2SWMwQ0JV?=
- =?utf-8?B?a3pwVnBHNXpjY0FZTFpDWlVTYXdjRlF5cFA5aFVzWHVLTlBaaXhlZVhtUGhK?=
- =?utf-8?B?VElhRkdLMXhDVkJFd3BwbFZ2dTRmaEdBR0NhdUtrZkxnblBwN0lOZi9yUHQz?=
- =?utf-8?B?VDZDL1F4Q0F2VXg1NDZTZlFJUkw3MllscDdTZlBiMEl6ZUJ6dVFVbGt6a2lz?=
- =?utf-8?B?aWpXVFUxYVpRUlZMdkQ1Nm1rRUZpbDhrUjJnQStNanRvTVJXaWx3K09MYjQx?=
- =?utf-8?B?T0MxSFUzNDJ3RFBXQXFocFVkSW1PNE1LMFFtSmdpbjVXZzNtalZqcFhVaGZj?=
- =?utf-8?B?Y1QvRGxxdGZzcW9DSzFwN3FtQnZXcjlkVnpYdVJnSDc2U3RMdzJCNE1FTmZR?=
- =?utf-8?B?bFcxeENVMEt4OWtrT2d1SVZNWStmQWFNbWg1R2gvaXhQalZEc1NWRzBMa2lS?=
- =?utf-8?B?WXhMUEVsaFFJdm8yNGVxODdzMVE4aXFXN0U5QnhIWFJMVWtOZ0h3THB1MTF4?=
- =?utf-8?B?T2xYbENwYlZMOFduR1RiYUl4TWZiUVY5ZitkUlBybzI5RS96SjNObzIvdG5s?=
- =?utf-8?B?Y1FFZTlWWVk4U2l1R3dqdXdubVpocCtHL2gxd0M3bytDbFI3UlJWOTlBaHYy?=
- =?utf-8?B?WHE2NVdmRWpHUitseFl5cDh4eVlLVUhPcFZDbUhET1RrRXhPdEZoY2xOTEFl?=
- =?utf-8?B?eHVnQ2RHS0QxQk1nM3E0Q1VHcTg1MHVIenFjZ25xcTJDbEszRVlBdS9XU0Rj?=
- =?utf-8?B?ZEdDSUJIMWhJUkYyaDlKZ2swSVBlTHFIbVhRNjhXU0lyVzZZT3YxZEdhTWRl?=
- =?utf-8?B?bFpzMUtOenRIRWpoTFlaa1NFR2xvN3lxc3dGYVdYNjhNNGxnSnpRMnBZenEz?=
- =?utf-8?B?WWpSMW1BMFFiY1Vtd0xRNldHSGI4TVRGckJlc2JPNVNFcTR0a3BtdkVWa2lG?=
- =?utf-8?Q?3QBfc3?=
+	=?utf-8?B?Q2Yxdi9EaTVIZTFCLzNQMW9jMUVkdE1BUlVsNzVoRmcwekNidmpyNFIzZUR3?=
+ =?utf-8?B?cjhpQVN0M1VteGVDZXdMVTdWQjZUN2tFaXRMZkFjYVNNTHB3UE1jaDBQeHR6?=
+ =?utf-8?B?THdpa2dIdncyV0hqazE0VktTNGIxNVdFMzNZb0hFOU9vVXkyS0Zza2RJdm1k?=
+ =?utf-8?B?c0lMVjZXem5nTGo2dkEyeStsbW1PdmlLWUlPbDF3bFltQzRldGhNQ1J5WmNt?=
+ =?utf-8?B?REtTb0MrNGlGNGZFNHU5OUNKTTl1YXd2NTllWkV2N1FSSElIMjYxc3UvSm1i?=
+ =?utf-8?B?blQvMkt1aXArM2s4cVJ1bGVvekFZVlFBa0pKY1pDa0RDc3hXMDA2cmM4RWU1?=
+ =?utf-8?B?ODNHZm5KMUJpbzlPdktvMTBDTTJldC9YUGdJUFQzempGblJJbXRlcnM1Z3VM?=
+ =?utf-8?B?U0p3T2VXL0V2MmMvWjJhZnNPcHNqOVUxTDN1SXh4cFJyRGhaU3crNTRpeGlV?=
+ =?utf-8?B?M0t5UjZHWTRRTHdNQitLanVPd2lZM05FekFHUWY1L0NqemVISWdPNWE1TTFa?=
+ =?utf-8?B?NWFOUUdyQytWbnpGb0VmWEJvalBTK3dlYWNlMUNlQ1Fmd2lCUnFKT2pKeEVw?=
+ =?utf-8?B?SndGVm56S0xSL3ZzTmdSTDZsL3VmdGkzN01aS2RXNm5rdFRWTUY5eld6ZWtE?=
+ =?utf-8?B?elVKNE9WWTZnSDBhQUpadXhpRTZMMjhLVEJWMmZTcVNsbEZJSEJxRVVPWlRY?=
+ =?utf-8?B?aWtkbmdBb3BsWnZUbnBBaEVWMlN1UTYxUEYyaytuTEYrdWIreGJvamtuY2N0?=
+ =?utf-8?B?SjIyejhIWklRd0JkWmI3Z28wb2s0WW9XVjVoTGpYbDZrR1ZtUnkrVWNUQmpX?=
+ =?utf-8?B?UHNqL0xWNzQ5VVNidlNqcHBBem9pYWZwb0ZCeGpqci9OV2I4OUdBSTVRWXpr?=
+ =?utf-8?B?NU5lM1RBY09rS1lvMERnV0FyNlNMNFJiNUR6cCtUeVZpS1JuQTlnbC8rWVBH?=
+ =?utf-8?B?RmdMa2Z4ejg5RVlNMWVLUWRiWUUyZlF3TzFNYU1UOVNYNVRsRFVtMWRqR1lZ?=
+ =?utf-8?B?SVFtVGQ1aU5mMmtZUWVKRUV0MXFQQWtVdTQzNURqUEE3OWtYbzZ0b1RXWE5S?=
+ =?utf-8?B?aU1mM25nbDRIaktwbUhkNW9vTFh2aHBYek5XNEtNdGhnVGVveHpSR2NXdlNW?=
+ =?utf-8?B?YzgvRHgwM3EwajN1bkczblBTdDhKZVJJOGgxVFNWek9TR1htV0xKbFFpeW1j?=
+ =?utf-8?B?VE9oMHlFajRxSUJuejJBUjZaclpJRGxXR1NxeXo4NjRBaXVCWEczVGJCUkZu?=
+ =?utf-8?B?c3d6c0h5QjduTTZsbVBuUnB6dEVEYnNwVXVtMGp2NnVrY3RTSHk0alg1ajNm?=
+ =?utf-8?B?ME02eDBVRGF3ZCtEQnlQZllxVVZWRGZZZFQ0WjloZzNMSkxoOUtSbzduTlZB?=
+ =?utf-8?B?M0FpdjhoeitmcXlqdEQ4aXJCWlVxUHhORW1BeHFJcG16VFdlNEdQbXBvVnZZ?=
+ =?utf-8?B?anliTm9QYTJ0WDZvUWZtSTlmdWM5T2g2Z3pPTjJzSU9USmN5SWZiMitXWlBK?=
+ =?utf-8?B?bnk4R1RpaGhNQTJuNEkvVk9uY2w1UFh0SHZkM2RZcHRic3duL2QyMkJrWEk3?=
+ =?utf-8?B?dk0yUzlQeGVzdzNhL2J0R0YyQmhxS2F1RjE2VEZBRFhSbVJyS21xQnZsUXU5?=
+ =?utf-8?B?R2NKL2JrQk5jT2RoVTdYemdoTmpPTExkN3pNQkpoYnQwbnQvT2t3UWhxSWor?=
+ =?utf-8?B?dThVa3BLWjc2VEtZOFI2bDcyS3ljQVk5RGltaWwxNlpCZThoamtJbHl2TSs0?=
+ =?utf-8?B?RFlERTZTU3NGbEdrelc1azFyTjNkZG1aTVg4aHpPZHBKWEZHYkNUME1yRmMz?=
+ =?utf-8?Q?AZx0TNpxHRgr/iJuJvQK1StLHZmHTmrsyhduc=3D?=
 X-Forefront-Antispam-Report:
-	CIP:52.17.62.50;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:eu-dlp.cloud-sec-av.com;PTR:eu-dlp.cloud-sec-av.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(14060799003)(36860700013)(35042699022);DIR:OUT;SFP:1102;
-X-OriginatorOrg: solid-run.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 17:54:28.4548
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cDlzdHVtSFRtcXRLQUU1eHlsTUYrRUZZWTBybE9vdCtscXY0S21PVFRsL0pI?=
+ =?utf-8?B?bWxGMWRhNC9iMVRuSGhqRTdMY29BV3FYc2R2S2RCNGZ0N0s4bGNPVGM0bElw?=
+ =?utf-8?B?RmJaSS9taHRCYVN0WFpzdmxIdEtVanBJa1JuQ0ZCOWJHbnQwTFlXRHhnUmxR?=
+ =?utf-8?B?SHJNcldYd1JnWS9QZnpxZnZDZFdRQ21UVFZmTG5ITmE4QnZlVGRPZnFQRkFF?=
+ =?utf-8?B?QWRjb3hLNzExalJjZ0FTb3BLeGo4Qnd2SmxPVU95cXl5MW5HYlo0TnJ1NVUw?=
+ =?utf-8?B?VHphbWI5bEFEWDlvc0ZveGZaT2VGeitpSko3cXRPRlhSVm1TbSs4VW5QdTVl?=
+ =?utf-8?B?R0hnUkRLQURYSkRrVWFOVmx0UUNUT1VhazVOOThRTE54REJuNCtCZHI1dUdV?=
+ =?utf-8?B?ZUI3UCtWNzJKc0xoYm5SVkJKVjJ1aDhTSEdHMnFmbldreGJDM3l0WXFFV1Er?=
+ =?utf-8?B?OTk5Z1VnUkNSQmNxM2hsZ1FZM2VUdStjaGdDd28rYkh1T1BNby9xcWxjNEM3?=
+ =?utf-8?B?THpJdTl6TGtrWXUzY1JLUXlKQ2FTQ3hiek9MY3N5YzNRbUZ2MU9IUS9USEdQ?=
+ =?utf-8?B?dlBmN09Nd3JjVkJhRmhSTG1JV3lNNG1wZHZKcSs2c253QkJCNUlIVnVpdlVJ?=
+ =?utf-8?B?RXRiY2tIQ2FzOUFOTXBPT1BiK0xDcExHWHlFcXJHb2phR0tWSHIrRXZoMDhu?=
+ =?utf-8?B?bitENTR5eWUzbFlQcGZxek5VY0Y5dGcxZkZoN2tmMFpVbk9NWGdyakN2Z0Fl?=
+ =?utf-8?B?VXFCckFOZ0NZMmRaWnR4R0NsalhkTk1LbXNReGxNblVDYnJjek9VYmwwb0Z3?=
+ =?utf-8?B?a29tK2pWMDdkZkhJT2xvNTNuK1BaVE41RzhDTjVpRG1kQUxld2haMTNVUGcz?=
+ =?utf-8?B?YlVYQ28zNWtpSU1NS2hCYmdwQUdjMUR1N3dUTDZtOFBpYWN6L2dtczRHdFBL?=
+ =?utf-8?B?NW9JK0FFekl5NlF5OHpWY3A5bnc0UlpsMElPQWtianplU2N5T1NSQ2ttemIr?=
+ =?utf-8?B?aVFyS2NKWTM2T0hqaWtBT3dJSEZQUDFmcnN5QitJaXhFek5xekhjQTJTL09O?=
+ =?utf-8?B?ZzlpVjJtQ3lhNVZsR2VpWVk5blNOclFsdlhIYkJ1YThlV2tGUTVvaHVzWWI0?=
+ =?utf-8?B?MzBLU0dQbXFkeTJaWnlIM0MvQlpYVlloRHA1UFFhOUFLWW02V0t5di9iZ0dH?=
+ =?utf-8?B?c1JEYWc3b2Jnb2NwQnhtNVFxeWx3bWduMVNaNzhlVGh0Q0h0UHIyK3RueTVP?=
+ =?utf-8?B?ZWRRT2YrNDM5UHZvcVowZVVsVnVKMVFPVmpWTUlMajN5bHVHSi8yMkVtdUdL?=
+ =?utf-8?B?NW5ENHlJcUVjKzRmdWhqWWxIUUphRGMrRVdMTDdlVzE3Zkd2WXBxb2hnVmtC?=
+ =?utf-8?B?Zy9xS2ZodzNaSHkybFcrelZCbFV1d2tUeTJBS2xoeTNWTk5MVGdKS2ZMYnB4?=
+ =?utf-8?B?YWE0WnQ1enE2emlLY0c3SGhBbG1qOXBVVXVUNytscmJ0Yi9pNGhPVnQrbGd0?=
+ =?utf-8?B?M2dqSWpVNy8rcXZsckVmcmxBSTZEd2VGZTFOanBGZGd3OXc5cmVFRGpmK2pZ?=
+ =?utf-8?B?d2dVdVpUN3U4aXZUaTdFeUl2bTZsa3p3QnkvZWZldk16NzhwUW5RYnhwcUpx?=
+ =?utf-8?B?MHZiU0luN2d3SlNGOTFabzBDTHFLaE1VZmFLWUI2OU5leEEvS2ZuUDJQRjVz?=
+ =?utf-8?B?YjZ0ZE9tRXE5TnR2ZDh5Zmx4WjBXcklKd1lEdHVKR2tCTkJtMno3Z1MxNTVJ?=
+ =?utf-8?B?Q0NLbmtMWmZRR3hDY1MvMFhjZ3ovRytFQ1drdGhGWHpsbnN6dFhwRTlQN1RW?=
+ =?utf-8?B?M3VpQkJiZVdHMk1GZFNTM2lkaGFCQXJseno5dThnV0RUTVRFeTlHTHU4S3Zm?=
+ =?utf-8?B?NERlNS9NL1QvVExMQTZORmJ5RU16aDhpdEE5SncwRFpONUFYWStVNWRUT1la?=
+ =?utf-8?B?UjZPVk04d2VCN1BTU1RDMkpXVE05K21GQjdZUnJPdjBqU1h4WVRiS3pWVEdH?=
+ =?utf-8?B?czhYdGoyYkxVaTlsY0dSUnM5QTJxamZGL1J0Q2F4emNtSU95djh1dDkyc3d1?=
+ =?utf-8?B?OGNSN1R0cHNST3ZPOWpyaUg1UmM4cHFGcmtXZ2F3blBIZmRiMjRnQTd3dnYr?=
+ =?utf-8?B?RzROZXVZWmFmaUNjL1pPTitCL3owbjFNemxpdjFabHNYYmFreDFPWWNpSVp1?=
+ =?utf-8?Q?odf1j+Nxzr/DGvmk9U3FDdI=3D?=
+X-OriginatorOrg: efficios.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b424d052-76c2-469c-401a-08dde4006b65
+X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 17:54:21.0565
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 74d46bdd-7140-4fb4-fe79-08dde4006fec
-X-MS-Exchange-CrossTenant-Id: a4a8aaf3-fd27-4e27-add2-604707ce5b82
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=a4a8aaf3-fd27-4e27-add2-604707ce5b82;Ip=[52.17.62.50];Helo=[eu-dlp.cloud-sec-av.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AMS0EPF0000019E.eurprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB11071
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: YjARYoX8WTGfe3PkdpbSByvtYP7f39H7v8m0JsopPz1sQloWJoCpymEORqYC0TimOdpDL3VVWABS7FSA1GZzIM8Gb8/vpBfo4TbfI6Q/Lrw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT3PR01MB5331
 
-PCF2127 can generate interrupt every full second or minute configured
-from control and status register 1, bits MI (1) and SI (0).
+On 2025-08-23 12:39, Thomas Gleixner wrote:
+> Hypervisors invoke resume_user_mode_work() before entering the guest, which
+> clears TIF_NOTIFY_RESUME. The @regs argument is NULL as there is no user
+> space context available to them, so the rseq notify handler skips
+> inspecting the critical section, but updates the CPU/MM CID values
+> unconditionally so that the eventual pending rseq event is not lost on the
+> way to user space.
+> 
+> This is a pointless exercise as the task might be rescheduled before
+> actually returning to user space and it creates unnecessary work in the
+> vcpu_run() loops.
 
-On interrupt control register 2 bit MSF (7) is set and must be cleared
-to continue normal operation.
+One question here: AFAIU, this removes the updates to the cpu_id_start,
+cpu_id, mm_cid, and node_id fields on exit to virt usermode. This means
+that while the virt guest is running in usermode, the host hypervisor
+process has stale rseq fields, until it eventually returns to the
+hypervisor's host userspace (from ioctl).
 
-While the driver never enables this interrupt on its own, users or
-firmware may do so - e.g. as an easy way to test the interrupt.
+Considering the rseq uapi documentation, this should not matter.
+Each of those fields have this statement:
 
-Add preprocessor definition for MSF bit and include it in the irq
-bitmask to ensure minute and second interrupts are cleared when fired.
+"This field should only be read by the thread which registered this data
+structure."
 
-This fixes an issue where the rtc enters a test mode and becomes
-unresponsive after a second interrupt has fired and is not cleared in
-time. In this state register writes to control registers have no
-effect and the interrupt line is kept asserted [1]:
+I can however think of use-cases for reading the rseq fields from other
+hypervisor threads to figure out information about thread placement.
+Doing so would however go against the documented uapi.
 
-[1] userspace commands to put rtc into unresponsive state:
-$ i2cget -f -y 2 0x51 0x00
-0x04
-$ i2cset -f -y 2 0x51 0x00 0x05 # set bit 0 SI
-$ i2cget -f -y 2 0x51 0x00
-0x84 # bit 8 EXT_TEST set
-$ i2cset -f -y 2 0x51 0x00 0x05 # try overwrite control register
-$ i2cget -f -y 2 0x51 0x00
-0x84 # no change
+I'd rather ask whether anyone is misusing this uapi in that way before
+going ahead with the change, just to prevent surprises.
 
-Signed-off-by: Josua Mayer <josua@solid-run.com>
----
- drivers/rtc/rtc-pcf2127.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+I'm OK with the re-trigger of rseq, as it does indeed appear to fix
+an issue, but I'm concerned about the ABI impact of skipping the
+rseq_update_cpu_node_id() on return to virt userspace.
 
-diff --git a/drivers/rtc/rtc-pcf2127.c b/drivers/rtc/rtc-pcf2127.c
-index 2e1ac0c42e9323dbc6793840a265e8a663e52568..3ba1de30e89c22ae07ea319d530b58adc25b520d 100644
---- a/drivers/rtc/rtc-pcf2127.c
-+++ b/drivers/rtc/rtc-pcf2127.c
-@@ -42,6 +42,7 @@
- #define PCF2127_BIT_CTRL2_AF			BIT(4)
- #define PCF2127_BIT_CTRL2_TSF2			BIT(5)
- #define PCF2127_BIT_CTRL2_WDTF			BIT(6)
-+#define PCF2127_BIT_CTRL2_MSF			BIT(7)
- /* Control register 3 */
- #define PCF2127_REG_CTRL3		0x02
- #define PCF2127_BIT_CTRL3_BLIE			BIT(0)
-@@ -96,7 +97,8 @@
- #define PCF2127_CTRL2_IRQ_MASK ( \
- 		PCF2127_BIT_CTRL2_AF | \
- 		PCF2127_BIT_CTRL2_WDTF | \
--		PCF2127_BIT_CTRL2_TSF2)
-+		PCF2127_BIT_CTRL2_TSF2 | \
-+		PCF2127_BIT_CTRL2_MSF)
- 
- #define PCF2127_MAX_TS_SUPPORTED	4
- 
+Thoughts ?
 
----
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-change-id: 20250825-rtc-irq-4d17b55204eb
+Thanks,
 
-Best regards,
+Mathieu
+
+> 
+> It's way more efficient to ignore that invocation based on @regs == NULL
+> and let the hypervisors re-raise TIF_NOTIFY_RESUME after returning from the
+> vcpu_run() loop before returning from the ioctl().
+> 
+> This ensures that a pending RSEQ update is not lost and the IDs are updated
+> before returning to user space.
+> 
+> Once the RSEQ handling is decoupled from TIF_NOTIFY_RESUME, this turns into
+> a NOOP.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Sean Christopherson <seanjc@google.com>
+> Cc: Wei Liu <wei.liu@kernel.org>
+> Cc: Dexuan Cui <decui@microsoft.com>
+> ---
+>   drivers/hv/mshv_root_main.c |    2 +
+>   include/linux/rseq.h        |   17 +++++++++
+>   kernel/rseq.c               |   76 +++++++++++++++++++++++---------------------
+>   virt/kvm/kvm_main.c         |    3 +
+>   4 files changed, 62 insertions(+), 36 deletions(-)
+> 
+> --- a/drivers/hv/mshv_root_main.c
+> +++ b/drivers/hv/mshv_root_main.c
+> @@ -585,6 +585,8 @@ static long mshv_run_vp_with_root_schedu
+>   		}
+>   	} while (!vp->run.flags.intercept_suspend);
+>   
+> +	rseq_virt_userspace_exit();
+> +
+>   	return ret;
+>   }
+>   
+> --- a/include/linux/rseq.h
+> +++ b/include/linux/rseq.h
+> @@ -38,6 +38,22 @@ static __always_inline void rseq_exit_to
+>   }
+>   
+>   /*
+> + * KVM/HYPERV invoke resume_user_mode_work() before entering guest mode,
+> + * which clears TIF_NOTIFY_RESUME. To avoid updating user space RSEQ in
+> + * that case just to do it eventually again before returning to user space,
+> + * the entry resume_user_mode_work() invocation is ignored as the register
+> + * argument is NULL.
+> + *
+> + * After returning from guest mode, they have to invoke this function to
+> + * re-raise TIF_NOTIFY_RESUME if necessary.
+> + */
+> +static inline void rseq_virt_userspace_exit(void)
+> +{
+> +	if (current->rseq_event_pending)
+> +		set_tsk_thread_flag(current, TIF_NOTIFY_RESUME);
+> +}
+> +
+> +/*
+>    * If parent process has a registered restartable sequences area, the
+>    * child inherits. Unregister rseq for a clone with CLONE_VM set.
+>    */
+> @@ -68,6 +84,7 @@ static inline void rseq_execve(struct ta
+>   static inline void rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs) { }
+>   static inline void rseq_signal_deliver(struct ksignal *ksig, struct pt_regs *regs) { }
+>   static inline void rseq_sched_switch_event(struct task_struct *t) { }
+> +static inline void rseq_virt_userspace_exit(void) { }
+>   static inline void rseq_fork(struct task_struct *t, unsigned long clone_flags) { }
+>   static inline void rseq_execve(struct task_struct *t) { }
+>   static inline void rseq_exit_to_user_mode(void) { }
+> --- a/kernel/rseq.c
+> +++ b/kernel/rseq.c
+> @@ -422,50 +422,54 @@ void __rseq_handle_notify_resume(struct
+>   {
+>   	struct task_struct *t = current;
+>   	int ret, sig;
+> +	bool event;
+> +
+> +	/*
+> +	 * If invoked from hypervisors before entering the guest via
+> +	 * resume_user_mode_work(), then @regs is a NULL pointer.
+> +	 *
+> +	 * resume_user_mode_work() clears TIF_NOTIFY_RESUME and re-raises
+> +	 * it before returning from the ioctl() to user space when
+> +	 * rseq_event.sched_switch is set.
+> +	 *
+> +	 * So it's safe to ignore here instead of pointlessly updating it
+> +	 * in the vcpu_run() loop.
+> +	 */
+> +	if (!regs)
+> +		return;
+>   
+>   	if (unlikely(t->flags & PF_EXITING))
+>   		return;
+>   
+>   	/*
+> -	 * If invoked from hypervisors or IO-URING, then @regs is a NULL
+> -	 * pointer, so fixup cannot be done. If the syscall which led to
+> -	 * this invocation was invoked inside a critical section, then it
+> -	 * will either end up in this code again or a possible violation of
+> -	 * a syscall inside a critical region can only be detected by the
+> -	 * debug code in rseq_syscall() in a debug enabled kernel.
+> +	 * Read and clear the event pending bit first. If the task
+> +	 * was not preempted or migrated or a signal is on the way,
+> +	 * there is no point in doing any of the heavy lifting here
+> +	 * on production kernels. In that case TIF_NOTIFY_RESUME
+> +	 * was raised by some other functionality.
+> +	 *
+> +	 * This is correct because the read/clear operation is
+> +	 * guarded against scheduler preemption, which makes it CPU
+> +	 * local atomic. If the task is preempted right after
+> +	 * re-enabling preemption then TIF_NOTIFY_RESUME is set
+> +	 * again and this function is invoked another time _before_
+> +	 * the task is able to return to user mode.
+> +	 *
+> +	 * On a debug kernel, invoke the fixup code unconditionally
+> +	 * with the result handed in to allow the detection of
+> +	 * inconsistencies.
+>   	 */
+> -	if (regs) {
+> -		/*
+> -		 * Read and clear the event pending bit first. If the task
+> -		 * was not preempted or migrated or a signal is on the way,
+> -		 * there is no point in doing any of the heavy lifting here
+> -		 * on production kernels. In that case TIF_NOTIFY_RESUME
+> -		 * was raised by some other functionality.
+> -		 *
+> -		 * This is correct because the read/clear operation is
+> -		 * guarded against scheduler preemption, which makes it CPU
+> -		 * local atomic. If the task is preempted right after
+> -		 * re-enabling preemption then TIF_NOTIFY_RESUME is set
+> -		 * again and this function is invoked another time _before_
+> -		 * the task is able to return to user mode.
+> -		 *
+> -		 * On a debug kernel, invoke the fixup code unconditionally
+> -		 * with the result handed in to allow the detection of
+> -		 * inconsistencies.
+> -		 */
+> -		bool event;
+> -
+> -		scoped_guard(RSEQ_EVENT_GUARD) {
+> -			event = t->rseq_event_pending;
+> -			t->rseq_event_pending = false;
+> -		}
+> +	scoped_guard(RSEQ_EVENT_GUARD) {
+> +		event = t->rseq_event_pending;
+> +		t->rseq_event_pending = false;
+> +	}
+>   
+> -		if (IS_ENABLED(CONFIG_DEBUG_RSEQ) || event) {
+> -			ret = rseq_ip_fixup(regs, event);
+> -			if (unlikely(ret < 0))
+> -				goto error;
+> -		}
+> +	if (IS_ENABLED(CONFIG_DEBUG_RSEQ) || event) {
+> +		ret = rseq_ip_fixup(regs, event);
+> +		if (unlikely(ret < 0))
+> +			goto error;
+>   	}
+> +
+>   	if (unlikely(rseq_update_cpu_node_id(t)))
+>   		goto error;
+>   	return;
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -49,6 +49,7 @@
+>   #include <linux/lockdep.h>
+>   #include <linux/kthread.h>
+>   #include <linux/suspend.h>
+> +#include <linux/rseq.h>
+>   
+>   #include <asm/processor.h>
+>   #include <asm/ioctl.h>
+> @@ -4466,6 +4467,8 @@ static long kvm_vcpu_ioctl(struct file *
+>   		r = kvm_arch_vcpu_ioctl_run(vcpu);
+>   		vcpu->wants_to_run = false;
+>   
+> +		rseq_virt_userspace_exit();
+> +
+>   		trace_kvm_userspace_exit(vcpu->run->exit_reason, r);
+>   		break;
+>   	}
+> 
+
+
 -- 
-Josua Mayer <josua@solid-run.com>
-
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
