@@ -1,72 +1,75 @@
-Return-Path: <linux-kernel+bounces-785671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DAE8B34F5F
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F71AB34F5E
 	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:58:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 312B21B2607B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:58:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 904217AA23E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:56:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B484D2C0F97;
-	Mon, 25 Aug 2025 22:57:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3CA2C21FE;
+	Mon, 25 Aug 2025 22:57:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HUxXQ1Ce"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Lal8//b+"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE5C2BE04F
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 22:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D6052C0F78
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 22:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756162642; cv=none; b=WSLBYBM5IzKD4VruDPbjtTEYiZ3yw4ksb5/iGyDwP5ZJGsPzdiAKHLIP+8NXHqk4zZK5qV4doLNCqesFCFxZAMRp4nsQCP8BeRU86mY6f4zvTeAZ/h/O2DemogtY7mr32FnPm1QAx8Dvt9RAIEYo0YiZzePWqzzWOUFi7cGa4Kg=
+	t=1756162643; cv=none; b=Zxc1b/AogP23W7VqtUPZKRqC8LISi56wxHGXtBQgaMcIggOa7OBoIm51sJuONrO2OQx7tYWYRnmhhULD8hkqlnNbMVOFiCJSPz8YY3ktEpPVV7FMVA7I+aDqA5AL0qakDaDVJBr7Z9CMD68xNNISoMGg+1URf2Yzt4EyaAciYtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756162642; c=relaxed/simple;
-	bh=n+eq93EFZerFCaRW/YU5rAe56h3L7pAing8rZOS9aIo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HcZaa5fBkq1/a0uuJsh3xFCLhqXBbyib1nUfbytUyB4yJG7cJnZlaodpSXrHsKOxVuKwBp52pDV4Whx3ejIA6JeFVYc2KLOrHHWuTBpr8974/rJfUqMcpZkRPoDd6AoRk/HJ/owF13HM+PNzFLK0Sy9XWG4/3RBkWKczCy+DXh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=HUxXQ1Ce; arc=none smtp.client-ip=209.85.210.171
+	s=arc-20240116; t=1756162643; c=relaxed/simple;
+	bh=Nvl+APFUB5en559ZQEJgCl7Ibf3Pwlj/L8YOZcRoCYY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=e6ZiCxCdyW4FeXk/7YRuGtNS2UNKKe2gjVDsb+WiHowKf40rjE8QLyMlJ9E/ttpLtlOTu4PSDWOsuc27R7CZdf91qgLfUNJCaTZ166mEXwoA8w/vJiJiUhUgHdqyKUMS6uyxkAZb7bFr/RbXgqHidfNgpftSn/0lVTrnfL/Fb4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Lal8//b+; arc=none smtp.client-ip=209.85.210.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-76e6cbb991aso4287176b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 15:57:20 -0700 (PDT)
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-770530175a6so1235987b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 15:57:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1756162640; x=1756767440; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=k5YulMZOBNM7qvzrKYRTd+kawswMfatbXk3R7yzHh5Q=;
-        b=HUxXQ1CexVBNSb9y4pxOc2hUVIgVO1IolJw0d6JOodexjFPanShGn2aY3ym2SqzFHQ
-         rVQmL2W+7HGeegKJ8LcHW/S/rpjQrWBMtZS2rGz6c+J7+Mno3t97mEatKZJLjsWNk38g
-         6OufbNk/DuvaVKAgTFv8HY8x4B4oop6815FgY=
+        d=chromium.org; s=google; t=1756162641; x=1756767441; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=No0PXOSlxr5gHLZibMa4NYjde5mWQl1xnGitNFzv0Ow=;
+        b=Lal8//b+IEUCTqtGrjMqZT9fqtmmePnE07jCnHayETv8cat+U/uIjqdBeuw0WofUmK
+         udgk29Rck4Lf0ybUthaGpquBGmzUiKNEDhGkxolh0C3xzZSZ96z5NP+Fro2S2H6YkANt
+         dCsiatN7dF/9JheUMGicgAAiacTAPcB4hx7eM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756162640; x=1756767440;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=k5YulMZOBNM7qvzrKYRTd+kawswMfatbXk3R7yzHh5Q=;
-        b=FucSyWIbfTguNAL259GNw4CD3hQraEa9MKgQWjA4M/VGZH9eBN4kKr/0CNKFg/vHg5
-         BvBPOBYRxFZyXlOPgs75Ptc7VG7iMtLY1nTU4JBYgQvHq55osTznYLLs9yPi9qenWzdr
-         hEiChQhX0NWMcawulV1Lw8Os34mF9v3otFumpcfWwWrZKBmAPuKi5NL6J5saF4JuA+9E
-         ocdMYGau9OviCEbRVzxvvH8Qb23WUoqe25IewVZgIhoPy3xQlX/ycBwqBuL4SkHmwnh6
-         d5XJ4GdMHLInZ5KUcgm4IKfaaLwX5pd6bd/u2naoQWr+6OoeB7iymQQuzjtnO0RCwVtm
-         EX6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU/K3DM04yEyFN8FJ9ACqPIZ/iuxj6s0Iuv6xPwXwwosOEFsGbOD+En2qVkjTkqEDKBUdUAKJr7HbuVfJ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzi8hjpn1hFQyrf57obRCqbHQ16B59ApB0p5yUpLYlVcC0mqEXX
-	4mpLxpnmw3Md7URbuZ/9jBsdmRm5x7/0+fRIZeqJC/PI89YfjqQEnKhQIcGkqPuTLQ==
-X-Gm-Gg: ASbGncuCeHsfVRD0iI7jx63gr7U7TVZc1wdZ8P4xWjj9YgWn9XMqmQyutM/BxJQoUv0
-	qObmk6CGtBvt3jxenDnt/uExosqwxijC1qaDKeCHNz9c1VGLeUghBrgOJPvs4ODngYx6aAxYUPP
-	l7iJpwm9ev+6bgGbMlCi+fceeWrcNw6aMVAhhWlpSibNMzm7dHpPY4fGiApJKxbbTrcbS28ARJS
-	zqrNDHcFlavo9yXApQ9FgFkCPrQcXYrY3N9Y64bTJkxH/8vaOB2ASRIb/AbFBQms4QCPC80SJh1
-	DtgpFSn1IOrfizRatMaPraZJWoKnCxQ61tu0E/GKMqZIuBeEU/QxoCWwC/Nklifrbh41OIYROKM
-	UbA5MzC1qvM2fCU+SboUvJ3TycG43TohzNBVi+YQrKrRzWnyQjE+SXrQ22kMcyQ07ltJd
-X-Google-Smtp-Source: AGHT+IE+HIZBtyyFvl4JXHn3tOLjF4u9v/mAZN6MHNUlS7TTvkI/So/QqLFhw5/+roUTI74EBRpCWQ==
-X-Received: by 2002:a05:6a00:4b55:b0:76b:fab4:6456 with SMTP id d2e1a72fcca58-7702fadbb34mr16821506b3a.21.1756162639731;
-        Mon, 25 Aug 2025 15:57:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756162641; x=1756767441;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=No0PXOSlxr5gHLZibMa4NYjde5mWQl1xnGitNFzv0Ow=;
+        b=WaqEhuz+KrJGFDMwQGFnmcsuro0adEaLeW/76g5NrornLVm+QFO/KX95vLDm6xcqdL
+         YlgNICq8cDScUAtdRYJt6VzPl0e4ahvB7FA/NrQpYfskUk9jIZJIbK1nRg0BHHgEvq4u
+         gX2BUX2YifkDxBJDQK6ZvAcgdkfIFjTQXMAOnM1Atx3/iP+4X96wQOuMkddaL39DiKED
+         EW7Nzh1Q4gmVSPf7+zDOPEdQ+fxqFGNywrTPgKUTsG75r6ZlXIKpg1ofQk/fVxQrc14B
+         WptYmd4CK+KsJH2XqWDtG2KCJEB6oilsfGY8OaseHiE4gpUJ3u8wM0zM4YZx+WkDZ6iy
+         OjQw==
+X-Forwarded-Encrypted: i=1; AJvYcCX7Kx8tdqOFGkMwiMux2XU7XF3uF6cU0luXnxj+2xnJDhcm9ibLvoIYzziS3W8WTXquF4Z9dlLt4xh0kZA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6hop+Rl3M/Dmbl8tgMmZwcJap13WXxQkFwwyYcv+IURJgGutd
+	WxyuAg/EtynJXEy8/iMfs9FljpziUsrcT74rP5NWQNpAjx1Xz8CPmMdwA4CDaec73Q==
+X-Gm-Gg: ASbGnctDOzPZKZmMU1rXaGnoc3N+gYgMvZR51P6Y72utxZEd4n78m3Pw5ydFhakwc9w
+	pk2LPqYn66l9KMHq3FhQ4jRNNIimpv9rhW0BXyOhqK5oDuuNe+kaciy7qbvd/ka4DAYPqtX9DvF
+	57a6LxP5K204EVJ1nD7To+3u3YZ9tkr9yOKp1RwELYyvoihN6BGVDbpS3o5fFrCrgt5plmugDk3
+	c3AB8AjQ0YmZ7OnBWHpDCF35abxG5oM0T0ie3g3gi4+ir8G9/Gyd9vHUHwwYvuXswLEqomJYdha
+	JW4g1HFXnDhOkICxOQogbcXvlZUQZWITx4WshXaokZ6eEPmf62vwumFrMV4huPiEyyOO0hd8ylB
+	0Srf+1x4yHhRjr2+60+KDESt0jCQ2YRFNNBm2UECki+RtfRuUR69vy+nJvEksvSvErR9wM/pp5L
+	COtyA=
+X-Google-Smtp-Source: AGHT+IFOLQSe2Rtc0YNjSnBoRdF4ZZxObNbu4Py/ZXRegVrx2wgM6pGF9Y0MMS5NL60LCvJfl3yEmA==
+X-Received: by 2002:a05:6a20:4320:b0:23f:fa6e:912c with SMTP id adf61e73a8af0-24340b8da90mr21448836637.2.1756162641441;
+        Mon, 25 Aug 2025 15:57:21 -0700 (PDT)
 Received: from localhost ([2a00:79e0:2e14:7:230e:95:218f:e216])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7704fb69542sm6529922b3a.94.2025.08.25.15.57.18
+        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-b49d4ffc22esm6130554a12.34.2025.08.25.15.57.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Aug 2025 15:57:19 -0700 (PDT)
+        Mon, 25 Aug 2025 15:57:20 -0700 (PDT)
 From: Brian Norris <briannorris@chromium.org>
 To: Bjorn Andersson <andersson@kernel.org>,
 	Konrad Dybcio <konradybcio@kernel.org>,
@@ -80,12 +83,13 @@ Cc: cros-qcom-dts-watchers@chromium.org,
 	Rob Herring <robh@kernel.org>,
 	Douglas Anderson <dianders@chromium.org>,
 	devicetree@vger.kernel.org,
-	Brian Norris <briannorris@chromium.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Subject: [PATCH v2 1/2] dt-bindings: interconnect: qcom: make sc7280 aggre{1,2}-noc clocks optional
-Date: Mon, 25 Aug 2025 15:55:56 -0700
-Message-ID: <20250825155557.v2.1.I018984907c1e6322cf4710bd1ce805580ed33261@changeid>
+	Brian Norris <briannorris@chromium.org>
+Subject: [PATCH v2 2/2] arm64: dts: qcom: sc7280: Drop aggre{1,2}_noc QOS clocks on Herobrine
+Date: Mon, 25 Aug 2025 15:55:57 -0700
+Message-ID: <20250825155557.v2.2.Idebf1d8bd8ff507462fef9dc1ff47e84c01e9b60@changeid>
 X-Mailer: git-send-email 2.51.0.261.g7ce5a0a67e-goog
+In-Reply-To: <20250825155557.v2.1.I018984907c1e6322cf4710bd1ce805580ed33261@changeid>
+References: <20250825155557.v2.1.I018984907c1e6322cf4710bd1ce805580ed33261@changeid>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,52 +98,78 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-We've found that some device firmware does not expose all the QoS
-resources necessary to manage these interconnects, and that the driver
-code that starts using them crashes. Leave 'clocks' as optional for
-qcom,sc7280-aggre1-noc and qcom,sc7280-aggre2-noc instead.
+Ever since these two commits
 
-Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+  fbd908bb8bc0 ("interconnect: qcom: sc7280: enable QoS configuration")
+  2b5004956aff ("arm64: dts: qcom: sc7280: Add clocks for QOS configuration")
+
+Herobrine systems fail to boot due to crashes like the following:
+
+[    0.243171] Kernel panic - not syncing: Asynchronous SError Interrupt
+[    0.243173] CPU: 7 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0 #1 c5464041cff584ced692726af2c4400fa2bde1db
+[    0.243178] Hardware name: Qualcomm Technologies, Inc. sc7280 CRD platform (rev5+) (DT)
+[    0.243180] Call trace:
+[    0.243182]  dump_backtrace+0x104/0x128
+[    0.243194]  show_stack+0x24/0x38
+[    0.243202]  __dump_stack+0x28/0x38
+[    0.243208]  dump_stack_lvl+0x28/0xb8
+[    0.243211]  dump_stack+0x18/0x30
+[    0.243215]  panic+0x134/0x340
+[    0.243219]  nmi_panic+0x48/0x98
+[    0.243227]  arm64_serror_panic+0x6c/0x80
+[    0.243245]  arm64_is_fatal_ras_serror+0xd8/0xe0
+[    0.243261]  do_serror+0x5c/0xa8
+[    0.243265]  el1h_64_error_handler+0x34/0x48
+[    0.243272]  el1h_64_error+0x7c/0x80
+[    0.243285]  regmap_mmio_read+0x5c/0xc0
+[    0.243289]  _regmap_bus_reg_read+0x78/0xf8
+[    0.243296]  regmap_update_bits_base+0xec/0x3a8
+[    0.243300]  qcom_icc_rpmh_probe+0x2d4/0x490
+[    0.243308]  platform_probe+0xb4/0xe0
+[...]
+
+Specifically, they fail in qcom_icc_set_qos() when trying to write the
+QoS settings for qhm_qup1. Several of the previous nodes (qhm_qspi,
+qhm_qup0, ...) seem to configure without crashing.
+
+We suspect that the TZ firmware on these devices does not expose QoS
+regions to Linux. The right solution here might involve deleting both
+'clocks' and 'reg', but 'reg' would cause more problems. Linux is
+already OK with a missing 'clocks', since pre-2b5004956aff DTBs need to
+be supported, so we go with an easier solution.
+
+Fixes: fbd908bb8bc0 ("interconnect: qcom: sc7280: enable QoS configuration")
+Fixes: 2b5004956aff ("arm64: dts: qcom: sc7280: Add clocks for QOS configuration")
 Signed-off-by: Brian Norris <briannorris@chromium.org>
 ---
 
 Changes in v2:
- * new in v2
+ * Update notes about TZ firmware
 
- .../interconnect/qcom,sc7280-rpmh.yaml         | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/interconnect/qcom,sc7280-rpmh.yaml b/Documentation/devicetree/bindings/interconnect/qcom,sc7280-rpmh.yaml
-index 81c3dff53992..5dbd0563ac17 100644
---- a/Documentation/devicetree/bindings/interconnect/qcom,sc7280-rpmh.yaml
-+++ b/Documentation/devicetree/bindings/interconnect/qcom,sc7280-rpmh.yaml
-@@ -82,17 +82,17 @@ allOf:
-           items:
-             - description: RPMH CC IPA clock
+diff --git a/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi b/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi
+index 2ba4ea60cb14..6237fc7a13ca 100644
+--- a/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi
+@@ -394,6 +394,16 @@ &vreg_l2c_1p8 {
  
-+  # QoS clocks are only valid for aggre{1,2}-noc. Some TZ firmware do not
-+  # expose even these, so they remain optional.
-   - if:
--      properties:
--        compatible:
--          contains:
--            enum:
--              - qcom,sc7280-aggre1-noc
--              - qcom,sc7280-aggre2-noc
-+      not:
-+        properties:
-+          compatible:
-+            contains:
-+              enum:
-+                - qcom,sc7280-aggre1-noc
-+                - qcom,sc7280-aggre2-noc
-     then:
--      required:
--        - clocks
--    else:
-       properties:
-         clocks: false
+ /* ADDITIONS TO NODES DEFINED IN PARENT DEVICE TREE FILES */
  
++/* TZ firmware on these devices seems to not expose QoS regions to the OS. */
++&aggre1_noc {
++	/delete-property/ clocks;
++};
++
++/* TZ firmware on these devices seems to not expose QoS regions to the OS. */
++&aggre2_noc {
++	/delete-property/ clocks;
++};
++
+ &edp_panel {
+ 	/* Our board provides power to the qcard for the eDP panel. */
+ 	power-supply = <&vreg_edp_3p3>;
 -- 
 2.51.0.261.g7ce5a0a67e-goog
 
