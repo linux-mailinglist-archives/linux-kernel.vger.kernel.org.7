@@ -1,156 +1,270 @@
-Return-Path: <linux-kernel+bounces-784016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30EC0B33567
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 06:44:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82B7BB3359A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 06:47:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CB9117D044
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 04:42:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EF501B24A8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 04:47:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8B8279DB3;
-	Mon, 25 Aug 2025 04:40:00 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C17B259CA5;
+	Mon, 25 Aug 2025 04:46:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DffJmzn2"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D2F23B63C;
-	Mon, 25 Aug 2025 04:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B79EA279DCC
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 04:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756096800; cv=none; b=qbXAPvvGuE3XGY2iOclaZvzKQ6uFR8V4BMgBS0BDNHBetL2DPQzcRLq+IQQRMOBuKBWExVLlI/GaMLVYXyyIRHG7y8+BiKj9MALAxujWpaPiNyjhHTDogB7xhsqlLuzXD1ZRzH93Uzs5YnPtzF/BccY3AhSpBMnrtdnQedpz8N4=
+	t=1756097181; cv=none; b=m8zlDBljW2fFOZEUTqA3vvFDqRo2HRrDJKnNqu+2picIJOrO1H8igDTcxfwo9JBqFg8sJqEdYHGrF4acblVFZ+7dkSUsE8c20rzQ5Cj9jnFMnKhxMvSQdLaWg4910uK1Z3Cc+MioY962ftsrBuqFiIPnJCUky7fm1s5QhP+gz+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756096800; c=relaxed/simple;
-	bh=sRi0BdywOkFVtpyesp1SmdY4RAR58yVQ7CfD8V/yBMs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=btLWw0PEz+Vcj127IFSU6Hc4/AcaVhJDYTQFxPlBLjyo92Zk0rY8nkrQJpG8V9WhKMPCAOiKT1AlnynnUdN8gFTHzQZuADA+/jGr2KXWa4pUC6Y5kPkAm5R/R/02MIKWth7Pk87tn/hBAZYB6HZBlxRl8aGFUtZsyxl0axACyS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c9J4B6HfZzYQvLt;
-	Mon, 25 Aug 2025 12:39:54 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 6A0531A0CC5;
-	Mon, 25 Aug 2025 12:39:53 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgAncY0W6atoqvLYAA--.56226S3;
-	Mon, 25 Aug 2025 12:39:52 +0800 (CST)
-Message-ID: <ad0e8cea-64fb-44f7-abf2-30ad5fc07a4c@huaweicloud.com>
-Date: Mon, 25 Aug 2025 12:39:50 +0800
+	s=arc-20240116; t=1756097181; c=relaxed/simple;
+	bh=423MUFVcRV9v/r2rjR3wXlHRo43mh1gRRDAEnGrqceU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=oB8Rf3LOqfPOujgooHMePiqqAysaQK2gilF30C07+gICZ5W+Wzogd/ptB2mtzq6/+goXRfu7lbXF3h/sNo5D6zQ+17JoDcObcrlLmwOnUhJw4f+M8Dk9kPEeYecIZ1PVJx9yYIwR0k73rU6mBbu/Rz8L+3hn+rlfpt754VgliCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DffJmzn2; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756097178; x=1787633178;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=423MUFVcRV9v/r2rjR3wXlHRo43mh1gRRDAEnGrqceU=;
+  b=DffJmzn2HAiPWaksGwVjFZM1eQ09pJzQ6cFz3Sv9wTghTo83JXdgvEq5
+   kmaRWUkoM+OWOhLU8Q0nsK8X5mMw+MlgkD3fOagzBtKnuzQxn+ySKvBZv
+   raZe5bayDjsFDb74LrdW4mz40wwPtVa6owiar1fEn6HS3KEmFdiY1pMHu
+   RvhgtXOLy/scuvS4PLoJK/nHDKiH7SC2D0OUFUFXrmMAwztXb2E3tkb/+
+   Xe/qtrCyD3Btx6BnBmVmkzdRhXttvAp4AQ+3EdwCxX4bGzwTVRBySzvyE
+   Y6mu/gTPRFDIJHUXpFCD9e/tJYm6PIsLP8uQN3xjsmKym3OHXnDSbicea
+   A==;
+X-CSE-ConnectionGUID: M6KRNItTRlOpKZVz9+EN3A==
+X-CSE-MsgGUID: JtsKAlfKRnCTS+IQ93tAvw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11532"; a="58401092"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="58401092"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Aug 2025 21:46:17 -0700
+X-CSE-ConnectionGUID: vzbq/mrzTquqnph/9sk+rw==
+X-CSE-MsgGUID: XAh0hwm6SA2wVO+O4jqfbw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="168406385"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa006.jf.intel.com with ESMTP; 24 Aug 2025 21:46:15 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uqP5v-000NMh-0n;
+	Mon, 25 Aug 2025 04:46:11 +0000
+Date: Mon, 25 Aug 2025 12:45:25 +0800
+From: kernel test robot <lkp@intel.com>
+To: Eric Dumazet <edumazet@google.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Jakub Kicinski <kuba@kernel.org>,
+	Maciej =?utf-8?Q?=C5=BBenczykowski?= <maze@google.com>
+Subject: include/net/sock.h:2100:16: sparse: sparse: cast to non-scalar
+Message-ID: <202508251226.ArERUcGn-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ext4: fix potential null deref in ext4_mb_init()
-To: libaokun@huaweicloud.com, linux-ext4@vger.kernel.org
-Cc: tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz,
- linux-kernel@vger.kernel.org, yangerkun@huawei.com, libaokun1@huawei.com,
- syzbot+1713b1aa266195b916c2@syzkaller.appspotmail.com
-References: <20250825033830.2230202-1-libaokun@huaweicloud.com>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <20250825033830.2230202-1-libaokun@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgAncY0W6atoqvLYAA--.56226S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxAw48WryxurWfWFyrtw4Dtwb_yoW5WF4fp3
-	ZrAFyxKr4UGFyDCa1xW3WYqw4Fga18WF1UJ34fWF1rXF1Utryvka92gr1UCFyUKrWDA3Z7
-	JF9Fqr45tw48CaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 8/25/2025 11:38 AM, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> In ext4_mb_init(), ext4_mb_avg_fragment_size_destroy() may be called
-> when sbi->s_mb_avg_fragment_size remains uninitialized (e.g., if groupinfo
-> slab cache allocation fails). Since ext4_mb_avg_fragment_size_destroy()
-> lacks null pointer checking, this leads to a null pointer dereference.
-> 
-> ==================================================================
-> EXT4-fs: no memory for groupinfo slab cache
-> BUG: kernel NULL pointer dereference, address: 0000000000000000
-> PGD 0 P4D 0
-> Oops: Oops: 0002 [#1] SMP PTI
-> CPU:2 UID: 0 PID: 87 Comm:mount Not tainted 6.17.0-rc2 #1134 PREEMPT(none)
-> RIP: 0010:_raw_spin_lock_irqsave+0x1b/0x40
-> Call Trace:
->  <TASK>
->  xa_destroy+0x61/0x130
->  ext4_mb_init+0x483/0x540
->  __ext4_fill_super+0x116d/0x17b0
->  ext4_fill_super+0xd3/0x280
->  get_tree_bdev_flags+0x132/0x1d0
->  vfs_get_tree+0x29/0xd0
->  do_new_mount+0x197/0x300
->  __x64_sys_mount+0x116/0x150
->  do_syscall_64+0x50/0x1c0
->  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> ==================================================================
-> 
-> Therefore, add necessary null check to ext4_mb_avg_fragment_size_destroy()
-> to prevent this issue. The same fix is also applied to
-> ext4_mb_largest_free_orders_destroy().
-> 
-> Reported-by: syzbot+1713b1aa266195b916c2@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=1713b1aa266195b916c2
-> Fixes: f7eaacbb4e54 ("ext4: convert free groups order lists to xarrays")
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   1b237f190eb3d36f52dffe07a40b5eb210280e00
+commit: e84a4927a404f369c842c19de93b216627fcc690 net: annotate races around sk->sk_uid
+date:   9 weeks ago
+config: alpha-randconfig-r131-20250824 (https://download.01.org/0day-ci/archive/20250825/202508251226.ArERUcGn-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 9.5.0
+reproduce: (https://download.01.org/0day-ci/archive/20250825/202508251226.ArERUcGn-lkp@intel.com/reproduce)
 
-Looks good to me.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508251226.ArERUcGn-lkp@intel.com/
 
-Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+sparse warnings: (new ones prefixed by >>)
+   net/core/lwt_bpf.c: note: in included file (through include/linux/tcp.h, include/linux/ipv6.h, include/net/ipv6.h, include/net/inetpeer.h, ...):
+>> include/net/sock.h:2100:16: sparse: sparse: cast to non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast from non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast to non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast from non-scalar
+--
+   net/ipv4/route.c: note: in included file (through include/linux/mroute_base.h, include/linux/mroute.h):
+>> include/net/sock.h:2100:16: sparse: sparse: cast to non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast from non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast to non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast from non-scalar
+   net/ipv4/route.c: note: in included file (through include/linux/mroute_base.h, include/linux/mroute.h):
+   include/net/ip_fib.h:562:19: sparse: sparse: cast to non-scalar
+   include/net/ip_fib.h:562:19: sparse: sparse: cast from non-scalar
+   include/net/ip_fib.h:562:19: sparse: sparse: cast to non-scalar
+   include/net/ip_fib.h:562:19: sparse: sparse: cast from non-scalar
+   include/net/ip_fib.h:562:19: sparse: sparse: cast to non-scalar
+   include/net/ip_fib.h:562:19: sparse: sparse: cast from non-scalar
+   include/net/ip_fib.h:562:19: sparse: sparse: cast to non-scalar
+   include/net/ip_fib.h:562:19: sparse: sparse: cast from non-scalar
+   include/net/ip_fib.h:562:19: sparse: sparse: cast to non-scalar
+   include/net/ip_fib.h:562:19: sparse: sparse: cast from non-scalar
+   include/net/ip_fib.h:562:19: sparse: sparse: cast to non-scalar
+   include/net/ip_fib.h:562:19: sparse: sparse: cast from non-scalar
+--
+   net/ipv4/ip_output.c: note: in included file (through include/net/inet_sock.h, include/net/ip.h):
+>> include/net/sock.h:2100:16: sparse: sparse: cast to non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast from non-scalar
+--
+   net/ipv4/inet_connection_sock.c:328:36: sparse: sparse: context imbalance in 'inet_csk_find_open_port' - wrong count at exit
+   net/ipv4/inet_connection_sock.c:605:23: sparse: sparse: context imbalance in 'inet_csk_get_port' - unexpected unlock
+   net/ipv4/inet_connection_sock.c: note: in included file (through include/net/inet_sock.h, include/net/inet_connection_sock.h):
+>> include/net/sock.h:2100:16: sparse: sparse: cast to non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast from non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast to non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast from non-scalar
+   net/ipv4/inet_connection_sock.c:1467:9: sparse: sparse: context imbalance in 'inet_csk_complete_hashdance' - unexpected unlock
+>> include/net/sock.h:2100:16: sparse: sparse: cast to non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast from non-scalar
+--
+   net/ipv4/tcp_ipv4.c:3415:41: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const *data @@     got struct tcp_congestion_ops const [noderef] __rcu *tcp_congestion_control @@
+   net/ipv4/tcp_ipv4.c:3415:41: sparse:     expected void const *data
+   net/ipv4/tcp_ipv4.c:3415:41: sparse:     got struct tcp_congestion_ops const [noderef] __rcu *tcp_congestion_control
+   net/ipv4/tcp_ipv4.c:3537:45: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const *data @@     got struct tcp_congestion_ops const [noderef] __rcu *extern [addressable] [toplevel] tcp_congestion_control @@
+   net/ipv4/tcp_ipv4.c:3537:45: sparse:     expected void const *data
+   net/ipv4/tcp_ipv4.c:3537:45: sparse:     got struct tcp_congestion_ops const [noderef] __rcu *extern [addressable] [toplevel] tcp_congestion_control
+   net/ipv4/tcp_ipv4.c:3541:50: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct tcp_congestion_ops const [noderef] __rcu *tcp_congestion_control @@     got struct tcp_congestion_ops * @@
+   net/ipv4/tcp_ipv4.c:3541:50: sparse:     expected struct tcp_congestion_ops const [noderef] __rcu *tcp_congestion_control
+   net/ipv4/tcp_ipv4.c:3541:50: sparse:     got struct tcp_congestion_ops *
+   net/ipv4/tcp_ipv4.c: note: in included file (through include/net/inet_sock.h, include/net/icmp.h):
+>> include/net/sock.h:2100:16: sparse: sparse: cast to non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast from non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast to non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast from non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast to non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast from non-scalar
+   net/ipv4/tcp_ipv4.c:1846:25: sparse: sparse: context imbalance in 'tcp_v4_syn_recv_sock' - unexpected unlock
+   net/ipv4/tcp_ipv4.c:2139:17: sparse: sparse: context imbalance in 'tcp_add_backlog' - unexpected unlock
+   net/ipv4/tcp_ipv4.c:2401:21: sparse: sparse: context imbalance in 'tcp_v4_rcv' - different lock contexts for basic block
+   net/ipv4/tcp_ipv4.c:2612:13: sparse: sparse: context imbalance in 'listening_get_first' - wrong count at exit
+   net/ipv4/tcp_ipv4.c:2660:29: sparse: sparse: context imbalance in 'listening_get_next' - unexpected unlock
+   net/ipv4/tcp_ipv4.c:2693:13: sparse: sparse: context imbalance in 'established_get_first' - wrong count at exit
+   net/ipv4/tcp_ipv4.c:2738:40: sparse: sparse: context imbalance in 'established_get_next' - unexpected unlock
+   net/ipv4/tcp_ipv4.c:2870:36: sparse: sparse: context imbalance in 'tcp_seq_stop' - unexpected unlock
+   net/ipv4/tcp_ipv4.c:3091:20: sparse: sparse: context imbalance in 'bpf_iter_tcp_listening_batch' - unexpected unlock
+   net/ipv4/tcp_ipv4.c:3119:40: sparse: sparse: context imbalance in 'bpf_iter_tcp_established_batch' - unexpected unlock
+   net/ipv4/tcp_ipv4.c:3416:41: sparse: sparse: dereference of noderef expression
+   net/ipv4/tcp_ipv4.c:3416:41: sparse: sparse: dereference of noderef expression
+   net/ipv4/tcp_ipv4.c:3538:45: sparse: sparse: dereference of noderef expression
+   net/ipv4/tcp_ipv4.c:3538:45: sparse: sparse: dereference of noderef expression
+--
+   net/ipv4/datagram.c: note: in included file (through include/net/inet_sock.h, include/net/ip.h):
+>> include/net/sock.h:2100:16: sparse: sparse: cast to non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast from non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast to non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast from non-scalar
+--
+   net/ipv4/raw.c: note: in included file (through include/linux/mroute_base.h, include/linux/mroute.h):
+>> include/net/sock.h:2100:16: sparse: sparse: cast to non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast from non-scalar
+--
+   net/ipv4/udp.c: note: in included file (through include/linux/bpf-cgroup.h):
+>> include/net/sock.h:2100:16: sparse: sparse: cast to non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast from non-scalar
+   net/ipv4/udp.c:1668:28: sparse: sparse: context imbalance in 'udp_rmem_release' - unexpected unlock
+   net/ipv4/udp.c:1700:19: sparse: sparse: context imbalance in 'busylock_acquire' - wrong count at exit
+   net/ipv4/udp.c:1712:28: sparse: sparse: context imbalance in 'busylock_release' - unexpected unlock
+   net/ipv4/udp.c:3305:9: sparse: sparse: context imbalance in 'udp_get_first' - wrong count at exit
+   net/ipv4/udp.c:3322:39: sparse: sparse: context imbalance in 'udp_get_next' - unexpected unlock
+   net/ipv4/udp.c:3370:31: sparse: sparse: context imbalance in 'udp_seq_stop' - unexpected unlock
+--
+   net/ipv4/af_inet.c: note: in included file (through include/net/inet_sock.h, include/net/ip.h):
+>> include/net/sock.h:2100:16: sparse: sparse: cast to non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast from non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast to non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast from non-scalar
+--
+   net/ipv4/ping.c: note: in included file (through include/net/inet_sock.h, include/net/ip.h):
+>> include/net/sock.h:2100:16: sparse: sparse: cast to non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast from non-scalar
+--
+   net/ipv6/af_inet6.c: note: in included file (through include/linux/tcp.h, include/linux/ipv6.h, include/linux/icmpv6.h):
+>> include/net/sock.h:2100:16: sparse: sparse: cast to non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast from non-scalar
+--
+   net/ipv6/route.c:2382:39: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned int [usertype] flow_label @@     got restricted __be32 @@
+   net/ipv6/route.c:2382:39: sparse:     expected unsigned int [usertype] flow_label
+   net/ipv6/route.c:2382:39: sparse:     got restricted __be32
+   net/ipv6/route.c: note: in included file (through include/linux/mroute_base.h, include/linux/mroute6.h):
+   include/net/ip_fib.h:562:19: sparse: sparse: cast to non-scalar
+   include/net/ip_fib.h:562:19: sparse: sparse: cast from non-scalar
+   include/net/ip_fib.h:562:19: sparse: sparse: cast to non-scalar
+   include/net/ip_fib.h:562:19: sparse: sparse: cast from non-scalar
+   include/net/ip_fib.h:562:19: sparse: sparse: cast to non-scalar
+   include/net/ip_fib.h:562:19: sparse: sparse: cast from non-scalar
+   include/net/ip_fib.h:562:19: sparse: sparse: cast to non-scalar
+   include/net/ip_fib.h:562:19: sparse: sparse: cast from non-scalar
+   include/net/ip_fib.h:562:19: sparse: sparse: cast to non-scalar
+   include/net/ip_fib.h:562:19: sparse: sparse: cast from non-scalar
+   include/net/ip_fib.h:562:19: sparse: sparse: cast to non-scalar
+   include/net/ip_fib.h:562:19: sparse: sparse: cast from non-scalar
+   net/ipv6/route.c: note: in included file (through include/linux/mroute_base.h, include/linux/mroute6.h):
+>> include/net/sock.h:2100:16: sparse: sparse: cast to non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast from non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast to non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast from non-scalar
+--
+   net/ipv6/udp.c: note: in included file (through include/linux/bpf-cgroup.h):
+>> include/net/sock.h:2100:16: sparse: sparse: cast to non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast from non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast to non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast from non-scalar
+--
+   net/ipv6/raw.c: note: in included file (through include/linux/tcp.h, include/linux/ipv6.h, include/linux/icmpv6.h):
+>> include/net/sock.h:2100:16: sparse: sparse: cast to non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast from non-scalar
+--
+   net/ipv6/ping.c: note: in included file (through include/linux/tcp.h, include/linux/ipv6.h, include/net/addrconf.h):
+>> include/net/sock.h:2100:16: sparse: sparse: cast to non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast from non-scalar
+--
+   net/ipv6/datagram.c: note: in included file (through include/linux/tcp.h, include/linux/ipv6.h):
+>> include/net/sock.h:2100:16: sparse: sparse: cast to non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast from non-scalar
+--
+   net/ipv6/tcp_ipv6.c: note: in included file (through include/linux/tcp.h, include/linux/ipv6.h):
+>> include/net/sock.h:2100:16: sparse: sparse: cast to non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast from non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast to non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast from non-scalar
+   net/ipv6/tcp_ipv6.c:1565:25: sparse: sparse: context imbalance in 'tcp_v6_syn_recv_sock' - unexpected unlock
+   net/ipv6/tcp_ipv6.c:1956:21: sparse: sparse: context imbalance in 'tcp_v6_rcv' - different lock contexts for basic block
+--
+   net/ipv6/inet6_connection_sock.c: note: in included file (through include/linux/tcp.h, include/linux/ipv6.h):
+>> include/net/sock.h:2100:16: sparse: sparse: cast to non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast from non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast to non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast from non-scalar
+--
+   net/ipv6/netfilter.c: note: in included file (through include/linux/tcp.h, include/linux/ipv6.h):
+>> include/net/sock.h:2100:16: sparse: sparse: cast to non-scalar
+>> include/net/sock.h:2100:16: sparse: sparse: cast from non-scalar
 
-> ---
->  fs/ext4/mballoc.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-> index 5898d92ba19f..6070d3c86678 100644
-> --- a/fs/ext4/mballoc.c
-> +++ b/fs/ext4/mballoc.c
-> @@ -3655,16 +3655,26 @@ static void ext4_discard_work(struct work_struct *work)
->  
->  static inline void ext4_mb_avg_fragment_size_destroy(struct ext4_sb_info *sbi)
->  {
-> +	if (!sbi->s_mb_avg_fragment_size)
-> +		return;
-> +
->  	for (int i = 0; i < MB_NUM_ORDERS(sbi->s_sb); i++)
->  		xa_destroy(&sbi->s_mb_avg_fragment_size[i]);
-> +
->  	kfree(sbi->s_mb_avg_fragment_size);
-> +	sbi->s_mb_avg_fragment_size = NULL;
->  }
->  
->  static inline void ext4_mb_largest_free_orders_destroy(struct ext4_sb_info *sbi)
->  {
-> +	if (!sbi->s_mb_largest_free_orders)
-> +		return;
-> +
->  	for (int i = 0; i < MB_NUM_ORDERS(sbi->s_sb); i++)
->  		xa_destroy(&sbi->s_mb_largest_free_orders[i]);
-> +
->  	kfree(sbi->s_mb_largest_free_orders);
-> +	sbi->s_mb_largest_free_orders = NULL;
->  }
->  
->  int ext4_mb_init(struct super_block *sb)
+vim +2100 include/net/sock.h
 
+  2096	
+  2097	static inline kuid_t sk_uid(const struct sock *sk)
+  2098	{
+  2099		/* Paired with WRITE_ONCE() in sockfs_setattr() */
+> 2100		return READ_ONCE(sk->sk_uid);
+  2101	}
+  2102	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
