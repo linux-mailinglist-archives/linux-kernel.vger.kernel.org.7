@@ -1,473 +1,118 @@
-Return-Path: <linux-kernel+bounces-784381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87897B33AB3
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:23:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C6EDDB33AB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:23:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C9561889E61
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:22:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 522E018868F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:23:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62C8F299954;
-	Mon, 25 Aug 2025 09:22:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3852C08BF;
+	Mon, 25 Aug 2025 09:23:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YFLcAmiu"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WuZY0fjg"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E81E2356B9
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 09:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6100F280CF1
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 09:23:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756113740; cv=none; b=TxhrAXjjhMBoSXD/nP9u4jS3b69l4MfDJM5pU2p4qECXUqRcsYX15ZPKsk44o9xQlkcKw8Nji0SGVAzaTPy8ZoBjOn45oeuxoyQ1zh2PrPgTvNsQs0JzMgIAWhfqQMPIIbp4CxEdUZqEcj058AZFz8G9oBMl6LPR+V8h6MSLsLM=
+	t=1756113805; cv=none; b=msTsnJo+okEWCizOj7vh03TqsJ/pxJoTOlqumxNw589TL5Dx3b8ZOZpCwtz4RoVdz5oqe9rxwov1CNb0zRMhjO1eq1MZQQClvISsb8BQXcEuouw/ReBjz6lAne4C2vGGL55jIsgYh/uBKkAZC4oKk60+wSOY6JdHdjeK/0m7258=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756113740; c=relaxed/simple;
-	bh=tmSXeUMYd1y7I6Cud0Np8R2ZmALbpzeie/4wsApA4kQ=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=XcZ/oKZ4lJA6QcTmLsXmXK+2DkYB5zdk6XsRuHTPj53J8LB7EH2ZMUTAySfWc7g9+aMew/aCWkiTsr5kLYRvzRwbpNviR4k483bhwn9g7XGvh7OT2Z24In4NBye9jSOpjKJtlhgMr+aEittPNVnIGbJ71SDcWiPwusl8u65s2+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YFLcAmiu; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45a1b0060bfso27175035e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 02:22:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756113737; x=1756718537; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=DxpyDWEEiXC8RbtTxDFHInIMZ/KB0uS5wOH557bgda8=;
-        b=YFLcAmiurDyEqtqWAX5FroRIe96CHYIEbCel1WSAY4QKbWMfCVF4YBIcfIZj8V1B4J
-         M2tw8Um1RB2MKNYbpJYBH4FRfDCqRI53DuoEytLeTU9efJvwv3a0fpu/uT5/VvVZ7hvO
-         iowDU6zfSgTI1VJkdRyOP0xyCgR19LTyQ9RDyNYoB6nonus6/Kme6Yk4jGNTHOLyk5mF
-         g8/6imx2B572hYC8QqvJQ09Tq6H058/fC0rPigNVPM5xBmJPfOgR+7Q4KKMFPgtZ69GN
-         DL5jOdduAif0jfK3yhGMOm4HFggljaezE6pWLBf1Ul2vjowKj5BW1ouaoGWOHC1ETeQu
-         7y6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756113737; x=1756718537;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DxpyDWEEiXC8RbtTxDFHInIMZ/KB0uS5wOH557bgda8=;
-        b=aqhYNWhXVI0oiKHm7MNCiPg7E/g0CoD9G2/jmjjcehb6esOp7OuJydFJAw+0+RqmG/
-         GtgFRek6IgwLPdQmub+fUTIiF0S6FDUbh1BshjNPMvlGvQ/f73NkgcrIvehJEvsBFEiv
-         U2EVba4ypJGrn/9X/eLdMXjnR7O+DOVDMSwRS7TnBAI8tSlnWcX5IMnmf0HQ3ynLkBiS
-         pYIpO5El1xNuYruQ8XfrT0o641mqL77AXvI2BeNKEBjZ5r2WC5hbuLO5NGFcuNIoBpfr
-         CtKYA+5FifC/tElgdzLh+MAL/nF/oZ4oj4gyl8XOjxnxHRtoFhFc8zLoWQObhsXoeowL
-         VpiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXBzB75zMDqJnrU403Fx/1fAU1KdeVP6hysojN2dpCGMYcAMH+blphuOv8uog79WyfbZeXs4h5WVsMObtc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzK8WX+JTOeT8Za/TI3EQsd7dwFhPNSrgXQP+y0KFiMpV5Dr6zX
-	VTZ43L2P7EDWrwbLfGS/SPacHFgaipTlp6MZIGOhycJ4X9ECN+arwt2FC408hBGB7ZLJiuTEw7J
-	Ws/57We++3bwydzh5ug==
-X-Google-Smtp-Source: AGHT+IEsD7hEieOB0TZ/iZJGtI2HZhSYiwy5rAQ58zAxezg1OxYBcPYv1yDzkWSHxlrD2I4lXOtswTBTXEy4QYo=
-X-Received: from wmga3.prod.google.com ([2002:a05:600c:2d43:b0:459:db87:c332])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:4f03:b0:43c:f44c:72a6 with SMTP id 5b1f17b1804b1-45b5daacd8bmr31737785e9.2.1756113736699;
- Mon, 25 Aug 2025 02:22:16 -0700 (PDT)
-Date: Mon, 25 Aug 2025 09:22:09 +0000
+	s=arc-20240116; t=1756113805; c=relaxed/simple;
+	bh=mbiywVb4Wrg7M/IiTpe1OcjcESnXshqvkDIvakmHVus=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h0uTrcmgcPQgTH7DlUTA8kE1t8vaE+qHGRVJFJafNJTOG8prQq8jcuV0gdHCsYVQ+R+QuRYO4QQ2g5crvCTtxeBCds+zUEu6p+7F1Vtr9ECWki1ZEKn4rBs1jLKpB8Tad1jxzn0wcLGeAOu2xGkOkRJXsll8RY9RGXLoNaJxP6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WuZY0fjg; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=3rGRqOlzNkFuqNDj9PPNc1mEXzy/nDP4b5Hqzb6LomE=; b=WuZY0fjgjsRQSUb3Yp+u+r0GYL
+	UNyvaEdeHEoAvO887vh5/HNkMkxttH5QYK2cxG4j9M9583Pvr9bTRHs0HMriat+XxEmnMDd6rLmZ4
+	fudsVPkShH2T4QGxemYsi8csP6iwuvWvI/lVZMnwzQet2cuDFADJ/uuraZ3yp5oAOwgkFBJzlr5od
+	bkgtiRYVwGMS/AW2x5ngD2t+247XlDX8Qy9p4vFJV4yGb1U8OZDeSqW3yuJfjDGmhsv0UX6ISrTHd
+	FCdCiuC40dqBZvBXEm0BXY4DiPo9cPnYOoDigT/dX3OiCYTpIKvR5sGd1lcBrjyfwPT3DsfZCEsar
+	5dzr/2qA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uqTPz-00000009usz-1IqE;
+	Mon, 25 Aug 2025 09:23:12 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 7E1263002ED; Mon, 25 Aug 2025 11:23:11 +0200 (CEST)
+Date: Mon, 25 Aug 2025 11:23:11 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Tim Chen <tim.c.chen@intel.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Libo Chen <libo.chen@oracle.com>,
+	Abel Wu <wuyun.abel@bytedance.com>, Len Brown <len.brown@intel.com>,
+	linux-kernel@vger.kernel.org, Chen Yu <yu.c.chen@intel.com>,
+	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+	Zhao Liu <zhao1.liu@intel.com>
+Subject: Re: [PATCH 1/2] sched: topology: Fix topology validation error
+Message-ID: <20250825092311.GH4068168@noisy.programming.kicks-ass.net>
+References: <cover.1755893468.git.tim.c.chen@linux.intel.com>
+ <a3de98387abad28592e6ab591f3ff6107fe01dc1.1755893468.git.tim.c.chen@linux.intel.com>
+ <67c2b6bc-7a05-46a5-a409-a51f28f94c64@amd.com>
+ <20250825075807.GR3245006@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAEArrGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDCyMT3fSC0rJc3ZLKgnzdtMwK3WTDFHODREvz5DTzRCWgpoKiVKAw2MD o2NpaAGiZScZgAAAA
-X-Change-Id: 20250824-gpuvm-typo-fix-c1d70a97cf7a
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=16753; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=tmSXeUMYd1y7I6Cud0Np8R2ZmALbpzeie/4wsApA4kQ=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBorCtDpx3oOOh+EcHwwwc+ynTWChjdTjspYcPkk
- uII9Vq9lz2JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaKwrQwAKCRAEWL7uWMY5
- RmbKD/wNdXcuRl0xcL+s/LWAJM+G8yYL5hkYC+2SvwjApshMidDUToWKTbru87JYNW8qj2phK5Q
- DXmNBOuD+9QieZUtPvHRsPwmPRSJ6jd3CmrhdYL9ASVIVcBXIg5O0vUSu42BcWH6F1EQLWwdXUS
- d0/8h1Y5urEIiDuzl/dOEJ1zcOVVUErx3Ki5HSRRImv3nJRXGmkCSBZHcAujJoPmOXrqBQUsKi3
- /AQzcDByQH8F2mwW5/oIbJ7rsT+94Rpw8UUJGKJOd7JgTFNHMnM4qoY2n2/cvPWVtL83rq4WUV9
- +G93t/5/gH6DVj+aZFQHz52jw51tSCq2clo/OjnjK1YdRKfwfyafYUpfIl0Y2cJt7RfG4BeRXzO
- ZiPxHcotNlwGF5YXdil9JU5FDu9YgzdaK4VYjpIEMY0AhFKZGAKCeEpw9bXT+jJuuRfBlMlUfbb
- LY4AiN2ZUS9l9EkeZWsF1ozX3xKz7DY7C7z22M/VI3vi1mRgNQUEgD07NFU9uRLCW8Mixao42OR
- 59eQg7NKYIh3hgbyMfZVVdR33LJ1SSeGswAM2D21Xbu7YDH5ceqqb/swZu0c2BdSo+2bmDrL3tB
- hf7/88B93gucne9B0sN7o+htiSARCmOLqMUz+ob6FECT3c16q5nR/ICqC/Ge9BMNKnp+rEojzFw UMKXtv9KsxwLluQ==
-X-Mailer: b4 0.14.2
-Message-ID: <20250825-gpuvm-typo-fix-v1-1-14e9e78e28e6@google.com>
-Subject: [PATCH] drm/gpuvm: fix various typos in .c and .h gpuvm file
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>, Matthew Brost <matthew.brost@intel.com>, 
-	"=?utf-8?q?Thomas_Hellstr=C3=B6m?=" <thomas.hellstrom@linux.intel.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250825075807.GR3245006@noisy.programming.kicks-ass.net>
 
-After working with this code for a while, I came across several typos.
-This patch fixes them.
+On Mon, Aug 25, 2025 at 09:58:07AM +0200, Peter Zijlstra wrote:
+> On Mon, Aug 25, 2025 at 08:48:29AM +0530, K Prateek Nayak wrote:
+> > Hello Tim, Vinicius,
+> > 
+> > On 8/23/2025 1:44 AM, Tim Chen wrote:
+> > > --- a/kernel/sched/topology.c
+> > > +++ b/kernel/sched/topology.c
+> > > @@ -2394,6 +2394,14 @@ static bool topology_span_sane(const struct cpumask *cpu_map)
+> > >  	for_each_sd_topology(tl) {
+> > >  		int tl_common_flags = 0;
+> > >  
+> > > +#ifdef CONFIG_NUMA
+> > > +		/*
+> > > +		 * sd_numa_mask() (one of the possible values of
+> > > +		 * tl->mask()) depends on the current level to work
+> > > +		 * correctly.
+> > > +		 */
+> > > +		sched_domains_curr_level = tl->numa_level;
+> > > +#endif
+> > 
+> > A similar solution was proposed in [1] and after a few iterations, we
+> > arrived at [2] as a potential solution to this issue. Now that the merge
+> > window is behind us, Peter would it be possible to pick one of these up?
+> > 
+> > P.S. Leon has confirmed this solved the splat of their deployments too
+> > on an earlier version [3].
+> > 
+> > [1] https://lore.kernel.org/lkml/20250624041235.1589-1-kprateek.nayak@amd.com/
+> > [2] https://lore.kernel.org/lkml/20250715040824.893-1-kprateek.nayak@amd.com/
+> > [3] https://lore.kernel.org/lkml/20250720104136.GI402218@unreal/
+> 
+> I'm sure that's stuck somewhere in my holiday backlog ... Let me go try
+> and find it.
 
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
- drivers/gpu/drm/drm_gpuvm.c | 80 ++++++++++++++++++++++-----------------------
- include/drm/drm_gpuvm.h     | 10 +++---
- 2 files changed, 45 insertions(+), 45 deletions(-)
+Replied there.
 
-diff --git a/drivers/gpu/drm/drm_gpuvm.c b/drivers/gpu/drm/drm_gpuvm.c
-index d6bea8a4fffd7613fb9b9ed5c795df373da2e7b6..098cc6be1c8273a36178dbd08fafcba87c3338ec 100644
---- a/drivers/gpu/drm/drm_gpuvm.c
-+++ b/drivers/gpu/drm/drm_gpuvm.c
-@@ -40,7 +40,7 @@
-  * mapping's backing &drm_gem_object buffers.
-  *
-  * &drm_gem_object buffers maintain a list of &drm_gpuva objects representing
-- * all existent GPU VA mappings using this &drm_gem_object as backing buffer.
-+ * all existing GPU VA mappings using this &drm_gem_object as backing buffer.
-  *
-  * GPU VAs can be flagged as sparse, such that drivers may use GPU VAs to also
-  * keep track of sparse PTEs in order to support Vulkan 'Sparse Resources'.
-@@ -72,7 +72,7 @@
-  * but it can also be a 'dummy' object, which can be allocated with
-  * drm_gpuvm_resv_object_alloc().
-  *
-- * In order to connect a struct drm_gpuva its backing &drm_gem_object each
-+ * In order to connect a struct drm_gpuva to its backing &drm_gem_object each
-  * &drm_gem_object maintains a list of &drm_gpuvm_bo structures, and each
-  * &drm_gpuvm_bo contains a list of &drm_gpuva structures.
-  *
-@@ -81,7 +81,7 @@
-  * This is ensured by the API through drm_gpuvm_bo_obtain() and
-  * drm_gpuvm_bo_obtain_prealloc() which first look into the corresponding
-  * &drm_gem_object list of &drm_gpuvm_bos for an existing instance of this
-- * particular combination. If not existent a new instance is created and linked
-+ * particular combination. If not present, a new instance is created and linked
-  * to the &drm_gem_object.
-  *
-  * &drm_gpuvm_bo structures, since unique for a given &drm_gpuvm, are also used
-@@ -108,7 +108,7 @@
-  * sequence of operations to satisfy a given map or unmap request.
-  *
-  * Therefore the DRM GPU VA manager provides an algorithm implementing splitting
-- * and merging of existent GPU VA mappings with the ones that are requested to
-+ * and merging of existing GPU VA mappings with the ones that are requested to
-  * be mapped or unmapped. This feature is required by the Vulkan API to
-  * implement Vulkan 'Sparse Memory Bindings' - drivers UAPIs often refer to this
-  * as VM BIND.
-@@ -119,7 +119,7 @@
-  * execute in order to integrate the new mapping cleanly into the current state
-  * of the GPU VA space.
-  *
-- * Depending on how the new GPU VA mapping intersects with the existent mappings
-+ * Depending on how the new GPU VA mapping intersects with the existing mappings
-  * of the GPU VA space the &drm_gpuvm_ops callbacks contain an arbitrary amount
-  * of unmap operations, a maximum of two remap operations and a single map
-  * operation. The caller might receive no callback at all if no operation is
-@@ -139,16 +139,16 @@
-  * one unmap operation and one or two map operations, such that drivers can
-  * derive the page table update delta accordingly.
-  *
-- * Note that there can't be more than two existent mappings to split up, one at
-+ * Note that there can't be more than two existing mappings to split up, one at
-  * the beginning and one at the end of the new mapping, hence there is a
-  * maximum of two remap operations.
-  *
-  * Analogous to drm_gpuvm_sm_map() drm_gpuvm_sm_unmap() uses &drm_gpuvm_ops to
-  * call back into the driver in order to unmap a range of GPU VA space. The
-- * logic behind this function is way simpler though: For all existent mappings
-+ * logic behind this function is way simpler though: For all existing mappings
-  * enclosed by the given range unmap operations are created. For mappings which
-- * are only partically located within the given range, remap operations are
-- * created such that those mappings are split up and re-mapped partically.
-+ * are only partially located within the given range, remap operations are
-+ * created such that those mappings are split up and re-mapped partially.
-  *
-  * As an alternative to drm_gpuvm_sm_map() and drm_gpuvm_sm_unmap(),
-  * drm_gpuvm_sm_map_ops_create() and drm_gpuvm_sm_unmap_ops_create() can be used
-@@ -168,7 +168,7 @@
-  * provided helper functions drm_gpuva_map(), drm_gpuva_remap() and
-  * drm_gpuva_unmap() instead.
-  *
-- * The following diagram depicts the basic relationships of existent GPU VA
-+ * The following diagram depicts the basic relationships of existing GPU VA
-  * mappings, a newly requested mapping and the resulting mappings as implemented
-  * by drm_gpuvm_sm_map() - it doesn't cover any arbitrary combinations of these.
-  *
-@@ -218,7 +218,7 @@
-  *
-  *
-  * 4) Existent mapping is a left aligned subset of the requested one, hence
-- *    replace the existent one.
-+ *    replace the existing one.
-  *
-  *    ::
-  *
-@@ -236,9 +236,9 @@
-  *       and/or non-contiguous BO offset.
-  *
-  *
-- * 5) Requested mapping's range is a left aligned subset of the existent one,
-+ * 5) Requested mapping's range is a left aligned subset of the existing one,
-  *    but backed by a different BO. Hence, map the requested mapping and split
-- *    the existent one adjusting its BO offset.
-+ *    the existing one adjusting its BO offset.
-  *
-  *    ::
-  *
-@@ -271,9 +271,9 @@
-  *	new: |-----|-----| (a.bo_offset=n, a'.bo_offset=n+1)
-  *
-  *
-- * 7) Requested mapping's range is a right aligned subset of the existent one,
-+ * 7) Requested mapping's range is a right aligned subset of the existing one,
-  *    but backed by a different BO. Hence, map the requested mapping and split
-- *    the existent one, without adjusting the BO offset.
-+ *    the existing one, without adjusting the BO offset.
-  *
-  *    ::
-  *
-@@ -304,7 +304,7 @@
-  *
-  * 9) Existent mapping is overlapped at the end by the requested mapping backed
-  *    by a different BO. Hence, map the requested mapping and split up the
-- *    existent one, without adjusting the BO offset.
-+ *    existing one, without adjusting the BO offset.
-  *
-  *    ::
-  *
-@@ -334,9 +334,9 @@
-  *	 new: |-----|-----------| (a'.bo_offset=n, a.bo_offset=n+1)
-  *
-  *
-- * 11) Requested mapping's range is a centered subset of the existent one
-+ * 11) Requested mapping's range is a centered subset of the existing one
-  *     having a different backing BO. Hence, map the requested mapping and split
-- *     up the existent one in two mappings, adjusting the BO offset of the right
-+ *     up the existing one in two mappings, adjusting the BO offset of the right
-  *     one accordingly.
-  *
-  *     ::
-@@ -351,7 +351,7 @@
-  *	 new: |-----|-----|-----| (a.bo_offset=n,b.bo_offset=m,a'.bo_offset=n+2)
-  *
-  *
-- * 12) Requested mapping is a contiguous subset of the existent one. Split it
-+ * 12) Requested mapping is a contiguous subset of the existing one. Split it
-  *     up, but indicate that the backing PTEs could be kept.
-  *
-  *     ::
-@@ -367,7 +367,7 @@
-  *
-  *
-  * 13) Existent mapping is a right aligned subset of the requested one, hence
-- *     replace the existent one.
-+ *     replace the existing one.
-  *
-  *     ::
-  *
-@@ -386,7 +386,7 @@
-  *
-  *
-  * 14) Existent mapping is a centered subset of the requested one, hence
-- *     replace the existent one.
-+ *     replace the existing one.
-  *
-  *     ::
-  *
-@@ -406,7 +406,7 @@
-  *
-  * 15) Existent mappings is overlapped at the beginning by the requested mapping
-  *     backed by a different BO. Hence, map the requested mapping and split up
-- *     the existent one, adjusting its BO offset accordingly.
-+ *     the existing one, adjusting its BO offset accordingly.
-  *
-  *     ::
-  *
-@@ -534,8 +534,8 @@
-  * make use of them.
-  *
-  * The below code is strictly limited to illustrate the generic usage pattern.
-- * To maintain simplicitly, it doesn't make use of any abstractions for common
-- * code, different (asyncronous) stages with fence signalling critical paths,
-+ * To maintain simplicity, it doesn't make use of any abstractions for common
-+ * code, different (asynchronous) stages with fence signalling critical paths,
-  * any other helpers or error handling in terms of freeing memory and dropping
-  * previously taken locks.
-  *
-@@ -544,7 +544,7 @@
-  *	// Allocates a new &drm_gpuva.
-  *	struct drm_gpuva * driver_gpuva_alloc(void);
-  *
-- *	// Typically drivers would embedd the &drm_gpuvm and &drm_gpuva
-+ *	// Typically drivers would embed the &drm_gpuvm and &drm_gpuva
-  *	// structure in individual driver structures and lock the dma-resv with
-  *	// drm_exec or similar helpers.
-  *	int driver_mapping_create(struct drm_gpuvm *gpuvm,
-@@ -652,7 +652,7 @@
-  *		.sm_step_unmap = driver_gpuva_unmap,
-  *	};
-  *
-- *	// Typically drivers would embedd the &drm_gpuvm and &drm_gpuva
-+ *	// Typically drivers would embed the &drm_gpuvm and &drm_gpuva
-  *	// structure in individual driver structures and lock the dma-resv with
-  *	// drm_exec or similar helpers.
-  *	int driver_mapping_create(struct drm_gpuvm *gpuvm,
-@@ -750,7 +750,7 @@
-  *
-  * This helper is here to provide lockless list iteration. Lockless as in, the
-  * iterator releases the lock immediately after picking the first element from
-- * the list, so list insertion deletion can happen concurrently.
-+ * the list, so list insertion and deletion can happen concurrently.
-  *
-  * Elements popped from the original list are kept in a local list, so removal
-  * and is_empty checks can still happen while we're iterating the list.
-@@ -1230,7 +1230,7 @@ drm_gpuvm_prepare_objects_locked(struct drm_gpuvm *gpuvm,
- }
- 
- /**
-- * drm_gpuvm_prepare_objects() - prepare all assoiciated BOs
-+ * drm_gpuvm_prepare_objects() - prepare all associated BOs
-  * @gpuvm: the &drm_gpuvm
-  * @exec: the &drm_exec locking context
-  * @num_fences: the amount of &dma_fences to reserve
-@@ -1300,13 +1300,13 @@ drm_gpuvm_prepare_range(struct drm_gpuvm *gpuvm, struct drm_exec *exec,
- EXPORT_SYMBOL_GPL(drm_gpuvm_prepare_range);
- 
- /**
-- * drm_gpuvm_exec_lock() - lock all dma-resv of all assoiciated BOs
-+ * drm_gpuvm_exec_lock() - lock all dma-resv of all associated BOs
-  * @vm_exec: the &drm_gpuvm_exec wrapper
-  *
-  * Acquires all dma-resv locks of all &drm_gem_objects the given
-  * &drm_gpuvm contains mappings of.
-  *
-- * Addionally, when calling this function with struct drm_gpuvm_exec::extra
-+ * Additionally, when calling this function with struct drm_gpuvm_exec::extra
-  * being set the driver receives the given @fn callback to lock additional
-  * dma-resv in the context of the &drm_gpuvm_exec instance. Typically, drivers
-  * would call drm_exec_prepare_obj() from within this callback.
-@@ -1363,7 +1363,7 @@ fn_lock_array(struct drm_gpuvm_exec *vm_exec)
- }
- 
- /**
-- * drm_gpuvm_exec_lock_array() - lock all dma-resv of all assoiciated BOs
-+ * drm_gpuvm_exec_lock_array() - lock all dma-resv of all associated BOs
-  * @vm_exec: the &drm_gpuvm_exec wrapper
-  * @objs: additional &drm_gem_objects to lock
-  * @num_objs: the number of additional &drm_gem_objects to lock
-@@ -1658,7 +1658,7 @@ drm_gpuvm_bo_find(struct drm_gpuvm *gpuvm,
- EXPORT_SYMBOL_GPL(drm_gpuvm_bo_find);
- 
- /**
-- * drm_gpuvm_bo_obtain() - obtains and instance of the &drm_gpuvm_bo for the
-+ * drm_gpuvm_bo_obtain() - obtains an instance of the &drm_gpuvm_bo for the
-  * given &drm_gpuvm and &drm_gem_object
-  * @gpuvm: The &drm_gpuvm the @obj is mapped in.
-  * @obj: The &drm_gem_object being mapped in the @gpuvm.
-@@ -1694,7 +1694,7 @@ drm_gpuvm_bo_obtain(struct drm_gpuvm *gpuvm,
- EXPORT_SYMBOL_GPL(drm_gpuvm_bo_obtain);
- 
- /**
-- * drm_gpuvm_bo_obtain_prealloc() - obtains and instance of the &drm_gpuvm_bo
-+ * drm_gpuvm_bo_obtain_prealloc() - obtains an instance of the &drm_gpuvm_bo
-  * for the given &drm_gpuvm and &drm_gem_object
-  * @__vm_bo: A pre-allocated struct drm_gpuvm_bo.
-  *
-@@ -1758,7 +1758,7 @@ EXPORT_SYMBOL_GPL(drm_gpuvm_bo_extobj_add);
-  * @vm_bo: the &drm_gpuvm_bo to add or remove
-  * @evict: indicates whether the object is evicted
-  *
-- * Adds a &drm_gpuvm_bo to or removes it from the &drm_gpuvms evicted list.
-+ * Adds a &drm_gpuvm_bo to or removes it from the &drm_gpuvm's evicted list.
-  */
- void
- drm_gpuvm_bo_evict(struct drm_gpuvm_bo *vm_bo, bool evict)
-@@ -1860,7 +1860,7 @@ __drm_gpuva_remove(struct drm_gpuva *va)
-  * drm_gpuva_remove() - remove a &drm_gpuva
-  * @va: the &drm_gpuva to remove
-  *
-- * This removes the given &va from the underlaying tree.
-+ * This removes the given &va from the underlying tree.
-  *
-  * It is safe to use this function using the safe versions of iterating the GPU
-  * VA space, such as drm_gpuvm_for_each_va_safe() and
-@@ -2464,7 +2464,7 @@ EXPORT_SYMBOL_GPL(drm_gpuvm_sm_map);
-  *
-  * This function iterates the given range of the GPU VA space. It utilizes the
-  * &drm_gpuvm_ops to call back into the driver providing the operations to
-- * unmap and, if required, split existent mappings.
-+ * unmap and, if required, split existing mappings.
-  *
-  * Drivers may use these callbacks to update the GPU VA space right away within
-  * the callback. In case the driver decides to copy and store the operations for
-@@ -2574,7 +2574,7 @@ static const struct drm_gpuvm_ops lock_ops = {
-  *    required without the earlier DRIVER_OP_MAP.  This is safe because we've
-  *    already locked the GEM object in the earlier DRIVER_OP_MAP step.
-  *
-- * Returns: 0 on success or a negative error codec
-+ * Returns: 0 on success or a negative error code
-  */
- int
- drm_gpuvm_sm_map_exec_lock(struct drm_gpuvm *gpuvm,
-@@ -2746,12 +2746,12 @@ __drm_gpuvm_sm_map_ops_create(struct drm_gpuvm *gpuvm,
-  * @req: map request arguments
-  *
-  * This function creates a list of operations to perform splitting and merging
-- * of existent mapping(s) with the newly requested one.
-+ * of existing mapping(s) with the newly requested one.
-  *
-  * The list can be iterated with &drm_gpuva_for_each_op and must be processed
-  * in the given order. It can contain map, unmap and remap operations, but it
-  * also can be empty if no operation is required, e.g. if the requested mapping
-- * already exists is the exact same way.
-+ * already exists in the exact same way.
-  *
-  * There can be an arbitrary amount of unmap operations, a maximum of two remap
-  * operations and a single map operation. The latter one represents the original
-@@ -2788,7 +2788,7 @@ EXPORT_SYMBOL_GPL(drm_gpuvm_sm_map_ops_create);
-  * The list can be iterated with &drm_gpuva_for_each_op and must be processed
-  * in the given order. It can contain map and remap operations, but it
-  * also can be empty if no operation is required, e.g. if the requested mapping
-- * already exists is the exact same way.
-+ * already exists in the exact same way.
-  *
-  * There will be no unmap operations, a maximum of two remap operations and two
-  * map operations. The two map operations correspond to: one from start to the
-diff --git a/include/drm/drm_gpuvm.h b/include/drm/drm_gpuvm.h
-index 4a22b9d848f7b3d5710ca554f5b01556abf95985..757d071275e5125522deaa0ed2adb7dcbe1314a5 100644
---- a/include/drm/drm_gpuvm.h
-+++ b/include/drm/drm_gpuvm.h
-@@ -103,7 +103,7 @@ struct drm_gpuva {
- 	} va;
- 
- 	/**
--	 * @gem: structure containing the &drm_gem_object and it's offset
-+	 * @gem: structure containing the &drm_gem_object and its offset
- 	 */
- 	struct {
- 		/**
-@@ -834,7 +834,7 @@ struct drm_gpuva_op_map {
- 	} va;
- 
- 	/**
--	 * @gem: structure containing the &drm_gem_object and it's offset
-+	 * @gem: structure containing the &drm_gem_object and its offset
- 	 */
- 	struct {
- 		/**
-@@ -1195,11 +1195,11 @@ struct drm_gpuvm_ops {
- 
- 	/**
- 	 * @sm_step_unmap: called from &drm_gpuvm_sm_map and
--	 * &drm_gpuvm_sm_unmap to unmap an existent mapping
-+	 * &drm_gpuvm_sm_unmap to unmap an existing mapping
- 	 *
--	 * This callback is called when existent mapping needs to be unmapped.
-+	 * This callback is called when existing mapping needs to be unmapped.
- 	 * This is the case when either a newly requested mapping encloses an
--	 * existent mapping or an unmap of an existent mapping is requested.
-+	 * existing mapping or an unmap of an existing mapping is requested.
- 	 *
- 	 * The &priv pointer matches the one the driver passed to
- 	 * &drm_gpuvm_sm_map or &drm_gpuvm_sm_unmap, respectively.
-
----
-base-commit: efe927b9702643a1d80472664c2642f0304cb608
-change-id: 20250824-gpuvm-typo-fix-c1d70a97cf7a
-
-Best regards,
--- 
-Alice Ryhl <aliceryhl@google.com>
-
+  https://lkml.kernel.org/r/20250825091910.GT3245006@noisy.programming.kicks-ass.net
 
