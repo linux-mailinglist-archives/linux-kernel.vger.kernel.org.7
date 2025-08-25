@@ -1,230 +1,162 @@
-Return-Path: <linux-kernel+bounces-784712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB0A0B3402E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:57:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBACFB3402C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:57:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5360D4E3031
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:57:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A31B61789F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:57:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C3B2609FC;
-	Mon, 25 Aug 2025 12:57:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A79F51E6DC5;
+	Mon, 25 Aug 2025 12:56:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=grenoble-inp.org header.i=@grenoble-inp.org header.b="AsFUaFZ1"
-Received: from smtpout02-ext4.partage.renater.fr (smtpout02-ext4.partage.renater.fr [194.254.241.31])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="b6hHUyVz"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53BA13B1AB;
-	Mon, 25 Aug 2025 12:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.254.241.31
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3F83B1AB
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 12:56:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756126623; cv=none; b=RVP2/9XSgrtbipMM6e9ddbpqrhOO29PeBrRoCtM4M0kTLTsh7uGMjdQLiJE3lF7b+BKQqmJM0MysG1sqOOA6d2QbhZ+lqkmbkuUYsR/5v/v28WA3cu741kg+YSYbv6caMhfsdRAoBe0GDTgno2I+RQfx8D1xraq+xDvnX++N4j8=
+	t=1756126614; cv=none; b=ozjjNDAnCS5iX+bPSWg3PYMY/gH8TStOlb4E16T1t9vDrpoy6inWOwIVF2mGiwzULtRItvBlXWVZ3MPIN7FD+t0s1RwNxTAUeQAYHx0kEL5dbMJL6Q4PG8VSPzS7xYpbLXQP7+ZfmsZq+cMQ31naE3DIGsl70M8vQANOBdWGM7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756126623; c=relaxed/simple;
-	bh=I8cOqQy1NyXSD/iFLWsedTfAdOjAm5LeF61aWjQoCUg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XY/PjvbkJlkUJesgn3eXGt70KEetv2Vbq1eInxsHDkVOm/4pbVxTML/zCd2wuSVTRpSdVhrc97EhrQImuF+KdaLbR91GDgaUv5K/gI9r6T5kE3DPZpOD/qSioTp0bdbm7Lp5eMn6/2u8FtAfoMYt56+EyzdfqyMRe8wO1uVhn1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grenoble-inp.org; spf=none smtp.mailfrom=grenoble-inp.org; dkim=pass (2048-bit key) header.d=grenoble-inp.org header.i=@grenoble-inp.org header.b=AsFUaFZ1; arc=none smtp.client-ip=194.254.241.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grenoble-inp.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=grenoble-inp.org
-Received: from zmtaauth04.partage.renater.fr (zmtaauth04.partage.renater.fr [194.254.241.26])
-	by smtpout20.partage.renater.fr (Postfix) with ESMTP id 2873BBFA4E;
-	Mon, 25 Aug 2025 14:56:54 +0200 (CEST)
-Received: from zmtaauth04.partage.renater.fr (localhost [127.0.0.1])
-	by zmtaauth04.partage.renater.fr (Postfix) with ESMTPS id 147B41C0925;
-	Mon, 25 Aug 2025 14:56:54 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by zmtaauth04.partage.renater.fr (Postfix) with ESMTP id EF9501C0832;
-	Mon, 25 Aug 2025 14:56:53 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 zmtaauth04.partage.renater.fr EF9501C0832
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grenoble-inp.org;
-	s=F42A61D9-9621-4693-8E8E-830FB5F1ED6E; t=1756126614;
-	bh=p7nZSFFPKI8nw4Et45knVxi5z/6xU+HLAyoavG1fZV0=;
-	h=From:To:Date:Message-ID:MIME-Version;
-	b=AsFUaFZ1XkzxJSgw/fxcDcJ2A6b9ZMmngwcSZM675OJT/ea+lBV4fEBTqstD9yGWn
-	 vIHq195RF5VorAsFlrzOnxLwC1MmMfioNTBWvELftHH0juIM/wV2p5uRjq594XqXSa
-	 9ddqFXP869y7S6oh0W6EgEqUWIhox6kHM857JeyWWKQo3jfTphQ8Qa7kfDwqzbtNVs
-	 ZqMU0B1U913JiMLrI+PqX3YYUcx9TyrV6LtQczVeoWkXDV3GHXMtSJoOt9C0JRbkgT
-	 bQPqSgB7uRNmE3+J33oecthWD3dArfedAoPNRcADSZl+dRyREEi5HQhgp8GZ9+hq07
-	 ran0OT4PJWAjw==
-Received: from zmtaauth04.partage.renater.fr ([127.0.0.1])
- by localhost (zmtaauth04.partage.renater.fr [127.0.0.1]) (amavis, port 10026)
- with ESMTP id LAO-yyCAx0mS; Mon, 25 Aug 2025 14:56:53 +0200 (CEST)
-Received: from 91.166.147.41 (unknown [194.254.241.251])
-	by zmtaauth04.partage.renater.fr (Postfix) with ESMTPA id 753F71C0925;
-	Mon, 25 Aug 2025 14:56:53 +0200 (CEST)
-From: Calixte Pernot <calixte.pernot@grenoble-inp.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	Calixte Pernot <calixte.pernot@grenoble-inp.org>
-Subject: [PATCH v2] vt: add support for smput/rmput escape codes
-Date: Mon, 25 Aug 2025 14:56:09 +0200
-Message-ID: <20250825125607.2478-3-calixte.pernot@grenoble-inp.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <e5f75c37-30a5-4c4e-aae5-a72060be24da@kernel.org>
-References: <e5f75c37-30a5-4c4e-aae5-a72060be24da@kernel.org>
+	s=arc-20240116; t=1756126614; c=relaxed/simple;
+	bh=AiRdSUneN/IHEMxz/2390+MMo6RGIcoLqIA6r4/MmWg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xdd6BF8oRPqq5JpLNnietoWHRwP2pF/1xXEP34bleknyIAzxfmOFwv8iGo0u17XGOYAuXDp5/LpReoUt6FnAM0JtNZqZgZqmd4USGDEEunvRbGp4H9mkzXLM4s5hakuUbvnIjhOIw1BDuFrWdjXEX54+TN3eRBCfFHx0+NVIhuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=b6hHUyVz; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-336674f95e7so11998521fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 05:56:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756126610; x=1756731410; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qnMFRUI7OrpeFHOHQnTbYDUskSBfz/K49TJPo7jgp3o=;
+        b=b6hHUyVzMJlduq3zU7G/7jfkvA+1tI33ljc7jbxBddnIN18QwkILh7NfmU/hTEX54G
+         LV+Yh1e9/uAcSwlxO+sdw7BBzzVD3I+hpU5dKwaB7U0x8BYdSFQUduEPaJwJElAGtNP6
+         nVvPVjTnEP0wCTbJIWrB6UtBVKuL9wWnZbiDv8k0k4fRZ/wYnKUL8MiLS7+Vj92iP2Ah
+         WA+0ezRfXgoEKKaoERSTlrr36WxK5t6tJLZQh+JHhQNvVDmejudMT7RMPrf2tr7ve54m
+         FB6jRxvByMSkJeQBDb6FZXCcNBxeH1jA+0Wt01V3A2C/iY2Q+RqsLTRqvY7S6+Il6stu
+         2ovQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756126610; x=1756731410;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qnMFRUI7OrpeFHOHQnTbYDUskSBfz/K49TJPo7jgp3o=;
+        b=hfA3n2nTo8hVOgc5W/TlHAvCO3wY35juExJUK44V/zTI2FTDGSCxXsvBAg86opANeU
+         yHINUfAW2qIRlnXq14VQ7+OlOroiWamkfXq9Cdi3b8HRrPFfMyWKeexvHslbP+uglhGS
+         HQoXlrq06Ki7HgogY4lwzk616qs8L/oUBCcZiEGM2T1QEwd5a88fcBkA3n1T5Muua5kZ
+         cqef9Rt1cg/+W9jGNmLbN6Ne7vTAn/S7KWND9EBpFxd6pb4JFWOxeJ7ymKnBFBFo1+xx
+         FHD755hRh11iflGHucY48AVbJip38jw4bju06aRTlKMuqM7pHoFpPDfMXjAxIZcA2GDj
+         aGhw==
+X-Forwarded-Encrypted: i=1; AJvYcCUBsLPeXWxv8GAF7+2zbeBiQOMA+d5X8yY3ADox5W2GrrET0P3XBKr09kOGkJ20TJKxQjXBOPBklAAjwjo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4uqh+jhWgVtVMsJnNx3D6fCO5Oh+RTaq1uPGfv2HWQS3zaSJc
+	kEkNUWnxhSq8qiu2RvZmWFcUyEHxZGEPh/1tNZptv6Xwkyx8oikPGWQ9ufvnCQpCNFpco5t2fUs
+	GNeQIGypiU4WuMFQRQ28nsQdzLYfwkhw47IXCAGpVzw==
+X-Gm-Gg: ASbGncsafCvDk/gkzLKDqIjSDZ5cMg1hsnQb9sQpK5OcVLXQfK1qfT+yh87zdPN/o3f
+	0cJLDz2lJ3MHBUtAwEGzEUw+PtiXcUbvqTBe42k9qJotW4l1DBLGSdd6Mopvly3ECDncNPBgJxl
+	FLh0Aq0KW9TUfruT7K4sEI/vCsvueBDg/XJw8F7nT/NYXzvJfQ6Y/xj5y5imH5fB3SsJSNgaeRs
+	X+6gX21PF1vt020AqMHFH/m53Ab5VOuQFxS7w4=
+X-Google-Smtp-Source: AGHT+IEKuRSYDRBEFcUoSaQJpuUMdlcesI/FHii7hOjk4oxM01a0EqmTFPiCYNu0z4GmlScnxLvw71vWU7C0gmCrYWM=
+X-Received: by 2002:a05:651c:e0a:b0:333:faea:760e with SMTP id
+ 38308e7fff4ca-33650e28035mr29572141fa.4.1756126610386; Mon, 25 Aug 2025
+ 05:56:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Virus-Scanned: clamav-milter 0.103.12 at clamav02
-X-Virus-Status: Clean
-X-Renater-Ptge-SpamState: clean
-X-Renater-Ptge-SpamScore: -100
-X-Renater-Ptge-SpamCause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddujedvgeehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecutffgpfetvffgtfenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepvegrlhhigihtvgcurfgvrhhnohhtuceotggrlhhigihtvgdrphgvrhhnohhtsehgrhgvnhhosghlvgdqihhnphdrohhrgheqnecuggftrfgrthhtvghrnhepvedvjeehgedvgfffvefhgfeitdfhffejgffgueduveetudevueeuheeukeetjeejnecukfhppeduleegrddvheegrddvgedurddvhedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelgedrvdehgedrvdeguddrvdehuddphhgvlhhopeeluddrudeiiedrudegjedrgedupdhmrghilhhfrhhomheptggrlhhigihtvgdrphgvrhhnohhtsehgrhgvnhhosghlvgdqihhnphdrohhrghdpnhgspghrtghpthhtohephedprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehjihhrihhslhgrsgihsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhsvghrihgrlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgt
- phhtthhopegtrghlihigthgvrdhpvghrnhhothesghhrvghnohgslhgvqdhinhhprdhorhhg
+References: <cover.1756104334.git.christophe.leroy@csgroup.eu> <e05a0959d794016bde79e48e25ff71253cf51aae.1756104334.git.christophe.leroy@csgroup.eu>
+In-Reply-To: <e05a0959d794016bde79e48e25ff71253cf51aae.1756104334.git.christophe.leroy@csgroup.eu>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 25 Aug 2025 14:56:39 +0200
+X-Gm-Features: Ac12FXyribtDrV6nGrkt8B-SxFaigB01Pq-K7rMjlp_S8j2j5Cn5-EuT5Gchlm4
+Message-ID: <CAMRc=MfPTtdFtE63UKfbuK3h1mLEk2aUGazBsbRS-OLZzm7e9g@mail.gmail.com>
+Subject: Re: [PATCH v3 2/6] soc: fsl: qe: Change GPIO driver to a proper
+ platform driver
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Qiang Zhao <qiang.zhao@nxp.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Support "\e[?1049h" and "\e[?1049l" escape codes.
-This patch allows programs to enter and leave alternate screens.
-This feature is widely available in graphical terminal emulators and most=
-ly
-used by fullscreen terminal-based user interfaces such as text editors.
-Most editors such as vim and nano assume this escape code in not supporte=
-d
-and will not try to print the escape sequence if TERM=3Dlinux.
-To try out this patch, run `TERM=3Dxterm-256color vim` inside a VT.
+On Mon, Aug 25, 2025 at 8:53=E2=80=AFAM Christophe Leroy
+<christophe.leroy@csgroup.eu> wrote:
+>
+> In order to be able to add interrupts to the GPIOs, first change the
+> QE GPIO driver to the proper platform driver in order to allow
+> initialisation to be done in the right order, otherwise the GPIOs
+> get added before the interrupts are registered.
+>
+> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Signed-off-by: Calixte Pernot <calixte.pernot@grenoble-inp.org>
----
- drivers/tty/vt/vt.c            | 58 ++++++++++++++++++++++++++++++++++
- include/linux/console_struct.h |  3 ++
- 2 files changed, 61 insertions(+)
+Hi! I retracted my review tag under v1 because...
 
-diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
-index 62049ceb3..bda2a6f76 100644
---- a/drivers/tty/vt/vt.c
-+++ b/drivers/tty/vt/vt.c
-@@ -141,6 +141,7 @@ static const struct consw *con_driver_map[MAX_NR_CONS=
-OLES];
- static int con_open(struct tty_struct *, struct file *);
- static void vc_init(struct vc_data *vc, int do_clear);
- static void gotoxy(struct vc_data *vc, int new_x, int new_y);
-+static void restore_cur(struct vc_data *vc);
- static void save_cur(struct vc_data *vc);
- static void reset_terminal(struct vc_data *vc, int do_clear);
- static void con_flush_chars(struct tty_struct *tty);
-@@ -1344,6 +1345,10 @@ struct vc_data *vc_deallocate(unsigned int currcon=
-s)
- 		kfree(vc->vc_screenbuf);
- 		vc_cons[currcons].d =3D NULL;
- 	}
-+	if (vc->vc_saved_screen !=3D NULL) {
-+		kfree(vc->vc_saved_screen);
-+		vc->vc_saved_screen =3D NULL;
-+	}
- 	return vc;
- }
-=20
-@@ -1878,6 +1883,45 @@ static int get_bracketed_paste(struct tty_struct *=
-tty)
- 	return vc->vc_bracketed_paste;
- }
-=20
-+/* console_lock is held */
-+static void enter_alt_screen(struct vc_data *vc)
-+{
-+	unsigned int size =3D vc->vc_rows * vc->vc_cols * 2;
-+
-+	if (vc->vc_saved_screen !=3D NULL)
-+		return; /* Already inside an alt-screen */
-+	vc->vc_saved_screen =3D kmemdup((u16 *)vc->vc_origin, size, GFP_KERNEL)=
-;
-+	if (vc->vc_saved_screen =3D=3D NULL)
-+		return;
-+	vc->vc_saved_rows =3D vc->vc_rows;
-+	vc->vc_saved_cols =3D vc->vc_cols;
-+	save_cur(vc);
-+	/* clear entire screen */
-+	csi_J(vc, CSI_J_FULL);
-+}
-+
-+/* console_lock is held */
-+static void leave_alt_screen(struct vc_data *vc)
-+{
-+	unsigned int rows =3D min(vc->vc_saved_rows, vc->vc_rows);
-+	unsigned int cols =3D min(vc->vc_saved_cols, vc->vc_cols);
-+	u16 *src, *dest;
-+
-+	if (vc->vc_saved_screen =3D=3D NULL)
-+		return; /* Not inside an alt-screen */
-+	for (unsigned int r =3D 0; r < rows; r++) {
-+		src =3D vc->vc_saved_screen + r * vc->vc_saved_cols;
-+		dest =3D ((u16 *)vc->vc_origin) + r * vc->vc_cols;
-+		memcpy(dest, src, 2 * cols);
-+	}
-+	restore_cur(vc);
-+	/* Update the entire screen */
-+	if (con_should_update(vc))
-+		do_update_region(vc, vc->vc_origin, vc->vc_screenbuf_size / 2);
-+	kfree(vc->vc_saved_screen);
-+	vc->vc_saved_screen =3D NULL;
-+}
-+
- enum {
- 	CSI_DEC_hl_CURSOR_KEYS	=3D 1,	/* CKM: cursor keys send ^[Ox/^[[x */
- 	CSI_DEC_hl_132_COLUMNS	=3D 3,	/* COLM: 80/132 mode switch */
-@@ -1888,6 +1932,7 @@ enum {
- 	CSI_DEC_hl_MOUSE_X10	=3D 9,
- 	CSI_DEC_hl_SHOW_CURSOR	=3D 25,	/* TCEM */
- 	CSI_DEC_hl_MOUSE_VT200	=3D 1000,
-+	CSI_DEC_hl_ALT_SCREEN	=3D 1049,
- 	CSI_DEC_hl_BRACKETED_PASTE =3D 2004,
- };
-=20
-@@ -1944,6 +1989,12 @@ static void csi_DEC_hl(struct vc_data *vc, bool on=
-_off)
- 		case CSI_DEC_hl_BRACKETED_PASTE:
- 			vc->vc_bracketed_paste =3D on_off;
- 			break;
-+		case CSI_DEC_hl_ALT_SCREEN:
-+			if (on_off)
-+				enter_alt_screen(vc);
-+			else
-+				leave_alt_screen(vc);
-+			break;
- 		}
- }
-=20
-@@ -2182,6 +2233,13 @@ static void reset_terminal(struct vc_data *vc, int=
- do_clear)
- 	vc->vc_deccm		=3D global_cursor_default;
- 	vc->vc_decim		=3D 0;
-=20
-+	if (vc->vc_saved_screen !=3D NULL) {
-+		kfree(vc->vc_saved_screen);
-+		vc->vc_saved_screen =3D NULL;
-+		vc->vc_saved_rows =3D 0;
-+		vc->vc_saved_cols =3D 0;
-+	}
-+
- 	vt_reset_keyboard(vc->vc_num);
-=20
- 	vc->vc_cursor_type =3D cur_default;
-diff --git a/include/linux/console_struct.h b/include/linux/console_struc=
-t.h
-index 59b4fec5f..13b35637b 100644
---- a/include/linux/console_struct.h
-+++ b/include/linux/console_struct.h
-@@ -159,6 +159,9 @@ struct vc_data {
- 	struct uni_pagedict *uni_pagedict;
- 	struct uni_pagedict **uni_pagedict_loc; /* [!] Location of uni_pagedict=
- variable for this console */
- 	u32 **vc_uni_lines;			/* unicode screen content */
-+	u16		*vc_saved_screen;
-+	unsigned int	vc_saved_cols;
-+	unsigned int	vc_saved_rows;
- 	/* additional information is in vt_kern.h */
- };
-=20
---=20
-2.50.1
+[snip]
 
+> -       return 0;
+> +       qe_gc =3D devm_kzalloc(dev, sizeof(*qe_gc), GFP_KERNEL);
+> +       if (!qe_gc)
+> +               return -ENOMEM;
+> +
+> +       spin_lock_init(&qe_gc->lock);
+> +
+> +       mm_gc =3D &qe_gc->mm_gc;
+> +       gc =3D &mm_gc->gc;
+> +
+> +       mm_gc->save_regs =3D qe_gpio_save_regs;
+> +       gc->ngpio =3D QE_PIO_PINS;
+> +       gc->direction_input =3D qe_gpio_dir_in;
+> +       gc->direction_output =3D qe_gpio_dir_out;
+> +       gc->get =3D qe_gpio_get;
+> +       gc->set =3D qe_gpio_set;
+> +       gc->set_multiple =3D qe_gpio_set_multiple;
+> +
+> +       return of_mm_gpiochip_add_data(np, mm_gc, qe_gc);
+
+... I believe this can be dropped now and replaced with
+devm_gpiochip_add_data().
+
+Bart
+
+> +}
+> +
+> +static const struct of_device_id qe_gpio_match[] =3D {
+> +       {
+> +               .compatible =3D "fsl,mpc8323-qe-pario-bank",
+> +       },
+> +       {},
+> +};
+> +MODULE_DEVICE_TABLE(of, qe_gpio_match);
+> +
+> +static struct platform_driver qe_gpio_driver =3D {
+> +       .probe          =3D qe_gpio_probe,
+> +       .driver         =3D {
+> +               .name   =3D "qe-gpio",
+> +               .of_match_table =3D qe_gpio_match,
+> +       },
+> +};
+> +
+> +static int __init qe_gpio_init(void)
+> +{
+> +       return platform_driver_register(&qe_gpio_driver);
+>  }
+> -arch_initcall(qe_add_gpiochips);
+> +arch_initcall(qe_gpio_init);
+> --
+> 2.49.0
+>
 
