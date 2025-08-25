@@ -1,186 +1,205 @@
-Return-Path: <linux-kernel+bounces-785184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AC56B3472B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:23:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54DA1B3472C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:23:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22AD32A54CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:23:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13C181A88722
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:24:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B4752E7F39;
-	Mon, 25 Aug 2025 16:23:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC1573009E2;
+	Mon, 25 Aug 2025 16:23:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="l0IsHYm8"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cuZQedcg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D363274B56
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 16:23:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F23111713;
+	Mon, 25 Aug 2025 16:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756138996; cv=none; b=qsIAjO+/zib30LxVOMkuAhOLD/x1+QcGaxrEQObYU5CvMS1d1PMOtxh+nwvUHYT0PtfBFZlGJxXZBDbS+VRNSq7Vhhv826aMYNhOai+3WHHoo2GmwuhhYITLffK4MrSZyN0OHkEAtSdiYiajAiH8FtGBRjh9py4xvX9PzhJoE3I=
+	t=1756139023; cv=none; b=fZeN5KU9FQHQdGtKQd4z+41HPsrzinnRfDZTP3aCJnoeIpcdAyXaAyijMfXtQwOwcMIJrxXcQgwU/0f6av5w/9AtlmBjmStRukJfkL+kWblRt0a2CkidDugW/FaxWQERujq1MjxJpSNQfXYS4n0N267ZbL8HW6n3p1cw8eA6nV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756138996; c=relaxed/simple;
-	bh=Ic+Wi+QSgnS5gFlavR/eRxT2p6/NMPQaeO1MV51PFDQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W0jcjYkrRgLBQHwm7b53u34YXM2mna+RSBEn7PCqUrOVZB5vVOZv8cD6FYmQYsYOvTFPGLcUWlQCY3tgl1kyJWmxA3Au/kCxEna4K0PQUdYds1Os73coA0RFd2wLpH4XDUBJguSnwzuo+quVh/IkLYA61MKn3uwQcH89gyZE/uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=l0IsHYm8; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57PG9ahZ006049
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 16:23:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	xT06D3RMtfKindU2hH6cWWUxy48f/VTeJ7LJts2PzLo=; b=l0IsHYm8ZLqNxwWE
-	19BVYhwsOB2Nedq144wm1aq6qmdQ+p0aqo6p4khH405fJo81CQndAxNXAcAJLT8d
-	J1CYwL8IjpN/SmwBjMpBQDD07bYCMeSG/28co0kPOm1Ks+4KyzutoKkBywZfkUsd
-	/F30GNa8dbSYsJV5qmGlanc0UyTVMDqaSpJKtBjqMHI2/XFG1gohnlw3+MR6xkFe
-	cqVGOc9Vk92JSW7ZTq9GYbV2k9ZVAK0PBMy0xncsqCo7JYFt/yH3DSQdbCXozRxr
-	aM1LQw1gpcpAymzttOtRneJdP98+HikrKzte3OcHntAuCG8oGixOaR6olDyIOW59
-	GGYEdg==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q6thwrt7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 16:23:14 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-246088fc25cso50266525ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 09:23:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756138994; x=1756743794;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xT06D3RMtfKindU2hH6cWWUxy48f/VTeJ7LJts2PzLo=;
-        b=uaTMS84vhawdb/33U176I4rCh6wH5eWNp6Kix6DOB208mW70TTt2xMtqQU31mdUEv+
-         qtz36Zp/KD1cpP2OYD0yi6OW2whRAAtnS5mKDxuIlGUrcWaHvULEhbnMi9lOHO7NJ7dh
-         O6/Rn+qsiVDdHAvGOltaGluKfBWmJJ0eewpdJLCQ4GrfB1YHtQbXQS7LNJJ2+WpycI5+
-         BtAhP6aUVNeKocA4DS3XAE5Nf3/01oyT/uAPtuHPOuOpDIXPYUgxTYS/suO/ANBnfte9
-         cvtCuRayeEVntqvs4CTp/gNqv14fJia3HAP4d/dWBjU9wh+hy2U/+cZiIz2ZaotMBTAG
-         DjDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXEeqlXmYuE0oig+M9hmh0djHeqn+2VcGXZlEz/soLOyispDzaKrAH0qML0muFZ8biKk1ZMTs6kpelzi0w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6myOAklYxdINdp3czj1kXeqoFWIvKdGaPFBe+rRMqU7BnzQw0
-	jepmEIvURBAiB3Bl+UDiXLxeDRjLdKwIIRR62OPU8PYKZWRYCOAy2HYGo10+K/+slyxBL6hPf3w
-	VeiMY3D9g10mUS87B+H2prIr9EaihrSq6K68Zn3FBZ+hiJwNBpQ+ewicfYX1VzFvVBPB33iQ+OY
-	U=
-X-Gm-Gg: ASbGncvU29zgmtYth9AE5RAwLtWW+I+BLlgXO4tEUoLYQB4zGVPKQ18uZwwvH1J1gut
-	tWRUwnalLZx20e26+J1K/qvCOeFu7P4hZVyOOFVdymLjJpMtxc+k5L/ADocgNAW8ujLo9g8pf3n
-	CqcpGa3rGzqrIiDDnLsQW12DbLrxXSJwtWokV0fFG/873fAD3kc+NDHdTm0W5cpND9NentJWADA
-	7by3ZSCbSUzdkXHGj+bE71GSrRUlPDjrTqq8M5XFaMG+91puR9wVe2IZZLRVrR5EDlgs/0JKvxE
-	F/4Ujk5L/3U8MGb65zPUXlP6P1KfjD5I21bxhdCtPCw43Pdvd8oirLR1v8t0sw==
-X-Received: by 2002:a17:903:2281:b0:23d:dd04:28e2 with SMTP id d9443c01a7336-2462ef4444fmr164017055ad.35.1756138993503;
-        Mon, 25 Aug 2025 09:23:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE3DDyXq0HbIVkH89aU17F4O+BE4oPf252DFOqa7KvXWd8OP2tBXEimcEdWPIlxPlDOWeBx5A==
-X-Received: by 2002:a17:903:2281:b0:23d:dd04:28e2 with SMTP id d9443c01a7336-2462ef4444fmr164016785ad.35.1756138993054;
-        Mon, 25 Aug 2025 09:23:13 -0700 (PDT)
-Received: from [10.91.118.43] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2466885efc8sm72180705ad.90.2025.08.25.09.23.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Aug 2025 09:23:12 -0700 (PDT)
-Message-ID: <5a405510-3eec-4262-9855-483dd589d8dc@oss.qualcomm.com>
-Date: Mon, 25 Aug 2025 21:53:07 +0530
+	s=arc-20240116; t=1756139023; c=relaxed/simple;
+	bh=KgpIyi6RAg5MAXdti7zU0f2hj8RJXYvhBuIqG1e+0CE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S7qDhJcZIBfVPzXSu/dG60hK0wJ7SLrorqbmvcFiunQkGyNdyCB3EUCvsYvHiXydfj+hjbnhF02Wre3rZrWrWG6GIfZNmvmOwAHN17y1fehoZnYSmarbbKURxkHGm5xB9C4A+Kkflvr6d6eVzQ6/8nvO+THLwoefrQ/SBCVspNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cuZQedcg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09423C4CEED;
+	Mon, 25 Aug 2025 16:23:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756139022;
+	bh=KgpIyi6RAg5MAXdti7zU0f2hj8RJXYvhBuIqG1e+0CE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cuZQedcg1Zp25ehlMzicSD+8IdnsfbE4M/4qDW+GBk9ac9z4eDU7QA6R5eTSxBxbe
+	 IFjDzU/5VAjaY7v9KqbVmjsEbZWtdaSccRasiAxWh7JdLtkj+ykHU+0OaB9UTDfEgW
+	 8v3PFGD7ukTKEdGiWSqbat61DdJsQ9rU/FEmZLPNkKxQDhf/heHdagLNykxupDCCSm
+	 3lu7uf5m1eR2ji0UUJezLjeh0pDx9h8qfk1AU2OFNwyw+HTJPTewAnEGi434B1V6Br
+	 p9w1zuysufJvFxZwXfaIKGYzFCI2xiznEsqSR8PVd5faWmyVnMEqXjwtewDrGZOMx5
+	 kCya4XmM0eXwQ==
+Date: Mon, 25 Aug 2025 17:23:34 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Pincheng Wang <pincheng.plct@isrc.iscas.ac.cn>
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	alex@ghiti.fr, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, anup@brainfault.org, pbonzini@redhat.com,
+	shuah@kernel.org, cyan.yang@sifive.com, cleger@rivosinc.com,
+	charlie@rivosinc.com, cuiyunhui@bytedance.com,
+	samuel.holland@sifive.com, namcao@linutronix.de, jesse@rivosinc.com,
+	inochiama@gmail.com, yongxuan.wang@sifive.com,
+	ajones@ventanamicro.com, parri.andrea@gmail.com,
+	mikisabate@gmail.com, yikming2222@gmail.com,
+	thomas.weissschuh@linutronix.de, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	devicetree@vger.kernel.org, kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v1 RESEND 1/5] dt-bidings: riscv: add Zilsd and Zclsd
+ extension descriptions
+Message-ID: <20250825-clang-husband-bcb5defdb5f3@spud>
+References: <20250821140131.225756-1-pincheng.plct@isrc.iscas.ac.cn>
+ <20250821140131.225756-2-pincheng.plct@isrc.iscas.ac.cn>
+ <20250822-purge-doubling-f38988284db1@spud>
+ <a2cc4cbe-82ca-4a89-b623-73721a1f3baf@isrc.iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/msm: fix race in Adreno header generation
-To: rob.clark@oss.qualcomm.com,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Alex Robinson <alex@ironrobin.net>, lumag@kernel.org,
-        abhinav.kumar@linux.dev, jessica.zhang@oss.qualcomm.com,
-        sean@poorly.run, marijn.suijten@somainline.org, airlied@gmail.com,
-        simona@ffwll.ch, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-References: <20250823020919.9947-1-alex@ironrobin.net>
- <6sdzghcc4uynvmk6r4axpwgqlmgxqzi457ttedqlrql7f7lt47@glsrzu46a63x>
- <CACSVV01R=FPAErpfJJvESKig+Z8=amEkpf6QFnkXHhTjFsPf5g@mail.gmail.com>
-From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <CACSVV01R=FPAErpfJJvESKig+Z8=amEkpf6QFnkXHhTjFsPf5g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDA0MyBTYWx0ZWRfX0SU1h8yGRO+H
- 8jUV8X7mN7EBUpCSEFydQcj0qEfO+cMjZ6u/mgQyzsPXD/jJS30e/nle43Qo397731+ZJAgPk1D
- OASGRLkppyZZli88+K65GkbWQr8d+dZNNFHuR+snK2OMKc52FifiGKAFqIpgnfFSVu5mMYVt7BW
- ek4SDBktvKoiVejTOcoQfYX/msvgJTol1Af/Q+Ax+A4FYBe+hu4PdN8GZ47DkUCn2Y3sJUULnJr
- N5gdzuYztdf2MT966dk43wuWVefgXEUPcOxVU2iT/kCnW26ca7boM/oRypJM+MyK5xkwtXMDP2F
- +RjkPXOTBbk0Vy8eXJenyxIdCgclmBb5/4BLyfCSpTakxCULxMAVsy6IhbMlXQ0FEccNH783jT5
- TBucXfo3
-X-Proofpoint-ORIG-GUID: -JtqrFsvb1VPQjMPl5DyVdBtaVtS1eEg
-X-Proofpoint-GUID: -JtqrFsvb1VPQjMPl5DyVdBtaVtS1eEg
-X-Authority-Analysis: v=2.4 cv=W544VQWk c=1 sm=1 tr=0 ts=68ac8df2 cx=c_pps
- a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=foaXouvCAAAA:8
- a=qt1P906IrRIBMUR0lrMA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=GvdueXVYPmCkWapjIL-Q:22 a=lBkOZJTZZNyIbKe29SIT:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-25_07,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 spamscore=0 clxscore=1015 suspectscore=0 phishscore=0
- bulkscore=0 impostorscore=0 adultscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230043
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="przAQh4lUz2Eomq/"
+Content-Disposition: inline
+In-Reply-To: <a2cc4cbe-82ca-4a89-b623-73721a1f3baf@isrc.iscas.ac.cn>
 
-On 8/23/2025 7:46 PM, Rob Clark wrote:
-> On Sat, Aug 23, 2025 at 6:49 AM Dmitry Baryshkov
-> <dmitry.baryshkov@oss.qualcomm.com> wrote:
->>
->> On Sat, Aug 23, 2025 at 02:09:39AM +0000, Alex Robinson wrote:
->>> Builds can compile msm-y objects (e.g. msm_gpu_devfreq.o)
->>> before adreno_common.xml.h is generated in trees that generate Adreno
->>> headers at build time. Make msm-y depend on the generated headers,
->>> removing the race.
->>>
->>> Signed-off-by: Alex Robinson <alex@ironrobin.net>
->>> ---
->>>  drivers/gpu/drm/msm/Makefile | 1 +
->>>  1 file changed, 1 insertion(+)
->>>
->>> diff --git a/drivers/gpu/drm/msm/Makefile b/drivers/gpu/drm/msm/Makefile
->>> index 0c0dfb25f01b..1a918d44ac48 100644
->>> --- a/drivers/gpu/drm/msm/Makefile
->>> +++ b/drivers/gpu/drm/msm/Makefile
->>> @@ -221,6 +221,7 @@ DISPLAY_HEADERS = \
->>>       generated/sfpb.xml.h
->>>
->>>  $(addprefix $(obj)/,$(adreno-y)): $(addprefix $(obj)/,$(ADRENO_HEADERS))
->>> +$(addprefix $(obj)/,$(msm-y)): $(addprefix $(obj)/,$(ADRENO_HEADERS))
->>
->> I'd say, no. The idea was that msm-y should not depend on
->> ADRENO_HEADERS. If there is any dependency, please move it to adreno-y.
-> 
-> probably we should s/adreno/gpu/ and move all the msm_gpu*.* there..
-> 
-> In the mean time, I think we were going to drop this patch from the IFPC series
 
-Yeah. I will drop that patch.
+--przAQh4lUz2Eomq/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Btw, was my usage of adreno_gpu symbol in msm_gpu* files incorrect?
+On Mon, Aug 25, 2025 at 11:26:13PM +0800, Pincheng Wang wrote:
+> On 2025/8/23 0:33, Conor Dooley wrote:
+> > On Thu, Aug 21, 2025 at 10:01:27PM +0800, Pincheng Wang wrote:
+> > > Add descriptions for the Zilsd (Load/Store pair instructions) and
+> > > Zclsd (Compressed Load/Store pair instructions) ISA extensions
+> > > which were ratified in commit f88abf1 ("Integrating load/store
+> > > pair for RV32 with the main manual") of the riscv-isa-manual.
+> > >=20
+> > > Signed-off-by: Pincheng Wang <pincheng.plct@isrc.iscas.ac.cn>
+> > > ---
+> > >   .../devicetree/bindings/riscv/extensions.yaml | 39 ++++++++++++++++=
++++
+> > >   1 file changed, 39 insertions(+)
+> > >=20
+> > > diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml =
+b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > > index ede6a58ccf53..d72ffe8f6fa7 100644
+> > > --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > > +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > > @@ -366,6 +366,20 @@ properties:
+> > >               guarantee on LR/SC sequences, as ratified in commit b1d=
+806605f87
+> > >               ("Updated to ratified state.") of the riscv profiles sp=
+ecification.
+> > > +        - const: zilsd
+> > > +          description:
+> > > +            The standard Zilsd extension which provides support for =
+aligned
+> > > +            register-pair load and store operations in 32-bit instru=
+ction
+> > > +            encodings, as ratified in commit f88abf1 ("Integrating
+> > > +            load/store pair for RV32 with the main manual") of riscv=
+-isa-manual.
+> > > +
+> > > +        - const: zclsd
+> > > +          description:
+> > > +            The Zclsd extension implements the compressed (16-bit) v=
+ersion of the
+> > > +            Load/Store Pair for RV32. As with Zilsd, this extension =
+was ratified
+> > > +            in commit f88abf1 ("Integrating load/store pair for RV32=
+ with the
+> > > +            main manual") of riscv-isa-manual.
+> > > +
+> > >           - const: zk
+> > >             description:
+> > >               The standard Zk Standard Scalar cryptography extension =
+as ratified
+> > > @@ -847,6 +861,16 @@ properties:
+> > >               anyOf:
+> > >                 - const: v
+> > >                 - const: zve32x
+> > > +      # Zclsd depends on Zilsd and Zca
+> > > +      - if:
+> > > +          contains:
+> > > +            anyOf:
+> > > +              - const: zclsd
+> > > +        then:
+> > > +          contains:
+> > > +            anyOf:
+> > > +              - const: zilsd
+> > > +              - const: zca
+> > >   allOf:
+> > >     # Zcf extension does not exist on rv64
+> > > @@ -864,6 +888,21 @@ allOf:
+> > >             not:
+> > >               contains:
+> > >                 const: zcf
+> > > +  # Zilsd extension does not exist on rv64
+> > > +  - if:
+> > > +      properties:
+> >=20
+> > > +        riscv,isa-extensions:
+> > > +          contains:
+> > > +            const: zilsd
+> >=20
+> > This syntax is odd, it shouldn't be required to have zilsd in here and
+> > in the then. Did you copy this from Zcf or come up with it yourself
+> > because it didn't work otherwise?
+> >=20
+>=20
+> Yes, I did model this after the existing Zcf constraint in the same file.
+> The structure is nearly identical: cheking for presence of the extension =
+and
+> rv64i, then forbidding it in the "then" branch.
+>=20
+> I've tested confirmed that removing the "contains: const: zilsd" from the
+> "if" condition still correctly enforces that zilsd must not appear when
+> rv64i is present. The "then" clause with "not: contains" is sufficient.
+>=20
+> Given that the validation behavior is equivalent, but the logic is cleaner
+> and less redundant without the extra "contains", would you recommend
+> updating it to the simpler form:
+>=20
+>     - if:
+>         properties:
+>           riscv,isa-base:
+>             contains:
+>               const: rv64i
+>       then:
+>         properties:
+>           riscv,isa-extensions:
+>             not:
+>               contains:
+>                 const: zilsd
+>=20
+> If so, I'll update it in the next revision.
 
--Akhil
+Yeah, please reduce it to this form.
 
-> 
-> BR,
-> -R
-> 
->>>  $(addprefix $(obj)/,$(msm-display-y)): $(addprefix $(obj)/,$(DISPLAY_HEADERS))
->>>
->>>  targets += $(ADRENO_HEADERS) $(DISPLAY_HEADERS)
->>> --
->>> 2.50.1
->>>
->>>
->>
->> --
->> With best wishes
->> Dmitry
+--przAQh4lUz2Eomq/
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaKyOBgAKCRB4tDGHoIJi
+0tBmAPwITOW6B962WAfPzymCU4z9xZ51B5BtYVuDFIxypRRcogD/bJcgHnZ/rI15
+6Mdyko1A6Tb+pZvgrrtqkICniCrQogc=
+=3Dwx
+-----END PGP SIGNATURE-----
+
+--przAQh4lUz2Eomq/--
 
