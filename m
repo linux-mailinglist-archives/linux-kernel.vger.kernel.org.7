@@ -1,214 +1,152 @@
-Return-Path: <linux-kernel+bounces-784080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 962F0B33677
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:29:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BBA3B3367A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:30:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BDC4200DD5
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 06:29:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5104F2019C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 06:30:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610A7280334;
-	Mon, 25 Aug 2025 06:29:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 779002836A0;
+	Mon, 25 Aug 2025 06:30:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UPaF050Y"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="J/whjBZu";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="j6/LFKZV"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17663277818;
-	Mon, 25 Aug 2025 06:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA8121C831A;
+	Mon, 25 Aug 2025 06:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756103358; cv=none; b=ckcD46mZvWR/P3zAB1AED/UGE5G7kleoSwuN8kftoH6jFT5wmYn8iSx9x+E+ScAUOnpBxzVPxuZkFpzuzRIw8/SlpepCKq1rwd/dJgAkX8lokxWAu2s5ZXgKqm+rZiHh0FbNjAPEabdyFSxVo1WY3Bj0zQkTyNo0gZSCCljENEo=
+	t=1756103429; cv=none; b=g38LYhlnOEEg8R70MBhErkVZBSFMryzC7soCsSLngHnARb/MCoOAGvXd3CMqxWp30EMIZyG+7FFPbENswtND9kXlCcrISooj7xQwbe7/13thyU/QjtjlAKBzhYAQVy8fn+vPkDCAUcuDJ4CfLlau+qLh/YRVQ/YF20VBej67xNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756103358; c=relaxed/simple;
-	bh=+aCSCeFSIdIztzIDPGOpEGJxoqlfBFMogHzH/++23IU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QzXUEmtK0RzekKcGFNAnd6oRvbcQ3SnG7kkDfo6NN0ndiFrIZ2Xf4u0MadmQyt6x0hLcfgcADLpjW4Dv6nY8fpR6d4ft4n7nYSoEMwTN/8j6p7+IpTu6p4Swv/CqOHa3BDOHRHHN2YYS2xp05BBog2ATCgOw1dyh5JQtGbvgmKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UPaF050Y; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57OGe5rU024681;
-	Mon, 25 Aug 2025 06:29:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	g9qb0uQ8lG7fH822VuVvdkzf7SFHewY7RtM5wBsh/wI=; b=UPaF050Yms0YgvKL
-	QeyiZJ8dW/Z8XpmdmjURoLISMOhM7zgjU2K+q7vuk8aZRhbtR8022s65lCcm58SD
-	ZRlLAXxrrBArkpZL/rDgQ5zjRH7anWYemUJenNWPHl4b4IOqb9rtR/QcO90Cb1Qh
-	Bo2OuDXHMWi9zA3Rgsc078dWRtMf6kAPTf8r1aiPFP2BuNgwIOTjVF6zn5XoElH9
-	i8FMmgv+zcI1SoAP0AU3U9cYfkgPZyB89qWSgqc/K2cdr7szMtjn5YcGN3xkREHJ
-	pnW652gUB0WbW2liUClB+t2AKxKprLZQpDFAAsMrph8iVh63WbJu1B/Y0Sa+zcyb
-	kn+3wg==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5uc3x34-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Aug 2025 06:29:10 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57P6T9B1014019
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Aug 2025 06:29:09 GMT
-Received: from [10.204.100.211] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Sun, 24 Aug
- 2025 23:29:05 -0700
-Message-ID: <3b8599bc-ffbd-a129-3dba-088c2fc950dd@quicinc.com>
-Date: Mon, 25 Aug 2025 11:59:02 +0530
+	s=arc-20240116; t=1756103429; c=relaxed/simple;
+	bh=0JpXSBDuq/9S1RKfbejNB6wgFT2GEwW1Y0Oq+7tcl/k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=F4+9dk7pTYzCO6m68oYrGts+5ahMj8OVufH5dmn1ho/MrdX1rSkvcv1Xv1T9rlzEBnGxBzp+VqbuWZFpBHxYVuoSzO2Ia3+gmSlOPGEPOFCJdxs31z2dVQa2KPFrw0B/96ZhocP7cscc9gES0vTlviW/v5aesn/WA9gwzRn4xbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=J/whjBZu; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=j6/LFKZV reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1756103426; x=1787639426;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=hVClrZYqVmS8mvDO5nHVAP+mpH/d3telWA6Jj0IEuHM=;
+  b=J/whjBZuGBV/BxFpt3e7SRHqkN1Vu7pErNvlh+fwcbQnIdzmY3rcMp9G
+   FE7Yf70o+tWv+vMdm8w232nY9ckhi1acUk2UrcVQQfXaPQvgUMeoNm/nu
+   mX0na0+8rLzIpoC4l5VAFvqQCfjgFBjwpSRywShkuIAkcZuFdaaX08cIf
+   m34C1KiDmFcFEFCcVQYGvFMtdGEfUY8ATanljAWmEqKcthm+Jr+gHs9Wn
+   D4DV5eD7i2fnYyIhL5J0Hur/oku/wCD6DoytvOHSDYz2YPXNsn559fLZ4
+   yew0645g1AE1wnKYalBKeT+1OYCR4woN6oKURMisfXhA6IKa4ZDtch1Tr
+   w==;
+X-CSE-ConnectionGUID: 6VonDOvySGKuggn1bEsNYw==
+X-CSE-MsgGUID: 7vjS2wWkRxG2z5SHniuKPA==
+X-IronPort-AV: E=Sophos;i="6.17,312,1747692000"; 
+   d="scan'208";a="45884651"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 25 Aug 2025 08:30:22 +0200
+X-CheckPoint: {68AC02FE-1F-820F521C-C7779E56}
+X-MAIL-CPID: BD5D3ABEBB39283A27FFCA9035FF8422_4
+X-Control-Analysis: str=0001.0A002123.68AC0294.00AD,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E325316626E;
+	Mon, 25 Aug 2025 08:30:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1756103418;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=hVClrZYqVmS8mvDO5nHVAP+mpH/d3telWA6Jj0IEuHM=;
+	b=j6/LFKZVNymhmmyzEM42kZsPyDpEoBbmub53LLTzfsqHI5PH1DufScz1JZIyh2Z/cfFFHn
+	Ab3FBnxhDPy//LteoYOno/TM5HysHHRQrrfaDe0c8SWw6C8EjGq0Ndl+Omig7NxSVvXQOK
+	Vxnkzyt71oYgQPOMHK85GepACPF9Rdd3DuKvxwwwIPghUX07fs0EwFXoMehK6TWV2nJyUG
+	23XdJh5neKY99mdg+qRWBUI1uOScsm+6/+xOApnzxkX+LYTVeNeEr+5mPGwOCQx2olWD6/
+	bb9EQFFyVucvoE5BkKsZuJ1CoPfdY3WcndFGuc+9mX2NXcR8tYfsN4eoz1N+fA==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-arm-kernel@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ Frank Li <Frank.Li@nxp.com>, Frank Li <Frank.Li@nxp.com>
+Subject: Re: [PATCH v3 0/4] ARM: dts: clean up most ls1021a CHECK_DTB warning
+Date: Mon, 25 Aug 2025 08:30:17 +0200
+Message-ID: <6192530.lOV4Wx5bFT@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20250822-ls1021a_dts_warning-v3-0-6b611a2f23a4@nxp.com>
+References: <20250822-ls1021a_dts_warning-v3-0-6b611a2f23a4@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v3 00/26] Enable H.264/H.265 encoder support and fixes in
- iris driver common code
-Content-Language: en-US
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-        Dikshita Agarwal
-	<quic_dikshita@quicinc.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        "Bryan
- O'Donoghue" <bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>,
-        Stefan Schmidt <stefan.schmidt@linaro.org>,
-        "Vedang
- Nagar" <quic_vnagar@quicinc.com>,
-        Hans Verkuil <hverkuil@kernel.org>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Renjiang Han <quic_renjiang@quicinc.com>,
-        Wangao Wang <quic_wangaow@quicinc.com>
-References: <20250820-iris-video-encoder-v3-0-80ab0ba58b3d@quicinc.com>
- <7e734644-15d7-4a47-a98e-7f6c5a50697d@linaro.org>
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-In-Reply-To: <7e734644-15d7-4a47-a98e-7f6c5a50697d@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMiBTYWx0ZWRfX7XV/4OcQ25DT
- 8nGOnEDn6zsIVsD7gYnxfjbZVG8EPgfhu3HMcqlBf1LfJOzY2DJ6spPBM3koA11m9Wp/nCYEo7k
- GaDWC6DkgeCr7j8BX9yQLbHdM+U3KOIKuG915Z4qnsiCiZOCcuOeOBMo7X8tfg1VX1gQIa5f+8z
- 87Gz27zrZrs15XCXtSaTQUzxccK3kNy20KDhVLiNAZKhc12hIHiOk99F3XTPF3fUvKQ4dAiAuBM
- Fwni2076fKVb7Dh6IgYbhmISfM4mMjNreJ/poQVZwBRbOAqtkCiZp4cD0uhEK6UKWgNCotiXl2b
- 0Vn2jJYShItNLsA0xVyPzq8X6cX1ImU/C46Y6z8M77+/LUCXZpS2OWaSUp446YRwdrv1KAXSN30
- ohXf/Kkp
-X-Proofpoint-ORIG-GUID: u2jZ7B1iBzPgGHsUxW0N2FhESdH_H7ZT
-X-Authority-Analysis: v=2.4 cv=I85lRMgg c=1 sm=1 tr=0 ts=68ac02b6 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8
- a=COk6AnOGAAAA:8 a=KKAkSRfTAAAA:8 a=TJQhyDWxPBfA8VjwnykA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: u2jZ7B1iBzPgGHsUxW0N2FhESdH_H7ZT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-25_03,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 spamscore=0 adultscore=0 bulkscore=0 malwarescore=0
- suspectscore=0 phishscore=0 clxscore=1015 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230032
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
+
+Hi Frank,
+Am Freitag, 22. August 2025, 16:49:57 CEST schrieb Frank Li:
+> clean up most ls1021a CHECK_DTB warning.
+>=20
+> Old uboot check esdhc@1560000. The new uboot already switch to check both
+> esdhc@1560000 and mmc@1560000. So we can rename it now.
+
+Please be aware you are not the only vendor. Do you have a link for
+the corresponding change, so other can easily keep up?
+
+Best regards,
+Alexander
+
+>=20
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> Changes in v3:
+> - rebase guoshawn/imx/dt tree. Remove patches that were already merged.
+> - Link to v2: https://lore.kernel.org/r/20250820-ls1021a_dts_warning-v2-0=
+=2D2e39648a32b7@nxp.com
+>=20
+> Changes in v2:
+> - squash rename to flash patches
+> - remove duplicate patches already post in
+> https://lore.kernel.org/linux-devicetree/20250725061339.266125-1-alexande=
+r.stein@ew.tq-group.com/
+> - Link to v1: https://lore.kernel.org/r/20250818-ls1021a_dts_warning-v1-0=
+=2D7a79b6b4a0e2@nxp.com
+>=20
+> ---
+> Frank Li (4):
+>       ARM: dts: ls1021a: Rename node name nor to flash
+>       ARM: dts: ls1021a: Rename 'mdio-mux-emi1' to 'mdio-mux@54'
+>       ARM: dts: ls1021a: Rename esdhc@1560000 to mmc@1560000
+>       ARM: dts: ls1021a-tsn: Remove redundant #address-cells for ethernet=
+=2Dswitch@1
+>=20
+>  arch/arm/boot/dts/nxp/ls/ls1021a-qds.dts | 8 ++++----
+>  arch/arm/boot/dts/nxp/ls/ls1021a-tsn.dts | 2 --
+>  arch/arm/boot/dts/nxp/ls/ls1021a-twr.dts | 2 +-
+>  arch/arm/boot/dts/nxp/ls/ls1021a.dtsi    | 2 +-
+>  4 files changed, 6 insertions(+), 8 deletions(-)
+> ---
+> base-commit: 75ad5f47c58aee30248d294a58c8ee52e079a8e3
+> change-id: 20250818-ls1021a_dts_warning-fff933bd83da
+>=20
+> Best regards,
+> --
+> Frank Li <Frank.Li@nxp.com>
+>=20
+>=20
+>=20
 
 
-On 8/22/2025 4:59 PM, Neil Armstrong wrote:
-> On 20/08/2025 11:07, Dikshita Agarwal wrote:
->> Hi All,
->>
->> This patch series adds support for H.264 and H.265 encoder in iris
->> driver and includes a few fixes and cleanup in the common code that were
->> identified during encoder bring-up process.
->>
->> The changes include:
->> - Enabling support for H.264 and H.265 encoding.
->> - Fixes and improvements in shared componenets used by both encoder and
->> decoder paths.
->> - Ensuring compatibility and stability with the existing decoder flow.
->>
->> Changes in v3:
->> - Fixed the log when destroying the interanl buffers (Jorge)
->> - Updated commit text with issue details in patch 05/25 (Krzysztof)
->> - Added a patch to simplify conditional logic in stop handling for hfi gen1
->> (Bryan)
->> - Reduced duplicate code while registering video devices (Bryan)
->> - Added a fix for try fmt handling in decoder (Self)
->> - Fixed the value of max core mbps for qcs8300 (Vikash)
->> - Simplied the frame rate handling in driver by using non q16 format and
->> converted to q16 when setting to firmware (Vikash)
->> - Fixed the issue with bitstream resolution setting to firmware (Neil)
->> - Addressed other review comments (Vikash, Bryan)
->> - Link to v2:
->> https://lore.kernel.org/r/20250813-iris-video-encoder-v2-0-c725ff673078@quicinc.com
->>
->> Changes in v2:
->> - Fixed sparse/coccinnelle issues.
->> - Fixed the kernel doc warning.
->> - Removed unsupported PEAK_BITRATE property from SM8250.
->> - Dropped patch 04/25 to fix quality issue with encoder.
->> - Enhanced command handling for encoder to allow start/stop commands.
->> - Expanded rate control condition checks to include additional rate
->>    control types for HFI Gen2.
->> - Updated default value to MAX_QP for all caps related to max QP settings.
->> - Add support for INPUT/OUTPUT_BUF_HOST_MAX_COUNT caps for encoder.
->> - Link to v1:
->> https://lore.kernel.org/r/20250704-iris-video-encoder-v1-0-b6ce24e273cf@quicinc.com
->>
->> All patches have been tested with v4l2-compliance, v4l2-ctl and
->> Gstreamer on SM8250 and SM8550 for encoder, at the same time ensured
->> that the existing decoder functionality remains uneffected.
->>
->> Commands used for V4l2-ctl validation:
->>
->> v4l2-ctl --verbose --set-fmt-video-out=width=1280,height=720,pixelformat=NV12
->> --set-selection-output target=crop,top=0,left=0,width=1280,height=720
->> --set-fmt-video=pixelformat=H264 --stream-mmap --stream-out-mmap
->> --stream-from=/media/cyclists_1280x720_92frames.yuv
->> --stream-to=/tmp/cyclists_1280x720_92frames.h264 -d /dev/video1
->>
->> v4l2-ctl --verbose --set-fmt-video-out=width=1280,height=720,pixelformat=NV12
->> --set-selection-output target=crop,top=0,left=0,width=1280,height=720
->> --set-fmt-video=pixelformat=HEVC --stream-mmap --stream-out-mmap
->> --stream-from=/media/cyclists_1280x720_92frames.yuv
->> --stream-to=/tmp/cyclists_1280x720_92frames.hevc -d /dev/video1
->>
->> Commands used for GST validation:
->>
->> gst-launch-1.0 -v filesrc location=/media/cyclists_1280x720_92frames.yuv !
->> rawvideoparse format=nv12 width=1280 height=720 framerate=30/1 ! v4l2h264enc
->> capture-io-mode=4 output-io-mode=4 ! filesink sync=true
->> location=/tmp/gst_cyclists_1280x720_92frames.h264
->>
->> gst-launch-1.0 -v filesrc location=/media/cyclists_1280x720_92frames.yuv !
->> rawvideoparse format=nv12 width=1280 height=720 framerate=30/1 ! v4l2h265enc
->> capture-io-mode=4 output-io-mode=4 ! filesink sync=true
->> location=/tmp/gst_cyclists_1280x720_92frames.hevc
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
 
-<snip>
-> 
-> Thanks !
-> 
-> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-HDK
-> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-HDK
-> 
-> It still requires some sm8650 specific buffer calculations tweaks
-> to support new firmwares and HEVC for encoding, but I'll post that in
-> a second time. The core is functional for H264 on older firmwares.
-> 
-> Neil
 
-@Bryan,
-
-except the minor fix in #24 (v4 would be needed for it), i do not see any open
-comments in this series and looks good to me to be pulled once v4 is posted with
-the fix.
-
-Regards,
-Vikash
 
