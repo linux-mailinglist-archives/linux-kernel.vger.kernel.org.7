@@ -1,138 +1,121 @@
-Return-Path: <linux-kernel+bounces-784025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B589B335B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 07:00:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30761B335B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 07:03:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29EC417EF83
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 05:00:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0238117FE4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 05:03:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7640726D4F6;
-	Mon, 25 Aug 2025 05:00:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9982566E9;
+	Mon, 25 Aug 2025 05:03:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="deQub1nM"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VDA6Ykw7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17C672741DA
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 05:00:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A257211F;
+	Mon, 25 Aug 2025 05:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756098019; cv=none; b=YMv6mDxOY/uhNJnb1t75ZmkqZLfL701+w4mYZogkB8qsEoqlSnmXB662WJtV6ATxJpmYs+7wyTpzaQUl5TdAIISp7zg6AcpAjakMhKsjvkpsW8/ogXY56anx3elalbSO4xjT0r0rFoHtU3Fn7+qi5ZJFRyIk0HzblLUiGWICbHo=
+	t=1756098192; cv=none; b=EZYg9egADUX4PlICIhhYNU5/08QLuelpInaub5hAYk/DwNsjJFmlvoneTpQ1vtKlaAX4MtB3QEeLmdT4tlzE18ir8pWNfSC1Rs3HRRJ/b4ijjwS499Uld3SrLIuaZN388l8B6t3B8nttHSv9sUH/m8+MHzVEZ4DcswYu9UuE528=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756098019; c=relaxed/simple;
-	bh=M1v7MgXYo2ZiAJLrPGScb7fokwoK7VA0/6vpxL6DlOA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=psxE/1xRmz7HMoONGW02yvF6I34TVyLfv0bLWnqOiC8KuKzxwwPEMR6xIkYkiJ/inJY9LMZRp9OgO6M+dMFHHO9LCvbA3GR2gcdHoNABKzibYZixF1RTO5LGPbdfspBMV8UcTZDPSOnhJJWzCYvPSSeqyGZ9IhIsCwK5EyU57Dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=deQub1nM; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <96ae7afc-c882-4c3d-9dea-3e2ae2789caf@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1756098011;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=twXdCbxQD+p45jDlWlWguELy0/DhGVBnMbLch4+9XPE=;
-	b=deQub1nM8cbt2AwA9kv9b3GMZFv/No8mwmXGpvLZ0MQRjfzPohPnMsGhCQxTdxrUJugUwH
-	+WZF9NWWzrI5feE6Jk1J+rBItdJonYgg0V5ek3bQ9aVZLeoCt2o9xkSWTpQUXflf9Twl7m
-	Fsi8TJwDmBedibOhIhVQAM0C3RQXBAg=
-Date: Mon, 25 Aug 2025 13:00:06 +0800
+	s=arc-20240116; t=1756098192; c=relaxed/simple;
+	bh=XVbqmF7jtp2Ja21RumkRR9Q09c1wFkJyPqA5r5bYEQs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=X6wtcj1ojA7uHOwEA6s+G54mkx4ptQNoxsUvM/LQlvGQljp9WcX8BD5jawM8mwUD17+2ptq3LxDYfcupXatgFWDiW6YRAahnmizkPDdFc8b5Q8VrydrLl7vaRnIdIbXJHPnS9zEGaXkF6n3+E5yd8fQ2TvHSpX/EOnSRm1kCRm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VDA6Ykw7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1455FC4CEED;
+	Mon, 25 Aug 2025 05:03:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756098192;
+	bh=XVbqmF7jtp2Ja21RumkRR9Q09c1wFkJyPqA5r5bYEQs=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=VDA6Ykw7bZNm1d7yISzYb9gDZ6f1MoHRF7lzZJfq49t0QyWTT4ZqQzuuhcfStBJo2
+	 cwh47lgbOCAO7sHoc9+uQF6/v2/4Kys8tUmAmshMuAD/gUYmSa9wf4hVXLud63VZPs
+	 8q7qldmN+rXgceaax73wvCvsIpB69hTzXKMf8RjhGEP7dIusjb0043UGNRBSepmLe1
+	 MIh1e13/v+Wg31lE0u1R0vL3TtCNzdkvXF+szeUUj0fc5njk8B/sD1Ag40Urw19ycq
+	 i0UYgSh79/scKrG2yVTb/uKoXXF6ppSTLnF+hE+WAxR5Ocb6F6QUObM9RF9E7c0aeA
+	 FqhaOC5Cg4kjQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00BDFCA0FE1;
+	Mon, 25 Aug 2025 05:03:12 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Date: Mon, 25 Aug 2025 00:03:07 -0500
+Subject: [PATCH] cpufreq: tegra186: Default divider to 35 if register read
+ fails
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] atomic: Specify natural alignment for atomic_t
-Content-Language: en-US
-To: Finn Thain <fthain@linux-m68k.org>
-Cc: akpm@linux-foundation.org, geert@linux-m68k.org,
- linux-kernel@vger.kernel.org, mhiramat@kernel.org, oak@helsinkinet.fi,
- peterz@infradead.org, stable@vger.kernel.org, will@kernel.org,
- Lance Yang <ioworker0@gmail.com>
-References: <7d9554bfe2412ed9427bf71ce38a376e06eb9ec4.1756087385.git.fthain@linux-m68k.org>
- <20250825032743.80641-1-ioworker0@gmail.com>
- <c8851682-25f1-f594-e30f-5b62e019d37b@linux-m68k.org>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <c8851682-25f1-f594-e30f-5b62e019d37b@linux-m68k.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Message-Id: <20250825-tegra186-cpufreq-ndiv-v1-1-4669bf8f2992@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAIruq2gC/x3MQQqEMAxA0atI1hOwoWqdqwwuao2aTXVSFUG8u
+ 8XlW/x/QWIVTvAtLlA+JMkSM8yngDD7ODHKkA1UUlU6srjxpN64GsO6j8p/jIMc2Ie28UTOWN9
+ CblflUc73++vu+wGbzNXbZwAAAA==
+X-Change-ID: 20250824-tegra186-cpufreq-ndiv-bc97a22814a9
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756098191; l=1487;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=rfEcX8ls2L9Ghv6edI8v1CbFCLor3x2WRkwzlxZtph0=;
+ b=Ut5weYR7xRwt2M+dlkUv1X8ffkKCHS5+SOthr91vOYmx3+lpcgnUN2WPB3d+b1HVn5TlJnnqE
+ Y95qQ6uDk/uAb7Qt2A03opxPaUffsn0mbPZuC6O9sd+AU//d46EdphX
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
+
+From: Aaron Kling <webgeek1234@gmail.com>
+
+Several of the cores fail to read any registers and thus fail to
+initialize cpufreq. With shared policies, this only affects the Denver
+cluster, but one of the A57 cores also exhibits this behaviour. If the
+value is initialized to match what is read by the downstream vendor
+kernel, scaling works as expected. I have never seen this value be
+anything other than 35, so it should be a relatively safe assumption.
+
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+ drivers/cpufreq/tegra186-cpufreq.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra186-cpufreq.c
+index cbabb726c6645d2e5f1857a47e5643c8552d1933..f017f903c6843f1881e8311753f6269637c6bc69 100644
+--- a/drivers/cpufreq/tegra186-cpufreq.c
++++ b/drivers/cpufreq/tegra186-cpufreq.c
+@@ -115,6 +115,11 @@ static unsigned int tegra186_cpufreq_get(unsigned int cpu)
+ 
+ 	edvd_offset = data->cpus[policy->cpu].edvd_offset;
+ 	ndiv = readl(data->regs + edvd_offset) & EDVD_CORE_VOLT_FREQ_F_MASK;
++	if (ndiv == 0) {
++		dev_warn_once(get_cpu_device(policy->cpu),
++			 "Scaling registers invalid, using expected values");
++		ndiv = 35;
++	}
+ 	cluster_id = data->cpus[policy->cpu].bpmp_cluster_id;
+ 	cluster = &data->clusters[cluster_id];
+ 	cpufreq_cpu_put(policy);
+
+---
+base-commit: 1b237f190eb3d36f52dffe07a40b5eb210280e00
+change-id: 20250824-tegra186-cpufreq-ndiv-bc97a22814a9
+
+Best regards,
+-- 
+Aaron Kling <webgeek1234@gmail.com>
 
 
-
-On 2025/8/25 12:07, Finn Thain wrote:
-> 
-> On Mon, 25 Aug 2025, Lance Yang wrote:
-> 
->>
->> Perhaps we should also apply the follwoing?
->>
->> diff --git a/include/linux/hung_task.h b/include/linux/hung_task.h
->> index 34e615c76ca5..940f8f3558f6 100644
->> --- a/include/linux/hung_task.h
->> +++ b/include/linux/hung_task.h
->> @@ -45,7 +45,7 @@ static inline void hung_task_set_blocker(void *lock, unsigned long type)
->>   	 * If the lock pointer matches the BLOCKER_TYPE_MASK, return
->>   	 * without writing anything.
->>   	 */
->> -	if (WARN_ON_ONCE(lock_ptr & BLOCKER_TYPE_MASK))
->> +	if (lock_ptr & BLOCKER_TYPE_MASK)
->>   		return;
->>
->>   	WRITE_ONCE(current->blocker, lock_ptr | type);
->> @@ -53,8 +53,6 @@ static inline void hung_task_set_blocker(void *lock, unsigned long type)
->>
->>   static inline void hung_task_clear_blocker(void)
->>   {
->> -	WARN_ON_ONCE(!READ_ONCE(current->blocker));
->> -
->>   	WRITE_ONCE(current->blocker, 0UL);
->>   }
->>
->> Let the feature gracefully do nothing on that ;)
->>
-> 
-> This is poor style indeed.
-
-Thanks for the lesson!
-
-> 
-> The conditional you've added to the hung task code has no real relevance
-> to hung tasks. It doesn't belong there.
-
-You're right! The original pointer-encoding was a deliberate trade-off to
-save a field in task_struct, but as we're seeing now, that assumption is
-fragile and causing issues :(
-
-> 
-> Of course, nobody wants that sort of logic to get duplicated at each site
-> affected by the architectural quirk in question. Try to imagine if the
-> whole kernel followed your example, and such unrelated conditionals were
-> scattered across code base for a few decades. Now imagine trying to work
-> on that code.
-
-I agree with you completely: scattering more alignment checks into core 
-logic
-isn't the right long-term solution. It's not a clean design :(
-
-> 
-> You can see special cases for architectural quirks in drivers, but we do
-> try to avoid them. And this is not a driver.
-
-So, how about this?
-
-What if we squash the runtime check fix into your patch? That would create a
-single, complete fix that can be cleanly backported to stop all the spurious
-warnings at once.
-
-Then, as a follow-up, we can work on the proper long-term solution: changing
-the pointer-encoding and re-introducing a dedicated field for the 
-blocker type.
 
