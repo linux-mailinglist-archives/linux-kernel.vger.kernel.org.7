@@ -1,170 +1,141 @@
-Return-Path: <linux-kernel+bounces-784662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25D94B33F4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:23:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A0CD4B33F56
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:25:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B46DB3B4A8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:23:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D0913BD406
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 248C2225390;
-	Mon, 25 Aug 2025 12:23:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9B9258ECD;
+	Mon, 25 Aug 2025 12:25:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="ii7mioXC";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="gFp9ICHj"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Asfoj6rb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B9123E359;
-	Mon, 25 Aug 2025 12:23:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE0015C158;
+	Mon, 25 Aug 2025 12:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756124588; cv=none; b=Aj+fN3a13GxDgLGIZETv1bhh8cqJAn2oBuJz9xZofO8S0dPtJmPRONUGMXsM6XvXKuk+WTI3xpG5qzdtVJ4laHEyDtjV1eqB/YzXY4/dbSuWH8ew6v0puzFRzTyfHwceX+olbFg307OfIIzOqwKoQy1G2ayWEXfsIK2fFu10hyk=
+	t=1756124733; cv=none; b=TKfKgU3Ht2Ex5iXWZLJiRaaf9brOegvMNrL4zo8PFt713YSkr/WEnutl3lDPGH1cRmjxvqDHPMibnlk99YSGlqF8y422Nht/CAqvaxsmq6xifdcNnnodjKba2hWBZoG/Awj+ABa0Bl5v0VgTWyyMgtLWBaj02zKIWjMzXuFs4nE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756124588; c=relaxed/simple;
-	bh=Ti5muMAyeztdYaT7gdOAkMCnChvbp3E+ufomta9VzkE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CTiwepdk6HyaCrSM/93ga3uur9Uk/yIqQYnPjXMZdn5GPiPYJ+URV1aGJz4vb1jDc3v2HFhpNZWP0kGhf2csGWmTF+Aa9wgOoscSb2ZOrtS/+umvQxq7YNcrr+nK04/NOR0+W05FclJIK7bKk30pdA+y4AYB8AeIrjZacumxHNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=ii7mioXC; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=gFp9ICHj reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1756124585; x=1787660585;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=WSRmMY5jU29CsQJMPn3HB4luU6QMUAIAzwE1ehOyQFA=;
-  b=ii7mioXCdYcyt1ciKK+8mgXKzBb8tAImIFeGxLI0ksKbldhFkDB5tbuS
-   psnGOOZAayx5s+bG/mBCMQj6QGk1prtsT3oJWemQi93yC6CD87WRFGKvC
-   P/bLHU5+83ZXHitdQOINiqhqyLQMrGEvM8l1NMtH2TxPXQoQ8YAfQmakd
-   TOvSrqGbaJDymTUG0MzcZXYpySRGxIgI22aajBU79PENXt9z+kATvBrPo
-   Jp+9CnY6pWcaQ7/9g5Ceed8Rx19LtCuktFff0CMQHhKyGvjQ3uFh37rXL
-   8N2bjAe9XtILe60tovs72kL3wpHSfDFOpqeB/pHDmiJ3xtE+Dvzwf7/Gx
-   g==;
-X-CSE-ConnectionGUID: iryiftpsQK2JAAFomD2WLQ==
-X-CSE-MsgGUID: Ve9ITUb6Th2+qx+Mj/FkEQ==
-X-IronPort-AV: E=Sophos;i="6.17,312,1747692000"; 
-   d="scan'208";a="45893376"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 25 Aug 2025 14:23:02 +0200
-X-CheckPoint: {68AC55A6-16-AD8F5F64-F0EACAA5}
-X-MAIL-CPID: 6E30C4E634C714040A742E56E9F2F571_1
-X-Control-Analysis: str=0001.0A002106.68AC55A9.000E,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C67A31673C8;
-	Mon, 25 Aug 2025 14:22:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1756124578; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=WSRmMY5jU29CsQJMPn3HB4luU6QMUAIAzwE1ehOyQFA=;
-	b=gFp9ICHjC/RUDTe5DfGzx8w1Aq7E8hMwY8F+C1wK2cPF2uYcFzfVt3jwGys5Ep6qfO5TE0
-	mwcLTL5C6LiK18XwLRnuogS0OEiPs1WaKnVH3anmXpLRdQ5dYi6Kkae0r67+B3xV95Lyoz
-	VwZdEu59Bd/P0ONyee5XjjKTrOzQ1CGAZcHhVRe65fWpol+7O9OE1GZ6tLQZA2CFOuwq0M
-	46++6KpFqEbo0lQIUux8GwmETmAWHsOm8jVKRPNOxNrSZYFpsdffbWj+g9SS0FLtd4+FK/
-	45X62oc6ncNuUmvdpJlJPv0lOFN1iawPNaSKPW7r0ro1z7RGG5bAxVOFu5btnQ==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Vignesh Raghavendra <vigneshr@ti.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Tony Lindgren <tony@atomide.com>
-Cc: Matthias Schiffer <matthias.schiffer@tq-group.com>,
-	linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alexander Stein <alexander.stein@ew.tq-group.com>
-Subject: [PATCH v2 2/2] mmc: sdhci-omap: use regulator_get_optional() and reuse pbias in sdhci_omap_regulator_get_caps()
-Date: Mon, 25 Aug 2025 14:21:47 +0200
-Message-ID: <20250825122149.2169502-2-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250825122149.2169502-1-alexander.stein@ew.tq-group.com>
-References: <20250825122149.2169502-1-alexander.stein@ew.tq-group.com>
+	s=arc-20240116; t=1756124733; c=relaxed/simple;
+	bh=W6KAjfj0R9bEnh4eOzH132K/jM70TLLRtAAfEhO3BxE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jmi+1Xccl6L/92eITKqKIDSFshT3YXG4Tv6Bt9UqYc7QlgqKXUXBSHJ/rKFUtGmd6B3YXBokiy1Srr73plDOyT2eBkQg7lcYtBMqZf/uTXAjf7sbHKJQNu8voKzI0EttTmAtl2d/5eXtkbhXnUNDG3vthlFnteDJN9AKrii/fkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Asfoj6rb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75274C4CEED;
+	Mon, 25 Aug 2025 12:25:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756124732;
+	bh=W6KAjfj0R9bEnh4eOzH132K/jM70TLLRtAAfEhO3BxE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Asfoj6rbaAAOTguC5bHlA9ugMlnQPu7UAGYwBGi8mE6DcqSGpyNQIF76dRrhA7ySM
+	 9dGam5c4pdpfz1LqFYXqq2wwbJRs7bwjAfgH5FWktF/TG9ZLq88YGLv3XOPrtBVO0v
+	 TzGnQexh2EfFAXDJKKyTb6n8aT5DfToK3HPWzuVy9PjZPbvm11hMoipclBitDNJ8zZ
+	 C8GBljqGS2ekeZFwPcpS2ls9DNxkzkv8zBSdWOpOArakFXuVY2zo0QAcrTnV0p0BWa
+	 Op2fwmJ5K3U+To9QCKE83xrNp41ATik+k0bnt6v14BQuYji5LW8b/ZzpSnDnTGCMIp
+	 LpZRv0yKs7b/Q==
+Message-ID: <66799067-faac-4fe7-9114-4797b93d03c7@kernel.org>
+Date: Mon, 25 Aug 2025 14:25:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 10/12] dt-bindings: media: fsd: Document CSIS DMA
+ controller
+To: Inbaraj E <inbaraj.e@samsung.com>, mturquette@baylibre.com,
+ sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ s.nawrocki@samsung.com, s.hauer@pengutronix.de, shawnguo@kernel.org,
+ cw00.choi@samsung.com, rmfrfs@gmail.com, laurent.pinchart@ideasonboard.com,
+ martink@posteo.de, mchehab@kernel.org, linux-fsd@tesla.com, will@kernel.org,
+ catalin.marinas@arm.com, pankaj.dubey@samsung.com, shradha.t@samsung.com,
+ ravi.patel@samsung.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, alim.akhtar@samsung.com,
+ linux-samsung-soc@vger.kernel.org, kernel@puri.sm, kernel@pengutronix.de,
+ festevam@gmail.com, linux-media@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org
+References: <20250814140943.22531-1-inbaraj.e@samsung.com>
+ <CGME20250814141051epcas5p14dccee388087372973988aeebcb872cf@epcas5p1.samsung.com>
+ <20250814140943.22531-11-inbaraj.e@samsung.com>
+ <c46c6f66-dee6-4efa-a624-de62aa705206@kernel.org>
+ <00e201dc13d7$17d2a750$4777f5f0$@samsung.com>
+ <2eaa1303-79e6-431e-9902-356862357c9f@kernel.org>
+ <015a01dc15b8$1095f0e0$31c1d2a0$@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <015a01dc15b8$1095f0e0$31c1d2a0$@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Matthias Schiffer <matthias.schiffer@tq-group.com>
+On 25/08/2025 14:01, Inbaraj E wrote:
+> Hi Krzysztof,
+> 
+>>> According to the HW design of FSD SoC, the control to manage CSIS
+>>> power is given to a separate CPU where custom firmware runs.
+>>> Therefore. The Linux side does not control the CSIS power supplies directly
+>> and are hence not included in the device tree.
+>>
+>> Usually this still means you vote for enabling these resources, at least for
+>> other vendors it is like that. Unless you want to say these are essentially
+>> always on and CANNOT be disabled ever.
+> 
+> Yes, we want IP to remain enabled permanently, So we are not adding power supply
+> control in linux.
 
-We actually want to get an error return instead of a dummy regulator
-when a supply is not set. Change regulator_get() to
-regulator_get_optional() for the vqmmc supply and reuse omap_host->pbias,
-which is already initialized at this point.
+Please describe it in the description: part of the binding.
 
-This change also avoids warning messages:
-
-    sdhci-omap 48060000.mmc: supply pbias not found, using dummy regulator
-    sdhci-omap 48060000.mmc: supply vqmmc not found, using dummy regulator
-
-Fixes: de5ccd2af71f ("mmc: sdhci-omap: Handle voltages to add support omap4")
-Signed-off-by: Matthias Schiffer <matthias.schiffer@tq-group.com>
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
- drivers/mmc/host/sdhci-omap.c | 25 +++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
-index 08d5a82b7d01b..4623781adba7b 100644
---- a/drivers/mmc/host/sdhci-omap.c
-+++ b/drivers/mmc/host/sdhci-omap.c
-@@ -939,16 +939,10 @@ static const struct sdhci_ops sdhci_omap_ops = {
- 	.set_timeout = sdhci_omap_set_timeout,
- };
- 
--static unsigned int sdhci_omap_regulator_get_caps(struct device *dev,
--						  const char *name)
-+static unsigned int sdhci_omap_regulator_get_caps(struct regulator *reg)
- {
--	struct regulator *reg;
- 	unsigned int caps = 0;
- 
--	reg = regulator_get(dev, name);
--	if (IS_ERR(reg))
--		return ~0U;
--
- 	if (regulator_is_supported_voltage(reg, 1700000, 1950000) > 0)
- 		caps |= SDHCI_CAN_VDD_180;
- 	if (regulator_is_supported_voltage(reg, 2700000, 3150000) > 0)
-@@ -956,8 +950,6 @@ static unsigned int sdhci_omap_regulator_get_caps(struct device *dev,
- 	if (regulator_is_supported_voltage(reg, 3150000, 3600000) > 0)
- 		caps |= SDHCI_CAN_VDD_330;
- 
--	regulator_put(reg);
--
- 	return caps;
- }
- 
-@@ -967,11 +959,20 @@ static int sdhci_omap_set_capabilities(struct sdhci_host *host)
- 	struct sdhci_omap_host *omap_host = sdhci_pltfm_priv(pltfm_host);
- 	struct device *dev = omap_host->dev;
- 	const u32 mask = SDHCI_CAN_VDD_180 | SDHCI_CAN_VDD_300 | SDHCI_CAN_VDD_330;
--	unsigned int pbias, vqmmc, caps = 0;
-+	unsigned int pbias = ~0U, vqmmc = ~0U, caps = 0;
-+	struct	regulator *reg_vqmmc;
- 	u32 reg;
- 
--	pbias = sdhci_omap_regulator_get_caps(dev, "pbias");
--	vqmmc = sdhci_omap_regulator_get_caps(dev, "vqmmc");
-+	if (!IS_ERR(omap_host->pbias))
-+		pbias = sdhci_omap_regulator_get_caps(omap_host->pbias);
-+
-+	/* mmc->supply.vqmmc is not initialized yet */
-+	reg_vqmmc = regulator_get_optional(dev, "vqmmc");
-+	if (!IS_ERR(reg_vqmmc)) {
-+		vqmmc = sdhci_omap_regulator_get_caps(reg_vqmmc);
-+		regulator_put(reg_vqmmc);
-+	}
-+
- 	caps = pbias & vqmmc;
- 
- 	if (pbias != ~0U && vqmmc == ~0U)
--- 
-2.43.0
-
+Best regards,
+Krzysztof
 
