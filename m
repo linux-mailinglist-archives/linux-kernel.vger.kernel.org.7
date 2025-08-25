@@ -1,378 +1,212 @@
-Return-Path: <linux-kernel+bounces-785181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 263B2B34713
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:21:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA87FB3470A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:20:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A0AC2A5553
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:21:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C48AE1A87F3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E082B301017;
-	Mon, 25 Aug 2025 16:21:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9622FF64E;
+	Mon, 25 Aug 2025 16:20:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="p846I/po"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BtcZn9AX"
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DD3D2FF65A;
-	Mon, 25 Aug 2025 16:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01810271A9D;
+	Mon, 25 Aug 2025 16:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756138875; cv=none; b=i6yLzUhNIPf/uHJDM1nYNON6Z8OMjGgOkarn5zYZV4///AriTR9ykffqNYUDH7ml+4fHm6rlnl8DZfh64BGK/xL3GZCugZ7cdR+814f/2md+x2aVO+9Tx1dB0fup0V1Ldx0J9+2QtBEVzjZ4mX8yBdvZXqe/QBr6p0KTg/mYYj4=
+	t=1756138822; cv=none; b=QjfK4rRGIO5ZjCokN2I+dXDSitY4H8VzOmSoJbI4ncAP+1Y513xly2Si8vVgsZXCAoy10r4dy64sgpcSz0aXFQukwFgDfuk2MA23VijtKDvcJLPi8iS8gQMy1Lgq3xdrT0rQZHh0o08Bal5xgZgUptgFltHkKTSv3YQd6tFI4NI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756138875; c=relaxed/simple;
-	bh=MiT345YLomub7IP86hOOjug+WGx1PWtBgEXUPCI3pfc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fXBTCbHCuG7SGkKmnNuZeWzXQw0XNv0nqrYvZ/Mx+KqoUivM6yaTOS4QEetDzqv74ZNp4kCSuBW4xiwOrkjQqu73UKHE7dBGYd2orx9py7gFptv3tmjZ3/gLwBInq3EfUhgAl2eOl37Ugcr/DbY+vag9MdPBkKgjh/C1t4FTi7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=p846I/po; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1756138873; x=1787674873;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=MiT345YLomub7IP86hOOjug+WGx1PWtBgEXUPCI3pfc=;
-  b=p846I/po2NYKfRp3CkTqwvByeMgg3cLPCx2S72bfVGRw9cIeQ5/69mn/
-   lYWk4NfaAU5WSaUqooMAzlQqfhp2WarR7yJqKMF3ZSJmvlH/9pan9ZVmf
-   A9L7ewFhXNTZbfeJPo4S9t5OOpsRY1o8sqRHqmA4hNKh6Cqm4o0mmYUly
-   NZD4nhJwe7jzteWyjJSoq2shNuPCHuxQQh8xTjkQy6ICAxLE0sT7KADul
-   WEtLIBLXItilvKnjRboC4Jd4JVm25dYBsvsoOTSkSlQs3MBBf4xfKCKLk
-   MFuWX0iM1FnwAJAaI9N8M1QQWIxKfxGbJHRXMjlpuwGzUp+TUgoxahgdE
-   w==;
-X-CSE-ConnectionGUID: aOjtNZFgQlqEbp9cjaRbcw==
-X-CSE-MsgGUID: Cf8bPDvWQjqWHEELUev/QA==
-X-IronPort-AV: E=Sophos;i="6.18,213,1751266800"; 
-   d="scan'208";a="45617318"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Aug 2025 09:21:11 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Mon, 25 Aug 2025 09:20:54 -0700
-Received: from valentina.microchip.com (10.10.85.11) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Mon, 25 Aug 2025 09:20:52 -0700
-From: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
-To: <conor.dooley@microchip.com>, <daire.mcnamara@microchip.com>,
-	<paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <aou@eecs.berkeley.edu>, <alex@ghiti.fr>,
-	<valentina.fernandezalanis@microchip.com>
-CC: <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-Subject: [PATCH v1 5/5] riscv: dts: microchip: add a device tree for Discovery Kit
-Date: Mon, 25 Aug 2025 17:19:52 +0100
-Message-ID: <20250825161952.3902672-6-valentina.fernandezalanis@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250825161952.3902672-1-valentina.fernandezalanis@microchip.com>
-References: <20250825161952.3902672-1-valentina.fernandezalanis@microchip.com>
+	s=arc-20240116; t=1756138822; c=relaxed/simple;
+	bh=TAcfmgI9LeesTtIHoLhIZ/JHO7GaVWax2M9oNJmKprQ=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=U8lrQM/0Koj2sytD/j+O64JwmXqKLr80LdGsAWigtAixeUv9W//WJDbxTyYH32Uufvm1pMNydLSFq1vh8AWCtjnvqfE9z2zdZg+phyQgxAtcDWvCaUzYizjD4O0XRaa+6Rkz6Ehv6E5sl1y8tPS6vGWIpPe6uqJfv27vp21zGps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BtcZn9AX; arc=none smtp.client-ip=209.85.221.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-540e0970ae2so509740e0c.1;
+        Mon, 25 Aug 2025 09:20:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756138819; x=1756743619; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cQK66bSWdpR/3neM6ZuMukiV+gZsLXj9dgiuTjYX2AA=;
+        b=BtcZn9AXCrHxvLk0Vu/OLj4mvTA9QKbmWnXqKq67GWGRW8NDfMPAm5Q6I7TtZnE7mf
+         +xqK6FO6PLWLyHXwe94mqJEi7VE1cZxX3TMZm9rp3kKynrQvVgnIo7McpJ8adRqYUbVc
+         nuEYhCDJRP1hIFWdZ+ANS/O4pq8fqCoC41XNvMLLrRhd2Y3Tzvg5PKFYEupjgxTg5XsY
+         J4q2wH+WHwj0YFw88Ikb/1aiqHjcfyTGQyqgiVtH5A0jqjyoRzo6bGoQ62vvDWtlJ9no
+         Wpkqdb2hQkDkU8Qi5/lTuLDU0xuzTJ9WrYy1ITEndlj8y2VgxkvwAYhhh2hgCzNr5vw5
+         kwBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756138819; x=1756743619;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=cQK66bSWdpR/3neM6ZuMukiV+gZsLXj9dgiuTjYX2AA=;
+        b=LGziLM3veU+ihTghpXtFlEvi5q5PscHj+R9YgLdeWoazFxA+nmtXvy3+4+2mIqTBq3
+         kLSf5RNRGpQO8ErxrudxY1C56nAvwu9bpiPF8s5wCDMEbd0c4SXye6IdsTd1/+PaVUck
+         LlZ/bq+zAFGg2Ss2+x+9qJI3XvDHkKNW9NlX5s79Osr4HXc8joWL12XjBr2sQ9U9glDj
+         VTDwj6sIfQ2ab37yfSIqRykxMlwIFpljQr9sk1k/B+oMW0En6kQ5MyvvRBEiZYU/iYL8
+         U+TjgWnOr46xQHCztlvYZSp/Fuo98af4fCYOXCBvw4WjCWTYS+teqfV0/dqQv8nM8FV7
+         VMlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUu83Ebo8Iiv+SII+Kzv70vJyBCI6BSM7aNl/TzcmtHd+KuLbOZ+uJL18ifvqjkJEsK0E4b3eFVJtApRyQ=@vger.kernel.org, AJvYcCXjbre7A7IqlSJ8ldKCdFb3wuAAVfFXquVpufmXLZ3b9tyCOs6lra9qmg1Z18RUIUpovfSgVpYy@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAstOe1RNTidLpXBirVnDauvQUmbdHd94YoTsAExhYhuNIr4f+
+	IEcmlbD4qoYQynFu3VRUzwxfgIHJwew+VSP6UclFyStDH/GF5SQcQyBY
+X-Gm-Gg: ASbGncte58m4RRaDFm4EnKvdHpM01ZgJbp0y+bpbmKKMeL9b9W92jdhquZEYRgE59I9
+	eumXHUOAqRt3sf/PdJa1CcOtaGe62soOIbloT3L2nrSli5+JwNDbHmTo430dWWgFiUWJth5kNnG
+	a84s84Pm7RX3nfXurjhj8fLU1PKH1OsnCXwGvcQU4q/KDvRoRkzJyxlRc4j5M6QbYAXkwirisY4
+	8e5rWEXSOiBOvm8lrH8UX04eCCBCk2JBS33fjkgQElUl1zebCNdFNcxRADbUT6W2TkLh93yUVF1
+	xSgPVkkEBZfQj391wMoYi/m1wpYqSl7hIUO4JCCt+++c/BSpTvbqJh1GywZQlY3MiLDlYIZ793L
+	/mH4M18q7JvACSayxn3yO3AMNUUCIZ1o+/fnjIgJy+KjhdZQ7QC40AM7bPbBwsccS+Q/Z0A==
+X-Google-Smtp-Source: AGHT+IG+DDyinrOkYJVWmDmJqNIEOlqMrV1fm+S8myMgd86vycFol54MLKDK798r08P9S1+6Mp7TvQ==
+X-Received: by 2002:a05:6122:8d0:b0:538:d227:a364 with SMTP id 71dfb90a1353d-53c8a2bde65mr3110548e0c.3.1756138818726;
+        Mon, 25 Aug 2025 09:20:18 -0700 (PDT)
+Received: from gmail.com (128.5.86.34.bc.googleusercontent.com. [34.86.5.128])
+        by smtp.gmail.com with UTF8SMTPSA id 71dfb90a1353d-541b1dbcffcsm496071e0c.4.2025.08.25.09.20.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Aug 2025 09:20:18 -0700 (PDT)
+Date: Mon, 25 Aug 2025 12:20:17 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Xin Zhao <jackzxcui1989@163.com>, 
+ willemdebruijn.kernel@gmail.com, 
+ edumazet@google.com, 
+ ferenc@fejes.dev
+Cc: davem@davemloft.net, 
+ kuba@kernel.org, 
+ pabeni@redhat.com, 
+ horms@kernel.org, 
+ netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+Message-ID: <willemdebruijn.kernel.26d6abeee5c4c@gmail.com>
+In-Reply-To: <20250825050628.124977-1-jackzxcui1989@163.com>
+References: <20250825050628.124977-1-jackzxcui1989@163.com>
+Subject: Re: [PATCH net-next v6] net: af_packet: Use hrtimer to do the retire
+ operation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-Add a minimal device tree for the Microchip PolarFire SoC Discovery Kit.
-The Discovery Kit is a cost-optimized board based on PolarFire SoC
-MPFS095T and features:
+Xin Zhao wrote:
+> On Mon, 2025-08-25 at 2:08 +0800, Willem wrote:
+> 
+> > This is getting more complex than needed.
+> > 
+> > Essentially the lifecycle is that packet_set_ring calls hrtimer_setup
+> > and hrtimer_del_sync.
+> > 
+> > Inbetween, while the ring is configured, the timer is either
+> > 
+> > - scheduled from tpacket_rcv and !is_scheduled
+> >     -> call hrtimer_start
+> > - scheduled from tpacket_rcv and is_scheduled
+> >     -> call hrtimer_set_expires
+> 
+> We cannot use hrtimer_set_expires/hrtimer_forward_now when a hrtimer is
+> already enqueued.  
 
-- 1 GB DDR4x16
-- 1x Gigabit Ethernet
-- 3x UARTs
-- Raspberry Pi connector
-- mikroBus connector
-- microSD card connector
+Perhaps we need to simplify and stop trying to adjust the timer from
+tpacket_rcv once scheduled. Let the callback handle that.
 
-Link: https://www.microchip.com/en-us/development-tool/mpfs-disco-kit
-Signed-off-by: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
----
- arch/riscv/boot/dts/microchip/Makefile        |   1 +
- .../dts/microchip/mpfs-disco-kit-fabric.dtsi  |  58 ++++++
- .../boot/dts/microchip/mpfs-disco-kit.dts     | 191 ++++++++++++++++++
- 3 files changed, 250 insertions(+)
- create mode 100644 arch/riscv/boot/dts/microchip/mpfs-disco-kit-fabric.dtsi
- create mode 100644 arch/riscv/boot/dts/microchip/mpfs-disco-kit.dts
+> The WARN_ON(timer->state & HRTIMER_STATE_ENQUEUED) in hrtimer_forward
+> already clearly indicates this point. The reason for not adding this
+> WARN_ON in hrtimer_set_expires is that hrtimer_set_expires is an inline
+> function, wory about increase code size.
+> The implementation of perf_mux_hrtimer_restart actually checks whether
+> the hrtimer is active when restarting the hrtimer.
+> 
+> static int perf_mux_hrtimer_restart(struct perf_cpu_pmu_context *cpc)
+> {
+> 	struct hrtimer *timer = &cpc->hrtimer;
+> 	unsigned long flags;
+> 
+> 	raw_spin_lock_irqsave(&cpc->hrtimer_lock, flags);
+> 	if (!cpc->hrtimer_active) {
+> 		cpc->hrtimer_active = 1;
+> 		hrtimer_forward_now(timer, cpc->hrtimer_interval);
+> 		hrtimer_start_expires(timer, HRTIMER_MODE_ABS_PINNED_HARD);
+> 	}
+> 	raw_spin_unlock_irqrestore(&cpc->hrtimer_lock, flags);
+> 
+> 	return 0;
+> }
+> 
+> Therefore, according to the overall design of the hrtimer, once the
+> hrtimer is active, it is not allowed to set the timeout outside of the
+> hrtimer callback nor is it allowed to restart the hrtimer.
+> 
+> So two ways to update the hrtimer timeout:
+> 1. update expire time in the callback
+> 2. Call the hrtimer_cancel and then call hrtimer_start
 
-diff --git a/arch/riscv/boot/dts/microchip/Makefile b/arch/riscv/boot/dts/microchip/Makefile
-index 1e2f4e41bf0d..345ed7a48cc1 100644
---- a/arch/riscv/boot/dts/microchip/Makefile
-+++ b/arch/riscv/boot/dts/microchip/Makefile
-@@ -1,5 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- dtb-$(CONFIG_ARCH_MICROCHIP_POLARFIRE) += mpfs-beaglev-fire.dtb
-+dtb-$(CONFIG_ARCH_MICROCHIP_POLARFIRE) += mpfs-disco-kit.dtb
- dtb-$(CONFIG_ARCH_MICROCHIP_POLARFIRE) += mpfs-icicle-kit.dtb
- dtb-$(CONFIG_ARCH_MICROCHIP_POLARFIRE) += mpfs-icicle-kit-prod.dtb
- dtb-$(CONFIG_ARCH_MICROCHIP_POLARFIRE) += mpfs-m100pfsevp.dtb
-diff --git a/arch/riscv/boot/dts/microchip/mpfs-disco-kit-fabric.dtsi b/arch/riscv/boot/dts/microchip/mpfs-disco-kit-fabric.dtsi
-new file mode 100644
-index 000000000000..f9b94b5ead96
---- /dev/null
-+++ b/arch/riscv/boot/dts/microchip/mpfs-disco-kit-fabric.dtsi
-@@ -0,0 +1,58 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/* Copyright (c) 2020-2025 Microchip Technology Inc */
-+
-+/ {
-+	core_pwm0: pwm@40000000 {
-+		compatible = "microchip,corepwm-rtl-v4";
-+		reg = <0x0 0x40000000 0x0 0xF0>;
-+		microchip,sync-update-mask = /bits/ 32 <0>;
-+		#pwm-cells = <3>;
-+		clocks = <&ccc_sw CLK_CCC_PLL0_OUT3>;
-+		status = "disabled";
-+	};
-+
-+	i2c2: i2c@40000200 {
-+		compatible = "microchip,corei2c-rtl-v7";
-+		reg = <0x0 0x40000200 0x0 0x100>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&ccc_sw CLK_CCC_PLL0_OUT3>;
-+		interrupt-parent = <&plic>;
-+		interrupts = <122>;
-+		clock-frequency = <100000>;
-+		status = "disabled";
-+	};
-+
-+	ihc: mailbox {
-+		compatible = "microchip,sbi-ipc";
-+		interrupt-parent = <&plic>;
-+		interrupts = <180>, <179>, <178>, <177>;
-+		interrupt-names = "hart-1", "hart-2", "hart-3", "hart-4";
-+		#mbox-cells = <1>;
-+		status = "disabled";
-+	};
-+
-+	mailbox@50000000 {
-+		compatible = "microchip,miv-ihc-rtl-v2";
-+		microchip,ihc-chan-disabled-mask = /bits/ 16 <0>;
-+		reg = <0x0 0x50000000 0x0 0x1c000>;
-+		interrupt-parent = <&plic>;
-+		interrupts = <180>, <179>, <178>, <177>;
-+		interrupt-names = "hart-1", "hart-2", "hart-3", "hart-4";
-+		#mbox-cells = <1>;
-+		status = "disabled";
-+	};
-+
-+	refclk_ccc: cccrefclk {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+	};
-+};
-+
-+&ccc_sw {
-+	clocks = <&refclk_ccc>, <&refclk_ccc>, <&refclk_ccc>, <&refclk_ccc>,
-+		 <&refclk_ccc>, <&refclk_ccc>;
-+	clock-names = "pll0_ref0", "pll0_ref1", "pll1_ref0", "pll1_ref1",
-+		      "dll0_ref", "dll1_ref";
-+	status = "okay";
-+};
-diff --git a/arch/riscv/boot/dts/microchip/mpfs-disco-kit.dts b/arch/riscv/boot/dts/microchip/mpfs-disco-kit.dts
-new file mode 100644
-index 000000000000..742369470ab0
---- /dev/null
-+++ b/arch/riscv/boot/dts/microchip/mpfs-disco-kit.dts
-@@ -0,0 +1,191 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/* Copyright (c) 2020-2025 Microchip Technology Inc */
-+
-+/dts-v1/;
-+
-+#include "mpfs.dtsi"
-+#include "mpfs-disco-kit-fabric.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/leds/common.h>
-+
-+/ {
-+	model = "Microchip PolarFire-SoC Discovery Kit";
-+	compatible = "microchip,mpfs-disco-kit-reference-rtl-v2507",
-+		     "microchip,mpfs-disco-kit",
-+		     "microchip,mpfs";
-+
-+	aliases {
-+		ethernet0 = &mac0;
-+		serial4 = &mmuart4;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial4:115200n8";
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		led-1 {
-+			gpios = <&gpio2 17 GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_AMBER>;
-+			label = "led1";
-+		};
-+
-+		led-2 {
-+			gpios = <&gpio2 18 GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_RED>;
-+			label = "led2";
-+		};
-+
-+		led-3 {
-+			gpios = <&gpio2 19 GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_AMBER>;
-+			label = "led3";
-+		};
-+
-+		led-4 {
-+			gpios = <&gpio2 20 GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_RED>;
-+			label = "led4";
-+		};
-+
-+		led-5 {
-+			gpios = <&gpio2 21 GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_AMBER>;
-+			label = "led5";
-+		};
-+
-+		led-6 {
-+			gpios = <&gpio2 22 GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_RED>;
-+			label = "led6";
-+		};
-+
-+		led-7 {
-+			gpios = <&gpio2 23 GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_AMBER>;
-+			label = "led7";
-+		};
-+
-+		led-8 {
-+			gpios = <&gpio1 9 GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_RED>;
-+			label = "led8";
-+		};
-+	};
-+
-+	ddrc_cache_lo: memory@80000000 {
-+		device_type = "memory";
-+		reg = <0x0 0x80000000 0x0 0x40000000>;
-+		status = "okay";
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		hss_payload: region@BFC00000 {
-+			reg = <0x0 0xBFC00000 0x0 0x400000>;
-+			no-map;
-+		};
-+	};
-+};
-+
-+&core_pwm0 {
-+	status = "okay";
-+};
-+
-+&gpio1 {
-+	interrupts = <27>, <28>, <29>, <30>,
-+		     <31>, <32>, <33>, <47>,
-+		     <35>, <36>, <37>, <38>,
-+		     <39>, <40>, <41>, <42>,
-+		     <43>, <44>, <45>, <46>,
-+		     <47>, <48>, <49>, <50>;
-+	status = "okay";
-+};
-+
-+&gpio2 {
-+	interrupts = <53>, <53>, <53>, <53>,
-+		     <53>, <53>, <53>, <53>,
-+		     <53>, <53>, <53>, <53>,
-+		     <53>, <53>, <53>, <53>,
-+		     <53>, <53>, <53>, <53>,
-+		     <53>, <53>, <53>, <53>,
-+		     <53>, <53>, <53>, <53>,
-+		     <53>, <53>, <53>, <53>;
-+	status = "okay";
-+};
-+
-+&i2c0 {
-+	status = "okay";
-+};
-+
-+&i2c2 {
-+	status = "okay";
-+};
-+
-+&ihc {
-+	status = "okay";
-+};
-+
-+&mac0 {
-+	phy-mode = "sgmii";
-+	phy-handle = <&phy0>;
-+	status = "okay";
-+
-+	phy0: ethernet-phy@b {
-+		reg = <0xb>;
-+	};
-+};
-+
-+&mbox {
-+	status = "okay";
-+};
-+
-+&mmc {
-+	bus-width = <4>;
-+	disable-wp;
-+	cap-sd-highspeed;
-+	cap-mmc-highspeed;
-+	sd-uhs-sdr12;
-+	sd-uhs-sdr25;
-+	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
-+	no-1-8-v;
-+	status = "okay";
-+};
-+
-+&mmuart1 {
-+	status = "okay";
-+};
-+
-+&mmuart4 {
-+	status = "okay";
-+};
-+
-+&refclk {
-+	clock-frequency = <125000000>;
-+};
-+
-+&refclk_ccc {
-+	clock-frequency = <50000000>;
-+};
-+
-+&rtc {
-+	status = "okay";
-+};
-+
-+&spi0 {
-+	status = "okay";
-+};
-+
-+&spi1 {
-+	status = "okay";
-+};
-+
-+&syscontroller {
-+	status = "okay";
-+};
--- 
-2.34.1
+1 seems preferable. The intent of the API.
+
+> According to your suggestion, we don't call hrtimer_start inside the
+> callback, would you accept calling hrtimer_cancel first and then calling
+> hrtimer_start in the callback? However, this approach also requires
+> attention, as hrtimer_cancel will block until the callback is running,
+> so it is essential to ensure that it is not called within the hrtimer
+> callback; otherwise, it could lead to a deadlock.
+> 
+> 
+> > - rescheduled from the timer callback
+> >     -> call hrtimer_set_expires and return HRTIMER_RESTART
+> > 
+> > The only complication is that the is_scheduled check can race with the
+> > HRTIMER_RESTART restart, as that happens outside the sk_receive_queue
+> > critical section.
+> > 
+> > One option that I suggested before is to convert pkc->delete_blk_timer
+> > to pkc->blk_timer_scheduled to record whether the timer is scheduled
+> > without relying on hrtimer_is_queued. Set it on first open_block and
+> > clear it from the callback when returning HR_NORESTART.
+> 
+> Do you agree with adding a callback variable to distinguish between
+> scheduled from tpacket_rcv and scheduled from the callback? I really
+> couldn't think of a better solution.
+
+Yes, no objections to that if necessary.
+> 
+> 
+> So, a possible solution may be?
+> 1. Continue to keep the callback parameter to strictly ensure whether it
+> is within the callback.
+> 2. Use hrtimer_set_expires within the callback to update the timeout (the
+> hrtimer module will enqueue the hrtimer when callback return)
+> 3. If it is not in callback, call hrtimer_cancel + hrtimer_start to restart
+> the timer.
+
+Instead, I would use an in_scheduled param, as in my previous reply and
+simply skip trying to schedule if already scheduled.
+
+> 4. To avoid the potential issue of the enqueue in step 2 and the
+> hrtimer_start in step 3 happening simultaneously, which could lead to
+> hrtimer_start being triggered twice in a very short period, the logic should
+> be:
+> if (hrtimer_cancel(...))
+>     hrtimer_start(...);
+> Additionally, the hrtimer_cancel check will also avoid hrtimer callback
+> triggered once more when just called prb_del_retire_blk_timer by packet_set_ring.
+> The hrtimer should be in an active state beginning from when
+> prb_setup_retire_blk_timer is called to the time when prb_del_retire_blk_timer
+> is called.
+> 
+> 
+> Thanks
+> Xin Zhao
+> 
+
 
 
