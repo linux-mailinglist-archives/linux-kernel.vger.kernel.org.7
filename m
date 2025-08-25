@@ -1,99 +1,175 @@
-Return-Path: <linux-kernel+bounces-785250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F2A2B34825
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:01:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CE65B34828
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:01:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 144A517F9F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:01:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DD8C5E5C2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 508622FF67C;
-	Mon, 25 Aug 2025 17:01:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 891EF155C97;
+	Mon, 25 Aug 2025 17:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cEDrd/5u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y38Tenu3"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865CE25C821;
-	Mon, 25 Aug 2025 17:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507BF1AAE28
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 17:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756141279; cv=none; b=iyVI1afW117dkXl0ED8EXJshnb8piD/sJfQ+Put9mrQe4aQk/23bss+oh+9pTsgd0/AJV4GX8eMPBiOr75lui31lI/YAw8MYad9jwRv9/7XM4/A0Phu5tKf849JFtpUgduM518AHadQlHP5fnBzcWfHMbiD75tvswPcChmANFhk=
+	t=1756141311; cv=none; b=SsbgPZVHTQkg2FhPL0qFCKzNbEAy20VD93xGZLKW4RNfLSpMC11ufrPQL8wkyHkq9Z/TmuTAbx08FCjR9HVcYXEb8urMoVTpCWud/qwJk9PYR+P9B3C7KA9SRTgcsiPCXBsiDL+DByy8UTTwhbIbC+P6Ei5aVG6SsvwZHxh1bNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756141279; c=relaxed/simple;
-	bh=IMUW6CVxrGrZJ/WRpVFLGrFRcQ/UhH4rr54AG1fKyVE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VxkucX4aH6N/vw96UFoUa9jnysHNacMbBq0TljN/3bqgsIzZYKwwGFIVYbxN7lra3bSiHGUnWRf3i1iRirs7T7Fg2lu5VAa11xFnDjhqKJQj0sEwDon7wLEww51UJ3NOSYIxnkeU25tqu9Vc2HGZwMTHlqdLQ84L9UtoNGJVRME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cEDrd/5u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEFFDC4CEED;
-	Mon, 25 Aug 2025 17:01:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756141278;
-	bh=IMUW6CVxrGrZJ/WRpVFLGrFRcQ/UhH4rr54AG1fKyVE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cEDrd/5ulWrDVaellrV3e74HPUec+sxdSqe5093jG76xEtHbSSIFtdHkmtpdyU9OX
-	 AcZkR64HmxkeBZu+qrk9rezhGRjdKjYhs9wJcKyhqXbJGDo9rLS13O6p+VfYAdyql4
-	 bu3BoWP7Yk9Fj3yIcjatUHReX5U2Q2Gl8l1IUmaXA0V1p+X3TkzVNtVN+eOukoul2O
-	 pM6lp14rnSSW4uc1Y3qMQ6Py0hHZhwtpzpu+hplQ75cOn1W3FIhQ2TQGFyUplu6hGJ
-	 PAxR3/fxnwRPTL7LcvMYkt7/JFwXjJ7cuT44RXKwrs8/xU5IniSv9EDWuVTgcVMSij
-	 6k0n9anUdVkGg==
-Date: Mon, 25 Aug 2025 10:01:16 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: ALOK TIWARI <alok.a.tiwari@oracle.com>, Andrew Lunn <andrew@lunn.ch>,
- Heiner Kallweit <hkallweit1@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Maxime
- Chevallier <maxime.chevallier@bootlin.com>, Kory Maincent
- <kory.maincent@bootlin.com>, Lukasz Majewski <lukma@denx.de>, Jonathan
- Corbet <corbet@lwn.net>, Donald Hunter <donald.hunter@gmail.com>, Vadim
- Fedorenko <vadim.fedorenko@linux.dev>, Jiri Pirko <jiri@resnulli.us>,
- Vladimir Oltean <vladimir.oltean@nxp.com>, Alexei Starovoitov
- <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard
- Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
- kernel@pengutronix.de, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
- Divya.Koppera@microchip.com, Sabrina Dubroca <sd@queasysnail.net>,
- Stanislav Fomichev <sdf@fomichev.me>
-Subject: Re: [PATCH net-next v3 2/3] net: ynl: add generated kdoc to UAPI
- headers
-Message-ID: <20250825100116.4e8a3cd4@kernel.org>
-In-Reply-To: <aKrJAzMdgGcNiRUC@pengutronix.de>
-References: <20250820131023.855661-1-o.rempel@pengutronix.de>
-	<20250820131023.855661-3-o.rempel@pengutronix.de>
-	<7e948eb9-2704-433e-9b51-fd83716e37d1@oracle.com>
-	<aKrJAzMdgGcNiRUC@pengutronix.de>
+	s=arc-20240116; t=1756141311; c=relaxed/simple;
+	bh=JbjaUCNNq59pUE+ugocXnVw1t4DerBdPv3Lw3ndbspo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VGslWXRqDGPneQKmezGKg+DyWMJIbWKVEDbui1c3Z9Y+kyIqXja1X7DRQGyb2nxLM7y/d+te1eEOmkotW7sCGTgYR4O8zOUewCtKBr7OS6VWNSJfB4KLgGicqc7epWLJ2S1BMkulTb8utopuc3Gx2EL5bGLbA2okpCHLirck/UQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y38Tenu3; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b474e8d6d01so3022412a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 10:01:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756141309; x=1756746109; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9Ak9l7Fg6l2LvYXRcTPen8iTILFfM1AH3OjnsIesU9Y=;
+        b=y38Tenu3MfLAuUPkGKFXnrPQizsR3bfefu1w3R2+1q1d7vF2zH44jeR2ryhRNNoxcz
+         MR/5UilkcdQJ/6y/Qn+XknyIN+iKw9+BZYVBPKKwMI888SFlyxFiepazbHvR0wW+/Yun
+         +NPd8nCXf9Isr3m6GaoOhLfySM+52kA3xaYnp31oP4JrUUJD9WEUuSn5/OBNAOdZ7QFG
+         dPfS9IbKjgJj/nbA+eF8iJuSyCZwhAwEC3QdUd44vNdpGqxqbf9qMIMI2bjARTdtt6Cj
+         ej6ewAjeLMOiKMc2yCSimZniwnVV5AbXu6dhA4opByKsyXgZWNqmwrdeU1ge1rgvgZLt
+         /BSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756141309; x=1756746109;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9Ak9l7Fg6l2LvYXRcTPen8iTILFfM1AH3OjnsIesU9Y=;
+        b=gRDlAhEt82TSSRxB+PelmF+DJH0MlRg/qu7otb5bt+0/sefbbK4m9OpTCb7eOlouZZ
+         h9VX2RhWTihU7YvGT+aJR+PKmAf43M3AQtOL9U+DtW+w57++8l2bKD/H6tIDMoh5fkMs
+         v/WwmJq2h2Q1t7WgMc7kEW/PvFrpGvBUd+pVwZJISB1G/f7uEQxBGMudyhNjNxO9i76t
+         ZOnGIs5lpap/PD5SdFvTy0458G3RWElga7jM2mRWdKoHv3lUhdS89t9PTDvwqYDgwsYK
+         g2eYboT98wVWIlTXFpD9QqkZI2l7DYclhvY2fR82jmhET788/GS99vgEVnzkluRwdyhO
+         LXBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQj1gfQuXHtX5HvWk2ikI1xpW4aEu/gn3/41e+CJg50Wr51M7M2fpqV7GWofIiTZElXFl6xTKtbJDMoK8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZ2l4voVWGpAaT7Bj7C+EmyfIGd3Bsn5/PzQjVqgOX5NCnCNnp
+	iK779Jps8Lk5RYKx7f0VUdho/SCWEBVCdoR/l2uBe+u191PWTuXFt+w1VJvblfKF1rI=
+X-Gm-Gg: ASbGncvBAGnXqc3tRkdnQ6Ou7VaeZNIhPIeLDGfOioDUSQ2+AxuTv4CRrRxsMfDzNlv
+	h20tpUgGoDfOWvrR7h/xmZmvp/ayhurmV9L30fxOkpmef8Q2esjvJDim5mRYp1h1apoF+W9EY2e
+	KSnU9IvjwnuNhcdEu/tIexE98abpWJy0nee2NFcAavgi01qa1kjyPdFvjexXugKuw3bAsgKqnpW
+	6sngh+QIBo+fo7xlgRUyrwVvF9spRZiER25Qarh/smhprOpvTvKu3/pcCxNj/D7S6H03j8wwkrv
+	iPaEnM3VfU1cDMq0QnWF7NNR5YzcXfUxabHTD9zJ+JQRG+zAohELVmF1l0dNyGamiW8ScbPxSmV
+	OI/F/qRLYI+h3ExI3iVCclhdJqSe4GkZX7lOvgwHuHKZvI5ggF3wK0QZlVjZ7pfD9LLXX2BvLqx
+	re/LWhuHYLYLBwFYmIqEg64whW
+X-Google-Smtp-Source: AGHT+IE1SxCcVPjQEknO8iyQnbOBTN5XYqsMYCNx0q4628NZu3zWYavkSuR+TiKqhP2rTdODkzX2FA==
+X-Received: by 2002:a17:902:ce01:b0:245:fd33:5b16 with SMTP id d9443c01a7336-2462ef1f2f6mr178350195ad.36.1756141309478;
+        Mon, 25 Aug 2025 10:01:49 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:f3a7:cbcf:8fdd:91a8])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2466878152esm73702815ad.12.2025.08.25.10.01.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Aug 2025 10:01:48 -0700 (PDT)
+Date: Mon, 25 Aug 2025 11:01:46 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Andrew Davis <afd@ti.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Hari Nagalla <hnagalla@ti.com>,
+	Beleswar Padhi <b-padhi@ti.com>, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] remoteproc: da8xx: Use devm_rproc_alloc() helper
+Message-ID: <aKyW-oMAZR791GF2@p14s>
+References: <20250814135532.638040-1-afd@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814135532.638040-1-afd@ti.com>
 
-On Sun, 24 Aug 2025 10:10:43 +0200 Oleksij Rempel wrote:
-> > > +/**
-> > > + * enum dpll_pin
-> > > + * @DPLL_A_PIN_FRACTIONAL_FREQUENCY_OFFSET: The FFO (Fractional Freq=
-uency
-> > > + *   Offset) between the RX and TX symbol rate on the media associat=
-ed with the
-> > > + *   pin: (rx_frequency-tx_frequency)/rx_frequency Value is in PPM (=
-parts per =20
-> >=20
-> > spacing for clarity (rx_frequency - tx_frequency) / rx_frequency =20
->=20
-> Thank you for the review. The comments you refer to are autogenerated
-> from the YAML specs. Extending my patch to adjust or clean up those
-> generated comments would mean adding side-quests outside the scope of
-> the actual change. I=E2=80=99d rather keep this series focused, otherwise=
- I risk
-> not being able to complete it.
+On Thu, Aug 14, 2025 at 08:55:30AM -0500, Andrew Davis wrote:
+> Use the device lifecycle managed allocation function. This helps prevent
+> mistakes like freeing out of order in cleanup functions and forgetting to
+> free on error paths.
+> 
+> Signed-off-by: Andrew Davis <afd@ti.com>
+> ---
+>  drivers/remoteproc/da8xx_remoteproc.c | 15 ++++++---------
+>  1 file changed, 6 insertions(+), 9 deletions(-)
+>
 
-SG, FWIW.
+Applied.
+ 
+> diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+> index 93031f0867d10..47df21bea5254 100644
+> --- a/drivers/remoteproc/da8xx_remoteproc.c
+> +++ b/drivers/remoteproc/da8xx_remoteproc.c
+> @@ -276,8 +276,8 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+>  			return dev_err_probe(dev, ret, "device does not have specific CMA pool\n");
+>  	}
+>  
+> -	rproc = rproc_alloc(dev, "dsp", &da8xx_rproc_ops, da8xx_fw_name,
+> -		sizeof(*drproc));
+> +	rproc = devm_rproc_alloc(dev, "dsp", &da8xx_rproc_ops, da8xx_fw_name,
+> +				 sizeof(*drproc));
+>  	if (!rproc) {
+>  		ret = -ENOMEM;
+>  		goto free_mem;
+> @@ -294,7 +294,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+>  
+>  	ret = da8xx_rproc_get_internal_memories(pdev, drproc);
+>  	if (ret)
+> -		goto free_rproc;
+> +		goto free_mem;
+>  
+>  	platform_set_drvdata(pdev, rproc);
+>  
+> @@ -304,7 +304,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+>  					rproc);
+>  	if (ret) {
+>  		dev_err(dev, "devm_request_threaded_irq error: %d\n", ret);
+> -		goto free_rproc;
+> +		goto free_mem;
+>  	}
+>  
+>  	/*
+> @@ -314,7 +314,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+>  	 */
+>  	ret = reset_control_assert(dsp_reset);
+>  	if (ret)
+> -		goto free_rproc;
+> +		goto free_mem;
+>  
+>  	drproc->chipsig = chipsig;
+>  	drproc->bootreg = bootreg;
+> @@ -325,13 +325,11 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+>  	ret = rproc_add(rproc);
+>  	if (ret) {
+>  		dev_err(dev, "rproc_add failed: %d\n", ret);
+> -		goto free_rproc;
+> +		goto free_mem;
+>  	}
+>  
+>  	return 0;
+>  
+> -free_rproc:
+> -	rproc_free(rproc);
+>  free_mem:
+>  	if (dev->of_node)
+>  		of_reserved_mem_device_release(dev);
+> @@ -352,7 +350,6 @@ static void da8xx_rproc_remove(struct platform_device *pdev)
+>  	disable_irq(drproc->irq);
+>  
+>  	rproc_del(rproc);
+> -	rproc_free(rproc);
+>  	if (dev->of_node)
+>  		of_reserved_mem_device_release(dev);
+>  }
+> -- 
+> 2.39.2
+> 
 
