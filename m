@@ -1,104 +1,156 @@
-Return-Path: <linux-kernel+bounces-784218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DC5AB33846
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:53:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E75CCB33849
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:55:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30B991B2251D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 07:54:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA08C174F28
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 07:55:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D2E0299943;
-	Mon, 25 Aug 2025 07:53:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78010299954;
+	Mon, 25 Aug 2025 07:55:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k8k6sKaz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NKL5JVYP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF1A14F70;
-	Mon, 25 Aug 2025 07:53:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549CD14F70;
+	Mon, 25 Aug 2025 07:54:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756108426; cv=none; b=BQkv/+JrIDD+oWam26B1/LCfVcxg+R8nb3x/OuoBiRfosTqdBGjH9UKuJo2xLzjZDVVMaZ405KmrODvutaQt5+pp+3jwwJ7Yo99JacjIjIoKWlNHeh1Usp5A6bnxMeGRtiCrxT3QYkFmycu8M1V8CShCpeDB+Qv0pUtLruFwL9k=
+	t=1756108500; cv=none; b=ikNc1CU3DJRE9/ZlYBoVIJTtSnojIb10wc6ZnVMxK+1gosfdiD0J49WubGKCmKltsu8FI5IKcrftyO+29a6OAB//b5P3F1YeXTQQdePw2Y7Civk0FnzGvyCtRLX260x3AEb3VAt6Pj81d1nqo1Ago+gXG/nH79YEehp0HlcZoC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756108426; c=relaxed/simple;
-	bh=siHquftZz0T1lNm1I/MwnFut9RzLZNKPq03XuIRiIPo=;
-	h=Content-Type:Date:Message-Id:Subject:Cc:From:To:References:
-	 In-Reply-To; b=NMj3X3GdryQD/7bMztGTowNMo9kMu1bRL18Obo1GgsHEK8IkF+IGdGer1XmcZKWtbrRp34E4BQv6H7PbwhUiAZvZhlJ9Hse1uVG+dcyDkSCkUM3D5q/cdxFJmQlA8uuhfrnyofNGkfPSEWH+r2FNyZX2Zwp1X18tkAunGFZphnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k8k6sKaz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16345C4CEED;
-	Mon, 25 Aug 2025 07:53:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756108425;
-	bh=siHquftZz0T1lNm1I/MwnFut9RzLZNKPq03XuIRiIPo=;
-	h=Date:Subject:Cc:From:To:References:In-Reply-To:From;
-	b=k8k6sKazH9DJEFs5CtJJZLnhiTBHEO1bX/rnpwXPJNZo48yymmubbIOmwJXqmv3ZT
-	 SXMv8m+oCNZ4P77DBsHf83wsZJBEwPkYslRFxaRNV+8uFmTJwqoQnOnwxwIImhSujO
-	 ni/5YRSbxTbT41bL5jHSDuALdxqcnA4cXU5ObFuGB3xObZAq6i4/BPlzIl3Zgdmz0S
-	 WqoV7Ysfn9mtf77GxKI1gNL7195/rMrSIzzXw+s2BnenqJqgy2M9yC4U4CYB2oU/ub
-	 nv7PO6XkeDpTpKuL+SR6yzrdxjS7GHP8IcX6ZrK84U9e7fkyamhoXFLjPCDukgNsM8
-	 88TAAehP6HF9g==
-Content-Type: multipart/signed;
- boundary=4ea3e07d3396ec2b46c8f27f87f01aae1de62acf24971f2d21860800c284;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Mon, 25 Aug 2025 09:53:41 +0200
-Message-Id: <DCBCHBIVM5IE.12J0BRE4I5KXZ@kernel.org>
-Subject: Re: [PATCH v1 0/7] Initial Kontron SMARC-sAM67 support
-Cc: <devicetree@vger.kernel.org>, "Tero Kristo" <kristo@kernel.org>, "Jean
- Delvare" <jdelvare@suse.com>, "Srinivas Kandagatla" <srini@kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <linux-watchdog@vger.kernel.org>,
- "Wim Van Sebroeck" <wim@linux-watchdog.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Lee Jones"
- <lee@kernel.org>, <linux-hwmon@vger.kernel.org>, "Vignesh Raghavendra"
- <vigneshr@ti.com>, "Nishanth Menon" <nm@ti.com>,
- <linux-kernel@vger.kernel.org>, "Guenter Roeck" <linux@roeck-us.net>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-X-Mailer: aerc 0.16.0
-References: <20250822131531.1366437-1-mwalle@kernel.org>
- <175589786195.518444.15005080125108403794.robh@kernel.org>
-In-Reply-To: <175589786195.518444.15005080125108403794.robh@kernel.org>
+	s=arc-20240116; t=1756108500; c=relaxed/simple;
+	bh=tnERFtuwx/0KAvpsxc7xSwCVJ5+TEdN/2UKJKWWValA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VwucyIkVAUxk3/bo43pJOGCq0Xi/9y9x+BTUMQEyG6dEGXPNTzxqLMc2/nvAw5e6p8oanPDwS8tHkhSp2QML6TTGCvzgCj7wXPdFpi/fltRHWpChecNy8uicrtN3ULBbLoSAfPXPJf0onWlD4fOmDARuLXm5Jg2/p6YQswCDOIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NKL5JVYP; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756108499; x=1787644499;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=tnERFtuwx/0KAvpsxc7xSwCVJ5+TEdN/2UKJKWWValA=;
+  b=NKL5JVYPHa+fZ9MkORMIbxv75BdSp26cch+L1q1rFA39m3i7S9mnMKSJ
+   IQI0CtlCJIlQa/Na3IE9ad9p0yqbuafT3c31hEh7m3soPIi/fWr4BF+Oq
+   sLz/S1M8kQN9jPlL4moIxJrMbXzY4RNHATdtZpd36JhZaJugAcP0ky/2K
+   81CvaJFaEOt695NaRs7dq44NBJ3Be/IZqyajVZivnLWcIO7rD755bGtmy
+   9OIT+SmHTS3wMj6XPgpG6bdsjgyX7dS/+WLvLTKLbWooyfi/KuO9b5Q63
+   2Kqe/nlvYPcaguxw357QQrVn6Lnes9rLau3ngiTsghwcGj+EBqK6uyPTg
+   g==;
+X-CSE-ConnectionGUID: SldSSXo4RImoGZYnEhJa/w==
+X-CSE-MsgGUID: nnNsNJ2IQx2bnHfiYYmujw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="58257444"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="58257444"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 00:54:58 -0700
+X-CSE-ConnectionGUID: jOO+zamcTCeDQo68mG767Q==
+X-CSE-MsgGUID: 6EB3dYYARiO0ROnWQb768g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="174510333"
+Received: from vpanait-mobl.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.7])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 00:54:57 -0700
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with ESMTP id A94B712023C;
+	Mon, 25 Aug 2025 10:54:53 +0300 (EEST)
+Date: Mon, 25 Aug 2025 10:54:53 +0300
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Allen Ballway <ballway@chromium.org>, Hans de Goede <hansg@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: ov8865: move mode_configure out of state_configure
+Message-ID: <aKwWzQGY_dsP8hg0@kekkonen.localdomain>
+References: <20250722-mode_configure-v1-1-5ea35052a01f@chromium.org>
+ <20250723154753.GH6719@pendragon.ideasonboard.com>
+ <CAEs41JCctnTgwY-ePrB+kwY7nUvJuMAttZ894PzhL-b_SF7uNQ@mail.gmail.com>
+ <20250723170237.GE14576@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250723170237.GE14576@pendragon.ideasonboard.com>
 
---4ea3e07d3396ec2b46c8f27f87f01aae1de62acf24971f2d21860800c284
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+Hi Allen, Laurent,
 
-On Fri Aug 22, 2025 at 11:27 PM CEST, Rob Herring (Arm) wrote:
-> New warnings running 'make CHECK_DTBS=3Dy for arch/arm64/boot/dts/ti/' fo=
-r 20250822131531.1366437-1-mwalle@kernel.org:
->
-> arch/arm64/boot/dts/ti/k3-am67a-kontron-sa67-base.dtb: pmic@44 (ti,tps652=
-g1): 'gpio-line-names' does not match any of the regexes: '^buck([1-5]|12|3=
-4|123|1234)-supply$', '^ldo[1-4]-supply$', '^pinctrl-[0-9]+$'
-> 	from schema $id: http://devicetree.org/schemas/mfd/ti,tps6594.yaml#
+On Wed, Jul 23, 2025 at 08:02:37PM +0300, Laurent Pinchart wrote:
+> On Wed, Jul 23, 2025 at 09:40:42AM -0700, Allen Ballway wrote:
+> > On Wed, Jul 23, 2025 at 8:47 AM Laurent Pinchart wrote:
+> > > On Tue, Jul 22, 2025 at 01:35:43PM -0700, Allen Ballway wrote:
+> > > > ov8865_mode_configure() only needs to be called on sensor init, but it can
+> > > > be called multiple times from ov8865_state_configure(). Move
+> > > > ov8865_mode_configure() to ov8865_sensor_init().
+> > > >
+> > > > Signed-off-by: Allen Ballway <ballway@chromium.org>
+> > > > ---
+> > > >  drivers/media/i2c/ov8865.c | 15 +++++++--------
+> > > >  1 file changed, 7 insertions(+), 8 deletions(-)
+> > > >
+> > > > diff --git a/drivers/media/i2c/ov8865.c b/drivers/media/i2c/ov8865.c
+> > > > index 95ffe7536aa6aba814f4e5c3d12e7279470b2f07..1d1a1f261bf4ab5c09848402dc057e2f572504e7 100644
+> > > > --- a/drivers/media/i2c/ov8865.c
+> > > > +++ b/drivers/media/i2c/ov8865.c
+> > > > @@ -2304,14 +2304,6 @@ static int ov8865_state_configure(struct ov8865_sensor *sensor,
+> > > >       if (sensor->state.streaming)
+> > > >               return -EBUSY;
+> > > >
+> > > > -     /* State will be configured at first power on otherwise. */
+> > > > -     if (pm_runtime_enabled(sensor->dev) &&
+> > > > -         !pm_runtime_suspended(sensor->dev)) {
+> > > > -             ret = ov8865_mode_configure(sensor, mode, mbus_code);
+> > > > -             if (ret)
+> > > > -                     return ret;
+> > > > -     }
+> > > > -
+> > > >       ret = ov8865_state_mipi_configure(sensor, mode, mbus_code);
+> > > >       if (ret)
+> > > >               return ret;
+> > > > @@ -2384,6 +2376,13 @@ static int ov8865_sensor_init(struct ov8865_sensor *sensor)
+> > > >       }
+> > > >
+> > > >       /* Configure current mode. */
+> > > > +     ret = ov8865_mode_configure(sensor, sensor->state.mode,
+> > > > +                                  sensor->state.mbus_code);
+> > >
+> > > How about the implication on ov8865_set_fmt() that will not update the
+> > > link freq and pixel rate controls anymore ?
+> > 
+> > I believe those will be unaffected by this change, they are updated in
+> > ov8865_state_mipi_configure() which is still called from
+> > ov8865_set_fmt() via ov8865_state_configure().
+> 
+> You're right, my bad.
+> 
+> > > > +     if (ret) {
+> > > > +             dev_err(sensor->dev, "failed to configure mode\n");
+> > > > +             return ret;
+> > > > +     }
+> > > > +
+> > > >       ret = ov8865_state_configure(sensor, sensor->state.mode,
+> > > >                                    sensor->state.mbus_code);
+> 
+> Can't we drop this now ? The remaining code in ov8865_state_configure()
+> updates the link frequency and pixel rate controls, and sets
+> sensor->state.mode and sensor->state.mbus_code. The latter is a no-op
+> here as they're set to their current value, and the controls shouldn't
+> need an update in this function as it's only called from
+> ov8865_resume().
 
-Damn, very late change on the device tree :o I'll add a new patch to add
+Any comments on this? Will there be v2?
 
-  gpio-line-names: true
-
-to bindings/mfd/ti,tps6594.yaml
-
--michael
-
---4ea3e07d3396ec2b46c8f27f87f01aae1de62acf24971f2d21860800c284
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaKwWhRIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/gPpgF+MlSY31S0rn1uDnKEPRt4gulqhcaJE2kZ
-Hy1IB+bI3+b9ZHbrP259Ugakq5SnfCa5AYCq7S6UcN4nPsU+gNFqo7B76clPp/xf
-6zY9VAtwCedukMzpOu/ekK8Jl3HXM63sn+Q=
-=KZxC
------END PGP SIGNATURE-----
-
---4ea3e07d3396ec2b46c8f27f87f01aae1de62acf24971f2d21860800c284--
+-- 
+Sakari Ailus
 
