@@ -1,200 +1,136 @@
-Return-Path: <linux-kernel+bounces-784347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22C57B33A3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:13:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 204E7B33A49
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:13:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02D3A189810A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:13:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF284482BD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:13:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA23A2C08DA;
-	Mon, 25 Aug 2025 09:12:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A042C1581;
+	Mon, 25 Aug 2025 09:13:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ldus4Vwn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j7iWC4YS"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03917282EB;
-	Mon, 25 Aug 2025 09:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907382C08DF;
+	Mon, 25 Aug 2025 09:13:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756113175; cv=none; b=YR0+KCgn/fMNmWYVYaqkFmdB0QIcLuTfRU5BMf9Ah7S4d3V+kjkX43UbGa7s2sR9CbABcNapMe6+F/GgBnwP54v8kn13twb6AJimYBfNtXPlBOvqi5nqr20SGgSZ2VyFkRIhSRwaOgDrkmrHca7ct2bP7AYTRRlR2GIwpj9ASQg=
+	t=1756113188; cv=none; b=a2yPtmOVdL+NsSNB4ijWJTOVRo/9p4BqH90sAMDGK+TTbCsPUaeATrbfhakrRl8PhDDbmqHhM6VQPg0fafDTvg1S0oWna43FfBi+fKwJ1z29i74P7WIvbgX3k+f2InFP/JzIl2qbNYsFlPN5eCcb/TPGu7mCHa5UAbA19eoe/lI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756113175; c=relaxed/simple;
-	bh=F13Y4FbWAU6xrLfR84xXT+EMfWvjmDKA3j1lzEZ9/Ys=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ix5/gJnLDaLxlBSpii6F6CtYcuhv/EyLbz+1Dqo3xsND/J6aaXNovVqFBRUVL36UYRUuHK4zPdngWxdgv5FgSiy4wLLKeqWq6cIvcb/TxdEH5n87PaKn8puj/QuhQamsy6s1feo2nlFuMFWGP/+4iBHkKmyBLTZqZQZbADwKL1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ldus4Vwn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8146FC4CEED;
-	Mon, 25 Aug 2025 09:12:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756113174;
-	bh=F13Y4FbWAU6xrLfR84xXT+EMfWvjmDKA3j1lzEZ9/Ys=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Ldus4Vwn80Hyx52ZVG9s5XbnsBhRtoP72Az1zyDa7qEa6fharS/QAYTaHoZUkgVYe
-	 V75f4D1PccdTOlqvTvL4n2O2gcWfyAFygCcCLzB+Q2orFW2nXb/AwytJwVldjRzS58
-	 q0/dqeEFdXAwuYso4gIJWZSNMgwtkTBURl1GyQrWTIJJ7xY+CE97h7LL3OZ/T+eHIq
-	 BQQaqhFU1fNYWF0Tdd0W3Al2KIO3xsWcsSiWvOGmEYdF96PnTMUpF6w8Ub8EPqXv62
-	 DRUT7AsU5AmluAoAQuY9T0UWUF5EpXjSEIRDVjHREIcmD3tuVFDnbhXQeiRJ6vtDB+
-	 B8OZ8ovdJ4zsA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=lobster-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1uqTG0-00000000AfV-0BxV;
-	Mon, 25 Aug 2025 09:12:52 +0000
-Date: Mon, 25 Aug 2025 10:12:50 +0100
-Message-ID: <871poz2299.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Sam Edwards <cfsworks@gmail.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Baruch Siach <baruch@tkos.co.il>,
-	Kevin Brodsky <kevin.brodsky@arm.com>,
-	Joey Gouly <joey.gouly@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] arm64/boot: Zero-initialize idmap PGDs before use
-In-Reply-To: <CAH5Ym4iqvQuO6JxO-jypTp05Ug_2vDokCDoBgGB+cOzgmTQpkQ@mail.gmail.com>
-References: <20250822041526.467434-1-CFSworks@gmail.com>
-	<CAMj1kXH38gOUpDDdarCXPAY3BHBbuFzdD=Dq7Knsg-qHJoNqzQ@mail.gmail.com>
-	<CAH5Ym4gTTLcyucnXjxFtNutVR1HQ0G2k_YBSNO-7G3-4YXUtag@mail.gmail.com>
-	<CAMj1kXF00Y0=67apXVbOC+rpbEEvyEovFYf4r_edr6mXjrj0+A@mail.gmail.com>
-	<CAH5Ym4h+2w6aayzsVu__3qu3-6ETq1HK7u18yGzOrRqZ--2H9w@mail.gmail.com>
-	<874itx14l5.wl-maz@kernel.org>
-	<CAH5Ym4iqvQuO6JxO-jypTp05Ug_2vDokCDoBgGB+cOzgmTQpkQ@mail.gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1756113188; c=relaxed/simple;
+	bh=89SJ+CeTRw/ZOip4rlLEx2j30XPwB/TJtFZLnmPX8Bk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cNu6SE3E4uOd6sMNvePME6o2PBEgJy7X4pChjgS1aKwTgEohilI7GXccEZ1i4JsFCnlppO28HGSVHec32niX7Myha6FK0xWRAnPm7TPu96CImtlMmCHopm55uELzWaDvglqfLpVZ4GmSaY4FG8TNreN915X3is3nwX5wEjnsEuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j7iWC4YS; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45a1b0d224dso20713345e9.3;
+        Mon, 25 Aug 2025 02:13:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756113185; x=1756717985; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=db4P+0rJIoVMAf9aCGAunwkOJVROKaFbOov+4nNddVY=;
+        b=j7iWC4YSxEsLFcmTLjQutM53PVZa18MiKgqdX2cTtLoEAIxkvKLAAiCPDZKI5SA49g
+         sekkG7WR8LdNXn1frcMXL39IhOaZ3VEu0WQRiTIHNMBig0T6ENanwnHoUAzmns8XBY3l
+         r2HZo9e4sZ9RSZjDj7g3PcTfZ4ZVL14eeyPJPM/JmTnL9pM/9KQPTLtpOYeUpEZfTZAq
+         KNfX3maywqj7PvDrnM37MNMNxhDZusuPwbbUJG5csri/v1JFuJTTi5l2HspLIMbj4XHm
+         ocdQUtKc2ecL2orgBc8Qiuoxzu6vp4r9A4ynpgO5LewiqXuSuiPkNwiXtyM/c+TDmlzr
+         rNqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756113185; x=1756717985;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=db4P+0rJIoVMAf9aCGAunwkOJVROKaFbOov+4nNddVY=;
+        b=lXR4tXTHHNeMHNM0HN6+EXJeD7tZceCfO2SEH/j4M2phCJ8x9ktw4E4XkcAodIZOl5
+         rRauYxtKwswWvZokaje0ZKVfwNt0uMevZbk0wkbMp58OVEn/i557/PafyfS/s+2gMxd+
+         Ou7psIFUYkHbqdPlk20IC/I88s4L9Py/ZmjbT1pqT1q+13IdwM6hbfbr1Jwkwm1Zh0yw
+         slRGe99F2cnF6BKZEbw/F+/eyi1RUgpboKF37mRwMhpM0rA14dW1Fj0ZAU4SjLAh0MIF
+         mbDezG6ccCWaykA0gpZP9tiEGIpf+CbwZGnzRngWRKbh9+jWHbHcaNGvVabO95Rro8yY
+         4vzA==
+X-Forwarded-Encrypted: i=1; AJvYcCUoEGTpZkXRU/yduE1wBqFlrFOHL0/zycVUdUscfpDggC2i0aV7c2BsFCZcvayYloQ5Lp7N4ZbTzEq9BQ==@vger.kernel.org, AJvYcCUw389aC/JSXfTs1SYyztheL+u3qDULGmJU2hB2ema1cQIrWVxG4MZEF3PBsyNb8P6ngp0OtAAZIvUC@vger.kernel.org, AJvYcCVLwmtsyyVJS9htlPQ5gWgNb6FMwsFuGSkIV2KHlOQlMfns6JrLn/snFRH4w5/QbkPGRwqiUl4jeNNGPlQ=@vger.kernel.org, AJvYcCVtBo10CmbB4CVE/fW3nierLiiEMSvNzxBw8DRgo09ydeeZWiJwq05/KLl2XTapTkA4KVOs9qgVkEj50RD2@vger.kernel.org, AJvYcCW5d2d/sWJYGd/Mgc59E6DrE6eueWnM2k7xByCB7WAILFX8Fiu6Up04MuOufoby1ZIKNVwDPI1AB4p/@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx79tLnHzYzrJ9AQaR2m6A0Ludh5B8mdQa97xUa0Z26YCfk5Yex
+	zaFl/+Uhg75faegH2u26cBMPwUgX5zlevrIHsWokpucaMrhUIrCV0Oxf
+X-Gm-Gg: ASbGncvzph6voQGuc5Zv8olUBvjunJgvn9j7br8X43C1F50d6ZQkpEv7pksFmVpoqeb
+	2PuS0rDjQfTB61EQgpQENd4i09wyq1b5CEgJk3jb9hxE9H+Oq4RCKYf199MyUH7AxlyGdxwodsf
+	h0NcMsAdgM2t0MN0A16sO4TI2bz1y9zqNuhh07IXs+P6Ba3DIkqb8RfKi15E7Zcszc6Fx3K9L4s
+	hiRcUbJ4Fz+vasW+1HFKicY46peE42RKa377JpcAYTGfCwIlc9OvYrZ8ol76/3rnDIGpEl7Y6AU
+	9SwfsKJemQ6Co9/rKXh0cva5hISdKzhtGTjkAhPWJo1DuKZN9MY8B0vUAI+cx/FdyNLev9jO7KG
+	T9i6l1fF17GToWA==
+X-Google-Smtp-Source: AGHT+IE03utt4ThdNe6shpSXgFmCA5mbksDv1S7T8WZiNoIZMCptGYie8W77bfRxLDIMs5p1gZhy8A==
+X-Received: by 2002:a05:600c:19cd:b0:456:db0:4f3d with SMTP id 5b1f17b1804b1-45b517b9571mr120173075e9.24.1756113184697;
+        Mon, 25 Aug 2025 02:13:04 -0700 (PDT)
+Received: from nsa ([161.230.67.253])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c712178161sm10638818f8f.67.2025.08.25.02.13.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Aug 2025 02:13:04 -0700 (PDT)
+Date: Mon, 25 Aug 2025 10:13:25 +0100
+From: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: nuno.sa@analog.com, linux-hwmon@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+	Jonathan Corbet <corbet@lwn.net>, Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH 6/6] gpio: gpio-ltc4283: Add support for the LTC4283 Swap
+ Controller
+Message-ID: <y6qiierd6qdzcyghzaisv3ajlt53f74hk64tomm57kqouci5k5@cgpxvsnz4jks>
+References: <20250814-ltc4283-support-v1-0-88b2cef773f2@analog.com>
+ <20250814-ltc4283-support-v1-6-88b2cef773f2@analog.com>
+ <CACRpkdax9THwKRZmaAHVcKbnBdi1LxjgvibAFOUVnVQJBhBiwA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: cfsworks@gmail.com, ardb@kernel.org, catalin.marinas@arm.com, will@kernel.org, akpm@linux-foundation.org, anshuman.khandual@arm.com, ryan.roberts@arm.com, baruch@tkos.co.il, kevin.brodsky@arm.com, joey.gouly@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACRpkdax9THwKRZmaAHVcKbnBdi1LxjgvibAFOUVnVQJBhBiwA@mail.gmail.com>
 
-On Mon, 25 Aug 2025 00:43:08 +0100,
-Sam Edwards <cfsworks@gmail.com> wrote:
->=20
-> Hi, Marc! It's been a while; hope you're well.
->=20
-> On Sun, Aug 24, 2025 at 1:55=E2=80=AFAM Marc Zyngier <maz@kernel.org> wro=
-te:
+On Tue, Aug 19, 2025 at 02:12:51PM +0200, Linus Walleij wrote:
+> Hi Nuno,
+> 
+> thanks for your patch!
+> 
+> On Thu, Aug 14, 2025 at 12:52 PM Nuno Sá via B4 Relay
+> <devnull+nuno.sa.analog.com@kernel.org> wrote:
+> 
+> > From: Nuno Sá <nuno.sa@analog.com>
 > >
-> > Hi Sam,
+> > The LTC4283 device has up to 8 pins that can be configured as GPIOs.
 > >
-> > On Sun, 24 Aug 2025 04:05:05 +0100,
-> > Sam Edwards <cfsworks@gmail.com> wrote:
-> > >
-> > > On Sat, Aug 23, 2025 at 5:29=E2=80=AFPM Ard Biesheuvel <ardb@kernel.o=
-rg> wrote:
-> > > >
+> > Note that PGIO pins are not set as GPIOs by default so if they are
+> > configured to be used as GPIOs we need to make sure to initialize them
+> > to a sane default. They are set as inputs by default.
 > >
-> > [...]
-> >
-> > > > Under which conditions would PGD_SIZE assume a value greater than P=
-AGE_SIZE?
-> > >
-> > > I might be doing my math wrong, but wouldn't 52-bit VA with 4K
-> > > granules and 5 levels result in this?
-> >
-> > No. 52bit VA at 4kB granule results in levels 0-3 each resolving 9
-> > bits, and level -1 resolving 4 bits. That's a total of 40 bits, plus
-> > the 12 bits coming directly from the VA making for the expected 52.
->=20
-> Thank you, that makes it clear: I made an off-by-one mistake in my
-> counting of the levels.
->=20
-> > > Each PTE represents 4K of virtual memory, so covers VA bits [11:0]
-> > > (this is level 3)
-> >
-> > That's where you got it wrong. The architecture is pretty clear that
-> > each level resolves PAGE_SHIFT-3 bits, hence the computation
-> > above. The bottom PAGE_SHIFT bits are directly extracted from the VA,
-> > without any translation.
->=20
-> Bear with me a moment while I unpack which part of that I got wrong:
-> A PTE is the terminal entry of the MMU walk, so I believe I'm correct
-> (in this example, and assuming no hugepages) that each PTE represents
-> 4K of virtual memory: that means the final step of computing a PA
-> takes a (valid) PTE and the low 12 bits of the VA, then just adds
-> those bits to the physical frame address.
-> It sounds like what you're saying is "That isn't a *level* though:
-> that's just concatenation. A 'level' always takes a bitslice of the VA
-> and uses it as an index into a table of word-sized entries. PTEs don't
-> point to a further table: they have all of the final information
-> encoded directly."
+> > Signed-off-by: Nuno Sá <nuno.sa@analog.com>
+> (...)
+> 
+> Can you check if you can use gpio-regmap.c helper?
+> 
+> select GPIO_REGMAP
+> 
+> git grep devm_gpio_regmap_register
+> for example drivers using this.
+> 
+> I think it can further cut down the code to very little.
 
-That's mostly it, yes. Each valid descriptor has an output address,
-which either points to another table or to actual memory, further to
-be indexed by the remaining bits of the VA (for 4kB pages: 12 bits for
-a level-3, 21 bits for a level-2...). Level-3 (aka PTEs in x86
-parlance) are always final.
+Sure, I'll have that in mind for v2.
 
-> That makes a lot more sense to me, but contradicts how I read this
-> comment from pgtable-hwdef.h:
->  * Level 3 descriptor (PTE).
-> I took this as, "a PTE describes how to perform level 3 of the
-> translation." But because in fact there are no "levels" after a PTE,
-> it must actually be saying "Level 3 of the translation is a lookup
-> into an array of PTEs."? The problem with that latter reading is that
-> this comment...
->  * Level -1 descriptor (PGD).
-> ...when read the same way, is saying "Level -1 of the translation is a
-> lookup into an array of PGDs." An "array of PGDs" is nonsense, so I
-> reverted back to my earlier readings: "PGD describes how to do level
-> -1." and "PTE describes how to do level 3."
+- Nuno Sá
 
-The initial level of lookup *is* an array: you take the base address
-from TTBR, index it with the correct slice of bits from the VA, read
-the value at that address, and you have the information needed for the
-next level. The only difference is that you obtain that initial
-address from a register instead of getting it from memory.
-
->=20
-> This smells like a classic "fencepost problem": The "PXX" Linuxisms
-> refer to the *nodes* along the MMU walk, while the "levels" in ARM
-> parlance are the actual steps of the walk taken by hardware -- edges,
-> not nodes, getting us from fencepost to fencepost. A fence with five
-> segments needs six posts, but we only have five currently.
->=20
-> So: where do the terms P4D, PUD, and PMD fit in here? And which one's
-> our missing fencepost?
-> PGD ----> ??? ----> ??? ----> ??? ----> ??? ----> PTE (|| low VA bits
-> =3D final PA)
-
-I'm struggling to see what you consider a problem, really. For me, the
-original mistake is that you seem to have started off the LSBs of the
-VA, instead of the MSBs.
-
-As for the naming, the comments in pgtable-hwdef.h do apply. Except
-that they only match a full 5-level walk, while the kernel can be
-configured for as little as 2 levels. Hence the macro hell of folding
-levels to hide the fact that we don't have 5 levels in most cases.
-
-I find it much easier to reason about a start level (anywhere from -1
-to 2, depending on the page size and the number of VA bits), and the
-walk to always finish at level 3. The x86 naming is just compatibility
-cruft that I tend to ignore.
-
-Thanks,
-
-	M.
-
---=20
-Jazz isn't dead. It just smells funny.
+> 
+> Yours,
+> Linus Walleij
 
