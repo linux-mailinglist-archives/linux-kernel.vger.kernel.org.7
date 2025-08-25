@@ -1,100 +1,127 @@
-Return-Path: <linux-kernel+bounces-784188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42227B337D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:30:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ECC8B337D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:32:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 405491B21694
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 07:31:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09E253BA8E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 07:32:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C4928D8C1;
-	Mon, 25 Aug 2025 07:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yfdPozZf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C9DA13790B;
-	Mon, 25 Aug 2025 07:30:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2CD1289368;
+	Mon, 25 Aug 2025 07:31:58 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8910DBE5E;
+	Mon, 25 Aug 2025 07:31:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756107039; cv=none; b=S+JC3fUluNI07qH7TLoJeAcKcnOWYd1ndn1yO1kc3eb8znjVhtDJInip4KgBIa7gh7ybSDUEQtIAOlh9Fr+e9nZ48bfRK3MFrt53OH1jsufkHrwOohv1it/+fpYqrt2ffn6//SeJa8jFxSrMoFfBmHydNeCJ+CL79Rxyaru3egs=
+	t=1756107118; cv=none; b=Xu253khy5edewycYO6xW8x6r5CopfSpl0jkEHQzn9/PHJeVDSoT/biU1wJ8S1cIOzivJvO4GNG73Wv57rHF2in1fiVo30DOhLUWmToda+o9UVk9WxCv16M7k/9zvXE5gHxtWY+Wg++gCGFcmyHmW8JAem2J2XH0TgaUbfiIG5ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756107039; c=relaxed/simple;
-	bh=3Yk6qbW5qXsffUYfd08JYjQsxUKrUp0TBAnBrPKx4Fo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SzryNDMmH/sIVD6yE3YZkWhQVeOrjZ6o9EvnAFxbJFgnqV4ZiZvF2tQocZas9wSIWuEAgISp6+UILIPgzOMwhcVIpI033WxjTC8mA6noS77DWXha5/rcwiHFW/f73ZvdJBeMF3WJX/cAJutnzzSSQuKqmsLgJfmvVd1bc1u1ppQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yfdPozZf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE5A7C4CEED;
-	Mon, 25 Aug 2025 07:30:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1756107039;
-	bh=3Yk6qbW5qXsffUYfd08JYjQsxUKrUp0TBAnBrPKx4Fo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=yfdPozZfwAiD5eV1PEDrLBYRXq5+f7r54Os6/FOp5UJDn1tvJDEknOPyZ8siICZyU
-	 j07m7Njo8YRz2MnYfvSjXZM5S+BGvY2c1hc5akMUE6R4ffw6++O4F4layzMpx1UU3N
-	 xlGih0K7pKFJhK4FtDfA/HsfT1b6GtiqMRFOk10U=
-Date: Mon, 25 Aug 2025 09:30:34 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Kyle Sanderson <kyle.leet@gmail.com>
-Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-	torvalds@linux-foundation.org, stable@vger.kernel.org, lwn@lwn.net,
-	jslaby@suse.cz
-Subject: Re: [REGRESSION] - BROKEN NETWORKING Re: Linux 6.16.3
-Message-ID: <2025082506-steersman-twentieth-0c79@gregkh>
-References: <2025082354-halogen-retaliate-a8ba@gregkh>
- <cfd4d3bd-cd0e-45dc-af9b-b478a56f8942@gmail.com>
- <2025082529-reporter-frays-73a5@gregkh>
- <2025082553-overripe-sanction-bc82@gregkh>
+	s=arc-20240116; t=1756107118; c=relaxed/simple;
+	bh=r50dDkvFDO+w+5+hTwJQC3IZEVejQAJBD9RW2mT+j/0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lQH0/b0uy1oQh9cqDsKd9g6WLu+vKnJM+abChR0lq5v9OdvCKD7kLcSUfzXqmUarGdqc4hFnAHLlwK4hNzciNGcA65fvVNgGSok7ZfARoHxDKcNpty6iaJGz1JWHCsb5aq5AQmTQfFbNZEcty4JS79fibTkMj1p+/n0EWsXmo54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 601921D70;
+	Mon, 25 Aug 2025 00:31:45 -0700 (PDT)
+Received: from [10.57.89.148] (unknown [10.57.89.148])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 366D23F738;
+	Mon, 25 Aug 2025 00:31:47 -0700 (PDT)
+Message-ID: <8e4e5648-9b70-4257-92c5-14c60928e240@arm.com>
+Date: Mon, 25 Aug 2025 09:31:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2025082553-overripe-sanction-bc82@gregkh>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v5 00/18] pkeys-based page table hardening
+To: Yang Shi <yang@os.amperecomputing.com>, linux-hardening@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Andy Lutomirski <luto@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ David Hildenbrand <david@redhat.com>, Ira Weiny <ira.weiny@intel.com>,
+ Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@chromium.org>,
+ Joey Gouly <joey.gouly@arm.com>, Kees Cook <kees@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Marc Zyngier <maz@kernel.org>,
+ Mark Brown <broonie@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+ Maxwell Bland <mbland@motorola.com>, "Mike Rapoport (IBM)"
+ <rppt@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Pierre Langlois <pierre.langlois@arm.com>,
+ Quentin Perret <qperret@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org, x86@kernel.org
+References: <20250815085512.2182322-1-kevin.brodsky@arm.com>
+ <98c9689f-157b-4fbb-b1b4-15e5a68e2d32@os.amperecomputing.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <98c9689f-157b-4fbb-b1b4-15e5a68e2d32@os.amperecomputing.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 25, 2025 at 09:29:05AM +0200, Greg Kroah-Hartman wrote:
-> On Mon, Aug 25, 2025 at 09:00:14AM +0200, Greg Kroah-Hartman wrote:
-> > On Sun, Aug 24, 2025 at 11:31:01AM -0700, Kyle Sanderson wrote:
-> > > On 8/23/2025 7:51 AM, Greg Kroah-Hartman wrote:
-> > > > I'm announcing the release of the 6.16.3 kernel.
-> > > > 
-> > > > All users of the 6.16 kernel series that use the ext4 filesystem should
-> > > > upgrade.
-> > > > 
-> > > > The updated 6.16.y git tree can be found at:
-> > > > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux-6.16.y
-> > > > and can be browsed at the normal kernel.org git web browser:
-> > > > 	https://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=summary
-> > > > 
-> > > > thanks,
-> > > > 
-> > > > greg k-h
-> > > 
-> > > Hi Greg,
-> > > 
-> > > Thanks for maintaining these as always. For the first time in a long time, I
-> > > booted the latest stable (6.15.x -> 6.16.3) and somehow lost my networking.
-> > > It looks like there is a patch from Intel (reported by AMD) that did not
-> > > make it into stable 6.16.
-> > > 
-> > > e67a0bc3ed4fd8ee1697cb6d937e2b294ec13b5e - ixgbe
-> > > https://lore.kernel.org/all/94d7d5c0bb4fc171154ccff36e85261a9f186923.1755661118.git.calvin@wbinvd.org/
-> > > - i40e
-> > 
-> > Any specific reason why this hasn't been asked to be backported to
-> > stable trees if it fixes an issue?   Please cc: the developers involved
-> > so that they know to let us pick it up.
-> 
-> I've picked it up now, simple enough.
+On 21/08/2025 19:29, Yang Shi wrote:
+> Hi Kevin,
+>
+> On 8/15/25 1:54 AM, Kevin Brodsky wrote:
+>> This is a proposal to leverage protection keys (pkeys) to harden
+>> critical kernel data, by making it mostly read-only. The series includes
+>> a simple framework called "kpkeys" to manipulate pkeys for in-kernel
+>> use,
+>> as well as a page table hardening feature based on that framework,
+>> "kpkeys_hardened_pgtables". Both are implemented on arm64 as a proof of
+>> concept, but they are designed to be compatible with any architecture
+>> that supports pkeys.
+>
+> [...]
+>
+>>
+>> Note: the performance impact of set_memory_pkey() is likely to be
+>> relatively low on arm64 because the linear mapping uses PTE-level
+>> descriptors only. This means that set_memory_pkey() simply changes the
+>> attributes of some PTE descriptors. However, some systems may be able to
+>> use higher-level descriptors in the future [5], meaning that
+>> set_memory_pkey() may have to split mappings. Allocating page tables
+>
+> I'm supposed the page table hardening feature will be opt-in due to
+> its overhead? If so I think you can just keep kernel linear mapping
+> using PTE, just like debug page alloc.
 
-Oops, nope, it needed other work.  And someone has already sent this for
-inclusion, I'll take their backports:
-	https://lore.kernel.org/r/20597f81c1439569e34d026542365aef1cedfb00.1756088250.git.calvin@wbinvd.org
+Indeed, I don't expect it to be turned on by default (in defconfig). If
+the overhead proves too large when block mappings are used, it seems
+reasonable to force PTE mappings when kpkeys_hardened_pgtables is enabled.
+
+>
+>> from a contiguous cache of pages could help minimise the overhead, as
+>> proposed for x86 in [1].
+>
+> I'm a little bit confused about how this can work. The contiguous
+> cache of pages should be some large page, for example, 2M. But the
+> page table pages allocated from the cache may have different
+> permissions if I understand correctly. The default permission is RO,
+> but some of them may become R/W at sometime, for example, when calling
+> set_pte_at(). You still need to split the linear mapping, right?
+
+When such a helper is called, *all* PTPs become writeable - there is no
+per-PTP permission switching.
+
+PTPs remain mapped RW (i.e. the base permissions set at the PTE level
+are RW). With this series, they are also all mapped with the same pkey
+(1). By default, the pkey register is configured so that pkey 1 provides
+RO access. The net result is that PTPs are RO by default, since the pkey
+restricts the effective permissions.
+
+When calling e.g. set_pte(), the pkey register is modified to enable RW
+access to pkey 1, making it possible to write to any PTP. Its value is
+restored when the function exit so that PTPs are once again RO.
+
+- Kevin
 
