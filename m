@@ -1,175 +1,179 @@
-Return-Path: <linux-kernel+bounces-784762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AEEDB340C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:32:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29350B340C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:32:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7823D7AEACD
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:30:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29B7E7AE79B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E05002777E8;
-	Mon, 25 Aug 2025 13:31:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D08F27380A;
+	Mon, 25 Aug 2025 13:31:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="RjQZU9H2"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jJpATx04"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035C027510B;
-	Mon, 25 Aug 2025 13:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E7D611E;
+	Mon, 25 Aug 2025 13:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756128702; cv=none; b=rAjg29egX9Hjne9diDyNaCc3R7h0Kv0MnJUsWuqUGIpRBWaDdEBFtdohJWYLtViDDm6hGnM+QqmiLzFJmBJJR2jOrc3csa3tpPqlSTCyowX6QFmvsPYqyhxvLWltonT1lhSe5XngZUz4NJGeGV92yCdpxopE1iYemu2ZJ1cajHU=
+	t=1756128696; cv=none; b=Z5jLATQHo/MIqGxW/QJT4iHugxdV7oTqhcMWs/bA/S/DAxhlda5SNc5XGg5N3YEPzccMfJqRoOQLRYpC31L8kNkJGcDrJ6IZZobsDZZXxbyjPbvlNeT9bmE7bTbR/A3aNZdkzGRvMHuAf1kn6/Kyhpd3YhjMhrDRXj2VSOXZRos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756128702; c=relaxed/simple;
-	bh=6O5W/y80iaKkDYIuTZU5ULjARvkCS0FnEOvGtJR9bwU=;
+	s=arc-20240116; t=1756128696; c=relaxed/simple;
+	bh=0s2ARpnB+llo0wyd0ziQYoULmmUP14SJmnC18+wGgKU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qyQ2vbuhx6RFR9/XfFfhXXGZzHGJhM3dLkq/5UWLaEsC+U5HtbrqcPtoqTh6RpBPl1Hf25bTp/Bah+ty1YwuFFvldrv4hf1MYqLSVQA3QI4+ErcVr+u2MrTRQWDPRpCY/0qNB0AZuuNfd1Exp4d5n8fRaKSkSY0NH6KU1Craics=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=RjQZU9H2; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=vXizZ6L0n8V782CYb3FHXRs1CctnBrwFXRGLWjyJOok=; b=RjQZU9H2eLaeNbY+/Xvon5f24G
-	H2wYLPrTIIfQck+LUpB1PV9QSoUakr7mivtpkJTyg7SICW6BSGSRX5B6tBKcF4sUktzAEMz9DaYEf
-	gYKPcwAi+Lwj8PQQnofEe5iyiK2io0K1SjSEJsMiHfecJlnfvqCEGHd9soWeWz0IwG/n8HFJ6Lg7w
-	ui2AvLdB5SY1wLOMPCGysM2ORPZYgQ7j5kjfJNeuMWANksMgBbevtqwWwYKCVrfk5aBYDjFL1QwSF
-	5aEmWRlkm8ZP3TnOoapdSVBZW3DRZYA4Md9IPAldpqH2Q5QvjBQG+0t81zNoJjGoKih1uMlnndsvS
-	ayEauFcw==;
-Received: from [187.57.78.222] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1uqXI9-001Pu6-Ip; Mon, 25 Aug 2025 15:31:21 +0200
-Message-ID: <6235a4c0-2b28-4dd6-8f18-4c1f98015de6@igalia.com>
-Date: Mon, 25 Aug 2025 10:31:16 -0300
+	 In-Reply-To:Content-Type; b=GgcgRTu/80XPek969QFZCb0p35S2h9Cd7PGB+Fa+5ofWHWr+zyHYx91oZYOp19DvIyd1jNwDAk+GUa3TDAT0mn4Ie18A1AvXe44o5DhCF6LDinKh+TK+9AhTDedlhN1MRpkoEoiMMASQrX0aeryniwHwn+krinSg9bFSWmPYjsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jJpATx04; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3c6df24f128so1635355f8f.3;
+        Mon, 25 Aug 2025 06:31:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756128693; x=1756733493; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=THJ34UQf7q4UAMHR0Y6f+KxcTpSVXQ6YuCTVQKzaewc=;
+        b=jJpATx04sfrsC2/Fd2OEJSkn+knJvQvtQAHY158HLiDUTzhvPwBd9gzwXqupgP8y3/
+         n/Zt+arsrkqyZcZUfXYXouOdKOb9O60OvTjVIHUqX4rlXcyhDk9zT7Vu8wt5xZegL402
+         0asL8orvcfYX+glvVluBfxwDVTxyp+EZ6/HKKFhkzkZ4obmgtbfMoSARzl5msTrfCe8w
+         52cxPKLwkMFflC9ESbsc8aFIZEVId2UVp5V5ub2MGrTggogoQ0Cw/71N2SdZe1JeSm5j
+         Ql9IzXfY3MzhShbnQhvgeZiGQJv2wxgdfO8daUkEdQU6bIubyQoCLWn+/RB+Yq+KtXxD
+         m41Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756128693; x=1756733493;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=THJ34UQf7q4UAMHR0Y6f+KxcTpSVXQ6YuCTVQKzaewc=;
+        b=WtJE9FhUvyJ2gXUnL3QU5fGmbB9CnkH9iji3e9ZR96eGixAYQujLb19AIuF7WR6YP5
+         GLcXr0GV0wZ/aWDr4S47OpqG3zk0mHLCcw7nGuq8QlZT72oJ5V4USHX93sRzw36KTmrr
+         LUiLfiPC5aabH8rHkEqs5SF1kRn30OoESo4+/a/CFhQ4lQTj6uTDCl/rKOmquclDsvFd
+         MXYpzNcEwqjIsZK4cqQvtNrrcrBNeDorHBYDi1ffD+IEIkTuWI+dr046tTrUTwh5aw+d
+         vV+gHVhPbeG/tzU3UH8ASGH7k8Wd3zU39kRANG2hI1wsO2zap/5lpcdCL+xHvM7UeTYz
+         QIsw==
+X-Forwarded-Encrypted: i=1; AJvYcCVUA2CwWzpxlOhYUPuFVnlXps29/VakxZBZN8k0QGNGyeDMmoTGFZJwQ0fXOkfTGGVcSuvuFzYZ@vger.kernel.org, AJvYcCWe/unw6AD74MO/uGOVjf0q4H+bAVq2PaYToVprrHyZ4vdB/7U1L2w3kgxsII4LEoZYArHK17a9lueh9iw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYV8ccKzIj1G7dMaVrabfBFXzF+gvVGfnEGFZGfxR+/V9yRyzb
+	0fiCqXLdxyOThjPybNz1nTqasOZS6C3A8+7E+MnPwPD4CtAyv6uyke9G
+X-Gm-Gg: ASbGncsn3WyY9usLsN+ugl95ZJe553DNCsvnoa+LKJS+4TuRCs4LiKwbsAvNg1tTddt
+	SgF3c/euWseppQFlHjtobWHZU/ui8cPx/yGuLQgCF8TTXNXk889o0OuWe408sgBt/wCdMVKQFCz
+	duKNyNnhNh8qXfD6krt8aFzgmW/JfzbXuiTrYzSIGClmE/EAvsM+/Z8HYkGCGCGT/p5u9rtlXy5
+	Z+aSUsjgYMR3ZnpHRP2PbHk7+qayX5cLch/Qp5nNMUECF3Z/RjqGMSY0IhpZZyMugrAEZYjjk9n
+	06J54hJFnwLyerqomX65G7Y/FCxpnvMs+Sq/HiZ0myuw8Cd03xMilfP/8AN/5u/s6S52vIiO2rk
+	4j0+q1JOs6U5K/Am+7RunfiWLq6VNE7kFvD/Vw4FiZBOdycA7
+X-Google-Smtp-Source: AGHT+IFwbHbTWb3A6JUwGyRydrcfpSylptDxshC1FrrrgqAyc1UO4KxsbwNIhLafGu4oyluystJNaA==
+X-Received: by 2002:a05:6000:2404:b0:3b7:9dc1:74a9 with SMTP id ffacd0b85a97d-3c5dd2d7ea7mr10778441f8f.42.1756128692899;
+        Mon, 25 Aug 2025 06:31:32 -0700 (PDT)
+Received: from localhost ([45.10.155.13])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c711abd15asm11783778f8f.56.2025.08.25.06.31.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Aug 2025 06:31:32 -0700 (PDT)
+Message-ID: <7935b433-4249-4f3f-bf22-bb377a6f6224@gmail.com>
+Date: Mon, 25 Aug 2025 15:31:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 9/9] ovl: Support mounting case-insensitive enabled
- layers
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>,
- Gabriel Krisman Bertazi <krisman@kernel.org>, linux-unionfs@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- kernel-dev@igalia.com
-References: <20250822-tonyk-overlayfs-v6-0-8b6e9e604fa2@igalia.com>
- <20250822-tonyk-overlayfs-v6-9-8b6e9e604fa2@igalia.com>
- <CAOQ4uxhWE=5_+DBx7OJ94NVCZXztxf1d4sxyMuakDGKUmbNyTg@mail.gmail.com>
- <62e60933-1c43-40c2-a166-91dd27b0e581@igalia.com>
- <CAOQ4uxjgp20vQuMO4GoMxva_8yR+kcW3EJxDuB=T-8KtvDr4kg@mail.gmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <CAOQ4uxjgp20vQuMO4GoMxva_8yR+kcW3EJxDuB=T-8KtvDr4kg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH net-next v3 3/5] net: gso: restore ids of outer ip headers
+ correctly
+To: Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ horms@kernel.org, corbet@lwn.net, saeedm@nvidia.com, tariqt@nvidia.com,
+ mbloch@nvidia.com, leon@kernel.org, ecree.xilinx@gmail.com,
+ dsahern@kernel.org, ncardwell@google.com, kuniyu@google.com,
+ shuah@kernel.org, sdf@fomichev.me, aleksander.lobakin@intel.com,
+ florian.fainelli@broadcom.com, willemdebruijn.kernel@gmail.com,
+ alexander.duyck@gmail.com, linux-kernel@vger.kernel.org,
+ linux-net-drivers@amd.com
+References: <20250821073047.2091-1-richardbgobert@gmail.com>
+ <20250821073047.2091-4-richardbgobert@gmail.com>
+ <4feda9bd-0aba-4136-a1ca-07e713c991b7@redhat.com>
+From: Richard Gobert <richardbgobert@gmail.com>
+In-Reply-To: <4feda9bd-0aba-4136-a1ca-07e713c991b7@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi Amir,
-
-Em 22/08/2025 16:17, Amir Goldstein escreveu:
-
-[...]
-
-   /*
->>>> -        * Allow filesystems that are case-folding capable but deny composing
->>>> -        * ovl stack from case-folded directories.
->>>> +        * Exceptionally for layers with casefold, we accept that they have
->>>> +        * their own hash and compare operations
->>>>            */
->>>> -       if (sb_has_encoding(dentry->d_sb))
->>>> -               return IS_CASEFOLDED(d_inode(dentry));
->>>> +       if (ofs->casefold)
->>>> +               return false;
->>>
->>> I think this is better as:
->>>           if (sb_has_encoding(dentry->d_sb))
->>>                   return false;
->>>
+Paolo Abeni wrote:
+> On 8/21/25 9:30 AM, Richard Gobert wrote:
+>> diff --git a/net/core/dev.c b/net/core/dev.c
+>> index 68dc47d7e700..9941c39b5970 100644
+>> --- a/net/core/dev.c
+>> +++ b/net/core/dev.c
+>> @@ -3772,10 +3772,9 @@ static netdev_features_t gso_features_check(const struct sk_buff *skb,
+>>  	 * IPv4 header has the potential to be fragmented.
+>>  	 */
+>>  	if (skb_shinfo(skb)->gso_type & SKB_GSO_TCPV4) {
+>> -		struct iphdr *iph = skb->encapsulation ?
+>> -				    inner_ip_hdr(skb) : ip_hdr(skb);
+>> -
+>> -		if (!(iph->frag_off & htons(IP_DF)))
+>> +		if (!(ip_hdr(skb)->frag_off & htons(IP_DF)) ||
+>> +		    (skb->encapsulation &&
+>> +		     !(inner_ip_hdr(skb)->frag_off & htons(IP_DF))))
+>>  			features &= ~NETIF_F_TSO_MANGLEID;
 > 
-> And this still fails the test "Casefold enabled" for me.
+> FWIW, I think the above is the problematic part causing GSO PARTIAL issues.
 > 
-> Maybe you are confused because this does not look like
-> a test failure. It looks like this:
+> By default UDP tunnels do not set the DF bit, and most/all devices
+> implementing GSO_PARTIAL clear TSO for encapsulated packet when MANGLEID
+> is not available.
 > 
-> generic/999 5s ...  [19:10:21][  150.667994] overlayfs: failed lookup
-> in lower (ovl-lower/casefold, name='subdir', err=-116): parent wrong
-> casefold
-> [  150.669741] overlayfs: failed lookup in lower (ovl-lower/casefold,
-> name='subdir', err=-116): parent wrong casefold
-> [  150.760644] overlayfs: failed lookup in lower (/ovl-lower,
-> name='casefold', err=-66): child wrong casefold
->   [19:10:24] [not run]
-> generic/999 -- overlayfs does not support casefold enabled layers
-> Ran: generic/999
-> Not run: generic/999
-> Passed all 1 tests
+> I think the following should workaround the problem (assuming my email
+> client did not corrupt the diff), but I also fear this change will cause
+> very visible regressions in existing setups.
 > 
 
-This is how the test output looks before my changes[1] to the test:
+Thanks for the thorough review!
 
-$ ./run.sh
-FSTYP         -- ext4
-PLATFORM      -- Linux/x86_64 archlinux 6.17.0-rc1+ #1174 SMP 
-PREEMPT_DYNAMIC Mon Aug 25 10:18:09 -03 2025
-MKFS_OPTIONS  -- -F /dev/vdc
-MOUNT_OPTIONS -- -o acl,user_xattr /dev/vdc /tmp/dir2
+To solve this issue, we can decide that MANGLEID cannot cause
+incrementing IDs to become fixed for outer headers of encapsulated
+packets (which is the current behavior), then just revert this diff.
+I'll update the documentation in segmentation-offloads.rst to reflect this.
+Do you think that would be a good solution?
 
-generic/999 1s ... [not run] overlayfs does not support casefold enabled 
-layers
-Ran: generic/999
-Not run: generic/999
-Passed all 1 tests
-
-
-And this is how it looks after my changes[1] to the test:
-
-$ ./run.sh
-FSTYP         -- ext4
-PLATFORM      -- Linux/x86_64 archlinux 6.17.0-rc1+ #1174 SMP 
-PREEMPT_DYNAMIC Mon Aug 25 10:18:09 -03 2025
-MKFS_OPTIONS  -- -F /dev/vdc
-MOUNT_OPTIONS -- -o acl,user_xattr /dev/vdc /tmp/dir2
-
-generic/999        1s
-Ran: generic/999
-Passed all 1 tests
-
-So, as far as I can tell, the casefold enabled is not being skipped 
-after the fix to the test.
-
-[1] 
-https://lore.kernel.org/lkml/5da6b0f4-2730-4783-9c57-c46c2d13e848@igalia.com/
-
-
-> I'm not sure I will keep the test this way. This is not very standard nor
-> good practice, to run half of the test and then skip it.
-> I would probably split it into two tests.
-> The first one as it is now will run to completion on kenrels >= v6.17
-> and the Casefold enable test will run on kernels >= v6.18.
+> Note that the current status is incorrect - GSO partial devices are
+> mangling the outer IP ID for encapsulated packets even when the outer
+> header IP DF is not set.
 > 
-> In any case, please make sure that the test is not skipped when testing
-> Casefold enabled layers
-> 
-> And then continue with the missing test cases.
-> 
-> When you have a test that passes please send the test itself or
-> a fstest branch for me to test.
+> /P
 
-Ok!
+WDYM? Currently, when the DF-bit isn't set, it means that the IDs must
+be incrementing. Otherwise, the packets wouldn't have been merged by GRO.
+GSO partial (and also regular GSO/TSO) generate incrementing IDs, so the
+IDs cannot be mangled. With my patch, if the IDs were originally fixed,
+regardless of the DF-bit, TSO/GSO partial will not occur unless MANGLEID
+is enabled.
 
+> ---
+> diff --git a/tools/testing/selftests/drivers/net/hw/tso.py
+> b/tools/testing/selftests/drivers/net/hw/tso.py
+> index 3370827409aa..b0c71a0d8028 100755
+> --- a/tools/testing/selftests/drivers/net/hw/tso.py
+> +++ b/tools/testing/selftests/drivers/net/hw/tso.py
+> @@ -214,8 +214,8 @@ def main() -> None:
+>              # name,       v4/v6  ethtool_feature
+> tun:(type,    partial, args)
+>              ("",            "4", "tx-tcp-segmentation",           None),
+>              ("",            "6", "tx-tcp6-segmentation",          None),
+> -            ("vxlan",        "", "tx-udp_tnl-segmentation",
+> ("vxlan",  True,  "id 100 dstport 4789 noudpcsum")),
+> -            ("vxlan_csum",   "", "tx-udp_tnl-csum-segmentation",
+> ("vxlan",  False, "id 100 dstport 4789 udpcsum")),
+> +            ("vxlan",        "", "tx-udp_tnl-segmentation",
+> ("vxlan",  True,  "id 100 dstport 4789 noudpcsum df set")),
+> +            ("vxlan_csum",   "", "tx-udp_tnl-csum-segmentation",
+> ("vxlan",  False, "id 100 dstport 4789 udpcsum df set")),
+>              ("gre",         "4", "tx-gre-segmentation",
+> ("gre",    False,  "")),
+>              ("gre",         "6", "tx-gre-segmentation",
+> ("ip6gre", False,  "")),
+>          )
 > 
-> Thanks,
-> Amir.
 
 
