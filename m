@@ -1,139 +1,145 @@
-Return-Path: <linux-kernel+bounces-784871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A879B342CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:11:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 933E2B342BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:09:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 681923ABAFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:04:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37CB42040DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:04:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59313226520;
-	Mon, 25 Aug 2025 14:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32DB288502;
+	Mon, 25 Aug 2025 14:02:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VT4tTxnE"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TCY7EQuE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352012040B6
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 14:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A999274FC1
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 14:02:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756130561; cv=none; b=Z14rXrViEi8IjCXiO7nK8+e4LPHLtixVAoYoqb5T5CF4h7C4d/L5taQwzBNrVSpFLGLBG7S3ddX3iMLqTAvc6kuGyuO17nATWfKBBW6iHRBdlxvLmhDZTwEU3LLJJ0Rl+UJ2tfpYfxPDyQwkmWVufhjKXie151HuZFTYEXtoW6s=
+	t=1756130579; cv=none; b=X51xReHPRWLj4Wh5+ulgrzA/RUha1cxWZfeveyOuDaCF+JIfPwZTp+YMkocY6s0Xh6lsAWjaS2MWLw1e+czpYR5PKlIWZhlt25ciUyji59LNHipBmJ7UCO8uQIJ1uKtgACmF49ifmlDzuLnqdMx4PIob7u9fU/+uvIf+ywyg9jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756130561; c=relaxed/simple;
-	bh=WIy7H5F4BIGIAuJoDRJa9Qm9GvHCfb9cAeB7Fcg9C4w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KdVTVp5rsfzI4i0UZ8AUx3KWypkebz/zul7oc34KqgZZz6WzzpId/TmfAvUbWrNxmPSG79kqHU3iG913fQwM9smrc4rF92y525Ke2313UMdCUvuNN2x99kiFev5sE8zWMWJtiA4nw6l02icsqPonxUg1NK3wvdKKKVqgckl8F0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VT4tTxnE; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756130560; x=1787666560;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=WIy7H5F4BIGIAuJoDRJa9Qm9GvHCfb9cAeB7Fcg9C4w=;
-  b=VT4tTxnE+BIGiU0yod8vbta1+OoDZrZOQwJicFXAxlSxqELZIyGBLNKO
-   UBHccwVOmiqQo56KWP/upN/yU5i+jSdgcsbKOYdxIca976t9p/ymWzOd2
-   yQwb2FU1AWIW1G3rG7KNsfJUJnJ3L9GjHi9Q/YlQ5C+3W21DPBRfudeRv
-   YOcyhHkofBVrOB8n9bk92K6b3tOn5InRI9v0UuN01m3UR+t5v3SCz6Hn1
-   FRwa4LYoqLEcZDRoMvTSfssC3dBmYXcBwimS5vVGUFIjzs6oG8KAwakin
-   /1Pj/hByeXxaEI2mMHT9Cfo0oZQjDyvV4Z4ChLzNePfqQgQ9wXR6mBAeP
-   w==;
-X-CSE-ConnectionGUID: xWeQT1kmSsWSBjiRR6rAIA==
-X-CSE-MsgGUID: Q1VsM476TAam2yy3txN2oA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11533"; a="69715686"
-X-IronPort-AV: E=Sophos;i="6.18,213,1751266800"; 
-   d="scan'208";a="69715686"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 07:02:39 -0700
-X-CSE-ConnectionGUID: SQ3DV1HCQcy+vrAzWRTVsA==
-X-CSE-MsgGUID: rDYFGniDRPmNY07CXIQesw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,213,1751266800"; 
-   d="scan'208";a="169492202"
-Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.108.213]) ([10.125.108.213])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 07:02:38 -0700
-Message-ID: <c69341d2-bf01-48df-9eeb-e346f72c9409@intel.com>
-Date: Mon, 25 Aug 2025 07:02:37 -0700
+	s=arc-20240116; t=1756130579; c=relaxed/simple;
+	bh=z0lNAkdycMWr/VBF2cxLpwLcBbkQKrhLX9nJ1Ouwo1w=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=q2IlvyvL/9LVYaAy5V7XpoyL7AnCZODDt/Pj4U9U3undmrvrD+vWpFq3baNdg8bK2wWjywjdQsBV/hJov6J+KYMfjOXK3/SDYxm1E7x4X3O5SFYP8uyrGV84V8i3kvlnoTDrjBHT4V9ZnA+7t22wQZSxXmxkrXEJe1xIFmcHDrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TCY7EQuE; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756130576;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=z0lNAkdycMWr/VBF2cxLpwLcBbkQKrhLX9nJ1Ouwo1w=;
+	b=TCY7EQuE4nGozmZ14hVtQeLR/7RK3wdaZShVbc7OvNWceF9zLgfF3unjLITZYsyOW6VJZJ
+	WyXRVueeF3miLrOZ6cQq5GredvjpcoV/YINafhywYA34rBYSwWj28i1dsNwIfgUuxkZOhz
+	Q5n0/lXhgABVZoHQkCD3DBHvKwVErSs=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-371-FHAGiWmfM46Bxf8aqbEw-w-1; Mon, 25 Aug 2025 10:02:54 -0400
+X-MC-Unique: FHAGiWmfM46Bxf8aqbEw-w-1
+X-Mimecast-MFC-AGG-ID: FHAGiWmfM46Bxf8aqbEw-w_1756130572
+Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-55f46d2ae2dso650902e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 07:02:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756130572; x=1756735372;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=z0lNAkdycMWr/VBF2cxLpwLcBbkQKrhLX9nJ1Ouwo1w=;
+        b=gNI5125x1MOBMaCI5favI3nPl9gjzi97k8S+mqMhUxhUfuYqPJQlFiVGI+uY/PqGtS
+         r/EZVZiXJselcWmrs7SAdEYuTc/+0WfBCgunOp7G1JRn+2/izfDOHGpvFhk1iN8gScbQ
+         ob6YZohGDkPTUpd6TbrvR71NDDNdjlkd0OX4NEoC2QfAH44VEdNgdWShL3rb3wR4mRJF
+         jftfNg9ANRFcTkc/9ISLfw9w5IU8irYUs3pUdhU4DWGhQLZW9z/deuvGrOGCS6CwyBFQ
+         HSEjZ3T0n5z2UnddAkc6wbFRsJSKDlDzWrLgDmsCnL3CErjdMEaKxztF/ow8dni9Urvr
+         xUUQ==
+X-Gm-Message-State: AOJu0Yy5LilqK4Y0Fj15zPJ62Jhjyf48E+zqX8fc4Zu2SK7+uEoOLH22
+	Y//oz1OT5SJRVS+auEezLDrL0Mt4RmmrBFm4NlKh3QEM0/I+SVkacL32PAIyxSSqT0BRWPqMDlC
+	79oz/xMFJsduEUhth0bzGM4ozeXEb0HmUju97oEOZODDDQGtvBtCv9u2G8urptTXMsg==
+X-Gm-Gg: ASbGncuBjKhH+wXg9byJMLmZ0qWPoG0YqPVjh9JMFFR3hwlKLlL0kCWsrf9CGgAjv3U
+	3w/ZW3F8GP+/loFCeGjnoUaW5hVmzRpKDrBDZcm6WtOOZjYbhcjkvsiPWcnKKQbHlZ0Fn9BqncX
+	reJL/hazi4BJSfGtgin2nKOo8Y6jOyvKJO7p5GsIS+2ao48mv8XGuoqpu5hU49LV+jkJyT09Zw2
+	BXDV6KsEEX3dypM5X4VplhmDkUuLcIKTa8QMMUE9PG9kX/eVDthZE7frITdLqKXYglHe+cfyEQA
+	35NlUqfqUfh8tppnJTUwGjU78+D2Hmuf/3baSWcYCK7mUXQowLdhk8xZK1PedT/qRA==
+X-Received: by 2002:ac2:4e05:0:b0:55f:44b8:1ed8 with SMTP id 2adb3069b0e04-55f44b82332mr1296557e87.57.1756130571751;
+        Mon, 25 Aug 2025 07:02:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHyt5bSS1oQEIqYObefsy8rlxTFpq428dUwOG2UZY8ok4fSpnoFwzgLRoQrXqmhna3vwFjpmA==
+X-Received: by 2002:ac2:4e05:0:b0:55f:44b8:1ed8 with SMTP id 2adb3069b0e04-55f44b82332mr1296544e87.57.1756130571296;
+        Mon, 25 Aug 2025 07:02:51 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.40])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f3b946df6sm1381018e87.36.2025.08.25.07.02.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Aug 2025 07:02:50 -0700 (PDT)
+Message-ID: <060ae0310f6b3795856d60e36e09b1924d2fa0bc.camel@redhat.com>
+Subject: Re: [RFC PATCH 10/17] verification/rvgen: Add support for Hybrid
+ Automata
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Nam Cao <namcao@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, 
+	linux-trace-kernel@vger.kernel.org, Tomas Glozar <tglozar@redhat.com>, Juri
+ Lelli <jlelli@redhat.com>, Clark Williams <williams@redhat.com>, John Kacur
+ <jkacur@redhat.com>
+Date: Mon, 25 Aug 2025 16:02:48 +0200
+In-Reply-To: <20250825100631.uTAyvLwP@linutronix.de>
+References: <20250814150809.140739-1-gmonaco@redhat.com>
+	 <20250814150809.140739-11-gmonaco@redhat.com>
+	 <20250825100631.uTAyvLwP@linutronix.de>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
+ xyhmqeUWOzFx5P43S1E1dhsrLWgP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/mm: lower MAP_32BIT begin to reduce heap collisions
-To: Simon Liebold <simonlie@amazon.de>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>
-Cc: x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- Andrew Morton <akpm@linux-foundation.org>, Mark Brown <broonie@kernel.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Helge Deller <deller@gmx.de>,
- "Liam R. Howlett" <Liam.Howlett@Oracle.com>,
- Simon Liebold <lieboldsimonpaul@gmail.com>, linux-kernel@vger.kernel.org
-References: <20250825104847.36669-1-simonlie@amazon.de>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250825104847.36669-1-simonlie@amazon.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 8/25/25 03:48, Simon Liebold wrote:
-> Commit 03475167fda5 ("x86: Increase brk randomness entropy for 64-bit
-> systems") increased the brk randomness from 32 MiB to 1 GiB. MAP_32BIT
-> looks between 1 GiB and 2 GiB for an unmapped area. Depending on the
-> randomization, a heap starting high enough and being big enough can use
-> up all the area that MAP_32BIT looks at, leading to allocation failures.
+On Mon, 2025-08-25 at 12:06 +0200, Nam Cao wrote:
+> On Thu, Aug 14, 2025 at 05:08:02PM +0200, Gabriele Monaco wrote:
+> > +=C2=A0=C2=A0=C2=A0 def fill_constr_func(self) -> list[str]:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 buff =3D []
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if self.constraints:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 buf=
+f.append(
+> > +"""/*
+> > + * This function is used to validate state transitions.
+> > + *
+> > + * It is generated by parsing the model, there is usually no need
+> > to change it,
+> > + * unless conditions were incorrectly specified
+>=20
+> If the conditions were incorrectly specified, then they should be
+> fixed in the automaton, not fixed in this generated C code.
 
-Isn't that still a really unreasonably gigantic heap?
+You're right, I should reword or remove that.
 
-Would you mind posting some actual /proc/$pid/maps output from one of
-the failure cases?
+> > or too complex for the parser.
+>=20
+> Do you have examples of these "too complex" cases? Is there a plan to
+> handle them?
+
+I wrote this before having the function/macro types, now everything
+coming to my mind is covered. Anyway the parser is trying to be smart
+but may not catch absolutely everything the user wants to specify.
+
+Now the best thing to do would probably be to strictly define a grammar
+and not support what isn't included in there, rather than telling the
+user they can kind of tweak the function..
+
+Good points, thanks!
+Gabriele
+
 
