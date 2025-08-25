@@ -1,124 +1,99 @@
-Return-Path: <linux-kernel+bounces-785702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C29A0B34FCA
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 01:48:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 069F4B34FE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:02:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E3F07A2095
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 23:47:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B63733AB541
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 369E82BEFFF;
-	Mon, 25 Aug 2025 23:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A3462AD00;
+	Tue, 26 Aug 2025 00:02:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sarinay.com header.i=@sarinay.com header.b="LgYfYa0q"
-Received: from natrix.sarinay.com (natrix.sarinay.com [159.100.251.32])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r5YVWmrH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87DD1A314E;
-	Mon, 25 Aug 2025 23:48:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.100.251.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F071E29A2;
+	Tue, 26 Aug 2025 00:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756165721; cv=none; b=unVZyodUJT+M2R8ojZXYoW3EAOIRnEgrqW3Gi0n6MFt1H8kjvG/UhpDCtuPN/CEhervdnCoFvUFGquqZYuMZfqCScAHN3ptJyWZmZSZwdcjkqLYM1xSQPuSW+bg7r67vMmP0lMH4jn4AK/EIwstU4U+HE6ZkRFWA0JCT7vZjPhI=
+	t=1756166548; cv=none; b=fF7mefl3jpiBG3KFLHDS/pVllVFDDGdxgJFEDXTAc6XfzNklVFKc2iPAlCFmY7KKdD2G1Dv0jX0pUI8BRxm2ZoXqRsanYht2XVrBBIj+RTSNMX9K+XGWQLsnuMsz7OqZhy1Pof4f4DUWmo/Cx0w94dkcBFywSpLkXC4ccu6pE4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756165721; c=relaxed/simple;
-	bh=cqmQ5Fj/MEGS7SskcrLs3VuOJjoCYvmvMNy3btPhxU8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QQOsAZiJRt0mL05caoS1tWPIYwr5vV0hnZaxhPPd5DkXj8tZHIJGVB/eg4HL8U3V3Fv5QuPA8k/TGg1SeQp4Ikol+CNTN3Pjf3CbJs+Nfe/y87/yr1aWUf3EaB4Zltio9QfP9lv+glN4t3uWtXxxNB1hOfsMJQmr2dgYk2gZqts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sarinay.com; spf=pass smtp.mailfrom=sarinay.com; dkim=pass (2048-bit key) header.d=sarinay.com header.i=@sarinay.com header.b=LgYfYa0q; arc=none smtp.client-ip=159.100.251.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sarinay.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sarinay.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=sarinay.com; s=2023;
-	t=1756165717; bh=cqmQ5Fj/MEGS7SskcrLs3VuOJjoCYvmvMNy3btPhxU8=;
-	h=From:To:Cc:Subject:Date;
-	b=LgYfYa0qRMw5G7cjT8ny0kFVwfjXcmznlLC0rziELgYck9gtJSsG3VqT8aQ5/CU8t
-	 tee6REAEB+9Nv0ZG/Epn8014eoo0HpIGSDANKFO5z1WV/UxoWHhUGPcxOUR2+eS4jU
-	 PftiUQn0+yKUPH+WSx2lVZK0h/sbrz9cpkh0OtuaG5HkTu2+oOWKDFh4N+RP62/rYI
-	 y4Hq7lNN2xbsJBHIFK+WjjL6pbGr1VENNY1yar3TtXovI86TdtXD2xCdrGTLZeG7kj
-	 abCHXPiQ/epaSoBxCuD4Q9ume/CbpfL0D45SAtkMf7j5Z5ECZufocjKF/qHnoP6HjR
-	 dUrK5LiY116rg==
-From: =?UTF-8?q?Juraj=20=C5=A0arinay?= <juraj@sarinay.com>
-To: netdev@vger.kernel.org
-Cc: =?UTF-8?q?Juraj=20=C5=A0arinay?= <juraj@sarinay.com>,
-	krzk@kernel.org,
-	linux-kernel@vger.kernel.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	mingo@kernel.org,
-	horms@kernel.org,
-	tglx@linutronix.de
-Subject: [PATCH net-next v2] net: nfc: nci: Turn data timeout into a module parameter and increase the default
-Date: Tue, 26 Aug 2025 01:43:49 +0200
-Message-ID: <20250825234354.855755-1-juraj@sarinay.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1756166548; c=relaxed/simple;
+	bh=Loc5pohHYUjhyJpSTUM6FXiXSt81XFswTcKuhTvLXa8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dRQjNWGIcOoyEBQ1J86pkLgK/PL/KMDyrvaikZ8vJXsqgpydxRcCYWz3RFzKr0vBF/5IFeJPIubwlkA27ef5pe8+GxfBVDcTdLeadT60on6Bpo3DBn1ZNZuDPEj4DmShoq0S6xjC1aCek7a2PLODPXI6hUYujEuIcIyv58PqOZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r5YVWmrH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5D1BC4CEED;
+	Tue, 26 Aug 2025 00:02:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756166547;
+	bh=Loc5pohHYUjhyJpSTUM6FXiXSt81XFswTcKuhTvLXa8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=r5YVWmrHj7xVjWD6QCu15oSr1HYapHyDPkoDoAyrSIbW4aZJV0odYiTYpxMysfOPP
+	 vRW2QdgMnVIQpslTZTitlbRFZZOWTza+NlEDsgyTek9XIwqrAl4jieLUo+JKxQNvu8
+	 qLNA+fB1BOBRDz9XxQfD5MA4p9fl6pvs1JRtv0qbPeam8U393A6eifcKlt/HdLzW/h
+	 NCxueYoFRsXSOOGO/Q2vkNO7SFf4XoriFJuwOzBFkQoFG4ly6K2NerfNM8n6IG2OBo
+	 tFUxhoQuU+yl5fFIUtsfj6nl+hLiVRUIzCiyEih1KXzgXR+HeKr6CrbxKZzJFAqnuk
+	 4Ed9VWUXBWv7A==
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Richard Leitner <richard.leitner@linux.dev>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/3] usb: usb251xb: support usage case without I2C control
+Date: Tue, 26 Aug 2025 07:45:06 +0800
+Message-ID: <20250825234509.1041-1-jszhang@kernel.org>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-An exchange with a NFC target must complete within NCI_DATA_TIMEOUT.
-A delay of 700 ms is not sufficient for cryptographic operations on smart
-cards. CardOS 6.0 may need up to 1.3 seconds to perform 256-bit ECDH
-or 3072-bit RSA. To prevent brute-force attacks, passports and similar
-documents introduce even longer delays into access control protocols
-(BAC/PACE).
+Currently, the usb251xb assumes i2c control. But from HW point of
+view, the hub supports usage case without any i2c, we only want the
+gpio controls.
 
-The timeout should be higher, but not too much. The expiration allows
-us to detect that a NFC target has disappeared.
+Refactor the code so that register writes for configuration are only
+performed if the device has a i2c_client provided and also register as
+a platform driver. This allows the driver to be used to manage GPIO
+based control of the device.
 
-Expose data_timeout as a parameter of nci.ko. Keep the value in uint
-nci_data_timeout, set the default to 3 seconds. Point NCI_DATA_TIMEOUT
-to the new variable.
+Since v3:
+ - collect Reviewed-by tags
+ - update commit msg to remove redundant content
+ - keep memset of i2c_wb[]
 
-Signed-off-by: Juraj Šarinay <juraj@sarinay.com>
----
-v2:
-  - export nci_data_timeout to survive make allmodconfig
-v1: https://lore.kernel.org/netdev/20250825134644.135448-1-juraj@sarinay.com/
+Since v2:
+ - add usage example w/o i2c control in dt-binding
+ - update commit msg
+ - remove of_match_ptr
 
- include/net/nfc/nci_core.h | 4 +++-
- net/nfc/nci/core.c         | 5 +++++
- 2 files changed, 8 insertions(+), 1 deletion(-)
+Since v1:
+ - make the modern pm macros usage a separate patch
+ - use pm_sleep_ptr instead of pm_ptr for usb251xb_plat_pm_ops, because
+   this ops is for PM_SLEEP only.
 
-diff --git a/include/net/nfc/nci_core.h b/include/net/nfc/nci_core.h
-index e180bdf2f82b..da62f0da1fb2 100644
---- a/include/net/nfc/nci_core.h
-+++ b/include/net/nfc/nci_core.h
-@@ -52,7 +52,9 @@ enum nci_state {
- #define NCI_RF_DISC_SELECT_TIMEOUT		5000
- #define NCI_RF_DEACTIVATE_TIMEOUT		30000
- #define NCI_CMD_TIMEOUT				5000
--#define NCI_DATA_TIMEOUT			700
-+
-+extern unsigned int nci_data_timeout;
-+#define NCI_DATA_TIMEOUT			nci_data_timeout
- 
- struct nci_dev;
- 
-diff --git a/net/nfc/nci/core.c b/net/nfc/nci/core.c
-index fc921cd2cdff..29fac0dd6c77 100644
---- a/net/nfc/nci/core.c
-+++ b/net/nfc/nci/core.c
-@@ -31,6 +31,11 @@
- #include <net/nfc/nci_core.h>
- #include <linux/nfc.h>
- 
-+unsigned int nci_data_timeout = 3000;
-+module_param_named(data_timeout, nci_data_timeout, uint, 0644);
-+MODULE_PARM_DESC(data_timeout, "Round-trip communication timeout in milliseconds");
-+EXPORT_SYMBOL_GPL(nci_data_timeout);
-+
- struct core_conn_create_data {
- 	int length;
- 	struct nci_core_conn_create_cmd *cmd;
+Jisheng Zhang (3):
+  dt-bindings: usb: usb251xb: support usage case without I2C control
+  usb: usb251xb: use modern PM macros
+  usb: usb251xb: support usage case without I2C control
+
+ .../devicetree/bindings/usb/usb251xb.yaml     |   9 +-
+ drivers/usb/misc/usb251xb.c                   | 108 +++++++++++++++---
+ 2 files changed, 103 insertions(+), 14 deletions(-)
+
 -- 
-2.47.2
+2.50.0
 
 
