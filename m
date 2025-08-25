@@ -1,258 +1,265 @@
-Return-Path: <linux-kernel+bounces-784936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73380B343C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:31:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 863CAB343A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:27:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26693163D59
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:26:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAF167AC8F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:25:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D86F92FB96A;
-	Mon, 25 Aug 2025 14:24:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 450052FD1C5;
+	Mon, 25 Aug 2025 14:26:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XVdGU3id"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZldJOsQ3"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F172FB612
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 14:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F1E92FB983;
+	Mon, 25 Aug 2025 14:26:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756131867; cv=none; b=LvqNYB3KOxHnIme/nekd49YqYohbWNRXxCrmDwgWgQ4eltroKY6VIlirsmQE/dbLbopM/FcAZZ//AC5oQOvB97a07oVJGxpB9MezkTsjZD1kjJMSb0EXD5+6vLRJl6JEKlv+WlXHJ+3QtM8JdJHhz+zTrH07OVJg0Wn545SEKPU=
+	t=1756131964; cv=none; b=WHXpbJD5wLqzeZtjrzMx/sKjeVQOFXWqdwQ1TddsfOpGuzvSD959vhmt6evoXIZta4rrdcZGI+cU6uR8aTAfIbGLYuLwIITYCI5f9Cu19fXHLWcKgyv3I0EYnUaHLFEkTB2kAP/tVaY+my1qu/tC3o0y0WlmcMhkWnmw0eCpsKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756131867; c=relaxed/simple;
-	bh=INBRtuojvYINvPeA71YMgia0UElzNVQxqsfPha1NJ8k=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Ht+WmtFcAA2ghtwIgj6/qhZ2vhtAsD2dELUJVimTuj6Fr84gZa/JhQuzjd6PPA5uKaI+05V4iPwmX8j5BVpWKfUku4y7Q4GRQzrvhlTX1VNczTPk2ZVzFpoXbolZ9Pmg0kA9FmbDXPO/J4Mzc/Z4EUt5VOM/ARszr/m5ingp+os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XVdGU3id; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756131863;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=INBRtuojvYINvPeA71YMgia0UElzNVQxqsfPha1NJ8k=;
-	b=XVdGU3idpjiGph0sAzqZNi/z7IBKN1moLmKUGpgsWJDkuaRD4tMob+xkZeOEYwvVOgCXDz
-	4i1xyQ6O7rFPnSSkvRwT0609zIOLljA0F1hN5PzUHf893S9W1jdZ4rd9R93d8JgfWruU5+
-	2TlM2ETQ5RdjEx0VaWuaxKGMRJHKRxw=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-644-csroImzCNCWAYlHuwP-0cg-1; Mon, 25 Aug 2025 10:24:18 -0400
-X-MC-Unique: csroImzCNCWAYlHuwP-0cg-1
-X-Mimecast-MFC-AGG-ID: csroImzCNCWAYlHuwP-0cg_1756131856
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45b4e345ce4so16062145e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 07:24:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756131856; x=1756736656;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=INBRtuojvYINvPeA71YMgia0UElzNVQxqsfPha1NJ8k=;
-        b=bakqWOVUYOskd1KybO915nYKDnavJ/p16NYYKQuF1AKQsCQ8BZrr5GiWBU3/H1Pe4G
-         X3wMvlwWE4NxzyLBfVGkI0taNFxy4SBSuvRMroc+WFLhE00zDHTCGxzI8LhdhUFlS7TZ
-         2UkhfZXVDUyt1UNKx5bXX+yYjtMDguC5sd3mGBRXwZERiWKx5VV7nhxT58gilx6p9qvv
-         ItTYpVkX445ho4dZXbtANvQpLvo+mkS4eR7YPhE2cm5M98cZIW5zZTd3LH+Fw644j+f2
-         SliCycAje3AWyN2Yaj2t27RWHCBguVPBlbvgmXfxGrwoYiz6knDjBMs37ERQ5+S6PZXF
-         8VXQ==
-X-Gm-Message-State: AOJu0Yz6E+BIJWjYDprs2O0yI1SLo8ckg/KZPu/TkBgNsD1xqhPD8mJ0
-	r989hLfsK2UWqjMly0pdMXKONmpBqaznyc/hRs/9E6LQtVY22LHSNjlLHFhF4neNFKOkS5A7FL4
-	4D21sUvDwDQCO+7cw23FGceVixsXYfj1ZQf5hQIfLSJa4YXnbwvJM/XNJy0FDjVOhug==
-X-Gm-Gg: ASbGnct2RtzZoPT+4hA9kSls10DeKfHoiIHTK74X9521QCqXHyX+ZBWI1c317I/Djq2
-	kgG+t1go5CZLJEBu3JLUh+WqNIKf97LwIbj14YGlDY03tHShpXzldX5VUwgeBvr/BVdvcORtVOG
-	kBrM02UehBt9l2ijvT2HxCZuJwhVO88+4sBaAOiduHiTuwgOO/4xFcOGbmp4rClaPf1xwaUIzJc
-	3Sba7LzBk9aZH5Ro+MMT5btuDV4ZP4euPC3p7N+aYDkjx7dY11ibxk5Iq2izGkijrt84d9krvn4
-	rKXWcwJh9RDx3JN9sy0l8c3SVeGUOzFV+zmrpHh1rt+uJyTrCR9eoN5w3dwk9Cg9tw==
-X-Received: by 2002:a05:600c:610a:b0:456:24aa:9586 with SMTP id 5b1f17b1804b1-45b574ece0emr65886635e9.21.1756131856407;
-        Mon, 25 Aug 2025 07:24:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGHLHjuzRmvtOguKp7TpZgpij1PyJ3ZTHlbQk5m2VDw68TS1JA2HQH7T2o2YJKiDovgov3PCw==
-X-Received: by 2002:a05:600c:610a:b0:456:24aa:9586 with SMTP id 5b1f17b1804b1-45b574ece0emr65886435e9.21.1756131855971;
-        Mon, 25 Aug 2025 07:24:15 -0700 (PDT)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.40])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ca6240b4ecsm1970702f8f.43.2025.08.25.07.24.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 07:24:15 -0700 (PDT)
-Message-ID: <6e84cdfe17492f31be8e4373fef7b3e1a37a6779.camel@redhat.com>
-Subject: Re: [RFC PATCH 10/17] verification/rvgen: Add support for Hybrid
- Automata
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Nam Cao <namcao@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, 
-	linux-trace-kernel@vger.kernel.org, Tomas Glozar <tglozar@redhat.com>, Juri
- Lelli <jlelli@redhat.com>, Clark Williams <williams@redhat.com>, John Kacur
- <jkacur@redhat.com>
-Date: Mon, 25 Aug 2025 16:24:13 +0200
-In-Reply-To: <20250825095554.NrT5tNY8@linutronix.de>
-References: <20250814150809.140739-1-gmonaco@redhat.com>
-	 <20250814150809.140739-11-gmonaco@redhat.com>
-	 <20250825095554.NrT5tNY8@linutronix.de>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
- xyhmqeUWOzFx5P43S1E1dhsrLWgP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1756131964; c=relaxed/simple;
+	bh=+anDv4KCxAMQhb/zgI5+MkJajBqEkRpD5J1Azq9QDII=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tnYrFijAPgPx57UDsGDD5nWhHP8RFsyfAkLc7Umif094OVV879crNG6C1KWTJ+3UQvNz3hqkMIlTBhQayLONC0WKD95yuV6C0xc9l26ozw465yrVyW/4P7wqkZg81H7QOAUIDNRKtP1KN8jmbkcIctmznTjoFIFUDyHOBO0yrug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ZldJOsQ3; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57PEPU36831105;
+	Mon, 25 Aug 2025 09:25:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1756131930;
+	bh=01wni2euBTT2L905UFnK3Ynn9iHMPxWiMJx8hw6DYUM=;
+	h=From:To:CC:Subject:Date;
+	b=ZldJOsQ3pABormexsA5ofZiuYgz6s7BAqxGV8NSR+WfxM7/jgaSztqPkglvtl2kIe
+	 fQgwHpDne3574euz0doUYU8R4/SdpWp7gBFVAKAyxebmxvyMcxaf12mElkeaqt45Tk
+	 Gw/Z/qVa/gFUxtq8gh/vLjGYIySM7ZV1duiiZMyo=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57PEPUTJ1643886
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 25 Aug 2025 09:25:30 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 25
+ Aug 2025 09:25:29 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Mon, 25 Aug 2025 09:25:29 -0500
+Received: from ws.dhcp.ti.com (ws.dhcp.ti.com [172.24.233.149])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57PEPN3n3747540;
+	Mon, 25 Aug 2025 09:25:23 -0500
+From: Rishikesh Donadkar <r-donadkar@ti.com>
+To: <jai.luthra@linux.dev>, <laurent.pinchart@ideasonboard.com>,
+        <mripard@kernel.org>
+CC: <r-donadkar@ti.com>, <y-abhilashchandra@ti.com>, <devarsht@ti.com>,
+        <vaishnav.a@ti.com>, <s-jain1@ti.com>, <vigneshr@ti.com>,
+        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <sakari.ailus@linux.intel.com>,
+        <hverkuil-cisco@xs4all.nl>, <tomi.valkeinen@ideasonboard.com>,
+        <jai.luthra@ideasonboard.com>, <changhuang.liang@starfivetech.com>,
+        <jack.zhu@starfivetech.com>, <linux-kernel@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v5 00/14] media: cadence,ti: CSI2RX Multistream Support
+Date: Mon, 25 Aug 2025 19:55:08 +0530
+Message-ID: <20250825142522.1826188-1-r-donadkar@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-T24gTW9uLCAyMDI1LTA4LTI1IGF0IDExOjU1ICswMjAwLCBOYW0gQ2FvIHdyb3RlOgo+IE9uIFRo
-dSwgQXVnIDE0LCAyMDI1IGF0IDA1OjA4OjAyUE0gKzAyMDAsIEdhYnJpZWxlIE1vbmFjbyB3cm90
-ZToKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGZvciBpIGluIGV2ZW50LnNw
-bGl0KCJcXG4iKToKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBp
-ZiAiOyIgaW4gaToKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgICMgaWYgdGhlIGV2ZW50IGNvbnRhaW5zIGEgY29uc3RyYWludAo+ID4gKGh5YnJpZCBh
-dXRvbWF0YSksCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoCAjIGl0IHdpbGwgYmUgc2VwYXJhdGVkIGJ5IGEgIjsiOgo+ID4gK8KgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgIyAic2NoZWRfc3dpdGNoO3g8MTAwMDty
-ZXNldCh4KSIKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgIGxpbmUgPSBpLnNwbGl0KCI7IikKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgIGkgPSBsaW5lLnBvcCgwKQo+ID4gK8KgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaWYgbGVuKGxpbmUpID4gMjoKPiA+ICvCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcmFpc2Ug
-VmFsdWVFcnJvcigiT25seSAxIGNvbnN0cmFpbnQKPiA+IGFuZCAxIHJlc2V0IGFyZSBzdXBwb3J0
-ZWQiKQo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
-ZW52cyArPSBzZWxmLl9fZXh0cmFjdF9lbnZfdmFyKGxpbmUpCj4gPiDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGV2ZW50cy5hcHBlbmQoaSkKPiAKPiBIb3cgYWJvdXQg
-d2UgZ2V0IHJpZCBvZiB0aGUgKGlmICI7IiksIGFuZCBqdXN0IHNwbGl0IGl0Ogo+IAo+IGZvciBp
-IGluIGV2ZW50LnNwbGl0KCJcXG4iKToKPiDCoMKgwqAgIyBpZiB0aGUgZXZlbnQgY29udGFpbnMg
-YSBjb25zdHJhaW50IChoeWJyaWQgYXV0b21hdGEpLAo+IMKgwqDCoCAjIGl0IHdpbGwgYmUgc2Vw
-YXJhdGVkIGJ5IGEgIjsiOgo+IMKgwqDCoCAjICJzY2hlZF9zd2l0Y2g7eDwxMDAwO3Jlc2V0KHgp
-Igo+IMKgwqDCoCBsaW5lID0gaS5zcGxpdCgiOyIpCj4gwqDCoMKgIGV2ZW50cy5hcHBlbmQobGlu
-ZS5wb3AoMCkpCj4gwqDCoMKgIGlmIGxlbihsaW5lKSA+IDI6Cj4gwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoCByYWlzZSBWYWx1ZUVycm9yKCJPbmx5IDEgY29uc3RyYWludCBhbmQgMSByZXNldCBhcmUK
-PiBzdXBwb3J0ZWQiKQo+IMKgwqDCoMKgwqDCoMKgIGVudnMgKz0gc2VsZi5fX2V4dHJhY3RfZW52
-X3ZhcihsaW5lKQo+IAoKUmlnaHQsIHRoYXQncyBuZWF0ZXIsIHRoYW5rcy4KCj4gPiArwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoCBlbHNlOgo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oCAjIHN0YXRlIGxhYmVscyBoYXZlIHRoZSBmb3JtYXQ6Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgICMgImVuYWJsZV9maXJlZCIgW2xhYmVsID0KPiA+ICJlbmFibGVfZmlyZWRc
-bmNvbmRpdGlvbiJdOwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAjwqAgLS0t
-LS0gbGFiZWwgaXMgaGVyZSAtLS0tLV5eXl5eCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgICMgbGFiZWwgYW5kIG5vZGUgbmFtZSBtdXN0IGJlIHRoZSBzYW1lLCBjb25kaXRpb24K
-PiA+IGlzIG9wdGlvbmFsCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHN0YXRl
-ID0KPiA+IHNlbGYuX19kb3RfbGluZXNbY3Vyc29yXS5zcGxpdCgibGFiZWwiKVsxXS5zcGxpdCgn
-IicpWzFdCj4gCj4gSSBrbm93IEkgY29tcGxhaW5lZCBhYm91dCByZWdleCBsYXN0IHdlZWssIGJ1
-dCBmb3IgdGhpcyBjYXNlIEkgdGhpbmsKPiByZWdleCBpcyBtb3JlIHN1aXRhYmxlOgo+IAo+IHN0
-YXRlID0gcmUuZmluZGFsbChyJyIuKj8iIFxbbGFiZWwgPSAiKFteIl0qKSJcXScsCj4gc2VsZi5f
-X2RvdF9saW5lc1tjdXJzb3JdKVswXQo+IAoKWWVhaCBJIGd1ZXNzIEkgb3BlbmVkIHRoZSBwYW5k
-b3JhIGJveCBhbHJlYWR5Li4KQWxzbyB0aGlua2luZyBhYm91dCB0aGUgcGx5IHBhcnNlciwgaXQn
-ZCBwcm9iYWJseSBlbmQgdXAgcmVseWluZyBvbgpyZWdleCB0b28uCkkgbWF5IGp1c3Qgc2V0IHVw
-IHRoZSB0aGluZ3MgaW4gdGhpcyBwYXRjaCAodXNlIHJlZ2V4IHdoZXJlIHRvbyBjb21wbGV4Cndp
-dGhvdXQpIGFuZCByZS1ldmFsdWF0ZSB0aGUgd2hvbGUgdGhpbmdzIHdpdGggcGx5IGxhdGVyIG9u
-LgoKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaWYgIlxcbiIgaW4gc3RhdGU6
-Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgbGluZSA9IHN0YXRl
-LnNwbGl0KCJcXG4iKQo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-IGxpbmUucG9wKDApCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
-aWYgbGVuKGxpbmUpID4gMToKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgIHJhaXNlIFZhbHVlRXJyb3IoIk9ubHkgMSBjb25zdHJhaW50IGlzCj4gPiBz
-dXBwb3J0ZWQgaW4gdGhlIHN0YXRlIikKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoCBlbnZzICs9Cj4gPiBzZWxmLl9fZXh0cmFjdF9lbnZfdmFyKFtsaW5lWzBdLnJl
-cGxhY2UoIiAiLCAiIildKQo+IAo+IFNhbWUgYXMgYWJvdmUsIEkgdGhpbmsgd2UgY2FuIGp1c3Qg
-c3BsaXQgd2l0aG91dCB0aGUgaWYgY2hlY2suCj4gCj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqAgY3Vyc29yICs9IDEKPiA+IMKgCj4gPiAtwqDCoMKgwqDCoMKgwqAgcmV0dXJuIHNvcnRlZChz
-ZXQoZXZlbnRzKSkKPiA+IC0KPiA+IC3CoMKgwqAgZGVmIF9fY3JlYXRlX21hdHJpeChzZWxmKToK
-PiA+ICvCoMKgwqDCoMKgwqDCoCByZXR1cm4gc29ydGVkKHNldChldmVudHMpKSwgc29ydGVkKHNl
-dChlbnZzKSkKPiA+ICsKPiA+ICvCoMKgwqAgZGVmIF9zcGxpdF9jb25zdHJhaW50X2V4cHIoc2Vs
-ZiwgY29uc3RyOiBsaXN0W3N0cl0pIC0+Cj4gPiBJdGVyYXRvclt0dXBsZVtzdHIsCj4gPiArwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgCj4gPiDCoMKgwqDCoMKgwqDCoCBzdHIgfCBOb25lXV06Cj4gPiArwqDC
-oMKgwqDCoMKgwqAgIiIiCj4gPiArwqDCoMKgwqDCoMKgwqAgR2V0IGEgbGlzdCBvZiBzdHJpbmdz
-IG9mIHRoZSB0eXBlIGNvbnN0cjEgJiYgY29uc3RyMiBhbmQKPiA+IHJldHVybnMgYSBsaXN0IG9m
-Cj4gPiArwqDCoMKgwqDCoMKgwqAgY29uc3RyYWludHMgYW5kIHNlcGFyYXRvcnM6Cj4gPiBbW2Nv
-bnN0cjEsIiYmIl0sW2NvbnN0cjIsTm9uZV1dCj4gPiArwqDCoMKgwqDCoMKgwqAgIiIiCj4gPiAr
-wqDCoMKgwqDCoMKgwqAgZXhwcnMgPSBbXQo+ID4gK8KgwqDCoMKgwqDCoMKgIHNlcHMgPSBbXQo+
-ID4gK8KgwqDCoMKgwqDCoMKgIGZvciBjIGluIGNvbnN0cjoKPiA+ICvCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgIHdoaWxlICImJiIgaW4gYyBvciAifHwiIGluIGM6Cj4gPiArwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgIGEgPSBjLmZpbmQoIiYmIikKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqAgbyA9IGMuZmluZCgifHwiKQo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoCBwb3MgPSBhIGlmIG8gPCAwIG9yIDAgPCBhIDwgbyBlbHNlIG8KPiA+ICvCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgZXhwcnMuYXBwZW5kKGNbOnBvc10ucmVwbGFjZSgiICIs
-ICIiKSkKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgc2Vwcy5hcHBlbmQoY1tw
-b3M6cG9zKzJdLnJlcGxhY2UoIiAiLCAiIikpCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgIGMgPSBjW3BvcysyOl0ucmVwbGFjZSgiICIsICIiKQo+ID4gK8KgwqDCoMKgwqDCoMKg
-wqDCoMKgwqAgZXhwcnMuYXBwZW5kKGMpCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBzZXBz
-LmFwcGVuZChOb25lKQo+ID4gK8KgwqDCoMKgwqDCoMKgIHJldHVybiB6aXAoZXhwcnMsIHNlcHMp
-Cj4gCj4gSWYgJiYgYW5kIHx8IGFyZSB0aGUgb25seSB0aGluZ3MgeW91IGludGVuZCB0byBzdXBw
-b3J0LCB0aGVuIHRoaXMgaXMKPiBwcm9iYWJseSBva2F5LiBCdXQgaWYgdGhlIHN5bnRheCB3aWxs
-IGV2ZXIgYmUgZXh0ZW5kZWQgKGUuZy4KPiBicmFja2V0cyksCj4gdGhpcyBiZWNvbWVzIHVucmVh
-ZGFibGUgcmVhbGx5IGZhc3QuCj4gCj4gUGVyaGFwcyBhICJyZWFsIiBwYXJzZXIgd2hpY2ggY29u
-dmVydHMgdGhlIGlucHV0IHN0cmluZyBpbnRvIGFic3RyYWN0Cj4gc3ludGF4IHRyZWUgaXMgc29t
-ZXRoaW5nIHdvcnRoIGNvbnNpZGVyaW5nLgoKWWVhaCB0b3RhbGx5LCBJJ20gZ29pbmcgdG8gc3Rp
-Y2sgdG8gdGhlICJzaW1wbGUiIHN5bnRheCBmb3Igbm93IGFuZAp0aGVuIHJld3JpdGUgdGhlIHdo
-b2xlIHRoaW5nIHdpdGggYSBwcm9wZXIgcGFyc2VyLgoKPiAKPiA+ICvCoMKgwqAgZGVmIGlzX2V2
-ZW50X2NvbnN0cmFpbnQoc2VsZiwga2V5OiB0dXBsZVtpbnQsIGludF0gfCBpbnQpIC0+Cj4gPiBi
-b29sOgo+ID4gK8KgwqDCoMKgwqDCoMKgICIiIgo+ID4gK8KgwqDCoMKgwqDCoMKgIEdpdmVuIHRo
-ZSBrZXkgaW4gc2VsZi5jb25zdHJhaW50cyByZXR1cm4gdHJ1ZSBpZiBpdCBpcyBhbgo+ID4gZXZl
-bnQKPiA+ICvCoMKgwqDCoMKgwqDCoCBjb25zdHJhaW50LCBmYWxzZSBpZiBpdCBpcyBhIHN0YXRl
-IGNvbnN0cmFpbnQKPiA+ICvCoMKgwqDCoMKgwqDCoCAiIiIKPiA+ICvCoMKgwqDCoMKgwqDCoCBy
-ZXR1cm4gaXNpbnN0YW5jZShrZXksIHR1cGxlKQo+IAo+IEkgZG9uJ3QgbG92ZSB0aGlzLiBBIGZl
-dyB5ZWFycyBmcm9tIG5vdywgc29tZW9uZSBjb3VsZCBjaGFuZ2Ugc3RhdGUKPiBjb25zdHJhaW50
-IHRvIGJlIGEgdHVwbGUsIG9yIGNoYW5nZSBldmVudCBjb250cmFpbnQgdG8gbm90IGJlIHR1cGxl
-LAo+IGFuZCB0aGluZ3MgYnJlYWsgaW4gY29uZnVzaW5nIHdheXMuCj4gCj4gUGVyaGFwcyBhbiBl
-eHBsaWNpdCB2YXJpYWJsZSB0byBzdG9yZSBjb250cmFpbnQgdHlwZSBpbmZvcm1hdGlvbgo+IGlu
-c3RlYWQ/CgpNbWggZ29vZCBwb2ludCwgSSdsbCBsb29rIGludG8gdGhhdC4KCj4gCj4gPiAtwqDC
-oMKgIGRlZiBfX2dldF9lbnVtX3N0YXRlc19jb250ZW50KHNlbGYpOgo+ID4gK8KgwqDCoCBkZWYg
-X19nZXRfZW51bV9zdGF0ZXNfY29udGVudChzZWxmKSAtPiBsaXN0W3N0cl06Cj4gPiDCoMKgwqDC
-oMKgwqDCoMKgIGJ1ZmYgPSBbXQo+ID4gwqDCoMKgwqDCoMKgwqDCoCBidWZmLmFwcGVuZCgiXHQl
-cyVzID0gMCwiICUgKHNlbGYuaW5pdGlhbF9zdGF0ZSwKPiA+IHNlbGYuZW51bV9zdWZmaXgpKQo+
-ID4gwqDCoMKgwqDCoMKgwqDCoCBmb3Igc3RhdGUgaW4gc2VsZi5zdGF0ZXM6Cj4gPiBAQCAtMzYs
-NyArMzcsNyBAQCBjbGFzcyBEb3QyYyhBdXRvbWF0YSk6Cj4gPiDCoAo+ID4gwqDCoMKgwqDCoMKg
-wqDCoCByZXR1cm4gYnVmZgo+ID4gwqAKPiA+IC3CoMKgwqAgZGVmIGZvcm1hdF9zdGF0ZXNfZW51
-bShzZWxmKToKPiA+ICvCoMKgwqAgZGVmIGZvcm1hdF9zdGF0ZXNfZW51bShzZWxmKSAtPiBsaXN0
-W3N0cl06Cj4gPiDCoMKgwqDCoMKgwqDCoMKgIGJ1ZmYgPSBbXQo+ID4gwqDCoMKgwqDCoMKgwqDC
-oCBidWZmLmFwcGVuZCgiZW51bSAlcyB7IiAlIHNlbGYuZW51bV9zdGF0ZXNfZGVmKQo+ID4gwqDC
-oMKgwqDCoMKgwqDCoCBidWZmICs9IHNlbGYuX19nZXRfZW51bV9zdGF0ZXNfY29udGVudCgpCj4g
-PiBAQCAtNTgsNyArNTksNyBAQCBjbGFzcyBEb3QyYyhBdXRvbWF0YSk6Cj4gPiDCoAo+ID4gwqDC
-oMKgwqDCoMKgwqDCoCByZXR1cm4gYnVmZgo+ID4gwqAKPiA+IC3CoMKgwqAgZGVmIGZvcm1hdF9l
-dmVudHNfZW51bShzZWxmKToKPiA+ICvCoMKgwqAgZGVmIGZvcm1hdF9ldmVudHNfZW51bShzZWxm
-KSAtPiBsaXN0W3N0cl06Cj4gCj4gVGhlc2UgY2hhbmdlcyBzaG91bGQgYmUgaW4geW91ciB0eXBl
-IGFubm90YXRpb24gcGF0Y2g/CgpSaWdodCwgcHJvYmFibHkgY29taW5nIGZyb20geWV0IGFub3Ro
-ZXIgcmViYXNlLCBoYXZpbmcgYSBsb29rLgoKPiAKPiA+IMKgwqDCoMKgwqDCoMKgwqAgYnVmZiA9
-IFtdCj4gPiDCoMKgwqDCoMKgwqDCoMKgIGJ1ZmYuYXBwZW5kKCJlbnVtICVzIHsiICUgc2VsZi5l
-bnVtX2V2ZW50c19kZWYpCj4gPiDCoMKgwqDCoMKgwqDCoMKgIGJ1ZmYgKz0gc2VsZi5fX2dldF9l
-bnVtX2V2ZW50c19jb250ZW50KCkKPiA+IEBAIC02Niw3ICs2Nyw0MyBAQCBjbGFzcyBEb3QyYyhB
-dXRvbWF0YSk6Cj4gPiDCoAo+ID4gwqDCoMKgwqDCoMKgwqDCoCByZXR1cm4gYnVmZgo+ID4gwqAK
-PiA+IC3CoMKgwqAgZGVmIGdldF9taW5pbXVuX3R5cGUoc2VsZik6Cj4gPiArwqDCoMKgIGRlZiBf
-X2dldF9ub25fc3RvcmVkX2VudnMoc2VsZikgLT4gbGlzdFtzdHJdOgo+ID4gK8KgwqDCoMKgwqDC
-oMKgIHJldHVybiBbIGUgZm9yIGUgaW4gc2VsZi5lbnZzIGlmIGUgbm90IGluIHNlbGYuZW52X3N0
-b3JlZAo+ID4gXQo+ID4gKwo+ID4gK8KgwqDCoCBkZWYgX19nZXRfZW51bV9lbnZzX2NvbnRlbnQo
-c2VsZikgLT4gbGlzdFtzdHJdOgo+ID4gK8KgwqDCoMKgwqDCoMKgIGJ1ZmYgPSBbXQo+ID4gK8Kg
-wqDCoMKgwqDCoMKgIGZpcnN0ID0gVHJ1ZQo+ID4gK8KgwqDCoMKgwqDCoMKgICMgV2UgZmlyc3Qg
-cGxhY2UgZW52IHZhcmlhYmxlcyB0aGF0IGhhdmUgYSB1NjQgc3RvcmFnZS4KPiA+ICvCoMKgwqDC
-oMKgwqDCoCAjIFRob3NlIGFyZSBsaW1pdGVkIGJ5IE1BWF9IQV9FTlZfTEVOLCBvdGhlciB2YXJp
-YWJsZXMKPiA+ICvCoMKgwqDCoMKgwqDCoCAjIGFyZSByZWFkIG9ubHkgYW5kIGRvbid0IHJlcXVp
-cmUgYSBzdG9yYWdlLgo+ID4gK8KgwqDCoMKgwqDCoMKgIHVuc3RvcmVkID0gc2VsZi5fX2dldF9u
-b25fc3RvcmVkX2VudnMoKQo+ID4gK8KgwqDCoMKgwqDCoMKgIGZvciBlbnYgaW4gbGlzdChzZWxm
-LmVudl9zdG9yZWQpICsgdW5zdG9yZWQ6Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBpZiBm
-aXJzdDoKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgYnVmZi5hcHBlbmQoIlx0
-JXMlcyA9IDAsIiAlIChlbnYsCj4gPiBzZWxmLmVudW1fc3VmZml4KSkKPiA+ICvCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqAgZmlyc3QgPSBGYWxzZQo+ID4gK8KgwqDCoMKgwqDCoMKgwqDC
-oMKgwqAgZWxzZToKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgYnVmZi5hcHBl
-bmQoIlx0JXMlcywiICUgKGVudiwgc2VsZi5lbnVtX3N1ZmZpeCkpCj4gCj4gVGhlICI9IDAiIGFz
-c2lnbm1lbnQgZm9yIHRoZSBmaXJzdCBlbnVtIGlzIG5vdCByZXF1aXJlZCByaWdodD8KPiBQZXJo
-YXBzIHlvdSBjYW4gZ2V0IHJpZCBvZiB0aGUgJ2ZpcnN0IiB0aGluZ3ksIGFuZCBqdXN0IGRvCj4g
-Cj4gZm9yIGVudiBpbiBsaXN0KHNlbGYuZW52X3N0b3JlZCkgKyB1bnN0b3JlZDoKPiDCoMKgwqAg
-YnVmZi5hcHBlbmQoIlx0JXMlcywiICUgKGVudiwgc2VsZi5lbnVtX3N1ZmZpeCkpCj4gCgpSaWdo
-dCwgdGhhdCdzIGNvdmVyZWQgYnkgdGhlIHN0YW5kYXJkLCB3ZSBjb3VsZCBqdXN0IHJlbW92ZSBp
-dC4KCj4gPiArwqDCoMKgwqDCoMKgwqAgbWF0Y2ggdW5pdDoKPiA+ICvCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgIGNhc2UgInVzIjoKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgdmFs
-dWUgKj0gMTAwMAo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgY2FzZSAibXMiOgo+ID4gK8Kg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB2YWx1ZSAqPSAxMDAwMDAwCj4gPiArwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoCBjYXNlICJzIjoKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqAgdmFsdWUgKj0gMTAwMDAwMDAwMAo+IAo+IFNpbmNlIHdoZW4gZGlkIFB5dGhvbiBoYXZl
-IHRoaXM/IE5pY2UhCgpJIHRoaW5rIGl0IHdhcyAzLjEwIC4gSG9uZXN0bHksIGl0IGhhc24ndCBo
-YWQgaXQgZm9yIHdheSB0b28gbG9uZyEKClRoYW5rcywKR2FicmllbGUK
+This series adds multi-stream support for Cadence CSI2RX and TI CSI2RX
+SHIM drivers.
+
+The first patch is not strictly related to multistream support
+
+PATCH 01 :    Remove word size alignment restriction on frame width
+
+PATCH 02-07:  Support multiple DMA contexts/video nodes in TI CSI2RX
+PATCH 08-09:  Use get_frame_desc to propagate virtual channel
+              information across Cadence and TI CSI-RX subdevs
+PATCH 10-11:  Use new multi-stream APIs across the drivers to support
+              multiplexed cameras from sources like UB960 (FPDLink)
+PATCH 12:     Optimize stream on by submitting all queued buffers to DMA
+PATCH 13:     Change the drain architecture to support multi-stream
+PATCH 14:     Use wait for completion barrier APIs to ensure clean
+              stream stop
+
+Testing for this series has been done on top of media tree with 4x IMX219
+camera modules connected to TI's AM62A using V3 Link fusion mini board.
+
+Overlay and defconfig changes for the same can be found below:
+https://github.com/RISHI27-dot/linux/commits/u/multistream_v5/
+
+v4l2-compliance results:
+https://gist.github.com/Rishikesh-D/27cb682fd0e16a383552485ef899b895
+
+This patch series depends on:
+https://lore.kernel.org/all/20250811-probe_fixes-v4-0-aae22290f1d0@ideasonboard.com/#t
+
+---
+Changes in v5:
+
+# New patches in v5:
+
+[PATCH v5 01/14] media: ti: j721e-csi2rx: Remove word size alignment
+[PATCH v5 14/14] media: ti: j721e-csi2rx: Wait for the last drain
+
+# Changes in patches from v4:
+
+[PATCH v4 01/12] dt-bindings: media: ti,j721e-csi2rx-shim: Support 32 dma chans
+- No change
+[PATCH v4 02/12] media: ti: j721e-csi2rx: separate out device and context
+- No change
+[PATCH v4 03/12] media: ti: j721e-csi2rx: prepare SHIM code for multiple contexts
+- No change
+[PATCH v4 04/12] media: ti: j721e-csi2rx: allocate DMA channel based on context index
+- No change
+[PATCH v4 05/12] media: ti: j721e-csi2rx: add a subdev for the core device
+- No change
+[PATCH v4 06/12] media: ti: j721e-csi2rx: get number of contexts from device tree
+- No change
+[PATCH v4 07/12] media: cadence: csi2rx: add get_frame_desc wrapper
+- No change
+[PATCH v4 08/12] media: ti: j721e-csi2rx: add support for processing virtual channels
+- No change
+[PATCH v4 09/12] media: cadence: csi2rx: add multistream support
+- No change
+[PATCH v4 10/12] media: ti: j721e-csi2rx: add multistream support
+- Serialize stream stop
+- Remove the break statement to avoid early return in the loop, as
+  reported by Sjoerd
+[PATCH v4 11/12] media: ti: j721e-csi2rx: Submit all available buffers
+- Delete the list node on DMA error to avoid kernel panic
+[PATCH v4 12/12] media: ti: j721e-csi2rx: Change the drain architecture for multistream
+- Mention about next frame after drain being bogus
+
+Link to (v4):
+  https://lore.kernel.org/all/20250514112527.1983068-1-r-donadkar@ti.com/
+
+Changes in v4:
+
+[PATCH 01/13] dt-bindings: media: ti,j721e-csi2rx-shim: Support 32 dma chans
+  - No change
+[PATCH 02/13] media: ti: j721e-csi2rx: separate out device and context
+  - Add ctx identifier in the dev_err() message
+  - No change
+[PATCH 03/13] media: ti: j721e-csi2rx: prepare SHIM code for multiple contexts
+  - Reduced the name string lenght from 32 chars to 5 chars
+[PATCH 04/13] media: ti: j721e-csi2rx: allocate DMA channel based on context index
+  - No change
+[PATCH 05/13] media: ti: j721e-csi2rx: add a subdev for the core device
+  - Add .enum_mbus_code callback
+  - Replace statically allocated struct with a global static const struct
+    v4l2_mbus_framefmt and used that in the _init_state() function
+[PATCH 06/13] media: ti: j721e-csi2rx: get number of contexts from device tree
+  - Fix the drain buffer being leaked
+  - If the shows more number of ctx than the TI_CSI2RX_MAX_CTX, return an error
+    instead of warning
+[PATCH 07/13] media: cadence: csi2rx: add get_frame_desc wrapper
+  - No change
+[PATCH 08/13] media: ti: j721e-csi2rx: add support for processing virtual channels
+  - Call ti_csi2rx_get_vc() only once on first stream start and cache the VC data in
+    the driver, use the corresponding VC in all subsequent stream starts.
+[PATCH 09/13] media: cadence: csi2rx: Use new enable stream APIs
+[PATCH 10/13] media: cadence: csi2rx: Enable multi-stream support
+  - Squash the above two patches into
+    [PATCH v4 09/12] media: cadence: csi2rx: add multistream support
+  - Use already obtained csi2rx->source_pad in enable_streams() and
+    disable_streams() call
+  - Update commit message with the reason for using a custom helper for s_stream
+    instead of v4l2_subdev_s_stream_helper()
+  - Use v4l2_get_link_freq() variant that takes pad of the source as its first
+    argument instead of the one that takes v4l2_ctrl_handler
+  - Call v4l2_get_link_freq() with bpp = 0 to prevent fallback to V4L2_CID_PIXEL_RATE
+    in multi-stream case
+  - Use lock guards to simplify error handling
+  - Call csi2rx_update_vc_select() at first stream start before enabling the controller
+[PATCH 11/13] media: ti: j721e-csi2rx: add multistream support
+  - No change
+[PATCH 12/13] media: ti: j721e-csi2rx: Submit all available buffers
+  - No change
+[PATCH 13/13] media: ti: j721e-csi2rx: Change the drain architecture for multistream
+  - Fix checkpatch warning
+  - Change commit message to give a better description of the patch
+
+Link to (v3):
+  https://lore.kernel.org/all/20250417065554.437541-1-r-donadkar@ti.com/
+
+Changes in v3:
+
+- Drop [PATCH v2 01/13] media: cadence: csi2rx: Support runtime PM from
+  v2, support for runtime PM will be added in a separate series:
+  https://lore.kernel.org/all/20250224-ti_csi_pm-v1-0-8f8c29ef646d@ideasonboard.com/
+- Change the drain architecture to prevent FIFO overflow in multistream
+  usecases.
+- With the new drain architecture, we don't need the the driver to wait
+  for userspace to start streaming on all "actively routed" video nodes
+  before starting streaming on the source. So, revert back to the capture
+  architecture where streams can be started and stopped independent
+  to each other.
+
+Link to (v2):
+  https://lore.kernel.org/r/20240627-multistream-v2-0-6ae96c54c1c3@ti.com
+
+Changes in v2:
+
+- Change the multi-camera capture architecture to be similar to that of
+  Tomi's RPi5 FE series, where the driver will wait for userspace to
+  start streaming on all "actively routed" video nodes before starting
+  streaming on the source. This simplifies things a lot from the HW
+  perspective, which might run into deadlocks due to a shared FIFO
+  between multiple DMA channels.
+
+- Drop a few fixes that were posted separately and are already merged
+- Fix dtschema warnings reported by Rob on [02/13]
+- Fix warnings for uninitialized `used_vc` variable in cdns-csi2rx.c
+- Return -EBUSY if someone updates routes for j721e-csi2rx subdev while
+  streaming
+- Only allow single-streams to be routed to the source pads (linked to
+  video nodes) of the j721e-csi2rx device
+- Squash the patches marked "SQUASH" in the v1 RFC series
+
+Link to RFC (v1):
+https://lore.kernel.org/r/20240222-multistream-v1-0-1837ed916eeb@ti.com
+
+Jai Luthra (7):
+  dt-bindings: media: ti,j721e-csi2rx-shim: Support 32 dma chans
+  media: ti: j721e-csi2rx: separate out device and context
+  media: ti: j721e-csi2rx: add a subdev for the core device
+  media: ti: j721e-csi2rx: add support for processing virtual channels
+  media: cadence: csi2rx: add multistream support
+  media: ti: j721e-csi2rx: add multistream support
+  media: ti: j721e-csi2rx: Submit all available buffers
+
+Pratyush Yadav (4):
+  media: ti: j721e-csi2rx: prepare SHIM code for multiple contexts
+  media: ti: j721e-csi2rx: allocate DMA channel based on context index
+  media: ti: j721e-csi2rx: get number of contexts from device tree
+  media: cadence: csi2rx: add get_frame_desc wrapper
+
+Rishikesh Donadkar (3):
+  media: ti: j721e-csi2rx: Remove word size alignment on frame width
+  media: ti: j721e-csi2rx: Change the drain architecture for multistream
+  media: ti: j721e-csi2rx: Wait for the last drain completion
+
+ .../bindings/media/ti,j721e-csi2rx-shim.yaml  |   39 +-
+ drivers/media/platform/cadence/cdns-csi2rx.c  |  372 ++++--
+ .../platform/ti/j721e-csi2rx/j721e-csi2rx.c   | 1002 ++++++++++++-----
+ 3 files changed, 1049 insertions(+), 364 deletions(-)
+
+-- 
+2.34.1
 
 
