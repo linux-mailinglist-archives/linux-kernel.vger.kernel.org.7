@@ -1,90 +1,269 @@
-Return-Path: <linux-kernel+bounces-784576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF122B33DC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:17:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6657B33DC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:16:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4C821A829A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:17:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5835F48690B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:16:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BCFC2E54D5;
-	Mon, 25 Aug 2025 11:16:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED582DF3FB;
+	Mon, 25 Aug 2025 11:16:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qrWvt8LS"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mUd114hu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 133352E54AF
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 11:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609392DBF46;
+	Mon, 25 Aug 2025 11:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756120608; cv=none; b=c0wBBJ+rqqTzltATNtDaS5rs3M2VAGHdhdvp0idA/8BtGy+eU0RbYOphZ3w+E5yeDwoCLI03LR32++fBw2FG43evKOasbv4wriCzcCklHVvHwqOMMBwcXTcaNJ0vL3pjwUILaa8UiruME65dcUEIBti+F4qW36zSqtdIK0T/Wt0=
+	t=1756120604; cv=none; b=mIIykVtNaBNAAOROx1v9XJxczXq5C9XoGi+0tbudUh1/Gzye5nS6n3gnoOU5KoXPw5AE9BJTENGLjnoyJG02gZTIunz3NTCf11cDnQiTUEIhsyLkJWwPKy2hg48LLxbYgjcFeKeki3nUpi8Y1h42H7NnrZTM8PeVdKUiPhValss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756120608; c=relaxed/simple;
-	bh=SPJR7uJhGInz2KZGEddoMGVHGiCZrKkJviN5g68Z/ss=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=svTz/iLZrTIYSOrM3a5IT/7tBSlD+8eMBl6CbmWvQt+AKL+ovWRHeCmGPlKde5z0cP5xJb5WUVyk81P9sSZK8Fgg6OuhPBvodYW9xbUSu9EAFPwQnZklpseOGKeGFa1Or9P/XlULplOTyMl9Pmot4fkfGDdQX4HJr2RP+LVu6zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qrWvt8LS; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Rrl9UkyUdItDNcAw/xne76M1VkKyzNn65MaBaQl4+bY=; b=qrWvt8LS1VSqG3guB31QEa6+W3
-	DmMrTK3TCmfxI+GKCA5dUYZAcGtNU/8Xxu4Zsbn8YONkr/MdEI1r/V8dwuQoBP/8RAyMilZ6i0THs
-	CnciEapdlkCA/AYniymoc9NA8jpWtMDze+qE5NNhJ2xSN4mf7BfxQkpJq3rqE9qs8zEO7rN8/9qq2
-	kgHR48zNhgSMmf8bQbkWR3L7RJTwdmqI9Bcqftv5sFVG72RzsXGpc8GyyPL0adeK2GGYiyMkof/xM
-	7sPlnRgXxEAzB/3Xt7ZikH4kevq7oF5xTUK1NpSJkvGMFClIWj/svkGPHJ9XFx1NuE7Dd8z7kaMOF
-	CwjFW/eg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uqVBb-0000000CF5M-142f;
-	Mon, 25 Aug 2025 11:16:28 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 100EB3002ED; Mon, 25 Aug 2025 13:16:27 +0200 (CEST)
-Date: Mon, 25 Aug 2025 13:16:27 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Leon Romanovsky <leon@kernel.org>, linux-kernel@vger.kernel.org,
-	Steve Wahl <steve.wahl@hpe.com>, Borislav Petkov <bp@alien8.de>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	srikar@linux.vnet.ibm.com, hca@linux.ibm.com
-Subject: Re: [PATCH v5] sched/fair: Use sched_domain_span() for
- topology_span_sane()
-Message-ID: <20250825111627.GW3245006@noisy.programming.kicks-ass.net>
-References: <20250715040824.893-1-kprateek.nayak@amd.com>
- <20250825091910.GT3245006@noisy.programming.kicks-ass.net>
- <5940cd15-b207-416a-b4e4-b5953f4cbf47@amd.com>
+	s=arc-20240116; t=1756120604; c=relaxed/simple;
+	bh=csdrdzRFyjcOF+eH27VJ8NpHjrGrWqDAvSSRKKFYK3U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mta7BnOo/TsaBIoEDdTyMyD1weWcxV+TQkEPW92cQfRj8M3rPbXA7qALbzLwTEnfUTIQwkbq/UKKkzVuBqLR8xgSj1zMvJzn26hyyW3FoJtRRgcItPUGaYOJ3qODIJV7MQYqU2HVb+cILXukh8HsZAOX28TxfOJpi3P76fNckEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mUd114hu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EECDFC4CEED;
+	Mon, 25 Aug 2025 11:16:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756120604;
+	bh=csdrdzRFyjcOF+eH27VJ8NpHjrGrWqDAvSSRKKFYK3U=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=mUd114hudPE8EoIIdcJ4lVTRQ7oBdCBGnqtyPYqH8Ctco5vyN0NnWRXZYi7U7oam9
+	 tdqKNPhulXDdHg1XDYN4prQuN7QZqdbq9SvLEO6DnnBtjSLmNa0/UDQ7t2vkgzKwQy
+	 +iLwUmvq8Ym8sW74QJWYwUtB2bWgIP7+LhZGfAwP1kaHH9CWIZNFkeemBmDWglXBg/
+	 nE8Cg74UkfPmoLee8AVQL5ikc+XtVlLLu+/ivKl804C3q5N7MquUtmG3mcxKQAWXab
+	 dckwO7PlsfOJaOpmX7fY4fu+4PNPO4Xv7sAwE4JwP5ccwipolQPbOlH6CkPq8E0VDA
+	 uKVVdndtZcSeg==
+Date: Mon, 25 Aug 2025 12:16:32 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, David Lechner <dlechner@baylibre.com>, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Marcelo
+ Schmitt <marcelo.schmitt1@gmail.com>, Marcelo Schmitt
+ <Marcelo.Schmitt@analog.com>, Ceclan Dumitru <dumitru.ceclan@analog.com>,
+ Jonathan Santos <Jonathan.Santos@analog.com>, Dragos Bogdan
+ <dragos.bogdan@analog.com>
+Subject: Re: [PATCH v1 2/2] iio: adc: Add basic support for MAX14001
+Message-ID: <20250825121632.605b50a2@jic23-huawei>
+In-Reply-To: <2919a00f86c1188b83446853bcb9740138d70f44.1755778212.git.marilene.agarcia@gmail.com>
+References: <cover.1755778211.git.marilene.agarcia@gmail.com>
+	<2919a00f86c1188b83446853bcb9740138d70f44.1755778212.git.marilene.agarcia@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5940cd15-b207-416a-b4e4-b5953f4cbf47@amd.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 25, 2025 at 04:17:52PM +0530, K Prateek Nayak wrote:
+On Thu, 21 Aug 2025 10:39:07 -0300
+Marilene Andrade Garcia <marilene.agarcia@gmail.com> wrote:
 
-> The above helpers may need guarding behind CONFIG_SCHED_{SMT,CLUSTER,MC}
-> if I'm not mistaken. Possibility for some unification and cleanup with:
+> The MAX14001/MAX14002 are configurable, isolated 10-bit ADCs for
+> multi-range binary inputs. Besides the ADC readings, the MAX14001/MAX14002
+> offers more features, like a binary comparator, a filtered reading that
+> can provide the average of the last 2, 4, or 8 ADC readings, and an inrush
+> comparator that triggers the inrush current. There is also a fault feature
+> that can diagnose seven possible fault conditions. And an option to select
+> an external or internal ADC voltage reference.
 > 
+> Add basic support for MAX14001/MAX14002 with the following features:
+> - Raw ADC reading.
+> - Filtered ADC average reading with the default configuration.
+> 
+> Signed-off-by: Marilene Andrade Garcia <marilene.agarcia@gmail.com>
 
-> Thoughts?
+Given the discussion on the cover letter, perhaps this will need to be
+merged with the earlier set. I'll do a quick review anyway!
 
-I hate we need __maybe_unused on static inline functions, but yeah, that
-might be nicer.
+Fairly minor comments inline. This is in a pretty good state for a v1.
 
-Can you fold the lot and stick that nice Changelog on? Then I'll get it
-into sched/core and we can forget all about this stuff.
+Thanks,
+
+Jonathan
+
+
+> ---
+>  MAINTAINERS                |   1 +
+>  drivers/iio/adc/Kconfig    |  10 ++
+>  drivers/iio/adc/Makefile   |   1 +
+>  drivers/iio/adc/max14001.c | 213 +++++++++++++++++++++++++++++++++++++
+>  4 files changed, 225 insertions(+)
+>  create mode 100644 drivers/iio/adc/max14001.c
+
+> diff --git a/drivers/iio/adc/max14001.c b/drivers/iio/adc/max14001.c
+> new file mode 100644
+> index 000000000000..fb79f3b81e0c
+> --- /dev/null
+> +++ b/drivers/iio/adc/max14001.c
+> @@ -0,0 +1,213 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * MAX14001/MAX14002 SPI ADC driver
+> + *
+> + * Copyright (c) 2025 Marilene Andrade Garcia <marilene.agarcia@gmail.com>
+> + *
+> + * Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/MAX14001-MAX14002.pdf
+> + */
+> +
+> +#include <asm/unaligned.h>
+
+As per build bot this doesn't work on modern kernels.  linux/unaligned.
+
+> +#include <linux/bitfield.h>
+> +#include <linux/bitrev.h>
+> +#include <linux/module.h>
+
+various headers missing. Please follow approximate include what you use principles.
+There are some headers that are obviously going to be included by another one
+because they cannot stand alone, so for those you can include just the parent.
+E.g. mutex.h not mutex_types.h but in most other cases all includes with definitions
+that are used in this file should be here.
+
+> +#include <linux/spi/spi.h>
+> +#include <linux/iio/iio.h>
+> +#include <linux/regulator/consumer.h>
+> +
+> +/* MAX14001 registers definition */
+> +#define MAX14001_REG_ADC				0x00
+> +#define MAX14001_REG_FADC				0x01
+> +#define MAX14001_REG_FLAGS				0x02
+> +#define MAX14001_REG_FLTEN				0x03
+> +#define MAX14001_REG_THL				0x04
+> +#define MAX14001_REG_THU				0x05
+> +#define MAX14001_REG_INRR				0x06
+> +#define MAX14001_REG_INRT				0x07
+> +#define MAX14001_REG_INRP				0x08
+> +#define MAX14001_REG_CFG				0x09
+> +#define MAX14001_REG_ENBL				0x0A
+> +#define MAX14001_REG_ACT				0x0B
+> +#define MAX14001_REG_WEN				0x0C
+> +
+> +/* MAX14001 CONTROL values*/
+
+Missing space before */
+
+They are going in the WR field below I'd rename that MASK_W
+then you can just 1 and 0 with their boolean meaning and
+not bother with these defines.
+
+> +#define MAX14001_REG_WRITE				0x1
+> +#define MAX14001_REG_READ				0x0
+> +
+> +/* MAX14001 MASKS */
+The comment isn't very useful.  Masks of what?  These seems to be
+SPI message related.  Also no point in prefixing comments
+with MAX14001 when the naming makes that clear.
+
+
+> +#define MAX14001_MASK_ADDR				GENMASK(15, 11)
+> +#define MAX14001_MASK_WR				BIT(10)
+> +#define MAX14001_MASK_DATA				GENMASK(9, 0)
+> +
+> +enum max14001_chip_model {
+> +	max14001,
+> +	max14002,
+> +};
+> +
+> +struct max14001_chip_info {
+> +	const char *name;
+> +};
+> +
+> +struct max14001_state {
+> +	const struct max14001_chip_info *chip_info;
+> +	struct spi_device *spi;
+> +	int vref_mv;
+> +
+> +	__be16 rx_buffer __aligned(IIO_DMA_MINALIGN);
+> +	__be16 tx_buffer;
+
+I'd add a comment on these to mention they are also bit
+reversed after we've flipped the bytes to be in the right order.
+
+> +};
+> +
+> +static struct max14001_chip_info max14001_chip_info_tbl[] = {
+> +	[max14001] = {
+> +		.name = "max14001",
+> +	},
+> +	[max14002] = {
+> +		.name = "max14002",
+> +	},
+> +};
+> +
+> +static int max14001_spi_read(struct max14001_state *st, u16 reg, int *val)
+
+The register map is large enough I'd consider using a custom regmap
+as then we can take advantage of caching and the field manipulation
+functions that we get from regmap.
+
+> +{
+> +	struct spi_transfer xfer[] = {
+> +		{
+> +			.tx_buf = &st->tx_buffer,
+> +			.len = sizeof(st->tx_buffer),
+> +			.cs_change = 1,
+> +		},
+> +		{
+> +			.rx_buf = &st->rx_buffer,
+> +			.len = sizeof(st->rx_buffer),
+> +		},
+> +	};
+> +	int ret;
+> +
+
+No locking? Given use of shared buffers I would suggest you need
+a mutex here, the bus lock won't be enough.
+
+> +	st->tx_buffer = FIELD_PREP(MAX14001_MASK_ADDR, reg) |
+> +			FIELD_PREP(MAX14001_MASK_WR, MAX14001_REG_READ);
+> +	st->tx_buffer = bitrev16(st->tx_buffer);
+> +
+> +	ret = spi_sync_transfer(st->spi, xfer, ARRAY_SIZE(xfer));
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	st->rx_buffer = bitrev16(be16_to_cpu(st->rx_buffer));
+> +	*val = FIELD_GET(MAX14001_MASK_DATA, st->rx_buffer);
+> +
+> +	return 0;
+> +}
+
+
+> +static const struct spi_device_id max14001_id_table[] = {
+> +	{ "max14001", (kernel_ulong_t)&max14001_chip_info_tbl[max14001] },
+> +	{ "max14002", (kernel_ulong_t)&max14001_chip_info_tbl[max14002] },
+> +	{}
+
+Trivial but for consistency
+	{ }
+
+which is the preferred style in IIO.  There isn't any general agreement
+across the kernel so I picked a choice at random a while back as any choice
+is better than a mix like we have here.
+
+> +};
+> +MODULE_DEVICE_TABLE(spi, max14001_id_table);
+> +
+> +static const struct of_device_id max14001_of_match[] = {
+> +	{ .compatible = "adi,max14001",
+> +	  .data = &max14001_chip_info_tbl[max14001], },
+> +	{ .compatible = "adi,max14002",
+> +	  .data = &max14001_chip_info_tbl[max14002], },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, max14001_of_match);
+
 
