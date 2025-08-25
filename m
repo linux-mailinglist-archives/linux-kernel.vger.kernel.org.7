@@ -1,144 +1,123 @@
-Return-Path: <linux-kernel+bounces-785523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D581CB34BF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:31:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD547B34C13
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:32:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E27D21A823A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:31:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B3097B3A3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3293288CA6;
-	Mon, 25 Aug 2025 20:30:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F64123BCF7;
+	Mon, 25 Aug 2025 20:32:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tF4bIDmM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CPaV73yP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B578143C61;
-	Mon, 25 Aug 2025 20:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D870393DE3;
+	Mon, 25 Aug 2025 20:32:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756153853; cv=none; b=PbXMmvfiGtxBWhsm+htiy3paNTh50pr/JXDaLxT9CKFcVb4rimsPIYp35pSkGwR52yDEiRMmknbm8Gd3mwzb3IVEKX1q8K7/sfld5LFRksR4gp0C620a4uBz0EwISxT+BfJizxXzmNuC1VVree4yu0saZgzNFhFM9zcKX2BT7O0=
+	t=1756153955; cv=none; b=oTrBiaD/S+uUkceq7FvW3EYC6CAIsx7kntty8US2bYt5SFmjTK7lJkwSzZaGMXaPRaCCRWbcQw5ujo1iMY7hD1vm+rCyFzXJ8Lmr/lZf6c9ZvMaqTw3Cnee/C8ZHBNNm7XqIe07Hbc2a4GZV/rkqZVPXjXKD+xf248AD//KQB8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756153853; c=relaxed/simple;
-	bh=8UDkz5+NJHjlqMVM+f8LGxpXdVjoPt8deai+stcazdA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=D6xoyKo/Vp++EL/u5VaHCsc5PmH5UqLVeqz0EH+6BaWiQlc736ACJUmLwpvlSLsI/ss8yFjD0jzeCqiAUsTxttmAi/DOCcXHfNZRusiVG77zmGdwdex+L+QmCQwuZktnz7rocrcZqH3oLX3i5r1eDS8nIHNNlsipfAke0MmWm2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tF4bIDmM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6827CC4CEED;
-	Mon, 25 Aug 2025 20:30:52 +0000 (UTC)
+	s=arc-20240116; t=1756153955; c=relaxed/simple;
+	bh=Ucxf6ONPWnqwGHzIJMurAJvEDHnfQwUW0d4rP7PrkbM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XxoR0kLYzkUaKXShkg51LmlTQ5vOUDAgLh+ggCxbH7rYxUt64xX44j0dOmq6hq4GXRRZyiL5KvCdoB4UecekmqTjW4W4SE8f4ojqaonc0jKqNBSVF/XTe1enkZesl7ssvsFaNqQNrQ53IdyVdv62vC7k6faWyB4a45YhWdpinG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CPaV73yP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75CECC4CEED;
+	Mon, 25 Aug 2025 20:32:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756153852;
-	bh=8UDkz5+NJHjlqMVM+f8LGxpXdVjoPt8deai+stcazdA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=tF4bIDmMrI43+36ns282EzHgvHkI1i4YU+8BiDurmsJWEvkIFY9tKfNWG7zi+5mEi
-	 mDj8DCkKcqIgvxoY4k5kGBu2IHL0cJNNjj1gNRllclvDGlVxUbxrxck30YkO8OhAg1
-	 YijnnsbnnRY8DQM2+QLc9Qt1p9Sn35QY/NTdncXDbhFeSzPfG3WtaYLwpmS0deC/tN
-	 PN8ARJ7M1uzf8j8gK6Ymr1BMDqvy7dfy4m9KTi7ILTRvaTmqzmx2d/eA3+8GSq5Khb
-	 pu98XSpDRMOh1iRkMceIUz2IDK0Sr+spT+Z9fMI1w3TgOyQ0F3sj6E5lZkLpQROCLL
-	 HJ8rJD+TbgFQA==
-Date: Mon, 25 Aug 2025 15:30:51 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Hans Zhang <18255117159@163.com>
-Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/7] PCI: Replace short msleep() calls with more
- precise delay functions
-Message-ID: <20250825203051.GA781401@bhelgaas>
+	s=k20201202; t=1756153955;
+	bh=Ucxf6ONPWnqwGHzIJMurAJvEDHnfQwUW0d4rP7PrkbM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=CPaV73yPqybMX1kBLGC5zIfe9FgKTCfYnlJ2he/y1tEcHv/LnPkByU9PHTS2778hK
+	 2u9QSDSDZXr0BUtNzxXgXEPf7mFGH9J3LB2sKrdgzbLFQWQggoxkf2ZoBQ1AGx4tW/
+	 5PtwmsoZ3fiE3ZCgSAaTukTvZy7xic1CP332tZN54pIhT5T5varuG6pIQvizU8rdaW
+	 rNHdquu/K0tTeymVtwnBYp/43CJyr2V1CbFcFXzGlisxY7KKa4YwjPl8jrkLj8ToRw
+	 n8oSKQlh+4hv4l2Hh2FzD4r9AG7l4uHk5kZHE+8G60UzSiXC0cvRVIuCGKtOIUrhML
+	 mQM9ltQUDsP5Q==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko@kernel.org>,
+	stable@vger.kernel.or,
+	Chris Fenner <cfenn@google.com>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	linux-kernel@vger.kernel.org (open list),
+	keyrings@vger.kernel.org (open list:KEYS/KEYRINGS),
+	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
+Subject: [PATCH] tpm: Disable TPM2_TCG_HMAC by default
+Date: Mon, 25 Aug 2025 23:32:23 +0300
+Message-Id: <20250825203223.629515-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <155f9f4f-45e4-45ea-85c2-de67115bd12c@163.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 25, 2025 at 12:05:26AM +0800, Hans Zhang wrote:
-> On 2025/8/23 00:46, Bjorn Helgaas wrote:
-> > On Fri, Aug 22, 2025 at 11:59:01PM +0800, Hans Zhang wrote:
-> > > This series replaces short msleep() calls (less than 20ms) with more
-> > > precise delay functions (fsleep() and usleep_range()) throughout the
-> > > PCI subsystem.
-> > > 
-> > > The msleep() function with small values can sleep longer than intended
-> > > due to timer granularity, which can cause unnecessary delays in PCI
-> > > operations such as link status checking, reset handling, and hotplug
-> > > operations.
+After reading all the feedback, right now disabling the TPM2_TCG_HMAC
+is the right call.
 
-> > I would split this a little differently:
-> > 
-> >    - Add #defines for values from PCIe base spec.  Make the #define
-> >      value match the spec value.  If there's adjustment, e.g.,
-> >      doubling, do it at the sleep site.  Adjustment like this seems a
-> >      little paranoid since the spec should already have some margin
-> >      built into it.
+Other views discussed:
 
-> patch 0001 I intend to modify it as follows:
-> 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index b0f4d98036cd..fb4aff520f64 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -4963,11 +4963,8 @@ void pci_reset_secondary_bus(struct pci_dev *dev)
->         ctrl |= PCI_BRIDGE_CTL_BUS_RESET;
->         pci_write_config_word(dev, PCI_BRIDGE_CONTROL, ctrl);
-> 
-> -       /*
-> -        * PCI spec v3.0 7.6.4.2 requires minimum Trst of 1ms.  Double
-> -        * this to 2ms to ensure that we meet the minimum requirement.
-> -        */
-> -       msleep(2);
-> +       /* Wait for the reset to take effect */
-> +       fsleep(PCI_T_RST_SEC_BUS_DELAY_US);
+A. Having a kernel command-line parameter or refining the feature
+   otherwise. This goes to the area of improvements.  E.g., one
+   example is my own idea where the null key specific code would be
+   replaced with a persistent handle parameter (which can be
+   *unambigously* defined as part of attestation process when
+   done correctly).
 
-This mixes 3 changes:
+B. Removing the code. I don't buy this because that is same as saying
+   that HMAC encryption cannot work at all (if really nitpicking) in
+   any form. Also I disagree on the view that the feature could not
+   be refined to something more reasoable.
 
-  1) Add #define PCI_T_RST_SEC_BUS_DELAY_US
+Also, both A and B are worst options in terms of backporting.
 
-  2) Reduce overall delay from 2ms to 1ms
+Thuss, this is the best possible choice.
 
-  3) Convert msleep() to fsleep()
+Cc: stable@vger.kernel.or # v6.10+
+Fixes: d2add27cf2b8 ("tpm: Add NULL primary creation")
+Suggested-by: Chris Fenner <cfenn@google.com>
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+PS. I did not post this last week because that would have been most
+likely the most counter-productive action to taken. It's better
+sometimes to take a bit of time to think (which can be seen that
+I've given also more reasonable weight to my own eaerlier
+proposals).
 
-There's no issue at all with 1), and I don't know if it's really worth
-doing 2), so I would do this:
+I also accept further changes, if there is e.g., inconsistency
+with TCG_TPM_HMAC setting or similar (obviously).
+---
+ drivers/char/tpm/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  - msleep(2);
-  + msleep(2 * PCI_T_RST_SEC_BUS_DELAY_MS);
+diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
+index dddd702b2454..3e4684f6b4af 100644
+--- a/drivers/char/tpm/Kconfig
++++ b/drivers/char/tpm/Kconfig
+@@ -29,7 +29,7 @@ if TCG_TPM
+ 
+ config TCG_TPM2_HMAC
+ 	bool "Use HMAC and encrypted transactions on the TPM bus"
+-	default X86_64
++	default n
+ 	select CRYPTO_ECDH
+ 	select CRYPTO_LIB_AESCFB
+ 	select CRYPTO_LIB_SHA256
+-- 
+2.39.5
 
-Then we can consider the question of whether "msleep(2)" is misleading
-to the reader because the actual delay is always > 20ms.  If that's
-the case, I would consider a separate patch like this:
-
-  - msleep(2 * PCI_T_RST_SEC_BUS_DELAY_MS);
-  + fsleep(2 * PCI_T_RST_SEC_BUS_DELAY_US);
-
-to make the stated intent of the code closer to the actual behavior.
-If we do this, the commit log should include concrete details about
-why short msleep() doesn't work as advertised.
-
-> > I'm personally dubious about the places you used usleep_range().
-> > These are low-frequency paths (rcar PHY ready, brcmstb link up,
-> > hotplug command completion, DPC recover) that don't seem critical.  I
-> > think they're all using made-up delays that don't come from any spec
-> > or hardware requirement anyway.  I think it's hard to make an argument
-> > for precision here.
-> 
-> My initial understanding was the same. There was no need for such precision
-> here. Then msleep will be retained, but only modified to #defines?
-
-The #defines are useful when (1) the value comes from a spec or (2) we
-want to use the same value several places.  Otherwise, the value is
-minimal.
-
-For rcar PHY ready, brcmstb link up, hotplug command completion, DPC
-recover, I don't think either applies, so personally I would probably
-leave them alone (or, if we think short msleep() is just misleading in
-principle, convert them to fsleep()).
-
-Bjorn
 
