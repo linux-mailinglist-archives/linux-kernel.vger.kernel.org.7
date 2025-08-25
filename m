@@ -1,118 +1,125 @@
-Return-Path: <linux-kernel+bounces-784833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBD4DB3423D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:56:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B07CAB34241
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:56:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 893E7188A7BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:55:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07D961898F67
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:55:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89862EFD89;
-	Mon, 25 Aug 2025 13:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C39832F0C66;
+	Mon, 25 Aug 2025 13:48:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="hfgmdoRS"
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="kxVGwWCy"
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6047E293C4E
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 13:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176852F0C44;
+	Mon, 25 Aug 2025 13:48:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756129677; cv=none; b=SBkv8VBNFoV73UXLOdBnHzPHljjtORqbqwmhNFle2gaEZr5RMlqkqal9c45u/UWfM7mk3G+joAs5wAUTnTFOpMm+bEBh6oUhirk6UDG19v+pgbZ5z7JVUVVvcpzRnalaCzQJGw1OwA1AY5lmDt0CsoteiG0Tpqq1fEZ0mz+gH28=
+	t=1756129721; cv=none; b=i90n4m9x0mUF9mnO7mLel0/sQus+HLJSGoYksXtkYlbZonF2cB+UXKc69u7DUhErxoBteOXRMhzzQf5xVg4JEKp2jNBdbHM82U1jjoKZtIyomt5Dy4tCn9cCmDr1ZQObGegYhLdWxaX+v0Ors0UeO5wzzm20m1Hb/xltW4RHFmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756129677; c=relaxed/simple;
-	bh=0g4nfZL06xXfcqQP2ZXeFhZtwkwQeXk3VS6zc+kDK/g=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Sw3fexjYKZ4RXJejabtaAYTvU243jOBZ0nAS1hXrmYEd1Jv4CZo+nnek+GePivtAM2/DuRu0oQjJfK2jRRiSPiVcTKbc9wbqlZb7nP56GTMvyPvN5UJjAcm6hT6XUiDIPWvwFqySv8dARw5j5ZRwNprrwBeh79Zsb6nS7Asq6Yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=hfgmdoRS; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3eb71ce0510so20776205ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 06:47:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1756129674; x=1756734474; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yaJhzYO4iaGPetQog50EhntUWyYduBz9Frmzzr2P5Qo=;
-        b=hfgmdoRSzKpjCpiNql9Lwq6XbXmLMRNwntE8BJy0O0SAFu1eDcv1fjKMmAN/zDohPH
-         JG2mu8IaEnJtxXD908Qr6Htuv3a5M0yGo+LJTMJUREKu3VVu/jfj+5glnFhOKf9ml9MT
-         ZKQb/ZCvZH5SWMC849Kjqb3bu0WlParJWMz3NZU0hq2qzjlpT6rzSKPSjoll+u51mK9P
-         Xh75TZC0vIKPWvyvB74lhX8PVCbOXkNILwMBzygXrLOM14kxwbYOeIusIqZhuXcVNVLH
-         EpkXE+emkjI9G1xKi0QOhsePy8AqN/IH9y5LU0CmcoePPCBzPV85nB0kpLVi//JwcvR9
-         1mxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756129674; x=1756734474;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yaJhzYO4iaGPetQog50EhntUWyYduBz9Frmzzr2P5Qo=;
-        b=aBGX47+aGdI7+CxuP8r26ahytDHDPJT/cFeCMJrZLLvQi9cAjYsEFsliJ6TuIy0eZu
-         8vUcdHUSaK7oZWcjyrsChjf97vHi5jcFsAv5OPWWrpms0SkReTOdON6YfWbbuvhqVqUK
-         hqqkIBzJQZJ3VIYqwT5tbpfPXLjNx6hmh9hCscyFUTZNWziJrgRE+evoD5um1HphO+ZD
-         T3JgMQ30QA+tE6Bov1pa5WdZLYuAPgICQYeh3AINuR4evXNb5sTEtBIW80kL6xHXg7Xp
-         eSWPJ5SzzsjhuKWMNPa0lh0lqy9Bib0UxfYoJUqwO9Dx2DY+LsOZ3hOv+xh8h7UWxiuE
-         GUAg==
-X-Forwarded-Encrypted: i=1; AJvYcCVxEa1ivTHr0JYAjl3JKqE3a+h1RYq29bp3eYFln7C831zROmlBAKdgM9g+lk5vUqp5iFZsAY1+pAUC3eo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxrp1N2Y8HBgIE8kFHbTYLBU1oGsCCbHS72z43WjNhUJWiOOEiS
-	BLVijJCXdUT1Y6HXqlX7m0Tx3wzk/n0ovVhz81XVjRQik8Gyn24vAEFRhHopaU9sifU=
-X-Gm-Gg: ASbGncuUkQlv0ir89KvEOy4S8lp/qNZUzBRf3502GH5L5D50IC+hipr6SG7VhoTeo1j
-	+t0jjj2gsWqZBg4ZICf0C5j1GHQB9qgzRLpcSPpl7UIzxKTkzixsgPpNFXOPnwiF3jetY5jGGJc
-	dQnuzXyZnYwPF1Jpk4/tQ6ebFKdNDvT/Z526RK5MBAWyA64i6+x6Zi7ZC0nZSoZku4BLphHKxZQ
-	aQkZbcFVRq1Ox+WxGDHjz2mtyKwAfnHcTnMEJvfepaobkbIPjwQgs/eZLjsS8+viU7mwK6IHcZB
-	EyjqCZjrqH5iVyPtTAdY6c1hv+Vl95vdhhc6nQvIDmYJwJL8f6rw+Yt+8hgJPppmw4nPbW2a2WM
-	G/unDDy3PwP8Lsw==
-X-Google-Smtp-Source: AGHT+IG9EQPhdHbz8mEGF2jLK140waZfJrbHSx+bzTm1sOM18L8qwaMMO1zcVhW/7At0bhqvqh7H7g==
-X-Received: by 2002:a05:6e02:184c:b0:3ec:40cf:2d37 with SMTP id e9e14a558f8ab-3ec40cf2ed7mr54279585ab.31.1756129666261;
-        Mon, 25 Aug 2025 06:47:46 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3eb18693d2esm38348625ab.42.2025.08.25.06.47.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 06:47:45 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: ming.lei@redhat.com, hch@infradead.org, yukuai3@huawei.com, 
- rajeevm@hpe.com, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
- yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
-In-Reply-To: <20250825093205.3684121-1-yukuai1@huaweicloud.com>
-References: <20250825093205.3684121-1-yukuai1@huaweicloud.com>
-Subject: Re: [PATCH v2] loop: fix zero sized loop for block special file
-Message-Id: <175612966482.55174.12405819858243003502.b4-ty@kernel.dk>
-Date: Mon, 25 Aug 2025 07:47:44 -0600
+	s=arc-20240116; t=1756129721; c=relaxed/simple;
+	bh=debTZXkkIpj9zmW8PgTAccY0m2emTzb1QtwH00Px3r0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=R3bbZfEfENJvq0/B60pkZtQqpAwhkwGBNDv18neREjFQW0Z21xlSSGwi87A92J76coKHJeuxxRx585JajvExH/gcFAcfacQ7P1w6+RKM/6//eIZ/onosrDiFCVUUkp5UsFd7YpcJY7mSDvyO1Edh/NGXhilMvICfCYcmC7xLvtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=kxVGwWCy; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57PDm3nL021849;
+	Mon, 25 Aug 2025 06:48:11 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=btcG3PoWQXAVDS5VoFlRoJV
+	NVK/NQl6OsYRo9KlZmBY=; b=kxVGwWCy07G/8+B9yOJyDWNLEZXaufzXLwTPtVw
+	f6yzli7frxbOcJtpm6NTluNv+nfRHcF3lcPbvNvzo3WJuZmpIOndUaSMF7VweDdq
+	2lGC4m0EsHJ9Wy0EtHWpmW09h/IBu1aWmtjkIoFbJpevSvBHEOGQFqj1SZBU+z79
+	DUGqF+UiTym2xrkUBM31Ls5+BgjlxET+388+GyX8vbxK64T5jVIg7+ucbnWHNDka
+	o7S2AQJfjw0UqkrxvVmC0glSFMcVqYXxrA7cf9dLAeJk/oF5IGyYsiVCCO2wH2df
+	W67bnGiY1qRWh+UdGC0gQUsVrnt82X0m0Nxy7Mn8ZbeSevA==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 48rs1kr00g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Aug 2025 06:48:11 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Mon, 25 Aug 2025 06:48:09 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Mon, 25 Aug 2025 06:48:09 -0700
+Received: from naveenm-PowerEdge-T630.marvell.com (unknown [10.29.37.44])
+	by maili.marvell.com (Postfix) with ESMTP id 5985B3F7055;
+	Mon, 25 Aug 2025 06:48:06 -0700 (PDT)
+From: Naveen Mamindlapalli <naveenm@marvell.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <horms@kernel.org>, <corbet@lwn.net>,
+        <andrew@lunn.ch>
+CC: <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Naveen Mamindlapalli <naveenm@marvell.com>
+Subject: [PATCH net-next] docs: networking: clarify expectation of persistent stats
+Date: Mon, 25 Aug 2025 19:17:55 +0530
+Message-ID: <20250825134755.3468861-1-naveenm@marvell.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-2ce6c
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI1MDEyNCBTYWx0ZWRfXzSKSk+jAVbOp nzoUNhZewD5twwTNOYrkKZk1Wr8H7cCJIIJAu4MjKol0IWohr1X7UVINbQu8pE4wvG1VhVpLe18 eMElFqwnOcmhlz4gVrCVz9+jD997KJQeC4aXangzxCcsIBCvHO30wsj5LLHbfOydk8CeuCcKkkA
+ Y19pJti0VBYEKJjVDMMR0sGjYgTiDSUUmLG0/WIFLgdZF2zWaiazy81xBv1MEjs5QamweG8+3pI 3wsAjIR9KWrxPArGdVdI+SMl1/DhoBzTiVk/C4lSNtJNJIsVjzNmw1D9wyObbQhQpRqq5oFniQn e5tj2GW6JbMgIOIiDXdTJvpnaJMCo82veHXB2GwDzeVdlgC899EHakWOpRQG+nCitfQHVjH7vms
+ VNZftndrpADf6WSHyiTQGMicZohcpuCuz2FkJBQlL/sIbcTRoFaIQoTD9r3GDrIcrjF5XGxo
+X-Authority-Analysis: v=2.4 cv=Lf886ifi c=1 sm=1 tr=0 ts=68ac699b cx=c_pps a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17 a=2OwXVqhp2XgA:10 a=M5GUcnROAAAA:8 a=ztq4QwoSifUOyHU0YMQA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-ORIG-GUID: PlkojfvPRGIC7xtThaC7Lhm3IHyfDX2W
+X-Proofpoint-GUID: PlkojfvPRGIC7xtThaC7Lhm3IHyfDX2W
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-25_06,2025-08-20_03,2025-03-28_01
 
+This update clarifies the requirement for preserving statistics across
+interface up/down cycles, noting that some drivers may not support this
+due to inherent limitations. It also outlines the potential effects on
+monitoring and observability tools.
 
-On Mon, 25 Aug 2025 17:32:05 +0800, Yu Kuai wrote:
-> By default, /dev/sda is block specail file from devtmpfs, getattr will
-> return file size as zero, causing loop failed for raw block device.
-> 
-> We can add bdev_statx() to return device size, however this may introduce
-> changes that are not acknowledged by user. Fix this problem by reverting
-> changes for block special file, file mapping host is set to bdev inode
-> while opening, and use i_size_read() directly to get device size.
-> 
-> [...]
+Signed-off-by: Naveen Mamindlapalli <naveenm@marvell.com>
+---
+ Documentation/networking/statistics.rst | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-Applied, thanks!
-
-[1/1] loop: fix zero sized loop for block special file
-      commit: d14469ed7c00314fe8957b2841bda329e4eaf4ab
-
-Best regards,
+diff --git a/Documentation/networking/statistics.rst b/Documentation/networking/statistics.rst
+index 518284e287b0..857b08d633f7 100644
+--- a/Documentation/networking/statistics.rst
++++ b/Documentation/networking/statistics.rst
+@@ -222,8 +222,18 @@ Retrieving ethtool statistics is a multi-syscall process, drivers are advised
+ to keep the number of statistics constant to avoid race conditions with
+ user space trying to read them.
+ 
+-Statistics must persist across routine operations like bringing the interface
+-down and up.
++Statistics are expected to persist across routine operations like bringing the
++interface down and up. This includes both standard interface statistics and
++driver-defined statistics reported via `ethtool -S`.
++
++However, this behavior is not always strictly followed, and some drivers do
++reset these counters to zero when the device is closed and reopened. This can
++lead to misinterpretation of network behavior by monitoring tools, such as
++SNMP, that expect monotonically increasing counters.
++
++Driver authors are expected to preserve statistics across interface down/up
++cycles to ensure consistent reporting and better integration with monitoring
++tools that consume these statistics.
+ 
+ Kernel-internal data structures
+ -------------------------------
 -- 
-Jens Axboe
-
-
+2.34.1
 
 
