@@ -1,86 +1,103 @@
-Return-Path: <linux-kernel+bounces-783870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1CF9B333A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 03:42:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0473B333A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 03:44:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 493FD4420B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 01:42:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 983EB1779A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 01:44:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 735512264C9;
-	Mon, 25 Aug 2025 01:42:46 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D002226CF0;
+	Mon, 25 Aug 2025 01:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NCaY39G/"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCAA0CA6F;
-	Mon, 25 Aug 2025 01:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7124B1C862C;
+	Mon, 25 Aug 2025 01:44:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756086166; cv=none; b=gI+CJTXrMde15Q3hlzXd2b+32Wxm9uiADaNIOL2LAushtIHkNC17OoYu5BEF8LMQ9oph2XWjy9SF6QbEBiZS8ZhQIZ3oNt/UGiKDCYFVPdFwz0zOhzg/RhBB6oE4Lf4lPQ5r6mfUodSgBq69jwORFxGEFnI41PWyvukH6qC2Ais=
+	t=1756086284; cv=none; b=lraSkEddHjVCfIL6GfLY//vvb+H3oU7DtpIAbRrPMMXQSv2bvQlq0F/qIXAT6qlxVAX9bcCapuw1f8tA5An/uVpR9zqTzgFdu8QSXT/fJbVUTdAf+d4YX17ZACCyQQhwCxPG2N4NfbNwWQYEHxGL5ClkuqL4IMrhi4PadCG9ajE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756086166; c=relaxed/simple;
-	bh=cV/AGyl5DgDOuNkUqkhvjHqP2OA+S+ziWi6EL5cmydQ=;
-	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=RN612y1kID0Dc4tphZLsD1gsPIzX8oVis9tixwgDkbiYgY3rGUR7kN63clQAWEo3tCgYIL1lN3vr+hJCptg8Qq3BECSQ6dJMWG/CpQx70LqiaKcI+25BlPti7HD9JTA9eScBwtlqJBJQYUn4VlC0slAlT2yXuKSN5zFbCmJc2OE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=h-partners.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=h-partners.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4c9D2T0Wqrz2Cftt;
-	Mon, 25 Aug 2025 09:38:09 +0800 (CST)
-Received: from kwepemh200005.china.huawei.com (unknown [7.202.181.112])
-	by mail.maildlp.com (Postfix) with ESMTPS id DB98D1401F2;
-	Mon, 25 Aug 2025 09:42:33 +0800 (CST)
-Received: from [10.67.120.126] (10.67.120.126) by
- kwepemh200005.china.huawei.com (7.202.181.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 25 Aug 2025 09:42:33 +0800
-Subject: Re: [PATCH 0/4] scsi: hisi_sas: Switch to use tasklet over threaded
- irq handling
-To: Bart Van Assche <bvanassche@acm.org>, <martin.petersen@oracle.com>,
-	<James.Bottomley@HansenPartnership.com>
-References: <20250822075951.2051639-1-liyihang9@h-partners.com>
- <f02e9bb8-3477-4fa7-8b20-72bd518407ed@acm.org>
-CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linuxarm@huawei.com>, <liyihang9@h-partners.com>, <liuyonglong@huawei.com>,
-	<prime.zeng@hisilicon.com>
-From: Yihang Li <liyihang9@h-partners.com>
-Message-ID: <2f2e5534-a368-547d-dedf-78f8ca2fc999@h-partners.com>
-Date: Mon, 25 Aug 2025 09:42:32 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+	s=arc-20240116; t=1756086284; c=relaxed/simple;
+	bh=s2avFoHaq0qeWQxHmu0/IfmoRr/AhaW/Ha68YwepWTw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qq9lk7E06VEhRvUnXoZLP85EW/nv6T+LOxk7K4lWttQKcKCU/CrlPno5ibvb87VvEFc71NpeiVi2bBivlM/nP9zL/b5s0FyckKdT28QZ/SUf7/kgbpBiQ4zEIsBO7LtDEMdybW5OE2gMzY0jghIQ8xNhemtvSSI4z51lguCcAZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NCaY39G/; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-61c7942597fso48893a12.0;
+        Sun, 24 Aug 2025 18:44:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756086281; x=1756691081; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s2avFoHaq0qeWQxHmu0/IfmoRr/AhaW/Ha68YwepWTw=;
+        b=NCaY39G/g40huWFF39yNfow2UZM4vPRz2XAIeakXYgjQPKLLbFtXSF01CZGdgP6KwX
+         5/yLJhdPQ38tRDRf/BHUiLOowLcVQkffWzG6OIZauGWmlzuRrHBcdrIV42bCJRdmqAPE
+         qCHzWMpaboE04Wjj3LzjwFg3g4iM7sQ7TB5f15yTxXxpifZyJLVsF70RFHTEDx0gSQXf
+         gTzCmpASiNqnyvNSeL4ED48SOUfK4KtM+HaNj7P6vJyGV/ubZ7RRB96Ngkfi2fhRU4Xl
+         pvTBKsv+YlnwJVIrSLTjweqBS5e6Huu/fdw+bViuFpbEJ2bOejsCBoIJnUyc/SguBfz/
+         FjtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756086281; x=1756691081;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=s2avFoHaq0qeWQxHmu0/IfmoRr/AhaW/Ha68YwepWTw=;
+        b=vfTvG+/9Sol46jfNYsEVWbuRfgUEDOEJ/TOXGtfm/uR4NELg3kfaLYxoDDprmN9dui
+         aTW8hH4JiXYVrelhCytNRAcnttVk3KoNoyt8OUan4QVlQ3zPquytrdKzZXkgrOAaR5F5
+         RCzCrvBQzHvHtfPZ7mvWhSz3XI4i2ThkCZ2ciD976F2EAp+GENUNRnqXFuOtg4sAL9He
+         CEIctIPC+yHnXEYv0SNBSonYj6En+zK+9XGiY1aymhHotaLgUhoEjbuN2ioEdYYNZu3w
+         rF5dsSgSvw0PjgMM7yNzaHnMydepAJAbU1u+cknEattlc1EHusLnAYgmcEuSJws8jEJh
+         tfmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUr+0BncAjegwoviG3f+C6XYDjN7E7tTCT2+q7zocJP7xqVVfiiPwZ94jE+nPtrHj/gTYTKlBMbHXtSk8w=@vger.kernel.org, AJvYcCVLKleeb2AIFTMG/OYyhhNfWuEnVdjLq7YGWQxIHbQsjEW8IYt/GK2IBqXGJnqsYMRGrN5gp5VT/OG+niI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0W6OEDI2dQLxV/Sw6OuM3B9DJD9ThL330QxVms6HjCf7BEbjq
+	jA10/Fm32ij3AnMHJD3vu7cg+lI93sAbx8MX9bySSWs+3VeVpcIghaNgPnO+aVIKWsUFpj3ZpbV
+	da28khugCyg5LzbMOCy+7uSd9hcYe3cY=
+X-Gm-Gg: ASbGnctYuhP3eqSarcL2d3UkGaJMpRR/64i9mMzPrWFCW9fA5DPeRd3ScpLUQh2kvK+
+	BUWYXiihgcJJIN7PzK1sHMbO0nLHgulkjROrJJQ3dtO3HUcqsUpH1/vcPLaVZVjzXd6CaeYkKlM
+	UBAehS0L/+dwRgb/7zdz0KqXiG+AiWPmdATgEHioS/EgJ4rUriLAS692KdpOeGwLDlzhSOLkHZW
+	mRTcA==
+X-Google-Smtp-Source: AGHT+IHLT+1EhLaT3bu32mIdNQEQRef1+B6NgFxQSUMzQXVyaMWMj/7mH5haukRWJU7ZixB7O+144Y6gyHOf1vKncZg=
+X-Received: by 2002:a17:907:2d0c:b0:afe:63c0:2649 with SMTP id
+ a640c23a62f3a-afe63c04d30mr437552666b.4.1756086280542; Sun, 24 Aug 2025
+ 18:44:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <f02e9bb8-3477-4fa7-8b20-72bd518407ed@acm.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemh200005.china.huawei.com (7.202.181.112)
+References: <20250805-drm-v4-0-94eaec01598d@gmail.com> <20250805-drm-v4-3-94eaec01598d@gmail.com>
+In-Reply-To: <20250805-drm-v4-3-94eaec01598d@gmail.com>
+From: =?UTF-8?B?546L6Imv5Lie?= <zaq14760@gmail.com>
+Date: Mon, 25 Aug 2025 09:44:30 +0800
+X-Gm-Features: Ac12FXwzSE2zxS8y6PyOaGjyBdjGU_uY8OxnqAzHE1RG7jBfGO_i3hWpq6MZILA
+Message-ID: <CAKEtaPAvXPHsEF1SLHg_KATZVCyaAy4Cha_p65KQ6FTUUy4qow@mail.gmail.com>
+Subject: Re: [PATCH v4 3/3] drm: tiny: Add support for Mayqueen Pixpaper e-ink panel
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Wig Cheng <onlywig@gmail.com>, LiangCheng Wang <zaq14760@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, 
+	linaro-mm-sig@lists.linaro.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Bart,
+Gentle ping on this series.
 
-On 2025/8/22 23:17, Bart Van Assche wrote:
-> On 8/22/25 12:59 AM, Yihang Li wrote:
->> We found that when the CPU handling the interrupt thread is occupied by
->> other high-priority processes, the interrupt thread will not be scheduled.
->> So there is a change to switch the driver to use tasklet over threaded
->> interrupt handling.
-> Tasklets have severe disadvantages and hence their removal has been
-> proposed several times. See e.g. https://lwn.net/Articles/960041/.
-> There must be a better solution than switching to tasklets.
-> 
+I sent v4 on August 5, but haven=E2=80=99t received any feedback yet.
+Any comments or reviews would be greatly appreciated.
 
-Thanks you for your reply. I will consider some other solution.
-Additionally, do you have any good suggestions?
-
-> Bart.
-> .
-> 
+Best regards,
+LiangCheng Wang
 
