@@ -1,225 +1,95 @@
-Return-Path: <linux-kernel+bounces-784657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2033B33F2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:19:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E17BBB33F2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:18:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87A843B87E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:19:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3901B7A9333
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:17:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B131A0712;
-	Mon, 25 Aug 2025 12:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC58E1991BF;
+	Mon, 25 Aug 2025 12:18:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="htDE4r67"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33FF576026;
-	Mon, 25 Aug 2025 12:19:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="1bbrj53F"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4AC72639;
+	Mon, 25 Aug 2025 12:18:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756124371; cv=none; b=iKS8xnKwb1ZvQoH6lPuAi+ZV/aYIniG8CXZgKEpYi5kZ1J4ZM5u6I1Kn4s4VS4nZHKccY6BTuXGV3Lzn30LwCQJu+YY/G0qvLPIlpO8gi5LmVxqk2NU7jK/J1T8EsXmvTUMR+DdfxaE8PX836p3NeXuZjvRc3J8W7pLNTmzXJMU=
+	t=1756124319; cv=none; b=TxA8X8iO1ZzWVugSsKk0nT2pVaL5z2FNNhByhLqAUeKaIB15Jy89Q0QmRduffXM+I+VL5CfdFaQ4icuw/9HFUe878obM4uVemMBDGiTqZY5L/86bmuLQJwCeckijqWNcyx15zgl6zmavQrRxYeUBw+G5J31zyaqM3cg6SXPCMV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756124371; c=relaxed/simple;
-	bh=SqeDizIwrr3y1GUkB2O8oQBvKjcCpXVMPbkpXiLxCf0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iToKOLyItftHUNhjJlG2idWUUEOQhe8wO7S2cjf0s8XZJX7zvSBXaHkF23/bu0EVqthlTidFxXeqyJSKRg9NnFjfaZQN6jjStQsCFxDaYO3ZXHW13Zuqjdcyc2DGSw9wVt8WgaqQb1BQAQ4DhMEBkUnEyyu1ofzmMbOOUOL99t8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=htDE4r67; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=en
-	QjVH9CPVENIVsHk7gsCn5/5+hGNNH2XndDe1QIK7w=; b=htDE4r67TWRW8/4/23
-	/qk3oo/CzwSXo0U2Fmra438wGVC795bfCZXAVAIaRY7dX8aio69L7Jf0x+eSTBc8
-	6jYS9HXn+8Ln/d1RjYbMWF+WJkGUMSmc4DxPQRFWFFKuOx+q3GLj0QEfB482ZDpf
-	qrSfHIurifvyA2n9H1bHX2weg=
-Received: from mi-work.mioffice.cn (unknown [])
-	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wBHsTdyVKxoeChoDw--.61651S4;
-	Mon, 25 Aug 2025 20:17:55 +0800 (CST)
-From: yangshiguang1011@163.com
-To: harry.yoo@oracle.com
-Cc: vbabka@suse.cz,
-	akpm@linux-foundation.org,
-	cl@gentwo.org,
-	rientjes@google.com,
-	roman.gushchin@linux.dev,
-	glittao@gmail.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	yangshiguang <yangshiguang@xiaomi.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v3] mm: slub: avoid wake up kswapd in set_track_prepare
-Date: Mon, 25 Aug 2025 20:17:37 +0800
-Message-ID: <20250825121737.2535732-1-yangshiguang1011@163.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1756124319; c=relaxed/simple;
+	bh=M0pDfGH7FaVEP+YSqPwNfp8XXrPzugzum9BDhZdsdv8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s8mWlHQWCyyu3BUMuB5743vDohAtFrwl6guOyLudcg7+0PV0Wfin6ZvO5PK/JVZZGdzt+By6zFcBXpHK78ui3BkcD7fgI5SV8KirwnyG+67SrC46s5+TOSLdDdQjbq3WMZEd3xd0sBSZSYttZIG4zeBNF9khlOCezowZZnrK9NE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=1bbrj53F; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=woWbdSWv2hCeQ8dbDxzkAVy11qYfSWwmpcaisbchnWg=; b=1bbrj53Fmarp8+/CEKiUfQOSwM
+	GXO0JUBvX2BHOKUwy7xRRBsBcR8nMyKneTmPlIpFyV/bERqZAZ1PI5qEsSMTOvkPVLP5d3qHO6Qu4
+	o6zUqEWrxtEl0C3rl2fl6p8QTvXcsiIFv28KDI8M7VOPXFS+hcKg11anWA3OtgLPdzfc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uqW9Z-005wEl-KX; Mon, 25 Aug 2025 14:18:25 +0200
+Date: Mon, 25 Aug 2025 14:18:25 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Kory Maincent <kory.maincent@bootlin.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	kernel@pengutronix.de,
+	Dent Project <dentproject@linuxfoundation.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Kyle Swenson <kyle.swenson@est.tech>
+Subject: Re: [PATCH net-next 2/2] net: pse-pd: pd692x0: Add sysfs interface
+ for configuration save/reset
+Message-ID: <6317ad1e-7507-4a61-92d0-865c52736b1a@lunn.ch>
+References: <20250822-feature_poe_permanent_conf-v1-0-dcd41290254d@bootlin.com>
+ <20250822-feature_poe_permanent_conf-v1-2-dcd41290254d@bootlin.com>
+ <d4bc2c95-7e25-4d76-994f-b68f1ead8119@lunn.ch>
+ <20250825104721.28f127a2@kmaincent-XPS-13-7390>
+ <aKwpW-c-nZidEBe0@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wBHsTdyVKxoeChoDw--.61651S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW3Jr43XFWkKF1UCFWkWryUWrg_yoW7CryfpF
-	W7WFy3tF48AF1jqFWUCw4Uur1SvrZ3CrW8Cr43Wa4ruF1Yvr48GFW7tFyYvFW5ArykuanF
-	ka109Fn3Ww4UXaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07juUDAUUUUU=
-X-CM-SenderInfo: 51dqw25klj3ttqjriiqr6rljoofrz/xtbBMRq05WisT9l87gAAs6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aKwpW-c-nZidEBe0@pengutronix.de>
 
-From: yangshiguang <yangshiguang@xiaomi.com>
+On Mon, Aug 25, 2025 at 11:14:03AM +0200, Oleksij Rempel wrote:
+> Hello Kory,
+> 
+> On Mon, Aug 25, 2025 at 10:47:21AM +0200, Kory Maincent wrote:
+> > > I've not looked at the sysfs documentation. Are there other examples
+> > > of such a property?
+> > 
+> > Not sure for that particular save/reset configuration case.
+> > Have you another implementation idea in mind?
+> 
+> My personal preference would be to use devlink (netlink based)
+> interface.
 
-From: yangshiguang <yangshiguang@xiaomi.com>
+Yes, devlink also crossed my mind, probably devlink params. Although
+saving the current configuration to non-volatile memory is more a meta
+parameter.
 
-set_track_prepare() can incur lock recursion.
-The issue is that it is called from hrtimer_start_range_ns
-holding the per_cpu(hrtimer_bases)[n].lock, but when enabled
-CONFIG_DEBUG_OBJECTS_TIMERS, may wake up kswapd in set_track_prepare,
-and try to hold the per_cpu(hrtimer_bases)[n].lock.
-
-Avoid deadlock caused by implicitly waking up kswapd by
-passing in allocation flags.
-
-The oops looks something like:
-
-BUG: spinlock recursion on CPU#3, swapper/3/0
- lock: 0xffffff8a4bf29c80, .magic: dead4ead, .owner: swapper/3/0, .owner_cpu: 3
-Hardware name: Qualcomm Technologies, Inc. Popsicle based on SM8850 (DT)
-Call trace:
-spin_bug+0x0
-_raw_spin_lock_irqsave+0x80
-hrtimer_try_to_cancel+0x94
-task_contending+0x10c
-enqueue_dl_entity+0x2a4
-dl_server_start+0x74
-enqueue_task_fair+0x568
-enqueue_task+0xac
-do_activate_task+0x14c
-ttwu_do_activate+0xcc
-try_to_wake_up+0x6c8
-default_wake_function+0x20
-autoremove_wake_function+0x1c
-__wake_up+0xac
-wakeup_kswapd+0x19c
-wake_all_kswapds+0x78
-__alloc_pages_slowpath+0x1ac
-__alloc_pages_noprof+0x298
-stack_depot_save_flags+0x6b0
-stack_depot_save+0x14
-set_track_prepare+0x5c
-___slab_alloc+0xccc
-__kmalloc_cache_noprof+0x470
-__set_page_owner+0x2bc
-post_alloc_hook[jt]+0x1b8
-prep_new_page+0x28
-get_page_from_freelist+0x1edc
-__alloc_pages_noprof+0x13c
-alloc_slab_page+0x244
-allocate_slab+0x7c
-___slab_alloc+0x8e8
-kmem_cache_alloc_noprof+0x450
-debug_objects_fill_pool+0x22c
-debug_object_activate+0x40
-enqueue_hrtimer[jt]+0xdc
-hrtimer_start_range_ns+0x5f8
-...
-
-Signed-off-by: yangshiguang <yangshiguang@xiaomi.com>
-Fixes: 5cf909c553e9 ("mm/slub: use stackdepot to save stack trace in objects")
-Cc: stable@vger.kernel.org
----
-
-v1 -> v2:
-    propagate gfp flags to set_track_prepare()
-v2 -> v3:
-    Remove the gfp restriction in set_track_prepare()
-
-[1]https://lore.kernel.org/all/20250801065121.876793-1-yangshiguang1011@163.com/
-[2]https://lore.kernel.org/all/20250814111641.380629-2-yangshiguang1011@163.com/
----
- mm/slub.c | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
-
-diff --git a/mm/slub.c b/mm/slub.c
-index 30003763d224..443411713e2f 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -962,19 +962,21 @@ static struct track *get_track(struct kmem_cache *s, void *object,
- }
- 
- #ifdef CONFIG_STACKDEPOT
--static noinline depot_stack_handle_t set_track_prepare(void)
-+static noinline depot_stack_handle_t set_track_prepare(gfp_t gfp_flags)
- {
- 	depot_stack_handle_t handle;
- 	unsigned long entries[TRACK_ADDRS_COUNT];
- 	unsigned int nr_entries;
-+	/* Preemption is disabled in ___slab_alloc() */
-+	gfp_flags &= ~(__GFP_DIRECT_RECLAIM);
- 
- 	nr_entries = stack_trace_save(entries, ARRAY_SIZE(entries), 3);
--	handle = stack_depot_save(entries, nr_entries, GFP_NOWAIT);
-+	handle = stack_depot_save(entries, nr_entries, gfp_flags);
- 
- 	return handle;
- }
- #else
--static inline depot_stack_handle_t set_track_prepare(void)
-+static inline depot_stack_handle_t set_track_prepare(gfp_t gfp_flags)
- {
- 	return 0;
- }
-@@ -996,9 +998,9 @@ static void set_track_update(struct kmem_cache *s, void *object,
- }
- 
- static __always_inline void set_track(struct kmem_cache *s, void *object,
--				      enum track_item alloc, unsigned long addr)
-+				      enum track_item alloc, unsigned long addr, gfp_t gfp_flags)
- {
--	depot_stack_handle_t handle = set_track_prepare();
-+	depot_stack_handle_t handle = set_track_prepare(gfp_flags);
- 
- 	set_track_update(s, object, alloc, addr, handle);
- }
-@@ -1921,9 +1923,9 @@ static inline bool free_debug_processing(struct kmem_cache *s,
- static inline void slab_pad_check(struct kmem_cache *s, struct slab *slab) {}
- static inline int check_object(struct kmem_cache *s, struct slab *slab,
- 			void *object, u8 val) { return 1; }
--static inline depot_stack_handle_t set_track_prepare(void) { return 0; }
-+static inline depot_stack_handle_t set_track_prepare(gfp_t gfp_flags) { return 0; }
- static inline void set_track(struct kmem_cache *s, void *object,
--			     enum track_item alloc, unsigned long addr) {}
-+			     enum track_item alloc, unsigned long addr, gfp_t gfp_flags) {}
- static inline void add_full(struct kmem_cache *s, struct kmem_cache_node *n,
- 					struct slab *slab) {}
- static inline void remove_full(struct kmem_cache *s, struct kmem_cache_node *n,
-@@ -3878,7 +3880,7 @@ static void *___slab_alloc(struct kmem_cache *s, gfp_t gfpflags, int node,
- 			 * tracking info and return the object.
- 			 */
- 			if (s->flags & SLAB_STORE_USER)
--				set_track(s, freelist, TRACK_ALLOC, addr);
-+				set_track(s, freelist, TRACK_ALLOC, addr, gfpflags);
- 
- 			return freelist;
- 		}
-@@ -3910,7 +3912,7 @@ static void *___slab_alloc(struct kmem_cache *s, gfp_t gfpflags, int node,
- 			goto new_objects;
- 
- 		if (s->flags & SLAB_STORE_USER)
--			set_track(s, freelist, TRACK_ALLOC, addr);
-+			set_track(s, freelist, TRACK_ALLOC, addr, gfpflags);
- 
- 		return freelist;
- 	}
-@@ -4422,7 +4424,7 @@ static noinline void free_to_partial_list(
- 	depot_stack_handle_t handle = 0;
- 
- 	if (s->flags & SLAB_STORE_USER)
--		handle = set_track_prepare();
-+		handle = set_track_prepare(__GFP_NOWARN);
- 
- 	spin_lock_irqsave(&n->list_lock, flags);
- 
--- 
-2.43.0
+	Andrew
 
 
