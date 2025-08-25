@@ -1,198 +1,104 @@
-Return-Path: <linux-kernel+bounces-784302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1944DB339BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:43:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B1E9B339CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:45:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE5DD16ADAC
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:43:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C124188773C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6DF02C08DB;
-	Mon, 25 Aug 2025 08:41:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98FC22BEFF2;
+	Mon, 25 Aug 2025 08:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kOMZ2uUV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZBAHoObe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A2A2BF009;
-	Mon, 25 Aug 2025 08:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2BE72BEFEA;
+	Mon, 25 Aug 2025 08:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756111271; cv=none; b=Sce6MPBNUUdNDzyfjvCdGNC88wODCFfhZ6PDtSxfi83BC5VILvapz2jllBVa3wBZJySsg8Kav28wn2SLwh2P4dvacbOMIKS0/iLD1Tg6JOU5ay9A55FdHdXZh03re4dq/qsNMbNJLIKjfuFK3Lub9w9szxe6jkAFHZFiKZe/DZU=
+	t=1756111305; cv=none; b=nSY493xyrr/7N18Ls5i4xkfaPvBwY0hazhAC7/7kLQkF3lj/e63s1uMvR7cieCP+h1b52wsmjRLupFhdsvZi6MOUZ/QCDgFQ88iHmCKiQQbPsRPfQFnOEucHRZPar5DUk2YnWZujqT9zW4K4E5BbAHaiEBqeEkzivZkj+wbuRM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756111271; c=relaxed/simple;
-	bh=YvGhFydXbrmE9yimRweNKCZChGzfZ1CATQpB6bIekEY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OIYT+iVRGZfxMUHy0dpsQXK65gfvAjGw7nN8V6Kn9vbRqIn0ERWxSQnTJedSNg6d61hDDiUMOhS5JXgIj43+6fTnq1HCcGxWuCdCaYW8SDKMOZcOr7K2aHhK+811K4UVpw3EEtH1jyJEZK0VXoxy9bD5AVH10ZCpQUuAEh7qyqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kOMZ2uUV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7064FC4CEF1;
-	Mon, 25 Aug 2025 08:41:09 +0000 (UTC)
+	s=arc-20240116; t=1756111305; c=relaxed/simple;
+	bh=K2j4Xg82+Ip2/lcscGXYAAN0FTOLzSOwafKLqgXQ6dA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iLr9raEOsGGqCZ4EY8xhDvwCwgs48nK4ba90RNpdtGswlXId2sqKB62u8AVOf1O0hqwDd3WGqTqcmH7+My923NNKbIwkXNG1dILJhj2PqTEN2ebmcEo4EUqa0LT+bjNfA10lx8MWVCqtsNiibht1uFNjIMFUbKVT3Q6dyliOH5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZBAHoObe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E789C4CEED;
+	Mon, 25 Aug 2025 08:41:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756111270;
-	bh=YvGhFydXbrmE9yimRweNKCZChGzfZ1CATQpB6bIekEY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kOMZ2uUVb/0wo3syOidoV1f0HRnUy2RJHSLMdGqk7yLVCovHqwhjwaAlh5RRjGhHZ
-	 vntVwdIrQaIPc6RHyWqxDvKuJf4yALVzvwSkz6MQRZOCjYqhY5PmaPIKYrOPpB1p8u
-	 ZQQcgaSOLbnXSBweKyIJlNLbQ4eko+2s1j1Kyd2DdcthL3uR+6Q+zm9V6VZoqVXEwk
-	 YjSDNkhA9rZ9AoJyJlfQ5AVgcfN/tGkd589lOdTPjxZRJZFSYBmnMyeGFXPtEjvyYF
-	 AaBOk5ZqAGeb9e0X69QoM8YFdfSFRB83tOPM4vDNmgfhRwb0C+7Wd6fILQWTsgyp8c
-	 FHQseDkSJrtGw==
-Date: Mon, 25 Aug 2025 16:41:07 +0800
-From: Yixun Lan <dlan@kernel.org>
-To: bmasney@redhat.com
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Keguang Zhang <keguang.zhang@gmail.com>,
-	Taichi Sugaya <sugaya.taichi@socionext.com>,
-	Takao Orito <orito.takao@socionext.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Jacky Huang <ychuang3@nuvoton.com>,
-	Shan-Chun Hung <schung@nuvoton.com>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Yixun Lan <dlan@gentoo.org>,
-	Steen Hegelund <Steen.Hegelund@microchip.com>,
-	Daniel Machon <daniel.machon@microchip.com>,
-	UNGLinuxDriver@microchip.com, Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Michal Simek <michal.simek@amd.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>,
-	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Max Filippov <jcmvbkbc@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Daniel Palmer <daniel@thingy.jp>,
-	Romain Perier <romain.perier@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Qin Jian <qinjian@cqplus1.com>, Viresh Kumar <vireshk@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Alex Helms <alexander.helms.jy@renesas.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	sophgo@lists.linux.dev, linux-mips@vger.kernel.org,
-	imx@lists.linux.dev, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
-	patches@opensource.cirrus.com, linux-actions@lists.infradead.org,
-	asahi@lists.linux.dev, linux-mediatek@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
-Subject: Re: [PATCH 050/114] clk: spacemit: ccu_mix: convert from
- round_rate() to determine_rate()
-Message-ID: <20250825084107-GYB1096417@kernel.org>
-References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
- <20250811-clk-for-stephen-round-rate-v1-50-b3bf97b038dc@redhat.com>
+	s=k20201202; t=1756111304;
+	bh=K2j4Xg82+Ip2/lcscGXYAAN0FTOLzSOwafKLqgXQ6dA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZBAHoObexxJACm0CyT3rWXmTuEE3szQxoY+ur1d3YdWHQaypq84Bs3bw170XTdiJs
+	 Fbkj+dLEIluoQjMCiePR3+JYeu2vjM/kZ5FUo4gmjOAVjqhrIrxUIsYMfm0z55V5z/
+	 fs4QYjZqJi7rxJ5VxWWchq/yTvwSj7xStzfihEv9Y/SsfJc5slYpJUGrOf93HPIvFL
+	 a0e7q75do94CVIMGHOgJ/VpMIDC2D7nFQOtpeEnLr/Hwr8tUNlSMSo5UrwGktdFcu5
+	 gPtDrlIV1iPA+gG1UmsY6pAtRTF1+7Jm+owKUNZpYQ3OlNR15vKbyaHqY2irS2NWEi
+	 81EoJrJwx/hEw==
+Date: Mon, 25 Aug 2025 09:41:28 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Xichao Zhao <zhao.xichao@vivo.com>, David Lechner
+ <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>, Andreas Klinger <ak@it-klinger.de>, Haibo
+ Chen <haibo.chen@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Marius Cristea
+ <marius.cristea@microchip.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Heiko Stuebner
+ <heiko@sntech.de>, Francesco Dolcini <francesco@dolcini.it>,
+ =?UTF-8?B?Sm/Do28=?= Paulo =?UTF-8?B?R29uw6dhbHZlcw==?=
+ <jpaulo.silvagoncalves@gmail.com>, Hugo Villeneuve
+ <hvilleneuve@dimonoff.com>, Gustavo Silva <gustavograzs@gmail.com>, Tomasz
+ Duszynski <tomasz.duszynski@octakon.com>, Jagath Jog J
+ <jagathjog1996@gmail.com>, Crt Mori <cmo@melexis.com>, Per-Daniel Olsson
+ <perdaniel.olsson@axis.com>, Waqar Hameed <waqar.hameed@axis.com>, Yasin
+ Lee <yasin.lee.x@gmail.com>, Julien Stephan <jstephan@baylibre.com>, "open
+ list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>, open list
+ <linux-kernel@vger.kernel.org>, "open list:NXP i.MX 7D/6SX/6UL/93 AND VF610
+ ADC DRIVER" <imx@lists.linux.dev>, "moderated list:ARM/FREESCALE IMX / MXC
+ ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, "open
+ list:ARM/Amlogic Meson SoC support" <linux-amlogic@lists.infradead.org>,
+ "open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>
+Subject: Re: [PATCH 0/7] iio: Remove dev_err_probe() if error is -ENOMEM
+Message-ID: <20250825094128.7d2834fa@jic23-huawei>
+In-Reply-To: <CAHp75VeDvK8cOr=rVGj_hVX5YzXM-UqrWRBgUrhiA1wzYn7C_w@mail.gmail.com>
+References: <20250821080723.525379-1-zhao.xichao@vivo.com>
+	<CAHp75VeDvK8cOr=rVGj_hVX5YzXM-UqrWRBgUrhiA1wzYn7C_w@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-50-b3bf97b038dc@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Brian,
+On Thu, 21 Aug 2025 11:13:00 +0300
+Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
 
-On 11:18 Mon 11 Aug     , Brian Masney via B4 Relay wrote:
-> From: Brian Masney <bmasney@redhat.com>
-> 
-> The round_rate() clk ops is deprecated, so migrate this driver from
-> round_rate() to determine_rate() using the Coccinelle semantic patch
-> on the cover letter of this series.
-> 
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> On Thu, Aug 21, 2025 at 11:07=E2=80=AFAM Xichao Zhao <zhao.xichao@vivo.co=
+m> wrote:
+> >
+> > The dev_err_probe() doesn't do anything when error is '-ENOMEM'. =20
+>=20
+> when the error
+>=20
+Tweaked and applied.
 
-Reviewed-by: Yixun Lan <dlan@kernel.org>
-> ---
->  drivers/clk/spacemit/ccu_mix.c | 12 +++++++-----
->  1 file changed, 7 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/clk/spacemit/ccu_mix.c b/drivers/clk/spacemit/ccu_mix.c
-> index 9b852aa61f78aed5256bfe6fc3b01932d6db6256..7b7990875372314dce131295af7f40267d0a127a 100644
-> --- a/drivers/clk/spacemit/ccu_mix.c
-> +++ b/drivers/clk/spacemit/ccu_mix.c
-> @@ -80,10 +80,12 @@ static int ccu_mix_trigger_fc(struct clk_hw *hw)
->  					       MIX_FC_TIMEOUT_US);
->  }
->  
-> -static long ccu_factor_round_rate(struct clk_hw *hw, unsigned long rate,
-> -				  unsigned long *prate)
-> +static int ccu_factor_determine_rate(struct clk_hw *hw,
-> +				     struct clk_rate_request *req)
->  {
-> -	return ccu_factor_recalc_rate(hw, *prate);
-> +	req->rate = ccu_factor_recalc_rate(hw, req->best_parent_rate);
-> +
-> +	return 0;
->  }
->  
->  static int ccu_factor_set_rate(struct clk_hw *hw, unsigned long rate,
-> @@ -198,7 +200,7 @@ const struct clk_ops spacemit_ccu_gate_ops = {
->  };
->  
->  const struct clk_ops spacemit_ccu_factor_ops = {
-> -	.round_rate	= ccu_factor_round_rate,
-> +	.determine_rate = ccu_factor_determine_rate,
->  	.recalc_rate	= ccu_factor_recalc_rate,
->  	.set_rate	= ccu_factor_set_rate,
->  };
-> @@ -220,7 +222,7 @@ const struct clk_ops spacemit_ccu_factor_gate_ops = {
->  	.enable		= ccu_gate_enable,
->  	.is_enabled	= ccu_gate_is_enabled,
->  
-> -	.round_rate	= ccu_factor_round_rate,
-> +	.determine_rate = ccu_factor_determine_rate,
->  	.recalc_rate	= ccu_factor_recalc_rate,
->  	.set_rate	= ccu_factor_set_rate,
->  };
-> 
-> -- 
-> 2.50.1
-> 
-> 
+> > Therefore, remove the useless call to dev_err_probe(), and just
+> > return the value instead. =20
+>=20
+> In favour of this series,
+> Reviewed-by: Andy Shevchenko <andy@kernel.org>
+> (yes, I indeed looked at all patches in this one :-)
+>=20
 
--- 
-Yixun Lan (dlan)
 
