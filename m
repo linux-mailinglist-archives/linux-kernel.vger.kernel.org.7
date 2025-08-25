@@ -1,155 +1,92 @@
-Return-Path: <linux-kernel+bounces-785657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFA15B34F24
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:41:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A895BB34F2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:43:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A990487466
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:41:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B1617A0FF3
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:41:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61A572BE657;
-	Mon, 25 Aug 2025 22:41:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD4A2BEFF6;
+	Mon, 25 Aug 2025 22:43:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="b8uj2Vlf"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42DCC29D26C;
-	Mon, 25 Aug 2025 22:41:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OXk+meCU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25710211A35;
+	Mon, 25 Aug 2025 22:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756161681; cv=none; b=TA7BwnX32IPTi1NnYqeJgOH75tFCaoDdhhkMnP/GmZMBaRI9dw21mFILYriJSUG8IvjbK1GJ9d4lEYd8uFV/3fTl+XRF+sSBgmnrTIxbalGRxeUkcnapmF92boVkqXUhgBEIcFvdFApVgI0IKFmLUg8T51ybdYWpXHqoJ/2OWEQ=
+	t=1756161797; cv=none; b=S9aRozkSgq5ZLW1mCSuHPdtxxpU4f7ufoltO9T/YYlKj357EURUhnW9QvujMztDLj82GtDfssittl/glmVNXn6nmg0TwRJpXHn9Q1cphW1rHBQMJM5VR9dw9EyJi4zjBKQ9IIURa2VHs7pNY0YXbwWpO5j7NfgPoMmoiHSR76Io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756161681; c=relaxed/simple;
-	bh=vENPD8qIYT0SxnJvVGHSlqT6IgLPf2Q+JP29FkUujyk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kR4n02ydmjKgejVdJzJnLWcA0RwRKOLLgdIDdb545c/hEFl+vgb4iFEcs8nKzY3yY5A3m9C7ro3//DjeQigh9zdcsVWvFZfVRWqqMpiY71L/uJM+ZVxgZsw/eeBGxpwSBI80l8gKTc1+cAlMAzQzOb+xioNDfmiKk4yzBYJk7rE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=b8uj2Vlf; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from romank-3650.corp.microsoft.com (unknown [131.107.160.188])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 4F71E211829B;
-	Mon, 25 Aug 2025 15:41:19 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4F71E211829B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1756161679;
-	bh=4V+Di2CdNqpVDQpM4RzbnLiWDx2BluMDafouDHKyG8g=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=b8uj2VlfaJc8cUSf3cp8QIWiLVMDA0I6acFWKSRutFKxvRSVRxNEI5i6h7LTLr2lm
-	 9d/01sTCBI4LyyY41CphZFLzHuiozoulcz66giqgRJO5Nv5lU0IBMFRl8Rm9NcuyXS
-	 OAbQ8HTLq/d+Kf+fhIlklCqG0J5qp0jrMGEt+acI=
-From: Roman Kisel <romank@linux.microsoft.com>
-To: dan.j.williams@intel.com
-Cc: Tianyu.Lan@microsoft.com,
-	alok.a.tiwari@oracle.com,
-	apais@microsoft.com,
-	arnd@arndb.de,
-	benhill@microsoft.com,
-	bp@alien8.de,
-	bperkins@microsoft.com,
-	corbet@lwn.net,
-	dave.hansen@linux.intel.com,
-	decui@microsoft.com,
-	haiyangz@microsoft.com,
-	hpa@zytor.com,
-	kys@microsoft.com,
-	linux-arch@vger.kernel.org,
-	linux-coco@lists.linux.dev,
-	linux-doc@vger.kernel.org,
-	linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mhklinux@outlook.com,
-	mingo@redhat.com,
-	rdunlap@infradead.org,
-	romank@linux.microsoft.com,
-	sunilmut@microsoft.com,
-	tglx@linutronix.de,
-	wei.liu@kernel.org,
-	x86@kernel.org
-Subject: Re: [PATCH hyperv-next v4 15/16] Drivers: hv: Support establishing the confidential VMBus connection
-Date: Mon, 25 Aug 2025 15:41:17 -0700
-Message-ID: <20250825224117.360875-1-romank@linux.microsoft.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <68a4ddff258de_2709100ba@dwillia2-xfh.jf.intel.com.notmuch>
-References: <68a4ddff258de_2709100ba@dwillia2-xfh.jf.intel.com.notmuch>
+	s=arc-20240116; t=1756161797; c=relaxed/simple;
+	bh=AyUN5Vep4hSDJ+K7OG6FuYEpjAcyxu18POCapEOdlpA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=er+yIb4msbyAHcymGdVqYTqa6JkfcTmwkkAsO9Dn6wDQxXd0UFm/X576Eb7tjPGnKqCMWu/l/joW7NzlquG74HislkSIaEqsT5p7f7rTpSiie1cz9ecWC7mHWrnHQo+rNOzNSzKaaWN0dU1aY1eJbj+GUNbqyIn+Gqyfw8Tqbpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OXk+meCU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D0CAC4CEED;
+	Mon, 25 Aug 2025 22:43:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756161796;
+	bh=AyUN5Vep4hSDJ+K7OG6FuYEpjAcyxu18POCapEOdlpA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OXk+meCUXk+f1tu1W8X6jg+IiC79kC1SEjDMvtGbLyy9JvTnSo2E3z2iWiBnF56Y8
+	 OBTxoxuixcRUfcL/x1lwT6uk8j7vOmt0ZVuzZXZqzoS3+HEHAWl2AA27p6TOQewaLL
+	 YUtFPY8dheCJNidF9h/V7tqEuRwNtNy+y56FgV0ZnS1j1PQFMZ/2kk+Ftgf5YdlU+N
+	 SWHDPuE4/Pgjz8jWmFn7DPqHtwyCMiZtYE15Gh7CVr4KECYR3BTosgglplTy5k8MhN
+	 ffGqQaOPkIkk3fE1E8zpAFjB+Hsy0O4Wj9pXznvF3IqhovD25RbHI8wGb28RnKTLwY
+	 h+X5RSN8jVnDg==
+Date: Mon, 25 Aug 2025 17:43:15 -0500
+From: Rob Herring <robh@kernel.org>
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Saravana Kannan <saravanak@google.com>, linux-pci@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+	Brian Norris <briannorris@chromium.org>
+Subject: Re: [PATCH 4/6] PCI: of: Add an API to get the BDF for the device
+ node
+Message-ID: <20250825224315.GA771834-robh@kernel.org>
+References: <20250819-pci-pwrctrl-perst-v1-0-4b74978d2007@oss.qualcomm.com>
+ <20250819-pci-pwrctrl-perst-v1-4-4b74978d2007@oss.qualcomm.com>
+ <20250822135147.GA3480664-robh@kernel.org>
+ <nphfnyl4ps7y76ra4bvlyhl2rwcaal42zyrspzlmeqqksqa5bi@zzpiolboiomp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <nphfnyl4ps7y76ra4bvlyhl2rwcaal42zyrspzlmeqqksqa5bi@zzpiolboiomp>
 
-[...]
->> +	 *
->> +	 * All scenarios here are:
->> +	 *	1. No paravisor,
->> +	 *  2. Paravisor without VMBus relay, no hardware isolation,
->> +	 *  3. Paravisor without VMBus relay, with hardware isolation,
->> +	 *  4. Paravisor with VMBus relay, no hardware isolation,
->> +	 *  5. Paravisor with VMBus relay, with hardware isolation.
->> +	 *
->>
-> I read this blurb looking for answers to my question below, no luck, and
-> left further wondering what is the comment trying to convey to future
-> maintenance?
+On Fri, Aug 22, 2025 at 07:57:41PM +0530, Manivannan Sadhasivam wrote:
+> On Fri, Aug 22, 2025 at 08:51:47AM GMT, Rob Herring wrote:
+> > On Tue, Aug 19, 2025 at 12:44:53PM +0530, Manivannan Sadhasivam wrote:
+> > > Bus:Device:Function (BDF) numbers are used to uniquely identify a
+> > > device/function on a PCI bus. Hence, add an API to get the BDF from the
+> > > devicetree node of a device.
+> > 
+> > For FDT, the bus should always be 0. It doesn't make sense for FDT. The 
+> > bus number in DT reflects how firmware configured the PCI buses, but 
+> > there's no firmware configuration of PCI for FDT.
+> 
+> This API is targeted for DT platforms only, where it is used to uniquely
+> identify a devfn. What should I do to make it DT specific and not FDT?
 
-The intention was to enumerate scenarios in which the driver executes
-this code to document what to expect of the conditional statement
+I don't understand. There are FDT and OF (actual OpenFirmware) 
+platforms. I'm pretty sure you don't care about the latter.
 
-| if (ms_hyperv.paravisor_present && (hv_isolation_type_tdx() || hv_isolation_type_snp()))
+Rob
 
-[...]
-
-> In comparison to PCIe TDISP where there is an explicit validation step
-> of cryptographic evidence that the platform is what it claims to be, I
-> am missing the same for this.
->
-
-This doesn't replace TDISP, I'll do a better job of supplementing the code changes
-with documentation and comments! Any suggestions are greatly appreciated.
-
-A fully-enlightened Linux guest could just use TDISP once support for that is available
-in the Linux kernel. Before it is, the non-fully enlightened Linux guests (they can only deal
-with accepting memory and sharing memory with the host) could rely on the paravisor to talk
-to such devices. The TDISP device will be connected to the paravisor, and the paravisor will
-provide the paravirtualized storage and network over the VMBus channels to the Linux guest.
-
-The patch set is a building block for building a confidential I/O path for the non-fully
-enlightened Linux guests. It would be great to have the Linux storage and network stack not
-to share pages with the host (and not bounce-buffer) if the storage and network are
-paravirtualized && use the Confidential VMBus. In the first version of the patchset I had
-patches for that, yet that was considered too naive to be merged in the main line kernel so
-I dropped them. But even without that, this patch series protects the control plane and the
-data plane from the host with the exception of the pages the guest might use for bounce-buffering
-although it could've avoided that in this case.
-
-I mentioned that the paravisor will be handling the TDISP device for such guests.
-As folks might know, we use the OpenHCL paravisor which is a Linux kernel with the VTL
-mode patches we've been upstreaming (links to the repos are in the cover letter), and
-the OpenVMM running in the user land. The question would be if TDISP isn't available
-in the Linux kernel, how one would get it working in the OpenHCL paravisor that itself
-runs Linux? The SEV guest device in the paravisor kernel is being extended to handle
-TIO. Once TDISP support is available in the mainline kernel, the paravisor will switch
-to using the mainline implementation.
-
-> I would expect something like a paravisor signed golden measurement with
-> a certificate that can be built-in to the kernel to validate that "yes,
-> in addition to the platform claims that can be emulated, this bus
-> enumeration is signed by an authority this kernel image trusts."
->
-> My motivation for commenting here is for alignment purposes with the
-> PCIe TDISP enabling and wider concerns about accepting other devices for
-> private operation. Specifically, I want to align on a shared
-> representation in the device-core (struct device) to communicate that a
-> device is either on a bus that has been accepted for private operation
-> (confidential-vmbus today, potentially signed-ACPI-devices tomorrow), or
-> is a device that has been individually accepted for private operation
-> (PCIe TDISP). In both cases there needs to be either a golden
-> measurement mechanism built-in, or a userspace acceptance dependency in
-> the flow.
->
-> Otherwise what mitigates a guest conveying secrets to a device that is
-> merely emulating a trusted bus/device?
 
