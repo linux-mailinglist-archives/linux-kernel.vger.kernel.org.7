@@ -1,148 +1,125 @@
-Return-Path: <linux-kernel+bounces-784184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D963BB337BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:26:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CC0EB337C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:28:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D5EB480FF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 07:26:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21A697ADCD7
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 07:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2471C28B7CC;
-	Mon, 25 Aug 2025 07:26:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF6E28BAB9;
+	Mon, 25 Aug 2025 07:27:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YAx4wDEu"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="Idm4c4//"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2452116E9;
-	Mon, 25 Aug 2025 07:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756106770; cv=none; b=Q4Pr9jaKzpRozs4pqpLr4ZjHypoOv8EyIbVVMykeqm45p9pYbfppJlcM3xdBNLyIA4fupjHdnIzcyKPAlO+UFIz8eggorHQZdrRhWNVGmqlHbdnQ26NU6w5IzAg7ouLAt7FAqBeNrBibhWskN83uQxFY4f1qScjpXZa6qYRIj8c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756106770; c=relaxed/simple;
-	bh=9QK8KkIHKhcfQflDQb19Jjrs4UyawTA8XPgfVuRLJpI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PbpwJxKOIlJ6q/gQsLuBl+NuCv67/W3LCLWWg3PxxmJZXGARxIhPtajhyCJ9k0nHZlF016i0M/xxGwYuDJnMtYq4VUWLnq/Ib8zs1+Fsv39KtkEtq9+dMO+6/lS49wjdyv1tVh02uuRozuuWs7SAHUGGIgKlykpqVQpbNC33yis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YAx4wDEu; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-afcb7ace3baso724767466b.3;
-        Mon, 25 Aug 2025 00:26:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756106767; x=1756711567; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=i83Ubiy7GBrk2qSsKCWz4m4ANjWjQBr67uBLa/oY6eA=;
-        b=YAx4wDEu2WzJWpRwAF+UGdx/g1Us6+H25X/HIosKQo1zb/63dI1UrWdygZXfJ5m3jq
-         e5rVT0cMQtwurThrZH6FCMN9aTYDVpUVIBxw6/ZVyEAxFIyfYA05hMyRHkTl/LPA67xu
-         WTdYfalRJNggVqkN0hOj6xF94x6jmXpc+6oBUySfwrMIdJK/UJ873D17KlEvwo+zNPFO
-         4TIdvhQx3Q1UKpTLMfhkFq5wCQ6AynTf8HpEcApqiOUWbovCaqV0MU0LZzYkmyukpHIb
-         JaItPPlTsZANhZUyCAiQYD2XHsV2UIfS5C/Oj85zKRXOLQRWT/zbCc8/QOh1wVQPM8BX
-         xLdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756106767; x=1756711567;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=i83Ubiy7GBrk2qSsKCWz4m4ANjWjQBr67uBLa/oY6eA=;
-        b=LzeCBthy1p3ywvaBB6qXsFlHQ6+1bIAeDOeDOcnQOaX2wcgzI+Jn3rqtrnZii301Mu
-         QNq8+RJ8V4Q1VPvFk+jTlYNP7S55pfefEhClWO0JlXbQW8NGISFytS3wkmTRuRtMwzg2
-         1lahs9YlmK6SZys8CMrMiEqv4ttrS5O88g7gdJO04vCGmXIXKItr6KpUrlDFzV0wAum3
-         DlUGAbRJi9lcfs1dYxQ2wa7NaaaAZuUvf/1TpmQQIirTFdhuqcBCzKR0HkOvWnHMSfhF
-         kn2Lh0XwIfoD83YYRhkaUYED1D/ROKCpcFvNJtyqlfm02u6cjS8o/1rudU+/fUjLWLa0
-         r79A==
-X-Forwarded-Encrypted: i=1; AJvYcCWRN2hLZnd3xRdPFg9Lkmwmrj8Psl/p0yZiwLWNGJl6h/7HpeXmPNY8hWUOVabA8w51bSZn4ryRTiW7gtg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDdZXsOqCHqBSqyvZdRCdVW4mu8EJqlzmky0gcRlKAbbVqTsCv
-	Xq+WN9+7Jrulop/Wk4TrJ8+wiszSSrz+fgSzW48N8kpnY8D+29GjxwQK
-X-Gm-Gg: ASbGncuISs4ZL00uN0v02yzACSdqYQO5YrENJZcgoz9X5Mogou7UVaSPgzzMpm0+JjY
-	2PIvcM5+J5rJewxkJoWfjtabj4tvpQuHPARzXGxD4NEuflcfsGuF56MkOTq50vAT0RWG9bX0Zgm
-	iwmxUAMOgQ3U1yEGgj16Oz7vxRlDLllwnooWbprOYAj6O8JrT/fZb7xvXOUhZrBklkHiowF6omQ
-	HEpMCJ3sT0+ukPr+n7ZLPTEgrRsR7WqfdGIwB7UHTGaAbZAcJ2p5yNVd4bOKULvCHOYJt+JhyhX
-	2lgTchFKvHHsuLRE41V+F0IkaLIRGMni5eVHZ3m+l/4EFtetmjjotW/piacnYQ28bfXrUi+mphI
-	UK7465tsU/4Ssq5oCspV9vSvDtS/rub3p5SLdoCiZ/6u/UWOPgNk47qseX8IX3q4x28jytMxPnL
-	zxaGoRvKERvWMefkofDfOl1iwCmHYAp/4DO1yQzx2ziECE7oG1w3O2
-X-Google-Smtp-Source: AGHT+IHOBqfH8kFoxiw1qNS6rxcwJYCmvvakLJPwx92KlOeYRXHGTrYIX2gTCyD/0BXBCwK+J/uU4w==
-X-Received: by 2002:a17:906:3759:b0:afe:6881:79c1 with SMTP id a640c23a62f3a-afe68817d5bmr352521666b.35.1756106766822;
-        Mon, 25 Aug 2025 00:26:06 -0700 (PDT)
-Received: from localhost.localdomain (93-87-121-239.dynamic.isp.telekom.rs. [93.87.121.239])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe7d5553c3sm178142966b.76.2025.08.25.00.26.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 00:26:06 -0700 (PDT)
-From: =?UTF-8?q?=C5=A0erif=20Rami?= <ramiserifpersia@gmail.com>
-To: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?=C5=A0erif=20Rami?= <ramiserifpersia@gmail.com>
-Subject: [PATCH] ALSA: usb-audio: us144mkii: Fixes for handshake, MIDI out and cleanup
-Date: Mon, 25 Aug 2025 09:25:57 +0200
-Message-ID: <20250825072557.7670-1-ramiserifpersia@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F6E4215F6C;
+	Mon, 25 Aug 2025 07:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756106878; cv=pass; b=jNpD64a4HErschxyxCteKN6I/K3PMg1JqGsFniLvSqDp8tbRN7cVJMzehdAjxY6+Y6MoBQZUUFD+kQ11gZBTIvdwWopvu7ksSVqbPGwl/43TBvUpw6bWgkKYpmxRnYxtLwOWuVWUy+eqxGf+ZQqq8Z9FV4/9n5BrbJQyMBL8f0U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756106878; c=relaxed/simple;
+	bh=fML6cRwp09iRLePqjQLtm24QRVBOlZ/sxCYg557xLP8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YQPcKz5rUiDNAd1FDmcIdrOVE5iKduUZ00jmKmDCb5fhrXnlB/QBBW6gQ+JmTF6u5LoHZePXlZbkyEoxLH4st2ERCDnUDlnPsrbJLTbOQ3v0NW5jmXDBIfnFcihojqYL9eDaG5z//EFVbc0510TVdOAR2mXiml4F7bjYtPWfBl0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=Idm4c4//; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1756106849; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=mEPfe+LalKrrED4ZK5hjFQelQk78dSO66JLcyZz+RAmvLO3g8HM5Pm3SbGFXG4yOXX0/Rm7cmtOYhbujBqyAun+tKkJPoRckkoDxuUeNcbx4nnvdX25nKAu1Cqv2BY9PlDQS+onShisZ3icAiCmCL2EJDB/MDr9s+z0PS3w9Rbs=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756106849; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=M/TwANByS8GbPPy4BtdqH5o/3ijPPSO7Y5K83ExNaD4=; 
+	b=VRMDlxMy6Ow3JvjULJlwASYl3/3F86yEo/usN9SjmdntDVkrDTuXlzJFwEUZ9lGn0SO7+cT/so7iiCRdaouujuyDCRcbCxc/nfptf9efCvtpWnkz7V1i7rdPnFqbcJ7p0lOdv9l4cz5J5qEaLvf7ihGk3PNoooMjpAzHTzZSeps=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756106849;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:To:To:Cc:Cc:Reply-To;
+	bh=M/TwANByS8GbPPy4BtdqH5o/3ijPPSO7Y5K83ExNaD4=;
+	b=Idm4c4//UOrazztLZtVF9PkLSf/WuAxutdVS1v3bOR/RjiHPa2EHOZffvBd+fMPx
+	My2PtOpzd3oV12TdAHpylBo0CGEjrjW9fawJAi5FzPxPysZ86eABz47sj6Yhhm94Ii7
+	aPDtWeWom/MbM+6bfYIotPgU0XXTx9kPzqPYh+H4=
+Received: by mx.zohomail.com with SMTPS id 175610684796468.22818037101536;
+	Mon, 25 Aug 2025 00:27:27 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Date: Mon, 25 Aug 2025 09:27:08 +0200
+Subject: [PATCH] arm64: dts: rockchip: fix USB on RADXA ROCK 5T
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250825-rock5t-usb-fix-v1-1-de71954a1bb5@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAEsQrGgC/yWMQQ6CMBAAv9Ls2TVttWj4iuHQllU3BqrbQkwIf
+ 6eB40wys0AmYcrQqgWEZs6cxgrmpCC+/fgi5L4yWG2dvluHkuLHFZxywCf/sQm611ey5MlAjb5
+ CVe/DR3ew0G+q33JICD4TxjQMXFo1N2dzQ4kX6NZ1A18a/nONAAAA
+X-Change-ID: 20250825-rock5t-usb-fix-6b0d04e2eae1
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: FUKAUMI Naoki <naoki@radxa.com>, kernel@collabora.com, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+X-Mailer: b4 0.14.2
 
-Add a handshake value of 0x32, which is required when the device
-was previously used by another OS with the official drivers.
+The RADXA ROCK 5T board uses the same GPIO pin for controlling the USB
+host port regulator. This control pin was mistakenly left out of the
+ROCK 5T device tree.
 
-Correct the last byte of the MIDI output protocol to 0xe0.
-
-Also, remove the unused DRIVER_VERSION macro.
-
-Signed-off-by: Šerif Rami <ramiserifpersia@gmail.com>
+Reported-by: FUKAUMI Naoki <naoki@radxa.com>
+Closes: https://libera.catirclogs.org/linux-rockchip/2025-08-25#38609886;
+Fixes: 0ea651de9b79 ("arm64: dts: rockchip: add ROCK 5T device tree")
+Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 ---
- sound/usb/usx2y/us144mkii.c      | 2 +-
- sound/usb/usx2y/us144mkii.h      | 1 -
- sound/usb/usx2y/us144mkii_midi.c | 2 +-
- 3 files changed, 2 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/rockchip/rk3588-rock-5t.dts | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/sound/usb/usx2y/us144mkii.c b/sound/usb/usx2y/us144mkii.c
-index 3127a3206..f6572a576 100644
---- a/sound/usb/usx2y/us144mkii.c
-+++ b/sound/usb/usx2y/us144mkii.c
-@@ -454,7 +454,7 @@ static int tascam_probe(struct usb_interface *intf,
- 	}
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5t.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5t.dts
+index 258c7400301d7f77517197ab433946bbfa39cf63..6acc7a8a5a12eee9cd3506910b40235813ec43b1 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5t.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5t.dts
+@@ -95,6 +95,12 @@ hp_detect: hp-detect {
+ 			rockchip,pins = <4 RK_PC3 RK_FUNC_GPIO &pcfg_pull_none>;
+ 		};
+ 	};
++
++	usb {
++		vcc5v0_host_en: vcc5v0-host-en {
++			rockchip,pins = <1 RK_PA1 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
+ };
  
- 	if (handshake_buf[0] != 0x12 && handshake_buf[0] != 0x16 &&
--	    handshake_buf[0] != 0x30) {
-+	    handshake_buf[0] != 0x30 && handshake_buf[0] != 0x32) {
- 		dev_err(&dev->dev, "Unexpected handshake value: 0x%x\n",
- 			handshake_buf[0]);
- 		return -ENODEV;
-diff --git a/sound/usb/usx2y/us144mkii.h b/sound/usb/usx2y/us144mkii.h
-index ecc4c2fed..95c4341f0 100644
---- a/sound/usb/usx2y/us144mkii.h
-+++ b/sound/usb/usx2y/us144mkii.h
-@@ -15,7 +15,6 @@
- #include <sound/rawmidi.h>
- 
- #define DRIVER_NAME "us144mkii"
--#define DRIVER_VERSION "1.7.6"
- 
- /* --- USB Device Identification --- */
- #define USB_VID_TASCAM 0x0644
-diff --git a/sound/usb/usx2y/us144mkii_midi.c b/sound/usb/usx2y/us144mkii_midi.c
-index 08b04aa39..ed2afec2a 100644
---- a/sound/usb/usx2y/us144mkii_midi.c
-+++ b/sound/usb/usx2y/us144mkii_midi.c
-@@ -257,7 +257,7 @@ static void tascam_midi_out_work_handler(struct work_struct *work)
- 			if (bytes_to_send < 9)
- 				memset(buf + bytes_to_send, 0xfd,
- 				       9 - bytes_to_send);
--			buf[8] = 0x00;
-+			buf[8] = 0xe0;
- 
- 			set_bit(urb_index, &tascam->midi_out_urbs_in_flight);
- 			urb->transfer_buffer_length = 9;
+ &vcc3v3_pcie2x1l0 {
+@@ -103,3 +109,10 @@ &vcc3v3_pcie2x1l0 {
+ 	pinctrl-0 = <&pcie2_0_vcc3v3_en>;
+ 	status = "okay";
+ };
++
++&vcc5v0_host {
++	enable-active-high;
++	gpio = <&gpio1 RK_PA1 GPIO_ACTIVE_HIGH>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&vcc5v0_host_en>;
++};
+
+---
+base-commit: 89d926fa53d0a6c257c4e8ac1c00c3d9a194ef31
+change-id: 20250825-rock5t-usb-fix-6b0d04e2eae1
+
+Best regards,
 -- 
-2.50.1
+Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
 
