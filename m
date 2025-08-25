@@ -1,89 +1,90 @@
-Return-Path: <linux-kernel+bounces-784609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DA3CB33E64
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:52:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A7A1B33E67
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:52:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36A0D7A4D9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:50:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 113BC3AF72E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:52:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F5D26C399;
-	Mon, 25 Aug 2025 11:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F3B2D0610;
+	Mon, 25 Aug 2025 11:52:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NJb0ntd1"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="U7jazKps"
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9EB26A0F8
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 11:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47DB2E7F25
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 11:52:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756122734; cv=none; b=dOeZomiZPkUnujl3A2foQ7tK53v7VgwFVI/GZxw9Z4CoG8e2h+do8NKxgclOzxFNSHd4mqChnfll0o3hDf5gu9lRexR3ilh4KjlRkbC6qXsMvNudHf4Xq19dDKup+v7ic0Hft6v7zTJOr6f7CzzCMqiYEdfP9YIifeCsvY4Lm+s=
+	t=1756122739; cv=none; b=p1V8IQIuB80neb+KUiXH5EmXQAwcxXim/jXOLwpBfE1U9s4JmuKpANr3vKSHOGQFJY95VcZtnF66lmywrGlz+NJRSpQ0dzLjY5AvhtHYtyga4oFPhsS9rTvBYWT1IQICbafXDaOLo8uc3AU2JsEPQBtWOQ0spOOIIybxVWS2A00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756122734; c=relaxed/simple;
-	bh=dHzgTV5EgsoXBfE9yCqjfg3o/8E0k/K/0/cMTieZHrY=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=RFuf/TATPsWNmGR1zvX72dt01VsNLzGv6ioS2XEHdWc+E79ud1s2uvXDzoU9OLN/i6syhhmdFy03AYaNnZwS+V+rCCyk2V2c3QYjtastkG24tUSQRJYCgNqVoAZSWrWoTQmV3B7JPqzFA4imd9+wAFJP/wU0TM4G4loElaAHanA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NJb0ntd1; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1756122739; c=relaxed/simple;
+	bh=y5Bq2C2XFu4tjzarifro/c1pTg5lvkE0QF25A4Uh1EY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=k+WUObXWzgCZaRsJYD0aQ74VwADKWMy6+BQux+RZ1B4BTvZ6b3ZjqcfxJQ4MDIYkNNGgEokAoDIlJ2Q1sMfWmtrE10m8t25peWN13/WxUY0xqTJnoWL9ugn3xcyMvdib/vn+LOjmzO9jtKaQz6jET9ooaPpGTMcCq4XDKfie7bU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=U7jazKps; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57P8ZdlA018085
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 11:52:12 GMT
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57P8PUtu024070
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 11:52:17 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=/Y526DyN1p59PkdBwvGxDS
-	FDOnzDRguJWKI/2yK0OeE=; b=NJb0ntd10hSm0hzqU8vfKNexLd+sbEWn2h22Hl
-	618M03HMzt3Fe8qgPH+7v9VYUICjrt6bN8+BQQ5iT/E+Qg+VSxEAiIljpE8utIRR
-	KFrIhaCeZQX7FSXVYznNdLLYNmi+Qtj1x0zgcJszUGL4qn8Qs2LphxC2pj+UGxm6
-	fb4wK1e+wCRfiwoV4X9O1hxuO/ZYev1I/sUVAipnNZhuaoHLFwoV94lFievqxFq/
-	Hd/2eCydsywwmXfmay5NCLmD8dXbmqGROFGE2cjBbesPytGPG3B2mBlMOFz8mf4E
-	x41oXfFgKm7nqbKMdDH5G8lfySSZky1+a6gUulI9m/qj7xXg==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5unmvy8-1
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	HpYASGZZmsu81nylw1xU5enO2W10dco2kzYUMmfi47I=; b=U7jazKpsZDXXnFpp
+	bpXf9dA3wQ3+RLo6cy5nsIr9jH0A+fZJu9ecSGUclxGo4pep2aUhDXYsFI9Nno2f
+	AasAc7WhtKeezpxohqPF3VhAhmBoh4bBXWim2yokuGTwt2RyO2fp19l/7IqLN7Cq
+	oNNGTojrzGVTrxvYs71ZL7obyuBaRrAgigpOnuhu71SIxRl4PEETqUj7cIKo+HrM
+	fdRQWLH5KfKRwtYS2CTHtC1dkdzRNNoU4D5fMXt8S6b1DQ0qKs1F+wF3+0nE8NTY
+	xNx0VwOFjeTxXcDhB2i717xVtrXaIuPvsG++veTrcKD7lVGw3peagHF3p5ulQhYO
+	9CtOOQ==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5uc4ub8-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 11:52:12 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-24458264c5aso47415425ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 04:52:12 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 11:52:16 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-24458264c5aso47415955ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 04:52:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756122731; x=1756727531;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/Y526DyN1p59PkdBwvGxDSFDOnzDRguJWKI/2yK0OeE=;
-        b=TIAYMufpJVfOs4C1oVKqkeH7ZkBGDLWllQt7myW+XT23dMyA3VS6ISOzDox4A0BrUB
-         WwTOK+IdsNKeniHKY0UP/tznzw9YvLTySS3b1HOVXG0SAGYqXRZafHqXVEBN1NingEFv
-         Z8EReMHqH+z5pZJ0SUjk2C7c9RhtDZERdKqx1W/bU8gls1g4Jr64YnRf3upxztS+mDl9
-         N7MOrak0wE5uVsOO/B7MWd9KHHqHHjp0FwjSIaAWukXw7XG9Nu3dh4vxvTWvGvM13Klb
-         Y7+TBXc4EAfuZLLpTvMQrmDYKsm6BTocIkeM9ZT8PB/YeQUBEgNprXuOX2pN50wg+clt
-         m/xA==
-X-Forwarded-Encrypted: i=1; AJvYcCV5fV/+6nLzExMrNR67q3/OmeOMT1q/R0UzSKLfLRn1o/Kp9b6vY+HZAj1ANxZFmVj+ZPKNA/RnnunYJUY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8K5a4mn66hzYaM9C+pCL6KVKH3Baa2lc0TZ0sgqNdBlJNqfih
-	0sofKZ1Yn3pa5g0sIKVaZtXxfVBPdQIOQgZ8/Z+KIH9VvtMXGD6a3+3eAl10NdUy4Vbqei9gOk3
-	Jof8mJRSJU5f+yA46jAV4D57+gBvRBlXZhLeEme3aQbWWGv/L/TVpvimDlpLljAnv9QI=
-X-Gm-Gg: ASbGncs2cTCDWqE8bFZLY+Hpd1ja5Y90DxCUlq4jmlAgpS8BU/3J+dGtzfEAYgeDWx7
-	mRvBideGcVFFG9J5CwSJoFl0ee+Pv621dRb6TNfLn+5/EnIqP5rzQnwr0tBocRKvek3B6j8f0Su
-	/XazwtCSkAOKRTLiibVWxfRlE3/ByMSCKchYIcQwvnB6cSy2z/M3vsLIxxPUQkhfZH5B5/CmbxT
-	vJHgC9lPRrVzWdYFLVBTjqRITWPe5fBxHhIVMAVhv3RXwvbMyTWCQgYYzX+2dLxLNquSz6szmQH
-	1nBcPjowUf+Iqf8ye/+JROe6MypWpJjEK8l5VUveNxlvh95f6GYG9OOkL6BECWSh2+8ohwsb+Ya
-	2UdIgltawce7lgL+wiOWwmxYovfygP+by3vzGJG80cQOJmcMCdbiV6SyLYkw3Y4tb2ViWrmwjHr
-	Y=
-X-Received: by 2002:a17:903:4b03:b0:246:cfc4:9a27 with SMTP id d9443c01a7336-246cfc49fefmr37821405ad.13.1756122731129;
-        Mon, 25 Aug 2025 04:52:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG0nXT2JRvirqDOleS8kFaVnHFiCoQc5HWIvFsBFs6zeOhIu5PAQX22b01eAoG3tmxg7dDKAg==
-X-Received: by 2002:a17:903:4b03:b0:246:cfc4:9a27 with SMTP id d9443c01a7336-246cfc49fefmr37821145ad.13.1756122730680;
-        Mon, 25 Aug 2025 04:52:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756122735; x=1756727535;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HpYASGZZmsu81nylw1xU5enO2W10dco2kzYUMmfi47I=;
+        b=RumYXyrf4+4ZCY/LCU4zo5+bkrbur6tkkhN/Lp5AMGKpGxbvVQmu1PEpuFVqiTmpza
+         97nJfCRGTGdFQNhhAYbLZ3ZmHYjm/UOA6aQYRVk54BI4iRW46aqpze0YNGpk4siM5PHn
+         wlNTyouzUiXT+H743YzSnPhpvm4J7ypIa2I2taxmzvA8XWpdWV8qZdWSfAft7pHZBaed
+         oC2vxLkYr9et9yLWGnx92DMstQLZukWNt9nHXwihzN+kP2MUuYnJ6JlIwlfo82PBys8C
+         qtfaOtdEkNFciIpKtPJ+XUskMG4piMVK50XxjlRbtJHPXVOJkdwhkLLgQ39mIQ9ZA5i+
+         Rjbw==
+X-Forwarded-Encrypted: i=1; AJvYcCVFqrlnX4gyLX+u/7f69f+I745boXhkKC1/ixCL3PW50zq9MPACW2XtYWb+KdCdQe9DMTLCYiO3gtOaRhw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxs82eIQWSn7ll9RjEqcmtsKosjUa64RowMkfCaqJsCzyouvoqn
+	yi1TjqbBTzcU0yxRWGIASBKK6P6zZHppWw/MMupK/0oqzxGK74HSIpJyi/x1Nadd6CGM/Q55sl/
+	jb/eRQwhowwLvP5SzY24VDH7tpRrGRqW3Z0knbAC3nHcn0rqkubGA1gEmMnQDOIbHKNk=
+X-Gm-Gg: ASbGncv9Ol6oTp+DjyGNhBJ04C13EvE9Y++fyH15aptTjeRax6EfFsz1hriY1fPtPzQ
+	hfaIbGCpTxKknVee9Lg3rAOu9exDoghvLj20xs+xbVJ/y8bCgTOVU5YdrGmribzf4qJ36SOHpr2
+	R0ntAz+8GmEXaSO7TXtoFjImu7iNP+/MXYVQVc2pfIZQXpith3xO4XXAZ5gky79jqnjJtbTASku
+	nm5cKGIGGJbPKLDnN3+wE3fIR9YJOyUWoeSkW9RIbtKvp7osrWVGTY/ru9WrM2lz0vvbVxFUj1x
+	LPRQxSlqzIaoeueXSfLWAbNTN5FUJC1vrOCdfbAIf6C3M+tbwpwyERUTrqqgLQRcF1ypeMNONUT
+	BAxjwd9IrEzTE9a+OR++Di1C7spL0E2Q6FH5ZC/wYoYGOq6BWgw7HtxzUkdJWOmBJLNVKSGCRpb
+	Q=
+X-Received: by 2002:a17:902:d603:b0:246:a42b:a31d with SMTP id d9443c01a7336-246a42ba453mr73367025ad.44.1756122734547;
+        Mon, 25 Aug 2025 04:52:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHf+8bmXr8Korpvwp3mX4WK/6McGdstI2tyTFrLp1MRPj7QLOOcYirhdLAQzg0QNUqxZUKcpA==
+X-Received: by 2002:a17:902:d603:b0:246:a42b:a31d with SMTP id d9443c01a7336-246a42ba453mr73366755ad.44.1756122734086;
+        Mon, 25 Aug 2025 04:52:14 -0700 (PDT)
 Received: from hu-kathirav-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-246687b521bsm67081015ad.60.2025.08.25.04.52.07
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-246687b521bsm67081015ad.60.2025.08.25.04.52.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 04:52:10 -0700 (PDT)
+        Mon, 25 Aug 2025 04:52:13 -0700 (PDT)
 From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-Subject: [PATCH 0/3] Fix the NULL pointer deference issue in QMP USB
- drivers
-Date: Mon, 25 Aug 2025 17:22:01 +0530
-Message-Id: <20250825-qmp-null-deref-on-pm-v1-0-bbd3ca330849@oss.qualcomm.com>
+Date: Mon, 25 Aug 2025 17:22:02 +0530
+Subject: [PATCH 1/3] phy: qcom-qmp-usb: fix NULL pointer dereference in PM
+ callbacks
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,10 +93,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAGFOrGgC/x2MQQqAIBAAvyJ7biEFsfpKdChda6HMlCKI/p50H
- IaZBzIlpgydeCDRxZn3UEBWAuwyhpmQXWFQtdJ1ozQeW8Rwris6SuRxDxg39K5txlZaY/QEJY1
- F8f1v++F9PxDlQo5mAAAA
-X-Change-ID: 20250825-qmp-null-deref-on-pm-fd98a91c775b
+Message-Id: <20250825-qmp-null-deref-on-pm-v1-1-bbd3ca330849@oss.qualcomm.com>
+References: <20250825-qmp-null-deref-on-pm-v1-0-bbd3ca330849@oss.qualcomm.com>
+In-Reply-To: <20250825-qmp-null-deref-on-pm-v1-0-bbd3ca330849@oss.qualcomm.com>
 To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
         Dmitry Baryshkov <lumag@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -106,64 +106,89 @@ Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
         Poovendhan Selvaraj <quic_poovendh@quicinc.com>,
         stable@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756122727; l=1268;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756122727; l=2291;
  i=kathiravan.thirumoorthy@oss.qualcomm.com; s=20230906;
- h=from:subject:message-id; bh=dHzgTV5EgsoXBfE9yCqjfg3o/8E0k/K/0/cMTieZHrY=;
- b=bq8Y3fUJzfMQT1ir+8ZpNme7SH/5rFoC8X+nVHsTL4XrSAbtetJEoIRxutdNqbYkdSBxVKOo6
- cQ+0ejVApFeDS7bz+rcwSTU4RUbttRQyGQAJthKmpRVm91keB91ALka
+ h=from:subject:message-id; bh=5tHHmTTWnCLhPgSdJhVTTRMV12QfK1s/7g0qLan1GPM=;
+ b=+4h5dOsKc93rJTyxtpkASa9VdaD7psJ6QMS6m9i1mhrHVmyUqXzUcMpMjcXA2aa3vT7uXpa0F
+ VdoBdRAqnuNDB1vN7nu0jdjIoAsFEZ+3XsCh4rwsmmT8F4sKZ2dsDpl
 X-Developer-Key: i=kathiravan.thirumoorthy@oss.qualcomm.com; a=ed25519;
  pk=xWsR7pL6ch+vdZ9MoFGEaP61JUaRf0XaZYWztbQsIiM=
-X-Proofpoint-GUID: x-U_WwiV51f1MfRRJrXTxeJapLyP3etO
-X-Proofpoint-ORIG-GUID: x-U_WwiV51f1MfRRJrXTxeJapLyP3etO
-X-Authority-Analysis: v=2.4 cv=JJo7s9Kb c=1 sm=1 tr=0 ts=68ac4e6c cx=c_pps
- a=cmESyDAEBpBGqyK7t0alAg==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=7tgEStx-2YtQAc9oN5kA:9
- a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMSBTYWx0ZWRfX8+1X9VijndcP
- 9o4qCju2xGJhAvFG69Ner7MnVwmxJySsmsfcrUcZDFTbN0K3xPT/v83cEEXRfTcnUombLgKY7Jy
- VF2EyLU2imnTULrd/203aQznJSZreaKMMsA8zTtil//b2HDZzE7poEJoIpMF43mojZxv0XzFZjT
- gFpZkUHJo+Ud1wt0iKP5r6kGHwptYYUd/f4D/UVY86xqLFyz4e7V55RPOGThcSLIOJxYBMEDk68
- 1yMBtDyHChf3E8DQwv8KmOUMj8kM5eVEGB1Dh7+Md0clwG3O+27GClP51bwrzjJ2aMTzZOeSe1d
- hSaaYXVIxSN0gaewsr8O6cx3asLj1RWLYB9sdPU2pue5SVW8D3g/M86e1e/rhz7O7nPqvzXZqlQ
- 2qOQnK0u
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMiBTYWx0ZWRfXziw5SBVrorVQ
+ IP93hWMn3h2Nlwcy22PcrxSpjK507HNX4SQrJYE8uMRb9FRihrPRNbKMSn4Xkk6Tl6gctf8ledx
+ LHRrk/myYUnVprZK8IPLcje0A7Pt9b0nCzfSUdTo9yndM6idhBxSQr5d/MszqpXbu31SyCzS9SJ
+ fGq/9T7me431oa5fIWAdiR4pNZQ7OM+75eUwB+unnN+UqkvGy0qISfsxE7q4EmSxYfZ9k6KRrAG
+ 1YIz7SfcjY4iqcAb3vwQ3mKwoRWO7HDM1ivVFjAJNaymfqqj1KUBga3Jd03RzSdK56ZOG14yGu/
+ 1UTashc/sgK7sa1ka8a9X+miC4kIHoi5rweowTKFhsiw2HDrQ9/Xy3UnBm4XZb26B0Q6fyVhD+k
+ 1khaXLMX
+X-Proofpoint-ORIG-GUID: X0NiaxaWyDrya60BsH9xEdXJLynrDmZC
+X-Authority-Analysis: v=2.4 cv=I85lRMgg c=1 sm=1 tr=0 ts=68ac4e70 cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=VwQbUJbxAAAA:8
+ a=EUspDBNiAAAA:8 a=qjlM38Vp9SSmJgUIidoA:9 a=QEXdDO2ut3YA:10
+ a=GvdueXVYPmCkWapjIL-Q:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: X0NiaxaWyDrya60BsH9xEdXJLynrDmZC
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-08-25_05,2025-08-20_03,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 adultscore=0 bulkscore=0 spamscore=0 impostorscore=0
- malwarescore=0 clxscore=1015 priorityscore=1501 suspectscore=0
+ priorityscore=1501 spamscore=0 adultscore=0 bulkscore=0 malwarescore=0
+ suspectscore=0 phishscore=0 clxscore=1015 impostorscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230031
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230032
 
-In the suspend / resume callbacks, qmp->phy could be NULL because PHY is
-created after the PM ops are enabled, which lead to the NULL pointer
-deference.
+From: Poovendhan Selvaraj <quic_poovendh@quicinc.com>
 
-Internally issue is reported on qcom-qmp-usb driver. Since the fix is
-applicable to legacy and usbc drivers, incoporated the fixes for those
-driver as well.
+The pm ops are enabled before qmp phy create which causes
+a NULL pointer dereference when accessing qmp->phy->init_count
+in the qmp_usb_runtime_suspend.
 
-qcom-qmp-usb-legacy and qcom-qmp-usbc drivers are splitted out from
-qcom-qmp-usb driver in v6.6 and v6.9 respectively. So splitted the
-changes into 3, for ease of backporting.
+So if qmp->phy is NULL, bail out early in suspend / resume callbacks
+to avoid the NULL pointer dereference in qmp_usb_runtime_suspend and
+qmp_usb_runtime_resume.
 
+Below is the stacktrace for reference:
+
+[<818381a0>] (qmp_usb_runtime_suspend [phy_qcom_qmp_usb]) from [<4051d1d8>] (__rpm_callback+0x3c/0x110)
+[<4051d1d8>] (__rpm_callback) from [<4051d2fc>] (rpm_callback+0x50/0x54)
+[<4051d2fc>] (rpm_callback) from [<4051d940>] (rpm_suspend+0x23c/0x428)
+[<4051d940>] (rpm_suspend) from [<4051e808>] (pm_runtime_work+0x74/0x8c)
+[<4051e808>] (pm_runtime_work) from [<401311f4>] (process_scheduled_works+0x1d0/0x2c8)
+[<401311f4>] (process_scheduled_works) from [<40131d48>] (worker_thread+0x260/0x2e4)
+[<40131d48>] (worker_thread) from [<40138970>] (kthread+0x118/0x12c)
+[<40138970>] (kthread) from [<4010013c>] (ret_from_fork+0x14/0x38)
+
+Cc: stable@vger.kernel.org # v6.0
+Fixes: 65753f38f530 ("phy: qcom-qmp-usb: drop multi-PHY support")
+Signed-off-by: Poovendhan Selvaraj <quic_poovendh@quicinc.com>
 Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
 ---
-Poovendhan Selvaraj (3):
-      phy: qcom-qmp-usb: fix NULL pointer dereference in PM callbacks
-      phy: qcom-qmp-usb-legacy: fix NULL pointer dereference in PM callbacks
-      phy: qcom-qmp-usbc: fix NULL pointer dereference in PM callbacks
+ drivers/phy/qualcomm/phy-qcom-qmp-usb.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- drivers/phy/qualcomm/phy-qcom-qmp-usb-legacy.c | 4 ++--
- drivers/phy/qualcomm/phy-qcom-qmp-usb.c        | 4 ++--
- drivers/phy/qualcomm/phy-qcom-qmp-usbc.c       | 4 ++--
- 3 files changed, 6 insertions(+), 6 deletions(-)
----
-base-commit: 0f4c93f7eb861acab537dbe94441817a270537bf
-change-id: 20250825-qmp-null-deref-on-pm-fd98a91c775b
+diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-usb.c b/drivers/phy/qualcomm/phy-qcom-qmp-usb.c
+index ed646a7e705ba3259708775ed5fedbbbada13735..cd04e8f22a0fe81b086b308d02713222aa95cae3 100644
+--- a/drivers/phy/qualcomm/phy-qcom-qmp-usb.c
++++ b/drivers/phy/qualcomm/phy-qcom-qmp-usb.c
+@@ -1940,7 +1940,7 @@ static int __maybe_unused qmp_usb_runtime_suspend(struct device *dev)
+ 
+ 	dev_vdbg(dev, "Suspending QMP phy, mode:%d\n", qmp->mode);
+ 
+-	if (!qmp->phy->init_count) {
++	if (!qmp->phy || !qmp->phy->init_count) {
+ 		dev_vdbg(dev, "PHY not initialized, bailing out\n");
+ 		return 0;
+ 	}
+@@ -1960,7 +1960,7 @@ static int __maybe_unused qmp_usb_runtime_resume(struct device *dev)
+ 
+ 	dev_vdbg(dev, "Resuming QMP phy, mode:%d\n", qmp->mode);
+ 
+-	if (!qmp->phy->init_count) {
++	if (!qmp->phy || !qmp->phy->init_count) {
+ 		dev_vdbg(dev, "PHY not initialized, bailing out\n");
+ 		return 0;
+ 	}
 
-Best regards,
 -- 
-Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+2.34.1
 
 
