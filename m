@@ -1,127 +1,181 @@
-Return-Path: <linux-kernel+bounces-784326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 263B4B339FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:54:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48A9BB339F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:52:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AED487A160D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:52:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A07216610E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA1229E11D;
-	Mon, 25 Aug 2025 08:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="Ova68O9t"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 001552BDC33;
+	Mon, 25 Aug 2025 08:52:24 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D340628D8CE
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 08:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B352729E116;
+	Mon, 25 Aug 2025 08:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756112046; cv=none; b=L8wlft3gCK5BJtoHwiLjAOh/h/HsbhiI7IJK7D16wOcxn0kCcY8lkERm/afAVgWOYaPomJV/9Vj5+bQBbcj9dt7LAp0YweY10UfAl7674uwmVsdo1ijoi1OlFQfP3RPvGzCbwLwspWnjGPKc0GKh5aG7sKtKa4qdHT/2Bc8DTZY=
+	t=1756111944; cv=none; b=UYvgfq7vVw+NoiK078RcwbYqEXDim6ExSqWDL/m5nBwWLYmcTRBgcY5WQNw5n+7AgNvvNaWXu56v3YzfXaYg4BurVmDVRaubDgs4uVpM2XDP36098TIKZTR4QeuRl3ptqQMDizGrjjEMYIe8N0ZUBx5qJbm8KGX6EB2ACDUv4o8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756112046; c=relaxed/simple;
-	bh=m84ECcN0WxtVYyG32AbKesu0Gs/eWeOojmVOVeScXxs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Yd4K2G1yB88vx1xnvAX+gTLYUVoH6rY/K/WcLgRwgzryAywU3wRqHEe45ulDMa/481kIPLSdOxzuTh5t9H6in0+COj5AmxuZ/IJaq/E+ZZqMvJzp5y3Py2xE/1FAGWGkuBE2bHPyG0lI19GFT2Xn9M9ncJqip7UoRy7cmTTSyTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=Ova68O9t; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
-	s=default; t=1756112035;
-	bh=sOPq0KUHy/zQLje3GwBSgWl+bHBkFOh2egvfb2ycGo8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Ova68O9tx5wsT1T5lnawE/wIbds2ux/wGsvhdCqJx0V+doE3+h7RoJ7ZLMIPyDWcQ
-	 F79keAPA2U1sQGlUz8pvfjVP0Tf1qQ5cfagVJfBbNcKiIBHJk66655E2aT4dqplmdV
-	 5BH93m72ceDJZRKXzw0TwczJxa7rC9+QiCjvpbuo=
-Received: from stargazer (unknown [IPv6:2409:874d:200:3037::3])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 5925D66B28;
-	Mon, 25 Aug 2025 04:53:50 -0400 (EDT)
-From: Xi Ruoyao <xry111@xry111.site>
-To: Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: amd-gfx@lists.freedesktop.org,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Mingcong Bai <jeffbai@aosc.io>,
-	dri-devel@lists.freedesktop.org,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Xi Ruoyao <xry111@xry111.site>,
-	Asiacn <710187964@qq.com>
-Subject: [PATCH] drm/amd/display/dml2: Guard dml21_map_dc_state_into_dml_display_cfg with DC_FP_START
-Date: Mon, 25 Aug 2025 16:52:11 +0800
-Message-ID: <20250825085211.34396-1-xry111@xry111.site>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1756111944; c=relaxed/simple;
+	bh=8IjO40d5GRPgcZOaJYTvH0o7/YYNzzRie0Ga1VLe+Tg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uFIRRasW+spcM5PyiGKnVH+NEjVE5flUC3w4TrLAJH4JeZnrLfJwRUP+eFzmZrrTm6pjRisqWWJGOHB8aJN+ETFTghRwAo4tCsWIHqy5rWv7DcAWzgdBC5XSDe49yyvyme3e3+PhOb7vD33XMcEw9U3A7pfB0MUGbhW6whSQWnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c9PgQ2KHgzKHN2v;
+	Mon, 25 Aug 2025 16:52:18 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id E2BB21A1351;
+	Mon, 25 Aug 2025 16:52:17 +0800 (CST)
+Received: from [10.174.179.247] (unknown [10.174.179.247])
+	by APP4 (Coremail) with SMTP id gCh0CgAncIw+JKxoslHtAA--.43715S3;
+	Mon, 25 Aug 2025 16:52:15 +0800 (CST)
+Message-ID: <7f401205-725e-9a83-f683-21a67500cdcd@huaweicloud.com>
+Date: Mon, 25 Aug 2025 16:52:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH 1/2] md: init queue_limits->max_hw_wzeroes_unmap_sectors
+ parameter
+To: Zhang Yi <yi.zhang@huaweicloud.com>, linux-block@vger.kernel.org,
+ linux-raid@vger.kernel.org, drbd-dev@lists.linbit.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ john.g.garry@oracle.com, hch@lst.de, martin.petersen@oracle.com,
+ axboe@kernel.dk, yi.zhang@huawei.com, yukuai3@huawei.com,
+ yangerkun@huawei.com
+References: <20250825083320.797165-1-yi.zhang@huaweicloud.com>
+ <20250825083320.797165-2-yi.zhang@huaweicloud.com>
+From: Li Nan <linan666@huaweicloud.com>
+In-Reply-To: <20250825083320.797165-2-yi.zhang@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAncIw+JKxoslHtAA--.43715S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxXFWUXw1fWrykZFyDur4DJwb_yoWrXw1fp3
+	y7XFySvryUJay5Aa98J34UuF4Fqa45KrWqkFy3Xwn5uFy3Wr9xWF43Xa98XFsrZw15Gw17
+	t3WIka9ru3WjgrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBSb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487
+	Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aV
+	AFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E
+	8cxan2IY04v7Mxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82
+	IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC2
+	0s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMI
+	IF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF
+	0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87
+	Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUo0eHDUUUU
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-dml21_map_dc_state_into_dml_display_cfg calls (the call is usually
-inlined by the compiler) populate_dml21_surface_config_from_plane_state
-and populate_dml21_plane_config_from_plane_state which may use FPU.  In
-a x86-64 build:
 
-    $ objdump --disassemble=dml21_map_dc_state_into_dml_display_cfg \
-    > drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_translation_helper.o |
-    > grep %xmm -c
-    63
 
-Thus it needs to be guarded with DC_FP_START.  But we must note that the
-current code quality of the in-kernel FPU use in AMD dml2 is very much
-problematic: we are actually calling DC_FP_START in dml21_wrapper.c
-here, and this translation unit is built with CC_FLAGS_FPU.  Strictly
-speaking this does not make any sense: with CC_FLAGS_FPU the compiler is
-allowed to generate FPU uses anywhere in the translated code, perhaps
-out of the DC_FP_START guard.  This problematic pattern also occurs in
-at least dml2_wrapper.c, dcn35_fpu.c, and dcn351_fpu.c.  Thus we really
-need a careful audit and refactor for the in-kernel FPU uses, and this
-patch is simply whacking a mole.  However per the reporter, whacking
-this mole is enough to make a 9060XT "just work."
+在 2025/8/25 16:33, Zhang Yi 写道:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> The parameter max_hw_wzeroes_unmap_sectors in queue_limits should be
+> equal to max_write_zeroes_sectors if it is set to a non-zero value.
+> However, the stacked md drivers call md_init_stacking_limits() to
+> initialize this parameter to UINT_MAX but only adjust
+> max_write_zeroes_sectors when setting limits. Therefore, this
+> discrepancy triggers a value check failure in blk_validate_limits().
+> 
+> Fix this failure by explicitly setting max_hw_wzeroes_unmap_sectors to
+> zero.
+> 
+> Fixes: 0c40d7cb5ef3 ("block: introduce max_{hw|user}_wzeroes_unmap_sectors to queue limits")
+> Reported-by: John Garry <john.g.garry@oracle.com>
+> Closes: https://lore.kernel.org/linux-block/803a2183-a0bb-4b7a-92f1-afc5097630d2@oracle.com/
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> ---
+>   drivers/md/md-linear.c | 1 +
+>   drivers/md/raid0.c     | 1 +
+>   drivers/md/raid1.c     | 1 +
+>   drivers/md/raid10.c    | 1 +
+>   drivers/md/raid5.c     | 1 +
+>   5 files changed, 5 insertions(+)
+> 
+> diff --git a/drivers/md/md-linear.c b/drivers/md/md-linear.c
+> index 5d9b08115375..3e1f165c2d20 100644
+> --- a/drivers/md/md-linear.c
+> +++ b/drivers/md/md-linear.c
+> @@ -73,6 +73,7 @@ static int linear_set_limits(struct mddev *mddev)
+>   	md_init_stacking_limits(&lim);
+>   	lim.max_hw_sectors = mddev->chunk_sectors;
+>   	lim.max_write_zeroes_sectors = mddev->chunk_sectors;
+> +	lim.max_hw_wzeroes_unmap_sectors = mddev->chunk_sectors;
+>   	lim.io_min = mddev->chunk_sectors << 9;
+>   	err = mddev_stack_rdev_limits(mddev, &lim, MDDEV_STACK_INTEGRITY);
+>   	if (err)
+> diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
+> index f1d8811a542a..419139ad7663 100644
+> --- a/drivers/md/raid0.c
+> +++ b/drivers/md/raid0.c
+> @@ -382,6 +382,7 @@ static int raid0_set_limits(struct mddev *mddev)
+>   	md_init_stacking_limits(&lim);
+>   	lim.max_hw_sectors = mddev->chunk_sectors;
+>   	lim.max_write_zeroes_sectors = mddev->chunk_sectors;
+> +	lim.max_hw_wzeroes_unmap_sectors = mddev->chunk_sectors;
+>   	lim.io_min = mddev->chunk_sectors << 9;
+>   	lim.io_opt = lim.io_min * mddev->raid_disks;
+>   	lim.chunk_sectors = mddev->chunk_sectors;
+> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+> index 408c26398321..35c6498b4917 100644
+> --- a/drivers/md/raid1.c
+> +++ b/drivers/md/raid1.c
+> @@ -3211,6 +3211,7 @@ static int raid1_set_limits(struct mddev *mddev)
+>   
+>   	md_init_stacking_limits(&lim);
+>   	lim.max_write_zeroes_sectors = 0;
+> +	lim.max_hw_wzeroes_unmap_sectors = 0;
+>   	lim.features |= BLK_FEAT_ATOMIC_WRITES;
+>   	err = mddev_stack_rdev_limits(mddev, &lim, MDDEV_STACK_INTEGRITY);
+>   	if (err)
+> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+> index b60c30bfb6c7..9832eefb2f15 100644
+> --- a/drivers/md/raid10.c
+> +++ b/drivers/md/raid10.c
+> @@ -4008,6 +4008,7 @@ static int raid10_set_queue_limits(struct mddev *mddev)
+>   
+>   	md_init_stacking_limits(&lim);
+>   	lim.max_write_zeroes_sectors = 0;
+> +	lim.max_hw_wzeroes_unmap_sectors = 0;
+>   	lim.io_min = mddev->chunk_sectors << 9;
+>   	lim.chunk_sectors = mddev->chunk_sectors;
+>   	lim.io_opt = lim.io_min * raid10_nr_stripes(conf);
+> diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
+> index 023649fe2476..e385ef1355e8 100644
+> --- a/drivers/md/raid5.c
+> +++ b/drivers/md/raid5.c
+> @@ -7732,6 +7732,7 @@ static int raid5_set_limits(struct mddev *mddev)
+>   	lim.features |= BLK_FEAT_RAID_PARTIAL_STRIPES_EXPENSIVE;
+>   	lim.discard_granularity = stripe;
+>   	lim.max_write_zeroes_sectors = 0;
+> +	lim.max_hw_wzeroes_unmap_sectors = 0;
+>   	mddev_stack_rdev_limits(mddev, &lim, 0);
+>   	rdev_for_each(rdev, mddev)
+>   		queue_limits_stack_bdev(&lim, rdev->bdev, rdev->new_data_offset,
 
-Reported-by: Asiacn <710187964@qq.com>
-Link: https://github.com/loongson-community/discussions/issues/102
-Tested-by: Asiacn <710187964@qq.com>
-Signed-off-by: Xi Ruoyao <xry111@xry111.site>
----
- drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_wrapper.c | 4 ++++
- 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_wrapper.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_wrapper.c
-index 03de3cf06ae5..059ede6ff256 100644
---- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_wrapper.c
-+++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_wrapper.c
-@@ -224,7 +224,9 @@ static bool dml21_mode_check_and_programming(const struct dc *in_dc, struct dc_s
- 	dml_ctx->config.svp_pstate.callbacks.release_phantom_streams_and_planes(in_dc, context);
- 
- 	/* Populate stream, plane mappings and other fields in display config. */
-+	DC_FP_START();
- 	result = dml21_map_dc_state_into_dml_display_cfg(in_dc, context, dml_ctx);
-+	DC_FP_END();
- 	if (!result)
- 		return false;
- 
-@@ -279,7 +281,9 @@ static bool dml21_check_mode_support(const struct dc *in_dc, struct dc_state *co
- 	dml_ctx->config.svp_pstate.callbacks.release_phantom_streams_and_planes(in_dc, context);
- 
- 	mode_support->dml2_instance = dml_init->dml2_instance;
-+	DC_FP_START();
- 	dml21_map_dc_state_into_dml_display_cfg(in_dc, context, dml_ctx);
-+	DC_FP_END();
- 	dml_ctx->v21.mode_programming.dml2_instance->scratch.build_mode_programming_locals.mode_programming_params.programming = dml_ctx->v21.mode_programming.programming;
- 	DC_FP_START();
- 	is_supported = dml2_check_mode_supported(mode_support);
+
+LGTM, feel free to add
+
+Reviewed-by: Li Nan <linan122@huawei.com>
+
 -- 
-2.51.0
+Thanks,
+Nan
 
 
