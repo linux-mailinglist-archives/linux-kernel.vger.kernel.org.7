@@ -1,141 +1,188 @@
-Return-Path: <linux-kernel+bounces-784552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42004B33D4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:55:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C160BB33D4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:56:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 146222030EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:55:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D82A4484F6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60CEA2DCF4C;
-	Mon, 25 Aug 2025 10:55:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76CD2DE1FA;
+	Mon, 25 Aug 2025 10:56:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OH4dziab"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cfhh1XYl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEBA51F461D
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 10:55:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4102DC334;
+	Mon, 25 Aug 2025 10:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756119347; cv=none; b=AAiPK4M/QjMQITJ5wLbhk2SDH9daOPC5RWZDmQuIvw+6V4eTVNUSSxapEvzj7/McFqQzn5eiFtVLkkg728dBklCqDZzo+dOhCYtP7mBZW5lPkXjpx9wy5E5K1O0YGIe+zB+ulmXum3eHq3P11XjRaqDdK4sFKf8PfzS/Id3DK8w=
+	t=1756119362; cv=none; b=X5qoe7lzddGoOLxiLHEUBXMDWLE8rx6v/JBu5eZJJsC75NwModRYSKs7G69zKlwasX5payZIKVM4QhGP3mZh2Ygww7f9EDh35aM592+WqSy2nNtgy/XmZDfoiJV7Q3EC/6Ju/PI+RMjOjdalJiU3rgCzip1BFEb2qID0f5NdqLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756119347; c=relaxed/simple;
-	bh=7Eo++RSHk60jXhrBRV6DAWQrmxZrOjIBQJ88YUsXAzk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SMpquabwj/gNBvz5PplFolhV4Be/N3hFttDRR0rtLQPxrR5EcnOUT7sdQQjnwngtKzyRhEv0ezW+FgKsoFl54b1omvT4izbImvNPnE43Hr9BwH+Y4NRRA5HzuwEXHxpg6i949Mx7/VACq35P86p7RpQxGJvSZsvRVFebxxwg0GY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OH4dziab; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13E22C113D0;
-	Mon, 25 Aug 2025 10:55:46 +0000 (UTC)
+	s=arc-20240116; t=1756119362; c=relaxed/simple;
+	bh=OkCfJU0z3FmlKCjw1ZiLXxsVjBBWcsaDb8j0QMm5vyA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dApJt6I4xV8H+E5YGvt/gXYkQquerefPOzSXwn+wbS0vZwwbOuM0gAE0rBUHENxGCc9nyRkncCC1Dc41s59Z11FOmEJ3uSI7KHTVTCcTEsYu6Ap80oaGK1+3lM+jFWa4j0vcxlI6K9KGy9pjOgd2tZfsKo7VTbh+BiHp6Q1CI7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cfhh1XYl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63327C4CEED;
+	Mon, 25 Aug 2025 10:55:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756119346;
-	bh=7Eo++RSHk60jXhrBRV6DAWQrmxZrOjIBQJ88YUsXAzk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OH4dziab8ewgT4fEKyE+VyC3wpI2KXsmvXVPNsOjfPFPCZ2IT3bNvsdcInGitkyKc
-	 KSIKLew8SsCYuyelEeMvqEkarU/6kEl3OHHHkrgbBLb/FHLvxjR5BTyTS9i39gdv+4
-	 d9gUiRJ5OHmavsw0f5OjzLR5QB8gi0hxwQ2mmDiG+lBiYp9cwLHSLVA0vU40xV68mO
-	 0mL2MaN2cv6JRZiGwb5J1xVV/sWs0QYYiGs5FgYjxsB+pdbwcGZsXiNHwJc8kIs9WH
-	 +7MhTHO1ntgh79jrZN2+Zl5IF0g8MxPGd1TQJtQOfuHGpcTZbYsgGtvASuTBjLYpph
-	 i4pjfnqOAUKzA==
-Message-ID: <a77f4199-dc21-4817-b08a-823d0753a303@kernel.org>
-Date: Mon, 25 Aug 2025 05:55:45 -0500
+	s=k20201202; t=1756119361;
+	bh=OkCfJU0z3FmlKCjw1ZiLXxsVjBBWcsaDb8j0QMm5vyA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cfhh1XYlW6fIQENl3wV0CAWdA8Zfv5YNdQYoJyV7LX5zvWB26r61Xzia7lWkodTZY
+	 F9MOIE7CqQCSGbF2DfgKzbrtn43LcXQXdoptbPMRZUjW130Qt5DyjNaYIqi7luyGtr
+	 ZnSH89s7iF6s0CsWu1dHM+wIwjCJG6JFC33aTPUD3KurCQ95sxoKCq7LC/m/aiO6BR
+	 R8k/jX0UZ0nHK+TX5ZzoykMBF5xIBqZoZw0Op7DB4pVm19iHgjIRt+XAUy9LXnS6B7
+	 m2AeDH4wGIRozfGe3xeDiuEwnfPnI3+7XnlPBgCSQ0hd+Sh1CIFkzJt6nz5tTmqRVz
+	 aJtwGL2YW8x5g==
+Date: Mon, 25 Aug 2025 11:55:52 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Remi Buisson via B4 Relay <devnull+remi.buisson.tdk.com@kernel.org>
+Cc: remi.buisson@tdk.com, David Lechner <dlechner@baylibre.com>, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 4/9] iio: imu: inv_icm45600: add IMU IIO gyroscope
+ device
+Message-ID: <20250825115552.69abe3b3@jic23-huawei>
+In-Reply-To: <20250820-add_newport_driver-v5-4-2fc9f13dddee@tdk.com>
+References: <20250820-add_newport_driver-v5-0-2fc9f13dddee@tdk.com>
+	<20250820-add_newport_driver-v5-4-2fc9f13dddee@tdk.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nios2: ensure that memblock.current_limit is set when
- setting pfn limits
-To: schuster.simon@siemens-energy.com
-Cc: linux-kernel@vger.kernel.org,
- Andreas Oetken <andreas.oetken@siemens-energy.com>
-References: <20250821-nios2-adjust-lowmem-bounds-v1-1-ea2dd8661ae5@siemens-energy.com>
-Content-Language: en-US
-From: Dinh Nguyen <dinguyen@kernel.org>
-In-Reply-To: <20250821-nios2-adjust-lowmem-bounds-v1-1-ea2dd8661ae5@siemens-energy.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 8/21/25 05:37, Simon Schuster via B4 Relay wrote:
-> From: Simon Schuster <schuster.simon@siemens-energy.com>
+On Wed, 20 Aug 2025 14:24:22 +0000
+Remi Buisson via B4 Relay <devnull+remi.buisson.tdk.com@kernel.org> wrote:
+
+> From: Remi Buisson <remi.buisson@tdk.com>
 > 
-> On nios2, with CONFIG_FLATMEM set, the kernel relies on
-> memblock_get_current_limit() to determine the limits of mem_map, in
-> particular for max_low_pfn.
-> Unfortunately, memblock.current_limit is only default initialized to
-> MEMBLOCK_ALLOC_ANYWHERE at this point of the bootup, potentially leading
-> to situations where max_low_pfn can erroneously exceed the value of
-> max_pfn and, thus, the valid range of available DRAM.
+> Add IIO device for gyroscope sensor
+> with data polling interface and FIFO parsing.
+
+Wrap at 75 chars for commit messages.
+
+> Attributes: raw, scale, sampling_frequency, calibbias.
+> Temperature is available as a processed channel.
 > 
-> This can in turn cause kernel-level paging failures, e.g.:
-> 
-> [   76.900000] Unable to handle kernel paging request at virtual address 20303000
-> [   76.900000] ea = c0080890, ra = c000462c, cause = 14
-> [   76.900000] Kernel panic - not syncing: Oops
-> [   76.900000] ---[ end Kernel panic - not syncing: Oops ]---
-> 
-> This patch fixes this by pre-calculating memblock.current_limit
-> based on the upper limits of the available memory ranges via
-> adjust_lowmem_bounds, a simplified version of the equivalent
-> implementation within the arm architecture.
-> 
-> Signed-off-by: Simon Schuster <schuster.simon@siemens-energy.com>
-> Signed-off-by: Andreas Oetken <andreas.oetken@siemens-energy.com>
+> Signed-off-by: Remi Buisson <remi.buisson@tdk.com>
 > ---
-> This patch was tested internally on 5.10.x stable for some time now and
-> applies and boots cleanly on next-20250815, as well.
-> ---
->   arch/nios2/kernel/setup.c | 15 +++++++++++++++
->   1 file changed, 15 insertions(+)
-> 
-> diff --git a/arch/nios2/kernel/setup.c b/arch/nios2/kernel/setup.c
-> index 2a40150142c3..f43f01c4ab93 100644
-> --- a/arch/nios2/kernel/setup.c
-> +++ b/arch/nios2/kernel/setup.c
-> @@ -142,6 +142,20 @@ static void __init find_limits(unsigned long *min, unsigned long *max_low,
->   	*max_high = PFN_DOWN(memblock_end_of_DRAM());
->   }
->   
-> +static void __init adjust_lowmem_bounds(void)
+
+Only thing I noticed is some accelerometer calls are made
+where the definitions are in the next patch.  To sanity check this
+tweak the Kconfig to allow you to build it and make sure that it
+builds after each patch.  At the end of the day we don't want to have
+this build without the bus drivers, but hacking it to test 'it could'
+is a great way to avoid issues of code in wrong patches etc, missing
+definitions etc.
+
+Jonathan
+
+>  drivers/iio/imu/inv_icm45600/Kconfig               |   2 +
+>  drivers/iio/imu/inv_icm45600/Makefile              |   1 +
+>  drivers/iio/imu/inv_icm45600/inv_icm45600.h        |  29 +
+>  drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c |  76 +-
+>  drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.h |   5 +-
+>  drivers/iio/imu/inv_icm45600/inv_icm45600_core.c   | 104 ++-
+>  drivers/iio/imu/inv_icm45600/inv_icm45600_gyro.c   | 792 +++++++++++++++++++++
+>  7 files changed, 1006 insertions(+), 3 deletions(-)
+
+> diff --git a/drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c b/drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c
+> index 50fd21a24e34decfbe10426946a51c61353eb6a9..5bf9535e27e8942312fe9749ce0c733149de0a9d 100644
+> --- a/drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c
+> +++ b/drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c
+
+> @@ -459,6 +462,77 @@ int inv_icm45600_buffer_fifo_read(struct inv_icm45600_state *st)
+>  	return 0;
+>  }
+>  
+> +int inv_icm45600_buffer_fifo_parse(struct inv_icm45600_state *st)
 > +{
-> +	phys_addr_t block_start, block_end;
-> +	u64 i;
-> +	phys_addr_t memblock_limit = 0;
+> +	struct inv_icm45600_sensor_state *gyro_st = iio_priv(st->indio_gyro);
+> +	struct inv_icm45600_sensor_state *accel_st = iio_priv(st->indio_accel);
+> +	struct inv_sensors_timestamp *ts;
+> +	int ret;
 > +
-> +	for_each_mem_range(i, &block_start, &block_end) {
-> +		if (block_end > memblock_limit)
-> +			memblock_limit = block_end;
+> +	if (st->fifo.nb.total == 0)
+> +		return 0;
+> +
+> +	/* Handle gyroscope timestamp and FIFO data parsing. */
+> +	if (st->fifo.nb.gyro > 0) {
+> +		ts = &gyro_st->ts;
+> +		inv_sensors_timestamp_interrupt(ts, st->fifo.watermark.eff_gyro,
+> +						st->timestamp.gyro);
+> +		ret = inv_icm45600_gyro_parse_fifo(st->indio_gyro);
+> +		if (ret)
+> +			return ret;
 > +	}
 > +
-> +	memblock_set_current_limit(memblock_limit);
+> +	/* Handle accelerometer timestamp and FIFO data parsing. */
+> +	if (st->fifo.nb.accel > 0) {
+> +		ts = &accel_st->ts;
+> +		inv_sensors_timestamp_interrupt(ts, st->fifo.watermark.eff_accel,
+> +						st->timestamp.accel);
+> +		ret = inv_icm45600_accel_parse_fifo(st->indio_accel);
+
+As below. No accel stuff available yet.
+
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
 > +}
 > +
->   void __init setup_arch(char **cmdline_p)
->   {
->   	console_verbose();
-> @@ -157,6 +171,7 @@ void __init setup_arch(char **cmdline_p)
->   	/* Keep a copy of command line */
->   	*cmdline_p = boot_command_line;
->   
-> +	adjust_lowmem_bounds();
->   	find_limits(&min_low_pfn, &max_low_pfn, &max_pfn);
->   
->   	memblock_reserve(__pa_symbol(_stext), _end - _stext);
-> 
-> ---
-> base-commit: 1357b2649c026b51353c84ddd32bc963e8999603
-> change-id: 20250818-nios2-adjust-lowmem-bounds-5d2d98af0fa8
-> 
-> Best regards,
+> +int inv_icm45600_buffer_hwfifo_flush(struct inv_icm45600_state *st,
+> +				     unsigned int count)
+> +{
+> +	struct inv_icm45600_sensor_state *gyro_st = iio_priv(st->indio_gyro);
+> +	struct inv_icm45600_sensor_state *accel_st = iio_priv(st->indio_accel);
+> +	struct inv_sensors_timestamp *ts;
+> +	s64 gyro_ts, accel_ts;
+> +	int ret;
+> +
+> +	gyro_ts = iio_get_time_ns(st->indio_gyro);
+> +	accel_ts = iio_get_time_ns(st->indio_accel);
+> +
+> +	ret = inv_icm45600_buffer_fifo_read(st, count);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (st->fifo.nb.total == 0)
+> +		return 0;
+> +
+> +	if (st->fifo.nb.gyro > 0) {
+> +		ts = &gyro_st->ts;
+> +		inv_sensors_timestamp_interrupt(ts, st->fifo.nb.gyro, gyro_ts);
+> +		ret = inv_icm45600_gyro_parse_fifo(st->indio_gyro);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	if (st->fifo.nb.accel > 0) {
+> +		ts = &accel_st->ts;
+> +		inv_sensors_timestamp_interrupt(ts, st->fifo.nb.accel, accel_ts);
+> +		ret = inv_icm45600_accel_parse_fifo(st->indio_accel);
+
+This call should be in the next patch as it's not defined yet.
 
 
-Applied! Queued for v6.18.
-
-Thanks,
-Dinh
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
+> +}
 
