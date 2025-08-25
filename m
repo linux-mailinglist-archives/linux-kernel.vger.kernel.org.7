@@ -1,139 +1,135 @@
-Return-Path: <linux-kernel+bounces-785150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24909B346A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:03:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02AB5B34802
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:56:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64D96171D9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:03:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA8022A2802
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:56:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6EA274FD0;
-	Mon, 25 Aug 2025 16:03:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 541A130146E;
+	Mon, 25 Aug 2025 16:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ThS3qUoa"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="MWVXxX6l";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eW4tXBo1"
+Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25501E32DB;
-	Mon, 25 Aug 2025 16:03:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518072FF17D;
+	Mon, 25 Aug 2025 16:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756137810; cv=none; b=C4UpOx8RB7iN7Xx8JDla73JqeL+Dm7KNHmV301Wm3A29G5H16zd05RvKQAckHw0M0hIJU2ggiVS7KmGtmr7fbKKfianbbm7VzlkKtHN8qTOBFTFSowFt7evyJjDrBMpj4S7y2E0GGbMCDuSKxEJGUdPTgGdGbEiXnMUnQj5gxS0=
+	t=1756140997; cv=none; b=c8tJF1ABd3yMDt60nQ6FbsSuxzFoemiqrrz7QIVHq7TrtvNLwAWcLV7/a5Sq9YeRJr3UTehw2Ko6xkv2UlUCZ7JiQPAyIVEi6VyruEEMcqbpuHt1LLoK/3a8LhECM32nnQKO4lOw77gWUnQy7vgDbyB72/o13f1zCf1mHVNtrOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756137810; c=relaxed/simple;
-	bh=yNYKVB7ejZHvag9mlt4vBKdDNtWCCkBY3PhbjTGPdRk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SuPfz6+IVvfJUgTSximKxa+Q/RBAwuBpX7C+xCO7MdsFIz9T1kGEHJwACcL8YTBgQ8FzsHLv9dpEhCkmBEEDTlGFILTFuvNvDnoT9u93zs3hMAaT4nKasetSUnK4ENL6+ngZt5NERejcu+jcbec9pHKXG8lkGfSLw8IB+CPNjR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ThS3qUoa; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1756137806;
-	bh=yNYKVB7ejZHvag9mlt4vBKdDNtWCCkBY3PhbjTGPdRk=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=ThS3qUoaX7eSegoVgtUWcxMbZq7tWTHAX6xAiSMkJu4+yJFjx7OYHWS+8FWzCH9OQ
-	 YafPQfcpzdW2iRvTV43ZZOnjD2sSpXfwKTXEnzOhDvtt9VRfFaQxs/zPxK/5S9PqM8
-	 jl7GTA8FsemJ4NL3V1wEQCIcTo4ErT9Aunz6NJTm2lDRCJ/OOqn2Apv5DjtdywA7dN
-	 j/NUoXwrCm19r6Jvt4hssp3/GTJGLUbSF6R8BW5AxUS+fXSqoFxU2J7B2HWwmli9sv
-	 Y2VR1uGnongrkp5618EobR8+03VtVyiy0NIyoldlpiXzHW0+tQP0kC6gkqLQ4pop3z
-	 kffGlHDrJymjQ==
-Received: from 2a01cb0892f2d600c8f85cf092d4af51.ipv6.abo.wanadoo.fr (2a01cb0892f2D600C8f85cf092d4AF51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: jmassot)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id EFED117E08E3;
-	Mon, 25 Aug 2025 18:03:24 +0200 (CEST)
-Message-ID: <305df15f3fdc1b9b1b1d9b853a859cfd969733c7.camel@collabora.com>
-Subject: Re: [PATCH v2 5/6] dt-bindings: sound: Convert MT8183 DA7219 sound
- card bindings to YAML
-From: Julien Massot <julien.massot@collabora.com>
-To: Rob Herring <robh@kernel.org>
-Cc: kernel@collabora.com, Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,  Matthias Brugger
- <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>,  Ikjoon Jang
- <ikjn@chromium.org>, Enric Balletbo i Serra <eballetbo@kernel.org>, Chen-Yu
- Tsai	 <wenst@chromium.org>, Weiyi Lu <weiyi.lu@mediatek.com>, Eugen Hristev
-	 <eugen.hristev@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark
- Brown	 <broonie@kernel.org>, Julien Massot <jmassot@collabora.com>, Sean
- Wang	 <sean.wang@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Date: Mon, 25 Aug 2025 18:03:24 +0200
-In-Reply-To: <20250822144224.GA3745327-robh@kernel.org>
-References: <20250820-mtk-dtb-warnings-v2-0-cf4721e58f4e@collabora.com>
-	 <20250820-mtk-dtb-warnings-v2-5-cf4721e58f4e@collabora.com>
-	 <20250822144224.GA3745327-robh@kernel.org>
-Organization: Collabora Ltd.
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1756140997; c=relaxed/simple;
+	bh=gbO/zfSLZKwIkdcWa8lq6pAh0F/PKrMcuam1wSYANZ4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AsO7t7iKhDWpr1/5keO4Pcu+jLhdEEiZ6jqdFKFP4Q5qZRXkeHbECNMANC43Sqm3LVrCXmCe6SEiHlrpgQyvSM/qMrSHAmWECB+1JBoCsKWrpmMa+2Bya84FKuAYML+hR5+wg1MUU1AXHp6UHAnFp7bEM2Bx6xGMdhcRIMkQj5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=MWVXxX6l; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eW4tXBo1; arc=none smtp.client-ip=202.12.124.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 41BAE7A0149;
+	Mon, 25 Aug 2025 12:56:34 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Mon, 25 Aug 2025 12:56:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1756140994;
+	 x=1756227394; bh=2oO4BZcpU5QLF9yoO1Z3iTLwTVA/fCrME0TR5ifc14k=; b=
+	MWVXxX6lSxQ4J54jotb0smHj9qDbdNjSC6FS2eFR470drPaxdir39+ha8MSEReK1
+	6D7PMcQEj5ZvSCogTiBglgrFVglV18eBWWUKuMsvODEoY/7n9tkVoElVmz/PMHWX
+	JDtE+ib14s0GhFZ3vQ6hgOIoudct8B9Fvj88lCmB0x9I5TueRbVgc9cIWfqn48Bl
+	54ywlKc9gdIdLvWck3lhIGX2EUKHUi5Po3H46DdHL+7fslqH9E6Tk4MkhJFfT7tD
+	JFPH2gFwV/wm/G3/VcooSyg74+sx+iNYaB2RVYBvwk1BS7dfk+CzUAf9rm5xy5R4
+	7l/xBoK+AuzxvhIojVTw9Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1756140994; x=
+	1756227394; bh=2oO4BZcpU5QLF9yoO1Z3iTLwTVA/fCrME0TR5ifc14k=; b=e
+	W4tXBo1QmxLm3ssGRGxy5nlugGczaTY+XiA5iupj1SMYhOHlXhsqOr7IESiVGR92
+	bQjw7WrFqjHYQb0D54t134NaBONI6dMyGmMFwdl72ldU8x+9CoJnpSOKPNYS71WK
+	jY47dpZ/oh7Ft1o2OKIYl1ZVu/ugQRTl2gQpd3dRVHFaVTynV67uVPvqWQ9SAKOl
+	H3f7hi3G5xl6yAFc9Lvjr8/olSJGsNrb4Q/lSx87szNR7s6/wg6IpglZoTEw/f03
+	LJohnxbJOSEfoyFAwap9A3ALxeWLP5AmtVGv2fD15thRgFgPvRGVuarCjxm3zEp6
+	dVSrzAs10e0DMTMB0uvtQ==
+X-ME-Sender: <xms:wZWsaBEWFJRr_Uj1mqVo7SU9jHd_D8-TMiUbDeQ4BkDLMXVWe55tYA>
+    <xme:wZWsaNshFTwoGWo7Ai5XJsk7voTSR-dA2Ais82appNRe64ELO5n08d8wdkyRsZPls
+    I8MM8S5W7qnRJCCqaE>
+X-ME-Received: <xmr:wZWsaIswHLD1r0QVnvcavB1Nu3Vj71B9VhXzW1nf02kWCGPExuZP4mNCDoHlMr8D9Da_I0eeFdvoC_wx9Pj2k1TrGiUUWA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddujedvledvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucgoteeftdduqddtudculdduhedmnecujfgurhephffvve
+    fufffkofgjfhggtgfgsehtkeertdertdejnecuhfhrohhmpeforghrkhcurfgvrghrshho
+    nhcuoehmphgvrghrshhonhdqlhgvnhhovhhosehsqhhuvggssgdrtggrqeenucggtffrrg
+    htthgvrhhnpeffffefudeuueduueduhfefkeeiueeihfdukeeuffekfffhheeigfehveek
+    hefhhfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hmphgvrghrshhonhdqlhgvnhhovhhosehsqhhuvggssgdrtggrpdhnsggprhgtphhtthho
+    peeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmphgvrghrshhonhdqlhgvnh
+    hovhhosehsqhhuvggssgdrtggrpdhrtghpthhtohepihhlphhordhjrghrvhhinhgvnhes
+    lhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehhrghnshhgsehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehkvggrnhdttdegkeesghhmrghilhdrtghomhdprhgtphht
+    thhopehplhgrthhfohhrmhdqughrihhvvghrqdigkeeisehvghgvrhdrkhgvrhhnvghlrd
+    horhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghl
+    rdhorhhg
+X-ME-Proxy: <xmx:wZWsaDBpBYUKtOnrV8Bo6zMyq_GtECa_8llfF41nqeOLoEd0qORfBQ>
+    <xmx:wZWsaKNXvqYPZ0JivKTXvej6zwhkdefaFgSU9BPZlfCrqdmRboCyNg>
+    <xmx:wZWsaMyWwG2y3k-P_We1XxjLSRtup7JziN_hQcn3Z0xxrLgE5FoDXQ>
+    <xmx:wZWsaKXc2ABsGYa4ufYzYmxmjczklWTJ3DJTZgGX-6uUtMtIxWvorg>
+    <xmx:wpWsaCf4_n7Rs1__TNmGUA-eetWuBgnwOAV9kuJU-EU55-K00tMzbzEt>
+Feedback-ID: ibe194615:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 25 Aug 2025 12:56:32 -0400 (EDT)
+From: Mark Pearson <mpearson-lenovo@squebb.ca>
+To: mpearson-lenovo@squebb.ca
+Cc: ilpo.jarvinen@linux.intel.com,
+	hansg@kernel.org,
+	kean0048@gmail.com,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/3] platform/x86: think-lmi: ThinkCenter certificate
+Date: Mon, 25 Aug 2025 12:03:35 -0400
+Message-ID: <20250825160351.971852-1-mpearson-lenovo@squebb.ca>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <mpearson-lenovo@squebb.ca>
+References: <mpearson-lenovo@squebb.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, 2025-08-22 at 09:42 -0500, Rob Herring wrote:
-> On Wed, Aug 20, 2025 at 03:44:56PM +0200, Julien Massot wrote:
-> > Convert the Device Tree binding for MT8183-based boards using the
-> > DA7219 headset codec and optional MAX98357, RT1015 or RT1015P speaker
-> > amplifiers from the legacy .txt format to YAML schema.
-> >=20
-> > This improves binding validation and removes DT schema warnings
-> > for boards using these audio components.
-> >=20
-> > Reviewed-by: AngeloGioacchino Del Regno
-> > <angelogioacchino.delregno@collabora.com>
-> > Signed-off-by: Julien Massot <julien.massot@collabora.com>
-> > ---
-> > =C2=A0.../bindings/sound/mediatek,mt8183_da7219.yaml=C2=A0=C2=A0=C2=A0=
-=C2=A0 | 49
-> > ++++++++++++++++++++++
-> > =C2=A0.../bindings/sound/mt8183-da7219-max98357.txt=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 | 21 ----------
-> > =C2=A02 files changed, 49 insertions(+), 21 deletions(-)
-> >=20
-> > diff --git
-> > a/Documentation/devicetree/bindings/sound/mediatek,mt8183_da7219.yaml
-> > b/Documentation/devicetree/bindings/sound/mediatek,mt8183_da7219.yaml
-> > new file mode 100644
-> > index
-> > 0000000000000000000000000000000000000000..b6fee3ff3af9a90820ee57efdf8e
-> > fb3f3d474804
-> > --- /dev/null
-> > +++
-> > b/Documentation/devicetree/bindings/sound/mediatek,mt8183_da7219.yaml
-> > @@ -0,0 +1,49 @@
-> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/sound/mediatek,mt8183_da7219.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: MediaTek MT8183 sound card with external codecs
-> > +
-> > +maintainers:
-> > +=C2=A0 - Julien Massot <jmassot@collabora.com>
-> > +
-> > +description:
-> > +=C2=A0 Binding for MediaTek MT8183 SoC-based sound cards with DA7219 a=
-s
-> > headset codec,
->=20
-> Drop 'Binding for '. Otherwise,
->=20
-Ack
+Patch series to implement certificate based authentication on
+ThinkCenter platforms
 
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Patch 1 introduce a certificate GUID structure to make it easier to
+support different GUIDs for certificate authentication
+Patch 2 implements the changes needed to support ThinkCenter platforms
+Patch3 adds some extra error message handling as used on ThinkCenter
+platforms.
 
-Julien
+Tested on M75q Gen 5
+
+Mark Pearson (3):
+  platform/x86: think-lmi: Add certificate GUID structure
+  platform/x86: think-lmi: Certificate support for ThinkCenter
+  platform/x86: think-lmi: Add extra TC BIOS error messages
+
+ drivers/platform/x86/lenovo/think-lmi.c | 103 ++++++++++++++++++++----
+ drivers/platform/x86/lenovo/think-lmi.h |   1 +
+ 2 files changed, 90 insertions(+), 14 deletions(-)
+
+-- 
+2.43.0
+
 
