@@ -1,54 +1,67 @@
-Return-Path: <linux-kernel+bounces-785654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F08EFB34F1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:37:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 008FBB34F20
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:41:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7B452A5665
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:37:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35918167B0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:41:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 267C629AAFD;
-	Mon, 25 Aug 2025 22:37:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D80A2BE02C;
+	Mon, 25 Aug 2025 22:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VV0wD93P"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TuzhpasJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73FB129B783;
-	Mon, 25 Aug 2025 22:37:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D593F19D8BC;
+	Mon, 25 Aug 2025 22:41:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756161453; cv=none; b=FuXvVyJb97cCkBpMYQzy/veXYuqbfUC2wwsINMZ9L4BLVOgSdDS+n7/eF3DTEJ+4jDHPTvY3FCu+MIzFFt5pVdt7KwNcdGL79M79qcFLxZSCoWkikTh2G5PXnj6iM0hMHMSB0Hakn95K1SLnWaw2E8fHgbaIMuJ1E9ehKkJqXqA=
+	t=1756161669; cv=none; b=h7r+HAvWWgRYq9AKldeWpDusVHnb2DYRKB+i6eIHUnhm7vqfowIQWhLphSHCU+4cO3lC7sKjZSqas+vv+qVF6u4SITnVeP2G6BPA06OwDWma6+YyhdMy94c8BqwCPCXwg5KjIWwxAaUtDCVqepXCIt2uEUDZdM+I8pjevWvrwig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756161453; c=relaxed/simple;
-	bh=bRkID7EIJJq/oVofnIksYjaHn0Ek+raLoQLfxWEpfD8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=QKpd9V/gyA1Si6Jh2a3EXNmkYEK+0IgjbZqewlUwdrU3+foyVgVLsyUePWF2bwcFDMXyIxBUmsXnsMhIDxprLr0G/7T1ul/0aL2VDJhXUfbnE/X0JqcdgYnmvl7gOZLZ43q0MiuL3AHocuzlvg1OEz6IWFkBskLuVeuhy5bC44E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VV0wD93P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC616C4CEED;
-	Mon, 25 Aug 2025 22:37:32 +0000 (UTC)
+	s=arc-20240116; t=1756161669; c=relaxed/simple;
+	bh=hcgh5oqMsvEek9C9auiVRt+yT8DF3gRRdz8vIwAO460=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jP5VvyVtBH3OhM7/5pll5Ml0isxKp3Hcb+YORxreKytxt442n4jlDxRQAnZwPT1jjE+OP5luT7hhSDIGgvCZQ8ZeCInRbT8gQfVBG9YK82by2u5DfQkX3IOJdbQikHW9aIpL8yVzsRX06eZ/GDYNs7ekHmG6LtroaCrFV/HjjHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TuzhpasJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1F71C4CEED;
+	Mon, 25 Aug 2025 22:41:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756161453;
-	bh=bRkID7EIJJq/oVofnIksYjaHn0Ek+raLoQLfxWEpfD8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=VV0wD93P0JrXAib+Kml9Hd2JmfWNiO0OC1wqOEkheIbjoBeNUd7zva+/Za4mi4K7N
-	 d8tG9O+NaiKChGDpDSgykFtVIHbmQuc+eupg4Zj45SIehdT+9MzQnE3p/v9hbFVSiT
-	 6ky+cGvJ3LLDP8oIkx4JxnjhSh0Fd1iBC4tx37XLf3av3z3GUk+JMvFq7zyCLUCBdE
-	 VQOYtoD5bUUrVvOq9kZ3x3T97go7j6kiDZ3UU7aEM5x17p9dPT3+82O/fdYcKNRRTa
-	 Jxz3TVdmr0JFA7nA7tFx6YXxvZQv3pbE0Orbo9zjcuhPtRkc6icdayN7yvta9LyUoh
-	 WJWrUqapTc2tw==
-Date: Mon, 25 Aug 2025 17:37:31 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Nirmoy Das <nirmoyd@nvidia.com>
-Cc: linux-acpi@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Vidya Sagar <vidyas@nvidia.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ACPI/PCI: Fix memory leak fix in pci_acpi_preserve_config
-Message-ID: <20250825223731.GA808746@bhelgaas>
+	s=k20201202; t=1756161669;
+	bh=hcgh5oqMsvEek9C9auiVRt+yT8DF3gRRdz8vIwAO460=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TuzhpasJSKONwmodl29hxEeu1B+jNP9tEnNDVUu5J+c2hP06IPu8smtAiAy/paA5D
+	 nQ7OpGab4minbAOsbjXXcQSkH/TI61SiMOxo7linJiZDbP6Jo2Fh2gtIHiIiZjiP/N
+	 mf9A26nzWQ+DOGu7DynGHvPP7N0ZHQU2sT68opCJns/zJBs6HWbEVSHmxXzvpyh5pp
+	 xl3cWCdgAOSNlciX9GaNuWSCTfhoxsI0v3bx0ke0VA8L3vRNHy/ALm9wKcVRs/LBDI
+	 Jfa0gF4IsoAKqhjqPYzyz0kQSIj32X8rbLnBzfg2E6cmQXIvI3A4c5qKxfv4HGvFMC
+	 zijfQ4ECgtsWA==
+Date: Mon, 25 Aug 2025 17:41:08 -0500
+From: Rob Herring <robh@kernel.org>
+To: Michael Riesch <michael.riesch@collabora.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Jagan Teki <jagan@amarulasolutions.com>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Diederik de Haas <didi.debian@cknow.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Collabora Kernel Team <kernel@collabora.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org
+Subject: Re: [PATCH v2 3/7] dt-bindings: phy: rockchip-inno-csi-dphy: add
+ rk3588 variant
+Message-ID: <20250825224108.GA766877-robh@kernel.org>
+References: <20250616-rk3588-csi-dphy-v2-0-7a94f079b712@collabora.com>
+ <20250616-rk3588-csi-dphy-v2-3-7a94f079b712@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,50 +70,121 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250825214642.142135-1-nirmoyd@nvidia.com>
+In-Reply-To: <20250616-rk3588-csi-dphy-v2-3-7a94f079b712@collabora.com>
 
-On Mon, Aug 25, 2025 at 02:46:42PM -0700, Nirmoy Das wrote:
-> The pci_acpi_preserve_config() function is leaking memory by returning
-> early without freeing the ACPI object on success. Fix that by always
-> freeing the obj which is not needed by the caller.
+On Tue, Aug 19, 2025 at 01:00:37AM +0200, Michael Riesch wrote:
+> The Rockchip RK3588 variant of the CSI-2 DPHY features two reset lines.
+> Add the variant and allow for the additional reset.
 > 
-> Fixes: 9d7d5db8e78e ("PCI: Move PRESERVE_BOOT_CONFIG _DSM evaluation to pci_register_host_bridge()")
-> Signed-off-by: Nirmoy Das <nirmoyd@nvidia.com>
-
-Applied to pci/misc for v6.18, thanks!
-
+> Signed-off-by: Michael Riesch <michael.riesch@collabora.com>
 > ---
->  drivers/pci/pci-acpi.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+>  .../bindings/phy/rockchip-inno-csi-dphy.yaml       | 60 ++++++++++++++++++++--
+>  1 file changed, 56 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
-> index ddb25960ea47d..9369377725fa0 100644
-> --- a/drivers/pci/pci-acpi.c
-> +++ b/drivers/pci/pci-acpi.c
-> @@ -122,6 +122,8 @@ phys_addr_t acpi_pci_root_get_mcfg_addr(acpi_handle handle)
+> diff --git a/Documentation/devicetree/bindings/phy/rockchip-inno-csi-dphy.yaml b/Documentation/devicetree/bindings/phy/rockchip-inno-csi-dphy.yaml
+> index 42da616ae2e3..10197cc9dc47 100644
+> --- a/Documentation/devicetree/bindings/phy/rockchip-inno-csi-dphy.yaml
+> +++ b/Documentation/devicetree/bindings/phy/rockchip-inno-csi-dphy.yaml
+> @@ -21,6 +21,7 @@ properties:
+>        - rockchip,rk3326-csi-dphy
+>        - rockchip,rk3368-csi-dphy
+>        - rockchip,rk3568-csi-dphy
+> +      - rockchip,rk3588-csi-dphy
 >  
->  bool pci_acpi_preserve_config(struct pci_host_bridge *host_bridge)
->  {
-> +	bool ret = false;
+>    reg:
+>      maxItems: 1
+> @@ -39,18 +40,50 @@ properties:
+>      maxItems: 1
+>  
+>    resets:
+> -    items:
+> -      - description: exclusive PHY reset line
+> +    minItems: 1
+> +    maxItems: 2
+
+Add a description for the 2nd reset here.
+
+>  
+>    reset-names:
+> -    items:
+> -      - const: apb
+> +    minItems: 1
+> +    maxItems: 2
+
+Add 'phy' to the list here and just minItems.
+
+>  
+>    rockchip,grf:
+>      $ref: /schemas/types.yaml#/definitions/phandle
+>      description:
+>        Some additional phy settings are access through GRF regs.
+>  
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - rockchip,px30-csi-dphy
+> +              - rockchip,rk1808-csi-dphy
+> +              - rockchip,rk3326-csi-dphy
+> +              - rockchip,rk3368-csi-dphy
+> +              - rockchip,rk3568-csi-dphy
+> +    then:
+> +      properties:
+> +        resets:
+> +          items:
+> +            - description: exclusive PHY reset line
 > +
->  	if (ACPI_HANDLE(&host_bridge->dev)) {
->  		union acpi_object *obj;
->  
-> @@ -135,11 +137,11 @@ bool pci_acpi_preserve_config(struct pci_host_bridge *host_bridge)
->  					      1, DSM_PCI_PRESERVE_BOOT_CONFIG,
->  					      NULL, ACPI_TYPE_INTEGER);
->  		if (obj && obj->integer.value == 0)
-> -			return true;
-> +			ret = true;
->  		ACPI_FREE(obj);
->  	}
->  
-> -	return false;
-> +	return ret;
->  }
->  
->  /* _HPX PCI Setting Record (Type 0); same as _HPP */
+> +        reset-names:
+> +          items:
+> +            - const: apb
+
+Then just 'maxItems: 1' here.
+
+> +    else:
+> +      properties:
+> +        resets:
+> +          items:
+> +            - description: APB reset line
+> +            - description: PHY reset line
+> +
+> +        reset-names:
+> +          items:
+> +            - const: apb
+> +            - const: phy
+
+And 'minItems: 2' here.
+
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -77,3 +110,22 @@ examples:
+>          reset-names = "apb";
+>          rockchip,grf = <&grf>;
+>      };
+> +  - |
+> +    #include <dt-bindings/clock/rockchip,rk3588-cru.h>
+> +    #include <dt-bindings/reset/rockchip,rk3588-cru.h>
+> +
+> +    soc {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        phy@fedc0000 {
+> +            compatible = "rockchip,rk3588-csi-dphy";
+> +            reg = <0x0 0xfedc0000 0x0 0x8000>;
+> +            clocks = <&cru PCLK_CSIPHY0>;
+> +            clock-names = "pclk";
+> +            #phy-cells = <0>;
+> +            resets = <&cru SRST_P_CSIPHY0>, <&cru SRST_CSIPHY0>;
+> +            reset-names = "apb", "phy";
+> +            rockchip,grf = <&csidphy0_grf>;
+> +        };
+> +    };
+> 
 > -- 
-> 2.43.0
+> 2.39.5
 > 
 
