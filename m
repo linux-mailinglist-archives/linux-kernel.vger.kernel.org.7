@@ -1,139 +1,142 @@
-Return-Path: <linux-kernel+bounces-784876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61718B342D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:11:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6D97B342D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:12:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFA3A170134
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:09:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81306164EFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F3552EE296;
-	Mon, 25 Aug 2025 14:09:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E1A2EF64A;
+	Mon, 25 Aug 2025 14:10:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="Ge2ZC4VK"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="DfmbQ3xm"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9291F21773F;
-	Mon, 25 Aug 2025 14:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B592222D1
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 14:10:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756130987; cv=none; b=W0kdm3hnNr/K7k0afJFe1V8Y3crPUNX0td/tuC0jCveMFud+/nYORTvj9yC4PRJ8H3nfBb1LAYdwfUBcCWICJZMeSWMDvbReHDyTJMrI72YalmVjfRktPxO1Gh+DgjP9+hiCKCBICeJD13lwzQELGDsyD10RkeXqgfw2F96DvwA=
+	t=1756131046; cv=none; b=T2uI3GW3ZbIX24Rax44Sm2pqJ7icTBSVkVqHnOoSw4bD76t5+Et/Hayp+fzVXNQru6KaOdbtjh6a8G8Ms9mEkkiN5Muu5LnAEXqp/ukoWQ8qXaZmS/QZR3qYH+23WktZc2/im7dX8YryjIfsYXNrYX2vKp8PFkRm53BzUUTle0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756130987; c=relaxed/simple;
-	bh=Nc/C+Uz9sI4IAH7BzAHFC+jOEg5BudUYmXbAWP/XQwc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=IbJUdoHhfFx570qu8bDgQueM5Y6rFfq/XsnbyJj3okgYnq4DcZuzsotS4jitjp9A6TiPcieeHNeI7qfkMH17D279NWbg+APs+HstbE57ep4J1Lxr0moNGg5/80JKiJbKPvBH04jtbCN3dFNBCd8mw5w/1wU+oSZeHzLCBA/agD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=Ge2ZC4VK; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id CDBF2A01D2;
-	Mon, 25 Aug 2025 16:09:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=mail; bh=qikWbUtqVmNTODGhbr83i6EXZE+fIqqYsVSThC2Lx7o=; b=
-	Ge2ZC4VKQ5WtBrus8o6tRBczDgySjYzbeEVOHy0qAmpmsiVFfp2AwfqRNtCbu82c
-	zjbwbaHfs067Kf7O6/15e6mlNwj5dBgO4frOj/QPJhQXL3TnETa51oNzZ8kjpxT+
-	C8N8MsD6NmUWO6mbsBTUcawXH8QwOx8oIIaEsN2LWNY99GqjYC4pf9hR93Giebr4
-	24k01OxnfVwmRFml1QhgJafA2bi59Nfaj28CbXpWMDVayMpY7ZahxoJFL9xuUaKY
-	nw/YFT9bDjLnzgXydchMTtrdTO40e6i9ZOs7XK0sRJL21avIwoPrO31//fz93ual
-	27JjhutmAJJhmNl6sV172/BzcbiKVRQNAaAInqBYxuMWhmMrWGOnXLScwP5TiK6f
-	H64xIYfK6kUKe+9BL2BX6lct48x5deBu50u2QW5Fmsr/ms1VfnZ6UxOTx64lLcK+
-	CLUeZSHGqDvNFthz0UK1aCVLGEKMhSIQ5UNnrwqUna0FunM5pzVZOuVEBtgg+GFA
-	1qvq7RAkPgx4/tAi4646CJez9svpDj07fQ3rqVH6aneF4uzzQsP6/fsPQThjnZMU
-	rfttxDakx1CgKFhf3SMqA2xB4MhMxVuvAdyrf+nmUMjdPN9GRGT42oApvL9vZS47
-	qn07wcW5E5khRJCef+Fq5ZrfGR0Jb+1TKnH2I6qh5Nw=
-From: =?utf-8?q?Bence_Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>
-Date: Mon, 25 Aug 2025 16:09:34 +0200
-Subject: [PATCH] net: mdiobus: Move all reset registration to
- `mdiobus_register_reset()`
+	s=arc-20240116; t=1756131046; c=relaxed/simple;
+	bh=JYLoJUwGKBDQEO1UVLrz1emWoAwB4K2kdLEIX8eP7tE=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=K5wRUvXRnY70V5Wxc3z77fASbywBEkxhlvakheJ+3ZXDGm2dclYEvQgm7WER8CWTOXBJrUdnf37z+ygR5x688jnHJsWK9nLi0YS2cbIKAePkj8pg/wTZKp8XoCgEJQWQ83cky95ulOQJ/av1WsZ9nNUuI/1gRg7flaDpZgT2qzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=DfmbQ3xm; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1756131044; x=1787667044;
+  h=message-id:date:mime-version:subject:from:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=JYLoJUwGKBDQEO1UVLrz1emWoAwB4K2kdLEIX8eP7tE=;
+  b=DfmbQ3xml2uvN15l0TQEIF7FihZncHar1UBNSU4iRaC8hm/yZUVpMvI1
+   jpBfa/3jMoHarPo4qH8YQvhEWJk+6QArGAo3MNxe/P77J28itMnMV4guN
+   mhI1DLYVuwFug/Ws6OKSX9AR7AC5L5qMCVoEdVrTD+mb4XihGCoFAnrUz
+   K2CjmlkNNubIM7T6g1qrbF9SXqjjbWMAiiWxyCR6cVhG8pHmZljnDLYRt
+   iebHZYExsNWiGB46/X2W5nMJQwq3OGsDlvhSx3c2oJbtZed8cY+OOnX7R
+   MtmNmGP48hHCFrurIvsVBMFTfWnfzwlT815cAXD9ndbzzZ+6kv7pI9ePC
+   g==;
+X-CSE-ConnectionGUID: cdlPPhXJQGaFbMdbODqVXg==
+X-CSE-MsgGUID: X+/vD80ySrWUJey6ExoCDQ==
+X-IronPort-AV: E=Sophos;i="6.18,213,1751266800"; 
+   d="scan'208";a="213036058"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Aug 2025 07:10:43 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Mon, 25 Aug 2025 07:10:30 -0700
+Received: from [10.159.245.205] (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Mon, 25 Aug 2025 07:10:28 -0700
+Message-ID: <786c7e37-f8d0-45ca-9a8f-c1468318ac2a@microchip.com>
+Date: Mon, 25 Aug 2025 16:10:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-ID: <20250825-b4-phy-rst-mv-prep-v1-1-6298349df7ca@prolan.hu>
-X-B4-Tracking: v=1; b=H4sIAJ1urGgC/x3MQQ6CMBCF4auQWTtJaUDFqxgXLR3sLKjNDCESw
- t0ZXX4vef8OSsKk8Gh2EFpZ+VMM7aWBMYfyJuRkBu987+6+x9hhzRuKLjivWIUquiHRtU3dbXA
- T2NHGib//6PNljkEJo4Qy5l9qDrqQwHGcT4S72X0AAAA=
-X-Change-ID: 20250825-b4-phy-rst-mv-prep-09de61d4790f
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Philipp Zabel
-	<p.zabel@pengutronix.de>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	=?utf-8?q?Bence_Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>
-X-Mailer: b4 0.14.2
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1756130979;VERSION=7996;MC=1807055755;ID=536864;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2998FD515E607067
+User-Agent: Mozilla Thunderbird
+Subject: Re: [ISSUE + PATCH] Interrupts were enabled early by spinlock guard
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+To: Edgar Bonet <bonet@grenoble.cnrs.fr>, Geert Uytterhoeven
+	<geert@linux-m68k.org>, Thomas Gleixner <tglx@linutronix.de>
+CC: Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea
+	<claudiu.beznea@tuxon.dev>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, Huacai Chen <chenhuacai@kernel.org>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>
+References: <280dd506-e1fc-4d2e-bdc4-98dd9dca6138@grenoble.cnrs.fr>
+ <CAMuHMdWJ3im+k9uQgRhUh52Z_tJ+KQjAGY_Y8FjbEu6gB=0UKw@mail.gmail.com>
+ <62be0896-6c90-4a27-81cb-7bd897d0e6f2@grenoble.cnrs.fr>
+ <e3199e23-0973-44d2-a882-405892290e73@microchip.com>
+Content-Language: en-US, fr
+Organization: microchip
+In-Reply-To: <e3199e23-0973-44d2-a882-405892290e73@microchip.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Make `mdiobus_register_reset()` function handle both gpiod and
-reset-controller-based reset registration.
+On 25/08/2025 at 14:35, Nicolas Ferre wrote:
+> On 14/08/2025 at 17:28, Edgar Bonet wrote:
+>> Hello Geert, and thanks for you prompt review!
+> 
+> Yep, Geert, many thanks!
+> 
+>>> I think the conversions in
+>>> drivers/irqchip/irq-atmel-aic.c:aic_irq_domain_xlate() and
+>>> drivers/irqchip/irq-loongson-liointc.c:liointc_set_type()
+>>> are also wrong, and need a similar change.
+>>
+>> The one in irq-atmel-aic.c looks indeed strikingly similar. The one in
+>> irq-loongson-liointc.c is slightly different though. Instead of:
+>>
+>>       irq_gc_lock_irqsave() -> guard(raw_spinlock_irq)
+>>
+>> it does:
+>>
+>>       irq_gc_lock_irqsave() -> guard(raw_spinlock)
+>>
+>> I don't know what the implications are though.
+>>
+>>> Unfortunately I have no hardware to verify.
+>>
+>> Neither do I.
+> 
+> I'm on it. Expect feedback later today...
 
-Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
----
- drivers/net/phy/mdio_bus.c | 15 +++------------
- 1 file changed, 3 insertions(+), 12 deletions(-)
+Answering to myself: tested working okay on at91sam9x35ek board (with 
+IRQ controller matching compatible string "atmel,at91rm9200-aic" 
+(handled by file irq-atmel-aic.c) and your modification:
 
-diff --git a/drivers/net/phy/mdio_bus.c b/drivers/net/phy/mdio_bus.c
-index cad6ed3aa10b643ad63fac15bfe7551446c8dca1..9117f0f93756f38acb2c367e163ef06616eab6e4 100644
---- a/drivers/net/phy/mdio_bus.c
-+++ b/drivers/net/phy/mdio_bus.c
-@@ -33,8 +33,10 @@
- #define CREATE_TRACE_POINTS
- #include <trace/events/mdio.h>
- 
--static int mdiobus_register_gpiod(struct mdio_device *mdiodev)
-+static int mdiobus_register_reset(struct mdio_device *mdiodev)
- {
-+	struct reset_control *reset;
-+
- 	/* Deassert the optional reset signal */
- 	mdiodev->reset_gpio = gpiod_get_optional(&mdiodev->dev,
- 						 "reset", GPIOD_OUT_LOW);
-@@ -44,13 +46,6 @@ static int mdiobus_register_gpiod(struct mdio_device *mdiodev)
- 	if (mdiodev->reset_gpio)
- 		gpiod_set_consumer_name(mdiodev->reset_gpio, "PHY reset");
- 
--	return 0;
--}
--
--static int mdiobus_register_reset(struct mdio_device *mdiodev)
--{
--	struct reset_control *reset;
--
- 	reset = reset_control_get_optional_exclusive(&mdiodev->dev, "phy");
- 	if (IS_ERR(reset))
- 		return PTR_ERR(reset);
-@@ -68,10 +63,6 @@ int mdiobus_register_device(struct mdio_device *mdiodev)
- 		return -EBUSY;
- 
- 	if (mdiodev->flags & MDIO_DEVICE_FLAG_PHY) {
--		err = mdiobus_register_gpiod(mdiodev);
--		if (err)
--			return err;
--
- 		err = mdiobus_register_reset(mdiodev);
- 		if (err)
- 			return err;
+--- a/drivers/irqchip/irq-atmel-aic.c
++++ b/drivers/irqchip/irq-atmel-aic.c
+@@ -188,7 +188,7 @@ static int aic_irq_domain_xlate(struct irq_domain *d,
 
----
-base-commit: 1b237f190eb3d36f52dffe07a40b5eb210280e00
-change-id: 20250825-b4-phy-rst-mv-prep-09de61d4790f
+         gc = dgc->gc[idx];
 
-Best regards,
--- 
-Bence Csókás <csokas.bence@prolan.hu>
+-       guard(raw_spinlock_irq)(&gc->lock);
++       guard(raw_spinlock_irqsave)(&gc->lock);
+         smr = irq_reg_readl(gc, AT91_AIC_SMR(*out_hwirq));
+         aic_common_set_priority(intspec[2], &smr);
+         irq_reg_writel(gc, smr, AT91_AIC_SMR(*out_hwirq));
 
+Thanks, best regards,
+   Nicolas
+
+
+
+> Thanks so much for the heads-up.
+> 
+> Best regards,
+>     Nicolas
+> 
 
 
