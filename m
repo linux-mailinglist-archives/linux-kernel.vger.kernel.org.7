@@ -1,97 +1,138 @@
-Return-Path: <linux-kernel+bounces-785205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A2DAB3477B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:34:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 168C1B34786
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:36:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F191B5E756C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:33:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 632CF1886E83
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:36:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 698B8301469;
-	Mon, 25 Aug 2025 16:32:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D4043009F2;
+	Mon, 25 Aug 2025 16:35:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CICHkMkk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aQ4JtXe6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E1F2FE059;
-	Mon, 25 Aug 2025 16:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30FB02367B5;
+	Mon, 25 Aug 2025 16:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756139566; cv=none; b=q7F1Lns91e6CmKfa+kv4+JZciGcU0awnjuVLDyr2Negb2kPRn8pAwRZCFUUBtC/uv1ekQT7vEE/X+VAA36jJyS5MMELtTy3UyuLRR5rNxroIKrAQlITe6wY0ZweQkDP4BYBI0Xq/tPP3pKPueyk7+p5qPauyy6UeqS10juR7qDY=
+	t=1756139757; cv=none; b=J5pwUrLHqUxUdfLv4+Gjafiq5Q/S47gao4DQn0dfdF3dsuhPWO5IGGZWAg5Vlb396QyV45PFVtuwiQESWuWQqJzAXtlP6OsvIcfquTHTKiFbcJnKggEWq1ZguB3Scb5mIS+b5DFq2jL+19w37xlM4DmFyHSEn2UZRphlOAyk29U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756139566; c=relaxed/simple;
-	bh=zxHmMRw5/sY4qKaSFZbZXzsqqlDUBxYTyqhzcESdego=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pLjnYZa6G52SF3908rUS9YIcSoVxKTnuIcN/noD4efX3YeTte0CpocMmZepdf9nD0OaDWTjZL/KqgoquhSYRApOsr2WUMiPBCqT2IsWQDmHgDbJXJ05IJ5Af91bZ6XV5okgJ8IP5rPDtVU8F88feX+XZpCX05cP19aGAUZR6agY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CICHkMkk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E72FC4CEED;
-	Mon, 25 Aug 2025 16:32:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756139566;
-	bh=zxHmMRw5/sY4qKaSFZbZXzsqqlDUBxYTyqhzcESdego=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CICHkMkkEU+tjKP+MqFEALd3NOdg5W+pElM+0WrIhPjTS6gvBVpk4YyHGw8b9c2G7
-	 D00hZB+RDGmjmf0Zy6Pqpo6llOt2tJXjZeYxygHGe9bo6dmAp6YfArRcXVi9rYmYmy
-	 Nwg3WaISziM97mmNyca5dsnxVT+JJ//QDcaKyASMHtCmV6TEvwbcQOqyNubkA/PgHm
-	 /PIa1chyi6bDCXNEPh8+nIEZihs/0rcDegmUfHxxIP/05Q1kwq1YyDmhNdpcHV3arw
-	 6jp0f8vKZ6Eub9iONvptvqABRZsCoGkYTBoTnkqkNP5z1UViNxCNEymcSUKf4yxppU
-	 1vvCfy5pbJN0w==
-Date: Mon, 25 Aug 2025 17:32:40 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 4/6] dt-bindings: thermal: add Tegra114 soctherm header
-Message-ID: <20250825-subtext-humorist-56ad14987b18@spud>
-References: <20250825104026.127911-1-clamor95@gmail.com>
- <20250825104026.127911-5-clamor95@gmail.com>
+	s=arc-20240116; t=1756139757; c=relaxed/simple;
+	bh=L2un3Tp24kq84D49bPeqtKFgx0ttvdt2Oi+LfIRW2Jk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u+wT30xuGlRhD1VS9y4xnkmQWjuE0zeIVyTWWGRObzs+IjVYfCwmSer/69gWp3DRILELdbDdL8utUK0MA9DoswtUH1GJGSCImXcu47PZmBQUhfrVUHJQzyIB9Yj/1WdCF5n+sQzgittFyN70QyQkX+8GtMYGFUfFox/CAUA2CrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aQ4JtXe6; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756139756; x=1787675756;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=L2un3Tp24kq84D49bPeqtKFgx0ttvdt2Oi+LfIRW2Jk=;
+  b=aQ4JtXe64l+megZLLTslxyNO3mJqjxdtJ26XSa/vg7Ok0/CPcoWHylNS
+   sy7pZklbtxpurn/BksnbsqCcROHvDk6acKNemmeoCLgviZMx9To+ysikz
+   EdWm7ujPGtjUyp8MohOgTFCufJzi5KQ0cMNvOl+AzGO5N52dsnVC/dpTp
+   JP2GkFp+B4U7cXsOqor3Jq6ku+sW4EGsBmdVrX1dLtNXZFulX9PA0+ZxU
+   TCqaefv5XJmYMQdXjFqGC7ZsHjmSKJQCskjGAauLG/aMOV77ejuZpgaHC
+   daCGL962vrAplIU/KS0uGjxyp1jnq+tEWKEflG7ocsis59TMXvx69grQ2
+   g==;
+X-CSE-ConnectionGUID: TonUE+BYSi2EtIOi3kn5rw==
+X-CSE-MsgGUID: Lj7NOPs8TAKPfDvF5eODHQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11533"; a="69459506"
+X-IronPort-AV: E=Sophos;i="6.18,213,1751266800"; 
+   d="scan'208";a="69459506"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 09:35:55 -0700
+X-CSE-ConnectionGUID: orFQ8jjkTR+a1kLWJels8Q==
+X-CSE-MsgGUID: l5OrMqmGT8icT6nXAJqR8A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,213,1751266800"; 
+   d="scan'208";a="169241087"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by orviesa007.jf.intel.com with ESMTP; 25 Aug 2025 09:35:48 -0700
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id D581B94; Mon, 25 Aug 2025 18:35:46 +0200 (CEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Helge Deller <deller@gmx.de>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Thomas Fourier <fourier.thomas@gmail.com>,
+	linux-alpha@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-m68k@lists.linux-m68k.org,
+	linux-mips@vger.kernel.org,
+	linux-parisc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	sparclinux@vger.kernel.org,
+	linux-block@vger.kernel.org
+Cc: Richard Henderson <richard.henderson@linaro.org>,
+	Matt Turner <mattst88@gmail.com>,
+	Ian Molton <spyro@f2s.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Denis Efremov <efremov@linux.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH v2 0/3] floppy: A couple of cleanups
+Date: Mon, 25 Aug 2025 18:32:54 +0200
+Message-ID: <20250825163545.39303-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7tazrZqeQK2No255"
-Content-Disposition: inline
-In-Reply-To: <20250825104026.127911-5-clamor95@gmail.com>
+Content-Transfer-Encoding: 8bit
 
+There are a few places in architecture code for the floppy driver
+that may be cleaned up. Do it so.
 
---7tazrZqeQK2No255
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Assumed to route via Andrew Morton's tree as floppy is basically orphaned.
 
+Changelog v2:
+- combined separate patches sent earlier into a series
+- added tags (Helge, Geert)
+- fixed typo in the commit message (Geert)
 
+Andy Shevchenko (3):
+  floppy: Remove unused CROSS_64KB() macro from arch/ code
+  floppy: Replace custom SZ_64K constant
+  floppy: Sort headers alphabetically
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+ arch/alpha/include/asm/floppy.h    | 19 ----------
+ arch/arm/include/asm/floppy.h      |  2 --
+ arch/m68k/include/asm/floppy.h     |  4 ---
+ arch/mips/include/asm/floppy.h     | 15 --------
+ arch/parisc/include/asm/floppy.h   | 11 +++---
+ arch/powerpc/include/asm/floppy.h  |  5 ---
+ arch/sparc/include/asm/floppy_32.h |  3 --
+ arch/sparc/include/asm/floppy_64.h |  3 --
+ arch/x86/include/asm/floppy.h      |  8 ++---
+ drivers/block/floppy.c             | 56 ++++++++++++++----------------
+ 10 files changed, 34 insertions(+), 92 deletions(-)
 
---7tazrZqeQK2No255
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+2.50.1
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaKyQKAAKCRB4tDGHoIJi
-0hNPAP0ZgYlArdqscbq1qWB/DsuZSnXLM/hf1evnYblufG+cdQD/YqSFvmrtGVLV
-7kJhUCGCQ+v7FNibpnCq6pTJpwLnKgs=
-=Cqzt
------END PGP SIGNATURE-----
-
---7tazrZqeQK2No255--
 
