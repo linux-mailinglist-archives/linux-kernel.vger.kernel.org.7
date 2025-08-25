@@ -1,178 +1,135 @@
-Return-Path: <linux-kernel+bounces-784600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05C98B33E3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:40:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5C41B33E3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:39:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C8817B1B41
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:38:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85836189BA44
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:39:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3612EC57B;
-	Mon, 25 Aug 2025 11:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301EF2EBDC5;
+	Mon, 25 Aug 2025 11:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iwfu8tca"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MZtwz8/m"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC802EAB6A;
-	Mon, 25 Aug 2025 11:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A693D2EAB88;
+	Mon, 25 Aug 2025 11:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756121970; cv=none; b=jptS9MF9BKkDH0LL2OTRZuCFMjkxwme+hb/KvXwpXTiYRM+acsyPKzGQVozSA5X8sycJ5VzTNT06z8vhakOb6MUalYTJOtI7ZYVr3yWaT2+U7QVVxLWM6ZQebjAcG/trJnnMJHLNkxcgAXO7DIt3kEfNXgv63bHo4XBfHoNi1zM=
+	t=1756121966; cv=none; b=h/IzxLZwHESdAz3NCI1OoxC7nTuDLI7Syea92kBYiYoPTX9CTyeOcClmXo6+GsbOmjdTYyIaPcYXV1GvaGXtWUUw5WrtyndPWEdj01xrTqH63o6vrviMPlK4cRsBhyKpKQ3m+xVSQKpGE3635yxjDWfe8MgLn5+A6gyviJ7DCyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756121970; c=relaxed/simple;
-	bh=7GO8Jac/WHBeZjLJm6fIwvfWXASWj8xYr2ROiPzF9aw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fK/y0HpCGkdx88TdwbvQtZed8vLcvPpxj2rmuIG/cfScbPN8TNbuLfSyrS/5aCXnH8gkeL/MeOP+BvCqxslTfeS5djU1dyf83zJ5k1VMAxEjUNtZV+iF1tXad026fsBw8AhAeBiGeNQsjIYRg6NdeYK5N7NJZAar6uZxcUVrrO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iwfu8tca; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0328DC4CEED;
-	Mon, 25 Aug 2025 11:39:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756121970;
-	bh=7GO8Jac/WHBeZjLJm6fIwvfWXASWj8xYr2ROiPzF9aw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=iwfu8tcaJGUohZ1xHZUMJowvML3G8NY+bdjH9VfIzuIhdm5y42l5Ande4p8TWQ1Lx
-	 gmEgz/P9aAafKnlQrJlUWyXYAcAqj+I4CwQxT5qle6VRvEQQRxr0+RgQm0NHLhQo+s
-	 Df9HLsaYXPKqsW2AdXzaD9NpxoM4DA2QAgFzLpaOMDBsX6yuwpDpi+OjdaQDCPhNri
-	 HgkWVFk67uDHuGhqaclhyjdCY9mCxc93vBEI75XUrAlrJS0oIyFvBfwM06WakAkS4Q
-	 XzpIrftTP3tJJwESpsBNigK4l0dfZoHYX7RcTRyN5KZ04FBbC5d2mwlPahqF+W9ZUU
-	 xnUQcc7EWJuFA==
-Date: Mon, 25 Aug 2025 12:39:19 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Dixit Parmar <dixitparmar19@gmail.com>
-Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Lars-Peter Clausen
- <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Ray
- Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Broadcom
- internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
- Support Opensource <support.opensource@diasemi.com>, Krzysztof Kozlowski
- <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Haibo Chen
- <haibo.chen@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Cai Huoqing <cai.huoqing@linux.dev>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, Andreas Klinger <ak@it-klinger.de>, Crt
- Mori <cmo@melexis.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev,
- linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH 00/10] iio: Drop unnecessary -ENOMEM messages
-Message-ID: <20250825123919.3c228ef7@jic23-huawei>
-In-Reply-To: <20250825093150.3ba23f2a@jic23-huawei>
-References: <20250822-enomam_logs-v1-0-db87f2974552@gmail.com>
-	<20250825093150.3ba23f2a@jic23-huawei>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756121966; c=relaxed/simple;
+	bh=K/kQgRpgKBpeblGCmioA9JFLsth+5XACElYdWEdqDXc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BuI//H/oHjNhbXcJkmTnQXvkz5czc1m6rzrqA9k9WuyHoEzo6sGn4nG/zLYv0mMo0MbSDxFeNQYBy+lLlLv+8m0fRLzvMVPPGgK+n/6cxh92o1V+CeOgnGTkUvPiH7Pw8qNs/AZ8QXJY/J4i02woJEEgW6C3Wen+rGu4ggNheJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MZtwz8/m; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-77057c4d88bso783896b3a.2;
+        Mon, 25 Aug 2025 04:39:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756121964; x=1756726764; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Aa/TXY2Um582KR4JGo9xX6kjB6nMiLz03lhm+4RC4ho=;
+        b=MZtwz8/mJw7bfKDJ6MFISu6bjPQvk4vQbGgsF8AWwzBZbh+KKwdsz3H16OgSDBzjZF
+         T/ewVcul144cK6YxuPFdSr00jO3zOUw8IVtv2zcTFE8LMvQplVHpypNacOb8ebzti/4h
+         54BwDCmR8RNqBluia+26HVCN/8SzlMQ6WADFERgWbayUlU4fvJOU1CaVP4Qlg6nixU+d
+         x3Dx/HfJSdzrmcuk24PuINB3JQYozqEtJN2KNSSFWLHOkBZgipRoV8TIjYhlhPV3rJRR
+         tv9Fv+Cd8ph4RAfw+TuZlEXUxwosTN0eBSkUUJ5TYCr3ZExysuEU02XE8bHFJhx/dh+4
+         CigQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756121964; x=1756726764;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Aa/TXY2Um582KR4JGo9xX6kjB6nMiLz03lhm+4RC4ho=;
+        b=BrRPBqhMW2KqZ5xN6+6TVp8VSo6zVG6yqPP37jLqOADqHNfxPgT6V3kkp3NNK8lemW
+         mZqYscn11jMrS1gd48cy42g3o9K9W8YQ3riQ/ltEOtmvEHW5dNwcjbgpgCK8+1FXhe0c
+         u+FUay/6GSIH3VE9xWkHBwO8lQOKabqohGn+YZWZ4jiuA6Wj82sVT0D9fvRyd40G7hKC
+         lSxoYdrxG4oUjW5sjU0ZbOqqaArllyBQSRvkMOM/hy1gSFl1P/aTnhTyZuUC7Xc9+jXC
+         +YkwBzp9c2u5xHFv+vsvO84kBY8eRrs1LTM8aCaf1OCHQgJ0ESSyZlwW2TbZXpETVHU5
+         xo6w==
+X-Forwarded-Encrypted: i=1; AJvYcCWeh6JXtliU/sKNFCGRABvcAF0R0zM3V/APj6J+iv3+xkUnXaycVUqFZ5MFqeHU3bzP6utGRl9HDD18d4A1@vger.kernel.org, AJvYcCWqqF+9PJ33Nv+64Y42pjZvXOotayyknW8wk6veSpL7QNmwL3WD+3+3PrHBWtPL2ae7LcNtYzMrRZ64@vger.kernel.org, AJvYcCXiuAg11it9dCpABDcghce4Toi6Zo1KX2CnH2KrFRZQtQC9AScf3G0E40l6os0MlzzoVUYY6/Oe37CVYQoX@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmIkHZPWS9MsWzMAmGhDI0iRKxwpEz6LhTcv+c+cvUMTI06W2B
+	c5f1yvDc575ysR9Yum9JRee5AZbgXo1N3bGKJ5H8ACTHPcg+t9eDii/T
+X-Gm-Gg: ASbGncvxDhGgCs0FQmqj2T9paqR6b57TYVxj1YQAHxuTgCcxEmLcjoK50Wt3jzzl8Q2
+	QZZz9ZpW9oHKPDakl8797q/lTRUt33GO8CdBM399kvcKcV/n8NE07CGCogFLGoKM1nSXgBWgfkr
+	quG0gof4Of/ejwxJiQki60fPlHpaCJMoHwc162zAvsXszn5QKvWQfsDchAW7FOVidqcMebJvsat
+	6KvERe9p+dUrDragDv/M9L7uZQHxO408XKA6Y2IbZOWSxQ+kWHjPmKrHfu/FWEIEUOq28Mu3Usk
+	YW6wk1v7gZeF7up2ns1QYYO7JrvsJIGOsGUz/9PSjyEAlRkDA3Rc6nqpcXRdqKhv0H6gF7Fi5Gc
+	1/Mg6hurYD5D2SumRv/OReQEU/5qCWJzQT3aEQ1upF7zf5g==
+X-Google-Smtp-Source: AGHT+IHCuCjkmgp3p+p6iAGzISrTsCb/4rjCyc4Apur5alh5Oexeff9wgo/3iDzWpADlrmQy1iRhEQ==
+X-Received: by 2002:a05:6a20:3d85:b0:240:e327:d7a1 with SMTP id adf61e73a8af0-24340b8db0fmr15619900637.1.1756121963643;
+        Mon, 25 Aug 2025 04:39:23 -0700 (PDT)
+Received: from VM-16-24-fedora.. ([43.153.32.141])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b49d858ae34sm4534931a12.47.2025.08.25.04.39.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Aug 2025 04:39:23 -0700 (PDT)
+From: Jinliang Zheng <alexjlzheng@gmail.com>
+X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
+To: hch@infradead.org
+Cc: alexjlzheng@gmail.com,
+	alexjlzheng@tencent.com,
+	brauner@kernel.org,
+	djwong@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	yi.zhang@huawei.com
+Subject: Re: [PATCH v3 0/4] allow partial folio write with iomap_folio_state
+Date: Mon, 25 Aug 2025 19:39:21 +0800
+Message-ID: <20250825113921.2933350-1-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <aKwuJptHVsx-Ed82@infradead.org>
+References: <aKwuJptHVsx-Ed82@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Mon, 25 Aug 2025 09:31:50 +0100
-Jonathan Cameron <jic23@kernel.org> wrote:
-
-> On Fri, 22 Aug 2025 09:19:48 +0530
-> Dixit Parmar <dixitparmar19@gmail.com> wrote:
-> 
-> > The drivers do not require their own error messages for error
-> > -ENOMEM, memory allocation failures. So remove the dev_err
-> > messages from the probe().
-> > With these patches, all the iio drivers now has uniform handling
-> > of the -ENOMEM while device_allocation and trigger_allocation
-> > calls.
+On Mon, 25 Aug 2025 02:34:30 -0700, Christoph Hellwig wrote:
+> On Tue, Aug 13, 2025 at 05:15:34PM +0800, alexjlzheng@gmail.com wrote:
+> > From: Jinliang Zheng <alexjlzheng@tencent.com>
 > > 
-> > Signed-off-by: Dixit Parmar <dixitparmar19@gmail.com>  
-> Series looks fine to me, after the minor tweaks to commit messages
-> that Andy requested.  However as it touches a lot of drivers
-> I'd like to leave it on list a little longer.
-
-I changed my mind after taking the dev_err_probe() series earlier.
-I'm rather too busy at the moment, so clearing this out now will reduce
-what I need to keep track of.
-
-Fixed up the () that Andy asked for in commit messages and applied
-to the togreg branch of iio.git, pushed out initially as testing.
-
-There is still the rest of the week (probably) in which I can add
-tags etc if anyone wants to give them before I push that out as
-a non rebasing tree.
-
-Thanks,
-
-Jonathan
-
-> 
-> Thanks,
-> 
-> Jonathan
-> 
-> > ---
-> > Dixit Parmar (10):
-> >       iio: accel: Drop unnecessary -ENOMEM messages
-> >       iio: adc: Drop unnecessary -ENOMEM messages
-> >       iio: dac: Drop unnecessary -ENOMEM messages
-> >       iio: health: Drop unnecessary -ENOMEM messages
-> >       iio: humidity: Drop unnecessary -ENOMEM messages
-> >       iio: light: Drop unnecessary -ENOMEM messages
-> >       iio: potentiostat: Drop unnecessary -ENOMEM messages
-> >       iio: pressure: Drop unnecessary -ENOMEM messages
-> >       iio: proximity: Drop unnecessary -ENOMEM messages
-> >       iio: temperature: Drop unnecessary -ENOMEM messages
+> > With iomap_folio_state, we can identify uptodate states at the block
+> > level, and a read_folio reading can correctly handle partially
+> > uptodate folios.
 > > 
-> >  drivers/iio/accel/bma220_spi.c      | 4 +---
-> >  drivers/iio/accel/dmard06.c         | 4 +---
-> >  drivers/iio/accel/dmard09.c         | 4 +---
-> >  drivers/iio/accel/dmard10.c         | 4 +---
-> >  drivers/iio/accel/mc3230.c          | 4 +---
-> >  drivers/iio/accel/mma7660.c         | 4 +---
-> >  drivers/iio/accel/stk8312.c         | 4 +---
-> >  drivers/iio/accel/stk8ba50.c        | 4 +---
-> >  drivers/iio/adc/ad7949.c            | 4 +---
-> >  drivers/iio/adc/bcm_iproc_adc.c     | 4 +---
-> >  drivers/iio/adc/cpcap-adc.c         | 6 ++----
-> >  drivers/iio/adc/da9150-gpadc.c      | 5 ++---
-> >  drivers/iio/adc/dln2-adc.c          | 9 +++------
-> >  drivers/iio/adc/exynos_adc.c        | 4 +---
-> >  drivers/iio/adc/imx7d_adc.c         | 4 +---
-> >  drivers/iio/adc/imx8qxp-adc.c       | 4 +---
-> >  drivers/iio/adc/mxs-lradc-adc.c     | 4 +---
-> >  drivers/iio/adc/palmas_gpadc.c      | 4 +---
-> >  drivers/iio/adc/rn5t618-adc.c       | 4 +---
-> >  drivers/iio/adc/stm32-dfsdm-adc.c   | 4 +---
-> >  drivers/iio/adc/stmpe-adc.c         | 4 +---
-> >  drivers/iio/adc/ti-adc084s021.c     | 4 +---
-> >  drivers/iio/adc/ti-ads131e08.c      | 8 ++------
-> >  drivers/iio/adc/ti_am335x_adc.c     | 5 ++---
-> >  drivers/iio/adc/twl4030-madc.c      | 4 +---
-> >  drivers/iio/adc/viperboard_adc.c    | 4 +---
-> >  drivers/iio/dac/ad5380.c            | 4 +---
-> >  drivers/iio/dac/ad5764.c            | 4 +---
-> >  drivers/iio/dac/ds4424.c            | 4 +---
-> >  drivers/iio/dac/ti-dac7311.c        | 4 +---
-> >  drivers/iio/dac/vf610_dac.c         | 4 +---
-> >  drivers/iio/health/afe4403.c        | 4 +---
-> >  drivers/iio/health/afe4404.c        | 4 +---
-> >  drivers/iio/humidity/am2315.c       | 4 +---
-> >  drivers/iio/humidity/dht11.c        | 4 +---
-> >  drivers/iio/light/stk3310.c         | 4 +---
-> >  drivers/iio/potentiostat/lmp91000.c | 4 +---
-> >  drivers/iio/pressure/dlhl60d.c      | 4 +---
-> >  drivers/iio/proximity/ping.c        | 4 +---
-> >  drivers/iio/proximity/srf04.c       | 4 +---
-> >  drivers/iio/temperature/mlx90632.c  | 4 +---
-> >  41 files changed, 47 insertions(+), 130 deletions(-)
-> > ---
-> > base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
-> > change-id: 20250822-enomam_logs-f66642957fb3
+> > Therefore, when a partial write occurs, accept the block-aligned
+> > partial write instead of rejecting the entire write.
 > > 
-> > Best regards,  
+> > For example, suppose a folio is 2MB, blocksize is 4kB, and the copied
+> > bytes are 2MB-3kB.
 > 
-> 
+> I'd still love to see some explanation of why you are doing this.
+> Do you have a workload that actually hits this regularly, and where
+> it makes a difference.  Can you provide numbers to quantify them?
 
+Thank you for your reply. :)
+
+Actually, I discovered this while reading (and studying) the code for large
+folios.
+
+Given that short-writes are inherently unusual, I don't think this patchset
+will significantly improve performance in hot paths. It might help in scenarios
+with frequent memory hardware errors, but unfortunately, I haven't built a
+test scenario like that.
+
+I'm posting this patchset just because I think we can do better in exception
+handling: if we can reduce unnecessary copying, why not?
+
+Hahaha, just my personal opinion. :)
+
+thanks,
+Jinliang Zheng
 
