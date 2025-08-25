@@ -1,216 +1,138 @@
-Return-Path: <linux-kernel+bounces-784655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B150EB33F2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:18:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BCD59B33BF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:57:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70B601676F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:18:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B430C17FE03
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9D21991BF;
-	Mon, 25 Aug 2025 12:18:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0994C2D0C95;
+	Mon, 25 Aug 2025 09:53:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Tao79EtA";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5rJ/Z/Gr";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Tao79EtA";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5rJ/Z/Gr"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="U1L3L4df";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="foPLQgWZ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17FF3136988
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 12:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07F2293C4E
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 09:53:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756124287; cv=none; b=b3jE5ielrMjGQ7765/NTigKmKFaAk7dO8llIi0X1T+qtv88BRr/p9DM+wiJUdnxtinOpf7bc/Uz+53WcB4VlGNQo85VHb2U8c+nw4bxLvQ/SGfPKEjnkPj5sLMRqy+xwy0tfQIw0dCypubnz/tYqwjDddv/GnSdCL3HfuklrDpA=
+	t=1756115601; cv=none; b=sOj/giizsoNdMDBTXDDZnsrzhwg3laF72GXe09AfbOJX9gVGZVA3TNu0898NNMdZn4e366ogJXlUVijkLHDFLmpdV3mXCA2s7eAngCA2NO2qpYrvkH1P82/2cZqrK7npNEdIEENR6ZpweRUqK6a+NG1apDFv2VgdtSVw2ru6Vjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756124287; c=relaxed/simple;
-	bh=P9ZioVmRLNZ0PRlBeWitR5wdkkEpDXbsieVIuraxilE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dmqwb34vDYfHyezfIRBHNn+UOYo5J1rSFhaKOc1OyYhKb2536X3iCezI3SHA0na9bwuS6V1cQeSBI3eKWTxzLgnkpsMBpIV/8qaKfMwvBVQTnAx6hvF2pmOD1iKZJpRVE6KQ0+I1ebHhaKJqX45ONKaxLTCgcC/oU1Zi1QuyNxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Tao79EtA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5rJ/Z/Gr; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Tao79EtA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5rJ/Z/Gr; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4A70A211F3;
-	Mon, 25 Aug 2025 12:18:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756124283; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1756115601; c=relaxed/simple;
+	bh=xJpFqzaqKgISiM7zMtTwHanAHWCN1r02jm2naeRcyPU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=pxAErSBRs/ht9HZ2ibfzuiXAEN6eNSmJn+1XUNF3WZPPGsEJWouVx95Jhjy8KrktTHYixw6U8HG0x9nKrrNeDNdxK4LBhZ4EUmuSen2v6o700ZZbOiPLxOkjPUuT49FkJ68mnNZJ3bmgaxtv+RTo+UTD5tlRffOg7tq06AhMhog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=U1L3L4df; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=foPLQgWZ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756115596;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Avr9qQSALOT/4FAoU4o3mO7LUZ77ekSCMOcAtT98JTM=;
-	b=Tao79EtAkiUvJLLkEijhojJY1EHnJXfA8BZXf+YCTwJ0QOr6o9nI8uIU/IOIvz45Er1yO/
-	/530XOlTtmwzjHr9n899nIC+KUD5hOYpyHxb8aKxQbSqg5JqWmU6PKjqW86pB8c1oU2MZE
-	ViqOeWEuDYowv/vH1UfE9x+pFo81juM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756124283;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	bh=35B4fjhngLRBiTOVgGZswSonEiPbq+2cC52RJ1vGSQ4=;
+	b=U1L3L4df+74JpwTccXgHr42RRvmQfGXY9KMWRMXHJHoupCQVGe5f7ZEeowcB+gRiPJlkty
+	nUSIsIhO1346QvyKCdX8e4wKeJf7H/INVxoGO8TIaZ3KfeNf4lclVaKl3IxZREx0C4fRlq
+	5vdJ0qhpncFWblTo93NjRS25yjEOsg3CDUo/1OSMPwD5JdBlxbxfo+tGsowj6AefdGJliR
+	yfZZ/t7X6H/iWyWijgImjKhdAi0lFejBHsggjB1ciGZWFn5CchFQmAHJzg7JdUpNvMj9Ys
+	i/DbB3FJNtCnz/+9dsH/Aqdbm2mJaXOoGGrp3/GEJzU5cOzHB17o7vbNZEt8pg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756115596;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Avr9qQSALOT/4FAoU4o3mO7LUZ77ekSCMOcAtT98JTM=;
-	b=5rJ/Z/GrRBtFPr2meoPGPviuJqwLUCdM8lWnMgbBeRZZmkztUbDBh7n+6f9ET2u2S3Bs1+
-	UfF5eaQM4wQ0hMCA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756124283; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Avr9qQSALOT/4FAoU4o3mO7LUZ77ekSCMOcAtT98JTM=;
-	b=Tao79EtAkiUvJLLkEijhojJY1EHnJXfA8BZXf+YCTwJ0QOr6o9nI8uIU/IOIvz45Er1yO/
-	/530XOlTtmwzjHr9n899nIC+KUD5hOYpyHxb8aKxQbSqg5JqWmU6PKjqW86pB8c1oU2MZE
-	ViqOeWEuDYowv/vH1UfE9x+pFo81juM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756124283;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Avr9qQSALOT/4FAoU4o3mO7LUZ77ekSCMOcAtT98JTM=;
-	b=5rJ/Z/GrRBtFPr2meoPGPviuJqwLUCdM8lWnMgbBeRZZmkztUbDBh7n+6f9ET2u2S3Bs1+
-	UfF5eaQM4wQ0hMCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 33DF4136DB;
-	Mon, 25 Aug 2025 12:18:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id B7CiDHtUrGjvEAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 25 Aug 2025 12:18:03 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 1D1F2A0A8A; Mon, 25 Aug 2025 11:52:50 +0200 (CEST)
-Date: Mon, 25 Aug 2025 11:52:50 +0200
-From: Jan Kara <jack@suse.cz>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
-	jack@suse.cz, linux-kernel@vger.kernel.org, yi.zhang@huawei.com, 
-	yangerkun@huawei.com, libaokun1@huawei.com
-Subject: Re: [PATCH] ext4: add ext4_sb_bread_nofail() helper function for
- ext4_free_branches()
-Message-ID: <clyk3sndidaz3plcvojzci7rs7sqmsegga5izrp46l23zaxtoc@sovizlltl6jd>
-References: <20250821133857.80542-1-libaokun@huaweicloud.com>
+	bh=35B4fjhngLRBiTOVgGZswSonEiPbq+2cC52RJ1vGSQ4=;
+	b=foPLQgWZfCJRXUR/yHmICMfN69C4ZHPqjeX79OgcwU8VMDUXMPQOKZHR1eFbYwG0VVahgG
+	WSaAYzkYgFIxQoAw==
+To: Jinchao Wang <wangjinchao600@gmail.com>, pmladek@suse.com,
+ akpm@linux-foundation.org, Steven Rostedt <rostedt@goodmis.org>, Sergey
+ Senozhatsky <senozhatsky@chromium.org>
+Cc: linux-kernel@vger.kernel.org, feng.tang@linux.alibaba.com,
+ joel.granados@kernel.org, wangjinchao600@gmail.com, namcao@linutronix.de,
+ sravankumarlpu@gmail.com
+Subject: Re: [PATCH 6/9] printk/nbcon: use panic_on_this_cpu() helper
+In-Reply-To: <20250820091702.512524-7-wangjinchao600@gmail.com>
+References: <20250820091702.512524-1-wangjinchao600@gmail.com>
+ <20250820091702.512524-2-wangjinchao600@gmail.com>
+ <20250820091702.512524-3-wangjinchao600@gmail.com>
+ <20250820091702.512524-4-wangjinchao600@gmail.com>
+ <20250820091702.512524-5-wangjinchao600@gmail.com>
+ <20250820091702.512524-6-wangjinchao600@gmail.com>
+ <20250820091702.512524-7-wangjinchao600@gmail.com>
+Date: Mon, 25 Aug 2025 11:59:16 +0206
+Message-ID: <84wm6rbucz.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250821133857.80542-1-libaokun@huaweicloud.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_NONE(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:email]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+Content-Type: text/plain
 
-On Thu 21-08-25 21:38:57, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> The implicit __GFP_NOFAIL flag in ext4_sb_bread() was removed in commit
-> 8a83ac54940d ("ext4: call bdev_getblk() from sb_getblk_gfp()"), meaning
-> the function can now fail under memory pressure.
-> 
-> Most callers of ext4_sb_bread() propagate the error to userspace and do not
-> remount the filesystem read-only. However, ext4_free_branches() handles
-> ext4_sb_bread() failure by remounting the filesystem read-only.
-> 
-> This implies that an ext3 filesystem (mounted via the ext4 driver) could be
-> forcibly remounted read-only due to a transient page allocation failure,
-> which is unacceptable.
-> 
-> To mitigate this, introduce a new helper function, ext4_sb_bread_nofail(),
-> which explicitly uses __GFP_NOFAIL, and use it in ext4_free_branches().
-> 
-> Fixes: 8a83ac54940d ("ext4: call bdev_getblk() from sb_getblk_gfp()")
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-
-Looks sane. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+On 2025-08-20, Jinchao Wang <wangjinchao600@gmail.com> wrote:
+> nbcon_context_try_acquire() compared
+> panic_cpu directly with smp_processor_id().
+> This open-coded check is now provided by
+> panic_on_this_cpu().
+>
+> Switch to panic_on_this_cpu() to simplify
+> the code and improve readability.
+>
+> Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
 > ---
->  fs/ext4/ext4.h     | 2 ++
->  fs/ext4/indirect.c | 2 +-
->  fs/ext4/super.c    | 9 +++++++++
->  3 files changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index 106484739932..32315e51639e 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -3134,6 +3134,8 @@ extern struct buffer_head *ext4_sb_bread(struct super_block *sb,
->  					 sector_t block, blk_opf_t op_flags);
->  extern struct buffer_head *ext4_sb_bread_unmovable(struct super_block *sb,
->  						   sector_t block);
-> +extern struct buffer_head *ext4_sb_bread_nofail(struct super_block *sb,
-> +						sector_t block);
->  extern void ext4_read_bh_nowait(struct buffer_head *bh, blk_opf_t op_flags,
->  				bh_end_io_t *end_io, bool simu_fail);
->  extern int ext4_read_bh(struct buffer_head *bh, blk_opf_t op_flags,
-> diff --git a/fs/ext4/indirect.c b/fs/ext4/indirect.c
-> index 7de327fa7b1c..39350a18e919 100644
-> --- a/fs/ext4/indirect.c
-> +++ b/fs/ext4/indirect.c
-> @@ -1025,7 +1025,7 @@ static void ext4_free_branches(handle_t *handle, struct inode *inode,
->  			}
+>  kernel/printk/nbcon.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
+> index 646801813415..7490865e2f44 100644
+> --- a/kernel/printk/nbcon.c
+> +++ b/kernel/printk/nbcon.c
+> @@ -2,6 +2,7 @@
+>  // Copyright (C) 2022 Linutronix GmbH, John Ogness
+>  // Copyright (C) 2022 Intel, Thomas Gleixner
 >  
->  			/* Go read the buffer for the next level down */
-> -			bh = ext4_sb_bread(inode->i_sb, nr, 0);
-> +			bh = ext4_sb_bread_nofail(inode->i_sb, nr);
->  
->  			/*
->  			 * A read failure? Report error and clear slot
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index c7d39da7e733..a0e2b396aa76 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -265,6 +265,15 @@ struct buffer_head *ext4_sb_bread_unmovable(struct super_block *sb,
->  	return __ext4_sb_bread_gfp(sb, block, 0, gfp);
->  }
->  
-> +struct buffer_head *ext4_sb_bread_nofail(struct super_block *sb,
-> +					 sector_t block)
-> +{
-> +	gfp_t gfp = mapping_gfp_constraint(sb->s_bdev->bd_mapping,
-> +			~__GFP_FS) | __GFP_MOVABLE | __GFP_NOFAIL;
-> +
-> +	return __ext4_sb_bread_gfp(sb, block, 0, gfp);
-> +}
-> +
->  void ext4_sb_breadahead_unmovable(struct super_block *sb, sector_t block)
+> +#include "linux/panic.h"
+>  #include <linux/atomic.h>
+>  #include <linux/bug.h>
+>  #include <linux/console.h>
+
+Please use angle brackets. Also, the includes are sorted
+alphabetically. So it should look like this:
+
+ #include <linux/irqflags.h>
+ #include <linux/kthread.h>
+ #include <linux/minmax.h>
++#include <linux/panic.h>
+ #include <linux/percpu.h>
+ #include <linux/preempt.h>
+ #include <linux/slab.h>
+
+> @@ -589,7 +590,6 @@ static struct printk_buffers panic_nbcon_pbufs;
+>   */
+>  static bool nbcon_context_try_acquire(struct nbcon_context *ctxt, bool is_reacquire)
 >  {
->  	struct buffer_head *bh = bdev_getblk(sb->s_bdev, block,
-> -- 
-> 2.39.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> -	unsigned int cpu = smp_processor_id();
+>  	struct console *con = ctxt->console;
+>  	struct nbcon_state cur;
+>  	int err;
+> @@ -614,7 +614,7 @@ static bool nbcon_context_try_acquire(struct nbcon_context *ctxt, bool is_reacqu
+>  	/* Acquire succeeded. */
+>  
+>  	/* Assign the appropriate buffer for this context. */
+> -	if (atomic_read(&panic_cpu) == cpu)
+> +	if (panic_on_this_cpu())
+>  		ctxt->pbufs = &panic_nbcon_pbufs;
+>  	else
+>  		ctxt->pbufs = con->pbufs;
+
+With the above changes:
+
+Reviewed-by: John Ogness <john.ogness@linutronix.de>
 
