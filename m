@@ -1,142 +1,104 @@
-Return-Path: <linux-kernel+bounces-784249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF071B33899
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:20:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ED68B3389B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:20:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4BA92023E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:20:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 447D31B22DC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C7F2868BA;
-	Mon, 25 Aug 2025 08:20:03 +0000 (UTC)
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.75.44.102])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 977D61FB3;
-	Mon, 25 Aug 2025 08:19:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.75.44.102
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0108298CB7;
+	Mon, 25 Aug 2025 08:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="N7RZjF+9"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF787225A59;
+	Mon, 25 Aug 2025 08:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756110003; cv=none; b=lO0UbPomXTBXiC0mduSSPwjCa11F8fn0udCOy65oR0+FejLcmaPTkrn2jcvIs09v9/MSOXzzRxqjksIy7eG/2g8kl9ry2WoTsFDKFiRXsWOhJIWhMk4+sdkdXOJayr4IvVGoLt4mA9PwN9QjfxsF9O2mzHfD2T15oJ+pwJw2QQw=
+	t=1756110016; cv=none; b=OCUZMoF8mfQ1Czwtiq1OR1c7IqLxmPtEJmAl2vaZAr778/nGeFVGclfoFdZnQXVkzAyn+8wxPQ81uutphEca2Y/4LfC3dmRCcGwfIuTOCCzJd41eVAUoG3LI7GSBNcLTr6uP2cfxS3hJFR0i7YRZCJYaV4uUzuIDBOiyAPBYcFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756110003; c=relaxed/simple;
-	bh=Ps9QhjWK6CZ95OsvA3fjPfEAqHGjUB74wOhHgsUF5oQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=FTaldE2ZxuoawPnbW4V8sX72cGjBgpRYMDHS2PIwNUR7OJXyPtFGR9otsZv8SGvDKOKdVCHoexdLLw09a1KB38VYEkM3JjVHvRlPtEy087SVwRaFzoSvrKqqdxEs3WXglPypG2jCMkWfIGYi6TIc8/nMm+eMR6ON4w55Givka0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=13.75.44.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from luyulin$eswincomputing.com ( [10.12.96.77] ) by
- ajax-webmail-app2 (Coremail) ; Mon, 25 Aug 2025 16:19:44 +0800 (GMT+08:00)
-Date: Mon, 25 Aug 2025 16:19:44 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: luyulin@eswincomputing.com
-To: "Rob Herring" <robh@kernel.org>
-Cc: dlemoal@kernel.org, cassel@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-ide@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	vkoul@kernel.org, kishon@kernel.org, linux-phy@lists.infradead.org,
-	ningyu@eswincomputing.com, zhengyu@eswincomputing.com,
-	linmin@eswincomputing.com, huangyifeng@eswincomputing.com,
-	fenglin@eswincomputing.com, lianghujun@eswincomputing.com
-Subject: Re: Re: [PATCH v2 1/3] dt-bindings: ata: eswin: Document for
- EIC7700 SoC ahci
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
- 20241203(6b039d88) Copyright (c) 2002-2025 www.mailtech.cn
- mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
-In-Reply-To: <CAL_JsqKFotNLZZXwiy7S6K8qXLdGRAnsa-1zvZRDQBE39Gf5kg@mail.gmail.com>
-References: <20250819134722.220-1-luyulin@eswincomputing.com>
- <20250819135413.386-1-luyulin@eswincomputing.com>
- <CAL_JsqKFotNLZZXwiy7S6K8qXLdGRAnsa-1zvZRDQBE39Gf5kg@mail.gmail.com>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1756110016; c=relaxed/simple;
+	bh=EbzhpPOjLi3kH55G5+vHCGUnZrR8M1xHYP6BhMDkE2w=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=RIsQJdnqDFrZ3FgABBgY+VGmzltX1BpZzzy9pPGavu04KvcBNv6Eca7RskH5cH+uhprWhB8YXagCwAmANMw9do9kEq7Of18ZXlkPFjHaoelT51+t6k8fwBKme/q0GHCj6/9XEVdUvzWKROHMI58ZIs1qARCy6itVJg1dLxK0DH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=N7RZjF+9; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=JjdTDWtQIxrGilIZgCVBGVSdcEmwWIR6irdMFSFg1uA=;
+	t=1756110014; x=1757319614; b=N7RZjF+921Doygr3G4eYSHhs3U7/Yg+dVZSqvIHNrPnrhIj
+	OFHDkTIx2v1tD7BPSlhbaJTBq+haH+OipyArxV8pLgNuC0KzlyO4AiyJgtyzVo1nsQ1M21Axzudgg
+	kYY1rbUmIqcMINaO5yWzcvxi9vg3/A4TW+edqBUR1C9ErG5NHS8QYen3oaeCClXY2oJV83qWzL7iR
+	uA052HvoMIpJEwCoQVYLPN3/Y0PUT6vOOWPAPI30/p0K8E8nuikL/C75dkSYlS29gBZh9/MvoqODi
+	mRSZeKwtvtX4YE6kkSpUH5fPDO9F6yucifFVv9a0BNopvN8WiDPName3sUGt+1Mg==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1uqSR0-00000001bsE-26fm;
+	Mon, 25 Aug 2025 10:20:10 +0200
+Message-ID: <4f8037dc97958e06dfb08d75fce982c1e4e36068.camel@sipsolutions.net>
+Subject: Re: [RFC] wifi: iwlwifi: mei: Remove unused flexible-array member
+ in struct iwl_sap_hdr?
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Miri Korenblit
+	 <miriam.rachel.korenblit@intel.com>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 25 Aug 2025 10:20:09 +0200
+In-Reply-To: <fbc03dee-273a-4c75-a8bb-fbc6ae48d26d@embeddedor.com>
+References: <fbc03dee-273a-4c75-a8bb-fbc6ae48d26d@embeddedor.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <2cc9f2ff.6a2.198e04fd36e.Coremail.luyulin@eswincomputing.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:TQJkCgA31pSgHKxoBmbDAA--.22942W
-X-CM-SenderInfo: pox13z1lq6v25zlqu0xpsx3x1qjou0bp/1tbiAQEFA2irPnUklgAA
-	s8
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VW3Jw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+X-malware-bazaar: not-scanned
 
-SGksIFJvYgpUaGFuayB5b3UgdmVyeSBtdWNoIGZvciB5b3VyIHByb2Zlc3Npb25hbCByZXNwb25z
-ZSBhbmQgc3VnZ2VzdGlvbnMuCkFtb25nIHRoZSBzdWdnZXN0aW9ucyB5b3UgbWVudGlvbmVkLCAK
-b25lIHBvaW50IGlzIG5vdCBlbnRpcmVseSBjbGVhciwgYW5kIEkgd291bGQgbGlrZSB0byBzZWVr
-IHlvdXIgYWR2aWNlIG9uIGl0Lgo+IAo+IE9uIFR1ZSwgQXVnIDE5LCAyMDI1IGF0IDg6NTTigK9B
-TSBZdWxpbiBMdSA8bHV5dWxpbkBlc3dpbmNvbXB1dGluZy5jb20+IHdyb3RlOgo+ID4KPiA+IEZy
-b206IGx1eXVsaW4gPGx1eXVsaW5AZXN3aW5jb21wdXRpbmcuY29tPgo+IAo+IFBsZWFzZSBmaXgg
-eW91ciBuYW1lLgo+IAo+ID4KPiA+IEFkZCBkb2N1bWVudCBmb3IgdGhlIFNBVEEgQUhDSSBjb250
-cm9sbGVyIG9uIHRoZSBFSUM3NzAwIFNvQyBwbGF0Zm9ybSwKPiA+IGluY2x1ZGluZyBkZXNjcmlw
-dGlvbnMgb2YgaXRzIGhhcmR3YXJlIGNvbmZpZ3VyYXRpb25zLgo+ID4KPiA+IFNpZ25lZC1vZmYt
-Ynk6IGx1eXVsaW4gPGx1eXVsaW5AZXN3aW5jb21wdXRpbmcuY29tPgo+IAo+IEFuZCBoZXJlLgo+
-IAo+ID4gLS0tCj4gPiAgLi4uL2JpbmRpbmdzL2F0YS9lc3dpbixlaWM3NzAwLWFoY2kueWFtbCAg
-ICAgIHwgOTIgKysrKysrKysrKysrKysrKysrKwo+ID4gIDEgZmlsZSBjaGFuZ2VkLCA5MiBpbnNl
-cnRpb25zKCspCj4gPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2aWNldHJl
-ZS9iaW5kaW5ncy9hdGEvZXN3aW4sZWljNzcwMC1haGNpLnlhbWwKPiA+Cj4gPiBkaWZmIC0tZ2l0
-IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2F0YS9lc3dpbixlaWM3NzAwLWFo
-Y2kueWFtbCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9hdGEvZXN3aW4sZWlj
-NzcwMC1haGNpLnlhbWwKPiA+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4gPiBpbmRleCAwMDAwMDAw
-MDAwMDAuLjllZjU4YzljMmYyOAo+ID4gLS0tIC9kZXYvbnVsbAo+ID4gKysrIGIvRG9jdW1lbnRh
-dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2F0YS9lc3dpbixlaWM3NzAwLWFoY2kueWFtbAo+ID4g
-QEAgLTAsMCArMSw5MiBAQAo+ID4gKyMgU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IChHUEwtMi4w
-LW9ubHkgT1IgQlNELTItQ2xhdXNlKQo+ID4gKyVZQU1MIDEuMgo+ID4gKy0tLQo+ID4gKyRpZDog
-aHR0cDovL2RldmljZXRyZWUub3JnL3NjaGVtYXMvYXRhL2Vzd2luLGVpYzc3MDAtYWhjaS55YW1s
-Iwo+ID4gKyRzY2hlbWE6IGh0dHA6Ly9kZXZpY2V0cmVlLm9yZy9tZXRhLXNjaGVtYXMvY29yZS55
-YW1sIwo+ID4gKwo+ID4gK3RpdGxlOiBFc3dpbiBFSUM3NzAwIFNvQyBTQVRBIENvbnRyb2xsZXIK
-PiA+ICsKPiA+ICttYWludGFpbmVyczoKPiA+ICsgIC0gWXVsaW4gTHUgPGx1eXVsaW5AZXN3aW5j
-b21wdXRpbmcuY29tPgo+ID4gKyAgLSBIdWFuIEhlIDxoZWh1YW4xQGVzd2luY29tcHV0aW5nLmNv
-bT4KPiA+ICsKPiA+ICtkZXNjcmlwdGlvbjoKPiA+ICsgIFRoaXMgZG9jdW1lbnQgZGVmaW5lcyBk
-ZXZpY2UgdHJlZSBiaW5kaW5ncyBmb3IgdGhlIFN5bm9wc3lzIERXQwo+ID4gKyAgaW1wbGVtZW50
-YXRpb24gb2YgdGhlIEFIQ0kgU0FUQSBjb250cm9sbGVyIGZvdW5kIGluIEVzd2luJ3MKPiA+ICsg
-IEVpYzc3MDAgU29DIHBsYXRmb3JtLgo+ID4gKwo+ID4gK3NlbGVjdDoKPiA+ICsgIHByb3BlcnRp
-ZXM6Cj4gPiArICAgIGNvbXBhdGlibGU6Cj4gPiArICAgICAgY29uc3Q6IGVzd2luLGVpYzc3MDAt
-YWhjaQo+ID4gKyAgcmVxdWlyZWQ6Cj4gPiArICAgIC0gY29tcGF0aWJsZQo+ID4gKwo+ID4gK2Fs
-bE9mOgo+ID4gKyAgLSAkcmVmOiBzbnBzLGR3Yy1haGNpLWNvbW1vbi55YW1sIwo+ID4gKwo+ID4g
-K3Byb3BlcnRpZXM6Cj4gPiArICBjb21wYXRpYmxlOgo+ID4gKyAgICBpdGVtczoKPiA+ICsgICAg
-ICAtIGNvbnN0OiBlc3dpbixlaWM3NzAwLWFoY2kKPiA+ICsgICAgICAtIGNvbnN0OiBzbnBzLGR3
-Yy1haGNpCj4gPiArCj4gPiArICByZWc6Cj4gPiArICAgIG1heEl0ZW1zOiAxCj4gCj4gRHJvcC4g
-c25wcyxkd2MtYWhjaS1jb21tb24ueWFtbCBhbHJlYWR5IGRlZmluZXMgdGhpcy4KPiAKPiA+ICsK
-PiA+ICsgIGludGVycnVwdHM6Cj4gPiArICAgIG1heEl0ZW1zOiAxCj4gCj4gRHJvcC4gc25wcyxk
-d2MtYWhjaS1jb21tb24ueWFtbCBhbHJlYWR5IGRlZmluZXMgdGhpcy4KPiAKPiA+ICsKPiA+ICsg
-IHBvcnRzLWltcGxlbWVudGVkOgo+ID4gKyAgICBjb25zdDogMQo+IAo+IFJlYWxseSwgeW91ciBm
-aXJtd2FyZSBzaG91bGQgaW5pdGlhbGl6ZSB0aGUgRFdDIHNwZWNpZmljIHJlZ2lzdGVyIHRoYXQK
-PiBzZXRzIHRoaXMgYW5kIGlzIGRpc2NvdmVyYWJsZSB2aWEgYSBzdGFuZGFyZCBBSENJIHJlZ2lz
-dGVyLgo+IApZZXMsIEkgaW5pdGlhbGl6ZWQgdGhlIHJlbGV2YW50IHJlZ2lzdGVycyBkdXJpbmcg
-dGhlIHVib290IHN0YWdlLAphbmQgdGhleSB3b3JrZWQgY29ycmVjdGx5IGFmdGVyIGVudGVyaW5n
-IHRoZSBMaW51eCBzeXN0ZW0uCkhvd2V2ZXIsIGFmdGVyIHVubG9hZGluZyBhbmQgdGhlbiByZWxv
-YWRpbmcgdGhlIGtvIGRyaXZlciwKYSByZXNldCBvcGVyYXRpb24gY2F1c2VzIHRoZXNlIHJlZ2lz
-dGVycyB0byBiZSBpbml0aWFsaXplZCB0byAwLApsZWFkaW5nIHRvIGluaXRpYWxpemF0aW9uIGVy
-cm9ycyB3aGVuIHJlbG9hZGluZyB0aGUga28gZHJpdmVyLgpJZiBJIHdhbnQgdG8gaW1wbGVtZW50
-IGl0IHRoaXMgd2F5LCBJIG5lZWQgdG8gbW9kaWZ5IHRoZSBhaGNpX2R3Yy5jIGRyaXZlcgphbmQg
-YWRkIHByb2dyYW0gaGFuZGxpbmcgdGFpbG9yZWQgdG8gb3VyIFNvQyBkZXNpZ24uCgpJIHNlYXJj
-aGVkIHRoZSBrZXJuZWwgZm9yICJzbnBzLGR3Yy1haGNpIiBhbmQgZm91bmQgdGhhdAppbiBtYW51
-ZmFjdHVyZXJzJyBkdHMgZmlsZXMsIHN1Y2ggYXMgcmszNTg4LWJhc2UuZHRzaSwgZHJhNy1sNC5k
-dHNpLApleHlub3M1MjUwLmR0c2ksIGV0Yy4sIGFsbCBpbmNsdWRlIHRoZSBwb3J0cy1pbXBsZW1l
-bnRlZCBmaWVsZCBpbiB0aGVpciBzYXRhIG5vZGVzLiAKb25seSB0aGUgc2F0YSBub2RlIGluIGFt
-ZC1zZWF0dGxlLXNvYy5kdHNpIGxhY2tzIHRoZSBwb3J0cy1pbXBsZW1lbnRlZCBmaWVsZAphbmQg
-ZG9lcyBub3QgaGF2ZSByZXNldCByZXNvdXJjZXMuCkFkZGl0aW9uYWxseSwgaW4gdGhlIFlBTUwg
-ZmlsZXMgdW5kZXIgdGhlwqAvRG9jdW1lbnRhdGlvbi9hdGHCoGRpcmVjdG9yeSB0aGF0CmludGVn
-cmF0ZSB0aGUgRFdDIEFIQ0kgY29udHJvbGxlciwgdGhlwqBwb3J0cy1pbXBsZW1lbnRlZMKgZmll
-bGQgaGFzIGJlZW4gaW1wbGVtZW50ZWQsCmFzIHNlZW4gaW4gZXhhbXBsZXMgc3VjaCBhc8Kgcm9j
-a2NoaXAsZHdjLWFoY2kueWFtbMKgYW5kwqBiYWlrYWwsYnQxLWFoY2kueWFtbC4KClRoZXJlZm9y
-ZSwgSSBoYXZlIHF1ZXN0aW9ucyBJIHdvdWxkIGxpa2UgdG8gY29uZmlybSB3aXRoIHlvdToKMS4g
-SW4geW91ciBwcmV2aW91cyBmZWVkYmFjaywgd2VyZSB5b3Ugc3VnZ2VzdGluZyB0aGF0IEkgcmVt
-b3ZlIHRoZcKgcG9ydHMtaW1wbGVtZW50ZWTCoGZpZWxkPwpBbmQgd2hhdCBpcyB0aGUgcmVhc29u
-IGZvciBkb2luZyBzbz8KQmFzZWQgb24geW91ciBwcm9mZXNzaW9uYWwgYWR2aWNlIGFuZCBjb25z
-aWRlcmluZyBvdXIgU29DIGRlc2lnbiwgZG8geW91IHRoaW5rCml0IGlzIGFjY2VwdGFibGUgdG8g
-cmV0YWluIHRoZcKgcG9ydHMtaW1wbGVtZW50ZWTCoGZpZWxkIGluIHRoZSBkdHMgaW5zdGVhZCBv
-ZgpyZW1vdmluZyBpdCBhbmQgbW9kaWZ5aW5nIHRoZcKgYWhjaV9kd2MuY8KgZHJpdmVyPwoyLiBJ
-IG5vdGljZWQgdGhhdCBpbiB0aGUgYXJjaC8gZGlyZWN0b3J5LCBjaGlwcyBsaWtlIGRyYTctbDQu
-ZHRzaSBhbmQKZXh5bm9zNTI1MC5kdHNpIGludGVncmF0ZSB0aGUgRFdDIEFIQ0kgY29udHJvbGxl
-ciBhbmQgaW5jbHVkZSBjb3JyZXNwb25kaW5nCmhhcmR3YXJlIHJlc291cmNlIGRlc2lnbnMgc3Vj
-aCBhcyBjbG9ja3MgYW5kIHJlc2V0cy4KV2h5IGRvIHRoZXkgbm90IGhhdmUgaW5kZXBlbmRlbnQg
-eWFtbCBmaWxlcyBpbXBsZW1lbnRlZCBpbiB0aGUga2VybmVsPwoKQmVzdCByZWdhcmRzLApZdWxp
-biBMdQo=
+On Mon, 2025-08-11 at 17:23 +0900, Gustavo A. R. Silva wrote:
+> Hi all,
+>=20
+> At first sight, it seems that the flexible-array member `payload`
+> in the struct below it's not being used:
+>=20
+> drivers/net/wireless/intel/iwlwifi/mei/sap.h:
+> 298 /**
+> 299  * struct iwl_sap_hdr - prefixes any SAP message
+> 300  * @type: See &enum iwl_sap_msg.
+> 301  * @len: The length of the message (header not included).
+> 302  * @seq_num: For debug.
+> 303  * @payload: The payload of the message.
+> 304  */
+> 305 struct iwl_sap_hdr {
+> 306         __le16 type;
+> 307         __le16 len;
+> 308         __le32 seq_num;
+> 309         u8 payload[];
+> 310 };
+>=20
+> If we remove it, we'd get rid of 14 of the following type of warnings:
+>=20
+> drivers/net/wireless/intel/iwlwifi/mei/sap.h:318:28: warning: structure c=
+ontaining a flexible array member is not at the end of another structure=
+=20
+> [-Wflex-array-member-not-at-end]
+>=20
+> Is there any case where this array is actually used that I might
+> be missing?
+
+Check if it builds? But I don't see it used in our internal (and
+possibly more recent) version of this either.
+
+johannes
 
