@@ -1,263 +1,214 @@
-Return-Path: <linux-kernel+bounces-784838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32365B34259
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:58:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F569B34263
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:59:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD3113AA9C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:56:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D91803ABBE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:56:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252DE2F3617;
-	Mon, 25 Aug 2025 13:49:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18592F39A4;
+	Mon, 25 Aug 2025 13:49:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xI18C57R"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AlwIv7L4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285602F2916
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 13:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA122F2916
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 13:49:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756129748; cv=none; b=Ub1xzW44zFY4WDuogyRxWjgkoCz70K4imxj05rEDNCl+2TOGH0KQ7wUnRKlf8WR0dBQn6Sl0dKCkaAVVBDjgiDhhH6xZraLOLx/LyV9FqpuI1g8QhliKmhp66WD8m8ZkUMowJxrd+Ymxsg87S9cbm69CdK5jqcJ8PlQ0NTiPro8=
+	t=1756129777; cv=none; b=P9zjgdofygJTvwYyHDkODbKJATql2+XVPsx89F0HCUmik+CPsznPRICGElFR66BLSiQ42IEePMzpB9gHeVKmJ38RiMB2enuaLcUyEvMs2Dd5oiPv8fDCAoj2HsdG0xP/A/UMc/vLmb0XbrJNpZSddj6HCz4Oov6hJHgHocJjd5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756129748; c=relaxed/simple;
-	bh=M+3aLG5O1Iyt0A5EfM0+G7YSFPkj1Z+V9I8upPF+K+8=;
+	s=arc-20240116; t=1756129777; c=relaxed/simple;
+	bh=CWzbZet4SwxOJyl9Yc6cOURxcFvzYGgEYdlCYF5i3BA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vBtQEL1CNg96LQW9x9DROFPdMhJXHBayQbn9PKDJJVTYhfgqIP689cPQVpz4ybDnpxtq7Q0dzdpdXL1TAAWoF4FkRiAhCVjZkgd9UVeBPu+NuP56SKOnT4+TV6FH+TY5R5dT1yAM8/X7CTawPY4BJ+oAdh5eKdL2iVE6+VFQJVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xI18C57R; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-24611734e18so312355ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 06:49:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756129745; x=1756734545; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=EPr98kGx2moAT0RVFoQtEyPZgoeJKLmMTUQO/3/PhCw=;
-        b=xI18C57RcBFTc4MuHQ1rdQJnQdUNbUGzYSPoxgNvg1SfeSaVfRvi5nLI/kSLfP4QZL
-         nYVXIeRVz/lPftPx5jGGSZCuYkJbfTTnDO1GDgb2ZLSZ03atI39YLI49SR4ZFI85ozq3
-         086oGoA4IaP+nznNrEcE/l1Mjl4zRJ3p3oiki0W2+2HCPSO/oDB/H8gUzOSEgmrz6GjL
-         3xtvipBIM/WL1/hN6AwO9EqZ7dIhkjzvnolvuJLlZDR3LR0fbicObWRCT/QYynhGJGLZ
-         sez80JZGB+POaxfdKK597AoYKR0HjQ9vatgTczfrutaF9Al1oBGK5vzLF6zwmKk/XRQg
-         m1Yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756129745; x=1756734545;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EPr98kGx2moAT0RVFoQtEyPZgoeJKLmMTUQO/3/PhCw=;
-        b=Mch8z1uhM8eEhceZdRnUmNuMF6dPgHmAhWOqel/V+S4IFrCDjtfqesZ2hxzYfFCOH8
-         VO5jeoymsbUI/7LI7bBJk7qYbC3yhCuLN/Wm3RXU6h4yIMPuWrXVmh5YPIgivcBZ/eWT
-         5na882fJC5hehaEMyA1L2RuPue2xLQAkqcOXT5ll2YJZF/k2b/RiPOnpWIcXPGqFLjlW
-         5n4wtBQyt7BBL522RM4ELkaK8q6UI3nkQibXsBPDZxD30Xyb3fIpLqNYpZQp8FbhimAS
-         PIoC03mGHO7tNzij/4gB9Xgl8atgrm1x0GahcXxYt1vqk0rQ+WT3Z/9W0EKejptd42bU
-         gwWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVBlszUyprZXQoZbIsEEcCJWQAC2oDSf0YQkAz9CxkgYtfRRYvIRc3eB840f+3d7nNpSQVMTGcBmeYg464=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPUaW6g8Jx5HIO7A4sRcoTbLNI15j8oSnQKNPBD1SCS3iAcW93
-	wwe/cnKz6WZ36evXTzUQ73NEf/PSg6jR+eyAa61uA4BcgIpkA3CZzOYWWO+1lPdqNg==
-X-Gm-Gg: ASbGnct/D5F42yzuG8FxHFLhLWT/LsDJzA9n9oM3akG9WRhFGTAkNZzAHmapmvq8tf9
-	xFjuY9ULrbagY+x64CdZcuw5qJEJDZlxWcDrwAUvPoqwY0NDHP0D/vgFmQkgYs51EgCN/E72PqU
-	qp1oUWtq5iNU5XzwPhCYxEryQowYl45x2sGp3X3qpOvHH+xex70+rmJ50cdJhYy+9MouhAgx/cP
-	7YqT8e1uFOkpAPJRGXT+mOAHDgjJerHONwY0eB4Tc/ESpLmkIPkIqfy3gCBGUnv1f5d/IjI9PJp
-	0I39rNWK3z3GhxCQayiKoNcR+TzmMLI1zlV3sr35wefD+dstdxjI4ssl1z4bQs94QyIqduoH/Kc
-	1laQJGaUIJh7wac6sBhw+5ZcWAAtp4X/fG6uxicEt6R5Ty7/tg9+zS+STzq5DO+CExm1JBRe37v
-	6P
-X-Google-Smtp-Source: AGHT+IFztbDXKXjAyRb5SxPdh+Iq/NxAzHcFUzomLyrk9sUfwujvvdLN8bMYYRRWXraeewthphphRw==
-X-Received: by 2002:a17:902:e5c4:b0:246:1f3e:4973 with SMTP id d9443c01a7336-2466f9ec151mr6423705ad.6.1756129744951;
-        Mon, 25 Aug 2025 06:49:04 -0700 (PDT)
-Received: from google.com (169.224.198.35.bc.googleusercontent.com. [35.198.224.169])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-771ecfd76f3sm1397728b3a.63.2025.08.25.06.49.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 06:49:04 -0700 (PDT)
-Date: Mon, 25 Aug 2025 13:48:59 +0000
-From: Pranjal Shrivastava <praan@google.com>
-To: Mostafa Saleh <smostafa@google.com>
-Cc: Eric Auger <eric.auger@redhat.com>,
-	Alex Williamson <alex.williamson@redhat.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, clg@redhat.com
-Subject: Re: [PATCH 2/2] vfio/platform: Mark for removal
-Message-ID: <aKxpyyKvYcd84Ayi@google.com>
-References: <20250806170314.3768750-1-alex.williamson@redhat.com>
- <20250806170314.3768750-3-alex.williamson@redhat.com>
- <aJ9neYocl8sSjpOG@google.com>
- <20250818105242.4e6b96ed.alex.williamson@redhat.com>
- <aKNj4EUgHYCZ9Q4f@google.com>
- <00001486-b43d-4c2b-a41c-35ab5e823f21@redhat.com>
- <aKXnzqmz-_eR_bHF@google.com>
- <43f198b5-60f8-40f5-a2cd-ff21b31a91d4@redhat.com>
- <aKYvS3qgV_dW1woo@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lh7bI9hqYiBvhYDMOQ6dUhYT8g/QSdHpUwHlwyhp39rGff+ctZzpuj+MVX2ERII+RY621GZk5pNV+yzCDn0+hOtApLmAP5IDkxO/VxBBs/7yRd9X/arLKslbnKEUjU8lFIjacnQEPxAYv2S14Dbt9hLn1ia0cMrME/5TGwUIrkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AlwIv7L4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9E01C4CEED;
+	Mon, 25 Aug 2025 13:49:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756129777;
+	bh=CWzbZet4SwxOJyl9Yc6cOURxcFvzYGgEYdlCYF5i3BA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AlwIv7L4ODWarF/fn/kZXgUER9iJKIgshLn01P2v8KzHcWE+UbM4AIgvndSwy50rh
+	 nRRhgI4XTsE2Plope6FqeaIsrKDADtzB96x4VcWYZsYD2FAkP0TGWek/DuOnp6q63G
+	 ieoG+DSelnffHBXufauGWWdJtzzoJtFyIG+3+z6sC7fko7rlw73v3wvp160LsM8BtD
+	 J/pMjSs9yVjkhqydiFrZODJTBPIu5K6V/62s0u1+qyAB49rqh1yNeI3J+3eTaLczwu
+	 5LSbfDib/WGjzPWRyAoPcaESuVSB6eSLiE1RfOsOUSkyKacPIhz0/TlPyMZu9UoOQn
+	 PirOuokj7vjEg==
+Date: Mon, 25 Aug 2025 15:49:34 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Marco Crivellari <marco.crivellari@suse.com>
+Cc: linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH v2 2/4] Workqueue: replace use of system_unbound_wq with
+ system_dfl_wq
+Message-ID: <aKxp7h8GWg8cGIla@localhost.localdomain>
+References: <20250825132906.1050437-1-marco.crivellari@suse.com>
+ <20250825132906.1050437-3-marco.crivellari@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aKYvS3qgV_dW1woo@google.com>
+In-Reply-To: <20250825132906.1050437-3-marco.crivellari@suse.com>
 
-On Wed, Aug 20, 2025 at 08:25:47PM +0000, Mostafa Saleh wrote:
-> Hi Eric,
+Le Mon, Aug 25, 2025 at 03:29:04PM +0200, Marco Crivellari a �crit :
+> Currently if a user enqueue a work item using schedule_delayed_work() the
+> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+> schedule_work() that is using system_wq and queue_work(), that makes use
+> again of WORK_CPU_UNBOUND.
 > 
-> On Wed, Aug 20, 2025 at 06:29:27PM +0200, Eric Auger wrote:
-> > Hi Mostafa,
-> > 
-> > On 8/20/25 5:20 PM, Mostafa Saleh wrote:
-> > > Hi Eric,
-> > >
-> > > On Tue, Aug 19, 2025 at 11:58:32AM +0200, Eric Auger wrote:
-> > >> Hi Mostafa,
-> > >>
-> > >> On 8/18/25 7:33 PM, Mostafa Saleh wrote:
-> > >>> On Mon, Aug 18, 2025 at 10:52:42AM -0600, Alex Williamson wrote:
-> > >>>> On Fri, 15 Aug 2025 16:59:37 +0000
-> > >>>> Mostafa Saleh <smostafa@google.com> wrote:
-> > >>>>
-> > >>>>> Hi Alex,
-> > >>>>>
-> > >>>>> On Wed, Aug 06, 2025 at 11:03:12AM -0600, Alex Williamson wrote:
-> > >>>>>> vfio-platform hasn't had a meaningful contribution in years.  In-tree
-> > >>>>>> hardware support is predominantly only for devices which are long since
-> > >>>>>> e-waste.  QEMU support for platform devices is slated for removal in
-> > >>>>>> QEMU-10.2.  Eric Auger presented on the future of the vfio-platform
-> > >>>>>> driver and difficulties supporting new devices at KVM Forum 2024,
-> > >>>>>> gaining some support for removal, some disagreement, but garnering no
-> > >>>>>> new hardware support, leaving the driver in a state where it cannot
-> > >>>>>> be tested.
-> > >>>>>>
-> > >>>>>> Mark as obsolete and subject to removal.  
-> > >>>>> Recently(this year) in Android, we enabled VFIO-platform for protected KVM,
-> > >>>>> and it’s supported in our VMM (CrosVM) [1].
-> > >>>>> CrosVM support is different from Qemu, as it doesn't require any device
-> > >>>>> specific logic in the VMM, however, it relies on loading a device tree
-> > >>>>> template in runtime (with “compatiable” string...) and it will just
-> > >>>>> override regs, irqs.. So it doesn’t need device knowledge (at least for now)
-> > >>>>> Similarly, the kernel doesn’t need reset drivers as the hypervisor handles that.
-> > >>>> I think what we attempt to achieve in vfio is repeatability and data
-> > >>>> integrity independent of the hypervisor.  IOW, if we 'kill -9' the
-> > >>>> hypervisor process, the kernel can bring the device back to a default
-> > >>>> state where the device isn't wedged or leaking information through the
-> > >>>> device to the next use case.  If the hypervisor wants to support
-> > >>>> enhanced resets on top of that, that's great, but I think it becomes
-> > >>>> difficult to argue that vfio-platform itself holds up its end of the
-> > >>>> bargain if we're really trusting the hypervisor to handle these aspects.
-> > >>> Sorry I was not clear, we only use that in Android for ARM64 and pKVM,
-> > >>> where the hypervisor in this context means the code running in EL2 which
-> > >>> is more privileged than the kernel, so it should be trusted.
-> > >>> However, as I mentioned that code is not upstream yet, so it's a valid
-> > >>> concern that the kernel still needs a reset driver.
-> > >>>
-> > >>>>> Unfortunately, there is no upstream support at the moment, we are making
-> > >>>>> some -slow- progress on that [2][3]
-> > >>>>>
-> > >>>>> If it helps, I have access to HW that can run that and I can review/test
-> > >>>>> changes, until upstream support lands; if you are open to keeping VFIO-platform.
-> > >>>>> Or I can look into adding support for existing upstream HW(with platforms I am
-> > >>>>> familiar with as Pixel-6)
-> > >>>> Ultimately I'll lean on Eric to make the call.  I know he's concerned
-> > >>>> about testing, but he raised that and various other concerns whether
-> > >>>> platform device really have a future with vfio nearly a year ago and
-> > >>>> nothing has changed.  Currently it requires a module option opt-in to
-> > >>>> enable devices that the kernel doesn't know how to reset.  Is that
-> > >>>> sufficient or should use of such a device taint the kernel?  If any
-> > >>>> device beyond the few e-waste devices that we know how to reset taint
-> > >>>> the kernel, should this support really even be in the kernel?  Thanks,
-> > >>> I think with the way it’s supported at the moment we need the kernel
-> > >>> to ensure that reset happens.
-> > >> Effectively my main concern is I cannot test vfio-platform anymore. We
-> > >> had some CVEs also impacting the vfio platform code base and it is a
-> > >> major issue not being able to test. That's why I was obliged, last year,
-> > >> to resume the integration of a new device (the tegra234 mgbe), nobody
-> > >> seemed to be really interested in and this work could not be upstreamed
-> > >> due to lack of traction and its hacky nature.
-> > >>
-> > >> You did not really comment on which kind of devices were currently
-> > >> integrated. Are they within the original scope of vfio (with DMA
-> > >> capabilities and protected by an IOMMU)? Last discussion we had in
-> > >> https://lore.kernel.org/all/ZvvLpLUZnj-Z_tEs@google.com/ led to the
-> > >> conclusion that maybe VFIO was not the best suited framework.
-> > > At the moment, Android device assignement only supports DMA capable
-> > > devices which are behind an IOMMU, and we use VFIO-platform for that,
-> > > most of our use cases are accelerators.
-> > >
-> > > In that thread, I was looking into adding support for simpler devices
-> > > (such as sensors) but as discussed that won’t be done through
-> > > VFIO-platform.
-> > >
-> > > Ignoring Android, as I mentioned, I can work on adding support for
-> > > existing upstream platforms (preferably ARM64, that I can get access to)
-> > > such as Pixel-6, which should make it easier to test.
-> > >
-> > > Also, we have some interest on adding new features such as run-time
-> > > power management.
-> > 
-> > OK fair enough. If Alex agrees then we can wait for those efforts. Also
-> > I think it would make sense to formalize the way you reset the devices
-> > (I understand the hyp does that under the hood).
+> This lack of consistentcy cannot be addressed without refactoring the API.
 > 
-> I think currently - with some help from the platform bus- we can rely on
-> the existing shutdown method, instead of specific hooks.
-> As the hypervisor logic will only be for ARM64 (at least for now), I can
-> look more into this.
+> system_unbound_wq should be the default workqueue so as not to enforce
+> locality constraints for random work whenever it's not required.
 > 
-> But I think the top priority would be to establish a decent platform to
-> test with, I will start looking into Pixel-6 (although that would need
-> to land IOMMU support for it upstream first). I also have a morello
-> board with SMMUv3, but I think it's all PCI.
+> Adding system_dfl_wq to encourage its use when unbound work should be used.
 > 
-> > >
-> > >> In case we keep the driver in, I think we need to get a garantee that
-> > >> you or someone else at Google commits to review and test potential
-> > >> changes with a perspective to take over its maintenance.
-> > > I can’t make guarantees on behalf of Google, but I can contribute in
-> > > reviewing/testing/maintenance of the driver as far as I am able to.
-> > > If you want, you can add me as reviewer to the driver.
-> > 
-> > I understand. I think the usual way then is for you to send a patch to
-> > update the Maintainers file.
+> queue_work() / queue_delayed_work() / mod_delayed_work() will now use the
+> new unbound wq: whether the user still use the old wq a warn will be
+> printed along with a wq redirect to the new one.
 > 
-> I see, I will send one shortly.
+> The old system_unbound_wq will be kept for a few release cycles.
 > 
+> Suggested-by: Tejun Heo <tj@kernel.org>
+> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
 
-I could contribute time to help with the maintenance effort here, if
-needed. Please let me know if you'd like that.
+This should be one patch per subsystem. Here is how you can divide that
+into a patchset:
 
-> Thanks,
-> Mostafa
-> 
+> ---
+>  drivers/accel/ivpu/ivpu_pm.c                         |  2 +-
+>  drivers/acpi/scan.c                                  |  2 +-
+>  drivers/base/dd.c                                    |  2 +-
+>  drivers/block/zram/zram_drv.c                        |  2 +-
+>  drivers/char/random.c                                |  8 ++++----
+>  drivers/gpu/drm/amd/amdgpu/aldebaran.c               |  2 +-
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_device.c           |  2 +-
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_reset.c            |  2 +-
+>  drivers/gpu/drm/drm_atomic_helper.c                  |  6 +++---
+>  drivers/gpu/drm/i915/display/intel_display_power.c   |  2 +-
+>  drivers/gpu/drm/i915/display/intel_tc.c              |  4 ++--
+>  drivers/gpu/drm/i915/gem/i915_gem_ttm_move.c         |  2 +-
+>  drivers/gpu/drm/i915/gt/uc/intel_guc.c               |  4 ++--
+>  drivers/gpu/drm/i915/gt/uc/intel_guc_ct.c            |  4 ++--
+>  drivers/gpu/drm/i915/gt/uc/intel_guc_submission.c    |  6 +++---
+>  drivers/gpu/drm/i915/i915_active.c                   |  2 +-
+>  drivers/gpu/drm/i915/i915_sw_fence_work.c            |  2 +-
+>  drivers/gpu/drm/i915/i915_vma_resource.c             |  2 +-
+>  drivers/gpu/drm/i915/pxp/intel_pxp.c                 |  2 +-
+>  drivers/gpu/drm/i915/pxp/intel_pxp_irq.c             |  2 +-
+>  drivers/gpu/drm/nouveau/dispnv50/disp.c              |  2 +-
+>  drivers/gpu/drm/rockchip/rockchip_drm_vop.c          |  2 +-
+>  drivers/gpu/drm/xe/xe_devcoredump.c                  |  2 +-
+>  drivers/gpu/drm/xe/xe_execlist.c                     |  2 +-
+>  drivers/gpu/drm/xe/xe_guc_ct.c                       |  4 ++--
+>  drivers/gpu/drm/xe/xe_oa.c                           |  2 +-
+>  drivers/gpu/drm/xe/xe_vm.c                           |  4 ++--
+>  drivers/hte/hte.c                                    |  2 +-
+>  drivers/infiniband/core/ucma.c                       |  2 +-
+>  drivers/infiniband/hw/mlx5/odp.c                     |  4 ++--
+>  drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c |  8 ++++----
+>  drivers/net/macvlan.c                                |  2 +-
+>  drivers/net/netdevsim/dev.c                          |  6 +++---
+>  drivers/net/wireless/intel/iwlwifi/fw/dbg.c          |  4 ++--
+>  drivers/net/wireless/intel/iwlwifi/iwl-trans.h       |  2 +-
+>  drivers/scsi/qla2xxx/qla_os.c                        |  2 +-
+>  drivers/scsi/scsi_transport_iscsi.c                  |  2 +-
+>  drivers/soc/xilinx/zynqmp_power.c                    |  6 +++---
+>  drivers/target/sbp/sbp_target.c                      |  8 ++++----
+>  drivers/tty/serial/8250/8250_dw.c                    |  4 ++--
+>  drivers/tty/tty_buffer.c                             |  8 ++++----
 
-Thanks,
-Praan
+One patch for drivers.
 
-> > 
-> > Thanks
-> > 
-> > Eric
-> > >
-> > > Thanks,
-> > > Mostafa
-> > >
-> > >
-> > >> Thanks
-> > >>
-> > >> Eric
-> > >>
-> > >>> But maybe instead of having that specific reset handler for VFIO, we
-> > >>> can rely on the “shutdown” method already existing in "platform_driver"?
-> > >>> I believe that should put the device in a state where it can be re-probed
-> > >>> safely. Although not all devices implement that but it seems more generic
-> > >>> and scalable.
-> > >>>
-> > >>> Thanks,
-> > >>> Mostafa
-> > >>>
-> > >>>> Alex
-> > >>>>
-> > 
-> 
+>  fs/afs/callback.c                                    |  4 ++--
+>  fs/afs/write.c                                       |  2 +-
+>  fs/bcachefs/btree_write_buffer.c                     |  2 +-
+>  fs/bcachefs/io_read.c                                | 12 ++++++------
+>  fs/bcachefs/journal_io.c                             |  2 +-
+>  fs/btrfs/block-group.c                               |  2 +-
+>  fs/btrfs/extent_map.c                                |  2 +-
+>  fs/btrfs/space-info.c                                |  4 ++--
+>  fs/btrfs/zoned.c                                     |  2 +-
+>  fs/ext4/mballoc.c                                    |  2 +-
+>  fs/netfs/objects.c                                   |  2 +-
+>  fs/netfs/read_collect.c                              |  2 +-
+>  fs/netfs/write_collect.c                             |  2 +-
+>  fs/nfsd/filecache.c                                  |  2 +-
+>  fs/notify/mark.c                                     |  4 ++--
+>  fs/quota/dquot.c                                     |  2 +-
+
+One for fs.
+
+>  include/linux/workqueue.h                            |  4 ++--
+
+One for workqueue.
+
+>  io_uring/io_uring.c                                  |  2 +-
+
+One for io_uring.
+
+>  kernel/bpf/helpers.c                                 |  4 ++--
+>  kernel/bpf/memalloc.c                                |  2 +-
+>  kernel/bpf/syscall.c                                 |  2 +-
+
+One for bpf.
+
+>  kernel/padata.c                                      |  4 ++--
+
+One for padata.
+
+>  kernel/sched/core.c                                  |  4 ++--
+>  kernel/sched/ext.c                                   |  4 ++--
+
+One for scheduler.
+
+>  kernel/umh.c                                         |  2 +-
+
+One for umh.
+
+>  kernel/workqueue.c                                   |  2 +-
+
+Should join the workqueue change above.
+
+>  mm/backing-dev.c                                     |  2 +-
+>  mm/kfence/core.c                                     |  6 +++---
+>  mm/memcontrol.c                                      |  4 ++--
+
+One for mm.
+
+>  net/core/link_watch.c                                |  4 ++--
+>  net/unix/garbage.c                                   |  2 +-
+>  net/wireless/core.c                                  |  4 ++--
+>  net/wireless/sysfs.c                                 |  2 +-
+
+One for net.
+
+>  rust/kernel/workqueue.rs                             |  6 +++---
+
+This can join the workqueue changes above.
+
+>  sound/soc/codecs/wm_adsp.c                           |  2 +-
+
+And finally one for sound.
+
+Thanks!
+
+-- 
+Frederic Weisbecker
+SUSE Labs
 
