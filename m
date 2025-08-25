@@ -1,278 +1,235 @@
-Return-Path: <linux-kernel+bounces-784201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B861FB33800
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:42:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADAF5B337FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:42:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90144189091C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 07:43:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C864175E54
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 07:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D263298CA4;
-	Mon, 25 Aug 2025 07:42:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F16296BD8;
+	Mon, 25 Aug 2025 07:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k5XCEXJ3"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rUWh3VxZ"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36CF524A074;
-	Mon, 25 Aug 2025 07:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE362566E9
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 07:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756107766; cv=none; b=TZIKPw53KYH7zb/HOY2IoNnZw9PUvfjvdOuFQ9aY9n89ffddacpgtIbopcxGJAJ3NRSUPev26YyobtV0AxrRImtx4QzhVPWXwth5oGCkrOUMM3RH7ekJuxqgMcTF6eD+KkU0oNPiutObAmkbgmfuIY9lyKydNXMok4TepCtF4hs=
+	t=1756107757; cv=none; b=NxJLvPnygoUd8h8Gx/IiRMC0ZYumQG3HAcUCuT+Z/7+jzR5O7nB+MOQgO8HWlTOEzpvykvZcEFUfVRPBtWWoQVIVOJwD91xSJ5zAPr51xtCj+2DQjuD/I9Ns4NTeLDkVk7OcGr2oDX2561UsF3bF1WEMc2bqnbOIqIXsmKG6oAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756107766; c=relaxed/simple;
-	bh=CF3nCaQrlkAeMy06uuovK8drERouHS65tJ8iar6vLsY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mvSAg8rkLMCV+TDliBbbHYHe7ZYAfmCTSCnyZTKwRFAqTKQQy1wWKU/SODfl+z/vJ6Foseb0ft2lwqEaXfh8Jkii/UiumxbTm2tnuMrzEkQg3H3rqlywCLp6DUEAq/2fLXM5TJ0OHNELNuxoz4w23p+2vs8x83tjmMPZVcaoc50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k5XCEXJ3; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-324fb2bb058so2615939a91.3;
-        Mon, 25 Aug 2025 00:42:44 -0700 (PDT)
+	s=arc-20240116; t=1756107757; c=relaxed/simple;
+	bh=+piRMyk996oarQcrywspO+vsQru2/x0PtBUGXUFMQLk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CqRUNiVDB+q7lJTtQGxtiKQsFB7dzSM+dxNpfZjT//vu6W068gwOFJyPMI//hr/qKBjPl/IfFUiPSFFn+f0OHAXLEpE9haXi0uAQtj3gZIwhwk4wuTvbJlX7TaQ2oQlNSYCdqCg39t72oifL+6bRWEgqAQrjzuc3oj93RqnZ+Yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rUWh3VxZ; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6188b6f7f15so4832894a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 00:42:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756107764; x=1756712564; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z+iedLlKmbf9rTuBT+gfMn79Q+NQYLm/fmWWO3YkJIA=;
-        b=k5XCEXJ3o1OjlfxfaQWd0sLNV24GpXXvTq9+DQuk54Y1kzpZpMsr147sSaCNfa1MDg
-         jkQwqfHbxCTlLPT5wcozPspeTf8K4zIT0/Oa+grK2d5UwIFBXZRYsZTsPGzKGdpik8VN
-         7OkiTWKiJR3YaDwxBccAMbZAT7R5v2uS/KTebZ8GqknhVyHPoZJBMOp1JNUnGLJaFA+I
-         /qHlwk26yFXj19eVSRdtF9o3PJVxpMgH2CNslSrhqyTLCPfPuwz1GeYc2yUHaIPCr0cK
-         Y6S/CeGLPSK+9DwOUYZG0dTs54Z6QZ6vihi0oj1WMWwtn+HAsz/WLGXQhbXjvuiP7+b8
-         DuMw==
+        d=linaro.org; s=google; t=1756107754; x=1756712554; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=G2EmfZstt/z8tWivV5ddyDVrQKEzNnXfSR1j/m6PBPk=;
+        b=rUWh3VxZEpud+buWPv9NpBxJ6uMVXOYdTpIo7s8QkDXKtX978WEVPnRiaKAFcCNti5
+         J3JuXWGjh2BVznsxIMB1sCYv7kSf2kEnjYzSz+qlFAjVyQE6GergNhJgUsbuCsz0kCSQ
+         2ujXtp8+V29qa1QQ9dXe/4q7Fd6ycx02v1kT5kKuToPPQx21GgvTbR+iR2byXpSmB+qG
+         Dsai4fc3YnmeOS1szhQwwNiD2yRo94pueALLu/IPBDZkTyqMezZwTSLtYM/1okqRXJc3
+         P+xYPcK1D1WIFi65H3ySSyiGEwjhw8dmixsHKVnsykxP6NB3H8joMEGjPO+KKyMJc2md
+         Ygag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756107764; x=1756712564;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1756107754; x=1756712554;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Z+iedLlKmbf9rTuBT+gfMn79Q+NQYLm/fmWWO3YkJIA=;
-        b=Jkphi2peJv5v0ml6OMFrYGbI4Pv5+OEIpcaNsIVnc89krucReO0XE1YxKR4cFKHO4r
-         MOlOtsp9oO9RhRDgt+42mwmf/ehAsOThcvrhnC/9SrtFtUS3++lcp1lSrhzNYcNWZgny
-         4FHnqFgSbujLtkZ/BhMyitLtk8NbImT0v/kOy5Q043ZY7bXMMWugkq9YFvn8M00eE7gQ
-         I2e83atsapDQ2uJwm4vJVRQHJhhr/Yjmmay9YXLQJJgMsNX7GgVmFtjwJjKJLXt+uXSY
-         SrifcibOXYRu3a6zSH+UsKQaJMd/gGkRIPt7h4AZPuHKZkVP7lnG/Gz2WYeKIQ1562SJ
-         0Tyg==
-X-Forwarded-Encrypted: i=1; AJvYcCV4jMEVHqvIpSY02CNBpg5Y1m5YeNQrBR0IVkDzl9JXAMZZTCmW2/7R6NjWQSxvwXIAuItGJhXmyykQAA==@vger.kernel.org, AJvYcCVZTlIdOuor2gZUtod3hiehFW7FRU6y1TAVtinQnke49hw+BiPPEsrw9wlSSlmnndiLT1YHfRtIXB8=@vger.kernel.org, AJvYcCVx/Sx9wqWH4WeXCl6SSJ+Uhecc7QnV9zxZxTF99K1pZz5b47BKnNDjzA/pj5l3ZpUuau+dF4YyPdbCEzcC@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfKvNkHwuARiOEvBCE+Y2Y3eKVbmR9jPGUHp6jUkLWsFsdLouz
-	taSw0wMy/xcdoEQF68DE4OdQOAzAVgKcGlLeEDfS6prLrSK1XG87Cz11/BtpPtcA
-X-Gm-Gg: ASbGncuzpFCBonXAG1rwoL3mGOpPbbaVnmTXngzAVt2hgN5UfKyIIk2YYEbJeb6ZWTH
-	GYBuTzF4Eroj7NE3KG3R/CCoUOrzJR5TqR26benbSrfwbTI/sxcaX+1JkM3eqGywiu7FkLWaxLm
-	7OvKDyeF1KFMUy3XrS/n2FiwQHaXLMwzAavIM5zoUXHOWqhvs0olmlZ9XvqjuDs5Ta0HlJ9OLYI
-	fg96fRTtD9G+2RlyW/vXbIdwYAGd4o2a3RpdE36oo+90X/nTDtHocu8w94Nu3NrqJRJzgVngW97
-	6xLaAu5tGkitqQt5OE7XE23jlRCSUBNFwOTOvHVAwRp7Xe8I0czmdr4emdezR0XSudDMRDhtINJ
-	K2BLvNDH2nsJQ06ENAnub/7rIbR3dsqZ3yTwQmjzScIJlWQ4JMGqt8A==
-X-Google-Smtp-Source: AGHT+IEaUrxdiHAQTBJbTzF/2pJwOoJ4BhJ3kWnE128jOIU8pVoa9qAhPX9k9LAdpusHHPu7o458fw==
-X-Received: by 2002:a17:90b:278b:b0:324:ffcf:153a with SMTP id 98e67ed59e1d1-32515eaeef7mr14636408a91.20.1756107763923;
-        Mon, 25 Aug 2025 00:42:43 -0700 (PDT)
-Received: from 100ask.localdomain ([116.234.74.152])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3252e7433ccsm3513423a91.8.2025.08.25.00.42.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 00:42:43 -0700 (PDT)
-From: Nino Zhang <ninozhang001@gmail.com>
-To: devicetree@vger.kernel.org
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	vkoul@kernel.org,
-	rahulbedarkar89@gmail.com,
-	linux-mips@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Nino Zhang <ninozhang001@gmail.com>
-Subject: [PATCH v3] dt-bindings: dma: img-mdc-dma: convert to DT schema
-Date: Mon, 25 Aug 2025 15:41:41 +0800
-Message-ID: <20250825074141.560141-1-ninozhang001@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        bh=G2EmfZstt/z8tWivV5ddyDVrQKEzNnXfSR1j/m6PBPk=;
+        b=EtS5fkHftlx0caz87S2mjpZlblFLY1K5OiDc4uTcoxjGEv/bAPno8qvQbNyf4vlvY1
+         uLd9ZABZje0WSI91AoaorwnmGe40/VlHacNUyX9HpL2NstQrn15X+If2KqvVDejiqc6w
+         hA9XK2fi/smDICwPWjarXLZkCN2r8m/7x7nyR914UFc/4tm7OU9NouFDfxTiXVmZOHJ9
+         uXZEvpoOZGvWsuG5jBhqwjbjs8Uequ1QN09G/XkIW7kzNyguTFGqDtKDlLIIjUgptTCh
+         sEvKKowaEN+HUzKBz4ujKl/uyyQqK9Dg/JyktraJQNCYm/ft5ZNH6C/6iOpXu0/W463F
+         PQdg==
+X-Forwarded-Encrypted: i=1; AJvYcCUOQT8G974ghayi+XZpgV5Q3DrKIMnurZPceCtAzJ/5VZlb5pXTm6o1JmTrBq8Iv1cclAYtyXEWbsfYtU4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywf7MTap0guZsY0uzDCxQ9GF/z135bJIBnmhPuBcb0juzkilrJZ
+	gPxcXwDx9yK2M2z07QnFwPQWwuXop9ceyuPLAH08iJS7+mVD5C82VNR1U/A1Y2fSLuBfTWLTJi/
+	Rt/ipknsjdfoeFPl0b1xMd7IMV7AWjRLL+oVLm8weGQ==
+X-Gm-Gg: ASbGncv22o14N+5c5v9grnjv+lAs3bciJlhjPKsNgybfs0Nc7Hs7oRVZ4O0fFvwlQdo
+	pZ9JpJDRi7KT6j1zOLK+FNkTtAM9/XCFZ9GqLwXN8JCvNjj7nFkHs7JCt8DPZyWcfN1IBM3oy+n
+	QVfL7V3NpFNszk3vohYyXLuSLa9wpGB7UjN0L8tD8goxXIZIDihfjW12i4oW1UE9J46HflNnl+U
+	C3dYTUbKG7l/P2nQCtwQhakTAr23ebQ/y3wtOJXq9swJ7E=
+X-Google-Smtp-Source: AGHT+IEH0WVgPD6c/Mjdpyb/eF5VATXLdRsxaboB8Iu4b3QUipIjqYn7VvvJjf0qKIiH04WPs5t3rHqKmP6xZm9hqWU=
+X-Received: by 2002:a05:6402:3492:b0:61c:6ecf:79dc with SMTP id
+ 4fb4d7f45d1cf-61c6ecf9073mr1539700a12.26.1756107754092; Mon, 25 Aug 2025
+ 00:42:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250818124702.163271-1-chengming.zhou@linux.dev>
+In-Reply-To: <20250818124702.163271-1-chengming.zhou@linux.dev>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Mon, 25 Aug 2025 09:42:21 +0200
+X-Gm-Features: Ac12FXyrO1tWMo0QYCpxOf8f4paPwsN9S1LtfKAhQLQsYNpdpzSNyduMsFfQx9A
+Message-ID: <CAKfTPtAU4UG+wVSQcqucpkRVZBiNwLkG=eEOkv7DJ4+6wNjghg@mail.gmail.com>
+Subject: Re: [RFC PATCH] sched/fair: Remove sched_idle_cpu() usages in select_task_rq_fair()
+To: Chengming Zhou <chengming.zhou@linux.dev>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Convert the img-mdc-dma binding from txt to YAML schema.
-No functional changes except dropping the consumer node
-(spi@18100f00) from the example, which belongs to the
-consumer binding instead.
+On Mon, 18 Aug 2025 at 14:47, Chengming Zhou <chengming.zhou@linux.dev> wrote:
+>
+> These sched_idle_cpu() considerations in select_task_rq_fair() is based
+> on an assumption that the wakee task can pick a cpu running sched_idle
+> task and preempt it to run, faster than picking an idle cpu to preempt
+> the idle task.
+>
+> This assumption is correct, but it also brings some problems:
+>
+> 1. work conservation: Often sched_idle tasks are also picking the cpu
+> which is already running sched_idle task, instead of utilizing a real
+> idle cpu, so work conservation is somewhat broken.
 
-Signed-off-by: Nino Zhang <ninozhang001@gmail.com>
----
-v2 -> v3:
-- Fix remaining issues based on Rob's and Krzysztof's comments.
-- Link to v2: https://lore.kernel.org/all/20250824034509.445743-1-ninozhang001@gmail.com/
+But this will be fixed by next idle load balancing, won't it ?
 
-v1 -> v2:
-- Addressed review comments from Rob.
-- Link to v1: https://lore.kernel.org/all/20250821150255.236884-1-ninozhang001@gmail.com/
+Keep in mind that sched_idle task has a particular meaning to not
+preempt other task and use a very low share
 
- .../bindings/dma/img,pistachio-mdc-dma.yaml   | 89 +++++++++++++++++++
- .../devicetree/bindings/dma/img-mdc-dma.txt   | 57 ------------
- 2 files changed, 89 insertions(+), 57 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/dma/img,pistachio-mdc-dma.yaml
- delete mode 100644 Documentation/devicetree/bindings/dma/img-mdc-dma.txt
+>
+> 2. sched_idle group: This sched_idle_cpu() is just not correct with
+> sched_idle group running. Look a simple example below.
+>
+>                 root
+>         /               \
+>         kubepods        system
+>         /       \
+> burstable       besteffort
+>                 (cpu.idle == 1)
+>
+> When a sched_idle cpu is just running tasks from besteffort group,
+> sched_idle_cpu() will return true in this case, but this cpu pick
+> is bad for wakee task from system group. Because the system group
+> has lower weight than kubepods, work conservation is somewhat
+> broken too.
 
-diff --git a/Documentation/devicetree/bindings/dma/img,pistachio-mdc-dma.yaml b/Documentation/devicetree/bindings/dma/img,pistachio-mdc-dma.yaml
-new file mode 100644
-index 000000000000..198e80b528c8
---- /dev/null
-+++ b/Documentation/devicetree/bindings/dma/img,pistachio-mdc-dma.yaml
-@@ -0,0 +1,89 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/dma/img,pistachio-mdc-dma.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: IMG Multi-threaded DMA Controller (MDC)
-+
-+maintainers:
-+  - Rahul Bedarkar <rahulbedarkar89@gmail.com>
-+  - linux-mips@vger.kernel.org
-+
-+allOf:
-+  - $ref: /schemas/dma/dma-controller.yaml#
-+
-+properties:
-+  compatible:
-+    const: img,pistachio-mdc-dma
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    minItems: 1
-+    maxItems: 32
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    items:
-+      - const: sys
-+
-+  img,cr-periph:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description:
-+      Phandle to peripheral control syscon node with DMA request to channel
-+      mapping registers.
-+
-+  img,max-burst-multiplier:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    minimum: 1
-+    description:
-+      Maximum supported burst size multiplier. The maximum burst size is this
-+      value multiplied by the hardware-reported bus width.
-+
-+  "#dma-cells":
-+    const: 3
-+    description: |
-+      DMA specifier cells:
-+        1: peripheral's DMA request line
-+        2: channel bitmap: bit N set indicates channel N is usable
-+        3: thread ID to be used by the channel
-+
-+  dma-channels:
-+    minimum: 1
-+    maximum: 32
-+    description: Defaults to HW-reported value if not specified.
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+  - clock-names
-+  - img,cr-periph
-+  - img,max-burst-multiplier
-+  - "#dma-cells"
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/mips-gic.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    dma-controller@18143000 {
-+      compatible = "img,pistachio-mdc-dma";
-+      reg = <0x18143000 0x1000>;
-+      interrupts = <GIC_SHARED 27 IRQ_TYPE_LEVEL_HIGH>,
-+                   <GIC_SHARED 28 IRQ_TYPE_LEVEL_HIGH>;
-+      clocks = <&system_clk>;
-+      clock-names = "sys";
-+
-+      img,max-burst-multiplier = <16>;
-+      img,cr-periph = <&cr_periph>;
-+
-+      #dma-cells = <3>;
-+    };
-diff --git a/Documentation/devicetree/bindings/dma/img-mdc-dma.txt b/Documentation/devicetree/bindings/dma/img-mdc-dma.txt
-deleted file mode 100644
-index 28c1341db346..000000000000
---- a/Documentation/devicetree/bindings/dma/img-mdc-dma.txt
-+++ /dev/null
-@@ -1,57 +0,0 @@
--* IMG Multi-threaded DMA Controller (MDC)
--
--Required properties:
--- compatible: Must be "img,pistachio-mdc-dma".
--- reg: Must contain the base address and length of the MDC registers.
--- interrupts: Must contain all the per-channel DMA interrupts.
--- clocks: Must contain an entry for each entry in clock-names.
--  See ../clock/clock-bindings.txt for details.
--- clock-names: Must include the following entries:
--  - sys: MDC system interface clock.
--- img,cr-periph: Must contain a phandle to the peripheral control syscon
--  node which contains the DMA request to channel mapping registers.
--- img,max-burst-multiplier: Must be the maximum supported burst size multiplier.
--  The maximum burst size is this value multiplied by the hardware-reported bus
--  width.
--- #dma-cells: Must be 3:
--  - The first cell is the peripheral's DMA request line.
--  - The second cell is a bitmap specifying to which channels the DMA request
--    line may be mapped (i.e. bit N set indicates channel N is usable).
--  - The third cell is the thread ID to be used by the channel.
--
--Optional properties:
--- dma-channels: Number of supported DMA channels, up to 32.  If not specified
--  the number reported by the hardware is used.
--
--Example:
--
--mdc: dma-controller@18143000 {
--	compatible = "img,pistachio-mdc-dma";
--	reg = <0x18143000 0x1000>;
--	interrupts = <GIC_SHARED 27 IRQ_TYPE_LEVEL_HIGH>,
--		     <GIC_SHARED 28 IRQ_TYPE_LEVEL_HIGH>,
--		     <GIC_SHARED 29 IRQ_TYPE_LEVEL_HIGH>,
--		     <GIC_SHARED 30 IRQ_TYPE_LEVEL_HIGH>,
--		     <GIC_SHARED 31 IRQ_TYPE_LEVEL_HIGH>,
--		     <GIC_SHARED 32 IRQ_TYPE_LEVEL_HIGH>,
--		     <GIC_SHARED 33 IRQ_TYPE_LEVEL_HIGH>,
--		     <GIC_SHARED 34 IRQ_TYPE_LEVEL_HIGH>,
--		     <GIC_SHARED 35 IRQ_TYPE_LEVEL_HIGH>,
--		     <GIC_SHARED 36 IRQ_TYPE_LEVEL_HIGH>,
--		     <GIC_SHARED 37 IRQ_TYPE_LEVEL_HIGH>,
--		     <GIC_SHARED 38 IRQ_TYPE_LEVEL_HIGH>;
--	clocks = <&system_clk>;
--	clock-names = "sys";
--
--	img,max-burst-multiplier = <16>;
--	img,cr-periph = <&cr_periph>;
--
--	#dma-cells = <3>;
--};
--
--spi@18100f00 {
--	...
--	dmas = <&mdc 9 0xffffffff 0>, <&mdc 10 0xffffffff 0>;
--	dma-names = "tx", "rx";
--	...
--};
--- 
-2.43.0
+sched_idle task in non sched_idle group has always been a problem
+because people wants those task to be preempted immediately but they
+also give it more weight than just what sched_idle provide with the
+weight of their parent group
 
+>
+> In a nutshell, sched_idle_cpu() should consider the wakee task group's
+> relationship with sched_idle tasks running on the cpu.
+>
+> Obviously, it's hard to do so. This patch chooses the simple approach
+> to remove all sched_idle_cpu() considerations in select_task_rq_fair()
+> to bring back work conservation in these cases.
+
+No, CPU with only sched_idle tasks should be considered as idle CPUs
+from a scheduling PoV. You need to find another way to fix it.  Why
+don't you use batch task but sched_idle if those sched_idle tasks are
+finally more important than just using remaining cycles on CPUs ?
+
+>
+> Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
+> ---
+>  kernel/sched/fair.c | 23 ++++++++---------------
+>  1 file changed, 8 insertions(+), 15 deletions(-)
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index b173a059315c..d9de63cdc314 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -7355,9 +7355,6 @@ sched_balance_find_dst_group_cpu(struct sched_group *group, struct task_struct *
+>                 if (!sched_core_cookie_match(rq, p))
+>                         continue;
+>
+> -               if (sched_idle_cpu(i))
+> -                       return i;
+> -
+>                 if (available_idle_cpu(i)) {
+>                         struct cpuidle_state *idle = idle_get_state(rq);
+>                         if (idle && idle->exit_latency < min_exit_latency) {
+> @@ -7446,7 +7443,7 @@ static inline int sched_balance_find_dst_cpu(struct sched_domain *sd, struct tas
+>
+>  static inline int __select_idle_cpu(int cpu, struct task_struct *p)
+>  {
+> -       if ((available_idle_cpu(cpu) || sched_idle_cpu(cpu)) &&
+> +       if (available_idle_cpu(cpu) &&
+>             sched_cpu_cookie_match(cpu_rq(cpu), p))
+>                 return cpu;
+>
+> @@ -7519,13 +7516,9 @@ static int select_idle_core(struct task_struct *p, int core, struct cpumask *cpu
+>         for_each_cpu(cpu, cpu_smt_mask(core)) {
+>                 if (!available_idle_cpu(cpu)) {
+>                         idle = false;
+> -                       if (*idle_cpu == -1) {
+> -                               if (sched_idle_cpu(cpu) && cpumask_test_cpu(cpu, cpus)) {
+> -                                       *idle_cpu = cpu;
+> -                                       break;
+> -                               }
+> +                       if (*idle_cpu == -1)
+>                                 continue;
+> -                       }
+> +
+>                         break;
+>                 }
+>                 if (*idle_cpu == -1 && cpumask_test_cpu(cpu, cpus))
+> @@ -7555,7 +7548,7 @@ static int select_idle_smt(struct task_struct *p, struct sched_domain *sd, int t
+>                  */
+>                 if (!cpumask_test_cpu(cpu, sched_domain_span(sd)))
+>                         continue;
+> -               if (available_idle_cpu(cpu) || sched_idle_cpu(cpu))
+> +               if (available_idle_cpu(cpu))
+>                         return cpu;
+>         }
+>
+> @@ -7677,7 +7670,7 @@ select_idle_capacity(struct task_struct *p, struct sched_domain *sd, int target)
+>         for_each_cpu_wrap(cpu, cpus, target) {
+>                 unsigned long cpu_cap = capacity_of(cpu);
+>
+> -               if (!available_idle_cpu(cpu) && !sched_idle_cpu(cpu))
+> +               if (!available_idle_cpu(cpu))
+>                         continue;
+>
+>                 fits = util_fits_cpu(task_util, util_min, util_max, cpu);
+> @@ -7748,7 +7741,7 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
+>          */
+>         lockdep_assert_irqs_disabled();
+>
+> -       if ((available_idle_cpu(target) || sched_idle_cpu(target)) &&
+> +       if (available_idle_cpu(target) &&
+>             asym_fits_cpu(task_util, util_min, util_max, target))
+>                 return target;
+>
+> @@ -7756,7 +7749,7 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
+>          * If the previous CPU is cache affine and idle, don't be stupid:
+>          */
+>         if (prev != target && cpus_share_cache(prev, target) &&
+> -           (available_idle_cpu(prev) || sched_idle_cpu(prev)) &&
+> +           available_idle_cpu(prev) &&
+>             asym_fits_cpu(task_util, util_min, util_max, prev)) {
+>
+>                 if (!static_branch_unlikely(&sched_cluster_active) ||
+> @@ -7788,7 +7781,7 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
+>         if (recent_used_cpu != prev &&
+>             recent_used_cpu != target &&
+>             cpus_share_cache(recent_used_cpu, target) &&
+> -           (available_idle_cpu(recent_used_cpu) || sched_idle_cpu(recent_used_cpu)) &&
+> +           available_idle_cpu(recent_used_cpu) &&
+>             cpumask_test_cpu(recent_used_cpu, p->cpus_ptr) &&
+>             asym_fits_cpu(task_util, util_min, util_max, recent_used_cpu)) {
+>
+> --
+> 2.20.1
+>
 
