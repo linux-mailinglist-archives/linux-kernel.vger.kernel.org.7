@@ -1,107 +1,215 @@
-Return-Path: <linux-kernel+bounces-785596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50C0FB34E37
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 23:43:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A672B34E3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 23:43:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BAD61B25C2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 21:43:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E12B21B25C6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 21:44:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 822AD299949;
-	Mon, 25 Aug 2025 21:43:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18CDE2980A8;
+	Mon, 25 Aug 2025 21:43:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="egDfgIxN"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ngPJKxwy"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F936221FC3;
-	Mon, 25 Aug 2025 21:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD810284693;
+	Mon, 25 Aug 2025 21:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756158194; cv=none; b=IkHGgnfljKktHthSm74AreLA1RAuEnZnu8q+Ygs1sedKKBDjNYq0OU0juc+hIlTy6FYdN4JegufO66ky856kKWOq2CQISDBxqSjz09tMC4w9b8cxokAP4K8S7Q/64qXnRkc+t3tA7qrhNHq0SFeepGI3IaTYWsLcFu2bLbiSxdc=
+	t=1756158226; cv=none; b=Dos06g8JUkbr2FXQRQrtvvOBELKLBemtI9iN6PHeusx5NL4HRvO7nwT0AYkrUWwjy1lrmJ6B/8lp2tERmPts/BiXATtw+nCU3Ask7IAk8FFlnBl26FfsqVLYRiJSAByKzyHb3SDaN1TwRXsWIMnswtgXNySXhnhoY4jNu9u/dNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756158194; c=relaxed/simple;
-	bh=xxIzkGDR321pyccex9pUY6O9+bueEK+mXm6r/XKg7Oc=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=duY6qo4PKdXbZ+7CZ8IKghf2AJkgRShVPs8oCY9TLKTiCJNYxlTHNwtnySxMsxEUM7pZHMR/wiavmwwdnpN4CrFbjcnNmItmE21mCkkr4rFCKg+826ohTl9JtlpxuXNtBJlISHJVhOWLEMctwdi/wPerkrxm4SXpxJrngUeLhMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=egDfgIxN; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-afcb7322da8so788391966b.0;
-        Mon, 25 Aug 2025 14:43:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756158192; x=1756762992; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=L1ZdiOQ+ocy7kIerFqAydo3pqaL3JBB3Sf5gIxDSEQs=;
-        b=egDfgIxNg24wgktpx5OdMrRJUQ18JLsphm206i2yWmm2e2VikSU4qPluq0D6AkGqDk
-         GC80ndzt1MmH8ZnPktKmzz9ZdIxFQGzzj3Yq+Rr1KxHbc5QvU1OJzjdisG2c7/BdItZO
-         YP70/6viOAPUxWUSBTEuyeZu/w5Irxcq5saGewcohO+lGwTawf31S3KRJjdGbBgEproD
-         tZLOnng9MCpgBZTNliKRNZ1/SL7qUDdd2JURsQ5q/CAu6hISZ+YIx0Q3yKQ80fa4Bj0y
-         Y89+kBcKNkxFHsKIAvKZQ5DOaB8HYl0XVkODqRsDxePbStbCaKPUJHQUR5xV+tyaM/2f
-         Zs6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756158192; x=1756762992;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=L1ZdiOQ+ocy7kIerFqAydo3pqaL3JBB3Sf5gIxDSEQs=;
-        b=iPLjYfdlrnXGGY9fSJwiUcJ5ecNCTTWz9K1Yrpif+bZEIzb5n9g6aSa+h0sU6f250M
-         URv/DCoHVZZzMCkDcABuXVPtzLizG4bQrYre3M7ka3gAAlC7e4UqiJqyg4n+ch3QBYsD
-         tG8wX9tCiHRP8KBdU84vFW9jVxkrEdskvzTnprF5lVOUhY+DUvezyPFxhbExfXnd93Fy
-         z2yW4e6cHhLI9F1AoyMq825Wkp0XglG/GMYVVi4WCViA6x9OlkRyecLLrRjYpqiU7hyr
-         FRRcpr7jql+IMbK7s73Cnnc3DYbOjxqqX3sAS1aeJ5sqA6BNvfwpc1Vl0T88rWKui1EM
-         ZnPA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCleWHptCy0O2SjKL8BDY9rAE7V1mrxxEhVU9e0PubuWa3hE+c+Qjr7vXf0kiQ28epGuDYuBEze7jdCf8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuCmJ3E/raKWPEghTOzqZOawkp+Bcyim8KJyR8pZ4jiOS4dnBr
-	crUg6TUYrP4IQ9HSbsmlPUuMI2rpu7VBGIN3zL5i5C0TbGGTfjkQCePaeAM3hU+BPoW5Cn+16Tg
-	/Yx0MjUzb+qdnYOf1JPsH3D/Rp8McBT4zNXG5
-X-Gm-Gg: ASbGncvq7vXyXDdno9VchGG2djomQqbT5DzW8r92b6c9DzGAb8rafMZ6GVsD1GP9RhW
-	f3oxNKaLc9/qs17LEm3VtwOc+USQ9lvLr8DL87KCybvN4kqGRpVtJhbhPjNmOrmwPAxottTDUFt
-	au9eryaqpaVrPNUGhicfWulk82Ci1AWMznt0bW15iUma1GhpoNAIZenunEX+373x05UqzFjqkwl
-	tcr/g==
-X-Google-Smtp-Source: AGHT+IG2yTyhHVml4GPr3jglTwK6YUTCOb2EGrJ1BJ46haG6NyaV3qSUMq0IRz5ulurjXu4Fv+OZ98jwWRmXcs+Tpg4=
-X-Received: by 2002:a17:907:d28:b0:ae0:d201:a333 with SMTP id
- a640c23a62f3a-afe295d28f5mr1398848566b.30.1756158191684; Mon, 25 Aug 2025
- 14:43:11 -0700 (PDT)
+	s=arc-20240116; t=1756158226; c=relaxed/simple;
+	bh=nACX/PKMfoQ1cm1Gc8DpXkrx8NjHKOOzNNb8874vwuo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JR6P+dZ/eeq9YqtnMZIYweA8UfnwIJU6GsYnc9/H3hHsTeLs1U+ov17NCvADo1fnKkmR7z4B9S963sA1e8IgURdiXI14ovoWYu2l/GgYoWLteNfxYgPYq0jwz3itDsPtrUOV8od17MbCyln3k/lm5CbgCjiOT5B9wUSEdJD/KEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ngPJKxwy; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756158225; x=1787694225;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=nACX/PKMfoQ1cm1Gc8DpXkrx8NjHKOOzNNb8874vwuo=;
+  b=ngPJKxwyCEmJEIQnvRsgp6hJZa5dlKFRtX+JJTpNQ9fVDRCIXNNF8Q4p
+   nWCc6MqaNY4CqDlYGa2laQuMe+0AOEo0yPnJmxne8A20W09OctLs1y6cn
+   Yiq8ayWeiHWkBsKLNafltFaxbFQAu4m6+Zgdv90K9YEym9tZsufjO/lJI
+   wTSJYdz3FRSCN1IhYD6pvXwSgRVpP5ILRaggO1WpOloJP6vtX+3g6wVfT
+   TwK21nuYp8UDGDY4fDLAVpQsU6KfIcC4Wl6KSmhjcI+SIy272vsLW364Y
+   U6btaGQt34v8lOmiS5w0f/J9CHmiPKP2OAQFYkmMDTIeCFPKB95ln8LUS
+   Q==;
+X-CSE-ConnectionGUID: csY0RYCBTDyyAgdKOYk1uw==
+X-CSE-MsgGUID: /XjWrzYWR3ClRntXJ36jVg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62210342"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="62210342"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 14:43:44 -0700
+X-CSE-ConnectionGUID: NKjOBtmlTOuLHvamFxwiwQ==
+X-CSE-MsgGUID: KtsP0jFTSmeNjtupUoYdow==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="169794340"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.16])
+  by fmviesa009.fm.intel.com with ESMTP; 25 Aug 2025 14:43:44 -0700
+From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To: hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com
+Cc: platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH v2] platform/x86/intel-uncore-freq: Present unique domain ID per package
+Date: Mon, 25 Aug 2025 14:43:36 -0700
+Message-ID: <20250825214336.410962-1-srinivas.pandruvada@linux.intel.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 25 Aug 2025 23:43:00 +0200
-X-Gm-Features: Ac12FXx9MwjgcuYmezIpIsQMoDHzInyHPpVRZ_U2ucNETDbC6af76PejKfFTQAA
-Message-ID: <CAGudoHHBRhU+XidV9U4osc2Ta4w0Lgi2XiFkYukKQoH45zT6vw@mail.gmail.com>
-Subject: Infinite loop in get_file_rcu() in face of a saturated ref count
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-__get_file_rcu() bails early:
+In partitioned systems, the domain ID is unique in the partition and a
+package can have multiple partitions.
 
-        if (unlikely(!file_ref_get(&file->f_ref)))
-                return ERR_PTR(-EAGAIN);
+Some user-space tools, such as turbostat, assume the domain ID is unique
+per package. These tools map CPU power domains, which are unique to a
+package. However, this approach does not work in partitioned systems.
 
-But get_file_rcu():
-       for (;;) {
-                struct file __rcu *file;
+There is no architectural definition of "partition" to present to user
+space.
 
-                file = __get_file_rcu(f);
-                if (!IS_ERR(file))
-                        return file;
-        }
+To support these tools, set the domain_id to be unique per package. For
+compute die IDs, uniqueness can be achieved using the platform info
+cdie_mask, mirroring the behavior observed in non-partitioned systems.
 
-So if this encounters a saturated refcount, the loop with never end.
+For IO dies, which lack a direct CPU relationship, any unique logical
+ID can be assigned. Here domain IDs for IO dies are configured after all
+compute domain IDs. During the probe, keep the index of the next IO
+domain ID after the last IO domain ID of the current partition. Since
+CPU packages are symmetric, partition information is same for all
+packages.
 
-I don't know what makes the most sense to do here and I'm no position
-to mess with any patches.
+The Intel Speed Select driver has already implemented a similar change
+to make the domain ID unique, with compute dies listed first, followed
+by I/O dies.
 
-This is not a serious problem either, so I would put this on the back
-burner. Just reporting for interested.
+Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+---
+v2:
+- Add some comments
+- Change update_domain_id() to set_domian_id() to set domain_id instead of update
+- cluster_info->uncore_data.domain_id += * is changed to add multiple steps to
+get to this equation
+- Handle case when only when no compute dies in partition 
+
+ .../uncore-frequency/uncore-frequency-tpmi.c  | 76 ++++++++++++++++++-
+ 1 file changed, 75 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c
+index cb4905bad89b..a30a99048db9 100644
+--- a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c
++++ b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c
+@@ -369,6 +369,79 @@ static void uncore_set_agent_type(struct tpmi_uncore_cluster_info *cluster_info)
+ 	cluster_info->uncore_data.agent_type_mask = FIELD_GET(UNCORE_AGENT_TYPES, status);
+ }
+ 
++#define MAX_PARTITIONS	2
++
++/* IO domain ID start index for a partition */
++static u8 io_die_start[MAX_PARTITIONS];
++
++/* Next IO domain ID index after the current partition IO die IDs */
++static u8 io_die_index_next;
++
++/* Lock to protect io_die_start, io_die_index_next */
++static DEFINE_MUTEX(domain_lock);
++
++static void set_domain_id(int id,  int num_resources,
++			  struct oobmsm_plat_info *plat_info,
++			  struct tpmi_uncore_cluster_info *cluster_info)
++{
++	u8 part_io_index = 0, cdie_range, pkg_io_index, max_dies;
++
++	if (plat_info->partition >= MAX_PARTITIONS) {
++		cluster_info->uncore_data.domain_id = id;
++		return;
++	}
++
++	if (cluster_info->uncore_data.agent_type_mask & AGENT_TYPE_CORE) {
++		cluster_info->uncore_data.domain_id = cluster_info->cdie_id;
++		return;
++	}
++
++	/* Unlikely but cdie_mask may have holes, so take range */
++	cdie_range = fls(plat_info->cdie_mask) - ffs(plat_info->cdie_mask) + 1;
++	max_dies = topology_max_dies_per_package();
++
++	/*
++	 * If the CPU doesn't enumerate dies, then just current cdie range
++	 * the max.
++	 */
++	if (cdie_range > max_dies)
++		max_dies = cdie_range;
++
++	guard(mutex)(&domain_lock);
++
++	if (!io_die_index_next)
++		io_die_index_next = max_dies;
++
++	if (!io_die_start[plat_info->partition]) {
++		io_die_start[plat_info->partition] = io_die_index_next;
++		/*
++		 * number of IO dies = num_resources - cdie_range. Hence
++		 * next partition io_die_index_next is set after IO dies
++		 * in the current partition.
++		 */
++		io_die_index_next += (num_resources - cdie_range);
++	}
++
++	/*
++	 * Index from IO die start within the partition:
++	 * This is the first valid domain after the cdies. If there are
++	 * no cdies in a partition just start from 0.
++	 * For example the current resource index 5 and cdies end at
++	 * index 3 (cdie_cnt = 4). Then the io only index 5 - 4 = 1.
++	 */
++	if (cdie_range)
++		part_io_index = id - cdie_range;
++
++	/*
++	 * Add to the IO die start index for this partition in this package
++	 * to make unique in the package.
++	 */
++	pkg_io_index = io_die_start[plat_info->partition] + part_io_index;
++
++	/* Assign this to domain ID */
++	cluster_info->uncore_data.domain_id = pkg_io_index;
++}
++
+ /* Callback for sysfs read for TPMI uncore values. Called under mutex locks. */
+ static int uncore_read(struct uncore_data *data, unsigned int *value, enum uncore_index index)
+ {
+@@ -605,11 +678,12 @@ static int uncore_probe(struct auxiliary_device *auxdev, const struct auxiliary_
+ 			cluster_info->uncore_data.package_id = pkg;
+ 			/* There are no dies like Cascade Lake */
+ 			cluster_info->uncore_data.die_id = 0;
+-			cluster_info->uncore_data.domain_id = i;
+ 			cluster_info->uncore_data.cluster_id = j;
+ 
+ 			set_cdie_id(i, cluster_info, plat_info);
+ 
++			set_domain_id(i, num_resources, plat_info, cluster_info);
++
+ 			cluster_info->uncore_root = tpmi_uncore;
+ 
+ 			if (TPMI_MINOR_VERSION(pd_info->ufs_header_ver) >= UNCORE_ELC_SUPPORTED_VERSION)
 -- 
-Mateusz Guzik <mjguzik gmail.com>
+2.49.0
+
 
