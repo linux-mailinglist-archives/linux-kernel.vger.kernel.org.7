@@ -1,176 +1,126 @@
-Return-Path: <linux-kernel+bounces-785039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 968B4B3450F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:04:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BD1DB34510
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:04:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 013B25E1E05
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:03:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2F47176A75
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:03:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B7AD3002AC;
-	Mon, 25 Aug 2025 15:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 239C02FC882;
+	Mon, 25 Aug 2025 15:00:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WaOaKmoG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RJ3B3sW1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D01CF230BD9;
-	Mon, 25 Aug 2025 15:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B37230BD9;
+	Mon, 25 Aug 2025 15:00:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756134052; cv=none; b=YnlIgPKHRBYctOyx0BaIWwoToGE6i+mCSAzz4o4T6vikKIHxILADdA0mOA4cSDlVWbrP6Z04YL+++Lfe6WSnjzFOxCYhurVzxllA1WStvx9MDRTTm+QVTDXCjnE6dUqAp7Hq/5yuLkJX9bFA9OZh/SkIziky1qKuJGnD2zaKwaw=
+	t=1756134044; cv=none; b=t7+lkLT/uH2G28IP02TTwF3dGMhAPmNujMBSJundPVDKdc5/sCUiWdxvWIfxHUmOi0ncY8pPn0o0aqTBGObhtnnH0aeQSYsDdluRbL4KY9NUUdRatMMBqYKwTBqHN9uaix9Da6oZlzyYlnUgXojJEbNBU575zornYxHNVdOnY2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756134052; c=relaxed/simple;
-	bh=cr6KBROp1M55uUNu32ISj3IWnbsJZPYjC+bGhB9SQOc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W4CaKtaxAmB8eYr0mSGFXL8+waCsBtcM/OnscYCGNIMfwlbgLaf9WbsXwNSyzlzNr3QkuEsZVhK1Yq5e2WilE2NBd7zt1KAtsgZ9A+n1ibr4c/5KS1T+hwqCbXnVKZsjbQRMreOb5yFh+ZqudMlzuy03AgshmhS8U3iLCRVeaVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WaOaKmoG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2DDCC116C6;
-	Mon, 25 Aug 2025 15:00:27 +0000 (UTC)
+	s=arc-20240116; t=1756134044; c=relaxed/simple;
+	bh=Ugep9HJbeJfe8M4p8+iQD78EvwPborb+MpXZjz1LLv0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z0b7Mhg9wDVOi/VZpHiWLvxuZk3ri78vGuXxh1GkBmkn/9WLr3Um7jRe7m/FP6UvZDmr+s9+2Zw31tfO7EAYb4Kusg0PSSDpwo3NpYX/xv7MMWlpfcmA9wutZw8ppzYupL63g8n8coBbXiRW84dvURe81BZE2QkdJ/kJWTR5Nbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RJ3B3sW1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 192F6C4CEED;
+	Mon, 25 Aug 2025 15:00:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756134051;
-	bh=cr6KBROp1M55uUNu32ISj3IWnbsJZPYjC+bGhB9SQOc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WaOaKmoGlIlwlRdIoLyJtkubsH1CewYNTdrqKLHi8ddKVKCkemSeXe47xaQgg004d
-	 T3lmlEzwuKUifFLJ5PVs2+7TuPpeAnJQHzDfAbqNGwwaDneln+zYZ+84Adbp6iop94
-	 qAbjLfQYS3y2jaaSjgni6VgI4AlthAMuOlOMQv4+lVWBgKHJS4cif7DVs8iI7IPyjB
-	 eW2gmu7XTAl1p7046BsX5lOFUR7KVS6GesFnuVLNhIzWcrNNGIWkdas4VxAUPqXuUK
-	 6oyvuTPorCS5xBCrjb15JSBPvntgI78pfkGXUgLZ5NiXwoaFgIl3BBzKViqlJjM8fC
-	 287YGOTl/mxEg==
-Date: Mon, 25 Aug 2025 16:00:23 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Linus Walleij
- <linus.walleij@linaro.org>, Eugen Hristev <eugen.hristev@linaro.org>,
- Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni
- <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Cai Huoqing <cai.huoqing@linux.dev>, Haibo Chen <haibo.chen@nxp.com>, Shawn
- Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
- <festevam@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Geert
- Uytterhoeven <geert+renesas@glider.be>, Magnus Damm
- <magnus.damm@gmail.com>, Lad Prabhakar
- <prabhakar.mahadev-lad.rj@bp.renesas.com>, Maxime Coquelin
- <mcoquelin.stm32@gmail.com>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, Chen-Yu Tsai <wens@csie.org>, Jernej
- Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
- Francesco Dolcini <francesco@dolcini.it>, =?UTF-8?B?Sm/Do28=?= Paulo
- =?UTF-8?B?R29uw6dhbHZlcw==?= <jpaulo.silvagoncalves@gmail.com>, Rui Miguel
- Silva <rmfrfs@gmail.com>, Jean-Baptiste Maneyrol
- <jean-baptiste.maneyrol@tdk.com>, Subhajit Ghosh
- <subhajit.ghosh@tweaklogic.com>, Gerald Loacker
- <gerald.loacker@wolfvision.net>, Andreas Klinger <ak@it-klinger.de>, Crt
- Mori <cmo@melexis.com>, Waqar Hameed <waqar.hameed@axis.com>, Julien
- Stephan <jstephan@baylibre.com>, Peter Zijlstra <peterz@infradead.org>,
- Greg KH <gregkh@linuxfoundation.org>, Bo Liu <liubo03@inspur.com>, Al Viro
- <viro@zeniv.linux.org.uk>, Sean Nyekjaer <sean@geanix.com>, Frank Li
- <Frank.Li@nxp.com>, Han Xu <han.xu@nxp.com>, Rayyan Ansari
- <rayyan@ansari.sh>, Gustavo Vaz <gustavo.vaz@usp.br>, Matti Vaittinen
- <mazziesaccount@gmail.com>, Alexandru Ardelean <aardelean@baylibre.com>,
- "Jiri Slaby (SUSE)" <jirislaby@kernel.org>, "Rob Herring (Arm)"
- <robh@kernel.org>, Fabrice Gasnier <fabrice.gasnier@foss.st.com>, Uwe
- =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>, Olivier
- Moysan <olivier.moysan@foss.st.com>, Christophe JAILLET
- <christophe.jaillet@wanadoo.fr>, Marcelo Schmitt
- <marcelo.schmitt1@gmail.com>, Vasileios Amoiridis <vassilisamir@gmail.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Hans de Goede
- <hansg@kernel.org>, Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Abhash Jha <abhashkumarjha123@gmail.com>, chuguangqing
- <chuguangqing@inspur.com>, Shreeya Patel <shreeya.patel@collabora.com>,
- Per-Daniel Olsson <perdaniel.olsson@axis.com>, =?UTF-8?B?QmFybmFiw6FzIEN6?=
- =?UTF-8?B?w6ltw6Fu?= <barnabas.czeman@mainlining.org>, Neil Armstrong
- <neil.armstrong@linaro.org>, David Laight <david.laight@aculab.com>, Jakob
- Hauser <jahau@rocketmail.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH v3 05/12] iio: dac: Remove redundant
- pm_runtime_mark_last_busy() calls
-Message-ID: <20250825160023.4070bbc1@jic23-huawei>
-In-Reply-To: <20250825135401.1765847-6-sakari.ailus@linux.intel.com>
-References: <20250825135401.1765847-1-sakari.ailus@linux.intel.com>
-	<20250825135401.1765847-6-sakari.ailus@linux.intel.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=k20201202; t=1756134044;
+	bh=Ugep9HJbeJfe8M4p8+iQD78EvwPborb+MpXZjz1LLv0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=RJ3B3sW1HPRV/CTE9MtLN1EOuCSt7b45AHK1+O05ynTUpvw3tfOKETm0augsqAedL
+	 M908nFI2nPV5M9LiGteC6X9Pzi32TpthSl0GovzZUpKzh61MUc2EYi43IYswLCUEKn
+	 oIXDqRzO7+yBb+TT8rS50oulKoQnCdeQao+f5HgUC4gk8na/Zo9lSo5DMS4yWAGu3E
+	 PiMXU/7aw2zp0FIyIoc1P40BsqbBaPK/1mm1hNdOs0NZho2EulbTMY9ZbEDcb0Vo9q
+	 7jLSDnGl6ufuX7O/8uSppxhP6on6Pp1YQapYuyF9Ho8wcg2M7jFhFONqaGXCHpc/FR
+	 vOz7bGG1PBEow==
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-74526ca7a46so246511a34.2;
+        Mon, 25 Aug 2025 08:00:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU7l5eyvsdcXKF1eRPmmLUHh6Z2PaXeyoXORMNpsghynL5Er3LtDHGtjwIXe/CFAgcLYqPnaKsFzZCgwXK8@vger.kernel.org, AJvYcCUoLZF2jpPpN4O2KVBMQCtFYv53CKojDsAApUXKh3A+oktLoNQma8hE2Krb2NA7W4OEwxPt/R02ECA2@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQvJq4jLCA1GLfND3CGk5PyW024dvalC6IXjthr7OhcbCMpIYZ
+	fKgBdS0ajGsUxf7p98rDW7L6UEA32LifuWfyOb9GpcllE1FaPIK6/A9RWApgNieA3Lgse27a5Cw
+	i8sxiwbCVFZluWqQLnMfVNfRj5npFeYU=
+X-Google-Smtp-Source: AGHT+IEIVMcl7vcY7/0g28+jH/GnesR/QNks6r5gFelznLt35hSp/7TVbhkQ9Oj6ak2sa1zxL8Lb4hUwuDTJMlZOWnA=
+X-Received: by 2002:a05:6830:6993:b0:741:c135:6afe with SMTP id
+ 46e09a7af769-74500900005mr6914482a34.5.1756134043404; Mon, 25 Aug 2025
+ 08:00:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250815-acpi_fix-v1-1-a05ebfe1b8ac@uniontech.com>
+In-Reply-To: <20250815-acpi_fix-v1-1-a05ebfe1b8ac@uniontech.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 25 Aug 2025 17:00:32 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iaAgpGhtH27j0hRDF7-S9F7uHZ4GZkmbfVLQOEN+6tbg@mail.gmail.com>
+X-Gm-Features: Ac12FXy9-BKrAqjrnflwZ9xHHH9i3P1dUbJZUPC6joJq9vDyUifwXwn9qEFGP-A
+Message-ID: <CAJZ5v0iaAgpGhtH27j0hRDF7-S9F7uHZ4GZkmbfVLQOEN+6tbg@mail.gmail.com>
+Subject: Re: [PATCH] ACPICA: add more parameter validation for acpi_walk_namespace()
+To: cryolitia@uniontech.com
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Robert Moore <robert.moore@intel.com>, 
+	Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, wangyuli@uniontech.com, 
+	guanwentao@uniontech.com, niecheng1@uniontech.com, zhanjun@uniontech.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 25 Aug 2025 16:53:54 +0300
-Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
+On Fri, Aug 15, 2025 at 10:56=E2=80=AFAM Cryolitia PukNgae via B4 Relay
+<devnull+cryolitia.uniontech.com@kernel.org> wrote:
+>
+> From: Cryolitia PukNgae <cryolitia@uniontech.com>
+>
+> On the Honor FMB-P-PCB laptop, an incorrect ACPI table causes
+> sdw_intel_acpi_scan to pass a NULL pointer as start_object to
+> acpi_walk_namespace() when calling it, which eventually causes the
+> kernel to report a NULL pointer dereference[1].
+>
+> 1. https://gist.github.com/Cryolitia/a860ffc97437dcd2cd988371d5b73ed7
+>
+> Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
 
-> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
-> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
-> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
-> pm_runtime_mark_last_busy().
-> 
-> Also clean up error handling in stm32_dac_set_enable_state().
-> 
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Hi Sakari,
+Please submit ACPICA changes to the upstream ACPICA project on GitHub
+as pull requests.  Once they have been merged upstream, you can submit
+a Linux patch based on the upstream one with a pointer to the
+corresponding upstream commit.
 
-I don't follow this...
+Thanks!
 
 > ---
->  drivers/iio/dac/stm32-dac.c | 19 ++++---------------
->  1 file changed, 4 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/iio/dac/stm32-dac.c b/drivers/iio/dac/stm32-dac.c
-> index 344388338d9b..e8688f9d6df7 100644
-> --- a/drivers/iio/dac/stm32-dac.c
-> +++ b/drivers/iio/dac/stm32-dac.c
-> @@ -82,9 +82,9 @@ static int stm32_dac_set_enable_state(struct iio_dev *indio_dev, int ch,
->  
->  	ret = regmap_update_bits(dac->common->regmap, STM32_DAC_CR, msk, en);
->  	mutex_unlock(&dac->lock);
-> -	if (ret < 0) {
-> +	if (ret) {
->  		dev_err(&indio_dev->dev, "%s failed\n", str_enable_disable(en));
-> -		goto err_put_pm;
-> +		goto err_pm_put;
->  	}
->  
->  	/*
-> @@ -95,18 +95,8 @@ static int stm32_dac_set_enable_state(struct iio_dev *indio_dev, int ch,
->  	if (en && dac->common->hfsel)
->  		udelay(1);
->  
-> -	if (!enable) {
-> -		pm_runtime_mark_last_busy(dev);
-> -		pm_runtime_put_autosuspend(dev);
-> -	}
-> -
-> -	return 0;
-> -
-> -err_put_pm:
-> -	if (enable) {
-> -		pm_runtime_mark_last_busy(dev);
-> -		pm_runtime_put_autosuspend(dev);
-> -	}
-> +err_pm_put:
-> +	pm_runtime_put_autosuspend(dev);
-
-now the put is here, whether or not there was ever a get as the get is gated on enable()
-
-
->  
->  	return ret;
->  }
-> @@ -349,7 +339,6 @@ static int stm32_dac_probe(struct platform_device *pdev)
->  	if (ret)
->  		goto err_pm_put;
->  
-> -	pm_runtime_mark_last_busy(dev);
->  	pm_runtime_put_autosuspend(dev);
->  
->  	return 0;
-
+>  drivers/acpi/acpica/nsxfeval.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/acpi/acpica/nsxfeval.c b/drivers/acpi/acpica/nsxfeva=
+l.c
+> index f9d059647cc52e94ce013af3382addba338820e8..c1f318ea7d5fcd846dc158b15=
+5286a6f5bba4cff 100644
+> --- a/drivers/acpi/acpica/nsxfeval.c
+> +++ b/drivers/acpi/acpica/nsxfeval.c
+> @@ -564,7 +564,7 @@ acpi_walk_namespace(acpi_object_type type,
+>
+>         /* Parameter validation */
+>
+> -       if ((type > ACPI_TYPE_LOCAL_MAX) ||
+> +       if ((type > ACPI_TYPE_LOCAL_MAX) || (start_object =3D=3D NULL) ||
+>             (!max_depth) || (!descending_callback && !ascending_callback)=
+) {
+>                 return_ACPI_STATUS(AE_BAD_PARAMETER);
+>         }
+>
+> ---
+> base-commit: 24ea63ea387714634813359e2c8e0e6c36952f73
+> change-id: 20250815-acpi_fix-3724e6c4da02
+>
+> Best regards,
+> --
+> Cryolitia PukNgae <cryolitia@uniontech.com>
+>
+>
 
