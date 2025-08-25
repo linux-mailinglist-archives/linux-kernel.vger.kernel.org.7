@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-785178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD886B3470D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:21:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33566B34716
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:22:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C69D1A87FA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:21:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 441E82A57ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:21:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 547F03009C2;
-	Mon, 25 Aug 2025 16:20:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B876301461;
+	Mon, 25 Aug 2025 16:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="ExmimHbC"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="qBa5mxQp"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE572FF643;
-	Mon, 25 Aug 2025 16:20:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C4E2FFDE2;
+	Mon, 25 Aug 2025 16:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756138850; cv=none; b=hL1nT/L0Fl9krtZzC2HnYAK9rSLNq1Trhv1vdFzGJQuvdBw0NoOqQfhzdeKmPNKT/Ox4SRhZfF6vyfzJDkW43uR4l/0KF0+YePSbs69UgSlSe/Vt1T+is0TN5PVLxBXT4amKAbLDoAowUnhpE+ciP5A1iBNf1TkQpkGBkRSwFUs=
+	t=1756138882; cv=none; b=b5z0Lji8EVIHiqtqd9L3zrCUEpmSNDsX8Ow8IbRo+R2ZapdP8tmngbISeuAJV16oqQijyCy8htz+sUdwuzSVm7kG64cDyNz+sI0gqQSNIU+lLlXUqfMYbRxHmHYGAhy4CxKRHUxf+6Er15MMCGH8wPiX0hQtDiEdiGKniAz79Bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756138850; c=relaxed/simple;
-	bh=TB1dOd76PEJ5mgVTi3H1IPzDArXUmTgjE1tKSSsdtws=;
+	s=arc-20240116; t=1756138882; c=relaxed/simple;
+	bh=Pkx8x1NkgVeuO4YFWXM02HHwwX1ANgOv0kGU1edmzoE=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qWJtIn4DsiqwhTV2TjgmPhfiKKmGSl+GrclagOMvLtpf7YuamK1fAuRXMtM5ClIZ5yUrynPt3drZJT2TkPwGmmRbHTIknHCrpDGEev5EVlyqcRrwM1AJ/S5ev5gklvyGCEbhCjMS41jZUp+ewovpGLJC3bfOrCzqVTKNQVlbBrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=ExmimHbC; arc=none smtp.client-ip=68.232.154.123
+	 MIME-Version:Content-Type; b=l1fV24phJSX9cI3ZbYz4bn1kPKF9J6SfvW31s+cB4f3bRROKdikwbmmBgySap7LDPHsZkyXxY3cmRJhx3Xje9d9UwV6+mg+3HzhCEeqZyhHaQ4Ki3U6YRuE8tXwNmpQDtGhmPGuseJJqiR2bdw4SCBScLjVN83wfQtsEdNhp79g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=qBa5mxQp; arc=none smtp.client-ip=68.232.153.233
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1756138848; x=1787674848;
+  t=1756138881; x=1787674881;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=TB1dOd76PEJ5mgVTi3H1IPzDArXUmTgjE1tKSSsdtws=;
-  b=ExmimHbCGRwLj57VBMSqw8wZwwRtEZaw/1d2bQFHglZE0nmFci8Ndp4z
-   waxye1DyC5ueRq+c3oGXAdIRSwoUaC3kSpSduftTjwWAV68MtleCNXrm6
-   LdewRMNCzyYhLYbefwDgSa1JuZ/xFqd3vbcQnJlyZnNmVxe3T/cre6ozn
-   JzmoWRbJk68n8i1ib9+P2h12AqzEboT4YLOzPqFZIGze3dm2VAwwcJfyF
-   PDYG2I+aGrtTgAqOlAqDZgKR9OSlsGZLAiH4vR0OuNeDvRY4r/otfekR+
-   t3opmQwU18P6ymIxs4UYxztkuj/MqNXU4JOBKZzD63UaxQYw5SNBDziwq
-   A==;
-X-CSE-ConnectionGUID: 9JmLn3EoSSGJz16GI5swOw==
-X-CSE-MsgGUID: 9YutzzChQSGv5z3j1Xc0zA==
+  bh=Pkx8x1NkgVeuO4YFWXM02HHwwX1ANgOv0kGU1edmzoE=;
+  b=qBa5mxQpPwmagwosL7aPA6VnaT16tx2O5S2wnZxFQw1T8f+ufxPrgaNq
+   sECR95IwG57aOvg+SIi13m8sXPgK9uLHDQ57pn7tYGGQjl0rOtee1JFE+
+   sRs8zIPk1BkAairfKV6txMAr3o5nTswIvKfoFXfj6dqLsBFCJYpvcjtI/
+   uenCF/SdcNsvTu+5PaPWAgedIqPeyeLOm6+kGR7WPgXQOek738sv8YdF6
+   saAjnD3xgC/gc07MkgtrJsAaVL4STwF09RvGUg1ty6Kjjlt6t5HcWEnIO
+   QnzgNkQPfq3KmxfAqPlAYola+6sOzE40Ght0xiqU2ap2aMpS99e85RP7c
+   w==;
+X-CSE-ConnectionGUID: JXhS0w1nR7uesDFk/Gs8Fw==
+X-CSE-MsgGUID: hUigM83LSoqoq/BOygZSTw==
 X-IronPort-AV: E=Sophos;i="6.18,213,1751266800"; 
-   d="scan'208";a="46199258"
+   d="scan'208";a="45617325"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Aug 2025 09:20:47 -0700
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Aug 2025 09:21:20 -0700
 Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Mon, 25 Aug 2025 09:20:45 -0700
+ 15.1.2507.44; Mon, 25 Aug 2025 09:20:47 -0700
 Received: from valentina.microchip.com (10.10.85.11) by
  chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Mon, 25 Aug 2025 09:20:42 -0700
+ 15.1.2507.44 via Frontend Transport; Mon, 25 Aug 2025 09:20:45 -0700
 From: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
 To: <conor.dooley@microchip.com>, <daire.mcnamara@microchip.com>,
 	<paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <robh@kernel.org>,
@@ -64,9 +64,9 @@ To: <conor.dooley@microchip.com>, <daire.mcnamara@microchip.com>,
 	<valentina.fernandezalanis@microchip.com>
 CC: <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
 	<devicetree@vger.kernel.org>
-Subject: [PATCH v1 1/5] riscv: dts: microchip: add common board dtsi for icicle kit variants
-Date: Mon, 25 Aug 2025 17:19:48 +0100
-Message-ID: <20250825161952.3902672-2-valentina.fernandezalanis@microchip.com>
+Subject: [PATCH v1 2/5] dt-bindings: riscv: microchip: document icicle kit with production device
+Date: Mon, 25 Aug 2025 17:19:49 +0100
+Message-ID: <20250825161952.3902672-3-valentina.fernandezalanis@microchip.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250825161952.3902672-1-valentina.fernandezalanis@microchip.com>
 References: <20250825161952.3902672-1-valentina.fernandezalanis@microchip.com>
@@ -79,525 +79,55 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-In preparation for supporting the Icicle Kit with production silicon,
-add a common board dtsi for the icicle kit with hardware shared by both
-the engineering sample and production versions.
+With the introduction of the Icicle Kit using the production MPFS250T
+device, it's necessary to distinguish it from the engineering sample
+(-es) variant. Engineering samples cannot write to flash from the MSS,
+as noted in the PolarFire SoC FPGA ES errata.
+
+Add specific compatibles for the Icicle Kit with Production device
+(MPFS250T) and Icicle Kit with Engineering Sample (MPFS250T_ES).
+
+The icicle kit reference designs in the v2025.07 release include the
+Mi-V IHC IP v2, used to send/receive data between clusters when
+using Asymmetric Multiprocessing (AMP) mode.
+
+In reference design releases prior to v2025.07, the MI-V IHC subsystem
+was included as a proof of concept in the design prior to becoming an
+IP available in the Libero catalog.
+
+Among other improvements, the new Mi-V IHC IP v2 includes some
+changes to the register map. For this reason, make use of a new
+reference design compatible to denote that v2025.07 reference design
+releases are not backwards compatible.
 
 Signed-off-by: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
 ---
- .../dts/microchip/mpfs-icicle-kit-common.dtsi | 247 ++++++++++++++++++
- .../boot/dts/microchip/mpfs-icicle-kit.dts    | 241 +----------------
- 2 files changed, 248 insertions(+), 240 deletions(-)
- create mode 100644 arch/riscv/boot/dts/microchip/mpfs-icicle-kit-common.dtsi
+ Documentation/devicetree/bindings/riscv/microchip.yaml | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/riscv/boot/dts/microchip/mpfs-icicle-kit-common.dtsi b/arch/riscv/boot/dts/microchip/mpfs-icicle-kit-common.dtsi
-new file mode 100644
-index 000000000000..eafea3b69cd7
---- /dev/null
-+++ b/arch/riscv/boot/dts/microchip/mpfs-icicle-kit-common.dtsi
-@@ -0,0 +1,247 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/* Copyright (c) 2025 Microchip Technology Inc */
+diff --git a/Documentation/devicetree/bindings/riscv/microchip.yaml b/Documentation/devicetree/bindings/riscv/microchip.yaml
+index 78ce76ae1b6d..8ddc5c02973e 100644
+--- a/Documentation/devicetree/bindings/riscv/microchip.yaml
++++ b/Documentation/devicetree/bindings/riscv/microchip.yaml
+@@ -18,10 +18,18 @@ properties:
+     const: '/'
+   compatible:
+     oneOf:
++      - items:
++          - const: microchip,mpfs-icicle-prod-reference-rtl-v2507
++          - const: microchip,mpfs-icicle-kit-prod
++          - const: microchip,mpfs-icicle-kit
++          - const: microchip,mpfs-prod
++          - const: microchip,mpfs
 +
-+/dts-v1/;
-+
-+#include "mpfs.dtsi"
-+#include "mpfs-icicle-kit-fabric.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/leds/common.h>
-+
-+/ {
-+	aliases {
-+		ethernet0 = &mac1;
-+		serial0 = &mmuart0;
-+		serial1 = &mmuart1;
-+		serial2 = &mmuart2;
-+		serial3 = &mmuart3;
-+		serial4 = &mmuart4;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial1:115200n8";
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		led-1 {
-+			gpios = <&gpio2 16 GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_RED>;
-+			label = "led1";
-+		};
-+
-+		led-2 {
-+			gpios = <&gpio2 17 GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_RED>;
-+			label = "led2";
-+		};
-+
-+		led-3 {
-+			gpios = <&gpio2 18 GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_AMBER>;
-+			label = "led3";
-+		};
-+
-+		led-4 {
-+			gpios = <&gpio2 19 GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_AMBER>;
-+			label = "led4";
-+		};
-+	};
-+
-+	ddrc_cache_lo: memory@80000000 {
-+		device_type = "memory";
-+		reg = <0x0 0x80000000 0x0 0x40000000>;
-+		status = "okay";
-+	};
-+
-+	ddrc_cache_hi: memory@1040000000 {
-+		device_type = "memory";
-+		reg = <0x10 0x40000000 0x0 0x40000000>;
-+		status = "okay";
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		hss_payload: region@BFC00000 {
-+			reg = <0x0 0xBFC00000 0x0 0x400000>;
-+			no-map;
-+		};
-+	};
-+};
-+
-+&core_pwm0 {
-+	status = "okay";
-+};
-+
-+&gpio2 {
-+	interrupts = <53>, <53>, <53>, <53>,
-+		     <53>, <53>, <53>, <53>,
-+		     <53>, <53>, <53>, <53>,
-+		     <53>, <53>, <53>, <53>,
-+		     <53>, <53>, <53>, <53>,
-+		     <53>, <53>, <53>, <53>,
-+		     <53>, <53>, <53>, <53>,
-+		     <53>, <53>, <53>, <53>;
-+	status = "okay";
-+};
-+
-+&i2c0 {
-+	status = "okay";
-+};
-+
-+&i2c1 {
-+	status = "okay";
-+
-+	power-monitor@10 {
-+		compatible = "microchip,pac1934";
-+		reg = <0x10>;
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		channel@1 {
-+			reg = <0x1>;
-+			shunt-resistor-micro-ohms = <10000>;
-+			label = "VDDREG";
-+		};
-+
-+		channel@2 {
-+			reg = <0x2>;
-+			shunt-resistor-micro-ohms = <10000>;
-+			label = "VDDA25";
-+		};
-+
-+		channel@3 {
-+			reg = <0x3>;
-+			shunt-resistor-micro-ohms = <10000>;
-+			label = "VDD25";
-+		};
-+
-+		channel@4 {
-+			reg = <0x4>;
-+			shunt-resistor-micro-ohms = <10000>;
-+			label = "VDDA_REG";
-+		};
-+	};
-+};
-+
-+&i2c2 {
-+	status = "okay";
-+};
-+
-+&mac0 {
-+	phy-mode = "sgmii";
-+	phy-handle = <&phy0>;
-+	status = "okay";
-+};
-+
-+&mac1 {
-+	phy-mode = "sgmii";
-+	phy-handle = <&phy1>;
-+	status = "okay";
-+
-+	phy1: ethernet-phy@9 {
-+		reg = <9>;
-+	};
-+
-+	phy0: ethernet-phy@8 {
-+		reg = <8>;
-+	};
-+};
-+
-+&mbox {
-+	status = "okay";
-+};
-+
-+&mmc {
-+	bus-width = <4>;
-+	disable-wp;
-+	cap-sd-highspeed;
-+	cap-mmc-highspeed;
-+	mmc-ddr-1_8v;
-+	mmc-hs200-1_8v;
-+	sd-uhs-sdr12;
-+	sd-uhs-sdr25;
-+	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
-+	status = "okay";
-+};
-+
-+&mmuart1 {
-+	status = "okay";
-+};
-+
-+&mmuart2 {
-+	status = "okay";
-+};
-+
-+&mmuart3 {
-+	status = "okay";
-+};
-+
-+&mmuart4 {
-+	status = "okay";
-+};
-+
-+&pcie {
-+	status = "okay";
-+};
-+
-+&qspi {
-+	status = "okay";
-+};
-+
-+&refclk {
-+	clock-frequency = <125000000>;
-+};
-+
-+&refclk_ccc {
-+	clock-frequency = <50000000>;
-+};
-+
-+&rtc {
-+	status = "okay";
-+};
-+
-+&spi0 {
-+	status = "okay";
-+};
-+
-+&spi1 {
-+	status = "okay";
-+};
-+
-+&syscontroller {
-+	status = "okay";
-+};
-+
-+&syscontroller_qspi {
-+	/*
-+	 * The flash *is* there, but Icicle kits that have engineering sample
-+	 * silicon (write?) access to this flash to non-functional. The system
-+	 * controller itself can actually access it, but the MSS cannot write
-+	 * an image there. Instantiating a coreQSPI in the fabric & connecting
-+	 * it to the flash instead should work though. Pre-production or later
-+	 * silicon does not have this issue.
-+	 */
-+	status = "disabled";
-+
-+	sys_ctrl_flash: flash@0 { // MT25QL01GBBB8ESF-0SIT
-+		compatible = "jedec,spi-nor";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		spi-max-frequency = <20000000>;
-+		spi-rx-bus-width = <1>;
-+		reg = <0>;
-+	};
-+};
-+
-+&usb {
-+	status = "okay";
-+	dr_mode = "host";
-+};
-diff --git a/arch/riscv/boot/dts/microchip/mpfs-icicle-kit.dts b/arch/riscv/boot/dts/microchip/mpfs-icicle-kit.dts
-index f80df225f72b..2cb08ed0946d 100644
---- a/arch/riscv/boot/dts/microchip/mpfs-icicle-kit.dts
-+++ b/arch/riscv/boot/dts/microchip/mpfs-icicle-kit.dts
-@@ -3,249 +3,10 @@
+       - items:
+           - enum:
+               - microchip,mpfs-icicle-reference-rtlv2203
+               - microchip,mpfs-icicle-reference-rtlv2210
++              - microchip,mpfs-icicle-es-reference-rtl-v2507
+           - const: microchip,mpfs-icicle-kit
+           - const: microchip,mpfs
  
- /dts-v1/;
- 
--#include "mpfs.dtsi"
--#include "mpfs-icicle-kit-fabric.dtsi"
--#include <dt-bindings/gpio/gpio.h>
--#include <dt-bindings/leds/common.h>
-+#include "mpfs-icicle-kit-common.dtsi"
- 
- / {
- 	model = "Microchip PolarFire-SoC Icicle Kit";
- 	compatible = "microchip,mpfs-icicle-reference-rtlv2210", "microchip,mpfs-icicle-kit",
- 		     "microchip,mpfs";
--
--	aliases {
--		ethernet0 = &mac1;
--		serial0 = &mmuart0;
--		serial1 = &mmuart1;
--		serial2 = &mmuart2;
--		serial3 = &mmuart3;
--		serial4 = &mmuart4;
--	};
--
--	chosen {
--		stdout-path = "serial1:115200n8";
--	};
--
--	leds {
--		compatible = "gpio-leds";
--
--		led-1 {
--			gpios = <&gpio2 16 GPIO_ACTIVE_HIGH>;
--			color = <LED_COLOR_ID_RED>;
--			label = "led1";
--		};
--
--		led-2 {
--			gpios = <&gpio2 17 GPIO_ACTIVE_HIGH>;
--			color = <LED_COLOR_ID_RED>;
--			label = "led2";
--		};
--
--		led-3 {
--			gpios = <&gpio2 18 GPIO_ACTIVE_HIGH>;
--			color = <LED_COLOR_ID_AMBER>;
--			label = "led3";
--		};
--
--		led-4 {
--			gpios = <&gpio2 19 GPIO_ACTIVE_HIGH>;
--			color = <LED_COLOR_ID_AMBER>;
--			label = "led4";
--		};
--	};
--
--	ddrc_cache_lo: memory@80000000 {
--		device_type = "memory";
--		reg = <0x0 0x80000000 0x0 0x40000000>;
--		status = "okay";
--	};
--
--	ddrc_cache_hi: memory@1040000000 {
--		device_type = "memory";
--		reg = <0x10 0x40000000 0x0 0x40000000>;
--		status = "okay";
--	};
--
--	reserved-memory {
--		#address-cells = <2>;
--		#size-cells = <2>;
--		ranges;
--
--		hss_payload: region@BFC00000 {
--			reg = <0x0 0xBFC00000 0x0 0x400000>;
--			no-map;
--		};
--	};
--};
--
--&core_pwm0 {
--	status = "okay";
--};
--
--&gpio2 {
--	interrupts = <53>, <53>, <53>, <53>,
--		     <53>, <53>, <53>, <53>,
--		     <53>, <53>, <53>, <53>,
--		     <53>, <53>, <53>, <53>,
--		     <53>, <53>, <53>, <53>,
--		     <53>, <53>, <53>, <53>,
--		     <53>, <53>, <53>, <53>,
--		     <53>, <53>, <53>, <53>;
--	status = "okay";
--};
--
--&i2c0 {
--	status = "okay";
--};
--
--&i2c1 {
--	status = "okay";
--
--	power-monitor@10 {
--		compatible = "microchip,pac1934";
--		reg = <0x10>;
--
--		#address-cells = <1>;
--		#size-cells = <0>;
--
--		channel@1 {
--			reg = <0x1>;
--			shunt-resistor-micro-ohms = <10000>;
--			label = "VDDREG";
--		};
--
--		channel@2 {
--			reg = <0x2>;
--			shunt-resistor-micro-ohms = <10000>;
--			label = "VDDA25";
--		};
--
--		channel@3 {
--			reg = <0x3>;
--			shunt-resistor-micro-ohms = <10000>;
--			label = "VDD25";
--		};
--
--		channel@4 {
--			reg = <0x4>;
--			shunt-resistor-micro-ohms = <10000>;
--			label = "VDDA_REG";
--		};
--	};
--};
--
--&i2c2 {
--	status = "okay";
--};
--
--&mac0 {
--	phy-mode = "sgmii";
--	phy-handle = <&phy0>;
--	status = "okay";
--};
--
--&mac1 {
--	phy-mode = "sgmii";
--	phy-handle = <&phy1>;
--	status = "okay";
--
--	phy1: ethernet-phy@9 {
--		reg = <9>;
--	};
--
--	phy0: ethernet-phy@8 {
--		reg = <8>;
--	};
--};
--
--&mbox {
--	status = "okay";
--};
--
--&mmc {
--	bus-width = <4>;
--	disable-wp;
--	cap-sd-highspeed;
--	cap-mmc-highspeed;
--	mmc-ddr-1_8v;
--	mmc-hs200-1_8v;
--	sd-uhs-sdr12;
--	sd-uhs-sdr25;
--	sd-uhs-sdr50;
--	sd-uhs-sdr104;
--	status = "okay";
--};
--
--&mmuart1 {
--	status = "okay";
--};
--
--&mmuart2 {
--	status = "okay";
--};
--
--&mmuart3 {
--	status = "okay";
--};
--
--&mmuart4 {
--	status = "okay";
--};
--
--&pcie {
--	status = "okay";
--};
--
--&qspi {
--	status = "okay";
--};
--
--&refclk {
--	clock-frequency = <125000000>;
--};
--
--&refclk_ccc {
--	clock-frequency = <50000000>;
--};
--
--&rtc {
--	status = "okay";
--};
--
--&spi0 {
--	status = "okay";
--};
--
--&spi1 {
--	status = "okay";
--};
--
--&syscontroller {
--	status = "okay";
--};
--
--&syscontroller_qspi {
--	/*
--	 * The flash *is* there, but Icicle kits that have engineering sample
--	 * silicon (write?) access to this flash to non-functional. The system
--	 * controller itself can actually access it, but the MSS cannot write
--	 * an image there. Instantiating a coreQSPI in the fabric & connecting
--	 * it to the flash instead should work though. Pre-production or later
--	 * silicon does not have this issue.
--	 */
--	status = "disabled";
--
--	sys_ctrl_flash: flash@0 { // MT25QL01GBBB8ESF-0SIT
--		compatible = "jedec,spi-nor";
--		#address-cells = <1>;
--		#size-cells = <1>;
--		spi-max-frequency = <20000000>;
--		spi-rx-bus-width = <1>;
--		reg = <0>;
--	};
--};
--
--&usb {
--	status = "okay";
--	dr_mode = "host";
- };
 -- 
 2.34.1
 
