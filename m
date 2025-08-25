@@ -1,39 +1,47 @@
-Return-Path: <linux-kernel+bounces-784190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ECC8B337D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:32:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 731A2B337D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:33:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09E253BA8E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 07:32:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45FB516D820
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 07:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2CD1289368;
-	Mon, 25 Aug 2025 07:31:58 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8910DBE5E;
-	Mon, 25 Aug 2025 07:31:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 862572877F5;
+	Mon, 25 Aug 2025 07:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q7q1PnRG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D992A22A4E5;
+	Mon, 25 Aug 2025 07:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756107118; cv=none; b=Xu253khy5edewycYO6xW8x6r5CopfSpl0jkEHQzn9/PHJeVDSoT/biU1wJ8S1cIOzivJvO4GNG73Wv57rHF2in1fiVo30DOhLUWmToda+o9UVk9WxCv16M7k/9zvXE5gHxtWY+Wg++gCGFcmyHmW8JAem2J2XH0TgaUbfiIG5ns=
+	t=1756107189; cv=none; b=KaSHdljZ51X0ZvJp6yCgbDhcfldyW4+hdouaaV+OsqoIfPeUUVLO4IV7r6ZYULZyZef9RxzlwtAx3pC8OgD3jx2AaObpZ5rwT6moDKHzsntjpSNF1g7JOOihetsJDjUCnXageq/SP3mxZHmpaHyU7MIaeJ2bj312P5x0mp+k0ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756107118; c=relaxed/simple;
-	bh=r50dDkvFDO+w+5+hTwJQC3IZEVejQAJBD9RW2mT+j/0=;
+	s=arc-20240116; t=1756107189; c=relaxed/simple;
+	bh=9/TBYORLfxODfzMBYG3cg/3Ags9DoW+lvt+FsEDPCUY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lQH0/b0uy1oQh9cqDsKd9g6WLu+vKnJM+abChR0lq5v9OdvCKD7kLcSUfzXqmUarGdqc4hFnAHLlwK4hNzciNGcA65fvVNgGSok7ZfARoHxDKcNpty6iaJGz1JWHCsb5aq5AQmTQfFbNZEcty4JS79fibTkMj1p+/n0EWsXmo54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 601921D70;
-	Mon, 25 Aug 2025 00:31:45 -0700 (PDT)
-Received: from [10.57.89.148] (unknown [10.57.89.148])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 366D23F738;
-	Mon, 25 Aug 2025 00:31:47 -0700 (PDT)
-Message-ID: <8e4e5648-9b70-4257-92c5-14c60928e240@arm.com>
-Date: Mon, 25 Aug 2025 09:31:44 +0200
+	 In-Reply-To:Content-Type; b=hefsUZZB8NitaNFueTll1pKJ1fMT9HwTfwEpkxY0MIandUdxURKVN9xCGHyMpwJ3kjF6hU5JPrCxQ75kDRea1loCONs0Q3FgYYhxJYHyKm6tWIMBxic5Q12qjWaPd8zOyDEtGY/3WJJAF8IpPeCVmicOUONOdKxmV5qzqdh4fiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q7q1PnRG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68A27C116B1;
+	Mon, 25 Aug 2025 07:33:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756107188;
+	bh=9/TBYORLfxODfzMBYG3cg/3Ags9DoW+lvt+FsEDPCUY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Q7q1PnRG7mybEwP/iaA8fxd+bVdPYpK16Tb6GJ+B199KISRpka5MMYEWH+3HwbZ0x
+	 ZYTCJNOjXJpyQztCFyf++C1hszoCEhpSeFfeo7SqSzBvAcV85AfIKVK6Lpv8C1YEhJ
+	 YnMS5qB9djDL6co0tHJuGPvq0dKTQ4Jb/XpKDDDDvI7z/VsDbLWpEP2J9xTGYe6SkM
+	 PkYd9KaWFBiTOiQL/znft7Rx4Oy6mCDIJEPooFOAcVBhl3AvmO082orlWXhLY3MIWC
+	 uE6IHqN60nicD5CAtSCH+EhNlmCA05dMQE5NfEn5sRYxa/Ab9mkp2BO4LfoZ1/NWg4
+	 3+1lH/sDDR8bw==
+Message-ID: <5d43578b-53a9-4f7f-a27e-7183dc05bd2e@kernel.org>
+Date: Mon, 25 Aug 2025 09:33:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,87 +49,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v5 00/18] pkeys-based page table hardening
-To: Yang Shi <yang@os.amperecomputing.com>, linux-hardening@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Andy Lutomirski <luto@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- David Hildenbrand <david@redhat.com>, Ira Weiny <ira.weiny@intel.com>,
- Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@chromium.org>,
- Joey Gouly <joey.gouly@arm.com>, Kees Cook <kees@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Marc Zyngier <maz@kernel.org>,
- Mark Brown <broonie@kernel.org>, Matthew Wilcox <willy@infradead.org>,
- Maxwell Bland <mbland@motorola.com>, "Mike Rapoport (IBM)"
- <rppt@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Pierre Langlois <pierre.langlois@arm.com>,
- Quentin Perret <qperret@google.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org, x86@kernel.org
-References: <20250815085512.2182322-1-kevin.brodsky@arm.com>
- <98c9689f-157b-4fbb-b1b4-15e5a68e2d32@os.amperecomputing.com>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <98c9689f-157b-4fbb-b1b4-15e5a68e2d32@os.amperecomputing.com>
+Subject: Re: [PATCH v3 1/1] arm64: defconfig: Enable Marvell WiFi-Ex USB
+ driver
+To: Alexander Stein <alexander.stein@ew.tq-group.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, Pengutronix Kernel Team <kernel@pengutronix.de>
+References: <20250822135715.3335023-1-alexander.stein@ew.tq-group.com>
+ <dc6af2fc-5e7f-4ec8-a7aa-6bde6518a83b@kernel.org>
+ <2800962.mvXUDI8C0e@steina-w>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <2800962.mvXUDI8C0e@steina-w>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 21/08/2025 19:29, Yang Shi wrote:
-> Hi Kevin,
->
-> On 8/15/25 1:54 AM, Kevin Brodsky wrote:
->> This is a proposal to leverage protection keys (pkeys) to harden
->> critical kernel data, by making it mostly read-only. The series includes
->> a simple framework called "kpkeys" to manipulate pkeys for in-kernel
->> use,
->> as well as a page table hardening feature based on that framework,
->> "kpkeys_hardened_pgtables". Both are implemented on arm64 as a proof of
->> concept, but they are designed to be compatible with any architecture
->> that supports pkeys.
->
-> [...]
->
+On 25/08/2025 08:03, Alexander Stein wrote:
+> Hi,
+> 
+> Am Sonntag, 24. August 2025, 13:26:43 CEST schrieb Krzysztof Kozlowski:
+>> On 22/08/2025 15:57, Alexander Stein wrote:
+>>> MBa91xxCA (imx93-tqma9352-mba91xxca.dts) features a USB attached WiFi
+>>> module. lsusb says:
+>>>  ID 1286:204e Marvell Semiconductor, Inc. Bluetooth and Wireless LAN Composite Device
+>>> Enable the corresponding driver.
 >>
->> Note: the performance impact of set_memory_pkey() is likely to be
->> relatively low on arm64 because the linear mapping uses PTE-level
->> descriptors only. This means that set_memory_pkey() simply changes the
->> attributes of some PTE descriptors. However, some systems may be able to
->> use higher-level descriptors in the future [5], meaning that
->> set_memory_pkey() may have to split mappings. Allocating page tables
->
-> I'm supposed the page table hardening feature will be opt-in due to
-> its overhead? If so I think you can just keep kernel linear mapping
-> using PTE, just like debug page alloc.
+>> This does not answer my questions. You can plug there something else...
+> 
+> It's not pluggable, it's soldered on the mainboard.
 
-Indeed, I don't expect it to be turned on by default (in defconfig). If
-the overhead proves too large when block mappings are used, it seems
-reasonable to force PTE mappings when kpkeys_hardened_pgtables is enabled.
+Would be worth to say it in the commit msg, because USB usually is used
+via connectors.
 
->
->> from a contiguous cache of pages could help minimise the overhead, as
->> proposed for x86 in [1].
->
-> I'm a little bit confused about how this can work. The contiguous
-> cache of pages should be some large page, for example, 2M. But the
-> page table pages allocated from the cache may have different
-> permissions if I understand correctly. The default permission is RO,
-> but some of them may become R/W at sometime, for example, when calling
-> set_pte_at(). You still need to split the linear mapping, right?
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-When such a helper is called, *all* PTPs become writeable - there is no
-per-PTP permission switching.
-
-PTPs remain mapped RW (i.e. the base permissions set at the PTE level
-are RW). With this series, they are also all mapped with the same pkey
-(1). By default, the pkey register is configured so that pkey 1 provides
-RO access. The net result is that PTPs are RO by default, since the pkey
-restricts the effective permissions.
-
-When calling e.g. set_pte(), the pkey register is modified to enable RW
-access to pkey 1, making it possible to write to any PTP. Its value is
-restored when the function exit so that PTPs are once again RO.
-
-- Kevin
+Best regards,
+Krzysztof
 
