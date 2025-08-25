@@ -1,223 +1,223 @@
-Return-Path: <linux-kernel+bounces-785135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86F29B34672
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:57:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53D53B3467A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:57:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 495673AB464
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:57:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5941B3B662D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:57:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E8FF2FF66C;
-	Mon, 25 Aug 2025 15:57:05 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E42B52FF667;
+	Mon, 25 Aug 2025 15:57:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="UsqofrG3";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="e+p3dpA+"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA0962FC01E
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 15:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756137424; cv=none; b=XoZ7ovFnKGmgu7FM5t7ez4kRsQRww3l635GayVt6rb1IL1s2T2OEpHORIOLA2xJbUHJ5F5SoHZPK3lnnig2wf6VFk1TMcsQC0iUcOR6o5YHNMxhZaT9oO+li8dGci4E7P+b6XSY26K1LgvQezccP0u7S+fNYqgoU2o2Cd7mXl1Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756137424; c=relaxed/simple;
-	bh=4cNWv4HsIy+0tAeRLpaonopaZeHAr5GnHLxGFQXG19E=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=tU2abAdUL0nqe0uNhRPYrVsqbhNM/+Q84EX/T3b3qjnPtNYKHHqj+uOWDoXz9+QjhHjwjuR9QpgiXGkTntVaMXvWB6PHSskNea+phOZpaz94X7WmdkTv/B3KyU6eegjrXMP7+/5n0RbVnBmJuiRi/5qJn0sT5WEsKMeSyTv6NOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uqZYd-0003lu-Pz; Mon, 25 Aug 2025 17:56:31 +0200
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uqZYZ-0025Zy-04;
-	Mon, 25 Aug 2025 17:56:27 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uqZYY-000dPY-2w;
-	Mon, 25 Aug 2025 17:56:26 +0200
-Message-ID: <ca0aabeae81758a64bcad5f8113962e79b06ffd5.camel@pengutronix.de>
-Subject: Re: [PATCH v13 04/11] PCI: stm32: Add PCIe host support for
- STM32MP25
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Christian Bruel <christian.bruel@foss.st.com>, lpieralisi@kernel.org, 
- kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org,
- bhelgaas@google.com,  krzk+dt@kernel.org, conor+dt@kernel.org,
- mcoquelin.stm32@gmail.com,  alexandre.torgue@foss.st.com,
- linus.walleij@linaro.org, corbet@lwn.net,  shradha.t@samsung.com,
- mayank.rana@oss.qualcomm.com, namcao@linutronix.de, 
- qiang.yu@oss.qualcomm.com, thippeswamy.havalige@amd.com,
- inochiama@gmail.com,  quic_schintav@quicinc.com
-Cc: johan+linaro@kernel.org, linux-pci@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org
-Date: Mon, 25 Aug 2025 17:56:26 +0200
-In-Reply-To: <7378edca-12f4-44a1-9c2a-ea07ebab4ad0@foss.st.com>
-References: <20250820075411.1178729-1-christian.bruel@foss.st.com>
-	 <20250820075411.1178729-5-christian.bruel@foss.st.com>
-	 <e67d5a27fb00040ba87a0b108322747ecca8d05b.camel@pengutronix.de>
-	 <7378edca-12f4-44a1-9c2a-ea07ebab4ad0@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374E12FE065;
+	Mon, 25 Aug 2025 15:57:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756137459; cv=fail; b=Yw4s2Vnxk21VxMSFCgWbkH6r4G5PsT1FRlbGuAPBxro2B75v/wkj7fW84KJ9pRVCVQcgofaB8x8n3qfCq7PeOEXc66oIgTOglDUex5Ljd4v3pdPPkDWeF8MN5elAkurky+4FF8i4xtJTWXwGRY8wIJ2F81RFz6uh7c9h6qfK+zA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756137459; c=relaxed/simple;
+	bh=VeMQsSBMdHub7kTYU8vUr0XwLu0lG9oDwQIJ7nMNxIE=;
+	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
+	 Content-Type:MIME-Version; b=Gz/EexnNOfxmusllfF8GC6RlbMcBl85Aq874VhF8AHufAETx03a5W9q8eFF4p1i7Xn8Q6lqY8fetarlCdLmC+1me5fHUukcU2POxj5sAlph5si641nbSB5+oDgA3t6ub/oSVJOwTD5LLTEICwCVKV1TPLiuEQR3YDP/so5tAYNM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=UsqofrG3; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=e+p3dpA+; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57PFfsMe022300;
+	Mon, 25 Aug 2025 15:56:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=QEnpKb9gPvGg/M20em
+	co49m+J5fWEFuwEeAJuNhlFCI=; b=UsqofrG3J0/6le/8GRYmR1obj12A1x3ShS
+	IlqBnA2B1qyRVGUCCA1rHVdZI9BmB42IeELXHYmWiJcJJ9SfkuNlHlK6cF23oVVK
+	vzCPxGpOZZLnTO6/UNU/OxHAESkV8txvN2C9WviJngt78tbVxRXeCmDD7hiiwKsc
+	VTaWKFwyr7xEFljetLM9VD3EH/lTnCQ6jCB2IxlXrkoBuYpU7GErmxJylIpOXuzF
+	6kAHXfonZQWAIv4Pg/+HzOwqWLLCrovE+ENYOnNHonM8Fc/Y2UWQFlCRdeAQ/r+y
+	8LTgU78AIyI2j459BK5CLMxHBBOzfkcx674/i7ryAWsJS/AQHwng==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48r8tw9d28-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 25 Aug 2025 15:56:53 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57PF2fNg005292;
+	Mon, 25 Aug 2025 15:56:52 GMT
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10on2048.outbound.protection.outlook.com [40.107.94.48])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 48qj88n5ss-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 25 Aug 2025 15:56:52 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Z7yKbE6lzGyc6KWKNHbAS8XYgcEruds9zyFMWMl12HAvMYT9W4pJ/TJHdVnyWIfNDCuwRIN5244wIpmtZp9NpAJPgUjsYp2cdD+kKOrzYd4TwIpMQv9WV9jYKeiKcZbOCLrFSM+gZ9EGCcnMyrXUNJnLSiDyHfhrA6WZsD4MTqzPyrCx9cQl4z6dqxcqNySUVdagI9sBLXBrVdOBE4v9FNT64qcqsizVFS6LJI9fnsAsDqIrPcSIw/UReGeuxkc+p/DnTPbYXKXI25qdegAKcvy8CQDYfEffvN0+IUtZshbNHnIa6EnMdPD8lgST+olquFghg5KcSgK7eu0POJoN6A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QEnpKb9gPvGg/M20emco49m+J5fWEFuwEeAJuNhlFCI=;
+ b=t102XB/nN0vVYpyt1EZlzFbQb0bkZiqKk6ypSwQMyfZD85NhtvO70p1kiTs/yKezRr+6quxkghUGCOe3DAOqnG3o2+FzBEEPdRkXfcEjgAbVv8EwRFACYnqIeWUwXEUSIDOPZkf/zKHRbhO6u06bOl3tU6RSLuFSSpWpIIOGBhsaKVbCBsUVzVWwPE4E88hrMYLzGXOYHx3zOrZiMAu7j41+sr7fJnzcM6zqfL80+ymTf30tftAYgpr9tHxO/LTXa8oWuMioTfE4xP5IdSJ7rNxIBaPzyKm8IT2PZvL2Z4dkD7CGXhhixnxxPci6FLMi6qmLG0XDTjBdHlEzRmin2Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QEnpKb9gPvGg/M20emco49m+J5fWEFuwEeAJuNhlFCI=;
+ b=e+p3dpA+/ARoe+8TgybhiN88puFz0VeWwO5gknaWb0wQSfYihcy7C/1uvjNv3rm5GlSlamVhCyRJ4Yyv9K9MIG7mqo8ErgQrST1MbTeOr/z4zXYC3+Wg0dKV6xG40AojLjQS7KczHKRVUi9s6qaGZrd3nvT8dx1REZ+JyNTUahg=
+Received: from CH0PR10MB5338.namprd10.prod.outlook.com (2603:10b6:610:cb::8)
+ by DS0PR10MB7091.namprd10.prod.outlook.com (2603:10b6:8:14d::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.20; Mon, 25 Aug
+ 2025 15:56:49 +0000
+Received: from CH0PR10MB5338.namprd10.prod.outlook.com
+ ([fe80::5cca:2bcc:cedb:d9bf]) by CH0PR10MB5338.namprd10.prod.outlook.com
+ ([fe80::5cca:2bcc:cedb:d9bf%6]) with mapi id 15.20.9031.014; Mon, 25 Aug 2025
+ 15:56:48 +0000
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: <linux-fsdevel@vger.kernel.org>, <linux-block@vger.kernel.org>,
+        <dm-devel@lists.linux.dev>, <linux-nvme@lists.infradead.org>,
+        <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <hch@lst.de>, <tytso@mit.edu>, <djwong@kernel.org>,
+        <bmarzins@redhat.com>, <chaitanyak@nvidia.com>,
+        <shinichiro.kawasaki@wdc.com>, <brauner@kernel.org>,
+        <martin.petersen@oracle.com>, <yi.zhang@huawei.com>,
+        <chengzhihao1@huawei.com>, <yukuai3@huawei.com>,
+        <yangerkun@huawei.com>
+Subject: Re: [PATCH util-linux v3] fallocate: add FALLOC_FL_WRITE_ZEROES
+ support
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+In-Reply-To: <20250820085632.1879239-1-yi.zhang@huaweicloud.com> (Zhang Yi's
+	message of "Wed, 20 Aug 2025 16:56:32 +0800")
+Organization: Oracle Corporation
+Message-ID: <yq15xebs8cw.fsf@ca-mkp.ca.oracle.com>
+References: <20250820085632.1879239-1-yi.zhang@huaweicloud.com>
+Date: Mon, 25 Aug 2025 11:56:46 -0400
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR03CA0045.namprd03.prod.outlook.com
+ (2603:10b6:a03:33e::20) To CH0PR10MB5338.namprd10.prod.outlook.com
+ (2603:10b6:610:cb::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH0PR10MB5338:EE_|DS0PR10MB7091:EE_
+X-MS-Office365-Filtering-Correlation-Id: a4b5f58b-b65d-4463-bdb1-08dde3efffb4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ZbVEk1ntuIsCe3F6tIwPRoMzIs0lvC9WfxJUlQzg9lstVFa+dM97mwR3EQTw?=
+ =?us-ascii?Q?Arrl0AOD45KSSJEwmirhZh1Z41MbFMi1WLNxm3bdtcaZWqxR1iNkjEtIY1Ct?=
+ =?us-ascii?Q?aJ3yE3hVV7aC1agtSVwi0W0ISWW1nsz+lSG5R98hFmrW449y9hIjGgxgLXzw?=
+ =?us-ascii?Q?X6YOVP+HkX4hfCvjuEHz5P4ak7Bb3U0sWWKXYaiWRS/W7lzrz7JDUZy0r5bA?=
+ =?us-ascii?Q?9mMgOipycnT0hi0ipEM7yxngp6xH5aVP3dBnYP9KE5OPtbBWUSv5QoIObfIl?=
+ =?us-ascii?Q?cgtjNyvOYuExLzEBF3U/n02AUwPIE2u99/F8HGQaEK6pukF0fjWf3hMJYv9/?=
+ =?us-ascii?Q?ognNBjANdOld23ItqUWMQdtlfdMjs56mCSf1jQ9VGiZH0NvRZjKJmyDA6hx+?=
+ =?us-ascii?Q?ZzHMIJ//ZpkJvsx7ewSl/RNsTqkUDpRtLUE1xp6mVvCWH7Qbr7zcXzn74Oty?=
+ =?us-ascii?Q?C5BYb2l9ixao6gfHxxs0M7P+Oxccv++caP4RlgLo/JW4x83uVsAQAyifC/NR?=
+ =?us-ascii?Q?17AHnqGdXmP72XR5v772fGClBk9MBxQHDCx4pl4KowmoRKrn8uQTFQOoF8Ry?=
+ =?us-ascii?Q?xUkwhyRg7XlgLiEIf3gxJm32dMuWK6GgVxWFtdLJesnPP+/GAzYxNPP7ELMo?=
+ =?us-ascii?Q?L6PB+Lt9IDF9FLvC6p2n6KaFfCkMtoi8dNKQHjPkbTbWRL1FQGSL3H1HTtXd?=
+ =?us-ascii?Q?Wm5jeilxUbmezcNepcYGdCDYT66K6tVX0oA2IIq9b5W/7yX0/fUKWngLS0y+?=
+ =?us-ascii?Q?VO1rgXdewW56t6NuN2fgKZM3Sus3dlLlEZF40a6OE5dTYzaDZNdCLbbIVkdj?=
+ =?us-ascii?Q?yDIAQnVrkygS2A/C+jDknFAspIJ0SCi7rH0Pt/04w2CeRCY3LET/NKlNgf0e?=
+ =?us-ascii?Q?rDOFiD9KVUjMc1eCwYwchM89Gqvw3sHZ3OJcd1JKenRxPlct/J3cguq203J3?=
+ =?us-ascii?Q?+IiAZLR+vDF8xqqSX8FC2v6ZWfkvcUOjzDtzBgvm5oJ1YWgXwnt2k43WrlQY?=
+ =?us-ascii?Q?WpXoscsPbw0b7tRu89hkEE0qelFko+Cs/PeqvsyLvELQviGGekqPR/fYwb5C?=
+ =?us-ascii?Q?2iPDUMXraff8tUvcIk+Q1Auc0buAYWTn8PdfPLS//1DfbX0UKiNWnQPnpTnd?=
+ =?us-ascii?Q?1RzQJZtdIarSTeXj1/gnjPrMSHdUXduJSvuIQDnJOY9RaQxes2WrJtk2sxWF?=
+ =?us-ascii?Q?7HPf3ydrAsDffUzU9vSfvVtj/DigF2mwI0PdqPGFXRnM3Vae9QK5iBK7hXqO?=
+ =?us-ascii?Q?eh1VF3TpeLEz64J1NbDJIMmTT5BSCsvMjVqFMPRCyVvcdMmGE/v56fgGJ85H?=
+ =?us-ascii?Q?SMWqr3Tg5L9m5yPmlWYHQYR9VwvSZCRGLc4223VjntcCnXAMV5K41sy6dabs?=
+ =?us-ascii?Q?a8o9uEzZhxaf/2+JtxyqY2G9LQHfxvf3Sy0EHx/ogDaP5oSDiKjhuFR9zTmT?=
+ =?us-ascii?Q?R+LqLJFY0Io=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR10MB5338.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?f53Wys42HscvLt1mHMJtNBhjqdlTOTt5VuiOEQq9lrQYRCk0mgGxyRoHbCrD?=
+ =?us-ascii?Q?eFtIM7fMsDad5KYMRhN7qWdkObVYbu2TjqBwLM2+Y/xubNM9vYwQKP9gPUMg?=
+ =?us-ascii?Q?yqEFaA6JRS1q6uMMHaOyyuT1JHnQF4HEikaVbtefwM5eRDvgoFf8yR0HJrVB?=
+ =?us-ascii?Q?CmCxZfNX6vuc7IUkMg4UPNam47eYIbOTvOsu7K3J5pJlvo1Jnla/FM9MG/Im?=
+ =?us-ascii?Q?kY/HEO24646k1xNv5DO547QjlLIM1StwmE3Rni55N2BoUoPgyao0x6GQjKl9?=
+ =?us-ascii?Q?Olt6qcsBcBwXIYYgxNHylWHuZOJ/qHN7y43IC47Jz8KaJVVXZMFvqGc/iyfU?=
+ =?us-ascii?Q?UFJ3QaetOKiCT6ve8JUfUEF6KbWTZbnBz22B8mhwArMkgnCaoPe5Q2gPPdhu?=
+ =?us-ascii?Q?mCUc5X84PRcz3nqFbmzlPDAsIPThkJtT6TuEzhq8JIXRYcVS5MCq2Tl52cLP?=
+ =?us-ascii?Q?3qh+yLcS5J1ZGGJbDzUVeKqm4iB4lvky0GTc7n6Cd+xvK1Y2O9WhtV2yB79L?=
+ =?us-ascii?Q?hJJ6RoNpe266Jo6ChWqJFneTCw9xaIPKJJQt3ztkYHtao9b3UpHCoSfIa/Wo?=
+ =?us-ascii?Q?5WuIzSd8zwXfEA+3c6AI8LlNV/Ocx6/bwFK1eFKUnElgDq54nDv4nSOvLein?=
+ =?us-ascii?Q?Wzi28Cjcn3pMLFSujGSnmwqmJoSPghV6UJS8gfIFnRJyOEMPa82Q2sySfmah?=
+ =?us-ascii?Q?2AC/TH9DwrejLI2JP9aRqjFBVhS2EqLFcB/kEcthtPqxaLdqM8cy09zLgThX?=
+ =?us-ascii?Q?xutZIW0WTRXC99cqnbEu7TL0cmG09/17Le/br3Sa69kSqxC5dhvWPpivFN/O?=
+ =?us-ascii?Q?ZBbT6RwiYv6tE8omCR/h6JoBhQPaCy7b2x9GRUUl1WjEgesshGxe2I6XJCcW?=
+ =?us-ascii?Q?8A/J2wSDyK3hUAdZMrg3nbg3YOuDQpKQEGpixheNAvaeDtwedlnwSCONGz6C?=
+ =?us-ascii?Q?xqLgHG0bEwhxIbkcimFCab00+UJLkiHIubsi+a7o73m0HfcfNz64ad2ugY7W?=
+ =?us-ascii?Q?Ju1IeHRu2/pXorjDR+wAtiRy0eqV/qOZfc0ITc8mGXmqta4LGx4SyWS1jjlQ?=
+ =?us-ascii?Q?2FwOL1yMXotvkYlPX49GfB+szf/NtR7zgnIkKE3QFqOB6qIY2zO29z8AFsHi?=
+ =?us-ascii?Q?I3WV5vAed4ID7DYiom+3RlRbpZNUW5x9TMwQyfeCrypNJUfpjNitMZcrhCeg?=
+ =?us-ascii?Q?3FmIm7gBZI1QpYesE+OlaicmKrFnVcbvaeQVfbjg0lkXseGLgmUI9NB6L11J?=
+ =?us-ascii?Q?cIFQnLN1DnE/B7HXfmeL7ZaM7A/lutlkw7Dkplmtttl4B5PLA9ZEF5QoLY1B?=
+ =?us-ascii?Q?4vJSFHFniwci054FqBiQlfBy/gp8i6P9q8ANOyOALqcbqL2zNQCOm45GhpYH?=
+ =?us-ascii?Q?qOJMB8wm3DytCHR99VeWqb+VNnCRP0wxRV3LIFyvK7xyg/uLQkntW/E31h1x?=
+ =?us-ascii?Q?HJwZj0hUh0r5U0fKmkQdYLalb9EKUBxDrU9VVH3a4ZqWAkfqu23bdyy7nxWW?=
+ =?us-ascii?Q?g6/wmyT+h/A1nzHIQvO7EeMedLgqqwKPmxgn4BI93CmDbCIcoVM1W8w9MbyD?=
+ =?us-ascii?Q?NEeO938HU2cmxSZaVNNfxSNM9M0Q4x7yS85Jp3KqpUg6HBA0TTt7M2UT7CWI?=
+ =?us-ascii?Q?eA=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	NxQaYyQvsihAkzVulauKYoDyb3T/xHL4Em/VLkuP9fnT8mecwyhp7df113xcYGGe7dX1gtVgrqsE/1+i5MQIpK6feNiyOgtVPXZR8i55FW7BxpR6VY9+7OzGQRAzEAhpMV5UjCoBjUAoZlR/+7BuIUy9E0BLOWVA1BHjB/UTa/zV/yUmCloHcLt5Bvs0jMRlxSWQ7jmX0fCKFXjHw9zmC3D7zR8OLbN7kp4IlbsHfsM3bTbWRGC5DGluiFfUa8vSqAnugUCbavQhvI19BgLEAHR8ttYm1Yb0ZBu3+Q8Nh9UJKC1g/QcS5/M7dWSUX3vo4/sgh0lzlsCVhITovCAF1A/9mPiTy3hmG6XKRxM8+VvDC5OGdtUPE+PB0g2/hFvt1e9G5OGxGQa4HGSGaIaak47TlLtupINwiFaUT4seimFpyLAyLNsNzzPdTOAYCKk8PFJOhRnxqPJGKF2kb/Yw2Yxvr3TcuNJLfDaUwiN754/MNSylPxL0z5L8upM//g6SbJEvvnOE8WvHGfJw+Y2UXH1EYD3AGvCIIrIivNXNa88CL1SiKdOaQ1KeKmneAQ/7T6SIeUhd0Gg9+ijIIqzNI2isknrzWBd7CxSwfupH8jo=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a4b5f58b-b65d-4463-bdb1-08dde3efffb4
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR10MB5338.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 15:56:48.4541
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: PSQty5ayOXTBS5qoElMqgOGg2ysC7gFHiqlXasB3OfASWKEHen2Vmgxy/sDgS3yjmc5GMpQD5WQ8luTK5HqTwZO2Z/+pRJvELApnSz8Dl+E=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB7091
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-25_07,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0 spamscore=0
+ phishscore=0 bulkscore=0 mlxscore=0 mlxlogscore=999 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
+ definitions=main-2508250144
+X-Proofpoint-ORIG-GUID: I-s5JqqW0lIoXKPWwyLZAb-HbJYcfdG0
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI0MDE4NCBTYWx0ZWRfX8wTYTxJenZGZ
+ aqrxVRpDGlzuc1hJk2vIL++o0cdmby9UGbmcSrr/shqGn+oe6+Q1reAq+sA0ZPo9VmdihSuzy6t
+ xBnAoEEElgdqJepFKcfAD9CAR/nC9uqcWRW8h/s0qor9Cjuo9xCAWs/lS92ymmHSuSB90NZcVAr
+ knXOWBtOsEJFKJSk8sobeuse62eULB4dqhsqo0LRlrqPvyTgtIfeEdBQpN7CJtoVGj77Ctn8l/Q
+ CNXd5mHDwSqOowIoQNFylNeecbY3I1w/N0pUNb1e+6Iw7RC83kLnO6L9Rm0y/nd2gmd5ovTz8lb
+ 0aW+endR4rORxr6ii9Tqn1QX4QlQ6dD0bU9SeEZW5GDyiRX5WnBHS6YXXfpQcGBfGnTVcl5t1RE
+ oS7VCqcIvpA852C693C6CIrw6q9aNA==
+X-Proofpoint-GUID: I-s5JqqW0lIoXKPWwyLZAb-HbJYcfdG0
+X-Authority-Analysis: v=2.4 cv=IciHWXqa c=1 sm=1 tr=0 ts=68ac87c5 b=1 cx=c_pps
+ a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=2OwXVqhp2XgA:10
+ a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=oMu4CXH3tChyjeE4K0sA:9 a=MTAcVbZMd_8A:10
+ cc=ntf awl=host:12069
 
-On Mo, 2025-08-25 at 16:47 +0200, Christian Bruel wrote:
->=20
-> On 8/25/25 11:15, Philipp Zabel wrote:
-> > On Mi, 2025-08-20 at 09:54 +0200, Christian Bruel wrote:
-> > > Add driver for the STM32MP25 SoC PCIe Gen1 2.5 GT/s and Gen2 5GT/s
-> > > controller based on the DesignWare PCIe core.
-> > >=20
-> > > Supports MSI via GICv2m, Single Virtual Channel, Single Function
-> > >=20
-> > > Supports WAKE# GPIO.
-> > >=20
-> > > Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
-> > > ---
-> > >   drivers/pci/controller/dwc/Kconfig      |  12 +
-> > >   drivers/pci/controller/dwc/Makefile     |   1 +
-> > >   drivers/pci/controller/dwc/pcie-stm32.c | 360 +++++++++++++++++++++=
-+++
-> > >   drivers/pci/controller/dwc/pcie-stm32.h |  15 +
-> > >   4 files changed, 388 insertions(+)
-> > >   create mode 100644 drivers/pci/controller/dwc/pcie-stm32.c
-> > >   create mode 100644 drivers/pci/controller/dwc/pcie-stm32.h
-> > >=20
-> > > diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/control=
-ler/dwc/Kconfig
-> > > index deafc512b079..a8174817fd5b 100644
-> > > --- a/drivers/pci/controller/dwc/Kconfig
-> > > +++ b/drivers/pci/controller/dwc/Kconfig
-> > > @@ -423,6 +423,18 @@ config PCIE_SPEAR13XX
-> > >   	help
-> > >   	  Say Y here if you want PCIe support on SPEAr13XX SoCs.
-> > >  =20
-> > > +config PCIE_STM32_HOST
-> > > +	tristate "STMicroelectronics STM32MP25 PCIe Controller (host mode)"
-> > > +	depends on ARCH_STM32 || COMPILE_TEST
-> > > +	depends on PCI_MSI
-> > > +	select PCIE_DW_HOST
-> > > +	help
-> > > +	  Enables Root Complex (RC) support for the DesignWare core based P=
-CIe
-> > > +	  controller found in STM32MP25 SoC.
-> > > +
-> > > +	  This driver can also be built as a module. If so, the module
-> > > +	  will be called pcie-stm32.
-> > > +
-> > >   config PCI_DRA7XX
-> > >   	tristate
-> > >  =20
-> > > diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/contro=
-ller/dwc/Makefile
-> > > index 6919d27798d1..1307a87b1cf0 100644
-> > > --- a/drivers/pci/controller/dwc/Makefile
-> > > +++ b/drivers/pci/controller/dwc/Makefile
-> > > @@ -31,6 +31,7 @@ obj-$(CONFIG_PCIE_UNIPHIER) +=3D pcie-uniphier.o
-> > >   obj-$(CONFIG_PCIE_UNIPHIER_EP) +=3D pcie-uniphier-ep.o
-> > >   obj-$(CONFIG_PCIE_VISCONTI_HOST) +=3D pcie-visconti.o
-> > >   obj-$(CONFIG_PCIE_RCAR_GEN4) +=3D pcie-rcar-gen4.o
-> > > +obj-$(CONFIG_PCIE_STM32_HOST) +=3D pcie-stm32.o
-> > >  =20
-> > >   # The following drivers are for devices that use the generic ACPI
-> > >   # pci_root.c driver but don't support standard ECAM config access.
-> > > diff --git a/drivers/pci/controller/dwc/pcie-stm32.c b/drivers/pci/co=
-ntroller/dwc/pcie-stm32.c
-> > > new file mode 100644
-> > > index 000000000000..964fa6f674c8
-> > > --- /dev/null
-> > > +++ b/drivers/pci/controller/dwc/pcie-stm32.c
-> > > @@ -0,0 +1,360 @@
-> > > +// SPDX-License-Identifier: GPL-2.0-only
-> > > +/*
-> > > + * STMicroelectronics STM32MP25 PCIe root complex driver.
-> > > + *
-> > > + * Copyright (C) 2025 STMicroelectronics
-> > > + * Author: Christian Bruel <christian.bruel@foss.st.com>
-> > > + */
-> > > +
-> > > +#include <linux/clk.h>
-> > > +#include <linux/mfd/syscon.h>
-> > > +#include <linux/of_platform.h>
-> > > +#include <linux/phy/phy.h>
-> > > +#include <linux/pinctrl/consumer.h>
-> > > +#include <linux/platform_device.h>
-> > > +#include <linux/pm_runtime.h>
-> > > +#include <linux/pm_wakeirq.h>
-> > > +#include <linux/regmap.h>
-> > > +#include <linux/reset.h>
-> > > +#include "pcie-designware.h"
-> > > +#include "pcie-stm32.h"
-> > > +#include "../../pci.h"
-> > > +
-> > > +struct stm32_pcie {
-> > > +	struct dw_pcie pci;
-> > > +	struct regmap *regmap;
-> > > +	struct reset_control *rst;
-> >=20
-> > This could be a local variable in stm32_pcie_probe().
->
-> Thank you for pointing that out.
->=20
-> Since we use the same common resources in stm32_pcie for both the host=
-=20
-> and endpoint drivers, aligning the same fields in the struct stm32_pcie=
-=20
-> seems more consistent.
 
-I hadn't seen the host driver at that point.
+Zhang,
 
-Aligning struct stm32_pcie with another struct in another .c file as an
-unwritten rule doesn't make sense to me. If parts of the structs should
-be kept aligned between host and endpoint drivers, it would be better
-to define a common base struct in a shared header.
+> The Linux kernel (since version 6.17) supports FALLOC_FL_WRITE_ZEROES
+> in fallocate(2). Add support for FALLOC_FL_WRITE_ZEROES to the
+> fallocate utility by introducing a new option -w|--write-zeroes.
 
-> Additionally, we could improve the code by moving regmap, clk, and rst=
-=20
-> out of probe into a new function, stm32_pcie_resource_get().
->=20
-> Which approach do you think is best? Moving rst to stm32_pcie_probe()=20
-> offers slight optimization,
+Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
 
-This option would be my preference, but it's not a strong one.
-
-Storing a single pointer unnecessarily isn't a big deal.
-My mind just went "where is it used? - oh, nowhere", so I thought I'd
-point that out.
-
-> while using a new stm32_pcie_resource_get()=20
-> provides better modularity.
-
-I think this isn't enough code to warrant sharing
-stm32_pcie_resource_get() between host and endpoint drivers in the
-absence of other shared code.
-
-Whether splitting this out in each driver improves readability of the
-probe functions is a matter of taste. I think it's fine as-is. I
-wouldn't argue against the change either.
-
-> Shall I re-spin a v14 with either of these options?
-
-Don't respin just for this.
-
-regards
-Philipp
+-- 
+Martin K. Petersen
 
