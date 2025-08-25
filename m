@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-785017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D54FB344C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:58:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 636D2B344CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:58:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7AC71898A3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:58:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3572189802B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:59:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DF3D2FDC2F;
-	Mon, 25 Aug 2025 14:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D26FD2FB988;
+	Mon, 25 Aug 2025 14:57:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="At8ZvItz"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="HEgdlVMq"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8AF12FD7D2
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 14:57:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC9F2FDC5A
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 14:57:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756133867; cv=none; b=cFgraFsDg09JCbVxcehR5g545tI2u2pG0d9J+pIuzTinLTsDQWZxjtYLgXPikL3qxokOHtF9hiQbybuMPsy8FU8nk/y9dChQ/HSm/Bckr1UNDL/Y0bIpLYyzMdA3f7LZvrnAiosLymQxvkfgTHmwU/x05G5f+8EeIalNGHBPzHQ=
+	t=1756133871; cv=none; b=QnLf1/9zHfQZoxvtntV5XMi8jvs8U1zIzRbr1P2kdA9kErqix4ODUwjTs83i/kPyvgp03AqaQ1Ki1qvoQomeCJsFnlUN6ySo7IqJU7fmTWnKH0ghQjsvAmfcjiZGlwBhojL3zkWfY4k3CGxomn04Q/m3AcRgMQzm2wpv07bdNSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756133867; c=relaxed/simple;
-	bh=uF4znN0JKpWwZRxgNIEH8MqnRz9lQ5HTl5xrH59tsJE=;
+	s=arc-20240116; t=1756133871; c=relaxed/simple;
+	bh=xY16xtdVzGEfaeQq9IN656McbF+sKB7TIBPK2joy6Bc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=byzt0axyBhQraH6IpgvkX7HUFErf8u7ffK1ge+RW3ekKfhNUOp6+2U1ZCLvPfY6gWbx0m3uz67wOpVC08xU4UeB818melS3ubbdewQVdnIhwXIkcJaLUzV3LLmZkQyhECsJZozY1D9hDTRqs2GOwXV60hxH4Gg7kpmtsqkfSOvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=At8ZvItz; arc=none smtp.client-ip=209.85.210.170
+	 MIME-Version; b=LVdnyD5hPtEltzR4Im1yFGI8b52i3UIvx1u5lvw47rsGILgfOT1iiCXrIs3RumOBJpO/9rS/n2oxLoTpDZbETs71lV8s8OyeTyLILHcvRi7tYM09u+SSEDQk5TwOhWiYPvFty08zowiH6bQTDnjlWPtLPsdH9NKa2EiYsQeeQbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=HEgdlVMq; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-76e7af160f1so3076233b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 07:57:45 -0700 (PDT)
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-76e2e6038cfso4966884b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 07:57:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1756133865; x=1756738665; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1756133869; x=1756738669; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=e+3wX2qQorY9HjJTcapV+Fc+oMOTnn7HyjyOkt8jkGk=;
-        b=At8ZvItzpJRAohPmB+3fqhVmvHGAVCk1GmNlOzPADLtJ2I0WBq35w6D2/ngj94tdDq
-         GIt9u7mQGqOXOkJC97iT+xa6kWv3SX+roBQ7nLJkefjpuMqe0FHukBdAtjxcQU8tKZpb
-         uJd2P3oTLUbhnMi1I3UOiPRm0pH6aMx9rsEqUsNtc3f735b+SAdJPOXg7G1h54ECBLzp
-         pRpmLHct86RaUH5AtB5lPDn/Tg+LelgjzcpqJR1hvxk0vti294EEZooBiR7uRGyvkPrl
-         nNCBemppKzqTf1KTJgm63mKTi3xR1NjBfzN0KwsRiR+j/7iQD3RT8xsWpO8ZFMhZdPYS
-         Frug==
+        bh=S4tDabwrjUnjyF2pNuKY+D/uJFltgF7p2tl2gzeMXdU=;
+        b=HEgdlVMqfcNzg4t4NKdp0OlF4jZ1GAzoEPjWfmG9Rvf+D3pIqfViiHhdzsH1mtENtm
+         h4u9U3wR8XAYu43ObhQXaKjSveEE33r0HnQarA37yWFBDiA825aQ6o1KXzKBoRIfGiKM
+         U/VVO7LUzKfxjS1+XgQfvkHKMCgSA9qDT++ZsHB88UlgODcvmrPj29T491X8ZshTHOzC
+         rRUq2c9BJmVvWjDB9EWZXTfCHz4T9bz1mVNxGYBD2H0rr3jUekKlIhcGc+7xf/hQYlcg
+         3ZuRQNNm5sPgOcGsAAoMbhX7fcGPnrZXLWfNZ5n5mJcG2jFVGdETbh6fcTKsN50lRrFv
+         g5mA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756133865; x=1756738665;
+        d=1e100.net; s=20230601; t=1756133869; x=1756738669;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=e+3wX2qQorY9HjJTcapV+Fc+oMOTnn7HyjyOkt8jkGk=;
-        b=DbyCvHh3DUiC0eHuqXquRassUjHaTxL2k/qmIkqIGlFWeYwK5VKJfKZ0tipBaS5hs7
-         TjIfaC/y5mUkzr6xH+dAMezatrdOqX5ubI/vuW10RTu5yWT5zP2Twe5x02KlHZ86bcpy
-         GSmoEVaTn+jqxrpgYKVsQFXwcuTumRCsl2VCcQP46hQgzgpddUsWWqJ5T1RgupeN9Kc+
-         KN+wTHz7fXyovodJepODO7zmNeM9xKMPaEIL6mTLq7zBFDJ1HantPe4wDUW5+XU74Idr
-         YV7JimXZCQg9r8Gl621n8iUMX5DMAQahF96gFEN/A2jGenUxOx6ldHZx/5fJ3lL7WY+B
-         cT+w==
-X-Gm-Message-State: AOJu0Yx4wINlXwaXz3bWXA+s1Fp8GdhBMb7fMpQ78O0D/8bxvYMyd7bI
-	vukMiXhHoSo08onyUZDBFQVI6gNVZhW5RrGWeMr+8CWV3kf9WXYtRiLD65m7/pmwBnpoXkN1vVF
-	xO8T/IyY=
-X-Gm-Gg: ASbGnctKkpGvbfoyEeWm8fKyoCLVnooPGN00WnV6D4JqaKjDSnwBc58NhhKqPu6m1in
-	lAKNiij8Fm8yFOzRNJNQzPHziWJPoKl5N5ccf3+aRGYzQFn8TEekdUKf4CcdHWannrbHMmhOoD8
-	mYmj+GO5d5FVRWDTFGnmreK2je2zyEZplsGuz39ctqQUy8mq9+5J3AfK49sIi3g+0/U7zZ3NoLU
-	4c692q9ruBHlAHAlJjfWyS7iN6cpiGfx3QF3w002eEmx8GVHx0ragSlvvC2W1WgrDF7MC3yCHxY
-	qV5N4LJ2JU3FNrHC1XPxDI2Em/sg6PLpqJqILtu/acj2wlpZtz5Um5zDwTmkyAztLt//vr+s73l
-	1rKaEKuAnrJK4TjtddL/9fKY9CMqM28Ck0aB4ENnyLO0YHR6JF/+n56IiaNHI
-X-Google-Smtp-Source: AGHT+IG029ngLH0Z0VBrJyvV3C0TtjVJCx48xckH0n599Ds5K4PkyEQjVQ5nnkIfx/oH8gYOcLg5pw==
-X-Received: by 2002:a05:6a21:3391:b0:243:78a:827f with SMTP id adf61e73a8af0-24340dbe653mr17737819637.55.1756133865176;
-        Mon, 25 Aug 2025 07:57:45 -0700 (PDT)
+        bh=S4tDabwrjUnjyF2pNuKY+D/uJFltgF7p2tl2gzeMXdU=;
+        b=nbpIJdR1wckOaGIEa/7fHciUc+20x9ft31HruMd/47leMkQonEc/QUnEd2lxbM0Q03
+         g0z5YAz5sOLP1m42ihkKJ8xOu/g19f4ei6FwiGofUrdvjIgqkY9QCVqWf6ote0wq0z1z
+         bxJ+mHT58k5HgFtLOr835It52J39/TSYQa9gmi95iMRX4oSN8q7zdn1K1Y+fo3O+cKQJ
+         gDd3M7Geb/kmWlJa2vbgY9jqpFtbVyTkaOZwffNJhkXFStPoastUNpCD/iuzT6IdwobU
+         A+OyJ2mqwNvvKqAqYCCAtp3J6Uxhh6sboMG2n1unFS2g9qjaWradnAh0uqR04vRO6RFj
+         sz9A==
+X-Gm-Message-State: AOJu0YwqZEs7ljTDN431Em1xiysuNpQIubnDgLhHTdlepd2jNy8oZtBE
+	lb5oCh0ToAOL90RgdIQa+78vY52DIOlFE7Bk462DWD73lQEi79Fvg4fs1NkkFN5Z6smq8+A/fK7
+	2FysHQFo=
+X-Gm-Gg: ASbGncv8U0227pkLZ6b2rNOOMgc0nZVWLRX4Lmc/odmvUvwnhd3qGeBSo85qHNdVkJY
+	iHeja+X94hIcmo6fYw0kdoR7cgfq52xu5FaTnO1KMUHTd+tW4PZzeuET7dr891luzjzHsV/91PV
+	oj0pcDKDxuUGaxUvYSwcI58bPyNGq5gdZJb1QPL4a/lBy3EDFjvwZ002lGFxqdPelaKLu52F1/H
+	ttmCd6dAJXVrqeAc5Ppp/vh/AboMQMzn8tTzjIVshtYFpe2siPlF0ZntBl3cNeVa/bgpSgVktEi
+	JB7KXMXGgcG9MJkY6idN8wVLKBfEB7osOBypHnmwn1uIJKC0ZLmgROlLejrt4JozrK4qwa+zaIf
+	Ju+71wVk6uW+9313CLrh1SouMuswZ9CxxLKBPAmJt6ggf/rXlTf7nOKHudNhd
+X-Google-Smtp-Source: AGHT+IFQ75GZYr3N6HMX7zPn0dw0ZuYOLQe7vaWeVSJK+4VjzmhYfxDpWVGeXxn9RSIeBs/bIzorqg==
+X-Received: by 2002:a05:6a00:248f:b0:770:34f9:49d2 with SMTP id d2e1a72fcca58-77034f94ca1mr11670084b3a.1.1756133868947;
+        Mon, 25 Aug 2025 07:57:48 -0700 (PDT)
 Received: from H3DJ4YJ04F.bytedance.net ([203.208.189.7])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-770401b190asm7803436b3a.74.2025.08.25.07.57.41
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-770401b190asm7803436b3a.74.2025.08.25.07.57.45
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 25 Aug 2025 07:57:44 -0700 (PDT)
+        Mon, 25 Aug 2025 07:57:48 -0700 (PDT)
 From: Yongting Lin <linyongting@bytedance.com>
 To: anthony.yznaga@oracle.com,
 	khalid@kernel.org,
@@ -81,9 +81,9 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-kselftest@vger.kernel.org,
 	akpm@linux-foundation.org,
 	linux-mm@kvack.org
-Subject: [PATCH 4/8] mshare: selftests: Add test case shared memory
-Date: Mon, 25 Aug 2025 22:57:07 +0800
-Message-Id: <20250825145719.29455-5-linyongting@bytedance.com>
+Subject: [PATCH 5/8] mshare: selftests: Add test case ioctl unmap
+Date: Mon, 25 Aug 2025 22:57:08 +0800
+Message-Id: <20250825145719.29455-6-linyongting@bytedance.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20250825145719.29455-1-linyongting@bytedance.com>
 References: <20250825145719.29455-1-linyongting@bytedance.com>
@@ -95,110 +95,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This test case aims to verify the basic functionalities of mshare.
-
-Create a mshare file and use ioctl to create mapping for host mm
-with supportive flags, then create two processes to map mshare file
-to their memory spaces, and eventually verify the correctiness
-of sharing memory.
+This test case aims to verify whether the process with guest mm will
+segfault when VMA of host mm is unmaped via ioctl(MSHAREFS_UNMAP).
 
 Signed-off-by: Yongting Lin <linyongting@bytedance.com>
 ---
- tools/testing/selftests/mshare/basic.c | 81 +++++++++++++++++++++++++-
- 1 file changed, 79 insertions(+), 2 deletions(-)
+ tools/testing/selftests/mshare/basic.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
 diff --git a/tools/testing/selftests/mshare/basic.c b/tools/testing/selftests/mshare/basic.c
-index 35739b1133f7..2347d30adfee 100644
+index 2347d30adfee..16d1f63c3ebe 100644
 --- a/tools/testing/selftests/mshare/basic.c
 +++ b/tools/testing/selftests/mshare/basic.c
-@@ -3,9 +3,86 @@
- #include "../kselftest_harness.h"
- #include "util.c"
- 
--TEST(basic)
-+#define STRING "I am Msharefs"
-+
-+FIXTURE(basic)
-+{
-+	char filename[128];
-+	size_t align_size;
-+	size_t allocate_size;
-+};
-+
-+FIXTURE_VARIANT(basic) {
-+	/* decide the time of real mapping size besed on align_size */
-+	size_t map_size_time;
-+	/* flags for ioctl */
-+	int map_flags;
-+};
-+
-+FIXTURE_VARIANT_ADD(basic, ANON_512G) {
-+	.map_size_time = 1,
-+	.map_flags = MAP_ANONYMOUS | MAP_SHARED | MAP_FIXED,
-+};
-+
-+FIXTURE_VARIANT_ADD(basic, HUGETLB_512G) {
-+	.map_size_time = 1,
-+	.map_flags = MAP_ANONYMOUS | MAP_HUGETLB | MAP_SHARED | MAP_FIXED,
-+};
-+
-+FIXTURE_VARIANT_ADD(basic, ANON_1T) {
-+	.map_size_time = 2,
-+	.map_flags = MAP_ANONYMOUS | MAP_SHARED | MAP_FIXED,
-+};
-+
-+FIXTURE_VARIANT_ADD(basic, HUGETLB_1T) {
-+	.map_size_time = 2,
-+	.map_flags = MAP_ANONYMOUS | MAP_HUGETLB | MAP_SHARED | MAP_FIXED,
-+};
-+
-+FIXTURE_SETUP(basic)
- {
--	printf("Hello mshare\n");
-+	int fd;
-+
-+	self->align_size = mshare_get_info();
-+	self->allocate_size = self->align_size * variant->map_size_time;
-+
-+	fd = create_mshare_file(self->filename, sizeof(self->filename));
-+	ftruncate(fd, self->allocate_size);
-+
-+	ASSERT_EQ(mshare_ioctl_mapping(fd, self->allocate_size, variant->map_flags), 0);
-+	close(fd);
-+}
-+
-+FIXTURE_TEARDOWN(basic)
-+{
-+	ASSERT_EQ(unlink(self->filename), 0);
-+}
-+
-+TEST_F(basic, shared_mem)
-+{
-+	int fd;
-+	void *addr;
-+	pid_t pid = fork();
-+
-+	ASSERT_NE(pid, -1);
-+
-+	fd = open(self->filename, O_RDWR, 0600);
-+	ASSERT_NE(fd, -1);
-+
-+	addr = mmap(NULL, self->allocate_size, PROT_READ | PROT_WRITE,
-+		       MAP_SHARED, fd, 0);
-+	ASSERT_NE(addr, MAP_FAILED);
-+
-+	if (pid == 0) {
-+		/* Child process write date the shared memory */
-+		memcpy(addr, STRING, sizeof(STRING));
-+		exit(0);
-+	}
-+
-+	ASSERT_NE(waitpid(pid, NULL, 0), -1);
-+
-+	/* Parent process should retrieve the data from the shared memory */
-+	ASSERT_EQ(memcmp(addr, STRING, sizeof(STRING)), 0);
+@@ -85,4 +85,24 @@ TEST_F(basic, shared_mem)
+ 	ASSERT_EQ(memcmp(addr, STRING, sizeof(STRING)), 0);
  }
  
++TEST_F_SIGNAL(basic, ioctl_unmap, SIGSEGV)
++{
++	char *addr;
++	int fd;
++
++	fd = open(self->filename, O_RDWR, 0600);
++	addr = mmap(NULL, self->allocate_size, PROT_READ | PROT_WRITE,
++			MAP_SHARED, fd, 0);
++	ASSERT_NE(addr, MAP_FAILED);
++	addr[0] = 'M';
++
++	/* munmap vma for host mm */
++	mshare_ioctl_munmap(fd, self->allocate_size);
++	/*
++	 * Will generate SIGSEGV signal as ioctl has already cleaned
++	 * shared page table
++	 */
++	addr[0] = 'D';
++}
++
  TEST_HARNESS_MAIN
 -- 
 2.20.1
