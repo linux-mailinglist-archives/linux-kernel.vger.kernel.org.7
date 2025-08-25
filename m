@@ -1,85 +1,84 @@
-Return-Path: <linux-kernel+bounces-785458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46921B34AF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 21:35:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61726B34B0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 21:40:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20A801A84D0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:35:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 155C117B95B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:40:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63DEE28000B;
-	Mon, 25 Aug 2025 19:34:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3524A2848B4;
+	Mon, 25 Aug 2025 19:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="PDGDmq5i"
-Received: from CAN01-YT3-obe.outbound.protection.outlook.com (mail-yt3can01on2108.outbound.protection.outlook.com [40.107.115.108])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="tWufEjhb"
+Received: from CAN01-YT3-obe.outbound.protection.outlook.com (mail-yt3can01on2115.outbound.protection.outlook.com [40.107.115.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85EE1169AE6
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 19:34:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.115.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F22B2367C9
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 19:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.115.115
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756150498; cv=fail; b=A9RFzWyND+KotXYXhvC+Q+iA7zTelG08lLjp7I1Cj1g4tte7tW3Y/W1MH597TbeZ24UmW6aXXO0P3C6I09CsHrURip/tmMyHYFPPMYEAzVurqXXiDZk4MxvOEyUKUEIBAgYSD3/dRWx9L5DZpACdV8hJSriqH2zP86k7e/dL8gM=
+	t=1756150800; cv=fail; b=sfVmA3VcurvVYCfY6gXy1yyqiLBn7N04tL1jS8fNxrVKmmc7YfZuA5NcQTWz5gAbmdrfpnPesACiSwtF7qT7SZt0UMwidUFIZKTsosRD1RNTomix+3nLFIQNwir4fTekKKsnJYpieoZ0h91QwSwIaWMutpAdk0ADpHKuIzi6yOM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756150498; c=relaxed/simple;
-	bh=H2GSHM02/ENPfUvsNBPHGJXiF1wtkitl8WM8bePaBa4=;
+	s=arc-20240116; t=1756150800; c=relaxed/simple;
+	bh=+zyv6Lw67fVjZcyoL/LHiarF2vHpbSAS554wL1QImsc=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=MQG9LInPvvr/Aoz3CeI+EQwxSBtPzKb6wWEjRk3QXbIDNQx0VGnnS3/6WQLSVi+yp/hKyRnlfem8265v45JD+fj4m1IHOcB0slHCvkXz7VuJUloG3uMYzZhBvbK7wAu2nS5Oah/LpiYJ2droqz8pL03YMiRA3O6ViRXPAi7CTnA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=PDGDmq5i; arc=fail smtp.client-ip=40.107.115.108
+	 Content-Type:MIME-Version; b=ukES1J4JfQ4j+mykbL3Bf2IMWvbC4h+TXy5yvdvVzYau+W13wAtmdQeRdfvEpiy8nSVTuKPRTwm9C+XCSROKpsb4FCd+GY34o1VytS9rMH3GcXAP1yGF6QU+aoJCy9NBtoym4k3/XJEIVvRB7KSfx0FrlMnddXUfgDrENpEaclk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=tWufEjhb; arc=fail smtp.client-ip=40.107.115.115
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YpxzbAdiKp2HJlBWUJpSmRIyEZKACfqoxzcUQAxfcnDiVKB1x34EpsyQvP0fwLRvZC2+ImHLJP7U0byV5v1lFs0N4HusVMxzeDl0DYvTxaWlOa5pqOHHuBnFWEzofj7fPYd/1OOS7V0ybBGps4A1+uYZZ6pRlSduL/O8qtEz9/l9L08YJWwZvZVidrqLX6Gf1zCLqE5gBPeMo38Uah5hqZMcC3fO1sAPMaM1Q5fwWDQDzAd5+WKeP389DRg6U1w5GeB8wgc+IWQH7yO6V4MElG4bH65O532YCkBW3gqmCP0oMsTuA7r0QZFmInfJ2UrFmEY8wBtn5JeS5JOQKy6ORA==
+ b=K4IdhZlqKPwwRz047XPqqg0yaAvGe25JL20Lo2FgfGhTgqeD3PlEZjvhH9t1e3Wl8/kr1xX/4K8sfsZabzO3PlbciwtVwvmnG8pB9RMn90MHQ1y3YfuGljVIivIU88mtPBmRHd3QH8lsYodTNX7se3Z2CZ3/k6hbklMzxlSTtLtOAyh1PeXb6Nvk02HEpoqh9XbEYgmGIa2SBz9L+LBay4mQXzQQOHAWYeflcj8phhHZacrGRtN9MCI2U10mRJZ9Gbe1luiPhLOUQhgs77MsYRsjLC+Zwpw7vEhFwwa3agTDexGeFlJnwjtU1GlDGpzXGUrxu0oq1I1mHbdi2gPLdA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gLzVEIh8ag0Uoz8XcrT/TWrYJ3k9HWDPejoh/O20pfI=;
- b=pefffNlBPMf9jxNrxfL8oqvCbSGyFqPZ4aAFXxcthzEu7N+vOiFhDtr0GVWPChAfAXwNClTFyLbxR+Qf8zYzwRVTIr56eU5ycLUdwQn/7ns3CowpuME7M81uxZuyNh2paPNlcXAk06zYwLCIiCTu4/Vu6PiQx2qU76CJGRCEKPQN/lewiM/6zpJLZQ+8Nmd0tDbPU8axZ51nVUdrwliLekPO3U0ViEFkBczUCMp6aozzK2GjcF9CuKiJWot0jB3y8IEPlN+77X2UEsYiN6/ntuFShneqlMbcEWCW1iFRqigSKnn4mwmCuxbmU6stZ14Nz1hI3Jxe6fQGeFMQQBfygw==
+ bh=FkFTnMl5ML/AWiyH5JlbIIxNNdo16iuRQ12UVQVqHLM=;
+ b=V6Wa2zJmyK6efXV9uPz7I1j0hx8jV7njz1Q7qTlZjKafnyjaz6civjW+WB8+KNcq7+b9K59Mb3KsNisAaXCWcbtzZI9ZsXGKWzZxfpJLippR1x5Xpf8x61yJwtAW4DQL5A85fED2tRFyacdzp4DPRY94MGdJqsRj1cc+OcFbQBg2gQunGK8n/lP5gPqa8tUIvzXtZi+Wjc2z5vlzlcPmQ8BgCGmD+ITKyTb7bnppXZzhrmWoW9tuU5ENWkfBGqOmGgz/PXuMZ6L64Y2skK+GHHeho+wCIXtlHY72Y8mLdi9NZ2N3sNLnG8QASENecX0ch06QWsu9Wf0ITIhizN6LpQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
  dkim=pass header.d=efficios.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gLzVEIh8ag0Uoz8XcrT/TWrYJ3k9HWDPejoh/O20pfI=;
- b=PDGDmq5iMKgAtoYAWeTyLSocSHnXryKVIUNOycwhaZJzmaESL6ytD8B3L5uc2X2dR+DhZrTRq9k1c9n0PBVmMS5nZlx0ckGYBff/SZtg6oAygJ46g4hoLYu5fXK9vZZaKPlLg1j57prQPzcAWD1fmJPlwwWg+v/aPYmfidyUGSPKi+YAeQnxtrr9okludX5R+7ykyTYQuTbXT3W/GlqiHnmQ9gqu8CyHHTkDRa90d2E7nT/40KsGPoNZeI+s07y25+feFxaloj99bSvdvhGg27QMh3pMQHHMkqhrNofsVG3xNwpfMYx53qnZ2ZphogfU58yA/l+5rYX6nwHiJKUNug==
+ bh=FkFTnMl5ML/AWiyH5JlbIIxNNdo16iuRQ12UVQVqHLM=;
+ b=tWufEjhboo+5fNHQMfpb8GU4kKft9FSfp6q8Q8hlXoFLuYrbZCSQcGS6zQO3u8JPcaLchBnw4kzlTzwb9uBnf+RvZd6Wei2V4mRVLw6o+FVI5FldKLZrwP/YbJHialXLCi7sUrq7aTeURRx1T+tAgACeUgkOQZjZt1xkk2yKE6tPdobngep/wRly3TLdYsaWOwWJsQ9M/fT8EsrqtnGKbZcbjz6M1jNYEMjMBmMZTlFKgYuMBBHfuF4vid3CUgf5Hc+orCfI0twOCOqCSMGS+0ZQvD6srPXas0nZgLNr45WMjO8blZdbqlPa6F+Az7VXqvCQ45OzD2zT817nxgGpXw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=efficios.com;
 Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
- by YQBPR0101MB8239.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c01:52::20) with
+ by YT3PR01MB5828.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:5d::5) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.22; Mon, 25 Aug
- 2025 19:34:52 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Mon, 25 Aug
+ 2025 19:39:53 +0000
 Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
  ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
  ([fe80::50f1:2e3f:a5dd:5b4%3]) with mapi id 15.20.9052.021; Mon, 25 Aug 2025
- 19:34:52 +0000
-Message-ID: <1f8a7c01-ef66-4f20-bca1-d203e7f66c4e@efficios.com>
-Date: Mon, 25 Aug 2025 15:34:50 -0400
+ 19:39:53 +0000
+Message-ID: <9b606d45-0d3e-4add-9936-380656475b55@efficios.com>
+Date: Mon, 25 Aug 2025 15:39:52 -0400
 User-Agent: Mozilla Thunderbird
-Subject: Re: [patch V2 32/37] x86: Use generic TIF bits
+Subject: Re: [patch V2 36/37] rseq: Switch to TIF_RSEQ if supported
 To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, x86@kernel.org,
- Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney"
- <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+Cc: Jens Axboe <axboe@kernel.dk>, Peter Zijlstra <peterz@infradead.org>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
  Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson
  <seanjc@google.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>, Arnd Bergmann <arnd@arndb.de>,
- Heiko Carstens <hca@linux.ibm.com>,
+ Dexuan Cui <decui@microsoft.com>, x86@kernel.org,
+ Arnd Bergmann <arnd@arndb.de>, Heiko Carstens <hca@linux.ibm.com>,
  Christian Borntraeger <borntraeger@linux.ibm.com>,
  Sven Schnelle <svens@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>,
  Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>
 References: <20250823161326.635281786@linutronix.de>
- <20250823161655.319791141@linutronix.de>
+ <20250823161655.586695263@linutronix.de>
 From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Content-Language: en-US
-In-Reply-To: <20250823161655.319791141@linutronix.de>
+In-Reply-To: <20250823161655.586695263@linutronix.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: QB1P288CA0030.CANP288.PROD.OUTLOOK.COM
- (2603:10b6:c00:2d::43) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+X-ClientProxiedBy: YQ1P288CA0007.CANP288.PROD.OUTLOOK.COM
+ (2603:10b6:c01:9e::12) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
  (2603:10b6:b01:be::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -88,211 +87,246 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YQBPR0101MB8239:EE_
-X-MS-Office365-Filtering-Correlation-Id: aff4a690-91ff-4923-6dd1-08dde40e761f
+X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT3PR01MB5828:EE_
+X-MS-Office365-Filtering-Correlation-Id: 963ee43d-e696-4225-ae9d-08dde40f29cf
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZWgwdGN1T0pvQ1RqNlpzYmJ1cUlJRzVvVW9iTGt3S1F3Tm5EaHljSDgyR08y?=
- =?utf-8?B?bUw2VXdmdDNQSElCd01KTUdrL3NaVDUwMnJGZy9RMGJxbG5GT2c4SEpCUnVr?=
- =?utf-8?B?YVNQY3JyYlVrUDdRVk9lVjBwTFRsVk9jYk0yR2VqN0hvUDh0TjZvT2t1aCtD?=
- =?utf-8?B?M0cvOFdzWitLMzFEUHpCRWl2Wmw1OTkzWDRSWjA2OUFINXlTdkRta3hVakxv?=
- =?utf-8?B?bGZNdCtRdWl2LzhPUjJmcEdRaHoxVFc4cys3YllWTnhKNWo0THBGTVlsai96?=
- =?utf-8?B?c2xTMHhqUmFVbjJld1Q1VkpDc1U0cWswRHVmclpHVmdzUTNDbW5idlp0NWt3?=
- =?utf-8?B?VW1NakhaS0ZSNk44Sy9HckxUY2Q5bUJiOEs2TWZPbElHMGFEbk1pT0poa08v?=
- =?utf-8?B?YU5sKzlNTXFEK0x1OHUzekg0SUhaWjZBcVpTTjducHpaYmlpdFgwNG9XUGdF?=
- =?utf-8?B?KzQ0UmlNN29reElZVVVEMkZKT1FTMkk0c0JuZGVhYm5YQUdiOWhIbWNacE9t?=
- =?utf-8?B?U2QvUzJUNU9mYkpsVkNrSy9nNlByUVFKV0V3RDQvMW9GSDRkSWNOMlhoRTA4?=
- =?utf-8?B?UEMxSXhQdDlzZ2xGVjRtRG4ySGJTRFFpZW9qRldNNDNBb0UzVVNIRGpkbllu?=
- =?utf-8?B?UytqbzloY0M4cWQxQnRjekFYVWovbFBlb08zVUF1bnZ2czVoU0VoMjhPekZD?=
- =?utf-8?B?TWhPRGNzMnRnb0wxdzZmSXJDUzBIcGdRMkZIdU04QWw5alBaZ1FPd2I0N1ZU?=
- =?utf-8?B?MVlMNTlUVURrZDEranc3U1RrWlg1MGp1dXRmQUVxc2dFalUydzBPUFF1amho?=
- =?utf-8?B?SVk3V2lhN0hQSWJOS3k1Z3F0NTY5Uk1IU1ZVV2dFMnF5RnhvZzgxMVpSbHhO?=
- =?utf-8?B?UE04QkJBZDNsNkRWck1vN1RvdlczWVExT0tFWE9yYjdBUHZjUENCY2dvTmRD?=
- =?utf-8?B?aFdRTkVDMWxCTHNCRC9KcGRmbEU5MlZBQ1B4ZmEzeStWVlk3eElVeVZBdkht?=
- =?utf-8?B?andub3VGVWl1NTVHSUczQWw4KzFZamNQblcyUEpnM2UzYmNLbkpBdDN0cGgz?=
- =?utf-8?B?dURaZWp2NFFDTGtyaEY1TWFFQ1hzRS9QQVdPR3dBY1FncVJWajBHUnRYUXlQ?=
- =?utf-8?B?bUJqUUJUemRpWlJnQW9uK2tJTXBXaFptOXlDdk1KTWxKcmFsekcxMTAwbUZv?=
- =?utf-8?B?ckxub1IzckhpWTZYd0RTTDRnSXZOUjgvZEhuRnVsbWt0UldpRHRQNkEwMWVT?=
- =?utf-8?B?clNTL04rdkVua3MycWUycDlMblpmSzJqSVZ4VnFrZ01HeFdPQXlSSzFGeTFT?=
- =?utf-8?B?dEZqU0NtY0lpYjdsT1duYlU1TTU0eXl5Q0xZcFhFNHBhdit0cGs4WWkzMzhK?=
- =?utf-8?B?em9IbVh2TVk3WFNoUWFJemJBcmVLV25rQ0hUdXZVMVZRK2Z5ZE5VbUVrZDQx?=
- =?utf-8?B?clFUbkNMeE9FVXdGdmw2ZEh6ckJ2cmorQ1RMcldPSnFaWmplYWRKM2pYMGxi?=
- =?utf-8?B?V25TanVFQzg2L3lVTWhwVUh0b3gyMDhtZ3BKeXlTTVRYV0lJY2MvZDIydERG?=
- =?utf-8?B?UEwwNmxZMDZHVlVyTmxaeFJOb29yNDdTMEtWMWs4YU41N1dIOENmbjF2dFhF?=
- =?utf-8?B?TWtaZHFRMU5KeEk0eEpZTmp0NFVYUFhQYjhlaGJXMTVLdUJZWkUyeEdaU2Nt?=
- =?utf-8?B?cG9vK1N4MFFsZGhPZGcyejhBTFNnY0pWL0RqMWF2V2Mwa0tVV0xucjUrM2Zx?=
- =?utf-8?B?dEhoVEhMa1Bpb1UrRkZUY1pzd3o0NjljZ0kydVpSNzhkLzhCMDJqVW5kMit2?=
- =?utf-8?Q?CE1YsVxhMtHroaeTpIyzhnovz54xboVbX8F/k=3D?=
+	=?utf-8?B?c3VQeEtyZEp3b2ZmaUp0aDNxMFFTRzNsZStmOXQ0ZkwyOHJoN0p5WmFPQVY5?=
+ =?utf-8?B?Vjc1QitWc2RkaUFrZ1FVZXE5WHdJNlIyY0RCQUNSbXZRbXUwSFp6eW90Unpz?=
+ =?utf-8?B?ek1hNzNEMUlyVVZlUUU3S3pFTHNLa2Q0YmlPeXNBMkM2RVlGY0pRTHZ3UHdP?=
+ =?utf-8?B?ckxOcHM1OE5hVFRXUVhMU0luWHl2MXFSa2M5eEViaGVIMkRpbXkrT290QlJZ?=
+ =?utf-8?B?UXMxYnRVMFNWQjZVb04xeUhTMHBJUlVOUTdUeXcxcGtqdjFQRm5iM2RBNm9W?=
+ =?utf-8?B?UE1lVThXY3kvcktwR3NXVmJra2dEZDJxdmRjQzgxcU41VzYrNmRpSjN2SERm?=
+ =?utf-8?B?V05nUVB5RzMyYkl6bTBZYkhJWkNpQTRKTlFta29MWktSbjhNSCtyWlF6UnpE?=
+ =?utf-8?B?eVNyZnJoY3doUG1ZMzI0QnNFeE5vYkRMcHJvVGhjVGpYOFAzQnI5OFVFQjBr?=
+ =?utf-8?B?dVNuaHBjdlNoei9OakdnM3dqZmhMQ0lCeXdlQ2lORTFCU1hYR2x6WnM3eXJL?=
+ =?utf-8?B?aldjR0R6dFlucTVKbmdydTBkOXVEWTZGUkc4UlFCK1dPMUhIUzF1MUgxaThZ?=
+ =?utf-8?B?VFhhT095VDhkTUZ3ZWFNMUV2TStLelZDa29USE1QTjVNV3cxdDZnWGVwZWZi?=
+ =?utf-8?B?c2p1QWpQUlh1QnI5ZjBRNG1jYU5mMm1ncE1OSSt6Ull2MUZybzBHalpSSGxu?=
+ =?utf-8?B?OU8xTFVObEdzYzcxS3crOU1aNVg4bGlQd1FZVUtDUGhVMDRJMHhUaDdPcnVp?=
+ =?utf-8?B?RFpIMGJ0Y3V5KzMrUXY0K2Z6NVBXWnZxa0kybHV4NDV2aVV3aVgyNjdNMTQ1?=
+ =?utf-8?B?T2QyYWZTNTFtbDlQQTFwdlZwMk9Hc0h0ZXlVNWdWUnNQTlZyVXE2amVEL3dr?=
+ =?utf-8?B?M0NPcTNSdUxvbkxXME1JU1VJQWhyYjVRR0ltRTZkd1hFMXhnNWR5ZDBUUzVV?=
+ =?utf-8?B?b2NCR01sakZQZkgyVEJYK0tQNFFuM3B5ZHZERFArNWJLSUpXaFlaNVo5N3pC?=
+ =?utf-8?B?SGRJQjh1My9LYmY5ZFRnWEJ5R2dWR0U5T1grN2F3SVNGbTBkcE9Ra0M2TGZI?=
+ =?utf-8?B?czNrcDZ5UkhoNjNuMjFhNlNVTTV0dzl6bm9VWlppQ2Zya0owYkRuWm1OMjZR?=
+ =?utf-8?B?MS9KcnVvbkF1blp4dnlYdjJVWHhmUWo2Y0FDV1BVaG1nNnQwbVkyRXlSUEQr?=
+ =?utf-8?B?NERnTXpENEtnV1p6K09FODh0eUo5KzZ5M1gxeFY1eFBvTU9WdjBja0xCS0cy?=
+ =?utf-8?B?RFl3Y01lbkQ0bDZ1d0NyYmNHUUprcWxCb1dJYXlpYnVJRnNRajhkcVY3bjdS?=
+ =?utf-8?B?aklYZ1dPcDc4a0daMS95cGFkM1pCU2Z5UXBWSmJCZmNMR05xbS9SYi9NTHov?=
+ =?utf-8?B?dlRsdlZBdTdtQjFUYjZ5QXYxOWltZWZxVXJEVEgxTmtQTTJ6SVg3Ym9PeEV3?=
+ =?utf-8?B?eW1acitnSnlKZmNWQys0eWkyRHdJcFh3U1cvOEtHV2JlbUIyT2I0bGVkS3pW?=
+ =?utf-8?B?SEVSL3NVdktFNUt3RzZoM0JPNTdPK3c2WWJqT2RtUlZTNlJFRDNSbk8yUURE?=
+ =?utf-8?B?b0YyZTdoQkIvakhkR3JBVWVLREgydGpHRCswRDZuMWcrUHJncVduMFR4b2gv?=
+ =?utf-8?B?YUZraTIxT2tRbW16dW1yY1JnSEhrZ1dPMW1DYmdRLzdlWldSTVdmYXdhU0N4?=
+ =?utf-8?B?OFFQQlQ0VWZXb2w4NnhtSUhwT08wYkxoTzc5RTFlK094dE02S0gybm9xZlB5?=
+ =?utf-8?B?cStkMms4K1NkaW9uV1BkMG80VWNIRHNTWksvaTV5TU5IbmMwZG5MYzFiZk5x?=
+ =?utf-8?Q?IklAwD0R9TwJtas2c5LYb9RZax5KlbaZBgzrM=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dUU0UmY4MEMrRkNKV2hXZDIyWEF4RHBmenFzLzBtVVoxZkVjaGt1RExpYldK?=
- =?utf-8?B?L0xKdEh1MWViK3RFYVFkTGdrS2Z3QWQ5R1FWTEVrQTZEMnJzZ2R0MkFMem1P?=
- =?utf-8?B?cDl2YUJyeWFNRVMxc1VVY3ZTNkVEWWJLdHFmSFZrUWZEeTBOMERpQjBEVGJ5?=
- =?utf-8?B?WHBqOXBVc2pTbU1HQ3crblNubXV6MVV6dkI1UHlpK2w1ZEs2dW1lNkJ6L3gx?=
- =?utf-8?B?eS9oMzhCODhpRXF0WDJUK0xxeGg4ZVVDZ3hiRXl3dE96RnR3cllBTEt6QzZx?=
- =?utf-8?B?LzZuNll6NkkvQ1Z1ZFlKZ1JmbzlURzF2NTVrb0pjeEpRaGJLR2JkRWxiWnE4?=
- =?utf-8?B?VmhmQ3plWXhJNVB5QnRhVDF6RDZpY3E3MGNxUjhjWHRMYW5VTGx1T3V3R1hQ?=
- =?utf-8?B?WC9DaEo0cGlhSWIxWWVkTDlWNWRibjhFSmg3eHI1d2psZmYvUWRvQndsYU5O?=
- =?utf-8?B?cXVCYWwvOEpIcmw4MXhmTFlheWpOT3Q2UWdhSnlXMGFuTjhYaGN0Tm1DajR2?=
- =?utf-8?B?KytCT3lyUmlwU0VLM1VlYXNnR21OOWp5NDUydVpvMmE3bDliY0pXTm5LcVNK?=
- =?utf-8?B?YWdzT0VacnlDcmNobVJwMWhqYXRuN3Y3a2FLUTA1aHErM1QwRW1DWU8ycldz?=
- =?utf-8?B?bjVjMUFWcGZQYWtrUmthSE8rN3EvbDgxNnBIdzNaNXl4MWp3c3RwTy8vaWw1?=
- =?utf-8?B?c1ZuanUrWVF6cmUrdm4wcDBMa0x5MXVUa2hYZHBQT1NLWGVBLzA3Vk50TFcy?=
- =?utf-8?B?NWpETFRJZmRZWUVmTFp5SlRXNGRPS0tjWkdJOG5JTzBYdGsrZlNCVDViTC96?=
- =?utf-8?B?aG4va1ZCeEU3MUl1MXpvb0lRUWhqeUxRZTVrT3ltN3VSNzJGK2pGYWxZQzEr?=
- =?utf-8?B?SXhMOGp3MUtFVUhSZ0kxWkVBMlo5Vm9ZSkFMVjJBSkNRWjY5cjhIVzArV0Zt?=
- =?utf-8?B?MmprM25aZzAxVkxzUnRoT0d3dkRqaEZwa2g3eE5pQy9TQ1hVeHFJTm1iM3dh?=
- =?utf-8?B?T3pPNDdCQS9qYklmVS9wbUdMMkluUy9jTkE3UFcwaEk2czhnTVArODdWTC9B?=
- =?utf-8?B?dHprVkNka1hhcmZDaStUSmtnc0JKZDZkRFVscFRnczU3ZVFZUHVJS2p5WG1E?=
- =?utf-8?B?clF2WHNsdWdVdm0ydml5REVPeVYxNkx2YllNbHBYZjNkM3M5bzl0Z01LVFVO?=
- =?utf-8?B?TnN5Y21kRFRMQXEwMXV0SG8vd1N6cmhSTkxQMy9DWlRQUEhRRnhCbTRZS1pB?=
- =?utf-8?B?K0o1bXYwQ0hqT3VQUi83T21IOUdGMzRuK1hEdTNRVDBnb3lsWk1EQ2EycTJP?=
- =?utf-8?B?YURHVVh4dThkZHBkSkZxS1ozZ0hkek9ZOU0yS1B3OGdBWjJrM3lKV2pWczk5?=
- =?utf-8?B?WFE2NG1WMDg4S0c5aE8ydkNPbFE4NEpGcUE4aVZ6ZHF3NjFSaUQ0cGFXZEsr?=
- =?utf-8?B?N0RXQkZXN2o0WnphUFRMSnlPMkYxS1puQnZDR2NBUzk4Nkg0c1dRUjFqc3NK?=
- =?utf-8?B?RDFQYWMyZis0ZDY2OUdJVGYrdE0vUCtHeHhwdysrOWQ0QWJTc2lRVkFTRkRi?=
- =?utf-8?B?emNFSmIyRStBUnVtdFlrcTdFTHdGa01OdGp6NHhlWGhwQU5NbEZMaXRJZTVK?=
- =?utf-8?B?TnlNQ1djbmY3a3U4L3FSUE40MkU0VENROGF5dWpSazZNVlhnMTlweGlYTWtE?=
- =?utf-8?B?U3Vrd1o5TXlqRWUzbTFMSkJQbjhvN2E2VC9uVjhLUkI3VkplSVNzaXdJOEdz?=
- =?utf-8?B?SEo1R3pKT21ocFZ6aGRVQ01sVVZESU5rcjVMRGIveGxXRmNnZjQwb29jaVpV?=
- =?utf-8?B?R3lJTlFHOUJqc3p3L2V3cVcxVkVxTnZTSmEwVU9zRURUTFNzbmZ4dUcrK0xS?=
- =?utf-8?B?Y2ZyQ2lzY2dmeWhkVHluNERxV2FZMVdidU9hL3NDSkdOVGo2ZDNDaldid0Vs?=
- =?utf-8?B?Y2M5bkNJVWdTZzZiUks4eThpU0JKUDc3M1Y2dG52VWFHUFkwL0VNR3pTVjc0?=
- =?utf-8?B?UUFCQTFWOGtEaEYrOVBzQkRyenNSSVJoK0FyWFR4M295Mlg4aVZnQ0praUU5?=
- =?utf-8?B?MHJqbGVZUFV5Vm9zUStNamVJdDRIK3lLMGZDSlRKMTNQMVNpYlRGOUR6NzJJ?=
- =?utf-8?B?aG50TFhlVWxTYjcyd09uWWFhWWwyYy9ZWStuMDdHaEVmdnh3K1RyVVlaK2VD?=
- =?utf-8?Q?wnPqzkOyo23AA/eanyIo+Ho=3D?=
+	=?utf-8?B?TlNXUDgrRDB4QUhzUW1uRmUzOERzUGVod3dLTi9TRjdTcXdFMytwUmUwVlRQ?=
+ =?utf-8?B?dXhVbXJlNnJZYkJwb2lTd01XTGp5ZEpwbXZMUFhiMlRHb2w5QUxrbFVCbTBU?=
+ =?utf-8?B?cmVtS05TaHJKLzNZcGRnRExhZjNsYlEzUldndTdZQXA0djRMUzFtNHNRK3dG?=
+ =?utf-8?B?RXluTUxlN3lRTGdVaCtpeEhkQjZ5YjN6Ris0Qk9MeGlWa0JtVGNjbFZTL0o0?=
+ =?utf-8?B?SkVJcDBuSUpsbVFtcSt0VDdqTjE5OCtOWk5ITVVMUGdXVTQ4NFEydE9lOTY0?=
+ =?utf-8?B?M2ZHODF2L0VodFNML3JFeENxZkQvV0prZE81aTVFMERpaTVmSWhxTVVyQ0d1?=
+ =?utf-8?B?KzNDOGxRSHpiaWwyalh4SmFVMWhheXk3VTJFaVl0V1ViTHdaM1NZWTdhMnJl?=
+ =?utf-8?B?c1VXY2VQbDBoOGlBM3ROOTBndGlsTFZPWStyMGpWREQzZWh4SWhya2JEZFhn?=
+ =?utf-8?B?MzY5aUZzMlgyaGtiaUV4MUpmSkFuTVM0U0NJMzBzaTBBKzd2YkJ6M0taM2xw?=
+ =?utf-8?B?d3FQUHlXbS83ZU5JRjgzbHg4VG4vbytvSHphbEJCSDIzU0N2TThYeVlDU3p5?=
+ =?utf-8?B?R1VrY0gwc2VzNThkSTI2bFFjbTFMZ05hZW9Tdkh5QnYxWGM1UlBVZmlzTGJs?=
+ =?utf-8?B?ZklpY25vczB6c1BJTmJlWmhxSCt6eGs2QU01cVJHODFqaDRVTUgraXdKdVha?=
+ =?utf-8?B?UFFqL2g1SlJmZEVIWGJLdlpZcXlZeXF3ZXhHTWxsVGdFbVZ0WVduTDgrL2Rs?=
+ =?utf-8?B?a1FnakJMQ2psc2V0TVp5cXVYdEZNaVB2WGJnQ2lUbXB3eGNHT3lOK04wOGVK?=
+ =?utf-8?B?K0lNS2xTK3VxVU53a2NYQ2xzam84bENhUjBadU5ZNVI5aDJtOUg2UWxYZ2pQ?=
+ =?utf-8?B?b3RtZlNnQ3pvcXJDakhmeWptMUFyTm44S2Z6NkVnMUNNNVRKYkRqSUFBY1hV?=
+ =?utf-8?B?Wmd6ODVWdTRML3V1cDhCVU02eFNPNFF5bENPUWlHdWI2cVFVcVpkN2FCcWVJ?=
+ =?utf-8?B?MmVKL1psSjNZTWpNRk1GTXQyN3dhQWpOMDVaWVdiMU1ibDRKbS9scy9nVWt0?=
+ =?utf-8?B?em5lRUt0K29TckRuYWFCaVZBelduZXlpc05xci9DN3FPUjlQSE5VazFGVHZ3?=
+ =?utf-8?B?TnBjekxuc1lDT2h3NTV0UldVOHZkZW5TSlFkUlJOU0hLVC9RTkkvREJIdGxR?=
+ =?utf-8?B?dmJpaHpQb2NVVjNzMlM4M2YzeHU3R2hEUHg5U3lQc1hlWnRMdSt4Y3RrTlY3?=
+ =?utf-8?B?UXVZZUtyVldZRktSakVVdCthYVhzZktzRHE2aDNuZUI4TmYwTE81TDM2OEpQ?=
+ =?utf-8?B?TURYYk15TmRFTFFNV1lxSUR3a2tDNlh3Y3JKemhhZU85SnNJWU01NnhzNnZj?=
+ =?utf-8?B?Q3hVbHBmUnJDR0tHMFRFVTllbjVqNDEwN3FVQ1gvUW1vR3lwSU5DeXlhd1Uv?=
+ =?utf-8?B?RmxRWkRUUXh3QUY5SjNQSW5xZ3dhd3hMd3hRZmV1amVqYVpLamVjZWVQU1ln?=
+ =?utf-8?B?TlRSNDNIbHBRM0lZTWh0dTRiZzhwVHFENDJZMU5ITENvOEM1NkdHVnU0eXhC?=
+ =?utf-8?B?STFYY2lNQ0NnZVFWUFQ0VEJscW1YdENyVkJFTnFwa2lDRWM0dEFCRVd5c1Nh?=
+ =?utf-8?B?dy95bkdtWjNwamtFZ1FJV0hQaXh4aE5YOW5GZGhXNnltOWFhR0FKbW5jUFZP?=
+ =?utf-8?B?SUpUWEdjdkdnWTN0MmpxM1dEZUdhS25tRFVGL3J6b1JtVnE1bmNJNzRVcUdK?=
+ =?utf-8?B?amg5UllraHV3VS9nampDT1EzN2JxN3dlUzBwQ3QzSGR3WFNRb2RkaS9Vc0FG?=
+ =?utf-8?B?SmNMMEFNbTN3ZjlDNys4M2l1bnFPaHlkWEd1d3BVQkRxNnFKRmNmZkpoOGxl?=
+ =?utf-8?B?em1SV3Z4ckdrMFR4bFc2L1NObzlHM0hTcWNGQm5BZXRrVm16UXZ3UmJWcTJY?=
+ =?utf-8?B?Yk95aTdERFhCa29LOGt0dkpRTk8rd056U1VSbGpkVlhYcmowTkZaL1lvdWUx?=
+ =?utf-8?B?ckdNeG14Rm5yVmpDQ3UrK1J0UkdVSEVGSWh2aC9Pb1lLRDg0S2lIOE5NQU5K?=
+ =?utf-8?B?VFFlMWswSWhGK09zdnNHMjZHYm5wWFdCZkwvajBieDlNTmlvNXcvcFFTOXNW?=
+ =?utf-8?B?cWpDKy9yMEh5MldrSHNySGUxcDlKUmFwajlod2xBeEdsRFJvZGFCVHJrbTU3?=
+ =?utf-8?Q?BTlchvdLCIU/EO/H2DBbZZ8=3D?=
 X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aff4a690-91ff-4923-6dd1-08dde40e761f
+X-MS-Exchange-CrossTenant-Network-Message-Id: 963ee43d-e696-4225-ae9d-08dde40f29cf
 X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 19:34:52.0610
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 19:39:53.5041
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: AzCgf07cICANATaW7QtnZc/N53JT1d4uyK/zc8GCsaO0pTwfaAwgnunOglky4OVEUsAcGGfPhogWErSUxfplhhs4VlvI50+yEeNllhVWIcU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YQBPR0101MB8239
+X-MS-Exchange-CrossTenant-UserPrincipalName: sQVtTmbvUoctoqpk0ubViF2Cq4yZHcGxu5xiraow/unfwjYzPEUURnH5wzDmAsLFkoSq/WmNpoefhQGXP+HTw0ZHTKlfD0n1spCdPdMuXZQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT3PR01MB5828
 
 On 2025-08-23 12:40, Thomas Gleixner wrote:
-> No point in defining generic items and the upcoming RSEQ optimizations are
-> only available with this _and_ the generic entry infrastructure, which is
-> already used by x86. So no further action required here.
+> TIF_NOTIFY_RESUME is a multiplexing TIF bit, which is suboptimal especially
+> with the RSEQ fast path depending on it, but not really handling it.
+> 
+> Define a seperate TIF_RSEQ in the generic TIF space and enable the full
+> seperation of fast and slow path for architectures which utilize that.
+> 
+> That avoids the hassle with invocations of resume_user_mode_work() from
+> hypervisors, which clear TIF_NOTIFY_RESUME. It makes the therefore required
+> re-evaluation at the end of vcpu_run() a NOOP on architectures which
+> utilize the generic TIF space and have a seperate TIF_RSEQ.
+> 
+> The hypervisor TIF handling does not include the seperate TIF_RSEQ as there
+> is no point in doing so. The guest does neither know nor care about the VMM
+> host applications RSEQ state. That state is only relevant when the ioctl()
+> returns to user space.
+> 
+> The fastpath implementation still utilizes TIF_NOTIFY_RESUME for failure
+> handling, but this only happens within exit_to_user_mode_loop(), so
+> arguably the hypervisor ioctl() code is long done when this happens.
+> 
+> This allows further optimizations for blocking syscall heavy workloads in a
+> subsequent step.
 > 
 > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: x86@kernel.org
 
 Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 
 > ---
->   arch/x86/Kconfig                   |    1
->   arch/x86/include/asm/thread_info.h |   74 +++++++++++++++----------------------
->   2 files changed, 31 insertions(+), 44 deletions(-)
+>   include/asm-generic/thread_info_tif.h |    3 +++
+>   include/linux/irq-entry-common.h      |    2 +-
+>   include/linux/rseq.h                  |   13 ++++++++++---
+>   include/linux/rseq_entry.h            |   23 +++++++++++++++++++----
+>   include/linux/thread_info.h           |    5 +++++
+>   5 files changed, 38 insertions(+), 8 deletions(-)
 > 
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -239,6 +239,7 @@ config X86
->   	select HAVE_EFFICIENT_UNALIGNED_ACCESS
->   	select HAVE_EISA			if X86_32
->   	select HAVE_EXIT_THREAD
-> +	select HAVE_GENERIC_TIF_BITS
->   	select HAVE_GUP_FAST
->   	select HAVE_FENTRY			if X86_64 || DYNAMIC_FTRACE
->   	select HAVE_FTRACE_GRAPH_FUNC		if HAVE_FUNCTION_GRAPH_TRACER
-> --- a/arch/x86/include/asm/thread_info.h
-> +++ b/arch/x86/include/asm/thread_info.h
-> @@ -80,56 +80,42 @@ struct thread_info {
+> --- a/include/asm-generic/thread_info_tif.h
+> +++ b/include/asm-generic/thread_info_tif.h
+> @@ -45,4 +45,7 @@
+>   # define _TIF_RESTORE_SIGMASK	BIT(TIF_RESTORE_SIGMASK)
 >   #endif
 >   
->   /*
-> - * thread information flags
-> - * - these are process state flags that various assembly files
-> - *   may need to access
-> + * Tell the generic TIF infrastructure which bits x86 supports
+> +#define TIF_RSEQ		11	// Run RSEQ fast path
+> +#define _TIF_RSEQ		BIT(TIF_RSEQ)
+> +
+>   #endif /* _ASM_GENERIC_THREAD_INFO_TIF_H_ */
+> --- a/include/linux/irq-entry-common.h
+> +++ b/include/linux/irq-entry-common.h
+> @@ -30,7 +30,7 @@
+>   #define EXIT_TO_USER_MODE_WORK						\
+>   	(_TIF_SIGPENDING | _TIF_NOTIFY_RESUME | _TIF_UPROBE |		\
+>   	 _TIF_NEED_RESCHED | _TIF_NEED_RESCHED_LAZY |			\
+> -	 _TIF_PATCH_PENDING | _TIF_NOTIFY_SIGNAL |			\
+> +	 _TIF_PATCH_PENDING | _TIF_NOTIFY_SIGNAL | _TIF_RSEQ |		\
+>   	 ARCH_EXIT_TO_USER_MODE_WORK)
+>   
+>   /**
+> --- a/include/linux/rseq.h
+> +++ b/include/linux/rseq.h
+> @@ -40,7 +40,7 @@ static inline void rseq_signal_deliver(s
+>   
+>   static inline void rseq_raise_notify_resume(struct task_struct *t)
+>   {
+> -	set_tsk_thread_flag(t, TIF_NOTIFY_RESUME);
+> +	set_tsk_thread_flag(t, TIF_RSEQ);
+>   }
+>   
+>   /* Invoked from context switch to force evaluation on exit to user */
+> @@ -122,7 +122,7 @@ static inline void rseq_force_update(voi
 >    */
-> -#define TIF_NOTIFY_RESUME	1	/* callback before returning to user */
-> -#define TIF_SIGPENDING		2	/* signal pending */
-> -#define TIF_NEED_RESCHED	3	/* rescheduling necessary */
-> -#define TIF_NEED_RESCHED_LAZY	4	/* Lazy rescheduling needed */
-> -#define TIF_SINGLESTEP		5	/* reenable singlestep on user return*/
-> -#define TIF_SSBD		6	/* Speculative store bypass disable */
-> -#define TIF_SPEC_IB		9	/* Indirect branch speculation mitigation */
-> -#define TIF_SPEC_L1D_FLUSH	10	/* Flush L1D on mm switches (processes) */
-> -#define TIF_USER_RETURN_NOTIFY	11	/* notify kernel of userspace return */
-> -#define TIF_UPROBE		12	/* breakpointed or singlestepping */
-> -#define TIF_PATCH_PENDING	13	/* pending live patching update */
-> -#define TIF_NEED_FPU_LOAD	14	/* load FPU on return to userspace */
-> -#define TIF_NOCPUID		15	/* CPUID is not accessible in userland */
-> -#define TIF_NOTSC		16	/* TSC is not accessible in userland */
-> -#define TIF_NOTIFY_SIGNAL	17	/* signal notifications exist */
-> -#define TIF_MEMDIE		20	/* is terminating due to OOM killer */
-> -#define TIF_POLLING_NRFLAG	21	/* idle is polling for TIF_NEED_RESCHED */
-> +#define HAVE_TIF_NEED_RESCHED_LAZY
-> +#define HAVE_TIF_POLLING_NRFLAG
-> +#define HAVE_TIF_SINGLESTEP
-> +
-> +#include <asm-generic/thread_info_tif.h>
-> +
-> +/* Architecture specific TIF space starts at 16 */
-> +#define TIF_SSBD		16	/* Speculative store bypass disable */
-> +#define TIF_SPEC_IB		17	/* Indirect branch speculation mitigation */
-> +#define TIF_SPEC_L1D_FLUSH	18	/* Flush L1D on mm switches (processes) */
-> +#define TIF_NEED_FPU_LOAD	19	/* load FPU on return to userspace */
-> +#define TIF_NOCPUID		20	/* CPUID is not accessible in userland */
-> +#define TIF_NOTSC		21	/* TSC is not accessible in userland */
->   #define TIF_IO_BITMAP		22	/* uses I/O bitmap */
->   #define TIF_SPEC_FORCE_UPDATE	23	/* Force speculation MSR update in context switch */
->   #define TIF_FORCED_TF		24	/* true if TF in eflags artificially */
-> -#define TIF_BLOCKSTEP		25	/* set when we want DEBUGCTLMSR_BTF */
-> +#define TIF_SINGLESTEP		25	/* reenable singlestep on user return*/
-> +#define TIF_BLOCKSTEP		26	/* set when we want DEBUGCTLMSR_BTF */
->   #define TIF_LAZY_MMU_UPDATES	27	/* task is updating the mmu lazily */
-> -#define TIF_ADDR32		29	/* 32-bit address space on 64 bits */
-> +#define TIF_ADDR32		28	/* 32-bit address space on 64 bits */
+>   static inline void rseq_virt_userspace_exit(void)
+>   {
+> -	if (current->rseq_event.sched_switch)
+> +	if (!IS_ENABLED(CONFIG_HAVE_GENERIC_TIF_BITS) && current->rseq_event.sched_switch)
+>   		rseq_raise_notify_resume(current);
+>   }
 >   
-> -#define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
-> -#define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
-> -#define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
-> -#define _TIF_NEED_RESCHED_LAZY	(1 << TIF_NEED_RESCHED_LAZY)
-> -#define _TIF_SINGLESTEP		(1 << TIF_SINGLESTEP)
-> -#define _TIF_SSBD		(1 << TIF_SSBD)
-> -#define _TIF_SPEC_IB		(1 << TIF_SPEC_IB)
-> -#define _TIF_SPEC_L1D_FLUSH	(1 << TIF_SPEC_L1D_FLUSH)
-> -#define _TIF_USER_RETURN_NOTIFY	(1 << TIF_USER_RETURN_NOTIFY)
-> -#define _TIF_UPROBE		(1 << TIF_UPROBE)
-> -#define _TIF_PATCH_PENDING	(1 << TIF_PATCH_PENDING)
-> -#define _TIF_NEED_FPU_LOAD	(1 << TIF_NEED_FPU_LOAD)
-> -#define _TIF_NOCPUID		(1 << TIF_NOCPUID)
-> -#define _TIF_NOTSC		(1 << TIF_NOTSC)
-> -#define _TIF_NOTIFY_SIGNAL	(1 << TIF_NOTIFY_SIGNAL)
-> -#define _TIF_POLLING_NRFLAG	(1 << TIF_POLLING_NRFLAG)
-> -#define _TIF_IO_BITMAP		(1 << TIF_IO_BITMAP)
-> -#define _TIF_SPEC_FORCE_UPDATE	(1 << TIF_SPEC_FORCE_UPDATE)
-> -#define _TIF_FORCED_TF		(1 << TIF_FORCED_TF)
-> -#define _TIF_BLOCKSTEP		(1 << TIF_BLOCKSTEP)
-> -#define _TIF_LAZY_MMU_UPDATES	(1 << TIF_LAZY_MMU_UPDATES)
-> -#define _TIF_ADDR32		(1 << TIF_ADDR32)
-> +#define _TIF_SSBD		BIT(TIF_SSBD)
-> +#define _TIF_SPEC_IB		BIT(TIF_SPEC_IB)
-> +#define _TIF_SPEC_L1D_FLUSH	BIT(TIF_SPEC_L1D_FLUSH)
-> +#define _TIF_NEED_FPU_LOAD	BIT(TIF_NEED_FPU_LOAD)
-> +#define _TIF_NOCPUID		BIT(TIF_NOCPUID)
-> +#define _TIF_NOTSC		BIT(TIF_NOTSC)
-> +#define _TIF_IO_BITMAP		BIT(TIF_IO_BITMAP)
-> +#define _TIF_SPEC_FORCE_UPDATE	BIT(TIF_SPEC_FORCE_UPDATE)
-> +#define _TIF_FORCED_TF		BIT(TIF_FORCED_TF)
-> +#define _TIF_BLOCKSTEP		BIT(TIF_BLOCKSTEP)
-> +#define _TIF_SINGLESTEP		BIT(TIF_SINGLESTEP)
-> +#define _TIF_LAZY_MMU_UPDATES	BIT(TIF_LAZY_MMU_UPDATES)
-> +#define _TIF_ADDR32		BIT(TIF_ADDR32)
+> @@ -147,9 +147,16 @@ static inline void rseq_fork(struct task
+>   		/*
+>   		 * If it has rseq, force it into the slow path right away
+>   		 * because it is guaranteed to fault.
+> +		 *
+> +		 * Setting TIF_NOTIFY_RESUME is redundant but harmless for
+> +		 * architectures which do not have a seperate TIF_RSEQ, but
+> +		 * for those who do it's required to enforce the slow path
+> +		 * as the scheduler sets only TIF_RSEQ.
+>   		 */
+> -		if (t->rseq_event.has_rseq)
+> +		if (t->rseq_event.has_rseq) {
+>   			t->rseq_event.slowpath = true;
+> +			set_tsk_thread_flag(t, TIF_NOTIFY_RESUME);
+> +		}
+>   	}
+>   }
 >   
->   /* flags to check in __switch_to() */
->   #define _TIF_WORK_CTXSW_BASE					\
+> --- a/include/linux/rseq_entry.h
+> +++ b/include/linux/rseq_entry.h
+> @@ -502,18 +502,33 @@ static __always_inline bool __rseq_exit_
+>   	return true;
+>   }
+>   
+> +#ifdef CONFIG_HAVE_GENERIC_TIF_BITS
+> +# define CHECK_TIF_RSEQ		_TIF_RSEQ
+> +static __always_inline void clear_tif_rseq(void)
+> +{
+> +	clear_thread_flag(TIF_RSEQ);
+> +}
+> +#else
+> +# define CHECK_TIF_RSEQ		0UL
+> +static inline void clear_tif_rseq(void) { }
+> +#endif
+> +
+>   static __always_inline unsigned long
+>   rseq_exit_to_user_mode_work(struct pt_regs *regs, unsigned long ti_work, const unsigned long mask)
+>   {
+>   	/*
+>   	 * Check if all work bits have been cleared before handling rseq.
+> +	 *
+> +	 * In case of a seperate TIF_RSEQ this checks for all other bits to
+> +	 * be cleared and TIF_RSEQ to be set.
+>   	 */
+> -	if ((ti_work & mask) != 0)
+> -		return ti_work;
+> -
+> -	if (likely(!__rseq_exit_to_user_mode_restart(regs)))
+> +	if ((ti_work & mask) != CHECK_TIF_RSEQ)
+>   		return ti_work;
+>   
+> +	if (likely(!__rseq_exit_to_user_mode_restart(regs))) {
+> +		clear_tif_rseq();
+> +		return ti_work & ~CHECK_TIF_RSEQ;
+> +	}
+>   	return ti_work | _TIF_NOTIFY_RESUME;
+>   }
+>   
+> --- a/include/linux/thread_info.h
+> +++ b/include/linux/thread_info.h
+> @@ -67,6 +67,11 @@ enum syscall_work_bit {
+>   #define _TIF_NEED_RESCHED_LAZY _TIF_NEED_RESCHED
+>   #endif
+>   
+> +#ifndef TIF_RSEQ
+> +# define TIF_RSEQ	TIF_NOTIFY_RESUME
+> +# define _TIF_RSEQ	_TIF_NOTIFY_RESUME
+> +#endif
+> +
+>   #ifdef __KERNEL__
+>   
+>   #ifndef arch_set_restart_data
 > 
 
 
