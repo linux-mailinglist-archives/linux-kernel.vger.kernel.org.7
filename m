@@ -1,189 +1,121 @@
-Return-Path: <linux-kernel+bounces-784874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5051B342D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:12:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A771B342CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B58E63A9C5A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:08:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC1D916AAE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7352C2ED159;
-	Mon, 25 Aug 2025 14:08:07 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E38A42ED871;
+	Mon, 25 Aug 2025 14:08:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="HeCIhxzu";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="lLwAcdyD"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92382ECE98;
-	Mon, 25 Aug 2025 14:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC322ECE9E;
+	Mon, 25 Aug 2025 14:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756130887; cv=none; b=ueclONUcnr9Gx8sYYke9I0I4pMDxDA+XMjL//uV4MgPewZcYu/IkppLeG1znBcIGZ56Mxy8tBa6VdquXs44y/dtOszrV1Mvu7AFrW3h8rGLggPG8ru6h4+8QNcAN5bpcVXRnfANiJejuZ8vK77qM3qF5GImfRVHMvSECil7RH8k=
+	t=1756130907; cv=none; b=pDDume+l4DIjSz+PjJTd3Q4vDPLmiR4TUjT1iciuD2RBeqnhpPmUYj1IZvy8X/np0wwNnK7nH8wufPVZrQylS+nYfWsgGVe40bRZGIsrCDKHQlA+gvFKe3e+acQpjwXr5b34r5H8/ADa98uQrx2HiW/m7JLdjLpGUkup/6QZ03A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756130887; c=relaxed/simple;
-	bh=udiX7xi6DrbH3//1h51tOaNo1oF7wTdzpq3UxSarm5E=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=MeeSYufbiMoVX60ltZGwGL0TvadDeqJrocVhfu2nK7LEIWt4Xz2Lxj4pVjt790jymgOQDkjuObh+A8HKRmLKcGQFSPGJxX4p3QgYsYp1N+Z21wtj8jb4oT5ymw249R3wD+TFDpnTDPyZt+EZ3lwSLeHmiMd3yn0bdOC5ss+I108=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 57PE7Ph4008586;
-	Mon, 25 Aug 2025 23:07:25 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 57PE7OW4008580
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Mon, 25 Aug 2025 23:07:25 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <ac9db9a4-6c30-416e-8b94-96e6559d55b2@I-love.SAKURA.ne.jp>
-Date: Mon, 25 Aug 2025 23:07:24 +0900
+	s=arc-20240116; t=1756130907; c=relaxed/simple;
+	bh=q2i1lD8/NLs7XFgROZ3GTkd+7LpvfMjEBlntS29bCWk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A/eYuydJdAwf6N7IldTmkPfiutwmxpRbDORZnA9ydGMjcetWGDXjb7fCQp0Zwr+rporHVJ/0pzbOtWtC15XurVYjyqzocWIxjHjzU3bAExmGtKL/J0f16DPDeNpjhzb4cYlEgTSgSRWQrWVwavUbZHdJhuxwu5XDERz3ylUzjZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=HeCIhxzu; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=lLwAcdyD reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1756130903; x=1787666903;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=rLx+MN+sb4hVCsLJydaJdCblYaYKo6FoytwS5P52MOo=;
+  b=HeCIhxzu67cf+PfubrAgvTzDCRLrzieyFtgtUBO8sv4PJoGgW9vh+M1v
+   KBaOzmYTh1VXcGdkcryfUGApebyWE3gg3qQvPDqRXhLVorKIg86JLSCJz
+   p2sD8bo3kns4f6zTvpXnnjctHdrhhVo+ubbigG7vNCT3ZH331kN7n3mkG
+   +ud6iWI8Fkiili9DjE7Bo8FIzLLSu4MEHtv0AoVvgqm8W6GdjqP0TE3Sk
+   q4jT4VhwLYUjiB1l9ikya4w1aAPBTRtKDLtJbpKXhjJ7wjl3g5E1+vrXp
+   YVAUOq6W2nCRLu2xHVSVSmubFJXBB7RNoBbautLOVWbChKw5J+cNYtUER
+   g==;
+X-CSE-ConnectionGUID: D0HienxOQX+SSPbh7cHmEA==
+X-CSE-MsgGUID: W8P7mUvHSYu2nuE8hdYxzA==
+X-IronPort-AV: E=Sophos;i="6.18,213,1751234400"; 
+   d="scan'208";a="45895844"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 25 Aug 2025 16:08:19 +0200
+X-CheckPoint: {68AC6E53-12-20CAA7DA-EC9DC758}
+X-MAIL-CPID: F1469DF620F32CA268DC821C898F1CBE_0
+X-Control-Analysis: str=0001.0A002101.68AC6E54.0032,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id AEA11164191;
+	Mon, 25 Aug 2025 16:08:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1756130895; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=rLx+MN+sb4hVCsLJydaJdCblYaYKo6FoytwS5P52MOo=;
+	b=lLwAcdyD9Tis/NdsxX9ZxJxz4JHkO0CIEbg4FMJXocwcDxpT1QkfGDZ8H2fy0Ulbxj5Bwl
+	iYnHK1/AeiDjrTiERoNS6+SDe0FpNxH0JiByFWkfa2Ie4asTTBz0gIda5KGGQe89Dc2r1k
+	9zfADP4aQyjcRkRyJTSWBqgkVyrOSlAKiWh44RiqvZTvTMPeULbtB3wlIHMiZDRgj0tqA2
+	qUaDUNQXtMuwf4Dab36bqQUcEX8U9eSfP7fUWOFNCNyFpql268aDnRZQe23EaHwOsI/ET9
+	cxoyhWoLPkcMaqm+sN2Rp7EfdjqaekjBcjSYpHZptkdgyeOBRjRldkywXca3Yw==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Tero Kristo <kristo@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Matthias Schiffer <matthias.schiffer@tq-group.com>,
+	linux-omap@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alexander Stein <alexander.stein@ew.tq-group.com>
+Subject: [PATCH 1/1] clk: ti: am33xx: keep WKUP_DEBUGSS_CLKCTRL enabled
+Date: Mon, 25 Aug 2025 16:08:11 +0200
+Message-ID: <20250825140812.2222185-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH] can: j1939: implement NETDEV_UNREGISTER notification handler
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Robin van der Gracht <robin@protonic.nl>, kernel@pengutronix.de,
-        Oliver Hartkopp <socketcan@hartkopp.net>,
-        Marc Kleine-Budde <mkl@pengutronix.de>, linux-can@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        Kurt Van Dijck <dev.kurt@vandijck-laurijssen.be>
-References: <50055a40-6fd9-468f-8e59-26d1b5b3c23d@I-love.SAKURA.ne.jp>
- <aKg9mTaSxzBVpTVI@pengutronix.de>
- <bb595640-0597-4d18-a9e1-f6eb8e6bb50e@I-love.SAKURA.ne.jp>
- <c1e50f41-da30-4cea-859c-05db0ab8040b@I-love.SAKURA.ne.jp>
-Content-Language: en-US
-In-Reply-To: <c1e50f41-da30-4cea-859c-05db0ab8040b@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav102.rs.sakura.ne.jp
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-syzbot is reporting
+From: Matthias Schiffer <matthias.schiffer@tq-group.com>
 
-  unregister_netdevice: waiting for vcan0 to become free. Usage count = 2
+As described in AM335x Errata Advisory 1.0.42, WKUP_DEBUGSS_CLKCTRL
+can't be disabled - the clock module will just be stuck in transitioning
+state forever, resulting in the following warning message after the wait
+loop times out:
 
-problem, for j1939 protocol did not have NETDEV_UNREGISTER notification
-handler for undoing changes made by j1939_sk_bind().
+    l3-aon-clkctrl:0000:0: failed to disable
 
-Commit 25fe97cb7620 ("can: j1939: move j1939_priv_put() into sk_destruct
-callback") expects that a call to j1939_priv_put() can be unconditionally
-delayed until j1939_sk_sock_destruct() is called. But we need to call
-j1939_priv_put() against an extra ref held by j1939_sk_bind() call
-(as a part of undoing changes made by j1939_sk_bind()) as soon as
-NETDEV_UNREGISTER notification fires (i.e. before j1939_sk_sock_destruct()
-is called via j1939_sk_release()). Otherwise, the extra ref on "struct
-j1939_priv" held by j1939_sk_bind() call prevents "struct net_device" from
-dropping the usage count to 1; making it impossible for
-unregister_netdevice() to continue.
+Just add the clock to enable_init_clks, so no attempt is made to disable
+it.
 
-Reported-by: syzbot <syzbot+881d65229ca4f9ae8c84@syzkaller.appspotmail.com>
-Closes: https://syzkaller.appspot.com/bug?extid=881d65229ca4f9ae8c84
-Tested-by: syzbot <syzbot+881d65229ca4f9ae8c84@syzkaller.appspotmail.com>
-Fixes: 9d71dd0c7009 ("can: add support of SAE J1939 protocol")
-Fixes: 25fe97cb7620 ("can: j1939: move j1939_priv_put() into sk_destruct callback")
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Signed-off-by: Matthias Schiffer <matthias.schiffer@tq-group.com>
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 ---
- net/can/j1939/j1939-priv.h |  1 +
- net/can/j1939/main.c       |  3 +++
- net/can/j1939/socket.c     | 49 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 53 insertions(+)
+ drivers/clk/ti/clk-33xx.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/net/can/j1939/j1939-priv.h b/net/can/j1939/j1939-priv.h
-index 31a93cae5111..81f58924b4ac 100644
---- a/net/can/j1939/j1939-priv.h
-+++ b/net/can/j1939/j1939-priv.h
-@@ -212,6 +212,7 @@ void j1939_priv_get(struct j1939_priv *priv);
- 
- /* notify/alert all j1939 sockets bound to ifindex */
- void j1939_sk_netdev_event_netdown(struct j1939_priv *priv);
-+void j1939_sk_netdev_event_unregister(struct j1939_priv *priv);
- int j1939_cancel_active_session(struct j1939_priv *priv, struct sock *sk);
- void j1939_tp_init(struct j1939_priv *priv);
- 
-diff --git a/net/can/j1939/main.c b/net/can/j1939/main.c
-index 7e8a20f2fc42..3706a872ecaf 100644
---- a/net/can/j1939/main.c
-+++ b/net/can/j1939/main.c
-@@ -377,6 +377,9 @@ static int j1939_netdev_notify(struct notifier_block *nb,
- 		j1939_sk_netdev_event_netdown(priv);
- 		j1939_ecu_unmap_all(priv);
- 		break;
-+	case NETDEV_UNREGISTER:
-+		j1939_sk_netdev_event_unregister(priv);
-+		break;
- 	}
- 
- 	j1939_priv_put(priv);
-diff --git a/net/can/j1939/socket.c b/net/can/j1939/socket.c
-index 493f49bfaf5d..72c649cec9e1 100644
---- a/net/can/j1939/socket.c
-+++ b/net/can/j1939/socket.c
-@@ -1303,6 +1303,55 @@ void j1939_sk_netdev_event_netdown(struct j1939_priv *priv)
- 	read_unlock_bh(&priv->j1939_socks_lock);
- }
- 
-+void j1939_sk_netdev_event_unregister(struct j1939_priv *priv)
-+{
-+	struct sock *sk;
-+	struct j1939_sock *jsk;
-+	bool wait_rcu = false;
-+
-+ rescan: /* The caller is holding a ref on this "priv" via j1939_priv_get_by_ndev(). */
-+	read_lock_bh(&priv->j1939_socks_lock);
-+	list_for_each_entry(jsk, &priv->j1939_socks, list) {
-+		/* Skip if j1939_jsk_add() is not called on this socket. */
-+		if (!(jsk->state & J1939_SOCK_BOUND))
-+			continue;
-+		sk = &jsk->sk;
-+		sock_hold(sk);
-+		read_unlock_bh(&priv->j1939_socks_lock);
-+		/* Check if j1939_jsk_del() is not yet called on this socket after holding
-+		 * socket's lock, for both j1939_sk_bind() and j1939_sk_release() call
-+		 * j1939_jsk_del() with socket's lock held.
-+		 */
-+		lock_sock(sk);
-+		if (jsk->state & J1939_SOCK_BOUND) {
-+			/* Neither j1939_sk_bind() nor j1939_sk_release() called j1939_jsk_del().
-+			 * Make this socket no longer bound, by pretending as if j1939_sk_bind()
-+			 * dropped old references but did not get new references.
-+			 */
-+			j1939_jsk_del(priv, jsk);
-+			j1939_local_ecu_put(priv, jsk->addr.src_name, jsk->addr.sa);
-+			j1939_netdev_stop(priv);
-+			/* Call j1939_priv_put() now and prevent j1939_sk_sock_destruct() from
-+			 * calling the corresponding j1939_priv_put().
-+			 *
-+			 * j1939_sk_sock_destruct() is supposed to call j1939_priv_put() after
-+			 * an RCU grace period. But since the caller is holding a ref on this
-+			 * "priv", we can defer synchronize_rcu() until immediately before
-+			 * the caller calls j1939_priv_put().
-+			 */
-+			j1939_priv_put(priv);
-+			jsk->priv = NULL;
-+			wait_rcu = true;
-+		}
-+		release_sock(sk);
-+		sock_put(sk);
-+		goto rescan;
-+	}
-+	read_unlock_bh(&priv->j1939_socks_lock);
-+	if (wait_rcu)
-+		synchronize_rcu();
-+}
-+
- static int j1939_sk_no_ioctlcmd(struct socket *sock, unsigned int cmd,
- 				unsigned long arg)
- {
+diff --git a/drivers/clk/ti/clk-33xx.c b/drivers/clk/ti/clk-33xx.c
+index 85c50ea39e6da..9269e6a0db6a4 100644
+--- a/drivers/clk/ti/clk-33xx.c
++++ b/drivers/clk/ti/clk-33xx.c
+@@ -258,6 +258,8 @@ static const char *enable_init_clks[] = {
+ 	"dpll_ddr_m2_ck",
+ 	"dpll_mpu_m2_ck",
+ 	"l3_gclk",
++	/* WKUP_DEBUGSS_CLKCTRL - disable fails, AM335x Errata Advisory 1.0.42 */
++	"l3-aon-clkctrl:0000:0",
+ 	/* AM3_L3_L3_MAIN_CLKCTRL, needed during suspend */
+ 	"l3-clkctrl:00bc:0",
+ 	"l4hs_gclk",
 -- 
-2.51.0
+2.43.0
 
 
