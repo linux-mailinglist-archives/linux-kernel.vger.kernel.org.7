@@ -1,152 +1,126 @@
-Return-Path: <linux-kernel+bounces-784719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8DDDB34042
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:01:42 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E79A8B34016
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:53:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FA767AB6B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:00:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DA0FB4E285F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:53:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA401EF0B9;
-	Mon, 25 Aug 2025 13:01:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="grD7m/Xe"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A3E21A453;
+	Mon, 25 Aug 2025 12:53:05 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521FB1D54E2;
-	Mon, 25 Aug 2025 13:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A966D217F36
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 12:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756126885; cv=none; b=FnT3YoRcVIat+d5tqWhm2v3vTe4GdnUQCcsnn7FWlOOs3FRbyjVHm4LsmHOytojRD9eoc+qbBlQ+tYsp0xoXMC+I5g9txzlZ4Qx4+znDC9gutT7Upak+IhYbqS3lPGle8W/+rl4Jmyr2YzUrU/whbOl6kovCEJd/+EO15MJ6D1k=
+	t=1756126385; cv=none; b=ryWUOUxeKmy1FJqhHvZjPvoTa0V3QQD5k60+8pNNkwKJBy6g0HmcIo4DBDurvJ378VCnuXvuw/Nj5A0szrhH+bPwZUKfjplTYwVcQQLH8QjCfXWYiWUGP/PDHaEnyM3BZV4pAXbzyJ5lybxgJy3wQXvGZ2JTcW1gIUZGU8c6iZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756126885; c=relaxed/simple;
-	bh=3mg8H5raVBKkDe/TXL7in7wasHK55tIcmkgCouAAdu4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=sJyFupzcozHSOT144LrYO0A/1EKxpPVMqa4zJZc5SQUBom8jn/7AEDdHSvzWMDMSHaiLDBceR2Iyn3u5nC4GmvSrpRCzM/2tiwLrLDeCsjO6E7vVuCB7ThflstLxkK7SLSryA6FgNx5hqfwG2j9/ooM/3fmpjQ65Is9cRfAYu/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=grD7m/Xe; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 1D8F1A05C6;
-	Mon, 25 Aug 2025 14:52:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=mail; bh=4EQUO9uZ0iCJ6TiGfFUQMxCSBU7gkSepVVETsOcLgjg=; b=
-	grD7m/XeXhE5qIjaVKYgSduEHqXmqCL/nrRWDyhlz798QOa3ZmLrRujq4xvKMluh
-	uimv1LzdaPwqe77Rh2htX9RcXI5/rRJbMlMS7qwV4awdZ/LOoY5QrJ9rsZW7o1+I
-	KaEEiWXrfedJX2XjN11J1U3ysy3USshL7EggKf4/QfLLrUimIK+pLfdjI7xKtmU1
-	rJh2Urhw5qzpns5bKGSSo3pVTP1kWpEoALMuwjYnnR0mA8FR48huWhSfB3yvMUl+
-	IevPNA1QZiaOR8+D0GSgez44T6oNa9UeT1RAHhbU4Us6aYlq3EfQP8gZte2kNBud
-	afiYEINbh5qjJNhUNSKFrpYsl9HAiVZ+sv+tuQlqrc5vtAB1nU4Hn6Nge9NsurP1
-	Wr0gID6LObwDS6n5oigR/TsP0RJxlSN0P/mJnMudCwchlsRcP5oU/Ill19sZ9sWU
-	Uud66ELIy5i7W9HScqF6995lx/eprTgPRnQlw2zRlEH2kNDILsYA2N+G9oqywGvZ
-	qMa9iAqsgIYbbO4dR3gNAl8mvsf7CnsQdNTy8ReemfUZsS0SnB5nqErCyxnugsTA
-	sn6I6H5/9BUbvJpgjlJ8ydr6UzgH7GsLjiecCF4iqC9o1fKazGcf4YiPB7gVLjH6
-	vlhlbVAgjshKtzLQgN1mqxXXnfozEZpLUqZEKD5To7w=
-From: =?utf-8?q?Bence_Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>
-Date: Mon, 25 Aug 2025 14:52:09 +0200
-Subject: [PATCH v2] ARM: dts: imx6ul-tx6ul: Switch away from deprecated
- `phy-reset-gpios`
+	s=arc-20240116; t=1756126385; c=relaxed/simple;
+	bh=81kL3J2V1N6FXIm5WMNhZF8RHen8YLtBNuA8rDrU5ek=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ndhqXoXQEqSm9lhwUndc/5yKGy4+8U70WNcqFwfuoI626GLpOUBnRiekhRs4l75j1hGtPcTR5ca0BNUfJ8/T39MFQX1NewAbNQjfFs+CihXf5qx0B+ceFKxAVUNyZ4XVId0xR5N0IWOL0N6Fn01ZRbGM/+pSmyoUcxBHgYCt8WM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3ea2bd7b667so82966815ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 05:53:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756126383; x=1756731183;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lkTreR6OCx3H+Pw90Y+LT36zIuTvnfylxeDrKRmFiAo=;
+        b=ZEZs0eDirWZzWG79a1uA9bqbEfmoV7JWhlOMt0JaEcDO6//lBhfK61+YbUXYtLgL5O
+         cXYH6I1P1FdzxApK3wz7TrXo8kvmuWq6spOnQZTY5bts7OeWmIh9HdGG3ikCYcKLHwaA
+         j3yid4utlYDn47m19stQeaaEPn4sO9IxFShSY76GH7gIACqw+NVkGhzhS04BQlOq6l7L
+         Xw3aLfvbrW2MayjZoWBcNWall11h8+IuAEXWIzcvV1848aaI3R78ofVA25VZKBn5lSCM
+         tychqoUbj1MX/i6yuH62acjDBvXFmwvN8BVbtqDRAToSaZjSJvNsFsWw4g+/enPGqFFM
+         2sVA==
+X-Forwarded-Encrypted: i=1; AJvYcCVU4ZB0GyrHUpGDgVitdnh2RuRgynJQCsKKujQtaM0pH3Zvd7p2mIVC+jZEdB/1uQ1b0fYbpXI1tAqHi2c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2i8LPiI538NzzkgSywXtFlC4Y1EF2iD6BgiLC6HbmZ1mfSm4h
+	cwJJC3nxLyVn6j4+HRyBcVq68Z2oUl72/F7ZV9DgpHkxcQsNZNQwvnPapWA4omQGlwaoB8dRCkh
+	wNJuqm5JldhwcGTXS/xeLzv0yCZS/ErCJFAeYTm8XiQs5EBypxc7fg0ALkD4=
+X-Google-Smtp-Source: AGHT+IH9VM7WDMbdKwJ6HfIcd1PSIxf58Q5RRWOrthTN2CgvCb8nE/O/LyiLEn2k6ILdUdQyR/cyOpLhERhEKuuxgq48n00klPqF
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-ID: <20250825-b4-tx6ul-dt-phy-rst-v2-1-0d3ba9736b0e@prolan.hu>
-X-B4-Tracking: v=1; b=H4sIAHhcrGgC/32OQQ6DIBREr9Kw7m9Bi5aueo/GBQgKiQXzQaMx3
- r3oAbp8ycyb2Ug06Ewkr8tG0MwuuuAzFNcLaa30vQGnM5OCFpw+GQf1gLRU0wA6wWhXwJigll3
- LBJWVoDXJzRFN55bT+mkyKxkNKJS+tYcroOudv39lTAaPvHUxBVzPEzM7Wv/3ZgYMhKq4KRnXQ
- pfvEcMg/c1OpNn3/Qf2ChcS1gAAAA==
-X-Change-ID: 20250815-b4-tx6ul-dt-phy-rst-7afc190a6907
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, "Sascha
- Hauer" <s.hauer@pengutronix.de>, Pengutronix Kernel Team
-	<kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>
-CC: <devicetree@vger.kernel.org>, <imx@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	"Csaba Buday" <buday.csaba@prolan.hu>, =?utf-8?q?Bence_Cs=C3=B3k=C3=A1s?=
-	<csokas.bence@prolan.hu>
-X-Mailer: b4 0.14.2
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1756126334;VERSION=7996;MC=126871935;ID=493941;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A296767155E607067
+X-Received: by 2002:a05:6e02:258b:b0:3e9:eec4:9b53 with SMTP id
+ e9e14a558f8ab-3e9eec49f04mr145733835ab.26.1756126382783; Mon, 25 Aug 2025
+ 05:53:02 -0700 (PDT)
+Date: Mon, 25 Aug 2025 05:53:02 -0700
+In-Reply-To: <20250825102648.5395-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ac5cae.a70a0220.303e5.0002.GAE@google.com>
+Subject: Re: [syzbot] [usb?] BUG: sleeping function called from invalid
+ context in dummy_dequeue
+From: syzbot <syzbot+8baacc4139f12fa77909@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The Ethernet PHY's reset GPIO should be specified in the node of the PHY
-itself, instead of the MAC (`fec`). The latter is deprecated, and was an
-i.MX-specific extension, incompatible with the new reset controller
-subsystem.
+Hello,
 
-Co-developed-by: Csaba Buday <buday.csaba@prolan.hu>
-Signed-off-by: Csaba Buday <buday.csaba@prolan.hu>
-Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
----
-Changes in v2:
-- Remove `reset-names` that was generating warnings
-  - This is how it is already in `polytouch`
-- Also move `etnphy1`'s reset
-- Link to v1: https://lore.kernel.org/r/20250815-b4-tx6ul-dt-phy-rst-v1-1-9b65e315d9d3@prolan.hu
----
- arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul.dtsi | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in dummy_dequeue
 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul.dtsi b/arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul.dtsi
-index f053358bc9317f8447d65013a18670cb470106b2..5c7e9556b5ce823b339798ec8f1bd351afa07185 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul.dtsi
-@@ -246,7 +246,6 @@ &fec1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_enet1 &pinctrl_enet1_mdio &pinctrl_etnphy0_rst>;
- 	phy-mode = "rmii";
--	phy-reset-gpios = <&gpio5 6 GPIO_ACTIVE_LOW>;
- 	phy-supply = <&reg_3v3_etn>;
- 	phy-handle = <&etnphy0>;
- 	status = "okay";
-@@ -262,6 +261,11 @@ etnphy0: ethernet-phy@0 {
- 			pinctrl-0 = <&pinctrl_etnphy0_int>;
- 			interrupt-parent = <&gpio5>;
- 			interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
-+			reset-gpios = <&gpio5 6 GPIO_ACTIVE_LOW>;
-+			reset-assert-us = <100>;
-+			reset-deassert-us = <25000>;
-+			/* Energy detect sometimes causes link failures */
-+			smsc,disable-energy-detect;
- 			status = "okay";
- 		};
- 
-@@ -272,6 +276,9 @@ etnphy1: ethernet-phy@2 {
- 			pinctrl-0 = <&pinctrl_etnphy1_int>;
- 			interrupt-parent = <&gpio4>;
- 			interrupts = <27 IRQ_TYPE_EDGE_FALLING>;
-+			reset-gpios = <&gpio4 28 GPIO_ACTIVE_LOW>;
-+			reset-assert-us = <100>;
-+			reset-deassert-us = <25000>;
- 			status = "okay";
- 		};
- 	};
-@@ -281,7 +288,6 @@ &fec2 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_enet2 &pinctrl_etnphy1_rst>;
- 	phy-mode = "rmii";
--	phy-reset-gpios = <&gpio4 28 GPIO_ACTIVE_LOW>;
- 	phy-supply = <&reg_3v3_etn>;
- 	phy-handle = <&etnphy1>;
- 	status = "disabled";
+------------[ cut here ]------------
+raw_local_irq_restore() called with IRQs enabled
+WARNING: CPU: 0 PID: 6659 at kernel/locking/irqflag-debug.c:10 warn_bogus_irq_restore+0x2a/0x40 kernel/locking/irqflag-debug.c:10
+Modules linked in:
+CPU: 0 UID: 0 PID: 6659 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+RIP: 0010:warn_bogus_irq_restore+0x2a/0x40 kernel/locking/irqflag-debug.c:10
+Code: f3 0f 1e fa 90 80 3d 83 fb 10 04 00 74 07 90 c3 cc cc cc cc cc c6 05 73 fb 10 04 01 90 48 c7 c7 40 ee 0a 8b e8 d7 dc 8c f6 90 <0f> 0b 90 90 90 e9 cc ad 03 00 cc cc cc cc cc cc cc cc cc cc cc cc
+RSP: 0018:ffffc900041378f8 EFLAGS: 00010246
+RAX: 7b813d5b6b8f1700 RBX: 0000000000000000 RCX: ffff888036dc9dc0
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc900041379d8 R08: 0000000000000000 R09: 0000000000000000
+R10: dffffc0000000000 R11: ffffed1017104863 R12: dffffc0000000000
+R13: ffff8880374cde64 R14: 1ffff92000826f28 R15: 0000000000000200
+FS:  00007f4ab96ee6c0(0000) GS:ffff8881268c2000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b34363fff CR3: 000000001da8c000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ dummy_dequeue+0x2d7/0x3d0 drivers/usb/gadget/udc/dummy_hcd.c:786
+ usb_ep_dequeue+0x66/0x250 drivers/usb/gadget/udc/core.c:330
+ raw_process_ep_io+0x5a3/0xaf0 drivers/usb/gadget/legacy/raw_gadget.c:1124
+ raw_ioctl_ep_write drivers/usb/gadget/legacy/raw_gadget.c:1152 [inline]
+ raw_ioctl+0x22dc/0x3ba0 drivers/usb/gadget/legacy/raw_gadget.c:1324
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:598 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:584
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4aba07e7eb
+Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+RSP: 002b:00007f4ab96ecf70 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000000000044 RCX: 00007f4aba07e7eb
+RDX: 00007f4ab96ecff0 RSI: 0000000040085507 RDI: 0000000000000003
+RBP: 0000000000000003 R08: 00007f4aba3d0320 R09: 0000000000000000
+R10: 0000000000000003 R11: 0000000000000246 R12: 0000200000000080
+R13: 000000000000000a R14: 00007f4aba2a5fa0 R15: 00007ffc6e132658
+ </TASK>
 
----
-base-commit: 0cc53520e68bea7fb80fdc6bdf8d226d1b6a98d9
-change-id: 20250815-b4-tx6ul-dt-phy-rst-7afc190a6907
 
-Best regards,
--- 
-Bence Csókás <csokas.bence@prolan.hu>
+Tested on:
 
+commit:         1b237f19 Linux 6.17-rc3
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=144a6862580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e1e1566c7726877e
+dashboard link: https://syzkaller.appspot.com/bug?extid=8baacc4139f12fa77909
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=174aec42580000
 
 
