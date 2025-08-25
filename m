@@ -1,203 +1,144 @@
-Return-Path: <linux-kernel+bounces-783852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD7CAB33381
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 03:25:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E82DB33382
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 03:26:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72802173528
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 01:25:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D914D16F8DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 01:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D12A1F5619;
-	Mon, 25 Aug 2025 01:24:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F222066CE;
+	Mon, 25 Aug 2025 01:26:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="Pc9r9rdw"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="anNkY9sH"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77047194C75
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 01:24:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30FD68834
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 01:26:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756085098; cv=none; b=n/Na8ndOC5/8juPxpi+sFpNRTQ7AzGm9A1gLUouUfx3+nj7ZbgldcozHvstkKeDS+Qf1Sv5XuF5i2YiXlNX3J8UBz1jKeJG+pFJK94oIXMF/khXLGn37NgZLmjo2nt7k9Gf1TFt6ekIIKx6pup0Zg48BpTDMsZVzhtXz53xHP6Y=
+	t=1756085173; cv=none; b=oMMzrYljI7MQH5Cb1csUau3jSUN3n9kbYEuZ5HcDDVXFX7SAxiT9Da2PkZ6Aj3oRrgIJnM7uF5Z97qW03Kn64f0/zJUfjyhbE2l3x0x+nrbppDCOXqcGfW4nTn609ftVI2cAQ4HhdGX7R/Nt4P8l+vy+VXgN827rTYlC+8hMwHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756085098; c=relaxed/simple;
-	bh=3Ffe4JhicSR+c460QtABlIMWYofFkx0O34b53xiizTU=;
-	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=i6vONIKlka1F4pzmJbqz74JX/xPPexZt4DAq52h2d8Lr+2evjBPwDmIxnsx8vphvCumDlvcexfWCBmx4BlBzdmNF8wlo7xJ25sWWjVLAJp+qL5V3wE7UI/IDejGx9Ytd3bk/PleZiFW+C6yzTaHZn8malcVDi5pgPva0J3QtHv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=Pc9r9rdw; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+	s=arc-20240116; t=1756085173; c=relaxed/simple;
+	bh=ldXgaE0ONhb86qsJsXi0FtxoH3OcIHXXwSV+lGOse+s=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=WUDkDVMW7naypxX5b+vSdiKh9H8nL9ptDcNUeujudQ6Y7UUlb45WcCipOTK3obM1vy313yk8Ljr9L6LRzS4NIFGNC9q50jkt+xL/UhkoNHjUNT14PirGkvnK2D8WGDqCBP/WsbwXRS1OKwpL+45jCsYsnKbGCb5yC6eaXkPasIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=anNkY9sH; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-71d603b674aso27091777b3.1
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Aug 2025 18:26:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1756085087;
-	bh=9eI//ifONMcYx8OuZ4RyDvs/wIE713deTiuA/p5E0LQ=;
-	h=Subject:From:To:Cc:Date;
-	b=Pc9r9rdwKIaqaqFzHA42xd2Qij0DYpICdtD6inYMnMEaNit74E9HeNCQSjMXPJfuw
-	 BXaPrlnESDziCtFHqGheuy67ZBJ09aJE44B4x6OcsQxbR8GLAuTn4HLAxfzVDapRwn
-	 uwMR3ac0XAQBt8vgVXVaY1k5uLYYgrM/P0yeSOZNFoG2Agl0iv7iGK+9lG3fXWGwe1
-	 8HPmxKn7y90ohEJmUF6d6UCE815cSOs8Tt3umXNPMUNToPZZr4LzLJcQVP23+QLWZ8
-	 bXPQvlvPbzQnimiYxIIYisQwU3KvWt99aE/fSVg+okhGF+V4EVR7keS5+01VdvvKEL
-	 mGM4DjglucP8w==
-Received: from [192.168.68.112] (unknown [180.150.112.213])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 7653064C1A;
-	Mon, 25 Aug 2025 09:24:45 +0800 (AWST)
-Message-ID: <cb634cffaf0db9d25fb3062f0eee41e03955321f.camel@codeconstruct.com.au>
-Subject: [GIT PULL] aspeed: early devicetree changes for 6.18
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: soc <soc@lists.linux.dev>
-Cc: linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org, Joel Stanley <joel@jms.id.au>
-Date: Mon, 25 Aug 2025 10:54:44 +0930
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+        d=google.com; s=20230601; t=1756085171; x=1756689971; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=b3aLhKf+1bQX6jPVz/mhVq6QH+09EMxI761Jrd6xObQ=;
+        b=anNkY9sHVFceGCAJJaeJasyXMPuXM62FauyraORENpwUusLHF8BbXmKU3Pc6tMhGr0
+         nz4XszGXKrhQfu/YjSu7qFU/COYUh7Mmo6/+CEf9v6abnn60KE8DTHA07J6YQrjbo+ZU
+         uG6hNpm/Fg6g0Na1+vZxsRXWxEgZ3fN6kMe2te/Lvv/4I5DGqQUM4/ktTHVyD90oX8J/
+         nRqHXG8HmG031qGZAglpO6KjjFpQM6qBi2IwbXaHT1TU8utkBYtbL7KEGKOKVTBjbUmm
+         6brMCinIsUSasP2AtY418JLl3VS9QjKG1a7A55Lq4SAQheN5KvZq61jOukvp/M7ymE4V
+         Y1RA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756085171; x=1756689971;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=b3aLhKf+1bQX6jPVz/mhVq6QH+09EMxI761Jrd6xObQ=;
+        b=odvtF9/g5FzamGir4YlGX5lGcBBawsRxa/KZ/Bm02WNrcoI/q/NF9in6XImfilVh+W
+         cje/HYPoSmOsY81ONPNwd3x9gFHPQzsRRthGIvGd7YPR5SNBWXxgNQ9bJI3FHx6VhHCm
+         s3y2Xmk6Tp6iwlTRtK01NAdnj6qt6O9iFjX46EEO5hmRBrG/BCP5uijOoOsbF5gNdEId
+         UYBtqH6c3/zdPSEtWAKDSIWufmZmhQ4KtsnNtu7Tt37Nsza/WW+ppuZUbhNrHmmnimCm
+         xuNOkOxa6n052E8sld7grMKVSG9IrMZ/bQpxZdgGDMvAbJ+SatYZaRKCvqH2dVSBvqya
+         qvEg==
+X-Forwarded-Encrypted: i=1; AJvYcCWHi04oS6YaYXzfO8k4214GwLiiElOVZXlp/mmgE+xQlMgIx2zxMz7hovL7UbydsxEEH3UMTyqGF5/mek4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOO2cUiUg/5FtBySI3s+1ySYy7h4Ik0DsKPUg0VmDEgzLZujX9
+	lDd0pUOTUknOyVGVSMnaoBXif//UbbyIo6UnedTqS3GxXEMlhGkrWIBYUS8aHnTKOw==
+X-Gm-Gg: ASbGncv50MpyUDIfl30tUpK54hBl9GWPQFu4qtjyj2YrVPXQEKpTEwSrabFGM87+3I3
+	QAF70SpMWrVZRS5gJgUQuRaFzJIMOJkS970Ax486zCiXuJov76aBIEF/fXLgPELmJRQGIHJqGQx
+	VU14/ipR26+8LKmqZEEfBjIFVjEv6cIHpNZOEUyh6ytbNw3HsG2GJ2wM4zNBj7blHxL6jRmuWQt
+	soY0gFme/I0OcIskq1zjFRkFV1bmC0v4p9iqZ0FWVu+kJAY0zghf0kb9kwsKDDTXl/0YZMSNLnQ
+	fafLWrqU6PTLdT+gjsGG/ZWVnrZ52i35JHgKorTaLVyVn5mvyAOTWRSIDshEi3vMW5qygqObtcn
+	uS/9f1kSsdK9oHgZdToFPGS6or+xO99K9KV1pQgiu2ig+L35XGEXZ0iRcX0kg48Wwwd6+BPthB/
+	ElhMj8I79zGHcxCQ==
+X-Google-Smtp-Source: AGHT+IESXET44sa1Didt3BQ6M8/RKA8XAwX3ohwCFfZmIhEtpdeEqGT4wCJzBu0c72swRla11eCTgA==
+X-Received: by 2002:a05:690c:94:b0:71a:2093:3558 with SMTP id 00721157ae682-71fdc2abbd8mr130068847b3.10.1756085170475;
+        Sun, 24 Aug 2025 18:26:10 -0700 (PDT)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-71ff1881f12sm14366797b3.38.2025.08.24.18.26.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 Aug 2025 18:26:09 -0700 (PDT)
+Date: Sun, 24 Aug 2025 18:25:14 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+To: Will Deacon <will@kernel.org>, David Hildenbrand <david@redhat.com>
+cc: Hugh Dickins <hughd@google.com>, linux-mm@kvack.org, 
+    linux-kernel@vger.kernel.org, Keir Fraser <keirf@google.com>, 
+    Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>, 
+    Frederick Mayle <fmayle@google.com>, 
+    Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>, 
+    Rik van Riel <riel@surriel.com>, Vlastimil Babka <vbabka@suse.cz>, 
+    Ge Yang <yangge1116@126.com>
+Subject: Re: [PATCH] mm/gup: Drain batched mlock folio processing before
+ attempting migration
+In-Reply-To: <aKM5S4oQYmRIbT3j@willie-the-truck>
+Message-ID: <9e7d31b9-1eaf-4599-ce42-b80c0c4bb25d@google.com>
+References: <20250815101858.24352-1-will@kernel.org> <c5bac539-fd8a-4db7-c21c-cd3e457eee91@google.com> <aKMrOHYbTtDhOP6O@willie-the-truck> <aKM5S4oQYmRIbT3j@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 
-Hello SoC maintainers,
+On Mon, 18 Aug 2025, Will Deacon wrote:
+> On Mon, Aug 18, 2025 at 02:31:42PM +0100, Will Deacon wrote:
+> > On Fri, Aug 15, 2025 at 09:14:48PM -0700, Hugh Dickins wrote:
+> > > I think replace the folio_test_mlocked(folio) part of it by
+> > > (folio_test_mlocked(folio) && !folio_test_unevictable(folio)).
+> > > That should reduce the extra calls to a much more reasonable
+> > > number, while still solving your issue.
+> > 
+> > Alas, I fear that the folio may be unevictable by this point (which
+> > seems to coincide with the readahead fault adding it to the LRU above)
+> > but I can try it out.
+> 
+> I gave this a spin but I still see failures with this change.
 
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585=
-:
+Many thanks, Will, for the precisely relevant traces (in which,
+by the way, mapcount=0 really means _mapcount=0 hence mapcount=1).
 
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+Yes, those do indeed illustrate a case which my suggested
+(folio_test_mlocked(folio) && !folio_test_unevictable(folio))
+failed to cover.  Very helpful to have an example of that.
 
-are available in the Git repository at:
+And many thanks, David, for your reminder of commit 33dfe9204f29
+("mm/gup: clear the LRU flag of a page before adding to LRU batch").
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/bmc/linux.git tags/aspeed=
--6.18-devicetree-0
+Yes, I strongly agree with your suggestion that the mlock batch
+be brought into line with its change to the ordinary LRU batches,
+and agree that doing so will be likely to solve Will's issue
+(and similar cases elsewhere, without needing to modify them).
 
-for you to fetch changes up to b785b5d88cc27a521ea22b3afd85804c4c321d4a:
+Now I just have to cool my head and get back down into those
+mlock batches.  I am fearful that making a change there to suit
+this case will turn out later to break another case (and I just
+won't have time to redevelop as thorough a grasp of the races as
+I had back then).  But if we're lucky, applying that "one batch
+at a time" rule will actually make it all more comprehensible.
 
-  ARM: dts: aspeed: x570d4u: convert NVMEM content to layout syntax (2025-0=
-8-11 09:37:48 +0930)
+(I so wish we had spare room in struct page to keep the address
+of that one batch entry, or the CPU to which that one batch
+belongs: then, although that wouldn't eliminate all uses of
+lru_add_drain_all(), it would allow us to efficiently extract
+a target page from its LRU batch without a remote drain.)
 
-----------------------------------------------------------------
-Early ASPEED devicetree updates for 6.18
+I have not yet begun to write such a patch, and I'm not yet sure
+that it's even feasible: this mail sent to get the polite thank
+yous out of my mind, to help clear it for getting down to work.
 
-Notable changes:
-
-- Meta's Wedge400 and Fuji boards have had parallel devicetrees added for a
-  transition to a new static flash layout. The original layout is deprecate=
-d and
-  I anticipate removing related devicetrees in future releases.
-
-New platforms:
-
-- Darwin (Meta)
-
-  Darwin is Meta's rack switch platform with an AST2600 BMC integrated for
-  health monitoring purpose.
-
-Updates and fixes:
-
-- GB200NVL (Nvidia): Networking, I2C, regulators, GPIOs
-- Wedge400, Fuji (Meta): Fix warnings from devicetree bindings
-- Use fixed-layout for NVMEM on Asrock platforms
-- Various: minor fixes for warnings from FSI devicetree bindings
-
-----------------------------------------------------------------
-Rob Herring (Arm) (3):
-      ARM: dts: aspeed: Drop "no-gpio-delays"
-      ARM: dts: aspeed: Drop "fsi-master" compatibles
-      ARM: dts: aspeed: Add missing "ibm,spi-fsi" compatibles
-
-Tan Siewert (4):
-      ARM: dts: aspeed: e3c246d4i: convert NVMEM content to layout syntax
-      ARM: dts: aspeed: e3c256d4i: convert NVMEM content to layout syntax
-      ARM: dts: aspeed: romed8hm3: convert NVMEM content to layout syntax
-      ARM: dts: aspeed: x570d4u: convert NVMEM content to layout syntax
-
-Tao Ren (13):
-      ARM: dts: aspeed: wedge400: Fix DTB warnings
-      ARM: dts: aspeed: fuji: Fix DTB warnings
-      ARM: dts: aspeed: Fix DTB warnings in ast2600-facebook-netbmc-common.=
-dtsi
-      ARM: dts: aspeed: Move eMMC out of ast2600-facebook-netbmc-common.dts=
-i
-      ARM: dts: aspeed: Add facebook-bmc-flash-layout-128-data64.dtsi
-      dt-bindings: arm: aspeed: add Facebook Wedge400-data64 board
-      ARM: dts: aspeed: Add Facebook Wedge400-data64 (AST2500) BMC
-      ARM: dts: aspeed: wedge400: Include wedge400-data64.dts
-      dt-bindings: arm: aspeed: add Facebook Fuji-data64 board
-      ARM: dts: aspeed: Add Facebook Fuji-data64 (AST2600) Board
-      ARM: dts: aspeed: facebook-fuji: Include facebook-fuji-data64.dts
-      dt-bindings: arm: aspeed: add Facebook Darwin board
-      ARM: dts: aspeed: Add Facebook Darwin (AST2600) BMC
-
-Willie Thai (4):
-      ARM: dts: aspeed: nvidia: gb200nvl: Add VCC Supply
-      ARM: dts: aspeed: nvidia: gb200nvl: Enable i2c3 bus
-      ARM: dts: aspeed: nvidia: gb200nvl: Repurpose the HMC gpio pin
-      ARM: dts: aspeed: nvidia: gb200nvl: Enable MAC0 for BMC network
-
- Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml           |    3 =
-+
- arch/arm/boot/dts/aspeed/Makefile                                  |    3 =
-+
- arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-e3c246d4i.dts           |   12 =
-+-
- arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-e3c256d4i.dts           |   12 =
-+-
- arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-romed8hm3.dts           |   12 =
-+-
- arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-x570d4u.dts             |   18 =
-+-
- arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dts            |   72 =
-+++++
- arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-elbert.dts            |   12 =
-+
- arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji-data64.dts       | 1256 =
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=
-++++++++
- arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji.dts              | 1247 =
-+--------------------------------------------------------------------------=
--------
- arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge400-data64.dts   |  375 =
-+++++++++++++++++++++++++
- arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge400.dts          |  366 =
-+-----------------------
- arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-everest.dts                |   24 =
-+-
- arch/arm/boot/dts/aspeed/aspeed-bmc-inspur-fp5280g2.dts            |    3 =
-+-
- arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dts        |   54 =
-+++-
- arch/arm/boot/dts/aspeed/aspeed-bmc-opp-lanyang.dts                |    2 =
-+-
- arch/arm/boot/dts/aspeed/aspeed-bmc-opp-mowgli.dts                 |    2 =
-+-
- arch/arm/boot/dts/aspeed/aspeed-bmc-opp-nicole.dts                 |    3 =
-+-
- arch/arm/boot/dts/aspeed/aspeed-bmc-opp-palmetto.dts               |    2 =
-+-
- arch/arm/boot/dts/aspeed/aspeed-bmc-opp-romulus.dts                |    3 =
-+-
- arch/arm/boot/dts/aspeed/aspeed-bmc-opp-witherspoon.dts            |    2 =
-+-
- arch/arm/boot/dts/aspeed/aspeed-bmc-opp-zaius.dts                  |    2 =
-+-
- arch/arm/boot/dts/aspeed/aspeed-g6.dtsi                            |    4 =
-+-
- arch/arm/boot/dts/aspeed/ast2600-facebook-netbmc-common.dtsi       |   22 =
-+-
- arch/arm/boot/dts/aspeed/facebook-bmc-flash-layout-128-data64.dtsi |   60 =
-++++
- arch/arm/boot/dts/aspeed/ibm-power10-dual.dtsi                     |   12 =
-+-
- arch/arm/boot/dts/aspeed/ibm-power10-quad.dtsi                     |   12 =
-+-
- 27 files changed, 1925 insertions(+), 1670 deletions(-)
- create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dts
- create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji-data6=
-4.dts
- create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge400-d=
-ata64.dts
- create mode 100644 arch/arm/boot/dts/aspeed/facebook-bmc-flash-layout-128-=
-data64.dtsi
-
+Hugh
 
