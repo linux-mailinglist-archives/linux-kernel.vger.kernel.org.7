@@ -1,56 +1,105 @@
-Return-Path: <linux-kernel+bounces-785281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13F64B34883
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:21:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD80BB34891
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:23:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C32684871CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:21:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD7971B20BEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:23:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F3F3301006;
-	Mon, 25 Aug 2025 17:21:11 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F58430149A;
-	Mon, 25 Aug 2025 17:21:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA59302779;
+	Mon, 25 Aug 2025 17:21:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="EHkqQjkm"
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316F3307AE8
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 17:21:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756142470; cv=none; b=mc8Dk7bXxpfuObh7ol2C+acm4qHfNEx7FRM8PA4Ls2ZXMYwpvd8JNT9i5UXdkCphg7F+bjIqCeDW6buiHMmsz1022MOZdGJbtkEdaxZuZcTYUv34FEeXSxGVk1QEMwOWURa5WRvaiIPNVmbPatboxgfv0wq6E0ywOc7TDeIlF5c=
+	t=1756142478; cv=none; b=Mu7hwQ4IOEgEw9tEwjq6+AVKvF+KP1qJzIVY9Ko2oSPM/FPlZdb7JMaYKqn0gEeFfIjR/yYdYdSv303xScUqvzCia7tOh33sPu68uj8XbO34HXt6hDnLOJlv9mUmzm+FMWhnchdY2ozoP5ujcRBJL0/STms3RndHpmfNssMD9bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756142470; c=relaxed/simple;
-	bh=Fef28QFM3pdzEgYJzMjoY0eLAKp2+6l3JqBjikHmbRI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E8Puoa1NENqSKhxmUGibqSa9d5Gs1QUEbiPMQvFk+4dDBIA14XyLtgMP0mnRDE0LlBAWldcnw76XWrjOI3vIE9zZbxNUbRgstIEahphqzOXbLjSmJOkY22HGxRscY1WONmHX76ky4Yy0ZMz2byoBUVhHHya3b+vYMFMhHFVON6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7AEC51D70;
-	Mon, 25 Aug 2025 10:20:58 -0700 (PDT)
-Received: from localhost.localdomain (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BB4CE3F63F;
-	Mon, 25 Aug 2025 10:21:04 -0700 (PDT)
-From: Andre Przywara <andre.przywara@arm.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	Samuel Holland <samuel@sholland.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Corentin LABBE <clabbe.montjoie@gmail.com>,
-	Paul Kocialkowski <paulk@sys-base.io>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@lists.linux.dev
-Subject: [PATCH net-next] net: stmmac: sun8i: drop unneeded default syscon value
-Date: Mon, 25 Aug 2025 18:20:55 +0100
-Message-ID: <20250825172055.19794-1-andre.przywara@arm.com>
-X-Mailer: git-send-email 2.46.3
+	s=arc-20240116; t=1756142478; c=relaxed/simple;
+	bh=D00Agu9o5lMwHglRF8JEmN9Mz2SwGM8gIpQ2brQAJHQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tvr2FoMSQKV8XRuCKXtwU2Ll42EB0nFUNZRQt5eUZkFYFjJv9lpdNjuPm9e+yy0f4NequFhE6C2hZySZRZGhT6R1SCP9IrGd4BsHg5iXTMiNOT1v5+3X1uXy2NzvTcG1OGeuTYD0HXF1R+323hcQDYnVwXCepN/Yb6yauMkw3/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=EHkqQjkm; arc=none smtp.client-ip=209.85.166.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-88432d932d6so55264439f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 10:21:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1756142475; x=1756747275; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RmHcfUIrXFFWAxyqlPf+YQqXo4C+Q0QbA66Hg5xFlzs=;
+        b=EHkqQjkmXHu8VAQtdYG8cdjzazIyFYR6KVsULolaId2YSJb8tec/DZ6WAMe5Yv9hmj
+         B3oEm1VKK/Tfk4ZS1ycwWT4jJutHBsgHPkusAFl7oDkJ5jAh4fCAAtNl8U3wAq/qAGiZ
+         bR4tohcCEaC7zBiCd0p+HGeVmmpgOobMmVN7XnB7ANGMhrS0lJ69c7Ep7dl72G0yvfwc
+         QPjkpeedfzoObWjwUewS15eGBPtFFWWUTcBTZnXsxdflFBswU/Ddm1E2uAZumVpY9fMC
+         e290i9mzQjWOh6rbPBwkgyjXTjqbtj/Fw+3p77BW87k/BxX/ofv4Mi3XmKlmA3OesvF5
+         BNrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756142475; x=1756747275;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RmHcfUIrXFFWAxyqlPf+YQqXo4C+Q0QbA66Hg5xFlzs=;
+        b=worhshlH/YJmaRAbTBhGRlpydf7UgDOYbH2jXW7k0n7npNuIrYMSMaIn3J/QTgiC+7
+         hsW8/k6SzfBfkpEAqZilgkhxTyRRj/V1NEhDYFZZlbLyEa+ek7uij6ayH4f9/5oGP5uG
+         cQRXuZ5YLzyYR/ZnfHaKrMjsqHmUw4yQflB26Z7O/PcXdbyBdpi6REeMKX8YRphgrx+q
+         IvP8h1RoEUKtDPt76RzAKpOH4hVGAo1Cnyt6pacoYKQpac/zMYYJTYAagPy0BrHhfkZm
+         D0+hDazuSHMY750rp6pxsFozuv8cTeAvnXBJPv/TKKKqFvWYgspbGhhiL6CWk6RBuuLc
+         +uHA==
+X-Forwarded-Encrypted: i=1; AJvYcCV0Xgmcj2m0N483Du/2cqYIJxuv8+VX6wk0AP4Ay+47Xe3ETAKqq0QSedF6qfnb67+7W++RE1ihMKgvVos=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxU90qyTnteJvOSkBDXoN4jYNxVS2tx2Jbs6CA2hj9cm0b3Ow/o
+	HoXrU0U2DWT15CzePMcwgJEABAOCHRX1Bvg8v6wryQPmPYnpNgQK3MiGnI1XhpTWjlw=
+X-Gm-Gg: ASbGncsm+DHYclgu2pmzgE0MxvSutdMt2ccg/HwRNlb6dhB37pZwE5HVhzPD9FRricV
+	zO/RUEEUrzBsbhH1PAgGNfnm0ot9MYbLFAFcJ5NrkrjaAtkq0k+i+auD2K+0MGcCrTEuzjf8en4
+	jDUrVxiEGpfXm7eUYMQ9lmXodlYbyMlRRAgkt3paF7qylaQGyUbgX8Ylv+dCK10QSq7+Oa7fgjb
+	Fj0j3xQxdpdLFUCD7JvyQvzpbRN3w3LOfooqDWeHM1VHKf2i2OAL4TOpRIWp/XQjWCWbrLQ5jtz
+	n6VcL9/7ipx8DMwXJFql02URjIU/xhf0HwFqvjOqYs0LvBz2nmD+B/C0GSCVo/a5zxmC62eSVWl
+	vNJKZ05Sr4Qib3n0c3bDW0cYFy/TICHS03TXXaCEyd5BRp6X+5IHWlTnSSMbmpDbSHA==
+X-Google-Smtp-Source: AGHT+IFaVPmcRIepO8mSzmP9PzGXjZwSc4TayWxRM79v7g/HByE5zJt50D0eHv9Uu2pV8a3THcTTMA==
+X-Received: by 2002:a05:6602:3a84:b0:881:6cf9:b8df with SMTP id ca18e2360f4ac-886bd1baf78mr1747744339f.10.1756142475231;
+        Mon, 25 Aug 2025 10:21:15 -0700 (PDT)
+Received: from zippy.localdomain (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-886e60c4737sm76275439f.26.2025.08.25.10.21.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Aug 2025 10:21:15 -0700 (PDT)
+From: Alex Elder <elder@riscstar.com>
+To: lee@kernel.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	alexandre.belloni@bootlin.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: mat.jonczyk@o2.pl,
+	dlan@gentoo.org,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	linux.amoon@gmail.com,
+	troymitchell988@gmail.com,
+	guodong@riscstar.com,
+	linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v13 7/7] riscv: dts: spacemit: define regulator constraints
+Date: Mon, 25 Aug 2025 12:20:56 -0500
+Message-ID: <20250825172057.163883-8-elder@riscstar.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250825172057.163883-1-elder@riscstar.com>
+References: <20250825172057.163883-1-elder@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,197 +108,130 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-For some odd reason we were very jealous about the value of the EMAC
-clock register from the syscon block, insisting on a reset value and
-only doing read-modify-write operations on that register, even though we
-pretty much know the register layout.
-This already led to a basically redundant entry for the H6, which only
-differs by that value. We seem to have the same situation with the new
-A523 SoC, which again is compatible to the A64, but has a different
-syscon reset value.
+Define basic constraints for the regulators in the SpacemiT P1 PMIC,
+as implemented in the Banana Pi BPI-F3.
 
-Drop any assumptions about that value, and set or clear the bits that we
-want to program, from scratch (starting with a value of 0). For the
-remove() implementation, we just turn on the POWERDOWN bit, and deselect
-the internal PHY, which mimics the existing code.
-
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
-Acked-by: Corentin LABBE <clabbe.montjoie@gmail.com>
-Tested-by: Corentin LABBE <clabbe.montjoie@gmail.com>
-Tested-by: Paul Kocialkowski <paulk@sys-base.io>
-Reviewed-by: Paul Kocialkowski <paulk@sys-base.io>
+Signed-off-by: Alex Elder <elder@riscstar.com>
 ---
-Hi,
+ .../boot/dts/spacemit/k1-bananapi-f3.dts      | 104 ++++++++++++++++++
+ 1 file changed, 104 insertions(+)
 
-this follows up on my RFC post from April[1]. We figured that the old
-approach (insisting on a certain reset value) was never really needed, and
-some people tested this on various hardware, many thanks for that!
-
-No real changes except solving one conflict after rebasing on top of
-v6.17-rc1, and adding the tags from the diligent reviewers!
-
-Cheers,
-Andre
-
-[1] https://lore.kernel.org/netdev/20250423095222.1517507-1-andre.przywara@arm.com/
-
- .../net/ethernet/stmicro/stmmac/dwmac-sun8i.c | 47 ++-----------------
- 1 file changed, 4 insertions(+), 43 deletions(-)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-index 2796dc426943e..690f3650f84ed 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-@@ -31,10 +31,6 @@
-  */
- 
- /* struct emac_variant - Describe dwmac-sun8i hardware variant
-- * @default_syscon_value:	The default value of the EMAC register in syscon
-- *				This value is used for disabling properly EMAC
-- *				and used as a good starting value in case of the
-- *				boot process(uboot) leave some stuff.
-  * @syscon_field		reg_field for the syscon's gmac register
-  * @soc_has_internal_phy:	Does the MAC embed an internal PHY
-  * @support_mii:		Does the MAC handle MII
-@@ -48,7 +44,6 @@
-  *				value of zero indicates this is not supported.
-  */
- struct emac_variant {
--	u32 default_syscon_value;
- 	const struct reg_field *syscon_field;
- 	bool soc_has_internal_phy;
- 	bool support_mii;
-@@ -94,7 +89,6 @@ static const struct reg_field sun8i_ccu_reg_field = {
+diff --git a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
+index a11a60b9f369b..a9a2596a94e89 100644
+--- a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
++++ b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
+@@ -68,6 +68,110 @@ pmic@41 {
+ 		compatible = "spacemit,p1";
+ 		reg = <0x41>;
+ 		interrupts = <64>;
++		vin-supply = <&reg_vcc_4v>;
++
++		regulators {
++			buck1 {
++				regulator-min-microvolt = <500000>;
++				regulator-max-microvolt = <3450000>;
++				regulator-ramp-delay = <5000>;
++				regulator-always-on;
++			};
++
++			buck2 {
++				regulator-min-microvolt = <500000>;
++				regulator-max-microvolt = <3450000>;
++				regulator-ramp-delay = <5000>;
++				regulator-always-on;
++			};
++
++			buck3 {
++				regulator-min-microvolt = <500000>;
++				regulator-max-microvolt = <1800000>;
++				regulator-ramp-delay = <5000>;
++				regulator-always-on;
++			};
++
++			buck4 {
++				regulator-min-microvolt = <500000>;
++				regulator-max-microvolt = <3300000>;
++				regulator-ramp-delay = <5000>;
++				regulator-always-on;
++			};
++
++			buck5 {
++				regulator-min-microvolt = <500000>;
++				regulator-max-microvolt = <3450000>;
++				regulator-ramp-delay = <5000>;
++				regulator-always-on;
++			};
++
++			buck6 {
++				regulator-min-microvolt = <500000>;
++				regulator-max-microvolt = <3450000>;
++				regulator-ramp-delay = <5000>;
++				regulator-always-on;
++			};
++
++			aldo1 {
++				regulator-min-microvolt = <500000>;
++				regulator-max-microvolt = <3400000>;
++				regulator-boot-on;
++			};
++
++			aldo2 {
++				regulator-min-microvolt = <500000>;
++				regulator-max-microvolt = <3400000>;
++			};
++
++			aldo3 {
++				regulator-min-microvolt = <500000>;
++				regulator-max-microvolt = <3400000>;
++			};
++
++			aldo4 {
++				regulator-min-microvolt = <500000>;
++				regulator-max-microvolt = <3400000>;
++			};
++
++			dldo1 {
++				regulator-min-microvolt = <500000>;
++				regulator-max-microvolt = <3400000>;
++				regulator-boot-on;
++			};
++
++			dldo2 {
++				regulator-min-microvolt = <500000>;
++				regulator-max-microvolt = <3400000>;
++			};
++
++			dldo3 {
++				regulator-min-microvolt = <500000>;
++				regulator-max-microvolt = <3400000>;
++			};
++
++			dldo4 {
++				regulator-min-microvolt = <500000>;
++				regulator-max-microvolt = <3400000>;
++				regulator-always-on;
++			};
++
++			dldo5 {
++				regulator-min-microvolt = <500000>;
++				regulator-max-microvolt = <3400000>;
++			};
++
++			dldo6 {
++				regulator-min-microvolt = <500000>;
++				regulator-max-microvolt = <3400000>;
++				regulator-always-on;
++			};
++
++			dldo7 {
++				regulator-min-microvolt = <500000>;
++				regulator-max-microvolt = <3400000>;
++			};
++		};
+ 	};
  };
  
- static const struct emac_variant emac_variant_h3 = {
--	.default_syscon_value = 0x58000,
- 	.syscon_field = &sun8i_syscon_reg_field,
- 	.soc_has_internal_phy = true,
- 	.support_mii = true,
-@@ -105,14 +99,12 @@ static const struct emac_variant emac_variant_h3 = {
- };
- 
- static const struct emac_variant emac_variant_v3s = {
--	.default_syscon_value = 0x38000,
- 	.syscon_field = &sun8i_syscon_reg_field,
- 	.soc_has_internal_phy = true,
- 	.support_mii = true
- };
- 
- static const struct emac_variant emac_variant_a83t = {
--	.default_syscon_value = 0,
- 	.syscon_field = &sun8i_syscon_reg_field,
- 	.soc_has_internal_phy = false,
- 	.support_mii = true,
-@@ -122,7 +114,6 @@ static const struct emac_variant emac_variant_a83t = {
- };
- 
- static const struct emac_variant emac_variant_r40 = {
--	.default_syscon_value = 0,
- 	.syscon_field = &sun8i_ccu_reg_field,
- 	.support_mii = true,
- 	.support_rgmii = true,
-@@ -130,7 +121,6 @@ static const struct emac_variant emac_variant_r40 = {
- };
- 
- static const struct emac_variant emac_variant_a64 = {
--	.default_syscon_value = 0,
- 	.syscon_field = &sun8i_syscon_reg_field,
- 	.soc_has_internal_phy = false,
- 	.support_mii = true,
-@@ -141,7 +131,6 @@ static const struct emac_variant emac_variant_a64 = {
- };
- 
- static const struct emac_variant emac_variant_h6 = {
--	.default_syscon_value = 0x50000,
- 	.syscon_field = &sun8i_syscon_reg_field,
- 	/* The "Internal PHY" of H6 is not on the die. It's on the
- 	 * co-packaged AC200 chip instead.
-@@ -933,25 +922,11 @@ static int sun8i_dwmac_set_syscon(struct device *dev,
- 	struct sunxi_priv_data *gmac = plat->bsp_priv;
- 	struct device_node *node = dev->of_node;
- 	int ret;
--	u32 reg, val;
--
--	ret = regmap_field_read(gmac->regmap_field, &val);
--	if (ret) {
--		dev_err(dev, "Fail to read from regmap field.\n");
--		return ret;
--	}
--
--	reg = gmac->variant->default_syscon_value;
--	if (reg != val)
--		dev_warn(dev,
--			 "Current syscon value is not the default %x (expect %x)\n",
--			 val, reg);
-+	u32 reg = 0, val;
- 
- 	if (gmac->variant->soc_has_internal_phy) {
- 		if (of_property_read_bool(node, "allwinner,leds-active-low"))
- 			reg |= H3_EPHY_LED_POL;
--		else
--			reg &= ~H3_EPHY_LED_POL;
- 
- 		/* Force EPHY xtal frequency to 24MHz. */
- 		reg |= H3_EPHY_CLK_SEL;
-@@ -965,11 +940,6 @@ static int sun8i_dwmac_set_syscon(struct device *dev,
- 		 * address. No need to mask it again.
- 		 */
- 		reg |= ret << H3_EPHY_ADDR_SHIFT;
--	} else {
--		/* For SoCs without internal PHY the PHY selection bit should be
--		 * set to 0 (external PHY).
--		 */
--		reg &= ~H3_EPHY_SELECT;
- 	}
- 
- 	if (!of_property_read_u32(node, "allwinner,tx-delay-ps", &val)) {
-@@ -980,8 +950,6 @@ static int sun8i_dwmac_set_syscon(struct device *dev,
- 		val /= 100;
- 		dev_dbg(dev, "set tx-delay to %x\n", val);
- 		if (val <= gmac->variant->tx_delay_max) {
--			reg &= ~(gmac->variant->tx_delay_max <<
--				 SYSCON_ETXDC_SHIFT);
- 			reg |= (val << SYSCON_ETXDC_SHIFT);
- 		} else {
- 			dev_err(dev, "Invalid TX clock delay: %d\n",
-@@ -998,8 +966,6 @@ static int sun8i_dwmac_set_syscon(struct device *dev,
- 		val /= 100;
- 		dev_dbg(dev, "set rx-delay to %x\n", val);
- 		if (val <= gmac->variant->rx_delay_max) {
--			reg &= ~(gmac->variant->rx_delay_max <<
--				 SYSCON_ERXDC_SHIFT);
- 			reg |= (val << SYSCON_ERXDC_SHIFT);
- 		} else {
- 			dev_err(dev, "Invalid RX clock delay: %d\n",
-@@ -1008,11 +974,6 @@ static int sun8i_dwmac_set_syscon(struct device *dev,
- 		}
- 	}
- 
--	/* Clear interface mode bits */
--	reg &= ~(SYSCON_ETCS_MASK | SYSCON_EPIT);
--	if (gmac->variant->support_rmii)
--		reg &= ~SYSCON_RMII_EN;
--
- 	switch (plat->mac_interface) {
- 	case PHY_INTERFACE_MODE_MII:
- 		/* default */
-@@ -1039,9 +1000,9 @@ static int sun8i_dwmac_set_syscon(struct device *dev,
- 
- static void sun8i_dwmac_unset_syscon(struct sunxi_priv_data *gmac)
- {
--	u32 reg = gmac->variant->default_syscon_value;
--
--	regmap_field_write(gmac->regmap_field, reg);
-+	if (gmac->variant->soc_has_internal_phy)
-+		regmap_field_write(gmac->regmap_field,
-+				   (H3_EPHY_SHUTDOWN | H3_EPHY_SELECT));
- }
- 
- static void sun8i_dwmac_exit(struct platform_device *pdev, void *priv)
 -- 
-2.46.3
+2.48.1
 
 
