@@ -1,286 +1,273 @@
-Return-Path: <linux-kernel+bounces-784867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4209AB342B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:08:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54CCFB342BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:09:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D4412A15B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:03:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73F091B23167
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4418A2F39D4;
-	Mon, 25 Aug 2025 13:59:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E7552ED871;
+	Mon, 25 Aug 2025 14:01:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="H/QoveyH"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="En9QrIes"
+Received: from relay12.grserver.gr (relay12.grserver.gr [88.99.38.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3C72F39B3
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 13:59:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFDB71DDC35
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 14:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.99.38.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756130384; cv=none; b=rsp46F3jrj64Antk/axP7+bmq0MOiNlP0ltHVzi4Hrtxb/PllbEIpoz4Uw5yjoIiZ6lSZJhSQVSunRcSo8xt8NBrAF2R3kk7/WTtqB+Vbh7nwWJhs1wbjphnNqTuUPMoyMdkY2kzFEB5fMkU7KzQV9iQjOlfA6vXQlkr6wcpKh8=
+	t=1756130481; cv=none; b=l3od6Z32SUg2JtudRJDf2KG3VZjlMq0Rc+lwCDKRTkb0mlqmDrchNk/LNyH8rDF4DAhRQ6pm9HfYf8KyY0Qf3dNQ5SvOKaPaCfHh4rr/C30g7hpo0qTZ7JMX/AbhxL6JLXSWbT4YrWwuBdKtdDvuzNF7fGyFEra9tybr68RvCs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756130384; c=relaxed/simple;
-	bh=v3Gi5YTVW/Cp+kTwx9Yt+qf7HZfn+UuKaA8V/d2uE4k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=p45hVUJrbJaD0lGd9xnsajDdAvCQwnfRQOTg/W8mhsk8QBU8M0qvtJfuy1VpC0eqzvws/GMC0+c/+W+P6ZT/PLN3+OFIheoVouycyYW8cqxAXrIxhGc0pcuZEyyr70YK+smG82AWooE1TZdtOUcnoSXpuAquikQLhrnVFLMbWqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=H/QoveyH; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250825135940euoutp01088ae6d021aebf4d5f2ab7595504d3f1~fB0a8QzIt2098920989euoutp01Q
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 13:59:40 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250825135940euoutp01088ae6d021aebf4d5f2ab7595504d3f1~fB0a8QzIt2098920989euoutp01Q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756130380;
-	bh=3cyM1i33QvECmO3VGKlA/wlGJx1DA9pp0W8lw/26QYE=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=H/QoveyHvcQzgAot0x+iV8pueXg2ZF17RltiPR+t9D4LGAbmuTUpK/i5J4E4k2rEw
-	 4kfZJa7nIgD93f+cROxKac2b6uv7VgEXVwaOUIgnLL/iW3Tx1P/csXm9SpPglW4QnL
-	 TXqsmgkHfSM6bOpECYJwGnrLu0flq/wiDZOyyKDw=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250825135939eucas1p206b6e2b5ba115f51618c773a1f37939c~fB0ajcpg01631516315eucas1p2u;
-	Mon, 25 Aug 2025 13:59:39 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250825135937eusmtip155667559731c29c009ae9b30c1a36298~fB0Y2twp60569705697eusmtip1V;
-	Mon, 25 Aug 2025 13:59:37 +0000 (GMT)
-Message-ID: <4066c0b4-807f-401e-baaa-25f4891f10ac@samsung.com>
-Date: Mon, 25 Aug 2025 15:59:37 +0200
+	s=arc-20240116; t=1756130481; c=relaxed/simple;
+	bh=BNlC+X/u+vxxZ33ItBWMZNNv+hGMli5lnn1SFZ2Ibtg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e7FHqmtvpjWnT9R5fvhREXZ/dfMa57FhsyFBWFYeXDY2i7nufk5PjqAAyu8NMFMMIGkB3Wk1hmySMq+9jX8A1uaGZe5wWCZOkF0s8p8aO9b4nhbkGM76CY4NBYhWCjNHfzrzHXatsmOeLA4DEq3C4I6RYlAPW3SQzrYrm5FDQSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=En9QrIes; arc=none smtp.client-ip=88.99.38.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from relay12 (localhost [127.0.0.1])
+	by relay12.grserver.gr (Proxmox) with ESMTP id D4B06BCF33
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 17:01:15 +0300 (EEST)
+Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by relay12.grserver.gr (Proxmox) with ESMTPS id E5594BDE7A
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 17:01:14 +0300 (EEST)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id 5837C2065D1
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 17:01:14 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1756130474;
+	bh=jUm2cs0MxLstzqDw/bvRmVyb9uCYh++AUfp1YcHAGdU=;
+	h=Received:From:Subject:To;
+	b=En9QrIesrVMxifxudMY0uxgeoiSnjHoH2g1t8YIWyY5NownljF3T8soWpBDFZ/WDX
+	 wvGmZaVCwzDH7Npy577+WMK+aFzX2ne9QYZENfSd7i2LvcvfcOv8kgRHgUmcfy+Iaj
+	 hEtyeB1A8U9w7KD8rEI3kXaCgVzgcKnGCqX1McRN+PJVLOuDRtwA+ouV/6xrCwofhh
+	 Qrbznb3JeOx2K8lgA6eX0kX8utrrMY3PyFyKHFoS0uPsODTKELqT8sMlMo8qpb3P6E
+	 vgbVQS9TBS7D5g6b3mPk6oJ4tzoS1spCT+4BnZis5/Dw1vSQm9UtUY+klm25F3av1H
+	 O4niIkpQ6lFWA==
+Authentication-Results: linux3247.grserver.gr;
+        spf=pass (sender IP is 209.85.208.180) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f180.google.com
+Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f180.google.com with SMTP id
+ 38308e7fff4ca-3367e0f9c1cso3955851fa.3
+        for <linux-kernel@vger.kernel.org>;
+ Mon, 25 Aug 2025 07:01:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWuUzy8KhV/lHlh3H8a8rChO79fX33h7m0QRnVVCBuJRzIwifJZoGRxk/cY+ltUxR70RGn4oJWxsDO/Nuc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXobFE42qDQvy9vH3GhO21blRCIKIdI9OppSBnADoLdF6ZzyyF
+	agImDG0advY2MERtcGEP2WO8X2awau9Ofvzd1LpklUAg+Yvzpy2NkUdvaKoXBa3/kFw7vjfxF27
+	18ATkca6Ii6jW9+z7GoVy0OosSLb1Qes=
+X-Google-Smtp-Source: 
+ AGHT+IEgIFu2a7sSoFRT1MWLt6wWj0nqliXMoBwBzszCtWscNMu9jYuezQU31rkuIloH/F6+esORXsebg9pTT8CGEEQ=
+X-Received: by 2002:a2e:bc02:0:b0:336:527a:5b4d with SMTP id
+ 38308e7fff4ca-336527a5f6bmr35365301fa.19.1756130473726; Mon, 25 Aug 2025
+ 07:01:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH v4 2/7] OPP: Move refcount and key update for
- readability in _opp_table_find_key()
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, Viresh
-	Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd
-	<sboyd@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Manivannan
-	Sadhasivam <mani@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring
-	<robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Bjorn Andersson
-	<andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Krzysztof
-	Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20250820-opp_pcie-v4-2-273b8944eed0@oss.qualcomm.com>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250825135939eucas1p206b6e2b5ba115f51618c773a1f37939c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250825135939eucas1p206b6e2b5ba115f51618c773a1f37939c
-X-EPHeader: CA
-X-CMS-RootMailID: 20250825135939eucas1p206b6e2b5ba115f51618c773a1f37939c
-References: <20250820-opp_pcie-v4-0-273b8944eed0@oss.qualcomm.com>
-	<20250820-opp_pcie-v4-2-273b8944eed0@oss.qualcomm.com>
-	<CGME20250825135939eucas1p206b6e2b5ba115f51618c773a1f37939c@eucas1p2.samsung.com>
+References: <20250824085351.454619-1-lkml@antheas.dev>
+ <CADnq5_MEhMha47V25SK4cZkd8TLcizR_y0si2n9jSDjJTXeoRQ@mail.gmail.com>
+ <CAGwozwF=UKhG0HU_cxaY8957rscY=W4_VK+z==3vkKJJWZehzQ@mail.gmail.com>
+In-Reply-To: 
+ <CAGwozwF=UKhG0HU_cxaY8957rscY=W4_VK+z==3vkKJJWZehzQ@mail.gmail.com>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Mon, 25 Aug 2025 16:01:00 +0200
+X-Gmail-Original-Message-ID: 
+ <CAGwozwFmfBrnZBO6JRZPnPyHLrKycdnoMRtOkK+KpwkdQ4Fw=w@mail.gmail.com>
+X-Gm-Features: Ac12FXyQXp39OEOxY06bF-IxIMDwCeQYQShgDJkivBsTcvO9jU_0oGLfwxsrQbI
+Message-ID: 
+ <CAGwozwFmfBrnZBO6JRZPnPyHLrKycdnoMRtOkK+KpwkdQ4Fw=w@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] drm/amdgpu/vpe: increase VPE_IDLE_TIMEOUT to fix
+ hang on Strix Halo
+To: Alex Deucher <alexdeucher@gmail.com>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Harry Wentland <harry.wentland@amd.com>,
+ Rodrigo Siqueira <siqueira@igalia.com>,
+	Mario Limonciello <mario.limonciello@amd.com>, Peyton Lee <peytolee@amd.com>,
+ Lang Yu <lang.yu@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-PPP-Message-ID: 
+ <175613047460.1417602.8625552377519639664@linux3247.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
+X-Virus-Status: Clean
 
-On 20.08.2025 10:28, Krishna Chaitanya Chundru wrote:
-> Refactor _opp_table_find_key() to improve readability by moving the
-> reference count increment and key update inside the match condition block.
+On Mon, 25 Aug 2025 at 15:33, Antheas Kapenekakis <lkml@antheas.dev> wrote:
 >
-> Also make the 'assert' check mandatory instead of treating it as optional.
+> On Mon, 25 Aug 2025 at 15:20, Alex Deucher <alexdeucher@gmail.com> wrote:
+> >
+> > On Mon, Aug 25, 2025 at 3:13=E2=80=AFAM Antheas Kapenekakis <lkml@anthe=
+as.dev> wrote:
+> > >
+> > > On the Asus Z13 2025, which uses a Strix Halo platform, around 8% of =
+the
+> > > suspend resumes result in a soft lock around 1 second after the scree=
+n
+> > > turns on (it freezes). This happens due to power gating VPE when it i=
+s
+> > > not used, which happens 1 second after inactivity.
+> > >
+> > > Specifically, the VPE gating after resume is as follows: an initial
+> > > ungate, followed by a gate in the resume process. Then,
+> > > amdgpu_device_delayed_init_work_handler with a delay of 2s is schedul=
+ed
+> > > to run tests, one of which is testing VPE in vpe_ring_test_ib. This
+> > > causes an ungate, After that test, vpe_idle_work_handler is scheduled
+> > > with VPE_IDLE_TIMEOUT (1s).
+> > >
+> > > When vpe_idle_work_handler runs and tries to gate VPE, it causes the
+> > > SMU to hang and partially freezes half of the GPU IPs, with the threa=
+d
+> > > that called the command being stuck processing it.
+> > >
+> > > Specifically, after that SMU command tries to run, we get the followi=
+ng:
+> > >
+> > > snd_hda_intel 0000:c4:00.1: Refused to change power state from D0 to =
+D3hot
+> > > ...
+> > > xhci_hcd 0000:c4:00.4: Refused to change power state from D0 to D3hot
+> > > ...
+> > > amdgpu 0000:c4:00.0: amdgpu: SMU: I'm not done with your previous com=
+mand: SMN_C2PMSG_66:0x00000032 SMN_C2PMSG_82:0x00000000
+> > > amdgpu 0000:c4:00.0: amdgpu: Failed to power gate VPE!
+> > > [drm:vpe_set_powergating_state [amdgpu]] *ERROR* Dpm disable vpe fail=
+ed, ret =3D -62.
+> > > amdgpu 0000:c4:00.0: [drm] *ERROR* [CRTC:93:crtc-0] flip_done timed o=
+ut
+> > > amdgpu 0000:c4:00.0: amdgpu: SMU: I'm not done with your previous com=
+mand: SMN_C2PMSG_66:0x00000032 SMN_C2PMSG_82:0x00000000
+> > > amdgpu 0000:c4:00.0: amdgpu: Failed to power gate JPEG!
+> > > [drm:jpeg_v4_0_5_set_powergating_state [amdgpu]] *ERROR* Dpm disable =
+jpeg failed, ret =3D -62.
+> > > amdgpu 0000:c4:00.0: amdgpu: SMU: I'm not done with your previous com=
+mand: SMN_C2PMSG_66:0x00000032 SMN_C2PMSG_82:0x00000000
+> > > amdgpu 0000:c4:00.0: amdgpu: Failed to power gate VCN instance 0!
+> > > [drm:vcn_v4_0_5_stop [amdgpu]] *ERROR* Dpm disable uvd failed, ret =
+=3D -62.
+> > > thunderbolt 0000:c6:00.5: 0: timeout reading config space 1 from 0xd3
+> > > thunderbolt 0000:c6:00.5: 0: timeout reading config space 2 from 0x5
+> > > thunderbolt 0000:c6:00.5: Refused to change power state from D0 to D3=
+hot
+> > > amdgpu 0000:c4:00.0: [drm] *ERROR* [CRTC:97:crtc-1] flip_done timed o=
+ut
+> > > amdgpu 0000:c4:00.0: amdgpu: SMU: I'm not done with your previous com=
+mand: SMN_C2PMSG_66:0x00000032 SMN_C2PMSG_82:0x00000000
+> > > amdgpu 0000:c4:00.0: amdgpu: Failed to power gate VCN instance 1!
+> > >
+> > > In addition to e.g., kwin errors in journalctl. 0000:c4.00.0 is the G=
+PU.
+> > > Interestingly, 0000:c4.00.6, which is another HDA block, 0000:c4.00.5=
+,
+> > > a PCI controller, and 0000:c4.00.2, resume normally. 0x00000032 is th=
+e
+> > > PowerDownVpe(50) command which is the common failure point in all
+> > > failed resumes.
+> > >
+> > > On a normal resume, we should get the following power gates:
+> > > amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownVpe(50) param=
+: 0x00000000, resp: 0x00000001
+> > > amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownJpeg0(33) par=
+am: 0x00000000, resp: 0x00000001
+> > > amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownJpeg1(38) par=
+am: 0x00010000, resp: 0x00000001
+> > > amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownVcn1(4) param=
+: 0x00010000, resp: 0x00000001
+> > > amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownVcn0(6) param=
+: 0x00000000, resp: 0x00000001
+> > > amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerUpVcn0(7) param: =
+0x00000000, resp: 0x00000001
+> > > amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerUpVcn1(5) param: =
+0x00010000, resp: 0x00000001
+> > > amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerUpJpeg0(34) param=
+: 0x00000000, resp: 0x00000001
+> > > amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerUpJpeg1(39) param=
+: 0x00010000, resp: 0x00000001
+> > >
+> > > To fix this, increase VPE_IDLE_TIMEOUT to 2 seconds. This increases
+> > > reliability from 4-25 suspends to 200+ (tested) suspends with a cycle
+> > > time of 12s sleep, 8s resume. The suspected reason here is that 1s th=
+at
+> > > when VPE is used, it needs a bit of time before it can be gated and
+> > > there was a borderline delay before, which is not enough for Strix Ha=
+lo.
+> > > When the VPE is not used, such as on resume, gating it instantly does
+> > > not seem to cause issues.
+> >
+> > This doesn't make much sense.  The VPE idle timeout is arbitrary.  The
+> > VPE idle work handler checks to see if the block is idle before it
+> > powers gates the block. If it's not idle, then the delayed work is
+> > rescheduled so changing the timing should not make a difference.  We
+> > are no powering down VPE while it still has active jobs.  It sounds
+> > like there is some race condition somewhere else.
 >
-> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-
-This patch landed in today's linux-next (20250825) as commit 
-b5323835f050 ("OPP: Reorganize _opp_table_find_key()"). In my tests I 
-found that it causes regressions on my test boards. Reverting this 
-change on top of linux-next fixes booting of all the affected boards.
-
-Here are kernel logs with lockdep enabled:
-
-1. Exynos4412-based Odroid-U3 board (ARM 32bit):
-
-============================================
-WARNING: possible recursive locking detected
-6.17.0-rc3-next-20250825 #10901 Not tainted
---------------------------------------------
-kworker/u16:0/12 is trying to acquire lock:
-cf896040 (&devfreq->lock){+.+.}-{3:3}, at: devfreq_notifier_call+0x30/0x124
-
-but task is already holding lock:
-cf896040 (&devfreq->lock){+.+.}-{3:3}, at: devfreq_monitor+0x1c/0x1a4
-
-other info that might help us debug this:
-  Possible unsafe locking scenario:
-
-        CPU0
-        ----
-   lock(&devfreq->lock);
-   lock(&devfreq->lock);
-
-  *** DEADLOCK ***
-
-  May be due to missing lock nesting notation
-
-4 locks held by kworker/u16:0/12:
-  #0: c289d0b4 ((wq_completion)devfreq_wq){+.+.}-{0:0}, at: 
-process_one_work+0x1b0/0x70c
-  #1: f0899f18 
-((work_completion)(&(&devfreq->work)->work)#2){+.+.}-{0:0}, at: 
-process_one_work+0x1dc/0x70c
-  #2: cf896040 (&devfreq->lock){+.+.}-{3:3}, at: devfreq_monitor+0x1c/0x1a4
-  #3: c2e78c4c (&(&opp_table->head)->rwsem){++++}-{3:3}, at: 
-blocking_notifier_call_chain+0x28/0x60
-
-stack backtrace:
-CPU: 2 UID: 0 PID: 12 Comm: kworker/u16:0 Not tainted 
-6.17.0-rc3-next-20250825 #10901 PREEMPT
-Hardware name: Samsung Exynos (Flattened Device Tree)
-Workqueue: devfreq_wq devfreq_monitor
-Call trace:
-  unwind_backtrace from show_stack+0x10/0x14
-  show_stack from dump_stack_lvl+0x68/0x88
-  dump_stack_lvl from print_deadlock_bug+0x370/0x380
-  print_deadlock_bug from __lock_acquire+0x1428/0x29ec
-  __lock_acquire from lock_acquire+0x134/0x388
-  lock_acquire from __mutex_lock+0xac/0x10c0
-  __mutex_lock from mutex_lock_nested+0x1c/0x24
-  mutex_lock_nested from devfreq_notifier_call+0x30/0x124
-  devfreq_notifier_call from notifier_call_chain+0x84/0x1d4
-  notifier_call_chain from blocking_notifier_call_chain+0x44/0x60
-  blocking_notifier_call_chain from _opp_kref_release+0x3c/0x5c
-  _opp_kref_release from exynos_bus_target+0x24/0x70
-  exynos_bus_target from devfreq_set_target+0x8c/0x2e8
-  devfreq_set_target from devfreq_update_target+0x9c/0xf8
-  devfreq_update_target from devfreq_monitor+0x28/0x1a4
-  devfreq_monitor from process_one_work+0x24c/0x70c
-  process_one_work from worker_thread+0x1b8/0x3bc
-  worker_thread from kthread+0x13c/0x264
-  kthread from ret_from_fork+0x14/0x28
-Exception stack(0xf0899fb0 to 0xf0899ff8)
-
-...
-
-
-2. Exynos5422-based Odroid-XU3 board (ARM 32bit):
-
-8<--- cut here ---
-Unable to handle kernel NULL pointer dereference at virtual address 
-00000000 when read
-[00000000] *pgd=00000000
-Internal error: Oops: 5 [#1] SMP ARM
-Modules linked in:
-CPU: 7 UID: 0 PID: 68 Comm: kworker/u34:1 Not tainted 
-6.17.0-rc3-next-20250825 #10901 PREEMPT
-Hardware name: Samsung Exynos (Flattened Device Tree)
-Workqueue: devfreq_wq devfreq_monitor
-PC is at _opp_compare_key+0x30/0xb4
-LR is at 0xfffffffc
-pc : [<c09831c4>]    lr : [<fffffffc>]    psr: 20000013
-sp : f0a89de0  ip : cfb0e94c  fp : c1574880
-r10: c14095a4  r9 : f0a89e44  r8 : c2a9c010
-r7 : cfb0ea80  r6 : 00000001  r5 : cfb0e900  r4 : 00000001
-r3 : 00000000  r2 : cfb0e900  r1 : cfb0ea80  r0 : cfaf5800
-Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-Control: 10c5387d  Table: 4000406a  DAC: 00000051
-Register r0 information: slab kmalloc-1k start cfaf5800 pointer offset 0 
-size 1024
-Register r1 information: slab kmalloc-128 start cfb0ea80 pointer offset 
-0 size 128
-Register r2 information: slab kmalloc-128 start cfb0e900 pointer offset 
-0 size 128
-Register r3 information: NULL pointer
-Register r4 information: non-paged memory
-Register r5 information: slab kmalloc-128 start cfb0e900 pointer offset 
-0 size 128
-Register r6 information: non-paged memory
-Register r7 information: slab kmalloc-128 start cfb0ea80 pointer offset 
-0 size 128
-Register r8 information: slab kmalloc-1k start c2a9c000 pointer offset 
-16 size 1024
-Register r9 information: 2-page vmalloc region starting at 0xf0a88000 
-allocated at kernel_clone+0x58/0x3c4
-Register r10 information: non-slab/vmalloc memory
-Register r11 information: non-slab/vmalloc memory
-Register r12 information: slab kmalloc-128 start cfb0e900 pointer offset 
-76 size 128
-Process kworker/u34:1 (pid: 68, stack limit = 0x050eb3d7)
-Stack: (0xf0a89de0 to 0xf0a8a000)
-..
-Call trace:
-  _opp_compare_key from _set_opp+0x78/0x50c
-  _set_opp from dev_pm_opp_set_rate+0x15c/0x21c
-  dev_pm_opp_set_rate from panfrost_devfreq_target+0x2c/0x3c
-  panfrost_devfreq_target from devfreq_set_target+0x8c/0x2e8
-  devfreq_set_target from devfreq_update_target+0x9c/0xf8
-  devfreq_update_target from devfreq_monitor+0x28/0x1a4
-  devfreq_monitor from process_one_work+0x24c/0x70c
-  process_one_work from worker_thread+0x1b8/0x3bc
-  worker_thread from kthread+0x13c/0x264
-  kthread from ret_from_fork+0x14/0x28
-Exception stack(0xf0a89fb0 to 0xf0a89ff8)
-...
----[ end trace 0000000000000000 ]---
-
-
-3. Qualcomm Technologies, Inc. Robotics RB5(ARM 64bit):
-
-ufshcd-qcom 1d84000.ufshc: freq-table-hz property not specified
-ufshcd-qcom 1d84000.ufshc: ufshcd_populate_vreg: Unable to find 
-vdd-hba-supply regulator, assuming enabled
-ufshcd-qcom 1d84000.ufshc: Failed to find OPP for MIN frequency
-ufshcd-qcom 1d84000.ufshc: ufshcd_pltfrm_init: OPP parse failed -34
-ufshcd-qcom 1d84000.ufshc: error -ERANGE: ufshcd_pltfrm_init() failed
-ufshcd-qcom 1d84000.ufshc: probe with driver ufshcd-qcom failed with 
-error -34
-
-
-
-> ---
->   drivers/opp/core.c | 14 ++++++--------
->   1 file changed, 6 insertions(+), 8 deletions(-)
+> On resume, the vpe is ungated and gated instantly, which does not
+> cause any crashes, then the delayed work is scheduled to run two
+> seconds later. Then, the tests run and finish, which start the gate
+> timer. After the timer lapses and the kernel tries to gate VPE, it
+> crashes. I logged all SMU commands and there is no difference between
+> the ones in a crash and not, other than the fact the VPE gate command
+> failed. Which becomes apparent when the next command runs. I will also
+> note that until the idle timer lapses, the system is responsive
 >
-> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> index a36c3daac39cd0bdd2a1f7e9bad5b92f0c756153..bf49709b8c39271431772924daf0c003b45eec7f 100644
-> --- a/drivers/opp/core.c
-> +++ b/drivers/opp/core.c
-> @@ -544,24 +544,22 @@ static struct dev_pm_opp *_opp_table_find_key(struct opp_table *opp_table,
->   	struct dev_pm_opp *temp_opp, *opp = ERR_PTR(-ERANGE);
->   
->   	/* Assert that the requirement is met */
-> -	if (assert && !assert(opp_table, index))
-> +	if (!assert(opp_table, index))
->   		return ERR_PTR(-EINVAL);
->   
->   	guard(mutex)(&opp_table->lock);
->   
->   	list_for_each_entry(temp_opp, &opp_table->opp_list, node) {
->   		if (temp_opp->available == available) {
-> -			if (compare(&opp, temp_opp, read(temp_opp, index), *key))
-> +			if (compare(&opp, temp_opp, read(temp_opp, index), *key)) {
-> +				/* Increment the reference count of OPP */
-> +				*key = read(opp, index);
-> +				dev_pm_opp_get(opp);
->   				break;
-> +			}
->   		}
->   	}
->   
-> -	/* Increment the reference count of OPP */
-> -	if (!IS_ERR(opp)) {
-> -		*key = read(opp, index);
-> -		dev_pm_opp_get(opp);
-> -	}
-> -
->   	return opp;
->   }
->   
+> Since the VPE is ungated to run the tests, I assume that in my setup
+> it is not used close to resume.
+
+I should also add that I forced a kernel panic and dumped all CPU
+backtraces in multiple logs. After the softlock, CPUs were either
+parked in the scheduler, powered off, or stuck executing an SMU
+command by e.g., a userspace usage sensor graph. So it is not a
+deadlock.
+
+Antheas
+
+> Antheas
 >
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+> > Alex
+> >
+> > >
+> > > Fixes: 5f82a0c90cca ("drm/amdgpu/vpe: enable vpe dpm")
+> > > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> > > ---
+> > >  drivers/gpu/drm/amd/amdgpu/amdgpu_vpe.c | 4 ++--
+> > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vpe.c b/drivers/gpu/dr=
+m/amd/amdgpu/amdgpu_vpe.c
+> > > index 121ee17b522b..24f09e457352 100644
+> > > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vpe.c
+> > > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vpe.c
+> > > @@ -34,8 +34,8 @@
+> > >  /* VPE CSA resides in the 4th page of CSA */
+> > >  #define AMDGPU_CSA_VPE_OFFSET  (4096 * 3)
+> > >
+> > > -/* 1 second timeout */
+> > > -#define VPE_IDLE_TIMEOUT       msecs_to_jiffies(1000)
+> > > +/* 2 second timeout */
+> > > +#define VPE_IDLE_TIMEOUT       msecs_to_jiffies(2000)
+> > >
+> > >  #define VPE_MAX_DPM_LEVEL                      4
+> > >  #define FIXED1_8_BITS_PER_FRACTIONAL_PART      8
+> > >
+> > > base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+> > > --
+> > > 2.50.1
+> > >
+> > >
+> >
 
 
