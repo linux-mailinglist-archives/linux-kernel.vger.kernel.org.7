@@ -1,216 +1,337 @@
-Return-Path: <linux-kernel+bounces-785128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31DF0B3465A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:54:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 184CEB3465F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:54:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E96242A43F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:54:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 075C61B20654
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A902FDC42;
-	Mon, 25 Aug 2025 15:53:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41DCE2FF667;
+	Mon, 25 Aug 2025 15:54:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="eGG8BoYy"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010044.outbound.protection.outlook.com [52.101.84.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="o0SLw+wP"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91FF7145FE0;
-	Mon, 25 Aug 2025 15:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756137233; cv=fail; b=CvCivFFfK/1+wOVekmK08YFo3yujcP+6pEAldnBAQpcVv0zScQ1pt1SVZCtM3i33rvqzvZd/junwHfcIQfl4QFsL5W6wgR8X8nDk04OaF7NoWrugQZ0/uVRjM/5SzQYEpY73NJJ1YODalEVmud5FQZMgCK7SwFVSgUoNw3cYOtw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756137233; c=relaxed/simple;
-	bh=C7zPiANJuMdqElsm6nT/gBqC+NFy/yc9WMJr7TXejVI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=VjlQMk7RSoGZs+3JUpaMfhiot2RF6y602oFhEwN0aG9cldgDPjFb6jrug3SLeNu0vswuMZ1+vibKu6l1CaLMRV6SaL+N6ddEjdT4jr0Ex/if8t654aG0G69rOlV2qpiew6Odf9NcAuM28gFlBqJIIVZp59qY8hgTnlVAndI4ZSc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=eGG8BoYy; arc=fail smtp.client-ip=52.101.84.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CG7Z+ja4Acf8C1ukxlS4PfiGJ+WZVowHz09yiLc/Iaz5I77uSX5K0SHYlU7ro1kclIgXQy7pOf24F9GzcdpjI+xL/vxRXWNpsdT8upYmpOlJsTybVlbPCjOqHLqtuOeVTHJRXDGAkKaBottywwP2NQBtWZZFDgSaBnfQeIx/sulog8CIUojHrPzoakcWod6mT4BedZ/omMe+9vCSi3470UeuEoMwN74ZH3pfcbb5XvQBjsTvZa00M+0Hgg9uCO/aWByTHgunafOGWcg1fKqRO5O0DOXWOAFRcbFClvStni0oE+ZrG4o4EaMOUNeG89viyfR5bye26ibIGxS5X0hSGA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8vVlSV55pG6kwzqGYXdMSZJdmiHsquJ/TnqXl8lFzzM=;
- b=iynWIE9tCDbTcCnI3+OzP+BJQunbwXLn/jxyy3NxJxgNMFnCKfM226px+z8BtGWiCuwbYEzggAx+bfBNfqMKzNmUboSBXi1zTipbARcz7VNk8cuLZYExAlB7hPGRhFTm962KriOYhvKFMFppyOmyVi1B1nT1aBXcyHCSX8GVtz+S8EkPoyT5eMyPquhu0cgDWqnS9LB3HXLnE+9EkMZj4TrAIImXIS/phUH40j2JKCTPSC97Amsf9DRUmZ6KL4zYv0oRbwpaLeBwNkfVxxIrcQbHkZg4YHSuvJdF6ngLLiEGG03tdN3vqNV03TwsjBv4ld8Yt7JZv2rD0ognFlO1pA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8vVlSV55pG6kwzqGYXdMSZJdmiHsquJ/TnqXl8lFzzM=;
- b=eGG8BoYySF6lCkw37Xh0SxeBiQQcslxfhI16Bntzq5Siu6UCfKggGeNrdieKjP1R5EQqG9CchmZo8FcDoSxJe5JWBNoghYzivOMYvZIUWk6Gq2GhY50Vx37uG7ROCIqz4QplgUjTz+oHLFaDMMgFnCI+b3OuJR1iNdQGfh8/eveCoiCmrOj3dv0hAk/zrlNYrP+PxbVHA1m3dNARRb5wn3gcwocT6hbWnigzoKCGntDi2N0ShwokEQb9xs/fqEF1ag+ZzXIorjUm7arac1XJnRTS+/P2D/UmH3shmRkJ5Kx4qVv+G4FhRfz8l3MFrhcq6hqAYmX2rppcArw7A81ZQQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
- by AM0PR04MB7171.eurprd04.prod.outlook.com (2603:10a6:208:19c::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.13; Mon, 25 Aug
- 2025 15:53:48 +0000
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::e81:b393:ebc5:bc3d]) by DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::e81:b393:ebc5:bc3d%5]) with mapi id 15.20.9073.009; Mon, 25 Aug 2025
- 15:53:48 +0000
-Date: Mon, 25 Aug 2025 11:53:42 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Aswath Govindraju <a-govindraju@ti.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Haibo Chen <haibo.chen@nxp.com>,
-	linux-can@vger.kernel.org, linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 3/5] arm64: dts: imx95-15x15-evk: Use phys to replace
- xceiver-supply
-Message-ID: <aKyHBqT+VG2e7PNf@lizhi-Precision-Tower-5810>
-References: <20250825-can-v2-0-c461e9fcbc14@nxp.com>
- <20250825-can-v2-3-c461e9fcbc14@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250825-can-v2-3-c461e9fcbc14@nxp.com>
-X-ClientProxiedBy: AS4P250CA0018.EURP250.PROD.OUTLOOK.COM
- (2603:10a6:20b:5e3::13) To DB9PR04MB9626.eurprd04.prod.outlook.com
- (2603:10a6:10:309::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5822FE59A
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 15:53:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756137239; cv=none; b=B2eq3vm1fcLpTf7BHWrrE2HXlD39i/vf5Cb5EAydqS2mRT/OTAa4TOAm1c1Y9hkSUpG1q70bD6JSD3ebbvTorD97oR5IrVOl29dAvXy9X1VYB8soPiaM/bs3TMvtTmVJuSR7/zC29vm/to07v7tuLCDOh6AFeeHMdFAHFSkj26k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756137239; c=relaxed/simple;
+	bh=iDIMFaPmP6Ptap4BSySC5MxVV+P3d+K2pyIekorzzbo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=UUXC3HH67Ij8ZC4bGe62fakaK44W1/Fdw56e8UhFdCiqBY3bOfuKO1fhlNYq4ypVN/YU46keFOdeVLWqBRTIpJnii6hKgWWt3C0TkJTpS3YanNZZhNRn+bN2ZOPs67CCKUfCr0ymylSm07jxD+y4efEcdqmE/vUxfsJsVYhl72g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=o0SLw+wP; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-afcb732eee6so793164366b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 08:53:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1756137235; x=1756742035; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3HqowhwKhilGiIPsPTFLVOfvfqilXqLVrLNuX0vYRl8=;
+        b=o0SLw+wPAtkVA9cVDuec/zje+HDAOCIO1NrveoFG195mCQpM9erUKFUZ81uhSvlFpc
+         Laf8qKGtVqBxXsfR3AVXuDf+XXB2xusNPIG5W26KP/xcmtRxpMZ1ic6TshUJTdFiKa/A
+         UwHIIATPuxcsf/hFud1Z4Z/TzB711ipM1B3Z+1wQGu3Y9/Pa9rL1uscKEzAw0vzqLrkF
+         cc3N82hq+7MmmdWhoYaWm9MK/Q3qt/vbvSdtpoddAaBuaWwye3ai6EDx7mJaMZ3ghHgG
+         EzKPBQTTfMgsLWkmONelIVDpKX5rLH5OFUHvw8Cm1S9TycB/EtLvevHkjEyD/ST1iMw+
+         DHLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756137235; x=1756742035;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3HqowhwKhilGiIPsPTFLVOfvfqilXqLVrLNuX0vYRl8=;
+        b=W9TN26djGXWZt6tt5hMi50Sgi0cld+KlKX4MN2R19MT4RYZ1qsbiMOaKXK4D046at3
+         /4nSnYyCpTTXz9NFCA/4jFFkzINUr3lO5OPv/v4HSaVWIqo2z1QM60ct7z9BhRhHpM1W
+         1RGMal2dQq+fLAgAaF8g2tDd9g4FP5+XbtE7fZhwzVcl8SfeCzzrNzlhgmL6sWnUpXxR
+         1ConAj9SBso7yL813TB6HMjxGrsK+/q9aEMcbcQuYaHMxFkOskhlJhCFDyxRPh8s/tGq
+         fyPqXHNs6ZxY55XX6UWZV61xQrlWdxO0u5AuJMKpgDyQxKWe3IuLBk506XxvyUYDuSrf
+         /uQg==
+X-Forwarded-Encrypted: i=1; AJvYcCXAzfEor4N1slYs+aBHmO8DoNIyNkARcDTJeITCi2dXKNHymrsGxBgQ19IU5O6XzXVeB5VxqP8AeBSOAng=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKRCWwy/Q9bEWzQdcMZ9sJijwzGK3ATI6PRT0Yl9VUlgDMZeSf
+	5w3NWWWmDMn9gLboQavIDf8brPlAnxWE8vKVjSOnbBKQWRop6al5MQuEnytxpgotTdE=
+X-Gm-Gg: ASbGncsX63cGeVD5Cfvjb5yVCx2DQN/PR/BbUQXk/8N1aLX90J+/Yx6pYWs4dcmM+Y9
+	L1xG2B10OXRtWd8qAIxr126yFmOVBfboKVlnbbBQvJGjilnvCqEoXuhpPhRojwWsEwca8viy8kg
+	vpzQyyiNuyVndL48IVSKUO1lZFyuL4IV+fVh/lcqqkVJfMZFnFIyzYtzpfUyJ4hJ3EFjKGw9hEZ
+	8PtoV08tNgTAqzqdyyxm4PPHtfXSSTXSuGdlitVpwjdW/x+tE3D8Ek3Mi7tZiIqIsMhzsAno34Z
+	CKOBSpGL17IVLlZKeWyZz+Q12yAfV4dV/+wNn84ArxoVYGLpmylw3uxyBZKjW6sBz77U/726e9s
+	bVZq5eK6+9BiYQL8f2w5k7Ehd40bMsRi0Fvc30NBhYzqe2nnyCqcjGBo5Won/m5vdn75ttuJZFi
+	3tg+g=
+X-Google-Smtp-Source: AGHT+IEDOv6gprEj6Ksbmo7p57Z4tZTNEHhZ9DTRLeOqT0HCwoH6lmCXLeF8Wklr2ttI5zxfbuX7Eg==
+X-Received: by 2002:a17:906:7943:b0:ae3:b2b7:7f2f with SMTP id a640c23a62f3a-afe296e74c2mr1283531066b.40.1756137234813;
+        Mon, 25 Aug 2025 08:53:54 -0700 (PDT)
+Received: from localhost (83-97-14-181.biz.kpn.net. [83.97.14.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe8b5fbc8dsm139360466b.1.2025.08.25.08.53.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Aug 2025 08:53:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|AM0PR04MB7171:EE_
-X-MS-Office365-Filtering-Correlation-Id: e5f047ef-4dec-4d3b-e55a-08dde3ef9494
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|19092799006|1800799024|376014|52116014|7416014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?8YT1awrY7SU5oAxfHAXxSwED2P0cqsUY/4e5hjg8Ix+yeRyL3ph1o2G3V9y1?=
- =?us-ascii?Q?LU9K8jjGOMc2B8XIO9vXftiiptoAt9vMXUyd+NnrDrStlPJBOCO75b7VBtyG?=
- =?us-ascii?Q?b+9cs+S7syTcC1aWDY9q4BUTL3Gxu0s4D3B2bfGBfaXSnOtEBgKJvRsAe+N9?=
- =?us-ascii?Q?NV9JKR8NZzme/nuU6i66fqEzMTW4WJIPYty04fu1+rm6jY3RMHpq8fFc92Yc?=
- =?us-ascii?Q?IvyyB4J3eS+9KfiDRnlxCsYU+aI1PJjecJJ/8XJCk+p/mO2mJh5HMt5c5uEA?=
- =?us-ascii?Q?pNz48JJa0g/+rxG8+Ip5olO7/o+LWdh6ebckv3yIQpAkvGZdI0ZIh1/B1KEi?=
- =?us-ascii?Q?nf83ZGXVw0pwfKEcx4AvpqZom3vGVM4LhI8a0yuRQmrLe1im57v3EATh+kBE?=
- =?us-ascii?Q?X5vpt8S5b85bQFnPoxgPiovbdmcxkl3QQg1UiOUW9M+TVHrSExDvU3cf7mTg?=
- =?us-ascii?Q?2FAI9bOgM10ttDfeLx/ByiJ8NK5VL8d+hoeWxxyzOM4h2m5BGMwuSm21XSZo?=
- =?us-ascii?Q?1W3U6GTrcLIJCwpWJ6Syu5aGBNIUPVjoiJOCl0c6jf63qEg2vkW2S/qw1w1x?=
- =?us-ascii?Q?/van/xbYGKN84Gvt0Emr5aBS6eswGXoaXt4vfbfgZV63A2XLhnggOHopb+2+?=
- =?us-ascii?Q?8Kc/CEDAIPzOs29qHscDys11ORl4rcoXC7IE7VojNVI8GLbmeM7wZluvcYPo?=
- =?us-ascii?Q?wwbK5pHaXH3aDpTP/eI8wKVKkvBDkmN+GJPJh/ulu7CjEFajz99s481eeclD?=
- =?us-ascii?Q?Basnsyn96vpvKQbFKJZqa8Wzv9ILN5/BCoti1FnIyT+pzX4HnWXb5zcpDW4y?=
- =?us-ascii?Q?8C3F00AQf3/yQlI9pcpYDx13XqQE8eE2+M7UOATQUoSK1KFsN16LEVP7D7Pg?=
- =?us-ascii?Q?lF2iHN1zHRc13CtcYNuR9Y4uZKWVo0CGHgkjb97wXXru+vGX2Bth+R1VqS3e?=
- =?us-ascii?Q?g22epcpO52YAU2rzO3SjO7Qq2qxIvUIALyepdAxkkZmE7ZRK0y043zhphupx?=
- =?us-ascii?Q?tkfTvCYGQOACOfROBaOHrWVRCx3NwLLVa5vs4UNEQSrenEyd9C/OlGurUo/G?=
- =?us-ascii?Q?u6izHKkc0Beu432hVJrX1Nclls3aSHYEiTEIjRkeN5GzcK0gTzO/biEqsbM4?=
- =?us-ascii?Q?yd4Mle8EubfReKDUeNGy+S1lbJUOMk0bwBlapiOMBnCIqg0yfh3nM6EOs/+d?=
- =?us-ascii?Q?9smmVm4k80BAh5CtRZKpuB0Iq8nh+b8hXf1scviux2pom9p1+0ixnBmIalDF?=
- =?us-ascii?Q?EvIh3LuVkBVDHNO7aS8ElzSpUOMI/mdbj37JOjpBy+TWkR+E0FHVyquRR4Mo?=
- =?us-ascii?Q?+83EE19XhHX9p6aXPvdvDe3K4Hq0k98+z0OoEwAym3QtNG4oh0lQtox8/b0Y?=
- =?us-ascii?Q?3RO6WPPMsIOY9OJn1Lq+PnXI1J3bZJQZbzIz+KiHpJIFpTfYEmxslikV7emd?=
- =?us-ascii?Q?mTWJCCfd5u9NAoGbyenEGQ09YuSkR5CiF4DMc3B0W3r6RNVPsN5RlQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(1800799024)(376014)(52116014)(7416014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?t9r5qqqwKUqQLSXw1+led3divjbFjrYlT2HNzq+Zc4VpB/iA4QRIn3Mu2DNy?=
- =?us-ascii?Q?tqbRQPLbMLYxuS+dJMguW6ZnWVGxY1ymAqL1r/J5MdQ51yB1SIq/uQRoDauj?=
- =?us-ascii?Q?dF6auykgOper5/hGEQIii8uwWoDVTotujBzwwnnB+/Bl5CpAr1IlbOEJS0tQ?=
- =?us-ascii?Q?wKdGATQ+6MSp1pQoCsoGpHRnAukKcKn+XcI4bSEp4pV3g2WtPiQmWRw8kThz?=
- =?us-ascii?Q?yv81qyzWXyOXF73id1Uly6s0x+GN4rU5DnvfpAPMgAfRuObr8UVqDwNShecw?=
- =?us-ascii?Q?kcn8Y/XKMYgqHbglPEZqDNz0bGCDdYGh3mmb2K2YNUXEj3stjI+3gJbNE40V?=
- =?us-ascii?Q?Tp5cBzEEmAhvObWZhWbEsaPlQEmaK27hec3ZGi4Ea9Z5qGgSqVfklK5/ZdP6?=
- =?us-ascii?Q?RAKnyi37dSl4hx2E3fuzIJ9trbG3siC1nOuouwPMFX444H8BpjWTh3c90B1z?=
- =?us-ascii?Q?2dGSZIi+MihV6fP686cnhPcfumCgBhO2lWMZb9lJ5sfh1vP2kn5TBcBH4BcR?=
- =?us-ascii?Q?hP2BgndHFTcGL/3iMayk47OPwj7s8JA9A9EIEsjMwIn5CrXo3ufSRpJXSg9W?=
- =?us-ascii?Q?9hNSAzpF20c6pRQ/thbhPMnenkOlpka89PMyVkUwko/LMgop4J3c/V/3EqRk?=
- =?us-ascii?Q?Q9UBuNSNh7uGdVq70RfnwwazjtIHYboXpwCT8vG+PtrnIAV/N8TS7kIpiw/5?=
- =?us-ascii?Q?B57fNKVpYPYxQKrePB8EW9slKxefyeqd50XeIYD0IEbHuR15MN1T8BvDb1gE?=
- =?us-ascii?Q?5/68EhiUyLn9RXH7MneTFuiwv8djsHxa1Gu+Y+C5Ia7OatQYpPwUQYhF6wOJ?=
- =?us-ascii?Q?5fLXLWxhu4I56+xFD4yFioMcQ7jMAwjOKcsAZqn7ZjSsXi+OYVNbX+XCqcX2?=
- =?us-ascii?Q?Ne4U6gV54cM4apKn8rPcmrQ9N8NQI5miyc5i1yh7UfiDZ4lDLtmRdPB+M3CB?=
- =?us-ascii?Q?Xa724q/AFRPCOrtp9vLA20OfVi65yJ3pcPEGlyy10aE4k5ayecBu9zuoHD4l?=
- =?us-ascii?Q?YAc3c6gwjDLfdEpRF+Fbfl/DmcxEyy5JGeNSPDS+VIFQTFUZNVbG3NWFlSS7?=
- =?us-ascii?Q?iyn2XJYD8ZmLQuj/ut+XDuUJHaUfpJnGTVEWXQCevcRvPEXVE157VGNmAFOy?=
- =?us-ascii?Q?IVn4VCFerHWJfdakYGsgUYvvdK6+XCux5fwfrfjMJ1NS6Tz3k9rV/ykjkxzk?=
- =?us-ascii?Q?+LgnjfIsmempIF7M1CqHrVb69PV7/ks9j7PlDgdiMFPTWRuC3JS/HZRmN2wT?=
- =?us-ascii?Q?r/fT6LlA3HQ0/iKeXgonQfr/7tZ1H19/c1AOzSFer4woKFMYTePrtpP/OcEW?=
- =?us-ascii?Q?eA9Y5TzNDf5O4lb5SUmfv/UsExBgUj4Ra6Zrfgm9K+UY0AoiAQh9ALXUDyQs?=
- =?us-ascii?Q?HmoVDQEJ7zDm4CxZK3g3d2JvoX8qoYTMNzdOD8PtFkwjEXCn2XI8uYRM0IVo?=
- =?us-ascii?Q?xqt0XPn6n3snCA0C1ckwkq1oi8ub+SooqSv0aigxFNYAzPCx12os2Lp9X1Ry?=
- =?us-ascii?Q?LhiWqgRVW9B0/90guYobaTvTMV6DwvB3zLvi8utzff8gM/o3qhw7jhOJ5qrB?=
- =?us-ascii?Q?aJOdqMvkOgMvQ+qmxrGDBDAyfTcqfKMrZp49Qg27?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e5f047ef-4dec-4d3b-e55a-08dde3ef9494
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 15:53:48.7307
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: lfCR7DkwaNED+ixnnBCNrVKPHcUP7XXy3gRQ9LFbzjzj/ZJhb24OVhQ2lfxxH3txZXLoOPmpozs/+achnxSgbg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB7171
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 25 Aug 2025 17:53:53 +0200
+Message-Id: <DCBMOZQ7BFI9.2B3A3PEZ0DTYD@fairphone.com>
+Cc: "Konrad Dybcio" <konrad.dybcio@oss.qualcomm.com>, "Will Deacon"
+ <will@kernel.org>, "Robin Murphy" <robin.murphy@arm.com>, "Joerg Roedel"
+ <joro@8bytes.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, "Viresh Kumar" <viresh.kumar@linaro.org>,
+ "Manivannan Sadhasivam" <mani@kernel.org>, "Herbert Xu"
+ <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
+ "Vinod Koul" <vkoul@kernel.org>, "Bjorn Andersson" <andersson@kernel.org>,
+ "Konrad Dybcio" <konradybcio@kernel.org>, "Robert Marko"
+ <robimarko@gmail.com>, "Das Srinagesh" <quic_gurus@quicinc.com>, "Thomas
+ Gleixner" <tglx@linutronix.de>, "Jassi Brar" <jassisinghbrar@gmail.com>,
+ "Amit Kucheria" <amitk@kernel.org>, "Thara Gopinath"
+ <thara.gopinath@gmail.com>, "Daniel Lezcano" <daniel.lezcano@linaro.org>,
+ "Zhang Rui" <rui.zhang@intel.com>, "Lukasz Luba" <lukasz.luba@arm.com>,
+ "Ulf Hansson" <ulf.hansson@linaro.org>,
+ <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-pm@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+ <linux-crypto@vger.kernel.org>, <dmaengine@vger.kernel.org>,
+ <linux-mmc@vger.kernel.org>
+Subject: Re: [PATCH v2 14/15] arm64: dts: qcom: Add initial Milos dtsi
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+To: "Dmitry Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20250713-sm7635-fp6-initial-v2-0-e8f9a789505b@fairphone.com>
+ <20250713-sm7635-fp6-initial-v2-14-e8f9a789505b@fairphone.com>
+ <3e0299ad-766a-4876-912e-438fe2cc856d@oss.qualcomm.com>
+ <DBE6TK1KDOTP.IIT72I1LUN5M@fairphone.com>
+ <DBE8G88CIQ53.2N51CABIBJOOO@fairphone.com>
+ <DBOC7QBND54K.1SI5V9C2Z76BY@fairphone.com>
+ <55420d89-fcd4-4cb5-a918-d8bbe2a03d19@oss.qualcomm.com>
+ <DC74DPI8WS81.17VCYVY34C2F9@fairphone.com>
+ <2hv4yuc7rgtglihc2um2lr5ix4dfqxd4abb2bqb445zkhpjpsi@rozikfwrdtlk>
+In-Reply-To: <2hv4yuc7rgtglihc2um2lr5ix4dfqxd4abb2bqb445zkhpjpsi@rozikfwrdtlk>
 
-On Mon, Aug 25, 2025 at 04:36:44PM +0800, Peng Fan wrote:
-> The TJA1051T/3 used on i.MX95-15x15-EVK is actually high-speed CAN
-> transceiver, not a regulator supply. So use phys to reflect the truth.
->
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+Hi Dmitry,
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+On Wed Aug 20, 2025 at 1:52 PM CEST, Dmitry Baryshkov wrote:
+> On Wed, Aug 20, 2025 at 10:42:09AM +0200, Luca Weiss wrote:
+>> Hi Konrad,
+>>=20
+>> On Sat Aug 2, 2025 at 2:04 PM CEST, Konrad Dybcio wrote:
+>> > On 7/29/25 8:49 AM, Luca Weiss wrote:
+>> >> Hi Konrad,
+>> >>=20
+>> >> On Thu Jul 17, 2025 at 11:46 AM CEST, Luca Weiss wrote:
+>> >>> Hi Konrad,
+>> >>>
+>> >>> On Thu Jul 17, 2025 at 10:29 AM CEST, Luca Weiss wrote:
+>> >>>> On Mon Jul 14, 2025 at 1:06 PM CEST, Konrad Dybcio wrote:
+>> >>>>> On 7/13/25 10:05 AM, Luca Weiss wrote:
+>> >>>>>> Add a devicetree description for the Milos SoC, which is for exam=
+ple
+>> >>>>>> Snapdragon 7s Gen 3 (SM7635).
+>> >>>>>>
+>> >>>>>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+>> >>>>>> ---
+>> >>>>>
+>> >>>>> [...]
+>> >>>>>> +
+>> >>>>>> +		spmi_bus: spmi@c400000 {
+>> >>>>>> +			compatible =3D "qcom,spmi-pmic-arb";
+>> >>>>>
+>> >>>>> There's two bus instances on this platform, check out the x1e bind=
+ing
+>> >>>>
+>> >>>> Will do
+>> >>>
+>> >>> One problem: If we make the labels spmi_bus0 and spmi_bus1 then we c=
+an't
+>> >>> reuse the existing PMIC dtsi files since they all reference &spmi_bu=
+s.
+>> >>>
+>> >>> On FP6 everything's connected to PMIC_SPMI0_*, and PMIC_SPMI1_* is n=
+ot
+>> >>> connected to anything so just adding the label spmi_bus on spmi_bus0
+>> >>> would be fine.
+>> >>>
+>> >>> Can I add this to the device dts? Not going to be pretty though...
+>> >>>
+>> >>> diff --git a/arch/arm64/boot/dts/qcom/milos-fairphone-fp6.dts b/arch=
+/arm64/boot/dts/qcom/milos-fairphone-fp6.dts
+>> >>> index d12eaa585b31..69605c9ed344 100644
+>> >>> --- a/arch/arm64/boot/dts/qcom/milos-fairphone-fp6.dts
+>> >>> +++ b/arch/arm64/boot/dts/qcom/milos-fairphone-fp6.dts
+>> >>> @@ -11,6 +11,9 @@
+>> >>>  #include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
+>> >>>  #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+>> >>>  #include "milos.dtsi"
+>> >>> +
+>> >>> +spmi_bus: &spmi_bus0 {};
+>> >>> +
+>> >>>  #include "pm7550.dtsi"
+>> >>>  #include "pm8550vs.dtsi"
+>> >>>  #include "pmiv0104.dtsi" /* PMIV0108 */
+>> >>>
+>> >>> Or I can add a second label for the spmi_bus0 as 'spmi_bus'. Not sur=
+e
+>> >>> other designs than SM7635 recommend using spmi_bus1 for some stuff.
+>> >>>
+>> >>> But I guess longer term we'd need to figure out a solution to this, =
+how
+>> >>> to place a PMIC on a given SPMI bus, if reference designs start to
+>> >>> recommend putting different PMIC on the separate busses.
+>> >>=20
+>> >> Any feedback on this regarding the spmi_bus label?
+>> >
+>> > I had an offline chat with Bjorn and we only came up with janky
+>> > solutions :)
+>> >
+>> > What you propose works well if the PMICs are all on bus0, which is
+>> > not the case for the newest platforms. If some instances are on bus0
+>> > and others are on bus1, things get ugly really quick and we're going
+>> > to drown in #ifdefs.
+>> >
+>> >
+>> > An alternative that I've seen downstream is to define PMIC nodes in
+>> > the root of a dtsi file (not in the root of DT, i.e. NOT under / { })
+>> > and do the following:
+>> >
+>> > &spmi_busN {
+>> > 	#include "pmABCDX.dtsi"
+>> > };
+>> >
+>> > Which is "okay", but has the visible downside of having to define the
+>> > temp alarm thermal zone in each board's DT separately (and doing
+>> > mid-file includes which is.. fine I guess, but also something we avoid=
+ed
+>> > upstream for the longest time)
+>> >
+>> >
+>> > Both are less than ideal when it comes to altering the SID under
+>> > "interrupts", fixing that would help immensely. We were hoping to
+>> > leverage something like Johan's work on drivers/mfd/qcom-pm8008.c,
+>> > but that seems like a longer term project.
+>> >
+>> > Please voice your opinions
+>>=20
+>> Since nobody else jumped in, how can we continue?
+>>=20
+>> One janky solution in my mind is somewhat similar to the PMxxxx_SID
+>> defines, doing something like "#define PM7550_SPMI spmi_bus0" and then
+>> using "&PM7550_SPMI {}" in the dtsi. I didn't try it so not sure that
+>> actually works but something like this should I imagine.
+>>=20
+>> But fortunately my Milos device doesn't have the problem that it
+>> actually uses both SPMI busses for different PMICs, so similar to other
+>> SoCs that already have two SPMI busses, I could somewhat ignore the
+>> problem and let someone else figure out how to actually place PMICs on
+>> spmi_bus0 and spmi_bus1 if they have such a hardware.
+>
+> I'd say, ignore it for now.
 
-> ---
->  arch/arm64/boot/dts/freescale/imx95-15x15-evk.dts | 13 ++++++-------
->  1 file changed, 6 insertions(+), 7 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/freescale/imx95-15x15-evk.dts b/arch/arm64/boot/dts/freescale/imx95-15x15-evk.dts
-> index 46f6e0fbf2b09106e6e726ff8b61522d1359cfa4..f6197ba356d49b97bf7287c3f0f86ef84f89bac9 100644
-> --- a/arch/arm64/boot/dts/freescale/imx95-15x15-evk.dts
-> +++ b/arch/arm64/boot/dts/freescale/imx95-15x15-evk.dts
-> @@ -89,12 +89,11 @@ reg_audio_switch1: regulator-audio-switch1 {
->  		gpio = <&pcal6524 0 GPIO_ACTIVE_LOW>;
->  	};
->
-> -	reg_can2_stby: regulator-can2-stby {
-> -		compatible = "regulator-fixed";
-> -		regulator-max-microvolt = <3300000>;
-> -		regulator-min-microvolt = <3300000>;
-> -		regulator-name = "can2-stby";
-> -		gpio = <&pcal6524 14 GPIO_ACTIVE_LOW>;
-> +	flexcan2_phy: can-phy {
-> +		compatible = "nxp,tja1051", "ti,tcan1043";
-> +		#phy-cells = <0>;
-> +		max-bitrate = <1000000>;
-> +		standby-gpios = <&pcal6524 14 GPIO_ACTIVE_HIGH>;
->  	};
->
->  	reg_m2_pwr: regulator-m2-pwr {
-> @@ -300,7 +299,7 @@ &enetc_port1 {
->  &flexcan2 {
->  	pinctrl-0 = <&pinctrl_flexcan2>;
->  	pinctrl-names = "default";
-> -	xceiver-supply = <&reg_can2_stby>;
-> +	phys = <&flexcan2_phy>;
->  	status = "okay";
->  };
->
->
-> --
-> 2.37.1
->
+You mean ignoring that there's a second SPMI bus on this SoC, and just
+modelling one with the label "spmi_bus"? Or something else?
+
+
+I have also actually tried out the C define solution that I was writing
+about in my previous email and this is actually working, see diff below.
+In my opinion it just expands on what we have with the SID defines, so
+shouldn't be tooo unacceptable :)
+
+diff --git a/arch/arm64/boot/dts/qcom/milos-fairphone-fp6.dts b/arch/arm64/=
+boot/dts/qcom/milos-fairphone-fp6.dts
+index 9fb174592e2d..96e1b5df4f65 100644
+--- a/arch/arm64/boot/dts/qcom/milos-fairphone-fp6.dts
++++ b/arch/arm64/boot/dts/qcom/milos-fairphone-fp6.dts
+@@ -7,6 +7,12 @@
+=20
+ #define PMIV0104_SID 7
+=20
++#define PM7550_SPMI spmi_bus0
++#define PM8550VS_SPMI spmi_bus0
++#define PMIV0104_SPMI spmi_bus0
++#define PMK8550_SPMI spmi_bus0
++#define PMR735B_SPMI spmi_bus0
++
+ #include <dt-bindings/leds/common.h>
+ #include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
+ #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+diff --git a/arch/arm64/boot/dts/qcom/pm7550.dtsi b/arch/arm64/boot/dts/qco=
+m/pm7550.dtsi
+index b886c2397fe7..08d7969128c2 100644
+--- a/arch/arm64/boot/dts/qcom/pm7550.dtsi
++++ b/arch/arm64/boot/dts/qcom/pm7550.dtsi
+@@ -34,7 +34,7 @@ trip1 {
+ 	};
+ };
+=20
+-&spmi_bus {
++&PM7550_SPMI {
+ 	pm7550: pmic@1 {
+ 		compatible =3D "qcom,pm7550", "qcom,spmi-pmic";
+ 		reg =3D <0x1 SPMI_USID>;
+diff --git a/arch/arm64/boot/dts/qcom/pm8550vs.dtsi b/arch/arm64/boot/dts/q=
+com/pm8550vs.dtsi
+index 7b5898c263ad..3c8c5f3724a2 100644
+--- a/arch/arm64/boot/dts/qcom/pm8550vs.dtsi
++++ b/arch/arm64/boot/dts/qcom/pm8550vs.dtsi
+@@ -91,7 +91,7 @@ trip1 {
+ };
+=20
+=20
+-&spmi_bus {
++&PM8550VS_SPMI {
+ 	pm8550vs_c: pmic@2 {
+ 		compatible =3D "qcom,pm8550", "qcom,spmi-pmic";
+ 		reg =3D <0x2 SPMI_USID>;
+diff --git a/arch/arm64/boot/dts/qcom/pmiv0104.dtsi b/arch/arm64/boot/dts/q=
+com/pmiv0104.dtsi
+index 85ee8911d93e..bf0c02974e74 100644
+--- a/arch/arm64/boot/dts/qcom/pmiv0104.dtsi
++++ b/arch/arm64/boot/dts/qcom/pmiv0104.dtsi
+@@ -40,7 +40,7 @@ trip2 {
+ 	};
+ };
+=20
+-&spmi_bus {
++&PMIV0104_SPMI {
+ 	pmic@PMIV0104_SID {
+ 		compatible =3D "qcom,pmiv0104", "qcom,spmi-pmic";
+ 		reg =3D <PMIV0104_SID SPMI_USID>;
+diff --git a/arch/arm64/boot/dts/qcom/pmk8550.dtsi b/arch/arm64/boot/dts/qc=
+om/pmk8550.dtsi
+index 583f61fc16ad..f1c34f0a2522 100644
+--- a/arch/arm64/boot/dts/qcom/pmk8550.dtsi
++++ b/arch/arm64/boot/dts/qcom/pmk8550.dtsi
+@@ -18,7 +18,7 @@ reboot-mode {
+ 	};
+ };
+=20
+-&spmi_bus {
++&PMK8550_SPMI {
+ 	pmk8550: pmic@0 {
+ 		compatible =3D "qcom,pm8550", "qcom,spmi-pmic";
+ 		reg =3D <0x0 SPMI_USID>;
+diff --git a/arch/arm64/boot/dts/qcom/pmr735b.dtsi b/arch/arm64/boot/dts/qc=
+om/pmr735b.dtsi
+index 09affc05b397..91b53348a4ae 100644
+--- a/arch/arm64/boot/dts/qcom/pmr735b.dtsi
++++ b/arch/arm64/boot/dts/qcom/pmr735b.dtsi
+@@ -30,7 +30,7 @@ pmr735b_crit: pmr735a-crit {
+ 	};
+ };
+=20
+-&spmi_bus {
++&PMR735B_SPMI {
+ 	pmr735b: pmic@5 {
+ 		compatible =3D "qcom,pmr735b", "qcom,spmi-pmic";
+ 		reg =3D <0x5 SPMI_USID>;
 
