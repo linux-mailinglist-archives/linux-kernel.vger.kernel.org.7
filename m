@@ -1,82 +1,96 @@
-Return-Path: <linux-kernel+bounces-785271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C61FFB34867
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:14:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C6EEB3486C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:15:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E5CE7A3A86
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:13:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 769142A69AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:15:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70FD83093BA;
-	Mon, 25 Aug 2025 17:12:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC16830276D;
+	Mon, 25 Aug 2025 17:12:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="NY6Le40z"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VyAv9TZI"
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2A6307ACB;
-	Mon, 25 Aug 2025 17:12:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C75D30276C;
+	Mon, 25 Aug 2025 17:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756141967; cv=none; b=kjmza6SEjseg6lHRQL3fsCRhEqXO0YeAaN0/vmulZ+wSQpwE+2Mlhl+5JDj6leD5sfKtHXC+7aL0qR0k/e01IriIQJQOQAnkVDXD+92/jfC81NSxRmTVpcBHkkC4YVQlMqbzd0ub2luNXLPgZ/fTITySxnbhmm5cxdrI/V1xH3U=
+	t=1756141979; cv=none; b=NIpIpcQnde6hAOkr2NybvKUpfHtz2vgiXRkA2LLRwkALuHWiVOhzDB1XGskx1ewksbeh9ftx2lQM6c6xj6B2omcXVsy3JutpEf1BmUa7CD18NtG8WgNaF0a45Lv76us3hbntT8l1GRZUuFYwbfSEXXrfP7nggMFMU8cB2E+ELRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756141967; c=relaxed/simple;
-	bh=HvTt5221H5DQ1X+GZWXY3QkHHnBA6eW/stRkoiAL7gs=;
+	s=arc-20240116; t=1756141979; c=relaxed/simple;
+	bh=xZHNKVKLd3t4a2y2+8LpNAaPdABTjrvspV304excENw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QXTl2bM+KJE/IB8JBQid7SWRxxsykjFHxmysyqtKIWQLsziVP76GHz04tzLz45VoqAZAUKCIaRvMSEOM3goLdMqg5RutQ8EwTH63OWYVjBqDzsQE63BoIDpQx56KeYA2i7JoYWuiOj48hq2TnPmm7CqYyDO5jeCm0NQflLYvrlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=NY6Le40z; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57P7fjkm001667;
-	Mon, 25 Aug 2025 17:12:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=+c2kHIW89fFxZMF7i
-	igDqHKPq5NHEczv6HmG2G6s5GY=; b=NY6Le40zeoQN3qdi5QjEONZCPm7Z3qs/L
-	s20NY4CqTOgSb/awXnst6umDuHf5DeDITLJwWRj2i/6wbSGdL3azQqRc09LZAQgD
-	UGshtvi4dks3Icu+bH2sr7F1T6WLUuDNdAa3tX6ucTk6Xxs4gkB7zVOfSh3d+oYB
-	dhphYxr277frQDIL0LRkzz6CysQy13Zu6gHtv/S4PtrhzWGkH1D/wXyJi3GMhsmX
-	YDL0O71NlE38JPGVB/yP+J07MfnCZl9qRA5FDx/YahbMQSb9N3c/zx3YWGuTkfaQ
-	I1MNPAsY952hWeGRU6IJNQgN37V5OIcQxpy305JHr8oO63Uq1pH/w==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48q9751jy2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Aug 2025 17:12:41 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57PEUHSw029871;
-	Mon, 25 Aug 2025 17:12:40 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48qsfmeufn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Aug 2025 17:12:40 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57PHCcXh34341178
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 25 Aug 2025 17:12:38 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C7EE258064;
-	Mon, 25 Aug 2025 17:12:38 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DB13E5804E;
-	Mon, 25 Aug 2025 17:12:37 +0000 (GMT)
-Received: from IBM-D32RQW3.ibm.com (unknown [9.61.255.253])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 25 Aug 2025 17:12:37 +0000 (GMT)
-From: Farhan Ali <alifm@linux.ibm.com>
-To: linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: alex.williamson@redhat.com, helgaas@kernel.org, alifm@linux.ibm.com,
-        schnelle@linux.ibm.com, mjrosato@linux.ibm.com
-Subject: [PATCH v2 9/9] vfio: Remove the pcie check for VFIO_PCI_ERR_IRQ_INDEX
-Date: Mon, 25 Aug 2025 10:12:26 -0700
-Message-ID: <20250825171226.1602-10-alifm@linux.ibm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250825171226.1602-1-alifm@linux.ibm.com>
-References: <20250825171226.1602-1-alifm@linux.ibm.com>
+	 MIME-Version; b=QBGBVfwbUZYop2iklC+5fO3GsDLKeIkmXaRv7J3nDiZlvmD7OpAFFJX37tr72Ub0IvVQk5SFynnlFxV+zJnAF6XZitENbOjFxXXdaQ8S8AaYF6UPsh9lSJcZkorAEMqAlbLmtLZNAUjnxSHPOXeNEoqoAH+rj4UvRsw6tmIXi8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VyAv9TZI; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e96c5eb69b0so1157504276.3;
+        Mon, 25 Aug 2025 10:12:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756141976; x=1756746776; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OI8ePd7/wKrk/VZQzSRc6TFVQyV9wSort1fWHyPMQ3o=;
+        b=VyAv9TZIO6Y2A/VfuUUNnShSNyLTn+GsA0YMGWKgPfeSux6tX2QvwtGzG/VQQJO8cY
+         hZROnofhyquVMjp+ZorCRuhE6o5lvfxyrKy93XhR+HOxbFzwGvUAXwMJis6cbH0JPOTq
+         ga2qyG+AjbKbA5XiOCRR3fH92GQWNqYaJzYzqu4kWVBThqJ+9vrp9tN0TsIdkSTi2Osv
+         TAb6ZWIrzsdB+lmabZSe+SJKugw+dzGdaH52HUjTVgR3L1YyE3zuWC431eBMZIuIH6E8
+         bmdZhyCYQ7pvYxJ+JzqNOi48W8fqzJ6scZkjjRBz1rlhYQvjP4fWdMQBAfr4jjNp2DSG
+         Dqcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756141976; x=1756746776;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OI8ePd7/wKrk/VZQzSRc6TFVQyV9wSort1fWHyPMQ3o=;
+        b=t3cWGdUi/kulNQ0Cb7L7MhHzuW8xIuD5e8WM60KVGDlgQvmenQES2sBKvIYnTnZCCY
+         y+7FyfFIPHJ9La9fuiROo+u710S5osDFlv+BxHZzSQmSKilttDqFFu7dn/P8FeM1Ehrq
+         0bEqNa5bZ7x3vjtcabWtuKi+E/hf5PH3vPbrko0ufElsZ7LXL7A9R2L/bkU9pA7z0Fmx
+         BJGp79YjlLjFTr54Clef4xNfAZ3Xl1Wr+R9ZYcFgKCMzmJj/DTTJOPOQbAze9qA9fZKR
+         Vbog8mbuasZiiPqK6C0b3AvsJfQxIisN/Klf6GxPm6ZuBXq2//6m/sju2Wtcx5CIQZGs
+         U54Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWXWQDlW5UNNk8llT2dTZrXkyzDh2nIrYvkkt62+o3k7lBBD0TaTOraE+oxKj72ONaC+Doxdaxt2PZnsZ0=@vger.kernel.org, AJvYcCWopabXM4k9RmEPat0yoDoDNN+2gkqg3GxFdfYXqpHcFaZkS7MNoKX23jIzxExiL8989YGTPSxV@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbdBl+Go9P0EjQIKWUlhUXQW+F0rZIYEwVJFx35Pi3Fw/o71oA
+	REXZNq5viL602VA6gAESGffDStdvQX7SH1cqjVLqySYhwhn/cCMOd/RQ
+X-Gm-Gg: ASbGncs9Kzjozu4vfgLO23PZnOTP6atfDtKZu3iOMNgnCI8lKyoBimyluFIcRdzuMAM
+	Q7kpHlVMMxSFhSK08NImfkZDEhU43XYOvG57vNTLKMM/5WK3cJfBLdzLnlN9FkpzZ0DrLfO1X3W
+	vms2VG2sUPWi2sjv8jw87ics7dBqtZgMvEj6havOqIdNwMNHQAU0JD3gTdqPP91JAeb5Rq9pyVE
+	EnXx3wDu7ekWfFJ7DClH5p1HWunWWZccBwC9PCTnexdeooYX6plQsavwXQNHjVLwk5l7m2TNsW9
+	xfh4KoZUpcEGyZzaZReTjKtzoNKBWUsvV0jfUPqhXmkvxCQA7VM3dENsslORe90JGaZs9Xop79H
+	3Ra4SYtef0sRMJVxofkQOr7XrUNTJwNOeaBXkU87GtN9TfH92os/06w==
+X-Google-Smtp-Source: AGHT+IEyMx/+POVFy3nvyaoGhbSSuohPwjNy61C/fbbRZEpp90mhH3T3/7m4UbJraYSe8qunKF0+Og==
+X-Received: by 2002:a05:690c:60c5:b0:71c:3fde:31b6 with SMTP id 00721157ae682-71fdc3d153cmr127223487b3.34.1756141975952;
+        Mon, 25 Aug 2025 10:12:55 -0700 (PDT)
+Received: from localhost ([2a03:2880:25ff:48::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-71ffd8ef450sm14755897b3.71.2025.08.25.10.12.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Aug 2025 10:12:55 -0700 (PDT)
+From: Joshua Hahn <joshua.hahnjy@gmail.com>
+To: Kuan-Wei Chiu <visitorckw@gmail.com>
+Cc: vbabka@suse.cz,
+	akpm@linux-foundation.org,
+	cl@gentwo.org,
+	rientjes@google.com,
+	roman.gushchin@linux.dev,
+	harry.yoo@oracle.com,
+	glittao@gmail.com,
+	jserv@ccns.ncku.edu.tw,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] mm/slub: Fix cmp_loc_by_count() to return 0 when counts are equal
+Date: Mon, 25 Aug 2025 10:12:52 -0700
+Message-ID: <20250825171254.701321-1-joshua.hahnjy@gmail.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <aKyM4jZqy8/G2DGq@visitorckw-System-Product-Name>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,81 +98,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Ej2z1ELbrgA7KWIzy7Pu80JquLI43Ovk
-X-Proofpoint-ORIG-GUID: Ej2z1ELbrgA7KWIzy7Pu80JquLI43Ovk
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDA3MSBTYWx0ZWRfXyxriXlNP19MQ
- FuKRjATPIajLpI3U4VGM8j4GvNRpECwkC+/hDgAwbCm23IYJAjHxOIvmd5YcEITU/aeUb0/MbTr
- J+PDmMcSpOJnzNu0Dxb7qxhNGGSqVQXPdIPxRSnw7dQm4ZmjsG7Q28f57sTk60GXWdMgPywO43o
- pne+zM/Qeq9spmKYYjeB9RouMMvsjG1EUt6W1fnyCRGr2gIOhf8rpauUGpfb1d0BotCasWJd1Yq
- mWW2IK8vyTF/CptG2NQd4EmcHuT4SuXIWgc0rK26i17SRB6pB+37xPvp4LG3CoCp2p0Y1UWeCBh
- wiKFemspAnc9zDdUwK7WsN4VoKh+76z/xIjYCEXoI0Z8ZqzBTBNHao8kIuhjRrKs2FhP70w+ZWZ
- K/ndlsbi
-X-Authority-Analysis: v=2.4 cv=RtDFLDmK c=1 sm=1 tr=0 ts=68ac9989 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=gONGJyW3jwFs4LhXXOUA:9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-25_08,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 suspectscore=0 malwarescore=0 spamscore=0 priorityscore=1501
- bulkscore=0 clxscore=1015 phishscore=0 adultscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508230071
 
-We are configuring the error signaling on the vast majority of devices and
-it's extremely rare that it fires anyway. This allows userspace to be
-notified on errors for legacy PCI devices. The Internal Share Memory (ISM)
-device on s390x is one such device. For PCI devices on IBM s390x error
-recovery involves platform firmware and notification to operating system
-is done by architecture specific way. So the ISM device can still be
-recovered when notified of an error.
+On Tue, 26 Aug 2025 00:18:42 +0800 Kuan-Wei Chiu <visitorckw@gmail.com> wrote:
 
-Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
----
- drivers/vfio/pci/vfio_pci_core.c  | 6 ++----
- drivers/vfio/pci/vfio_pci_intrs.c | 3 +--
- 2 files changed, 3 insertions(+), 6 deletions(-)
+> Hi Joshua,
+> 
+> On Mon, Aug 25, 2025 at 07:48:36AM -0700, Joshua Hahn wrote:
+> > On Mon, 25 Aug 2025 09:34:18 +0800 Kuan-Wei Chiu <visitorckw@gmail.com> wrote:
+> > 
+> > > The comparison function cmp_loc_by_count() used for sorting stack trace
+> > > locations in debugfs currently returns -1 if a->count > b->count and 1
+> > > otherwise. This breaks the antisymmetry property required by sort(),
+> > > because when two counts are equal, both cmp(a, b) and cmp(b, a) return
+> > > 1.
+> > > 
+> > > This can lead to undefined or incorrect ordering results. Fix it by
+> > > explicitly returning 0 when the counts are equal, ensuring that the
+> > > comparison function follows the expected mathematical properties.
+> > > 
+> > > Fixes: 553c0369b3e1 ("mm/slub: sort debugfs output by frequency of stack traces")
+> > > Cc: stable@vger.kernel.org
+> > > Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+> > > ---
+> > >  mm/slub.c | 3 ++-
+> > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/mm/slub.c b/mm/slub.c
+> > > index 30003763d224..c91b3744adbc 100644
+> > > --- a/mm/slub.c
+> > > +++ b/mm/slub.c
+> > > @@ -7718,8 +7718,9 @@ static int cmp_loc_by_count(const void *a, const void *b, const void *data)
+> > >  
+> > >  	if (loc1->count > loc2->count)
+> > >  		return -1;
+> > > -	else
+> > > +	if (loc1->count < loc2->count)
+> > >  		return 1;
+> > > +	return 0;
+> > >  }
+> > 
+> > Hello Kuan-Wei,
+> > 
+> > This is a great catch! I was thinking that in addition to separating out the
+> > == case, we can also simplify the behavior by just opting to use the
+> > cmp_int macro, which is defined in the <linux/sort.h> header, which is
+> > already included in mm/slub.c. For the description, we have:
+> > 
+> >  * Return: 1 if the left argument is greater than the right one; 0 if the
+> >  * arguments are equal; -1 if the left argument is less than the right one.
+> > 
+> > So in this case, we can replace the entire code block above with:
+> > 
+> > return cmp_int(loc2->count, loc1->count);
+> > 
+> > or
+> > 
+> > return -1 * cmp_int(loc1->count, loc2->count);
+> > 
+> > if you prefer to keep the position of loc1 and loc2. I guess we do lose
+> > some interpretability of what -1 and 1 would refer to here, but I think
+> > a comment should be able to take care of that.
+> > 
+> > Please let me know what you think. I hope you have a great day!
+> > Joshua
+> 
+> Thanks for the suggestion!
+> If we're going with the cmp_int() macro, I personally prefer
+> return cmp_int(loc2->count, loc1->count);
 
-diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
-index f2fcb81b3e69..d125471fd5ea 100644
---- a/drivers/vfio/pci/vfio_pci_core.c
-+++ b/drivers/vfio/pci/vfio_pci_core.c
-@@ -749,8 +749,7 @@ static int vfio_pci_get_irq_count(struct vfio_pci_core_device *vdev, int irq_typ
- 			return (flags & PCI_MSIX_FLAGS_QSIZE) + 1;
- 		}
- 	} else if (irq_type == VFIO_PCI_ERR_IRQ_INDEX) {
--		if (pci_is_pcie(vdev->pdev))
--			return 1;
-+		return 1;
- 	} else if (irq_type == VFIO_PCI_REQ_IRQ_INDEX) {
- 		return 1;
- 	}
-@@ -1150,8 +1149,7 @@ static int vfio_pci_ioctl_get_irq_info(struct vfio_pci_core_device *vdev,
- 	case VFIO_PCI_REQ_IRQ_INDEX:
- 		break;
- 	case VFIO_PCI_ERR_IRQ_INDEX:
--		if (pci_is_pcie(vdev->pdev))
--			break;
-+		break;
- 		fallthrough;
- 	default:
- 		return -EINVAL;
-diff --git a/drivers/vfio/pci/vfio_pci_intrs.c b/drivers/vfio/pci/vfio_pci_intrs.c
-index 123298a4dc8f..f2d13b6eb28f 100644
---- a/drivers/vfio/pci/vfio_pci_intrs.c
-+++ b/drivers/vfio/pci/vfio_pci_intrs.c
-@@ -838,8 +838,7 @@ int vfio_pci_set_irqs_ioctl(struct vfio_pci_core_device *vdev, uint32_t flags,
- 	case VFIO_PCI_ERR_IRQ_INDEX:
- 		switch (flags & VFIO_IRQ_SET_ACTION_TYPE_MASK) {
- 		case VFIO_IRQ_SET_ACTION_TRIGGER:
--			if (pci_is_pcie(vdev->pdev))
--				func = vfio_pci_set_err_trigger;
-+			func = vfio_pci_set_err_trigger;
- 			break;
- 		}
- 		break;
--- 
-2.43.0
+Makes sense with me, please feel free to add my reviewed-by tag as well!
+Have a great day!
+Joshua
 
+Reviewed-by: Joshua Hahn <joshua.hahnjy@gmail.com>
 
