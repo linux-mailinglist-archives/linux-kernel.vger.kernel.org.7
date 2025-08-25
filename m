@@ -1,201 +1,375 @@
-Return-Path: <linux-kernel+bounces-785584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E4BDB34E0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 23:28:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D2B1B34E11
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 23:29:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1650A17D4BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 21:28:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 218051B25BFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 21:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 411F428D8D9;
-	Mon, 25 Aug 2025 21:28:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30BE28D831;
+	Mon, 25 Aug 2025 21:28:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SCHzpFMQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n05dJE4p"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A25277C8D;
-	Mon, 25 Aug 2025 21:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD0D329ACC2
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 21:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756157331; cv=none; b=WIK+8zu1+gFit/7ZPbd2nohwAZbdyqr/J3xGIXDT6zbxRqQPFeSRBcGPHPg4n9bNmr2S66KEI9qAB9OvinKgwQn6piHn7Xz2ch2nVHR7PDntrjjk/QmVRPub+01E3y0aRExUfl8PicQpAT+mp6QsuwrMJmhAez9plxpRGZpLDrs=
+	t=1756157336; cv=none; b=Vf7/MXc9LXy+6qbpwqMIEuL1eoejd0NG/VxHJ5VZplJ475wTkwdKPw5wxpF6r/BfvufFNKzSn5cBsvbilz7b6Wu+8DA0hTWzXq7IeQ0qKYcNU2mIfGqB/QYiqxyGSmsES0VPiFj7PJpSBb93NlBmZ8VryJkgSilvCPXpstI+DlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756157331; c=relaxed/simple;
-	bh=khSoT/xEBCJvR5sbKOl0l9Ig4C7JXIiQbjQKawYtrlc=;
+	s=arc-20240116; t=1756157336; c=relaxed/simple;
+	bh=ki7b9RrkeSQ61NJfR2PwPTTIb/IOA3nXPz6d1bfc0nY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R1M75tLGEb8yglhIUuOXG4feZmmwKdE/tKNGaJCwzB1Q0jB761n/XUhYyqlZdsNaJ7NW6nTin4WIK0ltmonZhi/jZdSHhem7NPy/cBw8htxPTmEMgRxFre36vexaKHQ8R7INpWP1LvDuUdf3wJyhafYKf3CwLo2wFa2Xe9ZcvX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SCHzpFMQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 268A2C116C6;
-	Mon, 25 Aug 2025 21:28:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756157331;
-	bh=khSoT/xEBCJvR5sbKOl0l9Ig4C7JXIiQbjQKawYtrlc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=SCHzpFMQA00UNp9JXeCMtvVwjWjnIzptgTJ0+MWuLZrh0UvMBGmCbMXZrnKnwSpG2
-	 7acCH9FFzopLfuCb1PF7BGDzqjxKrF80YcZnHQqBFRm1sxmhmaMa/uFP8GvnRwDz50
-	 iVd8CHOzf8bMdOZ6B/6/vSXyS8aNTf0ICz5joqkJh5t3C0mMkpYyZ9F4ZXo9821HMs
-	 6c/FtykDPbYpdqFJ1P4WAeO27Mt3wkTuai5TndJZaEVYaBb1H9wpvtJQHk8sju2PyZ
-	 lS/Y1ZmNqkWLte8NBM6EO5VltPeB+E+xravcJk8N33NLqPm0iWwUzAYr2AZvaFWbxv
-	 W5EdQgWr1iGKg==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-55f48d61ea2so1393070e87.1;
-        Mon, 25 Aug 2025 14:28:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUvotIlqUjZNp7h2J+D4GqFGtjaqo3K5TNmrjoQEXuCtkXNOc1ttU8sE3khoCn09GKFSMlw26wAunfX8TDi@vger.kernel.org, AJvYcCXQ92M0oI2KeeVBfzUNzzw0BDghhSNKqlKz7HUw7jL5ZS34ZMNXbhlbcr6v29/vtvXi0c3OI9Og+oA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3waVMPDkadTABvb4Hk7/+M08A5O8RSySNh0yecUlUEiz1H63n
-	T65OYg6xQn5lKohw6YM3YfHnzER++DLJ5odtTDp/kFjI2+hX9yYCRKv6AmuZ0Kkop3OkSsQhMNE
-	MNavFSjmM12oaKvKgLJjjzGOJL/qWlHs=
-X-Google-Smtp-Source: AGHT+IEz+jOUV3ShcVhrnJRhPgRS4g/o27rdF0Xo2TGHWvUhpuM8Ya7a/7xKYNsJkwNPh1ojlNtnAeDU3heKlYaQLtY=
-X-Received: by 2002:a05:6512:1408:b0:55f:4bf6:eff1 with SMTP id
- 2adb3069b0e04-55f4bf6f56emr360497e87.39.1756157329463; Mon, 25 Aug 2025
- 14:28:49 -0700 (PDT)
+	 To:Cc:Content-Type; b=Si+ozHq4u8xsTlg/jyPnhdPQ1fCYmxxOzRMws6BULb8SrcYWnAIb2muOANs1INt2CodK0cOMhhichLRflfWYxNyp4gMWoUnon1mvpAWyb/AyfDoWaLxUSlFdnPgudjbs7aFIff7+y+S/eY4LCRXgeON8ZeuKX+q0R522oCs+zf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n05dJE4p; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-61c169a9720so2094a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 14:28:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756157333; x=1756762133; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AAqHEjqSxRITZbrtDXf1z5R4aI+Bl4Sv2vJSYYNeGZo=;
+        b=n05dJE4pU/1Vvxyd4mZ5uk4GXL20IeCORbpMZG3wYw89DhpKTuBrIE6ZwnbXncuygl
+         jFDOXzJNdVUvWpAPlcal4oO4DGWcqG4XglekPMKPfdyqXoyUlXhS5Kh0LuNt1LGnpXm3
+         9dNN18lNG6XRu9AgaUhO/lwTcD9rKvUdSCbQC7MRX+ZJfTZjwMCamjAM41sUreVHoyki
+         Mf5SSBQDUqzQK/WhU4wPEMJTnQinnFdQTNaW327znFPbZzyYBWoX24bkNlpBNIW3Qdu6
+         rIkJGfGpy94x6YfmIQpKYLkaNSnlRDf8f6Oe0deSyJrq7lRmYRt4PJl4OhwzK8xzB+iI
+         kJng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756157333; x=1756762133;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AAqHEjqSxRITZbrtDXf1z5R4aI+Bl4Sv2vJSYYNeGZo=;
+        b=vaEtBvmVT3npJGhXE5A1gSTIwQBIBHTfKwimx7pujq2BarKCs2RlRNG/fcULmdwZxI
+         ZtMsZVzs3/UxUyPcOgxY01DceiOiURr70Yjnk/tPKhyKIYs0aqY1kVJjbhD767dCbULs
+         paNG+8RtledDHytOyumUOmMKrZ80PRFBNT4E4gN+j8BPxAo+TK2fdsc9Rjl5o7CzxNSU
+         /HaOZxKqqmSA9oeSrTMjcu97mJ6VJJnxNL6A1Kw0k3/bSGaMieeNQuJeNZPiZZlg95Yv
+         w/FGZffYm7eAtSZpEqcbQkfulTFDtDU+Qx0h7DF0eF/BbRE5JLw1qCXRYg403OGDKq9c
+         28+g==
+X-Forwarded-Encrypted: i=1; AJvYcCXJ8EQ13TsLye9cgQdJaWrrqgGRixOXlCE725+CcOUnnKsKO4K69iUkzIUvpCl5v1OVnEL1ZTUT+d/YehY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAJuysuGIS0u9sKPbSAksYNfVUSI4olZAxJQtacGfS0fFCWklR
+	rDmDoPjueocPVyzEYXX5CFjFHdK4+E5se7wMv5E99Zu7y5SuGlNRzek+4DksUxrFSxp+mbSMugz
+	xeNgmeGKQR8+RvOLMwH35eHAY4hT6X3gQjkV52duG
+X-Gm-Gg: ASbGncvJrNCZrDD2e+Gt61QfMwVlJaiTqWJWXiLt3BvexYgHgNfMRQLm0NhOWWzvkYj
+	msfDQ7kYhI4F7GW1/eNVK0LwquNVI9V7R0rU4wHojkJMvUGgUB/VfZaD4mMf3B1xU8duV+1bL2T
+	vyOPeB50kBEtMitlrXlrPzAakCOzyOxdNwwDbLutB5bF5cJhvmMir1f+fv7yZxgyTDC9H5I+ABp
+	awF/u0Bxkb9MMK68eIFca8MIg==
+X-Google-Smtp-Source: AGHT+IEJIRUkfuqwdvU1Tz0emb8MQhZ8GaC5fb/fGtVOvXVxuDj7xD6jk2kqRpJ1sSg08zzTeeqzxVSojh6Puww+THI=
+X-Received: by 2002:a50:c014:0:b0:61a:22c2:81b9 with SMTP id
+ 4fb4d7f45d1cf-61c8f840ab9mr19594a12.6.1756157332746; Mon, 25 Aug 2025
+ 14:28:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250708-efi-default-loglevel-v1-1-12b80db5af16@gmail.com>
- <CALHNRZ9T0dHzbXBUdBa4hE-Ao8ebeLLPRX+1ThkuLT+Rp8_Jeg@mail.gmail.com>
- <CAMj1kXEwyaHUkO5aO-sL3YAN=qRoSTuotHMRpBDLX9BhERnN=g@mail.gmail.com>
- <45692a2c-ba3d-45a2-9ab1-cf6982dbf788@siemens.com> <CAMj1kXG=zG8j+cr0gNMpkKRvdekqMR-EiEkMHiFgRvbaWy9aKg@mail.gmail.com>
- <09cb03e4-21f3-418c-98f2-66004cc3080f@siemens.com> <CAMj1kXHyw3Oi=c3p+7q75vD4iJ+x642JzL7zHM4jpF4k937Uxg@mail.gmail.com>
- <CALHNRZ8YUVvQ--Y-EfXW04WYXiKNsj6KSs-OaLMcEnG3_xDMSg@mail.gmail.com>
-In-Reply-To: <CALHNRZ8YUVvQ--Y-EfXW04WYXiKNsj6KSs-OaLMcEnG3_xDMSg@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 26 Aug 2025 07:28:33 +1000
-X-Gmail-Original-Message-ID: <CAMj1kXE9tNa5R22M9NTmLY8qtnpxbvqMG-Cw0vFpVtr_KoM9bA@mail.gmail.com>
-X-Gm-Features: Ac12FXxklvaJZpEgICemd-GaDZHOiDmg1eqU5usuu_k9OR2ghL6W_rj1tDlF-6w
-Message-ID: <CAMj1kXE9tNa5R22M9NTmLY8qtnpxbvqMG-Cw0vFpVtr_KoM9bA@mail.gmail.com>
-Subject: Re: [PATCH] efistub: Lower default log level
-To: Aaron Kling <webgeek1234@gmail.com>
-Cc: Jan Kiszka <jan.kiszka@siemens.com>, linux-efi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20250807201628.1185915-1-sagis@google.com> <20250807201628.1185915-11-sagis@google.com>
+ <ef499c6e-d62c-450e-982b-82c53054ea53@linux.intel.com>
+In-Reply-To: <ef499c6e-d62c-450e-982b-82c53054ea53@linux.intel.com>
+From: Sagi Shahar <sagis@google.com>
+Date: Mon, 25 Aug 2025 16:28:38 -0500
+X-Gm-Features: Ac12FXwWWa132vNURqkQ6p9Go3_mkfPqTGcEUOL8gtYD8U5sBfHY5YEYy-t3Nlo
+Message-ID: <CAAhR5DGEv5acad7obi_9Fm9svm3GsK56imnLRE2oVyfvRBgtLQ@mail.gmail.com>
+Subject: Re: [PATCH v8 10/30] KVM: selftests: TDX: Add report_fatal_error test
+To: Binbin Wu <binbin.wu@linux.intel.com>
+Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
+	Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>, 
+	Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
+	Erdem Aktas <erdemaktas@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	"Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, Reinette Chatre <reinette.chatre@intel.com>, 
+	Ira Weiny <ira.weiny@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 26 Aug 2025 at 02:34, Aaron Kling <webgeek1234@gmail.com> wrote:
+On Wed, Aug 13, 2025 at 5:58=E2=80=AFAM Binbin Wu <binbin.wu@linux.intel.co=
+m> wrote:
 >
-> On Mon, Aug 25, 2025 at 5:44=E2=80=AFAM Ard Biesheuvel <ardb@kernel.org> =
-wrote:
-> >
-> > On Sun, 24 Aug 2025 at 16:47, Jan Kiszka <jan.kiszka@siemens.com> wrote=
-:
-> > >
-> > > On 24.08.25 02:31, Ard Biesheuvel wrote:
-> > > > On Sat, 16 Aug 2025 at 16:52, Jan Kiszka <jan.kiszka@siemens.com> w=
-rote:
-> > > >>
-> > > >> On 15.07.25 03:35, Ard Biesheuvel wrote:
-> > > >>> On Tue, 8 Jul 2025 at 17:31, Aaron Kling <webgeek1234@gmail.com> =
-wrote:
-> > > >>>>
-> > > >>>> On Tue, Jul 8, 2025 at 2:30=E2=80=AFAM Aaron Kling via B4 Relay
-> > > >>>> <devnull+webgeek1234.gmail.com@kernel.org> wrote:
-> > > >>>>>
-> > > >>>>> From: Aaron Kling <webgeek1234@gmail.com>
-> > > >>>>>
-> > > >>>>> Some uefi implementations will write the efistub logs to the di=
-splay
-> > > >>>>> over a splash image. This is not desirable for debug and info l=
-ogs, so
-> > > >>>>> lower the default efi log level to exclude them.
-> > > >>>>>
-> > > >>>>> Suggested-by: Ard Biesheuvel <ardb@kernel.org>
-> > > >>>>> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > > >>>>> ---
-> > > >>>>>  drivers/firmware/efi/libstub/printk.c | 4 ++--
-> > > >>>>>  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > >>>>>
-> > > >>>>> diff --git a/drivers/firmware/efi/libstub/printk.c b/drivers/fi=
-rmware/efi/libstub/printk.c
-> > > >>>>> index 3a67a2cea7bdf1aa215d48dbf9ece4ceec6e4c28..bc599212c05dd74=
-6a9c54abbbe61a4bf70f1a8c4 100644
-> > > >>>>> --- a/drivers/firmware/efi/libstub/printk.c
-> > > >>>>> +++ b/drivers/firmware/efi/libstub/printk.c
-> > > >>>>> @@ -5,13 +5,13 @@
-> > > >>>>>  #include <linux/ctype.h>
-> > > >>>>>  #include <linux/efi.h>
-> > > >>>>>  #include <linux/kernel.h>
-> > > >>>>> -#include <linux/printk.h> /* For CONSOLE_LOGLEVEL_* */
-> > > >>>>> +#include <linux/kern_levels.h>
-> > > >>>>>  #include <asm/efi.h>
-> > > >>>>>  #include <asm/setup.h>
-> > > >>>>>
-> > > >>>>>  #include "efistub.h"
-> > > >>>>>
-> > > >>>>> -int efi_loglevel =3D CONSOLE_LOGLEVEL_DEFAULT;
-> > > >>>>> +int efi_loglevel =3D LOGLEVEL_NOTICE;
-> > > >>>>>
-> > > >>>>>  /**
-> > > >>>>>   * efi_char16_puts() - Write a UCS-2 encoded string to the con=
-sole
-> > > >>>>>
-> > > >>>>> ---
-> > > >>>>> base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
-> > > >>>>> change-id: 20250708-efi-default-loglevel-4da5a36cac87
-> > > >>>>>
-> > > >>>>> Best regards,
-> > > >>>>> --
-> > > >>>>> Aaron Kling <webgeek1234@gmail.com>
-> > > >>>>
-> > > >>>> This patch was originally suggested a few months ago [0], but as=
- far
-> > > >>>> as I can tell was never queued for merge. Since I'm also hitting=
- a
-> > > >>>> case where this is relevant, I'm sending this in to bring attent=
-ion
-> > > >>>> back to it.
-> > > >>>>
-> > > >>>
-> > > >>> I've queued this up now - thanks.
-> > > >>>
-> > > >>
-> > > >> And how can I get back the loglevel info? It seems I can only choo=
-se
-> > > >> between notice, silent and debug now. And the latter two only by a=
-lso
-> > > >> touching the kernel's loglevel.
-> > > >>
-> > > >> I'm particularly missing [1] in my UART logs now which is helpful =
-in
-> > > >> understanding this essential system state.
-> > > >>
-> > > >
-> > > > Hi Jan,
-> > > >
-> > > > Is efi=3Ddebug too noisy for you?
-> > >
-> > > Yes, also because it affects the kernel even more. I'm looking for
-> > > "efi=3Dinfo".
-> > >
-> > > I don't get the reason behind this change anymore as well. If you hav=
-e a
-> > > splash screen shown, weren't you booting with "quiet" before already,
-> > > thus also without any stub messages?
-> > >
-> >
-> > Yeah, good point. IIRC that came up in the discussion but I can't
-> > remember the motivation so it can't have been very convincing.
-> >
-> > So should we just revert this change?
 >
-> I'd prefer not to have to set quiet to get a clean splash screen. That
-> doesn't seem like an unreasonable expectation, getting default
-> non-debug logs and not having stuff written on top of the splash
-> image.
-
-Perhaps you could remind us why this only applies to the efistub
-output, and having the output of the kernel itself corrupting the
-splash screen is fine?
-
-> But if this needs to be reverted, It would be nice to have an
-> option like the original patch which allowed setting the efi loglevel
-> separately. Or perhaps leave this as is and add the option to turn up
-> the efi loglevel independently.
+>
+> On 8/8/2025 4:16 AM, Sagi Shahar wrote:
+> > The test checks report_fatal_error functionality.
+> >
+> > TD guest can use TDG.VP.VMCALL<ReportFatalError> to report the fatal er=
+ror
+> > it has experienced. TD guest is requesting a termination with the error
+> > information that include 16 general-purpose registers.
+>
+> I think it's worth to mention that KVM converts TDG.VP.VMCALL<ReportFatal=
+Error>
+> to KVM_EXIT_SYSTEM_EVENT with the type KVM_SYSTEM_EVENT_TDX_FATAL.
 >
 
-Let's go back to the beginning and figure out to which problem this is
-the solution.
+Done. Will get updated in the next version.
+
+> >
+> > Co-developed-by: Binbin Wu <binbin.wu@linux.intel.com>
+> > Signed-off-by: Binbin Wu <binbin.wu@linux.intel.com>
+> > Signed-off-by: Sagi Shahar <sagis@google.com>
+> > ---
+> >   .../selftests/kvm/include/x86/tdx/tdx.h       |  6 ++-
+> >   .../selftests/kvm/include/x86/tdx/tdx_util.h  |  1 +
+> >   .../selftests/kvm/include/x86/tdx/test_util.h | 19 +++++++
+> >   tools/testing/selftests/kvm/lib/x86/tdx/tdx.c | 18 +++++++
+> >   .../selftests/kvm/lib/x86/tdx/tdx_util.c      |  6 +++
+> >   .../selftests/kvm/lib/x86/tdx/test_util.c     | 10 ++++
+> >   tools/testing/selftests/kvm/x86/tdx_vm_test.c | 51 ++++++++++++++++++=
+-
+> >   7 files changed, 108 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/tools/testing/selftests/kvm/include/x86/tdx/tdx.h b/tools/=
+testing/selftests/kvm/include/x86/tdx/tdx.h
+> > index a7161efe4ee2..2acccc9dccf9 100644
+> > --- a/tools/testing/selftests/kvm/include/x86/tdx/tdx.h
+> > +++ b/tools/testing/selftests/kvm/include/x86/tdx/tdx.h
+> > @@ -4,9 +4,13 @@
+> >
+> >   #include <stdint.h>
+> >
+> > +#include "kvm_util.h"
+> > +
+> > +#define TDG_VP_VMCALL_REPORT_FATAL_ERROR 0x10003
+> > +
+> >   #define TDG_VP_VMCALL_INSTRUCTION_IO 30
+> >
+> >   uint64_t tdg_vp_vmcall_instruction_io(uint64_t port, uint64_t size,
+> >                                     uint64_t write, uint64_t *data);
+> > -
+> > +void tdg_vp_vmcall_report_fatal_error(uint64_t error_code, uint64_t da=
+ta_gpa);
+> >   #endif // SELFTEST_TDX_TDX_H
+> > diff --git a/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h b/t=
+ools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
+> > index 57a2f5893ffe..d66cf17f03ea 100644
+> > --- a/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
+> > +++ b/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
+> > @@ -15,5 +15,6 @@ struct kvm_vm *td_create(void);
+> >   void td_initialize(struct kvm_vm *vm, enum vm_mem_backing_src_type sr=
+c_type,
+> >                  uint64_t attributes);
+> >   void td_finalize(struct kvm_vm *vm);
+> > +void td_vcpu_run(struct kvm_vcpu *vcpu);
+> >
+> >   #endif // SELFTESTS_TDX_KVM_UTIL_H
+> > diff --git a/tools/testing/selftests/kvm/include/x86/tdx/test_util.h b/=
+tools/testing/selftests/kvm/include/x86/tdx/test_util.h
+> > index 07d63bf1ffe1..dafeee9af1dc 100644
+> > --- a/tools/testing/selftests/kvm/include/x86/tdx/test_util.h
+> > +++ b/tools/testing/selftests/kvm/include/x86/tdx/test_util.h
+> > @@ -38,4 +38,23 @@ bool is_tdx_enabled(void);
+> >   void tdx_test_success(void);
+> >   void tdx_test_assert_success(struct kvm_vcpu *vcpu);
+> >
+> > +/*
+> > + * Report an error with @error_code to userspace.
+> > + *
+> > + * Return value from tdg_vp_vmcall_report_fatal_error() is ignored sin=
+ce
+> > + * execution is not expected to continue beyond this point.
+> > + */
+> > +void tdx_test_fatal(uint64_t error_code);
+> > +
+> > +/*
+> > + * Report an error with @error_code to userspace.
+> > + *
+> > + * @data_gpa may point to an optional shared guest memory holding the =
+error
+> > + * string.
+>
+> A according to the GHCI spec, this is the optional GPA pointing to a shar=
+ed guest memory, but in these TDX KVM selftest cases, it may not used that =
+way. It may need some clarification about it. And based on the usage in thi=
+s patch series, the name data_gpa may be misleading.
+>
+
+I can add a comment at the call site saying that the data_gpa is a
+fake one for the sake of testing. Whether the data_gpa points to a
+valid shared memory or not doesn't make a lot of difference from a
+unit test perspective since we are testing the ReportFatalError
+functionality itself.
+
+Making the data_gpa valid for the test requires setting up additional
+shared memory with no significant benefit for the test.
+
+>
+> > + *
+> > + * Return value from tdg_vp_vmcall_report_fatal_error() is ignored sin=
+ce
+> > + * execution is not expected to continue beyond this point.
+> > + */
+> > +void tdx_test_fatal_with_data(uint64_t error_code, uint64_t data_gpa);
+> > +
+> >   #endif // SELFTEST_TDX_TEST_UTIL_H
+> > diff --git a/tools/testing/selftests/kvm/lib/x86/tdx/tdx.c b/tools/test=
+ing/selftests/kvm/lib/x86/tdx/tdx.c
+> > index f417ee75bee2..ba088bfc1e62 100644
+> > --- a/tools/testing/selftests/kvm/lib/x86/tdx/tdx.c
+> > +++ b/tools/testing/selftests/kvm/lib/x86/tdx/tdx.c
+> > @@ -1,5 +1,7 @@
+> >   // SPDX-License-Identifier: GPL-2.0-only
+> >
+> > +#include <string.h>
+> > +
+> >   #include "tdx/tdcall.h"
+> >   #include "tdx/tdx.h"
+> >
+> > @@ -25,3 +27,19 @@ uint64_t tdg_vp_vmcall_instruction_io(uint64_t port,=
+ uint64_t size,
+> >
+> >       return ret;
+> >   }
+> > +
+> > +void tdg_vp_vmcall_report_fatal_error(uint64_t error_code, uint64_t da=
+ta_gpa)
+> > +{
+> > +     struct tdx_hypercall_args args;
+> > +
+> > +     memset(&args, 0, sizeof(struct tdx_hypercall_args));
+> > +
+> > +     if (data_gpa)
+> > +             error_code |=3D 0x8000000000000000;
+> > +
+> > +     args.r11 =3D TDG_VP_VMCALL_REPORT_FATAL_ERROR;
+> > +     args.r12 =3D error_code;
+> > +     args.r13 =3D data_gpa;
+> > +
+> > +     __tdx_hypercall(&args, 0);
+> > +}
+> > diff --git a/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c b/tools=
+/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
+> > index e2bf9766dc03..5e4455be828a 100644
+> > --- a/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
+> > +++ b/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
+> > @@ -9,6 +9,7 @@
+> >   #include "kvm_util.h"
+> >   #include "processor.h"
+> >   #include "tdx/td_boot.h"
+> > +#include "tdx/tdx.h"
+> >   #include "test_util.h"
+> >
+> >   uint64_t tdx_s_bit;
+> > @@ -603,3 +604,8 @@ void td_finalize(struct kvm_vm *vm)
+> >
+> >       tdx_td_finalize_mr(vm);
+> >   }
+> > +
+> > +void td_vcpu_run(struct kvm_vcpu *vcpu)
+> > +{
+> > +     vcpu_run(vcpu);
+> > +}
+> > diff --git a/tools/testing/selftests/kvm/lib/x86/tdx/test_util.c b/tool=
+s/testing/selftests/kvm/lib/x86/tdx/test_util.c
+> > index 7355b213c344..6c82a0c3bd37 100644
+> > --- a/tools/testing/selftests/kvm/lib/x86/tdx/test_util.c
+> > +++ b/tools/testing/selftests/kvm/lib/x86/tdx/test_util.c
+> > @@ -59,3 +59,13 @@ void tdx_test_assert_success(struct kvm_vcpu *vcpu)
+> >                   vcpu->run->io.port, vcpu->run->io.size,
+> >                   vcpu->run->io.direction);
+> >   }
+> > +
+> > +void tdx_test_fatal_with_data(uint64_t error_code, uint64_t data_gpa)
+> > +{
+> > +     tdg_vp_vmcall_report_fatal_error(error_code, data_gpa);
+> > +}
+> > +
+> > +void tdx_test_fatal(uint64_t error_code)
+> > +{
+> > +     tdx_test_fatal_with_data(error_code, 0);
+> > +}
+> > diff --git a/tools/testing/selftests/kvm/x86/tdx_vm_test.c b/tools/test=
+ing/selftests/kvm/x86/tdx_vm_test.c
+> > index fdb7c40065a6..7d6d71602761 100644
+> > --- a/tools/testing/selftests/kvm/x86/tdx_vm_test.c
+> > +++ b/tools/testing/selftests/kvm/x86/tdx_vm_test.c
+> > @@ -3,6 +3,7 @@
+> >   #include <signal.h>
+> >
+> >   #include "kvm_util.h"
+> > +#include "tdx/tdx.h"
+> >   #include "tdx/tdx_util.h"
+> >   #include "tdx/test_util.h"
+> >   #include "test_util.h"
+> > @@ -24,7 +25,51 @@ static void verify_td_lifecycle(void)
+> >
+> >       printf("Verifying TD lifecycle:\n");
+> >
+> > -     vcpu_run(vcpu);
+> > +     td_vcpu_run(vcpu);
+> > +     tdx_test_assert_success(vcpu);
+> > +
+> > +     kvm_vm_free(vm);
+> > +     printf("\t ... PASSED\n");
+> > +}
+> > +
+> > +void guest_code_report_fatal_error(void)
+> > +{
+> > +     uint64_t err;
+> > +
+> > +     /*
+> > +      * Note: err should follow the GHCI spec definition:
+> > +      * bits 31:0 should be set to 0.
+> > +      * bits 62:32 are used for TD-specific extended error code.
+> > +      * bit 63 is used to mark additional information in shared memory=
+.
+> > +      */
+> > +     err =3D 0x0BAAAAAD00000000;
+> > +     tdx_test_fatal(err);
+> > +
+> > +     tdx_test_success();
+> > +}
+> > +
+> > +void verify_report_fatal_error(void)
+> > +{
+> > +     struct kvm_vcpu *vcpu;
+> > +     struct kvm_vm *vm;
+> > +
+> > +     vm =3D td_create();
+> > +     td_initialize(vm, VM_MEM_SRC_ANONYMOUS, 0);
+> > +     vcpu =3D td_vcpu_add(vm, 0, guest_code_report_fatal_error);
+> > +     td_finalize(vm);
+> > +
+> > +     printf("Verifying report_fatal_error:\n");
+> > +
+> > +     td_vcpu_run(vcpu);
+> > +
+> > +     TEST_ASSERT_EQ(vcpu->run->exit_reason, KVM_EXIT_SYSTEM_EVENT);
+> > +     TEST_ASSERT_EQ(vcpu->run->system_event.type, KVM_SYSTEM_EVENT_TDX=
+_FATAL);
+> > +     TEST_ASSERT_EQ(vcpu->run->system_event.ndata, 16);
+> > +
+> > +     TEST_ASSERT_EQ(vcpu->run->system_event.data[12], 0x0BAAAAAD000000=
+00);
+> > +     TEST_ASSERT_EQ(vcpu->run->system_event.data[13], 0);
+> > +
+> > +     td_vcpu_run(vcpu);
+> >       tdx_test_assert_success(vcpu);
+> >
+> >       kvm_vm_free(vm);
+> > @@ -38,9 +83,11 @@ int main(int argc, char **argv)
+> >       if (!is_tdx_enabled())
+> >               ksft_exit_skip("TDX is not supported by the KVM. Exiting.=
+\n");
+> >
+> > -     ksft_set_plan(1);
+> > +     ksft_set_plan(2);
+> >       ksft_test_result(!run_in_new_process(&verify_td_lifecycle),
+> >                        "verify_td_lifecycle\n");
+> > +     ksft_test_result(!run_in_new_process(&verify_report_fatal_error),
+> > +                      "verify_report_fatal_error\n");
+> >
+> >       ksft_finished();
+> >       return 0;
+>
 
