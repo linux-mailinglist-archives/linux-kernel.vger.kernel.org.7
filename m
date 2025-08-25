@@ -1,287 +1,169 @@
-Return-Path: <linux-kernel+bounces-784643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E35E0B33EFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:11:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DA3CB33E64
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:52:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAA3A1A813B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:11:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36A0D7A4D9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:50:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CF472EDD7D;
-	Mon, 25 Aug 2025 12:08:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F5D26C399;
+	Mon, 25 Aug 2025 11:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="usJDOCI6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NJb0ntd1"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FDB22EBDDC;
-	Mon, 25 Aug 2025 12:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9EB26A0F8
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 11:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756123718; cv=none; b=c/2+uVLoxd/TeyKbYkH3wgryr04mf7YXv+Q7MjRRfMBiD3TNWY3vQmgo1CcSuhbp5A6VOQ77BMUTEKvIZwnaCzvH7LWrKIBQrnynYpP2S7d98oB7bwmKsibIcqiLc37GVp9kBsAXGdve8VpNxH8ONjRel9cEGFQ++pooC5RR89Q=
+	t=1756122734; cv=none; b=dOeZomiZPkUnujl3A2foQ7tK53v7VgwFVI/GZxw9Z4CoG8e2h+do8NKxgclOzxFNSHd4mqChnfll0o3hDf5gu9lRexR3ilh4KjlRkbC6qXsMvNudHf4Xq19dDKup+v7ic0Hft6v7zTJOr6f7CzzCMqiYEdfP9YIifeCsvY4Lm+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756123718; c=relaxed/simple;
-	bh=CgZN/JwtbrFNC7CsS3biW1Y/xVDoaqoPO4JwlJIhPIM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vmy8Ge8iilPpI4G7q7JqY72lKRAhrtQY0qSbMct4ycuUI+8mtX6b4qSw5LpZi8zXhd2fMhtgMd3xhbewB+JQlr92hV+J+5tEjxyPDdlkGWrkXiX/kbCkPpnjwE8LVlJQYwVNwfHPXZHUP8BMvQeD3dZS0SPIB1X4X//GyYrVvcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=usJDOCI6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B65CEC4CEED;
-	Mon, 25 Aug 2025 12:08:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756123718;
-	bh=CgZN/JwtbrFNC7CsS3biW1Y/xVDoaqoPO4JwlJIhPIM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=usJDOCI6rn4Ib86tprHSTx5yiGSOsyQadsQ+AfRI+PPE929klxTifsmhPnsDhu1Bl
-	 Q2UtCLYGgtZyYz0ExwjVHibxoAmy6QPPxs/4O7Iko9XWEN8pgyr5Oeo4lJ0jJ5oxCx
-	 Zdt4AMpRiLkgVGyYUNWpi0xCW9u1MihXKYHS/MemqomVSC0WtOoUmXXw7GxXXugaV3
-	 a1+855m742qL5rAjx7Wdf8BGP62k0c3Qx1di8G3jcjNZ7LT4goNAfwmcM9U3Z5pWhu
-	 M9dAEkeg/ygIj9lgRrKAQCj4P89SYyJmcQTbksv5aXBGX+zTBjPMeWqHLLgR3ESV4R
-	 0qmfeXOlt2Zpw==
-Date: Mon, 25 Aug 2025 19:51:20 +0800
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Richard Leitner <richard.leitner@linux.dev>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] usb: usb251xb: support usage case without I2C
- control
-Message-ID: <aKxOOGBkR7ZfwCo5@xhacker>
-References: <20250820161743.23458-1-jszhang@kernel.org>
- <20250820161743.23458-4-jszhang@kernel.org>
- <qhfmvqjxad3ngk3azdkyxhw6ka7ijxccl6d2ylu26zlmovmeg3@3f2r4f6ksr6s>
+	s=arc-20240116; t=1756122734; c=relaxed/simple;
+	bh=dHzgTV5EgsoXBfE9yCqjfg3o/8E0k/K/0/cMTieZHrY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=RFuf/TATPsWNmGR1zvX72dt01VsNLzGv6ioS2XEHdWc+E79ud1s2uvXDzoU9OLN/i6syhhmdFy03AYaNnZwS+V+rCCyk2V2c3QYjtastkG24tUSQRJYCgNqVoAZSWrWoTQmV3B7JPqzFA4imd9+wAFJP/wU0TM4G4loElaAHanA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NJb0ntd1; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57P8ZdlA018085
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 11:52:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=/Y526DyN1p59PkdBwvGxDS
+	FDOnzDRguJWKI/2yK0OeE=; b=NJb0ntd10hSm0hzqU8vfKNexLd+sbEWn2h22Hl
+	618M03HMzt3Fe8qgPH+7v9VYUICjrt6bN8+BQQ5iT/E+Qg+VSxEAiIljpE8utIRR
+	KFrIhaCeZQX7FSXVYznNdLLYNmi+Qtj1x0zgcJszUGL4qn8Qs2LphxC2pj+UGxm6
+	fb4wK1e+wCRfiwoV4X9O1hxuO/ZYev1I/sUVAipnNZhuaoHLFwoV94lFievqxFq/
+	Hd/2eCydsywwmXfmay5NCLmD8dXbmqGROFGE2cjBbesPytGPG3B2mBlMOFz8mf4E
+	x41oXfFgKm7nqbKMdDH5G8lfySSZky1+a6gUulI9m/qj7xXg==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5unmvy8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 11:52:12 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-24458264c5aso47415425ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 04:52:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756122731; x=1756727531;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/Y526DyN1p59PkdBwvGxDSFDOnzDRguJWKI/2yK0OeE=;
+        b=TIAYMufpJVfOs4C1oVKqkeH7ZkBGDLWllQt7myW+XT23dMyA3VS6ISOzDox4A0BrUB
+         WwTOK+IdsNKeniHKY0UP/tznzw9YvLTySS3b1HOVXG0SAGYqXRZafHqXVEBN1NingEFv
+         Z8EReMHqH+z5pZJ0SUjk2C7c9RhtDZERdKqx1W/bU8gls1g4Jr64YnRf3upxztS+mDl9
+         N7MOrak0wE5uVsOO/B7MWd9KHHqHHjp0FwjSIaAWukXw7XG9Nu3dh4vxvTWvGvM13Klb
+         Y7+TBXc4EAfuZLLpTvMQrmDYKsm6BTocIkeM9ZT8PB/YeQUBEgNprXuOX2pN50wg+clt
+         m/xA==
+X-Forwarded-Encrypted: i=1; AJvYcCV5fV/+6nLzExMrNR67q3/OmeOMT1q/R0UzSKLfLRn1o/Kp9b6vY+HZAj1ANxZFmVj+ZPKNA/RnnunYJUY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8K5a4mn66hzYaM9C+pCL6KVKH3Baa2lc0TZ0sgqNdBlJNqfih
+	0sofKZ1Yn3pa5g0sIKVaZtXxfVBPdQIOQgZ8/Z+KIH9VvtMXGD6a3+3eAl10NdUy4Vbqei9gOk3
+	Jof8mJRSJU5f+yA46jAV4D57+gBvRBlXZhLeEme3aQbWWGv/L/TVpvimDlpLljAnv9QI=
+X-Gm-Gg: ASbGncs2cTCDWqE8bFZLY+Hpd1ja5Y90DxCUlq4jmlAgpS8BU/3J+dGtzfEAYgeDWx7
+	mRvBideGcVFFG9J5CwSJoFl0ee+Pv621dRb6TNfLn+5/EnIqP5rzQnwr0tBocRKvek3B6j8f0Su
+	/XazwtCSkAOKRTLiibVWxfRlE3/ByMSCKchYIcQwvnB6cSy2z/M3vsLIxxPUQkhfZH5B5/CmbxT
+	vJHgC9lPRrVzWdYFLVBTjqRITWPe5fBxHhIVMAVhv3RXwvbMyTWCQgYYzX+2dLxLNquSz6szmQH
+	1nBcPjowUf+Iqf8ye/+JROe6MypWpJjEK8l5VUveNxlvh95f6GYG9OOkL6BECWSh2+8ohwsb+Ya
+	2UdIgltawce7lgL+wiOWwmxYovfygP+by3vzGJG80cQOJmcMCdbiV6SyLYkw3Y4tb2ViWrmwjHr
+	Y=
+X-Received: by 2002:a17:903:4b03:b0:246:cfc4:9a27 with SMTP id d9443c01a7336-246cfc49fefmr37821405ad.13.1756122731129;
+        Mon, 25 Aug 2025 04:52:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG0nXT2JRvirqDOleS8kFaVnHFiCoQc5HWIvFsBFs6zeOhIu5PAQX22b01eAoG3tmxg7dDKAg==
+X-Received: by 2002:a17:903:4b03:b0:246:cfc4:9a27 with SMTP id d9443c01a7336-246cfc49fefmr37821145ad.13.1756122730680;
+        Mon, 25 Aug 2025 04:52:10 -0700 (PDT)
+Received: from hu-kathirav-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-246687b521bsm67081015ad.60.2025.08.25.04.52.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Aug 2025 04:52:10 -0700 (PDT)
+From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+Subject: [PATCH 0/3] Fix the NULL pointer deference issue in QMP USB
+ drivers
+Date: Mon, 25 Aug 2025 17:22:01 +0530
+Message-Id: <20250825-qmp-null-deref-on-pm-v1-0-bbd3ca330849@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <qhfmvqjxad3ngk3azdkyxhw6ka7ijxccl6d2ylu26zlmovmeg3@3f2r4f6ksr6s>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGFOrGgC/x2MQQqAIBAAvyJ7biEFsfpKdChda6HMlCKI/p50H
+ IaZBzIlpgydeCDRxZn3UEBWAuwyhpmQXWFQtdJ1ozQeW8Rwris6SuRxDxg39K5txlZaY/QEJY1
+ F8f1v++F9PxDlQo5mAAAA
+X-Change-ID: 20250825-qmp-null-deref-on-pm-fd98a91c775b
+To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>,
+        Poovendhan Selvaraj <quic_poovendh@quicinc.com>,
+        stable@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756122727; l=1268;
+ i=kathiravan.thirumoorthy@oss.qualcomm.com; s=20230906;
+ h=from:subject:message-id; bh=dHzgTV5EgsoXBfE9yCqjfg3o/8E0k/K/0/cMTieZHrY=;
+ b=bq8Y3fUJzfMQT1ir+8ZpNme7SH/5rFoC8X+nVHsTL4XrSAbtetJEoIRxutdNqbYkdSBxVKOo6
+ cQ+0ejVApFeDS7bz+rcwSTU4RUbttRQyGQAJthKmpRVm91keB91ALka
+X-Developer-Key: i=kathiravan.thirumoorthy@oss.qualcomm.com; a=ed25519;
+ pk=xWsR7pL6ch+vdZ9MoFGEaP61JUaRf0XaZYWztbQsIiM=
+X-Proofpoint-GUID: x-U_WwiV51f1MfRRJrXTxeJapLyP3etO
+X-Proofpoint-ORIG-GUID: x-U_WwiV51f1MfRRJrXTxeJapLyP3etO
+X-Authority-Analysis: v=2.4 cv=JJo7s9Kb c=1 sm=1 tr=0 ts=68ac4e6c cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=7tgEStx-2YtQAc9oN5kA:9
+ a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMSBTYWx0ZWRfX8+1X9VijndcP
+ 9o4qCju2xGJhAvFG69Ner7MnVwmxJySsmsfcrUcZDFTbN0K3xPT/v83cEEXRfTcnUombLgKY7Jy
+ VF2EyLU2imnTULrd/203aQznJSZreaKMMsA8zTtil//b2HDZzE7poEJoIpMF43mojZxv0XzFZjT
+ gFpZkUHJo+Ud1wt0iKP5r6kGHwptYYUd/f4D/UVY86xqLFyz4e7V55RPOGThcSLIOJxYBMEDk68
+ 1yMBtDyHChf3E8DQwv8KmOUMj8kM5eVEGB1Dh7+Md0clwG3O+27GClP51bwrzjJ2aMTzZOeSe1d
+ hSaaYXVIxSN0gaewsr8O6cx3asLj1RWLYB9sdPU2pue5SVW8D3g/M86e1e/rhz7O7nPqvzXZqlQ
+ 2qOQnK0u
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-25_05,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 adultscore=0 bulkscore=0 spamscore=0 impostorscore=0
+ malwarescore=0 clxscore=1015 priorityscore=1501 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230031
 
-On Sun, Aug 24, 2025 at 08:55:09PM +0200, Richard Leitner wrote:
-> Hi Jisheng,
-> 
-> On Thu, Aug 21, 2025 at 12:17:43AM +0800, Jisheng Zhang wrote:
-> > Currently, the usb251xb assumes i2c control. But from HW point of
-> > view, the hub supports usage case without any i2c, we only want the
-> > gpio controls.
-> > 
-> > Refactor the code so that register writes for configuration are only
-> > performed if the device has a i2c_client provided and also register as
-> > a platform driver. This allows the driver to be used to manage GPIO
-> > based control of the device.
-> > 
-> > Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> > ---
-> >  drivers/usb/misc/usb251xb.c | 108 +++++++++++++++++++++++++++++++-----
-> >  1 file changed, 94 insertions(+), 14 deletions(-)
-> > 
-> > diff --git a/drivers/usb/misc/usb251xb.c b/drivers/usb/misc/usb251xb.c
-> > index cb2f946de42c..e9a9404d17b2 100644
-> > --- a/drivers/usb/misc/usb251xb.c
-> > +++ b/drivers/usb/misc/usb251xb.c
-> > @@ -17,6 +17,7 @@
-> >  #include <linux/module.h>
-> >  #include <linux/nls.h>
-> >  #include <linux/of.h>
-> > +#include <linux/platform_device.h>
-> >  #include <linux/regulator/consumer.h>
-> >  #include <linux/slab.h>
-> >  
-> > @@ -242,15 +243,19 @@ static int usb251xb_check_dev_children(struct device *dev, void *child)
-> >  static int usb251x_check_gpio_chip(struct usb251xb *hub)
-> >  {
-> >  	struct gpio_chip *gc = gpiod_to_chip(hub->gpio_reset);
-> > -	struct i2c_adapter *adap = hub->i2c->adapter;
-> > +	struct i2c_adapter *adap;
-> >  	int ret;
-> >  
-> > +	if (!hub->i2c)
-> > +		return 0;
-> > +
-> >  	if (!hub->gpio_reset)
-> >  		return 0;
-> >  
-> >  	if (!gc)
-> >  		return -EINVAL;
-> >  
-> > +	adap = hub->i2c->adapter;
-> >  	ret = usb251xb_check_dev_children(&adap->dev, gc->parent);
-> >  	if (ret) {
-> >  		dev_err(hub->dev, "Reset GPIO chip is at the same i2c-bus\n");
-> > @@ -271,7 +276,8 @@ static void usb251xb_reset(struct usb251xb *hub)
-> >  	if (!hub->gpio_reset)
-> >  		return;
-> >  
-> > -	i2c_lock_bus(hub->i2c->adapter, I2C_LOCK_SEGMENT);
-> > +	if (hub->i2c)
-> > +		i2c_lock_bus(hub->i2c->adapter, I2C_LOCK_SEGMENT);
-> >  
-> >  	gpiod_set_value_cansleep(hub->gpio_reset, 1);
-> >  	usleep_range(1, 10);	/* >=1us RESET_N asserted */
-> > @@ -280,7 +286,8 @@ static void usb251xb_reset(struct usb251xb *hub)
-> >  	/* wait for hub recovery/stabilization */
-> >  	usleep_range(500, 750);	/* >=500us after RESET_N deasserted */
-> >  
-> > -	i2c_unlock_bus(hub->i2c->adapter, I2C_LOCK_SEGMENT);
-> > +	if (hub->i2c)
-> > +		i2c_unlock_bus(hub->i2c->adapter, I2C_LOCK_SEGMENT);
-> >  }
-> >  
-> >  static int usb251xb_connect(struct usb251xb *hub)
-> > @@ -289,7 +296,11 @@ static int usb251xb_connect(struct usb251xb *hub)
-> >  	int err, i;
-> >  	char i2c_wb[USB251XB_I2C_REG_SZ];
-> >  
-> > -	memset(i2c_wb, 0, USB251XB_I2C_REG_SZ);
-> > +	if (!hub->i2c) {
-> > +		usb251xb_reset(hub);
-> > +		dev_info(dev, "hub is put in default configuration.\n");
-> > +		return 0;
-> > +	}
-> 
-> You dropped the memset of write buffer. Are you sure this doesn't cause
-> any issues? (Sorry, I'm currently travelling, so I wasn't able to test
-> the series on real hw)
+In the suspend / resume callbacks, qmp->phy could be NULL because PHY is
+created after the PM ops are enabled, which lead to the NULL pointer
+deference.
 
-oops, good catch! Even if the removing memset() works it should be in a
-seperate patch. I will send v2 soon. Thanks for your review!
+Internally issue is reported on qcom-qmp-usb driver. Since the fix is
+applicable to legacy and usbc drivers, incoporated the fixes for those
+driver as well.
 
-> 
-> Apart from that the patch LGTM. Thanks! :-)
-> 
-> >  
-> >  	if (hub->skip_config) {
-> >  		dev_info(dev, "Skip hub configuration, only attach.\n");
-> > @@ -698,18 +709,13 @@ static int usb251xb_i2c_probe(struct i2c_client *i2c)
-> >  	return usb251xb_probe(hub);
-> >  }
-> >  
-> > -static int usb251xb_suspend(struct device *dev)
-> > +static int usb251xb_suspend(struct usb251xb *hub)
-> >  {
-> > -	struct i2c_client *client = to_i2c_client(dev);
-> > -	struct usb251xb *hub = i2c_get_clientdata(client);
-> > -
-> >  	return regulator_disable(hub->vdd);
-> >  }
-> >  
-> > -static int usb251xb_resume(struct device *dev)
-> > +static int usb251xb_resume(struct usb251xb *hub)
-> >  {
-> > -	struct i2c_client *client = to_i2c_client(dev);
-> > -	struct usb251xb *hub = i2c_get_clientdata(client);
-> >  	int err;
-> >  
-> >  	err = regulator_enable(hub->vdd);
-> > @@ -719,7 +725,23 @@ static int usb251xb_resume(struct device *dev)
-> >  	return usb251xb_connect(hub);
-> >  }
-> >  
-> > -static DEFINE_SIMPLE_DEV_PM_OPS(usb251xb_pm_ops, usb251xb_suspend, usb251xb_resume);
-> > +static int usb251xb_i2c_suspend(struct device *dev)
-> > +{
-> > +	struct i2c_client *client = to_i2c_client(dev);
-> > +	struct usb251xb *hub = i2c_get_clientdata(client);
-> > +
-> > +	return usb251xb_suspend(hub);
-> > +}
-> > +
-> > +static int usb251xb_i2c_resume(struct device *dev)
-> > +{
-> > +	struct i2c_client *client = to_i2c_client(dev);
-> > +	struct usb251xb *hub = i2c_get_clientdata(client);
-> > +
-> > +	return usb251xb_resume(hub);
-> > +}
-> > +
-> > +static DEFINE_SIMPLE_DEV_PM_OPS(usb251xb_i2c_pm_ops, usb251xb_i2c_suspend, usb251xb_i2c_resume);
-> >  
-> >  static const struct i2c_device_id usb251xb_id[] = {
-> >  	{ "usb2422" },
-> > @@ -739,13 +761,71 @@ static struct i2c_driver usb251xb_i2c_driver = {
-> >  	.driver = {
-> >  		.name = DRIVER_NAME,
-> >  		.of_match_table = usb251xb_of_match,
-> > -		.pm = pm_sleep_ptr(&usb251xb_pm_ops),
-> > +		.pm = pm_sleep_ptr(&usb251xb_i2c_pm_ops),
-> >  	},
-> >  	.probe = usb251xb_i2c_probe,
-> >  	.id_table = usb251xb_id,
-> >  };
-> >  
-> > -module_i2c_driver(usb251xb_i2c_driver);
-> > +static int usb251xb_plat_probe(struct platform_device *pdev)
-> > +{
-> > +	struct usb251xb *hub;
-> > +
-> > +	hub = devm_kzalloc(&pdev->dev, sizeof(*hub), GFP_KERNEL);
-> > +	if (!hub)
-> > +		return -ENOMEM;
-> > +
-> > +	platform_set_drvdata(pdev, hub);
-> > +	hub->dev = &pdev->dev;
-> > +
-> > +	return usb251xb_probe(hub);
-> > +}
-> > +
-> > +static int usb251xb_plat_suspend(struct device *dev)
-> > +{
-> > +	return usb251xb_suspend(dev_get_drvdata(dev));
-> > +}
-> > +
-> > +static int usb251xb_plat_resume(struct device *dev)
-> > +{
-> > +	return usb251xb_resume(dev_get_drvdata(dev));
-> > +}
-> > +
-> > +static DEFINE_SIMPLE_DEV_PM_OPS(usb251xb_plat_pm_ops, usb251xb_plat_suspend, usb251xb_plat_resume);
-> > +
-> > +static struct platform_driver usb251xb_plat_driver = {
-> > +	.driver = {
-> > +		.name = DRIVER_NAME,
-> > +		.of_match_table = usb251xb_of_match,
-> > +		.pm = pm_sleep_ptr(&usb251xb_plat_pm_ops),
-> > +	},
-> > +	.probe		= usb251xb_plat_probe,
-> > +};
-> > +
-> > +static int __init usb251xb_init(void)
-> > +{
-> > +	int err;
-> > +
-> > +	err = i2c_add_driver(&usb251xb_i2c_driver);
-> > +	if (err)
-> > +		return err;
-> > +
-> > +	err = platform_driver_register(&usb251xb_plat_driver);
-> > +	if (err) {
-> > +		i2c_del_driver(&usb251xb_i2c_driver);
-> > +		return err;
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +module_init(usb251xb_init);
-> > +
-> > +static void __exit usb251xb_exit(void)
-> > +{
-> > +	platform_driver_unregister(&usb251xb_plat_driver);
-> > +	i2c_del_driver(&usb251xb_i2c_driver);
-> > +}
-> > +module_exit(usb251xb_exit);
-> >  
-> >  MODULE_AUTHOR("Richard Leitner <richard.leitner@skidata.com>");
-> >  MODULE_DESCRIPTION("USB251x/xBi USB 2.0 Hub Controller Driver");
-> > -- 
-> > 2.50.0
-> > 
-> 
-> regards;rl
+qcom-qmp-usb-legacy and qcom-qmp-usbc drivers are splitted out from
+qcom-qmp-usb driver in v6.6 and v6.9 respectively. So splitted the
+changes into 3, for ease of backporting.
+
+Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+---
+Poovendhan Selvaraj (3):
+      phy: qcom-qmp-usb: fix NULL pointer dereference in PM callbacks
+      phy: qcom-qmp-usb-legacy: fix NULL pointer dereference in PM callbacks
+      phy: qcom-qmp-usbc: fix NULL pointer dereference in PM callbacks
+
+ drivers/phy/qualcomm/phy-qcom-qmp-usb-legacy.c | 4 ++--
+ drivers/phy/qualcomm/phy-qcom-qmp-usb.c        | 4 ++--
+ drivers/phy/qualcomm/phy-qcom-qmp-usbc.c       | 4 ++--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
+---
+base-commit: 0f4c93f7eb861acab537dbe94441817a270537bf
+change-id: 20250825-qmp-null-deref-on-pm-fd98a91c775b
+
+Best regards,
+-- 
+Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+
 
