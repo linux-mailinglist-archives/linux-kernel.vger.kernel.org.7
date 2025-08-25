@@ -1,159 +1,151 @@
-Return-Path: <linux-kernel+bounces-785609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC5FBB34E77
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 23:54:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E7BCB34E7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 23:55:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9E8B16F236
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 21:54:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F71D5E595E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 21:55:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC71B29D29D;
-	Mon, 25 Aug 2025 21:54:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35BAA29D29B;
+	Mon, 25 Aug 2025 21:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bxSI5vp1"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bnEXUW47"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C398B29D26B
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 21:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DFAE23C4E3
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 21:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756158868; cv=none; b=Fe4d7lB2vv1uOeUKajhOy6mY9AmhoKVjBcCkLROIxtcGRkKL+SA2XKy4YfLmxONU4hG5ZG8c9XJzfEF59pgrBVRQ1dxmPiakPZlioQwYPrYj80CF2RBxLMWHR2DFwme+2is6XZIHd61Kkle+gPx1v2U0Md796LxTFP9qcrPjQ74=
+	t=1756158945; cv=none; b=hpIgD2viMvb7QrYQRzNpZZpkocqK2hEEl+YvoJXolA0/nyxwmDuVyh7O43xgsmGo2oaYQiSyEa8yQoF+bykRXjY9OQhzfX73LKMOpaGqdgVMgdDT2klF4XHTj6yXMUXaH/mX6VG6kG4A8R9h0b2rS+T5e95AeMyhlfubSmzFwlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756158868; c=relaxed/simple;
-	bh=PUrALNKcazTqj1JOi1kUX/7GRlWlbsgpoo8wt8AGzQQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IVOlDZSWDNjyaBB3TFz3knB+ff/LM66LltCV73npKlRkfPSWKujS5QjmC2eBztVU+L9TWf+XJjzzgz/IEFIhkDaG/O1ty74okeOsiW2if2pti8xgvkXL1xfrqzEXIYd+czmud01DxHs3I7X6EFlxkmhUGjqd6O6zn2VXvuuKhSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bxSI5vp1; arc=none smtp.client-ip=170.10.133.124
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756158865;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ktdRGsOdUoyTte4ICKWTNwEDxAMcLJUcCCRuCPiDxEI=;
-	b=bxSI5vp17Kttun/uupcHs86jhJFTizzaPNpJKfIc9JDrlgxnB3vCMoNyrm2VJy1opCpQ+D
-	8AqOGpnyAEZ0iYOMGI/5gxVL4dkLkC/DbBqER2ykqM6crnyQEfSuwfyGNcO7GY+JIYFJem
-	Fg38QuI/QXBaPUzb9LCA6AbnVtuwjtU=
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
- [209.85.166.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-524-u4BnFBwHMau9z_yPU7Pwtg-1; Mon, 25 Aug 2025 17:54:23 -0400
-X-MC-Unique: u4BnFBwHMau9z_yPU7Pwtg-1
-X-Mimecast-MFC-AGG-ID: u4BnFBwHMau9z_yPU7Pwtg_1756158863
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-88432dc85ddso3564139f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 14:54:23 -0700 (PDT)
+	s=arc-20240116; t=1756158945; c=relaxed/simple;
+	bh=NXFEpNyEVttMDMgHEZeZ2cvskfO/A0LFfXyq/AemQgw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uRBGJOuSE7HE/VUMn5r2EcuegD19w61nn7ZazhY5nPTOJOEfqmHOPEq7i3yEaUNDxiTDwuEQerUMosWCeXireZxyp+RoinjhHTovElUczvU0VJrlIgSRHPSxmHkiQv6VASS8No7VMCrb7wvvTCjnUGH9zeObw4j/K3yC2EKiwoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bnEXUW47; arc=none smtp.client-ip=205.220.180.131
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57PFnNPd028623
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 21:55:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=cUqE7qCCjIfKy84Rr0H8Cz13
+	kHS6QOxmkyR9AlwzF6w=; b=bnEXUW47jL0w7zec4aFNHejepHoQkNSHY7DZ9tek
+	bzcbuSbguIBNE7yvx29VLJVkjPMI8RM6ndrvUJ5lAoxPtjANKfkoQCICsLcGFJUB
+	5VW/vG1q1VKUjxcDaKk6vamrDriNQSXWRFb0Ws7IroTvrnttx4bKg4fUWCbr5ycA
+	md3x9uy/CZLIQ/m44pVbLbAATU+vi8VwcaaYe7B3SB87xvnfRAzksN596wEqNWb4
+	6y6tgUoXlR/L5KDO4G7xuDKVN0FUBTWdgJhKASYYS/uOuTWAvXVFPOmgOLXe7IJI
+	uk9x0c1Zi/xpjBjVHkZNdfGTxFtNlu56KQVc6GU3nHv7Bg==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q615egeg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 21:55:43 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b109bccebaso140604461cf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 14:55:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756158863; x=1756763663;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ktdRGsOdUoyTte4ICKWTNwEDxAMcLJUcCCRuCPiDxEI=;
-        b=nDWgJDhl1HGW7ffYfbVf/TbKrf5jIm1pQrPZCdDxhrpmhtOKoLGeEGPQMiAfy1jTHt
-         Fc2KjDDu0boyDZU4hh4+M2rozu/ze6idQCFbMwtkxjMMqrp7DlgP984z3fHBlZrKbSBf
-         Bsk3ClEDvo0LWYjJPdGcgI32vF11rG8TOmXFLxWD9rNBtlcKATj+4BT//ExrX5DOVnQQ
-         sJxmfqWt0gImUQfaaMN5zuSg7XWML+SBNAieHkOVSAR38RiU0K3rXZYTmGCWnHb3buJP
-         0kd6s3gPzT7dv/HkJW9V8ViQzoMZAwJQ0NzhHCdZ360Mzuo2VjLJ1oRBy7whvKgS4Mjl
-         /RWw==
-X-Forwarded-Encrypted: i=1; AJvYcCWQcKADiG1N7cmAVCIcvs5Vu0fp0nrfaJmt6J6gFkU161cfuP5e+3g+dGO2s21ION5i3AQ/dHnVbIMgfFw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvrsqOELNpFTUBBYqAOrwPmoUxXtgPLu3zwvPUFO0lTc1nIIbY
-	dQw2pQyXFBvnmHJqni2NH2zO/sTzak2g6aMM0GjOI77Mo47eR24jWPxZmYGNDzdDgLkzdPGmT6w
-	P/5RMOkN2ea3Y75ZogRQl3CJy5dzyI9MS3SwTrf6AhVHfiuJlHq7TD6eyOWcVUukNcQ==
-X-Gm-Gg: ASbGncvBpL0s5IwCouqR4Ykaimvg8iWiLBOLAZrXiJh7hkskLO71/PwDUdH7UTfKQs8
-	CTDyfubQ9tcWXHw+r4J5gCvwBmTavSs5vyx6ooOBGt1d34hIaAT5qYhJ1O5SvoYz5paHp5V0adS
-	HUT3KLkRcH+jOhF94nXJxsuTCqgurz3aXBDJrJPad9LGgUovWDxbfL31MU3ci0xGZTAlvnaJqT7
-	KjfDUTg5XbQaDmRVWPdBdF9pejLeADFp+ZIKqD0YwGCGtiZR6iOPOGhGO88Qi/X/kPgMxpWv9V5
-	F7Uy05YrMmPBIciYXobp00Swv9hGojshTosoFzTO7wI=
-X-Received: by 2002:a05:6602:2c10:b0:87c:32d1:3b84 with SMTP id ca18e2360f4ac-886bd202301mr688403639f.3.1756158863114;
-        Mon, 25 Aug 2025 14:54:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGQEDzQ15G4rYzJDAIr+leDsCSs9V6r+VT1nFdg7y+XkefGZ8cay0aY5yb38za5ejvfkweA7g==
-X-Received: by 2002:a05:6602:2c10:b0:87c:32d1:3b84 with SMTP id ca18e2360f4ac-886bd202301mr688402539f.3.1756158862694;
-        Mon, 25 Aug 2025 14:54:22 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-886c8fc6b0dsm540240839f.20.2025.08.25.14.54.21
+        d=1e100.net; s=20230601; t=1756158942; x=1756763742;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cUqE7qCCjIfKy84Rr0H8Cz13kHS6QOxmkyR9AlwzF6w=;
+        b=oRibj6DnIpEJ0WZRqSxn9AVkWuDnWke/HsZWweeB1HkfiUx1OQDzYCEwX+odblqkAZ
+         zLPA/5nW5L+MfqqUZE70RVFy7FFUWTQQa1BR33apKcSV8/WcxzfsrBeYxXf7Kuy5vhbf
+         faW2Rw/RTMHHIs8aS4m7IPv/1ihHkFKz3KlfQQq93RWi1ERXYGhatvF8J+6DCUGl6iJi
+         Zc4gPtQxxglK9gc+GFZ1p6vSYoVDTzbWEQjbg6Jm9zY9dOnuKCHgcKuPTk7Ve+kDY7DS
+         LbTCnZiGlWOH9/bEuS34RIjgrwthx02EpkCp/M31GSxZ51ehwERrSQT9u63lN5LHwjje
+         P3Aw==
+X-Forwarded-Encrypted: i=1; AJvYcCXEqDxbkB8M1q3hstAkBqn4G6pOSuivIbtquU5r/oAoumRRvijrKjkWpL/7ZyzTLPl8gnCPiQNuRSNYnfA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzx0k58ia57wvogVU+CKALGuKWjcfyVDx/ElHR7ea0NwQlimIzf
+	05chlK/4l1wJD8mg9n+gK2TMPRMrEFZaz2+GSS7THvx7cmaSx4xP4rbqqNBCVRw+1KSo9aKVCa3
+	2g3rqEJdoWhWhY8RUeq9mcLs3gexNYw3UUft+CSv9UX9r4x75M4ElBQQnw7H8QKm1z7M=
+X-Gm-Gg: ASbGnculJrWZdCs5rExWQQ8ifabU6BGrEfanlcMtASf2O+pKFEoNdPfjEl6yNNstSlP
+	OAadV3+VPLbf93fWqNd57gBIvVdMEkwI3nVaHNjA0WszzSLVSfKJSvFuZ2SoK4W4WvQ6L2hOR/1
+	S1kPIM7Te58HC8Hg3ie09FCcI0nz36cy/s0eWilIacOAaWHl26tskGjkCQKYFVIFzkOfBD62ZtJ
+	l7FfhqIma2fex4SYOuP0Zp7u/E9LsR6szxgUwJvMBhLJAM+Pff+vaeBu0K34wnH4e6RlzQUP1NJ
+	sChF6JOc/HWxc4uU+D2Rr4wMBVVPa213gARjD7QUZbn8ZYkXQPupXPMfdzPiqZnLYLawWJVIFmi
+	o9dc4vWRnKKfV+QlCzZhPLDvrWx09aiNIgW+9bt6kd2hrm+m31SpN
+X-Received: by 2002:ac8:7e8e:0:b0:4af:1bfb:1658 with SMTP id d75a77b69052e-4b2aaa196b0mr152453111cf.12.1756158942090;
+        Mon, 25 Aug 2025 14:55:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHFoMD3lKyx/+uaoF6/Udx3va33ITgDznogbeIupv27fT8xR/EpMcyEGrE5fvEV0eWAe2Y/LQ==
+X-Received: by 2002:ac8:7e8e:0:b0:4af:1bfb:1658 with SMTP id d75a77b69052e-4b2aaa196b0mr152452801cf.12.1756158941479;
+        Mon, 25 Aug 2025 14:55:41 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f35c8bacasm1855198e87.97.2025.08.25.14.55.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 14:54:21 -0700 (PDT)
-Date: Mon, 25 Aug 2025 15:54:20 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Farhan Ali <alifm@linux.ibm.com>
-Cc: linux-s390@vger.kernel.org, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, helgaas@kernel.org, schnelle@linux.ibm.com,
- mjrosato@linux.ibm.com
-Subject: Re: [PATCH v2 2/9] PCI: Add additional checks for flr and pm reset
-Message-ID: <20250825155420.2ace4847.alex.williamson@redhat.com>
-In-Reply-To: <20250825171226.1602-3-alifm@linux.ibm.com>
-References: <20250825171226.1602-1-alifm@linux.ibm.com>
-	<20250825171226.1602-3-alifm@linux.ibm.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+        Mon, 25 Aug 2025 14:55:40 -0700 (PDT)
+Date: Tue, 26 Aug 2025 00:55:38 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>
+Subject: Re: [PATCH v3 22/38] drm/msm/dp: Always program
+ MST_FIFO_CONSTANT_FILL for MST use cases
+Message-ID: <s5a6fpyqg5nybnnbrv7wwjvrsj44tr4cihcojkcfwmz5dc4r5m@rioxbgxvwayn>
+References: <20250825-msm-dp-mst-v3-0-01faacfcdedd@oss.qualcomm.com>
+ <20250825-msm-dp-mst-v3-22-01faacfcdedd@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250825-msm-dp-mst-v3-22-01faacfcdedd@oss.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzNCBTYWx0ZWRfX5kqc3t6h5VUO
+ 9hUcAl7J1au3jWvxvws6YYQRbMBDrhhKZFnel5BSOxLddQ536BDbgNR776rR+NHyonENDdh5nlu
+ QsJD/lpXMqaTMOhXabJ2Big4A5wHnZsmNsrp0uZrJBv3kt4PbF9ucBWcV5LjgZmGBuNVGi6a98c
+ 7vi53HfhA3HnwjBn9UaSrLle6emvU/mAvCEtmR8RRlqriERsae8bsyX4Ac8iryyXJxO2FKM2d93
+ CBoznQ5Ft7ERB/iICwo93dcz/bokxCpN1PpRQ0UR1knwO4VTYfqq6MHgQlrx1LqFvskDUkSiEJ5
+ yh5waLkR2i5iCCVjJOL7GFd51MRFabi19POF+2w5zcAjm2V7vCYhQq/hQjE3Z1pXDbHU/GFme5S
+ u56yn5lm
+X-Proofpoint-GUID: xfHHIK3-jE2uXSp9AF9aaecCJJRfz1B-
+X-Authority-Analysis: v=2.4 cv=K+AiHzWI c=1 sm=1 tr=0 ts=68acdbdf cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=1UWbhTYU8iixJmD3m_gA:9
+ a=CjuIK1q_8ugA:10 a=a_PwQJl-kcHnX1M80qC6:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: xfHHIK3-jE2uXSp9AF9aaecCJJRfz1B-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-25_10,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 suspectscore=0 bulkscore=0 clxscore=1015 adultscore=0
+ impostorscore=0 priorityscore=1501 phishscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230034
 
-On Mon, 25 Aug 2025 10:12:19 -0700
-Farhan Ali <alifm@linux.ibm.com> wrote:
-
-> If a device is in an error state, then any reads of device registers can
-> return error value. Add addtional checks to validate if a device is in an
-> error state before doing an flr or pm reset.
-
-I think the thing we see in practice for a device that's wedged and
-returning -1 from config space is that the FLR will timeout waiting for
-a pending transaction.  So this should fix that, but should we log
-something?
-
-I'm assuming AF FLR is not needed here because we don't cache the
-offset and therefore won't find the capability when we search the chain
-for it.
-
-> Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
-> ---
->  drivers/pci/pci.c | 7 +++++++
->  1 file changed, 7 insertions(+)
+On Mon, Aug 25, 2025 at 10:16:08PM +0800, Yongxing Mou wrote:
+> From: Abhinav Kumar <quic_abhinavk@quicinc.com>
 > 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 0dd95d782022..a07bdb287cf3 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -4560,12 +4560,17 @@ EXPORT_SYMBOL_GPL(pcie_flr);
->   */
->  int pcie_reset_flr(struct pci_dev *dev, bool probe)
->  {
-> +	u32 reg;
-> +
->  	if (dev->dev_flags & PCI_DEV_FLAGS_NO_FLR_RESET)
->  		return -ENOTTY;
->  
->  	if (!(dev->devcap & PCI_EXP_DEVCAP_FLR))
->  		return -ENOTTY;
->  
-> +	if (pcie_capability_read_dword(dev, PCI_EXP_DEVCAP, &reg))
-> +		return -ENOTTY;
-> +
->  	if (probe)
->  		return 0;
->  
-> @@ -4640,6 +4645,8 @@ static int pci_pm_reset(struct pci_dev *dev, bool probe)
->  		return -ENOTTY;
->  
->  	pci_read_config_word(dev, dev->pm_cap + PCI_PM_CTRL, &csr);
-> +	if (PCI_POSSIBLE_ERROR(csr))
-> +		return -ENOTTY;
+> As per the hardware programming guide, MST_FIFO_CONSTANT_FILL must
+> always be programmed when operating in MST mode. This patch ensures
+> the register is configured accordingly.
+> 
+> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
+> ---
+>  drivers/gpu/drm/msm/dp/dp_ctrl.c  |  2 ++
+>  drivers/gpu/drm/msm/dp/dp_panel.c | 12 ++++++++++++
+>  drivers/gpu/drm/msm/dp/dp_panel.h |  2 ++
+>  3 files changed, 16 insertions(+)
+> 
 
-Doesn't this turn out to be redundant to the test below?
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
->  	if (csr & PCI_PM_CTRL_NO_SOFT_RESET)
->  		return -ENOTTY;
->  
 
-Thanks,
-Alex
-
+-- 
+With best wishes
+Dmitry
 
