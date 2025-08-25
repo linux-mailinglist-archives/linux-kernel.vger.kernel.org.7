@@ -1,181 +1,134 @@
-Return-Path: <linux-kernel+bounces-785070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA2EFB34583
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:20:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2C2CB34574
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:19:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5EB817AECA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:17:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0CFD2A092C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449292F99BC;
-	Mon, 25 Aug 2025 15:18:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FEE52FD1D6;
+	Mon, 25 Aug 2025 15:18:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U2e0Mzee"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ReKPNpzY"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38576278771;
-	Mon, 25 Aug 2025 15:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA6A2EAB7E;
+	Mon, 25 Aug 2025 15:18:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756135114; cv=none; b=UdzGaScjEuHMmUc5jOXMorkRc2nwgEdnP2eYygMXFSIDuWNlvdNMUQQ7FFO5eRYnSdaD136koLS0n/Rl7p+a3xd7Ljvk02vTXZcmDr42rAfD+a68pK5PpztC8deTUZI4HFhsZiOGO+LWej0nEYyYJXcgIb0zfRfQhCE+HPEbX/4=
+	t=1756135121; cv=none; b=k+p9gny6K8QUtQRtxU+Gx2bOSTxFjAJpNZITQhsi4mPt7fMV8jNexeVvMthpuAH80oWRF06sb9DWY16A33pxF2ZA+qnJUytauGDo6Y99QTEU3czGeoo9rBuitluUpPYJ9/+7VPoLEfz8iJVAFK68LTZNTWKxoTeDO8zxk1yPl/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756135114; c=relaxed/simple;
-	bh=h9WJLP84xwt5wVBtEVeIRNiB8HSbXmFZo3QATGEh0lA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RZKfY3hJvXxgsfN9fPn30uWSoMuhjpOMM55yDmX8F8cw8m32zomLODzwydUP44dFLBZsbzKoa5RdcIURYIXcsERQq/+bou4es81oAA1Tzf0JG/T9edqaorQLt1uE6RGhke38Egm1eNYYdqi1MiHvWA0UtuPqKyMlbIDvI+Gs/OM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U2e0Mzee; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756135114; x=1787671114;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=h9WJLP84xwt5wVBtEVeIRNiB8HSbXmFZo3QATGEh0lA=;
-  b=U2e0MzeeLf5ay6OJ4C70+Yg2CyfVnkX3K2+yPCXaZP9UM0X6QC2GOA6B
-   ekGSv/XQA03Wq4ff2JJCl/0gYE+LWprxaJtLerJxOLJs2yOYYo51Hi1U5
-   MiCJgG2wRbTr72aHKQg2AIq3sZIaGsDts+rdV89qFPJ73OM/8g6xzkUVF
-   nKM4V0yHoUUfGEGYyeXNd6bOK6EwqYY//xsu0u7782ggAggSZFjPDSUa/
-   W6BYzwb7zuXrP+U7+eTecuWZUsbhD4+tqYgDjt2QUqrt5KmYpYTDoLrut
-   dNvVPu5thZlRDyQ+GYPoUNRHnIKyUlhG+YNLRq9cgWlam5Bq66dgZ2yvq
-   A==;
-X-CSE-ConnectionGUID: ecXd5AxdTjqjbL9jN+VoIA==
-X-CSE-MsgGUID: ocnny2NPS/GlhSqSprjvdQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11533"; a="61994078"
-X-IronPort-AV: E=Sophos;i="6.18,213,1751266800"; 
-   d="scan'208";a="61994078"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 08:18:33 -0700
-X-CSE-ConnectionGUID: nsjVeU+uShaSsnlrLf1iaQ==
-X-CSE-MsgGUID: sdw8uvA5QqmnpiRy9AsieQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,213,1751266800"; 
-   d="scan'208";a="169258184"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 08:18:30 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uqYxo-00000008XmU-0EcN;
-	Mon, 25 Aug 2025 18:18:28 +0300
-Date: Mon, 25 Aug 2025 18:18:27 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: =?iso-8859-1?Q?Jean-Fran=E7ois?= Lessard <jefflessard3@gmail.com>
-Cc: Andy Shevchenko <andy@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 5/6] auxdisplay: TM16xx: Add support for I2C-based
- controllers
-Message-ID: <aKx-w0QOOQPyy9pW@smile.fi.intel.com>
-References: <20250825033237.60143-1-jefflessard3@gmail.com>
- <20250825033237.60143-6-jefflessard3@gmail.com>
+	s=arc-20240116; t=1756135121; c=relaxed/simple;
+	bh=Xv1fUR7c7DrH0RCl9qk9w5ldZbgs5roIbDpYAn0dxwA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AZEMFDjPSYjl9so9C0KtflxFPAg/JWY2YZaeqlDnpislPZvcO+0hzHvUSSWnGZAUd+6v0odDrS1Z5Cdu4Q9XHsCtEFKDsvrPnGeFuRbAMabRN9Z9edHbv2tix/rEI+brJn/PKvu/Lb+7vluPx1AzEMXxxTWEAYSXAHTq18RbzGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ReKPNpzY; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57PAjvPN007772;
+	Mon, 25 Aug 2025 15:18:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=bl23w2yYbAM5/0gxI3EGf4H0RF7x/9Y8338nm/aXj
+	A4=; b=ReKPNpzYYCzTVspjGrWtjPMIGbOC0o2GnIB+yfnJjO+bCeBdHeQEHSGne
+	wlCkhCxgOJOm17Pq+xpEzQiVIEhgTz7HW0uC+fW3GimTlsnO8SJ0FMB0jngOnd/6
+	laW1N+3hukIjje6R8tVOekq+0KLAwI9V6vBBE/iCcQDqflA5KiRCSJDsBu0bxwR0
+	lla2Xw8LK18++HiLTHGv3dYsfSpKaoNMaDVSde5XYbX1ZB7rOrnzmcitT/JsoUGi
+	wGjzeBDsqP+06QfmyElgd0oEkAax+acGHsGUxtrgaVOs33Xb4j/11xOID9kvnPGC
+	DSJ4gd4HtfLjcvHtEO+QCRJXCxk1g==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48q5hpsk6t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Aug 2025 15:18:37 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57PEMgVL029982;
+	Mon, 25 Aug 2025 15:18:36 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48qsfmecuu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Aug 2025 15:18:36 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57PFIWUe48562678
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 25 Aug 2025 15:18:32 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3BEB52004B;
+	Mon, 25 Aug 2025 15:18:32 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8CF2C20040;
+	Mon, 25 Aug 2025 15:18:31 +0000 (GMT)
+Received: from p-imbrenda (unknown [9.111.17.238])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 25 Aug 2025 15:18:31 +0000 (GMT)
+From: Claudio Imbrenda <imbrenda@linux.ibm.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-s390@vger.kernel.org, kvm@vger.kernel.org, david@redhat.com,
+        frankja@linux.ibm.com, seiden@linux.ibm.com, nsg@linux.ibm.com,
+        nrb@linux.ibm.com, schlameuss@linux.ibm.com, hca@linux.ibm.com,
+        mhartmay@linux.ibm.com, borntraeger@de.ibm.com
+Subject: [PATCH v3 0/2] KVM: s390: Fix two bugs
+Date: Mon, 25 Aug 2025 17:18:29 +0200
+Message-ID: <20250825151831.78221-1-imbrenda@linux.ibm.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250825033237.60143-6-jefflessard3@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAyMSBTYWx0ZWRfX46rnXuQhXDpK
+ 7ILnHtI47S4ML32P10dGebA/bFc8CG/x6nJ7IUyyghNQB2a2btWGue6LDVvxBhHlPovUJ1FTlNC
+ Z0PCwc2uzumJySTTmjlMFZSTv4tBMNjpC/vAtKO8gp6Q+NwsYGmzUGk+4A0t4W6nErA8+Cgm21A
+ KszzfKPy94hMCSUmBY5DXfNk6k+W7rV2kqKILJX2vB2XEAZ631Usl4ENuy5Tpt61+iRyi86hSp0
+ QPSaXW3vgl+6Azmc/F5PUDsgT+Isj0+LZsBx620mJIWpEx2PcbOw5hnOYRl6KTGMc3mhjtO+s9+
+ I8ziOiDcyYTTyX+KKAo5AncCyzZo1pCbjrZA4w/B2x3cEcRJIwCApsVoJjc19T5MbDRK7p2HRfh
+ +H7CsQIB
+X-Proofpoint-ORIG-GUID: eJOxZD5UMf-DVICznofI6FY1Y5E5vohR
+X-Proofpoint-GUID: eJOxZD5UMf-DVICznofI6FY1Y5E5vohR
+X-Authority-Analysis: v=2.4 cv=Ndbm13D4 c=1 sm=1 tr=0 ts=68ac7ecd cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=2OwXVqhp2XgA:10 a=cAp4uq1tgFU3EhW9v_kA:9 a=zZCYzV9kfG8A:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-25_07,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 impostorscore=0 clxscore=1015 phishscore=0 malwarescore=0
+ suspectscore=0 bulkscore=0 spamscore=0 adultscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508230021
 
-On Sun, Aug 24, 2025 at 11:32:31PM -0400, Jean-François Lessard wrote:
-> Add support for TM16xx-compatible auxiliary display controllers connected
-> via the I2C bus.
-> 
-> The implementation includes:
-> - I2C driver registration and initialization
-> - Probe/remove logic for I2C devices
-> - Controller-specific handling and communication sequences
-> - Integration with the TM16xx core driver for common functionality
-> 
-> This allows platforms using TM16xx or compatible controllers over I2C to be
-> managed by the TM16xx driver infrastructure.
+This small series fixes two bugs in s390 KVM. One is small and trivial,
+the other is pretty bad.
 
-...
+* The wrong type of flag was being passed to vcpu_dat_fault_handler();
+  it expects a FOLL_* flag, but a FAULT_FLAG_* was passed instead.
+* Due to incorrect usage of mmu_notifier_register(), in some rare cases
+  when running a secure guest, the struct mm for the userspace process
+  would get freed too early and cause a use-after-free.
 
-> +#include <linux/i2c.h>
-> +#include <linux/mod_devicetable.h>
+v2->v3
+* Make sure .ops is not NULL before calling mmu_notifier_register() to
+  avoid NULL pointer errors (thanks Marc)
+v1->v2
+* Rename the parameters of __kvm_s390_handle_dat_fault() and
+  vcpu_dat_fault_handler() from flags to foll (thanks Christian)
 
-IWYU everywhere, too little header inclusions, you use much more.
+Claudio Imbrenda (2):
+  KVM: s390: Fix incorrect usage of mmu_notifier_register()
+  KVM: s390: Fix FOLL_*/FAULT_FLAG_* confusion
 
-> +static int tm16xx_i2c_write(struct tm16xx_display *display, u8 *data, size_t len)
-> +{
-
-> +	dev_dbg(display->dev, "i2c_write %*ph", (char)len, data);
-
-Noise.
-
-> +	/* expected sequence: S Command [A] Data [A] P */
-> +	struct i2c_msg msg = {
-> +		.addr = data[0] >> 1,
-> +		.flags = 0,
-> +		.len = len - 1,
-> +		.buf = &data[1],
-> +	};
-> +	int ret;
-> +
-> +	ret = i2c_transfer(display->client.i2c->adapter, &msg, 1);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return (ret == 1) ? 0 : -EIO;
-
-Can we use regmap for all parts of the driver? Why not?
-
-> +}
-
-...
-
-> +static const struct tm16xx_controller fd6551_controller = {
-> +	.max_grids = 5,
-> +	.max_segments = 7,
-> +	.max_brightness = 8,
-> +	.max_key_rows = 0,
-> +	.max_key_cols = 0,
-> +	.init = fd6551_init,
-> +	.data = fd655_data,
-
-> +	.keys = NULL,
-
-Redundant initialiser.
-
-> +};
-
-...
-
-> +#if IS_ENABLED(CONFIG_OF)
-
-No, please remove all these ugly ifdefferies.
-
-> +static const struct of_device_id tm16xx_i2c_of_match[] = {
-> +	{ .compatible = "titanmec,tm1650", .data = &tm1650_controller },
-> +	{ .compatible = "fdhisi,fd6551",   .data = &fd6551_controller },
-> +	{ .compatible = "fdhisi,fd655",    .data = &fd655_controller  },
-> +	{ .compatible = "winrise,hbs658",  .data = &hbs658_controller },
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, tm16xx_i2c_of_match);
-> +#endif
-
-...
-
-> +		.of_match_table = of_match_ptr(tm16xx_i2c_of_match),
-
-Definitely no to of_match_ptr(). Must be not used in a new code.
+ arch/s390/kvm/kvm-s390.c | 24 ++++++++++++------------
+ arch/s390/kvm/pv.c       | 16 +++++++++++-----
+ 2 files changed, 23 insertions(+), 17 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.51.0
 
 
