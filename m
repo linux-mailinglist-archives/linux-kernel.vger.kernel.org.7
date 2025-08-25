@@ -1,171 +1,107 @@
-Return-Path: <linux-kernel+bounces-784960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 471CFB343DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:32:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 694D8B343A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:27:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC0297AF3D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:30:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CFE418914DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:27:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02A56303C85;
-	Mon, 25 Aug 2025 14:27:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D6A2F0C73;
+	Mon, 25 Aug 2025 14:25:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="uZVejJZA"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QkKS3Urm"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8122FC88C;
-	Mon, 25 Aug 2025 14:27:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442971F869E
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 14:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756132035; cv=none; b=Ym8vYgoQDgS5uwvx4Bk0MH7Lsfk1ClWoemjwPJchHOE6vMzJIgJKB0qcoUBzlpaYL66C3I8c7yBpNFQEQC5Kqd0f0dJ0Nu7qo/ply6jbwQIWm2CVeERo2QLSgewkazmMD1AHcltJ1jUCgLuSHbsn4aHbq9fgqn9Y/+/YVVis+u0=
+	t=1756131955; cv=none; b=bnwuiqAyGDXVbdDLQBxI+QJoBFi8WXzDNgk4/Y9w63Pi0dZwisWBAcz9ZB+0G5UiFayTxmyMbKjNM3pjY6+GL6h3aeIGR5Zmm1SDWZHKv+72Fq+LEW2znxC0slf9zm1k8daUGngAPUHd2ynGfyxn8fuEJy9bhzK1QPLa0ECqf40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756132035; c=relaxed/simple;
-	bh=wnEwoAwOmaC9EtbLu07y6gkfUzdalMCzS41u8HyyAeQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HN+pK6JL+NU9wFnSGHmLelHS1eQ8Lt0+0Cf2R/sMIIBD5yWcOCPVLC1wFoDekzc1P29/6wFQSffa2zXmq8IrNsMQhof0IyC6GqeFn9/QT55s5Q2RYcN/buiL3dKhgA0fJMa9UvCdMumWs08MzKSeB2p367hBSl39wPAPSbHknSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=uZVejJZA; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57PEQuuY1294958;
-	Mon, 25 Aug 2025 09:26:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1756132016;
-	bh=h1zyU1evSKaxO4aYTSyZWEjNsFhfpDLHeNtlMXX9zq4=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=uZVejJZAuewUM17JPFF3XXEXpfhxX/ahO7M27zMyf9xVLZ8py8ftE3iMQnC+qN89F
-	 66gxbjZe1aYjpSTNw/YzCXfC50n8D+r4RDFlCPXdlWOgTvK/cAV69vea6pV1zwf5AS
-	 6jnwuV0z8wBDotk+Tkf2j93ByeJpZ2KxmC4IbPis=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57PEQu8n1236002
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Mon, 25 Aug 2025 09:26:56 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 25
- Aug 2025 09:26:55 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Mon, 25 Aug 2025 09:26:55 -0500
-Received: from ws.dhcp.ti.com (ws.dhcp.ti.com [172.24.233.149])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57PEPN433747540;
-	Mon, 25 Aug 2025 09:26:50 -0500
-From: Rishikesh Donadkar <r-donadkar@ti.com>
-To: <jai.luthra@linux.dev>, <laurent.pinchart@ideasonboard.com>,
-        <mripard@kernel.org>
-CC: <r-donadkar@ti.com>, <y-abhilashchandra@ti.com>, <devarsht@ti.com>,
-        <vaishnav.a@ti.com>, <s-jain1@ti.com>, <vigneshr@ti.com>,
-        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <sakari.ailus@linux.intel.com>,
-        <hverkuil-cisco@xs4all.nl>, <tomi.valkeinen@ideasonboard.com>,
-        <jai.luthra@ideasonboard.com>, <changhuang.liang@starfivetech.com>,
-        <jack.zhu@starfivetech.com>, <linux-kernel@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v5 14/14] media: ti: j721e-csi2rx: Wait for the last drain completion
-Date: Mon, 25 Aug 2025 19:55:22 +0530
-Message-ID: <20250825142522.1826188-15-r-donadkar@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250825142522.1826188-1-r-donadkar@ti.com>
-References: <20250825142522.1826188-1-r-donadkar@ti.com>
+	s=arc-20240116; t=1756131955; c=relaxed/simple;
+	bh=aa+clsjb86Yw77XTrkq6JqKULQ6u+ZqExkRbb2dCClI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=Dblmu7c5Rw7WI9dEYEaBzTdWPn/seKDaBPq33OJf886DuUUB6lhBlZRvc/2WEOwaK7IYRSpSpRgss9rFiHO/qxc+mlcXq7z2xlQYvHM0psJ2Inpl4XbBOux3jOfr5a3WOFXWG7ypf1drRK3PWUg6pU926dT97IKtJ4nd1KjC56E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=QkKS3Urm; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250825142551euoutp0188c5f2486650c30834ac11e6f94c3759~fCLSOaB0l1749117491euoutp01j
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 14:25:51 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250825142551euoutp0188c5f2486650c30834ac11e6f94c3759~fCLSOaB0l1749117491euoutp01j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756131951;
+	bh=g3XJAjkAnzmoOp83cZ+/QTzl+YqbNa+8BJauT66leBE=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=QkKS3UrmhpcD7fFMVhrCCHevrHqDbSbdEKM13h/uKfWCrmqZ3csjBPCt9AVs+COOU
+	 hLaE25Hoq8Zbdv/Jkxv++kPM6aadXAV3AKIbABOE5NFNsgQbkY5DF5XXJR87Tdm4Ts
+	 6UUUIC8MYdbf3A3F9UqM3ITrTU660NbrslIYHcGE=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250825142550eucas1p2a783ce9d7b9c9b3cc276a567c09d53bd~fCLRke9wg0835608356eucas1p2s;
+	Mon, 25 Aug 2025 14:25:50 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250825142548eusmtip19c6a58beda39ce7e243556a6f67cfe22~fCLP0ynBY2717327173eusmtip1-;
+	Mon, 25 Aug 2025 14:25:48 +0000 (GMT)
+Message-ID: <a9ae1238-e95d-46d8-9bc4-0ef5ec7c34bb@samsung.com>
+Date: Mon, 25 Aug 2025 16:25:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH v1 0/4] Apply DP helper APIs to do link train
+To: Damon Ding <damon.ding@rock-chips.com>, andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org, rfoss@kernel.org
+Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+	jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+	dmitry.baryshkov@oss.qualcomm.com, dianders@chromium.org,
+	andy.yan@rock-chips.com, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20250824084529.3317985-1-damon.ding@rock-chips.com>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20250825142550eucas1p2a783ce9d7b9c9b3cc276a567c09d53bd
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250824084543eucas1p10fcc1e6656f3cc3909d457ae9e0199f2
+X-EPHeader: CA
+X-CMS-RootMailID: 20250824084543eucas1p10fcc1e6656f3cc3909d457ae9e0199f2
+References: <CGME20250824084543eucas1p10fcc1e6656f3cc3909d457ae9e0199f2@eucas1p1.samsung.com>
+	<20250824084529.3317985-1-damon.ding@rock-chips.com>
 
-dmaengine_terminate_sync() causes all activity for the DMA channel to be
-stopped, and may discard data in the DMA FIFO which hasn't been fully
-transferred. No callback functions will be called for any
-incomplete transfers[1].
+On 24.08.2025 10:45, Damon Ding wrote:
+> Use the existing DP helper APIs instead of repeated self-defined
+> interfaces with the same functions. It can help make codes more
+> concise.
+>
+> Damon Ding (4):
+>    drm/bridge: analogix_dp: Apply DP helper API
+>      drm_dp_dpcd_read_link_status()
+>    drm/bridge: analogix_dp: Apply DP helper API
+>      drm_dp_clock_recovery_ok()
+>    drm/bridge: analogix_dp: Apply DP helper API drm_dp_channel_eq_ok()
+>    drm/bridge: analogix_dp: Apply DP helper APIs to get adjusted voltages
+>      and pre-emphasises
+>
+>   .../drm/bridge/analogix/analogix_dp_core.c    | 123 +++---------------
+>   1 file changed, 18 insertions(+), 105 deletions(-)
 
-In multistream use case, calling dmaengine_terminate_sync() immediately
-after issuing the last drain transaction will result in no callback
-for the last drain cycle.
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-Implement complete callback for the last drain cycle to make sure that
-the last drain has completed properly, this will ensure that stale data
-is not left out in the HW FIFO.
-
-[1] : https://docs.kernel.org/driver-api/dmaengine/client.html
-
-Signed-off-by: Rishikesh Donadkar <r-donadkar@ti.com>
----
- drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-index 4ac6a76b9409..520ee05eb5b4 100644
---- a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-+++ b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-@@ -62,6 +62,7 @@
- #define TI_CSI2RX_MAX_PADS		(1 + TI_CSI2RX_MAX_SOURCE_PADS)
- 
- #define DRAIN_BUFFER_SIZE		SZ_32K
-+#define DRAIN_TIMEOUT_MS		50
- 
- #define CSI2RX_BRIDGE_SOURCE_PAD	1
- 
-@@ -137,6 +138,7 @@ struct ti_csi2rx_dev {
- 		size_t			len;
- 	} drain;
- 	bool				vc_cached;
-+	struct completion drain_complete;
- };
- 
- static inline struct ti_csi2rx_dev *to_csi2rx_dev(struct v4l2_subdev *sd)
-@@ -624,12 +626,14 @@ static void ti_csi2rx_setup_shim(struct ti_csi2rx_ctx *ctx)
- static void ti_csi2rx_drain_callback(void *param)
- {
- 	struct ti_csi2rx_ctx *ctx = param;
-+	struct ti_csi2rx_dev *csi = ctx->csi;
- 	struct ti_csi2rx_dma *dma = &ctx->dma;
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&dma->lock, flags);
- 
- 	if (dma->state == TI_CSI2RX_DMA_STOPPED) {
-+		complete(&csi->drain_complete);
- 		spin_unlock_irqrestore(&dma->lock, flags);
- 		return;
- 	}
-@@ -774,6 +778,7 @@ static int ti_csi2rx_start_dma(struct ti_csi2rx_ctx *ctx,
- static void ti_csi2rx_stop_dma(struct ti_csi2rx_ctx *ctx)
- {
- 	struct ti_csi2rx_dma *dma = &ctx->dma;
-+	struct ti_csi2rx_dev *csi = ctx->csi;
- 	enum ti_csi2rx_dma_state state;
- 	unsigned long flags;
- 	int ret;
-@@ -783,6 +788,8 @@ static void ti_csi2rx_stop_dma(struct ti_csi2rx_ctx *ctx)
- 	dma->state = TI_CSI2RX_DMA_STOPPED;
- 	spin_unlock_irqrestore(&dma->lock, flags);
- 
-+	init_completion(&csi->drain_complete);
-+
- 	if (state != TI_CSI2RX_DMA_STOPPED) {
- 		/*
- 		 * Normal DMA termination does not clean up pending data on
-@@ -796,6 +803,10 @@ static void ti_csi2rx_stop_dma(struct ti_csi2rx_ctx *ctx)
- 				 "Failed to drain DMA. Next frame might be bogus\n");
- 	}
- 
-+	if (!wait_for_completion_timeout(&csi->drain_complete,
-+					 msecs_to_jiffies(DRAIN_TIMEOUT_MS)))
-+		dev_dbg(csi->dev, "DMA transfer timed out for drain buffer\n");
-+
- 	ret = dmaengine_terminate_sync(ctx->dma.chan);
- 	if (ret)
- 		dev_err(ctx->csi->dev, "Failed to stop DMA: %d\n", ret);
+Best regards
 -- 
-2.34.1
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
 
