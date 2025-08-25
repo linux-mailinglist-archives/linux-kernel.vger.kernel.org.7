@@ -1,265 +1,217 @@
-Return-Path: <linux-kernel+bounces-784739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E83BCB3408A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:20:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A59DB3408D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:20:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24BA81A84BCF
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:20:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CE2B200E68
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:20:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6C627146E;
-	Mon, 25 Aug 2025 13:20:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA62207DE2;
+	Mon, 25 Aug 2025 13:20:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DGlD45vg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T9DrUZv2"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9237223E359
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 13:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BD3626E175
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 13:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756128021; cv=none; b=r2t1m5NW952VIpISIpw2vCh5KcejL0QGqVX8k6ThzOmu01ohe3qDV9UJpLpSr+/zVwXeW5grgGvTVS4c3VYndJgGH0BfFN0LFTQbYRcvZcLOeY2/XkrxEMIcoTzKYWEiuH0vS8Yw4oQ/Ab6ZFlEyQfQjHvFzyP8yoP7XSH2I/LY=
+	t=1756128048; cv=none; b=FzN7YCSgb7Dvpyg4aDzSn/+WxjzAzCDSsShFB+96uOdRWyJ7NCHyRXcFtiV/iObf05mjWQPPSq6iBey17DQK2Pl/SQMFRxtOWzPzQRIzDmTLJcXAUJMsfo8qcwlONTHHZGdRkPV0Mlg1i43oPAEhuOZe9vTzk3VfuVY7I7vPJQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756128021; c=relaxed/simple;
-	bh=m6jqKINFobNIZ/79Pbgva0NJNu9TvoUNn6dTFB0S+7c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=imd3KM6frsipowl7XL1hQYEwJtVmgVunh6zD4jlPERR5+cQZRJlUAtFTW/FxugIpMyqBL5dHI3/U7fNTABtQReMBj+f7k09CBbX8GcCHL+sv0gk0iPCJmFFuJDhLbChW5lpXMuOqwSzUtOZ2BKeG9SBl+YdzVYUOE6cozFok0nU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DGlD45vg; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756128018;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=xanPEdPEE3D5dOZlqK4VGPHY2abbjAoznKTXD9A7MGY=;
-	b=DGlD45vgogFOnmNirGnK6pe2kjVEFm0sjvqpAQNxEbhNEWv3HAE5aRTg+FotMdfU3H9/53
-	jtaoel+eL/RL08LvNLp0mZtYBVlQXWrRNjQuIT7jhmOZmSKrPvYwaWRlTWPT5IxFc4qMym
-	Bq4i5Ec78h34ie72D8KB3VqR70gnviw=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-629-dy1KvB55O6mbj_LI3MstEA-1; Mon, 25 Aug 2025 09:20:17 -0400
-X-MC-Unique: dy1KvB55O6mbj_LI3MstEA-1
-X-Mimecast-MFC-AGG-ID: dy1KvB55O6mbj_LI3MstEA_1756128016
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45b612dbc28so5821145e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 06:20:16 -0700 (PDT)
+	s=arc-20240116; t=1756128048; c=relaxed/simple;
+	bh=vuEhpEq7WeDfXRPhjmymmb/hefNUAIMsZjGRmCTFFIs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sFqMbEyRtlzqOmh5mMxqdEwuNHg4BBpgV+2ONDu8Q+tminJFXswG0LLHANadHPwAjxysJbLnRpjmIrzWBOR8WNsmvYLGRNAvjE6EGXA4pX/fyLLdOGuiGs69/WDs8M010PN4Duo0NCj7n2ZVpDJ9QPIFo4B7G9AKx8P7h0OEqWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T9DrUZv2; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-771ed4a839eso31252b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 06:20:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756128045; x=1756732845; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=916cKpaTV2Bv5e55+QyisJcXuFvxyvvYLkcNcyrZ+IU=;
+        b=T9DrUZv2zKKYuOih2ds++QjrWPpausHOgmKzPEfE8/yaOj+Y6tDDzNB3OvtsY1CQOo
+         l5EJE09IdpDC4FzKWS5tQ/Qz0seT6JSlKdrI3CjJElK972r+pokqL25X4FbTkreLx1m7
+         IaXgtT6Mv6hm52/jzIW4iMn1sGbtakORgWbZZXnlO7cp7t1qaX7lpQq4jGYc92GtJ8SO
+         BsTmm0fKl0SEOxI6sNVzVO+FUskxzsCK4m3IyHVvCzLLalk6t6LMpjUX1bMfhYNooaF1
+         XlFkQ9ce6CMNRb1kB50aGj528A0IkNHRK3aniHutDtVi9DheDJy1PGNSWtzdxhGGx3SZ
+         frjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756128016; x=1756732816;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xanPEdPEE3D5dOZlqK4VGPHY2abbjAoznKTXD9A7MGY=;
-        b=rXJkMjn5i2ViP3ma/GOd1cFYo+w3S60NUJ353EKH2iEnRxkfKDGW7Jhhs05cRWorN0
-         TVjkzhkaeJjrDKYS4yV67D90z7GvWv/UqO+IdRJuORGtWJu6/ZQ1cEPtAgUKShsvXb5q
-         ZR7JqvjnZskKD8Jo/wwxvUpBcJ03sdZb4WT+B6LlzEAxvhSlfa/wQpeDf4ow4cdlhHZi
-         EZ70VYEqBIKBe+iNVstih57RkkxpUIpDpWdYa81Xwe5GWU8Tdpdf4tbinV+ph4RMeu1I
-         +WaMxXROh33gci3m2ZN9eww/i3+V4ZvwI9AWNAGe7A3e72n0z0mFghDAdcnz6oKgGxHp
-         rLyQ==
-X-Gm-Message-State: AOJu0YxUlfUtiEBxPyxsbbKxgYqyRpXooXBNjkp/JIKVm5s7rc76ZJUI
-	eFnGxgSxy5pbbO+B4Q0MHHd/iV7gOnQba/ecfs/ZHaGgRpfhdsyKuvAQjn7FMEtmbMto7Pd3eIG
-	QhOvIzN1UIBh98Gu2LM/U9nw98+ailODQGA9OM8wi7DTz6W3ZDtq0a9SxnUMx96TyPA==
-X-Gm-Gg: ASbGncszgeH9cmHdImBWeN772OcrJKhP1uMK4nxlXj+fFGSX4DwBGTCt58mymrTu1Pw
-	sxTkhZQW2GPtMJFOmaCe/i1JFkEF+xAR3zBqhWjZlmdNhYlTQ+ImgGNbuYiUGrGoeg53Ch3OTwq
-	CCulhnOQTcYlnPrzocIMF63LsQjTWQmNEqE18nqZiWf0KGHC8boLUeE0qZhvpPfI8G+0kFrfTV4
-	aUBf1jswP5TXyN31PFCNkj8mAHVT7bc2tyA2OoD50nock5DzT98jSbRO2XjZIwnMtosImT7qeTN
-	CMVWCKHxAdf6GZ8J6MZwQMtbiYS1vpcQeZDc5CYyeLNZIj8xCFl11gfctCt/0o7VKCAV3+zP/Jw
-	bGvq2M5v1lxUE2Pd6XmsQ0q7xZ3uK75dk0VEheEFqB3oJciR9Th0TkfC3MIQbiDHDJAI=
-X-Received: by 2002:a05:600c:4f03:b0:458:a7b5:9f6c with SMTP id 5b1f17b1804b1-45b5ec68358mr40532055e9.11.1756128015742;
-        Mon, 25 Aug 2025 06:20:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHvrXUbP05G5QAqAXL/0e5bs4AE6awYxmrv92zt0i3Fp8EOJw//DKRQZAygSokTsHc8FeRx2w==
-X-Received: by 2002:a05:600c:4f03:b0:458:a7b5:9f6c with SMTP id 5b1f17b1804b1-45b5ec68358mr40531705e9.11.1756128015277;
-        Mon, 25 Aug 2025 06:20:15 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f4f:1300:42f1:98e5:ddf8:3a76? (p200300d82f4f130042f198e5ddf83a76.dip0.t-ipconnect.de. [2003:d8:2f4f:1300:42f1:98e5:ddf8:3a76])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b506bdd9csm92855095e9.3.2025.08.25.06.20.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Aug 2025 06:20:14 -0700 (PDT)
-Message-ID: <f1f290fc-b2f0-483b-96d5-5995362e5a8b@redhat.com>
-Date: Mon, 25 Aug 2025 15:20:13 +0200
+        d=1e100.net; s=20230601; t=1756128045; x=1756732845;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=916cKpaTV2Bv5e55+QyisJcXuFvxyvvYLkcNcyrZ+IU=;
+        b=KYANVFqxI2S1hd5iFt3NnjKYd8Ua75k0TywiEZlw+dfhTAuQejT0swZdRdytp5y74z
+         HsyeGe0AGmw+5EUN0WsZZDGeYq0t+vVKh9u2Lt8fiTHKF0QnFNI/BpzZFSMTuWxa6OEj
+         e03LPjX0k6/tc2kfVYZ/no5l4UseHV3MYmsRlczvb54YfaskWt/NrhXU2v1IaBQbYgpZ
+         mR2Vadm56akO1pAA2zMpOnrNQ5tC++9VKdDJiCEcF7KHbybCGB6B+qxKv89obYgLbdwZ
+         VaMFj1On1+mytQZdQdpk01g69+TGUgMxSNGayRN3LSBMMBfOuQn2aztbhG7o93zfZPVn
+         kpew==
+X-Forwarded-Encrypted: i=1; AJvYcCUkmMqKXlFZtfvGV3ftwOdqXbWBZzI2eHymWT8Elcw9sVCB8NkGnXUMkXjF2tWe+Xr581+yYXln2s3D3qw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyxrf8vzoCDyBg04UJdV/zyqtlvDMOA4IJxQoFS9/o3wmUHT0Bu
+	e8nHBnjvAui2GpGO2N0YgCe+BkNU03ehwJM0UHCHhu2FbQA3BEs4c4Y9vOk8l6d0xRd9F2Iecrr
+	EAv7jaY9h7iVqQK4+Um+b6xYfBZRB2mQ=
+X-Gm-Gg: ASbGncv6ybNkOjRy7/2xOWxA8qlK9ZSR50w1Ps5pM+Lf9ZmwNPrlKOxtjHCeMFWXIpV
+	ncAP3R28LCpmjpPiIxMafP/HDpisbsj+8DemgFRPl21FZ3xq6xg69eZUg4Txr52d/BG/ZU0tR1X
+	MRO0vpRmXih9CublZds6bfBwdIt94kyviVth+tQm7leK7OiZHR8NNQUCZ0ONkz0G9bihLbpvVFA
+	2yKhVs=
+X-Google-Smtp-Source: AGHT+IEp690PmFStsDku5/163lfuuDDvEXli97fVC+XPZoOICszQaEs/1MIHJeldfcPUn4tOqKL5URu27qf/JROkx7o=
+X-Received: by 2002:a17:902:f689:b0:246:b3cc:f854 with SMTP id
+ d9443c01a7336-246b3cd0030mr32444395ad.2.1756128045433; Mon, 25 Aug 2025
+ 06:20:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC][PATCH v2 22/29] mm/numa: Register information into Kmemdump
-To: Eugen Hristev <eugen.hristev@linaro.org>, Michal Hocko <mhocko@suse.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-mm@kvack.org, tglx@linutronix.de,
- andersson@kernel.org, pmladek@suse.com,
- linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
- corbet@lwn.net, mojha@qti.qualcomm.com, rostedt@goodmis.org,
- jonechou@google.com, tudor.ambarus@linaro.org,
- Christoph Hellwig <hch@infradead.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>
-References: <20250724135512.518487-1-eugen.hristev@linaro.org>
- <20250724135512.518487-23-eugen.hristev@linaro.org>
- <ffc43855-2263-408d-831c-33f518249f96@redhat.com>
- <e66f29c2-9f9f-4b04-b029-23383ed4aed4@linaro.org>
- <751514db-9e03-4cf3-bd3e-124b201bdb94@redhat.com>
- <aJCRgXYIjbJ01RsK@tiehlicka>
- <e2c031e8-43bd-41e5-9074-c8b1f89e04e6@linaro.org>
- <23e7ec80-622e-4d33-a766-312c1213e56b@redhat.com>
- <f43a61b4-d302-4009-96ff-88eea6651e16@linaro.org>
- <77d17dbf-1609-41b1-9244-488d2ce75b33@redhat.com>
- <ecd33fa3-8362-48f0-b3c2-d1a11d8b02e3@linaro.org>
- <9f13df6f-3b76-4d02-aa74-40b913f37a8a@redhat.com>
- <64a93c4a-5619-4208-9e9f-83848206d42b@linaro.org>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <64a93c4a-5619-4208-9e9f-83848206d42b@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250824085351.454619-1-lkml@antheas.dev>
+In-Reply-To: <20250824085351.454619-1-lkml@antheas.dev>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Mon, 25 Aug 2025 09:20:33 -0400
+X-Gm-Features: Ac12FXyzxE6yqBetaHXfNUckoXVIwxpDLayzpsZI8RJGbQIPFJAGin3Yt7lWFrs
+Message-ID: <CADnq5_MEhMha47V25SK4cZkd8TLcizR_y0si2n9jSDjJTXeoRQ@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] drm/amdgpu/vpe: increase VPE_IDLE_TIMEOUT to fix
+ hang on Strix Halo
+To: Antheas Kapenekakis <lkml@antheas.dev>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Harry Wentland <harry.wentland@amd.com>, Rodrigo Siqueira <siqueira@igalia.com>, 
+	Mario Limonciello <mario.limonciello@amd.com>, Peyton Lee <peytolee@amd.com>, Lang Yu <lang.yu@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Aug 25, 2025 at 3:13=E2=80=AFAM Antheas Kapenekakis <lkml@antheas.d=
+ev> wrote:
+>
+> On the Asus Z13 2025, which uses a Strix Halo platform, around 8% of the
+> suspend resumes result in a soft lock around 1 second after the screen
+> turns on (it freezes). This happens due to power gating VPE when it is
+> not used, which happens 1 second after inactivity.
+>
+> Specifically, the VPE gating after resume is as follows: an initial
+> ungate, followed by a gate in the resume process. Then,
+> amdgpu_device_delayed_init_work_handler with a delay of 2s is scheduled
+> to run tests, one of which is testing VPE in vpe_ring_test_ib. This
+> causes an ungate, After that test, vpe_idle_work_handler is scheduled
+> with VPE_IDLE_TIMEOUT (1s).
+>
+> When vpe_idle_work_handler runs and tries to gate VPE, it causes the
+> SMU to hang and partially freezes half of the GPU IPs, with the thread
+> that called the command being stuck processing it.
+>
+> Specifically, after that SMU command tries to run, we get the following:
+>
+> snd_hda_intel 0000:c4:00.1: Refused to change power state from D0 to D3ho=
+t
+> ...
+> xhci_hcd 0000:c4:00.4: Refused to change power state from D0 to D3hot
+> ...
+> amdgpu 0000:c4:00.0: amdgpu: SMU: I'm not done with your previous command=
+: SMN_C2PMSG_66:0x00000032 SMN_C2PMSG_82:0x00000000
+> amdgpu 0000:c4:00.0: amdgpu: Failed to power gate VPE!
+> [drm:vpe_set_powergating_state [amdgpu]] *ERROR* Dpm disable vpe failed, =
+ret =3D -62.
+> amdgpu 0000:c4:00.0: [drm] *ERROR* [CRTC:93:crtc-0] flip_done timed out
+> amdgpu 0000:c4:00.0: amdgpu: SMU: I'm not done with your previous command=
+: SMN_C2PMSG_66:0x00000032 SMN_C2PMSG_82:0x00000000
+> amdgpu 0000:c4:00.0: amdgpu: Failed to power gate JPEG!
+> [drm:jpeg_v4_0_5_set_powergating_state [amdgpu]] *ERROR* Dpm disable jpeg=
+ failed, ret =3D -62.
+> amdgpu 0000:c4:00.0: amdgpu: SMU: I'm not done with your previous command=
+: SMN_C2PMSG_66:0x00000032 SMN_C2PMSG_82:0x00000000
+> amdgpu 0000:c4:00.0: amdgpu: Failed to power gate VCN instance 0!
+> [drm:vcn_v4_0_5_stop [amdgpu]] *ERROR* Dpm disable uvd failed, ret =3D -6=
+2.
+> thunderbolt 0000:c6:00.5: 0: timeout reading config space 1 from 0xd3
+> thunderbolt 0000:c6:00.5: 0: timeout reading config space 2 from 0x5
+> thunderbolt 0000:c6:00.5: Refused to change power state from D0 to D3hot
+> amdgpu 0000:c4:00.0: [drm] *ERROR* [CRTC:97:crtc-1] flip_done timed out
+> amdgpu 0000:c4:00.0: amdgpu: SMU: I'm not done with your previous command=
+: SMN_C2PMSG_66:0x00000032 SMN_C2PMSG_82:0x00000000
+> amdgpu 0000:c4:00.0: amdgpu: Failed to power gate VCN instance 1!
+>
+> In addition to e.g., kwin errors in journalctl. 0000:c4.00.0 is the GPU.
+> Interestingly, 0000:c4.00.6, which is another HDA block, 0000:c4.00.5,
+> a PCI controller, and 0000:c4.00.2, resume normally. 0x00000032 is the
+> PowerDownVpe(50) command which is the common failure point in all
+> failed resumes.
+>
+> On a normal resume, we should get the following power gates:
+> amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownVpe(50) param: 0x=
+00000000, resp: 0x00000001
+> amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownJpeg0(33) param: =
+0x00000000, resp: 0x00000001
+> amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownJpeg1(38) param: =
+0x00010000, resp: 0x00000001
+> amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownVcn1(4) param: 0x=
+00010000, resp: 0x00000001
+> amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownVcn0(6) param: 0x=
+00000000, resp: 0x00000001
+> amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerUpVcn0(7) param: 0x00=
+000000, resp: 0x00000001
+> amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerUpVcn1(5) param: 0x00=
+010000, resp: 0x00000001
+> amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerUpJpeg0(34) param: 0x=
+00000000, resp: 0x00000001
+> amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerUpJpeg1(39) param: 0x=
+00010000, resp: 0x00000001
+>
+> To fix this, increase VPE_IDLE_TIMEOUT to 2 seconds. This increases
+> reliability from 4-25 suspends to 200+ (tested) suspends with a cycle
+> time of 12s sleep, 8s resume. The suspected reason here is that 1s that
+> when VPE is used, it needs a bit of time before it can be gated and
+> there was a borderline delay before, which is not enough for Strix Halo.
+> When the VPE is not used, such as on resume, gating it instantly does
+> not seem to cause issues.
 
->>
->> IIRC, kernel/vmcore_info.c is never built as a module, as it also
->> accesses non-exported symbols.
-> 
-> Hello David,
-> 
-> I am looking again into this, and there are some things which in my
-> opinion would be difficult to achieve.
-> For example I looked into my patch #11 , which adds the `runqueues` into
-> kmemdump.
-> 
-> The runqueues is a variable of `struct rq` which is defined in
-> kernel/sched/sched.h , which is not supposed to be included outside of
-> sched.
-> Now moving all the struct definition outside of sched.h into another
-> public header would be rather painful and I don't think it's a really
-> good option (The struct would be needed to compute the sizeof inside
-> vmcoreinfo). Secondly, it would also imply moving all the nested struct
-> definitions outside as well. I doubt this is something that we want for
-> the sched subsys. How the subsys is designed, out of my understanding,
-> is to keep these internal structs opaque outside of it.
+This doesn't make much sense.  The VPE idle timeout is arbitrary.  The
+VPE idle work handler checks to see if the block is idle before it
+powers gates the block. If it's not idle, then the delayed work is
+rescheduled so changing the timing should not make a difference.  We
+are no powering down VPE while it still has active jobs.  It sounds
+like there is some race condition somewhere else.
 
-All the kmemdump module needs is a start and a length, correct? So the 
-only tricky part is getting the length.
+Alex
 
-One could just add a const variable that holds this information, or even 
-better, a simple helper function to calculate that.
-
-Maybe someone else reading along has a better idea.
-
-Interestingly, runqueues is a percpu variable, which makes me wonder if 
-what you had would work as intended (maybe it does, not sure).
-
-> 
->  From my perspective it's much simpler and cleaner to just add the
-> kmemdump annotation macro inside the sched/core.c as it's done in my
-> patch. This macro translates to a noop if kmemdump is not selected.
-
-I really don't like how we are spreading kmemdump all over the kernel, 
-and adding complexity with __section when really, all we need is a place 
-to obtain a start and a length.
-
-So we should explore if there is anything easier possible.
-
->>
->>>
->>> So I am unsure whether just removing the static and adding them into
->>> header files would be more acceptable.
->>>
->>> Added in CC Cristoph Hellwig and Sergey Senozhatsky maybe they could
->>> tell us directly whether they like or dislike this approach, as kmemdump
->>> would be builtin and would not require exports.
->>>
->>> One other thing to mention is the fact that the printk code dynamically
->>> allocates memory that would need to be registered. There is no mechanism
->>> for kmemdump to know when this process has been completed (or even if it
->>> was at all, because it happens on demand in certain conditions).
->>
->> If we are talking about memblock allocations, they sure are finished at
->> the time ... the buddy is up.
->>
->> So it's just a matter of placing yourself late in the init stage where
->> the buddy is already up and running.
->>
->> I assume dumping any dynamically allocated stuff through the buddy is
->> out of the picture for now.
->>
-> 
-> The dumping mechanism needs to work for dynamically allocated stuff, and
-> right now, it works for e.g. printk, if the buffer is dynamically
-> allocated later on in the boot process.
-
-You are talking about the memblock_alloc() result, correct? Like
-
-new_log_buf = memblock_alloc(new_log_buf_len, LOG_ALIGN);
-
-The current version is always stored in
-
-static char *log_buf = __log_buf;
-
-
-Once early boot is done and memblock gets torn down, you can just use 
-log_buf and be sure that it will not change anymore.
-
-> 
-> To have this working outside of printk, it would be required to walk
-> through all the printk structs/allocations and select the required info.
-> Is this something that we want to do outside of printk ?
-
-I don't follow, please elaborate.
-
-How is e.g., log_buf_len_get() + log_buf_addr_get() not sufficient, 
-given that you run your initialization after setup_log_buf() ?
-
-
--- 
-Cheers
-
-David / dhildenb
-
+>
+> Fixes: 5f82a0c90cca ("drm/amdgpu/vpe: enable vpe dpm")
+> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> ---
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_vpe.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vpe.c b/drivers/gpu/drm/am=
+d/amdgpu/amdgpu_vpe.c
+> index 121ee17b522b..24f09e457352 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vpe.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vpe.c
+> @@ -34,8 +34,8 @@
+>  /* VPE CSA resides in the 4th page of CSA */
+>  #define AMDGPU_CSA_VPE_OFFSET  (4096 * 3)
+>
+> -/* 1 second timeout */
+> -#define VPE_IDLE_TIMEOUT       msecs_to_jiffies(1000)
+> +/* 2 second timeout */
+> +#define VPE_IDLE_TIMEOUT       msecs_to_jiffies(2000)
+>
+>  #define VPE_MAX_DPM_LEVEL                      4
+>  #define FIXED1_8_BITS_PER_FRACTIONAL_PART      8
+>
+> base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+> --
+> 2.50.1
+>
+>
 
