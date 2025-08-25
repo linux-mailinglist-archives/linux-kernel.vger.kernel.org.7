@@ -1,77 +1,81 @@
-Return-Path: <linux-kernel+bounces-785486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26C60B34B72
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:06:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD56AB34B74
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:06:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC96D5E3DBD
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:06:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 689273AAD2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:06:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DDF72874FC;
-	Mon, 25 Aug 2025 20:06:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAAF028DF36;
+	Mon, 25 Aug 2025 20:06:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U/6GKrcz"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="paRzXkPY"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BAE91F09BF
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 20:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C163284B4E
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 20:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756152388; cv=none; b=k5tEhvy8P3tT6ciSe2Y46LQC4ZK8xzqtSObHJg/zehuWX1BFZFVfahF0OusltRg7kuegQkMQNIdg8vcV/gYrZSI7M77f/2DxYhQ8sio6qcVpJe78mfNBGbh09JvtGNlbScVPpC4WsKxXCWWY1hprudyDnu1e9NvOL+rJtxCutgg=
+	t=1756152389; cv=none; b=hK5tfoYXu1abcsEXcMORRiLi1JxEUtlEspNLOYBd6TCSOx30ozZMfSUC3GkUTuck6VUlGZO3WMqHgu6qUqKD5Gro8ZaWqb8TFeUvSO4ps5LoHCpruWLDFHpv/FheAX4keE+LFo3ZmDOl/6aGBvySewytYwDo7fflhENTlW0RaCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756152388; c=relaxed/simple;
-	bh=e6UMH6C4QXeee3JknmCO2I9Y/5OAkfG/m9YVXqh8/eg=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=X3uS8FBcYB2ebNdt9g9FThg2Epy1wkOXfvgJfARwxKl1LJ3AUgqAyPzDWZbtRenB5XThHt2t27YBxa7/9Gwg5Ge0yzKWgVUm8Z02EJwNjy//7xXYzIJ8bSIGoC/j3txOXpZNuyVnR1fymYkOgvhEiwu/3N9sERDKstPWcoH8Ovs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=U/6GKrcz; arc=none smtp.client-ip=209.85.216.73
+	s=arc-20240116; t=1756152389; c=relaxed/simple;
+	bh=aOaAMFU0lRUzQeN1F6iLwL6S3YUHwj3pFv409qQl9yQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=CkIs+7ssMhQXf1DtQfO6Yy73WVkHvgByqxnQFIm6qRQqx9JntmNv4iDNqBtFT1zRcvYBHYVbUSu/JMAFsCxfhtjCkPaeMrXvjlMoh3MCzPlVHe5eEdzesizrRqTpKMmCV9+1aABbP4mFhXPsQt3CGp7yzH7sODEm96nfbtRdlbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=paRzXkPY; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3253c517fecso2671194a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 13:06:26 -0700 (PDT)
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b47174bdce2so3790455a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 13:06:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756152385; x=1756757185; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8pR7rIORhhha7uQoj/L4UbVHOw9HCPKdRxBVZAbw60c=;
-        b=U/6GKrcziuMZ4ZNF4VS5URgcKX/rVLyTK/K79IwfLFkINOSFzJt4zy319jcUaT2h9Q
-         ccQPA0lYTIIJ0XviX9VG1/lJyRUkxwojEHcTT3t70mBD4gK1/2SXChpXQGo+XBVKEFSm
-         9l0Mg38k6xaokP35fXia8lpIvIGuH9Sdt2sU1MqW/Wsif2bZ72FamQslTM8l88dPMphl
-         P8rQpeqz0OlMDrViTB23fX4DtScA/gO4/EPIVgElvP6q+p5i/pgvqbuIMXQIbfMEWkXf
-         4UQ/IRDhQdOH41elIoduRkwttyqGLIMBs1fvkUMZi012qdf99BIqviyouvYX4e9rJMQ7
-         1u+g==
+        d=google.com; s=20230601; t=1756152387; x=1756757187; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
+        bh=n6KAJgpe+g35DHpdkouiNXTkH/lGhIRNqTvdrNu3evo=;
+        b=paRzXkPYY6C9gGx1xtvlFnhsaQhvZWvKcnW7AzKfSVqSynNxgDM8yGutVYQPcSZIqi
+         6gw1Yuomw9vSmb7Zk1lN+IP7uiFDCG2oZuBv8uUzDxRN8Naf33a6LeWFNevpvUvSu9uc
+         5rkslGWHL+o6Du9K1s5WKNnO/BHQi/ytiMXjAfGXdOeo4NZh8v0lw49iBPYwVL62Uu8W
+         nxA+HmbVhfO9u9Dv6dpJDBZydZeTuflEsnS/6DkxGRgF1F4CtTxL1V+XGQRGrMsqg9D8
+         ej2H9xd1wj74wxBJsPNq9uLa1kLwZLjDrDzdZRgpb4A9nf7X88gHm4e0rZ6CNWegY3qz
+         qhMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756152385; x=1756757185;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8pR7rIORhhha7uQoj/L4UbVHOw9HCPKdRxBVZAbw60c=;
-        b=fPLpC3lPRzds2rfzGe/cqvZ9+n4GopbfmSVYOT8r9S1MY35s8JTwzy36QE5yGqTb+h
-         9y0U3Q08OqWsEjx3bK/zOB8a3ZgVHve+gLWVKEth11EpOIa7jkR6E+i+9pKkWWnMn/s4
-         t1LSh3taYVEipOnDCIllVuyZo8PxLD7z3GAVLNwN7C++cCg42+UlQvAXoAp/jPzzXO1h
-         H7RBlLqEKXCiZuNVai1/wf+62uwYH+6xpr3yDOXBxVmJKFRjKyR8ToJRhwSOQWBmcojF
-         O7mJL3PRwdDasoEt0VGFOFfjRQL9DcAuHk/rW+9Kr8AFMLHTiKSnALR+bhTGNnuprPDu
-         mo/A==
-X-Gm-Message-State: AOJu0YzdO3x8KVgIeEbgp+/jfzWe/6wfp4ALC9mF6XGcki9/0C1Z44MJ
-	gjbjW4qiWuF1T13HWwSBdJk4u//NwjS55b7wFueKw6h4nu/dWvsIFKHv8wvfpJp/Tr3gINt2ynm
-	j10A46g==
-X-Google-Smtp-Source: AGHT+IEXEoKFvYTs3DYHIb6MyIfVoxfIwlslpUf6Y9Z1lNFDWyuIZVc83JO2uwlvd4IbE+BY+ZPFpeZDEbc=
-X-Received: from pjkk5.prod.google.com ([2002:a17:90b:57e5:b0:325:9fa7:5d07])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2ccd:b0:324:eac4:2968
- with SMTP id 98e67ed59e1d1-32515ee13cdmr17210596a91.33.1756152385445; Mon, 25
- Aug 2025 13:06:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756152387; x=1756757187;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n6KAJgpe+g35DHpdkouiNXTkH/lGhIRNqTvdrNu3evo=;
+        b=NpWO2jWK5hdbyPqP9T0vdIkmMjcyravx5v63Sq4AA6HM1w3kMqY1tnZg3PQKhzvxOl
+         jahiWsEqgSih+2ppLBDUWV6g8E83CdbgWt3AlNmAOsWQAAN9gJtlYSApzX+LTSO1Co+9
+         d0l2/xfsbKuGaF4xs/98nlPOxqFz2fZ6z/fEEI7jpER+q719DANsOIVGW77hGwjDOq5g
+         O8EsJmx3VcY83IoHVPXL4dNxa4ZS/3nTRTz7sqkh0OegQv9B9yug0igkYgw0ydIT24VR
+         OWEJcDp6LMpxh4CWdd3CVrKKrm+rGnPoK3+Qm9yhgpMyNXJxLNO1Es5N4wnTa+sszfwf
+         d9Bw==
+X-Gm-Message-State: AOJu0Yz85Etyi10WCtb/c9rvOsxvSL0mUCtshnhaGGmj1/oV4rVVLCDV
+	VRxhFSRdRqrdPLWNmZu3Z7IUTNM/HpcZBqCx5ntYmVMUXb22eU03NqDfqq/hphcoF6DCiezVShM
+	11ZT0mQ==
+X-Google-Smtp-Source: AGHT+IF91dn1j6fIvX+uRWorld3If0wpZl5jf5hDJFPUly2WnQsNSAnJfoCi7L3EWOQImM7m2slTmOJmyMA=
+X-Received: from pjbok14.prod.google.com ([2002:a17:90b:1d4e:b0:325:8fba:708c])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:fc4b:b0:246:76ed:e25d
+ with SMTP id d9443c01a7336-24676edecf2mr117886095ad.50.1756152387296; Mon, 25
+ Aug 2025 13:06:27 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Mon, 25 Aug 2025 13:06:17 -0700
+Date: Mon, 25 Aug 2025 13:06:18 -0700
+In-Reply-To: <20250825200622.3759571-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20250825200622.3759571-1-seanjc@google.com>
 X-Mailer: git-send-email 2.51.0.261.g7ce5a0a67e-goog
-Message-ID: <20250825200622.3759571-1-seanjc@google.com>
-Subject: [PATCH 0/5] Drivers: hv: Fix NEED_RESCHED_LAZY and use common APIs
+Message-ID: <20250825200622.3759571-2-seanjc@google.com>
+Subject: [PATCH 1/5] Drivers: hv: Move TIF pre-guest work handling fully into mshv_common.c
 From: Sean Christopherson <seanjc@google.com>
 To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
 	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
@@ -93,51 +97,119 @@ Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-hyperv@vger.kernel.org, rcu@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Fix a bug where MSHV root partitions don't honor NEED_RESCHED_LAZY, and then
-deduplicate the TIF related MSHV code by turning the "kvm" entry APIs into
-more generic "virt" APIs (which ideally would have been done when MSHV root
-support was added).
+Move the root partition's handling of pending thread work fully into
+mshv_common.c so that the "work pending" and "do work" code is co-located.
+Splitting the flags-to-check logic makes the code unnnecessarily difficult
+to maintain, e.g. it would be all too easy to add a check in "do work" but
+not in "work pending", and vice versa.
 
-Assuming all is well, maybe this could go through the tip tree?
+Note, this adds an extra CALL+RET when no work is pending; that will be
+remedied in the near feature by switching to common virtualization entry
+APIs.
 
-The Hyper-V stuff and non-x86 architectures are compile-tested only.
+No functional change intended.
 
-Sean Christopherson (5):
-  Drivers: hv: Move TIF pre-guest work handling fully into mshv_common.c
-  Drivers: hv: Handle NEED_RESCHED_LAZY before transferring to guest
-  entry/kvm: KVM: Move KVM details related to signal/-EINTR into KVM
-    proper
-  entry: Rename "kvm" entry code assets to "virt" to genericize APIs
-  Drivers: hv: Use common "entry virt" APIs to do work before running
-    guest
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ drivers/hv/mshv.h           |  2 +-
+ drivers/hv/mshv_common.c    | 24 +++++++++++++++++++++++-
+ drivers/hv/mshv_root_main.c | 24 +-----------------------
+ 3 files changed, 25 insertions(+), 25 deletions(-)
 
- MAINTAINERS                                 |  2 +-
- arch/arm64/kvm/Kconfig                      |  2 +-
- arch/arm64/kvm/arm.c                        |  3 +-
- arch/loongarch/kvm/Kconfig                  |  2 +-
- arch/loongarch/kvm/vcpu.c                   |  3 +-
- arch/riscv/kvm/Kconfig                      |  2 +-
- arch/riscv/kvm/vcpu.c                       |  3 +-
- arch/x86/kvm/Kconfig                        |  2 +-
- arch/x86/kvm/vmx/vmx.c                      |  1 -
- arch/x86/kvm/x86.c                          |  3 +-
- drivers/hv/Kconfig                          |  1 +
- drivers/hv/mshv.h                           |  2 --
- drivers/hv/mshv_common.c                    | 22 ---------------
- drivers/hv/mshv_root_main.c                 | 31 ++++-----------------
- include/linux/{entry-kvm.h => entry-virt.h} | 19 +++++--------
- include/linux/kvm_host.h                    | 17 +++++++++--
- include/linux/rcupdate.h                    |  2 +-
- kernel/entry/Makefile                       |  2 +-
- kernel/entry/{kvm.c => virt.c}              | 15 ++++------
- kernel/rcu/tree.c                           |  6 ++--
- virt/kvm/Kconfig                            |  2 +-
- 21 files changed, 49 insertions(+), 93 deletions(-)
- rename include/linux/{entry-kvm.h => entry-virt.h} (83%)
- rename kernel/entry/{kvm.c => virt.c} (66%)
-
-
-base-commit: 1b237f190eb3d36f52dffe07a40b5eb210280e00
+diff --git a/drivers/hv/mshv.h b/drivers/hv/mshv.h
+index 0340a67acd0a..db3aa3831c43 100644
+--- a/drivers/hv/mshv.h
++++ b/drivers/hv/mshv.h
+@@ -25,6 +25,6 @@ int hv_call_set_vp_registers(u32 vp_index, u64 partition_id, u16 count,
+ int hv_call_get_partition_property(u64 partition_id, u64 property_code,
+ 				   u64 *property_value);
+ 
+-int mshv_do_pre_guest_mode_work(ulong th_flags);
++int mshv_do_pre_guest_mode_work(void);
+ 
+ #endif /* _MSHV_H */
+diff --git a/drivers/hv/mshv_common.c b/drivers/hv/mshv_common.c
+index 6f227a8a5af7..1acc47c4be0d 100644
+--- a/drivers/hv/mshv_common.c
++++ b/drivers/hv/mshv_common.c
+@@ -146,7 +146,7 @@ EXPORT_SYMBOL_GPL(hv_call_get_partition_property);
+  *
+  * Returns: 0 on success, -errno on error.
+  */
+-int mshv_do_pre_guest_mode_work(ulong th_flags)
++static int __mshv_do_pre_guest_mode_work(ulong th_flags)
+ {
+ 	if (th_flags & (_TIF_SIGPENDING | _TIF_NOTIFY_SIGNAL))
+ 		return -EINTR;
+@@ -159,4 +159,26 @@ int mshv_do_pre_guest_mode_work(ulong th_flags)
+ 
+ 	return 0;
+ }
++
++int mshv_do_pre_guest_mode_work(void)
++{
++	const ulong work_flags = _TIF_NOTIFY_SIGNAL | _TIF_SIGPENDING |
++				 _TIF_NEED_RESCHED  | _TIF_NOTIFY_RESUME;
++	ulong th_flags;
++
++	th_flags = read_thread_flags();
++	while (th_flags & work_flags) {
++		int ret;
++
++		/* nb: following will call schedule */
++		ret = __mshv_do_pre_guest_mode_work(th_flags);
++		if (ret)
++			return ret;
++
++		th_flags = read_thread_flags();
++	}
++
++	return 0;
++
++}
+ EXPORT_SYMBOL_GPL(mshv_do_pre_guest_mode_work);
+diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
+index 72df774e410a..6f677fb93af0 100644
+--- a/drivers/hv/mshv_root_main.c
++++ b/drivers/hv/mshv_root_main.c
+@@ -487,28 +487,6 @@ mshv_vp_wait_for_hv_kick(struct mshv_vp *vp)
+ 	return 0;
+ }
+ 
+-static int mshv_pre_guest_mode_work(struct mshv_vp *vp)
+-{
+-	const ulong work_flags = _TIF_NOTIFY_SIGNAL | _TIF_SIGPENDING |
+-				 _TIF_NEED_RESCHED  | _TIF_NOTIFY_RESUME;
+-	ulong th_flags;
+-
+-	th_flags = read_thread_flags();
+-	while (th_flags & work_flags) {
+-		int ret;
+-
+-		/* nb: following will call schedule */
+-		ret = mshv_do_pre_guest_mode_work(th_flags);
+-
+-		if (ret)
+-			return ret;
+-
+-		th_flags = read_thread_flags();
+-	}
+-
+-	return 0;
+-}
+-
+ /* Must be called with interrupts enabled */
+ static long mshv_run_vp_with_root_scheduler(struct mshv_vp *vp)
+ {
+@@ -529,7 +507,7 @@ static long mshv_run_vp_with_root_scheduler(struct mshv_vp *vp)
+ 		u32 flags = 0;
+ 		struct hv_output_dispatch_vp output;
+ 
+-		ret = mshv_pre_guest_mode_work(vp);
++		ret = mshv_do_pre_guest_mode_work();
+ 		if (ret)
+ 			break;
+ 
 -- 
 2.51.0.261.g7ce5a0a67e-goog
 
