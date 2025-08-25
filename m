@@ -1,190 +1,166 @@
-Return-Path: <linux-kernel+bounces-784306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E115B339C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:44:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF01CB339CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:45:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6471E4E2B1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:44:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFB633B4897
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:45:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D59C2D0C84;
-	Mon, 25 Aug 2025 08:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gc94G2p0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9285299927;
+	Mon, 25 Aug 2025 08:43:20 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A787A2D0626;
-	Mon, 25 Aug 2025 08:41:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047D027AC34;
+	Mon, 25 Aug 2025 08:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756111298; cv=none; b=k6OVyQ3xQ+YRvllbFq8HtzBlxNy/hU1elnYi+iOEBhWZDy5jxlmZYMwSqL+xKp7k2Z3u1nw/LVajH6Qf015iAhdciEsYB71+bq6yd7HdgyxSxOYeYHiwoi5bP1jWjVFZ7nkFVRZK1kBSS13i3/aOT9Y755ZgtAx4/h8/OvjkbGM=
+	t=1756111400; cv=none; b=eypwwmD5z/JeP0uDZMrXT1H1Zs8ZdAIU8FnykGA1nWeYLQ2KtyAwATjrTYoys5xpeYTYmizDHpDE2st2MbZXljOm0zgMfH5g+pDzjeoTnoOYCTf/cjaDb3Ki0sEYIQbW/goCSABt8tfpKiQP8gokfrHxcp0uoJZ7ZOUHcqfA9go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756111298; c=relaxed/simple;
-	bh=QBpsTTorkc4pTkqdyLYFQrl7G/3d/UIHjKHmGDhjvh8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=os/uEZq/hCt4NHbRVpLtcRO2oCrqIdcZSarRsZGQY+OAKotvcnLhPN1rCbGXyZxUCSVVOTKgCCV0yTDW9jwJVlCgQYk3OeINMCr6ku0ep1Urk3auIRdP5uvonEAietL2EI6r/Sg/GTSpqWH2s0CWet0v4YM0bAIwG+RiQM1lGLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gc94G2p0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86D14C116B1;
-	Mon, 25 Aug 2025 08:41:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756111298;
-	bh=QBpsTTorkc4pTkqdyLYFQrl7G/3d/UIHjKHmGDhjvh8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gc94G2p0qbx0jlafND6WSRRDnjNbakv8JEjLETlT1wvutg3+AKWAm9shTWfHSh9nH
-	 T3texahUXyK7O2oESbwoBQBkFFAJ3KFnYqMT+ZeGTLrgd0yWOnXXMJNOOub9b6eZI4
-	 JrKqx6X1NQNrc11YZTMBuP3PvLEcW0W2sbbEeCdQbPszV7fGgdNErXWZKIKoECTuXj
-	 JAjAzrvziLXDJ4eGJMeZFJR8kqTAzP5Crlc95tXJwtxy5c+mIbpcVZc0GjmMuNWbUV
-	 NQjvrL/A+++kZ/GkL8H/vC77AZONQxtF8wgd/bwy1pjDXOppGKbfgT+fCUOjE0Ahlx
-	 OMRZXPhsipZpg==
-Date: Mon, 25 Aug 2025 16:41:35 +0800
-From: Yixun Lan <dlan@kernel.org>
-To: bmasney@redhat.com
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Keguang Zhang <keguang.zhang@gmail.com>,
-	Taichi Sugaya <sugaya.taichi@socionext.com>,
-	Takao Orito <orito.takao@socionext.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Jacky Huang <ychuang3@nuvoton.com>,
-	Shan-Chun Hung <schung@nuvoton.com>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Yixun Lan <dlan@gentoo.org>,
-	Steen Hegelund <Steen.Hegelund@microchip.com>,
-	Daniel Machon <daniel.machon@microchip.com>,
-	UNGLinuxDriver@microchip.com, Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Michal Simek <michal.simek@amd.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>,
-	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Max Filippov <jcmvbkbc@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Daniel Palmer <daniel@thingy.jp>,
-	Romain Perier <romain.perier@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Qin Jian <qinjian@cqplus1.com>, Viresh Kumar <vireshk@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Alex Helms <alexander.helms.jy@renesas.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	sophgo@lists.linux.dev, linux-mips@vger.kernel.org,
-	imx@lists.linux.dev, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
-	patches@opensource.cirrus.com, linux-actions@lists.infradead.org,
-	asahi@lists.linux.dev, linux-mediatek@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
-Subject: Re: [PATCH 051/114] clk: spacemit: ccu_pll: convert from
- round_rate() to determine_rate()
-Message-ID: <20250825084135-GYC1096417@kernel.org>
-References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
- <20250811-clk-for-stephen-round-rate-v1-51-b3bf97b038dc@redhat.com>
+	s=arc-20240116; t=1756111400; c=relaxed/simple;
+	bh=/HmWPUJ/QVxY3311v4PtW5t2r2BCqnsZtbdJnqGkUI8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XUSz4DJMoVRonxK0lMQYr55Y2YBmCi1T3VNRLVCaOEv9OFJ639sh+uzUeWwJ+7lrJHfVylRz+6Tc1TXzXKbIE54L3RRturM4Ta06Nt1sG/AMLx70T+G3SKfHjZEaAV4Hnvfa1NXO45zXz7PPsw23R1IcMEfiBvbo/ZFkIZOXZnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c9PSz4SkjzKHMx7;
+	Mon, 25 Aug 2025 16:43:15 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 335931A0EFD;
+	Mon, 25 Aug 2025 16:43:15 +0800 (CST)
+Received: from [10.174.179.247] (unknown [10.174.179.247])
+	by APP4 (Coremail) with SMTP id gCh0CgCX4o4hIqxo0ZfsAA--.61435S3;
+	Mon, 25 Aug 2025 16:43:14 +0800 (CST)
+Message-ID: <3e26e8a3-e0c1-cd40-af79-06424fb2d54b@huaweicloud.com>
+Date: Mon, 25 Aug 2025 16:43:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-51-b3bf97b038dc@redhat.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v3 1/2] md: prevent adding disks with larger
+ logical_block_size to active arrays
+To: Paul Menzel <pmenzel@molgen.mpg.de>, Li Nan <linan666@huaweicloud.com>
+Cc: song@kernel.org, yukuai3@huawei.com, linux-raid@vger.kernel.org,
+ linux-kernel@vger.kernel.org, martin.petersen@oracle.com,
+ bvanassche@acm.org, hch@infradead.org, filipe.c.maia@gmail.com,
+ yangerkun@huawei.com, yi.zhang@huawei.com
+References: <20250825075924.2696723-1-linan666@huaweicloud.com>
+ <20250825075924.2696723-2-linan666@huaweicloud.com>
+ <76d66b0b-afaa-4835-9d55-9e61be83ce01@molgen.mpg.de>
+From: Li Nan <linan666@huaweicloud.com>
+In-Reply-To: <76d66b0b-afaa-4835-9d55-9e61be83ce01@molgen.mpg.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCX4o4hIqxo0ZfsAA--.61435S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7uw45uF1ktryxCF45Ww48Zwb_yoW8uF1Dpa
+	n7X3W5G3y7Ar10va47JF1rAFy3Xr1kGayDtry7XFWUZrZxAr12gF4xWF90gr1jqws7Jr1U
+	X3WUKrZ7uF1fJF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v
+	4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7
+	AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
+	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GF
+	ylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
+	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUQ
+	vtAUUUUU=
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-Hi Brian,
 
-On 11:18 Mon 11 Aug     , Brian Masney via B4 Relay wrote:
-> From: Brian Masney <bmasney@redhat.com>
-> 
-> The round_rate() clk ops is deprecated, so migrate this driver from
-> round_rate() to determine_rate() using the Coccinelle semantic patch
-> on the cover letter of this series.
-> 
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
 
-Reviewed-by: Yixun Lan <dlan@kernel.org>
-> ---
->  drivers/clk/spacemit/ccu_pll.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clk/spacemit/ccu_pll.c b/drivers/clk/spacemit/ccu_pll.c
-> index 45f540073a656c0edc341a903acc3f2405971fc9..d92f0dae65a490e9db52f25a538a518baa487ea8 100644
-> --- a/drivers/clk/spacemit/ccu_pll.c
-> +++ b/drivers/clk/spacemit/ccu_pll.c
-> @@ -125,12 +125,14 @@ static unsigned long ccu_pll_recalc_rate(struct clk_hw *hw,
->  	return entry ? entry->rate : 0;
->  }
->  
-> -static long ccu_pll_round_rate(struct clk_hw *hw, unsigned long rate,
-> -			       unsigned long *prate)
-> +static int ccu_pll_determine_rate(struct clk_hw *hw,
-> +				  struct clk_rate_request *req)
->  {
->  	struct ccu_pll *pll = hw_to_ccu_pll(hw);
->  
-> -	return ccu_pll_lookup_best_rate(pll, rate)->rate;
-> +	req->rate = ccu_pll_lookup_best_rate(pll, req->rate)->rate;
-> +
-> +	return 0;
->  }
->  
->  static int ccu_pll_init(struct clk_hw *hw)
-> @@ -152,6 +154,6 @@ const struct clk_ops spacemit_ccu_pll_ops = {
->  	.disable	= ccu_pll_disable,
->  	.set_rate	= ccu_pll_set_rate,
->  	.recalc_rate	= ccu_pll_recalc_rate,
-> -	.round_rate	= ccu_pll_round_rate,
-> +	.determine_rate = ccu_pll_determine_rate,
->  	.is_enabled	= ccu_pll_is_enabled,
->  };
-> 
-> -- 
-> 2.50.1
+在 2025/8/25 16:10, Paul Menzel 写道:
+> Dear Li,
 > 
 > 
+> Thank you for your patch.
+> 
+> Am 25.08.25 um 09:59 schrieb linan666@huaweicloud.com:
+>> From: Li Nan <linan122@huawei.com>
+>>
+>> When adding a disk to a md array, avoid updating the array's
+>> logical_block_size to match the new disk. This prevents accidental
+>> partition table loss that renders the array unusable.
+> 
+> Do you have a reproducer to test this?
+
+Please try the following script:
+
+```
+#sd[de] lbs is 512, sdf is 4096
+mdadm -CR /dev/md0 -l1 -n2 /dev/sd[de] --assume-clean
+
+#512
+cat /sys/block/md0/queue/logical_block_size
+
+#create md0p1
+printf "g\nn\n\n\n\nw\n" | fdisk /dev/md0
+lsblk | grep md0
+
+mdadm --fail /dev/md0 /dev/sdd
+mdadm --add /dev/md0 /dev/sdf
+
+#4096
+cat /sys/block/md0/queue/logical_block_size
+
+#partition loss
+partprobe /dev/md0
+lsblk | grep md0
+```
+
+> 
+>> The later patch will introduce a way to configure the array's
+>> logical_block_size.
+>>
+>> Signed-off-by: Li Nan <linan122@huawei.com>
+>> Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+>> ---
+>>   drivers/md/md.c | 7 +++++++
+>>   1 file changed, 7 insertions(+)
+>>
+>> diff --git a/drivers/md/md.c b/drivers/md/md.c
+>> index cea8fc96abd3..206434591b97 100644
+>> --- a/drivers/md/md.c
+>> +++ b/drivers/md/md.c
+>> @@ -6064,6 +6064,13 @@ int mddev_stack_new_rdev(struct mddev *mddev, 
+>> struct md_rdev *rdev)
+>>       if (mddev_is_dm(mddev))
+>>           return 0;
+>> +    if (queue_logical_block_size(rdev->bdev->bd_disk->queue) >
+>> +        queue_logical_block_size(mddev->gendisk->queue)) {
+>> +        pr_err("%s: incompatible logical_block_size, can not add\n",
+>> +               mdname(mddev));
+>> +        return -EINVAL;
+>> +    }
+>> +
+>>       lim = queue_limits_start_update(mddev->gendisk->queue);
+>>       queue_limits_stack_bdev(&lim, rdev->bdev, rdev->data_offset,
+>>                   mddev->gendisk->disk_name);
+> 
+> 
+> Kind regards,
+> 
+> Paul
+> 
+> 
+> .
 
 -- 
-Yixun Lan (dlan)
+Thanks,
+Nan
+
 
