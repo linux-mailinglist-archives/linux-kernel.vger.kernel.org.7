@@ -1,140 +1,249 @@
-Return-Path: <linux-kernel+bounces-785552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ABDAB34D81
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 23:05:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01CEFB34D89
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 23:05:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B200207D31
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 21:05:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCD601B25DA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 21:06:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F5528F1;
-	Mon, 25 Aug 2025 21:05:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70AF2299AA9;
+	Mon, 25 Aug 2025 21:05:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="m9umoNnG"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="oRyENVlQ"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2052.outbound.protection.outlook.com [40.107.244.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C168528FA91
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 21:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756155926; cv=none; b=ftbsHeBVJZtBx2EStY88VhZnPZL90vSN6TuuExFP5rIs6RLgVKGo9Ssqs4oik9vzsMRVvdDbEd0Kb/AZIsJyawPslFk0KH1SwL4DVCsYioPHK8vPnuFlamF5002Hv5nTTqgXvXV8JegwjxzE1JSWukVTYshP0Cw/qwz7BhuJPC4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756155926; c=relaxed/simple;
-	bh=FMCrqrks/dXpZHsprf5BWivpfad0MjoU6jkP3WQ/7Og=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=IAQVYuAbM5qVCh5dHysWDzqyx1RSfl69Mk1aYY4rVmxg4hN5oyQRkBKMc6Uy6fiWuCxkqLzi0nT+rsmWChOBV5X7AvVtLWru//Fuef6Q4tqpl9V1qvbzBcRx66A5T+aoQI66R8DBoitPodFMsc3kVw2AMn+0RDA40LdbBRQ9M4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=m9umoNnG; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-324e41e946eso8937088a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 14:05:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756155924; x=1756760724; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7d15ca6DDhUkwd5VLfHJQyeR86hJJRH7e9ofbHHP6cU=;
-        b=m9umoNnGILYqNDaKr7ZJw2hjYFHmzqKLHKpnRXjARP1K/u8ZwGywfslURERyjYemag
-         SPkVcYvRdUAPcbt7kNlpFu/NjncDHgnnjAC7rwbGE1LH/OkKQjIPVJsq1ZNOnnfcRLvs
-         0lyFFBmCI490zKXkbFhuTWVdWgEkYEOyokA3mMcJym/cvSN1lmTlLMHQ+wdoc7D6WHdw
-         2XXQ+oo4U0GKK28YnaxmrHX/IRgxDGNV0Us7Zk9DgOKckvhiO/WNCN4G4OA2kg7//aoF
-         B8Z3SJ8bxtN5QTf7NtKSUaw4iIwN83kr24GAjANZpZzQf/wyDUUEG1VxTgnyG+/+0aXp
-         D5HQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756155924; x=1756760724;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7d15ca6DDhUkwd5VLfHJQyeR86hJJRH7e9ofbHHP6cU=;
-        b=ZTsj+Gop6ooENniAC2JeJT2R8TPszuuWlGQjBjXOrx0BME9rv7e7bHDd7mEJBfDN7J
-         csJTo5btMQwQYKcHIJ3HzJmYw/IF+7mgAzMeKEWsRzMIMBeLgy4DZgzQ9rc+jPUFDzoX
-         hqp1SPCpKVAkjqlfB7es4gdFj6Y2LChMXbSibQcryirasfCCieqEvVlF+vQ8Fb/B7Cq6
-         3WTc46M4qudjrhSMooKjMM5xpJUjnxaz3r6/YXXtn3a/cd2pZFZwdWpxTuZvvEMmBD9D
-         zxaXkR9nUeWUUvqUazA4RS1MTfsSwX1XveKiX0STwddai9ThG7kI9NZlXNKXupe86pCa
-         fIzg==
-X-Forwarded-Encrypted: i=1; AJvYcCUyV9Ml47xH/+aVUjaFS+MHMvB/EBS8I3aoRbim1CkHbBMJ8rgcYXN7QUKn0QxAT3Am2U1juQ7o3MdAtqg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcK7FcBcCAqYmhOpP/2zrLvleQsEi2NsrCLyaxWUagLxvh6PqR
-	+fOQZdAM7DC74KTHmhWemJ4aI5/sMOMIG32y2y2T2wj7nl6LbRW29rf/jlplGJplQc911aCqljM
-	9mDrHEA==
-X-Google-Smtp-Source: AGHT+IEm4/q7R9vqsalDGxIoUCdP69IoDYNKhvzEhXQffHVAOixTwa8x+rJdf1yKoahs9B9e41d388NCl58=
-X-Received: from pjn5.prod.google.com ([2002:a17:90b:5705:b0:325:b894:3c4f])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:384a:b0:325:8e03:c159
- with SMTP id 98e67ed59e1d1-3258e03c39amr6971375a91.9.1756155924087; Mon, 25
- Aug 2025 14:05:24 -0700 (PDT)
-Date: Mon, 25 Aug 2025 14:05:22 -0700
-In-Reply-To: <20250822080235.27274-1-yan.y.zhao@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C76412882BD
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 21:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756155948; cv=fail; b=TAynqVQ4iIWnthqc2VJdlZCnOsoWqmjtwu5+KSu2Cn+kgjdty5mn170S4kAdclgMpJuRcYR1jnTLwBazoqrP5dz2KFehFDORvNuvWvsNZYNh7dSz/5U65z5+xpgXEKo//c2Peu8ci4BfFV0D9q4Scd/fpLcmn5tFDATfp2e5zyU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756155948; c=relaxed/simple;
+	bh=ig6P1Wosqgi0K8H14aYtX4oTMU1hHhLbcjRo4XWAS3Y=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=LsYXjMMy+kjveKvUJQHQJaN2twleUTnx6BWNQKvTcSGKvZFek0rQfM3Wdl+4OYy4GEUv8EIYVMHlCsjrjlomHdAFN67Gt2SZMt0ymfwZMfMhejBXXJks2x8V24yYvuTl/Jtn31UDx/1oFd6hCOl9Trb4AHQZxqBSU+82krvaRk8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=oRyENVlQ; arc=fail smtp.client-ip=40.107.244.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tNicmt95pnbscHIaVUlDLOg7hxeVTzhU0rYXFX9WBGWyL9JzUustvG+pL5E6Pk831Q5x3C0Rm2q5XKS8SJ2S+q58jnrcUfOScWM0h+lztwv9eipZMtf44fFwJmn/7PCF/ada2z+/blG8gsCLezWe2mEIZst6CT4WKTsmfe/aVHF7vJKVrP8w2RECbQm89ZM1ejbPGvVYfaYw45iF9fUwwfqPKHBLKHeY7Tdl9xWmUBcIjtqgadczpWUsGFszAklRsfXKmX7Yi3d0uiR02wQhecTGhlZe3rHi5opzjnGXKc3AO5Q3fiICPaSwJo1WG7xtARTsoOmyJ8WQN5XxNm6CTw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ziipn1JWQz8KeSv1JUUU9xsyN5JZpPhQBYi0hrC5/NQ=;
+ b=M68Pkx8K6H7HNPrmfDKnoMwQAehbpG4b8/m2UuqEBbY8I8oYB5RQuE1YlsZF0VQ6fcHCtWCZQx1cLl/91LJA7arwdLbH512DJU+dZnIIh+EHKaAUYaobrSpCW7x/RFGi87vuZvkEn2AbPyvuAHHk053ZFvnFz9bJA9oJXB+bsA/Eriz2EqmpSndkoKaA/aTeifqRRzjoeitz8nteOQKdN4QIhxYae2DCbxvFle8CQTnoWvKB17CNWt8I5sp4poQdppAx5EDXXcpqITcms9Bj5bXb1ekTuffqGnyQ08zODobcq3BvjUv46EVCeS2psFKjZkFEdWhxpfVOsJnxHkBbZA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ziipn1JWQz8KeSv1JUUU9xsyN5JZpPhQBYi0hrC5/NQ=;
+ b=oRyENVlQN8WLdbbslspGi3vMTbgifgjyjWBvFZVzEZEODdkMuxocerUhzVxnftRVxIMuCNm0Kn1Wq7fufA4qWGYGPBaV39I1rwlfKxiHr3StSuQV9ERmJIsLKl40QFfm9/fhJL4XdhyhcOeOg240GS/o2FBeREk+dw+1PuqlAoY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by DS2PR12MB9711.namprd12.prod.outlook.com (2603:10b6:8:275::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.20; Mon, 25 Aug
+ 2025 21:05:43 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.9052.017; Mon, 25 Aug 2025
+ 21:05:43 +0000
+Message-ID: <0e1e33a6-70a0-40a0-86d9-b8f636b19455@amd.com>
+Date: Mon, 25 Aug 2025 16:05:34 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 5/5] drm: panel-backlight-quirks: Add Steam Decks
+To: Antheas Kapenekakis <lkml@antheas.dev>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, philm@manjaro.org,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+References: <20250824200202.1744335-1-lkml@antheas.dev>
+ <20250824200202.1744335-6-lkml@antheas.dev>
+ <f1ba9808-64a5-4d64-a4ef-b2a95cebae94@amd.com>
+ <CAGwozwEGdcyFnOADrCTb2cUDvq8H0kxtA+KRb_Kz5De1eFXztQ@mail.gmail.com>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <CAGwozwEGdcyFnOADrCTb2cUDvq8H0kxtA+KRb_Kz5De1eFXztQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: ROAP284CA0135.BRAP284.PROD.OUTLOOK.COM (2603:10d6:10:42::8)
+ To MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250822080100.27218-1-yan.y.zhao@intel.com> <20250822080235.27274-1-yan.y.zhao@intel.com>
-Message-ID: <aKzQEi4fykQwvqLE@google.com>
-Subject: Re: [PATCH v3 2/3] KVM: Skip invoking shared memory handler for
- entirely private GFN ranges
-From: Sean Christopherson <seanjc@google.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: pbonzini@redhat.com, peterx@redhat.com, rick.p.edgecombe@intel.com, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|DS2PR12MB9711:EE_
+X-MS-Office365-Filtering-Correlation-Id: b391aed7-2faa-4f04-c813-08dde41b2724
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?S2EzeDYrNVlWYmRxbVVQT2tiLzZXWjh1ZXV0NnJuZnd2bUh2OWhrTTNwc1Ez?=
+ =?utf-8?B?czVGWjhpamFlSzNKMXdseFZaVzVHM0EyOWNHNkFLanBlL2l6ZlM0ZVhVVUdQ?=
+ =?utf-8?B?V3EwdFJRbm1zRUN6eGZKUEgzYy9tRzJBcnNiSHJGY05ZTFZvSVZBYmxMS0Vh?=
+ =?utf-8?B?OC9uSjVXWXJSN3pyaDhlVldSdGhtQTYvRk1OY1N1eTFhbDdydFg1VnhRSGFY?=
+ =?utf-8?B?UjVtenhGd3doRk5sUWxjZE4xZ2hob3hScnI1Yk1LMFZrSUNTdlRlYmllb25q?=
+ =?utf-8?B?dnNvZnhMcW9jSm1DQ0QxOEg0Zm82VlZ6MW5XRFFBWWZuTEZIMy80SGIyYXhO?=
+ =?utf-8?B?cE9mSVZWelFRaWhXVG4zUUV5cHpmZWlUMWFQYTRmR3FSWVdvYWJaN2huUk43?=
+ =?utf-8?B?dzZYZjBHRFFTRCtBSTB2cXQ3cmxBTnpMdDVuV2JlSm5SN3hyWDhCU3hKQ1dD?=
+ =?utf-8?B?TXpxVXNBQmJTV3FhenBjUHg3MXY2QW5xWExCcGJxM2c5eitXdEZnRmFvcmQ4?=
+ =?utf-8?B?czZzNFNhRTFtNmFvSzBRSWZtRHJna3ptWmkzVXNxS012d2ZSa0F2dDBiRmtx?=
+ =?utf-8?B?aHRpZmZBMEdzKzA4alVGNWVJYk4vTzFuWXE3bi9PcVdab2UrY3QyUlhCdjZp?=
+ =?utf-8?B?aDNDNUp3UmdRRzV0S1MyZ0tyMjZMSUpGRm0rU1lBSEdGMlpWQUVIcWRmaW0x?=
+ =?utf-8?B?eHI4OWc4V043OTBDTFhmNk50SFNpMGNOVGlZMmcrajBzWE1LSC9TdG1OeXRr?=
+ =?utf-8?B?RVM5dXRydUkwSEJPdXBSYUcveWo0dVR1TDZJMm85WmFQeHF6NUR0TUxxMzhK?=
+ =?utf-8?B?R3UzeGNmNHFuYmEyYUp3a2lRVlFPeHBVNTY4K0FUajI3UlpEZks1ZHpEcnB2?=
+ =?utf-8?B?WDVNN3YrUFM5NGVmZFZMU3Z1eFlFS09WMjNHbHY2RDZLdDJWSGVzeXE1b2ZM?=
+ =?utf-8?B?bjFoUjdsNDMrRnlCa0dEV0ZpbGtpM0VKZmpDTWVmQzFqQ05pTWxWUkJtdnVa?=
+ =?utf-8?B?cys5Qm5QTUtCeUJ4K2pJNUg4eUtHbEJ2S0JpZ3htTG56eENXcVcwbERoWnZp?=
+ =?utf-8?B?cElYN3VOZk5MREVZR2RZbHZHd1oxbm9DWmlMSERxVDdCaGxyeWJzZ3pTeXJP?=
+ =?utf-8?B?Tmo0RHEzQVhhUXl1aXlWd0pTRFpubFkzNGZKQnhXSlAvaCtDSmkxdWFQdlhJ?=
+ =?utf-8?B?RGN3L0dqbjV4ZzU4aXU5c0k2R01EcEUxZVcvQUNtM1JZMUFwYlBKOVBRaWc4?=
+ =?utf-8?B?R2lUZXpOUXJ6ZEJYVjIxUEhCd3l3MDhPOWQzK1VJbHdmUEhKaDBYQ2xCMWgx?=
+ =?utf-8?B?OE5pay9naW1QVHM2OWpjVHVJdy9yZHBkSlFnK2QxclAzTm5VU1NqT0g0Y0VR?=
+ =?utf-8?B?WkM5djM0bWFLeWNjckJubDdvaVFyeW5RSTBieStkNlp2aFJ2d2pWV0kvM0Nj?=
+ =?utf-8?B?T1Q4Qm91eTRWYXFWcEM2dkJrMVVTbG84OFZVRHBGOEpQZlFlN2JHRmhvdDhQ?=
+ =?utf-8?B?ZGpLZXlrSEhaLytOMEV4NTlCOUQ5Vzk0V2VIbHJyeVlFOWN2NjY2MzgvUkts?=
+ =?utf-8?B?Nk13S1ZObXhaeHRVZ3lsLzJRN0cvTEdLK1J3OFd4UWRuVzRnM1RObzg1b3kz?=
+ =?utf-8?B?VHNlQ2RCaFFneTY0RTRqUFhxWDA1WS9OSlk1UmRkTU1mS3c5NnQ4V2p0aUlt?=
+ =?utf-8?B?SmhjTDNVdDhtblRXL1JmZ2pvVUlkYU90eHhLV1dGV1Fmd2thMkV3czRpSzNZ?=
+ =?utf-8?B?SlE3UEUyak9qTlJ3cnorQjlyUEs4R2l3WEVwaHpKeklYYlFLRngrak0rcXFR?=
+ =?utf-8?B?Z1E2MTlVT1BuY0R1cVI0NTJYcmZPZjJZVXpCNDNpVHFLMFFEaThQQlpGcFVh?=
+ =?utf-8?B?bmhEbEVpQlhNMlBzK0IyK3QvMjBzcm5pVzNXKytvdkNpRFJDd2tFNldmRDZ2?=
+ =?utf-8?Q?P8h3AUTDOLw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TUcrTlhzaGc1bFNuSUYvUmY3cmpKdkJPTEx4TThqS21ZRUZGNUprL3RXU1dJ?=
+ =?utf-8?B?cTV3enNIblFHS3haOUFaaDJLeXlvUGdJUEhBTzUyR0l0Z0RuWFpCUlM4TXlM?=
+ =?utf-8?B?VkhBOGhFTFBMRkwwbUp1U1dieDhEbHNqa094TlEySXdxYzBnQ3BsbTE1MHEy?=
+ =?utf-8?B?TkZWTGZ0YUJlS2ZHV2lGb3pIV1BabW9LTFdEN2NFdWVzOGd6UHB2c3NiN01W?=
+ =?utf-8?B?U1VtRkNYV2hVRExlS0xUbENuOTBQTjBYZnBIZzVabmFzeEM3MlVOckJ0QzJP?=
+ =?utf-8?B?NWZ2YjU4bGgwYVN6Vk5HcjRZZUpLZTkxdk51bTlUeE42anlmK1dvMjFpWEhO?=
+ =?utf-8?B?Wmo3WTJjRlpPTGlvZGI1YW0vb2RZWVpIWE1yVmlKcTg0elRKUW84aHlyQTNO?=
+ =?utf-8?B?N2JWQURKMWlVQXpDcGNrYjAyaXprQTIramdlaE4zRDVlYVpGL3YrUE10WlJ6?=
+ =?utf-8?B?SXRmSEZORlFuM1NYUm55cmRXT0VpVEk0azJBRnptZStZckZ3WHBXL05wczhK?=
+ =?utf-8?B?Ly8wa282OGhPLytGRTFOYUNzYU5lVTJkOHBzelFpZG0ranoxOStoa04yY05P?=
+ =?utf-8?B?cjkyQnl2dUhFQk1OZkdHU09uV1BLTUNBWTliTzZ0UTAwL3l3YlNseG14MFFj?=
+ =?utf-8?B?VzRtTzBoeVFlSFpLcGxGUkhPYnVObEo0TFlCSmROcmpXVWdHMTZPeG05SlJL?=
+ =?utf-8?B?SWZrVFN4dkxDWVVrT1FrK2lvZVZHUUVib2ZJU1QvMjA0Q3g1Qk5ZNFY1cjNG?=
+ =?utf-8?B?WXFaakNDQ2w5KzRPQmxobVpGTnQ4a2FiNzh5Q0NONnRtT0hOSHhVMXllRmps?=
+ =?utf-8?B?WVNXVU1QUjJnd0RBempIU1M0L2lNSFZWNjU5UERHZWNaZi9JZ3YzTDNjQjVr?=
+ =?utf-8?B?OWxQZ0RsQ2VKTlFSRTFmckhRWWlSQTczVTRmR1FLSSsyV0RiVWNDaUNZQk5E?=
+ =?utf-8?B?OHdPN0hENlpvVURoN2lFbzhNaTdSVWhNU0w4RzQ3VWdVaW1BbytvLzA5d0Mx?=
+ =?utf-8?B?SGFlZ2RVeng1Wk5nMzdWcXhxSnExK0M2K3VMOTFIZXc4eHA0MzdXcTNvUExq?=
+ =?utf-8?B?MEhNRzJBb2dvOUVwVXpyaUx1b3lsRm1JSUZIMUVOZG5wcGcyODRaUlVtWnY2?=
+ =?utf-8?B?RytZU0pBZVI2WlJWTVdmYzFCMng2ZE52WEJqNllZYlBvVWZ3YVg1cHpxOGsy?=
+ =?utf-8?B?SE9qbkU0Wm1KSGZJTW1sRkRZVjN4alhFbUlTVTJVM2NTRGRHdjZPNFo3TUFX?=
+ =?utf-8?B?SG5zOHZ6S2tvWGlWVVJCMnFWaUprbjNVSjVhZGtibm8vMHg5dWtKVVpiUDZ2?=
+ =?utf-8?B?YkwyTFRuSmZYVkpUTDJJR0huczE3amFvOTk0SVdZOGJXWitiTnQ2VmJJM3pP?=
+ =?utf-8?B?UCt0aHR2bi95QnAyNjlUSWt0SWVKUGtaeXhVV0Q4OWJMUExlSGtOTTBOaUtP?=
+ =?utf-8?B?UzJkUE9YUnNLVVFmNXdxMFVuZHRjdGJBZHVsWUIrOXoyZGFiUjRZNmdUZUdG?=
+ =?utf-8?B?cGV3bXJXU1lIR3diYWcyZlBsZjRMdXNWQnoxMkgrYWkyVFFMeTg0MGdVRDU4?=
+ =?utf-8?B?emxFUFBzVThHNkU4RzlaTXdSVXl1SFMvV1RDWWJnNlZqVENIL1NQM1Q5QVBO?=
+ =?utf-8?B?ZjB5UXc3NTdvYmNta2kwM3A1d0JtUlRwb3JZWTRub29hNjkrdkUwUWpIL2pL?=
+ =?utf-8?B?bjNjZ2hiaUlERmZhUWYrMkdRcXRybllqS2ZreFBic0tEWStpQkdpREltOElK?=
+ =?utf-8?B?bitTY09MUE1mUXZmakZ3QkdKUGNZL1Y2Y1QwTGx0YkQ1ZVBVTXFUbjZwM1ZO?=
+ =?utf-8?B?OEoxRXlZRHlxd2VXc1hCeHJzZnZMeFVFTll1UEZmUzQyaUtPRWhHdnpYMTk0?=
+ =?utf-8?B?aWFFTFF5ZDBHN05wc0pKOUVRK05kVTFwazJ0Mmdvc05HaWFyMjVBWUdybFFl?=
+ =?utf-8?B?d3drdkFUOUZQVy9pZzRrYmQzSVVVV0xlZUkrRkdXM3RwRWRDdjYraE5LUzJ2?=
+ =?utf-8?B?WWYxcjE5T3NXdThoa3RmRGUxZGRwRXFHNDZIUys3UmxhaldHdkxpcEFFdFlL?=
+ =?utf-8?B?bzlqQXJiWUxzeGJpdHFNdUl3YmdRT2p5K1diS3RvbVBvdkkvRWord3N4aHVn?=
+ =?utf-8?Q?IvELZmVMaxnc7qVEIJRVccwnh?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b391aed7-2faa-4f04-c813-08dde41b2724
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 21:05:43.0860
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SYa74nSn5YQIsoDzTUr/jTYZDVeg8PQ8RkckSHU+vgF9hK6C7qbG7jIEH+D9Sw+Oe7NSUKqENpxLuOuE9rzS0A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR12MB9711
 
-On Fri, Aug 22, 2025, Yan Zhao wrote:
-> When a GFN range is entirely private, it's unnecessary for
-> kvm_handle_hva_range() to invoke handlers for the GFN range, because
-> 1) the gfn_range.attr_filter for the handler is KVM_FILTER_SHARED, which
->    is for shared mappings only;
-> 2) KVM has already zapped all shared mappings before setting the memory
->    attribute to private.
+On 8/25/2025 4:02 PM, Antheas Kapenekakis wrote:
+> On Mon, 25 Aug 2025 at 18:47, Mario Limonciello
+> <mario.limonciello@amd.com> wrote:
+>>
+>> On 8/24/2025 3:02 PM, Antheas Kapenekakis wrote:
+>>> On the SteamOS kernel, Valve universally makes minimum brightness 0
+>>> for all devices. SteamOS is (was?) meant for the Steam Deck, so
+>>> enabling it universally is reasonable. However, it causes issues in
+>>> certain devices. Therefore, introduce it just for the Steam Deck here.
+>>>
+>>> SteamOS kernel does not have a public mirror, but this replaces commit
+>>> 806dd74bb225 ("amd/drm: override backlight min value from 12 -> 0")
+>>> in the latest, as of this writing, SteamOS kernel (6.11.11-valve24).
+>>> See unofficial mirror reconstructed from sources below.
+>>>
+>>> Link: https://gitlab.com/evlaV/linux-integration/-/commit/806dd74bb225
+>>> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+>>> ---
+>>
+>> Directionally I agree with this commit in favor of what the downstream
+>> kernel tree has that you linked above.
+>>
+>> But I would rather see it sent alone and not tied to a series to
+>> overhaul how quirks work.  If it's sent alone we should be able to get
+>> it reviewed pretty easily and in drm-misc-fixes.
 > 
-> This can avoid unnecessary zaps on private mappings for VMs of type
-> KVM_X86_SW_PROTECTED_VM, e.g., during auto numa balancing scans of VMAs.
+> That's a good idea. However, this commit relies on patch 1 and 3, as
+> it has no edid information and uses a second match.
 
-This feels like the wrong place to try and optimize spurious zaps.  x86 should
-be skipping SPTEs that don't match.  For KVM_X86_SW_PROTECTED_VM, I don't think
-we care about spurious zpas, because that's a testing-only type that doesn't have
-line of sight to be being a "real" type.
+The EDID half should be a solvable problem.  IE the EDIDs for Steam Deck 
+and Steam Deck OLED are known quantities, or a least trivial to dump.
 
-For SNP, we might care?  But actually zapping private SPTEs would require
-userspace to retain the shared mappings across a transition, _and_ be running
-NUMA autobalancing in the first place.  If someone actually cares about optimizing
-this scenario, KVM x86 could track private SPTEs via a software-available bit.
+And once you have the EDID in place I'm not sure if you need a second 
+match anymore or not really (at least for SD/SD OLED).
 
-We also want to move away from KVM_MEMORY_ATTRIBUTE_PRIVATE and instead track
-private vs. shared in the gmem instance.
-
-So I'm inclined to skip this...
-
-> Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
-> ---
->  virt/kvm/kvm_main.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
 > 
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index f769d1dccc21..e615ad405ce4 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -620,6 +620,17 @@ static __always_inline kvm_mn_ret_t kvm_handle_hva_range(struct kvm *kvm,
->  			gfn_range.slot = slot;
->  			gfn_range.lockless = range->lockless;
->  
-> +#ifdef CONFIG_KVM_GENERIC_MEMORY_ATTRIBUTES
-> +			/*
-> +			 * If GFN range are all private, no need to invoke the
-> +			 * handler.
-> +			 */
-> +			if (kvm_range_has_memory_attributes(kvm, gfn_range.start,
-> +							    gfn_range.end, ~0,
-> +							    KVM_MEMORY_ATTRIBUTE_PRIVATE))
-> +				continue;
-> +#endif
-> +
->  			if (!r.found_memslot) {
->  				r.found_memslot = true;
->  				if (!range->lockless) {
-> -- 
-> 2.43.2
+> Antheas
 > 
+>>>    drivers/gpu/drm/drm_panel_backlight_quirks.c | 17 ++++++++++++++++-
+>>>    1 file changed, 16 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/drm_panel_backlight_quirks.c b/drivers/gpu/drm/drm_panel_backlight_quirks.c
+>>> index 78c430b07d6a..5c24f4a86519 100644
+>>> --- a/drivers/gpu/drm/drm_panel_backlight_quirks.c
+>>> +++ b/drivers/gpu/drm/drm_panel_backlight_quirks.c
+>>> @@ -73,7 +73,22 @@ static const struct drm_get_panel_backlight_quirk drm_panel_min_backlight_quirks
+>>>                .dmi_match_other.field = DMI_PRODUCT_NAME,
+>>>                .dmi_match_other.value = "ONEXPLAYER F1 EVA-02",
+>>>                .quirk = { .brightness_mask = 3, },
+>>> -     }
+>>> +     },
+>>> +     /* Steam Deck models */
+>>> +     {
+>>> +             .dmi_match.field = DMI_SYS_VENDOR,
+>>> +             .dmi_match.value = "Valve",
+>>> +             .dmi_match_other.field = DMI_PRODUCT_NAME,
+>>> +             .dmi_match_other.value = "Jupiter",
+>>> +             .quirk = { .min_brightness = 1, },
+>>> +     },
+>>> +     {
+>>> +             .dmi_match.field = DMI_SYS_VENDOR,
+>>> +             .dmi_match.value = "Valve",
+>>> +             .dmi_match_other.field = DMI_PRODUCT_NAME,
+>>> +             .dmi_match_other.value = "Galileo",
+>>> +             .quirk = { .min_brightness = 1, },
+>>> +     },
+>>>    };
+>>>
+>>>    static bool drm_panel_min_backlight_quirk_matches(
+>>
+>>
+> 
+
 
