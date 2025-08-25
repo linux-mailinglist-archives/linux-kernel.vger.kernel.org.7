@@ -1,311 +1,152 @@
-Return-Path: <linux-kernel+bounces-784706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3AECB34015
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:52:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8DDDB34042
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:01:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD92C167A1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:52:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FA767AB6B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:00:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C4D25B1DC;
-	Mon, 25 Aug 2025 12:52:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA401EF0B9;
+	Mon, 25 Aug 2025 13:01:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="YtWd7wd/"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="grD7m/Xe"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53DE71EB36;
-	Mon, 25 Aug 2025 12:52:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521FB1D54E2;
+	Mon, 25 Aug 2025 13:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756126368; cv=none; b=OcesXZYG6UBjo/W1FucAye0LRIHoIivgeu2DKjK4/MjFv42RBFDQPcwtTyMdvcMQOA3GUHTJbBfnpcczX8NzKVT8UuyX04BMGGZGjtcuniUYOEncDkprn1KYXeNpXPRC6reitEX030BUI4O8f27qsAEJX9yhN5BlsYFhqqFNdks=
+	t=1756126885; cv=none; b=FnT3YoRcVIat+d5tqWhm2v3vTe4GdnUQCcsnn7FWlOOs3FRbyjVHm4LsmHOytojRD9eoc+qbBlQ+tYsp0xoXMC+I5g9txzlZ4Qx4+znDC9gutT7Upak+IhYbqS3lPGle8W/+rl4Jmyr2YzUrU/whbOl6kovCEJd/+EO15MJ6D1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756126368; c=relaxed/simple;
-	bh=5XWcstv/n0jB+QypykxUok+dX73nLTfw2ADRcqaWENA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dieE1yK+qEI4DmhRwMuPe1AejR0YaNfC8eWWO5UJ5g3fecxwbu2Z4BudiwLiyy1MRgHAWhAmaLgebCmzkK8VF48TelyNYpCgJFLTUW+fmloFR5Xrd3ICo7wlcekLs8QMOJP9PdpaEIh0XSb/jqDpZX/Fz0X5nX+2rODDDHD5K90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=YtWd7wd/; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1756126364;
-	bh=5XWcstv/n0jB+QypykxUok+dX73nLTfw2ADRcqaWENA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YtWd7wd/Do6104b1d43xPf32kEqsxn0ax0rbs1jHoUeav7dcdgR3puSSqsBE4hdyc
-	 bstHtSbFFuFMEBNTddQR9weAQHwYXS98MrEUIO24lf0yXeHBHkSs1zBaC+XYdCPosq
-	 Ka2NZ6ZKHSOSVQH1CDxlxUcEhNl3jTsTlX4ZXH8BVkmH62Huu487ybcpQdrNEOMeaB
-	 UCU1JVJ1WPuQGcIcY3xcSlc2rYY90dKKzokp9FjcpD9zl10b5yYgPXGUWr0gYcl/Xa
-	 0SOrXk0Z//US+n1EGoVE2trHxcjWYlH8YBTC8aFFkTd5SMCQ01h2xLjeuuTFndql2w
-	 ASPxPnnV5QXfg==
-Received: from laura.lan (unknown [IPv6:2001:b07:646b:e2:b1df:895a:e67b:5cd4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laura.nao)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8A46D17E0478;
-	Mon, 25 Aug 2025 14:52:43 +0200 (CEST)
-From: Laura Nao <laura.nao@collabora.com>
-To: wenst@chromium.org
-Cc: angelogioacchino.delregno@collabora.com,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	guangjie.song@mediatek.com,
-	kernel@collabora.com,
-	krzk+dt@kernel.org,
-	laura.nao@collabora.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	matthias.bgg@gmail.com,
-	mturquette@baylibre.com,
-	netdev@vger.kernel.org,
-	nfraprado@collabora.com,
-	p.zabel@pengutronix.de,
-	richardcochran@gmail.com,
-	robh@kernel.org,
-	sboyd@kernel.org
-Subject: Re: [PATCH v4 07/27] clk: mediatek: clk-gate: Add ops for gates with HW voter
-Date: Mon, 25 Aug 2025 14:51:41 +0200
-Message-Id: <20250825125141.209860-1-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <CAGXv+5HRKFrdjjXkwN6=OLtk=bK3C3mBnrDtmkEWeuxjz0pFKg@mail.gmail.com>
-References: <CAGXv+5HRKFrdjjXkwN6=OLtk=bK3C3mBnrDtmkEWeuxjz0pFKg@mail.gmail.com>
+	s=arc-20240116; t=1756126885; c=relaxed/simple;
+	bh=3mg8H5raVBKkDe/TXL7in7wasHK55tIcmkgCouAAdu4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=sJyFupzcozHSOT144LrYO0A/1EKxpPVMqa4zJZc5SQUBom8jn/7AEDdHSvzWMDMSHaiLDBceR2Iyn3u5nC4GmvSrpRCzM/2tiwLrLDeCsjO6E7vVuCB7ThflstLxkK7SLSryA6FgNx5hqfwG2j9/ooM/3fmpjQ65Is9cRfAYu/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=grD7m/Xe; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 1D8F1A05C6;
+	Mon, 25 Aug 2025 14:52:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=mail; bh=4EQUO9uZ0iCJ6TiGfFUQMxCSBU7gkSepVVETsOcLgjg=; b=
+	grD7m/XeXhE5qIjaVKYgSduEHqXmqCL/nrRWDyhlz798QOa3ZmLrRujq4xvKMluh
+	uimv1LzdaPwqe77Rh2htX9RcXI5/rRJbMlMS7qwV4awdZ/LOoY5QrJ9rsZW7o1+I
+	KaEEiWXrfedJX2XjN11J1U3ysy3USshL7EggKf4/QfLLrUimIK+pLfdjI7xKtmU1
+	rJh2Urhw5qzpns5bKGSSo3pVTP1kWpEoALMuwjYnnR0mA8FR48huWhSfB3yvMUl+
+	IevPNA1QZiaOR8+D0GSgez44T6oNa9UeT1RAHhbU4Us6aYlq3EfQP8gZte2kNBud
+	afiYEINbh5qjJNhUNSKFrpYsl9HAiVZ+sv+tuQlqrc5vtAB1nU4Hn6Nge9NsurP1
+	Wr0gID6LObwDS6n5oigR/TsP0RJxlSN0P/mJnMudCwchlsRcP5oU/Ill19sZ9sWU
+	Uud66ELIy5i7W9HScqF6995lx/eprTgPRnQlw2zRlEH2kNDILsYA2N+G9oqywGvZ
+	qMa9iAqsgIYbbO4dR3gNAl8mvsf7CnsQdNTy8ReemfUZsS0SnB5nqErCyxnugsTA
+	sn6I6H5/9BUbvJpgjlJ8ydr6UzgH7GsLjiecCF4iqC9o1fKazGcf4YiPB7gVLjH6
+	vlhlbVAgjshKtzLQgN1mqxXXnfozEZpLUqZEKD5To7w=
+From: =?utf-8?q?Bence_Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>
+Date: Mon, 25 Aug 2025 14:52:09 +0200
+Subject: [PATCH v2] ARM: dts: imx6ul-tx6ul: Switch away from deprecated
+ `phy-reset-gpios`
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-ID: <20250825-b4-tx6ul-dt-phy-rst-v2-1-0d3ba9736b0e@prolan.hu>
+X-B4-Tracking: v=1; b=H4sIAHhcrGgC/32OQQ6DIBREr9Kw7m9Bi5aueo/GBQgKiQXzQaMx3
+ r3oAbp8ycyb2Ug06Ewkr8tG0MwuuuAzFNcLaa30vQGnM5OCFpw+GQf1gLRU0wA6wWhXwJigll3
+ LBJWVoDXJzRFN55bT+mkyKxkNKJS+tYcroOudv39lTAaPvHUxBVzPEzM7Wv/3ZgYMhKq4KRnXQ
+ pfvEcMg/c1OpNn3/Qf2ChcS1gAAAA==
+X-Change-ID: 20250815-b4-tx6ul-dt-phy-rst-7afc190a6907
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, "Sascha
+ Hauer" <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+	<kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>
+CC: <devicetree@vger.kernel.org>, <imx@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	"Csaba Buday" <buday.csaba@prolan.hu>, =?utf-8?q?Bence_Cs=C3=B3k=C3=A1s?=
+	<csokas.bence@prolan.hu>
+X-Mailer: b4 0.14.2
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1756126334;VERSION=7996;MC=126871935;ID=493941;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A296767155E607067
 
-On 8/15/25 05:37, Chen-Yu Tsai wrote:
-> On Tue, Aug 5, 2025 at 10:55 PM Laura Nao <laura.nao@collabora.com> wrote:
->>
->> MT8196 use a HW voter for gate enable/disable control. Voting is
->> performed using set/clr regs, with a status bit used to verify the vote
->> state. Add new set of gate clock operations with support for voting via
->> set/clr regs.
->>
->> Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
->> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> Signed-off-by: Laura Nao <laura.nao@collabora.com>
->> ---
->>  drivers/clk/mediatek/clk-gate.c | 77 +++++++++++++++++++++++++++++++--
->>  drivers/clk/mediatek/clk-gate.h |  3 ++
->>  2 files changed, 77 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/clk/mediatek/clk-gate.c b/drivers/clk/mediatek/clk-gate.c
->> index 0375ccad4be3..426f3a25763d 100644
->> --- a/drivers/clk/mediatek/clk-gate.c
->> +++ b/drivers/clk/mediatek/clk-gate.c
->> @@ -5,6 +5,7 @@
->>   */
->>
->>  #include <linux/clk-provider.h>
->> +#include <linux/dev_printk.h>
->>  #include <linux/mfd/syscon.h>
->>  #include <linux/module.h>
->>  #include <linux/printk.h>
->> @@ -12,14 +13,19 @@
->>  #include <linux/slab.h>
->>  #include <linux/types.h>
->>
->> +#include "clk-mtk.h"
->>  #include "clk-gate.h"
->>
->>  struct mtk_clk_gate {
->>         struct clk_hw   hw;
->>         struct regmap   *regmap;
->> +       struct regmap   *regmap_hwv;
->>         int             set_ofs;
->>         int             clr_ofs;
->>         int             sta_ofs;
->> +       unsigned int    hwv_set_ofs;
->> +       unsigned int    hwv_clr_ofs;
->> +       unsigned int    hwv_sta_ofs;
->>         u8              bit;
->>  };
->>
->> @@ -100,6 +106,28 @@ static void mtk_cg_disable_inv(struct clk_hw *hw)
->>         mtk_cg_clr_bit(hw);
->>  }
->>
->> +static int mtk_cg_hwv_set_en(struct clk_hw *hw, bool enable)
->> +{
->> +       struct mtk_clk_gate *cg = to_mtk_clk_gate(hw);
->> +       u32 val;
->> +
->> +       regmap_write(cg->regmap_hwv, enable ? cg->hwv_set_ofs : cg->hwv_clr_ofs, BIT(cg->bit));
->> +
->> +       return regmap_read_poll_timeout_atomic(cg->regmap_hwv, cg->hwv_sta_ofs, val,
->> +                                              val & BIT(cg->bit),
->> +                                              0, MTK_WAIT_HWV_DONE_US);
->> +}
->> +
->> +static int mtk_cg_hwv_enable(struct clk_hw *hw)
->> +{
->> +       return mtk_cg_hwv_set_en(hw, true);
->> +}
->> +
->> +static void mtk_cg_hwv_disable(struct clk_hw *hw)
->> +{
->> +       mtk_cg_hwv_set_en(hw, false);
->> +}
->> +
->>  static int mtk_cg_enable_no_setclr(struct clk_hw *hw)
->>  {
->>         mtk_cg_clr_bit_no_setclr(hw);
->> @@ -124,6 +152,15 @@ static void mtk_cg_disable_inv_no_setclr(struct clk_hw *hw)
->>         mtk_cg_clr_bit_no_setclr(hw);
->>  }
->>
->> +static bool mtk_cg_uses_hwv(const struct clk_ops *ops)
->> +{
->> +       if (ops == &mtk_clk_gate_hwv_ops_setclr ||
->> +           ops == &mtk_clk_gate_hwv_ops_setclr_inv)
->> +               return true;
->> +
->> +       return false;
->> +}
->> +
->>  const struct clk_ops mtk_clk_gate_ops_setclr = {
->>         .is_enabled     = mtk_cg_bit_is_cleared,
->>         .enable         = mtk_cg_enable,
->> @@ -138,6 +175,20 @@ const struct clk_ops mtk_clk_gate_ops_setclr_inv = {
->>  };
->>  EXPORT_SYMBOL_GPL(mtk_clk_gate_ops_setclr_inv);
->>
->> +const struct clk_ops mtk_clk_gate_hwv_ops_setclr = {
->> +       .is_enabled     = mtk_cg_bit_is_cleared,
->> +       .enable         = mtk_cg_hwv_enable,
->> +       .disable        = mtk_cg_hwv_disable,
->> +};
->> +EXPORT_SYMBOL_GPL(mtk_clk_gate_hwv_ops_setclr);
->> +
->> +const struct clk_ops mtk_clk_gate_hwv_ops_setclr_inv = {
->> +       .is_enabled     = mtk_cg_bit_is_set,
->> +       .enable         = mtk_cg_hwv_enable,
->> +       .disable        = mtk_cg_hwv_disable,
->> +};
->> +EXPORT_SYMBOL_GPL(mtk_clk_gate_hwv_ops_setclr_inv);
->> +
->>  const struct clk_ops mtk_clk_gate_ops_no_setclr = {
->>         .is_enabled     = mtk_cg_bit_is_cleared,
->>         .enable         = mtk_cg_enable_no_setclr,
->> @@ -153,8 +204,9 @@ const struct clk_ops mtk_clk_gate_ops_no_setclr_inv = {
->>  EXPORT_SYMBOL_GPL(mtk_clk_gate_ops_no_setclr_inv);
->>
->>  static struct clk_hw *mtk_clk_register_gate(struct device *dev,
->> -                                               const struct mtk_gate *gate,
->> -                                               struct regmap *regmap)
->> +                                           const struct mtk_gate *gate,
->> +                                           struct regmap *regmap,
->> +                                           struct regmap *regmap_hwv)
->>  {
->>         struct mtk_clk_gate *cg;
->>         int ret;
->> @@ -169,11 +221,22 @@ static struct clk_hw *mtk_clk_register_gate(struct device *dev,
->>         init.parent_names = gate->parent_name ? &gate->parent_name : NULL;
->>         init.num_parents = gate->parent_name ? 1 : 0;
->>         init.ops = gate->ops;
->> +       if (mtk_cg_uses_hwv(init.ops) && !regmap_hwv) {
->> +               dev_err(dev, "regmap not found for hardware voter clocks\n");
->> +               return ERR_PTR(-ENXIO);
->
-> return dev_err_probe()?
->
-> I believe the same applies to the previous patch.
->
+The Ethernet PHY's reset GPIO should be specified in the node of the PHY
+itself, instead of the MAC (`fec`). The latter is deprecated, and was an
+i.MX-specific extension, incompatible with the new reset controller
+subsystem.
 
-mtk_clk_register_gate and mtk_clk_register_mux actually both return a
-struct clk_hw *.
+Co-developed-by: Csaba Buday <buday.csaba@prolan.hu>
+Signed-off-by: Csaba Buday <buday.csaba@prolan.hu>
+Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
+---
+Changes in v2:
+- Remove `reset-names` that was generating warnings
+  - This is how it is already in `polytouch`
+- Also move `etnphy1`'s reset
+- Link to v1: https://lore.kernel.org/r/20250815-b4-tx6ul-dt-phy-rst-v1-1-9b65e315d9d3@prolan.hu
+---
+ arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul.dtsi | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
->> +       }
->>
->>         cg->regmap = regmap;
->> +       cg->regmap_hwv = regmap_hwv;
->>         cg->set_ofs = gate->regs->set_ofs;
->>         cg->clr_ofs = gate->regs->clr_ofs;
->>         cg->sta_ofs = gate->regs->sta_ofs;
->> +       if (gate->hwv_regs) {
->> +               cg->hwv_set_ofs = gate->hwv_regs->set_ofs;
->> +               cg->hwv_clr_ofs = gate->hwv_regs->clr_ofs;
->> +               cg->hwv_sta_ofs = gate->hwv_regs->sta_ofs;
->> +       }
->> +
->>         cg->bit = gate->shift;
->>
->>         cg->hw.init = &init;
->> @@ -206,6 +269,7 @@ int mtk_clk_register_gates(struct device *dev, struct device_node *node,
->>         int i;
->>         struct clk_hw *hw;
->>         struct regmap *regmap;
->> +       struct regmap *regmap_hwv;
->>
->>         if (!clk_data)
->>                 return -ENOMEM;
->> @@ -216,6 +280,13 @@ int mtk_clk_register_gates(struct device *dev, struct device_node *node,
->>                 return PTR_ERR(regmap);
->>         }
->>
->> +       regmap_hwv = mtk_clk_get_hwv_regmap(node);
->> +       if (IS_ERR(regmap_hwv)) {
->> +               pr_err("Cannot find hardware voter regmap for %pOF: %pe\n",
->> +                      node, regmap_hwv);
->> +               return PTR_ERR(regmap_hwv);
->
-> return dev_err_probe();
->
+diff --git a/arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul.dtsi b/arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul.dtsi
+index f053358bc9317f8447d65013a18670cb470106b2..5c7e9556b5ce823b339798ec8f1bd351afa07185 100644
+--- a/arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul.dtsi
++++ b/arch/arm/boot/dts/nxp/imx/imx6ul-tx6ul.dtsi
+@@ -246,7 +246,6 @@ &fec1 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_enet1 &pinctrl_enet1_mdio &pinctrl_etnphy0_rst>;
+ 	phy-mode = "rmii";
+-	phy-reset-gpios = <&gpio5 6 GPIO_ACTIVE_LOW>;
+ 	phy-supply = <&reg_3v3_etn>;
+ 	phy-handle = <&etnphy0>;
+ 	status = "okay";
+@@ -262,6 +261,11 @@ etnphy0: ethernet-phy@0 {
+ 			pinctrl-0 = <&pinctrl_etnphy0_int>;
+ 			interrupt-parent = <&gpio5>;
+ 			interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
++			reset-gpios = <&gpio5 6 GPIO_ACTIVE_LOW>;
++			reset-assert-us = <100>;
++			reset-deassert-us = <25000>;
++			/* Energy detect sometimes causes link failures */
++			smsc,disable-energy-detect;
+ 			status = "okay";
+ 		};
+ 
+@@ -272,6 +276,9 @@ etnphy1: ethernet-phy@2 {
+ 			pinctrl-0 = <&pinctrl_etnphy1_int>;
+ 			interrupt-parent = <&gpio4>;
+ 			interrupts = <27 IRQ_TYPE_EDGE_FALLING>;
++			reset-gpios = <&gpio4 28 GPIO_ACTIVE_LOW>;
++			reset-assert-us = <100>;
++			reset-deassert-us = <25000>;
+ 			status = "okay";
+ 		};
+ 	};
+@@ -281,7 +288,6 @@ &fec2 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_enet2 &pinctrl_etnphy1_rst>;
+ 	phy-mode = "rmii";
+-	phy-reset-gpios = <&gpio4 28 GPIO_ACTIVE_LOW>;
+ 	phy-supply = <&reg_3v3_etn>;
+ 	phy-handle = <&etnphy1>;
+ 	status = "disabled";
 
-Will do.
+---
+base-commit: 0cc53520e68bea7fb80fdc6bdf8d226d1b6a98d9
+change-id: 20250815-b4-tx6ul-dt-phy-rst-7afc190a6907
 
-Thanks,
+Best regards,
+-- 
+Bence Csókás <csokas.bence@prolan.hu>
 
-Laura
 
-> ChenYu
->
->> +       }
->> +
->>         for (i = 0; i < num; i++) {
->>                 const struct mtk_gate *gate = &clks[i];
->>
->> @@ -225,7 +296,7 @@ int mtk_clk_register_gates(struct device *dev, struct device_node *node,
->>                         continue;
->>                 }
->>
->> -               hw = mtk_clk_register_gate(dev, gate, regmap);
->> +               hw = mtk_clk_register_gate(dev, gate, regmap, regmap_hwv);
->>
->>                 if (IS_ERR(hw)) {
->>                         pr_err("Failed to register clk %s: %pe\n", gate->name,
->> diff --git a/drivers/clk/mediatek/clk-gate.h b/drivers/clk/mediatek/clk-gate.h
->> index 1a46b4c56fc5..4f05b9855dae 100644
->> --- a/drivers/clk/mediatek/clk-gate.h
->> +++ b/drivers/clk/mediatek/clk-gate.h
->> @@ -19,6 +19,8 @@ extern const struct clk_ops mtk_clk_gate_ops_setclr;
->>  extern const struct clk_ops mtk_clk_gate_ops_setclr_inv;
->>  extern const struct clk_ops mtk_clk_gate_ops_no_setclr;
->>  extern const struct clk_ops mtk_clk_gate_ops_no_setclr_inv;
->> +extern const struct clk_ops mtk_clk_gate_hwv_ops_setclr;
->> +extern const struct clk_ops mtk_clk_gate_hwv_ops_setclr_inv;
->>
->>  struct mtk_gate_regs {
->>         u32 sta_ofs;
->> @@ -31,6 +33,7 @@ struct mtk_gate {
->>         const char *name;
->>         const char *parent_name;
->>         const struct mtk_gate_regs *regs;
->> +       const struct mtk_gate_regs *hwv_regs;
->>         int shift;
->>         const struct clk_ops *ops;
->>         unsigned long flags;
->> --
->> 2.39.5
->>
 
