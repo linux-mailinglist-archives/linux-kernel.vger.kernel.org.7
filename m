@@ -1,126 +1,106 @@
-Return-Path: <linux-kernel+bounces-785497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0E82B34BA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:20:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F085B34BA4
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:21:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3ACD3AC6E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:20:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B1515E4B09
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E25286422;
-	Mon, 25 Aug 2025 20:20:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 470B62868A9;
+	Mon, 25 Aug 2025 20:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CzFUEJLx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gK+sRZ+z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22DE2367B3;
-	Mon, 25 Aug 2025 20:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7872367B3;
+	Mon, 25 Aug 2025 20:21:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756153242; cv=none; b=i53dJ7kS9W7vVP8LeYHyyuH8Eg5e0RrsOu8oWOrZ6PwaUKm3w2w9qQRSnNt0muf2moo8I9R4id8h+M/Q5HHVVd8H40UWhEO9NSdXI0CkuLpusxrijXyAQBbRzHRxhkdmJwHsHWG5tzgmUfH8pNTa2BRdmKbrHFHmeUJ+m1pUzpE=
+	t=1756153266; cv=none; b=LmCcD3ZZITI7xPnP1+9eC54h9FvjufLoq+PZLILGwC+yzmqPLTqZdXfRqzYMfyCrj4myjJykuZKZX/zxmHw+Sa+nYUeoB4ZbJJ3R9JVeVJYOyvgf/J73xxxgpx4Bjx0bhstFA7aXWnR5J8L+c2TGYy/cvvtgAbwTtLJvuAFuHi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756153242; c=relaxed/simple;
-	bh=pLzmSkU2N6kdiHTKVy/LxO6tuao1DyXVwvxK6YJeMss=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rhZ0B5U+Taz8q+U4G9JZynxsMpntX4Yd3CPC9xen/e0FkxdJAzQGbr+LbdAzrj5UeVEta/BEWETxa3v2sRl3F6D9fmbnugRXcTkUzv1yNiROpD9ZBHb6PcWd/YgrWX8N4SgjYvRr4FtZAvqk2smqBCLu7f9WSK6CXAvht60ACZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CzFUEJLx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20130C4CEED;
-	Mon, 25 Aug 2025 20:20:40 +0000 (UTC)
+	s=arc-20240116; t=1756153266; c=relaxed/simple;
+	bh=HBUjCi58pGbQ1nqkVRl1Er9XlTy0S4iGn0Zj3CWDiaQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=pwLLPN9socaQ3aX9vskdS5uEsdF+/9IN6q23xKNjCMD2oCCX9l/zl9egfRTd4qOc/TYmVGq5hunSp+AvamA2Ph2yXvkwG/6iQ3kk8RNMc8EbH4mYkm890JlklF2jwH0htndOOdxoHbOEGVLhMMrWFmutCox1KRq1/pCYKC3Hdx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gK+sRZ+z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BB32C4CEED;
+	Mon, 25 Aug 2025 20:21:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756153241;
-	bh=pLzmSkU2N6kdiHTKVy/LxO6tuao1DyXVwvxK6YJeMss=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CzFUEJLxAHutIHQHziiEdc74+VYd2asXBGezzAm4VOZyAg6KRpdnB+tpCkMXNtxp6
-	 xW0wRMWA4/vcsauGC+V7VZpzeunCSFcX+ubh9u4QDe36bI9VCsl86OY3n6yH/HHr/c
-	 PwYD/4PACUnQ5ERfou7BknIhhN29QVLXF7iZ9uhiTDY9RSokyL6YcA1F3vlY4C9oEL
-	 UENmBu7qIJJk2Lun07ZlwtYBCFAWOUmULJMRNr0DjzZboJkynO5INTsuaoLXGbuuvF
-	 0vvWORTYNjdeSGTbUL4AEOaDY9NnX1Zyxi1m9qGhohmPeG3SYRH4sUoXFzb1MBtVjd
-	 29MSOvEy7MgCw==
-Date: Mon, 25 Aug 2025 22:20:13 +0200
-From: Nicolas Schier <nsc@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>,
-	Christian Brauner <brauner@kernel.org>,
-	Daniel Gomez <da.gomez@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH] scripts/misc-check: update export checks for
- EXPORT_SYMBOL_FOR_MODULES()
-Message-ID: <aKzFfToXptoHnrxI@levanger>
-References: <20250825-export_modules_fix-v1-1-5c331e949538@suse.cz>
- <20250825170710.GC2719297@ax162>
+	s=k20201202; t=1756153266;
+	bh=HBUjCi58pGbQ1nqkVRl1Er9XlTy0S4iGn0Zj3CWDiaQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=gK+sRZ+zc3gQfubJ/tLh+xKDp8ir/zajj8z2iQOt2wZ5v22TkQk8Fkmepmhg4pN4R
+	 1iOHMTHhJp7vy8p51MQga+gFnbJyvmyojNdWyB3hwJyMlSSS8M1UqBdT9KG5ti9TLj
+	 WQz4TXEB0L2fNj1ga2E2vksG4NhbZv9WsWU2iUdcPm4paP8qDw4/RvbSW1xggv/5qR
+	 5Zp9L1YjmW6Hubr1/YllayeLEunAjPp24KuCV5Q0JfcXAfK9bwnRLDxRMYo4buM5/h
+	 CqwPdgPtZ83WEiqnpwEBwbSM/LDhe7tf4Xaod9EHHFVDmbkTElX9NpapjWpCdo6K9D
+	 jOvv97PG3s5mQ==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, 
+ Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ johan+linaro@kernel.org, quic_skakitap@quicinc.com
+In-Reply-To: <20250823-pm8008-negitive-selector-v1-1-52b026a4b5e8@quicinc.com>
+References: <20250823-pm8008-negitive-selector-v1-1-52b026a4b5e8@quicinc.com>
+Subject: Re: [PATCH] regulator: pm8008: fix probe failure due to negative
+ voltage selector
+Message-Id: <175615326276.232492.9513119697865046178.b4-ty@kernel.org>
+Date: Mon, 25 Aug 2025 21:21:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="CHypDR+6IYo16V8/"
-Content-Disposition: inline
-In-Reply-To: <20250825170710.GC2719297@ax162>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-a9b2a
 
+On Sat, 23 Aug 2025 01:56:39 +0530, Kamal Wadhwa wrote:
+> In the current design, the `pm8008_regulator_get_voltage_sel()` callback
+> can return a negative value if the raw voltage value is read as 0 uV from
+> the PMIC HW register. This can cause the probe to fail when the
+> `machine_constraints_voltage()` check is called during the regulator
+> registration flow.
+> 
+> Fix this by using the helper `regulator_map_voltage_linear_range()` to
+> convert the raw value to a voltage selector inside the mentioned get
+> voltage selector function. This ensures that the value returned is always
+> within the defined range.
+> 
+> [...]
 
---CHypDR+6IYo16V8/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied to
 
-On Mon, Aug 25, 2025 at 10:07:10AM -0700, Nathan Chancellor wrote:
-> On Mon, Aug 25, 2025 at 05:00:37PM +0200, Vlastimil Babka wrote:
-> > The module export checks are looking for EXPORT_SYMBOL_GPL_FOR_MODULES()
-> > which was renamed to EXPORT_SYMBOL_FOR_MODULES(). Update the checks.
-> >=20
-> > Fixes: 6d3c3ca4c77e ("module: Rename EXPORT_SYMBOL_GPL_FOR_MODULES to E=
-XPORT_SYMBOL_FOR_MODULES")
-> > Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> > ---
-> > I've missed these new checks when renaming the export macro due to my
-> > git grep being too narrow. My commit went through Christian's vfs tree
-> > but seems the script is part of kbuild (which is currently Odd fixes).
->=20
-> If this needs to reach Linus's tree to avoid warnings, it could go via
-> another vfs fixes pull request with our ack or we could ask him to pick
-> it up directly (as I am not sure we will have a fixes pull request this
-> cycle). If it is not urgent, I can pick it up via kbuild-next for 6.18.
-> I have no strong preference.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
-Hm, you're right, the check will issue false warnings (and misses to
-warn when it should) without this update.  Therefore I think it would be
-good to get the patch merged soon - even though the warnings are only
-issued with W=3D2.
+Thanks!
 
-So, I second asking for the patch to go via vfs fixes or directly via
-Linus.  If it helps:
+[1/1] regulator: pm8008: fix probe failure due to negative voltage selector
+      commit: ef3e9c91ed87f13dba877a20569f4a0accf0612c
 
-Acked-by: Nicolas Schier <nsc@kernel.org>
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-Kind regards,
-Nicolas
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
---CHypDR+6IYo16V8/
-Content-Type: application/pgp-signature; name="signature.asc"
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
------BEGIN PGP SIGNATURE-----
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-iQIzBAABCgAdFiEEh0E3p4c3JKeBvsLGB1IKcBYmEmkFAmisxXEACgkQB1IKcBYm
-Emme/hAAjCm0NHBPa3ayDeqMNqmqVzxut7huter/Q5H42PaTpZXPB2FxTaMOlcUM
-c2/mthQR8SEKhH4w8/+Gwm2tyoWi12Ezx0C0FVCVS5DvVk7v5JRPnlxIml0eQL/n
-ZtyVUeF6kMeiE3PSe4Hd1MhJnePim5qXTw+0+jDZk2hMdPBQRKArEnaMO3OzMPSn
-7Iyg1fUtpAB//iVA0VGGsdAf9gj5oEdQUmo52GONsTWTGvAbQt7ZQ1bKzBRD08Dq
-Y2vf5Nfg2/72eOv9VztyOX//cYTjqx+lFt0nd0Ll+cdt/od3c8B/tA/oD6CylAII
-AS1z6PupU0JD64WEgflkQLU341mwCr54r1SXQPCFTLehQyzZU8JeeR+J8/tNyFbO
-d4M3eGmDKPI3qoF8GPp6jzL2HExGUoxo0rty5aQsBqAsEs3JT88JQYLLZjyvKBmy
-EE58SttIVGPvAm1kxUqHU8K0NzaZn19nc2YmPb9+M7F9Yk7ZoyNJCPdfeM903Ibc
-guQbldPqE2RIEIbXHOT8ammKKbOnBKguUzOR8xDa2/0nvOvbMZbBAIStO9bnipMD
-XcuX2B5LhzF7DGcdQTKBqU/Fa8PrEuuVsjBdJaCGnS47KosGefn9mtioIMJpkXDf
-LhrRDQCkALNGRoXUddLN+vCLW8IIudIDODD7pZ799T7ocdO3Y5I=
-=hgNE
------END PGP SIGNATURE-----
+Thanks,
+Mark
 
---CHypDR+6IYo16V8/--
 
