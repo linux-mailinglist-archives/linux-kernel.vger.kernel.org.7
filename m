@@ -1,174 +1,114 @@
-Return-Path: <linux-kernel+bounces-784778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8485BB340E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:38:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7F12B340E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:38:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5000317619C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:38:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80F163B7B45
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:38:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09FE827584E;
-	Mon, 25 Aug 2025 13:38:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9321E272811;
+	Mon, 25 Aug 2025 13:38:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="SCimNEDu"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="ej21sl26"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD17D78F29;
-	Mon, 25 Aug 2025 13:37:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36B6078F29
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 13:38:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756129081; cv=none; b=MQXN9FXf3iDFprxJ9R+HqfAo4poQ3w8kkt71HiT9fQGYpWrpjLgKLm7MSiJQRobvB4wU/Wvr8Xki2uZzZkz5IqWcbXm4lpP6zfR0ezRUbyXRhCQGVqulnD0kTcty3xy7u+W01RnoTMMgmI8nuaXBZU2iEslYUrvWpsAFDCoqOts=
+	t=1756129089; cv=none; b=kJzj44sNccmgp61c69RCIunAFu0LJOhdpr/5aOPVlrON9/2VPrhOi9kgt3lEJKFcf34U1SEGMYbuwZYXCCiYzR97N0eQPMvKcXBCi8EAhjVRJliTMLGxg5FuqcFMwDCiDTcAUp35CX60MhEHaEGcFny4QhDOs58rlnJcoM7wbso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756129081; c=relaxed/simple;
-	bh=uOCWHgBTGh/T8WTiTshAa6HbioDTVHtQOtkq6YuQYTQ=;
+	s=arc-20240116; t=1756129089; c=relaxed/simple;
+	bh=BHMvzg2b3Q99pUM2LkIF3pQZHrcwjZy8f0DBK73CqTU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CnVNTLF6LWXXrRjNntp1CeFbHMbr14sY0J+d460h83bCknlqnPIuopHJZnrQmS00/hLoD1Mg5MnEmkgwz4+iSax9mQ0tmHMyLWLF2aRSeqcArRAjunLHg5zm0BnWiF31KryyIMYSNv0Jxt8U4voTlmnrVozSqo1D39E/xbBltkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=SCimNEDu; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=PVgYUvPT1vPM01I1nr9R+3H7BRFArSAfjzLQN6iJKvQ=; b=SCimNEDupFMkyQhB1L09lOvN6L
-	2R2NcLUFXj3aX6q1C9zMzhUzbva/YBhfegk7MxjDN9oyQchc03Y+e3j+lu0irp5X2jaAcQNfcLzkw
-	57qcs0A5jOaIq5wT7QANf9CQw6k4yxggPLKlR2yYU9Hywo3l9qD2g0f/WNHW+WeGYkILoDqzSx59i
-	64jBpaJd1/A5X2fUoTAm8taxCXd+syedJ0xfiDBwokuWNqMVpiwgI0EQCCMmjCy8MeQ3DEWfab/9z
-	P/l3yoCWe6alpUfHXrf9VaRE17B1xFYZ0brzJFjmu3wKvk3yrOAqMNfujbdN1WPD7tVxWtSF8RFUT
-	iH3woFiQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:53562)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uqXOF-000000006XF-25Id;
-	Mon, 25 Aug 2025 14:37:39 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uqXO9-0000000089m-0a0b;
-	Mon, 25 Aug 2025 14:37:33 +0100
-Date: Mon, 25 Aug 2025 14:37:32 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Chaoyi Chen <chaoyi.chen@rock-chips.com>,
-	Chaoyi Chen <kernel@airkyi.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jonas Karlman <jonas@kwiboo.se>, David Wu <david.wu@rock-chips.com>,
-	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH net-next v3] net: ethernet: stmmac: dwmac-rk: Make the
- clk_phy could be used for external phy
-Message-ID: <aKxnHFSrVeM7Be5A@shell.armlinux.org.uk>
-References: <20250815023515.114-1-kernel@airkyi.com>
- <CGME20250825072312eucas1p2d4751199c0ea069c7938218be60e5e93@eucas1p2.samsung.com>
- <a30a8c97-6b96-45ba-bad7-8a40401babc2@samsung.com>
- <d0fe6d16-181f-4b38-9457-1099fb6419d0@rock-chips.com>
- <809848c9-2ffa-4743-adda-b8b714b404de@samsung.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ko/Dkm8JvUwnb9EIRovwDK+2/Gk+WCxYGCMMARLDiKz7RXi3dcC2hGfxXlyXHLr4QT3aY32XWIuD6C1l4w9FLKzQQLaJxjpo8jIJLL219HaOcB6wi1zTbn2mkCK5DClV+HAmYuygl6vSD0rOzmnF5Mn+3yVsmGD5adz4v2bd8o0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=ej21sl26; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-173-48-121-146.bstnma.fios.verizon.net [173.48.121.146])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 57PDbhaD000596
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Aug 2025 09:37:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1756129069; bh=DhKcm+2HIXxor3Yfwk81KfyIYu4BusrCprsTFNUMOd8=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=ej21sl26LAyyvIBOGAerawfp4yK7A56MPoYu0eEkuGeQRBSYD4cdpGb6Mm2MKp0mf
+	 0AZlh0RzF/9cGbZdJFdcq0bsCkqcFLt7vZisb4vOYZILHZ3yub3M4mSjfp1Vg88Y6j
+	 BpeAWUfRWvMAU2G1ZCyu33DN641tTCT2jForSD05ddeU0MvKeMsU1KmsK4cl+r/f8m
+	 EdR0MtVzKMALcaVKHW2QHD2iKhVCsZaXiR0zF1fdmlBaAZp6SGNp1xGwPguGDXTOXw
+	 l5A1OBYX6oM8CV78n0AZv0r8TY+AulgDCXbKuTRpFKYDoK8gz16NkeHwUmYRVeMPBh
+	 DeHc/FtbXhMHQ==
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id 97B652E00D6; Mon, 25 Aug 2025 09:37:43 -0400 (EDT)
+Date: Mon, 25 Aug 2025 09:37:43 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Hillf Danton <hdanton@sina.com>
+Cc: syzbot <syzbot+c5c9c223a721d7353490@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [ext4?] possible deadlock in ext4_truncate (2)
+Message-ID: <20250825133743.GA1511874@mit.edu>
+References: <68ac2412.050a0220.37038e.0089.GAE@google.com>
+ <20250825104155.5420-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <809848c9-2ffa-4743-adda-b8b714b404de@samsung.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <20250825104155.5420-1-hdanton@sina.com>
 
-On Mon, Aug 25, 2025 at 12:53:37PM +0200, Marek Szyprowski wrote:
-> On 25.08.2025 11:57, Chaoyi Chen wrote:
-> > On 8/25/2025 3:23 PM, Marek Szyprowski wrote:
-> >> On 15.08.2025 04:35, Chaoyi Chen wrote:
-> >>> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-> >>>
-> >>> For external phy, clk_phy should be optional, and some external phy
-> >>> need the clock input from clk_phy. This patch adds support for setting
-> >>> clk_phy for external phy.
-> >>>
-> >>> Signed-off-by: David Wu <david.wu@rock-chips.com>
-> >>> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-> >>> ---
-> >>>
-> >>> Changes in v3:
-> >>> - Link to V2: 
-> >>> https://lore.kernel.org/netdev/20250812012127.197-1-kernel@airkyi.com/
-> >>> - Rebase to net-next/main
-> >>>
-> >>> Changes in v2:
-> >>> - Link to V1: 
-> >>> https://lore.kernel.org/netdev/20250806011405.115-1-kernel@airkyi.com/
-> >>> - Remove get clock frequency from DT prop
-> >>>
-> >>>    drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c | 11 +++++++----
-> >>>    1 file changed, 7 insertions(+), 4 deletions(-)
-> >>>
-> >>> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c 
-> >>> b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> >>> index ac8288301994..5d921e62c2f5 100644
-> >>> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> >>> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> >>> @@ -1412,12 +1412,15 @@ static int rk_gmac_clk_init(struct 
-> >>> plat_stmmacenet_data *plat)
-> >>>            clk_set_rate(plat->stmmac_clk, 50000000);
-> >>>        }
-> >>>    -    if (plat->phy_node && bsp_priv->integrated_phy) {
-> >>> +    if (plat->phy_node) {
-> >>>            bsp_priv->clk_phy = of_clk_get(plat->phy_node, 0);
-> >>>            ret = PTR_ERR_OR_ZERO(bsp_priv->clk_phy);
-> >>> -        if (ret)
-> >>> -            return dev_err_probe(dev, ret, "Cannot get PHY clock\n");
-> >>> -        clk_set_rate(bsp_priv->clk_phy, 50000000);
-> >>> +        /* If it is not integrated_phy, clk_phy is optional */
-> >>> +        if (bsp_priv->integrated_phy) {
-> >>> +            if (ret)
-> >>> +                return dev_err_probe(dev, ret, "Cannot get PHY 
-> >>> clock\n");
-> >>> +            clk_set_rate(bsp_priv->clk_phy, 50000000);
-> >>> +        }
-> >
-> > I think  we should set bsp_priv->clk_phy to NULL here if we failed to 
-> > get the clock.
-> >
-> > Could you try this on your board? Thank you.
+On Mon, Aug 25, 2025 at 06:41:52PM +0800, Hillf Danton wrote:
+> > syzbot found the following issue on:
+> > 
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=c5c9c223a721d7353490
 > 
-> Right, the following change also fixes this issue:
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c 
-> b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> index 9fc41207cc45..2d19d48be01f 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> @@ -1415,6 +1415,8 @@ static int rk_gmac_clk_init(struct 
-> plat_stmmacenet_data *plat)
->          if (plat->phy_node) {
->                  bsp_priv->clk_phy = of_clk_get(plat->phy_node, 0);
->                  ret = PTR_ERR_OR_ZERO(bsp_priv->clk_phy);
-> +               if (ret)
-> +                       bsp_priv->clk_phy = NULL;
+> --- x/fs/ext4/inode.c
+> +++ y/fs/ext4/inode.c
+> @@ -4573,6 +4573,7 @@ int ext4_truncate(struct inode *inode)
+>  	struct ext4_inode_info *ei = EXT4_I(inode);
+>  	unsigned int credits;
+>  	int err = 0, err2;
+> +	static int subclass = 0;
+>  	handle_t *handle;
+>  	struct address_space *mapping = inode->i_mapping;
+>  
+> @@ -4636,7 +4637,7 @@ int ext4_truncate(struct inode *inode)
+>  	ext4_fc_track_inode(handle, inode);
+>  	ext4_check_map_extents_env(inode);
+>  
+> -	down_write(&EXT4_I(inode)->i_data_sem);
+> +	down_write_nested(&EXT4_I(inode)->i_data_sem, subclass++);
+>  	ext4_discard_preallocations(inode);
+>  
+>  	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
 
-Or just:
+This isn't the right way to fix these sorts of Syzbot failures.  First
+of all, we already have subclasses defined.  Secondly, using a
+continuously incrementing subclasses will chew up a huge amount of
+memory until lockdep gives a warning that the kernel exceeded a fixed
+limit, which (a) disables the lockdep checking, so it's counter
+productive, (b) will trigger a syzbot failure, so it doesn't even shut
+up the syzbot noise.
 
-		clk = of_clk_get(plat->phy_node, 0);
-		if (clk == ERR_PTR(-EPROBE_DEFER))
-			...
-		else if (!IS_ERR)
-			bsp_priv->clk_phy = clk;
+The combination of maliciously corrupted/fuzzed file systems, and a
+deadlock warning, is something that I just ignore.  Your patch is an
+attempt to do this programmtically, if it worked (and for better or
+for worse, it doesn't).  If there was a way I could tell syzbot ---
+you're just wasting everyone's time, shut up with this combination,
+but there isn't.  So when I have time, I'll recategorize these reports
+to priority low, which is a signal that it's been triaged, and it's
+syzbot noise.
 
-I don't have a free terminal to work out what "..." should be.
+Cheers,
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+						- Ted
 
