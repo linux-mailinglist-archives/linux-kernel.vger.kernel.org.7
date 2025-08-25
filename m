@@ -1,208 +1,242 @@
-Return-Path: <linux-kernel+bounces-785114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B856B34629
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:43:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D27A7B3462C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:44:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9671C2A3B99
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:43:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFFD47B3C31
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997342FF16E;
-	Mon, 25 Aug 2025 15:42:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBF082FE579;
+	Mon, 25 Aug 2025 15:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kHAs++aL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Cr3Tlk8p";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JVnfZJj+";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="nbgEC1lo"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="HW5B6XaO"
+Received: from YQZPR01CU011.outbound.protection.outlook.com (mail-canadaeastazon11020139.outbound.protection.outlook.com [52.101.191.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C27ED2FDC53
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 15:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756136577; cv=none; b=A3EW3Na8lORba1F5hhkyrEzmbuGf5PKzHvLW2RWKa/Ultn6Zs7K5G2cOh4xIHpPd8tRFwH0caPP+xubN8Y9lkoVKYOQuVD/I00IduOyQapc88fkref0LTZFi4Ocvns+5DDaQRY3iCQ7zUtSM0UHA1Oa1nzv3cZ2TUUVfQ2/pJ/k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756136577; c=relaxed/simple;
-	bh=hVXZhs0pRQvaFd3kpCnwauwRGSpYx2aGSDwO2qwVsS4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=inppdwKvEc1ISBBYCdBHft6oWCm4aM4DjUQorJzu16vV8VrCr3022uiEI254MQhWvlM/9aa3TjiOhY53ntb+6vxkluTckNYuzHxSzVzcfQDwjDdDCkn+P0j5TbzZh+FJWjvxEb0WoYjo/fXzmCclU5o420b8oYAMB6sVWJfXRUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kHAs++aL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Cr3Tlk8p; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JVnfZJj+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=nbgEC1lo; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E5D071F787;
-	Mon, 25 Aug 2025 15:42:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756136573; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=T3D8z4z+/f2dTCQrBeh6+CCe/Ua4SMJV5cXEFTw2Dxc=;
-	b=kHAs++aLVLeb0OZV24qtAvG9Xia/MTcwawW7yrk/hwo2UF1DtwjcBzv5vrYZTMXiVltPPq
-	Aabz6MlYLuEDnrgp2SSgnEbi5pboHcN6F8VXEpsDMNi8MqX9IXXCqX9aAk+w5LbTlchJHT
-	PD+oduxi826vwjsFkBD4GQwkjHf1Y1g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756136573;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=T3D8z4z+/f2dTCQrBeh6+CCe/Ua4SMJV5cXEFTw2Dxc=;
-	b=Cr3Tlk8ppZKMEJuCcFoOQZz+kXUTzRwkzKIjhN1Kycu+r1rxI1hGZh4qyo8rwhPvn/vqyU
-	xGXhXmy+xi1mVeCA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=JVnfZJj+;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=nbgEC1lo
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756136572; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=T3D8z4z+/f2dTCQrBeh6+CCe/Ua4SMJV5cXEFTw2Dxc=;
-	b=JVnfZJj+M8mDlnOpqfk544SPYfgkw+6vPqOgmyd+mCKdJqyACA8sow1ypV7pjnZ8b+pGSR
-	n1NgqNXRVM936Pjk1Dl1GZBZKlREBHOHNes3IA5y4a9KtGs1+Sofin/M/E4z5JQuTucm+o
-	nD21/KFNFsjqY8pJoiw5J7RqUTKUO44=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756136572;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=T3D8z4z+/f2dTCQrBeh6+CCe/Ua4SMJV5cXEFTw2Dxc=;
-	b=nbgEC1loXGaaMAOIXv+2A4H5ZqluWguqXsfbbMq235yRxgrNrVSjdarklUJPuNpMs5wxG3
-	3wXvUlYN2zlNfFCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CB9BD1368F;
-	Mon, 25 Aug 2025 15:42:52 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id dLVdMXyErGgXSwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 25 Aug 2025 15:42:52 +0000
-Message-ID: <54d9e5ac-5a51-4901-9b13-4c248aada2d7@suse.cz>
-Date: Mon, 25 Aug 2025 17:42:52 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43E042FDC53
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 15:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.191.139
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756136601; cv=fail; b=hrHZYcyV9IyhMjWZNGRwLv/caB5I1aaXymm6IlFu+GGGKA3PW77vmjTWiPyX0CYOqJHlIaIAIj+BXqMaJ7+EObLCPqTHrcX2NHufoL90qwXMiFttd42s5aRZDXu9ajTQyhHb2oPVzaF1Gw1Z/6yIqqNUZrR2cZNQ26e5EUdGy0o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756136601; c=relaxed/simple;
+	bh=v7Aq2Fmz5poudv3jrToXtXkjdhU+JfgdiswoLxZ8zzg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=V7VYLbAc5dyA0TBM0Ngt9WobUM0L0oT5RnJtu+9ngZ5VeF4ZwRX5FyqfnSuUrq2b8ff938vTPD7N7hi5yE+0XkkwuT4DfwpLIPt8mURnwhQ4VojWKQrts1W4g0Cjxu0cTc7J7xzK3m9uTvtWZ5Rdo5pcaY02t7Fc7UrBG69CvB0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=HW5B6XaO; arc=fail smtp.client-ip=52.101.191.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jsQTp9ne+KYDjCf2Uw4tzOQzCb9oU+Pyii+38OjyLhomPnYT4DE37DZPsa6nU2JASfnsCOEJiwQQ3FCxm4Npp/ju8W7GHfMUfAdZIzjnMofJCOgdPA6rnxCGk2D6aOEZbTBFMv77V8I/8WYOc6kNHQDpG6XLsQ5RFCx391c1knu+xpo6Ic4u5ItpyJlXd0ZvL114WoPm8PbL9VpNXDW8FJdvdk/4RpWn777q7CM2gA+M/Xb6QL1WgEdLiTV24feZSpt3QzpHJgpdZhdasW6RCh8e7gpgB7q7vxUgTu10qTOaI9Gs74XCnQEvKiV+7H3osDJ2jyWwRByQwPYmfVaMpw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ezgrDIMtd0UbjhsEcxCpOUkwan/Ho1jaujEfN71IZ/s=;
+ b=dskQojd/T3QtfM8HXLKcWdBVAtFEVyiy7Fkl5iExv5WDjFZAowrKypZKZEi4L5AVNJ+xZQPvDFGzhqRYsUIfoBASBeVoIghoOKevI7Wdj3z5dS50cHHnqkZm4743OVnz4ggQY9Xr45C9iv/GWpn8m5DeChRMlHbPLFsPHRo/bJzaX2405g4KPAzWKhIKvb4H565uoTaIAGJfLZcArMPFqI6rIuhqCCnupWwYeMOgBFWmn+xftpTMLsXhAm9O+P5ejlaHTIRN27OsCZc08NjXcBg2TvyhIqOpu5ZQwUb6UO5zMf5bft2lFT9oCGZdNKZ6xL8PN/MECYYLS9YjEMljog==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
+ dkim=pass header.d=efficios.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ezgrDIMtd0UbjhsEcxCpOUkwan/Ho1jaujEfN71IZ/s=;
+ b=HW5B6XaOPSHkvs7T2CCrMjpqNWPa2AOp85Z+vkqjhQHaJpCvYJlWz5h7exyapH1h+CGvkOpXeKswc4j/H42GWJ5dGzCGxa3BRy3RSH7Mvu/7BKh1arNVF6uw80a0pRKM5t7QxaWUCNbrRpWo9pQd1qMYckJzYSFAWItD6zotZ/8eka0TtUBYQrnImrtTsq8eVc1YiKyJmsT7hckzMxIz3jA2VwWKhCLDWKFGaL/hMjF+Ip5ZeSTS8vZS1oDR+fArb2uWKr5Bio/YB+m8wW2NWX4+8usSXWaNLBp8hlo+9H9mbtCJ6wuTcpNLvBqodFRGl2969NIrHYP/cuWfrcKGuA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=efficios.com;
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
+ by YT1PPFB0A9C7B87.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b08::578) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Mon, 25 Aug
+ 2025 15:43:12 +0000
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4%3]) with mapi id 15.20.9052.021; Mon, 25 Aug 2025
+ 15:43:11 +0000
+Message-ID: <e7757033-3746-46b7-b776-4db269b0499c@efficios.com>
+Date: Mon, 25 Aug 2025 11:43:09 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [patch V2 04/37] rseq: Remove the ksig argument from
+ rseq_handle_notify_resume()
+To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Peter Zijlstra <peterz@infradead.org>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson
+ <seanjc@google.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>, x86@kernel.org,
+ Arnd Bergmann <arnd@arndb.de>, Heiko Carstens <hca@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>
+References: <20250823161326.635281786@linutronix.de>
+ <20250823161653.516925982@linutronix.de>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20250823161653.516925982@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YQBPR0101CA0118.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:5::21) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:be::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] mm: slub: avoid wake up kswapd in set_track_prepare
-Content-Language: en-US
-To: Matthew Wilcox <willy@infradead.org>, yangshiguang1011@163.com
-Cc: harry.yoo@oracle.com, akpm@linux-foundation.org, cl@gentwo.org,
- rientjes@google.com, roman.gushchin@linux.dev, glittao@gmail.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- yangshiguang <yangshiguang@xiaomi.com>, stable@vger.kernel.org
-References: <20250825121737.2535732-1-yangshiguang1011@163.com>
- <aKxZp_GgYVzp8Uvt@casper.infradead.org>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <aKxZp_GgYVzp8Uvt@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[infradead.org,163.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[163.com,gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[oracle.com,linux-foundation.org,gentwo.org,google.com,linux.dev,gmail.com,kvack.org,vger.kernel.org,xiaomi.com];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: E5D071F787
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT1PPFB0A9C7B87:EE_
+X-MS-Office365-Filtering-Correlation-Id: 00b2d805-e111-42e7-1cef-08dde3ee1891
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cUpPc1dxc1hvSXU4bXFvR1c3TFBvU2tFS1RUOWJqZW5HVU1FRHp6M0QwSXcw?=
+ =?utf-8?B?QnFqZHV4SlN4TzI1ZlB0VjRZTktCYWdXM1YzNC83cWpnT3FWcHk4dW5hSXhI?=
+ =?utf-8?B?bjJuV1Fjc3BYNFFaQUMrM3RBNU9jN0tpVk5DQTNYWWhGQkcwck90bzh1SXpP?=
+ =?utf-8?B?NGt4dlc1bThiQnVMWWR6MzFXR1NKZ1hzZFdaQWpkSEMvdFRzU3RDWXRBRno2?=
+ =?utf-8?B?N0NidjlIcGp5VFdzUFNhMnpIZU5hWTYrVXhlUGZrUFlLT1lkOXhDVXR0STJT?=
+ =?utf-8?B?MmQ4enlMWjdab2s4eko4NVlrd2FsYjErZHkrVDNHVlRPMUozNmhzVzBobDBt?=
+ =?utf-8?B?cXBMMXhESUJYbjlVVnRBWVdtVWtjdWp6YnBhdG12MnhZOU1KZVZ5a0wzb3Ns?=
+ =?utf-8?B?bTJ4dHBhSUNITGswYWxudE5JdEhuRFdrVFRPVGVtUDMxelJ2T2t2VXhlY2pC?=
+ =?utf-8?B?RUl2WTMzR1dMTEsrR2tkY2lNZUVWeW43Z3dQZ05rajEzWEUvbERzYllxV2dL?=
+ =?utf-8?B?ZmRYNmRqSlZGSVh3NE9JY09PNWo3ZFk2K21SZnRkSm9WaC82SXVBWklVNVA0?=
+ =?utf-8?B?MTdMOUlZc3NjZHI1YkEyb1B2WXYxMFZCdCtVWFJsL1lDd0xJQjlwemdRZjJ1?=
+ =?utf-8?B?a1AvRHFUYlQ4TVNLQ21INmlSTE5FSE1WRlhLVUZXUEZWdkFyYW12Um51TllY?=
+ =?utf-8?B?MGZ4ZEFzQ2g0WE9xcXNoNW9MOWs1cUFWbTJiWFN0OEJjQnFpSCtEdXdWWVhj?=
+ =?utf-8?B?eFpBZVRBWHF4a0E1RGhGb2hGUG1COVJrQTlHWUFQZnA2ZllaS1BvSkllM1px?=
+ =?utf-8?B?LzhqRDVmUUN0OEVyY2N3amQ2T2tqbzcwUFpDNmJUeHdGU0QvUVo2dHhaMVJR?=
+ =?utf-8?B?b1BJRERFSEVCTm45Nzd2YmRsZ0lRa2thckNoRmlTd1ZDVjBQMm45UWZTYXRD?=
+ =?utf-8?B?RjNZb1JQRU5oZjFwdnBxdEZ4K01BenF2c0ZabTNiS2VUc2VRVmgyd2hRMGNs?=
+ =?utf-8?B?Q0F2aWRhdnMwQWR4Qm1VdC9BWXpDSVQ5ZzI5OHVvcmVoK1MvajkvLzU3RENV?=
+ =?utf-8?B?cWZYYXJnbVA0Qlp6OThjeFFMbW0vOTJpd0szeUNQNHgwQk85MnExY2RqS0x4?=
+ =?utf-8?B?b1VoRlA1bDlHcXYveExuV2lYaktQUmJFc3plSldPZ25qV2d5Q1pvblUwTDh4?=
+ =?utf-8?B?Tks4S1piR1JWajNzTjVWOG9UdXFjM3NZNTRLSU5aYkNPeTBEZURHZVBkT3Fy?=
+ =?utf-8?B?SEdXVVQyblBGUE9iRkY0UWtsZ2RDQlZKNnNyL2xxcDNoeGdzZXMzRHpWUmN2?=
+ =?utf-8?B?U1ZvNEZtMU9aNEN2N1ErYWhCeFVxbVhZNlJoeTJjRjFVMTFmcXJLSTI2TkpQ?=
+ =?utf-8?B?VWdGdDV0ME50a0dCS01zUlhEWGM5T202aXlJUDFDRThDZG5tb2FMcEx4aURu?=
+ =?utf-8?B?SWQzVXVSdjBzeHo3YUwwemtUYXZhYlJSS2pHamJoZlFZS0NReFVRUW5NNEM0?=
+ =?utf-8?B?eDM0VmRvWkh6KzlxYlpjL29NSUw4dVhrL2NxNXVjUjhCTGZHTXlObEJ1SUxk?=
+ =?utf-8?B?WkpaRDVDT2FjcGlVSUJRVzF4Z1pIcUxKcXJHc29nU09ja1RvQm0xZEFFTmdU?=
+ =?utf-8?B?Y0ZHMzdiallKRVFxdGpiMmYreXdxWTBiSzh6VHZ6SGZUdVdqUnhlU1BYNS9i?=
+ =?utf-8?B?UHlzK0UrS0lnT3lab01CYzJaYjNsVXM0ZnhoTldwdmtRb2RtN2FPb20wWXFG?=
+ =?utf-8?B?djM1WisvMmVOVmROeVhFQ3RvSEFHZUpYaW5ZSDRSWVlhZjBoa2FVc0xUTzlq?=
+ =?utf-8?Q?m0uozkomflXdkrmy4mN9sl68UB9/72YkxVtyg=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WjRqZ3hob2RCZnRoUzV3ZDZKcTdaa2xjUHdRLzBEVzJveWs4aDZpY0ptYmpN?=
+ =?utf-8?B?b2tvd1ArMm40anRVZXVPQXFOMHcyVFlxaWJmbXpBMVp6RXBLZERqbHdZdkJO?=
+ =?utf-8?B?RWVJUnc4bExvNkI5U0hZd3l4S01FYjdDREU5QjNCdFlBUUE3dHg0MUZ6aENq?=
+ =?utf-8?B?bGZGRlpGVENpL29ZYTBPNkpKZHAzVXhYRHovNE1GaTFjUUNSNW9hU0pyQzkr?=
+ =?utf-8?B?RW83QXRSbURKL2Q1SXN3QzNnU2N6N1JxZVdENDk4YmxFQjFBeERUZ2ZWODFy?=
+ =?utf-8?B?SmRZQWRBUzNpV09tZFB3ZmVja0JoMTNGem51LzJXQ3ppMmZ6cFRaUDBLSmd6?=
+ =?utf-8?B?eE4zTzd4clhhRzIzYzhqaDZUUEF6cmFWdVBvVzdEOXJSM0pmNHYzQXZzVlpt?=
+ =?utf-8?B?TFNCQVJmZmQvTzRFNVVLRHJJUnRoSzFKUWltNWVhcUY0dnJBMncyODVBZ1JF?=
+ =?utf-8?B?SmgwVTNOZFBRa2c3SkVwYXJjbHlJMDBTdnpwMXhPZ1hGNG1kMnBLNmZxUnFR?=
+ =?utf-8?B?bXhJbEQ5UUwzTFVGSzZXcUhldGg1Q0JvbmtxQ0ZyeXJHRmZZNlNxMmc5Y3Zh?=
+ =?utf-8?B?THJsYy9FV1lIVy9pVDFOeDRtSUZSWllzT0hiREtZK1RLWmU3VjYxS2ljVWxO?=
+ =?utf-8?B?QytaM0oxOG5Uem1sbUI5eFBRWGs4N3dWUS9MZ2lORXNQQUJya0tZeUsrbGxH?=
+ =?utf-8?B?azAyRnVla3BiazhRM0liYnBLTWU4MHFIbDN4NkFvQlFoMGpXbFNrZFNUZlc0?=
+ =?utf-8?B?ZkpOVkZBMXlFcHc2UUQ5c3JFY3JocXhTUnRZMndIVkdsdDR4VjJNMDY5UlJD?=
+ =?utf-8?B?UGdGNVJmRm4wWnFNZFZFbTRrdCtrZ29zVnErc0g1Vm0wSXdCb3JWMFYrbHEw?=
+ =?utf-8?B?Tit6YWZ4aEdlMzBvUHV2VlVCQjBkeDBzQjl6TWZudk91cFJDMTVQMnR3UkQz?=
+ =?utf-8?B?aFdkbWhnRjZONzFIcDVubUN2K25Va29PTDdvbVAvdk1NdHA2TUwzSmRIUDNs?=
+ =?utf-8?B?QWs4eE9yckx2d2FhTlRFUDJDaU11NjZRbllQM0NZM0FMNjhiT2tER2Vqa3Bw?=
+ =?utf-8?B?R1lwNlZYeG5sMTJxdSswU2RZYUNkQ3VOanRaRzY5NWhScTVpVVYrcEg5Wkdk?=
+ =?utf-8?B?bTk2RlQyVkVXNDhTd3VIRXp0TGlQcko2M3RJYnUyeEtpbVBLamVYcVdudU9D?=
+ =?utf-8?B?NlRxT3ppS0RpM0l2NWVJdUtGdzNmMmZ2Z2VZSENjZFg3MThJQkNDeUtuTUs4?=
+ =?utf-8?B?ekoyd0NHR2w1S01qTDc1ZDhLRnR1MmhGTUxlUkRvQVAyZnpGOCtzZlNsVEE3?=
+ =?utf-8?B?S0Q3TWxwcWRjTnZNam4waWFEdTFhZE9wUnVzKzNZemkvdElTVWpXWG5EaWVV?=
+ =?utf-8?B?WWsweEZFL1pxMW9HUjVvNlUva3hPVmp4dUoxYXlTZTNFb2FhdzB4QjVORHpE?=
+ =?utf-8?B?VVBBS0xESk5XWmNaVkl2QVBJSm9IaVVMaDBpNW94MlVyZzV6bDhCWDVKcnBp?=
+ =?utf-8?B?aEkwWDlrOXg0amo1QmdUZHF2YlQ1WHR5cy9abjZoYTJ1NVRybDZBQzBkaU5a?=
+ =?utf-8?B?S2pMSExnZHRMMzhNdElvUHRHK1U2WS9rQm9MQW1CNmNrc2Q3SVFDMnJ4c1dE?=
+ =?utf-8?B?YXJCNVd1UXZ3QlZwSWpmNm1Gby9LUk5tUksvRjNFNHdpU0dURjZNa2NXM3Ev?=
+ =?utf-8?B?VFB3K3RIcU1uTFJkSDNudG1BME9EMDJBQWg0ZHNjSDFTWis5dU4rdk5HSWJW?=
+ =?utf-8?B?dHpXMWNMakRIZ3ZWekNvWGRScWc4NWVMTENNM09xZm83b1prNkNEdGIyRnp5?=
+ =?utf-8?B?S0NLOHpMSE5ZQmQzNStoa0ZuTnNRd1VTcHZxRWhON2J0TlBqTUFZTVcwb0hB?=
+ =?utf-8?B?WmllRXdZRWFQRlp3aGlEOEphYUN5ckxjZ1JKRmxYMllVem4vdUVualdzUW10?=
+ =?utf-8?B?VUZLZEhzdnVqRU1JdzJ6aThtTUZrcU43OVJWREQ3SXJZNktmOHBCZmRGVmFJ?=
+ =?utf-8?B?dVBmR0lHNTBxQm9CNHBzVDFuQm1mSVZBUWZCa3hTc2Fxeno5VWZvMTRXNHZs?=
+ =?utf-8?B?MEp0bWJKaFFNUjdzcUsrTHNpYUNMOUU0UVVORFZBb1BNbWp3QkFXRDBOc3Zj?=
+ =?utf-8?B?TVFCRzVKVzN1R0RvenE5ZEtZbjRESTZpeHYvR0FtNml6RFJmUjFRejVwY1px?=
+ =?utf-8?Q?MVyOY9gCHU8wHgQhaOH9Cb8=3D?=
+X-OriginatorOrg: efficios.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 00b2d805-e111-42e7-1cef-08dde3ee1891
+X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 15:43:11.2396
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7eMcL/k2n8LySGVH7tm4+axk5adWGUgXhe4wZAveFQMACLcpBWHUGAaVj9Cwh8qANuERLcWYvGFsfqTFfj7sd/nQngd64A+Xx7VsCqKTIMk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT1PPFB0A9C7B87
 
-On 8/25/25 14:40, Matthew Wilcox wrote:
-> On Mon, Aug 25, 2025 at 08:17:37PM +0800, yangshiguang1011@163.com wrote:
->> Avoid deadlock caused by implicitly waking up kswapd by
->> passing in allocation flags.
-> [...]
->> +	/* Preemption is disabled in ___slab_alloc() */
->> +	gfp_flags &= ~(__GFP_DIRECT_RECLAIM);
+On 2025-08-23 12:39, Thomas Gleixner wrote:
+> There is no point for this being visible in the resume_to_user_mode()
+> handling.
 > 
-> If you don't mean __GFP_KSWAPD_RECLAIM here, the explanation needs to
-> be better.
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
-It was suggested by Harry here:
-https://lore.kernel.org/all/aKKhUoUkRNDkFYYb@harry/
+Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 
-I think the comment is enough? Disabling preemption means we can't direct
-reclaim, but we can wake up kswapd. If the slab caller context is such that
-we can't, __GFP_KSWAPD_RECLAIM already won't be in the gfp_flags.
+> ---
+>   include/linux/resume_user_mode.h |    2 +-
+>   include/linux/rseq.h             |   13 +++++++------
+>   2 files changed, 8 insertions(+), 7 deletions(-)
+> 
+> --- a/include/linux/resume_user_mode.h
+> +++ b/include/linux/resume_user_mode.h
+> @@ -59,7 +59,7 @@ static inline void resume_user_mode_work
+>   	mem_cgroup_handle_over_high(GFP_KERNEL);
+>   	blkcg_maybe_throttle_current();
+>   
+> -	rseq_handle_notify_resume(NULL, regs);
+> +	rseq_handle_notify_resume(regs);
+>   }
+>   
+>   #endif /* LINUX_RESUME_USER_MODE_H */
+> --- a/include/linux/rseq.h
+> +++ b/include/linux/rseq.h
+> @@ -37,19 +37,20 @@ static inline void rseq_set_notify_resum
+>   
+>   void __rseq_handle_notify_resume(struct ksignal *sig, struct pt_regs *regs);
+>   
+> -static inline void rseq_handle_notify_resume(struct ksignal *ksig,
+> -					     struct pt_regs *regs)
+> +static inline void rseq_handle_notify_resume(struct pt_regs *regs)
+>   {
+>   	if (current->rseq)
+> -		__rseq_handle_notify_resume(ksig, regs);
+> +		__rseq_handle_notify_resume(NULL, regs);
+>   }
+>   
+>   static inline void rseq_signal_deliver(struct ksignal *ksig,
+>   				       struct pt_regs *regs)
+>   {
+> -	scoped_guard(RSEQ_EVENT_GUARD)
+> -		__set_bit(RSEQ_EVENT_SIGNAL_BIT, &current->rseq_event_mask);
+> -	rseq_handle_notify_resume(ksig, regs);
+> +	if (current->rseq) {
+> +		scoped_guard(RSEQ_EVENT_GUARD)
+> +			__set_bit(RSEQ_EVENT_SIGNAL_BIT, &current->rseq_event_mask);
+> +		__rseq_handle_notify_resume(ksig, regs);
+> +	}
+>   }
+>   
+>   /* rseq_preempt() requires preemption to be disabled. */
+> 
 
-But I think we should mask our also __GFP_NOFAIL and add __GFP_NOWARN?
 
-(we should get some common helpers for these kinds of gfp flag manipulations
-already)
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
