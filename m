@@ -1,159 +1,108 @@
-Return-Path: <linux-kernel+bounces-784996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 054ABB34489
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:51:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC14FB34483
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:50:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED9B41627D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:48:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1900B3B2310
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:50:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18872F363C;
-	Mon, 25 Aug 2025 14:48:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A6812FA0C7;
+	Mon, 25 Aug 2025 14:50:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U9euI3nD"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="VkFcRY7l"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88CD22E63C;
-	Mon, 25 Aug 2025 14:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E4F243147;
+	Mon, 25 Aug 2025 14:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756133323; cv=none; b=mJzIjv+6Sni4eFxXaLzCf1KnlqVUca2m5a7K2douPbc9OE1VEo4U2siPig6YV7OOvZfVfR9Q7+WbwUTjZXviNfFFVt0nmrEKePuukRF3TCjd8LCrx/S2q8hKgSUuSXviqAenmfdxE5cu1uciXyttc8Ww0UZ0epwTHnu7G2f85BI=
+	t=1756133402; cv=none; b=SHwC7ceIQIseIvH/QaGO1gM6iYK9T0BfHeJJ/SzPiRdENG5cyU1qC8CsOytOr535hvQzZ7nWd7SddXkXmkeObZqpckfn8hM2JDBL1A8aT6DcFAomm1R9MvmPQq5GU2B2iDOlq/c9BYvKmV8Z5o8n+ka71oHeRxVtm1k+E7CCV5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756133323; c=relaxed/simple;
-	bh=6sFO7rT4Ru4cNwi2avrTSEgT/GSxCZcL3d0s9oT6jyo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mvqtfdCbAsVlIJEqGssZMg/8Rksa5ev2AHIrGfHEG+lbzgor1g75f995gEBqHMyxgWmaBbhmJy2qjSUuIjb51XN6GisP37uBc0cqtOyzUFLa7JIPyNgNFFBIq2WNKcHOoQ6fJq+RSYRfsVOCRuWEwDGI/ruGatMjDK2pkiUuEZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U9euI3nD; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-71d603b674aso31400807b3.1;
-        Mon, 25 Aug 2025 07:48:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756133320; x=1756738120; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LaBi4h9qQ27W+z3VVAxCvJfwUOkIuGF9RWMFwT6gLh0=;
-        b=U9euI3nDbb9j9EsAOBI5d9ltdzPIAWjB8elGrSbjYAo8/4D12YbZdkevVsVfkX/CJT
-         zMuVkvbDM7VcvaSJQoaWK2fBhUjD1DF/7Y/FZj6g8+zASTHlSh8o8ChZwV3rQDiqJdby
-         UkmnaVtlS61U9FWqgdbfF2oD6q8BO7UXrwdmi0CLWb9oZMbr6GGXg1Cq03zPnhZ4spHp
-         CRBV+Z6MQDNpPrYA+ahQ9FYUFC3BrP2D605+MBXiPpmUCrtaQKwegL49j0bTnMWAPXts
-         sOw0+QeqDp/8GGMqlSt52b3bhn96czd2rBJH5DbCLWQFJFTPPaRnXzwcYSHUP/bQL0yx
-         l5Cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756133320; x=1756738120;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LaBi4h9qQ27W+z3VVAxCvJfwUOkIuGF9RWMFwT6gLh0=;
-        b=KjZe6//6Cn85LAJe2sM60gaQFk9q1zKMtwDxv/+XaCRL0jQxrIL9RR5u+8VYzKHdxD
-         muUgGnJazsLhFw8iWbq8eSBmvIFwHE7IDsGXeP7ilhZ6fwFsLx1J3q598CHdMjQpa2gd
-         x4SyUlcMyoAgd/VBd6miq4AMTRFy9waERFdLHmgN9XU69he8uS+JLAu48P1zz2o27gHI
-         RX+kdP0XU58tmi9SdHvAFdiUNiql9tiHi8ySIPDac+9U+p/UCV+HtPs+vT2bjtNuccBS
-         RSAUg0fTj3KCQp/tQBvZ1ruL0034rXTpADjX1QpvQ/+8IjrKkkv+tq7FETKO57yNrnbK
-         H2AQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVepWN+7SSU0mSoYP6/vWdH1/t1gsZmYC3Qvpw/6tN9skhTrUvzP9RelGNxTYb1KdPS7LKHgxsh@vger.kernel.org, AJvYcCW93aqxPqblD/AfyIM9YDW/lxy/vcPblX501qaa6NTFFj4YWk6X+AoHgqf+d8YOVLWONDt3olmvHTj5fJ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoNNyHWrJykTliKfy+g+VEgKfY5BwteTsvblQqMeez5EGjZGsO
-	4z6a0cUydUN5J8VYvUbGFo+/k3tdDkgnkjfmnQy+shFpQ0DJT8GZXxDH
-X-Gm-Gg: ASbGncuAhoItfI7/NdyouzJHXRS+dV1thvYAZGUlMVIVOHxcurlA37/m1uWuxpdk5B2
-	uhfQroLh/5qilWSdqMM2gQmEMyYJRB7W9BSr9fCW8IP5Mpw8zIjOXcKodk437JMXlduglhiuzHG
-	qDbBGQtHlVoQWUWu1Gw20UQEDi+lG302xJtrbZtz+mlsitR39G2mDO7+Scf+JztEiNmQ0rfHSaX
-	Lq8U3fT5+e4QAGGYLmRHF6j/9dyXFgPZGRBS4hjvRcgC1pcS7rf5Gar8+cKDUBc8p0gguq2iXcn
-	CTD8dl8jpJRx4gunuKOpEy+b+PT7i2UHVts9XtMovMSGB3FHa92NVzgCFYfWYb6hVzD4KpLq1jp
-	oQjgGOfOycLos0gwugC8u+bY8+r2w2ReqCB+Z4vf/y+o5Z6lfduiSeA==
-X-Google-Smtp-Source: AGHT+IFX6t2g2RWBiaV9FhXCN/YWOlqlLXpi8FKYaFoeKCWyWmCmS3h7Sg/R2hd57jDnYX+t3o6YZQ==
-X-Received: by 2002:a05:690c:a87:b0:720:378:bed6 with SMTP id 00721157ae682-7200378d942mr77175157b3.41.1756133320165;
-        Mon, 25 Aug 2025 07:48:40 -0700 (PDT)
-Received: from localhost ([2a03:2880:25ff:43::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-71ff173633esm17768947b3.27.2025.08.25.07.48.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 07:48:39 -0700 (PDT)
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-To: Kuan-Wei Chiu <visitorckw@gmail.com>
-Cc: vbabka@suse.cz,
-	akpm@linux-foundation.org,
-	cl@gentwo.org,
-	rientjes@google.com,
-	roman.gushchin@linux.dev,
-	harry.yoo@oracle.com,
-	glittao@gmail.com,
-	jserv@ccns.ncku.edu.tw,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] mm/slub: Fix cmp_loc_by_count() to return 0 when counts are equal
-Date: Mon, 25 Aug 2025 07:48:36 -0700
-Message-ID: <20250825144838.4081382-1-joshua.hahnjy@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250825013419.240278-2-visitorckw@gmail.com>
-References: 
+	s=arc-20240116; t=1756133402; c=relaxed/simple;
+	bh=hCnP05TiQs00BGY+oG0ba4z63lxDCdqa3mCAPO/U3ls=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YCMZlymhauzWmuKnlpub00jrXi3A4PVw/9zHwp81KAPasxflgXKu3xwc0WbR09wE4jSGf+tIqm6/q/kZsfe0HBj491HpJZnAqRFQ0I9DsmupirXl4ktKadqcxmC2oD3HQrRj6dB+XS2LneG33Wr7a+bw70EIPS8HphcuDQ44Hpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=VkFcRY7l; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8978040E01A1;
+	Mon, 25 Aug 2025 14:49:57 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id mQBz3sQRIXXn; Mon, 25 Aug 2025 14:49:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1756133394; bh=9u9e2oYR+J3vZ4QtNSraXiEs+objJRX/aDWchk+pmRs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VkFcRY7lPRFl/1P9LJnnmj3rgRwJrWxAkvJsbWHfI+udX0ufea4Vp2GpGWiGkiP68
+	 SXBxT20mnHHPE1d5DiKLQQmqkoWKENbaCWpyizBYLc1uVeI56bhAifjHdB5CJogscT
+	 9wu6M/Bc6tXTuEFvwnTAGPLTjz0DR7lGlpLD1LUs+L5x+0P7nbtrtokofF+sjLTrmu
+	 PVyMhMDhDrO1VJSqJ5DVNRc+qD4LJ41zZR0JnqngR5HHVyWtqiPsoKV7LZiAKAU4Cg
+	 7TiTEjP6ttbyBesZcBkKlSH6s/DUPjPsu7wnkj89h0gxxJ4yC2Zh5ObdgOPo5p4dCh
+	 J78QIH4E3OySYkC7vBiu2+CXYlc8Dcpx9f2xECboadesrKWZorSUkrZ3+qIrYCJlze
+	 hr/9cZzFZxYYPuME19E1kRse1aHxvx2QW64mEXqfLhRC9kgvvhyoo4jKOkDUi97V6H
+	 lJ3gZWwSbCBcas1FmO1SKBK1bbGqN1Y/b4wfZd+QlKQFs65Y2c/pihSjV7w+ZaIowt
+	 GR5x1EawWitcfNce5C+UKg3ZUX1gMVGsv558XXgdKwn1uZ3v8yrgT/6X2z34DBPh2v
+	 5kVR5ZYvV+FQ5L76HnY0bLfxDqmXFujZasz3eFsXRccz4jPgl6vZhoEm9ktGkfaRzq
+	 HF4Uj2MpjpYvWxb7jzpba8tA=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0D47340E0202;
+	Mon, 25 Aug 2025 14:49:31 +0000 (UTC)
+Date: Mon, 25 Aug 2025 16:49:26 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Upadhyay, Neeraj" <neeraj.upadhyay@amd.com>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com,
+	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com,
+	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org,
+	hpa@zytor.com, peterz@infradead.org, seanjc@google.com,
+	pbonzini@redhat.com, kvm@vger.kernel.org,
+	kirill.shutemov@linux.intel.com, huibo.wang@amd.com,
+	naveen.rao@amd.com, francescolavra.fl@gmail.com,
+	tiala@microsoft.com
+Subject: Re: [PATCH v9 05/18] x86/apic: Add update_vector() callback for apic
+ drivers
+Message-ID: <20250825144926.GVaKx39npwZZ18htgX@fat_crate.local>
+References: <20250811094444.203161-1-Neeraj.Upadhyay@amd.com>
+ <20250811094444.203161-6-Neeraj.Upadhyay@amd.com>
+ <20250819215906.GNaKTzqvk5u0x7O3jw@fat_crate.local>
+ <c079f927-483c-46c4-a98e-6ad393cb23ef@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <c079f927-483c-46c4-a98e-6ad393cb23ef@amd.com>
 
-On Mon, 25 Aug 2025 09:34:18 +0800 Kuan-Wei Chiu <visitorckw@gmail.com> wrote:
-
-> The comparison function cmp_loc_by_count() used for sorting stack trace
-> locations in debugfs currently returns -1 if a->count > b->count and 1
-> otherwise. This breaks the antisymmetry property required by sort(),
-> because when two counts are equal, both cmp(a, b) and cmp(b, a) return
-> 1.
+On Wed, Aug 20, 2025 at 09:06:52AM +0530, Upadhyay, Neeraj wrote:
+> > > +static void apic_chipd_update_vector(struct irq_data *irqd, unsigned int newvec,
+> > 
+> > What is "chipd" supposed to denote?
 > 
-> This can lead to undefined or incorrect ordering results. Fix it by
-> explicitly returning 0 when the counts are equal, ensuring that the
-> comparison function follows the expected mathematical properties.
-> 
-> Fixes: 553c0369b3e1 ("mm/slub: sort debugfs output by frequency of stack traces")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-> ---
->  mm/slub.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/slub.c b/mm/slub.c
-> index 30003763d224..c91b3744adbc 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -7718,8 +7718,9 @@ static int cmp_loc_by_count(const void *a, const void *b, const void *data)
->  
->  	if (loc1->count > loc2->count)
->  		return -1;
-> -	else
-> +	if (loc1->count < loc2->count)
->  		return 1;
-> +	return 0;
->  }
+> chip data (struct apic_chip_data)
 
-Hello Kuan-Wei,
+So this function should be called chip_data_update() or so?
 
-This is a great catch! I was thinking that in addition to separating out the
-== case, we can also simplify the behavior by just opting to use the
-cmp_int macro, which is defined in the <linux/sort.h> header, which is
-already included in mm/slub.c. For the description, we have:
+It is static so it doesn't need the "apic_" prefix and "chipd" doesn't make
+a whole lotta of sense so let's call it as what it does.
 
- * Return: 1 if the left argument is greater than the right one; 0 if the
- * arguments are equal; -1 if the left argument is less than the right one.
+-- 
+Regards/Gruss,
+    Boris.
 
-So in this case, we can replace the entire code block above with:
-
-return cmp_int(loc2->count, loc1->count);
-
-or
-
-return -1 * cmp_int(loc1->count, loc2->count);
-
-if you prefer to keep the position of loc1 and loc2. I guess we do lose
-some interpretability of what -1 and 1 would refer to here, but I think
-a comment should be able to take care of that.
-
-Please let me know what you think. I hope you have a great day!
-Joshua
+https://people.kernel.org/tglx/notes-about-netiquette
 
