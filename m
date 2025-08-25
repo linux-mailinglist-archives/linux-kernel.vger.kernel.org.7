@@ -1,157 +1,234 @@
-Return-Path: <linux-kernel+bounces-784650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48699B33F1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:16:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D67EB33F16
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:15:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEA443B47A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:15:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 293701A81F57
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:15:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C15914A09C;
-	Mon, 25 Aug 2025 12:15:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B771275B1F;
+	Mon, 25 Aug 2025 12:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="oesLLvfI"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A931EA80;
-	Mon, 25 Aug 2025 12:15:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KxlUufWb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77529276020;
+	Mon, 25 Aug 2025 12:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756124145; cv=none; b=pXPtTlxQWKEMF+PIwQyDL7jo58IcwJo4sI+gSk7ZrLWYpvplkqLXqtJuAichOnOiQjQ+0MTiNNsXrWCQLPHqaLwpsJLujgyJlbJCurjRW9U5PN7u/tWPPeKEVw2iLqEuzjc93DnxISQNWco8Jy9q4up6SsWIMPy+FOllFV8mYmk=
+	t=1756124115; cv=none; b=QdNzkFTmBVt06hu13W3lVsF2oBOlpYkSaikVhyOMv/kMkRtF7q2wMGAWjf3cvBYXgNHltEdmjh6PSqctmilABrW3OjbecdryZSYpwdthip1BjypPgiAacYXImOApMBNhm0XKycGO0q+vdy722ezUhq1fJ/ep7EVG3CqLOHY73Os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756124145; c=relaxed/simple;
-	bh=pQRUIrRaJ4WHpO9221p/eCIx31S0mIW0eHDvL9xlmjw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A73sK8LA5NYFuiI5nKoU5lVJUw8Yu11Xa9MCyrCu+kDVKPvqEukKRoj1EB7e8/cZe7Tbgcs8bNhWOIcNbvnda6IasxJXoWRPv5pjAxgV1E+uav1Id85TeR2C+jYPlWf28DiouA1Z6WdkFI6+s3hf/hQRk3U8TdrArj79ugzaHgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=oesLLvfI; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=wm
-	j5n76lJI+EQ4fSCNHd5tg/1m0AUVHlQPLj3ohhhUY=; b=oesLLvfIRErVrkDogt
-	a1OiIZOZxwCxnyD4vqmBrnVVnRE80lSQFCaARmR+gtW5WcBIqVPm0z8/9JginPJi
-	BJSCAAwBOWQ0Aaaza4t++VbR9D/xdZ4ULSDfoDFvbUDgzCkA4qdjYYMSMerFg3Sb
-	bq23otVjkEWrLMTDxEZQrHoFc=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wCn0LeWU6xoYo0IEQ--.6105S2;
-	Mon, 25 Aug 2025 20:14:15 +0800 (CST)
-From: Jinyu Tang <tjytimi@163.com>
-To: Anup Patel <anup@brainfault.org>,
-	Atish Patra <atish.patra@linux.dev>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Yong-Xuan Wang <yongxuan.wang@sifive.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Nutty Liu <nutty.liu@hotmail.com>
-Cc: kvm@vger.kernel.org,
-	kvm-riscv@lists.infradead.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Jinyu Tang <tjytimi@163.com>
-Subject: [PATCH v3] riscv: skip csr restore if vcpu preempted reload
-Date: Mon, 25 Aug 2025 20:14:11 +0800
-Message-ID: <20250825121411.86573-1-tjytimi@163.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1756124115; c=relaxed/simple;
+	bh=eRL5BpSGnT9fCcnX9NFUgspntWq7x1rnMVtoETm4x4o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=FHDciKX+gsWn/i2pjMrxFU2ahDJPEKPH1kdAJWc1BHynnYYJDcv64E7tUouUspX7px9Uri6kDyzzayAKgLKfmwuNExOE/LlIbhN3CNOYeMRuChlUvmUzurlD4NLRNOk7t8Cf89NLEU7uP4CNdaRbvSCMMALFbBR1xjqQZ+XOsDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KxlUufWb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40861C4CEED;
+	Mon, 25 Aug 2025 12:15:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756124115;
+	bh=eRL5BpSGnT9fCcnX9NFUgspntWq7x1rnMVtoETm4x4o=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=KxlUufWbV6irgoMYRDCxVXmmzmAn26IvL1BXHyf8OyZCEyQ9Oqkrpr6p0bC681Mjr
+	 ORNe/jZuxFk0fdw2n8TrvtAZGd7BsFLoV5eBEzUqIbW1ZIwMwAJ5aVGhGJoHjbO4rs
+	 poMMKkS/RRaXoL8jhDqYJ2bTDk1BcY67SjpedXfOi7DbzFcd1dUCXle7SBw3C9wUMq
+	 6h2Zt7dKguv0hQp+2+Urqff1bjMlLkXvqVJoMoBjQ02nwJ+QQlAmrDDhW+D11cHjFz
+	 hfKOVqXfK75PyiRHpyf/U6afVFNGS+udreJ7aE/pq829MRuevdfvn+hx9+PDeRMRce
+	 Ti2U01KDU4eoQ==
+From: Sasha Levin <sashal@kernel.org>
+To: patches@lists.linux.dev,
+	stable@vger.kernel.org
+Cc: Xianglai Li <lixianglai@loongson.cn>,
+	Huacai Chen <chenhuacai@loongson.cn>,
+	Sasha Levin <sashal@kernel.org>,
+	tglx@linutronix.de,
+	peterz@infradead.org,
+	chenhuacai@kernel.org,
+	jiaxun.yang@flygoat.com,
+	kees@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.16] LoongArch: Add cpuhotplug hooks to fix high cpu usage of vCPU threads
+Date: Mon, 25 Aug 2025 08:14:55 -0400
+Message-ID: <20250825121505.2983941-6-sashal@kernel.org>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20250825121505.2983941-1-sashal@kernel.org>
+References: <20250825121505.2983941-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.16.3
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wCn0LeWU6xoYo0IEQ--.6105S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxuryrZw13Kr13uF15tw47Jwb_yoW5Ww48pF
-	W7urs09w48JrW7G342qrsY9F4F9rZYgrn3XryDWrWSyr1Utr9Yyr4kK3y7AFy5GryrZF1S
-	yFyDtFyIkFnYvwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piHa0PUUUUU=
-X-CM-SenderInfo: xwm13xlpl6il2tof0z/1tbipR+0eGisTjSwYwAAsb
 
-The kvm_arch_vcpu_load() function is called in two cases for riscv:
-1. When entering KVM_RUN from userspace ioctl.
-2. When a preempted VCPU is scheduled back.
+From: Xianglai Li <lixianglai@loongson.cn>
 
-In the second case, if no other KVM VCPU has run on this CPU since the
-current VCPU was preempted, the guest CSR (including AIA CSRS and HGTAP) 
-values are still valid in the hardware and do not need to be restored.
+[ Upstream commit 8ef7f3132e4005a103b382e71abea7ad01fbeb86 ]
 
-This patch is to skip the CSR write path when:
-1. The VCPU was previously preempted
-(vcpu->scheduled_out == 1).
-2. It is being reloaded on the same physical CPU
-(vcpu->arch.last_exit_cpu == cpu).
-3. No other KVM VCPU has used this CPU in the meantime
-(vcpu == __this_cpu_read(kvm_former_vcpu)).
+When the CPU is offline, the timer of LoongArch is not correctly closed.
+This is harmless for real machines, but resulting in an excessively high
+cpu usage rate of the offline vCPU thread in the virtual machines.
 
-This reduces many CSR writes with frequent preemption on the same CPU.
+To correctly close the timer, we have made the following modifications:
 
-Signed-off-by: Jinyu Tang <tjytimi@163.com>
-Reviewed-by: Nutty Liu <nutty.liu@hotmail.com>
+Register the cpu hotplug event (CPUHP_AP_LOONGARCH_ARCH_TIMER_STARTING)
+for LoongArch. This event's hooks will be called to close the timer when
+the CPU is offline.
+
+Clear the timer interrupt when the timer is turned off. Since before the
+timer is turned off, there may be a timer interrupt that has already been
+in the pending state due to the interruption of the disabled, which also
+affects the halt state of the offline vCPU.
+
+Signed-off-by: Xianglai Li <lixianglai@loongson.cn>
+Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- v2 -> v3:
- v2 was missing a critical check because I generated the patch from my
- wrong (experimental) branch. This is fixed in v3. Sorry for my trouble.
 
- v1 -> v2:
- Apply the logic to aia csr load. Thanks for
- Andrew Jones's advice.
+LLM Generated explanations, may be completely bogus:
 
- arch/riscv/kvm/vcpu.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+Based on my analysis of the commit and its context, here is my
+assessment:
 
-diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
-index f001e5640..66bd3ddd5 100644
---- a/arch/riscv/kvm/vcpu.c
-+++ b/arch/riscv/kvm/vcpu.c
-@@ -25,6 +25,8 @@
- #define CREATE_TRACE_POINTS
- #include "trace.h"
+**Backport Status: YES**
+
+This commit should be backported to stable kernel trees for the
+following reasons:
+
+## Bug Fix for Real User Impact
+
+1. **Fixes a concrete bug affecting virtual machines**: The commit
+   addresses a problem where offline vCPUs consume excessive CPU
+   resources in virtual machines. This is a real performance bug that
+   affects users running LoongArch VMs.
+
+2. **Clear problem statement**: The commit message clearly describes the
+   issue - when a CPU is offlined, the LoongArch timer is not properly
+   disabled, leading to high CPU usage by offline vCPU threads in
+   virtual environments.
+
+## Small and Contained Change
+
+The commit is relatively small and well-contained:
+- Adds ~20 lines of code for timer management hooks
+- Registers CPU hotplug callbacks using existing infrastructure
+  (CPUHP_AP_LOONGARCH_ARCH_TIMER_STARTING)
+- The changes are isolated to the LoongArch timer subsystem
+
+## Follows Established Patterns
+
+1. **Uses standard kernel infrastructure**: The fix properly uses the
+   cpuhotplug framework that other architectures already use (ARM, MIPS,
+   RISCV all have similar CPUHP_AP_*_TIMER_STARTING entries).
+
+2. **Similar to previous fixes**: Commit 355170a7ecac ("LoongArch:
+   Implement constant timer shutdown interface") addressed a related
+   issue with timer shutdown, and this commit completes the proper timer
+   management during CPU hotplug.
+
+## Minimal Risk of Regression
+
+1. **Architecture-specific**: Changes are confined to LoongArch
+   architecture code, with no impact on other architectures.
+
+2. **Clear timer interrupt handling**: The fix properly clears pending
+   timer interrupts when disabling the timer, preventing interrupt
+   storms.
+
+3. **Protected by proper locking**: Uses existing state_lock for
+   synchronization.
+
+## Virtual Machine Support is Important
+
+With increasing use of virtualization, proper vCPU management is
+critical for production environments. High CPU usage by offline vCPUs
+can significantly impact VM performance and host resource utilization.
+
+## Technical Correctness
+
+The implementation correctly:
+- Enables timer interrupts on CPU startup (`set_csr_ecfg(ECFGF_TIMER)`)
+- Shuts down the timer on CPU dying (`constant_set_state_shutdown()`)
+- Clears pending timer interrupts
+  (`write_csr_tintclear(CSR_TINTCLR_TI)`)
+
+This is a straightforward bug fix that addresses a clear performance
+issue in virtual machine environments without introducing new features
+or architectural changes, making it an ideal candidate for stable
+backport.
+
+ arch/loongarch/kernel/time.c | 22 ++++++++++++++++++++++
+ include/linux/cpuhotplug.h   |  1 +
+ 2 files changed, 23 insertions(+)
+
+diff --git a/arch/loongarch/kernel/time.c b/arch/loongarch/kernel/time.c
+index 367906b10f81..f3092f2de8b5 100644
+--- a/arch/loongarch/kernel/time.c
++++ b/arch/loongarch/kernel/time.c
+@@ -5,6 +5,7 @@
+  * Copyright (C) 2020-2022 Loongson Technology Corporation Limited
+  */
+ #include <linux/clockchips.h>
++#include <linux/cpuhotplug.h>
+ #include <linux/delay.h>
+ #include <linux/export.h>
+ #include <linux/init.h>
+@@ -102,6 +103,23 @@ static int constant_timer_next_event(unsigned long delta, struct clock_event_dev
+ 	return 0;
+ }
  
-+static DEFINE_PER_CPU(struct kvm_vcpu *, kvm_former_vcpu);
++static int arch_timer_starting(unsigned int cpu)
++{
++	set_csr_ecfg(ECFGF_TIMER);
 +
- const struct _kvm_stats_desc kvm_vcpu_stats_desc[] = {
- 	KVM_GENERIC_VCPU_STATS(),
- 	STATS_DESC_COUNTER(VCPU, ecall_exit_stat),
-@@ -581,6 +583,10 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
- 	struct kvm_vcpu_csr *csr = &vcpu->arch.guest_csr;
- 	struct kvm_vcpu_config *cfg = &vcpu->arch.cfg;
- 
-+	if (vcpu->scheduled_out && vcpu == __this_cpu_read(kvm_former_vcpu) &&
-+		vcpu->arch.last_exit_cpu == cpu)
-+		goto csr_restore_done;
++	return 0;
++}
 +
- 	if (kvm_riscv_nacl_sync_csr_available()) {
- 		nsh = nacl_shmem();
- 		nacl_csr_write(nsh, CSR_VSSTATUS, csr->vsstatus);
-@@ -624,6 +630,9 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
- 
- 	kvm_riscv_mmu_update_hgatp(vcpu);
- 
-+	kvm_riscv_vcpu_aia_load(vcpu, cpu);
++static int arch_timer_dying(unsigned int cpu)
++{
++	constant_set_state_shutdown(this_cpu_ptr(&constant_clockevent_device));
 +
-+csr_restore_done:
- 	kvm_riscv_vcpu_timer_restore(vcpu);
- 
- 	kvm_riscv_vcpu_host_fp_save(&vcpu->arch.host_context);
-@@ -633,8 +642,6 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
- 	kvm_riscv_vcpu_guest_vector_restore(&vcpu->arch.guest_context,
- 					    vcpu->arch.isa);
- 
--	kvm_riscv_vcpu_aia_load(vcpu, cpu);
--
- 	kvm_make_request(KVM_REQ_STEAL_UPDATE, vcpu);
- 
- 	vcpu->cpu = cpu;
-@@ -645,6 +652,8 @@ void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
- 	void *nsh;
- 	struct kvm_vcpu_csr *csr = &vcpu->arch.guest_csr;
- 
-+	__this_cpu_write(kvm_former_vcpu, vcpu);
++	/* Clear Timer Interrupt */
++	write_csr_tintclear(CSR_TINTCLR_TI);
 +
- 	vcpu->cpu = -1;
++	return 0;
++}
++
+ static unsigned long get_loops_per_jiffy(void)
+ {
+ 	unsigned long lpj = (unsigned long)const_clock_freq;
+@@ -172,6 +190,10 @@ int constant_clockevent_init(void)
+ 	lpj_fine = get_loops_per_jiffy();
+ 	pr_info("Constant clock event device register\n");
  
- 	kvm_riscv_vcpu_aia_put(vcpu);
++	cpuhp_setup_state(CPUHP_AP_LOONGARCH_ARCH_TIMER_STARTING,
++			  "clockevents/loongarch/timer:starting",
++			  arch_timer_starting, arch_timer_dying);
++
+ 	return 0;
+ }
+ 
+diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+index df366ee15456..e62064cb9e08 100644
+--- a/include/linux/cpuhotplug.h
++++ b/include/linux/cpuhotplug.h
+@@ -169,6 +169,7 @@ enum cpuhp_state {
+ 	CPUHP_AP_QCOM_TIMER_STARTING,
+ 	CPUHP_AP_TEGRA_TIMER_STARTING,
+ 	CPUHP_AP_ARMADA_TIMER_STARTING,
++	CPUHP_AP_LOONGARCH_ARCH_TIMER_STARTING,
+ 	CPUHP_AP_MIPS_GIC_TIMER_STARTING,
+ 	CPUHP_AP_ARC_TIMER_STARTING,
+ 	CPUHP_AP_REALTEK_TIMER_STARTING,
 -- 
-2.43.0
+2.50.1
 
 
