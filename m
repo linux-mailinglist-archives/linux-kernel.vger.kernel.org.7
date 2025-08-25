@@ -1,244 +1,203 @@
-Return-Path: <linux-kernel+bounces-783851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9495B3337E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 03:22:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD7CAB33381
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 03:25:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 587B13B9C29
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 01:22:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72802173528
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 01:25:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B68420CCDC;
-	Mon, 25 Aug 2025 01:22:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D12A1F5619;
+	Mon, 25 Aug 2025 01:24:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="krmEedy/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="Pc9r9rdw"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C871B139E;
-	Mon, 25 Aug 2025 01:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756084933; cv=fail; b=oS2mL9lpiHbl4thZlK+JI4p8kh1gAz/k1p9n9i/seWfld2V+gXcwakjyeaJVvnumDBwzsQ6A8EMNzTfepxdfUS2wfNu0Zt+hBQoAVGKkCFyqJdvSDDthzVJB8UTHbpJaZ9b8dmYTzTlhnv/46O4qBPFi3i/v5uN39vwrSsO1Pf0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756084933; c=relaxed/simple;
-	bh=l37nklSL3Jx9Pt+mmHqmEeQzfsVVoksChke1Yx+y4ts=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=HKDTzhS6+hyhr+vzfee/pCTBnLkbFkYq6weMGtWXCtOngs+GQ99Nqnpxz2kQl/oUrxTGh2eOmPOXkySeRVl5GvhBXRwPAGSW16am72CNuJhUjAhdOO9AlMV0C8kBoxghPKxVeB+dTdZ9TfS5rvkj4cpUzCv4t4vG8EJYTff+nI4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=krmEedy/; arc=fail smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756084931; x=1787620931;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=l37nklSL3Jx9Pt+mmHqmEeQzfsVVoksChke1Yx+y4ts=;
-  b=krmEedy/xMQ81UjYNvQQMz3nZm5ma8cdbV6M4Asbe4DGNZXHe8FiXVgx
-   fviCFZM+/o926ETlrtSCtdvA4HTCgsUBnVZIG1900NyAHhpCdUaj13bg4
-   MVrStgjguI0keExea3D7lESS+hbuMoUCeApqMArZ1TbmokhXskrEr5MQn
-   AwjfigDRGtZQQ8r3MlAFKpAjYa6STpakqo0AIkjg0ZbnnIVgtGJWIgxa2
-   ULN7mmd+BhUCkdv+Sgf+QKUk8FVIrUjRxSR2iRG1C4TVAOK7KIVogJ//+
-   BQ6oRruyIbOOO31ftyYNMdgGRkFDeWnY/CkMPDJrhLxJkd7gcwB833Mvi
-   Q==;
-X-CSE-ConnectionGUID: GUy+5tzEQpm0UTdDyP1BPQ==
-X-CSE-MsgGUID: jNQNP4AFRcayEYH5bWigVQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11532"; a="69724869"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="69724869"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Aug 2025 18:22:11 -0700
-X-CSE-ConnectionGUID: jR47hc8TRhqzad4qnN+A/Q==
-X-CSE-MsgGUID: EfyTM3gZRnurqZoLaL1LPw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="168378324"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Aug 2025 18:22:09 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Sun, 24 Aug 2025 18:22:09 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Sun, 24 Aug 2025 18:22:09 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (40.107.243.47)
- by edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Sun, 24 Aug 2025 18:22:08 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sOGBRSBoAKKmBDzJy0rPk8crIOeXBXCS7ioZD/QErx2K4EDIEPuu1UI9CUbv+aJibJpnun7tjpIgygLLlEuI6spkPuhcs+fCzyus0i4crH2vSSPOdm13+LXKI6M3Bt0w+Eo1H8Z0h0u7qW0AV1z4Xn1qadayB6MV7wDF9HNw+uefx0JtkgysWWX9b/LbOuwBQKvtCUoTXuKgvHkAJM5vMV3BQSiBvq2lv8YZV1jdWdZ6M9IV5bWOqG1UOtQm3AFmXwlG925O32UfQmdArDDHwj7+Cf+UsCqnEpBRMsaUjwE8CMHhEr1Qp+2GMa183a2GMIf38oQJhptIYqiIpfsVWQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wi4CZrTtsZtojbdIM8FHNzCAxV7YiCxcFE/wbP+YPDs=;
- b=muQgmhpKwC02vBIxD6BbOK2uakBVWknmB0Ai0rlPf5UfeiZpDSmJyiTJ74e+Ijtor9W9i0TtmfgW5Jdyk2z5bB17Mtc2ywZrnVOGG3TFIjVHDG0h5F2TxtA6N2Lq4DnhLetKdy7Z9wW0TNb/xYrQaaswYzriLBzKlLmWIkKMDCXbhl0NEH3C6aMnVx23kI6hSh8V6U64xTCOtXKWjJONcorH7RhRQFPdCLZONo1713tpLIaawiaLG9brDzwWO3NVtI8s5kSru7vzU0DvJrAFr1OHlP3BCAQYM/Qhr5AxOaeshxqHcem1DyK6QZxlKs02WuTSOzP9uR20yFphgDiBZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
- by SJ0PR11MB4895.namprd11.prod.outlook.com (2603:10b6:a03:2de::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Mon, 25 Aug
- 2025 01:22:07 +0000
-Received: from CH3PR11MB8660.namprd11.prod.outlook.com
- ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
- ([fe80::cfad:add4:daad:fb9b%4]) with mapi id 15.20.9052.019; Mon, 25 Aug 2025
- 01:22:06 +0000
-Date: Mon, 25 Aug 2025 09:21:54 +0800
-From: Chao Gao <chao.gao@intel.com>
-To: John Allen <john.allen@amd.com>
-CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-	<seanjc@google.com>, <pbonzini@redhat.com>, <dave.hansen@intel.com>,
-	<rick.p.edgecombe@intel.com>, <mlevitsk@redhat.com>,
-	<weijiang.yang@intel.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<hpa@zytor.com>, <mingo@redhat.com>, <tglx@linutronix.de>,
-	<thomas.lendacky@amd.com>
-Subject: Re: [PATCH v3 3/5] KVM: x86: SVM: Pass through shadow stack MSRs
-Message-ID: <aKu6sp1ikRetv/Q1@intel.com>
-References: <20250806204510.59083-1-john.allen@amd.com>
- <20250806204510.59083-4-john.allen@amd.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250806204510.59083-4-john.allen@amd.com>
-X-ClientProxiedBy: SGAP274CA0021.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b6::33)
- To CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77047194C75
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 01:24:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756085098; cv=none; b=n/Na8ndOC5/8juPxpi+sFpNRTQ7AzGm9A1gLUouUfx3+nj7ZbgldcozHvstkKeDS+Qf1Sv5XuF5i2YiXlNX3J8UBz1jKeJG+pFJK94oIXMF/khXLGn37NgZLmjo2nt7k9Gf1TFt6ekIIKx6pup0Zg48BpTDMsZVzhtXz53xHP6Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756085098; c=relaxed/simple;
+	bh=3Ffe4JhicSR+c460QtABlIMWYofFkx0O34b53xiizTU=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=i6vONIKlka1F4pzmJbqz74JX/xPPexZt4DAq52h2d8Lr+2evjBPwDmIxnsx8vphvCumDlvcexfWCBmx4BlBzdmNF8wlo7xJ25sWWjVLAJp+qL5V3wE7UI/IDejGx9Ytd3bk/PleZiFW+C6yzTaHZn8malcVDi5pgPva0J3QtHv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=Pc9r9rdw; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1756085087;
+	bh=9eI//ifONMcYx8OuZ4RyDvs/wIE713deTiuA/p5E0LQ=;
+	h=Subject:From:To:Cc:Date;
+	b=Pc9r9rdwKIaqaqFzHA42xd2Qij0DYpICdtD6inYMnMEaNit74E9HeNCQSjMXPJfuw
+	 BXaPrlnESDziCtFHqGheuy67ZBJ09aJE44B4x6OcsQxbR8GLAuTn4HLAxfzVDapRwn
+	 uwMR3ac0XAQBt8vgVXVaY1k5uLYYgrM/P0yeSOZNFoG2Agl0iv7iGK+9lG3fXWGwe1
+	 8HPmxKn7y90ohEJmUF6d6UCE815cSOs8Tt3umXNPMUNToPZZr4LzLJcQVP23+QLWZ8
+	 bXPQvlvPbzQnimiYxIIYisQwU3KvWt99aE/fSVg+okhGF+V4EVR7keS5+01VdvvKEL
+	 mGM4DjglucP8w==
+Received: from [192.168.68.112] (unknown [180.150.112.213])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 7653064C1A;
+	Mon, 25 Aug 2025 09:24:45 +0800 (AWST)
+Message-ID: <cb634cffaf0db9d25fb3062f0eee41e03955321f.camel@codeconstruct.com.au>
+Subject: [GIT PULL] aspeed: early devicetree changes for 6.18
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: soc <soc@lists.linux.dev>
+Cc: linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org, Joel Stanley <joel@jms.id.au>
+Date: Mon, 25 Aug 2025 10:54:44 +0930
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|SJ0PR11MB4895:EE_
-X-MS-Office365-Filtering-Correlation-Id: d58857b8-7f94-461a-b094-08dde375ce11
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?52NIVqkcWj+A/AVRntnoiep+vi1YQ+Voay2gdLQ1WX6vR+Hnds98jwOlKeST?=
- =?us-ascii?Q?YhtUQRAX4lx4K+GPyAYKB84hRQhqfRyWayi7hr93bYS52Vq6bwdCPitaYQsS?=
- =?us-ascii?Q?LbRS2ur5ueqDMjnDUCEz9YvMp4FjRfElXxMIQ2VteZeAKXYIpQGxp/GsQuoo?=
- =?us-ascii?Q?tAtORKb8MxF6tPvI2XZzrHde6x9NBhc+qFRa4jO5knW8m9nWQ+9561QzxUbv?=
- =?us-ascii?Q?0kokA7AazMwdMOTupg0tEE+feRVlZGjTgaikHs+rtyaB3CzHfwknorTLOhs2?=
- =?us-ascii?Q?Oa66xQEBeB5FZNtg/n1y2+Xn2y8kkABeCId+345y9RYxNKKL9xDuu6Xj4PZg?=
- =?us-ascii?Q?yQ6jpIVAK2xmhfxPkhCN11z5FVxkRx0o5yBisUCgRsU4G63pG6zCPV3/jhBu?=
- =?us-ascii?Q?kE8IbEI1BMI5QnLeBv3FGdkM9ufR6HhKj55Wna98swEnxwIJ/p09LTQEk/nO?=
- =?us-ascii?Q?JCahGNgkrNRHrUhX0aUkXLY/DrgN6w2yfgi6p/6cajg3FSOvr2dh2FFBQph+?=
- =?us-ascii?Q?TTmFsQyGd6lH1fkjjKfOGA6sHsqGxocnncUYv8TlBarQIL1KHuV/6xx9XN4b?=
- =?us-ascii?Q?d2HkECXTbRQcHdfRCE1N08DwKNBgQeTr5geBjKwpqoxU57pYVfhuJFzPFdd5?=
- =?us-ascii?Q?UHp/us/92pGbc9g/735Dh6mW8DSYOCsSwZIU+r4mWaJa3u7+jhO14YZXTvpx?=
- =?us-ascii?Q?bXTh/4idoI2wr1uiul0xWrxjiZTqLMyWQ7MmTVKotmvW04Op/8ScBRehfIC4?=
- =?us-ascii?Q?ddELb7nqAJEvzmOW6s36sQUZC21UlkKtMbgOJktGyubQJcLUCzllp53ADVvw?=
- =?us-ascii?Q?VFqqTE8Wbe2mUFDE/LBlibUbgR5VKT6cKHHAH1L6e21IOLW+DqAf3Lb5e4p0?=
- =?us-ascii?Q?7VJdqNsmZXdmSXzuFjDqK6eDQhJVcqog06j7O9fZBSl3/Fp/7fd4m2ISQkk5?=
- =?us-ascii?Q?0M5B8K9uhu+u6+GFq2p/kFl195kYzQ4oT92shSXNvJjyQWxoO4Aa9iCQjmU1?=
- =?us-ascii?Q?80Fgkh0XmJK27slukrT5Qk3qZYFcCssM0AagpZhQXpyl0EGl7xLW5waqFlL5?=
- =?us-ascii?Q?2/lDhhbMSz0f3YP6sKweFZMhQ+FwxAvQdITGkqHiJM2za1xQuQUfzodZ9mq0?=
- =?us-ascii?Q?/5wXr3WV6jz1OPd18pohLxLTduK3z8RvxS59YFYYxW1Y18r3ohdQmV5dz3CX?=
- =?us-ascii?Q?FEP/KsE5hdmotsiHg0sxP4XEIzvV5Kln3jImqQLQeiQpqb/sJ8igoZv5o650?=
- =?us-ascii?Q?mg4OCTcFC7UVqV4on8OqyaqX46CzWgs5LVaB+pNZlyZmUw91/LU0Pan4tTgm?=
- =?us-ascii?Q?J2Cs+A+FoVum++G1Msbi69UMqWI0gKQxlMo4exS9moq0JoUw+xrEI+Qk9HFr?=
- =?us-ascii?Q?7bQCU3otzmCOG5jufYQuPZFRcMe/sHucUWAXsgDWjBli0rJYlH8u98wv5D1Z?=
- =?us-ascii?Q?gHTAnP+rmQg=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Zk1MiKXy3Gj84GVJC374saudbKZysdPAO7EbZ0bS1nkfqPnuc1aCah7rfEJ3?=
- =?us-ascii?Q?o2cd/W//T6W0UXBDd2TZiltmZiOjB3cNKN88ThrdbTFlinm7QV0TFBTBXk8B?=
- =?us-ascii?Q?w8lHbA5eGazbjtZGOdkMyMQEWChlO7yow0W/iVw3mohXrX3I71jpd15qJG5R?=
- =?us-ascii?Q?A1m095yna9Y5m3wWOG+2B3ePEZKjj5Y4GryEK68D5V2xRNjM0VvvwtJTGcVF?=
- =?us-ascii?Q?3E0w6Ga6USjAJoBfPGsvTRlLXPXPzHehlfIjEr9C/2Z2msu26qQflapo8T0Y?=
- =?us-ascii?Q?VsTYAGJzfY4bvUng5FfLP2XYf3IME25gW5XT7Qxp9AhkJS2jGQ5quB/nFOBJ?=
- =?us-ascii?Q?z89ljbhbd5CJiBvYEULYET+LqAdiSbUHYc/1R8ZjaF6moonlO6jnOe0W+rTQ?=
- =?us-ascii?Q?xbFqxEYzABHtbskjnsf0GR0Dm5T2F+rvlZspy7i8sKiX1WME39ANXUrq3WCK?=
- =?us-ascii?Q?3b03dxSSOOtzOZB/G4S/b05BDRuihdBDFIyJD0nz01FNGWyAkwElfy8r81XR?=
- =?us-ascii?Q?zrfair2oklFCeHMmEfB9Ai4IFVqF7oyKNgptxuSxS5IXEcVFZWi9/aSojoq3?=
- =?us-ascii?Q?Qvl2BtshnDpLevM0Qai1ORr7fUKrmghnFT4X3Cv14fyai9UQD4Xx8g7zF6qp?=
- =?us-ascii?Q?g5Hm2xbeDFQvmCimDdWYdxoqtHignQLXXcKios/OntmxPbgHAQaCFfRpR7Ge?=
- =?us-ascii?Q?Hu6Kfmd0BLdBVizg3i0vA+WAMzOJUSFz+oCH4F2fVG57ucjxIE8Og+bKMap7?=
- =?us-ascii?Q?gLbPYwHr6xajGGVaGpHq5DJzdAIrNqWqRdCp+YIsNrM2Qp+4AVC0dZhNV5tC?=
- =?us-ascii?Q?hfOcbpMyD+7OAVSu6sK3t922J8EMLncyVVVi5+Izb6ku6yOHjSrY7ijjawlV?=
- =?us-ascii?Q?r6kMK57kEdkYAT2D+UBKmmfNxvrCqItg3c7qjjqSQeH/FStYhEuPwJ9Yx/qp?=
- =?us-ascii?Q?Dd92X1RiH31fuu8aZ8PRr41jHddICRGVL8x31rx/0bwPw1kBIkyxosOfTAAc?=
- =?us-ascii?Q?u1vg8D5pR5RXafIYflngGJUPMBLvFHGILEEY0W7dSXOpB9PzEtog29GAijib?=
- =?us-ascii?Q?x58jKVK4gMLNCEgP52n4MOoPbs0L6YHjc0d1ynOcv/ZnEFUFBeJ1lMkC7Dlh?=
- =?us-ascii?Q?pU0Vgcn329RzMz26NKro1lonc4ntnemcFZimpvKZ53743vToLhTG9ButzeJ0?=
- =?us-ascii?Q?LogkaamAURMBeklfrDJzdTtY8KFJ2H0bxU/twlfWlKZZ5tZbCzMTtrJN6ipk?=
- =?us-ascii?Q?Cd18z7wkPY1epIwTT8GZGiLATY0jLe67jNsCeBBryTJn3PSqfpdfGuLvVH1z?=
- =?us-ascii?Q?nFOzY6KGxbU8QxGbT2YHq1b0qsfbrhSTow8vQih16retMl1vPcat+CyqOswq?=
- =?us-ascii?Q?yk1p8As6TY5KAKPLdQzGTcgxWVRbOjsvSU/c0vQDtd4co82XH8HasohqvSVj?=
- =?us-ascii?Q?y1/eUEht9ojUrjzb7zdJb639kjdL7URl5tOaoSlp6swrdzmEq0UPPE1ZSwE1?=
- =?us-ascii?Q?DDAB9df2o1ccrIK6iHM4xfNvWBBf64Du/AEQX2zsV/m1O5jrNzUeT4mO5h0m?=
- =?us-ascii?Q?10cKICwYYU7KZTkRltmXUf/IxbnS8oybwD6xoK6J?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: d58857b8-7f94-461a-b094-08dde375ce11
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 01:22:06.6535
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nkFXXKypTdSuGjZDBwbNl5zwTfoYHQFYQnARvKN1ssU2TMJM6gizsacOt+//sxF11nRMMuBPlayZ1n8k94Dqmg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB4895
-X-OriginatorOrg: intel.com
 
-On Wed, Aug 06, 2025 at 08:45:08PM +0000, John Allen wrote:
->If kvm supports shadow stack, pass through shadow stack MSRs to improve
->guest performance.
+Hello SoC maintainers,
 
-The changelog is a bit sparse. Perhaps you could include something similar
-to what I did in my v13 version:
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585=
+:
 
-Pass through shadow stack MSRs that are managed by XSAVE, as they cannot be
-intercepted without also intercepting XSAVE. However, intercepting XSAVE would
-likely cause unacceptable performance overhead.
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
 
-MSR_IA32_INT_SSP_TAB is not managed by XSAVE, so it is intercepted.
+are available in the Git repository at:
 
->
->Signed-off-by: John Allen <john.allen@amd.com>
->---
-> arch/x86/kvm/svm/svm.c | 12 ++++++++++++
-> 1 file changed, 12 insertions(+)
->
->diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
->index a027d3c37181..82cde3578c96 100644
->--- a/arch/x86/kvm/svm/svm.c
->+++ b/arch/x86/kvm/svm/svm.c
->@@ -838,6 +838,18 @@ static void svm_recalc_msr_intercepts(struct kvm_vcpu *vcpu)
-> 	svm_set_intercept_for_msr(vcpu, MSR_IA32_SYSENTER_ESP, MSR_TYPE_RW,
-> 				  guest_cpuid_is_intel_compatible(vcpu));
-> 
->+	if (kvm_cpu_cap_has(X86_FEATURE_SHSTK)) {
->+		bool shstk_enabled = guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK);
->+
->+		svm_set_intercept_for_msr(vcpu, MSR_IA32_U_CET, MSR_TYPE_RW, !shstk_enabled);
->+		svm_set_intercept_for_msr(vcpu, MSR_IA32_S_CET, MSR_TYPE_RW, !shstk_enabled);
->+		svm_set_intercept_for_msr(vcpu, MSR_IA32_PL0_SSP, MSR_TYPE_RW, !shstk_enabled);
->+		svm_set_intercept_for_msr(vcpu, MSR_IA32_PL1_SSP, MSR_TYPE_RW, !shstk_enabled);
->+		svm_set_intercept_for_msr(vcpu, MSR_IA32_PL2_SSP, MSR_TYPE_RW, !shstk_enabled);
->+		svm_set_intercept_for_msr(vcpu, MSR_IA32_PL3_SSP, MSR_TYPE_RW, !shstk_enabled);
->+		svm_set_intercept_for_msr(vcpu, MSR_IA32_INT_SSP_TAB, MSR_TYPE_RW, !shstk_enabled);
+  https://git.kernel.org/pub/scm/linux/kernel/git/bmc/linux.git tags/aspeed=
+-6.18-devicetree-0
 
-MSR_IA32_INT_SSP_TAB should be intercepted unless there is a justification for
-pass-through. See Sean's comment below
+for you to fetch changes up to b785b5d88cc27a521ea22b3afd85804c4c321d4a:
 
-https://lore.kernel.org/kvm/aKTGVvOb8PZ7mzVr@google.com/
+  ARM: dts: aspeed: x570d4u: convert NVMEM content to layout syntax (2025-0=
+8-11 09:37:48 +0930)
 
-With above nits fixed,
+----------------------------------------------------------------
+Early ASPEED devicetree updates for 6.18
 
-Reviewed-by: Chao Gao <chao.gao@intel.com>
+Notable changes:
 
->+	}
->+
-> 	if (sev_es_guest(vcpu->kvm))
-> 		sev_es_recalc_msr_intercepts(vcpu);
-> 
->-- 
->2.34.1
->
+- Meta's Wedge400 and Fuji boards have had parallel devicetrees added for a
+  transition to a new static flash layout. The original layout is deprecate=
+d and
+  I anticipate removing related devicetrees in future releases.
+
+New platforms:
+
+- Darwin (Meta)
+
+  Darwin is Meta's rack switch platform with an AST2600 BMC integrated for
+  health monitoring purpose.
+
+Updates and fixes:
+
+- GB200NVL (Nvidia): Networking, I2C, regulators, GPIOs
+- Wedge400, Fuji (Meta): Fix warnings from devicetree bindings
+- Use fixed-layout for NVMEM on Asrock platforms
+- Various: minor fixes for warnings from FSI devicetree bindings
+
+----------------------------------------------------------------
+Rob Herring (Arm) (3):
+      ARM: dts: aspeed: Drop "no-gpio-delays"
+      ARM: dts: aspeed: Drop "fsi-master" compatibles
+      ARM: dts: aspeed: Add missing "ibm,spi-fsi" compatibles
+
+Tan Siewert (4):
+      ARM: dts: aspeed: e3c246d4i: convert NVMEM content to layout syntax
+      ARM: dts: aspeed: e3c256d4i: convert NVMEM content to layout syntax
+      ARM: dts: aspeed: romed8hm3: convert NVMEM content to layout syntax
+      ARM: dts: aspeed: x570d4u: convert NVMEM content to layout syntax
+
+Tao Ren (13):
+      ARM: dts: aspeed: wedge400: Fix DTB warnings
+      ARM: dts: aspeed: fuji: Fix DTB warnings
+      ARM: dts: aspeed: Fix DTB warnings in ast2600-facebook-netbmc-common.=
+dtsi
+      ARM: dts: aspeed: Move eMMC out of ast2600-facebook-netbmc-common.dts=
+i
+      ARM: dts: aspeed: Add facebook-bmc-flash-layout-128-data64.dtsi
+      dt-bindings: arm: aspeed: add Facebook Wedge400-data64 board
+      ARM: dts: aspeed: Add Facebook Wedge400-data64 (AST2500) BMC
+      ARM: dts: aspeed: wedge400: Include wedge400-data64.dts
+      dt-bindings: arm: aspeed: add Facebook Fuji-data64 board
+      ARM: dts: aspeed: Add Facebook Fuji-data64 (AST2600) Board
+      ARM: dts: aspeed: facebook-fuji: Include facebook-fuji-data64.dts
+      dt-bindings: arm: aspeed: add Facebook Darwin board
+      ARM: dts: aspeed: Add Facebook Darwin (AST2600) BMC
+
+Willie Thai (4):
+      ARM: dts: aspeed: nvidia: gb200nvl: Add VCC Supply
+      ARM: dts: aspeed: nvidia: gb200nvl: Enable i2c3 bus
+      ARM: dts: aspeed: nvidia: gb200nvl: Repurpose the HMC gpio pin
+      ARM: dts: aspeed: nvidia: gb200nvl: Enable MAC0 for BMC network
+
+ Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml           |    3 =
++
+ arch/arm/boot/dts/aspeed/Makefile                                  |    3 =
++
+ arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-e3c246d4i.dts           |   12 =
++-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-e3c256d4i.dts           |   12 =
++-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-romed8hm3.dts           |   12 =
++-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-x570d4u.dts             |   18 =
++-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dts            |   72 =
++++++
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-elbert.dts            |   12 =
++
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji-data64.dts       | 1256 =
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=
+++++++++
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji.dts              | 1247 =
++--------------------------------------------------------------------------=
+-------
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge400-data64.dts   |  375 =
++++++++++++++++++++++++++
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge400.dts          |  366 =
++-----------------------
+ arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-everest.dts                |   24 =
++-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-inspur-fp5280g2.dts            |    3 =
++-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dts        |   54 =
++++-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-opp-lanyang.dts                |    2 =
++-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-opp-mowgli.dts                 |    2 =
++-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-opp-nicole.dts                 |    3 =
++-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-opp-palmetto.dts               |    2 =
++-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-opp-romulus.dts                |    3 =
++-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-opp-witherspoon.dts            |    2 =
++-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-opp-zaius.dts                  |    2 =
++-
+ arch/arm/boot/dts/aspeed/aspeed-g6.dtsi                            |    4 =
++-
+ arch/arm/boot/dts/aspeed/ast2600-facebook-netbmc-common.dtsi       |   22 =
++-
+ arch/arm/boot/dts/aspeed/facebook-bmc-flash-layout-128-data64.dtsi |   60 =
+++++
+ arch/arm/boot/dts/aspeed/ibm-power10-dual.dtsi                     |   12 =
++-
+ arch/arm/boot/dts/aspeed/ibm-power10-quad.dtsi                     |   12 =
++-
+ 27 files changed, 1925 insertions(+), 1670 deletions(-)
+ create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dts
+ create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji-data6=
+4.dts
+ create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge400-d=
+ata64.dts
+ create mode 100644 arch/arm/boot/dts/aspeed/facebook-bmc-flash-layout-128-=
+data64.dtsi
+
 
