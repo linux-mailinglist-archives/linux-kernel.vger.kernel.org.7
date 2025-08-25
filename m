@@ -1,205 +1,330 @@
-Return-Path: <linux-kernel+bounces-785580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABB4FB34DF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 23:26:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09906B34DFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 23:26:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BC5E48713F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 21:26:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C65148702B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 21:26:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C32C28C841;
-	Mon, 25 Aug 2025 21:26:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64CF2292B44;
+	Mon, 25 Aug 2025 21:26:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="MEJKdxmU"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2088.outbound.protection.outlook.com [40.107.243.88])
+	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="igPYrLPV"
+Received: from relay12.grserver.gr (relay12.grserver.gr [88.99.38.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8176F1991D2;
-	Mon, 25 Aug 2025 21:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.88
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756157165; cv=fail; b=i1RdC+UYasxV0QsQavLh0jLmx2lTUvA3DYT3ikLVW6ZzQT1X4Ucy7mp6JCqq5CuoioAZqUParfPS36lm7RoYSrj7wfHL9+MnKkOcNGgU4G1cQRe2MXlhWohu7grH2PW4S+DMgQAWsPftQdS6dXtvxm2WTlT+rLYIFGcnokV2QGM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756157165; c=relaxed/simple;
-	bh=b8pNQo9N70+OXflQKlQUmH7Liu8MinrStK8tmVMQtpU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=hzNaSjPOvHecB1YwvM9ii2fQZEomrc1I/p2mijIVw1QCUOC/aymlMD0A9+IkE16oMwgZxgPfkDBigB8NYcXufro/3eLYIoqHoA7iEk+u8gDCg8m+XzkxCj/aJO7pZwMMmCyNbalW+QJ601BzIaxRWFAKCsOaxGm1O/DM9Msu2wI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=MEJKdxmU; arc=fail smtp.client-ip=40.107.243.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=V6wziyyk16T9RqmXK4G29UqHwn0V2dd8haNSC+Ml65/o3SsR2lDPM0OtX4WY/tiLJuZasgQU44TQAdI7/FLrb51KPLoH4ZKzFHP6LFKSaovQfEzmq421xSX1TTBxKbSMlQS0NcCQp2yYr0N2PTDT/AePtirTg7rWBOOQpl0247mN0cZa25pjs7Q4YgsU7UFZzgzOYXp8B0/yh1WW7V+et/Nw61Ty0dYPUNLzJi7ttQdw1m35u/zxrSIGD+w63318fSreqpoFnRSdnxq2yNlO0H1Hz7eSfARiz7KD8PFkd7r+0k8HQdbVbHGCPaRUSwnyIazOERV10pvrnwytk65E3w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9paDY7QyhI8WTO+/0FXNaksvlLOW2r3I6g+B7NwTDxg=;
- b=B/Fc0aWvSRZB1zlRfKCUctiXlc2vYs8vP6VfmthN30jziEnZKXfkoy39+q2lIBgV4S6b3vW81UixrEF+XfNTqHDfv3q/qOED05Rcq1RnwPivTyS1FKMShi5nmHfuiySWbhYNjI7vq7Iu06FcXinpKPjq6xwphkk3Islzv22Pxev0V+d3ljJKKzsGsTd8E58oK2V5IbZgR0ry0ZIfKIxZFS+ObPdgRz2I26XmSecni7sjHoVCz6t7wZ3TerG09tyA8NPZggykuXHXuhUR1DLFl+SBi7aow6sia5GMrmQHPI9EZCTBLGiybqxmnNoC13iSqmx6sKBuyDc3OVZ5WLJ4Mw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9paDY7QyhI8WTO+/0FXNaksvlLOW2r3I6g+B7NwTDxg=;
- b=MEJKdxmU0M5YzSvXmmNSDJc+tPK0MdvqFrmnWCI+VQ8hsuiDBivYYeWCTO+m8rRzmA7T8xr1bquJLoj5AAW5I16snl86FmUjH9esguAcjZI9H2ASkiufVR2K7fI/S6lMRBIKZuoXEYfQC9g24ucmvlCZ5x8RakKus45Cu4JT4BQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by PH7PR12MB9128.namprd12.prod.outlook.com (2603:10b6:510:2f7::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Mon, 25 Aug
- 2025 21:26:00 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.9052.017; Mon, 25 Aug 2025
- 21:26:00 +0000
-Message-ID: <75046094-d3b7-49da-af8e-3747ae9ed272@amd.com>
-Date: Mon, 25 Aug 2025 16:25:58 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tools/power/x86/amd_pstate_tracer: Fix python gnuplot
- package names
-To: Kuan-Wei Chiu <visitorckw@gmail.com>, ray.huang@amd.com,
- gautham.shenoy@amd.com, perry.yuan@amd.com
-Cc: jserv@ccns.ncku.edu.tw, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250824200902.163745-1-visitorckw@gmail.com>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <20250824200902.163745-1-visitorckw@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA0PR11CA0006.namprd11.prod.outlook.com
- (2603:10b6:806:d3::11) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210DE2989B5
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 21:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.99.38.195
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756157184; cv=none; b=mksyft8g6pDC7kWEZ4CGdFwd576pvJDwd+sSjspN+xMg6x94wlRqD2P1R3dzJi2+AoamWwJMmpSyJsft+q7Dub7KzzxTsNOtbUGPnub7rSS5FcFf4S4J9+S39iMLifDgDYY3sBfnpVR6t3O/dzhgVFy3Qj1HmiNbGqIGHc2rKIw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756157184; c=relaxed/simple;
+	bh=vXMlmWXX/Cs4qwpIBDgG7KmmGrak1CLlbwsMjJnywwA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kkBhRlhwnXyJiyMo7PnMQ02N9u/7ZTquYNsYBVV5pO9+M4L6TIH9AY+msI+THAd1iOcbkf+crrG5DTHS6iYlwc274nxtQXYT7vKFp6lEVY18bNkPlJyJbFwhVPBacJfqiKNl2ZREfmCQu+UeVgwQxeG8Si34rnDlrprA/GbN7co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=igPYrLPV; arc=none smtp.client-ip=88.99.38.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from relay12 (localhost [127.0.0.1])
+	by relay12.grserver.gr (Proxmox) with ESMTP id 504E2BDC08
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 00:26:19 +0300 (EEST)
+Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by relay12.grserver.gr (Proxmox) with ESMTPS id 862EDBDC89
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 00:26:18 +0300 (EEST)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id 0D8B02066DD
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 00:26:18 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1756157178;
+	bh=V0HNj3ZuBEySE9S+KwS5+gnEq0DcfBKYnxeQi/M7DTI=;
+	h=Received:From:Subject:To;
+	b=igPYrLPVef/HQnbmEuBr0W/f94WFLwtBEpB4V/bjqjGH8Crml/kqM9KGQEMTPDYaY
+	 +sNcwPxxrpYFefFzFRrL0w1CMM9uWH/8QWIBYU562hX6JgnjzxGc9wnyAAOJwhsPx8
+	 7OZEopgfkGdLVchKYEXFxFI8mLAQCg8dkazLZk3LEwsZuIO4HRc85uQtIzhDx3ye6F
+	 1e12G48oKKfo9Yx3UYVzlhCNW9oXnzXFRLEAeRPVzq1GheedtX+Ckrf/S4DbehAPJ1
+	 OPEhKFM0MrKxaeA6c8btxdN7XCAHFO5DdXRxzBqif4PVbDnBHn2k3Pl6GxJgfhr5k1
+	 IdUKxWrY1A5LA==
+Authentication-Results: linux3247.grserver.gr;
+        spf=pass (sender IP is 209.85.208.179) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f179.google.com
+Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f179.google.com with SMTP id
+ 38308e7fff4ca-333f8d1cbcdso40004861fa.0
+        for <linux-kernel@vger.kernel.org>;
+ Mon, 25 Aug 2025 14:26:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCX0DlkziTEi3aOBQS73afLWfAmVlPySdc95ZoDOa0+oFzvvBbNm/TCXrT8x9vn9fl+htgLSqtezNGgncWA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQUitO2RtrrXPAwYPKlObcKoAS+vuAGGg7hGp0mOxoL1Hu9QMo
+	4qilNVXliyypWDEr4k0W2uK9jBg83Es89NXfg8ho+U/c8048UyY6NtCEw0hEMFFB2QZjIjqg50A
+	gxZSxeIKhJHtY9RERDIZX42mFQd3VR9U=
+X-Google-Smtp-Source: 
+ AGHT+IH4N72k6FP3I024F8/mlh/LXuGTX+r1yhRIqRg6RvRIzkLuPe0EIybMrx1rfolEKdlh6EqxciQ25PA4Q1kJKK0=
+X-Received: by 2002:a05:651c:20cc:20b0:32b:78ce:be8e with SMTP id
+ 38308e7fff4ca-33650faa9c1mr26623951fa.32.1756157177446; Mon, 25 Aug 2025
+ 14:26:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|PH7PR12MB9128:EE_
-X-MS-Office365-Filtering-Correlation-Id: a0c3ac2f-10a6-4a7a-afd2-08dde41dfce7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eHZ4Qm5Nek5sQVd5bGlSVkVvclRLVG9QNWNuZnhlRllmVzk1MlJSdlFBODhN?=
- =?utf-8?B?Ry9FMXpCTytpV2tOOS9kUEdUV2xOcWhSUmFBbFJ1VEMvUkVGMDk1ZTJPQkZM?=
- =?utf-8?B?eE1oa2d1Z0Urb2N3VzRKUXZFcXhrMkF4MDU0U3Y2ZUYxOUF3NFVYckJWZDBK?=
- =?utf-8?B?NjhFODBjWTU3bDU0L0RmK2NDaXBkZC95S0RhUkUzU1U1ajNXamRmZFJXaTh3?=
- =?utf-8?B?R2VicCtBRkhJVWZBQllzN1ZXNkhLVEE1WnlGaHU0dEhNNnhaY2ZNblRhWDhX?=
- =?utf-8?B?cVJxMWd4TTdzWkN6cXRFcVc1WGs0UnRDdyt5NDI0TU50OTkySGErVnF1a3hV?=
- =?utf-8?B?dHpFeWVTc1hHZmtWTjVvZ3VNV2plNi9sY3ZBRU4rM1MzcnMwUi9NWnVBSjBN?=
- =?utf-8?B?WENQQUoyR1NYNStPOFdGVmFYYUdBV09tbVZOTG9rdit3Y2t4RG95ZVFhbVgw?=
- =?utf-8?B?a3pTcWkzZ0FXNkxCaHRrYVV4elNXY3VNaGNVbWM3cHB5QUJQWWNOY3owYXRw?=
- =?utf-8?B?NG1McjFncHZndkxYc010eFVOYXI4cHpwSmFzb0hlaEJ5Z3pGa1lveENTd0cv?=
- =?utf-8?B?bFdWNWNZUGZQMHZ1OFhKNFlKUnA4NkUvaFBrZVVNY3FRTDhxeGQrVWYzM1lh?=
- =?utf-8?B?QWpMVG5WQ3RwRTl1WDI2c1Y3bU9EaTQxVXV1Q29GS3pBTnE3bmpZTThnUE9P?=
- =?utf-8?B?eThkcEtrWFdqNWZjd2VadUpJNGtBa2lteVlyUjJaZzBuMnpHYjN3VytjclZV?=
- =?utf-8?B?YTF2NVRFVTNuSERQWmtuT21iSXV0TU0yQ2ZOSVUvZ1pPZzQxSjBTVVp0N0ZU?=
- =?utf-8?B?Wk90WUtseXo1bmo4dXZrT1kzOWN3Z2pFRWNjQk5jY2RqbWIzM2J6WHVTM1l4?=
- =?utf-8?B?UXFWejVzd3R1bDFlNWdSSVRzQmJXUUc1MVpQNnJNaGNDdDRZOSsraUMxa1hw?=
- =?utf-8?B?bHRQQkRrLzM3TW12STZLSzZYV252Z3NVcnQ3aGRjQUlubnN4dDdlTitsM1lD?=
- =?utf-8?B?MStSQTUzcUpIUFhLbjVHM1U2b0gwa2VYOUdxeGNTb1lnS2dXOVFoaGlsRHdt?=
- =?utf-8?B?cVNQNUVaU0RFNWlzcFd2aTh2aFBNcVppdE1LSFVWWEFnUXVPOGlZNUczcys3?=
- =?utf-8?B?YlovMDlqVHpMeDZlNnR2U2pjdm5ZZmZxTU5FaU1ud3NYanRNMTk1VStsbmRr?=
- =?utf-8?B?RElTK1hBaTZEbGkzblNNZHVsTzhVbGE1blNGWEs3Y2g4aitQV0kwNkFwQ3Bj?=
- =?utf-8?B?YUdPVEpnWk1HV3c4WlVMME9FVkM1dGlsZ0wvQjU2eXMwOEE5VmVmbm1JWE5w?=
- =?utf-8?B?YlVsZys4Z0xJZ3J5UWM5cW9zQTl2VTBMWGhWZEM4ZExuVlVWNkx0ZHpGR3dT?=
- =?utf-8?B?QS9Wa1lIREdlL2hSdFlYV3pLbTV1QzdQRndXV0p3bXVqZWl0elllZUxvb3Jk?=
- =?utf-8?B?MmQveTRGQ25pSS91cDJKa3oyZ25QTzFMclNkLy9Ja2tSeHVpZ0U2OGFvZVow?=
- =?utf-8?B?NVRuRlBBT0Z1bjcyYmI1VjBvRHNlMWJTODVwUVNtVi9IREVYMFJNTjkreTlX?=
- =?utf-8?B?UGNsVWk1cUw2b2FEVFRCbUFLcVhHd2VlQkQvdEtnei9kT2JYNyt0VisxR3k1?=
- =?utf-8?B?L2tkQjl5SkN5YSttWTczZFkwbkJnZjJndWtkTnVYbWhhLzBpeitydEpjNGMz?=
- =?utf-8?B?YURFWElQOENGbXJlVG1ORE5SNjYvMWdkcThXRHVTekVzd1plVmJueFR1UUov?=
- =?utf-8?B?VXhFeWRKQ2w1aXppcHVWbng5T3g4KzNPR1ZJNmpBTTdUWERwNjlIcDk3dEJt?=
- =?utf-8?B?Ky9WRFdxZ0d5eUVUMHozc2RCdkpRR0V0RGc3akxmVnJYY1NxMUcwYm0valVh?=
- =?utf-8?B?L2VxMitiY2prK2swai9EeWwvMXRhNlYybFlZSGVheEZ6emhGeVEvdFp6Z3gv?=
- =?utf-8?Q?8mCTW9J8gOE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?d1EraTlES0NiMU9wdGNlMjJDMFQ1MVF1bmZxWUcxQzBUUjhOSE5EMEtkL2dR?=
- =?utf-8?B?bGZJZ2tvRWVDSTZYZ3lUdkg3WVF5bWhxSUFBYmNSbStXWHp5RmdjNHQxMnRn?=
- =?utf-8?B?Q25UTkxKdEFBR29uM2V3dlBBN25iVHliS0VEYkJCMG05R05PbThTbVlhZFlZ?=
- =?utf-8?B?bFZxb3oyR3N1TXZia3VTSE5pS05Wc1Vhb2czYy85YTBZaGhhM3I0NTIxa3pT?=
- =?utf-8?B?Tmp2eURkOTRnWWNLQkorNFZPYkF4ZlVjaHRORkt1eEJTT0RPN2FUK3ZvM29T?=
- =?utf-8?B?dDlUbnZIZXNrWXM3aE5TaE85bUp6eC84cmJlNE1aYkc0Vit6UUF0d0lTR3p3?=
- =?utf-8?B?SHpTYXRkRXc2YThFSlpJOG9GUlh0MnIvUjl3R2JiMU1yNlQxTXVneHRaeER4?=
- =?utf-8?B?cFFaMjBjMGZTMkJmeWRacXJpdXIxa0QrVWZmQjc2blNMK0dOc0ROLzFOK1RO?=
- =?utf-8?B?cllUZXN3V0pxWFBoSHJLcU1sZEJybTg4cFY0bHNNYVk1TjNzTkZrQU9kd0tS?=
- =?utf-8?B?a0YwVGN4dEhtNUJZTHRUZzVOdGhqTGVIekRvNFpGVXhROUczeW9RMHpJalR0?=
- =?utf-8?B?YUIrM2dDQXFLVy95QjdUTm96M3ljbmZWMjBDVTNQQ29veVpNQnl4aFI2MDVn?=
- =?utf-8?B?Z3p2d0QwU0F5NmVGTitoWU1WY2k5ZGxxRGhiY05tdUJyT1QvcWN2SEtQTE5N?=
- =?utf-8?B?Z280QnlPT2k0WmdZcmRuVE5XNlJjT2ZZTlJsT1hUazl3SkIrVlV3a3hPZlZB?=
- =?utf-8?B?cU1LaU9Jc0wybFdQVlArNGpRNHlaK0FxL00xQXVCUk50L093ek9yOWt3VDJ0?=
- =?utf-8?B?bTlDdGRPV0d4QnYzRWlBNUZLUk5RUTFFZW14OVlkeFVDSEVDN0NQcFR2TWdt?=
- =?utf-8?B?L3ZhY3VrL1BPN2tnQklXWktuWkZFVlB0K0l5cmh2L3A1ZnE1KzFNVHJTNlZV?=
- =?utf-8?B?VCsvaXRiMlcvd3V6OUJvNmRCTVYzazErZ09LbU9qamxzV25IYU9qV0lQWXBT?=
- =?utf-8?B?bFdmOElTck1tbFhJMEEwUE5icGpqbEtoenYrTFRialB1TDFRaU5PQWovY3J1?=
- =?utf-8?B?Ny9WVnk0aHdRV2dabVBIYTRLeFJPOWk3UVNVT3Bxd3Y1ZHBqeVhkUFpROGJa?=
- =?utf-8?B?SE5JN1g2SjdhWXZlQXF1NzN6ajNqTmlQb3ZpT2xVb2JNSlo2SXJEd1NFZTdq?=
- =?utf-8?B?RDFMb3h1d0tPdC9YSm5id0FkZURFT0FnalRrMWFRcFY2eTJQOE1lQk96Qnht?=
- =?utf-8?B?ZlB5eWpEeHIwVGE5M0NIT2FrZWsvQWFINWVWd0hTT05yRnlqa2x0T05BdUxa?=
- =?utf-8?B?TmdzTzRtTlJSd0I0YnZEQzhYQ0I1am5wWG9waEI2SFZlYnJ3aDFNTkZ1Q1U2?=
- =?utf-8?B?L0lLQk5EQlZBamlRRDJNSmVLb0ljNlgwVXhtK05wNkRCVlRIUURkWm0yYmJw?=
- =?utf-8?B?VmxmQXJXaHJvcFl3VzJ5aTdtRG1ENGMrdGtpK0dWQkFhMmQyWExnNjFKTkNU?=
- =?utf-8?B?c3JQNzhPWVBsUk1YUktqZnJhMklEbmx1ZjR1RE1aNk1pWW1LblpBM0tpV2Fv?=
- =?utf-8?B?Rkk1NkJEZC9rcEh6WSs1bjZueG5GcU1nbExwUzFxNVkwd3MzZVZtbFgzN29F?=
- =?utf-8?B?RXd5eVN1KzdEV3pDQ2NJUUVYUDFGTTRNeGVUYzcxWmpHRkNSemgxY0dNWmNs?=
- =?utf-8?B?QkFsbEx6T0pldVdiL21SakN2dUIxRTFtQldCNEpWWHdwa3ZWdFg4aGRDOGha?=
- =?utf-8?B?elNvSHFjYmlTMkJJUDNGQlMzbndNdmF6dFpQNHNMVGMxTUJaZ1BIQVpvL3hR?=
- =?utf-8?B?cFdmaVNoMXNNZDZKQVg3T0JWUytHMU1uNlFRU2NUUUZjUk93NFFXMC9jNkRy?=
- =?utf-8?B?OGlRZ3kvTmdIYXowWDMxRGROaWNYazFIVkJjY2o3N3AzV0tpakxPRVVFZFVL?=
- =?utf-8?B?WW5heGhZRWtQQzJFbmo1aVBSM1dXL2FwOU8ySFViVldvL3F0M0FSUUNWZ01N?=
- =?utf-8?B?ZHNEQnFaU3BXeCtRM01OT0Roek1scE16aTdLck9EdEkvUDc1ODhIMHJST3Bo?=
- =?utf-8?B?YlJxaEZYUmVkSWh5S1ZrV1JkNE5XUTdNSm5Xc1BRYWEwOGZTT21qL1FFc0Z1?=
- =?utf-8?Q?F5bhg1kryC9jdd45CIsOODPgD?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a0c3ac2f-10a6-4a7a-afd2-08dde41dfce7
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 21:26:00.6930
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZPN9Zm5w2Bo6pDW26Llfr7CNXuujeOEemULjU4t7C27nuPG+rwDHXT/KfcYsC04h9E6rs6pcNwG5mCqNVQ08ww==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB9128
+References: <20250824200202.1744335-1-lkml@antheas.dev>
+ <20250824200202.1744335-5-lkml@antheas.dev>
+ <3b420fb9-9f85-4586-a887-f38804007cb8@amd.com>
+ <CAGwozwGQgnZO0V1eNwbO3w7DyaEnfC+OXD0h6r_ZKLcTS42u9A@mail.gmail.com>
+ <b189d2c2-3b50-43c9-bcd8-7b0f353786f7@amd.com>
+In-Reply-To: <b189d2c2-3b50-43c9-bcd8-7b0f353786f7@amd.com>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Mon, 25 Aug 2025 23:26:06 +0200
+X-Gmail-Original-Message-ID: 
+ <CAGwozwHz=gxF5HrA7NoJxXBUKO-sVdsFEA4vguSFSZk-LxSbMg@mail.gmail.com>
+X-Gm-Features: Ac12FXy2PePmsXBjsCCgS0POTqqCH1-XpH7fSEhoXUfK7aRlJOoLU2bwv1xFCbc
+Message-ID: 
+ <CAGwozwHz=gxF5HrA7NoJxXBUKO-sVdsFEA4vguSFSZk-LxSbMg@mail.gmail.com>
+Subject: Re: [PATCH v1 4/5] drm: panel-backlight-quirks: Add brightness mask
+ quirk
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, philm@manjaro.org,
+	Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+X-PPP-Message-ID: 
+ <175615717825.2953409.7428143403107773345@linux3247.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
+X-Virus-Status: Clean
 
-On 8/24/2025 3:09 PM, Kuan-Wei Chiu wrote:
-> The prerequisites section listed non-existent packages
-> "phython-gnuplot" and "phython3-gnuplot", which may mislead users and
-> cause installation failures.
-> 
-> Update the names to the correct distribution package names
-> "python-gnuplot" and "python3-gnuplot", helping users avoid confusion
-> and saving time for those following the instructions.
-> 
-> Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+On Mon, 25 Aug 2025 at 23:22, Mario Limonciello
+<mario.limonciello@amd.com> wrote:
+>
+> On 8/25/2025 4:17 PM, Antheas Kapenekakis wrote:
+> > On Mon, 25 Aug 2025 at 20:02, Mario Limonciello
+> > <mario.limonciello@amd.com> wrote:
+> >>
+> >> On 8/24/2025 3:02 PM, Antheas Kapenekakis wrote:
+> >>> Certain OLED devices malfunction on specific brightness levels.
+> >>> Specifically, when DP_SOURCE_BACKLIGHT_LEVEL is written to with
+> >>> the first byte being 0x00 and sometimes 0x01, the panel forcibly
+> >>> turns off until the device sleeps again.
+> >>>
+> >>> Below are some examples. This was found by iterating over brighness
+> >>
+> >> brightness
+> >>
+> >>> ranges while printing DP_SOURCE_BACKLIGHT_LEVEL. It was found that
+> >>> the screen would malfunction on specific values, and some of them
+> >>> were collected. Summary examples are found below.
+> >>>
+> >>> This quirk was tested by removing the workarounds and iterating
+> >>> from 0 to 50_000 value ranges with a cadence of 0.2s/it. The
+> >>> range of the panel is 1000...400_000, so the values were slightly
+> >>> interpolated during testing. The custom brightness curve added on
+> >>> 6.15 was disabled.
+> >>>
+> >>>    86016:  10101000000000000
+> >>>    86272:  10101000100000000
+> >>>    87808:  10101011100000000
+> >>> 251648: 111101011100000000
+> >>> 251649: 111101011100000001
+> >>>
+> >>>    86144:  10101000010000000
+> >>>    87809:  10101011100000001
+> >>> 251650: 111101011100000010
+> >>>
+> >>> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3803
+> >>> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> >>
+> >> To me this sounds like a panel firmware bug that is best driven with the
+> >> panel vendor.  But I'm guessing you're reporting it on proudution
+> >> hardware already in the field right?  In the field it's basically
+> >> unheard of to update the panel firmware.  The process is generally
+> >> speaking too dangerous/fragile.
+> >>
+> >> So in that case a workaround would make sense.  The actual issue as I'm
+> >> hearing it is that some fractional brightness values aren't working?
+> >> The API takes millinits, and I guess this was exposed by increasing the
+> >> granularity of values that userspace can program recently.
+> >>
+> >> It's possible it was there before too, but there are probably "more"
+> >> values that can hit it.
+> >
+> > Yes, it seems like if the first byte is 0 (always) or 1 (sometimes)
+> > then the panel turns off. The patch that forces using 100mnits works
+> > fully in my testing but Phil can still hit values on his device.
+> > Perhaps at a 1nit or 2 nit accuracy all the values are ok which is why
+> > Windows works fine
+> >
+> > It has already shipped in 4 SKUs from 3 manufacturers as shown below.
+> >
+> >>
+> >>> ---
+> >>>    .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |  7 +++++
+> >>>    .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h |  6 ++++
+> >>>    drivers/gpu/drm/drm_panel_backlight_quirks.c  | 29 +++++++++++++++++++
+> >>>    include/drm/drm_utils.h                       |  1 +
+> >>>    4 files changed, 43 insertions(+)
+> >>>
+> >>> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> >>> index 4ad80ae615a2..156f2aae6828 100644
+> >>> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> >>> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> >>> @@ -3662,6 +3662,9 @@ static void update_connector_ext_caps(struct amdgpu_dm_connector *aconnector)
+> >>>                if (panel_backlight_quirk->min_brightness)
+> >>>                        caps->min_input_signal =
+> >>>                                panel_backlight_quirk->min_brightness - 1;
+> >>> +             if (panel_backlight_quirk->brightness_mask)
+> >>> +                     caps->brightness_mask =
+> >>> +                             panel_backlight_quirk->brightness_mask;
+> >>>        }
+> >>>    }
+> >>>
+> >>> @@ -4862,6 +4865,10 @@ static void amdgpu_dm_backlight_set_level(struct amdgpu_display_manager *dm,
+> >>>        brightness = convert_brightness_from_user(caps, dm->brightness[bl_idx]);
+> >>>        link = (struct dc_link *)dm->backlight_link[bl_idx];
+> >>>
+> >>> +     /* Apply brightness quirk */
+> >>> +     if (caps->brightness_mask)
+> >>> +             brightness |= caps->brightness_mask;
+> >>> +
+> >>
+> >> I guess a problem I could see with using a mask is that there are
+> >> basically a bunch of values that are basically becoming no-op.
+> >
+> > Yeah, 1/3, but those were noops anyway, because 3mnit is not much.
+> >
+> >> An alternative would be to decrease the max value (IE some number
+> >> smaller than 65535 and scale so userspace doesn't request these "broken"
+> >> values).
+> >>
+> >> I'm not sure it's worth the effort though because you will probably
+> >> still find some subset of values with this problem.
+> >
+> > The patch that was with the VPE quirk essentially does that and works
+> > really well. But it is not perfect. That's at 100mnits.
+> >
+> >> The other comment I would say is this is probably very specific to AMD
+> >> and the millinit based brightness API; it might be better to keep the
+> >> quirk localized to amdgpu.  I also talked to Phil offline about this and
+> >> he's got a draft patch that helps a similar system he's seeing this on
+> >> (presumably) with another panel.
+> >>
+> >> I think it's worth getting that patch onto the list and we can weigh out
+> >> the alternatives.
+> >
+> > I think it is the same panel spec. Perhaps it is a different factory,
+> > but all affected devices are 7in OLED 1080p portrait panels with HDR.
+> > I sent this patch before I cleaned it up fully because Phil wanted to
+> > test it. It seems to work well. I think he's looking into implementing
+> > the same quirk essentially.
+> >
+> > I would not say it is specific to AMD per say. The bug happens in the
+> > panel after being sent a command to set the brightness through a
+> > shared drm helper. The same panel on intel with the same value would
+> > have the same problem.
+>
+> Does Intel also have millinits brightness control?  I wasn't sure.
 
-Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+Hm maybe I am wrong on this one. BACKLIGHT_CONTROL_AMD/VESA_AUX seem
+AMD specific.
 
-> ---
->   tools/power/x86/amd_pstate_tracer/amd_pstate_trace.py | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/power/x86/amd_pstate_tracer/amd_pstate_trace.py b/tools/power/x86/amd_pstate_tracer/amd_pstate_trace.py
-> index feb9f9421c7b..875b086550d1 100755
-> --- a/tools/power/x86/amd_pstate_tracer/amd_pstate_trace.py
-> +++ b/tools/power/x86/amd_pstate_tracer/amd_pstate_trace.py
-> @@ -11,7 +11,7 @@ Prerequisites:
->       gnuplot 5.0 or higher
->       gnuplot-py 1.8 or higher
->       (Most of the distributions have these required packages. They may be called
-> -     gnuplot-py, phython-gnuplot or phython3-gnuplot, gnuplot-nox, ... )
-> +     gnuplot-py, python-gnuplot or python3-gnuplot, gnuplot-nox, ... )
->   
->       Kernel config for Linux trace is enabled
->   
+> > Perhaps not depending on the backlight code
+> > that preprocesses the values. The drm_panel_backlight_quirks is used
+> > only by amd currently in any case. And this quirk system allows
+> > specifying EDID information, where the DRM code one that you did did
+> > not. I only saw that after I had made this series.
+> >
+> > Antheas
+>
+> OK thanks.  As you and Phil both have affected devices that are very
+> similar result get offline with Phil and come together with a new patch
+> series that works for both of you via quirks.
+>
+> >
+> >
+> >>>        /* Change brightness based on AUX property */
+> >>>        mutex_lock(&dm->dc_lock);
+> >>>        if (dm->dc->caps.ips_support && dm->dc->ctx->dmub_srv->idle_allowed) {
+> >>> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
+> >>> index b937da0a4e4a..340f9b5f68eb 100644
+> >>> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
+> >>> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
+> >>> @@ -200,6 +200,12 @@ struct amdgpu_dm_backlight_caps {
+> >>>         * @aux_support: Describes if the display supports AUX backlight.
+> >>>         */
+> >>>        bool aux_support;
+> >>> +     /**
+> >>> +      * @brightness_mask: After deriving brightness, or it with this mask.
+> >>> +      * This is used to workaround panels that have issues with certain
+> >>> +      * brightness values.
+> >>> +      */
+> >>> +     u32 brightness_mask;
+> >>>        /**
+> >>>         * @ac_level: the default brightness if booted on AC
+> >>>         */
+> >>> diff --git a/drivers/gpu/drm/drm_panel_backlight_quirks.c b/drivers/gpu/drm/drm_panel_backlight_quirks.c
+> >>> index 3d386a96e50e..78c430b07d6a 100644
+> >>> --- a/drivers/gpu/drm/drm_panel_backlight_quirks.c
+> >>> +++ b/drivers/gpu/drm/drm_panel_backlight_quirks.c
+> >>> @@ -45,6 +45,35 @@ static const struct drm_get_panel_backlight_quirk drm_panel_min_backlight_quirks
+> >>>                .ident.name = "NE135A1M-NY1",
+> >>>                .quirk = { .min_brightness = 1, },
+> >>>        },
+> >>> +     /* Have OLED Panels with brightness issue when last byte is 0/1 */
+> >>> +     {
+> >>> +             .dmi_match.field = DMI_SYS_VENDOR,
+> >>> +             .dmi_match.value = "AYANEO",
+> >>> +             .dmi_match_other.field = DMI_PRODUCT_NAME,
+> >>> +             .dmi_match_other.value = "AYANEO 3",
+> >>> +             .quirk = { .brightness_mask = 3, },
+> >>> +     },
+> >>> +     {
+> >>> +             .dmi_match.field = DMI_SYS_VENDOR,
+> >>> +             .dmi_match.value = "ZOTAC",
+> >>> +             .dmi_match_other.field = DMI_BOARD_NAME,
+> >>> +             .dmi_match_other.value = "G0A1W",
+> >>> +             .quirk = { .brightness_mask = 3, },
+> >>> +     },
+> >>> +     {
+> >>> +             .dmi_match.field = DMI_SYS_VENDOR,
+> >>> +             .dmi_match.value = "ONE-NETBOOK",
+> >>> +             .dmi_match_other.field = DMI_PRODUCT_NAME,
+> >>> +             .dmi_match_other.value = "ONEXPLAYER F1Pro",
+> >>> +             .quirk = { .brightness_mask = 3, },
+> >>> +     },
+> >>> +     {
+> >>> +             .dmi_match.field = DMI_SYS_VENDOR,
+> >>> +             .dmi_match.value = "ONE-NETBOOK",
+> >>> +             .dmi_match_other.field = DMI_PRODUCT_NAME,
+> >>> +             .dmi_match_other.value = "ONEXPLAYER F1 EVA-02",
+> >>> +             .quirk = { .brightness_mask = 3, },
+> >>> +     }
+> >>>    };
+> >>>
+> >>>    static bool drm_panel_min_backlight_quirk_matches(
+> >>> diff --git a/include/drm/drm_utils.h b/include/drm/drm_utils.h
+> >>> index 82eeee4a58ab..6a46f755daba 100644
+> >>> --- a/include/drm/drm_utils.h
+> >>> +++ b/include/drm/drm_utils.h
+> >>> @@ -18,6 +18,7 @@ int drm_get_panel_orientation_quirk(int width, int height);
+> >>>
+> >>>    struct drm_panel_backlight_quirk {
+> >>>        u16 min_brightness;
+> >>> +     u32 brightness_mask;
+> >>>    };
+> >>>
+> >>>    const struct drm_panel_backlight_quirk *
+> >>
+> >>
+> >
+>
+>
 
 
