@@ -1,339 +1,301 @@
-Return-Path: <linux-kernel+bounces-784678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A8E2B33F86
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:33:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8436BB33F8D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:34:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBB881A83C45
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:33:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DABE2055B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D7A723817F;
-	Mon, 25 Aug 2025 12:32:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD90139D;
+	Mon, 25 Aug 2025 12:33:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oI1hWQNJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ba7VuUic"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2081.outbound.protection.outlook.com [40.107.236.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8987138FB9;
-	Mon, 25 Aug 2025 12:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756125162; cv=none; b=dHcu+bVC0fzRj6Pv9k4j4upo1k56dySrCkPp8wtvplb95e4hz2PegvU0XzGafKmkGyXk0huV+bn0AdwyNAk1dk4/KloPEevfTG4SLaIdpfwOCzoZFxHC1FLVQTmFtQBn/WOSSxPHPAYkXHdmJIOpTFWRvnTTT0ilAoEUD/7qENs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756125162; c=relaxed/simple;
-	bh=27oRDKloyLag3j/Hytskw7lR0SKMLd5HrK4AzkisHrA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qKGVG6SnCFXChpdp8d/GsJ8QPzdL1bGJSbo5kppoIx73vzujtDVWlxOzCWW/LaLqIfaFWqy3/gicLzF3tJ3kIcKQoiHaQqbqWwC1Os/WrIas9tbBmhu4F3gnkCCc3hRQl8B9kPxbDJ4epRXMCgqqUPY0RV+e1TJ36YZQZ3VgBeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oI1hWQNJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2D6D1C16AAE;
-	Mon, 25 Aug 2025 12:32:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756125162;
-	bh=27oRDKloyLag3j/Hytskw7lR0SKMLd5HrK4AzkisHrA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=oI1hWQNJr2o3TfPG1cF/eEn0EfLriT5U5sPwBxzRz44cdR7Qs5VgPKD7XkYUhB+Vn
-	 9R13cIIhch8Hbtjhxe/i79tdtUqpqbfXh+IuonIE0CQvQJoD//jwsXBq0afkXkiGP3
-	 ijaqhW8Sfe36jww4aK0QSn5vDpafiWFjnlz0G0Uo4E6WqYVp+bhkvJoTvcbZkpXqqB
-	 jkLj4zUqAy8ObZIkxo2tXaXjIJn5ts5twSaYZgEsEaALhINFgRFOKSwDMzAWN6x8cv
-	 kuGjFrl/NThXu7ikPynMhrOAQm4h+VR7SltF20PFevM7A9LdFs19D1WfGzKu3/Q/Y/
-	 C4rcZT/NRdn3A==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B64CCA0EFA;
-	Mon, 25 Aug 2025 12:32:42 +0000 (UTC)
-From: Nickolay Goppen via B4 Relay <devnull+setotau.yandex.ru@kernel.org>
-Date: Mon, 25 Aug 2025 15:32:30 +0300
-Subject: [PATCH v3 3/3] pinctrl: qcom: Add SDM660 LPASS LPI TLMM
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF99274B37;
+	Mon, 25 Aug 2025 12:33:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756125209; cv=fail; b=MCtGjYuDeG72D+4+80KvKaJxd/7MlsDO7PbVZ7vvJknd93IiS8hWDc3BNuzmaGXmwsvwn8q1kCiUM09Gn/SzKCXYWsX+EIe5G7mj0R4AeQArcGpeJVMkCVRjRCjdHfSu9RjZ12tYuDyup+x4j/k2p3ip33y8tzztQCyoLohFvKc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756125209; c=relaxed/simple;
+	bh=QFUnxv0GIx6bUUQKCAlLPhldhROHR2YFhgiFzXdxl3g=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=roXLRFeBJQPvJ5p5cJJVdh7/Bmy92tRJfCxBTDAmOhpb+SeUDEe8VIzk4GZMAcSaFx7cHLqZ9+Wthj5XaHv4X+LEJk+TRZ+zeCtsAG32FGkDGhooleyWd+sLaSwWp4dEWsex10UT5alg4beoEOwBNz06T1OTAwghCQkJ6SLzAYQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ba7VuUic; arc=fail smtp.client-ip=40.107.236.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JlO3/jsils9kCa0V3sXkYOFRGuV2FJDBRghQJUbyvRTxAgwb8dwMivIjuyGglJ/e7owHQ+eO+Nl5yfuOTyDNnQVjJL6BN6yziv407yUa3AJ/yZ5BtgboYQ+WOiVDbTBg9t3jz/V+8u6/KBrey18FRMfH/lutggcXnwy9ELxKJ81S1yNwD6vh6rP8tvRMglBq2fns+tDaQ3vMGvW7DA87lk4VV7z+ySl9W6BldFWbK5rqtfR17lMoaJeku5HAvhtK3K7Af4yobFZKW54bXA732GPLKtHP5JE/D3jo28WwjI52zo6DSQK+HhmZI/pMADoxtwBeXVKNq15Bm/SxTmUwGw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2JDxYdOKr1wEMC81NFdy1XkmozjhF1um+dYuQUPw0wA=;
+ b=n+iCRZQJcmDlkldpT2YpDNJ+HIjhjTspZMz13bhqndClfFpaRuCI99ueqBPs4maxIHhATE827t9XcextCkjOgVIYKPobOYZNAXAVsD7MEkjkjfq6tF7IVOqvroFtGucZMYlOmHzCuL4gBrkMZ7uyPrxbTmxtfp6Vih9UIqY1pkIasHJS8owol6B983wQRE6IoIZs6nY87MP5RSYANTdhwh9DZMF3LT2OvUQeXAV1HtGWlBTG1hPziJWXE5fNYKwFOqP9x/2c9/AvZTs4jQF/7VLcKJ40IbrstphSiIUzVi5+eQ8wI5HX/qblMN98+WS7hP5yxHrkrouEeyOjtxEwLw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2JDxYdOKr1wEMC81NFdy1XkmozjhF1um+dYuQUPw0wA=;
+ b=ba7VuUicFi9Pq2dTKCiW/K65rSMdzlS4MSfTOwt3gPjj7MhPoxamCyrO5dEdhaC7Da7BtY/MiplrwcgEaSAzxWhUzISiCWlxihyBlochisPo3Vey29kRsCH5uyoJY4WGKgHpzZcinRXP6KfiFh+hE5XXE21dpqUh11dZorRzrw5sd2dj8sRIod39jCuOFtMrMJinu46cD+GIaLfe763MzmiVBZB+UH2RzjXz31eYmZEOP8Y4TvWxAy5MAAIvo3LgdbvWZNQ06BZGeTZ4cUwdvsRVOXsqWTIB7ISndS0iW5zkA5XQbVw5Y4+N33o/0v8sUAg2qQCUAiZ82hc7qfA53A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by MW3PR12MB4395.namprd12.prod.outlook.com (2603:10b6:303:5c::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Mon, 25 Aug
+ 2025 12:33:07 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99%3]) with mapi id 15.20.9052.019; Mon, 25 Aug 2025
+ 12:33:07 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 25 Aug 2025 21:33:03 +0900
+Message-Id: <DCBIF83RP6G8.1B97Z24RQ0T24@nvidia.com>
+Cc: "Joel Fernandes" <joelagnelf@nvidia.com>, "Timur Tabi"
+ <ttabi@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Bjorn Helgaas"
+ <bhelgaas@google.com>, =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
+ <kwilczynski@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, <nouveau@lists.freedesktop.org>,
+ <linux-pci@vger.kernel.org>, <rust-for-linux@vger.kernel.org>, "LKML"
+ <linux-kernel@vger.kernel.org>, "Elle Rhumsaa" <elle@weathered-steel.dev>
+Subject: Re: [PATCH v6 2/5] rust: pci: provide access to PCI Vendor values
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "John Hubbard" <jhubbard@nvidia.com>, "Danilo Krummrich"
+ <dakr@kernel.org>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20250822020354.357406-1-jhubbard@nvidia.com>
+ <20250822020354.357406-3-jhubbard@nvidia.com>
+In-Reply-To: <20250822020354.357406-3-jhubbard@nvidia.com>
+X-ClientProxiedBy: TYCP286CA0061.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:31a::13) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250825-sdm660-lpass-lpi-v3-3-65d4a4db298e@yandex.ru>
-References: <20250825-sdm660-lpass-lpi-v3-0-65d4a4db298e@yandex.ru>
-In-Reply-To: <20250825-sdm660-lpass-lpi-v3-0-65d4a4db298e@yandex.ru>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- ~postmarketos/upstreaming@lists.sr.ht, Nickolay Goppen <setotau@yandex.ru>, 
- Richard Acayan <mailingradian@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756125160; l=8821;
- i=setotau@yandex.ru; s=20250815; h=from:subject:message-id;
- bh=2FkNa+Pkw2vKfrl0HjWMBEMkTikG2zyE3vuQ7SqMbw4=;
- b=Zrg7Ns2UH8gSN/qbonS0VBITA1ilSh+M4Oacbf3nlYXqdyiACnNamiTYlz28CQIqk+g2QubSA
- 5xGLa9WfQBMAYnQISh/lAeCQ2NXtaOWPwPlJ9Di/RGht3V5RqZ9rsAp
-X-Developer-Key: i=setotau@yandex.ru; a=ed25519;
- pk=Og7YO6LfW+M2QfcJfjaUaXc8oOr5zoK8+4AtX5ICr4o=
-X-Endpoint-Received: by B4 Relay for setotau@yandex.ru/20250815 with
- auth_id=492
-X-Original-From: Nickolay Goppen <setotau@yandex.ru>
-Reply-To: setotau@yandex.ru
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|MW3PR12MB4395:EE_
+X-MS-Office365-Filtering-Correlation-Id: c13def6c-cd5d-4c21-5179-08dde3d38b3b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|10070799003|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TTlzY1p0V0FwWnlwTjZTU2JKT0laQWV1M3pWaFJQZmdBekluY2xJL1djOGli?=
+ =?utf-8?B?b1RhOC9hNHhOenZvbmwrOUYySnhQT0JiVHBMdjZEUm41NHZoblR6YkNwMkNL?=
+ =?utf-8?B?akFocXMyNXNmZ1hSUHdURldXeTJFUk80dU5zR0I0YzF2V3duR2dRL2FBbmtF?=
+ =?utf-8?B?d1BRU3ErUFFLeDUvL3lCZnZjTU0zV21qcEd3WFF4VExzUm5LM0w2QnpSNUp4?=
+ =?utf-8?B?cEtianN4WnpyeVZWa3YwaXRRQkVqQVdtVTd3eXh2THRmT1N0WWp0bE4rcEQ2?=
+ =?utf-8?B?OFNONGFQbjhWU0tlV3RLK0tycmZZR2JvSE4rQWswczcxVUgrSEk1TW9jbWJG?=
+ =?utf-8?B?Mk9wb2lkWEVyS0I0bEl2ZDNubFJ1RUQwclNrYkxoVmJLSisrckZpL1BwajBM?=
+ =?utf-8?B?ajFIUzg5dnJ2bldQaS9qOFVnY2NXQkJodjUzS0ZYOVA5WFFzSEhucG9vM3Rn?=
+ =?utf-8?B?VGJXcFBtTXVjSDl4RE1DWS9NU2lXblpKQ01aSU1wVDhUMzloSytLY3FZQk9G?=
+ =?utf-8?B?cWRuWm9CSm0rZEhKZjAwSlZ6b1hBRXhqYjNlYThBamd1eWwrcUtvREdieXBV?=
+ =?utf-8?B?c2lEYU5kenJ5bnd4UlU1NlhkQ2JPR0VxZ0N2TWpURkhYUFkrdVdtMU4xWG1w?=
+ =?utf-8?B?VUFiYkNZQ1pHc2tZWk9naTQzRDZCWTliUmJKQ1pIeE5EU0VwMXU1dDhKMzR2?=
+ =?utf-8?B?U0UvakVnVjBsZEtBa0loSnkyOUFKeFBTYTJqOHVvNXdDb2xzd0VMYm5BWkJ6?=
+ =?utf-8?B?QWxQMnBZVW9TTjRKRldqdXArK21DbXN5cHlmYkNxSWRJeVQ4UEkvV2E0V1Nr?=
+ =?utf-8?B?SzQvaUVINFFYdndiaWFtcnJNVzhNaDV1MGV4VjlPUmlZMVI0NnYvQUxwR04w?=
+ =?utf-8?B?NEYvM2JMRjlpb1o1Qm1sbG9GNFZaQ0Jodmc5a2xxV005Q0FJa2J2c1JRVm0v?=
+ =?utf-8?B?ais3QU5TL24zRTdNaytndkdBb0lNbEZyK20zVWtKbFYrTVFScTEyTmR3Mi96?=
+ =?utf-8?B?MEZlbi84NXBySUtOM0RMNWdLa1VRL1cyNFYwaERoRjBuSFMwSmwrWTJqYmUv?=
+ =?utf-8?B?U0JEN0RMQ1dXZmdtRThZTDVlWjhkbTZDYlZqZ2s4bEdxd1dRTW56cXlHRjVQ?=
+ =?utf-8?B?RzRNSjlXWjE3MkFUY0JyaXJ3Y3M1U0RBWHBiYWJMeFA0V09hV1FFWnlkVUxS?=
+ =?utf-8?B?dnBkZGduSFdCWk5QZlVKKzdLZG5IRUR6Mkw0V2haYm1NcmRaK3RMRnZENVFN?=
+ =?utf-8?B?andpdHVQUzNZYXpzakVydnJNZWxKdEJCeWRVK1BUSFBUdkNsdWptMVB4MkFX?=
+ =?utf-8?B?V2pXVlRaeU1iM1BpckYyUDUrU3F0b3NOZjh5TEZlTDQyUFlMOEJ3c0VnRkJ6?=
+ =?utf-8?B?QTJDMzJDdlVUUkVmRzlIWURqdGNMYURJbEJ2R0J3eUhGMGxMZFFQdFZLRHVQ?=
+ =?utf-8?B?eUdleXFKRzFUU2JCa2phL0w5alhna1M2TUJibkVuSFdOUGhJdGVCQ0VDVGM4?=
+ =?utf-8?B?ZDBLWG1RTFRGTkhqcGxlTkYzMGhHZ0hRbUtjaUNYRjRMUjcwZy81a3VIZ3dW?=
+ =?utf-8?B?aklQNmtiVnhzeHd5ckg3ZE56OEpDYndDUEFOLzh2RTFBdC9rcUtsaENtZSts?=
+ =?utf-8?B?NE1qTk0ycjJiTVplZ3RBb1BHWW5VMXdkVjFTakVXc1BUQVFlalkxVi9sNmMv?=
+ =?utf-8?B?UEt6bjM5YkhNb3VIMldWWnFhNmVlZGsydGcvaDYxOHJuMTV4SkxTdU1TZFlz?=
+ =?utf-8?B?ZVppRG9GMEFaNTU5YTFsLy94RVlBQXltdi81cm05Z1hjUmgvak1NaXlqbWtm?=
+ =?utf-8?B?RTJpRzJ0OStFa2dwWVdkOTNtcnNINHVUdGVwWGpDQU0rQmdBYkxtemtNODVz?=
+ =?utf-8?B?SWpZOWVoSkpHSll5RVN2VXhnQnhtWTNwYitGcjRZaVJrby9sZkoyWXZaMzZ3?=
+ =?utf-8?Q?xHX9r8D25VQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(10070799003)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cHZkZk1vR0IzOURUOUlscnBxdzJia1VzUUlkdk9TdVRRRXdYcExvTmpGZ2k5?=
+ =?utf-8?B?YnZWcXdFMWZYTDZmdEM4MVYzQlpPN3FtZC9VMXNmdkRHeWhhOHhsK1NzRzN5?=
+ =?utf-8?B?US9KVTNBT21UVHpXdmYwcGx1ZnF2T2NldTdtS0V2ZUFobVZaYVpYazZoWE5M?=
+ =?utf-8?B?R0l1UHg3dnQ0NVNKUFJCZ3hxS2gxTzBoY0ZmRDhXMFA1YXVRME52NEdyZGt3?=
+ =?utf-8?B?Q1JSVUpBblhCY3YxNkUxZHVnWEFMWi9lU1V1enVQaHNPMm91ekc5c0UrRm0w?=
+ =?utf-8?B?dDQ3by9UWEZsZ0tBbDBtRnpXL3plVFh0MlVmMjhUUEVJS0daSXo4czg3amJB?=
+ =?utf-8?B?VDhXOGtYRGpTcW5TbnlMYlUrUEMzMDB0NkxIcDZnK1VEbVlYd0cvSlRpQUJW?=
+ =?utf-8?B?RTFyeWRMYkFjQW9zZDVqV2hxWHVrcGQvUlppUzZaWWxnTVoyN2lHclN5enBp?=
+ =?utf-8?B?OU9JKyt5bnpVOERqWnlsVkVtU2s3dVhQVWcxS1RXS29tSDlpUUNaVUFJN1hj?=
+ =?utf-8?B?a3BodTRtU2RoVk4zVm95L01QL2RIN0hUcFNuYXh1ak5iQXpBa1d3RW00bnJV?=
+ =?utf-8?B?VGkvZXFlNTFleFloMjhuMDdKZmZ4dHJsSzZOaUtaYUY5aGVVeVJ0b1NNR2dB?=
+ =?utf-8?B?a3Bub2g2N2FGbG5ua1hvNFhnb2dFOXNJdXNiQUtoRXZyQ3p1ZWhZZVp0dXVx?=
+ =?utf-8?B?dXMwL3RnWmFtMXpuODZ6VUF6bGhVQiszUHdZM3JUc3dRaGlNbDNrbHlodUJo?=
+ =?utf-8?B?bGp1Z3BrMjJPNU5jcHdjYzdZUTdnYkpOc3hVajFLYS9uYUp1MDhCMFRvc1NO?=
+ =?utf-8?B?bm5zYzZLRVU5L3JBTWNoZjhDazM0ck5HT2kvODI1YnpmWXVCcGExbmhDcmlR?=
+ =?utf-8?B?djlkdDBoWFdUY2dSc2phcTdOelMrOG4xMC9xdlFJcGhUQTA5MXJFWkFjU0hG?=
+ =?utf-8?B?Mk5qdnBrSTZTYkh0SDZVMnZRRDlCbW5OUkhKMU9IeGZ3M0wxR3hKZUdOcjUx?=
+ =?utf-8?B?NTNxdVBIc3hUVFhCTGdnbUVsTUZwMFhqS0pUSkFUd2Q4WXdhRE81QWQzWkhi?=
+ =?utf-8?B?SWxIdUdIZG1yUy8rZlpTSXlhdlZIMWdWN3BzYXkxRXRlaDdHam1LMHZSTThK?=
+ =?utf-8?B?eEQxbE0yNFJ5Q0xBL2dWa1M5Q2lIRDlPdjF1TDViRWR0b2l1TU5DT0I0WlpN?=
+ =?utf-8?B?ei9ldHFCSXBoTUdQdTE3YVZhYnBhdzJDRzdqa2N0cU15bUR2ZWtiTUIzK0xu?=
+ =?utf-8?B?ODBqMW5JSXVqTkpkdkhnbzZpVjJHYmxQR0ZDc1ZBVGxXTEhQbnhIekVBTm5L?=
+ =?utf-8?B?bTFURUs3ZTJ5NCtMQTMwTFhxanRUUXdsaE1KaXVLUXRJdXo5NDBRcE1ocU1V?=
+ =?utf-8?B?OWZuR1M5SFZVMG1hS1BMamh5MGFXWWhwSG93NG45MDgrb0s2akZtNERhOE8z?=
+ =?utf-8?B?RU5vSDFiWm5tVE10MC96QVVHNGtQbm9YRDJscjNZMUNaalF5Q01Uakh3NDkv?=
+ =?utf-8?B?UWVRV3gzMGVPUWxadFpxcW8wNVVrM0RpMUdVZWYwMGQwZk9GYlF0Nk9QcGNM?=
+ =?utf-8?B?dkgwNXhORXIyc0dlOTZvZ1YxUk9RbXJJTHlORk82dEl6YjBTOTJWVkYvSGo5?=
+ =?utf-8?B?ZDUvc1dXbjdIaHlaWVh2dWVTOXhseU5UL1pGNXd6Y1ZjT1VLYjdzbExqb1NZ?=
+ =?utf-8?B?bzBmUklvaGZlYVZpTXVmdHRodE54L1N5USs4YndVbDl3ZXErQUEvQytsb3hi?=
+ =?utf-8?B?ekZ3SEVNOW1qekNzNDhqTVFpNjJkbzBLRy9qQWVObm1WMUY3cnkyWndOUkdC?=
+ =?utf-8?B?ekdTOHZ1cnAyYnZVbTdzQmRsR3BGOG1uVzZpWkVBNE15UzNCbEY0YUd1MUZC?=
+ =?utf-8?B?QjRPWVgySXZVbStVcjdOaFNscy9OUDc5dWt6MUNSc3kvTnhzcjd5Y0RDR3Z4?=
+ =?utf-8?B?M0l1K1k1VGZtb0ZCN3VtalZUN25EdElaanhxVW11MkZyais1M0lzUWQzVHZN?=
+ =?utf-8?B?eENNcCtoRll3UGgvQm96Vnl0VzZoQ2pSVGhOR05QYU4vdDBSejdRcnlEZjRL?=
+ =?utf-8?B?OXZ6TTdhUE9MWjlSaWtIaDRNaDRJOThhUXZHMVJMVDU2TDJWdW5UeGlKSlVT?=
+ =?utf-8?B?WU5tMi9VOXdqVnZ1VEFySWtIaGVJcW9CZ1JtWDZCaWs4Sm5WVlNXREd5bGRH?=
+ =?utf-8?Q?Dw1JsGJh8jK08odiunmVhkbqvLOJMkwD2OtcKa+D/Iyn?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c13def6c-cd5d-4c21-5179-08dde3d38b3b
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 12:33:07.1521
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: PfzHBFKF/LwYGmLQkohMq6YxgaVrw5fExBr+s55LYtLi+8/+6RGRK4mGxPISXYJZMibriIzYZcW4oSOml28wow==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4395
 
-From: Richard Acayan <mailingradian@gmail.com>
+On Fri Aug 22, 2025 at 11:03 AM JST, John Hubbard wrote:
+> This allows callers to write Vendor::SOME_COMPANY instead of
+> bindings::PCI_VENDOR_ID_SOME_COMPANY.
+>
+> New APIs:
+>     Vendor::SOME_COMPANY
+>     Vendor::as_raw()
+>     Vendor: From<u32> for Vendor
+>
+> Cc: Danilo Krummrich <dakr@kernel.org>
+> Cc: Alexandre Courbot <acourbot@nvidia.com>
+> Cc: Elle Rhumsaa <elle@weathered-steel.dev>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> ---
+>  rust/kernel/pci.rs    |   2 +-
+>  rust/kernel/pci/id.rs | 355 +++++++++++++++++++++++++++++++++++++++++-
+>  2 files changed, 355 insertions(+), 2 deletions(-)
+>
+> diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
+> index 0faec49bf8a2..d4675b7d4a86 100644
+> --- a/rust/kernel/pci.rs
+> +++ b/rust/kernel/pci.rs
+> @@ -25,7 +25,7 @@
+> =20
+>  mod id;
+> =20
+> -pub use self::id::{Class, ClassMask};
+> +pub use self::id::{Class, ClassMask, Vendor};
+> =20
+>  /// An adapter for the registration of PCI drivers.
+>  pub struct Adapter<T: Driver>(T);
+> diff --git a/rust/kernel/pci/id.rs b/rust/kernel/pci/id.rs
+> index 1291553b4e15..dd91e25a6890 100644
+> --- a/rust/kernel/pci/id.rs
+> +++ b/rust/kernel/pci/id.rs
+> @@ -2,7 +2,7 @@
+> =20
+>  //! PCI device identifiers and related types.
+>  //!
+> -//! This module contains PCI class codes and supporting types.
+> +//! This module contains PCI class codes, Vendor IDs, and supporting typ=
+es.
+> =20
+>  use crate::{bindings, error::code::EINVAL, error::Error, prelude::*};
+>  use core::fmt;
+> @@ -115,6 +115,74 @@ fn try_from(value: u32) -> Result<Self, Self::Error>=
+ {
+>      }
+>  }
+> =20
+> +/// PCI vendor IDs.
+> +///
+> +/// Each entry contains the 16-bit PCI vendor ID as assigned by the PCI =
+SIG.
+> +///
+> +/// # Examples
+> +///
+> +/// ```
+> +/// # use kernel::{device::Core, pci::{self, Vendor}, prelude::*};
+> +/// fn log_device_info(pdev: &pci::Device<Core>) -> Result<()> {
+> +///     // Get the raw PCI vendor ID and convert to Vendor
+> +///     let vendor_id =3D pdev.vendor_id();
+> +///     let vendor =3D Vendor::new(vendor_id.into());
+> +///     dev_info!(
+> +///         pdev.as_ref(),
+> +///         "Device: Vendor=3D{}, Device=3D0x{:x}\n",
+> +///         vendor,
+> +///         pdev.device_id()
+> +///     );
+> +///     Ok(())
+> +/// }
+> +/// ```
+> +#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+> +#[repr(transparent)]
+> +pub struct Vendor(u32);
+> +
+> +macro_rules! define_all_pci_vendors {
+> +    (
+> +        $($variant:ident =3D $binding:expr,)+
+> +    ) =3D> {
+> +
+> +        impl Vendor {
+> +            $(
+> +                #[allow(missing_docs)]
+> +                pub const $variant: Self =3D Self($binding as u32);
+> +            )+
+> +        }
+> +
+> +        /// Convert a raw 16-bit vendor ID to a `Vendor`.
+> +        impl From<u32> for Vendor {
+> +            fn from(value: u32) -> Self {
+> +                match value {
+> +                    $(x if x =3D=3D Self::$variant.0 =3D> Self::$variant=
+,)+
+> +                    _ =3D> Self::UNKNOWN,
+> +                }
+> +            }
 
-The Snapdragon 660 has a Low-Power Island (LPI) TLMM for configuring
-pins related to audio. Add the driver for this.
-Also, this driver uses it's own quirky pin_offset function like downstream
-driver does [1].
+Naive question from someone with a device tree background and almost no
+PCI experience: one consequence of using `From` here is that if I create
+an non-registered Vendor value (e.g. `let vendor =3D
+Vendor::from(0xf0f0)`), then do `vendor.as_raw()`, I won't get the value
+passed initially but the one for `UNKNOWN`, e.g. `0xffff`. Are we ok
+with this?
 
-[1] https://git.codelinaro.org/clo/la/kernel/msm-4.4/-/blob/LA.UM.7.2.c27-07400-sdm660.0/drivers/pinctrl/qcom/pinctrl-lpi.c#L107
+> +        }
+> +    };
+> +}
+> +
+> +/// Once constructed, a `Vendor` contains a valid PCI Vendor ID.
+> +impl Vendor {
+> +    /// Create a new Vendor from a raw 16-bit vendor ID.
 
-Signed-off-by: Richard Acayan <mailingradian@gmail.com>
-Co-developed-by: Nickolay Goppen <setotau@yandex.ru>
-Signed-off-by: Nickolay Goppen <setotau@yandex.ru>
----
- drivers/pinctrl/qcom/Kconfig                    |  10 ++
- drivers/pinctrl/qcom/Makefile                   |   1 +
- drivers/pinctrl/qcom/pinctrl-sdm660-lpass-lpi.c | 196 ++++++++++++++++++++++++
- 3 files changed, 207 insertions(+)
-
-diff --git a/drivers/pinctrl/qcom/Kconfig b/drivers/pinctrl/qcom/Kconfig
-index dd9bbe8f3e11c37418d2143b33c21eeea10d456b..ef42520115f461302098d878cb76c6f25e55b5e4 100644
---- a/drivers/pinctrl/qcom/Kconfig
-+++ b/drivers/pinctrl/qcom/Kconfig
-@@ -68,6 +68,16 @@ config PINCTRL_SC7280_LPASS_LPI
- 	  Qualcomm Technologies Inc LPASS (Low Power Audio SubSystem) LPI
- 	  (Low Power Island) found on the Qualcomm Technologies Inc SC7280 platform.
- 
-+config PINCTRL_SDM660_LPASS_LPI
-+	tristate "Qualcomm Technologies Inc SDM660 LPASS LPI pin controller driver"
-+	depends on GPIOLIB
-+	depends on ARM64 || COMPILE_TEST
-+	depends on PINCTRL_LPASS_LPI
-+	help
-+	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
-+	  Qualcomm Technologies Inc LPASS (Low Power Audio SubSystem) LPI
-+	  (Low Power Island) found on the Qualcomm Technologies Inc SDM660 platform.
-+
- config PINCTRL_SM4250_LPASS_LPI
- 	tristate "Qualcomm Technologies Inc SM4250 LPASS LPI pin controller driver"
- 	depends on ARM64 || COMPILE_TEST
-diff --git a/drivers/pinctrl/qcom/Makefile b/drivers/pinctrl/qcom/Makefile
-index 954f5291cc37242baffc021e3c68d850aabd57cd..cea8617ac650ecfc75c2a0c745a53d6a1b829842 100644
---- a/drivers/pinctrl/qcom/Makefile
-+++ b/drivers/pinctrl/qcom/Makefile
-@@ -43,6 +43,7 @@ obj-$(CONFIG_PINCTRL_SC7280_LPASS_LPI) += pinctrl-sc7280-lpass-lpi.o
- obj-$(CONFIG_PINCTRL_SC8180X)	+= pinctrl-sc8180x.o
- obj-$(CONFIG_PINCTRL_SC8280XP)	+= pinctrl-sc8280xp.o
- obj-$(CONFIG_PINCTRL_SDM660)   += pinctrl-sdm660.o
-+obj-$(CONFIG_PINCTRL_SDM660_LPASS_LPI) += pinctrl-sdm660-lpass-lpi.o
- obj-$(CONFIG_PINCTRL_SDM670) += pinctrl-sdm670.o
- obj-$(CONFIG_PINCTRL_SDM845) += pinctrl-sdm845.o
- obj-$(CONFIG_PINCTRL_SDX55) += pinctrl-sdx55.o
-diff --git a/drivers/pinctrl/qcom/pinctrl-sdm660-lpass-lpi.c b/drivers/pinctrl/qcom/pinctrl-sdm660-lpass-lpi.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..36fba93fda1160ad51a979996f8007393555f222
---- /dev/null
-+++ b/drivers/pinctrl/qcom/pinctrl-sdm660-lpass-lpi.c
-@@ -0,0 +1,196 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * This driver is solely based on the limited information in downstream code.
-+ * Any verification with schematics would be greatly appreciated.
-+ *
-+ * Copyright (c) 2023, Richard Acayan. All rights reserved.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pinctrl/pinctrl.h>
-+
-+#include "pinctrl-lpass-lpi.h"
-+
-+enum lpass_lpi_functions {
-+	LPI_MUX_comp_rx,
-+	LPI_MUX_dmic12,
-+	LPI_MUX_dmic34,
-+	LPI_MUX_mclk0,
-+	LPI_MUX_pdm_2_gpios,
-+	LPI_MUX_pdm_clk,
-+	LPI_MUX_pdm_rx,
-+	LPI_MUX_pdm_sync,
-+
-+	LPI_MUX_gpio,
-+	LPI_MUX__,
-+};
-+
-+static const u32 sdm660_lpi_offset[] = {
-+	0x00000000,
-+	0x00001000,
-+	0x00002000,
-+	0x00002010,
-+	0x00003000,
-+	0x00003010,
-+	0x00004000,
-+	0x00004010,
-+	0x00005000,
-+	0x00005010,
-+	0x00005020,
-+	0x00005030,
-+	0x00006000,
-+	0x00006010,
-+	0x00007000,
-+	0x00007010,
-+	0x00005040,
-+	0x00005050,
-+	0x00008000,
-+	0x00008010,
-+	0x00008020,
-+	0x00008030,
-+	0x00008040,
-+	0x00008050,
-+	0x00008060,
-+	0x00008070,
-+	0x00009000,
-+	0x00009010,
-+	0x0000a000,
-+	0x0000a010,
-+	0x0000b000,
-+	0x0000b010,
-+};
-+
-+static const struct pinctrl_pin_desc sdm660_lpi_pinctrl_pins[] = {
-+	PINCTRL_PIN(0, "gpio0"),
-+	PINCTRL_PIN(1, "gpio1"),
-+	PINCTRL_PIN(2, "gpio2"),
-+	PINCTRL_PIN(3, "gpio3"),
-+	PINCTRL_PIN(4, "gpio4"),
-+	PINCTRL_PIN(5, "gpio5"),
-+	PINCTRL_PIN(6, "gpio6"),
-+	PINCTRL_PIN(7, "gpio7"),
-+	PINCTRL_PIN(8, "gpio8"),
-+	PINCTRL_PIN(9, "gpio9"),
-+	PINCTRL_PIN(10, "gpio10"),
-+	PINCTRL_PIN(11, "gpio11"),
-+	PINCTRL_PIN(12, "gpio12"),
-+	PINCTRL_PIN(13, "gpio13"),
-+	PINCTRL_PIN(14, "gpio14"),
-+	PINCTRL_PIN(15, "gpio15"),
-+	PINCTRL_PIN(16, "gpio16"),
-+	PINCTRL_PIN(17, "gpio17"),
-+	PINCTRL_PIN(18, "gpio18"),
-+	PINCTRL_PIN(19, "gpio19"),
-+	PINCTRL_PIN(20, "gpio20"),
-+	PINCTRL_PIN(21, "gpio21"),
-+	PINCTRL_PIN(22, "gpio22"),
-+	PINCTRL_PIN(23, "gpio23"),
-+	PINCTRL_PIN(24, "gpio24"),
-+	PINCTRL_PIN(25, "gpio25"),
-+	PINCTRL_PIN(26, "gpio26"),
-+	PINCTRL_PIN(27, "gpio27"),
-+	PINCTRL_PIN(28, "gpio28"),
-+	PINCTRL_PIN(29, "gpio29"),
-+	PINCTRL_PIN(30, "gpio30"),
-+	PINCTRL_PIN(31, "gpio31"),
-+};
-+
-+static const char * const comp_rx_groups[] = { "gpio22", "gpio24" };
-+static const char * const dmic12_groups[] = { "gpio26", "gpio28" };
-+static const char * const dmic34_groups[] = { "gpio27", "gpio29" };
-+static const char * const mclk0_groups[] = { "gpio18" };
-+static const char * const pdm_2_gpios_groups[] = { "gpio20" };
-+static const char * const pdm_clk_groups[] = { "gpio18" };
-+static const char * const pdm_rx_groups[] = { "gpio21", "gpio23", "gpio25" };
-+static const char * const pdm_sync_groups[] = { "gpio19" };
-+
-+const struct lpi_pingroup sdm660_lpi_pinctrl_groups[] = {
-+	LPI_PINGROUP(0, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(1, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(2, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(3, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(4, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(5, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(6, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(7, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(8, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(9, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(10, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(11, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(12, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(13, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(14, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(15, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(16, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(17, LPI_NO_SLEW, _, _, _, _),
-+
-+	/* The function names of the PDM GPIOs are derived from SDM670 */
-+	LPI_PINGROUP(18, LPI_NO_SLEW, pdm_clk, mclk0, _, _),
-+	LPI_PINGROUP(19, LPI_NO_SLEW, pdm_sync, _, _, _),
-+	LPI_PINGROUP(20, LPI_NO_SLEW, pdm_2_gpios, _, _, _),
-+	LPI_PINGROUP(21, LPI_NO_SLEW, pdm_rx, _, _, _),
-+	LPI_PINGROUP(22, LPI_NO_SLEW, comp_rx, _, _, _),
-+	LPI_PINGROUP(23, LPI_NO_SLEW, pdm_rx, _, _, _),
-+	LPI_PINGROUP(24, LPI_NO_SLEW, comp_rx, _, _, _),
-+	LPI_PINGROUP(25, LPI_NO_SLEW, pdm_rx, _, _, _),
-+	LPI_PINGROUP(26, LPI_NO_SLEW, dmic12, _, _, _),
-+	LPI_PINGROUP(27, LPI_NO_SLEW, dmic34, _, _, _),
-+	LPI_PINGROUP(28, LPI_NO_SLEW, dmic12, _, _, _),
-+	LPI_PINGROUP(29, LPI_NO_SLEW, dmic34, _, _, _),
-+
-+	LPI_PINGROUP(30, LPI_NO_SLEW, _, _, _, _),
-+	LPI_PINGROUP(31, LPI_NO_SLEW, _, _, _, _),
-+};
-+
-+const struct lpi_function sdm660_lpi_pinctrl_functions[] = {
-+	LPI_FUNCTION(comp_rx),
-+	LPI_FUNCTION(dmic12),
-+	LPI_FUNCTION(dmic34),
-+	LPI_FUNCTION(mclk0),
-+	LPI_FUNCTION(pdm_2_gpios),
-+	LPI_FUNCTION(pdm_clk),
-+	LPI_FUNCTION(pdm_rx),
-+	LPI_FUNCTION(pdm_sync),
-+};
-+
-+static u32 lpi_pinctrl_pin_offset_sdm660(int pin_id)
-+{
-+	return sdm660_lpi_offset[pin_id];
-+}
-+
-+static const struct lpi_pinctrl_variant_data sdm660_lpi_pinctrl_data = {
-+	.pins = sdm660_lpi_pinctrl_pins,
-+	.npins = ARRAY_SIZE(sdm660_lpi_pinctrl_pins),
-+	.groups = sdm660_lpi_pinctrl_groups,
-+	.ngroups = ARRAY_SIZE(sdm660_lpi_pinctrl_groups),
-+	.functions = sdm660_lpi_pinctrl_functions,
-+	.nfunctions = ARRAY_SIZE(sdm660_lpi_pinctrl_functions),
-+	.flags = LPI_FLAG_SLEW_RATE_SAME_REG,
-+	.pin_offset = lpi_pinctrl_pin_offset_sdm660,
-+};
-+
-+static const struct of_device_id sdm660_lpi_pinctrl_of_match[] = {
-+	{
-+		.compatible = "qcom,sdm660-lpass-lpi-pinctrl",
-+		.data = &sdm660_lpi_pinctrl_data,
-+	},
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, sdm660_lpi_pinctrl_of_match);
-+
-+static struct platform_driver sdm660_lpi_pinctrl_driver = {
-+	.driver = {
-+		.name = "qcom-sdm660-lpass-lpi-pinctrl",
-+		.of_match_table = sdm660_lpi_pinctrl_of_match,
-+	},
-+	.probe = lpi_pinctrl_probe,
-+	.remove = lpi_pinctrl_remove,
-+};
-+module_platform_driver(sdm660_lpi_pinctrl_driver);
-+
-+MODULE_AUTHOR("Richard Acayan <mailingradian@gmail.com>");
-+MODULE_DESCRIPTION("QTI SDM660 LPI GPIO pin control driver");
-+MODULE_LICENSE("GPL");
-
--- 
-2.51.0
-
-
+The argument is 32-bit. :) Which triggers the question: why store these
+as u32 if a u16 is the right size?
 
