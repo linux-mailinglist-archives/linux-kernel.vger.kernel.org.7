@@ -1,244 +1,182 @@
-Return-Path: <linux-kernel+bounces-785326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DE90B34917
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:42:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18BDEB34931
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:45:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D966F161093
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:42:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD3B62A436A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:45:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C867B305E33;
-	Mon, 25 Aug 2025 17:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BF0D30AAB0;
+	Mon, 25 Aug 2025 17:44:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="oXqurqiy"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aaVFuumN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDD52FF648
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 17:42:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C54B301014;
+	Mon, 25 Aug 2025 17:44:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756143734; cv=none; b=ilaCGnXnHI5OGM734zOQh3Uun4cC5mnz74C2+lJ87RStBQsvcIC5/ICFCY3tNO0jPUCFKYAHSjdZkpC5Z4dMuaniEdx/ONNXzswgVfzkYIgtEjENQPdTdNGtZ+OHH2d8fTztVIiy53oI0F7FMn7C5hLhDM/pUkmQDqzfJgKbnJs=
+	t=1756143890; cv=none; b=Iz65409iAQwGCwS8RWnqDZZnfC6WTOHAyc/hkiDPqWFxC8SfOQ665iuGr/iIbfhSYPefODRn4c0Mwryv954jSZsg+8c0TIEo/PzlQ7ZUGVUcO8t2BiVnXFZaFvfX823d1gSddM8B5x91I6V1/NLI9+fu0vXbLv12TNihkyy1ix8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756143734; c=relaxed/simple;
-	bh=O0qGHqa21DZ+mvkJwshOOZ3pF1P9e1KUk2sx0IIba4c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IB7SJbBfVu4XyKyi7xBhogaGINeiEf+MQ9oprNkczZQ8PVr4NO9s945Cv34/whvaYaa2pkA7Id9pYVMXWIB9bjInLpJGOOH2z4al+ahIHxqxcNzU7n4mIvuucznHdOdfpSjvsBn+sBtkT1TdDuFoL5h6Su/DT1KSkL0mHs/Uyk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=oXqurqiy; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57PH4u9T020583
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 17:42:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=NwZKoiB17+RzcYdQtzPEWYcl
-	qT54d7+6tCe4wXrETLw=; b=oXqurqiy/ry0fDEjB8N+cp+O9iBBGReyv7E6gTTm
-	r3ADwD4ZHC2PeapULGvo7fbVPGpkuJn5ZAj3lTZ9ctFFB103EybPFpEvFsFs6TeZ
-	qHcCS7ak0rqJouVN+pZZFi7AFZZy/3xiGJh7qaoKcwLvAtsKvNCUQNRq7O10FkUE
-	TcTmNrsipGCt6HtYNdJcv+ul8gvr3uVNjoq4dy5bPcsblPpcSY4mi/7Lb+BNewEo
-	ZvVWKJKOqMlxD4RG9a6ET2dn9h/1Ta+GBJq7bR4Zd0KPlwwUg0Ny9sxRzppkWzqQ
-	vTfu8TSUc2KkaBPw3bY7WSQuSPLGSNTpQqS+nNO4B/NnIQ==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5y5duqj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 17:42:11 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b10993f679so127479611cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 10:42:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756143730; x=1756748530;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NwZKoiB17+RzcYdQtzPEWYclqT54d7+6tCe4wXrETLw=;
-        b=ipyExu95WGrjWpwvGSHHkQTWJnhJUAbAywdY631ONKlPEcGcmzPjv0Zhz2tuIc5Q3S
-         nMeT0kOjY0yxXQE0eL4peXnIUm2dl0VrW88Bj8nRsXdmhKDWLuP3QEC4bJEfq+fn98OH
-         /fjg6rdoR3MkUzZyVBMs6m6nWV9HsIPvzKRAWTdvT3QBLSZA61DLyhg4nHyFgvVor6aF
-         tORxQL5fgy7xzIN5p+qmDjaOSTEPN45so/d44HHkhFoXMPeVNweBssQnPhEHUgHCszq6
-         OSX2J7qKqIp+HjCTn1iNlheNpDqEq8h42qaycgaUVvfpdTLLj7aAVu3d0E36uAdcsZE1
-         KOeg==
-X-Forwarded-Encrypted: i=1; AJvYcCWWrDKAUzaEULDNo+xItxYCCe9sWvfJOxTQibkfmf/Yd7wxkOLZK/rVggQ1dRLGS2TUGaeCzpifAHOPe0M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9MThqLMgnFzIGYXdBqCYIRkM16OXTFQROc28l5sbcFRa5qxUB
-	I1yTKITRixj8w7qv/heoMQzGQRXlaPz481O5BdiNAX1KQWBH2EKoo85MiwlTztqOqu0F07Vsy7q
-	lLHaD2FXrBrLfQhI0PDRhbod0PB76MqAR4N0lTichoWNYY5Z2iR5QPsjew97PQwx8MmI=
-X-Gm-Gg: ASbGncsgoibmLpZZ0W2DCKck8VvGbMJVlI1NBNTjDIFHMjNNsF+//AWoQNOhEyGqBl/
-	eDFsnBi/cXW90i3t8C2ktgTcaBAGi82L5qudYic/ghf6cB7DFEhWq0EME7fgK8lpobzRPqoX49p
-	89TNYsE15pIbisH06fqhyKBXUGlqtsspNbvpLUld3dWZqQlOyzzCQ53tXiUpLXa5X6z27RMHZ1n
-	ZmsUBfQiGEi0Ew6sbkJu1jn6d7hupN3u39+q+f42xje0Mpzx+w2VeK0XXnPNwEo4oBRl7CEEFnB
-	6gXxhjxKpXUF5M62t35zM/7MjJvvL/V4+iXed19gMQeLJuXCqAtDXZRR6MebUcPWVtzIzLEUgYU
-	yseVQ5Yp5YGD/2Ubi+QuF2vtWOqtJ2etczCTOVGTy7Mpq9jQCzf/R
-X-Received: by 2002:a05:622a:211:b0:4b2:a07c:d728 with SMTP id d75a77b69052e-4b2aaa2b1d3mr173862421cf.27.1756143729904;
-        Mon, 25 Aug 2025 10:42:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFeCzCtDd568aAnN/B2JcD7EdU/1ndGpfZU0hZl1xPRFEteCvWyj6thJySnvMEtk6k9eUZZiQ==
-X-Received: by 2002:a05:622a:211:b0:4b2:a07c:d728 with SMTP id d75a77b69052e-4b2aaa2b1d3mr173861471cf.27.1756143728641;
-        Mon, 25 Aug 2025 10:42:08 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f35c8bbedsm1749862e87.85.2025.08.25.10.42.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 10:42:07 -0700 (PDT)
-Date: Mon, 25 Aug 2025 20:42:06 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>
-Subject: Re: [PATCH v3 12/38] drm/msm/dp: introduce max_streams for DP
- controller MST support
-Message-ID: <ltlmp5ytl2f7no7aqq7sl54pwd4f53fuema23xnuwu5uthhbg3@7wamwvv22nle>
-References: <20250825-msm-dp-mst-v3-0-01faacfcdedd@oss.qualcomm.com>
- <20250825-msm-dp-mst-v3-12-01faacfcdedd@oss.qualcomm.com>
+	s=arc-20240116; t=1756143890; c=relaxed/simple;
+	bh=ScdUxidEQcv0lLc6SYd7NOOa4CGgpMbRHWOtssqifAA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=H6q6VAidaYB6lulqoK6DGe47Lq68wQX1I9SxFh+R7LnP8P437uLI51AVbgn3SgcIMwskuC+mDQ/FHcQscxiLEdOEx5D9ukmWTr+dRbcQOwWwWd0krA9z8KQVO7YWD+F5WeL3IRbULW+MmF8gJBcUUo7A9jl4KORqrSu6xH2pwuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aaVFuumN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 16D90C4CEED;
+	Mon, 25 Aug 2025 17:44:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756143890;
+	bh=ScdUxidEQcv0lLc6SYd7NOOa4CGgpMbRHWOtssqifAA=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=aaVFuumNcS8ldf8vllqWbA17oLQDhY0ipMOSpVs7yPZCRxiMvvDw6e6krzhqP8DzG
+	 nJaa787//XLeZvA6iZJ9hJ0fNbk1OEdp7qYj6231w5MSvqfx4X16bjoBIU4ybXBVpO
+	 9L0850LPcsWcJvDOiffrINoWfzWNrahO42CKPTq3ml59Ip+rgb9GnYQMxZ7zot3Wex
+	 sJaXubIsFS0fc+SmYrC/d0j1/WMB9xu1jVTSWXA1t4wuRABU2KCCJEZu7uXlYMiNcy
+	 RejhlNj/T1nwiRJR0+RmBMwSbJ6o96l7fKe/jFoSCAQ1H3eoPCAcCsdkGDNccvvWk3
+	 0ZNob9Grxfniw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0380BCA0EED;
+	Mon, 25 Aug 2025 17:44:50 +0000 (UTC)
+From: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.oss.qualcomm.com@kernel.org>
+Subject: [PATCH v2 0/8] PCI/ASPM: Fix pci_enable_link_state*() APIs
+ behavior
+Date: Mon, 25 Aug 2025 23:14:35 +0530
+Message-Id: <20250825-ath-aspm-fix-v2-0-61b2f2db7d89@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250825-msm-dp-mst-v3-12-01faacfcdedd@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMyBTYWx0ZWRfX5rKqcdYHxSvU
- JGkNZ943vQoxJtbmZ1bo6k3NVt35MTlBKHrgJ2XzrBrPhIJxdkLv0VWTI0ZPlt+FI8qmPW+lBKn
- hX2rxoLwDDr3n22eGoRKy4+eUJVcKv6zoacuWb5CsITSwhINc18+037IuOOeLdLsnp9vRhr3AZ7
- c+AjYW1SLdns7IHCjpHB8hsZA4JnrSfw/2iO9XMttsJrFqBK1/9YKspQitQ16BfyCN7SBzzp+v3
- vdc9RNTtJ9wBAxY7OXPO095i5O7ufOpvG89GyJ+Y3b4jY2mbddziQvYik/SSG2/+i4CFuNLYbvV
- vCCyN0doMjD9P85eM1m9rbNSYZbqdlXXxT8DzcnkzZjHQH9fh35QD6jaJblZ7Luc3urDL8HOliM
- S2DrvMWW
-X-Authority-Analysis: v=2.4 cv=Lco86ifi c=1 sm=1 tr=0 ts=68aca073 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=KSwXNKDnAPCPISpuv5EA:9
- a=CjuIK1q_8ugA:10 a=dawVfQjAaf238kedN5IG:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: LyCpaA1l5sZ8UHYvJdpMDbXFyn26POGd
-X-Proofpoint-ORIG-GUID: LyCpaA1l5sZ8UHYvJdpMDbXFyn26POGd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-25_08,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 adultscore=0 clxscore=1015 malwarescore=0 spamscore=0
- suspectscore=0 phishscore=0 priorityscore=1501 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230033
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAAOhrGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHQUlJIzE
+ vPSU3UzU4B8JSMDI1MDCyNT3cSSDN3E4oJc3bTMCl1TC4s0Q2PTZMu0JEsloJaColSgMNi46Nj
+ aWgCyZBHJXgAAAA==
+X-Change-ID: 20250825-ath-aspm-fix-588f135c9fb9
+To: Bjorn Helgaas <bhelgaas@google.com>, 
+ Manivannan Sadhasivam <mani@kernel.org>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Nirmal Patel <nirmal.patel@linux.intel.com>, 
+ Jonathan Derrick <jonathan.derrick@linux.dev>, 
+ Jeff Johnson <jjohnson@kernel.org>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-wireless@vger.kernel.org, 
+ ath12k@lists.infradead.org, ath11k@lists.infradead.org, 
+ ath10k@lists.infradead.org, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
+ Qiang Yu <qiang.yu@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3844;
+ i=manivannan.sadhasivam@oss.qualcomm.com; h=from:subject:message-id;
+ bh=ScdUxidEQcv0lLc6SYd7NOOa4CGgpMbRHWOtssqifAA=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBorKEOm8o854j5OzwtUCAtHgkO4SxNcFD6l/mTW
+ yDz9WsMo+mJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCaKyhDgAKCRBVnxHm/pHO
+ 9cICCACoyDcpWLciZ9mGj6v2OKCXgoebAq/c+dWKacvurO+u8zkaubUrk5WvEDHZGBa/tgGuKb3
+ eMt1nbQflaBPVZoMw7ozg/NEmw0k9MMPUYBGhQEllopS6NL2aUAXq74QB086EkRHiHlXmneANPV
+ GyrAXimgn2Vu+0aLWPqfMIVgRvELuqudksg4B9epcrkSwctK/IBBi+cCDCD2txW6qglb/My28ty
+ v3avopLz4kbih4mKNBYeGyM0ZefuNeQJYgN+6Tpfw+aCep01fzpTcd0VlxseIxks0ZOk7Cxjkmx
+ aDV7BjvfbnjMxah3VTmJk6tRKwyTIfddLgWrCA8XYUh6KRF8
+X-Developer-Key: i=manivannan.sadhasivam@oss.qualcomm.com; a=openpgp;
+ fpr=C668AEC3C3188E4C611465E7488550E901166008
+X-Endpoint-Received: by B4 Relay for
+ manivannan.sadhasivam@oss.qualcomm.com/default with auth_id=461
+X-Original-From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+Reply-To: manivannan.sadhasivam@oss.qualcomm.com
 
-On Mon, Aug 25, 2025 at 10:15:58PM +0800, Yongxing Mou wrote:
-> From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> 
-> Introduce the `mst_streams` field in each DP controller descriptor to
-> specify the number of supported MST streams. Most platforms support 2 or
-> 4 MST streams, while platforms without MST support default to a single
-> stream (`DEFAULT_STREAM_COUNT = 1`).
-> 
-> This change also accounts for platforms with asymmetric stream support,
-> e.g., DP0 supporting 4 streams and DP1 supporting 2.
+Hi,
 
-How?
+This series fixes the behavior of the pci_enable_link_state() and
+pci_enable_link_state_locked() APIs to be in symmetry with
+pci_disable_link_state*() couterparts.
 
-> 
-> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
-> ---
->  drivers/gpu/drm/msm/dp/dp_display.c | 21 +++++++++++++++++++++
->  drivers/gpu/drm/msm/dp/dp_display.h |  1 +
->  2 files changed, 22 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
-> index 78d932bceb581ee54116926506b1025bd159108f..a8477a0a180137f15cbb1401c3964636aa32626c 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_display.c
-> +++ b/drivers/gpu/drm/msm/dp/dp_display.c
-> @@ -33,6 +33,7 @@ module_param(psr_enabled, bool, 0);
->  MODULE_PARM_DESC(psr_enabled, "enable PSR for eDP and DP displays");
->  
->  #define HPD_STRING_SIZE 30
-> +#define DEFAULT_STREAM_COUNT 1
->  
->  enum {
->  	ISR_DISCONNECTED,
-> @@ -52,6 +53,7 @@ struct msm_dp_display_private {
->  	bool core_initialized;
->  	bool phy_initialized;
->  	bool audio_supported;
-> +	bool mst_supported;
+First 5 patches fixes and cleans up the ASPM code and the last 3 patches
+modifies the atheros drivers to use the pci{enable/disable}_link_state() APIs
+instead of modifying the LNKCTL register directly for enabling ASPM.
 
-Why do we need the separate boot field here? Isn't it enough to check the max_stream?
+NOTE: The current callers of the pci_enable_link_state_locked() APIs (vmd and
+pcie-qcom) drivers doesn't look like depending on the old behavior of the API. I
+can atleast assure that for pcie-qcom. For VMD, it would be great if VMD folks
+CCed could provide their review tags for patch 2/6.
 
->  
->  	struct drm_device *drm_dev;
->  
-> @@ -84,12 +86,15 @@ struct msm_dp_display_private {
->  
->  	void __iomem *p0_base;
->  	size_t p0_len;
-> +
-> +	int max_stream;
->  };
->  
->  struct msm_dp_desc {
->  	phys_addr_t io_start;
->  	unsigned int id;
->  	bool wide_bus_supported;
-> +	int mst_streams;
->  };
->  
->  static const struct msm_dp_desc msm_dp_desc_sa8775p[] = {
-> @@ -1213,6 +1218,15 @@ static int msm_dp_display_get_io(struct msm_dp_display_private *display)
->  	return 0;
->  }
->  
-> +int msm_dp_get_mst_max_stream(struct msm_dp *msm_dp_display)
-> +{
-> +	struct msm_dp_display_private *dp;
-> +
-> +	dp = container_of(msm_dp_display, struct msm_dp_display_private, msm_dp_display);
-> +
-> +	return dp->max_stream;
-> +}
-> +
->  static int msm_dp_display_probe(struct platform_device *pdev)
->  {
->  	int rc = 0;
-> @@ -1239,6 +1253,13 @@ static int msm_dp_display_probe(struct platform_device *pdev)
->  	dp->msm_dp_display.is_edp =
->  		(dp->msm_dp_display.connector_type == DRM_MODE_CONNECTOR_eDP);
->  	dp->hpd_isr_status = 0;
-> +	dp->max_stream = DEFAULT_STREAM_COUNT;
+Also in this version, I've included a patch from Ilpo (patch 1) that disables
+ASPM forcefully even if BIOS/ACPI didn't grant us permission. More details are
+in the patch description. I think this patch is needed anyway since the device
+drivers are forcefully disabling it even if PCI core was skipping ASPM disable
+previously.
 
-Just use 1 it's not that magic to define it.
+Testing
+=======
 
-> +	dp->mst_supported = FALSE;
-> +
-> +	if (desc->mst_streams > DEFAULT_STREAM_COUNT) {
-> +		dp->max_stream = desc->mst_streams;
-> +		dp->mst_supported = TRUE;
-> +	}
->  
->  	rc = msm_dp_display_get_io(dp);
->  	if (rc)
-> diff --git a/drivers/gpu/drm/msm/dp/dp_display.h b/drivers/gpu/drm/msm/dp/dp_display.h
-> index 37c6e87db90ce951274cdae61f26d76dc9ef3840..7727cf325a89b4892d2370a5616c4fa76fc88485 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_display.h
-> +++ b/drivers/gpu/drm/msm/dp/dp_display.h
-> @@ -29,6 +29,7 @@ struct msm_dp {
->  	bool psr_supported;
->  };
->  
-> +int msm_dp_get_mst_max_stream(struct msm_dp *msm_dp_display);
->  int msm_dp_display_get_modes(struct msm_dp *msm_dp_display);
->  bool msm_dp_display_check_video_test(struct msm_dp *msm_dp_display);
->  int msm_dp_display_get_test_bpp(struct msm_dp *msm_dp_display);
-> 
-> -- 
-> 2.34.1
-> 
+I've tested this series on Lenovo Thinkpad T14s with WCN7850 chipset (so that's
+just ath12k driver). Rest of the drivers are compile tested only.
 
+Merging Strategy
+================
+
+Even though there is no build dependency between PCI core and atheros patches,
+there is a functional dependency. So I'd recommend creating an immutable branch
+with PCI patches and merging that branch into both PCI and linux-wireless trees
+and finally merging the atheros patches into linux-wireless tree.
+
+If immutable branch seems like a hassle, then PCI core patches could get merged
+for 6.18 and atheros patches can wait for 6.19.
+
+- Mani
+
+Changes in v2:
+
+* Reworked the pcie_aspm_enabled() API to return the enabled states instead of
+  bool and used it to save/restore the ASPM states in ath drivers.
+* Added a patch from Ilpo to disable ASPM even if BIOS didn't grant permission
+* Added the CONFIG_PCIEASPM dependency to ath{10/11/12}k drivers as they now
+  depend on the ASPM APIs for stable operation.
+* Rebased on top of v6.17-rc1
+
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+---
+Ilpo Järvinen (1):
+      PCI/ASPM: Always disable ASPM when driver requests it
+
+Manivannan Sadhasivam (7):
+      PCI/ASPM: Fix the behavior of pci_enable_link_state*() APIs
+      PCI/ASPM: Transition the device to D0 (if required) inside pci_enable_link_state_locked() API
+      PCI/ASPM: Improve the kernel-doc for pci_disable_link_state*() APIs
+      PCI/ASPM: Return enabled ASPM states from pcie_aspm_enabled() API
+      wifi: ath12k: Use pci_{enable/disable}_link_state() APIs to enable/disable ASPM states
+      wifi: ath11k: Use pci_{enable/disable}_link_state() APIs to enable/disable ASPM states
+      wifi: ath10k: Use pci_{enable/disable}_link_state() APIs to enable/disable ASPM states
+
+ drivers/net/wireless/ath/ath10k/Kconfig |   2 +-
+ drivers/net/wireless/ath/ath10k/pci.c   |  11 ++--
+ drivers/net/wireless/ath/ath10k/pci.h   |   5 +-
+ drivers/net/wireless/ath/ath11k/Kconfig |   2 +-
+ drivers/net/wireless/ath/ath11k/pci.c   |  19 +-----
+ drivers/net/wireless/ath/ath11k/pci.h   |   3 +-
+ drivers/net/wireless/ath/ath12k/Kconfig |   2 +-
+ drivers/net/wireless/ath/ath12k/pci.c   |  19 +-----
+ drivers/net/wireless/ath/ath12k/pci.h   |   4 +-
+ drivers/pci/controller/dwc/pcie-qcom.c  |   5 --
+ drivers/pci/controller/vmd.c            |   5 --
+ drivers/pci/pcie/aspm.c                 | 103 ++++++++++++++++++++++----------
+ include/linux/pci.h                     |   4 +-
+ 13 files changed, 92 insertions(+), 92 deletions(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250825-ath-aspm-fix-588f135c9fb9
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+
+
 
