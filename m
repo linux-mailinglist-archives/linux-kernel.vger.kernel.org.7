@@ -1,439 +1,181 @@
-Return-Path: <linux-kernel+bounces-785371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C38C6B349BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:05:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53F40B349C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:08:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE31517F4FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:05:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C55091B251EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:08:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE073093C1;
-	Mon, 25 Aug 2025 18:05:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852F730BF6D;
+	Mon, 25 Aug 2025 18:07:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LMgPx6M/"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZaNFXEl4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D5A35965
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 18:05:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE962E1EF8;
+	Mon, 25 Aug 2025 18:07:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756145141; cv=none; b=UodguTBqVhX2v/ftr5vcGSLJL3WWH6joNwBE/FwSePyrBJFrVBMHkcdQT/3jcIsSGskRjrNV9GeCqvVPEJ1C41V1GpfdIDbceTtFpEL5Elaf49xokVl1zouwQsXX/joqR9ui8gK0ObR3QbtM25Empwlqs64Z+KPyFXEZJfti48c=
+	t=1756145267; cv=none; b=pvreKTTA4jqOJiE/G7JTXKCa8UBfON0BXDBA0btynZ1HRbsp2bf1uMFmYxDwPkyLnmQdtccbrtEdtAGIZ3IMqdAxn9Da+DzIMN4101MR0pPzHMZl54/JKYch8elK0P9UhHy5q/IWhICDTBD0pdx4mKrTsW1dFtRkmiPPDITlROU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756145141; c=relaxed/simple;
-	bh=cvUm6zxQrVlFZAWEO8Grh3hyegMPEmfg+le2PJ3EYtg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PVw/3k46NdjKVpfBU/E7HRB9c9FRtZPvFof7yF1Tq1ksjUYS77qsVUTLoxODbS9hIxS5pnRY7HCJkl4UbjPqlDCKP3ieF/5DlTKMzB4IPvRu8t3WLBdQt1oZNA+IFIGWq2XMrTw3TZ5UcUTFzVVX7oZr/snpcZUQGNioS5E1Lyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LMgPx6M/; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57PFP2dW021128
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 18:05:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6A280ECCuxHYYu+C8Aygeam4jG3GMOZao8i9RHRtO9E=; b=LMgPx6M/2qQjGSQI
-	jbshBnr+jFTyfx2qPnDvuaL7Mg+i5LVZV97IMzRZlhRKMwULeZgqrnOJTvKZDYxQ
-	62Qu9kVNC/FXdCgY17SxXTF/oMFmNVmz5aXJzZZWqZdWct8OMq/g85a2/NYqJY3h
-	8WMi3CjAYsa32PqmRv0JQy6Z7STM3XvWrwJd1YyGPHOGjxKegml7bKpc51B2rDqq
-	LCKCmu8qjn4TyEVNn/nqHYMzANHPILOaLfJwhEae1PZc+2/xO5EKlTJTbO2GFA1O
-	aAeGgSJje5UYd24b+7FWDupCoQ29WRtBBpVRVE2WuGkoQmkjeCSFnYORA/cmVgqd
-	Wmw0Mw==
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5um64gy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 18:05:39 +0000 (GMT)
-Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-771e43775c8so820591b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 11:05:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756145138; x=1756749938;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6A280ECCuxHYYu+C8Aygeam4jG3GMOZao8i9RHRtO9E=;
-        b=Jeyd/ESUS9YYvwMl6Di8M4GUPqikA2gRJbDfWHNHeXww7o4AzJ1EPqZN9PL6ZPFRZw
-         Xx2Fy6y3mfU0BbSzOQUcrdLomk8eEWa8cohcJ8oNyFV/h6KU3qDIZ4kOksEeGsiFV4b8
-         rLbG5mjTt/XOEVromGy+uXiL7LM+H5DyyQWmY3BHOxCImZOMzu8M4Xzbpk9xBn4RYHS/
-         9u2jM51ilaKqnoztzedo649OC90vnP5p2xOo0dsl1hQLUhaAPZbroMl/cKxkzJLRirdj
-         f8sOAYAGqH8KKlSLHAV8k8QQyGdPTVY6qEoCUmbYG2JBLN/1PqKYGAT9Ec6ds6iua7Ix
-         UCyw==
-X-Forwarded-Encrypted: i=1; AJvYcCXO0cWLePPefiD3kerpdjwml1CH4AVOzvkYEQif/t+a0rVox7YY71qseVBkU5Z1Udi2d9d1wbqKquE+VAc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXbf5M0zHBQDQA8wjtAAUJlDYnsAcbTg/2aB5WSG1z6tnthrGg
-	NvgckCscg4dCQNW6e1V54JE9ZfTGbfioiduv4yXV8NBaiXwVO2BYHBIVJyywGXym5uQ4lD3Wz09
-	JEgcfGUXHQEyip4V/sutF0rJT/909F1te289wAzq5moKJzm9Dbi7reuXsbtFkFZeq4Ow=
-X-Gm-Gg: ASbGncvEDK0hBJkYcsmsl9eYQbgABuqFBWhG/N5KggnFiWwMN+KHUsEiNcPmmbDNbGg
-	nmMvETStvp0XDXYyconjXMBguSlv+If2kRadPCa19OYYMwCN3pwkeNrzi/QAQgT5LHqL3+bcwEb
-	qNBtKQLljWfBlemlJ2gSY2On1tFp8CBcGGLSZJOs5Fh0Sh+lKTU8vNy0n0CIieVkPY099uHaBS9
-	wHEJFOzlIW4QjHHmw5F8Hy3D9maQ2gjA3OXVYWyJTf+usskh0DlTl5V6mktAIxQBQh3R/qV8kHN
-	Eaumjz99kxYxnm+4vl1hp8bZ71yWC6CTPRyrKf72vHOaKtLSPctZOKAgNKYXNqrCDUwOYWvimi4
-	UfaFGdYpZPA==
-X-Received: by 2002:a05:6a00:2308:b0:771:e341:ce68 with SMTP id d2e1a72fcca58-771f58c7a6emr524814b3a.5.1756145138104;
-        Mon, 25 Aug 2025 11:05:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEiC+VUxQlXfaub6eJUtfnQK6RBJAo0sZiKzpd3PEppU3iLl0+ZO4/IxMGo0jI3sAsAcOM3sA==
-X-Received: by 2002:a05:6a00:2308:b0:771:e341:ce68 with SMTP id d2e1a72fcca58-771f58c7a6emr524754b3a.5.1756145137517;
-        Mon, 25 Aug 2025 11:05:37 -0700 (PDT)
-Received: from [10.73.115.24] (pat_11.qualcomm.com. [192.35.156.11])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-771e10d8446sm3676694b3a.78.2025.08.25.11.05.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Aug 2025 11:05:37 -0700 (PDT)
-Message-ID: <a158c4f5-e9c3-48c2-b440-fa9dc281b276@oss.qualcomm.com>
-Date: Mon, 25 Aug 2025 11:05:35 -0700
+	s=arc-20240116; t=1756145267; c=relaxed/simple;
+	bh=0FjaHJEeu8OC+uKc6tIBQ9qXWiuDw10dTkSnPT1smBM=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=eAYFfGqxejbQahEC9lcnCxdpoDIlr7jWzoGalKoueKlJljM7n1Y5dXeQuGUETdPENPVfwHHXULrc1/74Au8ZlgSSQ/wwHyH8IMboED8y/5MaMU9aFqdPoMARMnpG5PRrXqxUG6szp5cwNyTvmWjjap4svxskulSZCHbB+G89010=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZaNFXEl4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B162C4CEED;
+	Mon, 25 Aug 2025 18:07:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756145267;
+	bh=0FjaHJEeu8OC+uKc6tIBQ9qXWiuDw10dTkSnPT1smBM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ZaNFXEl4XBvKbfhivQ87H3Cy74zCosWse1EFKgvLlz5l99E9P1xwmDEM2OEwTeZY/
+	 G9mfdcykGQP8qBZndgN1cXJD5TKF2iLqSWo+UEEtWpJ0p9k5OWud7ZbRSdPDdUR+xS
+	 EQraoO2RrCQ4q9nsocticSsL0WF4lZkmHkjY80QgiHQugY5+v1NOeh2EFOUthJ7doK
+	 N/4/fm3Zp4YgWcgkC6LVEC6PAMz1P3NzHtQkTbj+jZrooS1sQ18AgY0z4DeNrkAENr
+	 5uxet4tzr4wjNJhiuMlZ15+LVrrgnXmxQ9jXc86FjZiYT+JLrrKhveBI5L3t+FbO7O
+	 iex0WflY1GfKQ==
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@kernel.org>)
+	id 1uqbbt-00000002n2e-2DVB;
+	Mon, 25 Aug 2025 14:08:01 -0400
+Message-ID: <20250825180638.877627656@kernel.org>
+User-Agent: quilt/0.68
+Date: Mon, 25 Aug 2025 14:06:38 -0400
+From: Steven Rostedt <rostedt@kernel.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org,
+ bpf@vger.kernel.org,
+ x86@kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@kernel.org>,
+ Jiri Olsa <jolsa@kernel.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Andrii Nakryiko <andrii@kernel.org>,
+ Indu Bhagat <indu.bhagat@oracle.com>,
+ "Jose E. Marchesi" <jemarch@gnu.org>,
+ Beau Belgrave <beaub@linux.microsoft.com>,
+ Jens Remus <jremus@linux.ibm.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Jens Axboe <axboe@kernel.dk>,
+ Florian Weimer <fweimer@redhat.com>,
+ Sam James <sam@gentoo.org>
+Subject: [PATCH v15 0/8] perf: Support the deferred unwinding infrastructure
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 4/5] PCI: dwc: Add ECAM support with iATU configuration
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-        cros-qcom-dts-watchers@chromium.org,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        quic_vbadigan@quicinc.com, quic_mrana@quicinc.com,
-        quic_vpernami@quicinc.com, mmareddy@quicinc.com
-References: <20250822-ecam_v4-v7-0-098fb4ca77c1@oss.qualcomm.com>
- <20250822-ecam_v4-v7-4-098fb4ca77c1@oss.qualcomm.com>
-Content-Language: en-US
-From: Mayank Rana <mayank.rana@oss.qualcomm.com>
-In-Reply-To: <20250822-ecam_v4-v7-4-098fb4ca77c1@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=VtIjA/2n c=1 sm=1 tr=0 ts=68aca5f3 cx=c_pps
- a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=ZdW6uxA9NKXbfdqeeS2OGA==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=8YObFgqK2cPrU_DjqCAA:9
- a=QEXdDO2ut3YA:10 a=IoOABgeZipijB_acs4fv:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMiBTYWx0ZWRfX2sAK+oD6QIvW
- +lsZ5Q8nECs1f8gk5JyJPDasfy/q60gZwjqXFtQ5pCHHVTQBMXVzyALJaTGrvNjxcwOT4+ZCQ8i
- 2Oq/STXvs0yasmodTwDeFJEFMOHxLCbf0Pv/sqwhm9rp85wTh9zurlDX4K0NNxI/7toAKdEsSKj
- mMIng39x7p0XgFqLEuoF76ySUm7VBeJejqvm4Phc4ZMV18GPC4u5JqjBk9x9cgdfJdnsM62gKCZ
- DaFmQPZNbn1KqB9uOp6xuBzJT9ACe7Igp5TeoPPd5byQCmcJ7D/EFtH9dC790dZUj+OlOwGVhMP
- 2CWbhAvubehSiUUWvwMS/VIdORcjZI+hcqtuydtI7qrxXNfHRGk2NBQe1EaeBUIZ53vf2hsn94O
- FNjCO/G8
-X-Proofpoint-GUID: uIIQdpHzOdOpejZLNBKWzxHdtXSPSSTW
-X-Proofpoint-ORIG-GUID: uIIQdpHzOdOpejZLNBKWzxHdtXSPSSTW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-25_08,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 phishscore=0 priorityscore=1501 impostorscore=0 bulkscore=0
- suspectscore=0 malwarescore=0 adultscore=0 spamscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508230032
 
-Hi Krishna
 
-On 8/22/2025 2:27 AM, Krishna Chaitanya Chundru wrote:
-> The current implementation requires iATU for every configuration
-> space access which increases latency & cpu utilization.
-> 
-> Designware databook 5.20a, section 3.10.10.3 says about CFG Shift Feature,
-> which shifts/maps the BDF (bits [31:16] of the third header DWORD, which
-> would be matched against the Base and Limit addresses) of the incoming
-> CfgRd0/CfgWr0 down to bits[27:12]of the translated address.
-> 
-> Configuring iATU in config shift feature enables ECAM feature to access the
-> config space, which avoids iATU configuration for every config access.
-> 
-> Add "ctrl2" into struct dw_pcie_ob_atu_cfg  to enable config shift feature.
-> 
-> As DBI comes under config space, this avoids remapping of DBI space
-> separately. Instead, it uses the mapped config space address returned from
-> ECAM initialization. Change the order of dw_pcie_get_resources() execution
-> to achieve this.
-> 
-> Enable the ECAM feature if the config space size is equal to size required
-> to represent number of buses in the bus range property.
+This patch is based off of:  https://lore.kernel.org/linux-trace-kernel/20250820180338.701352023@kernel.org
+And requires these patches to be enabled: https://lore.kernel.org/linux-trace-kernel/20250820190546.172023727@kernel.org/
 
-Also add 256 MB alignment requirement for using iATU config shift mode here.
+To run this series, you can checkout this repo that has this series as well as the above:
 
-> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-> ---
->   drivers/pci/controller/dwc/Kconfig                |   1 +
->   drivers/pci/controller/dwc/pcie-designware-host.c | 131 +++++++++++++++++++---
->   drivers/pci/controller/dwc/pcie-designware.c      |   2 +-
->   drivers/pci/controller/dwc/pcie-designware.h      |   5 +
->   4 files changed, 124 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-> index ff6b6d9e18ecfa44273e87931551f9e63fbe3cba..a0e7ad3fb5afec63b0f919732a50147229623186 100644
-> --- a/drivers/pci/controller/dwc/Kconfig
-> +++ b/drivers/pci/controller/dwc/Kconfig
-> @@ -20,6 +20,7 @@ config PCIE_DW_HOST
->   	bool
->   	select PCIE_DW
->   	select IRQ_MSI_LIB
-> +	select PCI_HOST_COMMON
->   
->   config PCIE_DW_EP
->   	bool
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> index 952f8594b501254d2b2de5d5e056e16d2aa8d4b7..abb93265a19fd62d3fecc64f29f37baf67291b40 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> @@ -413,6 +413,81 @@ static void dw_pcie_host_request_msg_tlp_res(struct dw_pcie_rp *pp)
->   	}
->   }
->   
-> +static int dw_pcie_config_ecam_iatu(struct dw_pcie_rp *pp)
-> +{
-> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> +	struct dw_pcie_ob_atu_cfg atu = {0};
-> +	resource_size_t bus_range_max;
-> +	struct resource_entry *bus;
-> +	int ret;
-> +
-> +	bus = resource_list_first_type(&pp->bridge->windows, IORESOURCE_BUS);
-> +
-> +	/*
-> +	 * Root bus under the host bridge doesn't require any iATU configuration
-> +	 * as DBI region will be used to access root bus config space.
-> +	 * Immediate bus under Root Bus, needs type 0 iATU configuration and
-> +	 * remaining buses need type 1 iATU configuration.
-> +	 */
-> +	atu.index = 0;
-> +	atu.type = PCIE_ATU_TYPE_CFG0;
-> +	atu.parent_bus_addr = pp->cfg0_base + SZ_1M;
-> +	/* 1MiB is to cover 1 (bus) * 32 (devices) * 8 (functions) */
-> +	atu.size = SZ_1M;
-> +	atu.ctrl2 = PCIE_ATU_CFG_SHIFT_MODE_ENABLE;
-> +	ret = dw_pcie_prog_outbound_atu(pci, &atu);
-> +	if (ret)
-> +		return ret;
-> +
-> +	bus_range_max = resource_size(bus->res);
-> +
-> +	if (bus_range_max < 2)
-> +		return 0;
-> +
-> +	/* Configure remaining buses in type 1 iATU configuration */
-> +	atu.index = 1;
-> +	atu.type = PCIE_ATU_TYPE_CFG1;
-> +	atu.parent_bus_addr = pp->cfg0_base + SZ_2M;
-> +	atu.size = (SZ_1M * bus_range_max) - SZ_2M;
-> +	atu.ctrl2 = PCIE_ATU_CFG_SHIFT_MODE_ENABLE;
-> +
-> +	return dw_pcie_prog_outbound_atu(pci, &atu);
-> +}
-> +
-> +static int dw_pcie_create_ecam_window(struct dw_pcie_rp *pp, struct resource *res)
-> +{
-> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> +	struct device *dev = pci->dev;
-> +	struct resource_entry *bus;
-> +
-> +	bus = resource_list_first_type(&pp->bridge->windows, IORESOURCE_BUS);
-> +	if (!bus)
-> +		return -ENODEV;
-> +	pp->cfg = pci_ecam_create(dev, res, bus->res, &pci_generic_ecam_ops);
-> +	if (IS_ERR(pp->cfg))
-> +		return PTR_ERR(pp->cfg);
-> +
-> +	pci->dbi_base = pp->cfg->win;
-> +	pci->dbi_phys_addr = res->start;
-> +
-> +	return 0;
-> +}
-> +
-> +static bool dw_pcie_ecam_enabled(struct dw_pcie_rp *pp, struct resource *config_res)
-> +{
-> +	struct resource *bus_range;
-> +	u64 nr_buses;
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git  unwind/perf-test
 
-As change is using Synopsis IP based iATU config shift mode 
-functionality, it is must that ECAM/DBI base address has to be 256 MB 
-aligned. Hence add change to check against alignment.
+This series implements the perf interface to use deferred user space stack
+tracing.
 
-#define IS_256MB_ALIGNED(x) IS_ALIGNED(x, SZ_256M)
+The first 4 patches implement the kernel side of perf to do the deferred stack
+tracing, and the last 4 patches implement the perf user space side to read
+this new interface.
 
-if (!IS_256MB_ALIGNED(config_res->start))
-           return false;
+Patch 1 adds a new API interface to the user unwinder logic to allow perf to
+get the current context cookie for it's task event tracing. Perf's task event
+tracing maps a single task per perf event buffer and it follows the task
+around, so it only needs to implement its own task_work to do the deferred
+stack trace. Because it can still suffer not knowing which user stack trace
+belongs to which kernel stack due to dropped events, having the cookie to
+create a unique identifier for each user space stack trace to know which
+kernel stack to append it to is useful.
 
-> +
-> +	bus_range = resource_list_first_type(&pp->bridge->windows, IORESOURCE_BUS)->res;
-> +	if (!bus_range)
-> +		return false;
-> +
-> +	nr_buses = resource_size(config_res) >> PCIE_ECAM_BUS_SHIFT;
-> +
-> +	return !!(nr_buses >= resource_size(bus_range));
-> +}
-> +
->   static int dw_pcie_host_get_resources(struct dw_pcie_rp *pp)
->   {
->   	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> @@ -422,10 +497,6 @@ static int dw_pcie_host_get_resources(struct dw_pcie_rp *pp)
->   	struct resource *res;
->   	int ret;
->   
-> -	ret = dw_pcie_get_resources(pci);
-> -	if (ret)
-> -		return ret;
-> -
->   	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "config");
->   	if (!res) {
->   		dev_err(dev, "Missing \"config\" reg space\n");
-> @@ -435,9 +506,32 @@ static int dw_pcie_host_get_resources(struct dw_pcie_rp *pp)
->   	pp->cfg0_size = resource_size(res);
->   	pp->cfg0_base = res->start;
->   
-> -	pp->va_cfg0_base = devm_pci_remap_cfg_resource(dev, res);
-> -	if (IS_ERR(pp->va_cfg0_base))
-> -		return PTR_ERR(pp->va_cfg0_base);
-> +	pp->ecam_enabled = dw_pcie_ecam_enabled(pp, res);
-> +	if (pp->ecam_enabled) {
-> +		ret = dw_pcie_create_ecam_window(pp, res);
-> +		if (ret)
-> +			return ret;
-> +
-> +		pp->bridge->ops = (struct pci_ops *)&pci_generic_ecam_ops.pci_ops;
-> +		pp->bridge->sysdata = pp->cfg;
-> +		pp->cfg->priv = pp;
-> +	} else {
-> +		pp->va_cfg0_base = devm_pci_remap_cfg_resource(dev, res);
-> +		if (IS_ERR(pp->va_cfg0_base))
-> +			return PTR_ERR(pp->va_cfg0_base);
-> +
-> +		/* Set default bus ops */
-> +		pp->bridge->ops = &dw_pcie_ops;
-> +		pp->bridge->child_ops = &dw_child_pcie_ops;
-> +		pp->bridge->sysdata = pp;
-> +	}
-> +
-> +	ret = dw_pcie_get_resources(pci);
-> +	if (ret) {
-> +		if (pp->cfg)
-> +			pci_ecam_free(pp->cfg);
-> +		return ret;
-> +	}
->   
->   	/* Get the I/O range from DT */
->   	win = resource_list_first_type(&pp->bridge->windows, IORESOURCE_IO);
-> @@ -476,14 +570,10 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
->   	if (ret)
->   		return ret;
->   
-> -	/* Set default bus ops */
-> -	bridge->ops = &dw_pcie_ops;
-> -	bridge->child_ops = &dw_child_pcie_ops;
-> -
->   	if (pp->ops->init) {
->   		ret = pp->ops->init(pp);
->   		if (ret)
-> -			return ret;
-> +			goto err_free_ecam;
->   	}
->   
->   	if (pci_msi_enabled()) {
-> @@ -525,6 +615,14 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
->   	if (ret)
->   		goto err_free_msi;
->   
-> +	if (pp->ecam_enabled) {
-> +		ret = dw_pcie_config_ecam_iatu(pp);
-> +		if (ret) {
-> +			dev_err(dev, "Failed to configure iATU in ECAM mode\n");
-> +			goto err_free_msi;
-> +		}
-> +	}
-> +
->   	/*
->   	 * Allocate the resource for MSG TLP before programming the iATU
->   	 * outbound window in dw_pcie_setup_rc(). Since the allocation depends
-> @@ -560,8 +658,6 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
->   		/* Ignore errors, the link may come up later */
->   		dw_pcie_wait_for_link(pci);
->   
-> -	bridge->sysdata = pp;
-> -
->   	ret = pci_host_probe(bridge);
->   	if (ret)
->   		goto err_stop_link;
-> @@ -587,6 +683,10 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
->   	if (pp->ops->deinit)
->   		pp->ops->deinit(pp);
->   
-> +err_free_ecam:
-> +	if (pp->cfg)
-> +		pci_ecam_free(pp->cfg);
-> +
->   	return ret;
->   }
->   EXPORT_SYMBOL_GPL(dw_pcie_host_init);
-> @@ -609,6 +709,9 @@ void dw_pcie_host_deinit(struct dw_pcie_rp *pp)
->   
->   	if (pp->ops->deinit)
->   		pp->ops->deinit(pp);
-> +
-> +	if (pp->cfg)
-> +		pci_ecam_free(pp->cfg);
->   }
->   EXPORT_SYMBOL_GPL(dw_pcie_host_deinit);
->   
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-> index 4684c671a81bee468f686a83cc992433b38af59d..6826ddb9478d41227fa011018cffa8d2242336a9 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> @@ -576,7 +576,7 @@ int dw_pcie_prog_outbound_atu(struct dw_pcie *pci,
->   		val = dw_pcie_enable_ecrc(val);
->   	dw_pcie_writel_atu_ob(pci, atu->index, PCIE_ATU_REGION_CTRL1, val);
->   
-> -	val = PCIE_ATU_ENABLE;
-> +	val = PCIE_ATU_ENABLE | atu->ctrl2;
->   	if (atu->type == PCIE_ATU_TYPE_MSG) {
->   		/* The data-less messages only for now */
->   		val |= PCIE_ATU_INHIBIT_PAYLOAD | atu->code;
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> index ceb022506c3191cd8fe580411526e20cc3758fed..f770e160ce7c538e0835e7cf80bae9ed099f906c 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.h
-> +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> @@ -20,6 +20,7 @@
->   #include <linux/irq.h>
->   #include <linux/msi.h>
->   #include <linux/pci.h>
-> +#include <linux/pci-ecam.h>
->   #include <linux/reset.h>
->   
->   #include <linux/pci-epc.h>
-> @@ -169,6 +170,7 @@
->   #define PCIE_ATU_REGION_CTRL2		0x004
->   #define PCIE_ATU_ENABLE			BIT(31)
->   #define PCIE_ATU_BAR_MODE_ENABLE	BIT(30)
-> +#define PCIE_ATU_CFG_SHIFT_MODE_ENABLE	BIT(28)
->   #define PCIE_ATU_INHIBIT_PAYLOAD	BIT(22)
->   #define PCIE_ATU_FUNC_NUM_MATCH_EN      BIT(19)
->   #define PCIE_ATU_LOWER_BASE		0x008
-> @@ -387,6 +389,7 @@ struct dw_pcie_ob_atu_cfg {
->   	u8 func_no;
->   	u8 code;
->   	u8 routing;
-> +	u32 ctrl2;
->   	u64 parent_bus_addr;
->   	u64 pci_addr;
->   	u64 size;
-> @@ -425,6 +428,8 @@ struct dw_pcie_rp {
->   	struct resource		*msg_res;
->   	bool			use_linkup_irq;
->   	struct pci_eq_presets	presets;
-> +	bool			ecam_enabled;
-> +	struct pci_config_window *cfg;
->   };
->   
->   struct dw_pcie_ep_ops {
-> 
-Regards,
-Mayank
+Patch 2 adds the per task deferred stack traces to perf. It adds a new event
+type called PERF_RECORD_CALLCHAIN_DEFERRED that is recorded when a task is
+about to go back to user space and happens in a location that pages may be
+faulted in. It also adds a new callchain context called PERF_CONTEXT_USER_DEFERRED
+that is used as a place holder in a kernel callchain to append the deferred
+user space stack trace to.
+
+Patch 3 adds the user stack trace context cookie in the kernel callchain right
+after the PERF_CONTEXT_USER_DEFERRED context so that the user space side can
+map the request to the deferred user space stack trace.
+
+Patch 4 adds support for the per CPU perf events that will allow the kernel to
+associate each of the per CPU perf event buffers to a single application. This
+is needed so that when a request for a deferred stack trace happens on a task
+that then migrates to another CPU, it will know which CPU buffer to use to
+record the stack trace on. It is possible to have more than one perf user tool
+running and a request made by one perf tool should have the deferred trace go
+to the same perf tool's perf CPU event buffer. A global list of all the
+descriptors representing each perf tool that is using deferred stack tracing
+is created to manage this.
+
+The last 4 patches implement the perf user space tooling side of this.
+
+Changes since v14: https://lore.kernel.org/linux-trace-kernel/20250718164119.089692174@kernel.org/
+
+- Moved the clean up patches into their own series (mentioned at the beginning)
+
+- Added unwind_user_get_cookie() API to allow the task events to add cookies
+  to differentiate which user stack belongs to which kernel stack in the event
+  of dropped events.
+
+- Save the cookie in the kernel callchain right after the PERF_CONTEXT_USER_DEFERRED
+
+- Have the perf user space tooling match the cookies as well as the TID
+  between the request and the user stack recording, to know which kernel stack
+  gets the user space trace appended to it based on its context cookie.
+
+Josh Poimboeuf (1):
+      perf: Support deferred user callchains
+
+Namhyung Kim (4):
+      perf tools: Minimal CALLCHAIN_DEFERRED support
+      perf record: Enable defer_callchain for user callchains
+      perf script: Display PERF_RECORD_CALLCHAIN_DEFERRED
+      perf tools: Merge deferred user callchains
+
+Steven Rostedt (3):
+      unwind deferred: Add unwind_user_get_cookie() API
+      perf: Have the deferred request record the user context cookie
+      perf: Support deferred user callchains for per CPU events
+
+----
+ include/linux/perf_event.h                |  11 +-
+ include/linux/unwind_deferred.h           |   5 +
+ include/uapi/linux/perf_event.h           |  25 +-
+ kernel/bpf/stackmap.c                     |   4 +-
+ kernel/events/callchain.c                 |  14 +-
+ kernel/events/core.c                      | 421 +++++++++++++++++++++++++++++-
+ kernel/unwind/deferred.c                  |  21 ++
+ tools/include/uapi/linux/perf_event.h     |  25 +-
+ tools/lib/perf/include/perf/event.h       |   8 +
+ tools/perf/Documentation/perf-script.txt  |   5 +
+ tools/perf/builtin-script.c               |  92 +++++++
+ tools/perf/util/callchain.c               |  24 ++
+ tools/perf/util/callchain.h               |   3 +
+ tools/perf/util/event.c                   |   1 +
+ tools/perf/util/evlist.c                  |   1 +
+ tools/perf/util/evlist.h                  |   1 +
+ tools/perf/util/evsel.c                   |  42 +++
+ tools/perf/util/evsel.h                   |   1 +
+ tools/perf/util/machine.c                 |   1 +
+ tools/perf/util/perf_event_attr_fprintf.c |   1 +
+ tools/perf/util/sample.h                  |   4 +-
+ tools/perf/util/session.c                 |  80 ++++++
+ tools/perf/util/tool.c                    |   2 +
+ tools/perf/util/tool.h                    |   4 +-
+ 24 files changed, 786 insertions(+), 10 deletions(-)
 
