@@ -1,287 +1,172 @@
-Return-Path: <linux-kernel+bounces-785455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CE06B34AED
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 21:33:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D0DBB34AEF
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 21:33:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 038445E61D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:33:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 837EA1B240E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:34:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A9F283683;
-	Mon, 25 Aug 2025 19:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8C62848B4;
+	Mon, 25 Aug 2025 19:33:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="LR1eSCA4"
-Received: from CAN01-YQB-obe.outbound.protection.outlook.com (mail-yqbcan01on2107.outbound.protection.outlook.com [40.107.116.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JGpq1sP5"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9AE721FF25
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 19:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.116.107
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756150413; cv=fail; b=swfpR2soDIpoN7Oo0+b0yydSsXrPF1ROLjvm2QhLf/c5Z7tui5f4pZEvgrvmJKlK+Iu24m9Bp1RhPReXjwQ5zxlB26qPiU/wGq+ocRL7Xi93EHrFvKIh0b7K4UgsglsV/xQvrVi9mI2HRE2h556ze8HUzJ1b4vh8G0RDanWhNLQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756150413; c=relaxed/simple;
-	bh=//mJkXVpKDEr1RpnZNIfsiIIfbGUlmq0Yk/omF1JJZQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=NiWJmKlj0ckH7YrLtP3M105DFab3m6fBtdo4wKAIVWqktQ9bPK+jtakOS8nw+3wq1zE3E6ZEmqgh9cDkET9bp/OaHdULJ138Q5k7qqsTVnf+x1q34uLZGofEXrLSuQmLc9BCLXHgae5bNSxAsoFsNuysIOGMrx4eygMlmghPejo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=LR1eSCA4; arc=fail smtp.client-ip=40.107.116.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oK3STZmP3sQCl3jZB/7NrsMigZjKmMeH7jU0YhUNxUKPw/3ZImuahaSXx58deG71Yi28KgNj7uRNWM7ymKW2FOhMIG2zDv9u+//0AUaI//0BYrkGRkDwf8O6YQSkB//B1ZHtxakeeoA0y8WHL/XyfvjCKd2CObg2SSQ8x+7TPzDy2v52Cbixy/QVojT7TUgPMkG6hLohSGaAMqWxValLKDtMa5A021bAnaMcsP+c3N9XUFcZ4yNYhrpnp77LVuKWiqYujcP6y7DoL6+/5rLtpKOrPBpooImqIX4mPT/2tNHF1C2sxb+YzUTS9yzWBvpUnIetOKDYjEcDnRsjm2EwDQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Z3tFWYFWscegcr9F8eou8Aog90xmXQyIEB87tjWbNl8=;
- b=iMgyaqJiY3/5ytHfb58FiqrBjeTifERu8BZ1vGT/k9pCV0a7hXyLOq4CCMLUMXi4ppMgIAuPhnw+DgzLqd7JwkQHUJe8CMgfryflapS7Gq7xPYq7zTrmXSSAss70C8unZZrt88doRAQyxFR37KB/rL8NAEbZM6kfve4XzrX0uAu9yYaa6tf4iT3QA5dymBIObfxrWULl6gyRAHplg/PGhLvjFq9Jc6d9cgiYQQnv4ecGSltW59ujAaJPfY6ARYyCtqqzWELvIhC4tiSjOcnl2u5EKSgOmrzircXXna+7lv9akP4lb5BQyJXDaJnOIhWrn/FhlF5Bmd2doYBaHm1gkg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
- dkim=pass header.d=efficios.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Z3tFWYFWscegcr9F8eou8Aog90xmXQyIEB87tjWbNl8=;
- b=LR1eSCA4HTFyyozKP601oY9ZMQCfAJIiKEZ7NY1dS4mAaebH2HWZSevg7KHnA24dmcXxMj0PwjifQYavV0znCHVvnLhNXLJqRbyzhYur9ZRWKieYqn+n2SCpsnSCLA7Lx/7Bn8DXL9cSs74sUznqOlHt7Yeo4TtwbtLipnltJRGJ45jAPGUlEydgq0VK3OUYopeOw+vFETisMogjxv2GLzsYru/12ZOFvIaBmG38+mwnXDt7mJ+SgRRU0mR/yJY8Yc+W+iEW6EbPsdNMplyd5tveAD7NHQ/hePOPwxkHqd8LrStFckwYQ1ibOswOwMW8Muvi+PzEaEA8le6fqVOE+w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=efficios.com;
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
- by YT1PR01MB8777.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:c8::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Mon, 25 Aug
- 2025 19:33:27 +0000
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4%3]) with mapi id 15.20.9052.021; Mon, 25 Aug 2025
- 19:33:27 +0000
-Message-ID: <ed52565a-be0b-45a7-a838-a9c6f8d5359d@efficios.com>
-Date: Mon, 25 Aug 2025 15:33:25 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [patch V2 31/37] asm-generic: Provide generic TIF infrastructure
-To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
- Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney"
- <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson
- <seanjc@google.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>, x86@kernel.org,
- Heiko Carstens <hca@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>
-References: <20250823161326.635281786@linutronix.de>
- <20250823161655.256689417@linutronix.de>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <20250823161655.256689417@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: QB1P288CA0021.CANP288.PROD.OUTLOOK.COM
- (2603:10b6:c00:2d::34) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:be::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3802848B2
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 19:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756150420; cv=none; b=Za3aIIHGJRhFdqd87BneGQit2jWC7on2+WGkjSq9qveUGodlhgwMFGFsIXiFYBwE1No6VHWcxYP3mQKr0jXoPEmhP9VDZl6tB/+1doV12tlAttSwvFw6gA7EG9aA83pBrNLQBtMSc1PL3yEnPMkfS+sJJQTyRXdYB9Vh+NPyAzs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756150420; c=relaxed/simple;
+	bh=S7AAqN5jURT5/z3vahcejf5DpecFFf0mqMMmmi7onvo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RcvRH4irxJ8XYgDhnCPdEgvpqo6RrJnJo6PJaTHqN894HV5cS06SbLILcibj7fq4DsPFiGWq3ha8kZ3ksA5krQLKxkJjh546k0CzRMLsARosov/qMD/yLXwpdzlyb8bS+FYHHGLyIau86l5jH+hvEU+sYrA/Ew7xgvlD+zhifGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JGpq1sP5; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4b1098f9ed9so35699621cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 12:33:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756150418; x=1756755218; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OxffX3a0/5wfsp9GphcAYcfX3auUfB5UZgtehPW6yAk=;
+        b=JGpq1sP5wIsLMDuR6Z5zYhOes4tz/rqHSEtCAAESVKrAE1//VRxmucTHxpYZnkVHLG
+         gNu+V+HmPi4qyxQEuWajl7lEuJrI3ExDJvMyfJVzRf2yWLvfuj5ziSt7UgjWHwhKQaHb
+         Xmknb0R+c9I4/bgC66u9sTJ5gNKqVcY0tgDLpnEwcD95YaWwZ+bjxH3+/aY/CumVVadq
+         Qta/jurfPf6IwSFC+H4oSphCSNz4R5/PI7TJieLKiNLsrtgzFv7T0eQX4EJ/XY95e+cI
+         1b54AqNXFc1lQE6ePo5VX18IlWGL/ZtsmGl224c4L48LNSCr8xNO95RaBuQcyodasQuZ
+         A3kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756150418; x=1756755218;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OxffX3a0/5wfsp9GphcAYcfX3auUfB5UZgtehPW6yAk=;
+        b=Y1C99MfVd9efUTB3MGF8aBXI0ZLnDZKvxXB3RCFgZSaMkC0rwY8Tz9oHlgvrlDpA4F
+         sk6AnPf2+6XcZiXNmn9VRLOWtrY2tGxtJRcjwBbKj/vzPuDxQufYaAyTmOsnvxbO9Dnj
+         a+U4LHQ6LOHyNHtcAF4tJikj4uFwDsZLi9G38pDS/kab/x8KH9I73QzgFJkGW7p3EUT3
+         60cZej1YfdcctzaAQnqXvL14xxhMG5gXe7Mtyjt7fSn08oHzm3ZMaEt4d6owkSoWK4jP
+         MNW8GKurDAnrF3k2Tztu4whNVqolTw9Fa7PAG5pgI0YkO2VzuxTi/D6Fkxi3b2gl8VJL
+         SNqA==
+X-Forwarded-Encrypted: i=1; AJvYcCXbXP/Qbb8stbR8iMCTNuKpeVGF4BhzSFzqMTJGbquVYalABkwY5vyT4mL2A2sKGYg0m9otgPlHILa0epk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7KYlxcKti4k5kg6giLg+HasD6aTLHhs2AEj5jBiv8N3X43MI/
+	3J5n8P8fidJxFh57K4BftbqaKNzm0vRTD+/QwGW3NHkku2jiUxOG1COEnFUfogOKmmolJ1/OeTK
+	xUTLOGOX9lrTYHqFUQHRyFm8m8GiGeudk9Kta3kXD
+X-Gm-Gg: ASbGncs55RMgQCWl99Iq09kQP7/j+eN8DIZ83hpfYiTnB/BLlchRWRm6rNqY20Dvuou
+	i61VQf/VqwrodYiYPqilJlDcd4Ei8MAlNoB8HgliVE3SI4qQhBHbxRO58cKmL4O0swtcAkrhWnC
+	MtzPj9AIJyOUEAi731fyRP2edAcdq9ZYFjaRDTLHXZfdFr2jGyYmMcOs9wFNrbxip0t2thw67py
+	v+K8fN4dV8rTbA=
+X-Google-Smtp-Source: AGHT+IEtf/9wf7+2/c/rNT0NYgi10xYmRrdVN2JDXyvdU2/6uZzQBPwxIFBBNmJNsr9XwCc4R2Dzkd9jHijR6MgVSrc=
+X-Received: by 2002:a05:622a:47ce:b0:4b1:dd3:e39c with SMTP id
+ d75a77b69052e-4b2aab467c5mr152508311cf.63.1756150417382; Mon, 25 Aug 2025
+ 12:33:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT1PR01MB8777:EE_
-X-MS-Office365-Filtering-Correlation-Id: d4c90cdb-9955-454e-3c82-08dde40e4365
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|366016|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?OFRhMlZTQ01qc29vM0ZZZ2pXM3h3MGlkcUltSWRyWVF3U3RiM1oyZC8xaUZT?=
- =?utf-8?B?QzRsM0VTV1UrU1ltMFl6Q0wwbnR1R21sRlRHSFF2a0pVVmQ5OE81b1NCNWRI?=
- =?utf-8?B?WVNnTXRYUnlHclZmOEQ3d3RHdHhiSWlERXZKVmEyV1E1RHVyeU5FUUdCaHdt?=
- =?utf-8?B?QWY2M3dpZ2xENlFWclBKTWl5QmFiUW1wU2JPMmxBa0NobDlOdmoyNnVjUHJi?=
- =?utf-8?B?MkpOVkNpOExjVCtwTXBqcmsrYjkvVUMxNTdPQVluMUh0RFlKQXRUUktQYTdD?=
- =?utf-8?B?ankzUkJkakxSTE82UitvSTNMNjVTSkl5RkVpdW1VYVR4cVNpeDFuTUpvRHFS?=
- =?utf-8?B?UURQT2REeDFuYmU2MWVubWRLbUxSL0w2TlhmRjVRSS9aUFlIc2tSYnFsbVFx?=
- =?utf-8?B?clU1a092RE9wQU9OUC9nWEdhOTE1SVRTYkJpOUJmVXpwNE5COXpGUDJlM3Mw?=
- =?utf-8?B?WmtKTTJWaU1hbmh3Kzg0SUhCL096YWhYNnBVbTdyWGFueUNJcXRWdWxRSlo5?=
- =?utf-8?B?c0pWcGJMbUV6RE9OMDkzZmdpbXVqU0ZNRHFhbzVWK05CWWo0cW1IRjdaWlFz?=
- =?utf-8?B?dGNvUThvQTI0dnl3QkFFSTJNb3k5NmNIMmF3Ymh5MDFjY0E1TlVUVUZJbzly?=
- =?utf-8?B?UUNhWjVJRFBvR1o4NzhxRFFETHBNSVI2c0dCSnNLaHNyeDUwRVBicy9kM0dV?=
- =?utf-8?B?UWJEU2ZhRWpJbXhhdnp6ZUJsd3NiL1gwY0RQQ3g0bjlYUHZzU2FIQm1SWDdJ?=
- =?utf-8?B?UE8yQWxCVVBBQjhPSVJvbWo1RnRDT2JkTFhyQlgxVTB0b3FhbHdxZWFIZDBX?=
- =?utf-8?B?NjJ4WDRYVmt0THVZcGpHM01Ha2V6MkJwQk9DT2hhb2w0MkpwbVQ4cGVkVTh3?=
- =?utf-8?B?RXJoYU9IUzhMN1EzMkdBVTJocHB2TFMwMEpVSXhOSFora0NoWFBOd3llTWwy?=
- =?utf-8?B?SnZIUDRvK0gwcTN5OExNM0ZaN1BnSXlEUmZBWk5IVXlKTkExS2RoRXlyVmxW?=
- =?utf-8?B?RE9qOVNLb0F5dFJybFJZcHpteThNWmpZVkM3M1hPeDBvWENiUEJNN3B6RTdS?=
- =?utf-8?B?Z0hudHdYN2JGRWVYR2EwWWpoZlFmZzhIUHlaMFRNeStiMmlXSnQ4VFdtVnBB?=
- =?utf-8?B?eGFPWlZWOU5DYVJTSUV0VzFkRGxZeUJqa0YrRFZlNVZoVFFJWThyQTBpSnNs?=
- =?utf-8?B?OGtqeS94MEVjNGNpdnBHOEh0cWhmUG1YMVp0WVlPVzdCdUUzME5vQ1Y2R0FZ?=
- =?utf-8?B?MWYwczlLdUhTVmFuZGxNTDJjTXBKUHNXKytHYks2ZGd6TERsVmJwRWhENk9R?=
- =?utf-8?B?Mm5DYmYrL3hqOWVIc1ZuQUhQeFVPOWJ6blY4d0VFdkNsN2phUC9MWDlJcExT?=
- =?utf-8?B?aXhYUTU0cUV1UDQySHhvbkYzUS91ZnRVK2pqL1BVaG53OFpqUC9ULzFmc2l5?=
- =?utf-8?B?MEVpeVFhRXVYSGZ4RG51Q3RvcWV0WjZ6TEdEMGRFOEF4UXZiUHpiTW43OGlF?=
- =?utf-8?B?MEV5SGFaSDYyUTVwOWpoR001UDhyeElLZFVhY2JERTNNK1ltd3NzaUVhRysr?=
- =?utf-8?B?dmNYSVdwcFRVSzUzdnJWSUhScmdLcnhZNGJoM0NnblhhNFY4Y1g3eFZLcU9Z?=
- =?utf-8?B?Tm1INlpMd2dWaE5lejN2cVdLamZ6ZmNMWVE2V3lIS004T05FSm11SCtmcnpG?=
- =?utf-8?B?TndQRnpjaWpKVjFsbkYrY3hOaDFGckw0bEtvczNXcFdiNVprTUhkUk1COUR1?=
- =?utf-8?B?dE1GNkVSdjdTdExCZlR1RTFYWDU4R1hKY2VSWUZIU2VPdFY0N1lTY3kzeDd5?=
- =?utf-8?Q?ug8ffweUGEgEHPwxX0Qs5t13uZepU67YD7tYU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eFlydjlsZWRBdzJQZVZtd2FVTWVPdXU1QisyVlZxTTFmNzUwN241d2svWmw4?=
- =?utf-8?B?aW9vYmw2SnVWM3BQNXhnSlpiWEltY25IVEUvb1RaT2krUlo1RVNnMlJVQ0Va?=
- =?utf-8?B?cTJsVUNvNnpEemlseUEydVpXUHJOSno4MStMOFl5NzJnYnp1K2Q1eGZnM3NT?=
- =?utf-8?B?bTE2SXVHWVRmNkVLNm5qelYvS3crT010MENCSzNxaVVQV2szQll2UEIwMURN?=
- =?utf-8?B?Sm9DVEdJaTdVejJSWUc4K1ZwQ1JOdkdTTDgybHFCSmV2YWpOYjliQ2hTZERs?=
- =?utf-8?B?Tk4yclJuNFlOYlRLNVJqSzZXSUk5Q3I5bG0vNGIzZUFKeUNrSEVFRmh3cFlu?=
- =?utf-8?B?aVE0M0oza05NclQ4QXFRNk1EaUZOYXZGVDl5VTRhR2xtbG1sM0ZmVW9ndERR?=
- =?utf-8?B?dnFlald5alZjRVVHRVd6VVRVS1hwZms0UE0yVVZXSURhRE5mUUlCTTBZeG9s?=
- =?utf-8?B?NHc2VU85YytpMys4WFVPUmVzY3Y3K3I4OVRZb1lQeVlEUlZlZlI3RTUrQXRX?=
- =?utf-8?B?ZDZwN0tJNEYzODNzWk00UkhJMDlqa2s1cVZvM0haeW5wU0E2VUZDZnlHSGY1?=
- =?utf-8?B?VWVtZDZ6OFNTN3hUT1B3aVcyNzV1c0JXeWJYUThMTmY3TVRPbVNSa3NpeGpx?=
- =?utf-8?B?UW9IS2tWU0I2MkwwT2FiR1VMUUtxRXdJbGJaOUtGbVU2WUtvdVNnSStJUVNi?=
- =?utf-8?B?dnl2V0tNd3RGc0kzQUxOaDZRdXpOckEydlpERGZaZklUQmR4alEvVUNDVTVa?=
- =?utf-8?B?bnpPRnRQeHRubHRVaU1MTmU1MGlETkRFQ0xRbnVuTjVvLzVGNHcwVHRRa3ZP?=
- =?utf-8?B?OWtTdFU2akF5bzVoNTJCSkUyRC9FWHVTV3NscWFqcy9tMmRwdDJZM00yODk3?=
- =?utf-8?B?eVl3NVFKMUw1aVhXdmFlNk00eDdaZjFlM0JLM2ZVK0NnUEY0ZzBreTB2VFZK?=
- =?utf-8?B?emZHV0NrZEVWUlc0eXZBWDBsZ2Y1c2cxV1RKL3JmakdHVmoxK0poaDB4cTVu?=
- =?utf-8?B?WHFOMWRlc1p0dkhuRkhOYTlqN2dzT3BQak5mLzRmb2QvcXFGWE9PR0FVNnpr?=
- =?utf-8?B?WDUyOEhpdFZ6RmV6bjFmYUVCWmpONzRwT09RbmZtV0tnUG1VNjFvUjNpQjlQ?=
- =?utf-8?B?R0RoVWVRZUZhWkphei9wV0w1dDR5cjZER3NGbnJmQUppZ2RuMzRCQkQzeHFS?=
- =?utf-8?B?K0RYY256N2lxdC91VE01N3ZCQ1NWQnpsaDJ2N0pPb3BUZm1RdGpCbjNnOGJ1?=
- =?utf-8?B?czVlamw1bDVPYXF1OU8zb3RMLzVtZElsRGUvQ2V2N3hmZmNQZ0FLejJoODdx?=
- =?utf-8?B?TW5QU3BXdjk3cGFSUDhObURqQ3BCaFVIQXhKUk1taU9NWWdablNXZ1l5UE9O?=
- =?utf-8?B?SjJoeTVjOWdTckxrNkV6ei94bjBNV2d0MjkxOVBtRW50aDVWbDdlTkRXSkNC?=
- =?utf-8?B?MXU4QmtjR1QyTzdqQ0FMeUt5NDQyVjhxR09IZUUrVXdWVXNZUFdSLy9BR21U?=
- =?utf-8?B?cndQMXc2RG8yN0wxUUE3d1IzWGpVcEhlT2hId1dSQmZaSnRFRlFnd1Fqb2t0?=
- =?utf-8?B?dmhybVNBb1IrRjdhRXEvVURpYVlTbEtrd1E4NmFPeHk4Q2dwNjh4UnVEOWJu?=
- =?utf-8?B?ak9YZEphdkkrNlVFdDRMNGx2YzZpZDZLM1V1M05LY0JEK1JjRUhhZXg5OUcw?=
- =?utf-8?B?dmpkRTFBT0pHSUhYeWpyLzh5RE9HUHIyYk9FcUp5aE5HYWI4WC95TElvZnJu?=
- =?utf-8?B?UlYzTDNuc3l3T21CMVA0VWxRNFRYS0pTNDRpVlFWN2JmcVg4dHZLWUR3OHBT?=
- =?utf-8?B?cDR3QXlMZ05MMGRnS3BjNmRJWHcycjlCRlVsYTlpeDhqRjhoZG96bk5HdzZ6?=
- =?utf-8?B?NllSdVJQMmpaejZqZnJYUDBKNlIxWmlYWXRMQnhrWWFkMmMzQ1RwTXMydWl0?=
- =?utf-8?B?SW9wa2FGQlN1Z1RUQTJ0R2NXSUczRHYyZHR0UzYxOHlpZXlrVWJwdnhMQjRr?=
- =?utf-8?B?RW04d2xZTXV0V1psb0ZlTjZoeVh2SW42WUdTaG5WM3BuMkUwc0gxTWpJRFRs?=
- =?utf-8?B?b2lZSXErZ3BDb3BEbTUxUHU5aFpMbDljbDlqSDlvRW4zdG5SQ3d5NUxTbWl4?=
- =?utf-8?B?VFB2SUloa2lhaHVOdkVKSmhSQUdMeVpYRnRURnhham9Nb09ocHR1RnVZTzB2?=
- =?utf-8?Q?Q2FhDdB5nOhP0FSpmDrbQs4=3D?=
-X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d4c90cdb-9955-454e-3c82-08dde40e4365
-X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 19:33:26.9545
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 82S8b4XIa7cL22+TS14S8lGnR1FOMlgC/edmiy0B9VXnxCCLtursRkXnN/pqRLJ1aeNuwnyVOwJ0m+mlAaYYjMj7LIpd7cgIaC4AL80RNBA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT1PR01MB8777
+References: <20250825190715.1690-1-andrea.mayer@uniroma2.it>
+In-Reply-To: <20250825190715.1690-1-andrea.mayer@uniroma2.it>
+From: Eric Dumazet <edumazet@google.com>
+Date: Mon, 25 Aug 2025 12:33:26 -0700
+X-Gm-Features: Ac12FXz0I9GuTz90X-rPTA1ZksZsbDknybu0BHszaMYs1YDI6C_dwuD3QVo4i00
+Message-ID: <CANn89i+UTv8nJ=cc67iKky=MLXOnzF5XyVRsV-TMXz7wUQ6Yvw@mail.gmail.com>
+Subject: Re: [PATCH net] ipv6: sr: fix destroy of seg6_hmac_info to prevent
+ HMAC data leak
+To: Andrea Mayer <andrea.mayer@uniroma2.it>
+Cc: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, David Ahern <dsahern@kernel.org>, Simon Horman <horms@kernel.org>, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	Eric Biggers <ebiggers@kernel.org>, David Lebrun <dlebrun@google.com>, 
+	Stefano Salsano <stefano.salsano@uniroma2.it>, Paolo Lungaroni <paolo.lungaroni@uniroma2.it>, 
+	Ahmed Abdelsalam <ahabdels.dev@gmail.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-08-23 12:40, Thomas Gleixner wrote:
-> Common TIF bits do not have to be defined by every architecture. They can
-> be defined in a generic header.
-> 
-> That allows adding generic TIF bits without chasing a gazillion of
-> architecture headers, which is again a unjustified burden on anyone who
-> works on generic infrastructure as it always needs a boat load of work to
-> keep existing architecture code working when adding new stuff.
-> 
-> While it is not as horrible as the ignorance of the generic entry
-> infrastructure, it is a welcome mechanism to make architecture people
-> rethink their approach of just leaching generic improvements into
-> architecture code and thereby making it accumulatingly harder to maintain
-> and improve generic code. It's about time that this changea.
+On Mon, Aug 25, 2025 at 12:08=E2=80=AFPM Andrea Mayer <andrea.mayer@uniroma=
+2.it> wrote:
+>
+> The seg6_hmac_info structure stores information related to SRv6 HMAC
+> configurations, including the secret key, HMAC ID, and hashing algorithm
+> used to authenticate and secure SRv6 packets.
+>
+> When a seg6_hmac_info object is no longer needed, it is destroyed via
+> seg6_hmac_info_del(), which eventually calls seg6_hinfo_release(). This
+> function uses kfree_rcu() to safely deallocate memory after an RCU grace
+> period has elapsed.
+> The kfree_rcu() releases memory without sanitization (e.g., zeroing out
+> the memory). Consequently, sensitive information such as the HMAC secret
+> and its length may remain in freed memory, potentially leading to data
+> leaks.
+>
+> To address this risk, we replaced kfree_rcu() with a custom RCU
+> callback, seg6_hinfo_free_callback_rcu(). Within this callback, we
+> explicitly sanitize the seg6_hmac_info object before deallocating it
+> safely using kfree_sensitive(). This approach ensures the memory is
+> securely freed and prevents potential HMAC info leaks.
+> Additionally, in the control path, we ensure proper cleanup of
+> seg6_hmac_info objects when seg6_hmac_info_add() fails: such objects are
+> freed using kfree_sensitive() instead of kfree().
+>
+> Fixes: 4f4853dc1c9c ("ipv6: sr: implement API to control SR HMAC structur=
+e")
+> Fixes: bf355b8d2c30 ("ipv6: sr: add core files for SR HMAC support")
 
-changes
+Not sure if you are fixing a bug worth backports.
 
-> 
-> Provide the infrastructure and split the TIF space in half, 16 generic and
-> 16 architecture specific bits.
-> 
-> This could probably be extended by TIF_SINGLESTEP and BLOCKSTEP, but those
-> are only used in architecture specific code. So leave them alone for now.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-
-Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Andrea Mayer <andrea.mayer@uniroma2.it>
 > ---
->   arch/Kconfig                          |    4 ++
->   include/asm-generic/thread_info_tif.h |   48 ++++++++++++++++++++++++++++++++++
->   2 files changed, 52 insertions(+)
-> 
-> --- a/arch/Kconfig
-> +++ b/arch/Kconfig
-> @@ -1730,6 +1730,10 @@ config ARCH_VMLINUX_NEEDS_RELOCS
->   	  relocations preserved. This is used by some architectures to
->   	  construct bespoke relocation tables for KASLR.
->   
-> +# Select if architecture uses the common generic TIF bits
-> +config HAVE_GENERIC_TIF_BITS
-> +       bool
+>  net/ipv6/seg6.c      |  2 +-
+>  net/ipv6/seg6_hmac.c | 10 +++++++++-
+>  2 files changed, 10 insertions(+), 2 deletions(-)
+>
+> diff --git a/net/ipv6/seg6.c b/net/ipv6/seg6.c
+> index 180da19c148c..88782bdab843 100644
+> --- a/net/ipv6/seg6.c
+> +++ b/net/ipv6/seg6.c
+> @@ -215,7 +215,7 @@ static int seg6_genl_sethmac(struct sk_buff *skb, str=
+uct genl_info *info)
+>
+>         err =3D seg6_hmac_info_add(net, hmackeyid, hinfo);
+>         if (err)
+> -               kfree(hinfo);
+> +               kfree_sensitive(hinfo);
+>
+>  out_unlock:
+>         mutex_unlock(&sdata->lock);
+> diff --git a/net/ipv6/seg6_hmac.c b/net/ipv6/seg6_hmac.c
+> index fd58426f222b..19cdf3791ebf 100644
+> --- a/net/ipv6/seg6_hmac.c
+> +++ b/net/ipv6/seg6_hmac.c
+> @@ -57,9 +57,17 @@ static int seg6_hmac_cmpfn(struct rhashtable_compare_a=
+rg *arg, const void *obj)
+>         return (hinfo->hmackeyid !=3D *(__u32 *)arg->key);
+>  }
+>
+> +static void seg6_hinfo_free_callback_rcu(struct rcu_head *head)
+> +{
+> +       struct seg6_hmac_info *hinfo;
 > +
->   source "kernel/gcov/Kconfig"
->   
->   source "scripts/gcc-plugins/Kconfig"
-> --- /dev/null
-> +++ b/include/asm-generic/thread_info_tif.h
-> @@ -0,0 +1,48 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _ASM_GENERIC_THREAD_INFO_TIF_H_
-> +#define _ASM_GENERIC_THREAD_INFO_TIF_H_
+> +       hinfo =3D container_of(head, struct seg6_hmac_info, rcu);
+> +       kfree_sensitive(hinfo);
+> +}
 > +
-> +#include <vdso/bits.h>
-> +
-> +/* Bits 16-31 are reserved for architecture specific purposes */
-> +
-> +#define TIF_NOTIFY_RESUME	0	// callback before returning to user
-> +#define _TIF_NOTIFY_RESUME	BIT(TIF_NOTIFY_RESUME)
-> +
-> +#define TIF_SIGPENDING		1	// signal pending
-> +#define _TIF_SIGPENDING		BIT(TIF_SIGPENDING)
-> +
-> +#define TIF_NOTIFY_SIGNAL	2	// signal notifications exist
-> +#define _TIF_NOTIFY_SIGNAL	BIT(TIF_NOTIFY_SIGNAL)
-> +
-> +#define TIF_MEMDIE		3	// is terminating due to OOM killer
-> +#define _TIF_MEMDIE		BIT(TIF_MEMDIE)
-> +
-> +#define TIF_NEED_RESCHED	4	// rescheduling necessary
-> +#define _TIF_NEED_RESCHED	BIT(TIF_NEED_RESCHED)
-> +
-> +#ifdef HAVE_TIF_NEED_RESCHED_LAZY
-> +# define TIF_NEED_RESCHED_LAZY	5	// Lazy rescheduling needed
-> +# define _TIF_NEED_RESCHED_LAZY	BIT(TIF_NEED_RESCHED_LAZY)
-> +#endif
-> +
-> +#ifdef HAVE_TIF_POLLING_NRFLAG
-> +# define TIF_POLLING_NRFLAG	6	// idle is polling for TIF_NEED_RESCHED
-> +# define _TIF_POLLING_NRFLAG	BIT(TIF_POLLING_NRFLAG)
-> +#endif
-> +
-> +#define TIF_USER_RETURN_NOTIFY	7	// notify kernel of userspace return
-> +#define _TIF_USER_RETURN_NOTIFY	BIT(TIF_USER_RETURN_NOTIFY)
-> +
-> +#define TIF_UPROBE		8	// breakpointed or singlestepping
-> +#define _TIF_UPROBE		BIT(TIF_UPROBE)
-> +
-> +#define TIF_PATCH_PENDING	9	// pending live patching update
-> +#define _TIF_PATCH_PENDING	BIT(TIF_PATCH_PENDING)
-> +
-> +#ifdef HAVE_TIF_RESTORE_SIGMASK
-> +# define TIF_RESTORE_SIGMASK	10	// Restore signal mask in do_signal() */
-> +# define _TIF_RESTORE_SIGMASK	BIT(TIF_RESTORE_SIGMASK)
-> +#endif
-> +
-> +#endif /* _ASM_GENERIC_THREAD_INFO_TIF_H_ */
-> 
+>  static inline void seg6_hinfo_release(struct seg6_hmac_info *hinfo)
+>  {
+> -       kfree_rcu(hinfo, rcu);
+> +       call_rcu(&hinfo->rcu, seg6_hinfo_free_callback_rcu);
+>  }
 
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+If we worry a lot about sensitive data waiting too much in RCU land,
+perhaps use call_rcu_hurry() here ?
 
