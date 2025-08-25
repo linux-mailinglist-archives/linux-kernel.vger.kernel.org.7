@@ -1,62 +1,55 @@
-Return-Path: <linux-kernel+bounces-784337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00326B33A12
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:02:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 434EDB33A14
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:03:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B068F3AEE3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:02:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08E17178F17
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:03:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DF0629D280;
-	Mon, 25 Aug 2025 09:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872F02BE020;
+	Mon, 25 Aug 2025 09:03:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eo2k90+i"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="KiBRuYf3"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA05A20013A;
-	Mon, 25 Aug 2025 09:02:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2317820013A;
+	Mon, 25 Aug 2025 09:03:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756112528; cv=none; b=oBM3bM5X9MxxGIpVNkdJZwiE7J89iJLZTrZ6K5KV9sngyHNGdovK99kn/JCM4iAPdMrdNXFG14OLWQPYqqoRZzeB/vK/6DxPigVwdThWBSuZjZIk11Fxf6BmU2nRnZ1K+q/dhx6osoTmj6hWWNHE9ZWiBvGlaoISUk9i1cBWcBk=
+	t=1756112601; cv=none; b=snmXh0VDWLh3hE9i1wGT11/kyJzVa5HmemVasNcwbBIBbrTzFEalEQj7ySFB3ga4dlimvmHO+i6n/WA//q9KllQ3Nzq0QFscRDanty2qHFlXyNLQjVGxdm3bWNrZuH35AJcT3W/iGF4HkWro1lG11XGfXZhvwnUdTWEJznm6wzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756112528; c=relaxed/simple;
-	bh=olJ5OfYe5gD3pVafV9J8crtGdqB1Wwgk5wAkeQKHr1M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HyNchpSi7aM9b01NIhXfbF3K/ZxGp0Cgc9SjUyiw2VleQh2T0VSg+oe0MzrwVLGKRlPTmkENoNy9O2GJGtYWWwb4JhpQzCgbV7opBlTLInlcrtldrG6JmGEjhx/GmNmczm+O4XzvU5JIqdqNWnNoeullyFPSWgij/7jgCdiHRjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eo2k90+i; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57P8VgxV022786;
-	Mon, 25 Aug 2025 09:01:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	sI1VaHbnI86/2Tk5Uu2onSdA+XK1tUyznWlaN1sEpeE=; b=eo2k90+iCq9Ao+7E
-	bkwXp8RGmIJabyx3AnSjSgj2f4jusgZjIXDayTXtWWHCqyx25/O5vBBGGv2aEola
-	jNeho7fP0UTANSNKSPQ/LrMHwyR35WkjB+laTJDtYScvZWTAy5Iv8Bw8U8rRTXUY
-	FbsKfA2Lere1RStEqc+n39DAj0/7JrT1nsJNMi8RgwoV25+7tmsTNDxL9Y+Pxtpw
-	fB+9yX+CQ6MmVuPAXVXv9sPTNHJ9M00ZupOQMD3a5ope9mLOEX2vriCQo+o4AxWY
-	3wFO4Tf1G20auAXSrw2YsfHsuax+rrVl46xKvUNqmr4LrSRNFr4zFec73plyOUT6
-	k1Jf4Q==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5unmexx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Aug 2025 09:01:48 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57P91k2p011018
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Aug 2025 09:01:46 GMT
-Received: from [10.239.105.140] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Mon, 25 Aug
- 2025 02:01:44 -0700
-Message-ID: <f2eefbeb-9a97-41db-a2e5-f069a8319900@quicinc.com>
-Date: Mon, 25 Aug 2025 17:01:41 +0800
+	s=arc-20240116; t=1756112601; c=relaxed/simple;
+	bh=GpMMXXtrrro+KyCTaVM/3scprUUxl3ko8HdPHlOnIn0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IeIzQk/SerMa0RyitVWE8RT5g4cARehlcpijjtdL5DEzTVGpdosDk6bSfPd254XRHby0Nf+syXZDzSNb5PbT3L/FZcx8Luvu+DHp8zXIwjHZCHw7hoju0aQaDX+8hvflMz92zTIHQ4L5whAz2BcUUbfORHilF7tUFe7LhSFcsGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=KiBRuYf3; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
+	s=s31663417; t=1756112596; x=1756717396; i=quwenruo.btrfs@gmx.com;
+	bh=8KacQJQEil5Z7jBxn6gRL6DKh3haZB2rdJQMAwnPR2k=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=KiBRuYf3GmsaKFj9SP24QempbNpt5hYQxl8i9QBJXrJQngo9tRbfO0WMUFyV9yom
+	 BSFI+oZw4CshaNY1DV4HRrX0JTY5R0N1eQCtevnFPluNpfiokQUtjZANwOKwVMZ5j
+	 3WKBvwGPHcO3kWb/xVWd4ll/QRd2mcPEAS+Lm+TlZahku4dHIp8dV2MqcjXMP2a8p
+	 bhPxD0WyyVRbyvnm5DUEDEfl0qt/TObp95LdQtOHike0Vn5EaAveDUqA/HStRO0v8
+	 /oRiKzuCvI2POYcHbz5G/MQSM3d3yHhdvMh0+w/pvOZ0IZbkAta+kE4+sxM1DJnso
+	 Vxa5fcAnXHMg1EtPfQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.0.229] ([159.196.52.54]) by mail.gmx.net (mrgmx104
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1MKsnF-1v57HS2rdN-00SQ0K; Mon, 25
+ Aug 2025 11:03:16 +0200
+Message-ID: <663c2f5b-3bb1-4a40-b962-11c6d3a7f806@gmx.com>
+Date: Mon, 25 Aug 2025 18:33:11 +0930
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,256 +57,197 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/3] SPI: Add virtio SPI driver
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-CC: <harald.mommer@oss.qualcomm.com>, <quic_msavaliy@quicinc.com>,
-        <broonie@kernel.org>, <virtio-dev@lists.linux.dev>,
-        <viresh.kumar@linaro.org>, <linux-spi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <hdanton@sina.com>,
-        <qiang4.zhang@linux.intel.com>, <alex.bennee@linaro.org>,
-        <quic_ztu@quicinc.com>
-References: <20250820084944.84505-1-quic_haixcui@quicinc.com>
- <20250820084944.84505-4-quic_haixcui@quicinc.com>
- <aKXePVShWzXGi8yP@smile.fi.intel.com>
+Subject: Re: [PATCH] btrfs: Accept and ignore compression level for lzo
+To: Daniel Vacek <neelx@suse.com>, Calvin Owens <calvin@wbinvd.org>
+Cc: Sun YangKai <sunk67188@gmail.com>, clm@fb.com, dsterba@suse.com,
+ josef@toxicpanda.com, linux-btrfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <2022221.PYKUYFuaPT@saltykitkat>
+ <810d2b19-47ed-4902-bd8d-eb69bacbf0c6@gmx.com>
+ <aKiSpTytAOXgHan5@mozart.vkv.me>
+ <e9a4f485-3907-4f1e-8a74-2ffde87f3044@gmx.com>
+ <aKj8K8IWkXr_SOk_@mozart.vkv.me>
+ <9cacdafc-98ec-4ad2-99a8-dfb077e4a5fb@gmx.com>
+ <aKs2mCRjtv3Ki06Z@mozart.vkv.me>
+ <CAPjX3FeOEg+QhkwKWe+qDH876bp6-t1GFO0sce7a6bmhM7umpw@mail.gmail.com>
 Content-Language: en-US
-From: Haixu Cui <quic_haixcui@quicinc.com>
-In-Reply-To: <aKXePVShWzXGi8yP@smile.fi.intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: AdpXP-3w3b2lzjoM9Ok25xKHYWCPxGMg
-X-Proofpoint-ORIG-GUID: AdpXP-3w3b2lzjoM9Ok25xKHYWCPxGMg
-X-Authority-Analysis: v=2.4 cv=JJo7s9Kb c=1 sm=1 tr=0 ts=68ac267c cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10
- a=SzxDVUQ6BuH0VNSqFgwA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMSBTYWx0ZWRfXxeyGIwKejTtD
- TSNB8eclWcFw4RMwYy8b8QwfBHd+RSoScHzcKzNhQzQ5UEWFs124OUf4L0rnuntqJJZMoYUK/xA
- 9Q7NPt69PKzzf4FYTLX2dmfmbwTWobdv2Hg0xWVE+gy7ueMQQduZ1qRnNG488B/cN5cg2tgEghh
- JsfvxUlrR4x3KX5xGsUO5BjkMqSJyNDfI24CDdqsc7NUNmlheTnyEdBo3H8AavXtUYC17pyJrQi
- Iv/B0wVEdmG/j1TNPb4+9/3OvbdJlowHaRsn4sswRUWSBDoJHZku1taZzPO0E16YMCk7uqsUvPw
- jGDWT5Bbk9LfcLlnCRWnLmNnE+SV/qeykw8VMhgGwmZo1DnYmwS8woYS5Xds6VDON4Oefz+ieqw
- vvef9Jma
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-25_04,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 adultscore=0 bulkscore=0 spamscore=0 impostorscore=0
- malwarescore=0 clxscore=1015 priorityscore=1501 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230031
-
-Hi Andy,
-
-Thank you very much for your review and suggestions, I truly appreciate it!
-
-I've carefully considered your comments and have replied directly under 
-your comments with the corresponding changes. These updates will be 
-included in next version of patch. Please let me know if there's 
-anything else I should address.
-
-Thanks again for your guidance and support.
-
-Best Regards
-Haixu Cui
-
-On 8/20/2025 10:39 PM, Andy Shevchenko wrote:
-
-> 
->> +#define VIRTIO_SPI_MODE_MASK \
->> +	(SPI_CPHA | SPI_CPOL | SPI_CS_HIGH | SPI_LSB_FIRST)
-> 
-> We have SPI_MODE_X_MASK.
-> 
-
-#define VIRTIO_SPI_MODE_MASK \
-         (SPI_MODE_X_MASK | SPI_CS_HIGH | SPI_LSB_FIRST)
-
-
->> +struct virtio_spi_req {
->> +	struct completion completion;
->> +	struct spi_transfer_head transfer_head	____cacheline_aligned;
->> +	const u8 *tx_buf;
->> +	u8 *rx_buf;
->> +	struct spi_transfer_result result	____cacheline_aligned;
->> +};
-> 
-> Dunno if `pahole` aware of ____cacheline_aligned attribute, but does it shows
-> any potential improvement?
-> 
-> I think the fields can be reshuffled to go last and only one needs that
-> attribute.
-> 
-> struct virtio_spi_req {
-> 	struct completion completion;
-> 	const u8 *tx_buf;
-> 	u8 *rx_buf;
-> 	struct spi_transfer_head transfer_head	____cacheline_aligned;
-> 	struct spi_transfer_result result;
-> };
-> 
-Ok, I’ll adjust the structure as recommended.
-
-
-
->> +static int virtio_spi_set_delays(struct spi_transfer_head *th,
->> +				 struct spi_device *spi,
->> +				 struct spi_transfer *xfer)
->> +{
->> +	int cs_setup;
->> +	int cs_word_delay_xfer;
->> +	int cs_word_delay_spi;
->> +	int delay;
->> +	int cs_hold;
->> +	int cs_inactive;
->> +	int cs_change_delay;
->> +
->> +	cs_setup = spi_delay_to_ns(&spi->cs_setup, xfer);
->> +	if (cs_setup < 0) {
-> 
-> Hmm... Not a problem in your code, but ns can be quite high for low speed
-> links, there is a potential overflow...
-
-You're right—ns values can be quite high on low-speed links, and there's 
-a potential risk of overflow. I’ll keep a close eye on this and I've 
-noted this as a follow-up action item.
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1YAUJEP5a
+ sQAKCRDCPZHzoSX+qF+mB/9gXu9C3BV0omDZBDWevJHxpWpOwQ8DxZEbk9b9LcrQlWdhFhyn
+ xi+l5lRziV9ZGyYXp7N35a9t7GQJndMCFUWYoEa+1NCuxDs6bslfrCaGEGG/+wd6oIPb85xo
+ naxnQ+SQtYLUFbU77WkUPaaIU8hH2BAfn9ZSDX9lIxheQE8ZYGGmo4wYpnN7/hSXALD7+oun
+ tZljjGNT1o+/B8WVZtw/YZuCuHgZeaFdhcV2jsz7+iGb+LsqzHuznrXqbyUQgQT9kn8ZYFNW
+ 7tf+LNxXuwedzRag4fxtR+5GVvJ41Oh/eygp8VqiMAtnFYaSlb9sjia1Mh+m+OBFeuXjgGlG
+ VvQFzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1gQUJEP5a0gAK
+ CRDCPZHzoSX+qHGpB/kB8A7M7KGL5qzat+jBRoLwB0Y3Zax0QWuANVdZM3eJDlKJKJ4HKzjo
+ B2Pcn4JXL2apSan2uJftaMbNQbwotvabLXkE7cPpnppnBq7iovmBw++/d8zQjLQLWInQ5kNq
+ Vmi36kmq8o5c0f97QVjMryHlmSlEZ2Wwc1kURAe4lsRG2dNeAd4CAqmTw0cMIrR6R/Dpt3ma
+ +8oGXJOmwWuDFKNV4G2XLKcghqrtcRf2zAGNogg3KulCykHHripG3kPKsb7fYVcSQtlt5R6v
+ HZStaZBzw4PcDiaAF3pPDBd+0fIKS6BlpeNRSFG94RYrt84Qw77JWDOAZsyNfEIEE0J6LSR/
+In-Reply-To: <CAPjX3FeOEg+QhkwKWe+qDH876bp6-t1GFO0sce7a6bmhM7umpw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:prcna7STclThLT6oJPiqCCvNUR5Lm/tRVoIUmJRsyjh99v4JTFZ
+ YvbgBUgNZis9wepHq3VHN8PTNppl5oNZG26NJr9dUXhYBwl205KLIc7hIjgOO6fThqkbPaz
+ VqjnARj1or1T4xbp28yI4gGvbkBl6+BisT4KvWOuLxMGHdlSQbjRBHGBNWktipiGEV1KwAv
+ ABLvS7T5RXgKbzS8+hKXQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:OguBIZoJRww=;I5JFtqNRWkHKeTyzwEaw225ONGq
+ +lw0V/K69CBWvQoMZlEhcdVb23bTYeBm6bZva408q9kjJd1puk1a4i8Gl1DgX2aT0ZAxEYCGF
+ Gw2xxGrn3VvLwE878Mu09BxS3BCLLJyh6D9AYgaxacDaLIzwEqTW2onuMmR1infoEEQucmrrk
+ nZXmEGIyQ3N+BkZLmS2OciJeqpZI8meBtdQMnH1P9yvqe6nmmWoIgjWCuw5pvgonu847qF6gG
+ Qv7vjHH6xRl9ly77y2YpOFrvvUfh0mHolFdw2Sb0A6a9fYl8VK1nzGfZM9WEwzg//GzHThoxk
+ Aw1lFDLinajqx5K5OBUeRMhIuGHFKYNNczWp12I8Pl0dsDkm9tw5LCcXHtUUUfMavCCPR0S4v
+ xYXYjTtFY51fNcfWDhhDPhzb9qQ4cu7ca4rBZ9B4UzWM4TNfcLCvVe+iSF3eVN8i4E3f/K6pR
+ RScaEEPJtKvRG4bwfxmBkVjTIa2Cqkk8xDdoHquiqe6LM8pfapeI5+03jZj0fBcfBckJt5arX
+ WqfT99MsTaMA0KlNWHc8K/Ag5Emwn2pPp5VhFjJABAs0Zd0hHAEF5GkAQltXUKY59fkHdxvmI
+ vNkTrTCJwIvXRLS/swhWs8aNdxhKXjyrZCRw8BFDBN25pcottK1K/UE5Too1C9FOd2+TcmjzN
+ lCxn7i29OuLeac7h8CeS/UeP3XU2S2qkiStPxAQqai8YKHudwz7bGukvg+x7khhrmTtKnUhOW
+ 1ekXt63yTbtZYove0mmLfWl5z5Qv7vIKkp8brHGxHd1nnznmUv5eoETv4GDx/gv3ei/J0LMBF
+ ugUKGItoqcvZ/Aei0LskjXP0hL2/1qEwT7U9PRWdYFymmq/SwFLGrwZofzMB/S5ETcJVWousD
+ CCNfx9mUrIUniDLhKrCeWCWBELpr2Mt9H3s7/laWqQUsqJxXlHG9yKRyWS3+Kmx16k+HE8KWE
+ zvHpUb1rYoEDx4F5llX1LkNTW1TLH+p0Aw/xM56PW2UNReXDp8E4wRQIuLbyk+QzmjhSslJdx
+ aCwyNk1aqctpy9WY5ODxgLPQfiLD7rgdt7sn9LemxNM4RDopSjbQjZ90n1TfOHNRdpx9Rvepw
+ qqi60zTtsJ8TG2eGjld5Lur1MNckyGwRHOEii05pI2052k8BbC7CAmh/oeE4b178uXzNf7t0G
+ T5qy97jslp7aYXQvL5Jp/TIcKLB6oUFvcL6NUpVgY9n3zWv5zwsVbn/zOS5YCfBegpk6n/El1
+ FhQy/PevhG9co+6NkBDsn89PFrnIil2hJZaRU3DjGLe/k1myEI55Y2dmQSAoL/NvraNTK4VzZ
+ 6iLn1ld3Tbb5u8P1BVmXnDbKJ4ERdRc2so3mjKaXq31///PQum9xqtesS+VdbtRGjE2cVF3rB
+ 3qVFi7h2/TzG3std1KB5tvMQG+h1nnzOefUMcOYmmIZ7eDIAjAvHP15ecasEhWolE695YhBkR
+ 0PndomacEnknRw01yTex/xWVGl8pzyIDjdLXG//8C/OVUyArfDbRtIATWLzTs8DZL6TxFkJfU
+ dFam3turZHiho1JRn7dI2L1BnjLInCS9nV+EB/bvcgiawBonIJe3wN4tSahWEmCvhQ+NJ3U/a
+ LaX4U+bzG4XV0Nfw42z51CxLBXgstgv5Lp+e/cpieGmjyeWnYoLxg6BK+EOtcVIv3vIl73+Fd
+ eyAkfOs5d9u7fjnugim3zOC81FYTz+43gr19jOKdaJJCIyLXFkUXOG5a1/x6KvACW6DdRl2ny
+ mcoafmUAN7H0bUI4Jd7j7/4uytalOJ9E3UcQ4WvDCs1IPJSFOruwZEhx9sEs8GjwJQdDQ6sxe
+ njHKkTAGpA5QHfWIcvbHIoH/8lbV6Z8IKz48OumeufxkODxHBteBRT5/SWZ4SjhBCqcxIThXx
+ MPgTe9AS01mBK97Jiuop3mTahuGTRnmJzZTLpBA+cnj6gpCkbT1JsEiN2LahvfSEdPboRJQdx
+ fcLSn4u73rdz2b8KZyK7SZzBcu378ZXMav9vMgkggOWTPL/tB/8c/kV12lWXNk/Jhe/VgWe1Y
+ BcoPOHLrHvU7rvpBl3af+48YfojyC7G1EPJT6EN8gWlwBxUgqZx+Z0mwcUy9b9qkH8piifHEC
+ HCt9wkM2+nKKPfX/Y4/3seZdS4lNFiwy/twuo23sIPPPkwSXQJwy+Zs1YvByRHKeMsOk8owL7
+ qjJlPUGbSH+5PYwK7Vge8MNcFEuxSVL4OxEdGHnKB598VGTRMBDMFy/pmEx4lTuE9vq9CzIEd
+ 8SA5y3iMHVqMPNQ+34ZVkHzGXKgpBeavEar5pjUB2XRQFPQSnSKT3gVvV6P7byKqYc5Hn3PK9
+ LupdjNJyxTQ0rerM9bamkNv6nIEfJJaqFziSMhi/907FrenvP0WCRTpIrz2SYcw//yMVdOF9m
+ S+gfDQGFn75ZKXNOsG1kZxsCiclJSFhn9Y4p4XHUOTNGnAxrnbtYMEv5oj9Ka7TLd6wmDE0Yv
+ KiJgFgly2cwqmlw485P9+B5yIPQnRBB3ZXogO4vNAeydYQ8LIteVLyE4N/nJsR1TBv4Y12smC
+ KncITvLadObUWitmjanRjq4dTgPUwDJVhbLhiDkpYN3oNJpoAH8EXHR1IUTwnWc1auFg4BwAy
+ zgbX2Kg0XQjL8Pt3oo2jPuZeuV0TCbH2syznJP+7HYmNLSBrb57jZlkPBitIwYEV5bgoladnt
+ y3eY713s9Op/sCSyb24SNSWbJJQS5574FI0w28EcpFaZaiaslXE8Va5hAaR5wxpVPa7Zes6+m
+ bXvoOpHi/msLhPt1OUkpd9kC9Kq6YWMGuH6tWhwuMNCCjWIcZ4AlQ89QNY2PcDaCIQjsZFW8c
+ iy1zwBph+xi0vmsDkQGycZTRizAfTOGWwFC9vhsqW9MBBSESB9j4IF4WRbNLz5p+nRM59qbD4
+ k3wx0XN/VRLFfCMfUqXuFMJ4FdO+1NIB2y89LKVQ9qcuatYzuV1FV295w76HYmH/G1teu6fQa
+ UNGg2CmxMFI0fmcqfGRvvPkKrTP2f3XoDfQDEgLNK3RzygZGwSqiqFsqHs1sUJ4oGLTZyhkWD
+ HAqaX7JI+XdWnDZXy184Fm0YTaUK4FXEUQeoGqx/X0MUyQhdZEsrMSwd5HCGrWH/0fneNfBal
+ TZy4PnrEtCFDQ4B0/SUxLBsd4gnfcStCYZ5GX0ws4hIli/5o7/ewlcbTgzwRLTOVMGw22gF5G
+ pZlUkl/2/Um71B6l5KyBYXewOxpyxlqdQXDxGQwYVq2i/Qrc7Ehc0X4xWn7pcmNspr4yE465l
+ ighT5F4jTWNtiVg7+ziSyUw3P6ccqZnTn3zvfJ61uxgPHoQZq6LiUBCU6zwhS78LZ94u94L1A
+ q1RdL3gN6/Un7E5KaNK5jVPxkfdrwOVJP9zbXo3U4CZ6kFBYj5wUwPxzdhtOnzlz7UvFi2yZL
+ fDD9RV7NFp/XkwUY5W0e1lIdsm7PnrLlmJC1Wr28xEuBzSWF7jHoDYREb7UJ8mr0LeDDRvDyA
+ uCOekQDvnEPAL1eJI5G1NktvHPZl9iPeW3dFsKpYZOIJLqiVYz+BMlMXh41vjrw6GHKYN+j7L
+ rw00CruvTjimoury+DihNfuFYfjxQBuza0vw65U1LtcMzh+7ta/xMyDjVNK+xxj0XDxOcjaDr
+ OjlxGHm6a5FxZclWHh3RQq6V4cbSF2gOmdvzwDozuOAqzymNQ/NRVVa8YfRo2JqoV+nXc7GS/
+ HrhbRh/NrjYQfP+PePcf0MXayXB/CTrso/nlT+bN/6umT4Dpu9444ndX1v8VSOFSjNtAYRMf5
+ tdyCcbfeS9oFwhggzrXJ6GD0TG3wIKrWoYE8tUlSADIsk67yxRxD7vODnqo4uANS6hc4p3irH
+ eEeuu4B8cXUfv/QUNbBW1VUCG2u+SjmS1L2y80c+5dWft8exA3OErz1Uo5QxSTkAWDZGXY2O6
+ iPx9psUxMhRs/tV50bQK908xDDCKsDtrx5oTJweQRwpjyclilbaLBKxA6/t8gGo5ebkYcU8+4
+ QKbt3s9hT6KFGvhW6c9KztyBr6JmNeMxI8W56zukNUY4e3YtTAeneGQnhort2RmiWIalag8/d
+ R6gRx2f3xi+CAcAnumiAGGIQCuaJcWGbqdi6h2zasB1OJH2WMPvXynb8MgJVtPPQRMczPCqkI
+ cuRn7FfkI0iWiNdsWeFs4smycc2No++bPZyLrbUgOn2yB9SiWKybTcR14JSbOHKEH1+wxMMfD
+ ARtYu06NaUlHBeC/qffKt4OF3GSiKS/oNT+BrTugFdTrPngptGV7pwi2BKJtssYVrC9H6dAwI
+ DSPcKMsv+dHsiCcPNOhWsPEMAXQ7xzHoZQugYrl+q8LXQQ+M0A5FCqPlxXscaxPfDJWrjQ3Yo
+ tFVPw41JVYFhpFVEYjToPRA1B0xPUTmfP1R+KXsn2P4xmWi6WYUf9IGptmEULaQetuE01oqjb
+ kXeg3wIPic9CBsaOgr+i/yX0USEULxLSza6AYeg1VefaRstjeuhmkLdum6KPohe5o6Pi32x2h
+ shzIsnWjOz9IaWjC/fKA/Mb7k6CUP5hA1Hy8n6SctI0rANCGTSkuOUIi9VgWrXWkQiRexEp3I
+ qex8X0Q0HGI10RsXRTAdyk2uwOEdYRdzrsB2Pobj0PwzyRxOrvqrQ629ddJABj3N/bCTrcMkj
+ Fd56KsmugZtLYTMgTGWzqpp7YsDJzVCnt0BemPI2zKgbkg6zUgFqlEvFOLFX44JTLoqkG3mMf
+ D8ebtcX6FRp/PGTjZdU4sB1ErJcmIVvHaF6uLusThd2Xqx1k2A==
 
 
 
-> 
->> +	if (cs_word_delay_spi > cs_word_delay_xfer)
->> +		th->word_delay_ns = cpu_to_le32(cs_word_delay_spi);
->> +	else
->> +		th->word_delay_ns = cpu_to_le32(cs_word_delay_xfer);
-> 
-> Why not max() ?
+=E5=9C=A8 2025/8/25 18:21, Daniel Vacek =E5=86=99=E9=81=93:
+> On Sun, 24 Aug 2025 at 17:58, Calvin Owens <calvin@wbinvd.org> wrote:
+>> From: Calvin Owens <calvin@wbinvd.org>
+>> Subject: [PATCH v3] btrfs: Accept and ignore compression level for lzo
+>>
+>> The compression level is meaningless for lzo, but before commit
+>> 3f093ccb95f30 ("btrfs: harden parsing of compression mount options"),
+>> it was silently ignored if passed.
+>>
+>> After that commit, passing a level with lzo fails to mount:
+>>
+>>      BTRFS error: unrecognized compression value lzo:1
+>>
+>> It seems reasonable for users to expect that lzo would permit a numeric
+>> level option, as all the other algos do, even though the kernel's
+>> implementation of LZO currently only supports a single level. Because i=
+t
+>> has always worked to pass a level, it seems likely to me that users in
+>> the real world are relying on doing so.
+>>
+>> This patch restores the old behavior, giving "lzo:N" the same semantics
+>> as all of the other compression algos.
+>>
+>> To be clear, silly variants like "lzo:one", "lzo:the_first_option", or
+>> "lzo:armageddon" also used to work. This isn't meant to suggest that
+>> any possible mis-interpretation of mount options that once worked must
+>> continue to work forever. This is an exceptional case where it makes
+>> sense to preserve compatibility, both because the mis-interpretation is
+>> reasonable, and because nothing tangible is sacrificed.
+>>
+>> Fixes: 3f093ccb95f30 ("btrfs: harden parsing of compression mount optio=
+ns")
+>> Signed-off-by: Calvin Owens <calvin@wbinvd.org>
+>> ---
+>>   fs/btrfs/super.c | 7 +++++--
+>>   1 file changed, 5 insertions(+), 2 deletions(-)
+>=20
+> v3 looks good to me. The original hardening was meant to gate complete
+> nonsense like "compress=3Dlzoutput", etc...
+>=20
+> Reviewed-by: Daniel Vacek <neelx@suse.com>
 
-update code with max() using:
-th->word_delay_ns = cpu_to_le32(max(cs_word_delay_spi, cs_word_delay_xfer));
+Now merged and pushed to for-next branch with the latest reviewed-by tags.
 
+Thanks,
+Qu
+>=20
+> Thank you.
+>=20
+>> diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+>> index a262b494a89f..18eb00b3639b 100644
+>> --- a/fs/btrfs/super.c
+>> +++ b/fs/btrfs/super.c
+>> @@ -299,9 +299,12 @@ static int btrfs_parse_compress(struct btrfs_fs_co=
+ntext *ctx,
+>>                  btrfs_set_opt(ctx->mount_opt, COMPRESS);
+>>                  btrfs_clear_opt(ctx->mount_opt, NODATACOW);
+>>                  btrfs_clear_opt(ctx->mount_opt, NODATASUM);
+>> -       } else if (btrfs_match_compress_type(string, "lzo", false)) {
+>> +       } else if (btrfs_match_compress_type(string, "lzo", true)) {
+>>                  ctx->compress_type =3D BTRFS_COMPRESS_LZO;
+>> -               ctx->compress_level =3D 0;
+>> +               ctx->compress_level =3D btrfs_compress_str2level(BTRFS_=
+COMPRESS_LZO,
+>> +                                                              string +=
+ 3);
+>> +               if (string[3] =3D=3D ':' && string[4])
+>> +                       btrfs_warn(NULL, "Compression level ignored for=
+ LZO");
+>>                  btrfs_set_opt(ctx->mount_opt, COMPRESS);
+>>                  btrfs_clear_opt(ctx->mount_opt, NODATACOW);
+>>                  btrfs_clear_opt(ctx->mount_opt, NODATASUM);
+>> --
+>> 2.49.1
+>>
 
-
->> +	unsigned int outcnt = 0u;
->> +	unsigned int incnt = 0u;
-> 
-> Are 'u':s important in this case/
-
-Will remove 'u' here.
-
-
->> +msg_done:
-> 
->> +	kfree(spi_req);
-> 
-> Can be called via __free() to simplify the error handling,
-> 
-
-Yes, will update spi_req definition as follows then remove 
-kfree(spi_req) here:
-
-struct virtio_spi_req *spi_req __free(kfree);
-
-
-
->> +static int virtio_spi_probe(struct virtio_device *vdev)
->> +{
->> +	struct virtio_spi_priv *priv;
->> +	struct spi_controller *ctrl;
-> 
->> +	int err;
-> 
-> Out of a sudden it's named 'err'. Please, go through the code and make
-> style/naming/etc consistent.
-> 
-I'll update the naming to consistently use ret throughout, replacing err 
-and other variants where appropriate
-
-
-
->> +	device_set_node(&ctrl->dev, dev_fwnode(&vdev->dev));
-> 
->> +	/* Setup ACPI node for controlled devices which will be probed through ACPI. */
->> +	ACPI_COMPANION_SET(&vdev->dev, ACPI_COMPANION(vdev->dev.parent));
-> 
-> This is strange. Either you need to put parent above in device_set_node() or
-> drop it here. Otherwise it's inconsistent. Needs a very good explanation what's
-> going on here...
-
-I'll remove the ACPI_COMPANION_SET() line and kept only 
-device_set_node(&ctrl->dev, dev_fwnode(&vdev->dev)); to ensure consistency.
-
-> 
->> +	dev_set_drvdata(&vdev->dev, ctrl);
->> +
->> +	err = device_property_read_u32(&vdev->dev, "spi,bus-num", &bus_num);
->> +	if (!err && bus_num <= S16_MAX)
-> 
-> This is wrong. What is the bus_num value when err != 0?
-> And why do we even care about this?
-> 
->> +		ctrl->bus_num = bus_num;
->> +	else
->> +		ctrl->bus_num = -1;
->> +
-
-Update as follows:
-ret = device_property_read_u32(&vdev->dev, "spi,bus-num", &bus_num);
-         if (ret || bus_num > S16_MAX)
-                 ctrl->bus_num = -1;
-         else
-                 ctrl->bus_num = bus_num;
-
-
-
->> +	err = virtio_spi_find_vqs(priv);
->> +	if (err) {
-> 
->> +		dev_err_probe(&vdev->dev, err, "Cannot setup virtqueues\n");
->> +		return err;
-> 
-> 		return dev_err_probe(...);
-> 
-Acknowledged.
-
-
-
-
->> +	/* Register cleanup for virtqueues using devm */
->> +	err = devm_add_action_or_reset(&vdev->dev, (void (*)(void *))virtio_spi_del_vq, vdev);
->> +	if (err) {
->> +		dev_err_probe(&vdev->dev, err, "Cannot register virtqueue cleanup\n");
->> +		return err;
->> +	}
->> +
->> +	/* Use devm version to register controller */
->> +	err = devm_spi_register_controller(&vdev->dev, ctrl);
->> +	if (err) {
->> +		dev_err_probe(&vdev->dev, err, "Cannot register controller\n");
->> +		return err;
-> 
-> As per above.
-Acknowledged
-
-> 
->> +static int virtio_spi_freeze(struct device *dev)
->> +{
->> +	struct spi_controller *ctrl = dev_get_drvdata(dev);
->> +	struct virtio_device *vdev = container_of(dev, struct virtio_device, dev);
-> 
-> Use dev_to_virtio()
-Acknowledged
-
-
-
-
->> +static int virtio_spi_restore(struct device *dev)
->> +{
->> +	struct spi_controller *ctrl = dev_get_drvdata(dev);
->> +	struct virtio_device *vdev = container_of(dev, struct virtio_device, dev);
-> 
-> As per above.
-Acknowledged
 
