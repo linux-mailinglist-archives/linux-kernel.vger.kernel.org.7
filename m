@@ -1,124 +1,139 @@
-Return-Path: <linux-kernel+bounces-785149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B802DB346A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:03:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 24909B346A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:03:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 875F01708F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:03:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64D96171D9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:03:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C612FCBFD;
-	Mon, 25 Aug 2025 16:03:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6EA274FD0;
+	Mon, 25 Aug 2025 16:03:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="QUVhI7yI"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ThS3qUoa"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AFB5278165;
-	Mon, 25 Aug 2025 16:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25501E32DB;
+	Mon, 25 Aug 2025 16:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756137796; cv=none; b=qYG9JzYp7aHxsuk07FvdUVUtywOW7xbgciNookNuqnQBPLAIySUjSPrXwTylK9HBxAQQrkhT1OdqILPTaN52q8JLbUUUeMHtvIy9hPKOA9R7TnzFBGRBEevrMEkYtQR7F9xdwqOKH3PNV3S3dKoR4/Fkb7cKUDYiuahCgspcm7M=
+	t=1756137810; cv=none; b=C4UpOx8RB7iN7Xx8JDla73JqeL+Dm7KNHmV301Wm3A29G5H16zd05RvKQAckHw0M0hIJU2ggiVS7KmGtmr7fbKKfianbbm7VzlkKtHN8qTOBFTFSowFt7evyJjDrBMpj4S7y2E0GGbMCDuSKxEJGUdPTgGdGbEiXnMUnQj5gxS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756137796; c=relaxed/simple;
-	bh=TMYmbV75ENfuMziIrnJPbcxfpn58qSXP8cMZpCdt1wA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sK0rIvNKt+mfyA38TOcSgca0xRxCnUvZHDz/HfjWSo4zXwxyehsORHl9KAiZ5yRxkHLepu4xyjqbJ9V9MesYNYNDWj2+hYvgMBwYIvwihp11oFuYTJZWlw1skrnugreV4enu6w8esV01V5A3dPWO3vavymXCx6wtkjITIqEkweU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=QUVhI7yI; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id CAF5440E023B;
-	Mon, 25 Aug 2025 16:03:11 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Q3sFWL6bUJ1u; Mon, 25 Aug 2025 16:03:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1756137788; bh=oSJSKtGTsSDr5xrTo430clkfvINZDjV2vXxA4FluFZ8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QUVhI7yIALl3eV/3zTlSZIP3Ub3uaGYOS0p7uNJ904u0piDWlT3aS9ILbyLApjHLb
-	 FA6N8mDWXbh5qi9a9ay7ttj9pwSbJGFpn5DOiMwQGWiqJgrwrYnH5T7HFqqBku7G26
-	 t32tAI9pVnb6LvmWo1xlqoddyQiSeu3Pl2/CjCIUDQZlhFsXLNwPKDTRE7Bv1KTa5+
-	 3INp5waK/nY5JoF+BpkPEZQcN9MSl3ALh1Xmtoq/jRO2lUCQzuOYWUxcgPTtD9pxW2
-	 1HpMzGfBFRgcm4kpYdzw7fiqWhV2G7Cv+T6/ciTGSu7CS5NTRX09fKXiFzi/tdAyyI
-	 VVMnyMQhoF+1Kn4/vfVeEIyJsk3Pj7r0CIJWXrfJ8VH768FztFTY6+FCmggGkbQvwk
-	 N4VKAoEMlB8ha5kZNvR6X1Z4qMqZyzdVP67SGPb4fFMuLZ0+3Qt0TPPp3WPy9Cygay
-	 yo1nvZ9QWa6n2qXwYgzceCEUv9aYTfxSoyxz7oo3yLffxuXifMxyCBJwa5pqlcBr72
-	 PI3vLCxWIgEST34bkJbqmUHV/KaWQZc5+qto/VCtdX+yvcCKv+PIHEsdgySh0KKC49
-	 LgZ9/WyIO8zkfRvc6xALp++/rXYuSgKuhqicYPVgyyhRJ1Y4/WH7hqG2nJNcUqDlL8
-	 OLh51o6uiSsR6WDh43Em9ZB0=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	s=arc-20240116; t=1756137810; c=relaxed/simple;
+	bh=yNYKVB7ejZHvag9mlt4vBKdDNtWCCkBY3PhbjTGPdRk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=SuPfz6+IVvfJUgTSximKxa+Q/RBAwuBpX7C+xCO7MdsFIz9T1kGEHJwACcL8YTBgQ8FzsHLv9dpEhCkmBEEDTlGFILTFuvNvDnoT9u93zs3hMAaT4nKasetSUnK4ENL6+ngZt5NERejcu+jcbec9pHKXG8lkGfSLw8IB+CPNjR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ThS3qUoa; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1756137806;
+	bh=yNYKVB7ejZHvag9mlt4vBKdDNtWCCkBY3PhbjTGPdRk=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=ThS3qUoaX7eSegoVgtUWcxMbZq7tWTHAX6xAiSMkJu4+yJFjx7OYHWS+8FWzCH9OQ
+	 YafPQfcpzdW2iRvTV43ZZOnjD2sSpXfwKTXEnzOhDvtt9VRfFaQxs/zPxK/5S9PqM8
+	 jl7GTA8FsemJ4NL3V1wEQCIcTo4ErT9Aunz6NJTm2lDRCJ/OOqn2Apv5DjtdywA7dN
+	 j/NUoXwrCm19r6Jvt4hssp3/GTJGLUbSF6R8BW5AxUS+fXSqoFxU2J7B2HWwmli9sv
+	 Y2VR1uGnongrkp5618EobR8+03VtVyiy0NIyoldlpiXzHW0+tQP0kC6gkqLQ4pop3z
+	 kffGlHDrJymjQ==
+Received: from 2a01cb0892f2d600c8f85cf092d4af51.ipv6.abo.wanadoo.fr (2a01cb0892f2D600C8f85cf092d4AF51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 42CEA40E0217;
-	Mon, 25 Aug 2025 16:02:46 +0000 (UTC)
-Date: Mon, 25 Aug 2025 18:02:45 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com,
-	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com,
-	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org,
-	hpa@zytor.com, peterz@infradead.org, seanjc@google.com,
-	pbonzini@redhat.com, kvm@vger.kernel.org,
-	kirill.shutemov@linux.intel.com, huibo.wang@amd.com,
-	naveen.rao@amd.com, francescolavra.fl@gmail.com,
-	tiala@microsoft.com
-Subject: Re: [PATCH v9 00/18] AMD: Add Secure AVIC Guest Support
-Message-ID: <20250825160245.GCaKyJJcIbHQ8VwnMv@fat_crate.local>
-References: <20250811094444.203161-1-Neeraj.Upadhyay@amd.com>
+	(Authenticated sender: jmassot)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id EFED117E08E3;
+	Mon, 25 Aug 2025 18:03:24 +0200 (CEST)
+Message-ID: <305df15f3fdc1b9b1b1d9b853a859cfd969733c7.camel@collabora.com>
+Subject: Re: [PATCH v2 5/6] dt-bindings: sound: Convert MT8183 DA7219 sound
+ card bindings to YAML
+From: Julien Massot <julien.massot@collabora.com>
+To: Rob Herring <robh@kernel.org>
+Cc: kernel@collabora.com, Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,  Matthias Brugger
+ <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>,  Ikjoon Jang
+ <ikjn@chromium.org>, Enric Balletbo i Serra <eballetbo@kernel.org>, Chen-Yu
+ Tsai	 <wenst@chromium.org>, Weiyi Lu <weiyi.lu@mediatek.com>, Eugen Hristev
+	 <eugen.hristev@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark
+ Brown	 <broonie@kernel.org>, Julien Massot <jmassot@collabora.com>, Sean
+ Wang	 <sean.wang@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Date: Mon, 25 Aug 2025 18:03:24 +0200
+In-Reply-To: <20250822144224.GA3745327-robh@kernel.org>
+References: <20250820-mtk-dtb-warnings-v2-0-cf4721e58f4e@collabora.com>
+	 <20250820-mtk-dtb-warnings-v2-5-cf4721e58f4e@collabora.com>
+	 <20250822144224.GA3745327-robh@kernel.org>
+Organization: Collabora Ltd.
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250811094444.203161-1-Neeraj.Upadhyay@amd.com>
 
-On Mon, Aug 11, 2025 at 03:14:26PM +0530, Neeraj Upadhyay wrote:
-> Kishon Vijay Abraham I (2):
->   x86/sev: Initialize VGIF for secondary VCPUs for Secure AVIC
->   x86/sev: Enable NMI support for Secure AVIC
-> 
-> Neeraj Upadhyay (16):
->   x86/apic: Add new driver for Secure AVIC
->   x86/apic: Initialize Secure AVIC APIC backing page
->   x86/apic: Populate .read()/.write() callbacks of Secure AVIC driver
->   x86/apic: Initialize APIC ID for Secure AVIC
->   x86/apic: Add update_vector() callback for apic drivers
->   x86/apic: Add update_vector() callback for Secure AVIC
->   x86/apic: Add support to send IPI for Secure AVIC
->   x86/apic: Support LAPIC timer for Secure AVIC
->   x86/apic: Add support to send NMI IPI for Secure AVIC
->   x86/apic: Allow NMI to be injected from hypervisor for Secure AVIC
->   x86/apic: Read and write LVT* APIC registers from HV for SAVIC guests
->   x86/apic: Handle EOI writes for Secure AVIC guests
->   x86/apic: Add kexec support for Secure AVIC
->   x86/apic: Enable Secure AVIC in Control MSR
->   x86/sev: Prevent SECURE_AVIC_CONTROL MSR interception for Secure AVIC
->     guests
->   x86/sev: Indicate SEV-SNP guest supports Secure AVIC
+On Fri, 2025-08-22 at 09:42 -0500, Rob Herring wrote:
+> On Wed, Aug 20, 2025 at 03:44:56PM +0200, Julien Massot wrote:
+> > Convert the Device Tree binding for MT8183-based boards using the
+> > DA7219 headset codec and optional MAX98357, RT1015 or RT1015P speaker
+> > amplifiers from the legacy .txt format to YAML schema.
+> >=20
+> > This improves binding validation and removes DT schema warnings
+> > for boards using these audio components.
+> >=20
+> > Reviewed-by: AngeloGioacchino Del Regno
+> > <angelogioacchino.delregno@collabora.com>
+> > Signed-off-by: Julien Massot <julien.massot@collabora.com>
+> > ---
+> > =C2=A0.../bindings/sound/mediatek,mt8183_da7219.yaml=C2=A0=C2=A0=C2=A0=
+=C2=A0 | 49
+> > ++++++++++++++++++++++
+> > =C2=A0.../bindings/sound/mt8183-da7219-max98357.txt=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 | 21 ----------
+> > =C2=A02 files changed, 49 insertions(+), 21 deletions(-)
+> >=20
+> > diff --git
+> > a/Documentation/devicetree/bindings/sound/mediatek,mt8183_da7219.yaml
+> > b/Documentation/devicetree/bindings/sound/mediatek,mt8183_da7219.yaml
+> > new file mode 100644
+> > index
+> > 0000000000000000000000000000000000000000..b6fee3ff3af9a90820ee57efdf8e
+> > fb3f3d474804
+> > --- /dev/null
+> > +++
+> > b/Documentation/devicetree/bindings/sound/mediatek,mt8183_da7219.yaml
+> > @@ -0,0 +1,49 @@
+> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/sound/mediatek,mt8183_da7219.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: MediaTek MT8183 sound card with external codecs
+> > +
+> > +maintainers:
+> > +=C2=A0 - Julien Massot <jmassot@collabora.com>
+> > +
+> > +description:
+> > +=C2=A0 Binding for MediaTek MT8183 SoC-based sound cards with DA7219 a=
+s
+> > headset codec,
+>=20
+> Drop 'Binding for '. Otherwise,
+>=20
+Ack
 
-Ok, you're all reviewed.
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-I don't see any big issues with the set anymore except nitpicks I've replied
-with to each patch separately. You can work in all review feedback and send
-the next revision which I'll queue unless someone objects.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Julien
 
