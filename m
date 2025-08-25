@@ -1,131 +1,80 @@
-Return-Path: <linux-kernel+bounces-784765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CC9DB340D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:35:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2CADB340C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:32:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A88687A38A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:31:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EBFD1706CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:32:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94589278165;
-	Mon, 25 Aug 2025 13:32:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE7727380A;
+	Mon, 25 Aug 2025 13:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FtNxSrWf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W2RrX9yL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA40F2765CC;
-	Mon, 25 Aug 2025 13:32:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6702A1A83FB
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 13:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756128739; cv=none; b=AxOQZWFdPRZ5NIVPBmhmpBW32eVM9zlT6OCQsdWXvru/ucnXD1sFn6I9sdVP6Q7DVq9FEqNqtExz3mnQ5Hmmkf2hGu2oY8LmR6yn+zbaVS+VgG7pJHPHrjMKB0+tUoNT4bntssjlEL+d251XjzCnZOnuVxqJp06JrK5l8/tcdbc=
+	t=1756128731; cv=none; b=F8i1QA079iHmnuULkdp6GJeJvf1NaYosRCfl1dVjDxCRmKU2G5NcKkfVqmpDAOmswlm4K2nO6qEEIEHknR5AnUmtYMu/WAvRWNJZisaAZ08X7CLG/br1yQB76salIjYNpa+v7phxJBsvB6jurgeGZzgN8gPTcOciIxZhogbYwII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756128739; c=relaxed/simple;
-	bh=XaTIaj6qHhD1hUA7V34cPlXuSaGIqHi/61efSmJGlLc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ttpG0lw1CYM+QomZZn5nWwbr2rGDyLpq1ATPp52W4lCeXyPeAf4AsW6RhNL8q9kIlu+goXoD0EVZytrt9Y8415skukN02iKBpESnx5jHl48cBwBLEWloynnWLG/fQkDlFbNo+kaes+u7r8ODGuAhu7aEklfUilhk9awaQQnMd40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FtNxSrWf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76E3AC4CEED;
-	Mon, 25 Aug 2025 13:32:17 +0000 (UTC)
+	s=arc-20240116; t=1756128731; c=relaxed/simple;
+	bh=jqq45E3cx3rUgAVpwRx7RAAXFOhHUbO3uAuW67XvdVQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qDCQjMD7NatcDdGrIUr44NIMrLLjYH1MEUZePXY9J7AWpj4nUeZxisteLpe839ocjBIdcUhNUNoYq+dkeucYutkJ3EuReXf48cIp8HGQV3y964bFzXbuLWDM8HwcSlRPmjPMtl8lmGkxZt++rOKSlDbYwX/jhd0Un4KYG62gFJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W2RrX9yL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E758EC4CEED;
+	Mon, 25 Aug 2025 13:32:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756128738;
-	bh=XaTIaj6qHhD1hUA7V34cPlXuSaGIqHi/61efSmJGlLc=;
+	s=k20201202; t=1756128731;
+	bh=jqq45E3cx3rUgAVpwRx7RAAXFOhHUbO3uAuW67XvdVQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FtNxSrWfOi+pHEA2JMEoer3JvCXgm4+JALquieVGBhzcgcZX6xPe6+HKmCeaCR7Df
-	 ARojhsZyh+gLDLg2pPB90qnk+L2gWP7/BKy4UHm+F//Yx+M1VWG4xyuou1OGoTuJ1Q
-	 kdBcdZKZJTHwDf7mjErpJ1XNjJeGvcXDc7FV3Yu7tJgBpnE/hjhIvDF7nbvTUPrqnz
-	 v6j9/f3ZbGaVZKb3/y3Xn+omkBuRRlUDaE3p0PZHtXVc6I/BbXMKZk06WgVPNNH5hg
-	 1OLdkU4EsNif2X2rKBV3C6st+84w7PHsyN7wloaVIpuwMnRC/RkjoDxwSuwqjDj4Ew
-	 /eQWrCwiupdpg==
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject:
- [PATCH v2 3/3] thermal: gov_step_wise: Allow cooling level to be reduced
- earlier
-Date: Mon, 25 Aug 2025 15:31:53 +0200
-Message-ID: <1947735.tdWV9SEqCh@rafael.j.wysocki>
-Organization: Linux Kernel Development
-In-Reply-To: <12745610.O9o76ZdvQC@rafael.j.wysocki>
-References: <12745610.O9o76ZdvQC@rafael.j.wysocki>
+	b=W2RrX9yLPYWt/6DJVKLYiwNS0CihvUQIZejVeQcxvR3jxo7+GHDdlJpxIMRkGmrQL
+	 hFVTe86jVKtgVtrymzKjDHUFEQXms6zVScoMf49JSSljf7Rg45zMJcHTdrdHUpUr+F
+	 6n2NQc+MNcs/mSwsN4I0E1Ao7M8zJpnCj6JsLAhVLBD9KqWT6zfEZ5IV0epxQz53Xz
+	 EfvUBFE8vGmwRhrKh17VEFwywUOAjW4S6t0P9XxW49EoxcVa33bBQJUbY8a2QvqK+r
+	 fSbllZMgDFd48F1XnHcL9jhalhRJsCGuUP1KR1+J3mPo1OzSrfTIGDWwXK52djdFCp
+	 DF8jeuNXWB3+Q==
+From: Kees Cook <kees@kernel.org>
+To: Junjie Cao <junjie.cao@intel.com>
+Cc: Kees Cook <kees@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] lkdtm: fortify: Fix potential NULL dereference on kmalloc failure
+Date: Mon, 25 Aug 2025 06:32:08 -0700
+Message-Id: <175612872734.1493840.9696239897709581215.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250814060605.5264-1-junjie.cao@intel.com>
+References: <20250814060605.5264-1-junjie.cao@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Thu, 14 Aug 2025 14:06:05 +0800, Junjie Cao wrote:
+> Add missing NULL pointer checks after kmalloc() calls in
+> lkdtm_FORTIFY_STR_MEMBER() and lkdtm_FORTIFY_MEM_MEMBER() functions.
+> 
+> 
 
-The current behavior of the Step-wise thermal governor is to increase
-the cooling level one step at a time after trip point threshold passing
-by thermal zone temperature until the temperature stops to rise and then
-do nothing until it falls down below the (possibly new) trip point
-threshold, at which point the cooling level is reduced straight to the
-applicable minimum.
+Applied to for-next/hardening, thanks!
 
-While this generally works, it is not in agreement with the throttling
-logic description comment in step_wise_manage() any more after some
-relatively recent changes, and in the case of passive cooling, it may
-lead to undesirable performance oscillations between high and low
-levels.
+[1/1] lkdtm: fortify: Fix potential NULL dereference on kmalloc failure
+      https://git.kernel.org/kees/c/a3db14be3e90
 
-For this reason, modify the governor's cooling device state selection
-function, get_target_state(), to reduce cooling by one level even if
-the temperature is still above the thermal zone threshold, but the
-temperature has started to fall down.  However, ensure that the cooling
-level will remain above the applicable minimum in that case to pull
-the zone temperature further down, possibly until it falls below the
-trip threshold (which may now be equal to the low temperature of the
-trip).
+Take care,
 
-Doing so should help higher performance to be restored earlier in some
-cases which is desirable especially for passive trip points with
-relatively high hysteresis values.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/thermal/gov_step_wise.c |   15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
-
---- a/drivers/thermal/gov_step_wise.c
-+++ b/drivers/thermal/gov_step_wise.c
-@@ -20,7 +20,9 @@
-  * If the temperature is higher than a trip point,
-  *    a. if the trend is THERMAL_TREND_RAISING, use higher cooling
-  *       state for this trip point
-- *    b. if the trend is THERMAL_TREND_DROPPING, do nothing
-+ *    b. if the trend is THERMAL_TREND_DROPPING, use a lower cooling state
-+ *       for this trip point, but keep the cooling state above the applicable
-+ *       minimum
-  * If the temperature is lower than a trip point,
-  *    a. if the trend is THERMAL_TREND_RAISING, do nothing
-  *    b. if the trend is THERMAL_TREND_DROPPING, use the minimum applicable
-@@ -51,6 +53,17 @@
- 	if (throttle) {
- 		if (trend == THERMAL_TREND_RAISING)
- 			return clamp(cur_state + 1, instance->lower, instance->upper);
-+
-+		/*
-+		 * If the zone temperature is falling, the cooling level can
-+		 * be reduced, but it should still be above the lower state of
-+		 * the given thermal instance to pull the temperature further
-+		 * down.
-+		 */
-+		if (trend == THERMAL_TREND_DROPPING)
-+			return clamp(cur_state - 1,
-+				     min(instance->lower + 1, instance->upper),
-+				     instance->upper);
- 	} else if (trend == THERMAL_TREND_DROPPING) {
- 		if (cur_state <= instance->lower)
- 			return THERMAL_NO_TARGET;
-
-
+-- 
+Kees Cook
 
 
