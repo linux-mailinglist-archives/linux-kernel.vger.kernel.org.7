@@ -1,100 +1,59 @@
-Return-Path: <linux-kernel+bounces-784991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96DC0B3447B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:48:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC251B3446D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:46:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6E06162754
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:42:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F41351882986
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D16F2EE619;
-	Mon, 25 Aug 2025 14:42:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD4E2FABE7;
+	Mon, 25 Aug 2025 14:45:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MYab47A3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gPeWoDqF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B14279918
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 14:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297282F2918;
+	Mon, 25 Aug 2025 14:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756132924; cv=none; b=UEFhxxAe0mN3uLkfzoEMHRxOGGvhhdX2A5jYH+WqRFxTnmtYClVGwmY0WuItWWPfmD9eYWBgP0OHawvPCQ3xyFH6MkBwg8O8VpOO96RqrC8yfxOm+tGjTw4iCHp1Tijai8C0ihgTlLKFi9wD9AeRz+LddcDO7YDPSfBq2BMYAr8=
+	t=1756133102; cv=none; b=VRUpdiAuHHoS4q6UNuBvQvibg/zaelnMv71fMaxRx0Y5kcvty6tHgGB3h5meEpyfmJIlPRoidmotnPqeyM+TyItjJtiVuJ2zXK8srtYYD+7TphiRguwzGF9jf1vb0uG2/EzmXbbTzELi4X1d4+9sj89JHstaJqDq2aNmEINgA4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756132924; c=relaxed/simple;
-	bh=dY2BC24LcOwPmwCFWjqjdFx0LB0w2liGu7oqHI05kJA=;
+	s=arc-20240116; t=1756133102; c=relaxed/simple;
+	bh=CXtcxglAA+98wJhlfNUc3ZX0sJCWhslYoGCOjtc+ktI=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZMykKjuXwkizdsE2gSSm8whbno+ElpRbi7RysyDeqmM11MkbEaqXqjrL1uD5VrADWncftJQxKmI1FXFWxyzjBRpB214XRQlfBYZyEhvbUKIP13KTjApmyMDRBXXv8VnGBmkkCAYbroS+c5bP+WjJWKik7IGrycSVvr+B/ZCYOA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MYab47A3; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756132921;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sLqi3ZQ4Qq7GjJJBZEDnBdmpcriLiuWuU+N614GqayQ=;
-	b=MYab47A3TUePDS5cKDHuueOOpoCdfpZO7VUkEgaHpv90fm2FlVIeZJkxsEUsRE9GIHAXeK
-	Kh6DU/dVtOiTmuw1EA4JnrIKheZekFhk6k84+IXNeTgXk76CrlOomuAVSJFvBh8jb3sltT
-	FE1crvZ8GVRvyvZuWQmu4VUQIVZH5QY=
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com
- [209.85.166.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-156-30KAuqcPMw6N9giJJvR9Hg-1; Mon, 25 Aug 2025 10:42:00 -0400
-X-MC-Unique: 30KAuqcPMw6N9giJJvR9Hg-1
-X-Mimecast-MFC-AGG-ID: 30KAuqcPMw6N9giJJvR9Hg_1756132920
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3ec9adc1255so2517205ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 07:42:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756132920; x=1756737720;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sLqi3ZQ4Qq7GjJJBZEDnBdmpcriLiuWuU+N614GqayQ=;
-        b=hFoJkel6Wqn9FBy5uJRrIVkmiGs6kXyg1UnU4nccMvIfSLjAr76g8vUCAzobQdfXQd
-         M8AhYc4sFBhZ2KXBkRHUn+BuZO8Uc1DUFIZxcp0kxCRjDOl6ndz7REZISwRqEVl9uddi
-         ZJZtq112n+WOinEj59em/OLblnJvnEtI9v3BGLZBzSsbPGVVooGCZC2bMTYlZ6gXWbyo
-         axcFst1w1IENyqS/lIdfF5fgZ/hNySAhxt9Td5oVeEZVScBVYy9MX1zWzIirDCeDdpWj
-         Ue1dmp5eX3/rRzFLR3DVMZ8IjfXRQD4cAJB1D0HkMch4f23R9yVtlbccJoKJev+73Taw
-         wnGg==
-X-Forwarded-Encrypted: i=1; AJvYcCWK2e5OkTv6E63Y7VNV7ywW1XTkOQDLD4yVnq1YKdj936+12eVJ4PsTHBHjVbfz1IHIPOuUaM+zLDcTeTE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0+8eKhRxW8D15OwlUwymqX7Cv4PAlE99lWFs9r2NCaFyl08mH
-	4yoyyCwo/aTiJi2TUYfrR6nvakbKs9UNUBBhDv1hnnrEtgcmpc4TU9rsQ7fQ05SJw8EAGR84wzF
-	8J10W6oL9wMPMJUT6I/3Gnt0hg2eDFwP+ooww9MJk3Juum2BY6TF+xgfu8hf1w/ofAQ==
-X-Gm-Gg: ASbGncsGSA9Mc8LmAaiKytylWV0cLZLCSPJ3M6vEDiBnXYTIEucc6Cy9AtS3ZonDmCW
-	LHzVgIKFpYJ1OKe9SDnWxljS9GWiRzkRaJFRPlAJWkeIWeoqmpJ90Tjn5lfavqNza26lxhUv4gd
-	sa5Xo21DaN8lnYBuppDSw0cw7ct3QQqqHgDoN9pkYgeXUIE22MPzV0l1fLsWVS7iag344krs5ja
-	xDDBCRc8Edi9Tvrc3iMljdf6AFs87VqPVDZ6Ns3yPYBzmc4uMnXaIdsTfCBLYxHuLgUzp2RbDV7
-	nG4NuqEYxRTV1W7R7i8vMj5uLep2QRjRWhA1V6zhfUM=
-X-Received: by 2002:a05:6e02:1567:b0:3ec:9c32:6471 with SMTP id e9e14a558f8ab-3ec9c32673bmr18816445ab.2.1756132919647;
-        Mon, 25 Aug 2025 07:41:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGW4Lgvz6FbySIAPwtm0U1Tae7UuaIE2esfeq7WZJykcdIyv6UETbtw/iCgysaF9obPTYn/Gg==
-X-Received: by 2002:a05:6e02:1567:b0:3ec:9c32:6471 with SMTP id e9e14a558f8ab-3ec9c32673bmr18816275ab.2.1756132919255;
-        Mon, 25 Aug 2025 07:41:59 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3ec67d6ffdasm22921535ab.25.2025.08.25.07.41.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 07:41:58 -0700 (PDT)
-Date: Mon, 25 Aug 2025 08:41:55 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Nipun Gupta <nipun.gupta@amd.com>
-Cc: <arnd@arndb.de>, <gregkh@linuxfoundation.org>, <nikhil.agarwal@amd.com>,
- <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <llvm@lists.linux.dev>, <oe-kbuild-all@lists.linux.dev>,
- <robin.murphy@arm.com>, <krzk@kernel.org>, <tglx@linutronix.de>,
- <maz@kernel.org>, <linux@weissschuh.net>, <chenqiuji666@gmail.com>,
- <peterz@infradead.org>, <robh@kernel.org>, <abhijit.gangurde@amd.com>,
- <nathan@kernel.org>, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v3 2/2] vfio/cdx: update driver to build without
- CONFIG_GENERIC_MSI_IRQ
-Message-ID: <20250825084155.10088e2a.alex.williamson@redhat.com>
-In-Reply-To: <20250825043122.2126859-2-nipun.gupta@amd.com>
-References: <20250825043122.2126859-1-nipun.gupta@amd.com>
-	<20250825043122.2126859-2-nipun.gupta@amd.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	 MIME-Version:Content-Type; b=niSiXf6TbLkZVshZfCgd1CKR1FvjqM2olWu5ovZhLdyH2u8ASqQ7zLkP64/DTDU1bBX9zmmLqixjNrq1oLxn0Q+GWOKhE9dFGY6+Kzr3/zXdCH5nHRkd4hNSrc/eaoMDiQIDdAkXxrhWerY11xXMz99XwDpPLXl8kSfdzutZGUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gPeWoDqF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DBC7C4CEED;
+	Mon, 25 Aug 2025 14:44:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756133100;
+	bh=CXtcxglAA+98wJhlfNUc3ZX0sJCWhslYoGCOjtc+ktI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gPeWoDqF7vJffRzi0Y3yt9IKt+LVXxczKGy80MxtSIholo8VrISuoJHb4x06yJi2q
+	 HJylDHsXhnnv4IT2HVEq54riS28MeDHVdCrjw6abj70ChMRe2EtRkgoZKXsUm34CvE
+	 oKjmdaQfVXKpF3F9q3K1Nv0lVRuYZJ9Ae4+xfU7JQeBLjpO+65UHPredvN1+hm37iM
+	 lRgKCanirRDENXvfSGBqBf+Z6X1YC9yDkxXQunAodN+v1Nre5/Q6xwNnBG32qB6Qsr
+	 saRwl+00bzontYffyDgLafrFMddyR+AXAFHJ81VK7E/TvsocYoyJUeEtdatn4hJAvo
+	 TQzVPwt4Xkvcg==
+Date: Mon, 25 Aug 2025 15:44:50 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Jonathan Santos <Jonathan.Santos@analog.com>
+Cc: <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <Michael.Hennerich@analog.com>,
+ <lars@metafoo.de>, <dlechner@baylibre.com>, <nuno.sa@analog.com>,
+ <andy@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+ <conor+dt@kernel.org>, <marcelo.schmitt1@gmail.com>
+Subject: Re: [PATCH v2 4/4] iio: adc: ad7768-1: add support for ADAQ776x-1
+ ADC Family
+Message-ID: <20250825154450.75eedc9b@jic23-huawei>
+In-Reply-To: <20250824041013.9872-1-Jonathan.Santos@analog.com>
+References: <20250824041013.9872-1-Jonathan.Santos@analog.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,80 +63,209 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Mon, 25 Aug 2025 10:01:22 +0530
-Nipun Gupta <nipun.gupta@amd.com> wrote:
+On Sun, 24 Aug 2025 01:10:13 -0300
+Jonathan Santos <Jonathan.Santos@analog.com> wrote:
 
-> Define dummy MSI related APIs in VFIO CDX driver to build the
-> driver without enabling CONFIG_GENERIC_MSI_IRQ flag.
+> Add support for ADAQ7767/68/69-1 series, which includes PGIA and
+> Anti-aliasing filter (AAF) gains. Unlike the AD7768-1, they do not
+> provide a VCM regulator interface.
 > 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202508070308.opy5dIFX-lkp@intel.com/
-> Reviewed-by: Nikhil Agarwal <nikhil.agarwal@amd.com>
-> Signed-off-by: Nipun Gupta <nipun.gupta@amd.com>
-> ---
+> The PGA gain is configured in run-time through the scale attribute,
+> if supported by the device. PGA is enabled and controlled by the GPIO
+> controller (GPIOs 0, 1 and 2) provided by the device with the SPI
+> interface.
 > 
-> Changes v1->v2:
-> - fix linking intr.c file in Makefile
-> Changes v2->v3:
-> - return error from vfio_cdx_set_irqs_ioctl() when CONFIG_GENERIC_MSI_IRQ
->   is disabled
+> The AAF gain is defined by hardware connections and should be specified
+> in device tree.
 > 
->  drivers/vfio/cdx/Makefile  |  6 +++++-
->  drivers/vfio/cdx/private.h | 14 ++++++++++++++
->  2 files changed, 19 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/vfio/cdx/Makefile b/drivers/vfio/cdx/Makefile
-> index df92b320122a..dadbef2419ea 100644
-> --- a/drivers/vfio/cdx/Makefile
-> +++ b/drivers/vfio/cdx/Makefile
-> @@ -5,4 +5,8 @@
+> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
+Hi Jonathan
+
+Various minor comments inline.
+
+Thanks,
+
+Jonathan
+
+> diff --git a/drivers/iio/adc/ad7768-1.c b/drivers/iio/adc/ad7768-1.c
+> index 51562367a9d4..61d93dbfc4c6 100644
+> --- a/drivers/iio/adc/ad7768-1.c
+> +++ b/drivers/iio/adc/ad7768-1.c
+
 >  
->  obj-$(CONFIG_VFIO_CDX) += vfio-cdx.o
->  
-> -vfio-cdx-objs := main.o intr.o
-> +vfio-cdx-objs := main.o
-> +
-> +ifdef CONFIG_GENERIC_MSI_IRQ
-> +vfio-cdx-objs += intr.o
-> +endif
-> diff --git a/drivers/vfio/cdx/private.h b/drivers/vfio/cdx/private.h
-> index dc56729b3114..5343eb61bec4 100644
-> --- a/drivers/vfio/cdx/private.h
-> +++ b/drivers/vfio/cdx/private.h
-> @@ -38,11 +38,25 @@ struct vfio_cdx_device {
->  	u8			config_msi;
->  };
->  
-> +#ifdef CONFIG_GENERIC_MSI_IRQ
->  int vfio_cdx_set_irqs_ioctl(struct vfio_cdx_device *vdev,
->  			    u32 flags, unsigned int index,
->  			    unsigned int start, unsigned int count,
->  			    void *data);
->  
->  void vfio_cdx_irqs_cleanup(struct vfio_cdx_device *vdev);
-> +#else
-> +static int vfio_cdx_set_irqs_ioctl(struct vfio_cdx_device *vdev,
-> +				   u32 flags, unsigned int index,
-> +				   unsigned int start, unsigned int count,
-> +				   void *data)
+>  struct ad7768_state {
+> @@ -235,6 +298,9 @@ struct ad7768_state {
+>  	unsigned int samp_freq;
+>  	unsigned int samp_freq_avail[ARRAY_SIZE(ad7768_mclk_div_rates)];
+>  	unsigned int samp_freq_avail_len;
+> +	int pga_gain_mode;
+> +	int aaf_gain;
+> +	int scale_tbl[ADAQ776X_MAX_GAIN_MODES][2];
+>  	struct completion completion;
+>  	struct iio_trigger *trig;
+>  	struct gpio_desc *gpio_sync_in;
+> @@ -243,6 +309,7 @@ struct ad7768_state {
+>  	struct gpio_chip gpiochip;
+>  	const struct ad7768_chip_info *chip;
+>  	bool en_spi_sync;
+> +	struct mutex pga_lock; /* protect PGA value access */
+
+why?  What is special about that value? Is it only state in device?
+If so I'd go with 
+/* protect device internal state (PGA) */
+
+
+> +static int ad7768_calc_pga_gain(struct ad7768_state *st, int gain_int,
+> +				int gain_fract, int precision)
 > +{
-> +	return -ENODEV;
-
-With the fix to patch 1/, the device info ioctl should be returning
-that there are no irqs available, so this should use the same errno as
-any other case of the user trying to set an out-of-bounds irq, -EINVAL.
-
-With that change
-
-Reviewed-by: Alex Williamson <alex.williamson@redhat.com>
-
+> +	u64 gain_nano;
+> +	int gain_idx;
+> +	u32 tmp;
+> +
+> +	gain_nano = gain_int * NANO + gain_fract;
+> +	gain_nano = clamp(gain_nano, 0, ADAQ776X_GAIN_MAX_NANO);
+> +	tmp = DIV_ROUND_CLOSEST_ULL(gain_nano << precision, NANO);
+> +	gain_nano = DIV_ROUND_CLOSEST(st->vref_uv, tmp);
+> +	if (st->chip->has_variable_aaf)
+> +		/* remove the AAF gain from the overall gain */
+> +		gain_nano = DIV_ROUND_CLOSEST_ULL(gain_nano *  MILLI,
+> +						  ad7768_aaf_gains[st->aaf_gain]);
+> +	tmp = st->chip->num_pga_modes;
+> +	gain_idx = find_closest(gain_nano, st->chip->pga_gains, tmp);
+put tmp inline.  It's not adding anything by having it in the local variable
+where it's not so obvious it is the number of the previous parameter.
+> +
+> +	return gain_idx;
 > +}
 > +
-> +static void vfio_cdx_irqs_cleanup(struct vfio_cdx_device *vdev)
+> +static int ad7768_set_pga_gain(struct ad7768_state *st,
+> +			       int gain_mode)
 > +{
-> +}
-> +#endif
->  
->  #endif /* VFIO_CDX_PRIVATE_H */
+> +	int pgia_pins_value = abs(gain_mode - st->chip->pgia_mode2pin_offset);
+> +	int check_val;
+> +	int ret;
+> +
+> +	guard(mutex)(&st->pga_lock);
+> +	/* Check GPIO control register */
 
+The code is pretty much saying what that comment does. Drop the comment.
+
+> +	ret = regmap_read(st->regmap, AD7768_REG_GPIO_CONTROL, &check_val);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	if ((check_val & AD7768_GPIO_PGIA_EN) != AD7768_GPIO_PGIA_EN) {
+> +		/* Enable PGIA GPIOs and set them as output */
+> +		ret = regmap_write(st->regmap, AD7768_REG_GPIO_CONTROL, AD7768_GPIO_PGIA_EN);
+
+Why check it? Just write it and rely on regcache making that only happen once
+if at all.  If you need to be careful about double writing - add a comment.
+
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	/* Write the respective gain values to GPIOs 0, 1, 2 */
+> +	ret = regmap_write(st->regmap, AD7768_REG_GPIO_WRITE,
+> +			   AD7768_GPIO_WRITE(pgia_pins_value));
+> +	if (ret)
+> +		return ret;
+> +
+> +	st->pga_gain_mode = gain_mode;
+> +
+> +	return 0;
+> +}
+
+>  static int __ad7768_write_raw(struct iio_dev *indio_dev,
+>  			      struct iio_chan_spec const *chan,
+>  			      int val, int val2, long info)
+>  {
+>  	struct ad7768_state *st = iio_priv(indio_dev);
+> +	const struct iio_scan_type *scan_type;
+> +	int gain_mode;
+>  	int ret;
+
+Might as well combine ret and gain_mode on one line.
+or pus gain_mode down into a more local scope so it's not defined here
+at all.
+
+
+>  
+> +	scan_type = iio_get_current_scan_type(indio_dev, chan);
+> +	if (IS_ERR(scan_type))
+> +		return PTR_ERR(scan_type);
+> +
+>  	switch (info) {
+>  	case IIO_CHAN_INFO_SAMP_FREQ:
+>  		return ad7768_set_freq(st, val);
+> @@ -887,6 +1083,18 @@ static int __ad7768_write_raw(struct iio_dev *indio_dev,
+>  
+>  		/* Update sampling frequency */
+>  		return ad7768_set_freq(st, st->samp_freq);
+> +	case IIO_CHAN_INFO_SCALE:
+> +		if (!st->chip->has_pga)
+> +			return -EOPNOTSUPP;
+> +
+> +		if (scan_type->sign == 's')
+> +			gain_mode = ad7768_calc_pga_gain(st, val, val2,
+> +							 scan_type->realbits - 1);
+> +		else
+> +			gain_mode = ad7768_calc_pga_gain(st, val, val2,
+> +							 scan_type->realbits);
+> +
+> +		return ad7768_set_pga_gain(st, gain_mode);
+
+>  static int ad7768_probe(struct spi_device *spi)
+>  {
+>  	struct ad7768_state *st;
+>  	struct iio_dev *indio_dev;
+> +	u32 val;
+>  	int ret;
+>  
+>  	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
+> @@ -1409,9 +1653,37 @@ static int ad7768_probe(struct spi_device *spi)
+>  	indio_dev->modes = INDIO_DIRECT_MODE;
+>  
+>  	/* Register VCM output regulator */
+> -	ret = ad7768_register_regulators(&spi->dev, st, indio_dev);
+> -	if (ret)
+> -		return ret;
+> +	if (st->chip->has_vcm_regulator) {
+> +		ret = ad7768_register_regulators(&spi->dev, st, indio_dev);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	st->aaf_gain = AD7768_AAF_IN1;
+> +	ret = device_property_read_u32(&spi->dev, "adi,gain-milli", &val);
+> +	if (ret && st->chip->has_variable_aaf)
+> +		dev_warn(&spi->dev, "AAF gain not specified, using default\n");
+> +
+> +	if (!ret && !st->chip->has_variable_aaf)
+> +		dev_warn(&spi->dev, "AAF gain not supported for %s\n", st->chip->name);
+
+I'm confused.  If you hit this warn, you then go ahead and set it anyway. How does that
+work?
+
+> +
+> +	if (!ret) {
+use a local bool for ret here with a suitable name. Carrying on using ret is
+fragile against later code changes where someone doesn't realise it is still in use.
+
+> +		/* If provided, validate and set the gain */
+> +		switch (val) {
+> +		case 1000:
+> +			st->aaf_gain = AD7768_AAF_IN1;
+> +			break;
+> +		case 364:
+> +			st->aaf_gain = AD7768_AAF_IN2;
+> +			break;
+> +		case 143:
+> +			st->aaf_gain = AD7768_AAF_IN3;
+> +			break;
+> +		default:
+> +			return dev_err_probe(&spi->dev, -EINVAL,
+> +					     "Invalid firmware provided AAF gain\n");
+> +		}
+> +	}
 
