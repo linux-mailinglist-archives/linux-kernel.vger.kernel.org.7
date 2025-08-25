@@ -1,295 +1,201 @@
-Return-Path: <linux-kernel+bounces-785083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 011A7B345A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:24:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7D9BB345B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:26:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A96753ACB30
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:24:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5755B3AF283
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D02482F361F;
-	Mon, 25 Aug 2025 15:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="1u512M3d"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2063.outbound.protection.outlook.com [40.107.223.63])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A9B62FD1A1;
+	Mon, 25 Aug 2025 15:26:41 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6742821FF2A;
-	Mon, 25 Aug 2025 15:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756135442; cv=fail; b=Hq1xoWp46QCX12gfrXPy9/tvftaIarlLx0CmIQyl3LhJa7DeUvJJPj+mgjLmNCMVD5Wh/sCYf2l2H9VRiSiJZu/sGXYx44ohEnGvVvAyfVPm3g6ctpCQtSNDGRkA05Ik55kfof1vMdpl9cdPcTTJGw23x+JXw4YJiZiR4xXzGfA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756135442; c=relaxed/simple;
-	bh=D+ckMoacOKwnayv8TA72Q7avkpRj/TrDn3LTqzzeX0w=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=A2C4cjn2b/bEL+ra73O5oGGhS6An+Gf/9QpkpPP3L7FC0sSnEa/8c8/W4iiyB+AHy9kAFhR0nraQ0fXpUAsIlhiCDTKGMmozCSjzyA8SJzm6d6lZS5O1wJzHsGGOpp2TSds12SW177pUSOgBJPESrscTQfKBSsb4QMoqjeq17TY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=1u512M3d; arc=fail smtp.client-ip=40.107.223.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Dz++OLZZyHb7Np4xiiO9ABcI6FaHqrKmxEnnnDSIlmI7xMrjYkWpB8EXmZGdhaMfZJJcnoS9kt0lrvtCKaGsNR2ZVEcGZ1hjAxN4RPuyIsB4I59R+5f7hekfASlDPzrvw0eR6jB0784Do0ckfDq9V5jERRR/blThaMvSIJy5BaIoxaZtLDwhR6G49kMTf8j6DI3LR6PfXlnyZpKisbWwMHQA6PqjEl+3T26ADDRVkDL8qabgxOewcD7cceAY28pPGrvgMA7gfnaXlFt0OnJoGhYQlCrg9GXU4gbFkx9UEY8Zv77R3V4cZpiUaPCxA9PltfajJbyRFgXbzHT0c2cCEg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oh98miuZjMxNiMUhs6gCrXSEf4l9VW0O4HbQC+f9/ic=;
- b=ubZt6gEvL+QJV6RJKTyyQKyBs2w5oJGv19OOCqmFbdqU/S8dB8CiLfkiIZBMNqcwknK91jftNizIyeMTqtlsUdJT/g+Y42zQugQ87lCJhuU/6IIHD0JBdyeWBSgJGVh1ESh9SJNHA8WbevZ6VKE103LCHpllmdQA7jTzrjd+/8n/J2urwwbReRaiSw6VCEr+BI1TJIokzw/0j7wt1K7eMJmjUGFaUG3xMTgo2QGkMhbbT94XoG6hp8IMuTZFZXDEwFLstXrmEKNUexvw0NYLtiGMWsYWQOi9uO5097mziavUO0c3+jIsf1nvODM0Q42Zcna8XSbtthPMTfhoflCA6w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oh98miuZjMxNiMUhs6gCrXSEf4l9VW0O4HbQC+f9/ic=;
- b=1u512M3dva8SshqnfLIKl9bVTROCoU3/+ej9chI2a7od76lsfaLY4RKiBL4qriWNEsoXWRzvQudxtBnVUxzi/23hf9josBZZqass4LAK8fwhGYA43FqdOn2PuB6nqQVLypg4ulc3a2GxeNOrFmgYGFDoJvE9RHOa1pdOj/m0WmE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CH0PR12MB5388.namprd12.prod.outlook.com (2603:10b6:610:d7::15)
- by DM6PR12MB4387.namprd12.prod.outlook.com (2603:10b6:5:2ac::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.22; Mon, 25 Aug
- 2025 15:23:58 +0000
-Received: from CH0PR12MB5388.namprd12.prod.outlook.com
- ([fe80::a363:f18a:cdd1:9607]) by CH0PR12MB5388.namprd12.prod.outlook.com
- ([fe80::a363:f18a:cdd1:9607%5]) with mapi id 15.20.9052.019; Mon, 25 Aug 2025
- 15:23:58 +0000
-Message-ID: <3dccf0ad-3cad-4211-b01b-c3f750092711@amd.com>
-Date: Mon, 25 Aug 2025 10:23:49 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] EDAC/amd64: Add support for AMD family 1Ah-based
- newer models
-To: Borislav Petkov <bp@alien8.de>, Avadhut Naik <avadhut.naik@amd.com>
-Cc: linux-edac@vger.kernel.org, yazen.ghannam@amd.com,
- linux-kernel@vger.kernel.org
-References: <20250807201843.4045761-1-avadhut.naik@amd.com>
- <20250807201843.4045761-2-avadhut.naik@amd.com>
- <20250818212248.GHaKOZqGhfCciWWOcD@fat_crate.local>
-Content-Language: en-US
-From: "Naik, Avadhut" <avadnaik@amd.com>
-In-Reply-To: <20250818212248.GHaKOZqGhfCciWWOcD@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN4PR01CA0034.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:273::7) To CH0PR12MB5388.namprd12.prod.outlook.com
- (2603:10b6:610:d7::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 150482F3627;
+	Mon, 25 Aug 2025 15:26:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756135601; cv=none; b=gABUvWdQlQYBOO2L1R66fCLNKwKrIPrOKg7rMSYmvTru/SVT1tWbRy7Pl3YQc7ocRQ8gUfkevlTsbNg+AzsQAmvJxANp4i1oko2fjhz43ZlrRvQUAI5N4ESc1KidQeq1kLroIUtD4mjWBGVXZaxoQwJW+rQ1JCeMV1fdxaFjj/8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756135601; c=relaxed/simple;
+	bh=KhMo0SpotGb/z4U7wZvB4jdhQVQqAkWRO5ZRQrh/7+0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AE63sXjL+pTNLsEl9snY2VQeqOQWIcZJ8Ld0d0Gg73ah1XE7CW3oqWJV7wR9m96FZByrxKQP2mKUH+RKy1LRJv/QW6hvuexTeQkN4uQwugfyI+Z0HcCdqhws/h+6rDRA6sEf0mD3/PwegmgLesQeyj4mG81UtglbxSe0WlTqBkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn; spf=pass smtp.mailfrom=isrc.iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=isrc.iscas.ac.cn
+Received: from [192.168.110.25] (unknown [118.251.178.216])
+	by APP-05 (Coremail) with SMTP id zQCowACXLF2WgKxok2QfDw--.14476S2;
+	Mon, 25 Aug 2025 23:26:15 +0800 (CST)
+Message-ID: <a2cc4cbe-82ca-4a89-b623-73721a1f3baf@isrc.iscas.ac.cn>
+Date: Mon, 25 Aug 2025 23:26:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH0PR12MB5388:EE_|DM6PR12MB4387:EE_
-X-MS-Office365-Filtering-Correlation-Id: 89915a09-1eac-4ca9-366b-08dde3eb6972
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RWtLWlBaODhWcjlURGwvMVNnNzM3aFNpVTJyWnllb3VNalNoMkVtcUZOOGNU?=
- =?utf-8?B?UzZ2VHp4Rm1NNFFkSEJtMU1pWUFTYmR2RXgvSzFYZkJQN3lOMGlMY1pVNkJF?=
- =?utf-8?B?MjExTkU0SFN3eWZ4am85ZjJ2WTJackczWm11RnFZOUFDRWVLRWtqQVNqTXgv?=
- =?utf-8?B?WlczNk1aTFBxdmZCVzhyRVNtZnlQc1dXZnVmdGhYcWtUVXBma3YvSEl3elkx?=
- =?utf-8?B?NnpZcnpsMmRMZDhFRmNySGNmMTN4ZWo0VnM5VEtjZkFhcmVjci9QR3lKQnJk?=
- =?utf-8?B?VTJyMThWbGFQNUpKWkcrNHJkTDQyakt6MVN4VG1EdHZyS2JRSGV6S0lpeDJ0?=
- =?utf-8?B?TnprVWU0RlY1SjFhU2hubU1HRktlZU1JUW93dUt4VmR1Z3dKbGVBLys0d3NR?=
- =?utf-8?B?N2YyT0RabWFhMUlNTkxURzFoTWxYRWZ2clJoZ1lqQUZtc0xaYWNqL2ZxaVh5?=
- =?utf-8?B?NUw5SXZMWlBGQmozNlhXREtNRDRBaFA5SUFjNjFpMDBmZUo1MExWZTJxNExD?=
- =?utf-8?B?M0MxbzBGb2ZMczJtMVA1aXNLeC8yNGxYdE43clJ3SERJS0lGbW1aZ0FnYVFJ?=
- =?utf-8?B?Q2l1SjY0U25QTnRJb3g4Z0NFbUxkdFdxS0xYYUVkdGlKTURxTFJTUC9nb2dx?=
- =?utf-8?B?SUtnUE5nL1Q0VnRobGtOWTNEci80c3JpMjZMQTJaMFV0RXRXc3ovRUtrUFY5?=
- =?utf-8?B?R3N4cUU2VS9iTW5pMmExS0tMZEdGVXpXWExJQXlFRlRHNnRFd3hEeXRWcGlo?=
- =?utf-8?B?WGpEbDNaRHk3My9iSWp4YkhTbVFRTFhMMy9lRFhQSmFCUzE4dzNJY3JDdWVS?=
- =?utf-8?B?a1hRQkdXdmtjVllwSU1YMHpoS09HbGZtdjZpOVZUb0JsWFV2MDhJVWxmaDZ6?=
- =?utf-8?B?eEM0bEorb29XSTFxOTM4ajZYM2tUT25uUXRFaVg2ZVAxeWg1UDBKcTBxZFRN?=
- =?utf-8?B?MzIxSVU1S2ZIbmFoVElVY0xkZjU3MlJtS3FxSTYyUW1ZUjFtRXlZamJoSHBJ?=
- =?utf-8?B?ZFhPQXZOYy9MWE1CY21ReVZZS0I2bzVad0tQZ2J1YUpMa094cjZPYUpjSEFm?=
- =?utf-8?B?YUNBNmlDWjJEanovV0ZYclFOVFVhRUMvRk9TWjh5QnpSMHdqazd3OG5VSnA5?=
- =?utf-8?B?ZHowa0ZHaFRWQWlxMm4xOFpGS1dlN3BOWVdxTGVnayt0YmQxdjVOdkxld3h2?=
- =?utf-8?B?SXBYejVmTDhGSXpPYWo0dnVJbklGRFBNTkl0ZDdYa2VqNzd3dkxrQzNKaVhz?=
- =?utf-8?B?cDFyYnpUNnRQZk5TNjNSaW1yUUFhejBKK1hmV3lHQ0NrdHhUNXpxUWhPQ0N6?=
- =?utf-8?B?YlhIQXFmbDk5OXJoSnV0OWtLRnNXTnIzdjBYVCt0TDVMY21mRTNzVVk0VnBw?=
- =?utf-8?B?cDlOWURvZ2dNRStabWdMR0dQOWY3T3AzWVV6NkFvNUNaZ0F1UGJKdUt0bEV4?=
- =?utf-8?B?QXhCZVBWMXFRY0VDd1dCaFpYYmkrUXAvL3hUQWtWd0FIZ2FKdFoySTdzOXBj?=
- =?utf-8?B?UTFBRDRoc2tnN3ZYWnhwZzF0SnE2Yng4bHFSSm81aHhyWXBnZU1NbUd2Ly82?=
- =?utf-8?B?R2JOMFNHQ2pSZ1d5b05ZZmhCTERrUVZNcVlENFFIU3Y1elBDM1BTRDh5b1lm?=
- =?utf-8?B?Zm5uOWZHNWNRYXJpUStjWlpUVDkxZWhSSHlyU294R1V3TGZLZmV1S0lhTk1K?=
- =?utf-8?B?bll2RHp0eTJpejZiWlpWT04wbnlWY3FmOGFEWnBaT0QybnVpR1Jpc3RyY3k3?=
- =?utf-8?B?RG5vemxoSkIyRGRQOWVQMXpCdVhSSHlNWUVZV3RndU40cjVnQVd5T0tHZU5k?=
- =?utf-8?B?OGxyTWxpRU5BWVlQVmpMNG95WEFobklBcXRPekFtNFlqUzZiTXlpb1dzdWxa?=
- =?utf-8?B?bmlPS3NjVEhjMjNyTFQrRzhMeG81VW1HQWp0cFpXZENHN3l0emtUdkUwSFZL?=
- =?utf-8?Q?Pj+pNj1KcbE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR12MB5388.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?emoramxqVmRlb2ZuSlpOaHJ0VEFlMDNnZE1RYzBhNzBaVm5qTU41Q2FXOWJ2?=
- =?utf-8?B?QTljVHJqR0QyUUhTSmJUYVBtMmlsRjZZU1liRzJIQU9NUW9tZHN0OEVaQkRr?=
- =?utf-8?B?bEVGV1Y4K210bWl2S2JwREtGdGJrUXQwYllUczJaUTltYXplRWd2aDBQT0tF?=
- =?utf-8?B?Si9JQ0I2SEhLeWE4aTZkOWdHVDFPR0N2emczb1FwMUV0czJVNUlsbEFST08x?=
- =?utf-8?B?S3l0QVNwcnZjT25pV3FVbzRVeWIzSkl4RHRkTTh0MGc3UXhZZVc0c0dtdjd2?=
- =?utf-8?B?ejBFYUlDVzlSbW9xLyt2SmowVmxqNnlVRzgvT0FqQWsvL2F1NDZCdkFvdU1r?=
- =?utf-8?B?VlVPTmJ6RCs0Z24yZ0U0WndVZWVUbFpvZHcwMDkyV1A0a1pYQ0RDc1BpSFBl?=
- =?utf-8?B?UmhIQWJQK01nZTU2K0c4WGFuRFJ5cHVrOEt1TVlSZXVnU2RnbzJDQVlxRXA0?=
- =?utf-8?B?OTIwMFN1RVVmbHlOdlJBbEZ0WTRHQnNtdnhpcXZWZktVYnRQQjBsbzlFTlMw?=
- =?utf-8?B?bnp2OXo4bzFPNDlnUVJZTFVSTS9qMlRGKzRRc2FMM0EzNXhpSjQvVGhoVjFs?=
- =?utf-8?B?aDg5aWVIb2ZRZnZaZ1J1ckNnSzRWTERQUlFWV2N2Y2cyNEFQMlVnTnNSZUVD?=
- =?utf-8?B?NGw1Sm95b1oyU1FaQlJFNk1OZTNVLzhLOWI2VVIvd3E5bW05R3JrdnlHbmNZ?=
- =?utf-8?B?d3FqOHF6bGpSUGZyd3N2Smc4UHVBbGNUTWpxcVRTMUJvNWloWThuaVZ3Vkhp?=
- =?utf-8?B?WUNNeGJMYVVFVFkvTkVSKzZVYTgwS283WFBoNmFSRVVwYm9TakdXUUJMTmVy?=
- =?utf-8?B?WjY5R3BTVmluYVF0QnVTMmNuQUlZNHh2dExRRHU5ZlArNHltZG8zNEZGVEp0?=
- =?utf-8?B?a2dqT24vNEVibHhJeHIva1g5L2V3MCtRWlYrWm8wSmFNMkxjY2gyQ2U3SXZu?=
- =?utf-8?B?a1NQU0Y5K3dJQ0JjUk4xQ1RxQlhiUnFxanBXWXREeGZxeEVIVnlBYmZZeGd0?=
- =?utf-8?B?Q05IWkZGVWZuUnNwV3BCMHg5K2xReFFOZjBtcGhEdVlJSnN1U1B1WnppNmFo?=
- =?utf-8?B?SDVWN3ZZQ2h1SVNhamluWk55VnM5QVNCVUlGQVZYT3REYWdJWDVzbEJteWdY?=
- =?utf-8?B?UERacDREcnNKdFlycFpuTnNaSmc0Z0Z6eDkzV3N3Q2xBWmFXU1BubnQ4ODRa?=
- =?utf-8?B?N1BKU3lGbDJRazBnbzRKVjhURmE3SzFOWllnb0Z4SUhKcitrOHpiNHJVeHo0?=
- =?utf-8?B?djRLLzRhNndXeWExL3dubGpRcWE2M1ZVTU92Yi9WWDArR2hxWS93ZmdsSTZG?=
- =?utf-8?B?cG1uZW5KQVZpZG5Pc1FhK0t5dGlUOFZtMlhnREVtcysvbFlEKy9CK3hsYzdl?=
- =?utf-8?B?OXptcXpxaHM2WDNHOGV3ZTJPZXowSkJ5MkQ4YVpiMWtJQ0tlMmdWYStyYmtT?=
- =?utf-8?B?dE9vZmJzSXpwaGs2dFFKSVQ5eFo0ZDdVekwrUEZwN1VkclVjYzhWWXZtNVda?=
- =?utf-8?B?TUhmczk4UW1UUzgwbDlYY2hMb2kwUGtMYVRES1BDcUdPeTJ0OWNja3U1VWNJ?=
- =?utf-8?B?VjZEakNOTis5SFNEQlZkZ0U1a0hDcXJ6TnVBdUVpaE9KNVBFUitNTjN0MXFz?=
- =?utf-8?B?LzZRb255RU00NmRhUEZzWUg0dklZODlGaFZEaGdUNUMrMkozS2hmYW5RRVZi?=
- =?utf-8?B?TGJXL2I4YzBSbUVrOFlFL2FPaW93TTF6VHVjT3hiZk5tci9xZ2ZTNTIyUGxL?=
- =?utf-8?B?ak96cVFKZ1Vjd0dEdDdUWGh5dGVVTlpoa3NQQUhkT2R0ekFNaUZ6UjE4Mlpy?=
- =?utf-8?B?K2ZHSjVJdFp4aWNoc0xrcDZ1ZXBvSDRwbi80bEk2WVhxRE40Z21YYUhLa2lv?=
- =?utf-8?B?WGRGNk9wc1dRYlp2YXRWMkpkejA3akJaQUJJOU04bzJINXNRWGhXcDBaTWZz?=
- =?utf-8?B?ZmxEb1R0dnNwcWdUNkdPalhaQmQ0emtiNEpsQlBLRldrK05DR2NKMXN5L21o?=
- =?utf-8?B?WE42T0FTOFQrUHRIbHgwQXpiN09nSUNjTWxYekdQYnRlcVZER0VLcnAwMTZt?=
- =?utf-8?B?VFE4cXZiY1FhSmJ3cThHSUd2V2thWXNjYVl4d0lIamFVZ0lFRm1XYWJGa3N3?=
- =?utf-8?Q?C9w/+ayTjKncrpsOQ9M7q43/e?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 89915a09-1eac-4ca9-366b-08dde3eb6972
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR12MB5388.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 15:23:58.3653
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dxthTRU9+moVVXak3gMlld+jeDrk7qLB0Tme9qf2ItpM3px6St1BXF0kwqTSdlW7jbccvD8Miha3mdBS5L7yZg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4387
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 RESEND 1/5] dt-bidings: riscv: add Zilsd and Zclsd
+ extension descriptions
+To: Conor Dooley <conor@kernel.org>
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+ alex@ghiti.fr, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ anup@brainfault.org, pbonzini@redhat.com, shuah@kernel.org,
+ cyan.yang@sifive.com, cleger@rivosinc.com, charlie@rivosinc.com,
+ cuiyunhui@bytedance.com, samuel.holland@sifive.com, namcao@linutronix.de,
+ jesse@rivosinc.com, inochiama@gmail.com, yongxuan.wang@sifive.com,
+ ajones@ventanamicro.com, parri.andrea@gmail.com, mikisabate@gmail.com,
+ yikming2222@gmail.com, thomas.weissschuh@linutronix.de,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, devicetree@vger.kernel.org, kvm@vger.kernel.org,
+ kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org
+References: <20250821140131.225756-1-pincheng.plct@isrc.iscas.ac.cn>
+ <20250821140131.225756-2-pincheng.plct@isrc.iscas.ac.cn>
+ <20250822-purge-doubling-f38988284db1@spud>
+From: Pincheng Wang <pincheng.plct@isrc.iscas.ac.cn>
+In-Reply-To: <20250822-purge-doubling-f38988284db1@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:zQCowACXLF2WgKxok2QfDw--.14476S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxCr47Ww18Kw47Xr4xKrW3Jrb_yoW5Kr43pF
+	Z3GF4kKa90qw13u3s2y3W0vw45AF4kKw13AFnrt34fKa98Zr10gF4ak3Z0qF1rCF48CF4j
+	vw4Ygr15ZrsrAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvmb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4
+	A2jsIEc7CjxVAFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVW8JVWxJw
+	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l
+	c7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
+	1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
+	14v26rWY6r4UJwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
+	x0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2
+	z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnU
+	UI43ZEXa7IUYsyCtUUUUU==
+X-CM-SenderInfo: pslquxhhqjh1xofwqxxvufhxpvfd2hldfou0/
 
-Apologies!
-
-Mistakenly hit send early in my previous response.
-
-On 8/18/2025 16:22, Borislav Petkov wrote:
-> On Thu, Aug 07, 2025 at 08:14:53PM +0000, Avadhut Naik wrote:
->> Add support for family 1Ah-based models 50h-57h, 90h-9Fh, A0h-AFh, and
->> C0h-C7h.
+On 2025/8/23 0:33, Conor Dooley wrote:
+> On Thu, Aug 21, 2025 at 10:01:27PM +0800, Pincheng Wang wrote:
+>> Add descriptions for the Zilsd (Load/Store pair instructions) and
+>> Zclsd (Compressed Load/Store pair instructions) ISA extensions
+>> which were ratified in commit f88abf1 ("Integrating load/store
+>> pair for RV32 with the main manual") of the riscv-isa-manual.
 >>
->> Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
+>> Signed-off-by: Pincheng Wang <pincheng.plct@isrc.iscas.ac.cn>
 >> ---
->>  drivers/edac/amd64_edac.c | 20 ++++++++++++++++++++
->>  drivers/edac/amd64_edac.h |  2 +-
->>  2 files changed, 21 insertions(+), 1 deletion(-)
+>>   .../devicetree/bindings/riscv/extensions.yaml | 39 +++++++++++++++++++
+>>   1 file changed, 39 insertions(+)
 >>
->> diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
->> index 07f1e9dc1ca7..2f6ab783bf20 100644
->> --- a/drivers/edac/amd64_edac.c
->> +++ b/drivers/edac/amd64_edac.c
->> @@ -3923,6 +3923,26 @@ static int per_family_init(struct amd64_pvt *pvt)
->>  			pvt->ctl_name           = "F1Ah_M40h";
->>  			pvt->flags.zn_regs_v2   = 1;
->>  			break;
->> +		case 0x50 ... 0x57:
->> +			pvt->ctl_name           = "F1Ah_M50h";
->> +			pvt->max_mcs            = 16;
->> +			pvt->flags.zn_regs_v2   = 1;
->> +			break;
->> +		case 0x90 ... 0x9f:
->> +			pvt->ctl_name           = "F1Ah_M90h";
->> +			pvt->max_mcs            = 8;
->> +			pvt->flags.zn_regs_v2   = 1;
->> +			break;
->> +		case 0xa0 ... 0xaf:
->> +			pvt->ctl_name           = "F1Ah_MA0h";
->> +			pvt->max_mcs            = 8;
->> +			pvt->flags.zn_regs_v2   = 1;
->> +			break;
->> +		case 0xc0 ... 0xc7:
->> +			pvt->ctl_name           = "F1Ah_MC0h";
->> +			pvt->max_mcs            = 16;
->> +			pvt->flags.zn_regs_v2   = 1;
->> +			break;
->>  		}
+>> diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Documentation/devicetree/bindings/riscv/extensions.yaml
+>> index ede6a58ccf53..d72ffe8f6fa7 100644
+>> --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
+>> +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
+>> @@ -366,6 +366,20 @@ properties:
+>>               guarantee on LR/SC sequences, as ratified in commit b1d806605f87
+>>               ("Updated to ratified state.") of the riscv profiles specification.
+>>   
+>> +        - const: zilsd
+>> +          description:
+>> +            The standard Zilsd extension which provides support for aligned
+>> +            register-pair load and store operations in 32-bit instruction
+>> +            encodings, as ratified in commit f88abf1 ("Integrating
+>> +            load/store pair for RV32 with the main manual") of riscv-isa-manual.
+>> +
+>> +        - const: zclsd
+>> +          description:
+>> +            The Zclsd extension implements the compressed (16-bit) version of the
+>> +            Load/Store Pair for RV32. As with Zilsd, this extension was ratified
+>> +            in commit f88abf1 ("Integrating load/store pair for RV32 with the
+>> +            main manual") of riscv-isa-manual.
+>> +
+>>           - const: zk
+>>             description:
+>>               The standard Zk Standard Scalar cryptography extension as ratified
+>> @@ -847,6 +861,16 @@ properties:
+>>               anyOf:
+>>                 - const: v
+>>                 - const: zve32x
+>> +      # Zclsd depends on Zilsd and Zca
+>> +      - if:
+>> +          contains:
+>> +            anyOf:
+>> +              - const: zclsd
+>> +        then:
+>> +          contains:
+>> +            anyOf:
+>> +              - const: zilsd
+>> +              - const: zca
+>>   
+>>   allOf:
+>>     # Zcf extension does not exist on rv64
+>> @@ -864,6 +888,21 @@ allOf:
+>>             not:
+>>               contains:
+>>                 const: zcf
+>> +  # Zilsd extension does not exist on rv64
+>> +  - if:
+>> +      properties:
 > 
-> Oh boy, this pvt->ctl_name is ridiculous: we're collecting a zoo of string
-> objects where this thing can simply be scnprintf()-ed once at driver init and
-> then the pointer handed in to mci->ctl_name.
+>> +        riscv,isa-extensions:
+>> +          contains:
+>> +            const: zilsd
 > 
-> Something like
-> 
-> static char *ctl_name[MAX_CTL_NAMELEN]; 
-> 
-> or so. And then
-> 
-> 	scnprintf(...)
-> 
-> into it based on family and model.
-> 
-> Can you pls do that as a cleanup upfront?
-> 
-> This is slowly getting out of hand.
-> 
-> And then you can group them together:
-> 
-> case 0x50 ... 0x57:
-> case 0xc0 ... 0xc7:
-> 	pvt->max_mcs            = 16;
-> 	pvt->flags.zn_regs_v2   = 1;
-> 	break;
-> 
-> ...
-> 
-> and so on.
-> 
-> So that this function turns back into something saner again.
-> 
-> Thx.
-> 
-Will try to put this in place and make it the fist patch of this
-set.
-
-> 
-> 
-> 
-> 
->>  		break;
->>  
->> diff --git a/drivers/edac/amd64_edac.h b/drivers/edac/amd64_edac.h
->> index 17228d07de4c..d70b8a8d0b09 100644
->> --- a/drivers/edac/amd64_edac.h
->> +++ b/drivers/edac/amd64_edac.h
->> @@ -96,7 +96,7 @@
->>  /* Hardware limit on ChipSelect rows per MC and processors per system */
->>  #define NUM_CHIPSELECTS			8
->>  #define DRAM_RANGES			8
->> -#define NUM_CONTROLLERS			12
->> +#define NUM_CONTROLLERS			16
-> 
-> I've asked this before but can we read out the number of controllers from the
-> hw somewhere instead of diddling with this silly define all the time?
-> 
-> Thx.
+> This syntax is odd, it shouldn't be required to have zilsd in here and
+> in the then. Did you copy this from Zcf or come up with it yourself
+> because it didn't work otherwise?
 > 
 
-Had considered this sometime back. Didn't pursue further as it maybe somewhat
-tricky.
+Yes, I did model this after the existing Zcf constraint in the same 
+file. The structure is nearly identical: cheking for presence of the 
+extension and rv64i, then forbidding it in the "then" branch.
 
-Some new CPUIDs were introduced since Zen4 trough which we MAYBE able to
-accomplish this i.e get rid of the macro.
+I've tested confirmed that removing the "contains: const: zilsd" from 
+the "if" condition still correctly enforces that zilsd must not appear 
+when rv64i is present. The "then" clause with "not: contains" is sufficient.
 
-But am not not sure as to what we should do for older SOCs in that case.
-Zen3, for example.
+Given that the validation behavior is equivalent, but the logic is 
+cleaner and less redundant without the extra "contains", would you 
+recommend updating it to the simpler form:
 
-Will look more if I can find something else.
+     - if:
+         properties:
+           riscv,isa-base:
+             contains:
+               const: rv64i
+       then:
+         properties:
+           riscv,isa-extensions:
+             not:
+               contains:
+                 const: zilsd
 
--- 
-Thanks,
-Avadhut Naik
+If so, I'll update it in the next revision.
+
+Thanks for the review!
+
+Best regards,
+Pincheng Wang
+
+>> +        riscv,isa-base:
+>> +          contains:
+>> +            const: rv64i
+>> +    then:
+>> +      properties:
+>> +        riscv,isa-extensions:
+>> +          not:
+>> +            contains:
+>> +              const: zilsd
+>>   
+>>   additionalProperties: true
+>>   ...
+>> -- 
+>> 2.39.5
+>>
 
 
