@@ -1,175 +1,208 @@
-Return-Path: <linux-kernel+bounces-784597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 488A1B33E33
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:38:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1FA2B33E38
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:39:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20091172555
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:38:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8604C1760DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E7C2EACEF;
-	Mon, 25 Aug 2025 11:38:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0691F2EB5CF;
+	Mon, 25 Aug 2025 11:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L0j1eyRG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cA9AuFCa"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 086A11D63C7;
-	Mon, 25 Aug 2025 11:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5492EA741;
+	Mon, 25 Aug 2025 11:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756121920; cv=none; b=mucE+vII4C2VjBkFW1Blz9wHezf3ysNOSPxUP1AQe8NJkMyLWoBWxtqHY++pKRZ0bMt99V0AH8LHFp++toP3O6WxsGVqA9B+fOPPLbLo4tZk939NydrhrIWOtQZsWpCmXvsJMtfM0IsVsZZ2RLCO/Ij2rT0jSdkVhyFpg6ZwEJU=
+	t=1756121949; cv=none; b=hF8g4uY8V6T56MgxSg8PgcBCRm5Wc+CqkARnXs9/7C2e6Tnp8oX530SHP5iinUK3lostS2uVX9Ngwuqie5n/Mw7l7pjGZp89hoVXhuzNFBh8wAvrirJPmaLUzlXyLAMUw6/rRORZ2w0fPf0/dYqEUvQB6c0gtx1ftF/VOBd9M9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756121920; c=relaxed/simple;
-	bh=6APue8na146l9OnCw5tc6LK/AUe3RQ1uN+CqpFXB2eM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UP/x0BV+y4mp4vZ2qovShFoZW/d7rJ+2gRnTOiHKEXxvKDhGGh5a6yFQF5PfdrtPAWUp6+rIyp6tBDB136V2TwbyQx5E4RojGJHvozb5X50iWkX2FBLwXsSqtcIOlpFgSvAWDDLGpXK0AyoqPyw1F1npTVyo0d6qyAF5eOti9dQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L0j1eyRG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B5ACC116B1;
-	Mon, 25 Aug 2025 11:38:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756121919;
-	bh=6APue8na146l9OnCw5tc6LK/AUe3RQ1uN+CqpFXB2eM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=L0j1eyRGjxReVhaPGXPc3OCxrSr43piTBZ94lfJEfW+n0rl/OmdwxZnCZtIDWh7Bt
-	 EZqDb/KAWoFy0CkpYuBwjf569mi9On3BLcjXOpAGeZKXjlYAp5Oh7ICZTXEVEH/8tU
-	 3XEyx9tvJm3yBjH8eYKq+bZTgBZemM+rS1BT//Pi6Mea5FdrAHs2SYntlVYm8NFYGI
-	 QN/pxPAZSV1IgKLfla2chLGmXHPGE1hnC6SYXHTsIj5b6tT8b+rlO0pls9I5bIdGYG
-	 OY/7DraI5VIaGSBy0c/LTYPPNhI2hHsndNW0DFzcV2oiQwTzVT1KVD84/K5vDe+SJs
-	 2M9hRWRMrLRLw==
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-afcb7347e09so729010566b.0;
-        Mon, 25 Aug 2025 04:38:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX/VIHdWVhmkAUjyCkHxpl/OPWoFnBKWIOTJsiy77YnPFAgHii4SBwZSmLZXVvDhLUU6hd/Zyg6O4rY97HC@vger.kernel.org, AJvYcCX7ljacjG9I9sFcqcNckAfyEgfzI0iy0c/YHbjcDROhbRh9+6yXZoxaLXfCt2lfagzlqIoyEFH9fY0CJw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YynD6tkmvR5lmASMKI0LuaKoemv1/vBvqrVl4XV8NaeZz1Qui28
-	yP86cK1fwDU0h6WzKNMjTk77LmEfvBEEX7uBNah4I2jw/VjkNKrTga2Pit+bb4i1RCl4vK5Wm+c
-	rmjEfIvawAu6qORHdu496WZqgfsrDHAI=
-X-Google-Smtp-Source: AGHT+IFZYJ+lV282ntDhnG+FAfTcwX4TZPreBFEEYH542R5PWbLp1BZFVxU5Bb3LcYecnnKruIXfxL/jaXx1DuNxS7s=
-X-Received: by 2002:a17:907:3f2a:b0:afc:b13d:ea7a with SMTP id
- a640c23a62f3a-afe2963aca8mr1065036866b.57.1756121918011; Mon, 25 Aug 2025
- 04:38:38 -0700 (PDT)
+	s=arc-20240116; t=1756121949; c=relaxed/simple;
+	bh=Dd64tH2C/anRhlI56SfA7nQHik6qZJ5IimIUY4B060M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KX9tBZS2QggwED6btdR2ZdJEHTXT9DYhJyGn7wUS5EQoLwUEwHpI8DdEGnZ2rDNxpVIcpmOQLgpXvNBRp+S0uGOFtEN0Gdxijrr/JnTB1e/PxIungFnI2AOoYGb2jnhK0sVvT5HgwSwWF3OSdJZJls4o8U5Ho6vim4Q8+qiuMvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cA9AuFCa; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57P85xC6006924;
+	Mon, 25 Aug 2025 11:39:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=efHdpw6MZigXbTvjxJT2D/SB8ccWQ+VoVAO
+	UhEsFy0A=; b=cA9AuFCaJK0N3e7IzZXMVeBneLw3Co9gfDZq684+XPWfXNpLnup
+	LutkiHQHzckADx37iVEFumu4PWTcesgattDnDsZLtHWJrXVA4Fq8uOCSJu9QPiT1
+	/XaqGcv1ix612+geDLqoJC30WRYrkNNx/QWOscFWL2vhnntM5BY5Xm8a1aAeRYRI
+	B7hpKtbAg3Bp1pN16yiBYVp4eLdhgmG7avglmxuT3Hp5Wa5Omvylm4WNcfuDzA+q
+	ZvMuht8RlfllgcrzMh1BUPl02ETwgiNIRx6ruOGF0Awl8SZSe+6GsfCGxcjo7WVr
+	C86jW7nlrazK/vBNL/7fE7tI05Q5n9JYB5Q==
+Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5unmv0f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Aug 2025 11:39:03 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 57PBd1F3013545;
+	Mon, 25 Aug 2025 11:39:01 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 48q6qkm58m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Aug 2025 11:39:01 +0000
+Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57PBd0V2013535;
+	Mon, 25 Aug 2025 11:39:00 GMT
+Received: from bt-iot-sh02-lnx.ap.qualcomm.com (bt-iot-sh02-lnx.qualcomm.com [10.253.144.65])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 57PBd0qs013533
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Aug 2025 11:39:00 +0000
+Received: by bt-iot-sh02-lnx.ap.qualcomm.com (Postfix, from userid 4467449)
+	id A97CB22A9B; Mon, 25 Aug 2025 19:38:59 +0800 (CST)
+From: Shuai Zhang <quic_shuaz@quicinc.com>
+To: dmitry.baryshkov@oss.qualcomm.com, marcel@holtmann.org,
+        luiz.dentz@gmail.com
+Cc: linux-bluetooth@vger.kernel.org, stable@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        quic_chejiang@quicinc.com, Shuai Zhang <quic_shuaz@quicinc.com>
+Subject: [PATCH v10] Bluetooth: hci_qca: Fix SSR (SubSystem Restart) fail when BT_EN is pulled up by hw
+Date: Mon, 25 Aug 2025 19:38:58 +0800
+Message-Id: <20250825113858.4017780-1-quic_shuaz@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2022221.PYKUYFuaPT@saltykitkat> <810d2b19-47ed-4902-bd8d-eb69bacbf0c6@gmx.com>
- <aKiSpTytAOXgHan5@mozart.vkv.me> <e9a4f485-3907-4f1e-8a74-2ffde87f3044@gmx.com>
- <aKj8K8IWkXr_SOk_@mozart.vkv.me> <9cacdafc-98ec-4ad2-99a8-dfb077e4a5fb@gmx.com>
- <aKs2mCRjtv3Ki06Z@mozart.vkv.me> <CAPjX3FeOEg+QhkwKWe+qDH876bp6-t1GFO0sce7a6bmhM7umpw@mail.gmail.com>
- <663c2f5b-3bb1-4a40-b962-11c6d3a7f806@gmx.com>
-In-Reply-To: <663c2f5b-3bb1-4a40-b962-11c6d3a7f806@gmx.com>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Mon, 25 Aug 2025 12:37:59 +0100
-X-Gmail-Original-Message-ID: <CAL3q7H4RgwGZwPdof=5NN6hcB7YRevOjA70vG19sRNXNMRMM3w@mail.gmail.com>
-X-Gm-Features: Ac12FXwH3j5pnrD1WiLI-vHL4MJH0eW5jRxhvOdqlx_vIdTC04hwLYGXagFrK5M
-Message-ID: <CAL3q7H4RgwGZwPdof=5NN6hcB7YRevOjA70vG19sRNXNMRMM3w@mail.gmail.com>
-Subject: Re: [PATCH] btrfs: Accept and ignore compression level for lzo
-To: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Cc: Daniel Vacek <neelx@suse.com>, Calvin Owens <calvin@wbinvd.org>, Sun YangKai <sunk67188@gmail.com>, 
-	clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: l8eD72juh49j3hINidIq_b9KFYpq9Ifs
+X-Proofpoint-ORIG-GUID: l8eD72juh49j3hINidIq_b9KFYpq9Ifs
+X-Authority-Analysis: v=2.4 cv=JJo7s9Kb c=1 sm=1 tr=0 ts=68ac4b58 cx=c_pps
+ a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=Zh3eq0SbisOj6M6HGuUA:9
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMSBTYWx0ZWRfX4vZYMzZU/TZ8
+ ahfYmyhgS8l8RQ3Tph6nlkjdkHrmedjTzOK523lUa53nMyT0qyDIIViKGfig4eBJXg09C1Zus7p
+ ClYtyuhMBT0xG4jRvRebeO2KvhjsCnGygykXbiR5YnrVWE+CPQLVFFurEtn0cxfzcvF6tWag1rd
+ N8fNoYOiUfpZqsh4J9JRmvdIVSYKkPgjmEsGPhggL7CbPFaePP5xys+IgSgPvGv5D4Ix17AJf6/
+ SaAV3lDF9/s+vfbcBx7lWhRzkyxcPvmdUktxNoJE0uDi9BRZfHzoK/BLraMr7L7OPECMCYyNIb3
+ uhCD/44rQDtUFiNagIFsME25Voe4DEXA0ellg9ucvXj/+MAzYPSEUzNG25jaZCSW9A56Ryw00Tv
+ OYInK80t
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-25_05,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 adultscore=0 bulkscore=0 spamscore=0 impostorscore=0
+ malwarescore=0 clxscore=1015 priorityscore=1501 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230031
 
-On Mon, Aug 25, 2025 at 10:03=E2=80=AFAM Qu Wenruo <quwenruo.btrfs@gmx.com>=
- wrote:
->
->
->
-> =E5=9C=A8 2025/8/25 18:21, Daniel Vacek =E5=86=99=E9=81=93:
-> > On Sun, 24 Aug 2025 at 17:58, Calvin Owens <calvin@wbinvd.org> wrote:
-> >> From: Calvin Owens <calvin@wbinvd.org>
-> >> Subject: [PATCH v3] btrfs: Accept and ignore compression level for lzo
-> >>
-> >> The compression level is meaningless for lzo, but before commit
-> >> 3f093ccb95f30 ("btrfs: harden parsing of compression mount options"),
-> >> it was silently ignored if passed.
-> >>
-> >> After that commit, passing a level with lzo fails to mount:
-> >>
-> >>      BTRFS error: unrecognized compression value lzo:1
-> >>
-> >> It seems reasonable for users to expect that lzo would permit a numeri=
-c
-> >> level option, as all the other algos do, even though the kernel's
-> >> implementation of LZO currently only supports a single level. Because =
-it
-> >> has always worked to pass a level, it seems likely to me that users in
-> >> the real world are relying on doing so.
-> >>
-> >> This patch restores the old behavior, giving "lzo:N" the same semantic=
-s
-> >> as all of the other compression algos.
-> >>
-> >> To be clear, silly variants like "lzo:one", "lzo:the_first_option", or
-> >> "lzo:armageddon" also used to work. This isn't meant to suggest that
-> >> any possible mis-interpretation of mount options that once worked must
-> >> continue to work forever. This is an exceptional case where it makes
-> >> sense to preserve compatibility, both because the mis-interpretation i=
-s
-> >> reasonable, and because nothing tangible is sacrificed.
-> >>
-> >> Fixes: 3f093ccb95f30 ("btrfs: harden parsing of compression mount opti=
-ons")
-> >> Signed-off-by: Calvin Owens <calvin@wbinvd.org>
-> >> ---
-> >>   fs/btrfs/super.c | 7 +++++--
-> >>   1 file changed, 5 insertions(+), 2 deletions(-)
-> >
-> > v3 looks good to me. The original hardening was meant to gate complete
-> > nonsense like "compress=3Dlzoutput", etc...
-> >
-> > Reviewed-by: Daniel Vacek <neelx@suse.com>
->
-> Now merged and pushed to for-next branch with the latest reviewed-by tags=
-.
+When the host actively triggers SSR and collects coredump data,
+the Bluetooth stack sends a reset command to the controller. However, due
+to the inability to clear the QCA_SSR_TRIGGERED and QCA_IBS_DISABLED bits,
+the reset command times out.
 
-Btw, don't forget a couple things:
+To address this, this patch clears the QCA_SSR_TRIGGERED and
+QCA_IBS_DISABLED flags and adds a 50ms delay after SSR, but only when
+HCI_QUIRK_NON_PERSISTENT_SETUP is not set. This ensures the controller
+completes the SSR process when BT_EN is always high due to hardware.
 
-1) In the subject, after the prefix "btrfs: " the first word should
-not be capitalized;
+For the purpose of HCI_QUIRK_NON_PERSISTENT_SETUP, please refer to
+the comment in `include/net/bluetooth/hci.h`.
 
-2) In the log message (btrfs_warn() call), the first word should also
-not be capitalized.
+The HCI_QUIRK_NON_PERSISTENT_SETUP quirk is associated with BT_EN,
+and its presence can be used to determine whether BT_EN is defined in DTS.
 
-These are the styles we follow, so we should be consistent.
+After SSR, host will not download the firmware, causing
+controller to remain in the IBS_WAKE state. Host needs
+to synchronize with the controller to maintain proper operation.
 
->
-> Thanks,
-> Qu
-> >
-> > Thank you.
-> >
-> >> diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-> >> index a262b494a89f..18eb00b3639b 100644
-> >> --- a/fs/btrfs/super.c
-> >> +++ b/fs/btrfs/super.c
-> >> @@ -299,9 +299,12 @@ static int btrfs_parse_compress(struct btrfs_fs_c=
-ontext *ctx,
-> >>                  btrfs_set_opt(ctx->mount_opt, COMPRESS);
-> >>                  btrfs_clear_opt(ctx->mount_opt, NODATACOW);
-> >>                  btrfs_clear_opt(ctx->mount_opt, NODATASUM);
-> >> -       } else if (btrfs_match_compress_type(string, "lzo", false)) {
-> >> +       } else if (btrfs_match_compress_type(string, "lzo", true)) {
-> >>                  ctx->compress_type =3D BTRFS_COMPRESS_LZO;
-> >> -               ctx->compress_level =3D 0;
-> >> +               ctx->compress_level =3D btrfs_compress_str2level(BTRFS=
-_COMPRESS_LZO,
-> >> +                                                              string =
-+ 3);
-> >> +               if (string[3] =3D=3D ':' && string[4])
-> >> +                       btrfs_warn(NULL, "Compression level ignored fo=
-r LZO");
-> >>                  btrfs_set_opt(ctx->mount_opt, COMPRESS);
-> >>                  btrfs_clear_opt(ctx->mount_opt, NODATACOW);
-> >>                  btrfs_clear_opt(ctx->mount_opt, NODATASUM);
-> >> --
-> >> 2.49.1
-> >>
->
->
+Multiple triggers of SSR only first generate coredump file,
+due to memcoredump_flag no clear.
+
+add clear coredump flag when ssr completed.
+
+When the SSR duration exceeds 2 seconds, it triggers
+host tx_idle_timeout, which sets host TX state to sleep. due to the
+hardware pulling up bt_en, the firmware is not downloaded after the SSR.
+As a result, the controller does not enter sleep mode. Consequently,
+when the host sends a command afterward, it sends 0xFD to the controller,
+but the controller does not respond, leading to a command timeout.
+
+So reset tx_idle_timer after SSR to prevent host enter TX IBS_Sleep mode.
+
+---
+Changs since v8-v9:
+-- Update base patch to latest patch.
+-- add Cc stable@vger.kernel.org on signed-of.
+
+Changes since v6-7:
+- Merge the changes into a single patch.
+- Update commit.
+
+Changes since v1-5:
+- Add an explanation for HCI_QUIRK_NON_PERSISTENT_SETUP.
+- Add commments for msleep(50).
+- Update format and commit.
+
+Signed-off-by: Shuai Zhang <quic_shuaz@quicinc.com>
+Cc: stable@vger.kernel.org
+---
+ drivers/bluetooth/hci_qca.c | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+
+diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+index 4cff4d9be..97aaf4985 100644
+--- a/drivers/bluetooth/hci_qca.c
++++ b/drivers/bluetooth/hci_qca.c
+@@ -1653,6 +1653,39 @@ static void qca_hw_error(struct hci_dev *hdev, u8 code)
+ 		skb_queue_purge(&qca->rx_memdump_q);
+ 	}
+ 
++	/*
++	 * If the BT chip's bt_en pin is connected to a 3.3V power supply via
++	 * hardware and always stays high, driver cannot control the bt_en pin.
++	 * As a result, during SSR (SubSystem Restart), QCA_SSR_TRIGGERED and
++	 * QCA_IBS_DISABLED flags cannot be cleared, which leads to a reset
++	 * command timeout.
++	 * Add an msleep delay to ensure controller completes the SSR process.
++	 *
++	 * Host will not download the firmware after SSR, controller to remain
++	 * in the IBS_WAKE state, and the host needs to synchronize with it
++	 *
++	 * Since the bluetooth chip has been reset, clear the memdump state.
++	 */
++	if (!test_bit(HCI_QUIRK_NON_PERSISTENT_SETUP, &hdev->quirks)) {
++		/*
++		 * When the SSR (SubSystem Restart) duration exceeds 2 seconds,
++		 * it triggers host tx_idle_delay, which sets host TX state
++		 * to sleep. Reset tx_idle_timer after SSR to prevent
++		 * host enter TX IBS_Sleep mode.
++		 */
++		mod_timer(&qca->tx_idle_timer, jiffies +
++				  msecs_to_jiffies(qca->tx_idle_delay));
++
++		/* Controller reset completion time is 50ms */
++		msleep(50);
++
++		clear_bit(QCA_SSR_TRIGGERED, &qca->flags);
++		clear_bit(QCA_IBS_DISABLED, &qca->flags);
++
++		qca->tx_ibs_state = HCI_IBS_TX_AWAKE;
++		qca->memdump_state = QCA_MEMDUMP_IDLE;
++	}
++
+ 	clear_bit(QCA_HW_ERROR_EVENT, &qca->flags);
+ }
+ 
+-- 
+2.34.1
+
 
