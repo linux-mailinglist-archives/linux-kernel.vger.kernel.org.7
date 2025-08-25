@@ -1,99 +1,105 @@
-Return-Path: <linux-kernel+bounces-783992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87234B3351B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 06:35:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD0C6B33520
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 06:36:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 375AC3A4EF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 04:35:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A26517AF85
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 04:36:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC1724A05D;
-	Mon, 25 Aug 2025 04:35:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CA527510E;
+	Mon, 25 Aug 2025 04:36:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="migGjffZ"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="WDEOiJz5"
+Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA762367D3
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 04:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6634523D288;
+	Mon, 25 Aug 2025 04:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756096509; cv=none; b=oacUeSUhQFkJcckdfWhtfu51lkOKFC0PpdwJ+wZnOqGu2ZNnD2ILtqkeC8pmOUaKwwvhQzC9DnMARNuIa20YJorSvgovW4VWWwXKOIdhIF6QSPZ+D8+Uw9ZYOgm7Rf9pvg+OoEjSnBYFRqVdX5WXDen45EJOXCZKPGiiJ4rj53k=
+	t=1756096590; cv=none; b=LIXI14++qV/BM8yymGx+1p+w9GipTrIL0aRpjeEWISd9dbCX9cQbvVHZ1o+mNSicOXTTX2MtL/GXaanxgYmD/YH0bETwG1DmLqLFupzZppdoNgQ4W3WQ2ZR8NLpZ393eLR4QAhwvBs3XEzjHkeMmafiO0/oPyZpS+wfOcbsO/Lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756096509; c=relaxed/simple;
-	bh=JAqJ6khWb3E1YjDk3jiUxTFsZIZ44UhIJxCJQRSWPBc=;
-	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=EsWTjjV8uGBgdZxt6Co/ivOVsv0UrW9T7XZG51di8CrsqxeegMSd67xLQHLcWIPkNceirvHjFC100z4TRlEpDE1mtxbLzxQZPIZ0GTv39dgqfbyKSErSEVFYCok3FeHrihLAagToeVD8lXYW2JZFj5iWvT/16GgelJ6RJLFeN4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=migGjffZ; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1756096505;
-	bh=KRq/IwotzLLYuVj7PpxaygrL44sgkinwI3pjoy5upqE=;
-	h=Subject:From:To:Cc:Date;
-	b=migGjffZRA8dfDHH3+sAjmK/q1cv6bIL74ULtRDFN4fleamO+S7VfU1iVs73cw2eG
-	 Hhad4DV03Lc3c3k3DdISvGbgygzgVJXRkD9w34lcbiQEaGqAvzj4rw5tRG42P8neKq
-	 B96gwzXu3tu7TlesGJafzo3oPV4LZKB2IzzMh1869QVs6TDbjTi45UMpSQ0sOaSrFJ
-	 8R3tJ4wQyfp1Y8cnm2vhaI4LkfIqqT5Gq1jiy6O9iKz98HV5xaFxRej5Rc0M9NZPFV
-	 Radu8EiQmbWWrVgj2YX1O0Q3HBvzQ8lwu0U82giBbxbMnPzh45GBmqSnd6p+1wBvAc
-	 3B4G9FiNf2JNw==
-Received: from [192.168.68.112] (unknown [180.150.112.213])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 179C0640BB;
-	Mon, 25 Aug 2025 12:35:03 +0800 (AWST)
-Message-ID: <bf3734aab62a5fcc8959261551bb4b1fa636efbd.camel@codeconstruct.com.au>
-Subject: [GIT PULL] nuvoton arm64: early devicetree changes for 6.18
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: soc <soc@lists.linux.dev>
-Cc: linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org, Joel Stanley <joel@jms.id.au>
-Date: Mon, 25 Aug 2025 14:05:03 +0930
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1756096590; c=relaxed/simple;
+	bh=sTunfMCq4/E9IlV0C2VSUlNM33ne8GOa5NtUxLEAanA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BYLUHM+4T0ryby+KPjJy4gn+0RDskP25CZVj5V4K1hSK2hDw/wiLpA03qZ+97WoiE1/2glwiqa8VxHjd0eUgg2U5KnhtQyZwpuDLk6jUh9GMygRx88tP3GNobjfhu31Qppl0NbOzJwMpE/RWmTUM8m/c6utmJoUNq/gWz/3JSK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=WDEOiJz5; arc=none smtp.client-ip=180.181.231.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=CAAF7pgkMZz/jA5UL8kzFkhd0KBcVmgKgcH+O4+CyTM=; b=WDEOiJz581vzbKXVFX10mc6NpP
+	E2f33ybgUXFgTEvInxeMlodeSZEK5LLXRZH0kBhlj+LLzMDpdxwjzSVozBt7BGTB78Kdsc0cXJM/1
+	jvvjARE7nd/ddUuwRHNvh89EMIhbO4hD9p1fHpc51ICqXCqW4+y84KWDV7cGYvTdpKt+yHjKDB9fe
+	o34Dge1KhGDIO5QBUU5Lv/+/a94VaZmuzOdzrYbjO/IPADJrCVjOTm5UBTFyWUJ0C+6yk3zBv1dG2
+	ZkO1JIIz2qa68a5VG5I48RNlFEK53xr9QqeKFY8dzg2/Pk+V3RDRS4VEEj8KBMaIskQMdY3LzOd6g
+	ZFNURwsw==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1uqOgs-00GzL2-26;
+	Mon, 25 Aug 2025 12:36:16 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Mon, 25 Aug 2025 12:36:15 +0800
+Date: Mon, 25 Aug 2025 12:36:15 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Chenghai Huang <huangchenghai2@huawei.com>
+Cc: davem@davemloft.net, linux-kernel@vger.kernel.org,
+	linux-crypto@vger.kernel.org, qianweili@huawei.com,
+	linwenkai6@hisilicon.com, wangzhou1@hisilicon.com,
+	taoqi10@huawei.com
+Subject: Re: [PATCH v2 0/3] crypto: hisilicon - add fallback function for
+ hisilicon accelerater driver
+Message-ID: <aKvoPwhKyoVz8Yta@gondor.apana.org.au>
+References: <20250818065714.1916898-1-huangchenghai2@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250818065714.1916898-1-huangchenghai2@huawei.com>
 
-Hello SoC maintainers,
+On Mon, Aug 18, 2025 at 02:57:11PM +0800, Chenghai Huang wrote:
+> Support fallback for zip/sec2/hpre when device is busy.
+> 
+> V1: https://lore.kernel.org/all/20250809070829.47204-1-huangchenghai2@huawei.com/
+> Updates:
+> - Remove unnecessary callback completions.
+> - Add CRYPTO_ALG_NEED_FALLBACK to hisi_zip's cra_flags.
+> 
+> Chenghai Huang (1):
+>   crypto: hisilicon/zip - support fallback for zip
+> 
+> Qi Tao (1):
+>   crypto: hisilicon/sec2 - support skcipher/aead fallback for hardware
+>     queue unavailable
+> 
+> Weili Qian (1):
+>   crypto: hisilicon/hpre - support the hpre algorithm fallback
+> 
+>  drivers/crypto/hisilicon/Kconfig            |   1 +
+>  drivers/crypto/hisilicon/hpre/hpre_crypto.c | 314 +++++++++++++++++---
+>  drivers/crypto/hisilicon/qm.c               |   4 +-
+>  drivers/crypto/hisilicon/sec2/sec_crypto.c  |  62 +++-
+>  drivers/crypto/hisilicon/zip/zip_crypto.c   |  52 +++-
+>  5 files changed, 360 insertions(+), 73 deletions(-)
 
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585=
-:
+Are you mapping one hardware queue to a single tfm object?
 
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+Hardware queues should be shared between tfm objects.
 
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/bmc/linux.git tags/nuvoto=
-n-arm64-6.18-devicetree-0
-
-for you to fetch changes up to 13587befb34ffa5d605196494c243420e045f28e:
-
-  arm64: dts: nuvoton: add refclk and update peripheral clocks for NPCM845 =
-(2025-08-11 09:38:08 +0930)
-
-----------------------------------------------------------------
-Early Nuvoton arm64 devicetree updates for 6.18
-
-Integrate changes from Tomer reworking devicetree pinctrl, reset, and clk n=
-odes
-for NPCM845-based platforms.
-
-----------------------------------------------------------------
-Tomer Maimon (3):
-      arm64: dts: nuvoton: npcm845: Add pinctrl groups
-      arm64: dts: nuvoton: combine NPCM845 reset and clk nodes
-      arm64: dts: nuvoton: add refclk and update peripheral clocks for NPCM=
-845
-
- arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi | 669 ++++++++++++=
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=
-++++++--
- arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dts     |   6 +
- 2 files changed, 663 insertions(+), 12 deletions(-)
-
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
