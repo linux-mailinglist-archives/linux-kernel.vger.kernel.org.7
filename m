@@ -1,215 +1,140 @@
-Return-Path: <linux-kernel+bounces-784313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADB23B339DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:47:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ABD5B339DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:48:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8167D188965C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:48:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B96CF3B0BEF
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5146A29D295;
-	Mon, 25 Aug 2025 08:47:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B56CB29E0F4;
+	Mon, 25 Aug 2025 08:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cv3PLodc"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="1XR0yl1R"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB88713959D;
-	Mon, 25 Aug 2025 08:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89974D599;
+	Mon, 25 Aug 2025 08:47:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756111653; cv=none; b=S9DfWxl45CGd1M4BQ3C3kDz0q4g2xsae5pvc/59EiybHxqQpRFigYNjkn4cBjttyXfEPomm3xWyOPXdmbOPb6BtRh4qCoxphbfyricPvY4JRw8DWdYpKUDN7z6JUZksPxozXyyXSelGGORWg38ApNW5N5d5UI6FM6mAHPct8Gc4=
+	t=1756111672; cv=none; b=HrckrXeUep7HJ0scNO8yyk9QFrJKSFDz5Xge7zV7S70GdFbBDisObUlzZ20ynoVMiSr8ASsFaNNtlnJd1o/8a8ctUJsF87LliAZmWpcGkLBOTOvWoXP/JZfh3P2n8BrbrEs1GWHAJZ2P/hffHvAwSFUyG4Hu08ob34BzO2Dz1n0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756111653; c=relaxed/simple;
-	bh=bPVNpV6nMN5xahOwuEGChnOhxKBoMGh0YVXl92nUSSY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z0Xy2ztxjXnzO7mrN9zCzGZDYPJw6Cfo5sYfpyjRRwH2Ozl5i3MkbQIYt+8NxD9j5WslRzTI0Yrf9XKJPEV0WKj5Wg7CGS2BTqSYfSfvVLAxZzJz67a7QPqLV+eB5SU4kktnb1wwutRUl/vLr1Ew3ma2QFJAW7e0D422F5vMaH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cv3PLodc; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756111652; x=1787647652;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bPVNpV6nMN5xahOwuEGChnOhxKBoMGh0YVXl92nUSSY=;
-  b=cv3PLodchH2BPbAF9V+5f3d6Z1TYB+OGNVAjDv8y11gnc5CKD07ohLKI
-   vx8BAfk+n+fyH0GRrG+X+D4TxnUZWzDbJGdxiMzcYEWGoDUWl4bpK4IzP
-   Uh59tKPYBlSNoOrge+MvY1TkPHV3XwzGKNPSDfvSSyYhgqOGcjgnlwKiQ
-   vkHM0W29UdVY34GCgWu4E0/Rms4bXPhh3ZvK5oVV9ba6nCxEQDZgNmxsI
-   21lTe93FTixb0DK9apCxjKxRcarz0fKR9CqFVUqWwHWsKdezvaqgsYvKa
-   FwbsHZLf+VeU5mNo0RE4/FgNPoISighk1sImQrdJYRVpTvajnp6NXYTMp
-   g==;
-X-CSE-ConnectionGUID: zJWErrChQQCzq//vzla5cg==
-X-CSE-MsgGUID: 5zwtZ7KJS8qn39mr0b07vw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11532"; a="62133706"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="62133706"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 01:47:31 -0700
-X-CSE-ConnectionGUID: EHKU6I3xQgyx4nNPByQ0/A==
-X-CSE-MsgGUID: 6v+ucBATRY+7FVaT1s8goA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="169133596"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa007.jf.intel.com with ESMTP; 25 Aug 2025 01:47:29 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uqSrH-000NWx-3A;
-	Mon, 25 Aug 2025 08:47:21 +0000
-Date: Mon, 25 Aug 2025 16:47:07 +0800
-From: kernel test robot <lkp@intel.com>
-To: Osama Abdelkader <osama.abdelkader@gmail.com>, tytso@mit.edu,
-	Jason@zx2c4.com
-Cc: oe-kbuild-all@lists.linux.dev, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Osama Abdelkader <osama.abdelkader@gmail.com>
-Subject: Re: [PATCH] drivers/char/random.c: Clean up style issues
-Message-ID: <202508251623.uUGghjhZ-lkp@intel.com>
-References: <20250820170359.78811-1-osama.abdelkader@gmail.com>
+	s=arc-20240116; t=1756111672; c=relaxed/simple;
+	bh=6/zd2oe4tQuTmgARpJtHt62iSQycVM6PzrqxAZU4Reo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=icack3vAvmnUkmtUVTuDHdFEz/HgUYQ1wfq/ByisYsHjv9TDkUGkPXgXEcsYhPmYRCePAEoVCCrd3Sfkuc+akk6RaGytU1H7YnG8C/x+RbKqcCVCcm8vGjDHNcWehXGrDRoHuJfhFZfcM7j9AWu4h2+8i41aNPbZfjF7NMmUym0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=1XR0yl1R; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 8BDE21A0666;
+	Mon, 25 Aug 2025 08:47:45 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 5A556605F1;
+	Mon, 25 Aug 2025 08:47:45 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C45C01C22DBF3;
+	Mon, 25 Aug 2025 10:47:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1756111664; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=6/zd2oe4tQuTmgARpJtHt62iSQycVM6PzrqxAZU4Reo=;
+	b=1XR0yl1RAKAsVxzi15g6YD2g1MurVf5QJ2qUaQn4GgcT51s545puimGwSlrxTkhVYsJd21
+	yN9HUMD0ioas3zw1ZGGzCA+1nEUobI+yNQaVpkhNP47OOudGFTccZeF+E7pV9PnJSaE91s
+	DlrivWeiMNJAZE0eupdl2HOwnIoWJm67ijADF9CgxwnsYROCG8X67bivSJTbTZPDZ5rgh2
+	/y2EhGdlca9H9vbdmIFlYJVVlt3U5we07LMDU8OUVufc/V/BF9PK2u8iLd0MY9J1th4DCA
+	E4AIBBRcDkS6CT0NK1J+wftdiO3SL299+tgruvM30Wec0D4N7sgSV0U0tCvPZg==
+Date: Mon, 25 Aug 2025 10:47:21 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, kernel@pengutronix.de, Dent Project
+ <dentproject@linuxfoundation.org>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Maxime Chevallier
+ <maxime.chevallier@bootlin.com>, Kyle Swenson <kyle.swenson@est.tech>
+Subject: Re: [PATCH net-next 2/2] net: pse-pd: pd692x0: Add sysfs interface
+ for configuration save/reset
+Message-ID: <20250825104721.28f127a2@kmaincent-XPS-13-7390>
+In-Reply-To: <d4bc2c95-7e25-4d76-994f-b68f1ead8119@lunn.ch>
+References: <20250822-feature_poe_permanent_conf-v1-0-dcd41290254d@bootlin.com>
+	<20250822-feature_poe_permanent_conf-v1-2-dcd41290254d@bootlin.com>
+	<d4bc2c95-7e25-4d76-994f-b68f1ead8119@lunn.ch>
+Organization: bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250820170359.78811-1-osama.abdelkader@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Osama,
+Hello Andrew,
 
-kernel test robot noticed the following build warnings:
+Le Fri, 22 Aug 2025 19:17:55 +0200,
+Andrew Lunn <andrew@lunn.ch> a =C3=A9crit :
 
-[auto build test WARNING on v6.17-rc2]
-[also build test WARNING on linus/master]
-[cannot apply to crng-random/master next-20250822]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> On Fri, Aug 22, 2025 at 05:37:02PM +0200, Kory Maincent wrote:
+> > From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+> >=20
+> > Add sysfs attributes save_conf and reset_conf to enable userspace
+> > management of the PSE's permanent configuration stored in EEPROM.
+> >=20
+> > The save_conf attribute allows saving the current configuration to
+> > EEPROM by writing '1'. The reset_conf attribute restores factory
+> > defaults and reinitializes the port matrix configuration. =20
+>=20
+> I'm not sure sysfs is the correct interface for this.
+>=20
+> Lets take a step back.
+>=20
+> I assume ethtool will report the correct state after a reboot when the
+> EEPROM has content? The driver does not hold configuration state which
+> cannot be represented in the EEPROM?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Osama-Abdelkader/drivers-char-random-c-Clean-up-style-issues/20250821-010651
-base:   v6.17-rc2
-patch link:    https://lore.kernel.org/r/20250820170359.78811-1-osama.abdelkader%40gmail.com
-patch subject: [PATCH] drivers/char/random.c: Clean up style issues
-config: sparc-randconfig-r071-20250825 (https://download.01.org/0day-ci/archive/20250825/202508251623.uUGghjhZ-lkp@intel.com/config)
-compiler: sparc-linux-gcc (GCC) 8.5.0
+In fact I assumed it is an EEPROM but it is described as non volatile memory
+so I don't know which type it is.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508251623.uUGghjhZ-lkp@intel.com/
+Yes ethtool report the current configuration which match the saved one if i=
+t has
+been saved before. No the driver doesn't hold any state that can not be
+represented in the non-volatile memory.
 
-smatch warnings:
-drivers/char/random.c:325 crng_fast_key_erasure() warn: inconsistent indenting
-drivers/char/random.c:349 crng_make_state() warn: inconsistent indenting
+> Is the EEPROM mandatory, or optional? Is it built into the controller?
 
-vim +325 drivers/char/random.c
+It is built into the controller. It seem there are version of this
+controller that does not support it : "This command is not supported by
+PD69200M."
 
-   304	
-   305	/*
-   306	 * This generates a ChaCha block using the provided key, and then
-   307	 * immediately overwrites that key with half the block. It returns
-   308	 * the resultant ChaCha state to the user, along with the second
-   309	 * half of the block containing 32 bytes of random data that may
-   310	 * be used; random_data_len may not be greater than 32.
-   311	 *
-   312	 * The returned ChaCha state contains within it a copy of the old
-   313	 * key value, at index 4, so the state should always be zeroed out
-   314	 * immediately after using in order to maintain forward secrecy.
-   315	 * If the state cannot be erased in a timely manner, then it is
-   316	 * safer to set the random_data parameter to &chacha_state->x[4]
-   317	 * so that this function overwrites it before returning.
-   318	 */
-   319	static void crng_fast_key_erasure(u8 key[CHACHA_KEY_SIZE],
-   320					  struct chacha_state *chacha_state,
-   321					  u8 *random_data, size_t random_data_len)
-   322	{
-   323		u8 first_block[CHACHA_BLOCK_SIZE];
-   324	
- > 325			WARN_ON_ONCE(random_data_len > 32);
-   326			if (random_data_len > 32)
-   327				return;
-   328		chacha_init_consts(chacha_state);
-   329		memcpy(&chacha_state->x[4], key, CHACHA_KEY_SIZE);
-   330		memset(&chacha_state->x[12], 0, sizeof(u32) * 4);
-   331		chacha20_block(chacha_state, first_block);
-   332	
-   333		memcpy(key, first_block, CHACHA_KEY_SIZE);
-   334		memcpy(random_data, first_block + CHACHA_KEY_SIZE, random_data_len);
-   335		memzero_explicit(first_block, sizeof(first_block));
-   336	}
-   337	
-   338	/*
-   339	 * This function returns a ChaCha state that you may use for generating
-   340	 * random data. It also returns up to 32 bytes on its own of random data
-   341	 * that may be used; random_data_len may not be greater than 32.
-   342	 */
-   343	static void crng_make_state(struct chacha_state *chacha_state,
-   344				    u8 *random_data, size_t random_data_len)
-   345	{
-   346		unsigned long flags;
-   347		struct crng *crng;
-   348	
- > 349			WARN_ON_ONCE(random_data_len > 32);
-   350			if (random_data_len > 32)
-   351				return;
-   352		/*
-   353		 * For the fast path, we check whether we're ready, unlocked first, and
-   354		 * then re-check once locked later. In the case where we're really not
-   355		 * ready, we do fast key erasure with the base_crng directly, extracting
-   356		 * when crng_init is CRNG_EMPTY.
-   357		 */
-   358		if (!crng_ready()) {
-   359			bool ready;
-   360	
-   361			spin_lock_irqsave(&base_crng.lock, flags);
-   362			ready = crng_ready();
-   363			if (!ready) {
-   364				if (crng_init == CRNG_EMPTY)
-   365					extract_entropy(base_crng.key, sizeof(base_crng.key));
-   366				crng_fast_key_erasure(base_crng.key, chacha_state,
-   367						      random_data, random_data_len);
-   368			}
-   369			spin_unlock_irqrestore(&base_crng.lock, flags);
-   370			if (!ready)
-   371				return;
-   372		}
-   373	
-   374		local_lock_irqsave(&crngs.lock, flags);
-   375		crng = raw_cpu_ptr(&crngs);
-   376	
-   377		/*
-   378		 * If our per-cpu crng is older than the base_crng, then it means
-   379		 * somebody reseeded the base_crng. In that case, we do fast key
-   380		 * erasure on the base_crng, and use its output as the new key
-   381		 * for our per-cpu crng. This brings us up to date with base_crng.
-   382		 */
-   383		if (unlikely(crng->generation != READ_ONCE(base_crng.generation))) {
-   384			spin_lock(&base_crng.lock);
-   385			crng_fast_key_erasure(base_crng.key, chacha_state,
-   386					      crng->key, sizeof(crng->key));
-   387			crng->generation = base_crng.generation;
-   388			spin_unlock(&base_crng.lock);
-   389		}
-   390	
-   391		/*
-   392		 * Finally, when we've made it this far, our per-cpu crng has an up
-   393		 * to date key, and we can do fast key erasure with it to produce
-   394		 * some random data and a ChaCha state for the caller. All other
-   395		 * branches of this function are "unlikely", so most of the time we
-   396		 * should wind up here immediately.
-   397		 */
-   398		crng_fast_key_erasure(crng->key, chacha_state, random_data, random_data_len);
-   399		local_unlock_irqrestore(&crngs.lock, flags);
-   400	}
-   401	
+> How fast is it to store the settings?
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2 i2c messages and a 50 ms wait as described in the datasheet.
+=20
+> I'm wondering if rather than having this sysfs parameter, you just
+> store every configuration change? That could be more intuitive.
+
+I have not thought of it. I don't know if it is a good idea. We may need
+feedback from people that actually use PSE on field. Kyle any idea on this?
+In any case we still need a way to reset the configuration through sysfs or
+whatever other way.
+
+> I've not looked at the sysfs documentation. Are there other examples
+> of such a property?
+
+Not sure for that particular save/reset configuration case.
+Have you another implementation idea in mind?
+
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
