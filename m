@@ -1,83 +1,153 @@
-Return-Path: <linux-kernel+bounces-784569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD68FB33DAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:07:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2444B33DB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:08:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A2B31A82835
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:07:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 945D6205865
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D02E2E1F15;
-	Mon, 25 Aug 2025 11:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFCCD2E1EF6;
+	Mon, 25 Aug 2025 11:07:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uw1vUFG2"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28BB2E11D5;
-	Mon, 25 Aug 2025 11:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ks3qlL2t"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B6CD2E11D5;
+	Mon, 25 Aug 2025 11:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756120032; cv=none; b=M4NAtS0501wuuN6t9rDYx/5NQSg8LE9XNXTZG0dth5yMeeo3ypb7SoHNJBc/3di1olfm130nemoWrCagMyR66muZKE1yzdqDqSaS7LJaWdoBUYsHUc9YOLjXqy/8F8oerYmkrKnlgKxiOMxzRIKY0yzCU0VWb/jb6ys9U+8Wypc=
+	t=1756120076; cv=none; b=FljJR8FC2ubl8OHxIjDP+14u3DLv7fSjGp/RpMSqjP3BjfFsEwc8DfwTc/tQ8fFK7RDlXesbEaLwZKqVEUcKwF9FlkPDjtgSEI9CK3czw72Vho8knLOmgXReTb4gq+7g4GiliTmRreH2mn6sP76XkUFtD5N/598eoOriotVR4WM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756120032; c=relaxed/simple;
-	bh=TABDPH/xAD0ULdz3KySbOMtsEFTpkYaa74uJoYqZFv4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jEg49AkJr3Ey0fowZkJy8RdQcZ23TfqdgZXS9OUfRusABGJVTLMzBn7m3wNkkVnq/GODXoGK0+6m2+h6Cw3JSVKJUkKExVWhhUsZRAdQjdhOQAHhpVoSwfcl6zVI5OCTQgoqaALRn28Vm7Y3twPbknku8/sp7CrZ7OsF0Q7CCCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=uw1vUFG2; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=XVuK7LKGUP1i9t5CT9fQGjrmQmutWSdWy08Yrwl3CCM=; b=uw1vUFG20qgyoqz4ePm7x2GLub
-	H/vejHraO0tYumTWsn8Qc0ckKjZELB9jZ8T3qs1cbbC6yz0s36NKWEnvIAW8rzye1Z84uW5bkgzIx
-	OntbC9LZMhKze5cHPQ8gVUFkOVT1A1FqMdcmty1H9ZhHQ6c35c3U9aZyjsG4NZ0W8AN447Cpvqxfe
-	d9MhiYmMqh4FNw4L7j+dY0bvHd6HS7nC8XpfWld9V5zSEAYHALpiRrI9deP1Iov2BIJ14sLnS3Q9z
-	uVMZuHMXKSRAnUoxNbGzZdYlYw2aVYk6HUWd4yaEzZYcOraz83WxGBaX2U6U9jXGCZ68CSFpxIeEC
-	/rIi2BZg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uqV2Y-00000007i1V-2N5Q;
-	Mon, 25 Aug 2025 11:07:06 +0000
-Date: Mon, 25 Aug 2025 04:07:06 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: hch@infradead.org, colyli@kernel.org, hare@suse.de, tieren@fnnas.com,
-	axboe@kernel.dk, tj@kernel.org, josef@toxicpanda.com,
-	song@kernel.org, yukuai3@huawei.com, akpm@linux-foundation.org,
-	neil@brown.name, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	linux-raid@vger.kernel.org, yi.zhang@huawei.com,
-	yangerkun@huawei.com, johnny.chenyi@huawei.com
-Subject: Re: [PATCH RFC 7/7] block: fix disordered IO in the case recursive
- split
-Message-ID: <aKxD2hdsUpZrtqOy@infradead.org>
-References: <20250825093700.3731633-1-yukuai1@huaweicloud.com>
- <20250825093700.3731633-8-yukuai1@huaweicloud.com>
+	s=arc-20240116; t=1756120076; c=relaxed/simple;
+	bh=pM8DzgYrBRzUbkrosASwQDrdBVtFf9vfYS3uZKWs+EE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UAPFJr6CN5nKbE4DgdHZCIJPc+ixjhzr2fSyw9PsK1SyfvhacJ9rnxwL/G+nIfk3xudheUIyuqWNvW8hXDp5zLsill0dGzf8CtN37sOvUyW7c+Z4igaTi4QrgCQLIrhQq3nosF2iODaTxIGgOw4kOsIFoV6n2ufmIUj7iGy5198=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ks3qlL2t; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=ra
+	1qbqEFFNjSwWkGuHdfZovIKLecMWGrPekXeDxHRTk=; b=ks3qlL2t/nH+gzv8ep
+	pyYjwPp79UdBvON49coCpwp+plmfK+If6M9fjuSwJwmhSxXynNkOJPG1o39RIHLY
+	Gqzz1UShddVV0q0G5VwrLO6IrTfUHrlRS7VWpMy4v7yCAiyVHMsaJHogHH8z+sAe
+	lWByRki3SDMo4CJHZxw6qhV2M=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wDnTZHfQ6xo1XCAEQ--.44581S2;
+	Mon, 25 Aug 2025 19:07:12 +0800 (CST)
+From: Jinyu Tang <tjytimi@163.com>
+To: Anup Patel <anup@brainfault.org>,
+	Atish Patra <atish.patra@linux.dev>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Yong-Xuan Wang <yongxuan.wang@sifive.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Nutty Liu <nutty.liu@hotmail.com>
+Cc: kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Jinyu Tang <tjytimi@163.com>
+Subject: [PATCH v2] riscv: skip csr restore if vcpu preempted reload
+Date: Mon, 25 Aug 2025 19:07:08 +0800
+Message-ID: <20250825110708.75474-1-tjytimi@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250825093700.3731633-8-yukuai1@huaweicloud.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDnTZHfQ6xo1XCAEQ--.44581S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxuryrZw13Kr13uF15tw47Jwb_yoW5XrWDpF
+	W7uF4Y9w48ArW7G3y2qrsY9Fs09rZYgrn3XryDWrWSyr1Utr9Yyr4kKa47JFy5GFyrZF1S
+	yFyDJFyxC3ZYvwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piJUUUUUUUU=
+X-CM-SenderInfo: xwm13xlpl6il2tof0z/1tbiZR60eGisO77aMgAAse
 
-On Mon, Aug 25, 2025 at 05:37:00PM +0800, Yu Kuai wrote:
-> +void submit_bio_noacct(struct bio *bio)
+The kvm_arch_vcpu_load() function is called in two cases for riscv:
+1. When entering KVM_RUN from userspace ioctl.
+2. When a preempted VCPU is scheduled back.
 
-Maybe just have version of submit_bio_noacct that takes the split
-argument, and make submit_bio_noacct a tiny wrapper around it?  That
-should create less churns than this version I think.  In fact I suspect
-we can actually bypass submit_bio_noacct entirely, all the checks and
-accounting in it were already done when submitting the origin bio, so
-the bio split helper could just call into submit_bio_noacct_nocheck 
-directly.
+In the second case, if no other KVM VCPU has run on this CPU since the
+current VCPU was preempted, the guest CSR (including AIA CSRS) values 
+are still valid in the hardware and do not need to be restored.
+
+This patch is to skip the CSR write path when:
+1. The VCPU was previously preempted
+(vcpu->scheduled_out == 1).
+2. It is being reloaded on the same physical CPU
+(vcpu->arch.last_exit_cpu == cpu).
+3. No other KVM VCPU has used this CPU in the meantime
+(vcpu == __this_cpu_read(kvm_former_vcpu)).
+
+This reduces many CSR writes with frequent preemption on the same CPU.
+
+Signed-off-by: Jinyu Tang <tjytimi@163.com>
+Reviewed-by: Nutty Liu <nutty.liu@hotmail.com>
+---
+ v1 -> v2:
+ Apply the logic to aia csr load. Thanks for
+ Andrew Jones's advice.
+
+ arch/riscv/kvm/vcpu.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
+index f001e5640..e50d1f76c 100644
+--- a/arch/riscv/kvm/vcpu.c
++++ b/arch/riscv/kvm/vcpu.c
+@@ -25,6 +25,8 @@
+ #define CREATE_TRACE_POINTS
+ #include "trace.h"
+ 
++static DEFINE_PER_CPU(struct kvm_vcpu *, kvm_former_vcpu);
++
+ const struct _kvm_stats_desc kvm_vcpu_stats_desc[] = {
+ 	KVM_GENERIC_VCPU_STATS(),
+ 	STATS_DESC_COUNTER(VCPU, ecall_exit_stat),
+@@ -581,6 +583,10 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+ 	struct kvm_vcpu_csr *csr = &vcpu->arch.guest_csr;
+ 	struct kvm_vcpu_config *cfg = &vcpu->arch.cfg;
+ 
++	if  (vcpu == __this_cpu_read(kvm_former_vcpu) &&
++		vcpu->arch.last_exit_cpu == cpu)
++		goto csr_restore_done;
++
+ 	if (kvm_riscv_nacl_sync_csr_available()) {
+ 		nsh = nacl_shmem();
+ 		nacl_csr_write(nsh, CSR_VSSTATUS, csr->vsstatus);
+@@ -624,6 +630,9 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+ 
+ 	kvm_riscv_mmu_update_hgatp(vcpu);
+ 
++	kvm_riscv_vcpu_aia_load(vcpu, cpu);
++
++csr_restore_done:
+ 	kvm_riscv_vcpu_timer_restore(vcpu);
+ 
+ 	kvm_riscv_vcpu_host_fp_save(&vcpu->arch.host_context);
+@@ -633,8 +642,6 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+ 	kvm_riscv_vcpu_guest_vector_restore(&vcpu->arch.guest_context,
+ 					    vcpu->arch.isa);
+ 
+-	kvm_riscv_vcpu_aia_load(vcpu, cpu);
+-
+ 	kvm_make_request(KVM_REQ_STEAL_UPDATE, vcpu);
+ 
+ 	vcpu->cpu = cpu;
+@@ -645,6 +652,8 @@ void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
+ 	void *nsh;
+ 	struct kvm_vcpu_csr *csr = &vcpu->arch.guest_csr;
+ 
++	__this_cpu_write(kvm_former_vcpu, vcpu);
++
+ 	vcpu->cpu = -1;
+ 
+ 	kvm_riscv_vcpu_aia_put(vcpu);
+-- 
+2.43.0
 
 
