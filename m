@@ -1,311 +1,288 @@
-Return-Path: <linux-kernel+bounces-784856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2F72B342A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:06:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB280B34299
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:05:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E3D25E4D4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:00:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDCD21A8313B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249B52EDD78;
-	Mon, 25 Aug 2025 13:55:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C2752F0688;
+	Mon, 25 Aug 2025 13:55:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o8CINZ5J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nordicsemi.no header.i=@nordicsemi.no header.b="fwRpN46c"
+Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11021132.outbound.protection.outlook.com [40.107.130.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0F82EE608
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 13:55:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756130104; cv=none; b=s+W5uErzKgYYtFPa38j10AmwW9BwZqKUiS91B5av3EuqUyxYwUP0VmIqd+9s89ZC/dY4f7YlIkt4hfdY0JPBieyfEd8w4EvQddevUpGOvSIGrOnwYCPBg4CdmG1IeRt1kQBeL8FBpmXc1jzRPYGyqmlHfEU0CKkbiTca8sEDLAU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756130104; c=relaxed/simple;
-	bh=cvEhUlh/at1MYhYP9O/AhyCcG9/rDmrBEzSWnFV4v7U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UCtCivAtaVJnjVtfw2Z3zQGp0r6mTxkkyeP44g45CQ3tR8PSaTyTfU67NRL7zW7FMa2sHtVkNwQMjA4SQH0OzJU0ccDcq2DZ4+8p5VHbDAMbDiLSQg1CutpqzWXZA6VYyckoWgir3TPBCMPIrR+og4RaUIrd3NzaHpPB65Bb0wQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o8CINZ5J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEC34C4CEED;
-	Mon, 25 Aug 2025 13:55:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756130103;
-	bh=cvEhUlh/at1MYhYP9O/AhyCcG9/rDmrBEzSWnFV4v7U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o8CINZ5JC6+BcL7DOxhfO+G6hu3+Cqv/csP6zLOb6b3d9Sif+fbzZYtCw3ebaFWpH
-	 f4A/glB5wAT6+knnUndKosxALKyg67ufy97VhGFDRn7IirNKBMthfG/tRGwsjd+lsM
-	 Zb5csNR50Co29el2FLClbtJ9kNsdtngVtobMA3LF4qbbBqsfn5/VoSoptzN183jXIS
-	 h6Q0dvMy+5rlIvn7nggERm4sNSrwyWpiNgYs3jz2ULpqlt7ScZLyrcdCXnqmoKRGCb
-	 MJktIa70CcNKCc/WxfO2MaBz4zLj082c0vs0xvV9/Fy0RiNarsFDTQIvK8c+dEuBe9
-	 YfvdOqe+WLu8g==
-Date: Mon, 25 Aug 2025 15:55:00 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Marco Crivellari <marco.crivellari@suse.com>
-Cc: linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH v2 3/4] Workqueue: WQ_PERCPU added to all the remaining
- users
-Message-ID: <aKxrNPfjjACwqSAa@localhost.localdomain>
-References: <20250825132906.1050437-1-marco.crivellari@suse.com>
- <20250825132906.1050437-4-marco.crivellari@suse.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1BAC2EE60A;
+	Mon, 25 Aug 2025 13:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.132
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756130140; cv=fail; b=De2Smu3hn3GG+VFha4uLvzwJIBZRrSBGcYAZA5b8Vh9XPB6JSumrQQ0qaYJnYAkH25KaM+4YhsUBHEifuwfqiX3aGNrgblk+cBhNgwN5n2mTYpxMoNvr+2lkq5KQdDYRWO1ksWx9rXFUchEAwx3h++ybBsHQ3+ckJfLb9y2Yk+k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756130140; c=relaxed/simple;
+	bh=zLJ3XoPx+1PDfoTJwtXRU0NJ2OUamrhVW7vBcGS51SM=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=cyjS+XKH6HOTvmKqGRoOHWd5d/bNPMTdYVUrcR1EIxdRThHmKLZN6QMu26JmXYSU27FS82wZ9pS3ns8Ro/Vi0JGUquHpUCj+9+ZIY1K5eQIPSJMR7ZspYDYFMM4zc6UxwrdJduDOkNnWgycdZXrrWG5mf+DsiQUmoO5W+9Hn9XQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nordicsemi.no; spf=pass smtp.mailfrom=nordicsemi.no; dkim=pass (2048-bit key) header.d=nordicsemi.no header.i=@nordicsemi.no header.b=fwRpN46c; arc=fail smtp.client-ip=40.107.130.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nordicsemi.no
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nordicsemi.no
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fIoluUttcVrxb0frFMkn7q2KLBFr2CzjZPewGSH2vJtLIi0O1Wy6/dqT/mlZAhwe8/5Z1dDhQX7zB+dvWzM0LOPjhUc5RI6d7ftJGwArQSQtKb7qkBpYktZY66CjEiBtMUS+6W8nZfP283IodFFbLCFA7RRDucV1GHOCoG8Gl0pG9PuM6Ro/o6GV7yI42THr5Z8OGfOHEHDh8DetGfvJkIeh/uunUm8Ehl4muR+Xso/zX/pAXwRcuqJZUws853BOEdIqZY6z2OlBLaeE4DJTdv+1g0jbhpyF5ebW4/snyj5jmpkVAR7OHTOYYrJiVm1DbdqHX6K5vhzcX/w11jVFGA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bSx2fIYaCFRQ6cwxTyE1LYRwjnZOvxKySa7ZQXbosmk=;
+ b=dply+MjXPHJK2i2Jrn95xU4NyGLIuRNrbNjVHOKg9/oDDOB2EaW7lngB4KVWhc2Tq8V+uwBKITs1JXWgcwrDe0JAce92cTqYQIRUqA2TZdE3QBd6NlYZj1eURVAWIyG7b2DeeZ4lE5Fzff7XO3CtKxmDnnIgTq4l3vzWhRdHSUhyAtU2m65wtQRQV9GaQbzaPM1pfZN8ve6OT4vUO9tzDhAnQMbovCFd8ygurcFW72QMeVvEUwkXxxPxRKIoGIV4HznLLf+j0rgUZ5aUhwXDtCCK4VJzIGGUqlgDle7CK76XEmCYE+D4SLgn70BX1bE8gpxDX3p63ez2pGEYgsgn0g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nordicsemi.no; dmarc=pass action=none
+ header.from=nordicsemi.no; dkim=pass header.d=nordicsemi.no; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nordicsemi.no;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bSx2fIYaCFRQ6cwxTyE1LYRwjnZOvxKySa7ZQXbosmk=;
+ b=fwRpN46cKHieDAYmyhNUMqo2DZWEcm+yYVagFp83iSDwNLe30d6Bs7KCVc/BOaEWMd7dzpIPu8cPJG/6k38gN3mqStFpUgJrHQnkdPJuwptKJCVbCDG+5aoQ1nJJwZiiIm1ILWrhhGyXyib3L1cj+d/QQS6QDSvUfuM+qs9QbTEmldx7i3gxbobhz4JOXnD4eXIzssFuyVCC55USB3fj91K3U9FfnkQfO9LEXR1g84zhZJbkgS+55gQdcBnGK+/4/laKTW/sRrWtx/yjDCPZUNNvceNuMFH4JDLwsDXPc845NuEvjEZYtf9TBaz99CZBclxJRKukMZw7MKp2DG0mOw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nordicsemi.no;
+Received: from DU0PR05MB8949.eurprd05.prod.outlook.com (2603:10a6:10:354::19)
+ by DB9PR05MB10252.eurprd05.prod.outlook.com (2603:10a6:10:450::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Mon, 25 Aug
+ 2025 13:55:33 +0000
+Received: from DU0PR05MB8949.eurprd05.prod.outlook.com
+ ([fe80::a522:c95:5d9c:15e8]) by DU0PR05MB8949.eurprd05.prod.outlook.com
+ ([fe80::a522:c95:5d9c:15e8%3]) with mapi id 15.20.9052.019; Mon, 25 Aug 2025
+ 13:55:33 +0000
+From: Seppo Takalo <seppo.takalo@nordicsemi.no>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Seppo Takalo <seppo.takalo@nordicsemi.no>
+Subject: [PATCH] tty: n_gsm: Don't block input queue by waiting MSC
+Date: Mon, 25 Aug 2025 16:55:00 +0300
+Message-ID: <20250825135500.881285-1-seppo.takalo@nordicsemi.no>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: HE1PR08CA0072.eurprd08.prod.outlook.com
+ (2603:10a6:7:2a::43) To DU0PR05MB8949.eurprd05.prod.outlook.com
+ (2603:10a6:10:354::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250825132906.1050437-4-marco.crivellari@suse.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR05MB8949:EE_|DB9PR05MB10252:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2d2f12c1-3134-4e47-f55d-08dde3df0f32
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?muNeW3EktZcDnX6tVYuw+uevGVcXd0g+XasgHmC8nAz8TGsucpbeJQssN7Vb?=
+ =?us-ascii?Q?411YWIcyRJc2zYTyn2c6Fqu0hxpslxqEqnJBWuqIWvvIBSqWAdMeAhyampUc?=
+ =?us-ascii?Q?1y79l2yStamXRKRKnVB1+TeZSLMrCynY6UEEiw6J/FbRpeHL3LHW1n+uVVfS?=
+ =?us-ascii?Q?vrTkHxrxoPCACuAVDkoiqC1e5SSsxE81waZkAVpCJSA52n5kEf6mdy6TAlHF?=
+ =?us-ascii?Q?hzNOwD+K+z8VzTawcmjuiWPSWDiSOglg+WEQ1LzOtwkO2pjes0hvaKzU/oWb?=
+ =?us-ascii?Q?S9mh3pbE8S+ljT+zxmQkr82Un2qZHzY8y8hmymNfNXeRayw9gj4I8YiV10Cm?=
+ =?us-ascii?Q?VtWuWV4irUVw3ZVPSqW+6LhYtR3RqhxXgD+Va0y33RXSLdj/RLCnxWXD9E7l?=
+ =?us-ascii?Q?cueBknTHiNeFtBYbiT0PzHOrtG52jaIna2Mt2dKEw2PUcUqdNnGF9r7litsz?=
+ =?us-ascii?Q?sPajA2gdv9q2jXJTPmpg6nzjA/rIMxRIm8qQlt6X8ROWnl7dXFEi4Nm85jGv?=
+ =?us-ascii?Q?1ufNy+G6A3r1u9JDi/K81Vqe/yEF80wbsElmPCzqo0Ho7kUFveRr0dXqRRAJ?=
+ =?us-ascii?Q?3zcPXwtG2AeqnsNBqMKN7B6mDPcVf4uf16JE6D4btw0m+TVQhHzJg7v+C+Sf?=
+ =?us-ascii?Q?WFvzTP0q6m44ypNdOrltnsmUBBj0Svp6AT6QjApx0b0XnKZmjuayCOlDineY?=
+ =?us-ascii?Q?3HK4cEyV8maP4X2ceIft7d7TjQ9Gj4cPvndywOrQU7gSgO7RoFFCYrQpzIFE?=
+ =?us-ascii?Q?SOEhPyfI2zMIiPsX/XBtGtGRpHKtZcgMDGFdKidb9OmEfMIjol/WLHBMAs8F?=
+ =?us-ascii?Q?9+YVGEAITytYnTsNohhASu++jl5voyOPX5l7vWdFYvwwyR0zN1kMW2OHo113?=
+ =?us-ascii?Q?n7XW/WXpnYs+3os4OACFtrjcxNyRu6xktrhZopA8/wn3C1+by5GB3TUts44A?=
+ =?us-ascii?Q?ph6rItEYNSsnGo7CaJhaxPMoTLvYlLmRMZV1adv51zPuExrJNBYCrozM5Dpy?=
+ =?us-ascii?Q?P5KdOUeAhS+b7eduHu7IAqSItT8nVAQTL9Swi9mcF/a0faazpDa6y7eT8lVz?=
+ =?us-ascii?Q?tPwrAtFl062lQYv1jdcuzo4lqdo4KMInITTHorl7fjYsU7SwTwsLIFmuhUnP?=
+ =?us-ascii?Q?SCh5LZjqhDg3PwlO66Lq3RFFRBtFJLHT8bh56WhMw0X0h/AQFihsxP8wbwpM?=
+ =?us-ascii?Q?WiMbjBEI8NCr31voSgxMu1DVc7Ks0epokt4j8mfPL6c2ARLToIELk5ufV1su?=
+ =?us-ascii?Q?Vty0XjQCdo6UHlXsQlsBgVKihAE4EkcTA0UuaOLAV6KVfwgQ2Otpxjtxn0J5?=
+ =?us-ascii?Q?lPA1oYn4M32CE47dAsD0Iz8EqoQPLVhEs95bAsOas/+JZ8NQoBZYGfLkUrQb?=
+ =?us-ascii?Q?P1eBOsSc2135VR+NAwmNSvFykGnv6rtH69VlYDaBINjCXCt+D/CU2MrRydnr?=
+ =?us-ascii?Q?gBT5jEVQw6E=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR05MB8949.eurprd05.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?4GsQ0tYnZ6bmIPtuC2fGI+1nAnFvRoDQeJCL6Y6msH1fi2eKVkGuMNu8v457?=
+ =?us-ascii?Q?AV+n0R1U4PZpFPgoTBS2sbIjGWnHwxa+1zGSpH3M830EAOzhuh3CveyNoefp?=
+ =?us-ascii?Q?g34fZb3dw3zlJbxE1iTSr31/gNuqb17QU+e0lXj9sUson37D0KY0C28/WcyG?=
+ =?us-ascii?Q?l/SbMUGivNeMwAkqOTKE+7bh+TuTvNn33IbQaMGRUNbbq75sndE9gYFf0kCJ?=
+ =?us-ascii?Q?0pPFUr/GeebkWF/A61IBHc5wjhTIAQPevRZPqNhCu4ZwJrY/qMIzXhbONAF8?=
+ =?us-ascii?Q?3EwivtK8NbGIiSO6KaYgl0d6AYrR95NiaiwesdfeN6swMpQd9d4O1Usvh0cS?=
+ =?us-ascii?Q?9ZKG/IOqcrNCeD1wQ1PWUiTwDTF1ywUMA8eM0cjFqUFtGEuVOJjk8RpyW7iA?=
+ =?us-ascii?Q?3czmx5yKr0Yfs6d4EkSPsUia5SENiZCYhc8x0cpix3dIgLljf+s1cEV2MWTs?=
+ =?us-ascii?Q?oIWAQabd+SAIEc1A1fdawaBpCjjH5ClgkrcxKreLBrqg2IAMn8G5tNaikuo4?=
+ =?us-ascii?Q?hmoDR8nSdesOFnj1YfF/w7qZTgwyQVHRaaVHQkEdXRqum4lAIo+pJWqKMdDd?=
+ =?us-ascii?Q?8Ljxx/5H96Y5LwzgNgaEqyQVrQMaFBXBhscYx8XFYk+rBnNjTQDFvWCc2+GB?=
+ =?us-ascii?Q?Kr8iA6+j+zA14Q6/amJ8pMm5ria+AmcV0nEwdiVQwpbticuuc+ucZ1XOfPZp?=
+ =?us-ascii?Q?4Dc+2OnF10l0F+wbDqvxZhSBSRYWK6JUNHzjoat3LIq2SUbYAwFxpw1hxdzn?=
+ =?us-ascii?Q?5GN+iqtqJ6AVob2hC5nAxoN/NkJbMWHfIM5WHpyaf6dxguWyd9JN7JszIscD?=
+ =?us-ascii?Q?EXa7efcfvXxUbvud32whg4TNikPJK179Jsm+vReFmdiooAe2IJHlcd0ojWJ1?=
+ =?us-ascii?Q?Y4avaME0HE8rpxD4YsEEYcZdQpvQAlws5FXtU3TleRG+/2XcpMfnAidP/8sY?=
+ =?us-ascii?Q?1cIV1uzQ/P7wXhK1IYimNepFgQSa5CcBIO3Bk1Fd0BzgcNw35LKoaI2vCNlp?=
+ =?us-ascii?Q?INcHYN4p8p28CkiprRLYcUT0f8obdchyDqA2qCxMdQTR5YQU3NVEyV4T65lP?=
+ =?us-ascii?Q?LiXET4q2FfEZxSV0ZPpuq5fjM8JbbCK+fDPgptLrZ8t8oL9H9JkvnSpuMzYw?=
+ =?us-ascii?Q?bj75kPa+Jv41ZK7RPggjTvB6kGn9xXlMRR4HbLHkYkghoQa7YeMhCxR+mxzR?=
+ =?us-ascii?Q?bd8QoeP/wf3drH/WCXXt2PorEiRoQ2jflTvpRYRNeb9RFReLvdMti4Ud+110?=
+ =?us-ascii?Q?JYRMd/SsvpUHMbO8xgeEWe1nN4QuhyKwP9y212SGEaBRuPRJtkY7SzxqE5oD?=
+ =?us-ascii?Q?esSFqIn6oZqOnVWM6uMyOlUa9kuR23BH3+zSe2CuUUVUy9377r6VLpUN5FXa?=
+ =?us-ascii?Q?s47pi+GyiUIFZeWwrnZN2+JwoMsk8W/oNTQVPjj9DxMc8L6ZtMA2D+Px7Btg?=
+ =?us-ascii?Q?WImddWb7Y7QuMKp8Tdita7p5GarnwNSDKHgKjOd9CD4OREY1XT4EabunfT1t?=
+ =?us-ascii?Q?9K7z/OOaX9vK5IetTVSC2c/klp5vVRad6t5X5Ouu/CecKcBPE2Mks+Udp8SD?=
+ =?us-ascii?Q?/3YVOJDTHwRMX2WecfTGLGpjlVStA8YEAFnYRZk2Dvbah74pYOFx4/gJVz2L?=
+ =?us-ascii?Q?yA=3D=3D?=
+X-OriginatorOrg: nordicsemi.no
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2d2f12c1-3134-4e47-f55d-08dde3df0f32
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR05MB8949.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 13:55:33.0824
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 28e5afa2-bf6f-419a-8cf6-b31c6e9e5e8d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2lqwVfhv/Q8JDA8iEdFpGaTijspC4EaMkCkDP9p7rvDuL7IU0mOIBY+p4MEFGdlF/APFAvDD9140bJ/0wPH5/Ds78ViIbcZCJ0sR7j/EVmE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR05MB10252
 
-Le Mon, Aug 25, 2025 at 03:29:05PM +0200, Marco Crivellari a écrit :
-> Currently if a user enqueue a work item using schedule_delayed_work() the
-> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-> schedule_work() that is using system_wq and queue_work(), that makes use
-> again of WORK_CPU_UNBOUND.
-> This lack of consistentcy cannot be addressed without refactoring the API.
-> 
-> alloc_workqueue() treats all queues as per-CPU by default, while unbound
-> workqueues must opt-in via WQ_UNBOUND.
-> 
-> This default is suboptimal: most workloads benefit from unbound queues,
-> allowing the scheduler to place worker threads where they’re needed and
-> reducing noise when CPUs are isolated.
-> 
-> This default is suboptimal: most workloads benefit from unbound queues,
-> allowing the scheduler to place worker threads where they’re needed and
-> reducing noise when CPUs are isolated.
-> 
-> This patch adds a new WQ_PERCPU flag to explicitly request the use of
-> the per-CPU behavior. Both flags coexist for one release cycle to allow
-> callers to transition their calls.
-> 
-> Once migration is complete, WQ_UNBOUND can be removed and unbound will
-> become the implicit default.
-> 
-> With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
-> any alloc_workqueue() caller that doesn’t explicitly specify WQ_UNBOUND
-> must now use WQ_PERCPU.
-> 
-> All existing users have been updated accordingly.
-> 
-> Suggested-by: Tejun Heo <tj@kernel.org>
-> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+Add parameter "wait" for gsm_modem_update() to indicate if we
+should wait for the response.
 
-A similar per subsystem patch cut should be done here.
+Currently gsm_queue() processes incoming frames and when opening
+a DLC channel it calls gsm_dlci_open() which calls gsm_modem_update().
+If basic mode is used it calls gsm_modem_upd_via_msc() and it
+cannot block the input queue by waiting the response to come
+into the same input queue.
 
-> ---
->  block/bio-integrity-auto.c                    |  5 +++--
->  block/bio.c                                   |  3 ++-
->  block/blk-core.c                              |  3 ++-
->  block/blk-throttle.c                          |  3 ++-
->  block/blk-zoned.c                             |  3 ++-
+Instead allow sending Modem Status Command without waiting for remote
+end to respond.
 
-One for block.
+Signed-off-by: Seppo Takalo <seppo.takalo@nordicsemi.no>
+---
+ drivers/tty/n_gsm.c | 33 +++++++++++++++++++--------------
+ 1 file changed, 19 insertions(+), 14 deletions(-)
 
->  crypto/cryptd.c                               |  3 ++-
-
-One for crypto API.
-
->  drivers/acpi/ec.c                             |  3 ++-
->  drivers/acpi/osl.c                            |  4 ++--
->  drivers/acpi/thermal.c                        |  3 ++-
->  drivers/ata/libata-sff.c                      |  3 ++-
->  drivers/base/core.c                           |  2 +-
->  drivers/block/aoe/aoemain.c                   |  2 +-
->  drivers/block/rbd.c                           |  2 +-
->  drivers/block/rnbd/rnbd-clt.c                 |  2 +-
->  drivers/block/sunvdc.c                        |  2 +-
->  drivers/block/virtio_blk.c                    |  2 +-
->  drivers/bus/mhi/ep/main.c                     |  2 +-
->  drivers/char/tpm/tpm-dev-common.c             |  3 ++-
->  drivers/char/xillybus/xillybus_core.c         |  2 +-
->  drivers/char/xillybus/xillyusb.c              |  4 ++--
->  drivers/cpufreq/tegra194-cpufreq.c            |  3 ++-
->  drivers/crypto/atmel-i2c.c                    |  2 +-
->  drivers/crypto/cavium/nitrox/nitrox_mbx.c     |  2 +-
->  drivers/crypto/intel/qat/qat_common/adf_aer.c |  4 ++--
->  drivers/crypto/intel/qat/qat_common/adf_isr.c |  3 ++-
->  .../crypto/intel/qat/qat_common/adf_sriov.c   |  3 ++-
->  .../crypto/intel/qat/qat_common/adf_vf_isr.c  |  3 ++-
->  drivers/firewire/core-transaction.c           |  3 ++-
->  drivers/firewire/ohci.c                       |  3 ++-
->  drivers/gpu/drm/amd/amdkfd/kfd_process.c      |  3 ++-
->  drivers/gpu/drm/bridge/analogix/anx7625.c     |  3 ++-
->  .../drm/i915/display/intel_display_driver.c   |  3 ++-
->  drivers/gpu/drm/i915/i915_driver.c            |  3 ++-
->  .../gpu/drm/i915/selftests/i915_sw_fence.c    |  2 +-
->  .../gpu/drm/i915/selftests/mock_gem_device.c  |  2 +-
->  drivers/gpu/drm/nouveau/nouveau_drm.c         |  2 +-
->  drivers/gpu/drm/nouveau/nouveau_sched.c       |  3 ++-
->  drivers/gpu/drm/radeon/radeon_display.c       |  3 ++-
->  drivers/gpu/drm/xe/xe_device.c                |  4 ++--
->  drivers/gpu/drm/xe/xe_ggtt.c                  |  2 +-
->  drivers/gpu/drm/xe/xe_hw_engine_group.c       |  3 ++-
->  drivers/gpu/drm/xe/xe_sriov.c                 |  2 +-
->  drivers/greybus/operation.c                   |  2 +-
->  drivers/hid/hid-nintendo.c                    |  3 ++-
->  drivers/hv/mshv_eventfd.c                     |  2 +-
->  drivers/i3c/master.c                          |  2 +-
->  drivers/infiniband/core/cm.c                  |  2 +-
->  drivers/infiniband/core/device.c              |  4 ++--
->  drivers/infiniband/hw/hfi1/init.c             |  3 +--
->  drivers/infiniband/hw/hfi1/opfn.c             |  3 +--
->  drivers/infiniband/hw/mlx4/cm.c               |  2 +-
->  drivers/infiniband/sw/rdmavt/cq.c             |  3 ++-
->  drivers/infiniband/ulp/iser/iscsi_iser.c      |  2 +-
->  drivers/infiniband/ulp/isert/ib_isert.c       |  2 +-
->  drivers/infiniband/ulp/rtrs/rtrs-clt.c        |  2 +-
->  drivers/infiniband/ulp/rtrs/rtrs-srv.c        |  2 +-
->  drivers/input/mouse/psmouse-smbus.c           |  2 +-
->  drivers/isdn/capi/kcapi.c                     |  2 +-
->  drivers/md/bcache/btree.c                     |  3 ++-
->  drivers/md/bcache/super.c                     | 10 ++++++----
->  drivers/md/bcache/writeback.c                 |  2 +-
->  drivers/md/dm-bufio.c                         |  3 ++-
->  drivers/md/dm-cache-target.c                  |  3 ++-
->  drivers/md/dm-clone-target.c                  |  3 ++-
->  drivers/md/dm-crypt.c                         |  6 ++++--
->  drivers/md/dm-delay.c                         |  4 +++-
->  drivers/md/dm-integrity.c                     | 15 ++++++++++-----
->  drivers/md/dm-kcopyd.c                        |  3 ++-
->  drivers/md/dm-log-userspace-base.c            |  3 ++-
->  drivers/md/dm-mpath.c                         |  5 +++--
->  drivers/md/dm-raid1.c                         |  5 +++--
->  drivers/md/dm-snap-persistent.c               |  3 ++-
->  drivers/md/dm-stripe.c                        |  2 +-
->  drivers/md/dm-verity-target.c                 |  4 +++-
->  drivers/md/dm-writecache.c                    |  3 ++-
->  drivers/md/dm.c                               |  3 ++-
->  drivers/md/md.c                               |  4 ++--
->  drivers/media/pci/ddbridge/ddbridge-core.c    |  2 +-
->  .../platform/mediatek/mdp3/mtk-mdp3-core.c    |  6 ++++--
->  drivers/message/fusion/mptbase.c              |  7 +++++--
->  drivers/mmc/core/block.c                      |  3 ++-
->  drivers/mmc/host/omap.c                       |  2 +-
->  drivers/net/can/spi/hi311x.c                  |  3 ++-
->  drivers/net/can/spi/mcp251x.c                 |  3 ++-
->  .../net/ethernet/cavium/liquidio/lio_core.c   |  2 +-
->  .../net/ethernet/cavium/liquidio/lio_main.c   |  8 +++++---
->  .../ethernet/cavium/liquidio/lio_vf_main.c    |  3 ++-
->  .../cavium/liquidio/request_manager.c         |  2 +-
->  .../cavium/liquidio/response_manager.c        |  3 ++-
->  .../net/ethernet/freescale/dpaa2/dpaa2-eth.c  |  2 +-
->  .../hisilicon/hns3/hns3pf/hclge_main.c        |  3 ++-
->  drivers/net/ethernet/intel/fm10k/fm10k_main.c |  2 +-
->  drivers/net/ethernet/intel/i40e/i40e_main.c   |  2 +-
->  .../net/ethernet/marvell/octeontx2/af/cgx.c   |  2 +-
->  .../marvell/octeontx2/af/mcs_rvu_if.c         |  2 +-
->  .../ethernet/marvell/octeontx2/af/rvu_cgx.c   |  2 +-
->  .../ethernet/marvell/octeontx2/af/rvu_rep.c   |  2 +-
->  .../marvell/octeontx2/nic/cn10k_ipsec.c       |  3 ++-
->  .../ethernet/marvell/prestera/prestera_main.c |  2 +-
->  .../ethernet/marvell/prestera/prestera_pci.c  |  2 +-
->  drivers/net/ethernet/mellanox/mlxsw/core.c    |  4 ++--
->  drivers/net/ethernet/netronome/nfp/nfp_main.c |  2 +-
->  drivers/net/ethernet/qlogic/qed/qed_main.c    |  3 ++-
->  drivers/net/ethernet/wiznet/w5100.c           |  2 +-
->  drivers/net/fjes/fjes_main.c                  |  5 +++--
->  drivers/net/wireguard/device.c                |  6 ++++--
->  drivers/net/wireless/ath/ath6kl/usb.c         |  2 +-
->  .../net/wireless/marvell/libertas/if_sdio.c   |  3 ++-
->  .../net/wireless/marvell/libertas/if_spi.c    |  3 ++-
->  .../net/wireless/marvell/libertas_tf/main.c   |  2 +-
->  drivers/net/wireless/quantenna/qtnfmac/core.c |  3 ++-
->  drivers/net/wireless/realtek/rtlwifi/base.c   |  2 +-
->  drivers/net/wireless/realtek/rtw88/usb.c      |  3 ++-
->  drivers/net/wireless/silabs/wfx/main.c        |  2 +-
->  drivers/net/wireless/st/cw1200/bh.c           |  4 ++--
->  drivers/net/wwan/t7xx/t7xx_hif_dpmaif_rx.c    |  3 ++-
->  drivers/net/wwan/wwan_hwsim.c                 |  2 +-
->  drivers/nvme/host/tcp.c                       |  2 ++
->  drivers/nvme/target/core.c                    |  5 +++--
->  drivers/nvme/target/fc.c                      |  6 +++---
->  drivers/nvme/target/tcp.c                     |  2 +-
->  drivers/pci/endpoint/functions/pci-epf-mhi.c  |  2 +-
->  drivers/pci/endpoint/functions/pci-epf-ntb.c  |  5 +++--
->  drivers/pci/endpoint/functions/pci-epf-test.c |  3 ++-
->  drivers/pci/endpoint/functions/pci-epf-vntb.c |  5 +++--
->  drivers/pci/hotplug/pnv_php.c                 |  3 ++-
->  drivers/pci/hotplug/shpchp_core.c             |  3 ++-
->  .../platform/surface/surface_acpi_notify.c    |  2 +-
->  drivers/power/supply/ab8500_btemp.c           |  3 ++-
->  drivers/power/supply/ipaq_micro_battery.c     |  3 ++-
->  drivers/rapidio/rio.c                         |  2 +-
->  drivers/s390/char/tape_3590.c                 |  2 +-
->  drivers/scsi/be2iscsi/be_main.c               |  3 ++-
->  drivers/scsi/bnx2fc/bnx2fc_fcoe.c             |  2 +-
->  drivers/scsi/device_handler/scsi_dh_alua.c    |  2 +-
->  drivers/scsi/fcoe/fcoe.c                      |  2 +-
->  drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c      |  3 ++-
->  drivers/scsi/lpfc/lpfc_init.c                 |  2 +-
->  drivers/scsi/pm8001/pm8001_init.c             |  2 +-
->  drivers/scsi/qedf/qedf_main.c                 | 15 ++++++++++-----
->  drivers/scsi/qedi/qedi_main.c                 |  2 +-
->  drivers/scsi/qla2xxx/qla_os.c                 |  2 +-
->  drivers/scsi/qla2xxx/qla_target.c             |  2 +-
->  drivers/scsi/qla2xxx/tcm_qla2xxx.c            |  2 +-
->  drivers/scsi/qla4xxx/ql4_os.c                 |  3 ++-
->  drivers/scsi/scsi_transport_fc.c              |  7 ++++---
->  drivers/soc/fsl/qbman/qman.c                  |  2 +-
->  drivers/staging/greybus/sdio.c                |  2 +-
->  drivers/target/target_core_transport.c        |  4 ++--
->  drivers/target/target_core_xcopy.c            |  2 +-
->  drivers/target/tcm_fc/tfc_conf.c              |  2 +-
->  drivers/usb/core/hub.c                        |  2 +-
->  drivers/usb/gadget/function/f_hid.c           |  3 +--
->  drivers/usb/storage/uas.c                     |  2 +-
->  drivers/usb/typec/anx7411.c                   |  3 +--
->  drivers/vdpa/vdpa_user/vduse_dev.c            |  3 ++-
->  drivers/virt/acrn/irqfd.c                     |  3 ++-
->  drivers/virtio/virtio_balloon.c               |  3 ++-
->  drivers/xen/privcmd.c                         |  3 ++-
-
-One for drivers.
-
->  include/linux/workqueue.h                     |  4 ++--
-
-One for workqueue.
-
->  kernel/bpf/cgroup.c                           |  3 ++-
-
-One for BPF.
-
->  kernel/cgroup/cgroup-v1.c                     |  2 +-
->  kernel/cgroup/cgroup.c                        |  2 +-
-
-One for cgroup.
-
->  kernel/padata.c                               |  5 +++--
-
-One for padata.
-
->  kernel/power/main.c                           |  2 +-
-
-One for power.
-
->  kernel/rcu/tree.c                             |  4 ++--
-
-One for RCU.
-
->  kernel/workqueue.c                            | 19 ++++++++++---------
-
-Join the workqueue change above.
-
->  virt/kvm/eventfd.c                            |  2 +-
-
-And one for KVM.
-
-Thanks.
-
+diff --git a/drivers/tty/n_gsm.c b/drivers/tty/n_gsm.c
+index 8dd3f23af3d2..8e8475d9fbeb 100644
+--- a/drivers/tty/n_gsm.c
++++ b/drivers/tty/n_gsm.c
+@@ -454,7 +454,7 @@ static const u8 gsm_fcs8[256] = {
+ 
+ static void gsm_dlci_close(struct gsm_dlci *dlci);
+ static int gsmld_output(struct gsm_mux *gsm, u8 *data, int len);
+-static int gsm_modem_update(struct gsm_dlci *dlci, u8 brk);
++static int gsm_modem_update(struct gsm_dlci *dlci, u8 brk, bool wait);
+ static struct gsm_msg *gsm_data_alloc(struct gsm_mux *gsm, u8 addr, int len,
+ 								u8 ctrl);
+ static int gsm_send_packet(struct gsm_mux *gsm, struct gsm_msg *msg);
+@@ -2174,7 +2174,7 @@ static void gsm_dlci_open(struct gsm_dlci *dlci)
+ 		pr_debug("DLCI %d goes open.\n", dlci->addr);
+ 	/* Send current modem state */
+ 	if (dlci->addr) {
+-		gsm_modem_update(dlci, 0);
++		gsm_modem_update(dlci, 0, false);
+ 	} else {
+ 		/* Start keep-alive control */
+ 		gsm->ka_num = 0;
+@@ -4138,7 +4138,7 @@ static void gsm_modem_upd_via_data(struct gsm_dlci *dlci, u8 brk)
+  *	@brk: break signal
+  */
+ 
+-static int gsm_modem_upd_via_msc(struct gsm_dlci *dlci, u8 brk)
++static int gsm_modem_upd_via_msc(struct gsm_dlci *dlci, u8 brk, bool wait)
+ {
+ 	u8 modembits[3];
+ 	struct gsm_control *ctrl;
+@@ -4155,10 +4155,15 @@ static int gsm_modem_upd_via_msc(struct gsm_dlci *dlci, u8 brk)
+ 		modembits[2] = (brk << 4) | 2 | EA; /* Length, Break, EA */
+ 		len++;
+ 	}
+-	ctrl = gsm_control_send(dlci->gsm, CMD_MSC, modembits, len);
+-	if (ctrl == NULL)
+-		return -ENOMEM;
+-	return gsm_control_wait(dlci->gsm, ctrl);
++	if (wait) {
++		ctrl = gsm_control_send(dlci->gsm, CMD_MSC, modembits, len);
++		if (!ctrl)
++			return -ENOMEM;
++		return gsm_control_wait(dlci->gsm, ctrl);
++	} else {
++		return gsm_control_command(dlci->gsm, CMD_MSC, (const u8 *)&modembits,
++				  len);
++	}
+ }
+ 
+ /**
+@@ -4167,7 +4172,7 @@ static int gsm_modem_upd_via_msc(struct gsm_dlci *dlci, u8 brk)
+  *	@brk: break signal
+  */
+ 
+-static int gsm_modem_update(struct gsm_dlci *dlci, u8 brk)
++static int gsm_modem_update(struct gsm_dlci *dlci, u8 brk, bool wait)
+ {
+ 	if (dlci->gsm->dead)
+ 		return -EL2HLT;
+@@ -4177,7 +4182,7 @@ static int gsm_modem_update(struct gsm_dlci *dlci, u8 brk)
+ 		return 0;
+ 	} else if (dlci->gsm->encoding == GSM_BASIC_OPT) {
+ 		/* Send as MSC control message. */
+-		return gsm_modem_upd_via_msc(dlci, brk);
++		return gsm_modem_upd_via_msc(dlci, brk, wait);
+ 	}
+ 
+ 	/* Modem status lines are not supported. */
+@@ -4243,7 +4248,7 @@ static void gsm_dtr_rts(struct tty_port *port, bool active)
+ 		modem_tx &= ~(TIOCM_DTR | TIOCM_RTS);
+ 	if (modem_tx != dlci->modem_tx) {
+ 		dlci->modem_tx = modem_tx;
+-		gsm_modem_update(dlci, 0);
++		gsm_modem_update(dlci, 0, true);
+ 	}
+ }
+ 
+@@ -4449,7 +4454,7 @@ static int gsmtty_tiocmset(struct tty_struct *tty,
+ 
+ 	if (modem_tx != dlci->modem_tx) {
+ 		dlci->modem_tx = modem_tx;
+-		return gsm_modem_update(dlci, 0);
++		return gsm_modem_update(dlci, 0, true);
+ 	}
+ 	return 0;
+ }
+@@ -4531,7 +4536,7 @@ static void gsmtty_throttle(struct tty_struct *tty)
+ 		dlci->modem_tx &= ~TIOCM_RTS;
+ 	dlci->throttled = true;
+ 	/* Send an MSC with RTS cleared */
+-	gsm_modem_update(dlci, 0);
++	gsm_modem_update(dlci, 0, true);
+ }
+ 
+ static void gsmtty_unthrottle(struct tty_struct *tty)
+@@ -4543,7 +4548,7 @@ static void gsmtty_unthrottle(struct tty_struct *tty)
+ 		dlci->modem_tx |= TIOCM_RTS;
+ 	dlci->throttled = false;
+ 	/* Send an MSC with RTS set */
+-	gsm_modem_update(dlci, 0);
++	gsm_modem_update(dlci, 0, true);
+ }
+ 
+ static int gsmtty_break_ctl(struct tty_struct *tty, int state)
+@@ -4561,7 +4566,7 @@ static int gsmtty_break_ctl(struct tty_struct *tty, int state)
+ 		if (encode > 0x0F)
+ 			encode = 0x0F;	/* Best effort */
+ 	}
+-	return gsm_modem_update(dlci, encode);
++	return gsm_modem_update(dlci, encode, true);
+ }
+ 
+ static void gsmtty_cleanup(struct tty_struct *tty)
 -- 
-Frederic Weisbecker
-SUSE Labs
+2.43.0
+
 
