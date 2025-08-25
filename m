@@ -1,215 +1,181 @@
-Return-Path: <linux-kernel+bounces-784770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B63D7B340CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:34:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1212B340E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:38:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 714543ADF48
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:34:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 639C27AFDD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9003627281E;
-	Mon, 25 Aug 2025 13:34:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027F226E154;
+	Mon, 25 Aug 2025 13:35:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="nSoNGub+"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="Y9LpjIP9"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212E11A9F89;
-	Mon, 25 Aug 2025 13:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F3F2AD13
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 13:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756128861; cv=none; b=VlH6KHZZv739hrFZA+uwKPMgCf/6ET2GDoQt2ip2gzxjVr4K/CrU96iA8KEaj5Pf1AfJ6KGDLD2JIW7T8FX2bG2VlxRuNWMdFLs7WwQe2SCpNc9TvQIjmGnYxQBFpAGyBxWVNdxnkJq03CghNDWTcf9azLyZATL092l0qLM4MDU=
+	t=1756128904; cv=none; b=L8pKWwtdG+VUMH2QnyiVqSdLUYjV2vVuE4W0It30OwUMBDDQImYKHIK9g2kx7MPKH0er8iSSrTDNp6Qeot92naHlj4KPCCCn5Z7O1cSJEj+rP4iUcl68n/dClxoc5N4/Zeqe9W2ks4gV/5n+m7gxbfrdfFz9jk6G6qnbeFeoMic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756128861; c=relaxed/simple;
-	bh=CCGJkYhHv6r53MD0QIkrv3WyoU2uM4jlc1ErpFQQMIg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oqFIz4PpnlzpHf2PM+zV92GVKp0hUENrmJOgpAW6CNt6LFJhHr473kTQKpaoi7GEoIyWb7eMh8yikCXHzis+M90W5D+7rxemOxGbK7+4pV8tpslYrESjs8W4+xp2PFkR9vSmjjINswpu3xDo2NMsdr9oLk2OvhM+d5wUO2FZReg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=nSoNGub+; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57PBD2cP019425;
-	Mon, 25 Aug 2025 13:34:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=33mw3k
-	9+Z7/3mpLUSaMOxp6CbqWVf4Vsc6++NrhwCSo=; b=nSoNGub+I/6+7orQEkiNXn
-	aUW+sOmvDRD5RlZki1ebFp9FYqLI/Toeb/ucedSF8xr0E4Lw5z6Msw+6p7fjt3r0
-	oNCOztHuqVBj+zu54I+iy4TQN5BHHS2cwjdatmLWg+Tl+vYVVbMWjUMwEE8HBq+B
-	6tytZfts4JMhY+tSSoudkCc4EyZgxAdY+xaBDXAUNLSnuv8XtkaO4PwQcZET8TAR
-	RjToHem5lKz59wrIbMCWSoBj+E0Tyr9bC8rd2QntBgJwd1gahkx0yQcSJFJYJwQW
-	5NcxIV1uxI3j7EXuZftzOHP6yAzZo3/DC+z1XjGFJn8j0ZLCBNqi/HwFxk/zzAVQ
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48q557s701-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Aug 2025 13:34:16 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57PD93re007451;
-	Mon, 25 Aug 2025 13:34:15 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 48qqyu67xp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Aug 2025 13:34:15 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57PDYCPA20316726
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 25 Aug 2025 13:34:12 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 171A320043;
-	Mon, 25 Aug 2025 13:34:12 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4FFD320040;
-	Mon, 25 Aug 2025 13:34:11 +0000 (GMT)
-Received: from p-imbrenda (unknown [9.111.17.238])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with SMTP;
-	Mon, 25 Aug 2025 13:34:11 +0000 (GMT)
-Date: Mon, 25 Aug 2025 15:34:07 +0200
-From: Claudio Imbrenda <imbrenda@linux.ibm.com>
-To: Thomas Huth <thuth@redhat.com>
-Cc: Janosch Frank <frankja@linux.ibm.com>, kvm@vger.kernel.org,
-        Peter Xu
- <peterx@redhat.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev
- <agordeev@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: s390: Fix access to unavailable adapter indicator
- pages during postcopy
-Message-ID: <20250825153407.5337aaa6@p-imbrenda>
-In-Reply-To: <20250821152309.847187-1-thuth@redhat.com>
-References: <20250821152309.847187-1-thuth@redhat.com>
-Organization: IBM
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1756128904; c=relaxed/simple;
+	bh=XCnbjByTHt/EzYt+qSgjmrxiVOZ/Je/LJwSli3PTmBs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EH3RD+PRLF9lO+9TVl145aZUOrW6vt+04Ftcz6IQJdMUiKC39iKQuNr8B5O9D36uOY1ZJeovbPfzYuis8j6rRv5pQoNO3rXlW82wXgXybbyzjNO/0mxBsbGBEVU2rO2r1WKq5paVnaEq2mnwOjK4WS4q8Mg6/GwqNzsAo8SuQqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=Y9LpjIP9; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7e864c4615aso532399885a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 06:35:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fooishbar.org; s=google; t=1756128901; x=1756733701; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gNAXqOqDA9cqjdX2o6MNVIoW7F+Slfq6PVIdvquqCX0=;
+        b=Y9LpjIP9j1WuJ/ulFAQbAbZ/RfP7VYM0JUtjQ3pfsiZvbwrabyw4AdWVY/4kzHEqAD
+         HEJkM0Yg0PUAI77X5dtWO8FnhQ+eljjwIVp6/OmW9O4ybRnAp60k9clPWxBF4A6zvgms
+         mu3U+oVjKFKv2fKsmKEPtUPhc/2+Xo27mVEAxgZHnQubJsdCgTkuYW3v6Z87hP15p6NA
+         cKKYORVlNQiFi0cHXd7VpZ8UaPRLbb974J6i3ymBOjiwo7j68QcCVflqBITCOVcZrXmy
+         tPdPWkLUmBuCJExegpBu241FPtZMkpzP8sUlbjGn2r8KkMWsjD1vWlOK78KwXwfeWmxl
+         F7VQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756128901; x=1756733701;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gNAXqOqDA9cqjdX2o6MNVIoW7F+Slfq6PVIdvquqCX0=;
+        b=Kj3sKdwHZLimhzB41csu1019MrBn4f2B8fVDPJgc/iIwDbkiRsOSmk20rsillU1Qyt
+         9PAPJ/9yzDsAWKjvv1e13/yaR3Jnyu+rjz0/PEXE5FgprX3z8SeoxxQv1IgS8IQEqh1J
+         7flP31RjlDofOYGxripDk1xvYMBtH/TpDzzEufR8Rhf/GNeooX2w3Mqh5nWSXN88r+Qu
+         E6b3FTcQbmpGK/+CGNKQ59wyE1Co03jFn/LpRVSkssZW+wXRDMQe0ogbzKjWXDyDu8TD
+         u2l8DsXiWDZXPhd6hp/Uri3nn+L+Ky9vo9kh5eMUABNDTHRUEOj/XOtv7X7TaI0fckrF
+         fHEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXifI3eR9LyVivMy3KT9GuLbc+f16fefAbux2+Ey5O5UVozgL6MR9+jl9va4uFHVvPKRid6cXPID6UoOkA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhPkkxc7UlolZyg/raNkVec4p98MddXzdMT4Ydb75wtGLQXotM
+	7NJhrA60s/r5Pg7K4HTxuYMAsupNT4e0Njhuw+wEHaZ1bQ3zMR32MA4O/iHMshWuBAHtwxzxN7d
+	6wGABJwT+a9esHQoVjINZfFowuTCqSvqoJtm5EEDyqg==
+X-Gm-Gg: ASbGncu4TawR1wOhfeL20foJYEZj8FYwmwxc1CGsosWvlg6bS/BpUP6n4mwwHKXEJRg
+	k07GGo17VJ6nCx8ADY54y1sc0I4MAFcZQAdPPuNxlhqPL8Vgc2zZryRt9/qhX/4wBgjgnsfesGW
+	EMIFTzDdAwiFMgxPWCtDpgvy40bH0c6Rfwsx7EBouWp3+wQgBitgkp2aKY8EOEabSg8QpXC9qrb
+	Vj+/V8jAoxSXoCAR486MgSgsRfnJktdL3w9wFQqX6lypOs36CIH
+X-Google-Smtp-Source: AGHT+IGOpK3uEJnQCrmnbOgq3jE9IN0xRtPnGuzZNnzUoPGGiNaxqS5J379tibwH0bqxmCutM7cmIZBZS3IWNjGPhFY=
+X-Received: by 2002:a05:620a:7109:b0:7e6:81cc:6999 with SMTP id
+ af79cd13be357-7ea0948df2fmr1733993185a.32.1756128900796; Mon, 25 Aug 2025
+ 06:35:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: dDvztKvdQcyIY1lgd-Kkk-12QFPLgLgS
-X-Proofpoint-ORIG-GUID: dDvztKvdQcyIY1lgd-Kkk-12QFPLgLgS
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAyMSBTYWx0ZWRfX5M9SoNFqepBS
- FGGj8TizaT4m7vmTd/2jynReafkxR+GUmeESSL2tFW6+cMIzaWVgZRJ8ZjHckjuISROvMAL+wSo
- gwi/tnPTvZp87o0m/YLMWDC+voFB/+GiiW+h8g4+T7e0isLDmp1nM6+GyjuYdfxxoDaIGg00yTD
- UaQi5/Die8KKK3zoBQwp5wCdXglUAPLT7PBTGP1ueWkBYDvIHYLTarqFKdY6rFjVKSDYcbypJzp
- 61CEotfB/o8rypLkK5+QROwJn+eB0Zip9eZ1MpVuXY1ut7SxjjtOQRp+NecHEu/troUiwyhDph/
- CLbKgODCzWgQPQ4Al3i3DhqDeJ6TFScjxSvvEOXt+1ZulBNnIyIqjPVu306HEQ9mMSUNC+8xglP
- tsMyCyLq
-X-Authority-Analysis: v=2.4 cv=A8ZsP7WG c=1 sm=1 tr=0 ts=68ac6658 cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=20KFwNOVAAAA:8 a=VnNF1IyMAAAA:8
- a=quq3VhT3AGQ69vMGiI4A:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-25_06,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 adultscore=0 priorityscore=1501 suspectscore=0 clxscore=1015
- spamscore=0 impostorscore=0 malwarescore=0 bulkscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508230021
+References: <20250822-mtk-post-blend-color-pipeline-v1-0-a9446d4aca82@collabora.com>
+ <20250822-mtk-post-blend-color-pipeline-v1-1-a9446d4aca82@collabora.com>
+In-Reply-To: <20250822-mtk-post-blend-color-pipeline-v1-1-a9446d4aca82@collabora.com>
+From: Daniel Stone <daniel@fooishbar.org>
+Date: Mon, 25 Aug 2025 14:34:48 +0100
+X-Gm-Features: Ac12FXydArko6F2KpO-xscTn2Bhfj39k97NaH0mQfBe9_vPNG3yvbIIh17F1fXw
+Message-ID: <CAPj87rPAoD2D99zTdsvJ=9K8+G17mTS2jDYHMPYmXNtUyp2L_Q@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/5] drm: Support post-blend color pipeline API
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Alex Hung <alex.hung@amd.com>, 
+	wayland-devel@lists.freedesktop.org, harry.wentland@amd.com, leo.liu@amd.com, 
+	ville.syrjala@linux.intel.com, pekka.paalanen@collabora.com, 
+	contact@emersion.fr, mwen@igalia.com, jadahl@redhat.com, 
+	sebastian.wick@redhat.com, shashank.sharma@amd.com, agoins@nvidia.com, 
+	joshua@froggi.es, mdaenzer@redhat.com, aleixpol@kde.org, xaver.hugl@gmail.com, 
+	victoria@system76.com, uma.shankar@intel.com, quic_naseer@quicinc.com, 
+	quic_cbraga@quicinc.com, quic_abhinavk@quicinc.com, marcan@marcan.st, 
+	Liviu.Dudau@arm.com, sashamcintosh@google.com, 
+	chaitanya.kumar.borah@intel.com, louis.chauvet@bootlin.com, mcanal@igalia.com, 
+	kernel@collabora.com, daniels@collabora.com, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, Simona Vetter <simona.vetter@ffwll.ch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 21 Aug 2025 17:23:09 +0200
-Thomas Huth <thuth@redhat.com> wrote:
+Hi Nicolas,
+Thanks for doing this! It's great to see.
 
-> From: Thomas Huth <thuth@redhat.com>
-> 
-> When you run a KVM guest with vhost-net and migrate that guest to
-> another host, and you immediately enable postcopy after starting the
-> migration, there is a big chance that the network connection of the
-> guest won't work anymore on the destination side after the migration.
-> 
-> With a debug kernel v6.16.0, there is also a call trace that looks
-> like this:
-> 
->  FAULT_FLAG_ALLOW_RETRY missing 881
->  CPU: 6 UID: 0 PID: 549 Comm: kworker/6:2 Kdump: loaded Not tainted 6.16.0 #56 NONE
->  Hardware name: IBM 3931 LA1 400 (LPAR)
->  Workqueue: events irqfd_inject [kvm]
->  Call Trace:
->   [<00003173cbecc634>] dump_stack_lvl+0x104/0x168
->   [<00003173cca69588>] handle_userfault+0xde8/0x1310
->   [<00003173cc756f0c>] handle_pte_fault+0x4fc/0x760
->   [<00003173cc759212>] __handle_mm_fault+0x452/0xa00
->   [<00003173cc7599ba>] handle_mm_fault+0x1fa/0x6a0
->   [<00003173cc73409a>] __get_user_pages+0x4aa/0xba0
->   [<00003173cc7349e8>] get_user_pages_remote+0x258/0x770
->   [<000031734be6f052>] get_map_page+0xe2/0x190 [kvm]
->   [<000031734be6f910>] adapter_indicators_set+0x50/0x4a0 [kvm]
->   [<000031734be7f674>] set_adapter_int+0xc4/0x170 [kvm]
->   [<000031734be2f268>] kvm_set_irq+0x228/0x3f0 [kvm]
->   [<000031734be27000>] irqfd_inject+0xd0/0x150 [kvm]
->   [<00003173cc00c9ec>] process_one_work+0x87c/0x1490
->   [<00003173cc00dda6>] worker_thread+0x7a6/0x1010
->   [<00003173cc02dc36>] kthread+0x3b6/0x710
->   [<00003173cbed2f0c>] __ret_from_fork+0xdc/0x7f0
->   [<00003173cdd737ca>] ret_from_fork+0xa/0x30
->  3 locks held by kworker/6:2/549:
->   #0: 00000000800bc958 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work+0x7ee/0x1490
->   #1: 000030f3d527fbd0 ((work_completion)(&irqfd->inject)){+.+.}-{0:0}, at: process_one_work+0x81c/0x1490
->   #2: 00000000f99862b0 (&mm->mmap_lock){++++}-{3:3}, at: get_map_page+0xa8/0x190 [kvm]
-> 
-> The "FAULT_FLAG_ALLOW_RETRY missing" indicates that handle_userfaultfd()
-> saw a page fault request without ALLOW_RETRY flag set, hence userfaultfd
-> cannot remotely resolve it (because the caller was asking for an immediate
-> resolution, aka, FAULT_FLAG_NOWAIT, while remote faults can take time).
-> With that, get_map_page() failed and the irq was lost.
-> 
-> We should not be strictly in an atomic environment here and the worker
-> should be sleepable (the call is done during an ioctl from userspace),
-> so we can allow adapter_indicators_set() to just sleep waiting for the
-> remote fault instead.
-> 
-> Link: https://issues.redhat.com/browse/RHEL-42486
-> Signed-off-by: Peter Xu <peterx@redhat.com>
-> [thuth: Assembled patch description and fixed some cosmetical issues]
-> Signed-off-by: Thomas Huth <thuth@redhat.com>
+On Fri, 22 Aug 2025 at 19:36, N=C3=ADcolas F. R. A. Prado
+<nfraprado@collabora.com> wrote:
+> -/**
+> - * drm_plane_colorop_curve_1d_lut_init - Initialize a DRM_COLOROP_1D_LUT
+> - *
+> - * @dev: DRM device
+> - * @colorop: The drm_colorop object to initialize
+> - * @plane: The associated drm_plane
+> - * @lut_size: LUT size supported by driver
+> - * @lut1d_interpolation: 1D LUT interpolation type
+> - * @flags: bitmask of misc, see DRM_COLOROP_FLAG_* defines.
+> - * @return zero on success, -E value on failure
+> - */
+> -int drm_plane_colorop_curve_1d_lut_init(struct drm_device *dev, struct d=
+rm_colorop *colorop,
+> -                                       struct drm_plane *plane, uint32_t=
+ lut_size,
+> -                                       enum drm_colorop_lut1d_interpolat=
+ion_type lut1d_interpolation,
+> -                                       uint32_t flags)
+> +static int
+> +drm_common_colorop_curve_1d_lut_init(struct drm_device *dev,
+> +                                    struct drm_colorop *colorop,
+> +                                    uint32_t lut_size,
+> +                                    enum drm_colorop_lut1d_interpolation=
+_type lut1d_interpolation,
+> +                                    uint32_t flags)
 
-Reviewed-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+I think these would be better in a prior commit which only moved the
+plane init around.
 
-> ---
->  Note: Instructions for reproducing the bug can be found in the ticket here:
->  https://issues.redhat.com/browse/RHEL-42486?focusedId=26661116#comment-26661116
-> 
->  arch/s390/kvm/interrupt.c | 15 +++++++++++----
->  1 file changed, 11 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
-> index 60c360c18690f..dcce826ae9875 100644
-> --- a/arch/s390/kvm/interrupt.c
-> +++ b/arch/s390/kvm/interrupt.c
-> @@ -2777,12 +2777,19 @@ static unsigned long get_ind_bit(__u64 addr, unsigned long bit_nr, bool swap)
->  
->  static struct page *get_map_page(struct kvm *kvm, u64 uaddr)
->  {
-> +	struct mm_struct *mm = kvm->mm;
->  	struct page *page = NULL;
-> +	int locked = 1;
+> @@ -416,6 +417,24 @@ int drm_mode_object_get_properties(struct drm_mode_o=
+bject *obj, bool atomic,
+>                                 continue;
+>                 }
+>
+> +               if (post_blend_color_pipeline && obj->type =3D=3D DRM_MOD=
+E_OBJECT_CRTC) {
+> +                       struct drm_crtc *crtc =3D obj_to_crtc(obj);
+> +                       struct drm_mode_config mode_config =3D crtc->dev-=
+>mode_config;
 > +
-> +	if (mmget_not_zero(mm)) {
-> +		mmap_read_lock(mm);
-> +		get_user_pages_remote(mm, uaddr, 1, FOLL_WRITE,
-> +				      &page, &locked);
-> +		if (locked)
-> +			mmap_read_unlock(mm);
-> +		mmput(mm);
-> +	}
->  
-> -	mmap_read_lock(kvm->mm);
-> -	get_user_pages_remote(kvm->mm, uaddr, 1, FOLL_WRITE,
-> -			      &page, NULL);
-> -	mmap_read_unlock(kvm->mm);
->  	return page;
->  }
->  
+> +                       if (prop =3D=3D mode_config.gamma_lut_property ||
+> +                           prop =3D=3D mode_config.degamma_lut_property =
+||
+> +                           prop =3D=3D mode_config.gamma_lut_size_proper=
+ty ||
+> +                           prop =3D=3D mode_config.ctm_property)
+> +                               continue;
+> +               }
+> +
+> +               if (!post_blend_color_pipeline && obj->type =3D=3D DRM_MO=
+DE_OBJECT_CRTC) {
+> +                       struct drm_crtc *crtc =3D obj_to_crtc(obj);
+> +
+> +                       if (prop =3D=3D crtc->color_pipeline_property)
+> +                               continue;
+> +               }
 
+Hmmm. One issue with this is that it makes things like drm_info
+harder: if drm_info opted into the client cap, it would no longer be
+able to see any GAMMA_LUT/etc programmed by the prior userspace. So I
+think allowing at least read-only access would be reasonable here.
+
+Having a client cap without a driver cap also puts userspace in a
+difficult position. If the driver doesn't support post-blend colorops,
+then enabling the client cap strictly removes support without a
+replacement. And without a driver cap, the client doesn't have a way
+to know which is better.
+
+Cheers,
+Daniel
 
