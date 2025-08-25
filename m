@@ -1,83 +1,87 @@
-Return-Path: <linux-kernel+bounces-784721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0B62B3404A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:03:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6EB5B3404E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:03:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D86BF484C6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:02:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCDA61A8467A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:03:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A0E1DF985;
-	Mon, 25 Aug 2025 13:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3721EFF9B;
+	Mon, 25 Aug 2025 13:03:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wC1DMav8"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jWGM1Tzr"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B7115D3
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 13:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5254D2B9A7;
+	Mon, 25 Aug 2025 13:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756126966; cv=none; b=b88HXWcTRZwgZrby3KZi4Icq6/U8424kkGXLXzHQ27ULuySu8msVSR3XCI2N+Es1md5pXCQaz0CGnoVYYRRICuA7HD+QOiYjLKBW4wxD59hMIsSoCHCgv4JkOxa61YriB2tg1DQb36uDFIYJLyXa0Z5amiEVDlkce5K2TWhJhj0=
+	t=1756127008; cv=none; b=uCOtIk3i6ceURJAsxqWsjgo5ZGl7G+ZJ0IinfH/sw48gU9k/Eg+JdFfIV3JK0miM4B7Y3QDPszd2wm3pupL+aafQ8XSq2dbWzPOcchcTf/BpYAPXM0MGUGBBLyjdxKgBszNH8R47xbCfIai/WzzjLVP6mgrsyYO9+52o2FQW318=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756126966; c=relaxed/simple;
-	bh=kJ4+WrfiTpuX/TbU0q4GBroFiwwGBXMEwWoR5a1yxuA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SfurCsRLTPK2SKXLkKTRFJrIEgW/ZJxCLJQSyjAWs26u8RPIxxw6Z1NCflRvunXAXGiUkAwKmB8q3zIzi9emB1BI6JF28QjomHk7AcH5tFuuwHRcvsmoPVLkz3sOgoa/FawUIaU89H1HKWFgDi1mgixXLRDZmBsrfLeiXxFTrYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wC1DMav8; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <6620ea89-89c9-4e28-a4be-3f909672a28e@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1756126952;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V3xI0UFFB4FGtaw1TyXLzYu7REKh3yP1oz56NbIWht4=;
-	b=wC1DMav8UyvDVqJA9vBt/IR1Q3+CxDfA5Bpe0+iGGfde5Jo6VIljuCFqtVoN5fL2Lw2l13
-	3YH793IPAg3hLUnZeTYFXHTamyUPz+Ok6aH9P1VIox7pVuPi4GDXl+PSwATEqwKrDHuVnq
-	CpbLIFc2O8tXOrEUG/rAWq+q91OLpwQ=
-Date: Mon, 25 Aug 2025 14:02:29 +0100
+	s=arc-20240116; t=1756127008; c=relaxed/simple;
+	bh=h8vW146cQOAZMeAF8OQcaqbM9C49DYmOGJ545rMirD8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MTJx9B/5Ma3682zKPJI6Pa1CSHdt2BQS6omVEdFW/2cWr/+GNXCvh+T8M/QWcgtrVd3qIJMolZP4+g6UnizUH6H5+UnDCMtf7LKfPxnr6ooFo87jU5MsYVEQHMteiml2zRZ8CLsjYcTtxSrxZxObCWIh29uWqSso1F3wcypSm9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jWGM1Tzr; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=hsGYF0FaLs7v3MHjFI3tJ5DbO+nCiLN104h3lCxUDJs=; b=jWGM1TzrJfeUb+QUcZa6LoHkBz
+	2m1cvVi3H3l7ouqIkH8UodE29ymG8/+bI7/XOp3KkyCY1pvVhiIsk5sgPlVM86NBwzv6R1T3Ma6Uz
+	5NtOZ5QST5Gn/epzZPNSjPpyDTN51xklK1r3INXttahp6p3A8JkTbl4z9k1HQAJo3+LpS1fBx7gm9
+	/Zg2FzC/uYbldSop2u449Ox1RCdNgqSbZMY6YKrmjeBFRgFMkvHmUt4xl4/jpmku46/02dptGZ2Kj
+	d+sNCwsdlt95Vi4Xq/s3VqERK9YRzGo11AgHGKT96wkjHO8KP4gyC+grXHxfF3adHKRIgjGptboJ+
+	6mNxW8Rg==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uqWr5-0000000EGgg-0jha;
+	Mon, 25 Aug 2025 13:03:23 +0000
+Date: Mon, 25 Aug 2025 14:03:22 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Alexander Aring <alex.aring@gmail.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Aleksa Sarai <cyphar@cyphar.com>, Jan Kara <jack@suse.cz>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH] uapi/fcntl: conditionally define AT_RENAME* macros
+Message-ID: <aKxfGix_o4glz8-Z@casper.infradead.org>
+References: <20250824221055.86110-1-rdunlap@infradead.org>
+ <aKuedOXEIapocQ8l@casper.infradead.org>
+ <9b2c8fe2-cf17-445b-abd7-a1ed44812a73@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net v2] phy: mscc: Fix when PTP clock is register and
- unregister
-To: Horatiu Vultur <horatiu.vultur@microchip.com>, andrew@lunn.ch,
- hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- richardcochran@gmail.com, vladimir.oltean@nxp.com,
- rmk+kernel@armlinux.org.uk, christophe.jaillet@wanadoo.fr, rosenp@gmail.com,
- viro@zeniv.linux.org.uk, atenart@kernel.org, quentin.schulz@bootlin.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250825065543.2916334-1-horatiu.vultur@microchip.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20250825065543.2916334-1-horatiu.vultur@microchip.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9b2c8fe2-cf17-445b-abd7-a1ed44812a73@infradead.org>
 
-On 25/08/2025 07:55, Horatiu Vultur wrote:
-> It looks like that every time when the interface was set down and up the
-> driver was creating a new ptp clock. On top of this the function
-> ptp_clock_unregister was never called.
-> Therefore fix this by calling ptp_clock_register and initialize the
-> mii_ts struct inside the probe function and call ptp_clock_unregister when
-> driver is removed.
-> 
-> Fixes: 7d272e63e0979d ("net: phy: mscc: timestamping and PHC support")
-> Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
-> 
+On Sun, Aug 24, 2025 at 04:54:50PM -0700, Randy Dunlap wrote:
+> In file included from ../samples/vfs/test-statx.c:23:
+> usr/include/linux/fcntl.h:159:9: warning: ‘AT_RENAME_NOREPLACE’ redefined
+>   159 | #define AT_RENAME_NOREPLACE     0x0001
+> In file included from ../samples/vfs/test-statx.c:13:
+> /usr/include/stdio.h:171:10: note: this is the location of the previous definition
+>   171 | # define AT_RENAME_NOREPLACE RENAME_NOREPLACE
 
-LGTM,
-Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Oh dear.  This is going to be libc-version-dependent.
+
+$ grep -r AT_RENAME_NOREPLACE /usr/include
+/usr/include/linux/fcntl.h:#define AT_RENAME_NOREPLACE	0x0001
+
+It's not in stdio.h at all.  This is with libc6 2.41-10
 
