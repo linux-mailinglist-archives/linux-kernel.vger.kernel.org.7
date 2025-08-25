@@ -1,164 +1,168 @@
-Return-Path: <linux-kernel+bounces-784534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98A2BB33D15
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:43:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C3B5B33D18
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:45:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 544CE48372E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:43:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F5B4204081
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:45:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD2C2D97B0;
-	Mon, 25 Aug 2025 10:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA9F2D5A14;
+	Mon, 25 Aug 2025 10:44:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="Z/ZsG5x4"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qyh3vJso"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C432D73B4;
-	Mon, 25 Aug 2025 10:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B911C262FC1;
+	Mon, 25 Aug 2025 10:44:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756118586; cv=none; b=Vjyexd7hT+wI11L1SLVet7OmOV3+samOwT9P3XtmF6XEEOzuMCi5GOGwMyO6gmIrMzfav6zOeDjKaWQvcp7iYWNt+s5JwFySmn84vaOPoqQrGwylxraTI+Sxz0h6kCq/IxWuzePmO0q8iojt/RzVlOAbgKiSHQaV1rPnCUQNAfQ=
+	t=1756118695; cv=none; b=Z+r1QrkC/rnZ2lC1p138L2yw0wvatg/srcqxuI8/tFQmh4U4T4NNcqqxk1TSAuSQiZ5/xK7X7FJY57zv94azui85Oflawddn4npLXdj4OAS5qCY3/fOpbueUNr3hka6eHJiwrbEhUIK4edWp3lddSHarprsBpocIBVJ6bi1mRp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756118586; c=relaxed/simple;
-	bh=8OH/oFef91VNFir2tRo/hKrDxHlYQnDxTphIBEtUQSg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tsw+uOlYJqKeuRg7xE93OhtVlyFKTPlk6eX6wBTi9D6t/I3241/9UGq6PwNTzTN69pzTKfLqaEfIgJwlLf+XISK5VeiHZAtCXTRx+R+KM4ZzO5FEv+M1ZCIUYvGfi3pD03/zq4M9cP0YCiSM0eitwleYZ16TMQWx8g+yO3eIvzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=Z/ZsG5x4; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D46A1431F2;
-	Mon, 25 Aug 2025 10:42:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
-	t=1756118576;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hBsTH86xs+DJ2xN6Y98Y0wPML2aErKmzjQBwO4teuOk=;
-	b=Z/ZsG5x4yw2K6JWCXIO2p3AIU/F7xAhkpDttvu5uB0/AHXQnq7YpXYyy59Y5e8ORXahrMo
-	u/c45Pj1DXqbMjzCWPf/MAXY1kWvkUGnrI2VeCJFeCk/1y6CFwzc1p0Qtr2wNQ7qLde443
-	/5ZuHXqFLG0GIhht/pgYyJ9GVEDGg+AnZvewcjyvIRWFX/+poqMIjiysZedcaJoYww5iQY
-	Ix035V2wRfRmDS3/jlTna5IMgqwsGBgCYg9XMdBTazwdca6UXRgMT9EkMee+btyE9OwWKq
-	QtUjFafNx2BGgxfXrliqwk6nN+qfpq029kLZKSs0CVpAR7aAWfJ2DDu3Ruei7A==
-From: Gabriel Krisman Bertazi <gabriel@krisman.be>
-To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,  Amir Goldstein
- <amir73il@gmail.com>,  Theodore Tso <tytso@mit.edu>,
-  linux-unionfs@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-fsdevel@vger.kernel.org,  Alexander Viro <viro@zeniv.linux.org.uk>,
-  Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,
-  kernel-dev@igalia.com
-Subject: Re: [PATCH v6 3/9] ovl: Prepare for mounting case-insensitive
- enabled layers
-In-Reply-To: <20250822-tonyk-overlayfs-v6-3-8b6e9e604fa2@igalia.com>
- (=?utf-8?Q?=22Andr=C3=A9?=
-	Almeida"'s message of "Fri, 22 Aug 2025 11:17:06 -0300")
-References: <20250822-tonyk-overlayfs-v6-0-8b6e9e604fa2@igalia.com>
-	<20250822-tonyk-overlayfs-v6-3-8b6e9e604fa2@igalia.com>
-Date: Mon, 25 Aug 2025 06:42:51 -0400
-Message-ID: <87a53n65sk.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1756118695; c=relaxed/simple;
+	bh=QD8oUBIDGpTVM3NZWJjZ6nU3/bBt4VFqt/FEl2JFavU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ahmvYvHdW6T/siEdPvttQ7ADpzXEgCiLA6JzATXzJWzrbzZsPhtdxTBqGQESY1e6EJay3VqflWqISBYt4jpRZNVlmYcG9/Q3Ui9Mbc9fkaC+1jaksCAURFigTn1kTWbltZaB1i2xZ8TW1nEkiiRpzcRU5Mrf+xWbOWJqD+d8V3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qyh3vJso; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C40BC4CEED;
+	Mon, 25 Aug 2025 10:44:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756118695;
+	bh=QD8oUBIDGpTVM3NZWJjZ6nU3/bBt4VFqt/FEl2JFavU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Qyh3vJso6kMWP9Wt1t9nJ1gn8inkCL3ZOUdPNo5g906MbnQcPWlLaH2bt6NIgsVQd
+	 x/looIJDATFVhZdRmyTCJO5DpY4Q7qPC3mA4TGNRi5Rx5mJEz4ayHeoYP1jFje5+/w
+	 JV44zosjAqErr2rPMqLimllXdi2u/3eVDti657nmgx1kxXoh9AqWrZTtJLhApfIiIp
+	 /YjoEemmP5BfX6j6CbTXqOWpH1T4tmh6+HN1AtEG3iiYsqNauVP+tF+gjPevfPKTol
+	 5j4bjE7Q5xmLNCV/yHrBEUc8QAA3aMvP5y8wpFDGV8KuM5L0eKWhDI6zA7Yd9sJd2I
+	 0YGKsxpA3kEJw==
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55f467f3bcaso570529e87.2;
+        Mon, 25 Aug 2025 03:44:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW8Ha2RzgUyIskpYLBz60V+dZ1PLuMQ/vGckiuYmRbbc+XYSMkH4mR6Wfi7nT2wpdzCqzUZB/MUwtE=@vger.kernel.org, AJvYcCWw8BwTXyXwWk53Fjlc3oElmfIYd2LaNq1QkpALIqA6lFS4PaqkC158L97fugwLOQrSjVK0moit+6BwnBuK@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtJ9D87rXnSxjWIVG2nd00KW3WJUrJS8vPVHOLfbRQrlIRkzfS
+	Rjs/uQGwk5q7nlcE8LdTmKo2+GXWF2MtT601yxFx+CSRLJ7unnyUfJ1dxGDKi27xqkEyLr94Cw4
+	we42eNqq06TR+GRwvPNv4FEHbwNABNvU=
+X-Google-Smtp-Source: AGHT+IHozNFzGZ/Be8XEaeN+LseVN6rYc06MeFFjqExsMToudCZfq84AjGkxH+wYgZCDvw+6AmP7hsiiXBQrs8aekoI=
+X-Received: by 2002:a05:6512:4407:b0:55f:42b8:b00 with SMTP id
+ 2adb3069b0e04-55f42b80cd2mr1194943e87.12.1756118693694; Mon, 25 Aug 2025
+ 03:44:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20250708-efi-default-loglevel-v1-1-12b80db5af16@gmail.com>
+ <CALHNRZ9T0dHzbXBUdBa4hE-Ao8ebeLLPRX+1ThkuLT+Rp8_Jeg@mail.gmail.com>
+ <CAMj1kXEwyaHUkO5aO-sL3YAN=qRoSTuotHMRpBDLX9BhERnN=g@mail.gmail.com>
+ <45692a2c-ba3d-45a2-9ab1-cf6982dbf788@siemens.com> <CAMj1kXG=zG8j+cr0gNMpkKRvdekqMR-EiEkMHiFgRvbaWy9aKg@mail.gmail.com>
+ <09cb03e4-21f3-418c-98f2-66004cc3080f@siemens.com>
+In-Reply-To: <09cb03e4-21f3-418c-98f2-66004cc3080f@siemens.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 25 Aug 2025 20:44:37 +1000
+X-Gmail-Original-Message-ID: <CAMj1kXHyw3Oi=c3p+7q75vD4iJ+x642JzL7zHM4jpF4k937Uxg@mail.gmail.com>
+X-Gm-Features: Ac12FXwxflF-hGpLA7ghlAf4OOTW89RuPiS0DEUxZcADPx5d9BUmmLk2eUjtUaQ
+Message-ID: <CAMj1kXHyw3Oi=c3p+7q75vD4iJ+x642JzL7zHM4jpF4k937Uxg@mail.gmail.com>
+Subject: Re: [PATCH] efistub: Lower default log level
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Aaron Kling <webgeek1234@gmail.com>, linux-efi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddujedvudejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhffkfgfgggtgfesthhqredttderjeenucfhrhhomhepifgrsghrihgvlhcumfhrihhsmhgrnhcuuegvrhhtrgiiihcuoehgrggsrhhivghlsehkrhhishhmrghnrdgsvgeqnecuggftrfgrthhtvghrnhepfedtvdehffevtddujeffffejudeuuefgvdeujeduhedtgfehkeefheegjefgueeknecukfhppeejtddrkedvrddukedvrdeikeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeejtddrkedvrddukedvrdeikedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepghgrsghrihgvlheskhhrihhsmhgrnhdrsggvpdhnsggprhgtphhtthhopeduuddprhgtphhtthhopegrnhgurhgvrghlmhgvihgusehighgrlhhirgdrtghomhdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoheprghmihhrjeefihhlsehgmhgrihhlrdgtohhmpdhrtghpthhtohepthihthhsohesmhhithdrvgguuhdprhgtphhtthhopehlihhnuhigqdhunhhiohhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvr
- hhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhk
-X-GND-Sasl: gabriel@krisman.be
 
-Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
-
-> Prepare for mounting layers with case-insensitive dentries in order to
-> supporting such layers in overlayfs, while enforcing uniform casefold
-> layers.
+On Sun, 24 Aug 2025 at 16:47, Jan Kiszka <jan.kiszka@siemens.com> wrote:
 >
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
-
-
-Reviewed-by: Gabriel Krisman Bertazi <gabriel@krisman.be>
-
-> ---
->  fs/overlayfs/ovl_entry.h |  1 +
->  fs/overlayfs/params.c    | 15 ++++++++++++---
->  fs/overlayfs/params.h    |  1 +
->  3 files changed, 14 insertions(+), 3 deletions(-)
+> On 24.08.25 02:31, Ard Biesheuvel wrote:
+> > On Sat, 16 Aug 2025 at 16:52, Jan Kiszka <jan.kiszka@siemens.com> wrote=
+:
+> >>
+> >> On 15.07.25 03:35, Ard Biesheuvel wrote:
+> >>> On Tue, 8 Jul 2025 at 17:31, Aaron Kling <webgeek1234@gmail.com> wrot=
+e:
+> >>>>
+> >>>> On Tue, Jul 8, 2025 at 2:30=E2=80=AFAM Aaron Kling via B4 Relay
+> >>>> <devnull+webgeek1234.gmail.com@kernel.org> wrote:
+> >>>>>
+> >>>>> From: Aaron Kling <webgeek1234@gmail.com>
+> >>>>>
+> >>>>> Some uefi implementations will write the efistub logs to the displa=
+y
+> >>>>> over a splash image. This is not desirable for debug and info logs,=
+ so
+> >>>>> lower the default efi log level to exclude them.
+> >>>>>
+> >>>>> Suggested-by: Ard Biesheuvel <ardb@kernel.org>
+> >>>>> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> >>>>> ---
+> >>>>>  drivers/firmware/efi/libstub/printk.c | 4 ++--
+> >>>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+> >>>>>
+> >>>>> diff --git a/drivers/firmware/efi/libstub/printk.c b/drivers/firmwa=
+re/efi/libstub/printk.c
+> >>>>> index 3a67a2cea7bdf1aa215d48dbf9ece4ceec6e4c28..bc599212c05dd746a9c=
+54abbbe61a4bf70f1a8c4 100644
+> >>>>> --- a/drivers/firmware/efi/libstub/printk.c
+> >>>>> +++ b/drivers/firmware/efi/libstub/printk.c
+> >>>>> @@ -5,13 +5,13 @@
+> >>>>>  #include <linux/ctype.h>
+> >>>>>  #include <linux/efi.h>
+> >>>>>  #include <linux/kernel.h>
+> >>>>> -#include <linux/printk.h> /* For CONSOLE_LOGLEVEL_* */
+> >>>>> +#include <linux/kern_levels.h>
+> >>>>>  #include <asm/efi.h>
+> >>>>>  #include <asm/setup.h>
+> >>>>>
+> >>>>>  #include "efistub.h"
+> >>>>>
+> >>>>> -int efi_loglevel =3D CONSOLE_LOGLEVEL_DEFAULT;
+> >>>>> +int efi_loglevel =3D LOGLEVEL_NOTICE;
+> >>>>>
+> >>>>>  /**
+> >>>>>   * efi_char16_puts() - Write a UCS-2 encoded string to the console
+> >>>>>
+> >>>>> ---
+> >>>>> base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
+> >>>>> change-id: 20250708-efi-default-loglevel-4da5a36cac87
+> >>>>>
+> >>>>> Best regards,
+> >>>>> --
+> >>>>> Aaron Kling <webgeek1234@gmail.com>
+> >>>>
+> >>>> This patch was originally suggested a few months ago [0], but as far
+> >>>> as I can tell was never queued for merge. Since I'm also hitting a
+> >>>> case where this is relevant, I'm sending this in to bring attention
+> >>>> back to it.
+> >>>>
+> >>>
+> >>> I've queued this up now - thanks.
+> >>>
+> >>
+> >> And how can I get back the loglevel info? It seems I can only choose
+> >> between notice, silent and debug now. And the latter two only by also
+> >> touching the kernel's loglevel.
+> >>
+> >> I'm particularly missing [1] in my UART logs now which is helpful in
+> >> understanding this essential system state.
+> >>
+> >
+> > Hi Jan,
+> >
+> > Is efi=3Ddebug too noisy for you?
 >
-> diff --git a/fs/overlayfs/ovl_entry.h b/fs/overlayfs/ovl_entry.h
-> index 4c1bae935ced274f93a0d23fe10d34455e226ec4..1d4828dbcf7ac4ba9657221e6=
-01bbf79d970d225 100644
-> --- a/fs/overlayfs/ovl_entry.h
-> +++ b/fs/overlayfs/ovl_entry.h
-> @@ -91,6 +91,7 @@ struct ovl_fs {
->  	struct mutex whiteout_lock;
->  	/* r/o snapshot of upperdir sb's only taken on volatile mounts */
->  	errseq_t errseq;
-> +	bool casefold;
->  };
->=20=20
->  /* Number of lower layers, not including data-only layers */
-> diff --git a/fs/overlayfs/params.c b/fs/overlayfs/params.c
-> index f4e7fff909ac49e2f8c58a76273426c1158a7472..63b7346c5ee1c127a9c33b12c=
-3704aa035ff88cf 100644
-> --- a/fs/overlayfs/params.c
-> +++ b/fs/overlayfs/params.c
-> @@ -276,17 +276,26 @@ static int ovl_mount_dir(const char *name, struct p=
-ath *path)
->  static int ovl_mount_dir_check(struct fs_context *fc, const struct path =
-*path,
->  			       enum ovl_opt layer, const char *name, bool upper)
->  {
-> +	bool is_casefolded =3D ovl_dentry_casefolded(path->dentry);
->  	struct ovl_fs_context *ctx =3D fc->fs_private;
-> +	struct ovl_fs *ofs =3D fc->s_fs_info;
->=20=20
->  	if (!d_is_dir(path->dentry))
->  		return invalfc(fc, "%s is not a directory", name);
->=20=20
->  	/*
->  	 * Allow filesystems that are case-folding capable but deny composing
-> -	 * ovl stack from case-folded directories.
-> +	 * ovl stack from inconsistent case-folded directories.
->  	 */
-> -	if (ovl_dentry_casefolded(path->dentry))
-> -		return invalfc(fc, "case-insensitive directory on %s not supported", n=
-ame);
-> +	if (!ctx->casefold_set) {
-> +		ofs->casefold =3D is_casefolded;
-> +		ctx->casefold_set =3D true;
-> +	}
-> +
-> +	if (ofs->casefold !=3D is_casefolded) {
-> +		return invalfc(fc, "case-%ssensitive directory on %s is inconsistent",
-> +			       is_casefolded ? "in" : "", name);
-> +	}
->=20=20
->  	if (ovl_dentry_weird(path->dentry))
->  		return invalfc(fc, "filesystem on %s not supported", name);
-> diff --git a/fs/overlayfs/params.h b/fs/overlayfs/params.h
-> index c96d939820211ddc63e265670a2aff60d95eec49..ffd53cdd84827cce827e8852f=
-2de545f966ce60d 100644
-> --- a/fs/overlayfs/params.h
-> +++ b/fs/overlayfs/params.h
-> @@ -33,6 +33,7 @@ struct ovl_fs_context {
->  	struct ovl_opt_set set;
->  	struct ovl_fs_context_layer *lower;
->  	char *lowerdir_all; /* user provided lowerdir string */
-> +	bool casefold_set;
->  };
->=20=20
->  int ovl_init_fs_context(struct fs_context *fc);
+> Yes, also because it affects the kernel even more. I'm looking for
+> "efi=3Dinfo".
+>
+> I don't get the reason behind this change anymore as well. If you have a
+> splash screen shown, weren't you booting with "quiet" before already,
+> thus also without any stub messages?
+>
 
---=20
-Gabriel Krisman Bertazi
+Yeah, good point. IIRC that came up in the discussion but I can't
+remember the motivation so it can't have been very convincing.
+
+So should we just revert this change?
 
