@@ -1,109 +1,189 @@
-Return-Path: <linux-kernel+bounces-784873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9F56B342BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:09:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5051B342D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:12:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C287B2A2FF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:05:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B58E63A9C5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:08:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 074212D29DB;
-	Mon, 25 Aug 2025 14:04:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="wNuif4lB"
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7352C2ED159;
+	Mon, 25 Aug 2025 14:08:07 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B2D20E029
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 14:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92382ECE98;
+	Mon, 25 Aug 2025 14:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756130672; cv=none; b=Dv2w8WFhhE1pa7CJVfJXRwa06YOxOG1gNuLEE+olZbowTiPIfLpqj8KpPS2NHqIs/LkpyRANw9JoaK7MYJjozHOHRtePT5oN1CNIxmIogEPmdUWbCL4m5R0TLPQibyIAWaUlxrhu2nrUk1f8Oz6yIwryL3aeH1cBIOmZcHU6kME=
+	t=1756130887; cv=none; b=ueclONUcnr9Gx8sYYke9I0I4pMDxDA+XMjL//uV4MgPewZcYu/IkppLeG1znBcIGZ56Mxy8tBa6VdquXs44y/dtOszrV1Mvu7AFrW3h8rGLggPG8ru6h4+8QNcAN5bpcVXRnfANiJejuZ8vK77qM3qF5GImfRVHMvSECil7RH8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756130672; c=relaxed/simple;
-	bh=/3DslClF26Tpetvdj2Tx6UdWgmJwjn0hLHzLQQ9qlqU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r2dC7CjkwJNL3URPiI9Aeo1aYBo0EZI2R6unCt7BZwUjxHApqxvdIZZCXQUDLR7XlZuLMk7xSRJdH9/+cv9rSGkVCqVCoKt8sgZgaad3VNZCUYDtpel5GxquqOgvE2ZgWGIGPi3G4RDaugxsMG3moS23CULPEyyizjB+cjfTXs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=wNuif4lB; arc=none smtp.client-ip=209.85.210.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-7451ee5e750so484091a34.2
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 07:04:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1756130670; x=1756735470; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=0EHuRO+zWG4akDLUijfoOjIulcloDYperZFzqc1OzSA=;
-        b=wNuif4lB6/kpUoVgXqM5YDN2caRlNIy/CHV9fyKN2whyeF1G5RhOHq5WlcnWiqueVg
-         rSOhNT9khA5Ctu7mMxuMfJX14LAcSsnWhgAcBgCwj8dZ4LwQcfcPexGKClEyOxPzM0tC
-         fPKMIbO7NEupj8QUTbdqwZux78LYX/kXDbMIbi6hzfu7QpBfQ5G/d3objMJMgDh/spLa
-         IKKuRAdZpuozdeSxH/ls4hSzuMbwZtvFZkgMA5kjDMnRXjYYsL09KBOlycJCI7hPeQgD
-         6KQO052z+QZa89ZiCMXRB3Hh9Q7OrcQkiDaQU4b9QqrbZktZc8OwARJfoj+RkSljV460
-         sCww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756130670; x=1756735470;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0EHuRO+zWG4akDLUijfoOjIulcloDYperZFzqc1OzSA=;
-        b=ELtCxl519SvEy3I8LsZS9cV3RgK33kalGqnleounvdtjv5vPmiebV+i/LH5zfXMuCa
-         qDOAkTt8IjAYjSW6hq7CEfnWdJFX65/SQumJzjekYBVQANWOb/v1X0X96IOeptNXFJRn
-         lQDL4q2VtXqHyggX61cD3XsG+ESgzTOBvyve7P4GYvWu4xkUFYoZG++WiWnipfFcfzrs
-         sCAQRo+isZPIS5XRz2A41vkWnvRRaJNA7AlgliKSj6OfPrbc1kc175Wpti3BZm83OCXR
-         9gC6s1c/OM7Ta4Va2PURW1i1LrSwDAszG6UsaeLDRdYe6hSXGSb7v6933VVSm82ToTiA
-         TIBA==
-X-Forwarded-Encrypted: i=1; AJvYcCWGrsZj6CrkfVyN7E03Yno7uz1pr/rLiLE4M+zhX1qhyUNyOX5svQCyCc3CxGx4c1W7wCb5S6mxcEJiCNI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/lNl1kckLWAo+EAPXV/btw6+s/aHlZE4eh2aZGxMjfebds7Zh
-	Z3xcuVztibyPVYZ4xoVpm7Iie8PileFgpeS5X4vHGx4dsZpNisdvl/CRQglB4rKv2Q==
-X-Gm-Gg: ASbGncugZeIVlQYGbrBz2mJR758623pW8wydBzDG4dWBNcV5xYQciqEgggyg5j7sxuv
-	8MnFu4IbVXeb8KXjHMYfkPBWWoLPtWOjpz+SEVJziPxT1+SqAkut9NGPfa7nhCfk44G2lBGsG5h
-	hF87x0C4SnDG2lmwR+d1+Bz8dr7MBEE7rYru1tv7wDbBJGRSMnMaDq8o7/sweR/F9o/GSMyK1D6
-	ZiUXMYNjz/ndsC7Xp4M9w5cgnDvHEGiEb2OjE6NItqILbYQofiFmEyl6hkJkCID/x7KIwcblveX
-	o2w4o61LDnzoeAKg1gT7KWI6BK8pTV9mrOljtPhUJA9a2bgZ+5mRFf362nmPtq89Js3aTMY+Ym+
-	6SXSUhB8Nro3GpnqWT/oCBDey
-X-Google-Smtp-Source: AGHT+IHWk0LQpCvep194jbTPIE+rjYyZUcSUaUe83BGMBGS+W+nGqu++rpvaZOJE5FTJIa8Te798ig==
-X-Received: by 2002:a05:6830:3709:b0:743:bc1:e85e with SMTP id 46e09a7af769-74500909d36mr7863102a34.4.1756130669721;
-        Mon, 25 Aug 2025 07:04:29 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:156:8000:24f0::eb06])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ebecb19253sm495628685a.8.2025.08.25.07.04.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 07:04:29 -0700 (PDT)
-Date: Mon, 25 Aug 2025 10:04:26 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: =?utf-8?B?6Ieq5bex?= <ccc194101@163.com>
-Cc: gregkh@linuxfoundation.org, jannh@google.com, rex.nie@jaguarmicro.com,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	chenchangcheng <chenchangcheng@kylinos.cn>
-Subject: Re: Re: Re: [PATCH] usb: usbfs: Add reset_resume callback to usbfs.
-Message-ID: <9b6056cf-5803-40f4-967b-e064996c10fc@rowland.harvard.edu>
-References: <20250822024602.42894-1-ccc194101@163.com>
- <f159e37f-3b27-4977-9712-345e8902eb48@rowland.harvard.edu>
- <4cdaecd1.131d.198dedeefe2.Coremail.ccc194101@163.com>
- <379c80f7-aa01-4575-aa0b-d64ef01c1346@rowland.harvard.edu>
- <23f1c6c2.2011.198df066c15.Coremail.ccc194101@163.com>
+	s=arc-20240116; t=1756130887; c=relaxed/simple;
+	bh=udiX7xi6DrbH3//1h51tOaNo1oF7wTdzpq3UxSarm5E=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=MeeSYufbiMoVX60ltZGwGL0TvadDeqJrocVhfu2nK7LEIWt4Xz2Lxj4pVjt790jymgOQDkjuObh+A8HKRmLKcGQFSPGJxX4p3QgYsYp1N+Z21wtj8jb4oT5ymw249R3wD+TFDpnTDPyZt+EZ3lwSLeHmiMd3yn0bdOC5ss+I108=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 57PE7Ph4008586;
+	Mon, 25 Aug 2025 23:07:25 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 57PE7OW4008580
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Mon, 25 Aug 2025 23:07:25 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <ac9db9a4-6c30-416e-8b94-96e6559d55b2@I-love.SAKURA.ne.jp>
+Date: Mon, 25 Aug 2025 23:07:24 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <23f1c6c2.2011.198df066c15.Coremail.ccc194101@163.com>
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH] can: j1939: implement NETDEV_UNREGISTER notification handler
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Robin van der Gracht <robin@protonic.nl>, kernel@pengutronix.de,
+        Oliver Hartkopp <socketcan@hartkopp.net>,
+        Marc Kleine-Budde <mkl@pengutronix.de>, linux-can@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        Kurt Van Dijck <dev.kurt@vandijck-laurijssen.be>
+References: <50055a40-6fd9-468f-8e59-26d1b5b3c23d@I-love.SAKURA.ne.jp>
+ <aKg9mTaSxzBVpTVI@pengutronix.de>
+ <bb595640-0597-4d18-a9e1-f6eb8e6bb50e@I-love.SAKURA.ne.jp>
+ <c1e50f41-da30-4cea-859c-05db0ab8040b@I-love.SAKURA.ne.jp>
+Content-Language: en-US
+In-Reply-To: <c1e50f41-da30-4cea-859c-05db0ab8040b@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Virus-Status: clean
+X-Anti-Virus-Server: fsav102.rs.sakura.ne.jp
 
-On Mon, Aug 25, 2025 at 10:19:56AM +0800, 自己 wrote:
-> According to the current experimental findings, when userspace encounters
-> an error while using the previous file descriptor (fd), it does not proceed to unbind
-> and rebind automatically. Therefore, the two uevents were added in the kernel to explicitly
-> notify userspace to unbind and rebind.
+syzbot is reporting
 
-Like Oliver said, this means that userspace needs to be fixed.  Not the 
-kernel.
+  unregister_netdevice: waiting for vcan0 to become free. Usage count = 2
 
-Alan Stern
+problem, for j1939 protocol did not have NETDEV_UNREGISTER notification
+handler for undoing changes made by j1939_sk_bind().
+
+Commit 25fe97cb7620 ("can: j1939: move j1939_priv_put() into sk_destruct
+callback") expects that a call to j1939_priv_put() can be unconditionally
+delayed until j1939_sk_sock_destruct() is called. But we need to call
+j1939_priv_put() against an extra ref held by j1939_sk_bind() call
+(as a part of undoing changes made by j1939_sk_bind()) as soon as
+NETDEV_UNREGISTER notification fires (i.e. before j1939_sk_sock_destruct()
+is called via j1939_sk_release()). Otherwise, the extra ref on "struct
+j1939_priv" held by j1939_sk_bind() call prevents "struct net_device" from
+dropping the usage count to 1; making it impossible for
+unregister_netdevice() to continue.
+
+Reported-by: syzbot <syzbot+881d65229ca4f9ae8c84@syzkaller.appspotmail.com>
+Closes: https://syzkaller.appspot.com/bug?extid=881d65229ca4f9ae8c84
+Tested-by: syzbot <syzbot+881d65229ca4f9ae8c84@syzkaller.appspotmail.com>
+Fixes: 9d71dd0c7009 ("can: add support of SAE J1939 protocol")
+Fixes: 25fe97cb7620 ("can: j1939: move j1939_priv_put() into sk_destruct callback")
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+ net/can/j1939/j1939-priv.h |  1 +
+ net/can/j1939/main.c       |  3 +++
+ net/can/j1939/socket.c     | 49 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 53 insertions(+)
+
+diff --git a/net/can/j1939/j1939-priv.h b/net/can/j1939/j1939-priv.h
+index 31a93cae5111..81f58924b4ac 100644
+--- a/net/can/j1939/j1939-priv.h
++++ b/net/can/j1939/j1939-priv.h
+@@ -212,6 +212,7 @@ void j1939_priv_get(struct j1939_priv *priv);
+ 
+ /* notify/alert all j1939 sockets bound to ifindex */
+ void j1939_sk_netdev_event_netdown(struct j1939_priv *priv);
++void j1939_sk_netdev_event_unregister(struct j1939_priv *priv);
+ int j1939_cancel_active_session(struct j1939_priv *priv, struct sock *sk);
+ void j1939_tp_init(struct j1939_priv *priv);
+ 
+diff --git a/net/can/j1939/main.c b/net/can/j1939/main.c
+index 7e8a20f2fc42..3706a872ecaf 100644
+--- a/net/can/j1939/main.c
++++ b/net/can/j1939/main.c
+@@ -377,6 +377,9 @@ static int j1939_netdev_notify(struct notifier_block *nb,
+ 		j1939_sk_netdev_event_netdown(priv);
+ 		j1939_ecu_unmap_all(priv);
+ 		break;
++	case NETDEV_UNREGISTER:
++		j1939_sk_netdev_event_unregister(priv);
++		break;
+ 	}
+ 
+ 	j1939_priv_put(priv);
+diff --git a/net/can/j1939/socket.c b/net/can/j1939/socket.c
+index 493f49bfaf5d..72c649cec9e1 100644
+--- a/net/can/j1939/socket.c
++++ b/net/can/j1939/socket.c
+@@ -1303,6 +1303,55 @@ void j1939_sk_netdev_event_netdown(struct j1939_priv *priv)
+ 	read_unlock_bh(&priv->j1939_socks_lock);
+ }
+ 
++void j1939_sk_netdev_event_unregister(struct j1939_priv *priv)
++{
++	struct sock *sk;
++	struct j1939_sock *jsk;
++	bool wait_rcu = false;
++
++ rescan: /* The caller is holding a ref on this "priv" via j1939_priv_get_by_ndev(). */
++	read_lock_bh(&priv->j1939_socks_lock);
++	list_for_each_entry(jsk, &priv->j1939_socks, list) {
++		/* Skip if j1939_jsk_add() is not called on this socket. */
++		if (!(jsk->state & J1939_SOCK_BOUND))
++			continue;
++		sk = &jsk->sk;
++		sock_hold(sk);
++		read_unlock_bh(&priv->j1939_socks_lock);
++		/* Check if j1939_jsk_del() is not yet called on this socket after holding
++		 * socket's lock, for both j1939_sk_bind() and j1939_sk_release() call
++		 * j1939_jsk_del() with socket's lock held.
++		 */
++		lock_sock(sk);
++		if (jsk->state & J1939_SOCK_BOUND) {
++			/* Neither j1939_sk_bind() nor j1939_sk_release() called j1939_jsk_del().
++			 * Make this socket no longer bound, by pretending as if j1939_sk_bind()
++			 * dropped old references but did not get new references.
++			 */
++			j1939_jsk_del(priv, jsk);
++			j1939_local_ecu_put(priv, jsk->addr.src_name, jsk->addr.sa);
++			j1939_netdev_stop(priv);
++			/* Call j1939_priv_put() now and prevent j1939_sk_sock_destruct() from
++			 * calling the corresponding j1939_priv_put().
++			 *
++			 * j1939_sk_sock_destruct() is supposed to call j1939_priv_put() after
++			 * an RCU grace period. But since the caller is holding a ref on this
++			 * "priv", we can defer synchronize_rcu() until immediately before
++			 * the caller calls j1939_priv_put().
++			 */
++			j1939_priv_put(priv);
++			jsk->priv = NULL;
++			wait_rcu = true;
++		}
++		release_sock(sk);
++		sock_put(sk);
++		goto rescan;
++	}
++	read_unlock_bh(&priv->j1939_socks_lock);
++	if (wait_rcu)
++		synchronize_rcu();
++}
++
+ static int j1939_sk_no_ioctlcmd(struct socket *sock, unsigned int cmd,
+ 				unsigned long arg)
+ {
+-- 
+2.51.0
+
 
