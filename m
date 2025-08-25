@@ -1,97 +1,232 @@
-Return-Path: <linux-kernel+bounces-784516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB728B33CD4
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:32:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58486B33CD0
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:31:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9665172839
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:31:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 063423BAEB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:31:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0320D2DBF47;
-	Mon, 25 Aug 2025 10:27:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783452D0C84;
+	Mon, 25 Aug 2025 10:31:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="foC8Z5Si"
-Received: from r3-20.sinamail.sina.com.cn (r3-20.sinamail.sina.com.cn [202.108.3.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lcsdjk5W"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726152D1931
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 10:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98CFA22F75C;
+	Mon, 25 Aug 2025 10:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756117634; cv=none; b=rcLEtljJ4UMrmwOKQ+xCpoe5r7W18k0aaqBWbeobHRcvkX1xSQDFQvcVdGSmRlR8EMRtlVyuP4zT324ZsW9eeULocpWQNxWqvnE+3xTtVgngDhKKcSSRb6kaRmBIMnjRT/5NhF/C/utQoot60tjgexBDBX2OJSjrKYm3rVHkyPw=
+	t=1756117891; cv=none; b=KxQ13dhvasUiWQQ5vJZXmGuch0QfoFeAcopOZBrdFvNtzMchiZL2mwLeycjAGNvSUP+N/DVf6LsNrca7CcP7XJuAXy2JPVkVDHUZwawttxSEtZi34sUdboo3vQsy4+yPqovNedoDCy2vftg8IU0nQy7ToXu4ueeFx9GCANUlTNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756117634; c=relaxed/simple;
-	bh=0OoKtBQyROQb+wHZaoS2xQjm0u3KufOUrctGDHpMTEM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=u8bSg2M3wCwglc6+GBbSGlI/ePIS/QmEvidn+55+QfbaAeOg7K9dugGnxxsPyuKt1gDjsG3DX2AvlMFZp+nI3qSSTEGjtf638HU3fXNeLJUUP7gNmHEQ0QTrTpjRtymcrDEm39OJQo3b8eFuPM82TwzaWh2jAQJviab/4fF1mu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=foC8Z5Si; arc=none smtp.client-ip=202.108.3.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1756117629;
-	bh=P61WosoPHPtnoxj7FVD5erEyWez+JC5PpUgmmeZ3l54=;
-	h=From:Subject:Date:Message-ID;
-	b=foC8Z5SipFWANmgGYAiyZDvkRImVMPLJyN99OlEzq0rdCCum5E7+URffKaIwN6mBI
-	 siF2u6ZIvPmZqERNt//RjsxWBLb0XRHLVvosCFGndVpB1X3XPJQ/tAF7ZpwilEKD2h
-	 dEhagPioWw3uVdw4w7U6n8hen2PrtHGOJovkBD9w=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.32) with ESMTP
-	id 68AC3A71000047B2; Mon, 25 Aug 2025 18:27:00 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 1528594456687
-X-SMAIL-UIID: A07B069CEBB34C44824FF4479A57219D-20250825-182700-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+8baacc4139f12fa77909@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [usb?] BUG: sleeping function called from invalid context in dummy_dequeue
-Date: Mon, 25 Aug 2025 18:26:46 +0800
-Message-ID: <20250825102648.5395-1-hdanton@sina.com>
-In-Reply-To: <68ac2411.050a0220.37038e.0087.GAE@google.com>
-References: 
+	s=arc-20240116; t=1756117891; c=relaxed/simple;
+	bh=DagyeZFyvQvu9dcSKHqH6sIuhOg3IuDx1uJP36Hi9Yw=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=lDACAYaS1tPrAlKHE0xgsFbeDV4fw1lfu6LlnmmxtscbigLtM5TjDKltnBC7yGnTdZhGP8LLpPcl0BBCC8CjD4f8dEkapSKuNg5+zzGgJa1dlDKY5Me8uuV2NXbnC+0kvVxDrxgc6/AYzbAp4Ygx/J/XW29wYcECXS5qEQ4VzE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lcsdjk5W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31AE1C4CEED;
+	Mon, 25 Aug 2025 10:31:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756117891;
+	bh=DagyeZFyvQvu9dcSKHqH6sIuhOg3IuDx1uJP36Hi9Yw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Lcsdjk5WPEu5YcN3zcRiAuHS5TcZGkyS8HxubNM7obfocjx37IjRtd6HK/w73qsP0
+	 erN8QRG5I4xEkNsDRoxSlD6ZKrlX86qjb+/q+ynIniTAy6SalxIXl+d+2F7mwjUJDV
+	 RsOBMANh/+1M2Vu2c6/2LrEAYMIYDgxhFOdZ88cIUTVTkhck8vaOmulpyN4xZlS+rl
+	 h8D6fbqOUsdiwbSOyF19Pz61tMmfE2LCuylCDhJjkaCa/vOQdCyFNzwqt3fiavcoXC
+	 DpcxaBuoVkeW7VYaVFkPpRaQP52ntahv+AylTq0oGsX5haF6EZzNzfH/BuoS9lYsVq
+	 zkC15AwIMtuuQ==
+Date: Mon, 25 Aug 2025 19:31:27 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Jinchao Wang <wangjinchao600@gmail.com>
+Cc: akpm@linux-foundation.org, mhiramat@kernel.org, naveen@kernel.org,
+ davem@davemloft.net, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 07/13] mm/kstackwatch: Add kprobe and stack watch
+ control
+Message-Id: <20250825193127.a0acb9831733e0e51a5ef81d@kernel.org>
+In-Reply-To: <20250818122720.434981-8-wangjinchao600@gmail.com>
+References: <20250818122720.434981-1-wangjinchao600@gmail.com>
+	<20250818122720.434981-2-wangjinchao600@gmail.com>
+	<20250818122720.434981-3-wangjinchao600@gmail.com>
+	<20250818122720.434981-4-wangjinchao600@gmail.com>
+	<20250818122720.434981-5-wangjinchao600@gmail.com>
+	<20250818122720.434981-6-wangjinchao600@gmail.com>
+	<20250818122720.434981-7-wangjinchao600@gmail.com>
+	<20250818122720.434981-8-wangjinchao600@gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-> Date: Mon, 25 Aug 2025 01:51:29 -0700	[thread overview]
-> Hello,
+On Mon, 18 Aug 2025 20:26:12 +0800
+Jinchao Wang <wangjinchao600@gmail.com> wrote:
+
+> This patch adds the core logic for controlling the kernel
+> stack watch mechanism using a combination of kprobes and kretprobes.
 > 
-> syzbot found the following issue on:
+> A kprobe is registered at function + ip_offset to turn on
+> the hardware breakpoint that monitors the stack. This allows
+> the tool to begin watching from a specific instruction within
+> the function. At the same time, a kretprobe is registered to be
+> triggered when the function returns. Its handler is responsible
+> for turning off the hardware breakpoint.
+
+Could you use fprobe instead of kretprobe for hooking function exit?
+kretprobe is an old feature and will be replaced by fprobe.
+
+You can find an example in samples/fprobe/fprobe_example.c
+
+Thank you,
+
 > 
-> HEAD commit:    8d245acc1e88 Merge tag 'char-misc-6.17-rc3' of git://git.k..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=11e42062580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=e1e1566c7726877e
-> dashboard link: https://syzkaller.appspot.com/bug?extid=8baacc4139f12fa77909
-> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13317062580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14d5ea34580000
+> By using these two probes, the tool can precisely watch a function's
+> stack frame for its entire duration. This makes sure the HWBP is active
+> only when needed, which reduces overhead and avoids accidental triggers.
+> This also provides a clear and reliable way to manage the HWBP.
+> 
+> Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
+> ---
+>  mm/kstackwatch/stack.c | 86 ++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 82 insertions(+), 4 deletions(-)
+> 
+> diff --git a/mm/kstackwatch/stack.c b/mm/kstackwatch/stack.c
+> index 8b558cdbda97..ba5280787e8f 100644
+> --- a/mm/kstackwatch/stack.c
+> +++ b/mm/kstackwatch/stack.c
+> @@ -6,8 +6,10 @@
+>  
+>  #include "kstackwatch.h"
+>  
+> +struct ksw_config *probe_config;
+> +
+>  /* Find canary address in current stack frame */
+> -static unsigned long __maybe_unused ksw_stack_find_canary(struct pt_regs *regs)
+> +static unsigned long ksw_stack_find_canary(struct pt_regs *regs)
+>  {
+>  	unsigned long *stack_ptr, *stack_end;
+>  	unsigned long expected_canary;
+> @@ -33,7 +35,7 @@ static unsigned long __maybe_unused ksw_stack_find_canary(struct pt_regs *regs)
+>  }
+>  
+>  /* Resolve stack offset to actual address */
+> -static unsigned long __maybe_unused ksw_stack_resolve_offset(struct pt_regs *regs,
+> +static unsigned long ksw_stack_resolve_offset(struct pt_regs *regs,
+>  					      s64 local_var_offset)
+>  {
+>  	unsigned long stack_base;
+> @@ -53,7 +55,7 @@ static unsigned long __maybe_unused ksw_stack_resolve_offset(struct pt_regs *reg
+>  }
+>  
+>  /* Validate that address is within current stack bounds */
+> -static int __maybe_unused ksw_stack_validate_addr(unsigned long addr, size_t size)
+> +static int ksw_stack_validate_addr(unsigned long addr, size_t size)
+>  {
+>  	unsigned long stack_start, stack_end;
+>  
+> @@ -73,7 +75,7 @@ static int __maybe_unused ksw_stack_validate_addr(unsigned long addr, size_t siz
+>  }
+>  
+>  /* Setup hardware breakpoints for active watches */
+> -static int __maybe_unused ksw_stack_prepare_watch(struct pt_regs *regs,
+> +static int ksw_stack_prepare_watch(struct pt_regs *regs,
+>  				   struct ksw_config *config, u64 *watch_addr,
+>  				   u64 *watch_len)
+>  {
+> @@ -110,3 +112,79 @@ static int __maybe_unused ksw_stack_prepare_watch(struct pt_regs *regs,
+>  	*watch_len = len;
+>  	return 0;
+>  }
+> +
+> +/* Kprobe handlers */
+> +static struct kprobe entry_probe;
+> +static struct kretprobe exit_probe;
+> +
+> +static void ksw_stack_entry_handler(struct kprobe *p, struct pt_regs *regs,
+> +				    unsigned long flags)
+> +{
+> +	int ret;
+> +	u64 watch_addr;
+> +	u64 watch_len;
+> +
+> +	/* Setup breakpoints for all active watches */
+> +	ret = ksw_stack_prepare_watch(regs, probe_config, &watch_addr,
+> +				      &watch_len);
+> +	if (ret) {
+> +		pr_err("KSW: Failed to parse watch info: %d\n", ret);
+> +		return;
+> +	}
+> +	ret = ksw_watch_on(watch_addr, watch_len);
+> +	if (ret) {
+> +		pr_err("KSW: Failed to arm hwbp: %d\n", ret);
+> +		return;
+> +	}
+> +	pr_info("KSW: Armed for %s at addr:0x%llx len:%llu\n",
+> +		probe_config->function, watch_addr, watch_len);
+> +}
+> +
+> +/* Function exit handler */
+> +static int ksw_stack_exit_handler(struct kretprobe_instance *ri,
+> +				  struct pt_regs *regs)
+> +{
+> +	ksw_watch_off();
+> +	pr_info("KSW: Disarmed for %s\n", probe_config->function);
+> +
+> +	return 0;
+> +}
+> +
+> +int ksw_stack_init(struct ksw_config *config)
+> +{
+> +	int ret;
+> +
+> +	/* Setup entry probe */
+> +	memset(&entry_probe, 0, sizeof(entry_probe));
+> +	entry_probe.symbol_name = config->function;
+> +	entry_probe.offset = config->ip_offset;
+> +	entry_probe.post_handler = ksw_stack_entry_handler;
+> +	probe_config = config;
+> +	ret = register_kprobe(&entry_probe);
+> +	if (ret < 0) {
+> +		pr_err("KSW: Failed to register kprobe ret %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	/* Setup exit probe */
+> +	memset(&exit_probe, 0, sizeof(exit_probe));
+> +	exit_probe.kp.symbol_name = config->function;
+> +	exit_probe.handler = ksw_stack_exit_handler;
+> +	exit_probe.maxactive = 20;
+> +
+> +	ret = register_kretprobe(&exit_probe);
+> +	if (ret < 0) {
+> +		pr_err("KSW: Failed to register exit probe for %s: %d\n",
+> +		       probe_config->function, ret);
+> +		unregister_kprobe(&entry_probe);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +void ksw_stack_exit(void)
+> +{
+> +	unregister_kretprobe(&exit_probe);
+> +	unregister_kprobe(&entry_probe);
+> +}
+> -- 
+> 2.43.0
+> 
 
-#syz test
 
---- x/drivers/usb/gadget/udc/dummy_hcd.c
-+++ y/drivers/usb/gadget/udc/dummy_hcd.c
-@@ -765,8 +765,7 @@ static int dummy_dequeue(struct usb_ep *
- 	if (!dum->driver)
- 		return -ESHUTDOWN;
- 
--	local_irq_save(flags);
--	spin_lock(&dum->lock);
-+	spin_lock_irqsave(&dum->lock, flags);
- 	list_for_each_entry(iter, &ep->queue, queue) {
- 		if (&iter->req != _req)
- 			continue;
---
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
