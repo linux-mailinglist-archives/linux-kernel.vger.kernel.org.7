@@ -1,126 +1,126 @@
-Return-Path: <linux-kernel+bounces-785143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05072B34696
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:00:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BB93B34699
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:01:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0AB82A4A18
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:00:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D44F47AB4D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:00:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121432FF64F;
-	Mon, 25 Aug 2025 16:00:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 013BE2FAC02;
+	Mon, 25 Aug 2025 16:01:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="K5cSiuiN"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="e+aZLe/D";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="P8xAx12V"
+Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 908B61946A0;
-	Mon, 25 Aug 2025 16:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BAAD2F0694;
+	Mon, 25 Aug 2025 16:01:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756137648; cv=none; b=dXrlrzMHmc24Y+rXw54dDKSExBdQsXKbc2vz8xL3Ld3XN6Gm9eM0zM5QIC/0t6s8DrWQXhIl1r94WlGNAW/Q9ByQjstraKx90kJZP0xOxMHnWFHi5cgLeqrNUpYZNtoetyhPD5E6abGWyYBIwQezzaHgEnvLbtDGBivueIcobI4=
+	t=1756137692; cv=none; b=KQQ174xf1jfBVyGFyde8mQXluIuVmoaO8XE88O80P0fm/T3x3JOQDHNq65BNeuCWRdrcAuTZY709gTURw5wn4m6CRKbTC2b2DLSVK/4eNNtqwLHTX9U+5KTO5l+4iAHUmlFL9xCnT1Yb9N9ZV32rEnCRSHgs3j5dgmbEt/NXrYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756137648; c=relaxed/simple;
-	bh=gaSCgp+9x9wgETscmsm6/J/E9Z0jSnaLlgjGoTawuZE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=IYBXMMHtTqlrqDVy1gmy5uXmAjGd0imtSOc1U0p0rSQFqolwGSlaoPIv8MsspQkaI86oHSd0iaFO4A5josE1VciHqHc7Rh+QNBdGWyQZ0nV1A7Msl6frtjjygsBbLXikA6I4kt12pMAIFWIsxi/iFlMNhk7ISnLBM/hYWOkQ7UU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=K5cSiuiN; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1756137644;
-	bh=gaSCgp+9x9wgETscmsm6/J/E9Z0jSnaLlgjGoTawuZE=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=K5cSiuiNyUlYig3gKw/Pjj8VRjMsSG/tQRnivKT87u8PoxdsqfWiKfs/lEN/BjDul
-	 YXcr+hei3+I2ZidXLOkn8JZnAmouiTOcVvtekkzgZkg2fjxKznWWD1UoyquCGhh5F5
-	 lM8M/Mqx2PvIN0+1c+3CA64FuDBiBS26UgHtt0fNtR+3h4O4/EcTl4Qjnu0p0Ve0v8
-	 g5U0haJrieuKeHvC5yLqOY0MSLzy2UdA8XXs1vKabJ9EMn5dA+cTVh8xXMpml6gf7c
-	 fKWl9gSQTYKapeF5r+YHs4yQN5nxRNeHiJCEYT3MzfbinYdWkeM1FivxAGgdiyLVg7
-	 LOYmef7KeMQqA==
-Received: from 2a01cb0892f2d600c8f85cf092d4af51.ipv6.abo.wanadoo.fr (2a01cb0892f2d600c8f85Cf092D4Af51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: jmassot)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id A47A017E053B;
-	Mon, 25 Aug 2025 18:00:43 +0200 (CEST)
-Message-ID: <9c544d68ec10da176b062333b8a04903ce77a406.camel@collabora.com>
-Subject: Re: [PATCH v2 2/6] ASoC: dt-binding: Convert mt8183-afe-pcm binding
- to YAML
-From: Julien Massot <julien.massot@collabora.com>
-To: Rob Herring <robh@kernel.org>
-Cc: kernel@collabora.com, Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,  Matthias Brugger
- <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>,  Ikjoon Jang
- <ikjn@chromium.org>, Enric Balletbo i Serra <eballetbo@kernel.org>, Chen-Yu
- Tsai	 <wenst@chromium.org>, Weiyi Lu <weiyi.lu@mediatek.com>, Eugen Hristev
-	 <eugen.hristev@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark
- Brown	 <broonie@kernel.org>, Julien Massot <jmassot@collabora.com>, Sean
- Wang	 <sean.wang@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Date: Mon, 25 Aug 2025 18:00:43 +0200
-In-Reply-To: <20250822143945.GA3709669-robh@kernel.org>
-References: <20250820-mtk-dtb-warnings-v2-0-cf4721e58f4e@collabora.com>
-	 <20250820-mtk-dtb-warnings-v2-2-cf4721e58f4e@collabora.com>
-	 <20250822143945.GA3709669-robh@kernel.org>
-Organization: Collabora Ltd.
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1756137692; c=relaxed/simple;
+	bh=RcK/LTYohFtxhRLXoxsNlDp9lcoVpoPktWnOwvHEx44=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=NmyBWj/K0XBhg9dLHgOQjUsEOA1sQYoJZjTfCfgHQ15jdpJi3S1uLu0mNl/0Z8zbspdBVl/qwnCXzZOAQ7OMsTNBcnc7V7AxN3LWaYTLezxXZvYFfHF2h5VAVWK1t5jfu25nuraLhPX3p41/CuZU31O9oVswURvFfaDP54gIM7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=e+aZLe/D; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=P8xAx12V; arc=none smtp.client-ip=202.12.124.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+	by mailfout.stl.internal (Postfix) with ESMTP id 539F81D00061;
+	Mon, 25 Aug 2025 12:01:23 -0400 (EDT)
+Received: from phl-imap-08 ([10.202.2.84])
+  by phl-compute-12.internal (MEProxy); Mon, 25 Aug 2025 12:01:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1756137683;
+	 x=1756224083; bh=RcK/LTYohFtxhRLXoxsNlDp9lcoVpoPktWnOwvHEx44=; b=
+	e+aZLe/DAVbHygByt+EzlyrGto1kihLj/hWt4fipKxZ7UGbFfEwDPQ4INPRO03cg
+	fpsKof5SWIIIYnor0ASipjnIJBsCEJThV4jhUf9pMbQZwC7DdX+xoHyktBw+bF/1
+	sNUFo/8dshdILysxBmTbS/InPY46GSCwpcyxQdJyDjo6ZWG3ms1fTh49+sJKxRSd
+	MumWTZlPyf/RCzn8dS7+U5/ij0/hO9w3iiAOx1qYozK7pye+wjOxPs7cEr88VB0h
+	2dSe3Nw0qvM2QoxJRQO/u4YLh0GPW7zhHn7GDukTOUQqqNBqSpuIP0CNPsZRDLed
+	kzEi6iXDIO7HeI58rhadcw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1756137683; x=
+	1756224083; bh=RcK/LTYohFtxhRLXoxsNlDp9lcoVpoPktWnOwvHEx44=; b=P
+	8xAx12V3Xth+HP/dkyAOuIp2iEY+OVKN3x1FaHakkY0t6x8pl3s0NnCOpYH3EzIK
+	aWcRW/5dVH0HyRHeQdumiJH5a0wXZ4D/2c2w1osx+li3fWPpmLc4PnxuqHVLlnKH
+	WrjYtwvVwNjw+HvpwaTn2fzuihAAirf2G0qCtsA9FZBLR8CiiwxxshEcyKIEGdvh
+	zAFqk4lHCCUhhWLK7S/y8RLD8n/y0zMKPSz6wtEUtQGp1FBZFBHZ+7oh6XB5eui9
+	hT92BcWaWyvcN/7TuY8tfyyvdV33Pp5Rl5BwzFSEcwg8/ozFuOfZgLTeffDQjMdW
+	LT7WQ0CqifsSzZfGALy4A==
+X-ME-Sender: <xms:0oisaMmJILOXtDDDINCFu53-uIUUg_3zDJt8BZ-BqUOp2yVI5-v6Fg>
+    <xme:0oisaL1c5xtrn-p-tQL6TOEPaZa0vJyP5R1MfKrNTEgfszaWSTfkfZAnpNBbqrSx8
+    A2S1rOos8BLiMcioo4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddujedvkedvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedfofgrrhhk
+    ucfrvggrrhhsohhnfdcuoehmphgvrghrshhonhdqlhgvnhhovhhosehsqhhuvggssgdrtg
+    grqeenucggtffrrghtthgvrhhnpedtffevgfethfevteduvdefleevkedtuddvlefghefg
+    ieekffejteejveffkedthfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluh
+    hsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhhpvggrrhhsohhn
+    qdhlvghnohhvohesshhquhgvsggsrdgtrgdpnhgspghrtghpthhtohepiedpmhhouggvpe
+    hsmhhtphhouhhtpdhrtghpthhtohepkhgvrghntddtgeeksehgmhgrihhlrdgtohhmpdhr
+    tghpthhtohephhgrnhhsgheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepihhlphhord
+    hjrghrvhhinhgvnheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehlihhn
+    uhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehplh
+    grthhfohhrmhdqughrihhvvghrqdigkeeisehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhr
+    tghpthhtohepmhgrrhhkuhhsrdgvlhhfrhhinhhgseifvggsrdguvg
+X-ME-Proxy: <xmx:0oisaFXiOWgLRUFjk-PAZdWeLgAX5_eFdtsODmogQlpvB5HIvVtfHQ>
+    <xmx:0oisaDKYnak1qaqwLWUnEfhqQvHjNJ0fbwXwRSP2df6rG-lS_a04pg>
+    <xmx:0oisaH0nngfUwVtDBU-b4FeClhimbjLJWffDfypgNGAMxB4KZEzUgg>
+    <xmx:0oisaJ7ywWqsAiukMfu8aO7CTFl6--VO_BnAy8Bqv4zACz0jjh0oig>
+    <xmx:04isaEFogNO1n1_RXJm4TzzH7GGTJb0QoZjSL7aqDwwXfj7Qw_rHlbjz>
+Feedback-ID: ibe194615:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 8FF712CE0071; Mon, 25 Aug 2025 12:01:22 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-ThreadId: AxLiYJmP0NXg
+Date: Mon, 25 Aug 2025 12:01:02 -0400
+From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
+To: "Markus Elfring" <Markus.Elfring@web.de>,
+ "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, "Hans de Goede" <hansg@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ RenHai <kean0048@gmail.com>
+Message-Id: <22906b4c-7811-4a6b-975b-ba7a73e6ed23@app.fastmail.com>
+In-Reply-To: <813948c1-e534-49f8-951a-0b81ae543c7b@web.de>
+References: <20250822152549.4077684-1-mpearson-lenovo@squebb.ca>
+ <813948c1-e534-49f8-951a-0b81ae543c7b@web.de>
+Subject: Re: [PATCH v2 1/3] platform/x86: think-lmi: Add certificate GUID structure
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Hi Rob,
-On Fri, 2025-08-22 at 09:39 -0500, Rob Herring wrote:
-> On Wed, Aug 20, 2025 at 03:44:53PM +0200, Julien Massot wrote:
-> > Convert the MediaTek MT8183 AFE PCM Device Tree binding from the old
-> > .txt format to YAML schema format to improve validation.
-> >=20
-> > While converting, also document all clock inputs and memory-region
-> > used by the AFE block.
-> >=20
-> > Reviewed-by: AngeloGioacchino Del Regno
-> > <angelogioacchino.delregno@collabora.com>
-> > Signed-off-by: Julien Massot <julien.massot@collabora.com>
-> >=20
+Hi Markus
 
-> > ...
+On Mon, Aug 25, 2025, at 9:36 AM, Markus Elfring wrote:
+>> Add a certificate GUID structure to make it easier to add different
+>> options for other platforms that need different GUIDs.
+>
+> Would a cover letter become helpful for such a patch series?
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.17-rc3#n310
+>
+Yep - I'll add that (good timing - I was just about to push v3)
 
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +=C2=A0 - |
-> > +=C2=A0=C2=A0=C2=A0 #include <dt-bindings/clock/mt8183-clk.h>
-> > +=C2=A0=C2=A0=C2=A0 #include <dt-bindings/interrupt-controller/arm-gic.=
-h>
-> > +=C2=A0=C2=A0=C2=A0 #include <dt-bindings/interrupt-controller/irq.h>
-> > +=C2=A0=C2=A0=C2=A0 #include <dt-bindings/power/mt8183-power.h>
-> > +=C2=A0=C2=A0=C2=A0 #include <dt-bindings/reset/mt8183-resets.h>
-> > +
-> > +=C2=A0=C2=A0=C2=A0 afe: mt8183-afe-pcm {
->=20
-> audio-controller {
->=20
-> like you changed the .dts.
->=20
-> With that,
->=20
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-Thanks, I will fix the node name in V3.
+Thanks for the review
+Mark
 
-Regards,
-Julien
 
