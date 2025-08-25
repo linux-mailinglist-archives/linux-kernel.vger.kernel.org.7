@@ -1,362 +1,110 @@
-Return-Path: <linux-kernel+bounces-784549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEE3EB33D3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:53:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE61FB33D40
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:54:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EDC8483EAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:53:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 850061A80079
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E755D2DCF7B;
-	Mon, 25 Aug 2025 10:53:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5082DF718;
+	Mon, 25 Aug 2025 10:53:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Xmu5G9ee";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="zXKMLMg2"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="0gqOi4ZW"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94C32DCF71
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 10:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756119184; cv=fail; b=uiWn3EGUdLCSdsTzpmJ/m641/N3F0oO4qUh1lQfTkiH6hiD0BWL0r+fbbqEEREEg718kK8/Rld3ZrnAcb56JgZKoBXNZLWGJL2XJDHapCE2r9T8CAW+tkOeLQ9ue0capZ3T4bTRuSjZOzb9JVdS4S8ZP29+FDNPFPHT3lISUyMk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756119184; c=relaxed/simple;
-	bh=F4pzvcse+NDpI2tODtH7cCEnuL/WRxRO3dfJ1GyENBU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=OjE/Nq8z9CN2u67G2LCDIowwb2BFnzeO1HVZetYLJSY48F5nzUwqWF4JVRq0iDOgZF4g/7kS4ZKuloUTdO9NU6jnpdmZkHoIPhJyjRKxhec9kucnFRmuBx/2KrlI7UGtbkDUDNJ5N3Z62hmafIGzHmiOls5nSbiwcr1Ht8Y0SFI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Xmu5G9ee; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=zXKMLMg2; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57P9gTOh016252;
-	Mon, 25 Aug 2025 10:52:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=F9iOTg+0S7RFPc2WBiC4EzKn8/BSOyW9joUhbSii/C4=; b=
-	Xmu5G9eeNH9xHGHqNXF3dpIbrndeqMHJS8NE0ggTnP0spd7rmNrfEGdi8vcV0rU3
-	XKb2KVzQNHJ04eMKQK5/A9BtIhfcgED9JvEY8rarsysfAut/zksa7E521GyC6Z7o
-	Xlow49DPhfbC9Sm4C6s1WNPl9P8N5PMkr0pqc3Z6TI7sGB9pgcb0vMLLoqh85T8x
-	4NQdj1YD4xoGJG6j3yu1Zj7tBrhWxko3lINx47Olybji35oaD6aGPdmyXzMKsZPC
-	evLWTXaRK9MaxhtWrtskUInEYaRKu/6YvejnsQwOaWu4CFgW5Km8SXpNEtVY/pOF
-	60FOCTeuWHi7+p2NmRrrpg==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48q678t03t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 25 Aug 2025 10:52:25 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57P97P0T005003;
-	Mon, 25 Aug 2025 10:52:24 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11on2049.outbound.protection.outlook.com [40.107.223.49])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 48qj88ak0t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 25 Aug 2025 10:52:24 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bgeiq5s2AhztOmz8D4UvDxtxpXNVN/gIIwrWOgQ3LWH4PkIvVodE5AOK5gykb1XAsvfMaqcPNeNRC0gq8/4dqw3JtLyFUfzNaY8vxDSnoxvXKYDrXyCzNSFZ6mQvpin0nDMBUybFCVodw/LCIbNU8eljna8tHILBRNfNN5ws930jpDDeUWZ/+/gY7ZAw38rEMaMztXJUvUPQLv+71LQhFFqGnLZbs6tXkXvJhfEEXiXiGMkY7Zs4J9iYvSClRqK7ktbOT59aZzIY+L3RmDE+odIOyrFW0tVZrTW5ETeYg2QPX71tGotXsYrFaDkp95ojqEEumYkanSWF8ZruVjiyYg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=F9iOTg+0S7RFPc2WBiC4EzKn8/BSOyW9joUhbSii/C4=;
- b=Mi+w8wNBRmqJ8VVm24dlq710I7UnDpn7nn7qVaZRFDq5a4P8+FHXl6iaV5p0leY3F3fDu2PmYIhHCL+G8MKBU/U2ofSOwI3paJW6hlwcgKFxoaVWTR2SNMKbxVinX7on0eKTYyLJpdls8fnDRJM97L83mlHd6ngOX7zJklUr6lb+UddaKEx4HTw0SbXJbHtrZI+NTotyEG7YPcn4UM6hnjdww9xXL3OiMxfl9f7WvfFX/FYnRGw+kAUdYTBNJF9tdxgCHawl5iiZBKpi6XUZdtbp3JCZfobryjODHVgL32AieCIFO+xQB4azZ9yORKJEYYGxn8WjlC/krZNFrcdymA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=F9iOTg+0S7RFPc2WBiC4EzKn8/BSOyW9joUhbSii/C4=;
- b=zXKMLMg2YrcukxykPhY3IU8bJngmx0WzxfttQy1Zq4a9dRvVbGOeL0VWOFCdh+73YXiBwcSDGE2jgfMQH0aWf57FMj8xFC1WvEdUNG8d2B6MyigXcO/MXht8z2GgvMrWrQYxW40AsfULGaAo0SZN5CwJRvQVx9gAhJ6smx88Ero=
-Received: from CH3PR10MB7329.namprd10.prod.outlook.com (2603:10b6:610:12c::16)
- by MN2PR10MB4240.namprd10.prod.outlook.com (2603:10b6:208:1d9::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Mon, 25 Aug
- 2025 10:52:21 +0000
-Received: from CH3PR10MB7329.namprd10.prod.outlook.com
- ([fe80::f238:6143:104c:da23]) by CH3PR10MB7329.namprd10.prod.outlook.com
- ([fe80::f238:6143:104c:da23%7]) with mapi id 15.20.9052.019; Mon, 25 Aug 2025
- 10:52:20 +0000
-Date: Mon, 25 Aug 2025 19:52:10 +0900
-From: Harry Yoo <harry.yoo@oracle.com>
-To: Lokesh Gidra <lokeshgidra@google.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
-        Barry Song <21cnbao@gmail.com>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        Peter Xu <peterx@redhat.com>, Suren Baghdasaryan <surenb@google.com>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        android-mm <android-mm@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Jann Horn <jannh@google.com>, Rik van Riel <riel@surriel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [DISCUSSION] Unconditionally lock folios when calling rmap_walk()
-Message-ID: <aKxAWqvTxctPoumF@hyeyoo>
-References: <CA+EESO4Z6wtX7ZMdDHQRe5jAAS_bQ-POq5+4aDx5jh2DvY6UHg@mail.gmail.com>
- <CA+EESO7j4dY3KjBWybTG6uQmXJ8kyhBrid3rTk5XAP7poZOhYQ@mail.gmail.com>
- <aKqjWqn8lrITKI7P@hyeyoo>
- <CA+EESO6PFJ9A0kbRWd-ARBLmQ9pwNOF=GBuAzMCOyFvps4euGA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+EESO6PFJ9A0kbRWd-ARBLmQ9pwNOF=GBuAzMCOyFvps4euGA@mail.gmail.com>
-X-ClientProxiedBy: SEWP216CA0038.KORP216.PROD.OUTLOOK.COM
- (2603:1096:101:2b5::6) To CH3PR10MB7329.namprd10.prod.outlook.com
- (2603:10b6:610:12c::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE4F2DAFDA;
+	Mon, 25 Aug 2025 10:53:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756119214; cv=none; b=Ool3I920kaRY8foN1oEL1zbVFlAz7B3MaBBe1/BYfWSFjN/cosGR2BXWa0rUtlcct4tPAciJ+jl1iH5w1rT/EWFhq1eoZlToyLX3iv3nX6GoHw4JdaZJB4A91F5HXsu3F/1LxySXBEaNooLA+OOGlODpgFc6vs+3YcxheHpyv7A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756119214; c=relaxed/simple;
+	bh=9i23GRRPAeysHMcSzhzEMBkwiF4+rOhXgj7ZsUmqrnc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GB8qKGJLa9mcr744yqYRLWv4VnXeahuXlBIBjqLvZbBr5koBFn5/T7+CwysC9NOKK1OCuu5SBA0rsZb+mRFmzaAsD1wF9rGDH6l7ScOryQ1NtQonDg0I+L2zioM/+pu1eeoBG6sQNqtbkOx3Cny95nFxrOgYFgJ2AX+yZJG4/lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=0gqOi4ZW; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=6XFPlhRGrLMbqZYr/NESjliKO8yOhmaJETTR2cZFYRc=; b=0gqOi4ZWPzv3qDc2urheKfPrP8
+	NgJHLMvH9YtxWytJQ7Yj2Qiujhk6E8e0TKVNUeQbe2zZFOIIEk4xRjMaiMCDDq1uWvcMlYxtmritE
+	pdh4sqylWH9juncEihbHIlDFxBrpezxPV4ZhcLYGqTqk4V0ARUPjgNWyvNACu3NQ3f6Y223zaALW3
+	vPo2MxIFtsyPkRBvl1l8viYFWyNVZ2DG6bAX0faPVEVsijxlfNl16S7ZRtrQuE5Pkat9fsIfmXuCe
+	OZdpSn0d9sYrh2qX/HNQfv+VBuT5N5Um0vjwR5eQhIwJ0hbaWytOYB3CImmZwBfWYd21c4k6lTpkx
+	suF8tXbg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uqUpK-00000007gNK-1g1J;
+	Mon, 25 Aug 2025 10:53:26 +0000
+Date: Mon, 25 Aug 2025 03:53:26 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: hch@infradead.org, colyli@kernel.org, hare@suse.de, tieren@fnnas.com,
+	axboe@kernel.dk, tj@kernel.org, josef@toxicpanda.com,
+	song@kernel.org, yukuai3@huawei.com, akpm@linux-foundation.org,
+	neil@brown.name, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+	linux-raid@vger.kernel.org, yi.zhang@huawei.com,
+	yangerkun@huawei.com, johnny.chenyi@huawei.com
+Subject: Re: [PATCH RFC 1/7] block: export helper bio_submit_split()
+Message-ID: <aKxApo1u8j-ZNOaI@infradead.org>
+References: <20250825093700.3731633-1-yukuai1@huaweicloud.com>
+ <20250825093700.3731633-2-yukuai1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR10MB7329:EE_|MN2PR10MB4240:EE_
-X-MS-Office365-Filtering-Correlation-Id: 507244af-8d42-43fa-1eb8-08dde3c576db
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RFc1NDdPdGx3dWx4b0xOSDVpazZYcU44SGtDME9sZU1rbWtxd0Z3ZVNaRGpv?=
- =?utf-8?B?QU5yS1BZN292aytQSzlJV1RQVjlsa0RxOEtXS2QvdUxGS1l1bFV6NmlHRFo1?=
- =?utf-8?B?S0JBVUFiN1ZOYkhOUjhjbGdVU2tvQUc1ZVpGc1FwbnRJSm5KcDZkNk5ybUFx?=
- =?utf-8?B?TXROOHhDM2IzNEJ3QTZqT0k0N3JRV0U1M080RGRUenh0eFd6RkZMYWp5eDhX?=
- =?utf-8?B?N2lPS0VtTGdLZ29LL0UreExjZm90V251YjEvVzllekwrSlBkanZ4dDVpWG84?=
- =?utf-8?B?akFWY0JONUwxeWhONXVNQUtBMTdKWjRFTk95VHNnNjN1TG90eUtzaWNyNkZJ?=
- =?utf-8?B?dVZXZk1NT2hOaGk2ZlAwWEJsUUM5WFhaYWthUUUyVWdwWCt0NEdyYU9sOTZq?=
- =?utf-8?B?bGFLZEFqSnVpZjR1UERMbmJyYlR2c1c3UzJpdExuWHhmQ0tHNmhLNmxkVzR3?=
- =?utf-8?B?MWJERnJ1endGVUpNTU4rRkY5QWZQOFdHcXhFcVJMd3FlSjZGUFRpbUMrY0lS?=
- =?utf-8?B?UXN0NGw2aUxRc3BWUlQ2dUJPbHpySTdZZ3p0QkNkNm1Sb0VrdE1Gc05aeHF6?=
- =?utf-8?B?OFpzeC9nbUZPWER2clQ2UUVaaHpLcEZqV3VVTjhkUkg5aDllQzdoZXlzOUdk?=
- =?utf-8?B?eWVoVWo1b0FwNU1uMXV6cFN6VGVPZUVQeFZTdUNDa3plSUV1T1FDMmk0MkR4?=
- =?utf-8?B?ZldYMnZTR3VMaUxETk56bVJYNmdTWjd3UzF5Mkp1NjVXbDduREtXSnRwUWFC?=
- =?utf-8?B?WHF4a2M2amRwWHFuc3ozMjVZWFJZV2RlRld5RWhadWVRRWhCUXhHWmY0dkdL?=
- =?utf-8?B?dnIzV3hVay9SVXQ0eEFUY3ZMT3F6UWV4T290Y1RhU09PTE10M0llaTJPd1Rx?=
- =?utf-8?B?bUNnemxzeURKdHRTeWhuUjNCUGlvVHZUZ1dGVFJEVmVCSW1JRmFsTVJSWEo5?=
- =?utf-8?B?K000RWMyNW10YXpkdmNZRHdDTUJReHpCQWZUYSswMlBSL1p0VmxXNHFheFl2?=
- =?utf-8?B?SG9xY2tzNHNWMWZqZWRCczlCc0dWM3BIdFVEOVd2UVJBNkVvYkhYQ2Vic1Ru?=
- =?utf-8?B?eUJXeUFPcDEzcVhvbnZlWlF2TlU3MGtrUmtUMjZERlNiTUMySE1UdXJjNHBI?=
- =?utf-8?B?NXZ4Sm83Q2NpMDl0UzNCWHprNUZMSWFFV1pFUlFBZEZpS2xtSWFYUUQxK3Rx?=
- =?utf-8?B?N2srMHhuMDZvdnNtMFJzY29qaDQxeTN3VEREOGo3ayt3aC9LWEhqTlBMS09F?=
- =?utf-8?B?cytxcDQyWGh6d2hHTW1MYUNzV0R4N055b1hmZ2VRRXBIQ3U3VGE4NmVzb2Iw?=
- =?utf-8?B?bWFzdmR6NzY2dW45Z05UUnFDUTluT09vT3ZEQ2tCNEhuc3ZpbVVHV3ptb28z?=
- =?utf-8?B?aUVoZ1NvNG8vMWQ3YmNmMDBlNnRyUzI2NHBqQ1pZekJJcll3UW0yMkUyV1VM?=
- =?utf-8?B?VEkzVUoxYkY1ZWZtZVNKa0djaXZVR1A1YUFTSGVETmEzZzVCRHA1R1YyNk1V?=
- =?utf-8?B?aHQ5ZTArMFhEMUYwQnRwczRoajEzSDYybXNnTmVkaE85c3hMcDNQVEczNDJx?=
- =?utf-8?B?d0xXaGRpWUhvcThqcGwrR0VzdmhadDRKK0FlTXhsOXp1YkRxNlR6NkFBMW9C?=
- =?utf-8?B?ZENYRDM1WFBFZVZlUGRBczVKT1NmYWxqV0NpMGplVjFuVlE4OGUzNGkwblNZ?=
- =?utf-8?B?Nm9uZGZlRW1HUUxBbFl5WGZRN1dqOEgrTy9jTzBoZUREOVg0bUpCejNrVTNP?=
- =?utf-8?B?bGE3YXFtUEkyUzgyeDVBMG8yNGZGTEtuRDZJS1A2UER5a21KbHRJc3J0ZHJQ?=
- =?utf-8?B?c2R2dDlYM0NDYmFyRFlxNzd5dklYbnNsZ05XVkJzb1BHQ2RtcDlnbHZvR0VQ?=
- =?utf-8?B?SkFuMGlLdzB5NUtNTGRrd2VuZmxNRHRneU9LNFV2WkF5UzF1MFlCTHFEMWR1?=
- =?utf-8?Q?uE1raLle4cA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR10MB7329.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?a1dXMzNjNE12azVZbThZZVpNQ0ZlRmNuOVZyOU0rdWgrOW04WjNldzc4VHMz?=
- =?utf-8?B?TnpTQ1VWaUFPUlNJR25QbTdBS2xYYzFTd0d1Nmp0Q3Y5NDZyWGNOOXg5V09o?=
- =?utf-8?B?KzFWTFprL0Voak0rL0FHc2hmaU1VbStSRTVwMFpQbG1kcGVremE3T21rd3N5?=
- =?utf-8?B?a0k4ZTBSL21Jd3B4aU1uVXdHdEZwTHF1Z1NiQUdHTjJGdjB6RmlJbGJUdXIw?=
- =?utf-8?B?SkF6VTlYaXNDSXZkYW5Ud0FIYlNNd3Y0M2RnSUJ5Qk9NRVpKWXVSQnBnMEp0?=
- =?utf-8?B?VEZEV2xVTVZwUnprc1VvVDFjUmRMOWhLZFZNaTdxVkdzNkx6bDIySlZHTUI2?=
- =?utf-8?B?d2pEMzJVQk41M1pqampKOHZrZlVCcitMbVNUTzdtelhHTmgrV1ozNWFVVHZS?=
- =?utf-8?B?bzVvdVRTUSt2SWRtOHc0THRBZTd4dGo4UUhuUGd3RWltc0lyVnVWSGFFZ0pK?=
- =?utf-8?B?NHd5aU1FYllCRW5odzRGNW1rWGdvUE9lSjBNcjVUWnNobEhCZ2l2M3NXV0xa?=
- =?utf-8?B?NlJkNkEyNHFzY1JtbUhLQ005UUhuOWtnQ0pQSTFGdFIvZTJHMjZZdndFbjBn?=
- =?utf-8?B?VnprK0xDTm9DZDgyY0ZELzM1djdPUGJYejJKNEZxeW1vczlCVklpd201WVIw?=
- =?utf-8?B?RXd4Y3d6Wm5GWnBKdVhqZVh4clBySWxhT2ZlM1Q5aFZFZEdhZEo2dXVFYlI0?=
- =?utf-8?B?M1d3ZkZUSzJ2NlVNV0FtNHU4Tit4Q3pZNDgyZ21yL0pERDJpLzQ1QlRmMk5D?=
- =?utf-8?B?Q2doNjBXemJvVDhrMXY1OGd2V2VJelVPSjlPRC9wdTBoeVFOWS9hcTFnSVV3?=
- =?utf-8?B?aHIwdmlrK0tpMjZJa0FTUk5YUWJUZGI4NFlMcHlWZzdaYWtpa1BjYzBOaEdC?=
- =?utf-8?B?MFp6REdHRGNFZzlSV2F6Q0c1R2lpeXBjV1hsazZLNUhCWk5aVGtFTlZMWEtz?=
- =?utf-8?B?a0ZDMlhnc2UyQTdFdHRVTVI0bkZvUWZ4MW1yQWF3QTRSYmtEclFKM0JueVU0?=
- =?utf-8?B?aHdyUU0xRHB1cDl0cFJHVGxGN001VHZLd05sMjh2YVJqajVVVDdramdScHpt?=
- =?utf-8?B?clBiSis4T0ZkOGVVbi84SlIxQW56YURzZG53Z281RWVMSzR6ZGp6dFIzdmVO?=
- =?utf-8?B?ZTFhQVBXcVdFcE1YTExuRzdwVzJHakY0VFNTcmRuZC9wb2V4R2xTVzA3Lzdv?=
- =?utf-8?B?amxaWUFqM0ErUnQ4RkFVaVllWlZSeHF2S0k2T3QyTWdMU2FRY01yanlJdzBo?=
- =?utf-8?B?cjN5alorQ3BvZ09NUFpib0xEcTI0c2dyU3Zxb1NrMDVGaTd5VUxHYXloenBv?=
- =?utf-8?B?cFJ6SXd2YkRleXR2RW1QS3RKc1VidFZwVnYrSlRoSnQ4R2ZhZjhuUkxOazly?=
- =?utf-8?B?aHQ5dXY2NW54K2RWdXBwTDdldXJnS1R5N3hUdkdOQktia0FuQTJhRFJsTEpK?=
- =?utf-8?B?dm5Xb2dDS2pkNXNjNXNwUlF2TEJTVjBuc1EvbUpHZUlkWGNHVWMwTm02Rnor?=
- =?utf-8?B?OGJuRmE2QzNzYjFHNjhmVVd0Y2JTZWl0NVZCS2J3ZGdoYnQ0MlExMkVScUNB?=
- =?utf-8?B?Y25BR2pseHI0R2c3cWFINTZXZjdXSTVkVmpiMG5ZbE9VZWFDNXU4RFlqYUdZ?=
- =?utf-8?B?ZmdCWmxjVTVzV09FN3U3SFZlVldud3k1WHl4NEEzbkVMNitleDUwWlN6V1A2?=
- =?utf-8?B?WkQ4eG9aeTFoT3VBTHZDaWxmVXNWOE1BL0g3a3BDbjVlWDgvTEFTdDBRZzEx?=
- =?utf-8?B?RGgyY1JkWlZtQ1ZlMDNIZHNzWmZNM0JzV3pkUjlhZkQ2UVV2SGhtOWgzZXl5?=
- =?utf-8?B?bUVRbnN6NFpZdkpUQ2ZOVURkOFdYUCszT0EzRWtzcmxKWjVpT2lBZzBBNnJG?=
- =?utf-8?B?U0ZtMXBFYzhiUVMvaERpdlFXTEJaWC9iVzk3bVdMQmRIbEF5N2RmRUdIb3NH?=
- =?utf-8?B?QnNvMFdwNENFWWtIK0lMeFkwUlhRYTRKb3h6b25BVytvb3o3NmxVRnN4ekVr?=
- =?utf-8?B?WlA4N25zZGJoTEliMStSVytGY0dobzQ4clRxR04wMUFaM3RFTjVkM0F5UVRJ?=
- =?utf-8?B?M3dFY0xrNC9FVHJCWkxxY045OEtwS2pkb3FDcVhpL1FVbDloeUFjUElOZ0Rv?=
- =?utf-8?Q?Uswf2FDJoHIF6HLsht2+SJy4N?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	hhC7RuyFxwXF0PCZxhIW5g/v3g7yePHlCj0PG3vH286M2u2Tn7rxU8i+UxoSXRgHIweCp/yCQeIoJzR87iUw48yLlBo80PYN0JQ7Vo3iwC9pFRhid1A+AQUzv4clmtBCclry4nhGaYQ8HgW+KsWhyKv0+2X5XG6OZPxIb3Lw/yk8/XOBXZhcARcZXQKcEZS8sK/84bl1KSw5n/UEppfkZ4PAmUFB3N4PMNq2P1eV5/g5NfTXh4vg+enWiRksg8EmMooBwXbEF3MhGvTO3DN//VAqN1fK50USWiUyQ23GCJAPlXy6S0HCQYhwgYyBfsAr0QkaIPgT+RFDNd5GPI3sYxqnwFF2akF3Ph41IegebcorkUWMFQecmEHIeiUlvoPcqeYnqm9oTfhnilapFHA73JZWtgI+EDRIvhu4WbCz4RvlS2TeuVcFDEyKP8IfBi7AnbxNJz7iMOGSWxY1LjxXSPvpBfyD05oJFoJ17CvO6l7wYjVV1SRRGf3dpsnZsWrLQ7bfWXrfkUyeFC8mwUQuB+f+rNu0SqfvHPX01LrXIr/e5XAMfR9zmQmTsRmQySWwroJ8yBAGm5iDdMps98gWhLyqDPIg0q9D1EhJwIZkp3o=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 507244af-8d42-43fa-1eb8-08dde3c576db
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR10MB7329.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 10:52:20.0804
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oIjthjMBYpJQXjpP47XUpEKJWPCWW1GiAl4oRKAhtph9uvE+krdDaYHykHEQxE/XFF+K5m2imKHr9Unb6vBCkQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR10MB4240
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-25_05,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0 spamscore=0
- phishscore=0 bulkscore=0 mlxscore=0 mlxlogscore=999 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
- definitions=main-2508250097
-X-Proofpoint-GUID: N1knzQuSXVGTU_Y62-rQmEoAXNKiZUQI
-X-Proofpoint-ORIG-GUID: N1knzQuSXVGTU_Y62-rQmEoAXNKiZUQI
-X-Authority-Analysis: v=2.4 cv=NrLRc9dJ c=1 sm=1 tr=0 ts=68ac4069 b=1 cx=c_pps
- a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8
- a=yPCof4ZbAAAA:8 a=1XWaLZrsAAAA:8 a=Pp3I1Z9nklXDFLRVzuIA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 cc=ntf awl=host:12069
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzNSBTYWx0ZWRfX8xshuq5LMFXp
- D8HcS4xg0WsgM0wDlQePh2zDvimgdugMp60BCG/qTNQe7N6gy1MPD8CznxTYu+VbcsV06zFA+MZ
- iVKgt1TCqET+s11s+u5D6Ulrp/GaUozrxAzvPRtSDeNNjB0WKwhN97lyQTWSLK53qMShNRTbviC
- fX/ce9PkN/mKE5FX3Y6tEdRk8yucrdnxIt543vMcuLjYvLwIsBfQZNn+b6Lgo9gfVzQmpLupRiY
- hzvJ+ftaij77V2KV9y6vEtbHJLHB9GhRWA3cpzB/EZVXZgjeHiPlVMZG+Joaf5KG1WPRpuiZ4Ac
- doJL+1wYwXQAXa2ROadw+7F1W/AJav/+ZS94qaeDhX2JMEXCyIq7916Wt2zzFyPK2NJ0m+wnqgU
- O1is7ahZaH47du+oXgfqvlxT4qEyRA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250825093700.3731633-2-yukuai1@huaweicloud.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Sat, Aug 23, 2025 at 11:45:03PM -0700, Lokesh Gidra wrote:
-> On Sat, Aug 23, 2025 at 10:31 PM Harry Yoo <harry.yoo@oracle.com> wrote:
-> >
-> > On Sat, Aug 23, 2025 at 09:18:11PM -0700, Lokesh Gidra wrote:
-> > > On Fri, Aug 22, 2025 at 10:29 AM Lokesh Gidra <lokeshgidra@google.com> wrote:
-> > > >
-> > > > Hi all,
-> > > >
-> > > > Currently, some callers of rmap_walk() conditionally avoid try-locking
-> > > > non-ksm anon folios. This necessitates serialization through anon_vma
-> > > > write-lock elsewhere when folio->mapping and/or folio->index (fields
-> > > > involved in rmap_walk()) are to be updated. This hurts scalability due
-> > > > to coarse granularity of the lock. For instance, when multiple threads
-> > > > invoke userfaultfd’s MOVE ioctl simultaneously to move distinct pages
-> > > > from the same src VMA, they all contend for the corresponding
-> > > > anon_vma’s lock. Field traces for arm64 android devices reveal over
-> > > > 30ms of uninterruptible sleep in the main UI thread, leading to janky
-> > > > user interactions.
-> > > >
-> > > > Among all rmap_walk() callers that don’t lock anon folios,
-> > > > folio_referenced() is the most critical (others are
-> > > > page_idle_clear_pte_refs(), damon_folio_young(), and
-> > > > damon_folio_mkold()). The relevant code in folio_referenced() is:
-> > > >
-> > > > if (!is_locked && (!folio_test_anon(folio) || folio_test_ksm(folio))) {
-> > > >         we_locked = folio_trylock(folio);
-> > > >         if (!we_locked)
-> > > >                 return 1;
-> > > > }
-> > > >
-> > > > It’s unclear why locking anon_vma exclusively (when updating
-> > > > folio->mapping, like in uffd MOVE) is beneficial over walking rmap
-> > > > with folio locked. It’s in the reclaim path, so should not be a
-> > > > critical path that necessitates some special treatment, unless I’m
-> > > > missing something.
-> > > >
-> > > > Therefore, I propose simplifying the locking mechanism by ensuring the
-> > > > folio is locked before calling rmap_walk(). This helps avoid locking
-> > > > anon_vma when updating folio->mapping, which, for instance, will help
-> > > > eliminate the uninterruptible sleep observed in the field traces
-> > > > mentioned earlier. Furthermore, it enables us to simplify the code in
-> > > > folio_lock_anon_vma_read() by removing the re-check to ensure that the
-> > > > field hasn’t changed under us.
-> > > Hi Harry,
-> > >
-> > > Your comment [1] in the other thread was quite useful and also needed
-> > > to be responded to. So bringing it here for continuing discussion.
-> >
-> > Hi Lokesh,
-> >
-> > Here I'm quoting my previous comment for discussion. I should have done it
-> > earlier but you know, it was Friday night in Korea :)
+On Mon, Aug 25, 2025 at 05:36:54PM +0800, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
 > 
-> No problem at all. :)
-> >
-> > My previous comment was:
-> >   Simply acquiring the folio lock instead of anon_vma lock isn't enough
-> >   1) because the kernel can't stablize anon_vma without anon_vma lock
-> >   (an anon_vma cannot be freed while someone's holding anon_vma lock,
-> >   see anon_vma_free()).
-> >
-> >   2) without anon_vma lock the kernel can't reliably unmap folios because
-> >   they can be mapped to other processes (by fork()) while the kernel is
-> >   iterating list of VMAs that can possibly map the folio. fork() doens't
-> >   and shouldn't acquire folio lock.
-> >
-> >   3) Holding anon_vma lock also prevents anon_vma_chains from
-> >      being freed while holding the lock.
-> >
-> >   [Are there more things to worry about that I missed?
-> >    Please add them if so]
-> >
-> >   Any idea to relax locking requirements while addressing these
-> >   requirements?
-> >
-> >   If some users don't care about missing some PTE A bits due to race
-> >   against fork() (perhaps folio_referenced()?), a crazy idea might be to
-> >   RCU-protect anon_vma_chains (but then we need to check if the VMA is
-> >   still alive) and use refcount to stablize anon_vmas?
-> >
-> > > It seems from your comment that you misunderstood my proposal. I am
-> > > not suggesting replacing anon_vma lock with folio lock during rmap
-> > > walk. Clearly, it is essential for all the reasons that you
-> > > enumerated. My proposal is to lock anon folios during rmap_walk(),
-> > > like file and KSM folios.
-> >
-> > Still not sure if I follow your proposal. Let's clarify a little bit.
-> >
-> > As anon_vma lock is reader-writer semaphore, maybe you're saying
-> > 1) readers should acquire both folio lock and anon_vma lock, and
-> >
-> > > This helps in improving scalability (and also simplifying code in
-> > > folio_lock_anon_vma_read()) as then we can serialize on folio lock
-> > > instead of anon_vma lock when moving the folio to a different root
-> > > anon_vma in folio_move_anon_rmap() [2].
-> >
-> > 2) some of existing writers (e.g., move_pages_pte() in mm/userfaultfd.c)
-> >    simply update folio->index and folio->mapping, and they should be able
-> >    to run in parallel if they're not updating the same folio,
-> >    by taking folio lock and avoiding anon_vma lock?
-> 
-> Yes, that's exactly what I am hoping to achieve.
+> No functional changes are intended, some drivers like mdraid will split
+> bio by internal processing, prepare to unify bio split codes.
 
-I think technically that should work. I can't think of a way this could
-go wrong (Or maybe I just lack imagination :/ ).
+Maybe name the exported helper bio_submit_split_bioset and keep
+bio_submit_split() as a wrapper that passes the default split
+bioset to keep the code a bit tidyer in blk-merge.c?
 
-Adding folio_lock/unlock in folio_referenced() is likely to affect
-reclamation performance. How bad is it? I don't know, need data.
+> +struct bio *bio_submit_split(struct bio *bio, int split_sectors,
+> +			     struct bio_set *bs)
+>  {
+> +	struct bio *split;
+> +
+>  	if (unlikely(split_sectors < 0))
+>  		goto error;
+>  
+> -	if (split_sectors) {
+> -		struct bio *split;
+> +	if (!split_sectors)
+> +		return bio;
+>  
+> -		split = bio_split(bio, split_sectors, GFP_NOIO,
+> -				&bio->bi_bdev->bd_disk->bio_split);
+> -		if (IS_ERR(split)) {
+> -			split_sectors = PTR_ERR(split);
+> -			goto error;
+> -		}
+> -		split->bi_opf |= REQ_NOMERGE;
+> -		blkcg_bio_issue_init(split);
+> -		bio_chain(split, bio);
+> -		trace_block_split(split, bio->bi_iter.bi_sector);
+> -		WARN_ON_ONCE(bio_zone_write_plugging(bio));
+> -		submit_bio_noacct(bio);
 
-And adding cost only for the uffd case might not be justifiable...
+Maybe skip the reformatting which makes this much harder to read?
+If you think it is useful it can be done in a separate patch.
 
-> > I see a comment in move_pages_pte():
-> > /*
-> >  * folio_referenced walks the anon_vma chain
-> >  * without the folio lock. Serialize against it with
-> >  * the anon_vma lock, the folio lock is not enough.
-> >  */
-> >
-> > > [1] https://lore.kernel.org/all/aKhIL3OguViS9myH@hyeyoo
-> > > [2] https://lore.kernel.org/all/e5d41fbe-a91b-9491-7b93-733f67e75a54@redhat.com
-> > > > > > Thanks,
-> > > > Lokesh
-
--- 
-Cheers,
-Harry / Hyeonggon
 
