@@ -1,182 +1,145 @@
-Return-Path: <linux-kernel+bounces-784397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05640B33B15
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:28:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2C1EB33A23
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:07:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18491485CF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:28:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 811F14801C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76D42C3263;
-	Mon, 25 Aug 2025 09:27:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66062C08C8;
+	Mon, 25 Aug 2025 09:07:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iram.es header.i=@iram.es header.b="n15LO+qs"
-Received: from mx07-006a4e02.pphosted.com (mx07-006a4e02.pphosted.com [143.55.146.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mv4/xmRP"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A61B2BDC25;
-	Mon, 25 Aug 2025 09:27:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=143.55.146.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A32220F5C;
+	Mon, 25 Aug 2025 09:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756114059; cv=none; b=jdAg6SOsZrEc7RWkr1TRiv0sk0Mm39DF0njkgFUDdY3L3W7HBvn4ls/hQQSWkHsMTiwQuM0YKp/ktPwgrbXlggUxAAlQh/xXq8XdGm5uqJd+kyF9xr6RBiikG4w1gsMKX+DyW+8ju/3LDncCOnxOdiAErRzkRKNTrd7/UmPqgjo=
+	t=1756112856; cv=none; b=GlpThw9RvoueP1evagmTI0JPvHvx90akDKBkupnHDo/asv1Nx7xGgcMML4hiUfBBtWfYhtvkqK9ZqomYTX0Yjo5bT5lxRJ8Q9Vty7s3SC4//fvhd5VT8mqYrT0I3W8GfYVBwgz9yeU9PKugNXLn9dwsps9SNiaUKQY86X3HsZRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756114059; c=relaxed/simple;
-	bh=od0Cl7EQYnvwX+EQ1mk1FhFEsgSnIhapkhd3PkN1zYY=;
+	s=arc-20240116; t=1756112856; c=relaxed/simple;
+	bh=0afVbdqJuKr1Gb8UF4vauT+qwqgRsD9QKUHqhLHj8uw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mezuf8XjTtCMI2RdQay5+WCb3ZcWyr04bT2Yi4KGOaZK9jt7vt6oqNHaFpV7aAl2DIQjdTipwh/GDHn31oUU5QeX0f077pQzL/27mygArfyScQ+gEqWMmavnZohltJcsxIspiOegBEJgLf3xOvCtG4WMQ/q3hvUSAD1YQa86FSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=iram.es; spf=pass smtp.mailfrom=iram.es; dkim=pass (2048-bit key) header.d=iram.es header.i=@iram.es header.b=n15LO+qs; arc=none smtp.client-ip=143.55.146.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=iram.es
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iram.es
-Received: from pps.filterd (m0316690.ppops.net [127.0.0.1])
-	by mx07-006a4e02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57P6PQ5K015116;
-	Mon, 25 Aug 2025 11:04:54 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iram.es; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=dkim3; bh=rzEViH2qeblykcKgZ/ETV2fumwaV
-	6V/zw4MF9XRlfeU=; b=n15LO+qsawzZh20Qn/20l1l3bhwYF9/v8hNwrHTt2L8t
-	YHSDQEyu9J6ONEXYGoxQfYm3Ggf16oO3UwGJAZEK51gLu9abRXIVlP9ie9/udLL7
-	Vlfhay/EhcMLO6GbTgoclzxF1qcLRBrkE3EihGPSdKezANy9+D2Cdx/5OLrK3z3P
-	7r76IEpXgztUNYUxrEhMw0UXauFqIUi8+ZA2utAQrS4aaSkVhRNynL1fUj9Pj26W
-	RYNLdEnGH2aGyRoVuxeiBaWTR4RYBRNkE7xsbyR/wTTSjB3BnhkWS55NR/lFzIsN
-	npKqwMjN09rJPyjCS98FknJTNCPu5rvyr8UEZrzx2Q==
-Received: from mta-out02.sim.rediris.es (mta-out02.sim.rediris.es [130.206.24.44])
-	by mx07-006a4e02.pphosted.com (PPS) with ESMTPS id 48qq0ka2r9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Aug 2025 11:04:54 +0200 (MEST)
-Received: from mta-out02.sim.rediris.es (localhost.localdomain [127.0.0.1])
-	by mta-out02.sim.rediris.es (Postfix) with ESMTPS id 0EE4014009B;
-	Mon, 25 Aug 2025 11:04:53 +0200 (CEST)
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mta-out02.sim.rediris.es (Postfix) with ESMTP id DD484140F82;
-	Mon, 25 Aug 2025 11:04:52 +0200 (CEST)
-X-Amavis-Modified: Mail body modified (using disclaimer) -
- mta-out02.sim.rediris.es
-Received: from mta-out02.sim.rediris.es ([127.0.0.1])
- by localhost (mta-out02.sim.rediris.es [127.0.0.1]) (amavis, port 10026)
- with ESMTP id 6dKRDSvFm0JS; Mon, 25 Aug 2025 11:04:52 +0200 (CEST)
-Received: from lt-gp.iram.es (haproxy01.sim.rediris.es [130.206.24.69])
-	by mta-out02.sim.rediris.es (Postfix) with ESMTPA id 5905014009B;
-	Mon, 25 Aug 2025 11:04:51 +0200 (CEST)
-Date: Mon, 25 Aug 2025 11:04:50 +0200
-From: Gabriel Paubert <paubert@iram.es>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Andre Almeida <andrealmeid@igalia.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Laight <david.laight.linux@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Daniel Borkmann <daniel@iogearbox.net>, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH v2 10/10] powerpc/uaccess: Implement masked user access
-Message-ID: <aKwnMo7UllLZkOcK@lt-gp.iram.es>
-References: <cover.1755854833.git.christophe.leroy@csgroup.eu>
- <647f1b1db985aec8ec1163bf97688563ae6f9609.1755854833.git.christophe.leroy@csgroup.eu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PHttZktMOu+uCrGxV1UO7W4Pqkn4YBbDRUpEOp+yqyehARQD+nqB16s4piYC6P7MpVqSOgSx+ThUa6O9Zap27iM6ts9K7G70AbgjPRBw3BqTdn6NgkbG8yrqqLOVA3tyjtju+oVGLoC382uSnJb3D8kzEXeuMk3yRwwRQUoI+xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mv4/xmRP; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45a20c51c40so32924175e9.3;
+        Mon, 25 Aug 2025 02:07:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756112853; x=1756717653; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Vr4qgg8QvT1htSr17vcKZvoQkQdbfOPGu2eF2Rhex4Y=;
+        b=mv4/xmRPPwFDawaaocz+O8wCMWAbL5mn1nPV7HKjaF1BR40haXbVDd62n8vhyxuynd
+         dxo+HMNGFEAwSZXRyS6YfAZSJ3veXexLsRANggsCMzPMdbas/rl3FsHBUYsfsCNbz4/C
+         J0yOZYZR/zdegFxOVXF67pxu0hU0H6HzHeZDbKqRXP3cDqshx+mHztygIVes/Fxm1RDm
+         vvfwkK/hFAzm3pAM3ihJid64P3XyEWcwN9nruxS1Wa3fdzmVE8yrpW1qwOLmSwZsQKSO
+         XB7mMAYAXN20+UyAAiABO9ffqr9VmBFkj3g+iw1NnJq5Rzl2KZ6+cu7MtZvPZMtPFHwF
+         iF2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756112853; x=1756717653;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vr4qgg8QvT1htSr17vcKZvoQkQdbfOPGu2eF2Rhex4Y=;
+        b=kOHFl7EOtquGvP2NW2ZmOIT+w+IOe/gCy8+qUZ8Wsimu5FN+aJlQV5fpHrTGCrvdYI
+         G29Zp4OcXsp6mD4vRtdpX5wZJkVK/DjHIQgNKy408y+/kxJZAvjyGatkU1pO/RLkzA6L
+         BcmQfZAWme4zPrDWwSPe2NIk/G0lxPYKyeEhq6ZRuezuhvbVPLtKtgdFHQ5iYpvbk21/
+         Sf+4rhrvp+0LNQVHaEVgS8ooK4Sa2YvR/fpD/mwEQPpVBwbQTCAneE41pdodNcrwSzuh
+         Rvuyoo6XkTa/MQPZuaSzCDKVH2sarh87XoZCV32AdaeVXWbDPl1Nm8kOx1X0c8XB5UoL
+         vINA==
+X-Forwarded-Encrypted: i=1; AJvYcCVVAPfw/it1NIlBvEQhlPqYqI1i8+h2Cp+eGsEroe48vxm0qjtx9BgN7JAE4R9uOKqaYsuObBxNZIjPvAQ=@vger.kernel.org, AJvYcCVdDWbxUdbNmpZDNeR26REMPzs7p3ZX8Md0tCTaH6yl14go8z6xdFJJN7O0L6prqdtOZB00Za8Nq8EFCA==@vger.kernel.org, AJvYcCVz0KHc3qo9rxTSziNxaZCOFsAe4fWc/aHbHjQdABqMWD7ainQjtIpL4ttHw0yLgi5IvtLZjG13/ixl@vger.kernel.org, AJvYcCWZ8Sdydz4O+9nHOg5rFZJpw7KE/XZG3+6/PkPn26g2kz511VtG4MDUVJiLoGTGu8GMKbK4ezQZjM3zbKC1@vger.kernel.org, AJvYcCXmCtcZR9JEL1V7jRXPjr9Hotnw7yBVRj+jKYjK0+eYU03bDzNewxj7slTOOUu2GOwKDLHgFuSW1CHE@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNKIJNK68y1hSiruErqjxLMdl65sjYHp306vCKCS4/81NvzWE1
+	1Y8OKICFy8AeNjYM4Ax3ygrtaanQYFuTpHD52zp/f5RENv0vfdncefgz
+X-Gm-Gg: ASbGncvCxCWIPbRMmgTGKkdLZ1L6LrguFVl9wQR5YkFz0SKZiQKlVmgeWAuIKiuvAJP
+	Dis2LvgsoD1cnNy4Mb3LZIWv6vNH4Db0VmbT2kHTeG86Ji/039XzmjqB7vmiNopZwIwmb6oTydd
+	jEL7XpXdA6USYnOHZAp9SsmpdzSCmmCD/G3mMLAfGB1iQ29vBqbS8/L589A99l+GCpwRGsexpRA
+	oplVDJcbqWlDidhLrx1fFOH1T0x8D6BvCEiQj0BjB8a96SfjpdYxPfOo9qWbInK2dw4j0EC+s80
+	NAKEsOBIa/4M/nH4Xr4tgLBJcuEKMpV6A/sgvgvd/Q9tju0aC/gFOBTL6oa6gzoMEfWW7o9KFpj
+	YknI+KMucrVuldw==
+X-Google-Smtp-Source: AGHT+IGdoM8nFDuaCsN//itvQR4DcfYOTg4viMn0MCLDJ9tOT8DXHl3CreL1W3WiJ/o4L5cjBiOFOw==
+X-Received: by 2002:a05:600c:3147:b0:459:d408:d890 with SMTP id 5b1f17b1804b1-45b517db8e6mr107941905e9.33.1756112852397;
+        Mon, 25 Aug 2025 02:07:32 -0700 (PDT)
+Received: from nsa ([161.230.67.253])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b57498d9csm99679345e9.22.2025.08.25.02.07.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Aug 2025 02:07:32 -0700 (PDT)
+Date: Mon, 25 Aug 2025 10:07:52 +0100
+From: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Guenter Roeck <linux@roeck-us.net>, nuno.sa@analog.com, 
+	linux-hwmon@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Lee Jones <lee@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH 0/6] mfd: Add support for the LTC4283 Hot Swap Controller
+Message-ID: <jhtvuwdako2r3pgj6lwxlgb6godnleqezh6kdiswn2mqslqy7w@6p6ixj3hrckq>
+References: <20250814-ltc4283-support-v1-0-88b2cef773f2@analog.com>
+ <5713bb5b-3301-46bc-b30a-d2e4c58d1036@roeck-us.net>
+ <2svr42ee7akwxwj5nizwe4a4hqdk4rslv7ivxraqg3jy6m3mxz@lfpn2nx4jdmm>
+ <20250820200354.GA602656-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <647f1b1db985aec8ec1163bf97688563ae6f9609.1755854833.git.christophe.leroy@csgroup.eu>
-X-Proofpoint-GUID: mUolfay-w1WXToAdGEjUbL3FPWWo1ug9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDIzMiBTYWx0ZWRfX8G3CF8JrmY3U
- BGgHltBwz3ExKiF7DjIdHKqJVml6dwPnDSIeKEc3k+1nbVINQyRJb932oCgW0jxo7xUZuvURGrb
- 0lybQtEVPgVxAbInIze5gfIj2JwT3kZnBngcdOQ1rNrpkmK6XO+qOvi/3NYDqqlaI7ClQamdSoH
- vwbsnvjm2+kk4adUbYXXsz1ZxzAyoPEue6z9kJn/NUNd9sTJZPnYn6++gtQEWTZHxIgI1Mezejn
- IX5Dw/Tgz3Ak0bsTmPj43e2B8M+5UfPLHEl4VUTBjV1p6IqneumXH1JSTpP1qECQ20vWmgERkrt
- 8sybnJI0U6q1FctZz3KfFVtLiKnzgBH2N40FoGH06e4A3x8tQFeAwpXa6Brm/2LjZCyy8v8dW0A
- gnkNeD2S
-X-Proofpoint-ORIG-GUID: mUolfay-w1WXToAdGEjUbL3FPWWo1ug9
-X-Authority-Analysis: v=2.4 cv=fJQ53Yae c=1 sm=1 tr=0 ts=68ac2736 cx=c_pps
- a=N+btqqeLiyZkBSWNmht35Q==:117 a=N+btqqeLiyZkBSWNmht35Q==:17
- a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=XLq9KcJuiYQVQIFsEiUA:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-25_04,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=salida_notspam policy=salida score=0
- spamscore=0 phishscore=0 bulkscore=0 impostorscore=0 adultscore=0
- malwarescore=0 suspectscore=0 priorityscore=1501 clxscore=1011
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230232
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250820200354.GA602656-robh@kernel.org>
 
-
-Hi Christophe,
-
-On Fri, Aug 22, 2025 at 11:58:06AM +0200, Christophe Leroy wrote:
-> Masked user access avoids the address/size verification by access_ok().
-> Allthough its main purpose is to skip the speculation in the
-> verification of user address and size hence avoid the need of spec
-> mitigation, it also has the advantage of reducing the amount of
-> instructions required so it even benefits to platforms that don't
-> need speculation mitigation, especially when the size of the copy is
-> not know at build time.
+On Wed, Aug 20, 2025 at 03:03:54PM -0500, Rob Herring wrote:
+> On Thu, Aug 14, 2025 at 03:15:29PM +0100, Nuno Sá wrote:
+> > On Thu, Aug 14, 2025 at 05:54:26AM -0700, Guenter Roeck wrote:
+> > > On 8/14/25 03:52, Nuno Sá via B4 Relay wrote:
+> > > > The LTC4283 device features programmable current limit with foldback and
+> > > > independently adjustable inrush current to optimize the MOSFET safe
+> > > > operating area (SOA). The SOA timer limits MOSFET temperature rise for
+> > > > reliable protection against overstresses.
+> > > > 
+> > > > An I2C interface and onboard ADC allow monitoring of board current, voltage,
+> > > > power, energy, and fault status.
+> > > > 
+> > > > It also features 8 pins that can be configured as GPIO devices. But since
+> > > > the main usage for this device is monitoring, the GPIO part is optional
+> > > > while the HWMON is being made as required.
+> > > > 
+> > > > Also to note that the device has some similarities with the already
+> > > > supported ltc4282 hwmon driver but it is different enough to be in it's own
+> > > > driver (apart from being added as MFD). The register map is also fairly
+> > > > different.
+> > > > 
+> > > > Last time (for the ltc4282) I tried to add the gpio bits directly in the
+> > > > hwmon driver but Guenter did not really liked it and so this time I'm doing
+> > > > it as MFD.
+> > > > 
+> > > Nowadays I suggest that people use auxiliary drivers in such situations.
+> > 
+> > I see. But do you have any issue with it being MFD?
 > 
-> So implement masked user access on powerpc. The only requirement is
-> to have memory gap that faults between the top user space and the
-> real start of kernel area.
+> I do...
 > 
-> On 64 bits platforms the address space is divided that way:
+> > I'm anyways tempted to the auxiliary device idea. The main usage for
+> > this device is HWMON and I dunno anyone would use it only as a GPIO
+> > controller. With the auxiliary device we would only need one bindings file
+> > and slightly better bindings for the pins functionality.
 > 
-> 	0xffffffffffffffff	+------------------+
-> 				|                  |
-> 				|   kernel space   |
->  		 		|                  |
-> 	0xc000000000000000	+------------------+  <== PAGE_OFFSET
-> 				|//////////////////|
-> 				|//////////////////|
-> 	0x8000000000000000	|//////////////////|
-> 				|//////////////////|
-> 				|//////////////////|
-> 	0x0010000000000000	+------------------+  <== TASK_SIZE_MAX
-> 				|                  |
-> 				|    user space    |
-> 				|                  |
-> 	0x0000000000000000	+------------------+
-> 
-> Kernel is always above 0x8000000000000000 and user always
-> below, with a gap in-between. It leads to a 4 instructions sequence:
-> 
->   80:	7c 69 1b 78 	mr      r9,r3
->   84:	7c 63 fe 76 	sradi   r3,r3,63
->   88:	7d 29 18 78 	andc    r9,r9,r3
->   8c:	79 23 00 4c 	rldimi  r3,r9,0,1
-> 
-> This sequence leaves r3 unmodified when it is below 0x8000000000000000
-> and clamps it to 0x8000000000000000 if it is above.
+> For this reason. The driver structure influencing the binding design is 
+> a problem, but I think MFD is more to blame on that.
 > 
 
-This comment looks wrong: the second instruction converts r3 to a
-replicated sign bit of the address ((addr>0)?0:-1) if treating the
-address as signed. After that the code only modifies the MSB of r3. So I
-don't see how r3 could be unchanged from the original value...
+Alright, it seems we're aligning for auxiliary device on v2.
 
-OTOH, I believe the following 3 instructions sequence would work,
-input address (a) in r3, scratch value (tmp) in r9, both intptr_t:
-
-	sradi r9,r3,63	; tmp = (a >= 0) ? 0L : -1L;
-	andc r3,r3,r9   ; a = a & ~tmp; (equivalently a = (a >= 0) ? a : 0)
-	rldimi r3,r9,0,1 ; copy MSB of tmp to MSB of a 
-
-But maybe I goofed...
-
-Gabriel
-
- 
- 
-
+- Nuno Sá
+> Rob
 
