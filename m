@@ -1,174 +1,128 @@
-Return-Path: <linux-kernel+bounces-785272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C6EEB3486C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:15:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69388B3486D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:15:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 769142A69AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:15:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEEA2188DFB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:15:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC16830276D;
-	Mon, 25 Aug 2025 17:12:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E5330AAC1;
+	Mon, 25 Aug 2025 17:13:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VyAv9TZI"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b="CuEm3kAe"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C75D30276C;
-	Mon, 25 Aug 2025 17:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE472302CBD
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 17:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756141979; cv=none; b=NIpIpcQnde6hAOkr2NybvKUpfHtz2vgiXRkA2LLRwkALuHWiVOhzDB1XGskx1ewksbeh9ftx2lQM6c6xj6B2omcXVsy3JutpEf1BmUa7CD18NtG8WgNaF0a45Lv76us3hbntT8l1GRZUuFYwbfSEXXrfP7nggMFMU8cB2E+ELRY=
+	t=1756141983; cv=none; b=eVWJ3ReJFk+QN7jsR5/bUU4VZLZS6ZZpffuUN8QNnRkYpJdlbWu6NOwzfr2yPguFYaakWB4nSMyzC03pGlX0Z620AF53OmOcmm44y7IFRpvNS2/i1Du9vvtDy6631CyAiq7wNdfkeQDb+LRshsY9gaSVVQhdCZI0e5iNK48OdXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756141979; c=relaxed/simple;
-	bh=xZHNKVKLd3t4a2y2+8LpNAaPdABTjrvspV304excENw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QBGBVfwbUZYop2iklC+5fO3GsDLKeIkmXaRv7J3nDiZlvmD7OpAFFJX37tr72Ub0IvVQk5SFynnlFxV+zJnAF6XZitENbOjFxXXdaQ8S8AaYF6UPsh9lSJcZkorAEMqAlbLmtLZNAUjnxSHPOXeNEoqoAH+rj4UvRsw6tmIXi8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VyAv9TZI; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e96c5eb69b0so1157504276.3;
-        Mon, 25 Aug 2025 10:12:57 -0700 (PDT)
+	s=arc-20240116; t=1756141983; c=relaxed/simple;
+	bh=hanUCkPuMxovxHm2S6pFpv9hGnC1yWqateRLvQpTuKQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=jv3Ef8BXRH/Gj9Uh0HxT5SY5N1Boirul5AbQ5D4JdwteYAl8TqLfzDkGrjDp8cFzqHqL1NXIhamc3syNMgp6cq9f7pIIKPEl8HFbONb6Hd94PWGRTEDJU1hEmpK/3aSUWSATr37p7MDQUhRT/NmEZB5e0eJt5eFkBon4yN34WA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com; spf=pass smtp.mailfrom=brighamcampbell.com; dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b=CuEm3kAe; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brighamcampbell.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7704f3c46ceso1434226b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 10:13:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756141976; x=1756746776; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=brighamcampbell.com; s=google; t=1756141980; x=1756746780; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OI8ePd7/wKrk/VZQzSRc6TFVQyV9wSort1fWHyPMQ3o=;
-        b=VyAv9TZIO6Y2A/VfuUUNnShSNyLTn+GsA0YMGWKgPfeSux6tX2QvwtGzG/VQQJO8cY
-         hZROnofhyquVMjp+ZorCRuhE6o5lvfxyrKy93XhR+HOxbFzwGvUAXwMJis6cbH0JPOTq
-         ga2qyG+AjbKbA5XiOCRR3fH92GQWNqYaJzYzqu4kWVBThqJ+9vrp9tN0TsIdkSTi2Osv
-         TAb6ZWIrzsdB+lmabZSe+SJKugw+dzGdaH52HUjTVgR3L1YyE3zuWC431eBMZIuIH6E8
-         bmdZhyCYQ7pvYxJ+JzqNOi48W8fqzJ6scZkjjRBz1rlhYQvjP4fWdMQBAfr4jjNp2DSG
-         Dqcw==
+        bh=5JIy/ikd0BLnHtzJtlevyIk9/jwbmefHUhOitr8lfoE=;
+        b=CuEm3kAeom/Zc0mPKPE5sPi4WEYbclhvnbZvHDH+zm2b2sJM+x2BrD4lE6MLhWqY8b
+         H1m9poQ2b922Mhu9LxZS1IoG56V/sS6vRQzRh88CysKeBuxI9s6acTqHMPZNKeoiqudJ
+         1wc7Q9NYtusFP0mjZ2yHkIwQZ8Nwmn4LMU9QLGzHPaSwubTmfSjqoMOfESJtZh4pv+kN
+         O5cwE273GY4NTUHLAi0ykEQF5LQP9CUC/l45dXQTlSVtu84vTCO/2XRfuQvcaA+pQJDT
+         RXeZZsi7oc/aJgZw8nIzQ6HuCCexiEqhFOaqJygx3Qi/V4c+DlIeDLdwRhcG5UTjQN7+
+         +MTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756141976; x=1756746776;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OI8ePd7/wKrk/VZQzSRc6TFVQyV9wSort1fWHyPMQ3o=;
-        b=t3cWGdUi/kulNQ0Cb7L7MhHzuW8xIuD5e8WM60KVGDlgQvmenQES2sBKvIYnTnZCCY
-         y+7FyfFIPHJ9La9fuiROo+u710S5osDFlv+BxHZzSQmSKilttDqFFu7dn/P8FeM1Ehrq
-         0bEqNa5bZ7x3vjtcabWtuKi+E/hf5PH3vPbrko0ufElsZ7LXL7A9R2L/bkU9pA7z0Fmx
-         BJGp79YjlLjFTr54Clef4xNfAZ3Xl1Wr+R9ZYcFgKCMzmJj/DTTJOPOQbAze9qA9fZKR
-         Vbog8mbuasZiiPqK6C0b3AvsJfQxIisN/Klf6GxPm6ZuBXq2//6m/sju2Wtcx5CIQZGs
-         U54Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWXWQDlW5UNNk8llT2dTZrXkyzDh2nIrYvkkt62+o3k7lBBD0TaTOraE+oxKj72ONaC+Doxdaxt2PZnsZ0=@vger.kernel.org, AJvYcCWopabXM4k9RmEPat0yoDoDNN+2gkqg3GxFdfYXqpHcFaZkS7MNoKX23jIzxExiL8989YGTPSxV@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbdBl+Go9P0EjQIKWUlhUXQW+F0rZIYEwVJFx35Pi3Fw/o71oA
-	REXZNq5viL602VA6gAESGffDStdvQX7SH1cqjVLqySYhwhn/cCMOd/RQ
-X-Gm-Gg: ASbGncs9Kzjozu4vfgLO23PZnOTP6atfDtKZu3iOMNgnCI8lKyoBimyluFIcRdzuMAM
-	Q7kpHlVMMxSFhSK08NImfkZDEhU43XYOvG57vNTLKMM/5WK3cJfBLdzLnlN9FkpzZ0DrLfO1X3W
-	vms2VG2sUPWi2sjv8jw87ics7dBqtZgMvEj6havOqIdNwMNHQAU0JD3gTdqPP91JAeb5Rq9pyVE
-	EnXx3wDu7ekWfFJ7DClH5p1HWunWWZccBwC9PCTnexdeooYX6plQsavwXQNHjVLwk5l7m2TNsW9
-	xfh4KoZUpcEGyZzaZReTjKtzoNKBWUsvV0jfUPqhXmkvxCQA7VM3dENsslORe90JGaZs9Xop79H
-	3Ra4SYtef0sRMJVxofkQOr7XrUNTJwNOeaBXkU87GtN9TfH92os/06w==
-X-Google-Smtp-Source: AGHT+IEyMx/+POVFy3nvyaoGhbSSuohPwjNy61C/fbbRZEpp90mhH3T3/7m4UbJraYSe8qunKF0+Og==
-X-Received: by 2002:a05:690c:60c5:b0:71c:3fde:31b6 with SMTP id 00721157ae682-71fdc3d153cmr127223487b3.34.1756141975952;
-        Mon, 25 Aug 2025 10:12:55 -0700 (PDT)
-Received: from localhost ([2a03:2880:25ff:48::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-71ffd8ef450sm14755897b3.71.2025.08.25.10.12.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 10:12:55 -0700 (PDT)
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-To: Kuan-Wei Chiu <visitorckw@gmail.com>
-Cc: vbabka@suse.cz,
-	akpm@linux-foundation.org,
-	cl@gentwo.org,
-	rientjes@google.com,
-	roman.gushchin@linux.dev,
-	harry.yoo@oracle.com,
-	glittao@gmail.com,
-	jserv@ccns.ncku.edu.tw,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] mm/slub: Fix cmp_loc_by_count() to return 0 when counts are equal
-Date: Mon, 25 Aug 2025 10:12:52 -0700
-Message-ID: <20250825171254.701321-1-joshua.hahnjy@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <aKyM4jZqy8/G2DGq@visitorckw-System-Product-Name>
-References: 
+        d=1e100.net; s=20230601; t=1756141980; x=1756746780;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=5JIy/ikd0BLnHtzJtlevyIk9/jwbmefHUhOitr8lfoE=;
+        b=b4JFCIxwDbonXqNlXKzg/V6Y019jfPDQDJsUB3Qx9bSeGUc86gYjlkOQ0TCQOihnuA
+         PiRipsnQqnuiXQeVqrBiNdK8AbAf1IQd5tkxl3ZbouTszfke58dkMGyZnq/o61es3MCN
+         gIvvrn2t1hFjRfZ5Uj+WX7VWhK/fU99snKqMaGEJSAIA3TpPKnGvvIwMBHzcSNd7Pqug
+         qRUZZMi5MI+OsL3xHD1CdoQsYoUIQkTbno8GMUh2a9Svz4I1MKyPrBGZmM4r7ftBad2i
+         gEZcI++viipLlcpAX6mO8z2hdDvLVhqT9fq+wrOnts7w+TPA/o5dZ90grdIvZUXp/2Hr
+         au5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWrUxqRjtL9h+eNgxncyJCH+gqJHArVLVS+7Bxu1BfqE4P2GZ7G9NSzcmNdmPO7NT0ceYFQZAqm4a3rk+Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoqPASxOcLbI1/fXp2LEZYnMsdJatgydxi+6U4QMpuuKGkYOY6
+	wKYLpalviYzQrwWD26/yc1A2Hhrbyvee+56Whix4ETCnbqgvQb8Ki6gCR7wseGMnIfg=
+X-Gm-Gg: ASbGncvHsEDiNRERUF2YgVt+RrDxKMBSAnkmGD251MGJPwWuDss6mz9IM5DZfswiW+y
+	plZFiofzR8u+D0uxQtsMQsCAs3E3Lt/0kTH+I/aOt45Bch/IeXztsMl0mRFVnfOu/vil2mkam+v
+	l30JocH8av/wfQAKU3EuqrX+Wt2JSU6jGKTkQrsmnW2Kn3cvv4cwZgcmmhmKzZqk26edJm78JGd
+	shwWLel19WbzFidMni0gO1cW5yGpoGEMO5q4Q6XOSXRqk9K07aESYx3JrBNMLV1PyUnqyKpaESj
+	ar0iNt3M5yk697qQDT61sOvBicUViPS6NMDyBYeeSJF0zS3ji5Yv1sVqg4MnUMY6Pck4y7vpI1t
+	v+kmPsZfN8iWY/JYJsLw=
+X-Google-Smtp-Source: AGHT+IGeInbCP5zEJV/VOWe6y9YTaEHSH8v+IWrNO4j77bL4LJuoltCMmSx3sMyg2xrRhCTkabtopA==
+X-Received: by 2002:a05:6a20:a110:b0:240:763:797e with SMTP id adf61e73a8af0-24340b8a6a0mr18926571637.25.1756141980050;
+        Mon, 25 Aug 2025 10:13:00 -0700 (PDT)
+Received: from localhost ([64.71.154.6])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-324f3c94c05sm5317223a91.3.2025.08.25.10.12.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Aug 2025 10:12:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 25 Aug 2025 11:12:57 -0600
+Message-Id: <DCBODJ411OLN.1IGN033564525@brighamcampbell.com>
+From: "Brigham Campbell" <me@brighamcampbell.com>
+To: "Dan Carpenter" <dan.carpenter@linaro.org>
+Cc: "Neil Armstrong" <neil.armstrong@linaro.org>, "Jessica Zhang"
+ <jessica.zhang@oss.qualcomm.com>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Douglas Anderson"
+ <dianders@chromium.org>, "Diogo Ivo" <diogo.ivo@tecnico.ulisboa.pt>,
+ <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+ <kernel-janitors@vger.kernel.org>, "dri-devel"
+ <dri-devel-bounces@lists.freedesktop.org>
+Subject: Re: [PATCH next] drm/panel: jdi-lpm102a188a: Fix error code in
+ jdi_panel_prepare()
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <aKcRfq8xBrFmhqmO@stanley.mountain>
+ <DCAVWVJ990VS.255346CDNF1GK@brighamcampbell.com>
+ <aKv5tkJghj6DZQIB@stanley.mountain>
+In-Reply-To: <aKv5tkJghj6DZQIB@stanley.mountain>
 
-On Tue, 26 Aug 2025 00:18:42 +0800 Kuan-Wei Chiu <visitorckw@gmail.com> wrote:
+On Sun Aug 24, 2025 at 11:50 PM MDT, Dan Carpenter wrote:
+> On Sun, Aug 24, 2025 at 12:54:41PM -0600, Brigham Campbell wrote:
+>> Good catch, Dan! Thank you for the patch. I'll try to be mindful of this
+>> kind of logic error in the future. Please let me know if you have other
+>> suggestions.
+>
+> Heh.  This is just static checker stuff.  https://github.com/error27/smat=
+ch
+> Humans are expected to have mechanical attention to detail at the
+> same level as a computer.  I just try to write the commit message out to
+> prove that I've looked at the code as well.
 
-> Hi Joshua,
-> 
-> On Mon, Aug 25, 2025 at 07:48:36AM -0700, Joshua Hahn wrote:
-> > On Mon, 25 Aug 2025 09:34:18 +0800 Kuan-Wei Chiu <visitorckw@gmail.com> wrote:
-> > 
-> > > The comparison function cmp_loc_by_count() used for sorting stack trace
-> > > locations in debugfs currently returns -1 if a->count > b->count and 1
-> > > otherwise. This breaks the antisymmetry property required by sort(),
-> > > because when two counts are equal, both cmp(a, b) and cmp(b, a) return
-> > > 1.
-> > > 
-> > > This can lead to undefined or incorrect ordering results. Fix it by
-> > > explicitly returning 0 when the counts are equal, ensuring that the
-> > > comparison function follows the expected mathematical properties.
-> > > 
-> > > Fixes: 553c0369b3e1 ("mm/slub: sort debugfs output by frequency of stack traces")
-> > > Cc: stable@vger.kernel.org
-> > > Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-> > > ---
-> > >  mm/slub.c | 3 ++-
-> > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/mm/slub.c b/mm/slub.c
-> > > index 30003763d224..c91b3744adbc 100644
-> > > --- a/mm/slub.c
-> > > +++ b/mm/slub.c
-> > > @@ -7718,8 +7718,9 @@ static int cmp_loc_by_count(const void *a, const void *b, const void *data)
-> > >  
-> > >  	if (loc1->count > loc2->count)
-> > >  		return -1;
-> > > -	else
-> > > +	if (loc1->count < loc2->count)
-> > >  		return 1;
-> > > +	return 0;
-> > >  }
-> > 
-> > Hello Kuan-Wei,
-> > 
-> > This is a great catch! I was thinking that in addition to separating out the
-> > == case, we can also simplify the behavior by just opting to use the
-> > cmp_int macro, which is defined in the <linux/sort.h> header, which is
-> > already included in mm/slub.c. For the description, we have:
-> > 
-> >  * Return: 1 if the left argument is greater than the right one; 0 if the
-> >  * arguments are equal; -1 if the left argument is less than the right one.
-> > 
-> > So in this case, we can replace the entire code block above with:
-> > 
-> > return cmp_int(loc2->count, loc1->count);
-> > 
-> > or
-> > 
-> > return -1 * cmp_int(loc1->count, loc2->count);
-> > 
-> > if you prefer to keep the position of loc1 and loc2. I guess we do lose
-> > some interpretability of what -1 and 1 would refer to here, but I think
-> > a comment should be able to take care of that.
-> > 
-> > Please let me know what you think. I hope you have a great day!
-> > Joshua
-> 
-> Thanks for the suggestion!
-> If we're going with the cmp_int() macro, I personally prefer
-> return cmp_int(loc2->count, loc1->count);
+Good to know! I'll consider integrating smatch and other static checking
+into my preflight checks.
 
-Makes sense with me, please feel free to add my reviewed-by tag as well!
-Have a great day!
-Joshua
+By the way, I'm interested in contributing more to drm as a hobbyist.
+I've been working on todo items in drm documentation and I plan to
+continue doing that. If there's anything you'd like help with or you
+know of any work to be done which I may not find in the todo list,
+please let me know. I can be contacted here on the public mailing lists,
+via direct email, or via #dri-devel on OFTC (my nick is xeyler).
 
-Reviewed-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+Cheers,
+Brigham
 
