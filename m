@@ -1,251 +1,347 @@
-Return-Path: <linux-kernel+bounces-783972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2571DB334DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 05:56:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D68F9B334D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 05:56:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D9977AAAC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 03:54:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76EE91B2193C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 03:56:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA8B0242D94;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC23F2405FD;
 	Mon, 25 Aug 2025 03:56:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="P5P78QuH"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2086.outbound.protection.outlook.com [40.107.237.86])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gkL8rlWw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1362A28E7;
-	Mon, 25 Aug 2025 03:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756094179; cv=fail; b=gqSuU0A0edMpFiFpSQoRs01gh58uHofjtVGUDULK5OQSSwckyOPp8vqfwupmhOusv5IIJ5MnoWTKtrAGO2cAcTV+W9QD/MVNWzyuUeVfluJz1yHf3o7upSxYBlPc40DINGjbU4Dojcy11WS17z/4muSkwKHmXFhgFDwb/DUi18I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC04E1FE45D
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 03:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756094179; cv=none; b=r4TFceC8BmvFspTcUdccftIU5jYvJYuawGoc0UoBq5wUPvInvHvxV+0mFHgSOVKkxfqeGLWQew73vukupeAvz8ZiOhgCgKV9GrvE4DJUdMEn+lom7KfPRfHUHFxe0/bzQUe/t9/ttV9kNT0Tq0fRLfnqyO9C137EJhqiW0898hk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756094179; c=relaxed/simple;
-	bh=GUtZPYDMMFcSiKatghB9vqXXijjSvs494UmM7jemV5c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HzY9ZQZITKPAK9XbLNecVz62JXYhX1PPcZY5wJ+zkDLq7+DBrsTdtzXpm3iQ6O6ZmoexOjqCPhXunlW52EvJU1L7iwe9Lx8xeqrdp7aEI3GYq1yXlbCKHsnjnJlr9YzD6nWC3W4ku6MBiF7p5iFqYv0I5aYe1889nM6rC2nzfDU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=P5P78QuH; arc=fail smtp.client-ip=40.107.237.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vDmLpi1IFKnAKfiqKRItJUTw6uLdNhkeHMT/4jUSAaesHwxU9YOLwzRZxg5ucFrNuGAL6c7Uec6jUq3FmfS137XK4vmQMmOc9BLV7XMyUPULoQYBe4+sKECtZibnw3NWe5ICjVUmQg0kplBb2oklgS+jIV6X+GNhCm/9yPn+RP2a7Xtxq480aMuaIus3NZwxNgoL/wZt5ZNcnZYv03auKouzOi4iQ+m3T/IkFqdk/CGWvrvqx9eB5lnosZaRP2tfpBjvPeKLTqzzi9IaNUBnopUwdOWP3OfMxhOsdSF3ajpl9jOjD2wjNzCZkWJNSp73rBNTYBNdnkfORWvWnWP9Mg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ixbLX894lFp9hdv5FsRAUKa5zVSkRKWKwwvNNeDXdl0=;
- b=V9LW1Ct6sf3ASSMxib2l/QQbRSK/OHdD06l4lEIO2D34y7QAj2EJCjjdFD99GcIEW63W1yDKAQkX5vKBKUvfUCmd8Zcm6BMB2UbFzpfV4aw4SYHPoHtC43qe+mc2CAQgyfl0HLdVv7+K5ix6P8zZLVT00BPL5Kl3nUK0Ts0kN/OnU062MAXA00dEZEU28feNKzOB7TrQ8fj/tslXQOG7rrrZ8HnEz5ClHPZjmIGG6livwmzXRM89czaiH9a4zmH7iyQXGUDw7yhSe6wwWxWKeFywMiagl6x5BfuYzT9tuaHXNBg2HGOTZGjHUrzewQXiwnksPRIz9Iceqq4DTugzqA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ixbLX894lFp9hdv5FsRAUKa5zVSkRKWKwwvNNeDXdl0=;
- b=P5P78QuHbrmSD5xiGizQcnwEnDl32v9lc0qE3GmNXKujeopoqRw1K6C3gbs4KzawoIZ7es8rnce9+Q9yh3wScxmzQVBI0HisRrgM3Yjo+7V+pRCMisHejxcxd3cXLpAetGV6P91s2RfltMjoaoiKXQvBWXpfcyC/EnA/umbdir+8Lv6VSOkeb1s5TOux5KcTgRPSlLBevNtDHagwzHSFfsSt+GZU/Hxfh+Im0akI9jU9JYLAS4yehplrcdo+76w19BR7Ta75aa+drOdyNLS+wBw09Cl3NPnRew14O7VmnQYsFu9F+OBxTukd/BX8gleKWCys/lOYl7Xp+v5sn0jgpA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM4PR12MB6494.namprd12.prod.outlook.com (2603:10b6:8:ba::19) by
- CY1PR12MB9560.namprd12.prod.outlook.com (2603:10b6:930:fd::16) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9052.20; Mon, 25 Aug 2025 03:56:12 +0000
-Received: from DM4PR12MB6494.namprd12.prod.outlook.com
- ([fe80::346b:2daf:d648:2e11]) by DM4PR12MB6494.namprd12.prod.outlook.com
- ([fe80::346b:2daf:d648:2e11%6]) with mapi id 15.20.9052.019; Mon, 25 Aug 2025
- 03:56:12 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-pm@vger.kernel.org
-Subject: Re: [PATCH v1 1/3] drivers: cpufreq: add Tegra 4 support
-Date: Mon, 25 Aug 2025 12:56:02 +0900
-Message-ID: <2395520.irdbgypaU6@senjougahara>
-In-Reply-To:
- <CAPVz0n0zuvXxT=G18ujhV26nbvuCKtyXNC3cxenxGuj8wHWZ8w@mail.gmail.com>
-References:
- <20250321095556.91425-1-clamor95@gmail.com> <1914341.atdPhlSkOF@senjougahara>
- <CAPVz0n0zuvXxT=G18ujhV26nbvuCKtyXNC3cxenxGuj8wHWZ8w@mail.gmail.com>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TYCP301CA0088.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:405:7b::16) To DM4PR12MB6494.namprd12.prod.outlook.com
- (2603:10b6:8:ba::19)
+	bh=dlP9gLi1p2qkfUlTX7cxU3rEmiLAQ6WMx4vIvUaWAeI=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=IXY1rX7Zp/Whq2TfhzuzxHkhDorlqNGm+Xh609kRiMPcV95Zfe51zQzeCdb4NPpWj8g4UG2GCDsU9/K/9G7Y9NerhqV+NTlWGOc6sh6eWkhJBYYBGFQW3cWjFA8ZtfKZKq3pD4NuVeSHE3om9LrH6fdmdcmvS0UZOEiA2xgKkoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gkL8rlWw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33B34C4CEF4;
+	Mon, 25 Aug 2025 03:56:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756094178;
+	bh=dlP9gLi1p2qkfUlTX7cxU3rEmiLAQ6WMx4vIvUaWAeI=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=gkL8rlWwqqUvtCb00ebB0F1SzJpgerZpkIyNAoYB1j+PHbEW7x/ltxzJbS2ZgHo5q
+	 CyWdPecgOUFbv2f3oLF5OSBeBAkSVAc45CD/gHl9LBsnmD4wQicerge/W+F6vI2bt5
+	 3UKEppL0lxNQvCgIizFnnQ95N7jmVRbbxt6IHtH12juHNQZ66BkqEBS1/N+OUcAaBn
+	 qUo390NwSZhLTPSfcn2c3kly1RAA6FlwGOcNcb60425zI0SpKGZm/JNkB+vKeU4BMd
+	 rMtvByDle9uWpD77/FB49MBQ3JNcQfYWZ5nM+EBAgB95V5vDIbazKU9kOYfyE3CN4/
+	 UmqiOGXTNdWQQ==
+Message-ID: <f1a893f7-9784-43c1-a696-b09c31d922fb@kernel.org>
+Date: Mon, 25 Aug 2025 11:56:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6494:EE_|CY1PR12MB9560:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5924872a-47a3-4881-173e-08dde38b54fb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|10070799003|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QXpWbUl3enVxaVhCWHBFbWpvdEpNaEpINDFrWkhhOTRDYm96alp3STZsT0Vi?=
- =?utf-8?B?UGcwNXB6Zk95eHp6NFU5VEY5OWo0Q3RZTnR4VUJ6a1FldFM1VG9oR1B6SXp5?=
- =?utf-8?B?VldMMS9VL3hraEtCMXZTZkhvOUFob1pYMFlTTjlSUkNhODZMUXZJaDV5cUcz?=
- =?utf-8?B?OWJmVVJzRndSMi9HbVdpdWd2V3VOVVVieEEybHl0UjdJcU1zTFd5SU1qMEVI?=
- =?utf-8?B?eVdtRjVObHdMK1k3UWNhU3VKN084cXl0RUtGbXY1SXc4VUt4VExWVS9MODR5?=
- =?utf-8?B?VFZzMjVQVnFwb2MraEVKL2U1VXZGVzR4SjZDUWhiUjc3bWtPayswam5xSXE5?=
- =?utf-8?B?aEhSbUNQejZmTUlxYS9IeGp2N2FUcjAzU2hhNlJEYWYyRlU1OTk4WGZPaGhC?=
- =?utf-8?B?Wk5aVk1hcFBENzNOdFc2aEdCSFEzUFhIanNwQXpoY0NydDZMTlM2MjNUc2dn?=
- =?utf-8?B?ZnhtYUFzQldGdTBXTGhVSlpJNlc0UkZocTBwbHE2NHdHT3ptTWhkVXVVS2Yr?=
- =?utf-8?B?cXR4MjU4cmcvYXRsUGg5ZlFKZlpVMmhXck44ZzR3b29HWTZYejUxUTZZU3Nh?=
- =?utf-8?B?TFFmRmtsNC91UGNieUpsMnB5N043b0JlNmdHd3dxT1Fvc0NvWlBrOVhtbTE1?=
- =?utf-8?B?OCtqQzg5NjFub3g0dHlXVXI1MXo0c1M1ajgva3luN3luRmhpN3hZdmp4Nyt2?=
- =?utf-8?B?b1RwUktrN053elE5WDg2Vm80NXR1WFNJaVBwL1lXaW1tcVFoVGR1QUJqakZn?=
- =?utf-8?B?RmxyRmIvamJ6Nm96Vm9vMGxFR2wwSW90V0w3MXRJbVhYdFhsVXQ5STB6QURR?=
- =?utf-8?B?SEVJbDdWTUp3QU1pVWRaTzR5KysrbEdwdHdRbUM2RHRINHVFMGtLZTR6K3pZ?=
- =?utf-8?B?bU92dFplRHJJYXplOFoybTVLeUpOemlsMzZOc0thOEIrdUNwUVVxVXkrMnRs?=
- =?utf-8?B?VGdnNVhnOVBIUHNRZXp6QzY3azE3bGdhVkJQYm5kNmVqK3dvQ2JOOGVPV2ZO?=
- =?utf-8?B?c3JoRVBXeUNsMlZLZW9ZWnNzU3lnRXpVRHNzMU9aeXVOVGIxdmE2Q0U5RHVF?=
- =?utf-8?B?MURMZDIxdElibG84czJRbldva004SmNzbjFjd2Nzc2ZkaTY0a0VzdGxLTnB6?=
- =?utf-8?B?LzI2UzhVQkZQVTlzd1JXWnVac3FiMWxhSmp1a1hPRERJMTJLVHZPYmZsZUxX?=
- =?utf-8?B?TENwNDdtanZraWUxbmZpUTRDOUlNTlp5dnVPZGlNVzdVL25pUXgya2RqMDRX?=
- =?utf-8?B?b1kxNERvY0V6a2tYWGt0NkxETmVVL204NzQveGdoRzUxQXpBcys2OVJjd3Uy?=
- =?utf-8?B?MkhDQXpSOU1wTCtYYkdXem8xSUVBVmd2TW91My9KaWlVY3ZpWW1uRjJEeml4?=
- =?utf-8?B?TzRsbUhQR09zTk5BdTlDVm5ic2VoRWVJd1U2NHNsT2VNWG5PWktaOUxLVWs4?=
- =?utf-8?B?dkFJck9XSWZLS3liVUxiOE1KUU9ra2dCdWk2ZkwyaGY5NmRRdVlSbzRrZGo1?=
- =?utf-8?B?M1U3bjAzSFc1am9JdlhReEY2Q1VUaDBGRDNvNjhHNzBLRVdVbSthYnRQR0pj?=
- =?utf-8?B?SnNIZStzZ05NVlJ1WU9JbzlyMmhreXlvSGM2SG9vdW93azVnOEU4NkVFWUYv?=
- =?utf-8?B?bWxuQXZGWUdFTWVTL1RyYUF2MUMzWllHYU1MUW05SXJuMTZqRjBJZXFUeFA0?=
- =?utf-8?B?TzJVY1lZUy9YSnY5bGxTNnVrRDZNVDVhTDdjdkJMU0Nuc255cjJMaDZxenJp?=
- =?utf-8?B?bDVXOVRRUTVScXVhdTY3eHUvcllLNnk2dk1vZWFMVmdCWkdEeWdCWExoQmRC?=
- =?utf-8?B?dGtjeCthMTBBOEs3eUYxYWx5V29WMGhzaGw1emdPMnJLVE8wcE5HYVRscWt0?=
- =?utf-8?B?dDVsWTVpSDQ4R0tsSk1RZ2xlOTQ3MDdORGVxWXI0UzdpampLakhJYk11Tkp4?=
- =?utf-8?Q?/BG6nF3XV3k=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6494.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(10070799003)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SjloLytEeXdBK2o3NmU3Z3BMc2tnSkRZcTBmRjM0VHVxTlRrcVN4bXVtbGdo?=
- =?utf-8?B?VllWS1BObUlRbkZqZWRVRDNBaUVSbVM0Q0RpYkNCdWkvQng1enJkVFNub1Zv?=
- =?utf-8?B?NGd2NHN6WnhnVGtpQzlMWndRNFRNT28vbVdiQWFxWDhHV1FseTE2VnFpc3Q2?=
- =?utf-8?B?clY5NklwYVZwVU9YUGp5M2M4aXRkT29xSDZSbFFJSlpPdWtPck1XT3RKRk42?=
- =?utf-8?B?TmNaQzZWUEltMW1MUXRJZURwL3JOOVRESnpLR3NXaXQ2Q2hQd1Zzd1FwcVEx?=
- =?utf-8?B?MFE2YUtjMWZhaDQzckxKZzRuZVJjU0g5eGo2TmFVUVhUV2N6Q0xHdEI4MDJr?=
- =?utf-8?B?dDJDNkxSa1M0VDJHWGFFa25Nd3J3SUR0Y0lDeG9pL2tDNVdOcTNyQlMxQVds?=
- =?utf-8?B?b2VOeHlDZzNFa0M4QUxMaTAzYkpBOHBZQ2w0T05hOXVXOUdsOHErQmVlb3FZ?=
- =?utf-8?B?d29wTUlyTUU3Ry9UNm01bEQzUlMwS2JwNHRGazdGY2szUEtqVVNSTU1yd1ha?=
- =?utf-8?B?aFVmQloxRGFjN3kvdFJkL0o1eVl6Zyt5YlkwTU00elE3a3R4R2pzMUI2cm9l?=
- =?utf-8?B?M1ZzcXFONzFzNElXUERxQ2FvcmFYa2FhbWZJVEZEOTN6aHBNQlZLYk4wY1c3?=
- =?utf-8?B?c3RzOVIzSzFKSTI1TmNLcVZSUE5iMGxrSVEzck9qZlRBTXk4Z3lRdEo0ZHQv?=
- =?utf-8?B?ZU1mNjRyTzMyajd3N0pPYW0vWGpqYVQxaUR6RHNTVXNaQVJRUFdab1JvQnBF?=
- =?utf-8?B?OHZOY2ZBb3JQWTBManA2SnFLWHBORXhNUHgwZXhFNEh2RTlRbE9BelBYUVVI?=
- =?utf-8?B?K0hLY0Z2bUNTTEt6OG12NEtqL29SaEg3Q1hqVWtxODJNK1h4cHdYR0REeHdM?=
- =?utf-8?B?Z3VnVzZsNGsxM0l0UmdvRTVMV2hWdVRYak4yV00yOHpLUU1CYytETnMxOXgv?=
- =?utf-8?B?WEs3MEVPT3ZlT1BnQ0FxYUhad2h4byt5SjMrVmpSMkR2WnFTMXV5ZGlPZGZh?=
- =?utf-8?B?aGhHL3dnTjVINGxpZndZd2w5ZWtBTHlUYU13aWRiaWdkNnFxejROVjhTTWJw?=
- =?utf-8?B?Q0t0eTBia2lvM3pQQ3d4RmVrL3FJaGE5TE5wRFV1WWZraEcyWHhreERDeWhO?=
- =?utf-8?B?a1pBdStnYSsrdkF0VzBsUUhUSzRYRmtSandxbGxHVW1hakh1MEZWd2ZiNzM2?=
- =?utf-8?B?ak1lY3JFYUFkclJrT3VLN3pFRnlxOE1ydlJlQzJPbTE1VzNwZE0rUTIzSnZh?=
- =?utf-8?B?QUlvVFpua1NhUzBGOE9QdTFWdlRCQktDek5rblJBKzg5bEc4cGhqOFBYWlho?=
- =?utf-8?B?YVk0TlNObDV0Q2xuRUVuVE9JVUFJaFJMeStFOEdhVWhhbUYva0t1OVFwVFp1?=
- =?utf-8?B?Q1VSZTJXSlloQ2ZZeGZabTJsSTllUnl5bGdYd2JhZU1XYldGUEczbGN6V3VQ?=
- =?utf-8?B?aGNqR0MvSnorSmkrdmE5dW1BYk9Ha1pRQk4xUjhHTElacm9ZYTNCYzBWOUJ1?=
- =?utf-8?B?dkh5N2t2NkdTNmdlNkVSalVrNkR3TERaUC9IWWlNQXZ2QVhxMi9XMUY5SFlQ?=
- =?utf-8?B?RUI0WGtmdnJjN2VmU0piQjdRWk5STmhPb3NJbGdaeVNTTTB6RjY5Mjh6dUJC?=
- =?utf-8?B?MFVRZUhPbnU4cUZkbHdSNnNwWHZCL2hmOG11YnVyZHBtSTZ1eXZtaTdsUE1y?=
- =?utf-8?B?bzZEZUlWRXUvSDRXZUI3WGhKNWpYb3ZzRTh6dEtBNXhFakFtTFYxSDhMN1Zp?=
- =?utf-8?B?VitrcHVhZTlKZzI2RG0za0M1bnYwNW9FUzlJc1lPOC9rUVpva1l2WGJmV2JV?=
- =?utf-8?B?VjZsMGpaNWlEK2U2T0Fud1dKWVpiUGVCUTZBaThxblQxSGc4Nk1mSURMY0xu?=
- =?utf-8?B?UytqRWFnVlZtNXdVSTF2ditqa0tERm5pQnlNUEVMVVZ1R2ZiWS9OaVdabUl2?=
- =?utf-8?B?OUlMSzhJWTdiRVptYXdJT0E0Tlk0bklBL2ZCS3JpKzdWMFpvRGZMdWoySkFT?=
- =?utf-8?B?TkZWaEM1bjlacklpM1RCejhLUno2NCtCaE9maVI5ZWkvRVFMd1NXc0dSV0Ew?=
- =?utf-8?B?dHZiZTNlaVNQczlXZXc4Tjc0ZldmQWRaRTNDREdJbCtSVlVxNVVLRzdlZktK?=
- =?utf-8?B?NlV1bzB5NDdHN2hXTnRMem53S1hsSVZxa2dlVlJSNUxWdEtLbkFuQzRaUEU1?=
- =?utf-8?B?SEl5dTZEa2tsbUp5TG1CTnlyOExsektaejFZZmY0WG13WmhqYm9sVnIxVE9Q?=
- =?utf-8?B?dlVOWGdIQ0hoV09odUdqN092TUFBPT0=?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5924872a-47a3-4881-173e-08dde38b54fb
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6494.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 03:56:12.4017
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tvncah+JXWqehO+5S3Qvu5wg7rz7gdX7LqXnZ6JCYnrqhGdI0vAZKibipYxZ7QJUod0wrGrZUEW9+U+Jw4qGuw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR12MB9560
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org
+Subject: Re: [PATCH v2] f2fs: Use allocate_section_policy to control write
+ priority in multi-devices setups
+To: Liao Yuanhong <liaoyuanhong@vivo.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+ "open list:F2FS FILE SYSTEM" <linux-f2fs-devel@lists.sourceforge.net>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20250820082142.388237-1-liaoyuanhong@vivo.com>
+ <8bda5b71-e7b9-47af-956b-22b95c957d56@kernel.org>
+ <f037ec6c-1290-4caa-a790-1d65d9f7c985@vivo.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <f037ec6c-1290-4caa-a790-1d65d9f7c985@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Friday, August 22, 2025 2:21=E2=80=AFPM Svyatoslav Ryhel wrote:
-> =D0=BF=D1=82, 22 =D1=81=D0=B5=D1=80=D0=BF. 2025=E2=80=AF=D1=80. =D0=BE 05=
-:58 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> > On Friday, March 21, 2025 6:55=E2=80=AFPM Svyatoslav Ryhel wrote:
-> > > Tegra 4 is fully compatible with existing Tegra K1 cpufreq driver.
-> > >=20
-> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > ---
-> > >=20
-> > >  drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
-> > >  drivers/cpufreq/tegra124-cpufreq.c   | 5 +++--
-> > >  2 files changed, 4 insertions(+), 2 deletions(-)
-> > >=20
-> > > diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c
-> > > b/drivers/cpufreq/cpufreq-dt-platdev.c index 18942bfe9c95..7d15a1224d=
-37
-> > > 100644
-> > > --- a/drivers/cpufreq/cpufreq-dt-platdev.c
-> > > +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-> > > @@ -140,6 +140,7 @@ static const struct of_device_id blocklist[]
-> > > __initconst =3D {
-> > >=20
-> > >       { .compatible =3D "nvidia,tegra20", },
-> > >       { .compatible =3D "nvidia,tegra30", },
-> > >=20
-> > > +     { .compatible =3D "nvidia,tegra114", },
-> > >=20
-> > >       { .compatible =3D "nvidia,tegra124", },
-> > >       { .compatible =3D "nvidia,tegra210", },
-> > >       { .compatible =3D "nvidia,tegra234", },
-> > >=20
-> > > diff --git a/drivers/cpufreq/tegra124-cpufreq.c
-> > > b/drivers/cpufreq/tegra124-cpufreq.c index 514146d98bca..6ff2ccc08e5e
-> > > 100644
-> > > --- a/drivers/cpufreq/tegra124-cpufreq.c
-> > > +++ b/drivers/cpufreq/tegra124-cpufreq.c
-> > > @@ -189,8 +189,9 @@ static int __init tegra_cpufreq_init(void)
-> > >=20
-> > >       int ret;
-> > >       struct platform_device *pdev;
-> > >=20
-> > > -     if (!(of_machine_is_compatible("nvidia,tegra124") ||
-> > > -             of_machine_is_compatible("nvidia,tegra210")))
-> > > +     if (!(of_machine_is_compatible("nvidia,tegra114") ||
-> > > +           of_machine_is_compatible("nvidia,tegra124") ||
-> > > +           of_machine_is_compatible("nvidia,tegra210")))
-> > >=20
-> > >               return -ENODEV;
-> > >      =20
-> > >       /*
-> >=20
-> > I also prefer using Tegra114 and Tegra124 in the commit message, perhap=
-s
-> > with the marketing names in parentheses, as the chip IDs are more
-> > consistent and (IMO) easier to decipher than the product names.
-> >=20
-> > Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
->=20
-> Yes, this was applied in v2 already and all other my Tegra patches,
-> this exact commit was already picked from v2.
+On 8/25/25 11:42, Liao Yuanhong wrote:
+> 
+> On 8/25/2025 11:10 AM, Chao Yu wrote:
+>> Yuanhong,
+>>
+>> On 8/20/25 16:21, Liao Yuanhong wrote:
+>>> Introduces two new sys nodes: allocate_section_hint and
+>>> allocate_section_policy. The allocate_section_hint identifies the boundary
+>>> between devices, measured in sections; it defaults to the end of the device
+>>> for single storage setups, and the end of the first device for multiple
+>>> storage setups. The allocate_section_policy determines the write strategy,
+>>> with a default value of 0 for normal sequential write strategy. A value of
+>>> 1 prioritizes writes before the allocate_section_hint, while a value of 2
+>>> prioritizes writes after it.
+>>>
+>>> This strategy addresses the issue where, despite F2FS supporting multiple
+>>> devices, SOC vendors lack multi-devices support (currently only supporting
+>>> zoned devices). As a workaround, multiple storage devices are mapped to a
+>>> single dm device. Both this workaround and the F2FS multi-devices solution
+>>> may require prioritizing writing to certain devices, such as a device with
+>>> better performance or when switching is needed due to performance
+>>> degradation near a device's end. For scenarios with more than two devices,
+>>> sort them at mount time to utilize this feature.
+>>>
+>>> When using this feature with a single storage device, it has almost no
+>>> impact. However, for configurations where multiple storage devices are
+>>> mapped to the same dm device using F2FS, utilizing this feature can provide
+>>> some optimization benefits. Therefore, I believe it should not be limited
+>>> to just multi-devices usage.
+>>>
+>>> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+>>> ---
+>>> Changes in v2:
+>>>     - Updated the feature naming to better reflect its actual functionality.
+>>>     - Appended patch description to clarify whether the usage should be
+>>>     limited to multi-devices.
+>>>     - Improved the code style.
+>>>     - Fixed typo.
+>>> ---
+>>>   Documentation/ABI/testing/sysfs-fs-f2fs | 22 ++++++++++++++++++++++
+>>>   fs/f2fs/f2fs.h                          |  8 ++++++++
+>>>   fs/f2fs/gc.c                            |  5 +++++
+>>>   fs/f2fs/segment.c                       | 18 +++++++++++++++++-
+>>>   fs/f2fs/super.c                         |  4 ++++
+>>>   fs/f2fs/sysfs.c                         | 18 ++++++++++++++++++
+>>>   6 files changed, 74 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+>>> index ee3acc8c2cb8..b590809869ca 100644
+>>> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
+>>> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+>>> @@ -911,3 +911,25 @@ Description:    Used to adjust the BG_GC priority when pending IO, with a default v
+>>>           bggc_io_aware = 1   skip background GC if there is pending read IO
+>>>           bggc_io_aware = 2   don't aware IO for background GC
+>>>           ==================  ======================================================
+>>> +
+>>> +What:        /sys/fs/f2fs/<disk>/allocate_section_hint
+>>> +Date:        August 2025
+>>> +Contact:    "Liao Yuanhong" <liaoyuanhong@vivo.com>
+>>> +Description:    Indicates the hint section between the first device and others in multi-devices
+>>> +        setup. It defaults to the end of the first device in sections. For a single storage
+>>> +        device, it defaults to the total number of sections. It can be manually set to match
+>>> +        scenarios where multi-devices are mapped to the same dm device.
+>>> +
+>>> +What:        /sys/fs/f2fs/<disk>/allocate_section_policy
+>>> +Date:        August 2025
+>>> +Contact:    "Liao Yuanhong" <liaoyuanhong@vivo.com>
+>>> +Description:    Controls write priority in multi-devices setups. A value of 0 means normal writing.
+>>> +        A value of 1 prioritizes writing to devices before the allocate_section_hint. A value of 2
+>>> +        prioritizes writing to devices after the allocate_section_hint. The default is 0.
+>>> +
+>>> +        ===========================  ==========================================================
+>>> +        value                         description
+>>> +        allocate_section_policy = 0  Normal writing
+>>> +        allocate_section_policy = 1  Prioritize writing to section before allocate_section_hint
+>>> +        allocate_section_policy = 2  Prioritize writing to section after allocate_section_hint
+>>> +        ===========================  ==========================================================
+>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>> index d6a49de1b7e9..5ce9bf6be462 100644
+>>> --- a/fs/f2fs/f2fs.h
+>>> +++ b/fs/f2fs/f2fs.h
+>>> @@ -162,6 +162,12 @@ enum bggc_io_aware_policy {
+>>>       AWARE_NONE,            /* don't aware IO for background GC */
+>>>   };
+>>>   +enum device_allocation_policy {
+>>> +    ALLOCATE_FORWARD_NOHINT,
+>>> +    ALLOCATE_FORWARD_WITHIN_HINT,
+>>> +    ALLOCATE_FORWARD_FROM_HINT,
+>>> +};
+>>> +
+>>>   /*
+>>>    * An implementation of an rwsem that is explicitly unfair to readers. This
+>>>    * prevents priority inversion when a low-priority reader acquires the read lock
+>>> @@ -1850,6 +1856,8 @@ struct f2fs_sb_info {
+>>>       bool aligned_blksize;            /* all devices has the same logical blksize */
+>>>       unsigned int first_seq_zone_segno;    /* first segno in sequential zone */
+>>>       unsigned int bggc_io_aware;        /* For adjust the BG_GC priority when pending IO */
+>>> +    unsigned int allocate_section_hint;    /* the boundary position between devices */
+>>> +    unsigned int allocate_section_policy;    /* determine the section writing priority */
+>>>         /* For write statistics */
+>>>       u64 sectors_written_start;
+>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>>> index 098e9f71421e..b57b8fd64747 100644
+>>> --- a/fs/f2fs/gc.c
+>>> +++ b/fs/f2fs/gc.c
+>>> @@ -2182,6 +2182,8 @@ static void update_fs_metadata(struct f2fs_sb_info *sbi, int secs)
+>>>       SM_I(sbi)->segment_count = (int)SM_I(sbi)->segment_count + segs;
+>>>       MAIN_SEGS(sbi) = (int)MAIN_SEGS(sbi) + segs;
+>>>       MAIN_SECS(sbi) += secs;
+>>> +    if (sbi->allocate_section_hint > MAIN_SECS(sbi))
+>>> +        sbi->allocate_section_hint = MAIN_SECS(sbi);
+>>>       FREE_I(sbi)->free_sections = (int)FREE_I(sbi)->free_sections + secs;
+>>>       FREE_I(sbi)->free_segments = (int)FREE_I(sbi)->free_segments + segs;
+>>>       F2FS_CKPT(sbi)->user_block_count = cpu_to_le64(user_block_count + blks);
+>>> @@ -2189,6 +2191,9 @@ static void update_fs_metadata(struct f2fs_sb_info *sbi, int secs)
+>>>       if (f2fs_is_multi_device(sbi)) {
+>>>           int last_dev = sbi->s_ndevs - 1;
+>>>   +        sbi->allocate_section_hint = FDEV(0).total_segments /
+>>> +                    SEGS_PER_SEC(sbi);
+>>> +
+>>>           FDEV(last_dev).total_segments =
+>>>                   (int)FDEV(last_dev).total_segments + segs;
+>>>           FDEV(last_dev).end_blk =
+>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>> index 04b0a3c1804d..e0f6589c6a1c 100644
+>>> --- a/fs/f2fs/segment.c
+>>> +++ b/fs/f2fs/segment.c
+>>> @@ -2807,6 +2807,10 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
+>>>       }
+>>>   #endif
+>>>   +    if (sbi->allocate_section_policy == ALLOCATE_FORWARD_FROM_HINT &&
+>>> +        hint < sbi->allocate_section_hint)
+>>> +        hint = sbi->allocate_section_hint;
+>>> +
+>>>   find_other_zone:
+>>>       secno = find_next_zero_bit(free_i->free_secmap, MAIN_SECS(sbi), hint);
+>>>   @@ -2828,13 +2832,25 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
+>>>   #endif
+>>>         if (secno >= MAIN_SECS(sbi)) {
+>>> -        secno = find_first_zero_bit(free_i->free_secmap,
+>>> +        if (sbi->allocate_section_policy == ALLOCATE_FORWARD_FROM_HINT) {
+>>> +            secno = find_next_zero_bit(free_i->free_secmap,
+>>> +                            MAIN_SECS(sbi), sbi->allocate_section_hint);
+>>> +            if (secno >= MAIN_SECS(sbi))
+>>> +                secno = find_first_zero_bit(free_i->free_secmap,
+>>> +                                MAIN_SECS(sbi));
+>>> +        } else {
+>>> +            secno = find_first_zero_bit(free_i->free_secmap,
+>>>                               MAIN_SECS(sbi));
+>>> +        }
+>>>           if (secno >= MAIN_SECS(sbi)) {
+>>>               ret = -ENOSPC;
+>>>               f2fs_bug_on(sbi, !pinning);
+>>>               goto out_unlock;
+>>>           }
+>>> +    } else if (sbi->allocate_section_policy == ALLOCATE_FORWARD_WITHIN_HINT &&
+>>> +                secno >= sbi->allocate_section_hint) {
+>>> +        secno = find_first_zero_bit(free_i->free_secmap,
+>>> +                            MAIN_SECS(sbi));
+>> Will we hit "secno >= MAIN_SECS(sbi)" case here?
+> 
+> 
+> Yes, there may be hit 'secno>=MAIN_SECS (sbi)' case, and I will fix this issue in
+> 
+> the new version patch.
+> 
+>>>       }
+>>>       segno = GET_SEG_FROM_SEC(sbi, secno);
+>>>       zoneno = GET_ZONE_FROM_SEC(sbi, secno);
+>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>>> index 5aa9d650512d..fa38a3e6b9cd 100644
+>>> --- a/fs/f2fs/super.c
+>>> +++ b/fs/f2fs/super.c
+>>> @@ -3942,6 +3942,7 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
+>>>       segs_per_sec = le32_to_cpu(raw_super->segs_per_sec);
+>>>       secs_per_zone = le32_to_cpu(raw_super->secs_per_zone);
+>>>       total_sections = le32_to_cpu(raw_super->section_count);
+>>> +    sbi->allocate_section_hint = total_sections;
+>> What about assigning sbi->allocate_section_hint in anywhere else rather than
+>> in sanity_check_raw_super()?
+> 
+> 
+> 
+> You're right, it's not suitable to initialize sbi->allocate_section_hint here. I'll put it in
+> 
+> init_sb_info() or f2fs_scan_devices().
+> 
+>>>         /* blocks_per_seg should be 512, given the above check */
+>>>       blocks_per_seg = BIT(le32_to_cpu(raw_super->log_blocks_per_seg));
+>>> @@ -4713,6 +4714,7 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
+>>>       logical_blksize = bdev_logical_block_size(sbi->sb->s_bdev);
+>>>       sbi->aligned_blksize = true;
+>>>       sbi->bggc_io_aware = AWARE_ALL_IO;
+>>> +    sbi->allocate_section_policy = ALLOCATE_FORWARD_NOHINT;
+>>>   #ifdef CONFIG_BLK_DEV_ZONED
+>>>       sbi->max_open_zones = UINT_MAX;
+>>>       sbi->blkzone_alloc_policy = BLKZONE_ALLOC_PRIOR_SEQ;
+>>> @@ -4744,6 +4746,8 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
+>>>                       SEGS_TO_BLKS(sbi,
+>>>                       FDEV(i).total_segments) - 1 +
+>>>                       le32_to_cpu(raw_super->segment0_blkaddr);
+>>> +                sbi->allocate_section_hint = FDEV(i).total_segments /
+>>> +                            SEGS_PER_SEC(sbi);
+>>>               } else {
+>>>                   FDEV(i).start_blk = FDEV(i - 1).end_blk + 1;
+>>>                   FDEV(i).end_blk = FDEV(i).start_blk +
+>>> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+>>> index 1ffaf9e74ce9..81b99c2a02a9 100644
+>>> --- a/fs/f2fs/sysfs.c
+>>> +++ b/fs/f2fs/sysfs.c
+>>> @@ -889,6 +889,20 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
+>>>           return count;
+>>>       }
+>>>   +    if (!strcmp(a->attr.name, "allocate_section_hint")) {
+>>> +        if (t < 0 || t > MAIN_SECS(sbi))
+>>> +            return -EINVAL;
+>>> +        sbi->allocate_section_hint = t;
+>> Will it race w/ resize_fs ioctl?
+>>
+>> Thanks,
+> 
+> 
+> Does this mean that after executing resize_fs, the current allocate_section_hint value will
+> 
+> not match the resized size? If so, I've handled the data update in update_fs_metadata().
+> 
+> If not, what other areas might cause a conflict? Please let me know so I can address the
+> 
+> issue immediately.
 
-Ah, sorry. Not sure how I missed that.
+I meant something like this:
 
-Mikko
+resize (cpu 0)					sysfs (cpu 1)
+- MAIN_SECS(sbi) += secs;
+- if (sbi->allocate_section_hint > MAIN_SECS(sbi))
+   sbi->allocate_section_hint = MAIN_SECS(sbi);
+						- if (t < 0 || t > MAIN_SECS(sbi))
+						 : what if MAIN_SECS() has the old value before
+						   statement "MAIN_SECS(sbi) += secs;" since cache
+						   between cpu 0 & 1 may not the same unless you
+						   call barrier to flush cache? Not sure, we'd better
+						   to avoid such race case w/ a lock?
 
-
+> 
+> 
+> Thanks,
+> 
+> Liao
+> 
+>>> +        return count;
+>>> +    }
+>>> +
+>>> +    if (!strcmp(a->attr.name, "allocate_section_policy")) {
+>>> +        if (t < ALLOCATE_FORWARD_NOHINT || t > ALLOCATE_FORWARD_FROM_HINT)
+>>> +            return -EINVAL;
+>>> +        sbi->allocate_section_policy = t;
+>>> +        return count;
+>>> +    }
+>>> +
+>>>       *ui = (unsigned int)t;
+>>>         return count;
+>>> @@ -1161,6 +1175,8 @@ F2FS_SBI_GENERAL_RW_ATTR(max_victim_search);
+>>>   F2FS_SBI_GENERAL_RW_ATTR(migration_granularity);
+>>>   F2FS_SBI_GENERAL_RW_ATTR(migration_window_granularity);
+>>>   F2FS_SBI_GENERAL_RW_ATTR(dir_level);
+>>> +F2FS_SBI_GENERAL_RW_ATTR(allocate_section_hint);
+>>> +F2FS_SBI_GENERAL_RW_ATTR(allocate_section_policy);
+>>>   #ifdef CONFIG_F2FS_IOSTAT
+>>>   F2FS_SBI_GENERAL_RW_ATTR(iostat_enable);
+>>>   F2FS_SBI_GENERAL_RW_ATTR(iostat_period_ms);
+>>> @@ -1398,6 +1414,8 @@ static struct attribute *f2fs_attrs[] = {
+>>>       ATTR_LIST(max_read_extent_count),
+>>>       ATTR_LIST(carve_out),
+>>>       ATTR_LIST(reserved_pin_section),
+>>> +    ATTR_LIST(allocate_section_hint),
+>>> +    ATTR_LIST(allocate_section_policy),
+>>>       NULL,
+>>>   };
+>>>   ATTRIBUTE_GROUPS(f2fs);
 
 
