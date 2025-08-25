@@ -1,182 +1,298 @@
-Return-Path: <linux-kernel+bounces-785545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0F9FB34D2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 23:00:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41ACAB34D3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 23:00:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C0921B2486B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 21:00:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADC7F2054E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 21:00:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E9BF2882DB;
-	Mon, 25 Aug 2025 20:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 052E529A30A;
+	Mon, 25 Aug 2025 21:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="bJGokT29"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="O78JC1FA"
+Received: from relay10.grserver.gr (relay10.grserver.gr [37.27.248.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB2A5291864
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 20:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBDF429D272
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 21:00:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.27.248.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756155597; cv=none; b=tlvYtonPywce3/mcmLmVnGwRqKXwGMNVZKmXu4SQIBL6xBxIODjZ2zH7gb0KMfWhsd8bsiDhIasO+JNQOUCVOtn5fgoFH4wt8x/9VjYRb0np9VFykODyUmipO7nsYgXakvOZkb7uK708taUAqi48Um1ZOjL64UfW8MuYCSvuD0s=
+	t=1756155636; cv=none; b=GS2FikGXZfpsFllQXlmqd1qPWFlxpskod2hgr7tGmGukTNYTrEpAaWNdu0akNTa8bOwx8xr688MtzDq6MXf9zxdGvE8uhu+TXNrVHCjSfyMtA/Ft14gortUdxZVSSAslCJhqTIXwF7S/MlsExdXyFUN7g982EcM0awtzRYA/fK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756155597; c=relaxed/simple;
-	bh=YBVOrpCcsqXAW5sCYr3wMwOJTycBQN3ZspPZEFbfxg8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cD6xKH8j9wfP7rFG8O33w8lC1ZuyxFBqgMChk5/iNLKiLkOXTmlRilmEPXkvQyGwX4ZI1QiY1pqY6HNxGWhbpmJwXNjyrKmKkVb54Ker+Bo4E39LdXEYMOqUFvwCiEOGvKvduu4N/6aLZ5W8trcVRTT0B8YuugXw1C9hhBVeOQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=bJGokT29; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3e721083e99so20347785ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 13:59:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1756155594; x=1756760394; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZcPPbu+aYl9Xu1jLxey4/WhZ40S4z542awI5r/G6Sno=;
-        b=bJGokT29qpsdlwr4E1Wfj7G8lf2T2DysfjWNN9Ywqm8/zxLfDQB3FUpANVmwO4q01J
-         j7MuZKvZxCzeVzfLFFxI8pibOchKxVwMTq2Mp+tcbZrCbRbE3yxKepqrIKlXNlr4BfnP
-         fPzCEjAOCy0k54k5KFDRPtzxo/C7PzdK8QOKnvqN3YMcqS5Ckxc6qhSpwl5IOr4QTK5U
-         YxDW0Dap1liX+0TnkwS6THbTvt0dk1OxgujHn4mn4NvS7tDX/8ye3/S+NSQMXbIr5Qnn
-         ZP6LVdaPLcP/mOIiOeqi/ZV5wDqOfQnyLqmS8gB2GaLo5VPLD6KNg0eqziLbDPlJTHQc
-         cMQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756155594; x=1756760394;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZcPPbu+aYl9Xu1jLxey4/WhZ40S4z542awI5r/G6Sno=;
-        b=VlexNkG5udtt5YaMy48kgFhBNsaNMGLm686iXh7aI9X2GcAAkj1zL5xtX5Qd7deSkT
-         6E9cAUHCcAYJ2TGOYGUNJU2r86bpL60UCM6BlP4R4Thpi7rRQUODk3LPPBtK5a2xwZ0+
-         3VF4RkUNwsChU2Nr3cxRUaDrtQBntvAUWoTAs5HlOWuYbPWVdgFZ5wlhrZBQjpgxsaSz
-         pPPdiVJSd1gdJhC9y12saRZz52PT9ULsaDqoMzMYYaiSoD1idqozYz2fjWKRscUbplIi
-         QDHKM3qi+eXfj0iHUwPj/8sQi7+1Mir9y8UBikHK20hqJ66E+0HPYEWaTfRXGjA7gzud
-         lB7A==
-X-Forwarded-Encrypted: i=1; AJvYcCX1bPeNZdJHwGjsF/0CHbdAeqwblS2wdck31wrKl+lrOwNUqzOhnKGM4abDG3O5q6BVqTn4aRfPsZpwC2U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypE3Go5mnB/nD/pfnfp/9Uf2/3/evgphRzu/oCAfdRVDwbzggW
-	nHIN86VjBiq9Fo5xcyNRI0I6X+CXb4bXCzp6UwL88uE3ahMZ+zgL7lSeQ2YG28FiZMM=
-X-Gm-Gg: ASbGncuaSrRTP3D3bY8Au5b3bBOgQWwGp1vTzlBfI2qVnvYE0Mmh2VGetpQRKtbGonF
-	y0b3JRA7mH5AsgRm8AaYQbcAtid0QfURmeseFv6knWt5ZIhQ28rumSHHEhqY7HcBa7lpnhhqVVP
-	O1+pHTa9VlCH+yssH29IAK6GVBMAzFrof6AS6Fmdq6pGXWJbQmRvEUG3OBC6HBPfezKBwXXTGLN
-	4rfw1aQG0Awy/R4qCl1NHdbxA3uxfanXFUnW7UPsTdMDjtp6YZeALeKGbKOcGuA/2/MRfCfjkju
-	0NS8E/nDfZfKrQkHD57/iSpuOrHKw1PSnCFEM2pK65X822C90hHbkBOrmwFW9699P2j7nIS81Di
-	P3VuO5uqrbE6tzs4ZQtj1i7L72hGVS+oznHXvH/ATTYU=
-X-Google-Smtp-Source: AGHT+IGl5YyJO5cNchW3hMpUrsJFnsYaH0jFB/UnFZkvzedPO9loSjPBh1OzNXyW8MzaaJOPsbW11Q==
-X-Received: by 2002:a92:cdad:0:b0:3e9:eec4:9b5a with SMTP id e9e14a558f8ab-3e9eec49d85mr152368845ab.25.1756155593789;
-        Mon, 25 Aug 2025 13:59:53 -0700 (PDT)
-Received: from [100.64.0.1] ([136.226.102.202])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3ea4ec1fa3dsm54724275ab.45.2025.08.25.13.59.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Aug 2025 13:59:53 -0700 (PDT)
-Message-ID: <9ae927d3-0a66-4354-910f-155ff9ba3e0f@sifive.com>
-Date: Mon, 25 Aug 2025 15:59:46 -0500
+	s=arc-20240116; t=1756155636; c=relaxed/simple;
+	bh=8Ulm68pndRsHOM17ZhyGCATPD/dvS8lStg9Je1fInjA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JnKkxk9NNZNwyeDcgEa+jujaRcJ6mCSgAyKwPebzBTzWeHpxAFi/4ZOaR3J9Fp8V9TqoSE2xfeFuRbY7c/Y/UDZcGrXnc3EL+dMJ5F7zgaWy0VZEx4palNZA5VCouxqUzpncErzDODvNXaXtGby8eg/Ij1403CyYtK9NgrA4GZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=O78JC1FA; arc=none smtp.client-ip=37.27.248.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from relay10 (localhost.localdomain [127.0.0.1])
+	by relay10.grserver.gr (Proxmox) with ESMTP id 32CA446DDF
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 00:00:25 +0300 (EEST)
+Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by relay10.grserver.gr (Proxmox) with ESMTPS id CE9A141F2A
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 00:00:23 +0300 (EEST)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id 2DDA42066C2
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 00:00:23 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1756155623;
+	bh=D8ifD12m19pxSkPj+MjJNcpSuPpQyZX3/Aoffcw+wLc=;
+	h=Received:From:Subject:To;
+	b=O78JC1FA177W53g8g8iHfU5c68i5xrvkX9c8Jeqw4L50Oi3CVwZNL6DUq7zYn/REL
+	 JJijxErotz9HSwkDujfYVaCcWF+4fO+cOac75TmIChRnAKFGmDUjeYXSlWN88szNz3
+	 yeE4OlUEqodxwl2KIYXazSni9gR3/5O00663ZLjMtqDZEvmHmuI+bt9SMk4tuch1O4
+	 kcpNsOLC689Yg2aS4PiSRTeMv/xSAAICEz3/LfnNnM9B7/uNfnILx+zGqITOO41b24
+	 b4vAtQYd/fWxI4oAwznm1+v4l05TSmFV2CdJa/AFTVcZ3bzIEgx5/dJZergAIiSz1P
+	 yFgF3kvfpKoTw==
+Authentication-Results: linux3247.grserver.gr;
+        spf=pass (sender IP is 209.85.208.182) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f182.google.com
+Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f182.google.com with SMTP id
+ 38308e7fff4ca-333f92a69d4so35506631fa.2
+        for <linux-kernel@vger.kernel.org>;
+ Mon, 25 Aug 2025 14:00:23 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVbVRNSTDo17cREeWK0VUbP+az3sF0Gb28Ar3fvT77JnDkZDsF8GpfGbNK1yYFLQHcI2UpqZn/6mXbwKrs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwD6bYsqY1uiNN6Tq7Q2hjtVRoGBsFaCgfGp2gGitDLqfFMqKwM
+	RdnXvbNQ33yeGxhwqQJb/jIRhEWt3+226tjoyVT5h7lh/i3ojoQOj1EI5/v8fxjdO1U6Fk3jeVC
+	t3VYQxcJkml5E2WWcbsHI8PQHju6ouho=
+X-Google-Smtp-Source: 
+ AGHT+IERDdc4cuaeqaeEoP6lBRc2LBCb+njMj/3wEbhTSDngQdBT7xq2OL7FygmjAFEfwtTTTMJNxulrEjvcqsG4xXo=
+X-Received: by 2002:a2e:ae16:0:b0:334:d4b:4965 with SMTP id
+ 38308e7fff4ca-33650ffde38mr32898911fa.31.1756155622487; Mon, 25 Aug 2025
+ 14:00:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 10/19] x86: LAM compatible non-canonical definition
-To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-Cc: x86@kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org,
- llvm@lists.linux.dev, linux-kbuild@vger.kernel.org,
- kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, sohil.mehta@intel.com,
- baohua@kernel.org, david@redhat.com, kbingham@kernel.org,
- weixugc@google.com, Liam.Howlett@oracle.com, alexandre.chartre@oracle.com,
- kas@kernel.org, mark.rutland@arm.com, trintaeoitogc@gmail.com,
- axelrasmussen@google.com, yuanchu@google.com, joey.gouly@arm.com,
- samitolvanen@google.com, joel.granados@kernel.org, graf@amazon.com,
- vincenzo.frascino@arm.com, kees@kernel.org, ardb@kernel.org,
- thiago.bauermann@linaro.org, glider@google.com, thuth@redhat.com,
- kuan-ying.lee@canonical.com, pasha.tatashin@soleen.com,
- nick.desaulniers+lkml@gmail.com, vbabka@suse.cz, kaleshsingh@google.com,
- justinstitt@google.com, catalin.marinas@arm.com,
- alexander.shishkin@linux.intel.com, dave.hansen@linux.intel.com,
- corbet@lwn.net, xin@zytor.com, dvyukov@google.com, tglx@linutronix.de,
- scott@os.amperecomputing.com, jason.andryuk@amd.com, morbo@google.com,
- nathan@kernel.org, lorenzo.stoakes@oracle.com, mingo@redhat.com,
- brgerst@gmail.com, kristina.martsenko@arm.com, bigeasy@linutronix.de,
- luto@kernel.org, jgross@suse.com, jpoimboe@kernel.org, urezki@gmail.com,
- mhocko@suse.com, ada.coupriediaz@arm.com, hpa@zytor.com, leitao@debian.org,
- peterz@infradead.org, wangkefeng.wang@huawei.com, surenb@google.com,
- ziy@nvidia.com, smostafa@google.com, ryabinin.a.a@gmail.com,
- ubizjak@gmail.com, jbohac@suse.cz, broonie@kernel.org,
- akpm@linux-foundation.org, guoweikang.kernel@gmail.com, rppt@kernel.org,
- pcc@google.com, jan.kiszka@siemens.com, nicolas.schier@linux.dev,
- will@kernel.org, andreyknvl@gmail.com, jhubbard@nvidia.com, bp@alien8.de
-References: <cover.1756151769.git.maciej.wieczor-retman@intel.com>
- <c1902b7c161632681dac51bc04ab748853e616d0.1756151769.git.maciej.wieczor-retman@intel.com>
-From: Samuel Holland <samuel.holland@sifive.com>
-Content-Language: en-US
-In-Reply-To: <c1902b7c161632681dac51bc04ab748853e616d0.1756151769.git.maciej.wieczor-retman@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250824085351.454619-1-lkml@antheas.dev>
+ <CADnq5_MEhMha47V25SK4cZkd8TLcizR_y0si2n9jSDjJTXeoRQ@mail.gmail.com>
+ <CAGwozwF=UKhG0HU_cxaY8957rscY=W4_VK+z==3vkKJJWZehzQ@mail.gmail.com>
+ <CAGwozwFmfBrnZBO6JRZPnPyHLrKycdnoMRtOkK+KpwkdQ4Fw=w@mail.gmail.com>
+ <425162fe-aeb7-4ff5-9a84-e7f6da20225e@kernel.org>
+In-Reply-To: <425162fe-aeb7-4ff5-9a84-e7f6da20225e@kernel.org>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Mon, 25 Aug 2025 23:00:11 +0200
+X-Gmail-Original-Message-ID: 
+ <CAGwozwHdQu0K-dgnh72P=ms-ory2bZr-6rtCtWM2QP0u8NqXng@mail.gmail.com>
+X-Gm-Features: Ac12FXyzqiebyPhIvIZHh18pCxRjmJRazAsv4y3o_K7o71Is36skq1VQ6cWjOak
+Message-ID: 
+ <CAGwozwHdQu0K-dgnh72P=ms-ory2bZr-6rtCtWM2QP0u8NqXng@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] drm/amdgpu/vpe: increase VPE_IDLE_TIMEOUT to fix
+ hang on Strix Halo
+To: Mario Limonciello <superm1@kernel.org>
+Cc: Alex Deucher <alexdeucher@gmail.com>, amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Harry Wentland <harry.wentland@amd.com>,
+ Rodrigo Siqueira <siqueira@igalia.com>,
+	Peyton Lee <peytolee@amd.com>, Lang Yu <lang.yu@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-PPP-Message-ID: 
+ <175615562341.2864356.183713090981194002@linux3247.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
+X-Virus-Status: Clean
 
-Hi Maciej,
+On Mon, 25 Aug 2025 at 18:41, Mario Limonciello <superm1@kernel.org> wrote:
+>
+> On 8/25/2025 9:01 AM, Antheas Kapenekakis wrote:
+> > On Mon, 25 Aug 2025 at 15:33, Antheas Kapenekakis <lkml@antheas.dev> wr=
+ote:
+> >>
+> >> On Mon, 25 Aug 2025 at 15:20, Alex Deucher <alexdeucher@gmail.com> wro=
+te:
+> >>>
+> >>> On Mon, Aug 25, 2025 at 3:13=E2=80=AFAM Antheas Kapenekakis <lkml@ant=
+heas.dev> wrote:
+> >>>>
+> >>>> On the Asus Z13 2025, which uses a Strix Halo platform, around 8% of=
+ the
+> >>>> suspend resumes result in a soft lock around 1 second after the scre=
+en
+> >>>> turns on (it freezes). This happens due to power gating VPE when it =
+is
+> >>>> not used, which happens 1 second after inactivity.
+> >>>>
+> >>>> Specifically, the VPE gating after resume is as follows: an initial
+> >>>> ungate, followed by a gate in the resume process. Then,
+> >>>> amdgpu_device_delayed_init_work_handler with a delay of 2s is schedu=
+led
+> >>>> to run tests, one of which is testing VPE in vpe_ring_test_ib. This
+> >>>> causes an ungate, After that test, vpe_idle_work_handler is schedule=
+d
+> >>>> with VPE_IDLE_TIMEOUT (1s).
+> >>>>
+> >>>> When vpe_idle_work_handler runs and tries to gate VPE, it causes the
+> >>>> SMU to hang and partially freezes half of the GPU IPs, with the thre=
+ad
+> >>>> that called the command being stuck processing it.
+> >>>>
+> >>>> Specifically, after that SMU command tries to run, we get the follow=
+ing:
+> >>>>
+> >>>> snd_hda_intel 0000:c4:00.1: Refused to change power state from D0 to=
+ D3hot
+> >>>> ...
+> >>>> xhci_hcd 0000:c4:00.4: Refused to change power state from D0 to D3ho=
+t
+> >>>> ...
+> >>>> amdgpu 0000:c4:00.0: amdgpu: SMU: I'm not done with your previous co=
+mmand: SMN_C2PMSG_66:0x00000032 SMN_C2PMSG_82:0x00000000
+> >>>> amdgpu 0000:c4:00.0: amdgpu: Failed to power gate VPE!
+> >>>> [drm:vpe_set_powergating_state [amdgpu]] *ERROR* Dpm disable vpe fai=
+led, ret =3D -62.
+> >>>> amdgpu 0000:c4:00.0: [drm] *ERROR* [CRTC:93:crtc-0] flip_done timed =
+out
+> >>>> amdgpu 0000:c4:00.0: amdgpu: SMU: I'm not done with your previous co=
+mmand: SMN_C2PMSG_66:0x00000032 SMN_C2PMSG_82:0x00000000
+> >>>> amdgpu 0000:c4:00.0: amdgpu: Failed to power gate JPEG!
+> >>>> [drm:jpeg_v4_0_5_set_powergating_state [amdgpu]] *ERROR* Dpm disable=
+ jpeg failed, ret =3D -62.
+> >>>> amdgpu 0000:c4:00.0: amdgpu: SMU: I'm not done with your previous co=
+mmand: SMN_C2PMSG_66:0x00000032 SMN_C2PMSG_82:0x00000000
+> >>>> amdgpu 0000:c4:00.0: amdgpu: Failed to power gate VCN instance 0!
+> >>>> [drm:vcn_v4_0_5_stop [amdgpu]] *ERROR* Dpm disable uvd failed, ret =
+=3D -62.
+> >>>> thunderbolt 0000:c6:00.5: 0: timeout reading config space 1 from 0xd=
+3
+> >>>> thunderbolt 0000:c6:00.5: 0: timeout reading config space 2 from 0x5
+> >>>> thunderbolt 0000:c6:00.5: Refused to change power state from D0 to D=
+3hot
+> >>>> amdgpu 0000:c4:00.0: [drm] *ERROR* [CRTC:97:crtc-1] flip_done timed =
+out
+> >>>> amdgpu 0000:c4:00.0: amdgpu: SMU: I'm not done with your previous co=
+mmand: SMN_C2PMSG_66:0x00000032 SMN_C2PMSG_82:0x00000000
+> >>>> amdgpu 0000:c4:00.0: amdgpu: Failed to power gate VCN instance 1!
+> >>>>
+> >>>> In addition to e.g., kwin errors in journalctl. 0000:c4.00.0 is the =
+GPU.
+> >>>> Interestingly, 0000:c4.00.6, which is another HDA block, 0000:c4.00.=
+5,
+> >>>> a PCI controller, and 0000:c4.00.2, resume normally. 0x00000032 is t=
+he
+> >>>> PowerDownVpe(50) command which is the common failure point in all
+> >>>> failed resumes.
+> >>>>
+> >>>> On a normal resume, we should get the following power gates:
+> >>>> amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownVpe(50) para=
+m: 0x00000000, resp: 0x00000001
+> >>>> amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownJpeg0(33) pa=
+ram: 0x00000000, resp: 0x00000001
+> >>>> amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownJpeg1(38) pa=
+ram: 0x00010000, resp: 0x00000001
+> >>>> amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownVcn1(4) para=
+m: 0x00010000, resp: 0x00000001
+> >>>> amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownVcn0(6) para=
+m: 0x00000000, resp: 0x00000001
+> >>>> amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerUpVcn0(7) param:=
+ 0x00000000, resp: 0x00000001
+> >>>> amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerUpVcn1(5) param:=
+ 0x00010000, resp: 0x00000001
+> >>>> amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerUpJpeg0(34) para=
+m: 0x00000000, resp: 0x00000001
+> >>>> amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerUpJpeg1(39) para=
+m: 0x00010000, resp: 0x00000001
+> >>>>
+> >>>> To fix this, increase VPE_IDLE_TIMEOUT to 2 seconds. This increases
+> >>>> reliability from 4-25 suspends to 200+ (tested) suspends with a cycl=
+e
+> >>>> time of 12s sleep, 8s resume. The suspected reason here is that 1s t=
+hat
+> >>>> when VPE is used, it needs a bit of time before it can be gated and
+> >>>> there was a borderline delay before, which is not enough for Strix H=
+alo.
+> >>>> When the VPE is not used, such as on resume, gating it instantly doe=
+s
+> >>>> not seem to cause issues.
+> >>>
+> >>> This doesn't make much sense.  The VPE idle timeout is arbitrary.  Th=
+e
+> >>> VPE idle work handler checks to see if the block is idle before it
+> >>> powers gates the block. If it's not idle, then the delayed work is
+> >>> rescheduled so changing the timing should not make a difference.  We
+> >>> are no powering down VPE while it still has active jobs.  It sounds
+> >>> like there is some race condition somewhere else.
+> >>
+> >> On resume, the vpe is ungated and gated instantly, which does not
+> >> cause any crashes, then the delayed work is scheduled to run two
+> >> seconds later. Then, the tests run and finish, which start the gate
+> >> timer. After the timer lapses and the kernel tries to gate VPE, it
+> >> crashes. I logged all SMU commands and there is no difference between
+> >> the ones in a crash and not, other than the fact the VPE gate command
+> >> failed. Which becomes apparent when the next command runs. I will also
+> >> note that until the idle timer lapses, the system is responsive
+> >>
+> >> Since the VPE is ungated to run the tests, I assume that in my setup
+> >> it is not used close to resume.
+> >
+> > I should also add that I forced a kernel panic and dumped all CPU
+> > backtraces in multiple logs. After the softlock, CPUs were either
+> > parked in the scheduler, powered off, or stuck executing an SMU
+> > command by e.g., a userspace usage sensor graph. So it is not a
+> > deadlock.
+> >
+>
+> Can you please confirm if you are on the absolute latest linux-firmware
+> when you reproduced this issue?
 
-On 2025-08-25 3:24 PM, Maciej Wieczor-Retman wrote:
-> For an address to be canonical it has to have its top bits equal to each
-> other. The number of bits depends on the paging level and whether
-> they're supposed to be ones or zeroes depends on whether the address
-> points to kernel or user space.
-> 
-> With Linear Address Masking (LAM) enabled, the definition of linear
-> address canonicality is modified. Not all of the previously required
-> bits need to be equal, only the first and last from the previously equal
-> bitmask. So for example a 5-level paging kernel address needs to have
-> bits [63] and [56] set.
-> 
-> Add separate __canonical_address() implementation for
-> CONFIG_KASAN_SW_TAGS since it's the only thing right now that enables
-> LAM for kernel addresses (LAM_SUP bit in CR4).
-> 
-> Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-> ---
-> Changelog v4:
-> - Add patch to the series.
-> 
->  arch/x86/include/asm/page.h | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/page.h b/arch/x86/include/asm/page.h
-> index bcf5cad3da36..a83f23a71f35 100644
-> --- a/arch/x86/include/asm/page.h
-> +++ b/arch/x86/include/asm/page.h
-> @@ -82,10 +82,20 @@ static __always_inline void *pfn_to_kaddr(unsigned long pfn)
->  	return __va(pfn << PAGE_SHIFT);
->  }
->  
-> +/*
-> + * CONFIG_KASAN_SW_TAGS requires LAM which changes the canonicality checks.
-> + */
-> +#ifdef CONFIG_KASAN_SW_TAGS
-> +static __always_inline u64 __canonical_address(u64 vaddr, u8 vaddr_bits)
-> +{
-> +	return (vaddr | BIT_ULL(63) | BIT_ULL(vaddr_bits - 1));
-> +}
-> +#else
->  static __always_inline u64 __canonical_address(u64 vaddr, u8 vaddr_bits)
->  {
->  	return ((s64)vaddr << (64 - vaddr_bits)) >> (64 - vaddr_bits);
->  }
-> +#endif
+I was on the latest at the time built from source. I think it was
+commit 08ee93ff8ffa. There was an update today though it seems.
 
-These two implementations have different semantics. The new function works only
-on kernel addresses, whereas the existing one works on user addresses as well.
-It looks like at least KVM's use of __is_canonical_address() expects the
-function to work with user addresses.
 
-Regards,
-Samuel
+> Can you please share the debugfs output for amdgpu_firmware_info.
 
->  
->  static __always_inline u64 __is_canonical_address(u64 vaddr, u8 vaddr_bits)
->  {
+Here is the information from it:
+VCE feature version: 0, firmware version: 0x00000000
+UVD feature version: 0, firmware version: 0x00000000
+MC feature version: 0, firmware version: 0x00000000
+ME feature version: 35, firmware version: 0x0000001f
+PFP feature version: 35, firmware version: 0x0000002c
+CE feature version: 0, firmware version: 0x00000000
+RLC feature version: 1, firmware version: 0x11530505
+RLC SRLC feature version: 0, firmware version: 0x00000000
+RLC SRLG feature version: 0, firmware version: 0x00000000
+RLC SRLS feature version: 0, firmware version: 0x00000000
+RLCP feature version: 1, firmware version: 0x11530505
+RLCV feature version: 0, firmware version: 0x00000000
+MEC feature version: 35, firmware version: 0x0000001f
+IMU feature version: 0, firmware version: 0x0b352300
+SOS feature version: 0, firmware version: 0x00000000
+ASD feature version: 553648366, firmware version: 0x210000ee
+TA XGMI feature version: 0x00000000, firmware version: 0x00000000
+TA RAS feature version: 0x00000000, firmware version: 0x00000000
+TA HDCP feature version: 0x00000000, firmware version: 0x17000044
+TA DTM feature version: 0x00000000, firmware version: 0x12000018
+TA RAP feature version: 0x00000000, firmware version: 0x00000000
+TA SECUREDISPLAY feature version: 0x00000000, firmware version: 0x00000000
+SMC feature version: 0, program: 0, firmware version: 0x00647000 (100.112.0=
+)
+SDMA0 feature version: 60, firmware version: 0x0000000e
+VCN feature version: 0, firmware version: 0x0911800b
+DMCU feature version: 0, firmware version: 0x00000000
+DMCUB feature version: 0, firmware version: 0x09002600
+TOC feature version: 0, firmware version: 0x0000000b
+MES_KIQ feature version: 6, firmware version: 0x0000006c
+MES feature version: 1, firmware version: 0x0000007c
+VPE feature version: 60, firmware version: 0x00000016
+VBIOS version: 113-STRXLGEN-001
+
+I see there was an update today though
+
+Antheas
+>
 
 
