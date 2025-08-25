@@ -1,112 +1,191 @@
-Return-Path: <linux-kernel+bounces-784222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03E63B33853
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:58:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A9A5B3385B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:59:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8F29480931
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 07:58:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A370189DF90
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 07:59:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25EB2299943;
-	Mon, 25 Aug 2025 07:58:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DC79299AAC;
+	Mon, 25 Aug 2025 07:59:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AZwefNb7"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=hewittfamily.org.uk header.i=@hewittfamily.org.uk header.b="R9yowu/4"
+Received: from m204-238.eu.mailgun.net (m204-238.eu.mailgun.net [161.38.204.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63D7F28A73A
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 07:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.38.204.238
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756108746; cv=none; b=cvSdhEe1aOuBM5E4JAwj1qSYQZAPw6UQuEC2bqucOgzDWSgP/bF2QnVsit/DFT0c5s5epkFKhty8fAkKWQ4uSU0E2PayBGcYCdnGE/islOJFa+O3okqAflJKohtaxyeSsUDTXBd675ACmo+341OQp+hOPaOQX0M1Md6bxF2cSuo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756108746; c=relaxed/simple;
+	bh=4XTMT6uavwuEBqViPRRFqM1dd7IHrypMtOOT4d+7JH4=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=DsatkLBBwBxapa2AATIiIx7kFUiw/Qdt6zaBQ7FouEDVSVhqjSY9zEAVHJ6dM/419/MPrDJcvHjvIos61UX1q4/Pl2ICD082uOIGb/Rmbz5h5KrQNImEdMV/5M9IsPriOf65oB6JZsNizoIFjxSiFt/CsO5TV1DN2+oU178Bw0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hewittfamily.org.uk; spf=pass smtp.mailfrom=hewittfamily.org.uk; dkim=pass (2048-bit key) header.d=hewittfamily.org.uk header.i=@hewittfamily.org.uk header.b=R9yowu/4; arc=none smtp.client-ip=161.38.204.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hewittfamily.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hewittfamily.org.uk
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=hewittfamily.org.uk; q=dns/txt; s=s1; t=1756108742; x=1756115942;
+ h=To: To: References: Message-Id: Content-Transfer-Encoding: Cc: Date: In-Reply-To: From: From: Subject: Subject: Mime-Version: Content-Type: Sender: Sender;
+ bh=4XTMT6uavwuEBqViPRRFqM1dd7IHrypMtOOT4d+7JH4=;
+ b=R9yowu/4iSAh3rO22Y2S1x8pG/bu39UTdUZdp8L7nF8zkB+DPLrcsewAcSJsibXOY++aGpw8d7GcS/tzjLod0CwgBc0rd9BhD+PqRK3DfJhK8RVHexxFWXqbtTOW4YdzXmRu9pG+5fHmyruVcNeT2if/Mm2mb4nWtLqwlWEjDWCCsKgK5Eedy0GVZA5DhnMzFunOm5URTMPRz/P7gZ4tqBhbJbc470MJh50+ebhSAfgXyj21mb9XtejLpCMGCKfWx2QwxwrWMEp/yF2M9XBOPg7Hil/6VV/buVXW3mUyzSxbQCa+lj6bigeLYM0gdLdi5914CMhTOlFnrGoK838oJw==
+X-Mailgun-Sid: WyIyNWUwNSIsImxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmciLCJlMzcyMCJd
+Received: from mail.hewittfamily.org.uk (unknown [87.200.95.144]) by
+ 6daba92ea63ccfff060124925e5e264487e90b9321cf65b2c1448e79f35e349c with SMTP id
+ 68ac17c603c0e2ff1b03e86b (version=TLS1.3, cipher=TLS_AES_128_GCM_SHA256);
+ Mon, 25 Aug 2025 07:59:02 GMT
+X-Mailgun-Sending-Ip: 161.38.204.238
+Sender: christian@hewittfamily.org.uk
+Received: from smtpclient.apple (unknown [172.16.20.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87532882CC
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 07:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756108697; cv=none; b=gyuGMlZi2nhW6zIWC4vyEPa1wjZrHR4yWHO4WNxOLCirqgcxw5tvMb4ji45GJt3iroS7jMuNipRe8hWFUqGDgHB6uXMCRyJa/2eoswG0d5Cbmj/xCTcPey3lSQmu2gTcg/w0/ue80ZdqWChFLRlBoa6uZfZSMCCEjvHM9iUMcyw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756108697; c=relaxed/simple;
-	bh=OTZxMLcGDs7NN+FBUgBxk6OksPxlKMgsSaOM8FYY2wg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DtcfPMDsAciTHrin/Upd+Y92KEYtElif3lOZ1tZAbcZ3qHDOMnGcA0iLfZsJwQpaHE/mwgUzq7z/yhOsW5t61AH/ZrpYzru+XVtBOGicVoXtdtKkK5oYGp03VIZYrfwleVGDuRPmZAzqDJLerzuFYcrYKBhO92B5itggUoAO9Iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=AZwefNb7; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=tzZ4BdsfhTpn9akJPuvH+9Eyu1s5OcIM+r5JoHQyRNM=; b=AZwefNb7aPV1AengUSqBaevAiy
-	KGZ1Pgg8OVtRGoEF9YZjafvHUNGiGxgIBMVi5sDxxuzjkgdncfpoXjxcsMj0Y76c1pDYnUcylFa5f
-	eVXdFYEdLQYeR5KJamBMtdy2YZf2TEDb76D+CqoByL+yDL/ZK7J6Rz1S0HLOXvQwYJDlMVBICn2bt
-	31yhoOv1XCz4oE99XGRBXwX+k6FWaYy36CzXeyNx8Mvzx7HC0m9Ui3CtuZa6ofNNYMVAGpSTmuJzo
-	8s943GWNgBxoTpQ7rcuZ7SA1DAocPnbkjsJLUb/4vJEuQ5uy1PT6IQ6CVf+jW5IDC/sEGQuoZPpGW
-	T1DtYPbQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uqS5f-000000084Kz-0nRZ;
-	Mon, 25 Aug 2025 07:58:08 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 5E0F9300473; Mon, 25 Aug 2025 09:58:07 +0200 (CEST)
-Date: Mon, 25 Aug 2025 09:58:07 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Tim Chen <tim.c.chen@intel.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Libo Chen <libo.chen@oracle.com>,
-	Abel Wu <wuyun.abel@bytedance.com>, Len Brown <len.brown@intel.com>,
-	linux-kernel@vger.kernel.org, Chen Yu <yu.c.chen@intel.com>,
-	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
-	Zhao Liu <zhao1.liu@intel.com>
-Subject: Re: [PATCH 1/2] sched: topology: Fix topology validation error
-Message-ID: <20250825075807.GR3245006@noisy.programming.kicks-ass.net>
-References: <cover.1755893468.git.tim.c.chen@linux.intel.com>
- <a3de98387abad28592e6ab591f3ff6107fe01dc1.1755893468.git.tim.c.chen@linux.intel.com>
- <67c2b6bc-7a05-46a5-a409-a51f28f94c64@amd.com>
+	by mail.hewittfamily.org.uk (Postfix) with ESMTPSA id 4c9NTv3F5Mz50RyQ;
+	Mon, 25 Aug 2025 11:58:59 +0400 (+04)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <67c2b6bc-7a05-46a5-a409-a51f28f94c64@amd.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH v2 01/11] arm64: dts: amlogic: Add cache information to
+ the Amlogic GXBB and GXL SoC
+From: Christian Hewitt <christian@hewittfamily.org.uk>
+In-Reply-To: <20250825065240.22577-2-linux.amoon@gmail.com>
+Date: Mon, 25 Aug 2025 11:58:48 +0400
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>,
+ Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ "moderated list:ARM/Amlogic Meson SoC support" <linux-arm-kernel@lists.infradead.org>,
+ "open list:ARM/Amlogic Meson SoC support" <linux-amlogic@lists.infradead.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <19AB5D06-DEB6-4C38-B90D-FCDD9719312C@hewittfamily.org.uk>
+References: <20250825065240.22577-1-linux.amoon@gmail.com>
+ <20250825065240.22577-2-linux.amoon@gmail.com>
+To: Anand Moon <linux.amoon@gmail.com>
+X-Synology-Spam-Status: score=-2.601, required 5, autolearn=ham, FREEMAIL_ENVRCPT 0, FROM_HAS_DN 0, FROM_EQ_ENVFROM 0, DBL_PROHIBIT 0, MIME_GOOD -0.1, MV_CASE 0.5, MID_RHS_MATCH_FROM 0, NO_RECEIVED -0.001, RCVD_COUNT_ZERO 0, TAGGED_RCPT 0, MISSING_XM_UA 0, __THREADED 0, FREEMAIL_CC 0, BAYES_HAM -3, TO_MATCH_ENVRCPT_ALL 0, TO_DN_ALL 0, __HDRS_LCASE_KNOWN 0, __BODY_URI_ONLY 0, FREEMAIL_TO 0, ARC_NA 0, MIME_TRACE 0, RCPT_COUNT_TWELVE 0, __NOT_SPOOFED 0
+X-Synology-Spam-Flag: no
+X-Synology-Virus-Status: no
 
-On Mon, Aug 25, 2025 at 08:48:29AM +0530, K Prateek Nayak wrote:
-> Hello Tim, Vinicius,
-> 
-> On 8/23/2025 1:44 AM, Tim Chen wrote:
-> > --- a/kernel/sched/topology.c
-> > +++ b/kernel/sched/topology.c
-> > @@ -2394,6 +2394,14 @@ static bool topology_span_sane(const struct cpumask *cpu_map)
-> >  	for_each_sd_topology(tl) {
-> >  		int tl_common_flags = 0;
-> >  
-> > +#ifdef CONFIG_NUMA
-> > +		/*
-> > +		 * sd_numa_mask() (one of the possible values of
-> > +		 * tl->mask()) depends on the current level to work
-> > +		 * correctly.
-> > +		 */
-> > +		sched_domains_curr_level = tl->numa_level;
-> > +#endif
-> 
-> A similar solution was proposed in [1] and after a few iterations, we
-> arrived at [2] as a potential solution to this issue. Now that the merge
-> window is behind us, Peter would it be possible to pick one of these up?
-> 
-> P.S. Leon has confirmed this solved the splat of their deployments too
-> on an earlier version [3].
-> 
-> [1] https://lore.kernel.org/lkml/20250624041235.1589-1-kprateek.nayak@amd.com/
-> [2] https://lore.kernel.org/lkml/20250715040824.893-1-kprateek.nayak@amd.com/
-> [3] https://lore.kernel.org/lkml/20250720104136.GI402218@unreal/
+> On 25 Aug 2025, at 10:51=E2=80=AFam, Anand Moon =
+<linux.amoon@gmail.com> wrote:
+>=20
+> As per S905 and S905X datasheet add missing cache information to
+> the Amlogic GXBB and GXL SoC.
+>=20
+> - Each Cortex-A53 core has 32KB of L1 instruction cache available and
+> 32KB of L1 data cache available.
+> - Along with 512KB Unified L2 cache.
+>=20
+> Cache memory significantly reduces the time it takes for the CPU
+> to access data and instructions, leading to faster program execution
+> and overall system responsiveness.
 
-I'm sure that's stuck somewhere in my holiday backlog ... Let me go try
-and find it.
+Hello Anand,
+
+I=E2=80=99m wondering if we are =E2=80=9Cenabling caching=E2=80=9D in =
+these patches (could be
+a significant gain, as per text) or we are =E2=80=9Coptimising =
+caching=E2=80=9D meaning
+the kernel currently assumes generic/safe defaults so having accurate
+descriptions in dt allows better efficiency (marginal gain)?
+
+Stats are also subjective to the workload used, but do you have any
+kind of before/after benchmarks? (for any of the SoCs in the patchset)
+
+Christian
+
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+> arch/arm64/boot/dts/amlogic/meson-gx.dtsi | 27 +++++++++++++++++++++++
+> 1 file changed, 27 insertions(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi =
+b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+> index 7d99ca44e660..c1d8e81d95cb 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+> @@ -95,6 +95,12 @@ cpu0: cpu@0 {
+> compatible =3D "arm,cortex-a53";
+> reg =3D <0x0 0x0>;
+> enable-method =3D "psci";
+> + d-cache-line-size =3D <32>;
+> + d-cache-size =3D <0x8000>;
+> + d-cache-sets =3D <32>;
+> + i-cache-line-size =3D <32>;
+> + i-cache-size =3D <0x8000>;
+> + i-cache-sets =3D <32>;
+> next-level-cache =3D <&l2>;
+> clocks =3D <&scpi_dvfs 0>;
+> #cooling-cells =3D <2>;
+> @@ -105,6 +111,12 @@ cpu1: cpu@1 {
+> compatible =3D "arm,cortex-a53";
+> reg =3D <0x0 0x1>;
+> enable-method =3D "psci";
+> + d-cache-line-size =3D <32>;
+> + d-cache-size =3D <0x8000>;
+> + d-cache-sets =3D <32>;
+> + i-cache-line-size =3D <32>;
+> + i-cache-size =3D <0x8000>;
+> + i-cache-sets =3D <32>;
+> next-level-cache =3D <&l2>;
+> clocks =3D <&scpi_dvfs 0>;
+> #cooling-cells =3D <2>;
+> @@ -115,6 +127,12 @@ cpu2: cpu@2 {
+> compatible =3D "arm,cortex-a53";
+> reg =3D <0x0 0x2>;
+> enable-method =3D "psci";
+> + d-cache-line-size =3D <32>;
+> + d-cache-size =3D <0x8000>;
+> + d-cache-sets =3D <32>;
+> + i-cache-line-size =3D <32>;
+> + i-cache-size =3D <0x8000>;
+> + i-cache-sets =3D <32>;
+> next-level-cache =3D <&l2>;
+> clocks =3D <&scpi_dvfs 0>;
+> #cooling-cells =3D <2>;
+> @@ -125,6 +143,12 @@ cpu3: cpu@3 {
+> compatible =3D "arm,cortex-a53";
+> reg =3D <0x0 0x3>;
+> enable-method =3D "psci";
+> + d-cache-line-size =3D <32>;
+> + d-cache-size =3D <0x8000>;
+> + d-cache-sets =3D <32>;
+> + i-cache-line-size =3D <32>;
+> + i-cache-size =3D <0x8000>;
+> + i-cache-sets =3D <32>;
+> next-level-cache =3D <&l2>;
+> clocks =3D <&scpi_dvfs 0>;
+> #cooling-cells =3D <2>;
+> @@ -134,6 +158,9 @@ l2: l2-cache0 {
+> compatible =3D "cache";
+> cache-level =3D <2>;
+> cache-unified;
+> + cache-size =3D <0x80000>; /* L2. 512 KB */
+> + cache-line-size =3D <64>;
+> + cache-sets =3D <512>;
+> };
+> };
+>=20
+> --=20
+> 2.50.1
+>=20
+>=20
+> _______________________________________________
+> linux-amlogic mailing list
+> linux-amlogic@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-amlogic
+
 
