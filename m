@@ -1,153 +1,145 @@
-Return-Path: <linux-kernel+bounces-784192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79C92B337D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:35:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC6B0B337DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:35:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 215CC1770CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 07:35:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69A7E3B1F79
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 07:35:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23125296BA0;
-	Mon, 25 Aug 2025 07:35:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6899A298CA6;
+	Mon, 25 Aug 2025 07:35:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kkflcGIJ"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tfoY60M+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260A2293C4E;
-	Mon, 25 Aug 2025 07:35:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F78296BB9;
+	Mon, 25 Aug 2025 07:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756107305; cv=none; b=YAGg90CuYBejNVK9cZPtvhh1C6GIK8n+I0R/ZMvpPJ2wVjivZT1f8B9UiMJns5pidTEFqAsJfQi2S/EiBGhSqIzIuO59ZBB/4wvBzRFebYaQO1D2sn57qKB2QMFWD2edRow8f3/fnyvOo820yLwpwCtPA/3UMw8Zpa3BpYTKLdM=
+	t=1756107306; cv=none; b=ZQFfoika0a0Fsr3eUPbwWj8XQ+/vU2B2e0UxIh7s+EGStfR3pcsN+0BEpM8Eu/wkui0vv+rLzcfENXg+A+1kec6ohvh9wZi/XekENOA94V0yiyzufSTS2MmU4NpXXF9KtmCoo30BrjJg6vISYuTQzq7tPJIlDAq9QrYoVtHPhjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756107305; c=relaxed/simple;
-	bh=8n8s0vL0czwCbBZJyb4R3SyME9JrMHVOESs2i7aHrl4=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fWpEF1VGlS9+V83dMEG0jgWF07evKLRdzFi15QLQH3IsrszoYCLlkckqw+cl7/idUyUMlaoFkI1cLtnbAiH9WcZ+UdOXt4pCvUxvu3NtVv6WxBBDyZPillhBUh3FqdUiaY3eky7jGGYrgiFNKHUjGar1IvMROFjGu/7DijcCGXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kkflcGIJ; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b49d6f8f347so1206562a12.0;
-        Mon, 25 Aug 2025 00:35:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756107303; x=1756712103; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lvp5MBsT7YhMVkgGMIsz2MCxt+BzXm3dU8zTzzspkLs=;
-        b=kkflcGIJ+cc5E0OOlI/iNYe6horzrNxxwhvxCmfT0TZGV9/ZxlJuZbJ05Gh1AdB8wP
-         4NiQ7oKLzUFdTsGbfnBL+Zd8mJAqKzZX2QJ8Q4EkYJJRdADUrP8PPv01ELYy3G78enEt
-         TGcMQoDSCqoNxzy22My0u8Fxw7KJgVtCq831jxObhePMYuAx2y9uCQkOQ969ICNs6E/d
-         +5JT4zhMev44E1yBd2AgmFH5XucGkTb8/4tAVYRm1kbZJdey/lsWhFNL44ncDK0CThLp
-         gOckbpI20merESoD5rS3LBQc/5aZpvimRekX8debwTCcZ2shRqhpvVmKFqVeT7jQz/L5
-         oBFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756107303; x=1756712103;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Lvp5MBsT7YhMVkgGMIsz2MCxt+BzXm3dU8zTzzspkLs=;
-        b=xJhvDnH91C+4AKNqkGD+veQWvQkruCZ7UBZ98Pai4C0eMaGB/vpmH67y2jFNlJAPbB
-         Ay/Tv3bxWbqsQi0jBrwFLBXBSP2Hbe7Vn433ajO1x7jyAu0WDRI+l2eEh8bxMcpAuHyq
-         MCBcn6RQxyBOtl3NVblUKrQDQVsfAzfVtIt4j2yfKHy6al6QKEjniGshE6z+S74plg/M
-         Xtvvi+JoA3PHD1pylU9MnamMUKHL1irbIJjmAhw8y9+SkifVe9uaTaAmKrFp8Ic9Zxl7
-         ry0eSSGj2oPas4ujOk4CRAlRmIDPeCLhWrySW6BngFRteCskeySqeeGtQDExwg+wjr+s
-         jJZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQwPTld5h2jbqEX5fnUOu9SgB+vsMBoL1XdW34PkFJiRG29869WCXk8USKhzDKncTt1O2QKxQUiPPLRHTz@vger.kernel.org, AJvYcCXhxDeibSI4bMqFU0ENBBfskc4NfrcaJG3VY8G6W9nBC9F5DN7UNvip9BeQafahVE7Tq+nLh+TjhAzw@vger.kernel.org
-X-Gm-Message-State: AOJu0YxseaDCtz238Z+Tsrwir19H5y9GUiad8RImybqSQpAxU5mPoZSO
-	imPVUTnfWVV2ZFJyIG4hoW2CZFEYbt8kTRuon/ZW2XWjrp1ZwV0WGscV
-X-Gm-Gg: ASbGncutNTPilHJLxKuYe4etWEMMIfkHkLmA5lpnxiDojZkT1gaw0jgOkHyNp6dHND0
-	tXl8SiWhvbDSHpRDTg3nVDE4MCpx3fRCRblR9qeTdDP4Mp2jFKN5sVCq+cKGiefYHiTxG4DRWmY
-	0V8fJLYpO2IX9jfGmbrkbQKdPrC4vvLQGTsAnmx7eSyB/Ct8DXk9u21jl7spwyhzgl5uLCEIMSY
-	uVos5dBpt1UkCfAXp/HzseGPauAZdzttpVN3nM/m8RvFpeEF396OxzU+jOvD/Q4zSiwzqtiK+NE
-	Jc4jdYUHiJcl9WAP/Nk2Acu8P5Oh1sbnXIAyGDxppEDRlL97LOSMHRa8ya2HqdehCfubaZqDGP7
-	lJFN/csLilRTf9kE2jVN35Q==
-X-Google-Smtp-Source: AGHT+IEsuMQF9X71mGIcNScDFx9goLQ7xmHtthjhYeAIT6/QFur1P7fK5isGOF+ZbDuvxs+fIRAQtw==
-X-Received: by 2002:a17:903:238e:b0:240:50ef:2f00 with SMTP id d9443c01a7336-2462eea80fbmr175765105ad.26.1756107303209;
-        Mon, 25 Aug 2025 00:35:03 -0700 (PDT)
-Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-24668880368sm59546745ad.109.2025.08.25.00.35.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 00:35:02 -0700 (PDT)
-Date: Mon, 25 Aug 2025 15:33:57 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Chen Wang <unicornxw@gmail.com>, u.kleine-koenig@baylibre.com, 
-	aou@eecs.berkeley.edu, unicorn_wang@outlook.com, conor+dt@kernel.org, 
-	inochiama@gmail.com, krzk+dt@kernel.org, looong.bin@gmail.com, palmer@dabbelt.com, 
-	paul.walmsley@sifive.com, robh@kernel.org, tglx@linutronix.de, sycamoremoon376@gmail.com, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	sophgo@lists.linux.dev
-Subject: Re: [PATCH 1/4] irqchip/sg2042-msi: Improve the logic of obtaining
- msi-ranges parameters
-Message-ID: <n7na4pl6xfhwdk3xq3ulwrxm5d32kdub44otuk7avwjgb32sjz@erqbkyzhohqv>
-References: <cover.1756103516.git.unicorn_wang@outlook.com>
- <adb383f0f4a3cb588448a5a708fb7a907d5e9403.1756103516.git.unicorn_wang@outlook.com>
+	s=arc-20240116; t=1756107306; c=relaxed/simple;
+	bh=BQgg4s8ZelqTBQ8X8cIjpfniAbGXYuy7MuR+MQT5Bpc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gQqse+XdbAwujDIZbs5ti7VquWBQj3lJ2Yl57kg0khleeoRiVbIQ/vDujY/rXAWQtZX1hsCt/T1uzfuggB5KK/kPjZ7KjmbHM16l5F8Zg1LjQ7tNH6/gYzb0oh9GSiFmRDJy8BL9WyeUtCFCVaMbh/Q9fYFJtHaA30bQmTXESfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tfoY60M+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5DEFC4CEED;
+	Mon, 25 Aug 2025 07:35:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756107306;
+	bh=BQgg4s8ZelqTBQ8X8cIjpfniAbGXYuy7MuR+MQT5Bpc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tfoY60M+LEEyB/DjpGghuDetWg9i1sWkZDL6PdbflytmYRZs0z2fyuW4Zu6vQ7Gfg
+	 lSuDRk4ntJ9RFgcD44oqJi8Xon5evU7oVSHQGJ+hoxqhLRRGAi+14nRlBqs0mIEY17
+	 KYnL0HhMwT/5OfenqZ15WPqQ8kb3LxKD+HagZ6a4JFdXoXoYMZ5sLuGLJLuGKym0xm
+	 O49651h/oGNn8XDuXf0j/4nq0hZ81mM4gFi03jf5XSRNdy1jbx/a9jBXbDeLWoLi/g
+	 ckIlSK+96nbbDgVgNfitgAdf+eI4m5H6SnMDFBTjkb8Fx6nOuyrBM5hBZsYCyXgLEm
+	 VUUAIxmqn0sQw==
+Message-ID: <609e4ec2-a7a2-4252-9b4b-4560d220068b@kernel.org>
+Date: Mon, 25 Aug 2025 09:34:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <adb383f0f4a3cb588448a5a708fb7a907d5e9403.1756103516.git.unicorn_wang@outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 10/12] dt-bindings: media: fsd: Document CSIS DMA
+ controller
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Inbaraj E <inbaraj.e@samsung.com>, mturquette@baylibre.com,
+ sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ s.nawrocki@samsung.com, s.hauer@pengutronix.de, shawnguo@kernel.org,
+ cw00.choi@samsung.com, rmfrfs@gmail.com, martink@posteo.de,
+ mchehab@kernel.org, linux-fsd@tesla.com, will@kernel.org,
+ catalin.marinas@arm.com, pankaj.dubey@samsung.com, shradha.t@samsung.com,
+ ravi.patel@samsung.com, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ alim.akhtar@samsung.com, linux-samsung-soc@vger.kernel.org, kernel@puri.sm,
+ kernel@pengutronix.de, festevam@gmail.com, linux-media@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+References: <20250814140943.22531-1-inbaraj.e@samsung.com>
+ <CGME20250814141051epcas5p14dccee388087372973988aeebcb872cf@epcas5p1.samsung.com>
+ <20250814140943.22531-11-inbaraj.e@samsung.com>
+ <c46c6f66-dee6-4efa-a624-de62aa705206@kernel.org>
+ <20250824211513.GA30196@pendragon.ideasonboard.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250824211513.GA30196@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 25, 2025 at 02:55:03PM +0800, Chen Wang wrote:
-> From: Chen Wang <unicorn_wang@outlook.com>
+On 24/08/2025 23:15, Laurent Pinchart wrote:
+> Hi Krzysztof,
 > 
-> Get the arguments of msi-ranges by specifying nargs directly instead of
-> using nargs_prop. This only takes one step, unlike the previous two
-> steps to get the values of all the arguments.
+> On Mon, Aug 18, 2025 at 10:45:17AM +0200, Krzysztof Kozlowski wrote:
+>> On 14/08/2025 16:09, Inbaraj E wrote:
+>>> +
+>>> +required:
+>>> +  - compatible
+>>> +  - reg
+>>> +  - interrupts
+>>> +  - clocks
+>>> +  - clock-names
+>>> +  - iommus
+>>> +  - port
+>>
+>> Also, you miss here supplies (as required).
 > 
-> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
-> ---
->  drivers/irqchip/irq-sg2042-msi.c | 14 +++-----------
->  1 file changed, 3 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/irqchip/irq-sg2042-msi.c b/drivers/irqchip/irq-sg2042-msi.c
-> index 3b13dbbfdb51..5249afd93b4a 100644
-> --- a/drivers/irqchip/irq-sg2042-msi.c
-> +++ b/drivers/irqchip/irq-sg2042-msi.c
-> @@ -276,17 +276,9 @@ static int sg2042_msi_probe(struct platform_device *pdev)
->  	data->doorbell_addr = res->start;
->  
+> Did you perhaps mean power-domains ? As far as I understand this is an
+> IP core internal to an SoC, so *-supply would be quite uncommon.
 
->  	ret = fwnode_property_get_reference_args(dev_fwnode(dev), "msi-ranges",
-> -						 "#interrupt-cells", 0, 0, &args);
-> +						 NULL, 3, 0, &args);
+Yes, power domains.
 
-Why using a fixed range here? I see no improvement. I think using #interrupt-cells
-is just OK.
 
-Regards,
-Inochi
-
->  	if (ret) {
-> -		dev_err(dev, "Unable to parse MSI vec base\n");
-> -		return ret;
-> -	}
-> -	fwnode_handle_put(args.fwnode);
-> -
-> -	ret = fwnode_property_get_reference_args(dev_fwnode(dev), "msi-ranges", NULL,
-> -						 args.nargs + 1, 0, &args);
-> -	if (ret) {
-> -		dev_err(dev, "Unable to parse MSI vec number\n");
-> +		dev_err(dev, "Unable to parse MSI Ranges\n");
->  		return ret;
->  	}
->  
-> @@ -298,7 +290,7 @@ static int sg2042_msi_probe(struct platform_device *pdev)
->  	}
->  
->  	data->irq_first = (u32)args.args[0];
-> -	data->num_irqs = (u32)args.args[args.nargs - 1];
-> +	data->num_irqs = (u32)args.args[2];
->  
->  	mutex_init(&data->msi_map_lock);
->  
-> -- 
-> 2.34.1
-> 
+Best regards,
+Krzysztof
 
