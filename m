@@ -1,165 +1,113 @@
-Return-Path: <linux-kernel+bounces-785662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E96C1B34F36
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:50:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0801AB34F3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:54:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EFA51A85B54
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:51:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 953F63B85E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:54:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F732BE04F;
-	Mon, 25 Aug 2025 22:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5708F29B783;
+	Mon, 25 Aug 2025 22:54:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FyLObBu4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=weathered-steel.dev header.i=@weathered-steel.dev header.b="ZXPGWGCD"
+Received: from mail-106111.protonmail.ch (mail-106111.protonmail.ch [79.135.106.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C1A153BED;
-	Mon, 25 Aug 2025 22:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CD552C08DF
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 22:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756162238; cv=none; b=oxPA79Pecbf9WKeoD6hmM68tKsXKp7neualp3qeVKWGYquF+of5amRU9Ih2tMGkIt7pxsNNAjMqbCdqZ2MCJzjrOngJXEA+sSQETNqnuZbtsAjAkqUF8ct2FKki/6KQ0DsCyOdkRKQCflVpq4qc5Kaql7k+jGPGk7f/Ib1xTrys=
+	t=1756162484; cv=none; b=lMEEoqY2JF8yDahCiEE2yLiUORBnZg1MyWN94ID1aqA5gY3/TkkezaGhsLTY6hJ1tpseSIhK3ZWtpDrg3zVzWVCgJfkW/lDFxUi1PQgSnem0SXhmFyb1SoLIH79RkozqBJcl1rjKeLPmdxYtwwOpC0Wei/SuP8PnC6/OSeiLrHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756162238; c=relaxed/simple;
-	bh=qLAILGylpNDxCGNnXDGO6cizwxD+QRteD6rM/sVBaQo=;
+	s=arc-20240116; t=1756162484; c=relaxed/simple;
+	bh=KUHNvd/4RB+C4mqKq6271tUITmjV3ZqRBPwdCYk/E2Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OFLWYIBT95e2KmR+eHoF7NQxrgr3N+Jqk/bdMVSunZZI1w9z1NyKFtQ1DkCiSY29/HLwxOfOtcp7JNKO6rGUV37VZ3KCRy1QuWgtlQ0wPFeNMyWGqGs+bKJ9jojA7XB1uan/dWY7T/D6Q+8/hVA9Mya6ONjkjsPDs4mi16iBwJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FyLObBu4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA55CC4CEED;
-	Mon, 25 Aug 2025 22:50:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756162235;
-	bh=qLAILGylpNDxCGNnXDGO6cizwxD+QRteD6rM/sVBaQo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FyLObBu4yeae/4I2HhwQ42nY1rjeme9QShssPkYP8kikxHnjai/1d2K8R/KplTRmx
-	 hn3niZf58Eug0UdO6tIzkmWfOM3vnJLg3l3QKGplgQ9/0niLNIHNfBu9ctfLJLAR6c
-	 d6Nb5vTXX5ZM06XOkj0GcnsMm7ZFiWFw2bXrtDNKISw9qU4248bNplSGjG1/fMCBLB
-	 O3kVVBMNgs6jEPqNuXraby7NzXLORT1qtghIYdM4DbNqYibWY0oofzFfvbqFxKNwjW
-	 XW6PDanOgpwKU6CLLBBNBxH+zQ43SFYEJkQycbRq18BB/tTfBsVbIb3i1yl2rTD9Zv
-	 2qcg0r3YFDKTQ==
-Date: Tue, 26 Aug 2025 01:50:31 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>
-Subject: Re: [PATCH] security: keys: use menuconfig for KEYS symbol
-Message-ID: <aKzot67f7F3wtHs7@kernel.org>
-References: <20250824222813.92300-1-rdunlap@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UkV00Hy4Im2mfTqYCaeczcJMfmugDL/z367GVnUuSsua0LQ4LvHNfriKn04Gz4UPtXpDeUtf3HZC7yCQ6XfDI1d4f2ifNyoHqeDlRVr0Dzm017rgEFerB4CGd2AVamKCIlj5xtVOEcU7fR1L/COPLyLdHoCABfwWbY6tqyoHNmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weathered-steel.dev; spf=pass smtp.mailfrom=weathered-steel.dev; dkim=pass (2048-bit key) header.d=weathered-steel.dev header.i=@weathered-steel.dev header.b=ZXPGWGCD; arc=none smtp.client-ip=79.135.106.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weathered-steel.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weathered-steel.dev
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=weathered-steel.dev;
+	s=protonmail3; t=1756162475; x=1756421675;
+	bh=eTlJMEfiQekU1EYYQrUuNLGsX/vZUxAdnlT3ykMi/8E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:In-Reply-To:From:To:
+	 Cc:Date:Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=ZXPGWGCDKQciBqfMR+wuqkY9UX6yJ9YwO3zgsbnMXSdgCNLmyBNcn/N5YTON3thqZ
+	 d79fE7eDEG7klNIB0gt85hpHkGkxSWDaw0kpiEmq/i56GnE3JNqtq3hrrw10G23pRp
+	 BWZvxa8vWhMi8Euv+/I0KLxfjGYogVWXYQ+1YCc6s79v6gAM6HRWSBJeX8ip03nZWL
+	 gXWL5La8SLXVMgE2K9nKMnf52E8de2xQ6eg777KzIRtH6a8LH6dgavXr8+ovn4LDDE
+	 NGUNVXRo2E5282n+YoYH8AxR8Lq7dmiMjcp5o2BWWJ6zabptQsud27IQgaC5jM1WBf
+	 +7T2q0lu02vzA==
+X-Pm-Submission-Id: 4c9mMC2r7cz1DDCD
+Date: Mon, 25 Aug 2025 22:54:28 +0000
+From: Elle Rhumsaa <elle@weathered-steel.dev>
+To: Onur =?iso-8859-1?Q?=D6zkan?= <work@onurozkan.dev>
+Cc: rust-for-linux@vger.kernel.org, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, ojeda@kernel.org,
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org,
+	aliceryhl@google.com, tmgross@umich.edu, dakr@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rust: file: use to_result for error handling
+Message-ID: <aKzppHcaaTxpfMTI@archiso>
+References: <20250821091001.28563-1-work@onurozkan.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250824222813.92300-1-rdunlap@infradead.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250821091001.28563-1-work@onurozkan.dev>
 
-On Sun, Aug 24, 2025 at 03:28:13PM -0700, Randy Dunlap wrote:
-> Give the KEYS kconfig symbol and its associated symbols a separate
-> menu space under Security options by using "menuconfig" instead of
-> "config".
+On Thu, Aug 21, 2025 at 12:10:01PM +0300, Onur Özkan wrote:
+> Simplifies error handling by replacing the manual check
+> of the return value with the `to_result` helper.
 > 
-> This also makes it easier to find the security and LSM options.
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Onur Özkan <work@onurozkan.dev>
 > ---
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: Jarkko Sakkinen <jarkko@kernel.org>
-> Cc: keyrings@vger.kernel.org
-> Cc: linux-security-module@vger.kernel.org
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: James Morris <jmorris@namei.org>
-> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+>  rust/kernel/fs/file.rs | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
 > 
->  security/keys/Kconfig |   14 ++++++--------
->  1 file changed, 6 insertions(+), 8 deletions(-)
-> 
-> --- linux-next-20250819.orig/security/keys/Kconfig
-> +++ linux-next-20250819/security/keys/Kconfig
-> @@ -3,7 +3,7 @@
->  # Key management configuration
->  #
->  
-> -config KEYS
-> +menuconfig KEYS
->  	bool "Enable access key retention support"
->  	select ASSOCIATIVE_ARRAY
->  	help
-> @@ -21,9 +21,10 @@ config KEYS
->  
->  	  If you are unsure as to whether this is required, answer N.
->  
-> +if KEYS
+> diff --git a/rust/kernel/fs/file.rs b/rust/kernel/fs/file.rs
+> index 35fd5db35c46..924f01bd64c2 100644
+> --- a/rust/kernel/fs/file.rs
+> +++ b/rust/kernel/fs/file.rs
+> @@ -10,7 +10,7 @@
+>  use crate::{
+>      bindings,
+>      cred::Credential,
+> -    error::{code::*, Error, Result},
+> +    error::{code::*, to_result, Error, Result},
+>      types::{ARef, AlwaysRefCounted, NotThreadSafe, Opaque},
+>  };
+>  use core::ptr;
+> @@ -398,9 +398,8 @@ impl FileDescriptorReservation {
+>      pub fn get_unused_fd_flags(flags: u32) -> Result<Self> {
+>          // SAFETY: FFI call, there are no safety requirements on `flags`.
+>          let fd: i32 = unsafe { bindings::get_unused_fd_flags(flags) };
+> -        if fd < 0 {
+> -            return Err(Error::from_errno(fd));
+> -        }
+> +        to_result(fd)?;
 > +
->  config KEYS_REQUEST_CACHE
->  	bool "Enable temporary caching of the last request_key() result"
-> -	depends on KEYS
->  	help
->  	  This option causes the result of the last successful request_key()
->  	  call that didn't upcall to the kernel to be cached temporarily in the
-> @@ -41,7 +42,6 @@ config KEYS_REQUEST_CACHE
->  
->  config PERSISTENT_KEYRINGS
->  	bool "Enable register of persistent per-UID keyrings"
-> -	depends on KEYS
->  	help
->  	  This option provides a register of persistent per-UID keyrings,
->  	  primarily aimed at Kerberos key storage.  The keyrings are persistent
-> @@ -58,7 +58,6 @@ config PERSISTENT_KEYRINGS
->  
->  config BIG_KEYS
->  	bool "Large payload keys"
-> -	depends on KEYS
->  	depends on TMPFS
->  	select CRYPTO_LIB_CHACHA20POLY1305
->  	help
-> @@ -70,7 +69,6 @@ config BIG_KEYS
->  
->  config TRUSTED_KEYS
->  	tristate "TRUSTED KEYS"
-> -	depends on KEYS
->  	help
->  	  This option provides support for creating, sealing, and unsealing
->  	  keys in the kernel. Trusted keys are random number symmetric keys,
-> @@ -85,7 +83,6 @@ endif
->  
->  config ENCRYPTED_KEYS
->  	tristate "ENCRYPTED KEYS"
-> -	depends on KEYS
->  	select CRYPTO
->  	select CRYPTO_HMAC
->  	select CRYPTO_AES
-> @@ -114,7 +111,6 @@ config USER_DECRYPTED_DATA
->  
->  config KEY_DH_OPERATIONS
->         bool "Diffie-Hellman operations on retained keys"
-> -       depends on KEYS
->         select CRYPTO
->         select CRYPTO_KDF800108_CTR
->         select CRYPTO_DH
-> @@ -127,9 +123,11 @@ config KEY_DH_OPERATIONS
->  
->  config KEY_NOTIFICATIONS
->  	bool "Provide key/keyring change notifications"
-> -	depends on KEYS && WATCH_QUEUE
-> +	depends on WATCH_QUEUE
->  	help
->  	  This option provides support for getting change notifications
->  	  on keys and keyrings on which the caller has View permission.
->  	  This makes use of pipes to handle the notification buffer and
->  	  provides KEYCTL_WATCH_KEY to enable/disable watches.
-> +
-> +endif # KEYS
+>          Ok(Self {
+>              fd: fd as u32,
+>              _not_send: NotThreadSafe,
 
-I wote for this at least. Definitely an improvement:
+Can be further simplified with:
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+```rust
+to_result(fd).map(|_| Self { fd: fd as u32, // rest... })
+```
 
-BR, Jarkko
+> --
+> 2.50.0
+
+Reviewed-by: Elle Rhumsaa <elle@weathered-steel.dev>
 
