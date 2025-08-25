@@ -1,118 +1,154 @@
-Return-Path: <linux-kernel+bounces-784240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5964EB3387F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:11:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D6AEB334D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 05:47:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B45E17D92E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:11:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC27B7A176D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 03:45:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC8D29B795;
-	Mon, 25 Aug 2025 08:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="jZTcCQqM"
-Received: from mail-m49206.qiye.163.com (mail-m49206.qiye.163.com [45.254.49.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C77F225390;
+	Mon, 25 Aug 2025 03:47:08 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96A8F29B793;
-	Mon, 25 Aug 2025 08:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FBA728E7;
+	Mon, 25 Aug 2025 03:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756109482; cv=none; b=hAJTQtGhcHUXZ+d0epsJZ5P2gPLWcunKgQumYhwNc/VQ+U6PZIM31DASQj9ljNj4Xv+18+5RQqKOwGOtMd1BUrg6Y8YU6Ct5u/k/NPg5oMjVkW04I+MljMdPg8p5mogZVgzLMNhmcm2xWBkwakag6piRFFKGpkSOSmPGY4NHSAM=
+	t=1756093628; cv=none; b=s+A0OsA1pD+3MpBV9okheKSVZIlT2iQhn8kXPwISKMw/IIp9dWUhsgqJ3B9pbQelEM+Ir3t4KPR+fL0M/BJ3zzuSiB4lZNnvKsLzkAYSK9LrwsX9hpYkR8vZEw8EYBSZ9kkX4QVQYtLyLwEVHbb95ltTqVUgjaYACnrOcieVB9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756109482; c=relaxed/simple;
-	bh=NGv79DTk6F7a87cvl4FUlWH3mVBfPqdnx9mJIeeHa5c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Rjw2y891k4GLhCthBeJ3KWvpzrT3tItSjBrQ/5esRl3vTfHBBIHDYUCVSVpXEjAxnO2YF8BxwD1B5j6lkLudgAJ9ycBj58RNtHjT69aG6K9OH6j8UzGHjwyeANFYy3mFB9urd955JcuO5x7ZqakGhCVTvbAyiw8s07YV3UQn0y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=jZTcCQqM; arc=none smtp.client-ip=45.254.49.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.33.94] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 20740ab50;
-	Mon, 25 Aug 2025 11:35:11 +0800 (GMT+08:00)
-Message-ID: <5252b43d-a7ee-42b5-932e-6c6eadd04543@rock-chips.com>
-Date: Mon, 25 Aug 2025 11:35:10 +0800
+	s=arc-20240116; t=1756093628; c=relaxed/simple;
+	bh=ci12geZvUE4ohC/4x/GAiLoTapYyh0p67pS8EckDUSA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ft4uY27gDJK0AUEKgpMPX4rQoFMe+ERU37eQD216e6l+jCgnAAhnqSVdBS8Q8T3AJYuCAg0oBNqwfFb2aDEdD2mMbjh59pndkykxa6icmnpwk8c6TEKvhC4yK/23fbegkv+DOaQCD5SCSFk11/3XvJOOybgKB3EGkgiIRRZOJLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c9GvF68g4zYQtM4;
+	Mon, 25 Aug 2025 11:47:05 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 673361A0A25;
+	Mon, 25 Aug 2025 11:47:04 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgDXIY613KtopsDUAA--.55486S4;
+	Mon, 25 Aug 2025 11:47:03 +0800 (CST)
+From: libaokun@huaweicloud.com
+To: linux-ext4@vger.kernel.org
+Cc: tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	libaokun1@huawei.com,
+	libaokun@huaweicloud.com,
+	syzbot+1713b1aa266195b916c2@syzkaller.appspotmail.com
+Subject: [PATCH] ext4: fix potential null deref in ext4_mb_init()
+Date: Mon, 25 Aug 2025 11:38:30 +0800
+Message-Id: <20250825033830.2230202-1-libaokun@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: gadget: f_hid: Fix zero length packet transfer
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: gregkh@linuxfoundation.org, Chris.Wulff@biamp.com,
- linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
- frank.wang@rock-chips.com, jianwei.zheng@rock-chips.com,
- yue.long@rock-chips.com
-References: <1755828118-21640-1-git-send-email-william.wu@rock-chips.com>
- <c09f21ee-be83-4880-841b-70e1e5c036f0@rowland.harvard.edu>
-From: William Wu <william.wu@rock-chips.com>
-In-Reply-To: <c09f21ee-be83-4880-841b-70e1e5c036f0@rowland.harvard.edu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a98df4b4d9709d4kunm3b6efc731b10cc1
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGh4YGVZJSk5OS0wfSh0ZSENWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUJCSU5LVU
-	pLS1VKQktCWQY+
-DKIM-Signature: a=rsa-sha256;
-	b=jZTcCQqM5yrjKOFSAtYk0EnwukWfQDkymkU92Bs/8bgdkoPL4iFiWgwJQ0RWrLDRT0s05dijmxWi39X56bJypBnDZJPRelZpNaRs6nQiCRqooJycG19YKE9GFZan4yvA4KXRKygdrWj8BKp8qrjw1L2zGaovhMjvOgSZYCkCrg0=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=G4TTjMMxsEMVdyTYcmWj7mnrO5XKGcr4tlqnkm4eDc8=;
-	h=date:mime-version:subject:message-id:from;
+X-CM-TRANSID:gCh0CgDXIY613KtopsDUAA--.55486S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxWF47uw13KF1rtF47CFW7Jwb_yoW5Gw48pw
+	n8JFyxKr4UGFyDCan7G3W5Xwn5Ka18WF1UG34fWF1rXF1UtrykCFn2qr1UAFyUKrWkA3Z7
+	JFyqqr45tw48CaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9K14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI4
+	8JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xv
+	wVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjx
+	v20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20E
+	Y4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267
+	AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUO73vUUUUU
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAQAIBWimynOITgABs8
 
+From: Baokun Li <libaokun1@huawei.com>
 
+In ext4_mb_init(), ext4_mb_avg_fragment_size_destroy() may be called
+when sbi->s_mb_avg_fragment_size remains uninitialized (e.g., if groupinfo
+slab cache allocation fails). Since ext4_mb_avg_fragment_size_destroy()
+lacks null pointer checking, this leads to a null pointer dereference.
 
-On 8/22/2025 9:56 PM, Alan Stern wrote:
-> On Fri, Aug 22, 2025 at 10:01:58AM +0800, William Wu wrote:
->> If the hid transfer with size divisible to EPs max packet
->> size, it needs to set the req->zero to true, then the usb
->> controller can transfer a zero length packet at the end
->> according to the USB 2.0 spec.
->>
->> Signed-off-by: William Wu <william.wu@rock-chips.com>
->> ---
->>   drivers/usb/gadget/function/f_hid.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/usb/gadget/function/f_hid.c b/drivers/usb/gadget/function/f_hid.c
->> index 8e1d1e8..8021af3 100644
->> --- a/drivers/usb/gadget/function/f_hid.c
->> +++ b/drivers/usb/gadget/function/f_hid.c
->> @@ -511,7 +511,7 @@ static ssize_t f_hidg_write(struct file *file, const char __user *buffer,
->>   	}
->>   
->>   	req->status   = 0;
->> -	req->zero     = 0;
->> +	req->zero     = ((count % hidg->in_ep->maxpacket) == 0);
-> 
-> Here and below, there is no need to check whether count is divisible by
-> the maxpacket length.  The UDC driver does this for you automatically.
-> (See the kerneldoc for struct usb_request.)  Simply set req->zero to 1.
-> 
-> Alan Stern
-Good idea，I checked the UDC drivers (drivers/usb/gadget/udc and 
-dwc2/dwc3), they test if zlp is actually needed if req->zero to 1.>
->>   	req->length   = count;
->>   	req->complete = f_hidg_req_complete;
->>   	req->context  = hidg;
->> @@ -967,7 +967,7 @@ static int hidg_setup(struct usb_function *f,
->>   	return -EOPNOTSUPP;
->>   
->>   respond:
->> -	req->zero = 0;
->> +	req->zero = ((length % cdev->gadget->ep0->maxpacket) == 0);
->>   	req->length = length;
->>   	status = usb_ep_queue(cdev->gadget->ep0, req, GFP_ATOMIC);
->>   	if (status < 0)
->> -- 
->> 2.0.0
-> 
-> 
-> 
+==================================================================
+EXT4-fs: no memory for groupinfo slab cache
+BUG: kernel NULL pointer dereference, address: 0000000000000000
+PGD 0 P4D 0
+Oops: Oops: 0002 [#1] SMP PTI
+CPU:2 UID: 0 PID: 87 Comm:mount Not tainted 6.17.0-rc2 #1134 PREEMPT(none)
+RIP: 0010:_raw_spin_lock_irqsave+0x1b/0x40
+Call Trace:
+ <TASK>
+ xa_destroy+0x61/0x130
+ ext4_mb_init+0x483/0x540
+ __ext4_fill_super+0x116d/0x17b0
+ ext4_fill_super+0xd3/0x280
+ get_tree_bdev_flags+0x132/0x1d0
+ vfs_get_tree+0x29/0xd0
+ do_new_mount+0x197/0x300
+ __x64_sys_mount+0x116/0x150
+ do_syscall_64+0x50/0x1c0
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
+==================================================================
+
+Therefore, add necessary null check to ext4_mb_avg_fragment_size_destroy()
+to prevent this issue. The same fix is also applied to
+ext4_mb_largest_free_orders_destroy().
+
+Reported-by: syzbot+1713b1aa266195b916c2@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=1713b1aa266195b916c2
+Fixes: f7eaacbb4e54 ("ext4: convert free groups order lists to xarrays")
+Signed-off-by: Baokun Li <libaokun1@huawei.com>
+---
+ fs/ext4/mballoc.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+index 5898d92ba19f..6070d3c86678 100644
+--- a/fs/ext4/mballoc.c
++++ b/fs/ext4/mballoc.c
+@@ -3655,16 +3655,26 @@ static void ext4_discard_work(struct work_struct *work)
+ 
+ static inline void ext4_mb_avg_fragment_size_destroy(struct ext4_sb_info *sbi)
+ {
++	if (!sbi->s_mb_avg_fragment_size)
++		return;
++
+ 	for (int i = 0; i < MB_NUM_ORDERS(sbi->s_sb); i++)
+ 		xa_destroy(&sbi->s_mb_avg_fragment_size[i]);
++
+ 	kfree(sbi->s_mb_avg_fragment_size);
++	sbi->s_mb_avg_fragment_size = NULL;
+ }
+ 
+ static inline void ext4_mb_largest_free_orders_destroy(struct ext4_sb_info *sbi)
+ {
++	if (!sbi->s_mb_largest_free_orders)
++		return;
++
+ 	for (int i = 0; i < MB_NUM_ORDERS(sbi->s_sb); i++)
+ 		xa_destroy(&sbi->s_mb_largest_free_orders[i]);
++
+ 	kfree(sbi->s_mb_largest_free_orders);
++	sbi->s_mb_largest_free_orders = NULL;
+ }
+ 
+ int ext4_mb_init(struct super_block *sb)
+-- 
+2.46.1
 
 
