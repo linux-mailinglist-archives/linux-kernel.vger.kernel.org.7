@@ -1,113 +1,144 @@
-Return-Path: <linux-kernel+bounces-785012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 743B0B344BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:57:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A5E3B344BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:57:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19BC63A51C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:57:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89EF37A5111
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434B22FB999;
-	Mon, 25 Aug 2025 14:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED0562FC008;
+	Mon, 25 Aug 2025 14:57:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ta7ChnMV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Wq8T7vpv"
+Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97FE31C5486;
-	Mon, 25 Aug 2025 14:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F4B2FABF7
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 14:57:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756133829; cv=none; b=RO8yBHE8nqz08g783vZZgTSAB11l2r9G8uh+G0ubD0Lm+AGD+mYp4aSeObbB2ZGWBTvGSa16y19x9A+YeUvfunHPJJyyvqj3r8rOB/4HBtymRJE4N9dEhh8QO6pEsMGhjG+AAWf0lBdWP8iINNiKcE2naL4GFgzSJ3LC8wWWA+c=
+	t=1756133852; cv=none; b=PK5yYi8bRwiVLBZuNilvMqZLTGoliji8zhg1bvCf4IQZhj1hwDp7c2YTz/kyTQ7Nry31fAkLNyYaCSjZFRNZDf64q2J7qxKGGz6GvKUGIWAdUpf5RQ43p5Ydj8n0GCAN8MpLV+ivirRCvTZOgxx/Fw1A6dOhOW6xQMsbnxPkw5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756133829; c=relaxed/simple;
-	bh=tY8TXkykPrjBK4IPNJfIRkS0VjGKW1olRODNSwXcnco=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oM34WFzFW/SfThn7Zy5jQiiibHjEgyT+FX90bVLlu2IdaP5vKJTDN8vrdyLpEusb8Sf/pqaStGoEWBFX0tKHRwwJfkVGqt1VyPfBDH6/KGtwNWkTYgK1LgfIWrtgu6jQsLA7BYcrvUq0p4CbmJZpyqAhDrq8xF4Er0lZJUiEJyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ta7ChnMV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 444E0C4CEF4;
-	Mon, 25 Aug 2025 14:57:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756133829;
-	bh=tY8TXkykPrjBK4IPNJfIRkS0VjGKW1olRODNSwXcnco=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ta7ChnMVSjsdsqH7svpUwMqf7Pz5wC7PWeFoTZzKavZS2xbjzQyp+UTJDXFzpXXQs
-	 enU+XtKfgP7BzZU+uL5nta0tC9AsEP3VIdcBob652VbdrAJCO3ydlqZKmC9nIuOBW5
-	 iX1IbPNSlLfcr0KX/xwaLVS2rAQpGBKI3mMntXrP6e3EqwvjHFw9B87V7pyPeOIaUp
-	 /CPVrJh/scKAfP3KoT36KeVrUzlMxrqLsxxp4jnW2Ez+TlM5Cr0UXx/dj6ooDxTped
-	 UD96LskbnhHGy+zsjYiPrJOdrVCWZvrrGBk28A/cxWseJICEqdz20I29v+bnblv08r
-	 1QQTXLA5MrUmw==
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-30ccebab736so3257666fac.3;
-        Mon, 25 Aug 2025 07:57:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWCzSBvn90b+3Mojc2eqUWkTkiwKTGAO73s/kZEkGj8hdJGEx0juBkDtNvFoBQA2dnZ51orQFCu6oo=@vger.kernel.org, AJvYcCXJbAAXtwjOQGXM/9mT+RB0k+pjZB+oEjzCZKpWIbNfUTuwzRGeljMoIwTutwVYrk4lBeLYWL1ahP+d7yyR@vger.kernel.org, AJvYcCXvyOXWCaqipUrdhvf7xdnVhjhQlcSPCzDyeMxxTmuj1t+Z0mIejJqknHY7TJEWSqFtjYW1WJWjY4QE@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVD42XYr9B1tasY9QB1xOEketMcpmG/90WaQqYGpynvdpFOs0c
-	GOfN+nmJWZt82bUi66MLnekeu4txJKFOBsFU587RF8OFe5vT8mRDsFUPX/jlVehaZRcnQaP50Ma
-	a8duq7JJiaVvxgoUKMGGv6E2i+b0PsCI=
-X-Google-Smtp-Source: AGHT+IGvB9xOXfVR+M1XersCBlaasX/VvIr6WHKDsJ/Iv2XSPDAmudlo3CsScfqb2fgCasliY1ryQqv1MwvyEHm+eU8=
-X-Received: by 2002:a05:6870:88a0:b0:30b:6dc6:d5ef with SMTP id
- 586e51a60fabf-314dcd5d1c0mr5366796fac.32.1756133828619; Mon, 25 Aug 2025
- 07:57:08 -0700 (PDT)
+	s=arc-20240116; t=1756133852; c=relaxed/simple;
+	bh=JH2YsonV3EAZH0DTcNFaxzu8DrMdoOtLh5Y0M8Z1pxQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IV7JtBSFq5erEOdxfdLnTtA4qizdBUSdad2Fh8OktatnkL7jnKwbyNw2dXfdEEuKHek8wf8Lyh61LzbV0FPkJbpXsG5iApmFJWBZO9hv07Fl5f9eQupURM0sKYyso54FNOTcUEYCATY7lLhF6OeVb4ooZgjVP9c9ePeguI8cP/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Wq8T7vpv; arc=none smtp.client-ip=209.85.210.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-7704f3c46ceso1288545b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 07:57:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1756133850; x=1756738650; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VdEVZ5TCp58sTeVk+nfvlA0Ah5Y1WxCmV7eSgrEVDls=;
+        b=Wq8T7vpvbumuM+QXjaLEY1TP2qh2kJHJu3YqtFom+RFIwnK1M+P1LX20aJaax9nl3x
+         6B0Uk0TbkLM7St7EiWUyaI837MyvGYPaQ7zIVmcNK1g8U/4IyQaAOo7gOZfDKDPdnJDU
+         j0b1vItsmLEGso7AlIoMsheOXhaZN/+rccp2Fr6Gc6CA+wW2T7pF8+u1+VrNwteZ8GLw
+         f/6uTpcrTqVRYBmI9Af0D4bZB+yjlpsNiUykTDoGtuhMA/BYM8q+0ZlTnVkIR61ejjAY
+         7rabhmW9n6e1JHz5dO3sMUuojeT+4Dx4XbjxEU4HmcBLmRZ1UFr3IwaOALvk2f9hBqXB
+         zgJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756133850; x=1756738650;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VdEVZ5TCp58sTeVk+nfvlA0Ah5Y1WxCmV7eSgrEVDls=;
+        b=QshEXkW7ynU8CAWjOhKQmeiLV9PkZtJHgmk0cF05S3Jucb0xNCcYV4kjMLyqWxOxfo
+         M+lR/EMkyovxdSN2G1EkXMfQ6pzGlBN/gT+EM91UqoGBUoLDekAkDua9DeL/NTNFQYjY
+         ZMtQ5cdlV3TowfCgr8ydElWh83fEshPY0cKrud++OtA72hG1iksjXhaUDnlubJA1GZCs
+         GeN0kAxBf6eRzc6V3bzq9OFJmX0WU9Cu+EbYHGv7zMVFsSFiJ8Ou6uOs6yIDF2Lrn2f7
+         7CNS8bxmCChSXqywjzUck10r7yk8ozBlTKGqIhA4bffEKicAhgXuYnG+1vZeFapWXTtm
+         vucg==
+X-Gm-Message-State: AOJu0YyvZk26H9pWneveSLgHU+o1saz7mzm6SKwC++OWqqHlvWGbe4n3
+	mouI0k4yypuI4ictdwCF2XUbOHToDAztOzamfzaPi3RuALcfkDzoWX3dNWujBuhS2l0=
+X-Gm-Gg: ASbGncuLKOQ3gA5Hjmb985vnX1g8Dt3eBX9SbG+h3uL3lPHbGZ3ioYMy3+KAyeikIRj
+	ohGAlzS1dip+auYsafd2SnmOB76/UutGq8qCKdJLfHjKrQ2GtCezIokDOAu5DLrmKvv53RnwUkl
+	m7X5hshiCcTdLTnZLmFLygT8CKxzu7gAHPJ0VH2C1zUDvQjtCnDx8rEd7is42OZH61jw04B4/ur
+	XCuQkPWh6RUGRHCHeeu+co6hmJlvtl0DL5rSm2+ktXenmACZEFTAb6nbGRqeSMieigiUGqzHZQz
+	5mUi7ozH+0VPEEZyrUTVvfUscYccrIxNKh7lEHos4lEewsW+UD6uelQQVgOCiwoRCOg8t6CbQZm
+	BgB188w9xbG6bnL7XAdx9QXDpSRlNH6Zx4RGP9ruPRd+bD+qUvY2QWpLhkIB4
+X-Google-Smtp-Source: AGHT+IENPQBoFqdndLCJHhCszx3PtbFlasr7HlxuUT0VwFZeQm4kkp41cyvWYH6QXY7aP4DPdWilzw==
+X-Received: by 2002:a05:6a00:bd92:b0:76e:7aee:35f1 with SMTP id d2e1a72fcca58-7702fc09f00mr14592628b3a.29.1756133849771;
+        Mon, 25 Aug 2025 07:57:29 -0700 (PDT)
+Received: from H3DJ4YJ04F.bytedance.net ([203.208.189.7])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-770401b190asm7803436b3a.74.2025.08.25.07.57.26
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 25 Aug 2025 07:57:29 -0700 (PDT)
+From: Yongting Lin <linyongting@bytedance.com>
+To: anthony.yznaga@oracle.com,
+	khalid@kernel.org,
+	shuah@kernel.org,
+	linyongting@bytedance.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	akpm@linux-foundation.org,
+	linux-mm@kvack.org
+Subject: [PATCH 0/8] Add selftests for mshare
+Date: Mon, 25 Aug 2025 22:57:03 +0800
+Message-Id: <20250825145719.29455-1-linyongting@bytedance.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814072934.1016694-1-tianyaxiong@kylinos.cn> <20250814073156.1022939-1-tianyaxiong@kylinos.cn>
-In-Reply-To: <20250814073156.1022939-1-tianyaxiong@kylinos.cn>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 25 Aug 2025 16:56:57 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hGj3=GxnLkj0adm+ENSk7YbzNZRPiBTgm_bKZsH3OYDw@mail.gmail.com>
-X-Gm-Features: Ac12FXzRjYE2csZ_OCSOdpP4wrPZ-eVam9nKg0GHm5mnlFEOke9NQBhN0m6QdEI
-Message-ID: <CAJZ5v0hGj3=GxnLkj0adm+ENSk7YbzNZRPiBTgm_bKZsH3OYDw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] ACPI: processor: idle: Replace single idle driver
- with per-CPU model for better hybrid CPU support
-To: Yaxiong Tian <tianyaxiong@kylinos.cn>
-Cc: rafael@kernel.org, daniel.lezcano@linaro.org, lenb@kernel.org, 
-	robert.moore@intel.com, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	acpica-devel@lists.linux.dev, Shaobo Huang <huangshaobo2075@phytium.com.cn>, 
-	Yinfeng Wang <wangyinfeng@phytium.com.cn>, Xu Wang <wangxu@phytium.com.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 14, 2025 at 9:32=E2=80=AFAM Yaxiong Tian <tianyaxiong@kylinos.c=
-n> wrote:
->
-> Current implementations of hybrid architectures (e.g., ARM64 big.LITTLE
-> and Intel Alder Lake) feature CPU cores with different exit latencies.
+Mshare is a developing feature proposed by Anthony Yznaga and Khalid Aziz
+that enables sharing of PTEs across processes. The V3 patch set has been
+posted for review:
 
-This is not true for Intel platforms, all of the CPUs in there have
-the same set of C-states.
+https://lore.kernel.org/linux-mm/20250820010415.699353-1-anthony.yznaga@oracle.com/
 
-> Using a single driver to describe_LPI states for all core types is
-> therefore suboptimal. This is further supported by ACPI specification
-> 8.4.4.1 which states: "In a processor hierarchy, each node has its
-> own _LPI low-power states specific to that node."
->
-> To address these limitations, we replace the monolithic idle driver
+This patch set adds selftests to exercise and demonstrate basic
+functionality of mshare.
 
-It cannot be replaced or you potentially open a Pandora's box of
-regressions on old systems in the field.
+The initial tests use open, ioctl, and mmap syscalls to establish a shared
+memory mapping between two processes and verify the expected behavior.
 
-> with a per-CPU model. This approach enables accurate idle state represent=
-ation
-> for each core type
+Additional tests are included to check interoperability with swap and
+Transparent Huge Pages.
 
-The per-CPU model can be used instead of the "monolithic idle driver"
-only if the platform is actually known to be hybrid.
+Future work will extend coverage to other use cases such as integration
+with KVM and more advanced scenarios.
 
-> Tested-by: Shaobo Huang <huangshaobo2075@phytium.com.cn>
-> Signed-off-by: Yaxiong Tian <tianyaxiong@kylinos.cn>
-> Signed-off-by: Shaobo Huang <huangshaobo2075@phytium.com.cn>
-> Signed-off-by: Yinfeng Wang <wangyinfeng@phytium.com.cn>
-> Signed-off-by: Xu Wang<wangxu@phytium.com.cn>
+This series is intended to be applied on top of mshare V3, which is
+based on mm-new (2025-08-15).
 
-What do all of the above S-o-b mean?  Are these people involved in the
-development of the code?  In that case Co-developed-by is also needed.
+Yongting Lin (8):
+  mshare: Add selftests
+  mshare: selftests: Adding config fragment
+  mshare: selftests: Add some helper function for mshare filesystem
+  mshare: selftests: Add test case shared memory
+  mshare: selftests: Add test case ioctl unmap
+  mshare: selftests: Add some helper functions for reading and
+    controlling cgroup
+  mshare: selftests: Add test case to demostrate the swaping of mshare
+    memory
+  mshare: selftests: Add test case to demostrate that mshare doesn't
+    support THP
 
-Thanks!
+ tools/testing/selftests/mshare/.gitignore |   3 +
+ tools/testing/selftests/mshare/Makefile   |   7 +
+ tools/testing/selftests/mshare/basic.c    | 108 ++++++++++
+ tools/testing/selftests/mshare/config     |   1 +
+ tools/testing/selftests/mshare/memory.c   |  82 +++++++
+ tools/testing/selftests/mshare/util.c     | 251 ++++++++++++++++++++++
+ 6 files changed, 452 insertions(+)
+ create mode 100644 tools/testing/selftests/mshare/.gitignore
+ create mode 100644 tools/testing/selftests/mshare/Makefile
+ create mode 100644 tools/testing/selftests/mshare/basic.c
+ create mode 100644 tools/testing/selftests/mshare/config
+ create mode 100644 tools/testing/selftests/mshare/memory.c
+ create mode 100644 tools/testing/selftests/mshare/util.c
+
+-- 
+2.20.1
+
 
