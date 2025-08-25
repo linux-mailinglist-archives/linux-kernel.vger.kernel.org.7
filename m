@@ -1,78 +1,54 @@
-Return-Path: <linux-kernel+bounces-784708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44ABDB34020
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:55:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A4AAB34027
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:56:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E84316C721
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:55:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BA203BE74A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:56:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8671521C161;
-	Mon, 25 Aug 2025 12:55:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 328CA2609FC;
+	Mon, 25 Aug 2025 12:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XhEYek19"
-Received: from mail-wr1-f67.google.com (mail-wr1-f67.google.com [209.85.221.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ECD2Sp7d"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB47F22F177
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 12:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8C022F177;
+	Mon, 25 Aug 2025 12:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756126513; cv=none; b=h31NsV3wlSWuZic2/2NAV3stGpxJR7CtZq9i6ceod0BqyKwN/a0Dvi+2woM9bG4pPv8gigdFU/YpzT2jy4nvIBTQxZBjtE9TlzXInNu3XDHbFmS+tqbuHtALj0bsjgh95xPmhDwXWzaxMxl6r4orm6W6/0prleiALAa0Et61vyg=
+	t=1756126560; cv=none; b=S5BfqqnHc21YN6A2Pi/OGj4lERmcj4Mi/d8rwQjtsA+r2SJH6x5Kj4rG8jBSC79DesibGyWl7+EM03wAYp3yIZ+SFfjqCA9s906jlr2mdVfi1uPbrLD6bX+E9I4FK40LZRP2B6mIkoPF+ZxyVJxFZ/pwZJQSW3Kb7oobUT1unJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756126513; c=relaxed/simple;
-	bh=p6Zmaj5smnWJq2PWn5FiDiA6cSwI6w5qSVM1iEtB1lM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BOcXaj+JRv8nBqV35CGX8sbrKB2mQlpAU0ppzDZ2XoWS7KkGOGV4cBKL3R2Nesr072nt7rdcgE56j+OJgwZPjXa0gJ2CQe/UvwRHGD4bSMuNGchEF2/M28T6a0RTJ5MKl9R82uGW2ecbT8NyuG1u3rWVHMFxDcWw2dsuluSPF0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XhEYek19; arc=none smtp.client-ip=209.85.221.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f67.google.com with SMTP id ffacd0b85a97d-3c380aa1ad0so2123109f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 05:55:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756126510; x=1756731310; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nyb7W0i1P3IjF0jcI+ICuOqZQ1VFzRLlpkO8ArSEv2U=;
-        b=XhEYek19T5/sOMJKe+Xz4/zVwm71KDg/IEs2q2n0mApkAfodD9NJ7S5McLDgflqOOB
-         vVeH1UUGz5sOuFNPJgLbnSSefMyh5FfHHbm9fY5KHLBt4MN2d4t9kieYx+Spt0B5Bv3G
-         yyk+PJDpdnsvaYQhK2RRdvoQIEA8uFDqOLnYfIh/0nkJI6QfqL0IW4H+ayMC+kVB3mfD
-         vSmeBya6U8JknaHWogW1GW3gEM6N+lpLOWSuLzsn7mZNfVbC0aGdxAMGCzdwbQGLK6PV
-         iCcDaPWN0bwDNG4DqdMQWTCha0tI6rojMVmcCfgF5eX8G+ky9tXQ7KRcHFEVofARS5RK
-         uSYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756126510; x=1756731310;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nyb7W0i1P3IjF0jcI+ICuOqZQ1VFzRLlpkO8ArSEv2U=;
-        b=jOzJZKz/tEVb8vpTsLii3SPJEzeJzPXM6F5B4dIs51TkieFtwVhX1YsKPKznANRUvs
-         CZTGs0rDy+FrQeGgmDLlPr/W8o3liPSEABaE3+p4bC9Hm6MbEFseK4cISgohR9KaScpz
-         Ut9NCDoDC2Fsgj1uzv4n7pEVFkTatd+lOS74L/GibEOL+KO8SFZUzFPDhot3RKOtXiCk
-         4GnhHB9/35iLi9KkDu56NgZj4ocQM3fRhiF+fu2+I+a97sySsyYF3wtwPqGua4XK10g0
-         PvN6YqbO+kBwR06EuBb8QFasT6oO+oMvB7160wLzI3jVJsKs1ub3LHfe9CmUrKbQ0gKY
-         amtw==
-X-Gm-Message-State: AOJu0YxSaZPsSekpENJRQ6l02wVziZmnR2aNMXV64voo721MfPiYREPO
-	MHJYO6V3MOpFj+QN4ArG4o36bBVDN+23gC2m9TufK0PgS4jPiEYAJeemmTbTx43+KWY=
-X-Gm-Gg: ASbGnctuz6zS7YgvRyAbAi1v14iIYMdkcZ3A9oraFjQB3kgQzujekbrRxMEvpfvXaEr
-	AANRoFV8QMnG5eplfT2k833hgH07rqX7uRGJlddWYE+bmI22dCs7nbhHr/JcJOQfck5OElI8pLS
-	L12/ov6TDkc8fDw8hIN1fGtBvX//P+6+VRvE0isghwo3GE/CVy+VMvFs4I7VVHJlOFfTstgJyOq
-	APnH+Y0R1T0OvnjdQkUXMmU4RfFQizSNtNDSR31MoovRkDx5iuTdOvSIw/NE5nxcANQ9jg0Aoxc
-	qHu3qIJXiX8geRpKCgiKsZODnW86weDgLu/tKHrTJ0P5l9BfL/LtNHz8ei6cuAxKNf/vcRpd8ni
-	8feeZ++DRvugjoP0bEuGMMtK/yl2NMw==
-X-Google-Smtp-Source: AGHT+IGiatYdBiQIlX08WDb3q8TgWhNu9cU7pZ5BZYgWH52vQcA/WE9cIPHsPYf1nJo7amAILSvRZA==
-X-Received: by 2002:a05:6000:40dd:b0:3a4:d6ed:8df8 with SMTP id ffacd0b85a97d-3c5dc734927mr8857444f8f.39.1756126509927;
-        Mon, 25 Aug 2025 05:55:09 -0700 (PDT)
-Received: from [192.168.0.24] ([82.76.24.202])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b57487910sm107774225e9.15.2025.08.25.05.55.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Aug 2025 05:55:09 -0700 (PDT)
-Message-ID: <64a93c4a-5619-4208-9e9f-83848206d42b@linaro.org>
-Date: Mon, 25 Aug 2025 15:55:07 +0300
+	s=arc-20240116; t=1756126560; c=relaxed/simple;
+	bh=qZFcnicgofqpjKSbgJm94yUCACoa/H1JOn5FGmcxNIs=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=HrkJ41DZfiURj9BP5fSUTgGGGRm3S1nrhUiA0xEs0a0rY4cYrT3Wg+l4inpu0ubsgfCfrMvih7Npb8FJLzt7cLhK6ifYuqOliFabXGEUJddPo+JtOKpdYnQL4HycIDBva80Lb/m8m+qAQaXjSYrsmMNgYyInzQE2jtUfkuu1F1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ECD2Sp7d; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1756126555; x=1756731355; i=markus.elfring@web.de;
+	bh=+KxtocZo7lEdK5wtDyMmQPcclmuh1chlangADQx2sl4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=ECD2Sp7dn4oE6+x+hfdevKL6Eup0JgBe3cIravEN8EHyaeTsmKeY4qnzv2rwrg/d
+	 0QC/wSuVuxJ/6rxw6aP2//JQAaSku+eTOhQahvjpgAJehYSO03eKBeLW3Vh7xH+Z9
+	 EE1w/C+NVldYLg5Pw4u9U2y1Ces/0PeYvT6xWHig9Q1rTNDutIM9ewUSykeZVah+t
+	 2MiA4nLskkfilhJy9KAL7pLuZ7Egolqy4C+zq3dJCuA3/eDDcT0N455bUaDBNDkN5
+	 s9KttDvNnoGITc8r6gGc3Tvqp0xf8ppfmFR5nZoaTjhj2pUoIIVTmnT8SvZxntowq
+	 QaTLmYLnk10RwHjJEw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.250]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MsaRt-1uXcAq1jH1-00tJ5i; Mon, 25
+ Aug 2025 14:55:55 +0200
+Message-ID: <068ddf68-f24f-4041-b4ab-2d7d5f8a90ee@web.de>
+Date: Mon, 25 Aug 2025 14:55:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,190 +56,109 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC][PATCH v2 22/29] mm/numa: Register information into Kmemdump
-To: David Hildenbrand <david@redhat.com>, Michal Hocko <mhocko@suse.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-mm@kvack.org, tglx@linutronix.de,
- andersson@kernel.org, pmladek@suse.com,
- linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
- corbet@lwn.net, mojha@qti.qualcomm.com, rostedt@goodmis.org,
- jonechou@google.com, tudor.ambarus@linaro.org,
- Christoph Hellwig <hch@infradead.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>
-References: <20250724135512.518487-1-eugen.hristev@linaro.org>
- <20250724135512.518487-23-eugen.hristev@linaro.org>
- <ffc43855-2263-408d-831c-33f518249f96@redhat.com>
- <e66f29c2-9f9f-4b04-b029-23383ed4aed4@linaro.org>
- <751514db-9e03-4cf3-bd3e-124b201bdb94@redhat.com>
- <aJCRgXYIjbJ01RsK@tiehlicka>
- <e2c031e8-43bd-41e5-9074-c8b1f89e04e6@linaro.org>
- <23e7ec80-622e-4d33-a766-312c1213e56b@redhat.com>
- <f43a61b4-d302-4009-96ff-88eea6651e16@linaro.org>
- <77d17dbf-1609-41b1-9244-488d2ce75b33@redhat.com>
- <ecd33fa3-8362-48f0-b3c2-d1a11d8b02e3@linaro.org>
- <9f13df6f-3b76-4d02-aa74-40b913f37a8a@redhat.com>
-From: Eugen Hristev <eugen.hristev@linaro.org>
-Content-Language: en-US
-In-Reply-To: <9f13df6f-3b76-4d02-aa74-40b913f37a8a@redhat.com>
+To: GuoHan Zhao <zhaoguohan@kylinos.cn>, linux-perf-users@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
+ Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
+ Kan Liang <kan.liang@linux.intel.com>, Mark Rutland <mark.rutland@arm.com>,
+ Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Thomas Falcon <thomas.falcon@intel.com>
+References: <20250815072008.20214-1-zhaoguohan@kylinos.cn>
+Subject: Re: [PATCH v2] perf parse-events: Prevent null pointer dereference in
+ __add_event()
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250815072008.20214-1-zhaoguohan@kylinos.cn>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:iQzby21TKxhmzFYiWw3/RjQH1DvJ7TOKLKrB34QOSb+NYnD1c7M
+ GKawo2Wqp3+BLcEHD18RFAfabKSZkbACYl5GgqiynMngVclH/R8EQCNv7iJxKMSBThD3qqX
+ ezhPl/ueTBDWtAgSj/y0ErDYmj1m8wrZzzBZLgRieSQiAyoRiuaV8yMcxILTHxWt3m8P2J3
+ uQBuXMibyEkr6wO7kpylA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:vT+qCPSsDEI=;xS7Oye+GX8o4hUDqdRGBk+TaCyU
+ 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
 
+=E2=80=A6
+> Signed-off-by: GuoHan Zhao <zhaoguohan@kylinos.cn>
+>=20
+> Changes in V2:
+> - Extended the goto chain with separate error handling labels =E2=80=A6
+> ---
+>  tools/perf/util/parse-events.c | 15 +++++++++------
+=E2=80=A6
 
+Please move your patch version descriptions behind the marker line.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.17-rc3#n784
 
-On 8/4/25 16:26, David Hildenbrand wrote:
-> On 04.08.25 15:03, Eugen Hristev wrote:
->>
->>
->> On 8/4/25 15:49, David Hildenbrand wrote:
->>> On 04.08.25 14:29, Eugen Hristev wrote:
->>>>
->>>>
->>>> On 8/4/25 15:18, David Hildenbrand wrote:
->>>>> On 04.08.25 13:06, Eugen Hristev wrote:
->>>>>>
->>>>>>
->>>>>> On 8/4/25 13:54, Michal Hocko wrote:
->>>>>>> On Wed 30-07-25 16:04:28, David Hildenbrand wrote:
->>>>>>>> On 30.07.25 15:57, Eugen Hristev wrote:
->>>>>>> [...]
->>>>>>>>> Yes, registering after is also an option. Initially this is how I
->>>>>>>>> designed the kmemdump API, I also had in mind to add a flag, but, after
->>>>>>>>> discussing with Thomas Gleixner, he came up with the macro wrapper idea
->>>>>>>>> here:
->>>>>>>>> https://lore.kernel.org/lkml/87ikkzpcup.ffs@tglx/
->>>>>>>>> Do you think we can continue that discussion , or maybe start it here ?
->>>>>>>>
->>>>>>>> Yeah, I don't like that, but I can see how we ended up here.
->>>>>>>>
->>>>>>>> I also don't quite like the idea that we must encode here what to include in
->>>>>>>> a dump and what not ...
->>>>>>>>
->>>>>>>> For the vmcore we construct it at runtime in crash_save_vmcoreinfo_init(),
->>>>>>>> where we e.g., have
->>>>>>>>
->>>>>>>> VMCOREINFO_STRUCT_SIZE(pglist_data);
->>>>>>>>
->>>>>>>> Could we similar have some place where we construct what to dump similarly,
->>>>>>>> just not using the current values, but the memory ranges?
->>>>>>>
->>>>>>> All those symbols are part of kallsyms, right? Can we just use kallsyms
->>>>>>> infrastructure and a list of symbols to get what we need from there?
->>>>>>>
->>>>>>> In other words the list of symbols to be completely external to the code
->>>>>>> that is defining them?
->>>>>>
->>>>>> Some static symbols are indeed part of kallsyms. But some symbols are
->>>>>> not exported, for example patch 20/29, where printk related symbols are
->>>>>> not to be exported. Another example is with static variables, like in
->>>>>> patch 17/29 , not exported as symbols, but required for the dump.
->>>>>> Dynamic memory regions are not have to also be considered, have a look
->>>>>> for example at patch 23/29 , where dynamically allocated memory needs to
->>>>>> be registered.
->>>>>>
->>>>>> Do you think that I should move all kallsyms related symbols annotation
->>>>>> into a separate place and keep it for the static/dynamic regions in place ?
->>>>>
->>>>> If you want to use a symbol from kmemdump, then make that symbol
->>>>> available to kmemdump.
->>>>
->>>> That's what I am doing, registering symbols with kmemdump.
->>>> Maybe I do not understand what you mean, do you have any suggestion for
->>>> the static variables case (symbols not exported) ?
->>>
->>> Let's use patch #20 as example:
->>>
->>> What I am thinking is that you would not include "linux/kmemdump.h" and
->>> not leak all of that KMEMDUMP_ stuff in all these files/subsystems that
->>> couldn't less about kmemdump.
->>>
->>> Instead of doing
->>>
->>> static struct printk_ringbuffer printk_rb_dynamic;
->>>
->>> You'd do
->>>
->>> struct printk_ringbuffer printk_rb_dynamic;
->>>
->>> and have it in some header file, from where kmemdump could lookup the
->>> address.
->>>
->>> So you move the logic of what goes into a dump from the subsystems to
->>> the kmemdump core.
->>>
->>
->> That works if the people maintaining these systems agree with it.
->> Attempts to export symbols from printk e.g. have been nacked :
->>
->>   https://lore.kernel.org/all/20250218-175733-neomutt-senozhatsky@chromium.org/
-> 
-> Do you really need the EXPORT_SYMBOL?
-> 
-> Can't you just not export symbols, building the relevant kmemdump part 
-> into the core not as a module.
-> 
-> IIRC, kernel/vmcore_info.c is never built as a module, as it also 
-> accesses non-exported symbols.
-
-Hello David,
-
-I am looking again into this, and there are some things which in my
-opinion would be difficult to achieve.
-For example I looked into my patch #11 , which adds the `runqueues` into
-kmemdump.
-
-The runqueues is a variable of `struct rq` which is defined in
-kernel/sched/sched.h , which is not supposed to be included outside of
-sched.
-Now moving all the struct definition outside of sched.h into another
-public header would be rather painful and I don't think it's a really
-good option (The struct would be needed to compute the sizeof inside
-vmcoreinfo). Secondly, it would also imply moving all the nested struct
-definitions outside as well. I doubt this is something that we want for
-the sched subsys. How the subsys is designed, out of my understanding,
-is to keep these internal structs opaque outside of it.
-
-From my perspective it's much simpler and cleaner to just add the
-kmemdump annotation macro inside the sched/core.c as it's done in my
-patch. This macro translates to a noop if kmemdump is not selected.
-
-How do you see this done another way ?
-
-> 
->>
->> So I am unsure whether just removing the static and adding them into
->> header files would be more acceptable.
->>
->> Added in CC Cristoph Hellwig and Sergey Senozhatsky maybe they could
->> tell us directly whether they like or dislike this approach, as kmemdump
->> would be builtin and would not require exports.
->>
->> One other thing to mention is the fact that the printk code dynamically
->> allocates memory that would need to be registered. There is no mechanism
->> for kmemdump to know when this process has been completed (or even if it
->> was at all, because it happens on demand in certain conditions).
-> 
-> If we are talking about memblock allocations, they sure are finished at 
-> the time ... the buddy is up.
-> 
-> So it's just a matter of placing yourself late in the init stage where 
-> the buddy is already up and running.
-> 
-> I assume dumping any dynamically allocated stuff through the buddy is 
-> out of the picture for now.
-> 
-
-The dumping mechanism needs to work for dynamically allocated stuff, and
-right now, it works for e.g. printk, if the buffer is dynamically
-allocated later on in the boot process.
-
-To have this working outside of printk, it would be required to walk
-through all the printk structs/allocations and select the required info.
-Is this something that we want to do outside of printk ? E.g. for the
-printk panic-dump case, the whole dumping is done by registering a
-dumper that does the job inside printk. There is no mechanism walking
-through printk data in another subsystem (in my example, pstore).
-So for me it is logical to register the data inside the printk.
-
-Does this make sense ?
-
+Regards,
+Markus
 
