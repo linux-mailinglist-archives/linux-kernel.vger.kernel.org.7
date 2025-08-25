@@ -1,56 +1,55 @@
-Return-Path: <linux-kernel+bounces-785661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83998B34F33
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:49:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E96C1B34F36
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58FD02A033F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:49:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EFA51A85B54
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:51:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6355228C841;
-	Mon, 25 Aug 2025 22:49:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F732BE04F;
+	Mon, 25 Aug 2025 22:50:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fIGRC61a"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FyLObBu4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD001C84C7;
-	Mon, 25 Aug 2025 22:49:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C1A153BED;
+	Mon, 25 Aug 2025 22:50:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756162158; cv=none; b=ZjycIY7hYEM/78KB3Iw8DmbLILGlF9IdqqN60xnsoUoaqonpmwRW9HByNn1HnPeM82kHZ6zoRoApR9g+DDbUi44wrYKzD6tlS/ubTa/u4XsYLj6EsL+SD+aFSaAydgReGoF+te9UYD7/SnMId4tMFB4+x3di34qhkaeqJZHeunM=
+	t=1756162238; cv=none; b=oxPA79Pecbf9WKeoD6hmM68tKsXKp7neualp3qeVKWGYquF+of5amRU9Ih2tMGkIt7pxsNNAjMqbCdqZ2MCJzjrOngJXEA+sSQETNqnuZbtsAjAkqUF8ct2FKki/6KQ0DsCyOdkRKQCflVpq4qc5Kaql7k+jGPGk7f/Ib1xTrys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756162158; c=relaxed/simple;
-	bh=OGSJXbBpZ+ZLlbeCJT9NuHPlX2y0kjeKy0z8kAeaXiY=;
+	s=arc-20240116; t=1756162238; c=relaxed/simple;
+	bh=qLAILGylpNDxCGNnXDGO6cizwxD+QRteD6rM/sVBaQo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=igtch/xWNAEnjRbds/AqVyXYstYxvJjB9p38rfup/9hQ6URm1hmeRBPMjxHLSW67h7ku524HfM7HM/y+h1XA8tcdyUH2irTkiuUms8PGtI29rWpjtd0N0NqOhdxE+fjV+HB3paU8690uodwq3qetEoCp/seBkI/hY/oF98kgmEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fIGRC61a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94D97C4CEED;
-	Mon, 25 Aug 2025 22:49:17 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=OFLWYIBT95e2KmR+eHoF7NQxrgr3N+Jqk/bdMVSunZZI1w9z1NyKFtQ1DkCiSY29/HLwxOfOtcp7JNKO6rGUV37VZ3KCRy1QuWgtlQ0wPFeNMyWGqGs+bKJ9jojA7XB1uan/dWY7T/D6Q+8/hVA9Mya6ONjkjsPDs4mi16iBwJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FyLObBu4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA55CC4CEED;
+	Mon, 25 Aug 2025 22:50:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756162158;
-	bh=OGSJXbBpZ+ZLlbeCJT9NuHPlX2y0kjeKy0z8kAeaXiY=;
+	s=k20201202; t=1756162235;
+	bh=qLAILGylpNDxCGNnXDGO6cizwxD+QRteD6rM/sVBaQo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fIGRC61a03P8KfgzGTrFjiViteR7bee4vuBehx1ojAUE8dETV491IgxebmqFaUp/4
-	 CkRroKn1ULr/z+DdKwChERBwMQDv/XOUVrTz5Xots30UVZAcZbzaRdbfqQbXIEoC89
-	 eZPDWWVpN9DnMMpVaaw/plRsBf69IgJRa0sC3xoO0D4zIEsgPBy85i+i85FTkAALhK
-	 gmQVizgilETpDpOFbvqX/GEMwzwGsrXfT6dqxAhhDIZo1AlyJJB3yKDWwScRDpM3Yk
-	 Chgep6Y+L7aBQ+pddvsmfrCWqaFZ3745fJZsbYFa58bV1NegmOld+Dpxkx6VmilLi9
-	 EXroFnDzpBFUA==
-Date: Tue, 26 Aug 2025 01:49:13 +0300
+	b=FyLObBu4yeae/4I2HhwQ42nY1rjeme9QShssPkYP8kikxHnjai/1d2K8R/KplTRmx
+	 hn3niZf58Eug0UdO6tIzkmWfOM3vnJLg3l3QKGplgQ9/0niLNIHNfBu9ctfLJLAR6c
+	 d6Nb5vTXX5ZM06XOkj0GcnsMm7ZFiWFw2bXrtDNKISw9qU4248bNplSGjG1/fMCBLB
+	 O3kVVBMNgs6jEPqNuXraby7NzXLORT1qtghIYdM4DbNqYibWY0oofzFfvbqFxKNwjW
+	 XW6PDanOgpwKU6CLLBBNBxH+zQ43SFYEJkQycbRq18BB/tTfBsVbIb3i1yl2rTD9Zv
+	 2qcg0r3YFDKTQ==
+Date: Tue, 26 Aug 2025 01:50:31 +0300
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Stuart Yoder <stuart.yoder@arm.com>
-Cc: linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
-	sudeep.holla@arm.com, Prachotan.Bathi@arm.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tpm_crb: Add idle support for the Arm FF-A start method
-Message-ID: <aKzoaWeJOh5W0M6J@kernel.org>
-References: <20250825205943.1225599-1-stuart.yoder@arm.com>
- <aKzcaaXGQyLfDPrf@kernel.org>
- <9227d35b-40d6-4faf-910d-ee7de9bbc094@arm.com>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>
+Subject: Re: [PATCH] security: keys: use menuconfig for KEYS symbol
+Message-ID: <aKzot67f7F3wtHs7@kernel.org>
+References: <20250824222813.92300-1-rdunlap@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,60 +58,108 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9227d35b-40d6-4faf-910d-ee7de9bbc094@arm.com>
+In-Reply-To: <20250824222813.92300-1-rdunlap@infradead.org>
 
-On Mon, Aug 25, 2025 at 05:19:34PM -0500, Stuart Yoder wrote:
+On Sun, Aug 24, 2025 at 03:28:13PM -0700, Randy Dunlap wrote:
+> Give the KEYS kconfig symbol and its associated symbols a separate
+> menu space under Security options by using "menuconfig" instead of
+> "config".
 > 
+> This also makes it easier to find the security and LSM options.
 > 
-> On 8/25/25 4:58 PM, Jarkko Sakkinen wrote:
-> > On Mon, Aug 25, 2025 at 03:59:43PM -0500, Stuart Yoder wrote:
-> > > According to the CRB over FF-A specification [1], a TPM that implements
-> > > the ABI must comply with the TCG PTP specification. This requires support
-> > > for the Idle and Ready states.
-> > > 
-> > > This patch implements CRB control area requests for goIdle and
-> > > cmdReady on FF-A based TPMs.
-> > > 
-> > > The FF-A message used to notify the TPM of CRB updates includes a
-> > > locality parameter, which provides a hint to the TPM about which
-> > > locality modified the CRB.  This patch adds a locality parameter
-> > > to __crb_go_idle() and __crb_cmd_ready() to support this.
-> > > 
-> > > [1] https://developer.arm.com/documentation/den0138/latest/
-> > > 
-> > > Signed-off-by: Stuart Yoder <stuart.yoder@arm.com>
-> > 
-> > Perhaps a dummy question but is this "QEMU testable"? I know how
-> > to bind swtpm to QEMU and make it appear as CRB device on x86-64.
-> > 
-> > I don't see much testing happening with these ARM CRB patches,
-> > and if that works in the first palce  I could probably add
-> > a new board target to my BR2_EXTERNAL [1].
-> > 
-> > I can of course do "negative testing' i.e. that these don't
-> > break x86 ;-)
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> ---
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Jarkko Sakkinen <jarkko@kernel.org>
+> Cc: keyrings@vger.kernel.org
+> Cc: linux-security-module@vger.kernel.org
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: "Serge E. Hallyn" <serge@hallyn.com>
 > 
-> Unfortunately this is not currently testable on QEMU.  We are using
-> the Arm FVP [1], which is also a machine emulator, with the firmware
-> stack and an fTPM running in TrustZone.  The firmware, fTPM, etc are
-> not all publicly available yet, but everything is based on open
-> source projects and the intent is that all the components needed do
-> test this on FVP will be available at some point.
+>  security/keys/Kconfig |   14 ++++++--------
+>  1 file changed, 6 insertions(+), 8 deletions(-)
 > 
-> There is nothing fundamental that would prevent this from running
-> on QEMU, but just a fair amount of integration and possibly firmware
-> work.
+> --- linux-next-20250819.orig/security/keys/Kconfig
+> +++ linux-next-20250819/security/keys/Kconfig
+> @@ -3,7 +3,7 @@
+>  # Key management configuration
+>  #
+>  
+> -config KEYS
+> +menuconfig KEYS
+>  	bool "Enable access key retention support"
+>  	select ASSOCIATIVE_ARRAY
+>  	help
+> @@ -21,9 +21,10 @@ config KEYS
+>  
+>  	  If you are unsure as to whether this is required, answer N.
+>  
+> +if KEYS
+> +
+>  config KEYS_REQUEST_CACHE
+>  	bool "Enable temporary caching of the last request_key() result"
+> -	depends on KEYS
+>  	help
+>  	  This option causes the result of the last successful request_key()
+>  	  call that didn't upcall to the kernel to be cached temporarily in the
+> @@ -41,7 +42,6 @@ config KEYS_REQUEST_CACHE
+>  
+>  config PERSISTENT_KEYRINGS
+>  	bool "Enable register of persistent per-UID keyrings"
+> -	depends on KEYS
+>  	help
+>  	  This option provides a register of persistent per-UID keyrings,
+>  	  primarily aimed at Kerberos key storage.  The keyrings are persistent
+> @@ -58,7 +58,6 @@ config PERSISTENT_KEYRINGS
+>  
+>  config BIG_KEYS
+>  	bool "Large payload keys"
+> -	depends on KEYS
+>  	depends on TMPFS
+>  	select CRYPTO_LIB_CHACHA20POLY1305
+>  	help
+> @@ -70,7 +69,6 @@ config BIG_KEYS
+>  
+>  config TRUSTED_KEYS
+>  	tristate "TRUSTED KEYS"
+> -	depends on KEYS
+>  	help
+>  	  This option provides support for creating, sealing, and unsealing
+>  	  keys in the kernel. Trusted keys are random number symmetric keys,
+> @@ -85,7 +83,6 @@ endif
+>  
+>  config ENCRYPTED_KEYS
+>  	tristate "ENCRYPTED KEYS"
+> -	depends on KEYS
+>  	select CRYPTO
+>  	select CRYPTO_HMAC
+>  	select CRYPTO_AES
+> @@ -114,7 +111,6 @@ config USER_DECRYPTED_DATA
+>  
+>  config KEY_DH_OPERATIONS
+>         bool "Diffie-Hellman operations on retained keys"
+> -       depends on KEYS
+>         select CRYPTO
+>         select CRYPTO_KDF800108_CTR
+>         select CRYPTO_DH
+> @@ -127,9 +123,11 @@ config KEY_DH_OPERATIONS
+>  
+>  config KEY_NOTIFICATIONS
+>  	bool "Provide key/keyring change notifications"
+> -	depends on KEYS && WATCH_QUEUE
+> +	depends on WATCH_QUEUE
+>  	help
+>  	  This option provides support for getting change notifications
+>  	  on keys and keyrings on which the caller has View permission.
+>  	  This makes use of pipes to handle the notification buffer and
+>  	  provides KEYCTL_WATCH_KEY to enable/disable watches.
+> +
+> +endif # KEYS
 
-OK, it's cool and the patch looks totally fine and I can
-"hallucinate it" so:
+I wote for this at least. Definitely an improvement:
 
 Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-
-> 
-> [1] https://developer.arm.com/Tools%20and%20Software/Fixed%20Virtual%20Platforms/Arm%20Architecture%20FVPs
-> 
-> Thanks,
-> Stuart
 
 BR, Jarkko
 
