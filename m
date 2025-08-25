@@ -1,91 +1,181 @@
-Return-Path: <linux-kernel+bounces-785219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88798B347B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:38:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDFE7B347B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:39:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 917B51B25245
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:39:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61C1D189E132
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94270301027;
-	Mon, 25 Aug 2025 16:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ecv5mkxg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D33301017;
+	Mon, 25 Aug 2025 16:39:43 +0000 (UTC)
+Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC1A2F2918;
-	Mon, 25 Aug 2025 16:38:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9C02FE58F;
+	Mon, 25 Aug 2025 16:39:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756139918; cv=none; b=u+FTqNWgS8obHdOIeagY4bjFQos+NIf7FulB9yGsrt/Iigl7uUkVT3VX9sYVpm02l3MRUkB7ajACtjDgV97eQuFNWX6a1/p8NqmYuqkXLeMTa1SEm09JXSDbiYlH28FBpOv2FJ7oPzvp6qF5qUNJnCtOA2vMm2sHTd0VdCmKn9E=
+	t=1756139982; cv=none; b=B+YUKoCDrs+AEpuzClAz4TicAWeNycm/JWsiLqF70/WqXM13ipiG+XsoHrzdMSj/0P2AHmq2h/xXJK+Cj/n1GBewt9zwlHNUk5VbxC8qVd6w3VVboiwNSgioNS6OEwvpM6+EQWtaDS/1G5cJN7snPU5thN6ImggbcFr+y0g70sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756139918; c=relaxed/simple;
-	bh=CMWCTdGAusm3hQWQsg2CdgEGKQ7dsznpkjRuCSAWWVU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YLIYP/2c7YOM6n8wjwQmgtzMK9UhSFXN/Cf6+OTrc0Yp/nDS/JyGRAmz3tftONKFCxyrRaAFnvT4/5sGaiMR3gX3x2zZRFowZComALD1PLLOxOxSNcvLOvcc2pXyPgXzTJWEPFE9V99LpV2Jq0h9w69cGZ3/rBsZ2CmrQIG2p5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ecv5mkxg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D244C4CEED;
-	Mon, 25 Aug 2025 16:38:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756139916;
-	bh=CMWCTdGAusm3hQWQsg2CdgEGKQ7dsznpkjRuCSAWWVU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ecv5mkxgN/I8RvhUlsb2sIAZbuxajeGKci91xhxLS+e67mq/3IGp2pManh2kl9JtF
-	 juTegqwAkrr/6I7CbaeEQsMNKsNHDQTELIPHwmRQCUZUKrEBhxTNplr921edcyoouj
-	 99Li2QuK44VfKmxn7X7JeYXs+fvPNSNDlqpAcXcmeLutceImVFZ/TCQ6eQjtQz3Pjw
-	 wUvoa0DFQnub7yXeEYGDrj9RtBUDux+d43iWw7uYYT6sNss+TSs6vHAg05UIrywMLD
-	 2MaevT6zdKRaM58sWPA8nqIhWnF4BnZsS3xXDSnSw7Z4fpFxC5umZ6ngnqjM1tBTQf
-	 zvX3XZSoYhagQ==
-Date: Mon, 25 Aug 2025 17:38:31 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Zhanzhan Ge <zhanzhan.ge@mediatek.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Project_Global_Chrome_Upstream_Group@mediatek.com,
-	sirius.wang@mediatek.com, vince-wl.liu@mediatek.com,
-	jh.hsu@mediatek.com, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] dt-bindings: timer: mediatek,timer: Add compatible for
- MT8189
-Message-ID: <20250825-tissue-rewire-2e74b3f6918f@spud>
-References: <20250825033136.7705-1-zhanzhan.ge@mediatek.com>
+	s=arc-20240116; t=1756139982; c=relaxed/simple;
+	bh=F3qCyhsjaviup5ygBJcuz8aUOr/seEJq9d+yePUzDP8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mrhdcs23adwLS2rBlVyq7A1bUVcljpGqKoi73v3AyWED0lGb+Mx47mWFYoVmdoU8ztpyQrIpmcaun38sRTjUhOm/gxtZZWRfoYdoIr5HVvmP+2pEVQ3gWH90U8xIrpRy+OQ4LCbUvhsVc0cJ5qAKpxVqTjDjpZNra9lKL9/WNm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
+Received: from [10.17.113.181] (unknown [15.248.3.85])
+	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id 81D85413A7;
+	Mon, 25 Aug 2025 16:39:29 +0000 (UTC)
+Authentication-Results: Plesk;
+        spf=pass (sender IP is 15.248.3.85) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=[10.17.113.181]
+Received-SPF: pass (Plesk: connection is authenticated)
+Message-ID: <b15c8986-b407-4ae1-9e02-672c1cf9013f@arnaud-lcm.com>
+Date: Mon, 25 Aug 2025 17:39:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="UI+qKYtt++1CWu95"
-Content-Disposition: inline
-In-Reply-To: <20250825033136.7705-1-zhanzhan.ge@mediatek.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next RESEND v4 1/2] bpf: refactor max_depth
+ computation in bpf_get_stack()
+To: Martin KaFai Lau <martin.lau@linux.dev>, yonghong.song@linux.dev
+Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
+ daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com,
+ john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org,
+ linux-kernel@vger.kernel.org, sdf@fomichev.me,
+ syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com,
+ syzkaller-bugs@googlegroups.com, song@kernel.org
+References: <20250819162652.8776-1-contact@arnaud-lcm.com>
+ <3d8fe484-2889-4367-9405-91aeee7d2ef0@linux.dev>
+Content-Language: en-US
+From: "Lecomte, Arnaud" <contact@arnaud-lcm.com>
+In-Reply-To: <3d8fe484-2889-4367-9405-91aeee7d2ef0@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: <175613997037.23104.10940002931951082170@Plesk>
+X-PPP-Vhost: arnaud-lcm.com
 
 
---UI+qKYtt++1CWu95
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 19/08/2025 22:15, Martin KaFai Lau wrote:
+> On 8/19/25 9:26 AM, Arnaud Lecomte wrote:
+>> A new helper function stack_map_calculate_max_depth() that
+>> computes the max depth for a stackmap.
+>>
+>> Changes in v2:
+>>   - Removed the checking 'map_size % map_elem_size' from
+>>     stack_map_calculate_max_depth
+>>   - Changed stack_map_calculate_max_depth params name to be more generic
+>>
+>> Changes in v3:
+>>   - Changed map size param to size in max depth helper
+>>
+>> Changes in v4:
+>>   - Fixed indentation in max depth helper for args
+>>
+>> Link to v3: 
+>> https://lore.kernel.org/all/09dc40eb-a84e-472a-8a68-36a2b1835308@linux.dev/
+>>
+>> Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
+>> Acked-by: Yonghong Song <yonghong.song@linux.dev>
+>> ---
+>>   kernel/bpf/stackmap.c | 30 ++++++++++++++++++++++++------
+>>   1 file changed, 24 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+>> index 3615c06b7dfa..b9cc6c72a2a5 100644
+>> --- a/kernel/bpf/stackmap.c
+>> +++ b/kernel/bpf/stackmap.c
+>> @@ -42,6 +42,27 @@ static inline int stack_map_data_size(struct 
+>> bpf_map *map)
+>>           sizeof(struct bpf_stack_build_id) : sizeof(u64);
+>>   }
+>>   +/**
+>> + * stack_map_calculate_max_depth - Calculate maximum allowed stack 
+>> trace depth
+>> + * @size:  Size of the buffer/map value in bytes
+>> + * @elem_size:  Size of each stack trace element
+>> + * @flags:  BPF stack trace flags (BPF_F_USER_STACK, 
+>> BPF_F_USER_BUILD_ID, ...)
+>> + *
+>> + * Return: Maximum number of stack trace entries that can be safely 
+>> stored
+>> + */
+>> +static u32 stack_map_calculate_max_depth(u32 size, u32 elem_size, 
+>> u64 flags)
+>> +{
+>> +    u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
+>> +    u32 max_depth;
+>> +
+>> +    max_depth = size / elem_size;
+>> +    max_depth += skip;
+>> +    if (max_depth > sysctl_perf_event_max_stack)
+>> +        return sysctl_perf_event_max_stack;
+>
+> hmm... this looks a bit suspicious. Is it possible that 
+> sysctl_perf_event_max_stack is being changed to a larger value in 
+> parallel?
+>
+Hi Martin, this is a valid concern as sysctl_perf_event_max_stack can be 
+modified at runtime through /proc/sys/kernel/perf_event_max_stack.
+What we could maybe do instead is to create a copy: u32 current_max = 
+READ_ONCE(sysctl_perf_event_max_stack);
+Any thoughts on this ?
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
---UI+qKYtt++1CWu95
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaKyRhwAKCRB4tDGHoIJi
-0tFZAQCZfUIEHKet8aipJi3IzMKDa+KfIG5vdjT00QVZWuO/fgD/YdNzRLdgrJAq
-cZBGuWpeXaboQnDiisCuiTDzRKtFowI=
-=37rC
------END PGP SIGNATURE-----
-
---UI+qKYtt++1CWu95--
+>> +
+>> +    return max_depth;
+>> +}
+>> +
+>>   static int prealloc_elems_and_freelist(struct bpf_stack_map *smap)
+>>   {
+>>       u64 elem_size = sizeof(struct stack_map_bucket) +
+>> @@ -406,7 +427,7 @@ static long __bpf_get_stack(struct pt_regs *regs, 
+>> struct task_struct *task,
+>>                   struct perf_callchain_entry *trace_in,
+>>                   void *buf, u32 size, u64 flags, bool may_fault)
+>>   {
+>> -    u32 trace_nr, copy_len, elem_size, num_elem, max_depth;
+>> +    u32 trace_nr, copy_len, elem_size, max_depth;
+>>       bool user_build_id = flags & BPF_F_USER_BUILD_ID;
+>>       bool crosstask = task && task != current;
+>>       u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
+>> @@ -438,10 +459,7 @@ static long __bpf_get_stack(struct pt_regs 
+>> *regs, struct task_struct *task,
+>>           goto clear;
+>>       }
+>>   -    num_elem = size / elem_size;
+>> -    max_depth = num_elem + skip;
+>> -    if (sysctl_perf_event_max_stack < max_depth)
+>> -        max_depth = sysctl_perf_event_max_stack;
+>> +    max_depth = stack_map_calculate_max_depth(size, elem_size, flags);
+>>         if (may_fault)
+>>           rcu_read_lock(); /* need RCU for perf's callchain below */
+>> @@ -461,7 +479,7 @@ static long __bpf_get_stack(struct pt_regs *regs, 
+>> struct task_struct *task,
+>>       }
+>>         trace_nr = trace->nr - skip;
+>> -    trace_nr = (trace_nr <= num_elem) ? trace_nr : num_elem;
+>
+> I suspect it was fine because trace_nr was still bounded by num_elem.
+>
+We should bring back the num_elem bound as an additional safe net.
+>> +    trace_nr = min(trace_nr, max_depth - skip);
+>
+> but now the min() is also based on max_depth which could be 
+> sysctl_perf_event_max_stack.
+>
+> beside, if I read it correctly, in "max_depth - skip", the max_depth 
+> could also be less than skip. I assume trace->nr is bound by 
+> max_depth, so should be less of a problem but still a bit unintuitive 
+> to read.
+>
+>>       copy_len = trace_nr * elem_size;
+>>         ips = trace->ip + skip;
+>
 
