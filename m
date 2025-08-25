@@ -1,191 +1,224 @@
-Return-Path: <linux-kernel+bounces-784664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ACF5B33F59
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:26:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECF97B33F5E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:27:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D789F7A857E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:24:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C856A1A8210F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:27:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E933244662;
-	Mon, 25 Aug 2025 12:26:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C47C25FA34;
+	Mon, 25 Aug 2025 12:27:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WxuTB6ER"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fklSwtki"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8907D246BC6
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 12:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A483393DCB;
+	Mon, 25 Aug 2025 12:27:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756124765; cv=none; b=J5Hml0ZKulCFp6r5C3nvere3qQ/DGVfpnZhvXLqJ+YMmW1i94p+sI9/DpTY31454TL8QMOw174LnTONM73Snb7vO19ojTcSY5g5g34VJXyJF2RogHjz78RJaU+gSnKrhRmcb2w849y8z0nCsCWGjWKZP9vkSrMdOWmnjsZTgiT4=
+	t=1756124848; cv=none; b=XCxTLByWhoqzNKWPNmH2Nd+GDqWH5dGKwwj2LrkmT3yhyUEYJxS34Xlw9IyP0dXBWwX168VQAQIGbans2kyQLB41cAppuhFdYzSRma9Aj9EfGXydAA+M39qcWBkC3BK1/Ekx8+Q7t9TiuiNAZt7yRckt9TNIWVESAh/gisHEq38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756124765; c=relaxed/simple;
-	bh=EPuhLSFemzDPHkQuDCqfWriMem09waSvO1qYO3wPP1k=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Y2gtQT/J65+lBHO4Gs46G/AzLrK+L0u1N2LLrgGioWv1fXeZ0FLX1vKoqJC8CKtRLZWoX2HIajhjPUYatoTJlyiw1DgCfDYZJteIXesWqCFrpor7cKrfgd7fBl/22U/IkqWS0auQ1q8tAXD1yMamsO3cSozZuFhUe4jCIlQTI3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WxuTB6ER; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3c79f0a606eso950846f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 05:26:03 -0700 (PDT)
+	s=arc-20240116; t=1756124848; c=relaxed/simple;
+	bh=bB2BBjeQYcFX30BOes4Y1bCH0Q0+giwVHbW7JKqbAtE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=La3iEJqf4JcWHlw5WvY0K9bX+m3BGJ1Oo63ab/u7re5+dxK4Q8wMon2TIR0SOZ2SRx4LL/5MyU1LvWc4yfe2q46OdBRuBvGco57v3sXgMG3fR0AX2JAhtTnQaAN3E8srkmwAL7lpATKJ0CpHDYiu6g1xNwOWlUDJUvxYOrDfJQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fklSwtki; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-77057266cb8so856481b3a.0;
+        Mon, 25 Aug 2025 05:27:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756124762; x=1756729562; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=iD4A2gYEHhEqDDI4pv93pPk9MPb3yUNXkPrSTp8pI48=;
-        b=WxuTB6ERMv7BKfPQBXBpLnvVDxz9VleDngFk4UyfWG/32lzt0A4MYFO6C6dosP93eb
-         3Y1cNeabm6W+8iO5UzANswTTKPIsh8QV/ld/JjZHegTFxHddCl7WJHSH/kFcSjhUjYbr
-         jn/ax6UIwej8buRnfAOI0fvUO1/UWs7RePsXe2D5DOVJKWAmyLOqDPKEsKWmmBQcWTIe
-         +KjnXOvSj4mbX0RGKmr2SGZMsFmvIq1Yy0tE6hrPqTi7hkWHhal9ai6dupsfe0N5hJIc
-         8K4zGGvI0DxaFkNOENqLJi9GLKFKoACVMfN74zMCTFkTLbt21MIEY/NWP5dAy4iVJFxz
-         +Kgw==
+        d=gmail.com; s=20230601; t=1756124846; x=1756729646; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HXi7bf0DqbtoALNk3gsA/Oq6tMtY8GPJ60Snna89sM8=;
+        b=fklSwtkijGcNTm+4PzIuEeQWaAzWjafL61vv0byn5zT108E8yfT8Jk/+hd7wUjxisR
+         kZxC6DjgTpNCncHLOHGVSCnN2jylOEjKeOD+NGN9FfkyCBqoZG7VrURhv3xIi6UQNW41
+         7s6py9rmZkuy9rQ+xmaSIfb+yPPy6EfWoov34hGJhdZglioZfb0FyjeKWo4SJKgiF90q
+         tNZepG+EATKKjifM/t3c3QG7xI/3pCsO5QNEQne22679VpJnM50iTCtTuJ5HmZEABfSn
+         +V389RXsj3Q4umXNasSATNeGokQv01gqf89ppZ5gQJh96rSc7YaJCzPKJ82JIj/y0vQh
+         9N3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756124762; x=1756729562;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iD4A2gYEHhEqDDI4pv93pPk9MPb3yUNXkPrSTp8pI48=;
-        b=jxZef6HxvDKGuRdYL3HlROHt0XtqAnPtD6gb82dbEcSUtjtwF2QRttrxGBY13+YgG/
-         bBFNA3uyd5mFhTD3lfBb7uA/t2F2+Ao9UvtZ3NDIK6o2v7yQFcPzofagxwoS2SAb7xn+
-         pz75BXQj75PIgLDk0EA25YyIGe0u/Dp0DN/OXr3ZhSzqWsuTSD4DGP0a/WM70S29RgxN
-         gCvNhIrRJMjA2eJMcLkPdOlYfc/g0mp3arTQb+W57dxtVZOa/WjAmuERS9sGcUC1u6Lw
-         zIfgCOL+Ht7kIWrKbWexIAmRh1rnZaKFC82J7lPvco8kc6AL9t8CCjHzk+f+JDOZkcge
-         qnuQ==
-X-Gm-Message-State: AOJu0YxFKVLD1sVuHXyABwkikSCpD45K7uan5HtI/FNqSBQP47OWR54h
-	2OaT8SX650mrHP21e/wu81MEala0In2dD2j9T/nyqnenGVqaIRzj0ExdNP1uw+mrQjI=
-X-Gm-Gg: ASbGncubL64MniiQrvN8T6oMOm3pE0DR9YdsK1vcjQxfRqZUmRkFYiYHt7zNO9yCDsd
-	EVjr7WagvZdgSdmcWn0DzL8FjS+6yqVMZLIbYS4aygQic31Xhj3RZhddafzMt0gMpRd/Y4SFvOf
-	qh2b2LujSBcpCcDMxL+MmNPZT4dshDA9N54EmP1/+fKnF6HuM4Wy1VXzBpZ+vu94jQ3ZopXPF/i
-	FDa1BuxjesrZ0HhXa5PcBAgIuhWwH3dtnfllhSjw3UBZ4jRy4508nfWoEcYbzxxtjmrBeRrVKf+
-	+Zp76g0xATCn3d7sBCt7wLQZAygGqqqFsXNDd/Jds7E/LnaUG5e6XtSwzirH9DMeazkSGoa6iM+
-	GOrxhL11/rmEjcx0tpYjDzMziGw==
-X-Google-Smtp-Source: AGHT+IGZKR4ycwSMzrqSf8EzPWzEYvLi9+vxNDQf6ku1dpyxkwx330HC9znsLRd8NyKKnUo4pxNj8g==
-X-Received: by 2002:a05:6000:2705:b0:3c6:a970:1505 with SMTP id ffacd0b85a97d-3c6a9701ec9mr4679656f8f.43.1756124761743;
-        Mon, 25 Aug 2025 05:26:01 -0700 (PDT)
-Received: from [10.1.1.59] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c86a8ccd1bsm7068027f8f.27.2025.08.25.05.26.00
+        d=1e100.net; s=20230601; t=1756124846; x=1756729646;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HXi7bf0DqbtoALNk3gsA/Oq6tMtY8GPJ60Snna89sM8=;
+        b=IKHRr63CyfVlzH0oWBkaprom1Sz/QkBlAIQO9rdNzAri8JoTAkgrtvzZhcJd/KGHyG
+         23GHuviFx1iNwv8f22j7TEusOajLjpr3E2p+lMw5WvPdGsfXBhiBiDyPNI6Z5hlmOshj
+         /jFVUOrdem6ebSyNTlppKBrMOg+lIB2eF3vOoeojx+X519hTcScSO0J3DWjsXhc+i15x
+         bVURf05y0wWD9BUMtDg1CI8lFBOnvHGmeyDZozifvsQu3vT00zjr/TOm7YbeVUWw+y+B
+         L3PpRs9MIfgBSN/ekpWJfFVgUcxk0c4fEY4vRIXO6AfpWrT+97M9AEAvkjlNu2rgqtpN
+         NrTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUg7/iNqZeQpO6m5S5PVD41f6u4Ny7xgkA1949/aVxFu5UqA/pSMiQUxx/easy+EtHlAWR8dEUqJU4J@vger.kernel.org, AJvYcCUrenV+FFPpe2ENM4dI/0hPEQB46Hn1noIPNSxVypbF6szYzn0qGR/qQ/lkRMn8v3xXx/U344tOpyJJkoBz@vger.kernel.org, AJvYcCX4LdWR1lkfkX52kSpH7bLlN2mAavbEovMmjopZ3kNS5TfWn4YC6y6XZk6x8sPrcu6vhLVcMCtW/6yy@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5YKgHtsJNEjpPJ4NqBcdJrPjn1ERjgXXEwO7UZSHZ84NbzHTE
+	M2WSFms6kObVCYsOMFIa9Sl77Ne4RhTZ1lK3UFIMCcQW8ErQww/oYxtYOv+P/ltx
+X-Gm-Gg: ASbGnctLZwffeaf4P+2QOy+kw41iv8Ih8wA27Cpd/HDf612WAjbOKuA9i1A/0lr0baP
+	DKhtz+5yZ6XFqyoAHeETHmZt0wJJAzVmVWESW1W1dNvkS+yl+MwX3Sa3BXPZ0NRKs3y0nG/0lOk
+	tX7fesNQB0uYxHeqSgS4LL3NCrtkQ00R3hILUGAZZweMu0a7z/hpfqaF613zLzzu48jEfBOuCrq
+	L5RbdefO3Trd+G7LzrhhqO3XAcOywl/3Tob6WCBwU0H4Yw/VLH6Il4ya6GKmMB9qmWmb1zAdM44
+	s+XIIZQAgzwrwA6YFiNyNvMiM/143cuLZTI0wRonZMBdMsAyv40qAlQjqbqXI7GzsC8d1/Pyp+b
+	p3ZHQq+e5LqsqwEg60loVwaT4Q+0weQ==
+X-Google-Smtp-Source: AGHT+IGOl5xPM35uvecBghrRgaVxe6SOObYmovXPZI7OvSuX3FvhasuckJt94mKjqrPhSzLJh1+WDQ==
+X-Received: by 2002:a05:6a00:398a:b0:76b:c882:e0a with SMTP id d2e1a72fcca58-7702f9d8ebamr12968324b3a.5.1756124846108;
+        Mon, 25 Aug 2025 05:27:26 -0700 (PDT)
+Received: from localhost ([2804:30c:1f77:e900:8ef5:b053:b8a:9345])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-771e912e40csm1861121b3a.44.2025.08.25.05.27.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 05:26:01 -0700 (PDT)
-Message-ID: <2855688dcb6898af0d4b03913c6193da8b115760.camel@linaro.org>
-Subject: Re: [PATCH v5 4/4] arm64: dts: exynos: google: add Maxim MAX77759
- Fuel-gauge
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: t.antoine@uclouvain.be, Sebastian Reichel <sre@kernel.org>, Rob Herring	
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley	
- <conor+dt@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>, Catalin
- Marinas	 <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Peter
- Griffin	 <peter.griffin@linaro.org>, Tudor Ambarus
- <tudor.ambarus@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
-Date: Mon, 25 Aug 2025 13:25:59 +0100
-In-Reply-To: <20250804-b4-gs101_max77759_fg-v5-4-03a40e6c0e3d@uclouvain.be>
-References: <20250804-b4-gs101_max77759_fg-v5-0-03a40e6c0e3d@uclouvain.be>
-	 <20250804-b4-gs101_max77759_fg-v5-4-03a40e6c0e3d@uclouvain.be>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1+build2 
+        Mon, 25 Aug 2025 05:27:24 -0700 (PDT)
+Date: Mon, 25 Aug 2025 09:27:49 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: jic23@kernel.org, robh@kernel.org, conor+dt@kernel.org,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 4/6] iio: adc: add ade9000 support
+Message-ID: <aKxWxfbUNMFbZXvN@debian-BULLSEYE-live-builder-AMD64>
+References: <20250822160157.5092-1-antoniu.miclaus@analog.com>
+ <20250822160157.5092-5-antoniu.miclaus@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250822160157.5092-5-antoniu.miclaus@analog.com>
 
-On Mon, 2025-08-04 at 16:26 +0200, Thomas Antoine via B4 Relay wrote:
-> From: Thomas Antoine <t.antoine@uclouvain.be>
->=20
-> Add the node for the Maxim MAX77759 fuel gauge as a slave of the i2c.
->=20
-> The TODO is still applicable given there are other slaves on the
-> bus (e.g. PCA9468, other MAX77759 functions and the MAX20339 OVP).
->=20
-> For the device specific values (full design capacity and terminal
-> current), the device should check an EEPROM at address 0x50 of the
-> hsi2c_8 for a battery id stored in register 0x17. A set of parameters
-> for the initialization of the fuel gauge should be chosen based on
-> this id. Those sets are defined here:
->=20
-> Link:
-> https://android.googlesource.com/kernel/gs/+/refs/heads/android-gs-raviol=
-e-5.10-android15/arch/arm64/boot/dts/google/gs101-oriole-battery-data.dtsi
-> Link:
-> https://android.googlesource.com/kernel/gs/+/refs/heads/android-gs-raviol=
-e-5.10-android15/arch/arm64/boot/dts/google/gs101-raven-battery-data.dtsi
->=20
-> This does not seem to be a standard pattern in the kernel currently
-> so it is not implemented. Values observed on tested devices are
-> instead used. The driver or the devicetree should be should be
-> extended in the future to take versions into account.
->=20
-> The pinctrl name follows the convention proposed in
-> Link: https://lore.kernel.org/all/20250524-b4-max77759-mfd-dts-v2-2-b4795=
-42eb97d@linaro.org/
->=20
-> Signed-off-by: Thomas Antoine <t.antoine@uclouvain.be>
+Hi Antoniu,
+
+This is still not a complete review, though, if going to re-spin, you may
+consider changing a few minor things.
+
+On 08/22, Antoniu Miclaus wrote:
+> Add driver support for the ade9000. highly accurate,
+> fully integrated, multiphase energy and power quality
+> monitoring device.
+> 
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
 > ---
-> =C2=A0arch/arm64/boot/dts/exynos/google/gs101-oriole.dts | 10 ++++++++
-> =C2=A0.../boot/dts/exynos/google/gs101-pixel-common.dtsi | 30 +++++++++++=
-+++++++++++
-> =C2=A0arch/arm64/boot/dts/exynos/google/gs101-raven.dts=C2=A0 | 11 ++++++=
-++
-> =C2=A03 files changed, 51 insertions(+)
-
-[...]
-
-> diff --git a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi b/=
-arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
-> index d6ddcc13f7b20c6dfbe92e86abafe965870d0c78..3362ad89ef6bacb7349259cf9=
-e14452193ff7361 100644
-> --- a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
-> @@ -10,6 +10,7 @@
-> =C2=A0
-> =C2=A0#include <dt-bindings/gpio/gpio.h>
-> =C2=A0#include <dt-bindings/input/input.h>
-> +#include <dt-bindings/interrupt-controller/irq.h>
-> =C2=A0#include <dt-bindings/usb/pd.h>
-> =C2=A0#include "gs101-pinctrl.h"
-> =C2=A0#include "gs101.dtsi"
-> @@ -99,6 +100,16 @@ &hsi2c_8 {
-> =C2=A0	eeprom: eeprom@50 {
-> =C2=A0		compatible =3D "atmel,24c08";
-> =C2=A0		reg =3D <0x50>;
+...
+> +#define ADE9000_PHASE_B_POS_BIT		BIT(5)
+> +#define ADE9000_PHASE_C_POS_BIT		BIT(6)
 > +
-> +		nvmem-layout {
-> +			compatible =3D "fixed-layout";
-> +			#address-cells =3D <1>;
-> +			#size-cells =3D <1>;
+> +#define ADE9000_MAX_PHASE_NR		3
+> +#define AD9000_CHANNELS_PER_PHASE	10
 > +
-> +			fg_state: fgstate@42 {
-> +				reg =3D <0x42 0x17>;
-> +			};
-> +		};
-> =C2=A0	};
-> =C2=A0};
-> =C2=A0
-> @@ -188,6 +199,18 @@ usbc0_role_sw: endpoint {
-> =C2=A0			};
-> =C2=A0		};
-> =C2=A0	};
+> +#define ADE9000_ADDR_ADJUST(addr, chan)					\
+> +	(((chan) == 0 ? 0 : (chan) == 1 ? 2 : 4) << 4 | (addr))
+Found it a bit hard to understand the reason why this macro is like that.
+I wonder if a comment to help understand it but not sure. Also, couldn't
+come up with any suggestion for an alternative. Guess this device's register
+layout is just a bit unusual.
+
 > +
-> +	fuel_gauge: fuel-gauge@36 {
-> +		compatible =3D "maxim,max77759-fg";
-> +		reg =3D <0x36>;
-> +		pinctrl-names =3D "default";
-> +		pinctrl-0 =3D <&if_pmic_fg_int>;
-> +		interrupt-parent =3D <&gpa9>;
-> +		interrupts =3D <3 IRQ_TYPE_LEVEL_LOW>;
+...
+> +static int ade9000_filter_type_get(struct iio_dev *indio_dev,
+> +				   const struct iio_chan_spec *chan)
+> +{
+> +	struct ade9000_state *st = iio_priv(indio_dev);
+> +	u32 val;
+> +	int ret, i;
+nitpicking:
+unsigned int i;
+?
 
-small nit - for consistency with other interrupt specs in this file,
-could you switch to using interrupts-extended please?
+> +
+> +	ret = regmap_read(st->regmap, ADE9000_REG_WFB_CFG, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	val = FIELD_GET(ADE9000_WF_SRC_MASK, val);
+> +
+> +	for (i = 0; i < ARRAY_SIZE(ade9000_filter_type_values); i++) {
+> +		if (ade9000_filter_type_values[i] == val)
+> +			return i;
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+...
+> +static const struct iio_enum ade9000_filter_type_enum = {
+> +	.items = ade9000_filter_type_items,
+> +	.num_items = ARRAY_SIZE(ade9000_filter_type_items),
+> +	.get = ade9000_filter_type_get,
+> +	.set = ade9000_filter_type_set,
+> +};
+> +
+> +static const struct iio_chan_spec_ext_info ade9000_ext_info[] = {
+> +	IIO_ENUM("filter_type", IIO_SHARED_BY_ALL, &ade9000_filter_type_enum),
+> +	IIO_ENUM_AVAILABLE("filter_type", IIO_SHARED_BY_ALL, &ade9000_filter_type_enum),
+> +	{}
+nitpicking: these sentinels have been standardized to use a space between the brackets
+	{ }
+https://lore.kernel.org/linux-iio/20250411-iio-sentinel-normalization-v1-1-d293de3e3d93@baylibre.com/
 
-Cheers,
-Andre'
+> +};
+> +
+...
+> +
+> +#define ADE9000_VOLTAGE_CHANNEL(num) {					\
+> +	.type = IIO_VOLTAGE,						\
+> +	.channel = num,							\
+> +	.address = ADE9000_ADDR_ADJUST(ADE9000_REG_AV_PCF, num),	\
+> +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |			\
+> +			      BIT(IIO_CHAN_INFO_SCALE) |		\
+> +			      BIT(IIO_CHAN_INFO_CALIBSCALE) |		\
+> +			      BIT(IIO_CHAN_INFO_CALIBSCALE) |		\
+duplicated IIO_CHAN_INFO_CALIBSCALE ?
+
+> +			      BIT(IIO_CHAN_INFO_FREQUENCY),		\
+> +	.event_spec = ade9000_events,					\
+> +	.num_event_specs = ARRAY_SIZE(ade9000_events),			\
+> +	.scan_index = num + 1,	/* interleave with current channels */	\
+> +	.indexed = 1,							\
+> +	.scan_type = {							\
+> +		.sign = 's',						\
+> +		.realbits = 32,						\
+> +		.storagebits = 32,					\
+> +		.endianness = IIO_BE,					\
+> +	},								\
+> +	.ext_info = ade9000_ext_info,					\
+> +}
+> +
+...
+> +		case ADE9000_ST1_SEQERR_BIT:
+> +			iio_push_event(indio_dev,
+> +				       IIO_UNMOD_EVENT_CODE(IIO_VOLTAGE,
+> +							    ADE9000_ST1_SEQERR_BIT >> 12,
+> +							    IIO_EV_TYPE_CHANGE,
+> +							    IIO_EV_DIR_NONE),
+> +				       timestamp);
+> +			handled_irq |= ADE9000_ST1_SEQERR_BIT;
+> +			break;
+> +		default:
+> +			return IRQ_HANDLED;
+> +		}
+> +	}
+> +
+> +	ret = regmap_write(st->regmap, ADE9000_REG_STATUS1, handled_irq);
+> +	if (ret)
+> +		return ret;
+maybe
+	if (ret)
+		dev_err(&st->spi->dev, "IRQ1 write status1 fail\n");
+
+	return IRQ_HANDLED;
+?
+So the IRQ always gets handled.
+
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+
+Best regards,
+Marcelo
 
