@@ -1,212 +1,200 @@
-Return-Path: <linux-kernel+bounces-785163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50379B346C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:09:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC683B346D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:17:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 077785E659E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:08:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 746F32A498D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:17:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE3782FF65B;
-	Mon, 25 Aug 2025 16:08:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E734301461;
+	Mon, 25 Aug 2025 16:10:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="NcRUClF4"
-Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="BZv7aZNE"
+Received: from mx0b-002e3701.pphosted.com (mx0b-002e3701.pphosted.com [148.163.143.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7266A2ECE8A
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 16:08:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9632A301034;
+	Mon, 25 Aug 2025 16:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.143.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756138131; cv=none; b=sHn9A/4XuXpdQrSnIAj+oIzXo/fNsBbTKgk/qB3MkpIFqeAJVxjhgUSCprXiQXyAE4bpgl4ELCO5ip2WTK6VQnM5n16nGOX220rfK6kWMLreOggH1W8Fc9EhweBEVuEaIwHVAkt70k34vlvK6H8laEbkdaxOoztATlfy3TJTwas=
+	t=1756138235; cv=none; b=Z14KvqstUPSZLOk7satVIQcbK7unx0bT2inz0SnOlrLiMwcNjl+pJSBq4OspyDOeDekFfT6oeniQtCGxuLIdvBwXZ2dgSmmVep1QsP4htwjfMtHONNFXmLkr+ymg5RNBwAR5g3ljYz0EhbA/cSQTaZogdjoA1r8O4OPUilJnkBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756138131; c=relaxed/simple;
-	bh=IRrGnU8GP7ncfbvvMS5DUsPXlS3sX82/pTTFd6SsTjo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uOqTfwnGao0abA4VNGAiXdVWuOhuCRHy5pJq9nSaDDuv7aWatkDYXNXqIHtIZ0KEOY2ZdenEJ5+2+nXXaVnIyMQr19kENBkQ23cvRXaic+6D6iTRzHD7JdcBiKnUFhGJ6v9ec6JYjhF6XaGRy5gpaAby7Y9ms+fdE91ALOFHVYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=NcRUClF4; arc=none smtp.client-ip=209.85.166.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-88432e6700dso71352739f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 09:08:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1756138127; x=1756742927; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=q0cjzzyWOyZks1nTu1rGjk9KV3egwe1aayyTboNLSe0=;
-        b=NcRUClF4419uY9or4sIjWjpe2GdaATVJjBxK4U7L51C+XrN5OwSTdFTJOvwO7vCWTW
-         UejXSVD1wsvJ8mAsOnBWRRHqMHEpU0JpxXiy5UgVtDTjh3HAg1zi21rTUb44hRBP/JsD
-         oBeZ1J74XRbVay2JBPWn8ycznjRN48VGc6ElCxnJc/pmpKoEqi+UCk0KrBEtkuTRd4ci
-         RiHMfjRwvAHuo8WlYgS/vN0RSYVXdY2iWrh1ABozpTRl/HQ8DKT8++KjBi2U39ucjmQw
-         WqV3hH3+/fb2dZigWqt9a+mzLxQSxa8IqCQukly+IOOd+i4KMVbZ4TkpfbS2YjgGOSrA
-         8yEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756138127; x=1756742927;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=q0cjzzyWOyZks1nTu1rGjk9KV3egwe1aayyTboNLSe0=;
-        b=qi65sNulfQzvBjfkMxQVLOV+T6cITayXRHKbPbsDCDApQAfv2+x5/9zf8psvwNhfIU
-         aZZW4B/oBdPU5l6Hd+i1SAXKs3cCr3LrMaLO/WI16rRxt/4Zuq2eLWrxrCJce4lINYdv
-         HKHyVrYkPQr8S14IHcYiMufTBkOEKEXI+SJF5CUhDLnSunSkNb5X56PpMDTJCeWSL5h+
-         gnPJu5zu+WLLYWa3fJnB41Hb0V+WEKzv6UOlg6GFutGgTpuskF/Ok5v55h4nsr1Dj/hy
-         w1lu5nZq5MKYT77gb6IGPMF7KC1E5TnoqeYo8OqyIiIVRfytymSqysVuymOr3Gb0PYpN
-         /thQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXIufAkJTY2phBo4KouKQyNVUg2A/dnA8JcfoLT/w6edlAegq/RoNXqdFwhwoeblKzYgN7hOD2EczjywcA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNGLV1Kx448UpmfsTHH7Xf74Atmyt4ajGabrAs0Kcn/b76odkS
-	WuKMCmI2vU/q21XK3e3Nsp/QCkj7/qHMqv+Cl3K0ITkeTeQHkHdyx4TJD/7v67vkhNo=
-X-Gm-Gg: ASbGncu99YH66SXnfOP2pIu6/FAy/vd0tUkeDgIUNgvs+Zxp2YiI0tZEiQlH6Y5EPm0
-	V1eUs96ifavZjpoGntIdbGQS3JnMyVQCTDaQWUPFuc+lkVIa/yBAOUXrsdBKPt0efamBsx8sPXz
-	O2cHBoRSqZLMCkSbraUdFs97QAIUNY96bAIoCkCtcpN2P+WpuTy45Ms4WgqidFAxd5qpTG910Uv
-	QcQRcM72Rfp80kSlM8rSfR8/xwDijif0szodt2CP/JaOaTAhvRWqqrWhbU2TCEZJrFxuXW6aVAt
-	oVtHYVS9DV3NtcN3X8v/XG/oVoD72MhfgtErsJ2Nmm/bCDrO5OXhQjT2VxShD2nkHZdpegq4J9v
-	8ZQJuSllE7YFwB42sDzZOBMV45jx/LNsi+cRQHMlD3MdooN/zQyxek92xMC7+Zg==
-X-Google-Smtp-Source: AGHT+IEL2QvsFMnDcZXTzmhm/4l1RIr9WfujVlwMQrzr/6F7bd2mjY4YQv7lvRHHyhZ+U5TJ7ij4Pw==
-X-Received: by 2002:a05:6602:2b07:b0:886:c53c:9172 with SMTP id ca18e2360f4ac-886c53c932cmr1606713739f.18.1756138127315;
-        Mon, 25 Aug 2025 09:08:47 -0700 (PDT)
-Received: from [172.22.22.28] (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-886c8f0a83esm502245639f.10.2025.08.25.09.08.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Aug 2025 09:08:46 -0700 (PDT)
-Message-ID: <b387ebdd-ae5d-4711-9e10-c61cb06f4b5b@riscstar.com>
-Date: Mon, 25 Aug 2025 11:08:45 -0500
+	s=arc-20240116; t=1756138235; c=relaxed/simple;
+	bh=P8XGQESn+FTZdmVay8MRlOAG5BK1vdHzeEJ7SdMsQdQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ryxeo5QVzN6hGlyv+TZBCZ3d8sBtItd7XD1avNZClRVnpjyVPBTWU/MrS0BrQLBGqzpHFc7RHMISZsMl/c1GZR1RncQRBB97YtSL3pUM1BjXAgzAf5JIfgrUNaTHKTJ/AilJ+i74dsMXoZ6vJsb1NuNqbTZP+rQROrJUfLlX+ZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=BZv7aZNE; arc=none smtp.client-ip=148.163.143.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
+Received: from pps.filterd (m0134425.ppops.net [127.0.0.1])
+	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57PCNc4l029977;
+	Mon, 25 Aug 2025 16:09:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pps0720; bh=sQ
+	H2klu1q9w/NyJjrasqKq1tGmDd3ucFuLZtG1LKn80=; b=BZv7aZNECNBSQkdGA2
+	8twBMjCYGOwkxdSEOXhC1z9DwHwoNNt1eQIq97g8jtcPYLT0e4pRleKzYd4qRlNE
+	e5sSQTAOlZqZ7TgRYFJnpqbLO63L23IQ4pZxqF96n0kAsPit9+6Q7Iuqb2+mAHBo
+	7aSZn0pRR+1KLabMU+vsqPC/DLUH+aClU0hEvSkluWwqm28t0luI99KzkaS5D6RT
+	JrJUiJkfR1LTIDbArRsP93f6yRX5CPDFoy1vS7OFFCXyUfkjR6Y5/jClcq+KYayS
+	0hObwpsGkO1tBZgOkG4uI+Vb57PNOGz5uezsDgv8x9MC2rTvyEAZUMm+TxO/dr0h
+	kJiQ==
+Received: from p1lg14879.it.hpe.com ([16.230.97.200])
+	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 48q6xvq0wc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Aug 2025 16:09:15 +0000 (GMT)
+Received: from p1lg14886.dc01.its.hpecorp.net (unknown [10.119.18.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by p1lg14879.it.hpe.com (Postfix) with ESMTPS id 07E97130D5;
+	Mon, 25 Aug 2025 16:09:13 +0000 (UTC)
+Received: from HPE-5CG20646DK.localdomain (unknown [16.231.227.36])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by p1lg14886.dc01.its.hpecorp.net (Postfix) with ESMTPS id 10E16801616;
+	Mon, 25 Aug 2025 16:09:10 +0000 (UTC)
+Date: Mon, 25 Aug 2025 11:09:06 -0500
+From: Kyle Meyer <kyle.meyer@hpe.com>
+To: Miaohe Lin <linmiaohe@huawei.com>
+Cc: Jiaqi Yan <jiaqiyan@google.com>, akpm@linux-foundation.org,
+        david@redhat.com, tony.luck@intel.com, bp@alien8.de,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-edac@vger.kernel.org, lorenzo.stoakes@oracle.com,
+        Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
+        surenb@google.com, mhocko@suse.com, nao.horiguchi@gmail.com,
+        jane.chu@oracle.com, osalvador@suse.de
+Subject: Re: [PATCH] mm/memory-failure: Do not call action_result() on
+ already poisoned pages
+Message-ID: <aKyKort2opfQYqgA@hpe.com>
+References: <20250821164445.14467-1-kyle.meyer@hpe.com>
+ <CACw3F53KmKRJyH+ajicyDUgGbPZT=U3VE4n+Jt3E62BxEiiCGA@mail.gmail.com>
+ <aKd1K3ueTacGTf1W@hpe.com>
+ <CACw3F527M-x=UeB0tN_sjCgp_YP_8yLkVRCLP2dLO2bzXrqWsA@mail.gmail.com>
+ <14a0dd45-388d-7a32-5ee5-44e60277271a@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 2/7] mfd: simple-mfd-i2c: add SpacemiT P1 support
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>, lee@kernel.org,
- lgirdwood@gmail.com, broonie@kernel.org, alexandre.belloni@bootlin.com,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: mat.jonczyk@o2.pl, dlan@gentoo.org, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
- linux.amoon@gmail.com, troymitchell988@gmail.com, guodong@riscstar.com,
- linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250813024509.2325988-1-elder@riscstar.com>
- <20250813024509.2325988-3-elder@riscstar.com>
- <089D29348F246F2C+aJ6bPgJsp5GjhDs5@LT-Guozexi>
-Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <089D29348F246F2C+aJ6bPgJsp5GjhDs5@LT-Guozexi>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <14a0dd45-388d-7a32-5ee5-44e60277271a@huawei.com>
+X-Proofpoint-GUID: eAojbwjnBFsxwDzG-eJQqJ_iiTYjmQP3
+X-Authority-Analysis: v=2.4 cv=ArTu3P9P c=1 sm=1 tr=0 ts=68ac8aab cx=c_pps
+ a=5jkVtQsCUlC8zk5UhkBgHg==:117 a=5jkVtQsCUlC8zk5UhkBgHg==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=MvuuwTCpAAAA:8 a=ERPcR_hKxm5yt4fehIQA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI1MDE0NSBTYWx0ZWRfX3Fhlj65ssQQh
+ iBxTfpOt7lv+4AFi8G63U53mKaWeYuCR6wPS6FvOcefIDLVr6N6IWqxUH+wGfyIm1PIUsrBVcZD
+ xqIlK2/HnzT/9/+QzwmaZX2UeC+gfWVsThm2oqmBQaxefjXFfKvAR97DhQmATQIAX/vEV2WZiIF
+ RqYr7Mb8Bz6xh1Ih/+HSos4C+lb/V3zaCiNOUp4ZVnbV+svX60RFioRGpOHMOXp/v2Rslx0nTiz
+ 4Wp9M7oU0f0yaGLDMF/d9hcjqWI8vCWFTBQ+J+u9SVw6kDP4Ut2cFD9R4QnRBfnkUBcHyg9Wg7Y
+ 6s3brve84JhuX92h9sU5l/FES2uNn7KPFCqzzIGHB0qiBKLYxiFTRDPTkc1lR3nVrmGbpQbmdqO
+ wQDgsmx0WHl/S4Owq8wLdwT4udB7hZSv28AaEyOA62CgztPuyFyIuPqdvbzV0MS8pA/gjsQo
+X-Proofpoint-ORIG-GUID: eAojbwjnBFsxwDzG-eJQqJ_iiTYjmQP3
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-25_07,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 mlxscore=0 mlxlogscore=999 suspectscore=0 clxscore=1015
+ priorityscore=1501 bulkscore=0 adultscore=0 phishscore=0 spamscore=0
+ lowpriorityscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508250145
 
-On 8/14/25 9:28 PM, Troy Mitchell wrote:
-> Hi, Alex,
+On Mon, Aug 25, 2025 at 11:04:43AM +0800, Miaohe Lin wrote:
+> On 2025/8/22 8:24, Jiaqi Yan wrote:
+> > On Thu, Aug 21, 2025 at 12:36 PM Kyle Meyer <kyle.meyer@hpe.com> wrote:
+> >>
+> >> On Thu, Aug 21, 2025 at 11:23:48AM -0700, Jiaqi Yan wrote:
+> >>> On Thu, Aug 21, 2025 at 9:46 AM Kyle Meyer <kyle.meyer@hpe.com> wrote:
+> >>>>
+> >>>> Calling action_result() on already poisoned pages causes issues:
+> >>>>
+> >>>> * The amount of hardware corrupted memory is incorrectly incremented.
+> >>>> * NUMA node memory failure statistics are incorrectly updated.
+> >>>> * Redundant "already poisoned" messages are printed.
+> >>>
+> >>> All agreed.
+> >>>
+> >>>>
+> >>>> Do not call action_result() on already poisoned pages and drop unused
+> >>>> MF_MSG_ALREADY_POISONED.
+> >>>
+> >>> Hi Kyle,
+> >>>
+> >>> Patch looks great to me, just one thought...
 > 
-> I did not find any accesses to the P1 shutdown or reboot registers here.
-> Does this mean that the current series does not support reboot or shutdown?
-
-Yes, that is correct.
-
-> If so, do you have any plans to support this functionality?
-
-At this time I personally don't have any plans to add this, but
-it could be added later (by anyone).
-
-I actually attempted to do this initially, but gave up.  The PMIC
-is accessed via I2C, and I needed to implement a non-blocking
-version of the I2C register write operation.  I tried that, but
-then found that the shutdown or reboot still did not work reliably.
-As it was, this was more than I originally planned to do, so I just
-implemented the simple RTC operations instead.
-
-					-Alex
-
-> If I have misunderstood, please correct me.
+> Thanks both.
 > 
-> Best regards,
-> Troy
+> >>>
+> >>> Alternatively, have you thought about keeping MF_MSG_ALREADY_POISONED
+> >>> but changing action_result for MF_MSG_ALREADY_POISONED?
+> >>> - don't num_poisoned_pages_inc(pfn)
+> >>> - don't update_per_node_mf_stats(pfn, result)
+> >>> - still pr_err("%#lx: recovery action for %s: %s\n", ...)
+> >>> - meanwhile remove "pr_err("%#lx: already hardware poisoned\n", pfn)"
+> >>> in memory_failure and try_memory_failure_hugetlb
+> >>
+> >> I did consider that approach but I was concerned about passing
+> >> MF_MSG_ALREADY_POISONED to action_result() with MF_FAILED. The message is a
+> >> bit misleading.
+> > 
+> > Based on my reading the documentation for MF_* in static const char
+> > *action_name[]...
+> > 
+> > Yeah, for file mapped pages, kernel may not have hole-punched or
+> > truncated it from the file mapping (shmem and hugetlbfs for example)
+> > but that still considered as MF_RECOVERED, so touching a page with
+> > HWPoison flag doesn't mean that page was failed to be recovered
+> > previously.
+> > 
+> > For pages intended to be taken out of the buddy system, touching a
+> > page with HWPoison flag does imply it isn't isolated and hence
+> > MF_FAILED.
 > 
+> There should be other cases that memory_failure failed to isolate the
+> hwpoisoned pages at first time due to various reasons.
 > 
-> On Tue, Aug 12, 2025 at 09:45:03PM -0500, Alex Elder wrote:
->> Enable support for the RTC and regulators found in the SpacemiT P1
->> PMIC.  Support is implemented by the simple I2C MFD driver.
->>
->> The P1 PMIC is normally implemented with the SpacemiT K1 SoC.  This
->> PMIC provides 6 buck converters and 12 LDO regulators.  It also
->> implements a switch, watchdog timer, real-time clock, and more.
->> Initially its RTC and regulators are supported.
->>
->> Signed-off-by: Alex Elder <elder@riscstar.com>
->> ---
->>   drivers/mfd/Kconfig          | 11 +++++++++++
->>   drivers/mfd/simple-mfd-i2c.c | 18 ++++++++++++++++++
->>   2 files changed, 29 insertions(+)
->>
->> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
->> index 425c5fba6cb1e..4d6a5a3a27220 100644
->> --- a/drivers/mfd/Kconfig
->> +++ b/drivers/mfd/Kconfig
->> @@ -1238,6 +1238,17 @@ config MFD_QCOM_RPM
->>   	  Say M here if you want to include support for the Qualcomm RPM as a
->>   	  module. This will build a module called "qcom_rpm".
->>   
->> +config MFD_SPACEMIT_P1
->> +	tristate "SpacemiT P1 PMIC"
->> +	depends on I2C
->> +	select MFD_SIMPLE_MFD_I2C
->> +	help
->> +	  This option supports the I2C-based SpacemiT P1 PMIC, which
->> +	  contains regulators, a power switch, GPIOs, an RTC, and more.
->> +	  This option is selected when any of the supported sub-devices
->> +	  is configured.  The basic functionality is implemented by the
->> +	  simple MFD I2C driver.
->> +
->>   config MFD_SPMI_PMIC
->>   	tristate "Qualcomm SPMI PMICs"
->>   	depends on ARCH_QCOM || COMPILE_TEST
->> diff --git a/drivers/mfd/simple-mfd-i2c.c b/drivers/mfd/simple-mfd-i2c.c
->> index 22159913bea03..47ffaac035cae 100644
->> --- a/drivers/mfd/simple-mfd-i2c.c
->> +++ b/drivers/mfd/simple-mfd-i2c.c
->> @@ -93,12 +93,30 @@ static const struct simple_mfd_data maxim_mon_max77705 = {
->>   	.mfd_cell_size = ARRAY_SIZE(max77705_sensor_cells),
->>   };
->>   
->> +
->> +static const struct regmap_config spacemit_p1_regmap_config = {
->> +	.reg_bits = 8,
->> +	.val_bits = 8,
->> +};
->> +
->> +static const struct mfd_cell spacemit_p1_cells[] = {
->> +	{ .name = "spacemit-p1-regulator", },
->> +	{ .name = "spacemit-p1-rtc", },
->> +};
->> +
->> +static const struct simple_mfd_data spacemit_p1 = {
->> +	.regmap_config = &spacemit_p1_regmap_config,
->> +	.mfd_cell = spacemit_p1_cells,
->> +	.mfd_cell_size = ARRAY_SIZE(spacemit_p1_cells),
->> +};
->> +
->>   static const struct of_device_id simple_mfd_i2c_of_match[] = {
->>   	{ .compatible = "kontron,sl28cpld" },
->>   	{ .compatible = "silergy,sy7636a", .data = &silergy_sy7636a},
->>   	{ .compatible = "maxim,max5970", .data = &maxim_max5970},
->>   	{ .compatible = "maxim,max5978", .data = &maxim_max5970},
->>   	{ .compatible = "maxim,max77705-battery", .data = &maxim_mon_max77705},
->> +	{ .compatible = "spacemit,p1", .data = &spacemit_p1, },
->>   	{}
->>   };
->>   MODULE_DEVICE_TABLE(of, simple_mfd_i2c_of_match);
->> -- 
->> 2.48.1
->>
->>
->> _______________________________________________
->> linux-riscv mailing list
->> linux-riscv@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> > 
+> > In summary, seeing the HWPoison flag again doesn't necessarily
+> > indicate what the recovery result was previously; it only indicate
+> > kernel won't re-attempt to recover?
+> 
+> Yes, kernel won't re-attempt to or just cannot recover.
+> 
+> > 
+> >>
+> >> How about introducing a new MF action result? Maybe MF_NONE? The message could
+> >> look something like:
+> > 
+> > Adding MF_NONE sounds fine to me, as long as we correctly document its
+> > meaning, which can be subtle.
+> 
+> Adding a new MF action result sounds good to me. But IMHO MF_NONE might not be that suitable
+> as kill_accessing_process might be called to kill proc in this case, so it's not "NONE".
 
+OK, would you like a separate MF action result for each case? Maybe
+MF_ALREADY_POISONED and MF_ALREADY_POISONED_KILLED?
+
+MF_ALREADY_POISONED can be the default and MF_ALREADY_POISONED_KILLED can be
+used when kill_accessing_process() returns -EHWPOISON.
+
+The log messages could look like...
+
+Memory failure: 0xXXXXXXXX: recovery action for already poisoned page: None
+	and
+Memory failure: 0xXXXXXXXX: recovery action for already poisoned page: Process killed
+
+Thanks,
+Kyle Meyer
 
