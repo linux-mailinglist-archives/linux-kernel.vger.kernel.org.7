@@ -1,132 +1,107 @@
-Return-Path: <linux-kernel+bounces-785607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20CE2B34E6C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 23:51:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50C0FB34E37
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 23:43:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EB39164D01
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 21:51:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BAD61B25C2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 21:43:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4A629BDB4;
-	Mon, 25 Aug 2025 21:51:05 +0000 (UTC)
-Received: from support.bugseng.com (mail.bugseng.com [162.55.131.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 822AD299949;
+	Mon, 25 Aug 2025 21:43:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="egDfgIxN"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE4028D8CE;
-	Mon, 25 Aug 2025 21:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=162.55.131.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756158664; cv=pass; b=OmWm59L/dPfjB5h3MQbNvG24eS0GDWxRhQj15fudZea1ctDmjZ7sWKkmdBPk5tt4bUhRgHqWPYh/4f3jcvKqmffuRtCYLaedOuboIbg/ICMipEoSXw45CgSt7hFCbyEqixx2T2UHgaB0MlOfTVklOHd0chkd8HEMiW6k6NWxSB4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756158664; c=relaxed/simple;
-	bh=Sxg8UGUkNSPcHnK3WfU9gOagF9nKZh7qvFXxzCg6eBo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bgVkr7EP9m1YFSLnCY1WFNMf8GG9wFywKvY4gMo0DPK0TkOx5qsTbjHZH5Z3/Kk2spOxia6rBDnQFOMKfBu1XXApIZbbjopVzbY5PYEmHvHM7NPhlhakypU2osqNmcbXIlXZ3bbuhzTkKYbHkQXfFCvqf2zyQui7W5dVKny5blA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; arc=pass smtp.client-ip=162.55.131.47
-Authentication-Results: bugseng.com; arc=none smtp.remote-ip=135.181.133.111
-ARC-Seal: i=1; d=bugseng.com; s=openarc; a=rsa-sha256; cv=none; t=1756158190;
-	b=3UrokH7dlEW73ah57rFFCDGOtWgoElJl8oYnwLzTJWMREKde/7u+4ewA1VPyu07jSWQh
-	 3TLVoSfqiVDtSdSkC0N1BE0F+h5V4Re4PalxHvFCqOwVRJ61+pXneMUIQyQBYN8CvKj28
-	 xHc2sRibVMbp6osAawttEIxVFdXRtegGGEir4Hx0wL2Z7MQEVqHoxZShDHZoQa2pxeM1z
-	 u06xiIc50NrwkTE4bE+yAN+/EZPErQBUTwyPDqy4fo5WbNYC9RbQrxYbuPcODQ8hwy/B/
-	 vFf8GuaF8DzuTpz4Im4CgIHth4Hvhi5uRsUtT/8yUXd0W8FoDW7zRxE9KGrW1ZUGWrTzo
-	 OllqSn3dB54qHiCxYfHnraitRnDjSQ8RZW3o/WCEqu4BhCCV9Et2sgsFsUgYBZjcf0WlS
-	 RmWGvTF7Z2xuT7APIeYFprQ9mgckMZjHnOt0SRCT8g6uxQn1kionoc+LK1rEy8OI0+DFI
-	 fNfw5FodA0VIFcYCjTPiA5TRlF9il7bEaojRZEbFXN722k+i2HdcXuy4xa5pex3QrJzae
-	 jk4cermVpZ2R3rD6+nyhQqDgbwu1Pu9T6xiWzEDFIFQOA3nds0He513qYhyKcMuMn8ool
-	 j40MYsdQ/j0VWK9jdjxhcuz49qaVq2n7jfYtEasgsTZk38vvt+qLkLssauP6CXk=
-ARC-Message-Signature: i=1; d=bugseng.com; s=openarc; a=rsa-sha256;
-	c=relaxed/relaxed; t=1756158190;
-	h=Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=OdPgDqkLgH4vvEd5//GdxbEVBYaCBTm9uHrvVmZJwj4=;
-	b=LgUWm4urIveDA+EgqvTA9J6hf0qE2Rnmqb2gMvCkF5vOT0kZ9dktco7T7dRg7cEXNUnR
-	 8VRI0T4ZwYvgFl3gZ06QLZChRqKAWrXKzJ2Sw3xWGrz5zDVLGGjVnF3p/ELTeiNpOdq8z
-	 BzRf0tQxwMrEQL2SVQJXwAJmn5yl0COynYL7K+I7Wjo6p1Arcs4p0grlXDAft+zll3EnJ
-	 LkUJ7I18tGAW3xwJJkK//HFsVxo2e9hsBwu9lgsMXyZrP/AeWAB7Fj/6Ky2xUIu20XBcM
-	 FieSD8gc6OTyBmE7AgFOfeXvtr2PGe5qiRcnbXaTgRgFwiKsejF8tWpJYGjalNDxlozcC
-	 P5NpaTGZrUsr0lWqaH8xMMhqo+81BAVcnoJsJZ5Ldcq5cXBssCARDg1Z8N7XoKEXIjWZJ
-	 jmoCSJfjnhWIITFIJON8jTdwxNTgo7C/KIokV+HApjSYyVCJexSLOR96I3nFVWXxx73W6
-	 Ksm8vAgleOOXrag7xEX9cc38uHNuw5TySX4vAXg7ij7Fk1ke783l0192vm2a7Lb7Puj+n
-	 ZEia4lnt2gZ2AoBaJvWbZ3pXcKfzn5Brte8vuPY+7dFAifDGoedWzQO8jMKUbXAymMkPb
-	 lgwg9inLBbJGRcnszfkux/vYu0h9TNN+GdyGw/Sy4F2+US9uh8aylrZpf3xRQIQ=
-ARC-Authentication-Results: i=1; bugseng.com; arc=none smtp.remote-ip=135.181.133.111
-Received: from eclairit (eclairit.com [135.181.133.111])
-	by support.bugseng.com (Postfix) with ESMTPS id 2E42E4EEBC47;
-	Mon, 25 Aug 2025 23:43:10 +0200 (CEST)
-Received: by eclairit (Postfix, from userid 1011)
-	id 8A0B2644066B; Mon, 25 Aug 2025 23:43:09 +0200 (CEST)
-From: Nicola Vetrini <nicola.vetrini@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	regressions@lists.linux.dev
-Cc: tsbogend@alpha.franken.de,
-	willy@infradead.org,
-	anders.roxell@linaro.org,
-	naresh.kamboju@linaro.org,
-	Nicola Vetrini <nicola.vetrini@gmail.com>
-Subject: [PATCH] mips: fix compilation error
-Date: Mon, 25 Aug 2025 23:42:45 +0200
-Message-ID: <20250825214245.1838158-1-nicola.vetrini@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F936221FC3;
+	Mon, 25 Aug 2025 21:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756158194; cv=none; b=IkHGgnfljKktHthSm74AreLA1RAuEnZnu8q+Ygs1sedKKBDjNYq0OU0juc+hIlTy6FYdN4JegufO66ky856kKWOq2CQISDBxqSjz09tMC4w9b8cxokAP4K8S7Q/64qXnRkc+t3tA7qrhNHq0SFeepGI3IaTYWsLcFu2bLbiSxdc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756158194; c=relaxed/simple;
+	bh=xxIzkGDR321pyccex9pUY6O9+bueEK+mXm6r/XKg7Oc=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=duY6qo4PKdXbZ+7CZ8IKghf2AJkgRShVPs8oCY9TLKTiCJNYxlTHNwtnySxMsxEUM7pZHMR/wiavmwwdnpN4CrFbjcnNmItmE21mCkkr4rFCKg+826ohTl9JtlpxuXNtBJlISHJVhOWLEMctwdi/wPerkrxm4SXpxJrngUeLhMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=egDfgIxN; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-afcb7322da8so788391966b.0;
+        Mon, 25 Aug 2025 14:43:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756158192; x=1756762992; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=L1ZdiOQ+ocy7kIerFqAydo3pqaL3JBB3Sf5gIxDSEQs=;
+        b=egDfgIxNg24wgktpx5OdMrRJUQ18JLsphm206i2yWmm2e2VikSU4qPluq0D6AkGqDk
+         GC80ndzt1MmH8ZnPktKmzz9ZdIxFQGzzj3Yq+Rr1KxHbc5QvU1OJzjdisG2c7/BdItZO
+         YP70/6viOAPUxWUSBTEuyeZu/w5Irxcq5saGewcohO+lGwTawf31S3KRJjdGbBgEproD
+         tZLOnng9MCpgBZTNliKRNZ1/SL7qUDdd2JURsQ5q/CAu6hISZ+YIx0Q3yKQ80fa4Bj0y
+         Y89+kBcKNkxFHsKIAvKZQ5DOaB8HYl0XVkODqRsDxePbStbCaKPUJHQUR5xV+tyaM/2f
+         Zs6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756158192; x=1756762992;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=L1ZdiOQ+ocy7kIerFqAydo3pqaL3JBB3Sf5gIxDSEQs=;
+        b=iPLjYfdlrnXGGY9fSJwiUcJ5ecNCTTWz9K1Yrpif+bZEIzb5n9g6aSa+h0sU6f250M
+         URv/DCoHVZZzMCkDcABuXVPtzLizG4bQrYre3M7ka3gAAlC7e4UqiJqyg4n+ch3QBYsD
+         tG8wX9tCiHRP8KBdU84vFW9jVxkrEdskvzTnprF5lVOUhY+DUvezyPFxhbExfXnd93Fy
+         z2yW4e6cHhLI9F1AoyMq825Wkp0XglG/GMYVVi4WCViA6x9OlkRyecLLrRjYpqiU7hyr
+         FRRcpr7jql+IMbK7s73Cnnc3DYbOjxqqX3sAS1aeJ5sqA6BNvfwpc1Vl0T88rWKui1EM
+         ZnPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUCleWHptCy0O2SjKL8BDY9rAE7V1mrxxEhVU9e0PubuWa3hE+c+Qjr7vXf0kiQ28epGuDYuBEze7jdCf8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuCmJ3E/raKWPEghTOzqZOawkp+Bcyim8KJyR8pZ4jiOS4dnBr
+	crUg6TUYrP4IQ9HSbsmlPUuMI2rpu7VBGIN3zL5i5C0TbGGTfjkQCePaeAM3hU+BPoW5Cn+16Tg
+	/Yx0MjUzb+qdnYOf1JPsH3D/Rp8McBT4zNXG5
+X-Gm-Gg: ASbGncvq7vXyXDdno9VchGG2djomQqbT5DzW8r92b6c9DzGAb8rafMZ6GVsD1GP9RhW
+	f3oxNKaLc9/qs17LEm3VtwOc+USQ9lvLr8DL87KCybvN4kqGRpVtJhbhPjNmOrmwPAxottTDUFt
+	au9eryaqpaVrPNUGhicfWulk82Ci1AWMznt0bW15iUma1GhpoNAIZenunEX+373x05UqzFjqkwl
+	tcr/g==
+X-Google-Smtp-Source: AGHT+IG2yTyhHVml4GPr3jglTwK6YUTCOb2EGrJ1BJ46haG6NyaV3qSUMq0IRz5ulurjXu4Fv+OZ98jwWRmXcs+Tpg4=
+X-Received: by 2002:a17:907:d28:b0:ae0:d201:a333 with SMTP id
+ a640c23a62f3a-afe295d28f5mr1398848566b.30.1756158191684; Mon, 25 Aug 2025
+ 14:43:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Mon, 25 Aug 2025 23:43:00 +0200
+X-Gm-Features: Ac12FXx9MwjgcuYmezIpIsQMoDHzInyHPpVRZ_U2ucNETDbC6af76PejKfFTQAA
+Message-ID: <CAGudoHHBRhU+XidV9U4osc2Ta4w0Lgi2XiFkYukKQoH45zT6vw@mail.gmail.com>
+Subject: Infinite loop in get_file_rcu() in face of a saturated ref count
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-The following build error occurs on a mips build configuration
-(32r2el_defconfig and similar ones)
-./arch/mips/include/asm/cacheflush.h:42:34: error: passing argument 2 of ‘set_bit’
-from incompatible pointer type [-Werror=incompatible-pointer-types]
-   42 |         set_bit(PG_dcache_dirty, &(folio)->flags)
-      |                                  ^~~~~~~~~~~~~~~
-      |                                  |
-      |                                  memdesc_flags_t *
+__get_file_rcu() bails early:
 
-This is due to changes introduced by
-commit 30f45bf18d55 ("mm: introduce memdesc_flags_t"), which did not update
-these usage sites.
+        if (unlikely(!file_ref_get(&file->f_ref)))
+                return ERR_PTR(-EAGAIN);
 
-Link: https://lore.kernel.org/lkml/CA+G9fYvkpmqGr6wjBNHY=dRp71PLCoi2341JxOudi60yqaeUdg@mail.gmail.com/
-Fixes: 30f45bf18d55 ("mm: introduce memdesc_flags_t")
-Signed-off-by: Nicola Vetrini <nicola.vetrini@gmail.com>
----
-First time sending a Linux patch, so I may have gotten some part of
-it wrong.
+But get_file_rcu():
+       for (;;) {
+                struct file __rcu *file;
 
-Bisection was done at the provided link.
----
- arch/mips/include/asm/cacheflush.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+                file = __get_file_rcu(f);
+                if (!IS_ERR(file))
+                        return file;
+        }
 
-diff --git a/arch/mips/include/asm/cacheflush.h b/arch/mips/include/asm/cacheflush.h
-index 1f14132b3fc9..5d283ef89d90 100644
---- a/arch/mips/include/asm/cacheflush.h
-+++ b/arch/mips/include/asm/cacheflush.h
-@@ -37,11 +37,11 @@
- #define PG_dcache_dirty			PG_arch_1
- 
- #define folio_test_dcache_dirty(folio)		\
--	test_bit(PG_dcache_dirty, &(folio)->flags)
-+	test_bit(PG_dcache_dirty, &(folio)->flags.f)
- #define folio_set_dcache_dirty(folio)	\
--	set_bit(PG_dcache_dirty, &(folio)->flags)
-+	set_bit(PG_dcache_dirty, &(folio)->flags.f)
- #define folio_clear_dcache_dirty(folio)	\
--	clear_bit(PG_dcache_dirty, &(folio)->flags)
-+	clear_bit(PG_dcache_dirty, &(folio)->flags.f)
- 
- extern void (*flush_cache_all)(void);
- extern void (*__flush_cache_all)(void);
+So if this encounters a saturated refcount, the loop with never end.
 
-base-commit: 6c68f4c0a147c025ae0b25fab688c7c47964a02f
+I don't know what makes the most sense to do here and I'm no position
+to mess with any patches.
+
+This is not a serious problem either, so I would put this on the back
+burner. Just reporting for interested.
 -- 
-2.43.0
-
+Mateusz Guzik <mjguzik gmail.com>
 
