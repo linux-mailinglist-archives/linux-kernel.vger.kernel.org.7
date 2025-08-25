@@ -1,125 +1,123 @@
-Return-Path: <linux-kernel+bounces-785061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41241B34553
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:14:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 462D3B34558
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:14:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56A5F1884A27
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:14:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BC14189087B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 15:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86DF02F39A7;
-	Mon, 25 Aug 2025 15:13:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A641D2FCBF4;
+	Mon, 25 Aug 2025 15:14:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bi3KNdil"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="AHTmaT4j"
+Received: from mail-0301.mail-europe.com (mail-0301.mail-europe.com [188.165.51.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA2A2E1EE6;
-	Mon, 25 Aug 2025 15:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B952FC896
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 15:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.51.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756134836; cv=none; b=i4oRt2PYThPfJpu+Mrv7UOB485c0Wn+UkBfYyp/yFUPFm0y+emxBqClHoMHvZbMKDS7I7dV2CPkUG6snnsknba8lLPoUZ7xw9iX4Zq0x7aFHM4rET0K2anQzz46GrGtScWoGyRGZXRTnfA9rZrMQOZCEILPkodC8JOlGvyCklRE=
+	t=1756134880; cv=none; b=Z76ftfbO6v9VxtUzQJCqr7Xa5wNV59Upqn+Xj+/avIBSWr7zmAQrb/3oPBm24GWO+Fzs4JQ1MjXgTc2j6NoZnZjX8LFbH1BhqM7fDO08fpadPp4fs5MpBYfLDXV9j3Ului/56TfG0REcVFbJziRHy6oQiFZAh0KjOQU+bkDkpqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756134836; c=relaxed/simple;
-	bh=WZz+BEh/Ios9GLEN/uIEsnq1OHEvgWzXABBqfRy6Akk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=iarLznP8c3Ywx6ikafQqHofIAyJnHREkr5XGAKcwiB/5IeIPQLjvKDa+DVCSqJnNKjdj8F0ZbUh4ADza8zGy7fJS8vSLbJv0NqhyIViSwcx5GjQTBTNbDCWbtETP9BpE6xx2Q7HDp9IxSn5O1P/bG1ZfCud+wHEWSkd1Zn3dsts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bi3KNdil; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65E0FC4CEED;
-	Mon, 25 Aug 2025 15:13:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756134835;
-	bh=WZz+BEh/Ios9GLEN/uIEsnq1OHEvgWzXABBqfRy6Akk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Bi3KNdilY7L65uSGuh+wXZHJcTlHRrqDDZGm/3FiF5ruHGiEQNhqc6YfGiHitK+F1
-	 dPqSNqGqGBBND2/c8uQCURQaRSadSmRLyY7aO7PKOxjv9o5bI4JZkH+ISVpn7hER8S
-	 k5JaeR4QTvO4dP26VxEWXP6MQpV1IHzwkc/b08X7HGZdnwfrYFsweHn3TKu+maBWK8
-	 ZgSq5xeVm+jzYe5970Y+VcwsuyIlASBk0DPRK29VbjOU3PBYXii9145mL4R7yTdsy0
-	 SEM52H/4Fabq1MNznSczUogzmbdz2tgh3IClQsc1X82qdK+aO0o9LWf0LrNnmjj7xe
-	 uuIAvIhCVEXFA==
-From: SeongJae Park <sj@kernel.org>
-To: Quanmin Yan <yanquanmin1@huawei.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	akpm@linux-foundation.org,
-	damon@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	wangkefeng.wang@huawei.com,
-	zuoze1@huawei.com,
-	kernel-team@meta.com
-Subject: Re: [PATCH v2 04/11] mm/damon/paddr: support addr_unit for DAMOS_LRU_[DE]PRIO
-Date: Mon, 25 Aug 2025 08:13:53 -0700
-Message-Id: <20250825151353.36392-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250822093420.2103803-5-yanquanmin1@huawei.com>
-References: 
+	s=arc-20240116; t=1756134880; c=relaxed/simple;
+	bh=rXdwHNU85Qjk0GtyGVi9u1XRwpYcyepp/ONeSlt5oIA=;
+	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uY3Urfv6sQdEC6Zmh3U+nhWKgstsvW+imOlBx0FBIOcdC80kLiJlGYirHqanN4ZKdW+6lPKSsQn0ISNHZEpfB4mT1HMTTcClSsoL4vRlIBpVG7Z8ODFPq01W3nOKsuwvGgQJo83OG1v1tha900USknVTVPmoyzRb3kffjbK+XvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=AHTmaT4j; arc=none smtp.client-ip=188.165.51.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=geanix.com;
+	s=protonmail2; t=1756134861; x=1756394061;
+	bh=3/6Aun7aUZM0TUc8HgYjVm375wAKs/aNao7PL8OhJ/Y=;
+	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=AHTmaT4jNTvu0jCNmKr6qAOZYSUT4rNmhgZo5XBECd0WH40ravtq6FfQhw/QmhMw9
+	 i0Tovk+RwRRANg5TcB9ikSYiFOuA/d5g6qYxE5ubbipLSeTRGdQ1FMsb8IQHjtNTe1
+	 MOpQv47xDnvT4aN1an2sihY0cQ7HMJRKUW+F4LTRogrZtewytCm0xipArG9KGIELpo
+	 /IiLdRwSMTYoPBL7BccCotF7aWPJiHukJxMPXcmvAgTT1sNrPXvExINb15zS3PACk+
+	 umnKQyfSTRPImd/sOs2R1k+xAOHThDjbIkeD/hMrNEgpnhHzmy7rgMuackp91Z1s3E
+	 H/t01WqMKOqFA==
+Date: Mon, 25 Aug 2025 15:14:15 +0000
+To: Andy Shevchenko <andy.shevchenko@gmail.com>, Jonathan Cameron <jic23@kernel.org>, Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>, David Lechner <dlechner@baylibre.com>, =?utf-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>
+From: Sean Nyekjaer <sean@geanix.com>
+Subject: Re: [PATCH v2 1/5] iio: imu: inv_icm42600: Simplify pm_runtime setup
+Message-ID: <6utm3ywkymr3hretvru7xkdv7p7p3wtmd62blfyapmgagr3pzc@42oiakgdxmqp>
+In-Reply-To: <yegzkmvizfcxwohvkxtfguylamvlpy3hsabkxydjwhyiy3fonn@mqjqdpkpo375>
+References: <20250808-icm42pmreg-v2-0-a480279e7721@geanix.com> <20250808-icm42pmreg-v2-1-a480279e7721@geanix.com> <CAHp75VdKNE0xD8xbJQ2RSCA=_MB9DMZtXRTCNkpdKdv8vW-Q-w@mail.gmail.com> <20250809190609.4fef9df7@jic23-huawei> <CAHp75Vc5CxOj77cw85hmioFTG6YJCe3ZJWwJsJW+QL79K8GpWw@mail.gmail.com> <yegzkmvizfcxwohvkxtfguylamvlpy3hsabkxydjwhyiy3fonn@mqjqdpkpo375>
+Feedback-ID: 134068486:user:proton
+X-Pm-Message-ID: 8ac87c0f8133c81bbced517b3d3a312ea4133a34
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 22 Aug 2025 17:34:12 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
+On Mon, Aug 11, 2025 at 02:21:26PM +0100, Sean Nyekjaer wrote:
+> On Sat, Aug 09, 2025 at 10:27:52PM +0100, Andy Shevchenko wrote:
+> > On Sat, Aug 9, 2025 at 8:06=E2=80=AFPM Jonathan Cameron <jic23@kernel.o=
+rg> wrote:
+> > > On Fri, 8 Aug 2025 23:37:51 +0200
+> > > Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+> > > > On Fri, Aug 8, 2025 at 5:58=E2=80=AFPM Sean Nyekjaer <sean@geanix.c=
+om> wrote:
+> >=20
+> > ...
+> >=20
+> > > > > +       struct device *dev =3D regmap_get_device(st->map);
+> > > > >
+> > > > > +       if (!pm_runtime_status_suspended(dev))
+> > > > > +               regulator_disable(st->vddio_supply);
+> > > >
+> > > > I would rather use positive conditional as it seems to me more scal=
+able
+> > >
+> > > To potentially save time when Sean looks at this.  I don't follow. Do=
+ you mean
+> > > something like
+> > >         if (pm_runtime_status_suspended(dev))
+> > >                 return;
+> > >
+> > >         regulator_disable(st->vddio_supply);
+> > >
+> > > ?
+> >=20
+> > Yes.
+> >=20
+> > > If so I'm not seeing why we'd want this to scale as it's a single use
+> > > devm_set_action_or_reset() callback doing just one thing.
+> >=20
+> > While I agree in _this_ case, in general the check and return
+> > immediately is more scalable for reading purposes, e.g., indentation
+> > will be one level less. Also it won't require additional churn in
+> > adding {, i.e. changing conditional line just for that.
+> >=20
+>=20
+> I like the return early if pm_runtime_status_suspended() is true.
+>=20
+> Andy, when doing reviews please keep the function name, as it's much
+> easier to add the changes.
+>=20
+> Jonathan, do we think checking pm_runtime_status_suspended() is a viable
+> option? Should we ask on the linux-pm list?
+>=20
+> If it's ok; I will patch:
+> drivers/iio/adc/ti-ads1100.c
+> drivers/iio/pressure/bmp280-core.c
+> drivers/iio/pressure/icp10100.c
 
-> From: SeongJae Park <sj@kernel.org>
-> 
-> Add support of addr_unit for DAMOS_LRU_PRIO and DAMOS_LRU_DEPRIO action
-> handling from the DAMOS operation implementation for the physical
-> address space.
-[...]
-> -	return applied * PAGE_SIZE;
-> +	return applied * PAGE_SIZE / addr_unit;
->  }
+Hi Jonathan,
 
-This can cause __udivdi3 linking issue similar to the report [1] from kernel
-test robot.  Andrew, could you please add below attaching fixup?
+Did you see my question here?
+Just ignore this if you are vacationing...
 
-[1] https://lore.kernel.org/oe-kbuild-all/202508241831.EKwdwXZL-lkp@intel.com/
+/Sean
 
-
-Thanks,
-SJ
-
-[...]
-
-==== Attachment 0 (0002-mm-damon-paddr-use-do_div-on-i386-for-damon_pa_de_ac.patch) ====
-From hackermail Thu Jan  1 00:00:00 1970
-From: SeongJae Park <sj@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: SeongJae Park <sj@kernel.org>
-Cc: damon@lists.linux.dev
-Cc: kernel-team@meta.com
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org
-Date: Mon, 25 Aug 2025 07:45:24 -0700
-Subject: [PATCH 2/3] mm/damon/paddr: use do_div() on i386 for
-         damon_pa_de_activate() return value
-
-Otherwise, __udivdi3 linking issue happens on certain configs.
-
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- mm/damon/paddr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/mm/damon/paddr.c b/mm/damon/paddr.c
-index 09c87583af6c..6fb92ecc513d 100644
---- a/mm/damon/paddr.c
-+++ b/mm/damon/paddr.c
-@@ -236,7 +236,7 @@ static inline unsigned long damon_pa_mark_accessed_or_deactivate(
- 		folio_put(folio);
- 	}
- 	s->last_applied = folio;
--	return applied * PAGE_SIZE / addr_unit;
-+	return damon_pa_core_addr(applied * PAGE_SIZE, addr_unit);
- }
- 
- static unsigned long damon_pa_mark_accessed(struct damon_region *r,
--- 
-2.39.5
 
