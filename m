@@ -1,248 +1,215 @@
-Return-Path: <linux-kernel+bounces-784061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6124DB33627
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:05:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9564AB33629
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 08:06:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D765148124D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 06:05:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09C6716506D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 06:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA0F27700A;
-	Mon, 25 Aug 2025 06:05:32 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44FEC2750F0;
+	Mon, 25 Aug 2025 06:06:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="lHTJ4nPF"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 086D823CEF9;
-	Mon, 25 Aug 2025 06:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 242EF23D7DA;
+	Mon, 25 Aug 2025 06:06:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756101932; cv=none; b=K8KFRBkTYbMBSD64obA+JvLylAWnTcOBI0cmduF+T3iSstq/Lh8j3TbzbBpaCGlQdfasPqSSLSCnW27FGMQLH+G8hcecUgJGmGZAT+B/0UzZOJIXTY43owq0A5EPpcwnm13YFdX/LyJYzti7ashNhzbcpPJi4gub+O50BkmwtFQ=
+	t=1756101970; cv=none; b=gRYxBe54aJh0nYw3hwBLdWnftDu+lPD6pKIilf6WOD4EfFqUVPuf1OTJeO2DLd2JcllCOoiQYzD/3TgB2IOF4cV7K5PEP3g/8hGZKGACX95kbdwwz+FfQh8aFP/6E8Fz3uLGzg+e+kcz+FK/oNUZCtqYUlEro4zEtsyW4ibiuuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756101932; c=relaxed/simple;
-	bh=5xdimQxy5HTLmsz20FCkxJnH6gBt1kDrqwdbKdoplC0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Rt2cTUq/HtV9i9fyblDy6ceU9lu3zY9aPOOQE0fdGu3bpNTx8C9+cUdmBDvk9KlOGLSW/DXJlOmJ69TjXvQ4AOSNZcpxvTqGwKfWv62P5PsmlhVNysfMbbRf+hhrZOlVdAXH34hxy4zEhaZkpwwWQsbsyMfoc0U+v0Wnvd1OYGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4c9L021CFvz27jGv;
-	Mon, 25 Aug 2025 14:06:26 +0800 (CST)
-Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id D78951A0188;
-	Mon, 25 Aug 2025 14:05:19 +0800 (CST)
-Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 25 Aug 2025 14:05:19 +0800
-Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
- (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 25 Aug
- 2025 14:05:18 +0800
-Message-ID: <9fe902df-98a3-47cf-a199-092c9ef90ce2@huawei.com>
-Date: Mon, 25 Aug 2025 14:05:02 +0800
+	s=arc-20240116; t=1756101970; c=relaxed/simple;
+	bh=yrD56le40eioGmzXzTsg1qQGCLMkeOGwVrY7cv15Fz0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IYzQH84LPkfsXDakfNXtQ2Fm5mKYfHyGhzFvLwc5WoL1+H0Y8Md2ljfGzW3xwpVze/SfK0RmQupibM3YQh1ka660tqvUROlyH02nTBo/jsG/wzXzlATxNjGDvfPKQwjf1Gd0vKl75nJKAEf5U+Xn/1X4d94y7o6zgi8N+Kz+cCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=lHTJ4nPF; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1756101958;
+	bh=Vijw8TeqguQFZ1R2OCtKzTGurHB8WiXSYY6DcAghyJE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=lHTJ4nPFTYQ7RLOYhKiag1aEKIjFpSYdtVcH+mKgZbhne/k4Itawg36mK+ltstcqs
+	 0rzugsZqHyAPPsc1b2qGsgVmUL34FZXgfRh9/4Sxm7368TPHc0/lL+G0tHp8st3uar
+	 gj+b1/Tp1E0NNDDnPtXS/G+NPyYK9/M64gWsHUlAofby/cWux4bMKzOVkg/s+m8Ifl
+	 CQiyjvY0jV8T/IWYAydIl8Aea1FVXWxGF1dox8hvRfs1+i6Q2S6Y+i7v6mWgyqINOd
+	 cb+fmFkjR+L6UzfAtQ8YsdTE+Z6q83anluvJ0/cSTgZUT+PCZMRBTDHxhutBWswNEX
+	 4l3blhs7OfYIg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c9KzV224Nz4w2H;
+	Mon, 25 Aug 2025 16:05:58 +1000 (AEST)
+Date: Mon, 25 Aug 2025 16:05:57 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: David Gow <davidgow@google.com>, Marie Zhussupova <marievic@google.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, KUnit Development
+ <kunit-dev@googlegroups.com>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the kunit-next tree
+Message-ID: <20250825160557.591ef4d7@canb.auug.org.au>
+In-Reply-To: <CABVgOSm2_FGfjQpUBttuUH5ZrMEqnaGkYVkN6N96wX7Qs8EE2Q@mail.gmail.com>
+References: <20250818120846.347d64b1@canb.auug.org.au>
+	<1befd7ab-f343-450f-9484-0cef21fe2da8@linuxfoundation.org>
+	<CABVgOSm2_FGfjQpUBttuUH5ZrMEqnaGkYVkN6N96wX7Qs8EE2Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] ACPI: processor: idle: Optimize acpi idle driver
- registration
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-CC: <lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-	<jonathan.cameron@huawei.com>, <zhanjie9@hisilicon.com>,
-	<zhenglifeng1@huawei.com>, <yubowen8@huawei.com>, <liuyonglong@huawei.com>,
-	<lihuisong@huawei.com>
-References: <20250728070612.1260859-1-lihuisong@huawei.com>
- <20250728070612.1260859-3-lihuisong@huawei.com>
- <CAJZ5v0jckgZfuh=yAqoftG1Q-1z0ngLXQa4TX-iwuy54UmWMng@mail.gmail.com>
-From: "lihuisong (C)" <lihuisong@huawei.com>
-In-Reply-To: <CAJZ5v0jckgZfuh=yAqoftG1Q-1z0ngLXQa4TX-iwuy54UmWMng@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemn100009.china.huawei.com (7.202.194.112)
+Content-Type: multipart/signed; boundary="Sig_/CSLmByyvfhI7Imp6=iqT0sp";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/CSLmByyvfhI7Imp6=iqT0sp
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-在 2025/8/24 0:13, Rafael J. Wysocki 写道:
-> On Mon, Jul 28, 2025 at 9:06 AM Huisong Li <lihuisong@huawei.com> wrote:
->> Currently, the acpi idle driver is registered from within a CPU
->> hotplug callback. Although this didn't cause any functional issues,
->> this is questionable and confusing. And it is better to register
->> the cpuidle driver when all of the CPUs have been brought up.
->>
->> So add a new function to initialize acpi_idle_driver based on the
->> power management information of an available CPU and register cpuidle
->> driver in acpi_processor_driver_init().
->>
->> Signed-off-by: Huisong Li <lihuisong@huawei.com>
->> ---
->>   drivers/acpi/processor_driver.c |  3 ++
->>   drivers/acpi/processor_idle.c   | 65 +++++++++++++++++++++------------
->>   include/acpi/processor.h        |  8 ++++
->>   3 files changed, 53 insertions(+), 23 deletions(-)
->>
->> diff --git a/drivers/acpi/processor_driver.c b/drivers/acpi/processor_driver.c
->> index 65e779be64ff..bc9f58a02c1d 100644
->> --- a/drivers/acpi/processor_driver.c
->> +++ b/drivers/acpi/processor_driver.c
->> @@ -263,6 +263,8 @@ static int __init acpi_processor_driver_init(void)
->>          if (result < 0)
->>                  return result;
->>
->> +       acpi_processor_register_idle_driver();
->> +
->>          result = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
->>                                     "acpi/cpu-drv:online",
->>                                     acpi_soft_cpu_online, NULL);
->> @@ -301,6 +303,7 @@ static void __exit acpi_processor_driver_exit(void)
->>
->>          cpuhp_remove_state_nocalls(hp_online);
->>          cpuhp_remove_state_nocalls(CPUHP_ACPI_CPUDRV_DEAD);
->> +       acpi_processor_unregister_idle_driver();
->>          driver_unregister(&acpi_processor_driver);
->>   }
->>
->> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
->> index 031738390f2d..c71802d42e8a 100644
->> --- a/drivers/acpi/processor_idle.c
->> +++ b/drivers/acpi/processor_idle.c
->> @@ -1360,7 +1360,48 @@ int acpi_processor_power_state_has_changed(struct acpi_processor *pr)
->>          return 0;
->>   }
->>
->> -static int acpi_processor_registered;
->> +void acpi_processor_register_idle_driver(void)
->> +{
->> +       struct acpi_processor *pr;
->> +       int ret = -ENODEV;
->> +       int cpu;
->> +
->> +       /*
->> +        * Acpi idle driver is used by all possible CPUs.
->> +        * Install the idle handler by the processor power info of one in them.
->> +        * Note that we use previously set idle handler will be used on
->> +        * platforms that only support C1.
->> +        */
->> +       for_each_cpu(cpu, (struct cpumask *)cpu_possible_mask) {
->> +               pr = per_cpu(processors, cpu);
->> +               if (!pr)
->> +                       continue;
->> +
->> +               ret = acpi_processor_get_power_info(pr);
->> +               if (!ret) {
->> +                       pr->flags.power_setup_done = 1;
->> +                       acpi_processor_setup_cpuidle_states(pr);
->> +                       break;
->> +               }
->> +       }
->> +
->> +       if (ret) {
->> +               pr_debug("No ACPI power information from any CPUs.\n");
->> +               return;
->> +       }
->> +
->> +       ret = cpuidle_register_driver(&acpi_idle_driver);
->> +       if (ret) {
->> +               pr_debug("register %s failed.\n", acpi_idle_driver.name);
->> +               return;
->> +       }
->> +       pr_debug("%s registered with cpuidle.\n", acpi_idle_driver.name);
->> +}
->> +
->> +void acpi_processor_unregister_idle_driver(void)
->> +{
->> +       cpuidle_unregister_driver(&acpi_idle_driver);
->> +}
->>
->>   int acpi_processor_power_init(struct acpi_processor *pr)
->>   {
->> @@ -1375,22 +1416,7 @@ int acpi_processor_power_init(struct acpi_processor *pr)
->>          if (!acpi_processor_get_power_info(pr))
->>                  pr->flags.power_setup_done = 1;
->>
->> -       /*
->> -        * Install the idle handler if processor power management is supported.
->> -        * Note that we use previously set idle handler will be used on
->> -        * platforms that only support C1.
->> -        */
->>          if (pr->flags.power) {
->> -               /* Register acpi_idle_driver if not already registered */
->> -               if (!acpi_processor_registered) {
->> -                       acpi_processor_setup_cpuidle_states(pr);
->> -                       retval = cpuidle_register_driver(&acpi_idle_driver);
->> -                       if (retval)
->> -                               return retval;
->> -                       pr_debug("%s registered with cpuidle\n",
->> -                                acpi_idle_driver.name);
->> -               }
->> -
->>                  dev = kzalloc(sizeof(*dev), GFP_KERNEL);
->>                  if (!dev)
->>                          return -ENOMEM;
->> @@ -1403,13 +1429,10 @@ int acpi_processor_power_init(struct acpi_processor *pr)
->>                   */
->>                  retval = cpuidle_register_device(dev);
->>                  if (retval) {
->> -                       if (acpi_processor_registered == 0)
->> -                               cpuidle_unregister_driver(&acpi_idle_driver);
->>                          kfree(dev);
->>                          per_cpu(acpi_cpuidle_device, pr->id) = NULL;
->>                          return retval;
->>                  }
->> -               acpi_processor_registered++;
->>          }
->>          return 0;
->>   }
->> @@ -1423,10 +1446,6 @@ int acpi_processor_power_exit(struct acpi_processor *pr)
->>
->>          if (pr->flags.power) {
->>                  cpuidle_unregister_device(dev);
->> -               acpi_processor_registered--;
->> -               if (acpi_processor_registered == 0)
->> -                       cpuidle_unregister_driver(&acpi_idle_driver);
->> -
->>                  kfree(dev);
->>          }
->>
->> diff --git a/include/acpi/processor.h b/include/acpi/processor.h
->> index d0eccbd920e5..1249f5e81d92 100644
->> --- a/include/acpi/processor.h
->> +++ b/include/acpi/processor.h
->> @@ -423,6 +423,8 @@ int acpi_processor_power_init(struct acpi_processor *pr);
->>   int acpi_processor_power_exit(struct acpi_processor *pr);
->>   int acpi_processor_power_state_has_changed(struct acpi_processor *pr);
->>   int acpi_processor_hotplug(struct acpi_processor *pr);
->> +void acpi_processor_register_idle_driver(void);
->> +void acpi_processor_unregister_idle_driver(void);
->>   #else
->>   static inline int acpi_processor_power_init(struct acpi_processor *pr)
->>   {
->> @@ -443,6 +445,12 @@ static inline int acpi_processor_hotplug(struct acpi_processor *pr)
->>   {
->>          return -ENODEV;
->>   }
->> +static void acpi_processor_register_idle_driver(void)
->> +{
->> +}
->> +static void acpi_processor_unregister_idle_driver(void)
->> +{
->> +}
->>   #endif /* CONFIG_ACPI_PROCESSOR_IDLE */
->>
->>   /* in processor_thermal.c */
->> --
-> Applied as 6.18 material, thanks!
+Hi all,
+
+On Tue, 19 Aug 2025 15:44:52 +0800 David Gow <davidgow@google.com> wrote:
 >
-> While at it, in the future, please always spell ACPI in capitals in
-> patch subjects, changelogs and code comments.
-Get it. Thanks.
+> On Tue, 19 Aug 2025 at 00:32, Shuah Khan <skhan@linuxfoundation.org> wrot=
+e:
+> >
+> > On 8/17/25 20:08, Stephen Rothwell wrote: =20
+> > >
+> > > After merging the kunit-next tree, today's linux-next build (x86_64
+> > > allmodconfig) failed like this: =20
+> >
+> > Thank you Stephen. I did a allmodconfig build on 6.17-rc1 base - didn't
+> > see the error.
+> >
+> > Marie, David, can you take a look this. Looks like conflict with drm
+> > in next?
+>=20
+> Thanks, Shuah. I've managed to reproduce this with:
+> ./tools/testing/kunit/kunit.py run --arch x86_64 --kunitconfig
+> drivers/gpu/drm/xe
+>=20
+> These patches fix it (and a corresponding drm/xe test failure):
+> https://lore.kernel.org/linux-next/20250819073434.1411114-1-davidgow@goog=
+le.com/T/#t
+>=20
+> Ideally, they'll be squashed into the corresponding patches, as
+> otherwise there'd be some temporary breakage during bisections. I can
+> squash these into the original series and re-send it out if that works
+> best for you.
+>=20
+> Cheers,
+> -- David
+>=20
+> > >
+> > > In file included from include/kunit/static_stub.h:18,
+> > >                   from drivers/gpu/drm/xe/xe_bo.c:20:
+> > > drivers/gpu/drm/xe/tests/xe_bo.c:610:48: error: initialization of 'co=
+nst void * (*)(struct kunit *, const void *, char *)' from incompatible poi=
+nter type 'const void * (*)(const void *, char *)' [-Wincompatible-pointer-=
+types]
+> > >    610 |         KUNIT_CASE_PARAM(xe_ccs_migrate_kunit, xe_pci_live_d=
+evice_gen_param),
+> > >        |                                                ^~~~~~~~~~~~~=
+~~~~~~~~~~~~~~~
+> > > include/kunit/test.h:210:38: note: in definition of macro 'KUNIT_CASE=
+_PARAM'
+> > >    210 |                   .generate_params =3D gen_params, .module_n=
+ame =3D KBUILD_MODNAME}
+> > >        |                                      ^~~~~~~~~~
+> > > drivers/gpu/drm/xe/tests/xe_bo.c:610:48: note: (near initialization f=
+or 'xe_bo_tests[0].generate_params')
+> > >    610 |         KUNIT_CASE_PARAM(xe_ccs_migrate_kunit, xe_pci_live_d=
+evice_gen_param),
+> > >        |                                                ^~~~~~~~~~~~~=
+~~~~~~~~~~~~~~~
+> > > include/kunit/test.h:210:38: note: in definition of macro 'KUNIT_CASE=
+_PARAM'
+> > >    210 |                   .generate_params =3D gen_params, .module_n=
+ame =3D KBUILD_MODNAME}
+> > >        |                                      ^~~~~~~~~~
+> > > drivers/gpu/drm/xe/tests/xe_bo.c:611:45: error: initialization of 'co=
+nst void * (*)(struct kunit *, const void *, char *)' from incompatible poi=
+nter type 'const void * (*)(const void *, char *)' [-Wincompatible-pointer-=
+types]
+> > >    611 |         KUNIT_CASE_PARAM(xe_bo_evict_kunit, xe_pci_live_devi=
+ce_gen_param),
+> > >        |                                             ^~~~~~~~~~~~~~~~=
+~~~~~~~~~~~~
+> > > include/kunit/test.h:210:38: note: in definition of macro 'KUNIT_CASE=
+_PARAM'
+> > >    210 |                   .generate_params =3D gen_params, .module_n=
+ame =3D KBUILD_MODNAME}
+> > >        |                                      ^~~~~~~~~~
+> > > drivers/gpu/drm/xe/tests/xe_bo.c:611:45: note: (near initialization f=
+or 'xe_bo_tests[1].generate_params')
+> > >    611 |         KUNIT_CASE_PARAM(xe_bo_evict_kunit, xe_pci_live_devi=
+ce_gen_param),
+> > >        |                                             ^~~~~~~~~~~~~~~~=
+~~~~~~~~~~~~
+> > > include/kunit/test.h:210:38: note: in definition of macro 'KUNIT_CASE=
+_PARAM'
+> > >    210 |                   .generate_params =3D gen_params, .module_n=
+ame =3D KBUILD_MODNAME}
+> > >        |                                      ^~~~~~~~~~
+> > > drivers/gpu/drm/xe/tests/xe_bo.c:624:51: error: initialization of 'co=
+nst void * (*)(struct kunit *, const void *, char *)' from incompatible poi=
+nter type 'const void * (*)(const void *, char *)' [-Wincompatible-pointer-=
+types]
+> > >    624 |         KUNIT_CASE_PARAM_ATTR(xe_bo_shrink_kunit, xe_pci_liv=
+e_device_gen_param,
+> > >        |                                                   ^~~~~~~~~~=
+~~~~~~~~~~~~~~~~~~
+> > > include/kunit/test.h:223:38: note: in definition of macro 'KUNIT_CASE=
+_PARAM_ATTR'
+> > >    223 |                   .generate_params =3D gen_params,          =
+                      \
+> > >        |                                      ^~~~~~~~~~
+> > > drivers/gpu/drm/xe/tests/xe_bo.c:624:51: note: (near initialization f=
+or 'xe_bo_shrink_test[0].generate_params')
+> > >    624 |         KUNIT_CASE_PARAM_ATTR(xe_bo_shrink_kunit, xe_pci_liv=
+e_device_gen_param,
+> > >        |                                                   ^~~~~~~~~~=
+~~~~~~~~~~~~~~~~~~
+> > > include/kunit/test.h:223:38: note: in definition of macro 'KUNIT_CASE=
+_PARAM_ATTR'
+> > >    223 |                   .generate_params =3D gen_params,          =
+                      \
+> > >        |                                      ^~~~~~~~~~
+> > >
+> > > Caused by commit
+> > >
+> > >    444be9072fca ("kunit: Pass parameterized test context to generate_=
+params()")
+> > >
+> > > I have used the kunit-next tree from next-20250815 for today.
 
->
+I am still seeing this build failure.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/CSLmByyvfhI7Imp6=iqT0sp
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmir/UUACgkQAVBC80lX
+0Gz+uQf/eRUEmVp/4AG5GB6ZDeMogB2T+8OUA5RZIJi/X0QRm0uuaBpDQ0usgJDp
+Nl5XnxGfVZWLw3xoDE+vKq0e7l/NShSLjWJmM85rUzZY0u3s8J4H0Mt2OTZdTWlX
+hyjaRyYVg/dVxokddniND1FOjlsK9p4zXHqNISG4FZ8S6TqONjkGDQsrH0x5DzJK
+AYHbIsDiWl33liei/5RAV3hST3DOUNNVP4WRfL0Vx0lfr44sgCiEuMHrWc2qRlh2
+RgCIOhqaLXRWlX36grHG9QVitycqrccg6qaeii8CWf63oKech5GM+ux2owIL6dt7
+i2Jf5gBtZwd6357EqcnIltrLQoXmdA==
+=CTa5
+-----END PGP SIGNATURE-----
+
+--Sig_/CSLmByyvfhI7Imp6=iqT0sp--
 
