@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-783950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9D68B334AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 05:36:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C3D0B33498
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 05:35:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEEA01B2369C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 03:35:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E68037AD806
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 03:33:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CB9279DC8;
-	Mon, 25 Aug 2025 03:34:42 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515EB23A58E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625F7366;
 	Mon, 25 Aug 2025 03:34:39 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA101C5496;
+	Mon, 25 Aug 2025 03:34:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756092881; cv=none; b=d9Naqzv9xV8fguTNx6hPmJ+hQUerOSABhNqcYSbn2doG8hFELHU7xWsQpeOA5xETURRe2LP3ZUo0gm64FHNu3nZebu0LlvjWga9RRaSpcskwiXHr03we14haIAaxW+bxy3K1TSE4zORroXUv/lDv2H+AwyIiCm0WzqPLQ5SJkyc=
+	t=1756092878; cv=none; b=FUXARrhMe7EVmHL4Yt9UOHCKFdpWsQRi6h14nvYLF8LtlW5Ton0D/qVjBEe3RD1SpyIzD0CsCzLTB4XbtBgf7hwjFCPdG/IAEgDxI2dDjHJYjE+lvQROsic6zKJejVgAD1k98vtPkmJwVfoUvj2DmmEywXooLTCTzCl/D+pUx94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756092881; c=relaxed/simple;
-	bh=G2jTfBPy5tqGKJ6OHbu0abTewPFDgcWMZyLkpvhl14g=;
+	s=arc-20240116; t=1756092878; c=relaxed/simple;
+	bh=HQ1D+tm6U/2Iz5bWZlC9enB6ulnn3ioXax8Z0NIkJmI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HKuGaI6JEOtCyKghAMCCrvpdpeC28Gv4o2pKHlRoDBotAs0hqWWAtdcdE55bVwsADp7sCaQ7EafcINNbWcFJI/Msq86w469PKd/PFHo4/gZGdXjek3HK3HcQMobII8HWex9MzSPO/qC0PQtLLSBfHbJkRF6ceBJC1HfIavYAhuU=
+	 MIME-Version; b=AsQGeKsRdzrg+CODyPhRkxBJvEyy10g9TbwxCEfZW24EafM2hnsm47sL6aCiNxvgPpwe2RH6lftJ8XrrY7bOK/zhlMr+zL3zkoRRWVUlHmzDsXxlYTOGEzBwvjpHBmMzEmE8UzYvRfgPk9B8thOBgtiOW9Y7Bug6NT4ZOSb24qk=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7B7822A6B;
-	Sun, 24 Aug 2025 20:34:24 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 599A52A9A;
+	Sun, 24 Aug 2025 20:34:26 -0700 (PDT)
 Received: from u200865.usa.arm.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9A1703F63F;
-	Sun, 24 Aug 2025 20:34:31 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 711103F63F;
+	Sun, 24 Aug 2025 20:34:33 -0700 (PDT)
 From: Jeremy Linton <jeremy.linton@arm.com>
 To: linux-trace-kernel@vger.kernel.org
 Cc: linux-perf-users@vger.kernel.org,
@@ -57,9 +57,9 @@ Cc: linux-perf-users@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Jeremy Linton <jeremy.linton@arm.com>
-Subject: [PATCH v7 2/7] arm64: uaccess: Move existing GCS accessors definitions to gcs.h
-Date: Sun, 24 Aug 2025 22:34:16 -0500
-Message-ID: <20250825033421.463669-3-jeremy.linton@arm.com>
+Subject: [PATCH v7 3/7] arm64: uaccess: Add additional userspace GCS accessors
+Date: Sun, 24 Aug 2025 22:34:17 -0500
+Message-ID: <20250825033421.463669-4-jeremy.linton@arm.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250825033421.463669-1-jeremy.linton@arm.com>
 References: <20250825033421.463669-1-jeremy.linton@arm.com>
@@ -71,128 +71,102 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-We are going to add some additional GCS access helpers to gcs.h in
-order to avoid some forward reference problems with uaccess.
+Uprobes need more advanced read, push, and pop userspace GCS
+functionality. Implement those features using the existing gcsstr()
+and copy_from_user().
 
-In preparation for that, lets move the existing gcssttr() and
-put_user_gcs() routines into gcs.h where it makes sense to keep all
-the accessors together. Further, the code which uses them already
-includes gcs.h and there is an existing CONFIG_ARM64_GCS check we can
-reuse. The GCSSTTR instruction description comment is corrected during
-the move.
+Its important to note that GCS pages can be read by normal
+instructions, but the hardware validates that pages used by GCS
+specific operations, have a GCS privilege set. We aren't validating this
+in load_user_gcs because it requires stabilizing the VMA over the read
+which may fault.
 
 Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
 Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
 Reviewed-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm64/include/asm/gcs.h     | 37 ++++++++++++++++++++++++++++-
- arch/arm64/include/asm/uaccess.h | 40 --------------------------------
- 2 files changed, 36 insertions(+), 41 deletions(-)
+ arch/arm64/include/asm/gcs.h | 54 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 54 insertions(+)
 
 diff --git a/arch/arm64/include/asm/gcs.h b/arch/arm64/include/asm/gcs.h
-index 5bc432234d3a..10c68d3e6e30 100644
+index 10c68d3e6e30..97801543380e 100644
 --- a/arch/arm64/include/asm/gcs.h
 +++ b/arch/arm64/include/asm/gcs.h
-@@ -21,7 +21,7 @@ static inline void gcsstr(u64 *addr, u64 val)
- 	register u64 *_addr __asm__ ("x0") = addr;
- 	register long _val __asm__ ("x1") = val;
- 
--	/* GCSSTTR x1, x0 */
-+	/* GCSSTTR x1, [x0] */
- 	asm volatile(
- 		".inst 0xd91f1c01\n"
- 		:
-@@ -81,6 +81,41 @@ static inline int gcs_check_locked(struct task_struct *task,
- 	return 0;
+@@ -116,6 +116,47 @@ static inline void put_user_gcs(unsigned long val, unsigned long __user *addr,
+ 	uaccess_ttbr0_disable();
  }
  
-+static inline int gcssttr(unsigned long __user *addr, unsigned long val)
++static inline void push_user_gcs(unsigned long val, int *err)
 +{
-+	register unsigned long __user *_addr __asm__ ("x0") = addr;
-+	register unsigned long _val __asm__ ("x1") = val;
-+	int err = 0;
++	u64 gcspr = read_sysreg_s(SYS_GCSPR_EL0);
 +
-+	/* GCSSTTR x1, [x0] */
-+	asm volatile(
-+		"1: .inst 0xd91f1c01\n"
-+		"2: \n"
-+		_ASM_EXTABLE_UACCESS_ERR(1b, 2b, %w0)
-+		: "+r" (err)
-+		: "rZ" (_val), "r" (_addr)
-+		: "memory");
-+
-+	return err;
++	gcspr -= sizeof(u64);
++	put_user_gcs(val, (unsigned long __user *)gcspr, err);
++	if (!*err)
++		write_sysreg_s(gcspr, SYS_GCSPR_EL0);
 +}
 +
-+static inline void put_user_gcs(unsigned long val, unsigned long __user *addr,
-+				int *err)
++/*
++ * Unlike put/push_user_gcs() above, get/pop_user_gsc() doesn't
++ * validate the GCS permission is set on the page being read.  This
++ * differs from how the hardware works when it consumes data stored at
++ * GCSPR. Callers should ensure this is acceptable.
++ */
++static inline u64 get_user_gcs(unsigned long __user *addr, int *err)
 +{
-+	int ret;
++	unsigned long ret;
++	u64 load = 0;
 +
-+	if (!access_ok((char __user *)addr, sizeof(u64))) {
-+		*err = -EFAULT;
-+		return;
-+	}
-+
-+	uaccess_ttbr0_enable();
-+	ret = gcssttr(addr, val);
++	/* Ensure previous GCS operation are visible before we read the page */
++	gcsb_dsync();
++	ret = copy_from_user(&load, addr, sizeof(load));
 +	if (ret != 0)
 +		*err = ret;
-+	uaccess_ttbr0_disable();
++	return load;
++}
++
++static inline u64 pop_user_gcs(int *err)
++{
++	u64 gcspr = read_sysreg_s(SYS_GCSPR_EL0);
++	u64 read_val;
++
++	read_val = get_user_gcs((unsigned long __user *)gcspr, err);
++	if (!*err)
++		write_sysreg_s(gcspr + sizeof(u64), SYS_GCSPR_EL0);
++
++	return read_val;
 +}
 +
  #else
  
  static inline bool task_gcs_el0_enabled(struct task_struct *task)
-diff --git a/arch/arm64/include/asm/uaccess.h b/arch/arm64/include/asm/uaccess.h
-index 5b91803201ef..1aa4ecb73429 100644
---- a/arch/arm64/include/asm/uaccess.h
-+++ b/arch/arm64/include/asm/uaccess.h
-@@ -502,44 +502,4 @@ static inline size_t probe_subpage_writeable(const char __user *uaddr,
+@@ -126,6 +167,10 @@ static inline bool task_gcs_el0_enabled(struct task_struct *task)
+ static inline void gcs_set_el0_mode(struct task_struct *task) { }
+ static inline void gcs_free(struct task_struct *task) { }
+ static inline void gcs_preserve_current_state(void) { }
++static inline void put_user_gcs(unsigned long val, unsigned long __user *addr,
++				int *err) { }
++static inline void push_user_gcs(unsigned long val, int *err) { }
++
+ static inline unsigned long gcs_alloc_thread_stack(struct task_struct *tsk,
+ 						   const struct kernel_clone_args *args)
+ {
+@@ -136,6 +181,15 @@ static inline int gcs_check_locked(struct task_struct *task,
+ {
+ 	return 0;
+ }
++static inline u64 get_user_gcs(unsigned long __user *addr, int *err)
++{
++	*err = -EFAULT;
++	return 0;
++}
++static inline u64 pop_user_gcs(int *err)
++{
++	return 0;
++}
  
- #endif /* CONFIG_ARCH_HAS_SUBPAGE_FAULTS */
+ #endif
  
--#ifdef CONFIG_ARM64_GCS
--
--static inline int gcssttr(unsigned long __user *addr, unsigned long val)
--{
--	register unsigned long __user *_addr __asm__ ("x0") = addr;
--	register unsigned long _val __asm__ ("x1") = val;
--	int err = 0;
--
--	/* GCSSTTR x1, x0 */
--	asm volatile(
--		"1: .inst 0xd91f1c01\n"
--		"2: \n"
--		_ASM_EXTABLE_UACCESS_ERR(1b, 2b, %w0)
--		: "+r" (err)
--		: "rZ" (_val), "r" (_addr)
--		: "memory");
--
--	return err;
--}
--
--static inline void put_user_gcs(unsigned long val, unsigned long __user *addr,
--				int *err)
--{
--	int ret;
--
--	if (!access_ok((char __user *)addr, sizeof(u64))) {
--		*err = -EFAULT;
--		return;
--	}
--
--	uaccess_ttbr0_enable();
--	ret = gcssttr(addr, val);
--	if (ret != 0)
--		*err = ret;
--	uaccess_ttbr0_disable();
--}
--
--
--#endif /* CONFIG_ARM64_GCS */
--
- #endif /* __ASM_UACCESS_H */
 -- 
 2.50.1
 
