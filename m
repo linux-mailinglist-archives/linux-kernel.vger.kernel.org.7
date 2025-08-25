@@ -1,155 +1,223 @@
-Return-Path: <linux-kernel+bounces-785587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29E7BB34E1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 23:35:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4859B34E1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 23:35:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D26A13B9863
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 21:35:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C8E6243359
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 21:35:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8238A283FDF;
-	Mon, 25 Aug 2025 21:35:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08630279788;
+	Mon, 25 Aug 2025 21:35:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XGikredX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AnFj76gL";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kMXkMdIv";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AnFj76gL";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kMXkMdIv"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F91F9CB
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 21:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7546227A917
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 21:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756157712; cv=none; b=Kyy3onQ3zjBGMrGpWCm6V92YslF83r3emt3mD0bq6vA0cmzOf0pSZ7qwE3BMSLZN/IVnRzKEpenWEw1Is0eqoWxj/NGIrcShKX4eStwiv0RM7tuWugWgE0fIAwu1+5letwcLhthKYAQk/MrNe938VloKTO229kBVIT2tIIewQ1A=
+	t=1756157732; cv=none; b=hKD/EIZGC8ZI8kBynPFLGrm7FlGPL+BQA1VV3/cDImMTHdCKRX4iqDIX/H5edkGXM5q2/i0lFl5VMR8h51d8eo/uWfzcJBuo4npjs5MqQV4c2uV5lVKrHmhun1R7NU5oPos0AGW/RXVFyUMcL/5sUjhDzAV2Ck7mrqQELoHn+Oo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756157712; c=relaxed/simple;
-	bh=Q9CPbQpH2d/T5EyyLjYG2kTFNAop20As96U/hmdEPUY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cYiEhfb6XueBZjFk+bT5RfRtwMPeH/P1KcKZjbMZHfER+ejLd79Gp6Cj5Y8xuk4CIGY+Fdc9eTRsNCVPXWFDI9EWz7OModYO78HBFxovjQfMU6Zym9P3wR8Izy5yx0qVKOc251oUN1SHqF3gX6BBA7JrQkXd1TkOtc265xSLx4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XGikredX; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756157710;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1756157732; c=relaxed/simple;
+	bh=zZdXENOKMlNRYc1Y0AYVcQ2MmKeVsWVR/hQsWiR/d+U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kE5VSyvXSkXOxuK1o9jKKqRW1i33omK9iTR4Vgi8lPeGxwAtf/y7lkCYY+ZQ2d11O/bmJ/b2XA+LJjk+5Zojy2nHapgoqMjKgCjUcM3+j591EGrQglwB1CVQ+bloq5uiFHQjLhLJ+3BRA1wAHRPKlBp3CMjdJNQKJD9hO5GT3GE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AnFj76gL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kMXkMdIv; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AnFj76gL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kMXkMdIv; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 8EB8A1F787;
+	Mon, 25 Aug 2025 21:35:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756157728; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TuacPQu0sUaEe98IXzV5lAzTlLH7oY2OXfsQpZup1+Q=;
-	b=XGikredX5v9jn7PBhhl8HgjMknJFTTTB4B58fESiAj8/LLM3okH0Jfh8lyo0XLWS/DBDcO
-	sY4T4VlIT31wrG01aDWsnEDK5TquUP8n8c0gyyGwy/3pmT2NppLQTBD5u9Qsd/SC6imE8Q
-	SdZv4gbjElGnKYy3H9ew+JM6+LJGStI=
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com
- [209.85.166.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-301-V7Fn8OG4PDq87lz8YFJTsw-1; Mon, 25 Aug 2025 17:35:08 -0400
-X-MC-Unique: V7Fn8OG4PDq87lz8YFJTsw-1
-X-Mimecast-MFC-AGG-ID: V7Fn8OG4PDq87lz8YFJTsw_1756157708
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3e6804691a2so9451305ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 14:35:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756157707; x=1756762507;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TuacPQu0sUaEe98IXzV5lAzTlLH7oY2OXfsQpZup1+Q=;
-        b=QLglt8FT6sJosrIMjelUulUboUyhmeX4+QUMqOy9xW3A9P9F494BFv5keHPkrbvsfJ
-         oV1g0luRsfHg6EDc2ixwdzYrFns9e1dk3Bn1f++oX5DbNsw5ig8W9djk3h75HDDCMtdC
-         X2yJFtF0klm2/jJaE4r5+tMhXmXK8YK3G7++Tio52Rb2bg3bQeP0nb6PBqax3RbxUbw5
-         WfIWqhbN5m2BDX9pIXa31kyESjHfKUL74tbt6PwIswyfIwpi2knAsjtNCvUa5fr5OvSe
-         jkq4f5d/y6evmHV/cnmWahrBdVHm67QhfnjhjRnrEj9BnpVtXOcwp9GXRsAHXDcaW8wr
-         zj1g==
-X-Forwarded-Encrypted: i=1; AJvYcCWTv3Erb7gEFwE0blqm/8ELI8Cxsq5lsFF89NouXwPAkOoBgZjNU7n1HbxqzxJl0HM/hlpJMq6gpjX8uic=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfT4wNKC6jos/FV2pz8TxAwHQGsLLjWtalweP+SvXsXqDOa2K0
-	kvl/Z9GUU27CBIqUrHNpg345MMCwyuQvixXP6Nnw5NXYKqeiOTJOpnpvUbupqS2Pz6i46h5bM+u
-	goHQ/YGhN7k0wITfhcVZ0lyCrphdoabv9e3M26h2X8MZg3fNpo5xkEAntbcspBTH1HM+i1dr9eQ
-	==
-X-Gm-Gg: ASbGncs03NBUfeg0rFdW0fMrv4KTEzPsxAX7HXr0xW5DhXhjaAf/ldvF/eiCM+6lqLz
-	kAn7JnLu8M1wuyifu+C0eggKRliM8EmGRXF3bFRzjqQ8DX76za34fXn/mHrd3PZmVKyfO6H9SiA
-	cLqD/cnlTmELQ2xq0HSH0ywQDUiIuHo5cuSjLBGt9YZP2B8UBIwcEX49T2ZQo8+juZFUejsgcjy
-	QSvEayVzTONtGJRTaL1GbNN3N3xf0Hc8ESv/+RjC7AM1FOIjMRBuMAGdo19E869IRgBY24E9MZ9
-	LcPis7ccuPw2JFJh/cfknyApg+ilTWaFlXxml2FxpJk=
-X-Received: by 2002:a05:6e02:4414:10b0:3e9:9070:b0bd with SMTP id e9e14a558f8ab-3e99070b2a6mr42182185ab.2.1756157707161;
-        Mon, 25 Aug 2025 14:35:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFjadVuAgSDvfABUcZMm01Kysw1HDncV59yUGSUyp2hVa5KPH4rom30lUjRmGeYrcRiA010pQ==
-X-Received: by 2002:a05:6e02:4414:10b0:3e9:9070:b0bd with SMTP id e9e14a558f8ab-3e99070b2a6mr42182075ab.2.1756157706803;
-        Mon, 25 Aug 2025 14:35:06 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3ea4c761718sm56163575ab.23.2025.08.25.14.35.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 14:35:05 -0700 (PDT)
-Date: Mon, 25 Aug 2025 15:35:01 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Farhan Ali <alifm@linux.ibm.com>
-Cc: linux-s390@vger.kernel.org, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, helgaas@kernel.org, schnelle@linux.ibm.com,
- mjrosato@linux.ibm.com
-Subject: Re: [PATCH v2 1/9] PCI: Avoid restoring error values in config
- space
-Message-ID: <20250825153501.3a1d0f0c.alex.williamson@redhat.com>
-In-Reply-To: <20250825171226.1602-2-alifm@linux.ibm.com>
-References: <20250825171226.1602-1-alifm@linux.ibm.com>
-	<20250825171226.1602-2-alifm@linux.ibm.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=WFqqdIGOHypxuBaV2I78OHESsO0HZPez/Xzs/qc1oIE=;
+	b=AnFj76gL4LyRVK/vjISvhCWBrYotQkhF+1EY79/ZVxJp5psbbtgVa+jM1PaccaccV7dEXH
+	cMuz4fkf2/P2IQPS9ESAmQ4AJCInuEs+nd4uEnyMQ++s9zjjo7AfBVBpDYhzgPM+ZUH+1j
+	KGJvK0Q7h/sm7jzIqaIqzJ8KgwHsdt4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756157728;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=WFqqdIGOHypxuBaV2I78OHESsO0HZPez/Xzs/qc1oIE=;
+	b=kMXkMdIvww0qs6PXXH6PBAI5hs7TziwICZP414mAEXstOi+ZcQazsjuhLAOWLwyfPkHyz6
+	RpuMOa8gfaVcgFBQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756157728; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=WFqqdIGOHypxuBaV2I78OHESsO0HZPez/Xzs/qc1oIE=;
+	b=AnFj76gL4LyRVK/vjISvhCWBrYotQkhF+1EY79/ZVxJp5psbbtgVa+jM1PaccaccV7dEXH
+	cMuz4fkf2/P2IQPS9ESAmQ4AJCInuEs+nd4uEnyMQ++s9zjjo7AfBVBpDYhzgPM+ZUH+1j
+	KGJvK0Q7h/sm7jzIqaIqzJ8KgwHsdt4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756157728;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=WFqqdIGOHypxuBaV2I78OHESsO0HZPez/Xzs/qc1oIE=;
+	b=kMXkMdIvww0qs6PXXH6PBAI5hs7TziwICZP414mAEXstOi+ZcQazsjuhLAOWLwyfPkHyz6
+	RpuMOa8gfaVcgFBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7C9911368F;
+	Mon, 25 Aug 2025 21:35:28 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id jM8LHiDXrGhQLQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 25 Aug 2025 21:35:28 +0000
+Message-ID: <c42a5ef3-a3da-47d3-affd-24796c4dfa21@suse.cz>
+Date: Mon, 25 Aug 2025 23:35:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scripts/misc-check: update export checks for
+ EXPORT_SYMBOL_FOR_MODULES()
+Content-Language: en-US
+To: Nicolas Schier <nsc@kernel.org>, Nathan Chancellor <nathan@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, Daniel Gomez
+ <da.gomez@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+References: <20250825-export_modules_fix-v1-1-5c331e949538@suse.cz>
+ <20250825170710.GC2719297@ax162> <aKzFfToXptoHnrxI@levanger>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <aKzFfToXptoHnrxI@levanger>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid,suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -4.30
 
-On Mon, 25 Aug 2025 10:12:18 -0700
-Farhan Ali <alifm@linux.ibm.com> wrote:
-
-> The current reset process saves the device's config space state before
-> reset and restores it afterward. However, when a device is in an error
-> state before reset, config space reads may return error values instead of
-> valid data. This results in saving corrupted values that get written back
-> to the device during state restoration. Add validation to prevent writing
-> error values to the device when restoring the config space state after
-> reset.
+On 8/25/25 22:20, Nicolas Schier wrote:
+> On Mon, Aug 25, 2025 at 10:07:10AM -0700, Nathan Chancellor wrote:
+>> On Mon, Aug 25, 2025 at 05:00:37PM +0200, Vlastimil Babka wrote:
+>> > The module export checks are looking for EXPORT_SYMBOL_GPL_FOR_MODULES()
+>> > which was renamed to EXPORT_SYMBOL_FOR_MODULES(). Update the checks.
+>> > 
+>> > Fixes: 6d3c3ca4c77e ("module: Rename EXPORT_SYMBOL_GPL_FOR_MODULES to EXPORT_SYMBOL_FOR_MODULES")
+>> > Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+>> > ---
+>> > I've missed these new checks when renaming the export macro due to my
+>> > git grep being too narrow. My commit went through Christian's vfs tree
+>> > but seems the script is part of kbuild (which is currently Odd fixes).
+>> 
+>> If this needs to reach Linus's tree to avoid warnings, it could go via
+>> another vfs fixes pull request with our ack or we could ask him to pick
+>> it up directly (as I am not sure we will have a fixes pull request this
+>> cycle). If it is not urgent, I can pick it up via kbuild-next for 6.18.
+>> I have no strong preference.
 > 
-> Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
-> ---
->  drivers/pci/pci.c | 3 +++
->  1 file changed, 3 insertions(+)
+> Hm, you're right, the check will issue false warnings (and misses to
+> warn when it should) without this update.  Therefore I think it would be
+> good to get the patch merged soon - even though the warnings are only
+> issued with W=2.
+
+Note only two files use EXPORT_SYMBOL_FOR_MODULES() in mainline:
+
+fs/anon_inodes.c - contains also EXPORT_SYMBOL_GPL() so the checks will
+cover it anyway (and IIUC since it includes module.h and not export.h it
+should be causing a warning already?)
+
+drivers/tty/serial/8250/8250_rsa.c: has no other variants of EXPORT, doesn't
+include export.h (includes module.h) so this will not trigger unnecessary
+export.h warning. It should be triggering missing export.h include warning,
+but will not without this patch.
+
+So IIUC missing this fix results in missing warnings, not adding spurious
+ones. And there seem to be many existing warnings already. So it doesn't
+seem that urgent fwiw.
+
+> So, I second asking for the patch to go via vfs fixes or directly via
+> Linus.  If it helps:
+
+Let's see what Christian thinks then.
+
+> Acked-by: Nicolas Schier <nsc@kernel.org>
 > 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index b0f4d98036cd..0dd95d782022 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -1825,6 +1825,9 @@ static void pci_restore_config_dword(struct pci_dev *pdev, int offset,
->  	if (!force && val == saved_val)
->  		return;
->  
-> +	if (PCI_POSSIBLE_ERROR(saved_val))
-> +		return;
-> +
->  	for (;;) {
->  		pci_dbg(pdev, "restore config %#04x: %#010x -> %#010x\n",
->  			offset, val, saved_val);
-
-
-The commit log makes this sound like more than it is.  We're really
-only error checking the first 64 bytes of config space before restore,
-the capabilities are not checked.  I suppose skipping the BARs and
-whatnot is no worse than writing -1 to them, but this is only a
-complete solution in the narrow case where we're relying on vfio-pci to
-come in and restore the pre-open device state.
-
-I had imagined that pci_save_state() might detect the error state of
-the device, avoid setting state_saved, but we'd still perform the
-restore callouts that only rely on internal kernel state, maybe adding a
-fallback to restore the BARs from resource information.
-
-This implementation serves a purpose, but the commit log should
-describe the specific, narrow scenario this solves, and probably also
-add a comment in the code about why we're not consistently checking the
-saved state for errors.  Thanks,
-
-Alex
+> Kind regards,
+> Nicolas
 
 
