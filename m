@@ -1,168 +1,140 @@
-Return-Path: <linux-kernel+bounces-783911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-783912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 144B5B3341A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 04:52:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45144B3341D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 04:53:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFA8316BACE
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 02:52:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 473EF1B23386
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 02:54:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A702367D6;
-	Mon, 25 Aug 2025 02:52:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13E66235041;
+	Mon, 25 Aug 2025 02:53:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="bOJShy/v"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RHj85OQ8"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D5A38DD8;
-	Mon, 25 Aug 2025 02:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC88C38DD8;
+	Mon, 25 Aug 2025 02:53:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756090353; cv=none; b=f7bKO1iToPOG665XFubOgjOqvVATZztDwoGrrtPqvl+htTQEJgFrpKnxuqR+VCscnuV2goCvrB1I8NSAqns2Q2Nd8xyG5fMkfXn4EFZfE2T1FP4H3JazY7h92KVanbeheQYyg2kraPND3sPxBDVMEbEC7dm7M2kHlDPCgAYvcPU=
+	t=1756090429; cv=none; b=NcoEVDiUSZGuVbkxaqZrin9v34MAKXwFgCrZT0ycN1FJYlBfMl8DeqHfji37tdH7is6k18hqeh1tEMxG6s9Uzd7MHE9EYs0E6GK+sYIZxw3bZ1wmm8Ui4UMK6AZrBQD+NtERagPw08dtdGCWP7HKBvk6o//A1fm6FeClA3XNr0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756090353; c=relaxed/simple;
-	bh=aQ3klEdpmWWkq5V7/ZmW5O2BmjonN+3JsZEFIImTQM4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZM838gkBgAX0CpZzzZV4yVQD3GZKaOITCjngXuaZMKZuTPpOeXuo7fUSBoah4m51K/sGQEdylvmCp9mn5AuqPHt2Z7shx7F8H6AVJG0meKjeltb6+YWkKpepSn0c/7JuLKzhLfeVq4edQlu4MSU5QIlvNWAIhtGCzLG+5x9j5kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=bOJShy/v; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.202] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 57P2pr1U255232
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Sun, 24 Aug 2025 19:51:54 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 57P2pr1U255232
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025082201; t=1756090317;
-	bh=lq00javG2UiQIbEp3w2ZdKaPm7rq/LpukSV6LTAhyLE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bOJShy/vbvo57MT6KNFG9ImSdy5kd/fM2Ee6qzLo/m7GXK1473Rt7f1eXehONvy1b
-	 y4BXqcMcW7CSMa6K11jLfS5bGCAreFjQD+iS87wz6Qo7ktuK8iV3xVBpLycO/Rg1K8
-	 EahjGNR0UfqeQ4m6bQGJmaGDAvdv+9Ll8V+5ukF8AIQeQm7p4HirUkTE0/rRGCYQS6
-	 ODYUKUH/OX2V/GIawNcAq7KDy0hnbw5c1MFOAw/nmGvarqI/UjNpQt+0qX0+56kHmI
-	 o0U97z7Kn9uzfD1unT4Zx7nG261i9ePDX2aehtv6wno5o/uBhRLD2cVq0GFdrtdj/C
-	 IoIVDTgkj2g8g==
-Message-ID: <2dd8c323-7654-4a28-86f1-d743b70d10b1@zytor.com>
-Date: Sun, 24 Aug 2025 19:51:52 -0700
+	s=arc-20240116; t=1756090429; c=relaxed/simple;
+	bh=AKXdzx3iGv0Cdlf3syAes3VVjlT9t9y5HamF5W7AGq0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HGXPHOl9owSulMEk9S+xSeZW4XG7vWOioi9qHTwYSXbI3PSQdvivC2UooduLRGTj9h6uIDDfsiObivftsVR8GPAFz2XqnSFtks/LJKHxHVfUHcMxvsOSbu13r5rlE+qgdduHafC0wWOiZHaFBKKH+3R3SshOUfQcFpqMwtUC4gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RHj85OQ8; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6188b793d21so5741227a12.3;
+        Sun, 24 Aug 2025 19:53:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756090425; x=1756695225; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uuQEOF8lXWx0tyN0E34X9QSFDbgyKnv6vJT8/V1kPN8=;
+        b=RHj85OQ83igf0JodNDTuzl+McNt08BjWQr1xqZAKqTTheujqJdJzg9+DidSmaUWOUn
+         khJYAou/0AKhDeQuxS1dNC1Vh0H0EsSqxoNp2unN/k3EQtue4Gi+SqE/GSbmfKDTMrWb
+         kiuxpR45fYIfqpUgAW3WCOp+eAiz7HzQdTZyD4W8gkx/Yyx26RnRt/iLTRi6JYNuk5q1
+         K3IAoxlr8iGI8JsWBGTma04g49cfYvYtCGZOrgfxTpmnFrlHmYq918V5xDpziS0k+x36
+         4p2xYv2blaWd7TfkcCwPibmPLMCch1t9pPDH5IlqysMbnH3msMq4oRpR+iaJh5DUmibv
+         VUQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756090425; x=1756695225;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uuQEOF8lXWx0tyN0E34X9QSFDbgyKnv6vJT8/V1kPN8=;
+        b=fZEwnhpKI1IpFZ2+uPfdHdNiXCGtgeKCQTEpGHHW5Zu+PHGL668ugrsTEzwcvidH5b
+         ptHGahHYwQa4PmErR5m/HoLuVIQRmzLBRlF1fhZwwr4vWTRJsWfX9FVlC9RGQzTS8IF+
+         abp+opQAvgKEUS2w6AzZiStoeZWLgrFd8XVYmorzBD0JDSiIrUtZGgx3D0wqOcj2dhvA
+         5xhsUSJVs7SrnSBDnU+h2zYAfnxCy4PTwa0yDVGyBFsuV38hJzHZrZQWaAHY+mlmG8BX
+         nAQWv/rt1/1hFM9hH1Qj9k8AoRSqFSvwfZ9AQgHOz6T/j08jn/tTtpib5UK2pvVAwudK
+         gwAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUMP+Uj9EcVImlmYopHf4GKHXXqI7pRlY481dsp9opWwFpPCMYBh4dVfGY9gwAZWMig2mclfmpMbkMY3Ic=@vger.kernel.org, AJvYcCWcvNa6Jhss/RmN0e9BP2SIrX+9ryU7euFAnVEQRDSRwHPQEKE6I7UeX6uwfbl6jvCkt7gBLxOa9OJ+BWm2KodI@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNF0bCqNzuU665NE52U/QpWLy9zqcWnNu9xwCfkz5SxHpK/QwU
+	PZdPcuum/8+QRRYYfe08dkeTJzA+WiKd1iwPGSb7Dg6EMwOUALbZIu4ipN3Khr4eLkXThKwnl3m
+	/pNP1D7XY4Wv20Eu9isVvHSyU0unynEk=
+X-Gm-Gg: ASbGncsjl++kHPVqIchtAzmBA5Ph9+7HpQ8pknt/klx3MGc5weMeRW5IGd33mY5sHc2
+	Js7uUHHDrToU+0BWDUHb42hguxz2hgBa7x/buaDSYHhom8bpVLE9pWb7hid++/Wea2a4i2+yPzU
+	70+T7Nnre2PYqoaEcwNDGt1RGyjUkC1VV0cMR6xl/bCbeY9OxAW0i3IzRnLV77RWJqtblEGzUph
+	YIWTcWNgccrfoZrhsQxehxuoVBbgK1FeE9pY9/Jjxk8dIkfb2gF7fJLCZO7pDwHuEtl+yAuPg==
+X-Google-Smtp-Source: AGHT+IEU1FlX6VqgN+0TONBTh6JTkrbGtb1BTJ7rjrRMKFIkmyRa22u+pADcYFGDkQRMTM+s2m7G/3I2ftjPQejby5g=
+X-Received: by 2002:a05:6402:27c7:b0:609:7ed1:c791 with SMTP id
+ 4fb4d7f45d1cf-61c1b6f5a6amr8602984a12.32.1756090425106; Sun, 24 Aug 2025
+ 19:53:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 06/20] KVM: VMX: Set FRED MSR intercepts
-To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Cc: pbonzini@redhat.com, seanjc@google.com, corbet@lwn.net, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-        x86@kernel.org, hpa@zytor.com, luto@kernel.org, peterz@infradead.org,
-        andrew.cooper3@citrix.com, chao.gao@intel.com, hch@infradead.org
-References: <20250821223630.984383-1-xin@zytor.com>
- <20250821223630.984383-7-xin@zytor.com>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- xsDNBGUPz1cBDACS/9yOJGojBFPxFt0OfTWuMl0uSgpwk37uRrFPTTLw4BaxhlFL0bjs6q+0
- 2OfG34R+a0ZCuj5c9vggUMoOLdDyA7yPVAJU0OX6lqpg6z/kyQg3t4jvajG6aCgwSDx5Kzg5
- Rj3AXl8k2wb0jdqRB4RvaOPFiHNGgXCs5Pkux/qr0laeFIpzMKMootGa4kfURgPhRzUaM1vy
- bsMsL8vpJtGUmitrSqe5dVNBH00whLtPFM7IbzKURPUOkRRiusFAsw0a1ztCgoFczq6VfAVu
- raTye0L/VXwZd+aGi401V2tLsAHxxckRi9p3mc0jExPc60joK+aZPy6amwSCy5kAJ/AboYtY
- VmKIGKx1yx8POy6m+1lZ8C0q9b8eJ8kWPAR78PgT37FQWKYS1uAroG2wLdK7FiIEpPhCD+zH
- wlslo2ETbdKjrLIPNehQCOWrT32k8vFNEMLP5G/mmjfNj5sEf3IOKgMTMVl9AFjsINLHcxEQ
- 6T8nGbX/n3msP6A36FDfdSEAEQEAAc0WWGluIExpIDx4aW5Aenl0b3IuY29tPsLBDQQTAQgA
- NxYhBIUq/WFSDTiOvUIqv2u9DlcdrjdRBQJlD89XBQkFo5qAAhsDBAsJCAcFFQgJCgsFFgID
- AQAACgkQa70OVx2uN1HUpgv/cM2fsFCQodLArMTX5nt9yqAWgA5t1srri6EgS8W3F+3Kitge
- tYTBKu6j5BXuXaX3vyfCm+zajDJN77JHuYnpcKKr13VcZi1Swv6Jx1u0II8DOmoDYLb1Q2ZW
- v83W55fOWJ2g72x/UjVJBQ0sVjAngazU3ckc0TeNQlkcpSVGa/qBIHLfZraWtdrNAQT4A1fa
- sWGuJrChBFhtKbYXbUCu9AoYmmbQnsx2EWoJy3h7OjtfFapJbPZql+no5AJ3Mk9eE5oWyLH+
- QWqtOeJM7kKvn/dBudokFSNhDUw06e7EoVPSJyUIMbYtUO7g2+Atu44G/EPP0yV0J4lRO6EA
- wYRXff7+I1jIWEHpj5EFVYO6SmBg7zF2illHEW31JAPtdDLDHYcZDfS41caEKOQIPsdzQkaQ
- oW2hchcjcMPAfyhhRzUpVHLPxLCetP8vrVhTvnaZUo0xaVYb3+wjP+D5j/3+hwblu2agPsaE
- vgVbZ8Fx3TUxUPCAdr/p73DGg57oHjgezsDNBGUPz1gBDAD4Mg7hMFRQqlzotcNSxatlAQNL
- MadLfUTFz8wUUa21LPLrHBkUwm8RujehJrzcVbPYwPXIO0uyL/F///CogMNx7Iwo6by43KOy
- g89wVFhyy237EY76j1lVfLzcMYmjBoTH95fJC/lVb5Whxil6KjSN/R/y3jfG1dPXfwAuZ/4N
- cMoOslWkfZKJeEut5aZTRepKKF54T5r49H9F7OFLyxrC/uI9UDttWqMxcWyCkHh0v1Di8176
- jjYRNTrGEfYfGxSp+3jYL3PoNceIMkqM9haXjjGl0W1B4BidK1LVYBNov0rTEzyr0a1riUrp
- Qk+6z/LHxCM9lFFXnqH7KWeToTOPQebD2B/Ah5CZlft41i8L6LOF/LCuDBuYlu/fI2nuCc8d
- m4wwtkou1Y/kIwbEsE/6RQwRXUZhzO6llfoN96Fczr/RwvPIK5SVMixqWq4QGFAyK0m/1ap4
- bhIRrdCLVQcgU4glo17vqfEaRcTW5SgX+pGs4KIPPBE5J/ABD6pBnUUAEQEAAcLA/AQYAQgA
- JhYhBIUq/WFSDTiOvUIqv2u9DlcdrjdRBQJlD89ZBQkFo5qAAhsMAAoJEGu9DlcdrjdR4C0L
- /RcjolEjoZW8VsyxWtXazQPnaRvzZ4vhmGOsCPr2BPtMlSwDzTlri8BBG1/3t/DNK4JLuwEj
- OAIE3fkkm+UG4Kjud6aNeraDI52DRVCSx6xff3bjmJsJJMb12mWglN6LjdF6K+PE+OTJUh2F
- dOhslN5C2kgl0dvUuevwMgQF3IljLmi/6APKYJHjkJpu1E6luZec/lRbetHuNFtbh3xgFIJx
- 2RpgVDP4xB3f8r0I+y6ua+p7fgOjDLyoFjubRGed0Be45JJQEn7A3CSb6Xu7NYobnxfkwAGZ
- Q81a2XtvNS7Aj6NWVoOQB5KbM4yosO5+Me1V1SkX2jlnn26JPEvbV3KRFcwV5RnDxm4OQTSk
- PYbAkjBbm+tuJ/Sm+5Yp5T/BnKz21FoCS8uvTiziHj2H7Cuekn6F8EYhegONm+RVg3vikOpn
- gao85i4HwQTK9/D1wgJIQkdwWXVMZ6q/OALaBp82vQ2U9sjTyFXgDjglgh00VRAHP7u1Rcu4
- l75w1xInsg==
-In-Reply-To: <20250821223630.984383-7-xin@zytor.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250823170208.184149-1-allyheev@gmail.com> <aKq25rlqbyYDaWVo@pc636>
+ <20250824171722.ea915592ea3bd060c6b17a38@linux-foundation.org>
+In-Reply-To: <20250824171722.ea915592ea3bd060c6b17a38@linux-foundation.org>
+From: ally heev <allyheev@gmail.com>
+Date: Mon, 25 Aug 2025 08:23:33 +0530
+X-Gm-Features: Ac12FXyys5mnbxszcX8Pac2LI8BHvZ5qDrWuATBA5w2UNc7UXOxjIJmIvIcS8TQ
+Message-ID: <CAMB6jUH70j20WgJ9TD=Lsy21XktDG0PqxEgjZ7XZFvcus9SjkA@mail.gmail.com>
+Subject: Re: [PATCH] kselftest: mm: fix typos in test_vmalloc.sh
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Uladzislau Rezki <urezki@gmail.com>, skhan@linuxfoundation.org, david@redhat.com, 
+	shuah@kernel.org, linux-mm@kvack.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/21/2025 3:36 PM, Xin Li (Intel) wrote:
-> +	/*
-> +	 * MSR_IA32_FRED_RSP0 and MSR_IA32_PL0_SSP (aka MSR_IA32_FRED_SSP0) are
-> +	 * designated for event delivery while executing in userspace.  Since
-> +	 * KVM operates exclusively in kernel mode (the CPL is always 0 after
-> +	 * any VM exit), KVM can safely retain and operate with the guest-defined
-> +	 * values for MSR_IA32_FRED_RSP0 and MSR_IA32_PL0_SSP.
-> +	 *
-> +	 * Therefore, interception of MSR_IA32_FRED_RSP0 and MSR_IA32_PL0_SSP
-> +	 * is not required.
-> +	 *
-> +	 * Note, save and restore of MSR_IA32_PL0_SSP belong to CET supervisor
-> +	 * context management.  However the FRED SSP MSRs, including
-> +	 * MSR_IA32_PL0_SSP, are supported by any processor that enumerates FRED.
-> +	 * If such a processor does not support CET, FRED transitions will not
-> +	 * use the MSRs, but the MSRs would still be accessible using MSR-access
-> +	 * instructions (e.g., RDMSR, WRMSR).
-> +	 */
-> +	vmx_set_intercept_for_msr(vcpu, MSR_IA32_FRED_RSP0, MSR_TYPE_RW, intercept);
-> +	vmx_set_intercept_for_msr(vcpu, MSR_IA32_PL0_SSP, MSR_TYPE_RW, intercept);
+> A changelog would be identical to the subject.  checkpatch is being a
+> bit excessive here.
 
-Hi Sean,
-
-I'd like to bring up an issue concerning MSR_IA32_PL0_SSP.
-
-The FRED spec claims:
-
-The FRED SSP MSRs are supported by any processor that enumerates
-CPUID.(EAX=7,ECX=1):EAX.FRED[bit 17] as 1. If such a processor does not
-support CET, FRED transitions will not use the MSRs (because shadow stacks
-are not enabled), but the MSRs would still be accessible using MSR-access
-instructions (e.g., RDMSR, WRMSR).
+Yes. Hence omitted it
 
 
-It means KVM needs to handle MSR_IA32_PL0_SSP even when FRED is supported
-but CET is not.  And this can be broken down into two subtasks:
-
-1) Allow such a guest to access MSR_IA32_PL0_SSP w/o triggering #GP.  And
-this behavior is already implemented in patch 8 of this series.
-
-2) Save and restore MSR_IA32_PL0_SSP in both KVM and Qemu for such a guest.
-
-
-I have the patches for 2) but they are not included in this series, because
-
-1) how much do we care the value in MSR_IA32_PL0_SSP in such a guest?
-
-Yes, Chao told me that you are the one saying that MSRs can be used as
-clobber registers and KVM should preserve the value.  Does MSR_IA32_PL0_SSP
-in such a guest count?
-
-
-2) Saving/restoring MSR_IA32_PL0_SSP adds complexity, though it's seldom
-used.  Is it worth it?
-
-
-BTW I'm still working on a KVM unit test for it, using a L1 VMM that
-enumerates FRED but not CET.
-
-Thanks!
-     Xin
+On Mon, Aug 25, 2025 at 5:47=E2=80=AFAM Andrew Morton <akpm@linux-foundatio=
+n.org> wrote:
+>
+> On Sun, 24 Aug 2025 08:53:26 +0200 Uladzislau Rezki <urezki@gmail.com> wr=
+ote:
+>
+> > >  run_stability_check()
+> > > @@ -160,7 +160,7 @@ function run_test()
+> > >             usage
+> > >     else
+> > >             if [[ "$1" =3D "performance" ]]; then
+> > > -                   run_perfformance_check
+> > > +                   run_performance_check
+> > >             elif [[ "$1" =3D "stress" ]]; then
+> > >                     run_stability_check
+> > >             elif [[ "$1" =3D "smoke" ]]; then
+> > > --
+> > > 2.34.1
+> > >
+> > >
+> > ./scripts/checkpatch.pl ./0001-kselftest-mm-fix-typos-in-test_vmalloc.s=
+h.patch
+> > WARNING: Missing commit description - Add an appropriate one
+> >
+> > total: 0 errors, 1 warnings, 24 lines checked
+> >
+> > NOTE: For some of the reported defects, checkpatch may be able to
+> >       mechanically convert to the typical style using --fix or --fix-in=
+place.
+> >
+> > ./0001-kselftest-mm-fix-typos-in-test_vmalloc.sh.patch has style proble=
+ms, please review.
+> >
+> > NOTE: If any of the errors are false positives, please report
+> >       them to the maintainer, see CHECKPATCH in MAINTAINERS.
+> >
+> > Can you add a commit message?
+>
+> A changelog would be identical to the subject.  checkpatch is being a
+> bit excessive here.
+>
+> Oh well, I'll add the obvious text.
 
