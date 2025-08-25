@@ -1,182 +1,278 @@
-Return-Path: <linux-kernel+bounces-784199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E456BB337F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:37:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B861FB33800
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:42:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 987A01B21A52
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 07:38:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90144189091C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 07:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C691627FD5A;
-	Mon, 25 Aug 2025 07:37:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D263298CA4;
+	Mon, 25 Aug 2025 07:42:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RvSbYewU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k5XCEXJ3"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34A2296BA6;
-	Mon, 25 Aug 2025 07:37:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36CF524A074;
+	Mon, 25 Aug 2025 07:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756107459; cv=none; b=dnA9/zfIfR9LqX3zssROtNndnX3QVyWVngWxJ6Gx21UcL6sRaP1sL2FSErL7N1ADzPQD5yJGJPTfBwqIb+28Njy1PDeL4mfKvCZZe5DuyP/aorP3dZignGs20udEs40IhJVssdRVJPZU8zOJXb6e2WirtG18eC2bhLUPYeQHQxw=
+	t=1756107766; cv=none; b=TZIKPw53KYH7zb/HOY2IoNnZw9PUvfjvdOuFQ9aY9n89ffddacpgtIbopcxGJAJ3NRSUPev26YyobtV0AxrRImtx4QzhVPWXwth5oGCkrOUMM3RH7ekJuxqgMcTF6eD+KkU0oNPiutObAmkbgmfuIY9lyKydNXMok4TepCtF4hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756107459; c=relaxed/simple;
-	bh=8Xuat5q/bZZpMzPwFIkh7VaktYMRLaRNPSYsoQ3oS0Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WuuhOl9J+AjFpGq8dLLoCJX1eEl9LCqxkDsIA4UVicOqZejIZUOwduvddTj398JhfV4SviH0mzMP+G/N19r/OQiLoksZ5ldZIXJ0xEd9zLvUZBbjZp4+TlKD+wsZb25QDbWutIDAQ9JiZUskbwAa+Lt/HM2KZ5KWcFhzOK1Sip8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RvSbYewU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BA22C4CEED;
-	Mon, 25 Aug 2025 07:37:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756107459;
-	bh=8Xuat5q/bZZpMzPwFIkh7VaktYMRLaRNPSYsoQ3oS0Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RvSbYewU3bmOnaNDNcoMiWjgIKvvrMHo5tWpU3d400C3IYl9vMYTI0ZX5kijfN5qE
-	 zuIVbvV3O0iAI0IaOXiAKIE3sGMR5UkArSjLP+1Vxf4MYJiQUZAnz+Yp3fcWv4SXnx
-	 MIFnixrBLZjbOWNJzIpxDEwbzL5se0Cz3rWL9m6XC3JemOnm/X9qniAGiKeUaJH52a
-	 Qbf1oegujVn8rfW2Rewv2FRFkDjzxxM2awj4oE0uQlt1MKURL7PyKE8e5Vx+VosUvS
-	 ejZSLgiYvJ5FFBNuf4/Ub7LRA4VxmneXfcoTr7EiJ3nV3IqbnrrTCNg3hH+7HiP9aP
-	 SD0rYENc9mjTw==
-Message-ID: <96b6f650-fa4d-461b-91f6-cb210cb1982d@kernel.org>
-Date: Mon, 25 Aug 2025 09:37:34 +0200
+	s=arc-20240116; t=1756107766; c=relaxed/simple;
+	bh=CF3nCaQrlkAeMy06uuovK8drERouHS65tJ8iar6vLsY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mvSAg8rkLMCV+TDliBbbHYHe7ZYAfmCTSCnyZTKwRFAqTKQQy1wWKU/SODfl+z/vJ6Foseb0ft2lwqEaXfh8Jkii/UiumxbTm2tnuMrzEkQg3H3rqlywCLp6DUEAq/2fLXM5TJ0OHNELNuxoz4w23p+2vs8x83tjmMPZVcaoc50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k5XCEXJ3; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-324fb2bb058so2615939a91.3;
+        Mon, 25 Aug 2025 00:42:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756107764; x=1756712564; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z+iedLlKmbf9rTuBT+gfMn79Q+NQYLm/fmWWO3YkJIA=;
+        b=k5XCEXJ3o1OjlfxfaQWd0sLNV24GpXXvTq9+DQuk54Y1kzpZpMsr147sSaCNfa1MDg
+         jkQwqfHbxCTlLPT5wcozPspeTf8K4zIT0/Oa+grK2d5UwIFBXZRYsZTsPGzKGdpik8VN
+         7OkiTWKiJR3YaDwxBccAMbZAT7R5v2uS/KTebZ8GqknhVyHPoZJBMOp1JNUnGLJaFA+I
+         /qHlwk26yFXj19eVSRdtF9o3PJVxpMgH2CNslSrhqyTLCPfPuwz1GeYc2yUHaIPCr0cK
+         Y6S/CeGLPSK+9DwOUYZG0dTs54Z6QZ6vihi0oj1WMWwtn+HAsz/WLGXQhbXjvuiP7+b8
+         DuMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756107764; x=1756712564;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z+iedLlKmbf9rTuBT+gfMn79Q+NQYLm/fmWWO3YkJIA=;
+        b=Jkphi2peJv5v0ml6OMFrYGbI4Pv5+OEIpcaNsIVnc89krucReO0XE1YxKR4cFKHO4r
+         MOlOtsp9oO9RhRDgt+42mwmf/ehAsOThcvrhnC/9SrtFtUS3++lcp1lSrhzNYcNWZgny
+         4FHnqFgSbujLtkZ/BhMyitLtk8NbImT0v/kOy5Q043ZY7bXMMWugkq9YFvn8M00eE7gQ
+         I2e83atsapDQ2uJwm4vJVRQHJhhr/Yjmmay9YXLQJJgMsNX7GgVmFtjwJjKJLXt+uXSY
+         SrifcibOXYRu3a6zSH+UsKQaJMd/gGkRIPt7h4AZPuHKZkVP7lnG/Gz2WYeKIQ1562SJ
+         0Tyg==
+X-Forwarded-Encrypted: i=1; AJvYcCV4jMEVHqvIpSY02CNBpg5Y1m5YeNQrBR0IVkDzl9JXAMZZTCmW2/7R6NjWQSxvwXIAuItGJhXmyykQAA==@vger.kernel.org, AJvYcCVZTlIdOuor2gZUtod3hiehFW7FRU6y1TAVtinQnke49hw+BiPPEsrw9wlSSlmnndiLT1YHfRtIXB8=@vger.kernel.org, AJvYcCVx/Sx9wqWH4WeXCl6SSJ+Uhecc7QnV9zxZxTF99K1pZz5b47BKnNDjzA/pj5l3ZpUuau+dF4YyPdbCEzcC@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfKvNkHwuARiOEvBCE+Y2Y3eKVbmR9jPGUHp6jUkLWsFsdLouz
+	taSw0wMy/xcdoEQF68DE4OdQOAzAVgKcGlLeEDfS6prLrSK1XG87Cz11/BtpPtcA
+X-Gm-Gg: ASbGncuzpFCBonXAG1rwoL3mGOpPbbaVnmTXngzAVt2hgN5UfKyIIk2YYEbJeb6ZWTH
+	GYBuTzF4Eroj7NE3KG3R/CCoUOrzJR5TqR26benbSrfwbTI/sxcaX+1JkM3eqGywiu7FkLWaxLm
+	7OvKDyeF1KFMUy3XrS/n2FiwQHaXLMwzAavIM5zoUXHOWqhvs0olmlZ9XvqjuDs5Ta0HlJ9OLYI
+	fg96fRTtD9G+2RlyW/vXbIdwYAGd4o2a3RpdE36oo+90X/nTDtHocu8w94Nu3NrqJRJzgVngW97
+	6xLaAu5tGkitqQt5OE7XE23jlRCSUBNFwOTOvHVAwRp7Xe8I0czmdr4emdezR0XSudDMRDhtINJ
+	K2BLvNDH2nsJQ06ENAnub/7rIbR3dsqZ3yTwQmjzScIJlWQ4JMGqt8A==
+X-Google-Smtp-Source: AGHT+IEaUrxdiHAQTBJbTzF/2pJwOoJ4BhJ3kWnE128jOIU8pVoa9qAhPX9k9LAdpusHHPu7o458fw==
+X-Received: by 2002:a17:90b:278b:b0:324:ffcf:153a with SMTP id 98e67ed59e1d1-32515eaeef7mr14636408a91.20.1756107763923;
+        Mon, 25 Aug 2025 00:42:43 -0700 (PDT)
+Received: from 100ask.localdomain ([116.234.74.152])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3252e7433ccsm3513423a91.8.2025.08.25.00.42.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Aug 2025 00:42:43 -0700 (PDT)
+From: Nino Zhang <ninozhang001@gmail.com>
+To: devicetree@vger.kernel.org
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	vkoul@kernel.org,
+	rahulbedarkar89@gmail.com,
+	linux-mips@vger.kernel.org,
+	dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Nino Zhang <ninozhang001@gmail.com>
+Subject: [PATCH v3] dt-bindings: dma: img-mdc-dma: convert to DT schema
+Date: Mon, 25 Aug 2025 15:41:41 +0800
+Message-ID: <20250825074141.560141-1-ninozhang001@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v6 1/3] dt-bindings: net: dsa: yt921x: Add
- Motorcomm YT921x switch support
-To: Yangfl <mmyangfl@gmail.com>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
- Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
- Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250824005116.2434998-1-mmyangfl@gmail.com>
- <20250824005116.2434998-2-mmyangfl@gmail.com>
- <20250824-jolly-amaranth-panther-97a835@kuoka>
- <CAAXyoMOfhSWhRCiFudju-DNtvD+8kHGhLzT2NGBF2cK_Ctviyw@mail.gmail.com>
- <0cb62840-845b-4a9f-94c6-e40d0b72ce95@kernel.org>
- <CAAXyoMMej5XJmofiY_9cpzscxm2GyZw_v9hcSYu7NvhcNFFV2Q@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CAAXyoMMej5XJmofiY_9cpzscxm2GyZw_v9hcSYu7NvhcNFFV2Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 25/08/2025 04:39, Yangfl wrote:
-> On Mon, Aug 25, 2025 at 2:09 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 24/08/2025 11:25, Yangfl wrote:
->>> On Sun, Aug 24, 2025 at 5:20 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>>>
->>>> On Sun, Aug 24, 2025 at 08:51:09AM +0800, David Yang wrote:
->>>>> The Motorcomm YT921x series is a family of Ethernet switches with up to
->>>>> 8 internal GbE PHYs and up to 2 GMACs.
->>>>>
->>>>> Signed-off-by: David Yang <mmyangfl@gmail.com>
->>>>> ---
->>>>
->>>> <form letter>
->>>> This is a friendly reminder during the review process.
->>>>
->>>> It looks like you received a tag and forgot to add it.
->>>>
->>>> If you do not know the process, here is a short explanation:
->>>> Please add Acked-by/Reviewed-by/Tested-by tags when posting new
->>>> versions of patchset, under or above your Signed-off-by tag, unless
->>>> patch changed significantly (e.g. new properties added to the DT
->>>> bindings). Tag is "received", when provided in a message replied to you
->>>> on the mailing list. Tools like b4 can help here. However, there's no
->>>> need to repost patches *only* to add the tags. The upstream maintainer
->>>> will do that for tags received on the version they apply.
->>>>
->>>> Please read:
->>>> https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
->>>>
->>>> *If a tag was not added on purpose, please state why* and what changed.
->>>> </form letter>
->>>>
->>>>
->>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>>
->>>> Best regards,
->>>> Krzysztof
->>>>
->>>
->>> Thanks.
->>>
->>>>  - use enum for reg in dt binding
->>>
->>> I made a change in dt binding. If you are fine with that change, I'll
->>> add the tag in the following versions (if any).
->>
->>
->> Cover letter must state the reason.
->>
->>
->> Best regards,
->> Krzysztof
-> 
-> as requested in the previous version
-> 
-> https://lore.kernel.org/r/f76df98e-f743-4dc2-9f10-93b97f69addb@lunn.ch
+Convert the img-mdc-dma binding from txt to YAML schema.
+No functional changes except dropping the consumer node
+(spi@18100f00) from the example, which belongs to the
+consumer binding instead.
 
-Hm? Where is there a statement that you remove review because of this
-and that?
+Signed-off-by: Nino Zhang <ninozhang001@gmail.com>
+---
+v2 -> v3:
+- Fix remaining issues based on Rob's and Krzysztof's comments.
+- Link to v2: https://lore.kernel.org/all/20250824034509.445743-1-ninozhang001@gmail.com/
 
+v1 -> v2:
+- Addressed review comments from Rob.
+- Link to v1: https://lore.kernel.org/all/20250821150255.236884-1-ninozhang001@gmail.com/
 
-Best regards,
-Krzysztof
+ .../bindings/dma/img,pistachio-mdc-dma.yaml   | 89 +++++++++++++++++++
+ .../devicetree/bindings/dma/img-mdc-dma.txt   | 57 ------------
+ 2 files changed, 89 insertions(+), 57 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/dma/img,pistachio-mdc-dma.yaml
+ delete mode 100644 Documentation/devicetree/bindings/dma/img-mdc-dma.txt
+
+diff --git a/Documentation/devicetree/bindings/dma/img,pistachio-mdc-dma.yaml b/Documentation/devicetree/bindings/dma/img,pistachio-mdc-dma.yaml
+new file mode 100644
+index 000000000000..198e80b528c8
+--- /dev/null
++++ b/Documentation/devicetree/bindings/dma/img,pistachio-mdc-dma.yaml
+@@ -0,0 +1,89 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/dma/img,pistachio-mdc-dma.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: IMG Multi-threaded DMA Controller (MDC)
++
++maintainers:
++  - Rahul Bedarkar <rahulbedarkar89@gmail.com>
++  - linux-mips@vger.kernel.org
++
++allOf:
++  - $ref: /schemas/dma/dma-controller.yaml#
++
++properties:
++  compatible:
++    const: img,pistachio-mdc-dma
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    minItems: 1
++    maxItems: 32
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    items:
++      - const: sys
++
++  img,cr-periph:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      Phandle to peripheral control syscon node with DMA request to channel
++      mapping registers.
++
++  img,max-burst-multiplier:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    minimum: 1
++    description:
++      Maximum supported burst size multiplier. The maximum burst size is this
++      value multiplied by the hardware-reported bus width.
++
++  "#dma-cells":
++    const: 3
++    description: |
++      DMA specifier cells:
++        1: peripheral's DMA request line
++        2: channel bitmap: bit N set indicates channel N is usable
++        3: thread ID to be used by the channel
++
++  dma-channels:
++    minimum: 1
++    maximum: 32
++    description: Defaults to HW-reported value if not specified.
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - clock-names
++  - img,cr-periph
++  - img,max-burst-multiplier
++  - "#dma-cells"
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/mips-gic.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    dma-controller@18143000 {
++      compatible = "img,pistachio-mdc-dma";
++      reg = <0x18143000 0x1000>;
++      interrupts = <GIC_SHARED 27 IRQ_TYPE_LEVEL_HIGH>,
++                   <GIC_SHARED 28 IRQ_TYPE_LEVEL_HIGH>;
++      clocks = <&system_clk>;
++      clock-names = "sys";
++
++      img,max-burst-multiplier = <16>;
++      img,cr-periph = <&cr_periph>;
++
++      #dma-cells = <3>;
++    };
+diff --git a/Documentation/devicetree/bindings/dma/img-mdc-dma.txt b/Documentation/devicetree/bindings/dma/img-mdc-dma.txt
+deleted file mode 100644
+index 28c1341db346..000000000000
+--- a/Documentation/devicetree/bindings/dma/img-mdc-dma.txt
++++ /dev/null
+@@ -1,57 +0,0 @@
+-* IMG Multi-threaded DMA Controller (MDC)
+-
+-Required properties:
+-- compatible: Must be "img,pistachio-mdc-dma".
+-- reg: Must contain the base address and length of the MDC registers.
+-- interrupts: Must contain all the per-channel DMA interrupts.
+-- clocks: Must contain an entry for each entry in clock-names.
+-  See ../clock/clock-bindings.txt for details.
+-- clock-names: Must include the following entries:
+-  - sys: MDC system interface clock.
+-- img,cr-periph: Must contain a phandle to the peripheral control syscon
+-  node which contains the DMA request to channel mapping registers.
+-- img,max-burst-multiplier: Must be the maximum supported burst size multiplier.
+-  The maximum burst size is this value multiplied by the hardware-reported bus
+-  width.
+-- #dma-cells: Must be 3:
+-  - The first cell is the peripheral's DMA request line.
+-  - The second cell is a bitmap specifying to which channels the DMA request
+-    line may be mapped (i.e. bit N set indicates channel N is usable).
+-  - The third cell is the thread ID to be used by the channel.
+-
+-Optional properties:
+-- dma-channels: Number of supported DMA channels, up to 32.  If not specified
+-  the number reported by the hardware is used.
+-
+-Example:
+-
+-mdc: dma-controller@18143000 {
+-	compatible = "img,pistachio-mdc-dma";
+-	reg = <0x18143000 0x1000>;
+-	interrupts = <GIC_SHARED 27 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SHARED 28 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SHARED 29 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SHARED 30 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SHARED 31 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SHARED 32 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SHARED 33 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SHARED 34 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SHARED 35 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SHARED 36 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SHARED 37 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SHARED 38 IRQ_TYPE_LEVEL_HIGH>;
+-	clocks = <&system_clk>;
+-	clock-names = "sys";
+-
+-	img,max-burst-multiplier = <16>;
+-	img,cr-periph = <&cr_periph>;
+-
+-	#dma-cells = <3>;
+-};
+-
+-spi@18100f00 {
+-	...
+-	dmas = <&mdc 9 0xffffffff 0>, <&mdc 10 0xffffffff 0>;
+-	dma-names = "tx", "rx";
+-	...
+-};
+-- 
+2.43.0
+
 
