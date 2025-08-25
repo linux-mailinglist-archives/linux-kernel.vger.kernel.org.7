@@ -1,183 +1,287 @@
-Return-Path: <linux-kernel+bounces-784608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DCD9B33E60
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:51:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E35E0B33EFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:11:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A5703AF8A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:51:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAA3A1A813B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:11:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08342D739D;
-	Mon, 25 Aug 2025 11:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CF472EDD7D;
+	Mon, 25 Aug 2025 12:08:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="TufXjCpI"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012067.outbound.protection.outlook.com [52.101.66.67])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="usJDOCI6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6528326B08F;
-	Mon, 25 Aug 2025 11:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756122695; cv=fail; b=HgFmPhdguxzeYxgtmAH5YEjmDPYp8mwnDuQtLnIS6+e9PrHCfV28oa7TaGVNhPb0sp13fR+WsiloXy2L1BocyhC3qmZVrhFZm+7tJIWtNZS4xVhhWmV46C19fxrli605SEvJPLVlWqWCW9r5hlFIo7UdbjYYLT9rN/FME1eZays=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756122695; c=relaxed/simple;
-	bh=ZjKnG9tDCzUURB93rifbJHeFvyg1ncmQMq2Ah+SD7XA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=e/usIcnRQsdx3EsttK3NkikquuoBlmbYoUgDLtVI6wZnfg3w7TEM6QR7oPoAs61ESzefrdUPqbi1NjSvAyJp0jivQJYCsdAcZCnSDJyqXRQt0yFns7PMm3FncM/dFo1y6/20dUw9vdtnB1047sE/gVGadw+uEHEwxSaVRKw55XU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=TufXjCpI; arc=fail smtp.client-ip=52.101.66.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=R7Swu7c+ryTUX2uaQjzXXG43uok+E/4F8Vv8Mrz+GTcWesq9oj5TJU1QzPbv9FolqMh8FBaoF8o1ihriItnLGNLrjRIqx6PPhoLWB0t0pkD9v9xvGWXJiI3NW9JRdn/8Rh4be2k20yMVKf5p/Zgn2RfO/oPlLFSzdmmIW92Om1rpyfZxtHAJUfSGWzgQTpXE1GuAkxG0XRd6je14orov8tU8Om5pjRuQeO34GZWcWOWG6thyIzwYiw5eQyzSaoLjtZfd058esseNNns9ytc1ooz9VM8bn2wk/6ZzkpzJlSKP+t3r+TLw9i/EApAJDeU63NObG519nnXJjM45soZZsw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MQzllPSDO97LtV5sJLAenrEsFWuGV8j69ZOURVX3zOk=;
- b=AS8+dm7/usWFLitqLWVqntWpIYUIl0uo5xDXB+SDcNYSz6LkaVE8PIDg92BRLHIHaFMrRBTZfGCtOtwPKCqTX8fmZ1QXEzDQ2ZoGKi7ZblyC1xb9/tTJb7IhGmqmC5XoYkDbEnIqRrFYs3BRwbprB+nOyStACScEYRc2J0Zq69XX5WCybFaD5SmUmVcVvLPqx5X6FZe5Zlqh7iHS/KGnHCvbcfLuhu3mOKoZ6j+niQiwOG+x1sEhlvr6DFI1Z0i6SyCeoqKuiqPjyID5WLRnO/6YCCyI3eqLpb0PICR+WuJtIAR4fx0/+MwiH8304KShfrLBn86hN1eOGdMbZAxM0A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 139.15.153.205) smtp.rcpttodomain=google.com smtp.mailfrom=de.bosch.com;
- dmarc=pass (p=reject sp=none pct=100) action=none header.from=de.bosch.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MQzllPSDO97LtV5sJLAenrEsFWuGV8j69ZOURVX3zOk=;
- b=TufXjCpI17qd9krBxgM9b5162jxAk/59L8N6ngVWfoBOD2hfTDpN5I5WvKhp6RvMmAPekHs++i1G90crT+boNcqxoQVxgGEWQUpiDKKs3stF+EDVdtpPc5dre3ShG8mj2/FdN2qDuRAf4Vf2wBoIjCetMfMXo+esf8DwJk5GL9ti8pkyymc6M6NhestTh36pB2M9pjo228Tr2SbVPVDI9TLmngJO+T6MhLOXSIIRWlY3ObFlvFT7+PYLKT5RmonSYcrH0ZfKack5QOqKOFQuwzg49MZKXOEJGYuXn5ZIa8UzeNri7At8zhCxWtIjLVi/Yk46dkGD3RIdWmvd2r0nRQ==
-Received: from AS4P190CA0011.EURP190.PROD.OUTLOOK.COM (2603:10a6:20b:5de::13)
- by VI0PR10MB8333.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:800:236::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.20; Mon, 25 Aug
- 2025 11:51:28 +0000
-Received: from AM3PEPF0000A78E.eurprd04.prod.outlook.com
- (2603:10a6:20b:5de:cafe::58) by AS4P190CA0011.outlook.office365.com
- (2603:10a6:20b:5de::13) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.22 via Frontend Transport; Mon,
- 25 Aug 2025 11:51:28 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 139.15.153.205)
- smtp.mailfrom=de.bosch.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=de.bosch.com;
-Received-SPF: Pass (protection.outlook.com: domain of de.bosch.com designates
- 139.15.153.205 as permitted sender) receiver=protection.outlook.com;
- client-ip=139.15.153.205; helo=eop.bosch-org.com; pr=C
-Received: from eop.bosch-org.com (139.15.153.205) by
- AM3PEPF0000A78E.mail.protection.outlook.com (10.167.16.117) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9073.11 via Frontend Transport; Mon, 25 Aug 2025 11:51:27 +0000
-Received: from SI-EXCAS2001.de.bosch.com (10.139.217.202) by eop.bosch-org.com
- (139.15.153.205) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.36; Mon, 25 Aug
- 2025 13:51:20 +0200
-Received: from RNGMBX3002.de.bosch.com (10.124.11.207) by
- SI-EXCAS2001.de.bosch.com (10.139.217.202) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.58; Mon, 25 Aug 2025 13:51:20 +0200
-Received: from [10.34.219.93] (10.34.219.93) by smtp.app.bosch.com
- (10.124.11.207) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 25 Aug
- 2025 13:51:19 +0200
-Message-ID: <8eaeeee7-005e-4639-9852-2304c8cbcc17@de.bosch.com>
-Date: Mon, 25 Aug 2025 13:51:14 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FDB22EBDDC;
+	Mon, 25 Aug 2025 12:08:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756123718; cv=none; b=c/2+uVLoxd/TeyKbYkH3wgryr04mf7YXv+Q7MjRRfMBiD3TNWY3vQmgo1CcSuhbp5A6VOQ77BMUTEKvIZwnaCzvH7LWrKIBQrnynYpP2S7d98oB7bwmKsibIcqiLc37GVp9kBsAXGdve8VpNxH8ONjRel9cEGFQ++pooC5RR89Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756123718; c=relaxed/simple;
+	bh=CgZN/JwtbrFNC7CsS3biW1Y/xVDoaqoPO4JwlJIhPIM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vmy8Ge8iilPpI4G7q7JqY72lKRAhrtQY0qSbMct4ycuUI+8mtX6b4qSw5LpZi8zXhd2fMhtgMd3xhbewB+JQlr92hV+J+5tEjxyPDdlkGWrkXiX/kbCkPpnjwE8LVlJQYwVNwfHPXZHUP8BMvQeD3dZS0SPIB1X4X//GyYrVvcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=usJDOCI6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B65CEC4CEED;
+	Mon, 25 Aug 2025 12:08:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756123718;
+	bh=CgZN/JwtbrFNC7CsS3biW1Y/xVDoaqoPO4JwlJIhPIM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=usJDOCI6rn4Ib86tprHSTx5yiGSOsyQadsQ+AfRI+PPE929klxTifsmhPnsDhu1Bl
+	 Q2UtCLYGgtZyYz0ExwjVHibxoAmy6QPPxs/4O7Iko9XWEN8pgyr5Oeo4lJ0jJ5oxCx
+	 Zdt4AMpRiLkgVGyYUNWpi0xCW9u1MihXKYHS/MemqomVSC0WtOoUmXXw7GxXXugaV3
+	 a1+855m742qL5rAjx7Wdf8BGP62k0c3Qx1di8G3jcjNZ7LT4goNAfwmcM9U3Z5pWhu
+	 M9dAEkeg/ygIj9lgRrKAQCj4P89SYyJmcQTbksv5aXBGX+zTBjPMeWqHLLgR3ESV4R
+	 0qmfeXOlt2Zpw==
+Date: Mon, 25 Aug 2025 19:51:20 +0800
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Richard Leitner <richard.leitner@linux.dev>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] usb: usb251xb: support usage case without I2C
+ control
+Message-ID: <aKxOOGBkR7ZfwCo5@xhacker>
+References: <20250820161743.23458-1-jszhang@kernel.org>
+ <20250820161743.23458-4-jszhang@kernel.org>
+ <qhfmvqjxad3ngk3azdkyxhw6ka7ijxccl6d2ylu26zlmovmeg3@3f2r4f6ksr6s>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 0/7] rust: DebugFS Bindings
-To: Matthew Maurer <mmaurer@google.com>, Miguel Ojeda <ojeda@kernel.org>, Alex
- Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
-	<gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
-	<bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, "Danilo
- Krummrich" <dakr@kernel.org>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, "Sami
- Tolvanen" <samitolvanen@google.com>, Timur Tabi <ttabi@nvidia.com>, "Benno
- Lossin" <lossin@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
-References: <20250819-debugfs-rust-v10-0-86e20f3cf3bb@google.com>
-Content-Language: en-GB
-From: Dirk Behme <dirk.behme@de.bosch.com>
-In-Reply-To: <20250819-debugfs-rust-v10-0-86e20f3cf3bb@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM3PEPF0000A78E:EE_|VI0PR10MB8333:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2f95d7e4-9813-4c0c-cee1-08dde3cdb9b9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|7416014|376014|82310400026|1800799024|7053199007|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Tjd0dDBrTHB5QWtpU2ZNY045azQ4d0NLZHNyZ2g2VWQxYWlCWm1sZ3U5MFhE?=
- =?utf-8?B?eE5wUFhJdEdSSWo4WGgwRWxmRW1qaHMxeDhKRVJSemFHOTNEa09ESWFNbzFy?=
- =?utf-8?B?bi9LN2dIMVI5R082U3FFV3JnckhHTWlCZnRpaHhjSDNrSkw2ZzZZUTVVMnJQ?=
- =?utf-8?B?YnFYTFl4blhpVmNQUzZaSUdQN3FKb1BtN29TcE9sbTdDUzBhWHU0NmNSWUdH?=
- =?utf-8?B?UWtvL2JsenoraHdhK2J0SUpTZ0hKUnMra3hvUzF4OXRUbjgxNmVWTzVrNVl4?=
- =?utf-8?B?SGcvUytneVJDWFJGZTR2S294cmQ0dXE0Q3FaNTNvWTRJaXgzaERSTHVETzlR?=
- =?utf-8?B?QkpkM2dMZkdaK0ljUzN6aWtYeEhVaEMyMm82MFFpSy9CdlJwdUd1SUZHV2N3?=
- =?utf-8?B?TGFmSGZPeGFqY0lUeWpIZ0dTQ05LRnVIL2RzbWlWLzVGbmxPTE44S1RrWXg3?=
- =?utf-8?B?SVAwUlhXYUszZml2NmhLS01xQmhpOG0vZ3FPeVFFQjFKa3NxQ2hCdEVRaHdJ?=
- =?utf-8?B?REJPNytNd3dhOUFzTDVkUGlsckdFWjdEdDkySE9UcmFSS2lMRCtZTlVBeUVV?=
- =?utf-8?B?OUpYbmUxM3NhdW9jUnJyOUNYUFBSc2JNS3hoL2NqTzVHQmdNQXQyczZENUpW?=
- =?utf-8?B?eTBuckZBR1RwMTJsb1NxMktlVENnZjZsNWRURlZKSmhEV1dUV0FFRUFBRVJh?=
- =?utf-8?B?Vll6Q0RyNkpidVBNaElxWEdwa2FUcm43K3c0NjJXTzJySGcvZk9UOERjNU1X?=
- =?utf-8?B?VU80ai9PZHRSaTU4VXpDb0Q5bVVBdGEwYUxZSlFvSFlnTGw0YkVRQ2pENmd6?=
- =?utf-8?B?aVI5S3E3TzF6QVFvblFzeENyb3E2U1BibGZWY1ptK2ZRZkxacVpKYUk4Sktm?=
- =?utf-8?B?Mk9QS3A4ZlJqb0U1T2dZNmNoZ0YvemhtVXpXUXhuUGVEMm9GOHM1RGk1aE4x?=
- =?utf-8?B?RW8wR3pPSFpsblpwUTVDV0JoSWM5dXh3dGtSMVV0R25kWnQ4cDdrV3doNkRD?=
- =?utf-8?B?UDNwMHFTVWEwOGp1eFpXQ204OGI4N1h1QlNWZ0loODM4NnY1Wjk2SHY1VXE5?=
- =?utf-8?B?dTZYWjgzSkcwMnRSQ2p5dzRRRVZWU2w5RmYrVTJ3MUZWUVpCUUg1Y0NkYi8y?=
- =?utf-8?B?bytGQUFWWXNRK2psc3V3Rm12algrWWxla0JZVnVRSi9CdnhnY0g4TDBNakZZ?=
- =?utf-8?B?WEtVaUZ0MUFIc05sNDZXc3k4UU5kck5oclB3OFFZcXdUMWJYcHhaeEkzMkd6?=
- =?utf-8?B?eUx5YUZNVDI4anhpZjFwZnQ4eThOWUJTMTQ1eHNTU2YyOG1hb3k2UC9wU2pS?=
- =?utf-8?B?cnNiQ0hvcGtQcERkR1ZRWVlhQzNYWGs0R0FOWG5JUFpsQWtEdzhpLy95M1da?=
- =?utf-8?B?REZFenBBK0JHSWtXSnF3bzBJTkJCOW9UV3ZmNTdSaXJKYWpZYndvSm1nbHhy?=
- =?utf-8?B?am83RWtjYmVoMEd4Skh4RkNlSjZLQ1g4UG5jWHd4ODJia1Y2OWt3UFR5dzEw?=
- =?utf-8?B?TTJ1d09qbGNsVzI5UktaQVNoVUZXRVA3YXB3ZTk3YkhOMks4TUw5SUc1Kzlk?=
- =?utf-8?B?bUsxTXVIUlNmNFhTbTYwemxMZXIwSDM5bnRwTWQxQmRrOFlGbGJkTU9nSmsy?=
- =?utf-8?B?ZWxPMWVRb1VveHhRbVB5TmkvK2V3Vk5GK2Rnd0lKTi9yTjRXdDlMVTI2eEIv?=
- =?utf-8?B?dEZsUkVXVGo4eTlhSnVlVWVSUTBpaElSa2JraWMyb1RWcFNEN2hBWlVuQzZV?=
- =?utf-8?B?YWNlcjdJYTgzTml6UEp3RlVyaVFtWk9YM0htZCtKbFlEcFJFZm00a0YwSXRr?=
- =?utf-8?B?d21QWlJvU0F5c1JyZ3NkNEZkK3l0RUNsNXMySjVxdVNWWUs1UmpkdUppbFc4?=
- =?utf-8?B?RVh0cXlVeTF0b1k0aDdLYnpDdkdQMWhmL1djWkJGV1dGN056UFh3WkZOU2t4?=
- =?utf-8?B?RVk3bWxUTFVXc0hPUVMvbjQ5M21jNHdYZE9WL3hSMGxRZm02TjZVOXEyQmNh?=
- =?utf-8?B?bzVEcFF2MlpNV25hM1JRRXdZWGFQVFpFUE9FUHhaMlFuQWh1dEYwYTc1bmly?=
- =?utf-8?B?YmhrOExBNWEwZ04vbWRBSDY0UWFMZGhyYzJodz09?=
-X-Forefront-Antispam-Report:
-	CIP:139.15.153.205;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:eop.bosch-org.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(376014)(82310400026)(1800799024)(7053199007)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: de.bosch.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 11:51:27.9417
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2f95d7e4-9813-4c0c-cee1-08dde3cdb9b9
-X-MS-Exchange-CrossTenant-Id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0ae51e19-07c8-4e4b-bb6d-648ee58410f4;Ip=[139.15.153.205];Helo=[eop.bosch-org.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM3PEPF0000A78E.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR10MB8333
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <qhfmvqjxad3ngk3azdkyxhw6ka7ijxccl6d2ylu26zlmovmeg3@3f2r4f6ksr6s>
 
-On 20/08/2025 00:53, Matthew Maurer wrote:
-> This series provides safe DebugFS bindings for Rust, with sample
-> modules using them.
+On Sun, Aug 24, 2025 at 08:55:09PM +0200, Richard Leitner wrote:
+> Hi Jisheng,
 > 
-> Shortly after this is sent, you will see a real driver WIP using this
-> implenting the qcom socinfo driver.
+> On Thu, Aug 21, 2025 at 12:17:43AM +0800, Jisheng Zhang wrote:
+> > Currently, the usb251xb assumes i2c control. But from HW point of
+> > view, the hub supports usage case without any i2c, we only want the
+> > gpio controls.
+> > 
+> > Refactor the code so that register writes for configuration are only
+> > performed if the device has a i2c_client provided and also register as
+> > a platform driver. This allows the driver to be used to manage GPIO
+> > based control of the device.
+> > 
+> > Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+> > ---
+> >  drivers/usb/misc/usb251xb.c | 108 +++++++++++++++++++++++++++++++-----
+> >  1 file changed, 94 insertions(+), 14 deletions(-)
+> > 
+> > diff --git a/drivers/usb/misc/usb251xb.c b/drivers/usb/misc/usb251xb.c
+> > index cb2f946de42c..e9a9404d17b2 100644
+> > --- a/drivers/usb/misc/usb251xb.c
+> > +++ b/drivers/usb/misc/usb251xb.c
+> > @@ -17,6 +17,7 @@
+> >  #include <linux/module.h>
+> >  #include <linux/nls.h>
+> >  #include <linux/of.h>
+> > +#include <linux/platform_device.h>
+> >  #include <linux/regulator/consumer.h>
+> >  #include <linux/slab.h>
+> >  
+> > @@ -242,15 +243,19 @@ static int usb251xb_check_dev_children(struct device *dev, void *child)
+> >  static int usb251x_check_gpio_chip(struct usb251xb *hub)
+> >  {
+> >  	struct gpio_chip *gc = gpiod_to_chip(hub->gpio_reset);
+> > -	struct i2c_adapter *adap = hub->i2c->adapter;
+> > +	struct i2c_adapter *adap;
+> >  	int ret;
+> >  
+> > +	if (!hub->i2c)
+> > +		return 0;
+> > +
+> >  	if (!hub->gpio_reset)
+> >  		return 0;
+> >  
+> >  	if (!gc)
+> >  		return -EINVAL;
+> >  
+> > +	adap = hub->i2c->adapter;
+> >  	ret = usb251xb_check_dev_children(&adap->dev, gc->parent);
+> >  	if (ret) {
+> >  		dev_err(hub->dev, "Reset GPIO chip is at the same i2c-bus\n");
+> > @@ -271,7 +276,8 @@ static void usb251xb_reset(struct usb251xb *hub)
+> >  	if (!hub->gpio_reset)
+> >  		return;
+> >  
+> > -	i2c_lock_bus(hub->i2c->adapter, I2C_LOCK_SEGMENT);
+> > +	if (hub->i2c)
+> > +		i2c_lock_bus(hub->i2c->adapter, I2C_LOCK_SEGMENT);
+> >  
+> >  	gpiod_set_value_cansleep(hub->gpio_reset, 1);
+> >  	usleep_range(1, 10);	/* >=1us RESET_N asserted */
+> > @@ -280,7 +286,8 @@ static void usb251xb_reset(struct usb251xb *hub)
+> >  	/* wait for hub recovery/stabilization */
+> >  	usleep_range(500, 750);	/* >=500us after RESET_N deasserted */
+> >  
+> > -	i2c_unlock_bus(hub->i2c->adapter, I2C_LOCK_SEGMENT);
+> > +	if (hub->i2c)
+> > +		i2c_unlock_bus(hub->i2c->adapter, I2C_LOCK_SEGMENT);
+> >  }
+> >  
+> >  static int usb251xb_connect(struct usb251xb *hub)
+> > @@ -289,7 +296,11 @@ static int usb251xb_connect(struct usb251xb *hub)
+> >  	int err, i;
+> >  	char i2c_wb[USB251XB_I2C_REG_SZ];
+> >  
+> > -	memset(i2c_wb, 0, USB251XB_I2C_REG_SZ);
+> > +	if (!hub->i2c) {
+> > +		usb251xb_reset(hub);
+> > +		dev_info(dev, "hub is put in default configuration.\n");
+> > +		return 0;
+> > +	}
 > 
-> Signed-off-by: Matthew Maurer <mmaurer@google.com>
-On ARM64 on top of v6.17-rc1 I applied this series to use
-read_only_file() to export some u64 proprietary values.
+> You dropped the memset of write buffer. Are you sure this doesn't cause
+> any issues? (Sorry, I'm currently travelling, so I wasn't able to test
+> the series on real hw)
 
-If you like feel free to add
+oops, good catch! Even if the removing memset() works it should be in a
+seperate patch. I will send v2 soon. Thanks for your review!
 
-Tested-by: Dirk Behme <dirk.behme@de.bosch.com>
-
-Thanks!
-
-Dirk
+> 
+> Apart from that the patch LGTM. Thanks! :-)
+> 
+> >  
+> >  	if (hub->skip_config) {
+> >  		dev_info(dev, "Skip hub configuration, only attach.\n");
+> > @@ -698,18 +709,13 @@ static int usb251xb_i2c_probe(struct i2c_client *i2c)
+> >  	return usb251xb_probe(hub);
+> >  }
+> >  
+> > -static int usb251xb_suspend(struct device *dev)
+> > +static int usb251xb_suspend(struct usb251xb *hub)
+> >  {
+> > -	struct i2c_client *client = to_i2c_client(dev);
+> > -	struct usb251xb *hub = i2c_get_clientdata(client);
+> > -
+> >  	return regulator_disable(hub->vdd);
+> >  }
+> >  
+> > -static int usb251xb_resume(struct device *dev)
+> > +static int usb251xb_resume(struct usb251xb *hub)
+> >  {
+> > -	struct i2c_client *client = to_i2c_client(dev);
+> > -	struct usb251xb *hub = i2c_get_clientdata(client);
+> >  	int err;
+> >  
+> >  	err = regulator_enable(hub->vdd);
+> > @@ -719,7 +725,23 @@ static int usb251xb_resume(struct device *dev)
+> >  	return usb251xb_connect(hub);
+> >  }
+> >  
+> > -static DEFINE_SIMPLE_DEV_PM_OPS(usb251xb_pm_ops, usb251xb_suspend, usb251xb_resume);
+> > +static int usb251xb_i2c_suspend(struct device *dev)
+> > +{
+> > +	struct i2c_client *client = to_i2c_client(dev);
+> > +	struct usb251xb *hub = i2c_get_clientdata(client);
+> > +
+> > +	return usb251xb_suspend(hub);
+> > +}
+> > +
+> > +static int usb251xb_i2c_resume(struct device *dev)
+> > +{
+> > +	struct i2c_client *client = to_i2c_client(dev);
+> > +	struct usb251xb *hub = i2c_get_clientdata(client);
+> > +
+> > +	return usb251xb_resume(hub);
+> > +}
+> > +
+> > +static DEFINE_SIMPLE_DEV_PM_OPS(usb251xb_i2c_pm_ops, usb251xb_i2c_suspend, usb251xb_i2c_resume);
+> >  
+> >  static const struct i2c_device_id usb251xb_id[] = {
+> >  	{ "usb2422" },
+> > @@ -739,13 +761,71 @@ static struct i2c_driver usb251xb_i2c_driver = {
+> >  	.driver = {
+> >  		.name = DRIVER_NAME,
+> >  		.of_match_table = usb251xb_of_match,
+> > -		.pm = pm_sleep_ptr(&usb251xb_pm_ops),
+> > +		.pm = pm_sleep_ptr(&usb251xb_i2c_pm_ops),
+> >  	},
+> >  	.probe = usb251xb_i2c_probe,
+> >  	.id_table = usb251xb_id,
+> >  };
+> >  
+> > -module_i2c_driver(usb251xb_i2c_driver);
+> > +static int usb251xb_plat_probe(struct platform_device *pdev)
+> > +{
+> > +	struct usb251xb *hub;
+> > +
+> > +	hub = devm_kzalloc(&pdev->dev, sizeof(*hub), GFP_KERNEL);
+> > +	if (!hub)
+> > +		return -ENOMEM;
+> > +
+> > +	platform_set_drvdata(pdev, hub);
+> > +	hub->dev = &pdev->dev;
+> > +
+> > +	return usb251xb_probe(hub);
+> > +}
+> > +
+> > +static int usb251xb_plat_suspend(struct device *dev)
+> > +{
+> > +	return usb251xb_suspend(dev_get_drvdata(dev));
+> > +}
+> > +
+> > +static int usb251xb_plat_resume(struct device *dev)
+> > +{
+> > +	return usb251xb_resume(dev_get_drvdata(dev));
+> > +}
+> > +
+> > +static DEFINE_SIMPLE_DEV_PM_OPS(usb251xb_plat_pm_ops, usb251xb_plat_suspend, usb251xb_plat_resume);
+> > +
+> > +static struct platform_driver usb251xb_plat_driver = {
+> > +	.driver = {
+> > +		.name = DRIVER_NAME,
+> > +		.of_match_table = usb251xb_of_match,
+> > +		.pm = pm_sleep_ptr(&usb251xb_plat_pm_ops),
+> > +	},
+> > +	.probe		= usb251xb_plat_probe,
+> > +};
+> > +
+> > +static int __init usb251xb_init(void)
+> > +{
+> > +	int err;
+> > +
+> > +	err = i2c_add_driver(&usb251xb_i2c_driver);
+> > +	if (err)
+> > +		return err;
+> > +
+> > +	err = platform_driver_register(&usb251xb_plat_driver);
+> > +	if (err) {
+> > +		i2c_del_driver(&usb251xb_i2c_driver);
+> > +		return err;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +module_init(usb251xb_init);
+> > +
+> > +static void __exit usb251xb_exit(void)
+> > +{
+> > +	platform_driver_unregister(&usb251xb_plat_driver);
+> > +	i2c_del_driver(&usb251xb_i2c_driver);
+> > +}
+> > +module_exit(usb251xb_exit);
+> >  
+> >  MODULE_AUTHOR("Richard Leitner <richard.leitner@skidata.com>");
+> >  MODULE_DESCRIPTION("USB251x/xBi USB 2.0 Hub Controller Driver");
+> > -- 
+> > 2.50.0
+> > 
+> 
+> regards;rl
 
