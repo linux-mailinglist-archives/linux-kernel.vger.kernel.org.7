@@ -1,226 +1,473 @@
-Return-Path: <linux-kernel+bounces-784380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E77AB33AAC
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:22:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87897B33AB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:23:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C59F484149
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:22:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C9561889E61
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:22:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE3762BDC35;
-	Mon, 25 Aug 2025 09:22:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62C8F299954;
+	Mon, 25 Aug 2025 09:22:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Ktg4b7N5"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YFLcAmiu"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D8B298994
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 09:22:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E81E2356B9
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 09:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756113731; cv=none; b=qv1Q83vXwGd/IFmcjJsxXU+GTapzRDxalaeumSut7h9/Sg1jaLTPXsgHDfrPPR3AwzGXoFBfynsU1PL1tBLMTuL+zt6w8kvkG7IO7J80ncza6dtZ6vmVm1PJ31xY/kNM4Lj2bQtoBe7OlbC5YO0fYrS7nP6+wQBZxeXRH8AAfIw=
+	t=1756113740; cv=none; b=TxhrAXjjhMBoSXD/nP9u4jS3b69l4MfDJM5pU2p4qECXUqRcsYX15ZPKsk44o9xQlkcKw8Nji0SGVAzaTPy8ZoBjOn45oeuxoyQ1zh2PrPgTvNsQs0JzMgIAWhfqQMPIIbp4CxEdUZqEcj058AZFz8G9oBMl6LPR+V8h6MSLsLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756113731; c=relaxed/simple;
-	bh=9bZNwRqzl8AWUYabscTcxNnDfMPP4awyOttaTxXW8yY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IlicirRobTvFZTVis3FwhRmnhwjq84wLnMX2+8EBMd6AQ5aZTf1T8QcNq0BYROBZ36Z5EUGzfYcXNgOE+Q1dKtviGX2jzlp+97b2nouYkBJBqHvDFRKLIYbBLkttEEWg+MQBJSeQr86ftGj5rhIdXBtYbLdP2pO0df21Uz+jsRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Ktg4b7N5; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57P8UqAr025091
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 09:22:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=uZhYIuZX4ATTadEC4VVuga/g
-	/sTYW1yNnMJwGqSFpK8=; b=Ktg4b7N5GiovvSel0DzO72aB5pzfkvic3nIrgaPJ
-	7d+zCHi/+NJ/DBhw4j+sawTKexH/VL/gLLN0XTo6m/OfdUtQtAzOzxFDjH7sMGES
-	OYee2Ct0Tvxq3sMUxVdUHpr5CKlB3oca9wf0rrU45ulfemQnA68h+Ryb5vYz2tVY
-	9sUKyZlF0jtDagdHlm6vvbKJogDm2ng2YeFkmFbddfDLADOJfKD0h2n7lfIkJb/1
-	yGcKiN0qTBSZazOBWMz6ZALRaYtx8BpM1J+P10eA9c7zVmFwwiq0ay+/YXKulY49
-	stjDXMNqTh6Krh46qHhsWYAmcDSwUBdwTq5KnPPG7xOonw==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5um4kdd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 09:22:08 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7e8704e0264so1087684185a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 02:22:08 -0700 (PDT)
+	s=arc-20240116; t=1756113740; c=relaxed/simple;
+	bh=tmSXeUMYd1y7I6Cud0Np8R2ZmALbpzeie/4wsApA4kQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=XcZ/oKZ4lJA6QcTmLsXmXK+2DkYB5zdk6XsRuHTPj53J8LB7EH2ZMUTAySfWc7g9+aMew/aCWkiTsr5kLYRvzRwbpNviR4k483bhwn9g7XGvh7OT2Z24In4NBye9jSOpjKJtlhgMr+aEittPNVnIGbJ71SDcWiPwusl8u65s2+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YFLcAmiu; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45a1b0060bfso27175035e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 02:22:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756113737; x=1756718537; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=DxpyDWEEiXC8RbtTxDFHInIMZ/KB0uS5wOH557bgda8=;
+        b=YFLcAmiurDyEqtqWAX5FroRIe96CHYIEbCel1WSAY4QKbWMfCVF4YBIcfIZj8V1B4J
+         M2tw8Um1RB2MKNYbpJYBH4FRfDCqRI53DuoEytLeTU9efJvwv3a0fpu/uT5/VvVZ7hvO
+         iowDU6zfSgTI1VJkdRyOP0xyCgR19LTyQ9RDyNYoB6nonus6/Kme6Yk4jGNTHOLyk5mF
+         g8/6imx2B572hYC8QqvJQ09Tq6H058/fC0rPigNVPM5xBmJPfOgR+7Q4KKMFPgtZ69GN
+         DL5jOdduAif0jfK3yhGMOm4HFggljaezE6pWLBf1Ul2vjowKj5BW1ouaoGWOHC1ETeQu
+         7y6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756113727; x=1756718527;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uZhYIuZX4ATTadEC4VVuga/g/sTYW1yNnMJwGqSFpK8=;
-        b=fKbKh40VDVJtUCgzbf0r4xSQHY3gtJJgMayjWhSxl2vQGXfFGGWu8WkRB7m8MUJFLz
-         9RYjkzeTqiCQmXHk7CEW30ruVB676O7sr7VzmGS2CpfOxsTJsEV/hmKd70CUoAAjKgBG
-         laCau8tqkYrbPx/RmUdo5lMV/ivOFHNUWmDFgnI7ocQRcgDek728368VG4NDSV7zzVR7
-         rU+iJp+N/ls6Xw0DEVMX6sEWswC5i9P9iInqepFabQe3P1sPqJnARRnZWgv/j48NtPae
-         0YbtQ3TU8eQG7kiGqC2QsVaSuyuxc5PUdwDeW0QpZReyeIpF2LwqOzSI4NKjejPRh7vV
-         STKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVvAQjbmdO4WHh10vlBIWHFT8UjArXq0GcUx4zvazl0kSkay+oNwC7muuZBO5QoPURs+jDWRswaWQZGtHI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfJCUsxfB8U+q4iOWqzS5SsoHHlxcThtXHkFlfKcesvHd5K3wF
-	6F8SMO3CkpM9g+H0f1Hb0Gcmgj8Xcv4N9dQJMAHWfQzSEiW4TEV1bVosz0uVsf85IWhcyGsGy25
-	o2TMyTFmMnbDEocgoAATDxGweHM+tEpO07gTgqPaLRg9q5obOoO9dWqbYlvi2TEJZlHE=
-X-Gm-Gg: ASbGncsvdO6rAtdFcEy9MF65keKMN3s6uFEdSOsVzwNhPIlOFT2wb51JLxp5b7d27Yd
-	px5GvfiEa67/SPD1H7F+DfZ/nGrBbuggIdMAQO7fSZj4Xstw0NJqRL+uY1DL024JUkCFSqpxMvs
-	pLt7YJClZ4hKVjZiBbc+oWTXcFNDd9YjYFbBIlIidpXcrdo18meCg6Kz9s9dMdfm40z3BtxYphY
-	5AP6VYaYv8ml8ywDh3ofIyo4AVzhk160bRnLmuItT09UKedQVVLRl5gt82PygcP8W3ofha43uUm
-	qdsttdtha58U8B3FikzdpUQS8HqNqR8GtQj2qJaKCAbQJmi8WjJ/ZsFSasWDleb+W2QQ3ZWISHx
-	K/QA12QKIYHm5b/OtI24owOZJvgs8pBBHrewE00NgnaVfnPijFxSU
-X-Received: by 2002:ad4:5cc9:0:b0:707:4f43:eed6 with SMTP id 6a1803df08f44-70d97251887mr132407976d6.19.1756113727138;
-        Mon, 25 Aug 2025 02:22:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE3V/rbRFQBwL/w5qM/vQJMILCKP6viO2gUQG9twx32eTEgRqBXSWLUWk0D0/yPB9lV7rSK9w==
-X-Received: by 2002:ad4:5cc9:0:b0:707:4f43:eed6 with SMTP id 6a1803df08f44-70d97251887mr132407726d6.19.1756113726479;
-        Mon, 25 Aug 2025 02:22:06 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f39de534bsm1393060e87.127.2025.08.25.02.22.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 02:22:04 -0700 (PDT)
-Date: Mon, 25 Aug 2025 12:22:03 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Brian Norris <briannorris@chromium.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        Odelu Kukatla <quic_okukatla@quicinc.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>, cros-qcom-dts-watchers@chromium.org
-Subject: Re: [RFC PATCH] arm64: dts: qcom: sc7280: Drop aggre{1,2}_noc QOS
- clocks on Herobrine
-Message-ID: <3i7pdzata6gxsc3svb3eygubfdfmnetlekxdd25bb4ljkdrlh7@bvufiwmdusqz>
-References: <20250823123718.RFC.1.Idebf1d8bd8ff507462fef9dc1ff47e84c01e9b60@changeid>
+        d=1e100.net; s=20230601; t=1756113737; x=1756718537;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DxpyDWEEiXC8RbtTxDFHInIMZ/KB0uS5wOH557bgda8=;
+        b=aqhYNWhXVI0oiKHm7MNCiPg7E/g0CoD9G2/jmjjcehb6esOp7OuJydFJAw+0+RqmG/
+         GtgFRek6IgwLPdQmub+fUTIiF0S6FDUbh1BshjNPMvlGvQ/f73NkgcrIvehJEvsBFEiv
+         U2EVba4ypJGrn/9X/eLdMXjnR7O+DOVDMSwRS7TnBAI8tSlnWcX5IMnmf0HQ3ynLkBiS
+         pYIpO5El1xNuYruQ8XfrT0o641mqL77AXvI2BeNKEBjZ5r2WC5hbuLO5NGFcuNIoBpfr
+         CtKYA+5FifC/tElgdzLh+MAL/nF/oZ4oj4gyl8XOjxnxHRtoFhFc8zLoWQObhsXoeowL
+         VpiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXBzB75zMDqJnrU403Fx/1fAU1KdeVP6hysojN2dpCGMYcAMH+blphuOv8uog79WyfbZeXs4h5WVsMObtc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzK8WX+JTOeT8Za/TI3EQsd7dwFhPNSrgXQP+y0KFiMpV5Dr6zX
+	VTZ43L2P7EDWrwbLfGS/SPacHFgaipTlp6MZIGOhycJ4X9ECN+arwt2FC408hBGB7ZLJiuTEw7J
+	Ws/57We++3bwydzh5ug==
+X-Google-Smtp-Source: AGHT+IEsD7hEieOB0TZ/iZJGtI2HZhSYiwy5rAQ58zAxezg1OxYBcPYv1yDzkWSHxlrD2I4lXOtswTBTXEy4QYo=
+X-Received: from wmga3.prod.google.com ([2002:a05:600c:2d43:b0:459:db87:c332])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:4f03:b0:43c:f44c:72a6 with SMTP id 5b1f17b1804b1-45b5daacd8bmr31737785e9.2.1756113736699;
+ Mon, 25 Aug 2025 02:22:16 -0700 (PDT)
+Date: Mon, 25 Aug 2025 09:22:09 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250823123718.RFC.1.Idebf1d8bd8ff507462fef9dc1ff47e84c01e9b60@changeid>
-X-Authority-Analysis: v=2.4 cv=VtIjA/2n c=1 sm=1 tr=0 ts=68ac2b40 cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=cm27Pg_UAAAA:8 a=XzfyJc1qPjP2x_x8poUA:9 a=CjuIK1q_8ugA:10
- a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMiBTYWx0ZWRfX/Ysazlfk5TX7
- Q0o3xZxn9zTjKWwl95ks8TZKOFePfuTEGsHCtr2guj7+8bK0cveAJp4uIln5xzKag3K1AxPZOaw
- a8pbL65qaEPibEaYsg0LoD4w2YnlE/W0IzOo3Yh7DGi/MgmNtvAkdmJU2HOjPPtPbzqmAYGDPm5
- YC3D+1IQDHk2McunmImHRYQpENkOLrwWA14vwmwAyRP89EhXas8sGJuUJz/c+gPm6nd0FY23kq9
- u3CBGWMtexQw3OgdAJzpKbFX/WqX8z/WF0U2u255V+/dbIZOL0QhrbvgbnjNu0uIw3wknZ/pKX7
- KG9lAR/TJ0n7HFrpVtCKUc0896qpYclTwebbz2KL9Nf4KF9uTzh+ioJtQWqf9Arkep0D8Msf7x3
- FA33IU6L
-X-Proofpoint-GUID: zuFXu43WphkWEa9sbRhdqEpX9nlHp7YQ
-X-Proofpoint-ORIG-GUID: zuFXu43WphkWEa9sbRhdqEpX9nlHp7YQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-25_04,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 phishscore=0 priorityscore=1501 impostorscore=0 bulkscore=0
- suspectscore=0 malwarescore=0 adultscore=0 spamscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508230032
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAEArrGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDCyMT3fSC0rJc3ZLKgnzdtMwK3WTDFHODREvz5DTzRCWgpoKiVKAw2MD o2NpaAGiZScZgAAAA
+X-Change-Id: 20250824-gpuvm-typo-fix-c1d70a97cf7a
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=16753; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=tmSXeUMYd1y7I6Cud0Np8R2ZmALbpzeie/4wsApA4kQ=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBorCtDpx3oOOh+EcHwwwc+ynTWChjdTjspYcPkk
+ uII9Vq9lz2JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaKwrQwAKCRAEWL7uWMY5
+ RmbKD/wNdXcuRl0xcL+s/LWAJM+G8yYL5hkYC+2SvwjApshMidDUToWKTbru87JYNW8qj2phK5Q
+ DXmNBOuD+9QieZUtPvHRsPwmPRSJ6jd3CmrhdYL9ASVIVcBXIg5O0vUSu42BcWH6F1EQLWwdXUS
+ d0/8h1Y5urEIiDuzl/dOEJ1zcOVVUErx3Ki5HSRRImv3nJRXGmkCSBZHcAujJoPmOXrqBQUsKi3
+ /AQzcDByQH8F2mwW5/oIbJ7rsT+94Rpw8UUJGKJOd7JgTFNHMnM4qoY2n2/cvPWVtL83rq4WUV9
+ +G93t/5/gH6DVj+aZFQHz52jw51tSCq2clo/OjnjK1YdRKfwfyafYUpfIl0Y2cJt7RfG4BeRXzO
+ ZiPxHcotNlwGF5YXdil9JU5FDu9YgzdaK4VYjpIEMY0AhFKZGAKCeEpw9bXT+jJuuRfBlMlUfbb
+ LY4AiN2ZUS9l9EkeZWsF1ozX3xKz7DY7C7z22M/VI3vi1mRgNQUEgD07NFU9uRLCW8Mixao42OR
+ 59eQg7NKYIh3hgbyMfZVVdR33LJ1SSeGswAM2D21Xbu7YDH5ceqqb/swZu0c2BdSo+2bmDrL3tB
+ hf7/88B93gucne9B0sN7o+htiSARCmOLqMUz+ob6FECT3c16q5nR/ICqC/Ge9BMNKnp+rEojzFw UMKXtv9KsxwLluQ==
+X-Mailer: b4 0.14.2
+Message-ID: <20250825-gpuvm-typo-fix-v1-1-14e9e78e28e6@google.com>
+Subject: [PATCH] drm/gpuvm: fix various typos in .c and .h gpuvm file
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>, Matthew Brost <matthew.brost@intel.com>, 
+	"=?utf-8?q?Thomas_Hellstr=C3=B6m?=" <thomas.hellstrom@linux.intel.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Sat, Aug 23, 2025 at 12:37:18PM -0700, Brian Norris wrote:
-> Ever since these two commits
-> 
->   fbd908bb8bc0 ("interconnect: qcom: sc7280: enable QoS configuration")
->   2b5004956aff ("arm64: dts: qcom: sc7280: Add clocks for QOS configuration")
-> 
-> Herobrine systems fail to boot due to crashes like the following:
+After working with this code for a while, I came across several typos.
+This patch fixes them.
 
-Nice to see somebody using these boards!
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+ drivers/gpu/drm/drm_gpuvm.c | 80 ++++++++++++++++++++++-----------------------
+ include/drm/drm_gpuvm.h     | 10 +++---
+ 2 files changed, 45 insertions(+), 45 deletions(-)
 
-> 
-> [    0.243171] Kernel panic - not syncing: Asynchronous SError Interrupt
-> [    0.243173] CPU: 7 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0 #1 c5464041cff584ced692726af2c4400fa2bde1db
-> [    0.243178] Hardware name: Qualcomm Technologies, Inc. sc7280 CRD platform (rev5+) (DT)
-> [    0.243180] Call trace:
-> [    0.243182]  dump_backtrace+0x104/0x128
-> [    0.243194]  show_stack+0x24/0x38
-> [    0.243202]  __dump_stack+0x28/0x38
-> [    0.243208]  dump_stack_lvl+0x28/0xb8
-> [    0.243211]  dump_stack+0x18/0x30
-> [    0.243215]  panic+0x134/0x340
-> [    0.243219]  nmi_panic+0x48/0x98
-> [    0.243227]  arm64_serror_panic+0x6c/0x80
-> [    0.243245]  arm64_is_fatal_ras_serror+0xd8/0xe0
-> [    0.243261]  do_serror+0x5c/0xa8
-> [    0.243265]  el1h_64_error_handler+0x34/0x48
-> [    0.243272]  el1h_64_error+0x7c/0x80
-> [    0.243285]  regmap_mmio_read+0x5c/0xc0
-> [    0.243289]  _regmap_bus_reg_read+0x78/0xf8
-> [    0.243296]  regmap_update_bits_base+0xec/0x3a8
-> [    0.243300]  qcom_icc_rpmh_probe+0x2d4/0x490
-> [    0.243308]  platform_probe+0xb4/0xe0
-> [...]
-> 
-> Specifically, they fail in qcom_icc_set_qos() when trying to write the
-> QoS settings for qhm_qup1. Several of the previous nodes (qhm_qspi,
-> qhm_qup0, ...) seem to configure without crashing.
-> 
-> I don't really know what's unique about Herobrine systems vs other
-> sc7280 systems that presumably work fine. I'd guess there's some
-> conflict with something configured by the boot firmware.
+diff --git a/drivers/gpu/drm/drm_gpuvm.c b/drivers/gpu/drm/drm_gpuvm.c
+index d6bea8a4fffd7613fb9b9ed5c795df373da2e7b6..098cc6be1c8273a36178dbd08fafcba87c3338ec 100644
+--- a/drivers/gpu/drm/drm_gpuvm.c
++++ b/drivers/gpu/drm/drm_gpuvm.c
+@@ -40,7 +40,7 @@
+  * mapping's backing &drm_gem_object buffers.
+  *
+  * &drm_gem_object buffers maintain a list of &drm_gpuva objects representing
+- * all existent GPU VA mappings using this &drm_gem_object as backing buffer.
++ * all existing GPU VA mappings using this &drm_gem_object as backing buffer.
+  *
+  * GPU VAs can be flagged as sparse, such that drivers may use GPU VAs to also
+  * keep track of sparse PTEs in order to support Vulkan 'Sparse Resources'.
+@@ -72,7 +72,7 @@
+  * but it can also be a 'dummy' object, which can be allocated with
+  * drm_gpuvm_resv_object_alloc().
+  *
+- * In order to connect a struct drm_gpuva its backing &drm_gem_object each
++ * In order to connect a struct drm_gpuva to its backing &drm_gem_object each
+  * &drm_gem_object maintains a list of &drm_gpuvm_bo structures, and each
+  * &drm_gpuvm_bo contains a list of &drm_gpuva structures.
+  *
+@@ -81,7 +81,7 @@
+  * This is ensured by the API through drm_gpuvm_bo_obtain() and
+  * drm_gpuvm_bo_obtain_prealloc() which first look into the corresponding
+  * &drm_gem_object list of &drm_gpuvm_bos for an existing instance of this
+- * particular combination. If not existent a new instance is created and linked
++ * particular combination. If not present, a new instance is created and linked
+  * to the &drm_gem_object.
+  *
+  * &drm_gpuvm_bo structures, since unique for a given &drm_gpuvm, are also used
+@@ -108,7 +108,7 @@
+  * sequence of operations to satisfy a given map or unmap request.
+  *
+  * Therefore the DRM GPU VA manager provides an algorithm implementing splitting
+- * and merging of existent GPU VA mappings with the ones that are requested to
++ * and merging of existing GPU VA mappings with the ones that are requested to
+  * be mapped or unmapped. This feature is required by the Vulkan API to
+  * implement Vulkan 'Sparse Memory Bindings' - drivers UAPIs often refer to this
+  * as VM BIND.
+@@ -119,7 +119,7 @@
+  * execute in order to integrate the new mapping cleanly into the current state
+  * of the GPU VA space.
+  *
+- * Depending on how the new GPU VA mapping intersects with the existent mappings
++ * Depending on how the new GPU VA mapping intersects with the existing mappings
+  * of the GPU VA space the &drm_gpuvm_ops callbacks contain an arbitrary amount
+  * of unmap operations, a maximum of two remap operations and a single map
+  * operation. The caller might receive no callback at all if no operation is
+@@ -139,16 +139,16 @@
+  * one unmap operation and one or two map operations, such that drivers can
+  * derive the page table update delta accordingly.
+  *
+- * Note that there can't be more than two existent mappings to split up, one at
++ * Note that there can't be more than two existing mappings to split up, one at
+  * the beginning and one at the end of the new mapping, hence there is a
+  * maximum of two remap operations.
+  *
+  * Analogous to drm_gpuvm_sm_map() drm_gpuvm_sm_unmap() uses &drm_gpuvm_ops to
+  * call back into the driver in order to unmap a range of GPU VA space. The
+- * logic behind this function is way simpler though: For all existent mappings
++ * logic behind this function is way simpler though: For all existing mappings
+  * enclosed by the given range unmap operations are created. For mappings which
+- * are only partically located within the given range, remap operations are
+- * created such that those mappings are split up and re-mapped partically.
++ * are only partially located within the given range, remap operations are
++ * created such that those mappings are split up and re-mapped partially.
+  *
+  * As an alternative to drm_gpuvm_sm_map() and drm_gpuvm_sm_unmap(),
+  * drm_gpuvm_sm_map_ops_create() and drm_gpuvm_sm_unmap_ops_create() can be used
+@@ -168,7 +168,7 @@
+  * provided helper functions drm_gpuva_map(), drm_gpuva_remap() and
+  * drm_gpuva_unmap() instead.
+  *
+- * The following diagram depicts the basic relationships of existent GPU VA
++ * The following diagram depicts the basic relationships of existing GPU VA
+  * mappings, a newly requested mapping and the resulting mappings as implemented
+  * by drm_gpuvm_sm_map() - it doesn't cover any arbitrary combinations of these.
+  *
+@@ -218,7 +218,7 @@
+  *
+  *
+  * 4) Existent mapping is a left aligned subset of the requested one, hence
+- *    replace the existent one.
++ *    replace the existing one.
+  *
+  *    ::
+  *
+@@ -236,9 +236,9 @@
+  *       and/or non-contiguous BO offset.
+  *
+  *
+- * 5) Requested mapping's range is a left aligned subset of the existent one,
++ * 5) Requested mapping's range is a left aligned subset of the existing one,
+  *    but backed by a different BO. Hence, map the requested mapping and split
+- *    the existent one adjusting its BO offset.
++ *    the existing one adjusting its BO offset.
+  *
+  *    ::
+  *
+@@ -271,9 +271,9 @@
+  *	new: |-----|-----| (a.bo_offset=n, a'.bo_offset=n+1)
+  *
+  *
+- * 7) Requested mapping's range is a right aligned subset of the existent one,
++ * 7) Requested mapping's range is a right aligned subset of the existing one,
+  *    but backed by a different BO. Hence, map the requested mapping and split
+- *    the existent one, without adjusting the BO offset.
++ *    the existing one, without adjusting the BO offset.
+  *
+  *    ::
+  *
+@@ -304,7 +304,7 @@
+  *
+  * 9) Existent mapping is overlapped at the end by the requested mapping backed
+  *    by a different BO. Hence, map the requested mapping and split up the
+- *    existent one, without adjusting the BO offset.
++ *    existing one, without adjusting the BO offset.
+  *
+  *    ::
+  *
+@@ -334,9 +334,9 @@
+  *	 new: |-----|-----------| (a'.bo_offset=n, a.bo_offset=n+1)
+  *
+  *
+- * 11) Requested mapping's range is a centered subset of the existent one
++ * 11) Requested mapping's range is a centered subset of the existing one
+  *     having a different backing BO. Hence, map the requested mapping and split
+- *     up the existent one in two mappings, adjusting the BO offset of the right
++ *     up the existing one in two mappings, adjusting the BO offset of the right
+  *     one accordingly.
+  *
+  *     ::
+@@ -351,7 +351,7 @@
+  *	 new: |-----|-----|-----| (a.bo_offset=n,b.bo_offset=m,a'.bo_offset=n+2)
+  *
+  *
+- * 12) Requested mapping is a contiguous subset of the existent one. Split it
++ * 12) Requested mapping is a contiguous subset of the existing one. Split it
+  *     up, but indicate that the backing PTEs could be kept.
+  *
+  *     ::
+@@ -367,7 +367,7 @@
+  *
+  *
+  * 13) Existent mapping is a right aligned subset of the requested one, hence
+- *     replace the existent one.
++ *     replace the existing one.
+  *
+  *     ::
+  *
+@@ -386,7 +386,7 @@
+  *
+  *
+  * 14) Existent mapping is a centered subset of the requested one, hence
+- *     replace the existent one.
++ *     replace the existing one.
+  *
+  *     ::
+  *
+@@ -406,7 +406,7 @@
+  *
+  * 15) Existent mappings is overlapped at the beginning by the requested mapping
+  *     backed by a different BO. Hence, map the requested mapping and split up
+- *     the existent one, adjusting its BO offset accordingly.
++ *     the existing one, adjusting its BO offset accordingly.
+  *
+  *     ::
+  *
+@@ -534,8 +534,8 @@
+  * make use of them.
+  *
+  * The below code is strictly limited to illustrate the generic usage pattern.
+- * To maintain simplicitly, it doesn't make use of any abstractions for common
+- * code, different (asyncronous) stages with fence signalling critical paths,
++ * To maintain simplicity, it doesn't make use of any abstractions for common
++ * code, different (asynchronous) stages with fence signalling critical paths,
+  * any other helpers or error handling in terms of freeing memory and dropping
+  * previously taken locks.
+  *
+@@ -544,7 +544,7 @@
+  *	// Allocates a new &drm_gpuva.
+  *	struct drm_gpuva * driver_gpuva_alloc(void);
+  *
+- *	// Typically drivers would embedd the &drm_gpuvm and &drm_gpuva
++ *	// Typically drivers would embed the &drm_gpuvm and &drm_gpuva
+  *	// structure in individual driver structures and lock the dma-resv with
+  *	// drm_exec or similar helpers.
+  *	int driver_mapping_create(struct drm_gpuvm *gpuvm,
+@@ -652,7 +652,7 @@
+  *		.sm_step_unmap = driver_gpuva_unmap,
+  *	};
+  *
+- *	// Typically drivers would embedd the &drm_gpuvm and &drm_gpuva
++ *	// Typically drivers would embed the &drm_gpuvm and &drm_gpuva
+  *	// structure in individual driver structures and lock the dma-resv with
+  *	// drm_exec or similar helpers.
+  *	int driver_mapping_create(struct drm_gpuvm *gpuvm,
+@@ -750,7 +750,7 @@
+  *
+  * This helper is here to provide lockless list iteration. Lockless as in, the
+  * iterator releases the lock immediately after picking the first element from
+- * the list, so list insertion deletion can happen concurrently.
++ * the list, so list insertion and deletion can happen concurrently.
+  *
+  * Elements popped from the original list are kept in a local list, so removal
+  * and is_empty checks can still happen while we're iterating the list.
+@@ -1230,7 +1230,7 @@ drm_gpuvm_prepare_objects_locked(struct drm_gpuvm *gpuvm,
+ }
+ 
+ /**
+- * drm_gpuvm_prepare_objects() - prepare all assoiciated BOs
++ * drm_gpuvm_prepare_objects() - prepare all associated BOs
+  * @gpuvm: the &drm_gpuvm
+  * @exec: the &drm_exec locking context
+  * @num_fences: the amount of &dma_fences to reserve
+@@ -1300,13 +1300,13 @@ drm_gpuvm_prepare_range(struct drm_gpuvm *gpuvm, struct drm_exec *exec,
+ EXPORT_SYMBOL_GPL(drm_gpuvm_prepare_range);
+ 
+ /**
+- * drm_gpuvm_exec_lock() - lock all dma-resv of all assoiciated BOs
++ * drm_gpuvm_exec_lock() - lock all dma-resv of all associated BOs
+  * @vm_exec: the &drm_gpuvm_exec wrapper
+  *
+  * Acquires all dma-resv locks of all &drm_gem_objects the given
+  * &drm_gpuvm contains mappings of.
+  *
+- * Addionally, when calling this function with struct drm_gpuvm_exec::extra
++ * Additionally, when calling this function with struct drm_gpuvm_exec::extra
+  * being set the driver receives the given @fn callback to lock additional
+  * dma-resv in the context of the &drm_gpuvm_exec instance. Typically, drivers
+  * would call drm_exec_prepare_obj() from within this callback.
+@@ -1363,7 +1363,7 @@ fn_lock_array(struct drm_gpuvm_exec *vm_exec)
+ }
+ 
+ /**
+- * drm_gpuvm_exec_lock_array() - lock all dma-resv of all assoiciated BOs
++ * drm_gpuvm_exec_lock_array() - lock all dma-resv of all associated BOs
+  * @vm_exec: the &drm_gpuvm_exec wrapper
+  * @objs: additional &drm_gem_objects to lock
+  * @num_objs: the number of additional &drm_gem_objects to lock
+@@ -1658,7 +1658,7 @@ drm_gpuvm_bo_find(struct drm_gpuvm *gpuvm,
+ EXPORT_SYMBOL_GPL(drm_gpuvm_bo_find);
+ 
+ /**
+- * drm_gpuvm_bo_obtain() - obtains and instance of the &drm_gpuvm_bo for the
++ * drm_gpuvm_bo_obtain() - obtains an instance of the &drm_gpuvm_bo for the
+  * given &drm_gpuvm and &drm_gem_object
+  * @gpuvm: The &drm_gpuvm the @obj is mapped in.
+  * @obj: The &drm_gem_object being mapped in the @gpuvm.
+@@ -1694,7 +1694,7 @@ drm_gpuvm_bo_obtain(struct drm_gpuvm *gpuvm,
+ EXPORT_SYMBOL_GPL(drm_gpuvm_bo_obtain);
+ 
+ /**
+- * drm_gpuvm_bo_obtain_prealloc() - obtains and instance of the &drm_gpuvm_bo
++ * drm_gpuvm_bo_obtain_prealloc() - obtains an instance of the &drm_gpuvm_bo
+  * for the given &drm_gpuvm and &drm_gem_object
+  * @__vm_bo: A pre-allocated struct drm_gpuvm_bo.
+  *
+@@ -1758,7 +1758,7 @@ EXPORT_SYMBOL_GPL(drm_gpuvm_bo_extobj_add);
+  * @vm_bo: the &drm_gpuvm_bo to add or remove
+  * @evict: indicates whether the object is evicted
+  *
+- * Adds a &drm_gpuvm_bo to or removes it from the &drm_gpuvms evicted list.
++ * Adds a &drm_gpuvm_bo to or removes it from the &drm_gpuvm's evicted list.
+  */
+ void
+ drm_gpuvm_bo_evict(struct drm_gpuvm_bo *vm_bo, bool evict)
+@@ -1860,7 +1860,7 @@ __drm_gpuva_remove(struct drm_gpuva *va)
+  * drm_gpuva_remove() - remove a &drm_gpuva
+  * @va: the &drm_gpuva to remove
+  *
+- * This removes the given &va from the underlaying tree.
++ * This removes the given &va from the underlying tree.
+  *
+  * It is safe to use this function using the safe versions of iterating the GPU
+  * VA space, such as drm_gpuvm_for_each_va_safe() and
+@@ -2464,7 +2464,7 @@ EXPORT_SYMBOL_GPL(drm_gpuvm_sm_map);
+  *
+  * This function iterates the given range of the GPU VA space. It utilizes the
+  * &drm_gpuvm_ops to call back into the driver providing the operations to
+- * unmap and, if required, split existent mappings.
++ * unmap and, if required, split existing mappings.
+  *
+  * Drivers may use these callbacks to update the GPU VA space right away within
+  * the callback. In case the driver decides to copy and store the operations for
+@@ -2574,7 +2574,7 @@ static const struct drm_gpuvm_ops lock_ops = {
+  *    required without the earlier DRIVER_OP_MAP.  This is safe because we've
+  *    already locked the GEM object in the earlier DRIVER_OP_MAP step.
+  *
+- * Returns: 0 on success or a negative error codec
++ * Returns: 0 on success or a negative error code
+  */
+ int
+ drm_gpuvm_sm_map_exec_lock(struct drm_gpuvm *gpuvm,
+@@ -2746,12 +2746,12 @@ __drm_gpuvm_sm_map_ops_create(struct drm_gpuvm *gpuvm,
+  * @req: map request arguments
+  *
+  * This function creates a list of operations to perform splitting and merging
+- * of existent mapping(s) with the newly requested one.
++ * of existing mapping(s) with the newly requested one.
+  *
+  * The list can be iterated with &drm_gpuva_for_each_op and must be processed
+  * in the given order. It can contain map, unmap and remap operations, but it
+  * also can be empty if no operation is required, e.g. if the requested mapping
+- * already exists is the exact same way.
++ * already exists in the exact same way.
+  *
+  * There can be an arbitrary amount of unmap operations, a maximum of two remap
+  * operations and a single map operation. The latter one represents the original
+@@ -2788,7 +2788,7 @@ EXPORT_SYMBOL_GPL(drm_gpuvm_sm_map_ops_create);
+  * The list can be iterated with &drm_gpuva_for_each_op and must be processed
+  * in the given order. It can contain map and remap operations, but it
+  * also can be empty if no operation is required, e.g. if the requested mapping
+- * already exists is the exact same way.
++ * already exists in the exact same way.
+  *
+  * There will be no unmap operations, a maximum of two remap operations and two
+  * map operations. The two map operations correspond to: one from start to the
+diff --git a/include/drm/drm_gpuvm.h b/include/drm/drm_gpuvm.h
+index 4a22b9d848f7b3d5710ca554f5b01556abf95985..757d071275e5125522deaa0ed2adb7dcbe1314a5 100644
+--- a/include/drm/drm_gpuvm.h
++++ b/include/drm/drm_gpuvm.h
+@@ -103,7 +103,7 @@ struct drm_gpuva {
+ 	} va;
+ 
+ 	/**
+-	 * @gem: structure containing the &drm_gem_object and it's offset
++	 * @gem: structure containing the &drm_gem_object and its offset
+ 	 */
+ 	struct {
+ 		/**
+@@ -834,7 +834,7 @@ struct drm_gpuva_op_map {
+ 	} va;
+ 
+ 	/**
+-	 * @gem: structure containing the &drm_gem_object and it's offset
++	 * @gem: structure containing the &drm_gem_object and its offset
+ 	 */
+ 	struct {
+ 		/**
+@@ -1195,11 +1195,11 @@ struct drm_gpuvm_ops {
+ 
+ 	/**
+ 	 * @sm_step_unmap: called from &drm_gpuvm_sm_map and
+-	 * &drm_gpuvm_sm_unmap to unmap an existent mapping
++	 * &drm_gpuvm_sm_unmap to unmap an existing mapping
+ 	 *
+-	 * This callback is called when existent mapping needs to be unmapped.
++	 * This callback is called when existing mapping needs to be unmapped.
+ 	 * This is the case when either a newly requested mapping encloses an
+-	 * existent mapping or an unmap of an existent mapping is requested.
++	 * existing mapping or an unmap of an existing mapping is requested.
+ 	 *
+ 	 * The &priv pointer matches the one the driver passed to
+ 	 * &drm_gpuvm_sm_map or &drm_gpuvm_sm_unmap, respectively.
 
-I think it well might be that Herobrine's TZ doesn't export QoS regions
-to Linux.
+---
+base-commit: efe927b9702643a1d80472664c2642f0304cb608
+change-id: 20250824-gpuvm-typo-fix-c1d70a97cf7a
 
-> 
-> I'm submitting as an RFC just to get thoughts from people who hopefully
-> know better than me what might be going wrong here.
-> 
-> Fixes: fbd908bb8bc0 ("interconnect: qcom: sc7280: enable QoS configuration")
-> Fixes: 2b5004956aff ("arm64: dts: qcom: sc7280: Add clocks for QOS configuration")
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
-> ---
-> 
->  arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi b/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi
-> index 2ba4ea60cb14..59203ce58c61 100644
-> --- a/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi
-> @@ -394,6 +394,16 @@ &vreg_l2c_1p8 {
->  
->  /* ADDITIONS TO NODES DEFINED IN PARENT DEVICE TREE FILES */
->  
-> +/* QoS seems to have conflicts with boot firmware on these devices. */
-> +&aggre1_noc {
-> +	/delete-property/ clocks;
-
-While it might be enough for Linux to make it skip the QoS, I think a
-more correct fix would be to remove the 'reg' instead / in addition.
-
-On the other hand, having those boards used by only a few people it
-might be easier to just pick up the simple fix rather than implementing
-a 'proper' one.
-
-Nevertheless, this would require changing the schema too, see
-Documentation/devicetree/bindings/interconnect/qcom,sc7280-rpmh.yaml
-
-> +};
-> +
-> +/* QoS seems to have conflicts with boot firmware on these devices. */
-> +&aggre2_noc {
-> +	/delete-property/ clocks;
-> +};
-> +
->  &edp_panel {
->  	/* Our board provides power to the qcard for the eDP panel. */
->  	power-supply = <&vreg_edp_3p3>;
-> -- 
-> 2.51.0.rc2.233.g662b1ed5c5-goog
-> 
-
+Best regards,
 -- 
-With best wishes
-Dmitry
+Alice Ryhl <aliceryhl@google.com>
+
 
