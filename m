@@ -1,124 +1,87 @@
-Return-Path: <linux-kernel+bounces-784555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C440B33D54
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:57:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 410A3B33D55
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 12:57:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20B98163278
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:57:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97A4A48537C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 10:57:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B13202DE1FE;
-	Mon, 25 Aug 2025 10:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RBLcC+8T"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F16A2DECB2;
+	Mon, 25 Aug 2025 10:57:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895431F461D;
-	Mon, 25 Aug 2025 10:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF58E2D6E40
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 10:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756119424; cv=none; b=I7uOiuzHd6GZBxWOL7EXm/Lc9uOK8TBcQZJKyeAf50BtsTJKocUJU7B0udhtEljOkr31jZcOejn17x9SorDGB5336ZQTGi0wtTPT+xxjpiSc2MGvZMA2LMzOPFPxwgSbf3QsWyaRZvulTXexIr8zNIAnCanuPptL6KcY6ozDgWA=
+	t=1756119425; cv=none; b=n9SJ2prMo6ZI/ARlOTo/a9p91N0YhGVwetyOdsaN2QbKlCZDpdaz98oZslWYK+SpPxtS++PY0BxfGQs+O0jFDtsY0pfBH8izjXmOV+GvFY8kcmoWN5if9nkwSNmoPlqJYayt4LIHhQfH08Iy8R8q6IHjAJ2a9corCdeVXdR5l4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756119424; c=relaxed/simple;
-	bh=35MhAoHiu7MIpB/ExWo2dwB356FS35wrYSoaNynDcw0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bS7OL+5bmQlOa1wus8I2RaHYO8Ixml4xNthpY6vdTeKPrXEfMjot6PLu+V4/1K2IVSMhVveEG5tQTbmubNxeKMozkugS+5H0D8JufZHC0JEQn3fo3Lt/6bPe4TsU0AZpAQJfcmd+hQS2/rRp5DXjOLFr4eorC8cSoJpRbz7irVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RBLcC+8T; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756119422; x=1787655422;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=35MhAoHiu7MIpB/ExWo2dwB356FS35wrYSoaNynDcw0=;
-  b=RBLcC+8Tn78BZ30welEe/ELopPQtqKZOh6blIWQ6W5KTRMRBUHu2RiTm
-   JqdA5c1JppPwAzqm1NdjjekB94SrFl/62WfP/elN+D0TpVjpD2FogwBh3
-   OOtfSMfjaicYgZUFJe8hQgxUCoJ8dnmTaFQgryzZBJgG3afw86NCMSlN6
-   oiDBGCOIpmBJ6aiwajnApiXXnBAIFHW3NtFk+yd4t9Ifgl0aXQiYwC0Zk
-   NsPfZbcFKhlRWIw47xO4+f8HsA8rvgPS3oTuOUTrGZcKH/Me1IlKbEWxd
-   fEix6bFtVgNWYanQ0CkvtoZkvDpi/9WAsyJRALWfm09ipVNeTYEbZebpd
-   A==;
-X-CSE-ConnectionGUID: 5wXeGEdZTWireiIC1jdYqw==
-X-CSE-MsgGUID: wEx7PtXIRzOOLSxAaJLSJA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11532"; a="45902335"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="45902335"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 03:57:02 -0700
-X-CSE-ConnectionGUID: c+/S0nsdRNePn5wMFI8eZg==
-X-CSE-MsgGUID: O9pyoXlqQOusP80PnhHcWQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="200207613"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 03:56:59 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uqUsh-00000008TWO-486z;
-	Mon, 25 Aug 2025 13:56:55 +0300
-Date: Mon, 25 Aug 2025 13:56:55 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Zhang Heng <zhangheng@kylinos.cn>
-Cc: axboe@kernel.dk, phasta@kernel.org, broonie@kernel.org,
-	lizetao1@huawei.com, viro@zeniv.linux.org.uk,
-	fourier.thomas@gmail.com, anuj20.g@samsung.com,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] block: mtip32xx: Prioritize state cleanup over memory
- freeing in the mtip_pci_probe error path.
-Message-ID: <aKxBd1uFldjopX3T@smile.fi.intel.com>
-References: <20250823083222.3137817-1-zhangheng@kylinos.cn>
+	s=arc-20240116; t=1756119425; c=relaxed/simple;
+	bh=o1drk41h7J8qeCol4O3/CIWWWJpjSEzM12xvBMF02Jo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=qoiWsclARg3KsB6fNzcqEy7BhDYS8tYvljPBmrMnX+dpMrjOpba301Sxf8geKLK+LNx1vjCTqsj2TmA1vAdX4z8y8BgviQNYMXzJAk8v1yE/GHv8hmgT7BWHFdq23lT7DwYeONgsHlOCooUjY23hRjPkRMsxMAPGGCCZejQ8apg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3ed3c254b63so5472065ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 03:57:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756119423; x=1756724223;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qnAEdxUVLyR7bjk0zgkr5LAOrPsrp1slbvoQ3cASm0A=;
+        b=jY6DVAI8DgT5yyAv0GCIKtUjCBI3hir5FRgGs0tQXVG7YdUwzsbaF1WJtFUZE9QvWj
+         lT2KC7Ba7WWTqlmfyygMyYWTKQawulusmn2AVTmxScZ4Mh2/wsYwza3y2P/NPvH65q1d
+         JdDkMTlBvmfGNzi6EUTj4LyTmMN83k9ybGVK23GDLdDfOlZXo5AdAuq75JD9RKCmPZuF
+         G1bV1sNU4YuAv3Cy/ksmHgOkB4Y17nfnLVWSEctCwkVJI8pmo572+aGNexsLBVoTcFkV
+         FWnkn6lvKhNUfPvggPU8Pt6Z+9Hxs/gXzshVraHJQh8IyceOwB7D5fnmgbKWusJD/9GJ
+         pZyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXabnhwJ/QfqGvXFLmJDoX3QiV9Dx9xrf3N3xxuNdKqkUtgBQDf6aiKcfil32b9IkWZFY0Yjs4Ja/pTKzQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyc4MU14gEu3X8LcFgHfX2IReltIVhdzZrWw81pXxiZluHTZ80K
+	bovnFpumMBxMcgNVO733335qmedk16B26w4JGuy6HiSL/KsDS3CgaIZTmxYw6NAKyFwjQD0mKRw
+	1o7mSPpdraXPNtj1rUt/d8rpFGbdOs4udh7t3bTAWh4WxFFuH/O26PBocvEQ=
+X-Google-Smtp-Source: AGHT+IEQWqLurzZuZnFZmN71S+pzCidDLgfEOupJpOfz+FdDU4Bj+KWNpbn38fN+c9gGxXYqrL0GqZ3FLKgYicvQFxvQt4nABMmO
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250823083222.3137817-1-zhangheng@kylinos.cn>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+X-Received: by 2002:a05:6e02:3cc6:b0:3e5:7e02:a06d with SMTP id
+ e9e14a558f8ab-3e91f93e0dbmr154146905ab.4.1756119423016; Mon, 25 Aug 2025
+ 03:57:03 -0700 (PDT)
+Date: Mon, 25 Aug 2025 03:57:03 -0700
+In-Reply-To: <1ebebfcf-99f7-420d-be00-606204aeee29@linux.alibaba.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ac417f.050a0220.37038e.008c.GAE@google.com>
+Subject: Re: [syzbot] [erofs?] KASAN: global-out-of-bounds Read in z_erofs_decompress_queue
+From: syzbot <syzbot+5a398eb460ddaa6f242f@syzkaller.appspotmail.com>
+To: hsiangkao@linux.alibaba.com, linux-erofs@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Aug 23, 2025 at 04:32:22PM +0800, Zhang Heng wrote:
-> The original sequence kfree(dd); pci_set_drvdata(pdev, NULL); creates a
-> theoretical race condition window. Between these two calls, the pci_dev
-> structure retains a dangling pointer to the already-freed device private
-> data (dd). Any concurrent access to the drvdata (e.g., from an interrupt
-> handler or an unexpected call to remove) would lead to a use-after-free
-> kernel oops.
-> 
-> Changes made:
-> 1. `pci_set_drvdata(pdev, NULL);` - First, atomically sever the link
-> from the pci_dev.
-> 2. `kfree(dd);` - Then, safely free the private memory.
-> 
-> This ensures the kernel state is always consistent before resources
-> are released, adhering to defensive programming principles.
+Hello,
 
-...
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
->  iomap_err:
-> -	kfree(dd);
->  	pci_set_drvdata(pdev, NULL);
-> -	return rv;
-> +	kfree(dd);
+Reported-by: syzbot+5a398eb460ddaa6f242f@syzkaller.appspotmail.com
+Tested-by: syzbot+5a398eb460ddaa6f242f@syzkaller.appspotmail.com
 
-These two seems to me unrelated. How do you possible have a race? What's racy
-there? (Yes, I have read the commit message, but I fail to see how it may lead
-to anything here. My question in one of the previous patches was about needless
-pci_set_drvdata() call. Do we even need that one?
+Tested on:
 
->  done:
->  	return rv;
+commit:         27ad5346 erofs: fix invalid algorithm for encoded exte..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git dev-test
+console output: https://syzkaller.appspot.com/x/log.txt?x=1506ec42580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e1e1566c7726877e
+dashboard link: https://syzkaller.appspot.com/bug?extid=5a398eb460ddaa6f242f
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
