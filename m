@@ -1,167 +1,146 @@
-Return-Path: <linux-kernel+bounces-785451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40646B34AE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 21:28:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB8E6B34AEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 21:33:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D7E11A87DE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:28:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8757E5E617A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:33:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B75D283FCB;
-	Mon, 25 Aug 2025 19:28:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A7B92820D5;
+	Mon, 25 Aug 2025 19:33:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O/PqwRUI"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cmDG1+8v"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF28F19D8BC;
-	Mon, 25 Aug 2025 19:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0625621FF25
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 19:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756150079; cv=none; b=P0UyNIjAUXl87KdHrk34e/1bWVET1CsvqkR1lXWGVOsYbjHAVVj9nzF9SQznLfDFnI0rFLQJnp7ra8B7lHuaL2qa4Au8FRFQvHAaJG43q7dkSAVx//l6kl/whx3pl/MT3ucK6B6XoWR+w72DcABc5D1U6WNdtjTvOGlZVcelIL8=
+	t=1756150397; cv=none; b=fwGey1qowfGU4eD51cR/rV7vUR7uR52qyW1pE0ykWSivrEhbx7Zyk7aiYz2xpLEjHgRnrEsU1GdsgSQu5qVcZPchErJRp05L/VBi8A8yMNPUWJL2hQLXw76J+ATb5KAf2IujBAEW6MfNQaavOIrcMZTMM/TfCTdrwyz+Z80zlN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756150079; c=relaxed/simple;
-	bh=NtYDnYYLBcQNliR7DjLF/2fRCZ+uTJO07x1lRyuK8Ys=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kZ4GiqH32eNQD+C2OR+EzAKeRMJzOyqD3odUAWSQI3y7oVHf2/F649kb0e8EW8CWSfk8tYzSjqvZ8e2dL6ed5OQGtakH4VBRP+BbOD+CCQaXr7jEdnIAmcfsk7JAoMPe7ZPTfHHF3YfmbuHzrFfsBxdIQ/QQyjTObN+HQGCM2Rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O/PqwRUI; arc=none smtp.client-ip=209.85.167.46
+	s=arc-20240116; t=1756150397; c=relaxed/simple;
+	bh=p3TU9mTxSIdQt9ysk7U84CSDNHVoqEThie5EVGDfhOQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kEuKpoBaSs+7FJalfd2n1zqi3jWlMVDWUVwhaqVQtxR+rz3laf4h94w1x7RInFMX5CW25Xnndrg7im36DuQYmNJIx1G/DjFDdysbpwT7D8hK2f0My1rjkUXn4Zp+sx3kvaEVNprJnwtWW9EZjGA9Yr/pkwHEdDKTpm6KI07DMl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cmDG1+8v; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-55f3edab4c7so2051826e87.3;
-        Mon, 25 Aug 2025 12:27:57 -0700 (PDT)
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3cb096c52a3so51156f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 12:33:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756150076; x=1756754876; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hWkGo7LIVWNgzW/3KtFiqD5dK4SoHZBbabk1AvnBAgE=;
-        b=O/PqwRUI/DirKYNPMu+bxMj6FHWxjtbOI7pdR2BGroCyf8xzLFHN5CL8n3DUQP3f3g
-         DhACAX8YC6QWP1/TrYFITm63oKM9EV004jup1fCUHkZiKuoOVvVxw6/bieuh82JRosIM
-         trNvId3JnTSPsTwQpCw9xuQPjcDXv5tdicCVpMaLFXHTepYcl203278Ggafms5hipM42
-         RQUWaB244jOAM8NfKzjHra3OdDD1YT5f+yeryEEQSESwgsJlGJxZNgAO5MTuoaGwezF3
-         TBN+UM2KpIFUyRSeyzYJRp2IijQjKYLy4++xOV2YfXwFKeOFGXws5IITLsig4UdIqKqh
-         OcUA==
+        d=gmail.com; s=20230601; t=1756150394; x=1756755194; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/QHlVkkaseu8HgvkDGo4UUAKEoUIx8XaB00oWO6P7ng=;
+        b=cmDG1+8vH8rGBICqysnOx4aglfryqlHRBEvdx8OkG0htkikujZxlNuM2ZH0wjfTEzB
+         GI++d+YIE2s+Xi7pw1S6g4uClLlWuqmQBUMGXIRSNTKw6q7hOUTVAD/rhyn9r7rWlSID
+         AmHbwR1CEpLOT+ksAKDvkMReMpWjs1rcCUrlCIxm1DgZXbC0ppng3QLYiDYYCjB7kRfb
+         zC/9SFXXNsvqEjIf+t+xt3Go+Ox2IFrtVhqybF6aaR7/qDJll+ERi9fkRqBKt4yXt/Gy
+         Tl2YJPu8H/05K/xB8BV5xaKUtxm0tkIF1syCAe0kZ+4bXsL6oz/mIhBeOryxJVeXv3pG
+         AQAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756150076; x=1756754876;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hWkGo7LIVWNgzW/3KtFiqD5dK4SoHZBbabk1AvnBAgE=;
-        b=lXobF/cE94XluIJoG9kwWHM1J50kSFZJ8CmrJbEM6LMt0qYyooy2qbjuygkuaPrhBA
-         lrTIwQMDUtsBxqjX8h5elLU79vV3wG9Ce46kdda46neOyhy0mQlEsJ88FMKcQl1AF21j
-         +y/ov2fCcqvVbk6oitX96X0fKpaG2Lswsagd0NtrohEDcW6HhEGPzL78Y/XfVEtBthI+
-         i7OZCndSdl40AbI8dgGCMo7pUH/+COnEAtcQtjNZVmOAVTUwQvaMZjKE5v2xy17lX1Cj
-         xWkUnTfFe99u5qBcLHgSPVvqbvswpLB6NwxfpbZXuqeJ/RQ4vEB9r6w5WXgKU9TuZ9Fq
-         +/Yw==
-X-Forwarded-Encrypted: i=1; AJvYcCWK124rjFtajkYphURGM/I3ayzm/Eeb9ejay553pa+IKHfbPGa+Q+6Hd+Y6HcRnh5A8+YNEfC3Dlexn6WTo@vger.kernel.org, AJvYcCWTBTqCxX+IunxoKozMky5W22abNr2EFg9krunM85bEnLM9TUdFCTEp1CYveiKxwHle0IM=@vger.kernel.org, AJvYcCXwmO1LSY9n69y7Jg2PXWLVpwNjHENqqePIuZ6m4a1DLOLCJ6fZ77eiqFcUW8KIap+XqkiOaA/lotYTvMJ8Hsrf@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZwcXdJTVqlupPbYEzb4MYRriAX1UBXy53WJy+s4Xev6uKdl3t
-	eZ+N0Q/cklzhzGMcfLI0v6sxMUfCwkrfOj9811Wy3yic4rgsM6YILLhLNayYW6BSKRJ39rV3Cn2
-	8+CCRJrNkoaV5Fw2JIGgfBaKoAqF6Aeo=
-X-Gm-Gg: ASbGncty3yaA+9PmZVhxD/7ZlC5oTgCjTmvuAEkZc7EPNNBXCKqpGCd8Siez7snbQCW
-	Q6IzXl0nIvNRdpYQcrRF/1nMCCG38C0qqEXNceAC/phu6YC5IlruohzKAH0Vf5oM1QUccRdC5bB
-	46ZhsTCZde2Vn2l3sbCt1oh3tGulg2T7gv0wAHIftEM/TVh4zEfU1CEWeVAStkmhCb9XGqsBpwE
-	9DbKtToD4tAyGcc4TaZYBlkCgeerYVvwJJg6Q==
-X-Google-Smtp-Source: AGHT+IE/v0WhEuhuYszot70qOf5CLPWK+nLXeOdB6grAADoaHvFZzuH9pkAzesP0BZ9rS+nWKgZUj356MlhJV+hCY20=
-X-Received: by 2002:a05:6512:135a:b0:554:f76a:bac2 with SMTP id
- 2adb3069b0e04-55f0cd67a31mr4417626e87.17.1756150075457; Mon, 25 Aug 2025
- 12:27:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756150394; x=1756755194;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/QHlVkkaseu8HgvkDGo4UUAKEoUIx8XaB00oWO6P7ng=;
+        b=vpn4u1MFZfJqlXKt4ikdP7QwXruNv85DunPxCHDfobv7v+omYGM9q1MAArOCOgPApP
+         Mr6ki2hxv8LGG1vOMaoxY0Y90cIxHqzuxONoFYVJvEbAJY4+BZOSeR0JMZy1OdyhX4KN
+         qUhTEfmbQrDchiOBH38lo3aCMVA2bD8ox9YPKzH2cvhkPQ7F46wSuCKKFo4g31eI0Pl4
+         2991BXF9MJ9oQuMXFPlKILwsjUDYD8Lfli371RCiIYya0gwmcRhABalUrh2FBebslDPo
+         v8uuMCk7daFu/Jf8Br+o8iV64lEJriVT6CIbcYgKd3Z98E3DyqzYLdmpKBocprkBF8YT
+         mKsQ==
+X-Gm-Message-State: AOJu0YyHcXS4XmQdUt5xFQCuGIWMuxZhVY/yWQK6/HLIVSBJQTxIWCiE
+	YhvDwkqxMNSsT51Meo26MZVZiKiFXS0tWvXrPIPeEg24mSlSHM1oPNNKj10bxRJpXVY=
+X-Gm-Gg: ASbGncvebak19AeWZa2Q/88rVSh22brOvrZ7o1gXKY5DziLTs1gUg/2IbKITi72hZoD
+	YoUn8GX/e5NBgEd6udX75q+eg8pI+NXu2MbOrKbPJMreF4YIRYxxQSXykaHEPJOPlp2zeW/LDDz
+	KR3OTW5e91KyEhd/PKbR4RdAn8DpAoxlXOLGNZ3tBXsCUqL8s8NTFFa18ONIG33yDaQ+rmxesuC
+	ktYpW9jSfzwnq+GLF5npfhkMO0vgvT8RLj170j6NsHURfOEZltA0V4ODZ6quk3CMUPzTZZpR2RQ
+	AOX2zQsBdagFFpzxKsNm/Bum4It1tX9QYKxqKuPvl4aHUkvOuKQaECoMPzFjrdqw0Q4lZF4ZHKC
+	RvuiSw882vBEy6O9d1u/ZGJLP7cx34wuBA54v5ZuAn3j5Jg==
+X-Google-Smtp-Source: AGHT+IHyI61ZhNycdeCbbHy+iag2OkNqlkiWdsJGn06gEVxXGybkSnillSLwzuQUfjHYdTfughvL4A==
+X-Received: by 2002:a05:6000:2089:b0:3b8:d12f:67f4 with SMTP id ffacd0b85a97d-3c5dcff537cmr4689313f8f.8.1756150394072;
+        Mon, 25 Aug 2025 12:33:14 -0700 (PDT)
+Received: from gnulinux.home ([2a00:23cc:ee22:4f01:7e07:36b4:64f2:8b5c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c7119c4200sm12671709f8f.53.2025.08.25.12.33.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Aug 2025 12:33:13 -0700 (PDT)
+From: Harry Fellowes <harryfellowes1@gmail.com>
+To: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	hpa@zytor.com,
+	Harry Fellowes <harryfellowes1@gmail.com>
+Subject: [PATCH] x86/boot: clean up whitespace in a20.c (v2)
+Date: Mon, 25 Aug 2025 20:28:34 +0100
+Message-ID: <20250825192832.6444-3-harryfellowes1@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250813152958.3107403-1-kafai.wan@linux.dev> <20250813152958.3107403-3-kafai.wan@linux.dev>
- <eb6f9ba4acccc7685596a8f1b282667a43d51ca8.camel@gmail.com>
- <CANk7y0hQWOL3OW8Ok4e-kp7Brn5Zq6H5+EfS=mVtoVd+AUxZmA@mail.gmail.com> <35c18502a4870d8a833c1c9af20b85ca3f8a0ff6.camel@gmail.com>
-In-Reply-To: <35c18502a4870d8a833c1c9af20b85ca3f8a0ff6.camel@gmail.com>
-From: Puranjay Mohan <puranjay12@gmail.com>
-Date: Mon, 25 Aug 2025 21:27:44 +0200
-X-Gm-Features: Ac12FXyl_ZssxVjMiFFRpGL2RvpHKQ-cQoOuTURV7HwdhECwlkorXw1hCV8QywI
-Message-ID: <CANk7y0gVNwX70ur0KkZKNkSDq7RH1xs5=dOHx_UCOErbwc7zhA@mail.gmail.com>
-Subject: Re: [PATCH bpf v2 2/2] selftests/bpf: Add socket filter attach test
-To: Eduard Zingerman <eddyz87@gmail.com>
-Cc: KaFai Wan <kafai.wan@linux.dev>, puranjay@kernel.org, xukuohai@huaweicloud.com, 
-	ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com, 
-	andrii@kernel.org, martin.lau@linux.dev, song@kernel.org, 
-	yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me, 
-	haoluo@google.com, jolsa@kernel.org, mykolal@fb.com, shuah@kernel.org, 
-	mrpre@163.com, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 14, 2025 at 6:06=E2=80=AFPM Eduard Zingerman <eddyz87@gmail.com=
-> wrote:
->
-> On Thu, 2025-08-14 at 13:23 +0200, Puranjay Mohan wrote:
-> > On Thu, Aug 14, 2025 at 2:35=E2=80=AFAM Eduard Zingerman <eddyz87@gmail=
-.com> wrote:
-> > >
-> > > On Wed, 2025-08-13 at 23:29 +0800, KaFai Wan wrote:
-> > > > This test verifies socket filter attachment functionality on archit=
-ectures
-> > > > supporting either BPF JIT compilation or the interpreter.
-> > > >
-> > > > It specifically validates the fallback to interpreter behavior when=
- JIT fails,
-> > > > particularly targeting ARMv6 devices with the following configurati=
-on:
-> > > >   # CONFIG_BPF_JIT_ALWAYS_ON is not set
-> > > >   CONFIG_BPF_JIT_DEFAULT_ON=3Dy
-> > > >
-> > > > Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
-> > > > ---
-> > >
-> > > This test should not be landed as-is, first let's do an analysis for
-> > > why the program fails to jit compile on arm.
-> > >
-> > > I modified kernel to dump BPF program before jit attempt, but don't
-> > > see anything obviously wrong with it.  The patch to get disassembly
-> > > and disassembly itself with resolved kallsyms are attached.
-> > >
-> > > Can someone with access to ARM vm/machine take a looks at this?
-> > > Puranjay, Xu, would you have some time?
-> >
-> > Hi Eduard,
-> > Thanks for the email, I will look into it.
-> >
-> > Let me try to boot a kernel on ARMv6 qemu and reproduce this.
->
-> Thank you, Puranjay,
->
-> While looking at the code yesterday I found a legit case for failing
-> to jit on armv6:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git/tree/arc=
-h/arm/net/bpf_jit_32.c#n445
-> https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git/tree/arc=
-h/arm/net/bpf_jit_32.c#n2089
->
-> But attached program does not seem to be that big to hit 0xfff boundary.
+This version fixes indentation problems introduced in the previous patch
+while still removing trailing whitespace only.
 
-Hi Eduard,
+Apologies for the previous version which seemed to have accidentally removed
+indentation on several lines.
 
-You were right, I have verified that the program is hitting the 0xfff
-boundary while doing the call to bpf_skb_load_helper_32
-While jiting this call, emit_a32_mov_i(tmp[1], func, ctx); is called,
-where this issue it triggered.
+Signed-off-by: Harry Fellowes <harryfellowes1@gmail.com>
+---
+ arch/x86/boot/a20.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-The offset in imm_offset() is calculated as:
-ctx->offsets[ctx->prog->len - 1] * 4 + ctx->prologue_bytes +
-ctx->epilogue_bytes + imm_i * 4
+diff --git a/arch/x86/boot/a20.c b/arch/x86/boot/a20.c
+index a2b6b428922a..bda042933a05 100644
+--- a/arch/x86/boot/a20.c
++++ b/arch/x86/boot/a20.c
+@@ -135,29 +135,29 @@ int enable_a20(void)
+ 		  (legacy free, etc.) */
+ 	       if (a20_test_short())
+ 		       return 0;
+-	       
++
+ 	       /* Next, try the BIOS (INT 0x15, AX=0x2401) */
+ 	       enable_a20_bios();
+ 	       if (a20_test_short())
+ 		       return 0;
+-	       
++
+ 	       /* Try enabling A20 through the keyboard controller */
+ 	       kbc_err = empty_8042();
+ 
+ 	       if (a20_test_short())
+ 		       return 0; /* BIOS worked, but with delayed reaction */
+-	
++
+ 	       if (!kbc_err) {
+ 		       enable_a20_kbc();
+ 		       if (a20_test_long())
+ 			       return 0;
+ 	       }
+-	       
++
+ 	       /* Finally, try enabling the "fast A20 gate" */
+ 	       enable_a20_fast();
+ 	       if (a20_test_long())
+ 		       return 0;
+        }
+-       
++
+        return -1;
+ }
+-- 
+2.51.0
 
-For this program, ctx->offsets[ctx->prog->len - 1] * 4 itself is
-0x1400 which is above 0xfff boundary.
-So, this is not a bug and expected behaviour with the current
-implementation of the JIT.
-
-For now, we can merge this and later I will try to improve the JIT so
-it works for bigger programs.
-
-Thanks,
-Puranjay
 
