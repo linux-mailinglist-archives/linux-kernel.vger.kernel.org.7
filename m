@@ -1,123 +1,128 @@
-Return-Path: <linux-kernel+bounces-785543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 499E9B34CF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:55:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ABE8B34D21
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:59:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF842177E83
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:55:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 617CD204092
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8338A29AB1A;
-	Mon, 25 Aug 2025 20:55:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6DF229AAFD;
+	Mon, 25 Aug 2025 20:59:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WS8WaGEL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PRvpxB6a"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D936C179BD;
-	Mon, 25 Aug 2025 20:55:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15A61E89C;
+	Mon, 25 Aug 2025 20:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756155329; cv=none; b=aQpbFQDPlKT7qHGylpJkwQEKu1CLzpyM8ZhbagmtTJ6wYiTI60wcKdM2TP0Cmz5KI4j/rBuVP6Pu8q+HbrVvD6XNqPxwOxqaR9nKWtP7gBhomlDyTuSk9fteC6rrWcyeMzRx5DC+0w6Kjj50ASWNoXPLLU6w9gmr3kiWXyukTks=
+	t=1756155568; cv=none; b=cHkYXBSKBBTrRIRd5mp3cV/VjwZsR2EQMkYNGzDM+QCbLYy1WBsEzZ8rfvuHOZuHJReiZmUg8sILGqCDx9z9jU4v0+3yDhAO/hyf5FDj+Mm2YXnCmhT+mU49KuWx9jdLZ5nAaYLQpY6g96BiOEfPtFWE1qdq5JH9nJlok0n9oIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756155329; c=relaxed/simple;
-	bh=JM6i/BBkoJtcy4KbG3Msr7B8vft4lS33A3YMhIcPYPY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vs5cOOnkjHg7ny5iUG/yCZE3UXS1zNmXq5ym7Rl/7Jf+5ItTuqN72Yls1b55v0z1WDPCHAID6sFtsAAS7sW04T4XiyZwHSCZVRF/s8P1V5bSFEGObONqC27x4MKBqiH+zr7/5YQccNiEZogE2EjmKDIQw7OS+Rsp6mLkGmxUb4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WS8WaGEL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E127FC4CEED;
-	Mon, 25 Aug 2025 20:55:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756155328;
-	bh=JM6i/BBkoJtcy4KbG3Msr7B8vft4lS33A3YMhIcPYPY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WS8WaGELzWx6JNeBXvzR0D1O5NKR6si6RJCL+ZYwcImmqVFMDQsGxpqpRGAXu/w4g
-	 lmLP5U9zoF3WMgJYXOKu9j1UoBTpdEUb4B5S7WfWbohDRiA+N9vlWQQZU/g2Ae3Bke
-	 LvfUa38rgtg33FGI0IXY8/jQa7orVNTV/kOb7a2dcwivnYgMQEae+tKYhlJ8b4XPLT
-	 3zZQYh/BIYe9gnjsQxplQT2L+1nxOtxQbXs/5odvSarD8VW/V9WNpXrsuBbS13yq/u
-	 1I4xF/1jFsn44qDR1JCPrNDChnsW6k/eRw4m7SdhEfcx3TlawnmRdccdYdmnSuBtoL
-	 qh04vuA/JrdtQ==
-Date: Mon, 25 Aug 2025 20:55:26 +0000
-From: Eric Biggers <ebiggers@kernel.org>
-To: Eric Dumazet <edumazet@google.com>
-Cc: Andrea Mayer <andrea.mayer@uniroma2.it>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	David Ahern <dsahern@kernel.org>, Simon Horman <horms@kernel.org>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	David Lebrun <dlebrun@google.com>,
-	Stefano Salsano <stefano.salsano@uniroma2.it>,
-	Paolo Lungaroni <paolo.lungaroni@uniroma2.it>,
-	Ahmed Abdelsalam <ahabdels.dev@gmail.com>, stable@vger.kernel.org
-Subject: Re: [PATCH net] ipv6: sr: fix destroy of seg6_hmac_info to prevent
- HMAC data leak
-Message-ID: <20250825205526.GA2130842@google.com>
-References: <20250825190715.1690-1-andrea.mayer@uniroma2.it>
- <CANn89i+UTv8nJ=cc67iKky=MLXOnzF5XyVRsV-TMXz7wUQ6Yvw@mail.gmail.com>
+	s=arc-20240116; t=1756155568; c=relaxed/simple;
+	bh=P+f9GWoudFIxOthJoiv89uXLOQljtr15VfO53YgP3og=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ug3GvYgmpNesbZgr6hk1Jyptt+YWU/8xSo0UX5C8PfXzucRnN45pXyiIw1vnzTWDtoSoLkqOo3n8sz5ngMqVTOfmqqnGXyTjgaiInfR08jNy+xTaLlKQwxlik9HBO0zBOHTW2beKOQMak/RAOUpKIO50KylxtWhUaAcRij7zrWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PRvpxB6a; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-55f499c7f0cso988419e87.0;
+        Mon, 25 Aug 2025 13:59:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756155565; x=1756760365; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NEDyZPVAqJd7dy++5AJb59bf7HNDp+oeDl1YcGWBAgw=;
+        b=PRvpxB6a0AOkVmZl8nWYRcAXmiBwxB+TtWm98sVGpC5ZykDZp3xzXX8MzSNu6EwhjL
+         UIE3hohcYhGKUo9cpQmnlpRQSLP7CZ7HgpORafsHnCZgaEajGbj1E0QOlXxZr0AIy530
+         glQ2L3Ir9uGxVuc+xfYWrn5jIb6Tvium4Q4uYHeqSv625y0q0s3UpYEYa8gZ1q1vXzEN
+         MEEhsg7BIkJZdHZsElaTp5MmZoapJMCFFm86tSiINMhl+jxbEVdJv9l4EAXAUOiYLDOr
+         xrvxpPhgqiTespRDwBNtYGv/v478zseBGhE/24A+NZ3vv9mMtV//uC9/fe9ut1e+JPGZ
+         6GTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756155565; x=1756760365;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NEDyZPVAqJd7dy++5AJb59bf7HNDp+oeDl1YcGWBAgw=;
+        b=tdmFGEnXbg1Xg7+R5ZJvNfhppH5zA14LHHbRyDzRO4tsqTwCJhHAEG0XCCJ7NiAFiD
+         yQnNREHOfTUykDM72JZ4zTQnc3dgOcrWsjhKNeX32jskLlhoZWrgLB+khTavMwWFHil1
+         +Jxe/P2CyW8pBLA5USCC5aLbaf7+3FEuBkG4j6Djb7afM0wZ7Bn8A7MluugaZ1xZuawM
+         m+Y+X4l4YuMIBFwAZzn30OrPFgEju5l9AcSfzdTlFX7IfomRMbklh6Mlw3034XcOUiEZ
+         SDUQyCYrJciFEa4AH8zwq3P1IplTOhZG1engyyTt5md4o9BOEBAoaRdDAzjYdyeVvouS
+         /Bag==
+X-Forwarded-Encrypted: i=1; AJvYcCWtJwwoog2Gb43pnpKODkJbDWthdHesW01qJNLuOlXhHhMbB1+pjTV8NEdFFT/S8t20XgcTtat6yS8=@vger.kernel.org, AJvYcCXHEezEpd8yIVaZzWinoORLs0vmiBp3XkDZeVvNWaKD+4bO6mQhL57Ke5PnD4OA6CWJOk+JElF2Vh73qu2H@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUxEef00Ye7zdZ1CshqHFfhDj9ZPRTn3t2lSqBYy21kGxHIZvQ
+	+Wx9WR7H158TDKv6WU3Mvg0XONeMLA6e+7maxd03A1rvDxY2TUXaqcb9YuBDmHYt6EX9/2WyERp
+	s8kMcfWBsrXNIgb4NhZKIUTw6XEOKvhs=
+X-Gm-Gg: ASbGnct5KdxSvEtX6cA4yNpazspoL/ezIBPPeTsTFlZ0OdxCq334lEtpoc7m3AtA84p
+	rRd5UcE4tTBGMkOUUcO3/NR9dM4kvuunESbCaJtiaftaViBU54dkHMM/MDSqOISTboCkkpoRwwA
+	cT/jmSYHY23DK45z+SP8auJwbQ8U/+N6X1lnO2WQnTRsPZp/YFIGd7vSksfG9y2ZmHizd2Ntu/A
+	hsqmU8bAErYaTdhV1DkwOxFc6IqGPtrjRqOdc74Jg==
+X-Google-Smtp-Source: AGHT+IGqCPX51Ss3DOPVVuYpEQYg8NqfIXNFIutjVci2omtiLZJsnfXe8YEYi2uoT4Y/9ZKYK072kPWj6B7xClz5wN0=
+X-Received: by 2002:a05:6512:1581:b0:55c:c937:1106 with SMTP id
+ 2adb3069b0e04-55f0d3715b2mr3714312e87.28.1756155564703; Mon, 25 Aug 2025
+ 13:59:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANn89i+UTv8nJ=cc67iKky=MLXOnzF5XyVRsV-TMXz7wUQ6Yvw@mail.gmail.com>
+References: <20250822180335.362979-1-akshayaj.lkd@gmail.com> <20250825152608.6468c27b@jic23-huawei>
+In-Reply-To: <20250825152608.6468c27b@jic23-huawei>
+From: Akshay Jindal <akshayaj.lkd@gmail.com>
+Date: Tue, 26 Aug 2025 02:29:12 +0530
+X-Gm-Features: Ac12FXyCinT6t4daEAj_YSmGc2pAsrD-_LPnxBN2FPcqHRneEAD2IAxJm6uvRjY
+Message-ID: <CAE3SzaR14zWWM_g-H4C76+6fBDotuAux7n2V1g94R2xLFQZOYQ@mail.gmail.com>
+Subject: Re: [PATCH] iio: light: ltr390: Add runtime PM support
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: anshulusr@gmail.com, dlechner@baylibre.com, nuno.sa@analog.com, 
+	andy@kernel.org, shuah@kernel.org, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 25, 2025 at 12:33:26PM -0700, Eric Dumazet wrote:
-> On Mon, Aug 25, 2025 at 12:08 PM Andrea Mayer <andrea.mayer@uniroma2.it> wrote:
-> >
-> > The seg6_hmac_info structure stores information related to SRv6 HMAC
-> > configurations, including the secret key, HMAC ID, and hashing algorithm
-> > used to authenticate and secure SRv6 packets.
-> >
-> > When a seg6_hmac_info object is no longer needed, it is destroyed via
-> > seg6_hmac_info_del(), which eventually calls seg6_hinfo_release(). This
-> > function uses kfree_rcu() to safely deallocate memory after an RCU grace
-> > period has elapsed.
-> > The kfree_rcu() releases memory without sanitization (e.g., zeroing out
-> > the memory). Consequently, sensitive information such as the HMAC secret
-> > and its length may remain in freed memory, potentially leading to data
-> > leaks.
-> >
-> > To address this risk, we replaced kfree_rcu() with a custom RCU
-> > callback, seg6_hinfo_free_callback_rcu(). Within this callback, we
-> > explicitly sanitize the seg6_hmac_info object before deallocating it
-> > safely using kfree_sensitive(). This approach ensures the memory is
-> > securely freed and prevents potential HMAC info leaks.
-> > Additionally, in the control path, we ensure proper cleanup of
-> > seg6_hmac_info objects when seg6_hmac_info_add() fails: such objects are
-> > freed using kfree_sensitive() instead of kfree().
-> >
-> > Fixes: 4f4853dc1c9c ("ipv6: sr: implement API to control SR HMAC structure")
-> > Fixes: bf355b8d2c30 ("ipv6: sr: add core files for SR HMAC support")
-> 
-> Not sure if you are fixing a bug worth backports.
+Hi Jonathan,
+Thanks for your review. Please see my followup inline.
 
-It can be considered a bug fix, or just hardening.  There are examples
-of both ways for this same type of issue.  I think the patch is fine
-as-is, though the commit message is a bit long.  Zeroizing crypto keys
-is a best practice that the kernel tries to follow elsewhere for all
-crypto keys, so this is nothing new.  The patch simply adds zeroization
-before freeing for a struct that contains a key.
+On Mon, Aug 25, 2025 at 7:56=E2=80=AFPM Jonathan Cameron <jic23@kernel.org>=
+ wrote:
+>
+> On Fri, 22 Aug 2025 23:33:26 +0530
+> Akshay Jindal <akshayaj.lkd@gmail.com> wrote:
+> > +
+> > +     if (!state) {
+> > +             ret =3D regmap_clear_bits(data->regmap, LTR390_INT_CFG, L=
+TR390_LS_INT_EN);
+> > +             data->irq_enabled =3D false;
+>
+> Just take an extra reference to runtime pm on enable of event and put it =
+disable.
+> Then no need for special handling with a local flag etc.
 
-> >  static inline void seg6_hinfo_release(struct seg6_hmac_info *hinfo)
-> >  {
-> > -       kfree_rcu(hinfo, rcu);
-> > +       call_rcu(&hinfo->rcu, seg6_hinfo_free_callback_rcu);
-> >  }
-> 
-> If we worry a lot about sensitive data waiting too much in RCU land,
-> perhaps use call_rcu_hurry() here ?
+Consider a scenario, where the user only disables the event instead of
+enabling it,
+(i.e. user wrote 0 on the sysfs attribute before it was 1). In this case,
+If enable means inc ref count and disable means dec ref count, then
+this would lead to refcount underflow and the suspend callback will
+not be called.
 
-No, zeroization doesn't have stringent time constraints.  As long as it
-happens eventually it is fine.
+To handle this case, we would need to check whether irq/event was
+enabled or not.
+For that either we can use the local flag as I did, or I would need to
+do a read and test
+for the interrupt bit being set. I feel using the local flag would be
+cleaner and would
+require less code.
+If you are fine with local flag usage, then shall I not stick to only
+local flag usage?
 
-Reviewed-by: Eric Biggers <ebiggers@kernel.org>
-
-- Eric
+Thanks,
+Akshay
 
