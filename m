@@ -1,201 +1,202 @@
-Return-Path: <linux-kernel+bounces-785416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 877CFB34A54
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:28:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85382B34A56
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:29:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3048F17E789
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:28:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40D054878CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:29:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1577030BF70;
-	Mon, 25 Aug 2025 18:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1BCE302CC1;
+	Mon, 25 Aug 2025 18:29:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oc4M9Ndi"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BZU82aSz"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FAEF305E29;
-	Mon, 25 Aug 2025 18:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2BC525A2B5;
+	Mon, 25 Aug 2025 18:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756146481; cv=none; b=mKjge6JMwOUwHcWKGIE8ZAy3gt2DA6U0KhpIzIxlXpi3P4nsWPSgCxTX46ZZvAvHa5IEW9bFKE/4TJxuYuERSI9gcIDvCrq3mrFarimpAKkm4VhqNn+Zrr7/H5c190QgGLgYZJ0KIq7q401v1kETSp+X/WATkwy+4i6c8LMJbMo=
+	t=1756146574; cv=none; b=pJY0ad1WLEda1hT+e+7B+ef8267rsrEWOacmYu5mC85sjwOVgBuLmBi5HQ4j6yq4aCP1vCN8kwQfARHkXnPjOye4tPJntuLATPUJGWZnqZMMTPdUFFhuhJ1jq2pZNSYFUOiWQktxHWYFy0vQTC3ql480Kw8tUZBpJvO2f8An6E8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756146481; c=relaxed/simple;
-	bh=iw2A7b8HfUY4C8oFRCU1gTmF2DPSqkrcOtKnUUygbjs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NxlJDdp+iGzw5Mib2CriAdpJ0ysllp+uKZurzY52+rKpogyecvOxP7RXSwrc2Q7LXaR8gfPpWu3y82oLEryMbDP3bkIlqlVKCceNK2h6pp7Am/HpcxCbH80rdxV9au6fYU60UM4hWRVSt2M3Ar5TzxEHA0z3+bQ4VzmKL5/HgEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oc4M9Ndi; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <43b9d0ff-9922-490a-ac6b-7e8e7baa2247@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1756146476;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VzmE5jm1E2E79Bi4ISsxWAGliYekiS7P+xPBgawpmGA=;
-	b=oc4M9NdiiejKaBXakXsS4zooMNN2MsioZ7KruoSX1YBGsCK4zvN6kaZYRRuJrdlE3a84NR
-	6RGIj0kIACEyALUkKYgSvaqhdiWlSQ/h9ACTHNNgopeT7UAithShq2bJeLWIctApQ34LaC
-	lha6t5mA+BBkAIZPlYpnnZVLltKBYfg=
-Date: Mon, 25 Aug 2025 11:27:49 -0700
+	s=arc-20240116; t=1756146574; c=relaxed/simple;
+	bh=6NGYoqzOovMHUP26BRfh3j297+VgIkmMJVxyTnJHQDs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=r5ZYIPsWb2LBJxEEIIwqpPtTFzOZCX5rii7HfjA8ThMDoGKBymfspX+m03ESyzLEfMYVRUkS7pbaW/GNPtQHtzGFXu+up0fgpeUQEpq8+JKeN+zeg/ziePLipKvUE5yEAu3ZINUNaJqnwpTnLZLUS5BrOI15LQ/fr+2GtSi2ODI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BZU82aSz; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57PITRR3872942;
+	Mon, 25 Aug 2025 13:29:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1756146567;
+	bh=OCn0fgfyr7GShlQoJ1NG5nuaGmBG/jRsdUFrvMEem/E=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=BZU82aSzA4fM99yZGoBVavgkDy6NYt5LhjCDwsvMowsWeRaerZUUG2R7/YGF1+HkH
+	 IZsiVofG9VbT15dtvkuGsKTmA/WXDkI98I88+1jyShWbYLiDZOaztZGgJlGAd2mXvp
+	 NHU7KA4IK+PRwBLyUweAfQxom0nTT2jTR6kGxtrw=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57PITR7W1778513
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 25 Aug 2025 13:29:27 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 25
+ Aug 2025 13:29:26 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Mon, 25 Aug 2025 13:29:26 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57PITQhS4050560;
+	Mon, 25 Aug 2025 13:29:26 -0500
+Message-ID: <d54e1cb6-388d-4e0e-a3a0-387ed87082ce@ti.com>
+Date: Mon, 25 Aug 2025 13:29:26 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next RESEND v4 1/2] bpf: refactor max_depth
- computation in bpf_get_stack()
-Content-Language: en-GB
-To: "Lecomte, Arnaud" <contact@arnaud-lcm.com>,
- Martin KaFai Lau <martin.lau@linux.dev>
-Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
- daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com,
- john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org,
- linux-kernel@vger.kernel.org, sdf@fomichev.me,
- syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com,
- syzkaller-bugs@googlegroups.com, song@kernel.org
-References: <20250819162652.8776-1-contact@arnaud-lcm.com>
- <3d8fe484-2889-4367-9405-91aeee7d2ef0@linux.dev>
- <b15c8986-b407-4ae1-9e02-672c1cf9013f@arnaud-lcm.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <b15c8986-b407-4ae1-9e02-672c1cf9013f@arnaud-lcm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] remoteproc: da8xx: Use devm action to release
+ reserved memory
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>, Hari Nagalla <hnagalla@ti.com>,
+        Beleswar Padhi <b-padhi@ti.com>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250814135532.638040-1-afd@ti.com>
+ <20250814135532.638040-2-afd@ti.com> <aKyXjH-3lnCYM2rG@p14s>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <aKyXjH-3lnCYM2rG@p14s>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+On 8/25/25 12:04 PM, Mathieu Poirier wrote:
+> On Thu, Aug 14, 2025 at 08:55:31AM -0500, Andrew Davis wrote:
+>> This helps prevent mistakes like freeing out of order in cleanup functions
+>> and forgetting to free on error paths.
+>>
+>> Signed-off-by: Andrew Davis <afd@ti.com>
+>> ---
+>>   drivers/remoteproc/da8xx_remoteproc.c | 30 +++++++++++++--------------
+>>   1 file changed, 14 insertions(+), 16 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+>> index 47df21bea5254..58b4f05283d92 100644
+>> --- a/drivers/remoteproc/da8xx_remoteproc.c
+>> +++ b/drivers/remoteproc/da8xx_remoteproc.c
+>> @@ -233,6 +233,13 @@ static int da8xx_rproc_get_internal_memories(struct platform_device *pdev,
+>>   	return 0;
+>>   }
+>>   
+>> +static void da8xx_rproc_mem_release(void *data)
+>> +{
+>> +	struct device *dev = data;
+>> +
+> 
+> The check for dev->of_node from "free_mem" is missing.  I can add it if you
+> agree.
+> 
 
+It should not be needed, this devm_action callback is added inside a if(dev->of_node)
+block below, so this will only be called iff dev->of_node is not null.
 
-On 8/25/25 9:39 AM, Lecomte, Arnaud wrote:
->
-> On 19/08/2025 22:15, Martin KaFai Lau wrote:
->> On 8/19/25 9:26 AM, Arnaud Lecomte wrote:
->>> A new helper function stack_map_calculate_max_depth() that
->>> computes the max depth for a stackmap.
->>>
->>> Changes in v2:
->>>   - Removed the checking 'map_size % map_elem_size' from
->>>     stack_map_calculate_max_depth
->>>   - Changed stack_map_calculate_max_depth params name to be more 
->>> generic
->>>
->>> Changes in v3:
->>>   - Changed map size param to size in max depth helper
->>>
->>> Changes in v4:
->>>   - Fixed indentation in max depth helper for args
->>>
->>> Link to v3: 
->>> https://lore.kernel.org/all/09dc40eb-a84e-472a-8a68-36a2b1835308@linux.dev/
->>>
->>> Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
->>> Acked-by: Yonghong Song <yonghong.song@linux.dev>
->>> ---
->>>   kernel/bpf/stackmap.c | 30 ++++++++++++++++++++++++------
->>>   1 file changed, 24 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
->>> index 3615c06b7dfa..b9cc6c72a2a5 100644
->>> --- a/kernel/bpf/stackmap.c
->>> +++ b/kernel/bpf/stackmap.c
->>> @@ -42,6 +42,27 @@ static inline int stack_map_data_size(struct 
->>> bpf_map *map)
->>>           sizeof(struct bpf_stack_build_id) : sizeof(u64);
->>>   }
->>>   +/**
->>> + * stack_map_calculate_max_depth - Calculate maximum allowed stack 
->>> trace depth
->>> + * @size:  Size of the buffer/map value in bytes
->>> + * @elem_size:  Size of each stack trace element
->>> + * @flags:  BPF stack trace flags (BPF_F_USER_STACK, 
->>> BPF_F_USER_BUILD_ID, ...)
->>> + *
->>> + * Return: Maximum number of stack trace entries that can be safely 
->>> stored
->>> + */
->>> +static u32 stack_map_calculate_max_depth(u32 size, u32 elem_size, 
->>> u64 flags)
->>> +{
->>> +    u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
->>> +    u32 max_depth;
->>> +
->>> +    max_depth = size / elem_size;
->>> +    max_depth += skip;
->>> +    if (max_depth > sysctl_perf_event_max_stack)
->>> +        return sysctl_perf_event_max_stack;
->>
->> hmm... this looks a bit suspicious. Is it possible that 
->> sysctl_perf_event_max_stack is being changed to a larger value in 
->> parallel?
->>
-> Hi Martin, this is a valid concern as sysctl_perf_event_max_stack can 
-> be modified at runtime through /proc/sys/kernel/perf_event_max_stack.
-> What we could maybe do instead is to create a copy: u32 current_max = 
-> READ_ONCE(sysctl_perf_event_max_stack);
-> Any thoughts on this ?
+Andrew
 
-There is no need to have READ_ONCE. Jut do
-     int curr_sysctl_max_stack = sysctl_perf_event_max_stack;
-     if (max_depth > curr_sysctl_max_stack)
-       return curr_sysctl_max_stack;
-
-Because of the above change, the patch is not a refactoring change any more.
-
->
->>> +
->>> +    return max_depth;
->>> +}
->>> +
->>>   static int prealloc_elems_and_freelist(struct bpf_stack_map *smap)
->>>   {
->>>       u64 elem_size = sizeof(struct stack_map_bucket) +
->>> @@ -406,7 +427,7 @@ static long __bpf_get_stack(struct pt_regs 
->>> *regs, struct task_struct *task,
->>>                   struct perf_callchain_entry *trace_in,
->>>                   void *buf, u32 size, u64 flags, bool may_fault)
->>>   {
->>> -    u32 trace_nr, copy_len, elem_size, num_elem, max_depth;
->>> +    u32 trace_nr, copy_len, elem_size, max_depth;
->>>       bool user_build_id = flags & BPF_F_USER_BUILD_ID;
->>>       bool crosstask = task && task != current;
->>>       u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
->>> @@ -438,10 +459,7 @@ static long __bpf_get_stack(struct pt_regs 
->>> *regs, struct task_struct *task,
->>>           goto clear;
->>>       }
->>>   -    num_elem = size / elem_size;
->>> -    max_depth = num_elem + skip;
->>> -    if (sysctl_perf_event_max_stack < max_depth)
->>> -        max_depth = sysctl_perf_event_max_stack;
->>> +    max_depth = stack_map_calculate_max_depth(size, elem_size, flags);
->>>         if (may_fault)
->>>           rcu_read_lock(); /* need RCU for perf's callchain below */
->>> @@ -461,7 +479,7 @@ static long __bpf_get_stack(struct pt_regs 
->>> *regs, struct task_struct *task,
->>>       }
->>>         trace_nr = trace->nr - skip;
->>> -    trace_nr = (trace_nr <= num_elem) ? trace_nr : num_elem;
->>
->> I suspect it was fine because trace_nr was still bounded by num_elem.
->>
-> We should bring back the num_elem bound as an additional safe net.
->>> +    trace_nr = min(trace_nr, max_depth - skip);
->>
->> but now the min() is also based on max_depth which could be 
->> sysctl_perf_event_max_stack.
->>
->> beside, if I read it correctly, in "max_depth - skip", the max_depth 
->> could also be less than skip. I assume trace->nr is bound by 
->> max_depth, so should be less of a problem but still a bit unintuitive 
->> to read.
->>
->>>       copy_len = trace_nr * elem_size;
->>>         ips = trace->ip + skip;
+>> +	of_reserved_mem_device_release(dev);
+>> +}
+>> +
+>>   static int da8xx_rproc_probe(struct platform_device *pdev)
+>>   {
+>>   	struct device *dev = &pdev->dev;
+>> @@ -274,14 +281,13 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+>>   		ret = of_reserved_mem_device_init(dev);
+>>   		if (ret)
+>>   			return dev_err_probe(dev, ret, "device does not have specific CMA pool\n");
+>> +		devm_add_action_or_reset(&pdev->dev, da8xx_rproc_mem_release, &pdev->dev);
+>>   	}
+>>   
+>>   	rproc = devm_rproc_alloc(dev, "dsp", &da8xx_rproc_ops, da8xx_fw_name,
+>>   				 sizeof(*drproc));
+>> -	if (!rproc) {
+>> -		ret = -ENOMEM;
+>> -		goto free_mem;
+>> -	}
+>> +	if (!rproc)
+>> +		return -ENOMEM;
+>>   
+>>   	/* error recovery is not supported at present */
+>>   	rproc->recovery_disabled = true;
+>> @@ -294,7 +300,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+>>   
+>>   	ret = da8xx_rproc_get_internal_memories(pdev, drproc);
+>>   	if (ret)
+>> -		goto free_mem;
+>> +		return ret;
+>>   
+>>   	platform_set_drvdata(pdev, rproc);
+>>   
+>> @@ -304,7 +310,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+>>   					rproc);
+>>   	if (ret) {
+>>   		dev_err(dev, "devm_request_threaded_irq error: %d\n", ret);
+>> -		goto free_mem;
+>> +		return ret;
+>>   	}
+>>   
+>>   	/*
+>> @@ -314,7 +320,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+>>   	 */
+>>   	ret = reset_control_assert(dsp_reset);
+>>   	if (ret)
+>> -		goto free_mem;
+>> +		return ret;
+>>   
+>>   	drproc->chipsig = chipsig;
+>>   	drproc->bootreg = bootreg;
+>> @@ -325,22 +331,16 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+>>   	ret = rproc_add(rproc);
+>>   	if (ret) {
+>>   		dev_err(dev, "rproc_add failed: %d\n", ret);
+>> -		goto free_mem;
+>> +		return ret;
+>>   	}
+>>   
+>>   	return 0;
+>> -
+>> -free_mem:
+>> -	if (dev->of_node)
+>> -		of_reserved_mem_device_release(dev);
+>> -	return ret;
+>>   }
+>>   
+>>   static void da8xx_rproc_remove(struct platform_device *pdev)
+>>   {
+>>   	struct rproc *rproc = platform_get_drvdata(pdev);
+>>   	struct da8xx_rproc *drproc = rproc->priv;
+>> -	struct device *dev = &pdev->dev;
+>>   
+>>   	/*
+>>   	 * The devm subsystem might end up releasing things before
+>> @@ -350,8 +350,6 @@ static void da8xx_rproc_remove(struct platform_device *pdev)
+>>   	disable_irq(drproc->irq);
+>>   
+>>   	rproc_del(rproc);
+>> -	if (dev->of_node)
+>> -		of_reserved_mem_device_release(dev);
+>>   }
+>>   
+>>   static const struct of_device_id davinci_rproc_of_match[] __maybe_unused = {
+>> -- 
+>> 2.39.2
 >>
 
 
