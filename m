@@ -1,103 +1,183 @@
-Return-Path: <linux-kernel+bounces-784990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62B25B3447A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:48:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96DC0B3447B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:48:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BE9E2A7817
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:41:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6E06162754
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:42:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306812FCC02;
-	Mon, 25 Aug 2025 14:39:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D16F2EE619;
+	Mon, 25 Aug 2025 14:42:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="hP0FzDKv"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MYab47A3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 292B6AD21;
-	Mon, 25 Aug 2025 14:39:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B14279918
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 14:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756132759; cv=none; b=u0LJST1rsmdlhafTGv/979KdUdre+kDT0Un3t27LGMGMUI/WQQeI3XQLRKmdMVPtYKLwBCN0LgZxHr7nDyu9+UcRtF19ZQHwghl80T3qY4Uai1od8K9SQUzxeTYUJ69f4yJ8TMjMv0GOkGepsMz03EG9V1Z+g//q9ndZj+O23vg=
+	t=1756132924; cv=none; b=UEFhxxAe0mN3uLkfzoEMHRxOGGvhhdX2A5jYH+WqRFxTnmtYClVGwmY0WuItWWPfmD9eYWBgP0OHawvPCQ3xyFH6MkBwg8O8VpOO96RqrC8yfxOm+tGjTw4iCHp1Tijai8C0ihgTlLKFi9wD9AeRz+LddcDO7YDPSfBq2BMYAr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756132759; c=relaxed/simple;
-	bh=gjMNa053jm9d1ZxNLYNws1hv3/WjlgBNebfTgWG/+fg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hXGD0xbsweLqgmW15zssxDlsSYnn9kB+7xZYdIJ0x+4M88xMEunEcXINSbizDTsV72Qq56xXSfVfN837lrBSaGfPYklxRdval6Zlzp1FDmj90sSSh1cB+e2GFzhI6VMC6GkF4U3fm5pMCof4NlwCCuMWqPJ8UEXTqBh/MfLEuGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=hP0FzDKv; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 7B486A01D2;
-	Mon, 25 Aug 2025 16:39:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=7LBCMNAUL/7vcH2b4nh4
-	CGZU3Z9xao18skU/LyQqwYA=; b=hP0FzDKvH3mi6Qmaw5vWS55+ZOVq7SwtKWwW
-	UsAzTcl57wg6xAzdT+nzcqNQN5L0bZ6yTmMNxENRL11hgvPxGsYPnuEAQBZ5ocWp
-	dkpulxb74zWEpTBx9aARKxhtH9Jws0I3kzVO9KSyVopAp6/3TvkeFKx0kMylQ8i5
-	5ZVNpGW2E8O7XWODZJq63hrsqpAfQT8GJZUD2nllpJBOjj78xaI+37IZLU2KYTGp
-	UqS6KDj3HFSx1id0v618ty+2raO3Aokxaeaj5QILoLUQi+6u+p2O+B3uvcSaRIM5
-	/mh1UJ+jPHRb3HGsSpPqxVHkW7V8AZ5nRiZZ55pCcOhPmJ7iDZE3io9IO4faGZi5
-	VazhlQzgRVuewWi2jrWZuACOMPh9ZLaj4LwvduVwuKHAe2K8T7dyb52jpZ1q7iIu
-	J8q+HR9EBsQZ7PXqwCIfYe9U4fbloy0HpD1Q/pWV5XctlRtjMCbQtMS9GhgIo0xM
-	0ieUi4u35fOpfla6VYChakQrfPSJtBpjL5IHOV12+gTuIcdZVjvBHhTMwQo64XB/
-	bUVGgGkQ/ZAFZ9bhDQVx20jIkWZRu0jaXgw4HWSEt82/+rmE4IOB2YEQlQiHkOKP
-	8b6A7Cuo5i9jWAQLVLz0OWLtGsezfbnTJzcd41dUcBlNnuAbHEtHGDANCN+SPl1a
-	aU8IKsU=
-Message-ID: <724f69f0-7eab-40aa-84f0-07055f051175@prolan.hu>
-Date: Mon, 25 Aug 2025 16:39:12 +0200
+	s=arc-20240116; t=1756132924; c=relaxed/simple;
+	bh=dY2BC24LcOwPmwCFWjqjdFx0LB0w2liGu7oqHI05kJA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZMykKjuXwkizdsE2gSSm8whbno+ElpRbi7RysyDeqmM11MkbEaqXqjrL1uD5VrADWncftJQxKmI1FXFWxyzjBRpB214XRQlfBYZyEhvbUKIP13KTjApmyMDRBXXv8VnGBmkkCAYbroS+c5bP+WjJWKik7IGrycSVvr+B/ZCYOA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MYab47A3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756132921;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sLqi3ZQ4Qq7GjJJBZEDnBdmpcriLiuWuU+N614GqayQ=;
+	b=MYab47A3TUePDS5cKDHuueOOpoCdfpZO7VUkEgaHpv90fm2FlVIeZJkxsEUsRE9GIHAXeK
+	Kh6DU/dVtOiTmuw1EA4JnrIKheZekFhk6k84+IXNeTgXk76CrlOomuAVSJFvBh8jb3sltT
+	FE1crvZ8GVRvyvZuWQmu4VUQIVZH5QY=
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com
+ [209.85.166.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-156-30KAuqcPMw6N9giJJvR9Hg-1; Mon, 25 Aug 2025 10:42:00 -0400
+X-MC-Unique: 30KAuqcPMw6N9giJJvR9Hg-1
+X-Mimecast-MFC-AGG-ID: 30KAuqcPMw6N9giJJvR9Hg_1756132920
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3ec9adc1255so2517205ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 07:42:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756132920; x=1756737720;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sLqi3ZQ4Qq7GjJJBZEDnBdmpcriLiuWuU+N614GqayQ=;
+        b=hFoJkel6Wqn9FBy5uJRrIVkmiGs6kXyg1UnU4nccMvIfSLjAr76g8vUCAzobQdfXQd
+         M8AhYc4sFBhZ2KXBkRHUn+BuZO8Uc1DUFIZxcp0kxCRjDOl6ndz7REZISwRqEVl9uddi
+         ZJZtq112n+WOinEj59em/OLblnJvnEtI9v3BGLZBzSsbPGVVooGCZC2bMTYlZ6gXWbyo
+         axcFst1w1IENyqS/lIdfF5fgZ/hNySAhxt9Td5oVeEZVScBVYy9MX1zWzIirDCeDdpWj
+         Ue1dmp5eX3/rRzFLR3DVMZ8IjfXRQD4cAJB1D0HkMch4f23R9yVtlbccJoKJev+73Taw
+         wnGg==
+X-Forwarded-Encrypted: i=1; AJvYcCWK2e5OkTv6E63Y7VNV7ywW1XTkOQDLD4yVnq1YKdj936+12eVJ4PsTHBHjVbfz1IHIPOuUaM+zLDcTeTE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0+8eKhRxW8D15OwlUwymqX7Cv4PAlE99lWFs9r2NCaFyl08mH
+	4yoyyCwo/aTiJi2TUYfrR6nvakbKs9UNUBBhDv1hnnrEtgcmpc4TU9rsQ7fQ05SJw8EAGR84wzF
+	8J10W6oL9wMPMJUT6I/3Gnt0hg2eDFwP+ooww9MJk3Juum2BY6TF+xgfu8hf1w/ofAQ==
+X-Gm-Gg: ASbGncsGSA9Mc8LmAaiKytylWV0cLZLCSPJ3M6vEDiBnXYTIEucc6Cy9AtS3ZonDmCW
+	LHzVgIKFpYJ1OKe9SDnWxljS9GWiRzkRaJFRPlAJWkeIWeoqmpJ90Tjn5lfavqNza26lxhUv4gd
+	sa5Xo21DaN8lnYBuppDSw0cw7ct3QQqqHgDoN9pkYgeXUIE22MPzV0l1fLsWVS7iag344krs5ja
+	xDDBCRc8Edi9Tvrc3iMljdf6AFs87VqPVDZ6Ns3yPYBzmc4uMnXaIdsTfCBLYxHuLgUzp2RbDV7
+	nG4NuqEYxRTV1W7R7i8vMj5uLep2QRjRWhA1V6zhfUM=
+X-Received: by 2002:a05:6e02:1567:b0:3ec:9c32:6471 with SMTP id e9e14a558f8ab-3ec9c32673bmr18816445ab.2.1756132919647;
+        Mon, 25 Aug 2025 07:41:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGW4Lgvz6FbySIAPwtm0U1Tae7UuaIE2esfeq7WZJykcdIyv6UETbtw/iCgysaF9obPTYn/Gg==
+X-Received: by 2002:a05:6e02:1567:b0:3ec:9c32:6471 with SMTP id e9e14a558f8ab-3ec9c32673bmr18816275ab.2.1756132919255;
+        Mon, 25 Aug 2025 07:41:59 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3ec67d6ffdasm22921535ab.25.2025.08.25.07.41.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Aug 2025 07:41:58 -0700 (PDT)
+Date: Mon, 25 Aug 2025 08:41:55 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Nipun Gupta <nipun.gupta@amd.com>
+Cc: <arnd@arndb.de>, <gregkh@linuxfoundation.org>, <nikhil.agarwal@amd.com>,
+ <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <llvm@lists.linux.dev>, <oe-kbuild-all@lists.linux.dev>,
+ <robin.murphy@arm.com>, <krzk@kernel.org>, <tglx@linutronix.de>,
+ <maz@kernel.org>, <linux@weissschuh.net>, <chenqiuji666@gmail.com>,
+ <peterz@infradead.org>, <robh@kernel.org>, <abhijit.gangurde@amd.com>,
+ <nathan@kernel.org>, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v3 2/2] vfio/cdx: update driver to build without
+ CONFIG_GENERIC_MSI_IRQ
+Message-ID: <20250825084155.10088e2a.alex.williamson@redhat.com>
+In-Reply-To: <20250825043122.2126859-2-nipun.gupta@amd.com>
+References: <20250825043122.2126859-1-nipun.gupta@amd.com>
+	<20250825043122.2126859-2-nipun.gupta@amd.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: mdiobus: Move all reset registration to
- `mdiobus_register_reset()`
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-CC: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Philipp
- Zabel" <p.zabel@pengutronix.de>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20250825-b4-phy-rst-mv-prep-v1-1-6298349df7ca@prolan.hu>
- <aKxwVNffu9w8Mepl@shell.armlinux.org.uk>
-Content-Language: en-US
-From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
-In-Reply-To: <aKxwVNffu9w8Mepl@shell.armlinux.org.uk>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: sinope.intranet.prolan.hu (10.254.0.237) To
- ATLAS.intranet.prolan.hu (10.254.0.229)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A296767155E607067
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On Mon, 25 Aug 2025 10:01:22 +0530
+Nipun Gupta <nipun.gupta@amd.com> wrote:
 
-On 2025. 08. 25. 16:16, Russell King (Oracle) wrote:
-> On Mon, Aug 25, 2025 at 04:09:34PM +0200, Bence Csókás wrote:
->> Make `mdiobus_register_reset()` function handle both gpiod and
->> reset-controller-based reset registration.
+> Define dummy MSI related APIs in VFIO CDX driver to build the
+> driver without enabling CONFIG_GENERIC_MSI_IRQ flag.
 > 
-> The commit description should include not only _what_ is being done but
-> also _why_.
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202508070308.opy5dIFX-lkp@intel.com/
+> Reviewed-by: Nikhil Agarwal <nikhil.agarwal@amd.com>
+> Signed-off-by: Nipun Gupta <nipun.gupta@amd.com>
+> ---
+> 
+> Changes v1->v2:
+> - fix linking intr.c file in Makefile
+> Changes v2->v3:
+> - return error from vfio_cdx_set_irqs_ioctl() when CONFIG_GENERIC_MSI_IRQ
+>   is disabled
+> 
+>  drivers/vfio/cdx/Makefile  |  6 +++++-
+>  drivers/vfio/cdx/private.h | 14 ++++++++++++++
+>  2 files changed, 19 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/vfio/cdx/Makefile b/drivers/vfio/cdx/Makefile
+> index df92b320122a..dadbef2419ea 100644
+> --- a/drivers/vfio/cdx/Makefile
+> +++ b/drivers/vfio/cdx/Makefile
+> @@ -5,4 +5,8 @@
+>  
+>  obj-$(CONFIG_VFIO_CDX) += vfio-cdx.o
+>  
+> -vfio-cdx-objs := main.o intr.o
+> +vfio-cdx-objs := main.o
+> +
+> +ifdef CONFIG_GENERIC_MSI_IRQ
+> +vfio-cdx-objs += intr.o
+> +endif
+> diff --git a/drivers/vfio/cdx/private.h b/drivers/vfio/cdx/private.h
+> index dc56729b3114..5343eb61bec4 100644
+> --- a/drivers/vfio/cdx/private.h
+> +++ b/drivers/vfio/cdx/private.h
+> @@ -38,11 +38,25 @@ struct vfio_cdx_device {
+>  	u8			config_msi;
+>  };
+>  
+> +#ifdef CONFIG_GENERIC_MSI_IRQ
+>  int vfio_cdx_set_irqs_ioctl(struct vfio_cdx_device *vdev,
+>  			    u32 flags, unsigned int index,
+>  			    unsigned int start, unsigned int count,
+>  			    void *data);
+>  
+>  void vfio_cdx_irqs_cleanup(struct vfio_cdx_device *vdev);
+> +#else
+> +static int vfio_cdx_set_irqs_ioctl(struct vfio_cdx_device *vdev,
+> +				   u32 flags, unsigned int index,
+> +				   unsigned int start, unsigned int count,
+> +				   void *data)
+> +{
+> +	return -ENODEV;
 
-Well, my question was, when I saw this part of code: why have it 
-separate? Users shouldn't care whether a device uses gpiod or 
-reset-controller when they call `mdio_device_reset()`, so why should 
-they have to care here and call two separate register functions, one 
-after another? In fact, the whole thing should be moved to mdio_device.c 
-honestly. Along with the setting of mdiodev->reset_{,de}assert_delay.
+With the fix to patch 1/, the device info ioctl should be returning
+that there are no irqs available, so this should use the same errno as
+any other case of the user trying to set an out-of-bounds irq, -EINVAL.
 
-The end goal is fixing this "Can't read PHY ID because the PHY was never 
-reset" bug that's been plaguing users for years.
+With that change
 
-Bence
+Reviewed-by: Alex Williamson <alex.williamson@redhat.com>
+
+> +}
+> +
+> +static void vfio_cdx_irqs_cleanup(struct vfio_cdx_device *vdev)
+> +{
+> +}
+> +#endif
+>  
+>  #endif /* VFIO_CDX_PRIVATE_H */
 
 
