@@ -1,127 +1,88 @@
-Return-Path: <linux-kernel+bounces-785513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1539BB34BDA
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:29:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F174EB34BE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 22:29:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C55AB481F64
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:29:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C808A243B55
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 20:29:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A52502882DE;
-	Mon, 25 Aug 2025 20:28:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE1228C5BE;
+	Mon, 25 Aug 2025 20:29:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="mK8TnozM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TjjzCZ/Z"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D1F8635C
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 20:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40CF58635C
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 20:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756153738; cv=none; b=g3b92NAFlh6P85bQ02mmfvEghwdrGHW26y8aBkl/K3bN8qtnfp5PDkEQOiLdfBkBtHxb0b6sqgXpH3zZJV0gfzbFcpJ4NBrm3GAPGPpRbxnGMVDBlw5b4mgD9NeIZTeloJTFGGrjC0wrQlwg/3Ng/yti9QzTuv7FoNvkwArSRHQ=
+	t=1756153781; cv=none; b=URA4dcM0GB5l50SqX1kN+yxfJCHwda2Srr2D/Sbz2zX5etfdHlPvlTXFt0wU1MUSAy6CEdZAKjqklSRlan68/UUr3Qj0gxWVTloWX2t1fpcL05knL/LxyyLTH7rg+prWPuAKRT6A3R47t+IEBdhGtOo/kYYLIc1UZ64zgYeCc1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756153738; c=relaxed/simple;
-	bh=ComM35XaOofwnrs4E6SooCBJVLjt4r+F5uISZovHRbk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=immi5tjHWA6cRm/kjl3m9ngmKqnLKxF3cy5mDYyKT0k+9oUuWsrQ137IHUQXpPCZbckgW79jKM4VxYX+R0XBgB6Ne1b5/6GL1eJkE1tSEjIbdU9mV6WnjR98lB8zMC03N7chkf0q+bWdC0vViuhhZN8tK+JGO/cpTmvUkLyB8p8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=mK8TnozM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33FF3C4CEED;
-	Mon, 25 Aug 2025 20:28:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1756153737;
-	bh=ComM35XaOofwnrs4E6SooCBJVLjt4r+F5uISZovHRbk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mK8TnozMk+hiGthqg6YeyX5K9pIAYMFPVR75G238AJAo/HCD9a0QSWhpYZF+II6/+
-	 GYnnrODQVztWLZDy50ntAhUkMwszDSRpzIeUdpj0fvCTUad/qcaM32Hh7FD8r22o/N
-	 5t8SohtCCDesXq7etFZD551C6gCqYtprq5G6EeeE=
-Date: Mon, 25 Aug 2025 22:28:53 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: xion.wang@mediatek.com
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	wsd_upstream@mediatek.com, huadian.liu@mediatek.com,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 1/1] misc: Prevent double registration and deregistration
- of miscdevice
-Message-ID: <2025082533-ranked-simply-4b63@gregkh>
-References: <20250825084556.10358-1-xion.wang@mediatek.com>
- <20250825084556.10358-2-xion.wang@mediatek.com>
+	s=arc-20240116; t=1756153781; c=relaxed/simple;
+	bh=02+8MH6hCAPPlDg8TadPjxMPFyzg3PMO1koKRqRz91I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Voaos6rUKu97cDaT8bEACZ4o9+SzWjRtShj96bECE2YrAnBOChvpHKvlkTSeCk5O6s33rREn9S6eU50NtlqbcYUB/1VQvEI/ajVIGWPBHLk99uA1Xwd2NWCDCtfclhRj+A3fEZMf5aSdMFGz8IwOmRgCXrcDm+/zqnIF4H8I5k8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TjjzCZ/Z; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <659fd81f-a017-48f0-b04a-41679dc5a61b@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756153773;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=02+8MH6hCAPPlDg8TadPjxMPFyzg3PMO1koKRqRz91I=;
+	b=TjjzCZ/Ze/wzh0nrIm9uj0QEDQIhK1ieq2BTUKU6v9xLzlfXIRwOQ5VinGJIc770SNgCDs
+	Vq4hrVGz3aoXlnTy45Uc3ndH5LTJ5xYmqwFa7rVG/dwiPaYX5cQ7OYJnEs1W56x1Nm91d2
+	UDmsSzYpsobzZ5V3nuTry98jj8I+hjo=
+Date: Mon, 25 Aug 2025 13:29:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250825084556.10358-2-xion.wang@mediatek.com>
+Subject: Re: [PATCH v7 1/2] bpftool: Refactor kernel config reading into
+ common helper
+Content-Language: en-GB
+To: chenyuan_fl@163.com, olsajiri@gmail.com
+Cc: aef2617b-ce03-4830-96a7-39df0c93aaad@kernel.org, andrii@kernel.org,
+ ast@kernel.org, bpf@vger.kernel.org, chenyuan@kylinos.cn,
+ daniel@iogearbox.net, linux-kernel@vger.kernel.org, qmo@kernel.org
+References: <aKL4rB3x8Cd4uUvb@krava>
+ <20250825022002.13760-1-chenyuan_fl@163.com>
+ <20250825022002.13760-2-chenyuan_fl@163.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <20250825022002.13760-2-chenyuan_fl@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Aug 25, 2025 at 04:45:47PM +0800, xion.wang@mediatek.com wrote:
-> From: Xion Wang <xion.wang@mediatek.com>
-> 
-> When repeated calls to misc_register() or misc_deregister() on the
-> same miscdevice could lead to kernel crashes or misc_list corruption due to
-> multiple INIT_LIST_HEAD or list_del operations on the same list node.
-> 
-> This patch improves the robustness of the misc device driver by preventing
-> both double registration and double deregistration of miscdevice instances.
-> 
-> Signed-off-by: Xion Wang <xion.wang@mediatek.com>
-> ---
->  drivers/char/misc.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/misc.c b/drivers/char/misc.c
-> index 558302a64dd9..2f8666312966 100644
-> --- a/drivers/char/misc.c
-> +++ b/drivers/char/misc.c
-> @@ -210,6 +210,9 @@ int misc_register(struct miscdevice *misc)
->  	int err = 0;
->  	bool is_dynamic = (misc->minor == MISC_DYNAMIC_MINOR);
->  
-> +	if (WARN_ON(misc->this_device))
-> +		return -EEXIST;
 
-You just crashed the kernel if this ever triggers (remember when
-panic-on-warn is set)
 
-So please, if this can happen, properly handle it.
+On 8/24/25 7:20 PM, chenyuan_fl@163.com wrote:
+> From: Yuan Chen <chenyuan@kylinos.cn>
+>
+> Extract the kernel configuration file parsing logic from feature.c into
+> a new read_kernel_config() function in common.c. This includes:
+>
+> 1. Moving the config file handling and option parsing code
+> 2. Adding required headers and struct definition
+> 3. Keeping all existing functionality
+>
+> The refactoring enables sharing this logic with other components while
+> maintaining current behavior. This will be used by subsequent patches
+> that need to check kernel config options.
+>
+> Signed-off-by: Yuan Chen <chenyuan@kylinos.cn>
 
-> +
->  	INIT_LIST_HEAD(&misc->list);
->  
->  	mutex_lock(&misc_mtx);
-> @@ -251,6 +254,7 @@ int misc_register(struct miscdevice *misc)
->  			misc->minor = MISC_DYNAMIC_MINOR;
->  		}
->  		err = PTR_ERR(misc->this_device);
-> +		misc->this_device = NULL;
->  		goto out;
->  	}
->  
-> @@ -275,12 +279,13 @@ EXPORT_SYMBOL(misc_register);
->  
->  void misc_deregister(struct miscdevice *misc)
->  {
-> -	if (WARN_ON(list_empty(&misc->list)))
-> +	if (WARN_ON(!misc->this_device))
->  		return;
->  
->  	mutex_lock(&misc_mtx);
->  	list_del(&misc->list);
->  	device_destroy(&misc_class, MKDEV(MISC_MAJOR, misc->minor));
-> +	misc->this_device = NULL;
+Acked-by: Yonghong Song <yonghong.song@linux.dev>
 
-You are overloading the pointer here to mean something, please don't.
-
-Again, why would this ever happen?  What in-tree driver does this?
-
-thanks,
-
-greg k-h
 
