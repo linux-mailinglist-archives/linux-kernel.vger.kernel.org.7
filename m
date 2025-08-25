@@ -1,194 +1,234 @@
-Return-Path: <linux-kernel+bounces-784445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAF23B33C08
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:58:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD872B33BFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:57:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9CA71880576
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:57:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6503F3B2B26
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 09:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7172C3265;
-	Mon, 25 Aug 2025 09:53:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C3552D3228;
+	Mon, 25 Aug 2025 09:56:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Jkr0s54L"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2079.outbound.protection.outlook.com [40.107.236.79])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oQlDCHn2";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vXkJ7c72"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF27280018;
-	Mon, 25 Aug 2025 09:53:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756115630; cv=fail; b=XbFpmcK2/tMoQK72by0IYL/PBqpFobiYT39LvxSF7Wx6Bbd6RddPS4xea87pNpJ3MM+dxWhCvVrvb1l5FXmHZVbn/HzvzV2GfcYhhsYDtkVYiQP52nBc2kAKcah8+/DTWS8m19V10b0QpA4gPCAi2FHQ5SkhKgkbHhLQgoMfpCI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756115630; c=relaxed/simple;
-	bh=9UmU8y9TSyvIdLPC4o+obnyuqNdoTLv1z3CB0l+XfRI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=NZvbb39ZdLdlCE6zbV2Z5kg8ZnApopgPGxtbuqzti9QAJGXMNM1SWfu8gvtK1g8y7O/FVKRp5tYZGIFELrDqOT4cbMoJ9Sri4bELOq+pKjy94zvG/HzOxf3Qak6FW6YqzXUPszxPOYFbRyebFSHNnZzwUh4AZBThR+gA++W/Sgs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Jkr0s54L; arc=fail smtp.client-ip=40.107.236.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gnUw/1Gz2FTltoBJO1ofPAknMPeGD6A3Tw/V2v5OxPHFKYITbRcKNc8304XRhRw4lBz8b7bwvQifT2PTRTSAQW83NoEghc2Snhfx7VUfAiDoUTc4QUhnewJdh8z40R1zDcMRCBF/77Pa2Qrc28RCnATCeS4QFCXyCh88WUKmglYWPVu2DqemBq1jT2L0/BfCNqFmTH5nXKXpTcRUZHpwQCWlukEFabXoE1ZzYN8duVjBVMcyHbfzh7U4pTY2YI7r6GaMew+9swenGesNWid+bvVeZ8giUZYjHZRsz+RvS+f1z89N0UV/5hE1GE1+Snm613c7/XPQ+bi61o27IyXuKQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9UmU8y9TSyvIdLPC4o+obnyuqNdoTLv1z3CB0l+XfRI=;
- b=xzJRfH66YtnXuU2HczjcQLd7JRgns2ev/xV4euGXvZUicTFWVMYK/R/M10WOlEcCpmBS6rns3fR72sicdujHvsP1XZT4Hb5xd1T6Mr2ZV5IGdu9aXI/mVJIM7mg3VSyl8h97uNJlSwTNLdw53M1GCjn787clI5rM18Vy+uWBkYIifmvsO2fXKFGIqPAUcr9qExYToEHlGIH0hTRzXtaBjOCP/plg9tb6PIlDnkGlfDE3RUQfyYaDNIqyLzXSAVzyVfOZQjH013olhE7hEwJL9udfWeZY0vA7fl2K8JYTmL7xw7VmDRMBu/DQ4esXgwTrJ3rvuRL+0HLxQTpFu2TgAw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9UmU8y9TSyvIdLPC4o+obnyuqNdoTLv1z3CB0l+XfRI=;
- b=Jkr0s54LyzlVgt9Bao+WMPDcYEBQkkWdXnW4zvcE1I9+DS2I/UpnQ2yf65UFXLz4tz3wMQielaCWfZcZdH2AUwRp2nOTnr4KK/pWsU+Ve6tWaafwwxYTrA3mrVgMAHXjdVF9erzGIc3g2D1g3xw/ArQt/ywtD8KDJEKcG6T6rbU=
-Received: from IA1PR12MB7736.namprd12.prod.outlook.com (2603:10b6:208:420::15)
- by DM4PR12MB7672.namprd12.prod.outlook.com (2603:10b6:8:103::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.20; Mon, 25 Aug
- 2025 09:53:44 +0000
-Received: from IA1PR12MB7736.namprd12.prod.outlook.com
- ([fe80::af21:b877:699d:43b0]) by IA1PR12MB7736.namprd12.prod.outlook.com
- ([fe80::af21:b877:699d:43b0%5]) with mapi id 15.20.9052.017; Mon, 25 Aug 2025
- 09:53:44 +0000
-From: "Erim, Salih" <Salih.Erim@amd.com>
-To: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>
-CC: "O'Griofa, Conall" <conall.ogriofa@amd.com>, "nuno.sa@analog.com"
-	<nuno.sa@analog.com>, "andy@kernel.org" <andy@kernel.org>, "Simek, Michal"
-	<michal.simek@amd.com>, "krzk@kernel.org" <krzk@kernel.org>,
-	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>
-Subject: RE: [PATCH v2] MAINTAINERS: Update xilinx-ams driver maintainers
-Thread-Topic: [PATCH v2] MAINTAINERS: Update xilinx-ams driver maintainers
-Thread-Index: AQHcEbn4jbBGSQqtcUiYMM22c5pVubRwbioAgAKiUACAABgRMA==
-Date: Mon, 25 Aug 2025 09:53:44 +0000
-Message-ID:
- <IA1PR12MB7736D5945F1AF7690E4497459F3EA@IA1PR12MB7736.namprd12.prod.outlook.com>
-References: <20250820100519.2272509-1-salih.erim@amd.com>
-	<e61c2e01-cd8d-4193-afcf-5ddaef34300e@baylibre.com>
- <20250825092634.75230a7d@jic23-huawei>
-In-Reply-To: <20250825092634.75230a7d@jic23-huawei>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_7ab537de-9a15-4e91-8150-78a9f873b18c_ActionId=a4c31828-a3a8-4bd5-a43d-c3bd6b1f8746;MSIP_Label_7ab537de-9a15-4e91-8150-78a9f873b18c_ContentBits=0;MSIP_Label_7ab537de-9a15-4e91-8150-78a9f873b18c_Enabled=true;MSIP_Label_7ab537de-9a15-4e91-8150-78a9f873b18c_Method=Privileged;MSIP_Label_7ab537de-9a15-4e91-8150-78a9f873b18c_Name=Third
- Party_New;MSIP_Label_7ab537de-9a15-4e91-8150-78a9f873b18c_SetDate=2025-08-25T09:53:40Z;MSIP_Label_7ab537de-9a15-4e91-8150-78a9f873b18c_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_7ab537de-9a15-4e91-8150-78a9f873b18c_Tag=10,
- 0, 1, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: IA1PR12MB7736:EE_|DM4PR12MB7672:EE_
-x-ms-office365-filtering-correlation-id: ffdbbf1d-eb99-4d61-9a6b-08dde3bd4758
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?QorDUyM3PJ93iMiIy7qG/I3jJ/WLnRKg9O2VYaHmbk+tC9np7CDDFfblmi6a?=
- =?us-ascii?Q?QdWLAXnoYLXuktxis5fE33i46d0eQRoK+Ec0ZekvxzYylX/5FU64U6PGrSOa?=
- =?us-ascii?Q?Nrj8bGW3WrfJ8MeGgdjDj33Jqwn05yVyBNBYsjQnm3aDb/E8VDTwrkul7qMa?=
- =?us-ascii?Q?hvaxPcYrwRRri53IzN3T3yFr2oJYkf+g06xy7/DRnhCRXHvzHUqJdzn3UoJZ?=
- =?us-ascii?Q?aVTpOM5bSGS27UyVSmKrqKOjmMlfENpeQxeAUS4MjhQBrZAJ1/x3wP81jb78?=
- =?us-ascii?Q?Zn8kDH0ihrSWbt8bcXTGmi9AjJTVKzTs1PamrqN2WKwuVsl4u6kzPYxwr3gt?=
- =?us-ascii?Q?w/O8rTos/aLFo1yJboBbOphK5wY+ndUrU0B0N3j6inG0rJMQHMRdmkruKGtX?=
- =?us-ascii?Q?p4v6jXwcaWoGzKfVfEtfRnbFzOUeTDoYEGT0ZUhSWe6oJYTEN94RLcFExAcn?=
- =?us-ascii?Q?aXUDLi7twEfmkrApTTTIBO7lJSxUhtP2Umv/OZgOMpSig7vHwcZ5PQCuXOGA?=
- =?us-ascii?Q?RNgXVZAHZsq1JdP31hVrP3kWAfop1+pfIULfhEbrWRTFQPo9Qof03EeA0ZVB?=
- =?us-ascii?Q?RsE5kCCnhtkc//41d4ZUGGb0hzb7zvJxssSf0U7rqjy5t8XXqnhATxt2MLOl?=
- =?us-ascii?Q?z+I+hwphCtyJ8uSVJVw7BMnANv2z35o8lyH0UBcwAOa/KwEfPdcYEBcXU/PI?=
- =?us-ascii?Q?WJ6mLqePSChYYnN2SZiEpbASYR0iNcHpiS7ykwMyvgNb/EjMhA0g5ocLw70P?=
- =?us-ascii?Q?e/A+LJKbsTSk1E/xyZkgJORKYSTQHyHSIPECgMc3guR/uYU2jCtP3bzNEKfv?=
- =?us-ascii?Q?vpML79hj5uyGzvbwejtifgYLb3IEiLDasWdfQZCW/d+2Z9n+FbqmIT5YydQ9?=
- =?us-ascii?Q?VJ3pX5J0gv9iJQCiixasV5m2KSujmw0a4fWI+MkJZptspRKyGpozYWUr9A6Q?=
- =?us-ascii?Q?gKvR35ir8WhXmq0ZkY0BdHnK+5s+inqYH+jvoh5Dqa9O6fisfGpLjXiRAJ1Z?=
- =?us-ascii?Q?/akfpE4k3W988eoGBHk4bqqQBCnDCq5GR/7YBXR3vVUvo3Lflk7kkb7TPM2u?=
- =?us-ascii?Q?EYuy4mtqlldVt/vA/PTB5l/uxC8UlbMiJSqAOm3E85gtcM3rGwlSVGE1TDNy?=
- =?us-ascii?Q?cJ7X+mOyv4dJSf+TeVmI6uJM95EKmIHzoeejYc17VAOBK+f4oQ5H31fZ59l5?=
- =?us-ascii?Q?2nzUlEZMVusvuywJIzHo8+vUyTqwuOH2gEkSNeCshdEGSQo5g8vfotVHycRU?=
- =?us-ascii?Q?Rm5+Fte+Yw7NnEJHonSlAz6Iy4FUX/M/EBWw/EJZ9x3wXrZV+FbZpC8MuNEl?=
- =?us-ascii?Q?EsaH1gP3v8UIlHYTTHOTAkKZoFghmVqcBvfsTJmlLKr3MTIfmWuHyEA1Uwxe?=
- =?us-ascii?Q?bDl6x/77VxLht+SxuD4pnR5WNdep2AiUGQNIzT2BrxmMxOf/XQopESsH2q3X?=
- =?us-ascii?Q?rr/Nqg1yqxtXMGGxQY/wEBaEsBciMDa/zOKJmK+LWJC46RFB9Iyrqg=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB7736.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?BhJ3CFMYn/QgwvvcNSQ1Lh8LPNKhb+Ka+Cuk6wDJ2DXAhcBq88D1SPDEbpr6?=
- =?us-ascii?Q?JL67LZ43p0hg8cl5ox+GCQvWiE3YlZ0l4/uvXwc5aL/OOkmWnGh/6WtfUXMt?=
- =?us-ascii?Q?PrBRW3sSONe77vpO0vSyci5zLnWVWhqVrpe58k1A5yoMVG7C7pYZR7/2iXGQ?=
- =?us-ascii?Q?YvLdFCAp2ttF62O/gnIpwp+cUIwwOUqL11/4SMBjTKU62Zuax4cy02+J1c/H?=
- =?us-ascii?Q?M4WIYk5BOIXTeb6jpW1irRaGLjEtPBrlfZ0xPnWRCtN4REcRQZAZmZSDRWDn?=
- =?us-ascii?Q?KicJsnR7eDNJojNhfz8ajOS3zyqVh+wCcEW85zzJqUBjMXzuQ+hCjafmgSPO?=
- =?us-ascii?Q?yaWIhYDr9INCVlaxebZT2uuzW3fPcQ0UoTuy2rS0OZsnul/5kjgF1l7wztqb?=
- =?us-ascii?Q?CBMeICY0M2tAF0MxppYeM9Jz7zZaif9UrSD5VNH+B3XEDGznUteqjBhx6O67?=
- =?us-ascii?Q?78edGjdYlpv9PX5Q+BrX6zUNgcGcvdMCqg/XEgbUC98q2ic8zLa+DEHqNAFB?=
- =?us-ascii?Q?9SE3Xwsqbjy/5YYevX+0X9G4vgyiOPHR2Ya5QL6zmo3eyyHy0EKWJrRTl2gn?=
- =?us-ascii?Q?gdi6godQ3S8DYGiOihyyqPIR/7BqEhoSoO9I55+9F+t3fxTegEgDaEarKK5A?=
- =?us-ascii?Q?aBdoujbzji/I049fh1LCyGkOqvCHmJL42yaJkxTdWw08Rgy76aPal3xPQSkj?=
- =?us-ascii?Q?pXpjrA/Iq+069ISAPxAO8z+It1N+nKP0OAus8uDISEpIWQB4F/+e+bURUU1A?=
- =?us-ascii?Q?h071cOULnYybBUrtarjni9epkZ36x/5aiMzCOogXa8YArmga15z9b5GGuTVb?=
- =?us-ascii?Q?YZvAYwVvojQR3xFZQ8IojXHJCd6D9T6PfQ8iOgh+pvlMamttE6zYcubMlhPW?=
- =?us-ascii?Q?K5rbpNsn85ZWtZSEIw2EAhCthlDGiQEl1LDDQMTgUsBZJyAimMc5ZEitbCKa?=
- =?us-ascii?Q?89M765pif4NiLWRc4pe6sQAlTvtq3vay9y+N4zyimyvMKUQstRlT2EzRWHsz?=
- =?us-ascii?Q?T0E8CIyqBMAMhqBrAE6MKltEhfbrKjQcALtmejg+PknzJTaKL00y7YJ27vEY?=
- =?us-ascii?Q?mpXfPNqQHFrFNq9Q8cNaWCRqedmA6RKlNrj7loU58nIJmMJxXtn6e1VhXvwv?=
- =?us-ascii?Q?MNGln6AmIGuS0Q7vVsnef9fW1uQSWjcV+KO7aZGIt5youfikkC9li0jcOdsM?=
- =?us-ascii?Q?zCQ7bcoYST8CzTuNxxFzdfSPBrlOAC/ac+Vnl5NoZs786z8+NyrHseTHZBwZ?=
- =?us-ascii?Q?DNqd3MiRRuRQKfvICun5UuavpREW3qE5wPml7TGyKmjg8jD28YvYs86EOjP8?=
- =?us-ascii?Q?MWXMTTa7yrdq7p38mO4G82KXUnLiTUKU7I7Zfi6k0WNAL2VMEwo7MdRWWdGP?=
- =?us-ascii?Q?fwPbZr4ajbABgNuezkRANilIFNPJkxgb6qTpfDSS5UVJTm4equZHdxoOAzUH?=
- =?us-ascii?Q?qolZ/YgfU4MKOoE4kGmUH3f/D/G0QpiBh92mKEo/l/nG1LISFaG/iJpUEjaC?=
- =?us-ascii?Q?UzeiIyMi60TuNA4dta1GJDp1fw9ncylhD1bm9Os57ob5gry9tdXzrGeZi/6X?=
- =?us-ascii?Q?5xJQ13X0pfP7spbRZnw=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A8242D5C61;
+	Mon, 25 Aug 2025 09:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756115759; cv=none; b=bTUwzBmDm619yDudTLD8mtPjAbrbgaNXI1uHUwpKN13YWiJDhwbiz1WFyQBE8O9vUcLAE82/sgxZ1AY5DYtr5NSzHuCI+2pU4Hki8UYIM7NHCvkh3QhJ012xDn544GBDzNBya1+ZcnvqPgBeB05Nsr4Wz87d5KMYCAILPMxtI5w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756115759; c=relaxed/simple;
+	bh=lGtfrfvnQoIdGQLhHh0iDxDrXu9sMFUP/0SzVV1kF0Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pEfFdPgRYE+PFsGb24B9FjUyb7bRAkYNbilib/inqMwjp3MQJ+ojlqTWEVorxhtHuae8lcLrwoKwSMyULMSDfwupRtfekRVyJVprA5SIgGduAnxB7pAboUF6lMe3vyhprktdr8h9aMXwUvrr2OTEQfEl26ZbiZaG5hQ14rw78IU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oQlDCHn2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vXkJ7c72; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 25 Aug 2025 11:55:54 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756115755;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CsNwdNgt3Cei2kSkCLTX8Ma530gKjb02dgxqfB6hDPI=;
+	b=oQlDCHn2OlPwtBW4P3lwkPyqzKy+TavDqQ12oRJV84vXGaoH6cqInOnH5/Jqo0+NDBwk4J
+	e28JIQoiP8E2HtD2JKFT3qdBOhd1ICO8WkWFoGs1Xi4NMs8NZC/EDXzIq+ade/xbn006oQ
+	qM94cXEGYZR97eyinNcOCjUgVQp40YYpnxHi94H09VAznHJL4wWrGb3I7D7qUFFpxD7865
+	+jXKxkgFYNXjGGrUSE+Ompad7OLMnI7bGObcIc8ydnx28YbXshTndofCT1jKRFTi6huDoH
+	CwberaSkf6ia8DQL+Xot7+0DLcKulEEr0Rfnl682/dmhqQml/0obR8HG2ayiUA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756115755;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CsNwdNgt3Cei2kSkCLTX8Ma530gKjb02dgxqfB6hDPI=;
+	b=vXkJ7c72/7t9acwpYY6I7dtH+Gwgqgu26Ya7jWua/R5DRIS5ecsDJG3sTUCOOBrpih8SOH
+	NJLPkSX+tZvzonDw==
+From: Nam Cao <namcao@linutronix.de>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+	linux-trace-kernel@vger.kernel.org,
+	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
+	Clark Williams <williams@redhat.com>,
+	John Kacur <jkacur@redhat.com>
+Subject: Re: [RFC PATCH 10/17] verification/rvgen: Add support for Hybrid
+ Automata
+Message-ID: <20250825095554.NrT5tNY8@linutronix.de>
+References: <20250814150809.140739-1-gmonaco@redhat.com>
+ <20250814150809.140739-11-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB7736.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ffdbbf1d-eb99-4d61-9a6b-08dde3bd4758
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Aug 2025 09:53:44.1585
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: yjTgmkIJ+h8Qh6m+ffMLcHCTIpmv8CRlBLk0YSXwPCFglPCu3ejuPpKUajeLjFLv
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7672
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814150809.140739-11-gmonaco@redhat.com>
 
+On Thu, Aug 14, 2025 at 05:08:02PM +0200, Gabriele Monaco wrote:
+>                  for i in event.split("\\n"):
+> +                    if ";" in i:
+> +                        # if the event contains a constraint (hybrid automata),
+> +                        # it will be separated by a ";":
+> +                        # "sched_switch;x<1000;reset(x)"
+> +                        line = i.split(";")
+> +                        i = line.pop(0)
+> +                        if len(line) > 2:
+> +                            raise ValueError("Only 1 constraint and 1 reset are supported")
+> +                        envs += self.__extract_env_var(line)
+>                      events.append(i)
 
-Hi,=20
+How about we get rid of the (if ";"), and just split it:
 
-> On Sat, 23 Aug 2025 11:13:06 -0500
-> David Lechner <dlechner@baylibre.com> wrote:
->=20
-> > On 8/20/25 5:05 AM, Salih Erim wrote:
-> > > Anand left AMD/Xilinx some time ago. Salih and Connall are new
-> > > maintainers of xilinx-ams driver.
-> > >
-> > > Signed-off-by: Salih Erim <salih.erim@amd.com>
-> >
-> > Looks like you forgot to pick up all of the trailers from v1.
-> >
-> > Also, there should be a changelog of what changed from v1 to v2. Just
-> > rewording the commit message, I assume.
-> >
-> >
-> >
->=20
-> Looks to be just that. Something to fix for next time but for this one, a=
-pplied (having
-> dropped v1)
+for i in event.split("\\n"):
+    # if the event contains a constraint (hybrid automata),
+    # it will be separated by a ";":
+    # "sched_switch;x<1000;reset(x)"
+    line = i.split(";")
+    events.append(line.pop(0))
+    if len(line) > 2:
+            raise ValueError("Only 1 constraint and 1 reset are supported")
+        envs += self.__extract_env_var(line)
 
-Thanks Jonathan.
+> +            else:
+> +                # state labels have the format:
+> +                # "enable_fired" [label = "enable_fired\ncondition"];
+> +                #  ----- label is here -----^^^^^
+> +                # label and node name must be the same, condition is optional
+> +                state = self.__dot_lines[cursor].split("label")[1].split('"')[1]
+
+I know I complained about regex last week, but for this case I think regex
+is more suitable:
+
+state = re.findall(r'".*?" \[label = "([^"]*)"\]', self.__dot_lines[cursor])[0]
+
+> +                if "\\n" in state:
+> +                    line = state.split("\\n")
+> +                    line.pop(0)
+> +                    if len(line) > 1:
+> +                        raise ValueError("Only 1 constraint is supported in the state")
+> +                    envs += self.__extract_env_var([line[0].replace(" ", "")])
+
+Same as above, I think we can just split without the if check.
+
+>              cursor += 1
+>  
+> -        return sorted(set(events))
+> -
+> -    def __create_matrix(self):
+> +        return sorted(set(events)), sorted(set(envs))
+> +
+> +    def _split_constraint_expr(self, constr: list[str]) -> Iterator[tuple[str,
+> +                                                                          str | None]]:
+> +        """
+> +        Get a list of strings of the type constr1 && constr2 and returns a list of
+> +        constraints and separators: [[constr1,"&&"],[constr2,None]]
+> +        """
+> +        exprs = []
+> +        seps = []
+> +        for c in constr:
+> +            while "&&" in c or "||" in c:
+> +                a = c.find("&&")
+> +                o = c.find("||")
+> +                pos = a if o < 0 or 0 < a < o else o
+> +                exprs.append(c[:pos].replace(" ", ""))
+> +                seps.append(c[pos:pos+2].replace(" ", ""))
+> +                c = c[pos+2:].replace(" ", "")
+> +            exprs.append(c)
+> +            seps.append(None)
+> +        return zip(exprs, seps)
+
+If && and || are the only things you intend to support, then this is
+probably okay. But if the syntax will ever be extended (e.g. brackets),
+this becomes unreadable really fast.
+
+Perhaps a "real" parser which converts the input string into abstract
+syntax tree is something worth considering.
+
+> +    def is_event_constraint(self, key: tuple[int, int] | int) -> bool:
+> +        """
+> +        Given the key in self.constraints return true if it is an event
+> +        constraint, false if it is a state constraint
+> +        """
+> +        return isinstance(key, tuple)
+
+I don't love this. A few years from now, someone could change state
+constraint to be a tuple, or change event contraint to not be tuple, and
+things break in confusing ways.
+
+Perhaps an explicit variable to store contraint type information instead?
+
+> -    def __get_enum_states_content(self):
+> +    def __get_enum_states_content(self) -> list[str]:
+>          buff = []
+>          buff.append("\t%s%s = 0," % (self.initial_state, self.enum_suffix))
+>          for state in self.states:
+> @@ -36,7 +37,7 @@ class Dot2c(Automata):
+>  
+>          return buff
+>  
+> -    def format_states_enum(self):
+> +    def format_states_enum(self) -> list[str]:
+>          buff = []
+>          buff.append("enum %s {" % self.enum_states_def)
+>          buff += self.__get_enum_states_content()
+> @@ -58,7 +59,7 @@ class Dot2c(Automata):
+>  
+>          return buff
+>  
+> -    def format_events_enum(self):
+> +    def format_events_enum(self) -> list[str]:
+
+These changes should be in your type annotation patch?
+
+>          buff = []
+>          buff.append("enum %s {" % self.enum_events_def)
+>          buff += self.__get_enum_events_content()
+> @@ -66,7 +67,43 @@ class Dot2c(Automata):
+>  
+>          return buff
+>  
+> -    def get_minimun_type(self):
+> +    def __get_non_stored_envs(self) -> list[str]:
+> +        return [ e for e in self.envs if e not in self.env_stored ]
+> +
+> +    def __get_enum_envs_content(self) -> list[str]:
+> +        buff = []
+> +        first = True
+> +        # We first place env variables that have a u64 storage.
+> +        # Those are limited by MAX_HA_ENV_LEN, other variables
+> +        # are read only and don't require a storage.
+> +        unstored = self.__get_non_stored_envs()
+> +        for env in list(self.env_stored) + unstored:
+> +            if first:
+> +                buff.append("\t%s%s = 0," % (env, self.enum_suffix))
+> +                first = False
+> +            else:
+> +                buff.append("\t%s%s," % (env, self.enum_suffix))
+
+The "= 0" assignment for the first enum is not required right? Perhaps you
+can get rid of the 'first" thingy, and just do
+
+for env in list(self.env_stored) + unstored:
+    buff.append("\t%s%s," % (env, self.enum_suffix))
+
+> +        match unit:
+> +            case "us":
+> +                value *= 1000
+> +            case "ms":
+> +                value *= 1000000
+> +            case "s":
+> +                value *= 1000000000
+
+Since when did Python have this? Nice!
+
+Nam
 
