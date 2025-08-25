@@ -1,80 +1,93 @@
-Return-Path: <linux-kernel+bounces-785257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2D22B34839
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:07:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59A78B3483C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 19:08:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95BFE2A25A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:07:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 348AC1A81795
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 17:09:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF8430102B;
-	Mon, 25 Aug 2025 17:07:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC7730102E;
+	Mon, 25 Aug 2025 17:08:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="NMypCay8"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Aj9PipZN"
+Received: from mail-pl1-f225.google.com (mail-pl1-f225.google.com [209.85.214.225])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C40492F99BD
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 17:07:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2A1257842
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 17:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756141647; cv=none; b=gpM/ubznTvjwAfYDETNk2CjngjPG4w141Z6NWgwjSm38rpwT804bGPSZ6kJmCg9Fo4vcRoR1w/Ttta9jFyRMmqHWZPUDfxh+pd62iSp/p1TDHKnSuntY+opLpCfUA3RfCT+sGjDBjyRjqTGG98aFO4gA+l92In9fvTI3yT6f4S8=
+	t=1756141716; cv=none; b=GsFjrnbREd1VEgLdznGS9N17kPcdkmJ2eIKVBtH02EkMvL27YjJyqbdiNEV1QTXKAWWD3eFqF9zEUaTxjwLfcltGjU2rggcdy3gT5DOBMHDpo/w43jYPCvRT/lklJ+VfMFlemhKrloxUa0BrYjX5LzhIZdTZ54/7R5h/Ha+/yXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756141647; c=relaxed/simple;
-	bh=tihT6GbomvvQs+EKZeESfFJSOKHlKrS+UHpmIToBb+k=;
+	s=arc-20240116; t=1756141716; c=relaxed/simple;
+	bh=96EhrU7mBWPOOGgnPers3hMdXLya4Uf6CGl8BnpedR4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c4CFlAqJGtgkZ51+s4PYzCQ8e04Q4aqaRc433P7vNxlAFHUgbupbgAdKLyfTgcKNbXU0sqyoBdeCmS56nFJkCPZWSXmJdWUHwnG6dLsCljutx81S5ldp6l+d8DdMPR6HFQRLVF5YN7o7AAObEyotVDXSpQ9YOwZdFhhqRsPlvUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=NMypCay8; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-435de7d6d05so3055411b6e.2
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 10:07:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756141645; x=1756746445; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NRbFgz7SRiEMK41EVqnjk1B2OcCfI8JeYtjMKIx5KnA=;
-        b=NMypCay84crHX5YcMfEb57OmYitBhiHPFh2+goOCfFSww9USlAbvHAF93hxGEjLMZA
-         norO5GksEO9GW6E8zDPoJ9tgtTKFzXRVPdVxucIIYKL29A1dRww999cJsnhXRvkPzj9g
-         7dLlkGxE7Sr4UV8DnjgifqmOkkhTvtlmadxPtX5R/OOZ939IA8vanlq1/SBn3M68F1ZN
-         6IjFxfEZa819UFNj9y/LW5XC6X0pSAuZJGp5/OnrAH9oTMa+7S6gGEujTtKUIZwlVC72
-         KsL3BmwSSP31XtMaky5bvihOV72/8iWzm5sD4T34IJfSNsTG+5y0IOVm1N0gDcry7iHG
-         zNaA==
+	 In-Reply-To:Content-Type; b=iAIVidfUDwR+FaOPK5DEmDq6qoF4Z/ApefoaYyoLBRFhG22V9iX/iCZoGjRatpPCJ0ErL5HsYaTJ7e6oQMr6lKail5s/MWJKOTIs+dgn5p5jgk2BEhw5AxdRKt8cmDbVkDz34OBcbtj3I++9besoUOsbrlHbMIhuY6V7z3OvLRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Aj9PipZN; arc=none smtp.client-ip=209.85.214.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pl1-f225.google.com with SMTP id d9443c01a7336-24457f581aeso34587765ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 10:08:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756141645; x=1756746445;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NRbFgz7SRiEMK41EVqnjk1B2OcCfI8JeYtjMKIx5KnA=;
-        b=wv2/uAUbNJyK1W8fSJsDDVsdXyxdGBsxr563lb1l3+05fQL352hVoFOEQCO2NFk57y
-         el95qysVTTw++XZp+GquhN6G0qB+/0TMrG57osQrRQJ5d/rxHDqSlHhhjwSBFqCjXU7e
-         Guy5nejWYTsmxcwKYYn/jh9gEESWAz8bu4DA8zw4boDYKtyU/8YQjLRBtLx9GgcUPR4k
-         uUL3fGgzHB5IG5LzMBd5w5WDF8ExsejjEiFcu7cReHiCTZ9vrRxoe1p3AJLYXiZbVOQL
-         ephL54UnL2ZhBxCGFIjwJngKUy7i76+j2OLAMN0+Xv4KHHkID9/fCw7yXlhIXhAe8Jwq
-         HSqw==
-X-Forwarded-Encrypted: i=1; AJvYcCXIux6pOVDUx2f257eYGMkZgQF4vjwx+Jb6giCTCe+acYVOvEJ232L4W9hxh2zyXwC98OvBdxe8LH4RW9E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLZ4gpmvMLfcnkgYWgd59nQHl66PAQZd7CUJhY/DNiycMNcSdb
-	1JG0NtXUrQ0kfyld+6eEyBpEuxUYygGKUciQKxC9TxKpfQmWpAeZSZVWiaWmOGVwFTU=
-X-Gm-Gg: ASbGncs7O2vTeX+287R5GmF3eLzNVRxRLvF7kWr03mD4G/00oo06n2BEdgc18rOOREA
-	r2NV2Mnu99JBS7o6cWXKr76tLGORjElXXXzYCGgzroKRreXKLxTwghEzoINgqafY9Fpy+QMWWLu
-	rNKEqhTdpX6es3NabhG32xwjwLBRAGXLXOoRorLYlZga8egO3lS1w3N20ztYUSMRaLVx1Dk9cT8
-	phbT3guyir8gdMt/hAaNlyJIA3OxpYrsZAc6wJSfomqyswoPrZgS5t9tzIdoU0tmOvekeVmPrfO
-	bQgCboUIIoXLUo45kk6bLR18Q0gQrwSnIOTf7uSvkwigVorod5tz91PncFd7tbtPHSmH9kvT6c3
-	av1s0lPvaI7WTPIGXLPDJFXQp2YAEiH5gD3MRtGYMRaKd/RaJM3jjjB6qTsJHBGKSE82XzVMDvV
-	b2HklJh+S4Gg==
-X-Google-Smtp-Source: AGHT+IGY54ol1V3rSvNLdykRyCpLBdcAFmUnk88/gdXvtcBJwtaoIthE1jhurmxQ3KMLjUHeffscYw==
-X-Received: by 2002:a05:6808:a5c7:10b0:437:ae34:16b7 with SMTP id 5614622812f47-437ae341c86mr1362511b6e.31.1756141644622;
-        Mon, 25 Aug 2025 10:07:24 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:5075:40f3:ff25:c24c? ([2600:8803:e7e4:1d00:5075:40f3:ff25:c24c])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-437967bf1bbsm1163111b6e.7.2025.08.25.10.07.23
+        d=1e100.net; s=20230601; t=1756141714; x=1756746514;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:dkim-signature:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=D1OkKoFIZDmEc1p3CKBZkkR1VvuCl//7dh2s4eHyiiw=;
+        b=Lj6HzjZ59UuJatqacb+wr/1+AY2lsIksluiuz1wmJolvu8WGyBf+Es9N0hks2NI/ZZ
+         INksrMjRkoMyYPFUX09YsMHLR/Zbwm1f+Z+3jkOfzaA+SH/ov6cnHUokVwVEHakK3WIx
+         dqFmeRCWZHvNjsSMLWcIKFhp3j/CXtG0YPEDDgdEWt5w6IZDXIJXSd4sE1p2PkwG7zwP
+         gmCJoh8+H8viRqwVKowY/2eJTC5bqA844Fa++7BIDAkpcqLf83DtIhRbUCQDJyyVYyqQ
+         S5GWWaIu+zN5w/k/tkv6cjhNmXtZ+m6AzQm9ZZEbhexSeZJEUhnOXvrPk412TSiNE2tG
+         VPPw==
+X-Gm-Message-State: AOJu0Yy8YOrg7VA8SiMOM1c9q2RHMPUHf5zzOarDMoidLGFfSDTOG6N2
+	M6ro8z15qaavbna0iVCXyfcze5nHeHWSDiPmPeShPb8Zfx5Oe4bwXibgR5/l8pZEFPQkXOoEmVn
+	vhfSUT/sUHeND1FMXT7jK6cJYb4vZkldwazQHc7sQtlW3lanzL1ETxFRfuHRroES+M+vEnRy5Vb
+	Za/c6sLnUN5sxVFSJN460VR591+3HAvj7KTo6dY4qAGjdMrXOQNv6NerZqznbvoATe2YMD6CvOc
+	2p5w2Dhda+W7HkFTEWrDJeu
+X-Gm-Gg: ASbGncsxtZw/oXjAq9ey4+w49D94kAkj4cYPBBYDsmdzwD7Yc45OdKPlLKOqKc0khYv
+	ZfEURBcR8qgO/wRHo920/ccITmz9wijq8eJiY7SAPH6t9kQ44+W/dY67PoAQ0a60IFcs/lmLzBY
+	XFi2pU6lpovWLGD22/iQg5u1O+TgjEllv9bx9mywZoQlii6Jz3o7yKt8UpAYvf8c31+I5C0zgsc
+	ORywLWZCJXwNjgRtT0hJ6TcDPdx2szSbcn5KFRqga4ZBwEA5ueCKGnRkS+NUc9zv+CyTzamr/R8
+	qLnrjDhBqFFiBdLDJBo1r37mqRIF5pDx0nDgUaEuflinhSPmwZbGpziXaDNTaYckfegqSKe119Y
+	UYpRq7jJRr8XBfmh8RPR5tTmvuugyx0vhmGoZAVzVUsQIu9DY/ZmB2tlGkcKUBFWYrulkPwoOdo
+	g7vPqc
+X-Google-Smtp-Source: AGHT+IGUmXPiwDbTUcSTgiVRRUFDOo3hOinpx5Q11H29HQ09ZUH5ggKIR7i5dSho6bq3TNkYs6gwLlrZlbDJ
+X-Received: by 2002:a17:902:ce12:b0:240:770f:72d1 with SMTP id d9443c01a7336-2462eea84dfmr209717785ad.24.1756141713910;
+        Mon, 25 Aug 2025 10:08:33 -0700 (PDT)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-11.dlp.protect.broadcom.com. [144.49.247.11])
+        by smtp-relay.gmail.com with ESMTPS id d9443c01a7336-2466879196asm6614865ad.9.2025.08.25.10.08.32
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 25 Aug 2025 10:08:33 -0700 (PDT)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-70db6ee0278so33300886d6.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 10:08:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1756141712; x=1756746512; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=D1OkKoFIZDmEc1p3CKBZkkR1VvuCl//7dh2s4eHyiiw=;
+        b=Aj9PipZNM0rm8JNzVLhgI3dHaKA0QpgMaSpZHfCMHfzuQlU6zrKApDuH02/n6FCdRQ
+         Bt66bm0/H6f9kEdT+3KEMi2lIUOdwFNzE4/7E2712N+yXMvURHuSwjNQ5cxcVnYtxQqv
+         DgzKu8iKBd/tYyCvbX7QkrvuPX7SaQ4Uga8HI=
+X-Received: by 2002:a05:6214:19e7:b0:70d:b1ea:25ed with SMTP id 6a1803df08f44-70db1ea286fmr97989496d6.23.1756141712134;
+        Mon, 25 Aug 2025 10:08:32 -0700 (PDT)
+X-Received: by 2002:a05:6214:19e7:b0:70d:b1ea:25ed with SMTP id 6a1803df08f44-70db1ea286fmr97989006d6.23.1756141711715;
+        Mon, 25 Aug 2025 10:08:31 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70dc09b892asm22575876d6.50.2025.08.25.10.08.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Aug 2025 10:07:23 -0700 (PDT)
-Message-ID: <e05f7e9b-f3c1-4b66-993a-31d16e5147c2@baylibre.com>
-Date: Mon, 25 Aug 2025 12:07:22 -0500
+        Mon, 25 Aug 2025 10:08:30 -0700 (PDT)
+Message-ID: <77d8a847-424e-4757-a703-709b6042236b@broadcom.com>
+Date: Mon, 25 Aug 2025 10:08:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,128 +95,100 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iio: proximity: hx9023s: fix scan_type endianness
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Yasin Lee <yasin.lee.x@gmail.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>
-References: <20250722-iio-proximity-hx9023c-fix-scan_type-endianness-v1-1-48f5dc156895@baylibre.com>
- <823a28d6-e612-4e32-976a-cb99945848ce@baylibre.com>
- <aIDuEcHhaGtz2klP@smile.fi.intel.com>
- <795dffe0-51cf-49a8-bbb1-1585edddf5ba@baylibre.com>
- <aIDzvNYIaJnSuzOa@smile.fi.intel.com>
- <7ca7e0b9-a77d-4de8-92b1-fea3250e8155@baylibre.com>
- <aID6jfjULn2kvvQJ@smile.fi.intel.com>
- <f74d6542-cc4e-40dd-8ef9-2a766d0b51ef@baylibre.com>
- <20250723165615.67969881@jic23-huawei>
+Subject: Re: [PATCH net] net: macb: Disable clocks once
+To: Sean Anderson <sean.anderson@linux.dev>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Harini Katakam <harini.katakam@xilinx.com>,
+ Neil Mandir <neil.mandir@seco.com>, Claudiu Beznea
+ <claudiu.beznea@tuxon.dev>,
+ Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>
+References: <20250825165925.679275-1-sean.anderson@linux.dev>
 Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250723165615.67969881@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20250825165925.679275-1-sean.anderson@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
-On 7/23/25 10:56 AM, Jonathan Cameron wrote:
-> On Wed, 23 Jul 2025 10:11:50 -0500
-> David Lechner <dlechner@baylibre.com> wrote:
+On 8/25/25 09:59, Sean Anderson wrote:
+> From: Neil Mandir <neil.mandir@seco.com>
 > 
->> On 7/23/25 10:06 AM, Andy Shevchenko wrote:
->>> On Wed, Jul 23, 2025 at 09:57:58AM -0500, David Lechner wrote:  
->>>> On 7/23/25 9:37 AM, Andy Shevchenko wrote:  
->>>>> On Wed, Jul 23, 2025 at 09:29:37AM -0500, David Lechner wrote:  
->>>>>> On 7/23/25 9:13 AM, Andy Shevchenko wrote:  
->>>>>>> On Tue, Jul 22, 2025 at 06:08:37PM -0500, David Lechner wrote:  
->>>>>>>> On 7/22/25 6:07 PM, David Lechner wrote:  
->>>>>>>>> Change the scan_type endianness from IIO_BE to IIO_LE. This matches
->>>>>>>>> the call to cpu_to_le16() in hx9023s_trigger_handler() that formats
->>>>>>>>> the data before pushing it to the IIO buffer.  
->>>>>>>  
->>>>>>>> It is odd to have data already in CPU-endian and convert it to LE
->>>>>>>> before pushing to buffers. So I'm a bit tempted to do this instead
->>>>>>>> since it probably isn't likely anyone is using this on a big-endian
->>>>>>>> system:  
->>>>>>>
->>>>>>> I can say that first of all, we need to consult with the datasheet for the
->>>>>>> actual HW endianess. And second, I do not believe that CPU endianess may be
->>>>>>> used,   
->>>>>>
->>>>>> Why not? Lot's of IIO drivers use IIO_CPU in their scan buffers.
->>>>>>  
->>>>>>> I can't imagine when this (discrete?) component can be integrated in such
->>>>>>> a way. That said, I think your second approach even worse.  
->>>>>>
->>>>>> hx9023s_sample() is calling get_unaligned_le16() on all of the data
->>>>>> read over the bus, so in the driver, all data is stored CPU-endian
->>>>>> already rather than passing actual raw bus data to the buffer.  
->>>>>
->>>>> I see, now it makes a lot of sense. Thanks for clarifying this to me.
->>>>>  
->>>>>> So it seems a waste of CPU cycles to convert it back to little-endian
->>>>>> to push to the buffer only for consumers to have to convert it back
->>>>>> to CPU-endian again. But since most systems are little-endian already
->>>>>> this doesn't really matter since no actual conversion is done in this
->>>>>> case.  
->>>>>
->>>>> Right, but it's buggy on BE, isn't it?
->>>>>  
->>>>
->>>> Right now, the driver is buggy everywhere. The scan info says that the
->>>> scan data is BE, but in reality, it is LE (no matter the CPU-endianness).
->>>>
->>>> With the simple patch, it fixes the scan info to reflect reality that
->>>> the data is LE in the buffer. This works on BE systems. They just have
->>>> an extra conversion from BE to LE in the kernel when pushing to the
->>>> buffer and userspace would have to convert back to BE to do math on it.
->>>>
->>>> With the alternate patch you didn't like, the forced conversion to LE
->>>> when pushing to buffers is dropped, so nothing would change on LE
->>>> systems but BE systems wouldn't have the extra order swapping.  
->>>
->>> But do they need that? If you supply CPU order (and it is already in a such
->>> after get_unaligned_*() calls) then everything would be good, no?
->>>   
->>
->> It doesn't make sense to my why, but the existing code is changing
->> back to LE before pushing to buffers for some reason.
->>
->>
->> 	iio_for_each_active_channel(indio_dev, bit) {
->> 		index = indio_dev->channels[bit].channel;
->> 		data->buffer.channels[i++] = cpu_to_le16(data->ch_data[index].diff);
->> 	}
->>
->> 	iio_push_to_buffers_with_ts(indio_dev, &data->buffer,
->> 				    sizeof(data->buffer), pf->timestamp);
->>
->> I agree that it seems unnecessary which is why I suggested the
->> alternate patch to drop the cpu_to_le16() and just leave it
->> CPU-endian when pushing to the buffers.
->>
-> 
-> This one was seriously odd and went though a lot of discussions around
-> endian conversions during review.  Definitely wait for Yasin to reply.
-> 
-> That's not to say I can recall how we ended up with the dance that
-> you are seeing now (and I'm too far behind on reviews to get to digging
-> through threads to refresh my memory).
-> 
-> Jonathan
-> 
-> 
+> When the driver is removed the clocks are twice: once by the driver and a
+> second time by runtime pm. Remove the redundant clock disabling. Disable
+> wakeup so all the clocks are disabled. Always suspend the device as we
+> always set it active in probe.
 
-I found the message you are likely referring to [1]. It explains why we
-can't use the raw data directly. There is some processing of the values
-that is required. However, it doesn't explain the choice to convert things
-to little-endian after the processing. Given the patch snippet in the
-linked message, I think the intention (albeit misguided - we should have
-suggested to just leave things CPU-endian) was to change from big-endian
-to little-endian everywhere, but changing the scan_type to match was
-overlooked in later revisions.
+There is a missing word in that first sentence which I assume is "disabled".
 
-Applying this patch seems like the simplest thing to do. Or, if we don't want
-others copying this questionable code, we could consider the heavier-handed
-alternative to keep things CPU-endian.
+> 
+> Fixes: d54f89af6cc4 ("net: macb: Add pm runtime support")
+> Signed-off-by: Neil Mandir <neil.mandir@seco.com>
+> Co-developed-by: Sean Anderson <sean.anderson@linux.dev>
+> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+> ---
+> 
+>   drivers/net/ethernet/cadence/macb_main.c | 7 ++-----
+>   1 file changed, 2 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+> index ce95fad8cedd..8e9bfd0f040d 100644
+> --- a/drivers/net/ethernet/cadence/macb_main.c
+> +++ b/drivers/net/ethernet/cadence/macb_main.c
+> @@ -5403,14 +5403,11 @@ static void macb_remove(struct platform_device *pdev)
+>   		mdiobus_free(bp->mii_bus);
+>   
+>   		unregister_netdev(dev);
+> +		device_set_wakeup_enable(&bp->pdev->dev, 0);
+>   		cancel_work_sync(&bp->hresp_err_bh_work);
+>   		pm_runtime_disable(&pdev->dev);
+>   		pm_runtime_dont_use_autosuspend(&pdev->dev);
+> -		if (!pm_runtime_suspended(&pdev->dev)) {
+> -			macb_clks_disable(bp->pclk, bp->hclk, bp->tx_clk,
+> -					  bp->rx_clk, bp->tsu_clk);
+> -			pm_runtime_set_suspended(&pdev->dev);
+> -		}
+> +		pm_runtime_set_suspended(&pdev->dev);
+>   		phylink_destroy(bp->phylink);
+>   		free_netdev(dev);
+>   	}
 
-[1]: https://lore.kernel.org/linux-iio/SN7PR12MB810159A22C9814AA7FC1AB96A4CE2@SN7PR12MB8101.namprd12.prod.outlook.com/
+-- 
+Florian
+
 
