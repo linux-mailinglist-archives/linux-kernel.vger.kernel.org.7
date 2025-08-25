@@ -1,148 +1,197 @@
-Return-Path: <linux-kernel+bounces-784975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08E49B34437
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:40:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE9EAB34447
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:42:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04CDA3AB8E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:36:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E89A164D9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 14:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4C622FD7DD;
-	Mon, 25 Aug 2025 14:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81592EE619;
+	Mon, 25 Aug 2025 14:35:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fovoz/Vp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Z+eMafDz"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2071.outbound.protection.outlook.com [40.107.212.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1111F2EFDBB;
-	Mon, 25 Aug 2025 14:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756132452; cv=none; b=fHOB357HqkimVEqVsaasSR6sPro8CxFFMDLiB5lpxqbINozJEGkSJcxBOsnLuFl03+GzngiVTFwoT7JiG7hU0fSLA1AtwBHs6wwXfeGXHgjNcD+Z0RVeA17DOtqWIoHvHPLaDvwznzKvkxYrAGUm/xrzNfeUNkCSc1ts5yEv2Vw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756132452; c=relaxed/simple;
-	bh=HB6pULNDXxeh1etg0zy/YFv/qO0C+90ihk/cMS1ozcE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=TjTh0yINfL/gC1CdFobKuBuBPIDqamfLryJU2VYuVrPbYrbN8Mst1Leg2Ez5UI0yjp+9f6CF0CLbq7nlZUmT7pQATURYSYRhjrbHoQdun5Jdbyai0mDm3yQCQEXwueW+ILS/pIADiRmKSFHBhKlhYuE+xGDfEkjWZTzsrsl+6mY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fovoz/Vp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C37EC4CEF4;
-	Mon, 25 Aug 2025 14:34:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756132451;
-	bh=HB6pULNDXxeh1etg0zy/YFv/qO0C+90ihk/cMS1ozcE=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=fovoz/VpGa+QTUk+5KXZSXNiPVdjQP1Zg9pQ6OSV/sR/cNir2T17xgdhzhpl4dATv
-	 FgKyFIUtP4I/NPn4n2Ubw45486K/QKUsbVwI9rE5BzSbBxXJvtTSZx+I8To1Iy6ybB
-	 CeH5AETuwZlmdlGZuFiV9JRSawjcO8AY9w7np8CxVci4tbCDAlcwc50gVRzLwRHSPu
-	 4Raca3x0eeu1xyFA9Bhjyt6oN83dWRr+Jxlu2skfJU3JMrE8tiRwDWthM4rujNhAE5
-	 zukA2KCJHa4/XZYPtvh5aD+SiPZNkjmWvmjt9p6ZKJr/tl+avzp5uHKCgo5B0VBDlX
-	 /TuZJBBWf3UEQ==
-Message-ID: <ea673976-49a6-44f6-8e6c-8d11abe46620@kernel.org>
-Date: Mon, 25 Aug 2025 16:34:04 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120B31E3DFE;
+	Mon, 25 Aug 2025 14:35:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756132505; cv=fail; b=uYVjQwLoiFJjXwzRpYtuUD6avn7TI1Z1h+Oljp4w3jHiW0bOvd7VFgfNUJs5oc3DkqpD78GVaxJnaautHNet8wFdQ3P7b2B6fgfZUE34RKRCTLcrG5ClLnLEuP1UmHwQKNpI/ov1xY5/CamT5zChapZwQiay8ObaXHz9sravhXk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756132505; c=relaxed/simple;
+	bh=k3BXMbj1OeltXIXRzCS8eUEZo3ROh7h0Dj9cDg7hueI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=g3hLyEeoBbcCzp5xvp6XrXLfMLHEo94NkaCiSDAs2wkAxS9s/kJ2+rnR7sDC64O1KbtM8gtbU6cIrIR0ye0vmE2m/w7IxQUayEmH/3BNxAAlvK60IZK3/Z248FJcsbmRUzSwv8AUqiIH+YWwH/PBuQO9XimCCn4tqkdmyhf8zh8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Z+eMafDz; arc=fail smtp.client-ip=40.107.212.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fObWHmHEsSh/64r9qPpMwOCLPMp27fMFMA2TvE+5D7sbLB8ZHoR+Rk+C2F/a+BYBe82tNVKFRUZkNraJG4G00RpYwFE8+s1BMNAiu5l5k0r1A+KDIQkomOKaorwOEGiiRd0YfXPTalL4UfvTuDJXzeQkZHCndkVrbpKaKuzkPZqmHInsRpHdgJV45CD8vbfMD+3pQBXxeazrUq3vqsdPmOvyt+VCbXe0yAxxFN/W2YLo7Ujw1ahtGXLfsEbDQTM0gYEnKeeQS+NRzZRvaL3d1ZN8uf2ZJYkQy/sN6jszc+GaHD8MqjtQgPtchApquABNEsQqIm4L/FTHImQf5mOwDw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kcNJ1bZmTFxfkuLwUsmzkNznz0HF2tkImWp/SCDNGnc=;
+ b=uCXP6Zfa1wCJqUuBwaJKIIr8DW+Ezpac727EbeUQwsLbHwwpGl4Z8gblcrh4BYDoJwmPbrBDFVSdWueRlMpT1Mw99sGS1cSglhrUB/1G8G7+u1yPKhPmUDHNcGTh+7llj9TVHIIEqX2TlKT0Z4UFm3KIxjN50X4FSSkyAGOkgdT2ed++eYK4lESB7rVBZK9zS//lv3P7pfaXulhJh8Fl77ZCyoaWA9xirpZt6lxEFy4pxEHvgEDicAioUWpiMi377mr9SaB0JGAuvIKwxj3yncCc5YCfC0WnMw24us+/dkKnjwCgQdVGDQPM1SZY9MgK0cuXLsr3sKlSdMrs38ew+A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kcNJ1bZmTFxfkuLwUsmzkNznz0HF2tkImWp/SCDNGnc=;
+ b=Z+eMafDz+PaqzJpdgT6EI+Gc4p0b9p16h6qoePNA7yRlluf92OpixAG2CE/RKbKGPEJdo1D26/v7PWfaW+BIp+jKOYoM6wu8QsGyTjxk3FyKZOhPcck89cdNFpdSxkTen+whPNaLJMBUccRG3MAktUHiAsS8minXpN519oDevpFb3igfbklxNVeeoV4K9WeR3RPZ9hgYRkZ/7AICZ1hICUDy4jccVKTTVbzDhUBG/wgK3a91NwMTjipNHU4x4X/XLUoPELdmPiyeHOkpZJyaebeCd6dznZVoJxnsXvAOgmIoqNHJkIGp/H3EeGao91iE8P7xsPu9QWDFlo2qLiyv+A==
+Received: from CH0PR13CA0044.namprd13.prod.outlook.com (2603:10b6:610:b2::19)
+ by DM6PR12MB4316.namprd12.prod.outlook.com (2603:10b6:5:21a::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.17; Mon, 25 Aug
+ 2025 14:35:00 +0000
+Received: from CH2PEPF0000014A.namprd02.prod.outlook.com
+ (2603:10b6:610:b2:cafe::f3) by CH0PR13CA0044.outlook.office365.com
+ (2603:10b6:610:b2::19) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.10 via Frontend Transport; Mon,
+ 25 Aug 2025 14:35:00 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ CH2PEPF0000014A.mail.protection.outlook.com (10.167.244.107) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9052.8 via Frontend Transport; Mon, 25 Aug 2025 14:35:00 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 25 Aug
+ 2025 07:34:46 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Mon, 25 Aug 2025 07:34:45 -0700
+Received: from vdi.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Mon, 25 Aug 2025 07:34:42 -0700
+From: Mark Bloch <mbloch@nvidia.com>
+To: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>
+CC: Tariq Toukan <tariqt@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+	"Saeed Mahameed" <saeedm@nvidia.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Gal Pressman <gal@nvidia.com>,
+	<linux-rdma@vger.kernel.org>, Mark Bloch <mbloch@nvidia.com>
+Subject: [PATCH net V2 00/11] mlx5 misc fixes 2025-08-25
+Date: Mon, 25 Aug 2025 17:34:23 +0300
+Message-ID: <20250825143435.598584-1-mbloch@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Hans Verkuil <hverkuil+cisco@kernel.org>
-Subject: Re: [PATCH V2 0/4] Add support for VIP
-To: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>, mchehab@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux@armlinux.org.uk, ardb@kernel.org, ebiggers@kernel.org,
- geert+renesas@glider.be, claudiu.beznea@tuxon.dev, bparrot@ti.com,
- andre.draszik@linaro.org, kuninori.morimoto.gx@renesas.com,
- prabhakar.mahadev-lad.rj@bp.renesas.com, heikki.krogerus@linux.intel.com,
- kory.maincent@bootlin.com, florian.fainelli@broadcom.com, lumag@kernel.org,
- dale@farnsworth.org, sbellary@baylibre.com, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, dagriego@biglakesoftware.com,
- u-kumar1@ti.com
-References: <20250716111912.235157-1-y-abhilashchandra@ti.com>
-Content-Language: en-US, nl
-In-Reply-To: <20250716111912.235157-1-y-abhilashchandra@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF0000014A:EE_|DM6PR12MB4316:EE_
+X-MS-Office365-Filtering-Correlation-Id: 22e65e24-0d38-414e-5b38-08dde3e49293
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?0alS1Y+6Z21GWMmWo3sIpC54yw0x64h8kA4qz4kDMbZ9HHac16Dj/uvK0e1l?=
+ =?us-ascii?Q?BNeGz8P+NQ5YlfOE4cxunvOuoSx1Kx9FfNnWw/BzyFoI4XY60dt7Sy5CZ4mu?=
+ =?us-ascii?Q?fFDY7brnh3Qy2VAYlcO6EhtTziekBMmoyti2ydCJ4HOuJ6yG75tQzOIpDgKn?=
+ =?us-ascii?Q?2gJBA78iRhh583jHlIn1ylt5JzESdhbhN/HGiQzcflVtWNajhslQbBtxpJ/p?=
+ =?us-ascii?Q?HCZd4jE7ZTt/5OuNLTU34WtoEIJTAo2Q2rqUMQhsLh46g3TXham/xoFJlCby?=
+ =?us-ascii?Q?vYaPlUvWJ4ho+7CgMMtNHjaFd2PxUx8nZMWyEUN3niskRzuQok/8k51r1v5t?=
+ =?us-ascii?Q?BwToF52PXsaSxEMqG+xRW2FuD1pXC84ZZ2eUL2fEB/XYgaa5apW00FdDY7hB?=
+ =?us-ascii?Q?x99ZSg5wnIgWwye0WA2HPPQM2uJUpYOuknjfhvj2gfuQnp0XnPU3jSMmmYUn?=
+ =?us-ascii?Q?PPUMjW9zqbGtgHY2QRVPyTcToRBcrtE1MAo2xCv1V9cH9WMXNzNDAKCh/zfm?=
+ =?us-ascii?Q?L+IP6FtZR9cT0TRluVK4xICRNOjVY0WMrBN79BzCEIJtPg/WIYLrnU7ytSgx?=
+ =?us-ascii?Q?JwNP8iFiJIVY2AxDFBZDWCPCP3JGDf0wGq/pztMk0FkmPYDWa27xcFYtOuYj?=
+ =?us-ascii?Q?Zu5S+lagDw5LjIjA1ArnOienCAXgmW/QNHSSoAoZtlCIpYtuoakXCBx+8IQ2?=
+ =?us-ascii?Q?SS71JZhf0SN5F8Ej5oWClV82Bxc5bDfobFfdIxQ81D8CeDyitq566P2zFg7C?=
+ =?us-ascii?Q?PUxjQgcrWKwofApG1/rGKHruYrOFU6tO4dED+b6p6h62NU9rebA9Q4DqUeuu?=
+ =?us-ascii?Q?KUwmApg/i4nX1A7tY1oHa3FW2EbdsYVz1UfTc9i6SJdj/2+tKRibOGjtuLno?=
+ =?us-ascii?Q?HAYOvTBB17ObUVV+Lh7VHk9K1gQApLdbGN+uwdzWVL8KxbAt+kk2b7jzcdWs?=
+ =?us-ascii?Q?/xpLy4RZiLfJX6lShPCAO2y7Hg+V7zeSXdVh3Gukw9g0XfJiGCrHRItiNavW?=
+ =?us-ascii?Q?QdGumbzyC9tmxe3K4B2BSjO/v+1RxXpcRSS81bv7Mj85eOrBTGUgf3LRxw9Z?=
+ =?us-ascii?Q?cIxaM3s5gx9tEyVLHpdp3bK1/FCRg1ksPt3CKrRXBaiCjZKeuKUpzPCSbjPW?=
+ =?us-ascii?Q?CAl+K/iOQ52bfE6jyLVu/iIaxminUATY5rxwqwaMCr5TjtBcqp0PAXq2GaAO?=
+ =?us-ascii?Q?5p0FR0Qu8bp+c9Zxl0AOZjLNuc24AYZAoTiH0RsOZv6CA66QKrYexP+7xsTC?=
+ =?us-ascii?Q?+8rALH+kLtz2vZmd0rI2vuTpAR0q6+gw8oD6qvvdeklnhVd/9VZK6sr3MVWs?=
+ =?us-ascii?Q?iDlO4lLtyjlFnQLDb/cb1WiLvIhNTajEVwXkc7JciC95c8WlNpwTSMmoNV54?=
+ =?us-ascii?Q?DpOewGkpBEq3o5fJYAcK4TzvC3yWGnjfGgEY+z2yRN6s5ZYmbT2FiQOY6urZ?=
+ =?us-ascii?Q?st/2dbC+alQqcctrVu0SiaYiiBli6j2El9UTk1h00hGf+IQpSalkyS9H8j8L?=
+ =?us-ascii?Q?IgBxjdeOZSu2+ZTgY0z5NOoH/6SkfXnGcBkU?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2025 14:35:00.6148
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 22e65e24-0d38-414e-5b38-08dde3e49293
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF0000014A.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4316
 
-Hi Yemike,
+Hi,
 
-On 16/07/2025 13:19, Yemike Abhilash Chandra wrote:
-> This patch series add support for the TI VIP video capture engine.
-> VIP stands for Video Input Port, it can be found on devices such as
-> DRA7xx and provides a parallel interface to a video source such as
-> a sensor or TV decoder. 
-> 
-> Each VIP can support two inputs (slices) and a SoC can be configured
-> with a variable number of VIP's. Each slice can support two ports
-> each connected to its own sub-device.
-> 
-> The first patch in this series updates the outdated MAINTAINERS entry
-> for the TI VPE and CAL drivers. The subsequent three patches introduce
-> support for the TI VIP (Video Input Port) driver.
+This patchset provides misc bug fixes from the team to the mlx5 core and
+Eth drivers.
 
-I'll pick up the MAINTAINERS patch, but the others need more work, so
-v3 is needed for that.
+V1: https://lore.kernel.org/all/20250824083944.523858-1-mbloch@nvidia.com/
 
-> 
-> Link for v1: https://lore.kernel.org/all/20200522225412.29440-1-bparrot@ti.com/
-> The v1 patch series was posted in the year 2020. This v2 series resumes the
-> effort to upstream VIP support by addressing all previous review comments
-> 
-> Changelog:
-> Changes in v2:
-> - Remove array and just use hsync: true in bindings (Patch 3/5)
-> - Remove array and use enum for bus width in bindings (Patch 3/5)
-> - Use pattern properties since properties across ports are same (Patch 3/5)
-> - Remove vip_dbg, vip_info, vip_err aliases and just use v4l2_dbg, v4l2_info
->   and v4l2_err instead (Patch 4/5)
-> - Remove color space information from vip_formats struct (Patch 4/5)
-> - Use g_std instead of g_std_output (Patch 4/5)
-> - Do not touch pix.priv (Patch 4/5)
-> - Remove all comments with just register values (Patch 4/5)
-> - Remove support for vidioc_default ioctl (Patch 4/5)
-> - In case of any error while streaming, push all pending buffers to vb2 (Patch 4/5)
-> - Address some minor comments made by Hans throughout the driver (Patch 4/5)
-> - Update copyright year at various places
-> 
-> v4l2-compliance output: https://gist.github.com/Yemike-Abhilash-Chandra/b0791cb465fadc11d4c995197cb22f29
+Changelog:
 
-Also run v4l2-compliance with the -s option to check compliance while streaming.
+V1->V2:
+- Patch 9 was fixed to address build warning found by kernel test robot.
 
-Regards,
+Alexei Lazar (3):
+  net/mlx5e: Update and set Xon/Xoff upon MTU set
+  net/mlx5e: Update and set Xon/Xoff upon port speed set
+  net/mlx5e: Set local Xoff after FW update
 
-	Hans
+Lama Kayal (4):
+  net/mlx5: HWS, Fix memory leak in hws_pool_buddy_init error path
+  net/mlx5: HWS, Fix memory leak in hws_action_get_shared_stc_nic error flow
+  net/mlx5: HWS, Fix uninitialized variables in mlx5hws_pat_calc_nop error flow
+  net/mlx5: HWS, Fix pattern destruction in mlx5hws_pat_get_pattern error path
 
-> 
-> v4l2-compliance cropping and composing tests are failing likely
-> due to OV10635 sensor supporting several discrete frame sizes,
-> fail: v4l2-test-formats.cpp(1560): node->frmsizes_count[pixfmt] > 1
-> 
-> Test logs: https://gist.github.com/Yemike-Abhilash-Chandra/98504ab56416aef38b851036aef5eeb1
-> 
-> Dale Farnsworth (2):
->   dt-bindings: media: ti: vpe: Add bindings for Video Input Port
->   media: ti-vpe: Add the VIP driver
-> 
-> Yemike Abhilash Chandra (2):
->   MAINTAINERS: Update maintainers of TI VPE and CAL
->   Revert "media: platform: ti: Remove unused vpdma_update_dma_addr"
-> 
->  .../devicetree/bindings/media/ti,vip.yaml     |  211 +
->  MAINTAINERS                                   |    3 +-
->  drivers/media/platform/ti/Kconfig             |   13 +
->  drivers/media/platform/ti/vpe/Makefile        |    2 +
->  drivers/media/platform/ti/vpe/vip.c           | 3824 +++++++++++++++++
->  drivers/media/platform/ti/vpe/vip.h           |  719 ++++
->  drivers/media/platform/ti/vpe/vpdma.c         |   32 +
->  drivers/media/platform/ti/vpe/vpdma.h         |    3 +
->  8 files changed, 4806 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/devicetree/bindings/media/ti,vip.yaml
->  create mode 100644 drivers/media/platform/ti/vpe/vip.c
->  create mode 100644 drivers/media/platform/ti/vpe/vip.h
-> 
+Moshe Shemesh (4):
+  net/mlx5: Reload auxiliary drivers on fw_activate
+  net/mlx5: Fix lockdep assertion on sync reset unload event
+  net/mlx5: Nack sync reset when SFs are present
+  net/mlx5: Prevent flow steering mode changes in switchdev mode
+
+ .../net/ethernet/mellanox/mlx5/core/devlink.c |   2 +-
+ .../mellanox/mlx5/core/en/port_buffer.c       |   3 +-
+ .../mellanox/mlx5/core/en/port_buffer.h       |  12 ++
+ .../net/ethernet/mellanox/mlx5/core/en_main.c |  19 ++-
+ .../net/ethernet/mellanox/mlx5/core/fs_core.c |  15 +--
+ .../ethernet/mellanox/mlx5/core/fw_reset.c    | 126 ++++++++++--------
+ .../ethernet/mellanox/mlx5/core/fw_reset.h    |   1 +
+ .../ethernet/mellanox/mlx5/core/sf/devlink.c  |  10 ++
+ .../net/ethernet/mellanox/mlx5/core/sf/sf.h   |   6 +
+ .../mellanox/mlx5/core/steering/hws/action.c  |   2 +-
+ .../mellanox/mlx5/core/steering/hws/pat_arg.c |   6 +-
+ .../mellanox/mlx5/core/steering/hws/pool.c    |   1 +
+ 12 files changed, 136 insertions(+), 67 deletions(-)
+
+
+base-commit: ec79003c5f9d2c7f9576fc69b8dbda80305cbe3a
+-- 
+2.34.1
 
 
