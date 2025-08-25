@@ -1,95 +1,126 @@
-Return-Path: <linux-kernel+bounces-783997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FE2BB3352B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 06:37:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18361B33539
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 06:38:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96A8F17BDA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 04:37:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEFB3189EA4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 04:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 467D427B51C;
-	Mon, 25 Aug 2025 04:36:42 +0000 (UTC)
-Received: from mx.socionext.com (mx.socionext.com [202.248.49.38])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 414882701B4;
-	Mon, 25 Aug 2025 04:36:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.248.49.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5FCC283CA2;
+	Mon, 25 Aug 2025 04:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TSdhfPja"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E37BD28150A;
+	Mon, 25 Aug 2025 04:37:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756096601; cv=none; b=mgt3MjZFlvi1RikMzl2DpQ6+hcNHB+D/VvkVX2bAHMar7ZQe9aGzLPyGCsWFN4mFwz8k6rvAtvQJH6StyF7IO8Xzvzuakb9uWvknBq6LXLj0KwQHh5sF94cEWWutss5FtYu6/fR0VGyXPaNTSf+oQxxONdyspB2jYbbdAyKw2Sk=
+	t=1756096630; cv=none; b=DPqjyKPv6Gh4axkAxcgJVNJ+tU2h62+H17IbsOdI/+lcxf58e9GC5uQbRbq1m/3Kly01yApGqzhASqieIyxtP0uyGTdUGZnCM9kdb9q0aSjTNFwfdB/8ov+7IwP/1IzRu9D2b/HqjCtTE1fqi3seqjo95q0nau0RCFOt7GdkKOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756096601; c=relaxed/simple;
-	bh=2UQdjiqd7O8IFLfGKPYuGC0jAgyCtp0zgSm8CQIH+Nk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=XOqHb27MH5meVW9CA0IzvxNhMHITIUOJArq897n/ehFVVMb7M0loUPf88MYle8gTcYgIFgOTPTNZq7ynDzYjFe6YOPJ2wBg15WJwPiS3nEVa3o4kygulgvb3OT3hj9kmB6titjzZe5W4EqsououzG7IwkjZqaPFbEEdImw0RrT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=socionext.com; spf=pass smtp.mailfrom=socionext.com; arc=none smtp.client-ip=202.248.49.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=socionext.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=socionext.com
-Received: from unknown (HELO iyokan3-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 25 Aug 2025 13:36:29 +0900
-Received: from mail.mfilter.local (mail-arc01.css.socionext.com [10.213.46.36])
-	by iyokan3-ex.css.socionext.com (Postfix) with ESMTP id 5C1832091489;
-	Mon, 25 Aug 2025 13:36:29 +0900 (JST)
-Received: from iyokan3.css.socionext.com ([172.31.9.53]) by m-FILTER with ESMTP; Mon, 25 Aug 2025 13:36:29 +0900
-Received: from [10.213.136.107] (unknown [10.213.136.107])
-	by iyokan3.css.socionext.com (Postfix) with ESMTP id EF23410A016;
-	Mon, 25 Aug 2025 13:36:28 +0900 (JST)
-Message-ID: <cb453b09-4aa0-45f4-8cf6-abcf5c625007@socionext.com>
-Date: Mon, 25 Aug 2025 13:36:28 +0900
+	s=arc-20240116; t=1756096630; c=relaxed/simple;
+	bh=qbmrznk8y3bTUpjqPLSvWYU8OwN7QufMMM55Yj86Gkw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=igivjEYF7aW4NbF9mooGoFTs5sEIMDDDdh5qjX0mRQ8IowH1AHl0EFf/ZA2zeR6BLuKWi8ZIeRz433d0rOP6428Nvk7GMpeFtm5rA6JsBX5O2jZ4RV/RekuDvdMmxYanReTSQZYY98O/ioddJJ2n3k58Qf2AaWZi4U+FM61gWqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TSdhfPja; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 76E7AC4CEF4;
+	Mon, 25 Aug 2025 04:37:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756096629;
+	bh=qbmrznk8y3bTUpjqPLSvWYU8OwN7QufMMM55Yj86Gkw=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=TSdhfPjaKUkCMfdZp6E1WGCCorVE09YvUlhgqThgPprHZL+GglTNpnY/9elKdcxEq
+	 skgve9Ww+us2OO5HJSLbCFn041VBYSjkr49jiGsqAflvZEOInxo80fkB7kciOZnbLI
+	 Ea1GDxhQIvWz5js7FSF2gzB4GtoZjV4yvOdlnwjYI+A9PZwNskiwzj+zcSy39ELASx
+	 68DXrvRC9NCp4eZxhq1J81iGiPNNeGr4BbwszzYMBsqIfsqW7nZN/s66057Dd3htrz
+	 lKjdmEeEvN+hvMEhrsgaD9C5pLFapiEXtti6xB0QL5KnBjb2T6GRJu03v7N7u7aol1
+	 RDZTK6QZaUesQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61FACCA0FE1;
+	Mon, 25 Aug 2025 04:37:09 +0000 (UTC)
+From: Rohan G Thomas via B4 Relay <devnull+rohan.g.thomas.altera.com@kernel.org>
+Subject: [PATCH net v3 0/3] net: stmmac: xgmac: Minor fixes
+Date: Mon, 25 Aug 2025 12:36:51 +0800
+Message-Id: <20250825-xgmac-minor-fixes-v3-0-c225fe4444c0@altera.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64: dts: socionext: uniphier-ld20: Add default PCI
- interrup controller address cells
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20250822133318.312232-3-krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250822133318.312232-3-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGPoq2gC/33NTQrDIBAF4KuEWdeikz/TVe9RuhAzJkKjRYOkh
+ Ny94qYUSpdvHu+bHSIFSxEu1Q6Bko3WuxzqUwV6Vm4iZsecATm2vBcN26ZFabZY5wMzdqPIGo6
+ yN4hi1AR59wxUijy7gaMV7vk427j68Cp/kijVHzIJxpmuGz6gklL1eFWPlYI6a78ULuGHkKL7R
+ WAmumFoW9QmE+aLOI7jDdEnumv7AAAA
+X-Change-ID: 20250714-xgmac-minor-fixes-40287f221dce
+To: Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Jose Abreu <Jose.Abreu@synopsys.com>, 
+ Romain Gantois <romain.gantois@bootlin.com>, 
+ Serge Semin <fancer.lancer@gmail.com>, 
+ Ong Boon Leong <boon.leong.ong@intel.com>
+Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Rohan G Thomas <rohan.g.thomas@altera.com>, 
+ Matthew Gerlach <matthew.gerlach@altera.com>, Andrew Lunn <andrew@lunn.ch>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756096627; l=1399;
+ i=rohan.g.thomas@altera.com; s=20250815; h=from:subject:message-id;
+ bh=qbmrznk8y3bTUpjqPLSvWYU8OwN7QufMMM55Yj86Gkw=;
+ b=wb6durDNB7EBHq2OkiLCdW7vqZM17yyaQFwyVzxklzowPsTG1zA8RPFzfe0pjDOg89l4lAE/C
+ O0US6x4B5ujDW1ogpumfCPQOh67cwwuBN4pPnWn+WnqvUqBeK5LdVC5
+X-Developer-Key: i=rohan.g.thomas@altera.com; a=ed25519;
+ pk=5yZXkXswhfUILKAQwoIn7m6uSblwgV5oppxqde4g4TY=
+X-Endpoint-Received: by B4 Relay for rohan.g.thomas@altera.com/20250815
+ with auth_id=494
+X-Original-From: Rohan G Thomas <rohan.g.thomas@altera.com>
+Reply-To: rohan.g.thomas@altera.com
 
-Hi Krzysztof,
+This patch series includes following minor fixes for stmmac
+dwxgmac driver:
 
-On 2025/08/22 22:33, Krzysztof Kozlowski wrote:
-> Add missing address-cells 0 to the PCI interrupt node to silence W=1
-> warning:
-> 
->    uniphier-ld20.dtsi:941.4-944.29: Warning (interrupt_map):
-> /soc@0/pcie@66000000:interrupt-map:
->      Missing property '#address-cells' in node
-> /soc@0/pcie@66000000/legacy-interrupt-controller, using 0 as fallback
-> 
-> Value '0' is correct because:
-> 1. GIC interrupt controller does not have children,
-> 2. interrupt-map property (in PCI node) consists of five components and
->     the fourth component "parent unit address", which size is defined by
->     '#address-cells' of the node pointed to by the interrupt-parent
->     component, is not used (=0)
+    1. Disable Rx FIFO overflow interrupt for dwxgmac
+    2. Correct supported speed modes for dwxgmac
+    3. Check for coe-unsupported flag before setting CIC bit of
+       Tx Desc3 in the AF_XDP flow
 
-I understand that "parent unit address" is omitted, and according to
-the devicetree specification, "#address-cells" define the the size of
-the address. However, GIC doesn't specify the address, so this line
-is needed to indicate it.
+Signed-off-by: Rohan G Thomas <rohan.g.thomas@altera.com>
+---
+Changes in v3:
+- Keep variable declaration smallest to largest.
+- Link to v2: https://lore.kernel.org/r/20250816-xgmac-minor-fixes-v2-0-699552cf8a7f@altera.com
 
-For both patches,
-Reviewed-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-
-There is no tree to manage the SoC-specified commits, so please apply
-this series into the DT tree.
-
-Thank you,
+Changes in v2:
+- Added Fixes: tags to relevant commits.
+- Added a check for synopsys version to enable 10Mbps, 100Mbps support.
+- Link to v1: https://lore.kernel.org/r/20250714-xgmac-minor-fixes-v1-0-c34092a88a72@altera.com
 
 ---
-Best Regards
-Kunihiko Hayashi
+Rohan G Thomas (3):
+      net: stmmac: xgmac: Do not enable RX FIFO Overflow interrupts
+      net: stmmac: xgmac: Correct supported speed modes
+      net: stmmac: Set CIC bit only for TX queues with COE
+
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c | 13 +++++++++++--
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c  |  9 +++++----
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c   |  6 ++++--
+ 3 files changed, 20 insertions(+), 8 deletions(-)
+---
+base-commit: b1c92cdf5af3198e8fbc1345a80e2a1dff386c02
+change-id: 20250714-xgmac-minor-fixes-40287f221dce
+
+Best regards,
+-- 
+Rohan G Thomas <rohan.g.thomas@altera.com>
+
+
 
