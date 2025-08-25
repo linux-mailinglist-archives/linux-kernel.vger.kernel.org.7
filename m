@@ -1,212 +1,129 @@
-Return-Path: <linux-kernel+bounces-785176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA87FB3470A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:20:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2849B3472A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 18:23:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C48AE1A87F3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:20:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 396415E6FAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 16:23:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9622FF64E;
-	Mon, 25 Aug 2025 16:20:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74CC111713;
+	Mon, 25 Aug 2025 16:22:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BtcZn9AX"
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="E6yCiHZX"
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01810271A9D;
-	Mon, 25 Aug 2025 16:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A0E2FF64E
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 16:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756138822; cv=none; b=QjfK4rRGIO5ZjCokN2I+dXDSitY4H8VzOmSoJbI4ncAP+1Y513xly2Si8vVgsZXCAoy10r4dy64sgpcSz0aXFQukwFgDfuk2MA23VijtKDvcJLPi8iS8gQMy1Lgq3xdrT0rQZHh0o08Bal5xgZgUptgFltHkKTSv3YQd6tFI4NI=
+	t=1756138936; cv=none; b=NvrxhVilpqbSYQkPK9L6ltTpg4jKq9ibFA8BLIHx4yyp3Y8056awT6rmqo/oPaM+zolEcI0rjmaw0W35khI3aclPAjI3jgSHOkGC519ygYY5fvPq55i3SN1cul7glbIPjaWicPivpyZpaK2ymyXydJDOoofKG5lAn/FCGkcU1gw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756138822; c=relaxed/simple;
-	bh=TAcfmgI9LeesTtIHoLhIZ/JHO7GaVWax2M9oNJmKprQ=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=U8lrQM/0Koj2sytD/j+O64JwmXqKLr80LdGsAWigtAixeUv9W//WJDbxTyYH32Uufvm1pMNydLSFq1vh8AWCtjnvqfE9z2zdZg+phyQgxAtcDWvCaUzYizjD4O0XRaa+6Rkz6Ehv6E5sl1y8tPS6vGWIpPe6uqJfv27vp21zGps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BtcZn9AX; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-540e0970ae2so509740e0c.1;
-        Mon, 25 Aug 2025 09:20:19 -0700 (PDT)
+	s=arc-20240116; t=1756138936; c=relaxed/simple;
+	bh=JeuslXWF3RXWs7wR6we9lSHOWfjRXXLnSuu4MvbX5yw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yh+wGZyDS/OpbC+pVSGwJMVbKTsTi57fU96tqdcKz58/S/gQFVBfkYp0iNHwX+SnbA4YDryfWJ13zKNd22Q0q4IVZgjiWu7sF6hd4rlaDvgy+OKDq4ytEqY7p0si82FvJekzCe1oeDgsk9e3AJiL5Oj3BqxZA/h7JHzw9/+rYRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=E6yCiHZX; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-88432e91223so126197939f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 09:22:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756138819; x=1756743619; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cQK66bSWdpR/3neM6ZuMukiV+gZsLXj9dgiuTjYX2AA=;
-        b=BtcZn9AXCrHxvLk0Vu/OLj4mvTA9QKbmWnXqKq67GWGRW8NDfMPAm5Q6I7TtZnE7mf
-         +xqK6FO6PLWLyHXwe94mqJEi7VE1cZxX3TMZm9rp3kKynrQvVgnIo7McpJ8adRqYUbVc
-         nuEYhCDJRP1hIFWdZ+ANS/O4pq8fqCoC41XNvMLLrRhd2Y3Tzvg5PKFYEupjgxTg5XsY
-         J4q2wH+WHwj0YFw88Ikb/1aiqHjcfyTGQyqgiVtH5A0jqjyoRzo6bGoQ62vvDWtlJ9no
-         Wpkqdb2hQkDkU8Qi5/lTuLDU0xuzTJ9WrYy1ITEndlj8y2VgxkvwAYhhh2hgCzNr5vw5
-         kwBQ==
+        d=ventanamicro.com; s=google; t=1756138933; x=1756743733; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gN8JTVN3UqrYbcE7si46e+ibxM+XGryuvpF6NcC0BZ0=;
+        b=E6yCiHZXLXd/y1hXF2DqMCJ8m1O08w87Su9g5PH6mKTyrIK9QU0UQbRVJK/QSuxbLM
+         2gw/t2g2fkmizWPCUic2tCwvNRVKx9EE4iyMzHSzmgc2VdPcHElHO9kiuF02QVko+WUb
+         ehhJDWCQRJ06eMBbi4z49J983ttOZAfugUZUpvUZa0tCpKNCbkrBkanmrDh4dud6Ew2i
+         yuw2OSRVmJxxagEIOV6DaxkSTiDyVKONz5cwkufYwFvAz8Kv5vOMs8syI6Cnj3sxDITx
+         +aJSacFMUYu7SCxKosljIEtmK22+wgHGWjW6+q4iRYsUhNPxaevLJd/WANEH4M2/6V8c
+         Lu7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756138819; x=1756743619;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=cQK66bSWdpR/3neM6ZuMukiV+gZsLXj9dgiuTjYX2AA=;
-        b=LGziLM3veU+ihTghpXtFlEvi5q5PscHj+R9YgLdeWoazFxA+nmtXvy3+4+2mIqTBq3
-         kLSf5RNRGpQO8ErxrudxY1C56nAvwu9bpiPF8s5wCDMEbd0c4SXye6IdsTd1/+PaVUck
-         LlZ/bq+zAFGg2Ss2+x+9qJI3XvDHkKNW9NlX5s79Osr4HXc8joWL12XjBr2sQ9U9glDj
-         VTDwj6sIfQ2ab37yfSIqRykxMlwIFpljQr9sk1k/B+oMW0En6kQ5MyvvRBEiZYU/iYL8
-         U+TjgWnOr46xQHCztlvYZSp/Fuo98af4fCYOXCBvw4WjCWTYS+teqfV0/dqQv8nM8FV7
-         VMlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUu83Ebo8Iiv+SII+Kzv70vJyBCI6BSM7aNl/TzcmtHd+KuLbOZ+uJL18ifvqjkJEsK0E4b3eFVJtApRyQ=@vger.kernel.org, AJvYcCXjbre7A7IqlSJ8ldKCdFb3wuAAVfFXquVpufmXLZ3b9tyCOs6lra9qmg1Z18RUIUpovfSgVpYy@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAstOe1RNTidLpXBirVnDauvQUmbdHd94YoTsAExhYhuNIr4f+
-	IEcmlbD4qoYQynFu3VRUzwxfgIHJwew+VSP6UclFyStDH/GF5SQcQyBY
-X-Gm-Gg: ASbGncte58m4RRaDFm4EnKvdHpM01ZgJbp0y+bpbmKKMeL9b9W92jdhquZEYRgE59I9
-	eumXHUOAqRt3sf/PdJa1CcOtaGe62soOIbloT3L2nrSli5+JwNDbHmTo430dWWgFiUWJth5kNnG
-	a84s84Pm7RX3nfXurjhj8fLU1PKH1OsnCXwGvcQU4q/KDvRoRkzJyxlRc4j5M6QbYAXkwirisY4
-	8e5rWEXSOiBOvm8lrH8UX04eCCBCk2JBS33fjkgQElUl1zebCNdFNcxRADbUT6W2TkLh93yUVF1
-	xSgPVkkEBZfQj391wMoYi/m1wpYqSl7hIUO4JCCt+++c/BSpTvbqJh1GywZQlY3MiLDlYIZ793L
-	/mH4M18q7JvACSayxn3yO3AMNUUCIZ1o+/fnjIgJy+KjhdZQ7QC40AM7bPbBwsccS+Q/Z0A==
-X-Google-Smtp-Source: AGHT+IG+DDyinrOkYJVWmDmJqNIEOlqMrV1fm+S8myMgd86vycFol54MLKDK798r08P9S1+6Mp7TvQ==
-X-Received: by 2002:a05:6122:8d0:b0:538:d227:a364 with SMTP id 71dfb90a1353d-53c8a2bde65mr3110548e0c.3.1756138818726;
-        Mon, 25 Aug 2025 09:20:18 -0700 (PDT)
-Received: from gmail.com (128.5.86.34.bc.googleusercontent.com. [34.86.5.128])
-        by smtp.gmail.com with UTF8SMTPSA id 71dfb90a1353d-541b1dbcffcsm496071e0c.4.2025.08.25.09.20.18
+        d=1e100.net; s=20230601; t=1756138933; x=1756743733;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gN8JTVN3UqrYbcE7si46e+ibxM+XGryuvpF6NcC0BZ0=;
+        b=ocZVslMAz6ds0xB2qqIaEcyhhjD+XkNBPYU2w0xPXODYNCVvKtTFCKXLstOxj/IJBI
+         p5mlEiAm4pBbQjBE0vj34OPPPrsEcoKyDDLm6yM4eqDFXpr4HS2petm1wQaRTZk1Ke1P
+         dZEBsN7jBaiKJZqi3E9Jxo8ntW29hLmqB8UryQakofQ7MIV+QEkSX42bBiBExGar4Vyy
+         dVur+WO+uzsdohQuCw8c0ozBs8OtFiV8DnEOf6qVQTP10Q4javRaeQvAL0+BESZWUxkM
+         iduoExXpVg7YirHYeMxUt8v60c7FhzQhR9iW1k+7i22MKzEBWfMnwNMps3avtuAnFzV+
+         FROA==
+X-Forwarded-Encrypted: i=1; AJvYcCUS2aJufK3x6QuTDTdFvGGURFKCna6RJNF0U+iZbc1+Yd5NX/Avj4bidHzo3rEyL92ZruvpYHPDw7oB9gs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpeUCj2GfeFjiMchl1dD+1OU9KlsVFmr4z0TAgEOr1zCP6pbWe
+	uIEdyPmd/B+wkdgtsqUCkowTeYfPJw9s0gNjCe31J+kqfCRNGZGVVbYPWysOQ2PD6As=
+X-Gm-Gg: ASbGncvjjbol/S5+9QWwdV4A9ChpGbhmGR6Q7EkEPcGHz63yJCQW1R07i7fxhGD7h9e
+	3bWMbEF1UEF/chGSrslttzilN5g5J2UlxAK2ekNbXfMx5bJtxO4tZZzQEbkx5pHY1EkMdgXQYEE
+	kEyP94/qnXvninvy5XxUvPcs1XMXeeXZz/Xtg4SbqBZFB00TMMN7GeVGIS4+o35mOPGgkSxWAIT
+	+MLVn0hnRfnIPwGyljdpnosCGuTAPiJs3Y1rm/KW3nhKyoAp26pk2aetT7ozFmnhAafS/WaXg6M
+	XgdQDPDIU2BIap3ELTpubej1BeYPWp/BGvZEZOJ8aNYLWMRU+g9H/iU/SvvArAn1v6W4F01bSW6
+	S55gCZYFKxpPqgI988Xt8Jbtp
+X-Google-Smtp-Source: AGHT+IHxDLcJHAYpyzsrbmn/aJb96iGEjJWm0YdiTY2GoeJB5NHC5Ix7Bwg5uxn0XGZ/yig4LtZaRw==
+X-Received: by 2002:a05:6e02:184c:b0:3ec:40cf:2d37 with SMTP id e9e14a558f8ab-3ec40cf2ed7mr61486495ab.31.1756138933068;
+        Mon, 25 Aug 2025 09:22:13 -0700 (PDT)
+Received: from localhost ([140.82.166.162])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3ea4c28624bsm49231365ab.18.2025.08.25.09.22.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 09:20:18 -0700 (PDT)
-Date: Mon, 25 Aug 2025 12:20:17 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Xin Zhao <jackzxcui1989@163.com>, 
- willemdebruijn.kernel@gmail.com, 
- edumazet@google.com, 
- ferenc@fejes.dev
-Cc: davem@davemloft.net, 
- kuba@kernel.org, 
- pabeni@redhat.com, 
- horms@kernel.org, 
- netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-Message-ID: <willemdebruijn.kernel.26d6abeee5c4c@gmail.com>
-In-Reply-To: <20250825050628.124977-1-jackzxcui1989@163.com>
-References: <20250825050628.124977-1-jackzxcui1989@163.com>
-Subject: Re: [PATCH net-next v6] net: af_packet: Use hrtimer to do the retire
- operation
+        Mon, 25 Aug 2025 09:22:12 -0700 (PDT)
+Date: Mon, 25 Aug 2025 11:22:11 -0500
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Jinyu Tang <tjytimi@163.com>
+Cc: Anup Patel <anup@brainfault.org>, Atish Patra <atish.patra@linux.dev>, 
+	Conor Dooley <conor.dooley@microchip.com>, Yong-Xuan Wang <yongxuan.wang@sifive.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Nutty Liu <nutty.liu@hotmail.com>, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] riscv: skip csr restore if vcpu preempted reload
+Message-ID: <20250825-69a3c8b588e0bb1fbb5b7beb@orel>
+References: <20250825121411.86573-1-tjytimi@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250825121411.86573-1-tjytimi@163.com>
 
-Xin Zhao wrote:
-> On Mon, 2025-08-25 at 2:08 +0800, Willem wrote:
+On Mon, Aug 25, 2025 at 08:14:11PM +0800, Jinyu Tang wrote:
+> The kvm_arch_vcpu_load() function is called in two cases for riscv:
+> 1. When entering KVM_RUN from userspace ioctl.
+> 2. When a preempted VCPU is scheduled back.
 > 
-> > This is getting more complex than needed.
-> > 
-> > Essentially the lifecycle is that packet_set_ring calls hrtimer_setup
-> > and hrtimer_del_sync.
-> > 
-> > Inbetween, while the ring is configured, the timer is either
-> > 
-> > - scheduled from tpacket_rcv and !is_scheduled
-> >     -> call hrtimer_start
-> > - scheduled from tpacket_rcv and is_scheduled
-> >     -> call hrtimer_set_expires
+> In the second case, if no other KVM VCPU has run on this CPU since the
+> current VCPU was preempted, the guest CSR (including AIA CSRS and HGTAP) 
+> values are still valid in the hardware and do not need to be restored.
 > 
-> We cannot use hrtimer_set_expires/hrtimer_forward_now when a hrtimer is
-> already enqueued.  
+> This patch is to skip the CSR write path when:
+> 1. The VCPU was previously preempted
+> (vcpu->scheduled_out == 1).
+> 2. It is being reloaded on the same physical CPU
+> (vcpu->arch.last_exit_cpu == cpu).
+> 3. No other KVM VCPU has used this CPU in the meantime
+> (vcpu == __this_cpu_read(kvm_former_vcpu)).
+> 
+> This reduces many CSR writes with frequent preemption on the same CPU.
+> 
+> Signed-off-by: Jinyu Tang <tjytimi@163.com>
+> Reviewed-by: Nutty Liu <nutty.liu@hotmail.com>
+> ---
+>  v2 -> v3:
+>  v2 was missing a critical check because I generated the patch from my
+>  wrong (experimental) branch. This is fixed in v3. Sorry for my trouble.
+> 
+>  v1 -> v2:
+>  Apply the logic to aia csr load. Thanks for
+>  Andrew Jones's advice.
+> 
+>  arch/riscv/kvm/vcpu.c | 13 +++++++++++--
+>  1 file changed, 11 insertions(+), 2 deletions(-)
+>
 
-Perhaps we need to simplify and stop trying to adjust the timer from
-tpacket_rcv once scheduled. Let the callback handle that.
-
-> The WARN_ON(timer->state & HRTIMER_STATE_ENQUEUED) in hrtimer_forward
-> already clearly indicates this point. The reason for not adding this
-> WARN_ON in hrtimer_set_expires is that hrtimer_set_expires is an inline
-> function, wory about increase code size.
-> The implementation of perf_mux_hrtimer_restart actually checks whether
-> the hrtimer is active when restarting the hrtimer.
-> 
-> static int perf_mux_hrtimer_restart(struct perf_cpu_pmu_context *cpc)
-> {
-> 	struct hrtimer *timer = &cpc->hrtimer;
-> 	unsigned long flags;
-> 
-> 	raw_spin_lock_irqsave(&cpc->hrtimer_lock, flags);
-> 	if (!cpc->hrtimer_active) {
-> 		cpc->hrtimer_active = 1;
-> 		hrtimer_forward_now(timer, cpc->hrtimer_interval);
-> 		hrtimer_start_expires(timer, HRTIMER_MODE_ABS_PINNED_HARD);
-> 	}
-> 	raw_spin_unlock_irqrestore(&cpc->hrtimer_lock, flags);
-> 
-> 	return 0;
-> }
-> 
-> Therefore, according to the overall design of the hrtimer, once the
-> hrtimer is active, it is not allowed to set the timeout outside of the
-> hrtimer callback nor is it allowed to restart the hrtimer.
-> 
-> So two ways to update the hrtimer timeout:
-> 1. update expire time in the callback
-> 2. Call the hrtimer_cancel and then call hrtimer_start
-
-1 seems preferable. The intent of the API.
-
-> According to your suggestion, we don't call hrtimer_start inside the
-> callback, would you accept calling hrtimer_cancel first and then calling
-> hrtimer_start in the callback? However, this approach also requires
-> attention, as hrtimer_cancel will block until the callback is running,
-> so it is essential to ensure that it is not called within the hrtimer
-> callback; otherwise, it could lead to a deadlock.
-> 
-> 
-> > - rescheduled from the timer callback
-> >     -> call hrtimer_set_expires and return HRTIMER_RESTART
-> > 
-> > The only complication is that the is_scheduled check can race with the
-> > HRTIMER_RESTART restart, as that happens outside the sk_receive_queue
-> > critical section.
-> > 
-> > One option that I suggested before is to convert pkc->delete_blk_timer
-> > to pkc->blk_timer_scheduled to record whether the timer is scheduled
-> > without relying on hrtimer_is_queued. Set it on first open_block and
-> > clear it from the callback when returning HR_NORESTART.
-> 
-> Do you agree with adding a callback variable to distinguish between
-> scheduled from tpacket_rcv and scheduled from the callback? I really
-> couldn't think of a better solution.
-
-Yes, no objections to that if necessary.
-> 
-> 
-> So, a possible solution may be?
-> 1. Continue to keep the callback parameter to strictly ensure whether it
-> is within the callback.
-> 2. Use hrtimer_set_expires within the callback to update the timeout (the
-> hrtimer module will enqueue the hrtimer when callback return)
-> 3. If it is not in callback, call hrtimer_cancel + hrtimer_start to restart
-> the timer.
-
-Instead, I would use an in_scheduled param, as in my previous reply and
-simply skip trying to schedule if already scheduled.
-
-> 4. To avoid the potential issue of the enqueue in step 2 and the
-> hrtimer_start in step 3 happening simultaneously, which could lead to
-> hrtimer_start being triggered twice in a very short period, the logic should
-> be:
-> if (hrtimer_cancel(...))
->     hrtimer_start(...);
-> Additionally, the hrtimer_cancel check will also avoid hrtimer callback
-> triggered once more when just called prb_del_retire_blk_timer by packet_set_ring.
-> The hrtimer should be in an active state beginning from when
-> prb_setup_retire_blk_timer is called to the time when prb_del_retire_blk_timer
-> is called.
-> 
-> 
-> Thanks
-> Xin Zhao
-> 
-
-
+Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 
