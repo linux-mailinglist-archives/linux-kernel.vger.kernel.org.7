@@ -1,208 +1,178 @@
-Return-Path: <linux-kernel+bounces-784598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-784600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1FA2B33E38
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:39:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05C98B33E3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 13:40:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8604C1760DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:39:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C8817B1B41
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Aug 2025 11:38:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0691F2EB5CF;
-	Mon, 25 Aug 2025 11:39:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3612EC57B;
+	Mon, 25 Aug 2025 11:39:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cA9AuFCa"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iwfu8tca"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5492EA741;
-	Mon, 25 Aug 2025 11:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC802EAB6A;
+	Mon, 25 Aug 2025 11:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756121949; cv=none; b=hF8g4uY8V6T56MgxSg8PgcBCRm5Wc+CqkARnXs9/7C2e6Tnp8oX530SHP5iinUK3lostS2uVX9Ngwuqie5n/Mw7l7pjGZp89hoVXhuzNFBh8wAvrirJPmaLUzlXyLAMUw6/rRORZ2w0fPf0/dYqEUvQB6c0gtx1ftF/VOBd9M9I=
+	t=1756121970; cv=none; b=jptS9MF9BKkDH0LL2OTRZuCFMjkxwme+hb/KvXwpXTiYRM+acsyPKzGQVozSA5X8sycJ5VzTNT06z8vhakOb6MUalYTJOtI7ZYVr3yWaT2+U7QVVxLWM6ZQebjAcG/trJnnMJHLNkxcgAXO7DIt3kEfNXgv63bHo4XBfHoNi1zM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756121949; c=relaxed/simple;
-	bh=Dd64tH2C/anRhlI56SfA7nQHik6qZJ5IimIUY4B060M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KX9tBZS2QggwED6btdR2ZdJEHTXT9DYhJyGn7wUS5EQoLwUEwHpI8DdEGnZ2rDNxpVIcpmOQLgpXvNBRp+S0uGOFtEN0Gdxijrr/JnTB1e/PxIungFnI2AOoYGb2jnhK0sVvT5HgwSwWF3OSdJZJls4o8U5Ho6vim4Q8+qiuMvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cA9AuFCa; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57P85xC6006924;
-	Mon, 25 Aug 2025 11:39:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=efHdpw6MZigXbTvjxJT2D/SB8ccWQ+VoVAO
-	UhEsFy0A=; b=cA9AuFCaJK0N3e7IzZXMVeBneLw3Co9gfDZq684+XPWfXNpLnup
-	LutkiHQHzckADx37iVEFumu4PWTcesgattDnDsZLtHWJrXVA4Fq8uOCSJu9QPiT1
-	/XaqGcv1ix612+geDLqoJC30WRYrkNNx/QWOscFWL2vhnntM5BY5Xm8a1aAeRYRI
-	B7hpKtbAg3Bp1pN16yiBYVp4eLdhgmG7avglmxuT3Hp5Wa5Omvylm4WNcfuDzA+q
-	ZvMuht8RlfllgcrzMh1BUPl02ETwgiNIRx6ruOGF0Awl8SZSe+6GsfCGxcjo7WVr
-	C86jW7nlrazK/vBNL/7fE7tI05Q5n9JYB5Q==
-Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5unmv0f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Aug 2025 11:39:03 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 57PBd1F3013545;
-	Mon, 25 Aug 2025 11:39:01 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 48q6qkm58m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Aug 2025 11:39:01 +0000
-Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57PBd0V2013535;
-	Mon, 25 Aug 2025 11:39:00 GMT
-Received: from bt-iot-sh02-lnx.ap.qualcomm.com (bt-iot-sh02-lnx.qualcomm.com [10.253.144.65])
-	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 57PBd0qs013533
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Aug 2025 11:39:00 +0000
-Received: by bt-iot-sh02-lnx.ap.qualcomm.com (Postfix, from userid 4467449)
-	id A97CB22A9B; Mon, 25 Aug 2025 19:38:59 +0800 (CST)
-From: Shuai Zhang <quic_shuaz@quicinc.com>
-To: dmitry.baryshkov@oss.qualcomm.com, marcel@holtmann.org,
-        luiz.dentz@gmail.com
-Cc: linux-bluetooth@vger.kernel.org, stable@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        quic_chejiang@quicinc.com, Shuai Zhang <quic_shuaz@quicinc.com>
-Subject: [PATCH v10] Bluetooth: hci_qca: Fix SSR (SubSystem Restart) fail when BT_EN is pulled up by hw
-Date: Mon, 25 Aug 2025 19:38:58 +0800
-Message-Id: <20250825113858.4017780-1-quic_shuaz@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1756121970; c=relaxed/simple;
+	bh=7GO8Jac/WHBeZjLJm6fIwvfWXASWj8xYr2ROiPzF9aw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fK/y0HpCGkdx88TdwbvQtZed8vLcvPpxj2rmuIG/cfScbPN8TNbuLfSyrS/5aCXnH8gkeL/MeOP+BvCqxslTfeS5djU1dyf83zJ5k1VMAxEjUNtZV+iF1tXad026fsBw8AhAeBiGeNQsjIYRg6NdeYK5N7NJZAar6uZxcUVrrO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iwfu8tca; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0328DC4CEED;
+	Mon, 25 Aug 2025 11:39:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756121970;
+	bh=7GO8Jac/WHBeZjLJm6fIwvfWXASWj8xYr2ROiPzF9aw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=iwfu8tcaJGUohZ1xHZUMJowvML3G8NY+bdjH9VfIzuIhdm5y42l5Ande4p8TWQ1Lx
+	 gmEgz/P9aAafKnlQrJlUWyXYAcAqj+I4CwQxT5qle6VRvEQQRxr0+RgQm0NHLhQo+s
+	 Df9HLsaYXPKqsW2AdXzaD9NpxoM4DA2QAgFzLpaOMDBsX6yuwpDpi+OjdaQDCPhNri
+	 HgkWVFk67uDHuGhqaclhyjdCY9mCxc93vBEI75XUrAlrJS0oIyFvBfwM06WakAkS4Q
+	 XzpIrftTP3tJJwESpsBNigK4l0dfZoHYX7RcTRyN5KZ04FBbC5d2mwlPahqF+W9ZUU
+	 xnUQcc7EWJuFA==
+Date: Mon, 25 Aug 2025 12:39:19 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Dixit Parmar <dixitparmar19@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Lars-Peter Clausen
+ <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Ray
+ Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Broadcom
+ internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+ Support Opensource <support.opensource@diasemi.com>, Krzysztof Kozlowski
+ <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Haibo Chen
+ <haibo.chen@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Cai Huoqing <cai.huoqing@linux.dev>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, Andreas Klinger <ak@it-klinger.de>, Crt
+ Mori <cmo@melexis.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev,
+ linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH 00/10] iio: Drop unnecessary -ENOMEM messages
+Message-ID: <20250825123919.3c228ef7@jic23-huawei>
+In-Reply-To: <20250825093150.3ba23f2a@jic23-huawei>
+References: <20250822-enomam_logs-v1-0-db87f2974552@gmail.com>
+	<20250825093150.3ba23f2a@jic23-huawei>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: l8eD72juh49j3hINidIq_b9KFYpq9Ifs
-X-Proofpoint-ORIG-GUID: l8eD72juh49j3hINidIq_b9KFYpq9Ifs
-X-Authority-Analysis: v=2.4 cv=JJo7s9Kb c=1 sm=1 tr=0 ts=68ac4b58 cx=c_pps
- a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=Zh3eq0SbisOj6M6HGuUA:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMSBTYWx0ZWRfX4vZYMzZU/TZ8
- ahfYmyhgS8l8RQ3Tph6nlkjdkHrmedjTzOK523lUa53nMyT0qyDIIViKGfig4eBJXg09C1Zus7p
- ClYtyuhMBT0xG4jRvRebeO2KvhjsCnGygykXbiR5YnrVWE+CPQLVFFurEtn0cxfzcvF6tWag1rd
- N8fNoYOiUfpZqsh4J9JRmvdIVSYKkPgjmEsGPhggL7CbPFaePP5xys+IgSgPvGv5D4Ix17AJf6/
- SaAV3lDF9/s+vfbcBx7lWhRzkyxcPvmdUktxNoJE0uDi9BRZfHzoK/BLraMr7L7OPECMCYyNIb3
- uhCD/44rQDtUFiNagIFsME25Voe4DEXA0ellg9ucvXj/+MAzYPSEUzNG25jaZCSW9A56Ryw00Tv
- OYInK80t
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-25_05,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 adultscore=0 bulkscore=0 spamscore=0 impostorscore=0
- malwarescore=0 clxscore=1015 priorityscore=1501 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230031
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-When the host actively triggers SSR and collects coredump data,
-the Bluetooth stack sends a reset command to the controller. However, due
-to the inability to clear the QCA_SSR_TRIGGERED and QCA_IBS_DISABLED bits,
-the reset command times out.
+On Mon, 25 Aug 2025 09:31:50 +0100
+Jonathan Cameron <jic23@kernel.org> wrote:
 
-To address this, this patch clears the QCA_SSR_TRIGGERED and
-QCA_IBS_DISABLED flags and adds a 50ms delay after SSR, but only when
-HCI_QUIRK_NON_PERSISTENT_SETUP is not set. This ensures the controller
-completes the SSR process when BT_EN is always high due to hardware.
+> On Fri, 22 Aug 2025 09:19:48 +0530
+> Dixit Parmar <dixitparmar19@gmail.com> wrote:
+> 
+> > The drivers do not require their own error messages for error
+> > -ENOMEM, memory allocation failures. So remove the dev_err
+> > messages from the probe().
+> > With these patches, all the iio drivers now has uniform handling
+> > of the -ENOMEM while device_allocation and trigger_allocation
+> > calls.
+> > 
+> > Signed-off-by: Dixit Parmar <dixitparmar19@gmail.com>  
+> Series looks fine to me, after the minor tweaks to commit messages
+> that Andy requested.  However as it touches a lot of drivers
+> I'd like to leave it on list a little longer.
 
-For the purpose of HCI_QUIRK_NON_PERSISTENT_SETUP, please refer to
-the comment in `include/net/bluetooth/hci.h`.
+I changed my mind after taking the dev_err_probe() series earlier.
+I'm rather too busy at the moment, so clearing this out now will reduce
+what I need to keep track of.
 
-The HCI_QUIRK_NON_PERSISTENT_SETUP quirk is associated with BT_EN,
-and its presence can be used to determine whether BT_EN is defined in DTS.
+Fixed up the () that Andy asked for in commit messages and applied
+to the togreg branch of iio.git, pushed out initially as testing.
 
-After SSR, host will not download the firmware, causing
-controller to remain in the IBS_WAKE state. Host needs
-to synchronize with the controller to maintain proper operation.
+There is still the rest of the week (probably) in which I can add
+tags etc if anyone wants to give them before I push that out as
+a non rebasing tree.
 
-Multiple triggers of SSR only first generate coredump file,
-due to memcoredump_flag no clear.
+Thanks,
 
-add clear coredump flag when ssr completed.
+Jonathan
 
-When the SSR duration exceeds 2 seconds, it triggers
-host tx_idle_timeout, which sets host TX state to sleep. due to the
-hardware pulling up bt_en, the firmware is not downloaded after the SSR.
-As a result, the controller does not enter sleep mode. Consequently,
-when the host sends a command afterward, it sends 0xFD to the controller,
-but the controller does not respond, leading to a command timeout.
-
-So reset tx_idle_timer after SSR to prevent host enter TX IBS_Sleep mode.
-
----
-Changs since v8-v9:
--- Update base patch to latest patch.
--- add Cc stable@vger.kernel.org on signed-of.
-
-Changes since v6-7:
-- Merge the changes into a single patch.
-- Update commit.
-
-Changes since v1-5:
-- Add an explanation for HCI_QUIRK_NON_PERSISTENT_SETUP.
-- Add commments for msleep(50).
-- Update format and commit.
-
-Signed-off-by: Shuai Zhang <quic_shuaz@quicinc.com>
-Cc: stable@vger.kernel.org
----
- drivers/bluetooth/hci_qca.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
-
-diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-index 4cff4d9be..97aaf4985 100644
---- a/drivers/bluetooth/hci_qca.c
-+++ b/drivers/bluetooth/hci_qca.c
-@@ -1653,6 +1653,39 @@ static void qca_hw_error(struct hci_dev *hdev, u8 code)
- 		skb_queue_purge(&qca->rx_memdump_q);
- 	}
- 
-+	/*
-+	 * If the BT chip's bt_en pin is connected to a 3.3V power supply via
-+	 * hardware and always stays high, driver cannot control the bt_en pin.
-+	 * As a result, during SSR (SubSystem Restart), QCA_SSR_TRIGGERED and
-+	 * QCA_IBS_DISABLED flags cannot be cleared, which leads to a reset
-+	 * command timeout.
-+	 * Add an msleep delay to ensure controller completes the SSR process.
-+	 *
-+	 * Host will not download the firmware after SSR, controller to remain
-+	 * in the IBS_WAKE state, and the host needs to synchronize with it
-+	 *
-+	 * Since the bluetooth chip has been reset, clear the memdump state.
-+	 */
-+	if (!test_bit(HCI_QUIRK_NON_PERSISTENT_SETUP, &hdev->quirks)) {
-+		/*
-+		 * When the SSR (SubSystem Restart) duration exceeds 2 seconds,
-+		 * it triggers host tx_idle_delay, which sets host TX state
-+		 * to sleep. Reset tx_idle_timer after SSR to prevent
-+		 * host enter TX IBS_Sleep mode.
-+		 */
-+		mod_timer(&qca->tx_idle_timer, jiffies +
-+				  msecs_to_jiffies(qca->tx_idle_delay));
-+
-+		/* Controller reset completion time is 50ms */
-+		msleep(50);
-+
-+		clear_bit(QCA_SSR_TRIGGERED, &qca->flags);
-+		clear_bit(QCA_IBS_DISABLED, &qca->flags);
-+
-+		qca->tx_ibs_state = HCI_IBS_TX_AWAKE;
-+		qca->memdump_state = QCA_MEMDUMP_IDLE;
-+	}
-+
- 	clear_bit(QCA_HW_ERROR_EVENT, &qca->flags);
- }
- 
--- 
-2.34.1
+> 
+> Thanks,
+> 
+> Jonathan
+> 
+> > ---
+> > Dixit Parmar (10):
+> >       iio: accel: Drop unnecessary -ENOMEM messages
+> >       iio: adc: Drop unnecessary -ENOMEM messages
+> >       iio: dac: Drop unnecessary -ENOMEM messages
+> >       iio: health: Drop unnecessary -ENOMEM messages
+> >       iio: humidity: Drop unnecessary -ENOMEM messages
+> >       iio: light: Drop unnecessary -ENOMEM messages
+> >       iio: potentiostat: Drop unnecessary -ENOMEM messages
+> >       iio: pressure: Drop unnecessary -ENOMEM messages
+> >       iio: proximity: Drop unnecessary -ENOMEM messages
+> >       iio: temperature: Drop unnecessary -ENOMEM messages
+> > 
+> >  drivers/iio/accel/bma220_spi.c      | 4 +---
+> >  drivers/iio/accel/dmard06.c         | 4 +---
+> >  drivers/iio/accel/dmard09.c         | 4 +---
+> >  drivers/iio/accel/dmard10.c         | 4 +---
+> >  drivers/iio/accel/mc3230.c          | 4 +---
+> >  drivers/iio/accel/mma7660.c         | 4 +---
+> >  drivers/iio/accel/stk8312.c         | 4 +---
+> >  drivers/iio/accel/stk8ba50.c        | 4 +---
+> >  drivers/iio/adc/ad7949.c            | 4 +---
+> >  drivers/iio/adc/bcm_iproc_adc.c     | 4 +---
+> >  drivers/iio/adc/cpcap-adc.c         | 6 ++----
+> >  drivers/iio/adc/da9150-gpadc.c      | 5 ++---
+> >  drivers/iio/adc/dln2-adc.c          | 9 +++------
+> >  drivers/iio/adc/exynos_adc.c        | 4 +---
+> >  drivers/iio/adc/imx7d_adc.c         | 4 +---
+> >  drivers/iio/adc/imx8qxp-adc.c       | 4 +---
+> >  drivers/iio/adc/mxs-lradc-adc.c     | 4 +---
+> >  drivers/iio/adc/palmas_gpadc.c      | 4 +---
+> >  drivers/iio/adc/rn5t618-adc.c       | 4 +---
+> >  drivers/iio/adc/stm32-dfsdm-adc.c   | 4 +---
+> >  drivers/iio/adc/stmpe-adc.c         | 4 +---
+> >  drivers/iio/adc/ti-adc084s021.c     | 4 +---
+> >  drivers/iio/adc/ti-ads131e08.c      | 8 ++------
+> >  drivers/iio/adc/ti_am335x_adc.c     | 5 ++---
+> >  drivers/iio/adc/twl4030-madc.c      | 4 +---
+> >  drivers/iio/adc/viperboard_adc.c    | 4 +---
+> >  drivers/iio/dac/ad5380.c            | 4 +---
+> >  drivers/iio/dac/ad5764.c            | 4 +---
+> >  drivers/iio/dac/ds4424.c            | 4 +---
+> >  drivers/iio/dac/ti-dac7311.c        | 4 +---
+> >  drivers/iio/dac/vf610_dac.c         | 4 +---
+> >  drivers/iio/health/afe4403.c        | 4 +---
+> >  drivers/iio/health/afe4404.c        | 4 +---
+> >  drivers/iio/humidity/am2315.c       | 4 +---
+> >  drivers/iio/humidity/dht11.c        | 4 +---
+> >  drivers/iio/light/stk3310.c         | 4 +---
+> >  drivers/iio/potentiostat/lmp91000.c | 4 +---
+> >  drivers/iio/pressure/dlhl60d.c      | 4 +---
+> >  drivers/iio/proximity/ping.c        | 4 +---
+> >  drivers/iio/proximity/srf04.c       | 4 +---
+> >  drivers/iio/temperature/mlx90632.c  | 4 +---
+> >  41 files changed, 47 insertions(+), 130 deletions(-)
+> > ---
+> > base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
+> > change-id: 20250822-enomam_logs-f66642957fb3
+> > 
+> > Best regards,  
+> 
+> 
 
 
