@@ -1,236 +1,158 @@
-Return-Path: <linux-kernel+bounces-787244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B899B37374
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 21:54:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E3FFB37376
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 21:55:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E36F3A2B21
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:54:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D03DA207CAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:55:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D98A31A554;
-	Tue, 26 Aug 2025 19:54:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D6A28850E;
+	Tue, 26 Aug 2025 19:55:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kVo2jcyH"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OYO6S2Tm"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD7730CD91
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 19:54:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 578081FF1C4;
+	Tue, 26 Aug 2025 19:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756238084; cv=none; b=k5Yw7snFfJY5Ss5LOgaIPF336I7yHFHDTp4452wMOq19Oi3+gPm19ZOgKQz1rlYK+IIA4uJl1ypGeqJCGgkKpkXt16T49Vx76ybcKtIijBptxYoCk253vtRDYBkLNZbSYF1F6iNk/HEh1LNEGf/SMKjYf6ivTx3CFeyg7FqecZo=
+	t=1756238146; cv=none; b=q1pHBcLrSd7QGW1k3a06o1lF9pyjllZto5deg6QLQ/qUwO+ZYfNtpOrJg2lxFLzo4X5oDTqsuSYJ209669N7QpU7Vo4SOiv9vLpIEpFtziodhfBs8Q7a2hs5lGn5K6tqvLVoLZWIDWuauUAdIeTEz9poA+cRDvaM9sEt8CsdFiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756238084; c=relaxed/simple;
-	bh=nHV+MoADmuu9Flb/SEZp6v3PcnQ8ZAvPvJ2YlUDEGqg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=WWLIWyoDP+Dih4vUgD3Qej1gksg3s1T9vZCJwpc3cS/QylkLMm6IhZlyIkTJCo2zerAC7FBJOYPpirEvL/1qBDZOFUPb1Tox5sjTIrXqHn6r8Zv964p+3Qw3XfJM3ksP4xEyWXMTzGy9Gyo48o5pwzd+eGerBKCSUOabeZg2OBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kVo2jcyH; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45b4d892175so30479995e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 12:54:41 -0700 (PDT)
+	s=arc-20240116; t=1756238146; c=relaxed/simple;
+	bh=Vpfyu4NPdnzd9uqNThPbF7jiacLNikWVgUA0cpZAZc4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lWy4LeF8ERi4R1yVUSxLtCQ+2eFHFIGV8pzHs7H0QquW6SbyMNTSNYu2nXhCuhrzbg9aW2NuN+vF4cbHVRtO+/UP9w6Yj80PMWeOHQ37FMDbKM52fXNbpsN9Cz28jZ59N0jSYFKP3UmkosgqZglZuwlC61uaaD4L9I/Evk1nVZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OYO6S2Tm; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4b1098f9ed9so44022911cf.0;
+        Tue, 26 Aug 2025 12:55:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756238080; x=1756842880; darn=vger.kernel.org;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p5ZZNfqznY43NdEJ8oweClpq/lUKtG6cvHvhI0eKnkw=;
-        b=kVo2jcyHjhJQIYTuA3M/9+RzN7Ft3MDQgkVwqOJKJKQiv03+ApkeCbQKaYGAYs7A6V
-         qhth2u8o2bj53Y48lTwskvQc38tQS/kYI5BMMu5Wh+CluwBu8QhVnT8sTES9/m30ng5k
-         vp7vsTJM+kKboSPZzqQB3WP5ljXCGedd0e6KWNPzC7hYvW5JhTnncYxhOxLVMr+CcCEx
-         DuwfBW3jaCMjtDPYf7uS3VfkuHnUynMGg28QvTNXBTbNeYBrNce1sp1MwfsR0IrBBVKC
-         BiOjFNHDF4IpM62a56M9gGoUa2AVgSM6YiV8OcG4CvKGl9/PS4X4zyeFMfZi9QH0jAbO
-         F8VA==
+        d=gmail.com; s=20230601; t=1756238144; x=1756842944; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=UVH8JQ7MGDoKY9UT6JkPsJuZOOfQY3APeyp3CLg8ACs=;
+        b=OYO6S2TmyOcwpIqAg72uKd9edX1NoH4fiOMzRoLPEUzHGNErMXtPf/6gFDXAJi46lt
+         utKfJQ+EVaHxpvJpFBfXH63THlpvBHyaHwjcTP4AmWrgyPoAqcy4i6yboXaxBbcdS4DT
+         F6D7ytd3/NKAAK3Ihmxh1h85Wue69wA5mo7AZhKLCz/PTkD9zOAzP3FhGM+NrQ6/bBmV
+         AUNOQr/2mtHmZV5iJuWz99riHgEkBpUg1QJ7ZqKKDkptWaccS77B2I4Pb73aDttf0jdc
+         Zx8hRBJ1PkxQe5LNuC5QZD9rneg6ftK+Ye1bLYBpNRVBwEeA1N6I1h+pt9uW8KwHlEeN
+         reuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756238080; x=1756842880;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=p5ZZNfqznY43NdEJ8oweClpq/lUKtG6cvHvhI0eKnkw=;
-        b=Iph+4bbE+I7g3t1xOZoAy49K95/r/GZDJnQ4319wi305/UUMBpoG6GvahCOTBltY+f
-         IZWuUEinTZjPrJkxePuHv2IWPsN5E7i+RDrIm71tWxYV0gGNa/Nj7++fvqnKoCqCZyVC
-         qncgXdzPl/E4jSCrxI3RNZhw4O8/27U21mCQ3zRq619HywNBVf2mH/t1X36+5xdf+bLJ
-         7ZD9TrOzQAHxuTMcAmSN0cpi8mbUJkltBep1nYUno+W6y/d8Ys7Z0h5bhOBEjHtqrVJ5
-         8BcOP6UU7blCQas9ZiF+1LCMGAg/kfhTl5mf7oIXB0H9nKPFGy5RHQ1t91dLHZtFGmC1
-         htAw==
-X-Forwarded-Encrypted: i=1; AJvYcCU3D8K/fk74PzSWJ0XOKRMJNnXg8Jq+Y3kL60RCV4v4z8ZLIpLN2wuojdTjZUi5SJWpx8VIFXcq7wIicUc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yych/jOtFxUoB/Cgd44MN0eWSXvHvWF5IIiEfCpH0RIlK5sXtms
-	ZLJmsUA8AGZYJ9A/ptbZkuf2dQDFa0pmkeEEXJiHb64UpLE/MFD9HgATiE3qLJfrTaI=
-X-Gm-Gg: ASbGncvXLiBfWiIUB7LqBxLtj1hTeCBzZGVCN5wjsOLuqJP3UuSzlNSJz4dtMaKDQJb
-	RFcPpKqNfGXqkWJ0QWYgkBpGyjEmkdTIQq/3R81AoCamldPo96KZkUZkIR+AZafB2bsaBcQdv6a
-	qBGM7GP55vI3EdxPC//lMPr06BYyThGbjJimgGk90E7+IraC/pG7+5IR36y4r1y/1qdabUjzpll
-	z4GmMYyuBP/G+KgiHx27wD8UcweMv2dMFtTCxVatj0VenndqNFLKvPk5pbiSlYzL5cklxHj8t2t
-	nWr6A7ziWYBC2BYfKmAibEAw9xoWkRFFsqD6Ns5Db4lquubbB4Ahq9mhkvJFnJ8YCbPKsjm6zOu
-	b1TKJS3ITBYW0m7t6V9w90YswwGQ=
-X-Google-Smtp-Source: AGHT+IGHAaQcE5nk8+2l2gN+bgEDgLzg5nPrVxn2sZgSHR1KIyMJyR1EB3qvooivM+uG4c5VtH8DHw==
-X-Received: by 2002:a05:600c:1392:b0:453:5a04:b60e with SMTP id 5b1f17b1804b1-45b517d4e23mr135380295e9.26.1756238080215;
-        Tue, 26 Aug 2025 12:54:40 -0700 (PDT)
-Received: from localhost ([2a02:c7c:7259:a00:e633:2c7e:2d3c:f5ec])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f0f320esm23865e9.16.2025.08.26.12.54.39
+        d=1e100.net; s=20230601; t=1756238144; x=1756842944;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UVH8JQ7MGDoKY9UT6JkPsJuZOOfQY3APeyp3CLg8ACs=;
+        b=Io6smbnfaeBEyXfrS4rVVWF0l1gUfQO/frg2Xge2icJC93UOSczYRiYpOB9ychdfZp
+         mxq+KE4LFDl2mefNsPXTncO8683VnBHV0OD0Mdbnut64+vmcv1BX0fW2aoRZwe4kahlB
+         ALkT/+q2hbZeYUsP6pQRunEzMwFF3PPdtlepAXGFO0UypRa/QX8ipdowLmsphdw8brZb
+         rjc4ZFiyXI1VlBCtK6E+3BJbiuoHCHR8gEI1VBRFAN0KXYEatQXy8bBec24qV+ft16el
+         lObPm0MHx8m/Atv1DwCJpvmVB0vPSjSH5r6IotZX1SNl/O00Qv7QZuGeePuDQvRZoPnt
+         rIgg==
+X-Forwarded-Encrypted: i=1; AJvYcCXHNqbNwIWNv7pslHN3OFec7lhDoWav6Wrn3p+ql0d3f9R4VemPvO5E7JuhCNTdir9t5jNoeH8Buq1wNY0=@vger.kernel.org, AJvYcCXOsFBzoFK7/frVL8GZWyl6a/O9D7JtNE9IAW1RM7MwERe5oOCjg9lPZll2ABscbqVYCYQKCD5q@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxes56s35/AOvMfUAxRIg8brMFvEXNp/G+05tIMqq0ikNkWqa8S
+	MSLWf8b/sbZ6paWFKyvA8p8BW5YQz5ZPKqKrQrL6ipyuBStugnaqCNpN
+X-Gm-Gg: ASbGnctBhZ4iG8Odalfg7Qy4oDiOYLLtM/ISrmqfLBiRxLxsWCG7O5hu6NPntjQpIE4
+	WvwUciHey5pXCQsGN+u/m9ShxF20I2z3uiTMKXuS6XrR2xBlZjyRJSCSgHhFmqOlbhn9C4pZN2u
+	BZirkpp4pAg47yZGLGw/IXg9ZYowt+sX3d23WTS0bfjEQxP10PeUbYse1NJN/JWhC58ES3Hzqgv
+	9HvKQ4lIHC6Nvp+jfyDYkoQKNtj1n0cQWJ7EFrKvNU8Q8xUyaGtrqQnSN77A25WFjUo12n+tR3k
+	nplnneC3exGbqj/5PrzSXfqHO6a9ds/haHJXonYyCFi9B7FcCzXZciYVvWgJmYod7+Mh0dpMN0l
+	nTvXnHyBNhxboVEc7pgO6QKx1fDeGAyOPuyqUKwD9T5wMB196IUVrlCeZc1XE
+X-Google-Smtp-Source: AGHT+IGjmrGHQ3/F4QIMSDClatJx9+dntn9vE+x444jydG55BysUGK2+aizCRI+SQPY3+J/XVWrjYw==
+X-Received: by 2002:ac8:5e10:0:b0:4b0:b7d2:763f with SMTP id d75a77b69052e-4b2aab20bb8mr207016831cf.47.1756238143872;
+        Tue, 26 Aug 2025 12:55:43 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b2b8e70fd2sm75011751cf.57.2025.08.26.12.55.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Aug 2025 12:54:39 -0700 (PDT)
+        Tue, 26 Aug 2025 12:55:43 -0700 (PDT)
+Message-ID: <70e96b60-f449-4455-934c-8447f968ea7e@gmail.com>
+Date: Tue, 26 Aug 2025 12:55:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 26 Aug 2025 20:54:38 +0100
-Message-Id: <DCCMFVC0DW1I.GXZVG2BQEFX7@linaro.org>
-Subject: Re: [PATCH v7 7/8] serial: qcom-geni: Enable PM runtime for serial
- driver
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: "Praveen Talari" <quic_ptalari@quicinc.com>, "Krzysztof Kozlowski"
- <krzk@kernel.org>
-Cc: "Bjorn Andersson" <andersson@kernel.org>, "Konrad Dybcio"
- <konradybcio@kernel.org>, <linux-arm-msm@vger.kernel.org>,
- <linux-serial@vger.kernel.org>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
- <dmitry.baryshkov@oss.qualcomm.com>, <psodagud@quicinc.com>,
- <djaggi@quicinc.com>, <quic_msavaliy@quicinc.com>,
- <quic_vtanuku@quicinc.com>, <quic_arandive@quicinc.com>,
- <quic_cchiluve@quicinc.com>, <quic_shazhuss@quicinc.com>, "Jiri Slaby"
- <jirislaby@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
- <devicetree@vger.kernel.org>, <bryan.odonoghue@linaro.org>,
- <neil.armstrong@linaro.org>, <srini@kernel.org>
-X-Mailer: aerc 0.20.0
-References: <20250721174532.14022-1-quic_ptalari@quicinc.com>
- <20250721174532.14022-8-quic_ptalari@quicinc.com>
- <DC0D53ZTNOBU.E8LSD5E5Z8TX@linaro.org>
- <577d05d4-789b-4556-a2d2-d0ad15b2c213@quicinc.com>
- <dcad137d-8ac9-4a0b-9b64-de799536fd32@kernel.org>
- <DCC8WLEKNS8W.9GAJHQGYPZIY@linaro.org>
- <8689a8b4-75cb-4f01-ad6c-0a8367851257@kernel.org>
- <DCC9B5C7SSU2.GRI1UY0VUDHF@linaro.org>
- <890ede8a-c049-4332-8f62-5dce2fa0f77b@kernel.org>
- <5ae730f4-5337-49f8-8bec-8605a2495f37@quicinc.com>
-In-Reply-To: <5ae730f4-5337-49f8-8bec-8605a2495f37@quicinc.com>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.12 000/322] 6.12.44-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20250826110915.169062587@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ WlfRzlpjIPmdjgoicA==
+In-Reply-To: <20250826110915.169062587@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue Aug 26, 2025 at 11:29 AM BST, Praveen Talari wrote:
-> Hi Alexey/Krzysztof,
->
->
-> On 8/26/2025 3:36 PM, Krzysztof Kozlowski wrote:
->> On 26/08/2025 11:37, Alexey Klimov wrote:
->>> On Tue Aug 26, 2025 at 10:21 AM BST, Krzysztof Kozlowski wrote:
->>>> On 26/08/2025 11:18, Alexey Klimov wrote:
->>>>>>> May i know what is testcase which you are running on target?
->>>>>>
->>>>>> Boot the board?
->>>>>>
->>>>>>> what is target?
->>>>>>
->>>>>> It is written in original report. Did you even read it?
->>>>>>
->>>>>>> Which usecase is this issue occurring in?
->>>>>>
->>>>>> Boot?
->>>>>
->>>>> FWIW, what said above by Krzysztof is correct, there is no usecase, j=
-ust booting the board.
->>>>>
->>>> 12 days and nothing improved, right? if this was not dropped now,
->>>> Alexey, can you send a revert? Author clearly approches stability with=
- a
->>>> very relaxed way and is just happy that patch was thrown over the wall
->>>> and job is done.
->>>>
->>>>
->>>> If you do not want to send revert, let me know, I will do it.
->>>
->>> I am okay with sending revert, just trying to see if there is any inter=
-est
->>> in fixing this.
->>=20
->> Any interest should have happened after 1 day of reporting linux-next
->> breakage. It has been like what? 12 days?
->>=20
->> That's typical throw the patch over the wall. Revert.
->
-> Really sorry for the delay.
->
-> I forgot to mention earlier that I=E2=80=99ve been actively investigating=
- this
-> issue across different platform SoCs. I was able to reproduce the
-> problem on the SC7280.
->
-> Here=E2=80=99s a summary of the observed behavior:
->
-> The issue appears to originate from the qcom_geni_serial driver during
-> device runtime resume. It results in a blocked IRQ thread, which in turn
-> causes system instability.
->
-> The call trace suggests a deadlock scenario where the IRQ
-> thread=E2=80=94responsible for handling wake-up events=E2=80=94becomes un=
-responsive
-> while interacting with the pinctrl subsystem.
->
-> Specifically, the msm_pinmux_set_mux function attempts to invoke
-> disable_irq, which is problematic when called from an IRQ thread context.
-> Since the IRQ itself is a wake-up source, this leads to contention or a
-> self-deadlock situation.
->
-> I have verified below diff and about to post it
+On 8/26/25 04:06, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.44 release.
+> There are 322 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 28 Aug 2025 11:08:26 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.44-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Was the original patch, that introduced the regression, also created by AI =
-tools?
-Just trying to understand how we ended up with untested commit in -master.
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-Did you test the change below on real hardware?
-
-
-> diff --git a/drivers/tty/serial/qcom_geni_serial.c=20
-> b/drivers/tty/serial/qcom_geni_serial.c
-> index c9c52c52a98d..cb3b4febd8c2 100644
-> --- a/drivers/tty/serial/qcom_geni_serial.c
-> +++ b/drivers/tty/serial/qcom_geni_serial.c
-> @@ -1848,16 +1848,36 @@ static int __maybe_unused=20
-> qcom_geni_serial_runtime_suspend(struct device *dev)
->   {
->          struct qcom_geni_serial_port *port =3D dev_get_drvdata(dev);
->          struct uart_port *uport =3D &port->uport;
-> +       int ret;
-> +
-> +       ret =3D geni_serial_resources_off(uport);
-> +       if(ret) {
-> +               if (device_may_wakeup(dev))
-> +                       disable_irq_wake(port->wakeup_irq);
-> +       }
->
-> -       return geni_serial_resources_off(uport);
-> +       if (device_may_wakeup(dev))
-> +               enable_irq_wake(port->wakeup_irq);
-> +
-> +       return ret;
->   }
->
->   static int __maybe_unused qcom_geni_serial_runtime_resume(struct=20
-> device *dev)
->   {
->          struct qcom_geni_serial_port *port =3D dev_get_drvdata(dev);
->          struct uart_port *uport =3D &port->uport;
-> +       int ret;
-> +
-> +       if (device_may_wakeup(dev))
-> +               disable_irq_wake(port->wakeup_irq);
->
-> -       return geni_serial_resources_on(uport);
-> +       ret =3D geni_serial_resources_on(uport);
-> +       if(ret) {
-> +               if (device_may_wakeup(dev))
-> +                       enable_irq_wake(port->wakeup_irq);
-> +       }
-> +
-> +       return ret;
->   }
-
-Best regards,
-Alexey
-
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
