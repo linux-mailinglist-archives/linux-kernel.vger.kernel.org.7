@@ -1,175 +1,181 @@
-Return-Path: <linux-kernel+bounces-786894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E903BB36D82
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:18:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05B28B36D87
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:19:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 050E62A7375
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:14:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD1D61894F6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB8B02D7BF;
-	Tue, 26 Aug 2025 15:13:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 833E326A1A4;
+	Tue, 26 Aug 2025 15:17:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="p02d0fdD"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="IWYdMARY"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010044.outbound.protection.outlook.com [52.101.69.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C40221FF25
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 15:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756221236; cv=none; b=KkXIDQPwVGx7CrMFxRsB//JrbYHJsRFnCZh65iJrhAjN7brGmVxZipo/SaxR7HJ7CAzkWA2efkMcLm4HQ482JzcQvGG2urPe12ee9P3SQOKmFzM1N5VzkD9ucRBSlNZ43NvKALlFDAOFH4SUvPT3NhQzcbaXtxneU1pxbV5Jm4c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756221236; c=relaxed/simple;
-	bh=DkRCJqnMM4jww8s5w14KNew//6BgyW0VKemUeA/8BvY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gTWbFhHOQcXwqbXtqgvjLdT8mc39jzBuWePmAR19fuZASvpwmaIVW8/H2oSOqBNeBSaxBLvSI71jfZafRapdRrNGfE4nTNM0aulwlpCMDg7TFaa1QkvojPbYarD94Nhh9EILZQi1+bA5B+dV+4YMMvsP/77Um+rfkZ35IK6jUyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=p02d0fdD; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57QFDDRI019284;
-	Tue, 26 Aug 2025 15:13:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2025-04-25; bh=NqcY609p1/QPUlesrUSagSKQZFPNH
-	0BjM/RQfv6wimg=; b=p02d0fdD8qq7So40+bhANsa+w3v7fnrzenpRiCFcQ7WTb
-	oioHF7HhFMAUZLmqXvxiLS2BisekZ29FuaZMgnSAsZUE/3XhTfp7wBhZiswNiaW1
-	hzi1RdVJ4wJgG3D3+I9BILB1EP0W2MObkoHfeV6ITdGY/vAmTbg5ffKf0LtHQ7q5
-	ynu8jvdc7TGgZdREjTIw18HtkwwW6jtHsjTvAL9bm47LUjtlBWU/mCbXCO1EI7Iq
-	6o/b6Baq+w6WM4ZgjX0YaT/7T7Fi7p7eBwIeIXbJxY8TbU0T8XY/W+kvV4dTLAAU
-	wuJAEThwEbhcHdzC4f6oAvdXocYX08mY2kfc5El/g==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48r8twbee8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 26 Aug 2025 15:13:49 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57QF6jBO012287;
-	Tue, 26 Aug 2025 15:13:48 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 48q439mxba-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 26 Aug 2025 15:13:48 +0000
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57QFDllX022738;
-	Tue, 26 Aug 2025 15:13:47 GMT
-Received: from sidhakum-ubuntu.osdevelopmeniad.oraclevcn.com (sidhakum-ubuntu.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.250.108])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 48q439mxb1-1;
-	Tue, 26 Aug 2025 15:13:47 +0000
-From: Sidhartha Kumar <sidhartha.kumar@oracle.com>
-To: linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org
-Cc: akpm@linux-foundation.org, willy@infradead.org, liam.howlett@oracle.com,
-        Sidhartha Kumar <sidhartha.kumar@oracle.com>
-Subject: [PATCH] maple_tree: fix MAPLE_PARENT_RANGE32 and parent pointer docs
-Date: Tue, 26 Aug 2025 15:13:44 +0000
-Message-ID: <20250826151344.403286-1-sidhartha.kumar@oracle.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4384A00;
+	Tue, 26 Aug 2025 15:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756221427; cv=fail; b=nxCE1MHptJ5zrrgnUvhV0RdSkyoG/YNDyW8DBjFDgyZUazYk62eEgdokJeYy9eaWHJFGdQFmngMnQxSwzzRVk3GYztsIEe5VTRu0W2jI1ncejhmtrV87RbETyTohLpdPDMxpxAcO30YUYpZ/qUIWVKY/bCdkxsp5MPtYjLkRQWQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756221427; c=relaxed/simple;
+	bh=YdGNNA/XZwF2aF5DLK1Z2Badf/wBWv1gu9aI8sNKvUM=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=N/PfZ60Q4cHQrYPvRRqnhEJtiaz+9mAET20rjkv0NkY34rR19o5E962jsh3Z+5a6I3dW6dwAHqgCx14b4erxijgZhRlamoPjIGHiPTnJjpY27M70PIoOlMNMZ8aag3COWQkd15W0OIWT6xQWC7iP3ltlkyZQC8sxuZZZbGNgg+s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=IWYdMARY; arc=fail smtp.client-ip=52.101.69.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LWVkJRwfRWbVnbgPphVo3kWuIurgYFhz7Kk+NO4rbaXNxeaGfuh24tIW2XZnBO4Kkm/ke2Wbo0FAlw6DS+pOJ6LF3fEs3UO0teLjqrFeWRWqxIALZqZtCBe6TibXy5IB0llTUA1drz8L6AQ5OUvtMQqtZnkRnelwrIzAGaJnoIqzuX3PwnTyqfU0UD/ilYxRlBP7R6AQWYhx/h+4EPUeH8P3lVNLC0MkL2E0jhUzuiJQxLzDONYM1/MJ3Z6szYkbUmyGZD0zvA4quKyQ63W6NF89Iwqh4ny6yugdfpCB0VXjnzgDwuIgvo63xFmxUc8+vooK8iV4pDVeMAYwIYkLEA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=m3fGcWLsuA0tf24fIuCWYT/xLV8FJYgf/kcbGsY3heQ=;
+ b=Au3sLHGHmgLyq1TbmvzkpNiksy9qMfHUbBx7EageBtMa4gfgQlYkp90xhY4w+KbRTeiAGd3f3CNYNFOcAESBaohwXMEDAx6SV7R6ES/GukxmHn4fqz6/V8GcgjaW3ovu6hp1ED7wkjn8A79LsmY+4Q3CHTn9G/WA3ktpLVa6pebNNFLGk5yC/930F7lzap/8cUEYZOLG6Sv5WcfywYDZwxjYFbqLm3hkqMNC32RqbDpjNGsLSLFFg7lyZ2JOAFlkX8HKTnl2a1/Y32pMdgiqIaBG3pKzv09S8dbO0bF0rjZMS5uTHVZMLgpDOCCgGKP8MFWj05arA0k1E2lm16KCBw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=m3fGcWLsuA0tf24fIuCWYT/xLV8FJYgf/kcbGsY3heQ=;
+ b=IWYdMARYfhPsRZglO30+nKPs+ZXpa51UUirdruxH+z3UfWq0uxia+fS/DOCA8qhcHozS17EVpMLhL+qMxG9NaZAsjcvXK6i94FBs3yvN4Q9WkKmZ+lQPw92PQJD9VVVxYSHNPNMQCwXFzEpW5FpiSCv1V/sjat4NCt768xCF1zAw1/rXQ4NFDL3uoIuNfT9xU030wBEe3IdWlpvczzDVPU5PZcoJXn3sDGrw3d6NBTvQ7Q/oKIc2ctYatbCs9trC9Rmr4T7oNSbhNsCca/c7Jz2swH68OlH5yaLQIhiE7nDyiAbn805NQm6RPMjQZsM857Fcfkh7Ruf0T36CANqbVw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
+ by DB9PR04MB9723.eurprd04.prod.outlook.com (2603:10a6:10:4ce::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.10; Tue, 26 Aug
+ 2025 15:17:02 +0000
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::e81:b393:ebc5:bc3d]) by DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::e81:b393:ebc5:bc3d%5]) with mapi id 15.20.9073.009; Tue, 26 Aug 2025
+ 15:17:02 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list)
+Cc: imx@lists.linux.dev
+Subject: [PATCH 1/1] docs: dt: writing-bindings: Add exception for clock-names
+Date: Tue, 26 Aug 2025 11:16:49 -0400
+Message-Id: <20250826151650.9396-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: PH8P220CA0001.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:510:345::9) To DB9PR04MB9626.eurprd04.prod.outlook.com
+ (2603:10a6:10:309::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-26_02,2025-08-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 bulkscore=0
- adultscore=0 mlxlogscore=999 spamscore=0 phishscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
- definitions=main-2508260134
-X-Proofpoint-ORIG-GUID: Sju9f3nmqLMVoLWpTMp3KaLuAC17ctzP
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI0MDE4NCBTYWx0ZWRfXzfIS+Th36Ku0
- lAyKcy/kxBpSnT7I97i2Y/ovGMWT06RRBKq8b1PqA9FNfcMJYhHs8iiA1CZAtY2VA1uj13czdQT
- sE1Z/3A9h0DxQJR/CygqR10oUSmb4vVKaamamOcjQlvraLmz1qnUwfP3exuInKekefdfxxFAIMO
- Pf8pV1j9rz195YOdgyLt2HGWinycDKWenkvNOAg2GWKKLJeiKPvY9ztrZgsG3A5xHtYIUb+r+VF
- dmdUBirFZjAPiw611ahGk8htBrD8Ohc7tnV+Tkvkk+XvO10nHIi+AUKgP95Pa9wN+HrbppZN3cW
- Rc1Urmx+mfbbnuwRqpb/+vGX2TlZ7dvTmAwEbTlJ5oabxy7q6NofMKE7/SMMl2xT4GrnJtgBXZc
- ER3fl5jKPfITBsgWaAy97mXiMO9hKw==
-X-Proofpoint-GUID: Sju9f3nmqLMVoLWpTMp3KaLuAC17ctzP
-X-Authority-Analysis: v=2.4 cv=IciHWXqa c=1 sm=1 tr=0 ts=68adcf2d b=1 cx=c_pps
- a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
- a=2OwXVqhp2XgA:10 a=yPCof4ZbAAAA:8 a=QCsb3DoeUs1ygUayxS4A:9 cc=ntf
- awl=host:12069
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|DB9PR04MB9723:EE_
+X-MS-Office365-Filtering-Correlation-Id: ecc7c419-4ed2-45bb-7409-08dde4b39bbc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|52116014|1800799024|19092799006|38350700014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Wse+Bvl2junlrSarTnrK0UJ0mG+HbVo/NHxRN1r6SBAhQJcdoHp6ndiKKW94?=
+ =?us-ascii?Q?HW0nG6+h5hRzH0YFqft6vbzosId1xxHwdJxoz15NyCRR9s9SdtFQxm+Gls8i?=
+ =?us-ascii?Q?Me4ZPvdKGOUs1CeKrPOB4/s1ociNH0X/t8bkbr9JaAAMA8MeyspfyRyKXTUF?=
+ =?us-ascii?Q?JZqeLW+46ig2Xw+5YoxLP5MZ/t/XIJQ30qwyeaAXk2VKNpFNmMuL974jgNn5?=
+ =?us-ascii?Q?9sMKvi2Jnq00kmkO7BMXnbTlLGAe9M+CvDDWsJqE9p3Zd87bAIVdbCkyJiEi?=
+ =?us-ascii?Q?gVhm4nbf7q8Uu0UOxI+9ivW+FL0EqFd393jARJpNDOmQsi0X/UJzXXx32M5y?=
+ =?us-ascii?Q?uRpFj5+2Lx6uTUD93AVFLXhatc8CYC5R5hqeS9tjWfPTlJj+vx18utnZ3QJD?=
+ =?us-ascii?Q?0mAIAogo5Pb51saiIzODWP1O4q9lWroSlqBWBb17kil4nRSg+q6548vV/Nyp?=
+ =?us-ascii?Q?fgGMWvTX+fxBdlZEWUYnfYk4a5iHki4sqAawSY3rcuFQYUvwKDX8kmdUTrJr?=
+ =?us-ascii?Q?vuv5/HvGHA7poy18eaZG+wffQGSDp2XnwwWY1X6zRgaBA4MThwF50Oxdv57R?=
+ =?us-ascii?Q?j7Me+fjlp82YQJt6y3kWXdCtM0scGMkbaXB8gxCH6OpbEPNJQwaURBz8jYFA?=
+ =?us-ascii?Q?XFeel5PPdjyS6z6IAqoUMRoNouII+mxvY9X1xHzqCVtjj8YjqF2myPKLNodR?=
+ =?us-ascii?Q?xuc/9HR/wAF6lG0LnAfqGiYZD/+ZghvcdfS/sLmkFwjO1Erz8i8D3xouTvus?=
+ =?us-ascii?Q?fMWCTCVPw2MDKTtfzjVaWFyPskmjI6Lg5xNgm5KQW8pAQIsR8T7kNt0UMC5V?=
+ =?us-ascii?Q?yB1koqyyKNe2keSmMxINkskRze8jl+yR5q1xa694rO2LzVQzYk/d80sewUi2?=
+ =?us-ascii?Q?S/4VROtWpVmTAct6qbA3B1lEK9/6g77Caxd3YHPuNElP+agNASvBKf4TLwGg?=
+ =?us-ascii?Q?nm5iz/nuFdCCreZRpPankatTaEcNRa4kdwAtjq1sEhNVuurdF05c7A2Sg2Np?=
+ =?us-ascii?Q?Cr/UBG7SHLdy8MKO+4Nk0Ra8E9+A3xoUNmynBqSrUyZ75JHhuRmf21l8M/JE?=
+ =?us-ascii?Q?Q6subEyOi7G4ifOnwjYhdLQXuUN4rceMtHUKDcXd4v41uWnCTiQfDFcNPogT?=
+ =?us-ascii?Q?CnHHe2BWDD6ymreWBqFURpgl7WLgujcJiciz+QcJd2buz+QGCAQFI3CBBroV?=
+ =?us-ascii?Q?jVPoqHO/TQlT9bJAUzOHdXVBsfaE+rLG0xDfD/BYLdkucuUsCwgqZEc03POx?=
+ =?us-ascii?Q?sbjfO+Let6qfRdGk7GJ70XSB/vcEy0y5/OdWsc0Qky2mOi60RIzgMwKqhJag?=
+ =?us-ascii?Q?JSNKiOyUv8YOhD63muSto44WnZ84w1+lxF/gOT2zpcoKq7soWZmvNnguSbYE?=
+ =?us-ascii?Q?o/WwCYqIXhCwhLn77zogjcJPK1pTgITaCQrmOfWZB8Eap4bcL5CbIJY4CuiI?=
+ =?us-ascii?Q?5hVxB+zJOxX5SWedqrk9RBxtG/IrEbnztGWmd61JgbTUL0mkeZThww=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(1800799024)(19092799006)(38350700014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?sOTN4mDMfZcP2UNhqCQyxOYNPhveB0Wrf3Pa2DQBikzjK/peP/s86Zq6mJXn?=
+ =?us-ascii?Q?/TZ0wPB6ohp0+bBNXBafvJ65jSA8oGuHR8fymx/3dacjTtoiHjGyyp7qrwM8?=
+ =?us-ascii?Q?cxln6g3KgoV7S+D2O4a+KloEP6YAZJs4ge4Jf1Gg9wFXMyr/mxJgyT0MeGQN?=
+ =?us-ascii?Q?5DNJFvk0UFJs4dfyjRxp2mrWNSr9sE4KScYGLpqFb41NgmJIOIE7zwSqEqNO?=
+ =?us-ascii?Q?QUo8QGvkSZv/aElDDYHBHbDUAS8WiST8uDearxGFO9GCQXJkD+b+w1/tw3PY?=
+ =?us-ascii?Q?xmk3sYE2RGJ1HCSSJWfZDwxEsXoPayclVtuc1NuIOv8F895J6M/eLZTFgDWj?=
+ =?us-ascii?Q?AgUX2kujhRPNAJSaU19Tsigni0mNlYXVoVyIpmCNBWAs64zt+YAWW2NbLZex?=
+ =?us-ascii?Q?a6OJmXXhTulpFvAatzUoIr6Hgut+kAFITw2BGIv6HkLKhMArCquCkY8uZkGZ?=
+ =?us-ascii?Q?ygGacnqYgV9AzheK6JraOqIUijHp0r3lo/p936af/hR1gs1hvOWmIL1A4mZe?=
+ =?us-ascii?Q?jQWa/IeOAozqmu6PvsilQ1qoV9ZJC0YtnJ+TMv8aJ0aA7Bd7vjT9ii2MvBex?=
+ =?us-ascii?Q?0HMJ6lHIc+7MAXoc9501icGlb6JnuVwIoCv4dV8TYJ7HvqQfCQeJmkTXDTDm?=
+ =?us-ascii?Q?sW2j/MXVDbRmd4hGvLIzR01XD41Fh2exyWGXOcGFaL50o+5x+U2fMJk0mZGq?=
+ =?us-ascii?Q?n87TliF5N3u2bGksqU5qpBGvHfTXCeJ2yVzncqEyZ9uuqMBEISCNJRxXWJUB?=
+ =?us-ascii?Q?fqBbQAKcwnHw2+n4GhT84w4iolpqHU2jSsgMEhCgBSXr2X/0fEUw7ELX7QHN?=
+ =?us-ascii?Q?/oIyAMMeeR2HNCEVfNuDOm4MtE0ltnL1sCKYI/KoAi3HyFk+p94sw+2jyxp6?=
+ =?us-ascii?Q?2YxY/jYhCBvmXinW8JoCpTjHGxt2rlYS00Yp0Rr9q9IRu8RyVu7TbeDdIFj4?=
+ =?us-ascii?Q?8rSDndzR8d45BrFocHOx0/zqP5NYpO4QzwpBIJ6DcZ8UtvHfWsgUH0nkMv03?=
+ =?us-ascii?Q?y8ziPwB5nrL9YRikEV7QKLUQTAKz+h8SKAL7IcTDqjdLIj+QeYidgQlP67VW?=
+ =?us-ascii?Q?35nSFWq9l06teZ/qYO2rx022ws0biTSLHLrZPXcNTIkTdho5AcyELQGVPTP2?=
+ =?us-ascii?Q?dz+OdEUmLzsf5aJCP70NZ+w3C0U6cRxCEHtiyle7rMcOBpwbNYjCmOsN8bWT?=
+ =?us-ascii?Q?Ajgn/jfVuISQMu1GBDWGI5b6XadO/2WbQ9JESQX00hh3gqyYUbPr0AUjYNxv?=
+ =?us-ascii?Q?bBjhnDDif23k9R5RhgINMK7eBeLo/Kg8QI6z86Oaw048Nr8P7mFnqEKcJumD?=
+ =?us-ascii?Q?sclX44uQAWUpbttxng2ut7H4yd9kn9r4RqE3b6suM3cQA+KZ5Na9bFhiM+ou?=
+ =?us-ascii?Q?SA9r4yryWDBIfk7618JPtMSJ+EqW7EY1oYA2eYHS4OxOiH9RdR8i6vIicnyO?=
+ =?us-ascii?Q?RPyFK9TN81euc3XTpUoaosca4LLMs7/NF7EqZPj7TUhCCSy4RhdF1qeTSVk1?=
+ =?us-ascii?Q?S17vcU/21h28sUyzfSsRYHJT2lxe47CuXqmo23UzRkdpOhT8/GvJ/oxn0Pjs?=
+ =?us-ascii?Q?7j99m/nh6AhzPf9JVIQ=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ecc7c419-4ed2-45bb-7409-08dde4b39bbc
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 15:17:02.2811
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: omV5Un1eAU2kvGWjrffJWN5zZaT/4WfbROEbGUt4ahzsXsNNJ07U5XMaP80yTH+CgmcghXmBoieQ/z1Kzf5Drw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9723
 
-MAPLE_PARENT_RANGE32 should be 0x02 as a 32 bit node is
-indicated by the bit pattern 0b010 which is the hex value 0x02.
-There are no users currently, so there is no associated bug with this
-wrong value.
+Allow pattern like "pclk" and "hclk" as clock-names.
 
-Fix typo Note -> Node and replace x with b to indicate binary
-values.
-
-Fixes: 54a611b60590 ("Maple Tree: add new data structure")
-Signed-off-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
 ---
- include/linux/maple_tree.h | 16 ++++++++--------
- lib/maple_tree.c           | 12 ++++++------
- 2 files changed, 14 insertions(+), 14 deletions(-)
+https://lore.kernel.org/linux-i3c/20250625200451.GA2117971-robh@kernel.org/
+---
+ Documentation/devicetree/bindings/writing-bindings.rst | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/maple_tree.h b/include/linux/maple_tree.h
-index bafe143b1f78..41e633264e51 100644
---- a/include/linux/maple_tree.h
-+++ b/include/linux/maple_tree.h
-@@ -57,17 +57,17 @@
-  * MT_FLAGS_ALLOC_RANGE flag.
-  *
-  *  Node types:
-- *   0x??1 = Root
-- *   0x?00 = 16 bit nodes
-- *   0x010 = 32 bit nodes
-- *   0x110 = 64 bit nodes
-+ *   0b??1 = Root
-+ *   0b?00 = 16 bit nodes
-+ *   0b010 = 32 bit nodes
-+ *   0b110 = 64 bit nodes
-  *
-  *  Slot size and location in the parent pointer:
-  *   type  : slot location
-- *   0x??1 : Root
-- *   0x?00 : 16 bit values, type in 0-1, slot in 2-6
-- *   0x010 : 32 bit values, type in 0-2, slot in 3-6
-- *   0x110 : 64 bit values, type in 0-2, slot in 3-6
-+ *   0b??1 : Root
-+ *   0b?00 : 16 bit values, type in 0-1, slot in 2-6
-+ *   0b010 : 32 bit values, type in 0-2, slot in 3-6
-+ *   0b110 : 64 bit values, type in 0-2, slot in 3-6
-  */
+diff --git a/Documentation/devicetree/bindings/writing-bindings.rst b/Documentation/devicetree/bindings/writing-bindings.rst
+index 667816dd7d504..81f76ca57a394 100644
+--- a/Documentation/devicetree/bindings/writing-bindings.rst
++++ b/Documentation/devicetree/bindings/writing-bindings.rst
+@@ -97,7 +97,8 @@ Typical cases and caveats
+   constraints (e.g. list of items).
  
- /*
-diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index 38fb68c08291..d1d513bb6e95 100644
---- a/lib/maple_tree.c
-+++ b/lib/maple_tree.c
-@@ -405,11 +405,11 @@ static __always_inline bool mt_is_alloc(struct maple_tree *mt)
-  * a reuse of the last bit in the node type.  This is possible by using bit 1 to
-  * indicate if bit 2 is part of the type or the slot.
-  *
-- * Note types:
-- *  0x??1 = Root
-- *  0x?00 = 16 bit nodes
-- *  0x010 = 32 bit nodes
-- *  0x110 = 64 bit nodes
-+ * Node types:
-+ *  0b??1 = Root
-+ *  0b?00 = 16 bit nodes
-+ *  0b010 = 32 bit nodes
-+ *  0b110 = 64 bit nodes
-  *
-  * Slot size and alignment
-  *  0b??1 : Root
-@@ -427,7 +427,7 @@ static __always_inline bool mt_is_alloc(struct maple_tree *mt)
- #define MAPLE_PARENT_16B_SLOT_MASK	0xFC
+ - For names used in {clock,dma,interrupt,reset}-names, do not add any suffix,
+-  e.g.: "tx" instead of "txirq" (for interrupt).
++  e.g.: "tx" instead of "txirq" (for interrupt). Except when only single letter
++  remains after removing the suffix, e.g., 'pclk', 'hclk'.
  
- #define MAPLE_PARENT_RANGE64		0x06
--#define MAPLE_PARENT_RANGE32		0x04
-+#define MAPLE_PARENT_RANGE32		0x02
- #define MAPLE_PARENT_NOT_RANGE16	0x02
- 
- /*
+ - Properties without schema types (e.g. without standard suffix or not defined
+   by schema) need the type, even if this is an enum.
 -- 
-2.43.0
+2.34.1
 
 
