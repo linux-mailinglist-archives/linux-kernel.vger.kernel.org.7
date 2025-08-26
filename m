@@ -1,107 +1,114 @@
-Return-Path: <linux-kernel+bounces-786719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E6F1B364F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:43:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8850EB36676
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:57:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E9E07A7E61
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:41:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 802055679D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:43:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF80D1ACEDA;
-	Tue, 26 Aug 2025 13:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264032FC870;
+	Tue, 26 Aug 2025 13:43:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="P5FDo8Ic"
-Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="OzaksYkf";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="c2UEh1cn"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A032264B8
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 13:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74E828314A;
+	Tue, 26 Aug 2025 13:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756215779; cv=none; b=cfPFSIDAcG1x9Ll4gUa44CDCAKBwXsHkppS5eHPiawFGWe47+1mebNa8K+dJbvO7b363psA3mOtEo2z6c2cY/q1cFteV0gORRji/0AA3ES1YWI6FJFZxqM97UQTkCR01KrOZEV6FUl25wrexIQCGmK/cDYWarpnfK3rLvEOJeeo=
+	t=1756215807; cv=none; b=qE+VUl2g2nFhCUGmS+v7i3MLPPnPynVOKbGSFOfz2x1mw2YUsEuLs+/9sh299/nr+BFQ6s7/8NOfyj6vvWjZP8Xa/yHXvzYougZf6QXo7n1eZukyf1lrp6fW4TITQgXXG9pH0RVOPRYzVy1WIPrGbkCNCX7SmuZVVNaZFnnfpa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756215779; c=relaxed/simple;
-	bh=IMNmI65FVUCbqdK9+JcQuv1rtH/SRuBK0q4ZgqSMeEA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=phc4AlIQW9nU2X9kSskYg+i8UFlZQHserN5F1NdowhUrk1BwPlTK9DTAvz21iDqtfrsI56LRGqUQ9Jl0FO2Krtm+qyzJQtXnV/qqfvlT6IULeZpyLqenkQcyXKnCE82PlJK2KQHMgXTX/aXIbaxqiDDQEKx7leA8SLzNcvRayE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=P5FDo8Ic; arc=none smtp.client-ip=209.85.161.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-61c13125417so539761eaf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 06:42:56 -0700 (PDT)
+	s=arc-20240116; t=1756215807; c=relaxed/simple;
+	bh=lBvAypEUNGK3qFrs5QK5suJnmFI2ohd1rT2QMhkO124=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c3B93P1UL3TQ5V+5A+aI2py6LabjfRxSwfXIVA6Z4wvzQNlwmkJY0D4VbweufSGK1MqAUJ6gCthpazTZUBsnGLD7N3dtV7FkGN59svnVIbVO5Y2Z95ewh30ovc6XBMmN7rV08eNabre+s0mQyf+Q6HjtEG8uYKDyLobAKh0tbWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=OzaksYkf; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=c2UEh1cn reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756215776; x=1756820576; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=VCSAaSZeoixOuMj1nuyEP4c108bz3Jb04yCTbdf3I2k=;
-        b=P5FDo8IcsRn2a8V/Kme9fyG/EKymZKLzBQmdtMYb2itTY7DKOlOkZ96w3+obLG+UK+
-         dhPmhgHPSoeNRR3AkVVuE9FkwX/WrbXKcsVvxdbT8n5jrUuEx0rRx1fMHd5c4FUlAJoC
-         IZI9zaKCQtX/VXVZtkfsuhPtHj/FemaLx8V5Vmf6YwZ6lwrIaT9Z18VzedY+ZMgO3bnh
-         aQ3xAsznGqlAG+xhpEqRgSPGLULLl2O/3IwaGmCyykm9nZYySeCt+hX563WvgAOeu2gX
-         71g4whmzHpjZJ7OTqXP7g7h44BLObuuAt3c2sj1EA58mQZ9ZTixlDet8+AC+Hl/llM4/
-         k62A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756215776; x=1756820576;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VCSAaSZeoixOuMj1nuyEP4c108bz3Jb04yCTbdf3I2k=;
-        b=S4mlrBcK9Nicxdxr+TyLsuJyy6xYtbqRo6geOyUQ4xeN22xwor9bKKzXlwjG7Jp3P8
-         bHGqZnKzKyRlf1Axx3tUdzJ5Ky/W52C5x4iGleu7PNXo4Ayxbi/o1Kzuek1FFJK/0Kll
-         2HRh8UTZIOAelYraRzSk09XlitReX4ltSsK+YXR7xxs2q5iSTjm6u2oaHSt1VxejgrKn
-         d8L42YEn2br4CFN/x9wBOUVaskXAQzh5i7Ly5bc4RnKWPVJE/ysV61wrhaj/6p7mqhsf
-         ewzCyFuxNVBjBOLoY1K13Fns426ce0aNscW08MraYFWJvlEp98G3dgcDH9USeqQB1GAv
-         pk0w==
-X-Forwarded-Encrypted: i=1; AJvYcCXYBRjgAdarbMg/JWVb0iYj+akyiPln1AMKogBHnJZT5mxwtLkTHJlPZ6TojvqISvZqakPdZ0OZscQp9kQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJda++SoQ3ErZjBaG40tjoEVB5jcUA2I0fKharBQSAbjbwMRF/
-	pNSAJR1xyKPs3IENiMsbjM+m/RNJP0UmQ68RjOGW80QLyD3BgbGtLZZJR0xqVc9DnvE=
-X-Gm-Gg: ASbGncs4QP8HawpqbUMlFs1KEtMAEy6zvXuS5t2UIy3hECgu//SNIa6OJNo8SlXRNK6
-	vw22qzw+3JveudxC5jDIxuI3QIEcoi+yotYuFZ6lWWJbLCiCOpSa2EC5PZQUbGOyempV+q9oxqe
-	hO73IBkzX31IfHrGyIlAMCQOs4gHvYNAR0dv5vJRgUjGu8+wSPMrL+Hjw3PkvS6OJ6v8BPU6TYl
-	RNhidedLsEUEk/5r/zlRdExZW8pTkecqf1V24i/5HhxgX3Vy42c97q06Pv8nCMsP/SzIar4iIaG
-	cLYlyXQBlrkv84uzZxW70YhX/REaAl3B2FK1qFyRw3JMgcaK8Emv+DxuH4qTH8m8GKQm+uESJlm
-	GYl/jU91+jQFxq1RGFZKxtsQRtsKr5efU/zj4Mnbz3INjsYhQS3zlU3J+JwKGlUKrgPE2bZl4sC
-	M=
-X-Google-Smtp-Source: AGHT+IH6oPmZUM4auc6eQuClGqcGHr3sDngRnQiYwGTgC1rN0Xhp7/AEI77Wl05/zubuIG3oVUhsMw==
-X-Received: by 2002:a05:6870:7056:20b0:315:26b8:8ee4 with SMTP id 586e51a60fabf-31526b894a3mr2347972fac.8.1756215775994;
-        Tue, 26 Aug 2025 06:42:55 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:5075:40f3:ff25:c24c? ([2600:8803:e7e4:1d00:5075:40f3:ff25:c24c])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7450e4bcecbsm2335437a34.45.2025.08.26.06.42.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Aug 2025 06:42:55 -0700 (PDT)
-Message-ID: <d6716d57-ed8b-4dcc-b16b-2528780a387c@baylibre.com>
-Date: Tue, 26 Aug 2025 08:42:53 -0500
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1756215804; x=1787751804;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=95LpgcUmGtkG3/iEyBUu5q03Om8Kq4KfvufUeFFtQCY=;
+  b=OzaksYkfKM/v3ohu0Y8Wx1FzE78Kefg0BylDrWiZ1zq+InRWzaPURU6X
+   JDSYd9Au0KcEKFK7Tjp2G1BFNhjuXqWrdA8JFgtHtcbZ/MDbO6wAYxZcf
+   YaPyfFF/I/vlf/F8VOia8ao4g/npGBfm43rbUooOU0WUIsXs5CMEhsEt7
+   5P2PPMH1trQL0tVqqHM8aJpEG5mxZFdwB97ocpQC4+CrYIpeMQY38oUIZ
+   no6Pn5XwnybGqHXi5ymuW8676n1Rk0gNA0lo+uZ/S1U74X6liF3lVhr/U
+   7FKqK5zUUaYjZw9fVHBlolisnCe1h9EAuOqcHziyAvNipdWmlTTfl/m7/
+   Q==;
+X-CSE-ConnectionGUID: 4XwqTIUvQ/WEU0by7cKtVw==
+X-CSE-MsgGUID: 3gjJSHO1T6W0A+J4sWZGJw==
+X-IronPort-AV: E=Sophos;i="6.18,214,1751234400"; 
+   d="scan'208";a="45916685"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 26 Aug 2025 15:43:15 +0200
+X-CheckPoint: {68ADB9F2-33-9821D066-F5C64F68}
+X-MAIL-CPID: 2BE93F38BCBA60C3F85774E63EFF2C95_2
+X-Control-Analysis: str=0001.0A002101.68ADB9F4.0023,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 47B6816806C;
+	Tue, 26 Aug 2025 15:43:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1756215790; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=95LpgcUmGtkG3/iEyBUu5q03Om8Kq4KfvufUeFFtQCY=;
+	b=c2UEh1cnN5IEsOxX68kIv0W273uMiQj3CrlBToHhCnPyI0fKVSTtLnc0Ddi7MUo/VIeGWL
+	GAbCQ9PwdKYFtiFQV6iqtpnxhIAQAX2sWb6h32G7VZwvkq2RksvE/Mv9mG26/qZOSkv4Y1
+	4jpWT0kPBCc0GoyQYeWiqGAc8zujQm72EWoZyK2oFDMExIb/VNRcuch938L2g3sPG4myAs
+	s19wNVqgPPPww1suhqQSz+4DHdgFHZjVJcJZaZgclIeltnmen4mXuNo5XCzzbMDOqRmCPW
+	pMZurZ+hJLL6HuLk6v7gy9Q65AtrJZfGFMJjnlxhMUmyXj09Hgq4xUGGcxzxMw==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Tony Lindgren <tony@atomide.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	linux-omap@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] ARM: dts: tps65910: Add gpio & interrupt properties
+Date: Tue, 26 Aug 2025 15:42:57 +0200
+Message-ID: <20250826134259.2564191-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iio: dac: use int instead of u32 to store error codes
-To: Qianfeng Rong <rongqianfeng@vivo.com>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250826101825.248167-1-rongqianfeng@vivo.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250826101825.248167-1-rongqianfeng@vivo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 8/26/25 5:18 AM, Qianfeng Rong wrote:
-> Use int instead of unsigned int for 'ret' variable to store negative error
-> codes returned by ad5421_write_unlocked() and ad5360_write_unlocked().
-> 
-> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
-> ---
-Reviewed-by: David Lechner <dlechner@baylibre.com>
+The binding document ti,tps65910.yaml requires the controller and
+cells properties for both gpio and interrupts. As they have const and
+fixed values a default can be provided for all users.
+
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+ arch/arm/boot/dts/tps65910.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm/boot/dts/tps65910.dtsi b/arch/arm/boot/dts/tps65910.dtsi
+index a941d1e623280..161ce31085d1e 100644
+--- a/arch/arm/boot/dts/tps65910.dtsi
++++ b/arch/arm/boot/dts/tps65910.dtsi
+@@ -10,6 +10,10 @@
+ 
+ &tps {
+ 	compatible = "ti,tps65910";
++	interrupt-controller;
++	#interrupt-cells = <1>;
++	gpio-controller;
++	#gpio-cells = <2>;
+ 
+ 	regulators {
+ 		#address-cells = <1>;
+-- 
+2.43.0
 
 
