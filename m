@@ -1,147 +1,258 @@
-Return-Path: <linux-kernel+bounces-786421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08651B35996
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:56:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93E9FB35990
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:55:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3DA35E4E70
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:56:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FFF5685CBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:55:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42320341660;
-	Tue, 26 Aug 2025 09:54:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2788D338F32;
+	Tue, 26 Aug 2025 09:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="z+c8El79"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BvIwaiB3"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B56338F26
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:54:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 826D1322557
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756202095; cv=none; b=ovV7FmDYYxL83Yp2XCaMAHpY6uVbcru3VGF4YuHJI96AsCXqZXQ9L0nxDGX9x2YML1UygbkQjzAnPAFJu8hBoW4QOkjwyJ/XlU3e8Xmf/XQejOy3yYp3FvIiqpBLJK48nQFv9Fngs6IeNnZwKn590XbEHazGpXh8mrdmwUVcOyQ=
+	t=1756202091; cv=none; b=TTooNx4G7RSHbMhVlCZgDwVlR2revwZvbZ8Myb4BiXMZJlLZH7ZQe4ZpbP5c40cOtjdnGEp/2MH7m1Xu4M8WgJkDpt05y2aUM4Y8f/kWdads+sd/kBDa6JInoNSk1+t0bOsIdKeOJzqqTBJZObhYH3SeIYmFZson/G+mfA8+fjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756202095; c=relaxed/simple;
-	bh=5PrN4kXWgSkhbgdmlbmnuhGMZyU6jWrz60oOZarPmr0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UOeooeMMbsqkspspjb6Usz9E/gO2dFCffw/jqCk2C8Z7aqsp4rdd7QS+ehqzYQ99SCDI9Uz3qINdE93gt4eemDYWJWTdiyNhSBVTGXluHZJVHigstRWnQIOVaBj3cStWUKY26giZBlOja89JsKMDSgYsep1I5PwzZV1ETh4NkT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=z+c8El79; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3c6743a10e3so2191541f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 02:54:51 -0700 (PDT)
+	s=arc-20240116; t=1756202091; c=relaxed/simple;
+	bh=v7/kKb/3aDjXYCuij46PTFlucQHPMuyf1vHAbBKqwlM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X4S2WYFrgyB/CAKR2tw+Q/MORzR0wbRYHKBMwdREMA5vguc6MfvVzcn9/GnI6EpI3fMj4OlcGtr7BDv4PJLEUz2Cp/SrWD9LbMK0Rf8L9QnLxro4rkmYiwquVhxfpcXSBslBZaH18knFCVEiN265W4m/5FlXfm48iRfFeQuj8ZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BvIwaiB3; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45a1b0d231eso31362665e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 02:54:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756202090; x=1756806890; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xaRZ3orPuVdXJjVO7RddRtX98nkKU7skjLyME4PeVHk=;
-        b=z+c8El79FvVytEi2Y+isBZboxl+N6Obfi0gSwNtkrwO+lfndYG+e4syCeOxdw6ZrcY
-         1fgYBt9pCzU4yDeHCeC1dFJ5N7DmUskr5sqP0EYsawlJ6kXxwzcjozwlhwew7NNmDDPb
-         UPHPHcQsMCPiojkKK1NGFVPS1njaVhZ6PzndqxxlLD7UHD/0DWsNbwBwVY1C7illdeRP
-         HUDJrHHHxruHxab7IQB4FXGah6OLQnqxmrv1HI8A6MfQfKk0qNEJcdkndlPE/X/AzkvU
-         3TCBa8FeO9P6p9yOtJdwnypFytZ/H6m2PGRqQaqCqvfky868YLEJtF/pmtHT8iCK48gd
-         rkCw==
+        d=linaro.org; s=google; t=1756202087; x=1756806887; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DUhR3N3wo9t0MMX9pMVCs5MuCLAFXYwayYcG32x3UPw=;
+        b=BvIwaiB3ApraeEUVeqXAIpyuyBFeYNj86TAYXtwqr78zxhohzsfIJkkIC6IXIH6jhn
+         zni831BZ8yaXlIiolqDxggqhv4qSOmSXnJ32a8GGB9A+6z6KbB6W7EM0z7OiXSl3ra6I
+         gFnqvXy1e8dyEpZ9nwgsMG0GanBPLnoAcMUbZfvOu64gtezOJ1aqgxfnedMIEE9uX73k
+         krDFpWjpUBNV6NoCxpFwrKU95QPLLIfnS+nQbJB1oCytzPFHitSTtthXU9I+OpPwwHwe
+         VFNOEysSaLIaDOvFe8VStOfH6Ul6kRhJHm9tI8OSQ4oiaY6IEbcSnTHfhfHKXAcHqGOQ
+         2NbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756202090; x=1756806890;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xaRZ3orPuVdXJjVO7RddRtX98nkKU7skjLyME4PeVHk=;
-        b=BcrxkW58iXYuwi/GufqrB6yjPIxRcHl3uvMVuhnbyILB81ZXsQlEGFovuUYN3Ruv2D
-         r+2NcwofUqNzl5p8apDGlQrnjNl30aefjO0AMKC3an/qTtJMdfCsEs7z0Hy5kvLPsjJn
-         LFHSkfy+naPQpYfYYKbQ2eCswWr7fnXU3slHQBy/eIdgJTWHLBABD6+AR8/59q3fMh2T
-         S/AS1vBpdsIQUOQUpXErHxmLcmi76NLvT4nKTmAZyoWhdr6QmcA/2Bh+Ldgb/R4SwLSZ
-         W5JfKhktW/bEx8WBVt8NcN/V9GN4iymjL4fbRPmZTRtSgGLKPLw9Hd7MZv7FS8oNjw1n
-         EOvg==
-X-Forwarded-Encrypted: i=1; AJvYcCVq4tYGnIHoonpdXXPGw5qccDDjJYErC8uBFbY3+V/BtPiCwGH/+3V0v6jGnM3UHp7W0SybENqngbB3gKY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnxGoYPL5+CKYqcoR4ZpQhjpomL6JQ+mZg8ZwjvVNYsjP8APVN
-	JIYZMxt/USOApg8byl/uX7uskkrKFpBcrH30J50TdH7hc51st+dVTYF6RkCU/C5a/2o=
-X-Gm-Gg: ASbGncvsFTF5+rUnwkV8BX7c71b3x5iUE228W7PlagMjoYdD0OIEdY0kTwuNjumUrAY
-	LHThaA3FN2/VByW/k3oJT+XYDA2Pv77lWt6AuAQQd2i2NnSqCfSy9NJwhTg0sPaTJtQqUV6xRNJ
-	meN9odanwFntoJqax6TVQzdwb2FGUJWht5PLN+kTi2C+yvSClEYPXtPFvQKMi6iYosaDpyfhMoq
-	tKE5TcKtGz+4wa9sbMfNBb5K7CJ/QzSMDF7XAfawW98Pqmi542J7mo8f+uapkGRUvPDnN70E3x7
-	nGj7xipZiwgfQOfvGPmD+EgdWKq/2KJiPu7m1fXenLGfnznC+eP96+HXHFiJp/Hopq25Qnjf4H3
-	OViR/3lDmryaWYi95Uw==
-X-Google-Smtp-Source: AGHT+IGn0GRxBvM+WD5O7v7/hNVOsDJAMieISnJTHVWyn0GlU/XBWButKenSU4mlUYhOne1RniJKdQ==
-X-Received: by 2002:a05:6000:25ee:b0:3c7:44eb:dd77 with SMTP id ffacd0b85a97d-3c744ebe211mr9929433f8f.12.1756202090400;
-        Tue, 26 Aug 2025 02:54:50 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:fed4:79fc:9440:6629])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c7117d5977sm15708447f8f.51.2025.08.26.02.54.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 02:54:50 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 26 Aug 2025 11:54:40 +0200
-Subject: [PATCH 6/6] gpio: xra1403: don't print out global GPIO numbers in
- debugfs callbacks
+        d=1e100.net; s=20230601; t=1756202087; x=1756806887;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DUhR3N3wo9t0MMX9pMVCs5MuCLAFXYwayYcG32x3UPw=;
+        b=FFdK04KOxgIc8lJFvWUnjRGP3C50DbBZMpXZl9LHb4j8YevjpbJLhm8l+KZAioNV12
+         kWKj4L1PvkAJxx9e7iq3q5zZspzhz0J4Eo2DqzzTt2Abt75UlYk8Mug4JS+vHLb0Lj9G
+         m/CCh9ilCol71cKX0Di38n6A2RMGf4IY87fH3ChH3afLZu9RkyHwV3kQxGYPsbFb4MX5
+         lOoMXdEXDzfL1iNm2TA8vaB8aUbIv1vNFzXlPRuHbZAgf2J97ZI64jaXKGRS5KZDhnyT
+         GkhR9cO+csvj8cS+TPJJYOjRLr2gzpDTxjNe6KymUSmuRnemle53lSTnf6j7R0GNaAQU
+         8Knw==
+X-Forwarded-Encrypted: i=1; AJvYcCVhQWucVfRlbxLxgIycGspYEwJGqL1eDVRctY06inIgwzWQdjlFon5V1CT8j7xzS+mS/W/fdjc77zpe2+0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxd8A98koC5OsU6qArMocUtPCRkd3hSP/b/Gs+xlEuLEAG2IRZF
+	aFgdNolxeN8zqqoPjzt2genMWSHlpUV6zBmxkzYseehb2SyWuU9zIHr96+keDC2NEY4=
+X-Gm-Gg: ASbGncvlSuDKVGRGpXX0oH9AXLEEjclO8+4ug2jfm2pb5OH5IO5cEeffhQ9g2w5YkoD
+	AywRL9lXJf5bmN3VGylPQIuQL5zybl/yLoVxlocLPtWGMcX2sYmOiZwGGpCtsaKwpPCsWuClOLo
+	Q6rqiC4z7ma3LKCaT2nu28oAiQ2/Ocy7T+c6+8zn5t/b38dsszsuZIFvKRF6DZsA+t0l43A+zF5
+	S1dP1HiPkpVCbxH614XZCNBxIqnTXTz35uURNaWN4EukdFjwFTVRSiRX6ux9M72kG+pTBXGxHp5
+	iLdKxu/KnZBwbWlt3Fg1UDWOA9YwUHbkMi1MCJ2g226bfHEvu1oKKFChG3mNf9b52lXW9SMCcfp
+	uIvEFggxJQ8bXZ1/b7pDligqtpyo=
+X-Google-Smtp-Source: AGHT+IG5d6hpblOKT6s7Wm3ZNawcMOjmqDBLGNn2fTe92R0dESnXpKCTH6m7G2x/JchotdGo9PM5Cw==
+X-Received: by 2002:a05:600c:1c0f:b0:45b:6365:7957 with SMTP id 5b1f17b1804b1-45b68bc7a0bmr7707245e9.33.1756202086662;
+        Tue, 26 Aug 2025 02:54:46 -0700 (PDT)
+Received: from [192.168.1.3] ([185.48.76.109])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b5744a587sm145919205e9.9.2025.08.26.02.54.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Aug 2025 02:54:46 -0700 (PDT)
+Message-ID: <939eb45c-f48e-40ce-86e8-710afa2b5c9b@linaro.org>
+Date: Tue, 26 Aug 2025 10:54:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250826-gpio-dbg-show-base-v1-6-7f27cd7f2256@linaro.org>
-References: <20250826-gpio-dbg-show-base-v1-0-7f27cd7f2256@linaro.org>
-In-Reply-To: <20250826-gpio-dbg-show-base-v1-0-7f27cd7f2256@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- patches@opensource.cirrus.com, linux-pwm@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1069;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=pqwEZ6klxsSv4inQWR27IXYKVls3Qm/tc/R/XY/nCmk=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBorYRhrRtwf1VkVEx/r9gY3Cm0Cya/2HLTxHfso
- Z84jtpt+hSJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaK2EYQAKCRARpy6gFHHX
- ctnOD/9TINMbHZubtrb6oT50/GRpHQJ063AdQj7zfSKZ59ymB2wM/mX8Pl1NkWFkEcxS9+JVk4Q
- lPCGUt2qfdhvXm5FVVMLwUbmtM9xF3GyeqiUrPPM80PrH0YhwCSOhpd8ghSm6QU6/mcbPNIAxnz
- iHZQDZsDHSgZhL6rcYIzKqG1T6MnBHYERna6eOUJvJflW6t1z+OV3LWM3rbImRGtgzgExtv7SLC
- 30vj3gnkMzlCC3/9UutUGDNB1kPT2iIHcQlPVPX3NT2J2i9c4JjsPzRHKmOJ/tf23t6sF/WcQY8
- 0K/+WFMJgJCYuA+BBeBvluPlLQadUddZSRNVLac8YMfZVbYS+GJgQvIH/51XCZKdmHV4LmsRxW8
- OWeFH5Gxi2NYcqQOuJm92rLshkHQtFYUp9EdF6UniY5jyq2cMRjDlptaZX5r3544iUHG5UFl/px
- k4HJTHxyqPdHLwJDjbPrvddnDgcVqx4s1Jqth/Bz+apACEuyHb6IQAX6QQMzRFNLyE9VSnUNa9C
- iFFiyE1jb5ZspnxT+439i1UlBmTqgbQv2KXU1/QCJAba6Xalc2I3GIjoFd3cmf0xgJ4uhW2RytJ
- GepfYgtLR5FAxX02LJpbPuWxSPU83zXmv7NVjSnrk/lHcncdZLC4mtHIwKf+gcVHuW31WpU23Na
- lZ8o9Gcmx7zGsjA==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 3/3] coresight: tpda: add sysfs node to flush specific
+ port
+To: Jie Gan <jie.gan@oss.qualcomm.com>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>
+References: <20250826070150.5603-1-jie.gan@oss.qualcomm.com>
+ <20250826070150.5603-4-jie.gan@oss.qualcomm.com>
+ <3ac2954e-5663-4ea0-bc1d-a09e1992af5b@linaro.org>
+ <a6be4d7b-d163-47df-9ab3-ca410f703555@oss.qualcomm.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <a6be4d7b-d163-47df-9ab3-ca410f703555@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-In order to further limit the number of references to the GPIO base
-number stored in struct gpio_chip, replace the global GPIO numbers in
-the output of debugfs callbacks by hardware offsets.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/gpio-xra1403.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+On 26/08/2025 10:39 am, Jie Gan wrote:
+> 
+> 
+> On 8/26/2025 5:27 PM, James Clark wrote:
+>>
+>>
+>> On 26/08/2025 8:01 am, Jie Gan wrote:
+>>> From: Tao Zhang <tao.zhang@oss.qualcomm.com>
+>>>
+>>> Setting bit i in the TPDA_FLUSH_CR register initiates a flush request
+>>> for port i, forcing the data to synchronize and be transmitted to the
+>>> sink device.
+>>>
+>>> Signed-off-by: Tao Zhang <tao.zhang@oss.qualcomm.com>
+>>> Co-developed-by: Jie Gan <jie.gan@oss.qualcomm.com>
+>>> Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
+>>> ---
+>>>   .../testing/sysfs-bus-coresight-devices-tpda  |  7 +++
+>>>   drivers/hwtracing/coresight/coresight-tpda.c  | 45 +++++++++++++++++++
+>>>   drivers/hwtracing/coresight/coresight-tpda.h  |  1 +
+>>>   3 files changed, 53 insertions(+)
+>>>
+>>> diff --git a/Documentation/ABI/testing/sysfs-bus-coresight-devices- 
+>>> tpda b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpda
+>>> index e827396a0fa1..8803158ba42f 100644
+>>> --- a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpda
+>>> +++ b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpda
+>>> @@ -41,3 +41,10 @@ Contact:    Jinlong Mao 
+>>> <jinlong.mao@oss.qualcomm.com>, Tao Zhang <tao.zhang@oss.qu
+>>>   Description:
+>>>           (RW) Configure the CMB/MCMB channel mode for all enabled 
+>>> ports.
+>>>           Value 0 means raw channel mapping mode. Value 1 means 
+>>> channel pair marking mode.
+>>> +
+>>> +What:        /sys/bus/coresight/devices/<tpda-name>/port_flush_req
+>>> +Date:        August 2025
+>>> +KernelVersion:    6.17
+>>> +Contact:    Jinlong Mao <jinlong.mao@oss.qualcomm.com>, Tao Zhang 
+>>> <tao.zhang@oss.qualcomm.com>, Jie Gan <jie.gan@oss.qualcomm.com>
+>>> +Description:
+>>> +        (RW) Configure the bit i to requests a flush operation of 
+>>> port i on the TPDA.
+>>> diff --git a/drivers/hwtracing/coresight/coresight-tpda.c b/drivers/ 
+>>> hwtracing/coresight/coresight-tpda.c
+>>> index 9e623732d1e7..c5f169facc51 100644
+>>> --- a/drivers/hwtracing/coresight/coresight-tpda.c
+>>> +++ b/drivers/hwtracing/coresight/coresight-tpda.c
+>>> @@ -509,6 +509,50 @@ static ssize_t cmbchan_mode_store(struct device 
+>>> *dev,
+>>>   }
+>>>   static DEVICE_ATTR_RW(cmbchan_mode);
+>>> +static ssize_t port_flush_req_show(struct device *dev,
+>>> +                   struct device_attribute *attr,
+>>> +                   char *buf)
+>>> +{
+>>> +    struct tpda_drvdata *drvdata = dev_get_drvdata(dev->parent);
+>>> +    unsigned long val;
+>>> +
+>>> +    guard(spinlock)(&drvdata->spinlock);
+>>> +    if (!drvdata->csdev->refcnt)
+>>> +        return -EPERM;
+>>> +
+>>> +    val = readl_relaxed(drvdata->base + TPDA_FLUSH_CR);
+>>> +    return sysfs_emit(buf, "%lx\n", val);
+>>
+>> Decimal would be better for a port number that goes from 0 - 127. If 
+>> you really want to use hex then don't you need to prefix it with 0x? 
+>> Otherwise you can't tell the difference between decimal 10 and hex 10, 
+>> and it's not documented that it's hex either.
+>>
+> 
+> Got it. I will fix the code here, and update the description in document.
+> 
+>>> +}
+>>> +
+>>> +static ssize_t port_flush_req_store(struct device *dev,
+>>> +                    struct device_attribute *attr,
+>>> +                    const char *buf,
+>>> +                    size_t size)
+>>> +{
+>>> +    struct tpda_drvdata *drvdata = dev_get_drvdata(dev->parent);
+>>> +    unsigned long val;
+>>> +
+>>> +    if (kstrtoul(buf, 0, &val))
+>>> +        return -EINVAL;
+>>> +
+>>> +    /* The valid value ranges from 0 to 127 */
+>>> +    if (val > 127)
+>>> +        return -EINVAL;
+>>> +
+>>> +    guard(spinlock)(&drvdata->spinlock);
+>>> +    if (!drvdata->csdev->refcnt)
+>>> +        return -EPERM;
+>>> +
+>>> +    if (val) {
+>>
+>> If 0 - 127 are valid don't you want to write 0 too?
+> 
+> It's 1-127 here. 0 may leads to an unexpected issue here.
+> 
+> Thanks,
+> Jie
+> 
 
-diff --git a/drivers/gpio/gpio-xra1403.c b/drivers/gpio/gpio-xra1403.c
-index faadcb4b0b2df0744711b4a8d211adf71ce49a38..7f3c98f9f902013cb4f1c9109dab331609b28997 100644
---- a/drivers/gpio/gpio-xra1403.c
-+++ b/drivers/gpio/gpio-xra1403.c
-@@ -135,8 +135,7 @@ static void xra1403_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- 	gcr = value[XRA_GCR + 1] << 8 | value[XRA_GCR];
- 	gsr = value[XRA_GSR + 1] << 8 | value[XRA_GSR];
- 	for_each_requested_gpio(chip, i, label) {
--		seq_printf(s, " gpio-%-3d (%-12s) %s %s\n",
--			   chip->base + i, label,
-+		seq_printf(s, " gpio-%-3d (%-12s) %s %s\n", i, label,
- 			   (gcr & BIT(i)) ? "in" : "out",
- 			   str_hi_lo(gsr & BIT(i)));
- 	}
+Then can't the above be this:
 
--- 
-2.48.1
+   /* The valid value ranges from 1 to 127 */
+   if (val < 1 || val > 127)
+     return -EINVAL;
+
+But I'm wondering how you flush port 0?
+
+Isn't the default value 0? So if you never write to port_flush_req then 
+you'd flush port 0, but why can't you change it back to 0 after writing 
+a different value?
+
+>>
+>>> +        CS_UNLOCK(drvdata->base);
+>>> +        writel_relaxed(val, drvdata->base + TPDA_FLUSH_CR);
+>>> +        CS_LOCK(drvdata->base);
+>>> +    }
+>>> +
+>>> +    return size;
+>>> +}
+>>> +static DEVICE_ATTR_RW(port_flush_req);
+>>> +
+>>>   static struct attribute *tpda_attrs[] = {
+>>>       &dev_attr_trig_async_enable.attr,
+>>>       &dev_attr_trig_flag_ts_enable.attr,
+>>> @@ -516,6 +560,7 @@ static struct attribute *tpda_attrs[] = {
+>>>       &dev_attr_freq_ts_enable.attr,
+>>>       &dev_attr_global_flush_req.attr,
+>>>       &dev_attr_cmbchan_mode.attr,
+>>> +    &dev_attr_port_flush_req.attr,
+>>>       NULL,
+>>>   };
+>>> diff --git a/drivers/hwtracing/coresight/coresight-tpda.h b/drivers/ 
+>>> hwtracing/coresight/coresight-tpda.h
+>>> index 00d146960d81..55a18d718357 100644
+>>> --- a/drivers/hwtracing/coresight/coresight-tpda.h
+>>> +++ b/drivers/hwtracing/coresight/coresight-tpda.h
+>>> @@ -10,6 +10,7 @@
+>>>   #define TPDA_Pn_CR(n)        (0x004 + (n * 4))
+>>>   #define TPDA_FPID_CR        (0x084)
+>>>   #define TPDA_SYNCR        (0x08C)
+>>> +#define TPDA_FLUSH_CR        (0x090)
+>>>   /* Cross trigger FREQ packets timestamp bit */
+>>>   #define TPDA_CR_FREQTS        BIT(2)
+>>
+>>
+> 
 
 
