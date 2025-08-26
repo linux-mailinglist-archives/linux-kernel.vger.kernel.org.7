@@ -1,99 +1,165 @@
-Return-Path: <linux-kernel+bounces-785763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89A0FB350CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:09:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15EC8B350D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:10:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0ADF7A4C16
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 01:07:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8198B189C847
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 01:10:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D721528688E;
-	Tue, 26 Aug 2025 01:09:23 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2B0258ECD;
+	Tue, 26 Aug 2025 01:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kjeXGEnN"
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E056C14A8B;
-	Tue, 26 Aug 2025 01:09:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67C1C27EFEE;
+	Tue, 26 Aug 2025 01:09:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756170563; cv=none; b=BL3UV2Wy/BIoi7gEUH5iNqw1LzpjNAIgL7wSw0cV1EDpjGJZeEGlsP+G19VrxaWsx5d23bFYJVZRzV/P4ghc426H9xhGd/Hesr8FpESiYHLccwo4NZTKMngkDHeD1mxYeYBfjGs9Hlhi1mi4Jzb68YLdBNFetMkCJ7EkH6iE/Nw=
+	t=1756170587; cv=none; b=E7OtrKxXiyScyvEQkiY3VTpkSy7LUv5dS5kOIDJCbs3MP+apW7mkrp+4HYhzbOZfJPSGtdXwq+YyZrtC5kv9YTrX1gwWDHKXVjbFpfflrPSPNNNy7f/1LHLcfRT6pXGK+PnoZw6vHouKb/SXyz38Fa9iJ1mqeBQEuLULxGBZ190=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756170563; c=relaxed/simple;
-	bh=t8qAn4BTHJMGQ6VKVltOTsKu86zB0A5UnPaa3nHCH1U=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=eWXjK/clcP4oAqgc6VfsNrSDLNX2DEh3EfQuA8Ix+7lTk3yWeXk9G0N0+8jxIqneF7Ht+wk71MLy0XMbO2yIlE138m0q224OXpYR7FWe8CofJe2m/7d9f7ukjWjPJQA5Hwyf1URrKInCRhVE6s6QxMBvrNFa4IMwYZJ21ZiQDss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c9qLl1v35zYQw0s;
-	Tue, 26 Aug 2025 09:09:19 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id C40EF1A1025;
-	Tue, 26 Aug 2025 09:09:17 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgAXYIw8Ca1o8lQ7AQ--.64085S3;
-	Tue, 26 Aug 2025 09:09:17 +0800 (CST)
-Subject: Re: [PATCH RFC 3/7] md/raid1: convert to use bio_submit_split()
-To: Christoph Hellwig <hch@infradead.org>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: colyli@kernel.org, hare@suse.de, tieren@fnnas.com, axboe@kernel.dk,
- tj@kernel.org, josef@toxicpanda.com, song@kernel.org,
- akpm@linux-foundation.org, neil@brown.name, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
- linux-raid@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- johnny.chenyi@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250825093700.3731633-1-yukuai1@huaweicloud.com>
- <20250825093700.3731633-4-yukuai1@huaweicloud.com>
- <aKxBoHcYyCn9unRp@infradead.org>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <83f1efa2-8909-a250-a1f8-8735f396ea7e@huaweicloud.com>
-Date: Tue, 26 Aug 2025 09:09:16 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1756170587; c=relaxed/simple;
+	bh=cG4YLB8fcRCQp9z/a4wbR6zYj3boTDYm2wYTkAWOUY8=;
+	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=BzHMYxPMu/+9KHVuLIdhzNy4F+xLsoCvh8oLdGbO+Qsgvd7EuqNpwY7g1/kVgrdjbWSbibgOhpe4F0/quo4U9hIWiD40FAREza4Gql3vRG0hyvVI/OW9kQBYtrr18QfPI0cAPC6h2JM9hmSmv0DuhozBLkEFWVku+p7qxafngZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kjeXGEnN; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-743749537caso4813538a34.0;
+        Mon, 25 Aug 2025 18:09:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756170584; x=1756775384; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lKcbDX8RSeeRVr6XtjQvaqenalc/kXd0hVTqBKK4oPg=;
+        b=kjeXGEnNKVO6kpc7BpG0zkhU6xeYfcYeOAy1uUKbbiQTlKtTkbD7DZuUEZzv+k2RJd
+         RpJzzRrnjJ5FZPTugLuBOJteFxKLT2dI3fpdB+9P8DWjB70XPnqrEbQV7hjfEKMKxkm1
+         gAdhdVwFq35ipiaA0Z2IX3ECUV/2hk4zCQGztFVhbC3SRcGnoFDyYrdoDmVjlPRUJM0+
+         xv4DEn5KJbSKF6L/qMP3VQ5oHmpjKpdW27U1JOo8cCJhffjGlZhlX9RjNHFaCLtOF4E9
+         DqRchIm4sk1NJB4xCIlBkFhdU1qd40tAyUa8syeaQUT0poTHucHNOse5qGNcHUhK9rf/
+         e7Xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756170584; x=1756775384;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lKcbDX8RSeeRVr6XtjQvaqenalc/kXd0hVTqBKK4oPg=;
+        b=Lao6nUY6ttWvqhrQ/lVR/n8pZgPTVEHAYK+ws6rCQnq5nI5gIVROuh7OFvn5hyWEp7
+         QBaf9YmnupCVj94aPL6kcFE0H8C+CuJlDB9ldF5V8xNfmbRhwi9WhZy0NBYYRmKIAZ3f
+         Se0UBYyU1MqukpCbQST1fSaZrDZEfRYmPDRCy35JSw1nWDI6C6qvpAIfzarAeBWG17Je
+         deXgqOLW6SxYsLKRLHtZG0yYqU/8RrF01Y0eUmRR/9Hpm4mGWH7z7TORLzc+7dpFEK1X
+         d8SM31XlfDVi/w0VmnclFL6qQh2FvFpNBMwcwF3IF3M8e71gMsqxh6m5wO7N6jRJ3f34
+         /mQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUqyOjiPJimz+y9jzlD1V1mKtnSJxg//4jjJFeV0nsipfrZqalLhdHuBdWzo2zLSi+AzTYOKqWb8/XZ@vger.kernel.org, AJvYcCVh44EYEg8teEC217VrP2Qds3AA+EQyrhzbiiRLRANEc6I/zbEvzy14B/GfDQCp/x3zz5XXe+lHWQ9+cloE@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtL3mfr/lXmOGvA8U5r9F7wazEI68QtuE4GojD711gtsg3Oq7R
+	fTX4Fv7ZeOxCxA8G6avJWf3CD3CEo5VlZCUyO0ThieXax82ZbsfWrZg4P8uz9js0
+X-Gm-Gg: ASbGnctburqUp/mGf9nt2y9GPYKaipSvOU8VaqwIC5rkQZhThhaMmL7zPTdw14fiHNn
+	U1d+/Yxc49biJPytkoxQkLDFYVKwDw5imcCykIGCyHDBTLRSemtNr5NOdsjmpH21P7nowauEWN8
+	etUUJsNkmXM2CTcrANIJzLip1SRL2Uj9rC4ESQ5QqM6IbWD9tkd1LIifogmYnSkXKPrgec9/lwj
+	d8BLEL3KhHURxCpBO5jJqctZ9k9TrNza3GrFWi3520JVR1Gy3bN5dnI5Jbm+wJVG4HuhTW2qj4g
+	bglPiUoFgrdBSIR0PPXQpePUFFBQG1W2WdOXAMG5bAngCZQRTwmHePUkCuiWSBk1Z13neVDbBBP
+	shnNnj5p82fzx6Qd7CJ7T/CzZ8QuZrB2g
+X-Google-Smtp-Source: AGHT+IE6F65QfwFabXNAuH7zs863T2wcLpZREnYgSei9bH+TLiPtsmlTeVF5Ku/WEWK907SSi5O82Q==
+X-Received: by 2002:a05:6808:1799:b0:437:75ea:6c77 with SMTP id 5614622812f47-437be056166mr849846b6e.20.1756170584317;
+        Mon, 25 Aug 2025 18:09:44 -0700 (PDT)
+Received: from localhost.localdomain ([122.8.183.87])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-437967dc1dasm1327704b6e.14.2025.08.25.18.09.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Aug 2025 18:09:43 -0700 (PDT)
+From: Chen Wang <unicornxw@gmail.com>
+To: u.kleine-koenig@baylibre.com,
+	aou@eecs.berkeley.edu,
+	unicorn_wang@outlook.com,
+	conor+dt@kernel.org,
+	inochiama@gmail.com,
+	krzk+dt@kernel.org,
+	looong.bin@gmail.com,
+	palmer@dabbelt.com,
+	paul.walmsley@sifive.com,
+	robh@kernel.org,
+	tglx@linutronix.de,
+	sycamoremoon376@gmail.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	sophgo@lists.linux.dev
+Subject: [PATCH v2 1/3] irqchip/sg2042-msi: Set irq type according to DT configuration
+Date: Tue, 26 Aug 2025 09:09:35 +0800
+Message-Id: <49e70989c2f0a8a67e48527e57b4877262996214.1756169460.git.unicorn_wang@outlook.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1756169460.git.unicorn_wang@outlook.com>
+References: <cover.1756169460.git.unicorn_wang@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <aKxBoHcYyCn9unRp@infradead.org>
-Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAXYIw8Ca1o8lQ7AQ--.64085S3
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYK7AC8VAFwI0_Xr0_Wr1l1xkIjI8I6I8E
-	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
-	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8I
-	cVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87
-	Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
-	6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72
-	CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4II
-	rI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr4
-	1l4c8EcI0Ec7CjxVAaw2AFwI0_GFv_Wryl4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
-	x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6r
-	W5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF
-	7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxV
-	WUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU
-	F0eHDUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hi,
+From: Chen Wang <unicorn_wang@outlook.com>
 
-ÔÚ 2025/08/25 18:57, Christoph Hellwig Ð´µÀ:
-> On Mon, Aug 25, 2025 at 05:36:56PM +0800, Yu Kuai wrote:
->> +		bio = bio_submit_split(bio, max_sectors,&conf->bio_split);
-> 
-> missing whitespace after the comma.
-> 
-> .
-> 
+The original MSI interrupt type was hard-coded, which was not a good idea.
+Now it is changed to read the device tree configuration and then set the
+interrupt type.
 
-Ok,
+Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+---
+ drivers/irqchip/irq-sg2042-msi.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-Thanks for the review.
-Kuai
+diff --git a/drivers/irqchip/irq-sg2042-msi.c b/drivers/irqchip/irq-sg2042-msi.c
+index 3b13dbbfdb51..f7cf0dc72eab 100644
+--- a/drivers/irqchip/irq-sg2042-msi.c
++++ b/drivers/irqchip/irq-sg2042-msi.c
+@@ -30,6 +30,7 @@ struct sg204x_msi_chip_info {
+  * @doorbell_addr:	see TRM, 10.1.32, GP_INTR0_SET
+  * @irq_first:		First vectors number that MSIs starts
+  * @num_irqs:		Number of vectors for MSIs
++ * @irq_type:		IRQ type for MSIs
+  * @msi_map:		mapping for allocated MSI vectors.
+  * @msi_map_lock:	Lock for msi_map
+  * @chip_info:		chip specific infomations
+@@ -41,6 +42,7 @@ struct sg204x_msi_chipdata {
+ 
+ 	u32					irq_first;
+ 	u32					num_irqs;
++	unsigned int				irq_type;
+ 
+ 	unsigned long				*msi_map;
+ 	struct mutex				msi_map_lock;
+@@ -137,14 +139,14 @@ static int sg204x_msi_parent_domain_alloc(struct irq_domain *domain, unsigned in
+ 	fwspec.fwnode = domain->parent->fwnode;
+ 	fwspec.param_count = 2;
+ 	fwspec.param[0] = data->irq_first + hwirq;
+-	fwspec.param[1] = IRQ_TYPE_EDGE_RISING;
++	fwspec.param[1] = data->irq_type;
+ 
+ 	ret = irq_domain_alloc_irqs_parent(domain, virq, 1, &fwspec);
+ 	if (ret)
+ 		return ret;
+ 
+ 	d = irq_domain_get_irq_data(domain->parent, virq);
+-	return d->chip->irq_set_type(d, IRQ_TYPE_EDGE_RISING);
++	return d->chip->irq_set_type(d, data->irq_type);
+ }
+ 
+ static int sg204x_msi_middle_domain_alloc(struct irq_domain *domain, unsigned int virq,
+@@ -298,6 +300,7 @@ static int sg2042_msi_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	data->irq_first = (u32)args.args[0];
++	data->irq_type = (unsigned int)args.args[1];
+ 	data->num_irqs = (u32)args.args[args.nargs - 1];
+ 
+ 	mutex_init(&data->msi_map_lock);
+-- 
+2.34.1
 
 
