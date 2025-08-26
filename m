@@ -1,92 +1,105 @@
-Return-Path: <linux-kernel+bounces-785931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08F8CB3529A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:11:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B217B3529E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:14:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39DDA7B429E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:09:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F05633AE251
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2800121D3D3;
-	Tue, 26 Aug 2025 04:11:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 588262D29C3;
+	Tue, 26 Aug 2025 04:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b="ZJLbad5A"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="w8MGzNlM"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2064.outbound.protection.outlook.com [40.107.93.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B071F9F51
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 04:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756181478; cv=none; b=sAv2xcWon3821fUwIWz5HhRROYhjtpE+NER6tLnBWF8RDjViyKmOtf6WLGFTvcW8VaVtWyoI7Vz73ucmH3pxSO7yI/hk2Qwto1EgDrhhibNfwfYyUWFNVUFrlyUM7nf1CZ1GmrQ9Er8m0fRTo4WuHX34lL1XYgI4D1SEpPEC6IM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756181478; c=relaxed/simple;
-	bh=/ZYgw3f/YwhbhIGBUGnb907urtjghpCGYhGTcOo4i6E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MlKM+PPTH/JhchIldGMdnAJRiSFqD3MYfI1gvWHSF/lXo9THHSGp/1f1bbRSK8bjbsCY6rSILVR/dKlG/+hGPMtfkiSFwVbh361COQ4Migsp/BOooJgDbpCLIturH2JBMVQYjfd95hNym0CF7Rz3HtZ9MXCV9F2kF4WY5oEVfXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org; spf=pass smtp.mailfrom=wbinvd.org; dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b=ZJLbad5A; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wbinvd.org
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-76e2e89e89fso6802118b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 21:11:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=wbinvd.org; s=wbinvd; t=1756181475; x=1756786275; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SihI0LEZCbrlbxxp8mie2+EGuARolL/677aRNBJupM8=;
-        b=ZJLbad5A5UIAlt/ZedUk5AWCac0c1j5DsPAjCeqBMSwzuUHZvgNRS/hgIwrTM9j0iE
-         tKsSX5PJaAHk/lG4Wjtk6XWFrewXw2MPwyU3TMFp5c11m75+O9yXLtxhRclIRUeUWwh8
-         rDm2c4S00XRWsi/IqvuAjLjgC9WVkeatJwEsNJ4kyF/3IBwJz0NuESoOgc8xTn3Kj2X4
-         VoVa6Nrf/rWl34xdd5TkNqL3buT8MqQde8vGvytnVbvK4KHPInP1NHuKO4lwrro58sXb
-         aFYqO20V+qQqGANK0ems/fxNAKRUyI/9J+gJFsLawjTcrVjCg+d9GeQuSa7Yf8XFoS2b
-         ABow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756181475; x=1756786275;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SihI0LEZCbrlbxxp8mie2+EGuARolL/677aRNBJupM8=;
-        b=nRS0CzJuqRM2fcjfONsT1CmyRmoatS3FvXirKBlaA/qAXdVmMmUJKFTARnbYmgS0Wa
-         Er2V+0f3VhOgOYPnLvbeufLY1mrcOAhwSXnCDwvo4LN9QtOO+t7IZc0gAfKb2SdL5gTy
-         sqWapY0Z1ykOVkNcfvrLXy8IT1KCEZJkCYKBUjCN35EFfrz1YfEh1oGWDjSBM242wEOC
-         p4P6gmDD5mmo5TiXUkfuNrFhP00EOsa6CxJ0nkcACO8RRH5tnizbaR/EUrZ31AVmR//v
-         GdQwmQSBaS3nFLgfFXbMRWXH42AbUUBgp5hY77aBEMagSjb+aixtFvVYFnQ6s3sZGTpv
-         XvVg==
-X-Gm-Message-State: AOJu0YzyjxnhykPi4JrkRmOSbpjjvOdzrB6RD5m/hiZMOM1+6B9DFdZR
-	a1Dd+zwCkUTrIoYs1IwYA8uq57e5yoXSwAXfeDuG/PUNLxVaiPRFHwXwJwH/duTXqIY4558ljFm
-	Onvou
-X-Gm-Gg: ASbGncsAU5QURAJfHU/VpoVPoLvtirG7hGxMmqbaEumJ/Tfzqv9A4gXYa79jzEfilEZ
-	vS1GQeT2SBa9XNgdUkO0pH3zAAeRvlTbTpA6SAV8iLeyWHI2nnWGf6IbeXWCkFI5PsZsrOZzI0+
-	MOXkdrWo9tNz6peXypS18Wl1hqXkUGd97LAXa3LvlvQIjvufE94SyXNCSW1lQKuSHMMjyNv2avh
-	SknGvwaGpkqo1fqZCOVyKFw4yMCrHwBpODOQ7QL0P1HeAVQc0AEKmlhH9oPEHVT8/jbimpZK4NM
-	MeZp8UXtA0QDPOxwIK4QXy+sWlATjbK2aunAP/FiRd4JGrrHJMUfNHGTJ/eCVSCPvUqa//VQgXv
-	2S6ewpFs/5Lqym9Z1C4PdkDS7
-X-Google-Smtp-Source: AGHT+IE6PpW/HOdNS5oZX4PeHU+PjR/DEI/AATl9npioGYOmUwe8aFkAarlXPhw3BZVTIZPHP8fcZw==
-X-Received: by 2002:a05:6a20:918a:b0:243:15b9:7790 with SMTP id adf61e73a8af0-24340eb9569mr22274208637.52.1756181475437;
-        Mon, 25 Aug 2025 21:11:15 -0700 (PDT)
-Received: from mozart.vkv.me ([192.184.167.117])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b49cb891a00sm8039888a12.2.2025.08.25.21.11.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 21:11:14 -0700 (PDT)
-From: Calvin Owens <calvin@wbinvd.org>
-To: linux-kernel@vger.kernel.org
-Cc: Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Amitkumar Karwar <amitkumar.karwar@nxp.com>,
-	Neeraj Kale <neeraj.sanjaykale@nxp.com>,
-	linux-bluetooth@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	johan.hedberg@intel.com
-Subject: [PATCH] Bluetooth: remove duplicate h4_recv_buf() in header
-Date: Mon, 25 Aug 2025 21:11:08 -0700
-Message-ID: <be8edf7f8ba8dea6c61272b02fb20a4ac7e1c5a5.1756179634.git.calvin@wbinvd.org>
-X-Mailer: git-send-email 2.47.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0610D1E5701;
+	Tue, 26 Aug 2025 04:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756181645; cv=fail; b=WCnIt6NN3TVngpiY1d2FFB6NniD1xjxnXnPae9fc0tE5dLUZiUzUU8A+l4Md/yZfWSqP8PuP9flLK9/iX88nJlJFkK+BHrJ+miQ+7NFS/V0+eiUGp1VEtk4F60SYhaozH/OZi8w0aqrZEGJWgHuOsWGkQU3OhHzUY563lKtHaxA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756181645; c=relaxed/simple;
+	bh=bkOeC17z0XahDMSlRtvFGj2FwGIVQj/3np1y9FyKmvk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VCRZm42cG/hxBwGBOX0Nf4aVoj9vZs+jUwtB8ZxswsUVP7yt+jZvigcEGyTrLUY65HnDdRjpe7xmFI+sSERztDQqDrI51/+/rTlPJvXZD2nAi1/O5PLHSjagnShbO3xZ5Vs0wL6SDoKtLz1pXEvh5bmq021rtULmTrCnlnRKCHQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=w8MGzNlM; arc=fail smtp.client-ip=40.107.93.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UM4OooI5NKvTGbzBPnysrIbf5LpDFZYiY330p0PKbsqJoc3wv/pUs0ijxLUJDN0yJmgWrxrUL3PC+0fgHtZifKLW3R88okFo3mSAVZr0XmxEleNA39AXLCOEdz/6sWXza5ZpAEEkrjoEXHoHJHoKtU5p1SIxGaNYs7HPdENMHd/xgcPx7SaihcBpDlCkYbVk3qYYeds5Ywk4R/0Jl1WWXtDuW++V+4LgNvxet1jzFy2ZehbJJoQ8+Njm9VB84PU2FtALrGciJDlqAmkZr9BnAezesAoFDa9Nbd0cNQsEhoLazmv9mdjiOfK13r+HvNAjqEGkAOXP72L9m033WHhaAg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6In/ptpnmVY9UHYqfR1hlW7VPd2tv7EoHAfpADJM/UU=;
+ b=Stmh2m7sI3Ae0lbQOJoblIg758I5QYGrtDbjU5IxWrp06ENOmuRBNBrh1NxY0zQsat3/LQvwT3I+8KYmoTYPo4R4pkv/CHdzStwFerq8VsA+SItbZnBWCfnzwqT19NW2BYHMoQp/qCkgzVQX32Nv5vP+1ufXXwLvuuoC5L57qZDlNnfNyBCoeO15KUGKlRaG7vaMC2lW/DVBp8exwuDELSpYfyYuOt5BazHEb99ILecK3FxfQWwKx7Yy29mv6GcV8TKmAphSFLZo+N4ZuJUXQcAy3e7s8GO3I3Bgy2gJa3scmQOTa0dk75UAhZ7lFTIxJjV9pNaxv04SILa+8G1K/Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linux.ibm.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6In/ptpnmVY9UHYqfR1hlW7VPd2tv7EoHAfpADJM/UU=;
+ b=w8MGzNlM7VSiSgZPhvHX4GXoI0tDT3+FhDjuOxzS3itdH7im8uCbN089o90gDnXkJ88sC1WMr07UP4BXnZZas8Dzy939fErM8MzkgxseF2NvbyrzQGrCOApMUvvKzrAcBHbYgmUX6nnrK0kUzTP4IciX812bnoEpyR5o6i6+ORY=
+Received: from DS7PR03CA0089.namprd03.prod.outlook.com (2603:10b6:5:3bb::34)
+ by DM4PR12MB7647.namprd12.prod.outlook.com (2603:10b6:8:105::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.20; Tue, 26 Aug
+ 2025 04:14:00 +0000
+Received: from DS1PEPF00017092.namprd03.prod.outlook.com
+ (2603:10b6:5:3bb:cafe::29) by DS7PR03CA0089.outlook.office365.com
+ (2603:10b6:5:3bb::34) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.21 via Frontend Transport; Tue,
+ 26 Aug 2025 04:14:00 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ DS1PEPF00017092.mail.protection.outlook.com (10.167.17.135) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9073.11 via Frontend Transport; Tue, 26 Aug 2025 04:14:00 +0000
+Received: from BLRKPRNAYAK.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 25 Aug
+ 2025 23:13:44 -0500
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+To: Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman
+	<mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy
+	<christophe.leroy@csgroup.eu>, Heiko Carstens <hca@linux.ibm.com>, "Vasily
+ Gorbik" <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle
+	<svens@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+	<mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+	<dave.hansen@linux.intel.com>, <x86@kernel.org>, "H. Peter Anvin"
+	<hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Juri Lelli
+	<juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
+	<linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+	<linux-s390@vger.kernel.org>
+CC: Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
+	<rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman
+	<mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, K Prateek Nayak
+	<kprateek.nayak@amd.com>, <thomas.weissschuh@linutronix.de>, Li Chen
+	<chenl311@chinatelecom.cn>, Bibo Mao <maobibo@loongson.cn>, Mete Durlu
+	<meted@linux.ibm.com>, Tobias Huschle <huschle@linux.ibm.com>, "Easwar
+ Hariharan" <easwar.hariharan@linux.microsoft.com>, Guo Weikang
+	<guoweikang.kernel@gmail.com>, "Rafael J. Wysocki"
+	<rafael.j.wysocki@intel.com>, Brian Gerst <brgerst@gmail.com>, Patryk Wlazlyn
+	<patryk.wlazlyn@linux.intel.com>, Swapnil Sapkal <swapnil.sapkal@amd.com>,
+	"Yury Norov [NVIDIA]" <yury.norov@gmail.com>, Sudeep Holla
+	<sudeep.holla@arm.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Andrea Righi <arighi@nvidia.com>, Yicong Yang <yangyicong@hisilicon.com>,
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>, Tim Chen
+	<tim.c.chen@linux.intel.com>, Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Subject: [PATCH v7 0/8] sched/fair: Get rid of sched_domains_curr_level hack for tl->cpumask()
+Date: Tue, 26 Aug 2025 04:13:11 +0000
+Message-ID: <20250826041319.1284-1-kprateek.nayak@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,392 +107,104 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS1PEPF00017092:EE_|DM4PR12MB7647:EE_
+X-MS-Office365-Filtering-Correlation-Id: 60348fba-fe13-4fad-2230-08dde456fc08
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|7416014|376014|13003099007|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?44t7sBNej+4mZTtOPFKUy/V16v/xuda/XOiSuY9GXMCG4mozDN23rp/BhAP4?=
+ =?us-ascii?Q?oaBIlDtjnh0OqYgVfhUAWssKgSFd6SrfiIIT0qJq6TBblCcJIQe4K63RK+Dk?=
+ =?us-ascii?Q?JvRYyoff69vr2XCAZmpGJ7bDme3dXvEUgDd4zwGFmRNMHPyCi8M1IqYy/ban?=
+ =?us-ascii?Q?Bb3TOVSZ/XIa6ISJjpjEyhiSuLrbRi14S12mEh5kPB386n86io5qP8OikW9W?=
+ =?us-ascii?Q?wvEJJ43mEanBSTX4eyKE+BFo5pLTU332skLuuUkpUR4BRdsR+lyv9VE5BziX?=
+ =?us-ascii?Q?Goy1HLTkGQQXBXTdxqNY+aDCeoMkE6T/rgHUWdoJH6z3ofRBFYCInX7oHDww?=
+ =?us-ascii?Q?jIyv6LLGhAi7C2eb1xct3CM6i0iHM2NsGR18undni0N8Gr8Lo7P4yXQpE9mW?=
+ =?us-ascii?Q?SExMNlmEM3c7WUIGWkQPrgk4ge1m8+PYz839H5dplG1jwuV4nRRNHJ7Dm/Eq?=
+ =?us-ascii?Q?dT4Mrr7taOxvprqNbrlFycV3ZgQHuUkVepqdgW7ecLJBDz//oYKI6ORSYabF?=
+ =?us-ascii?Q?CiHedl0q7wU4i7UJ6WIeOYzc8laXw24RiIQrlL7/2YGKVuuVasIQ/9XodKaZ?=
+ =?us-ascii?Q?70yotxKF9tIS8TC2D45XkJ0Nj5pH2S/Aaca0Sel9G4KcZoQbdC4W4LXRKxu0?=
+ =?us-ascii?Q?/pXePe33MJYNEa4e0ZUj1549kpkJD3I4dOsX62oFOKQ3cyM0JKxGKacGWai9?=
+ =?us-ascii?Q?UkI8Kr6ZSSP4qNleWY71EI6dVTe5ZVIaqHAGCw3lJfDO6a1BogxQaGJlEeff?=
+ =?us-ascii?Q?f2LwpEPIWzpp4cycPjQPXdAK4rTNatgQ7zygMk/BdNNKT117wRRtzIpWqhM2?=
+ =?us-ascii?Q?WlNN3tBp3rA54bF3snmVJtMAwvzYGZFkj5d6juIVyLphmdGm/yyVyFtlHJF4?=
+ =?us-ascii?Q?efls+usRvuvkNSSFASuvt+g2oKI9rspkcm8MiAypbfwILv6ILZB+TgCjdela?=
+ =?us-ascii?Q?8eNEAT2IGlGCIuGdMi7cSJiWP3vtYE3YBNFby2cWjyMIZtKS+zSZBM8Uiu4H?=
+ =?us-ascii?Q?ZAAJorUvwsOcOfdlg4bikV8/C/WQh5UL0HnOx3v+3RQKz+P4Pr5ETx8gQMj9?=
+ =?us-ascii?Q?Zi5RHB6uC18DTAw1Nh2NqSXDiyfuAF4H+6z0Yxad8rIJ5nE2qkfjZVaX1D6f?=
+ =?us-ascii?Q?JNWEqIugMwGiNVVJ62DUiOCKu2/GEIRMMP6v9ck3gixX3nyu/qQgdp3I9ruM?=
+ =?us-ascii?Q?uMqPk7ZcwG9ZlXD8twlmUxZX5DWSw9siPByHdDMQDfFcB42BRnRJ/cU0pc+g?=
+ =?us-ascii?Q?wB3Rx9we4TdPLr7GpfGXd9y3z3raywcoahPySxwF9JJWmYxwbC5mlE07Lr9U?=
+ =?us-ascii?Q?gchiifqNQy2L8zJGZeZ5WkmUcBPBIL7MWZmiQDSW9f0E8zUyqf49HQ2yUEi3?=
+ =?us-ascii?Q?ToFbKZtW0HMq+M8ZKaRBT0znNCumPD5ZSJvZ/VT+u5SC8KHrkb5xImsQwG6B?=
+ =?us-ascii?Q?kc7WKYV3P6fc3CDGJ7DlhSBdtOPvTCy6VakEarm7Ghn4oHI0jYCJl2nQYVDw?=
+ =?us-ascii?Q?zDqdu7svfjF/7E9SncBWftWYn0G4e3lTcXek4XJ7B9hO/7HmLKUeXf/CLtXC?=
+ =?us-ascii?Q?Y7KSKgPEXwvLHz33LN0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(7416014)(376014)(13003099007)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 04:14:00.2370
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 60348fba-fe13-4fad-2230-08dde456fc08
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS1PEPF00017092.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7647
 
-The "h4_recv.h" header contains a duplicate h4_recv_buf() that is nearly
-but not quite identical to the h4_recv_buf() in hci_h4.c.
+This version uses Peter's suggestion from [1] as if and incrementally
+adds cleanup on top to the arch/ bits. I've tested the x86 side but the
+PowerPC and the s390 bits are only build tested. Review and feedback is
+greatly appreciated.
 
-This duplicated header was added in commit 07eb96a5a7b0 ("Bluetooth:
-bpa10x: Use separate h4_recv_buf helper"). I wasn't able to find any
-explanation for duplicating the code in the discussion:
+[1] https://lore.kernel.org/lkml/20250825091910.GT3245006@noisy.programming.kicks-ass.net/
 
-    https://lore.kernel.org/all/20180320181855.37297-1-marcel@holtmann.org/
-    https://lore.kernel.org/all/20180324091954.73229-2-marcel@holtmann.org/
-
-Unfortunately, in the years since, several other drivers have come to
-also rely on this duplicated function, probably by accident. This is, at
-the very least, *extremely* confusing. It's also caused real issues when
-it's become out-of-sync, see the following:
-
-    ef564119ba83 ("Bluetooth: hci_h4: Add support for ISO packets")
-    61b27cdf025b ("Bluetooth: hci_h4: Add support for ISO packets in h4_recv.h")
-
-This is the full diff between the two implementations today:
-
-    --- orig.c
-    +++ copy.c
-    @@ -1,117 +1,100 @@
-     {
-    -	struct hci_uart *hu = hci_get_drvdata(hdev);
-    -	u8 alignment = hu->alignment ? hu->alignment : 1;
-    -
-     	/* Check for error from previous call */
-     	if (IS_ERR(skb))
-     		skb = NULL;
-
-     	while (count) {
-     		int i, len;
-
-    -		/* remove padding bytes from buffer */
-    -		for (; hu->padding && count > 0; hu->padding--) {
-    -			count--;
-    -			buffer++;
-    -		}
-    -		if (!count)
-    -			break;
-    -
-     		if (!skb) {
-     			for (i = 0; i < pkts_count; i++) {
-     				if (buffer[0] != (&pkts[i])->type)
-     					continue;
-
-     				skb = bt_skb_alloc((&pkts[i])->maxlen,
-     						   GFP_ATOMIC);
-     				if (!skb)
-     					return ERR_PTR(-ENOMEM);
-
-     				hci_skb_pkt_type(skb) = (&pkts[i])->type;
-     				hci_skb_expect(skb) = (&pkts[i])->hlen;
-     				break;
-     			}
-
-     			/* Check for invalid packet type */
-     			if (!skb)
-     				return ERR_PTR(-EILSEQ);
-
-     			count -= 1;
-     			buffer += 1;
-     		}
-
-     		len = min_t(uint, hci_skb_expect(skb) - skb->len, count);
-     		skb_put_data(skb, buffer, len);
-
-     		count -= len;
-     		buffer += len;
-
-     		/* Check for partial packet */
-     		if (skb->len < hci_skb_expect(skb))
-     			continue;
-
-     		for (i = 0; i < pkts_count; i++) {
-     			if (hci_skb_pkt_type(skb) == (&pkts[i])->type)
-     				break;
-     		}
-
-     		if (i >= pkts_count) {
-     			kfree_skb(skb);
-     			return ERR_PTR(-EILSEQ);
-     		}
-
-     		if (skb->len == (&pkts[i])->hlen) {
-     			u16 dlen;
-
-     			switch ((&pkts[i])->lsize) {
-     			case 0:
-     				/* No variable data length */
-     				dlen = 0;
-     				break;
-     			case 1:
-     				/* Single octet variable length */
-     				dlen = skb->data[(&pkts[i])->loff];
-     				hci_skb_expect(skb) += dlen;
-
-     				if (skb_tailroom(skb) < dlen) {
-     					kfree_skb(skb);
-     					return ERR_PTR(-EMSGSIZE);
-     				}
-     				break;
-     			case 2:
-     				/* Double octet variable length */
-     				dlen = get_unaligned_le16(skb->data +
-     							  (&pkts[i])->loff);
-     				hci_skb_expect(skb) += dlen;
-
-     				if (skb_tailroom(skb) < dlen) {
-     					kfree_skb(skb);
-     					return ERR_PTR(-EMSGSIZE);
-     				}
-     				break;
-     			default:
-     				/* Unsupported variable length */
-     				kfree_skb(skb);
-     				return ERR_PTR(-EILSEQ);
-     			}
-
-     			if (!dlen) {
-    -				hu->padding = (skb->len + 1) % alignment;
-    -				hu->padding = (alignment - hu->padding) % alignment;
-    -
-     				/* No more data, complete frame */
-     				(&pkts[i])->recv(hdev, skb);
-     				skb = NULL;
-     			}
-     		} else {
-    -			hu->padding = (skb->len + 1) % alignment;
-    -			hu->padding = (alignment - hu->padding) % alignment;
-    -
-     			/* Complete frame */
-     			(&pkts[i])->recv(hdev, skb);
-     			skb = NULL;
-     		}
-     	}
-
-     	return skb;
-     }
-    -EXPORT_SYMBOL_GPL(h4_recv_buf)
-
-As I read this: If alignment is one, and padding is zero, padding
-remains zero throughout the loop. So it seems to me that the two
-functions behave strictly identically in that case. All the duplicated
-defines are also identical, as is the duplicated h4_recv_pkt structure
-declaration.
-
-All four drivers which use the duplicated function use the default
-alignment of one, and the default padding of zero. I therefore conclude
-the duplicate function may be safely replaced with the core one.
-
-I raised this in an RFC a few months ago, and didn't get much interest:
-
-    https://lore.kernel.org/all/CABBYNZ+ONkYtq2fR-8PtL3X-vetvJ0BdP4MTw9cNpjLDzG3HUQ@mail.gmail.com/
-
-...but I'm still wary I've missed something, and I'd really appreciate
-more eyeballs on it.
-
-I tested this successfully on btnxpuart a few months ago, but
-unfortunately I no longer have access to that hardware.
-
-Cc: Marcel Holtmann <marcel@holtmann.org>
-Signed-off-by: Calvin Owens <calvin@wbinvd.org>
+Patches are prepared on top of tip:master at commit 4628e5bbca91 ("Merge
+branch into tip/master: 'x86/tdx'")
 ---
- drivers/bluetooth/bpa10x.c    |   2 +-
- drivers/bluetooth/btmtksdio.c |   2 +-
- drivers/bluetooth/btmtkuart.c |   2 +-
- drivers/bluetooth/btnxpuart.c |   2 +-
- drivers/bluetooth/h4_recv.h   | 153 ----------------------------------
- 5 files changed, 4 insertions(+), 157 deletions(-)
- delete mode 100644 drivers/bluetooth/h4_recv.h
+changelog v6..v7:
 
-diff --git a/drivers/bluetooth/bpa10x.c b/drivers/bluetooth/bpa10x.c
-index 8b43dfc755de..b7ba667a3d09 100644
---- a/drivers/bluetooth/bpa10x.c
-+++ b/drivers/bluetooth/bpa10x.c
-@@ -20,7 +20,7 @@
- #include <net/bluetooth/bluetooth.h>
- #include <net/bluetooth/hci_core.h>
- 
--#include "h4_recv.h"
-+#include "hci_uart.h"
- 
- #define VERSION "0.11"
- 
-diff --git a/drivers/bluetooth/btmtksdio.c b/drivers/bluetooth/btmtksdio.c
-index 4fc673640bfc..50abefba6d04 100644
---- a/drivers/bluetooth/btmtksdio.c
-+++ b/drivers/bluetooth/btmtksdio.c
-@@ -29,7 +29,7 @@
- #include <net/bluetooth/bluetooth.h>
- #include <net/bluetooth/hci_core.h>
- 
--#include "h4_recv.h"
-+#include "hci_uart.h"
- #include "btmtk.h"
- 
- #define VERSION "0.1"
-diff --git a/drivers/bluetooth/btmtkuart.c b/drivers/bluetooth/btmtkuart.c
-index 76995cfcd534..d9b90ea2ad38 100644
---- a/drivers/bluetooth/btmtkuart.c
-+++ b/drivers/bluetooth/btmtkuart.c
-@@ -27,7 +27,7 @@
- #include <net/bluetooth/bluetooth.h>
- #include <net/bluetooth/hci_core.h>
- 
--#include "h4_recv.h"
-+#include "hci_uart.h"
- #include "btmtk.h"
- 
- #define VERSION "0.2"
-diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
-index 76e7f857fb7d..d5153fed0518 100644
---- a/drivers/bluetooth/btnxpuart.c
-+++ b/drivers/bluetooth/btnxpuart.c
-@@ -24,7 +24,7 @@
- #include <net/bluetooth/bluetooth.h>
- #include <net/bluetooth/hci_core.h>
- 
--#include "h4_recv.h"
-+#include "hci_uart.h"
- 
- #define MANUFACTURER_NXP		37
- 
-diff --git a/drivers/bluetooth/h4_recv.h b/drivers/bluetooth/h4_recv.h
-deleted file mode 100644
-index 28cf2d8c2d48..000000000000
---- a/drivers/bluetooth/h4_recv.h
-+++ /dev/null
-@@ -1,153 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-or-later */
--/*
-- *
-- *  Generic Bluetooth HCI UART driver
-- *
-- *  Copyright (C) 2015-2018  Intel Corporation
-- */
--
--#include <linux/unaligned.h>
--
--struct h4_recv_pkt {
--	u8  type;	/* Packet type */
--	u8  hlen;	/* Header length */
--	u8  loff;	/* Data length offset in header */
--	u8  lsize;	/* Data length field size */
--	u16 maxlen;	/* Max overall packet length */
--	int (*recv)(struct hci_dev *hdev, struct sk_buff *skb);
--};
--
--#define H4_RECV_ACL \
--	.type = HCI_ACLDATA_PKT, \
--	.hlen = HCI_ACL_HDR_SIZE, \
--	.loff = 2, \
--	.lsize = 2, \
--	.maxlen = HCI_MAX_FRAME_SIZE \
--
--#define H4_RECV_SCO \
--	.type = HCI_SCODATA_PKT, \
--	.hlen = HCI_SCO_HDR_SIZE, \
--	.loff = 2, \
--	.lsize = 1, \
--	.maxlen = HCI_MAX_SCO_SIZE
--
--#define H4_RECV_EVENT \
--	.type = HCI_EVENT_PKT, \
--	.hlen = HCI_EVENT_HDR_SIZE, \
--	.loff = 1, \
--	.lsize = 1, \
--	.maxlen = HCI_MAX_EVENT_SIZE
--
--#define H4_RECV_ISO \
--	.type = HCI_ISODATA_PKT, \
--	.hlen = HCI_ISO_HDR_SIZE, \
--	.loff = 2, \
--	.lsize = 2, \
--	.maxlen = HCI_MAX_FRAME_SIZE
--
--static inline struct sk_buff *h4_recv_buf(struct hci_dev *hdev,
--					  struct sk_buff *skb,
--					  const unsigned char *buffer,
--					  int count,
--					  const struct h4_recv_pkt *pkts,
--					  int pkts_count)
--{
--	/* Check for error from previous call */
--	if (IS_ERR(skb))
--		skb = NULL;
--
--	while (count) {
--		int i, len;
--
--		if (!skb) {
--			for (i = 0; i < pkts_count; i++) {
--				if (buffer[0] != (&pkts[i])->type)
--					continue;
--
--				skb = bt_skb_alloc((&pkts[i])->maxlen,
--						   GFP_ATOMIC);
--				if (!skb)
--					return ERR_PTR(-ENOMEM);
--
--				hci_skb_pkt_type(skb) = (&pkts[i])->type;
--				hci_skb_expect(skb) = (&pkts[i])->hlen;
--				break;
--			}
--
--			/* Check for invalid packet type */
--			if (!skb)
--				return ERR_PTR(-EILSEQ);
--
--			count -= 1;
--			buffer += 1;
--		}
--
--		len = min_t(uint, hci_skb_expect(skb) - skb->len, count);
--		skb_put_data(skb, buffer, len);
--
--		count -= len;
--		buffer += len;
--
--		/* Check for partial packet */
--		if (skb->len < hci_skb_expect(skb))
--			continue;
--
--		for (i = 0; i < pkts_count; i++) {
--			if (hci_skb_pkt_type(skb) == (&pkts[i])->type)
--				break;
--		}
--
--		if (i >= pkts_count) {
--			kfree_skb(skb);
--			return ERR_PTR(-EILSEQ);
--		}
--
--		if (skb->len == (&pkts[i])->hlen) {
--			u16 dlen;
--
--			switch ((&pkts[i])->lsize) {
--			case 0:
--				/* No variable data length */
--				dlen = 0;
--				break;
--			case 1:
--				/* Single octet variable length */
--				dlen = skb->data[(&pkts[i])->loff];
--				hci_skb_expect(skb) += dlen;
--
--				if (skb_tailroom(skb) < dlen) {
--					kfree_skb(skb);
--					return ERR_PTR(-EMSGSIZE);
--				}
--				break;
--			case 2:
--				/* Double octet variable length */
--				dlen = get_unaligned_le16(skb->data +
--							  (&pkts[i])->loff);
--				hci_skb_expect(skb) += dlen;
--
--				if (skb_tailroom(skb) < dlen) {
--					kfree_skb(skb);
--					return ERR_PTR(-EMSGSIZE);
--				}
--				break;
--			default:
--				/* Unsupported variable length */
--				kfree_skb(skb);
--				return ERR_PTR(-EILSEQ);
--			}
--
--			if (!dlen) {
--				/* No more data, complete frame */
--				(&pkts[i])->recv(hdev, skb);
--				skb = NULL;
--			}
--		} else {
--			/* Complete frame */
--			(&pkts[i])->recv(hdev, skb);
--			skb = NULL;
--		}
--	}
--
--	return skb;
--}
+o Fix the s390 and ppc build errors (Intel test robot)
+
+o Use Peter's diff as is and incrementally do the cleanup on top. The
+  PowerPC part was slightly more extensive due to the lack of
+  CONFIG_SCHED_MC in arch/powerpc/Kconfig.
+
+v6: https://lore.kernel.org/lkml/20250825120244.11093-1-kprateek.nayak@amd.com/
+---
+K Prateek Nayak (7):
+  powerpc/smp: Rename cpu_corgroup_* to cpu_corgrp_*
+  powerpc/smp: Export cpu_coregroup_mask()
+  powerpc/smp: Introduce CONFIG_SCHED_MC to guard MC scheduling bits
+  sched/topology: Unify tl_smt_mask() across core and all arch
+  sched/topology: Unify tl_cls_mask() across core and x86
+  sched/topology: Unify tl_mc_mask() across core and all arch
+  sched/topology: Unify tl_pkg_mask() across core and all arch
+
+Peter Zijlstra (1):
+  sched/fair: Get rid of sched_domains_curr_level hack for tl->cpumask()
+
+ arch/powerpc/Kconfig           |  9 ++++++
+ arch/powerpc/include/asm/smp.h |  4 +++
+ arch/powerpc/kernel/smp.c      | 51 +++++++++++++++++++---------------
+ arch/s390/kernel/topology.c    | 16 ++++-------
+ arch/x86/kernel/smpboot.c      |  9 +++---
+ include/linux/sched/topology.h | 34 ++++++++++++++++++++---
+ include/linux/topology.h       |  2 +-
+ kernel/sched/topology.c        | 28 +++++++------------
+ 8 files changed, 93 insertions(+), 60 deletions(-)
+
+
+base-commit: 4628e5bbca916edaf4ed55915ab399f9ba25519f
 -- 
-2.49.1
+2.34.1
 
 
