@@ -1,308 +1,561 @@
-Return-Path: <linux-kernel+bounces-786512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AB3EB35AC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:11:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66E26B35ABC
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:08:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B59D2A287E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:11:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 005001B6674E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A637D2C08BD;
-	Tue, 26 Aug 2025 11:10:50 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA2B20B7EE;
-	Tue, 26 Aug 2025 11:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A9D3296BD7;
+	Tue, 26 Aug 2025 11:07:56 +0000 (UTC)
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [52.229.205.26])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D0361CD208;
+	Tue, 26 Aug 2025 11:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.229.205.26
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756206650; cv=none; b=FwbdHj1g7XqY4OyHVpnCxwl4wttAtVqOCxVr1f2RmTP2KXgtspVKZrOJgegvXRQzFatl91/U0CeWXCWrOuHDGs9bTfnBZdanj7ffwHSkg7gZTQdIDlIytvNe0XDIzZ7icClb/uQHrhqyOeHZVvLYKOkYidAQUUby9tSe9fq0TWs=
+	t=1756206475; cv=none; b=FGOiFCAJx5lZlHqNzHUhBwptSrKIMte/ObPno8tboj0FYwc9j8l2fivZ/C7PmzziWaDpqz/eXLXfFJDDDT27tHR3hbAgM8ABsqesVHWPXhiM9tPAgUkABIgtELmZY/CPYkbOwa5TGIopcQkQ7xqGsQbmIs8gyLa91Pb0ur6sdqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756206650; c=relaxed/simple;
-	bh=YHCZ7REntOxa1r/pT2GpAWUz67v6YmmjL9PrQS853cQ=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=OWWxh1TPkdGjLLVHk1iJJ0N/X+ZBQI6HCMbU7d9h0zaK7CwWFKsZDepFVeFp1lPjiH67mlQAPRzI5EW3YXL1DcFIXt5HDwj7g8qyHTVT26pEI175kcwNt9o/R6VSmtBHHrEnHXPyd5eBeOnMToLiu6f0NWHokKJu8igoQ3n40gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4cB4hd5N6tz8Xs7K;
-	Tue, 26 Aug 2025 19:10:41 +0800 (CST)
-Received: from xaxapp01.zte.com.cn ([10.88.99.176])
-	by mse-fl1.zte.com.cn with SMTP id 57QB7Gha034678;
-	Tue, 26 Aug 2025 19:07:16 +0800 (+08)
-	(envelope-from shao.mingyin@zte.com.cn)
-Received: from mapi (xaxapp01[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Tue, 26 Aug 2025 19:07:19 +0800 (CST)
-Date: Tue, 26 Aug 2025 19:07:19 +0800 (CST)
-X-Zmail-TransId: 2af968ad95677ed-b5846
-X-Mailer: Zmail v1.0
-Message-ID: <20250826190719682yrVrd5e1DHRXx0-XjI19Y@zte.com.cn>
-In-Reply-To: <20250826185643235jApHbqi4zaPaZWVy6_Pot@zte.com.cn>
-References: 20250826185643235jApHbqi4zaPaZWVy6_Pot@zte.com.cn
+	s=arc-20240116; t=1756206475; c=relaxed/simple;
+	bh=Fb5q/dYeeyBX0gcvirhFKJMdTLF8zcntLng7xI3ACMg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=JX8JQ5zDeQpynzLgmklDGzGpSMvu8NaMQVl1h4CDO1Odw5Sx6raIIIXCRRajIYr9ypcpt0YQJj2pv8IXg4yfT1IhgF4qet71BC1AdZhe6TBlmu8OS0nS7g/PQkp8Fw8jqcSBoe0qaOZxvnuikQKnYZ6eZE1EWTj/V1EyHWU2pKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=52.229.205.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0005152DT.eswin.cn (unknown [10.12.96.41])
+	by app1 (Coremail) with SMTP id TAJkCgAXLxB4la1o+ebDAA--.5412S2;
+	Tue, 26 Aug 2025 19:07:38 +0800 (CST)
+From: dongxuyang@eswincomputing.com
+To: p.zabel@pengutronix.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	huangyifeng@eswincomputing.com,
+	pinkesh.vaghela@einfochips.com,
+	Xuyang Dong <dongxuyang@eswincomputing.com>
+Subject: [PATCH v6 2/2] reset: eswin: Add eic7700 reset driver
+Date: Tue, 26 Aug 2025 19:07:34 +0800
+Message-Id: <20250826110734.1448-1-dongxuyang@eswincomputing.com>
+X-Mailer: git-send-email 2.31.1.windows.1
+In-Reply-To: <20250826110610.1338-1-dongxuyang@eswincomputing.com>
+References: <20250826110610.1338-1-dongxuyang@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <shao.mingyin@zte.com.cn>
-To: <shao.mingyin@zte.com.cn>
-Cc: <alexs@kernel.org>, <si.yanteng@linux.dev>, <dzm91@hust.edu.cn>,
-        <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <yang.yang29@zte.com.cn>,
-        <xu.xin16@zte.com.cn>, <yang.tao172@zte.com.cn>,
-        <wang.longjie1@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIHY0IDUvN10gRG9jcy96aF9DTjogVHJhbnNsYXRlIGdmczItZ2xvY2tzLnJzdCB0byBTaW1wbGlmaWVkIENoaW5lc2U=?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 57QB7Gha034678
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.132 unknown Tue, 26 Aug 2025 19:10:41 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 68AD9631.002/4cB4hd5N6tz8Xs7K
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:TAJkCgAXLxB4la1o+ebDAA--.5412S2
+X-Coremail-Antispam: 1UD129KBjvAXoWfArWkKrW3Jr4DKrW8ur13twb_yoW8uF45to
+	WrCF12qr4rKr98ZrWakr1fG3Z8Jw4ftr1UurWYqwnrJwnrCr1qqry8Ar1q9rW3JryUAryD
+	Zr1kGr9xuay5GFWrn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+	AaLaJ3UjIYCTnIWjp_UUUYK7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20EY4v20xva
+	j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2
+	x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8
+	Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
+	xl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+	6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
+	8cxan2IY04v7M4kE6xkIj40Ew7xC0wCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE-syl42
+	xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWU
+	GwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI4
+	8JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4U
+	MIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I
+	8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUOEfODUUUU
+X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/
 
-From: Shao Mingyin <shao.mingyin@zte.com.cn>
+From: Xuyang Dong <dongxuyang@eswincomputing.com>
 
-translate the "gfs2-glocks.rst" into Simplified Chinese.
+Add support for reset controller in eic7700 series chips.
+Provide functionality for asserting and deasserting resets
+on the chip.
 
-Update to commit 713f8834389f("gfs2: Get rid of emote_ok
-checks")
-
-Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
-Signed-off-by: yang tao <yang.tao172@zte.com.cn>
+Signed-off-by: Yifeng Huang <huangyifeng@eswincomputing.com>
+Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
 ---
-v3->v4
-resolve patch damage issues.
- .../zh_CN/filesystems/gfs2-glocks.rst         | 199 ++++++++++++++++++
- .../translations/zh_CN/filesystems/index.rst  |   1 +
- 2 files changed, 200 insertions(+)
- create mode 100644 Documentation/translations/zh_CN/filesystems/gfs2-glocks.rst
+ drivers/reset/Kconfig         |  10 +
+ drivers/reset/Makefile        |   1 +
+ drivers/reset/reset-eic7700.c | 428 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 439 insertions(+)
+ create mode 100644 drivers/reset/reset-eic7700.c
 
-diff --git a/Documentation/translations/zh_CN/filesystems/gfs2-glocks.rst b/Documentation/translations/zh_CN/filesystems/gfs2-glocks.rst
+diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+index 635eef469ab7..f247392af9c3 100644
+--- a/drivers/reset/Kconfig
++++ b/drivers/reset/Kconfig
+@@ -66,6 +66,16 @@ config RESET_BRCMSTB_RESCAL
+ 	  This enables the RESCAL reset controller for SATA, PCIe0, or PCIe1 on
+ 	  BCM7216 or the BCM2712.
+ 
++config RESET_EIC7700
++	bool "Reset controller driver for ESWIN SoCs"
++	depends on ARCH_ESWIN || COMPILE_TEST
++	default ARCH_ESWIN
++	help
++	  This enables the reset controller driver for ESWIN SoCs. This driver is
++	  specific to ESWIN SoCs and should only be enabled if using such hardware.
++	  The driver supports eic7700 series chips and provides functionality for
++	  asserting and deasserting resets on the chip.
++
+ config RESET_EYEQ
+ 	bool "Mobileye EyeQ reset controller"
+ 	depends on MACH_EYEQ5 || MACH_EYEQ6H || COMPILE_TEST
+diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+index a917d2522e8d..9af0a90a5936 100644
+--- a/drivers/reset/Makefile
++++ b/drivers/reset/Makefile
+@@ -12,6 +12,7 @@ obj-$(CONFIG_RESET_BCM6345) += reset-bcm6345.o
+ obj-$(CONFIG_RESET_BERLIN) += reset-berlin.o
+ obj-$(CONFIG_RESET_BRCMSTB) += reset-brcmstb.o
+ obj-$(CONFIG_RESET_BRCMSTB_RESCAL) += reset-brcmstb-rescal.o
++obj-$(CONFIG_RESET_EIC7700) += reset-eic7700.o
+ obj-$(CONFIG_RESET_EYEQ) += reset-eyeq.o
+ obj-$(CONFIG_RESET_GPIO) += reset-gpio.o
+ obj-$(CONFIG_RESET_HSDK) += reset-hsdk.o
+diff --git a/drivers/reset/reset-eic7700.c b/drivers/reset/reset-eic7700.c
 new file mode 100644
-index 000000000000..7f094c5781ad
+index 000000000000..ea0849c64134
 --- /dev/null
-+++ b/Documentation/translations/zh_CN/filesystems/gfs2-glocks.rst
-@@ -0,0 +1,199 @@
-+.. SPDX-License-Identifier: GPL-2.0
++++ b/drivers/reset/reset-eic7700.c
+@@ -0,0 +1,428 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright 2025, Beijing ESWIN Computing Technology Co., Ltd..
++ * All rights reserved.
++ *
++ * ESWIN Reset Driver
++ *
++ * Authors:
++ *	Yifeng Huang <huangyifeng@eswincomputing.com>
++ *	Xuyang Dong <dongxuyang@eswincomputing.com>
++ */
 +
-+==================
-+Glock 内部加锁规则
-+==================
++#include <linux/err.h>
++#include <linux/init.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++#include <linux/reset-controller.h>
++#include <linux/slab.h>
++#include <linux/types.h>
 +
-+本文档阐述 glock 状态机内部运作的基本原理。每个 glock（即
-+fs/gfs2/incore.h 中的 struct gfs2_glock）包含两把主要的内部锁：
++#include <dt-bindings/reset/eswin,eic7700-reset.h>
 +
-+ 1. 自旋锁（gl_lockref.lock）：用于保护内部状态（如
-+    gl_state、gl_target）和持有者列表（gl_holders）
-+ 2. 非阻塞的位锁（GLF_LOCK）：用于防止其他线程同时调用
-+    DLM 等操作。若某线程获取此锁，则在释放时必须调用
-+    run_queue（通常通过工作队列），以确保所有待处理任务
-+    得以完成。
++#define SYSCRG_CLEAR_BOOT_INFO_OFFSET 0x30C
++#define CLEAR_BOOT_FLAG_BIT BIT(0)
++#define SYSCRG_RESET_OFFSET 0x400
 +
-+gl_holders 列表包含与该 glock 关联的所有排队锁请求（不
-+仅是持有者）。若存在已持有的锁，它们将位于列表开头的连
-+续条目中。锁的授予严格遵循排队顺序。
++/**
++ * struct eic7700_reset_data - reset controller information structure
++ * @rcdev: reset controller entity
++ * @regmap: regmap handle containing the memory-mapped reset registers
++ */
++struct eic7700_reset_data {
++	struct reset_controller_dev rcdev;
++	struct regmap *regmap;
++};
 +
-+glock 层用户可请求三种锁状态：共享（SH）、延迟（DF）和
-+排他（EX）。它们对应以下 DLM 锁模式：
++static const struct regmap_config eic7700_regmap_config = {
++	.reg_bits = 32,
++	.val_bits = 32,
++	.max_register = 0x7fffc,
++};
 +
-+==========	====== =====================================================
-+Glock 模式       DLM    锁模式
-+==========	====== =====================================================
-+    UN          IV/NL  未加锁（无关联的 DLM 锁）或 NL
-+    SH          PR     受保护读（Protected read）
-+    DF          CW     并发写（Concurrent write）
-+    EX          EX     排他（Exclusive）
-+==========	====== =====================================================
++struct eic7700_reg {
++	u32 reg;
++	u32 bit;
++};
 +
-+因此，DF 本质上是一种与“常规”共享锁模式（SH）互斥的共
-+享模式。在 GFS2 中，DF 模式专用于直接 I/O 操作。Glock
-+本质上是锁加缓存管理例程的组合，其缓存规则如下：
++static inline struct eic7700_reset_data *
++to_eic7700_reset_data(struct reset_controller_dev *rcdev)
++{
++	return container_of(rcdev, struct eic7700_reset_data, rcdev);
++}
 +
-+==========      ==============   ==========   ==========   ==============
-+Glock 模式      缓存元数据       缓存数据      脏数据        脏元数据
-+==========      ==============   ==========   ==========   ==============
-+    UN               否            否           否            否
-+    DF               是            否           否            否
-+    SH               是            是           否            否
-+    EX               是            是           是            是
-+==========      ==============   ==========   ==========   ==============
++#define EIC7700_RESET(id, reg, bit)[id] = \
++		{ SYSCRG_RESET_OFFSET + (reg) * sizeof(u32), BIT(bit) }
 +
-+这些规则通过为每种 glock 定义的操作函数实现。并非所有
-+glock 类型都使用全部的模式，例如仅 inode glock 使用 DF 模
-+式。
++/* mapping table for reset ID to register offset and reset bit */
++static const struct eic7700_reg eic7700_reset[] = {
++	EIC7700_RESET(EIC7700_RESET_NOC_NSP, 0, 0),
++	EIC7700_RESET(EIC7700_RESET_NOC_CFG, 0, 1),
++	EIC7700_RESET(EIC7700_RESET_RNOC_NSP, 0, 2),
++	EIC7700_RESET(EIC7700_RESET_SNOC_TCU, 0, 3),
++	EIC7700_RESET(EIC7700_RESET_SNOC_U84, 0, 4),
++	EIC7700_RESET(EIC7700_RESET_SNOC_PCIE_XSR, 0, 5),
++	EIC7700_RESET(EIC7700_RESET_SNOC_PCIE_XMR, 0, 6),
++	EIC7700_RESET(EIC7700_RESET_SNOC_PCIE_PR, 0, 7),
++	EIC7700_RESET(EIC7700_RESET_SNOC_NPU, 0, 8),
++	EIC7700_RESET(EIC7700_RESET_SNOC_JTAG, 0, 9),
++	EIC7700_RESET(EIC7700_RESET_SNOC_DSP, 0, 10),
++	EIC7700_RESET(EIC7700_RESET_SNOC_DDRC1_P2, 0, 11),
++	EIC7700_RESET(EIC7700_RESET_SNOC_DDRC1_P1, 0, 12),
++	EIC7700_RESET(EIC7700_RESET_SNOC_DDRC0_P2, 0, 13),
++	EIC7700_RESET(EIC7700_RESET_SNOC_DDRC0_P1, 0, 14),
++	EIC7700_RESET(EIC7700_RESET_SNOC_D2D, 0, 15),
++	EIC7700_RESET(EIC7700_RESET_SNOC_AON, 0, 16),
++	EIC7700_RESET(EIC7700_RESET_GPU_AXI, 1, 0),
++	EIC7700_RESET(EIC7700_RESET_GPU_CFG, 1, 1),
++	EIC7700_RESET(EIC7700_RESET_GPU_GRAY, 1, 2),
++	EIC7700_RESET(EIC7700_RESET_GPU_JONES, 1, 3),
++	EIC7700_RESET(EIC7700_RESET_GPU_SPU, 1, 4),
++	EIC7700_RESET(EIC7700_RESET_DSP_AXI, 2, 0),
++	EIC7700_RESET(EIC7700_RESET_DSP_CFG, 2, 1),
++	EIC7700_RESET(EIC7700_RESET_DSP_DIV4, 2, 2),
++	EIC7700_RESET(EIC7700_RESET_DSP_DIV0, 2, 4),
++	EIC7700_RESET(EIC7700_RESET_DSP_DIV1, 2, 5),
++	EIC7700_RESET(EIC7700_RESET_DSP_DIV2, 2, 6),
++	EIC7700_RESET(EIC7700_RESET_DSP_DIV3, 2, 7),
++	EIC7700_RESET(EIC7700_RESET_D2D_AXI, 3, 0),
++	EIC7700_RESET(EIC7700_RESET_D2D_CFG, 3, 1),
++	EIC7700_RESET(EIC7700_RESET_D2D_PRST, 3, 2),
++	EIC7700_RESET(EIC7700_RESET_D2D_RAW_PCS, 3, 4),
++	EIC7700_RESET(EIC7700_RESET_D2D_RX, 3, 5),
++	EIC7700_RESET(EIC7700_RESET_D2D_TX, 3, 6),
++	EIC7700_RESET(EIC7700_RESET_D2D_CORE, 3, 7),
++	EIC7700_RESET(EIC7700_RESET_DDR1_ARST, 4, 0),
++	EIC7700_RESET(EIC7700_RESET_DDR1_TRACE, 4, 6),
++	EIC7700_RESET(EIC7700_RESET_DDR0_ARST, 4, 16),
++	EIC7700_RESET(EIC7700_RESET_DDR_CFG, 4, 21),
++	EIC7700_RESET(EIC7700_RESET_DDR0_TRACE, 4, 22),
++	EIC7700_RESET(EIC7700_RESET_DDR_CORE, 4, 23),
++	EIC7700_RESET(EIC7700_RESET_DDR_PRST, 4, 26),
++	EIC7700_RESET(EIC7700_RESET_TCU_AXI, 5, 0),
++	EIC7700_RESET(EIC7700_RESET_TCU_CFG, 5, 1),
++	EIC7700_RESET(EIC7700_RESET_TCU_TBU0, 5, 4),
++	EIC7700_RESET(EIC7700_RESET_TCU_TBU1, 5, 5),
++	EIC7700_RESET(EIC7700_RESET_TCU_TBU2, 5, 6),
++	EIC7700_RESET(EIC7700_RESET_TCU_TBU3, 5, 7),
++	EIC7700_RESET(EIC7700_RESET_TCU_TBU4, 5, 8),
++	EIC7700_RESET(EIC7700_RESET_TCU_TBU5, 5, 9),
++	EIC7700_RESET(EIC7700_RESET_TCU_TBU6, 5, 10),
++	EIC7700_RESET(EIC7700_RESET_TCU_TBU7, 5, 11),
++	EIC7700_RESET(EIC7700_RESET_TCU_TBU8, 5, 12),
++	EIC7700_RESET(EIC7700_RESET_TCU_TBU9, 5, 13),
++	EIC7700_RESET(EIC7700_RESET_TCU_TBU10, 5, 14),
++	EIC7700_RESET(EIC7700_RESET_TCU_TBU11, 5, 15),
++	EIC7700_RESET(EIC7700_RESET_TCU_TBU12, 5, 16),
++	EIC7700_RESET(EIC7700_RESET_TCU_TBU13, 5, 17),
++	EIC7700_RESET(EIC7700_RESET_TCU_TBU14, 5, 18),
++	EIC7700_RESET(EIC7700_RESET_TCU_TBU15, 5, 19),
++	EIC7700_RESET(EIC7700_RESET_TCU_TBU16, 5, 20),
++	EIC7700_RESET(EIC7700_RESET_NPU_AXI, 6, 0),
++	EIC7700_RESET(EIC7700_RESET_NPU_CFG, 6, 1),
++	EIC7700_RESET(EIC7700_RESET_NPU_CORE, 6, 2),
++	EIC7700_RESET(EIC7700_RESET_NPU_E31CORE, 6, 3),
++	EIC7700_RESET(EIC7700_RESET_NPU_E31BUS, 6, 4),
++	EIC7700_RESET(EIC7700_RESET_NPU_E31DBG, 6, 5),
++	EIC7700_RESET(EIC7700_RESET_NPU_LLC, 6, 6),
++	EIC7700_RESET(EIC7700_RESET_HSP_AXI, 7, 0),
++	EIC7700_RESET(EIC7700_RESET_HSP_CFG, 7, 1),
++	EIC7700_RESET(EIC7700_RESET_HSP_POR, 7, 2),
++	EIC7700_RESET(EIC7700_RESET_MSHC0_PHY, 7, 3),
++	EIC7700_RESET(EIC7700_RESET_MSHC1_PHY, 7, 4),
++	EIC7700_RESET(EIC7700_RESET_MSHC2_PHY, 7, 5),
++	EIC7700_RESET(EIC7700_RESET_MSHC0_TXRX, 7, 6),
++	EIC7700_RESET(EIC7700_RESET_MSHC1_TXRX, 7, 7),
++	EIC7700_RESET(EIC7700_RESET_MSHC2_TXRX, 7, 8),
++	EIC7700_RESET(EIC7700_RESET_SATA_ASIC0, 7, 9),
++	EIC7700_RESET(EIC7700_RESET_SATA_OOB, 7, 10),
++	EIC7700_RESET(EIC7700_RESET_SATA_PMALIVE, 7, 11),
++	EIC7700_RESET(EIC7700_RESET_SATA_RBC, 7, 12),
++	EIC7700_RESET(EIC7700_RESET_DMA0, 7, 13),
++	EIC7700_RESET(EIC7700_RESET_HSP_DMA, 7, 14),
++	EIC7700_RESET(EIC7700_RESET_USB0_VAUX, 7, 15),
++	EIC7700_RESET(EIC7700_RESET_USB1_VAUX, 7, 16),
++	EIC7700_RESET(EIC7700_RESET_HSP_SD1_PRST, 7, 17),
++	EIC7700_RESET(EIC7700_RESET_HSP_SD0_PRST, 7, 18),
++	EIC7700_RESET(EIC7700_RESET_HSP_EMMC_PRST, 7, 19),
++	EIC7700_RESET(EIC7700_RESET_HSP_DMA_PRST, 7, 20),
++	EIC7700_RESET(EIC7700_RESET_HSP_SD1_ARST, 7, 21),
++	EIC7700_RESET(EIC7700_RESET_HSP_SD0_ARST, 7, 22),
++	EIC7700_RESET(EIC7700_RESET_HSP_EMMC_ARST, 7, 23),
++	EIC7700_RESET(EIC7700_RESET_HSP_DMA_ARST, 7, 24),
++	EIC7700_RESET(EIC7700_RESET_HSP_ETH1_ARST, 7, 25),
++	EIC7700_RESET(EIC7700_RESET_HSP_ETH0_ARST, 7, 26),
++	EIC7700_RESET(EIC7700_RESET_SATA_ARST, 7, 27),
++	EIC7700_RESET(EIC7700_RESET_PCIE_CFG, 8, 0),
++	EIC7700_RESET(EIC7700_RESET_PCIE_POWEUP, 8, 1),
++	EIC7700_RESET(EIC7700_RESET_PCIE_PERST, 8, 2),
++	EIC7700_RESET(EIC7700_RESET_I2C0, 9, 0),
++	EIC7700_RESET(EIC7700_RESET_I2C1, 9, 1),
++	EIC7700_RESET(EIC7700_RESET_I2C2, 9, 2),
++	EIC7700_RESET(EIC7700_RESET_I2C3, 9, 3),
++	EIC7700_RESET(EIC7700_RESET_I2C4, 9, 4),
++	EIC7700_RESET(EIC7700_RESET_I2C5, 9, 5),
++	EIC7700_RESET(EIC7700_RESET_I2C6, 9, 6),
++	EIC7700_RESET(EIC7700_RESET_I2C7, 9, 7),
++	EIC7700_RESET(EIC7700_RESET_I2C8, 9, 8),
++	EIC7700_RESET(EIC7700_RESET_I2C9, 9, 9),
++	EIC7700_RESET(EIC7700_RESET_FAN, 10, 0),
++	EIC7700_RESET(EIC7700_RESET_PVT0, 11, 0),
++	EIC7700_RESET(EIC7700_RESET_PVT1, 11, 1),
++	EIC7700_RESET(EIC7700_RESET_MBOX0, 12, 0),
++	EIC7700_RESET(EIC7700_RESET_MBOX1, 12, 1),
++	EIC7700_RESET(EIC7700_RESET_MBOX2, 12, 2),
++	EIC7700_RESET(EIC7700_RESET_MBOX3, 12, 3),
++	EIC7700_RESET(EIC7700_RESET_MBOX4, 12, 4),
++	EIC7700_RESET(EIC7700_RESET_MBOX5, 12, 5),
++	EIC7700_RESET(EIC7700_RESET_MBOX6, 12, 6),
++	EIC7700_RESET(EIC7700_RESET_MBOX7, 12, 7),
++	EIC7700_RESET(EIC7700_RESET_MBOX8, 12, 8),
++	EIC7700_RESET(EIC7700_RESET_MBOX9, 12, 9),
++	EIC7700_RESET(EIC7700_RESET_MBOX10, 12, 10),
++	EIC7700_RESET(EIC7700_RESET_MBOX11, 12, 11),
++	EIC7700_RESET(EIC7700_RESET_MBOX12, 12, 12),
++	EIC7700_RESET(EIC7700_RESET_MBOX13, 12, 13),
++	EIC7700_RESET(EIC7700_RESET_MBOX14, 12, 14),
++	EIC7700_RESET(EIC7700_RESET_MBOX15, 12, 15),
++	EIC7700_RESET(EIC7700_RESET_UART0, 13, 0),
++	EIC7700_RESET(EIC7700_RESET_UART1, 13, 1),
++	EIC7700_RESET(EIC7700_RESET_UART2, 13, 2),
++	EIC7700_RESET(EIC7700_RESET_UART3, 13, 3),
++	EIC7700_RESET(EIC7700_RESET_UART4, 13, 4),
++	EIC7700_RESET(EIC7700_RESET_GPIO0, 14, 0),
++	EIC7700_RESET(EIC7700_RESET_GPIO1, 14, 1),
++	EIC7700_RESET(EIC7700_RESET_TIMER, 15, 0),
++	EIC7700_RESET(EIC7700_RESET_SSI0, 16, 0),
++	EIC7700_RESET(EIC7700_RESET_SSI1, 16, 1),
++	EIC7700_RESET(EIC7700_RESET_WDT0, 17, 0),
++	EIC7700_RESET(EIC7700_RESET_WDT1, 17, 1),
++	EIC7700_RESET(EIC7700_RESET_WDT2, 17, 2),
++	EIC7700_RESET(EIC7700_RESET_WDT3, 17, 3),
++	EIC7700_RESET(EIC7700_RESET_LSP_CFG, 18, 0),
++	EIC7700_RESET(EIC7700_RESET_U84_CORE0, 19, 0),
++	EIC7700_RESET(EIC7700_RESET_U84_CORE1, 19, 1),
++	EIC7700_RESET(EIC7700_RESET_U84_CORE2, 19, 2),
++	EIC7700_RESET(EIC7700_RESET_U84_CORE3, 19, 3),
++	EIC7700_RESET(EIC7700_RESET_U84_BUS, 19, 4),
++	EIC7700_RESET(EIC7700_RESET_U84_DBG, 19, 5),
++	EIC7700_RESET(EIC7700_RESET_U84_TRACECOM, 19, 6),
++	EIC7700_RESET(EIC7700_RESET_U84_TRACE0, 19, 8),
++	EIC7700_RESET(EIC7700_RESET_U84_TRACE1, 19, 9),
++	EIC7700_RESET(EIC7700_RESET_U84_TRACE2, 19, 10),
++	EIC7700_RESET(EIC7700_RESET_U84_TRACE3, 19, 11),
++	EIC7700_RESET(EIC7700_RESET_SCPU_CORE, 20, 0),
++	EIC7700_RESET(EIC7700_RESET_SCPU_BUS, 20, 1),
++	EIC7700_RESET(EIC7700_RESET_SCPU_DBG, 20, 2),
++	EIC7700_RESET(EIC7700_RESET_LPCPU_CORE, 21, 0),
++	EIC7700_RESET(EIC7700_RESET_LPCPU_BUS, 21, 1),
++	EIC7700_RESET(EIC7700_RESET_LPCPU_DBG, 21, 2),
++	EIC7700_RESET(EIC7700_RESET_VC_CFG, 22, 0),
++	EIC7700_RESET(EIC7700_RESET_VC_AXI, 22, 1),
++	EIC7700_RESET(EIC7700_RESET_VC_MONCFG, 22, 2),
++	EIC7700_RESET(EIC7700_RESET_JD_CFG, 23, 0),
++	EIC7700_RESET(EIC7700_RESET_JD_AXI, 23, 1),
++	EIC7700_RESET(EIC7700_RESET_JE_CFG, 24, 0),
++	EIC7700_RESET(EIC7700_RESET_JE_AXI, 24, 1),
++	EIC7700_RESET(EIC7700_RESET_VD_CFG, 25, 0),
++	EIC7700_RESET(EIC7700_RESET_VD_AXI, 25, 1),
++	EIC7700_RESET(EIC7700_RESET_VE_AXI, 26, 0),
++	EIC7700_RESET(EIC7700_RESET_VE_CFG, 26, 1),
++	EIC7700_RESET(EIC7700_RESET_G2D_CORE, 27, 0),
++	EIC7700_RESET(EIC7700_RESET_G2D_CFG, 27, 1),
++	EIC7700_RESET(EIC7700_RESET_G2D_AXI, 27, 2),
++	EIC7700_RESET(EIC7700_RESET_VI_AXI, 28, 0),
++	EIC7700_RESET(EIC7700_RESET_VI_CFG, 28, 1),
++	EIC7700_RESET(EIC7700_RESET_VI_DWE, 28, 2),
++	EIC7700_RESET(EIC7700_RESET_DVP, 29, 0),
++	EIC7700_RESET(EIC7700_RESET_ISP0, 30, 0),
++	EIC7700_RESET(EIC7700_RESET_ISP1, 31, 0),
++	EIC7700_RESET(EIC7700_RESET_SHUTTR0, 32, 0),
++	EIC7700_RESET(EIC7700_RESET_SHUTTR1, 32, 1),
++	EIC7700_RESET(EIC7700_RESET_SHUTTR2, 32, 2),
++	EIC7700_RESET(EIC7700_RESET_SHUTTR3, 32, 3),
++	EIC7700_RESET(EIC7700_RESET_SHUTTR4, 32, 4),
++	EIC7700_RESET(EIC7700_RESET_SHUTTR5, 32, 5),
++	EIC7700_RESET(EIC7700_RESET_VO_MIPI, 33, 0),
++	EIC7700_RESET(EIC7700_RESET_VO_PRST, 33, 1),
++	EIC7700_RESET(EIC7700_RESET_VO_HDMI_PRST, 33, 3),
++	EIC7700_RESET(EIC7700_RESET_VO_HDMI_PHY, 33, 4),
++	EIC7700_RESET(EIC7700_RESET_VO_HDMI, 33, 5),
++	EIC7700_RESET(EIC7700_RESET_VO_I2S, 34, 0),
++	EIC7700_RESET(EIC7700_RESET_VO_I2S_PRST, 34, 1),
++	EIC7700_RESET(EIC7700_RESET_VO_AXI, 35, 0),
++	EIC7700_RESET(EIC7700_RESET_VO_CFG, 35, 1),
++	EIC7700_RESET(EIC7700_RESET_VO_DC, 35, 2),
++	EIC7700_RESET(EIC7700_RESET_VO_DC_PRST, 35, 3),
++	EIC7700_RESET(EIC7700_RESET_BOOTSPI_HRST, 36, 0),
++	EIC7700_RESET(EIC7700_RESET_BOOTSPI, 36, 1),
++	EIC7700_RESET(EIC7700_RESET_ANO1, 37, 0),
++	EIC7700_RESET(EIC7700_RESET_ANO0, 38, 0),
++	EIC7700_RESET(EIC7700_RESET_DMA1_ARST, 39, 0),
++	EIC7700_RESET(EIC7700_RESET_DMA1_HRST, 39, 1),
++	EIC7700_RESET(EIC7700_RESET_FPRT, 40, 0),
++	EIC7700_RESET(EIC7700_RESET_HBLOCK, 41, 0),
++	EIC7700_RESET(EIC7700_RESET_SECSR, 42, 0),
++	EIC7700_RESET(EIC7700_RESET_OTP, 43, 0),
++	EIC7700_RESET(EIC7700_RESET_PKA, 44, 0),
++	EIC7700_RESET(EIC7700_RESET_SPACC, 45, 0),
++	EIC7700_RESET(EIC7700_RESET_TRNG, 46, 0),
++	EIC7700_RESET(EIC7700_RESET_TIMER0_0, 48, 0),
++	EIC7700_RESET(EIC7700_RESET_TIMER0_1, 48, 1),
++	EIC7700_RESET(EIC7700_RESET_TIMER0_2, 48, 2),
++	EIC7700_RESET(EIC7700_RESET_TIMER0_3, 48, 3),
++	EIC7700_RESET(EIC7700_RESET_TIMER0_4, 48, 4),
++	EIC7700_RESET(EIC7700_RESET_TIMER0_5, 48, 5),
++	EIC7700_RESET(EIC7700_RESET_TIMER0_6, 48, 6),
++	EIC7700_RESET(EIC7700_RESET_TIMER0_7, 48, 7),
++	EIC7700_RESET(EIC7700_RESET_TIMER0_N, 48, 8),
++	EIC7700_RESET(EIC7700_RESET_TIMER1_0, 49, 0),
++	EIC7700_RESET(EIC7700_RESET_TIMER1_1, 49, 1),
++	EIC7700_RESET(EIC7700_RESET_TIMER1_2, 49, 2),
++	EIC7700_RESET(EIC7700_RESET_TIMER1_3, 49, 3),
++	EIC7700_RESET(EIC7700_RESET_TIMER1_4, 49, 4),
++	EIC7700_RESET(EIC7700_RESET_TIMER1_5, 49, 5),
++	EIC7700_RESET(EIC7700_RESET_TIMER1_6, 49, 6),
++	EIC7700_RESET(EIC7700_RESET_TIMER1_7, 49, 7),
++	EIC7700_RESET(EIC7700_RESET_TIMER1_N, 49, 8),
++	EIC7700_RESET(EIC7700_RESET_TIMER2_0, 50, 0),
++	EIC7700_RESET(EIC7700_RESET_TIMER2_1, 50, 1),
++	EIC7700_RESET(EIC7700_RESET_TIMER2_2, 50, 2),
++	EIC7700_RESET(EIC7700_RESET_TIMER2_3, 50, 3),
++	EIC7700_RESET(EIC7700_RESET_TIMER2_4, 50, 4),
++	EIC7700_RESET(EIC7700_RESET_TIMER2_5, 50, 5),
++	EIC7700_RESET(EIC7700_RESET_TIMER2_6, 50, 6),
++	EIC7700_RESET(EIC7700_RESET_TIMER2_7, 50, 7),
++	EIC7700_RESET(EIC7700_RESET_TIMER2_N, 50, 8),
++	EIC7700_RESET(EIC7700_RESET_TIMER3_0, 51, 0),
++	EIC7700_RESET(EIC7700_RESET_TIMER3_1, 51, 1),
++	EIC7700_RESET(EIC7700_RESET_TIMER3_2, 51, 2),
++	EIC7700_RESET(EIC7700_RESET_TIMER3_3, 51, 3),
++	EIC7700_RESET(EIC7700_RESET_TIMER3_4, 51, 4),
++	EIC7700_RESET(EIC7700_RESET_TIMER3_5, 51, 5),
++	EIC7700_RESET(EIC7700_RESET_TIMER3_6, 51, 6),
++	EIC7700_RESET(EIC7700_RESET_TIMER3_7, 51, 7),
++	EIC7700_RESET(EIC7700_RESET_TIMER3_N, 51, 8),
++	EIC7700_RESET(EIC7700_RESET_RTC, 52, 0),
++	EIC7700_RESET(EIC7700_RESET_MNOC_SNOC_NSP, 53, 0),
++	EIC7700_RESET(EIC7700_RESET_MNOC_VC, 53, 1),
++	EIC7700_RESET(EIC7700_RESET_MNOC_CFG, 53, 2),
++	EIC7700_RESET(EIC7700_RESET_MNOC_HSP, 53, 3),
++	EIC7700_RESET(EIC7700_RESET_MNOC_GPU, 53, 4),
++	EIC7700_RESET(EIC7700_RESET_MNOC_DDRC1_P3, 53, 5),
++	EIC7700_RESET(EIC7700_RESET_MNOC_DDRC0_P3, 53, 6),
++	EIC7700_RESET(EIC7700_RESET_RNOC_VO, 54, 0),
++	EIC7700_RESET(EIC7700_RESET_RNOC_VI, 54, 1),
++	EIC7700_RESET(EIC7700_RESET_RNOC_SNOC_NSP, 54, 2),
++	EIC7700_RESET(EIC7700_RESET_RNOC_CFG, 54, 3),
++	EIC7700_RESET(EIC7700_RESET_MNOC_DDRC1_P4, 54, 4),
++	EIC7700_RESET(EIC7700_RESET_MNOC_DDRC0_P4, 54, 5),
++	EIC7700_RESET(EIC7700_RESET_CNOC_VO_CFG, 55, 0),
++	EIC7700_RESET(EIC7700_RESET_CNOC_VI_CFG, 55, 1),
++	EIC7700_RESET(EIC7700_RESET_CNOC_VC_CFG, 55, 2),
++	EIC7700_RESET(EIC7700_RESET_CNOC_TCU_CFG, 55, 3),
++	EIC7700_RESET(EIC7700_RESET_CNOC_PCIE_CFG, 55, 4),
++	EIC7700_RESET(EIC7700_RESET_CNOC_NPU_CFG, 55, 5),
++	EIC7700_RESET(EIC7700_RESET_CNOC_LSP_CFG, 55, 6),
++	EIC7700_RESET(EIC7700_RESET_CNOC_HSP_CFG, 55, 7),
++	EIC7700_RESET(EIC7700_RESET_CNOC_GPU_CFG, 55, 8),
++	EIC7700_RESET(EIC7700_RESET_CNOC_DSPT_CFG, 55, 9),
++	EIC7700_RESET(EIC7700_RESET_CNOC_DDRT1_CFG, 55, 10),
++	EIC7700_RESET(EIC7700_RESET_CNOC_DDRT0_CFG, 55, 11),
++	EIC7700_RESET(EIC7700_RESET_CNOC_D2D_CFG, 55, 12),
++	EIC7700_RESET(EIC7700_RESET_CNOC_CFG, 55, 13),
++	EIC7700_RESET(EIC7700_RESET_CNOC_CLMM_CFG, 55, 14),
++	EIC7700_RESET(EIC7700_RESET_CNOC_AON_CFG, 55, 15),
++	EIC7700_RESET(EIC7700_RESET_LNOC_CFG, 56, 0),
++	EIC7700_RESET(EIC7700_RESET_LNOC_NPU_LLC, 56, 1),
++	EIC7700_RESET(EIC7700_RESET_LNOC_DDRC1_P0, 56, 2),
++	EIC7700_RESET(EIC7700_RESET_LNOC_DDRC0_P0, 56, 3),
++};
 +
-+glock 操作函数及类型常量说明表：
++static int eic7700_reset_assert(struct reset_controller_dev *rcdev,
++				unsigned long id)
++{
++	struct eic7700_reset_data *data = to_eic7700_reset_data(rcdev);
 +
-+==============     ========================================================
-+字段                用途
-+==============     ========================================================
-+go_sync            远程状态变更前调用（如同步脏数据）
-+go_xmote_bh        远程状态变更后调用（如刷新缓存）
-+go_inval           远程状态变更需使缓存失效时调用
-+go_instantiate     获取 glock 时调用
-+go_held            每次获取 glock 持有者时调用
-+go_dump            为 debugfs 文件打印对象内容，或出错时将 glock 转储至日志
-+go_callback        若 DLM 发送回调以释放此锁时调用
-+go_unlocked        当 glock 解锁时调用（dlm_unlock()）
-+go_type            glock 类型，``LM_TYPE_*``
-+go_flags           若 glock 关联地址空间，则设置GLOF_ASPACE 标志
-+==============     ========================================================
++	return regmap_clear_bits(data->regmap, eic7700_reset[id].reg,
++				 eic7700_reset[id].bit);
++}
 +
-+每种锁的最短持有时间是指在远程锁授予后忽略远程降级请求
-+的时间段。此举旨在防止锁在集群节点间持续弹跳而无实质进
-+展的情况，此现象常见于多节点写入的共享内存映射文件。通
-+过延迟响应远程回调的降级操作，为用户空间程序争取页面取
-+消映射前的处理时间。
++static int eic7700_reset_deassert(struct reset_controller_dev *rcdev,
++				  unsigned long id)
++{
++	struct eic7700_reset_data *data = to_eic7700_reset_data(rcdev);
 +
-+未来计划将 glock 的 "EX" 模式设为本地共享，使本地锁通
-+过 i_mutex 实现而非 glock。
++	return regmap_set_bits(data->regmap, eic7700_reset[id].reg,
++			       eic7700_reset[id].bit);
++}
 +
-+glock 操作函数的加锁规则：
++static int eic7700_reset_reset(struct reset_controller_dev *rcdev,
++			       unsigned long id)
++{
++	int ret;
 +
-+==============   ======================    =============================
-+操作              GLF_LOCK 位锁持有          gl_lockref.lock 自旋锁持有
-+==============   ======================    =============================
-+go_sync              是                         否
-+go_xmote_bh          是                         否
-+go_inval             是                         否
-+go_instantiate       否                         否
-+go_held              否                         否
-+go_dump              有时                       是
-+go_callback          有时（N/A）                 是
-+go_unlocked          是                         否
-+==============   ======================    =============================
++	ret = eic7700_reset_assert(rcdev, id);
++	if (ret)
++		return ret;
 +
-+.. Note::
++	usleep_range(10, 15);
 +
-+   若入口处持有锁则操作期间不得释放位锁或自旋锁。
-+   go_dump 和 do_demote_ok 严禁阻塞。
-+   仅当 glock 状态指示其缓存最新数据时才会调用 go_dump。
++	return eic7700_reset_deassert(rcdev, id);
++}
 +
-+GFS2 内部的 glock 加锁顺序：
++static const struct reset_control_ops eic7700_reset_ops = {
++	.reset = eic7700_reset_reset,
++	.assert = eic7700_reset_assert,
++	.deassert = eic7700_reset_deassert,
++};
 +
-+ 1. i_rwsem（如需要）
-+ 2. 重命名 glock（仅用于重命名）
-+ 3. Inode glock
-+    （父级优先于子级，同级 inode 按锁编号排序）
-+ 4. Rgrp glock（用于（反）分配操作）
-+ 5. 事务 glock（通过 gfs2_trans_begin，非读操作）
-+ 6. i_rw_mutex（如需要）
-+ 7. 页锁（始终最后，至关重要！）
++static const struct of_device_id eic7700_reset_dt_ids[] = {
++	{ .compatible = "eswin,eic7700-reset", },
++	{ /* sentinel */ }
++};
 +
-+每个 inode 对应两把 glock：一把管理 inode 本身（加锁顺
-+序如上），另一把（称为 iopen glock）结合 inode 的
-+i_nlink 字段决定 inode 生命周期。inode 加锁基于单个
-+inode，rgrp 加锁基于单个 rgrp。通常优先获取本地锁再获
-+取集群锁。
++static int eic7700_reset_probe(struct platform_device *pdev)
++{
++	struct eic7700_reset_data *data;
++	struct device *dev = &pdev->dev;
++	void __iomem *base;
 +
-+Glock 统计
-+----------
++	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
 +
-+统计分为两类：超级块相关统计和单个 glock 相关统计。超级
-+块统计按每 CPU 执行以减少收集开销，并进一步按 glock 类
-+型细分。所有时间单位为纳秒。
++	base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
 +
-+超级块和 glock 统计收集相同信息。超级块时序统计为 glock
-+时序统计提供默认值，使新建 glock 具有合理的初始值。每个
-+glock 的计数器在创建时初始化为零，当 glock 从内存移除时
-+统计丢失。
++	data->regmap = devm_regmap_init_mmio(dev, base, &eic7700_regmap_config);
++	if (IS_ERR(data->regmap))
++		return dev_err_probe(dev, PTR_ERR(data->regmap),
++				     "failed to get regmap!\n");
 +
-+统计包含三组均值/方差对及两个计数器。均值/方差对为平滑
-+指数估计，算法与网络代码中的往返时间计算类似（参见《
-+TCP/IP详解 卷1》第21.3节及《卷2》第25.10节）。与 TCP/IP
-+案例不同，此处均值/方差未缩放且单位为整数纳秒。
++	data->rcdev.owner = THIS_MODULE;
++	data->rcdev.ops = &eic7700_reset_ops;
++	data->rcdev.of_node = dev->of_node;
++	data->rcdev.of_reset_n_cells = 1;
++	data->rcdev.dev = dev;
++	data->rcdev.nr_resets = ARRAY_SIZE(eic7700_reset);
 +
-+三组均值/方差对测量以下内容：
++	/* clear boot flag so u84 and scpu could be reseted by software */
++	regmap_set_bits(data->regmap, SYSCRG_CLEAR_BOOT_INFO_OFFSET,
++			CLEAR_BOOT_FLAG_BIT);
++	msleep(50);
 +
-+ 1. DLM 锁时间（非阻塞请求）
-+ 2. DLM 锁时间（阻塞请求）
-+ 3. 请求间隔时间（指向 DLM）
++	return devm_reset_controller_register(dev, &data->rcdev);
++}
 +
-+非阻塞请求指无论目标 DLM 锁处于何种状态均能立即完成的请求。
-+当前满足条件的请求包括：(a)锁当前状态为互斥（如锁降级）、
-+(b)请求状态为空置或解锁（同样如锁降级）、或(c)设置"try lock"
-+标志的请求。其余锁请求均属阻塞请求。
++static struct platform_driver eic7700_reset_driver = {
++	.probe	= eic7700_reset_probe,
++	.driver = {
++		.name		= "eic7700-reset",
++		.of_match_table	= eic7700_reset_dt_ids,
++	},
++};
 +
-+两个计数器分别统计：
-+ 1. 锁请求总数（决定均值/方差计算的数据量）
-+ 2. glock 代码顶层的持有者排队数（通常远大于 DLM 锁请求数）
-+
-+为什么收集这些统计数据？我们需深入分析时序参数的动因如下：
-+
-+1. 更精准设置 glock "最短持有时间"
-+2. 快速识别性能问题
-+3. 改进资源组分配算法（基于锁等待时间而非盲目 "try lock"）
-+
-+因平滑更新的特性，采样量的阶跃变化需经 8 次采样（方差需
-+4 次）才能完全体现，解析结果时需审慎考虑。
-+
-+通过锁请求完成时间和 glock 平均锁请求间隔时间，可计算节
-+点使用 glock 时长与集群共享时长的占比，对设置锁最短持有
-+时间至关重要。
-+
-+我们已采取严谨措施，力求精准测量目标量值。任何测量系统均
-+存在误差，但我期望当前方案已达到合理精度极限。
-+
-+超级块状态统计路径::
-+
-+    /sys/kernel/debug/gfs2/<fsname>/sbstats
-+
-+Glock 状态统计路径::
-+
-+    /sys/kernel/debug/gfs2/<fsname>/glstats
-+
-+（假设 debugfs 挂载于 /sys/kernel/debug，且 <fsname> 替
-+换为对应 GFS2 文件系统名）
-+
-+输出缩写说明：
-+
-+=========  ============================================
-+srtt       非阻塞 DLM 请求的平滑往返时间
-+srttvar    srtt 的方差估计
-+srttb      （潜在）阻塞 DLM 请求的平滑往返时间
-+srttvarb   srttb 的方差估计
-+sirt       DLM 请求的平滑请求间隔时间
-+sirtvar    sirt 的方差估计
-+dlm        DLM 请求数（glstats 文件中的 dcnt）
-+queue      排队的 glock 请求数（glstats 文件中的 qcnt）
-+=========  ============================================
-+
-+sbstats文件按glock类型（每种类型8行）和CPU核心（每CPU一列）
-+记录统计数据集。glstats文件则为每个glock提供统计集，其格式
-+与glocks文件类似，但所有时序统计量均采用均值/方差格式存储。
-+
-+gfs2_glock_lock_time 跟踪点实时输出目标 glock 的当前统计
-+值，并附带每次接收到的dlm响应附加信息：
-+
-+======   ============
-+status   DLM 请求状态
-+flags    DLM 请求标志
-+tdiff    该请求的耗时
-+======   ============
-+
-+（其余字段同上表）
-diff --git a/Documentation/translations/zh_CN/filesystems/index.rst b/Documentation/translations/zh_CN/filesystems/index.rst
-index 291d7a46e8ab..dbd300c20e6b 100644
---- a/Documentation/translations/zh_CN/filesystems/index.rst
-+++ b/Documentation/translations/zh_CN/filesystems/index.rst
-@@ -30,3 +30,4 @@ Linux Kernel中的文件系统
-    ubifs-authentication
-    gfs2
-    gfs2-uevents
-+   gfs2-glocks
++builtin_platform_driver(eic7700_reset_driver);
 -- 
-2.25.1
+2.17.1
+
 
