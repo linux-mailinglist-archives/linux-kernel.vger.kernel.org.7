@@ -1,134 +1,194 @@
-Return-Path: <linux-kernel+bounces-786841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A258B36D0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:06:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0462AB3602A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:57:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0268B5A311F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:48:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EE91465292
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 644CC1CD215;
-	Tue, 26 Aug 2025 14:45:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408FD213236;
+	Tue, 26 Aug 2025 12:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gyyhJh5U"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qttu5Vzd"
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29931A83FB
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 14:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E901F09BF;
+	Tue, 26 Aug 2025 12:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756219523; cv=none; b=V3/rDUTG7PpMmTjOeirI8znMXi/IHmRycdUe0ZMyKoXmvAGoqewcM5JJmPYax9qBwyhfeQdsm78kHySsigVDsTssgxyqDe4IRvDiCi4c7N1O2YEtuqrAJHAmZpfifs5qALOy/iMe2mNzaZmIRDrrFOPoNcn43jE2CTfqsvf//S8=
+	t=1756212890; cv=none; b=r3HeQcRPGwN7Z5rYHIgcl0F71mBTgTQHelkTj7M9PqKvLnDd3rDYS8V49zDY0zilLYnRAgPZL9O0AQni9kHwfkeR2lfyu+MG0UzUG+VigpbXvEBn43ZD2N0+D12ePLJ9EVVV2K0CcmYsyNG1X7npsWUS50AYMNUhyfUbf14jLqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756219523; c=relaxed/simple;
-	bh=4i76iFBGpqXB28FZCKzzhsSVSXhEQEgSz28LHBmh8r8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qxjlwm/Ii+ERQLLUi58uM/vExC2uqoQ1L5X9wcDu2vfQBJZDKqhwo19CFq5uHCKOGLYRdk/sHjiFOrr+0wVBvcy55B8AYSNH+eVHbAOg5Y2N+DvMbERsi5pGC5gtM9gseUlVRkAgCJGrviwM558OS+MK9Lwi+PK/IqjOqYz2FGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gyyhJh5U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54451C113D0;
-	Tue, 26 Aug 2025 14:45:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1756219523;
-	bh=4i76iFBGpqXB28FZCKzzhsSVSXhEQEgSz28LHBmh8r8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gyyhJh5Uj/lCmb8vNaMU0OlfUUbABEbkwgv0SXxjmYQKpyERYQs8UQG9SyHtYkvho
-	 wwdVRXeeEuYmnaaXzr/JAr9PGQfa/4zNbT+FQv962rPy+Hp10Biat3+/SSqNNw/rR7
-	 oU6dDrhWtJgtMJWLq7ZExG/JnlhX2H0Bunt/eK/8=
-Date: Tue, 26 Aug 2025 14:54:10 +0200
-From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To: Xion Wang =?utf-8?B?KOeOi+mRqyk=?= <Xion.Wang@mediatek.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	wsd_upstream <wsd_upstream@mediatek.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Huadian Liu =?utf-8?B?KOWImOWNjuWFuCk=?= <huadian.liu@mediatek.com>,
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-	"arnd@arndb.de" <arnd@arndb.de>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH 1/1] misc: Prevent double registration and deregistration
- of miscdevice
-Message-ID: <2025082646-regalia-glass-951d@gregkh>
-References: <20250825084556.10358-1-xion.wang@mediatek.com>
- <20250825084556.10358-2-xion.wang@mediatek.com>
- <2025082533-ranked-simply-4b63@gregkh>
- <d3d0fc0e19f939c093e6df1ff08ce23be71636a3.camel@mediatek.com>
- <2025082638-parlor-retreat-56ff@gregkh>
- <1ffa28bf6e3dcde83a6a6a5dde163596c4db639d.camel@mediatek.com>
- <2025082631-hypnotist-snazzy-147a@gregkh>
- <d3a780c367478868319064c27e0b41c69d4cc722.camel@mediatek.com>
+	s=arc-20240116; t=1756212890; c=relaxed/simple;
+	bh=LXuP8d/+OEh1uPEue6k7yNAbaZ/uz/Zgm558er50t5k=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=UcbARlWqNnrevycTa7gPZO3GQ7OFKlF5gzQlKikiHcR2AGfJmxGivkHtUv6h0E5EA1weTX2HxqIMX/ewovMKHEzcroZBeKPHeINrm29/QEVfEROoodkaOknwFrUzD1PgcQaIJ86IFAw3fLUXbHKaR71bbDS6DwdnVL3wby3JdJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qttu5Vzd; arc=none smtp.client-ip=209.85.221.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-53f55b17a6bso2364574e0c.1;
+        Tue, 26 Aug 2025 05:54:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756212887; x=1756817687; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PnJz260P+al/8wc9dq54V0f0J6jA1a/EJWHmGfEUVjE=;
+        b=Qttu5VzdJSZpCJZtnh7MfQhCg3WQ1EgxCMUct2YsGMAmti/LF+x731uht4G+DJDCK+
+         3vd8MFI/qgLYIv/JnfL90JuTCRs09c0wOOWAl7KMPhKw/bC6qMM0//Bt6JixESz0LOoF
+         mCkecs3k4TOcdDuTDY5pB7e3+KUnyu3cCNgD/ljD8CB5nFQ2HVqlK0LqDV19Y1VqAs/s
+         fhskNuQoULLdoWieR1kH0mxazlOhI+inxD2/5oOlCyca33YgoA0Hzq1TNIlPPvB0BRSO
+         qeJ2Nbv8t8I8g0sxW1js6bfSlVK7Efq6WH8cO1ppUws+Utkrh4pOXGuQSG9hAb7xkm/L
+         rnwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756212887; x=1756817687;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=PnJz260P+al/8wc9dq54V0f0J6jA1a/EJWHmGfEUVjE=;
+        b=ubW4CWqzByyh8mnasLE7FnSWMdFv8QN/rOAOJvSIN+YvCHKQQcdnJlWktv0tUe7FrC
+         4XIRI4L71hjmEAjXQlShf20T2eGkg+FTfxAI7RfO4O0ESmhVdJEAM8LFv3jMhpHfGRIw
+         7e3xahOF7G+RKBIHq2Tzihv3OoirYR2gjLVRzP/l3eEBMojffS0SudP5cT1wX3GCFiuF
+         lYQbjnyQL+5Zc/zkKCA7uqgInSQXDBiGYmVTNi1SucGGKIfZJfJmhKlgFdIqCBxuLTsK
+         vzADknq2tPbianLQpZr6Kd2tA4Rgbue8aRw7VYHE5hsniveiS+du6VNzxF4SvJuHYmXj
+         Khng==
+X-Forwarded-Encrypted: i=1; AJvYcCWLtIQ1TcZTizOEiDYhV2viOHyDuIyQFwiLlRzndjpn9ItnV3AY2iTPeGx+WrxF2jcUwHZK8ulElPDusdk=@vger.kernel.org, AJvYcCXY1osv9ZtCpsp0Xxv5gOfuzh5xlBJlmg1lbH8Qz3JgNykqVryKs7WHY5W6D6onc9pWcbk9Fb2b@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyNhAtgYmr8wUcB+oyj+81POL9zn6xrCfP2PZe39JwJxetyKL6
+	rEYa1CIEU/XIsyRZcayxUmSUNQxHSuqN3Efy9Gl1/Ob87F4qI7xx4EGJ
+X-Gm-Gg: ASbGnctvHNvM13lbEJPJWXiDMbOIMjrX1TeFCk02oRMmLIaJ5WgvPrzJFQMxnLNbby8
+	xhk7u8eQvaHGGSvHVdO4tBbrqLMuopGqc2vqG09LyxnHtsa3JpYl5Ie5+dCJzYqelESGlnxSYTJ
+	TX1TuGdM2LGVS7QKl3LlbnLc1g1amM/v7XhLneZ3ZI6nnikRs4C1ryilq9XKQulqfNMh3aVaPWr
+	r21uJy5qYdbEzwqLi/590D+bklFow+iTSl88eGKNuTIfRMf4BzVO6AO5sHNmWoM/vBM3ryc5uKU
+	CQIRa2W6bc4O9ysN5fwQEe64MCDSjEsFrKm3VFk3uaaYs484mBIOy4pX83uaepUYisN84WH+ptN
+	xUKNDHyh4LwNlWbrEFrDFhgQGqZZZrSPOPb7uU4LqqUppfp9N/GnEDq/mNL0JCzVx/J6Og1JBTT
+	qItw==
+X-Google-Smtp-Source: AGHT+IFCBUKljKD5m5RLKcPd+XCFYuuJ3uY3fDjRHzOwo6jxt7LqbYVS5RfhEPX9TEbBpvd6DxZA/Q==
+X-Received: by 2002:a05:6122:6ab:b0:540:68c4:81a2 with SMTP id 71dfb90a1353d-54068c49af3mr2433859e0c.14.1756212887511;
+        Tue, 26 Aug 2025 05:54:47 -0700 (PDT)
+Received: from gmail.com (141.139.145.34.bc.googleusercontent.com. [34.145.139.141])
+        by smtp.gmail.com with UTF8SMTPSA id 71dfb90a1353d-5438796ab60sm247590e0c.15.2025.08.26.05.54.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Aug 2025 05:54:46 -0700 (PDT)
+Date: Tue, 26 Aug 2025 08:54:46 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Xin Zhao <jackzxcui1989@163.com>, 
+ willemdebruijn.kernel@gmail.com, 
+ edumazet@google.com, 
+ ferenc@fejes.dev
+Cc: davem@davemloft.net, 
+ kuba@kernel.org, 
+ pabeni@redhat.com, 
+ horms@kernel.org, 
+ netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+Message-ID: <willemdebruijn.kernel.ade9d72d060e@gmail.com>
+In-Reply-To: <20250826030328.878001-1-jackzxcui1989@163.com>
+References: <20250826030328.878001-1-jackzxcui1989@163.com>
+Subject: Re: [PATCH net-next v7] net: af_packet: Use hrtimer to do the retire
+ operation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d3a780c367478868319064c27e0b41c69d4cc722.camel@mediatek.com>
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 26, 2025 at 12:09:01PM +0000, Xion Wang (王鑫) wrote:
-> On Tue, 2025-08-26 at 12:40 +0200, gregkh@linuxfoundation.org wrote:
-> > External email : Please do not click links or open attachments until
-> > you have verified the sender or the content.
+Xin Zhao wrote:
+> On Tue, 2025-08-25 at 0:20 +0800, Willem wrote:
+> 
+> > > We cannot use hrtimer_set_expires/hrtimer_forward_now when a hrtimer is
+> > > already enqueued.  
+> > > The WARN_ON(timer->state & HRTIMER_STATE_ENQUEUED) in hrtimer_forward
+> > > already clearly indicates this point. The reason for not adding this
+> > > WARN_ON in hrtimer_set_expires is that hrtimer_set_expires is an inline
+> > > function, wory about increase code size.
+> > > The implementation of perf_mux_hrtimer_restart actually checks whether
+> > > the hrtimer is active when restarting the hrtimer.
 > > 
+> > Perhaps we need to simplify and stop trying to adjust the timer from
+> > tpacket_rcv once scheduled. Let the callback handle that.
 > > 
-> > On Tue, Aug 26, 2025 at 07:58:47AM +0000, Xion Wang (王鑫) wrote:
-> > > > Again, this shouldn't be something that any driver should hit as
-> > > > this
-> > > > usage is not in the kernel tree that I can see.  Attempting to
-> > > > re-register a device multiple times is normally never a good
-> > > > idea.
-> > > 
-> > > Thank you for your comments.
-> > > 
-> > > I am not the owner of the WiFi driver and do not have full details
-> > > of
-> > > its internal logic. However, during internal integration and stress
-> > > testing, we observed an issue where repeated registration and
-> > > deregistration of a misc device by the WiFi module led to
-> > > corruption of
-> > > the misc_list. While I cannot provide the exact reasoning behind
-> > > the
-> > > WiFi driver's design, I wanted to report the problem and share our
-> > > findings with the community in case similar patterns exist
-> > > elsewhere,
-> > > including in vendor or out-of-tree drivers.
+> 
+> Okay, I would also like to modify the timeout only within the callback,
+> so I think PATCH v7 might be a better solution. Additionally, in terms of
+> performance, it should be more efficient than frequently calling
+> hrtimer_cancel/hrtimer_start functions to change the timeout outside the
+> callback.
+> 
+> Why do I add the pkc->expire_ktime in PATCH v7?
+> 
+> For example 8ms retire timeout.
+> T means the time callback/tpacket_rcv call _prb_refresh_rx_retire_blk_timer.
+> T1 means time T plus 1ms, T2 means time T plus 2ms...
+> 
+> timeline: past -----------> -----------> -----------> future
+> callback:      T	           T8
+> tpacket_rcv:                 T7
+> 
+> Considering the situation in the above diagram, at time T7, the tpacket_rcv
+> function processes the network and finds that a new block needs to be opened,
+> which requires setting a timeout of T7 + 8ms which is T15ms. However, we
+> cannot directly set the timeout within tpacket_rcv, so we use a variable
+> expire_ktime to record this value. At time T8, in the hrtimer callback, we
+> check that expire_ktime which is T15 is greater than the current timeout of
+> the hrtimer, which is T8. Therefore, we simply return from the hrtimer
+> callback at T8, the next execution time of the hrtimer callback will be T15.
+> This achieves the same effect as executing hrtimer_start in tpacket_rcv
+> using a "one shot" approach.
+> 
+> 
+> > > Do you agree with adding a callback variable to distinguish between
+> > > scheduled from tpacket_rcv and scheduled from the callback? I really
+> > > couldn't think of a better solution.
 > > 
-> > We do not "harden" our internal apis for external drivers, we fix
-> > drivers to not do foolish things :)
-> > 
-> > Please fix your out-of-tree code, it should not be even touching the
-> > miscdev api, as that is not something a wifi driver should be
-> > interacting with.  Please use the correct one instead, and then you
-> > will
-> > not have this type of issue.
+> > Yes, no objections to that if necessary.
 > 
-> Thank you for your feedback.
+> So it seems that the logic of 'adding a callback variable to distinguish' in 
+> PATCH v7 is OK?
 > 
-> I agree that the kernel should not be hardened for out-of-tree drivers
-> misusing internal APIs. We will update our internal code to follow best
-> practices and avoid improper use of the miscdevice API.
 > 
-> On a related note, the current 'WARN_ON(list_empty(&misc->list))' check
-> in misc_deregister() does not catch any practical error conditions:
+> > > So, a possible solution may be?
+> > > 1. Continue to keep the callback parameter to strictly ensure whether it
+> > > is within the callback.
+> > > 2. Use hrtimer_set_expires within the callback to update the timeout (the
+> > > hrtimer module will enqueue the hrtimer when callback return)
+> > > 3. If it is not in callback, call hrtimer_cancel + hrtimer_start to restart
+> > > the timer.
+> >
+> > Instead, I would use an in_scheduled param, as in my previous reply and
+> > simply skip trying to schedule if already scheduled.
 > 
-> For statically allocated miscdevice structs, the list pointers are
-> zero-initialized, so list_empty() will return false, not true.
-> After list_del(), the pointers are set to LIST_POISON1/2, so repeated
-> deregistration also fails to trigger the check.
-> 
-> Since this condition does not protect in-tree drivers or catch real
-> errors, would it be reasonable to remove it?
+> I understand that the additional in_scheduled variable is meant to prevent
+> multiple calls to hrtimer_start. However, based on the current logic
+> implementation, the only scenario that would cancel the hrtimer is after calling
+> prb_shutdown_retire_blk_timer. Therefore, once we have called hrtimer_start in
+> prb_setup_retire_blk_timer, we don't need to worry about the hrtimer stopping,
+> and we don't need to execute hrtimer_start again or check if the hrtimer is in
+> an active state. We can simply update the timeout in the callback.
 
-Yes, if it can never be hit, we should remove it.
+The hrtimer is also canceled when the callback returns
+HRTIMER_NORESTART.
 
-> I can submit a patch if the community agrees.
+> Additionally, we don't need to worry about the situation where packet_set_ring
+> is entered twice, leading to multiple calls to hrtimer_start, because there is
+> a check for pg_vec before executing init_prb_bdqc in packet_set_ring. If pg_vec
+> is non-zero, it will go to the out label.
+> 
+> So is PATCH v7 good to go? Besides I think that ktime_after should be used
+> instead of ktime_compare, I haven't noticed any other areas in PATCH v7 that
+> need modification. What do you think?
+> 
+> 
+> Thanks
+> Xin Zhao
+> 
 
-That would be great, thank you!
 
-greg k-h
 
