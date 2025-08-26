@@ -1,186 +1,189 @@
-Return-Path: <linux-kernel+bounces-786237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F392B356F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:33:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CDCEB35715
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:35:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7A335E21E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:33:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0188B1898D48
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:35:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774062FA0F2;
-	Tue, 26 Aug 2025 08:33:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 297F92FA0F5;
+	Tue, 26 Aug 2025 08:34:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jTbyDQUt"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UyKjsFQd";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CosuOZYD";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UyKjsFQd";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CosuOZYD"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC24D1DED64;
-	Tue, 26 Aug 2025 08:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44DC2F999A
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 08:34:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756197188; cv=none; b=IyrTmlD6/ZjVDc6g+br5ESSoXmQ2+EBh9yziCeRQth5T9Gon3Ak9RIhZWEF28nSyte9VnGZg6XMjiLvXK3UDA5xBecUX8yw+tbxjt5bipBoXGP/LQpLjn5zwj3HE7Z1QI6i2QD1Nywuc71dnS8Xdnxsrx/OfjwpGtN5i78Jwto8=
+	t=1756197243; cv=none; b=DnL3Spx8rxYcJnt7FjML29/BcNHyWeVUs3lMlowzO4dI64E2HHyPsCCmSY6OTNGWKyiVMZ/OlQ6J9b82Wxdk+jGi/RI1Sfyj48Usrs7qil8Tde//eXcm5/FbyMQuu9qRn0vvvdaAQ9vU5iYzVMjvAtnvF0dfl7cE32z+C0bWwII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756197188; c=relaxed/simple;
-	bh=OA8xWJ/KnE4nlmU8LRAyhQqzQwAaRS5yTJxNqw1prBw=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gV3NxS0PpeRHva8ar8DoSlW6MrJozJRH3ssDiCj1xkWrath8JH5TXLYkoLcZtaxSaJt3f2aTmyTHOcZ3vDiH3JQjVAPSF/UrV5CPIk2THgx18GLNvgxVlMwskIogzNV08csN9zcpOXU0yoRHvTPYHuIVZPZcDi6BN3DS+zxNbEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jTbyDQUt; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3c6df24f128so2277269f8f.3;
-        Tue, 26 Aug 2025 01:33:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756197185; x=1756801985; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fl4XqMbw5eWLG21H5yX4CcJWnuTddZJ9fz6Oh8RT7c4=;
-        b=jTbyDQUtdMKV89JSdp6IteZWNfJB1clC/aeKtqku5hZv/SPZxD3P29LYcXQdQ+z5Yl
-         j5vjKOSITpmIGZl3xaVFrTapGQpgyuf61nWwvro/raus0fmHiwaq4qUCS2w60uMOeORR
-         Q/2k4Jr7rMZKrZPKGNxSeVRv6wthH1hqPbPX57pBroo26ObNSE3h8D+fovb7m0Q0tpSG
-         sp/IRL29xoTRjWeevsNTmZrktvgOF5lf3fnjFtApc5l8FFWu7z1HszaUK70RHyBCJfod
-         ubwtYvCKC0USOkV0thn6LFALWFkQFFSipixgRFeufggXZ72lSE5Vo00kINWu/ZyHsUp3
-         7bnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756197185; x=1756801985;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fl4XqMbw5eWLG21H5yX4CcJWnuTddZJ9fz6Oh8RT7c4=;
-        b=Hq79HBNTpL9ReZ46EcZmf1VgA9sN7MkTw5B2BmVmCLjHPV9lHcuFT8eVxsI/NDx54W
-         TAF03A0BejKfSggu5+nrPy6IiBLEhdgonHKB8P5x9DUjmbmwIuJF6uRAysCGH8+sJDKS
-         e5QjomyYhxoj/IARXGMOZfRf57VXIqWCUgTyk/ankhsWWhwP+BzO8B2ly69HfbYV8Gj1
-         g+R+4pTiVmWhg2WRFADNElfElshWY7xi23y00+FAUR+W2pousRrZIJC99B/LwybRqBjv
-         t9Vnp6yHq+2VA3sPcu2ozhts0jcVuPnfUZqiuQWogH70o6HWJRaguCsLS6pWxxj00aKS
-         UYvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU6PWqKJ9Ld0ZPDG5U9oy+9P4+EHhEjPauPuPHg+lDLs4l4E0UU9QrRyHAxRZG8OxAwRxk=@vger.kernel.org, AJvYcCVpWi1oGTfQSu5kQ5XnUD9kNcYIClM9oKBfqCx2OpJ4soav7g4rJbenOyde008aoYLX73xM3ljQzr2A5Sdc@vger.kernel.org, AJvYcCXsqk/1BOTfs4536zvhbPaAOS678nfU8cyj/CXEtzchdzXop5ScKsNoqz0BxcHUsaGW5bzbFUrx0IlgpvA75IAagBaa@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8wYxxbV66qzSHz132TLuQIg6b2GOUJweSToPFDd/e+s2Y7lwR
-	WC/7s5ogqvKO59PZBT/SIkc0XSRkPkp8ZQcjkTaH57N2o1ytQZy0bv/ijv39+0Oi
-X-Gm-Gg: ASbGncsmTW4EZtLg5VQzSwjnM9E75hCxydx1vNglt91q5Y6QSvWFYEGRE6zECu5oUyM
-	4fT+3Bg8ZgI4Cql7rZP7DI6h+vf4rHFNg4C5J4O77LIry/XJcUQP+MhX06r7XSlibsoSSsuxne1
-	zCN++qFeA79aHio2rURS7sq/TiNAnVF6WMP34cH1dWAiN57FC5Zgyfld6RSxQWb50W+AF5yDeOj
-	EEKpD845vRnXMJo6MROSWtxafe/Xkdl/iPd9E4rjgh1dXr19glwVvVgyP0yeuZlUJJICWxjPU23
-	17koAVMTxq0R3Tz3dKkzH5DPwQedUrAX0YwZMag+y2XvZ+LCyWkhlNWuix4Su5sait1zCTc=
-X-Google-Smtp-Source: AGHT+IHscCe1NjLPLyPaBZZf+9xT5Q5fRNvd9R6wL0J4MFH2pGXT0pyHG4kc8nmj0tTbwW7rRFdlHw==
-X-Received: by 2002:a5d:5d0d:0:b0:3b8:ebbe:1792 with SMTP id ffacd0b85a97d-3c5dac173f7mr11223041f8f.10.1756197185062;
-        Tue, 26 Aug 2025 01:33:05 -0700 (PDT)
-Received: from krava ([2a02:8308:a00c:e200::31e0])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c70e4ba41bsm15802694f8f.10.2025.08.26.01.33.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 01:33:04 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Tue, 26 Aug 2025 10:33:03 +0200
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: David Laight <david.laight.linux@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>, oleg@redhat.com,
-	andrii@kernel.org, mhiramat@kernel.org,
-	linux-kernel@vger.kernel.org, alx@kernel.org, eyal.birger@gmail.com,
-	kees@kernel.org, bpf@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, x86@kernel.org,
-	songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
-	haoluo@google.com, rostedt@goodmis.org, alan.maguire@oracle.com,
-	David.Laight@aculab.com, thomas@t-8ch.de, mingo@kernel.org,
-	rick.p.edgecombe@intel.com
-Subject: Re: [PATCH 2/6] uprobes/x86: Optimize is_optimize()
-Message-ID: <aK1xPy33UMlT-blF@krava>
-References: <20250821122822.671515652@infradead.org>
- <20250821123656.823296198@infradead.org>
- <20250826065158.1b7ad5fc@pumpkin>
- <aK1veaIWBv3dZUUP@krava>
+	s=arc-20240116; t=1756197243; c=relaxed/simple;
+	bh=ZoIVSnj0WUlVcoaYbk/KZUKWhT/Vp1ezzJlsiqUnXNY=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gYQA1fJapZAPHIRBPXWO7WfY/B5JaiVCkJe377zs5xLaADBjWi102Qw+IjMwvIpEWjMRjnA4M5eF9x98OQGPBCieTgciAOEGqS8/e1NORxP1X+DBO237ns/4YSdFWc3ONSzRqVzPL5L5u+T2yrgF9k/WDmmG82EoqP8zziR4olo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UyKjsFQd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CosuOZYD; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UyKjsFQd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CosuOZYD; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 941E321193;
+	Tue, 26 Aug 2025 08:33:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756197239; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sloPabBLaK/g+vm2hRV4fJp6Txk+q5pY58hnKn9cJ2c=;
+	b=UyKjsFQdv/eItSH5WPSCsGn9sjGahoBn4nOmbsbm20unrYaewTRhTI4efmEjSTJ6pdIZvg
+	ppY1A9PytXPURamHP6DMuoc5Hm4HT1keeOPVpUbrOa1XNTpXC8jx7fuv44CcXKnng5ginx
+	aFToI1R0UIg1PB3lS9fsHUxTtTglI8k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756197239;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sloPabBLaK/g+vm2hRV4fJp6Txk+q5pY58hnKn9cJ2c=;
+	b=CosuOZYDOED02/vaqpARYjRbe4pPon8gJ5PXLo9v3Nf2CLlpPw0RqtcA1Z97mFzpeLjiBJ
+	nZU2JaD3jJvv1bAg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=UyKjsFQd;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=CosuOZYD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756197239; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sloPabBLaK/g+vm2hRV4fJp6Txk+q5pY58hnKn9cJ2c=;
+	b=UyKjsFQdv/eItSH5WPSCsGn9sjGahoBn4nOmbsbm20unrYaewTRhTI4efmEjSTJ6pdIZvg
+	ppY1A9PytXPURamHP6DMuoc5Hm4HT1keeOPVpUbrOa1XNTpXC8jx7fuv44CcXKnng5ginx
+	aFToI1R0UIg1PB3lS9fsHUxTtTglI8k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756197239;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sloPabBLaK/g+vm2hRV4fJp6Txk+q5pY58hnKn9cJ2c=;
+	b=CosuOZYDOED02/vaqpARYjRbe4pPon8gJ5PXLo9v3Nf2CLlpPw0RqtcA1Z97mFzpeLjiBJ
+	nZU2JaD3jJvv1bAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5092413A51;
+	Tue, 26 Aug 2025 08:33:59 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Vp1zEndxrWi6TwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Tue, 26 Aug 2025 08:33:59 +0000
+Date: Tue, 26 Aug 2025 10:33:58 +0200
+Message-ID: <87tt1u32ix.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Shenghao Ding <shenghao-ding@ti.com>
+Cc: <broonie@kernel.org>,
+	<andriy.shevchenko@linux.intel.com>,
+	<13564923607@139.com>,
+	<13916275206@139.com>,
+	<alsa-devel@alsa-project.org>,
+	<linux-kernel@vger.kernel.org>,
+	<baojun.xu@ti.com>,
+	<Baojun.Xu@fpt.com>,
+	<jesse-ji@ti.com>
+Subject: Re: [PATCH v1] ALSA: hda/tas2781: Fix EFI name for calibration beginning with 1 instead of 0
+In-Reply-To: <20250822135043.517-1-shenghao-ding@ti.com>
+References: <20250822135043.517-1-shenghao-ding@ti.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aK1veaIWBv3dZUUP@krava>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[139.com];
+	FREEMAIL_CC(0.00)[kernel.org,linux.intel.com,139.com,alsa-project.org,vger.kernel.org,ti.com,fpt.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,ti.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 941E321193
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.51
 
-On Tue, Aug 26, 2025 at 10:25:29AM +0200, Jiri Olsa wrote:
-> On Tue, Aug 26, 2025 at 06:51:58AM +0100, David Laight wrote:
-> > On Thu, 21 Aug 2025 14:28:24 +0200
-> > Peter Zijlstra <peterz@infradead.org> wrote:
-> > 
-> > > Make is_optimized() return a tri-state and avoid return through
-> > > argument. This simplifies things a little.
-> > > 
-> > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > > ---
-> > >  arch/x86/kernel/uprobes.c |   34 +++++++++++++---------------------
-> > >  1 file changed, 13 insertions(+), 21 deletions(-)
-> > > 
-> > > --- a/arch/x86/kernel/uprobes.c
-> > > +++ b/arch/x86/kernel/uprobes.c
-> > > @@ -1047,7 +1047,7 @@ static bool __is_optimized(uprobe_opcode
-> > >  	return __in_uprobe_trampoline(vaddr + 5 + call->raddr);
-> > >  }
-> > >  
-> > > -static int is_optimized(struct mm_struct *mm, unsigned long vaddr, bool *optimized)
-> > > +static int is_optimized(struct mm_struct *mm, unsigned long vaddr)
-> > >  {
-> > >  	uprobe_opcode_t insn[5];
-> > >  	int err;
-> > > @@ -1055,8 +1055,7 @@ static int is_optimized(struct mm_struct
-> > >  	err = copy_from_vaddr(mm, vaddr, &insn, 5);
-> > >  	if (err)
-> > >  		return err;
-> > > -	*optimized = __is_optimized((uprobe_opcode_t *)&insn, vaddr);
-> > > -	return 0;
-> > > +	return __is_optimized((uprobe_opcode_t *)&insn, vaddr);
-> > >  }
-> > >  
-> > >  static bool should_optimize(struct arch_uprobe *auprobe)
-> > > @@ -1069,17 +1068,14 @@ int set_swbp(struct arch_uprobe *auprobe
-> > >  	     unsigned long vaddr)
-> > >  {
-> > >  	if (should_optimize(auprobe)) {
-> > > -		bool optimized = false;
-> > > -		int err;
-> > > -
-> > >  		/*
-> > >  		 * We could race with another thread that already optimized the probe,
-> > >  		 * so let's not overwrite it with int3 again in this case.
-> > >  		 */
-> > > -		err = is_optimized(vma->vm_mm, vaddr, &optimized);
-> > > -		if (err)
-> > > -			return err;
-> > > -		if (optimized)
-> > > +		int ret = is_optimized(vma->vm_mm, vaddr);
-> > > +		if (ret < 0)
-> > > +			return ret;
-> > > +		if (ret)
-> > >  			return 0;
-> > 
-> > Looks like you should swap over 0 and 1.
-> > That would then be: if (ret <= 0) return ret;
+On Fri, 22 Aug 2025 15:50:42 +0200,
+Shenghao Ding wrote:
 > 
-> hum, but if it's not optimized (ret == 0) we need to follow up with
-> installing breakpoint through following uprobe_write_opcode call
-
-ah u meant to swap the whole thing.. got it
-
+> A bug reported by one of my customers that EFI name beginning with 0
+> instead of 1, and code clean for the string checking.
 > 
-> also I noticed we mix int/bool return, perhaps we could do fix below
-> 
-> jirka
-> 
+> Fixes: 4fe238513407 ("ALSA: hda/tas2781: Move and unified the calibrated-data getting function for SPI and I2C into the tas2781_hda lib")
+> Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
 > 
 > ---
-> diff --git a/arch/x86/kernel/uprobes.c b/arch/x86/kernel/uprobes.c
-> index 0a8c0a4a5423..853abb2a5638 100644
-> --- a/arch/x86/kernel/uprobes.c
-> +++ b/arch/x86/kernel/uprobes.c
-> @@ -1064,7 +1064,7 @@ static int is_optimized(struct mm_struct *mm, unsigned long vaddr)
->  	err = copy_from_vaddr(mm, vaddr, &insn, 5);
->  	if (err)
->  		return err;
-> -	return __is_optimized((uprobe_opcode_t *)&insn, vaddr);
-> +	return __is_optimized((uprobe_opcode_t *)&insn, vaddr) ? 1 : 0;
->  }
+> v1:
+>  - Fix EFI name beginning with 1 instead of 0
+>  - Code clean for the string checking
+>  - Add extra comments on EFI name for calibration
+>  - Remove an extra space
+> ---
+>  sound/hda/codecs/side-codecs/tas2781_hda_i2c.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c b/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
+> index ed7771ab9475..fecd5eac739b 100644
+> --- a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
+> +++ b/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
+> @@ -340,16 +340,17 @@ static int tas2563_save_calibration(struct tas2781_hda *h)
+>  		data[offset] = i;
+>  		offset++;
+>  		for (j = 0; j < TASDEV_CALIB_N; ++j) {
+> -			ret = snprintf(var8, sizeof(var8), vars[j], i);
+> +			/* EFI name for calibration started with 1, not 0 */
+> +			ret = snprintf(var8, sizeof(var8), vars[j], i + 1);
 >  
->  static bool should_optimize(struct arch_uprobe *auprobe)
+> -			if (ret < 0 || ret >= sizeof(var8) - 1) {
+> +			if (ret != strlen(var8)) {
+
+This doesn't look like a code "cleanup".  Calling strlen() is just an
+unneeded (but significant) overhead.
+
+Please concentrate only on the correction for now.
+
+
+thanks,
+
+Takashi
 
