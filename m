@@ -1,258 +1,418 @@
-Return-Path: <linux-kernel+bounces-785736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61870B35042
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:30:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E73AAB3503F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:30:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 239FA20156D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:30:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37A747B386C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:28:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C916B23B616;
-	Tue, 26 Aug 2025 00:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=juniper.net header.i=@juniper.net header.b="sp6E+c5n";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=juniper.net header.i=@juniper.net header.b="K4NlMXIo"
-Received: from mx0b-00273201.pphosted.com (mx0b-00273201.pphosted.com [67.231.152.164])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECFAB23A9B3;
+	Tue, 26 Aug 2025 00:30:17 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE1B23875D
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 00:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.152.164
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756168252; cv=fail; b=hGyTB2pmIQ8tBFmOgjoW+CQQACHjFvcwWOZ1EiluflprN6rkpYWgVDMiVT/qE68XRDa9GMjZe7zjyG7AHEQYagBgz2XJmkXdjavt/IiK1uH61uqPUdTjkH8J3treF76aR+ZdU6uEtmMc+dhX35STVLdFxWxYquxS/O8KwZCJEEg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756168252; c=relaxed/simple;
-	bh=TMRBkt2voLxk6gWOGHmJxgwMK3syHjFoF6bhl7lHjMw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZtCV6HrAyO7gxNgUFifGw8LvNx0AOQPZCU2RadEXgo3o6sN4K0KA/SjyZeHLsDceRBs3Eo/xSRT6f2lcnBdmh4E7PC63bJxEiNXR52MKkckrbpNd6vB6zFg0WSqmQcsa+kVafrnrguxbaaigMG28akNIywmvT5GFMvhVgnRWzzI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=juniper.net; spf=pass smtp.mailfrom=juniper.net; dkim=pass (2048-bit key) header.d=juniper.net header.i=@juniper.net header.b=sp6E+c5n; dkim=fail (0-bit key) header.d=juniper.net header.i=@juniper.net header.b=K4NlMXIo reason="key not found in DNS"; arc=fail smtp.client-ip=67.231.152.164
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=juniper.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=juniper.net
-Received: from pps.filterd (m0108161.ppops.net [127.0.0.1])
-	by mx0b-00273201.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57PL9sJT013234;
-	Mon, 25 Aug 2025 17:30:03 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=juniper.net; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=PPS1017; bh=5efEglA3w64cLzr3Z8frOwPR
-	4VbJriSNzJR4lUaYH9Q=; b=sp6E+c5nhwkpgBajADyO1pM0VvZAYtxGgjncEoaQ
-	ZSZzteag66LXlyKEDXZzoGfIlxlE/RYdetMxBgAN6nujt1jUnXaIsHnSPHRHtVh2
-	3rFhqikVwB+Wg878QHsY4lybONv9aZptAjU6P2Pt7xLrzfLmB3+rj9wYNSTgIQf3
-	hOiAVhkwFoQWYzIMSscu7Rg8PGFBq4KLx/LmklpYAol3RUw9e0aZ6cQ+r6Mn7ir2
-	b/XG4n26QjnK5SxgkweO9p/t2OYpwBh7dtlpvzFy4iFCNnmciOCpjIcd1FWR+8IH
-	0JV7Wjcwq3mW6EkmZ2N5Jqy+g19hvM8/EZnHdRblnGYB0w==
-Received: from ph7pr06cu001.outbound.protection.outlook.com (mail-westus3azon11020091.outbound.protection.outlook.com [52.101.201.91])
-	by mx0b-00273201.pphosted.com (PPS) with ESMTPS id 48rqhbtt17-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Aug 2025 17:30:02 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uxpEhOSI1tsa/5MNuaEREG3lXu6JJ9yTWMlpN+EKsvsOmKAs1UoXat/sZrnGG9MeDZaJRi1sNPdjhFZORsRzou8dq2VRpqAe7CT6tOTeQet0layyW73ovNqJP4/ad4CWZZGLFUHv86FKfYSFZ2VferB+4eSLbHQbM2dFYLNHj98ZCleWcbehCupc4OrERM96v7WwJ186mfXHsJiczPwaAvVryX+vn9c1qtMTPJcbyej14dIgN2M/62SN70/MapP/WBSplFfsDlaiacexIf+kVfCPGMoLh9E3klmJhOoMGML4ZfX67tinoCjo5HTNDmtJrvKkGVb4EO6sdOziCCJaNg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5efEglA3w64cLzr3Z8frOwPR4VbJriSNzJR4lUaYH9Q=;
- b=veeiEAHgkO8sdUs5lFCGaJrZX6CNmLwV7k/6/SzeLh/dTSb6sz6AogaoAhDv95oyr26kQdiSQ5vvAvIg1mW/TdphzAipwFT2u19BCzIzSgXiZztMI4iSEAiooPZHKZcHKuFwRgDRgcPoBmkmGBAViQBw85LZvX9+kMtPXIOiBHAVd6QTWvLA9ZV3uPoIGFqv648lFylSERefp3EC56m1BDuIL3f3C+vzBO8gZM6noFXrethhufFS/n67Roz7yxGBwXshknU5rjmq4lPJKSI2Nkbm+cKPc4OrTVPXJVOGuwpoqQjKM5RTeOMJlQO4rXkyu6Ms/nmEUS2DTTcgcmy6ew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=softfail (sender ip
- is 66.129.239.15) smtp.rcpttodomain=vger.kernel.org
- smtp.mailfrom=juniper.net; dmarc=fail (p=reject sp=reject pct=100)
- action=oreject header.from=juniper.net; dkim=none (message not signed);
- arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=juniper.net;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5efEglA3w64cLzr3Z8frOwPR4VbJriSNzJR4lUaYH9Q=;
- b=K4NlMXIoDwNRF9Zw/0MadpA9fPTp/BvKNnFKYvJgPdizRYFWoDgkbhK3AfPnebhnAHsJpc/ZYHK+K/R32mbgyzH7uqFsQSEm+IDUdKcSVbbcfOvTodIBfdDxjJ/mIsYU+4q44Fs+o4spm8A6VB9NtvijgG68Gt9dlmNPXoSyOuY=
-Received: from MW2PR16CA0063.namprd16.prod.outlook.com (2603:10b6:907:1::40)
- by SJ0PR05MB7708.namprd05.prod.outlook.com (2603:10b6:a03:2e2::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.19; Tue, 26 Aug
- 2025 00:29:57 +0000
-Received: from SJ1PEPF000023CC.namprd02.prod.outlook.com
- (2603:10b6:907:1:cafe::45) by MW2PR16CA0063.outlook.office365.com
- (2603:10b6:907:1::40) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.21 via Frontend Transport; Tue,
- 26 Aug 2025 00:29:57 +0000
-X-MS-Exchange-Authentication-Results: spf=softfail (sender IP is
- 66.129.239.15) smtp.mailfrom=juniper.net; dkim=none (message not signed)
- header.d=none;dmarc=fail action=oreject header.from=juniper.net;
-Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
- juniper.net discourages use of 66.129.239.15 as permitted sender)
-Received: from p-exchfe-eqx-02.jnpr.net (66.129.239.15) by
- SJ1PEPF000023CC.mail.protection.outlook.com (10.167.244.6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9052.8 via Frontend Transport; Tue, 26 Aug 2025 00:29:57 +0000
-Received: from p-exchbe-eqx-02.jnpr.net (10.104.9.15) by
- p-exchfe-eqx-02.jnpr.net (10.104.9.17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Mon, 25 Aug 2025 19:29:57 -0500
-Received: from p-mailhub01.juniper.net (10.104.20.6) by
- p-exchbe-eqx-02.jnpr.net (10.104.9.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Mon, 25 Aug 2025 19:29:56 -0500
-Received: from buildcontainer.juniper.net (qnc-bas-srv120c.juniper.net [10.46.0.14])
-	by p-mailhub01.juniper.net (8.14.4/8.11.3) with ESMTP id 57Q0TsVv012872;
-	Mon, 25 Aug 2025 17:29:54 -0700
-	(envelope-from makb@juniper.net)
-From: Brian Mak <makb@juniper.net>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, <x86@kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Brian Mak <makb@juniper.net>
-Subject: [PATCH] x86/boot: Add option to append to the cmdline
-Date: Mon, 25 Aug 2025 17:29:20 -0700
-Message-ID: <20250826002920.62397-1-makb@juniper.net>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243EF1A83F7;
+	Tue, 26 Aug 2025 00:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756168217; cv=none; b=mJ0EZ2KicDFwimcSoyx6WcYWmniQ1wqhAXyaq29oXU7AsKp2h41323qiBtxCrNb4/274pDCaTNc3s9q484s99uaEfvTU9lsKmVkyfP9wrH+5+YdfFQF2mGfY4qETXHuSPkupuUdb1SvIxoNc9PklaOt3Sx/CQBEFBgvlUkymtl0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756168217; c=relaxed/simple;
+	bh=WH0XtMsOQg03cW1mG/+e5SYWVR66zP+v54vwxy10Oqg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qb2NzanxWZTnX3sZtF8uy8uMzjCay1ieWxm5vl3IojHPMNrayv+0nKV/F2HJqSHerfCID7xqyogyQOlVkr8m4PPXa9Fws3UDQbFACSWOYtqLFt2JeKJpkgNU9Q06w52jyLnBwmYAC0nBRiCz1AkZxMT4Lc4qu8WZJEL/ZkKbXq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: cd5dbc18821311f0b29709d653e92f7d-20250826
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:76497a17-baa1-462b-893c-1943c72c4b5a,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:6c111aedd2401f9d0bb2422a3eb4e0ca,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
+	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: cd5dbc18821311f0b29709d653e92f7d-20250826
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 414231990; Tue, 26 Aug 2025 08:30:00 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 244FDE008FA4;
+	Tue, 26 Aug 2025 08:30:00 +0800 (CST)
+X-ns-mid: postfix-68AD0007-5837181
+Received: from [172.25.120.24] (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 830B3E008FA2;
+	Tue, 26 Aug 2025 08:29:47 +0800 (CST)
+Message-ID: <c19b9a8c-bb7d-4d71-89d0-eb98c70a9a85@kylinos.cn>
+Date: Tue, 26 Aug 2025 08:29:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000023CC:EE_|SJ0PR05MB7708:EE_
-X-MS-Office365-Filtering-Correlation-Id: 26a37655-d416-4ec7-d058-08dde437af5a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?EAZnDcQ8VCo1DKFZVne1AuTjtD8pQ5FjxVJTG0kPwY+WtMVYSEZSH2YSmhVv?=
- =?us-ascii?Q?o0MubbD4teHQQ62O8k5NQKvMVbEjAoJQD/5AgKBN7U87eZc2DnVD2LFvAm0W?=
- =?us-ascii?Q?5DFhbtw5c/pbFnPi8sL0fkQCV7KbudXh1RBkdy95+jEQEHX2KhyhTe5IzwK0?=
- =?us-ascii?Q?MAOzbEiISUA+KHv8ODgNe8zdSmwuq6rJqKy/5pJ9s1VrMfM9+2s6M+7OLRfG?=
- =?us-ascii?Q?MjHvxPO7QkCSlmkGX99fbTdGkKakhh5yai2guMHg61smbKmLmzy+EEj+/O1/?=
- =?us-ascii?Q?5QO1m9XrFRo5SDL0uF9FKVXihUqUbm025LO3PNDdj5Lw+NcIODS2Cjurzgd8?=
- =?us-ascii?Q?+YVSYTY03FuABE1aZ94AZXJpZrQ3zPNm0AUiFyjFYNEzJCc8kxH4+90koxv+?=
- =?us-ascii?Q?DGX7Ff9BEYJQ3fV0AX8fVwOFwUkrEiiz48ncDlWJrmlApBFu40A9f4q8Y1hO?=
- =?us-ascii?Q?YZanmIniS6kMQI4m44DW2CeOku0r/+lycvKaJiEgadwxS8Jx1KvopPgkf6I9?=
- =?us-ascii?Q?6b5168LyXIemFutKQClvZ+iyr37toFo2pfWAEkNDPQYrDZaH3B+OjdAJaIeZ?=
- =?us-ascii?Q?BEk9Uhw6GJi0I6L1StqJEGTwD7VF32TM9u8535wVPGtwLoFWDW2OUumhb6JX?=
- =?us-ascii?Q?ar++MJH5iWCo9E7ySqq8TBvytoz0h0HSSF7oX5LEoEGlbNvAsBsgRnqEvgmX?=
- =?us-ascii?Q?Xy+O6SC8aZw61mLP4iWD5p+jfwAof6Op03j/lvAriEPyH5yflRyBYiEFFj8M?=
- =?us-ascii?Q?AA3nuKS1CWxcvDppQsoiZU4GLwgXl8efbwu95tQRB0tAR+oSI70swKe/CUlZ?=
- =?us-ascii?Q?0hoPmxcwZhy7PM0AKl5QtyPAePRpbnVwEKwZ+SEaRz/8pidFDENtN9FaNR4a?=
- =?us-ascii?Q?j7w/JiMioyh5rRRQ/IcHHBkoZGS8tKB4K/3HSUuv4UdPXghmK6aMFTrVFmx1?=
- =?us-ascii?Q?ij09IcT6ghXecqU3g/fhzBGustcGBhpdN6BMhvyBM9J8lNnpLCOOWWXvk1p3?=
- =?us-ascii?Q?o+/gjax4L3hnzVfvyDRvGDzd9nWg8AS8gh22nv5+8Jwu2toHsupK/Yf5Rp5u?=
- =?us-ascii?Q?hQf676btZ2qrgyb8bz85uBNYuxoA8Hq0DROkzI65BwicrvQVBjiucgK7KYRM?=
- =?us-ascii?Q?9PPuu14SFj7m68GWAXdfnHBcWV7DFalpbeVt7ST00ZCzXHFrhQxYPgFhIO/L?=
- =?us-ascii?Q?8g49WHtfve3n8Zbi7vQxPdRKnal4xKLaFBgxipcGn4Xy1+JUOAg1D6EL1Bgi?=
- =?us-ascii?Q?Q4m45wqUYqLsBR1IqbcWMhXG0QsF0blPsrkgnDSA99yRBOkprWClpjcZI260?=
- =?us-ascii?Q?4W1BD40SXaZ0rq2N3TT/CG++P+qR9Inmg+t5ze0gV/A+vF4nkUj+uVKR8woF?=
- =?us-ascii?Q?vaC5bS/fNUufnFBeaHPtBVuTURdcB31a9vSTE6sg+RxWWf5yqJ6Da7yiqYUr?=
- =?us-ascii?Q?DyuEbfhCOjx8iGz7UMoPcxw2JCmRIpQyg+en6AEQJg0/nP1xGb+8BRomfEXx?=
- =?us-ascii?Q?uCh7jJrNHgkoAONhaUc/z1X0yP3gHZmACYOc?=
-X-Forefront-Antispam-Report:
-	CIP:66.129.239.15;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:p-exchfe-eqx-02.jnpr.net;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1102;
-X-OriginatorOrg: juniper.net
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 00:29:57.2597
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 26a37655-d416-4ec7-d058-08dde437af5a
-X-MS-Exchange-CrossTenant-Id: bea78b3c-4cdb-4130-854a-1d193232e5f4
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bea78b3c-4cdb-4130-854a-1d193232e5f4;Ip=[66.129.239.15];Helo=[p-exchfe-eqx-02.jnpr.net]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000023CC.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR05MB7708
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI1MDEwNyBTYWx0ZWRfX0KkLHNdNGQLy
- 0VzYpB0Z5/zf2ZltYOwfr43bTho0V6JTebyhy87puAF+nwqm9FnUO7iOfKxZCoWyfLZLy6ZLL3b
- ud1cw7L4v/Zp7E/Tu+r1lJAdcSwZ/CuhmrDL42noHHgazUdaIDt8cn/cDwPxvjfRiCb33bNk6Dx
- xYFD0g4m+PkRyf11l27g0sn3xVJtWZgyHtW8T43Dlf6bV6+De2ex6fyZOv7vjz6Q2ykcbbKkc6l
- p64TMsllLVF9BpoZi6hLzIkeqzUipJl5xr+UHgAhRuKUxG3ZO1043WUln7t0gudzTo2st4agJvL
- BPuPQKy3pXcQPKOJkjQ3+/By0wN8zXm9DVeufa89kVygIj/q0GayT9jH7xy9JY+hBB3tKSWxoS7
- XEE3p6Kv
-X-Proofpoint-ORIG-GUID: KgftDbyc3nI7MvLTktBcOXkBsz7YA05C
-X-Authority-Analysis: v=2.4 cv=ToDmhCXh c=1 sm=1 tr=0 ts=68ad000b cx=c_pps
- a=XRAB2LWAunOdTDivPrw6VQ==:117 a=YQU41r7WENJiSYrYYNJVsQ==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=h8e1o3o8w34MuCiiGQrqVE4VwXA=:19
- a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=2OwXVqhp2XgA:10 a=s63m1ICgrNkA:10 a=rhJc5-LppCAA:10 a=OUXY8nFuAAAA:8
- a=T8OkcMHtG-hyPi3r-k4A:9 a=cAcMbU7R10T-QSRYIcO_:22
-X-Proofpoint-GUID: KgftDbyc3nI7MvLTktBcOXkBsz7YA05C
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-25_11,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_spam_notspam policy=outbound_spam
- score=0 malwarescore=0 spamscore=0 priorityscore=1501 clxscore=1015
- phishscore=0 bulkscore=0 suspectscore=0 impostorscore=0 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508250107
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] cpufreq: use __free() for all cpufreq_cpu_get()
+ references
+To: Gautam Menghani <gautam@linux.ibm.com>
+Cc: "Rafael J . wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Sean Christopherson <seanjc@google.com>, Paolo Bonzini
+ <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Markus Mayer
+ <mmayer@broadcom.com>, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Krzysztof Kozlowski
+ <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Daniel Lezcano <daniel.lezcano@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+ Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ zhenglifeng <zhenglifeng1@huawei.com>, "H . Peter Anvin" <hpa@zytor.com>,
+ Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>,
+ Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Lukasz Luba <lukasz.luba@arm.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Beata Michalska <beata.michalska@arm.com>, Fabio Estevam
+ <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>,
+ Sumit Gupta <sumitg@nvidia.com>,
+ Prasanna Kumar T S M <ptsm@linux.microsoft.com>,
+ Sudeep Holla <sudeep.holla@arm.com>, Yicong Yang <yangyicong@hisilicon.com>,
+ linux-pm@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-tegra@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, imx@lists.linux.dev,
+ linux-omap@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250825092833.42441-1-zhangzihuan@kylinos.cn>
+ <aKxI8D5mgLRyydb3@li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.ibm.com>
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+In-Reply-To: <aKxI8D5mgLRyydb3@li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-Currently, the bootloader-provided command line can be prepended to with
-the built-in command line. This is done by enabling CONFIG_CMDLINE_BOOL
-and specifying a CONFIG_CMDLINE value with CONFIG_CMDLINE_OVERRIDE
-disabled.
 
-However, there is currently no way to append the built-in command line
-to the bootloader-provided command line, like there is on some other
-architectures. This is necessary to work around bootloaders that are
-difficult to update, where we want to override a subset of the
-bootloader-provided values and keep the others.
+=E5=9C=A8 2025/8/25 19:28, Gautam Menghani =E5=86=99=E9=81=93:
+> On Mon, Aug 25, 2025 at 05:28:33PM +0800, Zihuan Zhang wrote:
+>> This patch replaces all remaining uses of cpufreq_cpu_get() with
+>> the __free(cpufreq_cpu_put) annotation.
+>>
+>> Motivation:
+>> - Ensures automatic cleanup of policy references when they go out of s=
+cope,
+>>    reducing the risk of forgetting to call cpufreq_cpu_put() on early =
+return
+>>    or error paths.
+>> - Brings the code in line with the latest kernel coding style and best
+>>    practices for managing reference-counted objects.
+>> - No functional changes are introduced; behavior remains the same,
+>>    but reference counting is now safer and easier to maintain.
+>>
+>> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+>> ---
+>>   arch/arm64/kernel/topology.c                  |  9 +++----
+>>   arch/x86/kvm/x86.c                            | 10 ++++----
+>>   drivers/acpi/processor_thermal.c              | 13 ++++------
+>>   drivers/cpufreq/brcmstb-avs-cpufreq.c         |  4 +---
+>>   drivers/cpufreq/cppc_cpufreq.c                |  4 +---
+>>   drivers/cpufreq/intel_pstate.c                |  3 +--
+>>   drivers/cpufreq/longhaul.c                    |  3 +--
+>>   drivers/cpufreq/mediatek-cpufreq.c            |  6 ++---
+>>   drivers/cpufreq/powernv-cpufreq.c             |  6 ++---
+>>   drivers/cpufreq/s5pv210-cpufreq.c             |  3 +--
+>>   drivers/cpufreq/tegra186-cpufreq.c            |  3 +--
+>>   drivers/devfreq/governor_passive.c            | 19 ++++-----------
+>>   drivers/gpu/drm/i915/gt/intel_llc.c           |  3 +--
+>>   drivers/macintosh/windfarm_cpufreq_clamp.c    |  4 +---
+>>   drivers/powercap/dtpm_cpu.c                   | 24 ++++++-----------=
+--
+>>   drivers/thermal/imx_thermal.c                 |  7 ++----
+>>   .../ti-soc-thermal/ti-thermal-common.c        |  5 +---
+>>   kernel/power/energy_model.c                   |  7 ++----
+>>   18 files changed, 40 insertions(+), 93 deletions(-)
+>>
+>> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology=
+.c
+>> index 5d07ee85bdae..e3cb6d54f35b 100644
+>> --- a/arch/arm64/kernel/topology.c
+>> +++ b/arch/arm64/kernel/topology.c
+>> @@ -307,17 +307,16 @@ int arch_freq_get_on_cpu(int cpu)
+>>   		 */
+>>   		if (!housekeeping_cpu(cpu, HK_TYPE_TICK) ||
+>>   		    time_is_before_jiffies(last_update + msecs_to_jiffies(AMU_SAMP=
+LE_EXP_MS))) {
+>> -			struct cpufreq_policy *policy =3D cpufreq_cpu_get(cpu);
+>> +			struct cpufreq_policy *policy __free(put_cpufreq_policy);
+>>   			int ref_cpu;
+>>  =20
+>> +			policy =3D cpufreq_cpu_get(cpu);
+>>   			if (!policy)
+>>   				return -EINVAL;
+>>  =20
+>>   			if (!cpumask_intersects(policy->related_cpus,
+>> -						housekeeping_cpumask(HK_TYPE_TICK))) {
+>> -				cpufreq_cpu_put(policy);
+>> +						housekeeping_cpumask(HK_TYPE_TICK)))
+>>   				return -EOPNOTSUPP;
+>> -			}
+>>  =20
+>>   			for_each_cpu_wrap(ref_cpu, policy->cpus, cpu + 1) {
+>>   				if (ref_cpu =3D=3D start_cpu) {
+>> @@ -329,8 +328,6 @@ int arch_freq_get_on_cpu(int cpu)
+>>   					break;
+>>   			}
+>>  =20
+>> -			cpufreq_cpu_put(policy);
+>> -
+>>   			if (ref_cpu >=3D nr_cpu_ids)
+>>   				/* No alternative to pull info from */
+>>   				return -EAGAIN;
+>> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+>> index a1c49bc681c4..2a825f4ec701 100644
+>> --- a/arch/x86/kvm/x86.c
+>> +++ b/arch/x86/kvm/x86.c
+>> @@ -9492,16 +9492,14 @@ static void kvm_timer_init(void)
+>>   		max_tsc_khz =3D tsc_khz;
+>>  =20
+>>   		if (IS_ENABLED(CONFIG_CPU_FREQ)) {
+>> -			struct cpufreq_policy *policy;
+>> +			struct cpufreq_policy *policy __free(put_cpufreq_policy);
+>>   			int cpu;
+>>  =20
+>>   			cpu =3D get_cpu();
+>>   			policy =3D cpufreq_cpu_get(cpu);
+>> -			if (policy) {
+>> -				if (policy->cpuinfo.max_freq)
+>> -					max_tsc_khz =3D policy->cpuinfo.max_freq;
+>> -				cpufreq_cpu_put(policy);
+>> -			}
+>> +			if (policy && policy->cpuinfo.max_freq)
+>> +				max_tsc_khz =3D policy->cpuinfo.max_freq;
+>> +
+>>   			put_cpu();
+>>   		}
+>>   		cpufreq_register_notifier(&kvmclock_cpufreq_notifier_block,
+>> diff --git a/drivers/acpi/processor_thermal.c b/drivers/acpi/processor=
+_thermal.c
+>> index 1219adb11ab9..8367a81c4842 100644
+>> --- a/drivers/acpi/processor_thermal.c
+>> +++ b/drivers/acpi/processor_thermal.c
+>> @@ -64,17 +64,14 @@ static int phys_package_first_cpu(int cpu)
+>>  =20
+>>   static int cpu_has_cpufreq(unsigned int cpu)
+>>   {
+>> -	struct cpufreq_policy *policy;
+>> +	struct cpufreq_policy *policy __free(put_cpufreq_policy);
+>>  =20
+>>   	if (!acpi_processor_cpufreq_init)
+>>   		return 0;
+>>  =20
+>>   	policy =3D cpufreq_cpu_get(cpu);
+>> -	if (policy) {
+>> -		cpufreq_cpu_put(policy);
+>> -		return 1;
+>> -	}
+>> -	return 0;
+>> +
+>> +	return !!policy;
+>>   }
+>>  =20
+>>   static int cpufreq_get_max_state(unsigned int cpu)
+>> @@ -95,7 +92,7 @@ static int cpufreq_get_cur_state(unsigned int cpu)
+>>  =20
+>>   static int cpufreq_set_cur_state(unsigned int cpu, int state)
+>>   {
+>> -	struct cpufreq_policy *policy;
+>> +	struct cpufreq_policy *policy __free(put_cpufreq_policy);
+>>   	struct acpi_processor *pr;
+>>   	unsigned long max_freq;
+>>   	int i, ret;
+>> @@ -127,8 +124,6 @@ static int cpufreq_set_cur_state(unsigned int cpu,=
+ int state)
+>>   		max_freq =3D (policy->cpuinfo.max_freq *
+>>   			    (100 - reduction_step(i) * cpufreq_thermal_reduction_pctg)) /=
+ 100;
+>>  =20
+>> -		cpufreq_cpu_put(policy);
+>> -
+>>   		ret =3D freq_qos_update_request(&pr->thermal_req, max_freq);
+>>   		if (ret < 0) {
+>>   			pr_warn("Failed to update thermal freq constraint: CPU%d (%d)\n",
+>> diff --git a/drivers/cpufreq/brcmstb-avs-cpufreq.c b/drivers/cpufreq/b=
+rcmstb-avs-cpufreq.c
+>> index 5940d262374f..71450cca8e9f 100644
+>> --- a/drivers/cpufreq/brcmstb-avs-cpufreq.c
+>> +++ b/drivers/cpufreq/brcmstb-avs-cpufreq.c
+>> @@ -480,7 +480,7 @@ static bool brcm_avs_is_firmware_loaded(struct pri=
+vate_data *priv)
+>>  =20
+>>   static unsigned int brcm_avs_cpufreq_get(unsigned int cpu)
+>>   {
+>> -	struct cpufreq_policy *policy =3D cpufreq_cpu_get(cpu);
+>> +	struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D cpufreq=
+_cpu_get(cpu);
+>>   	struct private_data *priv;
+>>  =20
+>>   	if (!policy)
+>> @@ -488,8 +488,6 @@ static unsigned int brcm_avs_cpufreq_get(unsigned =
+int cpu)
+>>  =20
+>>   	priv =3D policy->driver_data;
+>>  =20
+>> -	cpufreq_cpu_put(policy);
+>> -
+>>   	return brcm_avs_get_frequency(priv->base);
+>>   }
+>>  =20
+>> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpu=
+freq.c
+>> index 4a17162a392d..7183754b1f31 100644
+>> --- a/drivers/cpufreq/cppc_cpufreq.c
+>> +++ b/drivers/cpufreq/cppc_cpufreq.c
+>> @@ -726,7 +726,7 @@ static int cppc_get_perf_ctrs_sample(int cpu,
+>>   static unsigned int cppc_cpufreq_get_rate(unsigned int cpu)
+>>   {
+>>   	struct cppc_perf_fb_ctrs fb_ctrs_t0 =3D {0}, fb_ctrs_t1 =3D {0};
+>> -	struct cpufreq_policy *policy =3D cpufreq_cpu_get(cpu);
+>> +	struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D cpufreq=
+_cpu_get(cpu);
+>>   	struct cppc_cpudata *cpu_data;
+>>   	u64 delivered_perf;
+>>   	int ret;
+>> @@ -736,8 +736,6 @@ static unsigned int cppc_cpufreq_get_rate(unsigned=
+ int cpu)
+>>  =20
+>>   	cpu_data =3D policy->driver_data;
+>>  =20
+>> -	cpufreq_cpu_put(policy);
+>> -
+>>   	ret =3D cppc_get_perf_ctrs_sample(cpu, &fb_ctrs_t0, &fb_ctrs_t1);
+>>   	if (ret) {
+>>   		if (ret =3D=3D -EFAULT)
+>> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_ps=
+tate.c
+>> index f366d35c5840..fb962140af56 100644
+>> --- a/drivers/cpufreq/intel_pstate.c
+>> +++ b/drivers/cpufreq/intel_pstate.c
+>> @@ -1698,7 +1698,7 @@ static ssize_t store_no_turbo(struct kobject *a,=
+ struct kobj_attribute *b,
+>>   static void update_qos_request(enum freq_qos_req_type type)
+>>   {
+>>   	struct freq_qos_request *req;
+>> -	struct cpufreq_policy *policy;
+>> +	struct cpufreq_policy *policy __free(put_cpufreq_policy);
+>>   	int i;
+>>  =20
+>>   	for_each_possible_cpu(i) {
+>> @@ -1710,7 +1710,6 @@ static void update_qos_request(enum freq_qos_req=
+_type type)
+>>   			continue;
+>>  =20
+>>   		req =3D policy->driver_data;
+>> -		cpufreq_cpu_put(policy);
+>>  =20
+>>   		if (!req)
+>>   			continue;
+>> diff --git a/drivers/cpufreq/longhaul.c b/drivers/cpufreq/longhaul.c
+>> index ba0e08c8486a..ae5596919671 100644
+>> --- a/drivers/cpufreq/longhaul.c
+>> +++ b/drivers/cpufreq/longhaul.c
+>> @@ -950,7 +950,7 @@ static int __init longhaul_init(void)
+>>  =20
+>>   static void __exit longhaul_exit(void)
+>>   {
+>> -	struct cpufreq_policy *policy =3D cpufreq_cpu_get(0);
+>> +	struct cpufreq_policy *policy __free(put_cpufreq_policy) =3D cpufreq=
+_cpu_get(0);
+>>   	int i;
+>>  =20
+>>   	for (i =3D 0; i < numscales; i++) {
+>> @@ -968,7 +968,6 @@ static void __exit longhaul_exit(void)
+>>   		}
+>>   	}
+>>  =20
+>> -	cpufreq_cpu_put(policy);
+>>   	cpufreq_unregister_driver(&longhaul_driver);
+>>   	kfree(longhaul_table);
+>>   }
+>> diff --git a/drivers/cpufreq/mediatek-cpufreq.c b/drivers/cpufreq/medi=
+atek-cpufreq.c
+>> index f3f02c4b6888..1fae060e16d9 100644
+>> --- a/drivers/cpufreq/mediatek-cpufreq.c
+>> +++ b/drivers/cpufreq/mediatek-cpufreq.c
+>> @@ -320,7 +320,7 @@ static int mtk_cpufreq_opp_notifier(struct notifie=
+r_block *nb,
+>>   	struct dev_pm_opp *new_opp;
+>>   	struct mtk_cpu_dvfs_info *info;
+>>   	unsigned long freq, volt;
+>> -	struct cpufreq_policy *policy;
+>> +	struct cpufreq_policy *policy __free(put_cpufreq_policy);
+>>   	int ret =3D 0;
+>>  =20
+>>   	info =3D container_of(nb, struct mtk_cpu_dvfs_info, opp_nb);
+>> @@ -354,11 +354,9 @@ static int mtk_cpufreq_opp_notifier(struct notifi=
+er_block *nb,
+>>  =20
+>>   			dev_pm_opp_put(new_opp);
+>>   			policy =3D cpufreq_cpu_get(info->opp_cpu);
+>> -			if (policy) {
+>> +			if (policy)
+>>   				cpufreq_driver_target(policy, freq / 1000,
+>>   						      CPUFREQ_RELATION_L);
+>> -				cpufreq_cpu_put(policy);
+>> -			}
+>>   		}
+>>   	}
+>>  =20
+>> diff --git a/drivers/cpufreq/powernv-cpufreq.c b/drivers/cpufreq/power=
+nv-cpufreq.c
+>> index 7d9a5f656de8..ea9d78bbeb38 100644
+>> --- a/drivers/cpufreq/powernv-cpufreq.c
+>> +++ b/drivers/cpufreq/powernv-cpufreq.c
+>> @@ -892,7 +892,7 @@ static int powernv_cpufreq_reboot_notifier(struct =
+notifier_block *nb,
+>>   				unsigned long action, void *unused)
+>>   {
+>>   	int cpu;
+>> -	struct cpufreq_policy *cpu_policy;
+>> +	struct cpufreq_policy *policy __free(put_cpufreq_policy);
+> There's a typo here. I got a compile error because of wrong variable na=
+me.
+>
+> Thanks,
+> Gautam
 
-To solve this limitation, we add CONFIG_CMDLINE_EXTEND, which is already
-available on several other architectures, to make the built-in command
-line append to the bootloader-provided command line.
+Sorry about that.
 
-Signed-off-by: Brian Mak <makb@juniper.net>
----
- arch/x86/Kconfig        |  9 +++++++++
- arch/x86/kernel/setup.c | 13 +++++++++----
- 2 files changed, 18 insertions(+), 4 deletions(-)
+Although we did compile-test it, some configs are not enabled by default=20
+so we missed this issue. I=E2=80=99ll fix it in the next version.
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 58d890fe2100..8da39ebaddf4 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -2275,6 +2275,15 @@ config CMDLINE_BOOL
- 	  Systems with fully functional boot loaders (i.e. non-embedded)
- 	  should leave this option set to 'N'.
- 
-+config CMDLINE_EXTEND
-+	bool "Extend bootloader kernel arguments"
-+	depends on CMDLINE_BOOL && !CMDLINE_OVERRIDE
-+	help
-+	  The built-in command line will be appended to the command-
-+	  line arguments provided during boot. This is useful in
-+	  cases where the provided arguments are insufficient and
-+	  you don't want to or cannot modify them.
-+
- config CMDLINE
- 	string "Built-in kernel command string"
- 	depends on CMDLINE_BOOL
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 1b2edd07a3e1..86e4d8ab8558 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -911,10 +911,15 @@ void __init setup_arch(char **cmdline_p)
- 	strscpy(boot_command_line, builtin_cmdline, COMMAND_LINE_SIZE);
- #else
- 	if (builtin_cmdline[0]) {
--		/* append boot loader cmdline to builtin */
--		strlcat(builtin_cmdline, " ", COMMAND_LINE_SIZE);
--		strlcat(builtin_cmdline, boot_command_line, COMMAND_LINE_SIZE);
--		strscpy(boot_command_line, builtin_cmdline, COMMAND_LINE_SIZE);
-+		if (!IS_ENABLED(CONFIG_CMDLINE_EXTEND)) {
-+			/* append boot loader cmdline to builtin */
-+			strlcat(builtin_cmdline, " ", COMMAND_LINE_SIZE);
-+			strlcat(builtin_cmdline, boot_command_line, COMMAND_LINE_SIZE);
-+			strscpy(boot_command_line, builtin_cmdline, COMMAND_LINE_SIZE);
-+		} else {
-+			strlcat(boot_command_line, " ", COMMAND_LINE_SIZE);
-+			strlcat(boot_command_line, builtin_cmdline, COMMAND_LINE_SIZE);
-+		}
- 	}
- #endif
- 	builtin_cmdline_added = true;
+Thanks for catching this!
 
-base-commit: 1b237f190eb3d36f52dffe07a40b5eb210280e00
--- 
-2.25.1
+
 
 
