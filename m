@@ -1,214 +1,167 @@
-Return-Path: <linux-kernel+bounces-787323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B9EEB37489
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 23:48:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21484B3748E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 23:49:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06DAB7C474F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 21:48:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A3F51B27EF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 21:50:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07624299943;
-	Tue, 26 Aug 2025 21:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50AD8299923;
+	Tue, 26 Aug 2025 21:49:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="y/U4lLvN"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dt+yYGMD"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED982343BE
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 21:48:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 029D7280325;
+	Tue, 26 Aug 2025 21:49:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756244893; cv=none; b=oBkZxT/Z5eWJWS/OhM8AAStkmPWr091x1/dKfNPGAqZEzI9emPVSo9ykByEDoThjq54xijFKcpn1QpKmst/VnUp7V1fb6uweFC4eq+G3Oh/4idziMxGNdM9/jPTrFTYBs+4eCbrAGL1etGmzdLPLId0puqxPA9L5+BMLr0GHxZg=
+	t=1756244990; cv=none; b=E5J9gg/7z47naOMhBH4+zP/2ljjwLSTcxcEKV8XyDLLTlyaZ1pLmWwV/MHI+XxuWzGthYVryJV5PALbZ0xLOtdJy8FHghnbnotVnpZn4m+rMWPTNTJfLXHGhoicC2VHSudmTUw9QYSErXHupr8HB5CjbAg/ngeUh/TjNa61k65A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756244893; c=relaxed/simple;
-	bh=bOwaeI93PSDb0zkaMiT9ewABVodLWy1w5hUTcezg2Eg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=JbZ0LSio7+2MzPJLT+3dRZNuodfCPiwQJ5iS2nM1aYSthr1HJSySeKxXEcdxi9a+AZGGN1PmSNvMP7s+KCH830aDozKKk5WTDWoEbQTmajM0OmFokZ/ZkDAXpJjfwGEZa7ojOM3Qey0wsQp1BU53zUgSXVHqJWS+6PRXtAC2iKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=y/U4lLvN; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32769224506so320832a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 14:48:10 -0700 (PDT)
+	s=arc-20240116; t=1756244990; c=relaxed/simple;
+	bh=YTP7oljg0BII5171/1yq3+K9FoB8VehllhNiO9W07Y0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ttl46UR3Ve3LvP/WAJT0EtPDCSWTBif4/Pj4Q2qsHvjQmYP2lbGRxki5N4UsUbm8QJA1oOYI+qGsMi1bSzcSRxbAKwXyTDMGjpwyLBmDUowS9D53Pzh1uGvqPxyYptK3mhfHNB97VH1VWBMzbZakPyo9eXZnJDA2YY1l/uLL+D0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dt+yYGMD; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45b49f7aaf5so37296825e9.2;
+        Tue, 26 Aug 2025 14:49:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756244890; x=1756849690; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=csobuERBofV5Nepble+8wxFqNjE3upSKLuk+G9nUdh4=;
-        b=y/U4lLvNJ/MerfrBBHu30G/qmSjIvv9fv51NFGoyRrzvtIPkUjHS/H/LUPdJ5tvPFA
-         SNA21+HfrUYzaefxgtFx6Y2hxQGXwwMv79wFiNTEKg5XcQUbqyD+lA6VStlWvn35aaSc
-         pdPvPM/9+Cr8PRb7xoeYLQ1quNdIv4ITFPDB9ga200A9dyWr/5eJN2QgOqnCKopQjisF
-         wOSvhIpmN5OeQr4cC3D2wRGpprWYyUy2LmdRyslx4fV1gxr7ufErKIfnuwN/L9APWxjZ
-         W7QY1KcgZHauHUJcL8yeLba1RcsLQ01S2Pt3PsdwgYNNO2AxrI2Z1Hyoa1qQRCvZbghm
-         2FCQ==
+        d=gmail.com; s=20230601; t=1756244987; x=1756849787; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UGxiUv+9T9MyXGrGc5hXaCPQg3e9+++0LsEZqWpGIE8=;
+        b=Dt+yYGMD9lnM74K8A38gF/rPYyRVomKyh8ELDySN34jrIS4aLJTT5c3VD2kyOeepbt
+         NCaaszPyQKASnnWcEF97vse38Yz+/D9R42+3llljfnjmRrIpE/IinIhAGwlLALxkyvrU
+         unNUreOxLj+6f6qk6qhpCgdd3zswc2HHitk/591thXcX0EhQfYX/YdV4yTGXrb4kQIyL
+         bF3/uUQ2RG5psRSSecbhqbXFRLIU3wEkzXvqYE0HIA9rewgPuwEylJkn0AdA45r6X88y
+         0g8pM+DlvSqqFHcm+ghvhl6fRCrAlybhEo1G1s1MtuhCJ+uCv6+yzgWA5BRb+8uVsJFt
+         RA6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756244890; x=1756849690;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=csobuERBofV5Nepble+8wxFqNjE3upSKLuk+G9nUdh4=;
-        b=LTQfqxm8aMuo/QyMaxY7vZsbfO4CUucBKKz6gIe3sT6LkT0UBp+w3gOzgFH0GOl6Tm
-         wnn4AT2GzX2W6aIJnKWBfSP7aox+MuZAPF+h0lmFnGkGHVeAjYI6fAFSHt/b35xCeHwp
-         waNGbSKIqCi1HwWD88sAUoGhPQEOOoqwWChOKcoR2Xs8K6N0+zNO6UHPLTVf4EkST6RW
-         6uNqwyr0ioXHXXqa/ompcIZ2vNSVdRTTs1pjCkJp/9IKVTFmwBukHi613gsVajNOacKF
-         NGmhMnRmSNU0Z2trPjvt99yXnzqqu/g5aHdz3h7mDE58UKxsNixgBNDFePLYvItrgcaX
-         NlOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWywt0gvL1RxoFmF7AVD/Oy6P1Ldh0GzSfi4YcBuE+Il0cnREwaPotVo48p7Hp5QjO2b8uRcF0kc2wSNPI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4EF9sJuktJGK0UfBJ9I/jlYarUmJwHtF4QTxyAmK3ezIHgpkq
-	snzeVxkK77lrVSGo2fHWkvffIPnyWZLy2PI0DbwDWnL17B8jtFxQZtADLZXqhZ0XV59Ol8sbiRT
-	2elnOQA==
-X-Google-Smtp-Source: AGHT+IFN06e3MQczQrLk326RnPETUX2fqjOe2ujcl7FpqHg8aymnuRt6WEeqpIiIReDvZBv6z8VLbf8Q57A=
-X-Received: from pjbpd18.prod.google.com ([2002:a17:90b:1dd2:b0:325:a8d:a485])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4c8d:b0:31e:f3a4:333
- with SMTP id 98e67ed59e1d1-32517d19c12mr20302910a91.26.1756244890381; Tue, 26
- Aug 2025 14:48:10 -0700 (PDT)
-Date: Tue, 26 Aug 2025 14:48:08 -0700
-In-Reply-To: <20250826213455.2338722-1-sagis@google.com>
+        d=1e100.net; s=20230601; t=1756244987; x=1756849787;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UGxiUv+9T9MyXGrGc5hXaCPQg3e9+++0LsEZqWpGIE8=;
+        b=ia8OTDqvmMjwCZZs5HzJycPUj3Zhk8AtuSOSvrEycpNE9vx4Y5zVjisy9g9rX3uHer
+         iY+Auu9SunzSRSLZfXURGL2aX2EdfE67NgvgqqBMUtlDBdZTI23NhmZU0RPif3xv+LcN
+         cKRAQe2aQYiGGe1PZYzx5J0G7WA5//5F9FZynqwgZzRF3pBVtzUQP7nKTxgcSQxnDsb2
+         UzS5tKkFfZl7ZkwWsS+ZJO6ftb9Yb5dVOAqyr55eFXOlmmRASd8JYkqizDlq60/GY4Sr
+         1SSkCYYACZqk/daeqDSZq0n4OFzJLQ00LK9BY6xuBNIq4fqCgQoHyTvAzRNF1l3tQ/JP
+         KZ7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUIHaU8I9E+rw7qQlpKUgrHVl25bJneEZ721Wm7+gFBTsppwaqgkSAaRuPTEXubGRyNdQvE52KkGwrxfX4=@vger.kernel.org, AJvYcCVigapHFx7x9vUZ+HOt8W3cNXUc98dQO/26Uo0Z9Zh9OwyO3pPukXsKo+MIm2VIDLBWF1CTW0xweP2WnUmxFsYA@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKYroGUfXzwIF4HViu9Hl3IyIlxgfv5wdmtC7j/DDB+fIbr3mu
+	voNkX7piEulsvSf6agETgdyfjoRJgxZBygJhl7URRt6/k/AhyUHdFZxQ
+X-Gm-Gg: ASbGnctBGxIuuHea23PTPWc5f4DyGWAwoF3bMNmeVFQPdFLsRFel5u9+XHzTbs0WBmL
+	pN6P6Kajc0u566qr9wTnIZKuaz9ijN7pp/mM/6lQW9QLeNilv7ax1kb9zYTPJykFVZUQ88z9ADG
+	rg1xvLjH4Tn5s8hLBGOo+eI1XL0+ueW0jWays5PfJQ99WCQ3qba6b2hoBSfpFJ+/va9RLajvfoV
+	tXJWj2lg2yZvzlOepOY5bAKUO+AHCz5VUmuxtzzfse+SqalCK1UQ7MzR0kXjjYFptKmhoCkm/Wr
+	tE8B1Ls6/+OsXAItt/r/lC3hcaLcGRQGaKYnAlw4xo/CMelEGSebl9k6DMXGVQuSsXC8/aWyUwo
+	i2fzVmdYPDpb00+fXGpFsmvNLw5u1whzZw9zvocrRuvZM5ljtDpuCbJdWVFXmGwMh
+X-Google-Smtp-Source: AGHT+IHv+Wry+OjQYum2M7c57rs+J3M7hZ2o5axY1fUO2E8dRSkddQaT/i6JHD3BgXqPOrIfoE/gqg==
+X-Received: by 2002:a05:600c:3b95:b0:459:df07:6db7 with SMTP id 5b1f17b1804b1-45b5179b2a1mr156669565e9.6.1756244987084;
+        Tue, 26 Aug 2025 14:49:47 -0700 (PDT)
+Received: from localhost.localdomain ([46.10.223.24])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c711211b19sm18309207f8f.39.2025.08.26.14.49.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Aug 2025 14:49:46 -0700 (PDT)
+From: "Nikola Z. Ivanov" <zlatistiv@gmail.com>
+To: bagasdotme@gmail.com,
+	Markus.Elfring@web.de,
+	broonie@kernel.org
+Cc: shuah@kernel.org,
+	will@kernel.org,
+	mark.rutland@arm.com,
+	ebiggers@google.com,
+	catalin.marinas@arm.com,
+	martin.petersen@oracle.com,
+	ardb@kernel.org,
+	thiago.bauermann@linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	"Nikola Z. Ivanov" <zlatistiv@gmail.com>
+Subject: [PATCH v2] selftests/arm64: Fix grammatical error in string literals
+Date: Wed, 27 Aug 2025 00:49:13 +0300
+Message-ID: <20250826214913.866695-1-zlatistiv@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250826213455.2338722-1-sagis@google.com>
-Message-ID: <aK4rmD7QpotYXume@google.com>
-Subject: Re: [PATCH] KVM: TDX: Force split irqchip for TDX at irqchip creation time
-From: Sean Christopherson <seanjc@google.com>
-To: Sagi Shahar <sagis@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Binbin Wu <binbin.wu@linux.intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org, x86@kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 26, 2025, Sagi Shahar wrote:
-> TDX module protects the EOI-bitmap which prevents the use of in-kernel
-> I/O APIC. See more details in the original patch [1]
-> 
-> The current implementation already enforces the use of split irqchip for
-> TDX but it does so at the vCPU creation time which is generally to late
-> to fallback to split irqchip.
-> 
-> This patch follows Sean's recomendation from [2] and move the check if
-> I/O APIC is supported for the VM at irqchip creation time.
-> 
-> [1] https://lore.kernel.org/lkml/20250222014757.897978-11-binbin.wu@linux.intel.com/
-> [2] https://lore.kernel.org/lkml/aK3vZ5HuKKeFuuM4@google.com/
-> 
-> Suggested-by: Sean Christopherson <seanjc@google.com>
-> Signed-off-by: Sagi Shahar <sagis@google.com>
-> ---
->  arch/x86/include/asm/kvm_host.h |  3 +++
->  arch/x86/kvm/vmx/tdx.c          | 15 ++++++++-------
->  arch/x86/kvm/x86.c              | 10 ++++++++++
->  3 files changed, 21 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index f19a76d3ca0e..cb22fc48cdec 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -1357,6 +1357,7 @@ struct kvm_arch {
->  	u8 vm_type;
->  	bool has_private_mem;
->  	bool has_protected_state;
-> +	bool has_protected_eoi;
->  	bool pre_fault_allowed;
->  	struct hlist_head *mmu_page_hash;
->  	struct list_head active_mmu_pages;
-> @@ -2284,6 +2285,8 @@ void kvm_configure_mmu(bool enable_tdp, int tdp_forced_root_level,
->  
->  #define kvm_arch_has_readonly_mem(kvm) (!(kvm)->arch.has_protected_state)
->  
-> +#define kvm_arch_has_protected_eoi(kvm) (!(kvm)->arch.has_protected_eoi)
-> +
->  static inline u16 kvm_read_ldt(void)
->  {
->  	u16 ldt;
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index 66744f5768c8..8c270a159692 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -658,6 +658,12 @@ int tdx_vm_init(struct kvm *kvm)
->  	 */
->  	kvm->max_vcpus = min_t(int, kvm->max_vcpus, num_present_cpus());
->  
-> +	/*
-> +	 * TDX Module doesn't allow the hypervisor to modify the EOI-bitmap,
-> +	 * i.e. all EOIs are accelerated and never trigger exits.
-> +	 */
-> +	kvm->arch.has_protected_eoi = true;
-> +
->  	kvm_tdx->state = TD_STATE_UNINITIALIZED;
->  
->  	return 0;
-> @@ -671,13 +677,8 @@ int tdx_vcpu_create(struct kvm_vcpu *vcpu)
->  	if (kvm_tdx->state != TD_STATE_INITIALIZED)
->  		return -EIO;
->  
-> -	/*
-> -	 * TDX module mandates APICv, which requires an in-kernel local APIC.
-> -	 * Disallow an in-kernel I/O APIC, because level-triggered interrupts
-> -	 * and thus the I/O APIC as a whole can't be faithfully emulated in KVM.
-> -	 */
-> -	if (!irqchip_split(vcpu->kvm))
-> -		return -EINVAL;
-> +	/* Split irqchip should be enforced at irqchip creation time. */
-> +	KVM_BUG_ON(irqchip_split(vcpu->kvm), vcpu->kvm);
+Fix grammatical error in <past tense verb> + <infinitive>
+construct related to memory allocation checks.
+In essence change "Failed to allocated" to "Failed to allocate".
 
-Sadly, the existing check needs to stay, because userspace could simply not create
-any irqchip.  My complaints about KVM_CREATE_IRQCHIP is that KVM is allowing an
-explicit action that is unsupported/invalid.  For lack of an in-kernel local APIC,
-there's no better alternative to enforcing the check at vCPU creation.
+Signed-off-by: Nikola Z. Ivanov <zlatistiv@gmail.com>
+---
+Changes in v2:
+- More descriptive commit message
 
->  	fpstate_set_confidential(&vcpu->arch.guest_fpu);
->  	vcpu->arch.apic->guest_apic_protected = true;
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index a1c49bc681c4..a846dd3dcb23 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -6966,6 +6966,16 @@ int kvm_arch_vm_ioctl(struct file *filp, unsigned int ioctl, unsigned long arg)
->  		if (irqchip_in_kernel(kvm))
->  			goto create_irqchip_unlock;
->  
-> +		/*
-> +		 * Disallow an in-kernel I/O APIC for platforms that has protected
-> +		 * EOI (such as TDX). The hypervisor can't modify the EOI-bitmap
-> +		 * on these platforms which prevents the proper emulation of
-> +		 * level-triggered interrupts.
-> +		 */
+Original title is "Fix typos in malloc return value check"
 
-Slight tweak to shorten this and to avoid mentioning the EOI-bitmap.  The use of
-a software-controlled EOI-bitmap is a vendor specific detail, and it's not so much
-the inability to modify the bitmap that's problematic, it's that TDX doesn't
-allow intercepting EOIs.  E.g. TDX also requires x2APIC and PICv to be enabled,
-without which EOIs would effectively be intercepted by other means.
+ tools/testing/selftests/arm64/fp/fp-stress.c   | 2 +-
+ tools/testing/selftests/arm64/fp/kernel-test.c | 4 ++--
+ tools/testing/selftests/arm64/gcs/gcs-stress.c | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-		/*
-		 * Disallow an in-kernel I/O APIC if the VM has protected EOIs,
-		 * i.e. if KVM can't intercept EOIs and thus can't properly
-		 * emulate level-triggered interrupts.
-		 */
+diff --git a/tools/testing/selftests/arm64/fp/fp-stress.c b/tools/testing/selftests/arm64/fp/fp-stress.c
+index 74e23208b94c..ddc01efea3f9 100644
+--- a/tools/testing/selftests/arm64/fp/fp-stress.c
++++ b/tools/testing/selftests/arm64/fp/fp-stress.c
+@@ -549,7 +549,7 @@ int main(int argc, char **argv)
+ 
+ 	evs = calloc(tests, sizeof(*evs));
+ 	if (!evs)
+-		ksft_exit_fail_msg("Failed to allocated %d epoll events\n",
++		ksft_exit_fail_msg("Failed to allocate %d epoll events\n",
+ 				   tests);
+ 
+ 	for (i = 0; i < cpus; i++) {
+diff --git a/tools/testing/selftests/arm64/fp/kernel-test.c b/tools/testing/selftests/arm64/fp/kernel-test.c
+index e3cec3723ffa..0c40007d1282 100644
+--- a/tools/testing/selftests/arm64/fp/kernel-test.c
++++ b/tools/testing/selftests/arm64/fp/kernel-test.c
+@@ -188,13 +188,13 @@ static bool create_socket(void)
+ 
+ 	ref = malloc(digest_len);
+ 	if (!ref) {
+-		printf("Failed to allocated %d byte reference\n", digest_len);
++		printf("Failed to allocate %d byte reference\n", digest_len);
+ 		return false;
+ 	}
+ 
+ 	digest = malloc(digest_len);
+ 	if (!digest) {
+-		printf("Failed to allocated %d byte digest\n", digest_len);
++		printf("Failed to allocate %d byte digest\n", digest_len);
+ 		return false;
+ 	}
+ 
+diff --git a/tools/testing/selftests/arm64/gcs/gcs-stress.c b/tools/testing/selftests/arm64/gcs/gcs-stress.c
+index bbc7f4950c13..cf316d78ea97 100644
+--- a/tools/testing/selftests/arm64/gcs/gcs-stress.c
++++ b/tools/testing/selftests/arm64/gcs/gcs-stress.c
+@@ -433,7 +433,7 @@ int main(int argc, char **argv)
+ 
+ 	evs = calloc(tests, sizeof(*evs));
+ 	if (!evs)
+-		ksft_exit_fail_msg("Failed to allocated %d epoll events\n",
++		ksft_exit_fail_msg("Failed to allocate %d epoll events\n",
+ 				   tests);
+ 
+ 	for (i = 0; i < gcs_threads; i++)
+-- 
+2.50.1
 
-> +		r = -ENOTTY;
-> +		if (kvm_arch_has_protected_eoi(kvm))
-
-No need for a macro wrapper, just do
-
-		if (kvm->arch.has_protected_eoi)
-
-kvm_arch_has_readonly_mem() and similar accessors exist so that arch-neutral
-code, e.g. check_memory_region_flags() in kvm_main.c, can query arch-specific
-state.  Nothing outside of KVM x86 should care about protected EOI, because that's
-very much an x86-specific detail.
-
-> +			goto create_irqchip_unlock;
-> +
->  		r = -EINVAL;
->  		if (kvm->created_vcpus)
->  			goto create_irqchip_unlock;
-> -- 
-> 2.51.0.261.g7ce5a0a67e-goog
-> 
 
