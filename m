@@ -1,169 +1,155 @@
-Return-Path: <linux-kernel+bounces-787279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71F9EB373F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 22:41:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1068B37403
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 22:45:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 727041BA4AA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 20:42:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5554F7C59F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 20:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A98334396;
-	Tue, 26 Aug 2025 20:41:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4542848B4;
+	Tue, 26 Aug 2025 20:45:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="paPjtZTY"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="Ki9wPHON"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941772EFD90
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 20:41:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756240900; cv=none; b=jHkwi6uyFmQfalUv3jwrVJRs+pH8gwmERvuGQWHdkHkcVisrDTFlKflaak6xWjYTl5T6Viw7iof/lQHVxIL8xdiDW79hnklU5+lc3S+iX2Pe06kw/OqR8mSmFu2r+d0si49hHqR5oopa/uM+BtuY7JDj+87pYAyj6tvFjD3Dr+c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756240900; c=relaxed/simple;
-	bh=T+a/BbQYUpxBjBCMc7qHsSqNFjpz2fZdg6cp2+uqwiQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=NEZEzyInIhGdI5wc8Laqw2K/RebbKyDRwRJzxUNJiUUJJTn4OJbJEJGkdFZd6d8rpFesV2ufnmmpi4glTskUNSAu4ry0Dk2VV5AWVDUQ5jb2fELZrImbD1pFnF9wR7kqnJ6jXgJ8J2loa0UIPUEyZoaNyweqA/WHznlF4vb15Ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=paPjtZTY; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2465bc6da05so55638755ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 13:41:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756240898; x=1756845698; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jxHPfEnTfM31bordW/xAmN05KZGENuYbEfdQSBjX92E=;
-        b=paPjtZTYOgecFcS8X3E7o8w7uLiAnnyTu35DcM0rYh0FboUFv17XUcGEx+2E9PwTMn
-         XEDHaRNSchdyLQEJaqREA3H1Py2vUeoVwNkZtfk6PwUg7i0ZeVtMob//YlTb45JDQ/VT
-         BimVZkQvrBm890B2Uh8DNLQQ92wBLf4kkP+3EBMbR1k4xuHc7HDGDDt7f0iGEwkkcrgg
-         C6vprEru/Bezbaf8n+ZLB0ehv+S3jzo0s+IDQxlNuPCH/w1R+iSqccYiRtoBovxj0Uim
-         ZhXshik+mIvy+qTISSa3B+d7yYu8QQ6jhPgA0ulr5brOCwnSD3276s3kHDm9O9x7wFDC
-         GMZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756240898; x=1756845698;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jxHPfEnTfM31bordW/xAmN05KZGENuYbEfdQSBjX92E=;
-        b=XX5TL9VWwHfN/d8o5OkA2se6EMwF/sbVoM56hRp3c/G658cMJv/Ant8baRwYf4lY25
-         1TlKUH0wJccK5mIKohZg/eFowJYidlszRCS0iMYy3OyzRvSPho9hyzNssWb6dHFTtCSo
-         fMyHYaztN6u1sOdii2nZXx0MnnogpHh/4Zhz2J1G8wVCX1FgDKSMSt9+N7zlCo08qUJ8
-         /RLZvGlelyj6Mjp6gP+LGeF9dpQruLVmhyVP2NUduhagFtDl21gkW3BoVu30GRHGnXEU
-         piojndmKwBDIcwf7shpXpawlScEAfupd03gFIyV9gqDnnLPk7EalHd/tkXQYnRQjGqwx
-         p9Hw==
-X-Forwarded-Encrypted: i=1; AJvYcCV4Cz/MC0KatU7Ir9jhbmuHCTPxEO9aB1cZoMwxFjaSW4uvRJl5pcaCfiYRikyFo/3fuMt8dEJw/gc7Tyg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQL1fz+3GrITko1rw7ITD2QkqUe8lmWmXIECM2P6hmcfG8wUUz
-	hJys9NUMMalhFWZ6d0M/uNPZam5LQkBNf71q84+75qD+7aKMOO1WY8bNvkZNuUAnEFOrcoDqeY9
-	pXI7F/w==
-X-Google-Smtp-Source: AGHT+IEGhZVQdVOygMYUI+v0tbctNCqb/0OYTa/y1v5d+8e0x9RnEZH1nApMHZtssGIweK5cKyTUcocTcSY=
-X-Received: from plez4.prod.google.com ([2002:a17:902:ccc4:b0:246:1ef:f07c])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:38c4:b0:240:5bde:532d
- with SMTP id d9443c01a7336-2462ef4c8eemr216737005ad.38.1756240897935; Tue, 26
- Aug 2025 13:41:37 -0700 (PDT)
-Date: Tue, 26 Aug 2025 13:41:36 -0700
-In-Reply-To: <aK4J5EA10ufKJZsU@linux.dev>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2BB218A6AD;
+	Tue, 26 Aug 2025 20:45:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756241137; cv=pass; b=gHOAH6WtgouPSbt8cZu9l+PJaWB6GvGx3U0dqKLh3Ksdnf9Cx3TWuGngzYjSAT7irKagudPipTSJWualQpIxopXRK3sTa2H7M+d7nlhkfB8i2QgpB2QtCaX0vgoaAdEeBYnM7634rIIaenV1Fx+cXKjNxosjovJIQCjYk12x8dc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756241137; c=relaxed/simple;
+	bh=KJjS8I6gJSijIC7JO2aXSuBJftstDuSC97VuLN7ULDM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Xle5+TQ0wY8fLKfrnBqd4lnoaNdbk5+9aBBc4UhwIB5haPZPyme+9xLxriVrEsEpShEdcHwjc/1CJZozbwR2DNCK1M28c42vZtdbP6TDQRIEvjbrxZir5KCthGC1tLyaijXTHzi3SjXE5qk+FrRhI/I/rlLRnXxhjkj+56SHxI8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=Ki9wPHON; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1756241053; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=j2yVxPbvVmnkEx3m/dN6e1AnUw4nYDLYLrQh9jouqxO5BJjiiCr793G8HSPBwBdIjatD9NagViFauNjRfSXiN5OkOvRkuqJsv3BkMAKRRezf9KhkZ9qHONfzjNiYdn92suhyL8w0t2CahFZ6j03Kzk/PHMsJrm8p8efMx+NlI/M=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756241053; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=h44Qfi5J3Y304gTJmb6TLXLe4gIhtF4d/gBhlL0gNV4=; 
+	b=N2xtWkuh45RuU2Vs8YqwfZJBv6pw4MgqWCT3y3wTsVdIc4i07F27CpHJTe6r0RHrYKECjA2mdKudHQ73mnL9z6hLRcvSqq2844PABhn+1mHxPbT5bMHwssg/rwWgr6mQ/zKgi0MKUL5PN5Wc1C2feJz+9yYB4bE83Epayd99uKE=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756241053;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=h44Qfi5J3Y304gTJmb6TLXLe4gIhtF4d/gBhlL0gNV4=;
+	b=Ki9wPHONx+Kgfg+EjzLJhd6LwqGwWdyDua6+Z+EDmJEbzyVUdyErOswt5JJ7uGnV
+	yBZm/csgF+b9XzuM3ZCk9g4oG2mnCIHV2SY/tvJsxQ81i+wvrbET0R14VjHnkb41YXS
+	mDPO7PRK+qiv+NHwXJGh2VBPtPHhrJ7sOczkb5CI=
+Received: by mx.zohomail.com with SMTPS id 1756241051276539.1866484786493;
+	Tue, 26 Aug 2025 13:44:11 -0700 (PDT)
+Message-ID: <676d88d1-c15a-4648-a4c5-c668e40b12f0@collabora.com>
+Date: Tue, 26 Aug 2025 23:43:57 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250825155203.71989-1-sebott@redhat.com> <aKy-9eby1OS38uqM@google.com>
- <87zfbnyvk9.wl-maz@kernel.org> <aKzRgp58vU6h02n6@google.com>
- <aKzX152737nAo479@linux.dev> <aK4CJnNxB6omPufp@google.com> <aK4J5EA10ufKJZsU@linux.dev>
-Message-ID: <aK4cAPeGgy0kXY98@google.com>
-Subject: Re: [PATCH] KVM: selftests: fix irqfd_test on arm64
-From: Sean Christopherson <seanjc@google.com>
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: Marc Zyngier <maz@kernel.org>, Sebastian Ott <sebott@redhat.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org, 
-	kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 04/20] media: synopsys: hdmirx: replace macros with
+ bitfield variants
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+ Yury Norov <yury.norov@gmail.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson
+ <ulf.hansson@linaro.org>, Heiko Stuebner <heiko@sntech.de>,
+ Shreeya Patel <shreeya.patel@collabora.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Sandy Huang
+ <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Shawn Lin <shawn.lin@rock-chips.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Chanwoo Choi <cw00.choi@samsung.com>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>, Qin Jian <qinjian@cqplus1.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
+ linux-sound@vger.kernel.org, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-pci@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, llvm@lists.linux.dev
+References: <20250825-byeword-update-v3-0-947b841cdb29@collabora.com>
+ <20250825-byeword-update-v3-4-947b841cdb29@collabora.com>
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250825-byeword-update-v3-4-947b841cdb29@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On Tue, Aug 26, 2025, Oliver Upton wrote:
-> On Tue, Aug 26, 2025 at 11:51:18AM -0700, Sean Christopherson wrote:
-> > On Mon, Aug 25, 2025, Oliver Upton wrote:
-> > > The majority of selftests don't even need an irqchip anyway.
-> > 
-> > But it's really, really nice for developers if they can assume a certain level of
-> > configuration is done by the infrastructure, i.e. don't have worry about doing
-> > what is effectively "basic" VM setup.
+On 8/25/25 11:28, Nicolas Frattaroli wrote:
+> The era of hand-rolled HIWORD_UPDATE macros is over, at least for those
+> drivers that use constant masks.
 > 
-> The more we pile behind what a "basic" VM configuration is the less
-> expressive the tests become. Being able to immediately grok the *intent*
-> of a test from reading it first pass is a very good thing. Otherwise I
-> need to go figure out what the definition of "basic" means when I need
-> to write a test and decide if that is compatible with what I'm trying to
-> do.
-
-Eh, I don't buy that argument, not as a blanket statement.
-
-The existence of code doesn't always communicate intent, e.g. the _only_ instance
-I can think of where doing more setup by default caused problems was a few crusty
-x86 tests that relied on an int3 to cause SHUTDOWN due to lack of an IDT.  OMG was
-I increduluous when I figured out what those tests were doing.
-
-And in that case, _not_ doing the "basic" setup hid the intent of the test.  Aside
-from the fact that deliberately triggering SHUTDOWN was completely unnecessary in
-those tests, IMO forcing such a test to use vm_create_barebones() would better
-capture that the test is doing something odd, i.e. has unusual intent.
-
-And explicitly doing something doesn't necessarily communicate the intent of the
-test.  E.g. the intent of the irqfd_test is to verify that KVM_IRQFD assign and
-deassign behaves as expected.  The test never generates IRQs, i.e. doesn't actually
-need an IRQCHIP beyond satisfying KVM's requirements for KVM_IRQFD.
-
-There are undoubtedly other tests that have similar "intent".  E.g. the in-progress
-mediated PMU support for x86 requires an in-kernel local APIC, and so tests like
-pmu_counters_test.c, pmu_event_filter_test.c, and vmx_pmu_caps_test.c will need
-to instantiate an IRQCHIP.  None of those tests actually touch the local APIC in
-any way, e.g. don't generate PMU interrupts, so creating an IRQCHIP is once again
-nothing more than a means to an end, and not indicative of the test's main intent.
-
-I think the use of vgic_v3_setup() in dirty_log_perf_test.c is also a case where
-the existence of code fails to communicate intent.  Without the comment in
-arch_setup_vm() to explain that having GICv3 somehow reduces the number of exits,
-I would be very confused as to why the test cares about GICv3.
-
-I agree there's a balance to be had in terms of doing too much.  Unfortunately in
-this case, it sounds like the fundamental problem is that the balance is simply
-different for x86 versus arm64.  Having an in-kernel local APIC is tables stakes
-for x86, to the point where I'm looking for any excuse to have KVM create a local
-APIC by default.  But for arm64, there's tremendous value in having tests do the
-lifting.
-
-> vm_create_with_irqchip() is delightfully unambiguous.
->
-> > E.g. x86 selftests creates an IRQCHIP, sets up descriptor tables and exception
-> > handlers, and a handful of other "basic" things, and that has eliminated soooo
-> > much boilerplate code and the associated friction with having to know/discover
-> > that e.g. sending IRQs in a test requires additional setup beyond the obvious
-> > steps like wiring up a handler.
+> Replace the UPDATE macro with bitfield.h's FIELD_PREP, to give us
+> additional error checking.
 > 
-> That simply isn't going to happen on arm64. On top of the fact that the
-> irqchip configuration depends on the intent of the test (e.g. wired IRQs
-> v. MSIs), there's a bunch of guest-side initialization that needs to
-> happen too.
+> Also, replace the HIWORD_UPDATE macro at the same time with the new
+> FIELD_PREP_WM16 macro in hw_bitfield.h, which also gives us additional
+> error checking.
 > 
-> We can add an extremely barebones GIC when asked for (although guest
-> init isn't addressed) but batteries are not included on this architecture
-> and I'd rather not attempt to abstract that.
+> The UPDATE/HIWORD_UPDATE macros are left as wrappers around the
+> replacement macros, in order to not rock the boat too much, and keep the
+> changes easy to review.
+> 
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> ---
+>  drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h
+> index 220ab99ca61152b36b0a08b398ddefdb985709a5..b26668a98aafd1682b8342cc11f84666a13f07a3 100644
+> --- a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h
+> +++ b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h
+> @@ -8,10 +8,12 @@
+>  #ifndef DW_HDMIRX_H
+>  #define DW_HDMIRX_H
+>  
+> +#include <linux/bitfield.h>
+>  #include <linux/bitops.h>
+> +#include <linux/hw_bitfield.h>
+>  
+> -#define UPDATE(x, h, l)		(((x) << (l)) & GENMASK((h), (l)))
+> -#define HIWORD_UPDATE(v, h, l)	(((v) << (l)) | (GENMASK((h), (l)) << 16))
+> +#define UPDATE(x, h, l)		(FIELD_PREP(GENMASK((h), (l)), (x)))
+> +#define HIWORD_UPDATE(v, h, l)	(FIELD_PREP_WM16(GENMASK((h), (l)), (v)))
 
-What about providing an API to do exactly that, instantiate and initialize a
-barebones GIC?  E.g.
+Nit: the extra parens around FIELD_PREP may be omitted
 
-	void kvm_arch_init_barebones_irqchip(struct kvm_vm *vm)
+Acked-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 
-Hmm, then we'd also need
-
-	void kvm_arch_vm_free(struct kvm_vm *vm)
-
-to gracefully free the GIC, as done by dirty_log_perf_test.c.  Blech.  Though
-maybe we'll end up with that hook sooner or later?
-
-All in all, I have no strong preference at this point.
+-- 
+Best regards,
+Dmitry
 
