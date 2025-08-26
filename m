@@ -1,136 +1,121 @@
-Return-Path: <linux-kernel+bounces-786453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 917AAB35A00
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:20:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF3CFB35A0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:26:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F7A52A6B73
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:20:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB8541B67E06
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:27:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1886E2BE05B;
-	Tue, 26 Aug 2025 10:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BCF52BE7B3;
+	Tue, 26 Aug 2025 10:26:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PXbW7b99"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gc2weJaT"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5757729D283;
-	Tue, 26 Aug 2025 10:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C9B2BDC2F;
+	Tue, 26 Aug 2025 10:26:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756203623; cv=none; b=BAcEllD7G7ZTL4hCj1Xa5beKRS+vwtHVkDtBy3JeBAiI6+MgKhV2OarH6c+jg7ctNRaEXmxTICIAGBFmnk9wWZe4V+DtGfXBL6OJnezxD0H7xes+JYA5PLff7azDexv0tubgC+0S31PdRVdOg5fnDnR8s+Wr2YvtRWvbbt4RWnk=
+	t=1756203997; cv=none; b=lt9vqm09eYTXzMOWQBglK9ozbAptBzNEuaagdXdAavLpv8SQz8ijC8STQeF+KBLfbWk3YqWCMdtx8tFYqSk6csOkPBk2ImQXlXbAvWvP/GeG2vAJZmsyjB+F54+ts9ZEH/h2hOGCQhEdPG51aGmHIebq/OyEBrb6WeVXBEUHeic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756203623; c=relaxed/simple;
-	bh=SQj19bRsv81q+ZnWFUSYxGQesSOr+XBdXk7u/2A7UuM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DWbP3v1Fm7S7XBwB5RQ38wlsINIT2zUcETe+nmnP13auQPPYRgPoayY+17hZ5k/lUsnI6UjVG/6ie6iQykhyHewfGLk0Eyk5ziApq63+RtgPy/qZRYjynmuaxeFjbQXyVlGwfKSL32VUkEfF7sE7HrEZftpVQfvaeW9moMAqbWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PXbW7b99; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21DEEC4CEF1;
-	Tue, 26 Aug 2025 10:20:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756203622;
-	bh=SQj19bRsv81q+ZnWFUSYxGQesSOr+XBdXk7u/2A7UuM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PXbW7b99egZTEWGT1MOnJm6owvmmBX7wjKJ68UPHQ4t+T88ZRP3BYOsTChItPpnv6
-	 Xd322TOoLmSp5R3HCzBO0hjvAl9YH3eJzCt4+qzYyIbzAwMRc7VgtjggQPqQ+LbGJ3
-	 cW/GWOM40AhYiyVNllhWNaNPIGXm6pbe1LNtLnt8fBo5jEpXNpGk4D9PezQ5IUGIw3
-	 BWyUhnubNlPqpVIq7wPpcPas5Wv9dnZKqcXY0D5kxBUERYBfr1D0FtUq4aGQr2oH7c
-	 PXMrlac5qeGwmiS+llwIWBzryBN9+sX3oQGHgthnLMEmAnM+Vvrz8ENzV9gObaSFSA
-	 DPR/cWj27bSiA==
-Date: Tue, 26 Aug 2025 15:50:07 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
-	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, quic_vbadigan@quicinc.com, 
-	quic_mrana@quicinc.com
-Subject: Re: [PATCH v2 3/3] PCI: qcom: Restrict port parsing only to pci
- child nodes
-Message-ID: <ei7qtgj7jegwaafrjdccoaz3tg7klnms4dyiqdumwxdvnucp4c@euose4y6vkqg>
-References: <20250826-pakala-v2-0-74f1f60676c6@oss.qualcomm.com>
- <20250826-pakala-v2-3-74f1f60676c6@oss.qualcomm.com>
- <rurdrz3buvb7paqgjjr7ethzvaeyvylezexcwshpj73xf7yeec@i52bla6r5tx7>
- <b7529529-9677-4713-920f-bf36863459ca@kernel.org>
- <p6yacm6hkhp4rgtl2xn677kek24ksczvtuersxnou4kmxmp7go@tmoy7gn4hrhx>
- <dfd9cc8b-8103-4fa9-8b3b-c31ae7c4970a@kernel.org>
+	s=arc-20240116; t=1756203997; c=relaxed/simple;
+	bh=O5QaWL4fC9ZfJKSjodA0MK3AH6Gddyny4ad5oPhmaK8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Edch0sJCFIFvURgZLe/xsQ7jXOfX0geVgRaQ7AaZkR88fbnm5iPh9+yQVaAhPcdPo/ookWy++6gSv6bofQNaC5G6JOgk65MrEQP5KezUQFXYskd1/uxIc+eyLIg8wRLmTkFs9jzqT4X51vtsw1EddbZmXHCjeXN6D+V6y0pOG8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gc2weJaT; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-619487c8865so11242771a12.1;
+        Tue, 26 Aug 2025 03:26:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756203994; x=1756808794; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ds6xAU6+uuVJ+pTYkEOyBSf6qVVVR2jmuQi+4247ivo=;
+        b=Gc2weJaTw4HKhI+dmvTnaU3Cjwz+Ilq69q9gc/Pa2BaRYAfEt7RNHRJTK3Xi5PbJrg
+         PC2KKlAm+wq2QX1VDOTYR5vzFbIJgQi7I/ws6/K1eGt7f47keMr3j3MRfIKKNK7h3uWs
+         3Nam0WE1sUaOLfKEJxhUvU0tyBznfZDTOXRL8uFDHgy1fvrtp9W2DZdK7HKcKzjTsvrr
+         yP+kQ2eEApsSbZlg01fdI/Ds+Xn7WbzmhRGnT9NKDAqP0o/TVnnrKJ7OCtPpS4zW8xv/
+         oOb6i8GSxYqXtWPToa/q0MoTXoSlw2jzZKP1qVM4Fjn5NpyXKtbD/nytyQWpuwbpc6rL
+         V5MA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756203994; x=1756808794;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ds6xAU6+uuVJ+pTYkEOyBSf6qVVVR2jmuQi+4247ivo=;
+        b=H2fsL8QK0B9XiK9VK3++BRmQ5VJZyHA2Bl3D7Fi4fAg1+BLexlOBCTNxXykc9rOYqn
+         XCdocechsu7WzFdG5pv5hb6cXLdFGjozPdGI1674PFHQr0WJPkaWpOf6bfDnXpO00wuP
+         QCtpUDi+HDwzh4s+UbHMi/dCcjXiypNbpGprujlI6iaI8I9zuhpc9rWK6/o3zB08Vllp
+         6r14Cg9JDg6EaJtEI26YyrkxmihKJ6rMyS7GYdc/Mt2Giz2rZtvt4IMudWYlKblV2nUz
+         PXWsw7oHXTFI0l7Uyr4cF+nVupBXI+tlEy4sQ7/tJovQXwHEWM3jzzzv8G3gYhojfuoj
+         NvXg==
+X-Forwarded-Encrypted: i=1; AJvYcCXzWdlou0ahrMbUKFvG3WM+CjhHAE868IobntrckdOQrE/KHoizyU+NOdtXOaEdCs0BdQSbTl9VBp0rjNc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1E1lnJjZahvbtwG2ceCg5kc+FVZUnDOGzcfbZV58UjM5PvNki
+	twKBVVlmYwFUZ0OrQ3/Ls58v1BlL9pykHna+NaAcramvC+189R3R8hpoArnQXA==
+X-Gm-Gg: ASbGncuTthLgIxbzQGomGSWxpZeGwU979KyJUjrc9u0KFNV7BOHpCOpm1vMOfgNIZdD
+	WN3gxisMlXsteAH0b2uxiabwrC1RB4ZqHsW1YiqtoMu81Pu3lDWTm+fWSaxKkoVYNJlbyF0xpFB
+	aClxTscLa0brwCFVryo3UDnwVB6cMVywaGbn0ZsjbixBCOHBAN65l0TpVDTgsRxFs8nATdi+Wfj
+	/jeUp5tccuu2Z5SiuepWGlQg47yiVUrVLVnxaBXg3AaljhHaCAStugG8SIRCbl0ws1gvgp8GcUc
+	7fTcX12PcQFrYAOgXjnkiGl2LuU/QSEIXoh3/zHIpbF0GyUGTFk5h3NNp+FaIErikq8m1+yocnM
+	6BiuxKAPU780Km2URpHbuw1AEfA==
+X-Google-Smtp-Source: AGHT+IHTceCWbmXAuyBrrQ/rdBMT4nvIUTD87nvmQUP/YtdfJBrxaTfJzojq7oJ8BVjGWCSkCrrLzQ==
+X-Received: by 2002:a05:6402:90e:b0:61c:931d:ccce with SMTP id 4fb4d7f45d1cf-61c983b81d2mr876407a12.13.1756203993533;
+        Tue, 26 Aug 2025 03:26:33 -0700 (PDT)
+Received: from NB-6746.. ([88.201.206.17])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61c3119f79asm6687862a12.5.2025.08.26.03.26.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Aug 2025 03:26:33 -0700 (PDT)
+From: Artem Shimko <artyom.shimko@gmail.com>
+X-Google-Original-From: Artem Shimko <a.shimko@yadro.com>
+To: dmaengine@vger.kernel.org
+Cc: Artem Shimko <artyom.shimko@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	vkoul@kernel.org,
+	eugeniy.paltsev@synopsys.com
+Subject: [PATCH 0/1] drivers: dma: change pm registration for dw-axi-dmac-platform's suspend
+Date: Tue, 26 Aug 2025 13:26:27 +0300
+Message-ID: <20250826102631.1891492-1-a.shimko@yadro.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <y>
+References: <y>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <dfd9cc8b-8103-4fa9-8b3b-c31ae7c4970a@kernel.org>
 
-On Tue, Aug 26, 2025 at 11:29:37AM GMT, Krzysztof Kozlowski wrote:
-> On 26/08/2025 11:26, Manivannan Sadhasivam wrote:
-> > On Tue, Aug 26, 2025 at 10:28:51AM GMT, Krzysztof Kozlowski wrote:
-> >> On 26/08/2025 08:17, Manivannan Sadhasivam wrote:
-> >>> On Tue, Aug 26, 2025 at 10:48:19AM GMT, Krishna Chaitanya Chundru wrote:
-> >>>> The qcom_pcie_parse_ports() function currently iterates over all available
-> >>>> child nodes of the PCIe controller's device tree node. This can lead to
-> >>>> attempts to parse unrelated nodes like OPP nodes, resulting in unnecessary
-> >>>> errors or misconfiguration.
-> >>>>
-> >>>
-> >>> What errors? Errors you are seeing on your setup or you envision?
-> >>>
-> >>>> Restrict the parsing logic to only consider child nodes named "pcie" or
-> >>>> "pci", which are the expected node names for PCIe ports.
-> >>>>
-> >>>> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-> >>>
-> >>> Since this is a fix, 'Fixes' tag is needed.
-> >>>
-> >>>> ---
-> >>>>  drivers/pci/controller/dwc/pcie-qcom.c | 2 ++
-> >>>>  1 file changed, 2 insertions(+)
-> >>>>
-> >>>> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> >>>> index 294babe1816e4d0c2b2343fe22d89af72afcd6cd..5dbdb69fbdd1b9b78a3ebba3cd50d78168f2d595 100644
-> >>>> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> >>>> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> >>>> @@ -1740,6 +1740,8 @@ static int qcom_pcie_parse_ports(struct qcom_pcie *pcie)
-> >>>>  	int ret = -ENOENT;
-> >>>>  
-> >>>>  	for_each_available_child_of_node_scoped(dev->of_node, of_port) {
-> >>>> +		if (!(of_node_name_eq(of_port, "pcie") || of_node_name_eq(of_port, "pci")))
-> >>>
-> >>> May I know which platform has 'pci' as the node name for the bridge node? AFAIK,
-> >>> all platforms defining bridge nodes have 'pcie' as the node name.
-> >>
-> >> It does not matter. If I name my node name as "pc" it stops working?
-> >>
-> >> No, Qualcomm cannot introduce such hidden ABI.
-> > 
-> > There is no hidden ABI that Qcom is introducing. We are just trying to reuse the
-> > standard node names documented in the devicetree spec. So you are saying that
-> > we should not rely on it even though it is documented? Maybe because, the dt
-> > tooling is not yet screaming if people put non-standard names in DT?
-> > 
-> 
-> If it is documented, you can use it, but I doubted first the author even
-> checked that. Otherwise commit message would say that.
-> 
-> As I mentioned in other response, I still find it discouraged pattern if
-> you have (and you do have!) compatibles.
-> 
+From: Artem Shimko <artyom.shimko@gmail.com>
 
-Compatibles for the PCI bridges are not mandatory, so we cannot use it. But
-'device_type' is and Krishna is going to use that instead.
+The SET_RUNTIME_PM_OPS macro has been deprecated in favor of
+DEFINE_RUNTIME_DEV_PM_OPS which provides equivalent functionality
+while also supporting system suspend mode.
 
-- Mani
+This change modernizes the power management implementation by:
+1. Replacing SET_RUNTIME_PM_OPS with DEFINE_RUNTIME_DEV_PM_OPS
+2. Removing wrapper runtime suspend/resume functions
+3. Adding __maybe_unused attribute to PM functions
+4. Converting direct chip access to device-based access in PM functions
+5. Using pm_ptr() for PM ops pointer registration
+
+The refactoring maintains all existing functionality while improving
+code maintainability and following current kernel best practices.
+
+Artem Shimko (1):
+  drivers: dma: change pm registration for dw-axi-dmac-platform's
+    suspend
+
+ .../dma/dw-axi-dmac/dw-axi-dmac-platform.c    | 31 ++++++-------------
+ 1 file changed, 9 insertions(+), 22 deletions(-)
 
 -- 
-மணிவண்ணன் சதாசிவம்
+2.43.0
 
