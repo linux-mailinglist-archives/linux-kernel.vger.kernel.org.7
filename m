@@ -1,87 +1,78 @@
-Return-Path: <linux-kernel+bounces-787095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EA6BB37160
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:34:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF319B37163
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:34:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44CE31BC024C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:34:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF290367C63
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:34:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0386330ACEA;
-	Tue, 26 Aug 2025 17:33:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16FC62E7F2F;
+	Tue, 26 Aug 2025 17:34:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dVe48VXW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dcB1gbYT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C94B1FECAB;
-	Tue, 26 Aug 2025 17:33:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60D9031A569;
+	Tue, 26 Aug 2025 17:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756229637; cv=none; b=D5teh+FVyVSseJT5HAJ31od0/CXhA90loXSMgfNdD3hjuaDxzbAyl8DYubbVigErp/5f06Jwf51M0Ghs1YOqAelxbELJF3ZSbKJG7KxUGhUa0nWGBzznlgkD2n49/2wHgS1P1CU0PAJ0M2OL3TdlbIILXdjjCHV+M1/H8qS6nNU=
+	t=1756229660; cv=none; b=NpO8pAXsYORstNAyMLYv+FTJYRLrkEr6SMuakV6R7omNrROpmlrjEAZcRSAhn7e0Ecbj91263iYdPLTAyTJkvEQ2tDkP98gl4wRLscWeRL9G6lwd5glcTUczP9MCB9m+XNST0868NEklZ84WWXequDU/uD47PAd6W7hz3Ftzryg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756229637; c=relaxed/simple;
-	bh=set+UrL846DMXk1AZBQ1WxbxGenls/IbLNhWKN1zPXw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
-	 References:In-Reply-To; b=Yx6nRUkniyvga5SNR87Tww39A9bCsF9VNhxyD7KCcUc5d0syYb5Qv/l1vzoV/MZmPZta3BrPVPyh/54GVCnJ4BETjN+rwyOrCHBTqVuWQj5sUb3IGVLqiA8GqXqI1SjCZx+R7NxvIelSfZGJHKjRi0XXzj1qk/xGBzDfV6Bu0wI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dVe48VXW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CAEBC4CEF1;
-	Tue, 26 Aug 2025 17:33:53 +0000 (UTC)
+	s=arc-20240116; t=1756229660; c=relaxed/simple;
+	bh=BF5va3bL9H0RXQ72gqDVVjz3oJB72gPJ9Rwn68FQIjU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ojMp47S6ZHKF4uZdWgVntjod04rEOh6pdtbdjH5biKRxXQSTRwcPCgi32ZeRjMLrexytbcvGtA3hL9Wp6Vm4+ILIG5AbExugFPZJyBAsLGwc0C+GycS59NNiI1tZ/BgbtXlm18dCifmuZVCtNOuaJ4H7bP3MvjVmSeAYACeprH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dcB1gbYT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63CD0C4CEF1;
+	Tue, 26 Aug 2025 17:34:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756229636;
-	bh=set+UrL846DMXk1AZBQ1WxbxGenls/IbLNhWKN1zPXw=;
-	h=Date:To:From:Subject:Cc:References:In-Reply-To:From;
-	b=dVe48VXWWQgERNS0xbyNcosZ3AtJcMiPJSWYDnEZ1ZKnt9bLIhNHQDrOyrTteE8PX
-	 lIthowePyi8pJCLA/gV1S2By+SVsV5SEzMVrlzv+v05U1hLdQuz7ObCO/i12ld7/22
-	 w1nObEevj2M7a71JtJdFJtnXTpT2xGZzzBil2cJy4YleDiD8evoAHO1CJUiXdNithR
-	 aDESst+om4NAJrIJhwxk4Q/71IA7Qt8mkhCzC1S2unl92MKC1wiXpJUEjUpFYdqGdI
-	 as+uNf8VQyd7CpW38mgSIjbutFtgA1v359mcjYzcT157H52n5p1UarN/eCWyh70Y4P
-	 mEs14YpEFB9Qw==
+	s=k20201202; t=1756229659;
+	bh=BF5va3bL9H0RXQ72gqDVVjz3oJB72gPJ9Rwn68FQIjU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dcB1gbYTXHVKXXad5J58MPjClFNprzobx84QVmyRgOQWxq2IsFrVJhXX+uFQvzf0f
+	 vOPcdah708uJmRFASp/hr51jdua3hqIA8oXViZj66RLFCTxGy1pypYvxAxA8pxASbQ
+	 zM9lFS0OY/bqh7vi9HBf5r0DrVVLzz9JWu2D5xclKbt9/TDfdLaZoZCMvlp8FsML7U
+	 SLMMEVQ2J200bFwpT8S4Wd6HPEod3ENYMw/UX/pmsKsE9C5PzFFaSD2oMNyRsoNpJi
+	 wABl06QOkDS82SXiAPWNUQ/lDWL8etHn7riVvdWrnLdsqsBKuikcdIYowIyPHxk1c2
+	 jcbeX0ZtoBgAQ==
+Date: Tue, 26 Aug 2025 18:34:15 +0100
+From: Simon Horman <horms@kernel.org>
+To: Madhur Kumar <madhurkumar004@gmail.com>
+Cc: aconole@redhat.com, echaudro@redhat.com, i.maximets@ovn.org,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, shuah@kernel.org, netdev@vger.kernel.org,
+	dev@openvswitch.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests/net: openvswitch: Fix spelling error in print
+ message
+Message-ID: <20250826173415.GM5892@horms.kernel.org>
+References: <20250814180007.406941-1-madhurkumar004@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 26 Aug 2025 19:33:49 +0200
-Message-Id: <DCCJG1V40J97.1FQA6ZV5JE6RK@kernel.org>
-To: "Daniel Almeida" <daniel.almeida@collabora.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v3 2/5] rust: dma: add type alias for
- bindings::dma_addr_t
-Cc: <akpm@linux-foundation.org>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
- <aliceryhl@google.com>, <tmgross@umich.edu>, <abdiel.janulgue@gmail.com>,
- <acourbot@nvidia.com>, <jgg@ziepe.ca>, <lyude@redhat.com>,
- <robin.murphy@arm.com>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-References: <20250825132539.122412-1-dakr@kernel.org>
- <20250825132539.122412-3-dakr@kernel.org>
- <CE0E1F73-69CE-4629-979E-9AE5B6AB055E@collabora.com>
-In-Reply-To: <CE0E1F73-69CE-4629-979E-9AE5B6AB055E@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250814180007.406941-1-madhurkumar004@gmail.com>
 
-On Tue Aug 26, 2025 at 7:15 PM CEST, Daniel Almeida wrote:
-> Hmm, I wonder if this shouldn=E2=80=99t be its own type, instead of an al=
-ias. This
-> will be handy if we want to enforce that a given address is, in fact, a b=
-us
-> address.
+On Thu, Aug 14, 2025 at 11:30:01PM +0530, Madhur Kumar wrote:
+> Fix a typo in a print statement in ovs-dpctl.py:
+> "Unkonwn" → "Unknown".
 
-I'm not sure I understand the idea. How can a new type compared to a type a=
-lias
-help to guarantee that a DMA address is also a bus address?
+Hi Madhur,
 
-This depends on whether there is an IOMMU, etc.
+You need to include a Signed-off-by line here.
 
-> In any case, this can be a separate patch. This one is good.
->
->
-> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+Please see [1] and [2].
 
+[1] https://docs.kernel.org/process/submitting-patches.html#developer-s-certificate-of-origin-1-1
+[2] https://docs.kernel.org/process/maintainer-netdev.html#changes-requested
 
