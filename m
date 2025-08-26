@@ -1,142 +1,99 @@
-Return-Path: <linux-kernel+bounces-785764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 965B2B350CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:09:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89A0FB350CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:09:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB9277A73DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 01:08:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0ADF7A4C16
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 01:07:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54DF028D8D1;
-	Tue, 26 Aug 2025 01:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eAdwvXwd"
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D721528688E;
+	Tue, 26 Aug 2025 01:09:23 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14BA328B7DE;
-	Tue, 26 Aug 2025 01:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E056C14A8B;
+	Tue, 26 Aug 2025 01:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756170566; cv=none; b=IxIgaVFbPAg1/HCMmc+ke/pRFhqep0kR3Y8bsLW+xtOFMRhvLJq1qNzoVeRsigiIitvxr7u/+jvKhQoSfJ655gNRhqx9mX9pk7vQnGTRvMDPzcrDDYF1apBJq8g9sNZekZaPvHLSVNIbbIjoE4ZFOXVfbFORPNFsdzlg6toz19Y=
+	t=1756170563; cv=none; b=BL3UV2Wy/BIoi7gEUH5iNqw1LzpjNAIgL7wSw0cV1EDpjGJZeEGlsP+G19VrxaWsx5d23bFYJVZRzV/P4ghc426H9xhGd/Hesr8FpESiYHLccwo4NZTKMngkDHeD1mxYeYBfjGs9Hlhi1mi4Jzb68YLdBNFetMkCJ7EkH6iE/Nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756170566; c=relaxed/simple;
-	bh=9O3lc/9bQ64hPLns61H0Mu3QkW7B+M2abebASMpzows=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=FJ2d+WxcYVX3KHiXYcIh2EoA8iaI0IPNX7DaHMpsvSsnMGgBk6AEfxKUX7McO8d5B8el95+HFKefINKU4VhRCmMgEBkinW8kEf/mavAZMERjXdAO5PY6GcJCC/HmeiyfCTH9Vc9aRS7O6wCB88UMN1hwRY4QTsy18zNDD8FcZWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eAdwvXwd; arc=none smtp.client-ip=209.85.161.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-61bf1542ecbso2390180eaf.1;
-        Mon, 25 Aug 2025 18:09:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756170564; x=1756775364; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jNepx41UElk7QS0w0sFASE9HqsxLVcmPU4Fw7Uj0xgA=;
-        b=eAdwvXwd2N/gifqvDd7Df7bwKaZczFOWRIS3FOdLHpWE18LP+7T0jji6n6yZYNPW6X
-         di1+MZgMU3AFdoIXlpqozk3jQddoYS2owb+4nznqcmQko/WhtbprT4kMj6Xl84sCJkSX
-         Kvb6xwbXPPA0iEqzH3qjTMHPED1rFdITLEC7QtPagB0lCN36plOl+KdDPV3mwDo1Chzd
-         JfhSYTWBkz0KPrA9ByXkeb/3PbM6ivAlmNzNTj2eUfcnxPC2iT+MflcpbJ+uq8ABS8z8
-         1+fsvTyAx6deC9RP+T0wD+uSvltC4MoZwHZ8sgf/0OPqpZtygT6LF4TsAyLXC/Yyk6Nw
-         c6zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756170564; x=1756775364;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jNepx41UElk7QS0w0sFASE9HqsxLVcmPU4Fw7Uj0xgA=;
-        b=pfvbk+MeIBlXVY3YID0RT0657X0kuAYVzZfA9DSuAPKBz8BIdoaqYOvTsD+ZDJK+8g
-         /fgCH9ncJ9dK/YN9xLFCoPnt7jCihErYkOz+3uBuEiOWPns4Q4+mZ4ZTvUbTUi/aBO+/
-         7btgCa8Azun13KdOIB1HC0wNO3UYglwgRob7HtwVKed9/gqd69auihCrWczgh9vM0Sud
-         OUQIE48PbdiJgIXcOiy0bBbM0K+oO8IuspxzjZytsQHXnNaIH+4OvrVwHLYURKguPsTj
-         mpjO/CpqmgI0wiImb21wk3SbSoVnA/GeaVpamguRuctgsZ2kdFBsATQbJnyb4OuWintG
-         79jA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCNET/4dIlkgKb7hqiIyUocPeEXPMfBFtbdw7wZT4Z/qa811WB9z5tnGMXp0boq++0lhH3H+1buCaNdpUH@vger.kernel.org, AJvYcCXqBKTdwR2JmlfpaSTX7qCPRlLXHzlI93i3CJV6/u94xoLRjy4a0JQmQJzwXvRSmfwvf/fRIJ8YRDfJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjVXGTTgLhOzdHUnWwB7UUy8cLndHmt1OBbN83O4FIxQtWzm9v
-	90avJL5i8QldhbbBhfnLVG1BAedeTfxnha+npI5a8QCJ0LwPvR/8XlsZ
-X-Gm-Gg: ASbGncuWpqksyeTyaipBwpeH7tTn0S0Zw7QkErTFVJAIGmzKR9Gc4paRLpxZUTJrUDJ
-	27ZIS07qJvD2BGGvRFQwN1ZlawDkOMScZQHom+UrwmtewjVpcb1plm7ozwzhhUbyI5pGE3nsvJH
-	Ni3k/sZYP7bTOhFQDkQ1oegomNdrBApjKV7XZcFSEMn8PuP0Pgl1wI4LgMqKJeY0pyrdluyMTmh
-	3emiKHpMMg7VzK/ZzTMYDLw/XYZ1FiIB91ymDjt/6jLEEhCEnJDoX2yzWTzg8wLLZx9Q7K8AqXi
-	EpifNPsDyJdic3Yj0ylcEomM0D3UYh24ag5RDR+RUFJM7eOkCArRH3tSB5Vb+4vSzcpkNB7EAbE
-	t6nqmlVmbZ/MGaj4/MgMNnVPRV6pRlFSe
-X-Google-Smtp-Source: AGHT+IGBtMv/0WW6P6N98C1dIhOAFBvRCQyuAP3X162OIex4ax2CK73yYgTB3SfjwxO4OMw9LImXvw==
-X-Received: by 2002:a05:6871:3a11:b0:315:3dd7:91be with SMTP id 586e51a60fabf-315439e84c7mr937923fac.16.1756170564040;
-        Mon, 25 Aug 2025 18:09:24 -0700 (PDT)
-Received: from localhost.localdomain ([122.8.183.87])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-314f7ca7ee6sm2168480fac.19.2025.08.25.18.09.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 18:09:22 -0700 (PDT)
-From: Chen Wang <unicornxw@gmail.com>
-To: u.kleine-koenig@baylibre.com,
-	aou@eecs.berkeley.edu,
-	unicorn_wang@outlook.com,
-	conor+dt@kernel.org,
-	inochiama@gmail.com,
-	krzk+dt@kernel.org,
-	looong.bin@gmail.com,
-	palmer@dabbelt.com,
-	paul.walmsley@sifive.com,
-	robh@kernel.org,
-	tglx@linutronix.de,
-	sycamoremoon376@gmail.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	sophgo@lists.linux.dev
-Subject: [PATCH v2 0/3] irqchip/sg2042-msi: Set irq type according to DT configuration
-Date: Tue, 26 Aug 2025 09:09:13 +0800
-Message-Id: <cover.1756169460.git.unicorn_wang@outlook.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1756170563; c=relaxed/simple;
+	bh=t8qAn4BTHJMGQ6VKVltOTsKu86zB0A5UnPaa3nHCH1U=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=eWXjK/clcP4oAqgc6VfsNrSDLNX2DEh3EfQuA8Ix+7lTk3yWeXk9G0N0+8jxIqneF7Ht+wk71MLy0XMbO2yIlE138m0q224OXpYR7FWe8CofJe2m/7d9f7ukjWjPJQA5Hwyf1URrKInCRhVE6s6QxMBvrNFa4IMwYZJ21ZiQDss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c9qLl1v35zYQw0s;
+	Tue, 26 Aug 2025 09:09:19 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id C40EF1A1025;
+	Tue, 26 Aug 2025 09:09:17 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgAXYIw8Ca1o8lQ7AQ--.64085S3;
+	Tue, 26 Aug 2025 09:09:17 +0800 (CST)
+Subject: Re: [PATCH RFC 3/7] md/raid1: convert to use bio_submit_split()
+To: Christoph Hellwig <hch@infradead.org>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: colyli@kernel.org, hare@suse.de, tieren@fnnas.com, axboe@kernel.dk,
+ tj@kernel.org, josef@toxicpanda.com, song@kernel.org,
+ akpm@linux-foundation.org, neil@brown.name, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+ linux-raid@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ johnny.chenyi@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20250825093700.3731633-1-yukuai1@huaweicloud.com>
+ <20250825093700.3731633-4-yukuai1@huaweicloud.com>
+ <aKxBoHcYyCn9unRp@infradead.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <83f1efa2-8909-a250-a1f8-8735f396ea7e@huaweicloud.com>
+Date: Tue, 26 Aug 2025 09:09:16 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <aKxBoHcYyCn9unRp@infradead.org>
+Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAXYIw8Ca1o8lQ7AQ--.64085S3
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYK7AC8VAFwI0_Xr0_Wr1l1xkIjI8I6I8E
+	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
+	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8I
+	cVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87
+	Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
+	6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72
+	CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4II
+	rI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr4
+	1l4c8EcI0Ec7CjxVAaw2AFwI0_GFv_Wryl4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
+	x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6r
+	W5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF
+	7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxV
+	WUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU
+	F0eHDUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-From: Chen Wang <unicorn_wang@outlook.com>
+Hi,
 
-The original MSI interrupt type was hard-coded, which was not a good idea.
-Now it is changed to read the device tree configuration and then set the
-interrupt type.
+ÔÚ 2025/08/25 18:57, Christoph Hellwig Ð´µÀ:
+> On Mon, Aug 25, 2025 at 05:36:56PM +0800, Yu Kuai wrote:
+>> +		bio = bio_submit_split(bio, max_sectors,&conf->bio_split);
+> 
+> missing whitespace after the comma.
+> 
+> .
+> 
 
-This patchset is based on irq/drivers branch of tip.
+Ok,
 
----
-
-Changes in v2:
-  The patch series is based on irq/drivers branch of tip.
-
-  Reverted the change to obtain params of "msi-ranges"; it's better not to
-  assume the value of "#interrupt-cells" is 2, even though it's known to be
-  the case. Thanks to Inochi for the comments.
-
-Changes in v1:
-  The patch series is based on irq/drivers branch of tip. You can simply review
-  or test the patches at the link [1].
-
-Link: https://lore.kernel.org/linux-riscv/cover.1756103516.git.unicorn_wang@outlook.com/ [1]
----
-
-Chen Wang (3):
-  irqchip/sg2042-msi: Set irq type according to DT configuration
-  riscv: sophgo: dts: sg2042: change msi irq type to
-    IRQ_TYPE_EDGE_RISING
-  riscv: sophgo: dts: sg2044: change msi irq type to
-    IRQ_TYPE_EDGE_RISING
-
- arch/riscv/boot/dts/sophgo/sg2042.dtsi | 2 +-
- arch/riscv/boot/dts/sophgo/sg2044.dtsi | 2 +-
- drivers/irqchip/irq-sg2042-msi.c       | 7 +++++--
- 3 files changed, 7 insertions(+), 4 deletions(-)
-
-
-base-commit: 8ff1c16c753e293c3ba20583cb64f81ea7b9a451
--- 
-2.34.1
+Thanks for the review.
+Kuai
 
 
