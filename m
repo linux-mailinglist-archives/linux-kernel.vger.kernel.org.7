@@ -1,207 +1,175 @@
-Return-Path: <linux-kernel+bounces-787180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D62D5B37296
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 20:50:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90943B37298
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 20:51:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91C3E5E85B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:50:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF99E7AFC05
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:49:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BDBF370580;
-	Tue, 26 Aug 2025 18:50:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8858E2EA170;
+	Tue, 26 Aug 2025 18:51:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="eK737trT"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p6mGL8Os"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7BD22980A8
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 18:50:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF812980A8
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 18:51:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756234246; cv=none; b=YrddO63NEDggSAe2D2rXSzrVn/UL2u1Ak/S2Az7TPwO86CJBF3LVAxsFZEDMp0cjpJoyRi+1IjZ4u87QSkW6DMqaoKrm8dXciiXI6KqmyTDmEBsl6S0rzF9zpcLzeUrUmTsVRtQqFvU/aVacFzufdbQJJoO1ZW1yBKfUElvYTco=
+	t=1756234267; cv=none; b=lOFOovEkdIU9XArnQyjxbJgsJllqgsVCdZjxcIwMe2HqEZQdEwypJDddJOJi9QKzgSDNry6p1Ozm+yGTvOMc+UUpmv0EsKILJhCRvWjIMIeCiq+FU1QWP9Jfn7VHOpKedv4wvMO9awzovJyy+omui6jbizZfw2XipQwVZxDDSXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756234246; c=relaxed/simple;
-	bh=8jhr+zgrktlFUJPHflNxaNZs/QqFUKfGNDK/vx/Mf9o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UXG2a1Z1KcR6w3mnNMNsFjeGkkmtyvF3HvgPWIvQFrtEL0IyR2hyPadUWrHJB6IT2+GnHhdut+9DKJT4QRdm+93UAaLgte0fjzOYO9kgIuTKBYg3EO3hf7fc/dGejYEb0op8O7YktOIFay1hsX1Tz4TD/W56nvS5VdOgAZaO5BQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=eK737trT; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45a1b0cbbbaso52704955e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 11:50:44 -0700 (PDT)
+	s=arc-20240116; t=1756234267; c=relaxed/simple;
+	bh=upz0pd6szGQzGRVufnsEbipy8MIi/tceHxoxzgEA4K8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tZBBb/L4f9Nci5R1vH7SBWV96xL/GWOPFeIgnmQ+anH6Ifpkj9AB8ZDaUr8l25lJ4cxNSTlMX6L7JcIGjxBWx2WoHNuW9ySGvYW3sR/swxOtBY11vFf2mg2WsCAzCzbmv/FU1yZFl9EbWNVCseLaKNSYFZj6a3k9zfwy5CeE5vI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=p6mGL8Os; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4b12b123e48so56801cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 11:51:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1756234243; x=1756839043; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=8jhr+zgrktlFUJPHflNxaNZs/QqFUKfGNDK/vx/Mf9o=;
-        b=eK737trTg7q4zm2fpQnGCjZCOcUp+lGVxDISNGg6fxyyTFDi6eIAWiqvS12wFsg/Ea
-         GhV1TM+oKCgnIFT3xXejhbbtVe9O2DMPjHYIftDUhAgV2m/5LJHeP86cA/PpGl6IF0sx
-         BK0sRF2D/t3zFzE+SJxnXhv8Kl9kqAeNG+I2Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756234243; x=1756839043;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1756234263; x=1756839063; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8jhr+zgrktlFUJPHflNxaNZs/QqFUKfGNDK/vx/Mf9o=;
-        b=N8FENbVurdJlN8AgEN+Mr6QG70OV/Zs9jw/ic87KV5k4kDsm3zMPQjd9wxG90U7Lm4
-         4Q7PpIsVga4Ri+9XAv8aTHttu7qcvlnzyPG27pBN3rirHDQ8kzS71jARNSkuVKlTeG37
-         oz+EW4oTAd+NJnzP1fYcDs+JOMoSkguMFWnS4OilqmxbDpdGOlluoHvbIiKyqWkuFhDq
-         YfVhQHTRpVnYOS98X3v+ZspPWs+0e/Z1gT8BUycaAyQ8tY8kalO8+u959RHA64sWlukQ
-         bZg/V3qfpPPaX9ljWY9cVdFQhLwv5Tv24Ivw7X9Oq6Vej2AsBHNICJ2clm0gHdN3FWrn
-         soGg==
-X-Forwarded-Encrypted: i=1; AJvYcCWwo6DWii4JuZ5rS5wzkGiC0lXdrrjp1B0BQUTo+gK9Xny+6qajSk0V6JJtEfxM88cfH5pUw6Zr1LSmC0Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yza37XSuFsomY1Alxrex/AJirpud9i4goBqYffp7GsKjslU+4mh
-	+uilz3Ba36MW5By8MvzLbtf8znmA/x4hZXadf1OH0PrSfkf8Zs4NOiVsXcrmUDZFows=
-X-Gm-Gg: ASbGncv/kc/L8FnDhs/qGPqRhq5qbO3uFrnGyCT0WN1iyklJxciqowGlu3txjLU1tvJ
-	j0e71RTJSsLvyfp/OxrEib7oQVGdiFyxWqFVReg0i+GngD8OuuBBoIq5tpU/bczJpKGN2qTzz2/
-	/e39maLZqpvRnRly3YJvPwaTCG1fae3vQJv3HyBu4xdLMipVCBazFYnpkQ2BHX5j2nfQLqW1gK2
-	CHN4WaVCts4mTQZOFSeWlucdY9Cf9QoZ1bu3k9l319xfUAW86X4cF09v4vBYll8Ux0hz6earS74
-	MOwBGbbIg/+gkk3DGxXrv6ikLH2WrZ+MzmXzo4uy0Tj4UIz+demQpcFYIhWUyOjsC39ZQj4ToeK
-	sIyRdvqBGaL9gH+PysSmHlYkeSSbRiQ+TB9lKvY2EwrPZqRVCSJ0HXu8Bn3lz3hW3z3mb
-X-Google-Smtp-Source: AGHT+IF8MzILpJEqNk90bdY6bp45yJeU21cH6r3SZLrCLRLDqDFhpaJ0n9kOGIMSvynRVb14WNZXpg==
-X-Received: by 2002:a05:600c:a0b:b0:456:1442:86e with SMTP id 5b1f17b1804b1-45b64b750b4mr41337505e9.21.1756234242976;
-        Tue, 26 Aug 2025 11:50:42 -0700 (PDT)
-Received: from [192.168.1.183] (host-195-149-20-212.as13285.net. [195.149.20.212])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6c5cfd14sm3164585e9.14.2025.08.26.11.50.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Aug 2025 11:50:42 -0700 (PDT)
-Message-ID: <36e0a671-6463-4bab-b5f1-63499838358d@citrix.com>
-Date: Tue, 26 Aug 2025 19:50:41 +0100
+        bh=rIkarbrRfLiSViNIpNSM7i2VpGQ/AquOsjFkrP5j+HM=;
+        b=p6mGL8OsZkhGy/cjXbG4iKPimyffRC33Uuek6JJ8rKTIFL1yPi0G63N+EKYp7LsN+O
+         FXeTHPAvBStxzbsIW0nJswGvSwU1M6hUXbRDKMn52KEpez5ST4ftA6O4owFuAEWedhZc
+         qAlzX5Zg6glwmoubco2c2ry0yMk3WIzJztkiuUZIX+1KWHptxZdtjJof9bU9927X64g0
+         J3ZOVvzr98mZ75I0SZUuNfjp2agNJDUFaTniNf3ePcErSwZ3/Y2ppGlc4UjL1nj+g+gE
+         rkFZRQ4xcJhq2QBLHxPbJJsLbACdeSYGH+tJH3iZC2mfvJfKuYCgRwq877VWJTcnwRzy
+         FeDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756234263; x=1756839063;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rIkarbrRfLiSViNIpNSM7i2VpGQ/AquOsjFkrP5j+HM=;
+        b=taAkVYH6+H6wmU4Wp8s2o4gTnEyh8WsZWrnCJHjemwDRi7OwCgDq2IlZkmTqzTssl3
+         gFtOWoqYOV7aU2ylalEQKET59r4M+qrGQxFPE/RAWh7hD9oWNuHOfPGkD082I2pLkoog
+         7bq0BQ1zhW+QtHlcma2y1NM1jFZkBdFMJavuIAhBWgiog8O9ZHzX9ZLuakmzi+8Ch9gD
+         wo+6M/NFq+Ek1DFgYTj55/uIBpFCaQuEdbyQeJGpjonTOnevOq5pzqMqgU6iPCm4hn6V
+         WqJoyyayrQczRhnqhmqFHFy+G+dbwD/abO3w3lrij8RFhF1UvC+EFbZ7kaV3gCZSRNRw
+         +mjg==
+X-Forwarded-Encrypted: i=1; AJvYcCWwY1wgIxpNkhT9KUwX+ftQLmzBPACa8b+pN5W5fOp3AZzJ5LMWiAnWXB5+SyOA9LScbFN7b0ru/RZ11II=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeumQUBrGWEqNF+IN803RTPsY3fD6aCocw8I1l1Kj80UGWx2sw
+	dEPe39QRMJfSXTf2ezuj6U3ZeJO26h4C2nXjG2w2dL4LWA5JqcUzp7qHmv9KnzB2Ck9Efw6I4Pc
+	8ehg/09F2HEnGm1bAdIUxFoOiz8eQdYptEEpLV7LF
+X-Gm-Gg: ASbGncvtqCNB4RxFzqX68UuKji1pI8cnrb9GetE0JLmIeUXL+Pg/rnR5dAizz8iZnem
+	EyJtXzUJE+GgirTSGIMCbUOeYN0GBAMlXcuV19/ulgv1iaOwLXL/TqPteSlYBXXzFFrLu1MHNip
+	6ajCXTKdfcMdm0Ab1RK7g4SBgzdpjQ3zG2nJd6K45VJEOEex/epz4slPIXHxH8YQ3uKWt79Pa2m
+	thkJRCQRwu9zn5Vk3WUHJ02FaDBenASJTz0dy4gN1n04fHwvZKA3v4=
+X-Google-Smtp-Source: AGHT+IEDlezhHpkPskTIsHzwAr859mmB74LsMVq5z6xxtgaD/8BKWJWN6SZPB/twLGKMgS0NYyLKkzWty6QgQD/Fcaw=
+X-Received: by 2002:a05:622a:2d4:b0:4b0:9c14:2fec with SMTP id
+ d75a77b69052e-4b2e1d26784mr7759141cf.8.1756234262791; Tue, 26 Aug 2025
+ 11:51:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 06/20] KVM: VMX: Set FRED MSR intercepts
-To: Xin Li <xin@zytor.com>, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org, linux-doc@vger.kernel.org
-Cc: pbonzini@redhat.com, seanjc@google.com, corbet@lwn.net,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, luto@kernel.org,
- peterz@infradead.org, chao.gao@intel.com, hch@infradead.org
-References: <20250821223630.984383-1-xin@zytor.com>
- <20250821223630.984383-7-xin@zytor.com>
- <2dd8c323-7654-4a28-86f1-d743b70d10b1@zytor.com>
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- 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
- 6+ahAA==
-In-Reply-To: <2dd8c323-7654-4a28-86f1-d743b70d10b1@zytor.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250818124702.163271-1-chengming.zhou@linux.dev>
+ <87212818-1f59-45e4-9a51-dca62ddb9633@arm.com> <e13c922f-2b51-4b4e-bcf8-617e4799522a@intel.com>
+ <c0174dd7-86f5-4f4d-b0eb-dd60515e21c5@arm.com> <f3757eff-5ffd-4155-8cc5-a70231b4cd49@linux.dev>
+ <CABk29NsqoF3U9nECBxh2cDWoPn=7cX+0sDfnpysNRb9HUcRyHg@mail.gmail.com> <68e34465-ecb6-409e-800c-3dd354156bb0@linux.dev>
+In-Reply-To: <68e34465-ecb6-409e-800c-3dd354156bb0@linux.dev>
+From: Josh Don <joshdon@google.com>
+Date: Tue, 26 Aug 2025 11:50:51 -0700
+X-Gm-Features: Ac12FXzCfMmI1yHwPlfoST6iK05YuGhJjp0PrfMhdh8r6Ov2btT7vN494vjrDO0
+Message-ID: <CABk29Ntu5ywHeoJqkP0t85V9zWr2wtoy4ijf6wTFDkBdp4pAHw@mail.gmail.com>
+Subject: Re: [RFC PATCH] sched/fair: Remove sched_idle_cpu() usages in select_task_rq_fair()
+To: Chengming Zhou <chengming.zhou@linux.dev>
+Cc: Christian Loehle <christian.loehle@arm.com>, "Chen, Yu C" <yu.c.chen@intel.com>, 
+	linux-kernel@vger.kernel.org, mingo@redhat.com, bsegall@google.com, 
+	vschneid@redhat.com, juri.lelli@redhat.com, rostedt@goodmis.org, 
+	mgorman@suse.de, dietmar.eggemann@arm.com, vincent.guittot@linaro.org, 
+	peterz@infradead.org, viresh.kumar@linaro.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 25/08/2025 3:51 am, Xin Li wrote:
-> On 8/21/2025 3:36 PM, Xin Li (Intel) wrote:
->> +    /*
->> +     * MSR_IA32_FRED_RSP0 and MSR_IA32_PL0_SSP (aka
->> MSR_IA32_FRED_SSP0) are
->> +     * designated for event delivery while executing in userspace. 
->> Since
->> +     * KVM operates exclusively in kernel mode (the CPL is always 0
->> after
->> +     * any VM exit), KVM can safely retain and operate with the
->> guest-defined
->> +     * values for MSR_IA32_FRED_RSP0 and MSR_IA32_PL0_SSP.
->> +     *
->> +     * Therefore, interception of MSR_IA32_FRED_RSP0 and
->> MSR_IA32_PL0_SSP
->> +     * is not required.
->> +     *
->> +     * Note, save and restore of MSR_IA32_PL0_SSP belong to CET
->> supervisor
->> +     * context management.  However the FRED SSP MSRs, including
->> +     * MSR_IA32_PL0_SSP, are supported by any processor that
->> enumerates FRED.
->> +     * If such a processor does not support CET, FRED transitions
->> will not
->> +     * use the MSRs, but the MSRs would still be accessible using
->> MSR-access
->> +     * instructions (e.g., RDMSR, WRMSR).
->> +     */
->> +    vmx_set_intercept_for_msr(vcpu, MSR_IA32_FRED_RSP0, MSR_TYPE_RW,
->> intercept);
->> +    vmx_set_intercept_for_msr(vcpu, MSR_IA32_PL0_SSP, MSR_TYPE_RW,
->> intercept);
+On Sun, Aug 24, 2025 at 11:58=E2=80=AFPM Chengming Zhou
+<chengming.zhou@linux.dev> wrote:
 >
-> Hi Sean,
+> On 2025/8/22 02:13, Josh Don wrote:
+> > On Wed, Aug 20, 2025 at 6:53=E2=80=AFPM Chengming Zhou <chengming.zhou@=
+linux.dev> wrote:
+> >>
+> >> +cc Josh and Viresh, I forgot to cc you, sorry!
+> >
+> > Thanks, missed this previously :)
+> >
+> >>
+> >> On 2025/8/20 21:53, Christian Loehle wrote:
+> >>> On 8/19/25 16:32, Chen, Yu C wrote:
+> >>>> On 8/18/2025 9:24 PM, Christian Loehle wrote:
+> >>>>> On 8/18/25 13:47, Chengming Zhou wrote:
+> >>>>>> These sched_idle_cpu() considerations in select_task_rq_fair() is =
+based
+> >>>>>> on an assumption that the wakee task can pick a cpu running sched_=
+idle
+> >>>>>> task and preempt it to run, faster than picking an idle cpu to pre=
+empt
+> >>>>>> the idle task.
+> >>>>>>
+> >>>>>> This assumption is correct, but it also brings some problems:
+> >>>>>>
+> >>>>>> 1. work conservation: Often sched_idle tasks are also picking the =
+cpu
+> >>>>>> which is already running sched_idle task, instead of utilizing a r=
+eal
+> >>>>>> idle cpu, so work conservation is somewhat broken.
+> >>>>>>
+> >>>>>> 2. sched_idle group: This sched_idle_cpu() is just not correct wit=
+h
+> >>>>>> sched_idle group running. Look a simple example below.
+> >>>>>>
+> >>>>>>           root
+> >>>>>>       /        \
+> >>>>>>       kubepods    system
+> >>>>>>       /    \
+> >>>>>> burstable    besteffort
+> >>>>>>           (cpu.idle =3D=3D 1)
+> >
+> > Thanks for bringing attention to this scenario, it's been a case I've
+> > worried about but haven't had a good idea about fixing. Ideally we
+> > could find_matching_se(), but we want to do these checks locklessly
+> > and quickly, so that's out of the question. Agree on it being a hard
+> > problem.
 >
-> I'd like to bring up an issue concerning MSR_IA32_PL0_SSP.
+> Yeah, right, we don't want to use find_matching_se() here.
 >
-> The FRED spec claims:
+> >
+> > One idea is that we at least handle the (what I think is fairly
+> > typical) scenario of a root-level sched_idle group well (a root level
 >
-> The FRED SSP MSRs are supported by any processor that enumerates
-> CPUID.(EAX=7,ECX=1):EAX.FRED[bit 17] as 1. If such a processor does not
-> support CET, FRED transitions will not use the MSRs (because shadow
-> stacks
-> are not enabled), but the MSRs would still be accessible using MSR-access
-> instructions (e.g., RDMSR, WRMSR).
+> You mean /kubepods and /system group in this case, right? Both of
+> them are not sched_idle here.
 
-This is silly.  AIUI, all CPUs that have FRED also have CET-SS, so in
-practice they all have these MSRs.
+Correct
 
-But from an architectural point of view, if CET-SS isn't available,
-these MSRs shouldn't be either.  A guest which can't use CET-SS has no
-reason to touch these MSRs at all.
+> > sched_idle group is trivially idle with respect to anything else in
+> > the system that is not also nested under a root-level sched_idle
+> > group). It would be fairly easy to track a nr_idle_queued cfs_rq
+> > field, as well as cache on task enqueue whether it nests under a
+> > sched_idle group.
+>
+> Ok, we can track if a task nests under a sched_idle group, like tasks
+> from /system and /kubepods/burstable are not under any sched_idle group,
+> there seems no way to distinguish them except using find_matching_se().
 
-MSR_PL0_SSP (== MSR_FRED_SSP_SL0) is gated on CET-SS alone (it already
-exists in CPUs), while MSR_FRED_SSP_SL{1..3} should be gated on CET-SS
-&& FRED, and should be reserved[1] otherwise.
+nr_idle_queued on the cfs_rq seems like the way to do it, but I agree
+it is a tricky problem.
 
-This distinction only matters for guests, and adding the CET-SS
-precondition makes things simpler overall for both VMMs and guests.  So
-can't this just be fixed up before being integrated into the SDM?
-
-~Andrew
-
-[1] I have a sneaking suspicion there's a SKU reason why the spec is
-written that way, and "Reserved" is still the right behaviour to have
-for !CET-SS || !FRED.
+>
+> Thanks!
+>
+> >
+> > Best,
+> > Josh
 
