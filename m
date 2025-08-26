@@ -1,171 +1,149 @@
-Return-Path: <linux-kernel+bounces-786934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FE51B36F02
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:56:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A9A8B36F19
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:58:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BE8F8E5CCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:51:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16988465655
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:53:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9660736C06C;
-	Tue, 26 Aug 2025 15:48:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E24F372885;
+	Tue, 26 Aug 2025 15:49:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g5G1vIfB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="e03nfmFD"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B078350857
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 15:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C03B36CE0C
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 15:49:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756223334; cv=none; b=VSV/40w/ehAeB0DbGX61UdWR0bRruS1WvvH+W8sw9SuyRdjw4CsEzKZk2NJ8a5toeMFPMKpkSRiJOjbdcJazHphRZkp644BwnX45BQcxyjmUf+xniRLY3jctvNj4gEINnE8xU4cwFH1j1Wn9SaAFLIXvb/KlD/Vzn3PHzD8Kcn0=
+	t=1756223362; cv=none; b=u59kr91NWjXVgaOarJlwnU+VDS1lW7yxDSWqQnBYQ3/OFobJ2tKVl6AH4YJGy9XszNB9POUAq6lVbCFiUWQF6N0hZj6MlE+uAZ3Ccs40VcxCrFSydqN8kdj4xBQfwhwCI92TDD+LzBcJSaRU5QwtLYwdOz5KJwn+2TzgmKF3yWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756223334; c=relaxed/simple;
-	bh=Y0eks1YaOqbzuug07KZLAOR4Y6H+hh0TiHWBe8OcU2k=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AHw/+u5/WfiJN18KlyWi7BErOlxO9k6ytrK+mpMFy3lL9Y/5b80iE+QwQJS8n5CDWTjvfhjTil5MlsVCyrE8Lqhctkf77PHICJl8jKIrgg7B1GqOdaGHIIk42MGGhDqd5Hqeza9/rFtQD9vr7tJWG+zjetKX0lMjTbKBnlHgddU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g5G1vIfB; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756223332;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BHNXd9VyNqrFX2UZhtEPC0je8otxXnW6I6u8evl0zzQ=;
-	b=g5G1vIfBQ8O825IYKAjaDcje7CwwxWSwfWQH8/4xa7qHx4IkOK4lHOenQ86n2S2cXgVBJp
-	RNTKJgU39BMhPWugigjzoGlIMYJXxWMFbF4z04tF2KVB2GGi8O4QM90veqFd1EQ7agiVN6
-	LpTHE/B8kS7BzBB2DJVHqYIuCv5z2c0=
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com
- [209.85.166.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-101-bqHvPYqsNtqQtVjx2rgdzg-1; Tue, 26 Aug 2025 11:48:50 -0400
-X-MC-Unique: bqHvPYqsNtqQtVjx2rgdzg-1
-X-Mimecast-MFC-AGG-ID: bqHvPYqsNtqQtVjx2rgdzg_1756223330
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3ee5c3c9938so1999735ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 08:48:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756223329; x=1756828129;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BHNXd9VyNqrFX2UZhtEPC0je8otxXnW6I6u8evl0zzQ=;
-        b=Tac7iJp8ZIj5mC+jFwzrmh7Nmxsg7EcJNysgCmgLI6NeUkpx+gkn6zbXKl6BrNNU+i
-         pi0aDbT20URF/HDhEeGdgw542FKZoCEjq3yckTJz+LZLlHrnDkulBJGaa+/xa/t5AYuL
-         xgfio+/bSnBQjxlhXh1p69CG9EitGnuTvmsXqp7FjViF4G+EQ+/nwREw0U+oZgthYuEQ
-         PwQ4cLRM8yyHDXOOu4TYEbRbh2fFWmEy2YlDm9N8i1udYnuA7AuHj4STQYCaao68TakW
-         +Ay5d5g+5Coy+xtVj5dsgD1Utbs6c5wBxJOnS/44hHXmXV9+tU4NJ6cUygVgrMeuRiDH
-         kv+g==
-X-Forwarded-Encrypted: i=1; AJvYcCXry6N/cKBf6Vt2CwNjoPucYg4GN8DXfEGCJss3XV1sIDL+uo5xERoe/a9DpIrABaYKCD3l9Hfp1k2iEp8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJLRQoFZPR2PpqSzZR9a8KXbVztWpjFfgD3D1YUeyyNibwV2Cc
-	iViMKy504yzWa7jYbpEv7yxYcorXMLzACQPiE0i1GeFjiog+xeT2rzDbdptr/7mz8LIK14XCTfo
-	GbnEOk4Sra5SPX1butmf3KU3IU+9bo93kb/IEc5brILD1JABtm95XICVAcYPyKQwXo9m9btCHcA
-	==
-X-Gm-Gg: ASbGnctuqOIYc9U/Nef5lEWV40ICCfq2hIOB5FD8qG/gPMA6ivHmEZ7MU91VbAx+2AI
-	xriD1iOEUuhmY3aoA/O/DN0uYZoK/ujsl9KAsWCbiHuMwBvmCfFciIOcjrmLNIJUPFpiDdsa53e
-	M7r/0AxGyDBh+ilF4Dq+Uz9yA0R5MdLfrwY+ifRGKYMBEiTFZ3qifcpRbDEWY5V6QA28VpU3EOB
-	RwsVGjnDtYnaoH6RGvYUNV/6EKIH/Q67b1cqcgSUOvMZXit8KiZ0ClPYUqA+ZMXxLM1GbgH15Xg
-	3xXFp8uxDvD9ukkA43D0xvxE1zYaq/QvGqbZwlpDvGk=
-X-Received: by 2002:a05:6e02:1a48:b0:3e6:67f9:2061 with SMTP id e9e14a558f8ab-3e91cfae117mr88824205ab.0.1756223329376;
-        Tue, 26 Aug 2025 08:48:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE41ooOBFFuOfcZRxU06TfSGWwzTnjM8fsjevvJOvWhDhebSC+xJEVzKrEMkNTbsTkk0XUw5w==
-X-Received: by 2002:a05:6e02:1a48:b0:3e6:67f9:2061 with SMTP id e9e14a558f8ab-3e91cfae117mr88824085ab.0.1756223328938;
-        Tue, 26 Aug 2025 08:48:48 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3ea4ec1f6d0sm68656065ab.40.2025.08.26.08.48.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 08:48:47 -0700 (PDT)
-Date: Tue, 26 Aug 2025 09:48:45 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Farhan Ali <alifm@linux.ibm.com>
-Cc: linux-s390@vger.kernel.org, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, helgaas@kernel.org, schnelle@linux.ibm.com,
- mjrosato@linux.ibm.com
-Subject: Re: [PATCH v2 1/9] PCI: Avoid restoring error values in config
- space
-Message-ID: <20250826094845.517e0fa7.alex.williamson@redhat.com>
-In-Reply-To: <eb6d05d0-b448-4f4e-a734-50c56078dd9b@linux.ibm.com>
-References: <20250825171226.1602-1-alifm@linux.ibm.com>
-	<20250825171226.1602-2-alifm@linux.ibm.com>
-	<20250825153501.3a1d0f0c.alex.williamson@redhat.com>
-	<eb6d05d0-b448-4f4e-a734-50c56078dd9b@linux.ibm.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1756223362; c=relaxed/simple;
+	bh=IAUxfttbswP3KsqClSDrpw1mBRcuDJ1VD047XaOfMsY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QR6R8wKqB4rtoRAKdRVNRmnJ09C1JwXhA5R+8VxP6weEgOJ7CiqxW8D5zUY/+g+v8yLPI6YI6VlAJW/HHRW3dvg6P6dIkT2XMimNW7EafZPkMknAUy4Wc/lzoGja+fOVhkrsenrI6Wzx7Royg5j9UwUA0Copir5Q0aHrHCot71g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=e03nfmFD; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57QFC4n3023647;
+	Tue, 26 Aug 2025 15:49:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2025-04-25; bh=mgeHveTBPT3qqn2ra8VG4npb+Vf/J
+	7RaXKQEESlrkZ0=; b=e03nfmFDA/QcN+z1XZBob0isQj527PjpC1213KrAr1g+t
+	Ux11okhgLjgyJ5K0bRkWm7WrEcEBtBwLd9EyQ/7aBQVqWEL9ai+2WjDnaE6oMRbF
+	8Yok2RB6MHO9SfX22j9uP6zO859KDrCqbplCHKsQlMnTWNUIQKmmWPqE0exxiIrt
+	62ZMAbvQBfI0ZgHuNqjQ3dw3fdfyN3/3RAN4utxEd1tK9nsNiRLVYWEVbqLa3Sr0
+	e5FDyGrMTd+fsmgjng3SEA1X7szGeYY4ixl9gj+ST4FIZ24sVGBmb26mK6r+3OoR
+	2sZkHK8KijO6p0gEH7t4X8h6yJ50sJ9ZAgxhKVMSw==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48q58s4r47-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 26 Aug 2025 15:49:05 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57QEXSZK014626;
+	Tue, 26 Aug 2025 15:49:05 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 48q439pn14-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 26 Aug 2025 15:49:04 +0000
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57QFn4EH020762;
+	Tue, 26 Aug 2025 15:49:04 GMT
+Received: from sidhakum-ubuntu.osdevelopmeniad.oraclevcn.com (sidhakum-ubuntu.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.250.108])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 48q439pn0g-1;
+	Tue, 26 Aug 2025 15:49:04 +0000
+From: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+To: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+        airlied@gmail.com, simona@ffwll.ch, willy@infradead.org,
+        sidhartha.kumar@oracle.com, jani.nikula@linux.intel.com
+Subject: [PATCH v3 0/6] DRM IDR to Xarray conversions
+Date: Tue, 26 Aug 2025 15:48:54 +0000
+Message-ID: <20250826154900.405480-1-sidhartha.kumar@oracle.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-26_02,2025-08-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxlogscore=999
+ mlxscore=0 bulkscore=0 phishscore=0 adultscore=0 spamscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2508110000 definitions=main-2508260139
+X-Authority-Analysis: v=2.4 cv=J6mq7BnS c=1 sm=1 tr=0 ts=68add771 b=1 cx=c_pps
+ a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
+ a=2OwXVqhp2XgA:10 a=JfrnYn6hAAAA:8 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8
+ a=LxaQk2LVrQ3WACRVRfUA:9 a=1CNFftbPRP8L7MoqJWF3:22 cc=ntf awl=host:13602
+X-Proofpoint-GUID: IJZ94Fn4UYOiVYtLqsWSqPH0mmID829C
+X-Proofpoint-ORIG-GUID: IJZ94Fn4UYOiVYtLqsWSqPH0mmID829C
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAyNyBTYWx0ZWRfX3A1aAgl6mq9f
+ Yu8MsPoCday4/SL5FZ67ObY30z5PVwzth6aaFskpofupOdABNDqXJyk+4RdqSQi6FCwSiMCQOpN
+ 0qTNZXy+W3hpR01UwxJfEMPQw9WS+phQ+fXXbDUQyhYBN+hQV4Npj/vzX4E7e7xKc8ie2EWcHC0
+ AJwfiR8+NJKfIl0Imo7/d6/WOb7nXmwAaNlCIcoxt5ijGfNvMiJke8tiLCJExdpK5O4NgaD7N2k
+ 1N5yo6UvNxrnzM/iOfgTCR4EPdIs2nSfUCJyYMywzbU972oUuR4gyxKmP0aHW1Srnf3IdR3+kGn
+ K9g9Zf0g+GBoNxIl/AbRHUKEu8ITxQ0etGghw7OQAQTspbQ+Ir6NknW7w0H4C3fM/gupVUxRmFQ
+ 6ZxMGyAtH89OOv+EQdzNSjmg5K/Kkg==
 
-On Mon, 25 Aug 2025 15:13:00 -0700
-Farhan Ali <alifm@linux.ibm.com> wrote:
+v2[2] -> v3:
+  - indicate the indentifiers do not change in the
+    commit mesage per Jani Nikula
 
-> On 8/25/2025 2:35 PM, Alex Williamson wrote:
-> > On Mon, 25 Aug 2025 10:12:18 -0700
-> > Farhan Ali <alifm@linux.ibm.com> wrote:
-> >  
-> >> The current reset process saves the device's config space state before
-> >> reset and restores it afterward. However, when a device is in an error
-> >> state before reset, config space reads may return error values instead of
-> >> valid data. This results in saving corrupted values that get written back
-> >> to the device during state restoration. Add validation to prevent writing
-> >> error values to the device when restoring the config space state after
-> >> reset.
-> >>
-> >> Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
-> >> ---
-> >>   drivers/pci/pci.c | 3 +++
-> >>   1 file changed, 3 insertions(+)
-> >>
-> >> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> >> index b0f4d98036cd..0dd95d782022 100644
-> >> --- a/drivers/pci/pci.c
-> >> +++ b/drivers/pci/pci.c
-> >> @@ -1825,6 +1825,9 @@ static void pci_restore_config_dword(struct pci_dev *pdev, int offset,
-> >>   	if (!force && val == saved_val)
-> >>   		return;
-> >>   
-> >> +	if (PCI_POSSIBLE_ERROR(saved_val))
-> >> +		return;
-> >> +
-> >>   	for (;;) {
-> >>   		pci_dbg(pdev, "restore config %#04x: %#010x -> %#010x\n",
-> >>   			offset, val, saved_val);  
-> >
-> > The commit log makes this sound like more than it is.  We're really
-> > only error checking the first 64 bytes of config space before restore,
-> > the capabilities are not checked.  I suppose skipping the BARs and
-> > whatnot is no worse than writing -1 to them, but this is only a
-> > complete solution in the narrow case where we're relying on vfio-pci to
-> > come in and restore the pre-open device state.
-> >
-> > I had imagined that pci_save_state() might detect the error state of
-> > the device, avoid setting state_saved, but we'd still perform the
-> > restore callouts that only rely on internal kernel state, maybe adding a
-> > fallback to restore the BARs from resource information.  
-> 
-> I initially started with pci_save_state(), and avoid saving the state 
-> altogether. But that would mean we don't go restore the msix state and 
-> for s390 don't call arch_restore_msi_irqs(). Do you prefer to avoid 
-> saving the state at all? This change was small and sufficient enough to 
-> avoid breaking the device in my testing.
+v1[1] -> v2:
+  - rebase onto latest mainline v6.17-rc2
+  - fix build error in patch 1 per Intel Test Robot
 
-If we're only reading -1 from the device anyway, I'm not sure what
-value we're adding to continue to save bogus data from the device.
-There are also various restore sub-functions that don't need that saved
-state, ex. PASID, PRI, ATS, REBAR, AER, MSI, MSIX, ACS, VF REBAR,
-SRIOV.  We could push the state_saved check down into the functions
-that do need the prior device state, add warnings and let the remaining
-function proceed.  We really need to at least pull BAR values from
-resources information for there to be a chance of a functional device
-without relying on vfio-pci to restore that though.  Thanks,
+This series is part of a project to depcrecate the IDR in favor
+of the Xarray. This simplifies the code as locking is handled by
+the Xarray internally and removes the need for a seperate mutex to
+proect the IDR.
 
-Alex
+The patches are from this tree and have been rebased to v6.17-rc2
+https://git.infradead.org/?p=users/willy/xarray.git;a=shortlog;h=refs/heads/xarray-conv
+
+
+The series has been compiled and tested with drivers/gpu/drm/tests/.kunitconfig
+and passes all tests.
+
+[15:22:04] Testing complete. Ran 608 tests: passed: 608
+[15:22:04] Elapsed time: 34.792s total, 3.086s configuring, 31.541s building, 0.141s running
+
+[1]: https://lore.kernel.org/dri-devel/20250818190046.157962-1-sidhartha.kumar@oracle.com/
+[2]: https://lore.kernel.org/dri-devel/20250821145429.305526-1-sidhartha.kumar@oracle.com/
+
+Matthew Wilcox (6):
+  drm: Convert aux_idr to XArray
+  drm: Convert object_name_idr to XArray
+  drm: Convert syncobj_idr to XArray
+  drm: Convert magic_map to XArray
+  drm: Convert lessee_idr to XArray
+  drm: Convert tile_idr to XArray
+
+ drivers/gpu/drm/display/drm_dp_aux_dev.c | 38 ++++++--------
+ drivers/gpu/drm/drm_auth.c               | 22 ++++----
+ drivers/gpu/drm/drm_connector.c          | 26 ++++------
+ drivers/gpu/drm/drm_debugfs.c            | 19 +++----
+ drivers/gpu/drm/drm_gem.c                | 11 ++--
+ drivers/gpu/drm/drm_lease.c              | 15 +++---
+ drivers/gpu/drm/drm_mode_config.c        |  3 +-
+ drivers/gpu/drm/drm_syncobj.c            | 64 ++++++++----------------
+ include/drm/drm_auth.h                   |  9 ++--
+ include/drm/drm_device.h                 |  4 +-
+ include/drm/drm_file.h                   |  6 +--
+ include/drm/drm_mode_config.h            | 12 ++---
+ 12 files changed, 86 insertions(+), 143 deletions(-)
+
+-- 
+2.43.0
 
 
