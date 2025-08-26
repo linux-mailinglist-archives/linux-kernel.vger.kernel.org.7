@@ -1,496 +1,211 @@
-Return-Path: <linux-kernel+bounces-787205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C731B372F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 21:21:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1BA7B372FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 21:22:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0398E4630DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:21:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ABD6463249
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:22:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E62D36C095;
-	Tue, 26 Aug 2025 19:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0812E37428C;
+	Tue, 26 Aug 2025 19:21:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="UjojwaJQ"
-Received: from relay11.grserver.gr (relay11.grserver.gr [78.46.171.57])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="lteV9aXZ"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A7192D46B4
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 19:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.171.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D5D37427E
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 19:21:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756236104; cv=none; b=GVJyQGVdQnv3Hb7lIEXyxQycso5D5Oq9OagOc3gsWiULJuiUM8fzEF9G0BT/YReRUFbFgQXB1o+4MpoiKx4wc3BhrpcvOCUXsxab3aW8PgQ962vjEsD96GSpLzBu7WnEHa+qxKqGBX2ki+w4HIrR4mqlrb7MHbkFxSuTwoDeDlI=
+	t=1756236118; cv=none; b=Z57tkXYSKh4F8q1Fy0PoMUOduoIJkzcj0pYJ6INBKsuic2ilGSKgHvaeoI24TFDY0j215ETgDqla6cc1AVHGLGirFdCulKX0fLs3XSirR6Eyuo1TwG7O1btkd+hiPYPNRecSMoZT9tE8ARlIMroE+7H85OcvnQcw+DWbb2riOPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756236104; c=relaxed/simple;
-	bh=pAfVHfkFlBoDgD9H4CoxZsaCOojdAyA2gN9Xv6tXP+M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iytA0V91rEcCVfdqSnfzFRk1XoxsdJSmqxcTD/oLLIuGJs0jd92VihQVdCpHytKFoVstBtScAuu0RuJvFz3HvMJ2xlsC2iTqW3bbqRUCiJNUCggbHfzeODm4cXmrH+vLAzW31mqwHmM/k8qu1BfBh0MTG/oOS/qqBMLvPps61l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=UjojwaJQ; arc=none smtp.client-ip=78.46.171.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from relay11 (localhost.localdomain [127.0.0.1])
-	by relay11.grserver.gr (Proxmox) with ESMTP id D2007C8E32
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 22:21:31 +0300 (EEST)
-Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by relay11.grserver.gr (Proxmox) with ESMTPS id 136EAC8E1C
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 22:21:29 +0300 (EEST)
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	by linux3247.grserver.gr (Postfix) with ESMTPSA id 6CB452065E9
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 22:21:28 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1756236088;
-	bh=H3Uz9m/KaafJ/FXUHV5QZ/G1yZ++W/GZK45ngNUGgoo=;
-	h=Received:From:Subject:To;
-	b=UjojwaJQsnteh4DiV20WbT73G76xuhMvXMErO+6Y+O/M6QbjgiIIhE+lf7ESz4+Pj
-	 cfNvre9ICnkECfPGXur1exQLX+Yvt3qEYIJ2Ey5FSZkPdYysRo0lJIwpR7MRPax62m
-	 H1w8swrbHfRfWSSIh2rd1uV4D0OCuw5IMSzBrPbUobmeSc1pStsHiPJPdqIdbI9Mvr
-	 pgWJoRV9htvEBDsq+wC6xJPfNM+u9oyEK1/23fMn6pcRC3QzaI9YnAJtzomEv9nYWX
-	 2QGyxdqn5+o7l6oYyg6sGYFGrfuaauGKxaPp+HuAAWLQikO1yFqUf2oz21eYIOtAUY
-	 HbXf55bPMIWrw==
-Authentication-Results: linux3247.grserver.gr;
-        spf=pass (sender IP is 209.85.208.178) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f178.google.com
-Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
-Received: by mail-lj1-f178.google.com with SMTP id
- 38308e7fff4ca-33693226e47so927191fa.2
-        for <linux-kernel@vger.kernel.org>;
- Tue, 26 Aug 2025 12:21:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1;
- AJvYcCVLXSYM+dl5SV7lj1i2Gu3Hckh0tuM2B2m8x2SHterdCYVjizqTVV9/rB8wgPEcechlI4GMXKnI2u3IQ5g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyw62R7bChhL2xWJLVZo9zoizimQx9pQjmTP5XFwTclFdscDBtv
-	4uqlImkaxcreNR17N9s9eu1ZnFfHaQOWmNw7aFEQJYEgg/y5UONeZSiDbA4wDEymlcB7CVrrN+l
-	FF0ZxgiRs96FroGRgJZe7EIG/u5Mm2vA=
-X-Google-Smtp-Source: 
- AGHT+IFXVfCr5mwAxM2Z4Px9RPaqCrDCgqTpJn53YM61c/10d+mmY8GcnoIVWZxeeC14kliuJcZbXRTPjpBb7qg4s7M=
-X-Received: by 2002:a05:651c:1544:b0:335:40e6:d05a with SMTP id
- 38308e7fff4ca-33650ffffc4mr48378511fa.44.1756236087706; Tue, 26 Aug 2025
- 12:21:27 -0700 (PDT)
+	s=arc-20240116; t=1756236118; c=relaxed/simple;
+	bh=O/xOZ1mCmstg5G9amJFO/bjVj7YYzqLq0+dX5+gJKDQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=g7J6Rp6Kzs6RARVjr5sRC8umJ2DjDwTWD1SUAlrOv8kjkFhthLEMrS9ISQYbA0hXfaAdZJkTKQkVsdPbIVTAwdlSnqeIwAAmH+2ZuBr+DZyMAL/MZPB3NaaaolShTGDgKH0Rqn7rp9nUlFMPtaK6RBZziRM/5D5BxOHsZdbz/FI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=lteV9aXZ; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-7200a651345so2746467b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 12:21:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1756236115; x=1756840915; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=O/xOZ1mCmstg5G9amJFO/bjVj7YYzqLq0+dX5+gJKDQ=;
+        b=lteV9aXZEJNLwQKDq3F+x/Ornysqdj7fLNirr1Fz60zngpqU01nh2TXYDY04Zuse7K
+         4guTpz9BNoLVbXKjjWUlwILwYF97dL2s3DAp3177K7KrQ3e0nyYE3zT6YVeVGPZfobHG
+         cH8PtYqbiO6uYUipniKN/0lU36EfRBlfgcbW+OPg5HIgN09xDBG9+IR/TszI1rAIxPDN
+         /g+y33D3Ks4eQzEFQvkU9Dc5b9t/ttMk0Qs2juU1lhUHK0rCnT2RirQFZbb5MXzoNl13
+         m1TyBlWen6VKG69zFK5W1ssJTF7tYFJsbeWDiY9rzyL5nDxTkrL+tiSOLIOTBMKKQHUT
+         wkOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756236115; x=1756840915;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=O/xOZ1mCmstg5G9amJFO/bjVj7YYzqLq0+dX5+gJKDQ=;
+        b=FfJOTY6r5xAcgZa5ppKSCVw1YMi50PPeWq4+9K/usooxkBZHGYVsZJpkzQEhWTQUsx
+         IowJMf4/LwfJR3gHq58zUXJLpox8kUSsrxXk5LgrjGmW1Fk291Szh9rqQSfdLcz7C+O1
+         pl+eMGntzuOgRyyHnH/rEESBw71zd6LAgtnxrY8iYdi//HgsBDdomiRyGcL1uZ5pwa7R
+         2htE2fE4L07QG8H8Jg5prJqRACHSjgzxDs4EGtQubwFEtuUEaQ39hwfaO9fIdGgnEjQj
+         riHdrHIC9pI1lxp7CFqFcfSRRmZ4YCkX6+Ln+Mxu9re3OewAZxl1YcJWwpVi6wkvrKrz
+         R/Xw==
+X-Forwarded-Encrypted: i=1; AJvYcCW+uZuo8syUFdRk0pI14VhD9LY92vGa8CHWwCtAr6BUYpzBeLBh1FJeYp4qFyrsEKIeNWH7hGIQtIedrB0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQiSDFvxZYr7I6ff6yF3a81RHmJACMtCROXABxpIx57NgkmfiL
+	LsCTyUIppaw4lkS8Ep8QcXCMdBYe4K5ud6MD1Lsdw4aX7BeYkpZH9OyRedf/OMGR+Y9n7qWOEbh
+	nilZ7oi8=
+X-Gm-Gg: ASbGncvM+azOnIfyrNDwuEHtsmgVV/v5NaWNAoAw+UkXel93i/LwZBTN0wUidyoLmcy
+	H9hrEpRbHNf3PPvM+A37n2u8RCpc33aRMNtfW2ewol4wv1CDu0T11glJDyLFq+gtKvCP5rmr71c
+	kT6Qw/CjwnFmo2aR7Op69XO5fpct+51pV3DxdmY4+2pEn1Odt/1+UjnIZBPT7fWb17qmUElLooq
+	uqLMqZ6XFu+1cAhMWsh/omKh8p7ONR/MKxN35qDYhmD5VWVyg+mZDu4jvYdyaapxfquHni+2DDe
+	+lwXqpucZtU0FHbQIPdJnQyHFUkgjteEs7fBBO/pDkbUnYjD8L9QgQZ3qcTlLTEthXnadYvHz8F
+	tGZMHuSp9wzxijitLNUfA9mLXBeGdOgd8r+VO3ghwct7J
+X-Google-Smtp-Source: AGHT+IEGt5fyMum9z6Tp8AHDWdI9JLgAQ+PXgNd5UK5zN53LynIPY8mGynAejn1itZ32vzBwTOLsAA==
+X-Received: by 2002:a05:690c:91:b0:71f:9a36:d330 with SMTP id 00721157ae682-72132cd7b92mr33724947b3.25.1756236114964;
+        Tue, 26 Aug 2025 12:21:54 -0700 (PDT)
+Received: from pop-os.attlocal.net ([2600:1700:6476:1430:d720:a4a3:6b6c:c5b1])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-7211217e559sm13084737b3.59.2025.08.26.12.21.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Aug 2025 12:21:54 -0700 (PDT)
+Message-ID: <c9814854f3b91699fd682a93b8379e8690a06d83.camel@dubeyko.com>
+Subject: Re: [PATCH RFC 0/4] Discuss to add return value in hfs_bnode_read*
+ and hfs_brec_lenoff
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: Chenzhi Yang <yang.chenzhi@vivo.com>, glaubitz@physik.fu-berlin.de, 
+	frank.li@vivo.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 26 Aug 2025 12:21:53 -0700
+In-Reply-To: <20250826033557.127367-1-yang.chenzhi@vivo.com>
+References: <20250826033557.127367-1-yang.chenzhi@vivo.com>
+Autocrypt: addr=slava@dubeyko.com; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250824085351.454619-1-lkml@antheas.dev>
- <f2402154-b0af-439f-80e0-3a323f34bcbc@kernel.org>
- <CAGwozwHm1vC-qVo8h6gL_m8L3ufOY_nrau=Xqp6HK=6ff-ap3A@mail.gmail.com>
- <03e5408a-dc5d-4259-a366-2090ef1df622@kernel.org>
- <CAGwozwFCXFGHtpDejq_kr-1JaQhgXc-fyuCHK5FX2k57eKWfmw@mail.gmail.com>
- <CADnq5_Ow4SCZz_jnaQ-Y4zUEnBEKbeW5um3HFyLQvYvOy9WsAw@mail.gmail.com>
- <4becb4f2-f1f8-41e5-a968-02fdbd97e337@kernel.org>
-In-Reply-To: <4becb4f2-f1f8-41e5-a968-02fdbd97e337@kernel.org>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Tue, 26 Aug 2025 21:21:16 +0200
-X-Gmail-Original-Message-ID: 
- <CAGwozwErcHdA9UD4wr6xDow5C5+sh-D=1Y74fG-p=0E3en+BHg@mail.gmail.com>
-X-Gm-Features: Ac12FXxVvJxyVZW3wusaqTA7mguvsu1rG3txNFvkIVsoHsGHVZVEgVGc0mCIVvY
-Message-ID: 
- <CAGwozwErcHdA9UD4wr6xDow5C5+sh-D=1Y74fG-p=0E3en+BHg@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] drm/amdgpu/vpe: increase VPE_IDLE_TIMEOUT to fix
- hang on Strix Halo
-To: Mario Limonciello <superm1@kernel.org>
-Cc: Alex Deucher <alexdeucher@gmail.com>, amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Harry Wentland <harry.wentland@amd.com>,
- Rodrigo Siqueira <siqueira@igalia.com>,
-	Mario Limonciello <mario.limonciello@amd.com>, Peyton Lee <peytolee@amd.com>,
- Lang Yu <lang.yu@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-PPP-Message-ID: 
- <175623608867.4169427.9541696614541791064@linux3247.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
-X-Virus-Status: Clean
 
-On Tue, 26 Aug 2025 at 21:19, Mario Limonciello <superm1@kernel.org> wrote:
->
-> On 8/26/2025 8:41 AM, Alex Deucher wrote:
-> > On Tue, Aug 26, 2025 at 3:49=E2=80=AFAM Antheas Kapenekakis <lkml@anthe=
-as.dev> wrote:
-> >>
-> >> On Mon, 25 Aug 2025 at 03:38, Mario Limonciello <superm1@kernel.org> w=
-rote:
-> >>>
-> >>>
-> >>>
-> >>> On 8/24/25 3:46 PM, Antheas Kapenekakis wrote:
-> >>>> On Sun, 24 Aug 2025 at 22:16, Mario Limonciello <superm1@kernel.org>=
- wrote:
-> >>>>>
-> >>>>>
-> >>>>>
-> >>>>> On 8/24/25 3:53 AM, Antheas Kapenekakis wrote:
-> >>>>>> On the Asus Z13 2025, which uses a Strix Halo platform, around 8% =
-of the
-> >>>>>> suspend resumes result in a soft lock around 1 second after the sc=
-reen
-> >>>>>> turns on (it freezes). This happens due to power gating VPE when i=
-t is
-> >>>>>> not used, which happens 1 second after inactivity.
-> >>>>>>
-> >>>>>> Specifically, the VPE gating after resume is as follows: an initia=
-l
-> >>>>>> ungate, followed by a gate in the resume process. Then,
-> >>>>>> amdgpu_device_delayed_init_work_handler with a delay of 2s is sche=
-duled
-> >>>>>> to run tests, one of which is testing VPE in vpe_ring_test_ib. Thi=
-s
-> >>>>>> causes an ungate, After that test, vpe_idle_work_handler is schedu=
-led
-> >>>>>> with VPE_IDLE_TIMEOUT (1s).
-> >>>>>>
-> >>>>>> When vpe_idle_work_handler runs and tries to gate VPE, it causes t=
-he
-> >>>>>> SMU to hang and partially freezes half of the GPU IPs, with the th=
-read
-> >>>>>> that called the command being stuck processing it.
-> >>>>>>
-> >>>>>> Specifically, after that SMU command tries to run, we get the foll=
-owing:
-> >>>>>>
-> >>>>>> snd_hda_intel 0000:c4:00.1: Refused to change power state from D0 =
-to D3hot
-> >>>>>> ...
-> >>>>>> xhci_hcd 0000:c4:00.4: Refused to change power state from D0 to D3=
-hot
-> >>>>>> ...
-> >>>>>> amdgpu 0000:c4:00.0: amdgpu: SMU: I'm not done with your previous =
-command: SMN_C2PMSG_66:0x00000032 SMN_C2PMSG_82:0x00000000
-> >>>>>> amdgpu 0000:c4:00.0: amdgpu: Failed to power gate VPE!
-> >>>>>> [drm:vpe_set_powergating_state [amdgpu]] *ERROR* Dpm disable vpe f=
-ailed, ret =3D -62.
-> >>>>>> amdgpu 0000:c4:00.0: [drm] *ERROR* [CRTC:93:crtc-0] flip_done time=
-d out
-> >>>>>> amdgpu 0000:c4:00.0: amdgpu: SMU: I'm not done with your previous =
-command: SMN_C2PMSG_66:0x00000032 SMN_C2PMSG_82:0x00000000
-> >>>>>> amdgpu 0000:c4:00.0: amdgpu: Failed to power gate JPEG!
-> >>>>>> [drm:jpeg_v4_0_5_set_powergating_state [amdgpu]] *ERROR* Dpm disab=
-le jpeg failed, ret =3D -62.
-> >>>>>> amdgpu 0000:c4:00.0: amdgpu: SMU: I'm not done with your previous =
-command: SMN_C2PMSG_66:0x00000032 SMN_C2PMSG_82:0x00000000
-> >>>>>> amdgpu 0000:c4:00.0: amdgpu: Failed to power gate VCN instance 0!
-> >>>>>> [drm:vcn_v4_0_5_stop [amdgpu]] *ERROR* Dpm disable uvd failed, ret=
- =3D -62.
-> >>>>>> thunderbolt 0000:c6:00.5: 0: timeout reading config space 1 from 0=
-xd3
-> >>>>>> thunderbolt 0000:c6:00.5: 0: timeout reading config space 2 from 0=
-x5
-> >>>>>> thunderbolt 0000:c6:00.5: Refused to change power state from D0 to=
- D3hot
-> >>>>>> amdgpu 0000:c4:00.0: [drm] *ERROR* [CRTC:97:crtc-1] flip_done time=
-d out
-> >>>>>> amdgpu 0000:c4:00.0: amdgpu: SMU: I'm not done with your previous =
-command: SMN_C2PMSG_66:0x00000032 SMN_C2PMSG_82:0x00000000
-> >>>>>> amdgpu 0000:c4:00.0: amdgpu: Failed to power gate VCN instance 1!
-> >>>>>>
-> >>>>>> In addition to e.g., kwin errors in journalctl. 0000:c4.00.0 is th=
-e GPU.
-> >>>>>> Interestingly, 0000:c4.00.6, which is another HDA block, 0000:c4.0=
-0.5,
-> >>>>>> a PCI controller, and 0000:c4.00.2, resume normally. 0x00000032 is=
- the
-> >>>>>> PowerDownVpe(50) command which is the common failure point in all
-> >>>>>> failed resumes.
-> >>>>>>
-> >>>>>> On a normal resume, we should get the following power gates:
-> >>>>>> amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownVpe(50) pa=
-ram: 0x00000000, resp: 0x00000001
-> >>>>>> amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownJpeg0(33) =
-param: 0x00000000, resp: 0x00000001
-> >>>>>> amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownJpeg1(38) =
-param: 0x00010000, resp: 0x00000001
-> >>>>>> amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownVcn1(4) pa=
-ram: 0x00010000, resp: 0x00000001
-> >>>>>> amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerDownVcn0(6) pa=
-ram: 0x00000000, resp: 0x00000001
-> >>>>>> amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerUpVcn0(7) para=
-m: 0x00000000, resp: 0x00000001
-> >>>>>> amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerUpVcn1(5) para=
-m: 0x00010000, resp: 0x00000001
-> >>>>>> amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerUpJpeg0(34) pa=
-ram: 0x00000000, resp: 0x00000001
-> >>>>>> amdgpu 0000:c4:00.0: amdgpu: smu send message: PowerUpJpeg1(39) pa=
-ram: 0x00010000, resp: 0x00000001
-> >>>>>>
-> >>>>>> To fix this, increase VPE_IDLE_TIMEOUT to 2 seconds. This increase=
-s
-> >>>>>> reliability from 4-25 suspends to 200+ (tested) suspends with a cy=
-cle
-> >>>>>> time of 12s sleep, 8s resume.
-> >>>>>
-> >>>>> When you say you reproduced with 12s sleep and 8s resume, was that
-> >>>>> 'amd-s2idle --duration 12 --wait 8'?
-> >>>>
-> >>>> I did not use amd-s2idle. I essentially used the script below with a
-> >>>> 12 on the wake alarm and 12 on the for loop. I also used pstore for
-> >>>> this testing.
-> >>>>
-> >>>> for i in {1..200}; do
-> >>>>     echo "Suspend attempt $i"
-> >>>>     echo `date '+%s' -d '+ 60 seconds'` | sudo tee /sys/class/rtc/rt=
-c0/wakealarm
-> >>>>     sudo sh -c 'echo mem > /sys/power/state'
-> >>>>
-> >>>>     for j in {1..50}; do
-> >>>>       # Use repeating sleep in case echo mem returns early
-> >>>>       sleep 1
-> >>>>     done
-> >>>> done
-> >>>
-> >>> =F0=9F=91=8D
-> >>>
-> >>>>
-> >>>>>> The suspected reason here is that 1s that
-> >>>>>> when VPE is used, it needs a bit of time before it can be gated an=
-d
-> >>>>>> there was a borderline delay before, which is not enough for Strix=
- Halo.
-> >>>>>> When the VPE is not used, such as on resume, gating it instantly d=
-oes
-> >>>>>> not seem to cause issues.
-> >>>>>>
-> >>>>>> Fixes: 5f82a0c90cca ("drm/amdgpu/vpe: enable vpe dpm")
-> >>>>>> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> >>>>>> ---
-> >>>>>>     drivers/gpu/drm/amd/amdgpu/amdgpu_vpe.c | 4 ++--
-> >>>>>>     1 file changed, 2 insertions(+), 2 deletions(-)
-> >>>>>>
-> >>>>>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vpe.c b/drivers/gpu=
-/drm/amd/amdgpu/amdgpu_vpe.c
-> >>>>>> index 121ee17b522b..24f09e457352 100644
-> >>>>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vpe.c
-> >>>>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vpe.c
-> >>>>>> @@ -34,8 +34,8 @@
-> >>>>>>     /* VPE CSA resides in the 4th page of CSA */
-> >>>>>>     #define AMDGPU_CSA_VPE_OFFSET       (4096 * 3)
-> >>>>>>
-> >>>>>> -/* 1 second timeout */
-> >>>>>> -#define VPE_IDLE_TIMEOUT     msecs_to_jiffies(1000)
-> >>>>>> +/* 2 second timeout */
-> >>>>>> +#define VPE_IDLE_TIMEOUT     msecs_to_jiffies(2000)
-> >>>>>>
-> >>>>>>     #define VPE_MAX_DPM_LEVEL                   4
-> >>>>>>     #define FIXED1_8_BITS_PER_FRACTIONAL_PART   8
-> >>>>>>
-> >>>>>> base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
-> >>>>>
-> >>>>> 1s idle timeout has been used by other IPs for a long time.
-> >>>>> For example JPEG, UVD, VCN all use 1s.
-> >>>>>
-> >>>>> Can you please confirm both your AGESA and your SMU firmware versio=
-n?
-> >>>>> In case you're not aware; you can get AGESA version from SMBIOS str=
-ing
-> >>>>> (DMI type 40).
-> >>>>>
-> >>>>> =E2=9D=AF sudo dmidecode | grep AGESA
-> >>>>
-> >>>> String: AGESA!V9 StrixHaloPI-FP11 1.0.0.0c
-> >>>>
-> >>>>> You can get SMU firmware version from this:
-> >>>>>
-> >>>>> =E2=9D=AF grep . /sys/bus/platform/drivers/amd_pmc/*/smu_*
-> >>>>
-> >>>> grep . /sys/bus/platform/drivers/amd_pmc/*/smu_*
-> >>>> /sys/bus/platform/drivers/amd_pmc/AMDI000B:00/smu_fw_version:100.112=
-.0
-> >>>> /sys/bus/platform/drivers/amd_pmc/AMDI000B:00/smu_program:0
-> >>>>
-> >>>
-> >>> Thanks, I'll get some folks to see if we match this AGESA version if =
-we
-> >>> can also reproduce it on reference hardware the same way you did.
-> >>>
-> >>>>> Are you on the most up to date firmware for your system from the
-> >>>>> manufacturer?
-> >>>>
-> >>>> I updated my bios, pd firmware, and USB device firmware early August=
-,
-> >>>> when I was doing this testing.
-> >>>>
-> >>>>> We haven't seen anything like this reported on Strix Halo thus far =
-and
-> >>>>> we do internal stress testing on s0i3 on reference hardware.
-> >>>>
-> >>>> Cant find a reference for it on the bug tracker. I have four bug
-> >>>> reports on the bazzite issue tracker, 2 about sleep wake crashes and=
- 2
-> >>>> for runtime crashes, where the culprit would be this. IE runtime gat=
-es
-> >>>> VPE and causes a crash.
-> >>>
-> >>> All on Strix Halo and all tied to VPE?  At runtime was VPE in use?  B=
-y
-> >>> what software?
-> >>>
-> >>> BTW - Strix and Kraken also have VPE.
-> >>
-> >> All on the Z13. Not tied to VPE necessarily. I just know that I get
-> >> reports of crashes on the Z13, and with this patch they are fixed for
-> >> me. It will be part of the next bazzite version so I will get feedback
-> >> about it.
-> >>
-> >> I don't think software that is using the VPE is relevant. Perhaps for
-> >> the runtime crashes it is and this patch helps in that case as well.
-> >> But in my case, the crash is caused after the ungate that runs the
-> >> tests on resume on the delayed handler.
-> >>
-> >> The Z13 also has some other quirks with spurious wakeups when
-> >> connected to a charger. So, if systemd is configured to e.g., sleep
-> >> after 20m, combined with this crash if it stays plugged in overnight
-> >> in the morning it has crashed.
-> >>
-> >>>>
-> >>>>> To me this seems likely to be a platform firmware bug; but I would =
-like
-> >>>>> to understand the timing of the gate vs ungate on good vs bad.
-> >>>>
-> >>>> Perhaps it is. It is either something like that or silicon quality.
-> >>>>
-> >>>>> IE is it possible the delayed work handler
-> >>>>> amdgpu_device_delayed_init_work_handler() is causing a race with
-> >>>>> vpe_ring_begin_use()?
-> >>>>
-> >>>> I don't think so. There is only a single ungate. Also, the crash
-> >>>> happens on the gate. So what happens is the device wakes up, the
-> >>>> screen turns on, kde clock works, then after a second it freezes,
-> >>>> there is a softlock, and the device hangs.
-> >>>>
-> >>>> The failed command is always the VPE gate that is triggered after 1s=
- in idle.
-> >>>>
-> >>>>> This should be possible to check without extra instrumentation by u=
-sing
-> >>>>> ftrace and looking at the timing of the 2 ring functions and the in=
-it
-> >>>>> work handler and checking good vs bad cycles.
-> >>>>
-> >>>> I do not know how to use ftrace. I should also note that after the
-> >>>> device freezes around 1/5 cycles will sync the fs, so it is also not=
- a
-> >>>> very easy thing to diagnose. The device just stops working. A lot of
-> >>>> the logs I got were in pstore by forcing a kernel panic.
-> >>>
-> >>> Here's how you capture the timing of functions.  Each time the functi=
-on
-> >>> is called there will be an event in the trace buffer.
-> >>>
-> >>> =E2=9D=AF sudo trace-cmd record -p function -l
-> >>> amdgpu_device_delayed_init_work_handler -l vpe_idle_work_handler -l
-> >>> vpe_ring_begin_use -l vpe_ring_end_use -l amdgpu_pmops_suspend -l
-> >>> amdgpu_pmops_resume
-> >>>
-> >>> Here's how you would review the report:
-> >>>
-> >>> =E2=9D=AF trace-cmd report
-> >>> cpus=3D24
-> >>>     kworker/u97:37-18051 [001] ..... 13655.970108: function:
-> >>> amdgpu_pmops_suspend <-- pci_pm_suspend
-> >>>     kworker/u97:21-18036 [002] ..... 13666.290715: function:
-> >>> amdgpu_pmops_resume <-- dpm_run_callback
-> >>>     kworker/u97:21-18036 [015] ..... 13666.308295: function:
-> >>> vpe_ring_begin_use <-- amdgpu_ring_alloc
-> >>>     kworker/u97:21-18036 [015] ..... 13666.308298: function:
-> >>> vpe_ring_end_use <-- vpe_ring_test_ring
-> >>>       kworker/15:1-12285 [015] ..... 13666.960191: function:
-> >>> amdgpu_device_delayed_init_work_handler <-- process_one_work
-> >>>       kworker/15:1-12285 [015] ..... 13666.963970: function:
-> >>> vpe_ring_begin_use <-- amdgpu_ring_alloc
-> >>>       kworker/15:1-12285 [015] ..... 13666.965481: function:
-> >>> vpe_ring_end_use <-- amdgpu_ib_schedule
-> >>>       kworker/15:4-16354 [015] ..... 13667.981394: function:
-> >>> vpe_idle_work_handler <-- process_one_work
-> >>>
-> >>> I did this on a Strix system just now to capture that.
-> >>>
-> >>> You can see that basically the ring gets used before the delayed init
-> >>> work handler, and then again from the ring tests.  My concern is if t=
-he
-> >>> sequence ever looks different than the above.  If it does; we do have=
- a
-> >>> driver race condition.
-> >>>
-> >>> It would also be helpful to look at the function_graph tracer.
-> >>>
-> >>> Here's some more documentation about ftrace and trace-cmd.
-> >>> https://www.kernel.org/doc/html/latest/trace/ftrace.html
-> >>> https://lwn.net/Articles/410200/
-> >>>
-> >>> You can probably also get an LLM to help you with building commands i=
-f
-> >>> you're not familiar with it.
-> >>>
-> >>> But if you're hung so bad you can't flush to disk that's going to be =
-a
-> >>> problem without a UART.  A few ideas:
-> >>
-> >> Some times it flushes to disk
-> >>
-> >>> 1) You can use CONFIG_PSTORE_FTRACE
-> >>
-> >> I can look into that
-> >>
-> >>> 2) If you add "tp_printk" to the kernel command line it should make t=
-he
-> >>> trace ring buffer flush to kernel log ring buffer.  But be warned thi=
-s
-> >>> is going to change the timing, the issue might go away entirely or ha=
-ve
-> >>> a different failure rate.  So hopefully <1> works.
-> >>>>
-> >>>> If you say that all IP blocks use 1s, perhaps an alternative solutio=
-n
-> >>>> would be to desync the idle times so they do not happen
-> >>>> simultaneously. So 1000, 1200, 1400, etc.
-> >>>>
-> >>>> Antheas
-> >>>>
-> >>>
-> >>> I don't dobut your your proposal of changing the timing works.  I jus=
-t
-> >>> want to make sure it's the right solution because otherwise we might
-> >>> change the timing or sequence elsewhere in the driver two years from =
-now
-> >>> and re-introduce the problem unintentionally.
-> >>
-> >> If there are other idle timers and only this one changes to 2s, I will
-> >> agree and say that it would be peculiar. Although 1s seems arbitrary
-> >> in any case.
-> >
-> > All of these timers are arbitrary.  Their point is just to provide a
-> > future point where we can check if the engine is idle.  The idle work
-> > handler will either power down the IP if it is idle or re-schedule in
-> > the future and try again if there is still work.  Making the value
-> > longer will use more power as it will wait longer before checking if
-> > the engine is idle.  Making it shorter will save more power, but adds
-> > extra overhead in that the engine will be powered up/down more often.
-> > In most cases, the jobs should complete in a few ms.  The timer is
-> > there to avoid the overhead of powering up/down the block too
-> > frequently when applications are using the engine.
-> >
-> > Alex
->
-> We had a try internally with both 6.17-rc2 and 6.17-rc3 and 1001b or
-> 1001c AGESA on reference system but unfortunately didn't reproduce the
-> issue with a 200 cycle attempt on either kernel or either BIOS (so we
-> had 800 cycles total).
+On Tue, 2025-08-26 at 11:35 +0800, Chenzhi Yang wrote:
+> From: Yang Chenzhi <yang.chenzhi@vivo.com>
+>=20
+> Hello,
+>=20
+> This patchset addresses two issues:
+>=20
+> 1. Unchecked offset/length leading to out-of-bounds memory access.=20
+> =C2=A0=C2=A0 syzbot has reported such a bug in hfs_bmap_alloc, and
+> hfs_bmap_free
+> =C2=A0=C2=A0 has a similar potential problem.=C2=A0=20
+>=20
+> =C2=A0=C2=A0 To mitigate this, I added offset/length validation in
+> `hfs_brec_lenoff`.
+>=20
+> =C2=A0=C2=A0 This ensures callers always receive valid parameters, and in=
+ case
+> of
+> =C2=A0=C2=A0 invalid values, an error code will be returned instead of ri=
+sking
+> =C2=A0=C2=A0 memory corruption.
+>=20
+> 2. Use of uninitialized memory due to early return in hfs_bnode_read.
+>=20
+> =C2=A0=C2=A0 Recent commits have introduced offset/length validation in
+> hfs_bnode_read.=20
+> =C2=A0=C2=A0 However, when an invalid offset is detected, the function
+> currently=20
+> =C2=A0=C2=A0 returns early without initializing the provided buffer.
+>=20
+> =C2=A0=C2=A0 This leads to a scenario where hfs_bnode_read_u16 may call
+> be16_to_cpu
+> =C2=A0=C2=A0 on uninitialized data.
+>=20
+> While there could be multiple ways to fix these issues, adding proper
+> error return values to the affected functions seems the safest
+> solution.
+>=20
+> However, this approach would require substantial changes across the
+> codebase. In this patch, I only modified a small example function to
+> illustrate the idea and seek feedback from the community:=20
+> Should we move forward with this direction and extend it more
+> broadly?
+>=20
+> In addition, this patch allows xfstests generic/113 to pass, which
+> previously failed.
+>=20
+> Yang Chenzhi (4):
+> =C2=A0 hfs: add hfs_off_and_len_is_valid helper
+> =C2=A0 hfs: introduce __hfs_bnode_read* to fix KMSAN uninit-value
+> =C2=A0 hfs: restruct hfs_bnode_read
+> =C2=A0 hfs: restructure hfs_brec_lenoff into a returned-value version
+>=20
+> =C2=A0fs/hfs/bfind.c | 12 +++----
+> =C2=A0fs/hfs/bnode.c | 87 +++++++++++++++++++++++++++++++++++------------=
+-
+> --
+> =C2=A0fs/hfs/brec.c=C2=A0 | 12 +++++--
+> =C2=A0fs/hfs/btree.c | 21 +++++++++---
+> =C2=A0fs/hfs/btree.h | 22 ++++++++++++-
+> =C2=A05 files changed, 115 insertions(+), 39 deletions(-)
 
-I think I did 6.12, 6.15, and a 6.16rc stock. I will have to come back
-to you with 6.17-rc3.
+Frankly speaking, I don't see the point to split this fix on several
+patches. It's really hard to understand the logic and correctness of
+the fix in the current state of patchset. Could you please resend the
+fix as one patch? It's not the big modification and one patch will be
+more easy to review. Also, as far as I can see, patches depend on each
+other and one patch will be more safe than the patchset.
 
-> Was your base a bazzite kernel or was it an upstream kernel?  I know
-> there are some other patches in bazzite especially relevant to suspend,
-> so I wonder if they could be influencing the timing.
->
-> Can you repo on 6.17-rc3?
->
-
+Thanks,
+Slava.
 
