@@ -1,189 +1,171 @@
-Return-Path: <linux-kernel+bounces-786244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CDCEB35715
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:35:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68E2EB35719
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:35:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0188B1898D48
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:35:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64CE92A1847
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:35:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 297F92FA0F5;
-	Tue, 26 Aug 2025 08:34:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UyKjsFQd";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CosuOZYD";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UyKjsFQd";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CosuOZYD"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44DC2F999A
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 08:34:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4C552FE052;
+	Tue, 26 Aug 2025 08:34:11 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FE782FD7A8;
+	Tue, 26 Aug 2025 08:34:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756197243; cv=none; b=DnL3Spx8rxYcJnt7FjML29/BcNHyWeVUs3lMlowzO4dI64E2HHyPsCCmSY6OTNGWKyiVMZ/OlQ6J9b82Wxdk+jGi/RI1Sfyj48Usrs7qil8Tde//eXcm5/FbyMQuu9qRn0vvvdaAQ9vU5iYzVMjvAtnvF0dfl7cE32z+C0bWwII=
+	t=1756197251; cv=none; b=ig5tNdUsiuG1AMeoUzzMOt0ZkokaJvhgKIlp76Pu/KwZA7jYdGsZ2Nc94dcqB4O6FYQnTooD/g8iCZcgmAnPy1FYd15vJRGMoGjNCZxChGWfeicJIiJt91Mtj68OP+1Q0vU1Z4SOFI2QKqfEihAQ4Q3Rsou8Os+40Ne3JC37tXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756197243; c=relaxed/simple;
-	bh=ZoIVSnj0WUlVcoaYbk/KZUKWhT/Vp1ezzJlsiqUnXNY=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gYQA1fJapZAPHIRBPXWO7WfY/B5JaiVCkJe377zs5xLaADBjWi102Qw+IjMwvIpEWjMRjnA4M5eF9x98OQGPBCieTgciAOEGqS8/e1NORxP1X+DBO237ns/4YSdFWc3ONSzRqVzPL5L5u+T2yrgF9k/WDmmG82EoqP8zziR4olo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UyKjsFQd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CosuOZYD; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UyKjsFQd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CosuOZYD; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 941E321193;
-	Tue, 26 Aug 2025 08:33:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756197239; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sloPabBLaK/g+vm2hRV4fJp6Txk+q5pY58hnKn9cJ2c=;
-	b=UyKjsFQdv/eItSH5WPSCsGn9sjGahoBn4nOmbsbm20unrYaewTRhTI4efmEjSTJ6pdIZvg
-	ppY1A9PytXPURamHP6DMuoc5Hm4HT1keeOPVpUbrOa1XNTpXC8jx7fuv44CcXKnng5ginx
-	aFToI1R0UIg1PB3lS9fsHUxTtTglI8k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756197239;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sloPabBLaK/g+vm2hRV4fJp6Txk+q5pY58hnKn9cJ2c=;
-	b=CosuOZYDOED02/vaqpARYjRbe4pPon8gJ5PXLo9v3Nf2CLlpPw0RqtcA1Z97mFzpeLjiBJ
-	nZU2JaD3jJvv1bAg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=UyKjsFQd;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=CosuOZYD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1756197239; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sloPabBLaK/g+vm2hRV4fJp6Txk+q5pY58hnKn9cJ2c=;
-	b=UyKjsFQdv/eItSH5WPSCsGn9sjGahoBn4nOmbsbm20unrYaewTRhTI4efmEjSTJ6pdIZvg
-	ppY1A9PytXPURamHP6DMuoc5Hm4HT1keeOPVpUbrOa1XNTpXC8jx7fuv44CcXKnng5ginx
-	aFToI1R0UIg1PB3lS9fsHUxTtTglI8k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1756197239;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sloPabBLaK/g+vm2hRV4fJp6Txk+q5pY58hnKn9cJ2c=;
-	b=CosuOZYDOED02/vaqpARYjRbe4pPon8gJ5PXLo9v3Nf2CLlpPw0RqtcA1Z97mFzpeLjiBJ
-	nZU2JaD3jJvv1bAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5092413A51;
-	Tue, 26 Aug 2025 08:33:59 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Vp1zEndxrWi6TwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 26 Aug 2025 08:33:59 +0000
-Date: Tue, 26 Aug 2025 10:33:58 +0200
-Message-ID: <87tt1u32ix.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Shenghao Ding <shenghao-ding@ti.com>
-Cc: <broonie@kernel.org>,
-	<andriy.shevchenko@linux.intel.com>,
-	<13564923607@139.com>,
-	<13916275206@139.com>,
-	<alsa-devel@alsa-project.org>,
-	<linux-kernel@vger.kernel.org>,
-	<baojun.xu@ti.com>,
-	<Baojun.Xu@fpt.com>,
-	<jesse-ji@ti.com>
-Subject: Re: [PATCH v1] ALSA: hda/tas2781: Fix EFI name for calibration beginning with 1 instead of 0
-In-Reply-To: <20250822135043.517-1-shenghao-ding@ti.com>
-References: <20250822135043.517-1-shenghao-ding@ti.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1756197251; c=relaxed/simple;
+	bh=qxC/p1Gc9KCWKM0dtM1F0XLBHrEhNf6/UuCrJIdSBD0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rSqD7jicQYGWNPIahr4FCy/Oqi8GcMwCJJ52xG3Z8OShEmlYVwpG8Gqy4Qxajx7A8AfzLo6205dlaEj12UirjugDWWeIr+r/nVnN1izy4FMy/S+7rrxEtIXu8pZ9wh+J1j7njJEKuVPlJ7myH0yXGXAWIgmadvo+AIbxbZcTe1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 054471AC1;
+	Tue, 26 Aug 2025 01:33:59 -0700 (PDT)
+Received: from [10.57.89.149] (unknown [10.57.89.149])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8E23E3F694;
+	Tue, 26 Aug 2025 01:34:01 -0700 (PDT)
+Message-ID: <9e2dcf8f-98b7-4461-af75-71627ee48230@arm.com>
+Date: Tue, 26 Aug 2025 10:33:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[139.com];
-	FREEMAIL_CC(0.00)[kernel.org,linux.intel.com,139.com,alsa-project.org,vger.kernel.org,ti.com,fpt.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,ti.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 941E321193
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.51
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/8] selftests/mm: Add -Wunreachable-code and fix
+ warnings
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Shuah Khan <shuah@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
+ Peter Xu <peterx@redhat.com>, Leon Romanovsky <leon@kernel.org>,
+ Zi Yan <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-riscv@lists.infradead.org
+Cc: kernel@collabora.com, Sidhartha Kumar <sidhartha.kumar@oracle.com>
+References: <20250822082145.4145617-1-usama.anjum@collabora.com>
+ <20250822082145.4145617-2-usama.anjum@collabora.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <20250822082145.4145617-2-usama.anjum@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, 22 Aug 2025 15:50:42 +0200,
-Shenghao Ding wrote:
-> 
-> A bug reported by one of my customers that EFI name beginning with 0
-> instead of 1, and code clean for the string checking.
-> 
-> Fixes: 4fe238513407 ("ALSA: hda/tas2781: Move and unified the calibrated-data getting function for SPI and I2C into the tas2781_hda lib")
-> Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
-> 
+On 22/08/2025 10:20, Muhammad Usama Anjum wrote:
+> Enable -Wunreachable-code flag to catch dead code and fix them.
+>
+> 1. Remove the dead code and write a comment instead:
+> hmm-tests.c:2033:3: warning: code will never be executed
+> [-Wunreachable-code]
+>                 perror("Should not reach this\n");
+>                 ^~~~~~
+>
+> 2. ksft_exit_fail_msg() calls exit(). Remove the dead code.
+
+In that new version there's no dead code removal, rather that call is
+replaced to a call to ksft_print_msg() that doesn't exit.
+
+With that corrected:
+
+Reviewed-by: Kevin Brodsky <kevin.brodsky@arm.com>
+
+- Kevin
+
+> split_huge_page_test.c:301:3: warning: code will never be executed
+> [-Wunreachable-code]
+>                 goto cleanup;
+>                 ^~~~~~~~~~~~
+>
+> 3. Remove duplicate inline.
+> pkey_sighandler_tests.c:44:15: warning: duplicate 'inline' declaration
+> specifier [-Wduplicate-decl-specifier]
+> static inline __always_inline
+>
+> Reviewed-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 > ---
-> v1:
->  - Fix EFI name beginning with 1 instead of 0
->  - Code clean for the string checking
->  - Add extra comments on EFI name for calibration
->  - Remove an extra space
+> Changes since v2:
+> - In split_huge_page_test.c, print error message and then go to cleanup
+>   tag for cleanup instead of just exiting without cleanup
 > ---
->  sound/hda/codecs/side-codecs/tas2781_hda_i2c.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c b/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
-> index ed7771ab9475..fecd5eac739b 100644
-> --- a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
-> +++ b/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
-> @@ -340,16 +340,17 @@ static int tas2563_save_calibration(struct tas2781_hda *h)
->  		data[offset] = i;
->  		offset++;
->  		for (j = 0; j < TASDEV_CALIB_N; ++j) {
-> -			ret = snprintf(var8, sizeof(var8), vars[j], i);
-> +			/* EFI name for calibration started with 1, not 0 */
-> +			ret = snprintf(var8, sizeof(var8), vars[j], i + 1);
+>  tools/testing/selftests/mm/Makefile                | 1 +
+>  tools/testing/selftests/mm/hmm-tests.c             | 5 ++---
+>  tools/testing/selftests/mm/pkey_sighandler_tests.c | 2 +-
+>  tools/testing/selftests/mm/split_huge_page_test.c  | 2 +-
+>  4 files changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
+> index d13b3cef2a2b2..23d4bf6215465 100644
+> --- a/tools/testing/selftests/mm/Makefile
+> +++ b/tools/testing/selftests/mm/Makefile
+> @@ -34,6 +34,7 @@ endif
+>  MAKEFLAGS += --no-builtin-rules
 >  
-> -			if (ret < 0 || ret >= sizeof(var8) - 1) {
-> +			if (ret != strlen(var8)) {
-
-This doesn't look like a code "cleanup".  Calling strlen() is just an
-unneeded (but significant) overhead.
-
-Please concentrate only on the correction for now.
-
-
-thanks,
-
-Takashi
+>  CFLAGS = -Wall -O2 -I $(top_srcdir) $(EXTRA_CFLAGS) $(KHDR_INCLUDES) $(TOOLS_INCLUDES)
+> +CFLAGS += -Wunreachable-code
+>  LDLIBS = -lrt -lpthread -lm
+>  
+>  # Some distributions (such as Ubuntu) configure GCC so that _FORTIFY_SOURCE is
+> diff --git a/tools/testing/selftests/mm/hmm-tests.c b/tools/testing/selftests/mm/hmm-tests.c
+> index 141bf63cbe05e..15aadaf24a667 100644
+> --- a/tools/testing/selftests/mm/hmm-tests.c
+> +++ b/tools/testing/selftests/mm/hmm-tests.c
+> @@ -2027,11 +2027,10 @@ TEST_F(hmm, hmm_cow_in_device)
+>  	if (pid == -1)
+>  		ASSERT_EQ(pid, 0);
+>  	if (!pid) {
+> -		/* Child process waitd for SIGTERM from the parent. */
+> +		/* Child process waits for SIGTERM from the parent. */
+>  		while (1) {
+>  		}
+> -		perror("Should not reach this\n");
+> -		exit(0);
+> +		/* Should not reach this */
+>  	}
+>  	/* Parent process writes to COW pages(s) and gets a
+>  	 * new copy in system. In case of device private pages,
+> diff --git a/tools/testing/selftests/mm/pkey_sighandler_tests.c b/tools/testing/selftests/mm/pkey_sighandler_tests.c
+> index b5e076a564c95..302fef54049c8 100644
+> --- a/tools/testing/selftests/mm/pkey_sighandler_tests.c
+> +++ b/tools/testing/selftests/mm/pkey_sighandler_tests.c
+> @@ -41,7 +41,7 @@ static siginfo_t siginfo = {0};
+>   * syscall will attempt to access the PLT in order to call a library function
+>   * which is protected by MPK 0 which we don't have access to.
+>   */
+> -static inline __always_inline
+> +static __always_inline
+>  long syscall_raw(long n, long a1, long a2, long a3, long a4, long a5, long a6)
+>  {
+>  	unsigned long ret;
+> diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
+> index bf40e6b121abc..de0d26f3df675 100644
+> --- a/tools/testing/selftests/mm/split_huge_page_test.c
+> +++ b/tools/testing/selftests/mm/split_huge_page_test.c
+> @@ -297,7 +297,7 @@ void split_file_backed_thp(int order)
+>  
+>  	status = snprintf(testfile, INPUT_MAX, "%s/thp_file", tmpfs_loc);
+>  	if (status >= INPUT_MAX) {
+> -		ksft_exit_fail_msg("Fail to create file-backed THP split testing file\n");
+> +		ksft_print_msg("Fail to create file-backed THP split testing file\n");
+>  		goto cleanup;
+>  	}
+>  
 
