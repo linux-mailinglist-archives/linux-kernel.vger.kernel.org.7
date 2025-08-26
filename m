@@ -1,99 +1,91 @@
-Return-Path: <linux-kernel+bounces-787228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E228BB3733A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 21:36:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77DAAB3733E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 21:36:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 787A31BA6D80
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:36:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFCE91BA7633
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:36:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD770374265;
-	Tue, 26 Aug 2025 19:34:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4012337C0ED;
+	Tue, 26 Aug 2025 19:35:11 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3018A1A0BD0;
-	Tue, 26 Aug 2025 19:34:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B04DE2F0C7A;
+	Tue, 26 Aug 2025 19:35:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756236884; cv=none; b=Q4Nf/t/Fruj1M6jYsT5yOzCYdTx6/sUKfAI8zstv7QQvRngdRGAilJeN3tPQIfZiUiJUfwB8jM69TwIrER9dYBy5KFUCuo/ny+1hhD+e9QFprlPBWGWvlTcKuMtYgfuXwsnLCWCEdKzYphO1ryK+Lhw1rDUc106NjuVy1INUtdY=
+	t=1756236910; cv=none; b=Jo5wR5lRqZ5BNzmszpkd2BDL6LXU5j8aYo6Vwe/GOvtCWDDvxUCLFdPLtkXtLvjS9fjepjQ1kn5+0KRvtt3A0cy4kuw1wWw5lkF69FdawPGoQNd2EQxdbeEmqPjToNJwjdf0AevdXhbhmKw08V9zpzD/qUpxGkgYQdnZt9Uz1lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756236884; c=relaxed/simple;
-	bh=0PIxGqsNu2o5Bjhc/cWLVmkGbMcZXP2uAlg8QoJFphA=;
+	s=arc-20240116; t=1756236910; c=relaxed/simple;
+	bh=6/7n+g1zNexOTdHB4lKVMKI6ZVYvq/hB0xWd+VSmFKk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rLKcA4KfYLVI/C+2Rc5C0kPJaAuz5Wc2i0uFXMPXPP19vHeALJJZTJII2PAzZXUv7Hw+UVgp+dvL+iWoXW/if9Y397CgYt39SGxUWWYli99fUWd4Lau5SPkvPcFxeYa2gldXP7Os00rlOPdwkMbmNaExktm6tv/WgYM1nXM1mE8=
+	 Content-Type:Content-Disposition:In-Reply-To; b=XfFpOnm86gn3smO0L8dQGhJmVHvMi0JH5SuoYrfwKndwRrzC2WcxEAC9fHTRO8pjmIe28Q/+IBId27LX8jnmIjtz8V1NmNspdIgV5fidQz2eCAcO+AsccE2ptMMzhRRN8oIJnmhftDktRCa4HyNKSvc9wgYf34RgXXoYrODXm+o=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D17BC4CEF1;
-	Tue, 26 Aug 2025 19:34:37 +0000 (UTC)
-Date: Tue, 26 Aug 2025 20:34:39 +0100
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D065C4CEF1;
+	Tue, 26 Aug 2025 19:34:57 +0000 (UTC)
+Date: Tue, 26 Aug 2025 20:35:00 +0100
 From: Catalin Marinas <catalin.marinas@arm.com>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Nam Cao <namcao@linutronix.de>,
-	Russell King <linux@armlinux.org.uk>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Will Deacon <will@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>,
-	Christian Brauner <brauner@kernel.org>,
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
-	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-s390@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: [PATCH 10/11] vdso: Drop kconfig GENERIC_VDSO_TIME_NS
-Message-ID: <aK4MTxWGoe461HGb@arm.com>
-References: <20250826-vdso-cleanups-v1-0-d9b65750e49f@linutronix.de>
- <20250826-vdso-cleanups-v1-10-d9b65750e49f@linutronix.de>
+To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+Cc: sohil.mehta@intel.com, baohua@kernel.org, david@redhat.com,
+	kbingham@kernel.org, weixugc@google.com, Liam.Howlett@oracle.com,
+	alexandre.chartre@oracle.com, kas@kernel.org, mark.rutland@arm.com,
+	trintaeoitogc@gmail.com, axelrasmussen@google.com,
+	yuanchu@google.com, joey.gouly@arm.com, samitolvanen@google.com,
+	joel.granados@kernel.org, graf@amazon.com,
+	vincenzo.frascino@arm.com, kees@kernel.org, ardb@kernel.org,
+	thiago.bauermann@linaro.org, glider@google.com, thuth@redhat.com,
+	kuan-ying.lee@canonical.com, pasha.tatashin@soleen.com,
+	nick.desaulniers+lkml@gmail.com, vbabka@suse.cz,
+	kaleshsingh@google.com, justinstitt@google.com,
+	alexander.shishkin@linux.intel.com, samuel.holland@sifive.com,
+	dave.hansen@linux.intel.com, corbet@lwn.net, xin@zytor.com,
+	dvyukov@google.com, tglx@linutronix.de,
+	scott@os.amperecomputing.com, jason.andryuk@amd.com,
+	morbo@google.com, nathan@kernel.org, lorenzo.stoakes@oracle.com,
+	mingo@redhat.com, brgerst@gmail.com, kristina.martsenko@arm.com,
+	bigeasy@linutronix.de, luto@kernel.org, jgross@suse.com,
+	jpoimboe@kernel.org, urezki@gmail.com, mhocko@suse.com,
+	ada.coupriediaz@arm.com, hpa@zytor.com, leitao@debian.org,
+	peterz@infradead.org, wangkefeng.wang@huawei.com, surenb@google.com,
+	ziy@nvidia.com, smostafa@google.com, ryabinin.a.a@gmail.com,
+	ubizjak@gmail.com, jbohac@suse.cz, broonie@kernel.org,
+	akpm@linux-foundation.org, guoweikang.kernel@gmail.com,
+	rppt@kernel.org, pcc@google.com, jan.kiszka@siemens.com,
+	nicolas.schier@linux.dev, will@kernel.org, andreyknvl@gmail.com,
+	jhubbard@nvidia.com, bp@alien8.de, x86@kernel.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org, llvm@lists.linux.dev,
+	linux-kbuild@vger.kernel.org, kasan-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 14/19] arm64: Unify software tag-based KASAN inline
+ recovery path
+Message-ID: <aK4MZGzTvJ8bBQvn@arm.com>
+References: <cover.1756151769.git.maciej.wieczor-retman@intel.com>
+ <eb073b008b547cf87722390cc94fe6e9d21c514e.1756151769.git.maciej.wieczor-retman@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250826-vdso-cleanups-v1-10-d9b65750e49f@linutronix.de>
+In-Reply-To: <eb073b008b547cf87722390cc94fe6e9d21c514e.1756151769.git.maciej.wieczor-retman@intel.com>
 
-On Tue, Aug 26, 2025 at 08:17:13AM +0200, Thomas Weiﬂschuh wrote:
-> All architectures implementing time-related functionality in the vDSO are
-> using the generic vDSO library which handles time namespaces properly.
+On Mon, Aug 25, 2025 at 10:24:39PM +0200, Maciej Wieczor-Retman wrote:
+> To avoid having a copy of a long comment explaining the intricacies of
+> the inline KASAN recovery system and issues for every architecture that
+> uses the software tag-based mode, a unified kasan_inline_recover()
+> function was added.
 > 
-> Remove the now unnecessary kconfig symbol.
+> Use kasan_inline_recover() in the kasan brk handler to cleanup the long
+> comment, that's kept in the non-arch KASAN code.
 > 
-> Enables the use of time namespaces on architectures, which use the
-> generic vDSO but did not enable GENERIC_VDSO_TIME_NS, namely MIPS and arm.
-> 
-> Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
-> 
-> ---
-> Technically this is still too restrictive, as it prevents architectures
-> without a real vDSO to enable CONFIG_TIME_NS. Right now this restriction
-> only protects the SPARC vDSO. I have patches to drop it completely,
-> as soon as SPARC is usingthe generic vDSO.
-> ---
->  arch/arm64/Kconfig                   | 1 -
+> Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
 
 Acked-by: Catalin Marinas <catalin.marinas@arm.com>
 
