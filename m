@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-787381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D65B0B37571
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 01:19:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B4D0B37576
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 01:20:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 976842A8695
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 23:19:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1CA91BA1E30
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 23:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDDFF2FA0F7;
-	Tue, 26 Aug 2025 23:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0644F307492;
+	Tue, 26 Aug 2025 23:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WyJRIJAl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c9HqCg/Y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2385E2264CE;
-	Tue, 26 Aug 2025 23:19:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B6C305E24;
+	Tue, 26 Aug 2025 23:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756250386; cv=none; b=M4U4ZiuL9GvKrvdc9D0W1Lqe3A+ZRFixN8H6RN5vmCYSHCM2/f6ng5P2w3iYsa8VKAvYyu9Mkq5M8Ral2ntSlM79wkYEpBtLW63ZUx33V9zfAb782VPsVxZR8e7J/QAsABU1Y8AN2sMldTmgYl+moKiNs+4dZrAtcY2FHweYpdo=
+	t=1756250387; cv=none; b=aGUtunq84AcAEli8/n38Oc5gCvyXFLE7D9hGynq3fZoHcgH1tisikjCDsvDWgpV25jSNftTkgvpJ6XryvEgX8yrY4FpvCot2kOO3CZOjBt5DKS/fzFXJzVtfJCMpbKe49wWyaR8Q0cxe6yamAUgw7kd7qksrGdW1Tpxxo7QsN9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756250386; c=relaxed/simple;
-	bh=V5+/7XEH4hLHcMPBz+Zh+CzV2IBqlOxEt53xo3DTfZE=;
+	s=arc-20240116; t=1756250387; c=relaxed/simple;
+	bh=zLh8WizEEOD2O7XSqtpVeM4YMDdo/7PIjzbYqeNimzY=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=kc2UxtnwuEm7T8K2aXXSsNVfop12thJC8q1obxK9GD4WO2TuyHjwUL7aMQq1Vr8BoACKEcFbdSB57a8ydy4SGaFSAcdeR0Xd4lxyjBhopHhUK1MxSLzePMGL1FNQbd3C/nydVwoRcd+wU4iXjr0gcC/CvnIN+D7HuOt6JAuDIF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WyJRIJAl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DB81C4CEF1;
-	Tue, 26 Aug 2025 23:19:45 +0000 (UTC)
+	 Message-Id:Subject; b=Lbdd2v+LdYMuQFWRRVN5rkhYzDS9tuTm2m6VGJd1WyNeKMpNzIAXxQYjcMDGB23mmLTvcRT0/L9wkc/yTKjv0FNDOr29Pij35g+qeCKw9ok19FwIgq+foppdvuazdRWoRc1Si+9CVUtrkiIdl9pSxe2/+msNjMu1l+z43HnNKGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c9HqCg/Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95708C4AF0C;
+	Tue, 26 Aug 2025 23:19:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756250385;
-	bh=V5+/7XEH4hLHcMPBz+Zh+CzV2IBqlOxEt53xo3DTfZE=;
+	s=k20201202; t=1756250387;
+	bh=zLh8WizEEOD2O7XSqtpVeM4YMDdo/7PIjzbYqeNimzY=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=WyJRIJAltpcqF4H0kfN2dPHSy1g5gDlTD30riJD+bz0LI5HIkCp4PG6eLEylKLH+V
-	 tQRMZ6ZAdMUBI7scoEmhOIR5r+fwcaTXC+6q0QuwCToO+fcmXzQ4d/dQsxdC35/OQm
-	 nq2LMCYX39HlzrLUi3LVFmYjI0lMNjWZ4RRsXcHn4tai1BuNcHzjRwnQy6be9E/eKk
-	 t4JQiV8YryEQfejroFA1Q4svIPRrhghBYXBqLCU0yIT/cFHtfI3Wkkh90lYIzqdbjZ
-	 J0mkPpkPbx2qw93wdICGX6hWPI0RqE1ZAtD+SPyCID59a/YSI3RfnPIrtIysTNS/xd
-	 Yk7PmgGd5ZDEQ==
-Date: Tue, 26 Aug 2025 18:19:44 -0500
+	b=c9HqCg/YkJuVZhtoh9ZY3su6EnYr8ZO7arMD1izYLBdxkShCC5i/mNMHmC0RZQzBd
+	 r6LvqvXVLfCSofbgsYgHy6Rowi0EsSQXwzrq3x21Mgq+GbDWDb57m7zFaKJDe4bKfm
+	 B/9hKF4V5GKL1l5OEwex+apFf+jYnSYEOEVDdNkuzC8UtUFuaoyaQdpg27R4W1p9cI
+	 krC3HZtOL8+i1jQhTcg8hJqb7sfmzJzV5S8tYu1ueOAeOUyvp14eVBScasWxuEuHJV
+	 3Z+shw+l/9ABZ7Py/LS7ieBjqk9HxSdWy32eX5TPm6nTFvNRpXbgn8mcATBE3J2S0y
+	 iBnpM1dIkz9qg==
+Date: Tue, 26 Aug 2025 18:19:45 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,26 +50,87 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
- Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org, 
- linux-omap@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-In-Reply-To: <20250826134259.2564191-1-alexander.stein@ew.tq-group.com>
-References: <20250826134259.2564191-1-alexander.stein@ew.tq-group.com>
-Message-Id: <175625023024.716358.4095639193170110202.robh@kernel.org>
-Subject: Re: [PATCH 1/2] ARM: dts: tps65910: Add gpio & interrupt
- properties
+Cc: linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, 
+ Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>, 
+ Vishal Kumar Pal <quic_vispal@quicinc.com>, 
+ Bjorn Andersson <andersson@kernel.org>, linux-mmc@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Richard Cochran <richardcochran@gmail.com>, 
+ Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Dikshita Agarwal <quic_dikshita@quicinc.com>, 
+ Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>, 
+ devicetree@vger.kernel.org, netdev@vger.kernel.org, 
+ Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Sushrut Shree Trivedi <quic_sushruts@quicinc.com>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Monish Chunara <quic_mchunara@quicinc.com>, kernel@oss.qualcomm.com, 
+ linux-arm-msm@vger.kernel.org, 
+ Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
+To: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
+In-Reply-To: <20250826-lemans-evk-bu-v1-0-08016e0d3ce5@oss.qualcomm.com>
+References: <20250826-lemans-evk-bu-v1-0-08016e0d3ce5@oss.qualcomm.com>
+Message-Id: <175625023137.716456.17233441178355576969.robh@kernel.org>
+Subject: Re: [PATCH 0/5] arm64: dts: qcom: lemans-evk: Extend board support
+ for additional peripherals
 
 
-On Tue, 26 Aug 2025 15:42:57 +0200, Alexander Stein wrote:
-> The binding document ti,tps65910.yaml requires the controller and
-> cells properties for both gpio and interrupts. As they have const and
-> fixed values a default can be provided for all users.
+On Tue, 26 Aug 2025 23:50:59 +0530, Wasim Nazir wrote:
+> This series extend support for additional peripherals on the Qualcomm
+> Lemans EVK board to enhance overall hardware functionality.
 > 
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> It includes:
+>   - New peripherals like:
+>     - GPI (Generic Peripheral Interface) DMA controllers and QUPv3 controllers
+>       for peripheral communication.
+>     - PCIe HW with required regulators and PHYs.
+>     - I2C based devices like GPIO I/O expander and EEPROM.
+>     - USB0 controller in device mode.
+>     - Remoteproc subsystems for supported DSPs.
+>     - Qca8081 2.5G Ethernet PHY.
+>     - Iris video decoder.
+>     - SD card support on SDHC v5.
+>   - Audio change [1] to support capture and playback on I2S.
+> 
+> Dependency:
+>   - Revert commit b5323835f050 ("OPP: Reorganize _opp_table_find_key()") to
+>     avoid regression introduced in linux-next (20250825).
+>   - This series depends on the removal of partial changes from patch [2],
+>     which are now part of the above commit and are causing boot failures as
+>     described in [3].
+>   - The ethernet PHY QCA8081 depends on CONFIG_QCA808X_PHY, without
+>     which ethernet will not work.
+> 
+> [1] https://lore.kernel.org/linux-arm-msm/20250822131902.1848802-1-mohammad.rafi.shaik@oss.qualcomm.com/
+> [2] https://lore.kernel.org/all/20250820-opp_pcie-v4-2-273b8944eed0@oss.qualcomm.com/
+> [3] https://lore.kernel.org/all/aKyS0RGZX4bxbjDj@hu-wasimn-hyd.qualcomm.com/
+> 
 > ---
->  arch/arm/boot/dts/tps65910.dtsi | 4 ++++
->  1 file changed, 4 insertions(+)
+> Mohammad Rafi Shaik (2):
+>       arm64: dts: qcom: lemans: Add gpr node
+>       arm64: dts: qcom: lemans-evk: Add sound card
+> 
+> Monish Chunara (2):
+>       dt-bindings: mmc: sdhci-msm: Document the Lemans compatible
+>       arm64: dts: qcom: lemans: Add SDHC controller and SDC pin configuration
+> 
+> Wasim Nazir (1):
+>       arm64: dts: qcom: lemans-evk: Extend peripheral and subsystem support
+> 
+>  .../devicetree/bindings/mmc/sdhci-msm.yaml         |   1 +
+>  arch/arm64/boot/dts/qcom/lemans-evk.dts            | 439 +++++++++++++++++++++
+>  arch/arm64/boot/dts/qcom/lemans.dtsi               | 124 ++++++
+>  3 files changed, 564 insertions(+)
+> ---
+> base-commit: d0630b758e593506126e8eda6c3d56097d1847c5
+> change-id: 20250814-lemans-evk-bu-ec015ce4080e
+> 
+> Best regards,
+> --
+> Wasim Nazir <wasim.nazir@oss.qualcomm.com>
+> 
+> 
 > 
 
 
@@ -88,50 +149,15 @@ make sure dt-schema is up to date:
 
 
 This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: tags/next-20250825 (exact match)
+ Base: using specified base-commit d0630b758e593506126e8eda6c3d56097d1847c5
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/ti/' for 20250826134259.2564191-1-alexander.stein@ew.tq-group.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250826-lemans-evk-bu-v1-0-08016e0d3ce5@oss.qualcomm.com:
 
-arch/arm/boot/dts/ti/omap/am335x-pdu001.dtb: tps@2d (ti,tps65910): #interrupt-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-arch/arm/boot/dts/ti/omap/am335x-base0033.dtb: tps@2d (ti,tps65910): #interrupt-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-arch/arm/boot/dts/ti/omap/am335x-baltos-ir5221.dtb: tps@2d (ti,tps65910): #interrupt-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-arch/arm/boot/dts/ti/omap/am335x-regor-rdk.dtb: pmic@2d (ti,tps65910): #interrupt-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-arch/arm/boot/dts/ti/omap/am335x-netcom-plus-8xx.dtb: tps@2d (ti,tps65910): #interrupt-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-arch/arm/boot/dts/ti/omap/am335x-evm.dtb: tps@2d (ti,tps65910): #interrupt-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-arch/arm/boot/dts/ti/omap/am335x-evmsk.dtb: tps@2d (ti,tps65910): #interrupt-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-arch/arm/boot/dts/ti/omap/omap3-echo.dtb: tps@2d (ti,tps65910): #interrupt-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-arch/arm/boot/dts/ti/omap/am335x-moxa-uc-8100-me-t.dtb: tps@2d (ti,tps65910): #interrupt-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-arch/arm/boot/dts/ti/omap/am335x-icev2.dtb: power-controller@2d (ti,tps65910): #interrupt-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-arch/arm/boot/dts/ti/omap/am335x-phycore-rdk.dtb: pmic@2d (ti,tps65910): #interrupt-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-arch/arm/boot/dts/ti/omap/am3517-craneboard.dtb: tps@2d (ti,tps65910): #interrupt-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-arch/arm/boot/dts/ti/omap/am335x-netcom-plus-2xx.dtb: tps@2d (ti,tps65910): #interrupt-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-arch/arm/boot/dts/ti/omap/am335x-netcan-plus-1xx.dtb: tps@2d (ti,tps65910): #interrupt-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-arch/arm/boot/dts/ti/omap/am335x-baltos-ir3220.dtb: tps@2d (ti,tps65910): #interrupt-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-arch/arm/boot/dts/ti/omap/am335x-wega-rdk.dtb: pmic@2d (ti,tps65910): #interrupt-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-arch/arm/boot/dts/ti/omap/am335x-baltos-ir2110.dtb: tps@2d (ti,tps65910): #interrupt-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-arch/arm/boot/dts/ti/omap/am335x-lxm.dtb: tps@2d (ti,tps65910): #interrupt-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
+arch/arm64/boot/dts/qcom/lemans-evk.dtb: ethernet@23040000 (qcom,sa8775p-ethqos): Unevaluated properties are not allowed ('interconnect-names', 'interconnects' were unexpected)
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
 
 
 
