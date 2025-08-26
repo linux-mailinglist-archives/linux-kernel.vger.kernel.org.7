@@ -1,112 +1,103 @@
-Return-Path: <linux-kernel+bounces-787166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A1FBB3724F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 20:39:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34BF0B3724C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 20:38:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 69BBE4E24A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:39:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 455241BA24E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF216370580;
-	Tue, 26 Aug 2025 18:38:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE56636CDFD;
+	Tue, 26 Aug 2025 18:38:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4np88ZLg"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tw8rO4AX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C62662F0C50
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 18:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6B3299957;
+	Tue, 26 Aug 2025 18:38:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756233538; cv=none; b=G1TMEbpPv0oNS3fLaoDyzIU63GkZ+oy1NHARU6mu58SCMB1youcn3TsnuNV7ZN0EO1AzAewAtZiNZeV/FsUdgja2Ne8k65TTvm0ofPPobSUOMzPbY761ptDKSwwe44OS3GoQvPyOxgm0TJkjnHyhZiuSJt5sxuBjKi1GmuuHsdo=
+	t=1756233521; cv=none; b=rZDkr2dYIVWuLrR8Ckt8SeUpJU/MGIcu26X2odVF5553oR3KYVqjFMQStBAhJf/AEf1KOqpvVmCLtMBs/8DQLCPNhQMPLf6/qIYsoZm5TzJ7ULgkxDmLVqzCwBkJm/1O2RsmpUWxBL06rgkDFIBRivUhOjTzSYivUY7VjnP1R1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756233538; c=relaxed/simple;
-	bh=06jdW27mAIPRBmadC9Obk+RK34cpiAgXn9PuJx8myVg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pjD8oC9mLmHti09jQ71iwLwzW3a60dg02Z05Ot3oS9QxH1paeygcF4ssBZKn9Xf2TT1S9PcV3r9pBna/Pmb2ShKM27gsqXepbqf95rsND5FMoWCGZ97nU9Fc6YVzW4Sykqo9TUEvItAhoF/QGA04GA3Tu/X1grYaSecijlrYWVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4np88ZLg; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b47174beb13so4124035a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 11:38:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756233536; x=1756838336; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=06jdW27mAIPRBmadC9Obk+RK34cpiAgXn9PuJx8myVg=;
-        b=4np88ZLgYd03qQc+6huSoWZ8qYhBXOmi2/meJB6jH5nRw7LvpYZViOacMFrunlUhkg
-         Dz0I/Zg2JfZ/Ydk9obh57WNifbkMxudPbptJg+UYLZQz9LyJIBdkpDBh0fnXFGMgHpRc
-         Njv1ItWVxux541lA72eSzs63HzjXMYwplpcCDQZNnmLdDk+LluwjusnFDeukVDtt9Hd6
-         jNNhu/1bQDx8Mi5YtELcQA0XFeZ0q1rg4cz+WlV6Wto4rScR/JR3pxVjUuOuKJ4cSO1P
-         rMAf4ATPqkCbpcn0lrjuUDj2sisX29um2ig9Rr3SvSVcGEtqHnNxnVGkEUuSlsrsNZbV
-         KBkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756233536; x=1756838336;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=06jdW27mAIPRBmadC9Obk+RK34cpiAgXn9PuJx8myVg=;
-        b=tGdXQluQEZot24Y199r8pjil7jupzCjsipMCR+JNbjY1yfJZMzypE01tHeXXGbzksM
-         XuA3Jqj3x0CSgp8bNbLHu9VbYXhlgD+3zAE/iQuCWtyC8Q1cpjdTNN2FWna0CTLWW83M
-         WO/N//zT+DZNUnDDGSeoNaL5YSyelNz/OuvIVL9spU2STNWcwAzzGNm9YS/+fqT0+e3f
-         2jgyyr3dtpxaEJTXlowXrRi7UC4aSXaeTtWh1qUzGW0eQfwqbFrUbSrOWJkKc9/hHuwt
-         I+xQUxHrkexEiNKz4bR6ZPxDZfYRjFZycZQYIBfrQfLg+7yUeZPuIur1/R1emBBvHOLP
-         9QAw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1vlfVp+ysRyT9Iw8yqMDGBoX6JFdaLUMJfzjWQq7DMj5TSl9YuxQUerFTXNz6PwJydipkRyDugO2jb1s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1XLk1XXnHKh43ZocyENT2bcj0SSl2H6IoXUWvafPGXD27df/Z
-	3zN8RI2uAWFewOAUlyd33K0ujO5Sw/AdTDVxYxaQDO3JkbyEQ4t02M4+hwJ2RanKfgeuGvgCSf1
-	Xv61H1srztiQga98pBsaCnKt4uYVTXIegeYRw2y7D3E9g+uGLA16VI4QOV8A=
-X-Gm-Gg: ASbGnctsSl6x0l0GkIYUnkmvcdEmByAUgdaU4xFk2vqDBqWv6uCpmvwzqL3j7Ur44e5
-	hgXVZnaEV8UbvI9Oz58Gyw28I/Xli0qjOIVjOULw1i7qhpVU0MiBo5HmaezeZHSURKHXso9bczv
-	0ZKDtDHDhPHqMXR4rk7kBWwwgs+x+vMQIIUX7SG9Cs8GXQN82A9qTwsuiXEL5kNsdd1W33Mil6V
-	pxEk365VZfI2YR4cVpo3qxEX8DHkgxi7KESvfygpb0AwnLFWOBLKA==
-X-Google-Smtp-Source: AGHT+IH5KjEJVhvCkQSabMFJ6Dgae7xyjx92todBEtX1cQ3584ZTM1rL7jIKPVZvYFP3E0VQrG7UKBtxiwCnzhW7MZo=
-X-Received: by 2002:a17:902:e946:b0:246:461b:d46b with SMTP id
- d9443c01a7336-246461bdafamr192188235ad.46.1756233535777; Tue, 26 Aug 2025
- 11:38:55 -0700 (PDT)
+	s=arc-20240116; t=1756233521; c=relaxed/simple;
+	bh=I3ZmJOTeI5U0UWdxXYHroNtLPixbix3GWAcILqmBLz0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NUbHm4i+Qcd3ARKlCU0roowDo1z+q1cH4EW/h3FsBNxPOulnoULcZuvZPy7SMoI8/ntXplz3aTTJm82G2QX3S/4oeQ2BlRMr7VPHwUTETRQ8RF6mu5ZOUdKpAGl+qETdL3YQgzUYRMtlBSlVjLtxqX3o91b1IQv34Njc8h+NHrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tw8rO4AX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05373C4CEF1;
+	Tue, 26 Aug 2025 18:38:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756233520;
+	bh=I3ZmJOTeI5U0UWdxXYHroNtLPixbix3GWAcILqmBLz0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tw8rO4AXOfA8dpc65nMg5u/wXw/WAZjn7kZBMuMnXKjSu2lklLg+zuJBg0HchBIZi
+	 Kau44OkrJIcWM29VFSkyHhd3KJFHlGO3s0Edom62ZIqdclXPnq18DPzHzpdMReCDa6
+	 jCmcTBQznsjABaE1LfJe6J6jUWQH5REodrD28b4wg+1A1YyVFuRRCk9e/5KxBIAvPi
+	 zwj7IVEOBv1Rhr0kdDjyAlecRcJWFNgmiqCwi2zI9zG39AE9/ic9xmmiHy6uEQKUkk
+	 X3kOdXATrvYUpo4WlCK446VJyIlnIIbl2pMklQeOsQ0tYsTDu6lS2JlMkBLdoeDOgG
+	 IKKxtWUtfsC4Q==
+Date: Tue, 26 Aug 2025 11:38:36 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Nicolas Schier <nsc@kernel.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>,
+	Christian Brauner <brauner@kernel.org>,
+	Daniel Gomez <da.gomez@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH] scripts/misc-check: update export checks for
+ EXPORT_SYMBOL_FOR_MODULES()
+Message-ID: <20250826183836.GA3422853@ax162>
+References: <20250825-export_modules_fix-v1-1-5c331e949538@suse.cz>
+ <20250825170710.GC2719297@ax162>
+ <aKzFfToXptoHnrxI@levanger>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826150826.11096-1-ryanzhou54@gmail.com>
-In-Reply-To: <20250826150826.11096-1-ryanzhou54@gmail.com>
-From: Roy Luo <royluo@google.com>
-Date: Tue, 26 Aug 2025 11:38:19 -0700
-X-Gm-Features: Ac12FXziHtS4dfDITSUW9py7_9gScCCwvZ_1Krem7Oi7XWBIDVeE6StLiWQj7w0
-Message-ID: <CA+zupgwnbt=5Oh28Chco=YNt9WwKzi2J+0hQ04nqyZG_7WUAYg@mail.gmail.com>
-Subject: Re: [PATCH] drvier: usb: dwc3: Fix runtime PM trying to activate
- child device xxx.dwc3 but parent is not active
-To: Ryan Zhou <ryanzhou54@gmail.com>
-Cc: Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org, 
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aKzFfToXptoHnrxI@levanger>
 
-On Tue, Aug 26, 2025 at 8:12=E2=80=AFAM Ryan Zhou <ryanzhou54@gmail.com> wr=
-ote:
->
-> Issue description:
-> The parent device dwc3_glue has runtime PM enabled and is in the
-> runtime suspended state. The system enters the deep sleep process
-> but is interrupted by another task. When resuming dwc3,
-> console outputs the log 'runtime PM trying to activate child device
-> xxx.dwc3 but parent is not active'.
->
+On Mon, Aug 25, 2025 at 10:20:13PM +0200, Nicolas Schier wrote:
+> On Mon, Aug 25, 2025 at 10:07:10AM -0700, Nathan Chancellor wrote:
+> > On Mon, Aug 25, 2025 at 05:00:37PM +0200, Vlastimil Babka wrote:
+> > > The module export checks are looking for EXPORT_SYMBOL_GPL_FOR_MODULES()
+> > > which was renamed to EXPORT_SYMBOL_FOR_MODULES(). Update the checks.
+> > > 
+> > > Fixes: 6d3c3ca4c77e ("module: Rename EXPORT_SYMBOL_GPL_FOR_MODULES to EXPORT_SYMBOL_FOR_MODULES")
+> > > Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> > > ---
+> > > I've missed these new checks when renaming the export macro due to my
+> > > git grep being too narrow. My commit went through Christian's vfs tree
+> > > but seems the script is part of kbuild (which is currently Odd fixes).
+> > 
+> > If this needs to reach Linus's tree to avoid warnings, it could go via
+> > another vfs fixes pull request with our ack or we could ask him to pick
+> > it up directly (as I am not sure we will have a fixes pull request this
+> > cycle). If it is not urgent, I can pick it up via kbuild-next for 6.18.
+> > I have no strong preference.
+> 
+> Hm, you're right, the check will issue false warnings (and misses to
+> warn when it should) without this update.  Therefore I think it would be
+> good to get the patch merged soon - even though the warnings are only
+> issued with W=2.
 
-Wouldn't the parent glue dev already resume before resuming the child dwc3?
-Why would 'runtime PM trying to activate child device xxx.dwc3 but parent i=
-s
-not active' happen in the first place?
-What is the glue driver that's being used here? Knowing what's being done i=
-n
-the glue driver pm callbacks would help in understanding the issue.
+Oh, I forgot that these warnings were downgraded to W=2 in commit
+a6a7946bd691 ("kbuild: move warnings about linux/export.h from W=1 to
+W=2")... I thought these were in W=1 still.
 
-Regards,
-Roy
+In that case, I do not think it is really imperative to fast track this
+to mainline. We are not and probably never will be W=2 clean so the
+presence of new or missing warnings is not a big bug to me. I will apply
+this to kbuild-next later today but I can drop it if someone wants to
+fast track it.
+
+Cheers,
+Nathan
 
