@@ -1,169 +1,203 @@
-Return-Path: <linux-kernel+bounces-786966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DB85B36F65
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:05:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BD05B36F75
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:07:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EFAC1BC101B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:03:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C72CF189D021
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:05:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A3430FC0D;
-	Tue, 26 Aug 2025 16:03:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0F0530FC19;
+	Tue, 26 Aug 2025 16:05:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="x5mCD9Ol"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2072.outbound.protection.outlook.com [40.107.244.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MEAqUavN"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D89E930FC19
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 16:03:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756224208; cv=fail; b=FAzLZ9PvEKOARA7jtXWgq/5xUjqnvCRKPqSTdlyAKxcUT3qj7vyCOKNfzQ7MMTdwOVH2heoMpmQmAPcqsmMcBwZuLdAkqsK5H8sJH7qhiMO0B2UnJHGGlqnKLC66gl7pH2UB8UpTXsg3R/4oxswTNLtXSOU3eaj1As25AgymnMI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756224208; c=relaxed/simple;
-	bh=oSYMGmJQEr7yjvXVOVukIMu+rGubqOMaPh33cOe/esI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FlWIBM/Uw6uHlqDMipe4iJmZ/CtDywhpw15/9JfQZiZ0tbQiR2IRo6OXAn748HZDy9gjdy2GJRUttukx/IZr0NpSMniUoq93ZNJj+E/EMeVgjkzYg5Rtuw69OtozInBYl6+pFHdYSAzwWiY6FEOw3bbU7iNmuVS1Krw32KLW5VM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=x5mCD9Ol; arc=fail smtp.client-ip=40.107.244.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rrcPeuCkzTwL25XDiI5SFWIanHgd4xYkbwb8FKdBIkB3dt1XcA52Ro9zipQqEBnos3PVcUizVLz77LkuSdC689TxF+2uiyZTQyzQDam1S5AsZymPhlqxJhAa5zP6ZjvwycmuQqexXOvq+UVSmVshQlmKnecHoEOARhLlNEy+c7lV5jGMcrGpFL0CAEpRIloTXkQi22NoRpYt8bCgf0j0kZ9Bx7y3F9fEqyECDkY1XSS2iQXxamMCkaLRQMCBvHvXq68TA4Jg9WR8OKweg0tPDNDU9tsvMr0LYHLjhtarHfFGHP5TCfbwRKdTQOVbFujtDx4miJApog5TWTpuHvKhzQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+emYlXKq5gATdlOGChsxoRNdWCXUJ4kyR/RlMAyXxLE=;
- b=vyaP/nNAQUJ4N9WO6JDyewF9rBtxBSYK8ZQPn8FJrEdF/vxxyApcxZZRgNOACNNcazF3n8BDMcDs77Q+JmswVDI3I8LLAFIiK6QHthOAVGpVR60pF4bIgbl/tXItmjmxhH78zHiU5WOTN54O/bkgkyB86ln2XUKA2Mfb1gJWs7R6RVNQgP51JZzqkUU9uV3HlM93GpYnDrHf+ESOipAwcwf08lDAMoMQUdS/V5RqEvnoeZHqyDXfepcItxrdPk6sO2MmNuGN8YnWJR6mpQsu9XOmux0URBryjiKpx6GzfkJqHMLxFy3IgHgnZDtGNMBar1sNbaHstNMea2qPO3CguQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+emYlXKq5gATdlOGChsxoRNdWCXUJ4kyR/RlMAyXxLE=;
- b=x5mCD9OlCpiQCDdM4SLxoe40fhmc8ArvC/bHa3rkQp9vHlwyprUDsqtuejGtCxN5gXcWngD3Mc1J0nSvhlhzFztL8CTBS6kOPe/dX0L+SOJEQtW63pvm8E/K9NxKMdzuz/hqdrRJ6qpDlruBhjkcbtyDQPv7bqU0NVmr+OeBcxw=
-Received: from BLAPR05CA0001.namprd05.prod.outlook.com (2603:10b6:208:36e::6)
- by SN7PR12MB7107.namprd12.prod.outlook.com (2603:10b6:806:2a2::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.23; Tue, 26 Aug
- 2025 16:03:24 +0000
-Received: from BN3PEPF0000B073.namprd04.prod.outlook.com
- (2603:10b6:208:36e:cafe::7b) by BLAPR05CA0001.outlook.office365.com
- (2603:10b6:208:36e::6) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.14 via Frontend Transport; Tue,
- 26 Aug 2025 16:03:24 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- BN3PEPF0000B073.mail.protection.outlook.com (10.167.243.118) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9073.11 via Frontend Transport; Tue, 26 Aug 2025 16:03:24 +0000
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 26 Aug
- 2025 11:03:24 -0500
-Received: from xsjlizhih51.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Tue, 26 Aug 2025 11:03:23 -0500
-From: Lizhi Hou <lizhi.hou@amd.com>
-To: <ogabbay@kernel.org>, <quic_jhugo@quicinc.com>,
-	<jacek.lawrynowicz@linux.intel.com>, <dri-devel@lists.freedesktop.org>
-CC: Lizhi Hou <lizhi.hou@amd.com>, <linux-kernel@vger.kernel.org>,
-	<max.zhen@amd.com>, <sonal.santan@amd.com>, <mario.limonciello@amd.com>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH] accel/amdxdna: Fix incorrect type used for a local variable
-Date: Tue, 26 Aug 2025 09:03:21 -0700
-Message-ID: <20250826160321.795866-1-lizhi.hou@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875A631A56E
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 16:05:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756224310; cv=none; b=I15XpHUW6AwZUXlXQPVJhXMD3438egiMViP5DTTSf4KGqEK0Bj54ZGXhJu8d0MxBPRqy3Xg5ZeDtLJAzUNrs3zdRiPPcHe4AERT0k4IF8ybDwzdCnhykfwwFuRmokPbaSSPQzBfby5ubTo524LVbwjUj9VEqtojyzG2MPzcK8lk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756224310; c=relaxed/simple;
+	bh=J9vJ2+9ip+xBDaCuNEKvK4MQijG4RVOmKRiN3vMj1hE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lRnM4u+0yqgo79SLEkFTn+C1O9jHfK/3WE+3ExZ2GWruHzyE1xRNCQAgoyrcoDs5yAzVrH/1hLzG/l/+dGe0aCsU24+dbYxhDfBYEdsLcM8kbOr3Mkf3h5SF022rmjuRN6+lkmgzmIKmCQ8aG9WqcP4fy9XHc7o79IX8q0jPjn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MEAqUavN; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4b29b714f8cso436381cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:05:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756224307; x=1756829107; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vLdExvFTYvU58j6WoYulhsR3rHO3T8nQ/1Jf9icS5kU=;
+        b=MEAqUavN2It8aQ0zGPcULUn7IaJxxy30E9JW8oC2yazouZBRnJJ6Afj0YOkfOvy9YZ
+         E6VlAkWwZHTWTyUda4Rb8Zax8OQHwp/UY3m0q+hOUnJKNlr4W3Mq6UpAvVDW0aODJHIi
+         mSE9ylacaps1L2gEVVK/00bFxQOIWdIgX2rq8crre+MSRga2AbeXEJEZdOB4mhC6oNAJ
+         2Ssh3ROVzESdsZd06TYNMpXgnlONZMx10yRQZdAXGdT9MsxJoTKEuXarAwA9AN15x+kK
+         fIEh4qBUJ4qO1i2bqMpaFgxuegV1RP/KJCYnuKwoQrQdGKjaepVVOtQBJEJPWXOelL+k
+         A07g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756224307; x=1756829107;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vLdExvFTYvU58j6WoYulhsR3rHO3T8nQ/1Jf9icS5kU=;
+        b=HptBnEzy4BYG+/Sc/HMkfq6+gYu914c3sXqzFlmX+281I1HlQD3feuBPXB2xq3hWec
+         OuADZvv//X9l0/E2ZeG8ckogE+Li+0Vnx2ee+X0MwZ/ZL6ya24bR0bzcfi9663ReSJI7
+         j3q2Kklj42yHQGmwR39Vp1pqgYOyxpEuaccIfJl6TlRoO6AT60FcxRXarrRo5vuPq4WD
+         JVu925bxp9ERc098GZMM/gaRV1kpxHGHDg+Rze5zb5y0Pvaq3Z3ezUIVVwHGH+Kn6nqD
+         34n0vxo/HrsXUM6YpJETO3q5my14xQczJH9L2e8r6P9xJZOc+61ebyQv3rzzH9HiiI1G
+         g0tA==
+X-Forwarded-Encrypted: i=1; AJvYcCWvFFAnKG+WERD/VNr0Za5ZfgL7DmQLbn7biIs8sDx7F0+i1Gau54+Dy/nS6i9FF6nF2rvf9m+5DpCDQo8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywj1L2LJyBldIqJ604ImNVwA/2PzMBqV5PbJuahiJu8O0ghwicI
+	A+ntLlZT/hRhc8E1g7wSFRzxcA94kWae6rz3cXrfLNadLIgsFbvgdSGxev80i+aaE/P78EafnVg
+	Lzxgxnh9vxWTtSq7n5uIZ3OLjoEdPea3RstktCnYN
+X-Gm-Gg: ASbGncs1lfCkgraWQscPk9JZJoNUhVuD0DwP7gjohft61HUUHMdt6OzlUuqUJF4dI24
+	cd452bxAF4aHIZrz4IV3nEdeCb0z1UMud+3qbEw9KfjTo1C7n6m3LcLV21EHtOWwfieOFzf9pZu
+	w84tYVyXTrRMMSGKQshoRtE5DKnVuVR5Wdz4QKbeVLxux37Fil5XQ2H+bT4cKyrGF64ClBdKGL6
+	HvsI+WkdrKsgTdSrmO9PSY66/yoPLNKbgALFMi/ngzP0+EwqRwiG9oHnSIMiqHGbx4=
+X-Google-Smtp-Source: AGHT+IHQofB+0fZiGVyLFKBbZzOTFAlCePKw3setaCLAGa199ccs6HjZuyQer66ydcsQhnpA2pHNLY0XytOvHQwBMHI=
+X-Received: by 2002:ac8:5a49:0:b0:4ae:d2cc:ad51 with SMTP id
+ d75a77b69052e-4b2e2b6d63dmr5994341cf.1.1756224306662; Tue, 26 Aug 2025
+ 09:05:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB03.amd.com: lizhi.hou@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B073:EE_|SN7PR12MB7107:EE_
-X-MS-Office365-Filtering-Correlation-Id: e5390010-d8b2-4c34-86a6-08dde4ba163c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?M1J78MB1FHbMii+KdtVc3o+z8U+y6PtzrqQycKR18Z62z9Uzsb5y1KY1uzr4?=
- =?us-ascii?Q?qJkzgt7a9282CYL4JUHHEYLSh1Ptx0htCbCYJZcyK6NzNm/fj1TtYnEDBSjp?=
- =?us-ascii?Q?d3n1CUa2u/gQJNldV9jYggyulTiscZHtZH0NVvuwLRrYx52gTazThE+5Vylu?=
- =?us-ascii?Q?LIbAQj+Vtkp27gEYp+07AcTOx1wJC26uRyAR4bFw7rIV9L7xoQi9aFSr7dEK?=
- =?us-ascii?Q?oit0wz7XqZh+skbylvQDVBOxR+4JFc6NrrA2BLcyC0GIK8mABeWJtLd6/NCh?=
- =?us-ascii?Q?UW5kgm7/ymtfDR7JXjClHnX4y1R7LOCJvH8EoP/jb/6IaWEnz3fg//3cawBJ?=
- =?us-ascii?Q?TqGhW26dbwEs6CteZ6NfX6UqOoTrj13Jhlnwrvdb2ZQO6wbBkSOxtNP6mUZ5?=
- =?us-ascii?Q?uV7OErfml8q4jr2M6kBSyImzRfqZGd2az6/rsDX5NdoHiApM5NrkX7VRzP/G?=
- =?us-ascii?Q?jvnJiNTv5xfgxSDXGh+jbYbZtAMyql6fuqpv24T1fNZhRE5mJ2KZtl2fjTlr?=
- =?us-ascii?Q?NLFnjDD816ThDVNNe4KGYbLe3noXKgtYtBGFWkS2H73ZWvyMF9Fa6XjRepby?=
- =?us-ascii?Q?C1+rvHoH/iO6msurZQB32UkXugMM3wNGPapvY7/Hpqc25Kztnk/DwaX/5iID?=
- =?us-ascii?Q?KmfrwICTRXr57z47qZ2QA3QTJLVzlENxoEMiEUU8RokMy85dvIPZwonyAltC?=
- =?us-ascii?Q?QOgIxNNoE72+pN2bv7+hFoCDbA7WDGFo+ntfAC9sRKIj9JOMhy2XijXPQPAT?=
- =?us-ascii?Q?FGOalHz2cuHtmVRd4rBgWNpzb5qxZx8SfG8Gl+HXRCuzceCwr9rh3c5jK0/7?=
- =?us-ascii?Q?kt4qmoCMCRZEn36BppJ5QLhZJG3zckTYD+qVuKgsMrst22OMVWXBVn/FnfFS?=
- =?us-ascii?Q?BVEEB5dGotz47UXlVMR2utkB5x0lmC053+XuADN3A4Alj5jnjSEJ77Emq014?=
- =?us-ascii?Q?Dz5EOg63/AeceCKLkFGXKadmWWqrz0IcyGobsLVGtuSSWfevyFScdOMnbCQu?=
- =?us-ascii?Q?GYOEXOKQg/0a8jLMkHXyaO3j/dy/gyTnJSyoWrK7XrzLp2QJ9cZGwxeA76Vj?=
- =?us-ascii?Q?vvhaxWCPuZdHpfvkzfj97kER3qeMwY7cOVtAM1X+3BMeaPBUzBr1P9BHt6z0?=
- =?us-ascii?Q?TDWTEOIsw6wjQ6Ocb4O6ISUFcPhhul0yfRx0gn2rWc+2/+HqAvDpiY3IbSW4?=
- =?us-ascii?Q?bWjFCkQVBoUxBE1AOgiZ4LXC0BDOopU1/07YtTR0HQSsJqhWr8iakgOHAr3F?=
- =?us-ascii?Q?VDLjQya58AwAnLOOzedBrWiOI0ehQEKxmLYmWwf7Ok8Ii37t1dAr0ECTqlVI?=
- =?us-ascii?Q?/Gk/ZReh9Bnr/i/b0wgtflft9BiEEIvPFyaN9C02LNwtJX+GIrmYT1v9CV5V?=
- =?us-ascii?Q?QdjorIBrJnjzXT1RR8dBqAglB1cYxJwbmnL+R/MHfoEf7EAI+rZePgmSKY3E?=
- =?us-ascii?Q?/1jbuxWi5bPuIFut8x+yjWm39LbyvjmQZHaZY2ntZUaRMbWHpZjNUbL1TfaU?=
- =?us-ascii?Q?b+gQOISDSTNnq6UIydCZAGo5QZUVyDJfnL7g?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 16:03:24.4111
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e5390010-d8b2-4c34-86a6-08dde4ba163c
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN3PEPF0000B073.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7107
+References: <20250821042915.3712925-1-sagis@google.com> <20250821042915.3712925-6-sagis@google.com>
+ <176247c7-6801-4e06-860e-4a6b8e77ba20@linux.intel.com>
+In-Reply-To: <176247c7-6801-4e06-860e-4a6b8e77ba20@linux.intel.com>
+From: Sagi Shahar <sagis@google.com>
+Date: Tue, 26 Aug 2025 11:04:54 -0500
+X-Gm-Features: Ac12FXyWmbtvC2IZYpCOYC0Y6vnU76B-4TsLAYBi_s7kTMKW6NKMvVulYzN01rA
+Message-ID: <CAAhR5DHbhCaR53GuKotrmLqVDRBzc1zvLN1xX+U2iJT1gEdSbg@mail.gmail.com>
+Subject: Re: [PATCH v9 05/19] KVM: selftests: Update kvm_init_vm_address_properties()
+ for TDX
+To: Binbin Wu <binbin.wu@linux.intel.com>
+Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
+	Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>, 
+	Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
+	Erdem Aktas <erdemaktas@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	"Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, Reinette Chatre <reinette.chatre@intel.com>, 
+	Ira Weiny <ira.weiny@intel.com>, Chao Gao <chao.gao@intel.com>, 
+	Chenyi Qiang <chenyi.qiang@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	Adrian Hunter <adrian.hunter@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-drivers/accel/amdxdna/aie2_pci.c:794:13: sparse: sparse: incorrect type in assignment (different address spaces)
+On Tue, Aug 26, 2025 at 12:51=E2=80=AFAM Binbin Wu <binbin.wu@linux.intel.c=
+om> wrote:
+>
+>
+>
+> On 8/21/2025 12:28 PM, Sagi Shahar wrote:
+> > From: Isaku Yamahata <isaku.yamahata@intel.com>
+> >
+> > Let kvm_init_vm_address_properties() initialize vm->arch.{s_bit, tag_ma=
+sk}
+> > similar to SEV.
+> >
+> > TDX sets the shared bit based on the guest physical address width and
+> > currently supports 48 and 52 widths.
+> >
+> > Co-developed-by: Adrian Hunter <adrian.hunter@intel.com>
+> > Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+> > Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+> > Co-developed-by: Sagi Shahar <sagis@google.com>
+> > Signed-off-by: Sagi Shahar <sagis@google.com>
+> > ---
+> >   .../selftests/kvm/include/x86/tdx/tdx_util.h       | 14 +++++++++++++=
++
+> >   tools/testing/selftests/kvm/lib/x86/processor.c    | 12 ++++++++++--
+> >   2 files changed, 24 insertions(+), 2 deletions(-)
+> >   create mode 100644 tools/testing/selftests/kvm/include/x86/tdx/tdx_ut=
+il.h
+> >
+> > diff --git a/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h b/t=
+ools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
+> > new file mode 100644
+> > index 000000000000..286d5e3c24b1
+> > --- /dev/null
+> > +++ b/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
+> > @@ -0,0 +1,14 @@
+> > +/* SPDX-License-Identifier: GPL-2.0-only */
+> > +#ifndef SELFTESTS_TDX_TDX_UTIL_H
+> > +#define SELFTESTS_TDX_TDX_UTIL_H
+> > +
+> > +#include <stdbool.h>
+> > +
+> > +#include "kvm_util.h"
+> > +
+> > +static inline bool is_tdx_vm(struct kvm_vm *vm)
+> > +{
+> > +     return vm->type =3D=3D KVM_X86_TDX_VM;
+> > +}
+>
+> If the branch "vm->type !=3D KVM_X86_TDX_VM" in patch 04/19
+> is still needed, this helper could be added earlier and used instead of
+> open code.
+>
 
-Fixes: c8cea4371e5e ("accel/amdxdna: Add a function to walk hardware contexts")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202508230855.0b9efFl6-lkp@intel.com/
-Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
----
- drivers/accel/amdxdna/aie2_pci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I'm dropping the check in 04/19. See my response to Ira.
 
-diff --git a/drivers/accel/amdxdna/aie2_pci.c b/drivers/accel/amdxdna/aie2_pci.c
-index 16ac0cab4f44..2885a3c17e89 100644
---- a/drivers/accel/amdxdna/aie2_pci.c
-+++ b/drivers/accel/amdxdna/aie2_pci.c
-@@ -785,7 +785,7 @@ static int aie2_get_clock_metadata(struct amdxdna_client *client,
- 
- static int aie2_hwctx_status_cb(struct amdxdna_hwctx *hwctx, void *arg)
- {
--	struct amdxdna_drm_query_hwctx __user *buf, *tmp __free(kfree) = NULL;
-+	struct amdxdna_drm_query_hwctx *tmp __free(kfree) = NULL, __user *buf;
- 	struct amdxdna_drm_get_info *get_info_args = arg;
- 
- 	if (get_info_args->buffer_size < sizeof(*tmp))
--- 
-2.34.1
+> > +
+> > +#endif // SELFTESTS_TDX_TDX_UTIL_H
+> > diff --git a/tools/testing/selftests/kvm/lib/x86/processor.c b/tools/te=
+sting/selftests/kvm/lib/x86/processor.c
+> > index 1eae92957456..6dbf40cbbc2a 100644
+> > --- a/tools/testing/selftests/kvm/lib/x86/processor.c
+> > +++ b/tools/testing/selftests/kvm/lib/x86/processor.c
+> > @@ -8,6 +8,7 @@
+> >   #include "kvm_util.h"
+> >   #include "processor.h"
+> >   #include "sev.h"
+> > +#include "tdx/tdx_util.h"
+> >
+> >   #ifndef NUM_INTERRUPTS
+> >   #define NUM_INTERRUPTS 256
+> > @@ -1190,12 +1191,19 @@ void kvm_get_cpu_address_width(unsigned int *pa=
+_bits, unsigned int *va_bits)
+> >
+> >   void kvm_init_vm_address_properties(struct kvm_vm *vm)
+> >   {
+> > +     uint32_t gpa_bits =3D kvm_cpu_property(X86_PROPERTY_GUEST_MAX_PHY=
+_ADDR);
+> > +
+> > +     vm->arch.sev_fd =3D -1;
+> > +
+> >       if (is_sev_vm(vm)) {
+> >               vm->arch.sev_fd =3D open_sev_dev_path_or_exit();
+> >               vm->arch.c_bit =3D BIT_ULL(this_cpu_property(X86_PROPERTY=
+_SEV_C_BIT));
+> >               vm->gpa_tag_mask =3D vm->arch.c_bit;
+> > -     } else {
+> > -             vm->arch.sev_fd =3D -1;
+> > +     } else if (is_tdx_vm(vm)) {
+> > +             TEST_ASSERT(gpa_bits =3D=3D 48 || gpa_bits =3D=3D 52,
+> > +                         "TDX: bad X86_PROPERTY_GUEST_MAX_PHY_ADDR val=
+ue: %u", gpa_bits);
+> > +             vm->arch.s_bit =3D 1ULL << (gpa_bits - 1);
+>
+> Nit: Use BIT_ULL().
+>
 
+ACK, Will update in next version.
+
+> > +             vm->gpa_tag_mask =3D vm->arch.s_bit;
+> >       }
+> >   }
+> >
+>
 
