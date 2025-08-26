@@ -1,132 +1,171 @@
-Return-Path: <linux-kernel+bounces-786565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0599CB35D0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:40:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7432B35DDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:48:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 558753B5F77
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:40:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1553188DB39
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:42:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 450692FD7C8;
-	Tue, 26 Aug 2025 11:39:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0FFE29D280;
+	Tue, 26 Aug 2025 11:42:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=bob.beckett@collabora.com header.b="JWNY/jY9"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OE+M895s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94FDC29D273
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 11:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756208391; cv=pass; b=DeqoAr7lvcrIq8CNM3MrP7m5PTUhDQVDJUmHfCwBPdPCMI8kNSrDyfKNFE0pqJcIUl++hF7dAme0zBOzRxMpVySyJE+6WPQ/vLznnRRioqyNK8H5Fpch9jSJcj8lg+n9WjkIzOe3brK1c3AIxzt05bx0kQEbtTLlAQFZs8f3gHs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756208391; c=relaxed/simple;
-	bh=COoVxgfHA8MCBpi6yucVlKYbKVe+CtBebhfveNnP1gQ=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=XJJYKcrGzIx7kj1By0OwZnhUkayhXm2C11PV/OlvW0PAug409GgtiJ9kHOhoBHDK5SD5rAbYiafQfnaPWAnUcDmIUINwI8odNBaoBzfrZP/o1oaICLKepEFDe7Xza4YQOS9zE0Ey7rh6qOSKCxtTJlLFGhy4AKOCGHcdI6S7elg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=bob.beckett@collabora.com header.b=JWNY/jY9; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1756208370; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Rb9xn2fTOKKaWYDTKVtb6tXJcRftlBOsdEJhPIKiwlcSXev+MfNP2sCtFS3Ys/K86r9vwfOaX3rBGNgjJ48t36fkB03crSEnD+eORHec7H5CdtsdpNuXKTy4Z4gAvGZp7q+0Y7HSekphh7W9bQxMpUbNIbWnHErJjMgZGbb87R8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1756208370; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=2HU9eUcc8WGG2gaX/M8M9tjRaoa9qsJqLwJNN74sr4M=; 
-	b=LsBJTlzMZu8Iu0jCTvKkH6cyF2JefFj2Y0PfwQopHt2KsGjjLmqkDLUsJEQlz55UTkuvZR2xBKLTLxCe6qEMvdCorS1pOgXAQrVvMp7a8JblWSMCfZ1RuO4UgP6e+2Fd01bRKBkuxNONJdh+6clb3vR+va0uEvvRYcFI3w+GkCc=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=bob.beckett@collabora.com;
-	dmarc=pass header.from=<bob.beckett@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756208370;
-	s=zohomail; d=collabora.com; i=bob.beckett@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=2HU9eUcc8WGG2gaX/M8M9tjRaoa9qsJqLwJNN74sr4M=;
-	b=JWNY/jY95QR9At+berP4+i2NTg7PoyEZjJVW+Ey+tiEUa10e0H29Sbf/comqeIw0
-	bEuz0uA+GWzyA+Houh7/Ot2K1oMHkxe+eRu3CEmEo1U2jv7lBqw6VtA0PB9cuo0456g
-	9rGNCm2UKkrpRXP7aV9AQwDsa0fQMJbHhh+yWpXg=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 17562083275301017.6621271839762; Tue, 26 Aug 2025 04:38:47 -0700 (PDT)
-Date: Tue, 26 Aug 2025 12:38:47 +0100
-From: Robert Beckett <bob.beckett@collabora.com>
-To: "Antheas Kapenekakis" <lkml@antheas.dev>
-Cc: "amd-gfx" <amd-gfx@lists.freedesktop.org>,
-	"dri-devel" <dri-devel@lists.freedesktop.org>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"philm" <philm@manjaro.org>,
-	"Alex Deucher" <alexander.deucher@amd.com>,
-	=?UTF-8?Q?=22Christian_K=C3=B6nig=22?= <christian.koenig@amd.com>,
-	"Mario Limonciello" <mario.limonciello@amd.com>
-Message-ID: <198e62c6b4d.895a68a41708589.706102196190635345@collabora.com>
-In-Reply-To: <20250824200202.1744335-6-lkml@antheas.dev>
-References: <20250824200202.1744335-1-lkml@antheas.dev> <20250824200202.1744335-6-lkml@antheas.dev>
-Subject: Re: [PATCH v1 5/5] drm: panel-backlight-quirks: Add Steam Decks
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6FD01A256B;
+	Tue, 26 Aug 2025 11:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756208526; cv=none; b=tlQbl7v+W5rXErSniTthshhheFXHlb4wEOlPoFJINtkSgieAbd7PzhVkDl14c50erGXEeOQmNNApf9uDplzvLGQH/5nOzB/d18G57S/wxMqdZHc++tb4rjdJm2DAfiUSVBIL+z82ayh3/CoYpQgrwmdynuLaMJGQvafHDL16xYM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756208526; c=relaxed/simple;
+	bh=ddq8PtAcnbhRU79j5ZF0yjwZpeApRBwN/QBnxQXmLuE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZCY8ZmzhOWftdG0mGD4FgtyIqwq/FPSesQrfef/xQRdCHOlkZVCmYX4qXQuvqIdef8TMqmhKPJVm50qy6p8SzsNdm8wOPfL+mASPRx5+bH1gBQwKiSlq5dQJCBi/8vktEiR+o8oShQsusLXHK7DomYUVk7eouzU4Ebm7UW6BTJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OE+M895s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A22D5C4AF09;
+	Tue, 26 Aug 2025 11:42:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756208524;
+	bh=ddq8PtAcnbhRU79j5ZF0yjwZpeApRBwN/QBnxQXmLuE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=OE+M895sfE2wvK9df/swqIDcfzZmNXvlJ3qDXgvVn9s3HWvbSw2yDMKhy6vjJBtfr
+	 Wv9EhOPQvilH6uJ4G/qFQmy4Mdr5Tmy+p3VH815uL6XrCuad1PV13fDR2kAZrkEpDc
+	 xlws92mhVfferekXCzBFe0Mz47AGXh+6pv229RAnDlIVjEGhpzzYrHnEvVbSpVLyfX
+	 qfjtZ+56u9man0PR6jrV3beO+/KGpP9vPmr6AHBIDkJlYCVJRaIAufgEPM9MjuIU/N
+	 qzCwlBQXq7QbGzbGaN3QBqa4gZdc7yELKsKqzuVOP2p+98esuGVHyrgPzr0AC8P6en
+	 9PXsHGtKJdvSA==
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-743814bcca2so4336387a34.0;
+        Tue, 26 Aug 2025 04:42:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVDQeu32F14fD0/yFQ+eQtnqbYIWLqW2QRMla2jXzz65FaknR6AcS9ADE15jWDIVwebgJRRmE7D9LI=@vger.kernel.org, AJvYcCXdHyg7X7BSQrM9SZ6OeUez6f5V/lRNTKzgN8imiTE85XLod1/kGWntOx48J0rhndNPvYnAUSyV5nP2AkA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNNFGUTgMPC5MyHaHMJC+Td7o4hP4Ghh50CsD2UI+T1jEI2Dop
+	7RN9pZ97Ini/7Yt4zb3ErLSMJQaAG9etC1jLkDyxRQ9iuCLeSgDj70bAS2bUW1LXsZVbWwbc9pf
+	0gFgxIMKQmm8Na1g0Toxn0el/nIEnMXA=
+X-Google-Smtp-Source: AGHT+IFQ2XeumGF9W4JXGKm5jlcVfvminsoQJd8mMVcdNxrIEkM2QVx63XLyxrWLY3oxXQgLXzx/nSt4pbY5VI3bhQk=
+X-Received: by 2002:a05:6830:280d:b0:741:c2aa:5536 with SMTP id
+ 46e09a7af769-74535b18f44mr432709a34.2.1756208523886; Tue, 26 Aug 2025
+ 04:42:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250826125541.7143e172c124.I9ecf55da46ccf33778f2c018a82e1819d815b348@changeid>
+In-Reply-To: <20250826125541.7143e172c124.I9ecf55da46ccf33778f2c018a82e1819d815b348@changeid>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 26 Aug 2025 13:41:52 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0i_V259T07peaZWUEULzWjWhqsP2RQxL3bB=q-GtYfX1A@mail.gmail.com>
+X-Gm-Features: Ac12FXwvstLJ5Z1EJnKgxOqFaTkUGkYS2f3wQi53VH9dCkYbqHcGmxgRHlu4150
+Message-ID: <CAJZ5v0i_V259T07peaZWUEULzWjWhqsP2RQxL3bB=q-GtYfX1A@mail.gmail.com>
+Subject: Re: [PATCH] PM: sleep: annotate RCU list iterations
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Aug 26, 2025 at 12:55=E2=80=AFPM Johannes Berg
+<johannes@sipsolutions.net> wrote:
+>
+> From: Johannes Berg <johannes.berg@intel.com>
+>
+> These iterations require the read lock, otherwise RCU
+> lockdep will splat:
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+> WARNING: suspicious RCU usage
+> 6.17.0-rc3-00014-g31419c045d64 #6 Tainted: G           O
+> -----------------------------
+> drivers/base/power/main.c:1333 RCU-list traversed in non-reader section!!
+>
+> other info that might help us debug this:
+>
+> rcu_scheduler_active =3D 2, debug_locks =3D 1
+> 5 locks held by rtcwake/547:
+>  #0: 00000000643ab418 (sb_writers#6){.+.+}-{0:0}, at: file_start_write+0x=
+2b/0x3a
+>  #1: 0000000067a0ca88 (&of->mutex#2){+.+.}-{4:4}, at: kernfs_fop_write_it=
+er+0x181/0x24b
+>  #2: 00000000631eac40 (kn->active#3){.+.+}-{0:0}, at: kernfs_fop_write_it=
+er+0x191/0x24b
+>  #3: 00000000609a1308 (system_transition_mutex){+.+.}-{4:4}, at: pm_suspe=
+nd+0xaf/0x30b
+>  #4: 0000000060c0fdb0 (device_links_srcu){.+.+}-{0:0}, at: device_links_r=
+ead_lock+0x75/0x98
+>
+> stack backtrace:
+> CPU: 0 UID: 0 PID: 547 Comm: rtcwake Tainted: G           O        6.17.0=
+-rc3-00014-g31419c045d64 #6 VOLUNTARY
+> Tainted: [O]=3DOOT_MODULE
+> Stack:
+>  223721b3a80 6089eac6 00000001 00000001
+>  ffffff00 6089eac6 00000535 6086e528
+>  721b3ac0 6003c294 00000000 60031fc0
+> Call Trace:
+>  [<600407ed>] show_stack+0x10e/0x127
+>  [<6003c294>] dump_stack_lvl+0x77/0xc6
+>  [<6003c2fd>] dump_stack+0x1a/0x20
+>  [<600bc2f8>] lockdep_rcu_suspicious+0x116/0x13e
+>  [<603d8ea1>] dpm_async_suspend_superior+0x117/0x17e
+>  [<603d980f>] device_suspend+0x528/0x541
+>  [<603da24b>] dpm_suspend+0x1a2/0x267
+>  [<603da837>] dpm_suspend_start+0x5d/0x72
+>  [<600ca0c9>] suspend_devices_and_enter+0xab/0x736
+>  [...]
+>
+> Add the fourth argument to the iteration to annotate
+> this and avoid the splat.
 
- ---- On Sun, 24 Aug 2025 21:02:02 +0100  Antheas Kapenekakis <lkml@antheas.dev> wrote --- 
- > On the SteamOS kernel, Valve universally makes minimum brightness 0
- > for all devices. SteamOS is (was?) meant for the Steam Deck, so
- > enabling it universally is reasonable. However, it causes issues in
- > certain devices. Therefore, introduce it just for the Steam Deck here.
- > 
- > SteamOS kernel does not have a public mirror, but this replaces commit
- > 806dd74bb225 ("amd/drm: override backlight min value from 12 -> 0")
- > in the latest, as of this writing, SteamOS kernel (6.11.11-valve24).
- > See unofficial mirror reconstructed from sources below.
- > 
- > Link: https://gitlab.com/evlaV/linux-integration/-/commit/806dd74bb225
- > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
- > ---
- >  drivers/gpu/drm/drm_panel_backlight_quirks.c | 17 ++++++++++++++++-
- >  1 file changed, 16 insertions(+), 1 deletion(-)
- > 
- > diff --git a/drivers/gpu/drm/drm_panel_backlight_quirks.c b/drivers/gpu/drm/drm_panel_backlight_quirks.c
- > index 78c430b07d6a..5c24f4a86519 100644
- > --- a/drivers/gpu/drm/drm_panel_backlight_quirks.c
- > +++ b/drivers/gpu/drm/drm_panel_backlight_quirks.c
- > @@ -73,7 +73,22 @@ static const struct drm_get_panel_backlight_quirk drm_panel_min_backlight_quirks
- >          .dmi_match_other.field = DMI_PRODUCT_NAME,
- >          .dmi_match_other.value = "ONEXPLAYER F1 EVA-02",
- >          .quirk = { .brightness_mask = 3, },
- > -    }
- > +    },
- > +    /* Steam Deck models */
- > +    {
- > +        .dmi_match.field = DMI_SYS_VENDOR,
- > +        .dmi_match.value = "Valve",
- > +        .dmi_match_other.field = DMI_PRODUCT_NAME,
- > +        .dmi_match_other.value = "Jupiter",
- > +        .quirk = { .min_brightness = 1, },
- > +    },
- > +    {
- > +        .dmi_match.field = DMI_SYS_VENDOR,
- > +        .dmi_match.value = "Valve",
- > +        .dmi_match_other.field = DMI_PRODUCT_NAME,
- > +        .dmi_match_other.value = "Galileo",
- > +        .quirk = { .min_brightness = 1, },
- > +    },
- >  };
- >  
- >  static bool drm_panel_min_backlight_quirk_matches(
- > -- 
- > 2.50.1
- > 
+Yeah, good catch!
 
-Reviewed-by: Robert Beckett <bob.beckett@collabora.com>
- 
+> Fixes: 06799631d522 ("PM: sleep: Make async suspend handle suppliers like=
+ parents")
+> Fixes: ed18738fff02 ("PM: sleep: Make async resume handle consumers like =
+children")
+> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+> ---
+> Honestly, not sure, maybe this should just be without _rcu?
+> ---
+>  drivers/base/power/main.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+> index dbf5456cd891..e80175486be7 100644
+> --- a/drivers/base/power/main.c
+> +++ b/drivers/base/power/main.c
+> @@ -675,7 +675,8 @@ static void dpm_async_resume_subordinate(struct devic=
+e *dev, async_func_t func)
+>         idx =3D device_links_read_lock();
+>
+>         /* Start processing the device's "async" consumers. */
+> -       list_for_each_entry_rcu(link, &dev->links.consumers, s_node)
+> +       list_for_each_entry_rcu(link, &dev->links.consumers, s_node,
+> +                               device_links_read_lock_held())
 
+There is a macro for this already in main.c, it is called
+list_for_each_entry_rcu_locked().
+
+>                 if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT)
+>                         dpm_async_with_cleanup(link->consumer, func);
+>
+> @@ -1330,7 +1331,8 @@ static void dpm_async_suspend_superior(struct devic=
+e *dev, async_func_t func)
+>         idx =3D device_links_read_lock();
+>
+>         /* Start processing the device's "async" suppliers. */
+> -       list_for_each_entry_rcu(link, &dev->links.suppliers, c_node)
+> +       list_for_each_entry_rcu(link, &dev->links.suppliers, c_node,
+> +                               device_links_read_lock_held())
+>                 if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT)
+>                         dpm_async_with_cleanup(link->supplier, func);
+>
+> --
 
