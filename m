@@ -1,88 +1,134 @@
-Return-Path: <linux-kernel+bounces-786320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E9A4B35840
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:11:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93483B35867
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:14:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3ECCB7B6AF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:09:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AD4116C3DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 747A7303CA8;
-	Tue, 26 Aug 2025 09:11:05 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33CDD303CAC;
+	Tue, 26 Aug 2025 09:11:28 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92DC3279DC5
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C58279DC5;
+	Tue, 26 Aug 2025 09:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756199465; cv=none; b=Yy63qfz5j8aQFrGQ7efwd4KFgta5spO2r+bKw+m5EJkVCX+5antsKbdAmmIc++g0ReEWlLkBxOIBEeqXSqEe4QVEVXyQnwOOEr4C0FNtG+LB+heIEI342UDKt6GTMNK/52jjL7edvHS3VtlV+obtw3WycCFZPtYijNN0f1M6TXo=
+	t=1756199487; cv=none; b=Xn45d1U1jvUWnE+plGx40LFDGgqYZmCsB1KSP3B0uL5RKag95prsQ9pHNbD83FNml+K6yFhsfNWowUg2yJyFSoVRNVgulqXuk9P/SAaosljUDpoUtk7v1tymfqu48wZE/jUzGOwxR0i6TG+rDEqRpnbwgaK7eamAeVgWGmVnuVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756199465; c=relaxed/simple;
-	bh=gEXYHOBGGEli8RvKYmckqBvsoX5LOA6W0GdLupDhUW8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Z95/BHXYm7OFk6ujbd03pihf9KqdDQzVmFmlR6h7szlIeptX+kHOBfUA/qft6Kkp1Y1YBxXB1c1j5ZByG9fAz6WxkDrdo4dUD/Z7CwTsbw3y9Ny9Admy9/YkP65439UF/BnzEEDelZAxju5Wi52E70i7JzYCrVBGU6Bv7b3JNkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-88432e1ea71so1397602139f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 02:11:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756199462; x=1756804262;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MMj/VOAIYkkRpnJp2RloIJ2JilM6kX9Q3qYFM0TRN+s=;
-        b=uuvG9+RJprklRgs1qBdDF67eVvOeQkWkIvXdFaPoA1bLPHULqM+upfalgO24IRbkc8
-         IWXL3jat+iLfsI9kzDC3CqBHlTLkAE0uaudZ25Ecckph250sBJVDow+eRPV0w2fX7rfZ
-         Es82FdYuYj0Qhl7KGp6rPAeKWbgOmyswRCGVHBSbMCoBFA0tmM+psh+cpvtwuWmt+GdQ
-         q5J0fyPJgeqid/6DFZlolqU1RA1y7QBNBZB0iiPhJcGxr7q9CGVA+T56fzSO2u3TX6e3
-         s9uymeMsC11z3QxQtqooAMpf4OCy3fTtp7j/sRGEY2+NIIkqpxuX9qka4Q30Y+QEQ32D
-         vPjg==
-X-Forwarded-Encrypted: i=1; AJvYcCXo6NEsKIIjraD90G4HdoNfQaKofN93W2QxaFBCaXih5KmhVa0qI3DxkwbBxQojLypyZq2kG9HMn+38++g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIQIxbx/qyWD77zvAH55z531FxBH44p9lzoO6YLsvJfdhRtU+1
-	Mo7UxzuPb5i00Wty1XN47NL+fco/yX7UE0aXI0f1sgYhqvTQmA6M86KyBPKYCYvslxB8XsyXuY8
-	mOFg0UNI4Tot8UfXQsnTNDQM9z+c8nUrA3hX6ZbjmfIMIbXes4vBnhP8fYjU=
-X-Google-Smtp-Source: AGHT+IGv/JKXwGSCnbrecmul8CK0k+Anj4Ek2C++LuavJi+2hf6vhicEZ19pC7gsLG0rJ+Z8wPHfYZ0yMXwDS1j9zMLOZVigRapw
+	s=arc-20240116; t=1756199487; c=relaxed/simple;
+	bh=zeSUYqpCyQktVExq8yTiXlqOX3wp9QK+YqIwke6RiJ8=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=CuRjeBQydBIZ7UCAZ4EZTaE384kJPqzG2OjL/uloLVcd7W1gMuGAXPL8LTPmUcBcnUToOJdTvF37CcGyCWRZVUS3LzlXDDlsq2RppUaGsYlr067xhYq9T9v+oo/lmJ9sg244nxsOVZ3T4hs2cy+8p2KTzu+zNGaqr/V1V5NfnDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cB22z05cXzYQvHK;
+	Tue, 26 Aug 2025 17:11:23 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 85CB41A1945;
+	Tue, 26 Aug 2025 17:11:21 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgAncY03eq1otrxhAQ--.25926S3;
+	Tue, 26 Aug 2025 17:11:21 +0800 (CST)
+Subject: Re: [PATCH RFC 2/7] md/raid0: convert raid0_handle_discard() to use
+ bio_submit_split()
+To: Christoph Hellwig <hch@infradead.org>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: colyli@kernel.org, hare@suse.de, tieren@fnnas.com, axboe@kernel.dk,
+ tj@kernel.org, josef@toxicpanda.com, song@kernel.org,
+ akpm@linux-foundation.org, neil@brown.name, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+ linux-raid@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ johnny.chenyi@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20250825093700.3731633-1-yukuai1@huaweicloud.com>
+ <20250825093700.3731633-3-yukuai1@huaweicloud.com>
+ <aKxBgNQXphpa1BNt@infradead.org>
+ <2984b719-f555-7588-fa2a-1f78d2691e8a@huaweicloud.com>
+ <aK1oLSppbXNELKCX@infradead.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <8f33c7b8-81bb-f167-b7a1-2783c20ede6f@huaweicloud.com>
+Date: Tue, 26 Aug 2025 17:11:19 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:18cb:b0:3eb:2b11:441d with SMTP id
- e9e14a558f8ab-3eb2b1146bdmr147302155ab.15.1756199462711; Tue, 26 Aug 2025
- 02:11:02 -0700 (PDT)
-Date: Tue, 26 Aug 2025 02:11:02 -0700
-In-Reply-To: <a3a6fd46-c9b4-4def-8633-f6ae79e40268@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ad7a26.050a0220.37038e.00b8.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] KASAN: use-after-free Read in ocfs2_get_system_file_inode
-From: syzbot <syzbot+900962ac9bf1860033f2@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <aK1oLSppbXNELKCX@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAncY03eq1otrxhAQ--.25926S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7AF18uF4DGr1DtFykAr48tFb_yoW8Wrykp3
+	y5Way8tr4DJrsFkw1vqw1UtFn5tw15Xry5ZryfXrWIyFn8KF1ayr1fKr1Fkry3KryDG3WY
+	q340vFWrGry5C3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBa14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY
+	6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aV
+	CY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRx-BiUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hello,
+Hi,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+在 2025/08/26 15:54, Christoph Hellwig 写道:
+> On Tue, Aug 26, 2025 at 09:08:33AM +0800, Yu Kuai wrote:
+>> 在 2025/08/25 18:57, Christoph Hellwig 写道:
+>>> On Mon, Aug 25, 2025 at 05:36:55PM +0800, Yu Kuai wrote:
+>>>> +		bio = bio_submit_split(bio,
+>>>> +				zone->zone_end - bio->bi_iter.bi_sector,
+>>>> +				&mddev->bio_set);
+>>>
+>>> Do you know why raid0 and linear use mddev->bio_set for splitting
+>>> instead of their own split bio_sets like raid1/10/5?  Is this safe?
+>>>
+>>
+>> I think it's not safe, as mddev->bio_split pool size is just 2, reuse
+>> this pool to split multiple times before submitting will need greate
+>> pool size to make this work.
+>>
+>> By the way, do you think it's better to increate disk->bio_split pool
+>> size to 4 and convert all mdraid internal split to use disk->bio_split
+>> directly?
+> 
+> I don't really know where that magic number 4 or even the current number
+> comes from, but I think Jens might be amenable to a small increase with a
+> good explanation.
 
-Reported-by: syzbot+900962ac9bf1860033f2@syzkaller.appspotmail.com
-Tested-by: syzbot+900962ac9bf1860033f2@syzkaller.appspotmail.com
+I was thinking we have to make sure issuing the allocated split bio
+before allocating new bio, and that number is the safe limit that we can
+allocated before issuing.
 
-Tested on:
+In case of recursive split, we can hold multiple split bio in
+curent->bio_list, and with this set to handle split bio first, we can
+gurantee we'll at most hold 3 split bios from mdraid:
+  - bio_split_to_limits(), for example, by max_sectors
+  - bio_split() by internal chunksize
+  - bio_split() by badblocks
 
-commit:         fab1beda Merge tag 'devicetree-fixes-for-6.17-1' of gi..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=11998634580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=34aa432f9050e15d
-dashboard link: https://syzkaller.appspot.com/bug?extid=900962ac9bf1860033f2
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-userspace arch: arm64
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10968634580000
+That's why I said 4 should be safe :) If genddisk->bio_split can be
+expanded to 4, all internal bio_split can be removed now.
 
-Note: testing is done by a robot and is best-effort only.
+Thanks,
+Kuai
+
+> 
+> .
+> 
+
 
