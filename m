@@ -1,143 +1,147 @@
-Return-Path: <linux-kernel+bounces-786857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D65F8B36D61
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:14:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AFACBB36D62
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:14:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB1D68E70DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:56:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33E6F683949
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE6722F75B;
-	Tue, 26 Aug 2025 14:56:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1321FDE19;
+	Tue, 26 Aug 2025 14:56:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="MkFRCod7"
-Received: from fra-out-005.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-005.esa.eu-central-1.outbound.mail-perimeter.amazon.com [63.176.194.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="t4LhYdgX";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="HRzlIrhB"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1494E2222AC;
-	Tue, 26 Aug 2025 14:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.176.194.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A651A76B1
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 14:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756220180; cv=none; b=DEAztwwCPZQlTop3oLyAbpyZtH4rxPowZ1w4nerdPL52X9BqKWNv5V9n/dd/69tgu+tAaoKwMORHF73L7hoTwbzpvv+WSV4XwkqmsTR8VA8jqqCfQrp/ity2Ux5DIdNqFwLEenwwlr8majQh20jPq9xh3E7a7OAoUZk5n7jv3qE=
+	t=1756220175; cv=none; b=j++RH7NeiESB8WOiQGPnZEo2i6gke5bM8vvu/EL/6wnWnoofv9zu5o5yIk3YX2pY5lHt3kDceDwuD02X19AcK7MrbrHQ3WezxfJdvIUbHpgcpe4HmRSDibRrm3x4avlsu7TrTJi2ILa/fdjhObd7IxJBKkdWM1E+FSqX5ngQIiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756220180; c=relaxed/simple;
-	bh=LI1dCZa4FwieTJrb5lNo+wXzSQ7nbU3b0nB7rDBUhHM=;
-	h=MIME-Version:Content-Type:Date:Message-ID:To:CC:Subject:From:
-	 References:In-Reply-To; b=dxnw46hR0mnxtHaNJpI2YEhAyRQVez+liHHBPkmo5B46zcIPCajdFMx/sMzzNOtxBDMt01fDk+csuKoJmLjyYSAdJjCvr1DT0DoFj4zlHMA9B1zXDzuXj1kosIKVbldHV/CzLqVKPh/U1UMb5fd0Scp5prM+GnnkC4BeEW9G6CU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.es; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=MkFRCod7; arc=none smtp.client-ip=63.176.194.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.es
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1756220177; x=1787756177;
-  h=mime-version:content-transfer-encoding:date:message-id:
-   to:cc:subject:from:references:in-reply-to;
-  bh=6W8m3tqW7TsBzc9bn3jq/EsbNWeFZzmBuJ+k3VQ45Yk=;
-  b=MkFRCod77B5NtIFu9/GDHQxgWaEhs0N8JSTb1otA6TKqzb50FnqoVf1Q
-   BOB5h8K0Ovxa4HMmOGfzQGLsfifPOlgIs0h6VobPz1uzmlc/zwAY3M1t+
-   D8sqOU417nzNV1Hlm2aXiUSl4ucyIoBoFUSUxYzohA7tO3yZalj/czo8y
-   jYzf4IBqhyUoTQBr7twAKJ89c9kaBxj6fcp9yxN4OGzYGAx6Z0rZc70kn
-   O4HV8Ia4a3eJsJkELz/EAzXUtzsYctbdu/K3aApGT/ZCpSPN0DlnT0jCj
-   2Ly8eCPrR0lklm1kfWHBI8oEsSlVreLSXauaDipW45q6GxZnIaKfsL7RG
-   A==;
-X-CSE-ConnectionGUID: asiGzhnzTiCdDQnaKZprlg==
-X-CSE-MsgGUID: R4nyLwQwQJCy5oUT7xGABg==
-X-IronPort-AV: E=Sophos;i="6.18,214,1751241600"; 
-   d="scan'208";a="1210282"
-Received: from ip-10-6-3-216.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.3.216])
-  by internal-fra-out-005.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 14:56:07 +0000
-Received: from EX19MTAEUC002.ant.amazon.com [54.240.197.228:1375]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.11.187:2525] with esmtp (Farcaster)
- id 2f6f29d2-1acf-4882-b0d8-cf461d27f0a6; Tue, 26 Aug 2025 14:56:07 +0000 (UTC)
-X-Farcaster-Flow-ID: 2f6f29d2-1acf-4882-b0d8-cf461d27f0a6
-Received: from EX19D004EUC001.ant.amazon.com (10.252.51.190) by
- EX19MTAEUC002.ant.amazon.com (10.252.51.245) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.17;
- Tue, 26 Aug 2025 14:56:06 +0000
-Received: from localhost (10.13.235.138) by EX19D004EUC001.ant.amazon.com
- (10.252.51.190) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.17; Tue, 26 Aug 2025
- 14:56:02 +0000
+	s=arc-20240116; t=1756220175; c=relaxed/simple;
+	bh=5g6HXnzozrba5+OrGrWDAAAEEmLwLakaYTTpgVj5uKM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZDvQ260C6SbAW3p6fy4oW4+EW5KI+awSBYvneteFJjA7/U8KAwZvomQnmfdglCJONtVIDpU7VK2nycyeFvzCmbzESH0F8UnkXlNjFHgtQ/7yS3ubbTMrnEmM0ugn+A5ozCRbKQ9rYtJIXLvTmNGD3ffVcRwlEACRv1BV7MuUKs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=t4LhYdgX; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=HRzlIrhB; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E8B761F38F;
+	Tue, 26 Aug 2025 14:56:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1756220171; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=AA3kVYdUWF6i6YoYHZrMeLM9qBHfEfgoU7R9Gv0EeKg=;
+	b=t4LhYdgXQfChZMnlicIFotO/yGEHHCSbrCQ1PuJ5Fd+3D8gEIkyNZT/CYc4ja8p4xvS9K2
+	g+69d3T7UwPZf9MKVWIQeYK9fqldA+4DBXTUVvKozTlFDYzJ1rCi57TV0c/b8hAP2EAi+a
+	Fyllb7YDtgzUUZiVSvz7hb2LMDgXs1s=
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1756220170; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=AA3kVYdUWF6i6YoYHZrMeLM9qBHfEfgoU7R9Gv0EeKg=;
+	b=HRzlIrhBzIxZLG8kB9H7WiFEX9kKQy0yEUoAAr2rNt3SnEQadq9gA5db1/VjOfn4qYNxAM
+	6GsmMzob3eFdCeERCc8e9dC33LqpNtufTC/fMNOOXvvZcd8Po0n6NB7sgTmBWpxQu2X0+O
+	dBi8MoCa3DJCZ2DdK/VZNOYA06F3HzA=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8D60013A31;
+	Tue, 26 Aug 2025 14:56:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id oQoeIQrLrWiwTwAAD6G6ig
+	(envelope-from <jgross@suse.com>); Tue, 26 Aug 2025 14:56:10 +0000
+From: Juergen Gross <jgross@suse.com>
+To: linux-kernel@vger.kernel.org,
+	x86@kernel.org
+Cc: Juergen Gross <jgross@suse.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+	xen-devel@lists.xenproject.org
+Subject: [PATCH 0/3] xen: use X86_FEATURE_XENPV for PV specific code
+Date: Tue, 26 Aug 2025 16:56:05 +0200
+Message-ID: <20250826145608.10352-1-jgross@suse.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
-Date: Tue, 26 Aug 2025 14:55:58 +0000
-Message-ID: <DCCG3711VAN4.9QEOBBP433L2@amazon.com>
-To: Eugene Koira <eugkoira@amazon.com>, <iommu@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>
-CC: <dwmw2@infradead.org>, <baolu.lu@linux.intel.com>, <joro@8bytes.org>,
-	<will@kernel.org>, <robin.murphy@arm.com>, <longpeng2@huawei.com>,
-	<graf@amazon.de>, <nsaenz@amazon.com>, <nh-open-source@amazon.com>,
-	<stable@vger.kernel.org>
-Subject: Re: [PATCH] iommu/intel: Fix __domain_mapping()'s usage of
- switch_to_super_page()
-From: Nicolas Saenz Julienne <nsaenz@amazon.com>
-X-Mailer: aerc 0.20.1-125-gabe5bb884bbc-dirty
-References: <20250826143816.38686-1-eugkoira@amazon.com>
-In-Reply-To: <20250826143816.38686-1-eugkoira@amazon.com>
-X-ClientProxiedBy: EX19D032UWB002.ant.amazon.com (10.13.139.190) To
- EX19D004EUC001.ant.amazon.com (10.252.51.190)
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:mid]
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
 
-On Tue Aug 26, 2025 at 2:38 PM UTC, Eugene Koira wrote:
-> switch_to_super_page() assumes the memory range it's working on is aligne=
-d
-> to the target large page level. Unfortunately, __domain_mapping() doesn't
-> take this into account when using it, and will pass unaligned ranges
-> ultimately freeing a PTE range larger than expected.
->
-> Take for example a mapping with the following iov_pfn range [0x3fe400,
-> 0x4c0600], which should be backed by the following mappings:
->
->    iov_pfn [0x3fe400, 0x3fffff] covered by 2MiB pages
->    iov_pfn [0x400000, 0x4bffff] covered by 1GiB pages
->    iov_pfn [0x4c0000, 0x4c05ff] covered by 2MiB pages
->
-> Under this circumstance, __domain_mapping() will pass [0x400000, 0x4c05ff=
-]
-> to switch_to_super_page() at a 1 GiB granularity, which will in turn
-> free PTEs all the way to iov_pfn 0x4fffff.
->
-> Mitigate this by rounding down the iov_pfn range passed to
-> switch_to_super_page() in __domain_mapping()
-> to the target large page level.
->
-> Additionally add range alignment checks to switch_to_super_page.
->
-> Fixes: 9906b9352a35 ("iommu/vt-d: Avoid duplicate removing in __domain_ma=
-pping()")
-> Signed-off-by: Eugene Koira <eugkoira@amazon.com>
-> Cc: stable@vger.kernel.org
-> ---
+Instead of using a global variable with the current guest type or the
+XENFEAT_auto_translated_physmap Xen feature, use the already existing
+X86_FEATURE_XENPV for guarding PV mode specific code.
 
->  drivers/iommu/intel/iommu.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-> index 9c3ab9d9f69a..dff2d895b8ab 100644
-> --- a/drivers/iommu/intel/iommu.c
-> +++ b/drivers/iommu/intel/iommu.c
-> @@ -1575,6 +1575,10 @@ static void switch_to_super_page(struct dmar_domai=
-n *domain,
->  	unsigned long lvl_pages =3D lvl_to_nr_pages(level);
->  	struct dma_pte *pte =3D NULL;
-> =20
-> +	if (WARN_ON(!IS_ALIGNED(start_pfn, lvl_pages) ||
-> +		    !IS_ALIGNED(end_pfn + 1, lvl_pages)))
+This has the advantage of compile time code elimination in case of the
+kernel having been configured without CONFIG_XEN_PV, and the usage of
+static-keys for selecting the correct code path otherwise.
 
-It might make sense to downgrade the warning to WARN_ON_ONCE().
+Juergen Gross (3):
+  xen: rework xen_pv_domain()
+  xen: replace XENFEAT_auto_translated_physmap with xen_pv_domain()
+  drivers/xen/gntdev: use xen_pv_domain() instead of cached value
 
-Other than that:
+ arch/x86/include/asm/xen/page.h    | 14 ++++++-------
+ arch/x86/xen/enlighten_pv.c        |  2 +-
+ arch/x86/xen/mmu.c                 |  2 +-
+ arch/x86/xen/p2m.c                 |  4 ++--
+ drivers/xen/balloon.c              |  4 ++--
+ drivers/xen/gntdev-dmabuf.c        |  7 +++----
+ drivers/xen/gntdev-dmabuf.h        |  2 +-
+ drivers/xen/gntdev.c               | 33 +++++++++++++-----------------
+ drivers/xen/grant-table.c          |  6 +++---
+ drivers/xen/privcmd.c              | 14 ++++++-------
+ drivers/xen/unpopulated-alloc.c    |  4 ++--
+ drivers/xen/xenbus/xenbus_client.c |  2 +-
+ include/xen/grant_table.h          |  4 ++--
+ include/xen/mem-reservation.h      |  4 ++--
+ include/xen/xen-ops.h              |  7 ++++---
+ include/xen/xen.h                  |  9 +++++++-
+ 16 files changed, 59 insertions(+), 59 deletions(-)
 
-	Reviewed-by: Nicolas Saenz Julienne <nsaenz@amazon.com>
+-- 
+2.43.0
 
-Regards,
-Nicolas
 
