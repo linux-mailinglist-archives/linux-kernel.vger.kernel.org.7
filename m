@@ -1,131 +1,201 @@
-Return-Path: <linux-kernel+bounces-786022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C4E0B353A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:56:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69372B353A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:57:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DECDE6839B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:56:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AC78167931
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:57:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07BE72ED87C;
-	Tue, 26 Aug 2025 05:56:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CD452F3C14;
+	Tue, 26 Aug 2025 05:57:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1VzaLkWX";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ed/NODVk"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ln9gUA1G"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E730A1514E4;
-	Tue, 26 Aug 2025 05:56:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF042EF64A;
+	Tue, 26 Aug 2025 05:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756187813; cv=none; b=ei5KyxSUyuEV1sDABgc40/NRrXUduMPac9jvhshcPc0hnbTdonONf6ALSNz97W42t+xR7e7fSBMw1B1oycENnUTfqWbs6zMnWLhdktqrjcUaVJvAJwnOreoTOlBqdPRCnnqguw1ZuU70fLzE5qgoevC25/LI9rOCclQNk6m5VMo=
+	t=1756187848; cv=none; b=Zp9YdvavQm4ZBJ1Gu1Jq4cRX9Watz4M/M0Ktk9IUxaA6GWfoamuPZjJYChLDvFQrooV4KJKoFtsRz0/bMJHXDhMeW5C1RufMokuqsk8jEAfUb3J4OsQ9hj9aXaavubjeQA5iqSfEHlHA+NRENupIZuAeOv5qtPMU78A5OH0zyug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756187813; c=relaxed/simple;
-	bh=j02ZoAtSA1uZjXue5PrQ9okoLepVqZdZQod0qqHwbUQ=;
+	s=arc-20240116; t=1756187848; c=relaxed/simple;
+	bh=kKNH8NUIKhO94RwCUn5nWlFEWU6qfkkFMbDLyS0gX0Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A7d58lrSkbbKXcFZDZUuzak+OgY57OAAI8agTH+CLelPKfyPLm+wYehPuzPx2YvgcgbJGHvW78n3kg/sIO8JwLOcfq0KOherWlpHTiVe7Nhw+ns4MC5P0tYUu6+6MhQaM5F6CUlTYDSWto7p9P8q4+wwgZ56RvXleMA2FUH8pQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1VzaLkWX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ed/NODVk; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 26 Aug 2025 07:56:49 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756187810;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mtvWv6/yFUPFvOI9eBuJsRFgng8gzu79ka920jl7CaY=;
-	b=1VzaLkWXBPYfHLmrGgLg2VoUnIWHl9akZLhe6YsexT+6mldca4MuBhr3SiAbhMKwgsPLfH
-	tXBYWSEaEo28t8QYAlVxBPGpbD4M55kLbr1O06TsF7HLzYOwqd1j8vd+Tj6d4A4xxCFBFW
-	n1MKj9BUT1v4QipOC/vI7byviCg688czN8fxxMyEi9AYvYs5VKKISCYXFvlKdEJ79TURaV
-	LroraU7bcek0RYcZ1MHP+9czxjQ6OZrDN9DOuLEGqOW+MQpyZQ/vNtOQ4wB8jo7TRLsEt2
-	bIP6SkJ0Ad3e3iCimJLrN08xrtaxRHeFapaezwAgUI8glWE/rskbyOipBvAIzA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756187810;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mtvWv6/yFUPFvOI9eBuJsRFgng8gzu79ka920jl7CaY=;
-	b=ed/NODVk9y47VwSPpXwpF0bl0tTRBDinZ1dIn8j8xZYG0CKKkdVwwk0i/fzHZdkht/HkKe
-	FeeBMH1AdbKmsRBg==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Andreas Larsson <andreas@gaisler.com>
-Cc: Andy Lutomirski <luto@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
-	Arnd Bergmann <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>, 
-	Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>, Nick Alcock <nick.alcock@oracle.com>, 
-	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org
-Subject: Re: [PATCH v2 08/13] sparc64: vdso: Switch to the generic vDSO
- library
-Message-ID: <20250826074526-a1463084-366a-44d1-874b-b898f4747451@linutronix.de>
-References: <20250815-vdso-sparc64-generic-2-v2-0-b5ff80672347@linutronix.de>
- <20250815-vdso-sparc64-generic-2-v2-8-b5ff80672347@linutronix.de>
- <0b223e3d-25af-4897-b513-699dfeedfa04@gaisler.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ri4XUoBaWJCZEHICFjYiWzDyfE1meuCFLqge7VzE5vUT1U4TqwcXEygyXw5OL0P0bYPIgoY7MpL6yyjzQPOezElZXo4//+yp7xRsIT8TbdIxnyu4Gkj+AGdFm01pchIo1px7pEbwlK7EKZ3SLsMzj1249nwbgnaQnrPi+5Kk+Fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ln9gUA1G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC04AC4CEF1;
+	Tue, 26 Aug 2025 05:57:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756187847;
+	bh=kKNH8NUIKhO94RwCUn5nWlFEWU6qfkkFMbDLyS0gX0Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ln9gUA1G06fZktO8IE1FEsVV3ABrBpoEvWvmBLz2mWUJIu1k7gwHVtEwna4XoA9g/
+	 V9EpMnEOF8H7QyGHxgr7eck3KTr0lYbav+9YwjJcGdeh6iohVzfUJXhT0GRMOy+ejc
+	 g2AXVc0668NFypwEHhVGnGoKy1/YUvMgkVVFWbymrUN713HNWZRQznBlNm5Fr6Oqn/
+	 FBPmpKrvsoieRxEuuQp9lu4V6vKNEjYYUw9gfxFAAjRYufUivmMOVvpGl0aXwwSw56
+	 YBVmEvDnkFgoFQ9WvB4hI8B64Bh4pcP00U3D40cGQvgZ/iVvL853IvAFxLDja/ht70
+	 aqNFoO4SZ4OaQ==
+Date: Tue, 26 Aug 2025 11:27:11 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, 
+	Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 3/7] arm64: dts: qcom: sm8450: Add opp-level to
+ indicate PCIe data rates
+Message-ID: <6nwss6gl3d47zer4pai23xcu4weok7m3ptyuptvu5oli7u7ads@zzhbw67hnhz5>
+References: <20250820-opp_pcie-v4-0-273b8944eed0@oss.qualcomm.com>
+ <20250820-opp_pcie-v4-3-273b8944eed0@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <0b223e3d-25af-4897-b513-699dfeedfa04@gaisler.com>
+In-Reply-To: <20250820-opp_pcie-v4-3-273b8944eed0@oss.qualcomm.com>
 
-Hi Andreas,
-
-thaks for testing!
-
-On Mon, Aug 25, 2025 at 05:55:20PM +0200, Andreas Larsson wrote:
-> On 2025-08-15 12:41, Thomas Wei�schuh wrote:
-> > The generic vDSO provides a lot common functionality shared between
-> > different architectures. SPARC is the last architecture not using it,
-> > preventing some necessary code cleanup.
-> > 
-> > Make use of the generic infrastructure.
-> > 
-> > Signed-off-by: Thomas Wei�schuh <thomas.weissschuh@linutronix.de>
-> > ---
-> >  arch/sparc/Kconfig                         |   4 +-
-> >  arch/sparc/include/asm/clocksource.h       |   9 --
-> >  arch/sparc/include/asm/vdso/clocksource.h  |  10 ++
-> >  arch/sparc/include/asm/vdso/gettimeofday.h |  58 ++++++++--
-> >  arch/sparc/include/asm/vdso/vsyscall.h     |  10 ++
-> >  arch/sparc/include/asm/vvar.h              |  75 -------------
-> >  arch/sparc/kernel/Makefile                 |   1 -
-> >  arch/sparc/kernel/time_64.c                |   6 +-
-> >  arch/sparc/kernel/vdso.c                   |  69 ------------
-> >  arch/sparc/vdso/Makefile                   |   6 +-
-> >  arch/sparc/vdso/vclock_gettime.c           | 169 ++++-------------------------
-> >  arch/sparc/vdso/vdso-layout.lds.S          |   7 +-
-> >  arch/sparc/vdso/vma.c                      |  70 +++---------
-> >  13 files changed, 119 insertions(+), 375 deletions(-)
+On Wed, Aug 20, 2025 at 01:58:49PM GMT, Krishna Chaitanya Chundru wrote:
+> Add opp-level to indicate PCIe data rates and also define OPP enteries
+> for each link width and data rate. Append the opp level to name of the
+> opp node to indicate both frequency and level.
 > 
-> With the first seven patches (applied on v6.17-rc1) I don't run into any
-> problems, but from this patch (and onwards) things do not work properly.
-> With patches 1-8 applied, Debian running on a sun4v (in a Solaris LDOM)
-> stops being able to mount the root filesystem with the patches applied
-> up to and including this patch.
 
-Could you give me the kernel log of the failures? Is there any chance to get
-access to the machine? Can you reproduce this issue on sun4u? sun4v in QEMU is
-"work in progress" and instantly crashes for me. Can you provide me your Debian
-image?
+First define the problem statement of why this change is needed. You've
+mentioned it in the cover letter, but that won't be preserved in git history.
+Then you need to justify the change and make it clear that *this* platform
+doesn't suffer the issue but you are doing it for the unification.
 
-> As an aside, with all patches applied, it panics when the kernel
-> attempts to kill init.
+This needs to be done for all DTS patches.
 
-It is suprising that the error changes between patches.
-The later patches don't change any lowlevel stuff, so if rootfs mounting
-was broken earlier I don't see how it could go on to start init later.
-Are these results repeatable?
+- Mani
 
+> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sm8450.dtsi | 41 +++++++++++++++++++++++++++++-------
+>  1 file changed, 33 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8450.dtsi b/arch/arm64/boot/dts/qcom/sm8450.dtsi
+> index 33574ad706b915136546c7f92c7cd0b8a0d62b7e..d7f8706ca4949e253a4102474c92b393a345262f 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8450.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8450.dtsi
+> @@ -2052,6 +2052,7 @@ opp-2500000 {
+>  					opp-hz = /bits/ 64 <2500000>;
+>  					required-opps = <&rpmhpd_opp_low_svs>;
+>  					opp-peak-kBps = <250000 1>;
+> +					opp-level = <1>;
+>  				};
+>  
+>  				/* GEN 2 x1 */
+> @@ -2059,6 +2060,7 @@ opp-5000000 {
+>  					opp-hz = /bits/ 64 <5000000>;
+>  					required-opps = <&rpmhpd_opp_low_svs>;
+>  					opp-peak-kBps = <500000 1>;
+> +					opp-level = <2>;
+>  				};
+>  
+>  				/* GEN 3 x1 */
+> @@ -2066,6 +2068,7 @@ opp-8000000 {
+>  					opp-hz = /bits/ 64 <8000000>;
+>  					required-opps = <&rpmhpd_opp_nom>;
+>  					opp-peak-kBps = <984500 1>;
+> +					opp-level = <3>;
+>  				};
+>  			};
+>  
+> @@ -2210,45 +2213,67 @@ pcie1_opp_table: opp-table {
+>  				compatible = "operating-points-v2";
+>  
+>  				/* GEN 1 x1 */
+> -				opp-2500000 {
+> +				opp-2500000-1 {
+>  					opp-hz = /bits/ 64 <2500000>;
+>  					required-opps = <&rpmhpd_opp_low_svs>;
+>  					opp-peak-kBps = <250000 1>;
+> +					opp-level = <1>;
+>  				};
+>  
+> -				/* GEN 1 x2 and GEN 2 x1 */
+> -				opp-5000000 {
+> +				/* GEN 1 x2 */
+> +				opp-5000000-1 {
+> +					opp-hz = /bits/ 64 <5000000>;
+> +					required-opps = <&rpmhpd_opp_low_svs>;
+> +					opp-peak-kBps = <500000 1>;
+> +					opp-level = <1>;
+> +				};
+> +
+> +				/* GEN 2 x1 */
+> +				opp-5000000-2 {
+>  					opp-hz = /bits/ 64 <5000000>;
+>  					required-opps = <&rpmhpd_opp_low_svs>;
+>  					opp-peak-kBps = <500000 1>;
+> +					opp-level = <2>;
+>  				};
+>  
+>  				/* GEN 2 x2 */
+> -				opp-10000000 {
+> +				opp-10000000-2 {
+>  					opp-hz = /bits/ 64 <10000000>;
+>  					required-opps = <&rpmhpd_opp_low_svs>;
+>  					opp-peak-kBps = <1000000 1>;
+> +					opp-level = <2>;
+>  				};
+>  
+>  				/* GEN 3 x1 */
+> -				opp-8000000 {
+> +				opp-8000000-3 {
+>  					opp-hz = /bits/ 64 <8000000>;
+>  					required-opps = <&rpmhpd_opp_nom>;
+>  					opp-peak-kBps = <984500 1>;
+> +					opp-level = <3>;
+> +				};
+> +
+> +				/* GEN 3 x2 */
+> +				opp-16000000-3 {
+> +					opp-hz = /bits/ 64 <16000000>;
+> +					required-opps = <&rpmhpd_opp_nom>;
+> +					opp-peak-kBps = <1969000 1>;
+> +					opp-level = <3>;
+>  				};
+>  
+> -				/* GEN 3 x2 and GEN 4 x1 */
+> -				opp-16000000 {
+> +				/* GEN 4 x1 */
+> +				opp-16000000-4 {
+>  					opp-hz = /bits/ 64 <16000000>;
+>  					required-opps = <&rpmhpd_opp_nom>;
+>  					opp-peak-kBps = <1969000 1>;
+> +					opp-level = <4>;
+>  				};
+>  
+>  				/* GEN 4 x2 */
+> -				opp-32000000 {
+> +				opp-32000000-4 {
+>  					opp-hz = /bits/ 64 <32000000>;
+>  					required-opps = <&rpmhpd_opp_nom>;
+>  					opp-peak-kBps = <3938000 1>;
+> +					opp-level = <4>;
+>  				};
+>  			};
+>  
+> 
+> -- 
+> 2.34.1
+> 
 
-Thomas
+-- 
+மணிவண்ணன் சதாசிவம்
 
