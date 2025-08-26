@@ -1,111 +1,159 @@
-Return-Path: <linux-kernel+bounces-787393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00360B375A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 01:50:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA94FB375AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 01:50:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A893C2A09B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 23:50:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9BFC1B669E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 23:51:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E6E308F39;
-	Tue, 26 Aug 2025 23:50:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839773093A7;
+	Tue, 26 Aug 2025 23:50:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bzVw4Auq"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ku2eS2aL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638482AE90;
-	Tue, 26 Aug 2025 23:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B025826D4DD;
+	Tue, 26 Aug 2025 23:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756252205; cv=none; b=pd7jCoyKbL49J3FI5CdYGC25UzqxEZz3USrIrcGyZKt6NjngNZaUnDsqZ8ltiHS0cjUiCvyoOmNzKG6R20ZI3AcF0myRz5wsL9xz8s/CQxP73H6sRy5zvIztHaO7xbtG17gUjVcXSTLj9S3dDhJMYlcSKLhO/oGxC0MRpPuxWZM=
+	t=1756252245; cv=none; b=Q7CW4RzwrX91TF9kjJq8eEbkStdgcxrxMjfv3fjVf50SYC4A9D/+D3t6zKwhjtrtlnxp2cN9fU6Zn1EqSzIj+uPtb/8EsvbVKL/2OtYP4+6BwCk4JASUr53pFpxEcBB6UOsGOyYACTNwGzu7+tGq71DMUV0/ZnLflq4u5co0uyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756252205; c=relaxed/simple;
-	bh=yp0sPi7ensv+tk3ak4LFv+iFDvcNLyplFQW9UDpUncA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oXPGKaYpitz8wxR3T9MQviXWY04MQcT3YIO8q4rAwUi/VwNWFzWqnWOtLUbBpaDCcjnml5GViVTebnrihGx+Cvcruia8RYWRIfxHoj758jmjw8bZKGDW4ywehsZBUCjRaP7MekMqZwaxPC8xdFXRNsT7uDBPVDWOeD8ApYeX1w8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bzVw4Auq; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45a1abf5466so2404175e9.0;
-        Tue, 26 Aug 2025 16:50:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756252202; x=1756857002; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k/4a8LhXaZFfcU7YpzkKktV2M/qUnbxvgob32Os+YRE=;
-        b=bzVw4AuqXtDoOQbmYIBh0Jl4Xj3u3nZXaVICcLyIuYGqQxY0YSsIBtjRB+pBFyHYI7
-         Ac2rd/k26O4o7CoNeYHvR43KtfwqqNWJj9sPYHAnNFpRu4WBQxdDrSOjv+ukIthzbZf5
-         xufGdsivnKeS/noxhPOPtkCh7SYI95Dp9ZONC0UX9PSAkdqE98rg8OyY3JhwgXBu/mBx
-         qnwrjHat5zIcWxxTdA60mCG/WMD51Gh3vnccVDUXqpHqDq3WIhmZqzY+KZ6KcbS/Dytc
-         n4MdpIrV9AcisXpXzm7yQtm3G3e96AmUDqwq9qoBzaOsA8+uyvvN8o3AdYYKk4iWVfjj
-         gH6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756252202; x=1756857002;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k/4a8LhXaZFfcU7YpzkKktV2M/qUnbxvgob32Os+YRE=;
-        b=EnlNBpAZD0UPPm1xEHhsw1xzZngMOF0JSP3T9kHohUG8x987QObqWsWvA8rG7X58j/
-         Apc11YViydpzykHuO1byVUNCk1L0eHU8Qr0G5SyMBM2Y/N2/jKV0WDmU/H6pbqEa4IiP
-         TsOuHvvmm3Es4HzkoC/DZkgcJVOymHTkgAUMD2dPcDdUaTOvPiV6fTk0FsBX2TFHMqBa
-         967f1F7NGH1FBa/60qIyrIPQUiDNsDn4U67e8XBrmFcpPLT1qbO3keNOL5fqnje/68AF
-         Z3+8cva4MPCza/sBHqzPfkiwc/112ZVlrjTVtWVTp7bjoKQtU5hHfykk6fUg/Nz2FKsX
-         NefQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUIp4XwIj0/XaBleQiRn2bR5spszxesG2lpoUbM5MsnVh0xfU2b3JFd0nG9Lfx3+rV1J98=@vger.kernel.org, AJvYcCUzil6GIspYYL+yOqceVs2wucFibNsQnIgIf/6innZ6GObY9O8dLhDbc9eNiKoOkaITxPhJdsw0V7wgc3TS@vger.kernel.org, AJvYcCX8Z6QkzP5UGDSICjIofW4282JOZIgq5R4c0C/sMPhcrRU3RTuDfRFO7DtOj8PvDW2mw9Ua5Hyl@vger.kernel.org, AJvYcCXgAznOR84GRkNq+b/DRIE9ouIl1E2681uZqpRjr+BwwjjDyzw2bG0FjdorjzEJapH/jQ/ppmEaJpSxq1Rba3gx@vger.kernel.org
-X-Gm-Message-State: AOJu0YytObeAB2/RcMBpecdglSE61GRr+xxfhSx/QF6BN/cPVKTnoXga
-	KRg/3qkAXSzhu0CFG9kKJFYykWhC3ppxfRvhEAsMgcSLwZYdLOOW0gByiFywHunminplJOEmpcc
-	o0GSqHk5Qsn9f4F/ORawrAl/xb+6a5n0=
-X-Gm-Gg: ASbGncuQ8sqIYOZZcCBAYQUyagZRhf3k0Gk5quqb+5YJhUouljcYAWbjtc5tC8N3zmm
-	Y3yZJzM/5+Oo0YJyzuOxIogtfeU48hmnUKl56qa7kJF+yG7+QL0oBr0XV9mMiy35k2YDM5N2sNe
-	spThwKgmsJ4PvWipcUdHR/IchCj1PhDkEyxbVEQp6D2YPicceMsPn9etSgOeveyYxks+oaHmOdb
-	zmVOcOhlgY2CAEhp2MHZgBIBY9535+4mZIhHlCxTS4lwhc=
-X-Google-Smtp-Source: AGHT+IGOef4BkFmgq9uqxMXYnUDjhEW8H9g/OL+f3GTmv1InuyS+566WxiHJhas/C0bhDuk4CyPbcBTUnih/0vHqLiY=
-X-Received: by 2002:a05:600c:474e:b0:453:6c45:ce14 with SMTP id
- 5b1f17b1804b1-45b6b045954mr13042075e9.4.1756252201513; Tue, 26 Aug 2025
- 16:50:01 -0700 (PDT)
+	s=arc-20240116; t=1756252245; c=relaxed/simple;
+	bh=07Ku4luLp6tCckZKvoGpBvBDQ0Ywwcemo2l4BS/xWs0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OJaeeNxkprsmccTyyeJIBp56PiKBH6On4kyqx08MY6TqZFwpiv05fpaIs1AyEb19Qzr1lg0nEVI4oCTpMKM87lBoHdWjK3Nvdj+2MwqkaKsB86WhRIZz41T/IZYpY5DRAkV84REITSw9Epsvl7S/GwcAbYDQq5Bch4k/a5kkuQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ku2eS2aL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D91F3C4CEF1;
+	Tue, 26 Aug 2025 23:50:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756252245;
+	bh=07Ku4luLp6tCckZKvoGpBvBDQ0Ywwcemo2l4BS/xWs0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ku2eS2aLuk2BO85gltgp9fViBt3A7nXYGIzz3ko+3i02BU56tWHBUt7SqU2nURtEN
+	 XBBLjuym5594eRddN8//2A0hIq9YGE3uJyHGblP1kjOj68phQ1DzZczKcjxA+BYH7m
+	 beuxjpqZ1t3NkKzgfPTOjhOisGGViCwrEjzxf5/EchC01qkp/d/r0yRVVVq5e9D4ra
+	 9iyKZSacjOMQZjnsjMUDUS7FZcVzPkmSyZlv8uUTxMLQ55Ro7lB9BFk8KSd1dsWumX
+	 ZZ+S+nCkt7tGurJCOCifKfd1hsdFyeaBfVGIOUwIwszL5KLRmkt2m3Rz7ePoD+ElMf
+	 wfPZvM216LTww==
+Date: Tue, 26 Aug 2025 18:50:43 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	linux-watchdog@vger.kernel.org,
+	Mathew McBride <matt@traverse.com.au>,
+	linux-arm-kernel@lists.infradead.org,
+	Michael Walle <mwalle@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Nikita Travkin <nikita@trvn.ru>,
+	Guenter Roeck <groeck@chromium.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-mediatek@lists.infradead.org,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Tim Harvey <tharvey@gateworks.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Mark Brown <broonie@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	linux-sound@vger.kernel.org,
+	Cheng-Yi Chiang <cychiang@chromium.org>,
+	linux-hwmon@vger.kernel.org, Tzung-Bi Shih <tzungbi@kernel.org>,
+	Pengyu Luo <mitltlatltl@gmail.com>, linux-gpio@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Benson Leung <bleung@chromium.org>, Lee Jones <lee@kernel.org>,
+	linux-pwm@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Tinghan Shen <tinghan.shen@mediatek.com>
+Subject: Re: [PATCH v3] dt-bindings: mfd: Move embedded controllers to own
+ directory
+Message-ID: <175625224288.764159.13881647192010727208.robh@kernel.org>
+References: <20250825081201.9775-2-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826131158.171530-1-matt@readmodwrite.com>
-In-Reply-To: <20250826131158.171530-1-matt@readmodwrite.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 26 Aug 2025 16:49:50 -0700
-X-Gm-Features: Ac12FXy2S8MJX84UFWWWSnzeF83x3Sm34xHiKgTplshGBttG4YFKeH0bi0meFek
-Message-ID: <CAADnVQ+=bYcR6whXxEPst4a4n1eKeDXp4tO8Q2wEx_6GbwqMFg@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v4] selftests/bpf: Add LPM trie microbenchmarks
-To: Matt Fleming <matt@readmodwrite.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, Shuah Khan <shuah@kernel.org>, 
-	kernel-team <kernel-team@cloudflare.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	bpf <bpf@vger.kernel.org>, Martin KaFai Lau <martin.lau@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, Network Development <netdev@vger.kernel.org>, 
-	Matt Fleming <mfleming@cloudflare.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250825081201.9775-2-krzysztof.kozlowski@linaro.org>
 
-On Tue, Aug 26, 2025 at 6:12=E2=80=AFAM Matt Fleming <matt@readmodwrite.com=
-> wrote:
->
-> +static int baseline(__u32 index, __u32 *unused)
-> +{
-> +       struct trie_key key;
-> +       __s64 blackbox;
-> +
-> +       generate_key(&key);
-> +       /* Avoid compiler optimizing out the modulo */
-> +       barrier_var(blackbox);
-> +       blackbox =3D READ_ONCE(key.data);
 
-Overall looks good, but gcc-bpf found an actual issue.
+On Mon, 25 Aug 2025 10:12:02 +0200, Krzysztof Kozlowski wrote:
+> Move several embedded controller bindings (like ChromeOS EC, Gateworks
+> System Controller and Kontron sl28cpld Board Management) to new
+> subdirectory "embedded-controller" matching their purpose.
+> 
+> An embedded controller (EC) is a discrete component that contains a
+> microcontroller (i.e. a small CPU running a small firmware without
+> operating system) mounted into a larger computer system running
+> a fully fledged operating system that needs to utilize the embedded
+> controller as part of its operation.
+> 
+> So far the EC bindings were split between "mfd" and "platform"
+> directory.  MFD name comes from Linux, not hardware, and "platform" is a
+> bit too generic.
+> 
+> Rename Gateworks GSC and Huawei Gaokun filenames to match compatible, as
+> preferred for bindings.
+> 
+> Acked-by: Michael Walle <mwalle@kernel.org> # for sl28cpld
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+> 
+> Lee,
+> Can you take it via MFD?
+> There is a patch on the lists touching kontron,sl28cpld.
+> 
+> Changes in v3:
+> 1. Move more files from "platform" directory.
+> 2. Grow commit msg, based on feedback from Linus.
+> 3. Add Rb (patch changed, though).
+> 
+> Changes in v2:
+> 1. Correct remaining paths in other schemas ($ref and descriptions).
+> 2. Add Ack.
+> 
+> Cc: Mathew McBride <matt@traverse.com.au>
+> ---
+>  .../{platform => embedded-controller}/acer,aspire1-ec.yaml  | 2 +-
+>  .../{mfd => embedded-controller}/google,cros-ec.yaml        | 2 +-
+>  .../gateworks-gsc.yaml => embedded-controller/gw,gsc.yaml}  | 2 +-
+>  .../huawei,gaokun3-ec.yaml}                                 | 2 +-
+>  .../{mfd => embedded-controller}/kontron,sl28cpld.yaml      | 2 +-
+>  .../lenovo,yoga-c630-ec.yaml                                | 2 +-
+>  .../microsoft,surface-sam.yaml                              | 2 +-
+>  .../devicetree/bindings/gpio/kontron,sl28cpld-gpio.yaml     | 2 +-
+>  .../devicetree/bindings/hwmon/kontron,sl28cpld-hwmon.yaml   | 2 +-
+>  .../interrupt-controller/kontron,sl28cpld-intc.yaml         | 2 +-
+>  .../devicetree/bindings/pwm/google,cros-ec-pwm.yaml         | 2 +-
+>  .../devicetree/bindings/pwm/kontron,sl28cpld-pwm.yaml       | 2 +-
+>  Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml   | 4 ++--
+>  .../devicetree/bindings/sound/google,cros-ec-codec.yaml     | 2 +-
+>  .../devicetree/bindings/watchdog/kontron,sl28cpld-wdt.yaml  | 2 +-
+>  MAINTAINERS                                                 | 6 +++---
+>  16 files changed, 19 insertions(+), 19 deletions(-)
+>  rename Documentation/devicetree/bindings/{platform => embedded-controller}/acer,aspire1-ec.yaml (94%)
+>  rename Documentation/devicetree/bindings/{mfd => embedded-controller}/google,cros-ec.yaml (99%)
+>  rename Documentation/devicetree/bindings/{mfd/gateworks-gsc.yaml => embedded-controller/gw,gsc.yaml} (98%)
+>  rename Documentation/devicetree/bindings/{platform/huawei,gaokun-ec.yaml => embedded-controller/huawei,gaokun3-ec.yaml} (97%)
+>  rename Documentation/devicetree/bindings/{mfd => embedded-controller}/kontron,sl28cpld.yaml (97%)
+>  rename Documentation/devicetree/bindings/{platform => embedded-controller}/lenovo,yoga-c630-ec.yaml (95%)
+>  rename Documentation/devicetree/bindings/{platform => embedded-controller}/microsoft,surface-sam.yaml (92%)
+> 
 
-pw-bot: cr
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
 
