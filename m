@@ -1,124 +1,204 @@
-Return-Path: <linux-kernel+bounces-786840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FF1EB36BE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:50:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0767B35FD7
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:54:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90B937B659D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:46:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E86D7463FD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:53:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5DD135E4FA;
-	Tue, 26 Aug 2025 14:45:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0991822CBCB;
+	Tue, 26 Aug 2025 12:51:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Y3R+aij1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fsCb1jux"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE473469FC;
-	Tue, 26 Aug 2025 14:45:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35522222BA
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 12:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756219521; cv=none; b=X1Lyxyi7gJM8oPTUcxnrHO33rxbSwI8tF557zt0rDYJME2VYP/H+O1i7DezQgoUdZ94/gE6U6zCNLpywnWcl+qO5WIohVxsmVpInSETRuQhYQr751k/MOSzkWqL8+WrQebVinzMoxJe5Tx0IOGU6Yo4ltztTCn3CdL7cJQPAL8o=
+	t=1756212703; cv=none; b=YutSdro/7P07WP6PswkB/gaOe1aROLCaH9piskAzY1lDKvsFzLYzbrM9y7by2WlSqlsM9DORrU851BUAicSkn1suGZSGZ/Eq1SVhv4qNXkSJQL2Oy3nZMg69eBpIYhRVamMgehR5R1FGZnEugPo06TzPkKe/qsbNdlDNxyka/y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756219521; c=relaxed/simple;
-	bh=2fjsl71zFKbXs3ws16pco+vp93pc2Qs+5PISA74aiUI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VehOJ0fUjSkSSnk7Hoy/vnpXClML6FIDnEl79W1VcuQ3Y+DJnDNM+jn4r6oLV0UbV7iKyx901Wo7Bj3jdsjKGm/CXXmoLb3x7GV6WE09mEh+r1qW9ZhHddxdXFjO19fDC8Id+wA1LdPw7pCZbAY09wsGH8o/VGx5wnbty5pLQO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Y3R+aij1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92C4BC113CF;
-	Tue, 26 Aug 2025 14:45:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1756219521;
-	bh=2fjsl71zFKbXs3ws16pco+vp93pc2Qs+5PISA74aiUI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y3R+aij1aGBJdGAHoAvaLVaVHo3OsAEERdumuBbMQx9Afo2EKHbZGXh3bBZp1qOTU
-	 6OGYULvDxm3rH0YZ3F3rCvnZ/rWuiZJx4oMRls2/vzUEbbJccEb263T6prDFHLgC66
-	 DvdOd5WnNmRNoMQZA7iKNDoXp/Xd15KyfAUHfjMc=
-Date: Tue, 26 Aug 2025 14:51:30 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, stable@vger.kernel.org,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	hargar@microsoft.com, broonie@kernel.org, achill@achill.org,
-	Ben Copeland <benjamin.copeland@linaro.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Bjorn Andersson <andersson@kernel.org>,
-	linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	srinivas.kandagatla@oss.qualcomm.com
-Subject: Re: [PATCH 6.15 000/515] 6.15.11-rc1 review
-Message-ID: <2025082612-energetic-lair-ee26@gregkh>
-References: <20250818124458.334548733@linuxfoundation.org>
- <CA+G9fYt5sknJ3jbebYZrqMRhbcLZKLCvTDHfg5feNnOpj-j9Wg@mail.gmail.com>
- <CA+G9fYt6SAsPo6TvfgtnDWHPHO2q7xfppGbCaW0JxpL50zqWew@mail.gmail.com>
- <CACMJSeu_DTVK=XtvaSD3Fj3aTXBJ5d-MpQMuysJYEFBNwznDqQ@mail.gmail.com>
- <2025081931-chump-uncurled-656b@gregkh>
- <CACMJSesMDcUM+bvmT76m2s05a+-T7NxGQwe72yS03zkEJ-KzCw@mail.gmail.com>
+	s=arc-20240116; t=1756212703; c=relaxed/simple;
+	bh=yt7PX86YZMaO/zrX2cd6zBWZMNRsvMh2Y0BhzLi5e4E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T0I4LU6ITsvC942vzJO52VeACOyavrO5Ll7KRV5Yeolx4uRer0G7H8f+hTldI2ILdBT249GUh/26z5wSOvVSx1UQ3aeNUkYlJpSe1dHBkEdxo5YYPqXpN+wvzOLq5+lmKasetQEGZeDxiaVNdzBUDhlLIEnmSQrTaafw+o/CMmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fsCb1jux; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756212700;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ssn/jpuXTRjbOLCPQ6KT3z7CgPD8X2cfIkgpAEmxoSg=;
+	b=fsCb1juxS05jfkSN7jIQS1E6Xo2DFEe1au7x30LOKZj9/Fo+uVPUOfLGZg2zAmZW14HAE5
+	lpSf+bp/fryfv9BkHb+8W/e5oPSaS0MKKmpf0G7LbJEYkNfueHp4cP2AsAjWt9Xb3Jcr/n
+	niAPLEed5AgO++qQ/Uz/pbmZMKDVhiA=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-526-t5ai1-A4OoS17tHxj-OKPg-1; Tue, 26 Aug 2025 08:51:39 -0400
+X-MC-Unique: t5ai1-A4OoS17tHxj-OKPg-1
+X-Mimecast-MFC-AGG-ID: t5ai1-A4OoS17tHxj-OKPg_1756212698
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45a1b0098c0so38986025e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 05:51:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756212698; x=1756817498;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ssn/jpuXTRjbOLCPQ6KT3z7CgPD8X2cfIkgpAEmxoSg=;
+        b=X525OjPLjaN/rHeXPkKOiMg3aOmykUnmWzKGhbCk6ApiAZ6nVNp2Eau+jIYsx4Lwa7
+         w7D1v+/d0y8QBnq3YzSGfEU0aG5aOoWfD/E2A7z0Rjs5E66/n06KmO6sCCYt7dJe7XT4
+         umO3P6flDcBwuFwA5VN7EMaFBFAoEWZBxcjTVDfLhygvuIHJ5F5SKvZJ9WpNkmVpW7sP
+         C8zV0v5VSlWZrnExEB2FV7S3hRngVWM4SL5Rop4ESn90ZMjYJhpLah8DZMxr09QaT/5D
+         oVZTSk99meH6wMfO6Bpopf5lye6v5kmITlohnVSXAduKHYREWgr5gtvi9cSqHcdd7XVZ
+         lK4w==
+X-Forwarded-Encrypted: i=1; AJvYcCXQRn5R5P/dco7mA7o47PGgkMGAXvoJcZdRmuPuypDrX/PNUM7M1q3+brIWX3unVbq958MC6+O3OKslQJg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxF6KsE70TMKO3My59nXsO6uzMwHPpnPatP0rwSDKfJ3pmx3xBW
+	QAtbz7ccj8PZG1Zlwl46fkW1ePE2HTEogtWLtIxG/rsNjATnL2uCh2RKV+MgA3z/2JYynaVL4gS
+	XJ9i5/gEV2zC0wcGQ0QwHfd1eqcFLTS1/IIiMhIS8uI4T5JBhPK9T4JzOVfv+PQ15LQ==
+X-Gm-Gg: ASbGncscvwOaSQyJTj2BAoOx0+4sm39YJMXJc+NZ5nwG9rAZele3M2s9ALuyX0l3nCD
+	jqjRdH0k1Cffq+Fk0AZPP/rynnrr8rpRifAtdIDdGkTK2ZIo/uz273Z/Poe1RJ2Hgvs35VrTVZV
+	aro77wA+0G9cj41GoFhpv1ep2dCBSb6hQUU++0/dmJH4wyyHBN0iyCU3Gkkvg8UHE8Cc5u8HXgj
+	WE8xSt+TEvnNhfKTqv9X/CFgyKzJgLJqqKMA5iXYsoEJ+gVZMH8Iv6gbqTa6c8ED73bpQRJfH1e
+	KzBj75+032Giuz/8uiGgtY1h9nyc225w+02ZfYPkecq6EVVFCm+DnPOPxiMBZHKlLuVkYM7OjQ=
+	=
+X-Received: by 2002:a05:6000:26c1:b0:3ca:a190:c45f with SMTP id ffacd0b85a97d-3caa190c7e5mr3558102f8f.16.1756212697967;
+        Tue, 26 Aug 2025 05:51:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEyjBgPsOULlt/GMGVomIiEKxcepINJfoXSLaYtklo9AIJ7LYUfR1QNVtypvSUKbPxSGG+sYQ==
+X-Received: by 2002:a05:6000:26c1:b0:3ca:a190:c45f with SMTP id ffacd0b85a97d-3caa190c7e5mr3558017f8f.16.1756212697472;
+        Tue, 26 Aug 2025 05:51:37 -0700 (PDT)
+Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c70e4ba046sm17461806f8f.1.2025.08.26.05.51.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Aug 2025 05:51:36 -0700 (PDT)
+Message-ID: <d74caa51-6bf7-4f76-b681-cf60826b139d@redhat.com>
+Date: Tue, 26 Aug 2025 14:51:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACMJSesMDcUM+bvmT76m2s05a+-T7NxGQwe72yS03zkEJ-KzCw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 05/10] mm: convert uprobes to mm_flags_*() accessors
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, "David S . Miller"
+ <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski
+ <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Kees Cook <kees@kernel.org>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache
+ <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>,
+ Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ David Rientjes <rientjes@google.com>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
+ Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
+ Peter Xu <peterx@redhat.com>, Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>, Matthew Wilcox <willy@infradead.org>,
+ Mateusz Guzik <mjguzik@gmail.com>, linux-s390@vger.kernel.org,
+ linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+References: <cover.1755012943.git.lorenzo.stoakes@oracle.com>
+ <1d4fe5963904cc0c707da1f53fbfe6471d3eff10.1755012943.git.lorenzo.stoakes@oracle.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <1d4fe5963904cc0c707da1f53fbfe6471d3eff10.1755012943.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 26, 2025 at 02:06:04PM +0200, Bartosz Golaszewski wrote:
-> On Tue, 19 Aug 2025 at 13:52, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Tue, Aug 19, 2025 at 01:30:46PM +0200, Bartosz Golaszewski wrote:
-> > > On Tue, 19 Aug 2025 at 12:02, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
-> > > >
-> > > > On Tue, 19 Aug 2025 at 00:18, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
-> > > > >
-> > > > >
-> > > > > Boot regression: stable-rc 6.15.11-rc1 arm64 Qualcomm Dragonboard 410c
-> > > > > Unable to handle kernel NULL pointer dereference
-> > > > > qcom_scm_shm_bridge_enable
-> > > >
-> > > > I have reverted the following patch and the regression got fixed.
-> > > >
-> > > > firmware: qcom: scm: initialize tzmem before marking SCM as available
-> > > >     [ Upstream commit 87be3e7a2d0030cda6314d2ec96b37991f636ccd ]
-> > > >
-> > >
-> > > Hi! I'm on vacation, I will look into this next week. I expect there
-> > > to be a fix on top of this commit.
-> >
-> > Ok, I'll go and drop this one from the queues now, thanks.
-> >
-> > greg k-h
+On 12.08.25 17:44, Lorenzo Stoakes wrote:
+> As part of the effort to move to mm->flags becoming a bitmap field, convert
+> existing users to making use of the mm_flags_*() accessors which will, when
+> the conversion is complete, be the only means of accessing mm_struct flags.
 > 
-> Hi!
+> No functional change intended.
 > 
-> The issue was caused by only picking up commit 7ab36b51c6bee
-> ("firmware: qcom: scm: request the waitqueue irq *after* initializing
-> SCM") into stable, while the following four must be applied instead:
-> 
-> 23972da96e1ee ("firmware: qcom: scm: remove unused arguments from SHM
-> bridge routines")
-> dc3f4e75c54c1 ("firmware: qcom: scm: take struct device as argument in
-> SHM bridge enable")
-> 87be3e7a2d003 ("firmware: qcom: scm: initialize tzmem before marking
-> SCM as available")
-> 7ab36b51c6bee ("firmware: qcom: scm: request the waitqueue irq *after*
-> initializing SCM")
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> ---
 
-6.15.y is long end-of-life, so is anything still to be done here?
+Acked-by: David Hildenbrand <david@redhat.com>
 
-thanks,
+-- 
+Cheers
 
-greg k-h
+David / dhildenb
+
 
