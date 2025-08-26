@@ -1,137 +1,132 @@
-Return-Path: <linux-kernel+bounces-786212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F788B35697
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:20:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 666AAB3567A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:14:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43178246FCD
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:20:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55A1E1B62876
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:14:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B5C2F746F;
-	Tue, 26 Aug 2025 08:20:38 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B866D2248A4;
-	Tue, 26 Aug 2025 08:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03542F532C;
+	Tue, 26 Aug 2025 08:14:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GpfmW+/q"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A5A284678;
+	Tue, 26 Aug 2025 08:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756196437; cv=none; b=ZLpfWx5UaWxsIdwD4TrUeaiyyiV9Jcd2SwRHT2oX458Ae27ETYTm08qXJfzbSYW5Fsw8nxMCl6yWZOAL6TaRe/XxWD3/hACGGupZXdd/QEtcBUiGBNdDclF+W1Gscpzzb7SYZiAIwL3jSqzHgA+e992B26ENTDuQnBbdgIFaHGs=
+	t=1756196050; cv=none; b=GuxzKwYqzsQUj+fnr4XAiudAdAiLWE0sT/92dDH572TB+WI5sUeBUu4DCAAXKBpRP+H8hnDFo/VFeexZcbfdrtRGLvyZ3msRcCU//iEQzHqi4m9v56d3+UFOUB03vdm7TNEh+Lwq7PmX1hzhZEjXlNprDFI01XKS9vv6UzpeuEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756196437; c=relaxed/simple;
-	bh=esU0BJE6AEb+zv/ijPoESgZfSOIaYt6UKHknAJ0+OnM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=skEyY7VQWHWbAdL3JY6RsjXlfdxAR3Qy3rZdU4n5z1/osfIgeyXJC6Jm4vQqQ7YKqLd8EJvFYXEjpeQvpD5+1Oevxcsp6uHkhfMYKc0cit5Xw8GFbzB6218wVzyxG9uCqQNjmRPhSLIxhDYbj2+wtq8MXbuhC9XU547n7eWe23I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4cB0k63K4Cz9sSp;
-	Tue, 26 Aug 2025 10:11:42 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id hiYLp3UY9uY7; Tue, 26 Aug 2025 10:11:42 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4cB0k6241Nz9sSn;
-	Tue, 26 Aug 2025 10:11:42 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 2A7BA8B764;
-	Tue, 26 Aug 2025 10:11:42 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id OvpXfkz87_WW; Tue, 26 Aug 2025 10:11:42 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5B2258B763;
-	Tue, 26 Aug 2025 10:11:40 +0200 (CEST)
-Message-ID: <a506bb53-6e17-4a10-a870-50ce87a4ce06@csgroup.eu>
-Date: Tue, 26 Aug 2025 10:11:40 +0200
+	s=arc-20240116; t=1756196050; c=relaxed/simple;
+	bh=K5a74MigWwPcCyFreDaIcqML8Y25Lv7ViHW6u82Go60=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=enjz9MZaYdbhHPlpncQpNEhEza+yQoG2LIAEdhNKBN7Ozp2Gcy+TolfqnpdeRS+V9f1icLeGobKPRe7y6Z8fSWQAAZSum/4qWSsPG2L8tiTmNRlsBUdpg6EJ9ujXni3Od6IcPJ1E8BL9ZHPLjU69LVNIEjyh30t/hqD4+MPwVY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GpfmW+/q; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-afcb7347e09so907190766b.0;
+        Tue, 26 Aug 2025 01:14:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756196047; x=1756800847; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c+9cDqbe7/fXz5iaoORlIRYc1spfaZP8SiJ5AmziM+U=;
+        b=GpfmW+/qzSFqjFkNptsmiUujnyioZBQuf9Uq7USMs8YpG2PsJO+e/exVFqAYYeUvvE
+         blAxU7IFidEBwScvrDhFOh8PuWo0K/9mMsr2B85kga/aisxMmtW3lYy2mrSSTiPyo58U
+         EMsuV3noXLrxatDrc/MLg3UVd5VQ2CPo73BO7asE4uWIVzF///+1FuoCfHH6nCqNgf++
+         m/FqWvO+QJIJ15Jfp2aYmzLlVpeNK764u2LN9OgeVn+T0kDtdDHZijj3IGKj670Beq0L
+         VFDCOAtLOnBFaW13/TlGuiwQP4DDKwpQGbGLpBmmhVjwAaHBVN1rvphnLzXadF1ONO81
+         LxNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756196047; x=1756800847;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c+9cDqbe7/fXz5iaoORlIRYc1spfaZP8SiJ5AmziM+U=;
+        b=ARb3KbjdD9Q1is80k4OvfJhgSgiQarHmVkCIrML6lr33/J1khWQOyDasV5oyt5tx2L
+         3KCrbRZPjXCtZhb3AITm+8Yi4m5SyJNCZIksnxOnFVgKGsY3bIhQIgtPMa3P9wAaNQ5z
+         tZVy2MEYi/FyGTcoQOAJYXrfo5tTEPHIXKxZLP5Cg7R0i84R6EojCKE2vl9hlDz2ugi+
+         BEF0zEVeGn28aPRRDL0aFTgb1kK1glurePmFWSKPm9DiQ8Gq3G7RMatoOhvG9rzgNWFY
+         iI/IFa2fgxJp71YY2MC+WHd9ayha1n/HO1On0FmkON5NEFvfS0r5VHAigm8rC9CjCXPl
+         L6IQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVHkXUt+XuCbhhn6E6V2z4AogqHGBCMxTFdOKZC8fzNaePBj/TVP3OGDWmL+bF5VoAsiGOT5ofcnsY+pIhc@vger.kernel.org, AJvYcCW0aqY7uSsjPs8kn1HaV/WfikCxViHj8QSjVoz3lSE7EVQ6N5C5dEPHzsc6hdn5xYltsB0Yg2vrJ2Zj@vger.kernel.org, AJvYcCWInAE/gWtIiMJOoBIAj1jjtd0TZr5eIDSoS7+AHpCDK3d5vVCU+MbKYkuP3vd1QNm1+uD8kHjdKPil@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8dC4R7nuMZOVPi6W8G9NDH25EIMsvHS8e+sxmmIIvodWVN+ql
+	6bzrk8s0Ru6Qyu7YhT2wPZkEl7VXPikjGhartrmriHISK8ZRA+U2OXmNcZ1KiBkwSbVraf1xHGx
+	SVIq0jUOBq6cWUUUouJakM9YXMxwrehHpGRtBqU0=
+X-Gm-Gg: ASbGncsBadU4HwApAB0Uo1/RZdQEzAUxbH5XCJ7xv++w8GX6OGjOKfAsvUFw4gHjT3x
+	LuMwySywhfKgvMldppuSfvSYkSvx86OKU2XMtycdRX4u3QT+mzWN68IuYFkfqzI25dxJhfkgUDQ
+	B0Kv65d47o6w7nrDrUEGZ3fTzz+qRCkfqQWVJUIPsidBeDWiAXrzvgizG2T4S7NkpJNzZI51mwW
+	eL5uvg=
+X-Google-Smtp-Source: AGHT+IG50ET/PhN9ukJyoZNxRs+zEBWaeQQsD1E6eaJ7b55Lbh0MZlW4U80jHXcFYMrLdpZtXZifvaaF8NUeXrUkU7Y=
+X-Received: by 2002:a17:907:c487:b0:afc:aec3:7da4 with SMTP id
+ a640c23a62f3a-afe2963b010mr1238928066b.58.1756196046480; Tue, 26 Aug 2025
+ 01:14:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 5/8] sched/topology: Unify tl_smt_mask() across core
- and all arch
-To: Peter Zijlstra <peterz@infradead.org>,
- K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>, linuxppc-dev@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- thomas.weissschuh@linutronix.de, Li Chen <chenl311@chinatelecom.cn>,
- Bibo Mao <maobibo@loongson.cn>, Mete Durlu <meted@linux.ibm.com>,
- Tobias Huschle <huschle@linux.ibm.com>,
- Easwar Hariharan <easwar.hariharan@linux.microsoft.com>,
- Guo Weikang <guoweikang.kernel@gmail.com>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
- Brian Gerst <brgerst@gmail.com>,
- Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
- Swapnil Sapkal <swapnil.sapkal@amd.com>,
- "Yury Norov [NVIDIA]" <yury.norov@gmail.com>,
- Sudeep Holla <sudeep.holla@arm.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Andrea Righi <arighi@nvidia.com>, Yicong Yang <yangyicong@hisilicon.com>,
- Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
- Tim Chen <tim.c.chen@linux.intel.com>,
- Vinicius Costa Gomes <vinicius.gomes@intel.com>
-References: <20250826041319.1284-1-kprateek.nayak@amd.com>
- <20250826041319.1284-6-kprateek.nayak@amd.com>
- <20250826080123.GB3245006@noisy.programming.kicks-ass.net>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <20250826080123.GB3245006@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250825-iio-adc-ad7124-proper-clock-support-v2-0-4dcff9db6b35@baylibre.com>
+ <20250825-iio-adc-ad7124-proper-clock-support-v2-4-4dcff9db6b35@baylibre.com>
+In-Reply-To: <20250825-iio-adc-ad7124-proper-clock-support-v2-4-4dcff9db6b35@baylibre.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 26 Aug 2025 11:13:30 +0300
+X-Gm-Features: Ac12FXzVmmj-5G2Y2-Ph7vd-m35fceWUBSLrx90B4elHQDFntoLJODJJ9ysQknQ
+Message-ID: <CAHp75VeAMNp8gARndVRnh3EwrTb65MNFXL7pCThR+Ghd_+yHDw@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] iio: adc: ad7124: add clock output support
+To: David Lechner <dlechner@baylibre.com>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Aug 26, 2025 at 1:55=E2=80=AFAM David Lechner <dlechner@baylibre.co=
+m> wrote:
+>
+> Add support for the AD7124's internal clock output. If the #clock-cells
+> property is present, turn on the internal clock output during probe.
+>
+> If both the clocks and #clock-names properties are present (not allowed
+> by devicetree bindings), assume that an external clock is being used so
+> that we don't accidentally have two outputs fighting each other.
 
+...
 
-Le 26/08/2025 à 10:01, Peter Zijlstra a écrit :
->> diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
->> index 602508130c8a..d75fbb7d9667 100644
->> --- a/include/linux/sched/topology.h
->> +++ b/include/linux/sched/topology.h
->> @@ -37,7 +37,13 @@ static inline int cpu_smt_flags(void)
->>   {
->>   	return SD_SHARE_CPUCAPACITY | SD_SHARE_LLC;
->>   }
->> -#endif
->> +
->> +static const __maybe_unused
->> +struct cpumask *tl_smt_mask(struct sched_domain_topology_level *tl, int cpu)
->> +{
->> +	return cpu_smt_mask(cpu);
->> +}
->> +#endif /* CONFIG_SCHED_SMT */
-> 
-> Problem with that __maybe_unused is that you forgot inline.
-> 
-> static inline const
-> struct cpumask *tl_smt_mask(struct sched_domain_topology_level *tl, int cpu)
-> {
-> 	return cpu_smt_mask(cpu);
-> }
-> 
-> seems to make it happy.
-> 
+>  static const int ad7124_master_clk_freq_hz[3] =3D {
+> -       [AD7124_LOW_POWER] =3D 76800,
+> -       [AD7124_MID_POWER] =3D 153600,
+> -       [AD7124_FULL_POWER] =3D 614400,
+> +       [AD7124_LOW_POWER] =3D AD7124_INT_CLK_HZ / 8,
+> +       [AD7124_MID_POWER] =3D AD7124_INT_CLK_HZ / 4,
+> +       [AD7124_FULL_POWER] =3D AD7124_INT_CLK_HZ,
 
-But the function is referenced by SDTL_INIT() macro so there is no real 
-point in declaring it inline. Would be cleaner to have it defined in a C 
-file.
+Perhaps / 1 ?
 
-Christophe
+>  };
+
+...
+
+> +               const char *name __free(kfree) =3D kasprintf(GFP_KERNEL, =
+"%s-clk",
+> +                       fwnode_get_name(dev_fwnode(dev)));
+
+What's wrong with the %pfwP specifier?
+
+> +               if (!name)
+> +                       return -ENOMEM;
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
