@@ -1,77 +1,74 @@
-Return-Path: <linux-kernel+bounces-786623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF0D6B35F35
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:35:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3187B35F2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:35:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49BFE684582
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:35:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8151A3BAD20
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5270332145E;
-	Tue, 26 Aug 2025 12:35:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 046CC2D060B;
+	Tue, 26 Aug 2025 12:35:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="IJbnUDS5"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="DVv3Cy/r"
+Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [45.157.188.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5AFA2D060B;
-	Tue, 26 Aug 2025 12:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6968E21D3C0
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 12:35:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756211735; cv=none; b=o4QTTkOHQD9XVc0dxJ3sQbxODL7U0Q+agKNGVJVL70+Dw+TJrKFV7dy1fpHNx9Gg5Ylpe2uByjFznSG6BV6vceUql8PeTQCR+KAqVktynE0zTor6jiUpS7l5n8/m1ggogaJre5IqR22SaA7eMrtlEfB+6bcxE4HkrGEwEAUiXcI=
+	t=1756211719; cv=none; b=lmbySlAXNKmq+XY3am5xI5k4ZLjnTgkQdYLCc6v0zSaPC6nwVW8WB/CRZRAuRIvXPMDiS8jyWl/N1horE+37AaX+X+yFTZXiaZRAhfe0Oe8YNlJD6eVzuN9QpUx2Nufg5yrvlIfNi/RxMOJ6sIqy3Y1Ngbx/6RUDZbgV6MfjXyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756211735; c=relaxed/simple;
-	bh=tsg8sofVKU1gAA4xm07JjD4e07ulHOEy2RCaq9LMvzc=;
+	s=arc-20240116; t=1756211719; c=relaxed/simple;
+	bh=rlitfwKw6m8qm0mxEs/6cnYt/upIMsMd+WjUZGJict0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oeBPTIO1reBz6NFFgTqyN44FGKY+00ZBTBFwvFihf6mW2LRZAZ8M26N3JDfepxlqV+yI7PjWzp60+jlAhwRUtKObo0gsL6bG/ddN4ETjQw6XCjwpnuorbkDR3f+ApzwUZKlXywiLmIbBONYLrYnhtvA0sBqkJxet9x8xphCyVsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=IJbnUDS5; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4C92840E019C;
-	Tue, 26 Aug 2025 12:35:25 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id OxaYDB8Ybs47; Tue, 26 Aug 2025 12:35:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1756211720; bh=lGSH99NR2GNnJhwGm4yaNbNzgYqDVCmJ+LnXEzv8sS8=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ey60KcYt6Td0SRKfFkIZFmLkMkN+VIhGscI8FQds8C7RncDqQvyyo1fMP7MeUlMNS6yCAjjvOoaYbUADWk8wGewryILydXLgNqXO7iyfV3xrMpzRsb1apI/MX1MoQYgF8kftVuqM6KoPAOq0oCi90LMO8bA6Thy2u4vhIv4lk2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=DVv3Cy/r; arc=none smtp.client-ip=45.157.188.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4cB6Z738bNzLcG;
+	Tue, 26 Aug 2025 14:35:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1756211711;
+	bh=R8XQ+qnr9SZ/BmQ7yIcGbNm53gzbfSqxt8B1gBqiUxg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IJbnUDS5uwS+oELwj39bMB+KdOyQthhU61envLs3tdr6Shomts7LSH9fQYTHEqm4T
-	 EZV4xddbNcdJaNxXfcuzGHIt2rJt/GDMZH0MZidYoA9FpDV4rGovaXpl2iuPSaFcl0
-	 leEmfSE3WItq4uG8T8NtSpxPh1KR8KX2K1HemAL9WGXhi+qO8J1zLvBsXBe4TvH7ny
-	 KGXu3Im35qsNgRWPdIoALYKMgFLZC9w11CKgWoiAj5sCOoUwy7s7wCKzIXubjxfg1L
-	 N+hGwkwtfmctz+LjXtA6N1hAdar7dmydENHZuXVJxDDZPKCtLUC3XeoJQ99wjJhFKz
-	 LrE/hfh92gd4J+Ecj/UD8ff2nvzBc8bmIQXVX5qTXXtD/YLp/cHKf/Vfl4yWIiXx9T
-	 yqBPhCkGQnrP0ZdN7J2yAkCTSrOMGOamCsEb3F0IXyzOrHQpbEewmVHN2GlIZqrcxQ
-	 Zlln4AddQBayoi23Ygt1eUIEPiteHcI6dwbPTjbGPBSj0+Z5vG1fbDf0LzNx1xdfnr
-	 7v1Fl1JcRMZUGxoIFHV7I6IbTp6CZ4GxJ86G+hV7ytvTPiayh0Vd/rdoqEq6aKfqkt
-	 cCoihtBCQ9wQBYNVYdsyzU3nyghbP0J/G8cTn/dpYPjzNkOqSLwvVNTzKQzrg8q2JI
-	 mJ0dXFPY4yZKzTDVNfPOjAo0=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 94E5640E0288;
-	Tue, 26 Aug 2025 12:35:10 +0000 (UTC)
-Date: Tue, 26 Aug 2025 14:35:03 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: x86@kernel.org, Tony Luck <tony.luck@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
-	Smita.KoralahalliChannabasappa@amd.com,
-	Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v5 05/20] x86/mce: Cleanup bank processing on init
-Message-ID: <20250826123503.GEaK2p9-e87SaTMKVv@fat_crate.local>
-References: <20250825-wip-mca-updates-v5-0-865768a2eef8@amd.com>
- <20250825-wip-mca-updates-v5-5-865768a2eef8@amd.com>
+	b=DVv3Cy/rQOpb1FageSeGpGJiQ0vQ9qK2YvEr44f/YXumQ0jgQLQbn01zyRrrPE6Fr
+	 ztkIi3ltRzcLAUKGOSoRq/UYWQx6o+d/49io54LxzL/W9LzI8HgvK9kN3UmFUeBspK
+	 JjbE8yzV9pYsgoKq3TcmYBkfEPA4TM5OCUV87IGQ=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4cB6Z44FXQztlg;
+	Tue, 26 Aug 2025 14:35:08 +0200 (CEST)
+Date: Tue, 26 Aug 2025 14:35:08 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Florian Weimer <fweimer@redhat.com>
+Cc: Andy Lutomirski <luto@amacapital.net>, Jann Horn <jannh@google.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>, 
+	Serge Hallyn <serge@hallyn.com>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
+	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, Jeff Xu <jeffxu@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Miklos Szeredi <mszeredi@redhat.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
+	Robert Waite <rowait@microsoft.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Scott Shell <scottsh@microsoft.com>, Steve Dower <steve.dower@python.org>, 
+	Steve Grubb <sgrubb@redhat.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@chromium.org>
+Subject: Re: [RFC PATCH v1 1/2] fs: Add O_DENY_WRITE
+Message-ID: <20250826.Lie3ye8to7yo@digikod.net>
+References: <20250822170800.2116980-1-mic@digikod.net>
+ <20250822170800.2116980-2-mic@digikod.net>
+ <CAG48ez1XjUdcFztc_pF2qcoLi7xvfpJ224Ypc=FoGi-Px-qyZw@mail.gmail.com>
+ <20250824.Ujoh8unahy5a@digikod.net>
+ <CALCETrWwd90qQ3U2nZg9Fhye6CMQ6ZF20oQ4ME6BoyrFd0t88Q@mail.gmail.com>
+ <20250825.mahNeel0dohz@digikod.net>
+ <lhuikibbv0g.fsf@oldenburg.str.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,35 +77,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250825-wip-mca-updates-v5-5-865768a2eef8@amd.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <lhuikibbv0g.fsf@oldenburg.str.redhat.com>
+X-Infomaniak-Routing: alpha
 
-On Mon, Aug 25, 2025 at 05:33:02PM +0000, Yazen Ghannam wrote:
-> From: Borislav Petkov <bp@suse.de>
+On Mon, Aug 25, 2025 at 11:39:11AM +0200, Florian Weimer wrote:
+> * Mickaël Salaün:
 > 
-> Unify the bank preparation into __mcheck_cpu_init_clear_banks(), rename
-> that function to what it does now - prepares banks. Do this so that
-> generic and vendor banks init goes first so that settings done during
-> that init can take effect before the first bank polling takes place.
+> > The order of checks would be:
+> > 1. open script with O_DENY_WRITE
+> > 2. check executability with AT_EXECVE_CHECK
+> > 3. read the content and interpret it
+> >
+> > The deny-write feature was to guarantee that there is no race condition
+> > between step 2 and 3.  All these checks are supposed to be done by a
+> > trusted interpreter (which is allowed to be executed).  The
+> > AT_EXECVE_CHECK call enables the caller to know if the kernel (and
+> > associated security policies) allowed the *current* content of the file
+> > to be executed.  Whatever happen before or after that (wrt.
+> > O_DENY_WRITE) should be covered by the security policy.
 > 
-> Move __mcheck_cpu_check_banks() into __mcheck_cpu_init_prepare_banks()
-> as it already loops over the banks.
+> Why isn't it an improper system configuration if the script file is
+> writable?
+
+It is, except if the system only wants to track executions (e.g. record
+checksum of scripts) without restricting file modifications.
+
 > 
-> The MCP_DONTLOG flag is no longer needed, since the MCA polling function
-> is now called only if boot-time logging should be done.
-> 
-> Signed-off-by: Borislav Petkov <bp@suse.de>
+> In the past, the argument was that making a file (writable and)
+> executable was an auditable even, and that provided enough coverage for
+> those people who are interested in this.
 
-Yeah, when you send someone else's patch, you need to add your SOB underneath.
-I'll add it now.
-
-> Reviewed-by: Yazen Ghannam <yazen.ghannam@amd.com>
-> Reviewed-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-> Tested-by: Tony Luck <tony.luck@intel.com>
-> Reviewed-by: Tony Luck <tony.luck@intel.com>
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Yes, but in this case there is a race condition that this patch tried to
+fix.
 
