@@ -1,62 +1,94 @@
-Return-Path: <linux-kernel+bounces-786275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C94E1B35798
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:50:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 532B2B357A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:51:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 89CD84E3302
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:50:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07FDF3BD807
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF4D2FCC1F;
-	Tue, 26 Aug 2025 08:50:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EBB92FDC22;
+	Tue, 26 Aug 2025 08:51:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VrlNHF/Q"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Q36scFBY";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="t53TWzCe";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Q36scFBY";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="t53TWzCe"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D5129ACCD;
-	Tue, 26 Aug 2025 08:50:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C301FDA89
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 08:51:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756198236; cv=none; b=DQyBeA+1nus3+OMjnPDIp3aLsY+zYOYLvwc7HYD+d+MFvOkCdNUECOtpJHGxsOwrDIxPbMZnoLhqSJgjHGUeQD3AUKSqJBS3ZY76uNDXoRB7B/EufjwkvBtuO5jUh/aXUQnTg1m5SPzQqDt1jgnUUZ6qBQBjQmAS7XJuEygdD1Y=
+	t=1756198298; cv=none; b=YbPWh9adC0FLvsmj5NiTkpKFnmGKNX5lFfkeCDByFIO/ErtsvBNM3WNKeUoGpjdYMNiTgnoDrjL3MpkyGmkpThMEek+thDA2u0BDygCmCMPS1/5dLmOPPG2MxkdxegigZdjzayupgawJ4PbeOp+0w7QACxt6/rJD2NIKJ4TRQuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756198236; c=relaxed/simple;
-	bh=6NCjTTLQ8IS1fnIuWH723X5fwFZYB5chP9QXlwXt50Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=W6jDH1e/Buu+tWPDjwyTkoSP9nMAhJXD13QkfQeykEKMLco4zBJYWDN1gPfztmo+cSAhrogJNQ58IlJ5dqHyL3BKZp8hqk/zrMq8QcTQPW48RDLmzijaYQYTdLQm/4wBEnmys/s2aC0udNPvLH/EhxU1xWpfwHPcc9MJhRPUt3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=VrlNHF/Q; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57Q8o8xO1495853;
-	Tue, 26 Aug 2025 03:50:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1756198208;
-	bh=PtlWd1f4QUk/q9tiYzSXCRAuxQq8+9vZ8gqlgXf6znc=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=VrlNHF/QXyWUAw6cin7+412iuqD//LNrxFYQIaU1U5tq+gc1sJyu/JpqQHVxErlf9
-	 evXt5zCBk+izDndKmqr8ROQxXaq8LYGLFvAuw6gM6d4nrundzafzkB0B5fcQ0fYs90
-	 2f2pBp+kWoL3o1kwPRe3zYizD+nMkry2MznZC9ek=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57Q8o5mk1556543
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 26 Aug 2025 03:50:05 -0500
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 26
- Aug 2025 03:50:05 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Tue, 26 Aug 2025 03:50:05 -0500
-Received: from [10.24.68.198] (abhilash-hp.dhcp.ti.com [10.24.68.198])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57Q8nwfm1163034;
-	Tue, 26 Aug 2025 03:49:58 -0500
-Message-ID: <3bdc9ef0-d5a6-4836-b3b1-c0114aa330f6@ti.com>
-Date: Tue, 26 Aug 2025 14:19:57 +0530
+	s=arc-20240116; t=1756198298; c=relaxed/simple;
+	bh=Em6u5DU0XNGDf2sOo8Ctl/6DsXlXI2cN/yrG00i9JAQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jVsYau3Pb5+D6K5NVvfK7QCy+ODLJ0RhG3caC1j4uTTVeD87DzaMiizJahsRLCYl4dV9XzD+3WLfE5uk/O9VXAa1kbgPJzFwWjutqWQwjBvLAftTGNtuWsWaQkJZcFvC2KKIHEDx4IYH4b6Ch4a3sXAoAoh2jc1993gDi/G1lSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Q36scFBY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=t53TWzCe; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Q36scFBY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=t53TWzCe; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D271021241;
+	Tue, 26 Aug 2025 08:51:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756198294; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ufVkpPwtQutVDZsBUYqAOSqGDbYTWA0sDjJ69c5U8ZI=;
+	b=Q36scFBYhGcmbA/HFYYrNeARQr1EN3ffNW5Fk+uMM/wdhwEStZOMiwhmEYUamCEFLUVQjR
+	1p/hAXLzJFonWw+5Q5cR1DL/XVZ6iwTyN5fc54qafVjto5Ab8lqU8MNXYTWhueGa1bHD7C
+	JsuJ7ylY3Qhd7KMOnrqkMp7FrLAS0ws=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756198294;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ufVkpPwtQutVDZsBUYqAOSqGDbYTWA0sDjJ69c5U8ZI=;
+	b=t53TWzCeusuWJG/2cJ0mHNI/Tx282ahU/hmVeTE15zfNo/Y9+0sX6Vh80I0CfsIa8ratpi
+	E/U/kEL5buYK6nAg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756198294; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ufVkpPwtQutVDZsBUYqAOSqGDbYTWA0sDjJ69c5U8ZI=;
+	b=Q36scFBYhGcmbA/HFYYrNeARQr1EN3ffNW5Fk+uMM/wdhwEStZOMiwhmEYUamCEFLUVQjR
+	1p/hAXLzJFonWw+5Q5cR1DL/XVZ6iwTyN5fc54qafVjto5Ab8lqU8MNXYTWhueGa1bHD7C
+	JsuJ7ylY3Qhd7KMOnrqkMp7FrLAS0ws=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756198294;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ufVkpPwtQutVDZsBUYqAOSqGDbYTWA0sDjJ69c5U8ZI=;
+	b=t53TWzCeusuWJG/2cJ0mHNI/Tx282ahU/hmVeTE15zfNo/Y9+0sX6Vh80I0CfsIa8ratpi
+	E/U/kEL5buYK6nAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B8FC313A31;
+	Tue, 26 Aug 2025 08:51:34 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Lz6SLJZ1rWhHVQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 26 Aug 2025 08:51:34 +0000
+Message-ID: <ce289766-6d7d-427a-b9bb-8cb3634dbe9b@suse.cz>
+Date: Tue, 26 Aug 2025 10:51:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,119 +96,115 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 0/4] Add support for VIP
-To: Hans Verkuil <hverkuil+cisco@kernel.org>, <mchehab@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <linux@armlinux.org.uk>, <ardb@kernel.org>, <ebiggers@kernel.org>,
-        <geert+renesas@glider.be>, <claudiu.beznea@tuxon.dev>,
-        <bparrot@ti.com>, <andre.draszik@linaro.org>,
-        <kuninori.morimoto.gx@renesas.com>,
-        <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        <heikki.krogerus@linux.intel.com>, <kory.maincent@bootlin.com>,
-        <florian.fainelli@broadcom.com>, <lumag@kernel.org>,
-        <dale@farnsworth.org>, <sbellary@baylibre.com>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <dagriego@biglakesoftware.com>, <u-kumar1@ti.com>
-References: <20250716111912.235157-1-y-abhilashchandra@ti.com>
- <ea673976-49a6-44f6-8e6c-8d11abe46620@kernel.org>
+Subject: Re: [PATCH v5 01/14] slab: add opt-in caching layer of percpu sheaves
 Content-Language: en-US
-From: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
-In-Reply-To: <ea673976-49a6-44f6-8e6c-8d11abe46620@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
+ Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+ maple-tree@lists.infradead.org
+References: <20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz>
+ <20250723-slub-percpu-caches-v5-1-b792cd830f5d@suse.cz>
+ <CAJuCfpG5+oJY0aaE3=VOGtRxEoCgjejg-WTqrXU0TffFQ+7TQA@mail.gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <CAJuCfpG5+oJY0aaE3=VOGtRxEoCgjejg-WTqrXU0TffFQ+7TQA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[oracle.com,gentwo.org,google.com,linux.dev,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -4.30
 
-Hi Hans,
-Thanks for the review.
+On 8/19/25 06:19, Suren Baghdasaryan wrote:
+>> @@ -5624,20 +6561,29 @@ static int init_kmem_cache_nodes(struct kmem_cache *s)
+>>
+>>         for_each_node_mask(node, slab_nodes) {
+>>                 struct kmem_cache_node *n;
+>> +               struct node_barn *barn = NULL;
+>>
+>>                 if (slab_state == DOWN) {
+>>                         early_kmem_cache_node_alloc(node);
+>>                         continue;
+>>                 }
+>> +
+>> +               if (s->cpu_sheaves) {
+>> +                       barn = kmalloc_node(sizeof(*barn), GFP_KERNEL, node);
+>> +
+>> +                       if (!barn)
+>> +                               return 0;
+>> +               }
+>> +
+>>                 n = kmem_cache_alloc_node(kmem_cache_node,
+>>                                                 GFP_KERNEL, node);
+>> -
+>>                 if (!n) {
+>> -                       free_kmem_cache_nodes(s);
+> 
+> Why do you skip free_kmem_cache_nodes() here?
 
-On 25/08/25 20:04, Hans Verkuil wrote:
-> Hi Yemike,
-> 
-> On 16/07/2025 13:19, Yemike Abhilash Chandra wrote:
->> This patch series add support for the TI VIP video capture engine.
->> VIP stands for Video Input Port, it can be found on devices such as
->> DRA7xx and provides a parallel interface to a video source such as
->> a sensor or TV decoder.
->>
->> Each VIP can support two inputs (slices) and a SoC can be configured
->> with a variable number of VIP's. Each slice can support two ports
->> each connected to its own sub-device.
->>
->> The first patch in this series updates the outdated MAINTAINERS entry
->> for the TI VPE and CAL drivers. The subsequent three patches introduce
->> support for the TI VIP (Video Input Port) driver.
-> 
-> I'll pick up the MAINTAINERS patch, but the others need more work, so
-> v3 is needed for that.
-> 
+It's not necessary as the caller will perform __kmem_cache_release() which
+calls free_kmem_cache_nodes()
 
-Thanks, I am working on v3. I plan to incorporate the additional
-feedback you provided on the driver before submitting the v3.
-
->>
->> Link for v1: https://lore.kernel.org/all/20200522225412.29440-1-bparrot@ti.com/
->> The v1 patch series was posted in the year 2020. This v2 series resumes the
->> effort to upstream VIP support by addressing all previous review comments
->>
->> Changelog:
->> Changes in v2:
->> - Remove array and just use hsync: true in bindings (Patch 3/5)
->> - Remove array and use enum for bus width in bindings (Patch 3/5)
->> - Use pattern properties since properties across ports are same (Patch 3/5)
->> - Remove vip_dbg, vip_info, vip_err aliases and just use v4l2_dbg, v4l2_info
->>    and v4l2_err instead (Patch 4/5)
->> - Remove color space information from vip_formats struct (Patch 4/5)
->> - Use g_std instead of g_std_output (Patch 4/5)
->> - Do not touch pix.priv (Patch 4/5)
->> - Remove all comments with just register values (Patch 4/5)
->> - Remove support for vidioc_default ioctl (Patch 4/5)
->> - In case of any error while streaming, push all pending buffers to vb2 (Patch 4/5)
->> - Address some minor comments made by Hans throughout the driver (Patch 4/5)
->> - Update copyright year at various places
->>
->> v4l2-compliance output: https://gist.github.com/Yemike-Abhilash-Chandra/b0791cb465fadc11d4c995197cb22f29
-> 
-> Also run v4l2-compliance with the -s option to check compliance while streaming.
-> 
-
-Thanks for pointing this out. Will run as part of v3.
-
-Thanks and Regards,
-Yemike Abhilash Chandra
-
-> Regards,
-> 
-> 	Hans
-> 
->>
->> v4l2-compliance cropping and composing tests are failing likely
->> due to OV10635 sensor supporting several discrete frame sizes,
->> fail: v4l2-test-formats.cpp(1560): node->frmsizes_count[pixfmt] > 1
->>
->> Test logs: https://gist.github.com/Yemike-Abhilash-Chandra/98504ab56416aef38b851036aef5eeb1
->>
->> Dale Farnsworth (2):
->>    dt-bindings: media: ti: vpe: Add bindings for Video Input Port
->>    media: ti-vpe: Add the VIP driver
->>
->> Yemike Abhilash Chandra (2):
->>    MAINTAINERS: Update maintainers of TI VPE and CAL
->>    Revert "media: platform: ti: Remove unused vpdma_update_dma_addr"
->>
->>   .../devicetree/bindings/media/ti,vip.yaml     |  211 +
->>   MAINTAINERS                                   |    3 +-
->>   drivers/media/platform/ti/Kconfig             |   13 +
->>   drivers/media/platform/ti/vpe/Makefile        |    2 +
->>   drivers/media/platform/ti/vpe/vip.c           | 3824 +++++++++++++++++
->>   drivers/media/platform/ti/vpe/vip.h           |  719 ++++
->>   drivers/media/platform/ti/vpe/vpdma.c         |   32 +
->>   drivers/media/platform/ti/vpe/vpdma.h         |    3 +
->>   8 files changed, 4806 insertions(+), 1 deletion(-)
->>   create mode 100644 Documentation/devicetree/bindings/media/ti,vip.yaml
->>   create mode 100644 drivers/media/platform/ti/vpe/vip.c
->>   create mode 100644 drivers/media/platform/ti/vpe/vip.h
->>
-> 
-
+I have incorporated your other suggestions, thanks!
 
