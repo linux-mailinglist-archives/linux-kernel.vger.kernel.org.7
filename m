@@ -1,163 +1,103 @@
-Return-Path: <linux-kernel+bounces-787260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C4A7B373AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 22:13:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62683B373B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 22:16:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 637AE2A011F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 20:13:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C4A51BA3D93
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 20:16:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF43B36CC88;
-	Tue, 26 Aug 2025 20:13:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57CB2F548A;
+	Tue, 26 Aug 2025 20:16:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="kHX46aF+"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QpkkL+vP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7932F617B;
-	Tue, 26 Aug 2025 20:13:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164C81E1E1C;
+	Tue, 26 Aug 2025 20:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756239216; cv=none; b=cQF9ip94JUGzgPAAIbjfoEH6Ku/pM/p1IkCJwyhT/g0jYJkJpfjg1op7zwnbHZ1ZzbWW/5N74nnqrijjCwTnvGNjBTGM7Wm7le6AKKicQ9VOOHIU85w4+0f2lamVaPThQXyM9C0FU09hiajhAyTJAytrBqU48y5fDyVE16X+K3E=
+	t=1756239383; cv=none; b=Up/CjsPZupdV5016t7oHgl9e+E6QNBKs4QArnpZ3DzJOWOKxRbBczVq//2HRvcMYQYDsQZ2JvjriQ7OosJUqr0LHSojD3sn0dx5whcXyTolvH/7Fc3MdPcsNlNOyiXrxQUlcI4l/vEXtgk7pff7y78f1QFWK4aesx9W+o8t511w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756239216; c=relaxed/simple;
-	bh=747eHocCfsCXBtIKywwzJa65EUHobTy67jD+hkex9J0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FP/yRXNjAjC0tc6Uhfe+8SFatzZhilczx7iIpbw/RBR1RpmIk1/Pe9QU5WHOO1tD4xZ8/gKdqT6zJHu9oiF4+zO4PY2LyuTJ8jPCiCw8KUfilhZvOLRQVZlm0Uzj42BtN4zWjxJ3RuRFRVU1QpoTNV4aTpoawdFXES0PQfQp8uM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=kHX46aF+; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=WbaCLDq3PXrvsNvohX1K/gq1TVWTxamq6WGTMZzTmBk=; b=kHX46aF+2u+WkQVfm9d0FdJj+h
-	G3gMrDcglY6O6Fb3C1uWOaSeZNIUWDqjW+9SbzwtkKF+pz2osuAD3SjaNcqDAzagPi2TBNDX6X+Oh
-	VidiUBIRZhxuNABpSrXcJBvtEb8JjytWjzfB5nIrqay3biwH4L+JI+3ud+LIWTuRmoCI7L6uXwr4l
-	mczfkDwaK/jssXbpo7O36VljUcCmRZxsZ8/lChl51S21EByti969HcAIPEjS7BEibmsfrg021IyKB
-	JCsBb8RytB5EU4NbGHQ8xLGF6U2sVauXwmUyo/QN20S27XWO64L1u5kkRZgDB8i9PDOVxHYpZ11vn
-	JfvJESFQ==;
-Received: from [187.57.78.222] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1ur02s-0025Nu-Dq; Tue, 26 Aug 2025 22:13:30 +0200
-Message-ID: <a29eec78-1e40-4ade-8b23-b44c3f72bee2@igalia.com>
-Date: Tue, 26 Aug 2025 17:13:26 -0300
+	s=arc-20240116; t=1756239383; c=relaxed/simple;
+	bh=oVlsbr0Om4iJks3GxT0/vdOhBTnl82lkeLSHLSp9gLY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fPGKYec61tsyieI1AXPYbEEZTZM+JaEIvajMOBoiKglcv/1TroGEXbxGXdKGGX+v/y5XJ/ph+w58dBV94FatyA6+niOfV/TmBEmxOt0urIcaB4RmkgRrVxlnVzpQiMnE3HlWT4a28oJ8er0aDW/J/IcL8N6gfqKkLocOi35ZrAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QpkkL+vP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A70E7C4CEF1;
+	Tue, 26 Aug 2025 20:16:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756239382;
+	bh=oVlsbr0Om4iJks3GxT0/vdOhBTnl82lkeLSHLSp9gLY=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=QpkkL+vPRt6pHKcbP9uQQdLTsaJCV5XmSd58KL0cM/7EXXD5OsOCkOdcv/JaI7LRv
+	 4x0LphWz71fZX1HjqGPgqPcpKqX3JzNdlSdckmjs8cQRubw5KBpCJCsvpvxdjSiaaC
+	 ZJCtxOPrZOqTtP8XTfOZEOu+3vrTZd5YqzvWCGG7KIOms3MKPvO9G3/af4kxXz7PDR
+	 l6GWrqDmuPZGS+I8QXTCmMvF72m0bpapz24Q6rtBa9JaVoXGKB/XD0FJ2+ijbHuELE
+	 ONTlkZLV6BkD+rTFNRXBnLTIg6fdIIKQzOk6IqsGhwGrkRu2bAQ+4Li46kBDUHENBI
+	 tW4Wm6Xhf9U0Q==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92D46CA0FF0;
+	Tue, 26 Aug 2025 20:16:22 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Subject: [PATCH 0/2] cpufreq: tegra186: Fix initialization and scaling
+Date: Tue, 26 Aug 2025 15:15:58 -0500
+Message-Id: <20250826-tegra186-cpufreq-fixes-v1-0-97f98d3e0adb@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 6/9] ovl: Set case-insensitive dentry operations for
- ovl sb
-To: Amir Goldstein <amir73il@gmail.com>,
- Gabriel Krisman Bertazi <gabriel@krisman.be>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>,
- linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- kernel-dev@igalia.com
-References: <20250822-tonyk-overlayfs-v6-0-8b6e9e604fa2@igalia.com>
- <20250822-tonyk-overlayfs-v6-6-8b6e9e604fa2@igalia.com>
- <87wm6r4pbf.fsf@mailhost.krisman.be>
- <CAOQ4uxjBcwhOfbR2cCmQgQFMLDwoxfiTMMBHtGejm=m5mtz-xg@mail.gmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <CAOQ4uxjBcwhOfbR2cCmQgQFMLDwoxfiTMMBHtGejm=m5mtz-xg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAP4VrmgC/x3LSwqAMAwA0atI1gZswVq8irioNdFs/KQqgnh3i
+ 8vHMA8kUqEEbfGA0iVJ1iXDlAXEOSwToYzZYCtbV946PGjSYLzDuJ2stCPLTQkbHpi9ic4HC3n
+ elP6Q365/3w/l+hYNaAAAAA==
+X-Change-ID: 20250826-tegra186-cpufreq-fixes-7fbff81c68a2
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Aaron Kling <luceoscutum@gmail.com>, 
+ Sumit Gupta <sumitg@nvidia.com>
+Cc: Thierry Reding <treding@nvidia.com>, linux-pm@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Aaron Kling <webgeek1234@gmail.com>, 
+ Mikko Perttunen <mperttunen@nvidia.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756239382; l=642;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=oVlsbr0Om4iJks3GxT0/vdOhBTnl82lkeLSHLSp9gLY=;
+ b=d0y1cj3ZkD/6aUt8GB3zzQTUIqnLEBNCe3MPJ4VbUdTLeQrc51CV9spvqZVqsh390XQB1Chh5
+ CEiqpLaufuZBR41VwhRHMCw2W3CqPKrdcp4Cl0ushvieYvHN/Bj0EE5
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
+This series fixes an issue with shared policy per cluster not scaling
+all cpus and with some cores being initialized by the subsystem.
 
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+Aaron Kling (2):
+      cpufreq: tegra186: Set target frequency for all cpus in policy
+      cpufreq: tegra186: Initialize all cores to base frequencies
 
-Em 25/08/2025 12:34, Amir Goldstein escreveu:
-> On Mon, Aug 25, 2025 at 1:24 PM Gabriel Krisman Bertazi
-> <gabriel@krisman.be> wrote:
->>
->> André Almeida <andrealmeid@igalia.com> writes:
->>
->>> For filesystems with encoding (i.e. with case-insensitive support), set
->>> the dentry operations for the super block as ovl_dentry_ci_operations.
->>>
->>> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
->>> Signed-off-by: André Almeida <andrealmeid@igalia.com>
->>> ---
->>> Changes in v6:
->>> - Fix kernel bot warning: unused variable 'ofs'
->>> ---
->>>   fs/overlayfs/super.c | 25 +++++++++++++++++++++++++
->>>   1 file changed, 25 insertions(+)
->>>
->>> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
->>> index b1dbd3c79961094d00c7f99cc622e515d544d22f..8db4e55d5027cb975fec9b92251f62fe5924af4f 100644
->>> --- a/fs/overlayfs/super.c
->>> +++ b/fs/overlayfs/super.c
->>> @@ -161,6 +161,16 @@ static const struct dentry_operations ovl_dentry_operations = {
->>>        .d_weak_revalidate = ovl_dentry_weak_revalidate,
->>>   };
->>>
->>> +#if IS_ENABLED(CONFIG_UNICODE)
->>> +static const struct dentry_operations ovl_dentry_ci_operations = {
->>> +     .d_real = ovl_d_real,
->>> +     .d_revalidate = ovl_dentry_revalidate,
->>> +     .d_weak_revalidate = ovl_dentry_weak_revalidate,
->>> +     .d_hash = generic_ci_d_hash,
->>> +     .d_compare = generic_ci_d_compare,
->>> +};
->>> +#endif
->>> +
->>>   static struct kmem_cache *ovl_inode_cachep;
->>>
->>>   static struct inode *ovl_alloc_inode(struct super_block *sb)
->>> @@ -1332,6 +1342,19 @@ static struct dentry *ovl_get_root(struct super_block *sb,
->>>        return root;
->>>   }
->>>
->>> +static void ovl_set_d_op(struct super_block *sb)
->>> +{
->>> +#if IS_ENABLED(CONFIG_UNICODE)
->>> +     struct ovl_fs *ofs = sb->s_fs_info;
->>> +
->>> +     if (ofs->casefold) {
->>> +             set_default_d_op(sb, &ovl_dentry_ci_operations);
->>> +             return;
->>> +     }
->>> +#endif
->>> +     set_default_d_op(sb, &ovl_dentry_operations);
->>> +}
->>> +
->>>   int ovl_fill_super(struct super_block *sb, struct fs_context *fc)
->>>   {
->>>        struct ovl_fs *ofs = sb->s_fs_info;
->>> @@ -1443,6 +1466,8 @@ int ovl_fill_super(struct super_block *sb, struct fs_context *fc)
->>>        if (IS_ERR(oe))
->>>                goto out_err;
->>>
->>> +     ovl_set_d_op(sb);
->>> +
->>
->> Absolutely minor, but fill_super is now calling
->> set_default_d_op(sb, &ovl_dentry_operations) twice, once here and once
->> at the beginning of the function.  You can remove the original call.
-> 
-> Good catch!
-> 
-> That was not my intention at all.
-> I asked to replace the set_default_d_op() call with ovl_set_d_op()
-> but I missed that in the review.
-> 
-> Will fix it in my tree.
-> 
+ drivers/cpufreq/tegra186-cpufreq.c | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
+---
+base-commit: 1b237f190eb3d36f52dffe07a40b5eb210280e00
+change-id: 20250826-tegra186-cpufreq-fixes-7fbff81c68a2
 
-Ops, my bad. Thank you for the fix :)
+Best regards,
+-- 
+Aaron Kling <webgeek1234@gmail.com>
 
-> Thanks!
-> Amir.
 
 
