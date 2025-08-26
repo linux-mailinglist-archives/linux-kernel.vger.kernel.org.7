@@ -1,232 +1,208 @@
-Return-Path: <linux-kernel+bounces-786261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DD6BB35761
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:40:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E952B3579E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:51:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36B783A7D32
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:40:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE755686D8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 982452FC881;
-	Tue, 26 Aug 2025 08:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="k6Q/yNoJ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DC5288C1E
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 08:40:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 248F82FF649;
+	Tue, 26 Aug 2025 08:50:42 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85863D984;
+	Tue, 26 Aug 2025 08:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756197608; cv=none; b=ueDm4d9HzMJsOLdSPCEY8wrPwYNqZ7vKz6Ni1f7Ynw61hOFuiGSVV5zle0xr8BTukgqsxF+OB7b+Ydjswcq0WRY6b+Y/Yuw83vMJC05/mT5la7C2TOErSJJXW8UkHnj21iMYPFFvAoRhsKY3TvQ159cZB9o9esF2zEOvvSTLwHY=
+	t=1756198241; cv=none; b=Oahg9/wf7lNuYa7Vg/Vmw/8NpVQ25pp3i5n9yfhy6sZ2l1PS+3VO9YfrlJY1RETsnt0LmckLLf3qtfZZt/X4HJjgCUtHSM7LsdZdYtofxFkMuP8tewCn/GFQr1sx9sSfuE2qkpQIgq6ElN2ADbewvlUHE2vqN9mzrZchu2t2koo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756197608; c=relaxed/simple;
-	bh=l0kbiIGF1pDSwWfvhUdw7e1i+RQ9T4G2DNY6m3SB5ig=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ch+t6ToPEeYvGgwDL04Eit/sPyCvTGdPJ9mjFzuFTWoJ6qQ6yjoKWru6LSSvtKLn4qAmsB75632zxw7MxMw8h/eTZAeAWPhawD8jbBeyAcKlIA5L2ER5vRyDMGVOLQ8IDpMuV3x1IJWi4PKWKehSpR0WqnGPgth+pf1RluaKfG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=k6Q/yNoJ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57PMjctv019674
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 08:40:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	9ZzBwPQpsFm5dOpqRIWUvHHP01zFw0ebgHPUha5E/DY=; b=k6Q/yNoJIikDIO/9
-	5ZhlsK16bE9KEph72O3PEOvWqU0nt4xcUl4N+XIYuJUfaJy3CZboulsq8Pk98i/N
-	8OZRUfbpIDYQVlGDDhHTtVyZFjCodvmOOgYp/BvSOMzAACIZVWx4fkrT77WYqkQd
-	vZ6EJ2kpOIl/mseEMvI2Q4E4NLz1Qop0y0LMFTwHcqO9ThnjUxQaH1bluaYE1NXh
-	cqG7PGa4bz0sDPpOxXcSX6a2DyUda6lFBsQeh5DQ408FU+2MKP9Aon8roI3m6k6a
-	1zim5/VsW5m8+3Akx+V0Pj5juxCzvv35WUn7YB9MroT2U/vp0xGaiD4pH5iWahJc
-	we4p9g==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5y5fx8j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 08:40:06 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-246bcd0a112so17206925ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 01:40:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756197604; x=1756802404;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9ZzBwPQpsFm5dOpqRIWUvHHP01zFw0ebgHPUha5E/DY=;
-        b=p6Z0PGV/W1J0P+NXAEO+W8sg5N0DwI92i+uyArSpC9fA/6AjQxpBmT4Nn0d5G/pRzj
-         lqsiFERu/T5JId+pN2eQxiBIIaHv29i7pdCTebH9gMmnrHh+wvgXXIxheMYIhjN2j0gS
-         wzmZxbjUFzyXPVpluLIpWEPkaU0mWsVLM0DaqrozO6KMPZmfrPTEaCAGq8FHxqJmy/Jb
-         eRZxEPm8aYGtr1rgPWwUplBBIr1YNpbbtN2YWP/BtFBQECANnBxZBo0l1AdUMJ84u0N2
-         ILc3GXvhwtB0LG/8LQx+SF8fL38SLxMwZqG4umbgqMXp2EtL+NSE7UeV6UtOjVBBZ9L0
-         4XoA==
-X-Forwarded-Encrypted: i=1; AJvYcCXjWKK5tAvWu/17hMl2gYtRpXVqs8WGbBjMgNIIVgcFx2Y/zubRb7/IuhCQGtp54GGxfBA2YRtxVPuiFpE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx99E2pIpD4vJ8i6iVPJ+VW1DIE0/cjioVAsVEAEz1T6PgiFggq
-	nwMu3Gv4I/LA1mONij2jrVladEb0Ut52MFDOEMfX8/jZnQyzMGEdNxq6/smp5wsjF3tqH/sWiuX
-	AY2qvzWoIvbM0cCZA0BrR3wZK64EGv/fDTANbfzQNotl7cwmwhNnAAwWHYhIJNAo1JFE1QdrsSm
-	k=
-X-Gm-Gg: ASbGncvJnGN3n5z4aZYXDmXqbPbVGjO5Y+jFBeRcs7z6eiaUObtUtUyqkwa65RFLHQk
-	rz/+khPII+Q8FQmEYmeuOh51c6m0jbDWm+iWj9itnsq68BDC5HX3vhOGC2Lk36Mrxp4bO6lZC+R
-	W+vEl0BsOW3yuXayNgICnoCi+YJzELE50Q8UJxMApKHAxcMBrWuSKGOdNC/1ddSg8rd3TExq1ZK
-	QLzbW+nEsFm1eh6oZGE7JF3blSp28X2+PADbaw1WbJxNAX4kJCZGEonPLsQ0WeEooGK0paoAWzg
-	r7FrN97wWxu4WamCKWJMYptBYSaZB36L4JS5zwzXVMiseDBYoYobKUUyy8JIXylsOJ60PQB72cf
-	NipIR0xLp
-X-Received: by 2002:a17:903:37c4:b0:246:76da:80ea with SMTP id d9443c01a7336-24676da82b5mr136669445ad.30.1756197604126;
-        Tue, 26 Aug 2025 01:40:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFps5spYMgMSBOykW3IsGvhVvZ5qGTh7lw6hM84N5G9hXec38uZg+X3bGMa48Hor3TRcNwCfw==
-X-Received: by 2002:a17:903:37c4:b0:246:76da:80ea with SMTP id d9443c01a7336-24676da82b5mr136669095ad.30.1756197603599;
-        Tue, 26 Aug 2025 01:40:03 -0700 (PDT)
-Received: from [10.151.37.217] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-246688645e1sm89184635ad.79.2025.08.26.01.40.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Aug 2025 01:40:03 -0700 (PDT)
-Message-ID: <8753d857-5d72-493b-8c39-8caa84e0ba16@oss.qualcomm.com>
-Date: Tue, 26 Aug 2025 14:09:58 +0530
+	s=arc-20240116; t=1756198241; c=relaxed/simple;
+	bh=5s3yYeYRZ3QkohcSQgNTeYUyQ5TvPkMMh0AM/N4girU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=pcF4aA3a+A9wDkQLtaOH9xbYtxE5C1GXI0yA8PELjRNzy7h6zxx5YGgm8MYtDqiEt6UmjpFFaywivpmOgjKpOQHoi68q3GZ+OorTIW6IVV1Wunba1vPQlSRg/8JCNmdDrpdJ3CE5UgnXHWN9o1IkkTMlxCOpnkSEFX98PFcgUtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cB1N06r90z9sSZ;
+	Tue, 26 Aug 2025 10:41:04 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 95Os1xD7Erc8; Tue, 26 Aug 2025 10:41:04 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cB1N05t26z9sSY;
+	Tue, 26 Aug 2025 10:41:04 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id B24528B764;
+	Tue, 26 Aug 2025 10:41:04 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id 5Sr4FVgPNX2m; Tue, 26 Aug 2025 10:41:04 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 1576D8B763;
+	Tue, 26 Aug 2025 10:41:04 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Qiang Zhao <qiang.zhao@nxp.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH v4] soc: fsl: qe: Change GPIO driver to a proper platform driver
+Date: Tue, 26 Aug 2025 10:40:33 +0200
+Message-ID: <2df36ab4e1ec2af1d383281ed5005a09d28f40e2.1756197491.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <e05a0959d794016bde79e48e25ff71253cf51aae.1756104334.git.christophe.leroy@csgroup.eu>
+References: <e05a0959d794016bde79e48e25ff71253cf51aae.1756104334.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] phy: qcom-qmp-usb: fix NULL pointer dereference in PM
- callbacks
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Poovendhan Selvaraj <quic_poovendh@quicinc.com>,
-        stable@vger.kernel.org
-References: <20250825-qmp-null-deref-on-pm-v1-0-bbd3ca330849@oss.qualcomm.com>
- <20250825-qmp-null-deref-on-pm-v1-1-bbd3ca330849@oss.qualcomm.com>
- <sxqgnmj4bawj7n6kan7tiutb5ynhxz6cgbtpbz2xx4ixodtdw6@q2ftbnpjouvb>
-Content-Language: en-US
-From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-In-Reply-To: <sxqgnmj4bawj7n6kan7tiutb5ynhxz6cgbtpbz2xx4ixodtdw6@q2ftbnpjouvb>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756197653; l=3483; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=5s3yYeYRZ3QkohcSQgNTeYUyQ5TvPkMMh0AM/N4girU=; b=I/hgGETiK8FWJI3XxVV6HRRuu9Mq+Y4KxbL8S7c07bgSnbYBq9ioSj3ZZS9Z+O/kSPSSY1Pci nxWqwwiIed3BLFJhGbGLoSuUgPAxoRcWC4vibP61MV8LRTnJhqLSaxk
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMyBTYWx0ZWRfX5Uvw61zqQhhP
- 2m3mQTJ26TuaMVhpt0rJO1BMnre9D6wFhMBoGa+Er1RxRK+EuyTd08zbmc2R87cujs08NFdkSC+
- jtAMDJovJYrF98OJj6Xz2TLJXuMzRUwydyg0qWzNV5ctDDe5yhd/u88zIu5DvX+qpOXW3ReaYR+
- fXsYq0tkQRzSFbgVImRAxPSSCaNYwIWqbibDyi2kHpWmTIgDdoCzQtPAyz8hw7/4X7x/538PNwM
- QWGzsch6gVhgA5AF8klCq/CQ7CcpE1OLlSPhmPEo7YgGEeu1IDPxpPDs24JTpSv54L4D/eYksu6
- putM9yysOdZiEuyUY3T55zoF/UWwFc/PwbKIbecYF5j0YBEVxzpi6K57tgzsQ8QLPl+Cw7Vsb7g
- gDZMg9EG
-X-Authority-Analysis: v=2.4 cv=Lco86ifi c=1 sm=1 tr=0 ts=68ad72e6 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=VwQbUJbxAAAA:8
- a=EUspDBNiAAAA:8 a=5K2DVmaXFLzhwRWEU4gA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=uG9DUKGECoFWVXl0Dc02:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: Gss_dQPiH3zNRxUn7DZQU6mW0jEdk5f1
-X-Proofpoint-ORIG-GUID: Gss_dQPiH3zNRxUn7DZQU6mW0jEdk5f1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-26_02,2025-08-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 adultscore=0 clxscore=1015 malwarescore=0 spamscore=0
- suspectscore=0 phishscore=0 priorityscore=1501 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230033
 
+In order to be able to add interrupts to the GPIOs, first change the
+QE GPIO driver to the proper platform driver in order to allow
+initialisation to be done in the right order, otherwise the GPIOs
+get added before the interrupts are registered.
 
-On 8/26/2025 8:20 AM, Bjorn Andersson wrote:
-> On Mon, Aug 25, 2025 at 05:22:02PM +0530, Kathiravan Thirumoorthy wrote:
->> From: Poovendhan Selvaraj <quic_poovendh@quicinc.com>
->>
->> The pm ops are enabled before qmp phy create which causes
->> a NULL pointer dereference when accessing qmp->phy->init_count
->> in the qmp_usb_runtime_suspend.
->>
-> How does that happen? Do we end up in the error path inbetween the
-> devm_pm_runtime_enable()? Or does it happen by some other means?
+Removing linux/of.h and linux/property.h which are unused.
 
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+v4: Removed unused headers
+---
+ drivers/soc/fsl/qe/gpio.c | 88 +++++++++++++++++++++------------------
+ 1 file changed, 47 insertions(+), 41 deletions(-)
 
-qmp_usb_probe() is scheduled out per the below stack (collected from the 
-RAM dump),
+diff --git a/drivers/soc/fsl/qe/gpio.c b/drivers/soc/fsl/qe/gpio.c
+index 8df1e8fa86a5..fece644ce914 100644
+--- a/drivers/soc/fsl/qe/gpio.c
++++ b/drivers/soc/fsl/qe/gpio.c
+@@ -12,13 +12,12 @@
+ #include <linux/spinlock.h>
+ #include <linux/err.h>
+ #include <linux/io.h>
+-#include <linux/of.h>
+ #include <linux/gpio/legacy-of-mm-gpiochip.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/gpio/driver.h>
+ #include <linux/slab.h>
+ #include <linux/export.h>
+-#include <linux/property.h>
++#include <linux/platform_device.h>
+ 
+ #include <soc/fsl/qe/qe.h>
+ 
+@@ -295,45 +294,52 @@ void qe_pin_set_gpio(struct qe_pin *qe_pin)
+ }
+ EXPORT_SYMBOL(qe_pin_set_gpio);
+ 
+-static int __init qe_add_gpiochips(void)
++static int qe_gpio_probe(struct platform_device *ofdev)
+ {
+-	struct device_node *np;
+-
+-	for_each_compatible_node(np, NULL, "fsl,mpc8323-qe-pario-bank") {
+-		int ret;
+-		struct qe_gpio_chip *qe_gc;
+-		struct of_mm_gpio_chip *mm_gc;
+-		struct gpio_chip *gc;
+-
+-		qe_gc = kzalloc(sizeof(*qe_gc), GFP_KERNEL);
+-		if (!qe_gc) {
+-			ret = -ENOMEM;
+-			goto err;
+-		}
++	struct device *dev = &ofdev->dev;
++	struct device_node *np = dev->of_node;
++	struct qe_gpio_chip *qe_gc;
++	struct of_mm_gpio_chip *mm_gc;
++	struct gpio_chip *gc;
+ 
+-		spin_lock_init(&qe_gc->lock);
+-
+-		mm_gc = &qe_gc->mm_gc;
+-		gc = &mm_gc->gc;
+-
+-		mm_gc->save_regs = qe_gpio_save_regs;
+-		gc->ngpio = QE_PIO_PINS;
+-		gc->direction_input = qe_gpio_dir_in;
+-		gc->direction_output = qe_gpio_dir_out;
+-		gc->get = qe_gpio_get;
+-		gc->set = qe_gpio_set;
+-		gc->set_multiple = qe_gpio_set_multiple;
+-
+-		ret = of_mm_gpiochip_add_data(np, mm_gc, qe_gc);
+-		if (ret)
+-			goto err;
+-		continue;
+-err:
+-		pr_err("%pOF: registration failed with status %d\n",
+-		       np, ret);
+-		kfree(qe_gc);
+-		/* try others anyway */
+-	}
+-	return 0;
++	qe_gc = devm_kzalloc(dev, sizeof(*qe_gc), GFP_KERNEL);
++	if (!qe_gc)
++		return -ENOMEM;
++
++	spin_lock_init(&qe_gc->lock);
++
++	mm_gc = &qe_gc->mm_gc;
++	gc = &mm_gc->gc;
++
++	mm_gc->save_regs = qe_gpio_save_regs;
++	gc->ngpio = QE_PIO_PINS;
++	gc->direction_input = qe_gpio_dir_in;
++	gc->direction_output = qe_gpio_dir_out;
++	gc->get = qe_gpio_get;
++	gc->set = qe_gpio_set;
++	gc->set_multiple = qe_gpio_set_multiple;
++
++	return of_mm_gpiochip_add_data(np, mm_gc, qe_gc);
++}
++
++static const struct of_device_id qe_gpio_match[] = {
++	{
++		.compatible = "fsl,mpc8323-qe-pario-bank",
++	},
++	{},
++};
++MODULE_DEVICE_TABLE(of, qe_gpio_match);
++
++static struct platform_driver qe_gpio_driver = {
++	.probe		= qe_gpio_probe,
++	.driver		= {
++		.name	= "qe-gpio",
++		.of_match_table	= qe_gpio_match,
++	},
++};
++
++static int __init qe_gpio_init(void)
++{
++	return platform_driver_register(&qe_gpio_driver);
+ }
+-arch_initcall(qe_add_gpiochips);
++arch_initcall(qe_gpio_init);
+-- 
+2.49.0
 
-
-Stack trace of the kmodloader process:
-     [<0x408def88>] __schedule+0x348/0x55c
-     [<0x408df1f8>] schedule+0x5c/0x98
-     [<0x4052c318>] rpm_resume+0x150/0x404
-     [<0x4052d4e4>] pm_runtime_forbid+0x54/0x60
-     [<0x629c47f0>] qmp_usb_probe+0x3c4/0x5d0 [phy_qcom_qmp_usb.ko]
-
- From the above snippet, we can see that the phy-create has not happened 
-yet as the probe is still in pm_runtime_forbid() and qmp->phy is NULL. 
-Meanwhile, qmp_usb_runtime_suspend() is called, causing the NULL pointer 
-de-reference issue. Since the issue is not easily reproducible, we are 
-not able to find out who/why the suspend was called.
-
-
->
-> This would be quite useful information for others to know if they hit
-> the same or just a similar problem.
->
->> So if qmp->phy is NULL, bail out early in suspend / resume callbacks
->> to avoid the NULL pointer dereference in qmp_usb_runtime_suspend and
->> qmp_usb_runtime_resume.
->>
->> Below is the stacktrace for reference:
->>
->> [<818381a0>] (qmp_usb_runtime_suspend [phy_qcom_qmp_usb]) from [<4051d1d8>] (__rpm_callback+0x3c/0x110)
->> [<4051d1d8>] (__rpm_callback) from [<4051d2fc>] (rpm_callback+0x50/0x54)
->> [<4051d2fc>] (rpm_callback) from [<4051d940>] (rpm_suspend+0x23c/0x428)
->> [<4051d940>] (rpm_suspend) from [<4051e808>] (pm_runtime_work+0x74/0x8c)
->> [<4051e808>] (pm_runtime_work) from [<401311f4>] (process_scheduled_works+0x1d0/0x2c8)
->> [<401311f4>] (process_scheduled_works) from [<40131d48>] (worker_thread+0x260/0x2e4)
->> [<40131d48>] (worker_thread) from [<40138970>] (kthread+0x118/0x12c)
->> [<40138970>] (kthread) from [<4010013c>] (ret_from_fork+0x14/0x38)
->>
->> Cc: stable@vger.kernel.org # v6.0
->> Fixes: 65753f38f530 ("phy: qcom-qmp-usb: drop multi-PHY support")
-> Has this been a reproducible issue for last 3 years? I think the fixes
-> makes sense in that it introduced the indirection, but when did the
-> issue actually show up?
-
-
-After migrating the QSDK Linux from 5.4 to 6.6, we are started seeing 
-this issue randomly. We didn't had a chance to test in the other kernel 
-versions.
-
-
->
-> Regards,
-> Bjorn
->
->> Signed-off-by: Poovendhan Selvaraj <quic_poovendh@quicinc.com>
->> Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
->> ---
->>   drivers/phy/qualcomm/phy-qcom-qmp-usb.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-usb.c b/drivers/phy/qualcomm/phy-qcom-qmp-usb.c
->> index ed646a7e705ba3259708775ed5fedbbbada13735..cd04e8f22a0fe81b086b308d02713222aa95cae3 100644
->> --- a/drivers/phy/qualcomm/phy-qcom-qmp-usb.c
->> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-usb.c
->> @@ -1940,7 +1940,7 @@ static int __maybe_unused qmp_usb_runtime_suspend(struct device *dev)
->>   
->>   	dev_vdbg(dev, "Suspending QMP phy, mode:%d\n", qmp->mode);
->>   
->> -	if (!qmp->phy->init_count) {
->> +	if (!qmp->phy || !qmp->phy->init_count) {
->>   		dev_vdbg(dev, "PHY not initialized, bailing out\n");
->>   		return 0;
->>   	}
->> @@ -1960,7 +1960,7 @@ static int __maybe_unused qmp_usb_runtime_resume(struct device *dev)
->>   
->>   	dev_vdbg(dev, "Resuming QMP phy, mode:%d\n", qmp->mode);
->>   
->> -	if (!qmp->phy->init_count) {
->> +	if (!qmp->phy || !qmp->phy->init_count) {
->>   		dev_vdbg(dev, "PHY not initialized, bailing out\n");
->>   		return 0;
->>   	}
->>
->> -- 
->> 2.34.1
->>
 
