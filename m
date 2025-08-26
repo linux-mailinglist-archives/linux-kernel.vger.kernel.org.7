@@ -1,365 +1,225 @@
-Return-Path: <linux-kernel+bounces-787146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26A9CB371F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 20:10:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 637B7B371F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 20:10:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D62203A2E58
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:10:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1909B3B2982
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:10:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E276534F48B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC5B134F464;
 	Tue, 26 Aug 2025 18:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="tQL87x0K"
-Received: from CAN01-YQB-obe.outbound.protection.outlook.com (mail-yqbcan01on2135.outbound.protection.outlook.com [40.107.116.135])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="yLeAQO3T"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2051.outbound.protection.outlook.com [40.107.96.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0EC19DF66
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 18:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.116.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5979886342
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 18:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.51
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756231832; cv=fail; b=YQcYE86i4I2OyJnycbKxXIJZrkpWtc4KtbxwCfIUBnDDWDGz53WNgujBwa0Cq71GLvzARutMw2Pw5E6iGzK/gVJBxFO7Hsh5U+cYjitZe9RhIf67f8E1VxaKZ1gy8TyHzF9c3+XSp+VxzyIfbEaO49kDsAJak+EPnIGClu+aVeg=
+	t=1756231832; cv=fail; b=rNNOWA2s7tMAOMbiVI5D3FnT0mLn5/oh/E3F6kIyHwF2dgvxaymhu1XbkAeDO/LBob+4dgI86Sa4+RZC9kceGfn0VvFewyH+9+aU7vR/Ar36Ng9S4tgW7gba2LQi2q2x0QvaS5AmNcaPYSSqWgOpC1Moy9ip2LIZwxeaMuRRTwY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756231832; c=relaxed/simple;
-	bh=m1/bvlSARPjndXWDLFpVlf3ByY7P5D4t86GPzZ7pTzY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=S6kaEUF58p4bfUnzKmPSo3A3wc7ANU5l0p3CMM8EKNd07/h57XjHbAm8ztoJ6ieY356t04/gOn67o4+puZM+d8aOTMxwrwdZrGRqcYUlBA4A1vyPMZ/O7afnfSkzLV9wQRdlQsl1cScpQaPzIJKPRKj7ij0ghvGRsax4tDrpjgQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=tQL87x0K; arc=fail smtp.client-ip=40.107.116.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+	bh=brl3TnFJMHpL1uPmAgrmX5PqwApP7C29NgkWgcx93PU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=I42grkB/mxjN5LwVxhSzbJWMfixfj2GyLIBRkaSR2D10080MSs1CDw2zdSn2G0t95Gj3t8vG7cAiTwWeQfVYgXi0uMkWmIgFfbYac4R5pgG3U7VjBvBs/zJaYbhG7VGLBmkqxRmgQ07bKZB/yCSQnW6QKl4x6I45D1Zz9BMozLA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=yLeAQO3T; arc=fail smtp.client-ip=40.107.96.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OAsqzYO41XBxPeBSWrHOPceXrn9mOVph778Mdsc8uXsQG5hrJrCnqLhi/6OzNW75bx3yW354OELJdxp//bwS8QFlyCATeD6JQhqD1FCUyM5XUAatU7750UubZ+RkhMA03vC5hIswPkSGLeXTAMTVrckucCoWEEOY2nw/sNF+6vO4X2T762AQpr/d6tMIkzoSOKoyj/UNUCS1kMVmaz7KGAxjrxCgn3c7/OyVRi3ojiulHOhn7cPx3LUF9sn471lOBNUuFHlkv4CZkpIB4qNfFlSupSW7u0dE/itCiey2rpmMW3oJa1IEGK4wqWD7Dro+Kb9O6kETUIy+U86fZiH3kQ==
+ b=AcP1G0dyY+Rgb1OLYMxciZqkliogG5THCZzVwWv5jtpKnz3nqu74s/0kx7/XS9Tha/NnpGMqeQUL7laG0VtSTaIPXyS9IVaouHbgpinCczv9HEbtaSsRUcybxJcv1+9CmCjsrKNCAezTAUgiBLmnd7ksiFpZLfrBGVUdlzW48Ed2KumIYyxvxUSTtSxQMlMwBp4UqZAoTGdqls9VO0diQsxcXofLKpvThvgnL6YYIS2hXtNJRFW5xNSmvYHVHReLHCacU5hEWHtyH1u9n155G3QgEVtcz4GAHDiv+Pue+obXesPFms42uzeW+2wGHJQOwKx6LeRyoc/9nNLqZTdZIw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=exMnlQLpdD+yjLbov5H04WdhiDHJ/bvWjkVIptk3Fbs=;
- b=qlbZ9h/gq3WR4BPhziwK0NLJzaALHqD4FAvd6T9QWPJC909qI4aQM0jnYDeuLAf2lOSuzN0XEoD14VV3B041wEOe115x6ZgTAP6e3oBX/J+wBy0i28kPzes7vkx6Sz+RHSkeYeiHcpuGVfFAiHuEbvaCOVqEL/t0JaXBad7dVVSepX0S5V9FKLAKozqFgo7LlPgLqhwKAlE72HBUvsXCtioOaHlRfKH2NOeSteE3t/RhTIRcoLRvfiGv6ATD6eP0bo3zmdjPn4ZfSiHPX65RPCe8qcEQTuAG+Q0l0DdyVRuAcU7dCYeZ7jyUIZt3XmqZ2FloHqYe5C9INppAM8iV7g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
- dkim=pass header.d=efficios.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
- s=selector1;
+ bh=Bc7sJfxf6CzhWOZY7rqUBIEsNvU8VP0vQE5cBDOt8So=;
+ b=nPvEK8/6pOs2jIH6UYrnoGveOHQh7eiiZxLOFijmR/2sOFJVY1ArQpk7bQ55mJJu2r4/JwFAASM9Xj4DloElQptMDfGJekLbD2dtUPASdOceKK9ZCgs++Q4yb9vaPGsjGTRck1sFOXmME8y0BeWo8uvfqXUPDebF2JgZsJD3S8g4McusARIzqHIWYjwlJpvF/mrCdt9uroa5yEV6kJX0Jv5DrUhUEVDR6WsQJGhw+m+1g7BNnnfBkku0yDE7ZA520CPAmw404OnGrWKSsM0+RxlWlIEFtsFdU4f7lhKDHEaqk/0NBVRD3au+EGIDi6dr1Oi/dROTnNUiY9PNNZfwbQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=temperror (sender ip
+ is 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com;
+ dmarc=temperror action=none header.from=amd.com; dkim=none (message not
+ signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=exMnlQLpdD+yjLbov5H04WdhiDHJ/bvWjkVIptk3Fbs=;
- b=tQL87x0KTIEjATiM93diXXoket29Zc82Tuzklz/xWnRdHYwXb78BkwURF6+oyGnPNgejKvx7OdW/AfJCYfEeMDyuZkLrWQGFBeykts1gzh7cKE/zrdXAWhfcctQvQXI4REZ1qS+vW+bnTMIaI5HXWPz8etEXM8e7bYGWMNjX1gPSUi2zwer0b1Ky5hPUrRPYew1n70grHHE0Uh+LjMbZ1avNKLWl1ZWkINzsWVF0/RGXTogVcwIwf25mbycnBkmPXz6hlTKiyy/l0r1sAO0A+1qHBrdtDpgfCKcWZOUU4HKWjHpcyEpI7k7JNWCD9PV0/FKpnusWF6YUlRdzNXwKoQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=efficios.com;
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
- by YT1PPF51DB93001.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b08::538) with
+ bh=Bc7sJfxf6CzhWOZY7rqUBIEsNvU8VP0vQE5cBDOt8So=;
+ b=yLeAQO3TVVwqHlWrp9r4LR5Cmhgx4qGE9yCZPJZ1Yo21uK3UjbLjji5Pk3+ksrh2IuMrrgwiUxMizKFWWjLjlBy39l7/Oqyj3efhbJQKyk9t+0YJsgRncHF32QCSaD5gtowtl3xIaEj8DyRxxRKSyc+u6zNpSBdn8nXEFdFpRts=
+Received: from BY3PR05CA0040.namprd05.prod.outlook.com (2603:10b6:a03:39b::15)
+ by LV5PR12MB9804.namprd12.prod.outlook.com (2603:10b6:408:303::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.20; Tue, 26 Aug
- 2025 18:10:26 +0000
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4%3]) with mapi id 15.20.9052.021; Tue, 26 Aug 2025
- 18:10:26 +0000
-Message-ID: <7fddf82f-e85e-42c5-90f3-9cfca4d8756a@efficios.com>
-Date: Tue, 26 Aug 2025 14:10:25 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] sched: Compact RSEQ concurrency IDs in batches
-To: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, linux-mm@kvack.org,
- Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.org>
-References: <20250716160603.138385-6-gmonaco@redhat.com>
- <20250716160603.138385-9-gmonaco@redhat.com>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <20250716160603.138385-9-gmonaco@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YQ1P288CA0006.CANP288.PROD.OUTLOOK.COM
- (2603:10b6:c01:9e::16) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:be::5)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Tue, 26 Aug
+ 2025 18:10:28 +0000
+Received: from CO1PEPF000044F3.namprd05.prod.outlook.com
+ (2603:10b6:a03:39b:cafe::7b) by BY3PR05CA0040.outlook.office365.com
+ (2603:10b6:a03:39b::15) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.13 via Frontend Transport; Tue,
+ 26 Aug 2025 18:10:27 +0000
+X-MS-Exchange-Authentication-Results: spf=temperror (sender IP is
+ 165.204.84.17) smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=temperror action=none header.from=amd.com;
+Received-SPF: TempError (protection.outlook.com: error in processing during
+ lookup of amd.com: DNS Timeout)
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ CO1PEPF000044F3.mail.protection.outlook.com (10.167.241.73) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9073.11 via Frontend Transport; Tue, 26 Aug 2025 18:10:26 +0000
+Received: from satlexmb07.amd.com (10.181.42.216) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 26 Aug
+ 2025 13:10:26 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Tue, 26 Aug
+ 2025 11:10:26 -0700
+Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Tue, 26 Aug 2025 13:10:25 -0500
+Message-ID: <b3874221-5b4f-9625-de8a-4e54dc6884a2@amd.com>
+Date: Tue, 26 Aug 2025 11:10:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH V1] accel/amdxdna: Add ioctl DRM_IOCTL_AMDXDNA_GET_ARRAY
+Content-Language: en-US
+To: Mario Limonciello <mario.limonciello@amd.com>, <ogabbay@kernel.org>,
+	<quic_jhugo@quicinc.com>, <jacek.lawrynowicz@linux.intel.com>,
+	<dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <max.zhen@amd.com>, <sonal.santan@amd.com>
+References: <20250822172319.377848-1-lizhi.hou@amd.com>
+ <2bec1429-4f8c-472c-99a1-420a33a3d316@amd.com>
+ <d6a02baa-3b05-73e6-9c2a-66c257efecc3@amd.com>
+ <a9814644-96e3-456f-90b7-8705a102c938@amd.com>
+ <2a21100b-2078-a166-0b47-9db6b4446b5a@amd.com>
+ <b758a72f-e30e-42f9-a6aa-6f6297b8cce3@amd.com>
+From: Lizhi Hou <lizhi.hou@amd.com>
+In-Reply-To: <b758a72f-e30e-42f9-a6aa-6f6297b8cce3@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT1PPF51DB93001:EE_
-X-MS-Office365-Filtering-Correlation-Id: 51d37c24-0918-4fbe-1a2e-08dde4cbd516
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044F3:EE_|LV5PR12MB9804:EE_
+X-MS-Office365-Filtering-Correlation-Id: 81d78357-5a17-42f9-4edf-08dde4cbd56c
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7053199007;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ckR6eFA1U25xbVZSMmlnQUxoQTdkcElRM0VVZFpRZWdIRGoxOEhqdzNGMmly?=
- =?utf-8?B?NmZBcmIvaTA0akRQenZ6NUdWQi9MTHdGRERpQ012Vk9SU2RDb0xGL1lnajRh?=
- =?utf-8?B?YU9yM0s2Skc4czRPZzlyMm5MejNYNkxYdXQzTEloN2I1SExFYTBJL2ZqdE8v?=
- =?utf-8?B?Ti96cVFhUWpjd2VneE0rRmhDT3FIa2UrWnNBUnBmb21XaFhaWFY4SVp6SHBx?=
- =?utf-8?B?K0RIZWpHRUhXVmpKeUU1NmtmWW9VTXQycW04N3hBZ0J0cVVMVmtmVmFCb1U5?=
- =?utf-8?B?WWN5cFk1MWdyNTJSUXpOcjVkMXpuYnJDSU0xZVI3Mkc1U2pqMVJiY0l4UlFo?=
- =?utf-8?B?UWpnQnA3eW9nYTZ0aWg0TzluajkzKzZQUjFkZnVncHJZQ2cwN0t2NmxHVlRO?=
- =?utf-8?B?a1I3b29wdWRsTmUvZjNsOURhZldRUHFCRFJhM0FpNWlreFJXVFJMMGhJVzhQ?=
- =?utf-8?B?VGkwdzlvRHhDdjdLc09hTE5IYVRlVGRoQTNhUGVuNmlaTHczTGtsU0lqOVc1?=
- =?utf-8?B?c0RwTWtDWVZDZXZGWENZbHpudUM1UW4rQ2RIL0duSWhhejFWdVY5WXMzZjVp?=
- =?utf-8?B?ZkdGN0FTenV2MXFnUkdhekxZTisyT0xMVDA0R1hkS1k4SXJzTS9OYkJ4V2Ew?=
- =?utf-8?B?NmhhWFVGMWpvRnprbGFQamRoQXhwS0hTdWw1dmZtcjhSVnhxNXhnQ2VxOXhw?=
- =?utf-8?B?czBkd3pZcnJQUElESHhwY05VT1dyUUtyWUlvOGJvZkhUVk9JdmZpdEw1dUNr?=
- =?utf-8?B?QnhYUGY4aVBxTXN4RXFWbUEwSG4rWHk0NHNMdlRINXAwVFpYTzNKL0JPVC8z?=
- =?utf-8?B?RHhZS0kwUmRMQkhFU2ZuYlpmZklzYlJvdmdGRzZISys4dkxPQ3l0UjMrRDRC?=
- =?utf-8?B?cHBWR1VzVHhWcmJURDlzeDIzK211MVRldGJCQVpVd0NEZ3FhM0cxdFpwSEdr?=
- =?utf-8?B?bERFZ0NSTm5PaXNubnllRllEblNWVDN3ZWRpR1J1aXA4NWxTTGJkOUxWdXFj?=
- =?utf-8?B?anlaUjNxMWR2M2xmdFZ4OTVzdjNYNi9RZHlhUFBsTzV5c2JqZS9wUlJLdTNj?=
- =?utf-8?B?VENTVTBiLzFzNndOT1RBMVp2RTl5cm5lcStBek52aVlpTDhXeWtYWk1Ga244?=
- =?utf-8?B?WDV1R3VHZ0lNNE1xck5pRXBZcm9hcStjRTVqa2JnVGtaRFRURlQxMjhSb1lk?=
- =?utf-8?B?UVVTMG9ENDViUTE5a05vYjRnOGNCeXAzOXdhTzhVcmpPYkUxZjk4MW43dkEv?=
- =?utf-8?B?RTY0bXBlQW5hUXZOaGZaR3Q4ZHF2TmF3M1dGU3BBSncwVTVkVEJhN2o1ZG1I?=
- =?utf-8?B?WDFFbkRxUTZKUXk2andsRkNwMDBYaFpCdzlzVUxrUmJnVm5FZEY2MnhTbjNR?=
- =?utf-8?B?K0c2U081SlhlOEpWQ1RObk1TZ0lhZGw2Q085Z2tHUkVMTXYxeFp5a1lPRGls?=
- =?utf-8?B?eC9JTFpaV0FWQnJJcTV0Z0s3NmZaMEZvNFNMb0dmT2IxZEFpN3JZSzgxckdY?=
- =?utf-8?B?dVRwN3ByNmtZVVNPZ1hyMDVtL3NYK3QvbEFiODYwUDVDZFlhWmxHTEhhNDRn?=
- =?utf-8?B?Q3F2Wjd1aDAzdjZnOFhnYlk3SWJjeWlnMWxVRUcwVnZ6TWk5eFF0aXVHQlpJ?=
- =?utf-8?B?bEJxTTA0OXI0M3I3aGJNLzZEY05PbzZ1VkpyK0x3ekJ2Mm13YmxyZXBjdEdK?=
- =?utf-8?B?dGMrcTZ0WkRaRVl6bHdsQnhtd2xseFpvRWQ1MTBPR2ZmQnB2QzdVK3NDbHpL?=
- =?utf-8?B?WHdVTlpLZHNCTFFoaGhFUHRkdGdLSG83bkRwTUdUb09FZUlEV2t1bEF2TFI3?=
- =?utf-8?Q?v4O1b+hKdb+IJPEroo/FYZIgFPERQxsG9y92Q=3D?=
+	=?utf-8?B?WlV0cXU5S2VnS1NOWDR6YUVsWlhJVkNCaU55czUxdUhtOXZYZk4yTXlyN1FX?=
+ =?utf-8?B?RFJpdXBXMkdDVlJzZjcyQlhvNEQ4Q202R3M3WGRJSTd0SWN5SklCMW9wVU9h?=
+ =?utf-8?B?VVRoaTdZME5ab3YyQXVMK2JCcFNBbFJaUUNXNVVDSkxrdU9pVnNoRGtLSjhE?=
+ =?utf-8?B?V2d0Mm04VjIwQW5ENzhzbFpueDBTc1MwZjNONlc3dWpMZEkybnc2NVNFZEI1?=
+ =?utf-8?B?WVhCNmxVYmd2b1hhMVFiM2M2UWpEZTBQTHpDZTF4cjdEY2p5cGVPN2JqREFT?=
+ =?utf-8?B?RGVZOVZsZlFaOWtaZVhBMDY3dWtYeklnTjRoWDlXbXRSOHVqZlhzV0RhRVZO?=
+ =?utf-8?B?TERWYjVsRDE5TGxGOUwxZzMvSVJKYUFhWVZ2MzkvVTB1SzZFOU9xOVlDdHBV?=
+ =?utf-8?B?RG9sTEJJMmJYWWQrOWtjYUZ4bWRFeFNJSjlJZ0ZyU2FLMnNETWUwMmRBRHlD?=
+ =?utf-8?B?YTJDLzNCK2VrdEdiZlNUT2dieTJ5M25JNTcvUDRrRkx6bzdNMnE2dWwzK3pa?=
+ =?utf-8?B?S1dOcmpPeGpLcXVoZ1BYWW9zTWl6UHF2bzNsbVByK3EzaVFqakQ2cStxTFJH?=
+ =?utf-8?B?S3VyZTBIVktibVRRNDUyRzFSODd5eithcVBkbHhEaGsrWXpvZnRBOWpWMnhF?=
+ =?utf-8?B?c1c5N1Nabmt6dDl5M1VpY2FnUlJhUlVZN3U5M0tPWVNIMEZ6UGtaQlpnRDh2?=
+ =?utf-8?B?a2hYTE9XUTlIaHQ5ckVMSXQ5T0laSk5EcTdzTVpuVlFlQjBWV2ZPclNzbXdR?=
+ =?utf-8?B?UmNUcjQrbStWek1oeExRSVF2RldGTW5PNW1FcWF1Q0g0eWtiWHZ5LzlOb1F3?=
+ =?utf-8?B?dmZFVnB5MndDZGRiZVJhdWUvMHllNjZ0WjlkSDhvMEhEVTZ5UTExQnR5NGlm?=
+ =?utf-8?B?TExPNHRZcWU1NW45QWI4ZExXeFNvTXo2UjlrYXArcXJ3SFZRZHF0ZFhCOUdE?=
+ =?utf-8?B?MlRDNzNsbjF6ODgyS3VENTQvc28vS3YvREpWdWE4STBnZWVRMkcwVEpDMlhC?=
+ =?utf-8?B?MU5yTDliYVJRbzNWd1RuUm0zQXJoTG16S0NsbG92bUl4K09kdjE0NTdqSzhV?=
+ =?utf-8?B?L0JQWStEc3FHRjVXaFdjY1dGYTlIU2h1UFZOeU1LeU5CMmRITm03dENIcC9B?=
+ =?utf-8?B?VlUzM0FjOHlYc1E0Y0s5Zm5XcnFyOW1QZmxBYytaNHJMRFBiOUlYRTkzLzJh?=
+ =?utf-8?B?UWMvVFp4MFZzNTd2c293N2pOWVE0NCtOOU4rU0hqNENubkkxVExkUkVWUTg5?=
+ =?utf-8?B?TXIrRHJhWlE0SVJxcWxma1g1NjBhVVZlYUJzbnZ6aU02b0xEQWVobDI5dUd6?=
+ =?utf-8?B?UnB4MVVpNXlLN0YyTUY3d0NjcXltUi9FUG9qOS9YalQ0dFJrMkNkQnlHVTNJ?=
+ =?utf-8?B?TmwyMUhiT29tbFpFSm51b3RrR2p6TGIvaVFiOVl2ZnN2K1FFT0JiVkJEbGt5?=
+ =?utf-8?B?VnA3a0Y4bENHZXh4Z1pDcVhxTUpERFdhbjVwNkFPNllLR1JKa3JFS0lsVUt3?=
+ =?utf-8?B?TUN1MEhKRzZ1YTFxdkJ2WExaMmt3Yi9ybE1seEdrc0pPemlNWTE2Ri9Nd0Ro?=
+ =?utf-8?B?M25vd0lHTHRqZWNrSjF5M0toSnJqajdBQm1ISDUrN1F2Ry8rV0czaWZta0ZT?=
+ =?utf-8?B?VjltbUxscXJYYUJPVzMxY1RTM05KZC8wbXZ2dDg4OStpOXRHUTdWTkhyTFVN?=
+ =?utf-8?B?OWUwSllvdlpnR2ExTFdDL2pTeUl2c0tBYS9pVzhXTGRFTC8wVVV6TDM4VkF5?=
+ =?utf-8?B?K1hJVnI1VG5lNVhJZ3ZObWFobEExLzBjRjFoZUlERmpMS3Ixajg0cmJEalZS?=
+ =?utf-8?B?RVYxT0dIY00zQmZmdlptTW1Cd1pUSVVicE1jbnZzRHNmanhsN3FnbGYxNWYw?=
+ =?utf-8?B?SGpXWEhjd085RUFUUExqbWhpb09naFlHUGdQVG96RFBPZ1RWMXN4TDRnTUZj?=
+ =?utf-8?B?YXVxRy9mQWJDVFpZOGd0cVp4a0hBbmxya1NjdjIza0NWQTM0R2RGd0pYRmdt?=
+ =?utf-8?B?N2hGeS85Mk5NTlI4bzRtZGJvaXVHbnNpQnZFWmpMTXJSdEJoU3pOdjdxazZ4?=
+ =?utf-8?Q?CgSZAr?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MlBvYkIra3dYcjR0djdxanhLQWM2TzlldFEvZWROaFBHVzZ5djdKMkFwQklr?=
- =?utf-8?B?cHF2ejJjRXgwR2FvZE1VbXlHRTQxdkxvUEVnbk9vWE1pQXppcWFjbmFRSVor?=
- =?utf-8?B?K1U3Rko3MTN4SURRQmYwZGd6aFBvdzQ5WGJlWGQwNlNDTVRvRktUaVNxYjNS?=
- =?utf-8?B?OW1RY1lmeHlSU3B4ZEgzSnFQcCtvT0hZdTRGQVVqUGc0ZU54S0hteG9nTzh0?=
- =?utf-8?B?dlYyeVgwNWo3Ynp0bzhENTJEd250dmJqUGhRTXRHWndJN3prVFNhQ0huVVdw?=
- =?utf-8?B?T3BBR2JHcTNVSmc1OGhNcXh6WTNXa1dIVTB5MlRhdm5wU1VENDd2dDdiYTRY?=
- =?utf-8?B?cVozNVRhWGNKcGFld1B6NjJqZlhRU1ZRY1NWYjFUK1BCUnFUeXpiaGl3WkxP?=
- =?utf-8?B?OHcyZ0FFREZoNEhHSWI0dS82YjByL2o1U08vVllVRWdYN3poNGR0bWZxaU9l?=
- =?utf-8?B?bXl0UGZDT2Q1UUxXNUJEdmFFM1dNdHNTaHNtdmFUVVlxZjFkekwweFpubXFN?=
- =?utf-8?B?ZE1pTTg3SXM4andLTGl5OTJxNHN1emxoN210UVlpMjhjazJKV0JJd1hnZS85?=
- =?utf-8?B?bFdwSStpZDR3SVdwL3J3bm5LMDNJMFpIaDVuajV5Q2VGRzg0UTFBMWhXcTg2?=
- =?utf-8?B?Q01ZakNFUGM1ZmJDdUhINFdOVTJ4N3pQVGNVR3RPQWN1OFIxdFY1QWxzUjJm?=
- =?utf-8?B?enVkclNDaEU1VlQ4STJnUm41bmE0d1hMejZOcDNCbmt3dHFrdHZ5OC9jVnpj?=
- =?utf-8?B?YnBaUGl4bkRrdWJzTUlWbFBIUzd0R0ZhZDhsRU01MkNDY0I5UWIwdXhOaTNK?=
- =?utf-8?B?aitmRjBsZ0h4c3puL3llYnNha0xhMTNHV2xNbWVuamcwM3NMUTA3UWs2SE9p?=
- =?utf-8?B?aG9tUVF1eGlnZFVaOG9VbmlOVkNRanYzMkNSblF2MUtPbzNzaU1HSXhTK2VF?=
- =?utf-8?B?N2Y1RXlMU1Jra0w4RGZaRmpRemJwd1QyRXdYV3RRVDRSQ3lPN05HWHpmbGZr?=
- =?utf-8?B?MXZvdVIxNVJ5M2pTRDREZVpmNVhyOVZCTmZISUhXaFdXdkpTd0lwaURLZDBZ?=
- =?utf-8?B?Z2VFU0E5cG5Yd0JOQS9EVERHckQxcTJSREFDR2RjdUtBcHdnNVhNZ3BOZHdk?=
- =?utf-8?B?T3pONTJPVmNOS0FwbjI4TDkyT0ZrNkFobU13NlhLNEd3YU04UDhJTHdjbHZB?=
- =?utf-8?B?OGhsMzdnNnhkZnYrMTVrOXhaSEhqN1oxSkErMlBiUFNKV3pLMlRraWxRQ25V?=
- =?utf-8?B?b3dqQm1pQy8yendUUlRjdnBLV29vcTI3OXpkWm9BcXRBclk5aWgwcmtncHY5?=
- =?utf-8?B?blRwZkVtdWhGRHhKZkxtYnJLMllKeDVCb1JKc0R1dkd1UmFpYm00aVl6WFJL?=
- =?utf-8?B?NVFLZ1g2REEzRUt0ZUczRVhTWTYvZW5yOHorekNTRXpoTVpNR042b21vZldF?=
- =?utf-8?B?eW9TeDEvV1ZYcHdhODJpdWJKUnE4a04rbGIrQ1puY1M0dzFMcDFqWmY5WFFE?=
- =?utf-8?B?cUZORG0zbVMwYUVyMDdpMWV6VzQ1Mm51WHpEWUdHeEtaeVdHQ1lEMDltWksx?=
- =?utf-8?B?Vllwem1QSVE1eElGaGV3S0FsdldQWnlIdFVtUnhHTDhSakhrRDRrOHE2WHhO?=
- =?utf-8?B?aU1XK0twWWk2Z0NyRE9WRUduQnRzVENSTmhjUHcyL1pJaWtCRHhkQTluMjlO?=
- =?utf-8?B?QTU5eDlZLzlRakozcE1tWXlTOVdFeGZTeVlzcU9Ud2dQcTZzeG9vZFl6b253?=
- =?utf-8?B?YmlFV3dwdGJvQ05YMXhqbjlhZ0Zadi9ZMTQ0K3VvNnI4UHc2TndRL0tid1h2?=
- =?utf-8?B?N01LNFdnTlh0d2l0a3BJZ1ZYcm5lS2NxYmp0eGR3SVlkQUhLSEg5TVNIc2dr?=
- =?utf-8?B?ckM3c0NCQ2l1dWlFdHVRaU9DQ253MG50eWpWclI5Y3dqTnZSaVpzY09XR1Aw?=
- =?utf-8?B?SmxRbEhlMSszeXh5VXlvdVpGYVpFdmZDbnVNUE1LS01QaldnTjI5OVg5ZGRH?=
- =?utf-8?B?ZnNqanlSU1JnQ0U0Q3NRdjRHdHByUExGUWQ1TC90MjJxaFcrbW9Cb3ZwZk9x?=
- =?utf-8?B?ekJFZ1QzMU5nYk8ycElDM05EcnA0K0FxYnZhZ3MzRHhFS3RXWE9HVk9Ec2hh?=
- =?utf-8?B?bTZ0TGFMSXRERTFIazVpZUZLRlFUTm8ybnFoRHYxYkE5eTZUVmFSOXZQT3BJ?=
- =?utf-8?Q?luwBs5eys0dQ7KcbrlSH5oE=3D?=
-X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 51d37c24-0918-4fbe-1a2e-08dde4cbd516
-X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 18:10:26.2519
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 18:10:26.5269
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zEI/LRfSwMrWZbyQeCSS+hTwTk1zeio3UpWLlSrjvuS4sDd5AhLwoe2YBjH5l7ZgcbOt/HS9htKXIpGNyBnI3eax/GTOOI2y9YRHsJE1o4w=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT1PPF51DB93001
+X-MS-Exchange-CrossTenant-Network-Message-Id: 81d78357-5a17-42f9-4edf-08dde4cbd56c
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000044F3.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV5PR12MB9804
 
-On 2025-07-16 12:06, Gabriele Monaco wrote:
-> Currently, task_mm_cid_work() is called from resume_user_mode_work().
-> This can delay the execution of the corresponding thread for the entire
-> duration of the function, negatively affecting the response in case of
-> real time tasks.
-> In practice, we observe task_mm_cid_work increasing the latency of
-> 30-35us on a 128 cores system, this order of magnitude is meaningful
-> under PREEMPT_RT.
-> 
-> Run the task_mm_cid_work in batches of up to CONFIG_RSEQ_CID_SCAN_BATCH
-> CPUs, this reduces the duration of the delay for each scan.
-> 
-> The task_mm_cid_work contains a mechanism to avoid running more
-> frequently than every 100ms. Keep this pseudo-periodicity only on
-> complete scans.
-> This means each call to task_mm_cid_work returns prematurely if the
-> period did not elapse and a scan is not ongoing (i.e. the next batch to
-> scan is not the first).
-> This way full scans are not excessively delayed while still keeping each
-> run, and introduced latency, short.
 
-With your test hardware/workload as reference, do you have an idea of
-how many CPUs would be needed to require more than 100ms to iterate on
-all CPUs with the default scan batch size (8) ?
+On 8/26/25 10:58, Mario Limonciello wrote:
+> On 8/26/2025 12:55 PM, Lizhi Hou wrote:
+>>
+>> On 8/26/25 10:18, Mario Limonciello wrote:
+>>> On 8/25/2025 11:48 PM, Lizhi Hou wrote:
+>>>>
+>>>> On 8/25/25 14:28, Mario Limonciello wrote:
+>>>>> On 8/22/2025 12:23 PM, Lizhi Hou wrote:
+>>>>>> Add interface for applications to get information array. The 
+>>>>>> application
+>>>>>> provides a buffer pointer along with information type, maximum 
+>>>>>> number of
+>>>>>> entries and maximum size of each entry. The buffer may also 
+>>>>>> contain match
+>>>>>> conditions based on the information type. After the ioctl 
+>>>>>> completes, the
+>>>>>> actual number of entries and entry size are returned.
+>>>>>>
+>>>>>> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+>>>>>
+>>>>> How does userspace discover whether or not the new IOCTL call is 
+>>>>> supported?  Just a test call?
+>>>> The kernel header version will be used to determine whether the 
+>>>> application which uses new IOCTL will be compiled or not.
+>>>>
+>>>
+>>> But it's not actually an application compile time decision, it's a 
+>>> runtime decision.  IE I can compile an application with the headers 
+>>> on kernel 6.18 that has this, but if I try to run it on 6.15 it's 
+>>> going to barf.
+>>>
+>>> To some extent that comes with the territory, but I'm wondering if a 
+>>> better solution going forward would be for there to be a dedicated 
+>>> version command that you bump.
+>>
+>> For in-tree driver, I did not aware a common way for this other than 
+>> checking the kernel version.
+>>
+>> And here is qaic patch of adding a new IOCTL.
+>>
+>> https://github.com/torvalds/linux/ 
+>> commit/217b812364d360e1933d8485f063400e5dda7d66
+>>
+>>
+>> I know there is major, minor, patchlevel in struct drm_driver. And I 
+>> think that is not required for in-tree driver.
+>>
+>> Please let me know if I missed anything.
+>>
+>> Thanks,
+>
+> Right; so bump up one of those so that userspace can check it. Maybe 
+> "minor"?
 
-> 
-> Fixes: 223baf9d17f2 ("sched: Fix performance regression introduced by mm_cid")
-> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
-> ---
->   include/linux/mm_types.h | 15 +++++++++++++++
->   init/Kconfig             | 12 ++++++++++++
->   kernel/sched/core.c      | 37 ++++++++++++++++++++++++++++++++++---
->   3 files changed, 61 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index e6d6e468e64b4..a822966a584f3 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -995,6 +995,13 @@ struct mm_struct {
->   		 * When the next mm_cid scan is due (in jiffies).
->   		 */
->   		unsigned long mm_cid_next_scan;
-> +		/*
-> +		 * @mm_cid_scan_batch: Counter for batch used in the next scan.
-> +		 *
-> +		 * Scan in batches of CONFIG_RSEQ_CID_SCAN_BATCH. This field
-> +		 * increments at each scan and reset when all batches are done.
-> +		 */
-> +		unsigned int mm_cid_scan_batch;
->   		/**
->   		 * @nr_cpus_allowed: Number of CPUs allowed for mm.
->   		 *
-> @@ -1385,6 +1392,7 @@ static inline void mm_init_cid(struct mm_struct *mm, struct task_struct *p)
->   	raw_spin_lock_init(&mm->cpus_allowed_lock);
->   	cpumask_copy(mm_cpus_allowed(mm), &p->cpus_mask);
->   	cpumask_clear(mm_cidmask(mm));
-> +	mm->mm_cid_scan_batch = 0;
->   }
->   
->   static inline int mm_alloc_cid_noprof(struct mm_struct *mm, struct task_struct *p)
-> @@ -1423,8 +1431,15 @@ static inline void mm_set_cpus_allowed(struct mm_struct *mm, const struct cpumas
->   
->   static inline bool mm_cid_needs_scan(struct mm_struct *mm)
->   {
-> +	unsigned int next_batch;
-> +
->   	if (!mm)
->   		return false;
-> +	next_batch = READ_ONCE(mm->mm_cid_scan_batch);
-> +	/* Always needs scan unless it's the first batch. */
-> +	if (CONFIG_RSEQ_CID_SCAN_BATCH * next_batch < num_possible_cpus() &&
-> +	    next_batch)
-> +		return true;
->   	return time_after(jiffies, READ_ONCE(mm->mm_cid_next_scan));
->   }
->   #else /* CONFIG_SCHED_MM_CID */
-> diff --git a/init/Kconfig b/init/Kconfig
-> index 666783eb50abd..98d7f078cd6df 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -1860,6 +1860,18 @@ config DEBUG_RSEQ
->   
->   	  If unsure, say N.
->   
-> +config RSEQ_CID_SCAN_BATCH
-> +	int "Number of CPUs to scan at every mm_cid compaction attempt"
-> +	range 1 NR_CPUS
-> +	default 8
-> +	depends on SCHED_MM_CID
-> +	help
-> +	  CPUs are scanned pseudo-periodically to compact the CID of each task,
-> +	  this operation can take a longer amount of time on systems with many
-> +	  CPUs, resulting in higher scheduling latency for the current task.
-> +	  A higher value means the CID is compacted faster, but results in
-> +	  higher scheduling latency.
-> +
->   config CACHESTAT_SYSCALL
->   	bool "Enable cachestat() system call" if EXPERT
->   	default y
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 27b856a1cb0a9..eae4c8faf980b 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -10591,11 +10591,26 @@ static void sched_mm_cid_remote_clear_weight(struct mm_struct *mm, int cpu,
->   
->   void task_mm_cid_work(struct task_struct *t)
->   {
-> +	int weight, cpu, from_cpu, this_batch, next_batch, idx;
->   	unsigned long now = jiffies, old_scan, next_scan;
->   	struct cpumask *cidmask;
-> -	int weight, cpu;
->   	struct mm_struct *mm = t->mm;
->   
-> +	/*
-> +	 * This function is called from __rseq_handle_notify_resume, which
-> +	 * makes sure t is a user thread and is not exiting.
-> +	 */
-> +	this_batch = READ_ONCE(mm->mm_cid_scan_batch);
-> +	next_batch = this_batch + 1;
-> +	from_cpu = cpumask_nth(this_batch * CONFIG_RSEQ_CID_SCAN_BATCH,
-> +			       cpu_possible_mask);
-> +	if (from_cpu >= nr_cpu_ids) {
-> +		from_cpu = 0;
-> +		next_batch = 1;
-> +	}
-> +	/* Delay scan only if we are done with all cpus. */
-> +	if (from_cpu != 0)
-> +		goto cid_compact;
->   	old_scan = READ_ONCE(mm->mm_cid_next_scan);
->   	next_scan = now + msecs_to_jiffies(MM_CID_SCAN_DELAY);
->   	if (!old_scan) {
-> @@ -10611,17 +10626,33 @@ void task_mm_cid_work(struct task_struct *t)
->   		return;
->   	if (!try_cmpxchg(&mm->mm_cid_next_scan, &old_scan, next_scan))
->   		return;
-> +
-> +cid_compact:
-> +	if (!try_cmpxchg(&mm->mm_cid_scan_batch, &this_batch, next_batch))
-> +		return;
->   	cidmask = mm_cidmask(mm);
->   	/* Clear cids that were not recently used. */
-> -	for_each_possible_cpu(cpu)
-> +	idx = 0;
-> +	cpu = from_cpu;
-> +	for_each_cpu_from(cpu, cpu_possible_mask) {
-> +		if (idx == CONFIG_RSEQ_CID_SCAN_BATCH)
-
-could do "if (idx++ == CONFIG_RSEQ_CID_SCAN_BATCH)"
-
-> +			break;
->   		sched_mm_cid_remote_clear_old(mm, cpu);
-> +		++idx;
-
-and remove this ^
-
-> +	}
->   	weight = cpumask_weight(cidmask);
->   	/*
->   	 * Clear cids that are greater or equal to the cidmask weight to
->   	 * recompact it.
->   	 */
-> -	for_each_possible_cpu(cpu)
-> +	idx = 0;
-> +	cpu = from_cpu;
-> +	for_each_cpu_from(cpu, cpu_possible_mask) {
-> +		if (idx == CONFIG_RSEQ_CID_SCAN_BATCH)
-
-Likewise.
-
-> +			break;
->   		sched_mm_cid_remote_clear_weight(mm, cpu, weight);
-> +		++idx;
-
-Likewise.
+I meant for in-tree driver, is it good enough for userspace to just 
+check kernel version?  E.g. The drm driver versions are not used by ivpu 
+or qaic.
 
 Thanks,
 
-Mathieu
+Lizhi
 
-> +	}
->   }
->   
->   void init_sched_mm_cid(struct task_struct *t)
-
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
 
