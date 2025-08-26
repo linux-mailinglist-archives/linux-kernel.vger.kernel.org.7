@@ -1,150 +1,121 @@
-Return-Path: <linux-kernel+bounces-786764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F2E6B36859
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:15:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B74EAB36876
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:16:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D74DB1C27F32
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:08:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29C6B566E0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2561F35336E;
-	Tue, 26 Aug 2025 14:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6EB134DCC0;
+	Tue, 26 Aug 2025 14:07:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Unj1Lgxq"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ETxHM3AD"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4092B9A7
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 14:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94BDE42AA4
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 14:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756217181; cv=none; b=NW9zj0N/bnlF5JPlgZn+WVE9JRe/7SpqlS+2zMjftHfTav0W5JXBqbGPF+emEJfDTSyUZJMuM9UwKvzCWTKrD8CtYJ6hS0VwHzVwrUVcf+Ac+leHZVnPemhyUdA2qeaIZFIidO4/GV7dqhiGDFyD7Qm5O+Ov3+aiRyAgkYWiIzI=
+	t=1756217224; cv=none; b=iEu9K0asNrK6XEj03dMOPFkc6hGejGo2LK+0tYEmrFY+ESiVjSaZb0J8L5h2ZKKzP5xZ28rC2a1kK19Cg6c96ow9VHflSbeBot18zRUHf/u9xL7ghKFLmbMyIy5ycdGna4z4z4j4kAmQdM645Y5V4b3BibAhlPcoiXNq7zKwyp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756217181; c=relaxed/simple;
-	bh=QCj1Vvy93yZ6bsOTF4xxqJ3kzTZvrOBpLj0CgeZABsQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X0L+IvNBlEt5Q9qoakIqMozdARSodBjblfaJ5kPItELYOQiBO53fLIkufkh2wzq52MT/qsD29jughurKfDDYvLDfVMfRQngk850PFqgMb/prTXWe3qzOs8N4OGfbUR78U5J0P47bnxTlxeGLBatq/ikeR3ozUY73jyeUqTcfGlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Unj1Lgxq; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3c8fe6bd038so1199747f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 07:06:18 -0700 (PDT)
+	s=arc-20240116; t=1756217224; c=relaxed/simple;
+	bh=ch7zapkbifVrVlNXs7zZCY/pU6FG/cdoykXi/3wq5rA=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=nh2S5FkawMJNdydlp9pjYD4XxykJjJ+qZ9hmt6qbyjbiDqdGNmCWCOQ0oJu8Jzwy56Lm4A8tl79hq462XNDeddDlovPm6Tzr1jOtK0/jZXAh/W2Yl+tgLATMpfbawXhONB5+fTDmHw/XLn0oiuUopp97hEcRccQ4zh8kxs8gWco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ETxHM3AD; arc=none smtp.client-ip=209.85.221.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3c75de76cacso2357999f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 07:07:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756217177; x=1756821977; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MlKAEubDhdWXLTp3RgKe1j2zx0nuB/WOtFKlQ/1PMDc=;
-        b=Unj1Lgxq8+/y/hTGhM+CD7PeRVtaS2/BUZQLri6Iq74SYmtwcaJNwvowGwIRQlWXFN
-         UoUB/ruGyeG/n/dnNAQsj2bJgS2lsga5KAkF5wvl5BI/JTBGqrv2ri+uV+evwOe2vc5w
-         Deiu/1FU3w4A97hvmseS/5mPQHSa/Mdgry4ctt6/5PO0e4kU26UGw3jun3tTmRBhjty5
-         Wt6JyQ58i5iGcm2FdgZzauM8QjOwrmvJnBMShJTwvwWEpXeBs4HzI4z11jOdKn6lKUFT
-         tp6N2n5nR34ODJwIunxPM7dqo7JxepuiiidwVnxZ/FqxWHGyFrrhzeaajNbwn3rJT9Q8
-         ZqPg==
+        d=google.com; s=20230601; t=1756217221; x=1756822021; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MIM/U1loAWy1WHGaIaxXWm/mISmivdeS4MOXtnSHfXI=;
+        b=ETxHM3ADQXoxgExz6bFyZa0qo7xgFScSaI7pOw3gfIveCfIwgPjBopLI40bYazRByO
+         GCa8MWema0kW1jSJuI7b8QaANv61ciVtOr/Z9WpZAZ6kWTOVdmsuB2HB5zysLkIIODrl
+         WSI8fMctthZMpmmeCRaR7D4l06WJ44Fwe2iaqvBBoxQucY9LGDRT0rsyI0ZmekArlKMZ
+         goHoATWXIBngUea/yZkq6e7rjjHI5ShPyhvHYG9LRL575V2ZgClsETn3xo3foIoaJ1Pm
+         h9hF/QQXw2Q1TDHtaoPmhww9F4a7eqiJdDPky01Bsv8QA3fYSB8Xm9ddefoqDcDRJ2ZX
+         BNbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756217177; x=1756821977;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MlKAEubDhdWXLTp3RgKe1j2zx0nuB/WOtFKlQ/1PMDc=;
-        b=tXLvJXn0qwj2xlTzm1rjIEDNVxfd1A5nCVol/VAjPnSeuIQZJf8CZK4rpBGD58+3gF
-         wnrgrewH5qaaau0iIvL38p3UWWKYMCwWWZqNjc+hekDvF1HD5onlK0zvBYGUbqKPJ1R/
-         6Mqia+Xb7VyLElnppoQe+suXDamZ92an9V3958xIiPI3AMJlO/vzEm6NdWDrtWfW3jYQ
-         JDdpT+RD3fH+ep0HoAxsb3IyT1lsPAYpdvtFpFZZy3HtjWkaoHuC1ePuIe2dZdS0mewV
-         Qqsk0r3yg/MIiuPmF6jW7L9xmV99a5rfwyOwnn56sohf9dsRaphvT7Bx9g95mCTqM4Mf
-         vW+A==
-X-Forwarded-Encrypted: i=1; AJvYcCXS86HpUwnZ0/+pHHA1Qn0LVaHSAu4P/4mR1zvkkXFL5bOwWnKJT7NsnN2es3wL/QurI1VCmuw1j4FtE94=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOWgnSsSNg6DzOANC4V1xrb1DMY9pwfJy8Ku4F5NGW9/Ga1/b4
-	adzXmV+cSesUAuWRjOPplBIp536Rqllqkdrs8Pvlo2M5ff885VP2rZuZ
-X-Gm-Gg: ASbGncszSS7nhdqdzawFmCWB/c+lArWE8fB/RTFdDocENidXPDJE9YvXV2NM2Y9xReS
-	piwEP564vUPpMnb50DeP1YpGG+LpHKXlTRiLSZAm84SW1avqXam3oANG7ytzylTpinkR9gtF0XP
-	kYJiiZDyQOeVNBx52cqie5MGKZZz7z5ZfQasZBe7vjHDKev48rCnGC3AWB9MyUVWCXxP2Nc/zHE
-	mAY8ObrkzMDqvkevZWPBbgBjEy81y5k1Q2By0B21oBUi7YWCZmx53ltH/9r8der3MPwmL8A/Miq
-	iywWilCukcdagjyeLQGeBq/HOoJaa4Q7Yw5JZlKSY/sJe2rrReMeZkjTMHEQiICwrJkQNfn2CDz
-	yjvpOcjIvSnzxfFVX3s8JwGCkyug4ICIz3zRVNx0=
-X-Google-Smtp-Source: AGHT+IG22gPI5488uIPs25oszBDX56Yi53KPVP8VjvbYnpIG7qN6HDEcXj2kkT7vF5pcH3GSgehc9g==
-X-Received: by 2002:a05:6000:1446:b0:3c7:f0fb:834 with SMTP id ffacd0b85a97d-3c7f0fb0c5amr8807636f8f.42.1756217176808;
-        Tue, 26 Aug 2025 07:06:16 -0700 (PDT)
-Received: from devbig569.cln6.facebook.com ([2a03:2880:31ff:54::])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c712178161sm16263514f8f.67.2025.08.26.07.06.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 07:06:16 -0700 (PDT)
-Date: Tue, 26 Aug 2025 07:06:13 -0700
-From: Yueyang Pan <pyyjason@gmail.com>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Suren Baghdasaryan <surenb@google.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Usama Arif <usamaarif642@gmail.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC 0/1] Try to add memory allocation info for cgroup oom kill
-Message-ID: <aK2/Vesgr9Xcl5gy@devbig569.cln6.facebook.com>
-References: <cover.1755190013.git.pyyjason@gmail.com>
- <6qu2uo3d2msctkkz5slhx5piqtt64wsvkgkvjjpd255k7nrds4@qtffskmesivg>
- <aKdw6Pkj2H4B6QDb@devbig569.cln6.facebook.com>
- <tiwa6wnkdf6q2pfchxbbqb6r42y7moykqumvnzauckhavyemg2@zc5haja5mlxs>
+        d=1e100.net; s=20230601; t=1756217221; x=1756822021;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MIM/U1loAWy1WHGaIaxXWm/mISmivdeS4MOXtnSHfXI=;
+        b=k+xfCmFJWQWP25n0znPq8gr7pJVBkZfPEEvnm6V5mcyTcjHzHKOTx9/sITXqA3ZZDD
+         y7x+3zPxUSmAM/g6scu5o59c9e/c7kppCSSnofd7mq1nUOKP30+bVve+zJo0ubTEMzKQ
+         By1vUij9+Bw2dGwR7UZzS1E0ledb01QmsGSuFuNzfLFFA78KGx6MsSD7K/p3ySjo/Px1
+         EmNOKprMW4VfenIel5XUih2c/ACGiJdwHKc8q3QhHB+0NKV8KsIJnP3v9kLgBtS45tax
+         SCidDcquUtDTfThv9qBNFXxsERzC9oubFCu9XMgVbl/JvYtxmZ5YNgq4lLmOD5z2/6Sy
+         S1Mg==
+X-Forwarded-Encrypted: i=1; AJvYcCXe3wTeGxQhpWZQg3fC9LiMhI7WRxLinMvxASXsW3Mk5Y/jlx32+ojrd66E6FN70+oJn9RLNOoi4JU6kEM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+j71gp0AdgNZ2cLoTykpE3ia+Cpz6R0MXQupgvyq+Lrb1AbTT
+	XKVactQUPKd5YrDW7Ooz0iLS0LXpwpqvXh+8AqPZrkMDeoHC8BaB4fbD8GJ9v9g313NmePmFIKo
+	5LmiwrNTU5V320g==
+X-Google-Smtp-Source: AGHT+IE5PDrKa9lrBaPKlhqfT8IBKuaqTzSTLSoAm/eLHLIugHPgVuptHw9Og68GQkPrK5CfjMfI5EsdL9bWgQ==
+X-Received: from wmsr15.prod.google.com ([2002:a05:600c:8b0f:b0:45b:5f83:6ae4])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:652:b0:3cb:a9e4:5a56 with SMTP id ffacd0b85a97d-3cba9e47299mr1276970f8f.30.1756217221050;
+ Tue, 26 Aug 2025 07:07:01 -0700 (PDT)
+Date: Tue, 26 Aug 2025 14:06:54 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tiwa6wnkdf6q2pfchxbbqb6r42y7moykqumvnzauckhavyemg2@zc5haja5mlxs>
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAH2/rWgC/x3MSwqEMAwA0KtI1ha04Ge8iojUNI4BbUuqMoN4d
+ 4vLt3kXRBKmCF12gdDJkb1LKPMMcDHuS4ptMuhCV0Wra4UrGXcEFRd/rHZEvwWD+yi0y199sJ4 qtHNrdQOpCEIz/96+H+77ATQ84N1uAAAA
+X-Change-Id: 20250826-cleanup-should_compact_retry-9c6b5cdf8d27
+X-Mailer: b4 0.14.2
+Message-ID: <20250826-cleanup-should_compact_retry-v1-1-d2ca89727fcf@google.com>
+Subject: [PATCH] mm/page_alloc: Harmonize should_compact_retry() type
+From: Brendan Jackman <jackmanb@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Brendan Jackman <jackmanb@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Thu, Aug 21, 2025 at 12:53:03PM -0700, Shakeel Butt wrote:
-> On Thu, Aug 21, 2025 at 12:18:00PM -0700, Yueyang Pan wrote:
-> > On Thu, Aug 21, 2025 at 11:35:19AM -0700, Shakeel Butt wrote:
-> > > On Thu, Aug 14, 2025 at 10:11:56AM -0700, Yueyang Pan wrote:
-> > > > Right now in the oom_kill_process if the oom is because of the cgroup 
-> > > > limit, we won't get memory allocation infomation. In some cases, we 
-> > > > can have a large cgroup workload running which dominates the machine. 
-> > > > The reason using cgroup is to leave some resource for system. When this 
-> > > > cgroup is killed, we would also like to have some memory allocation 
-> > > > information for the whole server as well. This is reason behind this 
-> > > > mini change. Is it an acceptable thing to do? Will it be too much 
-> > > > information for people? I am happy with any suggestions!
-> > > 
-> > > For a single patch, it is better to have all the context in the patch
-> > > and there is no need for cover letter.
-> > 
-> > Thanks for your suggestion Shakeel! I will change this in the next version.
-> > 
-> > > 
-> > > What exact information you want on the memcg oom that will be helpful
-> > > for the users in general? You mentioned memory allocation information,
-> > > can you please elaborate a bit more.
-> > > 
-> > 
-> > As in my reply to Suren, I was thinking the system-wide memory usage info 
-> > provided by show_free_pages and memory allocation profiling info can help 
-> > us debug cgoom by comparing them with historical data. What is your take on 
-> > this?
-> > 
-> 
-> I am not really sure about show_free_areas(). More specifically how the
-> historical data diff will be useful for a memcg oom. If you have a
-> concrete example, please give one. For memory allocation profiling, is
+Currently order is signed in one version of the function and unsigned in
+the other. Tidy that up.
 
-Sorry for my late reply. I have been trying hard to think about a use case. 
-One specific case I can think about is when there is no workload stacking, 
-when one job is running solely on the machine. For example, memory allocation 
-profiling can tell the memory usage of the network driver, which can make 
-cg allocates memory harder and eventually leads to cgoom. Without this 
-information, it would be hard to reason about what is happening in the kernel 
-given increased oom number.
+In page_alloc.c, order is unsigned in the vast majority of cases. But,
+there is a cluster of exceptions in compaction-related code (probably
+stemming from the fact that compact_control.order is signed). So, prefer
+local consistency and make this one signed too.
 
-show_free_areas() will give a summary of different types of memory which 
-can possibably lead to increased cgoom in my previous case. Then one looks 
-deeper via the memory allocation profiling as an entrypoint to debug.
+Signed-off-by: Brendan Jackman <jackmanb@google.com>
+---
+ mm/page_alloc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Does this make sense to you?
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index d1d037f97c5fc76f8a7739e8515d7593e0ad44f9..8faa0ad9f461fbe151ec347e331d83c2fdc8cad2 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -4182,7 +4182,7 @@ __alloc_pages_direct_compact(gfp_t gfp_mask, unsigned int order,
+ }
+ 
+ static inline bool
+-should_compact_retry(struct alloc_context *ac, unsigned int order, int alloc_flags,
++should_compact_retry(struct alloc_context *ac, int order, int alloc_flags,
+ 		     enum compact_result compact_result,
+ 		     enum compact_priority *compact_priority,
+ 		     int *compaction_retries)
 
-> it possible to filter for the given memcg? Do we save memcg information
-> in the memory allocation profiling?
+---
+base-commit: fab1beda7597fac1cecc01707d55eadb6bbe773c
+change-id: 20250826-cleanup-should_compact_retry-9c6b5cdf8d27
 
-Thanks
-Pan
+Best regards,
+-- 
+Brendan Jackman <jackmanb@google.com>
+
 
