@@ -1,126 +1,342 @@
-Return-Path: <linux-kernel+bounces-785870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B754B351FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:59:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B859EB35200
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:00:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 205B7172D5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:59:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 751DC1A81349
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 517532BDC28;
-	Tue, 26 Aug 2025 02:59:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845EA2D0298;
+	Tue, 26 Aug 2025 03:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="IsW+t1QE"
-Received: from mx0b-002e3701.pphosted.com (mx0b-002e3701.pphosted.com [148.163.143.35])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WtDpcIvR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B7F2777E5;
-	Tue, 26 Aug 2025 02:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.143.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A321D7E41;
+	Tue, 26 Aug 2025 03:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756177145; cv=none; b=CLamcd2bvKElqXpVfLlD7i8aYLIjNzVhUr2NdUN2AIH8Dle9Gs2/lRC1wQQhdBMsPMsLkIYZnfz7/r3fvzGEclUh/la447qFjNaumxtOJRs3hAW+raCa6Ix19zPW0ituk8vFxNgJ+cNzrI6hFxqr8WdA5FYRleQ0EMh6ClHE0io=
+	t=1756177231; cv=none; b=T3PW9TRoQbNjRZYsHUvq1nC811m6CZ4hWcjhz0xHRAxygCYUvBtrgBDdAbCyxaD7Bz3Vj79zHiRP3CIFkVsbBKWMkICM3SNKEqhC75yonvGQqCqsatANGOwYnieQiavqP+NvoGCDoDPT9gleRjRIVZDHfIg/Vlusc1hZi0inUOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756177145; c=relaxed/simple;
-	bh=q9o3QoT8lr/AGU0AQv1oBtYFnfwN7uErKAg4OVa4Vbo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nwuYbbaZ9IRG8EwGBNVwG2O6xaGogxcWfHone2LZ0kAN1QYQOBavU3Hi2DtXt+F03uyY9nPECJFMl/2t6DaYwBX69npHllpCHL0y5JC4X+QdNuEO3vsUutqlgmyEyCA2ryQnpwprO3Am2/9ZREACKmUgPf+dOWwaI9GV0zh6wv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=IsW+t1QE; arc=none smtp.client-ip=148.163.143.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
-Received: from pps.filterd (m0134423.ppops.net [127.0.0.1])
-	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57Q22HGZ014836;
-	Tue, 26 Aug 2025 02:58:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pps0720; bh=/l
-	FErksqAO2mqrtk6vYOINrt6RJ5khwuke1lCAx9oRQ=; b=IsW+t1QEHRTHZ7anl9
-	BlpLmsxXdLxUxj0JMJDzCIPOPigvSYgIjtO3cb++dzsEGG+59GTpS8LEw+tFfWAP
-	qV028UNPfuepO/0JQC6BtOoXeEsLN4qo1GieDWlA2QVtKjHsNTxzL4F+BL8Oh78E
-	eSVzbiIdyB/fV69RZwOdfDLVJGdtOpUkrAbRmlUsLYGUZIqu1+GUXXgQieWStRgg
-	PEMs3G6L7UP1y2JgulFZ9G6h4x9T6ipydrTV3lrbUZ45qfl6Bw6OEGS61gLgHG0w
-	2V5FMIIXczRdrYZL4A2yTgxXQCM80Lgs8kUZMwYYU7mhr3AOnSQy1TmKRsHSMtrG
-	lZew==
-Received: from p1lg14880.it.hpe.com ([16.230.97.201])
-	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 48s2djrydj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Aug 2025 02:58:32 +0000 (GMT)
-Received: from mlperfr9.3-rocky.novalocal (unknown [192.58.206.35])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by p1lg14880.it.hpe.com (Postfix) with ESMTPS id DC47B8003B5;
-	Tue, 26 Aug 2025 02:58:31 +0000 (UTC)
-Received: from mlperfr9.3-rocky.novalocal (localhost [127.0.0.1])
-	by mlperfr9.3-rocky.novalocal (Postfix) with ESMTPS id 79C61A0A40A4;
-	Tue, 26 Aug 2025 02:58:17 +0000 (UTC)
-Received: (from rocky@localhost)
-	by mlperfr9.3-rocky.novalocal (8.16.1/8.16.1/Submit) id 57Q2wFAS3715170;
-	Tue, 26 Aug 2025 02:58:15 GMT
-From: Cloud User <rajeevm@hpe.com>
-To: Cloud User <rajeevm@hpe.com>, Yu Kuai <yukuai1@huaweicloud.com>,
-        ming.lei@redhat.com, hch@infradead.org
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
-        yukuai <yukuai3@huawei.com>
-Subject: Re: [PATCH v5] fixed the blok file statx issue
-Date: Tue, 26 Aug 2025 02:58:13 +0000
-Message-ID: <20250826025815.3715160-1-rajeevm@hpe.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <a118e156-36a2-6612-517a-ba22c11fbd1d@huaweicloud.com>
-References: <a118e156-36a2-6612-517a-ba22c11fbd1d@huaweicloud.com>
+	s=arc-20240116; t=1756177231; c=relaxed/simple;
+	bh=MtCbNTySNZLVfRUizQ4pG/OPpalNhZ8Xq/TpZhVJaBs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=raBQ0QOevAbajU6C33yuwhH7dqWl49AKiMCourKYQA+GT+UECEmHbWmQXpKqiMPhLUpCpLHLyiHwjYHwb8XZ9BDn6s39l7N/mp2EMZhTw6BwxuXEttX83aEG2dHzYsL+xIgEkA6Giq+9rSVjsqCAmeLRCKRhY+VCyq+VXZz4+bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WtDpcIvR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E3FEC4CEF1;
+	Tue, 26 Aug 2025 03:00:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756177231;
+	bh=MtCbNTySNZLVfRUizQ4pG/OPpalNhZ8Xq/TpZhVJaBs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WtDpcIvRP0rERRoziypkzTgm2Wx0Vi2FLLJfkvNRwx1y5KHABaEVrm23CbDOQLRYg
+	 HBaRw34cpsO/oyTG0R2CW9AI3W5f6vlxtbS4lod1aIwZEKx+WgCR9ZYtObrZM4tyKX
+	 bHIDt6UL+KJCB+RBogX3PC3nxD5AYq04yJmGz88NUXhBDELbGd5vuXK2MxSxtMpS3+
+	 qCG8NTvT1/ysHvvunw3kFHOPweio1yzmM4jxNA8MHKg1HDZTsyLGjUQc+Ob+c6lyOS
+	 QC1mUztZ2kZjxX4Al1eupJ3YODdT176/mYutyOfyYX+NOY7h7W06Bg+iVF24Himrs1
+	 XPr5cWF6mAMWQ==
+Date: Mon, 25 Aug 2025 22:00:28 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: setotau@yandex.ru
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	~postmarketos/upstreaming@lists.sr.ht, Richard Acayan <mailingradian@gmail.com>
+Subject: Re: [PATCH v3 3/3] pinctrl: qcom: Add SDM660 LPASS LPI TLMM
+Message-ID: <wgpxw6pj5xmtlc3kabprkfx4o2nsvmykyemmdulhvyxmahes3z@xb7tlzec7nv2>
+References: <20250825-sdm660-lpass-lpi-v3-0-65d4a4db298e@yandex.ru>
+ <20250825-sdm660-lpass-lpi-v3-3-65d4a4db298e@yandex.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=WMJ/XmsR c=1 sm=1 tr=0 ts=68ad22d8 cx=c_pps
- a=A+SOMQ4XYIH4HgQ50p3F5Q==:117 a=A+SOMQ4XYIH4HgQ50p3F5Q==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=P6ybfcUMI3NkiizEEVYA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: cxvBjHSDvEE1W4TQ6LRpkkJ7fcklRZfu
-X-Proofpoint-ORIG-GUID: cxvBjHSDvEE1W4TQ6LRpkkJ7fcklRZfu
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI2MDAyNCBTYWx0ZWRfXxBmhcQxF2uqP
- c+vwg3x9X+GTi7Ad8xgqxlG09b2Rg5PhQHz2ulnVj43PCJqiJRssaFfHru7/8KYCXO+zHBNsHiT
- FZwS5jtKYnQCavaQ5q0Rb663s5MV/RsEf+b/BK7U9a4t44KhEStFqM4pWDAp3mh1F66o4VeLGek
- pTt9J6a92CdnmrSO2mZPXojm4XgFm8rnxpXmjeOvNfPpxfiEB0yS4fW7n3SPJfKtQTaiYX7YJmz
- 6SST7gZYWAuLNuypig1uxqNREkp0r45yoKOUYbdxCMpW2RjlAfYqqbhM3FESULnlIE7W7mWTv6H
- fHV9tbUxum9oBgabvEKBev1JzlUg9Jge+dQEQIUhn/i3bT8XW28bDjsJ9atCq4FK6TjGlSMJLPw
- 0sbh4C3R2VspU0twYvaaJWyDbyRt79O4zptQstctjZvec6O4MFWCbMLUVl6/OaeNSZ9bDPMd
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-26_01,2025-08-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 mlxlogscore=999 impostorscore=0 adultscore=0 clxscore=1015
- phishscore=0 bulkscore=0 suspectscore=0 malwarescore=0 lowpriorityscore=0
- spamscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2507300000
- definitions=main-2508260024
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250825-sdm660-lpass-lpi-v3-3-65d4a4db298e@yandex.ru>
 
-Hi,
+On Mon, Aug 25, 2025 at 03:32:30PM +0300, Nickolay Goppen via B4 Relay wrote:
+> From: Richard Acayan <mailingradian@gmail.com>
+> 
+> The Snapdragon 660 has a Low-Power Island (LPI) TLMM for configuring
+> pins related to audio. Add the driver for this.
+> Also, this driver uses it's own quirky pin_offset function like downstream
+> driver does [1].
 
-在 2025/08/26 6:17, Cloud User 写道:
-> This fixes the statx issue which caused multiple test issue
->
-> Rajeev Mishra (2):
->    loop: Rename and merge get_size/get_loop_size to lo_calculate_size
->    loop: use vfs_getattr_nosec for accurate file size
->
->   drivers/block/loop.c | 43 +++++++++++++++++++++++++------------------
->   1 file changed, 25 insertions(+), 18 deletions(-)
->
+Please describe the quirky behavior in the commit message, rather than
+just referencing the downstream code.
 
-There is no need, to late for this now. :(
->>> Thanks Kuai for your continued support. I just want to make sure the original 
->>>> fix which calls   vfs_getattr_nosec in lo_calculate_size is not getting
->>> discarded. Again thanks for your quick response
+> 
+> [1] https://git.codelinaro.org/clo/la/kernel/msm-4.4/-/blob/LA.UM.7.2.c27-07400-sdm660.0/drivers/pinctrl/qcom/pinctrl-lpi.c#L107
+> 
+> Signed-off-by: Richard Acayan <mailingradian@gmail.com>
+> Co-developed-by: Nickolay Goppen <setotau@yandex.ru>
+> Signed-off-by: Nickolay Goppen <setotau@yandex.ru>
+> ---
+>  drivers/pinctrl/qcom/Kconfig                    |  10 ++
+>  drivers/pinctrl/qcom/Makefile                   |   1 +
+>  drivers/pinctrl/qcom/pinctrl-sdm660-lpass-lpi.c | 196 ++++++++++++++++++++++++
+>  3 files changed, 207 insertions(+)
+> 
+> diff --git a/drivers/pinctrl/qcom/Kconfig b/drivers/pinctrl/qcom/Kconfig
+> index dd9bbe8f3e11c37418d2143b33c21eeea10d456b..ef42520115f461302098d878cb76c6f25e55b5e4 100644
+> --- a/drivers/pinctrl/qcom/Kconfig
+> +++ b/drivers/pinctrl/qcom/Kconfig
+> @@ -68,6 +68,16 @@ config PINCTRL_SC7280_LPASS_LPI
+>  	  Qualcomm Technologies Inc LPASS (Low Power Audio SubSystem) LPI
+>  	  (Low Power Island) found on the Qualcomm Technologies Inc SC7280 platform.
+>  
+> +config PINCTRL_SDM660_LPASS_LPI
+> +	tristate "Qualcomm Technologies Inc SDM660 LPASS LPI pin controller driver"
+> +	depends on GPIOLIB
+> +	depends on ARM64 || COMPILE_TEST
+> +	depends on PINCTRL_LPASS_LPI
+> +	help
+> +	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
+> +	  Qualcomm Technologies Inc LPASS (Low Power Audio SubSystem) LPI
+> +	  (Low Power Island) found on the Qualcomm Technologies Inc SDM660 platform.
+> +
+>  config PINCTRL_SM4250_LPASS_LPI
+>  	tristate "Qualcomm Technologies Inc SM4250 LPASS LPI pin controller driver"
+>  	depends on ARM64 || COMPILE_TEST
+> diff --git a/drivers/pinctrl/qcom/Makefile b/drivers/pinctrl/qcom/Makefile
+> index 954f5291cc37242baffc021e3c68d850aabd57cd..cea8617ac650ecfc75c2a0c745a53d6a1b829842 100644
+> --- a/drivers/pinctrl/qcom/Makefile
+> +++ b/drivers/pinctrl/qcom/Makefile
+> @@ -43,6 +43,7 @@ obj-$(CONFIG_PINCTRL_SC7280_LPASS_LPI) += pinctrl-sc7280-lpass-lpi.o
+>  obj-$(CONFIG_PINCTRL_SC8180X)	+= pinctrl-sc8180x.o
+>  obj-$(CONFIG_PINCTRL_SC8280XP)	+= pinctrl-sc8280xp.o
+>  obj-$(CONFIG_PINCTRL_SDM660)   += pinctrl-sdm660.o
+> +obj-$(CONFIG_PINCTRL_SDM660_LPASS_LPI) += pinctrl-sdm660-lpass-lpi.o
+>  obj-$(CONFIG_PINCTRL_SDM670) += pinctrl-sdm670.o
+>  obj-$(CONFIG_PINCTRL_SDM845) += pinctrl-sdm845.o
+>  obj-$(CONFIG_PINCTRL_SDX55) += pinctrl-sdx55.o
+> diff --git a/drivers/pinctrl/qcom/pinctrl-sdm660-lpass-lpi.c b/drivers/pinctrl/qcom/pinctrl-sdm660-lpass-lpi.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..36fba93fda1160ad51a979996f8007393555f222
+> --- /dev/null
+> +++ b/drivers/pinctrl/qcom/pinctrl-sdm660-lpass-lpi.c
+> @@ -0,0 +1,196 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * This driver is solely based on the limited information in downstream code.
+> + * Any verification with schematics would be greatly appreciated.
+> + *
+> + * Copyright (c) 2023, Richard Acayan. All rights reserved.
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pinctrl/pinctrl.h>
+> +
+> +#include "pinctrl-lpass-lpi.h"
+> +
+> +enum lpass_lpi_functions {
+> +	LPI_MUX_comp_rx,
+> +	LPI_MUX_dmic12,
+> +	LPI_MUX_dmic34,
+> +	LPI_MUX_mclk0,
+> +	LPI_MUX_pdm_2_gpios,
+> +	LPI_MUX_pdm_clk,
+> +	LPI_MUX_pdm_rx,
+> +	LPI_MUX_pdm_sync,
+> +
+> +	LPI_MUX_gpio,
+> +	LPI_MUX__,
+> +};
+> +
+> +static const u32 sdm660_lpi_offset[] = {
 
-Thanks,
-Kuai
+This should be write only, but I still find it error prone and ugly to
+keep this array separate of the pingroups - and I don't fancy the extra
+indirect jump just to lookup an element in the array.
+
+Can't we instead extend lpi_pingroup with an "reg_offset", and then use
+lpi_pinctrl_variant_data->flags to indicate when this should be used?
+
+That consolidates the information in the groups[] and avoids the
+additional function calls.
+
+Regards,
+Bjorn
+
+> +	0x00000000,
+> +	0x00001000,
+> +	0x00002000,
+> +	0x00002010,
+> +	0x00003000,
+> +	0x00003010,
+> +	0x00004000,
+> +	0x00004010,
+> +	0x00005000,
+> +	0x00005010,
+> +	0x00005020,
+> +	0x00005030,
+> +	0x00006000,
+> +	0x00006010,
+> +	0x00007000,
+> +	0x00007010,
+> +	0x00005040,
+> +	0x00005050,
+> +	0x00008000,
+> +	0x00008010,
+> +	0x00008020,
+> +	0x00008030,
+> +	0x00008040,
+> +	0x00008050,
+> +	0x00008060,
+> +	0x00008070,
+> +	0x00009000,
+> +	0x00009010,
+> +	0x0000a000,
+> +	0x0000a010,
+> +	0x0000b000,
+> +	0x0000b010,
+> +};
+> +
+> +static const struct pinctrl_pin_desc sdm660_lpi_pinctrl_pins[] = {
+> +	PINCTRL_PIN(0, "gpio0"),
+> +	PINCTRL_PIN(1, "gpio1"),
+> +	PINCTRL_PIN(2, "gpio2"),
+> +	PINCTRL_PIN(3, "gpio3"),
+> +	PINCTRL_PIN(4, "gpio4"),
+> +	PINCTRL_PIN(5, "gpio5"),
+> +	PINCTRL_PIN(6, "gpio6"),
+> +	PINCTRL_PIN(7, "gpio7"),
+> +	PINCTRL_PIN(8, "gpio8"),
+> +	PINCTRL_PIN(9, "gpio9"),
+> +	PINCTRL_PIN(10, "gpio10"),
+> +	PINCTRL_PIN(11, "gpio11"),
+> +	PINCTRL_PIN(12, "gpio12"),
+> +	PINCTRL_PIN(13, "gpio13"),
+> +	PINCTRL_PIN(14, "gpio14"),
+> +	PINCTRL_PIN(15, "gpio15"),
+> +	PINCTRL_PIN(16, "gpio16"),
+> +	PINCTRL_PIN(17, "gpio17"),
+> +	PINCTRL_PIN(18, "gpio18"),
+> +	PINCTRL_PIN(19, "gpio19"),
+> +	PINCTRL_PIN(20, "gpio20"),
+> +	PINCTRL_PIN(21, "gpio21"),
+> +	PINCTRL_PIN(22, "gpio22"),
+> +	PINCTRL_PIN(23, "gpio23"),
+> +	PINCTRL_PIN(24, "gpio24"),
+> +	PINCTRL_PIN(25, "gpio25"),
+> +	PINCTRL_PIN(26, "gpio26"),
+> +	PINCTRL_PIN(27, "gpio27"),
+> +	PINCTRL_PIN(28, "gpio28"),
+> +	PINCTRL_PIN(29, "gpio29"),
+> +	PINCTRL_PIN(30, "gpio30"),
+> +	PINCTRL_PIN(31, "gpio31"),
+> +};
+> +
+> +static const char * const comp_rx_groups[] = { "gpio22", "gpio24" };
+> +static const char * const dmic12_groups[] = { "gpio26", "gpio28" };
+> +static const char * const dmic34_groups[] = { "gpio27", "gpio29" };
+> +static const char * const mclk0_groups[] = { "gpio18" };
+> +static const char * const pdm_2_gpios_groups[] = { "gpio20" };
+> +static const char * const pdm_clk_groups[] = { "gpio18" };
+> +static const char * const pdm_rx_groups[] = { "gpio21", "gpio23", "gpio25" };
+> +static const char * const pdm_sync_groups[] = { "gpio19" };
+> +
+> +const struct lpi_pingroup sdm660_lpi_pinctrl_groups[] = {
+> +	LPI_PINGROUP(0, LPI_NO_SLEW, _, _, _, _),
+> +	LPI_PINGROUP(1, LPI_NO_SLEW, _, _, _, _),
+> +	LPI_PINGROUP(2, LPI_NO_SLEW, _, _, _, _),
+> +	LPI_PINGROUP(3, LPI_NO_SLEW, _, _, _, _),
+> +	LPI_PINGROUP(4, LPI_NO_SLEW, _, _, _, _),
+> +	LPI_PINGROUP(5, LPI_NO_SLEW, _, _, _, _),
+> +	LPI_PINGROUP(6, LPI_NO_SLEW, _, _, _, _),
+> +	LPI_PINGROUP(7, LPI_NO_SLEW, _, _, _, _),
+> +	LPI_PINGROUP(8, LPI_NO_SLEW, _, _, _, _),
+> +	LPI_PINGROUP(9, LPI_NO_SLEW, _, _, _, _),
+> +	LPI_PINGROUP(10, LPI_NO_SLEW, _, _, _, _),
+> +	LPI_PINGROUP(11, LPI_NO_SLEW, _, _, _, _),
+> +	LPI_PINGROUP(12, LPI_NO_SLEW, _, _, _, _),
+> +	LPI_PINGROUP(13, LPI_NO_SLEW, _, _, _, _),
+> +	LPI_PINGROUP(14, LPI_NO_SLEW, _, _, _, _),
+> +	LPI_PINGROUP(15, LPI_NO_SLEW, _, _, _, _),
+> +	LPI_PINGROUP(16, LPI_NO_SLEW, _, _, _, _),
+> +	LPI_PINGROUP(17, LPI_NO_SLEW, _, _, _, _),
+> +
+> +	/* The function names of the PDM GPIOs are derived from SDM670 */
+> +	LPI_PINGROUP(18, LPI_NO_SLEW, pdm_clk, mclk0, _, _),
+> +	LPI_PINGROUP(19, LPI_NO_SLEW, pdm_sync, _, _, _),
+> +	LPI_PINGROUP(20, LPI_NO_SLEW, pdm_2_gpios, _, _, _),
+> +	LPI_PINGROUP(21, LPI_NO_SLEW, pdm_rx, _, _, _),
+> +	LPI_PINGROUP(22, LPI_NO_SLEW, comp_rx, _, _, _),
+> +	LPI_PINGROUP(23, LPI_NO_SLEW, pdm_rx, _, _, _),
+> +	LPI_PINGROUP(24, LPI_NO_SLEW, comp_rx, _, _, _),
+> +	LPI_PINGROUP(25, LPI_NO_SLEW, pdm_rx, _, _, _),
+> +	LPI_PINGROUP(26, LPI_NO_SLEW, dmic12, _, _, _),
+> +	LPI_PINGROUP(27, LPI_NO_SLEW, dmic34, _, _, _),
+> +	LPI_PINGROUP(28, LPI_NO_SLEW, dmic12, _, _, _),
+> +	LPI_PINGROUP(29, LPI_NO_SLEW, dmic34, _, _, _),
+> +
+> +	LPI_PINGROUP(30, LPI_NO_SLEW, _, _, _, _),
+> +	LPI_PINGROUP(31, LPI_NO_SLEW, _, _, _, _),
+> +};
+> +
+> +const struct lpi_function sdm660_lpi_pinctrl_functions[] = {
+> +	LPI_FUNCTION(comp_rx),
+> +	LPI_FUNCTION(dmic12),
+> +	LPI_FUNCTION(dmic34),
+> +	LPI_FUNCTION(mclk0),
+> +	LPI_FUNCTION(pdm_2_gpios),
+> +	LPI_FUNCTION(pdm_clk),
+> +	LPI_FUNCTION(pdm_rx),
+> +	LPI_FUNCTION(pdm_sync),
+> +};
+> +
+> +static u32 lpi_pinctrl_pin_offset_sdm660(int pin_id)
+> +{
+> +	return sdm660_lpi_offset[pin_id];
+> +}
+> +
+> +static const struct lpi_pinctrl_variant_data sdm660_lpi_pinctrl_data = {
+> +	.pins = sdm660_lpi_pinctrl_pins,
+> +	.npins = ARRAY_SIZE(sdm660_lpi_pinctrl_pins),
+> +	.groups = sdm660_lpi_pinctrl_groups,
+> +	.ngroups = ARRAY_SIZE(sdm660_lpi_pinctrl_groups),
+> +	.functions = sdm660_lpi_pinctrl_functions,
+> +	.nfunctions = ARRAY_SIZE(sdm660_lpi_pinctrl_functions),
+> +	.flags = LPI_FLAG_SLEW_RATE_SAME_REG,
+> +	.pin_offset = lpi_pinctrl_pin_offset_sdm660,
+> +};
+> +
+> +static const struct of_device_id sdm660_lpi_pinctrl_of_match[] = {
+> +	{
+> +		.compatible = "qcom,sdm660-lpass-lpi-pinctrl",
+> +		.data = &sdm660_lpi_pinctrl_data,
+> +	},
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, sdm660_lpi_pinctrl_of_match);
+> +
+> +static struct platform_driver sdm660_lpi_pinctrl_driver = {
+> +	.driver = {
+> +		.name = "qcom-sdm660-lpass-lpi-pinctrl",
+> +		.of_match_table = sdm660_lpi_pinctrl_of_match,
+> +	},
+> +	.probe = lpi_pinctrl_probe,
+> +	.remove = lpi_pinctrl_remove,
+> +};
+> +module_platform_driver(sdm660_lpi_pinctrl_driver);
+> +
+> +MODULE_AUTHOR("Richard Acayan <mailingradian@gmail.com>");
+> +MODULE_DESCRIPTION("QTI SDM660 LPI GPIO pin control driver");
+> +MODULE_LICENSE("GPL");
+> 
+> -- 
+> 2.51.0
+> 
+> 
 
