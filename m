@@ -1,193 +1,113 @@
-Return-Path: <linux-kernel+bounces-785912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10FC4B35269
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:55:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A3C2B3524A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:44:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C683E24175C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:55:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1FE35E852F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:44:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8066C2D59E8;
-	Tue, 26 Aug 2025 03:55:21 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA422D3220;
+	Tue, 26 Aug 2025 03:44:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a0buhXl3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6BEBE571;
-	Tue, 26 Aug 2025 03:55:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4E21CD0C;
+	Tue, 26 Aug 2025 03:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756180521; cv=none; b=ZrKp9F8X7gOJWuNUze/992jp9NVo0MjWheeiWi1+ryyqK/kGGFDDrX+yhwsOdVcBm1WCdE/hs5hv65NsuL2Q6CJETNmpn/XQsgsTS0iqgGSEh1MRHvhaSriYAwAnohFuhCDcxfCGvfUdWbLxvntaxsaqea3A4+nKJ1wQHCrlxsg=
+	t=1756179844; cv=none; b=DlpEmkw/ph5kYc9RnCd4L1yxYMiq04n4j9sRO36FwB1q+sZkzYufEkC0vuakSkiunyaIa+XyrWTMUX+TZkQgbkpChaSA7rYG6aV8cAVT3vZH7Zl60DaBIb6skD84IzMbaKWdcPeHotGmV1OkIjNdSzqx51+pMIbn7Q5zsGo+9PQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756180521; c=relaxed/simple;
-	bh=ten0Lr96KhbpXoPXjw0B6qY68FXSiotUZ/FF9blsbzA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZKWdGcssu3Hozq84VhPmk0rvbo/gymWBS9HxNWMo5RUDg3OUuouA3wd6yEXb/Lybyu+1AH3VfdM5UVWrkwxCPbnWbYwl1stcz68mlKpgAu9ijM6ntUK/NnVoBM9d970WtorsmiZ2r/1nJWEEH/ZvlVZ8Phk/qU5vw9J4R0s2eVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c9v2D4NzqzKHMq5;
-	Tue, 26 Aug 2025 11:55:16 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 3C7BC1A0E0B;
-	Tue, 26 Aug 2025 11:55:16 +0800 (CST)
-Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
-	by APP2 (Coremail) with SMTP id Syh0CgCHsJcQMK1o1ZJFAQ--.52077S5;
-	Tue, 26 Aug 2025 11:55:16 +0800 (CST)
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: tj@kernel.org,
-	hannes@cmpxchg.org,
-	mkoutny@suse.com
-Cc: cgroups@vger.kernel.org,
+	s=arc-20240116; t=1756179844; c=relaxed/simple;
+	bh=qViKu2G3S4xLHtRgNf8GgW5zqv9/Lpel9naK3zFCNMU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=N36F0lrsw4866doVBzBl3b1NzC913krmIlV2VwFbjO5FOclLJKP+sv/tfJv3/Ns9ZLkgfMEj6Nenro0UEuSPMESnv9tCqTjJVZdRRpNVHuQbp4CfHKUqw2LGsn39KLptskCyEwWTD8MtgzDvXCzTdIcmurF0COy8oGkTnNMwTUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a0buhXl3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EE58C4CEF1;
+	Tue, 26 Aug 2025 03:44:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756179844;
+	bh=qViKu2G3S4xLHtRgNf8GgW5zqv9/Lpel9naK3zFCNMU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=a0buhXl3Jjdcb2R4aAtZilC57yTt2X0OQtPsV5WYI0sKem4AC+TB/8oOjKBqCNgkl
+	 BD6F1gNvr9sR+WyMhQd5s+fIvuywsGIjnlOS4u0e1oHPw6HQYQA917oYeJZcaFRPXK
+	 rXmcI6dE2iqe3SQsBbFoyuTUAYIQWyHNuiFUThoUHdaiR3CqD3+kefi7OoAMgkQO9Z
+	 9eCzrIZoF+yX7Hb/52qY/PbTwaqCxl1w7WffAOFde/z8r01ntiUndnCzvSoK1Owt/0
+	 oaMg0c7dTaoUPump4o8B28ZcZuSS32e3lwFO9g70xrsiHxZDuBI/Z1CjiQeBHOFs5p
+	 7YPYDTXO2yTEA==
+From: Kees Cook <kees@kernel.org>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Kees Cook <kees@kernel.org>,
+	kernel test robot <lkp@intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Vineet Gupta <vgupta@kernel.org>,
+	linux-snps-arc@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	lujialin4@huawei.com,
-	chenridong@huawei.com
-Subject: [PATCH cgroup/for-next 3/3] cgroup: rename css offline related functions
-Date: Tue, 26 Aug 2025 03:40:22 +0000
-Message-Id: <20250826034022.1736249-4-chenridong@huaweicloud.com>
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] arc: Fix __fls() const-foldability via __builtin_clzl()
+Date: Mon, 25 Aug 2025 20:43:58 -0700
+Message-Id: <20250826034354.work.684-kees@kernel.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250826034022.1736249-1-chenridong@huaweicloud.com>
-References: <20250826034022.1736249-1-chenridong@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2182; i=kees@kernel.org; h=from:subject:message-id; bh=qViKu2G3S4xLHtRgNf8GgW5zqv9/Lpel9naK3zFCNMU=; b=owGbwMvMwCVmps19z/KJym7G02pJDBlrdWt3LrKv3/v55yrWvjUJfq1/aj60ecWkPma7dWtH3 9zb9Wd3dpSyMIhxMciKKbIE2bnHuXi8bQ93n6sIM4eVCWQIAxenAFwkieGf1rrQN5vXbnG9UMns suOD2aOLnzjFY8zzK9cziuj6G3/XZfjJqHas7VBxoqhHYlXiD+Paouxd+38dT+diZWZ7FluynZs bAA==
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgCHsJcQMK1o1ZJFAQ--.52077S5
-X-Coremail-Antispam: 1UD129KBjvJXoWxZw4fuF4rAFWDCryUurWfXwb_yoWrtw4fpF
-	ZxA3sxtan5GaykW39aq3409FySgFs5J34UK3yxG34Syr43JFyUtF42vr1jyFW5GrZ7ur4f
-	ArsYvr1fCw1jyrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Kb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUWw
-	A2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMc
-	Ij6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_
-	Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr4
-	1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK
-	67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI
-	8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAv
-	wI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14
-	v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUwhFxUUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-From: Chen Ridong <chenridong@huawei.com>
+While tracking down a problem where constant expressions used by
+BUILD_BUG_ON() suddenly stopped working[1], we found that an added static
+initializer was convincing the compiler that it couldn't track the state
+of the prior statically initialized value. Tracing this down found that
+ffs() was used in the initializer macro, but since it wasn't marked with
+__attribute__const__, the compiler had to assume the function might
+change variable states as a side-effect (which is not true for ffs(),
+which provides deterministic math results).
 
-The cgroup_destroy_wq has been split into three separate workqueues:
-cgroup_offline_wq, cgroup_release_wq, and cgroup_free_wq. The cgroup
-destroy work is now enqueued sequentially into these queues. To clarify
-the three distinct stages of the destruction process, it will introduce
-helper functions or rename existing ones accordingly. The resulting
-structure is as follows:
+For arc architecture with CONFIG_ISA_ARCV2=y, the __fls() function
+uses __builtin_arc_fls() which lacks GCC's const attribute, preventing
+compile-time constant folding[2]. Fix this by handling compile-time
+constants with the standard __builtin_clzl() builtin (which has const
+attribute) while preserving the optimized arc-specific builtin for runtime
+cases. This has the added benefit of skipping runtime calculation of
+compile-time constant values.
 
-work            workqueue               work_fn
-css_offline     cgroup_offline_wq       css_offline_work_fn
-css_release     cgroup_release_wq       css_release_work_fn
-css_free        cgroup_free_wq          css_free_rwork_fn
+Build tested ARCH=arc allyesconfig with GCC arc-linux 15.2.0.
 
-This patch renames css_killed_ref_fn to css_offline_work_fn and
-css_killed_work_fn to css_offline_work_fn to align with the new
-multi-phase destruction workflow.
-
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
+Link: https://github.com/KSPP/linux/issues/364 [1]
+Link: https://lore.kernel.org/all/202508031025.doWxtzzc-lkp@intel.com/
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202508031025.doWxtzzc-lkp@intel.com/
+Signed-off-by: Kees Cook <kees@kernel.org>
 ---
- kernel/cgroup/cgroup.c | 34 +++++++++++++++++-----------------
- 1 file changed, 17 insertions(+), 17 deletions(-)
+Cc: Yury Norov <yury.norov@gmail.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Vineet Gupta <vgupta@kernel.org>
+Cc: <linux-snps-arc@lists.infradead.org>
+---
+ arch/arc/include/asm/bitops.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index ad1f6a59a27b..1c75ebad7a88 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -5447,20 +5447,20 @@ static struct cftype cgroup_psi_files[] = {
- /*
-  * css destruction is four-stage process.
-  *
-- * 1. Destruction starts.  Killing of the percpu_ref is initiated.
-- *    Implemented in kill_css().
-+ * 1. kill_css: Destruction starts.  Killing of the percpu_ref is
-+ *    initiated. Implemented in kill_css().
-  *
-- * 2. When the percpu_ref is confirmed to be visible as killed on all CPUs
-- *    and thus css_tryget_online() is guaranteed to fail, the css can be
-- *    offlined by invoking offline_css().  After offlining, the base ref is
-- *    put.  Implemented in css_killed_work_fn().
-+ * 2. css_offline: When the percpu_ref is confirmed to be visible as
-+ *    killed on all CPUs and thus css_tryget_online() is guaranteed to
-+ *    fail, the css can be offlined by invoking __css_offline(). After
-+ *    offlining, the base ref is put. Implemented in css_offline_work_fn().
-  *
-- * 3. When the percpu_ref reaches zero, the only possible remaining
-- *    accessors are inside RCU read sections.  css_release() schedules the
-- *    RCU callback.
-+ * 3. css_release: When the percpu_ref reaches zero, the only possible
-+ *    remaining accessors are inside RCU read sections. css_release()
-+ *    schedules the RCU callback.
-  *
-- * 4. After the grace period, the css can be freed.  Implemented in
-- *    css_free_rwork_fn().
-+ * 4. css_free: After the grace period, the css can be freed. Implemented
-+ *    in css_free_rwork_fn().
-  *
-  * It is actually hairier because both step 2 and 4 require process context
-  * and thus involve punting to css->destroy_work adding two additional
-@@ -5642,7 +5642,7 @@ static int online_css(struct cgroup_subsys_state *css)
- }
- 
- /* if the CSS is online, invoke ->css_offline() on it and mark it offline */
--static void offline_css(struct cgroup_subsys_state *css)
-+static void __css_offline(struct cgroup_subsys_state *css)
- {
- 	struct cgroup_subsys *ss = css->ss;
- 
-@@ -5936,7 +5936,7 @@ int cgroup_mkdir(struct kernfs_node *parent_kn, const char *name, umode_t mode)
-  * css_tryget_online() is now guaranteed to fail.  Tell the subsystem to
-  * initiate destruction and put the css ref from kill_css().
+diff --git a/arch/arc/include/asm/bitops.h b/arch/arc/include/asm/bitops.h
+index 5340c2871392..df894235fdbc 100644
+--- a/arch/arc/include/asm/bitops.h
++++ b/arch/arc/include/asm/bitops.h
+@@ -133,6 +133,8 @@ static inline __attribute__ ((const)) int fls(unsigned int x)
   */
--static void css_killed_work_fn(struct work_struct *work)
-+static void css_offline_work_fn(struct work_struct *work)
+ static inline __attribute__ ((const)) unsigned long __fls(unsigned long x)
  {
- 	struct cgroup_subsys_state *css =
- 		container_of(work, struct cgroup_subsys_state, destroy_work);
-@@ -5944,7 +5944,7 @@ static void css_killed_work_fn(struct work_struct *work)
- 	cgroup_lock();
- 
- 	do {
--		offline_css(css);
-+		__css_offline(css);
- 		css_put(css);
- 		/* @css can't go away while we're holding cgroup_mutex */
- 		css = css->parent;
-@@ -5954,13 +5954,13 @@ static void css_killed_work_fn(struct work_struct *work)
++	if (__builtin_constant_p(x))
++		return x ? BITS_PER_LONG - 1 - __builtin_clzl(x) : 0;
+ 	/* FLS insn has exactly same semantics as the API */
+ 	return	__builtin_arc_fls(x);
  }
- 
- /* css kill confirmation processing requires process context, bounce */
--static void css_killed_ref_fn(struct percpu_ref *ref)
-+static void css_offline(struct percpu_ref *ref)
- {
- 	struct cgroup_subsys_state *css =
- 		container_of(ref, struct cgroup_subsys_state, refcnt);
- 
- 	if (!css->nr_descendants) {
--		INIT_WORK(&css->destroy_work, css_killed_work_fn);
-+		INIT_WORK(&css->destroy_work, css_offline_work_fn);
- 		queue_work(cgroup_offline_wq, &css->destroy_work);
- 	}
- }
-@@ -6011,7 +6011,7 @@ static void kill_css(struct cgroup_subsys_state *css)
- 	 * Use percpu_ref_kill_and_confirm() to get notifications as each
- 	 * css is confirmed to be seen as killed on all CPUs.
- 	 */
--	percpu_ref_kill_and_confirm(&css->refcnt, css_killed_ref_fn);
-+	percpu_ref_kill_and_confirm(&css->refcnt, css_offline);
- }
- 
- /**
 -- 
 2.34.1
 
