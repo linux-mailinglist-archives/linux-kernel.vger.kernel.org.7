@@ -1,148 +1,187 @@
-Return-Path: <linux-kernel+bounces-786346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5613FB358A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:20:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9529B358B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:22:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61FD67A84C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:18:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A24F53A5977
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5496426C3A4;
-	Tue, 26 Aug 2025 09:19:56 +0000 (UTC)
-Received: from mail-pf1-f196.google.com (mail-pf1-f196.google.com [209.85.210.196])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05102307488;
+	Tue, 26 Aug 2025 09:20:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FoXLE4LR"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B79F2F6593;
-	Tue, 26 Aug 2025 09:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC95E2F9996
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756199996; cv=none; b=JvMnnt+06iHBoozAHg92ij9C92i6T23PyKDmAvG7RuF3h5zmssagft2EyDgnSFAJ9GPeGRCcYnCQg9OdbiLhxiMcxRpGsWBpnVbIVeiQax3xk4EHSRQZ4fThlX8+BCgXZF5qLwa3jw+c094ua3xRQOviGWh+EDZkR/ID/YJmQag=
+	t=1756200012; cv=none; b=SuQCEpHbddLWhLwEo67kP5MVTa++3/q6o6YPOF6k4ECc/ySQauEHXXXU8NBigcMWZj8NhO6msor8dLqby8LZlzKz/OS5jtUliWJwHj01IbWNwX2fvN02rpWJEQ6FOLr/u2QI1b7Wfj65qxsYIoqIZTrHnMjWiQe2VKsQbvmrLvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756199996; c=relaxed/simple;
-	bh=cSVhgzXTN1fIYCAwVwg103cSNkVWu7dW0EFjmdAvC68=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iu71Wgob8CAP/vY2QnsAdzdbimwzNelqznJ8nzknopEJxvXNLlJ/yWxJigYoZqhNH850rSxzJRmcESgP0nnglvsoTzUD+2NPTg72O1N3EF5rCTxOr7YOmRuliT+qlILwmqCxsd+d0cbnmf4dioCeS+DsEVr9TvYJA8FixEcbtjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f196.google.com with SMTP id d2e1a72fcca58-76e2e6038cfso5978974b3a.0;
-        Tue, 26 Aug 2025 02:19:53 -0700 (PDT)
+	s=arc-20240116; t=1756200012; c=relaxed/simple;
+	bh=ZO1IgAuwBt52NoHD+ilRGM6Mth1RH65xMpJ/BN9e9qE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SkyfUSINJKFGOsbolepUx4rnUThQpAcPleIJoX2dfsMn7Snht/PQv4C5M/9ivkRad9mGfly/NHUosvEdzD3mlrusAfWyUXGl7zs1xsmlkJLT5sNs88MYQL6oa+bcQUzeBLl07F3UPk27x4BaqTF4rGIYTG1/FLk4HRVyZqkFrj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FoXLE4LR; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45a1b04f8b5so33309845e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 02:20:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756200008; x=1756804808; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eaOTCniziyeazJJYkYE2FSNDiQRbUyarefsu1PbqX/E=;
+        b=FoXLE4LRMJXihDnfdpc3QiHZQYE5qwyxGlTC1lwkW8NcQ/Pctb80Vy01Ba8ZPYVM3q
+         0i7LN1f+MxPpzuxcoR/eDdUqS19205GImLB9Mnv34KXBvvcV0Xr2dNFo/a0GgR1zr1Ve
+         mzaeettoJFaSSIEF7u9ZernabZ1qCX5FwFiYu12idMXSwioa58CpwwR1ri0CArds2bK0
+         Dgdxq3c/XOyCtXBHM01OkWSKCdC31l7n0T9H4AWTYreE9STeoSbVuLIKdxR46qBw4pzT
+         OZnvkwfa17YJLFPdVQ7i3boEs8qddTaaorwn5FQDGTy7GJAxvSCbxgMDTKpgwITrbHgU
+         Q7XQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756199993; x=1756804793;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kiotA2JV4z/aoaoQuJaHJfZjyCmN/l/UIOVo8YNVBQ8=;
-        b=JeSlr0xMxOC8os6X1dhDKGj2zbcpyvTLOJk9Knwu/ZGmOYoruhE81A5j/NXER3LteI
-         HpxFe3Y8XyWiVnIhQB8xYeF8J/rmZ+FjLe7XcdTfREDfrSSOxQx2mr6o3GIAyMtYRcWS
-         26KL5DflpiW/8D6yUh333SX1rjgp5MMzxs3EZNt/13zY8vEWbEbTeutlaVWPI2fCoA/J
-         rHhQyfMRsYd4fCKzfioqxlFyA5v57D6/QqZH/ctP6Z+v3zkFq3P/r5dHDF0Kt8IRbbBF
-         Z8DkrT1zj5hkQKXlTjwiyEzeFH1RtgSqCrCvifEBnuRwX8ghFHpS0fucA2w+5LzJlSI+
-         Virg==
-X-Forwarded-Encrypted: i=1; AJvYcCWS3zl2rk+8h1LN0LvA5/Mgv8KdmETqsJI6sGprcGtpqP9cQYZ5ZHvg5pi7bn3SXV+EJoL9VYypwt1jcBI=@vger.kernel.org, AJvYcCXYeBAxQ6c3oJmSYAGXrsMaC1wSHOPxORL07lfIg/U8j/GVOUA8nsEPVajDGp+qyKqu6KNU/gzF5vM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNrWJzVRYxmIgfWn4wIOuP2ScMLEm2742maHTK1Pjzdrt0edEd
-	zH/XZNL+qAqd4jHKJUftb3Zr0a2F+uyLYLmSJZHTA2A2emOaqn4v7BrfY3n2H+Z8TCs=
-X-Gm-Gg: ASbGnctSX+iuRuuC3bwfb3DtLGbU+1uVjflyXt9JaAfz0QSd/LA2yHGwV4/Qo/pL8rh
-	g2JB52mGsvcPn1d0+t6MmgmhX5hXWeVZ3tXNp2GOtvyyAFxI3HYtisDbgCRDDPfvtSoOVIuhbq+
-	ca7ciPp9INQ3OCltI9tbuYpe+WOro8wZKwSKzpP9L/d2QgsOe4jNaLLHFL2E+CYAn/Lo0Cg1wKc
-	li0iRWCVabv7PrcGXeM9lxRpmEPsEV9+haFbZKytDIggG6LXFlAsrvArAOFjGQmfgy++8XtOC/r
-	ByQQGMgmMBD0J617iMtNN9kOa4ea2kmUPIS6PGeXdZOKlrK/n9dLp1BJ4eba0I1HvrJZHcv7yQx
-	iie3uP6Yc7E7H+LQBwKc2Gqq4MJGwDaZMRdMjlnBKLfftcQ==
-X-Google-Smtp-Source: AGHT+IHH7da/LZmAZnM0fJkvDTf4zlk9MLG128qdfl7Rl/ZDlQrAKSDlDVnlaMHDaf0NYEI0QrOebQ==
-X-Received: by 2002:a05:6a20:4304:b0:243:15b9:7656 with SMTP id adf61e73a8af0-24340d231damr23290148637.48.1756199992578;
-        Tue, 26 Aug 2025 02:19:52 -0700 (PDT)
-Received: from power-ThinkBook-15-G2-ITL.. ([116.128.244.171])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b49cd272648sm8332063a12.27.2025.08.26.02.19.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 02:19:52 -0700 (PDT)
-From: Xueqin Luo <luoxueqin@kylinos.cn>
-To: rafael@kernel.org,
-	pavel@kernel.org,
-	lenb@kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Xueqin Luo <luoxueqin@kylinos.cn>
-Subject: [PATCH] PM: hibernate: make compression threads configurable via kernel parameter
-Date: Tue, 26 Aug 2025 17:19:37 +0800
-Message-ID: <20250826091937.991667-1-luoxueqin@kylinos.cn>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1756200008; x=1756804808;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eaOTCniziyeazJJYkYE2FSNDiQRbUyarefsu1PbqX/E=;
+        b=TsDthBjgyQbRDHbhWeAQoXGihdsF2xZuNmqPabwDNvlnc+Igfw/AUGsDFcsNsooTnm
+         dV+sG3f1VGY7U+tF8sbEXCSErqkd+bBQmCfOfrnT1XbWP9X6D8bQIQAHU8RrYw9H1gGa
+         2qB5JEGSaQoRXt4wbbrWETyvEEB5et8q99MIubeycyqDAg6HRQekZAhebltT8m46ltis
+         1whlNPkdmzeg5yNaE+r+c/bIK3TqtT/vPnpWalpBrhg6SWYEWGlhNZzmuTdaT7elM1av
+         etJMxwvd9Z3WqA41Ab4CQ0CVjg9YXOb58+0+8YhUk1xSzWcgtvD44jt3rKMGlvZTkOfb
+         M3ag==
+X-Forwarded-Encrypted: i=1; AJvYcCWVwQVCtIFrQvrC3gpeNhE9Pk99lAcIWZwg4cXi+M+b5k4lXFgbJfRLo6Si+7BzBdHVzl3DdjiQqHLYKhs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9c3qyP8AKu77kZKwoOdFEAhaO1qX1KDVq2du8dmqdpE46B9xn
+	DGNKZUyJAf43JarShRSXNFUKtFeoEjxnKl6ilGxZm8a4/QbBYOYi47vl+4RIykrEGoBHm+kCSjj
+	7lYRp
+X-Gm-Gg: ASbGncugOiadtd1KBs3sUN6vLYbKBMqXCSx6g9pejDKN7xK0mKxoc/M3VSIgOARvltq
+	06horU7FtZq4IBx6UU/gFcFIWxeDT7N3SmCC1KFrqtR7VpDsw7f6WSlw5ui1BQ/VZySaIaPk4UR
+	pzE0thwSv2GoeULl2SrwIMBis8/Qwrg2sJwLOFUWWUuEj12aDkdKiexBYXoBE/aG3y5GfsB4yw7
+	KnSxNGF259PA13j8pDKl0ny8CyGac9a7nyRlQicsJqRIHS2OqFTJMnRzm1KZ+lhYrAtZldSksTT
+	zB9XnvazHC0lbHbu6x38sqFNvMoXh1ToSRhJeoEVKOkJMwKj/ewf0mj/oOwC8hu5gW0b1WuQRi2
+	JP70FW2HtVS1YX1FNMsgTC0QA5E92V0ZCmOsl7A==
+X-Google-Smtp-Source: AGHT+IG3O4nYqPPZOTd55R1CACz78Gxy+VGwYkBeN2scTg38UYjMhu5WNHrdDEH4ezcSuJRTDw+VSw==
+X-Received: by 2002:a05:6000:2c04:b0:3c9:469d:c092 with SMTP id ffacd0b85a97d-3c9469dc2b7mr5298437f8f.16.1756200008054;
+        Tue, 26 Aug 2025 02:20:08 -0700 (PDT)
+Received: from [192.168.1.3] ([185.48.76.109])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c711211b19sm15708101f8f.39.2025.08.26.02.20.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Aug 2025 02:20:07 -0700 (PDT)
+Message-ID: <66cfff9c-e0ec-4171-b62d-80d6139c42f3@linaro.org>
+Date: Tue, 26 Aug 2025 10:20:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/3] coresight: tpda: add function to configure
+ TPDA_SYNCR register
+To: Jie Gan <jie.gan@oss.qualcomm.com>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>
+References: <20250826070150.5603-1-jie.gan@oss.qualcomm.com>
+ <20250826070150.5603-3-jie.gan@oss.qualcomm.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20250826070150.5603-3-jie.gan@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-A new kernel parameter 'cmp_threads=' is introduced to
-allow tuning the number of compression/decompression threads at boot.
 
-Signed-off-by: Xueqin Luo <luoxueqin@kylinos.cn>
----
- kernel/power/swap.c | 22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
 
-diff --git a/kernel/power/swap.c b/kernel/power/swap.c
-index ad13c461b657..43280e08a4ad 100644
---- a/kernel/power/swap.c
-+++ b/kernel/power/swap.c
-@@ -520,7 +520,8 @@ static int swap_writer_finish(struct swap_map_handle *handle,
- #define CMP_SIZE	(CMP_PAGES * PAGE_SIZE)
- 
- /* Maximum number of threads for compression/decompression. */
--#define CMP_THREADS	3
-+#define CMP_MAX_THREADS	12
-+static int cmp_threads = 3
- 
- /* Minimum/maximum number of pages for read buffering. */
- #define CMP_MIN_RD_PAGES	1024
-@@ -585,8 +586,8 @@ struct crc_data {
- 	wait_queue_head_t go;                     /* start crc update */
- 	wait_queue_head_t done;                   /* crc update done */
- 	u32 *crc32;                               /* points to handle's crc32 */
--	size_t *unc_len[CMP_THREADS];             /* uncompressed lengths */
--	unsigned char *unc[CMP_THREADS];          /* uncompressed data */
-+	size_t *unc_len[CMP_MAX_THREADS];             /* uncompressed lengths */
-+	unsigned char *unc[CMP_MAX_THREADS];          /* uncompressed data */
- };
- 
- /*
-@@ -703,7 +704,7 @@ static int save_compressed_image(struct swap_map_handle *handle,
- 	 * footprint.
- 	 */
- 	nr_threads = num_online_cpus() - 1;
--	nr_threads = clamp_val(nr_threads, 1, CMP_THREADS);
-+	nr_threads = clamp_val(nr_threads, 1, cmp_threads);
- 
- 	page = (void *)__get_free_page(GFP_NOIO | __GFP_HIGH);
- 	if (!page) {
-@@ -1223,7 +1224,7 @@ static int load_compressed_image(struct swap_map_handle *handle,
- 	 * footprint.
- 	 */
- 	nr_threads = num_online_cpus() - 1;
--	nr_threads = clamp_val(nr_threads, 1, CMP_THREADS);
-+	nr_threads = clamp_val(nr_threads, 1, cmp_threads);
- 
- 	page = vmalloc(array_size(CMP_MAX_RD_PAGES, sizeof(*page)));
- 	if (!page) {
-@@ -1667,3 +1668,14 @@ static int __init swsusp_header_init(void)
- }
- 
- core_initcall(swsusp_header_init);
-+
-+static int __init cmp_threads_setup(char *str)
-+{
-+       int rc = kstrtouint(str, 0, &cmp_threads);
-+       if (rc)
-+               return rc;
-+       return 1;
-+
-+}
-+
-+__setup("cmp_threads=", cmp_threads_setup);
--- 
-2.43.0
+On 26/08/2025 8:01 am, Jie Gan wrote:
+> From: Tao Zhang <tao.zhang@oss.qualcomm.com>
+> 
+> The TPDA_SYNCR register defines the frequency at which TPDA generates
+> ASYNC packets, enabling userspace tools to accurately parse each valid
+> packet.
+> 
+> Signed-off-by: Tao Zhang <tao.zhang@oss.qualcomm.com>
+> Co-developed-by: Jie Gan <jie.gan@oss.qualcomm.com>
+> Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
+> ---
+>   drivers/hwtracing/coresight/coresight-tpda.c | 15 +++++++++++++++
+>   drivers/hwtracing/coresight/coresight-tpda.h |  1 +
+>   2 files changed, 16 insertions(+)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-tpda.c b/drivers/hwtracing/coresight/coresight-tpda.c
+> index cc254d53b8ec..9e623732d1e7 100644
+> --- a/drivers/hwtracing/coresight/coresight-tpda.c
+> +++ b/drivers/hwtracing/coresight/coresight-tpda.c
+> @@ -189,6 +189,18 @@ static void tpda_enable_pre_port(struct tpda_drvdata *drvdata)
+>   		writel_relaxed(0x0, drvdata->base + TPDA_FPID_CR);
+>   }
+>   
+> +static void tpda_enable_post_port(struct tpda_drvdata *drvdata)
+> +{
+> +	uint32_t val;
+
+Minor nit: this is inconsistent with u32 used elsewhere in this file.
+
+> +
+> +	val = readl_relaxed(drvdata->base + TPDA_SYNCR);
+> +	/* Clear the mode */
+> +	val = val & ~TPDA_MODE_CTRL;
+
+&=
+
+> +	/* Program the counter value */
+> +	val = val | 0xFFF;
+
+|=
+
+Defining a field would be a bit nicer here. Like:
+
+val |= FIELD_PREP(TPDA_SYNCR_COUNTER, UINT32_MAX);
+
+Assuming you wanted to set all bits, and 0xFFF isn't some specific value.
+
+> +	writel_relaxed(val, drvdata->base + TPDA_SYNCR);
+> +}
+> +
+>   static int tpda_enable_port(struct tpda_drvdata *drvdata, int port)
+>   {
+>   	u32 val;
+> @@ -227,6 +239,9 @@ static int __tpda_enable(struct tpda_drvdata *drvdata, int port)
+>   		tpda_enable_pre_port(drvdata);
+>   
+>   	ret = tpda_enable_port(drvdata, port);
+> +	if (!drvdata->csdev->refcnt)
+> +		tpda_enable_post_port(drvdata);
+
+Any reason this can't be done on tpda_enable_pre_port()? It has the same 
+logic where it's only done once for the first port.
+
+If it can't be done there you should add a comment saying why it must be 
+done after enabling the first port.
+
+> +
+>   	CS_LOCK(drvdata->base);
+>   
+>   	return ret;
+> diff --git a/drivers/hwtracing/coresight/coresight-tpda.h b/drivers/hwtracing/coresight/coresight-tpda.h
+> index b651372d4c88..00d146960d81 100644
+> --- a/drivers/hwtracing/coresight/coresight-tpda.h
+> +++ b/drivers/hwtracing/coresight/coresight-tpda.h
+> @@ -9,6 +9,7 @@
+>   #define TPDA_CR			(0x000)
+>   #define TPDA_Pn_CR(n)		(0x004 + (n * 4))
+>   #define TPDA_FPID_CR		(0x084)
+> +#define TPDA_SYNCR		(0x08C)
+>   
+>   /* Cross trigger FREQ packets timestamp bit */
+>   #define TPDA_CR_FREQTS		BIT(2)
 
 
