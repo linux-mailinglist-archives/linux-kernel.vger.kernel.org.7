@@ -1,266 +1,337 @@
-Return-Path: <linux-kernel+bounces-786000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80677B3535B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:30:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EA47B35351
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:29:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38AAC3A4497
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:29:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23F903B48EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9030E2F067E;
-	Tue, 26 Aug 2025 05:29:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE84C2EE29F;
+	Tue, 26 Aug 2025 05:29:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="SH7eaYTX"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2059.outbound.protection.outlook.com [40.107.243.59])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Wq6Ux+WC";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sKuNjYhf"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F5922EE29F;
-	Tue, 26 Aug 2025 05:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756186175; cv=fail; b=Rhs+T+iDJJ9sJ1heQjuF14zMVp2hW1G6fityeeQKjTj3+NiNWyny0j3QipD7tLA02mLmeBgDOuCXqiWl4tALtKUkmrwgiSsVkIFNDEOIONVW5ZNLKeY6BP4B2MYvNqgxlMHnmDZ2yU0xnaCZP9yxaeA/tjX5pFw8nf3sp4l26EM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756186175; c=relaxed/simple;
-	bh=BedOt79+PW6QxRT0a2r83zG0BciGBldYa/9lcLTECJ4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WijnqFap6qqgTt8xxkid2ezjx6S/ChcZL2gJ8UTYw6k+AhbpYNg8DuZrvbxL0eyASGpPo6r7BT3DToarbv2zIlLK07Cyssvt/dGvYyB1JpMmQpaeHA0ASr0LZgs1XC+SM4+VbuoxwQG5yi6n9AWqifP/z2sOPSyRf5jhAfJd6MM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=SH7eaYTX; arc=fail smtp.client-ip=40.107.243.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nOkNK6wXvnTm20XxNgY96a13+7V/nKNmo53rpMD0kCjAFPtVKxk+gfz1SAxyLUibGPZVWPKc1hZvMALkwxpOLw5YL3ma/L3kyTOeZKZQeqmdXpERKd0yAqX0xyk8QTeZ+x6nNbt3m9jZU6Ad7Fow9quwG7+qSrt9NF6itsU7fKcurxErS8zJqEb3QKTlfI/IbP2q2yvVp6LWw0oFCenqjbo9cut38FPjP3Bt8w7mQWPSM36nJuX6wBcZzA9zoFVT8vrg39+EZL5aFjiDoWjURSfhAux/hZFZ0Agj2tmDWXuIeAQOK2roJmRYZtXHBm4VtBFnX+PjOCL9QRq2GQlHLA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Fao3+upMfuKUn7A1BBpx/0/uQ2/CPeUVXV+AjUc+vcM=;
- b=lUb8OyHZ8Hx8ux7gJUQW+sxA3UycNxCAxYRDFYP79npZsHYyKNo0zKM5qXwcB00waDw4etqZ/NHkIDseJVIGYuD9UZJHrtOfYZREgQEjKyeyuLQq7GS19yPlfmicPMFo9jD6ibHeBlWdgpmtBRpT6mJTeDscFeNbziH6fwhXQZ+ChnRBdf1oyT5tY8nB/6na5rO2yUGjC4RoLR1rYyJAPZgsK5BKKz0fralhXP8C8doQ93c3r97U/8WZFYy9THl89vAOLqF7A11r71Gf9RuDdoiFPWFsccA3FYDj0vEcf3DBQaf0YWH4V0IxnACfuLRbEJBlBcKs5yJHm/4YwLHRFA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Fao3+upMfuKUn7A1BBpx/0/uQ2/CPeUVXV+AjUc+vcM=;
- b=SH7eaYTXff9A4cuJURgtlgiY1hA8rJE6y5aK8uer9TESsCBiOv28ch09RVUKjQa5HVnPqn1egu+SLTLgVMKkQdxJMKcIHAwPMDGHYpU+L2/O2QJaJ5sqQ29PWUVnKSGHhpCh9StenYLP9YP4IJ35HeJ/RX/7YxZSUiY03Fq3Qz4=
-Received: from DS7PR03CA0171.namprd03.prod.outlook.com (2603:10b6:5:3b2::26)
- by SN7PR12MB8132.namprd12.prod.outlook.com (2603:10b6:806:321::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.20; Tue, 26 Aug
- 2025 05:29:30 +0000
-Received: from DS3PEPF000099E0.namprd04.prod.outlook.com
- (2603:10b6:5:3b2:cafe::24) by DS7PR03CA0171.outlook.office365.com
- (2603:10b6:5:3b2::26) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.21 via Frontend Transport; Tue,
- 26 Aug 2025 05:29:30 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- DS3PEPF000099E0.mail.protection.outlook.com (10.167.17.203) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9073.11 via Frontend Transport; Tue, 26 Aug 2025 05:29:30 +0000
-Received: from Satlexmb09.amd.com (10.181.42.218) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 26 Aug
- 2025 00:29:29 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by satlexmb09.amd.com
- (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Mon, 25 Aug
- 2025 22:29:28 -0700
-Received: from xhdradheys41.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Tue, 26 Aug 2025 00:29:24 -0500
-From: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
-To: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-edac@vger.kernel.org>
-CC: <git@amd.com>, <ptsm@linux.microsoft.com>, <srivatsa@csail.mit.edu>,
-	<shubhrajyoti.datta@gmail.com>, Shubhrajyoti Datta
-	<shubhrajyoti.datta@amd.com>, Krzysztof Kozlowski <krzk@kernel.org>, "Rob
- Herring" <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Borislav
- Petkov" <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, James Morse
-	<james.morse@arm.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, "Robert
- Richter" <rric@kernel.org>, Nipun Gupta <nipun.gupta@amd.com>, Nikhil Agarwal
-	<nikhil.agarwal@amd.com>
-Subject: [PATCH v8 2/5] cdx: Export Symbols for MCDI RPC and Initialization
-Date: Tue, 26 Aug 2025 10:59:11 +0530
-Message-ID: <20250826052914.2066884-3-shubhrajyoti.datta@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250826052914.2066884-1-shubhrajyoti.datta@amd.com>
-References: <20250826052914.2066884-1-shubhrajyoti.datta@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B2D2E88B0;
+	Tue, 26 Aug 2025 05:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756186164; cv=none; b=az6K58wE2ZuhLUUulPWzaP0uB4RmUpsPo6QLtt1F8/vck15xU+kDNanesjeHIlImSZSNAEE1No+djkDhk6G2nZ+QVfmw/k9Vzum82TFZ+OeuB0RFQXy5X2T+gSNdOJkcyy/mgMioP+b+NrZkKlzxG3tzA4AKOkF7dR2Dkv+8QvY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756186164; c=relaxed/simple;
+	bh=zAA65t+biCTL2Eftd5Vt0eFjHTRHEoaWFGOLEH6aG4w=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UYxPxwlZgGdIgruSQ7C1dSZ93g29QUCQmarcFeyug3QUHazF+IR63CYZ4BbXQckQ3J+USIm/B5Yle+0pnQ8rR916vQazG/cab/bR6/YP/P6BZqU5BsptsQ4btj1gRdQJKpiYPbBimMTHgFVWXPfysvzjGleSkQHHCjqYebkAlQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Wq6Ux+WC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sKuNjYhf; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756186159;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=65ayLE+QQynk9aQmcYEngRqdHtxeY4HUGz5dhtcY1F0=;
+	b=Wq6Ux+WC2gIff/jZ/isyQz+BbCWLrcjOr4FQaQf29+xxJllaVC2St0w7reMOMbwCf0ucpg
+	wMHNDP6oXt85ysteE3C15+xukHVemOZGaY/xYcgwf1ueeMfvan+cO7iHdI1hnvasFLMVKA
+	wIAtvnoJcQSfPrg80ljFFzoJ5dxD4sHJtTHMbgzvoK11ywq67dzS57viFFMo4nEgU8URaw
+	bO5LlyBGRQY5QRW0z/PfZzxaUodPaMCfOmz0JSuWlI04RKILD8IFxF+IlVeDTQ3ncL1LY5
+	sSe7w1h62t377FLJPMimvuWZtf6i7zY1EscHlJCgbxSJbBMJS+vE72xsTYZpGg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756186159;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=65ayLE+QQynk9aQmcYEngRqdHtxeY4HUGz5dhtcY1F0=;
+	b=sKuNjYhfjcMqtbi/xJ6keKKcRYn6EZO9jbKAcc5QJRj9FYL4OA5rbvIG5YsuMAshlGQr/W
+	An4saYE4LMRJs5Bw==
+Date: Tue, 26 Aug 2025 07:29:11 +0200
+Subject: [PATCH] vdso: Remove struct getcpu_cache
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF000099E0:EE_|SN7PR12MB8132:EE_
-X-MS-Office365-Filtering-Correlation-Id: 62284627-eb56-43bc-8daf-08dde461881f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?hWxWlmugQ3MHGkXBpbQTqEiQLW+W+7utJ1942qFVZR28bmoxJbc+BugsqL2s?=
- =?us-ascii?Q?GaCIr1Fp9CWpcq23btdmwia/mhxLR7btg57UdSNlfqpy0EMIZt0wpZcLvYYW?=
- =?us-ascii?Q?7Nh9aEufKYWEsJkd5Xc7PoAyO5fsQQVKSSQwwTAN+lOi0Q4QTk+tObqLF07P?=
- =?us-ascii?Q?m8/0J40O8DwuuNaUlwkrOMuctf2dJnuHL5SOUpBjSTwiQCTqY+0a7x5qBZBP?=
- =?us-ascii?Q?D0fH3qbxHjxpt/AQXX75MXICtak3k0qGo8/RWCoe3bkRluAa7upK19avaEry?=
- =?us-ascii?Q?HHZ6qjHOLeY71NuIki7qBiE/Kodte1HtYVe0qqjIhgo+9OqztOJvP5Qb71dU?=
- =?us-ascii?Q?XsY8NJ+r7Cslov4//LezhH6ySSK9T3w9Kjyh1ruwn/3rADIbxDjKWngEbbNE?=
- =?us-ascii?Q?76UrbfG8lKFTIMi9Kg/9aQql+A6G4yb2X7rBjLkL1p2VLYYz55I8U16za8RI?=
- =?us-ascii?Q?DpNde8amEDvLb3qWJkZYi9HjwR7xV9h6BYmXiUknSuHyCOyoCn3iA5vyRTif?=
- =?us-ascii?Q?fRt59iqEbFosN8c8OKg59r4M/4LW0bu9rSPuZoaAKFLRVRClU2tbkbleuFHk?=
- =?us-ascii?Q?Dv8mNYtmY5edwpDD9eNZ77bctsrCQpdejIsx87TW83eWKipQPuNS9F3TJon4?=
- =?us-ascii?Q?+FAMtS/S/TgNS6pCaAAKREOQb25OPwEJLWW1fCAc+C4J2APtXHpNsnO0kW9T?=
- =?us-ascii?Q?YmVQm/KPsu5dp0pSjZyPC6d8+fNETA8OisfsNnIueG6jsBF4pWqB88SuvnMW?=
- =?us-ascii?Q?UBiUW8jEAKs1lMWFSJASdBktEIk7ZfXqF9ySR7HLbLZ1/KvMTwTnuysSehmo?=
- =?us-ascii?Q?fwafXmzu31jbaSkNnpGQQle9GJcOHVrDdfKEFypE1ZevapjB+M+/bHIFpmno?=
- =?us-ascii?Q?BkrLqPtbKlziPEo29u1YVfuh/esbDhgsMXYBjvl+qNPd3rxWe4OAGIctO2Pe?=
- =?us-ascii?Q?i9RXZLQATMF+rqwJ6jspESuQLztO2Kxkpxm14qVWq1ZEJfjt3krmnxjK3dCZ?=
- =?us-ascii?Q?E7G9aoenzmerkCKuzOe7ZZJp/ga9GKmbXSW056/A343Gs+FBSCCGJJ3Y6uyF?=
- =?us-ascii?Q?p+zqs85EkiztG3TjEiJfRp24m9vFK/UZ2XLETLbQ1yo1LOd0w81rfgA9drx1?=
- =?us-ascii?Q?wNh7GLFj35B5ZgzUmEZFu+BFrOS5R5OSn8KhAmzNW5kcLo8eq/9xjbAXzCn5?=
- =?us-ascii?Q?qIogIDkfcJKpCq4biS2ZO1s0s9CcEsJzg7NlpamoSr8qK2uzFLMOanuzmWap?=
- =?us-ascii?Q?nccftTdwbXuRSnmTQvm/2143MwcvqkcIjUFLpyuVsFKx1gKZUPHBdldSTb6L?=
- =?us-ascii?Q?6QH5MCQb367hYPKx10WttgHdCSQFnwcIfHYNDI4lcOgiJ+s5Xz5IHdpO9qnK?=
- =?us-ascii?Q?QRSZL0PAYEu1KyacUWert4iLqcsVogPzUOtwOZH6vjpgmM/W5hpvjWF/Se4p?=
- =?us-ascii?Q?J2E5mTj1Ts7dyMB0wbXlQ080lXYrffhGvh7aywuTIwTXo3bI5JQaa3dxjyeo?=
- =?us-ascii?Q?6yNx6N53CxgAtecz5F0CdoLEwgioZErrBSUq?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 05:29:30.2394
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 62284627-eb56-43bc-8daf-08dde461881f
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS3PEPF000099E0.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8132
+Message-Id: <20250826-getcpu_cache-v1-1-8748318f6141@linutronix.de>
+X-B4-Tracking: v=1; b=H4sIACZGrWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDCyNT3fTUkuSC0vjkxOSMVF3jxKTkFKNUM1MTY3MloJaCotS0zAqwcdG
+ xtbUAwJ29uV4AAAA=
+X-Change-ID: 20250825-getcpu_cache-3abcd2e65437
+To: Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+ Alexander Gordeev <agordeev@linux.ibm.com>, 
+ Christian Borntraeger <borntraeger@linux.ibm.com>, 
+ Sven Schnelle <svens@linux.ibm.com>, Andy Lutomirski <luto@kernel.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+ Richard Weinberger <richard@nod.at>, 
+ Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
+ Johannes Berg <johannes@sipsolutions.net>, 
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ linux-s390@vger.kernel.org, linux-um@lists.infradead.org, 
+ linux-api@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756186155; l=9757;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=zAA65t+biCTL2Eftd5Vt0eFjHTRHEoaWFGOLEH6aG4w=;
+ b=oCH06dxxdjmFh7WWuVm9nzzFq2kCgh1Ogw3db72JXYeGBbeG8IW+QjHv1UcScE5HMJWzhJ0V8
+ RIFNkDMcDqBDhl6Nfn7WDqgAyYQep8GaP8LuLJF9TlYHxgP3yYaCx0i
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-The cdx_mcdi_init, cdx_mcdi_process_cmd, and cdx_mcdi_rpc functions are
-needed by VersalNET EDAC modules that interact with the MCDI (Management
-Controller Direct Interface) framework. These functions facilitate
-communication between different hardware components by enabling command
-execution and status management.
+The cache parameter of getcpu() is not used by the kernel and no user ever
+passes it in anyways.
 
-Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+Remove the struct and its header.
+
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 ---
+We could also completely remove the parameter, but I am not sure if
+that is a good idea for syscalls and vDSO entrypoints.
+---
+ arch/loongarch/vdso/vgetcpu.c                   |  5 ++---
+ arch/s390/kernel/vdso64/getcpu.c                |  3 +--
+ arch/s390/kernel/vdso64/vdso.h                  |  4 +---
+ arch/x86/entry/vdso/vgetcpu.c                   |  5 ++---
+ arch/x86/include/asm/vdso/processor.h           |  4 +---
+ arch/x86/um/vdso/um_vdso.c                      |  7 +++----
+ include/linux/getcpu.h                          | 19 -------------------
+ include/linux/syscalls.h                        |  3 +--
+ kernel/sys.c                                    |  4 +---
+ tools/testing/selftests/vDSO/vdso_test_getcpu.c |  4 +---
+ 10 files changed, 13 insertions(+), 45 deletions(-)
 
-(no changes since v7)
-
-Changes in v7:
-- Add the kernel doc description
-- Add the prototype from first patch to here
-
-Changes in v6:
-- Update commit description
-
-Changes in v2:
-- Export the symbols for module compilation
-
- drivers/cdx/controller/mcdi.c | 29 +++++++++++++++++++++++++++++
- include/linux/cdx/mcdi.h      |  6 ++++++
- 2 files changed, 35 insertions(+)
-
-diff --git a/drivers/cdx/controller/mcdi.c b/drivers/cdx/controller/mcdi.c
-index 90bf9f7c257b..6f52d8dac907 100644
---- a/drivers/cdx/controller/mcdi.c
-+++ b/drivers/cdx/controller/mcdi.c
-@@ -100,6 +100,19 @@ static unsigned long cdx_mcdi_rpc_timeout(struct cdx_mcdi *cdx, unsigned int cmd
- 		return cdx->mcdi_ops->mcdi_rpc_timeout(cdx, cmd);
- }
+diff --git a/arch/loongarch/vdso/vgetcpu.c b/arch/loongarch/vdso/vgetcpu.c
+index 5301cd9d0f839eb0fd7b73a1d36e80aaa75d5e76..aefba899873ed035d70766a95b0b6fea881e94df 100644
+--- a/arch/loongarch/vdso/vgetcpu.c
++++ b/arch/loongarch/vdso/vgetcpu.c
+@@ -4,7 +4,6 @@
+  */
  
-+/**
-+ * cdx_mcdi_init - Initialize MCDI (Management Controller Driver Interface) state
-+ * @cdx: NIC through which to issue the command
-+ *
-+ * This function allocates and initializes internal MCDI structures and resources
-+ * for the CDX device, including the workqueue, locking primitives, and command
-+ * tracking mechanisms. It sets the initial operating mode and prepares the device
-+ * for MCDI operations.
-+ *
-+ * Return:
-+ * * 0        - on success
-+ * * -ENOMEM  - if memory allocation or workqueue creation fails
-+ */
- int cdx_mcdi_init(struct cdx_mcdi *cdx)
+ #include <asm/vdso.h>
+-#include <linux/getcpu.h>
+ 
+ static __always_inline int read_cpu_id(void)
  {
- 	struct cdx_mcdi_iface *mcdi;
-@@ -129,6 +142,7 @@ int cdx_mcdi_init(struct cdx_mcdi *cdx)
- fail:
- 	return rc;
+@@ -20,8 +19,8 @@ static __always_inline int read_cpu_id(void)
  }
-+EXPORT_SYMBOL_GPL(cdx_mcdi_init);
  
- void cdx_mcdi_finish(struct cdx_mcdi *cdx)
+ extern
+-int __vdso_getcpu(unsigned int *cpu, unsigned int *node, struct getcpu_cache *unused);
+-int __vdso_getcpu(unsigned int *cpu, unsigned int *node, struct getcpu_cache *unused)
++int __vdso_getcpu(unsigned int *cpu, unsigned int *node, void *unused);
++int __vdso_getcpu(unsigned int *cpu, unsigned int *node, void *unused)
  {
-@@ -554,6 +568,19 @@ static void cdx_mcdi_start_or_queue(struct cdx_mcdi_iface *mcdi,
- 			cdx_mcdi_cmd_start_or_queue(mcdi, cmd);
- }
+ 	int cpu_id;
  
-+/**
-+ * cdx_mcdi_process_cmd - Process an incoming MCDI response
-+ * @cdx: NIC through which to issue the command
-+ * @outbuf:  Pointer to the response buffer received from the management controller
-+ * @len:     Length of the response buffer in bytes
-+ *
-+ * This function handles a response from the management controller. It locates the
-+ * corresponding command using the sequence number embedded in the header,
-+ * completes the command if it is still pending, and initiates any necessary cleanup.
-+ *
-+ * The function assumes that the response buffer is well-formed and at least one
-+ * dword in size.
-+ */
- void cdx_mcdi_process_cmd(struct cdx_mcdi *cdx, struct cdx_dword *outbuf, int len)
+diff --git a/arch/s390/kernel/vdso64/getcpu.c b/arch/s390/kernel/vdso64/getcpu.c
+index 5c5d4a848b7669436e73df8e3b711e5b876eb3db..1e17665616c5fa766ca66c8de276b212528934bd 100644
+--- a/arch/s390/kernel/vdso64/getcpu.c
++++ b/arch/s390/kernel/vdso64/getcpu.c
+@@ -2,11 +2,10 @@
+ /* Copyright IBM Corp. 2020 */
+ 
+ #include <linux/compiler.h>
+-#include <linux/getcpu.h>
+ #include <asm/timex.h>
+ #include "vdso.h"
+ 
+-int __s390_vdso_getcpu(unsigned *cpu, unsigned *node, struct getcpu_cache *unused)
++int __s390_vdso_getcpu(unsigned *cpu, unsigned *node, void *unused)
  {
- 	struct cdx_mcdi_iface *mcdi;
-@@ -591,6 +618,7 @@ void cdx_mcdi_process_cmd(struct cdx_mcdi *cdx, struct cdx_dword *outbuf, int le
+ 	union tod_clock clk;
  
- 	cdx_mcdi_process_cleanup_list(mcdi->cdx, &cleanup_list);
- }
-+EXPORT_SYMBOL_GPL(cdx_mcdi_process_cmd);
+diff --git a/arch/s390/kernel/vdso64/vdso.h b/arch/s390/kernel/vdso64/vdso.h
+index 9e5397e7b590a23c149ccc6043d0c0b0d5ea8457..cadd307d7a365cabf53f5c8d313be3718625533d 100644
+--- a/arch/s390/kernel/vdso64/vdso.h
++++ b/arch/s390/kernel/vdso64/vdso.h
+@@ -4,9 +4,7 @@
  
- static void cdx_mcdi_cmd_work(struct work_struct *context)
+ #include <vdso/datapage.h>
+ 
+-struct getcpu_cache;
+-
+-int __s390_vdso_getcpu(unsigned *cpu, unsigned *node, struct getcpu_cache *unused);
++int __s390_vdso_getcpu(unsigned *cpu, unsigned *node, void *unused);
+ int __s390_vdso_gettimeofday(struct __kernel_old_timeval *tv, struct timezone *tz);
+ int __s390_vdso_clock_gettime(clockid_t clock, struct __kernel_timespec *ts);
+ int __s390_vdso_clock_getres(clockid_t clock, struct __kernel_timespec *ts);
+diff --git a/arch/x86/entry/vdso/vgetcpu.c b/arch/x86/entry/vdso/vgetcpu.c
+index e4640306b2e3c95d74d73037ab6b09294b8e1d6c..6381b472b7c52487bccf3cbf0664c3d7a0e59699 100644
+--- a/arch/x86/entry/vdso/vgetcpu.c
++++ b/arch/x86/entry/vdso/vgetcpu.c
+@@ -6,17 +6,16 @@
+  */
+ 
+ #include <linux/kernel.h>
+-#include <linux/getcpu.h>
+ #include <asm/segment.h>
+ #include <vdso/processor.h>
+ 
+ notrace long
+-__vdso_getcpu(unsigned *cpu, unsigned *node, struct getcpu_cache *unused)
++__vdso_getcpu(unsigned *cpu, unsigned *node, void *unused)
  {
-@@ -758,6 +786,7 @@ int cdx_mcdi_rpc(struct cdx_mcdi *cdx, unsigned int cmd,
- 	return cdx_mcdi_rpc_sync(cdx, cmd, inbuf, inlen, outbuf, outlen,
- 				 outlen_actual, false);
+ 	vdso_read_cpunode(cpu, node);
+ 
+ 	return 0;
  }
-+EXPORT_SYMBOL_GPL(cdx_mcdi_rpc);
  
- /**
-  * cdx_mcdi_rpc_async - Schedule an MCDI command to run asynchronously
-diff --git a/include/linux/cdx/mcdi.h b/include/linux/cdx/mcdi.h
-index 46e3f63b062a..1344119e9a2c 100644
---- a/include/linux/cdx/mcdi.h
-+++ b/include/linux/cdx/mcdi.h
-@@ -169,6 +169,12 @@ struct cdx_mcdi_data {
- 	u32 fn_flags;
- };
+-long getcpu(unsigned *cpu, unsigned *node, struct getcpu_cache *tcache)
++long getcpu(unsigned *cpu, unsigned *node, void *tcache)
+ 	__attribute__((weak, alias("__vdso_getcpu")));
+diff --git a/arch/x86/include/asm/vdso/processor.h b/arch/x86/include/asm/vdso/processor.h
+index 7000aeb59aa287e2119c3d43ab3eaf82befb59c4..93e0e24e5cb47f7b0056c13f2a7f2304ed4a0595 100644
+--- a/arch/x86/include/asm/vdso/processor.h
++++ b/arch/x86/include/asm/vdso/processor.h
+@@ -18,9 +18,7 @@ static __always_inline void cpu_relax(void)
+ 	native_pause();
+ }
  
-+int cdx_mcdi_init(struct cdx_mcdi *cdx);
-+void cdx_mcdi_process_cmd(struct cdx_mcdi *cdx, struct cdx_dword *outbuf, int len);
-+int cdx_mcdi_rpc(struct cdx_mcdi *cdx, unsigned int cmd,
-+		 const struct cdx_dword *inbuf, size_t inlen,
-+		 struct cdx_dword *outbuf, size_t outlen, size_t *outlen_actual);
-+
- /*
-  * We expect that 16- and 32-bit fields in MCDI requests and responses
-  * are appropriately aligned, but 64-bit fields are only
+-struct getcpu_cache;
+-
+-notrace long __vdso_getcpu(unsigned *cpu, unsigned *node, struct getcpu_cache *unused);
++notrace long __vdso_getcpu(unsigned *cpu, unsigned *node, void *unused);
+ 
+ #endif /* __ASSEMBLER__ */
+ 
+diff --git a/arch/x86/um/vdso/um_vdso.c b/arch/x86/um/vdso/um_vdso.c
+index cbae2584124fd0ff0f9d240c33fefb8d213c84cd..9aa2c62cce6b7a07bbaf8441014d347162d1950d 100644
+--- a/arch/x86/um/vdso/um_vdso.c
++++ b/arch/x86/um/vdso/um_vdso.c
+@@ -10,14 +10,13 @@
+ #define DISABLE_BRANCH_PROFILING
+ 
+ #include <linux/time.h>
+-#include <linux/getcpu.h>
+ #include <asm/unistd.h>
+ 
+ /* workaround for -Wmissing-prototypes warnings */
+ int __vdso_clock_gettime(clockid_t clock, struct __kernel_old_timespec *ts);
+ int __vdso_gettimeofday(struct __kernel_old_timeval *tv, struct timezone *tz);
+ __kernel_old_time_t __vdso_time(__kernel_old_time_t *t);
+-long __vdso_getcpu(unsigned int *cpu, unsigned int *node, struct getcpu_cache *unused);
++long __vdso_getcpu(unsigned int *cpu, unsigned int *node, void *unused);
+ 
+ int __vdso_clock_gettime(clockid_t clock, struct __kernel_old_timespec *ts)
+ {
+@@ -60,7 +59,7 @@ __kernel_old_time_t __vdso_time(__kernel_old_time_t *t)
+ __kernel_old_time_t time(__kernel_old_time_t *t) __attribute__((weak, alias("__vdso_time")));
+ 
+ long
+-__vdso_getcpu(unsigned int *cpu, unsigned int *node, struct getcpu_cache *unused)
++__vdso_getcpu(unsigned int *cpu, unsigned int *node, void *unused)
+ {
+ 	/*
+ 	 * UML does not support SMP, we can cheat here. :)
+@@ -74,5 +73,5 @@ __vdso_getcpu(unsigned int *cpu, unsigned int *node, struct getcpu_cache *unused
+ 	return 0;
+ }
+ 
+-long getcpu(unsigned int *cpu, unsigned int *node, struct getcpu_cache *tcache)
++long getcpu(unsigned int *cpu, unsigned int *node, void *tcache)
+ 	__attribute__((weak, alias("__vdso_getcpu")));
+diff --git a/include/linux/getcpu.h b/include/linux/getcpu.h
+deleted file mode 100644
+index c304dcdb4eac2a9117080e6a14f4e3f28d07fd56..0000000000000000000000000000000000000000
+--- a/include/linux/getcpu.h
++++ /dev/null
+@@ -1,19 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-#ifndef _LINUX_GETCPU_H
+-#define _LINUX_GETCPU_H 1
+-
+-/* Cache for getcpu() to speed it up. Results might be a short time
+-   out of date, but will be faster.
+-
+-   User programs should not refer to the contents of this structure.
+-   I repeat they should not refer to it. If they do they will break
+-   in future kernels.
+-
+-   It is only a private cache for vgetcpu(). It will change in future kernels.
+-   The user program must store this information per thread (__thread)
+-   If you want 100% accurate information pass NULL instead. */
+-struct getcpu_cache {
+-	unsigned long blob[128 / sizeof(long)];
+-};
+-
+-#endif
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index 77f45e5d44139da36a5dacbf9db7b65261d13398..81822d203eac5d8d91488a18ff7fcdc65670df54 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -59,7 +59,6 @@ struct compat_stat;
+ struct old_timeval32;
+ struct robust_list_head;
+ struct futex_waitv;
+-struct getcpu_cache;
+ struct old_linux_dirent;
+ struct perf_event_attr;
+ struct file_handle;
+@@ -714,7 +713,7 @@ asmlinkage long sys_getrusage(int who, struct rusage __user *ru);
+ asmlinkage long sys_umask(int mask);
+ asmlinkage long sys_prctl(int option, unsigned long arg2, unsigned long arg3,
+ 			unsigned long arg4, unsigned long arg5);
+-asmlinkage long sys_getcpu(unsigned __user *cpu, unsigned __user *node, struct getcpu_cache __user *cache);
++asmlinkage long sys_getcpu(unsigned __user *cpu, unsigned __user *node, void __user *cache);
+ asmlinkage long sys_gettimeofday(struct __kernel_old_timeval __user *tv,
+ 				struct timezone __user *tz);
+ asmlinkage long sys_settimeofday(struct __kernel_old_timeval __user *tv,
+diff --git a/kernel/sys.c b/kernel/sys.c
+index 1e28b40053ce206d7d0ed27e8a4fce8b616c3565..a830d78c1e1eb1d6cef31294feeb6a88dc0f83f3 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -31,7 +31,6 @@
+ #include <linux/tty.h>
+ #include <linux/signal.h>
+ #include <linux/cn_proc.h>
+-#include <linux/getcpu.h>
+ #include <linux/task_io_accounting_ops.h>
+ #include <linux/seccomp.h>
+ #include <linux/cpu.h>
+@@ -2813,8 +2812,7 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+ 	return error;
+ }
+ 
+-SYSCALL_DEFINE3(getcpu, unsigned __user *, cpup, unsigned __user *, nodep,
+-		struct getcpu_cache __user *, unused)
++SYSCALL_DEFINE3(getcpu, unsigned __user *, cpup, unsigned __user *, nodep, void __user *, unused)
+ {
+ 	int err = 0;
+ 	int cpu = raw_smp_processor_id();
+diff --git a/tools/testing/selftests/vDSO/vdso_test_getcpu.c b/tools/testing/selftests/vDSO/vdso_test_getcpu.c
+index cdeaed45fb26c61f6314c58fe1b71fa0be3c0108..994ce569dc37c6689b1a3c79156e3dfc8bf27f22 100644
+--- a/tools/testing/selftests/vDSO/vdso_test_getcpu.c
++++ b/tools/testing/selftests/vDSO/vdso_test_getcpu.c
+@@ -16,9 +16,7 @@
+ #include "vdso_config.h"
+ #include "vdso_call.h"
+ 
+-struct getcpu_cache;
+-typedef long (*getcpu_t)(unsigned int *, unsigned int *,
+-			 struct getcpu_cache *);
++typedef long (*getcpu_t)(unsigned int *, unsigned int *, void *);
+ 
+ int main(int argc, char **argv)
+ {
+
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250825-getcpu_cache-3abcd2e65437
+
+Best regards,
 -- 
-2.34.1
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
 
