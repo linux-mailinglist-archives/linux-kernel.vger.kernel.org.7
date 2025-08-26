@@ -1,286 +1,164 @@
-Return-Path: <linux-kernel+bounces-785796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 087F4B35121
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:44:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C293B35123
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:45:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E2637A3D00
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 01:42:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8CF0A7A75D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 01:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E218247299;
-	Tue, 26 Aug 2025 01:44:08 +0000 (UTC)
-Received: from mta21.hihonor.com (mta21.honor.com [81.70.160.142])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F611FDA94;
+	Tue, 26 Aug 2025 01:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FF1W0Lyu"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36DAC21FF25
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 01:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.160.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67A002356BD
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 01:45:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756172647; cv=none; b=rkhuHOTtozH2n3lhkWQPzqqpPwqwLGVvqFts7DwHLxoiILSdTEEMaOho/nTY+XwsRuCG1sT+/R5WhdhmSsy3fxo5mq8FtFis8iVLSR7U0oXYwoyK6sBOwMpsP2BwxxGrq244jV5cr7uWmhOtDc/c2brwhIATVI/wqktSEV7Lk5A=
+	t=1756172721; cv=none; b=mVyP4Bs+p7YyYCnsmo4ZELwcpjYUcLlqNWP8np75EBGzZIPwBHKz+dZAlLFvjstGIlxbnUtz1xfZW2nNPw48ylGn7kcA4Iu0skT//CD80CqpvgowD/XVwCPeIWTlffNLrAuCP3YcqJL57I4AfGDVd8+Ww+WgkPLXC/3AoWgg5LY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756172647; c=relaxed/simple;
-	bh=yheA1pyR67seJmhIEQpioW/zF+7erGKugiGfBqf1x3s=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=op6qbLYaTV+sY6PqfBanTtekTX6cr9r1IyzhXjIrzCYX/MCa0MDFpddsaOiyjDQs8zbhEPyUdll6PrXJWoBWjK4av1su33e8xWkIkGLKsdQvvpfrcx9xbIb4iJKSLVSc5IJq71P8PiyUWACr2GV/52MO1bhNJsnotgZ8rsjjCgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.160.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w013.hihonor.com (unknown [10.68.26.19])
-	by mta21.hihonor.com (SkyGuard) with ESMTPS id 4c9r6V2D9QzYkxr2;
-	Tue, 26 Aug 2025 09:43:46 +0800 (CST)
-Received: from a011.hihonor.com (10.68.31.243) by w013.hihonor.com
- (10.68.26.19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 26 Aug
- 2025 09:44:02 +0800
-Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
- (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 26 Aug
- 2025 09:44:02 +0800
-From: wangzijie <wangzijie1@honor.com>
-To: <linux-f2fs-devel@lists.sourceforge.net>
-CC: <chao@kernel.org>, <feng.han@honor.com>, <jaegeuk@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <wangzijie1@honor.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: reduce nat_tree_lock hold time when flush nat entries
-Date: Tue, 26 Aug 2025 09:44:01 +0800
-Message-ID: <20250826014401.2020583-1-wangzijie1@honor.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <894561d6-c0eb-4f58-ad3e-96797135e89b@kernel.org>
-References: <894561d6-c0eb-4f58-ad3e-96797135e89b@kernel.org>
+	s=arc-20240116; t=1756172721; c=relaxed/simple;
+	bh=hEeOvL96oX//3xN5hbYJM3EN0uLmzkFCLHaDkaPAyNk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ysy/qzxT8MdoFfhgk1jqoYEs+vtztwrN226enJ6q0beMnPuML2YWTL3R60MHfBoEwC4X+9dCt19Y7FeAm+RSEw7NTgpuDaQmdde5wZ0+0qHkU8J9ZVoHD3byPDgaKSwHdLWyIODZnr16Yw1Pdan4Pn8v6otwWdM5Q78GSfG9cLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FF1W0Lyu; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <4f994d6f-0055-16b8-3246-4bf8f34652a9@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756172716;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zhPKSYeWa3LByOwSOh1Oz83tUV3CK9Eh3Eg0l1lL8YM=;
+	b=FF1W0Lyurb2owuOnES139G4RVFiULBq9z93ZhUSitMyk4YpfkTnZUiiWv1LpMmTI+cgr/n
+	RqJMPAUdCf69doj3CHibG8TaPJ74WdBNzv/A5m7CvF22Mt0La/ZhZo2LbpWSDEvkNxA53u
+	4R6twjP31Jq5UABcOq6zEkmUmOqStcE=
+Date: Tue, 26 Aug 2025 09:45:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: w003.hihonor.com (10.68.17.88) To a011.hihonor.com
- (10.68.31.243)
+Subject: Re: [PATCH] sched/rt: Remove the unnecessary CONFIG_RT_GROUP_SCHED
+Content-Language: en-US
+To: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+ vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org,
+ bsegall@google.com, mgorman@suse.de, vschneid@redhat.com
+Cc: linux-kernel@vger.kernel.org
+References: <20250818061716.1168820-1-yajun.deng@linux.dev>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yajun Deng <yajun.deng@linux.dev>
+In-Reply-To: <20250818061716.1168820-1-yajun.deng@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-> On 8/13/25 12:04, wangzijie wrote:
-> > Sometimes I suffered the nat_tree_lock contention between f2fs_write_checkpoint
-> > and f2fs_get_node_info. Commit a9419b6("f2fs: do not bother checkpoint by
-> > f2fs_get_node_info") also mentioned that situation.
-> > 
-> > My idea is, when flush nat entries, we can use some structures to record nat
-> > pages we may read, and readahead them before hold nat_tree_lock. Before
-> > impletement code, I did some survey and found a submittion in community.
-> > 
-> > Subject: f2fs: use bucket sort to avoid tree lookup and list sort when nat flushing
-> > Link: https://lore.kernel.org/linux-f2fs-devel/20170520122435.17574-2-houpengyang@huawei.com/
-> > This patch aims to improve nat entry set sort by using bucket.
-> > I steal that structure and readahead nat pages contain nat entry set which cannot be moved
-> > to journal according to dirty nat entry set bucket.
-> > 
-> > By doing this, I think there are two benefits to reducing nat_tree_lock hold time when
-> > when flush nat entries.
-> 
-> Zijie,
-> 
-> Can you please figure out some numbers for this patch? something like
-> checkpoint latency or average or extreme time to grab nat_tree_lock...?
-> 
-> > 1. avoid nat set tree lookup and sort
-> > 2. readahead nat pages before holding nat_tree_lock
-> 
-> It may cause performance regression if it races w/ drop_caches?
-> 
-> Thanks,
+Hi all,
 
-Hi, Chao
-Do you mean that it will race with f2fs_try_to_free_nats()?
-In this patch, nat_tree_lock is not held when readahead nat pages, but
-in fact we need it. Am I right?
+Gentle ping.
 
-> > 
-> > Signed-off-by: wangzijie <wangzijie1@honor.com>
-> > ---
-> >  fs/f2fs/f2fs.h |  1 +
-> >  fs/f2fs/node.c | 70 ++++++++++++++++++++++++--------------------------
-> >  fs/f2fs/node.h |  2 +-
-> >  3 files changed, 35 insertions(+), 38 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > index 46be75605..b27cc059f 100644
-> > --- a/fs/f2fs/f2fs.h
-> > +++ b/fs/f2fs/f2fs.h
-> > @@ -975,6 +975,7 @@ struct f2fs_nm_info {
-> >  	struct radix_tree_root nat_set_root;/* root of the nat set cache */
-> >  	struct f2fs_rwsem nat_tree_lock;	/* protect nat entry tree */
-> >  	struct list_head nat_entries;	/* cached nat entry list (clean) */
-> > +	struct list_head nat_dirty_set[NAT_ENTRY_PER_BLOCK + 1];	/* store dirty nat set */
-> >  	spinlock_t nat_list_lock;	/* protect clean nat entry list */
-> >  	unsigned int nat_cnt[MAX_NAT_STATE]; /* the # of cached nat entries */
-> >  	unsigned int nat_blocks;	/* # of nat blocks */
-> > diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> > index 27743b93e..87c975ee8 100644
-> > --- a/fs/f2fs/node.c
-> > +++ b/fs/f2fs/node.c
-> > @@ -244,6 +244,12 @@ static void __del_from_nat_cache(struct f2fs_nm_info *nm_i, struct nat_entry *e)
-> >  	__free_nat_entry(e);
-> >  }
-> >  
-> > +static void __relocate_nat_entry_set(struct f2fs_nm_info *nm_i,
-> > +							struct nat_entry_set *set)
-> > +{
-> > +	list_move_tail(&set->set_list, &nm_i->nat_dirty_set[set->entry_cnt]);
-> > +}
-> > +
-> >  static struct nat_entry_set *__grab_nat_entry_set(struct f2fs_nm_info *nm_i,
-> >  							struct nat_entry *ne)
-> >  {
-> > @@ -260,6 +266,7 @@ static struct nat_entry_set *__grab_nat_entry_set(struct f2fs_nm_info *nm_i,
-> >  		head->set = set;
-> >  		head->entry_cnt = 0;
-> >  		f2fs_radix_tree_insert(&nm_i->nat_set_root, set, head);
-> > +		__relocate_nat_entry_set(nm_i, head);
-> >  	}
-> >  	return head;
-> >  }
-> > @@ -279,8 +286,10 @@ static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
-> >  	 * 2. update old block address to new one;
-> >  	 */
-> >  	if (!new_ne && (get_nat_flag(ne, IS_PREALLOC) ||
-> > -				!get_nat_flag(ne, IS_DIRTY)))
-> > +				!get_nat_flag(ne, IS_DIRTY))) {
-> >  		head->entry_cnt++;
-> > +		__relocate_nat_entry_set(nm_i, head);
-> > +	}
-> >  
-> >  	set_nat_flag(ne, IS_PREALLOC, new_ne);
-> >  
-> > @@ -309,6 +318,7 @@ static void __clear_nat_cache_dirty(struct f2fs_nm_info *nm_i,
-> >  
-> >  	set_nat_flag(ne, IS_DIRTY, false);
-> >  	set->entry_cnt--;
-> > +	__relocate_nat_entry_set(nm_i, set);
-> >  	nm_i->nat_cnt[DIRTY_NAT]--;
-> >  	nm_i->nat_cnt[RECLAIMABLE_NAT]++;
-> >  }
-> > @@ -2976,24 +2986,6 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
-> >  	up_write(&curseg->journal_rwsem);
-> >  }
-> >  
-> > -static void __adjust_nat_entry_set(struct nat_entry_set *nes,
-> > -						struct list_head *head, int max)
-> > -{
-> > -	struct nat_entry_set *cur;
-> > -
-> > -	if (nes->entry_cnt >= max)
-> > -		goto add_out;
-> > -
-> > -	list_for_each_entry(cur, head, set_list) {
-> > -		if (cur->entry_cnt >= nes->entry_cnt) {
-> > -			list_add(&nes->set_list, cur->set_list.prev);
-> > -			return;
-> > -		}
-> > -	}
-> > -add_out:
-> > -	list_add_tail(&nes->set_list, head);
-> > -}
-> > -
-> >  static void __update_nat_bits(struct f2fs_sb_info *sbi, nid_t start_nid,
-> >  		const struct f2fs_nat_block *nat_blk)
-> >  {
-> > @@ -3095,6 +3087,7 @@ static int __flush_nat_entry_set(struct f2fs_sb_info *sbi,
-> >  
-> >  	/* Allow dirty nats by node block allocation in write_begin */
-> >  	if (!set->entry_cnt) {
-> > +		list_del(&set->set_list);
-> >  		radix_tree_delete(&NM_I(sbi)->nat_set_root, set->set);
-> >  		kmem_cache_free(nat_entry_set_slab, set);
-> >  	}
-> > @@ -3109,11 +3102,8 @@ int f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
-> >  	struct f2fs_nm_info *nm_i = NM_I(sbi);
-> >  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
-> >  	struct f2fs_journal *journal = curseg->journal;
-> > -	struct nat_entry_set *setvec[NAT_VEC_SIZE];
-> >  	struct nat_entry_set *set, *tmp;
-> > -	unsigned int found;
-> > -	nid_t set_idx = 0;
-> > -	LIST_HEAD(sets);
-> > +	int i;
-> >  	int err = 0;
-> >  
-> >  	/*
-> > @@ -3129,6 +3119,16 @@ int f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
-> >  	if (!nm_i->nat_cnt[DIRTY_NAT])
-> >  		return 0;
-> >  
-> > +	/* readahead sets which cannot be moved to journal */
-> > +	if (!__has_cursum_space(journal, nm_i->nat_cnt[DIRTY_NAT], NAT_JOURNAL)) {
-> > +		for (i = MAX_NAT_JENTRIES(journal); i <= NAT_ENTRY_PER_BLOCK; i++) {
-> > +			list_for_each_entry_safe(set, tmp, &nm_i->nat_dirty_set[i], set_list) {
-> > +				f2fs_ra_meta_pages(sbi, set->set, 1,
-> > +								META_NAT, true);
-> > +			}
-> > +		}
-> > +	}
-> > +
-> >  	f2fs_down_write(&nm_i->nat_tree_lock);
-> >  
-> >  	/*
-> > @@ -3141,21 +3141,13 @@ int f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
-> >  			nm_i->nat_cnt[DIRTY_NAT], NAT_JOURNAL))
-> >  		remove_nats_in_journal(sbi);
-> >  
-> > -	while ((found = __gang_lookup_nat_set(nm_i,
-> > -					set_idx, NAT_VEC_SIZE, setvec))) {
-> > -		unsigned idx;
-> > -
-> > -		set_idx = setvec[found - 1]->set + 1;
-> > -		for (idx = 0; idx < found; idx++)
-> > -			__adjust_nat_entry_set(setvec[idx], &sets,
-> > -						MAX_NAT_JENTRIES(journal));
-> > -	}
-> > -
-> >  	/* flush dirty nats in nat entry set */
-> > -	list_for_each_entry_safe(set, tmp, &sets, set_list) {
-> > -		err = __flush_nat_entry_set(sbi, set, cpc);
-> > -		if (err)
-> > -			break;
-> > +	for (i = 0; i <= NAT_ENTRY_PER_BLOCK; i++) {
-> > +		list_for_each_entry_safe(set, tmp, &nm_i->nat_dirty_set[i], set_list) {
-> > +			err = __flush_nat_entry_set(sbi, set, cpc);
-> > +			if (err)
-> > +				break;
-> > +		}
-> >  	}
-> >  
-> >  	f2fs_up_write(&nm_i->nat_tree_lock);
-> > @@ -3249,6 +3241,7 @@ static int init_node_manager(struct f2fs_sb_info *sbi)
-> >  	struct f2fs_nm_info *nm_i = NM_I(sbi);
-> >  	unsigned char *version_bitmap;
-> >  	unsigned int nat_segs;
-> > +	int i;
-> >  	int err;
-> >  
-> >  	nm_i->nat_blkaddr = le32_to_cpu(sb_raw->nat_blkaddr);
-> > @@ -3275,6 +3268,9 @@ static int init_node_manager(struct f2fs_sb_info *sbi)
-> >  	INIT_LIST_HEAD(&nm_i->nat_entries);
-> >  	spin_lock_init(&nm_i->nat_list_lock);
-> >  
-> > +	for (i = 0; i <= NAT_ENTRY_PER_BLOCK; i++)
-> > +		INIT_LIST_HEAD(&nm_i->nat_dirty_set[i]);
-> > +
-> >  	mutex_init(&nm_i->build_lock);
-> >  	spin_lock_init(&nm_i->nid_list_lock);
-> >  	init_f2fs_rwsem(&nm_i->nat_tree_lock);
-> > diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
-> > index 030390543..d805d4ce7 100644
-> > --- a/fs/f2fs/node.h
-> > +++ b/fs/f2fs/node.h
-> > @@ -158,7 +158,7 @@ enum mem_type {
-> >  };
-> >  
-> >  struct nat_entry_set {
-> > -	struct list_head set_list;	/* link with other nat sets */
-> > +	struct list_head set_list;	/* link with nat sets which have same entry_cnt */
-> >  	struct list_head entry_list;	/* link with dirty nat entries */
-> >  	nid_t set;			/* set number*/
-> >  	unsigned int entry_cnt;		/* the # of nat entries in set */
+Thanks
 
+On 2025/8/18 14:17, Yajun Deng wrote:
+> After commit 5f6bd380c7bd ("sched/rt: Remove default bandwidth control"),
+> these bandwidth control members are only initialized when
+> CONFIG_RT_GROUP_SCHED is enabled.
+>
+> Remove the unnecessary CONFIG_RT_GROUP_SCHED from init_rt_rq() and
+> initialize the members in init_tg_rt_entry().
+>
+> In sched_init(), the rt_runtime of rt_bandwidth will be initialized by
+> global_rt_runtime(), so we can unify the rt_runtime of rt_rq by it in
+> init_tg_rt_entry().
+>
+> Also, remove the unnecessary CONFIG_RT_GROUP_SCHED in rt_se_prio().
+>
+> Signed-off-by: Yajun Deng <yajun.deng@linux.dev>
+> ---
+>   kernel/sched/core.c |  6 ------
+>   kernel/sched/rt.c   | 17 +++++------------
+>   2 files changed, 5 insertions(+), 18 deletions(-)
+>
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index be00629f0ba4..e9d6ceead9f4 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -8772,12 +8772,6 @@ void __init sched_init(void)
+>   #endif /* CONFIG_FAIR_GROUP_SCHED */
+>   
+>   #ifdef CONFIG_RT_GROUP_SCHED
+> -		/*
+> -		 * This is required for init cpu because rt.c:__enable_runtime()
+> -		 * starts working after scheduler_running, which is not the case
+> -		 * yet.
+> -		 */
+> -		rq->rt.rt_runtime = global_rt_runtime();
+>   		init_tg_rt_entry(&root_task_group, &rq->rt, NULL, i, NULL);
+>   #endif
+>   		rq->sd = NULL;
+> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+> index 7936d4333731..390f3d08abbe 100644
+> --- a/kernel/sched/rt.c
+> +++ b/kernel/sched/rt.c
+> @@ -84,14 +84,6 @@ void init_rt_rq(struct rt_rq *rt_rq)
+>   	plist_head_init(&rt_rq->pushable_tasks);
+>   	/* We start is dequeued state, because no RT tasks are queued */
+>   	rt_rq->rt_queued = 0;
+> -
+> -#ifdef CONFIG_RT_GROUP_SCHED
+> -	rt_rq->rt_time = 0;
+> -	rt_rq->rt_throttled = 0;
+> -	rt_rq->rt_runtime = 0;
+> -	raw_spin_lock_init(&rt_rq->rt_runtime_lock);
+> -	rt_rq->tg = &root_task_group;
+> -#endif
+>   }
+>   
+>   #ifdef CONFIG_RT_GROUP_SCHED
+> @@ -229,10 +221,14 @@ void init_tg_rt_entry(struct task_group *tg, struct rt_rq *rt_rq,
+>   {
+>   	struct rq *rq = cpu_rq(cpu);
+>   
+> -	rt_rq->highest_prio.curr = MAX_RT_PRIO-1;
+> +	rt_rq->rt_time = 0;
+> +	rt_rq->rt_throttled = 0;
+>   	rt_rq->rt_nr_boosted = 0;
+> +	raw_spin_lock_init(&rt_rq->rt_runtime_lock);
+> +
+>   	rt_rq->rq = rq;
+>   	rt_rq->tg = tg;
+> +	rt_rq->rt_runtime = tg->rt_bandwidth.rt_runtime;
+>   
+>   	tg->rt_rq[cpu] = rt_rq;
+>   	tg->rt_se[cpu] = rt_se;
+> @@ -280,7 +276,6 @@ int alloc_rt_sched_group(struct task_group *tg, struct task_group *parent)
+>   			goto err_free_rq;
+>   
+>   		init_rt_rq(rt_rq);
+> -		rt_rq->rt_runtime = tg->rt_bandwidth.rt_runtime;
+>   		init_tg_rt_entry(tg, rt_rq, rt_se, i, parent->rt_se[i]);
+>   	}
+>   
+> @@ -957,12 +952,10 @@ static void __disable_runtime(struct rq *rq) { }
+>   
+>   static inline int rt_se_prio(struct sched_rt_entity *rt_se)
+>   {
+> -#ifdef CONFIG_RT_GROUP_SCHED
+>   	struct rt_rq *rt_rq = group_rt_rq(rt_se);
+>   
+>   	if (rt_rq)
+>   		return rt_rq->highest_prio.curr;
+> -#endif
+>   
+>   	return rt_task_of(rt_se)->prio;
+>   }
 
