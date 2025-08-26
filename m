@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-786750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B74E7B36797
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:08:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 07C39B367E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:11:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3F2B98004F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:58:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5963B8E775F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:58:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42EE352FFA;
-	Tue, 26 Aug 2025 13:56:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 681F7352FD9;
+	Tue, 26 Aug 2025 13:56:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J//Si2GW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qVuy7TuI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE71341ABD;
-	Tue, 26 Aug 2025 13:56:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE4C35209D;
+	Tue, 26 Aug 2025 13:56:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756216608; cv=none; b=j50clJ4Xax6nGSPgHu8GmbKZziPjoUufgSjaPOprxIeMtFK7/pQc8rPHtwwmwJ+TlnFPy/9iKKXiOxZ2ExaozOmgmVlIoXQ+tCydhHx9iwlRWsUkh+oDYcK5ojEjP1BBEHfQsmNMb5+6HpOOTsXqXcSxtxo0Z5RVptWG2qE+aMU=
+	t=1756216606; cv=none; b=Su94pPr4wg7E58m6D5qN+8kyCsAgDlfKAvX77gbZmtqDYhbfd/zNubawONSg37KjCeANXa4L+mbyFUzoy1uzDbYiBHvUmVQ1dFuu0ENF5E/yxkZ7NvhLN3uUmnFQCGNywe8upCnl3OJxythqb9rsCMMX3viasuobsvpW7XBhteQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756216608; c=relaxed/simple;
-	bh=GAK3iErIJh5FHvvRonZ/RMRYuNJxBuLG4M3JABISxbU=;
+	s=arc-20240116; t=1756216606; c=relaxed/simple;
+	bh=nd3CQ34Xe56IKG456UFoWEYOWYvtYcS68YFfQ7k9gS4=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=S/axGT3jFdP4vG0H+oKbSNRNsMGGe8BRu6X5RaLNc+p8rOgB0QhDMI6DBoZX3n2f6z7A7JmRffMZAN040sf6XU4NlxT6yEHRhX+vfXpo/o8rNUBLyB0KfSKFIKh3IwDp98HkstAKrbkJvfCcpuXfxMv12DoLpF3iPLLFxDOBXS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J//Si2GW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 412E6C116B1;
-	Tue, 26 Aug 2025 13:56:45 +0000 (UTC)
+	 Message-Id:Subject; b=HTUzxl6+jMo2PfTujejVFTm8pL5jdNX0HexBEGcRS6R9MleqtQPkYvuseRgqtKkyikidnCZKR/hLNr1Bh2DXi9M4KWyKmbjClgYp0ai8FdtEKglWOYvGjZukwm25W9T3cwCa8hEQxs7jLZvUVQQIXCT0gdHiRaQaA8v/FyP/sT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qVuy7TuI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49EC4C116D0;
+	Tue, 26 Aug 2025 13:56:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756216605;
-	bh=GAK3iErIJh5FHvvRonZ/RMRYuNJxBuLG4M3JABISxbU=;
+	s=k20201202; t=1756216606;
+	bh=nd3CQ34Xe56IKG456UFoWEYOWYvtYcS68YFfQ7k9gS4=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=J//Si2GWx4doiSIjC71SHMojeaD1+tCxptmSzaXZqxSx3rCUTtGQ+N7qSq0mOM8hl
-	 RdvRAjAI4KD/o56UqmJBJ7h9hifetskHNsgG6r/jlVtoaErGvd0QQjU3sQT1uE8Ete
-	 cDAayHCLQUSflFpyl1uH2n8CYd/EcdD+7f+YaTcNOlSE0LI5Ou+0HTthv4IVq/mTt+
-	 Wnsvyky7VR2spB54QCYWFuJ+p2kR6iUBfte8T6jcIFXZHO1ayCudO5gD+qSP1QC/sn
-	 wsg4DZjJg/QQMiAEqVVXFxc2LYHuYDNusrNbdM7mEorQgDXPfu9bP/MWHiTYqy11lV
-	 /WAgbi+dJWiXw==
-Date: Tue, 26 Aug 2025 08:56:44 -0500
+	b=qVuy7TuI+FdrXztlovmBpOGsaAom9wXQu6e5lKGHnE8ZgzN/haS5Lo/w42R29V0R8
+	 pUDqSzC1vxWsTOiUEkD5axNIEyd/Akx7tK+/UT6sHor2e7wSX9Vq2+/qRsSTJSg0pj
+	 gsnpiRwfF6X5i69r8FWY7Bt/FCBYAJ1lO8xqXjD50GY7TYQkXdGBK4NFS/r6200MYY
+	 L9YLxZxf6cR4yT/WMwThvUEKkJHp6lhi5pxkKT3V03d7RmEb4lBpG9Z1kg3u93dam0
+	 R9Gaw+9+2VvaNH7V0AsVWH8WNZWh85RtA1gY6tKRVF8ssanZbiYavvyidubDPOCxI6
+	 Z49zDNDEbMpkw==
+Date: Tue, 26 Aug 2025 08:56:45 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,57 +50,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Thierry Reding <treding@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Viresh Kumar <viresh.kumar@linaro.org>, linux-tegra@vger.kernel.org, 
- Mikko Perttunen <mperttunen@nvidia.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
- linux-pm@vger.kernel.org
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-In-Reply-To: <20250826061117.63643-1-clamor95@gmail.com>
-References: <20250826061117.63643-1-clamor95@gmail.com>
-Message-Id: <175621649727.159471.17430997152265024171.robh@kernel.org>
-Subject: Re: [PATCH v3 0/4] clk: tegra: add DFLL support for Tegra114
+Cc: Conor Dooley <conor+dt@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ linux-arm-msm@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, linux-pci@vger.kernel.org, 
+ devicetree@vger.kernel.org, Manivannan Sadhasivam <mani@kernel.org>, 
+ linux-phy@lists.infradead.org, quic_mrana@quicinc.com, 
+ quic_vbadigan@quicinc.com, linux-kernel@vger.kernel.org, 
+ Bjorn Helgaas <bhelgaas@google.com>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+In-Reply-To: <20250826-pakala-v3-0-721627bd5bb0@oss.qualcomm.com>
+References: <20250826-pakala-v3-0-721627bd5bb0@oss.qualcomm.com>
+Message-Id: <175621649862.159548.14099860400165270689.robh@kernel.org>
+Subject: Re: [PATCH v3 0/3] arm64: dts: qcom: Add PCIe Support for sm8750
 
 
-On Tue, 26 Aug 2025 09:11:13 +0300, Svyatoslav Ryhel wrote:
-> DFLL is a dedicated clock source for the Fast CPU. The DFLL is based on
-> a ring oscillator and translates voltage changes into frequency
-> compensation changes needed to prevent the CPU from failing and is
-> essential for correct CPU frequency scaling.
+On Tue, 26 Aug 2025 16:32:52 +0530, Krishna Chaitanya Chundru wrote:
+> Describe PCIe controller and PHY. Also add required system resources like
+> regulators, clocks, interrupts and registers configuration for PCIe.
 > 
+> The qcom_pcie_parse_ports() function currently iterates over all available
+> child nodes of the PCIe controller's device tree node. This includes
+> unrelated nodes such as OPP (Operating Performance Points) nodes, which do
+> not contain the expected 'reset' and 'phy' properties. As a result, parsing
+> fails and the driver falls back to the legacy method of parsing the
+> controller node directly. However, this fallback also fails when properties
+> are shifted to the root port, leading to probe failure.
+> 
+> Fix this by restricting the parsing logic to only consider child nodes with
+> device_type = "pci", which is the expected and required property for PCIe
+> ports as defined in pci-bus-common.yaml.
+> 
+> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
 > ---
-> Changes in v2:
-> - dropped 'drivers:' from commit title
-> - aligned naming to Tegra114
-> 
 > Changes in v3:
-> - add DFLL support for Tegra 114 was split into dt header addition,
->   DFLL reset configuration and CVB tables implementation.
-> - added cleaner commit message to dt header commit
-> - added T210_ prefixes to Tegra210 CVB table macros
+> - Use device_type to find pci node or not instead of node name.
+> - Link to v2: https://lore.kernel.org/r/20250826-pakala-v2-0-74f1f60676c6@oss.qualcomm.com
+> 
+> Changes in v2:
+> - Follow the x1e80100.dtsi pcie node description (Konrad).
+> - define phy & perst, wake in port node as per latest bindings.
+> - Add check in the driver to parse only pcie child nodes.
+> - Added acked by tag(Rob).
+> - Removed dtbinding and phy driver patches as they got applied.
+> - Link to v1: https://lore.kernel.org/r/20250809-pakala-v1-0-abf1c416dbaa@oss.qualcomm.com
+> 
 > ---
+> Krishna Chaitanya Chundru (3):
+>       dt-bindings: PCI: qcom,pcie-sm8550: Add SM8750 compatible
+>       arm64: dts: qcom: sm8750: Add PCIe PHY and controller node
+>       PCI: qcom: Restrict port parsing only to pci child nodes
 > 
-> Svyatoslav Ryhel (4):
->   dt-bindings: reset: add Tegra114 car header
->   clk: tegra: add DFLL DVCO reset control for Tegra114
->   clk: tegra: dfll: add CVB tables for Tegra114
->   ARM: tegra: Add DFLL clock support for Tegra114
+>  .../devicetree/bindings/pci/qcom,pcie-sm8550.yaml  |   1 +
+>  arch/arm64/boot/dts/qcom/sm8750.dtsi               | 180 ++++++++++++++++++++-
+>  drivers/pci/controller/dwc/pcie-qcom.c             |   2 +
+>  3 files changed, 182 insertions(+), 1 deletion(-)
+> ---
+> base-commit: b6add54ba61890450fa54fd9327d10fdfd653439
+> change-id: 20250809-pakala-25a7c1ddba85
 > 
->  arch/arm/boot/dts/nvidia/tegra114.dtsi     |  33 +++++
->  drivers/clk/tegra/Kconfig                  |   2 +-
->  drivers/clk/tegra/clk-tegra114.c           |  30 +++-
->  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 158 +++++++++++++++++----
->  drivers/clk/tegra/clk.h                    |   2 -
->  include/dt-bindings/reset/tegra114-car.h   |  13 ++
->  6 files changed, 204 insertions(+), 34 deletions(-)
->  create mode 100644 include/dt-bindings/reset/tegra114-car.h
-> 
+> Best regards,
 > --
-> 2.48.1
+> Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
 > 
 > 
 > 
@@ -121,34 +135,15 @@ make sure dt-schema is up to date:
 
 
 This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: tags/next-20250825 (best guess, 3/5 blobs matched)
+ Base: using specified base-commit b6add54ba61890450fa54fd9327d10fdfd653439
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/nvidia/' for 20250826061117.63643-1-clamor95@gmail.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250826-pakala-v3-0-721627bd5bb0@oss.qualcomm.com:
 
-arch/arm/boot/dts/nvidia/tegra114-tn7.dtb: /clock@70110000: failed to match any schema with compatible: ['nvidia,tegra114-dfll']
-arch/arm/boot/dts/nvidia/tegra114-tn7.dtb: cpu@0 (arm,cortex-a15): 'operating-points' is a dependency of 'clock-latency'
-	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
-arch/arm/boot/dts/nvidia/tegra114-tn7.dtb: cpu@0 (arm,cortex-a15): Unevaluated properties are not allowed ('clock-latency' was unexpected)
-	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
-arch/arm/boot/dts/nvidia/tegra114-roth.dtb: /clock@70110000: failed to match any schema with compatible: ['nvidia,tegra114-dfll']
-arch/arm/boot/dts/nvidia/tegra114-roth.dtb: cpu@0 (arm,cortex-a15): 'operating-points' is a dependency of 'clock-latency'
-	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
-arch/arm/boot/dts/nvidia/tegra114-roth.dtb: cpu@0 (arm,cortex-a15): Unevaluated properties are not allowed ('clock-latency' was unexpected)
-	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
-arch/arm/boot/dts/nvidia/tegra114-dalmore.dtb: /clock@70110000: failed to match any schema with compatible: ['nvidia,tegra114-dfll']
-arch/arm/boot/dts/nvidia/tegra114-dalmore.dtb: cpu@0 (arm,cortex-a15): 'operating-points' is a dependency of 'clock-latency'
-	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
-arch/arm/boot/dts/nvidia/tegra114-dalmore.dtb: cpu@0 (arm,cortex-a15): Unevaluated properties are not allowed ('clock-latency' was unexpected)
-	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
-arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: /clock@70110000: failed to match any schema with compatible: ['nvidia,tegra114-dfll']
-arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: cpu@0 (arm,cortex-a15): 'operating-points' is a dependency of 'clock-latency'
-	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
-arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: cpu@0 (arm,cortex-a15): Unevaluated properties are not allowed ('clock-latency' was unexpected)
-	from schema $id: http://devicetree.org/schemas/arm/cpus.yaml#
+arch/arm64/boot/dts/qcom/sm8750-mtp.dtb: /soc@0/phy@1c06000: failed to match any schema with compatible: ['qcom,sm8750-qmp-gen3x2-pcie-phy']
+arch/arm64/boot/dts/qcom/sm8750-qrd.dtb: /soc@0/phy@1c06000: failed to match any schema with compatible: ['qcom,sm8750-qmp-gen3x2-pcie-phy']
 
 
 
