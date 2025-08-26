@@ -1,239 +1,491 @@
-Return-Path: <linux-kernel+bounces-785784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC3EBB35100
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:31:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25957B35105
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:34:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B382C1B23E9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 01:32:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F22DA207632
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 01:34:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3CEF1DF970;
-	Tue, 26 Aug 2025 01:31:40 +0000 (UTC)
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1809B1E521B;
+	Tue, 26 Aug 2025 01:34:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CTmQRtLd"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9875415D3;
-	Tue, 26 Aug 2025 01:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365BF8F58;
+	Tue, 26 Aug 2025 01:34:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756171900; cv=none; b=oePn3G3bqnqZBhXPUfBX3PZWnImoGfodAoZgGEqb24v3TK2cAv1N4nTSWX5PAAgOxv9A17bwA8UZB7yLPPd+GaiEnYHV0jxqUM7i3gKLlE+Gizipm1+xRHc+VCPnMhzQaqLSEx/ksZj6YMFBWXSkQ4eDjKJtrDX8pCg+qmBEd0M=
+	t=1756172043; cv=none; b=h40FGEdmZwVn7OeziqzDExn92n7D+vCohbt2Te0d2z8Rlj3jdpzuNP+wMo71DWIBmm2W8feAnPwsRIAwZjbm5enPId3q/3n8ixe/WVM6ynqaMgDomivpeBpDGNZTUxOP3A4qug679tyInNL9hv2h0+cUfvZz/V8Xbwg8GXiSqrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756171900; c=relaxed/simple;
-	bh=2CAfInhMBlEheWI50chGaNttiRjZFFWB2jkfwM/74SA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PBVOZzKTD/3l7aeV5M1C0SuJCzAZ/N4FloQMYw2m5wb/V7E4xJc5+Joyrc44F2kyqWHcbXyauFYrjsfqWpty8A2EepPIpl1am5+10izync6E6v7ooQ/wMvu+/JcM49aq5WrX7LltYz440n6T0KMbL1NhN52FVAaxuswym20QQGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=18.194.254.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: esmtpsz11t1756171875tdaf462a0
-X-QQ-Originating-IP: JG4CTHw+p2KwTkKW/C8uuarVnjApQNroGADEHk0tpcY=
-Received: from localhost ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 26 Aug 2025 09:31:13 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 5786060330741140375
-Date: Tue, 26 Aug 2025 09:31:13 +0800
-From: Yibo Dong <dong100@mucse.com>
-To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
-	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
-	gustavoars@kernel.org, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH net-next v7 4/5] net: rnpgbe: Add basic mbx_fw support
-Message-ID: <82E3BE49DB4195F0+20250826013113.GA6582@nic-Precision-5820-Tower>
-References: <20250822023453.1910972-1-dong100@mucse.com>
- <20250822023453.1910972-5-dong100@mucse.com>
- <316f57e3-5953-4db6-84aa-df9278461d30@linux.dev>
+	s=arc-20240116; t=1756172043; c=relaxed/simple;
+	bh=JljAl9r/j6PbHsICi+x7/AoZ/aU81SB4r7Vb0Z9T7Oo=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=GibDuNcOU3uFb4GSmsvm6KtZxQmk1OmHRF9VAqcCbvxfGwuze13zzkDHgB5om1yqgks6tRMrsMdG7pxWbQEZe08GsGxin2dL3NstRrQDkpUmrcxYgEHxg62V3ydIm44uxNLEHCQSGNwMr342Ct8kH4lzcs04Zz1J4ZpbWcw8I+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CTmQRtLd; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4b109a95f09so37605651cf.1;
+        Mon, 25 Aug 2025 18:34:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756172040; x=1756776840; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=PUGk0ZKOd7yqSKxDow7E4tiDM13vj5YXyFH8cIUH+OM=;
+        b=CTmQRtLdRc77E4pGUWCB5i5xrDpS6A/Jw/x3w+vwcxRLFjhP419/cbOqcfLfzTPcM2
+         wIxfMSJRow3/j1e88tbPjPLT6sNmL9y0uV4mcFYs0yJUJJKOcG61Pv3GsYJNr463yxCQ
+         VvMdzd5V4sHDRSLyOQJXqTt7t93TvPERv3Lu9om6DaG/XWl9nlTJycStAoztEdiqLbsp
+         Mr7VeV2x+TQ4qokiztFO5WnlWaJRPD8LN7hwkw3KPYp9nU36epXiC7fhkJ/yHq83Wua+
+         bAoqDEHobjjOiOm0EIGjHUFh7m4/WCt04x5GWl1Uh4Db1tOl/sy0LoSRE9dVAZbHCsHX
+         mLNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756172040; x=1756776840;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PUGk0ZKOd7yqSKxDow7E4tiDM13vj5YXyFH8cIUH+OM=;
+        b=cxBQNHGWRgOFTdyWcGd+VEoB3wC8F61YqM8rKbl2mKisTUOku3CtOTNOCiVa+06aw+
+         TWBGJr/IgV9vzDbDxIqotKrfwh+Nsl8kUaE4G9k0l524dbgjpT3AcW8hWpmE0xoOblNl
+         /De13KKXSPjQvIuHcNQYH29r5d92YlOFSeCoQgOitOP9QFVp57YuXhKuASTjoK8ISjUM
+         Sq5df0mBHlZuGBrTf4Re3OczsCbbcW5dGxyBFfW8jeepNfs4FRrEkUKVVgMvHTv7m3sK
+         lvAwgBOGzE6L3loXJIcgiOeswYASQHBKxtSuTzOq9Ot3+y0PwdmwUIvEo48EizxIG8dO
+         PGiw==
+X-Forwarded-Encrypted: i=1; AJvYcCW5bD/zMok3sv74rEYzTfZSISOTeN3AHAas+ungeW9DbP4kz8P+cESyLGqzCf39duT9bUgEzIsEMb7J@vger.kernel.org, AJvYcCX23CTGUc3epmlh1t9O9Uq2BIJ+s+hLZfklPGnIt3X6PFPejrStqpsz5rVbBpZGFKWceRGa4ueeIYuJ2xXg@vger.kernel.org, AJvYcCXAEBz7/7nrhXnk/QaUYZBfJ2BArZRM2czaW2azkpAIeInS5dTOJRZ0Vc7PhIEgg7NgoF6LZ8+jdXS2tg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxQ7K300ISe3WOxq5mQUzSwKmoJTNWwbH2MR8kwI88vUKVkoGC
+	fivVLX42/i71utm+NwT0tsVeTA8IxgQrDGVQz+fXQ8jDdE8AVP+5ldMl
+X-Gm-Gg: ASbGncvNDsHey4JbCyEweI8DVbnILEc7KRJglEFe+Zl3MVcO+a1Q4zlYBpF7HD58UIG
+	bdvkokW1T3fBMmpjLceSUOUa2Ciq7abeQ8AuoATgKZqCiXuXkt5O+Lfivn+rikQM88LE8TlmwKf
+	9ZUjOidfymZcTEGmrEFC5e8E9TWUuYnfNKrObebjQh1+/p7OFid5gB3aKAfYEP4DqGaJGtMmOZq
+	7CSCB+Sj6asFSILqqk6WHqAc1nTVx/PAib1SG/3OSvAh8z++eVcNDYcdYPQ5+iutmw51npDLy0Z
+	TeqDbWdBtqBHj0Gnmr/4Ic+OOXBdUW8JxV4ePEyfrnvuK4ioJOnr6yUaxdYtyCE/FlwZZaedMk9
+	Cnd+4Y92rQxewmMVwmfke03aSIYZzWbMqaXX+GicztB5l02525qB9Pi/1a2xRAvoJaxo+a3MdAL
+	Vs9e4V
+X-Google-Smtp-Source: AGHT+IEJ4VbJhoJzyBjM8Y4MejTnzUP08csRL+Oh7OcJFfST3HfSmnxPn7t6z1okavMnvmfcWjLJdQ==
+X-Received: by 2002:ac8:5703:0:b0:4b0:71e9:1f95 with SMTP id d75a77b69052e-4b2aaa40e53mr151318591cf.10.1756172039706;
+        Mon, 25 Aug 2025 18:33:59 -0700 (PDT)
+Received: from [127.0.0.1] (modemcable197.17-162-184.mc.videotron.ca. [184.162.17.197])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b2b8e1e07bsm60811151cf.41.2025.08.25.18.33.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Aug 2025 18:33:59 -0700 (PDT)
+Date: Mon, 25 Aug 2025 21:33:58 -0400
+From: =?ISO-8859-1?Q?Jean-Fran=E7ois_Lessard?= <jefflessard3@gmail.com>
+To: Rob Herring <robh@kernel.org>
+CC: Andy Shevchenko <andy@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+ devicetree@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v4_2/6=5D_dt-bindings=3A_auxdisp?=
+ =?US-ASCII?Q?lay=3A_add_Titan_Micro_Electronics_TM16xx?=
+User-Agent: Thunderbird for Android
+In-Reply-To: <20250825182521.GA4157069-robh@kernel.org>
+References: <20250825033237.60143-1-jefflessard3@gmail.com> <20250825033237.60143-3-jefflessard3@gmail.com> <20250825182521.GA4157069-robh@kernel.org>
+Message-ID: <44C925EA-73CF-46C3-86C4-BD8ECD33AE00@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <316f57e3-5953-4db6-84aa-df9278461d30@linux.dev>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: OQNQM5UP8StMXU05C0AxZJUxwGUJleeF6slPjPlLNWqCHQtnEEGp2zI4
-	h9bZtMi5wjc39AZuTDu4fQvOKoplGiT9KkbYDuwSBdZw+quPVNXmDiAimhgYLU1hIZcALmd
-	vfqe13vm5SceoXV46PVlI4TGO1MS4Y1Pa5bbJFj+CpO5BdKTDbic48o5n8HWT2zgSVXysux
-	X/14RmUstCRjUst1kQ/AlbUTdc2Uh4al76Re4fTRWFCqQqiDtDUpBQxnUnUF+rFZE5oJz32
-	jpqfHVZPqOFlyWvzs4I7omytuWlGG77XTiSAaKWEz+++Kpi7HIsDP6U6Mr7rY6vN6LVAgEV
-	WnAmzR8Q7J4lVi8Jnq7jKh4RkpupTXVXvSX77hn77nanKOOLHELkjMlwFu3TaWDo9iwocR9
-	BFJXaFhogGQw/XQW9MF+zyouCb66czPnC4Jg8+BPNR0oFeVnvclpA0h8UQrj6Uimi5SrVTp
-	C9QNoohbeHoc6KOcU/nMglTo059UScC4etaqui4nrYrbGbO68lewkdKV7uLjw1Y9iuev94Z
-	DWBQ9ac2SXhLdEJNh1OFfQRIkexPj77mn8qL6X5YwG4a7HDvLehIjyj9RyKINASGWMXP4jk
-	AsF+r0eabP0AURMYoAoLwfCQLBOi8SXv3jJDM6pYuiDQeaMH3u3lemnyKl0m3hoVRMLleNG
-	AEb2J4nlSetu9s4XQooIEK0MAWAvqrPHH3peTSWRdPAjOs+HEP6FDXjdvj2HuNqCeo/6tFI
-	EsgO2LkmjFIwzJO1k0yq5vqsCwETbq+/iN4EUbfQHsCcatKhEFTVUkx21gbm3EMHtU8UPzP
-	OLH0eBjyz9/zd9poybfXIbsrFeVuObsXIk3YuyOvV/qiIvaWv+LjULqTNl28gzWVc1fXttm
-	U160fKexBMtBiNzUviwq4osUpvIt3GqFWqKxlnJJA//Yi13nvy0YKiSY9CskbByKQAA4CgL
-	4kmoFY2fWyAyp93SeNLzgi8hNJu721QwCdcnUkfalAYWutS3BHORoUNjF
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 25, 2025 at 05:37:27PM +0100, Vadim Fedorenko wrote:
-> On 22/08/2025 03:34, Dong Yibo wrote:
-> 
-> [...]
-> > +/**
-> > + * mucse_mbx_fw_post_req - Posts a mbx req to firmware and wait reply
-> > + * @hw: pointer to the HW structure
-> > + * @req: pointer to the cmd req structure
-> > + * @cookie: pointer to the req cookie
-> > + *
-> > + * mucse_mbx_fw_post_req posts a mbx req to firmware and wait for the
-> > + * reply. cookie->wait will be set in irq handler.
-> > + *
-> > + * @return: 0 on success, negative on failure
-> > + **/
-> > +static int mucse_mbx_fw_post_req(struct mucse_hw *hw,
-> > +				 struct mbx_fw_cmd_req *req,
-> > +				 struct mbx_req_cookie *cookie)
-> > +{
-> > +	int len = le16_to_cpu(req->datalen);
-> > +	int err;
-> > +
-> > +	cookie->errcode = 0;
-> > +	cookie->done = 0;
-> > +	init_waitqueue_head(&cookie->wait);
-> > +	err = mutex_lock_interruptible(&hw->mbx.lock);
-> > +	if (err)
-> > +		return err;
-> > +	err = mucse_write_mbx_pf(hw, (u32 *)req, len);
-> > +	if (err)
-> > +		goto out;
-> > +	/* if write succeeds, we must wait for firmware response or
-> > +	 * timeout to avoid using the already freed cookie->wait
-> > +	 */
-> > +	err = wait_event_timeout(cookie->wait,
-> > +				 cookie->done == 1,
-> > +				 cookie->timeout_jiffies);
-> 
-> it's unclear to me, what part of the code is managing values of cookie
-> structure? I didn't get the reason why are you putting the address of
-> cookie structure into request which is then directly passed to the FW.
-> Is the FW supposed to change values in cookie?
-> 
+Le 25 ao=C3=BBt 2025 14 h 26 min 57 s HAE, Rob Herring <robh@kernel=2Eorg> =
+a =C3=A9crit=C2=A0:
+>On Sun, Aug 24, 2025 at 11:32:28PM -0400, Jean-Fran=C3=A7ois Lessard wrot=
+e:
+>> Add documentation for TM16xx-compatible 7-segment LED display controlle=
+rs
+>> with keyscan=2E
+>>=20
+>> Signed-off-by: Jean-Fran=C3=A7ois Lessard <jefflessard3@gmail=2Ecom>
+>> ---
+>>=20
+>> Notes:
+>>     The 'segments' property is intentionally not vendor-prefixed as it
+>>     defines a generic hardware description concept applicable to any
+>>     7-segment display controller=2E The property describes the fundamen=
+tal
+>>     grid/segment coordinate mapping that is controller-agnostic and cou=
+ld
+>>     be reused by other LED matrix display bindings=2E Similar to how 'g=
+pios'
+>>     describes GPIO connections generically, 'segments' describes segmen=
+t
+>>     connections in a standardized way using uint32-matrix format=2E
+>>=20
+>>  =2E=2E=2E/bindings/auxdisplay/titanmec,tm16xx=2Eyaml  | 477 ++++++++++=
+++++++++
+>>  MAINTAINERS                                   |   5 +
+>>  2 files changed, 482 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/auxdisplay/titanm=
+ec,tm16xx=2Eyaml
+>>=20
+>> diff --git a/Documentation/devicetree/bindings/auxdisplay/titanmec,tm16=
+xx=2Eyaml b/Documentation/devicetree/bindings/auxdisplay/titanmec,tm16xx=2E=
+yaml
+>> new file mode 100644
+>> index 000000000=2E=2Ec94556d95
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/auxdisplay/titanmec,tm16xx=2Eya=
+ml
+>> @@ -0,0 +1,477 @@
+>> +# SPDX-License-Identifier: (GPL-2=2E0-only OR BSD-2-Clause)
+>> +%YAML 1=2E2
+>> +---
+>> +$id: http://devicetree=2Eorg/schemas/auxdisplay/titanmec,tm16xx=2Eyaml=
+#
+>> +$schema: http://devicetree=2Eorg/meta-schemas/core=2Eyaml#
+>> +
+>> +title: Auxiliary displays based on TM16xx and compatible LED controlle=
+rs
+>> +
+>> +maintainers:
+>> +  - Jean-Fran=C3=A7ois Lessard <jefflessard3@gmail=2Ecom>
+>> +
+>> +description: |
+>> +  LED matrix controllers used in auxiliary display devices that drive =
+individual
+>> +  LED icons and 7-segment digit groups through a grid/segment addressi=
+ng scheme=2E
+>> +  Controllers manage a matrix of LEDs organized as grids (columns/bank=
+s in
+>> +  vendor datasheets) and segments (rows/bit positions in vendor datash=
+eets)=2E
+>> +  Maximum grid and segment indices are controller-specific=2E
 
-cookie will be used in an irq-handler. like this:
-static int rnpgbe_mbx_fw_reply_handler(struct mucse *mucse,
-                                       struct mbx_fw_cmd_reply *reply)
-{
-        struct mbx_req_cookie *cookie;
+In reference to max-brightness, I'll replace with:
 
-        cookie = reply->cookie;
+Maximum brightness and grid/segment indices are controller-specific=2E Con=
+troller-specific maximum are validated in the driver=2E
 
-        if (cookie->priv_len > 0)
-                memcpy(cookie->priv, reply->data, cookie->priv_len);
-        cookie->done = 1;
-        if (le16_to_cpu(reply->flags) & FLAGS_ERR)
-                cookie->errcode = -EIO;
-        else
-                cookie->errcode = 0;
-        wake_up(&cookie->wait);
-        return 0;
-}
-That is why we must wait for firmware response.
-But irq is not added in this patch series. Maybe I should move all
-cookie relative codes to the patch will add irq?
+>> +
+>> +  The controller is agnostic of the display layout=2E Board-specific L=
+ED wiring is
+>> +  described through child nodes that specify grid/segment coordinates =
+for
+>> +  individual icons and segment mapping for 7-segment digits=2E
+>> +
+>> +  The bindings use separate 'leds' and 'digits' containers to accommod=
+ate
+>> +  different addressing schemes:
+>> +  - LEDs use 2-cell addressing (grid, segment) for matrix coordinates
+>> +  - Digits use 1-cell addressing with explicit segment mapping
+>> +
+>> +  The controller node exposes a logical LED-like control for the aggre=
+gate
+>> +  display brightness=2E Child nodes describe individual icons and 7-se=
+g digits=2E
+>> +  The top-level control supports only label and brightness-related pro=
+perties
+>> +  and does not support other common LED properties such as color or fu=
+nction=2E
+>> +  Child LED nodes use the standard LED binding=2E
+>> +
+>> +  Optional keypad scanning is supported when both 'linux,keymap' and
+>> +  'poll-interval' properties are specified=2E
+>> +
+>> +properties:
+>> +  compatible:
+>> +    oneOf:
+>> +      - items:
+>> +          - enum:
+>> +              - fdhisi,fd628
+>> +              - princeton,pt6964
+>> +              - wxicore,aip1628
+>> +          - const: titanmec,tm1628
+>> +      - items:
+>> +          - enum:
+>> +              - wxicore,aip1618
+>> +          - const: titanmec,tm1618
+>> +      - items:
+>> +          - enum:
+>> +              - fdhisi,fd650
+>> +              - wxicore,aip650
+>> +          - const: titanmec,tm1650
+>> +      - enum:
+>> +          - fdhisi,fd620
+>> +          - fdhisi,fd655
+>> +          - fdhisi,fd6551
+>> +          - titanmec,tm1618
+>> +          - titanmec,tm1620
+>> +          - titanmec,tm1628
+>> +          - titanmec,tm1638
+>> +          - titanmec,tm1650
+>> +          - winrise,hbs658
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  label:
+>> +    description:
+>> +      The label for the top-level LED=2E If omitted, the label is take=
+n from the
+>> +      node name (excluding the unit address)=2E It has to uniquely ide=
+ntify a
+>> +      device, i=2Ee=2E no other LED class device can be assigned the s=
+ame label=2E
+>> +    $ref: /schemas/leds/common=2Eyaml#/properties/label
+>> +
+>> +  max-brightness:
+>> +    description:
+>> +      Normally the maximum brightness is determined by the hardware an=
+d this
+>> +      property is not required=2E This property is used to put a softw=
+are limit
+>> +      on the brightness apart from what the driver says, as it could h=
+appen
+>> +      that a LED can be made so bright that it gets damaged or causes =
+damage
+>> +      due to restrictions in a specific system, such as mounting condi=
+tions=2E
+>> +    $ref: /schemas/leds/common=2Eyaml#/properties/max-brightness
+>
+>These 2 $ref's should be at the node level=2E The clue is you=20
+>copied-n-pasted the whole description=2E
+>
 
-> > +
-> > +	if (!err)
-> > +		err = -ETIMEDOUT;
-> > +	else
-> > +		err = 0;
-> > +	if (!err && cookie->errcode)
-> > +		err = cookie->errcode;
-> > +out:
-> > +	mutex_unlock(&hw->mbx.lock);
-> > +	return err;
-> > +}
-> 
-> [...]
-> 
-> > +struct mbx_fw_cmd_req {
-> > +	__le16 flags;
-> > +	__le16 opcode;
-> > +	__le16 datalen;
-> > +	__le16 ret_value;
-> > +	union {
-> > +		struct {
-> > +			__le32 cookie_lo;
-> > +			__le32 cookie_hi;
-> > +		};
-> > +
-> > +		void *cookie;
-> > +	};
-> > +	__le32 reply_lo;
-> > +	__le32 reply_hi;
-> 
-> what do these 2 fields mean? are you going to provide reply's buffer
-> address directly to FW?
-> 
+I'll add:
 
-No, this is defined by fw. Some fw can access physical address.
-But I don't use it in this driver.
+allOf:
+  - $ref: /schemas/leds/common=2Eyaml#
 
-> > +	union {
-> > +		u8 data[32];
-> > +		struct {
-> > +			__le32 version;
-> > +			__le32 status;
-> > +		} ifinsmod;
-> > +		struct {
-> > +			__le32 port_mask;
-> > +			__le32 pfvf_num;
-> > +		} get_mac_addr;
-> > +	};
-> > +} __packed;
-> > +
-> > +struct mbx_fw_cmd_reply {
-> > +	__le16 flags;
-> > +	__le16 opcode;
-> > +	__le16 error_code;
-> > +	__le16 datalen;
-> > +	union {
-> > +		struct {
-> > +			__le32 cookie_lo;
-> > +			__le32 cookie_hi;
-> > +		};
-> > +		void *cookie;
-> > +	};
-> 
-> This part looks like the request, apart from datalen and error_code are
-> swapped in the header. And it actually means that the FW will put back
-> the address of provided cookie into reply, right? If yes, then it
-> doesn't look correct at all...
-> 
+at the node level and constrain inapplicable LED properties (color, functi=
+on)
+using properties: false since this auxdisplay device integrates with LED
+subsystem for brightness control=2E
 
-It is yes. cookie is used in irq handler as show above.
-Sorry, I didn't understand 'the not correct' point?
+>What you need here is some constraints=2E What's the max value?
+>
 
-> > +	union {
-> > +		u8 data[40];
-> > +		struct mac_addr {
-> > +			__le32 ports;
-> > +			struct _addr {
-> > +				/* for macaddr:01:02:03:04:05:06
-> > +				 * mac-hi=0x01020304 mac-lo=0x05060000
-> > +				 */
-> > +				u8 mac[8];
-> > +			} addrs[4];
-> > +		} mac_addr;
-> > +		struct hw_abilities hw_abilities;
-> > +	};
-> > +} __packed;
-> 
+Maximum brightness varies by controller:
+- TM1618/TM1628/TM1638 support levels 0-8
+- TM1650 supports levels 0-8
+- TM1620 supports levels 0-3
+I'll set the schema maximum to 8:
+
+max-brightness:
+  maximum: 8  # Maximum across all TM16xx controllers
+
+with the top-level description note that actual limits are controller-depe=
+ndent
+and are enforced by the driver=2E
+
+>> +
+>> +  default-brightness:
+>> +    description:
+>> +      Brightness to be set if LED's default state is on=2E Used only d=
+uring
+>> +      initialization=2E If the option is not set then max brightness i=
+s used=2E
+>> +    $ref: /schemas/types=2Eyaml#/definitions/uint32
+>
+>This needs to first go into leds/common=2Eyaml=2E
+>
+
+Given its specific relevance to this auxdisplay use case rather than gener=
+al LED
+behavior, I am not sure it's worth adding default-brightness to LEDs/commo=
+n=2Eyaml
+If broader LED subsystem adoption is wanted, I am willing to submit a sepa=
+rate
+patch to this series to add it=2E
+
+Otherwise, existing precedent in backlight/common=2Eyaml and leds/leds-pwm=
+=2Eyaml
+would advocate for defining it locally=2E
+
+>> +
+>> +  digits:
+>> +    type: object
+>> +    description: Container for 7-segment digit group definitions
+>> +    additionalProperties: false
+>> +
+>> +    properties:
+>> +      "#address-cells":
+>> +        const: 1
+>> +      "#size-cells":
+>> +        const: 0
+>> +
+>> +    patternProperties:
+>> +      "^digit@[0-9]+$":
+>> +        type: object
+>> +        unevaluatedProperties: false
+>> +
+>> +        properties:
+>> +          reg:
+>> +            description: Digit position identifier
+>
+>Position is right to left (0 on right)? Please clarify=2E
+>=20
+
+I'll clarify: digit positions are numbered sequentially left-to-right,=20
+with reg=3D0 representing the leftmost digit position as displayed to the =
+user=2E
+
+>> +            maxItems: 1
+>> +
+>> +          segments:
+>> +            $ref: /schemas/types=2Eyaml#/definitions/uint32-matrix
+>> +            description: |
+>> +              Array of grid/segment coordinate pairs for each 7-segmen=
+t position=2E
+>> +              Each entry is <grid segment> mapping to standard 7-segme=
+nt positions
+>> +              in order: a, b, c, d, e, f, g
+>> +
+>> +              Standard 7-segment layout:
+>> +                 aaa
+>> +                f   b
+>> +                f   b
+>> +                 ggg
+>> +                e   c
+>> +                e   c
+>> +                 ddd
+>> +            items:
+>> +              items:
+>> +                - description: Grid index
+>> +                - description: Segment index
+>
+>Can't you do an array instead and make the array index be the grid or=20
+>segment index?
+>
+
+Original design was array-based:
+- titanmec,digits: array of grid indices
+- titanmec,segment-mapping: array of segment indices for a,b,c,d,e,f,g
+- titanmec,transposed: boolean for matrix-transposed cases
+
+The current explicit coordinate approach was adopted based on v2 feedback =
+and
+handles both standard and transposed wiring patterns effectively, where
+manufacturers swap grid/segment relationships:
+- Standard: digit segments use same grid, different segments =20
+- Transposed: digit segments use same segment, different grids
+It also future-proofs potential irregular wiring patterns where individual
+digits might have different grid/segment relationships=2E
+
+Unless you have strong objections, I prefer to keep this approach to avoid
+further churn, as it's proven to handle all the real-world board layouts
+encountered=2E
+
+See=20
+ttps://lore=2Ekernel=2Eorg/linux-devicetree/9133F5BC-7F4E-4732-9649-178E5A=
+698273@gmail=2Ecom/
+
+>> +            minItems: 7
+>> +            maxItems: 7
+>> +
+>> +        required:
+>> +          - reg
+>> +          - segments
+>> +
+>> +  leds:
+>> +    type: object
+>> +    description: Container for individual LED icon definitions
+>> +    additionalProperties: false
+>> +
+>> +    properties:
+>> +      "#address-cells":
+>> +        const: 2
+>> +      "#size-cells":
+>> +        const: 0
+>> +
+>> +    patternProperties:
+>> +      "^led@[0-9]+,[0-9]+$":
+>> +        type: object
+>> +        $ref: /schemas/leds/common=2Eyaml#
+>> +        unevaluatedProperties: false
+>> +
+>> +        properties:
+>> +          reg:
+>> +            description:
+>> +              Grid and segment indices as <grid segment> of this indiv=
+idual LED icon
+>> +
+>> +        required:
+>> +          - reg
+>> +
+>> +allOf:
+>> +  - $ref: /schemas/input/input=2Eyaml#
+>> +  - $ref: /schemas/input/matrix-keymap=2Eyaml#
+>> +
+>> +dependencies:
+>> +  poll-interval:
+>> +    - linux,keymap
+>> +  linux,keymap:
+>> +    - poll-interval
+>> +  autorepeat:
+>> +    - linux,keymap
+>> +    - poll-interval
+>> +
+>> +# SPI controllers require 3-wire (combined MISO/MOSI line)
+>> +if:
+>
+>Move this under the allOf=2E
+>
+
+Well received=2E
+
+>> +  properties:
+>> +    compatible:
+>> +      contains:
+>> +        enum:
+>> +          - fdhisi,fd620
+>> +          - fdhisi,fd628
+>> +          - princeton,pt6964
+>> +          - titanmec,tm1618
+>> +          - titanmec,tm1620
+>> +          - titanmec,tm1628
+>> +          - titanmec,tm1638
+>> +          - wxicore,aip1618
+>> +          - wxicore,aip1628
+>> +then:
+>> +  allOf:
+>
+>Drop allOf=2E
+>
+
+Well received=2E
+
+>> +    - $ref: /schemas/spi/spi-peripheral-props=2Eyaml#
+>> +  properties:
+>> +    spi-3wire: true
+>
+>Drop 'properties'
+>
+
+Well received=2E
+
+>> +  required:
+>> +    - spi-3wire
+>> +
+>> +required:
+>
+>Order should be 'dependencies', 'required', 'allOf'=2E
+>
+
+I'll reorder the schema sections accordingly=2E
+
+>> +  - compatible
+>> +  - reg
+>> +
+>> +unevaluatedProperties: false
+>> +
+=2E=2E=2E
+>> --=20
+>> 2=2E43=2E0
+>>=20
+
+
+Thanks for your time and your feedback,
+
+Best Regards
+Jean-Fran=C3=A7ois Lessard
 
