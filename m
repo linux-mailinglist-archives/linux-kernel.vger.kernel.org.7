@@ -1,117 +1,88 @@
-Return-Path: <linux-kernel+bounces-786264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF35FB35778
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:43:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 03DA8B3577C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:45:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 243AB18939E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:43:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D05F1B27ECB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD80E2FC881;
-	Tue, 26 Aug 2025 08:43:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA442FCBFF;
+	Tue, 26 Aug 2025 08:45:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EvcL5yqR";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="T32aPWHZ"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JjIXOxw/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC19227D77B;
-	Tue, 26 Aug 2025 08:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7AF1F0E55;
+	Tue, 26 Aug 2025 08:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756197808; cv=none; b=Q9LFk/inLzRiHdNWgvf9IKMozM5L9DXUWCXA6t8HOpeVQifx3iuWia6QBmWQk7IjQUK9iiKu0eTgI/LPc16DHDdJcljMuYoZFQW8BYChycE3hKLco60d9TW0QbNqgqHI9lznJo2NX7N1E3nmJ0DsE2kpmcqjiKbg6D1tw959/9E=
+	t=1756197940; cv=none; b=ODQ2+/x7sGyFFPS9fMJbSu62nytVB5d8d7H8by2tXXpLZnlwVmMuBYoW0gOhR9a41aRzV1AOE3HOWLwmoGLGdmWBHWRztDI0xK6t3xdOvdSnQqHrjWLa6Y4JkRR67c5EeBnkdma3HUm2UlHR6xKlkHOTMyEpykeuspLA2lTSzqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756197808; c=relaxed/simple;
-	bh=y4dwqQVgtSX6sPHPMwAuaPOfXvlILwfzYILH/VuFM1w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ghkiV2tPuhG2E9Rr90EgWVpQp7UpO1wqngxQKSWBe//6yFoxXsPtw7e+vDttWx6mVaCbVCJTOqyWKTuaOYBepWX3nGQrHaer3BpTsBxYIeL/CpsOke58Mqf6EzlkjepYbGnor9P0hG4vuC2TLQ6uriNokiDTUArDy3hZSjDadAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EvcL5yqR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=T32aPWHZ; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 26 Aug 2025 10:43:20 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756197804;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vW0GsgV7Ep6s4XIArheKm/LdDZZmdIK5t24jU+6kggw=;
-	b=EvcL5yqRd2AKS+Y8UMGkM5b9exWowZdlqZLZFId2q0cdJEUZ6rCghtwN2F2RL6mtYmm2BD
-	i+8+vbOBOVH+dQaEBkunBVi3JNeRGkUgQ+KNqcz2chZS1YkSfOzFoUdKhvt5D0OnZQzSxF
-	nTQkh3syh8J7XKjIAuYIpgzGXxanKF5RGamHo3bttlX9HMf2RlUDG1MCwU/eiz/0N6duPz
-	YZPYnd5iUeYHFSy+kSUTLv5EiXIn5oYkR1qXgX3j+hte5JQdtDUSsPqhMSfuyppcG5PCu8
-	iPchwwOW9ixRj+h+8Y7xiRB4BwGYZQeFWF8jDdosveKfYLqhRhluQ0D0gF1xgw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756197804;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vW0GsgV7Ep6s4XIArheKm/LdDZZmdIK5t24jU+6kggw=;
-	b=T32aPWHZdJeTw+a5UJKU3WD36z2iBIV7xYlqQ6KAqP2pHQwPD7bhFhGgVpi2WefMqunUNQ
-	ps8p7jmoDxApSYCg==
-From: Nam Cao <namcao@linutronix.de>
-To: Christian Brauner <brauner@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Xi Ruoyao <xry111@xry111.site>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	John Ogness <john.ogness@linutronix.de>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	linux-rt-users@vger.kernel.org, Joe Damato <jdamato@fastly.com>,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	Jens Axboe <axboe@kernel.dk>
-Cc: stable@vger.kernel.org
-Subject: Re: [PATCH v4 1/1] eventpoll: Replace rwlock with spinlock
-Message-ID: <20250826084320.XeTd6XAK@linutronix.de>
-References: <cover.1752581388.git.namcao@linutronix.de>
- <ec92458ea357ec503c737ead0f10b2c6e4c37d47.1752581388.git.namcao@linutronix.de>
+	s=arc-20240116; t=1756197940; c=relaxed/simple;
+	bh=RBnl58A5TRIsTpWbH75eLIzXRC1KN59+1EZ3+wPeIcw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=jl6ghPde42MDekIT5uQUny6+J5rVMYB4wfOpmpEAaxNe+t4rZMXEUceVVLNn09r8xRD+BP3AFlaxPJLuG3365/g/RrLDSB+OFaIrvyYEuLDm7swi8T+grt/CeD3jh6AI8Fm5URsEnDYcImbFnM5DLCvnucTN08gE3KBm0j1adqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JjIXOxw/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C3C9C116C6;
+	Tue, 26 Aug 2025 08:45:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756197939;
+	bh=RBnl58A5TRIsTpWbH75eLIzXRC1KN59+1EZ3+wPeIcw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=JjIXOxw/QxrVJvgMc0gGXsyTFywRZuSxwAxYsEFLVhflFoyG0PAM0EheCyZR+V3Vq
+	 4LW0fiUXAaUe6b6aFqCy5lcJpNfRMi1SR2SWZv2z8HLQRxHjUQICPi5HjgT23+xdga
+	 RwKNAZeevaZbj8C0zskGtEHTz4GTV4Rufrw5/RmSTaunPkYSNiyulN7mqo5gHmcMLN
+	 YCD2nUr0oOIz3Mtonfi8h1IpdaRSnAncfqR24d1GkAIJ3Z74sQaDbaXjOxugZ9aPcX
+	 fDUIR8qz/nyVQ3Pw1FPPL14lYgKptKW7wf7Pe4XOWhxj/R842ACZY6LcEjeRgLhxLd
+	 WasVNRy1Ee/bw==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Lyude Paul <lyude@redhat.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, FUJITA Tomonori
+ <fujita.tomonori@gmail.com>, Frederic Weisbecker <frederic@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>, John Stultz <jstultz@google.com>, Stephen Boyd
+ <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
+ <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6r?=
+ =?utf-8?Q?n?= Roy Baron
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Alice
+ Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo
+ Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 7/7] rust: hrtimer: Add HrTimer::expires()
+In-Reply-To: <20250821193259.964504-8-lyude@redhat.com>
+References: <20250821193259.964504-1-lyude@redhat.com>
+ <NIpGrltySo0vppvE0Z80S3xXLtyrcjxuE2fjMitgnJRkZLGGAPM4uCL8YcByJwodSs99TnNIT2hDDMUgpZHzGg==@protonmail.internalid>
+ <20250821193259.964504-8-lyude@redhat.com>
+Date: Tue, 26 Aug 2025 10:43:31 +0200
+Message-ID: <87h5xuwk0c.fsf@t14s.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ec92458ea357ec503c737ead0f10b2c6e4c37d47.1752581388.git.namcao@linutronix.de>
+Content-Type: text/plain
 
-On Tue, Jul 15, 2025 at 02:46:34PM +0200, Nam Cao wrote:
-> The ready event list of an epoll object is protected by read-write
-> semaphore:
-> 
->   - The consumer (waiter) acquires the write lock and takes items.
->   - the producer (waker) takes the read lock and adds items.
-> 
-> The point of this design is enabling epoll to scale well with large number
-> of producers, as multiple producers can hold the read lock at the same
-> time.
-> 
-> Unfortunately, this implementation may cause scheduling priority inversion
-> problem. Suppose the consumer has higher scheduling priority than the
-> producer. The consumer needs to acquire the write lock, but may be blocked
-> by the producer holding the read lock. Since read-write semaphore does not
-> support priority-boosting for the readers (even with CONFIG_PREEMPT_RT=y),
-> we have a case of priority inversion: a higher priority consumer is blocked
-> by a lower priority producer. This problem was reported in [1].
-> 
-> Furthermore, this could also cause stall problem, as described in [2].
-> 
-> Fix this problem by replacing rwlock with spinlock.
+"Lyude Paul" <lyude@redhat.com> writes:
 
-Hi Christian,
+> Add a simple callback for retrieving the current expiry time for an
+> HrTimer. In rvkms, we use the HrTimer expiry value in order to calculate
+> the approximate vblank timestamp during each emulated vblank interrupt.
+>
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
 
-May I know your plan with this patch? Are you still waiting for something?
 
-You may still understandably be paranoid about epoll due to the last
-regression. But it's been weeks, and this patch is quite simple, so I start
-to wonder if it is forgotten.
+Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
 
-Nam
+
+Best regards,
+Andreas Hindborg
+
+
+
 
