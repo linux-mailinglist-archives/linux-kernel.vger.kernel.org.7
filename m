@@ -1,167 +1,288 @@
-Return-Path: <linux-kernel+bounces-787324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21484B3748E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 23:49:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C1C4B37498
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 23:59:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A3F51B27EF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 21:50:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC10C7C5854
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 21:59:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50AD8299923;
-	Tue, 26 Aug 2025 21:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8852A29B766;
+	Tue, 26 Aug 2025 21:59:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dt+yYGMD"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="dvzhD3j/"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 029D7280325;
-	Tue, 26 Aug 2025 21:49:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28C01DFF0;
+	Tue, 26 Aug 2025 21:59:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756244990; cv=none; b=E5J9gg/7z47naOMhBH4+zP/2ljjwLSTcxcEKV8XyDLLTlyaZ1pLmWwV/MHI+XxuWzGthYVryJV5PALbZ0xLOtdJy8FHghnbnotVnpZn4m+rMWPTNTJfLXHGhoicC2VHSudmTUw9QYSErXHupr8HB5CjbAg/ngeUh/TjNa61k65A=
+	t=1756245583; cv=none; b=hG90Z+Nz2iPWRYTl+rWoXAyTT01njQkZs+QrMXgbA88+FmcQ9L8raT70RpeLwXc6ivV2YLIcP2e3RsqUd377P26W7Ibzrvj120YNMpT7bzkFVtEX0Y6h0kSjdKp63cK4/XrvLd79jukOTXFQYlJNJ5Rc1FrLdmkeP7COqptz834=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756244990; c=relaxed/simple;
-	bh=YTP7oljg0BII5171/1yq3+K9FoB8VehllhNiO9W07Y0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ttl46UR3Ve3LvP/WAJT0EtPDCSWTBif4/Pj4Q2qsHvjQmYP2lbGRxki5N4UsUbm8QJA1oOYI+qGsMi1bSzcSRxbAKwXyTDMGjpwyLBmDUowS9D53Pzh1uGvqPxyYptK3mhfHNB97VH1VWBMzbZakPyo9eXZnJDA2YY1l/uLL+D0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dt+yYGMD; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45b49f7aaf5so37296825e9.2;
-        Tue, 26 Aug 2025 14:49:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756244987; x=1756849787; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UGxiUv+9T9MyXGrGc5hXaCPQg3e9+++0LsEZqWpGIE8=;
-        b=Dt+yYGMD9lnM74K8A38gF/rPYyRVomKyh8ELDySN34jrIS4aLJTT5c3VD2kyOeepbt
-         NCaaszPyQKASnnWcEF97vse38Yz+/D9R42+3llljfnjmRrIpE/IinIhAGwlLALxkyvrU
-         unNUreOxLj+6f6qk6qhpCgdd3zswc2HHitk/591thXcX0EhQfYX/YdV4yTGXrb4kQIyL
-         bF3/uUQ2RG5psRSSecbhqbXFRLIU3wEkzXvqYE0HIA9rewgPuwEylJkn0AdA45r6X88y
-         0g8pM+DlvSqqFHcm+ghvhl6fRCrAlybhEo1G1s1MtuhCJ+uCv6+yzgWA5BRb+8uVsJFt
-         RA6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756244987; x=1756849787;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UGxiUv+9T9MyXGrGc5hXaCPQg3e9+++0LsEZqWpGIE8=;
-        b=ia8OTDqvmMjwCZZs5HzJycPUj3Zhk8AtuSOSvrEycpNE9vx4Y5zVjisy9g9rX3uHer
-         iY+Auu9SunzSRSLZfXURGL2aX2EdfE67NgvgqqBMUtlDBdZTI23NhmZU0RPif3xv+LcN
-         cKRAQe2aQYiGGe1PZYzx5J0G7WA5//5F9FZynqwgZzRF3pBVtzUQP7nKTxgcSQxnDsb2
-         UzS5tKkFfZl7ZkwWsS+ZJO6ftb9Yb5dVOAqyr55eFXOlmmRASd8JYkqizDlq60/GY4Sr
-         1SSkCYYACZqk/daeqDSZq0n4OFzJLQ00LK9BY6xuBNIq4fqCgQoHyTvAzRNF1l3tQ/JP
-         KZ7A==
-X-Forwarded-Encrypted: i=1; AJvYcCUIHaU8I9E+rw7qQlpKUgrHVl25bJneEZ721Wm7+gFBTsppwaqgkSAaRuPTEXubGRyNdQvE52KkGwrxfX4=@vger.kernel.org, AJvYcCVigapHFx7x9vUZ+HOt8W3cNXUc98dQO/26Uo0Z9Zh9OwyO3pPukXsKo+MIm2VIDLBWF1CTW0xweP2WnUmxFsYA@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKYroGUfXzwIF4HViu9Hl3IyIlxgfv5wdmtC7j/DDB+fIbr3mu
-	voNkX7piEulsvSf6agETgdyfjoRJgxZBygJhl7URRt6/k/AhyUHdFZxQ
-X-Gm-Gg: ASbGnctBGxIuuHea23PTPWc5f4DyGWAwoF3bMNmeVFQPdFLsRFel5u9+XHzTbs0WBmL
-	pN6P6Kajc0u566qr9wTnIZKuaz9ijN7pp/mM/6lQW9QLeNilv7ax1kb9zYTPJykFVZUQ88z9ADG
-	rg1xvLjH4Tn5s8hLBGOo+eI1XL0+ueW0jWays5PfJQ99WCQ3qba6b2hoBSfpFJ+/va9RLajvfoV
-	tXJWj2lg2yZvzlOepOY5bAKUO+AHCz5VUmuxtzzfse+SqalCK1UQ7MzR0kXjjYFptKmhoCkm/Wr
-	tE8B1Ls6/+OsXAItt/r/lC3hcaLcGRQGaKYnAlw4xo/CMelEGSebl9k6DMXGVQuSsXC8/aWyUwo
-	i2fzVmdYPDpb00+fXGpFsmvNLw5u1whzZw9zvocrRuvZM5ljtDpuCbJdWVFXmGwMh
-X-Google-Smtp-Source: AGHT+IHv+Wry+OjQYum2M7c57rs+J3M7hZ2o5axY1fUO2E8dRSkddQaT/i6JHD3BgXqPOrIfoE/gqg==
-X-Received: by 2002:a05:600c:3b95:b0:459:df07:6db7 with SMTP id 5b1f17b1804b1-45b5179b2a1mr156669565e9.6.1756244987084;
-        Tue, 26 Aug 2025 14:49:47 -0700 (PDT)
-Received: from localhost.localdomain ([46.10.223.24])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c711211b19sm18309207f8f.39.2025.08.26.14.49.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 14:49:46 -0700 (PDT)
-From: "Nikola Z. Ivanov" <zlatistiv@gmail.com>
-To: bagasdotme@gmail.com,
-	Markus.Elfring@web.de,
-	broonie@kernel.org
-Cc: shuah@kernel.org,
-	will@kernel.org,
-	mark.rutland@arm.com,
-	ebiggers@google.com,
-	catalin.marinas@arm.com,
-	martin.petersen@oracle.com,
-	ardb@kernel.org,
-	thiago.bauermann@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	"Nikola Z. Ivanov" <zlatistiv@gmail.com>
-Subject: [PATCH v2] selftests/arm64: Fix grammatical error in string literals
-Date: Wed, 27 Aug 2025 00:49:13 +0300
-Message-ID: <20250826214913.866695-1-zlatistiv@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1756245583; c=relaxed/simple;
+	bh=rF7py0I4BQaA96IrHqgiK8rvwdsG8stamTkJqbzpqXU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NsTwyCpWnN5ZZsrnt6UL69bbnHIlscX3at287JwTXp5vqO7HxIo2ViIMguT7hs2Jx8BFgUsyCIkXJxGvlDn+82JkQVijMuqWgeMzRzzaegKf8+5/wE6sgKfzp3i5DbKV5Rs2GXEjrVcY2aJY3EFoCdFuAKEwUXUPU0X+SxXp+TI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=dvzhD3j/; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 57QLx2qS1287801
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Tue, 26 Aug 2025 14:59:02 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 57QLx2qS1287801
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025082201; t=1756245544;
+	bh=JhEF9PyJIiz8iDeAX7hqrwvGmHOpLTMxdPH/sUFCfaw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dvzhD3j/eO28ZaxQT/SDRzI5/92/hnb+BKoxiEkCVziAGO6BuUE50h13oBz/8NRBb
+	 zVRn94TsGBcc8oV08CxqMd8aP89j92txgn8U4NRm9JN4+emHj8CtevRy4F/aNdYzjN
+	 5ty+V61NSzqppfTjVSvkKP9SgVnnc9+381KtKs4F97F2n9VYCryJ93SpUwIXZXQrc7
+	 74TsSBt/KukYH/KVU1F43qnhAxbFKtrlpHMLkmjzAXYM2hTMNRCTDQsYOfErm+sCoh
+	 +C3bOuzuJ9hQdsZ0jrxQ+vPzozbBCkvNiua+6WSUA7iw8DyfDQZ9AAhA6xm07Quqa4
+	 o7Kl6SZJSSfTQ==
+Message-ID: <c45a7c91-e393-4f71-8b22-aef6486aaa9e@zytor.com>
+Date: Tue, 26 Aug 2025 14:59:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 06/20] KVM: VMX: Set FRED MSR intercepts
+To: Sean Christopherson <seanjc@google.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        linux-doc@vger.kernel.org, pbonzini@redhat.com, corbet@lwn.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        luto@kernel.org, peterz@infradead.org, andrew.cooper3@citrix.com,
+        chao.gao@intel.com, hch@infradead.org
+References: <20250821223630.984383-1-xin@zytor.com>
+ <20250821223630.984383-7-xin@zytor.com>
+ <2dd8c323-7654-4a28-86f1-d743b70d10b1@zytor.com>
+ <aK340-6yIE_qujUm@google.com>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <aK340-6yIE_qujUm@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Fix grammatical error in <past tense verb> + <infinitive>
-construct related to memory allocation checks.
-In essence change "Failed to allocated" to "Failed to allocate".
 
-Signed-off-by: Nikola Z. Ivanov <zlatistiv@gmail.com>
----
-Changes in v2:
-- More descriptive commit message
+>> Hi Sean,
+>>
+>> I'd like to bring up an issue concerning MSR_IA32_PL0_SSP.
+>>
+>> The FRED spec claims:
+>>
+>> The FRED SSP MSRs are supported by any processor that enumerates
+>> CPUID.(EAX=7,ECX=1):EAX.FRED[bit 17] as 1. If such a processor does not
+>> support CET, FRED transitions will not use the MSRs (because shadow stacks
+>> are not enabled), but the MSRs would still be accessible using MSR-access
+>> instructions (e.g., RDMSR, WRMSR).
+>>
+>> It means KVM needs to handle MSR_IA32_PL0_SSP even when FRED is supported
+>> but CET is not.  And this can be broken down into two subtasks:
+>>
+>> 1) Allow such a guest to access MSR_IA32_PL0_SSP w/o triggering #GP.  And
+>> this behavior is already implemented in patch 8 of this series.
+>>
+>> 2) Save and restore MSR_IA32_PL0_SSP in both KVM and Qemu for such a guest.
+> 
+> What novel work needs to be done in KVM?  For QEMU, I assume it's just adding an
+> "or FRED" somewhere.  For KVM, I'm missing what additional work would be required
+> that wouldn't be naturally covered by patch 8 (assuming patch 8 is bug-free).
 
-Original title is "Fix typos in malloc return value check"
+Extra patches:
 
- tools/testing/selftests/arm64/fp/fp-stress.c   | 2 +-
- tools/testing/selftests/arm64/fp/kernel-test.c | 4 ++--
- tools/testing/selftests/arm64/gcs/gcs-stress.c | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+1) A patch to save/restore guest MSR_IA32_PL0_SSP (i.e., FRED SSP0), as
+what we have done for RSP0, following is the patch on top of the patch 
+saving/restoring RSP0:
 
-diff --git a/tools/testing/selftests/arm64/fp/fp-stress.c b/tools/testing/selftests/arm64/fp/fp-stress.c
-index 74e23208b94c..ddc01efea3f9 100644
---- a/tools/testing/selftests/arm64/fp/fp-stress.c
-+++ b/tools/testing/selftests/arm64/fp/fp-stress.c
-@@ -549,7 +549,7 @@ int main(int argc, char **argv)
- 
- 	evs = calloc(tests, sizeof(*evs));
- 	if (!evs)
--		ksft_exit_fail_msg("Failed to allocated %d epoll events\n",
-+		ksft_exit_fail_msg("Failed to allocate %d epoll events\n",
- 				   tests);
- 
- 	for (i = 0; i < cpus; i++) {
-diff --git a/tools/testing/selftests/arm64/fp/kernel-test.c b/tools/testing/selftests/arm64/fp/kernel-test.c
-index e3cec3723ffa..0c40007d1282 100644
---- a/tools/testing/selftests/arm64/fp/kernel-test.c
-+++ b/tools/testing/selftests/arm64/fp/kernel-test.c
-@@ -188,13 +188,13 @@ static bool create_socket(void)
- 
- 	ref = malloc(digest_len);
- 	if (!ref) {
--		printf("Failed to allocated %d byte reference\n", digest_len);
-+		printf("Failed to allocate %d byte reference\n", digest_len);
- 		return false;
- 	}
- 
- 	digest = malloc(digest_len);
- 	if (!digest) {
--		printf("Failed to allocated %d byte digest\n", digest_len);
-+		printf("Failed to allocate %d byte digest\n", digest_len);
- 		return false;
- 	}
- 
-diff --git a/tools/testing/selftests/arm64/gcs/gcs-stress.c b/tools/testing/selftests/arm64/gcs/gcs-stress.c
-index bbc7f4950c13..cf316d78ea97 100644
---- a/tools/testing/selftests/arm64/gcs/gcs-stress.c
-+++ b/tools/testing/selftests/arm64/gcs/gcs-stress.c
-@@ -433,7 +433,7 @@ int main(int argc, char **argv)
- 
- 	evs = calloc(tests, sizeof(*evs));
- 	if (!evs)
--		ksft_exit_fail_msg("Failed to allocated %d epoll events\n",
-+		ksft_exit_fail_msg("Failed to allocate %d epoll events\n",
- 				   tests);
- 
- 	for (i = 0; i < gcs_threads; i++)
--- 
-2.50.1
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 449a5e02c7de..0bf684342a71 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -1294,8 +1294,13 @@ void vmx_prepare_switch_to_guest(struct kvm_vcpu *vcpu)
+
+  	wrmsrq(MSR_KERNEL_GS_BASE, vmx->msr_guest_kernel_gs_base);
+
+-	if (guest_cpu_cap_has(vcpu, X86_FEATURE_FRED))
++	if (guest_cpu_cap_has(vcpu, X86_FEATURE_FRED)) {
+  		wrmsrns(MSR_IA32_FRED_RSP0, vmx->msr_guest_fred_rsp0);
++
++		/* XSAVES/XRSTORS do not cover SSP MSRs */
++		if (!kvm_cpu_cap_has(X86_FEATURE_SHSTK))
++			wrmsrns(MSR_IA32_FRED_SSP0, vmx->msr_guest_fred_ssp0);
++	}
+  #else
+  	savesegment(fs, fs_sel);
+  	savesegment(gs, gs_sel);
+@@ -1349,6 +1354,10 @@ static void vmx_prepare_switch_to_host(struct 
+vcpu_vmx *vmx)
+  		 * CPU exits to userspace (RSP0 is a per-task value).
+  		 */
+  		fred_sync_rsp0(vmx->msr_guest_fred_rsp0);
++
++		/* XSAVES/XRSTORS do not cover SSP MSRs */
++		if (!kvm_cpu_cap_has(X86_FEATURE_SHSTK))
++			vmx->msr_guest_fred_ssp0 = read_msr(MSR_IA32_FRED_SSP0);
+  	}
+  #endif
+  	load_fixmap_gdt(raw_smp_processor_id());
+diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
+index 733fa2ef4bea..12c1cf827cb7 100644
+--- a/arch/x86/kvm/vmx/vmx.h
++++ b/arch/x86/kvm/vmx/vmx.h
+@@ -228,6 +228,7 @@ struct vcpu_vmx {
+  #ifdef CONFIG_X86_64
+  	u64		      msr_guest_kernel_gs_base;
+  	u64		      msr_guest_fred_rsp0;
++	u64		      msr_guest_fred_ssp0;
+  #endif
+
+  	u64		      spec_ctrl;
+
+And We might want to zero host MSR_IA32_PL0_SSP when switching to host.
+
+
+2) Add vmx_read_guest_fred_ssp0()/vmx_write_guest_fred_ssp0(), and use
+them to read/write MSR_IA32_PL0_SSP in patch 8:
+
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 99106750b1e3..cbdc67682d27 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -1400,9 +1408,23 @@ static void vmx_write_guest_fred_rsp0(struct 
+vcpu_vmx *vmx, u64 data)
+  	vmx_write_guest_host_msr(vmx, MSR_IA32_FRED_RSP0, data,
+  				 &vmx->msr_guest_fred_rsp0);
+  }
++
++static u64 vmx_read_guest_fred_ssp0(struct vcpu_vmx *vmx)
++{
++	return vmx_read_guest_host_msr(vmx, MSR_IA32_FRED_SSP0,
++				       &vmx->msr_guest_fred_ssp0);
++}
++
++static void vmx_write_guest_fred_ssp0(struct vcpu_vmx *vmx, u64 data)
++{
++	vmx_write_guest_host_msr(vmx, MSR_IA32_FRED_SSP0, data,
++				 &vmx->msr_guest_fred_ssp0);
++}
+  #endif
+
+  static void grow_ple_window(struct kvm_vcpu *vcpu)
+@@ -2189,6 +2211,18 @@ int vmx_get_msr(struct kvm_vcpu *vcpu, struct 
+msr_data *msr_info)
+  	case MSR_IA32_DEBUGCTLMSR:
+  		msr_info->data = vmx_guest_debugctl_read();
+  		break;
++	case MSR_IA32_PL0_SSP:
++		/*
++		 * If kvm_cpu_cap_has(X86_FEATURE_SHSTK) but
++		 * !guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK), XSAVES/XRSTORS
++		 * cover SSP MSRs.
++		 */
++		if (!kvm_cpu_cap_has(X86_FEATURE_SHSTK) &&
++		    guest_cpu_cap_has(vcpu, X86_FEATURE_FRED)) {
++			msr_info->data = vmx_read_guest_fred_ssp0(vmx);
++			break;
++		}
++		fallthrough;
+  	default:
+  	find_uret_msr:
+  		msr = vmx_find_uret_msr(vmx, msr_info->index);
+@@ -2540,7 +2574,18 @@ int vmx_set_msr(struct kvm_vcpu *vcpu, struct 
+msr_data *msr_info)
+  		}
+  		ret = kvm_set_msr_common(vcpu, msr_info);
+  		break;
+-
++	case MSR_IA32_PL0_SSP:
++		/*
++		 * If kvm_cpu_cap_has(X86_FEATURE_SHSTK) but
++		 * !guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK), XSAVES/XRSTORS
++		 * cover SSP MSRs.
++		 */
++		if (!kvm_cpu_cap_has(X86_FEATURE_SHSTK) &&
++		    guest_cpu_cap_has(vcpu, X86_FEATURE_FRED)) {
++			vmx_write_guest_fred_ssp0(vmx, data);
++			break;
++		}
++		fallthrough;
+  	default:
+  	find_uret_msr:
+  		msr = vmx_find_uret_msr(vmx, msr_index);
+
+
+3) Another change I was discussing with Chao:
+https://lore.kernel.org/lkml/2ed04dff-e778-46c6-bd5f-51295763af06@zytor.com/
+
+> 
+>> I have the patches for 2) but they are not included in this series, because
+>>
+>> 1) how much do we care the value in MSR_IA32_PL0_SSP in such a guest?
+>>
+>> Yes, Chao told me that you are the one saying that MSRs can be used as
+>> clobber registers and KVM should preserve the value.  Does MSR_IA32_PL0_SSP
+>> in such a guest count?
+> 
+> If the architecture says that MSR_IA32_PL0_SSP exists and is accessible, then
+> KVM needs to honor that.
+> 
+>> 2) Saving/restoring MSR_IA32_PL0_SSP adds complexity, though it's seldom
+>> used.  Is it worth it?
+> 
+> Honoring the architecture is generally not optional.  There are extreme cases
+> where KVM violates that rule and takes (often undocumented) erratum, e.g. APIC
+> base relocation would require an absurd amount of complexity for no real world
+> benefit.  But I would be very surprised if the complexity in KVM or QEMU to support
+> this scenario is at all meaningful, let alone enough to justify diverging from
+> the architectural spec.
+
+Let me post v7 which includes all the required changes.
+
+Thanks!
+     Xin
 
 
