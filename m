@@ -1,168 +1,226 @@
-Return-Path: <linux-kernel+bounces-786089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79D1BB354D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:56:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 481D6B354DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:58:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DCF424528E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:56:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E39E8682C90
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:58:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F32E2F60CF;
-	Tue, 26 Aug 2025 06:55:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C4482F60B5;
+	Tue, 26 Aug 2025 06:58:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="TXu8NwlR"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="TYg4CGPD"
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11012025.outbound.protection.outlook.com [40.107.75.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1A8502BE;
-	Tue, 26 Aug 2025 06:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756191354; cv=none; b=GsDpASFkNhQOAKXWSpi1LRPBhkc/xT0CSryhE6P7JmJxnmZTCd5AFBqZdMt7V24Tcj+ezavVQ3sm5Go835uCyZsb4KPbXQXFiy+JU6lduqo/LESaTByaK88PCJk9lWAl7tJ1EgIOLLWx38xU/M12e7diJ7auo3cRuDlSdAc10ng=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756191354; c=relaxed/simple;
-	bh=AbFQ84Opa8P2yoCJhAEc+dOQF1w2tEkJ3FXtdJJOOQc=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=RK5xlBJvOTEBwdmhQlDU68V+e/6Q+D4J4adE+4D2rC5CsA+JMuk/6fh0IrL/WRAd8wd6r8m639BfxOu41qL3IOkpb90mujPNTHdpvgSFJLyiuRKGswwWSYpsebI92AXTemOVaeZCX6wzfMahGVnhvS+Butf0XiKhYM8gFeQYfnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=TXu8NwlR; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.202] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 57Q6slRZ947466
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Mon, 25 Aug 2025 23:54:48 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 57Q6slRZ947466
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025082201; t=1756191292;
-	bh=31hcUTjsqXzWZTOGdQDWB0hfth61bxathytRbPMfT9o=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=TXu8NwlRDu8fDbPcGjqill3BNsHgX0GvUITPYr9IBoHH3GCjfMG7577uDy1GKqRSz
-	 CS/PEXGldgwejkYOy9WWW9FY4RN3+rytjnTMM2BCv+n6fI/vT6jtINChJ9cYv9FZ1U
-	 rTYgdNC2504ShZyWQsoFCIzuAmI7iD+I33HtIroxOjnUymFIKUGH4n22PbuJmS6X2A
-	 PVW3daX2eaqMaVJWJ0mLbTJgOU7UQMuL0LZCQ+FOgorfCgtucKKINyDe38/Ji8Ji4D
-	 5UJLjnqKnHzX0ueHBkY7xkagO426UpcGYNzrYHxqA8aiHBVasEmblnP4Km78MlXOOM
-	 rKLBIPycWoqEA==
-Message-ID: <2ed04dff-e778-46c6-bd5f-51295763af06@zytor.com>
-Date: Mon, 25 Aug 2025 23:54:46 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEDEE199FAB;
+	Tue, 26 Aug 2025 06:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756191510; cv=fail; b=AiMErdSkektq1flxOFhAwC3UCd6GE6DIzXXMsdfUq9MuljWj7NX3Ksm1YYltmJMcyJG3gmq+pnNpiL3Q6sY+8Il6n27R2VQ5O58aCiOfM//slKdDofdtGokYUxwwu11D/9cWzf0mmmYbbWTkE7h5Uv9uYyr9pYVb1kZk9IoLe4E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756191510; c=relaxed/simple;
+	bh=pbVUAvVLGjirMPSnYoxBY1NsYb2tGTZ7hwGvNrgrVzA=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=K2Dq3IlJaZSA3NqwARD9E28cKA+9EK0rEQflwLXb4GONgZ3NHG40xVl7PXETHXeMTBGFAtp0czC/WTh6Bk7ZOg7LWmmChU5u9P7ZMGO3qkVYGIzax+ORbRRNWMDC6U+E70hXgrMBRtzS3d7Gok/jbQjJx44EOivhonNKeWNQ4Lg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=TYg4CGPD; arc=fail smtp.client-ip=40.107.75.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KZJABzd6gKgOrtvUOr1HqAc7HgQYAWtyEzYJ86IYKghjQ+884rpm9HyWLYE7XzHbA1/7FrXQ7lYBOwRu1C90oV1pRqPnEG4jv/zdFnYuOQS+s31nMeYBw2dvCv9zaC1S6ZR4x7qewrwtB24HA8WMz/bxfKuTKB3ejAlZkR+khgsSqQtt2cdsU3+WsMK8UNXf/sIUkBgMNThZGxjjIx5OKS7uyc13YE7aZpKEutZuRC60oZeSWmdKsTr/ktuz+BZjgTNasRvdVgrMQh4tRjDv7xJCW7MZDzlED8vGD3ZJXiU04uhHu5EGIlT6Fy3eUgcKWoK7kObLA+7hScWbGsQG8Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BfWLBeoqiS5ZVvMaPGMLphuaSEtdztzqMpZNbcGZbno=;
+ b=mUFQjV7p0og4m0yCkxELUR/iGWZSkNdGOZHnuXA/7kLMx4JyKv1hTO47FytGuyCrFGCh+eIBNQO3NURAG0LnRm/FbkCHLMyUJEstczq4CGuEnsadBHXGVcOoy2uayhxqCPSn8mFL2b2K8aBS8NlZNNfsjIRPWxn5E4GnpvlIBZBhiekz/ovZbtZjxFas+ELKqn6d7B4r/pzeXHaFYaVZu1He1LUAHMznJEx73c3xLNOHACULidZunqC4nGwZ3M7Lph4B3CTGOrz/w2yS0YHQCZMzFEwNK6yB1G72u48c8O9ZIwXuSvd6wtnWcRCzhYHXMJ+RTDTEmllccpInTKjoQQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BfWLBeoqiS5ZVvMaPGMLphuaSEtdztzqMpZNbcGZbno=;
+ b=TYg4CGPDxTwz0rBejdUYbuy/2dvBcoFTq4bWqlAqDwBau+FFWysFLNsufQiiMchizZYO4p8e3fsunL2R6Vj0xK1+tTA797EJPN0rK7pzVe62ZaWgrMkBGQFA0RRrmeqQgty6k2AlrSid18REZ6K8zeZt40ICft5Jjuf1fb9sCWoDWNEf9UxzXf4T8yR8B/4vpu8QsklSmR/Cx3rZGIs1L2HM+k3nViNWwBo3chmbNDOdET/+csk/k8R1Ihe+EkBbAKqlrc/KIj4BLom0E50IVPSxdmr86HDp+ksq5iRzI1zQojcIElWs5Pkft7JHlVcdn+QgVKODVakfy5v72hd15A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
+ SG2PR06MB5264.apcprd06.prod.outlook.com (2603:1096:4:1dc::13) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9052.20; Tue, 26 Aug 2025 06:58:24 +0000
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666%5]) with mapi id 15.20.9052.019; Tue, 26 Aug 2025
+ 06:58:23 +0000
+Message-ID: <4779c117-c5b5-4344-848b-3e9d35028b67@vivo.com>
+Date: Tue, 26 Aug 2025 14:58:20 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ata: ahci_xgene: Use int type for 'rc' to store error
+ codes
+Content-Language: en-US
+To: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>,
+ linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250826040219.133959-1-rongqianfeng@vivo.com>
+ <138dde32-e528-4731-b766-4f26dd9366d1@kernel.org>
+From: Qianfeng Rong <rongqianfeng@vivo.com>
+In-Reply-To: <138dde32-e528-4731-b766-4f26dd9366d1@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: TYCP286CA0040.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:29d::15) To SI2PR06MB5140.apcprd06.prod.outlook.com
+ (2603:1096:4:1af::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Xin Li <xin@zytor.com>
-Subject: Re: [PATCH v13 05/21] KVM: x86: Load guest FPU state when access
- XSAVE-managed MSRs
-To: Chao Gao <chao.gao@intel.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, bp@alien8.de,
-        dave.hansen@linux.intel.com, hpa@zytor.com, john.allen@amd.com,
-        mingo@redhat.com, minipli@grsecurity.net, mlevitsk@redhat.com,
-        pbonzini@redhat.com, rick.p.edgecombe@intel.com, seanjc@google.com,
-        tglx@linutronix.de, weijiang.yang@intel.com, x86@kernel.org
-References: <20250821133132.72322-1-chao.gao@intel.com>
- <20250821133132.72322-6-chao.gao@intel.com>
- <b61f8d7c-e8bf-476e-8d56-ce9660a13d02@zytor.com> <aKvP2AHKYeQCPm0x@intel.com>
-Content-Language: en-US
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <aKvP2AHKYeQCPm0x@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|SG2PR06MB5264:EE_
+X-MS-Office365-Filtering-Correlation-Id: ba1528a1-d5bf-4332-95d3-08dde46df2cf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?anZEbmVWQXVQdXZqcHdick9PQUVlZVVKRDJ0Zi9qZVdkZDVtS1NoREVxdWpu?=
+ =?utf-8?B?RmtFTFovZ0d1RktNR0wzK3Voa0trczA1aEs0aW1NTUthSE03K1JuVGR0S3F0?=
+ =?utf-8?B?WlNLaGxlMlRVUW9LYzVMN1BpNXBHZEU5K1pDNTlPTU5NeHA4YldZbmVCVC9R?=
+ =?utf-8?B?R3BzWXU5SzA5OXo0REdmQUZNYWpsZTNJMmFtanBvT2ZiaDR5UVRUMW42bE0y?=
+ =?utf-8?B?NHVDNFYydXF1WG5hZzBFNnJRdEV6TUZGYjV3cEtQWWFyT0ZtYXlMVmN1MGUr?=
+ =?utf-8?B?ZnpwOU9zYmtpdGlBZ3BLRHo0K0ZJUHlTTk9VNEVhNmdDT2NlM1B1S3JzYWRI?=
+ =?utf-8?B?WDZ6YTlBcDNQOEtxRzhBVlExUVoyL0llVytrcHVZNExwMkd3S1Q0RFFxU2hE?=
+ =?utf-8?B?NGtUMVVmRXFWT2h4eWkyUGhJMmltOGZRa3NiU2cvdExJZjBmS2lqMGxGR0pr?=
+ =?utf-8?B?Sjdkc20zWVFYSWh4dVlFczkzYU5aQ05YYU0xTVh5NklEaVAyZ2FTeGorN2xz?=
+ =?utf-8?B?K0tycnBVWWZ1UzM2aTBYcnNMODNsdnpJTWtocjFIUG1WRnN4cUtFRlUyV25W?=
+ =?utf-8?B?ZEtsSjVWWW8reEhkOWZtZGpZQS9PSlpsbWc1NGU3RVNBTnJkYnhweEVYNjJQ?=
+ =?utf-8?B?dXVuNzIrN3NONGUvZ1gzcllSRUd3VURpSi9OdThQeXVQNUhUdXlyOXY3VERL?=
+ =?utf-8?B?dndVaFN3ODRkS2VPL01XcGpPcS9EUlJpUnVUUDlXamNQa2JVZGxoNTVIczVT?=
+ =?utf-8?B?ZGlOcDBJM1huV204dHVyK1RvWG5FTzhBbDZmMHdSU2hmM1pwMUl6VDZ1NTA0?=
+ =?utf-8?B?Z1JIbmcrcFRCMFBhS2VOdUt6SCtLVGlXeHQzL1o3UXdRVGRHOFptYlJUNHdJ?=
+ =?utf-8?B?eklvWGprRmpVUGl5d08vb3J4eHVFeENkMllEZ1FCSjFIVmt3QXJNYW1tYnhn?=
+ =?utf-8?B?ZDFzYzY3ZVZBWDJtdE9MTzZLckRLOFBKWklzRHB4Zzd0NStnKzQ2YWc0YXVC?=
+ =?utf-8?B?ZDNJKzZmZFh0elFQRDJTU1hScGFCZUd0YUJweGIrL2tjVkRuWkxYenIzQktn?=
+ =?utf-8?B?cWpxTWhZRXo0d0lBQTNScGRYWlFxWG9aMFFKMFpwY1loOWlMdEdodUxIdC91?=
+ =?utf-8?B?bklwRGV6QlQ4QzFKeFE4SjRiQjF6eDNVN2dVZmRLdEhVbE1jSkFTNXZhNEp2?=
+ =?utf-8?B?VXMyckliV1FBN1kzRDVFT1l4eWhJNkJDOE5FYW96R0lydEVYOXNLYWlKazM1?=
+ =?utf-8?B?QXdreEJ1Mnh6dWdDdVM1L0tiQ2pLRHJLWW9JcDFaWnk1b2JTT0xQcTU0eHRP?=
+ =?utf-8?B?aDljcGZUUnU2ZEk3Z212bDE0MUllQmxwRjVhSnhib1I1ZHFmeTlEN2E3RWNN?=
+ =?utf-8?B?KzZRZmZEckxoUktlMktKTWtvZnYvZmZDYituWDFONzFVaWlTa2puV2xtTURH?=
+ =?utf-8?B?Q2ZUV01wZldCejNGdUt5aVJnd2ZLYm12eW1NRVR1cVk1SUFTSFkzOHY4bkYw?=
+ =?utf-8?B?WE9tR2IwUEY5MUFuREx5eTh4YzZQZDd3V1dKdTlGcVgwZTEzcUpSbmNtNnpo?=
+ =?utf-8?B?ZktjclNTYzFhSUJVb3E5emc4K3VmMzdtamdZZ2NCZGpLOUZ4S3RBUkxQUEVV?=
+ =?utf-8?B?MXBUUTlaTVBUZy9IajJyZVNBVThzbnhLTUNYOFljZXM3VGlQQzNaUHhBbFBC?=
+ =?utf-8?B?dnlRMmFXM2JWM1lwaWNlcWg2UTZlTEZwNDQ3cGpXTEU0SjFlSXVOR2QyQWtu?=
+ =?utf-8?B?cUt1QWkyYnNNcVF4blRvL3d0c1I2S2FjKzNGSEJpa1E0ZGV2Q09rc3NlQUVV?=
+ =?utf-8?B?aFc5OEpWWmZRVVNhQ0thc1FxV0NKdWI3WUVPUFBuZDZQZHdOaG5LY001dS9Z?=
+ =?utf-8?B?L0ZOMWp2WFdjVndQREZRaHhPWXNiUGprejAzSkcrZG5WcHc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cWQ1THlFUFhNWmIwYTlURkJjRlRYMUJVa0FxaC9IOVA1REZjazQwRTg3MFNn?=
+ =?utf-8?B?NUgwaEtsTnQ5R1B6MGJUa201ZVFCL1BBbWFxSWdPU0hlY2FLREtJa1g4RCtN?=
+ =?utf-8?B?cjJIQ050VWh1NnhndWUyNlRXUkthMzBSdFJ1RVlwM2V2aTBCU2hwTnMyUjV1?=
+ =?utf-8?B?RUQ4UnUyazFTNlg3bmVIc0h1eDkvOEdOOGcwWStWVGRmQmRka21kT1FwVWZ3?=
+ =?utf-8?B?aVQ4Y2x5enhaL2pjSGZ1Z3grNm5pZ0R0RnNLUUJrUmVQMXlBY1JHcy9LVkta?=
+ =?utf-8?B?U1VTRnNVdUFLbDFCMjE2enduQVpKN2w3WjlCWDBWRkJMKzFlcys2K1VjaW9u?=
+ =?utf-8?B?K21Rd1lmcWlSL0RvKzNYTlJyTEp5MUxmcjJxSU9WdEhadllSdVlMaW11Njho?=
+ =?utf-8?B?d2MzR1FBbCtYRDQvUUZCenNwSUlabVBuaWpRSm93OUtmdXFNY1VoR2wwVEVn?=
+ =?utf-8?B?TnpRd3NEUTE1MmtBNU5QZlB1cFByK2Y2VWdBNUVHc296VENuNHpCRzYvblFr?=
+ =?utf-8?B?WVY3OHZLOEl0alZwZ25uS3dtcXkzcXBwTDMwMDBQQ1lDaldwV3Q3bHpsYm9K?=
+ =?utf-8?B?OXBYWU52Wk1VK3VtMDFCdjQ0eVhqaWJOUUFpalk2WVJ2YXEzT2RvZ3VFOWVL?=
+ =?utf-8?B?NWgyOWRUTEVPMWhodVpkZUpvTzZ5eTVRYlJXeUc0YVVCV1NlZ0dCUHQ5Q3VT?=
+ =?utf-8?B?Z1FldmVFYllleUhudUlIMitiNEFpaHNyM0hiUWtkdlFobnFxbkFZZDVGd0hJ?=
+ =?utf-8?B?eGl2aUk4T09qNlhQb3IvNU5pMFFhTXBobS9tNkgrWU85S3doa3hYTHVXMUZ2?=
+ =?utf-8?B?WnMxVS9RZWk5MVAwRlJVaHd1aG5NMWZaN1RlamZwNFRiRTJ5cW42Nk9hVlZI?=
+ =?utf-8?B?ek9yUWFkTUl2bXZFd1R1RjIwWjRudHQySDJyR3dKQ0VOYWFBaWJKZGFQY2NP?=
+ =?utf-8?B?bWdSeXVUY0tveSs5clpoUjFGZWZCaHNSU3hxZnlwY3lXZ0s5WHZkSDVwWWRx?=
+ =?utf-8?B?STYwM0V0V2h1VXRUYlAydGdLVXhmZTJwYkJsQzgyNitRbmptRXNKZW5GS096?=
+ =?utf-8?B?R1hia3lRT29RZVhNdVdHdWFOSkVaNHh6RXVOUnlQV1BzNE0xdEo4OXhDeHk1?=
+ =?utf-8?B?NmYvVnVMeW55ZFN0d2VDTThsQkIzdTlUZERMN0NNTzlWbmpOYmJwZ3d6ZzAx?=
+ =?utf-8?B?Vlp3bUF0b25RUGdmMjlab2NKOC9Sa2YzVENpWUdmRDlJNFZlQU8xWUg0SEVl?=
+ =?utf-8?B?aENvRnZBOE9RVzB2a0MySXB1bXRGdVdRK3p4V0EwelZhTDc3cWZ5V2pybG9Q?=
+ =?utf-8?B?TE1zUjZXUG5uajVWZFpqR1p0eWt0aUVDVDBBcHltWmdHcWVKbEttbFd5Wlk5?=
+ =?utf-8?B?ejFyTXVocHZjZlBMNmtiRkdmVGo1eHpIcEcxVkpZdUlWYUt1Y0F6bmlQd2w3?=
+ =?utf-8?B?UEYrQll0QlFrQ0gvYlRZMGpwTFArSWxvY3VJV1RiYVlPY29jOGtSRDlZVXY1?=
+ =?utf-8?B?Y3BEYmhSTGZ0N2JZNWcrM1lXQ3BpTVFMb3B3aFlGZW1GUWZLZG84WnBzRTdy?=
+ =?utf-8?B?clZtaEJZSXVZR1ljdEkrM1hxcXZRZmJZdjJxMHdOajNKeXRPUENrMTJZdWFn?=
+ =?utf-8?B?TS9wM0grdnFZSklFekFtTlB3VkhSUzlrMDJLR0xxNm5CTHl4SGhBb2VaSEg4?=
+ =?utf-8?B?VFR0S0JrL0tDQm44T1pnRS9YbjE2SmtVeXovR0YrRmpyZDI1Q2NHWTdoOHhI?=
+ =?utf-8?B?cmFrL3dHNTlKSG9PVGgxNmdYQTlqdzRIWUtrRUVrdkM5MjQ0dFloN1dqeFZi?=
+ =?utf-8?B?azlrcFJyRjIzVzFqMWZFZlN4MkIza0poakJqQ1JVZ0lpTGY3TGRUMm5wNmxE?=
+ =?utf-8?B?MnNOMTZFV3dIMEtYZHlIcG1pVExtL3dnZHRTUDJWVGt1ZEM3ZUdtcHVyZFNu?=
+ =?utf-8?B?TG9yUjhLYTU1QVZkR2NlMUVnMkFJaUFCVmVvNlA5YWxIck5vNm05QXV5bW9j?=
+ =?utf-8?B?ZDFOMHR0WWRWVnpxWmZFUU9uSkFuZUt4Z3lTbGZkNGFMSDlnUnh3Mmp6b1Nw?=
+ =?utf-8?B?anQyOEtSY0NDOUFQUTZhK2srQ0tYRURjVEFLWW5nR00rOExjK0ZXRTEyQlI0?=
+ =?utf-8?Q?r1o+MYmu8Adshg25J59j0wsjY?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ba1528a1-d5bf-4332-95d3-08dde46df2cf
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 06:58:23.6747
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3x9wVc+/sZU7iDIYGwrXxV8V6CT8nYlw6IcE7CkxYFJGyPKl0am/PnXZ0BbhoQ2wfO+1lOnm9gKqjgRgvILelA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2PR06MB5264
 
-On 8/24/2025 7:55 PM, Chao Gao wrote:
->> static bool is_xstate_managed_msr(u32 index)
->> {
->>          if (!kvm_caps.supported_xss)
->>                  return false;
+
+在 2025/8/26 13:09, Damien Le Moal 写道:
+> On 8/26/25 13:02, Qianfeng Rong wrote:
+>> Use int instead of u32 for 'rc' variable to store negative error codes
+>> returned by ahci_do_softreset().
 >>
->>          switch (index) {
->>          case MSR_IA32_U_CET:
->>          case MSR_IA32_S_CET:
->>          case MSR_IA32_PL1_SSP ... MSR_IA32_PL3_SSP:
->>                  return kvm_caps.supported_xss & XFEATURE_MASK_CET_USER &&
->>                         kvm_caps.supported_xss & XFEATURE_MASK_CET_KERNEL;
->>          default:
->>                  return false;
-> This will duplicate checks in other functions. I slightly prefer to keep this
-> function super simple and do all capability checks in __kvm_{set,get}_msr()
-> or kvm_emulate_msr_{write,read}.
-> 
->>          }
->> }
+>> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+>> ---
+>>   drivers/ata/ahci_xgene.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
 >>
->> And it would be obvious how to add new MSRs related to other XFEATURE bits.
-> Just return true for all those MSRs, regardless of host capabilities. If
-> kvm_caps doesn't support them, those MSRs are not advertised to userspace
-> either (see kvm_probe_msr_to_save()). Loading or putting the guest FPU when
-> userspace attempts to read/write those unsupported MSRs shouldn't cause any
-> performance issues, as userspace is unlikely to access them in hot paths.
+>> diff --git a/drivers/ata/ahci_xgene.c b/drivers/ata/ahci_xgene.c
+>> index 5d5a51a77f5d..8d01c105fd44 100644
+>> --- a/drivers/ata/ahci_xgene.c
+>> +++ b/drivers/ata/ahci_xgene.c
+>> @@ -450,7 +450,7 @@ static int xgene_ahci_pmp_softreset(struct ata_link *link, unsigned int *class,
+>>   {
+>>   	int pmp = sata_srst_pmp(link);
+>>   	struct ata_port *ap = link->ap;
+>> -	u32 rc;
+>> +	int rc;
+>>   	void __iomem *port_mmio = ahci_port_base(ap);
+>>   	u32 port_fbs;
+> If you fix this, please fix it properly: the rc variable is not needed at all in
+> that function. You can just do:
+>
+> diff --git a/drivers/ata/ahci_xgene.c b/drivers/ata/ahci_xgene.c
+> index 5d5a51a77f5d..a6d964f7184c 100644
+> --- a/drivers/ata/ahci_xgene.c
+> +++ b/drivers/ata/ahci_xgene.c
+> @@ -450,7 +450,6 @@ static int xgene_ahci_pmp_softreset(struct ata_link *link,
+> unsigned int *class,
+>   {
+>          int pmp = sata_srst_pmp(link);
+>          struct ata_port *ap = link->ap;
+> -       u32 rc;
+>          void __iomem *port_mmio = ahci_port_base(ap);
+>          u32 port_fbs;
+>
+> @@ -463,9 +462,7 @@ static int xgene_ahci_pmp_softreset(struct ata_link *link,
+> unsigned int *class,
+>          port_fbs |= pmp << PORT_FBS_DEV_OFFSET;
+>          writel(port_fbs, port_mmio + PORT_FBS);
+>
+> -       rc = ahci_do_softreset(link, class, pmp, deadline, ahci_check_ready);
+> -
+> -       return rc;
+> +       return ahci_do_softreset(link, class, pmp, deadline, ahci_check_ready);
+>   }
+The 'rc' variable in the first instance can indeed be removed, and I will
+send the second version. Thanks.
 
-There is no problem as of now, because there are only two CET related bits
-set in KVM_SUPPORTED_XSS.  So if !CET, the two bits are cleared thus
-kvm_caps.supported_xss is 0, and kvm_load_guest_fpu() is never executed in
-__msr_io().
-
-However after any new bit is added to KVM_SUPPORTED_XSS in future, if !CET,
-kvm_caps.supported_xss could be non-zero.  There should still be no problem
-because we don't expect any access to CET MSRs.
-
-The trouble comes with MSR_IA32_PL0_SSP when FRED and !CET, because it will
-be accessed even !CET.  And we need to have to do the following:
-
-static bool is_xstate_managed_msr(u32 index)
-{
-	switch (index) {
-	case MSR_IA32_U_CET:
-	case MSR_IA32_PL1_SSP ... MSR_IA32_PL3_SSP:
-		return true;
-	case MSR_IA32_PL0_SSP:
-		return kvm_caps.supported_xss & XFEATURE_MASK_CET_USER &&
-		       kvm_caps.supported_xss & XFEATURE_MASK_CET_KERNEL;
-	default:
-		return false;
-	}
-}
-
-Then it makes more sense to handle all CET MSRs consistently.
-
-Thanks!
-      Xin
-
+Best regards,
+Qianfeng
+>
 
