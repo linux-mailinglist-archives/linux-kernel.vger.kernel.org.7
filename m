@@ -1,122 +1,197 @@
-Return-Path: <linux-kernel+bounces-786225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4D64B356C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:26:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA2D7B356C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:26:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5614A6842BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:26:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E34E37B2242
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61CCE2F90F6;
-	Tue, 26 Aug 2025 08:25:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EFE52F90DC;
+	Tue, 26 Aug 2025 08:26:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VouqkHhs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e/ddcbLZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B181A129E6E;
-	Tue, 26 Aug 2025 08:25:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B3C2AE8D
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 08:26:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756196758; cv=none; b=NKWb0pvwnZeLJJYFM+1Iu5zlK7We6VCJnXqurYWjo3XLcIY7QuSelz8f8OLarwfXnDhHrS88pFGgU3Xrn1TtHlbWIZv6Gto4mQsmjIoqtEHIzMStGsPntkE8rw8KrWl+E0BfyH7V8X86ZRR4NJ391y2N/H35OF3FK8zfnA61+Ok=
+	t=1756196790; cv=none; b=OsM3/RAO1I7nNYUs33ksUxB7a/DRYflSP12ouYcRjxfXH5f859fpmkcVl4RWiABvHsVei8O7HHKlTWzYAWi+HeWg1ImHoBiQ7PFRF+OGX7DTHGgLdme/pVdwjelchhJuFTxSSfcthaLN/maMurpaIcmlIVyyIEOBKlmlTWGdOD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756196758; c=relaxed/simple;
-	bh=154rTs/wpxQR2q7mncWfQAq/mYJvsijZEEnVetuUdok=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YDiTahKTqUQtvcXlafmC4F/np/q20W5dEsjZovxzCOZYUeZnNjdUrJzBGfUySmEs9R69bDy7t2Hf9PGekbwL2EM9KupTDgdFSlgOTnxPgEF6+MdSFdQcXSvXKbpWWbVk0yXCEWnjlLPVew16ftqSNlD0Dyj7PKjPWHEBe+F+Rag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VouqkHhs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AFFDC4CEF1;
-	Tue, 26 Aug 2025 08:25:54 +0000 (UTC)
+	s=arc-20240116; t=1756196790; c=relaxed/simple;
+	bh=BYIUsxzd64whGoRFXCzZ5dt78UhHZqqx/gVeEyPFu/8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n8Jw8D1ltwBobZAWRyQC0C6N5IvfjPep3eXAFGngTtjg3avR0z31HsVFXXj80F4HKXljMtInK9NW6X77DSIhzLtBXOMSBvXEAfCc8VBIJTIDe0JeNg1dLS5GCXTIdbkRJNqaOpVeUJGozwtF6uh25ZyjrDmWdRie8qcY4efp5Go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e/ddcbLZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C774C4AF09
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 08:26:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756196758;
-	bh=154rTs/wpxQR2q7mncWfQAq/mYJvsijZEEnVetuUdok=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VouqkHhsIoJl82Dx/r98VmKMpvZYSe/D2C0/t2PqNpALtUqQIeC4XG/+OTKbLNdtG
-	 edJXhyOUVgxqZSAUYKYJCCs6DNn/EgoGlVYzxxYiZrrGCEUgIanx+s9MfYoamjQ5w3
-	 Kl8aqeUi3A5xcprHCAVzPjdx8T8OYeFouIawlVXU64a0I+dTy7V4jtmcX0ikATnRr1
-	 wipMuNYD0etcmYGHeOlnLB29NWskrMpQDtWRjIsRhFNNm+KiPPK052x26Geq8paCAB
-	 ApuMoTXPGKh4Ps0BtFg49EOLgAQNd33AyZx4NWkUCBgp4sBgVabnGi0INTP2m+YhAI
-	 ml91zclCdrT1g==
-Message-ID: <b7869ddb-f44b-4d1f-a6c3-393a28d3cb00@kernel.org>
-Date: Tue, 26 Aug 2025 10:25:52 +0200
+	s=k20201202; t=1756196790;
+	bh=BYIUsxzd64whGoRFXCzZ5dt78UhHZqqx/gVeEyPFu/8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=e/ddcbLZiZlUV0NABVz3YLWSkwOecxQKG7WYnE66OpYNwHMZc3iFbefp+tB5UCDh5
+	 1JSJiapQ+9XjAoPnUsRKVU9+yNI1kE+EWj457C+NovpDSKg66Thf2bIsNMZo2W5zYb
+	 PhCc0Q1x4hxuS1gqIQ9DoHP6Pc0PQZzvv4jQ2J+zj80yTYFJEAYdkUS1Mz0yCDDNbM
+	 eqpKHa2BNEfgko7KU42Ju66e32k+/fY64T2wrKtxEnRKmfOWsdOhCFQeaVGOP4d4Za
+	 FHE9886RAXu5xwmCEfJ5CcWBVpt2TBeNZV311WiAULAU2s+8mnpvC7tIXNsvJGHvZ8
+	 D4mFSFH2VOjvw==
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6188b5ae1e8so6250072a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 01:26:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXvfXjtzMijiS0oUexfCWujgr5rkvya1SsLxThgaRiE33g04M0X6OvSzNC8hXEITOyn+n0gLub/9NQ4cZk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxwQNb4nQGoQe2BG7qcN6eUlhK7XfQdfFfFAASIRhXwKQnyTOl
+	j8hJ7J46j5aosffTyGvae+fRtzOvu+Rgor62DYuU8Jsy1Pfo0nEknIPsV/9pZocv+j1fEbZN5Om
+	bXs7hwzxpwY2LsKBjqT3lPsHmSz/HVXY=
+X-Google-Smtp-Source: AGHT+IHky69aX1ytUrLeQjn70EkrzDwZTD8b04aKCI8SFIJf+StPfPdbQhhPSQt4nuP8VZogBWb0V2oxn3aLFInNQSU=
+X-Received: by 2002:a05:6402:1d4b:b0:618:1250:ac5e with SMTP id
+ 4fb4d7f45d1cf-61c1b6f982amr12612104a12.19.1756196788881; Tue, 26 Aug 2025
+ 01:26:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 6/6] arm64: defconfig: enable Verisilicon IOMMU
-To: Benjamin Gaignard <benjamin.gaignard@collabora.com>, joro@8bytes.org,
- will@kernel.org, robin.murphy@arm.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, heiko@sntech.de, nicolas.dufresne@collabora.com,
- jgg@ziepe.ca, p.zabel@pengutronix.de, mchehab@kernel.org
-Cc: iommu@lists.linux.dev, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, kernel@collabora.com,
- linux-media@vger.kernel.org
-References: <20250825153450.150071-1-benjamin.gaignard@collabora.com>
- <20250825153450.150071-7-benjamin.gaignard@collabora.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250825153450.150071-7-benjamin.gaignard@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250826064631.9617-1-yangtiezhu@loongson.cn> <20250826064631.9617-3-yangtiezhu@loongson.cn>
+In-Reply-To: <20250826064631.9617-3-yangtiezhu@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Tue, 26 Aug 2025 16:26:14 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H7NNtH-oaqMsN5=2c+EdF0-dy5mxcsO=_KFGWqb-FZj_w@mail.gmail.com>
+X-Gm-Features: Ac12FXylOWw-1eZbOdRMzAZ9EGR9AE5_FdM-moItNtL0zuTlZhTq0kNopY_6c_4
+Message-ID: <CAAhV-H7NNtH-oaqMsN5=2c+EdF0-dy5mxcsO=_KFGWqb-FZj_w@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/2] objtool/LoongArch: Fix unreachable instruction
+ warnings about head.S
+To: Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Nathan Chancellor <nathan@kernel.org>, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 25/08/2025 17:34, Benjamin Gaignard wrote:
-> Enable Verisilicon IOMMU used by RK3588 AV1 hardware codec.
+On Tue, Aug 26, 2025 at 2:46=E2=80=AFPM Tiezhu Yang <yangtiezhu@loongson.cn=
+> wrote:
+>
+> When compiling with LLVM and CONFIG_LTO_CLANG is set, there exist the
+> following objtool warnings after silencing all of the other warnings:
+>
+>   LD      vmlinux.o
+> vmlinux.o: warning: objtool: .head.text+0x0: unreachable instruction
+> vmlinux.o: warning: objtool: .head.text+0x18: unreachable instruction
+> vmlinux.o: warning: objtool: .head.text+0x38: unreachable instruction
+> vmlinux.o: warning: objtool: .head.text+0x3c: unreachable instruction
+> vmlinux.o: warning: objtool: .head.text+0x40: unreachable instruction
+> vmlinux.o: warning: objtool: .head.text+0x44: unreachable instruction
+> vmlinux.o: warning: objtool: .head.text+0x54: unreachable instruction
+> vmlinux.o: warning: objtool: .head.text+0x58: unreachable instruction
+> vmlinux.o: warning: objtool: .head.text+0x6c: unreachable instruction
+> vmlinux.o: warning: objtool: .head.text+0x84: unreachable instruction
+> vmlinux.o: warning: objtool: .head.text+0x94: unreachable instruction
+> vmlinux.o: warning: objtool: .head.text+0x9c: unreachable instruction
+> vmlinux.o: warning: objtool: .head.text+0xc4: unreachable instruction
+> vmlinux.o: warning: objtool: .head.text+0xf8: unreachable instruction
+> vmlinux.o: warning: objtool: .head.text+0xfc: unreachable instruction
+> vmlinux.o: warning: objtool: .head.text+0x104: unreachable instruction
+> vmlinux.o: warning: objtool: .head.text+0x10c: unreachable instruction
+> vmlinux.o: warning: objtool: .head.text+0x11c: unreachable instruction
+> vmlinux.o: warning: objtool: .head.text+0x120: unreachable instruction
+> vmlinux.o: warning: objtool: .head.text+0x124: unreachable instruction
+> vmlinux.o: warning: objtool: .head.text+0x144: unreachable instruction
+> vmlinux.o: warning: objtool: kernel_entry+0x0: unreachable instruction
+> vmlinux.o: warning: objtool: smpboot_entry+0x0: unreachable instruction
+>
+> All of the above instructions are in arch/loongarch/kernel/head.S,
+> and there is "OBJECT_FILES_NON_STANDARD_head.o :=3D y" in Makefile
+> to skip objtool checking for head.o, but OBJECT_FILES_NON_STANDARD
+> does not work for link time validation of vmlinux.o according to
+> tools/objtool/Documentation/objtool.txt.
+>
+> Just give a proper unwind hint to silence the above warnings. By the way,
+> the previous instructions of kernel_entry+0xf4 and smpboot_entry+0x68 are
+> the 'bl' instructions, the call destination symbols are start_kernel() an=
+d
+> start_secondary() which are noreturn functions, then the 'bl' instruction=
+s
+> are marked as dead end in annotate_call_site(), so actually ASM_BUG() can
+> be removed due to unnecessary, otherwise there are following warnings:
+>
+>   kernel_entry+0xf4: start_kernel() missing __noreturn
+>   in .c/.h or NORETURN() in noreturns.h
+>
+>   smpboot_entry+0x68: start_secondary() missing __noreturn
+>   in .c/.h or NORETURN() in noreturns.h
+>
+> Link: https://lore.kernel.org/lkml/20250814083651.GR4067720@noisy.program=
+ming.kicks-ass.net/
+> Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+> ---
+>  arch/loongarch/kernel/head.S | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/loongarch/kernel/head.S b/arch/loongarch/kernel/head.S
+> index e3865e92a917..566a1dbf5fa0 100644
+> --- a/arch/loongarch/kernel/head.S
+> +++ b/arch/loongarch/kernel/head.S
+> @@ -20,6 +20,7 @@
+>         __HEAD
+>
+>  _head:
+> +       UNWIND_HINT_UNDEFINED
+>         .word   IMAGE_DOS_SIGNATURE     /* "MZ", MS-DOS header */
+>         .org    0x8
+>         .dword  _kernel_entry           /* Kernel entry point (physical a=
+ddress) */
+> @@ -30,6 +31,7 @@ _head:
+>         .long   pe_header - _head       /* Offset to the PE header */
+>
+>  pe_header:
+> +       UNWIND_HINT_UNDEFINED
+>         __EFI_PE_HEADER
+The efi header is completely not code, the annotations are very strange.
 
-Qualcomm RK3588? This is defconfig for all platforms, so be specific
-which board uses it.
+Huacai
 
-
-
-Best regards,
-Krzysztof
+>
+>  SYM_DATA(kernel_asize, .long _kernel_asize);
+> @@ -42,6 +44,7 @@ SYM_DATA(kernel_fsize, .long _kernel_fsize);
+>         .align 12
+>
+>  SYM_CODE_START(kernel_entry)                   # kernel entry point
+> +       UNWIND_HINT_UNDEFINED
+>
+>         /* Config direct window and set PG */
+>         SETUP_DMWINS    t0
+> @@ -109,8 +112,6 @@ SYM_CODE_START(kernel_entry)                        #=
+ kernel entry point
+>  #endif
+>
+>         bl              start_kernel
+> -       ASM_BUG()
+> -
+>  SYM_CODE_END(kernel_entry)
+>
+>  #ifdef CONFIG_SMP
+> @@ -120,6 +121,7 @@ SYM_CODE_END(kernel_entry)
+>   * function after setting up the stack and tp registers.
+>   */
+>  SYM_CODE_START(smpboot_entry)
+> +       UNWIND_HINT_UNDEFINED
+>
+>         SETUP_DMWINS    t0
+>         JUMP_VIRT_ADDR  t0, t1
+> @@ -142,8 +144,6 @@ SYM_CODE_START(smpboot_entry)
+>         ld.d            tp, t0, CPU_BOOT_TINFO
+>
+>         bl              start_secondary
+> -       ASM_BUG()
+> -
+>  SYM_CODE_END(smpboot_entry)
+>
+>  #endif /* CONFIG_SMP */
+> --
+> 2.42.0
+>
 
