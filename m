@@ -1,81 +1,79 @@
-Return-Path: <linux-kernel+bounces-786364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 975ECB358EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:29:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B181BB358D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:27:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9EC77AAC5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:27:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71DDB1670C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE002FF144;
-	Tue, 26 Aug 2025 09:28:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94CE52D29C8;
+	Tue, 26 Aug 2025 09:27:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SYsajpfn"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sdC6WILg"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38BF29ACDB;
-	Tue, 26 Aug 2025 09:28:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E547829ACDB
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:27:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756200534; cv=none; b=EyxVDTYcpPb9YUqsYqN1HcWMpGk/xciCTS3LhEa/AaY+5vNQcE1S5hGDy7ffeGJFOy+lcfNSGKOq911svEqSx7dWvO+6JABVkszulzL0GFzTRKvDWuxNDsLI0djJBU724D94WGx14klRpNC86Ybf2Hl9kCW7UpY5rP3Wqsp4QdM=
+	t=1756200470; cv=none; b=BTvZK2aJerQ3GvGsMt9qX4b/AboIpaPWnUGWn36234UR3YqUTFIcyAY7g0t8fJM5TgSOZAd5Y4xls41F3xrUgtTjB1eKQMe+Qa759mF8LiN/j3efYDZ4rGiO4a22EOW5NiHB+cKgy1/iqfhQXtbSBPcrwuxq210VgVaf4v4UK3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756200534; c=relaxed/simple;
-	bh=jDg/KB6u0lYtMjxjYUvRGk+JF4NmdC2GAuOnu6sn+L0=;
+	s=arc-20240116; t=1756200470; c=relaxed/simple;
+	bh=aAmfAPH3Qk6KURQiF4RbC2saNto0/CEB7lS82gjYhfY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KEfFyEfNhyhtS4uhKfmxYklR6jAMOL0HI16shi76IZKIAskiofU/pTrKuNK544OBPKYNu0HjF7Nn8zXAojhni+mTw+jSqfe9Nbu4BkCWfGrhTq1d8ZNQRPi8YmmO4lsp+de3gCu0cjx2GTAovXIONNDdp91wLKBRZCJoWKIX+C4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SYsajpfn; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57Q6Dcbh031678;
-	Tue, 26 Aug 2025 09:27:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=/li5vo
-	BFOk8y8WhPScKDKHem83+F9vyXBJjMmaZ041o=; b=SYsajpfn1k2gmbDI6+49Al
-	221fkrxda43lSYG5dpv2737JhyXDPCjLCuwCxyQSJ63ONvEZZi/Q3nGSbYZ7rqir
-	0sQewioGXSvtvFgbbywpr4yv0schQe8enHiaaKAoN98D6W+sOAPR/fxQcPPm18vd
-	c2h4WZ84ixTPDP8QLh/mdqUYWSq6H56yR0YtdgpfUVvXK6oLrNFsj5yFjGbhpVvC
-	jizyKM5aq1W7AoDxu6KH5gXdGS2ShgdNnBGXHVGUV+jqgQgqwxiD1uPq77vPABJl
-	axwDdu0mSLnJXcZvNwoIHfvfcVxP62STi07172Nqi3oEvMVsgpiKSz6m6v8UbYFQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48q5avdn20-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Aug 2025 09:27:49 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57Q90rKS023609;
-	Tue, 26 Aug 2025 09:27:48 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48q5avdn1v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Aug 2025 09:27:48 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57Q8ZanK017989;
-	Tue, 26 Aug 2025 09:27:47 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 48qtp39rpy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Aug 2025 09:27:47 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57Q9RhGG35259098
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 26 Aug 2025 09:27:43 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6690920040;
-	Tue, 26 Aug 2025 09:27:43 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2F2CD20043;
-	Tue, 26 Aug 2025 09:27:34 +0000 (GMT)
-Received: from [9.39.23.183] (unknown [9.39.23.183])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 26 Aug 2025 09:27:33 +0000 (GMT)
-Message-ID: <5f1a9ed6-b551-48b9-8c62-8ef0f2bd2fca@linux.ibm.com>
-Date: Tue, 26 Aug 2025 14:57:33 +0530
+	 In-Reply-To:Content-Type; b=EMLEWo3RNpQcbJ9OXH1KBxahImWmfSpLebUuKuGITI1oX2AwSrs4HFoU3488zwQyVXu2RRNbpsfi3qzXC0Y1uemRR2/5iRDX2Zy8T7t3YPq2Qhi7IirIkIr5pBmIASsosNA1I2aQZ+ZGhvpuKdjKQu7YErjg96Ce3EINUiqTmBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sdC6WILg; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3c51f0158d8so4024260f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 02:27:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756200467; x=1756805267; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qLqmIwK8NZ6hSazvQk4aM7oVEZe5wm9tqFDFQ8D7Dao=;
+        b=sdC6WILg11PfURPySM8OuTXOJ1kWPObl4BXh7fT5B5HqVkarxNf8iFfklzf/jW5Yio
+         VVYmsQJM7IPFSNgNNux35RTRT/fypFwFhvTOg2KfEPkI6+4HCyKgnobdoJ9/5c7ON1fU
+         9hXRZfnAP73R7UemERI9R0QSD2RQx1dGP7Mve2yiXvnvzXr4HizJmlnaUQR73Hv2u2C/
+         3Zh1IodCdFWLSIzF4bh66s2y80uLd5zQsx5NzTEXV1d0tbUT85xyLYxnMCS/NO/Y4OAR
+         hb5kgEiuj+hCK3Hro+ktvTTTarae25SZ1mLC1xHTooSenTuLYIBFIVyszO5fjzDfl4Qm
+         Tosg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756200467; x=1756805267;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qLqmIwK8NZ6hSazvQk4aM7oVEZe5wm9tqFDFQ8D7Dao=;
+        b=ofSih+1uELmBV7dTp0YgFzstVKzzB0rx0veBhXn3npTDLaKUr2Rk1r1bN183aFk1Tb
+         N+USlMU2luL73d59nA2VOldJkL0r3kT69H24F9Kq5hNgDAtrNpzSySWLPEssB2ZyiINl
+         LTPy0VNI9tbijIMRrmUfZzk8n0t1oquAyJc5dl0LUNR0z3Z0ch3oPyzikzEBQcR3gMDu
+         QJVMzfOZ1CKn32SEuwexsKBoR220UwcLlhrxZdy6QD1Jdptd0ewmRYAbMbBi1Wi7rwzt
+         w0jfBY2DLfnyiJ4fIntkIOvMLE6c5Hkll0XMGDpyyqLIpLyLkigdOp18lWnTwTjMMk9x
+         xMpA==
+X-Forwarded-Encrypted: i=1; AJvYcCWPMydZyecWXdrTjLk6muMkoKgaWUoC3uQx7AM16P0gAXl/Obp+81Hs85Vs1bqpNbeZveHn7QsbekHo8fU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUHWAEW3Qw6xy2moUMXwE/+dfjc1iLnzcc3ICARnqkOjnKEOzG
+	7lMYr5XhULSZw9zHXU9j1izfo1UGF9bz6TI8iRAT5UQO4Gln96Ob+rgWLFjn9AYZDxw=
+X-Gm-Gg: ASbGncv4vMePoIq+tuepcpDbkW/DpIh+/IICX0uQRoUAnRdJ5DYYQHPV2o8w7RujagL
+	P/G+LNXThFQmmO9qZgn3iH8znGaSsFlIueVXIbiq0B6meYHhkOyhMIjqzHjk7LVrBcfaU63B5jl
+	KGaSYUlyQoFVveC35Jybrc9Twde/TcECktEjPBUE00/+m/AYK0vN3BzW6ov5OHMF6ogbEFzV/oV
+	3H/C/QbHcQ1ZdT+jYMwfQ/VykacdypSB4a8Na/xy9x1+KTzEGYhNlhAVUtK7Vw4Y7sAIX00CSA/
+	5dhm2BXnHn5D6UPEMArs6pr8ZWlrbrEOpRsJrtZE3HFd0gqbQzindq2samFWgFEw5b/kvDlYHCt
+	tj+/8RPjPYu6cc8IuYrwGyJ6b7bWTkuSLKv/0hQ==
+X-Google-Smtp-Source: AGHT+IFbIYlKW54tLzTd2qlLQcjlN/Yji9BCemb4M6ZN8HZ69VKZDUD6dqfqBp/gsz3qgvx86VJf2w==
+X-Received: by 2002:a05:6000:4011:b0:3b9:13e4:9693 with SMTP id ffacd0b85a97d-3c5dcc0c457mr10671415f8f.52.1756200467087;
+        Tue, 26 Aug 2025 02:27:47 -0700 (PDT)
+Received: from [192.168.1.3] ([185.48.76.109])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b5ef818d3sm86633675e9.12.2025.08.26.02.27.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Aug 2025 02:27:46 -0700 (PDT)
+Message-ID: <3ac2954e-5663-4ea0-bc1d-a09e1992af5b@linaro.org>
+Date: Tue, 26 Aug 2025 10:27:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,178 +81,139 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 4/8] powerpc/smp: Introduce CONFIG_SCHED_MC to guard MC
- scheduling bits
-To: K Prateek Nayak <kprateek.nayak@amd.com>, Andrea Righi <arighi@nvidia.com>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
-        thomas.weissschuh@linutronix.de, Li Chen <chenl311@chinatelecom.cn>,
-        Bibo Mao <maobibo@loongson.cn>, Mete Durlu <meted@linux.ibm.com>,
-        Tobias Huschle <huschle@linux.ibm.com>,
-        Easwar Hariharan <easwar.hariharan@linux.microsoft.com>,
-        Guo Weikang <guoweikang.kernel@gmail.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
-        Swapnil Sapkal <swapnil.sapkal@amd.com>,
-        "Yury Norov [NVIDIA]" <yury.norov@gmail.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Yicong Yang <yangyicong@hisilicon.com>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>
-References: <20250826041319.1284-1-kprateek.nayak@amd.com>
- <20250826041319.1284-5-kprateek.nayak@amd.com>
+Subject: Re: [PATCH v1 3/3] coresight: tpda: add sysfs node to flush specific
+ port
+To: Jie Gan <jie.gan@oss.qualcomm.com>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>
+References: <20250826070150.5603-1-jie.gan@oss.qualcomm.com>
+ <20250826070150.5603-4-jie.gan@oss.qualcomm.com>
 Content-Language: en-US
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-In-Reply-To: <20250826041319.1284-5-kprateek.nayak@amd.com>
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20250826070150.5603-4-jie.gan@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: -2--Cp9qI1VVivKGyFqxE41rZ7zdojJh
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAyMSBTYWx0ZWRfXxjL/DSgAnx2D
- zxziEiBmpLPb7T373sPDIP5FphKINAVdX6nVXXoRC7zeod0LNE53DAQ+yyL0I+8WLvU7kd3n6rp
- C18zs+ZnzyV/v6/bNOEY2yd6mWPvEys6pfNGeOAgqXNmtqAcZFSuSjFKyTvmxtEhWvwVPtlnKx7
- dPw+P2/4fZTaD0VKlQqGfhdFHWt2sIOMPbR3RPae+IyEUtF57BoBo11fl6ezMIOmniti8Bo0wFa
- VmfngxIWnk5NbiO45DBbAXujxvjC3Nkd+/RzFiqOs3aAIuXbw7Mf2Ddp+DONQ9ux+9ycLNDbtRN
- EkmOw7cjGB2kCMSsPLD/5rYyQiMstj2vRxjjhNz3+v7R5zgT8Np6BXAmpn+lv+3zPzDTfmGdXhh
- IY3l+zSe
-X-Proofpoint-ORIG-GUID: lHjetDSyZoG3vF1_c2MO9HTQV_cMoToA
-X-Authority-Analysis: v=2.4 cv=SNNCVPvH c=1 sm=1 tr=0 ts=68ad7e15 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=zd2uoN0lAAAA:8 a=v6YubWqPPbTyhgY4940A:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-26_02,2025-08-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 adultscore=0 bulkscore=0 phishscore=0 clxscore=1011
- impostorscore=0 malwarescore=0 suspectscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230021
 
 
 
-On 8/26/25 9:43 AM, K Prateek Nayak wrote:
-> PowerPC enables the MC scheduling domain by default on systems with
-> coregroup support without having a SCHED_MC config in Kconfig.
+On 26/08/2025 8:01 am, Jie Gan wrote:
+> From: Tao Zhang <tao.zhang@oss.qualcomm.com>
 > 
-> The scheduler uses CONFIG_SCHED_MC to introduce the MC domain in the
-> default topology (core) and to optimize the default CPU selection
-> routine (sched-ext).
-
-Curious to know if sched_ext usage. i see below code.
-
-if (static_branch_maybe(CONFIG_SCHED_MC, &scx_selcpu_topo_llc))
-
-scx_selcpu_topo_llc = true if there is sd_llc. One can have llc domain without MC domain.
-I am wondering whats the reason behind the clubbing.
-
+> Setting bit i in the TPDA_FLUSH_CR register initiates a flush request
+> for port i, forcing the data to synchronize and be transmitted to the
+> sink device.
 > 
-> Introduce CONFIG_SCHED_MC for powerpc and note that it should be
-> preferably enabled given the current default behavior. This also ensures
-> PowerPC is tested during future developments that come to depend on
-> CONFIG_SCHED_MC.
-> 
-> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
+> Signed-off-by: Tao Zhang <tao.zhang@oss.qualcomm.com>
+> Co-developed-by: Jie Gan <jie.gan@oss.qualcomm.com>
+> Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
 > ---
->   arch/powerpc/Kconfig           | 9 +++++++++
->   arch/powerpc/include/asm/smp.h | 2 ++
->   arch/powerpc/kernel/smp.c      | 4 ++++
->   3 files changed, 15 insertions(+)
+>   .../testing/sysfs-bus-coresight-devices-tpda  |  7 +++
+>   drivers/hwtracing/coresight/coresight-tpda.c  | 45 +++++++++++++++++++
+>   drivers/hwtracing/coresight/coresight-tpda.h  |  1 +
+>   3 files changed, 53 insertions(+)
 > 
-> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-> index 93402a1d9c9f..e954ab3f635f 100644
-> --- a/arch/powerpc/Kconfig
-> +++ b/arch/powerpc/Kconfig
-> @@ -971,6 +971,15 @@ config SCHED_SMT
->   	  when dealing with POWER5 cpus at a cost of slightly increased
->   	  overhead in some places. If unsure say N here.
->   
-> +config SCHED_MC
-> +	bool "Multi-Core Cache (MC) scheduler support"
-> +	depends on PPC64 && SMP
-> +	default y
-> +	help
-> +	  MC scheduler support improves the CPU scheduler's decision making
-> +	  when dealing with POWER systems that contain multiple Last Level
-> +	  Cache instances on the same socket. If unsure say Y here.
+> diff --git a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpda b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpda
+> index e827396a0fa1..8803158ba42f 100644
+> --- a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpda
+> +++ b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpda
+> @@ -41,3 +41,10 @@ Contact:	Jinlong Mao <jinlong.mao@oss.qualcomm.com>, Tao Zhang <tao.zhang@oss.qu
+>   Description:
+>   		(RW) Configure the CMB/MCMB channel mode for all enabled ports.
+>   		Value 0 means raw channel mapping mode. Value 1 means channel pair marking mode.
 > +
->   config PPC_DENORMALISATION
->   	bool "PowerPC denormalisation exception handling"
->   	depends on PPC_BOOK3S_64
-> diff --git a/arch/powerpc/include/asm/smp.h b/arch/powerpc/include/asm/smp.h
-> index 86de4d0dd0aa..9a320d96e891 100644
-> --- a/arch/powerpc/include/asm/smp.h
-> +++ b/arch/powerpc/include/asm/smp.h
-> @@ -148,7 +148,9 @@ static inline const struct cpumask *cpu_smt_mask(int cpu)
+> +What:		/sys/bus/coresight/devices/<tpda-name>/port_flush_req
+> +Date:		August 2025
+> +KernelVersion:	6.17
+> +Contact:	Jinlong Mao <jinlong.mao@oss.qualcomm.com>, Tao Zhang <tao.zhang@oss.qualcomm.com>, Jie Gan <jie.gan@oss.qualcomm.com>
+> +Description:
+> +		(RW) Configure the bit i to requests a flush operation of port i on the TPDA.
+> diff --git a/drivers/hwtracing/coresight/coresight-tpda.c b/drivers/hwtracing/coresight/coresight-tpda.c
+> index 9e623732d1e7..c5f169facc51 100644
+> --- a/drivers/hwtracing/coresight/coresight-tpda.c
+> +++ b/drivers/hwtracing/coresight/coresight-tpda.c
+> @@ -509,6 +509,50 @@ static ssize_t cmbchan_mode_store(struct device *dev,
 >   }
->   #endif /* CONFIG_SCHED_SMT */
+>   static DEVICE_ATTR_RW(cmbchan_mode);
 >   
-> +#ifdef CONFIG_SCHED_MC
->   extern const struct cpumask *cpu_coregroup_mask(int cpu);
-> +#endif
+> +static ssize_t port_flush_req_show(struct device *dev,
+> +				   struct device_attribute *attr,
+> +				   char *buf)
+> +{
+> +	struct tpda_drvdata *drvdata = dev_get_drvdata(dev->parent);
+> +	unsigned long val;
+> +
+> +	guard(spinlock)(&drvdata->spinlock);
+> +	if (!drvdata->csdev->refcnt)
+> +		return -EPERM;
+> +
+> +	val = readl_relaxed(drvdata->base + TPDA_FLUSH_CR);
+> +	return sysfs_emit(buf, "%lx\n", val);
+
+Decimal would be better for a port number that goes from 0 - 127. If you 
+really want to use hex then don't you need to prefix it with 0x? 
+Otherwise you can't tell the difference between decimal 10 and hex 10, 
+and it's not documented that it's hex either.
+
+> +}
+> +
+> +static ssize_t port_flush_req_store(struct device *dev,
+> +				    struct device_attribute *attr,
+> +				    const char *buf,
+> +				    size_t size)
+> +{
+> +	struct tpda_drvdata *drvdata = dev_get_drvdata(dev->parent);
+> +	unsigned long val;
+> +
+> +	if (kstrtoul(buf, 0, &val))
+> +		return -EINVAL;
+> +
+> +	/* The valid value ranges from 0 to 127 */
+> +	if (val > 127)
+> +		return -EINVAL;
+> +
+> +	guard(spinlock)(&drvdata->spinlock);
+> +	if (!drvdata->csdev->refcnt)
+> +		return -EPERM;
+> +
+> +	if (val) {
+
+If 0 - 127 are valid don't you want to write 0 too?
+
+> +		CS_UNLOCK(drvdata->base);
+> +		writel_relaxed(val, drvdata->base + TPDA_FLUSH_CR);
+> +		CS_LOCK(drvdata->base);
+> +	}
+> +
+> +	return size;
+> +}
+> +static DEVICE_ATTR_RW(port_flush_req);
+> +
+>   static struct attribute *tpda_attrs[] = {
+>   	&dev_attr_trig_async_enable.attr,
+>   	&dev_attr_trig_flag_ts_enable.attr,
+> @@ -516,6 +560,7 @@ static struct attribute *tpda_attrs[] = {
+>   	&dev_attr_freq_ts_enable.attr,
+>   	&dev_attr_global_flush_req.attr,
+>   	&dev_attr_cmbchan_mode.attr,
+> +	&dev_attr_port_flush_req.attr,
+>   	NULL,
+>   };
 >   
-
-Is ifdef necessary here?
-
->   /* Since OpenPIC has only 4 IPIs, we use slightly different message numbers.
->    *
-> diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
-> index e623f2864dc4..7f79b853b221 100644
-> --- a/arch/powerpc/kernel/smp.c
-> +++ b/arch/powerpc/kernel/smp.c
-> @@ -1059,6 +1059,7 @@ static bool has_coregroup_support(void)
->   	return coregroup_enabled;
->   }
+> diff --git a/drivers/hwtracing/coresight/coresight-tpda.h b/drivers/hwtracing/coresight/coresight-tpda.h
+> index 00d146960d81..55a18d718357 100644
+> --- a/drivers/hwtracing/coresight/coresight-tpda.h
+> +++ b/drivers/hwtracing/coresight/coresight-tpda.h
+> @@ -10,6 +10,7 @@
+>   #define TPDA_Pn_CR(n)		(0x004 + (n * 4))
+>   #define TPDA_FPID_CR		(0x084)
+>   #define TPDA_SYNCR		(0x08C)
+> +#define TPDA_FLUSH_CR		(0x090)
 >   
-> +#ifdef CONFIG_SCHED_MC
->   const struct cpumask *cpu_coregroup_mask(int cpu)
->   {
->   	if (has_coregroup_support())
-> @@ -1071,6 +1072,7 @@ static const struct cpumask *cpu_mc_mask(struct sched_domain_topology_level *tl,
->   {
->   	return cpu_corgrp_mask(cpu);
->   }
-> +#endif
->   
-
-Previous patch says cpu_coregroup_mask is exported. Is it exported in any way to user or modules?
-
-Also i don't see similar gating in other archs. It maybe unnecessary.
-
->   static const struct cpumask *cpu_pkg_mask(struct sched_domain_topology_level *tl, int cpu)
->   {
-> @@ -1729,10 +1731,12 @@ static void __init build_sched_topology(void)
->   			SDTL_INIT(shared_cache_mask, powerpc_shared_cache_flags, CACHE);
->   	}
->   
-> +#ifdef CONFIG_SCHED_MC
->   	if (has_coregroup_support()) {
->   		powerpc_topology[i++] =
->   			SDTL_INIT(cpu_mc_mask, powerpc_shared_proc_flags, MC);
->   	}
-> +#endif
-
-Just this gating should suffice IMO.>   
->   	powerpc_topology[i++] = SDTL_INIT(cpu_pkg_mask, powerpc_shared_proc_flags, PKG);
->   
+>   /* Cross trigger FREQ packets timestamp bit */
+>   #define TPDA_CR_FREQTS		BIT(2)
 
 
