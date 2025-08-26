@@ -1,271 +1,317 @@
-Return-Path: <linux-kernel+bounces-787274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FFDAB373DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 22:30:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0A5FB373E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 22:32:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D34DD363318
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 20:30:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 846793B6B8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 20:32:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662533570DE;
-	Tue, 26 Aug 2025 20:30:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B31A2F6588;
+	Tue, 26 Aug 2025 20:32:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Tq9Mp4jX"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EtQiRqCl"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB1C286890
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 20:30:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756240242; cv=none; b=A0wxFvyM/ZcU8k39Jxv7QF+Dzaplj5Sxhz20TW4yiGpp/DZ/jvtpRHOJ1NTAu3NAAGg4LDH/kakBkNfiYJS1QCI1RJBVZOH8jVvzbQEm9Sl29IV0jWGaHbtSz5QAdFrt0/qiiBJ6kJnmOjmFkqCN/YCT1wZIbPbZ+P/eT/yTt8o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756240242; c=relaxed/simple;
-	bh=dWpaw+5IK+faLL3HzEwBYWrdV1DKLv9aeK98Eb/3Bcg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=efI4AKhXqjgH62qeQcZbSXs9N4zEdZgg2QHvbAyA2/AoFBpmcO3EkuLs1nsTHIVxfWJSmNwFMbzh+wC4gxs+UnNdzNhOOjkwZElAiTcuf3adiXlEnAICMlepUCLdddZu2FagybDgeJ21OSMVaU+swBA8N1KzQDwSi68Lvj7U+4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Tq9Mp4jX; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4b2dc20aebbso124611cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 13:30:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756240239; x=1756845039; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1NivCtX5VVCQOwctlprydiQ2y64E7oPKjSGk2dbkglQ=;
-        b=Tq9Mp4jXZkGffOrZZJxfggfM1SBX2EtierahX67SbSeT3Yc8chGMPV7ZkZSQiFgv3j
-         pAH+hWZ6A7w3qyNGfyicavXbtrJmVp1E2s7eAhTgHhaCarrjvhvOuXXsn+Hc2ugQKK4m
-         EBEaelsnylLTD/d2Ps+2JRyHttuXZLOsEH+aKEX2QTOO2loKgFPg7DP2lRWuOF4UCVTM
-         XDiFvrIN37DLnu221Ye/EYmBHTKSzBHEU8vFT+XlnuOXHzAONyJsKIje5DdfoAdm2dQf
-         oj+BQxsk/MlHqxecFXsHmYWooAJf2n9dWF0kQCxA3BhIz+OnTyT2cQvljcKZ6BKjuq/B
-         N4mQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756240239; x=1756845039;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1NivCtX5VVCQOwctlprydiQ2y64E7oPKjSGk2dbkglQ=;
-        b=eF/CSq1fJaYqxI3INzWKJIVifFVp7/qDghv53UNtndKZeVcqUrn2r+JcxKkUN01nZK
-         vhyYaf3oXeBZdpmN7kzrJ9WSGiesjUm/HsJiD80c1JNJsXCfArUYrL7K7+8cNa9rRMO1
-         qvnJa+CoEQzn3V087E+6sHGy4Vus1i+pBp1ZUSOECqHHFC00iLthJ2i8Mk8q6rtoZnsd
-         ihPU5Y4w/ffGW7s4YB1u3acTp3a+MVwFHscViTBeLWxdIb6c8d/2KvJMiJyBibu9Mtsr
-         jFMz9KqEA6Qt0/Cyhudju6hmDaTNcEgvRYf2xbiI85nbwEwE0iXYTmu8VWnmzq1rKqt6
-         HwSw==
-X-Forwarded-Encrypted: i=1; AJvYcCUYE5Sx8epiQdR6+h+YHxuIbBzpXbgZwgt63oYy0pTK/F8uV3yZiKU4ManS8QHVI+n6gHGXzyN6BA303rc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvNbO5fkr6U6vhzT04k80n23xxGYKB0iw64l/8RX3SSTzbff6j
-	81gxvHyeARI2KnbeBD19ZF6EtA5l42gx+xGy2X8+3abIZVE2nRPjJd4fjeCy0xl2L0uE6djB3Cs
-	tnGw0qkcHcGne4FsNMtUYs2ehwan17+qMWrpW/oNe
-X-Gm-Gg: ASbGncvp5ytf1gA1qbcll4/GlFUIYMlR5k2rZ4KDCBuAXLvJb5sxc+PtIhiyCERb+W2
-	4d3mjFRr0YLXOrlXvNmgUJ9MPgq38F02MrFtt3Tzf9S6vJDtxyEn8uHn751Te0Sx+G9cj4OmX/w
-	u4HeCmz3GXT5FEque8zEynRc8m9h068J+GgFR4XqQU5HCaeikoESOvGEOOMDFzxzTdpiK56fx6w
-	OjBWmwofKQg7kEzv4NBTKQe2nZBbrJlYVeynXB8squhURZ6KOx7biykng==
-X-Google-Smtp-Source: AGHT+IEL45FJ6C194aidsP5pgQHqoHHDUuhtRlEDTjKfdI4ez+CYTV0dWOx7Th8KWxoUAD969ZMn2roqrW1KFRyGIUE=
-X-Received: by 2002:a05:622a:1116:b0:4b0:8318:a95 with SMTP id
- d75a77b69052e-4b2e1d2850cmr8109911cf.8.1756240238481; Tue, 26 Aug 2025
- 13:30:38 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17FD627703A;
+	Tue, 26 Aug 2025 20:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756240365; cv=fail; b=HxQs19csCcvEWUjL7MGkt0q7k73w7nZKgvFBy293FOP+ApWAatGYGGqGFJP7wl4KrrcSqrYqrjAYjrf9UonTZHnugwtZFgVExkjlO2crWJPXSja/W5GxKDLR2XbTjxIXeAu+v5bvQuClZ1s1r8Q9BhNfiUdxFreqJcROQkFGKIA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756240365; c=relaxed/simple;
+	bh=PglwnPquXkcDmkkdO+Z9bMcP9Qovz4XxcvrEThjSVj0=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=O02I81ZCgG/hFkuAzuG9EF1Nz2oY8QqhArx0vQS5l0cFcsA3QLrT48h8ljlPJtccjvNWiohMVWZzdEGujkk2lb+5Hzispia69aX9XSzpbY9KcDzFRcTp70hjwfv1ornxx7JEG2/XclZaixVapSDc9J7/ZtCZ9nbpQfW58t1znEY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EtQiRqCl; arc=fail smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756240363; x=1787776363;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=PglwnPquXkcDmkkdO+Z9bMcP9Qovz4XxcvrEThjSVj0=;
+  b=EtQiRqClhyJPNm8BAefUwGM5WV6dh6yBvCdmPahXQkiU2mga9We3B0xJ
+   km7YqI8SekLQr9bzgB6C7Ydo2yQmlY86Gaf/GBu3m9QvwiXuKy7FQxNUv
+   yAsudDyFW+AUr1cPMX5inoYOBEC50OFfG2rlLEl2zGU1bSESMr2iJ7u6k
+   Serci7W7V210f/rQPsV8YSW+ppb8J9XnzbeMKrEtckbnSWGrLjCIu3Fkx
+   slBBBkSxIej06ok5teJd9WpqHyhWz34LQqP5LuKOm+VMWGGpPHhTx18Ox
+   FytD8DK1S6CXDPKq3JGamFEvvMq7byBS/42nlJnNhqgSMPRIYYEj8RHiL
+   g==;
+X-CSE-ConnectionGUID: O1lsgjMETnWwCErAAXOjPw==
+X-CSE-MsgGUID: SIb9BqqwRHKp1xGnfOa0TA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11534"; a="57691585"
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="57691585"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 13:32:41 -0700
+X-CSE-ConnectionGUID: UC8+EUT7RI661PiAM0p+zQ==
+X-CSE-MsgGUID: I+WJ3kXgTAStyhjPNhEQRw==
+X-ExtLoop1: 1
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 13:32:41 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Tue, 26 Aug 2025 13:32:40 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Tue, 26 Aug 2025 13:32:40 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (40.107.223.68)
+ by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Tue, 26 Aug 2025 13:32:40 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TyrxMvsdFb3u+UT26KxJ89qw3R9HrA7tFFi+DmLS/OObgTYjlhvhE6UvWRlMepVZTb01x4crpdftbmyW3n3F4ecmWp/wcQnUFJxXlc63HIo1coab22zqET61c4KZpbA5PMCX+MVRX3+MzUYkGOVSddVsHPj2IW2ckNOGE1u13D1S4q3U8MTfWdLTGBmDZ1NsXhnQ7n9+iFantRTwDUcf9NY9BiZPs6GDGHRGLtLPOyRvSTByXPvLUg/mWrjWKXtdLkkZ9kn2PJXhzZbi5YjTXiszYwa6xtGkreAXU3LWMdZzDaydV/OiEKAn1oVJ6JKVvi5npu7TH+oDqnQjLF87Xw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mhgk0wSAQ4xBmp/G1cSa2mMKl/E0HU5CFSEWSCxTjRU=;
+ b=TwlGCEzn7WFASpkMRE3H5lOzAfi1QiwY3n4xEDF7Wx3VjdMqMbuQN3/DiSItTgB+PEl5MnjgZfxreqd8bOYOcp1Jp32keCpAImPUwjnZd0CsuDVumAsM96tq8fQh3igN4Zfa7fGpMZi3soSV4gq7o6ru8BW1k2DceKF41Wy6yPco15ob0BdAkUQwHx9FU2wci5PeoNgFBYIl4F3CKVMUxSdylJS0rQnCQGXYdBuYGfpmcA41FpFpwPgeTtPUDpno+AdsOJUva7T2XntOQ7Zs9yxsxmfzDUAGvE0Co72OHaIfaKYb/Q+W2iY3lSFi7Q+HIz8VsLDIr0K+FKAjUctKxw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MN6PR11MB8102.namprd11.prod.outlook.com (2603:10b6:208:46d::9)
+ by DM4PR11MB6191.namprd11.prod.outlook.com (2603:10b6:8:ac::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Tue, 26 Aug
+ 2025 20:32:39 +0000
+Received: from MN6PR11MB8102.namprd11.prod.outlook.com
+ ([fe80::15b2:ee05:2ae7:cfd6]) by MN6PR11MB8102.namprd11.prod.outlook.com
+ ([fe80::15b2:ee05:2ae7:cfd6%6]) with mapi id 15.20.9052.019; Tue, 26 Aug 2025
+ 20:32:39 +0000
+Message-ID: <f94db328-fe7a-44b4-8fd9-bda904bd9540@intel.com>
+Date: Tue, 26 Aug 2025 22:32:33 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH iwl-next v1] ice: add support for unmanaged dpll on E830
+ NIC
+To: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>, Aleksandr Loktionov
+	<aleksandr.loktionov@intel.com>
+CC: <netdev@vger.kernel.org>, <anthony.l.nguyen@intel.com>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<intel-wired-lan@lists.osuosl.org>
+References: <20250826153118.2129807-1-arkadiusz.kubalewski@intel.com>
+From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Content-Language: en-US
+In-Reply-To: <20250826153118.2129807-1-arkadiusz.kubalewski@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DB3PR06CA0029.eurprd06.prod.outlook.com (2603:10a6:8:1::42)
+ To MN6PR11MB8102.namprd11.prod.outlook.com (2603:10b6:208:46d::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250821042915.3712925-1-sagis@google.com> <20250821042915.3712925-16-sagis@google.com>
- <aK3vZ5HuKKeFuuM4@google.com> <68ae1604a387c_300e8f2947e@iweiny-mobl.notmuch> <CAAhR5DHPMPOb2XCJodyNMf2RTQfTZpAaCGMg6WeWxSWPLtkO4Q@mail.gmail.com>
-In-Reply-To: <CAAhR5DHPMPOb2XCJodyNMf2RTQfTZpAaCGMg6WeWxSWPLtkO4Q@mail.gmail.com>
-From: Sagi Shahar <sagis@google.com>
-Date: Tue, 26 Aug 2025 15:30:27 -0500
-X-Gm-Features: Ac12FXwbbMM7pQh_4Keas2PDt_6Fce4xe48eDBxubuYMDZnlgdFtNq-3iaBrnyg
-Message-ID: <CAAhR5DGeTQ4G-w2o5YCvNWkZZWFcXe=6rro+RcfhR18-4sT+PQ@mail.gmail.com>
-Subject: Re: [PATCH v9 15/19] KVM: selftests: Hook TDX support to vm and vcpu creation
-To: Ira Weiny <ira.weiny@intel.com>
-Cc: Sean Christopherson <seanjc@google.com>, linux-kselftest@vger.kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
-	Erdem Aktas <erdemaktas@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Roger Wang <runanwang@google.com>, Binbin Wu <binbin.wu@linux.intel.com>, 
-	Oliver Upton <oliver.upton@linux.dev>, "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, 
-	Reinette Chatre <reinette.chatre@intel.com>, Chao Gao <chao.gao@intel.com>, 
-	Chenyi Qiang <chenyi.qiang@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN6PR11MB8102:EE_|DM4PR11MB6191:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8b42fe4c-44d4-41e4-cc42-08dde4dfb30b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?S2NySzJCcktIeXdmSXM2OWtUWU82MFNzdkhBL3BPQ3ZFTTBLZG9CbU8wYVhG?=
+ =?utf-8?B?VGNRbE5LVXMzOGlNZ0h2NEM4NVBSRWtWUXlqREt5SFRNQWRqcE1Xd3I1TEk4?=
+ =?utf-8?B?K0NxWFprSHFqOUZOd01HOE1oOXVmbm1SUitaL2NudnN2S2luMndVUHZaUHdB?=
+ =?utf-8?B?QjYraUxjM3FxbzBSN3kxcHlhTzgzNiswWWx1S2pYN2R0Z3hGUDFYVFJDL2s1?=
+ =?utf-8?B?WDFDOTh2VzN5WXZNbVluMTBQbzVuMzQzZElzKzhNL3l5MTBiMDlEUzlDMytj?=
+ =?utf-8?B?YmlnV2g2TUxlR00zaXlQUHJidmViSDlNRjFHdS9YUWJ4NitIa2xYNkFuNTdx?=
+ =?utf-8?B?MTU0TldrVThyTDdDOWd0TkVEbm9CbnY2Z0NObCt1R3o4dkJyL1Q2UENVcVNR?=
+ =?utf-8?B?NFZ2STJqQWNMV09DYkNBQzFYY0pwUVFaNVBQWTQ2MVY2WTY0SHNqZ3hldjNC?=
+ =?utf-8?B?aG81ZnBZV3ZMTUhnRWUrZVNPSGVUVTdoaHRWQTBkUGcwb0dQTjY5bWZvMGpz?=
+ =?utf-8?B?OSszMzNsSVk4Q21PVjhZdlRuMzVCTWdCNWRuK0pVWlJGZ1h2aUhQN2pmSjdP?=
+ =?utf-8?B?Tnp5MU9waGdibHIzMTI0Z2FFVTQrSHR1eHNlQmNYYUFiVnk0VnN2M1RKSEZE?=
+ =?utf-8?B?UjZ1cWFzV2pNU1M5YzlBNzI5L09VSnFSSnpZMG1jSnBFQTdXdDNZQmFMU0pH?=
+ =?utf-8?B?RE9wL0YrUHdvb2JQc1JXbE5GaXdkOVJtZEdwTUFkaXFPQlVhd0F2SWNpZzcz?=
+ =?utf-8?B?ZGJNWksrUkwrYXRTZ2YxY2JSVSthQmU4b0V0RDVXZmE2Y1hla1ZZYTJYMDV6?=
+ =?utf-8?B?cTlUQXdGT1I4UG80eWdXS05ZUE4rMUtBVnN6aXJqOFBqM3B1d2lQd1dUUDh6?=
+ =?utf-8?B?aGQ0c1pQOVUvMWw5c05HQmZ1SFJIQ1V4QjRESENlVUw4RmxoK1Zid3NWcWVi?=
+ =?utf-8?B?QmhCOHFPSFVKTEMzTEhsYzRMdXRNc1RHZFhabTNYSFNqN3FMemM0QklsVUNj?=
+ =?utf-8?B?ZjU5S2dPbHAvS2lZUTFxb1NySDhncEFTcFphenRWcXIwd0FWZ01ta3hTMUF5?=
+ =?utf-8?B?dFA4ZHJpeGNZSWowR2daWURWWmN2Q21ZYWpWMi9VTnc4TUUyVW9PWXY2TVlQ?=
+ =?utf-8?B?SlpoRmMrZUNxUnBVOUp6ei9aVENudjZGZzB5ZHVEWFZyOFNvbmNCN29mUlRB?=
+ =?utf-8?B?L21uMVN4OHF3bm4wVDZ1V3JGZ0JuRnhCWk0vL3g4KzdNMDd2NVg0MW50QkY1?=
+ =?utf-8?B?WnAwdkdqWXMzY2lES2JUMzQrM2UyL21haGZlRlMxL1R6TEc3bFhhMG5FVjNV?=
+ =?utf-8?B?NjlVd2gwZjVvWUFXZzR5VlNIYU5xSEpBYnpUS1gxOUpweG5NY2h3WjZSb28x?=
+ =?utf-8?B?dnpBWDNWZkNDbWphZDJxb21jdnA5SEttZ0c5b1R4L3cvNkg0Q1lWcVVwZklI?=
+ =?utf-8?B?WkFIV1pwSW1KQlFMSTR4akJEZ2szM2sxY252K00zbjVOU3lCaWUyRHE4NU1O?=
+ =?utf-8?B?WjI4SGx0MWcxZWdieTQxLzMvVmNaUHhHbDhDeHpVcmx6bmFVRDdLbkRSS3Ny?=
+ =?utf-8?B?cDU1enJBK2hyR2p4ckhmcDQzQzdqUlNTYkxRa3hySktMeUtseDJlZEd4ZmFu?=
+ =?utf-8?B?YnJWQnlqcWRETUEyK2RxTlBvMHBIakhtOW9WVzVoNk5TYlltdXhLTXgxbU9i?=
+ =?utf-8?B?MVNneG1uWm55N0g0SW5raTF0VHNnSFBQZmdRZEpreVZBZmN2R1k5b2hoWGox?=
+ =?utf-8?B?YTJyeEh5aDFIMVRuSURmeXJ5R3dwOS9WOEJJU0hrVHhGdUNyL21JZVltZzZn?=
+ =?utf-8?B?YmRFL0ZjL1ZMMm9ic2xDOThiWnJjNWlDVmNlLzNCSlJHdS92MFJwOWo4VjZV?=
+ =?utf-8?B?RDlKaFkyTHBwZ0FiTmQ1c2w0TkprKzBDTUpmVnhBNjdnMlJSQWR5Mk1WS0dG?=
+ =?utf-8?Q?hwXrs/IDIlA=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN6PR11MB8102.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?S0IzZEJvTCtDS3M1MVhTa1lPQzlHaFoxWVBCWTJlTlk5Wm5mREViSGVmSnJo?=
+ =?utf-8?B?Q0JtNUhxZXQ0OVdpZ2hMenpJM0JSWkpidk9UUzVDZmZFTlJ3dUlkK0FtN2JU?=
+ =?utf-8?B?VlhxQTVtYUpCcEkySUdOREx1WXprTmF1amMrTmNhSERnOVJhbWszREVhTnVx?=
+ =?utf-8?B?VXdOYUtrYWVNV3pQcWxwa2h2YkhTZkN6emZZMzQ1Q0VnTnRWcSt3YVptQm1H?=
+ =?utf-8?B?eVc0Nmw5L29BbThVVmhBNER3WnhFZkQzWjBYd0laazJyMU83c28xdVErd0ta?=
+ =?utf-8?B?TEZnVkROblEwTG9jblR2YlJVamZZM0ZqMGNCVlNodlJMUzRLT2dsRUVUZ1RJ?=
+ =?utf-8?B?Y3NZeFB4L0JGN0h0dDBlQW9kVzlpcXhxWjNRNHBrRzQ3aWdJdHgza3BaUTFM?=
+ =?utf-8?B?ZDFLdC9IbjNBSEpEaUJJV0pDaHZZMlNpMVNCemVhSWM4N09VTGQ5eWVLQmVh?=
+ =?utf-8?B?Ujl4RmVzY2VFZWZsT2ZWVnhyOUJpZTNOVXRsL0U1bVNjeUZqdnRuL3gvMzYy?=
+ =?utf-8?B?UkgzQzhGdlAxZnhBL3FPQkVpVkNqLzdORDI3STVJTk1RMDJzN29POWtobWFl?=
+ =?utf-8?B?dko1Rks2aVQ2Y0VRQWluYTBhM2FkZXpWdmdRN3c1WDR2ckJnRm1GV0RrZUU4?=
+ =?utf-8?B?V0JLZndKMmZ4YUJRK09jMVZmeFkzMGw1K2c2VVVhWEVXcFJXL2srbnBWTjBt?=
+ =?utf-8?B?YitOd1VOSFVBOHA3aXBxNHVCM3EvMW8vYXpmSHgyTEJtS25vcWlpcHRORTJT?=
+ =?utf-8?B?UEJNSk4wVGxDRVR0ZnlydERFSlNJUFZoMlpReEZrbC94ek00UkRrQjZhcHE4?=
+ =?utf-8?B?WFhCdHNlL0RMNXJyeTV6ZC9zK1dkeGUrdTBycW02UlhIeDQ0cG1QMnJKMmJs?=
+ =?utf-8?B?a25WMHBTSnRHdWwySzBLbnVVL2dhdGZYU1I2WGM1dmJLT0U3NzRzVy9Xc01G?=
+ =?utf-8?B?VFhLUGplRU5wQS9Tck1FZUtBRjdaU1lGNXBEMHdFNDduSFg3RXMrVHVGRy80?=
+ =?utf-8?B?d01hV0p4NjVTMlI2WTZrS0R6SDRFR0RkZ09vMVcxeTZaOHV4UnJ2eGZkUnRQ?=
+ =?utf-8?B?dnpCQUYwem1OcEZZbU9udG9hSFdiSjB3RlZSaG1wYWlrOHNSd29XVFl6RW1i?=
+ =?utf-8?B?NEszcjA3YmVJVFUrLzdCOTlkL3RzR2tRWkFiYm0rbC9zUEwrajNSM0I1Uzh3?=
+ =?utf-8?B?Y2FuTDZsd3RManc5dVNwbS94d00yUjVIblY0R0VORU9rVkVxdzJXaWRGajM0?=
+ =?utf-8?B?eXN6KzdDdEwwbmZEYWdzUXVBS2FvSFhtazlYdy9CWHhrUFZBVVp6TTRWellG?=
+ =?utf-8?B?TEZKU0dpMEkvWTFXMUY0eXEvbTRIYUFzb1VURWJRMmlRSENsdHgzRUtiYlIx?=
+ =?utf-8?B?aWU2cnNxTW9hQWU4cldXcGkzNGdQR3grSEpxdWxVUXhkaCtacDRmMDQrM3FR?=
+ =?utf-8?B?Qy8xVDdEdlFid1BKeGpEZ1FXdkVQbTRKYTc5WHpkTEF5NmpHOU44VkF2dFJR?=
+ =?utf-8?B?N2liYXlxQTB5Yk1jR1pIY2hlZWZ3T0FXaXJlank4MW5BNElwbTV6V3puMEhl?=
+ =?utf-8?B?VGlhVTVWVGFaOGovd2hEamIvN1FsTXRXaGVKWnAwYWFnTEZLUDR0YndYK0Vh?=
+ =?utf-8?B?ZVFLaS9Ea0t0aDR4WW81cVNCaUxLeGZmQWNkUU11UlluWW5kMzRtT3plZGVF?=
+ =?utf-8?B?emhvMk1pYXlhSDIrNnFiNUtOSVYwSmptNW9IaEdSY0Y2YlcrekR3R3d3V3Fw?=
+ =?utf-8?B?Umk1NmZUWjh2TlN3UmJENmQweEdIR011MFc0Y2xZRlRvSWdVZTVqcG9oRzRz?=
+ =?utf-8?B?dngxdWY3SHFBSm5xSHFFRzFyOXM4VWkvelFrbWxoQVlvT1lBQTdUZzUzQkli?=
+ =?utf-8?B?amJ4ZmY5a1NWNE9GMkZaZjNDZHJxckVYU2FCNFl6OVJ4c2dxTlVrOGp3Q2Nw?=
+ =?utf-8?B?cFhMUUJXOXF2OXFXQ2ZnSTUzOGRISjJCdFgvL1JXallXMlVIYW91d3hVZzFL?=
+ =?utf-8?B?dG80VnY4MkZBTm5sTzZNODBFVFBSKzE3SDNCTUVZNTZoaGVPY01GVWFjRnp2?=
+ =?utf-8?B?NFZybFlyS3VBOTIveENQdEJNenJlcEN5dWIwcVc5YW5yOHI1MGZ0QTBHdThR?=
+ =?utf-8?B?alRVSjJDbzQxY0RYZlU3VXlUZFZsUlhObHFrM3VnbTZ4eXpZd1I4bk1MZVpj?=
+ =?utf-8?Q?uS4geKcYMm3QWInPgR5w0dE=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8b42fe4c-44d4-41e4-cc42-08dde4dfb30b
+X-MS-Exchange-CrossTenant-AuthSource: MN6PR11MB8102.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 20:32:39.0252
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: eO+hMQ9sy0wLx1Rzq/26dOsoRCPFFIUx3KlXMOawf5L+EVuglCdRRVAXXjyd3sftuWuGX64TX5+puL+5sLw/j2jwJxFm5ncQ+diUzhIyVms=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6191
+X-OriginatorOrg: intel.com
 
-On Tue, Aug 26, 2025 at 3:29=E2=80=AFPM Sagi Shahar <sagis@google.com> wrot=
-e:
->
-> On Tue, Aug 26, 2025 at 3:14=E2=80=AFPM Ira Weiny <ira.weiny@intel.com> w=
-rote:
-> >
-> > Sean Christopherson wrote:
-> > > On Wed, Aug 20, 2025, Sagi Shahar wrote:
-> > > > TDX require special handling for VM and VCPU initialization for var=
-ious
-> > > > reasons:
-> > > > - Special ioctlss for creating VM and VCPU.
-> > > > - TDX registers are inaccessible to KVM.
-> > > > - TDX require special boot code trampoline for loading parameters.
-> > > > - TDX only supports KVM_CAP_SPLIT_IRQCHIP.
-> > >
-> > > Please split this up and elaborate at least a little bit on why each =
-flow needs
-> > > special handling for TDX.  Even for someone like me who is fairly fam=
-iliar with
-> > > TDX, there's too much "Trust me bro" and not enough explanation of wh=
-y selftests
-> > > really need all of these special paths for TDX.
-> > >
-> > > At least four patches, one for each of your bullet points.  Probably =
-5 or 6, as
-> > > I think the CPUID handling warrants its own patch.
-> > >
-> > > > Hook this special handling into __vm_create() and vm_arch_vcpu_add(=
-)
-> > > > using the utility functions added in previous patches.
-> > > >
-> > > > Signed-off-by: Sagi Shahar <sagis@google.com>
-> > > > ---
-> > > >  tools/testing/selftests/kvm/lib/kvm_util.c    | 24 ++++++++-
-> > > >  .../testing/selftests/kvm/lib/x86/processor.c | 49 ++++++++++++++-=
-----
-> > > >  2 files changed, 61 insertions(+), 12 deletions(-)
-> > > >
-> > > > diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/tes=
-ting/selftests/kvm/lib/kvm_util.c
-> > > > index b4c8702ba4bd..d9f0ff97770d 100644
-> > > > --- a/tools/testing/selftests/kvm/lib/kvm_util.c
-> > > > +++ b/tools/testing/selftests/kvm/lib/kvm_util.c
-> > > > @@ -4,6 +4,7 @@
-> > > >   *
-> > > >   * Copyright (C) 2018, Google LLC.
-> > > >   */
-> > > > +#include "tdx/tdx_util.h"
-> > > >  #include "test_util.h"
-> > > >  #include "kvm_util.h"
-> > > >  #include "processor.h"
-> > > > @@ -465,7 +466,7 @@ void kvm_set_files_rlimit(uint32_t nr_vcpus)
-> > > >  static bool is_guest_memfd_required(struct vm_shape shape)
-> > > >  {
-> > > >  #ifdef __x86_64__
-> > > > -   return shape.type =3D=3D KVM_X86_SNP_VM;
-> > > > +   return (shape.type =3D=3D KVM_X86_SNP_VM || shape.type =3D=3D K=
-VM_X86_TDX_VM);
-> > > >  #else
-> > > >     return false;
-> > > >  #endif
-> > > > @@ -499,6 +500,12 @@ struct kvm_vm *__vm_create(struct vm_shape sha=
-pe, uint32_t nr_runnable_vcpus,
-> > > >     for (i =3D 0; i < NR_MEM_REGIONS; i++)
-> > > >             vm->memslots[i] =3D 0;
-> > > >
-> > > > +   if (is_tdx_vm(vm)) {
-> > > > +           /* Setup additional mem regions for TDX. */
-> > > > +           vm_tdx_setup_boot_code_region(vm);
-> > > > +           vm_tdx_setup_boot_parameters_region(vm, nr_runnable_vcp=
-us);
-> > > > +   }
-> > > > +
-> > > >     kvm_vm_elf_load(vm, program_invocation_name);
-> > > >
-> > > >     /*
-> > > > @@ -1728,11 +1735,26 @@ void *addr_gpa2alias(struct kvm_vm *vm, vm_=
-paddr_t gpa)
-> > > >     return (void *) ((uintptr_t) region->host_alias + offset);
-> > > >  }
-> > > >
-> > > > +static bool is_split_irqchip_required(struct kvm_vm *vm)
-> > > > +{
-> > > > +#ifdef __x86_64__
-> > > > +   return is_tdx_vm(vm);
-> > > > +#else
-> > > > +   return false;
-> > > > +#endif
-> > > > +}
-> > > > +
-> > > >  /* Create an interrupt controller chip for the specified VM. */
-> > > >  void vm_create_irqchip(struct kvm_vm *vm)
-> > > >  {
-> > > >     int r;
-> > > >
-> > > > +   if (is_split_irqchip_required(vm)) {
-> > > > +           vm_enable_cap(vm, KVM_CAP_SPLIT_IRQCHIP, 24);
-> > > > +           vm->has_irqchip =3D true;
-> > > > +           return;
-> > > > +   }
-> > >
-> > > Ugh.  IMO, this is a KVM bug.  Allowing KVM_CREATE_IRQCHIP for a TDX =
-VM is simply
-> > > wrong.  It _can't_ work.  Waiting until KVM_CREATE_VCPU to fail setup=
- is terrible
-> > > ABI.
-> > >
-> > > If we stretch the meaning of ENOTTY a bit and return that when trying=
- to create
-> > > a fully in-kernel IRQCHIP for a TDX VM, then the selftests code Just =
-Works thanks
-> > > to the code below, which handles the scenario where KVM was be built =
-without
-> >          ^^^^^^^^^^
-> >
-> > I'm not following.  Was there supposed to be a patch attached?
-> >
->
-> I think Sean refers to the original implementation which was out of
-> the scope for the git diff so it was left out of the patch:
->
-> /*
->  * Allocate a fully in-kernel IRQ chip by default, but fall back to a
->  * split model (x86 only) if that fails (KVM x86 allows compiling out
->  * support for KVM_CREATE_IRQCHIP).
->  */
-> r =3D __vm_ioctl(vm, KVM_CREATE_IRQCHIP, NULL);
-> if (r && errno =3D=3D ENOTTY && kvm_has_cap(KVM_CAP_SPLIT_IRQCHIP))
->         vm_enable_cap(vm, KVM_CAP_SPLIT_IRQCHIP, 24);
-> else
->         TEST_ASSERT_VM_VCPU_IOCTL(!r, KVM_CREATE_IRQCHIP, r, vm);
->
-> /*
->  * Allocate a fully in-kernel IRQ chip by default, but fall back to a
->  * split model (x86 only) if that fails (KVM x86 allows compiling out
->  * support for KVM_CREATE_IRQCHIP).
->  */
-> r =3D __vm_ioctl(vm, KVM_CREATE_IRQCHIP, NULL);
-> if (r && errno =3D=3D ENOTTY && kvm_has_cap(KVM_CAP_SPLIT_IRQCHIP))
-> vm_enable_cap(vm, KVM_CAP_SPLIT_IRQCHIP, 24);
-> else
-> TEST_ASSERT_VM_VCPU_IOCTL(!r, KVM_CREATE_IRQCHIP, r, vm);
-> /*
-> * Allocate a fully in-kernel IRQ chip by default, but fall back to a
-> * split model (x86 only) if that fails (KVM x86 allows compiling out
-> * support for KVM_CREATE_IRQCHIP).
-> */
-> r =3D __vm_ioctl(vm, KVM_CREATE_IRQCHIP, NULL);
-> if (r && errno =3D=3D ENOTTY && kvm_has_cap(KVM_CAP_SPLIT_IRQCHIP))
-> vm_enable_cap(vm, KVM_CAP_SPLIT_IRQCHIP, 24);
-> else
-> TEST_ASSERT_VM_VCPU_IOCTL(!r, KVM_CREATE_IRQCHIP, r, vm);
->
+On 8/26/25 17:31, Arkadiusz Kubalewski wrote:
+> Hardware variants of E830 may support an unmanaged DPLL where the
+> configuration is hardcoded within the hardware and firmware, meaning
+> users cannot modify settings. However, users are able to check the DPLL
+> lock status and obtain configuration information through the Linux DPLL
+> subsystem.
+> 
+> Availability of 'loss of lock' health status code determines if such
+> support is available, if true, register single dpll device with 1 input
+> and 1 output and provide hardcoded/read only properties of a pin and
+> dpll device. User is only allowed to check dpll device status and receive
+> notifications on dpll lock status change.
+> 
+> When present, the DPLL device locks to an external signal provided
+> through the PCIe/OCP pin. The expected input signal is 1PPS
+> (1 Pulse Per Second) embedded on a 10MHz reference clock.
+> The DPLL produces output:
+> - for MAC (Media Access Control) & PHY (Physical Layer) clocks,
+> - 1PPS for synchronization of onboard PHC (Precision Hardware Clock) timer.
+> 
+> Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
+> Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+> ---
+>   .../device_drivers/ethernet/intel/ice.rst     |  83 +++++
+>   .../net/ethernet/intel/ice/ice_adminq_cmd.h   |   4 +
+>   drivers/net/ethernet/intel/ice/ice_common.c   | 110 +++++++
+>   drivers/net/ethernet/intel/ice/ice_common.h   |   7 +
+>   drivers/net/ethernet/intel/ice/ice_dpll.c     | 306 ++++++++++++++++--
+>   drivers/net/ethernet/intel/ice/ice_dpll.h     |  11 +
+>   drivers/net/ethernet/intel/ice/ice_main.c     |  14 +-
+>   drivers/net/ethernet/intel/ice/ice_ptp_hw.c   |  46 +++
+>   drivers/net/ethernet/intel/ice/ice_ptp_hw.h   |   1 +
+>   9 files changed, 560 insertions(+), 22 deletions(-)
+> 
 
-Sorry, I messed up the paste somehow:
 
-/*
- * Allocate a fully in-kernel IRQ chip by default, but fall back to a
- * split model (x86 only) if that fails (KVM x86 allows compiling out
- * support for KVM_CREATE_IRQCHIP).
- */
-r =3D __vm_ioctl(vm, KVM_CREATE_IRQCHIP, NULL);
-if (r && errno =3D=3D ENOTTY && kvm_has_cap(KVM_CAP_SPLIT_IRQCHIP))
-        vm_enable_cap(vm, KVM_CAP_SPLIT_IRQCHIP, 24);
-else
-        TEST_ASSERT_VM_VCPU_IOCTL(!r, KVM_CREATE_IRQCHIP, r, vm);
+> +int ice_is_health_status_code_supported(struct ice_hw *hw, u16 code,
+> +					bool *supported)
+> +{
+> +	struct ice_aqc_health_status_elem *buff __free(kfree) = NULL;
 
-> > Ira
-> >
-> > > support for in-kernel I/O APIC (and PIC and PIT).
-> >
-> >
+observation: netdev maintainers don't like __free
+
+> +	const int BUFF_SIZE = ICE_AQC_HEALTH_STATUS_CODE_NUM;
+> +	int ret;
+> +
+> +	*supported = false;
+
+it's best to don't change output pointers on error
+
+> +
+> +	buff = kcalloc(BUFF_SIZE, sizeof(*buff), GFP_KERNEL);
+> +	if (!buff)
+> +		return -ENOMEM;
+> +	ret = ice_aq_get_health_status_supported(hw, buff, BUFF_SIZE);
+> +	if (ret)
+> +		return ret;
+> +	for (int i = 0; i < BUFF_SIZE && buff[i].health_status_code; i++)
+> +		if (le16_to_cpu(buff[i].health_status_code) == code) {
+> +			*supported = true;
+
+so, this line should be enough
+
+> +			break;
+> +		}
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+> + * ice_get_last_health_status_code - get last health status for given code
+> + * @hw: pointer to the hardware structure
+> + * @out: pointer to the health status struct to be filled
+> + * @code: health status code to check
+> + *
+> + * Return: 0 on success, negative error code otherwise
+> + */
+> +int ice_get_last_health_status_code(struct ice_hw *hw,
+> +				    struct ice_aqc_health_status_elem *out,
+> +				    u16 code)
+> +{
+> +	struct ice_aqc_health_status_elem *buff __free(kfree) = NULL;
+> +	const int BUFF_SIZE = ICE_AQC_HEALTH_STATUS_CODE_NUM;
+> +	int last_status = -1, ret;
+
+nit: variables with initial value set should be on the end of given
+declaration line (here @ret should be first)
+
+> +
+> +	buff = kcalloc(BUFF_SIZE, sizeof(*buff), GFP_KERNEL);
+> +	if (!buff)
+> +		return -ENOMEM;
+> +	ret = ice_aq_get_health_status(hw, buff, BUFF_SIZE);
+> +	if (ret)
+> +		return ret;
+> +	for (int i = 0; i < BUFF_SIZE && buff[i].health_status_code; i++)
+> +		if (le16_to_cpu(buff[i].health_status_code) == code)
+> +			last_status = i;
+> +
+> +	if (last_status >= 0 && last_status < BUFF_SIZE)
+
+second part of the contidion is always true
+
+> +		memcpy(out, &buff[last_status], sizeof(*out));
+> +	else
+> +		memset(out, 0, sizeof(*out));
+
+weird, but let it be
+
+> +
+> +	return ret;
+> +}
 
