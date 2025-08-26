@@ -1,55 +1,61 @@
-Return-Path: <linux-kernel+bounces-785888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C86BB35233
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:19:32 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51633B3520B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:06:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04EC1682054
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:19:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5C9C64E10B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4648F2D12F5;
-	Tue, 26 Aug 2025 03:19:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AFBF2C21E8;
+	Tue, 26 Aug 2025 03:06:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="FvpEa0SX"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFDB111BF;
-	Tue, 26 Aug 2025 03:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u1KYSH54"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C147260B;
+	Tue, 26 Aug 2025 03:06:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756178364; cv=none; b=FJB96T5616dHu7bdY6gSpQ8l2KCYB8KTwa3K2boNKEMmUu8vViqzQuQmRmrArNCd5NSy5Yr3xSoolBS3X5oNebYGi9DYYqN7tJSMh2pQJBIqYJuxrpfuoTKpfJr7u5lEHifPgmvQoLvhlDOYZZKSmChLyY07CsaGSDyN4YG9hRM=
+	t=1756177571; cv=none; b=f7Ne907l0fAp6V4eXNQ8szl6AP7sTX0ye3T3iPFu8gyOaCr7l7NLQA3qk1h4GjIjBF4UPrnPZhDFJC4m9z3fXsQSNKeGLZluXPuZsdk53VfsijKkK4pD171U3l2W7PGjPB6OedputF2E6oobct8jpxHXOaIAgUpbqvWflkNgvlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756178364; c=relaxed/simple;
-	bh=wi8sbdKRlrXo0kWBOE2JRx8vCNBDwrKiFlY3fNVuc3E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jIMwPtYRRiDf+/02zjn3s5FBuNpTSkWYLYb5xb7IHkyk1Gl8BXNgmyaeTjyIov4JUPo8pBPLFSDSwtLt2dTgUWVFiBlyPnXYFxtI4lFS6Uz9Mi2SPTLl30uXRSDl2zpMtWS9AQa4qxfDBn1Plt+ay6y3i4HtpJg2SrCFKcjE3F4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=FvpEa0SX; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=8U
-	KRPKWH6JXfLDs9LyaWay1d2b/APYWFOa54QlGQgsU=; b=FvpEa0SX45Kdz2xu7W
-	6JFmFOSi27E1gUhtUyZ4XnpJiptQ8/SwL1gBvS9hSL8zKTR6yYn/fpxVhr/ahD0A
-	12sPrA890JOhaZ3LioUNw5nJZcE/+46A9z23ShPnlsbJJs1CeYI+FwryD8cdoNhK
-	B22oBGjXA2im/gsYQiO/UMWK0=
-Received: from zhaoxin-MS-7E12.. (unknown [])
-	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wAn7zcAJK1oxxy_Dw--.24255S2;
-	Tue, 26 Aug 2025 11:03:30 +0800 (CST)
-From: Xin Zhao <jackzxcui1989@163.com>
-To: willemdebruijn.kernel@gmail.com,
-	edumazet@google.com,
-	ferenc@fejes.dev
-Cc: davem@davemloft.net,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v7] net: af_packet: Use hrtimer to do the retire operation
-Date: Tue, 26 Aug 2025 11:03:28 +0800
-Message-Id: <20250826030328.878001-1-jackzxcui1989@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1756177571; c=relaxed/simple;
+	bh=3e4hvzpDH6EODnkYI8p9FQ9wL3jJv36ugO7+Ag6HcVA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=OATC9lgH2cDY0OT8TmlUNT8xaH1rxi6LyQmLj0tz48W1UfWyp73qdTxj1R/pVLN7yXnUM0tiw7glPL1mlES7YeYCooMzloI4K/18bzXT6sTwcP8ju0W8zlNpZwEg5Zq0MHgbFFVJtqynUr9NKqt2eScYiScvYPzXl7ksbyzRTW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u1KYSH54; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DE7FC4CEF1;
+	Tue, 26 Aug 2025 03:06:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756177571;
+	bh=3e4hvzpDH6EODnkYI8p9FQ9wL3jJv36ugO7+Ag6HcVA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=u1KYSH54VdstYOlsRJ7bZRGckzrCWNXRvBKWbeYaET9GZnEar0BMrUxNQQv2UfKp0
+	 UlH2DKwBqde+W/Y8njuZOdU/vZD+3O83g98NE/xqceYm6q0SR2dwe1Swl+fODTkJ7P
+	 Pgc4mnskWH9RAGbDUnJatiXnHke7v8Is3VnEMpZ0HLzShRI0G9APMG3D6eBsZJ+jmi
+	 2LUu8H3MGvcjxuspcag4ORR2lp9eeL+n129vez9wiFcPUyCSXVjRgBQ4cNsxJSal13
+	 oekjc7lenkJOnt7w6hModY1ZLC2t+a4HBMkYNtZ1NFagqNQ1xlAYtgmRteGO/ul4fh
+	 qorS4x0wx4wXA==
+From: SeongJae Park <sj@kernel.org>
+To: SeongJae Park <sj@kernel.org>
+Cc: Quanmin Yan <yanquanmin1@huawei.com>,
+	akpm@linux-foundation.org,
+	damon@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	wangkefeng.wang@huawei.com,
+	zuoze1@huawei.com,
+	kernel-team@meta.com
+Subject: Re: [PATCH v2 04/11] mm/damon/paddr: support addr_unit for DAMOS_LRU_[DE]PRIO
+Date: Mon, 25 Aug 2025 20:06:08 -0700
+Message-Id: <20250826030608.44305-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250825151353.36392-1-sj@kernel.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,95 +63,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wAn7zcAJK1oxxy_Dw--.24255S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxCF1fuF47XryDWFyDGw17Wrg_yoWrGw4kpa
-	yaq347Jr1kZrWIvF1xZa1kXFy5J393AF47Gr1fGF1FywnrCFyxtFWjqFWFgFW7C395twsF
-	vw48XrnxAwnYk37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UqZXrUUUUU=
-X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbibgO1CmitIq0lPwAAsC
 
-On Tue, 2025-08-25 at 0:20 +0800, Willem wrote:
+On Mon, 25 Aug 2025 08:13:53 -0700 SeongJae Park <sj@kernel.org> wrote:
 
-> > We cannot use hrtimer_set_expires/hrtimer_forward_now when a hrtimer is
-> > already enqueued.  
-> > The WARN_ON(timer->state & HRTIMER_STATE_ENQUEUED) in hrtimer_forward
-> > already clearly indicates this point. The reason for not adding this
-> > WARN_ON in hrtimer_set_expires is that hrtimer_set_expires is an inline
-> > function, wory about increase code size.
-> > The implementation of perf_mux_hrtimer_restart actually checks whether
-> > the hrtimer is active when restarting the hrtimer.
+> On Fri, 22 Aug 2025 17:34:12 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
 > 
-> Perhaps we need to simplify and stop trying to adjust the timer from
-> tpacket_rcv once scheduled. Let the callback handle that.
+> > From: SeongJae Park <sj@kernel.org>
+> > 
+> > Add support of addr_unit for DAMOS_LRU_PRIO and DAMOS_LRU_DEPRIO action
+> > handling from the DAMOS operation implementation for the physical
+> > address space.
+> [...]
+> > -	return applied * PAGE_SIZE;
+> > +	return applied * PAGE_SIZE / addr_unit;
+> >  }
 > 
-
-Okay, I would also like to modify the timeout only within the callback,
-so I think PATCH v7 might be a better solution. Additionally, in terms of
-performance, it should be more efficient than frequently calling
-hrtimer_cancel/hrtimer_start functions to change the timeout outside the
-callback.
-
-Why do I add the pkc->expire_ktime in PATCH v7?
-
-For example 8ms retire timeout.
-T means the time callback/tpacket_rcv call _prb_refresh_rx_retire_blk_timer.
-T1 means time T plus 1ms, T2 means time T plus 2ms...
-
-timeline: past -----------> -----------> -----------> future
-callback:      T	           T8
-tpacket_rcv:                 T7
-
-Considering the situation in the above diagram, at time T7, the tpacket_rcv
-function processes the network and finds that a new block needs to be opened,
-which requires setting a timeout of T7 + 8ms which is T15ms. However, we
-cannot directly set the timeout within tpacket_rcv, so we use a variable
-expire_ktime to record this value. At time T8, in the hrtimer callback, we
-check that expire_ktime which is T15 is greater than the current timeout of
-the hrtimer, which is T8. Therefore, we simply return from the hrtimer
-callback at T8, the next execution time of the hrtimer callback will be T15.
-This achieves the same effect as executing hrtimer_start in tpacket_rcv
-using a "one shot" approach.
-
-
-> > Do you agree with adding a callback variable to distinguish between
-> > scheduled from tpacket_rcv and scheduled from the callback? I really
-> > couldn't think of a better solution.
+> This can cause __udivdi3 linking issue similar to the report [1] from kernel
+> test robot.  Andrew, could you please add below attaching fixup?
 > 
-> Yes, no objections to that if necessary.
+> [1] https://lore.kernel.org/oe-kbuild-all/202508241831.EKwdwXZL-lkp@intel.com/
 
-So it seems that the logic of 'adding a callback variable to distinguish' in 
-PATCH v7 is OK?
-
-
-> > So, a possible solution may be?
-> > 1. Continue to keep the callback parameter to strictly ensure whether it
-> > is within the callback.
-> > 2. Use hrtimer_set_expires within the callback to update the timeout (the
-> > hrtimer module will enqueue the hrtimer when callback return)
-> > 3. If it is not in callback, call hrtimer_cancel + hrtimer_start to restart
-> > the timer.
->
-> Instead, I would use an in_scheduled param, as in my previous reply and
-> simply skip trying to schedule if already scheduled.
-
-I understand that the additional in_scheduled variable is meant to prevent
-multiple calls to hrtimer_start. However, based on the current logic
-implementation, the only scenario that would cancel the hrtimer is after calling
-prb_shutdown_retire_blk_timer. Therefore, once we have called hrtimer_start in
-prb_setup_retire_blk_timer, we don't need to worry about the hrtimer stopping,
-and we don't need to execute hrtimer_start again or check if the hrtimer is in
-an active state. We can simply update the timeout in the callback.
-Additionally, we don't need to worry about the situation where packet_set_ring
-is entered twice, leading to multiple calls to hrtimer_start, because there is
-a check for pg_vec before executing init_prb_bdqc in packet_set_ring. If pg_vec
-is non-zero, it will go to the out label.
-
-So is PATCH v7 good to go? Besides I think that ktime_after should be used
-instead of ktime_compare, I haven't noticed any other areas in PATCH v7 that
-need modification. What do you think?
+Hi Andrew, I posted three fixups for the __udivdi3 issue, and I see you picked
+two of those in mm tree.  But this one is not yet picked.  Could you please
+also add this fixup to mm tree?
 
 
-Thanks
-Xin Zhao
+Thanks,
+SJ
 
+> 
+> 
+> Thanks,
+> SJ
+> 
+> [...]
+> 
+> ==== Attachment 0 (0002-mm-damon-paddr-use-do_div-on-i386-for-damon_pa_de_ac.patch) ====
+> From hackermail Thu Jan  1 00:00:00 1970
+> From: SeongJae Park <sj@kernel.org>
+> To: Andrew Morton <akpm@linux-foundation.org>
+> Cc: SeongJae Park <sj@kernel.org>
+> Cc: damon@lists.linux.dev
+> Cc: kernel-team@meta.com
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-mm@kvack.org
+> Date: Mon, 25 Aug 2025 07:45:24 -0700
+> Subject: [PATCH 2/3] mm/damon/paddr: use do_div() on i386 for
+>          damon_pa_de_activate() return value
+> 
+> Otherwise, __udivdi3 linking issue happens on certain configs.
+> 
+> Signed-off-by: SeongJae Park <sj@kernel.org>
+> ---
+>  mm/damon/paddr.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/damon/paddr.c b/mm/damon/paddr.c
+> index 09c87583af6c..6fb92ecc513d 100644
+> --- a/mm/damon/paddr.c
+> +++ b/mm/damon/paddr.c
+> @@ -236,7 +236,7 @@ static inline unsigned long damon_pa_mark_accessed_or_deactivate(
+>  		folio_put(folio);
+>  	}
+>  	s->last_applied = folio;
+> -	return applied * PAGE_SIZE / addr_unit;
+> +	return damon_pa_core_addr(applied * PAGE_SIZE, addr_unit);
+>  }
+>  
+>  static unsigned long damon_pa_mark_accessed(struct damon_region *r,
+> -- 
+> 2.39.5
 
