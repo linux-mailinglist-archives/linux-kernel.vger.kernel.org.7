@@ -1,210 +1,149 @@
-Return-Path: <linux-kernel+bounces-785756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 620CAB3508C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:56:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 714C7B3508D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:58:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D4923BFCBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:56:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C33177A161B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C579149C6F;
-	Tue, 26 Aug 2025 00:55:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062242550CD;
+	Tue, 26 Aug 2025 00:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="RVCBfS8X"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2057.outbound.protection.outlook.com [40.107.244.57])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ksh3ef1Z"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E081C26A1A4;
-	Tue, 26 Aug 2025 00:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756169740; cv=fail; b=LeHsdKolXG2Ipdg+BXvRNoHz05YZjaO6+0lDIwmMZiU2eaffT3mvPDZi/HpitCaVCXM5i9zhrrfn2A/7uDqzGKueCzwOLyh7c4fXrO95VjEn/9Z7pv+/nWvfOFmkmcjyQV3uCMwuESdp7tPfEC90GYwGfoBI62y+Il/a1qHQNfM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756169740; c=relaxed/simple;
-	bh=qv5ToFVTYgmb0DbdsCyl16Vmhyv0T3JEw1SfObgKvbE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fWxXSIfetbpenbLaTVeCdQRFSy0nUnUvL47/OvexXbZuH9uCiOlLOHlpoK76aQANC7Sjr/IwPurwqvyu1PC27UkiI2Z/UJ0kVZorM7CEziMVQDRqK7/ATHB2S+mJStlt6CtehmmR6Ql5WRffMh0cY0RQg7AWqR5SeBXekpc0vN4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=RVCBfS8X; arc=fail smtp.client-ip=40.107.244.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iyU3wxYGpiISoh/ORueFSlytgk+9QjxHWrrI+iS77I8904KH0bmveF6N9VU+okulfnrkePT4SD1RTIlTsRJRFdqSsnj0EpyUYr1ICpkXCd46C+tG+0ptUNybsT08+kFyDL4l2qOi4/q9i3kuueuodtlNyDtQDABrJLUGuUK8Art/hVD6eiraEXYcx08GmVvMoUIn3EXRXPEOgeRFbcXEBGMPCmiY+I0vTHMxsP+/gre5C+FBhzLoC1bVWRN7eFayeHZpD5+t7wSF2hNHl9XVbAWaKA1do+edtNX6IDiOAyAr+U6aRO0roXycbudLXzcB1PIytZz+gksNnNgbBABi5w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vhSEPF8a35m/xTcBty/l8kD6Fit9wlVpONLWs4x9hHc=;
- b=G26YkfVD81nINmHApXz4ZmP6moCflXuXTcTRFWEFE85quKSoF8RIPPr+N3vhXtGt//Ns1qSKuiHp01TwhZHEdZ+5Pfid2lSutwQl0gg7vOZvO7GbG5mKkf56huNfiAP1BDqp4+SaRb67OkZEw5DPKPBhlBVHSiVvzkc7DhUOOWC7wtzm1poByNeNFKruVvK4rKDR9MpF9X3qBr26+mxvd59qe5Rqdynfs8ZRurR3Nr4pKezYW9H1WPvKaRyg0gf7fMjIMKIfLrvV9Py9HOU3Qr1spfyCoJ4FWmrjdd/fcapJ4Ppv7rkqW8ugr/v79qoJwI/U8usU+r+ZzHm67Flm7Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=suse.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vhSEPF8a35m/xTcBty/l8kD6Fit9wlVpONLWs4x9hHc=;
- b=RVCBfS8XKocgZAYHQbndIsv6uFJPNsX+hv+3pDf92Soh59aeNbp4tm5g4EP3ZW04EQqxlkT10ebS+DBZHOZBtPm2sQFv+U9odzWu/wTiQVD6eECd3C3IlTN38iVnGUOMYOIXRH/pgSHGK1NuHxZvu7dJKG4CBag/l1hEt/PD4G8=
-Received: from DM6PR14CA0055.namprd14.prod.outlook.com (2603:10b6:5:18f::32)
- by MN2PR12MB4272.namprd12.prod.outlook.com (2603:10b6:208:1de::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Tue, 26 Aug
- 2025 00:55:34 +0000
-Received: from CY4PEPF0000EDD6.namprd03.prod.outlook.com
- (2603:10b6:5:18f:cafe::47) by DM6PR14CA0055.outlook.office365.com
- (2603:10b6:5:18f::32) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.21 via Frontend Transport; Tue,
- 26 Aug 2025 00:55:34 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- CY4PEPF0000EDD6.mail.protection.outlook.com (10.167.241.202) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9073.11 via Frontend Transport; Tue, 26 Aug 2025 00:55:33 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 25 Aug
- 2025 19:55:27 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 25 Aug
- 2025 19:55:27 -0500
-Received: from fedora.mshome.net (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Mon, 25 Aug 2025 19:55:26 -0500
-From: Jason Andryuk <jason.andryuk@amd.com>
-To: Juergen Gross <jgross@suse.com>, Stefano Stabellini
-	<sstabellini@kernel.org>, Oleksandr Tyshchenko
-	<oleksandr_tyshchenko@epam.com>, Chris Wright <chrisw@sous-sol.org>, "Jeremy
- Fitzhardinge" <jeremy@xensource.com>
-CC: Jason Andryuk <jason.andryuk@amd.com>, <stable@vger.kernel.org>,
-	<xen-devel@lists.xenproject.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 3/3] xen/events: Update virq_to_irq on migration
-Date: Mon, 25 Aug 2025 20:55:15 -0400
-Message-ID: <20250826005517.41547-4-jason.andryuk@amd.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250826005517.41547-1-jason.andryuk@amd.com>
-References: <20250826005517.41547-1-jason.andryuk@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0979C149C6F
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 00:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756169905; cv=none; b=PUDHsYgS1u7PBgkilAUKhFwGsWnhOjHM+jgmwf39V08Q7ORj3TBQyxblIb01xXls1otjfV+SBSdwAxPw3eBUEpnP+7XMdxfiWyMQinBRuRhh6EXeimXs+9SulEVZj2Ln6D55gNYfb9TQabY3Oa/vRApeN3k50zGOyIPAlZdtWto=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756169905; c=relaxed/simple;
+	bh=4gaX2XlcckANCEEc9yuhUn1Qx+eRlzo0H7MYzgfWBpE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tI3JltiUShKHAvAQEfScPlp3HQKSy1mSZPsB/jQtlh+596fhwGRk33t69XKRKaXuGBhf5TYipzZJPefOXu/5C+4GQRmr6b6/AbyipT6UlqiLmYqdSFeER5p1ufodN7ym/W8JEF5/AdTAvzLk8e8lbvyIS6ttUh1RYxmxevPQ6pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ksh3ef1Z; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-24457fe9704so46113385ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 17:58:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756169903; x=1756774703; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=74P6fo6XxZXMmO6G8CcbeGGu5ldJKgBq/pfz/wibO5g=;
+        b=ksh3ef1ZM2dsrBIie2o+SL4/erDpQkBqZdiKc1uw66Kjm7eWfJ4nk1DXRhQoAqWnV0
+         Su0FX7QDtZaocvBTF2fgU0z1qjUmMiyM5JfZYDOhvOqe310X0K4I8Q34PrzRmYxNucq3
+         5hoECYrrafBH7q0LrtCF9aIWcNa/TZTNVpY1dTdYR7tT49HDjF4fbfFRuf2R5jLFN2+1
+         3uLKZRoNeqeE/UNJ7f8sI+mSuLlau530l2NxF/d4uxU5pAm0H1AM1fu2T6ZF+2v2y1OW
+         pdgx0A0tr5OWcVDSuRFQKu0jfldkxlDKVwBhDFQMqJkz9TCNnPGQ7zEA4rsnlPMrVwts
+         jg9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756169903; x=1756774703;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=74P6fo6XxZXMmO6G8CcbeGGu5ldJKgBq/pfz/wibO5g=;
+        b=rGZWJAd8WHr2LGD7vbBwiHoF8QpjLCVnD7427hRCdq4sxuoolLXzbAOCTiIbehpZ+T
+         kwVDebqxnJZKn3qGY10fsD1SnNUovC6CJARmdEkAWW+zuC2fZq7lEVoHcKbg3Om88kOR
+         370+ULwbOj6XJrCs+bEpNOClivEUOw43OfW+s0VCZQ7Xw9M/OcUAq1p9gMyztgkre4YA
+         nerHme+6hDYrJ2ExWNwB199a+GtzOPJ/yiL9mryEuVj4rXD8uzDURm2EtAkLk3z6pVio
+         QPqGFsqi4erv1vL4No/DjfN2CR9oezeIc3k2KiiJhYs3mJNdC9Hu1FY+NuGh9kKxs2CC
+         mxKg==
+X-Gm-Message-State: AOJu0Yx2mBkbEWjBV57DF5GcD1Xu4n3TcswK7EH34p52xsL/Z4JoQ9LR
+	AeT/93TnDRdm2PIw5u3lz67dJh/qDVyBz1Zx/eTHdd1ygrtPzqTePIlXIXsq4E8VpnDUnQ==
+X-Gm-Gg: ASbGncuIkJHInTSjbzaAR8j5WGY12zVJm/2nCYYL5PP4G3jsbnA9UKp+iIQHnIoyn8m
+	4yQ8yx8ltuqxLcz8TmWEeGq3pOzemJiRr923vI0GO0UXhyhS/DzKzYvw3TfS/VWfleUcDR/6w+f
+	PuQKoGtIhtJz4/b4opaxYxtpe3rPlrvZ+wOf84uiQgpZv8Gf/HC7uOCl69kZVb9DuY6CAUgR2lc
+	vZRJzetb9eBhmv2r5Rczt1vLtVFQ0KtGr+xjmXnVyASns0qgkGSWfvmFLdr8jCpd7DRQlZbfKFE
+	NhQm52t0HRBq2KyBQtkSpAdnb1Vx6MQiY7GtaJP3xJphxBddhsOVCu81wbmzed3OqQi+LX4QmxX
+	C7GZPxnDpamwEAMY=
+X-Google-Smtp-Source: AGHT+IG9IwJIwDLhLw5XIGzPYiyPunkt8KjddUPeVGIGwXQ24y8jpmPvrHWII/pIY4COXT31JMrdjw==
+X-Received: by 2002:a17:902:fc4b:b0:246:76ed:e25d with SMTP id d9443c01a7336-24676edecf2mr127218405ad.50.1756169903198;
+        Mon, 25 Aug 2025 17:58:23 -0700 (PDT)
+Received: from [127.0.0.1] ([2403:2c80:6::3058])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24668779fe3sm80200525ad.11.2025.08.25.17.58.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Aug 2025 17:58:22 -0700 (PDT)
+Message-ID: <504d5b94-e656-4c84-8da8-294459d3af2a@gmail.com>
+Date: Tue, 26 Aug 2025 08:58:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB05.amd.com: jason.andryuk@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EDD6:EE_|MN2PR12MB4272:EE_
-X-MS-Office365-Filtering-Correlation-Id: 257c7527-1b1a-433b-18bb-08dde43b4337
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?nMu5kN6+I6t6UvBysYvjl1/MEYUrCnNC8IwTMUiApM6Y7vjcU5L7+M2ajHCD?=
- =?us-ascii?Q?fm1E04TgLfivlaY/KFpx/OBXiRVFWeSJt4HfkEglYRNUqCUJVW7xdlX/ESS4?=
- =?us-ascii?Q?vo8bpZqUeUCIMQxSaY2wZiDof6geiz/JyGw6W9jHMLqrWO33opFWTKOE3mG7?=
- =?us-ascii?Q?AivaUi5VktkKg/vNRYmshmMkvDxlasVH47xXY2Nx56YIyin61gDNGwWcQtjO?=
- =?us-ascii?Q?P1+KWpnSWMR0bVPQTGf5h/gOr80x8N4np0ZJwafstEU4qCPM1KsFVQ8QEd+M?=
- =?us-ascii?Q?SVEDfgGUW4wLHNDFoU51KIc5ZULnsfv35s7lR/org0HSwDACOGU/20RQco9f?=
- =?us-ascii?Q?99FEOryKLszZ6v9KGyeHpuTRhYku1n53KcTZhHMmaU/juJlwdycxTxRZJS1n?=
- =?us-ascii?Q?LrTxbJ4E8tAotqBtD6kUj3GaW2XMACJjWygKwl11mBJx9Tf0gBr2prrL1mHR?=
- =?us-ascii?Q?T4gTczicMx8C/xgckO+miyL2mns3q5tBNUoP1agh5Cyoo41TnHtVWnlvER8r?=
- =?us-ascii?Q?xTAvFr6rWe8ThzSOwSthdHcxJRlYpvNTUXiLziVp1MgTtSUCQpPAYMLDXMv1?=
- =?us-ascii?Q?tXoPs/dtEkYfO5Y2SYIzFAB49JbZN/M2oXjE2+onWoadlFVjtXQuYlCP3GiQ?=
- =?us-ascii?Q?4W3+CF5a28GBiyoRGIs92SwcM24971eCdefuOL7ufVZAZ/7e4dmH0ZHmGIde?=
- =?us-ascii?Q?FjMOWGPBlz6RXnG+GbBpCIvG4TS48hhRae/39OtZqKAFBPEUKi6IBA7M0Utg?=
- =?us-ascii?Q?oKvMilWMMZteVwD5/f9EUaTLcaugmrG3GjF/4sPDpSP5DLBTENFPhy0WHHKo?=
- =?us-ascii?Q?sxpr4u+NPW6EK2WD8zL3J9vAlQBG3O8fA4qQybwshy4b/RvYeJv529byUyfz?=
- =?us-ascii?Q?AAGWmAmFKNwFE26HzvOVBG3DIIeO0+MIlcztVkhWdQYGYQzz+/H8G01+OqJH?=
- =?us-ascii?Q?d2w4QDk1DwCbOK2mOFfkC02qZAKUenToIQfyOaNwurdUEfus7yJs/gRg0iec?=
- =?us-ascii?Q?kYXJJ6wWJaY5Nt9sJYkr+jSwRffnBucwH1ruJJfHwtG5okUylSUcRy94D2Lg?=
- =?us-ascii?Q?+reSQ4ypSSvEQlivuZKGa1VmV2HTu12f35b3fGW5Cy1wFTHaRtM9uutAEcNM?=
- =?us-ascii?Q?WbNbqpNXLwuLW168eTNjWY4E/G3sGteGmPdZrWEoCrW+bMcNYR/eS+OOSC7L?=
- =?us-ascii?Q?GVxbEmPzlIlizGHekFE56hQRrluaRhe/a00yhvdsr8bVqgCo7krGflPF9oLR?=
- =?us-ascii?Q?vZ6/ARt5r98MWPx4qKGnH39aGx/IfucC0TpPx7/4dIQmtW3RyDKN0+PrIwhY?=
- =?us-ascii?Q?vVIgJIuyy81QV3bea/owOwxHVRrw5CYi3m5bEZ8nFGlw4ZuU0ybFs7947HVx?=
- =?us-ascii?Q?MJsS+vQYboQ5q+Gc+1jp1tzI5cjtQXQPjGbx5JyfQvmsqim0HNfvuUORUANU?=
- =?us-ascii?Q?O4hwTi1b3Y1tW72mPpjeUPea+ylza4Un1fbzXHHXJ8nbpbk3mG5dFqTLPvVk?=
- =?us-ascii?Q?XmZFJ5f3NvQcIeXnA72fgPKyULIXqfFzSher?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 00:55:33.7475
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 257c7527-1b1a-433b-18bb-08dde43b4337
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EDD6.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4272
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/9] printk/nbcon: use panic_on_this_cpu() helper
+Content-Language: en-US
+To: John Ogness <john.ogness@linutronix.de>, pmladek@suse.com,
+ akpm@linux-foundation.org, Steven Rostedt <rostedt@goodmis.org>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: linux-kernel@vger.kernel.org, feng.tang@linux.alibaba.com,
+ joel.granados@kernel.org, namcao@linutronix.de, sravankumarlpu@gmail.com
+References: <20250820091702.512524-1-wangjinchao600@gmail.com>
+ <20250820091702.512524-2-wangjinchao600@gmail.com>
+ <20250820091702.512524-3-wangjinchao600@gmail.com>
+ <20250820091702.512524-4-wangjinchao600@gmail.com>
+ <20250820091702.512524-5-wangjinchao600@gmail.com>
+ <20250820091702.512524-6-wangjinchao600@gmail.com>
+ <20250820091702.512524-7-wangjinchao600@gmail.com>
+ <84wm6rbucz.fsf@jogness.linutronix.de>
+From: Jinchao Wang <wangjinchao600@gmail.com>
+In-Reply-To: <84wm6rbucz.fsf@jogness.linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-VIRQs come in 3 flavors, per-VPU, per-domain, and global, and the VIRQs
-are tracked in per-cpu virq_to_irq arrays.
+On 8/25/25 17:53, John Ogness wrote:
+> On 2025-08-20, Jinchao Wang <wangjinchao600@gmail.com> wrote:
+>> nbcon_context_try_acquire() compared
+>> panic_cpu directly with smp_processor_id().
+>> This open-coded check is now provided by
+>> panic_on_this_cpu().
+>>
+>> Switch to panic_on_this_cpu() to simplify
+>> the code and improve readability.
+>>
+>> Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
+>> ---
+>>   kernel/printk/nbcon.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
+>> index 646801813415..7490865e2f44 100644
+>> --- a/kernel/printk/nbcon.c
+>> +++ b/kernel/printk/nbcon.c
+>> @@ -2,6 +2,7 @@
+>>   // Copyright (C) 2022 Linutronix GmbH, John Ogness
+>>   // Copyright (C) 2022 Intel, Thomas Gleixner
+>>   
+>> +#include "linux/panic.h"
+>>   #include <linux/atomic.h>
+>>   #include <linux/bug.h>
+>>   #include <linux/console.h>
+> 
+> Please use angle brackets. Also, the includes are sorted
+> alphabetically. So it should look like this:
+> 
+>   #include <linux/irqflags.h>
+>   #include <linux/kthread.h>
+>   #include <linux/minmax.h>
+> +#include <linux/panic.h>
+>   #include <linux/percpu.h>
+>   #include <linux/preempt.h>
+>   #include <linux/slab.h>
+> 
 
-Per-domain and global VIRQs must be bound on CPU 0, and
-bind_virq_to_irq() sets the per_cpu virq_to_irq at registration time
-Later, the interrupt can migrate, and info->cpu is updated.  When
-calling __unbind_from_irq(), the per-cpu virq_to_irq is cleared for a
-different cpu.  If bind_virq_to_irq() is called again with CPU 0, the
-stale irq is returned.  There won't be any irq_info for the irq, so
-things break.
-
-Make xen_rebind_evtchn_to_cpu() update the per_cpu virq_to_irq mappings
-to keep them update to date with the current cpu.  This ensures the
-correct virq_to_irq is cleared in __unbind_from_irq().
-
-Fixes: e46cdb66c8fc ("xen: event channels")
-Cc: stable@vger.kernel.org
-Signed-off-by: Jason Andryuk <jason.andryuk@amd.com>
----
-V2:
-Different approach changing virq_to_irq
----
- drivers/xen/events/events_base.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/drivers/xen/events/events_base.c b/drivers/xen/events/events_base.c
-index a85bc43f4344..4e9db7b92dde 100644
---- a/drivers/xen/events/events_base.c
-+++ b/drivers/xen/events/events_base.c
-@@ -1772,6 +1772,7 @@ static int xen_rebind_evtchn_to_cpu(struct irq_info *info, unsigned int tcpu)
- {
- 	struct evtchn_bind_vcpu bind_vcpu;
- 	evtchn_port_t evtchn = info ? info->evtchn : 0;
-+	int old_cpu = info ? info->cpu : tcpu;
- 
- 	if (!VALID_EVTCHN(evtchn))
- 		return -1;
-@@ -1795,8 +1796,18 @@ static int xen_rebind_evtchn_to_cpu(struct irq_info *info, unsigned int tcpu)
- 	 * it, but don't do the xenlinux-level rebind in that case.
- 	 */
- 	if (HYPERVISOR_event_channel_op(EVTCHNOP_bind_vcpu, &bind_vcpu) >= 0)
-+	{
- 		bind_evtchn_to_cpu(info, tcpu, false);
- 
-+		if (info->type == IRQT_VIRQ) {
-+			int virq = info->u.virq;
-+			int irq = per_cpu(virq_to_irq, old_cpu)[virq];
-+
-+			per_cpu(virq_to_irq, old_cpu)[virq] = -1;
-+			per_cpu(virq_to_irq, tcpu)[virq] = irq;
-+		}
-+	}
-+
- 	do_unmask(info, EVT_MASK_REASON_TEMPORARY);
- 
- 	return 0;
+Thanks for the feedback. This patch, v2, has been merged to the -mm 
+branch already, but I will fix the include style in a separate cleanup 
+patch.
 -- 
-2.50.1
-
+Best regards,
+Jinchao
 
