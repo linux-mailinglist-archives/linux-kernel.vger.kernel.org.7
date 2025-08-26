@@ -1,64 +1,42 @@
-Return-Path: <linux-kernel+bounces-786007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F1D4B35370
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:39:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ADA77B35379
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:41:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A9F21B623CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:39:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94A231B627A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:41:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 471D52EFD96;
-	Tue, 26 Aug 2025 05:39:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jgppWsx8"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 746FF2F1FDB;
+	Tue, 26 Aug 2025 05:40:40 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE19611CA9;
-	Tue, 26 Aug 2025 05:39:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD6B2F1FDC;
+	Tue, 26 Aug 2025 05:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756186770; cv=none; b=SCkDaoUOluiyy+bRY72lVXZY8g5/jq8K0MUbzrSA76/PQlpsMk+zU1z/4D6j/7sfjupq2rdREfXy1LY0IkbKVdI3WnycMXCzeEBt3ijR7OtvZqzwzmEvPD7gCMfuFcmOP9E9eISB0lot499YPehZVMWUQWpTzgLOrxgaXwb04IA=
+	t=1756186839; cv=none; b=r6MKspmqxDdR94cSM+fgVcWjdOWiW8zJ9WOWTzWgf3Cvb2BUI/AQMMurV4t/mr5Td/1qFJS12Yu5pIWTlEYTIsM+VpeaF102tYBg8lXld3Tdb/lxB4lv6AEKFfS3OpHOSyLivO1tjIAyphUr7CB05z+3huZ9SJb+HEjB8pcpEic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756186770; c=relaxed/simple;
-	bh=HRJjcbcyRfvO3v41VLnMi0TCRariXmHmNsEbLs52GtQ=;
+	s=arc-20240116; t=1756186839; c=relaxed/simple;
+	bh=9eSCc/1IVWVs30tCSZDdOQB5X7sh8HgtKf8BwoIEIkA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bJ/NcjcbhJ11tO09rmCO8S4aGUkbtvM3w26TPZ3QOpdb/lRhjKdZ22nJzroqKQXcKaRFMz3mczyJBVu1JojMzUco1JWTMPq65CS98uI0Auo2D822hNC6JfxroEz0kBbNvtESN8aEA65cbExj2YkUZKbyjEblJPjK8yLuO0z9Z2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jgppWsx8; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756186769; x=1787722769;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=HRJjcbcyRfvO3v41VLnMi0TCRariXmHmNsEbLs52GtQ=;
-  b=jgppWsx8Ew0fbwYIMvXJP/CvMMrHuHLttIeeJJOruX9ONSX2m7Xiir0h
-   NwuwXtvng2sdGyyq+HdjrVU6nD1dHJWHfKvHqSddm9LJ9594DZA7OcHfo
-   1vJX6JKJtHrTubUfPeoyixz6vThkE08LmqKmb1/ka6VQq89aALQVBq5v/
-   RBZse9Ady2RtjXM8kfMNCqDiID47n0KmOrjW5qon+Q1OWRyJwpoFP8YPo
-   SLD5dKVsg7IgzyuZh1OHXu3O1DkFZspdn6iEObzxkr/tzwX8iDAjcAzaX
-   qAcFYYUibBiQHNn1dc8EBmN/f/GJTl1dtzLOLRK2bShf93YGTlks27sqM
-   g==;
-X-CSE-ConnectionGUID: 1UfnXi8lRt6ZlbeeUckPrQ==
-X-CSE-MsgGUID: FOmdkIa0RqyRT1x6aNYLCQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11533"; a="69123201"
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="69123201"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 22:39:28 -0700
-X-CSE-ConnectionGUID: 2eNAQR4oRJy8JCdYeCXpBA==
-X-CSE-MsgGUID: 6gzzK6PFS/yu5WF5x/yI6w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="193154065"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 22:39:23 -0700
-Message-ID: <9ef0d1f4-3257-4821-8241-aedae0957c6a@linux.intel.com>
-Date: Tue, 26 Aug 2025 13:39:20 +0800
+	 In-Reply-To:Content-Type; b=ukQxPyViKXxxmL2JNSs0EjTpiOFMc9KfCT2Rl9h4PcrKzHBFDNpmySZMCPCsFmkTVgIPEcW9wy8JNhcSB0sUTdjWI6P5JUeRR++FBMDpXxIfYpgsY+qXy05dw1S8CnvQJMjy7vcV1gSSKcWL9blULncp7iu/hSLzOrajp/Bu8mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.192] (ip5f5af7cb.dynamic.kabel-deutschland.de [95.90.247.203])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 8DAC56028826D;
+	Tue, 26 Aug 2025 07:40:00 +0200 (CEST)
+Message-ID: <e9bbe0bb-b70d-445b-a7ff-b0ab2eef6c6f@molgen.mpg.de>
+Date: Tue, 26 Aug 2025 07:40:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,110 +44,421 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 04/19] KVM: selftests: Expose function to allocate
- guest vCPU stack
-To: Sagi Shahar <sagis@google.com>
-Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
- Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>,
- Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>,
- Andrew Jones <ajones@ventanamicro.com>,
- Isaku Yamahata <isaku.yamahata@intel.com>,
- Erdem Aktas <erdemaktas@google.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>,
- "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>,
- Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny
- <ira.weiny@intel.com>, Chao Gao <chao.gao@intel.com>,
- Chenyi Qiang <chenyi.qiang@intel.com>, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org
-References: <20250821042915.3712925-1-sagis@google.com>
- <20250821042915.3712925-5-sagis@google.com>
+Subject: Re: [PATCH] Bluetooth: remove duplicate h4_recv_buf() in header
+To: Calvin Owens <calvin@wbinvd.org>
+Cc: linux-kernel@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Sean Wang <sean.wang@mediatek.com>,
+ Amitkumar Karwar <amitkumar.karwar@nxp.com>,
+ Neeraj Kale <neeraj.sanjaykale@nxp.com>, linux-bluetooth@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ johan.hedberg@intel.com
+References: <be8edf7f8ba8dea6c61272b02fb20a4ac7e1c5a5.1756179634.git.calvin@wbinvd.org>
 Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250821042915.3712925-5-sagis@google.com>
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <be8edf7f8ba8dea6c61272b02fb20a4ac7e1c5a5.1756179634.git.calvin@wbinvd.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
+Dear Calvin,
 
 
-On 8/21/2025 12:28 PM, Sagi Shahar wrote:
-> TDX guests' registers cannot be initialized directly using
-> vcpu_regs_set(), hence the stack pointer needs to be initialized by
-> the guest itself, running boot code beginning at the reset vector.
->
-> Expose the function to allocate the guest stack so that TDX
-> initialization code can allocate it itself and skip the allocation in
-> vm_arch_vcpu_add() in that case.
->
-> Signed-off-by: Sagi Shahar <sagis@google.com>
+Thank you for your patch.
+
+Am 26.08.25 um 06:11 schrieb Calvin Owens:
+> The "h4_recv.h" header contains a duplicate h4_recv_buf() that is nearly
+> but not quite identical to the h4_recv_buf() in hci_h4.c.
+> 
+> This duplicated header was added in commit 07eb96a5a7b0 ("Bluetooth:
+> bpa10x: Use separate h4_recv_buf helper"). I wasn't able to find any
+> explanation for duplicating the code in the discussion:
+> 
+>      https://lore.kernel.org/all/20180320181855.37297-1-marcel@holtmann.org/
+>      https://lore.kernel.org/all/20180324091954.73229-2-marcel@holtmann.org/
+> 
+> Unfortunately, in the years since, several other drivers have come to
+> also rely on this duplicated function, probably by accident. This is, at
+> the very least, *extremely* confusing. It's also caused real issues when
+> it's become out-of-sync, see the following:
+> 
+>      ef564119ba83 ("Bluetooth: hci_h4: Add support for ISO packets")
+>      61b27cdf025b ("Bluetooth: hci_h4: Add support for ISO packets in h4_recv.h")
+> 
+> This is the full diff between the two implementations today:
+> 
+>      --- orig.c
+>      +++ copy.c
+>      @@ -1,117 +1,100 @@
+>       {
+>      -	struct hci_uart *hu = hci_get_drvdata(hdev);
+>      -	u8 alignment = hu->alignment ? hu->alignment : 1;
+>      -
+>       	/* Check for error from previous call */
+>       	if (IS_ERR(skb))
+>       		skb = NULL;
+> 
+>       	while (count) {
+>       		int i, len;
+> 
+>      -		/* remove padding bytes from buffer */
+>      -		for (; hu->padding && count > 0; hu->padding--) {
+>      -			count--;
+>      -			buffer++;
+>      -		}
+>      -		if (!count)
+>      -			break;
+>      -
+>       		if (!skb) {
+>       			for (i = 0; i < pkts_count; i++) {
+>       				if (buffer[0] != (&pkts[i])->type)
+>       					continue;
+> 
+>       				skb = bt_skb_alloc((&pkts[i])->maxlen,
+>       						   GFP_ATOMIC);
+>       				if (!skb)
+>       					return ERR_PTR(-ENOMEM);
+> 
+>       				hci_skb_pkt_type(skb) = (&pkts[i])->type;
+>       				hci_skb_expect(skb) = (&pkts[i])->hlen;
+>       				break;
+>       			}
+> 
+>       			/* Check for invalid packet type */
+>       			if (!skb)
+>       				return ERR_PTR(-EILSEQ);
+> 
+>       			count -= 1;
+>       			buffer += 1;
+>       		}
+> 
+>       		len = min_t(uint, hci_skb_expect(skb) - skb->len, count);
+>       		skb_put_data(skb, buffer, len);
+> 
+>       		count -= len;
+>       		buffer += len;
+> 
+>       		/* Check for partial packet */
+>       		if (skb->len < hci_skb_expect(skb))
+>       			continue;
+> 
+>       		for (i = 0; i < pkts_count; i++) {
+>       			if (hci_skb_pkt_type(skb) == (&pkts[i])->type)
+>       				break;
+>       		}
+> 
+>       		if (i >= pkts_count) {
+>       			kfree_skb(skb);
+>       			return ERR_PTR(-EILSEQ);
+>       		}
+> 
+>       		if (skb->len == (&pkts[i])->hlen) {
+>       			u16 dlen;
+> 
+>       			switch ((&pkts[i])->lsize) {
+>       			case 0:
+>       				/* No variable data length */
+>       				dlen = 0;
+>       				break;
+>       			case 1:
+>       				/* Single octet variable length */
+>       				dlen = skb->data[(&pkts[i])->loff];
+>       				hci_skb_expect(skb) += dlen;
+> 
+>       				if (skb_tailroom(skb) < dlen) {
+>       					kfree_skb(skb);
+>       					return ERR_PTR(-EMSGSIZE);
+>       				}
+>       				break;
+>       			case 2:
+>       				/* Double octet variable length */
+>       				dlen = get_unaligned_le16(skb->data +
+>       							  (&pkts[i])->loff);
+>       				hci_skb_expect(skb) += dlen;
+> 
+>       				if (skb_tailroom(skb) < dlen) {
+>       					kfree_skb(skb);
+>       					return ERR_PTR(-EMSGSIZE);
+>       				}
+>       				break;
+>       			default:
+>       				/* Unsupported variable length */
+>       				kfree_skb(skb);
+>       				return ERR_PTR(-EILSEQ);
+>       			}
+> 
+>       			if (!dlen) {
+>      -				hu->padding = (skb->len + 1) % alignment;
+>      -				hu->padding = (alignment - hu->padding) % alignment;
+>      -
+>       				/* No more data, complete frame */
+>       				(&pkts[i])->recv(hdev, skb);
+>       				skb = NULL;
+>       			}
+>       		} else {
+>      -			hu->padding = (skb->len + 1) % alignment;
+>      -			hu->padding = (alignment - hu->padding) % alignment;
+>      -
+>       			/* Complete frame */
+>       			(&pkts[i])->recv(hdev, skb);
+>       			skb = NULL;
+>       		}
+>       	}
+> 
+>       	return skb;
+>       }
+>      -EXPORT_SYMBOL_GPL(h4_recv_buf)
+> 
+> As I read this: If alignment is one, and padding is zero, padding
+> remains zero throughout the loop. So it seems to me that the two
+> functions behave strictly identically in that case. All the duplicated
+> defines are also identical, as is the duplicated h4_recv_pkt structure
+> declaration.
+> 
+> All four drivers which use the duplicated function use the default
+> alignment of one, and the default padding of zero. I therefore conclude
+> the duplicate function may be safely replaced with the core one.
+> 
+> I raised this in an RFC a few months ago, and didn't get much interest:
+> 
+>      https://lore.kernel.org/all/CABBYNZ+ONkYtq2fR-8PtL3X-vetvJ0BdP4MTw9cNpjLDzG3HUQ@mail.gmail.com/
+> 
+> ...but I'm still wary I've missed something, and I'd really appreciate
+> more eyeballs on it.
+> 
+> I tested this successfully on btnxpuart a few months ago, but
+> unfortunately I no longer have access to that hardware.
+
+Great analysis. Thank you for your time writing this up.
+
+> Cc: Marcel Holtmann <marcel@holtmann.org>
+> Signed-off-by: Calvin Owens <calvin@wbinvd.org>
 > ---
->   .../selftests/kvm/include/x86/processor.h       |  2 ++
->   tools/testing/selftests/kvm/lib/x86/processor.c | 17 ++++++++++++-----
->   2 files changed, 14 insertions(+), 5 deletions(-)
->
-> diff --git a/tools/testing/selftests/kvm/include/x86/processor.h b/tools/testing/selftests/kvm/include/x86/processor.h
-> index 5c16507f9b2d..8fcc5118683e 100644
-> --- a/tools/testing/selftests/kvm/include/x86/processor.h
-> +++ b/tools/testing/selftests/kvm/include/x86/processor.h
-> @@ -1111,6 +1111,8 @@ static inline void vcpu_clear_cpuid_feature(struct kvm_vcpu *vcpu,
->   	vcpu_set_or_clear_cpuid_feature(vcpu, feature, false);
->   }
+>   drivers/bluetooth/bpa10x.c    |   2 +-
+>   drivers/bluetooth/btmtksdio.c |   2 +-
+>   drivers/bluetooth/btmtkuart.c |   2 +-
+>   drivers/bluetooth/btnxpuart.c |   2 +-
+>   drivers/bluetooth/h4_recv.h   | 153 ----------------------------------
+>   5 files changed, 4 insertions(+), 157 deletions(-)
+>   delete mode 100644 drivers/bluetooth/h4_recv.h
+> 
+> diff --git a/drivers/bluetooth/bpa10x.c b/drivers/bluetooth/bpa10x.c
+> index 8b43dfc755de..b7ba667a3d09 100644
+> --- a/drivers/bluetooth/bpa10x.c
+> +++ b/drivers/bluetooth/bpa10x.c
+> @@ -20,7 +20,7 @@
+>   #include <net/bluetooth/bluetooth.h>
+>   #include <net/bluetooth/hci_core.h>
 >   
-> +vm_vaddr_t kvm_allocate_vcpu_stack(struct kvm_vm *vm);
-> +
->   uint64_t vcpu_get_msr(struct kvm_vcpu *vcpu, uint64_t msr_index);
->   int _vcpu_set_msr(struct kvm_vcpu *vcpu, uint64_t msr_index, uint64_t msr_value);
+> -#include "h4_recv.h"
+> +#include "hci_uart.h"
 >   
-> diff --git a/tools/testing/selftests/kvm/lib/x86/processor.c b/tools/testing/selftests/kvm/lib/x86/processor.c
-> index b2a4b11ac8c0..1eae92957456 100644
-> --- a/tools/testing/selftests/kvm/lib/x86/processor.c
-> +++ b/tools/testing/selftests/kvm/lib/x86/processor.c
-> @@ -687,12 +687,9 @@ void vcpu_arch_set_entry_point(struct kvm_vcpu *vcpu, void *guest_code)
->   	vcpu_regs_set(vcpu, &regs);
->   }
+>   #define VERSION "0.11"
 >   
-> -struct kvm_vcpu *vm_arch_vcpu_add(struct kvm_vm *vm, uint32_t vcpu_id)
-> +vm_vaddr_t kvm_allocate_vcpu_stack(struct kvm_vm *vm)
->   {
-> -	struct kvm_mp_state mp_state;
-> -	struct kvm_regs regs;
->   	vm_vaddr_t stack_vaddr;
-> -	struct kvm_vcpu *vcpu;
+> diff --git a/drivers/bluetooth/btmtksdio.c b/drivers/bluetooth/btmtksdio.c
+> index 4fc673640bfc..50abefba6d04 100644
+> --- a/drivers/bluetooth/btmtksdio.c
+> +++ b/drivers/bluetooth/btmtksdio.c
+> @@ -29,7 +29,7 @@
+>   #include <net/bluetooth/bluetooth.h>
+>   #include <net/bluetooth/hci_core.h>
 >   
->   	stack_vaddr = __vm_vaddr_alloc(vm, DEFAULT_STACK_PGS * getpagesize(),
->   				       DEFAULT_GUEST_STACK_VADDR_MIN,
-> @@ -713,6 +710,15 @@ struct kvm_vcpu *vm_arch_vcpu_add(struct kvm_vm *vm, uint32_t vcpu_id)
->   		    "__vm_vaddr_alloc() did not provide a page-aligned address");
->   	stack_vaddr -= 8;
+> -#include "h4_recv.h"
+> +#include "hci_uart.h"
+>   #include "btmtk.h"
 >   
-> +	return stack_vaddr;
-> +}
-> +
-> +struct kvm_vcpu *vm_arch_vcpu_add(struct kvm_vm *vm, uint32_t vcpu_id)
-> +{
-> +	struct kvm_mp_state mp_state;
-> +	struct kvm_regs regs;
-> +	struct kvm_vcpu *vcpu;
-> +
->   	vcpu = __vm_vcpu_add(vm, vcpu_id);
->   	vcpu_init_cpuid(vcpu, kvm_get_supported_cpuid());
->   	vcpu_init_sregs(vm, vcpu);
-> @@ -721,7 +727,8 @@ struct kvm_vcpu *vm_arch_vcpu_add(struct kvm_vm *vm, uint32_t vcpu_id)
->   	/* Setup guest general purpose registers */
->   	vcpu_regs_get(vcpu, &regs);
->   	regs.rflags = regs.rflags | 0x2;
-> -	regs.rsp = stack_vaddr;
-> +	if (vm->type != KVM_X86_TDX_VM)
-> +		regs.rsp = kvm_allocate_vcpu_stack(vm);
+>   #define VERSION "0.1"
+> diff --git a/drivers/bluetooth/btmtkuart.c b/drivers/bluetooth/btmtkuart.c
+> index 76995cfcd534..d9b90ea2ad38 100644
+> --- a/drivers/bluetooth/btmtkuart.c
+> +++ b/drivers/bluetooth/btmtkuart.c
+> @@ -27,7 +27,7 @@
+>   #include <net/bluetooth/bluetooth.h>
+>   #include <net/bluetooth/hci_core.h>
+>   
+> -#include "h4_recv.h"
+> +#include "hci_uart.h"
+>   #include "btmtk.h"
+>   
+>   #define VERSION "0.2"
+> diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
+> index 76e7f857fb7d..d5153fed0518 100644
+> --- a/drivers/bluetooth/btnxpuart.c
+> +++ b/drivers/bluetooth/btnxpuart.c
+> @@ -24,7 +24,7 @@
+>   #include <net/bluetooth/bluetooth.h>
+>   #include <net/bluetooth/hci_core.h>
+>   
+> -#include "h4_recv.h"
+> +#include "hci_uart.h"
+>   
+>   #define MANUFACTURER_NXP		37
+>   
+> diff --git a/drivers/bluetooth/h4_recv.h b/drivers/bluetooth/h4_recv.h
+> deleted file mode 100644
+> index 28cf2d8c2d48..000000000000
+> --- a/drivers/bluetooth/h4_recv.h
+> +++ /dev/null
+> @@ -1,153 +0,0 @@
+> -/* SPDX-License-Identifier: GPL-2.0-or-later */
+> -/*
+> - *
+> - *  Generic Bluetooth HCI UART driver
+> - *
+> - *  Copyright (C) 2015-2018  Intel Corporation
+> - */
+> -
+> -#include <linux/unaligned.h>
+> -
+> -struct h4_recv_pkt {
+> -	u8  type;	/* Packet type */
+> -	u8  hlen;	/* Header length */
+> -	u8  loff;	/* Data length offset in header */
+> -	u8  lsize;	/* Data length field size */
+> -	u16 maxlen;	/* Max overall packet length */
+> -	int (*recv)(struct hci_dev *hdev, struct sk_buff *skb);
+> -};
+> -
+> -#define H4_RECV_ACL \
+> -	.type = HCI_ACLDATA_PKT, \
+> -	.hlen = HCI_ACL_HDR_SIZE, \
+> -	.loff = 2, \
+> -	.lsize = 2, \
+> -	.maxlen = HCI_MAX_FRAME_SIZE \
+> -
+> -#define H4_RECV_SCO \
+> -	.type = HCI_SCODATA_PKT, \
+> -	.hlen = HCI_SCO_HDR_SIZE, \
+> -	.loff = 2, \
+> -	.lsize = 1, \
+> -	.maxlen = HCI_MAX_SCO_SIZE
+> -
+> -#define H4_RECV_EVENT \
+> -	.type = HCI_EVENT_PKT, \
+> -	.hlen = HCI_EVENT_HDR_SIZE, \
+> -	.loff = 1, \
+> -	.lsize = 1, \
+> -	.maxlen = HCI_MAX_EVENT_SIZE
+> -
+> -#define H4_RECV_ISO \
+> -	.type = HCI_ISODATA_PKT, \
+> -	.hlen = HCI_ISO_HDR_SIZE, \
+> -	.loff = 2, \
+> -	.lsize = 2, \
+> -	.maxlen = HCI_MAX_FRAME_SIZE
+> -
+> -static inline struct sk_buff *h4_recv_buf(struct hci_dev *hdev,
+> -					  struct sk_buff *skb,
+> -					  const unsigned char *buffer,
+> -					  int count,
+> -					  const struct h4_recv_pkt *pkts,
+> -					  int pkts_count)
+> -{
+> -	/* Check for error from previous call */
+> -	if (IS_ERR(skb))
+> -		skb = NULL;
+> -
+> -	while (count) {
+> -		int i, len;
+> -
+> -		if (!skb) {
+> -			for (i = 0; i < pkts_count; i++) {
+> -				if (buffer[0] != (&pkts[i])->type)
+> -					continue;
+> -
+> -				skb = bt_skb_alloc((&pkts[i])->maxlen,
+> -						   GFP_ATOMIC);
+> -				if (!skb)
+> -					return ERR_PTR(-ENOMEM);
+> -
+> -				hci_skb_pkt_type(skb) = (&pkts[i])->type;
+> -				hci_skb_expect(skb) = (&pkts[i])->hlen;
+> -				break;
+> -			}
+> -
+> -			/* Check for invalid packet type */
+> -			if (!skb)
+> -				return ERR_PTR(-EILSEQ);
+> -
+> -			count -= 1;
+> -			buffer += 1;
+> -		}
+> -
+> -		len = min_t(uint, hci_skb_expect(skb) - skb->len, count);
+> -		skb_put_data(skb, buffer, len);
+> -
+> -		count -= len;
+> -		buffer += len;
+> -
+> -		/* Check for partial packet */
+> -		if (skb->len < hci_skb_expect(skb))
+> -			continue;
+> -
+> -		for (i = 0; i < pkts_count; i++) {
+> -			if (hci_skb_pkt_type(skb) == (&pkts[i])->type)
+> -				break;
+> -		}
+> -
+> -		if (i >= pkts_count) {
+> -			kfree_skb(skb);
+> -			return ERR_PTR(-EILSEQ);
+> -		}
+> -
+> -		if (skb->len == (&pkts[i])->hlen) {
+> -			u16 dlen;
+> -
+> -			switch ((&pkts[i])->lsize) {
+> -			case 0:
+> -				/* No variable data length */
+> -				dlen = 0;
+> -				break;
+> -			case 1:
+> -				/* Single octet variable length */
+> -				dlen = skb->data[(&pkts[i])->loff];
+> -				hci_skb_expect(skb) += dlen;
+> -
+> -				if (skb_tailroom(skb) < dlen) {
+> -					kfree_skb(skb);
+> -					return ERR_PTR(-EMSGSIZE);
+> -				}
+> -				break;
+> -			case 2:
+> -				/* Double octet variable length */
+> -				dlen = get_unaligned_le16(skb->data +
+> -							  (&pkts[i])->loff);
+> -				hci_skb_expect(skb) += dlen;
+> -
+> -				if (skb_tailroom(skb) < dlen) {
+> -					kfree_skb(skb);
+> -					return ERR_PTR(-EMSGSIZE);
+> -				}
+> -				break;
+> -			default:
+> -				/* Unsupported variable length */
+> -				kfree_skb(skb);
+> -				return ERR_PTR(-EILSEQ);
+> -			}
+> -
+> -			if (!dlen) {
+> -				/* No more data, complete frame */
+> -				(&pkts[i])->recv(hdev, skb);
+> -				skb = NULL;
+> -			}
+> -		} else {
+> -			/* Complete frame */
+> -			(&pkts[i])->recv(hdev, skb);
+> -			skb = NULL;
+> -		}
+> -	}
+> -
+> -	return skb;
+> -}
 
-I am wondering if this could be more generic.
-I.e, make vcpu_regs_get() return the error code.
-If vcpu_regs_get() failed (for TDX, since it's guest state is protected, the
-ioctl will return -EINVAL), the vcpu_regs_set(), including the allocation for
-the vcpu stack, could be skipped.
+Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
 
->   	vcpu_regs_set(vcpu, &regs);
->   
->   	/* Setup the MP state */
 
+Kind regards,
+
+Paul
 
