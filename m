@@ -1,171 +1,104 @@
-Return-Path: <linux-kernel+bounces-786245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68E2EB35719
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:35:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F0BFB3571F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:35:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64CE92A1847
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:35:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E29BC2A1B35
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:35:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4C552FE052;
-	Tue, 26 Aug 2025 08:34:11 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FE782FD7A8;
-	Tue, 26 Aug 2025 08:34:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5989E2FB994;
+	Tue, 26 Aug 2025 08:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NIMGdEu5"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A9E914A8B;
+	Tue, 26 Aug 2025 08:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756197251; cv=none; b=ig5tNdUsiuG1AMeoUzzMOt0ZkokaJvhgKIlp76Pu/KwZA7jYdGsZ2Nc94dcqB4O6FYQnTooD/g8iCZcgmAnPy1FYd15vJRGMoGjNCZxChGWfeicJIiJt91Mtj68OP+1Q0vU1Z4SOFI2QKqfEihAQ4Q3Rsou8Os+40Ne3JC37tXs=
+	t=1756197316; cv=none; b=pZAStsLd2GB1C6wasQl5QQCduyRr714tENRSqfsYmvKeRmzHMv+xk4utjmqvaJtCtvosUUfys5IK9LJmzP8Lm9J8fh+xsWp7jCrnP6a5iPqHnf29qL8sLUrKO3GxN0upnuvy6dpcShnGPOw84ruUJ4Is6c+Tc1aGVL6TkVmWLVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756197251; c=relaxed/simple;
-	bh=qxC/p1Gc9KCWKM0dtM1F0XLBHrEhNf6/UuCrJIdSBD0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rSqD7jicQYGWNPIahr4FCy/Oqi8GcMwCJJ52xG3Z8OShEmlYVwpG8Gqy4Qxajx7A8AfzLo6205dlaEj12UirjugDWWeIr+r/nVnN1izy4FMy/S+7rrxEtIXu8pZ9wh+J1j7njJEKuVPlJ7myH0yXGXAWIgmadvo+AIbxbZcTe1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 054471AC1;
-	Tue, 26 Aug 2025 01:33:59 -0700 (PDT)
-Received: from [10.57.89.149] (unknown [10.57.89.149])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8E23E3F694;
-	Tue, 26 Aug 2025 01:34:01 -0700 (PDT)
-Message-ID: <9e2dcf8f-98b7-4461-af75-71627ee48230@arm.com>
-Date: Tue, 26 Aug 2025 10:33:59 +0200
+	s=arc-20240116; t=1756197316; c=relaxed/simple;
+	bh=wF2iqRuPq649nB8WnYrSESB/yuS8sJCOpTTxDXnS6sM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F0Dx+4rSUM9K1pbMsLXoGV+KDIf/JVohfd/nyzIqmgUpkH+TUVzVlHlkgH011ski0uPlPcoigdzWVi5rI3TgTbR7Y5iLLkXmD+r7tBVNbw3qFlq0FTVorIzgwqFZ95xPRekhMLitVtdhftg3Bj/9WT+u2OOEdaA1fK8zD3X30Sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NIMGdEu5; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-71d603acc23so41825417b3.1;
+        Tue, 26 Aug 2025 01:35:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756197314; x=1756802114; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ac2/FoHy2PuIcNAfbmtOH9apRTI3pIQbhyR2CE6Z1Qw=;
+        b=NIMGdEu53a5IW/5M5WWa8dcv8iG/PI5pN242pItMfF0m5olmtMSUHTqBy6RwqwBFNt
+         3sDGdJDhznUqXHZnYSDP1YcQOZMiXX9Uo0CHsIy5yo5nqFgBCVladJPYaMkvl69fCBuC
+         hMFfzZFhQWt8zwtpnFl2DUcVx1dMRrxWFQeW+Tz6tqoF3+VCy9yuMUPhBRxPOGsiPh5x
+         jGZOUsMNFvVgYQk6ckIduHK5AHEqkjj8Z51E64SFZCEKIX4wvxjxihZMWehTrmpXvsZS
+         srZXov5KjZd2XmEisee8NWqKnbyUBMskaV3H7S+IDjl3Tbqz2zrKKxYoRXM1i2wV3prM
+         Mkvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756197314; x=1756802114;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ac2/FoHy2PuIcNAfbmtOH9apRTI3pIQbhyR2CE6Z1Qw=;
+        b=OuQxcS2hW7C5G2UY4eVrJK1DiLLB2H9XiyilcNSW2eFb/IVBHJLqqjm92n4SOCI00L
+         QBLo6h7HkMGNsLn5Z5H3yLxSrBYOP8R/O4iIpXfCZa9kq+1L1dxzPt92n6YxuhuKBnGO
+         QKxRcVZOKUpeGDfv9MUqquc1gD1XCOnT6ms56EK3O2xIZImO18XOXdKijsG9wnNqzbYX
+         ESJkkwwuHkbnXuEHsp4tLykgaPJgX+g4ybqAZsCIH+hw1SwwEYlH8GJe2tPdN4rHDqbj
+         u15ldPEHAsCTPZDbv96rmV1rU7N6wmvwVyDIuC6buGcufZvvzqbNQQ4scknmifV6EAot
+         Xy5A==
+X-Forwarded-Encrypted: i=1; AJvYcCWVGEGtQBAEEfI7YPKJ3txTdU2yAK8VHd2ko7te2zjLYm/BISJj2WHagzh1GjNeSbOCGmBN+MKl@vger.kernel.org, AJvYcCXJXo4Tz7dkw7xgSfqfuK2/JgFsvTwS5+VaW4JxGbWEDibZiCc/AfMSbysJFbKrguaSaN1MCKX9csMWd5I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9DnGaO1aETeDN67Mth4W1StrZcCpx13tQoPBpDWR0yn4e+dv/
+	Vor7z/MLYk7kSnquWxeONR/s2ShyA3lTF3FWibH28e2ffELq08R/kn5Z+VVtYjQVCwoaPw+gKx2
+	FZkKL3VflW+rBmtBZ4FyqwmRm5OlPqRQD8FgtKGltdA==
+X-Gm-Gg: ASbGncsdD9kGovgyBBtd1bI2QuPquk/tLmn8lZt3iH0Y9yyfA10lmqqpJixx8BGaW21
+	DmINiOuTKzWCkogYbZGr/xYG7IwMS1q8u33mqpMV3qh2tzDm5s+N8QIiGjNyTsYkJo8p4isSXWf
+	AnE9EthqqqN/77nAShbCmtQodV1VaB5Y5g6jcopATgnyH16BIQ5dh/+jGjD1IOdEbBku7lP/T5y
+	6hAfFZbQhjBx1ulS1ZD8/Nh8MAhbz9eVsQA5GkkFyzkqsICBA==
+X-Google-Smtp-Source: AGHT+IEsxj9AM63XvfJuRmA8fh9Cj786c121WPw8M1n+C9wqWvFJ11QETiHRWLoG7EY1dbwavQKHqRNShZHq7/t1Grc=
+X-Received: by 2002:a05:690c:c0b:b0:720:631:e77b with SMTP id
+ 00721157ae682-7200631f187mr88570537b3.2.1756197314230; Tue, 26 Aug 2025
+ 01:35:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/8] selftests/mm: Add -Wunreachable-code and fix
- warnings
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Shuah Khan <shuah@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
- Peter Xu <peterx@redhat.com>, Leon Romanovsky <leon@kernel.org>,
- Zi Yan <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-riscv@lists.infradead.org
-Cc: kernel@collabora.com, Sidhartha Kumar <sidhartha.kumar@oracle.com>
-References: <20250822082145.4145617-1-usama.anjum@collabora.com>
- <20250822082145.4145617-2-usama.anjum@collabora.com>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <20250822082145.4145617-2-usama.anjum@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250826023346.26046-1-dqfext@gmail.com> <CANn89iLZUkQrsfqvEZGmz9ZVoVk1CNQzaZyCcJ53o9e2-1GTPQ@mail.gmail.com>
+In-Reply-To: <CANn89iLZUkQrsfqvEZGmz9ZVoVk1CNQzaZyCcJ53o9e2-1GTPQ@mail.gmail.com>
+From: Qingfang Deng <dqfext@gmail.com>
+Date: Tue, 26 Aug 2025 16:34:45 +0800
+X-Gm-Features: Ac12FXz2ge7S7Dy3y2jx-XnVfO4WuvDi4NOphRSkwyzQlihg9mJfEI-kpEJzPcY
+Message-ID: <CALW65jZwrO5hQs_rm1Qo_+p-6yiKm+AdC9ZjkfjZnoWAm+i=Bg@mail.gmail.com>
+Subject: Re: [PATCH net-next 1/2] pppoe: remove rwlock usage
+To: Eric Dumazet <edumazet@google.com>
+Cc: Michal Ostrowski <mostrows@earthlink.net>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 22/08/2025 10:20, Muhammad Usama Anjum wrote:
-> Enable -Wunreachable-code flag to catch dead code and fix them.
+On Tue, Aug 26, 2025 at 3:33=E2=80=AFPM Eric Dumazet <edumazet@google.com> =
+wrote:
+> Are you sure that RCU rules make sure sk_refcnt can not be zero ?
 >
-> 1. Remove the dead code and write a comment instead:
-> hmm-tests.c:2033:3: warning: code will never be executed
-> [-Wunreachable-code]
->                 perror("Should not reach this\n");
->                 ^~~~~~
+> sock_hold()  will crash otherwise.
 >
-> 2. ksft_exit_fail_msg() calls exit(). Remove the dead code.
-
-In that new version there's no dead code removal, rather that call is
-replaced to a call to ksft_print_msg() that doesn't exit.
-
-With that corrected:
-
-Reviewed-by: Kevin Brodsky <kevin.brodsky@arm.com>
-
-- Kevin
-
-> split_huge_page_test.c:301:3: warning: code will never be executed
-> [-Wunreachable-code]
->                 goto cleanup;
->                 ^~~~~~~~~~~~
+> if (po && !refcount_inc_not_zero(&sk_pppox(po)->sk_refcnt))
+>     po =3D NULL;
 >
-> 3. Remove duplicate inline.
-> pkey_sighandler_tests.c:44:15: warning: duplicate 'inline' declaration
-> specifier [-Wduplicate-decl-specifier]
-> static inline __always_inline
->
-> Reviewed-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
-> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> ---
-> Changes since v2:
-> - In split_huge_page_test.c, print error message and then go to cleanup
->   tag for cleanup instead of just exiting without cleanup
-> ---
->  tools/testing/selftests/mm/Makefile                | 1 +
->  tools/testing/selftests/mm/hmm-tests.c             | 5 ++---
->  tools/testing/selftests/mm/pkey_sighandler_tests.c | 2 +-
->  tools/testing/selftests/mm/split_huge_page_test.c  | 2 +-
->  4 files changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
-> index d13b3cef2a2b2..23d4bf6215465 100644
-> --- a/tools/testing/selftests/mm/Makefile
-> +++ b/tools/testing/selftests/mm/Makefile
-> @@ -34,6 +34,7 @@ endif
->  MAKEFLAGS += --no-builtin-rules
->  
->  CFLAGS = -Wall -O2 -I $(top_srcdir) $(EXTRA_CFLAGS) $(KHDR_INCLUDES) $(TOOLS_INCLUDES)
-> +CFLAGS += -Wunreachable-code
->  LDLIBS = -lrt -lpthread -lm
->  
->  # Some distributions (such as Ubuntu) configure GCC so that _FORTIFY_SOURCE is
-> diff --git a/tools/testing/selftests/mm/hmm-tests.c b/tools/testing/selftests/mm/hmm-tests.c
-> index 141bf63cbe05e..15aadaf24a667 100644
-> --- a/tools/testing/selftests/mm/hmm-tests.c
-> +++ b/tools/testing/selftests/mm/hmm-tests.c
-> @@ -2027,11 +2027,10 @@ TEST_F(hmm, hmm_cow_in_device)
->  	if (pid == -1)
->  		ASSERT_EQ(pid, 0);
->  	if (!pid) {
-> -		/* Child process waitd for SIGTERM from the parent. */
-> +		/* Child process waits for SIGTERM from the parent. */
->  		while (1) {
->  		}
-> -		perror("Should not reach this\n");
-> -		exit(0);
-> +		/* Should not reach this */
->  	}
->  	/* Parent process writes to COW pages(s) and gets a
->  	 * new copy in system. In case of device private pages,
-> diff --git a/tools/testing/selftests/mm/pkey_sighandler_tests.c b/tools/testing/selftests/mm/pkey_sighandler_tests.c
-> index b5e076a564c95..302fef54049c8 100644
-> --- a/tools/testing/selftests/mm/pkey_sighandler_tests.c
-> +++ b/tools/testing/selftests/mm/pkey_sighandler_tests.c
-> @@ -41,7 +41,7 @@ static siginfo_t siginfo = {0};
->   * syscall will attempt to access the PLT in order to call a library function
->   * which is protected by MPK 0 which we don't have access to.
->   */
-> -static inline __always_inline
-> +static __always_inline
->  long syscall_raw(long n, long a1, long a2, long a3, long a4, long a5, long a6)
->  {
->  	unsigned long ret;
-> diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
-> index bf40e6b121abc..de0d26f3df675 100644
-> --- a/tools/testing/selftests/mm/split_huge_page_test.c
-> +++ b/tools/testing/selftests/mm/split_huge_page_test.c
-> @@ -297,7 +297,7 @@ void split_file_backed_thp(int order)
->  
->  	status = snprintf(testfile, INPUT_MAX, "%s/thp_file", tmpfs_loc);
->  	if (status >= INPUT_MAX) {
-> -		ksft_exit_fail_msg("Fail to create file-backed THP split testing file\n");
-> +		ksft_print_msg("Fail to create file-backed THP split testing file\n");
->  		goto cleanup;
->  	}
->  
+> I will send fixes to drivers/net/pptp.c, net/l2tp/l2tp_ppp.c,
+> net/phonet/socket.c, net/qrtr/af_qrtr.c, net/tipc/socket.c
+
+Nice catch. I'll send a v2 with your fix. Thanks!
 
