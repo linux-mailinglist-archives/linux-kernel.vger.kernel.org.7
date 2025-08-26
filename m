@@ -1,76 +1,78 @@
-Return-Path: <linux-kernel+bounces-787379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D625B37564
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 01:16:49 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFDA4B37565
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 01:16:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BAB77B2D4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 23:15:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2A2B94E29DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 23:16:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF903054FB;
-	Tue, 26 Aug 2025 23:16:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3591F306D47;
+	Tue, 26 Aug 2025 23:16:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="OXyoNDKu"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="XhInzqTM"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610A92BDC02
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 23:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD2FE30101F
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 23:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756250200; cv=none; b=O6LkvhDTNVc9vIV+txJfj0BB3ENXUxb5Fmz0m1x8aXSMg9fjua7uBFhbCkuCBUEmRs0MZeZrJTdvmNth0JrYhb8Rcdq58408QMHTh4zmoPvl4vi2Eid024OPlXHN+yrBGxn3KohiRd1pnjHDK56sYaZN5Ng38jxLPAclkXmeMi0=
+	t=1756250202; cv=none; b=Ejx4DKfW5r4wRIU7/buR4AENb+xsvMNk0SyKogRAnlWkR7xtB12Z8j07tz5P9/fiqerKBzD/gqZpoElgTNzDi6gjd2ht1mk0VDakv7F67KOGgzwsuMEN3HwzwHA3nddYmPxLBHUz0e+lJa3lbujJ93SYxziz3spCyxsJECsrOf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756250200; c=relaxed/simple;
-	bh=qvi7B5q37ieJSXMATxBD/HvZ0beHaR80oa05ZVPlxCo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bi9I3MbiW4//rpDo2OtE8zyUmEfUrmmQxKcxMwu0AKliCxfwnCYhLjprFQPAcpMOWlvzt4Fpa6ijMPnet2b7i4R8Re8gn4n9NORWKadQv2Ub8EDRdrnN6Wj8JhnxEB+DVMi2bczGHjXJRqyvuq42pZyk5ejseCMLaslKtV4NW/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=OXyoNDKu; arc=none smtp.client-ip=209.85.218.54
+	s=arc-20240116; t=1756250202; c=relaxed/simple;
+	bh=/fBqzc3yn80C+Clra48ZRyN+Wew+iSqN6ghgdIhxSrk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=dthNMb/kiyjmBZQ1ACLwGyiaVcwQyebtOv+ntJ0BcwQJIzX1cENE6qLfiO1i73XwjKjCB6KXfNdWDHDoWVeVHJvzBiLLFCQsR5BwJkvskmyTuo39ly2nzh9y3zvjKo0sdcusQFo596JH0pY9+mPvo/fMLwC/c+zBjGOa7jprEic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=XhInzqTM; arc=none smtp.client-ip=209.85.208.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-afebb6d3f2bso65905866b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 16:16:38 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-61c4f73cfa0so5442724a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 16:16:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1756250197; x=1756854997; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aK14C8WHtwfr9yBqD7cQYdKpQBzE143ZMlJ2OollMC0=;
-        b=OXyoNDKuySL+o/GfemkGnHVeKTERDmiI8yqWCgMMXcnbbxibagnvBVUSBSwRNrk5QS
-         eVHNDlFMLeIzlRfqEJe51sjDnAIT1VvS4WyndYkYpU73fivglTlORMGzF5CHBMfDtdyt
-         QNQsd9CVwwPtlA2zjDMUbhW0hpZBmm7KH4a9r51PfkkoprNKkCAt+zCdZiwT5XBSNVLF
-         ONtud4FQuzSIz5n3B4uoxiMCb+KLFABp0s9QBRn3pr2FhI2/Y3ApJziLR2of9/uDHWGf
-         7ir3goOoza/PnFS/cWn9pGjvQ7v1soAtMl6ECvyeGem/EL38fi/CSIT6bvTbOqphy7SX
-         aAwA==
+        d=ionos.com; s=google; t=1756250199; x=1756854999; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qetrqf3MczqPduYKizayxhW6O6ZOA8BdxBOfHLUC1/Q=;
+        b=XhInzqTM6YJH7dv+5FQe61ZQ1eXiz+6U52MHEcCidDyang8d8CV1gDdQ+wCsSMi9Od
+         bJioiZ7tHrwcXbvyFSuk25LG/GiVy+CuicDGcIHSAYTdPXww92NEVYpQWbQzdnbBq5ec
+         cy9vF4LWxqZGPSc3bW39ushsBYo44NzeI4KIq25kKvVxBr62Fg54KREzAZs2NLL0h3dL
+         cdyOn1pQHzLyToUPzyP6mocub1lVXAot7Rf3+IHEmmN8NZH9ZnrgJelv2RezLpuypRhJ
+         Yx2NnwiPuZ0F5ge1HNrpb7lFHODrnKpFFA2exQQFwDqlBmZpRSTeWvL6YUsARvbUskch
+         jnUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756250197; x=1756854997;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aK14C8WHtwfr9yBqD7cQYdKpQBzE143ZMlJ2OollMC0=;
-        b=JwyAWGjj0gT94N3EsSmtcJaIQ8nzaTDkPp/UWJ+rouP/sUeoi7KxurV0CtvLqXKjdo
-         ispl9bDs0zBnpGdoTD2Z8tV+cOTaoMDbRZD7QR7C/BQJmW3ZifdFH8WLwSIxyEnHPLi/
-         gI0CaomBVgnzyzHuJp2rA03WHqtVyCvjrOLOy7Bj/5y6ThxRyMi0Xtqhc1zwmNhLhDGu
-         GT0LhPhXp71yTvpEsWi7hG/8L9x5VXMvFpVlpzkFXhBbkX8wXChkhkrciG6sjNSEGtDB
-         aM7ZPT+yCS8L/lRM5WItjEVSfaG+fqTe2/zrTNvfJs8LwgDSRTawTOhs7lHoWXxxUE8H
-         0ASA==
-X-Forwarded-Encrypted: i=1; AJvYcCUqUp6eD3O1knZtsrrN0waNRZmRHUWTjwOjJy8r5S7Zk4N5w2RMCmodju19UCgDHmxWFkK+aHC4Htv3mYA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNgkv0C5vYKfzehE8PrgfhoGScWH9QImxwxULq8D0kRJ0KezO5
-	1UKvhC2DRlLu+1bbLfEy6T5+31qF55xUXNPRrx8oCQ8/QdkViKehXkD+C4OUJ9nyVbc=
-X-Gm-Gg: ASbGncucvbA1cOTCpXbGrDUHjrrbM6DqQ8Lo/ZUwh2JsAcV/exlL5BjId9ZpSoIpBXd
-	9vBkQYFCOmVaF2Q4iJzyvaXhtpmhVM9vOKYprr0ih/HhZe9aaIVVmFjXQpinUjFB3pk+uo55fBk
-	f77+Y15Xp+hK2mrvqH+3yflAGQXi2U5Jw0RG+PgQAAe025f7JcD7ET5chYdqWoFJPQrcssbWUeL
-	DVUXqUcr1spiXQ3ZRlR7Eb3XrQLIl93/hAqYqiVnsaTcxoaH44jTCHVLmHNctJVGAzyLe21Sx1B
-	Rc1J8cmCH95U+nHUUiSJTPZ+MgQEZmMZx5jIwyklYtvw1o0vO0K148s2/CRMB3ow/ydDGhv0G/4
-	iOyPt8oZMuoT+6ZJOCHH1jaYBtID7r87RK0+K/EZqZrLuvwy189W0coiZD1AchzAK1VKZB8Rh2a
-	X+D2YiQYyIOXACX/wEmuKQDQ==
-X-Google-Smtp-Source: AGHT+IFiG6h5lI6W9GmtX6eyyZFaeAkkYu/4EvN9xMb66KhJPYTSBOh+0PHK7R6lz+1qTP8H7JPHOA==
-X-Received: by 2002:a17:906:d511:b0:afe:8d25:770f with SMTP id a640c23a62f3a-afe8d25818bmr502309566b.3.1756250196702;
-        Tue, 26 Aug 2025 16:16:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756250199; x=1756854999;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qetrqf3MczqPduYKizayxhW6O6ZOA8BdxBOfHLUC1/Q=;
+        b=p9DS8B/Oj3VNL2Gt13khvPo3NUNnXw4qAFcSbwSsJqIkQMHcilexoErm40c2d815H3
+         LVQLAGJrzKeIh8yOcNpKBsYkL6MepjStnv7L6gCan6T9p/fTqpkVSaHdEUDdaSViC3e3
+         mSdiO/xu+hkNEBzut1705H5PC98HOe669COwEuy+U1WCaMDwcRBwIhjdRZYNIjS4nFSq
+         N2ic5yX0v8/yTx7jshWrhiTkvTQlKa2m6Lm9kBjsyRwGu7/ccotubLYS8BXPz+pQdYIY
+         5ln3W9vSkJ3/y7JutbP+fwB3rYbJQhzzTL+MVAVu/M4bWzIi4IAyrzSxS9SD6dKqheZz
+         jT7A==
+X-Forwarded-Encrypted: i=1; AJvYcCX0px5Mr52w0bOg1v7lJ8j5GLzcWHWY7Ut8bzN7YJ2ll8KYQtTglgIzMVhmofUyTQjbeNWDOQ4nLhsnw3c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6I5tG7a8wfbSdM/12i9YH/HUD/GhzvrSIcu+H1lz0BwOVeXJO
+	cjJgOYkthtx5DYH5L2IS+nJAkz/Ntl3Q7+Myn/dDo8buK8ZuBmJrG5mgO8t8mUrlHi4=
+X-Gm-Gg: ASbGncvibTMDStYeipCcM59s5LrIzS2JqxXL0px05WT6F7FVfV57qci1rP2B2OVPQhS
+	as+Yqkf+vp+G+T3lIb3pT2klHlgideFjQkm+DUNboSZbGT8zxZdPOADasbD1ejRqQt8OKDYNYC3
+	s3T4Nlm7ItD0yoXw3ExNr3ZCDeHkq1+i/i0c4myCi69ZyR1i01lMuUGrzl68z0FJKzogGQCjGJP
+	UgkXsMfe50Yif5f2v9xgzMi22qM/BtBA0IcoQYWp284LBViDr9FUIY/461BMDWC5tLswBUxiEkl
+	ZJgFgM4UnpG5ogPqE819nkEkVBA8/C66vDzEtAITbEB1xBFtMO98nVU/wmBSrnfeJRm83I+8g7I
+	cCYZoLdmcJFtjtKSRXA3zfNCmJ8zI+aaWYD3c0UsNKdR/xaBqFs8LOBtIRnhrLTSIBrQgAZI9jB
+	2VANW9bcEnrxP/iK4z56gu5PEZ7SuT94Eq
+X-Google-Smtp-Source: AGHT+IE74yfqVMKiPyh0C08W2ABt3qXIpU354P0qAPryu5ETmoDrG7LlzRcdx7ZJnXUVlOl7635fBw==
+X-Received: by 2002:a17:907:7e9c:b0:af9:8c1f:b290 with SMTP id a640c23a62f3a-afe28f6a866mr1381335366b.29.1756250199096;
+        Tue, 26 Aug 2025 16:16:39 -0700 (PDT)
 Received: from raven.intern.cm-ag (p200300dc6f1d0f00023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f1d:f00:230:64ff:fe74:809])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afec3251fdesm23170666b.77.2025.08.26.16.16.35
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afec3251fdesm23170666b.77.2025.08.26.16.16.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 16:16:36 -0700 (PDT)
+        Tue, 26 Aug 2025 16:16:38 -0700 (PDT)
 From: Max Kellermann <max.kellermann@ionos.com>
 To: akpm@linux-foundation.org,
 	david@redhat.com,
@@ -90,10 +92,12 @@ To: akpm@linux-foundation.org,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
 Cc: Max Kellermann <max.kellermann@ionos.com>
-Subject: [PATCH 1/2] huge_mm.h: is_huge_zero_folio(NULL) should return false
-Date: Wed, 27 Aug 2025 01:16:24 +0200
-Message-ID: <20250826231626.218675-1-max.kellermann@ionos.com>
+Subject: [PATCH 2/2] mm/swap: add BUG_ON(folio==NULL) to folios_put_refs()
+Date: Wed, 27 Aug 2025 01:16:25 +0200
+Message-ID: <20250826231626.218675-2-max.kellermann@ionos.com>
 X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250826231626.218675-1-max.kellermann@ionos.com>
+References: <20250826231626.218675-1-max.kellermann@ionos.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,50 +106,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Calling is_huge_zero_folio(NULL) should not be legal - it makes no
-sense, and a different (theoretical) implementation may dereference
-the pointer.  But currently, lacking any explicit documentation, this
-call is legal.
+It is not legal to have NULL pointers in a folio_batch.
 
-But if somebody really passes NULL, the function should not return
-true - this isn't the huge zero folio after all!  However, if the
-`huge_zero_folio` hasn't been allocated yet, it's NULL, and
-is_huge_zero_folio(NULL) just happens to return true, which is a lie.
+However, the Ceph code does exactly this, and a refactoring patch gone
+wrong has exposed this to folios_put_refs(), see
+https://lore.kernel.org/ceph-devel/aK4v548CId5GIKG1@swift.blarg.de/
 
-I believe this is a negligible corner case and I don't want to add any
-overhead for this; but in debugging kernels, it may be helpful to add
-this check, therefore I put it inside an `#ifdef CONFIG_DEBUG_VM`.
-
-This weird side effect prevented me from reproducing a kernel crash
-that occurred when the elements of a folio_batch were NULL - since
-folios_put_refs() skips huge zero folios, this sometimes causes a
-crash, but sometimes does not.  For debugging, it is better to reveal
-such bugs reliably and not hide them behind random preconditions like
-"has the huge zero folio already been created?"
+I believe this should Oops instead of crashing due to NULL pointer
+reference (guarded by is_huge_zero_folio(), which may silently hide
+the bug).
 
 Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
 ---
- include/linux/huge_mm.h | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ mm/swap.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 7748489fde1b..e4c617c0b445 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -479,7 +479,12 @@ extern unsigned long huge_zero_pfn;
+diff --git a/mm/swap.c b/mm/swap.c
+index 3632dd061beb..07ccda00e7ee 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -952,6 +952,7 @@ void folios_put_refs(struct folio_batch *folios, unsigned int *refs)
+ 	for (i = 0, j = 0; i < folios->nr; i++) {
+ 		struct folio *folio = folios->folios[i];
+ 		unsigned int nr_refs = refs ? refs[i] : 1;
++		BUG_ON(folio == NULL);
  
- static inline bool is_huge_zero_folio(const struct folio *folio)
- {
--	return READ_ONCE(huge_zero_folio) == folio;
-+	const struct folio *hzf = READ_ONCE(huge_zero_folio);
-+#ifdef CONFIG_DEBUG_VM
-+	if (hzf == NULL)
-+		return false;
-+#endif
-+	return hzf == folio;
- }
- 
- static inline bool is_huge_zero_pfn(unsigned long pfn)
+ 		if (is_huge_zero_folio(folio))
+ 			continue;
 -- 
 2.47.2
 
