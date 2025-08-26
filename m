@@ -1,165 +1,137 @@
-Return-Path: <linux-kernel+bounces-786219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4505FB356B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:24:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27C3EB35674
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:11:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 743223BD4A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:24:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD0511711E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE2A2F9984;
-	Tue, 26 Aug 2025 08:24:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF9C2F532C;
+	Tue, 26 Aug 2025 08:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="UusjxQNF"
-Received: from mail-m15588.qiye.163.com (mail-m15588.qiye.163.com [101.71.155.88])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UyWqIOHq"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4E727AC45;
-	Tue, 26 Aug 2025 08:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E449B18A6AD;
+	Tue, 26 Aug 2025 08:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756196655; cv=none; b=PT2mXUAcLomksyPtZqTuL44n8uHWeEqWuxwJiytWwZU73GkeUmtq6XYZzcYyFoomdNquuNuukw6+b5RIZ487rtYJPXy8kMvbdQlwjS8pjp8q26wI3y+BKVnvmnApxlAeceGZPZYUTibe4lUu6CvVz+dagIqNMn9Lwkmt3ku0CkA=
+	t=1756195870; cv=none; b=qg2qdYXX7Z4PRBhxS4JYw6byA2wsNuwzlmS/JkXz0asPrG/sZAxF4c5zOytBisRIe/cUBfvkTq39ZJnYYPGepIA0TPSxJkRUdc4gtccSnIQghoqPs2+0RuLVLW4IBpJvXcPx0Ar2DywqLD3mekNo8XvPAFfvpyKRGrP8PlGaLUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756196655; c=relaxed/simple;
-	bh=NYQxuzRoyE3fAv952wesSvek/3GuuzRVk1hPqosGcc0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CPSGJqBKd0VMPymdj+5TLb72yURy3yEhXibNnk4v7hiZ4+Rj1jALU9XcO331dxTyQzZ/rKV0/r1+kHBBUn9DD6xW4LOwp23JCD7I27wXLSuuzhZOt3GMLGrDYMoz2+hczW5vb60qsTJoy7u4YBoxOzU8OjCZgk3NUeait9neYg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=UusjxQNF; arc=none smtp.client-ip=101.71.155.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.153] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 20a3254b0;
-	Tue, 26 Aug 2025 16:08:42 +0800 (GMT+08:00)
-Message-ID: <8240a3cc-aade-40d8-b2f4-09681f76be68@rock-chips.com>
-Date: Tue, 26 Aug 2025 16:08:40 +0800
+	s=arc-20240116; t=1756195870; c=relaxed/simple;
+	bh=KsddloKoUCQZm0lpBEkjLyAKdvQi4ATkyfiWQKdGr5o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ECpeepw+qYn13GCm9mRrX+p3SxjnV3wK+0j7RFXa9out6e7QiI6EuobvcxmUzzoQ8H5wjRieg8fC4ARPiT2Jh9ZCBdiiSWUKoGeyD8WyR7XvAoPKwkX9eRky6UfwAip80bRB0YJ2il4yhV2Ua2f1FxAivr9eVCfrDSR0AacQPjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UyWqIOHq; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-afcb72d51dcso723092566b.0;
+        Tue, 26 Aug 2025 01:11:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756195867; x=1756800667; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4aX7FenfyrBV1mKFKmXZQBk55IyzLqtyKU5LAZ0/lVg=;
+        b=UyWqIOHq2fEKP7bJLNPNdR2oEy8//sECThBxVuN33OANXX3HhGv6nBFTAN3ADzJwAq
+         ZwiY7+fNzA76w0VDhUDoaS9d1V/aPgGJrO3qvndFbAQ+bJf/U0uAjXrXqSf/na+kJhpm
+         lzujA6dGaGBKGdL8QV7gkNJ1lTRBNWVTrcYP/KrCzqJaW4fRFUlF4SWGYTxsVlNNNqHo
+         a79xo/uw2BU3LB8klUeObbdaHJ9ugxy7zQOwNF/RAaLk+K00S8WR7/TGONLOhE8T7pZC
+         ORdV6ZF+GvlqEjVlrCf9P4uOqh06McdKRup7xrU8q5kNNJcXUFSjnwUBfPjrpXwBwMoU
+         g1BQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756195867; x=1756800667;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4aX7FenfyrBV1mKFKmXZQBk55IyzLqtyKU5LAZ0/lVg=;
+        b=wot4oPzGSuH8XZexxaIzuytk2bp4tA8HodlEWY+wfruifzzc6hTZlZDkDKgkfq1/YL
+         4+Et3IaqQrd5cbYH2zF8Yfgm+6x481bGYeM8hARKfkUoKGtXTnRukIEPl0mX+4g5Nxwa
+         XUkAC7QRfi6fGtXq5WR1kx9NOiCEi60RlCQsz0lB1z7teScfHJuFPwhC6DsCNY2/YSFC
+         iY0jcl6ejD85M1NfML8AZNvVHzXcjRMN/IfK9UTNoVnogeg13VJUojR9PZNJUC71NUCz
+         53f9DUkN45XicArd5k65hsIv9ppj9BMEkbDwCPQkj7/QvWwTbxqM5bpMRptaVh1j0zal
+         oMRA==
+X-Forwarded-Encrypted: i=1; AJvYcCUIY36aXjpFM7r/hXB8gxlRrDYoMaa7VcCKfUMN3Pl3evdb7vG3RgSJqzFdLlv55oYTZUZ1L/2N6zGXRx0U@vger.kernel.org, AJvYcCW1lwrVzy/iLxVm/K5b9OL+jbSUq8iX191GqFtLpL+CPpmkuzOjIUpE8essbXzwT9IY7fZn37LuQRa+@vger.kernel.org, AJvYcCXOjp5e4UcSnLhUrdoOLF9mJk6KZJVrGTQnPY4v0p21sSWezP+r35TFYeJQK+oj5zHZqDAnDjLQlQ4d@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWbMe4uN4L0aUz0ubciFypWeNvms9gyxikaknH0JlMx1V05GCP
+	hxDrMyG+mKWxRWKSYCvi2NaqIbVKuTTLSA0fGbfjLk5NctsJJ2dsLI6mTot36OFKeymT2K7UzIr
+	jUuS2yPbUOw2b/G6iMzdNF1IlMJEbfqaLSByso7w=
+X-Gm-Gg: ASbGnct7lqi6dddkNITVqSQwBS952CGXNRfK4ycM9NW0Ry7Zl95/bKsZXlZJx+Nwsp0
+	aLOjHQwOQ/MTcTSEIe/que4e5WGbDcN3xyDozCbMit9ClVR54m5UhNJxQ4lJHAbamrjvIWbyExA
+	aes/HACZ/BJSD1+9L721VGjxJDKirM7YEG7R+0vM3QWYvAf9fZzAKoOXBuBKLl4THcGpmnSh1DC
+	E+nt/Q=
+X-Google-Smtp-Source: AGHT+IGEd1eZnHcmzpvXANGzhr1yd+oGriamqJKZ0s2iB8R/aw4f3dtalaUKYgCOlOt4g+XTgdfhCNITfaZ4EhFXlkk=
+X-Received: by 2002:a17:907:1de5:b0:afe:8d25:771e with SMTP id
+ a640c23a62f3a-afe8d258216mr372706966b.54.1756195867146; Tue, 26 Aug 2025
+ 01:11:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3] net: ethernet: stmmac: dwmac-rk: Make the
- clk_phy could be used for external phy
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>,
- Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Chaoyi Chen <kernel@airkyi.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Jonas Karlman <jonas@kwiboo.se>, David Wu <david.wu@rock-chips.com>,
- netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org
-References: <20250815023515.114-1-kernel@airkyi.com>
- <CGME20250825072312eucas1p2d4751199c0ea069c7938218be60e5e93@eucas1p2.samsung.com>
- <a30a8c97-6b96-45ba-bad7-8a40401babc2@samsung.com>
- <d0fe6d16-181f-4b38-9457-1099fb6419d0@rock-chips.com>
- <809848c9-2ffa-4743-adda-b8b714b404de@samsung.com>
- <aKxnHFSrVeM7Be5A@shell.armlinux.org.uk>
-Content-Language: en-US
-From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-In-Reply-To: <aKxnHFSrVeM7Be5A@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a98e56c163203abkunmeb456a22128a486
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQhlJTFZJHRpIT0lNTh1KT0hWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=UusjxQNFmrhgPsBeO4BSS3vwfcXBVWMPRqRdZNCreD0Y3L9qO8EqBSlYU2i1ULdp+iyY6GbBaf/00QZeXLzGw3wjtT9ZJo4HN1rR7oYsMs2ha4d9dM+kLxiPLGjbAciiCssQvAVh1ppofzqZbMudcpH4MkQE7IH114QtmiGhntE=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=59s5xl47iUIECmsf5jnpdKqma5NgiHbA2ceA9PEBxGI=;
-	h=date:mime-version:subject:message-id:from;
+References: <20250825-iio-adc-ad7124-proper-clock-support-v2-0-4dcff9db6b35@baylibre.com>
+ <20250825-iio-adc-ad7124-proper-clock-support-v2-3-4dcff9db6b35@baylibre.com>
+In-Reply-To: <20250825-iio-adc-ad7124-proper-clock-support-v2-3-4dcff9db6b35@baylibre.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 26 Aug 2025 11:10:30 +0300
+X-Gm-Features: Ac12FXyHRa3HqDklPqwL16eed7EcWQFU3zytsF-1uM7QmzKO3PNRAwfy77ztEGM
+Message-ID: <CAHp75VfBEQAettOACoSix748pu0T2D+ihie0VjNW7U1_AuuB=g@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] iio: adc: ad7124: add external clock support
+To: David Lechner <dlechner@baylibre.com>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Russell,
-
-On 8/25/2025 9:37 PM, Russell King (Oracle) wrote:
-> On Mon, Aug 25, 2025 at 12:53:37PM +0200, Marek Szyprowski wrote:
->> On 25.08.2025 11:57, Chaoyi Chen wrote:
->>> On 8/25/2025 3:23 PM, Marek Szyprowski wrote:
->>>> On 15.08.2025 04:35, Chaoyi Chen wrote:
->>>>> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
->>>>>
->>>>> For external phy, clk_phy should be optional, and some external phy
->>>>> need the clock input from clk_phy. This patch adds support for setting
->>>>> clk_phy for external phy.
->>>>>
->>>>> Signed-off-by: David Wu <david.wu@rock-chips.com>
->>>>> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
->>>>> ---
->>>>>
->>>>> Changes in v3:
->>>>> - Link to V2:
->>>>> https://lore.kernel.org/netdev/20250812012127.197-1-kernel@airkyi.com/
->>>>> - Rebase to net-next/main
->>>>>
->>>>> Changes in v2:
->>>>> - Link to V1:
->>>>> https://lore.kernel.org/netdev/20250806011405.115-1-kernel@airkyi.com/
->>>>> - Remove get clock frequency from DT prop
->>>>>
->>>>>     drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c | 11 +++++++----
->>>>>     1 file changed, 7 insertions(+), 4 deletions(-)
->>>>>
->>>>> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
->>>>> b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
->>>>> index ac8288301994..5d921e62c2f5 100644
->>>>> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
->>>>> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
->>>>> @@ -1412,12 +1412,15 @@ static int rk_gmac_clk_init(struct
->>>>> plat_stmmacenet_data *plat)
->>>>>             clk_set_rate(plat->stmmac_clk, 50000000);
->>>>>         }
->>>>>     -    if (plat->phy_node && bsp_priv->integrated_phy) {
->>>>> +    if (plat->phy_node) {
->>>>>             bsp_priv->clk_phy = of_clk_get(plat->phy_node, 0);
->>>>>             ret = PTR_ERR_OR_ZERO(bsp_priv->clk_phy);
->>>>> -        if (ret)
->>>>> -            return dev_err_probe(dev, ret, "Cannot get PHY clock\n");
->>>>> -        clk_set_rate(bsp_priv->clk_phy, 50000000);
->>>>> +        /* If it is not integrated_phy, clk_phy is optional */
->>>>> +        if (bsp_priv->integrated_phy) {
->>>>> +            if (ret)
->>>>> +                return dev_err_probe(dev, ret, "Cannot get PHY
->>>>> clock\n");
->>>>> +            clk_set_rate(bsp_priv->clk_phy, 50000000);
->>>>> +        }
->>> I think  we should set bsp_priv->clk_phy to NULL here if we failed to
->>> get the clock.
->>>
->>> Could you try this on your board? Thank you.
->> Right, the following change also fixes this issue:
->>
->> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
->> b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
->> index 9fc41207cc45..2d19d48be01f 100644
->> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
->> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
->> @@ -1415,6 +1415,8 @@ static int rk_gmac_clk_init(struct
->> plat_stmmacenet_data *plat)
->>           if (plat->phy_node) {
->>                   bsp_priv->clk_phy = of_clk_get(plat->phy_node, 0);
->>                   ret = PTR_ERR_OR_ZERO(bsp_priv->clk_phy);
->> +               if (ret)
->> +                       bsp_priv->clk_phy = NULL;
-> Or just:
+On Tue, Aug 26, 2025 at 1:55=E2=80=AFAM David Lechner <dlechner@baylibre.co=
+m> wrote:
 >
-> 		clk = of_clk_get(plat->phy_node, 0);
-> 		if (clk == ERR_PTR(-EPROBE_DEFER))
-
-Do we actually need this? Maybe other devm_clk_get() before it would fail in advance.
-
-
-> 			...
-> 		else if (!IS_ERR)
-> 			bsp_priv->clk_phy = clk;
+> Add support for an external clock source to the AD7124 ADC driver.
 >
-> I don't have a free terminal to work out what "..." should be.
+> Previously, the driver only supported using the internal clock and had
+> bad devicetree bindings that used a fake clock to essentially select
+> the power mode. This is preserved for backwards compatibility.
 >
+> If the clock is not named "mclk", then we know that the devicetree is
+> using the correct bindings and we can configure the chip to use an
+> external clock source rather than internal.
+>
+> Also drop a redundant comment when configuring the register fields
+> instead of adding more.
+
+...
+
+> +                       /*
+> +                        * The external clock may be 4x the nominal clock=
+ rate,
+> +                        * in which case the ADC needs to be configured t=
+o
+> +                        * divide it by 4. Using MEGA is a bit arbitrary,=
+ but
+> +                        * the expected clock rates are either 614.4 kHz =
+or
+> +                        * 2.4576 MHz, so this should work.
+> +                        */
+> +                       if (clk_hz > MEGA)
+
+This is (1 * HZ_PER_MHZ), but as the comment says, this arbitrary
+check may be improved by using the exact values.
+
+> +                               clk_sel =3D AD7124_ADC_CONTROL_CLK_SEL_EX=
+T_DIV4;
+> +                       else
+> +                               clk_sel =3D AD7124_ADC_CONTROL_CLK_SEL_EX=
+T;
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
