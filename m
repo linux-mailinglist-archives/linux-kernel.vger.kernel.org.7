@@ -1,113 +1,148 @@
-Return-Path: <linux-kernel+bounces-787141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E3F6B371E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 20:04:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0CD8B371E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 20:04:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 602D936594E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:04:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90EC336628D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:04:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11863362098;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45B833680B4;
 	Tue, 26 Aug 2025 18:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OzRHQAFE"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4A3338F54;
-	Tue, 26 Aug 2025 18:03:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29957322C70
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 18:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756231420; cv=none; b=Frg1XnmAJy/gnn9CNgN6iu4iFPxEvdBDpIPu+0tBQEN70mdeCJqBnvHwfV8I8stMVCLoGmes8jjy6rXspSnLwBm2TJvX5dO1Cn0bBYJ+RWTwN+V4nmfZSeipBiPPQaZZ2wb5flwSDd39PXpQ4hR+7DW806pXP74hlh42YbT0H4o=
+	t=1756231420; cv=none; b=Z+VfXtXjJcDJMGgD7BX8nwfGnYe0M+MIwtMNCgqJpmyaouDEIT1HrKB0s+sM/uGd3UJD/8BszloXsO2N+Rl97Me27zPP798HI+nvMH2ltWxj2HKXtMCb5O1l1QODN4SOE9Gw18YfwqzV6p6LEv/tR76GS8PLl9lTC6EGX/DOSCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756231420; c=relaxed/simple;
-	bh=fves3TlKOiL6El/r71tNPg5Ed7FLQBLTsDv8cZZc6jU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bCIaHjj08ilPpwzzDEsQx1/Du9q9Trd9APGgymAOCRnXPFCQjs81oT0wUzrsHVEBBcH/kLhYqE1He58vjGFMmJOi+qHI9I0ZyV/h3lY28mZ2rDaJxN8l8bOWcJ6TPxw1ijc2u04KOJjNtCLQEulwdUyru7qGs+xKWGXzaWwe+to=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OzRHQAFE; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-246163711caso8489585ad.3;
-        Tue, 26 Aug 2025 11:03:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756231418; x=1756836218; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fves3TlKOiL6El/r71tNPg5Ed7FLQBLTsDv8cZZc6jU=;
-        b=OzRHQAFER6NWloHnmsH72D5PKj+1znPwfkqMPn0InJAVsqWRZy6qy5JNpid61HASym
-         jkVS28IIY8+mmmLRxXt2qefIG4R6jrRbmtxry5d8pyXprqEEeyxQwleYJdcl1azGgwFi
-         OpSaaXkAk1Z/GZCyUS74NzI9SwWqqFgVNQwqORFxr/7sABuWz2UOBzU083LAigg06p/b
-         +qGxmKWLgYXFsK7fiHCXGIBR1z4XjEAFumg/ASwEiH7Yl/kSgHO5n17EwkxQA4tmwySW
-         BduJ1SmZMu0SKzzX14xjvpyzpm4Ah04Y4fqEm1nQBXKRhKt34IO/faTaL7j6qDlAww7p
-         P+Jg==
+	bh=9Fd/OGAbNTjvQVsCC770Cymc9rBqjfYkhbkSQm0cn5w=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Nq+HlASyQsWky2+apKgXRbiktaOuVo1ratINzy++jwvqru9EhbgUjQpXxDO8wdYAYH/TQ9QcbPTM9hmqo7gLwnsoNQGI56CAaDCwcUVyGhycNafjhP6m5WK9g3b7unjW17rCMB28RnB+qEuwXsakP5lba4vBWy3zvSUQ7mfvobo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-886e2e808d0so203766239f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 11:03:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1756231418; x=1756836218;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fves3TlKOiL6El/r71tNPg5Ed7FLQBLTsDv8cZZc6jU=;
-        b=oOssz1VdFivpTxvCeh4/cGqDzzaNSE8zeawMiWUruPpEVzCb+Xz7ZHoH4WNqhCFc/+
-         6cHhfROQ4vOIngNW++bWUfQRoA9J02lPV8u9dkbi552HwGKdMYd55SFzbAPI4tm4tzZ2
-         5AjvnmKzFWEBEO+OoaB0HKgZfXwbXiOTXt8bov7wigk7MDVOagZf9XtGrZasOu7rSrv2
-         3yCjmtjsNib6AaMDO46/qczAFPwV5xl9fP+dJZqmnBPkh42Cyvv6RcqnY13XNQ0uHFMP
-         S2O4/vE43IGeMVRMjkuwNR1vtqFzasH0s9++rcQ63dG339Too8Shf56wEI0ryGzswozt
-         A7oQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU55Utf1gkOfaCpPhqiSl2Kxj0E3p8jPJfGxlVA480TwBLsTz8OAxR8JRSggxzWuSV7vxo5acwV+uVLz7KEfPU=@vger.kernel.org, AJvYcCUoEqJyKBCOjFKnKsJ+7CPMMe26K6RG5Z02YPwoD6x1SQZ8GsXx3KPdE9TjxmIs68W9yO8JW5Ru+tRBMOU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2coqGycXxhQvhbocCr+JfsIJ/dqmKYeB6QI62MzL8piV/h2Hp
-	wyq/ECMao9J0yETjQr67WWTdXC70Dv7RplufcDuXGRI6PeTycU8BA4XGjONZhaeMPdnj0Jc0SIc
-	wFUgWB/T9gCIMGj5qFe6v8g50lzZlvX0=
-X-Gm-Gg: ASbGncs79+s26fNHm23HrWV9a/tbQpqCO7kuaONeFLR4pTJe97iXbWUrfstnUKpLl/T
-	TPVzNz5uMtSiIadgKCYK58HtO2xq/CXafm10d912i7rYbLrm4C1ZbrBAa+BOkvgAnRj7ba+ID8b
-	7PhK4rxXey28phr7FnS+xoT9/8Oa3OWEzy3w6Erqceu4uuqD2gxPJ+oBn9Nz0LCu23vv4Dk2ezU
-	cU1BIC2cgqQWq20yQ7SCsoEiGAemokS6dQwflZaVis/O81/VI9FimG6LCj5TITxwjvtRNDEqowE
-	wdxHmNpDvb7691SkElit6qYmqA==
-X-Google-Smtp-Source: AGHT+IEkDu0dZOVR4ym4Y9k1+JLt3r3CZqSLtfwEbuDz5hkPzEZathJgAPIL0R3F+nfJ5F2R16Lwn4qWJNBSCV1Zhog=
-X-Received: by 2002:a17:902:db0c:b0:240:9dcd:94c0 with SMTP id
- d9443c01a7336-2462edfb000mr108271585ad.2.1756231418142; Tue, 26 Aug 2025
- 11:03:38 -0700 (PDT)
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jee1SPohgLWvDGFphulqzmgE+y+1pMrI8cs2Wryp8LI=;
+        b=DzdssP07eppFh1RixJppPn0TvEjYGeRbYTe+Dz+Hl6iLygSoV/Hrw+w4rQz75oGHRi
+         VB6+cDwydD03Tdg5OclO9HTs9TKxNp0/CefXWhJNfplxkHLGc05NiTSaWMGD6Lg7MmAg
+         PEQ9vK08/T/qstQmnhdtMuRivpfsGOkwbLyyMMuYS415D1aB4V4b9pFZRkVlndegLcL+
+         eE6ssqm9k7aFA8IhLTDhrrGfUGYwex/UJngizmemPlQrtzntWFwEnER1H4Kdt/te1uoY
+         owADW4sHfCa+6CkRJZEmklmdVSzYo4bUvNifryZ3qsHI43h2Y9LsbbDYadZhg8p+ZnSV
+         lIug==
+X-Forwarded-Encrypted: i=1; AJvYcCV4SiTS4iu2pFFSrlp3MgvwU3JGVycd0roWolbQCGj/DUTvgNwC+krfwCPqBFqZRmTLJpwY12UosZdfB8Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1sQWZSOP1PJnbLfB2ejQ/fecK6Zp3p9VhxaJyQc7BgFv0rSib
+	rVk/OgcvuSMxo5O8LRIjX2SjGhvErMRhKxpWsgw1C6GWKRusmxNL7qR6LoRGHbkEUtEGtIHWx3Z
+	Lf0OPY2WXKNTVhJUS1KrV32sA/e16tMpUX3D42ud372J8U5hpFfBWmELdn+g=
+X-Google-Smtp-Source: AGHT+IHM/4UQBgBxVmC3OCA6lszfoFadB711vNP2kTRVMK/pKoDB1iqhG9SN5miGqY7xLnxk8K2+Xkr0y3OgsVzWrsCGxE9uSgzq
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ub8ohgErgUJB1KWyrSWn18gSQiyiIJ4Py133yi5fMR68ZG2zeWokoP7kULU7voBjry46A7GZUSrHuCQn0C_DZg==@protonmail.internalid>
- <20250821035710.3692455-2-fujita.tomonori@gmail.com> <87bjo2witj.fsf@t14s.mail-host-address-is-not-set>
- <20250826.205941.963904478024459782.fujita.tomonori@gmail.com>
-In-Reply-To: <20250826.205941.963904478024459782.fujita.tomonori@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 26 Aug 2025 20:03:25 +0200
-X-Gm-Features: Ac12FXyFyZdjTmFaRLIHEhugsupQrMJ1GFstOS_rGWVLewFxnM6d2xXXwjoCDvc
-Message-ID: <CANiq72n4GKUo3LjNkvBvh0C=20tfz7D_jirZpu+2BogqNuK3KQ@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] rust: add udelay() function
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>
-Cc: a.hindborg@kernel.org, alex.gaynor@gmail.com, ojeda@kernel.org, 
-	aliceryhl@google.com, anna-maria@linutronix.de, bjorn3_gh@protonmail.com, 
-	boqun.feng@gmail.com, dakr@kernel.org, frederic@kernel.org, gary@garyguo.net, 
-	jstultz@google.com, linux-kernel@vger.kernel.org, lossin@kernel.org, 
-	lyude@redhat.com, rust-for-linux@vger.kernel.org, sboyd@kernel.org, 
-	tglx@linutronix.de, tmgross@umich.edu, acourbot@nvidia.com, 
-	daniel.almeida@collabora.com
+X-Received: by 2002:a92:c268:0:b0:3e5:4631:54a5 with SMTP id
+ e9e14a558f8ab-3e921f3be05mr272322575ab.18.1756231418094; Tue, 26 Aug 2025
+ 11:03:38 -0700 (PDT)
+Date: Tue, 26 Aug 2025 11:03:38 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68adf6fa.a70a0220.3cafd4.0000.GAE@google.com>
+Subject: [syzbot] [net?] WARNING in est_timer
+From: syzbot <syzbot+72db9ee39db57c3fecc5@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 26, 2025 at 1:59=E2=80=AFPM FUJITA Tomonori
-<fujita.tomonori@gmail.com> wrote:
->
-> This can lead to an unexpected delay duration, but it's safe in Rust=E2=
-=80=99s
-> sense of safety?
+Hello,
 
-If it is just unexpected behavior, then yeah.
+syzbot found the following issue on:
 
-Perhaps Andreas is referring to C overflow UB? If that is the case,
-then in the kernel it is actually defined due to
-`-fno-strict-overflow`.
+HEAD commit:    8d245acc1e88 Merge tag 'char-misc-6.17-rc3' of git://git.k..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1056cef0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e1e1566c7726877e
+dashboard link: https://syzkaller.appspot.com/bug?extid=72db9ee39db57c3fecc5
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a4b062580000
 
-Cheers,
-Miguel
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/096739d8f0ec/disk-8d245acc.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/83a21aa9b978/vmlinux-8d245acc.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7e7f165a3b29/bzImage-8d245acc.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+72db9ee39db57c3fecc5@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 29 at ./include/linux/seqlock.h:221 __seqprop_assert include/linux/seqlock.h:221 [inline]
+WARNING: CPU: 1 PID: 29 at ./include/linux/seqlock.h:221 est_timer+0x6dc/0x9f0 net/core/gen_estimator.c:93
+Modules linked in:
+CPU: 1 UID: 0 PID: 29 Comm: ktimers/1 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+RIP: 0010:__seqprop_assert include/linux/seqlock.h:221 [inline]
+RIP: 0010:est_timer+0x6dc/0x9f0 net/core/gen_estimator.c:93
+Code: ff c7 42 80 3c 23 00 74 08 4c 89 f7 e8 6d 3b 41 f9 4d 89 3e 42 80 3c 23 00 0f 85 54 ff ff ff e9 57 ff ff ff e8 45 05 e2 f8 90 <0f> 0b 90 e9 63 fd ff ff 44 89 e1 80 e1 07 38 c1 0f 8c 65 fa ff ff
+RSP: 0018:ffffc90000a3f7a0 EFLAGS: 00010246
+RAX: ffffffff88dc56fb RBX: 0000000000000001 RCX: ffff88801caf1dc0
+RDX: 0000000000000100 RSI: 0000000000000000 RDI: 0000000000000100
+RBP: ffffc90000a3f8b0 R08: 0000000000000000 R09: 0000000000000100
+R10: dffffc0000000000 R11: fffff52000147f0a R12: 0000000000000008
+R13: 0000000000000000 R14: 0000000000000000 R15: ffff88814a58d468
+FS:  0000000000000000(0000) GS:ffff8881269c2000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fc221f97d60 CR3: 00000000320ec000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ call_timer_fn+0x17e/0x5f0 kernel/time/timer.c:1747
+ expire_timers kernel/time/timer.c:1798 [inline]
+ __run_timers kernel/time/timer.c:2372 [inline]
+ __run_timer_base+0x648/0x970 kernel/time/timer.c:2384
+ run_timer_base kernel/time/timer.c:2393 [inline]
+ run_timer_softirq+0xb7/0x180 kernel/time/timer.c:2403
+ handle_softirqs+0x22c/0x710 kernel/softirq.c:579
+ __do_softirq kernel/softirq.c:613 [inline]
+ run_ktimerd+0xcf/0x190 kernel/softirq.c:1043
+ smpboot_thread_fn+0x53f/0xa60 kernel/smpboot.c:160
+ kthread+0x70e/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
