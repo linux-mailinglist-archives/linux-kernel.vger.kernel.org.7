@@ -1,51 +1,53 @@
-Return-Path: <linux-kernel+bounces-786088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 599CDB354D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:54:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79D1BB354D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:56:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BC3D1B621B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:54:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DCF424528E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08BD2F60B5;
-	Tue, 26 Aug 2025 06:54:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F32E2F60CF;
+	Tue, 26 Aug 2025 06:55:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nQiZBbWD"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="TXu8NwlR"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD5C1B4223;
-	Tue, 26 Aug 2025 06:54:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1A8502BE;
+	Tue, 26 Aug 2025 06:55:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756191267; cv=none; b=Y/239iJuhGeJF8dbtWfVvyBcGWRo+XdUBO1azblTBNKpsRzzDNnuQbnDI1zCJVXiCUbqCUjHOeeg3YSlnIYQMsxtNiH3BEKCv8y9865khv7jh3tFPunPtBM7xdhk/feeWV/e611kqPDNQo+qtKcJhoRKMZf9XF+7KGoXFhe0CeQ=
+	t=1756191354; cv=none; b=GsDpASFkNhQOAKXWSpi1LRPBhkc/xT0CSryhE6P7JmJxnmZTCd5AFBqZdMt7V24Tcj+ezavVQ3sm5Go835uCyZsb4KPbXQXFiy+JU6lduqo/LESaTByaK88PCJk9lWAl7tJ1EgIOLLWx38xU/M12e7diJ7auo3cRuDlSdAc10ng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756191267; c=relaxed/simple;
-	bh=GCXK9lBQxnpvP4CS3fac4UgL43PEtRvfp2/tBi5BrUQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mz7ByahBguz9hQ5kBF81X1fLkGABQmfJDIPJqxcLEKtLvyZUL1waqHbg0iBI+lYEy8DsVworGeCEVPFWM5t7N+16dmD2wneCigeRoN0YK+bi0dfO4tm4Fg2bZM4/Ee86NFnIbmTqNpjNlM1jjo+B8Rf32wQubA7JbZVyhMgDbf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=nQiZBbWD; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=0yW+8sLG9IXtlq0I3N5zxQoGTczv6TkhG3cqXiKZ17w=; b=nQiZBbWDkRktGbLzVRD7OhGhIQ
-	l3kBlUnbfStBlWa9HI8J87e/hUGTNPGpoTRv3+f02oaSvtzFVlX4AtJXihBWadiBg1s/o7i5O8Z/N
-	Yljl9vrgGex8Dd1PDwUR4bp30VVsAssMEHK5o48ihUA2UO40dXYOolRe5dXCbGhd96W6R3k1S7gEs
-	RwBBWzk7sIRh8KTqRX3SAdEblAmjQCwe4ii/wfmhVeuXf49xZDvebLvxwX8U1uGnY7pExklAe8kX6
-	BWwE0rPoHmARrie+DdlcpZTZRpJYve1kw+3C/AD29sYDj5AMJKsnAZzS6sDw1kU57KxneO7CEJ28N
-	EZASG/rw==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uqnZX-0000000AlSF-2P3K;
-	Tue, 26 Aug 2025 06:54:23 +0000
-Message-ID: <67d355fc-7ee9-4203-9578-095004c4a7e6@infradead.org>
-Date: Mon, 25 Aug 2025 23:54:22 -0700
+	s=arc-20240116; t=1756191354; c=relaxed/simple;
+	bh=AbFQ84Opa8P2yoCJhAEc+dOQF1w2tEkJ3FXtdJJOOQc=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=RK5xlBJvOTEBwdmhQlDU68V+e/6Q+D4J4adE+4D2rC5CsA+JMuk/6fh0IrL/WRAd8wd6r8m639BfxOu41qL3IOkpb90mujPNTHdpvgSFJLyiuRKGswwWSYpsebI92AXTemOVaeZCX6wzfMahGVnhvS+Butf0XiKhYM8gFeQYfnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=TXu8NwlR; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 57Q6slRZ947466
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Mon, 25 Aug 2025 23:54:48 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 57Q6slRZ947466
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025082201; t=1756191292;
+	bh=31hcUTjsqXzWZTOGdQDWB0hfth61bxathytRbPMfT9o=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=TXu8NwlRDu8fDbPcGjqill3BNsHgX0GvUITPYr9IBoHH3GCjfMG7577uDy1GKqRSz
+	 CS/PEXGldgwejkYOy9WWW9FY4RN3+rytjnTMM2BCv+n6fI/vT6jtINChJ9cYv9FZ1U
+	 rTYgdNC2504ShZyWQsoFCIzuAmI7iD+I33HtIroxOjnUymFIKUGH4n22PbuJmS6X2A
+	 PVW3daX2eaqMaVJWJ0mLbTJgOU7UQMuL0LZCQ+FOgorfCgtucKKINyDe38/Ji8Ji4D
+	 5UJLjnqKnHzX0ueHBkY7xkagO426UpcGYNzrYHxqA8aiHBVasEmblnP4Km78MlXOOM
+	 rKLBIPycWoqEA==
+Message-ID: <2ed04dff-e778-46c6-bd5f-51295763af06@zytor.com>
+Date: Mon, 25 Aug 2025 23:54:46 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,68 +55,114 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation: management-style: Correct "know" past
- participle
-To: Bagas Sanjaya <bagasdotme@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Documentation <linux-doc@vger.kernel.org>,
- Linux Kernel Workflows <workflows@vger.kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Fox Foster <fox@tardis.ed.ac.uk>,
- Federico Vaga <federico.vaga@vaga.pv.it>,
- =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-References: <20250826003437.7695-2-bagasdotme@gmail.com>
+From: Xin Li <xin@zytor.com>
+Subject: Re: [PATCH v13 05/21] KVM: x86: Load guest FPU state when access
+ XSAVE-managed MSRs
+To: Chao Gao <chao.gao@intel.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, bp@alien8.de,
+        dave.hansen@linux.intel.com, hpa@zytor.com, john.allen@amd.com,
+        mingo@redhat.com, minipli@grsecurity.net, mlevitsk@redhat.com,
+        pbonzini@redhat.com, rick.p.edgecombe@intel.com, seanjc@google.com,
+        tglx@linutronix.de, weijiang.yang@intel.com, x86@kernel.org
+References: <20250821133132.72322-1-chao.gao@intel.com>
+ <20250821133132.72322-6-chao.gao@intel.com>
+ <b61f8d7c-e8bf-476e-8d56-ce9660a13d02@zytor.com> <aKvP2AHKYeQCPm0x@intel.com>
 Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250826003437.7695-2-bagasdotme@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <aKvP2AHKYeQCPm0x@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-
-
-On 8/25/25 5:34 PM, Bagas Sanjaya wrote:
-> Management style docs writes on people under a manager, where they know
-> the details better than the manager himself, in past perfect tense. Yet,
-> "know" is in infinitive form instead.
+On 8/24/2025 7:55 PM, Chao Gao wrote:
+>> static bool is_xstate_managed_msr(u32 index)
+>> {
+>>          if (!kvm_caps.supported_xss)
+>>                  return false;
+>>
+>>          switch (index) {
+>>          case MSR_IA32_U_CET:
+>>          case MSR_IA32_S_CET:
+>>          case MSR_IA32_PL1_SSP ... MSR_IA32_PL3_SSP:
+>>                  return kvm_caps.supported_xss & XFEATURE_MASK_CET_USER &&
+>>                         kvm_caps.supported_xss & XFEATURE_MASK_CET_KERNEL;
+>>          default:
+>>                  return false;
+> This will duplicate checks in other functions. I slightly prefer to keep this
+> function super simple and do all capability checks in __kvm_{set,get}_msr()
+> or kvm_emulate_msr_{write,read}.
 > 
-> Correct the verb form.
-> 
+>>          }
+>> }
+>>
+>> And it would be obvious how to add new MSRs related to other XFEATURE bits.
+> Just return true for all those MSRs, regardless of host capabilities. If
+> kvm_caps doesn't support them, those MSRs are not advertised to userspace
+> either (see kvm_probe_msr_to_save()). Loading or putting the guest FPU when
+> userspace attempts to read/write those unsupported MSRs shouldn't cause any
+> performance issues, as userspace is unlikely to access them in hot paths.
 
-Hi Bagas,
+There is no problem as of now, because there are only two CET related bits
+set in KVM_SUPPORTED_XSS.  So if !CET, the two bits are cleared thus
+kvm_caps.supported_xss is 0, and kvm_load_guest_fpu() is never executed in
+__msr_io().
 
-I don't know about the patch description/argument/justification,
-but the wording makes no sense to me...
+However after any new bit is added to KVM_SUPPORTED_XSS in future, if !CET,
+kvm_caps.supported_xss could be non-zero.  There should still be no problem
+because we don't expect any access to CET MSRs.
 
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> ---
->  Documentation/process/management-style.rst | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/process/management-style.rst b/Documentation/process/management-style.rst
-> index dfbc69bf49d435..1381b253b19ef4 100644
-> --- a/Documentation/process/management-style.rst
-> +++ b/Documentation/process/management-style.rst
-> @@ -42,7 +42,7 @@ actually true.
->  The name of the game is to **avoid** having to make a decision.  In
->  particular, if somebody tells you "choose (a) or (b), we really need you
->  to decide on this", you're in trouble as a manager.  The people you
-> -manage had better know the details better than you, so if they come to
-> +manage had better known the details than you, so if they come to
->  you for a technical decision, you're screwed.  You're clearly not
->  competent to make that decision for them.
->  
-> @@ -115,7 +115,7 @@ sure as hell shouldn't encourage them by promising them that what they
->  work on will be included.  Make them at least think twice before they
->  embark on a big endeavor.
->  
-> -Remember: they'd better know more about the details than you do, and
-> +Remember: they'd better known more about the details than you do, and
->  they usually already think they have the answer to everything.  The best
->  thing you can do as a manager is not to instill confidence, but rather a
->  healthy dose of critical thinking on what they do.
-> 
-> base-commit: ee9a6691935490dc39605882b41b9452844d5e4e
+The trouble comes with MSR_IA32_PL0_SSP when FRED and !CET, because it will
+be accessed even !CET.  And we need to have to do the following:
 
--- 
-~Randy
+static bool is_xstate_managed_msr(u32 index)
+{
+	switch (index) {
+	case MSR_IA32_U_CET:
+	case MSR_IA32_PL1_SSP ... MSR_IA32_PL3_SSP:
+		return true;
+	case MSR_IA32_PL0_SSP:
+		return kvm_caps.supported_xss & XFEATURE_MASK_CET_USER &&
+		       kvm_caps.supported_xss & XFEATURE_MASK_CET_KERNEL;
+	default:
+		return false;
+	}
+}
+
+Then it makes more sense to handle all CET MSRs consistently.
+
+Thanks!
+      Xin
 
 
