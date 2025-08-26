@@ -1,274 +1,209 @@
-Return-Path: <linux-kernel+bounces-786932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35EBCB36EEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:54:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D430B36F08
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:56:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35AED1BC2860
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:51:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B63E46242A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7093734DCFE;
-	Tue, 26 Aug 2025 15:47:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1DA33472E;
+	Tue, 26 Aug 2025 15:48:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="LDfPLwy/"
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013043.outbound.protection.outlook.com [52.101.83.43])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cBpUZwwJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED485314A61;
-	Tue, 26 Aug 2025 15:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756223278; cv=fail; b=HutBzF7LPwR9DmKU9H26aPiBnbdVXiIh/oFbu6GS1ctv0JQd/mPL8Yzz5knnBg1j5G2EpighLJG3VRygtX1Dw1W3OlzJ17+zr5GQehP7C0SNwD9POV7f/APV8/i6Rh7xabEGNUVn8ZK6Fk7Qc5Ya/bB1OKU4AB2FQ1S8oaJt2bs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756223278; c=relaxed/simple;
-	bh=ROX28ktdg8jQSJRmG/V3nsIbx7SY/DVZmGUYad6jJSA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=nSavRswUTsw1lU7GRMEhidLz4VhO2fC/bYDzpt3kB9HDuw7KgnS8YOZ9SrT0KueyWLfQqWdN49ndobt2Uijb9WEoonCJ7E9v7MqKIOfOW/B2Sf9yzApOzXs8EBRw2KXvw1tlJvD4gwt+r/bABdlX1SG4AU0yNCVmuz+8ITyPEg0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=LDfPLwy/; arc=fail smtp.client-ip=52.101.83.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lb1XHeMrh+cxbkwvjbCajGjH7+20svDiDjjEt5UGJnYHV6WuQhtajKR/ic/dMftaS6t8ZrYG2Aa/Fg5AWyBiVNhU41SZ01UNbK2Xz+trDdSXqYpQ9UbnqZbXqonEJCr9vEhsGln8d3mwDH56r4E6njApSsZ+azyJBRz6dZUirltG4bXzyLYa/Peitysrm3jfGYuo03R8ejUPLt+1Cx28njfyDnW14bPLMqPGDYWQWGQ0Qipj4edJizYMcDOGlI6aQ/aROKjSkX2rrUR008P0Z4e/3aJRQe6vO2ZM8v+w4jOo18qIQHzujyxkXOF32ieOBg7DzNAcXPB13gdCN9xhZw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cFdizu9I15YcmgIX/1ZsTILL4noquikNKfhNbPaRdVU=;
- b=TVWxt+3RzWex0/YJabMUuIpp29m3QlSHE72Xmk9yU5kf6d+na6TWbltZdebbKI/j/bi9FyMfGIRzwzpJ2D9JP2WXPXBTiUgn478aY3HBnbEZkLOLuP/dSaFXVrFmBx1CTfAl2VxGxQITZ6Ei8/gUh02/L6RJvO9gHbn2+bXQnl3DIzQrAugEqdNf7g+Rm+fPMkys2ha2g2Xv7rKAydPH1g0BejHk3O0aVaWk30EU8vsXgyZOSoAIdmknVAXBe948kGZucKVDMpqmIxJg5rDg4T2bNNAEvQ+PclQlKFJeJJWHz4BCHq+XEPGerzwRTGLwh5rXN73aWmHavJ+uxEqQeA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cFdizu9I15YcmgIX/1ZsTILL4noquikNKfhNbPaRdVU=;
- b=LDfPLwy/9/guV1dhPr01gE9CtUbRBt3B+fC909nvjTJN1cqBDN2j8W9nK6K8TKT36znJ9E2oMcYqppnAI9ZqLVuIS1l8MAceYyVGvp6HOI3ikfZtqqS0Dp2/V1W2/S5mygp3uSZq9MZTGNMw/p0CcThQjStePA0D1ZITdFAI0Rkynir7K4YhcA317ce1oEvuXYftNGEzw3AdjsQSCT9hfmlbt1jTYgA3F0uav24qktE9oAbbX6h06I4HW7XPR56EbnhwG7uYFbWttmAhZ2s91YE14e0N9LUZB1nMMN7p6PjX16H7ayGl1dW763sj3U9Epcr0ynWVMWVCOE/MI7vACA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
- by GVXPR04MB11524.eurprd04.prod.outlook.com (2603:10a6:150:288::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.11; Tue, 26 Aug
- 2025 15:47:50 +0000
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::e81:b393:ebc5:bc3d]) by DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::e81:b393:ebc5:bc3d%5]) with mapi id 15.20.9073.009; Tue, 26 Aug 2025
- 15:47:50 +0000
-Date: Tue, 26 Aug 2025 11:47:45 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Jorge Marques <jorge.marques@analog.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-i3c@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, gastmaier@gmail.com,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v7 1/2] dt-bindings: i3c: Add adi-i3c-master
-Message-ID: <aK3XIUpVZYmHGiUz@lizhi-Precision-Tower-5810>
-References: <20250818-adi-i3c-master-v7-0-f7207902669d@analog.com>
- <20250818-adi-i3c-master-v7-1-f7207902669d@analog.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250818-adi-i3c-master-v7-1-f7207902669d@analog.com>
-X-ClientProxiedBy: AM0PR10CA0112.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:208:e6::29) To DB9PR04MB9626.eurprd04.prod.outlook.com
- (2603:10a6:10:309::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B4636CC63;
+	Tue, 26 Aug 2025 15:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756223301; cv=none; b=IrMBkqe4X8ygU2V3PMu3DbsujKaNcHEJtz9ABXcV+sF7kXNuGTJjgs7SbrRv2Ij3TlNK4g/1qQ9ChoPLA4s5MwLI5c2UKJni3ebXGiiZ5n66+Vl106pYIjjNPUgXlX3f8q3o0EjEiqqDBMdqjDOAH4GOp+DZZhcJtj8QTabIX1E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756223301; c=relaxed/simple;
+	bh=b8FPl/vsVw5JNumARcRZVHO1eLeE0zNGP8ZNm5DfGWI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AonG9Jqztv9zlIGpKIUdm9J11jmPOPQ0TPdFN2akVJypNEdxQfu36WS6a6OHWl5b6VgFt9ONP5mZUwWrZMiMIihDqHGgSmbN1BtAIA6pxcxHiLzdH4bJvyiIBftNAxO8fD+Lw5dW2//qXF2Wq2OW1ydRNB6xpBkjOM06iMKbwLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cBpUZwwJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D1E1C4CEF1;
+	Tue, 26 Aug 2025 15:48:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756223300;
+	bh=b8FPl/vsVw5JNumARcRZVHO1eLeE0zNGP8ZNm5DfGWI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cBpUZwwJwkflKJ0/vGcmpkC8DliLFLjpny0HUmG2Ln346CiBilgYH94HOREACj5jF
+	 Eq+XapbP4mc3qqOBbKqJAOA0njYw2EK8+6zfRSA0eWXfO/SnsO8pThLIrOhMQixQZd
+	 XHTps7BStTJKDCTVj8vOn5Gy/oHQabqqNoH1MEnvwi5qkv97UYldOWhQP3PUn5/9Lm
+	 OHy0yblKZsp109frfTjXxEUXfzNX/BWGVXFCAq2cHizxUwV7oPc2+wbbiLb4kwDlOc
+	 9FKAQoMjqXrG9GwaCG+g+UxkSz4WB1qo0ykVddH858/C+LLN/pLzUJQA3YX3ce1Yuk
+	 4SOasopz6FeBw==
+Date: Tue, 26 Aug 2025 17:48:18 +0200
+From: "mripard@kernel.org" <mripard@kernel.org>
+To: "Kandpal, Suraj" <suraj.kandpal@intel.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	"liviu.dudau@arm.com" <liviu.dudau@arm.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	"kernel-list@raspberrypi.com" <kernel-list@raspberrypi.com>, "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, 
+	"freedreno@lists.freedesktop.org" <freedreno@lists.freedesktop.org>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
+	"intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>, 
+	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, "Nautiyal, Ankit K" <ankit.k.nautiyal@intel.com>, 
+	"Murthy, Arun R" <arun.r.murthy@intel.com>, "Shankar, Uma" <uma.shankar@intel.com>, 
+	"Nikula, Jani" <jani.nikula@intel.com>, "harry.wentland@amd.com" <harry.wentland@amd.com>, 
+	"siqueira@igalia.com" <siqueira@igalia.com>, "alexander.deucher@amd.com" <alexander.deucher@amd.com>, 
+	"christian.koenig@amd.com" <christian.koenig@amd.com>, "airlied@gmail.com" <airlied@gmail.com>, 
+	"simona@ffwll.ch" <simona@ffwll.ch>, 
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, "robin.clark@oss.qualcomm.com" <robin.clark@oss.qualcomm.com>, 
+	"abhinav.kumar@linux.dev" <abhinav.kumar@linux.dev>, "tzimmermann@suse.de" <tzimmermann@suse.de>, 
+	"jessica.zhang@oss.qualcomm.com" <jessica.zhang@oss.qualcomm.com>, "sean@poorly.run" <sean@poorly.run>, 
+	"marijn.suijten@somainline.org" <marijn.suijten@somainline.org>, "mcanal@igalia.com" <mcanal@igalia.com>, 
+	"dave.stevenson@raspberrypi.com" <dave.stevenson@raspberrypi.com>, 
+	"tomi.valkeinen+renesas@ideasonboard.com" <tomi.valkeinen+renesas@ideasonboard.com>, 
+	"kieran.bingham+renesas@ideasonboard.com" <kieran.bingham+renesas@ideasonboard.com>, "louis.chauvet@bootlin.com" <louis.chauvet@bootlin.com>
+Subject: Re: [RFC PATCH 1/8] drm: writeback: Refactor drm_writeback_connector
+ structure
+Message-ID: <20250826-skinny-dancing-otter-de9be4@houat>
+References: <20250811092707.3986802-2-suraj.kandpal@intel.com>
+ <20250811094429.GE21313@pendragon.ideasonboard.com>
+ <awtqznhquyn7etojonmjn7karznefsb7fdudawcjsj5g2bok3u@2iqcdviuiz2s>
+ <20250811111546.GA30760@pendragon.ideasonboard.com>
+ <2ah3pau7p7brgw7huoxznvej3djct76vgfwtc72n6uub7sjojd@zzaebjdcpdwf>
+ <DM3PPF208195D8D0E55A761A3C16B87BAEEE32AA@DM3PPF208195D8D.namprd11.prod.outlook.com>
+ <aJ4LQvqli36TlETu@e110455-lin.cambridge.arm.com>
+ <hc6f6wgsnauh72cowocpm55tikejhiha5z4mgufeq7v6gb2qml@kmgfd26bigos>
+ <wr76vyag2osox2xf7ducnkiaanzk2k5ehd2ahnoyqdm5qiywlk@penf4v5bvg5z>
+ <DM3PPF208195D8D87AECE8397914A67D9A1E33EA@DM3PPF208195D8D.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|GVXPR04MB11524:EE_
-X-MS-Office365-Filtering-Correlation-Id: 19d2af3f-9c3f-4389-af51-08dde4b7e9a3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|19092799006|7416014|52116014|366016|1800799024|7053199007|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?N0s5MTIwWkZ2WDlkR29nRVFPL3hhL0h5anVVRmNvWUlHZUkrZXcxTzFJMERJ?=
- =?utf-8?B?SzRnZnNpRXloWlozb1BCcjRHT04yWVRRakgvSmdSRXk1Q3Z1WS8ySW5uc0pp?=
- =?utf-8?B?bkViL05mT2wrQ2pSMGkvU3AvZXlmTlpRWndlVW1NbkR4bUYwUGtvYVZGeHpq?=
- =?utf-8?B?dWQwNlF4VmxYY3MxOWhPNmliekovYVpqTTl3eUpWU1Y2NFdvcGlxSWNpdG9Z?=
- =?utf-8?B?dzRIajJDV01MRWtEdmo2QXB0YXFhYy9aTGdIMnE0ZVBERzVaUEdGazY1Rzdl?=
- =?utf-8?B?V2cwU1VsQU1xSHNDN2VnbDFvZWN4SEZzT1NxZXIrbCt2cFpQeXBWUVRTVHVp?=
- =?utf-8?B?M0MyaTJ5c0xLZGdYelRpZ0hNckJiSEFLYlBkZmtiQmRtNTFUdnZzNi9JelVM?=
- =?utf-8?B?U3NkUHVSTWxFRTd0amlJUkMwaTBTcUNQTG5WUzFPU0FtV3U5Z0ZWUnZNd0lq?=
- =?utf-8?B?SzNKcy9xb25MMWxycVk5V2Uzc211dVBpKzRpOUJDdHhOVDdzeEI0eE9kRTNG?=
- =?utf-8?B?TlRMNWR5NHJOM1FhMk1Yak1IV24vMWwwYXNUUmo1V1o2WVlYU3JTaHplMDQz?=
- =?utf-8?B?cWUrR05qUklzUlYvQnlSN2dFSndJZmlMN1NDS2U3SFFPc2pKQlpOZVZpeFpH?=
- =?utf-8?B?b1NPb1QwMFZvSVpHRC9tUVE3YWtCelhtWnh2bmlEWHQ1S2RybDA2Zm1CZmlI?=
- =?utf-8?B?OGd6dlArUUhDQTdRdUwyNE5wamc5Z1FCVzEyU21MUWpQRFZGWVUrb3NCOXNS?=
- =?utf-8?B?cEk5TSszOGZxNFEzbDN0UWNjNFphMGZvd3ZwNzFFVGE3OFdMRUFmenJwOWo0?=
- =?utf-8?B?U293NDU1ZXFvTS9WMSt0MkRHOWNrZkZaOERGN3NsZ2tibi84Q01FSXdJOTFU?=
- =?utf-8?B?dktlSFdvZ2xXSzVwcFJ3S3lTRFFRZEFQVnl3S2UvOE1TTDNyVzFoeE5mdGhX?=
- =?utf-8?B?VmdYbUFqMk1YYU54UUFxRVFWWjdHUi9FWGtiSk9sdkFGcHdFN2RXYkpLS3Qz?=
- =?utf-8?B?anRvQXR6OXAyRzZHbjcrMElMUG5wYWpYeGhBOFhOOUlyV0FObXJZY1NXeWRz?=
- =?utf-8?B?RmxMaUh0TFBRc21GYW0vOWs4N2NVWG1zT2t3ZlNmNDVuc21XN2dIZHl3S3ZE?=
- =?utf-8?B?SHl0dmF1Q2dhb1BvTWxISnhhMTlENlE3aGdBL2k0Vm9DQzVuRFUwOTg1Zm5t?=
- =?utf-8?B?VFJrZGNNaG5mTmlJZ1B2MWprVjVETlhuVmtVRk53b25yUWREQWVEZzNxOVBI?=
- =?utf-8?B?cG1qSk5ab1RVbGlIV1FEZmNibVlvVUZWWWoxQlRTdlJBc3gxcEVaZVVubFVR?=
- =?utf-8?B?T3cwRWN5VmQ5UHllTVk1UjR5NlhDYkJSQUFGMGl3bXRkTTRGSWdiaERaaW1O?=
- =?utf-8?B?RlhJOVQxWXN4cENuamFWSk5neVVwVlF3bVFCVWdCRG51VWRHaHVES2ZCQUp3?=
- =?utf-8?B?THM3Ti96ZGtTY2xVcE1Hb1BBQmxlb2lHUDk5bUszcm5YUTI3R2tOaGFneVZH?=
- =?utf-8?B?NGxvZlQyMDVBOTdyRmNmK1VrUFlKa1lJdS9aK0JKMnBZSmVPVTRUdWM1citl?=
- =?utf-8?B?cGdJWE83WUkzOTUzQWJMOFlUMTJvblp0cW1kL2R2Znpja0VrNkJBYW1DV0xr?=
- =?utf-8?B?VDR3YlRFdnFtNTVKaWxEOU5iKzB5SEM5UTFzNzRMbVZrdDVaN04wUGxTS3JW?=
- =?utf-8?B?OXVyNVl5Z1YzWVZ3WnQrUkpNVk9ZU1VZVlg0Y0RqOEJZMmRTenpRT3lnLzN0?=
- =?utf-8?B?ZXpZTmNHMzBkVEYrZmtBYWxMY3RVUHVnN0xzLzMwVVJYRGxNU0IvSWlLdUNK?=
- =?utf-8?B?MEpLUTJQa3BBNEIyMkkrWm9INk9RbVExTmJkNjVmQ0d1MUVzYmJ4S2VrMFQ0?=
- =?utf-8?B?OTM3WEdsazBrbjBwQlliWW1nemhQcUhXbzN0RjhMKzMrN08ySmgwNVZvbEpk?=
- =?utf-8?B?UlBydko5bUpNMDVJam90RXZHQ2JJOUYveU5kQXJ4S1YxSzlMMG1SQTVLWlM5?=
- =?utf-8?B?MFlkSTFMdmNRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(19092799006)(7416014)(52116014)(366016)(1800799024)(7053199007)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QXBQRFJwMWlHMStDMU9QRHhFOFdFVy90U3ZlWkViMldKNjVzU1MwR0JHQmlm?=
- =?utf-8?B?dDZRZ2pGSG1FY1M3WSt2bEpobWNmK0toa3hKSkVIY0ZldjBmSnNSWWRTSUp1?=
- =?utf-8?B?MmFmWEVyVDRmV1pDNmQ1NnpmaE51Q1ZYZFFaam14dlBLclRJeThPU0dPTU5l?=
- =?utf-8?B?NW50d3I5dGJyUkUrdW5ld0RiUm9sS2VFY0JsV3B4UG1tempjR25HbllyRk1G?=
- =?utf-8?B?S29xTitrYlc5UmVDT0VMYTAvdGxRZjBUdUJYSG5Nbk5xRmtienZ1L3ltbHox?=
- =?utf-8?B?bnBaSDhuTXNuOEdxR3JvRXdkb3ZRbDhxUlBON3ZDWE96cWhPRUNPMXZ3aEk0?=
- =?utf-8?B?d1RwK3RBdG1wTHZaQU9CUm9xMU1yUldJSm9tN3ltbGlwdUhoeWVWUW1VYXZh?=
- =?utf-8?B?czM0U0pXUVRTLzdEVjNwSWNMTEpUWUJRNE0rQS9yeFlLRzA2dGkvZVp5ME5s?=
- =?utf-8?B?QUUweDNhSEd3WldTZU9JQ0YrbHBPeVVSTEJnRUx3SjR0dWFrakdpUThSVzlu?=
- =?utf-8?B?R0QvRStNeFRjeERHNGVYMWp6RENjVldoVm0ybHE4UHhKRy9yTHRsVGhDOVpQ?=
- =?utf-8?B?ZFZoTzVGL3ZXN1JJdVgwR3VESHkrYWdWSjRqMnNlL3VWQTc0NTBPN2VXcGpm?=
- =?utf-8?B?QUg5MG5EMWkvQWxycnkxNFRudHJnbjNFZHZjUlFJTytDQ1gzVTNCU0VyQ0VL?=
- =?utf-8?B?aVpJaHNUMXFOb3ByN2dqbFRTdGFpaktjZ29UY0QyQmx2WVBaaVorLzdOZzRi?=
- =?utf-8?B?NCtqR1p1Y3g5WGtGaXlVOGwyMnZmQ3hkQ0sxcXhGWS9SeENDUU1saWxSak9H?=
- =?utf-8?B?c3pLQXlBSXk3Uk5MYzVscFU4cHh3cjBHQ1pFRkdZMDRmbkN5TG8yMEhJQVN3?=
- =?utf-8?B?d0IrQjNRREVSTy9TeHRGYzhvVWpLNElQVC8wWnZlRklDNVJyYkE0OXhjRGg1?=
- =?utf-8?B?UHpMSDdvSy91VjEvbnFpNml4Uk5vVHhBMUh6c2NYbVNwT01vZnA1NVlCMy9i?=
- =?utf-8?B?YXgxQ2lHeVBnQmpXa3BiMitEaFQ2YmtSd0t6NHBEYS9kUDYybnFLaDJjamFl?=
- =?utf-8?B?ZFdkLzZXUVVCaWxPNCtrZ2w3eDh0c2JXaEJqcDE1cnFBUHZqMkM1c2dNRjNS?=
- =?utf-8?B?NWlRc1FRT1luQzZWUnJzRjErNnBXU0d4ZTNoeFZSdS9CQWxWVTV5UEI3dXk1?=
- =?utf-8?B?Mmt6cmJDdEJyUE5Td05GWGZWejM4ZEh2Ly9zMFIyQ05WQWtYb2JpNVRLeFA0?=
- =?utf-8?B?L0hjamg4Z2FnYWNkNkZHY1BPWW8yaWsrYXpMZ0J1WnhwOUY5WnRuZVJ0MTV3?=
- =?utf-8?B?NEpBdXpJQ1BhTHlmY1dtMmUvZFJqUGJJRzFwSzA4NDVZZGo2SEhQQnVCais5?=
- =?utf-8?B?amRTZmxrMHRNUVJyZEVKTVZrU0FTeXlvOHFVZ09vS256MDA1ZXZhTEEzbXdq?=
- =?utf-8?B?WEhxRlEvVWRVRjYybEJWdENPcUpQa1B6ZCs2Y3ZjNHg1ZjdzTXNSMk94eDFq?=
- =?utf-8?B?RnZ3SVlmK2FHclJQWlQ2OWxXSTE0ZFgxYjE5blFFcFpyY2J0eFQyNkQ5MDB1?=
- =?utf-8?B?MkVlOERlNW54enFtdjlUeEJHZnI2L2tEQ1l4ZXV1QVpQUXVyaFU3amRqNVJT?=
- =?utf-8?B?V3VvTGtCR1RmL0lMSzVVc0w4UTJXaHU3OWZ5Q0JiZlVrTXo1Yms1VXRrYzVN?=
- =?utf-8?B?QzRiMlczR05KTUFEbmRERTBpTTc0THNNRlhITUNJZE9ZblZCQjJWMUUvS0V2?=
- =?utf-8?B?SHVqc0M4L1pOVkN4VVBpcGlaNHlrUG5qcktkVXdZMHhIRmRQRUpKT2szaE1Q?=
- =?utf-8?B?blhlK2Z0cVBURXNBRGpIUVdNaFJjUEpja1FPeVpyRFIxS3BEY1FxWGFjR1k1?=
- =?utf-8?B?K1dmWGxuOGtmVXJqdlhWRjdiZWZjWk9oS1Q3QlRZb0tNbXRLNDlFQmdUVWRG?=
- =?utf-8?B?cm56NEhtc1lvR2tqeTEyZmFxTU5hZVB3OGw5YklkUFJFMzRNbU1uV2VveTdk?=
- =?utf-8?B?cVVaOVkvdG9PdG9SMWZXZnM5dkVpY280MEhwNjZKSlpmdzJqcEFCTXhhQVZi?=
- =?utf-8?B?ODBMWWE1RUF3SUd1b0ZPTk9NNGxNeTBiZmZhTnNWd3lDN2JDM2tjbkgrczc5?=
- =?utf-8?Q?JgyU8NY1Lnsyzybme3xTmSmPM?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 19d2af3f-9c3f-4389-af51-08dde4b7e9a3
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 15:47:50.8237
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: k5lvDLsqetSdmSQUm7U6Jx52KE4S594Y20YNoJ3FVbkY2uiMtIuEDvztjfvrihYlvnDU8cNQ0BvA+q+1t5nGgg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB11524
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="h5fbt5za66ojtx6g"
+Content-Disposition: inline
+In-Reply-To: <DM3PPF208195D8D87AECE8397914A67D9A1E33EA@DM3PPF208195D8D.namprd11.prod.outlook.com>
 
-On Mon, Aug 18, 2025 at 01:51:13PM +0200, Jorge Marques wrote:
-> Add bindings doc for ADI I3C Controller IP core, a FPGA synthesizable IP
-> core that implements the MIPI I3C Basic controller specification.
-> The IP Core is versioned following Semantic Versioning 2.0.0 and
-> ADI's open-source HDL guidelines for devicetree bindings and drivers.
->
-> Signed-off-by: Jorge Marques <jorge.marques@analog.com>
-> ---
->  .../devicetree/bindings/i3c/adi,i3c-master.yaml    | 72 ++++++++++++++++++++++
->  MAINTAINERS                                        |  5 ++
->  2 files changed, 77 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/i3c/adi,i3c-master.yaml b/Documentation/devicetree/bindings/i3c/adi,i3c-master.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..fda240f9ee0c73bcbea97f775d6e081fe0c089d9
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/i3c/adi,i3c-master.yaml
-> @@ -0,0 +1,72 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-...
-> +
-> +  clocks:
-> +    minItems: 1
-> +    items:
-> +      - description: The AXI interconnect clock, drives the register map.
-> +      - description: |
 
-Needn't | here.
+--h5fbt5za66ojtx6g
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [RFC PATCH 1/8] drm: writeback: Refactor drm_writeback_connector
+ structure
+MIME-Version: 1.0
 
-Frank
-> +          The secondary clock, drives the internal logic asynchronously to the
-> +          register map. The presence of this entry states that the IP Core was
-> +          synthesized with a second clock input, and the absence of this entry
-> +          indicates a topology where a single clock input drives all the
-> +          internal logic.
-> +
-> +  clock-names:
-> +    minItems: 1
-> +    items:
-> +      - const: axi
-> +      - const: i3c
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - interrupts
-> +
-> +allOf:
-> +  - $ref: i3c.yaml#
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    i3c@44a00000 {
-> +        compatible = "adi,i3c-master-v1";
-> +        reg = <0x44a00000 0x1000>;
-> +        interrupts = <3 IRQ_TYPE_LEVEL_HIGH>;
-> +        clocks = <&clkc 15>, <&clkc 15>;
-> +        clock-names = "axi", "i3c";
-> +        #address-cells = <3>;
-> +        #size-cells = <0>;
-> +
-> +        /* I3C and I2C devices */
-> +    };
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 35ed8498ab1e9b92b4bce5db9bb64004d80e4b1a..faa50535b514037ddf97309874ec64aac2013cb6 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -11452,6 +11452,11 @@ S:	Maintained
->  F:	Documentation/devicetree/bindings/i3c/aspeed,ast2600-i3c.yaml
->  F:	drivers/i3c/master/ast2600-i3c-master.c
->
-> +I3C DRIVER FOR ANALOG DEVICES I3C CONTROLLER IP
-> +M:	Jorge Marques <jorge.marques@analog.com>
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/i3c/adi,i3c-master.yaml
-> +
->  I3C DRIVER FOR CADENCE I3C MASTER IP
->  M:	Przemysław Gaj <pgaj@cadence.com>
->  S:	Maintained
->
-> --
-> 2.49.0
->
+On Mon, Aug 25, 2025 at 06:26:48AM +0000, Kandpal, Suraj wrote:
+> > Subject: Re: [RFC PATCH 1/8] drm: writeback: Refactor
+> > drm_writeback_connector structure
+> >=20
+> > Hi,
+> >=20
+> > On Sat, Aug 16, 2025 at 01:20:53AM +0300, Dmitry Baryshkov wrote:
+> > > On Thu, Aug 14, 2025 at 05:13:54PM +0100, liviu.dudau@arm.com wrote:
+> > > > Hi,
+> > > >
+> > > > On Wed, Aug 13, 2025 at 10:04:22AM +0000, Kandpal, Suraj wrote:
+> > > > > > > > };
+> > > > > > >
+> > > > > > > I still don't like that. This really doesn't belong here. If
+> > > > > > > anything, the drm_connector for writeback belongs to drm_crtc.
+> > > > > >
+> > > > > > Why? We already have generic HDMI field inside drm_connector. I
+> > > > > > am really hoping to be able to land DP parts next to it. In
+> > > > > > theory we can have a DVI- specific entry there (e.g. with the
+> > subconnector type).
+> > > > > > The idea is not to limit how the drivers subclass those structu=
+res.
+> > > > > >
+> > > > > > I don't see a good case why WB should deviate from that design.
+> > > > > >
+> > > > > > > If the issue is that some drivers need a custom drm_connector
+> > > > > > > subclass, then I'd rather turn the connector field of
+> > > > > > > drm_writeback_connector into a pointer.
+> > > > > >
+> > > > > > Having a pointer requires additional ops in order to get
+> > > > > > drm_connector from WB code and vice versa. Having
+> > > > > > drm_connector_wb inside drm_connector saves us from those ops
+> > (which don't manifest for any other kind of structure).
+> > > > > > Nor will it take any more space since union will reuse space
+> > > > > > already taken up by HDMI part.
+> > > > > >
+> > > > > > >
+> > > > >
+> > > > > Seems like this thread has died. We need to get a conclusion on t=
+he
+> > design.
+> > > > > Laurent do you have any issue with the design given Dmitry's
+> > > > > explanation as to why this Design is good for drm_writeback_conne=
+ctor.
+> > > >
+> > > > I'm with Laurent here. The idea for drm_connector (and a lot of drm
+> > > > structures) are to be used as base "classes" for extended
+> > > > structures. I don't know why HDMI connector ended up inside
+> > > > drm_connector as not all connectors have HDMI functionality, but th=
+at's a
+> > cleanup for another day.
+> > >
+> > > Maybe Maxime can better comment on it, but I think it was made exactly
+> > > for the purpose of not limiting the driver's design. For example, a
+> > > lot of drivers subclass drm_connector via drm_bridge_connector. If
+> > > struct drm_connector_hdmi was a wrapper around struct drm_connector,
+> > > then it would have been impossible to use HDMI helpers for bridge
+> > > drivers, while current design freely allows any driver to utilize
+> > > corresponding library code.
+> >=20
+> > That's exactly why we ended up like this. With that design, we wouldn't=
+ have
+> > been able to "inherit" two connector "classes": bridge_connector is one,
+> > intel_connector another one.
+> >=20
+> > See here for the rationale:
+> > https://lore.kernel.org/dri-devel/ZOTDKHxn2bOg+Xmg@phenom.ffwll.local/
+> >=20
+> > I don't think the "but we'll bloat drm_connector" makes sense either.
+> > There's already a *lot* of things that aren't useful to every connector=
+ (fwnode,
+> > display_info, edid in general, scaling, vrr, etc.)
+> >=20
+> > And it's not like we allocate more than a handful of them during a syst=
+em's life.
+>=20
+> So Are we okay with the approach mentioned here with the changes that hav=
+e been proposed here like
+> Having drm_writeback_connector in union with drm_hdmi_connector
+
+I don't think we need a union here. It artificially creates the same
+issue: we can't have two types for a connector if we do so.
+
+> Also one more thing I would like to clarify here is how everyone would
+> like the patches patches where each patch changes both the drm core
+> and all related drivers (ensures buildability but then review is tough
+> for each driver). Or patches where we have initial drm core changes
+> and then each patch does the all changes in a driver in its own
+> respective patch.
+
+The latter should be preferred, but if you can't maintain bisectability
+that way, then it's the most important and you should fall back to the
+former.
+
+Maxime
+
+--h5fbt5za66ojtx6g
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJQEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaK3XPQAKCRAnX84Zoj2+
+dkGOAXsF9clyGa0v79Lvcn8LKsqqNonbB//uZEuQy7tvsCVTi+DhFkU8idQEhmiv
+4/hwQBIBdjsjXoUxkxPssK1Cqn88KbP1KGjTWNATiM+3ovUf9J35gCUaNCEzp/9o
+nS7FRKYC
+=Lfn+
+-----END PGP SIGNATURE-----
+
+--h5fbt5za66ojtx6g--
 
