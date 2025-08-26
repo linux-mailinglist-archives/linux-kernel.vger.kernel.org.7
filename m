@@ -1,257 +1,240 @@
-Return-Path: <linux-kernel+bounces-786331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68899B3588F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:17:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A87CB35868
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:14:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 243E216057C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:14:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB29F1B664C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:14:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 800C03090E2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B44192FB97D;
 	Tue, 26 Aug 2025 09:13:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f/ZT+FZ5"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ewb5bsJg"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BCA030276C
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:13:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06BA1303C91
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756199628; cv=none; b=U8/guaZ6yDgoLKEZoJx4fMz9RM+PP3JIKO3jv5w7HQC0+X8+cqakXfAysPM9BstKbf2A67N3k0oD/31xPoy0x0ldB13IugMgImrSCLyq3QbTBzr8eLlaKKG026+5PLBdpo+ZpUJUTEPfg9egi04fxH+rsumffp+5DxEU8VZMmXo=
+	t=1756199628; cv=none; b=Kv19jxjHLX5+lHAaB5k/Qrwfx5H4ZBWqUsNhoJAOKzmp5PsjQGLKKIDFGp/B9jC5Z2nNLa4yvJeZsDz1VA7kkxyQ24wkeyiFBFRyhUfDolE44SsQzm9lqaHJVRkld2GQ1RFdRrsYpoMmrt5YIu7rkLTRx9HBfwiIW+3euYnRtT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756199628; c=relaxed/simple;
-	bh=gjX9E9EmiPWX+40GzbEyxkzrbiBU9S3aul0vtFeQNGQ=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Xhi3WtUOPp3bZJnx0S57clPEPKorhy9qaE1cz+R/lwfeTFIJ+YUhpuKwcXJyf4lUdWX76UE+rEp5MSgIPMlCyN8p0zJzsu80K8zMiyKWsfiUvZN72bMiWyZ3W79kuLEsU6wm61tENHN5z/C/Yz8FyckWPwtbC232WQSXF9VxQvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f/ZT+FZ5; arc=none smtp.client-ip=209.85.210.201
+	bh=pD4XLTg0DldHukyFdaH/5tCPbfyEuITBPgA9nptPuIs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=iiF5SQj1HimHWjD90AZTZ/2y1G5FrabFu7rRqz8kRIqy+SRdJm8Xgs706Hb0FtAx+wlMZ1p0pIEo4wrmrieGs8NlM4rISUdyebsxiA1dMtx8b3AUWOYg5z37SNtjOKP6V5awY3ab0RbEZdtf2DeFWGUuNSXSYvIl7MtW1e1NHsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ewb5bsJg; arc=none smtp.client-ip=209.85.210.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-76e2e614889so4590813b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 02:13:45 -0700 (PDT)
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-771f28ed113so1114225b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 02:13:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756199625; x=1756804425; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=znqW7t629WY1D1c5x2OGn1PouDI+EiyaNYCniW4dbvs=;
-        b=f/ZT+FZ5arc5fvJcapNXe+F1jlh9dpXa4KriUO7PhfjzQpHlm8vgzSMVBShOKmlSGk
-         YyJZeyqcirC295+7H1v4YsjPFuWMP/5EP81sG5ytqeWX2WMDWKV4njHBa8ddRT2YC16g
-         QikUeSsPeE1vTfrSTyT3ixfsiftuzuV/Al5VDPGeFdhT2bYwCzE3wvgH97TXxnMQjgaw
-         lFZN4s70eLSsP7pnhGAtJbp0zDpJtPqqzGxIuUt/C0RltrBhqdohev8A4QyPEiE+UULr
-         jCeMJeg8AR3fckUuGRg78JlEFKOZXwu7w1fy2M+dZxNSF2NQbHT3B4/s5ewkXT2VWXoz
-         Zqmw==
+        d=google.com; s=20230601; t=1756199626; x=1756804426; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z06H7nQAXuGVWeGBmy7rHwPZSCBDj75F7L0FEZo0y1s=;
+        b=Ewb5bsJg7v5I8LPD/DDkPTVsnY7ekoQSmDMcNoLT/xpje1tYxWf9suaDoBcQZidKJw
+         jtYRYE4zCRQVrV3txNqzqKmSfJ4BOQX2TpEbDHukl0Rz7ZnD7Xc0/SD38Q/aElR+wE2V
+         bE/w1aDz7f6b7Dao5CPtWTfiyF0VM/Cr2IaFAIAq9Pe7Y5iVvLglxA9yCFv66GF4CvM0
+         s4VDI7/cdZbdKFd8S4GuopxmC61+C4viNA+Qi3Y6fOvr/tBfyel6oYuYVKBb7VrFWjo0
+         6K7GnRdRagoLorV4bZtRng4tH1iGhHB1S9A+nmMltUo9jdzAwdjCVynORVwxe6IQgQIP
+         Y85Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756199625; x=1756804425;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=znqW7t629WY1D1c5x2OGn1PouDI+EiyaNYCniW4dbvs=;
-        b=p6dVqBplOM4lMlqMDHj5i8qc5O6MVTkbNeK5g53DtdD6HycvuIsh6gdbTM1ZD77O2o
-         6M6fcrUMM7fT5F/nOnjxpDcLu9ghEyYrgqpwTIvUkd9qEho2tiIpO4BoP+6SSklJDOCs
-         Ub1s7nXYToUQj4JpYTDxffpBhoEARGkwk3BJUwDpnrIC2yqQRlwWzm/3dp1+yurUJ2T5
-         EuADETV8O1SwzdUVst/Pbs3x3Fplxml7JgsDVQj1pmI/RYJC6JVJ2/96hchIhw0yvphf
-         SMNlHAui9etXah2FWqE+hasRt/FTOVfkXYOfOy/r8q1gekS8psFVdmAjJMQyX7NnaXuu
-         HqiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUY10h1GMWgnruGSCm2oTRZafQDowbpJdaFDCXvyHPlbTGeg+k+hd/uZ0RfqtJF+GMj46qdF+9C9MNjsXQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTtBZ/+7C5Uw6+z+puNs7vwB+5LEzqfWi0C51w9/0zmXIZsVQe
-	j/bdEg96Lwaj9sGryLw3rvTqGLvhQN8UiHi6nYBl/ZwcmcKfo9v80GutN5at030hu91IajmdDs1
-	lxW7TPwbM8dtG1w==
-X-Google-Smtp-Source: AGHT+IEJeR1/GR+N43ubU0gh/gMey5vMfKh200YEtstzt6LIdxaZvucfphjchQJ/CmOBUoz6yCADrHdUEbL35g==
-X-Received: from pfva1.prod.google.com ([2002:a05:6a00:c81:b0:771:3e92:f3aa])
+        d=1e100.net; s=20230601; t=1756199626; x=1756804426;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z06H7nQAXuGVWeGBmy7rHwPZSCBDj75F7L0FEZo0y1s=;
+        b=sfFQlCg+fe1tdTEu2G5wOhTIW/mhBplGVn5SFw54PrtqyJfLPKKXg+23QkKdRQpA6h
+         UmtqSGK0Z2dHK2/EZUNVqOFVvXpaeFSvV4fMofx8GuSFX3vNN7Qd912eTU/MjyazGFk0
+         RBPqZCGX7FhVL7agK7/qm0xJI+kr3ITU0nqX03WksumWbIcdTu9lukE/e9wKAOOykJvM
+         0PGGgmRQITF4CUQFvsBMULGqobgErv8pvLiziKZeWEL6JEJ6BWk+CvrJUsHoomeJ7Cea
+         c4rCoGNxjT2zxYaJbIXH/iUZunGUqCgGoXYHO52Wpj38Kswp19IxcwOW0qhdVVaUO0XO
+         zosQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXZf9QMkNGh8JPQodIgeM7lWVFDp4idd8EqP56JykFNlcMMZ52pSqIGb2o+OnZbUF20gLStWm+7nYXkWVc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxkz/BVmu+LIE0fxiX0ThipCEluNPRYyEbDFuOeEq6Tp6kjdTUo
+	XxSsbTkS39Ax0/r3wiyvIGA4A8zQqx4B9Y9kD6fAfE15IHFPGbUGTct891UsxwOCw6c8Mh0iCa0
+	amk82nnYFRjnxiw==
+X-Google-Smtp-Source: AGHT+IFv6OGkkYcCqgD5ALA5r0X9nZMsDa3qbm/600rcJO0vkLNs5ciUkvjSFY6CyLtsEnsS+a8iY6JjNwchPA==
+X-Received: from pfx51.prod.google.com ([2002:a05:6a00:a473:b0:771:e00d:cee])
  (user=davidgow job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:a2a:b0:736:8c0f:7758 with SMTP id d2e1a72fcca58-7702fa4f732mr16572148b3a.10.1756199624679;
- Tue, 26 Aug 2025 02:13:44 -0700 (PDT)
-Date: Tue, 26 Aug 2025 17:13:30 +0800
+ 2002:a05:6a00:4b56:b0:76e:7ae9:e869 with SMTP id d2e1a72fcca58-7702fb00068mr18610618b3a.25.1756199626242;
+ Tue, 26 Aug 2025 02:13:46 -0700 (PDT)
+Date: Tue, 26 Aug 2025 17:13:31 +0800
+In-Reply-To: <20250826091341.1427123-1-davidgow@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20250826091341.1427123-1-davidgow@google.com>
 X-Mailer: git-send-email 2.51.0.261.g7ce5a0a67e-goog
-Message-ID: <20250826091341.1427123-1-davidgow@google.com>
-Subject: [PATCH v4 0/7] kunit: Refactor and extend KUnit's parameterized
- testing framework
+Message-ID: <20250826091341.1427123-2-davidgow@google.com>
+Subject: [PATCH v4 1/7] kunit: Add parent kunit for parameterized test context
 From: David Gow <davidgow@google.com>
 To: Marie Zhussupova <marievic@google.com>, marievictoria875@gmail.com, rmoar@google.com, 
 	shuah@kernel.org, brendan.higgins@linux.dev
-Cc: David Gow <davidgow@google.com>, mark.rutland@arm.com, elver@google.com, 
-	dvyukov@google.com, lucas.demarchi@intel.com, 
-	thomas.hellstrom@linux.intel.com, rodrigo.vivi@intel.com, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	kasan-dev@googlegroups.com, intel-xe@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: mark.rutland@arm.com, elver@google.com, dvyukov@google.com, 
+	lucas.demarchi@intel.com, thomas.hellstrom@linux.intel.com, 
+	rodrigo.vivi@intel.com, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, kasan-dev@googlegroups.com, 
+	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	David Gow <davidgow@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Hi all,
+From: Marie Zhussupova <marievic@google.com>
 
-This is a new version of Marie's patch series, with a couple of extra
-fixes squashed in, notably:
-- drm/xe/tests: Fix some additional gen_params signatures
-https://lore.kernel.org/linux-kselftest/20250821135447.1618942-1-davidgow@google.com/
-- kunit: Only output a test plan if we're using kunit_array_gen_params
-https://lore.kernel.org/linux-kselftest/20250821135447.1618942-2-davidgow@google.com/
+Currently, KUnit parameterized tests lack a mechanism to share
+resources across parameter runs because the same `struct kunit`
+instance is cleaned up and reused for each run.
 
-These should fix the issues found in linux-next here:
-https://lore.kernel.org/linux-next/20250818120846.347d64b1@canb.auug.org.au/
+This patch introduces parameterized test context, enabling test
+users to share resources between parameter runs. It also allows
+setting up resources that need to be available for all parameter
+runs only once, which is helpful in cases where setup is expensive.
 
-These changes only affect patches 3 and 4 of the series, the others are
-unchanged from v3.
+To establish a parameterized test context, this patch adds a
+parent pointer field to `struct kunit`. This allows resources added
+to the parent `struct kunit` to be shared and accessible across all
+parameter runs.
 
-Thanks, everyone, and sorry for the inconvenience!
+In kunit_run_tests(), the default `struct kunit` created is now
+designated to act as the parameterized test context whenever a test
+is parameterized.
 
-Cheers,
--- David
+Subsequently, a new `struct kunit` is made for each parameter run, and
+its parent pointer is set to the `struct kunit` that holds the
+parameterized test context.
 
+Reviewed-by: David Gow <davidgow@google.com>
+Reviewed-by: Rae Moar <rmoar@google.com>
+Signed-off-by: Marie Zhussupova <marievic@google.com>
+Signed-off-by: David Gow <davidgow@google.com>
 ---
 
-Hello!
-
-KUnit offers a parameterized testing framework, where tests can be
-run multiple times with different inputs. However, the current
-implementation uses the same `struct kunit` for each parameter run.
-After each run, the test context gets cleaned up, which creates
-the following limitations:
-
-a. There is no way to store resources that are accessible across
-   the individual parameter runs.
-b. It's not possible to pass additional context, besides the previous
-   parameter (and potentially anything else that is stored in the current
-   test context), to the parameter generator function.
-c. Test users are restricted to using pre-defined static arrays
-   of parameter objects or generate_params() to define their
-   parameters. There is no flexibility to make a custom dynamic
-   array without using generate_params(), which can be complex if
-   generating the next parameter depends on more than just the single
-   previous parameter.
-
-This patch series resolves these limitations by:
-
-1. [P 1] Giving each parameterized run its own `struct kunit`. It will
-   remove the need to manage state, such as resetting the `test->priv`
-   field or the `test->status_comment` after every parameter run.
-
-2. [P 1] Introducing parameterized test context available to all
-   parameter runs through the parent pointer of type `struct kunit`.
-   This context won't be used to execute any test logic, but will
-   instead be used for storing shared resources. Each parameter run
-   context will have a reference to that parent instance and thus,
-   have access to those resources.
-
-3. [P 2] Introducing param_init() and param_exit() functions that can
-   initialize and exit the parameterized test context. They will run once
-   before and after the parameterized test. param_init() can be used to add
-   resources to share between parameter runs, pass parameter arrays, and
-   any other setup logic. While param_exit() can be used to clean up
-   resources that were not managed by the parameterized test, and
-   any other teardown logic.
-
-4. [P 3] Passing the parameterized test context as an additional argument
-   to generate_params(). This provides generate_params() with more context,
-   making parameter generation much more flexible. The generate_params()
-   implementations in the KCSAN and drm/xe tests have been adapted to match
-   the new function pointer signature.
-
-5. [P 4] Introducing a `params_array` field in `struct kunit`. This will
-   allow the parameterized test context to have direct storage of the
-   parameter array, enabling features like using dynamic parameter arrays
-   or using context beyond just the previous parameter. This will also
-   enable outputting the KTAP test plan for a parameterized test when the
-   parameter count is available.
-
-Patches 5 and 6 add examples tests to lib/kunit/kunit-example-test.c to
-showcase the new features and patch 7 updates the KUnit documentation
-to reflect all the framework changes.
-
-Thank you!
--Marie
-
----
-
-Changes in v4:
-
-Link to v3 of this patch series:
-https://lore.kernel.org/linux-kselftest/20250815103604.3857930-1-marievic@google.com/
-
-- Fixup the signatures of some more gen_params functions in the drm/xe
-  driver.
-- Only print a KTAP test plan if a parameterised test is using the
-  built-in kunit_array_gen_params generating function, fixing the issues
-  with generator functions which skip array elements.
+No changes in v4:
+v3: https://lore.kernel.org/linux-kselftest/20250815103604.3857930-2-marievic@google.com/
 
 Changes in v3:
-
-Link to v2 of this patch series:
-https://lore.kernel.org/all/20250811221739.2694336-1-marievic@google.com/
-
-- Added logic for skipping the parameter runs and updating the test statistics
-  when parameterized test initialization fails.
-- Minor changes to the documentation.
+v2: https://lore.kernel.org/all/20250811221739.2694336-2-marievic@google.com/
 - Commit message formatting.
 
 Changes in v2:
-
-Link to v1 of this patch series:
-https://lore.kernel.org/all/20250729193647.3410634-1-marievic@google.com/
-
-- Establish parameterized testing terminology:
-   - "parameterized test" will refer to the group of all runs of a single test
-     function with different parameters.
-   - "parameter run" will refer to the execution of the test case function with
-     a single parameter.
-   - "parameterized test context" is the `struct kunit` that holds the context
-     for the entire parameterized test.
-   - "parameter run context" is the `struct kunit` that holds the context of the
-     individual parameter run.
-   - A test is defined to be a parameterized tests if it was registered with a
-     generator function.
-- Make comment edits to reflect the established terminology.
-- Require users to manually pass kunit_array_gen_params() to
-  KUNIT_CASE_PARAM_WITH_INIT() as the generator function, unless they want to
-  provide their own generator function, if the parameter array was registered
-  in param_init(). This is to be consistent with the definition of a
-  parameterized test, i.e. generate_params() is never NULL if it's
-  a parameterized test.
-- Change name of kunit_get_next_param_and_desc() to
-  kunit_array_gen_params().
-- Other minor function name changes such as removing the "__" prefix in front
-  of internal functions.
-- Change signature of get_description() in `struct params_array` to accept
-  the parameterized test context, as well.
-- Output the KTAP test plan for a parameterized test when the parameter count
-  is available.
-- Cover letter was made more concise.
-- Edits to the example tests.
-- Fix bug of parameterized test init/exit logic being done outside of the
+v1: https://lore.kernel.org/all/20250729193647.3410634-2-marievic@google.com/
+- Descriptions of the parent pointer in `struct kunit` were changed to
+  be more general, as it could be used to share resources not only
+  between parameter runs but also between test cases in the future.
+- When printing parameter descriptions using test.param_index was changed
+  to param_test.param_index.
+- kunit_cleanup(&test) in kunit_run_tests() was moved inside the
   parameterized test check.
-- Fix bugs identified by the kernel test robot.
-
+- The comments and the commit message were changed to reflect the
+  parameterized testing terminology. See the patch series cover letter
+  change log for the definitions.
 ---
+ include/kunit/test.h |  8 ++++++--
+ lib/kunit/test.c     | 34 ++++++++++++++++++++--------------
+ 2 files changed, 26 insertions(+), 16 deletions(-)
 
-Marie Zhussupova (7):
-  kunit: Add parent kunit for parameterized test context
-  kunit: Introduce param_init/exit for parameterized test context
-    management
-  kunit: Pass parameterized test context to generate_params()
-  kunit: Enable direct registration of parameter arrays to a KUnit test
-  kunit: Add example parameterized test with shared resource management
-    using the Resource API
-  kunit: Add example parameterized test with direct dynamic parameter
-    array setup
-  Documentation: kunit: Document new parameterized test features
-
- Documentation/dev-tools/kunit/usage.rst | 342 +++++++++++++++++++++++-
- drivers/gpu/drm/xe/tests/xe_pci.c       |  14 +-
- drivers/gpu/drm/xe/tests/xe_pci_test.h  |   9 +-
- include/kunit/test.h                    |  95 ++++++-
- kernel/kcsan/kcsan_test.c               |   2 +-
- lib/kunit/kunit-example-test.c          | 217 +++++++++++++++
- lib/kunit/test.c                        |  94 +++++--
- rust/kernel/kunit.rs                    |   4 +
- 8 files changed, 740 insertions(+), 37 deletions(-)
-
+diff --git a/include/kunit/test.h b/include/kunit/test.h
+index d958ee53050e..9766403afd56 100644
+--- a/include/kunit/test.h
++++ b/include/kunit/test.h
+@@ -268,14 +268,18 @@ struct kunit_suite_set {
+  *
+  * @priv: for user to store arbitrary data. Commonly used to pass data
+  *	  created in the init function (see &struct kunit_suite).
++ * @parent: reference to the parent context of type struct kunit that can
++ *	    be used for storing shared resources.
+  *
+  * Used to store information about the current context under which the test
+  * is running. Most of this data is private and should only be accessed
+- * indirectly via public functions; the one exception is @priv which can be
+- * used by the test writer to store arbitrary data.
++ * indirectly via public functions; the two exceptions are @priv and @parent
++ * which can be used by the test writer to store arbitrary data and access the
++ * parent context, respectively.
+  */
+ struct kunit {
+ 	void *priv;
++	struct kunit *parent;
+ 
+ 	/* private: internal use only. */
+ 	const char *name; /* Read only after initialization! */
+diff --git a/lib/kunit/test.c b/lib/kunit/test.c
+index d2bfa331a2b1..587b5c51db58 100644
+--- a/lib/kunit/test.c
++++ b/lib/kunit/test.c
+@@ -647,6 +647,7 @@ int kunit_run_tests(struct kunit_suite *suite)
+ 	struct kunit_case *test_case;
+ 	struct kunit_result_stats suite_stats = { 0 };
+ 	struct kunit_result_stats total_stats = { 0 };
++	const void *curr_param;
+ 
+ 	/* Taint the kernel so we know we've run tests. */
+ 	add_taint(TAINT_TEST, LOCKDEP_STILL_OK);
+@@ -679,37 +680,42 @@ int kunit_run_tests(struct kunit_suite *suite)
+ 		} else {
+ 			/* Get initial param. */
+ 			param_desc[0] = '\0';
+-			test.param_value = test_case->generate_params(NULL, param_desc);
++			/* TODO: Make generate_params try-catch */
++			curr_param = test_case->generate_params(NULL, param_desc);
+ 			test_case->status = KUNIT_SKIPPED;
+ 			kunit_log(KERN_INFO, &test, KUNIT_SUBTEST_INDENT KUNIT_SUBTEST_INDENT
+ 				  "KTAP version 1\n");
+ 			kunit_log(KERN_INFO, &test, KUNIT_SUBTEST_INDENT KUNIT_SUBTEST_INDENT
+ 				  "# Subtest: %s", test_case->name);
+ 
+-			while (test.param_value) {
+-				kunit_run_case_catch_errors(suite, test_case, &test);
++			while (curr_param) {
++				struct kunit param_test = {
++					.param_value = curr_param,
++					.param_index = ++test.param_index,
++					.parent = &test,
++				};
++				kunit_init_test(&param_test, test_case->name, test_case->log);
++				kunit_run_case_catch_errors(suite, test_case, &param_test);
+ 
+ 				if (param_desc[0] == '\0') {
+ 					snprintf(param_desc, sizeof(param_desc),
+-						 "param-%d", test.param_index);
++						 "param-%d", param_test.param_index);
+ 				}
+ 
+-				kunit_print_ok_not_ok(&test, KUNIT_LEVEL_CASE_PARAM,
+-						      test.status,
+-						      test.param_index + 1,
++				kunit_print_ok_not_ok(&param_test, KUNIT_LEVEL_CASE_PARAM,
++						      param_test.status,
++						      param_test.param_index,
+ 						      param_desc,
+-						      test.status_comment);
++						      param_test.status_comment);
+ 
+-				kunit_update_stats(&param_stats, test.status);
++				kunit_update_stats(&param_stats, param_test.status);
+ 
+ 				/* Get next param. */
+ 				param_desc[0] = '\0';
+-				test.param_value = test_case->generate_params(test.param_value, param_desc);
+-				test.param_index++;
+-				test.status = KUNIT_SUCCESS;
+-				test.status_comment[0] = '\0';
+-				test.priv = NULL;
++				curr_param = test_case->generate_params(curr_param, param_desc);
+ 			}
++			/* TODO: Put this kunit_cleanup into a try-catch. */
++			kunit_cleanup(&test);
+ 		}
+ 
+ 		kunit_print_attr((void *)test_case, true, KUNIT_LEVEL_CASE);
 -- 
 2.51.0.261.g7ce5a0a67e-goog
 
