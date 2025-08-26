@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-785963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD85FB352F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:09:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 192BFB352FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:10:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 610A83A94F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:09:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC2E9240F59
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 581472E091E;
-	Tue, 26 Aug 2025 05:09:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A167D215077;
+	Tue, 26 Aug 2025 05:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NR/XQi81"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cVnVrWRb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA3AF215077;
-	Tue, 26 Aug 2025 05:09:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0505BA92E;
+	Tue, 26 Aug 2025 05:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756184948; cv=none; b=PTRcHXnLg8PQF0SCuvPip0CALvavy1QJpXv0aHduRcYVPON4tc3M8rfnfCwsitBGQ3FPBR5MVfLVddktUEPQv5wFUuLibbzPlHIgCMezkELrcCcmLjhqyqnG/iR+So0yynnJvwKnj+Vmmk3WimrTl8uOyl1NYm60njGnVwj5gvc=
+	t=1756185006; cv=none; b=S4JwoOoUPLJxHy4b72NLGS5KHQCgEwbUnW8QmlI6tDw5+cJdKaSydYUPiBb7RkrcAzqars+4wJ2RDRgGkB2KAsLnCYRlIb8Nc4ZHbppjYrU265C+945iAmdyJ3E24kTEPDgPGOxu8ZelEUHRPILw/KA2td7g6Ybvt5oZxPD56yI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756184948; c=relaxed/simple;
-	bh=W4XXRCWhkiA5nW0vb7FwmYtG9wU18GNBtufJX13/nU4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=lweYVCHgrDbQ/3/iHYQniifd7Iq8gQtmYn09M+J/Ta1aD9+u21fZ6K0cyiyATxortvE3njszGhn+FXuq3denM3wyociyrCdnAMHZ4U77ze+MIj+eq59VY+rnVY6Uk2dlkSfxms4BcjqQuax1Aer39PcSjDHQVBn0GVa42enI3XE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NR/XQi81; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9175FC4CEF1;
-	Tue, 26 Aug 2025 05:09:07 +0000 (UTC)
+	s=arc-20240116; t=1756185006; c=relaxed/simple;
+	bh=0GDYshJH2dENjEzqGPH6OZl85xajSPfIw+5++sTXWEE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qr6B66en5yYDBKhffkKZ5lTouswGf9kVbffDJfBXGuvEnMHxv+RJWsH7CXfBxKKwEsCm+bYSZ+wrwKyw3kxacUxebRTYEjYAEaWmooCuN/5ELA7V1xK8V7O5IMf3RS1TSLqYfJKGSHcYRzIwemy45f/O75Aub9bWuKEyCZYrSNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cVnVrWRb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3E94C4CEF1;
+	Tue, 26 Aug 2025 05:10:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756184948;
-	bh=W4XXRCWhkiA5nW0vb7FwmYtG9wU18GNBtufJX13/nU4=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=NR/XQi815eEEWQrX4QJs07XdGqSVoqdFGZXY6wLYFxtB0kPYYwAURypd6RAQS9n6G
-	 dQHTMp8MV17lAW2RXCGtQq9Vmrn7pUBZlTDemC/DdKN5bYqICowpfDEaBU3UZ5RGLw
-	 BZ/0vJnhIJIxjP+8yoJjiU4k/MzDer0xeiQ0EY4symiBJWQj9j1S9wvcQWrwj+VF6J
-	 aU9cTkb19d5kNlPyiM3E1K4vceaOhwXkfY2UwXENwt5HLaPQtk7NKIYVxomswrMfKU
-	 QDi/KOcKEU2A76jLc7taIlrdZ6UmhsVuLWCGFvprdcds3Q/CQ6gAi424UuCqR7sfb4
-	 sPjk8zApxZIHw==
-Message-ID: <138dde32-e528-4731-b766-4f26dd9366d1@kernel.org>
-Date: Tue, 26 Aug 2025 14:09:05 +0900
+	s=k20201202; t=1756185005;
+	bh=0GDYshJH2dENjEzqGPH6OZl85xajSPfIw+5++sTXWEE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=cVnVrWRbIDx57K8+gYXDjHqI7i2hZE/s3wJSrJagOrIXb3cBoXLwestuK3EsdvShm
+	 ge0B/yrxa7CvUH3xt7b9+B2e5J82Z3/hY3PJzbtOmT+LGgq1q00jS6STz7tzkRHadN
+	 gq17ddWp3X9pMWeDPGM+ZbvgeqsvICTE/6/2wTCr90BaB34XKpnTQBYm17puFsbrKR
+	 66DtaGkfFOMs3zJGEExsoMlPrZj32h/0+xyCikf9Ocgpp+jvuNx4BO5Tpwp4O1rNpH
+	 YRxo4lkXIQ4WKA0dnPmOZwSykYEt/yhpmYQMCw1GRP41NZ4nF8yv75bDcLfixVbwU+
+	 mpE92sFkiIFHg==
+Message-ID: <a618bb76-af82-4b47-a68c-8fc83cad97cb@kernel.org>
+Date: Tue, 26 Aug 2025 14:10:03 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,78 +49,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ata: ahci_xgene: Use int type for 'rc' to store error
- codes
-To: Qianfeng Rong <rongqianfeng@vivo.com>, Niklas Cassel <cassel@kernel.org>,
- linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250826040219.133959-1-rongqianfeng@vivo.com>
+Subject: Re: [PATCH v10 3/3] scsi: sd: make sd_revalidate_disk() return void
+To: Abinash Singh <abinashsinghlalotra@gmail.com>, bvanassche@acm.org
+Cc: James.Bottomley@HansenPartnership.com, linux-kernel@vger.kernel.org,
+ linux-scsi@vger.kernel.org, martin.petersen@oracle.com
+References: <20250825183940.13211-1-abinashsinghlalotra@gmail.com>
+ <20250825183940.13211-4-abinashsinghlalotra@gmail.com>
 Content-Language: en-US
 From: Damien Le Moal <dlemoal@kernel.org>
 Organization: Western Digital Research
-In-Reply-To: <20250826040219.133959-1-rongqianfeng@vivo.com>
+In-Reply-To: <20250825183940.13211-4-abinashsinghlalotra@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 8/26/25 13:02, Qianfeng Rong wrote:
-> Use int instead of u32 for 'rc' variable to store negative error codes
-> returned by ahci_do_softreset().
+On 8/26/25 03:39, Abinash Singh wrote:
+> The sd_revalidate_disk() function currently returns 0 for
+> both success and memory allocation failure.Since none of its
+> callers use the return value, this return code is both unnecessary
+> and potentially misleading.
 > 
-> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
-> ---
->  drivers/ata/ahci_xgene.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> Change the return type of sd_revalidate_disk() from int to void
+> and remove all return value handling. This makes the function
+> semantics clearer and avoids confusion about unused return codes.
 > 
-> diff --git a/drivers/ata/ahci_xgene.c b/drivers/ata/ahci_xgene.c
-> index 5d5a51a77f5d..8d01c105fd44 100644
-> --- a/drivers/ata/ahci_xgene.c
-> +++ b/drivers/ata/ahci_xgene.c
-> @@ -450,7 +450,7 @@ static int xgene_ahci_pmp_softreset(struct ata_link *link, unsigned int *class,
->  {
->  	int pmp = sata_srst_pmp(link);
->  	struct ata_port *ap = link->ap;
-> -	u32 rc;
-> +	int rc;
->  	void __iomem *port_mmio = ahci_port_base(ap);
->  	u32 port_fbs;
+> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+> Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+> Signed-off-by: Abinash Singh <abinashsinghlalotra@gmail.com>
 
-If you fix this, please fix it properly: the rc variable is not needed at all in
-that function. You can just do:
+[...]
 
-diff --git a/drivers/ata/ahci_xgene.c b/drivers/ata/ahci_xgene.c
-index 5d5a51a77f5d..a6d964f7184c 100644
---- a/drivers/ata/ahci_xgene.c
-+++ b/drivers/ata/ahci_xgene.c
-@@ -450,7 +450,6 @@ static int xgene_ahci_pmp_softreset(struct ata_link *link,
-unsigned int *class,
- {
-        int pmp = sata_srst_pmp(link);
-        struct ata_port *ap = link->ap;
--       u32 rc;
-        void __iomem *port_mmio = ahci_port_base(ap);
-        u32 port_fbs;
-
-@@ -463,9 +462,7 @@ static int xgene_ahci_pmp_softreset(struct ata_link *link,
-unsigned int *class,
-        port_fbs |= pmp << PORT_FBS_DEV_OFFSET;
-        writel(port_fbs, port_mmio + PORT_FBS);
-
--       rc = ahci_do_softreset(link, class, pmp, deadline, ahci_check_ready);
--
--       return rc;
-+       return ahci_do_softreset(link, class, pmp, deadline, ahci_check_ready);
- }
-
-
+>  	lim = kmalloc(sizeof(*lim), GFP_KERNEL);
+>  	if (!lim)
+> -		goto out;
+> +		return;
 >  
-> @@ -500,7 +500,7 @@ static int xgene_ahci_softreset(struct ata_link *link, unsigned int *class,
->  	u32 port_fbs;
->  	u32 port_fbs_save;
->  	u32 retry = 1;
-> -	u32 rc;
-> +	int rc;
+>  	buffer = kmalloc(SD_BUF_SIZE, GFP_KERNEL);
+>  	if (!buffer)
+> @@ -3823,7 +3823,6 @@ static int sd_revalidate_disk(struct gendisk *disk)
+>  	kfree(buffer);
+>  	kfree(lim);
 >  
->  	port_fbs_save = readl(port_mmio + PORT_FBS);
+
+Nit: please delete the blank line above too.
+
+> -	return err;
+>  }
 >  
+>  /**
 
 
 -- 
