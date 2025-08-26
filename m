@@ -1,136 +1,142 @@
-Return-Path: <linux-kernel+bounces-786340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2A03B358A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:20:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEE51B3589F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:20:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D4995E4524
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:16:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B10C3174CC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:16:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729C63074AA;
-	Tue, 26 Aug 2025 09:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 560A8306D3E;
+	Tue, 26 Aug 2025 09:16:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="2PdBgyoO"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="coY8G13j"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391882FE069;
-	Tue, 26 Aug 2025 09:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391C8305E1F
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756199691; cv=none; b=afpcio4jFrfT8dAq8iqupr75CtI2r4vvA7RYTVXmV/7cTrdId1M3pCmUPpYb9FjKQa/P5Q1+9mnsqKrnnaAdjKNxeQu1wS8xdjEOqQ54PZjq+U7UXzz+Wy/ZjKNRugbKbYm5tWvz4v+d8j7wULCLIbspbt4mdtbmoozt7Bdew0I=
+	t=1756199765; cv=none; b=ID/M6RTCYjcyb+JOUTdgN/OgW0+m3Hk0eQGLk6Tj4mESAY3dq0f6kkErJL+76pjguZVpW0+UqGj9P1MbCDoFrvlVWaOjIJ9qckrTPezmbDZlL7C6EpE0bUPOBEOfDrm59fKPL0YKy9LejBtkLeEZKWPFsFwU5rhjrIkT9OH4Wf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756199691; c=relaxed/simple;
-	bh=Lxn6j1kzDkH/WTga4d/2k5vCxhia+Sp6of3N/hIKY/s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=sJildRD5ULu5Y38MAJ9Yi1qcvhhW7XxxGkHTW3GdFu/p9x7A+ziULO5Jp4oeS5UjozAk6YJnsaOWc3d1ATrqgc3TxrFLdao+ShMi5cChg3uAPmUFf4vn4aGC9Lfb4oVsEKwb4VFhRcw5RM4uJUO8o4O8D3SoDjgQ5u3DogEH7Fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=2PdBgyoO; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1756199690; x=1787735690;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Lxn6j1kzDkH/WTga4d/2k5vCxhia+Sp6of3N/hIKY/s=;
-  b=2PdBgyoOHoV6cSjJpGWLXaXxW7Vezpp3hUiDEH8DGKYCAXK5f23ZuJA7
-   sYUJKLxGrXlSdVb8LRKRDgihmyOUplqjMWQvLq5qUGvH0hcIcsrNm4Bkz
-   c56vN3XS2M3ZcezIO0dm0p+Xy+/hTMasB57sKcA/2hgcTjI7xGQitQ1C7
-   GQ5AVuz7Y7P7uxgln1HgZk7SzMjfNrKSI6mawan+MZnS4BBYr8lA1ksRH
-   HKI2fHiCFmX0zWdMQxeqNqgUScIg+hgovPNgk1ANRS1suU69nW2otoRqT
-   MG1fhAy9m/5gmDDYIcYEMLbWhrRw9hfdKpP8lxjSWC2pdhFMSquCi8inw
-   A==;
-X-CSE-ConnectionGUID: oz5noQKVS6yv1ppRAce+jQ==
-X-CSE-MsgGUID: k1iAyTw3SpukqoVYCbsjww==
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="213074774"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 26 Aug 2025 02:14:48 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
- chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Tue, 26 Aug 2025 02:14:23 -0700
-Received: from [10.159.245.205] (10.10.85.11) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
- Transport; Tue, 26 Aug 2025 02:14:19 -0700
-Message-ID: <3bccf773-abd6-4ade-a1c5-99f2a773b723@microchip.com>
-Date: Tue, 26 Aug 2025 11:14:18 +0200
+	s=arc-20240116; t=1756199765; c=relaxed/simple;
+	bh=1y6xXtnsBfcq1kO8jrl/JBy033EpU/0duq6peYZvdWg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XBgPhvJfRs4K580MDkB9ToahwajQTKvzuV2oZ22K2+B9uP4mNEXLfJHl9Tra+Kb/k3paaC2X2NN2YwJvbLy6o/5NyTD+w79E1NG9rYRlKX7Ksith21Yx3MSlPzsGFoBXJrR+X9BXjcnXJdA89ewKzjAbvMKYEOVexZEGZiU0xXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=coY8G13j; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-24687a76debso23631025ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 02:16:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1756199762; x=1756804562; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2tcYVYvsM6kA2zwY5YJW0abgLUuueK5NNoX+JNJ1avE=;
+        b=coY8G13j08J9SYOCdkQHYVfiUyrieYQA5+xgVtkwKCoxpBEX6orYEdvw4qLLbZJesf
+         g+zMshK67gGsVo/gKdkqLCP1/Bn0sPb18VlxaJXdr5YMtZxTmRV2wrRa4dZOgwCEqz2L
+         Wa+HQHieWdnrfh0LZBPmL+x7xdRFRI8WP4cLI5p3fqsabKkYZEoAooNOl9BDGECTOlbL
+         elKRiX8FFQFKb5rj1DJnASlz2PXTDYq64jV3Hdy6tG8G97kRxfDiv+/45fn6eEsubqe4
+         U1QW4h0KAw04mjl/P8dWAE167PZaSz5UTZx1CcgM4iKUAEAIReid+l2VXiYjfY4dfF7b
+         2anA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756199762; x=1756804562;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2tcYVYvsM6kA2zwY5YJW0abgLUuueK5NNoX+JNJ1avE=;
+        b=aRya4Oxvs9xln+39Q3pheV2St1QCyyNiQ1dQXWu1A1PLPm420G92zZnnQ7o3StVCmG
+         qR49nd37KPqoXedjl/260T0lrOHfpMP0++Vru7y92uC1xQjk/8gqyyZJItSrNl825hJK
+         yhpMocv+v18Hz3awxqCRbT0Gz7Ym3/hXYRLdGYNzMzEe4UIcguVHZ+D9rybc5cacIqMb
+         YVvb16Odil/t5ssI853J/qM4+rpe137xHj5JnN57LrxV7ejkOOSE+YhqDHGaJGVbNArT
+         m83ITlIuOr0yQi9JIYlph3gsoOIx3z9XMtOeQRZsWqyGOys9FwaeKvxUz2laVuS/NFZt
+         q0mg==
+X-Forwarded-Encrypted: i=1; AJvYcCVXDoElglMphArFkBkgYthyrvsQL60mtlijlaGnSrLAHyYlyMUZ/V3UfS9elrg1+OxPf14E/rPBKu/Lwu8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy76BBUzLQY8thi5BPCpYdnI8ZLUvf8A5r3LVQJJQVHdNw6Cqsj
+	V3nJU6mRcFTwPsRkzHG6GbRQvkmNlvPHMTualIc2HiCGMJprQUpJ3OPLSNOSgb5sXg==
+X-Gm-Gg: ASbGncuMZJoxOQHIBG2ifVtajlIEoUVrI0jU/TTKJMo3gIoT+bKHWPj5iiUkN6RUemZ
+	8Z8Y1lXfST5KguPfILBHc67eSzqydDs8fjnRbqA3uIiKk3+pyyYQDaJ7PM0EgI0f32c6LOIPdom
+	MY8K/BkTVZ6O1nOlL/vHuoAZPU18LdRbDfWROFzUd3YDig7gmlrShPJ1I94U1889Uun2PjuT8Dd
+	XC4Oznc9Mj7+p7341ToJKPrtdOoNFc1UmsEnnwpV2MDrTGRR3Qn1sn021P48x+TZBMkQxajI1Xy
+	8cShx8MWlP3PFtjcMnbf3Nsqjs+lqcPwWmz7HU385IA7WguGOQXgnYSnuIuT8hxiaGqIJhmvmWR
+	SakZoH7qxMxbUoEivHbj4dry9zjwHi61Z7PNwEsvC+m8xBos=
+X-Google-Smtp-Source: AGHT+IFKzh36i/RR/bwLCELe7gb/WIrtsSCl8pnqE3wNQlAA5RehW1rSbbJl/QtH9n2qSYJ+QAkpWA==
+X-Received: by 2002:a17:903:1b0c:b0:240:6fc0:3421 with SMTP id d9443c01a7336-248753a27acmr10478495ad.3.1756199762210;
+        Tue, 26 Aug 2025 02:16:02 -0700 (PDT)
+Received: from bytedance ([61.213.176.56])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24692f981c9sm74072675ad.116.2025.08.26.02.15.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Aug 2025 02:16:01 -0700 (PDT)
+Date: Tue, 26 Aug 2025 17:15:51 +0800
+From: Aaron Lu <ziqianlu@bytedance.com>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: Ben Segall <bsegall@google.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
+	Chuyi Zhou <zhouchuyi@bytedance.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Florian Bezdeka <florian.bezdeka@siemens.com>,
+	Songtang Liu <liusongtang@bytedance.com>, Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH v3 4/5] sched/fair: Task based throttle time accounting
+Message-ID: <20250826091551.GC87@bytedance>
+References: <20250715071658.267-1-ziqianlu@bytedance.com>
+ <20250715071658.267-5-ziqianlu@bytedance.com>
+ <xhsmhbjociso8.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] net: cadence: macb: Set upper 32bits of DMA ring
- buffer
-To: Jakub Kicinski <kuba@kernel.org>, Stanimir Varbanov <svarbanov@suse.de>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-rpi-kernel@lists.infradead.org>, Broadcom internal kernel review list
-	<bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Florian
- Fainelli <florian.fainelli@broadcom.com>, Andrea della Porta
-	<andrea.porta@suse.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, Phil
- Elwell <phil@raspberrypi.com>, Jonathan Bell <jonathan@raspberrypi.com>, Dave
- Stevenson <dave.stevenson@raspberrypi.com>, <stable@vger.kernel.org>, Andrew
- Lunn <andrew@lunn.ch>, =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-References: <20250822093440.53941-1-svarbanov@suse.de>
- <20250822093440.53941-2-svarbanov@suse.de>
- <20250825165310.64027275@kernel.org>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Content-Language: en-US, fr
-Organization: microchip
-In-Reply-To: <20250825165310.64027275@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <xhsmhbjociso8.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 
-On 26/08/2025 at 01:53, Jakub Kicinski wrote:
-> On Fri, 22 Aug 2025 12:34:36 +0300 Stanimir Varbanov wrote:
->> In case of rx queue reset and 64bit capable hardware, set the upper
->> 32bits of DMA ring buffer address.
->>
->> Cc: stable@vger.kernel.org # v4.6+
->> Fixes: 9ba723b081a2 ("net: macb: remove BUG_ON() and reset the queue to handle RX errors")
->> Credits-to: Phil Elwell <phil@raspberrypi.com>
->> Credits-to: Jonathan Bell <jonathan@raspberrypi.com>
->> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
->> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+On Mon, Aug 18, 2025 at 04:57:27PM +0200, Valentin Schneider wrote:
+> On 15/07/25 15:16, Aaron Lu wrote:
+> > @@ -5287,19 +5287,12 @@ enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+> >               check_enqueue_throttle(cfs_rq);
+> >               list_add_leaf_cfs_rq(cfs_rq);
+> >  #ifdef CONFIG_CFS_BANDWIDTH
+> > -		if (throttled_hierarchy(cfs_rq)) {
+> > +		if (cfs_rq->pelt_clock_throttled) {
+> >                       struct rq *rq = rq_of(cfs_rq);
+> >
+> > -			if (cfs_rq_throttled(cfs_rq) && !cfs_rq->throttled_clock)
+> > -				cfs_rq->throttled_clock = rq_clock(rq);
+> > -			if (!cfs_rq->throttled_clock_self)
+> > -				cfs_rq->throttled_clock_self = rq_clock(rq);
+> > -
+> > -			if (cfs_rq->pelt_clock_throttled) {
+> > -				cfs_rq->throttled_clock_pelt_time += rq_clock_pelt(rq) -
+> > -					cfs_rq->throttled_clock_pelt;
+> > -				cfs_rq->pelt_clock_throttled = 0;
+> > -			}
+> > +			cfs_rq->throttled_clock_pelt_time += rq_clock_pelt(rq) -
+> > +				cfs_rq->throttled_clock_pelt;
+> > +			cfs_rq->pelt_clock_throttled = 0;
 > 
->> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
->> index ce95fad8cedd..36717e7e5811 100644
->> --- a/drivers/net/ethernet/cadence/macb_main.c
->> +++ b/drivers/net/ethernet/cadence/macb_main.c
->> @@ -1634,7 +1634,11 @@ static int macb_rx(struct macb_queue *queue, struct napi_struct *napi,
->>                macb_writel(bp, NCR, ctrl & ~MACB_BIT(RE));
->>
->>                macb_init_rx_ring(queue);
->> -             queue_writel(queue, RBQP, queue->rx_ring_dma);
->> +             queue_writel(queue, RBQP, lower_32_bits(queue->rx_ring_dma));
->> +#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
->> +             if (bp->hw_dma_cap & HW_DMA_CAP_64B)
->> +                     macb_writel(bp, RBQPH, upper_32_bits(queue->rx_ring_dma));
->> +#endif
->>
->>                macb_writel(bp, NCR, ctrl | MACB_BIT(RE));
->>
+> This is the only hunk of the patch that affects the PELT stuff; should this
+> have been included in patch 3 which does the rest of the PELT accounting changes?
 > 
-> Looks like a subset of Théo Lebrun's work:
-> https://lore.kernel.org/all/20250820-macb-fixes-v4-0-23c399429164@bootlin.com/
-> let's wait for his patches to get merged instead?
 
-Yes, we can certainly wait. As RBOPH changes by Théo are key, they will 
-probably remove the need for this fix altogether: but I count on you 
-Stanimir to monitor that (as I don't have a 64 bit capable platform at 
-hand).
+While working on a rebase and staring at this further, this hunk that
+deals with pelt stuff is actually introduced in patch 3 and do not have
+any real changes here. i.e. after throttled_clock related lines are
+removed, pelt stuffs just moved from an inner if to an outer if but it
+didn't have any real changes.
 
-Best regards,
-   Nicolas
-
+I hope I've clarified it clear this time, last time my brain stopped
+working...
 
