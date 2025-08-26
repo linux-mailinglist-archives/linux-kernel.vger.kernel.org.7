@@ -1,171 +1,115 @@
-Return-Path: <linux-kernel+bounces-786566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7432B35DDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:48:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ECA4B35E54
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:56:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1553188DB39
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:42:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C95F463C5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:43:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0FFE29D280;
-	Tue, 26 Aug 2025 11:42:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BBBD283FDF;
+	Tue, 26 Aug 2025 11:42:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OE+M895s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZQqgtlZX"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6FD01A256B;
-	Tue, 26 Aug 2025 11:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B14B393DD1;
+	Tue, 26 Aug 2025 11:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756208526; cv=none; b=tlQbl7v+W5rXErSniTthshhheFXHlb4wEOlPoFJINtkSgieAbd7PzhVkDl14c50erGXEeOQmNNApf9uDplzvLGQH/5nOzB/d18G57S/wxMqdZHc++tb4rjdJm2DAfiUSVBIL+z82ayh3/CoYpQgrwmdynuLaMJGQvafHDL16xYM=
+	t=1756208574; cv=none; b=OCOiU5gPn8SXKdu179oOlqqhdFFSL9yfSA+8EmtMpk+8Qlfem231KCrLpOTvX0l+lq/+X9pOGE/o9icYSnOIJQU+1ZwBSooD/2zStE7UzEt2bleVOQIiL1vz32IBNhyyG+s7vrkT7RVmvgEJBf8z4nYvZbaPPivNCaqXIpQ79PA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756208526; c=relaxed/simple;
-	bh=ddq8PtAcnbhRU79j5ZF0yjwZpeApRBwN/QBnxQXmLuE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZCY8ZmzhOWftdG0mGD4FgtyIqwq/FPSesQrfef/xQRdCHOlkZVCmYX4qXQuvqIdef8TMqmhKPJVm50qy6p8SzsNdm8wOPfL+mASPRx5+bH1gBQwKiSlq5dQJCBi/8vktEiR+o8oShQsusLXHK7DomYUVk7eouzU4Ebm7UW6BTJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OE+M895s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A22D5C4AF09;
-	Tue, 26 Aug 2025 11:42:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756208524;
-	bh=ddq8PtAcnbhRU79j5ZF0yjwZpeApRBwN/QBnxQXmLuE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=OE+M895sfE2wvK9df/swqIDcfzZmNXvlJ3qDXgvVn9s3HWvbSw2yDMKhy6vjJBtfr
-	 Wv9EhOPQvilH6uJ4G/qFQmy4Mdr5Tmy+p3VH815uL6XrCuad1PV13fDR2kAZrkEpDc
-	 xlws92mhVfferekXCzBFe0Mz47AGXh+6pv229RAnDlIVjEGhpzzYrHnEvVbSpVLyfX
-	 qfjtZ+56u9man0PR6jrV3beO+/KGpP9vPmr6AHBIDkJlYCVJRaIAufgEPM9MjuIU/N
-	 qzCwlBQXq7QbGzbGaN3QBqa4gZdc7yELKsKqzuVOP2p+98esuGVHyrgPzr0AC8P6en
-	 9PXsHGtKJdvSA==
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-743814bcca2so4336387a34.0;
-        Tue, 26 Aug 2025 04:42:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVDQeu32F14fD0/yFQ+eQtnqbYIWLqW2QRMla2jXzz65FaknR6AcS9ADE15jWDIVwebgJRRmE7D9LI=@vger.kernel.org, AJvYcCXdHyg7X7BSQrM9SZ6OeUez6f5V/lRNTKzgN8imiTE85XLod1/kGWntOx48J0rhndNPvYnAUSyV5nP2AkA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNNFGUTgMPC5MyHaHMJC+Td7o4hP4Ghh50CsD2UI+T1jEI2Dop
-	7RN9pZ97Ini/7Yt4zb3ErLSMJQaAG9etC1jLkDyxRQ9iuCLeSgDj70bAS2bUW1LXsZVbWwbc9pf
-	0gFgxIMKQmm8Na1g0Toxn0el/nIEnMXA=
-X-Google-Smtp-Source: AGHT+IFQ2XeumGF9W4JXGKm5jlcVfvminsoQJd8mMVcdNxrIEkM2QVx63XLyxrWLY3oxXQgLXzx/nSt4pbY5VI3bhQk=
-X-Received: by 2002:a05:6830:280d:b0:741:c2aa:5536 with SMTP id
- 46e09a7af769-74535b18f44mr432709a34.2.1756208523886; Tue, 26 Aug 2025
- 04:42:03 -0700 (PDT)
+	s=arc-20240116; t=1756208574; c=relaxed/simple;
+	bh=Xx84B80yl9s5MKdpn1AdlJtJZU7aFzllXR3eTO3zx00=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VkVFD6dft/50ROga9T+8BMdYrfYfiMdugUeOrRfVDT8y1fX3W1pTcvRjdJDQIe5snH5ldTwQzHrWQrpK6fEfi6tea/EQTKx0gHBtjnFMnrrrhgNr8vNsB4cxgKt8pVi+1zgXJaS6r1KdFsEjflJ1yH1fIx10HWOSAeNY2pXJys8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZQqgtlZX; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-323266cdf64so4046569a91.0;
+        Tue, 26 Aug 2025 04:42:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756208572; x=1756813372; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+BX+2HoJ02Ew7shzFz7rI9qYusnmHKSjjBetjjXJ4TQ=;
+        b=ZQqgtlZXdQN7mft4MOKk/QqxYZv9NW3sxXHcT9LTULXiBleTntsJ4RAXggVE0MLviY
+         uDG9ZmCn9XtldWB1fUchq8sJalfN0hYEGheta90wF1fOPNZiBLYlTBex6HbHJPWhIiFg
+         Y32Mxmoj+DTieqw5mcsOusX22nUOrwAFgs0F4hdRreEWnB27bgZR2T3tCd2+yUAOP4ec
+         eGQdHz99Cl4H0vLnZaye29Ykt0vNmWX6ePKteRnXn3qVJbjo8S3gjGanSBhF7ANL63mw
+         62AT6h9rXILzcl/rjbCb3rpSn9K26S9FT1mGAV6PJtcTLEZXJ2699bXpe+3fWK5SJN5h
+         N4eQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756208572; x=1756813372;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+BX+2HoJ02Ew7shzFz7rI9qYusnmHKSjjBetjjXJ4TQ=;
+        b=QjZij3l97wp8W88PX0jxJ7eJnrata5FjR5L0N1VfHcmpF19vEZa+Yj3zJ8DGKVEDO2
+         nEJfvVhbw23BK0zQPIO5rOplvxWMHunNza3dUy12kwEKJn3nNzz9JdMhktm+6lDZwVGD
+         bjS+XG+pbKuKQQL6Fc9GqCNfnzm+T2hnX8B1hEibceVGyjrCPJlyYyp8dNti0UABPG6s
+         +aWWXr5rZxCa2bNrW3Up555MsUt3CYy5TfxpAfk5orNLNa6oTq3cPLfi49t3o8IqG9T0
+         f23Z4XvcO4c1Hd/9Ii/bHK+hfT5NaLu0DovVJ8Evd4hb8lXcNeLEugPZMCeIrVCUkKmC
+         6ytw==
+X-Forwarded-Encrypted: i=1; AJvYcCUzvRcPTgXgiycR9EtuaFgvZed5FpAVhCdqaPFgtw4OvFek79RHB/AqJWtVtX78CLutLR3USB4dXCy+ELY=@vger.kernel.org, AJvYcCVpQ00R0O1PMXXVyc657nyjYitwl3dGRxFZI4/O7D+i4gGXXqE4qk9ER9NU28AWf66PGKsBEzWu8sr9@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdAxW5fecc53sNmpaHG8Crul1Du7WDvKOAtHyDuCxA7EZdOZ0C
+	5aioEytMUBHDOKJPoT7P6JzJZSJQu4onIGiWR+jlmlGebT7njuZZs8QO
+X-Gm-Gg: ASbGncs7rrnraGkT7sKQSiYRBoHK37jH8RQsN4X3JJQBgkWFzhfYAkgldgEjwP2IqOM
+	K/jLHzFqMQjtQDR7ZUvlAtWK7JOqdMwiC51r1bWnhoNst75TdpXqoVF7NOXzb+sk4TsNMncc+xn
+	06ear7Csh6NBdOkZoVL9yevEfS9nly5CVZN3jlBit0XU/PfeFWxcBUnHZK1pe1K51D1cgYHkavs
+	ru0sHTcHk3d1KDDRfCyl6JQ6rmXiaVRCDubUNdCHlqfdPDRCxPh1cVYtoYJ6JRn1fpclA1aHdrK
+	V22ITjQ592rduFGm3yqKs+raHyHxV4Z8trbc914woBhQwu4D5mpfPoSORzpIo0L7oGnQOJ63sXg
+	vgxFX8iSVcEZ9LOQpd3bn
+X-Google-Smtp-Source: AGHT+IEoKSb9vq/au9mQMY9sjtndAQJuIeZfvPvHmHR0n06Qu+1C+X1Uvs4o72iXCNZATQYyNF9NUA==
+X-Received: by 2002:a17:90b:5292:b0:325:7fc5:fd82 with SMTP id 98e67ed59e1d1-3257fc5fecdmr11625183a91.24.1756208572216;
+        Tue, 26 Aug 2025 04:42:52 -0700 (PDT)
+Received: from rockpi-5b ([45.112.0.216])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4a8b7b301csm5612958a12.35.2025.08.26.04.42.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Aug 2025 04:42:51 -0700 (PDT)
+From: Anand Moon <linux.amoon@gmail.com>
+To: Shawn Guo <shawn.guo@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-pci@vger.kernel.org (open list:PCIE DRIVER FOR HISILICON STB),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Anand Moon <linux.amoon@gmail.com>
+Subject: [PATCH v1 0/2] HiSilicon STB PCIe host use bulk API for clock
+Date: Tue, 26 Aug 2025 17:12:39 +0530
+Message-ID: <20250826114245.112472-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826125541.7143e172c124.I9ecf55da46ccf33778f2c018a82e1819d815b348@changeid>
-In-Reply-To: <20250826125541.7143e172c124.I9ecf55da46ccf33778f2c018a82e1819d815b348@changeid>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 26 Aug 2025 13:41:52 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0i_V259T07peaZWUEULzWjWhqsP2RQxL3bB=q-GtYfX1A@mail.gmail.com>
-X-Gm-Features: Ac12FXwvstLJ5Z1EJnKgxOqFaTkUGkYS2f3wQi53VH9dCkYbqHcGmxgRHlu4150
-Message-ID: <CAJZ5v0i_V259T07peaZWUEULzWjWhqsP2RQxL3bB=q-GtYfX1A@mail.gmail.com>
-Subject: Re: [PATCH] PM: sleep: annotate RCU list iterations
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 26, 2025 at 12:55=E2=80=AFPM Johannes Berg
-<johannes@sipsolutions.net> wrote:
->
-> From: Johannes Berg <johannes.berg@intel.com>
->
-> These iterations require the read lock, otherwise RCU
-> lockdep will splat:
->
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-> WARNING: suspicious RCU usage
-> 6.17.0-rc3-00014-g31419c045d64 #6 Tainted: G           O
-> -----------------------------
-> drivers/base/power/main.c:1333 RCU-list traversed in non-reader section!!
->
-> other info that might help us debug this:
->
-> rcu_scheduler_active =3D 2, debug_locks =3D 1
-> 5 locks held by rtcwake/547:
->  #0: 00000000643ab418 (sb_writers#6){.+.+}-{0:0}, at: file_start_write+0x=
-2b/0x3a
->  #1: 0000000067a0ca88 (&of->mutex#2){+.+.}-{4:4}, at: kernfs_fop_write_it=
-er+0x181/0x24b
->  #2: 00000000631eac40 (kn->active#3){.+.+}-{0:0}, at: kernfs_fop_write_it=
-er+0x191/0x24b
->  #3: 00000000609a1308 (system_transition_mutex){+.+.}-{4:4}, at: pm_suspe=
-nd+0xaf/0x30b
->  #4: 0000000060c0fdb0 (device_links_srcu){.+.+}-{0:0}, at: device_links_r=
-ead_lock+0x75/0x98
->
-> stack backtrace:
-> CPU: 0 UID: 0 PID: 547 Comm: rtcwake Tainted: G           O        6.17.0=
--rc3-00014-g31419c045d64 #6 VOLUNTARY
-> Tainted: [O]=3DOOT_MODULE
-> Stack:
->  223721b3a80 6089eac6 00000001 00000001
->  ffffff00 6089eac6 00000535 6086e528
->  721b3ac0 6003c294 00000000 60031fc0
-> Call Trace:
->  [<600407ed>] show_stack+0x10e/0x127
->  [<6003c294>] dump_stack_lvl+0x77/0xc6
->  [<6003c2fd>] dump_stack+0x1a/0x20
->  [<600bc2f8>] lockdep_rcu_suspicious+0x116/0x13e
->  [<603d8ea1>] dpm_async_suspend_superior+0x117/0x17e
->  [<603d980f>] device_suspend+0x528/0x541
->  [<603da24b>] dpm_suspend+0x1a2/0x267
->  [<603da837>] dpm_suspend_start+0x5d/0x72
->  [<600ca0c9>] suspend_devices_and_enter+0xab/0x736
->  [...]
->
-> Add the fourth argument to the iteration to annotate
-> this and avoid the splat.
+Simplify the code using the clk_bulk*() and reset_control_bulk() APIs
 
-Yeah, good catch!
+Thanks
+-Anand
 
-> Fixes: 06799631d522 ("PM: sleep: Make async suspend handle suppliers like=
- parents")
-> Fixes: ed18738fff02 ("PM: sleep: Make async resume handle consumers like =
-children")
-> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-> ---
-> Honestly, not sure, maybe this should just be without _rcu?
-> ---
->  drivers/base/power/main.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-> index dbf5456cd891..e80175486be7 100644
-> --- a/drivers/base/power/main.c
-> +++ b/drivers/base/power/main.c
-> @@ -675,7 +675,8 @@ static void dpm_async_resume_subordinate(struct devic=
-e *dev, async_func_t func)
->         idx =3D device_links_read_lock();
->
->         /* Start processing the device's "async" consumers. */
-> -       list_for_each_entry_rcu(link, &dev->links.consumers, s_node)
-> +       list_for_each_entry_rcu(link, &dev->links.consumers, s_node,
-> +                               device_links_read_lock_held())
+Anand Moon (2):
+  PCI: dwc: histb: Simplify clock handling by using clk_bulk*()
+    functions
+  PCI: dwc: histb: Simplify reset control handling by using
+    reset_control_bulk*() function
 
-There is a macro for this already in main.c, it is called
-list_for_each_entry_rcu_locked().
+ drivers/pci/controller/dwc/pcie-histb.c | 119 +++++++-----------------
+ 1 file changed, 35 insertions(+), 84 deletions(-)
 
->                 if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT)
->                         dpm_async_with_cleanup(link->consumer, func);
->
-> @@ -1330,7 +1331,8 @@ static void dpm_async_suspend_superior(struct devic=
-e *dev, async_func_t func)
->         idx =3D device_links_read_lock();
->
->         /* Start processing the device's "async" suppliers. */
-> -       list_for_each_entry_rcu(link, &dev->links.suppliers, c_node)
-> +       list_for_each_entry_rcu(link, &dev->links.suppliers, c_node,
-> +                               device_links_read_lock_held())
->                 if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT)
->                         dpm_async_with_cleanup(link->supplier, func);
->
-> --
+
+base-commit: fab1beda7597fac1cecc01707d55eadb6bbe773c
+-- 
+2.50.1
+
 
