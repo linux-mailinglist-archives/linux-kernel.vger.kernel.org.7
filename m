@@ -1,199 +1,235 @@
-Return-Path: <linux-kernel+bounces-787071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C21A8B370FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:08:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9E1CB37101
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:11:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B473E1BA325E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:09:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95E131BA356C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:11:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FF992E285B;
-	Tue, 26 Aug 2025 17:08:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC5E2E266C;
+	Tue, 26 Aug 2025 17:10:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ouF1RLq1"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2063.outbound.protection.outlook.com [40.107.243.63])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="XS/blkfX"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD99231A541;
-	Tue, 26 Aug 2025 17:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.63
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D7E234973;
+	Tue, 26 Aug 2025 17:10:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756228129; cv=fail; b=NMNzed1sjM86cj751DsEPEUXECUXu89fZDqxMcVxyDgAy677kI/9x4LHYhPPz3oWyVaL0U6G63wR+9GiEw52bMxrwq2Y3RxSta9RRzfUeVhLqKpMjDQ3cGiqB8MNxv+IU9p+9phxnVeUR6ponStMD2OOVB7iRrTq8bWfRbsoRA8=
+	t=1756228257; cv=pass; b=EvxOPzLoX1oJArKD3eetWLiqEzqjZOSSCVXpfX8wnb0sO1mg2n8GSRSSWMLzd/QSCwV8GKvFwEAr95OlSKx0s+2AcP5r4AQO3uIVM7wn+jGBdmqTtxnL5xdCUMvw9tCs+EcIGYHk+UD1UMLYdI4tipSYrjLFuA58ADsGZLU3ZvY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756228129; c=relaxed/simple;
-	bh=NH2IWF9H0ASDVqAeYaJ8uSYGxAxnr3OC25u4GoHQhts=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=bo8gL48vA3hJKKxtkvH+ZJ6UesCQDV347NrN2yECOVw6HMrmx2gYWslHN46+KrP+oBhnNTkkaL5/TjGLdYwuQSThi9Q/xMZGTzAGV7FOjVXmkoc55kGBBK/Kzk/qKUPViK4FtSgDZpBnFJCBq/LaYT/KkLoJh1OYIPRY5c87lDU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ouF1RLq1; arc=fail smtp.client-ip=40.107.243.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=V6q5gCy8mZ9cOQ7h//qExVXWEuYs7cqPGp6KkBU52lnFdXYhA2S3sj/Q8AAbkGpl8FHQ803FsIXLCKI2ois7yeb1t42ULp7tjOcKkqS9QtM6cLkyrDEQ/0iKmbO54S+hMik+0SKJTwEMRE3z9nmYzsIDcC7QS9SALEytKzm8tz+NoLUC2MvmPZ4QIZ1Gye/Dqk9iG2wc6IP6QHh2th3vlVX4uFrb7NmsEbqqnfeBlZ5BEvAHd62pBCJnSTQ2+aIpknJ2FyL4NJzQjD/eZw5FTVsUzskPtBaI2Hmm+M8ONkENazF7dlZ6qDpHAtfwk81DGRKGEsJVk8y4OUzMkbxmLw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NH2IWF9H0ASDVqAeYaJ8uSYGxAxnr3OC25u4GoHQhts=;
- b=sGb3i3yt1C05Ry37tpWPIUz4pVbZ/HLFDjPruAyYGQjJJ5Vg/wrvcPZJpVlvaNyUAB1qXK/cITNKwyKn86ZbYkwERj3Nm+TsLCh4ze+ctCWt+rUjgzPohjWLwJnFkkUcoPvXKb5Zc69vLZC0HIXHU075uW/qZH4HbfQ9vr2ubdTLgwwj+m+n1S50j4qoQkhqYwAzVE/XaQzucXPixgMgkIXuKrSN2jJiC80dRZm928w1Y9GVQ0n5jRcxPtcEv1nxiL9dBEtCS4Fv2P5fZEFpPRcVJS/ZKE0k6lW5x228o0TJrb/io4lXkzD+rHT9MzVxeVhsieWL2hp6VQRbedlEcg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NH2IWF9H0ASDVqAeYaJ8uSYGxAxnr3OC25u4GoHQhts=;
- b=ouF1RLq1/jxOOdZJtbi46t8WXi5Iir6RrGXtn9dlFpnGsgc1+mFnYbdcmQEyy4F9ITdRRI6G0nlzneNmhdtHInwGUJWosKw9nqLDA34GGysrjYIWLPtg/5hrOomeLyYlQEHXJFOgfKxtdWypTIFKk/2HirU20h+28xyOtXKsaNTbsC73WH5FDwE/1DkrUH8s4J7uNi1iYITN8JGJ0jI/D5/02kAeSRHicpW66J4HyeU3MxW934hlIBqyCK2BSImFP1bY1ykI6L/hpEvZJtjkQXSWSae7IY4MsyPCRAShx5HFLYS/PAeGAjPokbosgnXnGpfDXb6WBBqJx8yDqnHgvQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SA1PR12MB8641.namprd12.prod.outlook.com (2603:10b6:806:388::18)
- by CY8PR12MB7195.namprd12.prod.outlook.com (2603:10b6:930:59::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.20; Tue, 26 Aug
- 2025 17:08:41 +0000
-Received: from SA1PR12MB8641.namprd12.prod.outlook.com
- ([fe80::9a57:92fa:9455:5bc0]) by SA1PR12MB8641.namprd12.prod.outlook.com
- ([fe80::9a57:92fa:9455:5bc0%4]) with mapi id 15.20.9052.019; Tue, 26 Aug 2025
- 17:08:41 +0000
-Date: Tue, 26 Aug 2025 14:08:39 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Pratyush Yadav <pratyush@kernel.org>, jasonmiu@google.com,
-	graf@amazon.com, changyuanl@google.com, rppt@kernel.org,
-	dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
-	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
-	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
-	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
-	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
-	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
-	dan.j.williams@intel.com, david@redhat.com,
-	joel.granados@kernel.org, rostedt@goodmis.org,
-	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
-	linux@weissschuh.net, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org,
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
-	aleksander.lobakin@intel.com, ira.weiny@intel.com,
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
-	stuart.w.hayes@gmail.com, lennart@poettering.net,
-	brauner@kernel.org, linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
-	ajayachandra@nvidia.com, parav@nvidia.com, leonro@nvidia.com,
-	witu@nvidia.com
-Subject: Re: [PATCH v3 00/30] Live Update Orchestrator
-Message-ID: <20250826170839.GF2130239@nvidia.com>
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
- <mafs0ms7mxly1.fsf@kernel.org>
- <CA+CK2bBoLi9tYWHSFyDEHWd_cwvS_hR4q2HMmg-C+SJpQDNs=g@mail.gmail.com>
- <20250826142406.GE1970008@nvidia.com>
- <CA+CK2bBrCd8t_BUeE-sVPGjsJwmtk3mCSVhTMGbseTi_Wk+4yQ@mail.gmail.com>
- <20250826151327.GA2130239@nvidia.com>
- <CA+CK2bAbqMb0ZYvsC9tsf6w5myfUyqo3N4fUP3CwVA_kUDQteg@mail.gmail.com>
- <20250826162203.GE2130239@nvidia.com>
- <CA+CK2bB9r_pMzd0VbLsAGTwh8kvV_o3rFM_W--drutewomr1ZQ@mail.gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+CK2bB9r_pMzd0VbLsAGTwh8kvV_o3rFM_W--drutewomr1ZQ@mail.gmail.com>
-X-ClientProxiedBy: BYAPR08CA0028.namprd08.prod.outlook.com
- (2603:10b6:a03:100::41) To SA1PR12MB8641.namprd12.prod.outlook.com
- (2603:10b6:806:388::18)
+	s=arc-20240116; t=1756228257; c=relaxed/simple;
+	bh=4Vx/QI4i55J2XDbPq76nlwchHfVrQMCLkJssf+8o3as=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=OcXVk93lZzM9vkrPXqMum+YlOR8eDsiPT40SM7fPVp0/t8sG+n4HEjB0fImzf1W7wHCOLnwlx4kB1d+eu6ZWkGBKArZLazQTfLkdZ9jbDo6+keR/PWsM+VxjTQxv37CFs8MEMVjrC537C/n9Af4isTB9gEW+SY9SnvkqojNjlD4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=XS/blkfX; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1756228232; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=S/rN8Rgmw230boCeNSf08fQpYegFKcxu+nTy5OV6yUipX4rjEr0txFn4fqoBicJFomWryBIgk/1OwoU5g2R9Z2wjpteOy8JFQkfDCAXfvCLVlOIxnnWMHH298Bec+f7orcZ025xdbOBIp8cU+kYfqHZmixvcU3s6TUaradjZCXg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756228232; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=6ESWsgBJC8fPbJpsp4MhmuWc0RcABRP9zNnzcCiUOGA=; 
+	b=f9mWCGo6m2kXHbnqireWwe5MyWzmo0WixNJLlTQvkSA5/2ngby+7yvsw1ihwl7pEb46wa3Rn7sRp3L1qfNJ0SqDp8JCzue1R7AWkHyH8YF2Voa32QTSA1dOtG+TC/lpyACSK5zAT6h82zr1Jqg49Rr9xH+fnqdH1GMbBNlrsA+4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756228232;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=6ESWsgBJC8fPbJpsp4MhmuWc0RcABRP9zNnzcCiUOGA=;
+	b=XS/blkfXwCXoT0kdoZhLJ0i91bV6beJya2tGQvEAebsl+GJOOHMUr/IwDzDhLfkb
+	h7qtSoI2blD4q93YZ0edrw8gEdHP8tg9tIJBz3xkeP1j9N3G6Ce9ja3amB/9PGtWqRs
+	q3fTWiXYhprtKKlrrNXPXLWn+B4qliUjcvAPm0TE=
+Received: by mx.zohomail.com with SMTPS id 1756228230518249.55696295371752;
+	Tue, 26 Aug 2025 10:10:30 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA1PR12MB8641:EE_|CY8PR12MB7195:EE_
-X-MS-Office365-Filtering-Correlation-Id: d266cdac-556f-4aac-515f-08dde4c3349e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?H+36CWtAAt1w+RUBXCp36JOnA2yTgdbNw3xaCU3BoksqXBqvz2TSmxiuIcFJ?=
- =?us-ascii?Q?CxNPwGvQnbmUeogDj0v20YRwfCWJ2hXdjb+x9TrHu9lV0wz5T32Zc0Nos0Mj?=
- =?us-ascii?Q?VinSeI/0/qD/iMep4HXSR9wvZIFc1ZOYq8LAFz22w+Wznd7JdZ9mNPoZZTTg?=
- =?us-ascii?Q?p4aTzW/RqCPnC/1mB0tfV+kONvEVLcR2LdXkf/XcWDqn8axVwsjFwGKc4gSd?=
- =?us-ascii?Q?R+SgqvAUsuLEVpdvTIMtBN42Q3vbdm3XqlSdhfL2mbV/vozfl1zvskZ0SPMw?=
- =?us-ascii?Q?EfHokAHHuc+Vm33lqZnm27ZhXn7Yb5T8M9kSkEgyYEKYE4kQWlkqpB8T59c7?=
- =?us-ascii?Q?TbZY/Z3Ub9HhO/pwqYIUW1EU1xmyfn8hyYFj0qj+91glYbxjIfNxsxyD+iMN?=
- =?us-ascii?Q?slhBgVQfwT22apKIzt0l3+HMh/tcU8sA/SSos5uBpW5EGCBUvPy5Akeito7Y?=
- =?us-ascii?Q?z5/fsA2hna73J2IvuzTQZzUACULXA+NiwexyfSYGxIo2CD3WOqwpyykTEMGz?=
- =?us-ascii?Q?z2qpV7VgGFPFpeXXTelaq3m6gkQHXiHgpuIiVAE9RJNLUPuS6Gs0yMt48mAZ?=
- =?us-ascii?Q?sk8EO8qoK328q0A9JmkKsHooMRPXgIYhI1orEqSTqzMcInfgZiV1BcIr6f/p?=
- =?us-ascii?Q?pkOZUO/KzBNIH3l6nyhOL7kEiRSdzvAcuWSxQmTZ84gnsY3B7duv2RPBbNRd?=
- =?us-ascii?Q?j2DzvtdumdB8nmSMqYIjnTwW75OwjqKhND5zomMvUhEIn4zUDfeBvJ0QVinX?=
- =?us-ascii?Q?w2YuZQrZ+F1TtPk5Rx/T1s6wt/TjVEax00AhiXp/c20RSPnyC2X/Xj9/qarE?=
- =?us-ascii?Q?pMeH08gEIRSvvSKW6cNFyaxJxV5ArJ+pIgGNyjTqZdfZQ9LVVzrTA/r9sH9Z?=
- =?us-ascii?Q?HmEDr0sLrYaIwdFpSny5a+hjHV9yHVAlIsRMyh762012tk7qXAts5dcOE3Ys?=
- =?us-ascii?Q?KXVOnToOt9lpxlYeBqPERHOvmBuEnndTs7Ocq93B1+J5VtbVmonAd02ire35?=
- =?us-ascii?Q?So0Mi80BbhRNHY1JYtfZeajAi0gBLTCgnAVoHMwtnm+92iAOzAqIvFRarMYH?=
- =?us-ascii?Q?geWeVxBDlqdn7rpr/piEJwQwJLKI+HEvhmWWmZo/yidojT9A6ZjdDjTwMwfi?=
- =?us-ascii?Q?SrjTkU8a7ERUeWl9/pmvJegozgleSDYJIzUTGBsRue1TL5RqTTr7NnZkMxMA?=
- =?us-ascii?Q?NdIMR1bb3GfLRjxvmlY/kilM15MNPBalmBO4dimbikmgwCQ9iWTOpo9ZleuL?=
- =?us-ascii?Q?broA2uh2mCrskZEJ4a6gbXUeb7Bs5ObgQ+H5rofHKlfg9NMJKFq9qAM/x668?=
- =?us-ascii?Q?U1IZFGs6cZR220bmOGcnfISEBpkwMr+Z/D0AU5wW2IADSk9EaN7bVPmGlPeC?=
- =?us-ascii?Q?0oATZqwbh0A92ipeZaM5eQ8zwjaDWwAvdwyNLLZSibw6Xin7hw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR12MB8641.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?4JjRLjhdJu8Ta6FhTNO/9VCJvIAB0gTDZSbg9ITKh2biE3fTrDcLSeTRViwu?=
- =?us-ascii?Q?dytPQBEDEzsHmXGEwE4Xga7sxRGGeHv446+fgygYpUlZU7mfXWE4T5qDx7lU?=
- =?us-ascii?Q?H7JPjW+PQl745id2fEq57+UOGNwn1tIF8MjTz+gz2Fvt3igVVF6rTtMWMUm/?=
- =?us-ascii?Q?ofdoU96/Afyytb7FeB42ZRZ2100C9j9xJoffq2r0KKGN4TKcXzFPawrUGxAN?=
- =?us-ascii?Q?mW96kNyB5w/iCmJOwyQ+b4ldhvoYy9iaJxAJvXjgmMwiiKlrhjrDToLColOj?=
- =?us-ascii?Q?d93dDiboQwXBJFsRHOK5cE1q5acf82/hiLSzeFY73OElZxEzgRdDWj2+jnb3?=
- =?us-ascii?Q?LYfmcTs7YUlOG8EE2z4s/6zcxVKmo9plDtQNQHxF/hPTXtqTz9lBBLOg80HR?=
- =?us-ascii?Q?yef/8Fd5gJX/0YbQxS6G4nEw96QBbO6OFaEU/MH92VcAW7y7yA8FrTi7T6HF?=
- =?us-ascii?Q?TauzynGOphAbLOvjs1+BdLR8JQ/F+RbRd+NuNUJ/kK1Pctu9SkwWQIEToBDc?=
- =?us-ascii?Q?mfeYb+OG2cr2RHHSFnNdDYqmd6gLKm5NR1L+LESsb7KjN89usdjBI1dRPbzH?=
- =?us-ascii?Q?70dREKYIHyrwdTDV6+XDrmoBgOxAQo+XOKPbPf0bijUBDEqvmEAXSNUIdu0r?=
- =?us-ascii?Q?rKb8r8va4a9XyqvdWpw744fdegEYOdoRYkQWiRzUPpXAE7fj7CIZKtYEtWsY?=
- =?us-ascii?Q?jUNh7Jp0KuvScoBq6cjY8Y7VjdihvbSbK9/G7okc4HmftW8XBL4JRxDVKNkQ?=
- =?us-ascii?Q?nvpkSP8fblyX6FN7Rg/VijdNZOv76MH6cgTFNOrm0ayjzer45q1FBQDhdQnt?=
- =?us-ascii?Q?7BqfdA3tXvgllPbuJ6+PlJ4KJiq5lJS2i0ePXva3+sdQghJMAqP2X9ZsN+sz?=
- =?us-ascii?Q?3RVDYEilWEn4IG7YQK2r4yyaMFX6u4lnWZgJOmaB6LAodLubCej3c9eUeswr?=
- =?us-ascii?Q?MLUgzP2m//W3udnolMpOZUhItaV66B+MVQzC86wkKmVhotBBmO5PFFP+bk6f?=
- =?us-ascii?Q?05WKVSEN9mIQg8keVdlbJioNuNrgJxDL0/6S3mmxzpkc0QeimRxFYbzVCs+Y?=
- =?us-ascii?Q?fFgPN/megyNsnoKNuULDwdL8foat22zp6YbFoLyl5wReJ0PreF4ynrcEQxKT?=
- =?us-ascii?Q?EanNRyA5JcvcAjOU5CXc2OJnYhRptzgGbnRvhtIiS5G/ki1IrT4VOHe5Xw/D?=
- =?us-ascii?Q?uwoQs2ftyjenKsScmKHdqL5I5ECQOWkY1Pis9m2MpSgpC/kA1zNgaiyu/DvF?=
- =?us-ascii?Q?uWti8zBFT0EDbO2/elQ1emTplcs0g4Bi8YhMeaoBsB1Au+G4MAfE/GiP6OXK?=
- =?us-ascii?Q?SdkmJMQPrSHOGQGvY9KoKgLbB+EVBgoQzdIhmMmEeZpxW26Q2WIOnE1lL60O?=
- =?us-ascii?Q?/HGr8P2dcK/JQcTkwinm/PgmPI538llqlr9+PY9mtmU8AlvDWS899fdtII6T?=
- =?us-ascii?Q?Uucn92tYw6atXdEk3HYpW7CIY9QwY4mhZVvROnu/Z4YTBx2iK10NRArm9nnh?=
- =?us-ascii?Q?Byz2Ry4ZBgnrrxOgJE8HibO0eKX/JV4DeRFXjViSKNhaf7alshVsgh6H6SIh?=
- =?us-ascii?Q?3pKq9oeiEYumIK9Bk00o9YFeVCxIX78F7qyaiH76?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d266cdac-556f-4aac-515f-08dde4c3349e
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR12MB8641.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 17:08:41.1431
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nnHM3t2Xk0hrbI/1WXgwM38tWJuEjvSRDJIbTgJtdnJK7DCMLzj98qzF/iLyC/I5
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7195
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH v3 1/5] rust: dma: implement DataDirection
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250825132539.122412-2-dakr@kernel.org>
+Date: Tue, 26 Aug 2025 14:10:13 -0300
+Cc: akpm@linux-foundation.org,
+ ojeda@kernel.org,
+ alex.gaynor@gmail.com,
+ boqun.feng@gmail.com,
+ gary@garyguo.net,
+ bjorn3_gh@protonmail.com,
+ lossin@kernel.org,
+ a.hindborg@kernel.org,
+ aliceryhl@google.com,
+ tmgross@umich.edu,
+ abdiel.janulgue@gmail.com,
+ acourbot@nvidia.com,
+ jgg@ziepe.ca,
+ lyude@redhat.com,
+ robin.murphy@arm.com,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <E7B266B2-4CD6-4C20-9969-AC5BEA57C5A4@collabora.com>
+References: <20250825132539.122412-1-dakr@kernel.org>
+ <20250825132539.122412-2-dakr@kernel.org>
+To: Danilo Krummrich <dakr@kernel.org>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-On Tue, Aug 26, 2025 at 05:03:59PM +0000, Pasha Tatashin wrote:
 
-> Perhaps, we should add session extensions to the kernel as follow-up
-> after this series lands, we would also need to rewrite luod design
-> accordingly to move some of the sessions logic into the kernel.
 
-This is what I imagined at least..
+> On 25 Aug 2025, at 10:24, Danilo Krummrich <dakr@kernel.org> wrote:
+>=20
+> Add the `DataDirection` struct, a newtype wrapper around the C
+> `enum dma_data_direction`.
+>=20
+> This provides a type-safe Rust interface for specifying the direction =
+of
+> DMA transfers.
+>=20
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> ---
+> rust/bindings/bindings_helper.h |  1 +
+> rust/kernel/dma.rs              | 68 +++++++++++++++++++++++++++++++++
+> 2 files changed, 69 insertions(+)
+>=20
+> diff --git a/rust/bindings/bindings_helper.h =
+b/rust/bindings/bindings_helper.h
+> index 0e140e07758b..c2cc52ee9945 100644
+> --- a/rust/bindings/bindings_helper.h
+> +++ b/rust/bindings/bindings_helper.h
+> @@ -47,6 +47,7 @@
+> #include <linux/cpumask.h>
+> #include <linux/cred.h>
+> #include <linux/device/faux.h>
+> +#include <linux/dma-direction.h>
+> #include <linux/dma-mapping.h>
+> #include <linux/errname.h>
+> #include <linux/ethtool.h>
+> diff --git a/rust/kernel/dma.rs b/rust/kernel/dma.rs
+> index 2bc8ab51ec28..27b25f041f32 100644
+> --- a/rust/kernel/dma.rs
+> +++ b/rust/kernel/dma.rs
+> @@ -244,6 +244,74 @@ pub mod attrs {
+>     pub const DMA_ATTR_PRIVILEGED: Attrs =3D =
+Attrs(bindings::DMA_ATTR_PRIVILEGED);
+> }
+>=20
+> +/// DMA data direction.
+> +///
+> +/// Corresponds to the C [`enum dma_data_direction`].
+> +///
+> +/// [`enum dma_data_direction`]: =
+srctree/include/linux/dma-direction.h
+> +#[derive(Copy, Clone, PartialEq, Eq, Debug)]
+> +#[repr(u32)]
+> +pub enum DataDirection {
+> +    /// The DMA mapping is for bidirectional data transfer.
+> +    ///
+> +    /// This is used when the buffer can be both read from and =
+written to by the device.
+> +    /// The cache for the corresponding memory region is both flushed =
+and invalidated.
+> +    Bidirectional =3D =
+Self::const_cast(bindings::dma_data_direction_DMA_BIDIRECTIONAL),
+> +
+> +    /// The DMA mapping is for data transfer from memory to the =
+device (write).
+> +    ///
+> +    /// The CPU has prepared data in the buffer, and the device will =
+read it.
+> +    /// The cache for the corresponding memory region is flushed =
+before device access.
+> +    ToDevice =3D =
+Self::const_cast(bindings::dma_data_direction_DMA_TO_DEVICE),
+> +
+> +    /// The DMA mapping is for data transfer from the device to =
+memory (read).
+> +    ///
+> +    /// The device will write data into the buffer for the CPU to =
+read.
+> +    /// The cache for the corresponding memory region is invalidated =
+before CPU access.
+> +    FromDevice =3D =
+Self::const_cast(bindings::dma_data_direction_DMA_FROM_DEVICE),
+> +
+> +    /// The DMA mapping is not for data transfer.
+> +    ///
+> +    /// This is primarily for debugging purposes. With this =
+direction, the DMA mapping API
+> +    /// will not perform any cache coherency operations.
+> +    None =3D Self::const_cast(bindings::dma_data_direction_DMA_NONE),
+> +}
+> +
+> +impl DataDirection {
+> +    /// Casts the bindgen-generated enum type to a `u32` at compile =
+time.
+> +    ///
+> +    /// This function will cause a compile-time error if the =
+underlying value of the
+> +    /// C enum is out of bounds for `u32`.
+> +    const fn const_cast(val: bindings::dma_data_direction) -> u32 {
+> +        // CAST: The C standard allows compilers to choose different =
+integer types for enums.
+> +        // To safely check the value, we cast it to a wide signed =
+integer type (`i128`)
+> +        // which can hold any standard C integer enum type without =
+truncation.
+> +        let wide_val =3D val as i128;
+> +
+> +        // Check if the value is outside the valid range for the =
+target type `u32`.
+> +        // CAST: `u32::MAX` is cast to `i128` to match the type of =
+`wide_val` for the comparison.
+> +        if wide_val < 0 || wide_val > u32::MAX as i128 {
+> +            // Trigger a compile-time error in a const context.
+> +            build_error!("C enum value is out of bounds for the =
+target type `u32`.");
+> +        }
+> +
+> +        // CAST: This cast is valid because the check above =
+guarantees that `wide_val`
+> +        // is within the representable range of `u32`.
+> +        wide_val as u32
+> +    }
+> +}
+> +
+> +impl From<DataDirection> for bindings::dma_data_direction {
+> +    /// Returns the raw representation of [`enum =
+dma_data_direction`].
+> +    fn from(direction: DataDirection) -> Self {
+> +        // CAST: `direction as u32` gets the underlying =
+representation of our `#[repr(u32)]` enum.
+> +        // The subsequent cast to `Self` (the bindgen type) assumes =
+the C enum is compatible
+> +        // with the enum variants of `DataDirection`, which is a =
+valid assumption given our
+> +        // compile-time checks.
+> +        direction as u32 as Self
+> +    }
+> +}
+> +
+> /// An abstraction of the `dma_alloc_coherent` API.
+> ///
+> /// This is an abstraction around the `dma_alloc_coherent` API which =
+is used to allocate and map
+> --=20
+> 2.51.0
+>=20
+>=20
 
-I wouldn't even try to do anything with pid if it can't solve the
-whole problem.
-
-Jason
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>=
 
