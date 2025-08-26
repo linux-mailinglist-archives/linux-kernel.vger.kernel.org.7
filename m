@@ -1,166 +1,232 @@
-Return-Path: <linux-kernel+bounces-786523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 079FAB35AE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:15:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA3B7B35AB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:05:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 480BA360CD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:14:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CE2E7B7725
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 747B2335BC8;
-	Tue, 26 Aug 2025 11:13:21 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A1D3090D7;
+	Tue, 26 Aug 2025 11:04:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="canFekNU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B28334392;
-	Tue, 26 Aug 2025 11:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43CE32206A7
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 11:04:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756206800; cv=none; b=LColrl/xcSP+hrXeA3VDiCPSiDCPbYBMg//roY1rYMKFhwefSox1XwulyIQEc2AbAzTTUHzajYPhiItjqQ90kIcJlrMg3vwkfLa586DtiOQTWK3ta5bAgxyHbZrM1oX1LsWbJ/9qBMvhEUHWpT1Jw4vfZe0dGwkefTFpk/sEveI=
+	t=1756206284; cv=none; b=n22b8qyH+DeygsJvaajR4GJHAj4nHvLoOqXH5VJVek8ElacElQ9QSysW1F3I+mR+wH51cZRFApDZ5LduHaKmuNKPkPWsHr9lrIPKuBCKEtyxqwxeFGsIGkNcaKtz264eiaiEi6ajdtwLnpe2FFi7StvA/BqbaFdRrOXoNbwviZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756206800; c=relaxed/simple;
-	bh=hx3VjNm9hL5Re325Q2m1xUtHFv297j/64xIFFRrsAu4=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=ri8bnmfxfdQUkcQEp30O3hJVxK5yCKRLHI3b4piHPQcFiekubJ3icaVWGC+PW3/9aNYh/g6II0pjjorO5j95sdTDBYocQbGngkgqyzXa2Ip+5e4d1GpPyU1uFY7AslppWr9H6wmQXydltDreu7Tazo63oBbZhqVeg/1yTUGvzYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4cB4lc25CLz6G4T5;
-	Tue, 26 Aug 2025 19:13:16 +0800 (CST)
-Received: from xaxapp05.zte.com.cn ([10.99.98.109])
-	by mse-fl2.zte.com.cn with SMTP id 57QB4T1B019077;
-	Tue, 26 Aug 2025 19:04:29 +0800 (+08)
-	(envelope-from shao.mingyin@zte.com.cn)
-Received: from mapi (xaxapp02[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Tue, 26 Aug 2025 19:04:32 +0800 (CST)
-Date: Tue, 26 Aug 2025 19:04:32 +0800 (CST)
-X-Zmail-TransId: 2afa68ad94c01d5-b522e
-X-Mailer: Zmail v1.0
-Message-ID: <20250826190432466GaTpnjTc3gxpU-_9GwAkj@zte.com.cn>
-In-Reply-To: <20250826185643235jApHbqi4zaPaZWVy6_Pot@zte.com.cn>
-References: 20250826185643235jApHbqi4zaPaZWVy6_Pot@zte.com.cn
+	s=arc-20240116; t=1756206284; c=relaxed/simple;
+	bh=IQ5LDCs/IEmTXiQ4zdkXIkPVxNBQzfU++k5VF/Ufz7k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JdScisA8Y8LJFH+xjGF/mycYWWEgbKMMJOW7LotCpmFPWz5YdL7OTFibT3nEkZuNpojYdIbgYfQrTKkKTi04pmshALuHlemFOI83fAOEq5PZVDJqpgWk0M0ggWQE3Dz1SnvA8lSKV+C1TDIOGatvasoUG51dYtKlYDvlX53Aqv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=canFekNU; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756206281;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=jhHf33zPn8FMTc4V2Pm10xsHI1Kc6Z2Rv/ZWcei/RDk=;
+	b=canFekNUPR0xC+PH5766rAfjaS0A7rpG1sWfH1J24eV5gKUCCWPn2aUpkG4g9qA1q3pFUO
+	iIoqLx8q4zCIO3X3IjKKbYuFGh6tMbuPP1kyOrXOH7KsOHmYV19I8wZA535Sa1ICe7jDJk
+	Jc2rsDjPQJVQqkYZSG4eDlCUiNq9oe8=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-84-7LCXqkSbM0WkRl-lOTEMrw-1; Tue, 26 Aug 2025 07:04:39 -0400
+X-MC-Unique: 7LCXqkSbM0WkRl-lOTEMrw-1
+X-Mimecast-MFC-AGG-ID: 7LCXqkSbM0WkRl-lOTEMrw_1756206278
+Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-61c6d735f15so1813794a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 04:04:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756206278; x=1756811078;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jhHf33zPn8FMTc4V2Pm10xsHI1Kc6Z2Rv/ZWcei/RDk=;
+        b=ru7e7BbKu0nz8Rnzbpx4qZF2YbwgnidEW0KIqyVWok7GvIbxlFfUcUs6ddUNhRsSPi
+         gdv4D99HA8E12Nt7aUxcpNHTenDemm44mk5DR6JlbB2rusgtVKHwHyAnIGhik3Fi3mse
+         AgDlajDILyMboEsAX/tIpFD3Lg4ReWZnp56pKm2VrRqPLYGV+JAUAFcxrY+XjDWuhKAW
+         xWdS9QVHhOtS1fXby06CjcFpRXL0ouhvs8jORY+Dl2FKxhQki7hsBgI2r1AdZmeDgIYa
+         E5oWosvDwx1isc1RS74KLNMp+OQmN9ngklVCRUuzOu/c3j3XQFbvljENFHri9VzaKVU9
+         zlPw==
+X-Gm-Message-State: AOJu0YxgrG1Glg7gdEY1D0Tgt83w4rFWE2Tkf5zHCNZx7h3f88BvZnoN
+	mHomhYW4wXLnmQzjuX2K7+caqSh+qykBbD83nUwY5Pz5duG73UmH7++WXpFwry6O0olt44kVzd1
+	WQ60BKksipn18eJWhwga4kDJgXEIoMMXq07SygdwTq3o5mW8wkORmud5JOg0DM2iDpg==
+X-Gm-Gg: ASbGncs9LG3WDLCw3ZN9ouKM+Kfz6XD4K66Iu66DIqbHNdzc9FbfDEd3qZ83wOzymvJ
+	gzoU0iuiGC94vYv8nXE7Lw5Cp0BdVJZgB12uiD1TZVDo0bULi6wzmra+VIKY4dwMzWJBAjrLvp3
+	S4gyhmqkOzbETzlgVJZbHfXpOgAvXD3h02ZJBroeeu97aOLQCvMOE3rwePGERf/tIXGwZsS4To4
+	gsgll758Q03bLXZ/f8HlUPkC9Kl2k6qia5WdArEHU2eW0lWX1B/sP2L/FJM0hTA7w76ZiclePie
+	n2BMpP+0Du9LkueOvB8zs1LSCQkB8nCXHRwIpeG/Gf71A7/4guZXW6WM/cNEjEDKN+QntG29gw=
+	=
+X-Received: by 2002:a05:6402:510e:b0:61c:a1a6:52a2 with SMTP id 4fb4d7f45d1cf-61ca1a65d0amr110474a12.28.1756206278195;
+        Tue, 26 Aug 2025 04:04:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFJfWOpyeYnJbaHVglB9KfY+PTnQ4jI93qRAexOTMKIRVofYBVmmLclF7ZKvry/r0B75eD1FQ==
+X-Received: by 2002:a05:6402:510e:b0:61c:a1a6:52a2 with SMTP id 4fb4d7f45d1cf-61ca1a65d0amr110409a12.28.1756206276561;
+        Tue, 26 Aug 2025 04:04:36 -0700 (PDT)
+Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61c3172bf4csm6850118a12.38.2025.08.26.04.04.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Aug 2025 04:04:36 -0700 (PDT)
+Message-ID: <ad521f4f-47aa-4728-916f-3704bf01f770@redhat.com>
+Date: Tue, 26 Aug 2025 13:04:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <shao.mingyin@zte.com.cn>
-To: <shao.mingyin@zte.com.cn>
-Cc: <alexs@kernel.org>, <si.yanteng@linux.dev>, <dzm91@hust.edu.cn>,
-        <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <yang.yang29@zte.com.cn>,
-        <xu.xin16@zte.com.cn>, <yang.tao172@zte.com.cn>,
-        <wang.longjie1@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIHY0IDMvN10gRG9jcy96aF9DTjogVHJhbnNsYXRlIGdmczIucnN0IHRvIFNpbXBsaWZpZWQgQ2hpbmVzZQ==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 57QB4T1B019077
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.133 unknown Tue, 26 Aug 2025 19:13:16 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 68AD96CC.001/4cB4lc25CLz6G4T5
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 21/35] mm/cma: refuse handing out non-contiguous page
+ ranges
+To: Alexandru Elisei <alexandru.elisei@arm.com>
+Cc: linux-kernel@vger.kernel.org, Alexander Potapenko <glider@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
+ Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
+ dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ iommu@lists.linux.dev, io-uring@vger.kernel.org,
+ Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
+ Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
+ kasan-dev@googlegroups.com, kvm@vger.kernel.org,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
+ linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+ linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-scsi@vger.kernel.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Marco Elver <elver@google.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
+ Muchun Song <muchun.song@linux.dev>, netdev@vger.kernel.org,
+ Oscar Salvador <osalvador@suse.de>, Peter Xu <peterx@redhat.com>,
+ Robin Murphy <robin.murphy@arm.com>, Suren Baghdasaryan <surenb@google.com>,
+ Tejun Heo <tj@kernel.org>, virtualization@lists.linux.dev,
+ Vlastimil Babka <vbabka@suse.cz>, wireguard@lists.zx2c4.com, x86@kernel.org,
+ Zi Yan <ziy@nvidia.com>
+References: <20250821200701.1329277-1-david@redhat.com>
+ <20250821200701.1329277-22-david@redhat.com> <aK2QZnzS1ErHK5tP@raptor>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <aK2QZnzS1ErHK5tP@raptor>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Shao Mingyin <shao.mingyin@zte.com.cn>
+>>   
+>>   		pr_debug("%s(): memory range at pfn 0x%lx %p is busy, retrying\n",
+>> -			 __func__, pfn, pfn_to_page(pfn));
+>> +			 __func__, pfn, page);
+>>   
+>>   		trace_cma_alloc_busy_retry(cma->name, pfn, pfn_to_page(pfn),
+> 
+> Nitpick: I think you already have the page here.
 
-translate the "gfs2.rst" into Simplified Chinese.
+Indeed, forgot to clean that up as well.
 
-Update to commit d9593868cd58("Documentation: Update
-filesystems/gfs2.rst")
+> 
+>>   					   count, align);
+>> -		/* try again with a bit different memory target */
+>> -		start = bitmap_no + mask + 1;
+>>   	}
+>>   out:
+>> -	*pagep = page;
+>> +	if (!ret)
+>> +		*pagep = page;
+>>   	return ret;
+>>   }
+>>   
+>> @@ -882,7 +892,7 @@ static struct page *__cma_alloc(struct cma *cma, unsigned long count,
+>>   	 */
+>>   	if (page) {
+>>   		for (i = 0; i < count; i++)
+>> -			page_kasan_tag_reset(nth_page(page, i));
+>> +			page_kasan_tag_reset(page + i);
+> 
+> Had a look at it, not very familiar with CMA, but the changes look equivalent to
+> what was before. Not sure that's worth a Reviewed-by tag, but here it in case
+> you want to add it:
+> 
+> Reviewed-by: Alexandru Elisei <alexandru.elisei@arm.com>
 
-Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
-Signed-off-by: yang tao <yang.tao172@zte.com.cn>
----
-v3->v4
-resolve patch damage issues.
- .../translations/zh_CN/filesystems/gfs2.rst   | 57 +++++++++++++++++++
- .../translations/zh_CN/filesystems/index.rst  |  1 +
- 2 files changed, 58 insertions(+)
- create mode 100644 Documentation/translations/zh_CN/filesystems/gfs2.rst
+Thanks!
 
-diff --git a/Documentation/translations/zh_CN/filesystems/gfs2.rst b/Documentation/translations/zh_CN/filesystems/gfs2.rst
-new file mode 100644
-index 000000000000..301a6af257b1
---- /dev/null
-+++ b/Documentation/translations/zh_CN/filesystems/gfs2.rst
-@@ -0,0 +1,57 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+.. include:: ../disclaimer-zh_CN.rst
-+
-+:Original: Documentation/filesystems/gfs2.rst
-+
-+:翻译:
-+
-+ 邵明寅 Shao Mingyin <shao.mingyin@zte.com.cn>
-+
-+:校译:
-+
-+ - 杨涛 yang tao <yang.tao172@zte.com.cn>
-+
-+=====================================
-+全局文件系统 2 (Global File System 2)
-+=====================================
-+
-+GFS2 是一个集群文件系统。它允许一组计算机同时使用在它们之间共享的块设备（通
-+过 FC、iSCSI、NBD 等）。GFS2 像本地文件系统一样读写块设备，但也使用一个锁
-+模块来让计算机协调它们的 I/O 操作，从而维护文件系统的一致性。GFS2 的出色特
-+性之一是完美一致性——在一台机器上对文件系统所做的更改会立即显示在集群中的所
-+有其他机器上。
-+
-+GFS2 使用可互换的节点间锁定机制，当前支持的机制有：
-+
-+  lock_nolock
-+    - 允许将 GFS2 用作本地文件系统
-+
-+  lock_dlm
-+    - 使用分布式锁管理器 (dlm) 进行节点间锁定。
-+      该 dlm 位于 linux/fs/dlm/
-+
-+lock_dlm 依赖于在上述 URL 中找到的用户空间集群管理系统。
-+
-+若要将 GFS2 用作本地文件系统，则不需要外部集群系统，只需：:
-+
-+  $ mkfs -t gfs2 -p lock_nolock -j 1 /dev/block_device
-+  $ mount -t gfs2 /dev/block_device /dir
-+
-+在所有集群节点上都需要安装 gfs2-utils 软件包；对于 lock_dlm，您还需要按
-+照文档配置 dlm 和 corosync 用户空间工具。
-+
-+gfs2-utils 可在 https://pagure.io/gfs2-utils  找到。
-+
-+GFS2 在磁盘格式上与早期版本的 GFS 不兼容，但它已相当接近。
-+
-+以下手册页 (man pages) 可在 gfs2-utils 中找到：
-+
-+  ============          =============================================
-+  fsck.gfs2		用于修复文件系统
-+  gfs2_grow		用于在线扩展文件系统
-+  gfs2_jadd		用于在线向文件系统添加日志
-+  tunegfs2		用于操作、检查和调优文件系统
-+  gfs2_convert		用于将 gfs 文件系统原地转换为 GFS2
-+  mkfs.gfs2		用于创建文件系统
-+  ============          =============================================
-diff --git a/Documentation/translations/zh_CN/filesystems/index.rst b/Documentation/translations/zh_CN/filesystems/index.rst
-index 3c25b39739db..37968fb91f1a 100644
---- a/Documentation/translations/zh_CN/filesystems/index.rst
-+++ b/Documentation/translations/zh_CN/filesystems/index.rst
-@@ -28,3 +28,4 @@ Linux Kernel中的文件系统
-    tmpfs
-    ubifs
-    ubifs-authentication
-+   gfs2
+> 
+> Just so I can better understand the problem being fixed, I guess you can have
+> two consecutive pfns with non-consecutive associated struct page if you have two
+> adjacent memory sections spanning the same physical memory region, is that
+> correct?
+
+Exactly. Essentially on SPARSEMEM without SPARSEMEM_VMEMMAP it is not 
+guaranteed that
+
+	pfn_to_page(pfn + 1) == pfn_to_page(pfn) + 1
+
+when we cross memory section boundaries.
+
+It can be the case for early boot memory if we allocated consecutive 
+areas from memblock when allocating the memmap (struct pages) per memory 
+section, but it's not guaranteed.
+
+So we rule out that case.
+
 -- 
-2.25.1
+Cheers
+
+David / dhildenb
+
 
