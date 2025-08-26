@@ -1,154 +1,276 @@
-Return-Path: <linux-kernel+bounces-786635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD3A4B35F5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:43:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EB48B35F5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:43:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E8DA462C73
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:43:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DA8C3B88C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:43:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE2C833A023;
-	Tue, 26 Aug 2025 12:43:16 +0000 (UTC)
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34AF932A3C8;
+	Tue, 26 Aug 2025 12:43:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PYXjHRNw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6881C29D280;
-	Tue, 26 Aug 2025 12:43:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A9329D280;
+	Tue, 26 Aug 2025 12:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756212196; cv=none; b=V5VmqBI+mPBOlKsttVqKFMKVSXXovFu1yIZwluZ/1iAt4R/js22zY7PtnIf6EvQZ2rw3ZLC3Yo6FHjgo9/KKmVrNqJwaWVRi3s/6+Q41Pa5u+kq029fyfRtnoo7HdseXdrPpgl66dJrv6hjPVDgnMJ/0kfDDdoONyFJWJ0HvKDk=
+	t=1756212209; cv=none; b=K1JCAaI7BPVTwmxah/s774SgfoaJfJVzLFW02RoqfuvXnd38IjDxfHIonCHhtx8H9j9WQ9jcFmhKAFWcS9U9rkc4biDjhiXRdKF+3ATQxYEDqDJIseQmgDf7VpGLyWYxrLyZ/TuTTT8CfPQ7Y0zep+wUO75XS/dFmKeibj5z9ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756212196; c=relaxed/simple;
-	bh=E3lKJnXF6k/flLtgtrzdPU4k0vJ7hdH3EtlPDfTiZbk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QcJ5JHXz+8JkDZtnww7tyUO8UQg20iveQ1j4T49025Lmy17hQTxWODPNmvtcg32a9yhUqJeu2OXFakIND6UcrQzyRPx4z4j1sB0mpGEk0fHp5Wy5hppk3JLVG+M3PEBWD37hfUm2ILN2aS7BBfzqWF7rVj49c9Vw/SwbQYnc+fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-61a8c134609so6924785a12.3;
-        Tue, 26 Aug 2025 05:43:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756212193; x=1756816993;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A45A8CgqJyJGta/ZNHLL6IXg2WGgk+TeIJYni0Vt7SU=;
-        b=D7FnULOySfqzzQ9Ua749XDGWrDgx9McwmBokreUqzQlLeo/uX4gOdomA3LeAwv7VHC
-         pIvGEgzT3LBZEbabhs/cte6+MA56wsey+sAJ0qhhgSNVl7r6TrLr90C8IOVH1rcPsMdl
-         ujlMcnSrI8qUmbB9Z4YFnMIMxZHAwkfWwszRBoKJv/sST+GCKR+0IUoxvOScYqcpxGkh
-         88oOac0UEVIE/Kl7TepbTetfS9vHS1yeeBhxYcTYIbmhB2aVaRJM2rmRItuVy9EImT1N
-         hlX+ZC3BP6wI1ueidYcRTVnEb05Ncw+7w96kc6JafCvECnraSwe4a6SXE4V9V3XOy5je
-         l7jg==
-X-Forwarded-Encrypted: i=1; AJvYcCWIDJAIo8eG93wDruvmBoOkYfPNuvP5gIeVM4MVQ2TSguchO0zgFgr+SdpC1IL3SFTTK4OyCoNG@vger.kernel.org, AJvYcCXlUpNu2Jjps437kDMPtybR9lm19/2j8BW8atNI5tbtl65HcmAGOLBgyd6cj3hXN+BVcQJtNu3DyYlJDbI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFhB90INuIbB4l8RzxV18NBcf13FXDQV9X90ZfxakMrT4ndOWp
-	TDKulFSStOcROdvCbJ5OOL257DesrHLM6FJjtRIJmAuTvrZBQu/Cfl4a
-X-Gm-Gg: ASbGncuA/kd+9ni8QBvmceTCnsQ306s6/FF8Yl+yj17Wfg1To+YFCqXJ39eAtdfjR57
-	U85VcOuX6WgLCAAGGxfohx0xD+owVsmhzva16KQFSFXFNKMb8lxOVo4kB/3h3NaqKqakv3erqqb
-	l7CFl0WYL8B/G5QkHUPZmarIEWd+b4gGPSLiNve+I8s+E2+d7kWUhuXTVUIbUujMSIQZChwiAbL
-	hJMH5WKfvQawSXaYouFUCaMPEa93nelK+PfHZoA/9n62QrAzge9wT+NVbGND6eslqjFr/EGXvyp
-	NUaVjCyPZktru0VKWIIi0vuAIZ0U0F6MNU9uODqT3XVG38I1x8FeMCY1AkG4er4s7gMoIso3/Td
-	UXE4Oz/wpxbvDhJ/O4UY07O4=
-X-Google-Smtp-Source: AGHT+IEDfTrnQUo/uJH1qHMiXflndbp2yyTSPamaEijw/d90zSSYm9XSewqG8TmDTPZ7ohF0zVLrFQ==
-X-Received: by 2002:a05:6402:5189:b0:61c:5379:4265 with SMTP id 4fb4d7f45d1cf-61c53794504mr6343160a12.1.1756212192514;
-        Tue, 26 Aug 2025 05:43:12 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:6::])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61c3119f85esm6750725a12.10.2025.08.26.05.43.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 05:43:11 -0700 (PDT)
-Date: Tue, 26 Aug 2025 05:43:09 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Mike Galbraith <efault@gmx.de>, Simon Horman <horms@kernel.org>, 
-	kuba@kernel.org, calvin@wbinvd.org
-Cc: Pavel Begunkov <asml.silence@gmail.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Johannes Berg <johannes@sipsolutions.net>, paulmck@kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, boqun.feng@gmail.com
-Subject: Re: netconsole: HARDIRQ-safe -> HARDIRQ-unsafe lock order warning
-Message-ID: <tgp5ddd2xdcvmkrhsyf2r6iav5a6ksvxk66xdw6ghur5g5ggee@cuz2o53younx>
-References: <isnqkmh36mnzm5ic5ipymltzljkxx3oxapez5asp24tivwtar2@4mx56cvxtrnh>
- <3dd73125-7f9b-405c-b5cd-0ab172014d00@gmail.com>
- <hyc64wbklq2mv77ydzfxcqdigsl33leyvebvf264n42m2f3iq5@qgn5lljc4m5y>
- <b2qps3uywhmjaym4mht2wpxul4yqtuuayeoq4iv4k3zf5wdgh3@tocu6c7mj4lt>
- <4c4ed7b836828d966bc5bf6ef4d800389ba65e77.camel@gmx.de>
- <otlru5nr3g2npwplvwf4vcpozgx3kbpfstl7aav6rqz2zltvcf@famr4hqkwhuv>
- <d1679c5809ffdc82e4546c1d7366452d9e8433f0.camel@gmx.de>
- <7a2b44c9e95673829f6660cc74caf0f1c2c0cffe.camel@gmx.de>
- <tx2ry3uwlgqenvz4fsy2hugdiq36jrtshwyo4a2jpxufeypesi@uceeo7ykvd6w>
- <5b509b1370d42fd0cc109fc8914272be6dcfcd54.camel@gmx.de>
+	s=arc-20240116; t=1756212209; c=relaxed/simple;
+	bh=YJJphITcbiKQ3JJ7Mz1oiUVImP7rWbUytgWR8gnOAuQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e3lwWwSkDtenjDGZ/FGESgVewhvZMEiZRvb/Q02ZVnTdC/za8eIgTFLIZTxfKk3rNblVmQnGcuaoan5hKbqS1enOuP58v3OCg9ZEciu1q0eevTsujqZbrvfeRPMdCFDQS5wv9J77M4NR77XSh2XQlXo3vrG/8PcdhWKUJJSnpfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PYXjHRNw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D11F4C4CEF1;
+	Tue, 26 Aug 2025 12:43:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756212208;
+	bh=YJJphITcbiKQ3JJ7Mz1oiUVImP7rWbUytgWR8gnOAuQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=PYXjHRNw0BaA/bpDXW5j/G2QGgE+fZHYGAiLRSIK7FbUswPmt5yUZ2BPV5oCz8VRz
+	 GWiKj0RNe851FxjLoF8q/E5iZrhM0TM5etCL/SdGXW3LQmwHkB38t+hR0hjYIfuucj
+	 PO2nl74dQt8Fhx69kxfGJXVPKrUskGScy6TQcs1yaIDgqI+GClMAZp7zS+uZ15rFgO
+	 MHMcPh06jYUbVx2YESQM23IQS/4s18J6NQKJYifWbibGKA1BE260DW1fRsq+cSJkBV
+	 GDBCe0DL3ogts8jh29S//0ZIR0gJpIO5KJ9XvIjZ5iqHgRffQaTy2LOsmkY50oD2sF
+	 WaY9FcfvND6EA==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-55f3ec52a42so3270836e87.1;
+        Tue, 26 Aug 2025 05:43:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVA7WHEHd63H6TAFsZ5xsBFwhbyE/rHoYv8ojK9iOArbS+gqzjdrzlTgFBxrzXjuZi/urpXf4jZDWOzTLL8@vger.kernel.org, AJvYcCXnuRVjbhJtFBhtexFqS7h+cwx/YfNuRSMGsg3PCIrHvlqQp94iYpl8F5w77I/Jii6j+Tl/D94xoe0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSOj/tmgKmOUS9tceHVRvmaccz5QEAK0XbZW91A2GeP3/RuJrH
+	0D8NyXhtGkbxsBXmt4H1RN/yQ/V3EPQgFWv3aF0cTChcclCAFsWawcS7EITyVfvpndd0KU/Duhf
+	4U5STvCLJ5qzowzrmN7JWKNd8WciS6eA=
+X-Google-Smtp-Source: AGHT+IHp4EKOU4K1PetvcSc9aeoUmGfw6Q5NJKG0AFsvTHBGPLokBQsYm1LqduA3iICsbQZVLUFVcPfq9O/3VxdwcE8=
+X-Received: by 2002:a05:6512:3ca1:b0:55f:4e8a:19b9 with SMTP id
+ 2adb3069b0e04-55f4e8a1c79mr612884e87.25.1756212207178; Tue, 26 Aug 2025
+ 05:43:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5b509b1370d42fd0cc109fc8914272be6dcfcd54.camel@gmx.de>
+References: <20250708-efi-default-loglevel-v1-1-12b80db5af16@gmail.com>
+ <CALHNRZ9T0dHzbXBUdBa4hE-Ao8ebeLLPRX+1ThkuLT+Rp8_Jeg@mail.gmail.com>
+ <CAMj1kXEwyaHUkO5aO-sL3YAN=qRoSTuotHMRpBDLX9BhERnN=g@mail.gmail.com>
+ <45692a2c-ba3d-45a2-9ab1-cf6982dbf788@siemens.com> <CAMj1kXG=zG8j+cr0gNMpkKRvdekqMR-EiEkMHiFgRvbaWy9aKg@mail.gmail.com>
+ <09cb03e4-21f3-418c-98f2-66004cc3080f@siemens.com> <CAMj1kXHyw3Oi=c3p+7q75vD4iJ+x642JzL7zHM4jpF4k937Uxg@mail.gmail.com>
+ <CALHNRZ8YUVvQ--Y-EfXW04WYXiKNsj6KSs-OaLMcEnG3_xDMSg@mail.gmail.com>
+ <CAMj1kXE9tNa5R22M9NTmLY8qtnpxbvqMG-Cw0vFpVtr_KoM9bA@mail.gmail.com>
+ <CALHNRZ_Q9XwJenTVDBdk4NQ79m2wWKRyxNS_sV1TLuqunE_NGQ@mail.gmail.com>
+ <2b7e98a3-dc77-4eb3-beba-3bea7febb715@siemens.com> <CAMj1kXGeGG6hCCNKhSxPJppkTzBeZg9jO0py1P8xfi2N3S=vyQ@mail.gmail.com>
+In-Reply-To: <CAMj1kXGeGG6hCCNKhSxPJppkTzBeZg9jO0py1P8xfi2N3S=vyQ@mail.gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 26 Aug 2025 14:43:15 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXF53U8DUmt8tN75ZYkkQc8wLOcns1eEzNFo=a7F02h3Kg@mail.gmail.com>
+X-Gm-Features: Ac12FXy8NzaqjCfOh0_ex9Gur2O22dfPtZk0GpHqG-td-cD5SuAUEPtlE_8CL78
+Message-ID: <CAMj1kXF53U8DUmt8tN75ZYkkQc8wLOcns1eEzNFo=a7F02h3Kg@mail.gmail.com>
+Subject: Re: [PATCH] efistub: Lower default log level
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Aaron Kling <webgeek1234@gmail.com>, linux-efi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 22, 2025 at 05:54:28AM +0200, Mike Galbraith wrote:
-> On Thu, 2025-08-21 at 10:35 -0700, Breno Leitao wrote:
-> > > On Thu, Aug 21, 2025 at 05:51:59AM +0200, Mike Galbraith wrote:
->  
-> > > > > --- a/drivers/net/netconsole.c
-> > > > > +++ b/drivers/net/netconsole.c
-> > > > > @@ -1952,12 +1952,12 @@ static void netcon_write_thread(struct c
-> > > > >  static void netconsole_device_lock(struct console *con, unsigned long *flags)
-> > > > >  {
-> > > > >  	/* protects all the targets at the same time */
-> > > > > -	spin_lock_irqsave(&target_list_lock, *flags);
-> > > > > +	spin_lock(&target_list_lock);
-> > > 
-> > > I personally think this target_list_lock can be moved to an RCU lock.
-> > > 
-> > > If that is doable, then we probably make netconsole_device_lock()
-> > > to a simple `rcu_read_lock()`, which would solve this problem as well.
-> 
-> The bigger issue for the nbcon patch would seem to be the seemingly
-> required .write_atomic leading to landing here with disabled IRQs.
+On Tue, 26 Aug 2025 at 10:16, Ard Biesheuvel <ardb@kernel.org> wrote:
+>
+> On Tue, 26 Aug 2025 at 09:23, Jan Kiszka <jan.kiszka@siemens.com> wrote:
+> >
+> > On 26.08.25 00:09, Aaron Kling wrote:
+> > > On Mon, Aug 25, 2025 at 4:28=E2=80=AFPM Ard Biesheuvel <ardb@kernel.o=
+rg> wrote:
+> > >>
+> > >> On Tue, 26 Aug 2025 at 02:34, Aaron Kling <webgeek1234@gmail.com> wr=
+ote:
+> > >>>
+> > >>> On Mon, Aug 25, 2025 at 5:44=E2=80=AFAM Ard Biesheuvel <ardb@kernel=
+.org> wrote:
+> > >>>>
+> > >>>> On Sun, 24 Aug 2025 at 16:47, Jan Kiszka <jan.kiszka@siemens.com> =
+wrote:
+> > >>>>>
+> > >>>>> On 24.08.25 02:31, Ard Biesheuvel wrote:
+> > >>>>>> On Sat, 16 Aug 2025 at 16:52, Jan Kiszka <jan.kiszka@siemens.com=
+> wrote:
+> > >>>>>>>
+> > >>>>>>> On 15.07.25 03:35, Ard Biesheuvel wrote:
+> > >>>>>>>> On Tue, 8 Jul 2025 at 17:31, Aaron Kling <webgeek1234@gmail.co=
+m> wrote:
+> > >>>>>>>>>
+> > >>>>>>>>> On Tue, Jul 8, 2025 at 2:30=E2=80=AFAM Aaron Kling via B4 Rel=
+ay
+> > >>>>>>>>> <devnull+webgeek1234.gmail.com@kernel.org> wrote:
+> > >>>>>>>>>>
+> > >>>>>>>>>> From: Aaron Kling <webgeek1234@gmail.com>
+> > >>>>>>>>>>
+> > >>>>>>>>>> Some uefi implementations will write the efistub logs to the=
+ display
+> > >>>>>>>>>> over a splash image. This is not desirable for debug and inf=
+o logs, so
+> > >>>>>>>>>> lower the default efi log level to exclude them.
+> > >>>>>>>>>>
+> > >>>>>>>>>> Suggested-by: Ard Biesheuvel <ardb@kernel.org>
+> > >>>>>>>>>> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> > >>>>>>>>>> ---
+> > >>>>>>>>>>  drivers/firmware/efi/libstub/printk.c | 4 ++--
+> > >>>>>>>>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+> > >>>>>>>>>>
+> > >>>>>>>>>> diff --git a/drivers/firmware/efi/libstub/printk.c b/drivers=
+/firmware/efi/libstub/printk.c
+> > >>>>>>>>>> index 3a67a2cea7bdf1aa215d48dbf9ece4ceec6e4c28..bc599212c05d=
+d746a9c54abbbe61a4bf70f1a8c4 100644
+> > >>>>>>>>>> --- a/drivers/firmware/efi/libstub/printk.c
+> > >>>>>>>>>> +++ b/drivers/firmware/efi/libstub/printk.c
+> > >>>>>>>>>> @@ -5,13 +5,13 @@
+> > >>>>>>>>>>  #include <linux/ctype.h>
+> > >>>>>>>>>>  #include <linux/efi.h>
+> > >>>>>>>>>>  #include <linux/kernel.h>
+> > >>>>>>>>>> -#include <linux/printk.h> /* For CONSOLE_LOGLEVEL_* */
+> > >>>>>>>>>> +#include <linux/kern_levels.h>
+> > >>>>>>>>>>  #include <asm/efi.h>
+> > >>>>>>>>>>  #include <asm/setup.h>
+> > >>>>>>>>>>
+> > >>>>>>>>>>  #include "efistub.h"
+> > >>>>>>>>>>
+> > >>>>>>>>>> -int efi_loglevel =3D CONSOLE_LOGLEVEL_DEFAULT;
+> > >>>>>>>>>> +int efi_loglevel =3D LOGLEVEL_NOTICE;
+> > >>>>>>>>>>
+> > >>>>>>>>>>  /**
+> > >>>>>>>>>>   * efi_char16_puts() - Write a UCS-2 encoded string to the =
+console
+> > >>>>>>>>>>
+> > >>>>>>>>>> ---
+> > >>>>>>>>>> base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
+> > >>>>>>>>>> change-id: 20250708-efi-default-loglevel-4da5a36cac87
+> > >>>>>>>>>>
+> > >>>>>>>>>> Best regards,
+> > >>>>>>>>>> --
+> > >>>>>>>>>> Aaron Kling <webgeek1234@gmail.com>
+> > >>>>>>>>>
+> > >>>>>>>>> This patch was originally suggested a few months ago [0], but=
+ as far
+> > >>>>>>>>> as I can tell was never queued for merge. Since I'm also hitt=
+ing a
+> > >>>>>>>>> case where this is relevant, I'm sending this in to bring att=
+ention
+> > >>>>>>>>> back to it.
+> > >>>>>>>>>
+> > >>>>>>>>
+> > >>>>>>>> I've queued this up now - thanks.
+> > >>>>>>>>
+> > >>>>>>>
+> > >>>>>>> And how can I get back the loglevel info? It seems I can only c=
+hoose
+> > >>>>>>> between notice, silent and debug now. And the latter two only b=
+y also
+> > >>>>>>> touching the kernel's loglevel.
+> > >>>>>>>
+> > >>>>>>> I'm particularly missing [1] in my UART logs now which is helpf=
+ul in
+> > >>>>>>> understanding this essential system state.
+> > >>>>>>>
+> > >>>>>>
+> > >>>>>> Hi Jan,
+> > >>>>>>
+> > >>>>>> Is efi=3Ddebug too noisy for you?
+> > >>>>>
+> > >>>>> Yes, also because it affects the kernel even more. I'm looking fo=
+r
+> > >>>>> "efi=3Dinfo".
+> > >>>>>
+> > >>>>> I don't get the reason behind this change anymore as well. If you=
+ have a
+> > >>>>> splash screen shown, weren't you booting with "quiet" before alre=
+ady,
+> > >>>>> thus also without any stub messages?
+> > >>>>>
+> > >>>>
+> > >>>> Yeah, good point. IIRC that came up in the discussion but I can't
+> > >>>> remember the motivation so it can't have been very convincing.
+> > >>>>
+> > >>>> So should we just revert this change?
+> > >>>
+> > >>> I'd prefer not to have to set quiet to get a clean splash screen. T=
+hat
+> > >>> doesn't seem like an unreasonable expectation, getting default
+> > >>> non-debug logs and not having stuff written on top of the splash
+> > >>> image.
+> > >>
+> > >> Perhaps you could remind us why this only applies to the efistub
+> > >> output, and having the output of the kernel itself corrupting the
+> > >> splash screen is fine?
+> > >
+> > > I'm not greatly knowledgeable about the efi standard and what's
+> > > happening under the hood, so I will just speak to what I saw in my us=
+e
+> > > case. I'm working on Nvidia Tegra devices, newer generations of which
+> > > use EDK2 as the last stage bootloader. The target os is Android, whic=
+h
+> > > has a pretty strictly controlled defconfig. Prior to this change, the
+> > > kernel efistub logs were getting passed to the efi impl, which was
+> > > then printing those lines to the display. The kernel logs were not
+> > > being printed to the screen, as none of the console drivers were
+> > > enabled to do so. So after this change, regardless of the kernel log
+> > > level, the boot splash will remain untouched until the kernel display
+> > > driver takes over the display and the os renders to it. Because no
+> > > efistub log lines are being printed.
+> > >
+> >
+> > That makes sense now, and surely don't mind having some build-time or
+> > runtime configuration switch that allow to tune the system into such
+> > settings. It's just not so nice to take away the freedom of full-scale
+> > loglevel control from the efistub.
+> >
+>
+> Yeah, that would be my fault, I guess. I suggested simplifying this to
+> the current approach.
+>
+> Would it be sufficient to make the EFI stub loglevel a separate
+> compile time Kconfig option? I'd prefer that over adding more runtime
+> logic.
 
-In this case, instead of transmitting through netpoll directly in the
-.write_atomic context, we could queue the messages for later delivery.
+Would the below work for you Aaron?
 
-With the current implementation, this is not straightforward unless we
-introduce an additional message copy at the start of .write_atomic.
+diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
+index eb1bff6968a5..f7552f36ab51 100644
+--- a/drivers/firmware/efi/Kconfig
++++ b/drivers/firmware/efi/Kconfig
+@@ -72,6 +72,11 @@ config EFI_RUNTIME_WRAPPERS
+ config EFI_GENERIC_STUB
+        bool
 
-This is where the interface between netpoll and netconsole becomes
-problematic. Ideally, we would avoid carrying extra data into netconsole
-and instead copy the message into an SKB and queue the SKB for
-transmission.
++config EFI_STUB_LOGLEVEL
++       int "Loglevel for the EFI stub console"
++       range 1 15
++       default CONSOLE_LOGLEVEL_DEFAULT
++
+ config EFI_ZBOOT
+        bool "Enable the generic EFI decompressor"
+        depends on EFI_GENERIC_STUB && !ARM
+diff --git a/drivers/firmware/efi/libstub/printk.c
+b/drivers/firmware/efi/libstub/printk.c
+index bc599212c05d..782d1330c1cc 100644
+--- a/drivers/firmware/efi/libstub/printk.c
++++ b/drivers/firmware/efi/libstub/printk.c
+@@ -5,13 +5,12 @@
+ #include <linux/ctype.h>
+ #include <linux/efi.h>
+ #include <linux/kernel.h>
+-#include <linux/kern_levels.h>
+ #include <asm/efi.h>
+ #include <asm/setup.h>
 
-The core issue is that netpoll and netconsole are tightly coupled, and
-several pieces of functionality that live in netpoll really belong in
-netconsole. A good example is the SKB pool: that’s a netconsole concept,
-not a netpoll one. None of the other netpoll users send raw char *
-messages. They all work directly with skbs, so, in order to achieve it,
-we need to move the concept of skb pool into netconsole, and give
-netconsole the management of the skb pool.
+ #include "efistub.h"
 
-> WRT my patch, seeing a hard RT crash on wired box cleanly logged with
-> your nbcon patch applied (plus my twiddle mentioned earlier) tells me
-> my patch has lost its original reason to exist.  It's relevant to this
-> thread only in that those once thought to be RT specific IRQ disable
-> spots turned out to actually be RT agnostic wireless sore spots.
+-int efi_loglevel =3D LOGLEVEL_NOTICE;
++int efi_loglevel =3D CONFIG_EFI_STUB_LOGLEVEL;
 
-Thanks. As a follow-up, I would suggest the following steps:
-
-1) Decouple the SKB pool from netpoll and move it into netconsole
-
-  * This makes netconsole behave like any other netpoll user,
-    interacting with netpoll by sending SKBs.
-	* The SKB population logic would then reside in netconsole, where it
-	  logically belongs.
-
-  * Enable NBCONS in netconsole, guarded by NETCONSOLE_NBCON
-	* In normal .write_atomic() mode, messages should be queued in
-	  a workqueue.
-	* If oops_in_progress is set, we bypass the queue and
-	  transmit the SKB immediately. (Maybe disabling lockdep?!).
-
-Any concern with this plan?
---breno
+ /**
+  * efi_char16_puts() - Write a UCS-2 encoded string to the console
 
