@@ -1,132 +1,122 @@
-Return-Path: <linux-kernel+bounces-786727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1083B36669
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:56:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78E29B36625
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:53:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6156E8E5452
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:47:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9532E1C2019D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:48:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43AE34F461;
-	Tue, 26 Aug 2025 13:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE073350845;
+	Tue, 26 Aug 2025 13:46:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B2811dIm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="zbSI7+ng"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A09234F460;
-	Tue, 26 Aug 2025 13:46:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6338C350843
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 13:46:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756216006; cv=none; b=cFczMkwNY9RrKgGaYbPT9ZYpYPD3k06nHZHkGcMYKQEPDfRrfp2C/rC0JtyRCxhoedr6BXqQBtwv5p6PkT6aZvXSj+jpp733bb4xoqJTFROOUe6zqYgsIcxAG+SqHwQrGy5WrJ5bBUz5X0X+uqQGh3G1hNudMyXubRjxCcfhSfo=
+	t=1756216012; cv=none; b=QQfCe3N4nR1xK4C0xr1ohsh59qOmwFuLbUxQKV8OM0HBNZKNXYNsrokQ2wwOhJRwTydgRFsRZtLx1sOiNssV8fRSFJQwkIelO/RUCdrb5bEoTB3DrOxEcZpGRV2nkob9KjOjGoekSpbwCViSnz8ImIursUvGbznM12jWYQsMgAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756216006; c=relaxed/simple;
-	bh=AAH1An4dME/NHFSM/pFOMD8DZ8SYdIRvJf7aDrJZdFs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Iekk7Rwh7Ncds9cAK+wWgDuIQs7ACYJo9t9XZ2kNxVaa5nrVTtrfLdu1CUC4a6cSe7xRAMikws3MyazXHgnjtYfkbSOwGpqS/vtZMbSLK6e1zkISRefCCgMkfAo1pdzSUVKh1weyc+R95o374DFfeYCSaPcCByEdT1Bmncarj2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B2811dIm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CD57C4CEF1;
-	Tue, 26 Aug 2025 13:46:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756216005;
-	bh=AAH1An4dME/NHFSM/pFOMD8DZ8SYdIRvJf7aDrJZdFs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=B2811dImBTJdaljtQDbuVrXRMHjWETRARaTNmSFdBVZnXrswCYH8HDM/PqIitRhh2
-	 w2TsJrNPctccrFK82j7bUFmzfxhVnFb+INrhy3c9xEdJOD0QJrhc6ozyMzsx9tzeGK
-	 pDJtx01Puj2AbvMDkHchlfQonJeReZrnQLZbj3mElqz4Z0/ihQMJJTnhDmlvB4mwru
-	 4i2D6rr4spFcYh6nSMvmTqyQpkibLFwERIGY1NtvMYeF8TBadp4c+XCczdT4a6XoVf
-	 k2zZrKDbDfc/tN42LEGfIo2LEAf1DBAai8C37NXvp5pMdEhqxEYgZf213iabz3iHv8
-	 Iwqw1S5h4CiGg==
-From: Michael Walle <mwalle@kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Lee Jones <lee@kernel.org>
-Cc: jcormier@criticallink.com,
-	Job Sava <jsava@criticallink.com>,
+	s=arc-20240116; t=1756216012; c=relaxed/simple;
+	bh=jJUBEbotMJc4/7tNagC7dFAxP/nGnFXGjRAa45Uyr30=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PX+Tw3icoh0Fe3PJbgLZneynuWc9S7B/Yl0SQPimzlgedXXp+NsggcsMmAF8axlfQ3kix0ry8NrZnb0OMLl5VHJiw5YrOGwS0rNptq3q5a6tpsXEd+dAyZ84NV0JRPJdeGEobcPGmI7FUE2m05CR0u3vdwAa4Mu9jPnks7GyfxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=zbSI7+ng; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45a1b0cbbbaso49739825e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 06:46:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756216009; x=1756820809; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0bgIZihST00M2CtyLVGqxcGCSa4PCOhuFDLrOFCRzds=;
+        b=zbSI7+ngDgAeufBxY0YA69pZH64+vtruMVXY0fyqR9bzvirWkCfc8fpqQYgktIN6oL
+         TCzAuzfYTPECbMcualgYwgOna458I1w9IE2MbLNL40qUMFv81WHluAs9VNLNP/ChKn5Y
+         cFo0dQjuvvwYYa3C0zitcJgq0yQG2YTihrGUxkVrUert1jGoPehvr+JsE7w/TUi7Veg6
+         zxxWKj2+/yhJ5jh5Qi9Y3x2l+ETTRFgjwLt4ZBNOEbXWHOB3lZUV1VideovXGTB+jowx
+         /ExQANvRuoH3qrqrLCnD+UINhA3k5UMmLU1q7HAjsUPH9Dg7D3gDElg3hgrGpumwxT/L
+         8maQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756216009; x=1756820809;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0bgIZihST00M2CtyLVGqxcGCSa4PCOhuFDLrOFCRzds=;
+        b=HJDJOrDNG2LW1ciF5zRkvl2Zanf9fOexuEh0VhdmUS5OQCRtKFgu9JG9w5aDNcpa8n
+         PcZeaT0q4YvPX0VzL6Ba4i1bQksJJVj0GBoJ06Yu0/VWm3jQtp6qFEGIy93ofH8pcnwG
+         ulz9vgwBcMK/si40PrCOqDSa/3amg+tRDNpCHTBcTv+GNg1beeaxByuZT9UUJcJv6CLb
+         fkWS785bbfePV06Ck4EqdUq4kxuwQB4eg84Ny17pC8BYyVdIkr3U15d5oaroA6rAj+Yx
+         5dRyrZnki3/UMZwec7r7b6Y37qPNi+cszlMVq5PgCE/dDTay1c03+NEtgDAMFXxpFzJM
+         THcg==
+X-Forwarded-Encrypted: i=1; AJvYcCWqZNQHqhc+14vxGtvpFLloe8zEEAcisi3IrABWCN9j8Q90VLKkCu8a89cWbbCo+whzt7OEr9i8d4E2o2Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yze3a+DbghKRuHaRSX/i+PombQjxIewZ1m76uEE8g89MBk4qqEV
+	wo5itxRVfZLzRysK77Ehd8TDSmXhgJcULWOhtkKs3RhzMJEA6HP5hgzVIwfIqsO60cs=
+X-Gm-Gg: ASbGncuJ9p0TXhYyw/EzdBOb1Wign5RsksdeYBO3JnVkEHaADuXfsQF2FRU2YmC1DFx
+	ucnD4qryATL9BjbH0gQA5PTVuBm7D8wCTZGi4ZvsYFpaPUDa5VJ28VUqHmxfWWrDl37G8BVAMS9
+	pp+IIGVD2Y90U2QPRrT/o7wXw8HmbUWlq770DUe3pms/JJw3FR6erke0Gr4OZNiOg7nu7sdx5hb
+	VIqdxvyNdOQvaKKmvrOL+FbgWmABpXg2NcxqdwYAZcWWoGyPcVKLmLkANYO/yZ73iJSB4boxhfq
+	CU/RSTXwEp82QlF9dVS88VT1I97BVpRpspqihGCvlyyO1t5U4r7T/BYB6V747JVDuna0pmoXFlK
+	h23oE9od8+TRoZh0h1rAU/JvK
+X-Google-Smtp-Source: AGHT+IH/vtben+jS8p+rxXWOqr702i8ga9ZchZdA6ANpXGCersQKl3QS+kocMs00UNNWRezs+Fzb3w==
+X-Received: by 2002:a05:600c:190e:b0:459:e3f8:9308 with SMTP id 5b1f17b1804b1-45b517ad4bbmr141075015e9.11.1756216008734;
+        Tue, 26 Aug 2025 06:46:48 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:fed4:79fc:9440:6629])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c7117d5b10sm16231162f8f.47.2025.08.26.06.46.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Aug 2025 06:46:48 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Yixun Lan <dlan@gentoo.org>,
+	Lukas Wunner <lukas@wunner.de>,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org,
-	Michael Walle <mwalle@kernel.org>
-Subject: [PATCH v2 3/3] mfd: tps6594: Add board power-off support
-Date: Tue, 26 Aug 2025 15:46:31 +0200
-Message-Id: <20250826134631.1499936-4-mwalle@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250826134631.1499936-1-mwalle@kernel.org>
-References: <20250826134631.1499936-1-mwalle@kernel.org>
+	linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH] dt-bindings: gpio: Minor whitespace cleanup in example
+Date: Tue, 26 Aug 2025 15:46:46 +0200
+Message-ID: <175621600512.33327.13991412012918423626.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250821083213.46642-2-krzysztof.kozlowski@linaro.org>
+References: <20250821083213.46642-2-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Add a system level power-off handler if the "system-power-controller"
-flag is set for this device in the device tree.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-A power-off request is triggered by writing the TRIGGER_I2C_0 bit (which
-is actually just a convention and really depends on the freely
-programmable FSM).
 
-Co-developed-by: Job Sava <jsava@criticallink.com>
-Signed-off-by: Job Sava <jsava@criticallink.com>
-Signed-off-by: Michael Walle <mwalle@kernel.org>
----
-v2:
- - incoroprate feedback from Lee Jones.
- - use of_device_is_system_power_controller() instead of open coding it
- - handle errors in power_off handler
----
- drivers/mfd/tps6594-core.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+On Thu, 21 Aug 2025 10:32:14 +0200, Krzysztof Kozlowski wrote:
+> The DTS code coding style expects exactly one space around '='
+> character.
+> 
+> 
 
-diff --git a/drivers/mfd/tps6594-core.c b/drivers/mfd/tps6594-core.c
-index 9195c9059489..7127af7142f5 100644
---- a/drivers/mfd/tps6594-core.c
-+++ b/drivers/mfd/tps6594-core.c
-@@ -15,6 +15,7 @@
- #include <linux/interrupt.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/reboot.h>
- 
- #include <linux/mfd/core.h>
- #include <linux/mfd/tps6594.h>
-@@ -688,6 +689,19 @@ static int tps6594_enable_crc(struct tps6594 *tps)
- 	return ret;
- }
- 
-+static int tps6594_power_off_handler(struct sys_off_data *data)
-+{
-+	struct tps6594 *tps = data->cb_data;
-+	int ret;
-+
-+	ret = regmap_update_bits(tps->regmap, TPS6594_REG_FSM_I2C_TRIGGERS,
-+				 TPS6594_BIT_TRIGGER_I2C(0), TPS6594_BIT_TRIGGER_I2C(0));
-+	if (ret)
-+		return notifier_from_errno(ret);
-+
-+	return NOTIFY_DONE;
-+}
-+
- int tps6594_device_init(struct tps6594 *tps, bool enable_crc)
- {
- 	struct device *dev = tps->dev;
-@@ -770,6 +784,12 @@ int tps6594_device_init(struct tps6594 *tps, bool enable_crc)
- 			return dev_err_probe(dev, ret, "Failed to add RTC child device\n");
- 	}
- 
-+	if (of_device_is_system_power_controller(dev->of_node)) {
-+		ret = devm_register_power_off_handler(tps->dev, tps6594_power_off_handler, tps);
-+		if (ret)
-+			return dev_err_probe(dev, ret, "Failed to register power-off handler\n");
-+	}
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(tps6594_device_init);
+Applied, thanks!
+
+[1/1] dt-bindings: gpio: Minor whitespace cleanup in example
+      https://git.kernel.org/brgl/linux/c/604642fc148b5d98fbe5f55e4c2688f9ee0b5868
+
+Best regards,
 -- 
-2.39.5
-
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
