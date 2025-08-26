@@ -1,136 +1,111 @@
-Return-Path: <linux-kernel+bounces-785935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B788B352A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:15:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F3A7B352B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9147189A34D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:15:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E6B8173514
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:17:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3682D46D9;
-	Tue, 26 Aug 2025 04:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D77672D6401;
+	Tue, 26 Aug 2025 04:17:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="orenYixY"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="ljScmyOW"
+Received: from r3-18.sinamail.sina.com.cn (r3-18.sinamail.sina.com.cn [202.108.3.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2C12D3A7B;
-	Tue, 26 Aug 2025 04:15:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A6F2D663F
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 04:17:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756181719; cv=none; b=li42f3wT/EXr3ikyc/d1GH94psLOd0ox8BxXC3gwNevFpmXD8eMVLbSyWl2G54a5+R68EI4FmT8gS86c8flKOrGdORtlvMthMMZCm9xL/YG53B5dlYdcWZlNH9z8a+TohQhv/T+bfky5oByZRbdQ4UMbGHrDO77EOycQh3BHP0s=
+	t=1756181840; cv=none; b=JQ83PN6ktfmc3T4krvrcSEq8A49Aw3tBaC21EfH4U9zEX7uincPlr5TzkNAJY9MUI6jqIM4/H4xas8W63xoZRVaOhy55BN8GmAg+JfW5NWJyQvw/s7EwJ146g8U8h0z1/wouwlaKnUKz9FsYWgyFwnsjjYlfpGUUhHZwdx/jYns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756181719; c=relaxed/simple;
-	bh=fczNbiCT2Uje0IOvL2yy//lCqjb3lkrzhUOqVvwLfbA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CYLbxsFbhR2vOGqK0l46bpWCdM+d91RtA0czQV6C9fi7MRfeX5a0B8ObwtIqktTOU6NdV+DvHbr/nC2Y/xtnaXFyPqHVVJjUaIBBUlxI9o7H+YAV5IMEUxPzfjG7cSk/aZdzg1DyjKpN/ZfuYX4QxkLrPrlgPOJg/O6Yw556fw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=orenYixY; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=ertIYPEFECJ0bvh76dRuNtOkYGLs+05loEH4MTifk1A=; b=orenYixY1R7z+wDwcpNDDXjvLl
-	Zs9EOdg4bUD8MnprbkzgLahp57QL/LL+E4y2b5dmQ5xIcuPsGw7Bj55ZlOcjdf2oy7lH+jryamLOF
-	8vdBASxwlFMoSzUYxpGgXEBzAUGZwc5T2nAtyRZE2RBalBVgsz/JBH+z0QdWf29XcedjF89WD/hjF
-	tWpIDwa/Rk12XgjMNLWPn1ENLC1XMuvOhjmRn4Bedoa+vAYgT4wPz/rfF/NDSWVPkVM2DErij2GMw
-	yxEjf1YfcTxrbMhEZx9XcRfjoGPlEQYWopyqNuY5nezXm1V1Mjjf/LRkoa5IbKoW8EOoQcAsgMW3Q
-	hPNSbtpQ==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1uqkpf-00HHmm-1S;
-	Tue, 26 Aug 2025 12:14:48 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 26 Aug 2025 12:14:47 +0800
-Date: Tue, 26 Aug 2025 12:14:47 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-Cc: Nhat Pham <nphamcs@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-	"yosry.ahmed@linux.dev" <yosry.ahmed@linux.dev>,
-	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
-	"usamaarif642@gmail.com" <usamaarif642@gmail.com>,
-	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
-	"21cnbao@gmail.com" <21cnbao@gmail.com>,
-	"ying.huang@linux.alibaba.com" <ying.huang@linux.alibaba.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"senozhatsky@chromium.org" <senozhatsky@chromium.org>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"clabbe@baylibre.com" <clabbe@baylibre.com>,
-	"ardb@kernel.org" <ardb@kernel.org>,
-	"ebiggers@google.com" <ebiggers@google.com>,
-	"surenb@google.com" <surenb@google.com>,
-	"Accardi, Kristen C" <kristen.c.accardi@intel.com>,
-	"Gomes, Vinicius" <vinicius.gomes@intel.com>,
-	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>,
-	"Gopal, Vinodh" <vinodh.gopal@intel.com>
-Subject: Re: [PATCH v11 00/24] zswap compression batching with optimized
- iaa_crypto driver
-Message-ID: <aK00t9ld3YOWJo1I@gondor.apana.org.au>
-References: <20250801043642.8103-1-kanchana.p.sridhar@intel.com>
- <CAKEwX=Pj30Zymib2fEoDW9UyD1vAwxRKO3p28RPtK9DZWAdv8w@mail.gmail.com>
- <aJ7FSUdvxtZyiHBq@gondor.apana.org.au>
- <PH7PR11MB812143269E98B00ED4E5BE4DC93DA@PH7PR11MB8121.namprd11.prod.outlook.com>
- <aKv28XTvAITuq-p8@gondor.apana.org.au>
- <PH7PR11MB812163C97D4C533F0302FA20C93EA@PH7PR11MB8121.namprd11.prod.outlook.com>
- <aK0KNAmQh_JVgnML@gondor.apana.org.au>
- <PH7PR11MB8121473792ACC3AD50D5F129C939A@PH7PR11MB8121.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1756181840; c=relaxed/simple;
+	bh=tLRs7cyM4zOL8Iw9xxqOATKXUGiKj+/sNuj1KqZJxk0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=TmzmFTM6Puew++Ma2rMgLawZZE1R5Fk9KaYa2xi2yAzytXJP53iCdxGVoI7KCAL6Njr8iAzhS9NmGJrLXqEIq6KEW9N5vcOIN6Drndiu+Qxz/y2M80dBImvP1eDQyUKHBuMbLO9r7E/yi/49XIfw1EfAVXXvgYyRmgSzIRjB7Mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=ljScmyOW; arc=none smtp.client-ip=202.108.3.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1756181835;
+	bh=KguVyi6io1xREaWG1OM4ABL8lJlBLqOiLBBo1JR22UU=;
+	h=From:Subject:Date:Message-ID;
+	b=ljScmyOWMn/eOwTT64hel5JaOEWnzcr1I2tRxuxBO2uzJx5mCdqW9vWZ6MQRloQqc
+	 72zhaGzbnrNWWDsLjKHok50Zz5tyHLv9aLG8TLPR+r6FPAKj+PF/w116V836xjYJ3B
+	 ie9SrLWWg7PJ9WfK3T1yoRcR1898yK2i59JTiwrY=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.32) with ESMTP
+	id 68AD3541000005DA; Tue, 26 Aug 2025 12:17:06 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 8502844456963
+X-SMAIL-UIID: 69A7D3480C994A7B898C9939D0E62007-20250826-121706-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+a25ee9d20d31e483ba7b@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Write in __xfrm_state_delete
+Date: Tue, 26 Aug 2025 12:16:54 +0800
+Message-ID: <20250826041656.5633-1-hdanton@sina.com>
+In-Reply-To: <68ab6633.050a0220.37038e.0079.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PH7PR11MB8121473792ACC3AD50D5F129C939A@PH7PR11MB8121.namprd11.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 26, 2025 at 04:09:45AM +0000, Sridhar, Kanchana P wrote:
+> Date: Sun, 24 Aug 2025 12:21:23 -0700	[thread overview]
+> syzbot has found a reproducer for the following issue on:
 > 
-> Thanks Herbert. Just want to make sure I understand this. Are you
-> referring to replacing sg_set_page() for the input with sg_set_folio()?
-> We have to pass in a scatterlist for the acomp_req->src..
+> HEAD commit:    b1c92cdf5af3 Merge branch 'net-wangxun-complete-ethtool-co..
+> git tree:       net-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1411b062580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=67b99ceb67d33475
+> dashboard link: https://syzkaller.appspot.com/bug?extid=a25ee9d20d31e483ba7b
+> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14221862580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=159fba34580000
 
-I'm talking about acomp_request_set_src_folio.  You can pass just
-a portion of a folio by specifying an offset and a length.
+#syz test
 
->         for (i = 0; i < nr_pages; i += nr_comps) {
->                 for_each_sg(acomp_ctx->sg_inputs->sgl, sg, nr_comps, k)
->                         sg_set_folio(sg, folio, PAGE_SIZE, (start + k + i) * PAGE_SIZE);
-> 
->                 /*                                                                                                                        
->                  * We need PAGE_SIZE * 2 here since there maybe over-compression case,                                                    
->                  * and hardware-accelerators may won't check the dst buffer size, so                                                      
->                  * giving the dst buffer with enough length to avoid buffer overflow.                                                     
->                  */
->                 for_each_sg(acomp_ctx->sg_outputs->sgl, sg, nr_comps, k)
->                         sg_set_buf(sg, acomp_ctx->buffers[k], PAGE_SIZE * 2);
->
->                 acomp_request_set_params(acomp_ctx->req,
->                                          acomp_ctx->sg_inputs->sgl,
->                                          acomp_ctx->sg_outputs->sgl,
->                                          nr_comps * PAGE_SIZE,
->                                          nr_comps * PAGE_SIZE);
-
-I meant something more like:
-
-		acomp_request_set_src_folio(req, folio, start_offset,
-					    nr_comps * PAGE_SIZE);
-		acomp_request_set_dst_sg(req, acomp_ctx_sg_outputs->sgl,
-					 nr_comps * PAGE_SIZE);
-		acomp_request_set_unit_size(req, PAGE_SIZE);
-
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+--- x/net/xfrm/xfrm_state.c
++++ y/net/xfrm/xfrm_state.c
+@@ -798,6 +798,7 @@ void xfrm_dev_state_free(struct xfrm_sta
+ void __xfrm_state_destroy(struct xfrm_state *x)
+ {
+ 	WARN_ON(x->km.state != XFRM_STATE_DEAD);
++	WARN_ON(!hlist_unhashed(&x->bydst));
+ 
+ 	spin_lock_bh(&xfrm_state_gc_lock);
+ 	hlist_add_head(&x->gclist, &xfrm_state_gc_list);
+@@ -934,14 +935,15 @@ restart:
+ 			if (!xfrm_state_kern(x) &&
+ 			    xfrm_id_proto_match(x->id.proto, proto)) {
+ 				xfrm_state_hold(x);
++				if (x->km.state == XFRM_STATE_DEAD)
++					x->km.state++;
+ 				spin_unlock_bh(&net->xfrm.xfrm_state_lock);
+ 
+ 				err = xfrm_state_delete(x);
+ 				xfrm_audit_state_delete(x, err ? 0 : 1,
+ 							task_valid);
+ 				xfrm_state_put(x);
+-				if (!err)
+-					cnt++;
++				cnt++;
+ 
+ 				spin_lock_bh(&net->xfrm.xfrm_state_lock);
+ 				goto restart;
+--
 
