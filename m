@@ -1,84 +1,93 @@
-Return-Path: <linux-kernel+bounces-785890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4242DB35237
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:24:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3B50B35238
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:27:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A4A47A401C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:22:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 138F77A9890
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:26:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 348252D238D;
-	Tue, 26 Aug 2025 03:24:16 +0000 (UTC)
-Received: from sgoci-sdnproxy-4.icoremail.net (sgoci-sdnproxy-4.icoremail.net [129.150.39.64])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDB5393DD1;
-	Tue, 26 Aug 2025 03:24:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.150.39.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A4752D1F72;
+	Tue, 26 Aug 2025 03:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="lAsmwa9p"
+Received: from mail3-165.sinamail.sina.com.cn (mail3-165.sinamail.sina.com.cn [202.108.3.165])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C59619F137
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 03:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756178655; cv=none; b=RwwtoJGQY6m0UICOxU3d18YznMNI2b+dQAVu0ADGQVsbbDCfzFJrw+XeXUfq403TSvT+T19Lqxlz1F3k+pdkvYheL/1nSkffMSgOmTuV19PW4U3pkXpTmzb0IBAjb9mzQ/KAdud3Kb2Ojzw564CLZamiEaqn+/yNNHkz0qTg9mY=
+	t=1756178869; cv=none; b=CnTSHko2VEOAjkf/jWKvIjMrSVHfDmPnXFFDZusZ6u+in3+Gfh+O4qFrEamCrZUAFk6WsgmUqj0JTUvfnlNATtO0a28eHevx3V9wz63cn11d/IeQo0pIiuU42JOE1kjJEBw7m6HZ78M4yYK3fQW/0S+7lovrhthWfmNaeEXlvmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756178655; c=relaxed/simple;
-	bh=aXzpDQbc0d3NKnBRl7lRsprIHKBsoXUaHwCtoysIoIU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=iMknVbblep8SIeflGHV1HWc1qWCGh8oTXV5EkDaOgShbVE7fxl1R34Us4pDuaJQykBqI475/pL0dHD18HXZDCGA6APPiuyaQ9CuDTpuYMtlvfjZtXIKfodmdkznheBbrcmBDjk5/H5gh9Gk/rGtJlMkIY4QsgmlXAzTCtQxfTiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=129.150.39.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from luyulin$eswincomputing.com ( [10.12.96.77] ) by
- ajax-webmail-app2 (Coremail) ; Tue, 26 Aug 2025 11:23:57 +0800 (GMT+08:00)
-Date: Tue, 26 Aug 2025 11:23:57 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: luyulin@eswincomputing.com
-To: "Krzysztof Kozlowski" <krzk@kernel.org>
-Cc: dlemoal@kernel.org, cassel@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-ide@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	vkoul@kernel.org, kishon@kernel.org, linux-phy@lists.infradead.org,
-	ningyu@eswincomputing.com, zhengyu@eswincomputing.com,
-	linmin@eswincomputing.com, huangyifeng@eswincomputing.com,
-	fenglin@eswincomputing.com, lianghujun@eswincomputing.com
-Subject: Re: Re: [PATCH v2 2/3] dt-bindings: phy: eswin: Document for
- EIC7700 SoC SATA PHY
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
- 20241203(6b039d88) Copyright (c) 2002-2025 www.mailtech.cn
- mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
-In-Reply-To: <20250821-precise-delightful-lyrebird-6b4275@kuoka>
-References: <20250819134722.220-1-luyulin@eswincomputing.com>
- <20250820092758.803-1-luyulin@eswincomputing.com>
- <20250821-precise-delightful-lyrebird-6b4275@kuoka>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1756178869; c=relaxed/simple;
+	bh=B3svkU2f3qi1zev2tHvRBHlzdaEn3brBzjYFCbPORMM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=OIaNoHXu68+/XqLaxWZZUw2IVTxZLGl4L+10pefGMoiwfc1cW/9Jz/n2gTthbFh392QdX8LBNgQxWmCz6iGkAvB2V759gXKWxBmjx373uNMAqqdIlXkrtHpjNepIS3jefOS1InP2BY/FHee3yKb0CpMnfkktb0FfHvRyle6lM9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=lAsmwa9p; arc=none smtp.client-ip=202.108.3.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1756178864;
+	bh=HEB2ddPtmZydgAkVYcyzE1MWrXQ3XUMD61CA3jfW3A4=;
+	h=From:Subject:Date:Message-ID;
+	b=lAsmwa9pcpK4nVDxIZTX2soTZPtgg9bXtt0e7PTpz0Yzos5uBpPefd2yewc2PrasR
+	 n3LLRUiG2NXl8LcTnxk+J5shgeZND22t6kZPdO2dRyArdVuR6wiySqs2DgMOVhh+RV
+	 ylwe4ZeIDzB/Xat2FDfswNLCUqk81UJRvuvh2Mno=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.33) with ESMTP
+	id 68AD29AC00006C35; Tue, 26 Aug 2025 11:27:41 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 5665576685014
+X-SMAIL-UIID: 46B1E8821D8749879616F6C2938F4607-20250826-112741-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+a25ee9d20d31e483ba7b@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Write in __xfrm_state_delete
+Date: Tue, 26 Aug 2025 11:27:30 +0800
+Message-ID: <20250826032731.5585-1-hdanton@sina.com>
+In-Reply-To: <68ab6633.050a0220.37038e.0079.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <3fd6740d.6d3.198e4676278.Coremail.luyulin@eswincomputing.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:TQJkCgDHZpXNKK1oArvDAA--.23274W
-X-CM-SenderInfo: pox13z1lq6v25zlqu0xpsx3x1qjou0bp/1tbiAQEGA2isj-USPQAA
-	sU
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+Content-Transfer-Encoding: 8bit
 
-SGksCktyenlzenRvZgoKSSBhcG9sb2dpemUgZm9yIGluY29ycmVjdGx5IGZpbGxpbmcgaW4gdGhl
-ICJJbi1SZXBseS1UbyIgZmllbGQKd2hlbiBJIGZpcnN0IHNlbnQgdGhpcyBwYXRjaCwgd2hpY2gg
-Y2F1c2VkIGl0IHRvIGxvc2UgYXNzb2NpYXRpb24Kd2l0aCB0aGUgb3RoZXIgcGF0Y2hlcy4KQXMg
-YSByZXN1bHQsIEkgaGF2ZSByZXNlbnQgdGhpcyBwYXRjaC4KQ291bGQgeW91IHBsZWFzZSBoZWxw
-IHJldmlldyB0aGUgb3RoZXIgcGF0Y2hlcyBpbiB0aGlzIHBhdGNoIHNlcmllcyBhZ2Fpbj8KVGhl
-IGxpbmsgdG8gdGhlIGNvdmVyIGxldHRlciBmb3IgdGhpcyBwYXRjaCBzZXJpZXMgaXM6Cmh0dHBz
-Oi8vbG9yZS5rZXJuZWwub3JnL2xrbWwvMjAyNTA4MTkxMzQ3MjIuMjIwLTEtbHV5dWxpbkBlc3dp
-bmNvbXB1dGluZy5jb20vClRoYW5rIHlvdSB2ZXJ5IG11Y2ggZm9yIHlvdXIgcmV2aWV3IHN1Z2dl
-c3Rpb25zIQo+IAo+IE9uIFdlZCwgQXVnIDIwLCAyMDI1IGF0IDA1OjI3OjU4UE0gKzA4MDAsIFl1
-bGluIEx1IHdyb3RlOgo+ID4gQWRkIGRvY3VtZW50IGZvciB0aGUgU0FUQSBwaHkgb24gdGhlIEVJ
-Qzc3MDAgU29DIHBsYXRmb3JtLAo+ID4gZGVzY3JpYmluZyBpdHMgdXNhZ2UuCj4gPiAKPiA+IFNp
-Z25lZC1vZmYtYnk6IFl1bGluIEx1IDxsdXl1bGluQGVzd2luY29tcHV0aW5nLmNvbT4KPiAKPiBZ
-b3UgYWxyZWFkeSBzZW50IHRoaXMgcGF0Y2ggc2VwYXJhdGVseSAoISEhKSBhbmQgcmVjZWl2ZWQg
-cmV2aWV3Lgo+IAo+IEJlc3QgcmVnYXJkcywKPiBLcnp5c3p0b2YKCkJlc3QgcmVnYXJkcywKWXVs
-aW4K
+> Date: Sun, 24 Aug 2025 12:21:23 -0700	[thread overview]
+> syzbot has found a reproducer for the following issue on:
+> 
+> HEAD commit:    b1c92cdf5af3 Merge branch 'net-wangxun-complete-ethtool-co..
+> git tree:       net-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1411b062580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=67b99ceb67d33475
+> dashboard link: https://syzkaller.appspot.com/bug?extid=a25ee9d20d31e483ba7b
+> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14221862580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=159fba34580000
+
+#syz test
+
+--- x/net/xfrm/xfrm_state.c
++++ y/net/xfrm/xfrm_state.c
+@@ -798,6 +798,7 @@ void xfrm_dev_state_free(struct xfrm_sta
+ void __xfrm_state_destroy(struct xfrm_state *x)
+ {
+ 	WARN_ON(x->km.state != XFRM_STATE_DEAD);
++	WARN_ON(!hlist_unhashed(&x->bydst));
+ 
+ 	spin_lock_bh(&xfrm_state_gc_lock);
+ 	hlist_add_head(&x->gclist, &xfrm_state_gc_list);
+--
 
