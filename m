@@ -1,238 +1,187 @@
-Return-Path: <linux-kernel+bounces-785915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8CECB35271
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:02:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0E15B35275
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:02:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EAED2419D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:02:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B14301B26C46
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:03:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A86623E320;
-	Tue, 26 Aug 2025 04:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E041A2D3EFB;
+	Tue, 26 Aug 2025 04:02:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TUyrKfyL"
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="cbpCUrp9"
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013045.outbound.protection.outlook.com [52.101.127.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080283D984;
-	Tue, 26 Aug 2025 04:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756180920; cv=none; b=Xjkt4JoJTN9gB30Ea+SF5Fs+FZm3vL3ZuHtaGx6f/N01Veyt7/WLKfY2fCJbz9g1LrXofcP0EJv2g4PGANUTHagOiWHqbx13H4wADdx/wSDu0K36+7JHXv4bzgixvTHjuffNTq43BsmpVWn1Vcj8g21hZxpAo815Urx74jUK2RA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756180920; c=relaxed/simple;
-	bh=3538VbyHo5E4XYOowQRklx9J7HdiZmeSTpOCbULUdwg=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=ZBxl7lYOaB/4iAthMPY8MFRT2kmpwFJW0Xg65xe88Fc31CN93SSQo8BRzGGkKLrQaf9Ps2OQALQwcGWSXwzDSoTwAx8bKnAEbbOX1Z1qxViUvlPyymgcmXZhUFyf+qFNiS44LoIIAfVWb9fiG+UUviWDTax11/vnhOkOxUaOMNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TUyrKfyL; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7e870316b79so575735285a.0;
-        Mon, 25 Aug 2025 21:01:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756180918; x=1756785718; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=DYZtfOu2sTzFKmnnCvFst2n3HDgx1eNSREKAoaoeA/M=;
-        b=TUyrKfyLoB57kJ15tn3JlUvnX6GUKH+FThFIJgqmDS5024P2YQNQaP6ywd/EY7ZLmN
-         xQHkUPw0OcA2pW0IX0T+2ebRaTE4KBGsbPdEIl3HHQNP4aU0/c/saI8n6I6brJZfjP3O
-         QLApFujMtDFILuyG+/Fz8RT6yw5yUzwkr1ASz8gvKYw0BqfsUpndXjv48i1zmU1JUwyA
-         nmRjO15+spCkAuQyW2rWWUL4C9LzJFr/MQUBGvMnBiPlbxE/0hF85AbCj3pUeI0Fhz2M
-         2PR4AeOppEmi8bF2yrDQuVa9dadmTE0DzUqocIEXu4c8bygvWRXFJzy0cr0teVVay0x7
-         jInw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756180918; x=1756785718;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DYZtfOu2sTzFKmnnCvFst2n3HDgx1eNSREKAoaoeA/M=;
-        b=OwNdMe8SOieMQXbH+PkW7d5BiNgxJjy0fPoG50gMmQ7AAlCfY8jRo26cXMpeLP3Ojm
-         ZcUn/VUx4z62vyr8WZRJBIaTEdZXga2+ABb6IoK0onfkj82fjjBChky2dsSNmRtc15YI
-         XJRks32aDedlTGYa/Lqz0w6zAxR1OHxXnslCM5rFjIF3ATejB3YFWDhgu01sZy7LfvdB
-         YjwMLi9HjefeEZ7Ro1c3P8PCFUreToiSbcmzjbZ3QUelUBKqkUa/sOPtaqYGwFc3r7yP
-         4KMZjODvX52LsIwm1QrOtabRtPahMiAkVHG2cCAroTbqF+hQU4rP1mXL+9krVPoTRgOc
-         xo4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUeHRhocENx28FB/jvXxshIXvnfmh7rsq4xe3NGPvS1JvOpfbtqhxxKsr4Yvfhd9otUXrANDNTfwra7@vger.kernel.org, AJvYcCUnBrRtRYta/hQsdBhUwwg+/FSAIAmSPWL60fuXRVlkcZU1gjG+nqAeuNbisJCugquDA6U5laG6rUIGXg==@vger.kernel.org, AJvYcCVfnCfTkoZ8oI7p3XSPAZwyTVUYDiS+uwNFEhN7xI66uYeEjAlvMraQLnDxzCMwQ9D9SCjaD3oa5uxJyXWQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwN4AQWzaCGeZtTmaeSU0SAo/1lfmnrcfrDwPTqd7e5y69dA91X
-	P7JvrvFpINvJA8yajnhLBp+fRTXa9XGdI0AB4pTGmIMgqSapAsGgxJBO
-X-Gm-Gg: ASbGncvHL+c3+cotFivY5N0jcOhMsDdWYfw22LE4zKpAVQa5FujOvpdf8A7txidvzWG
-	pPJyLE+VDMDDJRAu9nUBTvuFimx3777Ho4PWqMfdAgTDs/JvKuyimMtf0jVVlPbcl1BiYo/hA0X
-	wo34hns4HZl4MZEJqd5A5sohYN63jBT1E7DKVBCSkSufmpA4GshXXWzKWKhAc/Lb6FKs9/I8LxY
-	mG7QEtfohPiJzop0tuX0r+YKnWIWXr27iKDKMC5SHdQlY4BTDMtGdgMYfNbFjbT09OWYTKoTJl6
-	Nf/H15Bt968g3kDRh/c0f7LKYGR+8IIf0A2qip/jK8jd4TehKI2Hz0xHQgV+Yfsv36Tw2uySRuo
-	2rQXn8BMFomh8OjSbsajzdrfYLHyDxEcyam3QvyTiyigwmKQAPg3VFPq4tthl6FzcW7Lo+A==
-X-Google-Smtp-Source: AGHT+IHz0zRWKU0+TYMO3TgA14QejdX10VcvwfSLmPslVWxbWq1Uu2s+60QYu/AIkei9UIVnG1owcQ==
-X-Received: by 2002:a05:620a:ab18:b0:7ec:4971:398 with SMTP id af79cd13be357-7ec498f8be6mr1068970385a.11.1756180917562;
-        Mon, 25 Aug 2025 21:01:57 -0700 (PDT)
-Received: from [127.0.0.1] (modemcable197.17-162-184.mc.videotron.ca. [184.162.17.197])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ebe6069a17sm618211585a.0.2025.08.25.21.01.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Aug 2025 21:01:57 -0700 (PDT)
-Date: Tue, 26 Aug 2025 00:01:57 -0400
-From: =?ISO-8859-1?Q?Jean-Fran=E7ois_Lessard?= <jefflessard3@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-CC: Andy Shevchenko <andy@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-leds@vger.kernel.org, devicetree@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v4_5/6=5D_auxdisplay=3A_TM16xx=3A?=
- =?US-ASCII?Q?_Add_support_for_I2C-based_controllers?=
-User-Agent: Thunderbird for Android
-In-Reply-To: <aKx-w0QOOQPyy9pW@smile.fi.intel.com>
-References: <20250825033237.60143-1-jefflessard3@gmail.com> <20250825033237.60143-6-jefflessard3@gmail.com> <aKx-w0QOOQPyy9pW@smile.fi.intel.com>
-Message-ID: <951E84EF-4ED7-4882-A5E2-6E3CD63E1E07@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18E0123506F;
+	Tue, 26 Aug 2025 04:02:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756180953; cv=fail; b=HpLkpGxQmSct+0zBfqMOQsy/w0KmyhdzrUtDNdXYqF62eHmzYVzJ0jsaex7EJWl4TJrkOdlzXi8ZjdPeCwtzVnf+XhhXb/vta4QtsjwZ0wFlx/lEQ4s9rUy95aQVNt8AyWnBbswpEb0cPEEKFtTBXpcPGZjZSponusko3wMN6pA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756180953; c=relaxed/simple;
+	bh=243RO3KvQH41YhgLrZ8kQylF71BkcN2rpKaL5SWDl1Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=D8I3MaNCh53L7dSb+43lQ9afpFAHgfLuadRLGzKKyoJMcH91VykpGSAdpDoLiWvNvNy9TjL3U78i7GPmKJUdkw9dsWZLDlOq476pkht5dmuYizkOeEIe40+6KLjYIRsRThrseCAp5rcHKfefZfNySVd9ihR0SjUSpPGWqvvRbkM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=cbpCUrp9; arc=fail smtp.client-ip=52.101.127.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SHlKX52xxGbhYTaorDezo3tOTUKExAvGOqt2vOQOSWYEiKQ57LDEmdnjb1/XVQ15KI4ZjuvgSl95DC8RTOWKs9fKrJjgUiTw2opMfUaz31oSh8j6HzHyhVhJY6V3OqTbsFuzcszHrq1yjELygUMXbJjI923sRS0drvHsn73vzCs7Asc+GDsswfZSM8kvtW0aNVD6tUHWGPWXC3nNdFP6hHZq96r5XIFfwdlylhPnyJCXUOO2GKk/+TPSjafjNvpRjJcky5A4R2Ny1oaM2cU1cyr0j6mBQ1S0JgbmbiXhHmQm8pHfDsDtx1HfZlDKan1lGQwKUYHeRiDT4b+3JMKLjg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VmdHfKNtGC9mREnQYyOq2JObaAn2tr6btgtH8KtK3HU=;
+ b=cSvGZP+14vW2shGHZxe8KvJTCbPteG/d1muxMF701HHSGdFI5O2c/zn5rB4ZgipZIpGtQIkap0UeqzpEArhlN6aGUW7kFeELt/Gkq9fzquDTMgiDyZa+nJI+LwjDx6F3B0fGTDAeRy7YPxLjkoVBG2tKelDeezZsXdy1nDNxfgqTxV/rmGBlIhOlrxbt1eiBr0y81DOFgXZdXVEWIY0TrHFcY8sw+LK8R2Xw4OiOPcWxIDv2vuS75FQJxFW0AAR8MEH49I/61+pah3F0OSBHBruCLb/+/CxAuG4Z0ouurGt8ln5STodQT2DMtIzx4PqChwst8FxhGiHVntsvg7g9yQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VmdHfKNtGC9mREnQYyOq2JObaAn2tr6btgtH8KtK3HU=;
+ b=cbpCUrp9iS6VIHY2wlwyLd5g7ZkJFYtVDnI2BpPi0SZwzCtadJHaPH5V1yeUxi6gs1TfUplSfbN969BdXtshcu2e7a5bB1kTTpyRfszEnpZk4njopgx3rb6JfmP/fQEpKkpbSuTgtENrw5YQPIZjJ5J/XOSsEr+oo8k7ogrBhyvCF0uVXZA2FsG75ldeYA8dl7AIWKg3Ki3+ZV2EPLvu632hi7rL1/QV9NcroP2LDtFJiRDMfChHI/L2G8luqwTQAOsXIQKA78Br5zpZaIiUWoN5e42Gj9x3YCzyqN6u8+6cWsszrY9vCuLnn66ooeme3xOMnxFiD3meGTXiklxAcg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
+ TYSPR06MB6526.apcprd06.prod.outlook.com (2603:1096:400:481::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.20; Tue, 26 Aug
+ 2025 04:02:28 +0000
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666%5]) with mapi id 15.20.9052.019; Tue, 26 Aug 2025
+ 04:02:28 +0000
+From: Qianfeng Rong <rongqianfeng@vivo.com>
+To: Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>,
+	linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Qianfeng Rong <rongqianfeng@vivo.com>
+Subject: [PATCH] ata: ahci_xgene: Use int type for 'rc' to store error codes
+Date: Tue, 26 Aug 2025 12:02:19 +0800
+Message-Id: <20250826040219.133959-1-rongqianfeng@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR01CA0178.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:28::34) To SI2PR06MB5140.apcprd06.prod.outlook.com
+ (2603:1096:4:1af::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|TYSPR06MB6526:EE_
+X-MS-Office365-Filtering-Correlation-Id: 99185905-5e5d-48bf-e9da-08dde4555f91
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|52116014|376014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?icQZ+vsUjxKHBMgvY1sBiJ+0/U06ldQIkjQCWwzPWwErpoVcjFb0oHoW+dc6?=
+ =?us-ascii?Q?wULzk/+OaBNjU/htYECGO8w+8IgNF8tFaakAh7mppxmi1MxXHrOuGrLhwlDV?=
+ =?us-ascii?Q?2g0SKpQWsL17jgHzlipZh2pYV9BsETRfiUYFMFgE64+ONvq+dUAeJ65OU5B5?=
+ =?us-ascii?Q?J8ZzxCyOEcNgLLSejw2lW329NsDqQM6EtniGELB8dwzjVRa/Jg4+zKPErrNV?=
+ =?us-ascii?Q?k4zmt1mp5HQLiP7h6u2X+gzf5mTbbiM0/65AZbWqpuF57KmJ/Zo6DGFB4XA8?=
+ =?us-ascii?Q?JqywuKSU4IwTfIVdEbXOwuJmUyoD0CSUMRfq2/S5ODEVp3slWnT0hx3RMXGm?=
+ =?us-ascii?Q?MMycwIrnyEE1OFojtPSSOCvtvxFedg8k9cQexeOQ1cbIBBK523inZZKihKZb?=
+ =?us-ascii?Q?oGVGPzPLIFfVPwsHtibP/DDYsRon36NN0OeuXxQuQgGkZpcCSPlqzkba8g07?=
+ =?us-ascii?Q?nulE2TKDi8PqCdDjb2rp1AaFxi7tczcRmUIb5WETjo8IZDPJ4mWIVeKWsQvE?=
+ =?us-ascii?Q?J4lDgJG95oAR44OsqQBc7x3PZG0l0YTgmK7ur5kKVdyqTZqMTGknckd0mpQc?=
+ =?us-ascii?Q?4qqE9u5+stnb6UwBkzPtfZaJ0PLRX53LK29iqGqUEJz3N1ppAHFC4Vpe4YdR?=
+ =?us-ascii?Q?FW+0sczTY51SXgqfHtI91EGEag7PyK5sNlbN+eTMpOSgKVdlWg407QyqZqX+?=
+ =?us-ascii?Q?eVlv4Kd2No5dV2XMcI56bp2zncmuvoHJkmLzfiyk6TVX6dyrx0s/EbtC/eOc?=
+ =?us-ascii?Q?2EVeig47TFCBeL+2RJrsAS+n+ZcbenklAsTSemeNstugjCAHf9ItKN232zE/?=
+ =?us-ascii?Q?nsjBgTVgNEnoXblC2qnXChnlSFG336vhQsXN3F4g/NIUPVtdgdww4zx8T4X0?=
+ =?us-ascii?Q?Rm5xBJdr1p/A9NplnlEzDY4dn7/d2DHoqVwVWUXAsn7ESVUnWYVcNE6jEmZI?=
+ =?us-ascii?Q?FBz+iUOj9XtQv3jehzitBoeutTn0w7IN7FvX5RnvCTmqscNKOsnOGrPCOu37?=
+ =?us-ascii?Q?cir9d9FgB7/LgEwVhHu4m5hNVTm8rO9ql75xcD4VTMjgUsRzxiikdjHhhvCU?=
+ =?us-ascii?Q?yZOwfU+XWpxqMpSKKVMzk4EuRlm1KGRNo886ZVBCA+zysNDXa2NsaIB4slLZ?=
+ =?us-ascii?Q?hG0AE/lIj7tqrG2OWdLa/GW02phV15b2CYE5LVeGXjLdvhp0C2pBheOA0XTI?=
+ =?us-ascii?Q?XB5hf9KoRNjwR5dNYX5Thsxl/xjYcOYuIosyQQnFm8yoK/YdNAWguY75BN/S?=
+ =?us-ascii?Q?75TI2VbRFOgrrxtzNDxqgHrZFLk0380+ufChx7SvxGMjLRwbJWsFG5IYsYgq?=
+ =?us-ascii?Q?2W6+VzLoo/BEijNtqNBtgzmXrYGwGX6xOpDX+HPUuarWOz/Re9C+KzZoIW6R?=
+ =?us-ascii?Q?UVU5CttArDrZ87ZotQhpcPub+IquBB/S8zJ8KJmHG/8/xHaWe1y3woIey08s?=
+ =?us-ascii?Q?k8Wa+EHKW9FTIZYf+A9tdN/3J/VOY4wRoyP7hr7Wz/fA1jmLv3dg0w=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?gaxeKJHQ6VOrMjZBtYrRpauAldDv23nEZ7VsAnoT+DH3kLLq5GhWvArJotA/?=
+ =?us-ascii?Q?rBh+hg6mlkFtLdf4081ss3I++aIYHfMw2kMzXMx05kp2sDRmGPqyYLSQyx72?=
+ =?us-ascii?Q?asHGYDFraVSG1ru13U621JO/qwfv7AlYEHVXIyvsVruddbqs2AN0QGBhEQ+A?=
+ =?us-ascii?Q?OYJTAOj1hgeJK2ABRVjZUQXDB95HzWOG0mCJXPPDzJygYCufTzJzzmYDl7uf?=
+ =?us-ascii?Q?vTw/ucO8g8AUytqbs0kZ7aNjSRz0SoOZc+mkew2+2QEbVYYrpoqZfgobDLtO?=
+ =?us-ascii?Q?j80hoUFlF0fSaNfHJnMG/3AgAGhzvvnumwvRKsrMZKm1vKF+iPLcoNx1Xphd?=
+ =?us-ascii?Q?luHXTWj+n1dfLf10pfMd0ULPUmFDruDF3Us5JFZhsfgQYZaVMcAPiSEoUsmf?=
+ =?us-ascii?Q?55A73Xt18n98KfP0EpUn2Ls3DhGUOxaMCUP3oYax5J/UsyHu6T9xJ2IqHjRY?=
+ =?us-ascii?Q?tcTO8Ky4Lb4XAjQg8ItEh/217gepIam3732ssc+iifCRAbpdGmN6FBpELIDI?=
+ =?us-ascii?Q?0tY/tHmmMg3mFkBDf547N5utt7bskF2Kt0ZVyY5tmKus7zXTppewJOFg7jDn?=
+ =?us-ascii?Q?3Z6EZlnhih1hJLn+lFMHWjEeY7cp3zhIh9Okv3FTts8lkF2GMJ2DKu/fc6cK?=
+ =?us-ascii?Q?/6j/WajFE9mZiV7PjbYTCAUst88dgWj8IhXHaagxgba5Z3hJdNj/S67POpw+?=
+ =?us-ascii?Q?LT3oixV8eMGnflvE7Dv1eqLuEsZzmY7CFX9g8+fVxVHI7FTH5wjaNU+1WMt0?=
+ =?us-ascii?Q?BIfNEFE10s9DT2wNRGih8yTF0cUPW9x7xIQcu6rGYnUw2xqLY2G6njiOgkC+?=
+ =?us-ascii?Q?lD9C972Ge6Yubug325PtC3my63ZUnMMKCaqllc+gyA7jaFjqFPXYTFkZZAmk?=
+ =?us-ascii?Q?LE5Qh6bJ3uxQTyIkMJmJPRePVMwxa+FOJgzKnRr4zl5GHJBC5Xna+yzGkcg+?=
+ =?us-ascii?Q?YhFFe0Iit1eBjm1Q7CuPXVe+iv5shR5UOaRKruSL6tSV0NlGGOZ99/tKyEoW?=
+ =?us-ascii?Q?StqKIiGnL8lg/tXtK2dQSdOf0cjqP61HWMknaDBFSc3RUurp6EX4UOZsGftq?=
+ =?us-ascii?Q?LYD8xrqiFNZ8sIPZa7qc025DLFYfz5pnrKEhrlLOKqX8HJS5qpXrM6QfHO2S?=
+ =?us-ascii?Q?2KqKF2xu6jCmpwRBQRXWy02MjHeapnEOB2Kc9yaUrh+FErHxDZvVEbVBn7nE?=
+ =?us-ascii?Q?hjv2uVps2EnE5onV/l39NeGPSGPIq+Q4Hbam9pPMMv2QjDXuoGq7BlFUsSdN?=
+ =?us-ascii?Q?/KbTGoqgo1VWaAcrLjfEJN0bt561eRWYf01Tt0kfgHIU6CBVMtUagSTxwuhx?=
+ =?us-ascii?Q?n1zmLLIelkbiVrnM/9U1pOxpVSwKs4m0M8OXoF677B1MlWGdKHytMXTfzTao?=
+ =?us-ascii?Q?G/003/BVMp3ejv4aiOk66lfaaAqkrQguoy61qx4xYJUqTTebJBDkgiLObl2P?=
+ =?us-ascii?Q?BB3GcOT4MJwqpAq97lO4+wBMLYpil7Nrv8S+AMKeYOblQ86mC3UBdkjg/X/v?=
+ =?us-ascii?Q?itnEtoVE6sTmWYD0zMDaOgkXDs2LbpKyQzB14RMAGdzGPngNOFqo7qhLHOa0?=
+ =?us-ascii?Q?d9YUJr6iTIh4Y9ZtOp66AI/eH3SMOaElHMgqRud+?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 99185905-5e5d-48bf-e9da-08dde4555f91
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 04:02:28.4912
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4CuyIjprzQNNl3Jh0pZfa3Wjy5ZfbM5dkmMIy4OWH8VfV7gcOi51Y+8cmDnGodoKdi5sZ1yqw77iDeBTJZcxng==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR06MB6526
 
-Le 25 ao=C3=BBt 2025 11 h 18 min 27 s HAE, Andy Shevchenko <andriy=2Eshevch=
-enko@intel=2Ecom> a =C3=A9crit=C2=A0:
->On Sun, Aug 24, 2025 at 11:32:31PM -0400, Jean-Fran=C3=A7ois Lessard wrot=
-e:
->> Add support for TM16xx-compatible auxiliary display controllers connect=
-ed
->> via the I2C bus=2E
->>=20
->> The implementation includes:
->> - I2C driver registration and initialization
->> - Probe/remove logic for I2C devices
->> - Controller-specific handling and communication sequences
->> - Integration with the TM16xx core driver for common functionality
->>=20
->> This allows platforms using TM16xx or compatible controllers over I2C t=
-o be
->> managed by the TM16xx driver infrastructure=2E
->
->=2E=2E=2E
->
->> +#include <linux/i2c=2Eh>
->> +#include <linux/mod_devicetable=2Eh>
->
->IWYU everywhere, too little header inclusions, you use much more=2E
->
+Use int instead of u32 for 'rc' variable to store negative error codes
+returned by ahci_do_softreset().
 
-I'll explicitly include all required headers in each source file
-instead of relying on transitive includes from the header=2E
+Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+---
+ drivers/ata/ahci_xgene.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
->> +static int tm16xx_i2c_write(struct tm16xx_display *display, u8 *data, =
-size_t len)
->> +{
->
->> +	dev_dbg(display->dev, "i2c_write %*ph", (char)len, data);
->
->Noise=2E
->
+diff --git a/drivers/ata/ahci_xgene.c b/drivers/ata/ahci_xgene.c
+index 5d5a51a77f5d..8d01c105fd44 100644
+--- a/drivers/ata/ahci_xgene.c
++++ b/drivers/ata/ahci_xgene.c
+@@ -450,7 +450,7 @@ static int xgene_ahci_pmp_softreset(struct ata_link *link, unsigned int *class,
+ {
+ 	int pmp = sata_srst_pmp(link);
+ 	struct ata_port *ap = link->ap;
+-	u32 rc;
++	int rc;
+ 	void __iomem *port_mmio = ahci_port_base(ap);
+ 	u32 port_fbs;
+ 
+@@ -500,7 +500,7 @@ static int xgene_ahci_softreset(struct ata_link *link, unsigned int *class,
+ 	u32 port_fbs;
+ 	u32 port_fbs_save;
+ 	u32 retry = 1;
+-	u32 rc;
++	int rc;
+ 
+ 	port_fbs_save = readl(port_mmio + PORT_FBS);
+ 
+-- 
+2.34.1
 
-Understood, I'll remove the debug noise=2E
-
->> +	/* expected sequence: S Command [A] Data [A] P */
->> +	struct i2c_msg msg =3D {
->> +		=2Eaddr =3D data[0] >> 1,
->> +		=2Eflags =3D 0,
->> +		=2Elen =3D len - 1,
->> +		=2Ebuf =3D &data[1],
->> +	};
->> +	int ret;
->> +
->> +	ret =3D i2c_transfer(display->client=2Ei2c->adapter, &msg, 1);
->> +	if (ret < 0)
->> +		return ret;
->> +
->> +	return (ret =3D=3D 1) ? 0 : -EIO;
->
->Can we use regmap for all parts of the driver? Why not?
->
-
-These controllers implement custom 2-wire/3-wire protocols that share
-sufficient commonalities with I2C/SPI to leverage those subsystems, but ar=
-e not
-fully compliant with standard register-based access patterns=2E
-
-Specific regmap incompatibilities:
-
-I2C protocol:
-- Dynamic addressing: slave address embedded in command byte (data[0] >> 1=
-)
-- Custom message flags: requires I2C_M_NO_RD_ACK for reads
-
-SPI protocol:
-- Inter-transfer timing: mandatory TM16XX_SPI_TWAIT_US delay between
-command/data
-- CS control: requires cs_change =3D 0 to maintain assertion across phases
-
-Regmap's I2C/SPI bus implementations use fixed addressing and standard tra=
-nsfer
-patterns without support for these protocol-specific requirements=2E A cus=
-tom
-regmap bus would internally call these same helper functions without provi=
-ding
-practical benefit=2E
-
-The explicit transfer approach better reflects the actual hardware protoco=
-l
-requirements=2E
-
->> +}
->
->=2E=2E=2E
->
->> +static const struct tm16xx_controller fd6551_controller =3D {
->> +	=2Emax_grids =3D 5,
->> +	=2Emax_segments =3D 7,
->> +	=2Emax_brightness =3D 8,
->> +	=2Emax_key_rows =3D 0,
->> +	=2Emax_key_cols =3D 0,
->> +	=2Einit =3D fd6551_init,
->> +	=2Edata =3D fd655_data,
->
->> +	=2Ekeys =3D NULL,
->
->Redundant initialiser=2E
->
-
-Acknowledged=2E Will remove=2E
-
->> +};
->
->=2E=2E=2E
->
->> +#if IS_ENABLED(CONFIG_OF)
->
->No, please remove all these ugly ifdefferies=2E
->
-
-Acknowledged=2E Will remove=2E
-
->> +static const struct of_device_id tm16xx_i2c_of_match[] =3D {
->> +	{ =2Ecompatible =3D "titanmec,tm1650", =2Edata =3D &tm1650_controller=
- },
->> +	{ =2Ecompatible =3D "fdhisi,fd6551",   =2Edata =3D &fd6551_controller=
- },
->> +	{ =2Ecompatible =3D "fdhisi,fd655",    =2Edata =3D &fd655_controller =
- },
->> +	{ =2Ecompatible =3D "winrise,hbs658",  =2Edata =3D &hbs658_controller=
- },
->> +	{ /* sentinel */ }
->> +};
->> +MODULE_DEVICE_TABLE(of, tm16xx_i2c_of_match);
->> +#endif
->
->=2E=2E=2E
->
->> +		=2Eof_match_table =3D of_match_ptr(tm16xx_i2c_of_match),
->
->Definitely no to of_match_ptr()=2E Must be not used in a new code=2E
->
-
-Well received=2E Will ban usage of of_match_ptr=2E
 
