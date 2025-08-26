@@ -1,165 +1,126 @@
-Return-Path: <linux-kernel+bounces-787182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECA76B3729A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 20:51:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ED07B372A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 20:52:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9852D5E864E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:51:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57772164EB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52706371E94;
-	Tue, 26 Aug 2025 18:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zOO7VwST"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 792C7370584;
+	Tue, 26 Aug 2025 18:52:46 +0000 (UTC)
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BCD32F546E
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 18:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C4B41A9FB8
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 18:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756234281; cv=none; b=bDRIayd3eyhqjCZa5GaUVCruRftSsXehMG96Yx4vpAxUcbWViw4LE+fedDoG+7flawBS61QU0ya8aOA5EA0cToxZrfpugVZ3FK+fYFkkq+HxZvxh8atQ8s6c2EHk9VdX+YS1ajeU1m1kHashhbdJdDpnpFXenkjTp3Ji+j0xW+c=
+	t=1756234366; cv=none; b=BjP5AHkdn0M+dC+B50Fc5m6ruAOltw9hzabbKlmzKx0+xDyCvNZJewXxhm2NnsXMr1w2yyrWpQBWPMBZviISNRuXOvJRFjiLywyNMskOMibwhKHhcEme1UQjU7CgDrFxzLFUfn6GCgolm4mzq2RlK8Kx26i1PsC3arICm16xQz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756234281; c=relaxed/simple;
-	bh=ePoQZSqtiQfljKx6DF9Tewo2GeYmeDzoRcxt1mAmdBA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=EybJD0E71DZLKV63lSfCbUKoxejt26bdFkknwyJ8uRzCOCC/8RgT3vTAwW7NFazEelpDi+GVK/TLbbvrr0Zpl/x6OyFUdtcctg5RQSWsPkpU77y6JV1qZsUOj8HyVmSIMIpzE00bKqlAmF6xemo5MhrQaKR3pLsr9w6cuhUwk9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zOO7VwST; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-76e55665b05so5081279b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 11:51:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756234279; x=1756839079; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wx/eP8ISZUfaNU5gsf9zfBk4G2Ojy7BXWA5HSbjb9W8=;
-        b=zOO7VwSTBVaD/fs/I+VG5jofJ/A+gYGHT7GVtszTj5NQWSGuOtdZ0N+gtvY0LeKOOM
-         SOc7x0LtUzjfSvrDM3Ct9ndIcOyvJb0U6jnyWXE3NEDqwVUOGoYyw0AyoCKD29oi32Ug
-         iSA8AtT3MJVi7+4NQLFEcuTGrapKIzXCS4xAb7PO+X+5x0rVi74DeChwzv6N6DenVmM+
-         KgKKnzmls4Z1iiIQul76L7CT+61uYqLMmcio/tlghS18gLGdIVKkwWvOYSUkt1VN4SDn
-         DJA/Jzag99yW3V4yXVfwVnGBo+2EdOVOff2kXbUnDhzb1UX0PmjIrw5Cqie+LxhODCBu
-         eR6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756234279; x=1756839079;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wx/eP8ISZUfaNU5gsf9zfBk4G2Ojy7BXWA5HSbjb9W8=;
-        b=Ws64jJuvRyTEkfgoD5cExdA7RdhEbyQjjGG/ysGXzPMJOiUDl/etvlPBX1JM9J3gQn
-         MAW2vhwCFWum/XLzDFVGocL/s+8oRHxKiZS71fRCKEM9sctl/9A0QjAuhCUoGpHjJist
-         A5TmAP82f08UbCEnAOYXU3+PFw+Q2fiNNz5D4KUJ1wk9pLe0q80i0RqaxBA53UXqIwxh
-         h70h3nJdTuV6TNTrUWbuN41m/zw4qAM4yEQU0D9hvySi9AT5IfAIc5p9Na/V4euJslKn
-         l9upyP9AoXWVQShmOJARnebWWWgYFOwGrS9csf1UckdaLrWJzOVDEJ7UYlwxhdsGkW0O
-         iDVw==
-X-Forwarded-Encrypted: i=1; AJvYcCUNWnsfSQnDvLBv/aHq87FARMiqSeRRW47X1lKfqs29XuuLauILhnXBIv21K+TqByecdE1y27ZffhvwNLo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw//7gkGXlUdzUyhRHkhHmebluFXtZpjr8qb1VzhCAa/924iTuy
-	pEgFYbweIJNPgX+MXgAJH/zUehOKh/Bh3KG8SENM0yupniauwTi6gM7u5TazM6ScTGk/REPnZmz
-	lPTsnlw==
-X-Google-Smtp-Source: AGHT+IGKYZgVuKPCFTi5OK6fXT9HPNRtj+Ry3+8K8iNH2BVKAfyRecdTfCXVWb0y2y273V0KC9Ad4c4jfQ0=
-X-Received: from pfhh22.prod.google.com ([2002:a05:6a00:2316:b0:76e:839a:7a08])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:3e01:b0:748:e9e4:d970
- with SMTP id d2e1a72fcca58-7702fa091a4mr19565624b3a.1.1756234279349; Tue, 26
- Aug 2025 11:51:19 -0700 (PDT)
-Date: Tue, 26 Aug 2025 11:51:18 -0700
-In-Reply-To: <aKzX152737nAo479@linux.dev>
+	s=arc-20240116; t=1756234366; c=relaxed/simple;
+	bh=ysGMvxjXeLxucIqZRoBjJFzvfOCN+qR2v3Hnbp0cf4s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fSnkWbsVjNGtNqJLfAWOH1p/KQBY5jAmXxS4c3rEJeAgCTfdNjaGUktih3Lvklm406VbQgNOlV4t4GThxb9/0+5Pz7KpScAV+QFXGhZYENglhkW5FNO10DZ5xZ/6onS+kff7AMD3Jkygcf2jyzDfVS3c1mc8ARiLxE1dFybuSoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=linux.dev; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 26 Aug 2025 14:52:27 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Ben Collins <bcollins@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, 
+	Antoniu Miclaus <antoniu.miclaus@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 1/5] iio: core: Add IIO_VAL_EMPTY type
+Message-ID: <2025082614-passionate-panther-8016ba@boujee-and-buff>
+Mail-Followup-To: David Lechner <dlechner@baylibre.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Antoniu Miclaus <antoniu.miclaus@analog.com>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250825-mcp9600-iir-v7-0-2ba676a52589@kernel.org>
+ <20250825-mcp9600-iir-v7-1-2ba676a52589@kernel.org>
+ <9fd7f08f-51cc-4155-a5e2-c6ba2f1c4897@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250825155203.71989-1-sebott@redhat.com> <aKy-9eby1OS38uqM@google.com>
- <87zfbnyvk9.wl-maz@kernel.org> <aKzRgp58vU6h02n6@google.com> <aKzX152737nAo479@linux.dev>
-Message-ID: <aK4CJnNxB6omPufp@google.com>
-Subject: Re: [PATCH] KVM: selftests: fix irqfd_test on arm64
-From: Sean Christopherson <seanjc@google.com>
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: Marc Zyngier <maz@kernel.org>, Sebastian Ott <sebott@redhat.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org, 
-	kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9fd7f08f-51cc-4155-a5e2-c6ba2f1c4897@baylibre.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Aug 25, 2025, Oliver Upton wrote:
-> On Mon, Aug 25, 2025 at 02:11:30PM -0700, Sean Christopherson wrote:
-> > On Mon, Aug 25, 2025, Marc Zyngier wrote:
-> > > On Mon, 25 Aug 2025 20:52:21 +0100,
-> > > Sean Christopherson <seanjc@google.com> wrote:
-> > > > Is there a sane way to handle vGIC creation in kvm_arch_vm_post_create()?  E.g.
-> > > > could we create a v3 GIC when possible, and fall back to v2?  And then provide a
-> > > > way for tests to express a hard v3 GIC dependency?
-> > > 
-> > > You can ask KVM what's available. Like an actual VMM does. There is no
-> > > shortage of examples in the current code base.
+On Tue, Aug 26, 2025 at 12:00:05PM -0500, David Lechner wrote:
+> On 8/25/25 7:10 PM, Ben Collins wrote:
+> > In certain situations it may be necessary to return nothing when reading
+> > an attribute.
 > > 
-> > Right, by "sane" I meant: is there a way to instantiate a supported GIC without
-> > making it hard/painful to write tests, and without having to plumb in arm64
-> > specific requirements to common APIs?
+> > For example, when a driver has a filter_type of "none" it should not
+> > print any information for frequency or available frequencies.
 > > 
-> > E.g. are there tests that use the common vm_create() APIs and rely on NOT having
-> > a GIC?
+> > Signed-off-by: Ben Collins <bcollins@kernel.org>
+> > ---
+> >  drivers/iio/industrialio-core.c | 1 +
+> >  include/linux/iio/types.h       | 1 +
+> >  2 files changed, 2 insertions(+)
+> > 
+> > diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
+> > index 159d6c5ca3cec3f5c37ee9b85ef1681cca36f5c7..e4ff5b940223ab58bf61b394cc9357cd3674cfda 100644
+> > --- a/drivers/iio/industrialio-core.c
+> > +++ b/drivers/iio/industrialio-core.c
+> > @@ -702,6 +702,7 @@ static ssize_t __iio_format_value(char *buf, size_t offset, unsigned int type,
+> >  	case IIO_VAL_INT_64:
+> >  		tmp2 = (s64)((((u64)vals[1]) << 32) | (u32)vals[0]);
+> >  		return sysfs_emit_at(buf, offset, "%lld", tmp2);
+> > +	case IIO_VAL_EMPTY:
+> >  	default:
+> >  		return 0;
+> >  	}
+> > diff --git a/include/linux/iio/types.h b/include/linux/iio/types.h
+> > index ad2761efcc8315e1f9907d2a7159447fb463333e..261745c2d94e582bcca1a2abb297436e8314c930 100644
+> > --- a/include/linux/iio/types.h
+> > +++ b/include/linux/iio/types.h
+> > @@ -32,6 +32,7 @@ enum iio_event_info {
+> >  #define IIO_VAL_FRACTIONAL 10
+> >  #define IIO_VAL_FRACTIONAL_LOG2 11
+> >  #define IIO_VAL_CHAR 12
+> > +#define IIO_VAL_EMPTY 13
+> >  
+> >  enum iio_available_type {
+> >  	IIO_AVAIL_LIST,
+> > 
 > 
-> Instead of stuffing a GIC in behind vm_create(), I'd rather we have a
-> specific helper for creating a VM with an irqchip. There's tests in
-> arm64 that rely on all this generic infrastructure and also need to
-> select / dimension a GIC appropriately for the test.
+> This is an interesting idea, but I think it would be a lot of work
+> to teach existing userspace tools to handle this new possibility.
+> 
+> On top of that, I'm not quite convinced it is necessary. If a numeric
+> value is undefined, then there is already a well known expression for
+> that: "nan". Or in the case of this series, the 3dB point when the
+> filter is disable could also be considered "inf". Using these would have
+> a better chance of working with existing userspace tools since things
+> like `scanf()` can already handle these.
 
-I've no objection to arm64 providing an API for tests that need a specific GIC
-configuration (I think it's a great idea), but I don't think that needs to be
-mutually exclusive with having the common APIs instantiate _a_ GIC by default.
+I'm ok with "inf", but then would there also be an "inf" in available
+frequencies?
 
-What if we use a global flag with thread local storage (because paranoia is
-basically free, I think) to communicate that the test wants to create a v3 vGIC?
+This would take us all the way back to where I could just not even need
+a filter_type==none and make the 3db available values:
 
-E.g.
+{ inf, 0.5xxx, ... }
 
----
-static __thread bool vm_wants_custom_vgic;
+And inf would just be the filter is disabled.
 
-void kvm_arch_vm_post_create(struct kvm_vm *vm)
-{
-	if (!vm_wants_custom_vgic) {
-		<setup default vgic>
-	}
-}
-
-struct kvm_vm *vm_create_with_vgic_v3(uint32_t nr_vcpus, void *guest_code,
-				      uint32_t nr_irqs, struct kvm_vcpu **vcpus)
-{
-	TEST_ASSERT(!vm_wants_custom_vgic, "blah blah blah");
-	vm_wants_custom_vgic = true;
-	vm = vm_create_with_vcpus(nr_vcpus, guest_code, vcpus)
-	vm_wants_custom_vgic = false;
-
-	vgic_v3_setup(vm, nr_vcpus, nr_irqs);
-}
-
-struct kvm_vm *vm_create_with_one_vcpu_and_vgic_v3(struct kvm_vcpu **vcpu,
-						   void *guest_code,
-						   uint32_t nr_irqs)
-{
-	struct kvm_vcpu *vcpus[1];
-	struct kvm_vm *vm;
-
-	vm = vm_create_with_vgic_v3(1, guest_code, nr_irqs, vcpus);
-
-	*vcpu = vcpus[0];
-	return vm;
-}
----
-
-> The majority of selftests don't even need an irqchip anyway.
-
-But it's really, really nice for developers if they can assume a certain level of
-configuration is done by the infrastructure, i.e. don't have worry about doing
-what is effectively "basic" VM setup.
-
-E.g. x86 selftests creates an IRQCHIP, sets up descriptor tables and exception
-handlers, and a handful of other "basic" things, and that has eliminated soooo
-much boilerplate code and the associated friction with having to know/discover
-that e.g. sending IRQs in a test requires additional setup beyond the obvious
-steps like wiring up a handler.
+-- 
+ Ben Collins
+ https://libjwt.io
+ https://github.com/benmcollins
+ --
+ 3EC9 7598 1672 961A 1139  173A 5D5A 57C7 242B 22CF
 
