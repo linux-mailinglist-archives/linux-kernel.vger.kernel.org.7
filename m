@@ -1,203 +1,294 @@
-Return-Path: <linux-kernel+bounces-787343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84B93B374ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 00:38:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CF49B37502
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 00:46:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A9FF1B67E9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 22:38:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D64277C1E56
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 22:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D062D12EF;
-	Tue, 26 Aug 2025 22:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b="g3v8XzDS"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2115.outbound.protection.outlook.com [40.107.102.115])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE84A28751C;
-	Tue, 26 Aug 2025 22:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.115
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756247881; cv=fail; b=bFnXX/Da6ITjFzvJbLuoWOG6enLJUz0aMaAQNQs4YBEQIvcRg1HQXAxdL3qDtA12kJXm02TuRzfwwrszQ0iT0ckxPztp1a9vSeJE4TD9cEFp9NNmCgZQBm/T8gBB6lmCsaaeNlAeM6D+Rx+5wToJNtbrKGZfvGMZNQy0aog+qgc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756247881; c=relaxed/simple;
-	bh=8h79CH0TrUy8UzNs1haodTtMMY+fYGKETlo/itQ9Bgs=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=UYoYdasdOGTIOtluJ1BVnHo9QP5yE+UeWVb3J+bgYMhDdZwJnjIzdzZ9L1SiF99KzE6sfka5blWr44+ZkQvI/GiErqChsvCm8hTtNK4ehjyP/k2pcKHa5ca6oKHuDD4R8na/3tSAhnCy2sc1GancrTc5/Bk1imkNbDBWgvnriyQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=fail (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b=g3v8XzDS reason="key not found in DNS"; arc=fail smtp.client-ip=40.107.102.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jEXr2tcO+9fnblV/ucj3zSQruKklWnwTyGnpZypb9HspcBa+KPHsEqKljSKNjW3lBoIdm4ho2YS7xjfA4YPQ3TYps34hHZv7u7Kwq//PZn9PuDjMFkekVh1tyNvyaVWtIFkFR23VvfBtoY1LQvcnDjuwOsctkWDHNwRl+wTCy/UP2ROSpbeWfg/Ii9DQr7ao5Z2c+93NEUpussCfKyNS0BpGbSxni26HJZ5dNVhpuajcs7opSAKN4chQA7yT2zK2LzYmttWAfsYk26UWE3ZXSeDAtZZL7gQFdDbH2I+hpZ15WgE6SPHQKZywLcbSIzoJ1aaTER1uV9x2e8DeXVaQaA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SrAhDGfNWW1Ow1ezIYRC2COloLQSyiZ5y7rikU6F5/4=;
- b=J8VBIn28T6OPJLtx1CzrQX4XbxOsukJrpDoNtiGXtGH6RlHUWoXYyFzWJJGLR1Kvd+P1a2W4v+9pkQmvclL4txCum1gbi91a1zJo2CK3nQNWaYzxb4RF4RakHqOqbUuT792NQhoDTy6QUJIDpmRgi2l6MUM3Lm6PEucTORhpD9ACligtzFUwHawMJM1PVQCSfeSCoy5DUe3QmL3By0lVKhwfMnV87lPltn1woBS1Ik3hNURlDstkME+vc4JsOwaXdlSvfK/cvGBgxWtfl4gQZYZDeJ4LmNYXNKieBEb9Vqabjf1+7w20+NB2C0TNpnnX0H/0mNSkomt1FMd+wUjAYQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=amperemail.onmicrosoft.com; dkim=pass
- header.d=amperemail.onmicrosoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amperemail.onmicrosoft.com; s=selector1-amperemail-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SrAhDGfNWW1Ow1ezIYRC2COloLQSyiZ5y7rikU6F5/4=;
- b=g3v8XzDSmEywHXjxn1PW7c0jUG9Z2I+gWA9o9jiUwXU3hHp/nezWKic7UzPkEUdWfMKraCMp966XD9xkQbA8k8NWV9SvU/wUv8r3U5UMfvHhDtbm1e34pDhFfI/MxrKaSCnJxP5ErAn6AZaaL7ytWtPRHR18aWt9OONxlIwd+io=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amperemail.onmicrosoft.com;
-Received: from BN3PR01MB9212.prod.exchangelabs.com (2603:10b6:408:2cb::8) by
- SJ0PR01MB7284.prod.exchangelabs.com (2603:10b6:a03:3f4::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9031.24; Tue, 26 Aug 2025 22:37:56 +0000
-Received: from BN3PR01MB9212.prod.exchangelabs.com
- ([fe80::3513:ad6e:208c:5dbd]) by BN3PR01MB9212.prod.exchangelabs.com
- ([fe80::3513:ad6e:208c:5dbd%4]) with mapi id 15.20.9052.019; Tue, 26 Aug 2025
- 22:37:56 +0000
-Message-ID: <f3e65225-0560-4940-9342-7ba12807cff8@amperemail.onmicrosoft.com>
-Date: Tue, 26 Aug 2025 18:37:52 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v25 1/1] mctp pcc: Implement MCTP over PCC
- Transport
-To: Jeremy Kerr <jk@codeconstruct.com.au>, admiyo@os.amperecomputing.com,
- Matt Johnston <matt@codeconstruct.com.au>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Sudeep Holla <sudeep.holla@arm.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Huisong Li <lihuisong@huawei.com>
-References: <20250819205159.347561-1-admiyo@os.amperecomputing.com>
- <20250819205159.347561-2-admiyo@os.amperecomputing.com>
- <88a67cc10907926204a478c58e361cb6706a939a.camel@codeconstruct.com.au>
-Content-Language: en-US
-From: Adam Young <admiyo@amperemail.onmicrosoft.com>
-In-Reply-To: <88a67cc10907926204a478c58e361cb6706a939a.camel@codeconstruct.com.au>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: CYXPR02CA0033.namprd02.prod.outlook.com
- (2603:10b6:930:cc::8) To BN3PR01MB9212.prod.exchangelabs.com
- (2603:10b6:408:2cb::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F7B12D7387;
+	Tue, 26 Aug 2025 22:46:16 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0120D199FAB;
+	Tue, 26 Aug 2025 22:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756248375; cv=none; b=prhp4Sdu4N7wBUU0Mle276DSevtTFk5N2F5py9guSSxfO0WW6AsQ7CxMqW5xexsBtXCAXiJ+4saVz5MAagmw4JEAUL27D6CB9SZ8JCqMMvZKUvrYToUI7KU1O9DiFL8VMkLk7511l0B1mFbTTQz4RMiq7jpZvN9GJbXpII1l1Tk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756248375; c=relaxed/simple;
+	bh=QPfOdRE+UdI8R6QWzL+BY+m7E4ercnZLAi/SgCwDk70=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G9MroSod3z5C8DtweWsrOpt4ueYM3U3P4iZr1WPLG0T6K875rajx5S6sge1upVLs7K0INcPWNxqEfDiiSOj28XzWcDZYjy9qJlVw4RnjtIFIB92MeKI9FWQrKP5GA49NZFEvXj8w7E8Zfe69dZ7NPjQHyK2C6rLd7J+LziBOQUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D91401A25;
+	Tue, 26 Aug 2025 15:46:03 -0700 (PDT)
+Received: from [10.57.4.86] (unknown [10.57.4.86])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DCF5D3F738;
+	Tue, 26 Aug 2025 15:46:05 -0700 (PDT)
+Message-ID: <015974a4-f129-4ae5-adf9-c94b29f0576a@arm.com>
+Date: Tue, 26 Aug 2025 23:46:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PR01MB9212:EE_|SJ0PR01MB7284:EE_
-X-MS-Office365-Filtering-Correlation-Id: f4f82090-dd34-41b0-ff43-08dde4f1335b
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|376014|10070799003|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Q3VjQTRIbTZ6WjhkZzFVWXVBQXg3MzhMV05YSWltTmVISmx0MUFLSzlRUUJB?=
- =?utf-8?B?TXlxL0p3bkY0azhUdVpxN29zV3UxbXBLWWNGVzA0Mzl1RlF1K2lOQmg4QThQ?=
- =?utf-8?B?VXJmaEJYMHRsRUhBZ2lUM1JWRWlmditlM2hPQUM0ZTdReUZZSnlFQjNySG9n?=
- =?utf-8?B?WkhUbjU1UHgzRjByTzU5ak1WWCtDM2RlUWh5ZXZpM2ptN0dvRzNjZ1JUdUs4?=
- =?utf-8?B?RVJVS01GM1FnY3p2T0t4d3lGRVpLVXEwOUZKa0Roa2UxQnNiNUZrTVFwQnFm?=
- =?utf-8?B?YitRRUdhK0R0TEpITkRLTnpiMGdLRFI0RXBmbElyNWVwelFyYk8wbzd3eWxh?=
- =?utf-8?B?MVZqa1lQSjB2d2RDUWE0bUx5bmZldDhoa3ZMWTBvTlQrWnJ3aTZqNFNyQ1E1?=
- =?utf-8?B?VWRNeGhxTlVGQlUxdlhsdmNqd3dneTY1bVFxc1lGSEd5RFFOQ21rY2ZpWjRE?=
- =?utf-8?B?dTNpZFBnMk54bW5scG9vU3J5N2JVaDNrb3I3Y3pHQXhVaVpUdFVqUEQrYmRv?=
- =?utf-8?B?a1U2N1RsbHllTkF2QTdnNzNORmZsZlZ3N0FZYUI1ZDFMY0VVZnBqSjJNZ2Rl?=
- =?utf-8?B?eEUyYVh5bElXWmR2SFpBZG1xaVU2cGhsNThtZjloVHRmVjM3QkMvT0NGdTVM?=
- =?utf-8?B?RFYwTnNPTlZ2L0RNNG9ITWN6RGdwTlJKckJuaUFoZmVRcVVPZzJCZ1hCeFVq?=
- =?utf-8?B?ZG5tWEwzN3Uzd3lXRm9ndXFUOWRhMDAzNmg3ZWNYUHVNMGNIRWxidVhuSmgy?=
- =?utf-8?B?N3BKUXZWanJ0a1Q3TmJTZ3FUT2JRQzczbXJPUVRCcDlwZWwxV1VjbVRhQ1dU?=
- =?utf-8?B?UE1ReTZRNEtIM2pQLzR6TWxUOExBa3U4M25VdVV3Nnc1TmxVa1BVN1p5Q2hx?=
- =?utf-8?B?TlBVUkxUKyttVmoyOWRjZDBaTXJNN3gxZm5sZkFPMGh6TU9VeXMyOXZYbnZN?=
- =?utf-8?B?R3pxWTJxaEpSSlRqNC9MQ2E3eTg1NVQwUkQ4eTdnb2lRRlpOTDlrSU96RjVL?=
- =?utf-8?B?ZnhGU2ZrcFJsNm1Yem9GbEV3bjVTRjRxMGZHSHpKU3N0bzFhQkJyU20wbEd4?=
- =?utf-8?B?NkpzMXBRd050bzUrcmEyLzNKK2xpZ1c4S1UrUlp6M256N0RnallScWNRY3Vp?=
- =?utf-8?B?R2draGUxVWQzUmRwWjdWekVCYWJzQ3VBeUtrRklycjgyMEl5YmxhVCtOcHZl?=
- =?utf-8?B?a3NGeXp6TXJ0d0h1VjhXT1d3UXc3MVVrT1dTSkFoSGQ0VzBqZks0SEZGU25O?=
- =?utf-8?B?SmFXOHJvTkZhS1Y4bFdkUk10K2ZoZmRnNHZ1UVF4UzZXcld3djBoV0xjMDlS?=
- =?utf-8?B?THBvSEcrL2N1bXBnaE1KZDVRSEp1ekJrNkxtN1NoS2Y1TnF2dm5XTlZFK0F0?=
- =?utf-8?B?ejVUaE0vVnU4R0ZRL3JraGVhTW0yampWS3hreUVwalJWR3RieCtrSkEzRjZo?=
- =?utf-8?B?Mm1lVTdCL3ZVYUt5cGFLMk9xVGREckxhUUhlU1ArNmluUWgvV0JGWXArM051?=
- =?utf-8?B?N3gzQWZPeXdjbkVLWmkvM1BzUlAvUXFhcW4wQVF5alptMmR3UWFvS1AzY0J4?=
- =?utf-8?B?SDRENVFuOHBrWGhzR3hFekxub2kzdmd5ZjZxREdFQjB2RGRydXJyMHAvdXhI?=
- =?utf-8?B?L3lGdnhvTHF4bmE3MXBaSDRWb1F3NGdUK1dYKzlRWmFFUzdQcVBzcXFRNDl5?=
- =?utf-8?B?N2o0Q2NqeUYvMUJsb1VuU2g2N0RmVkdpaDVwSmtBTnFSMkMwWFU1YWg1Tms4?=
- =?utf-8?B?OXBtK3hzU3BKc2hzWnMrZzFOclg0S0hidUgzQVYwc3d6YUZzSzBqRTlWeWpP?=
- =?utf-8?B?Q1c3NnFEQmdHTlJaZXRHZHAvWGczU3h0MzI2V25UQ2M3SGlFb0I3MnMrSnZj?=
- =?utf-8?B?MkV4S3BOeVpPazZRVGsrNGczK29Ub1dzcGt0K3NFMXh0eDA2RmhrTmp0Mkp6?=
- =?utf-8?Q?JS4KSMSr0Ok=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN3PR01MB9212.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(10070799003)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Tk51MENZR2xrOGJXOTlXbk5xV2FoSnpMOG5aRkJyVGVGUHVXMGZaRDhoMjdL?=
- =?utf-8?B?dmJVc3A3MTA4MHhuNmNGZ05TZ21YWFdDSGQ0eGZPMmxjMm5yV1VkNnlJeURQ?=
- =?utf-8?B?a2I3cC9Md1ZPTGMwUVJ5WTBrMnNhUktNSDNKakUrYVVqeStJaEZpdDZCNUZN?=
- =?utf-8?B?WG5LVzQvYTQ5NjFwOFBQRVl1clZMd0Ivejk2eGdPTkcxY3FrOHFyczdpeXJV?=
- =?utf-8?B?T1JidFRDRGhaeTV4LzFCNERYOVBBbGtoUXB1YmJ1VFFnZHJhOWpLeno1SEZG?=
- =?utf-8?B?Sk43NFJPdGJvYkt2SnoxQW4zWmtYMGhLQ3BxWndnR1doZFlDWkJsWGw1MW1Z?=
- =?utf-8?B?d3dTcGkvNC9BM2VkbVFpdGpBT2Q4bU0yL05TWFk4NGF2ZlZpT2syUmFwMGY5?=
- =?utf-8?B?VE13TVE4YVlpQ0ZFTm96NUxZWUpSd05vcXFIc1VKZUhaK3V0enBySzgvVStO?=
- =?utf-8?B?YkxGSEpIYnZLUjMxSzFIL1BkaHFyYjJrRWVML2Vkcm9heTFIQjlOclBzRkR6?=
- =?utf-8?B?ZEMramlXOTY2a0gwZDN0NkZMTkFINEd0ck10aHdhSFZETFpOV29vYklXVmZR?=
- =?utf-8?B?ZWVWOUU1U3V5ZDU2ZERib1ZhWWlwVkUvUE8zU3Evamp6TkxDNVdoWVRzQWV1?=
- =?utf-8?B?Y3VaOUhiU0xJVmc3OWxYODBiRVdNdmR3a0tEaDRVRHFmSjdxYXBoTlo1c29M?=
- =?utf-8?B?WU1iZytiMVQ2TnhIYk5NM0o2S1I3TVRVTlh2TzhNM1NXSm5aTnFwU0FBaGcz?=
- =?utf-8?B?clBuSllRUW9TNlJhRnJ4ME4vOW9VRkhLaTFacnZrSDJZaHIrNHI0NjhzSDhq?=
- =?utf-8?B?SjdES2xrR0Z4cW9XK1ZXNVhqNDJiRmhqajcxMEsvK1I5eVZuS1FseklZUnk0?=
- =?utf-8?B?RmVySkp3QnAxeUFQNVY1dU9vT1E1Qmlld1dMRUNjTDFyU1cveHpuQitGV3VF?=
- =?utf-8?B?NXNCeUw5eEpmUUdUbGxqS0VGVmZScUtZTWNzVzZLeG5IUjNnaWx3c2hHWnQy?=
- =?utf-8?B?b0hYUElsM096MkRCYUVGMHo1dHBqNHlPTWxEcy9UZU9hVThyWlBZbWxpcFFR?=
- =?utf-8?B?elJjN3diaTVGMGp4YnNwSkpTbFZONkZMc1h6QlpYKzRzZUl4aFo5NGtvMjRF?=
- =?utf-8?B?RlRNTFdjeDRNdFI3V3lGR1ZMRlJBNWJGM3FxRi9mUHpZcEJlV2Jjdko2aVc1?=
- =?utf-8?B?enE3Z0VtL3pxaXhyeklXbko3NHBLZFkzVDh3eUd6OSt4MkF6MXhGYXdHdjh3?=
- =?utf-8?B?WXNqRWQzUFJrUGhYK0JMa2dKQXIyZjhRTm40czA3eWl3amNXR1cwRFhLQU81?=
- =?utf-8?B?bjV6dXZSN2M4ZkYwTUI3ak1TODdrTUdITGgwV3E5QmI3QU5aTTRXdlJrZkw1?=
- =?utf-8?B?aWNuZ01uMjE2WXV6OUFtR3VVTzJnemVVYlZOcWxxY3ZVMlRhUTVReEtNRVdZ?=
- =?utf-8?B?czJHY042dHpZNUNHK3ZQVHo1Qkc5S0tkU1ZnRlhaQjRxZ3dSRzB5VlQzM2M4?=
- =?utf-8?B?MkJtM213NGkyWlc1aGdLUll6UEJGU0lRcWtwYWJTSVNZNUpZZHZGbkE2L1g3?=
- =?utf-8?B?RjlrZnZKdjJlSVJnS2owTUtXZDdxSVROWXRjRnBDK25jcVpTUklmNlFwQ0hR?=
- =?utf-8?B?NzZCVVViU1Y5OGtybmVpSE1MQUo0MkJCeUJ1WXBDckxYcDFteTJUWU83b1hq?=
- =?utf-8?B?dHg5UHcvTCtxdUN0WE84UjR5aEcvL25zcTRSM1AwVDVQSndaYnp3WHhKS21U?=
- =?utf-8?B?MGQxaGQ2TkZVYUpaUVBlS3pEdjlETjJXV2duQ2JDUHFJYXJnak8rV0h6cWVM?=
- =?utf-8?B?RWVPckV2L3dRV3o5OWk1cWdnMUtpYkhKaEFMMHl4NXN6MmswR05EMXVudmx4?=
- =?utf-8?B?WjRuYXpzMmJ6U0g2akFNQTVIZzByWGdham15WGFVU2lrZWZHNmJNLzdIcWd0?=
- =?utf-8?B?WTBYZzJDdUlPc0dENmRLY0QrS3RGTll6djg0OWk5UHpUeVZzMDhpVmhzcHp5?=
- =?utf-8?B?ZldGOHl3MjhqN1JNOHZLUTVlQ252YjJPR3ltV0NWNk9JK2N2azJzUHdXY25M?=
- =?utf-8?B?Y1A3UWs3Y0hVQm5zQXcvdGtpZkVCaG92UEs4NmJNSCsvWlZIRElJZllRZU5O?=
- =?utf-8?B?QlVoVGFLaHhwYzRZZ1IxRC91U2tEUzdBMzMyeW94dmo1UXFHYitPV2ZiblN0?=
- =?utf-8?B?NWlsVW5lRDNNRU5pSG9CQ2F0MUZZZXVHeS9DZXcrRUp1d1ZTNkdrZXJmR2Ir?=
- =?utf-8?Q?LgcyiQdUAYW88GzBSOkY+IvFLcUWOUQeMspzDIxVrw=3D?=
-X-OriginatorOrg: amperemail.onmicrosoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f4f82090-dd34-41b0-ff43-08dde4f1335b
-X-MS-Exchange-CrossTenant-AuthSource: BN3PR01MB9212.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 22:37:55.9607
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XAQXPgizjb36R9mLXMIG1xax3+HzMWk5QNYmB/L3wCaPLSiVmjfi7P2oNxj3tfN+wEq3opk4pMTJ7C1BAAwhYzxtLB08kLgxeNWpBLmqEsJuFAF8o/l84j6Bwj2ymKzo
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR01MB7284
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 18/19] perf: Introduce positive capability for raw events
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: peterz@infradead.org, mingo@redhat.com, will@kernel.org, acme@kernel.org,
+ namhyung@kernel.org, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+ irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+ linux-csky@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, dmaengine@vger.kernel.org,
+ linux-fpga@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org, coresight@lists.linaro.org,
+ iommu@lists.linux.dev, linux-amlogic@lists.infradead.org,
+ linux-cxl@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-riscv@lists.infradead.org
+References: <cover.1755096883.git.robin.murphy@arm.com>
+ <542787fd188ea15ef41c53d557989c962ed44771.1755096883.git.robin.murphy@arm.com>
+ <aK259PrpyxguQzdN@J2N7QTR9R3>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <aK259PrpyxguQzdN@J2N7QTR9R3>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 2025-08-26 2:43 pm, Mark Rutland wrote:
+> On Wed, Aug 13, 2025 at 06:01:10PM +0100, Robin Murphy wrote:
+>> Only a handful of CPU PMUs accept PERF_TYPE_{RAW,HARDWARE,HW_CACHE}
+>> events without registering themselves as PERF_TYPE_RAW in the first
+>> place. Add an explicit opt-in for these special cases, so that we can
+>> make life easier for every other driver (and probably also speed up the
+>> slow-path search) by having perf_try_init_event() do the basic type
+>> checking to cover the majority of cases.
+>>
+>> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+> 
+> 
+> To bikeshed a little here, I'm not keen on the PERF_PMU_CAP_RAW_EVENTS
+> name, because it's not clear what "RAW" really means, and people will
+> definitely read that to mean something else.
+> 
+> Could we go with something like PERF_PMU_CAP_COMMON_CPU_EVENTS, to make
+> it clear that this is about opting into CPU-PMU specific event types (of
+> which PERF_TYPE_RAW is one of)?
 
-On 8/22/25 04:21, Jeremy Kerr wrote:
->> +static int mctp_pcc_ndo_open(struct net_device *ndev)
+Indeed I started with that very intention after our previous discussion, 
+but soon realised that in fact nowhere in the code is there any 
+definition or even established notion of what "common" means in this 
+context, so it's hardly immune to misinterpretation either. Furthermore 
+the semantics of the cap as it ended up are specifically that the PMU 
+wants the same behaviour as if it had registered as PERF_TYPE_RAW, so 
+having "raw" in the name started to look like the more intuitive option 
+after all (plus being nice and short helps.)
+
+If anything, it's "events" that carries the implication that's proving 
+hard to capture precisely and concisely here, so maybe the answer to 
+avoid ambiguity is to lean further away from a "what it represents" to a 
+"what it actually does" naming - PERF_PMU_CAP_TYPE_RAW, anyone?
+
+> Likewise, s/is_raw_pmu()/pmu_supports_common_cpu_events()/.
+
+Case in point: is it any more logical and expected that supporting 
+common CPU events implies a PMU should be offered software or breakpoint 
+events as well? Because that's what such a mere rename would currently 
+mean :/
+
+>> ---
+>>
+>> A further possibility is to automatically add the cap to PERF_TYPE_RAW
+>> PMUs in perf_pmu_register() to have a single point-of-use condition; I'm
+>> undecided...
+> 
+> I reckon we don't need to automagically do that, but I reckon that
+> is_raw_pmu()/pmu_supports_common_cpu_events() should only check the cap,
+> and we don't read anything special into any of
+> PERF_TYPE_{RAW,HARDWARE,HW_CACHE}.
+
+OK, but that would then necessitate having to explicitly add the cap to 
+all 15-odd other drivers which register as PERF_TYPE_RAW as well, at 
+which point it starts to look like a more general "I am a CPU PMU in 
+terms of most typical assumptions you might want to make about that" flag...
+
+To clarify (and perhaps something for a v2 commit message), we currently 
+have 3 categories of PMU driver:
+
+1: (Older/simpler CPUs) Registers as PERF_TYPE_RAW, wants 
+PERF_TYPE_RAW/HARDWARE/HW_CACHE events
+2: (Heterogeneous CPUs) Registers as dynamic type, wants 
+PERF_TYPE_RAW/HARDWARE/HW_CACHE events plus events of its own type
+3: (Mostly uncore) Registers as dynamic type, only wants events of its 
+own type
+
+My vested interest is in making category 3 the default behaviour, given 
+that the growing majority of new drivers are uncore (and I keep having 
+to write them...) However unclear the type overlaps in category 1 might 
+be, it's been like that for 15 years, so I didn't feel compelled to 
+churn fossils like Alpha more than reasonably necessary. Category 2 is 
+only these 5 drivers, so a relatively small tweak to distinguish them 
+from category 3 and let them retain the effective category 1 behaviour 
+(which remains the current one of potentially still being offered 
+software etc. events too) seemed like the neatest way to make progress.
+
+I'm not saying I'm necessarily against a general overhaul of CPU PMUs 
+being attempted too, just that it seems more like a whole other 
+side-quest, and I'd really like to slay the uncore-boilerplate dragon first.
+
+>> ---
+>>   arch/s390/kernel/perf_cpum_cf.c    |  1 +
+>>   arch/s390/kernel/perf_pai_crypto.c |  2 +-
+>>   arch/s390/kernel/perf_pai_ext.c    |  2 +-
+>>   arch/x86/events/core.c             |  2 +-
+>>   drivers/perf/arm_pmu.c             |  1 +
+>>   include/linux/perf_event.h         |  1 +
+>>   kernel/events/core.c               | 15 +++++++++++++++
+>>   7 files changed, 21 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/arch/s390/kernel/perf_cpum_cf.c b/arch/s390/kernel/perf_cpum_cf.c
+>> index 1a94e0944bc5..782ab755ddd4 100644
+>> --- a/arch/s390/kernel/perf_cpum_cf.c
+>> +++ b/arch/s390/kernel/perf_cpum_cf.c
+>> @@ -1054,6 +1054,7 @@ static void cpumf_pmu_del(struct perf_event *event, int flags)
+>>   /* Performance monitoring unit for s390x */
+>>   static struct pmu cpumf_pmu = {
+>>   	.task_ctx_nr  = perf_sw_context,
+>> +	.capabilities = PERF_PMU_CAP_RAW_EVENTS,
+>>   	.pmu_enable   = cpumf_pmu_enable,
+>>   	.pmu_disable  = cpumf_pmu_disable,
+>>   	.event_init   = cpumf_pmu_event_init,
+> 
+> Tangential, but use of perf_sw_context here looks bogus.
+
+Indeed, according to the history it was intentional, but perhaps that no 
+longer applies since the big context redesign? FWIW there seem to be a 
+fair few instances of this, including Arm SPE.
+
+Thanks,
+Robin.
+
+>> diff --git a/arch/s390/kernel/perf_pai_crypto.c b/arch/s390/kernel/perf_pai_crypto.c
+>> index a64b6b056a21..b5b6d8b5d943 100644
+>> --- a/arch/s390/kernel/perf_pai_crypto.c
+>> +++ b/arch/s390/kernel/perf_pai_crypto.c
+>> @@ -569,7 +569,7 @@ static const struct attribute_group *paicrypt_attr_groups[] = {
+>>   /* Performance monitoring unit for mapped counters */
+>>   static struct pmu paicrypt = {
+>>   	.task_ctx_nr  = perf_hw_context,
+>> -	.capabilities = PERF_PMU_CAP_SAMPLING,
+>> +	.capabilities = PERF_PMU_CAP_SAMPLING | PERF_PMU_CAP_RAW_EVENTS,
+>>   	.event_init   = paicrypt_event_init,
+>>   	.add	      = paicrypt_add,
+>>   	.del	      = paicrypt_del,
+>> diff --git a/arch/s390/kernel/perf_pai_ext.c b/arch/s390/kernel/perf_pai_ext.c
+>> index 1261f80c6d52..bcd28c38da70 100644
+>> --- a/arch/s390/kernel/perf_pai_ext.c
+>> +++ b/arch/s390/kernel/perf_pai_ext.c
+>> @@ -595,7 +595,7 @@ static const struct attribute_group *paiext_attr_groups[] = {
+>>   /* Performance monitoring unit for mapped counters */
+>>   static struct pmu paiext = {
+>>   	.task_ctx_nr  = perf_hw_context,
+>> -	.capabilities = PERF_PMU_CAP_SAMPLING,
+>> +	.capabilities = PERF_PMU_CAP_SAMPLING | PERF_PMU_CAP_RAW_EVENTS,
+>>   	.event_init   = paiext_event_init,
+>>   	.add	      = paiext_add,
+>>   	.del	      = paiext_del,
+>> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+>> index 789dfca2fa67..764728bb80ae 100644
+>> --- a/arch/x86/events/core.c
+>> +++ b/arch/x86/events/core.c
+>> @@ -2697,7 +2697,7 @@ static bool x86_pmu_filter(struct pmu *pmu, int cpu)
+>>   }
+>>   
+>>   static struct pmu pmu = {
+>> -	.capabilities		= PERF_PMU_CAP_SAMPLING,
+>> +	.capabilities		= PERF_PMU_CAP_SAMPLING | PERF_PMU_CAP_RAW_EVENTS,
+>>   
+>>   	.pmu_enable		= x86_pmu_enable,
+>>   	.pmu_disable		= x86_pmu_disable,
+>> diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
+>> index 72d8f38d0aa5..bc772a3bf411 100644
+>> --- a/drivers/perf/arm_pmu.c
+>> +++ b/drivers/perf/arm_pmu.c
+>> @@ -877,6 +877,7 @@ struct arm_pmu *armpmu_alloc(void)
+>>   		 * specific PMU.
+>>   		 */
+>>   		.capabilities	= PERF_PMU_CAP_SAMPLING |
+>> +				  PERF_PMU_CAP_RAW_EVENTS |
+>>   				  PERF_PMU_CAP_EXTENDED_REGS |
+>>   				  PERF_PMU_CAP_EXTENDED_HW_TYPE,
+>>   	};
+>> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+>> index 183b7c48b329..c6ad036c0037 100644
+>> --- a/include/linux/perf_event.h
+>> +++ b/include/linux/perf_event.h
+>> @@ -305,6 +305,7 @@ struct perf_event_pmu_context;
+>>   #define PERF_PMU_CAP_EXTENDED_HW_TYPE	0x0100
+>>   #define PERF_PMU_CAP_AUX_PAUSE		0x0200
+>>   #define PERF_PMU_CAP_AUX_PREFER_LARGE	0x0400
+>> +#define PERF_PMU_CAP_RAW_EVENTS		0x0800
+>>   
+>>   /**
+>>    * pmu::scope
+>> diff --git a/kernel/events/core.c b/kernel/events/core.c
+>> index 71b2a6730705..2ecee76d2ae2 100644
+>> --- a/kernel/events/core.c
+>> +++ b/kernel/events/core.c
+>> @@ -12556,11 +12556,26 @@ static inline bool has_extended_regs(struct perf_event *event)
+>>   	       (event->attr.sample_regs_intr & PERF_REG_EXTENDED_MASK);
+>>   }
+>>   
+>> +static bool is_raw_pmu(const struct pmu *pmu)
 >> +{
->> +       struct mctp_pcc_ndev *mctp_pcc_ndev =
->> +           netdev_priv(ndev);
->> +       struct mctp_pcc_mailbox *outbox =
->> +           &mctp_pcc_ndev->outbox;
->> +       struct mctp_pcc_mailbox *inbox =
->> +           &mctp_pcc_ndev->inbox;
-> Minor: I don't think these need wrapping?
-
-The outbox and inbox lines are longer than the mctp_pcc_ndev line, and 
-they depend on it.  This ordering and wrapping passes the xmas  tree 
-check and keeps assignment with declaration.
-
-
+>> +	return pmu->type == PERF_TYPE_RAW ||
+>> +	       pmu->capabilities & PERF_PMU_CAP_RAW_EVENTS;
+>> +}
+> 
+> As above, I reckon we should make this:
+> 
+> static bool pmu_supports_common_cpu_events(const struct pmu *pmu)
+> {
+> 	return pmu->capabilities & PERF_PMU_CAP_RAW_EVENTS;
+> }
+> 
+> Other than the above, this looks good to me.
+> 
+> Mark.
+> 
+>> +
+>>   static int perf_try_init_event(struct pmu *pmu, struct perf_event *event)
+>>   {
+>>   	struct perf_event_context *ctx = NULL;
+>>   	int ret;
+>>   
+>> +	/*
+>> +	 * Before touching anything, we can safely skip:
+>> +	 * - any event for a specific PMU which is not this one
+>> +	 * - any common event if this PMU doesn't support them
+>> +	 */
+>> +	if (event->attr.type != pmu->type &&
+>> +	    (event->attr.type >= PERF_TYPE_MAX || is_raw_pmu(pmu)))
+>> +		return -ENOENT;
+>> +
+>>   	if (!try_module_get(pmu->module))
+>>   		return -ENODEV;
+>>   
+>> -- 
+>> 2.39.2.101.g768bb238c484.dirty
+>>
 
