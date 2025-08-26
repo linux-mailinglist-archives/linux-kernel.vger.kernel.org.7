@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-785987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5CD6B35334
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:20:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C7C9CB35390
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:50:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A4E45E84EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:20:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00FB05E6B1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:50:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 953AF275108;
-	Tue, 26 Aug 2025 05:20:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D58C2F068C;
+	Tue, 26 Aug 2025 05:50:44 +0000 (UTC)
 Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40BB61514E4;
-	Tue, 26 Aug 2025 05:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B323986342;
+	Tue, 26 Aug 2025 05:50:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756185636; cv=none; b=iXSbdTLsgREIwiPSXVBvdz/RlDh5DoCD4J4V/P8RbUdzr+d9GtXkTEqvvtQqMnN5VE6U0V3uboMT1y6Z8fJwPihKB7mmoOw3rWKRX1nCDOXbQfSlahapH2mwmscbva6nljg0n2TV+AKBBc6M9zwJC910278PAyAX2qr+jNycCtg=
+	t=1756187443; cv=none; b=ZiLFMXjDRmUCglzTig46/fNxuKw54FruuyULM1nKEzIi5cV5dFDUo7mW0Ehz9EQbStFqIuHMvl8qx7Plzdsm3AjfA69kRoG+kFO7JxzZPiZeeFWv2MyIbQLaJCIngP1mGzF/QZ5mStmJsQh5creqmGwPsP/ofnDIlvL/oyUxDt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756185636; c=relaxed/simple;
-	bh=k2xuUkJ5CYoYevoKomjEJAfiGiwMnldUI6wVPw1rmqQ=;
+	s=arc-20240116; t=1756187443; c=relaxed/simple;
+	bh=jVV+oiJM0cYWxoE5qzXOwM2cqZugv66qN003jNJGkJA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dncF3lyJlhAir8Ndvoh5sYqPycZI52tEYgjbnUPhsp3XTiu4DiOq/y5p36qmrVuzY8yPfP6LRCpXjpeVjGbLRUC1KzAfzNcMM90TfMUd8BjPUV1r1FXJVi4hQ11IwEn+c24XI7iYpO2XerxWeb6f+yXd1p5sWYPilaepEdFJin0=
+	 In-Reply-To:Content-Type; b=tmtQNN+7PldtBaApNPyh+4Ec58y5O1FWcuhuBWF/cHR6no8zeych6k/sEKulNl68B6H01gKPaG6P3HwGIxM6jEXY2PCRkCJrf+OJHHfdj47CHFhlxL5N0p4CYOH3ftC+Y60dVgSRFDGVnkcyUpCE7Exj0bXiIxFtDv53fB5OKo4=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
 Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4c9wnp3pJPz9sSY;
-	Tue, 26 Aug 2025 07:14:38 +0200 (CEST)
+	by localhost (Postfix) with ESMTP id 4c9wqD4n9Lz9sSb;
+	Tue, 26 Aug 2025 07:15:52 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from pegase2.c-s.fr ([172.26.127.65])
 	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id dEmYXdeORp8H; Tue, 26 Aug 2025 07:14:38 +0200 (CEST)
+	with ESMTP id rpB2O40BvjbE; Tue, 26 Aug 2025 07:15:52 +0200 (CEST)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4c9wnp2XzBz9sSX;
-	Tue, 26 Aug 2025 07:14:38 +0200 (CEST)
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4c9wqD3f1Fz9sSZ;
+	Tue, 26 Aug 2025 07:15:52 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 3C7C08B764;
-	Tue, 26 Aug 2025 07:14:38 +0200 (CEST)
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5FE698B764;
+	Tue, 26 Aug 2025 07:15:52 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
 	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 5Jvj8WfM3QuB; Tue, 26 Aug 2025 07:14:38 +0200 (CEST)
+	with ESMTP id QeAqRAElDkH6; Tue, 26 Aug 2025 07:15:52 +0200 (CEST)
 Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 577028B763;
-	Tue, 26 Aug 2025 07:14:36 +0200 (CEST)
-Message-ID: <e926a154-0f4e-49b2-aefa-1e778530c34c@csgroup.eu>
-Date: Tue, 26 Aug 2025 07:14:36 +0200
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 70BC98B763;
+	Tue, 26 Aug 2025 07:15:50 +0200 (CEST)
+Message-ID: <29c26faf-98da-42fa-9408-0e0d2932bb13@csgroup.eu>
+Date: Tue, 26 Aug 2025 07:15:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,8 +55,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 6/8] sched/topology: Unify tl_cls_mask() across core
- and x86
+Subject: Re: [PATCH v7 7/8] sched/topology: Unify tl_mc_mask() across core and
+ all arch
 To: K Prateek Nayak <kprateek.nayak@amd.com>,
  Madhavan Srinivasan <maddy@linux.ibm.com>,
  Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
@@ -90,81 +90,137 @@ Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
  Tim Chen <tim.c.chen@linux.intel.com>,
  Vinicius Costa Gomes <vinicius.gomes@intel.com>
 References: <20250826041319.1284-1-kprateek.nayak@amd.com>
- <20250826041319.1284-7-kprateek.nayak@amd.com>
+ <20250826041319.1284-8-kprateek.nayak@amd.com>
 From: Christophe Leroy <christophe.leroy@csgroup.eu>
 Content-Language: fr-FR
-In-Reply-To: <20250826041319.1284-7-kprateek.nayak@amd.com>
+In-Reply-To: <20250826041319.1284-8-kprateek.nayak@amd.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
 
 
 Le 26/08/2025 à 06:13, K Prateek Nayak a écrit :
-> Unify the tl_cls_mask() used by both the scheduler core and x86.
+> Unify the tl_mc_mask() wrapper around cpu_coregroup_mask() used by core,
+> x86, powerpc, and s390.
+> 
 > No functional changes intended.
 > 
 > Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
 > ---
->   arch/x86/kernel/smpboot.c      | 4 ----
+>   arch/powerpc/kernel/smp.c      | 7 +------
+>   arch/s390/kernel/topology.c    | 7 +------
+>   arch/x86/kernel/smpboot.c      | 7 -------
 >   include/linux/sched/topology.h | 8 +++++++-
 >   kernel/sched/topology.c        | 7 -------
->   3 files changed, 7 insertions(+), 12 deletions(-)
+>   5 files changed, 9 insertions(+), 27 deletions(-)
 > 
-> diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-> index 03ff6270966a..81a40d777d65 100644
-> --- a/arch/x86/kernel/smpboot.c
-> +++ b/arch/x86/kernel/smpboot.c
-> @@ -470,10 +470,6 @@ static int x86_cluster_flags(void)
->   {
->   	return cpu_cluster_flags() | x86_sched_itmt_flags();
+> diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
+> index c58ddf84fe63..40719679385b 100644
+> --- a/arch/powerpc/kernel/smp.c
+> +++ b/arch/powerpc/kernel/smp.c
+> @@ -1062,11 +1062,6 @@ const struct cpumask *cpu_coregroup_mask(int cpu)
+>   
+>   	return cpu_node_mask(cpu);
 >   }
-> -static const struct cpumask *tl_cls_mask(struct sched_domain_topology_level *tl, int cpu)
+> -
+> -static const struct cpumask *cpu_mc_mask(struct sched_domain_topology_level *tl, int cpu)
 > -{
-> -	return cpu_clustergroup_mask(cpu);
+> -	return cpu_corgrp_mask(cpu);
 > -}
 >   #endif
 >   
+>   static const struct cpumask *cpu_pkg_mask(struct sched_domain_topology_level *tl, int cpu)
+> @@ -1729,7 +1724,7 @@ static void __init build_sched_topology(void)
 >   #ifdef CONFIG_SCHED_MC
+>   	if (has_coregroup_support()) {
+>   		powerpc_topology[i++] =
+> -			SDTL_INIT(cpu_mc_mask, powerpc_shared_proc_flags, MC);
+> +			SDTL_INIT(tl_mc_mask, powerpc_shared_proc_flags, MC);
+>   	}
+>   #endif
+>   
+> diff --git a/arch/s390/kernel/topology.c b/arch/s390/kernel/topology.c
+> index c88eda847309..8dbf32f362e1 100644
+> --- a/arch/s390/kernel/topology.c
+> +++ b/arch/s390/kernel/topology.c
+> @@ -514,11 +514,6 @@ const struct cpumask *cpu_coregroup_mask(int cpu)
+>   	return &cpu_topology[cpu].core_mask;
+>   }
+>   
+> -static const struct cpumask *cpu_mc_mask(struct sched_domain_topology_level *tl, int cpu)
+> -{
+> -	return &cpu_topology[cpu].core_mask;
+> -}
+> -
+>   static const struct cpumask *cpu_book_mask(struct sched_domain_topology_level *tl, int cpu)
+>   {
+>   	return &cpu_topology[cpu].book_mask;
+> @@ -536,7 +531,7 @@ static const struct cpumask *cpu_pkg_mask(struct sched_domain_topology_level *tl
+>   
+>   static struct sched_domain_topology_level s390_topology[] = {
+>   	SDTL_INIT(tl_smt_mask, cpu_smt_flags, SMT),
+> -	SDTL_INIT(cpu_mc_mask, cpu_core_flags, MC),
+> +	SDTL_INIT(tl_mc_mask, cpu_core_flags, MC),
+>   	SDTL_INIT(cpu_book_mask, NULL, BOOK),
+>   	SDTL_INIT(cpu_drawer_mask, NULL, DRAWER),
+>   	SDTL_INIT(cpu_pkg_mask, NULL, PKG),
+> diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+> index 81a40d777d65..bfbcac9a73d1 100644
+> --- a/arch/x86/kernel/smpboot.c
+> +++ b/arch/x86/kernel/smpboot.c
+> @@ -472,13 +472,6 @@ static int x86_cluster_flags(void)
+>   }
+>   #endif
+>   
+> -#ifdef CONFIG_SCHED_MC
+> -static const struct cpumask *tl_mc_mask(struct sched_domain_topology_level *tl, int cpu)
+> -{
+> -	return cpu_coregroup_mask(cpu);
+> -}
+> -#endif
+> -
+>   static const struct cpumask *tl_pkg_mask(struct sched_domain_topology_level *tl, int cpu)
+>   {
+>   	return cpu_node_mask(cpu);
 > diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
-> index d75fbb7d9667..e54501cc8e47 100644
+> index e54501cc8e47..075d1f063668 100644
 > --- a/include/linux/sched/topology.h
 > +++ b/include/linux/sched/topology.h
-> @@ -50,7 +50,13 @@ static inline int cpu_cluster_flags(void)
+> @@ -63,7 +63,13 @@ static inline int cpu_core_flags(void)
 >   {
->   	return SD_CLUSTER | SD_SHARE_LLC;
+>   	return SD_SHARE_LLC;
 >   }
 > -#endif
 > +
 > +static const __maybe_unused
 
-Same as previous patch, don't hide dust under the carpet, if you need 
-__maybe_unused it means there is a problem in the construct.
+Same as the two previous patches, __maybe_unused shouldn't be required.
 
-> +struct cpumask *tl_cls_mask(struct sched_domain_topology_level *tl, int cpu)
+> +struct cpumask *tl_mc_mask(struct sched_domain_topology_level *tl, int cpu)
 > +{
-> +	return cpu_clustergroup_mask(cpu);
+> +	return cpu_coregroup_mask(cpu);
 > +}
-> +#endif /* CONFIG_SCHED_CLUSTER */
+> +#endif /* CONFIG_SCHED_MC */
 >   
->   #ifdef CONFIG_SCHED_MC
->   static inline int cpu_core_flags(void)
+>   #ifdef CONFIG_NUMA
+>   static inline int cpu_numa_flags(void)
 > diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> index 92165fe56a2d..4530cbad41e1 100644
+> index 4530cbad41e1..77d14430c5e1 100644
 > --- a/kernel/sched/topology.c
 > +++ b/kernel/sched/topology.c
 > @@ -1724,13 +1724,6 @@ sd_init(struct sched_domain_topology_level *tl,
 >   	return sd;
 >   }
 >   
-> -#ifdef CONFIG_SCHED_CLUSTER
-> -static const struct cpumask *tl_cls_mask(struct sched_domain_topology_level *tl, int cpu)
+> -#ifdef CONFIG_SCHED_MC
+> -static const struct cpumask *tl_mc_mask(struct sched_domain_topology_level *tl, int cpu)
 > -{
-> -	return cpu_clustergroup_mask(cpu);
+> -	return cpu_coregroup_mask(cpu);
 > -}
 > -#endif
 > -
->   #ifdef CONFIG_SCHED_MC
->   static const struct cpumask *tl_mc_mask(struct sched_domain_topology_level *tl, int cpu)
+>   static const struct cpumask *tl_pkg_mask(struct sched_domain_topology_level *tl, int cpu)
 >   {
+>   	return cpu_node_mask(cpu);
 
 
