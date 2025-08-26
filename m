@@ -1,280 +1,217 @@
-Return-Path: <linux-kernel+bounces-786233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9B04B356E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:30:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E8EAB356E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:30:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8936D177481
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:30:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBC841B62015
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:30:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659802FAC03;
-	Tue, 26 Aug 2025 08:30:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 778932F99BE;
+	Tue, 26 Aug 2025 08:30:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RNXZ4RDQ"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="RLc1gLHy"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2065.outbound.protection.outlook.com [40.107.237.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C5822E004;
-	Tue, 26 Aug 2025 08:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756197033; cv=none; b=smva25Y0ejggVjiR7VZPgOPqKJGdccPkIustq85Ii2Ej3ch0/VVWT5YaN041CBWyyooLXAOkIwU+RGnfXzN4EGiBm0z6901kumS9fl/NLWzwa53ho26UVXV26DNZF0Kze800rxv7s9nUBBI1HCcDhbjN5AXfurK85Skxr6WpOe4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756197033; c=relaxed/simple;
-	bh=VNgkWQvunszqiwa2iCQGKFHn2EIFZXNxa26eYSuIAmM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JOkoayCHv11YH3Fuv9qrA9k8brqI0wl3C2Ev0nLRjBuY6ZBTjebTurN19u4Rb54/LVfSxgj2Uws60gW4GIwshUFTVh+CEtShFN1tIbbI+tKokBTftce80V0REV5VSRlbr1tVey1StxmVD94EmXWvvtdmE8zd0r0x2NDjxfEFbHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RNXZ4RDQ; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57Q8TpuD1474791;
-	Tue, 26 Aug 2025 03:29:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1756196991;
-	bh=qA4QtszB3lhYVxil4FY85NorKM9gDEhmhJP9fmqDZM0=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=RNXZ4RDQOHKqg91jIce38BPyes6xfCyL41zxjE5Fxuronah7zNCrbTzB9WI8J4FBq
-	 6qEH2XOFxkaoa1kIlykoBp/G4OpGIjfZYRjsa0Fo59pkc2Z2fwOIV793HHwW2DJsZl
-	 qH/s0rpWYp1eSTxm6oSnOj7zn+JLxeDZo9WQDTLA=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57Q8ToHr2261537
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 26 Aug 2025 03:29:50 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 26
- Aug 2025 03:29:50 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Tue, 26 Aug 2025 03:29:49 -0500
-Received: from [10.24.68.198] (abhilash-hp.dhcp.ti.com [10.24.68.198])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57Q8Thoe1135709;
-	Tue, 26 Aug 2025 03:29:43 -0500
-Message-ID: <dcaaf0ee-2cfc-419e-8c4a-8834372f1948@ti.com>
-Date: Tue, 26 Aug 2025 13:59:42 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9351FC0EF;
+	Tue, 26 Aug 2025 08:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756197000; cv=fail; b=JOR2Oef06VXyPzAztfCL8dRm1UvrL7KYuRC+1RyGxDItpuc9ez8vgF6X2gyCjsr4gc2m97dnyT5GrYhT74S9vf6zcLvWea6D4GW/fwJ3SzNibZoD5GsYAC8i+KilFpepcJ1SXNlcTzhCETJO3pmoWmfj0gnKiYlR+2MEjtof9ho=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756197000; c=relaxed/simple;
+	bh=JPVM6LGlQ6q0ToRzkcEHG4/VAWporT3VnPcUch85cnU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=UqpRyhP7anY1/F/ZoJ3cgpKwTPHnLR5mKj28qRbJj8GbXyaksCdzNZNNxxF681upewI5nuE/btQsZg8UIcKGi0t0jXC9sTZPcXxMpl35fQwnmKaRXxmmji9LMAKHIzMY+fLTFK0/pkeolGmaqrAgsOYqjjJDnbom26A7HWtumKE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=RLc1gLHy; arc=fail smtp.client-ip=40.107.237.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VF5aMV0WqDYZlxT9KJf/DgDtfRIFt1D66XnCkzbPmIX42wtZSc9gHvbKuwdmwAxrxPEz0qe2aZs/vI8Zby2BzgvcR/zEf+ZiHA0MbL+ql61IlngYeZT0pgUGoIJhvCSrOZ9PPWLzJERRGL4sgV2QSS8TEg6Gru/hF3xwlw/hjC/q3EtTMdtanNQMmdcj8qttVuqrebxCAlk8U2YeaTxmc/R+yyoAvgJkHsEk4s97EMEnpg0Nd7BIs/KTiUaKSjC1JhzAyl7mTfgQFbWRMHfl31uedE1iJCT++PEDvsHM/LUsPnId2S6vKvers9D9V4J4aDay5cnU8gGf6ta21TFjHA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=l56325eYtTWp5JGFokib4VZ3JrUuSt/+mpXwwRtkBSs=;
+ b=vxU9AfFc5YxRn2ZqsdiG4i0gpAd6P3zuF7pyCjkPTcjYgOzI0inaHRrKZTJTd1NOjFClPae4+0VPmk/Hp4+uxVejj5m3flQrjeZL8y10DXgDEFuqSfdYVSQlH4quzgG2UhnSReBTfDCn4TtMSVTSpa/te4pp1t/hvePzR/t6KIhtx3r6oQ+ukazRoA919iuQMGQ27KJeVDyYH9X2iuAow/q8KMHO9ZcasFAfF2hs5O0ylnIgSz3Bo/JRq2zjT8iga5yiLxmsKP4SGO3oEMqtvKQYqNfC4makS8HRVe6geAS0TpivN8pLxSXB+cX0R//HWPscybMmqQLEa43WWzS6Ww==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=l56325eYtTWp5JGFokib4VZ3JrUuSt/+mpXwwRtkBSs=;
+ b=RLc1gLHy3UvKnFjhdDLvaRuFUXPb3ZnYosqlxlbOFx9Al/gCpETn9AQf9xxyClAnBz4rQmwLbPrjud5VfXbTGfu/kPzpCtzlm2NCkUQGC7/Nd7Tp/+ntuoYtwgQPHeXfGQmeS/hWtKf5wGSeWUO6fA6L23UZgorwLGxt56ZZOPN0oJGDJ2Ve5OF7K/gKXKVUpjx/0bo1v5XlA6aQ4fgmeO70oZnid8EhZ0AI7oXnhfbwZ7dJCMwkMP7Zk3uK5HBsFmQADYlJSK4aLRJLrNLmP6EXvuYoMsnMlD31n4bTbxjF/izCbkqjMasnv8h6LbaS7/ZZW8h6xgm7T9Ej9cbrJA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com (2603:10b6:8:ba::19) by
+ DS0PR12MB7678.namprd12.prod.outlook.com (2603:10b6:8:135::22) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9052.20; Tue, 26 Aug 2025 08:29:56 +0000
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11]) by DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11%6]) with mapi id 15.20.9052.019; Tue, 26 Aug 2025
+ 08:29:56 +0000
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] dt-bindings: reset: add Tegra114 car header
+Date: Tue, 26 Aug 2025 17:29:52 +0900
+Message-ID: <3303492.5fSG56mABF@senjougahara>
+In-Reply-To: <2ef333b7-2c4c-4c06-b90f-5dfa8af41e36@kernel.org>
+References:
+ <20250826061117.63643-1-clamor95@gmail.com>
+ <20250826061117.63643-2-clamor95@gmail.com>
+ <2ef333b7-2c4c-4c06-b90f-5dfa8af41e36@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: TYCP301CA0062.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:405:7d::15) To DM4PR12MB6494.namprd12.prod.outlook.com
+ (2603:10b6:8:ba::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 4/4] media: ti-vpe: Add the VIP driver
-To: Krzysztof Kozlowski <krzk@kernel.org>, <mchehab@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <linux@armlinux.org.uk>, <ardb@kernel.org>, <ebiggers@kernel.org>,
-        <geert+renesas@glider.be>, <claudiu.beznea@tuxon.dev>,
-        <bparrot@ti.com>, <andre.draszik@linaro.org>,
-        <kuninori.morimoto.gx@renesas.com>,
-        <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        <heikki.krogerus@linux.intel.com>, <kory.maincent@bootlin.com>,
-        <florian.fainelli@broadcom.com>, <lumag@kernel.org>,
-        <dale@farnsworth.org>, <sbellary@baylibre.com>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <dagriego@biglakesoftware.com>, <u-kumar1@ti.com>
-References: <20250716111912.235157-1-y-abhilashchandra@ti.com>
- <20250716111912.235157-5-y-abhilashchandra@ti.com>
- <b8149d7d-65ca-47c1-9338-45a0db614e77@kernel.org>
-Content-Language: en-US
-From: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
-In-Reply-To: <b8149d7d-65ca-47c1-9338-45a0db614e77@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6494:EE_|DS0PR12MB7678:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7b9ed869-91dc-45ed-45f3-08dde47abca3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|1800799024|7416014|366016|376014|921020|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?L3V1c29XeG1iYXhtalBmZlJ4dDIwMm40SnhMdkttd2ZBeG0xeUcxVFJBQ2dS?=
+ =?utf-8?B?aHF3YTNqUjBnMUF2M3o0dE1SOWYwdS9RNzQvVTdXZ1Ruc2txdHh0NXNYN1M3?=
+ =?utf-8?B?N2pWdy92cFViWHZmMWxwV2x5MFdxWnJLcit0c0JWekUwM0NXaUFYZERSdnB6?=
+ =?utf-8?B?SnVja3ppckdhSVNJbkNXbHRmd2dwNEZCcE5vdXlWMmI3TklyZzlUSG5xaExC?=
+ =?utf-8?B?blFkWVpNK0J5OE5HYS9tZ3VlaDdnM0FQTUxiemJYaTFrSkFETnhicFZaL3h6?=
+ =?utf-8?B?TzdvcUdEaEYvU21VOHdSeUphNURyS2RxMkphOC9Id2VCNjlzbnNaREFKS3l3?=
+ =?utf-8?B?UU5xRDZLM2RrU0pjOTNLcXhVeUFDL3g1QmFSWFR1Q2ZVekwvczVDbG1nYkRJ?=
+ =?utf-8?B?RWUvTmRyM0VUVitnYUNwbzBwTEJIVzdqWHZwOUNIRGg1elZOTldzY2hreURZ?=
+ =?utf-8?B?bHg5SmVCUVl3eDdZVVRtM25PV2ZROEExbEM2R0tiVWdwUUEwM2JjWXM0Wmxq?=
+ =?utf-8?B?dksrSjNsM2pWVmRJOWE0YkFQZHBCY2ZuR0ZPd3J2anU2TVlWRzM2eWtnazhT?=
+ =?utf-8?B?UUl3RlkramRpN3Yzc0d5NUFUSGJyR2M4YkwxbFlqYkxXWXBBa1hwcGM2UG52?=
+ =?utf-8?B?SUoyd1huNXhzQmxhNm15VlpiL2VISExLeEI3NElLUEg3bWIwWHVpc3F2VDFr?=
+ =?utf-8?B?SjFVOUxma3JsWmtINXQ2bnE4bGUwSFlyekRZYWc2Nks1MjZSU245L0Y4bW0v?=
+ =?utf-8?B?TkxpMldjWW4yNytqOEFsa0drcjk0cUlQbUxsWllhd01sNHlwdHM3ZTZJK0t5?=
+ =?utf-8?B?OEorcWwxSWRDcWtCa201ZElPa1pEYmx5UEZGdXF5V1FNekplUjdCcUNtTFhm?=
+ =?utf-8?B?M3lUdmtnNk9BbmNYQ01RQ241N0oxVHhwYnJoQVpUekJjUkcwTmc0cnZsWVR6?=
+ =?utf-8?B?UVJ5V0hPZDd0SXFFdWhoQmVlVmtzdU52S1ZqSVRzVlJZeDdXbWVTc1hjNTdo?=
+ =?utf-8?B?citkTTJKd1VNN3JOOGtTYVFtZGpROW5RUDMwT0k2Vm84cm1oc0NnWVd0QnZY?=
+ =?utf-8?B?aE16L2piN1U5U0h4S2lBeGFCYnJrMEhzQTBBekF4bXUxL3hkUUo1M3JPcXRa?=
+ =?utf-8?B?SitiTlpoTlF3ODQxZEFJOTd1d09UMlFxRFZNOWhpYURDWnRIVEIwbkhCdGxG?=
+ =?utf-8?B?RTIzMkVjUVdScWF2dUtsNlpOZzZDc2haSFVia1pyNU9mSStucjVENWRObDBs?=
+ =?utf-8?B?Tlp5d043ekdOK21nTExEZThZTzlMMEx3RFRqSjhKOC9rdmV1SXg0dzRVWHBs?=
+ =?utf-8?B?NGpHb1NQckVYRnhmNFpobkpNYmZQS0ttQ3RtSFcrczRidklPMnFmeGpLZlVQ?=
+ =?utf-8?B?VTJ6VzlieXdxTmlwbUllaDRmM2N6RGMwNXlkZVUzc2tJYjR5cVZZdnFPcVRX?=
+ =?utf-8?B?b21pbnVGSHFmT2FNdmNxenZERnFiNDcxanNKbVM4UExUUk9NWFl6bjYvR3F2?=
+ =?utf-8?B?R09ka0EyYkc1Zys5aUhqTzFpNlZGWklpT0dUb0cxZS9wZ3RaV2RnMmozSERL?=
+ =?utf-8?B?VS9xam9vNVExWks5K25Ic3Y4RysrVTZja0I1UDlINmFuR09rN3IyNjkyeGxr?=
+ =?utf-8?B?TlFwd3ZrT3Vob1VPQ0dHZzcvWlJwNThJZ2dXandmWTJCdjgrVC9CcTQraEVq?=
+ =?utf-8?B?dVUxcHVKSXpxZmN5NkNEbi9HRHVCV2hrZnhNMDNTYXIxYVpqenBJaVpNUm5S?=
+ =?utf-8?B?OWJ3SkV0Zk5Md3JONVp6ZlN0MVZxdll2Y2JmblJTUzg5MVJKbzJEenZmVVcx?=
+ =?utf-8?B?YjlnNUdvd3RNMWcxZVZsZStvY0VBbkRvWTI2Q1VWVXoyRy94REcwUEFOTjZU?=
+ =?utf-8?B?MlJsVDlMLzJPdHkxaW1uOWpkckRUM1kzYmNnNjdtN2k2enEzTjRURkZFMUJ4?=
+ =?utf-8?B?TzBnUlQrMmZ2a2hZc05Mc0VScDJUandILzh3VGJwNUxDbEg2VDlrYjVaZ3VZ?=
+ =?utf-8?B?UTdENDd1MXhnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6494.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(7416014)(366016)(376014)(921020)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dmZGdE51ZEt3TlJueUQyYzZlUzY0S3htOVp5OHFUYVFFbmJjWG1BNG05d25u?=
+ =?utf-8?B?NlJGV3VGUTZDZHdLMktLdTNkY3RudFl1MnBnTFZWRkN4LzdxYkgra2kxRmQr?=
+ =?utf-8?B?Umd0eFhCL1NxZzFaYzN2M1UvaldGd1FiNGMwUFFMMXJtcSttQVNJRCt4NlUy?=
+ =?utf-8?B?WndNcmFvRkxsQXdyWTFRTUkydzlaZG5JOFo3OFhkc2w5clhIUzh4eFd5Vm9F?=
+ =?utf-8?B?SE1CWVdwcmpJSG9uanBGWElIS1cyaGJmQysyaURrZmxSUjFCWW1tb2VCWDIv?=
+ =?utf-8?B?T1doQldsdXlwMTl2UDdYbTNQbndTdm5pOExpMjNla2NUZWlNa2lqaEhwU1RM?=
+ =?utf-8?B?bFd5MmpzRXJ5ajYzMUtTd2x0TUw4YWdQTTZhYzdVVGVIZmZ0d1ZjUCtwRXVN?=
+ =?utf-8?B?WW1UckFraU5ZVkMvcW9nTFJhUkNOaW9uRTBBWDFHSlBWVm9sdDYrSmlQUmQw?=
+ =?utf-8?B?a3dXOXA3a2NFQTB5TVoxc1h1SUFvL2FmRUw4Q0dsSHVISTZlRjdraElsNTBS?=
+ =?utf-8?B?d2Y2SGJrQm5WZFp1RStIRk1tbTFWTjl5YlFIREJoRkEyYVVZc2FOdHlXa0dn?=
+ =?utf-8?B?VFNweTE1NjZmbytOeTNSOU1rbFJ0eHVpbFpNR0s0UkViRk91VUJjU0hqNDB1?=
+ =?utf-8?B?ZkF5UFZrZzhXUXpkczNMRmYrMU9TcjFMTkhxOG9TVWEvWm9ON0R3NGt4bEpz?=
+ =?utf-8?B?MXVyWjJoalJGbXNFcHkxWkpxUzdpQWpJZW0zQ3c3Ky9ZbXpKTDRDN21ZU2NN?=
+ =?utf-8?B?NGpaa1g3aGlFSEZXWDl3eEpZUkxNYlkzUzU4QjBjOWFoMi9FRU8yWXJLOExJ?=
+ =?utf-8?B?Z3pURGhjTUtXeXZUcFYyUXQyR3k2RGY3di9RaStIRWxVNFZMK2dVUkFJeElG?=
+ =?utf-8?B?VnFKU3d4TE4rd0xON2RrNlRKK05SdTJaRU5VNUR2aE5UUk83QlVoRURzaDUr?=
+ =?utf-8?B?d2M4SzZLQVpiUkVxa1o2L3lqL3FoVDFXOFZKblBmU3QvQnBmUHVrQU0vT1hx?=
+ =?utf-8?B?WHFZOFpwT1UwVkV5V2pzNUNCenV5eDZVcWZCd0xHWlNiajlYYWpxeWdCcEht?=
+ =?utf-8?B?S0ZkQmJlTzdsUk8rdHRjYUF4QytCQzB4UWNuY0ZLTXRlY2hKOEZncFp2UWJT?=
+ =?utf-8?B?NFlaMHZlRDNzNk5kQkJQeitpUHdsQitJdW94WnJuTnVVNTBKc2pBVEgyR0s4?=
+ =?utf-8?B?QW5OMHE4QkJHZUZOYzQzOW1IMGh3ODhvSkhsUkNCL2ZVWHdsbm9aNFBPWTFr?=
+ =?utf-8?B?ZWUrRGVkc3c1Yko3d2RReklrZ2RUWGtjVW9jcThZWnhKWW5OZGFLeTd6SHVV?=
+ =?utf-8?B?NklUV2wrWFVKY0xiTlB4cFArNDllbldxZThZTTlzeE9sS3V6TlJYTk1YeER3?=
+ =?utf-8?B?SWV6UUVQa1FNNzV6bStDQzBjcVIzRWdybkdjNFhGMVRYZVhvL0hkZWJIVUFH?=
+ =?utf-8?B?c3FDWkE5cDhiZEpmNkN4MnppOE5kMGRQZnRycElJNFdBUjE1Umo3Y24wWHZG?=
+ =?utf-8?B?RkZnN0tvdVA0SlJEbXB4VFpjRHRNbGNNeHd5RFB3NlhxbDBPNFdhbUZ1dm5r?=
+ =?utf-8?B?RzRWb3ZoMFhiSmNlS3VBTkNBZlFkWEoxNm8zalpFUUUzT2lrRCtlamIydnBK?=
+ =?utf-8?B?aXN4L0FDTHZ5OEFpb2sxN0pvWkFyb3o2OU9kUWozdUxRenk4QmVvUEZGMGFB?=
+ =?utf-8?B?MzluZWROTnlLeW5PNjJoazNVZVJJbGZBMTE3WDhrWWdaR0ZmVkE5NjB3UTdB?=
+ =?utf-8?B?L05kbTlRY1BSMEZoTjUyMW1TaDZJaUVDZjB0eExHRmFmbHNDRytTTHAva0hm?=
+ =?utf-8?B?YmVzSmFGaXFGRklzVUNZMFo3d0xyTlRpSHZobVRGVVA5NzlFMjlCUk5mNUhZ?=
+ =?utf-8?B?YzdxS0JLSUpXOXFVcmtYMG03SWxDdjdFa1NydzRGcktMeDBSNjNoMDhLTk9h?=
+ =?utf-8?B?N2NCeUlGWWZxSDdqL1pRZ1U0MUpUa0JXWkI5dWRzZ21OY2JxNEt5RGI4aUs1?=
+ =?utf-8?B?RnN4cG5CMWY2S2hxdWk3UlcrWmFLNndBanZTb25VYldSVVN6d0tNdVE3NXVt?=
+ =?utf-8?B?U0pabGl0cTllVjdqczJnRGgvOEhXaUprTDFobTBxUFFKTXIyendqa1UxRkl0?=
+ =?utf-8?B?QXByVWRPbkx5WVhOVFVHOC9CZmpoL1QxSURaU0VxaTByN3lFQkxXWnhGYXJS?=
+ =?utf-8?B?N2lGamxHeVltQVllZ05WbVg0eFNJUmpUMkEveElzRmp1V2VmaHdIRVh3OVFn?=
+ =?utf-8?B?YkIybWFGUmRXZGNSZEFjQ29pbStRPT0=?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7b9ed869-91dc-45ed-45f3-08dde47abca3
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6494.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 08:29:55.9650
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +m6cBqZ1UE5v3FX8r6IEIxgroiVx15sjUVuvBKMkuh4jzy5ssbt7dbJZz39rnRzf4UtgHcKbIPeNxxvXBiii5w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7678
 
-Hi Krzysztof,
-Thanks for the review.
-
-On 16/07/25 19:39, Krzysztof Kozlowski wrote:
-> On 16/07/2025 13:19, Yemike Abhilash Chandra wrote:
-> 
->> +static int vip_probe_complete(struct platform_device *pdev)
->> +{
->> +	struct vip_shared *shared = platform_get_drvdata(pdev);
->> +	struct regmap *syscon_pol = NULL;
->> +	u32 syscon_pol_offset = 0;
->> +	struct vip_port *port;
->> +	struct vip_dev *dev;
->> +	struct device_node *parent = pdev->dev.of_node;
->> +	struct fwnode_handle *ep = NULL;
->> +	int ret, slice_id, port_id, p;
->> +
->> +	if (parent && of_property_read_bool(parent, "ti,vip-clk-polarity")) {
->> +		syscon_pol = syscon_regmap_lookup_by_phandle(parent,
->> +							     "ti,vip-clk-polarity");
->> +		if (IS_ERR(syscon_pol)) {
->> +			dev_err(&pdev->dev, "failed to get ti,vip-clk-polarity regmap\n");
->> +			return PTR_ERR(syscon_pol);
-> 
-> Syntax is return dev_err_probe. If this is not probe path, then this has
-> to be fixed.
-> 
-
-I will fix this in v3.
-
->> +		}
->> +
->> +		if (of_property_read_u32_index(parent, "ti,vip-clk-polarity",
->> +					       1, &syscon_pol_offset)) {
->> +			dev_err(&pdev->dev, "failed to get ti,vip-clk-polarity offset\n");
->> +			return -EINVAL;
->> +		}
->> +	}
->> +
->> +	for (p = 0; p < (VIP_NUM_PORTS * VIP_NUM_SLICES); p++) {
->> +		ep = fwnode_graph_get_next_endpoint_by_regs(of_fwnode_handle(parent),
->> +							    p, 0);
->> +		if (!ep)
->> +			continue;
->> +
->> +		switch (p) {
->> +		case 0:
->> +			slice_id = VIP_SLICE1;	port_id = VIP_PORTA;
->> +			break;
->> +		case 1:
->> +			slice_id = VIP_SLICE2;	port_id = VIP_PORTA;
->> +			break;
->> +		case 2:
->> +			slice_id = VIP_SLICE1;	port_id = VIP_PORTB;
->> +			break;
->> +		case 3:
->> +			slice_id = VIP_SLICE2;	port_id = VIP_PORTB;
->> +			break;
->> +		default:
->> +			dev_err(&pdev->dev, "Unknown port reg=<%d>\n", p);
->> +			continue;
->> +		}
->> +
->> +		ret = alloc_port(shared->devs[slice_id], port_id);
->> +		if (ret < 0)
->> +			continue;
->> +
->> +		dev = shared->devs[slice_id];
->> +		dev->syscon_pol = syscon_pol;
->> +		dev->syscon_pol_offset = syscon_pol_offset;
->> +		port = dev->ports[port_id];
->> +
->> +		vip_register_subdev_notif(port, ep);
->> +		fwnode_handle_put(ep);
->> +	}
->> +	return 0;
->> +}
->> +
->> +static int vip_probe_slice(struct platform_device *pdev, int slice, int instance_id)
->> +{
->> +	struct vip_shared *shared = platform_get_drvdata(pdev);
->> +	struct vip_dev *dev;
->> +	struct vip_parser_data *parser;
->> +	u32 vin_id;
->> +	int ret;
->> +
->> +	dev = devm_kzalloc(&pdev->dev, sizeof(*dev), GFP_KERNEL);
->> +	if (!dev)
->> +		return -ENOMEM;
->> +
->> +	dev->instance_id = instance_id;
->> +	vin_id = 1 + ((dev->instance_id - 1) * 2) + slice;
->> +	snprintf(dev->name, sizeof(dev->name), "vin%d", vin_id);
->> +
->> +	dev->irq = platform_get_irq(pdev, slice);
->> +	if (dev->irq < 0)
->> +		return dev->irq;
->> +
->> +	ret = devm_request_irq(&pdev->dev, dev->irq, vip_irq,
->> +			       0, dev->name, dev);
->> +	if (ret < 0)
->> +		return -ENOMEM;
->> +
->> +	spin_lock_init(&dev->slock);
->> +	mutex_init(&dev->mutex);
->> +
->> +	dev->slice_id = slice;
->> +	dev->pdev = pdev;
->> +	dev->res = shared->res;
->> +	dev->base = shared->base;
->> +	dev->v4l2_dev = &shared->v4l2_dev;
->> +
->> +	dev->shared = shared;
->> +	shared->devs[slice] = dev;
->> +
->> +	vip_top_reset(dev);
->> +	vip_set_slice_path(dev, VIP_MULTI_CHANNEL_DATA_SELECT, 1);
->> +
->> +	parser = devm_kzalloc(&pdev->dev, sizeof(*dev->parser), GFP_KERNEL);
->> +	if (!parser)
->> +		return PTR_ERR(parser);
->> +
->> +	parser->res = platform_get_resource_byname(pdev,
->> +						   IORESOURCE_MEM,
->> +						   (slice == 0) ?
->> +						   "parser0" :
->> +						   "parser1");
->> +	parser->base = devm_ioremap_resource(&pdev->dev, parser->res);
->> +	if (IS_ERR(parser->base))
->> +		return PTR_ERR(parser->base);
->> +
->> +	parser->pdev = pdev;
->> +	dev->parser = parser;
->> +
->> +	dev->sc_assigned = VIP_NOT_ASSIGNED;
->> +	dev->sc = sc_create(pdev, (slice == 0) ? "sc0" : "sc1");
->> +	if (IS_ERR(dev->sc))
->> +		return PTR_ERR(dev->sc);
->> +
->> +	dev->csc_assigned = VIP_NOT_ASSIGNED;
->> +	dev->csc = csc_create(pdev, (slice == 0) ? "csc0" : "csc1");
->> +	if (IS_ERR(dev->sc))
->> +		return PTR_ERR(dev->sc);
->> +
->> +	return 0;
->> +}
->> +
->> +static int vip_probe(struct platform_device *pdev)
->> +{
->> +	struct vip_shared *shared;
->> +	struct pinctrl *pinctrl;
->> +	int ret, slice = VIP_SLICE1;
->> +	int instance_id;
->> +	u32 tmp, pid;
->> +	const char *label;
->> +
->> +	if (!of_property_read_string(pdev->dev.of_node, "label", &label)) {
->> +		if (strcmp(label, "vip1") == 0)
->> +			instance_id = 1;
->> +		else if (strcmp(label, "vip2") == 0)
->> +			instance_id = 2;
->> +		else if (strcmp(label, "vip3") == 0)
-> 
-> 
-> Heh, nice try. You cannot encode instance ID as different property (and
-> instance ID is not allowed, see writing bindings in next).
-> 
-> And how does it work with label called "krzk"? Your binding said that
-> "krzk" is a perfectly correct label.
-> 
-> You need to think about such cases.
-> 
-> 
->> +			instance_id = 3;
-> 
-> And past here you use uninitialized instance_id, because you did not
-> consider "krzk".
-> 
-
-Understood. I will avoid this in v3
-
-Thanks and Regards,
-Yemike Abhilash Chandra
-
-> 
-> 
+On Tuesday, August 26, 2025 5:21=E2=80=AFPM Krzysztof Kozlowski wrote:
+> On 26/08/2025 08:11, Svyatoslav Ryhel wrote:
+> > Binding values for special resets that are placed starting from
+> > software-defined index 160 in line with other chips.
+> >=20
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > ---
+> >=20
+> >  include/dt-bindings/reset/tegra114-car.h | 13 +++++++++++++
+>=20
+> NAK
+>=20
+> You got comments last time and you completely ignored them.
+>=20
 > Best regards,
 > Krzysztof
+
+Thierry explained to you last time why this patch makes sense.
+
+The existing binding is such that values below 160 map to clock IDs (in dt-
+bindings/clock/tegra114-car.h). We cannot use those numbers for these "spec=
+ial=20
+resets" that have no corresponding clock, or we'd be changing existing=20
+binding. Hence this patch starts them at 160, above the clock IDs. The same=
+=20
+already exists in the tegra124-car binding for TEGRA124_RST_DFLL_DVCO -- th=
+is=20
+just extends that to Tegra114.
+
+Mikko
+
+
 
 
