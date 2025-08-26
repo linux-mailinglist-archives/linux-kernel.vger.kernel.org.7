@@ -1,111 +1,230 @@
-Return-Path: <linux-kernel+bounces-786203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5375B3567F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:15:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D38AFB35687
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:17:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 520B57A50C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:14:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A05C517A53A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:17:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70282285404;
-	Tue, 26 Aug 2025 08:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D33402ED15F;
+	Tue, 26 Aug 2025 08:16:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cm9c6XIj"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vHK/PL9G"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5366E19D081;
-	Tue, 26 Aug 2025 08:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11377285404;
+	Tue, 26 Aug 2025 08:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756196138; cv=none; b=Qc6FA/MwsfoyLA66nCDlOIUhnNhiiPXYwxewjRjrtk/RQR7D5fG26s/knktmB5IQ18FHLyPCzyLRd3eivXvQxhCZVW9TWs0NV70m24OUyxYzVdfMaazv0NWSRrkNVQ2JbGiQw3onpCV0Y53tuB8FmtgNm3CA03qPuUhNUlWNkxc=
+	t=1756196218; cv=none; b=LEMoT8pwcItFAzATgqYWieKd5irjQSPbLZ4mZf5gLzcgSTS6Yz41sZrUkZqobnUIkXwJA2ck3GL75wmbAowHud7MEeUZxgiaCQQ8uRH9JIYHYL0n6XZne+ymJ81w1y5Y1lultM/vlgzMb+PXDqRnJo1M8K/xs11WGj2/Xaz5wY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756196138; c=relaxed/simple;
-	bh=vH1s/qVM+wKYkLAArPKBMK9dC9IhIastVVlWT81ed4I=;
+	s=arc-20240116; t=1756196218; c=relaxed/simple;
+	bh=7FUxW9fktk2/qvaM7hLvRUyvceCRBBXHQaXJTD5jfKA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J/nQqgW7Ny+IlsQZQPe9wLPB/eQ+cXad6fiYtV6vqjwG+MUwVzz96QQ0lFIVD/EpeaFr2stXk1a3v6TMLd3FcK0Cr8cfoGy6jo6NZEwS3KuCEfe08tzu63RzxZfAgbe2IG28eLlqaLCaerqe3gEpHODFkiHiPJromcf8w0zyF2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cm9c6XIj; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-afcb78d5e74so1013264466b.1;
-        Tue, 26 Aug 2025 01:15:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756196136; x=1756800936; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/2q8212zjEFCbPtMQxkB3qmRsPilaVELd/edlGizi68=;
-        b=cm9c6XIjWOgtl7zBIe73AuCkF6WrLBpFiUvXgeuDVgEVdrmlt6DIjgEub8UqOXarPv
-         +uamvruXskNaHaW8CPQAP9y3OSqhyhTkiSWJzF8cfF7Oy1dD3BmpkaUWetQAFliD4rl4
-         jEleSqq7kqyZv1LGfCZ+5iGJztXNJ1Rjzq/d8LD+BlIiAQp78m66NeTlIAR3pz/5IRJA
-         tvmIvpw/r9gC4P/OFwx09GxS7exx8ada68M/+EODAIWX5giwpg2Y2apfI8/i9hkNALpb
-         VVgDhZqOv+mZZdHF01/LQpLGSQUv2UgtOG/wzjWvd+9vxw9KksXPgBFe8toSxIcvDJA5
-         Op0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756196136; x=1756800936;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/2q8212zjEFCbPtMQxkB3qmRsPilaVELd/edlGizi68=;
-        b=L7em1jnPib0DL0I3meZQJG0imH2sMWk1jhngEki/z7ydgab5ecbmCW7swuO7R3T+67
-         oTD7avTKOnbHCBJIc3iXPZJOVDo8DwuDw0EuWkPAkBBqmK96yCrH/hno8jPAo08NY+PY
-         qABPZHrPT0UNQ1iExBR5RAaJjl8ytiSvdx+wVYHV+wKhBeEfsytXCnz+MZhGr13VIvkl
-         wY1y0JQPJOa7HUSraBzHUWukAQ8GjqmRQTQZ8C5N5eEcvSzF/xm6gXKzNSIJxxohSL86
-         EfsmB61B1I+DdFkjRYbEIJZ7vghzgzLB1udAjRmvCtrVWx8QjT/UacYhsBIC2JPGLqpi
-         vOxg==
-X-Forwarded-Encrypted: i=1; AJvYcCWQd1ZJkAo2D/Mbv9FcawBLgN4PmgilXAodX0i46IBtPrNsMLxOVtehc18SJw/Be3iSo5QkSAIe1oT6sFqw@vger.kernel.org, AJvYcCWYQhxqgrG0K7eO8ieDkw4zVa70HJXSAz9rT0W/MgQU/ihZJUb4C1hjKNkKJ+pP94dZoxWemOvr/4U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1/21uxA9YE6KIACiqv/FUY02UEvcuoelB6dULN5BdqgjFFAe+
-	BS3ptsLaPBsTBQDqk8wD1q5Sz+XznmhP5RiVEYUTxlQCJMk1DG6nYxe9XyF/VCObaEE0OLWjStO
-	ppmtJyq3lstttpyLbiC1uDDH/NlXU7GA=
-X-Gm-Gg: ASbGnctNoA7SE4zQoD5G91JzIkdlXntls34SRXy/n9vUaBkGcyuerZK5OAFIGrDL+5F
-	OkHPG2m7WX7XuVKIEbSiD7AXoqHu2SfjBXpBfIA5dTw3nfH+7r5eovwdxwKugcSdEIxceCVsQ/+
-	NrRiFUDkHkRauOzqXss3woTADoEWLG37s4RdPb1Wr5uwOm7rRQq8wLVKhnxHviW9v3QQLmQRXxb
-	AckewU=
-X-Google-Smtp-Source: AGHT+IH7iKsMwj3JRi2VS8NEIMYGY6iWHLh63hFgWW+s+d8mYzIC/E9H9VUPcYJxf9VJPjaxwcdQ/VEFKrNsHM9xLmw=
-X-Received: by 2002:a17:907:1c8c:b0:afe:114f:11fb with SMTP id
- a640c23a62f3a-afe29631283mr1251002666b.64.1756196135448; Tue, 26 Aug 2025
- 01:15:35 -0700 (PDT)
+	 To:Cc:Content-Type; b=YGObR2EDKj2hB0AO1LmME1kEJr55lvhRZGqwK6k/DgxVAsTuLwFpfO4uompQDCymq4JjQ6N/kD2lc0D23xsZqSXpd2Zks3ndEpXLvLWnTvVC4ZOxj69UHbAsfYQ1avTAFh1CrU4r4PgSXinSir2zbdW67M1TWgSr0RzbRm91tuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vHK/PL9G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A705EC116C6;
+	Tue, 26 Aug 2025 08:16:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756196217;
+	bh=7FUxW9fktk2/qvaM7hLvRUyvceCRBBXHQaXJTD5jfKA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=vHK/PL9Gq2ruAdRZVjMnbe5aLAn3ofWFx/TvtxjRqeOIqntD3MxCL5UD9MBcuneuo
+	 m2ahuHEIivRVieNB5wUdCL3AdQlIvN0J+hhJ5meF/2XlrSn/P1r2Q5q885gNJd6xHr
+	 N84Hoo3Hu1HKCyXQdG9K3iZOE8GsXVlZk6QRY8rXFrwhwRzCDkh9lZPIntRTzM2QzT
+	 SkMOIJVT/9AXmRHU/xuQ5PgaNFi6l6aTfeMxfce2wmYieYiywZHmMiWKR5o76Mwgy2
+	 fA1VP+ZDDszk8pqi5lWIbUx3iZamaLiTKu/yYoyNDsV+H7xOwn+VCFg4g/gK6oLnXk
+	 iKepgxdA/IxNQ==
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-55f4969c95aso1440664e87.0;
+        Tue, 26 Aug 2025 01:16:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUeMSoqBSRCzA51uO80G/Ja3UdfsnxaRvtSz+Q8MCkNYq0N7Tr/S3DLwocLed1JQyM0uihV4+GQUbJDJmcp@vger.kernel.org, AJvYcCUwBb8ymF97GeK6+b+dtImj0a0y3v4zolNdCq5mH3MqK+JhkCst+xgV/NnUE1qw4c0QK6tGYO8HvQE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1lvSsymleaY0qXRSLA3Qj07/FofZtKwX/2gnIE1icAQE974Lr
+	bAhhzPfaJYkf9hqCPh2tvJIeIUyf5m1rG+AztJCCDR8uVXPXpmMdhWJi7Ug7bpbS4JizBU0YyhH
+	jV3pc0ebHfsNfK5fuVheFnw/dbDqhn0E=
+X-Google-Smtp-Source: AGHT+IHZcsziz2OQi7iE6xi8xnVcdTBZ2Bp5pRG8eXRhAligKMbh9E1wd7s+Swbme+0i9FSC434NVV0EJiPi/hJTLqk=
+X-Received: by 2002:a05:6512:2903:b0:55f:48d6:1cfc with SMTP id
+ 2adb3069b0e04-55f48d61ee3mr1471517e87.3.1756196216010; Tue, 26 Aug 2025
+ 01:16:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250825-mcp9600-iir-v7-0-2ba676a52589@kernel.org>
-In-Reply-To: <20250825-mcp9600-iir-v7-0-2ba676a52589@kernel.org>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 26 Aug 2025 11:14:58 +0300
-X-Gm-Features: Ac12FXwedsMzxG4MGOIQh3eF2QdfSRTLN9ZLC4Ma-S20B9AsxbFv84W_9Qv4qGU
-Message-ID: <CAHp75Vf_QL4Nm8KDCVT5GQaOqeQtpg_Tz7HTNt5YNFQ0fAAUEQ@mail.gmail.com>
-Subject: Re: [PATCH v7 0/5] iio: mcp9600: Implement IIR feature and add iio
- core support
-To: Ben Collins <bcollins@kernel.org>
-Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Antoniu Miclaus <antoniu.miclaus@analog.com>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250708-efi-default-loglevel-v1-1-12b80db5af16@gmail.com>
+ <CALHNRZ9T0dHzbXBUdBa4hE-Ao8ebeLLPRX+1ThkuLT+Rp8_Jeg@mail.gmail.com>
+ <CAMj1kXEwyaHUkO5aO-sL3YAN=qRoSTuotHMRpBDLX9BhERnN=g@mail.gmail.com>
+ <45692a2c-ba3d-45a2-9ab1-cf6982dbf788@siemens.com> <CAMj1kXG=zG8j+cr0gNMpkKRvdekqMR-EiEkMHiFgRvbaWy9aKg@mail.gmail.com>
+ <09cb03e4-21f3-418c-98f2-66004cc3080f@siemens.com> <CAMj1kXHyw3Oi=c3p+7q75vD4iJ+x642JzL7zHM4jpF4k937Uxg@mail.gmail.com>
+ <CALHNRZ8YUVvQ--Y-EfXW04WYXiKNsj6KSs-OaLMcEnG3_xDMSg@mail.gmail.com>
+ <CAMj1kXE9tNa5R22M9NTmLY8qtnpxbvqMG-Cw0vFpVtr_KoM9bA@mail.gmail.com>
+ <CALHNRZ_Q9XwJenTVDBdk4NQ79m2wWKRyxNS_sV1TLuqunE_NGQ@mail.gmail.com> <2b7e98a3-dc77-4eb3-beba-3bea7febb715@siemens.com>
+In-Reply-To: <2b7e98a3-dc77-4eb3-beba-3bea7febb715@siemens.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 26 Aug 2025 10:16:37 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXGeGG6hCCNKhSxPJppkTzBeZg9jO0py1P8xfi2N3S=vyQ@mail.gmail.com>
+X-Gm-Features: Ac12FXyv4oRRFM3i-z0i698E2Ax6uhVoSMeXM0ttfTXxekyUYvy5X36a_xTj33Y
+Message-ID: <CAMj1kXGeGG6hCCNKhSxPJppkTzBeZg9jO0py1P8xfi2N3S=vyQ@mail.gmail.com>
+Subject: Re: [PATCH] efistub: Lower default log level
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Aaron Kling <webgeek1234@gmail.com>, linux-efi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 26, 2025 at 3:10=E2=80=AFAM Ben Collins <bcollins@kernel.org> w=
-rote:
+On Tue, 26 Aug 2025 at 09:23, Jan Kiszka <jan.kiszka@siemens.com> wrote:
 >
-> ChangeLog:
-> v6 -> v7:
->   - Remove extra space before trailing \
->   - Don't add extra white-space
->   - Remove mcp9600_write_raw_get_fmt
->   - Separate out the mcp9600 IIR series into its own series as there is
->     a lot of conversation around implementation.
->   - Add rework of ad4080 to match filter_type "none" logic
+> On 26.08.25 00:09, Aaron Kling wrote:
+> > On Mon, Aug 25, 2025 at 4:28=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org=
+> wrote:
+> >>
+> >> On Tue, 26 Aug 2025 at 02:34, Aaron Kling <webgeek1234@gmail.com> wrot=
+e:
+> >>>
+> >>> On Mon, Aug 25, 2025 at 5:44=E2=80=AFAM Ard Biesheuvel <ardb@kernel.o=
+rg> wrote:
+> >>>>
+> >>>> On Sun, 24 Aug 2025 at 16:47, Jan Kiszka <jan.kiszka@siemens.com> wr=
+ote:
+> >>>>>
+> >>>>> On 24.08.25 02:31, Ard Biesheuvel wrote:
+> >>>>>> On Sat, 16 Aug 2025 at 16:52, Jan Kiszka <jan.kiszka@siemens.com> =
+wrote:
+> >>>>>>>
+> >>>>>>> On 15.07.25 03:35, Ard Biesheuvel wrote:
+> >>>>>>>> On Tue, 8 Jul 2025 at 17:31, Aaron Kling <webgeek1234@gmail.com>=
+ wrote:
+> >>>>>>>>>
+> >>>>>>>>> On Tue, Jul 8, 2025 at 2:30=E2=80=AFAM Aaron Kling via B4 Relay
+> >>>>>>>>> <devnull+webgeek1234.gmail.com@kernel.org> wrote:
+> >>>>>>>>>>
+> >>>>>>>>>> From: Aaron Kling <webgeek1234@gmail.com>
+> >>>>>>>>>>
+> >>>>>>>>>> Some uefi implementations will write the efistub logs to the d=
+isplay
+> >>>>>>>>>> over a splash image. This is not desirable for debug and info =
+logs, so
+> >>>>>>>>>> lower the default efi log level to exclude them.
+> >>>>>>>>>>
+> >>>>>>>>>> Suggested-by: Ard Biesheuvel <ardb@kernel.org>
+> >>>>>>>>>> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> >>>>>>>>>> ---
+> >>>>>>>>>>  drivers/firmware/efi/libstub/printk.c | 4 ++--
+> >>>>>>>>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+> >>>>>>>>>>
+> >>>>>>>>>> diff --git a/drivers/firmware/efi/libstub/printk.c b/drivers/f=
+irmware/efi/libstub/printk.c
+> >>>>>>>>>> index 3a67a2cea7bdf1aa215d48dbf9ece4ceec6e4c28..bc599212c05dd7=
+46a9c54abbbe61a4bf70f1a8c4 100644
+> >>>>>>>>>> --- a/drivers/firmware/efi/libstub/printk.c
+> >>>>>>>>>> +++ b/drivers/firmware/efi/libstub/printk.c
+> >>>>>>>>>> @@ -5,13 +5,13 @@
+> >>>>>>>>>>  #include <linux/ctype.h>
+> >>>>>>>>>>  #include <linux/efi.h>
+> >>>>>>>>>>  #include <linux/kernel.h>
+> >>>>>>>>>> -#include <linux/printk.h> /* For CONSOLE_LOGLEVEL_* */
+> >>>>>>>>>> +#include <linux/kern_levels.h>
+> >>>>>>>>>>  #include <asm/efi.h>
+> >>>>>>>>>>  #include <asm/setup.h>
+> >>>>>>>>>>
+> >>>>>>>>>>  #include "efistub.h"
+> >>>>>>>>>>
+> >>>>>>>>>> -int efi_loglevel =3D CONSOLE_LOGLEVEL_DEFAULT;
+> >>>>>>>>>> +int efi_loglevel =3D LOGLEVEL_NOTICE;
+> >>>>>>>>>>
+> >>>>>>>>>>  /**
+> >>>>>>>>>>   * efi_char16_puts() - Write a UCS-2 encoded string to the co=
+nsole
+> >>>>>>>>>>
+> >>>>>>>>>> ---
+> >>>>>>>>>> base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
+> >>>>>>>>>> change-id: 20250708-efi-default-loglevel-4da5a36cac87
+> >>>>>>>>>>
+> >>>>>>>>>> Best regards,
+> >>>>>>>>>> --
+> >>>>>>>>>> Aaron Kling <webgeek1234@gmail.com>
+> >>>>>>>>>
+> >>>>>>>>> This patch was originally suggested a few months ago [0], but a=
+s far
+> >>>>>>>>> as I can tell was never queued for merge. Since I'm also hittin=
+g a
+> >>>>>>>>> case where this is relevant, I'm sending this in to bring atten=
+tion
+> >>>>>>>>> back to it.
+> >>>>>>>>>
+> >>>>>>>>
+> >>>>>>>> I've queued this up now - thanks.
+> >>>>>>>>
+> >>>>>>>
+> >>>>>>> And how can I get back the loglevel info? It seems I can only cho=
+ose
+> >>>>>>> between notice, silent and debug now. And the latter two only by =
+also
+> >>>>>>> touching the kernel's loglevel.
+> >>>>>>>
+> >>>>>>> I'm particularly missing [1] in my UART logs now which is helpful=
+ in
+> >>>>>>> understanding this essential system state.
+> >>>>>>>
+> >>>>>>
+> >>>>>> Hi Jan,
+> >>>>>>
+> >>>>>> Is efi=3Ddebug too noisy for you?
+> >>>>>
+> >>>>> Yes, also because it affects the kernel even more. I'm looking for
+> >>>>> "efi=3Dinfo".
+> >>>>>
+> >>>>> I don't get the reason behind this change anymore as well. If you h=
+ave a
+> >>>>> splash screen shown, weren't you booting with "quiet" before alread=
+y,
+> >>>>> thus also without any stub messages?
+> >>>>>
+> >>>>
+> >>>> Yeah, good point. IIRC that came up in the discussion but I can't
+> >>>> remember the motivation so it can't have been very convincing.
+> >>>>
+> >>>> So should we just revert this change?
+> >>>
+> >>> I'd prefer not to have to set quiet to get a clean splash screen. Tha=
+t
+> >>> doesn't seem like an unreasonable expectation, getting default
+> >>> non-debug logs and not having stuff written on top of the splash
+> >>> image.
+> >>
+> >> Perhaps you could remind us why this only applies to the efistub
+> >> output, and having the output of the kernel itself corrupting the
+> >> splash screen is fine?
+> >
+> > I'm not greatly knowledgeable about the efi standard and what's
+> > happening under the hood, so I will just speak to what I saw in my use
+> > case. I'm working on Nvidia Tegra devices, newer generations of which
+> > use EDK2 as the last stage bootloader. The target os is Android, which
+> > has a pretty strictly controlled defconfig. Prior to this change, the
+> > kernel efistub logs were getting passed to the efi impl, which was
+> > then printing those lines to the display. The kernel logs were not
+> > being printed to the screen, as none of the console drivers were
+> > enabled to do so. So after this change, regardless of the kernel log
+> > level, the boot splash will remain untouched until the kernel display
+> > driver takes over the display and the os renders to it. Because no
+> > efistub log lines are being printed.
+> >
+>
+> That makes sense now, and surely don't mind having some build-time or
+> runtime configuration switch that allow to tune the system into such
+> settings. It's just not so nice to take away the freedom of full-scale
+> loglevel control from the efistub.
+>
 
-Wasn't v6 already applied?
+Yeah, that would be my fault, I guess. I suggested simplifying this to
+the current approach.
 
---=20
-With Best Regards,
-Andy Shevchenko
+Would it be sufficient to make the EFI stub loglevel a separate
+compile time Kconfig option? I'd prefer that over adding more runtime
+logic.
 
