@@ -1,186 +1,158 @@
-Return-Path: <linux-kernel+bounces-786376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35B74B3590B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:35:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B8FDB3590D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:35:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7633F1B63F2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:35:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B3B716FAD8
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:35:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C12A30F55C;
-	Tue, 26 Aug 2025 09:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2988D313537;
+	Tue, 26 Aug 2025 09:35:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="pEsksbH0"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="B6FlBUV/"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1FCB393DCA;
-	Tue, 26 Aug 2025 09:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874CA2FC87E
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:35:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756200907; cv=none; b=u/BXW6dG46np2loUgOAMG7kgPnyhIqsxDBf8O4Hz0CUAFeAIhn2aE0jj7iLQU6FO/w9nCgV7OCiu2s6Poei2FtzkWKdwZ/Jp10vxHkzEK8D01vjYA4xyMO+sBU4XoTqDqMlHQ4eY68jvKtOOkXMxytCtH7GiNYjxtsbIykdQBlQ=
+	t=1756200915; cv=none; b=uLd/NGMc+X46hlsiFpdWWPpRYFIljAHtWsVYtm26EBIa6+eHq+hguOzbMo9AdgFP20jsUWDYzhwMkP2KiRavEpiHQPLxRFv6QR4fo+t3c/TbZKL5xu3yrMVOBEFtFM0LZ4piMjsPUDLOJkbVLw+w/7mNlzwGGOOOC8ej83Zsn6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756200907; c=relaxed/simple;
-	bh=bBbppVx3R7H1M9z+T8beISYQlnn6nidjn5JWunIl9/4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=afcU4bQEPuAMVBhk6+glNIr5W8EOdkcMjUDIMcyy2op/QmeWd7sPYcfY0rspEia1rFr9GF6CXo8HGBUB4tlGLrTk4bmTM7QktgmAUW30JMuc8CFshvZjRwSXqo5HdOD3ffNQYTQL47WhpVcsZl9ADKdMphX9NCBuH1+vHRu068Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=pEsksbH0; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=0kksXY6qvH1L0tvsp2dKynLeBCUnDrycYEwOgABE3I8=; b=pEsksbH0GWNkC4oxuPMuoDz4Lv
-	oEVH+1V0RqTirpkdnQphw4N23fltxzOHWvH4oMWynmB2vQLBFc/NdVgMXBvEWNMdtE/JPZT5abkxZ
-	BOLuOh9/uOEFrdX762OF9dTagAm1dx327Z6TS42pJYBD7C1QpphQGmmlv7hMbNRSLY6Q00eVzJ601
-	0FUNVVqOOAq2FXvGBmBh4rUv7dMLsiQ/xK9zby1Q7fHSP6Wrgck0rx2dOFJfsOc+moxoDdnFmotar
-	6VqZB12dNSXOh9vBdzPrClQBiD795n/HjXDXU97wGRSVBJYYwaL5hzxmwXICYPtU12qsJt0aD1g+z
-	lIVGCueQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:41130)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uqq4r-000000007fR-03bV;
-	Tue, 26 Aug 2025 10:34:53 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uqq4o-0000000018h-0Pc0;
-	Tue, 26 Aug 2025 10:34:50 +0100
-Date: Tue, 26 Aug 2025 10:34:49 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Chaoyi Chen <kernel@airkyi.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jonas Karlman <jonas@kwiboo.se>, David Wu <david.wu@rock-chips.com>,
-	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH net-next v3] net: ethernet: stmmac: dwmac-rk: Make the
- clk_phy could be used for external phy
-Message-ID: <aK1_uaBpnix4n4eS@shell.armlinux.org.uk>
-References: <20250815023515.114-1-kernel@airkyi.com>
- <CGME20250825072312eucas1p2d4751199c0ea069c7938218be60e5e93@eucas1p2.samsung.com>
- <a30a8c97-6b96-45ba-bad7-8a40401babc2@samsung.com>
- <d0fe6d16-181f-4b38-9457-1099fb6419d0@rock-chips.com>
- <809848c9-2ffa-4743-adda-b8b714b404de@samsung.com>
- <aKxnHFSrVeM7Be5A@shell.armlinux.org.uk>
- <8240a3cc-aade-40d8-b2f4-09681f76be68@rock-chips.com>
- <aK19bSmrbXjoVXdO@shell.armlinux.org.uk>
- <ae11b993-5844-4da1-b433-c27b5a73060a@rock-chips.com>
+	s=arc-20240116; t=1756200915; c=relaxed/simple;
+	bh=Q4ut4up6GX/HdckreW0R8OaX0WDAeyY5hviNTW/p74Y=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=l4OZ9dyAlnxDGV0sffAxBHprsZp8NrjyTicXrwzXGdyRB1HckTJMXVQnT7z9h8x9kKgbgKN1lDvfRUiAXfamYUkyyknKByILUDkfGTglCU/fxMfFqs7ygiwDI5n1b9Wi1KByVL1n3Hf97AtfYb07jbI0Cr9ZKiuB/HolqSv/EoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=B6FlBUV/; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45a1b0c52f3so32714895e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 02:35:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756200912; x=1756805712; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hkJG+WUZSpEwjO7HzoCtPjyyNbjxdrmMzotvlEggg7g=;
+        b=B6FlBUV/9v0CVEYfAfwF86r4mvRoXMjxtNRqwwGqFtZ7frTaU+jKwqWAcz8RZEFjUM
+         UUo1Ao9tZixW007NvfqsiiT3q5LqR8CkW7/1wbKWMo82Ftk1ad3noF2zQ5eGwxmBzVPF
+         b5JOTQx66ZMlLJUD4r1+qp8c9/B4IT7YintfeAt6uBSuIN3qg1fKLPUYqFpt4obU4Meg
+         IcSsLx6ixNhVzqX61EK+43k29mrH8chxUvWLySTvRMmiSh1zTPQmzYAT1bQY4c/Coes0
+         vXTGIXNhjE16QQCnm3DRP9kWqVmBxpr9k9erQIyOiRoxXBW8/aw3+QM3ntFKiTqi+t4m
+         DkpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756200912; x=1756805712;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hkJG+WUZSpEwjO7HzoCtPjyyNbjxdrmMzotvlEggg7g=;
+        b=VRi8rrRL4f+iKBpz6jgsh8od60jKUAHhw1qIwjPOAX9QwPFpSKChcnjWFOpy1cyW1U
+         0wUsE4+Q7zAb2/+dlJyqD9LuEJWVrd2BW/pCFxv9ysx8mG6ZjkzF8+//HQeR/o0kvqNg
+         sygZO8qN7AYu6yRN1SpFLMtmioyZi4ToAT9TSZ/SfKo6svesxjzhGKKod5ZAqGsSw9Qw
+         m4AZZzt2OeCybcCOCOeKR+wSpUx8maBsY9Vc222hxCP1bTqAw0lgbiubR3P342+WVOOb
+         oRRIOYikmT0cY6VLShrPrQA3XYcZkz3uoX7T2SniTcMaRR4cTfR4X3qQiy1Fi9HnitSa
+         t8gQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXaEwsxNYtvTs/6w/o+pyAguuvRLnX+He8ezp1jqfWQCx/5mSPApTCBMenvahDzeR4B3QgkvI2+Eemrwqo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlSZ8avmeND5RoCN99vUFjqNyy79SiKgei9A5DxmJu8ZgFMZlJ
+	oTW204crVk9y7C9PZ9LLigVjEKKFHWh9kXVIltpjooqwxL7Y5FWiEYtRTsk5rPaLjjU=
+X-Gm-Gg: ASbGnctZ1NOdyXKjU/SBPmfMNAXONgCv7dEftNLeLxoRsWKzMnaPormdG8feMpKW15o
+	RUk8I4uz3WKKHiLPsg+m4LNlihfZs0ircogQYWj/JruxCaIgtVWcbEISqU8+5PlVYoNMtPn73K8
+	+SrFr368jvP3QwQwKMlf45tqdxzCh2aukJM8lE453PmfqgvdBhkL/S1D9CHh9cjcJ8PSIWo/N2f
+	2IeRA4DDTybaacStj+TIaMgbdhczY3tc+4152A3+kEGGnUpOAgHlv7CyQtJ6THwINm6ASb2xyNe
+	7XK3FiLVy/qEhOQ0oRLV6KLeguqh72NvDEfugmx3MKaHZKqZtaP/viHFeqjOyyl8ltLzJXR/T2+
+	RbENYpOcf3da1/1jbMUCt7U31LsE=
+X-Google-Smtp-Source: AGHT+IH2xF7cWf9zPiJpCZDblnQIkHuRl4owRmxgCh3l1f0u4tvEtpqb3bPUkqR7KcRXy8joxsDAmg==
+X-Received: by 2002:a05:600c:3b15:b0:458:c059:7db1 with SMTP id 5b1f17b1804b1-45b517d4580mr149020165e9.30.1756200911704;
+        Tue, 26 Aug 2025 02:35:11 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:fed4:79fc:9440:6629])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c7117d5b10sm15308255f8f.47.2025.08.26.02.35.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Aug 2025 02:35:11 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 00/12] gpio: replace legacy bgpio_init() with its
+ modernized alternative - part 2
+Date: Tue, 26 Aug 2025 11:35:01 +0200
+Message-Id: <20250826-gpio-mmio-gpio-conv-part2-v1-0-f67603e4b27e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ae11b993-5844-4da1-b433-c27b5a73060a@rock-chips.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMV/rWgC/x2MQQqAIBBFryKzbkClSLpKtLCcahapaEgg3T1p8
+ /hv8V+FTIkpwyQqJCqcOfgmqhOwndYfhOyag5Z6kEZpPCIHvK6Gf23BF4w23RqlXQ31ZlSud9D
+ +MdHOz9+el/f9ALS1ILVrAAAA
+X-Change-ID: 20250812-gpio-mmio-gpio-conv-part2-0ab8e4871d4d
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Ray Jui <rjui@broadcom.com>, 
+ Scott Branden <sbranden@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Yang Shen <shenyang39@huawei.com>, 
+ Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1645;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=Q4ut4up6GX/HdckreW0R8OaX0WDAeyY5hviNTW/p74Y=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBorX/IsQ61XrGh+TV0cTJdfuJwQ0IU2AzJI6U6B
+ xODhnvRaf2JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaK1/yAAKCRARpy6gFHHX
+ cmJuD/4s6vLLL4IJvlMcBRWt+fL3p/MdEMPyIgv+IS4S1jqjqxW26UsphEQIOFT4zd+2Ei6Qx4E
+ bYgNLNqataNIqWb6AtcX8wjj3CWWIqrMTZD2ZXpw7rLb951R5Dotmo1R6kM58oDlTaNJFZjbg9n
+ ChkAEyNlA5GRhB6foaz3+Do5OJTbItx/BFm0lH2dyCt0s/6WsRMwal4Iv66YCXtvOGUGiQtRnEP
+ Jl0NjctXUHuT0bmeBEDxXiB9np1PybcUOTk1AhTTyvajEThwU8fCt+oaavXD+6mn4QIBRfnqyTl
+ jYArmBFJBtDETk2cAIcyPpsRLaXJQfHPIXK+35E53tBd1AVBBWm9wpL/18OzvnFdcVibRnfb+dz
+ DpPzPGdSpxkREQGdv1S4HNICQdTQ/FtrRdk0CEJluBKeMXcPSEI0yuhZMEORT20nSri9kTKJgAL
+ BMa8VJSwoEoUkx2+GBgUcJYRyPlZ5d4vMM3eFjuiezT9WnyRp4/QLxWBVFxrBIdwvb30HB3FZ24
+ WMbajv8vTcO7A4A+txRMVD1IoNqnjKQ5ZR0KDXSRml9ykbYzC8TKlOXRAEJte+Z96Yt5BWlfzIc
+ 5oHMXijNS4BrvrtEiPsnVbf7kA8XquJdZMs1dq7KwCkiXlLtRlhonbsjN9GGfNZBkyhVrchsZNd
+ QX+14T53A7wjY2A==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-On Tue, Aug 26, 2025 at 05:29:04PM +0800, Chaoyi Chen wrote:
-> On 8/26/2025 5:25 PM, Russell King (Oracle) wrote:
-> 
-> > On Tue, Aug 26, 2025 at 04:08:40PM +0800, Chaoyi Chen wrote:
-> > > Hi Russell,
-> > > 
-> > > On 8/25/2025 9:37 PM, Russell King (Oracle) wrote:
-> > > > On Mon, Aug 25, 2025 at 12:53:37PM +0200, Marek Szyprowski wrote:
-> > > > > On 25.08.2025 11:57, Chaoyi Chen wrote:
-> > > > > > On 8/25/2025 3:23 PM, Marek Szyprowski wrote:
-> > > > > > > On 15.08.2025 04:35, Chaoyi Chen wrote:
-> > > > > > > > From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-> > > > > > > > 
-> > > > > > > > For external phy, clk_phy should be optional, and some external phy
-> > > > > > > > need the clock input from clk_phy. This patch adds support for setting
-> > > > > > > > clk_phy for external phy.
-> > > > > > > > 
-> > > > > > > > Signed-off-by: David Wu <david.wu@rock-chips.com>
-> > > > > > > > Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-> > > > > > > > ---
-> > > > > > > > 
-> > > > > > > > Changes in v3:
-> > > > > > > > - Link to V2:
-> > > > > > > > https://lore.kernel.org/netdev/20250812012127.197-1-kernel@airkyi.com/
-> > > > > > > > - Rebase to net-next/main
-> > > > > > > > 
-> > > > > > > > Changes in v2:
-> > > > > > > > - Link to V1:
-> > > > > > > > https://lore.kernel.org/netdev/20250806011405.115-1-kernel@airkyi.com/
-> > > > > > > > - Remove get clock frequency from DT prop
-> > > > > > > > 
-> > > > > > > >      drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c | 11 +++++++----
-> > > > > > > >      1 file changed, 7 insertions(+), 4 deletions(-)
-> > > > > > > > 
-> > > > > > > > diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> > > > > > > > b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> > > > > > > > index ac8288301994..5d921e62c2f5 100644
-> > > > > > > > --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> > > > > > > > +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> > > > > > > > @@ -1412,12 +1412,15 @@ static int rk_gmac_clk_init(struct
-> > > > > > > > plat_stmmacenet_data *plat)
-> > > > > > > >              clk_set_rate(plat->stmmac_clk, 50000000);
-> > > > > > > >          }
-> > > > > > > >      -    if (plat->phy_node && bsp_priv->integrated_phy) {
-> > > > > > > > +    if (plat->phy_node) {
-> > > > > > > >              bsp_priv->clk_phy = of_clk_get(plat->phy_node, 0);
-> > > > > > > >              ret = PTR_ERR_OR_ZERO(bsp_priv->clk_phy);
-> > > > > > > > -        if (ret)
-> > > > > > > > -            return dev_err_probe(dev, ret, "Cannot get PHY clock\n");
-> > > > > > > > -        clk_set_rate(bsp_priv->clk_phy, 50000000);
-> > > > > > > > +        /* If it is not integrated_phy, clk_phy is optional */
-> > > > > > > > +        if (bsp_priv->integrated_phy) {
-> > > > > > > > +            if (ret)
-> > > > > > > > +                return dev_err_probe(dev, ret, "Cannot get PHY
-> > > > > > > > clock\n");
-> > > > > > > > +            clk_set_rate(bsp_priv->clk_phy, 50000000);
-> > > > > > > > +        }
-> > > > > > I think  we should set bsp_priv->clk_phy to NULL here if we failed to
-> > > > > > get the clock.
-> > > > > > 
-> > > > > > Could you try this on your board? Thank you.
-> > > > > Right, the following change also fixes this issue:
-> > > > > 
-> > > > > diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> > > > > b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> > > > > index 9fc41207cc45..2d19d48be01f 100644
-> > > > > --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> > > > > +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> > > > > @@ -1415,6 +1415,8 @@ static int rk_gmac_clk_init(struct
-> > > > > plat_stmmacenet_data *plat)
-> > > > >            if (plat->phy_node) {
-> > > > >                    bsp_priv->clk_phy = of_clk_get(plat->phy_node, 0);
-> > > > >                    ret = PTR_ERR_OR_ZERO(bsp_priv->clk_phy);
-> > > > > +               if (ret)
-> > > > > +                       bsp_priv->clk_phy = NULL;
-> > > > Or just:
-> > > > 
-> > > > 		clk = of_clk_get(plat->phy_node, 0);
-> > > > 		if (clk == ERR_PTR(-EPROBE_DEFER))
-> > > Do we actually need this? Maybe other devm_clk_get() before it would fail in advance.
-> > Is it the same clock as devm_clk_get()? If it is, what's the point of
-> > getting it a second time. If it isn't, then it could be a different
-> > clock which may be yet to probe.
-> 
-> It's not the same clock, but it should be use the same clock controller driver, which is the CRU on the Rockchip platform.
+Here's another round of patches converting GPIO drivers to the
+modernized generic GPIO chip API.
 
-Will it always be the same clock controller, including into the future
-Rockchip devices?
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Bartosz Golaszewski (12):
+      gpio: xgene-sb: use new generic GPIO chip API
+      gpio: mxs: order includes alphabetically
+      gpio: mxs: use new generic GPIO chip API
+      gpio: mlxbf2: use dev_err_probe() where applicable
+      gpio: mlxbf2: use new generic GPIO chip API
+      gpio: xgs-iproc: use new generic GPIO chip API
+      gpio: ftgpio010: order includes alphabetically
+      gpio: ftgpio010: use new generic GPIO chip API
+      gpio: realtek-otto: use new generic GPIO chip API
+      gpio: hisi: use new generic GPIO chip API
+      gpio: vf610: use new generic GPIO chip API
+      gpio: visconti: use new generic GPIO chip API
 
+ drivers/gpio/gpio-ftgpio010.c    | 48 +++++++++++++-----------
+ drivers/gpio/gpio-hisi.c         | 46 +++++++++++++----------
+ drivers/gpio/gpio-mlxbf2.c       | 81 ++++++++++++++++++----------------------
+ drivers/gpio/gpio-mxs.c          | 31 +++++++++------
+ drivers/gpio/gpio-realtek-otto.c | 41 +++++++++++---------
+ drivers/gpio/gpio-vf610.c        | 27 +++++++++-----
+ drivers/gpio/gpio-visconti.c     | 25 ++++++++-----
+ drivers/gpio/gpio-xgene-sb.c     | 53 ++++++++++++++------------
+ drivers/gpio/gpio-xgs-iproc.c    | 34 +++++++++--------
+ 9 files changed, 215 insertions(+), 171 deletions(-)
+---
+base-commit: d0630b758e593506126e8eda6c3d56097d1847c5
+change-id: 20250812-gpio-mmio-gpio-conv-part2-0ab8e4871d4d
+
+Best regards,
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
 
