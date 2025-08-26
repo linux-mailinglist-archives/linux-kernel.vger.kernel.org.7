@@ -1,200 +1,567 @@
-Return-Path: <linux-kernel+bounces-786399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F876B35943
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:43:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB2CEB35948
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:45:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CF8917F691
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:43:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8087F189A002
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:45:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E07319858;
-	Tue, 26 Aug 2025 09:43:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044C631B139;
+	Tue, 26 Aug 2025 09:44:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fetCA905017.onmicrosoft.com header.i=@fetCA905017.onmicrosoft.com header.b="KsoxmLjN"
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11023099.outbound.protection.outlook.com [40.107.44.99])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FPBwE9KU"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE39A296BC3;
-	Tue, 26 Aug 2025 09:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.99
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756201420; cv=fail; b=UAs+NpI5OtwAXkNoJX86U4S1xGLEnDi2isHwuEhlpE0G6D/1/DalotL1kzIwpcoPBFBanBTZ/gESIHbUFuLwonSv5/vE7TccpXOz5Jv/KzF0Zisxzo5iBmMJMGtJh3mbUJXEk+5KadDbCpr2gbPdikMUVrTsFoVeHzBiAgJSsvM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756201420; c=relaxed/simple;
-	bh=zEiX1KyYhcj5PlCIF7Vf6QDrnmdQ1w/8ZJZr/oQCb10=;
-	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=UzSyW0VvTCioaT5H8FN+Fz8qJvFXPMpHLwGDKI/e9D97ENOdYMFX52EfFyhWezMJtFrvp9RobFTF11LGg80Vu23v0bftHKvoHhdj1Ns+u5S7HCm5qts2DgfmEEavNiwCTaiFW6xQURSKoPVXzT+4bIZ3kXNVMQSgf//TYt/HMgY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=portwell.com.tw; spf=pass smtp.mailfrom=portwell.com.tw; dkim=pass (2048-bit key) header.d=fetCA905017.onmicrosoft.com header.i=@fetCA905017.onmicrosoft.com header.b=KsoxmLjN; arc=fail smtp.client-ip=40.107.44.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=portwell.com.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=portwell.com.tw
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=j4hT1+miH3L23PM5i3Y6ZTdx1pXbplzZxop/KLFDxw/Vuc2+3EEaC3cfNmrMCkNkZesyHd0PgJUC5ydUdqM4QW2pweBkUU/odjAhMU6doQP8PN7xC4u5dpasfx0E3CBIzSvMmu+8gikTR2KG47alTZpJxydBbMVWVe6KBPM0nh1QT3NI8/Tc41Ms+DCHD7ymfkoedivF4mh/f3mjhxc5xkoUq4tmB5P6D4TbH1vjCYrd3vFMFB72LcDR2lg890DtVB6454GEGulgi8FmNrmlpqwblkPz4dzHjocTgnKjWUM+67gmZjt9BtaGbDn8ZfDem0p/O5sKa1zOl+yxS2zzOg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=q0kz/HWyfb9TbqKLCzEC0t0EzOXaWhLtC9OYRHEduh8=;
- b=LfrUCr50qulwoF6jbIN5NbMj1rHXd6by8m11YlhFY6a/ft2u2h0Me+vm7gvQv6tvo3AdMlJOJtAPO0IS9SHAxb7viOIUkY2GiozkX2Qlt0OEFd5XPDLBJVypCKwFuTDSM7WOBotMr2Id/FdOQuoM2EN2pnimHWhW0HKlFhBB/WW4VJynC/5t6QrzNZA6bwgyvSQIF2njTEVgBhSre+F2Tl4qN6Ow96Fo+8fW2+d/PGr/bvTTpoXg+Z0xzIVTq6g31G7nSH+NsV7fIOX0lY0Rhf43Wifrv2hAjhaezSLl7E7CB4uZwxvQhZ4jrKe2A6ItFluHIgN8Bcv+nhklSjMv2A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=portwell.com.tw; dmarc=pass action=none
- header.from=portwell.com.tw; dkim=pass header.d=portwell.com.tw; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=fetCA905017.onmicrosoft.com; s=selector1-fetCA905017-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=q0kz/HWyfb9TbqKLCzEC0t0EzOXaWhLtC9OYRHEduh8=;
- b=KsoxmLjN+jirAbK3mrffEws2ZUaxIBpfjx6LolrokBk4QT13/QhTchkKxRuMcq5eZEjyDyRMmZVV+MW0JaucrCSVPVofHDkFU0Q5Bbe07QIOxcfz4lkFpFcwDfT3mHWzT9WWt9O7nAIWfnuwLRpGkex39eQb9sg2059LQG0p6+KhzDrpAvFPz0OCxg62v4YxU0JN2gdQsjyOrqhrHEogULRIWx9CTatJjAAThOcpNR0VpfDvdKFAtoV+xCK4+PMivFU1SHcZsXiALLLn7W9/5Kd2CiImyZ/vuiyE67iZfP5j8YEiXzfD5TtQExFcPveyVx4ZeiPYY7LoQJYjbsvp6Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=portwell.com.tw;
-Received: from KL1PR06MB6395.apcprd06.prod.outlook.com (2603:1096:820:e7::10)
- by SEYPR06MB6312.apcprd06.prod.outlook.com (2603:1096:101:140::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Tue, 26 Aug
- 2025 09:43:33 +0000
-Received: from KL1PR06MB6395.apcprd06.prod.outlook.com
- ([fe80::9235:5570:71b3:224]) by KL1PR06MB6395.apcprd06.prod.outlook.com
- ([fe80::9235:5570:71b3:224%4]) with mapi id 15.20.9052.019; Tue, 26 Aug 2025
- 09:43:33 +0000
-Message-ID: <f72da7c2-cd2f-4b09-8cc5-7b08ad54dde8@portwell.com.tw>
-Date: Tue, 26 Aug 2025 17:43:29 +0800
-User-Agent: Mozilla Thunderbird
-From: Yen-Chi Huang <jesse.huang@portwell.com.tw>
-Subject: Re: [PATCH v3 1/2] platform/x86: portwell-ec: Add suspend/resume
- support for watchdog
-To: ilpo.jarvinen@linux.intel.com
-Cc: hdegoede@redhat.com, jdelvare@suse.com, linux@roeck-us.net,
- wim@linux-watchdog.org, linux-kernel@vger.kernel.org,
- platform-driver-x86@vger.kernel.org, linux-hwmon@vger.kernel.org,
- linux-watchdog@vger.kernel.org, jay.chen@canonical.com
-References: <22148817-aade-4e40-92b7-dcac0916e1ed@portwell.com.tw>
- <e11e542b-b630-4f18-8a60-a36fe31c0133@portwell.com.tw>
- <6584da3e-fc86-7a47-f783-da77049b2215@linux.intel.com>
-Content-Language: en-US
-In-Reply-To: <6584da3e-fc86-7a47-f783-da77049b2215@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TPYP295CA0019.TWNP295.PROD.OUTLOOK.COM
- (2603:1096:7d0:a::14) To KL1PR06MB6395.apcprd06.prod.outlook.com
- (2603:1096:820:e7::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E09B319848;
+	Tue, 26 Aug 2025 09:44:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756201490; cv=none; b=QGOvXjniEqBHfO5WtSt7SHVYAnJilhFWZ1UYfHcLIVG4nTari0buk49SrfbybsNVPAIsGm3cAXlvkLgp2sCwXHBB8pmme4XtRRz4EfAy9wGOzR16/88ec5kDFMket7E9NpYmBsge9VTByBnCKVdJ/ffHHzB9s+RDFTPsbRtuH2k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756201490; c=relaxed/simple;
+	bh=ULr0vGuDuV6TzZuQIg1w3W7HvSTj8tUse9kNuLzqh8s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qO6XOCZFD5rNlZruTrvUPVmFZaDqLygMlcOm9FbofT6Y/Gxp3g9sHt/qnqWjN4zG3UbPW/uGDQYksh8w0aSLjdOP9xAnIwSFUMblZrmg4maiMSfLbBLDEdBYzDc3rX/QsBLu6Cnk3k71onlMqLi1Pxk2zX5kUFKfQq7i4mKoG5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FPBwE9KU; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=440g2MCDS70C5GUzL38qGyO0LLNuUeiYROjtfaXpBNc=; b=FPBwE9KUGGI/Sp3bL/acaKowb0
+	7dBUnevCp9OWqlkv9crqDWUTNOIbCLOMN/T9tqAwnwMYrPzXEj9yyGyz0ow3rppgSuXO0n3rnCTnZ
+	hbdOaDwnl3oqQAHNpd9Fn5SzxpJTHrRWqeTKLgDJXFpR2IZlYzkYD/fCqz+NN4+of5+3yX0uYkfPg
+	PaOw2Ezaq/9hhJkSFkDCnczBva1CpLxuF4KoCP0ma/IapXbieiRt/XE7TIvctQiglRagLttO70nvJ
+	f9kPrSg1stJ8+Am80MEMoKSYX86s7pTU3aesVdudUWaaV2/LbuqVBto3mY7tNQn/WfcX8WbgI1wV6
+	60QvIjyw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uqqDf-0000000GSI9-19tL;
+	Tue, 26 Aug 2025 09:44:00 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 871BE300323; Tue, 26 Aug 2025 11:43:58 +0200 (CEST)
+Date: Tue, 26 Aug 2025 11:43:58 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	linux-s390@vger.kernel.org,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	thomas.weissschuh@linutronix.de, Li Chen <chenl311@chinatelecom.cn>,
+	Bibo Mao <maobibo@loongson.cn>, Mete Durlu <meted@linux.ibm.com>,
+	Tobias Huschle <huschle@linux.ibm.com>,
+	Easwar Hariharan <easwar.hariharan@linux.microsoft.com>,
+	Guo Weikang <guoweikang.kernel@gmail.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Brian Gerst <brgerst@gmail.com>,
+	Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
+	Swapnil Sapkal <swapnil.sapkal@amd.com>,
+	"Yury Norov [NVIDIA]" <yury.norov@gmail.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Andrea Righi <arighi@nvidia.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+	Tim Chen <tim.c.chen@linux.intel.com>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Subject: Re: [PATCH v7 4/8] powerpc/smp: Introduce CONFIG_SCHED_MC to guard
+ MC scheduling bits
+Message-ID: <20250826094358.GG3245006@noisy.programming.kicks-ass.net>
+References: <20250826041319.1284-1-kprateek.nayak@amd.com>
+ <20250826041319.1284-5-kprateek.nayak@amd.com>
+ <609a980b-cbe3-442b-a492-91722870b156@csgroup.eu>
+ <20250826080706.GC3245006@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR06MB6395:EE_|SEYPR06MB6312:EE_
-X-MS-Office365-Filtering-Correlation-Id: 11cf3bde-2e5d-4c30-40b6-08dde4850583
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?R0dRaytSMzVMODBocVVBSXk0bWgrQjFQNHBWc2lnblhaZkJQRTBiN1B2bFZU?=
- =?utf-8?B?Ty9OSGFtQlZxRDd5WEJLaHpKMmo5bDVxQTFLakFOdUFJa1hVODVmamZaZEVU?=
- =?utf-8?B?a2hicTdzdk5PK2VVNDlqWWphcVlXQmNGdENobmRDY21PQ3FET3ZFV0xwaXEz?=
- =?utf-8?B?MEtyaFJ2TnpJMkx1cENiWGZYczlXelYxYjczV2FSeFMvZ0RWTkNqSVFEUXhZ?=
- =?utf-8?B?V09xNWM3T05kSTlNTENMWWpKNHkzNEVzQnQvREhrSENxRU5pbE8wWCtUbHk5?=
- =?utf-8?B?SXk1VmZBWkZUc1haN0V0T2dPQ05UK0VOUSt2ZElIV1VMbkZjditpdHAweXN1?=
- =?utf-8?B?SEx2TXlNVHNSR1UvUmdUV1h4ZzVZK0l4TnY1WS9QTEZrOUxxcmIwNG9GRGNo?=
- =?utf-8?B?OGtNSWN6anNjY3VXbjNNMG4vWDBsZjlYbDBvZktzUXJkK0Y3bG9TZ2o1dEMr?=
- =?utf-8?B?anA1dERMNTRLTW5RWGlaYmNTU05OaFd4YTltZSs1cHppOWFRWHZJUHB4T2E3?=
- =?utf-8?B?elFoazhROVdiT0RFV3hpT1pjVU5ZSFdWT2JpV0N1Zy9sVElwQjJiZmR2Znln?=
- =?utf-8?B?TGlWME9xV0xEVG1Nd1FVdVlURzJHejVLTW1rbDMxWFlpWUVTOURxSE5FaEZJ?=
- =?utf-8?B?Q3YzaGpCVUlJRndaSFpsVWVEUlFXd3IxZUwvVzFSWitXTnNWa0wwUlpVRXBy?=
- =?utf-8?B?bzAybndVMHp4Q0dVMStrMGFORUtXZ29DNktUSHIrUjZRZVZDWG53bmpZR3RV?=
- =?utf-8?B?TUthamxIN1BzMnVFaGIxUzZNQ0FEc0RWNTdYN29OelZRdzNPbW5ENnRYSngr?=
- =?utf-8?B?cDRFUEpPdVVwUEZGLzVqWmlZdC83S1R3NkxRR1RlaUM4ZWNjaURkV3hSQ3Vm?=
- =?utf-8?B?NnRPRERTdXhtUTBFQ21aN25XdTRsTnA1aDhkTDdHNmpHODFQd2pwbGlER1ZF?=
- =?utf-8?B?ckY4MFpvRFh3YTFiVGVuWFlUZkJ6SXlxVCtYcStFTmxUZGJsbkFmTStuUlBN?=
- =?utf-8?B?bjJyT0dUNWo3ZUlyclRrVExFSlFmZ0Q2UGh5aC9JaDNZU0k3WkVtLzNjTThs?=
- =?utf-8?B?alUxT2pYUVY2RmorR0JLNEozY2tsODJHZHQrdEw3c2VucnkwZ1FRNEtQdmJW?=
- =?utf-8?B?M0w5UUEzUHpPQkVLaGxaTkNKalJsMVExcm11enRUZm9QRWFqZFAwVVE2TTE5?=
- =?utf-8?B?aVdpMzR0U092SkpTWGhxcHFjWEt5WTMvZXZVSmVUVGJKdy9QVE9DSTEvRGJa?=
- =?utf-8?B?S1hWLzRKK0hUWlBwUE9wNW94cG1sMHdGRmhDM1c3bUtNZE5nS1dYVXhGdm10?=
- =?utf-8?B?NGxGSUx0RmhKaUdrQ0lIaThjM2FOcWFDaktUNXpNRHdWbjdJSnFOa3BZODlp?=
- =?utf-8?B?RDNSNDBaVTBGd3VObkp0UWVZd3RaTmtuNHIrRks2UlZhWnVTNjhEMFRzWkdr?=
- =?utf-8?B?M0cxMndoNjMvNmtMcW55VW03NG5rNGxOcFRWaWxTMjdkeFZ3MjIzV0ZlUUZH?=
- =?utf-8?B?VG03YWtBdTgvTUN2Tnl1ZFh6b05pWTBQUUdja3o5V25YU2VPODVyaCtGL2VU?=
- =?utf-8?B?amVtY0k5dCtZb0FENnFWOWhPeVQ1ZWJ3eUtXOGZvTVRMN1lURkNBeVVRYjVk?=
- =?utf-8?B?OEpDTVNtMG9KMTgwWFhaL2ZYb0c0WFZxOGlXSG8xRDZnZldBVXUyTjExU0J5?=
- =?utf-8?B?clUvQTFvdlR3eHVZYk9CdVlBaDBQSXJjbXNtc3JxOEJ4S3ZkQmxwbFplblBn?=
- =?utf-8?B?U2ZGVjcvQWt4TVJqdFFsOFJsNzNHSnJpdjVHa3ZYSGgxMXNyekpuc1JLZ2hr?=
- =?utf-8?B?R0lJa2pvbXRGNU5DUExwWjI3czBXbVkwK1lnS2h6VVNCWUJOVTFURGtyN3hV?=
- =?utf-8?B?T2lrMkpHOThNM1EzMXNJb2FFUzNXMUxqVEhhK1pWZExUZEtzWERiZ3NlRFRl?=
- =?utf-8?Q?zDprJyxMRZU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6395.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SjE3NEJyWUtCc2RMVlA0Tmd4ZzBIY2lqdkV2bmM0S2doRjg0c0w1V2dyZHN0?=
- =?utf-8?B?Tkc5Q3IrOWtsUkN3VXI2ekFTL0FSUDNZQWErano3KzltUHUrTTE4c1JTUG5s?=
- =?utf-8?B?QTU2R2ZQaTY2M0hCdGsvVXA5V1h0R0tiRDlYc0Q4ZnMwQkc1NUdkK25oU085?=
- =?utf-8?B?cm5RZk1hanZuMFlVU1AyUTlZQjVNTmNRY0VHSnMycmx6MTM4Z0MrcTh6b2ZG?=
- =?utf-8?B?NUlTdGNtSHRmczhPNTBtelFPZFVtb1lxUzdVTkZsSmJpanFoaCt4a3dJRUE4?=
- =?utf-8?B?TkRFS3o3NkRVL3JUQXl4Q1RyWmsvK3NXckxIYlFPME5qWWQzUHFWWXl6VjJo?=
- =?utf-8?B?UENFYjBrdTBSZjk5a1FaM2RSTDA1N1N2MTM4TzlwcC9Mb3RHSGxMYnczR24w?=
- =?utf-8?B?eDJBbmlPL2pJUW5DZkV1YW5ReWZFaUhyYndrbzg0c1NwVGxWTHdNM1dWejRv?=
- =?utf-8?B?amZmRDAxbTIyTnQreUE2UDRTZjRQVEx5TzFxUGR5OWRjdnRSU05zWCt4WmJq?=
- =?utf-8?B?ODFxUVFscmhObWVMWUUyQ0lHbmpKYXF0N3FtVXc3TmdGajRYL1l6QzRiVUpN?=
- =?utf-8?B?bG5icGxwdkVzUzFya1l6bitsWFlUT055K2hmWk1ESmN1bTFib1M0T282cnNs?=
- =?utf-8?B?ZFBNYWg2aDc4Z2IxMmhTY1Y3M29GbElGQXd3Tm92a254RGc4V1VXL3hiVngx?=
- =?utf-8?B?OFZLUUZlVDkzek5hcnB4ZmJjMHFtVGNyN0Z5L1hTc0V3N0ZuTXN0L1hGSWVK?=
- =?utf-8?B?UFAwZ1Mxc1VoTi92K1lSaFVCeEZoL0ZTdkRRMGtkbFNFN3RXR1VIRjJvWTJI?=
- =?utf-8?B?M01kc1N5SGlSNmZJYkJ2RFBBLzRHazlKSE5CTUhyOUVBN1I1OGdENkVjQVpz?=
- =?utf-8?B?c0J4UlhwOHdwbFlCUXdFNjdMU2h5L2V1d3BISkhGb0dRNkRqaGVvWU52Y1k4?=
- =?utf-8?B?czg4a3I1YW52NTJiOGdzSWlNUFVtY00vVHFrZ28zZDhsTEFnejBLLzU3QXY2?=
- =?utf-8?B?YXBLS3ZOdUdKWVoyaTVtejFoVUxqdXdkUzB5WGRydEZhRVV6elJyOCtlMWpp?=
- =?utf-8?B?ekdZN2FON2JVWng5M1BLb0puam9OL0UrSGVsUFlleWJ3djJOWExkYWYzZVZR?=
- =?utf-8?B?TkU3azNOVFVyUnRXeHJiL2RsMG1kL3lNR1hsUzg3a2lxaVk2R1Uza09SNW9N?=
- =?utf-8?B?VFcyTXRNTzZ2K2ErNjJsSzVITjNiL2d3Ynp1RUEwM05OTDZKak5OYlVYZzFn?=
- =?utf-8?B?blM4Q3lYSmpBWko5RTVJdzNyaEthR2p6YmRIUEZxWEhLUHNXb3M5c1pQN0c2?=
- =?utf-8?B?aEdqNnZ4SkErMHljRDVxTjJXRDBHVTJZMlp3dGtacTB3aDhEdFcvOXBSQ1pX?=
- =?utf-8?B?YjRVTUxlMjNVbUJNdE1zbkNpMkFQN2s3SjdMbndPU3ErRFVhdjRTaUkwQnR4?=
- =?utf-8?B?Q0hmcGNNZ0p6eUl2Ym5JVE9EbjFSUU4wQW10UDhLMWI4dUJVZXh0UG9DSlRX?=
- =?utf-8?B?YTdMSm16VjE1QnZjRTNLczNWMjF3OVJRVWtJUVpDY3RjN0oySVZGMkRkd1M0?=
- =?utf-8?B?L2RDNUgwaWV5V0dTa0dGblRZUUtscURxTmdtQmp5UHVFRjRGNGpEWmtvc09V?=
- =?utf-8?B?b2tMMUlpS0NrRkJxeGVzdmplRitGN3FUQk9Vb1RNclpIc2FTbmtabGhDeWxC?=
- =?utf-8?B?eFVkVkRqdE1XM0h0RFdUUUpXV0wxbmdWWDUvbXZsQXBGR3NXamVRR1c5eEpv?=
- =?utf-8?B?T3J6dWNpaVhFRERmSkN6ZHpmOHVWQzhlNlQrV3MxUHVzekRaQ1JvenRsdk5E?=
- =?utf-8?B?cmdmQzN1d2NNelZmTlV0MFpQd2ZQeFJmN3crUnRXSnVGNG9YRnAvTkpUMFJp?=
- =?utf-8?B?bElBZ3hSUmxqWWZHWGd3Wmk1WHU3OEI1YklLMUxybGYwNkJMaERhakFqVTUw?=
- =?utf-8?B?eHcvSVhta3pvZVlQa0wvWWxUQ0JFRGVlZEhIQkd1SUFrZEFDT3RHbG82bmFw?=
- =?utf-8?B?cGlhWWVMbUhxazBiNXBlZVM4MTJ6RDBvSEVRM0FjbEgyakQ3ZXp6aEtZb3N6?=
- =?utf-8?B?RG1EdTFuUU85SGcydHZaTmdOYis3bDEvL1BxY05XL251WldjelFJOWRST0l6?=
- =?utf-8?B?RDVMYjZ1ZVJkWVByVWoyUFhUdjIwYjBqdWxZNllhbjNpaFlGMUM2ZTVJWk9n?=
- =?utf-8?B?R1E9PQ==?=
-X-OriginatorOrg: portwell.com.tw
-X-MS-Exchange-CrossTenant-Network-Message-Id: 11cf3bde-2e5d-4c30-40b6-08dde4850583
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6395.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 09:43:33.3413
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e309f7e-c3ee-443b-8668-97701d998b2c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: azQ72Z1jXJvxIPsy6iPsIpNxvtmXnxfSK9kaKga/feTAeOnZAfNKRMOjPP5CGW455yn+Wo49ufBgF8spt5YhBpATY2cXeq4X2iTtRhw/CiA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6312
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250826080706.GC3245006@noisy.programming.kicks-ass.net>
 
-On 8/19/2025 5:51 PM, Ilpo Jarvinen wrote:
-> On Mon, 28 Jul 2025, Yen-Chi Huang wrote:
->>  static struct platform_driver pwec_driver = {
->>  	.driver = {
->>  		.name = "portwell-ec",
->>  	},
->>  	.probe = pwec_probe,
->> +	.suspend = pm_ptr(pwec_suspend),
->> +	.resume = pm_ptr(pwec_resume),
+On Tue, Aug 26, 2025 at 10:07:06AM +0200, Peter Zijlstra wrote:
+> On Tue, Aug 26, 2025 at 06:49:29AM +0200, Christophe Leroy wrote:
+> > 
+> > 
+> > Le 26/08/2025 à 06:13, K Prateek Nayak a écrit :
+> > > PowerPC enables the MC scheduling domain by default on systems with
+> > > coregroup support without having a SCHED_MC config in Kconfig.
+> > > 
+> > > The scheduler uses CONFIG_SCHED_MC to introduce the MC domain in the
+> > > default topology (core) and to optimize the default CPU selection
+> > > routine (sched-ext).
+> > > 
+> > > Introduce CONFIG_SCHED_MC for powerpc and note that it should be
+> > > preferably enabled given the current default behavior. This also ensures
+> > > PowerPC is tested during future developments that come to depend on
+> > > CONFIG_SCHED_MC.
+> > > 
+> > > Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
+> > > ---
+> > >   arch/powerpc/Kconfig           | 9 +++++++++
+> > >   arch/powerpc/include/asm/smp.h | 2 ++
+> > >   arch/powerpc/kernel/smp.c      | 4 ++++
+> > >   3 files changed, 15 insertions(+)
+> > > 
+> > > diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+> > > index 93402a1d9c9f..e954ab3f635f 100644
+> > > --- a/arch/powerpc/Kconfig
+> > > +++ b/arch/powerpc/Kconfig
+> > > @@ -971,6 +971,15 @@ config SCHED_SMT
+> > >   	  when dealing with POWER5 cpus at a cost of slightly increased
+> > >   	  overhead in some places. If unsure say N here.
+> > > +config SCHED_MC
+> > > +	bool "Multi-Core Cache (MC) scheduler support"
+> > > +	depends on PPC64 && SMP
+> > > +	default y
+> > > +	help
+> > > +	  MC scheduler support improves the CPU scheduler's decision making
+> > > +	  when dealing with POWER systems that contain multiple Last Level
+> > > +	  Cache instances on the same socket. If unsure say Y here.
+> > > +
+> > 
+> > You shouldn't duplicate CONFIG_SCHED_MC in every architecture, instead you
+> > should define a CONFIG_ARCH_HAS_SCHED_MC in arch/Kconfig that gets selected
+> > by architectures then have CONFIG_SCHED_MC defined in init/Kconfig or
+> > kernel/Kconfig or so.
 > 
-> These are legacy handlers, please use .pm under .driver and the macros to 
-> create the struct dev_pm_ops.
-> 
+> Let me add this first -- it is currently duplicated. Then I'll see about
+> merging the thing across architectures.
 
-Hi Ilpo,
+So what I added to power was:
 
-Thanks for pointing this out. For v4, I have switched to .pm with
-DEFINE_SIMPLE_DEV_PM_OPS as suggested.
+config SCHED_MC
+	def_bool y
+	depends on PPC64 && SMP
 
-Best regards,
-Yen-Chi
+because that is more or less the behaviour that was there, per the
+existing SDTL_INIT().
+
+---
+
+Now, when I look at unifying those config options (there's a metric ton
+of crap that's duplicated in the arch/*/Kconfig), I end up with something
+like the below.
+
+And while that isn't exact, it is the closest I could make it without
+making a giant mess of things.
+
+WDYT?
+
+---
+ Kconfig           |   38 ++++++++++++++++++++++++++++++++++++++
+ arm/Kconfig       |   18 ++----------------
+ arm64/Kconfig     |   26 +++-----------------------
+ loongarch/Kconfig |   19 ++-----------------
+ mips/Kconfig      |   16 ++--------------
+ parisc/Kconfig    |    9 +--------
+ powerpc/Kconfig   |   15 +++------------
+ riscv/Kconfig     |    9 +--------
+ s390/Kconfig      |    8 ++------
+ sparc/Kconfig     |   20 ++------------------
+ x86/Kconfig       |   27 ++++-----------------------
+ 11 files changed, 60 insertions(+), 145 deletions(-)
+
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -41,6 +41,44 @@ config HOTPLUG_SMT
+ config SMT_NUM_THREADS_DYNAMIC
+ 	bool
+ 
++config ARCH_SUPPORTS_SCHED_SMT
++	bool
++
++config ARCH_SUPPORTS_SCHED_CLUSTER
++	bool
++
++config ARCH_SUPPORTS_SCHED_MC
++	bool
++
++config SCHED_SMT
++	bool "SMT (Hyperthreading) scheduler support"
++	depends on ARCH_SUPPORTS_SCHED_SMT
++	default y
++	help
++	  Improves the CPU scheduler's decision making when dealing with
++	  MultiThreading at a cost of slightly increased overhead in some
++	  places. If unsure say N here.
++
++config SCHED_CLUSTER
++	bool "Cluster scheduler support"
++	depends on ARCH_SUPPORTS_SCHED_CLUSTER
++	default y
++	help
++	  Cluster scheduler support improves the CPU scheduler's decision
++	  making when dealing with machines that have clusters of CPUs.
++	  Cluster usually means a couple of CPUs which are placed closely
++	  by sharing mid-level caches, last-level cache tags or internal
++	  busses.
++
++config SCHED_MC
++	bool "Multi-Core Cache (MC) scheduler support"
++	depends on ARCH_SUPPORTS_SCHED_MC
++	default y
++	help
++	  Multi-core scheduler support improves the CPU scheduler's decision
++	  making when dealing with multi-core CPU chips at a cost of slightly
++	  increased overhead in some places. If unsure say N here.
++
+ # Selected by HOTPLUG_CORE_SYNC_DEAD or HOTPLUG_CORE_SYNC_FULL
+ config HOTPLUG_CORE_SYNC
+ 	bool
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -941,28 +941,14 @@ config IRQSTACKS
+ config ARM_CPU_TOPOLOGY
+ 	bool "Support cpu topology definition"
+ 	depends on SMP && CPU_V7
++	select ARCH_SUPPORTS_SCHED_MC
++	select ARCH_SUPPORTS_SCHED_SMT
+ 	default y
+ 	help
+ 	  Support ARM cpu topology definition. The MPIDR register defines
+ 	  affinity between processors which is then used to describe the cpu
+ 	  topology of an ARM System.
+ 
+-config SCHED_MC
+-	bool "Multi-core scheduler support"
+-	depends on ARM_CPU_TOPOLOGY
+-	help
+-	  Multi-core scheduler support improves the CPU scheduler's decision
+-	  making when dealing with multi-core CPU chips at a cost of slightly
+-	  increased overhead in some places. If unsure say N here.
+-
+-config SCHED_SMT
+-	bool "SMT scheduler support"
+-	depends on ARM_CPU_TOPOLOGY
+-	help
+-	  Improves the CPU scheduler's decision making when dealing with
+-	  MultiThreading at a cost of slightly increased overhead in some
+-	  places. If unsure say N here.
+-
+ config HAVE_ARM_SCU
+ 	bool
+ 	help
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -108,6 +108,9 @@ config ARM64
+ 	select ARCH_SUPPORTS_PER_VMA_LOCK
+ 	select ARCH_SUPPORTS_HUGE_PFNMAP if TRANSPARENT_HUGEPAGE
+ 	select ARCH_SUPPORTS_RT
++	select ARCH_SUPPORTS_SCHED_SMT
++	select ARCH_SUPPORTS_SCHED_CLUSTER
++	select ARCH_SUPPORTS_SCHED_MC
+ 	select ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH
+ 	select ARCH_WANT_COMPAT_IPC_PARSE_VERSION if COMPAT
+ 	select ARCH_WANT_DEFAULT_BPF_JIT
+@@ -1505,29 +1508,6 @@ config CPU_LITTLE_ENDIAN
+ 
+ endchoice
+ 
+-config SCHED_MC
+-	bool "Multi-core scheduler support"
+-	help
+-	  Multi-core scheduler support improves the CPU scheduler's decision
+-	  making when dealing with multi-core CPU chips at a cost of slightly
+-	  increased overhead in some places. If unsure say N here.
+-
+-config SCHED_CLUSTER
+-	bool "Cluster scheduler support"
+-	help
+-	  Cluster scheduler support improves the CPU scheduler's decision
+-	  making when dealing with machines that have clusters of CPUs.
+-	  Cluster usually means a couple of CPUs which are placed closely
+-	  by sharing mid-level caches, last-level cache tags or internal
+-	  busses.
+-
+-config SCHED_SMT
+-	bool "SMT scheduler support"
+-	help
+-	  Improves the CPU scheduler's decision making when dealing with
+-	  MultiThreading at a cost of slightly increased overhead in some
+-	  places. If unsure say N here.
+-
+ config NR_CPUS
+ 	int "Maximum number of CPUs (2-4096)"
+ 	range 2 4096
+--- a/arch/loongarch/Kconfig
++++ b/arch/loongarch/Kconfig
+@@ -70,6 +70,8 @@ config LOONGARCH
+ 	select ARCH_SUPPORTS_MSEAL_SYSTEM_MAPPINGS
+ 	select ARCH_SUPPORTS_NUMA_BALANCING
+ 	select ARCH_SUPPORTS_RT
++	select ARCH_SUPPORTS_SCHED_SMT if SMP
++	select ARCH_SUPPORTS_SCHED_MC  if SMP
+ 	select ARCH_USE_BUILTIN_BSWAP
+ 	select ARCH_USE_CMPXCHG_LOCKREF
+ 	select ARCH_USE_MEMTEST
+@@ -448,23 +450,6 @@ config EFI_STUB
+ 	  This kernel feature allows the kernel to be loaded directly by
+ 	  EFI firmware without the use of a bootloader.
+ 
+-config SCHED_SMT
+-	bool "SMT scheduler support"
+-	depends on SMP
+-	default y
+-	help
+-	  Improves scheduler's performance when there are multiple
+-	  threads in one physical core.
+-
+-config SCHED_MC
+-	bool "Multi-core scheduler support"
+-	depends on SMP
+-	default y
+-	help
+-	  Multi-core scheduler support improves the CPU scheduler's decision
+-	  making when dealing with multi-core CPU chips at a cost of slightly
+-	  increased overhead in some places.
+-
+ config SMP
+ 	bool "Multi-Processing support"
+ 	help
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -2223,7 +2223,7 @@ config MIPS_MT_SMP
+ 	select SMP
+ 	select SMP_UP
+ 	select SYS_SUPPORTS_SMP
+-	select SYS_SUPPORTS_SCHED_SMT
++	select ARCH_SUPPORTS_SCHED_SMT
+ 	select MIPS_PERF_SHARED_TC_COUNTERS
+ 	help
+ 	  This is a kernel model which is known as SMVP. This is supported
+@@ -2235,18 +2235,6 @@ config MIPS_MT_SMP
+ config MIPS_MT
+ 	bool
+ 
+-config SCHED_SMT
+-	bool "SMT (multithreading) scheduler support"
+-	depends on SYS_SUPPORTS_SCHED_SMT
+-	default n
+-	help
+-	  SMT scheduler support improves the CPU scheduler's decision making
+-	  when dealing with MIPS MT enabled cores at a cost of slightly
+-	  increased overhead in some places. If unsure say N here.
+-
+-config SYS_SUPPORTS_SCHED_SMT
+-	bool
+-
+ config SYS_SUPPORTS_MULTITHREADING
+ 	bool
+ 
+@@ -2318,7 +2306,7 @@ config MIPS_CPS
+ 	select HOTPLUG_CORE_SYNC_DEAD if HOTPLUG_CPU
+ 	select SYNC_R4K if (CEVT_R4K || CSRC_R4K)
+ 	select SYS_SUPPORTS_HOTPLUG_CPU
+-	select SYS_SUPPORTS_SCHED_SMT if CPU_MIPSR6
++	select ARCH_SUPPORTS_SCHED_SMT if CPU_MIPSR6
+ 	select SYS_SUPPORTS_SMP
+ 	select WEAK_ORDERING
+ 	select GENERIC_IRQ_MIGRATION if HOTPLUG_CPU
+--- a/arch/parisc/Kconfig
++++ b/arch/parisc/Kconfig
+@@ -44,6 +44,7 @@ config PARISC
+ 	select ARCH_HAVE_NMI_SAFE_CMPXCHG
+ 	select GENERIC_SMP_IDLE_THREAD
+ 	select GENERIC_ARCH_TOPOLOGY if SMP
++	select ARCH_SUPPORTS_SCHED_MC if SMP && PA8X00
+ 	select GENERIC_CPU_DEVICES if !SMP
+ 	select GENERIC_LIB_DEVMEM_IS_ALLOWED
+ 	select SYSCTL_ARCH_UNALIGN_ALLOW
+@@ -319,14 +320,6 @@ config SMP
+ 
+ 	  If you don't know what to do here, say N.
+ 
+-config SCHED_MC
+-	bool "Multi-core scheduler support"
+-	depends on GENERIC_ARCH_TOPOLOGY && PA8X00
+-	help
+-	  Multi-core scheduler support improves the CPU scheduler's decision
+-	  making when dealing with multi-core CPU chips at a cost of slightly
+-	  increased overhead in some places. If unsure say N here.
+-
+ config IRQSTACKS
+ 	bool "Use separate kernel stacks when processing interrupts"
+ 	default y
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -170,6 +170,9 @@ config PPC
+ 	select ARCH_STACKWALK
+ 	select ARCH_SUPPORTS_ATOMIC_RMW
+ 	select ARCH_SUPPORTS_DEBUG_PAGEALLOC	if PPC_BOOK3S || PPC_8xx
++	select ARCH_SUPPORTS_SCHED_SMT		if PPC64 && SMP
++	select ARCH_SUPPORTS_SCHED_MC		if PPC64 && SMP
++	select SCHED_MC				if ARCH_SUPPORTS_SCHED_MC
+ 	select ARCH_USE_BUILTIN_BSWAP
+ 	select ARCH_USE_CMPXCHG_LOCKREF		if PPC64
+ 	select ARCH_USE_MEMTEST
+@@ -963,18 +966,6 @@ config PPC_PROT_SAO_LPAR
+ config PPC_COPRO_BASE
+ 	bool
+ 
+-config SCHED_SMT
+-	bool "SMT (Hyperthreading) scheduler support"
+-	depends on PPC64 && SMP
+-	help
+-	  SMT scheduler support improves the CPU scheduler's decision making
+-	  when dealing with POWER5 cpus at a cost of slightly increased
+-	  overhead in some places. If unsure say N here.
+-
+-config SCHED_MC
+-	def_bool y
+-	depends on PPC64 && SMP
+-
+ config PPC_DENORMALISATION
+ 	bool "PowerPC denormalisation exception handling"
+ 	depends on PPC_BOOK3S_64
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -72,6 +72,7 @@ config RISCV
+ 	select ARCH_SUPPORTS_PER_VMA_LOCK if MMU
+ 	select ARCH_SUPPORTS_RT
+ 	select ARCH_SUPPORTS_SHADOW_CALL_STACK if HAVE_SHADOW_CALL_STACK
++	select ARCH_SUPPORTS_SCHED_MC if SMP
+ 	select ARCH_USE_CMPXCHG_LOCKREF if 64BIT
+ 	select ARCH_USE_MEMTEST
+ 	select ARCH_USE_QUEUED_RWLOCKS
+@@ -453,14 +454,6 @@ config SMP
+ 
+ 	  If you don't know what to do here, say N.
+ 
+-config SCHED_MC
+-	bool "Multi-core scheduler support"
+-	depends on SMP
+-	help
+-	  Multi-core scheduler support improves the CPU scheduler's decision
+-	  making when dealing with multi-core CPU chips at a cost of slightly
+-	  increased overhead in some places. If unsure say N here.
+-
+ config NR_CPUS
+ 	int "Maximum number of CPUs (2-512)"
+ 	depends on SMP
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -547,15 +547,11 @@ config NODES_SHIFT
+ 	depends on NUMA
+ 	default "1"
+ 
+-config SCHED_SMT
+-	def_bool n
+-
+-config SCHED_MC
+-	def_bool n
+-
+ config SCHED_TOPOLOGY
+ 	def_bool y
+ 	prompt "Topology scheduler support"
++	select ARCH_SUPPORTS_SCHED_SMT
++	select ARCH_SUPPORTS_SCHED_MC
+ 	select SCHED_SMT
+ 	select SCHED_MC
+ 	help
+--- a/arch/sparc/Kconfig
++++ b/arch/sparc/Kconfig
+@@ -110,6 +110,8 @@ config SPARC64
+ 	select HAVE_SETUP_PER_CPU_AREA
+ 	select NEED_PER_CPU_EMBED_FIRST_CHUNK
+ 	select NEED_PER_CPU_PAGE_FIRST_CHUNK
++	select ARCH_SUPPORTS_SCHED_SMT if SMP
++	select ARCH_SUPPORTS_SCHED_MC  if SMP
+ 
+ config ARCH_PROC_KCORE_TEXT
+ 	def_bool y
+@@ -288,24 +290,6 @@ if SPARC64 || COMPILE_TEST
+ source "kernel/power/Kconfig"
+ endif
+ 
+-config SCHED_SMT
+-	bool "SMT (Hyperthreading) scheduler support"
+-	depends on SPARC64 && SMP
+-	default y
+-	help
+-	  SMT scheduler support improves the CPU scheduler's decision making
+-	  when dealing with SPARC cpus at a cost of slightly increased overhead
+-	  in some places. If unsure say N here.
+-
+-config SCHED_MC
+-	bool "Multi-core scheduler support"
+-	depends on SPARC64 && SMP
+-	default y
+-	help
+-	  Multi-core scheduler support improves the CPU scheduler's decision
+-	  making when dealing with multi-core CPU chips at a cost of slightly
+-	  increased overhead in some places. If unsure say N here.
+-
+ config CMDLINE_BOOL
+ 	bool "Default bootloader kernel arguments"
+ 	depends on SPARC64
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -330,6 +330,10 @@ config X86
+ 	imply IMA_SECURE_AND_OR_TRUSTED_BOOT    if EFI
+ 	select HAVE_DYNAMIC_FTRACE_NO_PATCHABLE
+ 	select ARCH_SUPPORTS_PT_RECLAIM		if X86_64
++	select ARCH_SUPPORTS_SCHED_SMT		if SMP
++	select SCHED_SMT			if SMP
++	select ARCH_SUPPORTS_SCHED_CLUSTER	if SMP
++	select ARCH_SUPPORTS_SCHED_MC		if SMP
+ 
+ config INSTRUCTION_DECODER
+ 	def_bool y
+@@ -1036,29 +1040,6 @@ config NR_CPUS
+ 	  This is purely to save memory: each supported CPU adds about 8KB
+ 	  to the kernel image.
+ 
+-config SCHED_CLUSTER
+-	bool "Cluster scheduler support"
+-	depends on SMP
+-	default y
+-	help
+-	  Cluster scheduler support improves the CPU scheduler's decision
+-	  making when dealing with machines that have clusters of CPUs.
+-	  Cluster usually means a couple of CPUs which are placed closely
+-	  by sharing mid-level caches, last-level cache tags or internal
+-	  busses.
+-
+-config SCHED_SMT
+-	def_bool y if SMP
+-
+-config SCHED_MC
+-	def_bool y
+-	prompt "Multi-core scheduler support"
+-	depends on SMP
+-	help
+-	  Multi-core scheduler support improves the CPU scheduler's decision
+-	  making when dealing with multi-core CPU chips at a cost of slightly
+-	  increased overhead in some places. If unsure say N here.
+-
+ config SCHED_MC_PRIO
+ 	bool "CPU core priorities scheduler support"
+ 	depends on SCHED_MC
 
