@@ -1,137 +1,137 @@
-Return-Path: <linux-kernel+bounces-786201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27C3EB35674
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:11:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F788B35697
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:20:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD0511711E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:11:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43178246FCD
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:20:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF9C2F532C;
-	Tue, 26 Aug 2025 08:11:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UyWqIOHq"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E449B18A6AD;
-	Tue, 26 Aug 2025 08:11:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B5C2F746F;
+	Tue, 26 Aug 2025 08:20:38 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B866D2248A4;
+	Tue, 26 Aug 2025 08:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756195870; cv=none; b=qg2qdYXX7Z4PRBhxS4JYw6byA2wsNuwzlmS/JkXz0asPrG/sZAxF4c5zOytBisRIe/cUBfvkTq39ZJnYYPGepIA0TPSxJkRUdc4gtccSnIQghoqPs2+0RuLVLW4IBpJvXcPx0Ar2DywqLD3mekNo8XvPAFfvpyKRGrP8PlGaLUM=
+	t=1756196437; cv=none; b=ZLpfWx5UaWxsIdwD4TrUeaiyyiV9Jcd2SwRHT2oX458Ae27ETYTm08qXJfzbSYW5Fsw8nxMCl6yWZOAL6TaRe/XxWD3/hACGGupZXdd/QEtcBUiGBNdDclF+W1Gscpzzb7SYZiAIwL3jSqzHgA+e992B26ENTDuQnBbdgIFaHGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756195870; c=relaxed/simple;
-	bh=KsddloKoUCQZm0lpBEkjLyAKdvQi4ATkyfiWQKdGr5o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ECpeepw+qYn13GCm9mRrX+p3SxjnV3wK+0j7RFXa9out6e7QiI6EuobvcxmUzzoQ8H5wjRieg8fC4ARPiT2Jh9ZCBdiiSWUKoGeyD8WyR7XvAoPKwkX9eRky6UfwAip80bRB0YJ2il4yhV2Ua2f1FxAivr9eVCfrDSR0AacQPjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UyWqIOHq; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-afcb72d51dcso723092566b.0;
-        Tue, 26 Aug 2025 01:11:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756195867; x=1756800667; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4aX7FenfyrBV1mKFKmXZQBk55IyzLqtyKU5LAZ0/lVg=;
-        b=UyWqIOHq2fEKP7bJLNPNdR2oEy8//sECThBxVuN33OANXX3HhGv6nBFTAN3ADzJwAq
-         ZwiY7+fNzA76w0VDhUDoaS9d1V/aPgGJrO3qvndFbAQ+bJf/U0uAjXrXqSf/na+kJhpm
-         lzujA6dGaGBKGdL8QV7gkNJ1lTRBNWVTrcYP/KrCzqJaW4fRFUlF4SWGYTxsVlNNNqHo
-         a79xo/uw2BU3LB8klUeObbdaHJ9ugxy7zQOwNF/RAaLk+K00S8WR7/TGONLOhE8T7pZC
-         ORdV6ZF+GvlqEjVlrCf9P4uOqh06McdKRup7xrU8q5kNNJcXUFSjnwUBfPjrpXwBwMoU
-         g1BQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756195867; x=1756800667;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4aX7FenfyrBV1mKFKmXZQBk55IyzLqtyKU5LAZ0/lVg=;
-        b=wot4oPzGSuH8XZexxaIzuytk2bp4tA8HodlEWY+wfruifzzc6hTZlZDkDKgkfq1/YL
-         4+Et3IaqQrd5cbYH2zF8Yfgm+6x481bGYeM8hARKfkUoKGtXTnRukIEPl0mX+4g5Nxwa
-         XUkAC7QRfi6fGtXq5WR1kx9NOiCEi60RlCQsz0lB1z7teScfHJuFPwhC6DsCNY2/YSFC
-         iY0jcl6ejD85M1NfML8AZNvVHzXcjRMN/IfK9UTNoVnogeg13VJUojR9PZNJUC71NUCz
-         53f9DUkN45XicArd5k65hsIv9ppj9BMEkbDwCPQkj7/QvWwTbxqM5bpMRptaVh1j0zal
-         oMRA==
-X-Forwarded-Encrypted: i=1; AJvYcCUIY36aXjpFM7r/hXB8gxlRrDYoMaa7VcCKfUMN3Pl3evdb7vG3RgSJqzFdLlv55oYTZUZ1L/2N6zGXRx0U@vger.kernel.org, AJvYcCW1lwrVzy/iLxVm/K5b9OL+jbSUq8iX191GqFtLpL+CPpmkuzOjIUpE8essbXzwT9IY7fZn37LuQRa+@vger.kernel.org, AJvYcCXOjp5e4UcSnLhUrdoOLF9mJk6KZJVrGTQnPY4v0p21sSWezP+r35TFYeJQK+oj5zHZqDAnDjLQlQ4d@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWbMe4uN4L0aUz0ubciFypWeNvms9gyxikaknH0JlMx1V05GCP
-	hxDrMyG+mKWxRWKSYCvi2NaqIbVKuTTLSA0fGbfjLk5NctsJJ2dsLI6mTot36OFKeymT2K7UzIr
-	jUuS2yPbUOw2b/G6iMzdNF1IlMJEbfqaLSByso7w=
-X-Gm-Gg: ASbGnct7lqi6dddkNITVqSQwBS952CGXNRfK4ycM9NW0Ry7Zl95/bKsZXlZJx+Nwsp0
-	aLOjHQwOQ/MTcTSEIe/que4e5WGbDcN3xyDozCbMit9ClVR54m5UhNJxQ4lJHAbamrjvIWbyExA
-	aes/HACZ/BJSD1+9L721VGjxJDKirM7YEG7R+0vM3QWYvAf9fZzAKoOXBuBKLl4THcGpmnSh1DC
-	E+nt/Q=
-X-Google-Smtp-Source: AGHT+IGEd1eZnHcmzpvXANGzhr1yd+oGriamqJKZ0s2iB8R/aw4f3dtalaUKYgCOlOt4g+XTgdfhCNITfaZ4EhFXlkk=
-X-Received: by 2002:a17:907:1de5:b0:afe:8d25:771e with SMTP id
- a640c23a62f3a-afe8d258216mr372706966b.54.1756195867146; Tue, 26 Aug 2025
- 01:11:07 -0700 (PDT)
+	s=arc-20240116; t=1756196437; c=relaxed/simple;
+	bh=esU0BJE6AEb+zv/ijPoESgZfSOIaYt6UKHknAJ0+OnM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=skEyY7VQWHWbAdL3JY6RsjXlfdxAR3Qy3rZdU4n5z1/osfIgeyXJC6Jm4vQqQ7YKqLd8EJvFYXEjpeQvpD5+1Oevxcsp6uHkhfMYKc0cit5Xw8GFbzB6218wVzyxG9uCqQNjmRPhSLIxhDYbj2+wtq8MXbuhC9XU547n7eWe23I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cB0k63K4Cz9sSp;
+	Tue, 26 Aug 2025 10:11:42 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id hiYLp3UY9uY7; Tue, 26 Aug 2025 10:11:42 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cB0k6241Nz9sSn;
+	Tue, 26 Aug 2025 10:11:42 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 2A7BA8B764;
+	Tue, 26 Aug 2025 10:11:42 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id OvpXfkz87_WW; Tue, 26 Aug 2025 10:11:42 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5B2258B763;
+	Tue, 26 Aug 2025 10:11:40 +0200 (CEST)
+Message-ID: <a506bb53-6e17-4a10-a870-50ce87a4ce06@csgroup.eu>
+Date: Tue, 26 Aug 2025 10:11:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250825-iio-adc-ad7124-proper-clock-support-v2-0-4dcff9db6b35@baylibre.com>
- <20250825-iio-adc-ad7124-proper-clock-support-v2-3-4dcff9db6b35@baylibre.com>
-In-Reply-To: <20250825-iio-adc-ad7124-proper-clock-support-v2-3-4dcff9db6b35@baylibre.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 26 Aug 2025 11:10:30 +0300
-X-Gm-Features: Ac12FXyHRa3HqDklPqwL16eed7EcWQFU3zytsF-1uM7QmzKO3PNRAwfy77ztEGM
-Message-ID: <CAHp75VfBEQAettOACoSix748pu0T2D+ihie0VjNW7U1_AuuB=g@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] iio: adc: ad7124: add external clock support
-To: David Lechner <dlechner@baylibre.com>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 5/8] sched/topology: Unify tl_smt_mask() across core
+ and all arch
+To: Peter Zijlstra <peterz@infradead.org>,
+ K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>, linuxppc-dev@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ thomas.weissschuh@linutronix.de, Li Chen <chenl311@chinatelecom.cn>,
+ Bibo Mao <maobibo@loongson.cn>, Mete Durlu <meted@linux.ibm.com>,
+ Tobias Huschle <huschle@linux.ibm.com>,
+ Easwar Hariharan <easwar.hariharan@linux.microsoft.com>,
+ Guo Weikang <guoweikang.kernel@gmail.com>,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+ Brian Gerst <brgerst@gmail.com>,
+ Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
+ Swapnil Sapkal <swapnil.sapkal@amd.com>,
+ "Yury Norov [NVIDIA]" <yury.norov@gmail.com>,
+ Sudeep Holla <sudeep.holla@arm.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Andrea Righi <arighi@nvidia.com>, Yicong Yang <yangyicong@hisilicon.com>,
+ Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+ Tim Chen <tim.c.chen@linux.intel.com>,
+ Vinicius Costa Gomes <vinicius.gomes@intel.com>
+References: <20250826041319.1284-1-kprateek.nayak@amd.com>
+ <20250826041319.1284-6-kprateek.nayak@amd.com>
+ <20250826080123.GB3245006@noisy.programming.kicks-ass.net>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <20250826080123.GB3245006@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 26, 2025 at 1:55=E2=80=AFAM David Lechner <dlechner@baylibre.co=
-m> wrote:
->
-> Add support for an external clock source to the AD7124 ADC driver.
->
-> Previously, the driver only supported using the internal clock and had
-> bad devicetree bindings that used a fake clock to essentially select
-> the power mode. This is preserved for backwards compatibility.
->
-> If the clock is not named "mclk", then we know that the devicetree is
-> using the correct bindings and we can configure the chip to use an
-> external clock source rather than internal.
->
-> Also drop a redundant comment when configuring the register fields
-> instead of adding more.
 
-...
 
-> +                       /*
-> +                        * The external clock may be 4x the nominal clock=
- rate,
-> +                        * in which case the ADC needs to be configured t=
-o
-> +                        * divide it by 4. Using MEGA is a bit arbitrary,=
- but
-> +                        * the expected clock rates are either 614.4 kHz =
-or
-> +                        * 2.4576 MHz, so this should work.
-> +                        */
-> +                       if (clk_hz > MEGA)
+Le 26/08/2025 à 10:01, Peter Zijlstra a écrit :
+>> diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
+>> index 602508130c8a..d75fbb7d9667 100644
+>> --- a/include/linux/sched/topology.h
+>> +++ b/include/linux/sched/topology.h
+>> @@ -37,7 +37,13 @@ static inline int cpu_smt_flags(void)
+>>   {
+>>   	return SD_SHARE_CPUCAPACITY | SD_SHARE_LLC;
+>>   }
+>> -#endif
+>> +
+>> +static const __maybe_unused
+>> +struct cpumask *tl_smt_mask(struct sched_domain_topology_level *tl, int cpu)
+>> +{
+>> +	return cpu_smt_mask(cpu);
+>> +}
+>> +#endif /* CONFIG_SCHED_SMT */
+> 
+> Problem with that __maybe_unused is that you forgot inline.
+> 
+> static inline const
+> struct cpumask *tl_smt_mask(struct sched_domain_topology_level *tl, int cpu)
+> {
+> 	return cpu_smt_mask(cpu);
+> }
+> 
+> seems to make it happy.
+> 
 
-This is (1 * HZ_PER_MHZ), but as the comment says, this arbitrary
-check may be improved by using the exact values.
+But the function is referenced by SDTL_INIT() macro so there is no real 
+point in declaring it inline. Would be cleaner to have it defined in a C 
+file.
 
-> +                               clk_sel =3D AD7124_ADC_CONTROL_CLK_SEL_EX=
-T_DIV4;
-> +                       else
-> +                               clk_sel =3D AD7124_ADC_CONTROL_CLK_SEL_EX=
-T;
-
---=20
-With Best Regards,
-Andy Shevchenko
+Christophe
 
