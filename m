@@ -1,95 +1,48 @@
-Return-Path: <linux-kernel+bounces-786830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A79E5B36CD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:02:06 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB7EFB36B21
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:43:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28D69567F79
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:42:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B06034E2C59
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:43:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA8535FC25;
-	Tue, 26 Aug 2025 14:38:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IXlW3t9S"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3E735AAB4;
-	Tue, 26 Aug 2025 14:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F4174352FF0;
+	Tue, 26 Aug 2025 14:40:29 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4EE7352FFC
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 14:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756219136; cv=none; b=QBWM95UW6iARig6KfFTcucpFnmU4MJD70OTymGq/6yUO2l3gg5Pw3I7ryfojOaSJwx1/8ZU0TS/JA93qT9bBLujxnGa58qHJF30gHqVQ8G8lCGhB76dEAb/412D/my2QlnpxJT/xnSknZIfay2/sKUivZvWAdEyQgQ0aok6/v3g=
+	t=1756219229; cv=none; b=BCfqT9zZ0HcnD2qpd5EwCxqZiNknTdob2B3FOy5X8m6XTgSanqDhxixtnvldKJmsj/HRU1h8HzYhgoVKwaBL+nPUXa38VpAJwV91+XNgDiJDoGkX8kAcg4GSuJDTDZ/74Ay9Uziywx5gehDVe5vkzbxI+IFXcuhnjtdhkjewANs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756219136; c=relaxed/simple;
-	bh=Y6APwQxwvGhqQiU0qnlk9kFVimX4KbrPK3kJnYGAEwQ=;
+	s=arc-20240116; t=1756219229; c=relaxed/simple;
+	bh=kSe13fwo97E00gcXuKHBNqwQgjC0TaeIYw3hj9qfT/U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pe1umEH650eb+9BTA92r+xJJRxEkL+uIMBy4n2/v/hKhG163z3OqaVNrh+ppSQ8ZGYNSo6uee0muHgOniAv8hOjlt6vHHo/wi3i8cXMYengFcfA5NtNzGa6mAGo6MgS41Vqr7/y7WM5XaqHgTlVNMGAGw+R+SyIALsZhr7GsyZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IXlW3t9S; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6188b72d690so898701a12.2;
-        Tue, 26 Aug 2025 07:38:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756219132; x=1756823932; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=d6d4F5lWcv+eLekx7HNLggfgjBWTBT95yOAIkuEoxMk=;
-        b=IXlW3t9SzXp3SmY1cZce//wKOIC4yBgyfIdXatIrR+bGGMnDGcrp+F040dZqsQqx0w
-         UF79BI+DQYWH1Fftxe4j3SznOjof9cra6sg29lMRaGJXBxOwg/Z4kkf07cz0u7qd2VNZ
-         Q+kXSAOHZJ0HXDJQgKYffo894QwINQtmUD8AgdCwguafBIm3xXVrtPqkdsjreJbzGAvP
-         MjPZ9QEdP/l/dlgpjyYoVOGySdbQZTXYDtF7UjEMR0Wr57jk/x59ywYJJMJBYX2jP2dO
-         4zfFvssn67DFqouze09eL9ba33v8u8cspRbe9dmqqTIW2/jRQqfjO/4w1XCTRQKNq4y2
-         97pA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756219132; x=1756823932;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d6d4F5lWcv+eLekx7HNLggfgjBWTBT95yOAIkuEoxMk=;
-        b=E85WC9GlHgHaIv6Af1wZGYwKdcQ31F23Bp5Nq4FnLRxLXAQplrBz2pr4XQUIrXzAFU
-         pw1ZCJ5XIBNh9M02kAqhHXuWxV55BHe2Wr+Bs+CG6rENhN7sEzJ6SrKlAM8hRTuwG4tm
-         EgYkOO4VJ+Pl9SiFlBnEQ4NsVUFgY2q/6IntfdXt9jUptSCQcZwt2NGA49ZEK19Tegdj
-         srAXmUydekmVuOhHBd7ojgI7CWAJeDoJLkImDDWoxFI3QiBU0Uh3gUE677YygMVCQ0ft
-         PMoIJH54L51wKEfebF1O08kgz9kJVhFNqbeFxGDWF19nRvR4wyKxyit8Q+ncHN1PD9hm
-         06qA==
-X-Forwarded-Encrypted: i=1; AJvYcCWTTfsNIIX1lMye/wmRSTmCX4N3EtfJDNvkId6DKisRQP70zjM22cx3Og7QI8pXU60vWbIy3WjFtZZe6wqQ@vger.kernel.org, AJvYcCXL/dzVIN8AmDrKzGkITbn+75WiXwbWXFgQzTqdnsOvvjSkbz4ell6CgQGjYGTcHmDC67nP4yTGH+1A@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/ZW1qUiQmd6/nNF/F1iRyfLk5PKVzhNz/r6xz44PIQ7vmc8nu
-	pLo74bD28it/4CrA5zGb1Ub2+Ep3nsIkUFFyjRb9soVzzoRC0RAo+1DQ
-X-Gm-Gg: ASbGncuZ88LapkbflyAeOdaxRieAwN5FaBy1q8TmApFXueemWlnvsfYDZIbU8wT0qzB
-	DAyuZKgy/IUZTSIOGgfvz9x019qMImWiRhy6f/kGybh7Bez9VvE2lHZCQrP8i1/xbGBngCKUJOU
-	b8Uszw9kvzOMz24jjcvJ19uB9SqW+gAaqmQ6wfxHeXU1VdLqKANUeY/sElDozQn4raHyjXqlOlE
-	p7vx4yHy8PO9PcDNZJkDaKuQ3xfvNbRLD8ea/fI2Sdnp63rvIynaY+DOWx4zf1pvT4kV/jDs5Eh
-	j5cljxy5VZ6KJnA5HwSwoqjQyZIODz/jp5SJDsHk037ljYFBMh56XzA02rwWaIaeWd6jXoHrb30
-	UCw3Fi24eA+ZHWw==
-X-Google-Smtp-Source: AGHT+IETPXxxMpJyeesJWYBnsu+A3CD+BFs8jRFWez5lq7PWwxLL73ZZJjY/I5QKHSkfBf3w4iFvWw==
-X-Received: by 2002:a05:6402:510a:b0:61c:8205:f3d8 with SMTP id 4fb4d7f45d1cf-61c8205f61cmr2116423a12.4.1756219131642;
-        Tue, 26 Aug 2025 07:38:51 -0700 (PDT)
-Received: from skbuf ([2a02:2f04:d005:3b00:63b:fbf0:5e17:81ec])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61c31703d8esm6917552a12.26.2025.08.26.07.38.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 07:38:50 -0700 (PDT)
-Date: Tue, 26 Aug 2025 17:38:47 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Yangfl <mmyangfl@gmail.com>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v6 2/3] net: dsa: tag_yt921x: add support for
- Motorcomm YT921x tags
-Message-ID: <20250826143847.wwczaqgafl6y7ped@skbuf>
-References: <20250824005116.2434998-1-mmyangfl@gmail.com>
- <20250824005116.2434998-3-mmyangfl@gmail.com>
- <20250825221507.vfvnuaxs7hh2jy7d@skbuf>
- <CAAXyoMNh-6_NtYGBYYBhbiH0UPWCOoiZNhMkgeGqPzKP3HA-_g@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=al0Gp5oJSpW9BdTCohCQTanf7BxXrkCgjALYsp2I9WQVJ98z4dwcwKi2kgx1/6bNkRzS0/krEZW3XUs4UAGmc5UK/QLjSsWu+AhD0T2EEHwzExhQbiagZEgiymL109jheyMvValgQ1vdAnysX0/jaosIFEpObU1azbuhR9Bfeiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7D29D169E;
+	Tue, 26 Aug 2025 07:40:18 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CD3203F694;
+	Tue, 26 Aug 2025 07:40:24 -0700 (PDT)
+Date: Tue, 26 Aug 2025 15:40:22 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Breno Leitao <leitao@debian.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, kexec@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	bhe@redhat.com, oxu@redhat.com, berrange@redhat.com,
+	kernel-team@meta.com, Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] arm64: kexec: Initialize kexec_buf struct in image_load()
+Message-ID: <aK3HVqt6I5KxoHia@J2N7QTR9R3>
+References: <20250826-akpm-v1-1-3c831f0e3799@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,64 +51,86 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAAXyoMNh-6_NtYGBYYBhbiH0UPWCOoiZNhMkgeGqPzKP3HA-_g@mail.gmail.com>
+In-Reply-To: <20250826-akpm-v1-1-3c831f0e3799@debian.org>
 
-On Tue, Aug 26, 2025 at 09:47:34AM +0800, Yangfl wrote:
-> > The tag format sort of becomes fixed ABI as soon as user space is able
-> > to run "cat /sys/class/net/eth0/dsa/tagging", see "yt921x", and record
-> > it to a pcap file. Unless the EtherType bears some other meaning rather
-> > than being a fixed value, then if you change it later to some other
-> > value than 0x9988, you'd better also change the protocol name to
-> > distinguish it from "yt921x".
+On Tue, Aug 26, 2025 at 05:08:51AM -0700, Breno Leitao wrote:
+> The kexec_buf structure was previously declared without initialization
+> in image_load(). This led to a UBSAN warning when the structure was
+> expanded and uninitialized fields were accessed [1].
+
+Just to check my understanding, is that only a problem for new fields
+(e.g. the 'random' field added in [1]), or do we have UBSAN warnigns for
+any existing fields? I assume there's no problem with existing fields
+today.
+
+> Zero-initializing kexec_buf at declaration ensures all fields are
+> cleanly set, preventing future instances of uninitialized memory being
+> used.
 > 
-> "EtherType" here does not necessarily become EtherType; better to
-> think it is a key to enable port control over the switch. It could be
-> a dynamic random value as long as everyone gets the same value all
-> over the kernel, see the setup process of the switch driver. Ideally
-> only the remaining content of the tag should become the ABI (and is
-> actually enforced by the switch), but making a dynamic "EtherType" is
-> clearly a worse idea so I don't know how to clarify the fact...
+> Andrew Morton suggested that this function is only called 3x a week[2],
+> thus, the memset() cost is inexpressive.
 > 
-> > Also, you can _not_ use yt921x_priv :: tag_eth_p, because doing so would
-> > assume that typeof(ds->priv) == struct yt921x_priv. In principle we
-> > would like to be able to run the tagging protocols on the dsa_loop
-> > driver as well, which can be attached to any network interface. Very
-> > few, if any, tagging protocol drivers don't work on dsa_loop.
-> > > +
-> > > +static struct sk_buff *
-> > > +yt921x_tag_rcv(struct sk_buff *skb, struct net_device *netdev)
-> > > +{
-> > > +     unsigned int port;
-> > > +     __be16 *tag;
-> > > +     u16 rx;
-> > > +
-> > > +     if (unlikely(!pskb_may_pull(skb, YT921X_TAG_LEN)))
-> > > +             return NULL;
-> > > +
-> > > +     tag = (__be16 *)skb->data;
-> >
-> > Use dsa_etype_header_pos_rx() and validate the CPU_TAG_TPID_TPID as well.
+> Link: https://lore.kernel.org/all/oninomspajhxp4omtdapxnckxydbk2nzmrix7rggmpukpnzadw@c67o7njgdgm3/ [1]
+> Link: https://lore.kernel.org/all/20250825180531.94bfb86a26a43127c0a1296f@linux-foundation.org/ [2]
+> Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+> Signed-off-by: Breno Leitao <leitao@debian.org>
+
+This looks fine to me, but I reckon it should be added to the series
+which extends kexec_buf, unless there's some reason to avoid that?
+
+> ---
+>  arch/arm64/kernel/kexec_image.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+IIUC arch/arm64/kernel/machine_kexec_file.c would need the same
+treatment in load_other_segments().
+
+If other architectures need this, it'd probably make sense to clean that
+up treewide in one go. It looks like at least riscv and s390 need that
+from a quick grep:
+
+| [mark@lakrids:~/src/linux]% git grep -w 'struct kexec_buf .*;'
+| arch/arm64/kernel/kexec_image.c:        struct kexec_buf kbuf;
+| arch/arm64/kernel/machine_kexec_file.c: struct kexec_buf kbuf;
+| arch/powerpc/include/asm/kexec.h:int arch_kexec_locate_mem_hole(struct kexec_buf *kbuf);
+| arch/powerpc/include/asm/kexec.h:                                 struct kexec_buf *kbuf);
+| arch/riscv/kernel/elf_kexec.c:  struct kexec_buf kbuf;
+| arch/riscv/kernel/elf_kexec.c:  struct kexec_buf kbuf;
+| arch/riscv/kernel/elf_kexec.c:  struct kexec_buf kbuf;
+| arch/s390/kernel/kexec_elf.c:   struct kexec_buf buf;
+| arch/s390/kernel/kexec_image.c: struct kexec_buf buf;
+| arch/s390/kernel/machine_kexec_file.c:  struct kexec_buf buf;
+| arch/s390/kernel/machine_kexec_file.c:  struct kexec_buf buf;
+| arch/s390/kernel/machine_kexec_file.c:  struct kexec_buf buf;
+| include/linux/kexec.h:int kexec_load_purgatory(struct kimage *image, struct kexec_buf *kbuf);
+| include/linux/kexec.h:extern int kexec_add_buffer(struct kexec_buf *kbuf);
+| include/linux/kexec.h:int kexec_locate_mem_hole(struct kexec_buf *kbuf);
+| kernel/kexec_file.c:    struct kexec_buf *kbuf = (struct kexec_buf *)arg;
+
+Mark.
+
 > 
-> See the above explanation why rx "EtherType" is not considered part of ABI.
-
-So what I don't understand is: it's impossible to separate RX from TX in
-current DSA taggers. If TX hardcodes the assumption that the switch was
-configured to use EtherType 0x9988, why would we expect RX to use anything else?
-What valid configuration would we prevent, if we ensured that RX packets
-have the same EtherType?
-
-It should be ok if you documented that the EtherType is self-assigned
-and must be hardcoded to 0x9988 by local convention for the moment, but
-is otherwise configurable, and the meaning of a different value is
-undefined. Even if self-assigned, I suppose you could still add the
-value to include/uapi/linux/if_ether.h to avoid conflicts with other
-uses.
-
-Even better if you clarify the expectations by writing a libpcap
-dissector for the new tagging protocol, which you need to do anyway for
-recent tcpdump versions to work on the conduit interface (otherwise it
-fails with "unsupported protocol"). See
-https://github.com/the-tcpdump-group/libpcap/pull/1463
-The libpcap dissector uses the /sys/class/net/eth0/dsa/tagging text to
-identify the protocol in use, not the EtherType.
+> diff --git a/arch/arm64/kernel/kexec_image.c b/arch/arm64/kernel/kexec_image.c
+> index 532d72ea42ee8..b70f4df15a1ae 100644
+> --- a/arch/arm64/kernel/kexec_image.c
+> +++ b/arch/arm64/kernel/kexec_image.c
+> @@ -41,7 +41,7 @@ static void *image_load(struct kimage *image,
+>  	struct arm64_image_header *h;
+>  	u64 flags, value;
+>  	bool be_image, be_kernel;
+> -	struct kexec_buf kbuf;
+> +	struct kexec_buf kbuf = {};
+>  	unsigned long text_offset, kernel_segment_number;
+>  	struct kexec_segment *kernel_segment;
+>  	int ret;
+> 
+> ---
+> base-commit: 7a77c6b5ce68a71b9102760a988a4564ff6d4106
+> change-id: 20250826-akpm-18a57e3a39fd
+> 
+> Best regards,
+> --  
+> Breno Leitao <leitao@debian.org>
+> 
+> 
 
