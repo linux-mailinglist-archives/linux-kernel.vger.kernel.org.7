@@ -1,408 +1,390 @@
-Return-Path: <linux-kernel+bounces-786606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC86CB35F09
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:20:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E501B35F0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:21:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C1B34618EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:20:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E905205C47
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:21:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E27032143D;
-	Tue, 26 Aug 2025 12:20:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E439731DDBC;
+	Tue, 26 Aug 2025 12:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XlOXyKEv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YL3OJjeH"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688F9393DF2;
-	Tue, 26 Aug 2025 12:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2F02FA0E2
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 12:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756210820; cv=none; b=oYh5L3XjUU3m+L1liGyTHmW8f5wE9iCo+fyl7YqHFHpUk1uYCTA0dCv/kKp1uN6nfsUJTTB8smAGlM8mNR71FPvJu5jrL9aYLOWZ0Bxg3yy6KPFZy6Nna0EjfCjOi2zRCR79dEglAVOieXsLGLOtojLpRZg88HFBsZjg+aocHpQ=
+	t=1756210906; cv=none; b=B95gUtGOc2Z3nsVbnCx2JyVbKGMGaJ64miPYRbsiB87npz9BE+XYfkDtUpLISn7vphJI/CsUwXn9FObdpOeNRgONIFK1aZ/E+Aw1IlQUNtL6Ny78igk3cvg57ZtPzNbBOFlMnRk/ws8RebdJoXEDHiuRE9lW89q2xkaJP2Asj0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756210820; c=relaxed/simple;
-	bh=qEjT78mgIQq7OSX5He9ED1JWcvsyTbb52dl5uA8a6Vg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=VZPlFuz6/ykBfp7rnosbDOweh+LwWXgb/6DyWzC/e2zSsuIuvhGsjSiGm+wtkL9OuXXLtpKZnFP6N3yXRXd/TN901ubVyC2/c6r2nVF1fbqSOellKAizzGrokxblSKpbedhaD6IlMNIsKMfvtiQGad2nHq9jQGk4W08UTdo1/LU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XlOXyKEv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81482C4CEF4;
-	Tue, 26 Aug 2025 12:20:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756210820;
-	bh=qEjT78mgIQq7OSX5He9ED1JWcvsyTbb52dl5uA8a6Vg=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=XlOXyKEve4kWvmASe4UcwUnmjoqmjlj8bOBuSax2q6LEjrGiz8cfy6C8csI9QNZD+
-	 YXN7X1aqAQlRNqdTli2pHO5F4fEjxOgvuobXO01ASaQMqfoQEQwJwuO+c7HGpWrel1
-	 fB5UByB9WtaVsvfVeHqB7WJJRPFN4oAlNUVYcOrpUAjn88kCG5/87E74Bjl9zAaUd6
-	 K9eaBi2FedFXc/abgP3hZ5n65ii/LUnEMkwwg/oRQ1H6jqXBJs5gTqUAgUcp8x4gdO
-	 P1XVRvrOM2JQz0rza36sCMMkEdVyvbKN8D2IHnGkpuSim+1vkvXTE0WvY+4cqqAacY
-	 4/5Xklgx3vxlg==
+	s=arc-20240116; t=1756210906; c=relaxed/simple;
+	bh=cDZY4sOyXdEWG+JCocZJFf7HDgOgg81Kbcw/od9SAq0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=RE/Pl2YK6gE2NhsyOVTUHqCwH6rKDtWJ+p6ZCLXFVAjmhWpjv1Z2hM+8Y8dbwT/qc0mv7/xS0tGNs/B7PRRqo7E90g2yIGWrB4aJna5/CXeD4xK6fUeNLPdF3lLDWfx82/s/tuXfiAR5Jvgl7TJn94t/IXWKXAv1kklQpk0BEDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YL3OJjeH; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57QBPGLl007563
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 12:21:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	xj/MZA6A4yQOjokPCqmS06vMg9EIcp9det7tR39R6Hw=; b=YL3OJjeHRaQdDKf5
+	3h0iLKmUcTx8Ohu5CA9ce49/fhE0kC3sb90PvGKqsm6R9EV3jMCrKNKN4yl+pymv
+	Sy+UeAyvNicAGshwsTvkfYrMjMhi540zTFXv5aGC4ZG8A9WxpSTZnUmURnvlqUal
+	bcsXjZzodMtgc75e3jmAvoI3AcQLG9E/VyzTtjghg1zIKNN55hYMf3M9q9flUkGV
+	U47aitsd6VWnhdsvjGjXeAHub9sd65aPEECzWqYjB4wuXWLcUgvB115OotK3Qhk5
+	HwhESSjWqn6OHluYLOanbNCsBCByAVsdjYH2ds+i7kOXzuhOph75Vys6zIT1PuT5
+	VcNgwA==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q6x88s1q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 12:21:44 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-76e2ea9366aso5050989b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 05:21:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756210903; x=1756815703;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xj/MZA6A4yQOjokPCqmS06vMg9EIcp9det7tR39R6Hw=;
+        b=Sfn1ijd3AfJLAqmvnJPl0f1zkBnB7dB/KaBJ2sUIzZORyPAsK2fxHYcOHS+p4K7oEF
+         je8GStgEA5HllHwLft11QPr2IOjEh8ZT1xBYYfHCoGui29Rw6sZzdv2kO0iWQdFgsFs8
+         h0qr7R5lbpgfuDBBO/eJNbGTxcS5Z7O/rJp9ukd+d3DYOVhg/hyie4tMV+f4XfCnxO/L
+         XUMv8urvJDHwxY4eoSWUkej1zKPqDreAcHs83vKXTXOBjA6ce0QAcwhCJunQWBspLApB
+         UrkuNZPkYDm7fzgJ2WEAQc/SuXFZK5m9OXj256DtippQiXSkn4E5qu5tzrvYENyUNH1N
+         5akA==
+X-Forwarded-Encrypted: i=1; AJvYcCV+dTWXYR+nEldkto3CJ8h40LYo60qCMuVpd6Oy1lvAVWO5fBDdDt5fA2kwKAiDsIG5a1x5tzFD1XF4uXM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgkywG9MKQ/jNQ+rQw+gn8DQGHKZQgUs4MTulY9vv7FGTiTgA9
+	685gkxOjihBUbb0LeRG7F/iGHYeQaRaSGHcmYV7TNA3hJHWZumlH02F4P9eJ9MGRphmFbXpvSOA
+	dYfa0xvb0agqg3JO8mqN0KH8qJVJtx0tdjLdQLWKEvXUfO3765NfR+4sCr9KZxN0BFTE=
+X-Gm-Gg: ASbGnct1j2vODdkR7RwVoxzdozHDVQvp4c99g7N1RXEEuIr5g3j7dr6FDrKHbmc1YOu
+	iSA2ChU5Yw641zSKQE2iBoApUa0Zk787y5Dwk3wfzuq/u5yntEfx0FYN2OCQdcQyFHdXBMDnw3u
+	pvRVwyVU0k2oQU7YOsCe7Q9iNdv1pgU7z5vBBxauePyet+SSNAzhWchpabvUStGc6QYZvjY1SE1
+	3l6LDzT/ocX/vmOnL0b6CnnAV/1Fv+BzxlFoFuA21f+20Iv18FzC9/QChLlbuHqLe/uPijvnEtw
+	QbrplphFTpuiRh9126Xak0opmjTba5vt4n5FpMBv47yGcTx19hIbBxoVua2eg+fUbw==
+X-Received: by 2002:a05:6a00:10d1:b0:76e:7aee:35f2 with SMTP id d2e1a72fcca58-7702fc15031mr16945609b3a.30.1756210903230;
+        Tue, 26 Aug 2025 05:21:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFdHFcw5nbbR7DmXRWjmRQkX5tmIcocsB+qO88Jb3kvJp1o/g2CVqD8Sf5HxYdMvi7GPrmIRA==
+X-Received: by 2002:a05:6a00:10d1:b0:76e:7aee:35f2 with SMTP id d2e1a72fcca58-7702fc15031mr16945559b3a.30.1756210902626;
+        Tue, 26 Aug 2025 05:21:42 -0700 (PDT)
+Received: from [10.64.16.151] ([114.94.8.21])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-771e9c6f2ffsm4758155b3a.6.2025.08.26.05.21.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Aug 2025 05:21:42 -0700 (PDT)
+Message-ID: <adda1cff-61c8-4f9d-bb9c-7c0cc70a21f1@oss.qualcomm.com>
+Date: Tue, 26 Aug 2025 20:21:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 26 Aug 2025 14:20:14 +0200
-Message-Id: <DCCCRYEUVJWZ.2AUDA0DXK0XSF@kernel.org>
-Subject: Re: [PATCH v4 2/2] rust: zpool: add abstraction for zpool drivers
-Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- "Uladzislau Rezki" <urezki@gmail.com>, "Alice Ryhl" <aliceryhl@google.com>,
- "Vlastimil Babka" <vbabka@suse.cz>, "Lorenzo Stoakes"
- <lorenzo.stoakes@oracle.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>,
- "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>, "Bjorn
- Roy Baron" <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>,
- "Andreas Hindborg" <a.hindborg@kernel.org>, "Trevor Gross"
- <tmgross@umich.edu>, "Johannes Weiner" <hannes@cmpxchg.org>, "Yosry Ahmed"
- <yosry.ahmed@linux.dev>, "Nhat Pham" <nphamcs@gmail.com>,
- <linux-mm@kvack.org>
-To: "Vitaly Wool" <vitaly.wool@konsulko.se>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250823130420.867133-1-vitaly.wool@konsulko.se>
- <20250823130522.867263-1-vitaly.wool@konsulko.se>
-In-Reply-To: <20250823130522.867263-1-vitaly.wool@konsulko.se>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/2] arm64: dts: qcom: Add display support for QCS615
+ RIDE board
+From: Fange Zhang <fange.zhang@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Li Liu <quic_lliu6@quicinc.com>, dmitry.baryshkov@oss.qualcomm.com,
+        tingwei.zhang@oss.qualcomm.com, xiangxu.yin@oss.qualcomm.com
+References: <20250818-add-display-support-for-qcs615-platform-v6-0-62aad5138a78@oss.qualcomm.com>
+ <20250818-add-display-support-for-qcs615-platform-v6-2-62aad5138a78@oss.qualcomm.com>
+ <hlajupt4mwb27j4kbygdk5rifthnbnyv4ypcrqd2jk4vvdytoy@fef26rluqkxi>
+ <8243f4f2-4505-4264-91ab-3688f4f6fc6e@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <8243f4f2-4505-4264-91ab-3688f4f6fc6e@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: wwihhyB_WWp21dtl4J89KwdZDGNwJvT_
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDA0NCBTYWx0ZWRfXzNzldw+eco3s
+ ibM3KfNeL7FI68m0neYT92lU6gpBYJnzXeiL73dcibaaYXFElbaTPM2L1m5uzoo1IETD3VE9Yff
+ VYo+bkCvYXDY6Y+/mkjODd3XP46zSEbrqLfww1AhDw6sIp0HiMdJq2nUUxnfxAAqCT+uj+iJqaW
+ ulRRAPEhPazt6q3ZuiHD3Tgqi48ekLDkDDtcNJ3VbU0ndIfwEi8GyRZjcwRcOvnET3rac68hZ9S
+ 6cLi24wxAypau/1LEcgN6Ni9I85OXFKTVi2doZqo9jKjoSy67saKwxxW9J/SKELJrmtXNPpHCPD
+ NNFNP8S14OGIZMZgzMfr19G/H+x7OpkPsBj+tSvzyJJyNPe2CzkIbNtgb9nWm6tpaEGT8RJ0BKj
+ 5ZEAULUC
+X-Proofpoint-GUID: wwihhyB_WWp21dtl4J89KwdZDGNwJvT_
+X-Authority-Analysis: v=2.4 cv=Ep/SrTcA c=1 sm=1 tr=0 ts=68ada6d8 cx=c_pps
+ a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=Uz3yg00KUFJ2y2WijEJ4bw==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=gEfo2CItAAAA:8 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=fAMiPJdJibrns1U4IokA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=OpyuDcXvxspvyRM73sMx:22 a=sptkURWiP4Gy88Gu7hUp:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-26_02,2025-08-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 spamscore=0 adultscore=0 bulkscore=0 suspectscore=0
+ phishscore=0 priorityscore=1501 malwarescore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230044
 
-On Sat Aug 23, 2025 at 3:05 PM CEST, Vitaly Wool wrote:
-> +/// Zpool API.
-> +///
-> +/// The [`ZpoolDriver`] trait serves as an interface for Zpool drivers i=
-mplemented in Rust.
-> +/// Such drivers implement memory storage pools in accordance with the z=
-pool API.
-> +///
-> +/// # Example
-> +///
-> +/// A zpool driver implementation which uses KVec of 2**n sizes, n =3D 6=
-, 7, ..., PAGE_SHIFT.
-> +/// Every zpool object is packed into a KVec that is sufficiently large,=
- and n (the
-> +/// denominator) is saved in the least significant bits of the handle, w=
-hich is guaranteed
-> +/// to be at least 2**6 aligned by kmalloc.
-> +///
-> +/// ```
-> +/// use core::ptr::{NonNull, copy_nonoverlapping};
-> +/// use core::sync::atomic::{AtomicU64, Ordering};
-> +/// use kernel::alloc::{Flags, KBox, KVec, NumaNode};
-> +/// use kernel::page::PAGE_SHIFT;
-> +/// use kernel::prelude::EINVAL;
-> +/// use kernel::zpool::*;
-> +///
-> +/// struct MyZpool {
-> +///     name: &'static CStr,
-> +///     bytes_used: AtomicU64,
-> +/// }
-> +///
-> +/// struct MyZpoolDriver;
-> +///
-> +/// impl ZpoolDriver for MyZpoolDriver {
-> +///     type Pool =3D KBox<MyZpool>;
-> +///
-> +///     fn create(name: &'static CStr, gfp: Flags) -> Result<KBox<MyZpoo=
-l>> {
-> +///         let my_pool =3D MyZpool { name, bytes_used: AtomicU64::new(0=
-) };
-> +///         let pool =3D KBox::new(my_pool, gfp)?;
-> +///
-> +///         Ok(pool)
-> +///     }
-> +///
-> +///     fn destroy(p: KBox<MyZpool>) {
-> +///         drop(p);
-> +///     }
-> +///
-> +///     fn malloc(pool: &mut MyZpool, size: usize, gfp: Flags, _nid: Num=
-aNode) -> Result<usize> {
-> +///         let mut pow: usize =3D 0;
-> +///         for n in 6..=3DPAGE_SHIFT {
-> +///             if size <=3D 1 << n {
-> +///                 pow =3D n;
-> +///                 break;
-> +///             }
-> +///         }
 
-Why not just use next_power_of_two()? I think the same logic could also be
-achieved with
 
-	size.next_power_of_two().trailing_zeros().max(6).min(PAGE_SHIFT)
+On 8/26/2025 4:08 PM, Fange Zhang wrote:
+> 
+> 
+> On 8/24/2025 11:15 AM, Bjorn Andersson wrote:
+>> On Mon, Aug 18, 2025 at 12:39:21PM +0800, Fange Zhang wrote:
+>>> From: Li Liu <quic_lliu6@quicinc.com>
+>>>
+>>> Add display MDSS and DSI configuration for QCS615 RIDE board.
+>>> QCS615 has a DP port, and DP support will be added in a later patch.
+>>>
+>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+>>> Signed-off-by: Li Liu <quic_lliu6@quicinc.com>
+>>> Signed-off-by: Fange Zhang <fange.zhang@oss.qualcomm.com>
+>>
+>> Running dtb checker after applying your patch gives me the following:
+>>> $ make qcom/qcs615-ride.dtb CHECK_DTBS=1
+>>>    UPD     include/config/kernel.release
+>>>    HOSTCC  scripts/basic/fixdep
+>>>    SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+>>> Documentation/devicetree/bindings/net/snps,dwmac.yaml: mac-mode: 
+>>> missing type definition
+>>> Documentation/devicetree/bindings/net/nfc/ti,trf7970a.yaml: ti,rx- 
+>>> gain-reduction-db: missing type definition
+>>> Documentation/devicetree/bindings/phy/fsl,imx8mq-usb-phy.yaml: 
+>>> fsl,phy-pcs-tx-deemph-3p5db-attenuation-db: missing type definition
+>>>    DTC [C] arch/arm64/boot/dts/qcom/qcs615-ride.dtb
+>>> arch/arm64/boot/dts/qcom/qcs615-ride.dtb: clock-controller@100000: 
+>>> 'clock-names' is a required property
+>>>          from schema $id: http://devicetree.org/schemas/clock/ 
+>>> qcom,qcs615-gcc.yaml#
+>>
+>> Taniya is looking at this one.
+> 
+> Got it. Since the patch appears to be accepted, should I still wait for 
+> mm clk version 7?
+> https://patchwork.kernel.org/project/linux-arm-msm/patch/20250814- 
+> qcs615-mm-cpu-dt-v6-v6-1-a06f69928ab5@oss.qualcomm.com/
+> 
+>>
+>>> arch/arm64/boot/dts/qcom/qcs615-ride.dtb: gpio@3e: $nodename:0: 
+>>> 'gpio@3e' does not match '^(pinctrl|pinmux)(@[0-9a-f]+)?$'
+>>>          from schema $id: http://devicetree.org/schemas/pinctrl/ 
+>>> semtech,sx1501q.yaml#
+>>
+>> This is from your patch.
+> 
+> got it, will change "gpio@3e" to "pinctrl@3e"
+> 
+>>
+>>> arch/arm64/boot/dts/qcom/qcs615-ride.dtb: bridge@58: 'vdd10-supply' 
+>>> is a required property
+>>>          from schema $id: http://devicetree.org/schemas/display/ 
+>>> bridge/analogix,anx7625.yaml#
+>>
+>> This is from your patch.
+> 
+> got it, will add this part like https://lore.kernel.org/ 
+> all/20250604071851.1438612-3-quic_amakhija@quicinc.com/
+> 
+> @@ -51,6 +51,64 @@ dp_dsi0_connector_in: endpoint {
+> };
+> };
+> 
+> +       vreg_12p0: vreg-12p0-regulator {=
+> ...
+> @@ -338,7 +396,9 @@ bridge@58 {
+>                                  interrupts-extended = <&io_expander 0 
+> IRQ_TYPE_EDGE_FALLING>;
+>                                  enable-gpios = <&tlmm 4 GPIO_ACTIVE_HIGH>;
+>                                  reset-gpios = <&tlmm 5 GPIO_ACTIVE_HIGH>;
+> -                               wakeup-source;
+> +                               vdd10-supply = <&vreg_1p0>;
+> +                               vdd18-supply = <&vreg_1p8>;
+> +                               vdd33-supply = <&vreg_3p0>;
+> 
+>>
+>>> arch/arm64/boot/dts/qcom/qcs615-ride.dtb: bridge@58: 'vdd18-supply' 
+>>> is a required property
+>>>          from schema $id: http://devicetree.org/schemas/display/ 
+>>> bridge/analogix,anx7625.yaml#
+>>
+>> This is from your patch.
+> 
+> same as above
+> 
+>>
+>>> arch/arm64/boot/dts/qcom/qcs615-ride.dtb: bridge@58: 'vdd33-supply' 
+>>> is a required property
+>>>          from schema $id: http://devicetree.org/schemas/display/ 
+>>> bridge/analogix,anx7625.yaml#
+>>
+>> This is from your patch.
+> 
+> same as above
+> 
+>>
+>>> arch/arm64/boot/dts/qcom/qcs615-ride.dtb: bridge@58: 'wakeup-source' 
+>>> does not match any of the regexes: 'pinctrl-[0-9]+'
+>>>          from schema $id: http://devicetree.org/schemas/display/ 
+>>> bridge/analogix,anx7625.yaml#
+>>
+>> This is from your patch.
+> 
+> will remove it
+> 
+>>
+>>> arch/arm64/boot/dts/qcom/qcs615-ride.dtb: phy@ae94400: Unevaluated 
+>>> properties are not allowed ('vdds-supply' was unexpected)
+>>>          from schema $id: http://devicetree.org/schemas/display/msm/ 
+>>> dsi-phy-14nm.yaml#
+>>
+>> This is from your patch.
+> 
+> will change "vdds-supply" to "vcca-supply"
+> 
+>>
+>>
+>> Am I missing something? Is there any reason why these 6 new errors
+>> should be added?
+> 
+> Sorry, I missed those parts earlier. I've re-tested and confirmed the 
+> changes. The patch can pass after refine.
+> Would it be appropriate to send v7 now, or should I wait until the mm 
+> clk v7 is ready?
 
-> +///         match pow {
-> +///             0 =3D> Err(EINVAL),
-> +///             _ =3D> {
-> +///                 let vec =3D KVec::<u64>::with_capacity(1 << (pow - 3=
-), gfp)?;
+ok, I saw it's already included in linux-next. I'll send v7 tomorrow 
+based on the latest linux-next. may i?
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=f9c36698db91780eed4ee3a90794bda2a4252166
 
-Why use u64 and 1 << (pow - 3), rather than simply u8 and 1 << pow?
+> 
+>>
+>> Regards,
+>> Bjorn
+>>
+>>> ---
+>>>   arch/arm64/boot/dts/qcom/qcs615-ride.dts | 90 +++++++++++++++++++++ 
+>>> +++++++++++
+>>>   1 file changed, 90 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/ 
+>>> boot/dts/qcom/qcs615-ride.dts
+>>> index 
+>>> 59582d3dc4c49828ef4a0d22a1cbaba715c7ce8c..39c757b66f47579d9bc7cc5c4d703f7af4434df4 100644
+>>> --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+>>> +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+>>> @@ -39,6 +39,18 @@ xo_board_clk: xo-board-clk {
+>>>           };
+>>>       };
+>>> +    dp-dsi0-connector {
+>>> +        compatible = "dp-connector";
+>>> +        label = "DSI0";
+>>> +        type = "mini";
+>>> +
+>>> +        port {
+>>> +            dp_dsi0_connector_in: endpoint {
+>>> +                remote-endpoint = <&dsi2dp_bridge_out>;
+>>> +            };
+>>> +        };
+>>> +    };
+>>> +
+>>>       vreg_conn_1p8: regulator-conn-1p8 {
+>>>           compatible = "regulator-fixed";
+>>>           regulator-name = "vreg_conn_1p8";
+>>> @@ -294,6 +306,84 @@ &gcc {
+>>>            <&sleep_clk>;
+>>>   };
+>>> +&i2c2 {
+>>> +    clock-frequency = <400000>;
+>>> +    status = "okay";
+>>> +
+>>> +    io_expander: gpio@3e {
+>>> +        compatible = "semtech,sx1509q";
+>>> +        reg = <0x3e>;
+>>> +        interrupts-extended = <&tlmm 58 IRQ_TYPE_EDGE_FALLING>;
+>>> +        gpio-controller;
+>>> +        #gpio-cells = <2>;
+>>> +        interrupt-controller;
+>>> +        #interrupt-cells = <2>;
+>>> +        semtech,probe-reset;
+>>> +    };
+>>> +
+>>> +    i2c-mux@77 {
+>>> +        compatible = "nxp,pca9542";
+>>> +        reg = <0x77>;
+>>> +        #address-cells = <1>;
+>>> +        #size-cells = <0>;
+>>> +
+>>> +        i2c@0 {
+>>> +            reg = <0>;
+>>> +            #address-cells = <1>;
+>>> +            #size-cells = <0>;
+>>> +
+>>> +            bridge@58 {
+>>> +                compatible = "analogix,anx7625";
+>>> +                reg = <0x58>;
+>>> +                interrupts-extended = <&io_expander 0 
+>>> IRQ_TYPE_EDGE_FALLING>;
+>>> +                enable-gpios = <&tlmm 4 GPIO_ACTIVE_HIGH>;
+>>> +                reset-gpios = <&tlmm 5 GPIO_ACTIVE_HIGH>;
+>>> +                wakeup-source;
+>>> +
+>>> +                ports {
+>>> +                    #address-cells = <1>;
+>>> +                    #size-cells = <0>;
+>>> +
+>>> +                    port@0 {
+>>> +                        reg = <0>;
+>>> +
+>>> +                        dsi2dp_bridge_in: endpoint {
+>>> +                            remote-endpoint = <&mdss_dsi0_out>;
+>>> +                        };
+>>> +                    };
+>>> +
+>>> +                    port@1 {
+>>> +                        reg = <1>;
+>>> +
+>>> +                        dsi2dp_bridge_out: endpoint {
+>>> +                            remote-endpoint = <&dp_dsi0_connector_in>;
+>>> +                        };
+>>> +                    };
+>>> +                };
+>>> +            };
+>>> +        };
+>>> +    };
+>>> +};
+>>> +
+>>> +&mdss {
+>>> +    status = "okay";
+>>> +};
+>>> +
+>>> +&mdss_dsi0 {
+>>> +    vdda-supply = <&vreg_l11a>;
+>>> +    status = "okay";
+>>> +};
+>>> +
+>>> +&mdss_dsi0_out {
+>>> +    remote-endpoint = <&dsi2dp_bridge_in>;
+>>> +    data-lanes = <0 1 2 3>;
+>>> +};
+>>> +
+>>> +&mdss_dsi0_phy {
+>>> +    vdds-supply = <&vreg_l5a>;
+>>> +    status = "okay";
+>>> +};
+>>> +
+>>>   &pcie {
+>>>       perst-gpios = <&tlmm 101 GPIO_ACTIVE_LOW>;
+>>>       wake-gpios = <&tlmm 100 GPIO_ACTIVE_HIGH>;
+>>>
+>>> -- 
+>>> 2.34.1
+>>>
+> 
 
-(Btw. you could also just use VBox<u8; PAGE_SIZE>::new_uninit() for all
-allocations to keep the example simple.)
-
-> +///                 let (ptr, _len, _cap) =3D vec.into_raw_parts();
-> +///                 pool.bytes_used.fetch_add(1 << pow, Ordering::Relaxe=
-d);
-> +///                 Ok(ptr as usize | (pow - 6))
-> +///             }
-> +///         }
-> +///     }
-> +///
-> +///     unsafe fn free(pool: &MyZpool, handle: usize) {
-> +///         let n =3D (handle & 0x3F) + 3;
-> +///         let uptr =3D handle & !0x3F;
-> +///
-> +///         // SAFETY:
-> +///         // - uptr comes from handle which points to the KVec allocat=
-ion from `alloc`.
-
-That's not true, you modified the pointer you got from KVec. Please explain=
- why
-it is always safe to use lower 6 bits for something else.
-
-What does "`alloc`" refer to?
-
-NIT: `uptr`, `KVec`
-
-> +///         // - size =3D=3D capacity and is coming from the first 6 bit=
-s of handle.
-> +///         let vec =3D unsafe { KVec::<u64>::from_raw_parts(uptr as *mu=
-t u64, 1 << n, 1 << n) };
-
-Why do you set the length (not the capacity) of the Vector to 1 << n? I thi=
-nk
-technically it doesn't matter, but you should explain that in the safety
-comment.
-
-> +///         drop(vec);
-> +///         pool.bytes_used.fetch_sub(1 << (n + 3), Ordering::Relaxed);
-> +///     }
-> +///
-> +///     unsafe fn read_begin(_pool: &MyZpool, handle: usize) -> NonNull<=
-u8> {
-> +///         let uptr =3D handle & !0x3F;
-> +///         // SAFETY: uptr points to a memory area allocated by KVec
-
-Please use markdown and end sentences with a period. (Applies to the entire
-file.)
-
-> +///         unsafe { NonNull::new_unchecked(uptr as *mut u8) }
-> +///     }
-> +///
-> +///     unsafe fn read_end(_pool: &MyZpool, _handle: usize, _handle_mem:=
- NonNull<u8>) {}
-> +///
-> +///     unsafe fn write(_p: &MyZpool, handle: usize, handle_mem: NonNull=
-<u8>, mem_len: usize) {
-> +///         let uptr =3D handle & !0x3F;
-> +///         // SAFETY: handle_mem is a valid non-null pointer provided b=
-y zpool, uptr points to
-> +///         // a KVec allocated in `malloc` and is therefore also valid.
-> +///         unsafe {
-> +///             copy_nonoverlapping(handle_mem.as_ptr().cast(), uptr as =
-*mut c_void, mem_len)
-> +///         };
-> +///     }
-> +///
-> +///     fn total_pages(pool: &MyZpool) -> u64 {
-> +///         pool.bytes_used.load(Ordering::Relaxed) >> PAGE_SHIFT
-
-I'm not sure what the semantic of this function is; the documentation says
-"Get the number of pages used by the `pool`".
-
-However, given that you give out allocations from a kmalloc() bucket in
-malloc(), this pool might be backed by more pages than what you calculate h=
-ere.
-
-So, what is done here is calculating the number of pages you could fill wit=
-h
-the memory that is kept around, but not the number of backing pages you con=
-sume
-memory from.
-
-Using VBox<u8; PAGE_SIZE>::new_uninit() for all allocations might simplify =
-this.
-
-> +///     }
-> +/// }
-> +/// ```
-> +///
-> +pub trait ZpoolDriver {
-> +    /// Opaque Rust representation of `struct zpool`.
-> +    type Pool: ForeignOwnable;
-> +
-> +    /// Create a pool.
-> +    fn create(name: &'static CStr, gfp: Flags) -> Result<Self::Pool>;
-> +
-> +    /// Destroy the pool.
-> +    fn destroy(pool: Self::Pool);
-> +
-> +    /// Allocate an object of size `size` bytes from `pool`, with the al=
-location flags `gfp` and
-
-"of `size` bytes"
-
-> +    /// preferred NUMA node `nid`. If the allocation is successful, an o=
-paque handle is returned.
-> +    fn malloc(
-> +        pool: <Self::Pool as ForeignOwnable>::BorrowedMut<'_>,
-> +        size: usize,
-> +        gfp: Flags,
-> +        nid: NumaNode,
-> +    ) -> Result<usize>;
-> +
-> +    /// Free a previously allocated from the `pool` object, represented =
-by `handle`.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// - `handle` must be a valid handle previously returned by `malloc=
-`.
-> +    /// - `handle` must not be used any more after the call to `free`.
-> +    unsafe fn free(pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>, h=
-andle: usize);
-> +
-> +    /// Make all the necessary preparations for the caller to be able to=
- read from the object
-> +    /// represented by `handle` and return a valid pointer to the `handl=
-e` memory to be read.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// - `handle` must be a valid handle previously returned by `malloc=
-`.
-> +    /// - `read_end` with the same `handle` must be called for each `rea=
-d_begin`.
-
-What can potentially happen if we don't? I.e. how is this different from
-malloc()?
-
-> +    unsafe fn read_begin(
-> +        pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>,
-> +        handle: usize,
-> +    ) -> NonNull<u8>;
-> +
-> +    /// Finish reading from a previously allocated `handle`. `handle_mem=
-` must be the pointer
-> +    /// previously returned by `read_begin`.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// - `handle` must be a valid handle previously returned by `malloc=
-`.
-> +    /// - `handle_mem` must be the pointer previously returned by `read_=
-begin`.
-> +    unsafe fn read_end(
-> +        pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>,
-> +        handle: usize,
-> +        handle_mem: NonNull<u8>,
-> +    );
-> +
-> +    /// Write to the object represented by a previously allocated `handl=
-e`. `handle_mem` points
-> +    /// to the memory to copy data from, and `mem_len` defines the lengt=
-h of the data block to
-> +    /// be copied.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// - `handle` must be a valid handle previously returned by `malloc=
-`.
-> +    /// - `handle_mem` must be a valid pointer to an allocated memory ar=
-ea.
-
-"must be a valid pointer into the allocated memory aread represented by
-`handle`"
-
-> +    /// - `handle_mem` + `mem_len` must not point outside the allocated =
-memory area.
-> +    unsafe fn write(
-> +        pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>,
-> +        handle: usize,
-> +        handle_mem: NonNull<u8>,
-> +        mem_len: usize,
-> +    );
-> +
-> +    /// Get the number of pages used by the `pool`.
-> +    fn total_pages(pool: <Self::Pool as ForeignOwnable>::Borrowed<'_>) -=
-> u64;
-> +}
-> +
-> +/// An "adapter" for the registration of zpool drivers.
-> +pub struct Adapter<T: ZpoolDriver>(T);
-> +
-> +impl<T: ZpoolDriver> Adapter<T> {
-> +    extern "C" fn create_(name: *const c_uchar, gfp: u32) -> *mut c_void=
- {
-> +        // SAFETY: the memory pointed to by name is guaranteed by zpool =
-to be a valid string
-
-What about the lifetime of the string? In the abstraction you assume 'stati=
-c,
-how is this guaranteed?
-
-> +        let pool =3D unsafe { T::create(CStr::from_char_ptr(name), Flags=
-::from_raw(gfp)) };
-> +        match pool {
-> +            Err(_) =3D> null_mut(),
-> +            Ok(p) =3D> T::Pool::into_foreign(p),
-> +        }
-> +    }
-
-Please add an empty line in between function definitions.
-
-> +    extern "C" fn destroy_(pool: *mut c_void) {
-> +        // SAFETY: The pointer originates from an `into_foreign` call.
-> +        T::destroy(unsafe { T::Pool::from_foreign(pool) })
-> +    }
-> +    extern "C" fn malloc_(
-> +        pool: *mut c_void,
-> +        size: usize,
-> +        gfp: u32,
-> +        handle: *mut usize,
-> +        nid: c_int,
-> +    ) -> c_int {
-> +        // SAFETY: The pointer originates from an `into_foreign` call. I=
-f `pool` is passed to
-> +        // `from_foreign`, then that happens in `_destroy` which will no=
-t be called during this
-> +        // method.
-> +        let pool =3D unsafe { T::Pool::borrow_mut(pool) };
-
-Wait, can't this happen concurrently to all the other functions that borrow=
- the
-pool? This would be undefined behavior, no?
-
-> +        from_result(|| {
-> +            let real_nid =3D match nid {
-> +                bindings::NUMA_NO_NODE =3D> NumaNode::NO_NODE,
-> +                _ =3D> NumaNode::new(nid)?,
-> +            };
-> +            let h =3D T::malloc(pool, size, Flags::from_raw(gfp), real_n=
-id)?;
-> +            // SAFETY: handle is guaranteed to be a valid pointer by zpo=
-ol.
-> +            unsafe { *handle =3D h };
-> +            Ok(0)
-> +        })
-> +    }
-> +    extern "C" fn free_(pool: *mut c_void, handle: usize) {
-> +        // SAFETY: The pointer originates from an `into_foreign` call. I=
-f `pool` is passed to
-> +        // `from_foreign`, then that happens in `_destroy` which will no=
-t be called during this
-> +        // method.
-> +        let pool =3D unsafe { T::Pool::borrow(pool) };
-> +
-> +        // SAFETY: the caller (zswap) guarantees that `handle` is a vali=
-d handle previously
-
-Why does this mention zwap here and in the other functions below?
-
-> +        // allocated by `malloc`.
-> +        unsafe { T::free(pool, handle) }
-> +    }
 
