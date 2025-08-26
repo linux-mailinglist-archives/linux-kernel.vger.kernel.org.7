@@ -1,195 +1,92 @@
-Return-Path: <linux-kernel+bounces-786164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD5A1B355DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:41:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 884A7B355E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:41:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 069257AD5E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:39:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC409203286
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:41:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782EB2E1727;
-	Tue, 26 Aug 2025 07:39:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A252F6560;
+	Tue, 26 Aug 2025 07:39:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="MP+XJbgO"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R8GrXQXm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A73972F99B5;
-	Tue, 26 Aug 2025 07:39:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD042F5307;
+	Tue, 26 Aug 2025 07:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756193988; cv=none; b=icabEo4aFzO0VnRkR9IE34MmWwW2p+YiN2WfunmVIoEzgFLSYz5RMSuIzE0WrtRT9j+niPQlt+Q1XisInMJz3qqucM5Z+q4X2ZPpqACGDFg7k/fjBnCfaCwhMXb0zMY73Rqz2iVwLMdf9PbZPwkR6qIKwZN7ODvo8q302nKYrNE=
+	t=1756193998; cv=none; b=VEi5MpekOb58OLXGkgtGNC+eGvgQeElo5gHEjYMeWpi1LZbvd7Cjc7fQQnozcE5L07HgfS9ULqs9xQPKx0E5BBd/2fXKjudoKrAhWKyDQvOtN/yaeqJpZYjjbyZliGHCyPcmJb9d2cPjIoevft5niqjUC7r0Y9jGGWnUyA3v90M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756193988; c=relaxed/simple;
-	bh=IdixZxrNWPt50GtxxtAuJjgTZCVnyk5QruEPtZQ+mLM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=eoS4duXdxIc0CtuSvyg2G+Th7M+0TUSoS31kF1zg2A3o8A2JVRkdIBCVKgjIMOz3dXKtgG/dwQem1mrmnUKzwnd8ib3Hc2hY/o4Ocli8IP81JS2Xesqr0mYacSHXRmQ62rkFQ9HCega4NxMr4MyfCcMs5IDDkLson3szL/uyoEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=MP+XJbgO; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1756193985;
-	bh=IdixZxrNWPt50GtxxtAuJjgTZCVnyk5QruEPtZQ+mLM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=MP+XJbgO1nW7kVD4o0fcUHF2K3/HHFxGUV7olYVe6eoJ81/o1gnMrjy8VH5DBxUlw
-	 15Abd820pWIh1ermhivPxPm85a/xUnHvyOzGcHT9PKcGQkkmCqDO2PClmBEYTL8C3C
-	 72wp4T4qR4TV3qDAeFDwVfiE7r2QqctEHGDAyS7YWE9v7wM/dRyim0cwAZOkZ1y0hm
-	 T8x4tf4kg4QGrHtUNIcKsP3YxFEdc9eJL40oxhs+RkRPTyTLjORMWCzL4BTX+2E+xw
-	 VK+OAhcLdQ6CRMAOmFn0fGysv2CffMyLPc6IcEt5GQ0Kc/KWksWjntaXbFRvSAPIp4
-	 Y7HxCemACRALA==
-Received: from 2a01cb0892f2d600c8f85cf092d4af51.ipv6.abo.wanadoo.fr (2a01cb0892F2D600C8F85cF092d4AF51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: jmassot)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2AE3517E0A28;
-	Tue, 26 Aug 2025 09:39:44 +0200 (CEST)
-From: Julien Massot <julien.massot@collabora.com>
-Date: Tue, 26 Aug 2025 09:39:39 +0200
-Subject: [PATCH v3 6/6] ASoC: dt-binding: Convert MediaTek mt8183-mt6358 to
- DT schema
+	s=arc-20240116; t=1756193998; c=relaxed/simple;
+	bh=oEq8H6EfVNjsg+UO9rpShA2CXXXpl88BFCa6VmYHAh4=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=g8tbyUkfhJfa1CCHDLNfNLq1nzuuNPJP0wHbvuDAKWivG55j8zfEDBDP1StkckUiJz/fvtnaAp97Ky4db19/yV7tMIc/LNnMkNWOMNL1Aqdckfa7ULP0TWWR4t/5Ljg1owMp2UdMqhbGVr3Cc6Tp7HbF8wgmmWOyL7dPrsqtlpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R8GrXQXm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EACB8C4CEF4;
+	Tue, 26 Aug 2025 07:39:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756193998;
+	bh=oEq8H6EfVNjsg+UO9rpShA2CXXXpl88BFCa6VmYHAh4=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=R8GrXQXmUGPDBpnWH367lCBqsbirT2QNC9+1TGVUu3tLQjQnLguIOcmW6+DpqahEr
+	 jmz63rELSz1dRpFTnmJNiWg1TbpiTf5Jccf7NFyjTSydghXmyRXrgonYkmRhdq2uqR
+	 xNe/Qcd89x2wsDdHujUl+rcY73YdQUSfqf+3tnsnGipvaKJAslNN72rN/6SRE5FXRg
+	 vP8vj8TPumadWwYeiLyp4E/UO/BxeGqmFhscgcgrCJBxmDAqqIHp133z4IOEdGGyXq
+	 A2/XXhJqA7z3oTgnDjeUfwRX3v3f2lKcXNA+QlfZQdVrRCweiOUhqGGJGy8WWUB0x3
+	 DAWjH8pEdzGYA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAEEB383BF70;
+	Tue, 26 Aug 2025 07:40:06 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250826-mtk-dtb-warnings-v3-6-20e89886a20e@collabora.com>
-References: <20250826-mtk-dtb-warnings-v3-0-20e89886a20e@collabora.com>
-In-Reply-To: <20250826-mtk-dtb-warnings-v3-0-20e89886a20e@collabora.com>
-To: kernel@collabora.com, Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Ikjoon Jang <ikjn@chromium.org>, 
- Enric Balletbo i Serra <eballetbo@kernel.org>, 
- Chen-Yu Tsai <wenst@chromium.org>, Weiyi Lu <weiyi.lu@mediatek.com>, 
- Eugen Hristev <eugen.hristev@linaro.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Julien Massot <jmassot@collabora.com>, Sean Wang <sean.wang@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org, 
- linux-gpio@vger.kernel.org, Julien Massot <julien.massot@collabora.com>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] octeontx2-af: Remove unused declarations
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175619400575.3695592.14849572687350740184.git-patchwork-notify@kernel.org>
+Date: Tue, 26 Aug 2025 07:40:05 +0000
+References: <20250820123007.1705047-1-yuehaibing@huawei.com>
+In-Reply-To: <20250820123007.1705047-1-yuehaibing@huawei.com>
+To: Yue Haibing <yuehaibing@huawei.com>
+Cc: sgoutham@marvell.com, lcherian@marvell.com, gakula@marvell.com,
+ jerinj@marvell.com, hkelam@marvell.com, sbhatta@marvell.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-Convert the existing text-based DT binding for MT8183 sound cards using
-MT6358 and various other codecs to a DT schema.
+Hello:
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-Signed-off-by: Julien Massot <julien.massot@collabora.com>
----
- .../sound/mediatek,mt8183_mt6358_ts3a227.yaml      | 59 ++++++++++++++++++++++
- .../sound/mt8183-mt6358-ts3a227-max98357.txt       | 25 ---------
- 2 files changed, 59 insertions(+), 25 deletions(-)
+This patch was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-diff --git a/Documentation/devicetree/bindings/sound/mediatek,mt8183_mt6358_ts3a227.yaml b/Documentation/devicetree/bindings/sound/mediatek,mt8183_mt6358_ts3a227.yaml
-new file mode 100644
-index 0000000000000000000000000000000000000000..43a6f9d40644c2fc1e61ebf58fcd62eaf3ee43f0
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/mediatek,mt8183_mt6358_ts3a227.yaml
-@@ -0,0 +1,59 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/mediatek,mt8183_mt6358_ts3a227.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: MediaTek MT8183 sound card with MT6358, TS3A227, and MAX98357/RT1015 codecs
-+
-+maintainers:
-+  - Julien Massot <julien.massot@collabora.com>
-+
-+description:
-+  MediaTek MT8183 SoC-based sound cards using the MT6358 codec,
-+  with optional TS3A227 headset codec, EC codec (via Chrome EC), and HDMI audio.
-+  Speaker amplifier can be one of MAX98357A/B, RT1015, or RT1015P.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - mediatek,mt8183_mt6358_ts3a227_max98357
-+      - mediatek,mt8183_mt6358_ts3a227_max98357b
-+      - mediatek,mt8183_mt6358_ts3a227_rt1015
-+      - mediatek,mt8183_mt6358_ts3a227_rt1015p
-+
-+  mediatek,platform:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: Phandle to the MT8183 ASoC platform node (e.g., AFE).
-+
-+  mediatek,headset-codec:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: Phandle to the TS3A227 headset codec.
-+
-+  mediatek,ec-codec:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: |
-+      Optional phandle to a ChromeOS EC codec node.
-+      See bindings in google,cros-ec-codec.yaml.
-+
-+  mediatek,hdmi-codec:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: Optional phandle to an HDMI audio codec node.
-+
-+required:
-+  - compatible
-+  - mediatek,platform
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    sound {
-+        compatible = "mediatek,mt8183_mt6358_ts3a227_max98357";
-+        mediatek,headset-codec = <&ts3a227>;
-+        mediatek,ec-codec = <&ec_codec>;
-+        mediatek,hdmi-codec = <&it6505dptx>;
-+        mediatek,platform = <&afe>;
-+    };
-+
-+...
-diff --git a/Documentation/devicetree/bindings/sound/mt8183-mt6358-ts3a227-max98357.txt b/Documentation/devicetree/bindings/sound/mt8183-mt6358-ts3a227-max98357.txt
-deleted file mode 100644
-index ecd46ed8eb98b99d0f2cc9eeca5f6d0aef6a5ada..0000000000000000000000000000000000000000
---- a/Documentation/devicetree/bindings/sound/mt8183-mt6358-ts3a227-max98357.txt
-+++ /dev/null
-@@ -1,25 +0,0 @@
--MT8183 with MT6358, TS3A227, MAX98357, and RT1015 CODECS
--
--Required properties:
--- compatible : "mediatek,mt8183_mt6358_ts3a227_max98357" for MAX98357A codec
--               "mediatek,mt8183_mt6358_ts3a227_max98357b" for MAX98357B codec
--               "mediatek,mt8183_mt6358_ts3a227_rt1015" for RT1015 codec
--               "mediatek,mt8183_mt6358_ts3a227_rt1015p" for RT1015P codec
--- mediatek,platform: the phandle of MT8183 ASoC platform
--
--Optional properties:
--- mediatek,headset-codec: the phandles of ts3a227 codecs
--- mediatek,ec-codec: the phandle of EC codecs.
--                     See google,cros-ec-codec.txt for more details.
--- mediatek,hdmi-codec: the phandles of HDMI codec
--
--Example:
--
--	sound {
--		compatible = "mediatek,mt8183_mt6358_ts3a227_max98357";
--		mediatek,headset-codec = <&ts3a227>;
--		mediatek,ec-codec = <&ec_codec>;
--		mediatek,hdmi-codec = <&it6505dptx>;
--		mediatek,platform = <&afe>;
--	};
--
+On Wed, 20 Aug 2025 20:30:07 +0800 you wrote:
+> Commit 1845ada47f6d ("octeontx2-af: cn10k: Add RPM LMAC pause frame
+> support") remove cgx_lmac_[s|g]et_pause_frm() and leave these unused.
+> 
+> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+> ---
+>  drivers/net/ethernet/marvell/octeontx2/af/cgx.h | 4 ----
+>  1 file changed, 4 deletions(-)
 
+Here is the summary with links:
+  - [net-next] octeontx2-af: Remove unused declarations
+    https://git.kernel.org/netdev/net-next/c/07ca488d688c
+
+You are awesome, thank you!
 -- 
-2.50.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
