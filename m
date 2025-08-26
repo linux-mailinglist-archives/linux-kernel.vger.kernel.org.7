@@ -1,195 +1,115 @@
-Return-Path: <linux-kernel+bounces-786452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35D42B359FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:20:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F9F6B359FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:19:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 275561B28107
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:20:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 435BA2A6C54
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:19:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24ED829E0E9;
-	Tue, 26 Aug 2025 10:20:08 +0000 (UTC)
-Received: from baidu.com (mx22.baidu.com [220.181.50.185])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0592629D297;
+	Tue, 26 Aug 2025 10:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uoKKX/sD"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F0D529992E
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 10:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A01C91EE7B9
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 10:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756203607; cv=none; b=kEO/4ThEaNlWE0aOJeFU/Q7oi8zkI841DQUZVP+T8ElVuijDIfXtCUUBcfj3HOmc1DMLV714Qt04wLmS8bOWuRNtja9nhN/DkK7Fsoztf5B3eT15VFvhzkzwkTUqASsxLArdI8R8bG4yrQJGvd9OyvXfLF83cWYB0v8ltP3cOis=
+	t=1756203557; cv=none; b=tkAzq7TGn6sqG51c98ZJ8/C2cUBuL3ZgyQL5htBuOyAx5KozD08fl0mfnONA6L2kJE+xL/1g+/sEF0ZvIrCEPAwAz9Tvqmu/9dtM3vgx1pXB55xUx1uq4sl9CNj3EmBLx0So6XDf7IEplRbpdyaW3HXPOm+ThKuB8p8jZqLbFcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756203607; c=relaxed/simple;
-	bh=oAkXsdiMFng0cw165O8QJJiDhjH0zGQicoIoHtBLd/8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tHsUqAZWcPkDYkx6+jQXoRwbLlPlB0pBEMYYeTjnNqlF/Z9tIrOQRpnim1+a3iMb6fspCCXbw0GkhLJ6XS02HnVv5RJ2m6f6cCLuN5h47zNQmGMZfEUKOZJTu6k3dDxrBrirpDZNsoJl59pFfBTpCHVtudJVJfhEZRfRoU3ZcS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
-From: lirongqing <lirongqing@baidu.com>
-To: <muchun.song@linux.dev>, <osalvador@suse.de>, <david@redhat.com>,
-	<akpm@linux-foundation.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <giorgitchankvetadze1997@gmail.com>
-CC: Li RongQing <lirongqing@baidu.com>, Wenjie Xu <xuwenjie04@baidu.com>
-Subject: [PATCH] mm/hugetlb: two-phase hugepage allocation when reservation is high
-Date: Tue, 26 Aug 2025 18:18:40 +0800
-Message-ID: <20250826101840.3954-1-lirongqing@baidu.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1756203557; c=relaxed/simple;
+	bh=P9Vdw9iylpzk0qKP9kKWFec9BuKBYaZ64z20IOqIxAQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pk4yDZ2NdEnHF0V0uU7geqxYbrKknO+LhKostZJbx9eu6oumwD3MgaiDrBxdvxgIrZc9onYLl3bS/MBkx7bd/1QIF5wW0YkC9sXlsqhgPuxZZ4kuWfrXRPTqclr8UIcFmlJtkShlQzogInX9/ynds6FlqxWK3Q8/Bb7GRfBqwyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uoKKX/sD; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3c854b6459fso1585850f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 03:19:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756203554; x=1756808354; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KA08p19n2dBZD6F6oasWBo8WpykXDUnkHMST64oT7b4=;
+        b=uoKKX/sDKa/x1ptQtiT+iFnbOImipNzAu4AIzS4xxj2UDld7NuJGvxa+J/nXS6u4s+
+         3bYzXSKhjc5woOnTMrl8JFDGtALtDG7AM8b6W3CeboLPFSQ0AUZGLh9qsznAXII3/fjk
+         lxv24ulXkF/SUeinL85lNANU8QhpAOUfzdPxl8wPxG6UQj5i/n9yGm4F3xRfUUHauRMU
+         o1EAmezIHiyrQeBH2cscgrq7wOQg6HTJ1mIjNBRQCMElQdtAsmlfepgeZbMMfhdwraNq
+         QfEoxycPJlkjF8QZ9ykMCiKO2v91eEV9gGZPzAAEZCAy7ZOzad+iEvmfBDbuFrQ9zd0y
+         cu5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756203554; x=1756808354;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KA08p19n2dBZD6F6oasWBo8WpykXDUnkHMST64oT7b4=;
+        b=NwUBq9EkN5afZ8TKB3W8wk8u4/pftui1wi4PR1oljl3rfoMsiiHAUBSXub2XNggkSD
+         GmjtnUZg5nTrL/VvHXrADyMXHX4WKDdm5YVR9t51kutjArIN6yTH6DbzwIxuIsDQSF38
+         vweDYXARd+Cy+gduXxLLKBoqLBAiVEVu5ejbnjcm8H0RfZyQiEqT+4Sgl/uTZWpyC8fT
+         mji/3T1HK+5sYCqrPuHN3GS5HpmfSCeH8e5nuIqY8Z1bcXr4YAAglXSXAHcw/O0dpBqX
+         bNF6c7twf5Oze4JpXVG/mkOR8dSHk1s7CDaRcyyo0qGsVsDmKbR9PNpK5/8X3rR6f1Cf
+         Xhnw==
+X-Forwarded-Encrypted: i=1; AJvYcCX0OhOXp9XlcEEs93122OU4rZZwZg0CVVpiwJ4jc7WzQNpISOsAKl4ReyyVzzP7jNBxUmpSwBN3Qhd63Hw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyi0W6c0jlxV6YuvugeTBmwk32lyowuxzcyXj00c7jaND79P3IC
+	RVpwWgKKa0masQgW4wN1V3Egqnbc+VPS0Ev6JNBBqfE5YrDIclHMky3zcJeiGyPNGG8=
+X-Gm-Gg: ASbGnct1PmQL7DmfoX2K/+4LubtLFtFwt9zZVvg2rqacgp0B8x5XGc+A/o2U+0t+66X
+	XpQLIUsOkLQDWPGArbOrUoXbM6EyLoXu/d9tRor50LLKpFIPQVvQTNQ/i8meJ+CPlW/id5ogAFH
+	silUlh09SjkzQB34DwQ/t9rxOSdYmo2w+ZyAqNzBRq6d8hW5ntTKhLSnIxn1MlEdcqfoxadKKYP
+	yTs6ccIJXuLn9OvvOhKtldDIGvv5TIfSEKh428bh1TIW6W7rifPjD6+XPZq3KwzMz5/F125wW2S
+	3G+pBStEHveGm90M9fO66w9i7VtO2FkbXE4s4ZLalX6ZhwID+qgad4ktEprWCjjqV913KQxx0PS
+	IvFp0rgZTj2tk8sh4jXJlumTAi/8kfNxYalA4kg==
+X-Google-Smtp-Source: AGHT+IHk9cosoz3/LRw9lg5Dp7C24orHPU6oYSaVahz4ew+BPbdCGzHMxX5ITzmTxE3NR4Fgi9pymg==
+X-Received: by 2002:a5d:4846:0:b0:3b7:6d95:56d2 with SMTP id ffacd0b85a97d-3c5da7402e3mr8297216f8f.7.1756203553895;
+        Tue, 26 Aug 2025 03:19:13 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3cc0ea9e0d7sm27392f8f.25.2025.08.26.03.19.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Aug 2025 03:19:13 -0700 (PDT)
+Date: Tue, 26 Aug 2025 13:19:10 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Qianfeng Rong <rongqianfeng@vivo.com>
+Cc: Dave Penkler <dpenkler@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Michael Rubin <matchstick@neverthere.org>,
+	Arnd Bergmann <arnd@arndb.de>, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: gpib: use int instead of u32 to store error
+ codes
+Message-ID: <aK2KHhaFqWbd5S_O@stanley.mountain>
+References: <20250826095907.239992-1-rongqianfeng@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: bjhj-exc4.internal.baidu.com (172.31.3.14) To
- bjkjy-exc3.internal.baidu.com (172.31.50.47)
-X-FEAS-Client-IP: 172.31.50.47
-X-FE-Policy-ID: 52:10:53:SYSTEM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250826095907.239992-1-rongqianfeng@vivo.com>
 
-From: Li RongQing <lirongqing@baidu.com>
+On Tue, Aug 26, 2025 at 05:58:59PM +0800, Qianfeng Rong wrote:
+> Use int instead of size_t for 'ret' variable to store negative error codes
+> returned by bb_write().
+> 
 
-When the total reserved hugepages account for 95% or more of system RAM
-(common in cloud computing on physical servers), allocating them all in one
-go can lead to OOM or fail to allocate huge page during early boot.
+The commit message needs to give a motivation.  I would have assumed from
+reading the patch that this caused a signedness bug but it doesn't.
+The commit has no effect on runtime but fixing the type is a nice
+cleanup.  My commit message would say:
 
-The commit 91f386bf0772 ("hugetlb: batch freeing of vmemmap pages") can
-worsen peak memory pressure under these conditions by deferring page frees,
-exacerbating allocation failures. To prevent this, split the allocation
-into two equal batches whenever
-	huge_reserved_pages >= totalram_pages() * 90 / 100.
+The "ret" variable is used to store the return from bb_write() returns
+either zero on success or negative error codes on failure.  Storing the
+error codes in size_t which is an unsigned long, doesn't cause an issue
+at runtime but it's ugly as pants.  Change "ret" from size_t to int
+type.  No effect on runtime.
 
-This change does not alter the number of padata worker threads per batch;
-it merely introduces a second round of padata_do_multithreaded(). The added
-overhead of restarting the worker threads is minimal.
-
-The result on a 256G memory machine as below:
-Before:
-[    4.350400] HugeTLB: allocation took 706ms with hugepage_allocation_threads=32
-[    4.351577] HugeTLB: allocating 128512 of page size 2.00 MiB failed.  Only allocated 128074 hugepages.
-[    4.355608] HugeTLB: registered 2.00 MiB page size, pre-allocated 128074 pages
-After:
-[    3.561088] HugeTLB: two-phase hugepage allocation is used
-[    4.280300] HugeTLB: allocation took 712ms with hugepage_allocation_threads=32
-[    4.281054] HugeTLB: registered 2.00 MiB page size, pre-allocated 128512 pages
-
-Fixes: 91f386bf0772 ("hugetlb: batch freeing of vmemmap pages")
-
-Co-developed-by: Wenjie Xu <xuwenjie04@baidu.com>
-Signed-off-by: Wenjie Xu <xuwenjie04@baidu.com>
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
----
-Diff with v1: add log if two-phase hugepage allocation is triggered
-              add the knod to control split ratio
-
- Documentation/admin-guide/mm/hugetlbpage.rst | 12 +++++++++
- mm/hugetlb.c                                 | 39 ++++++++++++++++++++++++++--
- 2 files changed, 49 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/admin-guide/mm/hugetlbpage.rst b/Documentation/admin-guide/mm/hugetlbpage.rst
-index 67a9419..5cfb6e3 100644
---- a/Documentation/admin-guide/mm/hugetlbpage.rst
-+++ b/Documentation/admin-guide/mm/hugetlbpage.rst
-@@ -156,6 +156,18 @@ hugepage_alloc_threads
- 		hugepage_alloc_threads=8
- 
- 	Note that this parameter only applies to non-gigantic huge pages.
-+
-+hugepage_split_ratio
-+    Controls the threshold for two-phase hugepage allocation.
-+    When the total number of reserved hugepages (huge_reserved_pages) exceeds
-+    (totalram_pages * hugepage_split_ratio / 100), the hugepage allocation process
-+    during boot is split into two batches.
-+
-+    Default value is 90, meaning the two-phase allocation is triggered when
-+    reserved hugepages exceed 90% of total system RAM.
-+    The value can be adjusted via the kernel command line parameter
-+    "hugepage_split_ratio=". Valid range is 1 to 99.
-+
- default_hugepagesz
- 	Specify the default huge page size.  This parameter can
- 	only be specified once on the command line.  default_hugepagesz can
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 753f99b..576f402 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -88,6 +88,7 @@ static bool __initdata parsed_valid_hugepagesz = true;
- static bool __initdata parsed_default_hugepagesz;
- static unsigned int default_hugepages_in_node[MAX_NUMNODES] __initdata;
- static unsigned long hugepage_allocation_threads __initdata;
-+static int hugepage_split_ratio __initdata = 90;
- 
- static char hstate_cmdline_buf[COMMAND_LINE_SIZE] __initdata;
- static int hstate_cmdline_index __initdata;
-@@ -3587,12 +3588,24 @@ static unsigned long __init hugetlb_pages_alloc_boot(struct hstate *h)
- 		.numa_aware	= true
- 	};
- 
-+	unsigned long huge_reserved_pages = h->max_huge_pages << h->order;
-+	unsigned long huge_pages, remaining, total_pages;
- 	unsigned long jiffies_start;
- 	unsigned long jiffies_end;
- 
-+	total_pages = totalram_pages() * hugepage_split_ratio / 100;
-+	if (huge_reserved_pages > total_pages) {
-+		huge_pages =  h->max_huge_pages * hugepage_split_ratio / 100;
-+		remaining = h->max_huge_pages - huge_pages;
-+		pr_info("HugeTLB: two-phase hugepage allocation is used\n");
-+	} else {
-+		huge_pages =  h->max_huge_pages;
-+		remaining = 0;
-+	}
-+
- 	job.thread_fn	= hugetlb_pages_alloc_boot_node;
- 	job.start	= 0;
--	job.size	= h->max_huge_pages;
-+	job.size	= huge_pages;
- 
- 	/*
- 	 * job.max_threads is 25% of the available cpu threads by default.
-@@ -3616,10 +3629,16 @@ static unsigned long __init hugetlb_pages_alloc_boot(struct hstate *h)
- 	}
- 
- 	job.max_threads	= hugepage_allocation_threads;
--	job.min_chunk	= h->max_huge_pages / hugepage_allocation_threads;
-+	job.min_chunk	= huge_pages / hugepage_allocation_threads;
- 
- 	jiffies_start = jiffies;
- 	padata_do_multithreaded(&job);
-+	if (remaining) {
-+		job.start   = huge_pages;
-+		job.size    = remaining;
-+		job.min_chunk   = remaining / hugepage_allocation_threads;
-+		padata_do_multithreaded(&job);
-+	}
- 	jiffies_end = jiffies;
- 
- 	pr_info("HugeTLB: allocation took %dms with hugepage_allocation_threads=%ld\n",
-@@ -5061,6 +5080,22 @@ static int __init hugepage_alloc_threads_setup(char *s)
- }
- __setup("hugepage_alloc_threads=", hugepage_alloc_threads_setup);
- 
-+static int __init hugepage_split_ratio_setup(char *s)
-+{
-+	int ratio;
-+
-+	if (kstrtoint(s, 0, &ratio) != 0)
-+		return 1;
-+
-+	if (ratio > 99 || ratio < 0)
-+		return 1;
-+
-+	hugepage_split_ratio = ratio;
-+
-+	return 1;
-+}
-+__setup("hugepage_split_ratio=", hugepage_split_ratio_setup);
-+
- static unsigned int allowed_mems_nr(struct hstate *h)
- {
- 	int node;
--- 
-2.9.4
+regards,
+dan carpenter
 
 
