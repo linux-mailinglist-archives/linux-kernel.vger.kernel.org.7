@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-787083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC236B37138
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:20:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2E81B3713A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:20:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD9F26851C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:20:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E48911BA6DEA
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 395F12E7F30;
-	Tue, 26 Aug 2025 17:20:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3CB2E3AE6;
+	Tue, 26 Aug 2025 17:20:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m0YL40+p"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="jgs1T0bQ"
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E4BF2E3B00;
-	Tue, 26 Aug 2025 17:20:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC421CD1F
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 17:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756228810; cv=none; b=qsLMbRR8otl9lm4RjQcOzZjdqYQUtCeIZH/ZqXfMZpZk9BP3AoMEdOYiZM1+Hxd5Zkq5fMS6dwMiez1YgVGGksjDeLtvXTzIO3W/6TvFS9s5Kzg1ln3bO72VEymiJsKY/aLjpI/5SRMhfEKvz7JctehwagiW9xtWKHsNwbSrPog=
+	t=1756228843; cv=none; b=eE9QG8/dJSHWwbEqXNDxfFRrwzyAGZ4lFLTRItE3W7kPir4dtWjhMYLYiUeQIhgMKbwkziVD+5pa1oekNGFkqSPNN2TuiXaWGhpndPvcLgQo7p6WwcwdFmCIIqgcEfF5ocZXdMGPbRGbTOVRmZI6k4B8tjCOi7nfNeqbvWTgHNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756228810; c=relaxed/simple;
-	bh=OneTPVvGf5CtKTfVmDcbn/EPX4wa9VHKlSdVCjaigTc=;
+	s=arc-20240116; t=1756228843; c=relaxed/simple;
+	bh=t8IwPQqNJiRPMzBJsf54cWWfn0K+k0YIvxSOPZmYjDI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Tvn8J4mqmfKAzIfct0cpgPh0iUeE0VNxelPFlDzfJf81f136yZx0oP+r2lDb/NWs/r92CbxcXNSA0Fbbk7V0AtWOjxUvRKlkdFxkpsx+nBoghUgB0prviD/KTKw2hgHi4hjsTo7fqGw1Xf5zgxh4XqaQZipV1LXlz6GNoldWDck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m0YL40+p; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7e8704da966so401797085a.1;
-        Tue, 26 Aug 2025 10:20:08 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=I2m2M+sHLsMeiBgDcvmkVzp6IoY2VzWHLCYLfOefFzwIi6SWWYW0CXeYKY9ljI1dlvqRR3BjkChtMXAYuCegfRq3V8iZsYWN0DDOeIadS/IRTH3L1UkkYvT1UP/WEys+UzCMvM5m3An0u+2GdkHsnBX//kSy2tDlyUWXGv7sna8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=jgs1T0bQ; arc=none smtp.client-ip=209.85.160.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-314bccf2472so1853241fac.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 10:20:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756228808; x=1756833608; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=JSKLhsuTTKWaNe2Iz7phwf88flDafRwaCX2Joa67Vn8=;
-        b=m0YL40+pwXmPi+VgdNSLoiJEM/UX+y/F/YrJURBw34xV9/MPjKFZQP8hnxGTLTvQMj
-         WcCqLv5XBsW4V+Or8U+F5T36dHoct9nxY4Z++nKtFoJ8Wd7ZTbcSNjL/l6AwdcbtaZ40
-         jNxmq+yvchMIIfZuClvCkgFaX8GSG8IofpdTHL7ekSLy6HecYzmcIgJYtGYvh/4tlWkW
-         mRxtgqUpOQe9mnBQc0w8v+98miPrL1YkszuHpfKQOZaQQUXjKaOKaNoTmvO5SffK2/E0
-         dFOCxevI58eZNWjgu8WvitLyyLzxqFFJLAXOggMO/Q92tFPb3u6XgIcGVhWnZu17ZLH8
-         iQ8A==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756228840; x=1756833640; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nLH5ebccMJNg2fmiEZ6mELPUvyqcTFcov8uXGnh7hPs=;
+        b=jgs1T0bQSyzBiGPxN+FAYjwKrx4hL39EJSW2foG3lLnd65BVSgLvPd0lsurp+aMwr5
+         8OfLCXOew3BOg/Hw3DwBRfNJRwhVCDhbfsCa02nmQx/REW5vAzgW8DR8oF0uJkMMd5do
+         Qb4eQLNtVrzpdalTzBAxW2lecjrRzCZN1U1F3p/tTTDLZcJCddHCrz31JU4GePMT0Vu/
+         8Ork9wUMIGQHqT/qhXjkVk56av9CcLkSIn4LUq/jXD9eanVemrxNdD6hwQxraQ9A9eCQ
+         psZ1zchPmnEKQC7CTrdiD+GX/eFj07EyUTwtoa1ndjkySVuLuDbmP+q+81Uq/oQVSq5a
+         RduQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756228808; x=1756833608;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JSKLhsuTTKWaNe2Iz7phwf88flDafRwaCX2Joa67Vn8=;
-        b=fdR86qyqcqF/LR1NgYokeJOZmJujDsctQ19oqTjP68rK+ggJ0eH56ga9YCgiIfNdHi
-         HblG2/skuGObsTJFmbq1bGKka6d6sEIWEmv944agBeMk+lmXN5qtQojWn8yT8SYHFbj/
-         eZYDeWFmxQfTcy25v90ljh0W3I5QB3zxGWuqU2XCiYGhTOOQIB2z9VxjFLF0RaRiIGU9
-         +lpkKsvCgH26PEQjo8tW2pikWrFEWYNAakCgh2mN5565vsNQJTLsTP9cE0k7lk+4wOuV
-         X74gTKJBskRD9ehsnoNGbAf82NpOGzijsZDIKYv4PjqtMGxDi7Oqli9GeKT1Tk9EqpBH
-         4tww==
-X-Forwarded-Encrypted: i=1; AJvYcCVqicfxIDuga8lJkZwxVkGCakVSeoDlDIHwQ1t6cdM5K4++kBfPq3f0rD4exeUxyyBdrLpVrL1Q@vger.kernel.org, AJvYcCWFUqHGziUK1wZpLCcq6sJHimt92ZdDiRONd+K7p9kpR1aOiFRVsGzvsI8t7H04QuAQRmOQ5wvExan2tcc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwH2GFJ+IvaTQElmcadVC7OUIJJF5cB1LttepNgcsnrSgqm7jwv
-	VCErNoAeptLP1ZvfFQwRjYWuov4h38jg6zPuFE8Jic1gIsDBlDAViuPn
-X-Gm-Gg: ASbGncs5J5Ouv70PQKQoAqR8au5hffdTFUzmT3Cc0EJ1p87BCjbMAuIcCMNt08gQY44
-	HvzR9Tcslo6dF9M6RswbhgovvGT0L5D6cA1XRdSdNAu2aheFn+G3wu6irtctIB2l1njMvviO2Ig
-	8n75HbshoKuwgQ92+tnkJR3tuRFo5L6jfOnkFsBe97QGJxuILiHNoHTP4QUXsxQ5eluSEHxVQrH
-	d1AMXEoG4VFPMN4XsGKrms0Hfp820w8f57jxJk6eljXPRzJghBPHfFaFgUbEC7mxLPfqnUCuBUs
-	a48SApJFzzY9zfZC7nAfCheGqzib71jUvUE3vtRyc/jnCmvAyaGpODWrAl5uUk5Dn+SJqivcys4
-	XbVSDId/Pz84iGCe5zdj1gAQ4RzlnyZpkr/t7ZuYvj97vsjmR6zPTwI6ZUgGu
-X-Google-Smtp-Source: AGHT+IExeNvwjRjJf0kFxGHZgI4IqJ8wYKpZjQFsHmzmUaPm5gzD5mD7E/3CGXYv/RyZ24Sn9V36HQ==
-X-Received: by 2002:a05:620a:4305:b0:7e9:f81f:ceb4 with SMTP id af79cd13be357-7ea1108e2bfmr1670461685a.78.1756228807932;
-        Tue, 26 Aug 2025 10:20:07 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70da7283decsm68502276d6.41.2025.08.26.10.20.03
+        d=1e100.net; s=20230601; t=1756228840; x=1756833640;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nLH5ebccMJNg2fmiEZ6mELPUvyqcTFcov8uXGnh7hPs=;
+        b=dd0HJFSlZwNnmh400h6AYQvsKyx9PkXoedsQZ+MtAAlUaxZDoRd/1gXP+O58eOlpy2
+         tF0UB/WhrWYdPAq9iVXgPfZ9IBBLU1C6VoAvqRVIpesXf0XQsgpR+cDRoAUujKU7iZmY
+         Z/Y6mNlXIDHAJuD1odKNlBKkNn3lpM89gA2DGNLKmNL30ga1uqRH9UkNgo96T/pqPw8D
+         qOq7bIUcy4B9F2anrHQ8HExSOP1/fg3mDGPxn6W4Hozv6KkuUy0JndIDIXoiQZ8YziAU
+         fHudp187vtpIrwFQPdx+lI19klwnUpOQqMmpMfSdDpAzrrc/3F3oBoo4ZqOdYqrxEbpL
+         wd/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW26qwfXRuw30/vIZIn7jtm6nrAuAUnamy8s74nVDSAPDXgCj7apatSskoNGnYYihjSfRjUlbwQWpvDvws=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaWn1zxZEYR6Ok9CbXX3wvcm46xorLTOnigT7m5f2tI2SHA0pO
+	1b7tuaIsjS0PIcGFThSFXhIFV0H0tDtWxVErWvjFP8uhpYL6rx5XOGpN51iiAW6vnCI=
+X-Gm-Gg: ASbGncueaZgomsng7KyMIrEMq7x2mbC1ujlikNLV9K1IFKwr3R10BDxemt31YDOgpUG
+	DFOlawPm/ZZ6Q88UezdiKS8mKHBRsdsqMyKo622seBkhOdVOEVEUZRPxnEDb1ze1WXibBrPCxFa
+	g7Ila7GjcLop5i6Zl2LOQjB5U4CfOADojYpcMWAH1EXLpO9CeSzNd6d732dmbwccFqjkP2tiSef
+	bF+X/rKYpcdkP4O9COVELpRaqznPP+w0c480mvQAtQW0YstUFcWC+3k0IcW/Z3EB4ZrVY0PNMiH
+	27cHDBEAbA3aZ+nERmAauDGhjd286mzaQSSCGd1W8F/swEAuAkPLgRUmnpgr8gNrPKM7DBe3JGw
+	s6M2d185mN8FTFcE7/BhQEn++RZO/1gbS7yMVbSZ3+XDqrgKK3dQiZbI1eVu3Z/Tg9hnkcLc40Q
+	wyIWwIm4ibow==
+X-Google-Smtp-Source: AGHT+IGLRA6KlL/el+5xyazskMojzEi/VZ5zSOO1th1Lvm0JoJbB1wRq23JboidQMDj1JKuA+jwtEw==
+X-Received: by 2002:a05:6871:4184:b0:30b:c4e1:7936 with SMTP id 586e51a60fabf-314dcad7aa1mr7362127fac.7.1756228840359;
+        Tue, 26 Aug 2025 10:20:40 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:aa9f:f4cd:76b1:fecb? ([2600:8803:e7e4:1d00:aa9f:f4cd:76b1:fecb])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-314f79c54basm2650246fac.5.2025.08.26.10.20.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Aug 2025 10:20:07 -0700 (PDT)
-Message-ID: <fece2c26-4434-48db-9be8-42bd882c51e0@gmail.com>
-Date: Tue, 26 Aug 2025 10:20:02 -0700
+        Tue, 26 Aug 2025 10:20:39 -0700 (PDT)
+Message-ID: <45170936-3eeb-4b7a-b75b-560660979b72@baylibre.com>
+Date: Tue, 26 Aug 2025 12:20:39 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,77 +82,197 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.15 000/644] 5.15.190-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-References: <20250826110946.507083938@linuxfoundation.org>
+Subject: Re: [PATCH v7 4/5] iio: mcp9600: Add support for IIR filter
+To: Ben Collins <bcollins@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>,
+ Antoniu Miclaus <antoniu.miclaus@analog.com>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250825-mcp9600-iir-v7-0-2ba676a52589@kernel.org>
+ <20250825-mcp9600-iir-v7-4-2ba676a52589@kernel.org>
 Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- WlfRzlpjIPmdjgoicA==
-In-Reply-To: <20250826110946.507083938@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20250825-mcp9600-iir-v7-4-2ba676a52589@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 8/26/25 04:01, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.190 release.
-> There are 644 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 8/25/25 7:10 PM, Ben Collins wrote:
+> MCP9600 supports an IIR filter with 7 levels. Add IIR attribute
+> to allow get/set of this value.
 > 
-> Responses should be made by Thu, 28 Aug 2025 11:08:21 +0000.
-> Anything received after that time might be too late.
+> Use filter_type[none, ema] for enabling the IIR filter.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.190-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
+> Signed-off-by: Ben Collins <bcollins@kernel.org>
+> ---
+>  drivers/iio/temperature/mcp9600.c | 147 ++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 147 insertions(+)
 > 
-> thanks,
-> 
-> greg k-h
+> diff --git a/drivers/iio/temperature/mcp9600.c b/drivers/iio/temperature/mcp9600.c
+> index aa42c2b1a369edbd36e0d6d6d1738ed0069fd990..d3309e30628ae5cdc74378403952ba285990f4c0 100644
+> --- a/drivers/iio/temperature/mcp9600.c
+> +++ b/drivers/iio/temperature/mcp9600.c
+> @@ -31,6 +31,7 @@
+>  #define MCP9600_STATUS_ALERT(x)		BIT(x)
+>  #define MCP9600_SENSOR_CFG		0x05
+>  #define MCP9600_SENSOR_TYPE_MASK	GENMASK(6, 4)
+> +#define MCP9600_FILTER_MASK		GENMASK(2, 0)
+>  #define MCP9600_ALERT_CFG1		0x08
+>  #define MCP9600_ALERT_CFG(x)		(MCP9600_ALERT_CFG1 + (x - 1))
+>  #define MCP9600_ALERT_CFG_ENABLE	BIT(0)
+> @@ -94,6 +95,27 @@ static const int mcp9600_tc_types[] = {
+>  	[THERMOCOUPLE_TYPE_R] = 'R',
+>  };
+>  
+> +enum mcp9600_filter {
+> +	MCP9600_FILTER_TYPE_NONE,
+> +	MCP9600_FILTER_TYPE_EMA,
+> +};
+> +
+> +static const char * const mcp9600_filter_type[] = {
+> +	[MCP9600_FILTER_TYPE_NONE] = "none",
+> +	[MCP9600_FILTER_TYPE_EMA] = "ema",
+> +};
+> +
+> +static const int mcp_iir_coefficients_avail[7][2] = {
+> +	/* Level 0 is no filter */
+> +	{ 0, 524549 },
+> +	{ 0, 243901 },
+> +	{ 0, 119994 },
+> +	{ 0,  59761 },
+> +	{ 0,  29851 },
+> +	{ 0,  14922 },
+> +	{ 0,   7461 },
+> +};
+> +
+>  static const struct iio_event_spec mcp9600_events[] = {
+>  	{
+>  		.type = IIO_EV_TYPE_THRESH,
+> @@ -119,6 +141,8 @@ struct mcp_chip_info {
+>  struct mcp9600_data {
+>  	struct i2c_client *client;
+>  	u32 thermocouple_type;
+> +	int filter_level;
+> +	int filter_enabled;
+>  };
+>  
+>  static int mcp9600_config(struct mcp9600_data *data)
+> @@ -129,6 +153,9 @@ static int mcp9600_config(struct mcp9600_data *data)
+>  
+>  	cfg  = FIELD_PREP(MCP9600_SENSOR_TYPE_MASK,
+>  			  mcp9600_type_map[data->thermocouple_type]);
+> +	/* The chip understands 0 as "none", and 1-7 as ema filter levels. */
+> +	if (data->filter_enabled)
+> +		FIELD_MODIFY(MCP9600_FILTER_MASK, &cfg, data->filter_level + 1);
+>  
+>  	ret = i2c_smbus_write_byte_data(client, MCP9600_SENSOR_CFG, cfg);
+>  	if (ret < 0) {
+> @@ -146,7 +173,11 @@ static int mcp9600_config(struct mcp9600_data *data)
+>  			.address = MCP9600_HOT_JUNCTION,		       \
+>  			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |	       \
+>  					      BIT(IIO_CHAN_INFO_THERMOCOUPLE_TYPE) | \
+> +					      BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY) | \
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+Does the filter actually only apply to the hot junction and not the
+cold junction? There is a mismatch between this being info_mask_separate
+and the filter_type being IIO_SHARED_BY_ALL.
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+Not related to this patch, but the comment same applies to
+IIO_CHAN_INFO_THERMOCOUPLE_TYPE - I missed that in previous reviews.
+
+>  					      BIT(IIO_CHAN_INFO_SCALE),	       \
+> +			.info_mask_separate_available =                        \
+> +					      BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY), \
+> +			.ext_info = mcp9600_ext_filter,			       \
+>  			.event_spec = &mcp9600_events[hj_ev_spec_off],	       \
+>  			.num_event_specs = hj_num_ev,			       \
+>  		},							       \
+> @@ -162,6 +193,57 @@ static int mcp9600_config(struct mcp9600_data *data)
+>  		},							       \
+>  	}
+>  
+> +static int mcp9600_get_filter(struct iio_dev *indio_dev,
+> +			      struct iio_chan_spec const *chan)
+> +{
+> +	struct mcp9600_data *data = iio_priv(indio_dev);
+> +
+> +	return data->filter_enabled ? MCP9600_FILTER_TYPE_EMA :
+> +		MCP9600_FILTER_TYPE_NONE;
+> +}
+> +
+> +static int mcp9600_set_filter(struct iio_dev *indio_dev,
+> +			      struct iio_chan_spec const *chan,
+> +			      unsigned int mode)
+> +{
+> +	struct mcp9600_data *data = iio_priv(indio_dev);
+> +	int new_type;
+
+This variable name is a little confusing. It looks like it should
+rather be:
+
+	bool new_filter_enabled;
+
+> +
+> +	switch (mode) {
+> +	case MCP9600_FILTER_TYPE_NONE:
+> +		new_type = 0;
+> +		break;
+> +
+> +	case MCP9600_FILTER_TYPE_EMA:
+> +		new_type = 1;
+> +		break;
+> +
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* Do not reset the filter if we don't need to. */
+> +	if (data->filter_enabled == new_type)
+> +		return 0;
+> +
+> +	data->filter_enabled = new_type;
+> +	return mcp9600_config(data);
+> +}
+> +
+> +static const struct iio_enum mcp9600_filter_enum = {
+> +	.items = mcp9600_filter_type,
+> +	.num_items = ARRAY_SIZE(mcp9600_filter_type),
+> +	.get = mcp9600_get_filter,
+> +	.set = mcp9600_set_filter,
+> +};
+> +
+> +static const struct iio_chan_spec_ext_info mcp9600_ext_filter[] = {
+> +	IIO_ENUM("filter_type", IIO_SHARED_BY_ALL, &mcp9600_filter_enum),
+> +	IIO_ENUM_AVAILABLE("filter_type", IIO_SHARED_BY_ALL,
+> +			   &mcp9600_filter_enum),
+> +	{ }
+> +};
+> +
+>  static const struct iio_chan_spec mcp9600_channels[][2] = {
+>  	MCP9600_CHANNELS(0, 0, 0, 0), /* Alerts: - - - - */
+>  	MCP9600_CHANNELS(1, 0, 0, 0), /* Alerts: 1 - - - */
+> @@ -216,6 +298,69 @@ static int mcp9600_read_raw(struct iio_dev *indio_dev,
+>  	case IIO_CHAN_INFO_THERMOCOUPLE_TYPE:
+>  		*val = mcp9600_tc_types[data->thermocouple_type];
+>  		return IIO_VAL_CHAR;
+> +	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
+> +		if (!data->filter_enabled)
+> +			return IIO_VAL_EMPTY;
+
+This brings us back to the earlier discussion of what should this
+be when the filter is disabled. Mathematically, it would be infinite.
+
+I wonder if it would be reasonable to return "inf" here since many
+floating point parsers will already handle that as a valid value.
+
+> +
+> +		*val = mcp_iir_coefficients_avail[data->filter_level][0];
+> +		*val2 = mcp_iir_coefficients_avail[data->filter_level][1];
+> +		return IIO_VAL_INT_PLUS_MICRO;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
 
