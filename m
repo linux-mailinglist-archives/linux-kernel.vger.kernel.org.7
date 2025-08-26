@@ -1,124 +1,140 @@
-Return-Path: <linux-kernel+bounces-786407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C42AB3595C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:50:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA43EB3595E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:51:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B07E71892E26
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:50:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6F2F1683E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:51:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D7343126C7;
-	Tue, 26 Aug 2025 09:50:31 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F28C305E32;
-	Tue, 26 Aug 2025 09:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056FD3176FF;
+	Tue, 26 Aug 2025 09:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y3r9qy+M"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C1D1C3C08;
+	Tue, 26 Aug 2025 09:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756201830; cv=none; b=qFOZf0gv/CgE0HBz3t3hySG9yzyZ8QJcRxnIS37BH7VifhenISKhVo/GdeUUfYrIvOx65G1jSTUN9Pu5ZZFqyU7MdfPEqiFe4//768D+jEcAlTPkACYJsROAOg5zeZ6o0JRhRBdyp3R5NEWONrN7QsuXdMLOnRD+AF5wA7YkD5Q=
+	t=1756201869; cv=none; b=rsAYUM6ySLLhNDsIIZXpmMMW9Ssvfz40MAXxCmqg50Xdakwv6+8V0LFLGKkuBE7xQLRMuOWzUaGald5vURwmGT1tE1lbQLsXS3joZsMAVSU5kdCq+/8/kPILKCuBr60A7Ik7fzb4W8jIoo5TQaVMdOpKeE36BtxboZVZvBKNUn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756201830; c=relaxed/simple;
-	bh=r5qMbe4kTDDLldGYy/rC48/6xg03WM0XcsMR1LpgIaQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DjMbKQAjkjh4+/JH4evv5Yy8wsVvpDKspctbr9hVPdj+BalEDjHq8gbGX/44Hy7m5qMZ2OZbCtU1n64vXhFrIV+Zo590sigT0IfJm6uKlyjwpJB2mUA9JArrHVBizMIvGjkU4+vpytkD4uAQDGSxccL2S33KSgrwraorks8Qvnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3231C1A00;
-	Tue, 26 Aug 2025 02:50:19 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AABA83F63F;
-	Tue, 26 Aug 2025 02:50:22 -0700 (PDT)
-Date: Tue, 26 Aug 2025 10:50:15 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Sam Edwards <cfsworks@gmail.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Baruch Siach <baruch@tkos.co.il>,
-	Kevin Brodsky <kevin.brodsky@arm.com>,
-	Joey Gouly <joey.gouly@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] arm64/boot: Zero-initialize idmap PGDs before use
-Message-ID: <aK2DV_joOnaU85Tx@J2N7QTR9R3>
-References: <20250822041526.467434-1-CFSworks@gmail.com>
- <CAMj1kXH38gOUpDDdarCXPAY3BHBbuFzdD=Dq7Knsg-qHJoNqzQ@mail.gmail.com>
- <CAH5Ym4gTTLcyucnXjxFtNutVR1HQ0G2k_YBSNO-7G3-4YXUtag@mail.gmail.com>
+	s=arc-20240116; t=1756201869; c=relaxed/simple;
+	bh=CwVr4RX8gbDe4qxlAAE1okF7Zn+dquLwYFmpDG6+/MI=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Wd3O6HFAPT+0K+l/CV2yOLu+zdnzioZKqntp6QARWRxkNcbDxKQI6Xcz+gixwqG3Re3Ygl8Vxr6g+056Deh6id+uTsCKU3uD7NxgSWVtbCLBgHIRzKwptoqcfyNf3RODg6maSEg9eW7J46HdMzjMUVjcgaIFfdl6pInRGiDzvQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y3r9qy+M; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b475dfb4f42so3653509a12.0;
+        Tue, 26 Aug 2025 02:51:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756201867; x=1756806667; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=S+oUJPTWB8DlIO9yqYlcDMK+AvxbsTryDTMCee8+s38=;
+        b=Y3r9qy+MY6Qabi5XqOWWGQYjERnFsE34Dm0wyBYxMgSi5Abq2r2Ch0MwKQ6kq7kZKr
+         XIdI1G3kyKWByNVQsqOzmOY1E1vLktPg8B4nfcSExBFNF0TCNun9ogxcvUCJ66xqDz8P
+         bYK0nzPqFiUDpGsoSAm2uR7dZ7L9u3kjNG+Jdr8nhyNZHLgAbQJn2uilD1DyxA0Ig+2L
+         /5tg1CuE1SKap1ZO696EQYU2uanTNVJJ18n9D/de7XyW4S+a4gFV6vgnysmVm3d8pR4d
+         WCDkj940f9ya3Q3vsp1vFCdN5KL85WsDfvMYkpcE/vHZtKXKfngvj4m7GstgvXLcAT3k
+         nDrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756201867; x=1756806667;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=S+oUJPTWB8DlIO9yqYlcDMK+AvxbsTryDTMCee8+s38=;
+        b=k9uf7m32NDdrBMZYLN2KOL30T7nN03h6VTpF01VWp8OPH0srx2YOXspif8V5Gp0RpV
+         n1o1nfr86vKYlRVUevNtGpF6ieznOro7unHUvNteeHbmVzBV7WkODgZnhqRLV0ud56mw
+         Z330u4mYLkIVy/HLhE18GrKtqj46I54t8kEafxHJezMZ9j+5yMcLTkipnOT1kKd1v+Y4
+         JoATWTFXZsrPZH+A6rTlNWRVrM2+63UTszlsXyHK4TA+RuNblF6duBiPeL2Z0pYNJH7J
+         BSVX/as58Rsqr6sVbTEVvTDANsfdSG6O8AKHMvWqVYGodgwltIv/6GFHNSt1t8/n8kUy
+         v+VQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWP0c1A07tyNHwd6UjA6uvmYddyZhZ+bieu8qgyNxZaKYo/ZBvo6KlxJKzCNC62OkWlIO/f+B8Ees+rpbk=@vger.kernel.org, AJvYcCXY5KabAuH8enB5DobVYjY5ebsirmP577UGpsYwsb4drQWpRPzdp7UaUBloMhCN6o+8oiJraAultNbmugwYWw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4zfR1Zpw3zDsxqojRXnEfN+rXHsOBDT0x1RvXMBHFVqC+4ixh
+	ofi6pwpFMXuWk3MeTQ2mssBPOUH+08xfwgPLobwLRdANFEvogV58OFBz
+X-Gm-Gg: ASbGncs+7AbpRlf2A+URW9dMHuZG/GdTlbSFrvw2EwjuNReiEBg8/w5VnUIParZe7il
+	uA+BnvreK+yil0eXvcqqMySH/IgC+1zJJb6tYGEv3d6J90iTOelsxagJBRrbRiTgDx6d46JZrDB
+	+u1ScMBioYC7wtz4EbVKYC+ktwwgPD3sVi7fLRhY3F512osu6Sff6jawcDvmge2VMSz42LvjL5c
+	AInTGQ1oWaYpwOZOhYWwuPRh+9SLn+y6HetfZJUKddEkdq+4zmJOQ5wyn5irPbabedG91jl4ZXX
+	lWC5GnFos/B7C3fJwHLttg6eumDg0BHvMsGkAM4Rrivrow71CFBsZtkIJPvQ5ik35NmvPizeg2j
+	XElD8yU3TSDRG7wD8EBs26PRbXvCdgTOLvceirzh1OYsKY6F07L9pfZf0tVY=
+X-Google-Smtp-Source: AGHT+IEsnB9h8HQbTQ2V93YwU7fvO4wdZ9OH5V36EUwye/rm2G7duDx03V2i+6SWxNvsg4hh+tZfcw==
+X-Received: by 2002:a17:902:dad0:b0:248:79d4:93aa with SMTP id d9443c01a7336-24879d497bemr8362515ad.53.1756201867212;
+        Tue, 26 Aug 2025 02:51:07 -0700 (PDT)
+Received: from [127.0.0.1] ([103.88.46.127])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4c04c7522fsm4900440a12.5.2025.08.26.02.51.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Aug 2025 02:51:06 -0700 (PDT)
+Message-ID: <3b96de64-166c-4e96-99e4-714310e13d52@gmail.com>
+Date: Tue, 26 Aug 2025 17:51:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5Ym4gTTLcyucnXjxFtNutVR1HQ0G2k_YBSNO-7G3-4YXUtag@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+From: Jinchao Wang <wangjinchao600@gmail.com>
+Subject: Re: [PATCH v2 2/4] module: show why force load fails
+To: Petr Pavlu <petr.pavlu@suse.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Daniel Gomez <da.gomez@kernel.org>,
+ Sami Tolvanen <samitolvanen@google.com>, linux-modules@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250825091545.18607-1-wangjinchao600@gmail.com>
+ <20250825091545.18607-3-wangjinchao600@gmail.com>
+ <52288605-a16c-4a93-9e80-66d32de88847@suse.com>
+Content-Language: en-US
+In-Reply-To: <52288605-a16c-4a93-9e80-66d32de88847@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, Aug 23, 2025 at 04:55:44PM -0700, Sam Edwards wrote:
-> On Sat, Aug 23, 2025 at 3:25 PM Ard Biesheuvel <ardb@kernel.org> wrote:
-> >
-> > Hi Sam,
-> >
-> > On Fri, 22 Aug 2025 at 14:15, Sam Edwards <cfsworks@gmail.com> wrote:
-> > >
-> > > In early boot, Linux creates identity virtual->physical address mappings
-> > > so that it can enable the MMU before full memory management is ready.
-> > > To ensure some available physical memory to back these structures,
-> > > vmlinux.lds reserves some space (and defines marker symbols) in the
-> > > middle of the kernel image. However, because they are defined outside of
-> > > PROGBITS sections, they aren't pre-initialized -- at least as far as ELF
-> > > is concerned.
-> > >
-> > > In the typical case, this isn't actually a problem: the boot image is
-> > > prepared with objcopy, which zero-fills the gaps, so these structures
-> > > are incidentally zero-initialized (an all-zeroes entry is considered
-> > > absent, so zero-initialization is appropriate).
-> > >
-> > > However, that is just a happy accident: the `vmlinux` ELF output
-> > > authoritatively represents the state of memory at entry. If the ELF
-> > > says a region of memory isn't initialized, we must treat it as
-> > > uninitialized. Indeed, certain bootloaders (e.g. Broadcom CFE) ingest
-> > > the ELF directly -- sidestepping the objcopy-produced image entirely --
-> > > and therefore do not initialize the gaps. This results in the early boot
-> > > code crashing when it attempts to create identity mappings.
-> > >
-> > > Therefore, add boot-time zero-initialization for the following:
-> > > - __pi_init_idmap_pg_dir..__pi_init_idmap_pg_end
-> > > - idmap_pg_dir
-> > > - reserved_pg_dir
-> >
-> > I don't think this is the right approach.
-> >
-> > If the ELF representation is inaccurate, it should be fixed, and this
-> > should be achievable without impacting the binary image at all.
+On 8/26/25 17:33, Petr Pavlu wrote:
+> On 8/25/25 11:15 AM, Jinchao Wang wrote:
+>> Include reason in error message when force loading is disabled.
+>>
+>> Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
+>> ---
+>>   kernel/module/main.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/kernel/module/main.c b/kernel/module/main.c
+>> index c66b26184936..a426bd8a18b5 100644
+>> --- a/kernel/module/main.c
+>> +++ b/kernel/module/main.c
+>> @@ -1083,6 +1083,7 @@ int try_to_force_load(struct module *mod, const char *reason)
+>>   	add_taint_module(mod, TAINT_FORCED_MODULE, LOCKDEP_NOW_UNRELIABLE);
+>>   	return 0;
+>>   #else
+>> +	pr_err("%s force load is not supported\n", reason);
+>>   	return -ENOEXEC;
+>>   #endif
+>>   }
 > 
-> Hi Ard,
+> The module name is already available at all points where
+> try_to_force_load() is called, so the new error message should include
+> it.
 > 
-> I don't believe I can declare the ELF output "inaccurate" per se,
-> since it's the linker's final determination about the state of memory
-> at kernel entry -- including which regions are not the loader's
-> responsibility to initialize (and should therefore be initialized at
-> runtime, e.g. .bss). But, I think I understand your meaning: you would
-> prefer consistent load-time zero-initialization over run-time. I'm
-> open to that approach if that's the consensus here, but it will make
-> `vmlinux` dozens of KBs larger (even though it keeps `Image` the same
-> size).
+> Additionally, we should be careful about the message. In the case of the
+> init_module syscall, the missing modversions and vermagic could mean
+> that the data was deliberately stripped by kmod because the module was
+> inserted with --force, or it could mean that the module lacks this data
+> in the first place. In other words, it is not always the case that that
+> we're reaching this logic because of a force load.
+> 
+> My suggestion would be to use the following:
+> 
+> pr_err("%s: %s, force load is not supported\n", mod->name, reason);
+> 
+Good suggestion. Thanks.
 
-Our intent was that these are zeroed at build time in the Image. If the
-vmlinux isn't consistent with that, that's a problem with the way we
-generate the vmlinux, and hence "the ELF representation is inaccurate".
-
-I agree with Ard that it's better to bring the vmlinux into line with
-that (if we need to handlr this at all), even if that means making the
-vmlinux a few KB bigger.
-
-Mark.
+-- 
+Best regards,
+Jinchao
 
