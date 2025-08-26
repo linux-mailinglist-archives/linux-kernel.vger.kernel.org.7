@@ -1,65 +1,88 @@
-Return-Path: <linux-kernel+bounces-787256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E754B373A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 22:09:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC1D0B373A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 22:12:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BF9E1BA1F2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 20:09:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 519C13B8A57
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 20:12:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34FFF2F49F2;
-	Tue, 26 Aug 2025 20:09:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8CA3164C6;
+	Tue, 26 Aug 2025 20:12:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rsze/N9t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LwnRZW/U"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 729C5211C;
-	Tue, 26 Aug 2025 20:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559C22E9EA3;
+	Tue, 26 Aug 2025 20:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756238946; cv=none; b=Xw7IMkmTwz0zrGPyv7s5ng1ksxudCCbwySX98qp8u7kQX8icK0gTroZ2D5clff26dvNH4ZpdFekJT2rstwfIgYIepR2UgqUOH/uHYsYeYtmKWz+1/CCtIMQd2qZo+W6A4hPCgub9Uw+XnmrzouWo2gopHBQZfIl/pmOHjoatETE=
+	t=1756239165; cv=none; b=Eav6M+cryHA+wsgJjlW8FZQFDjkM4o26w4lKLyXzw4/UHzsHm+OUSjqaOoJqVLv997GqKwv/sdOoXpGN7juLhf14thHCFSXaH8/9h7FB8BEPgOKQga4pwHA8WPW0yw+nA8BzTldRqUemyir596dOU1WqNyXJ0zA9ds50ErDk6Wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756238946; c=relaxed/simple;
-	bh=De6tXlh/83GdnOt9bMTPx+Vmn3L3ISZ/uryMZcIrB5w=;
+	s=arc-20240116; t=1756239165; c=relaxed/simple;
+	bh=RmglgdKiaAkIymyJEKmEXRq/SpFzkirOA/7MNlgJTcc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WBEGLMRc1N/IptR+Hfq9kvKb+0KvAIRGhH49Ti338nsavxok8tmPJ6yjhdLLhgEUe9VtBDJz4QLMG39lv/BpsJw56dCQkewjH414Hh1iCHsdG+yHmWfuXs2nWHYzcS20oum1XbdcJEN/vVP0pgjLohsg8qG5YVFaJCrLyKg/hDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rsze/N9t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BA1AC4CEF1;
-	Tue, 26 Aug 2025 20:09:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756238945;
-	bh=De6tXlh/83GdnOt9bMTPx+Vmn3L3ISZ/uryMZcIrB5w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Rsze/N9tQPzXjNLqiKo/xJtWAqCNAVk3sr4XHPf755WUo82wNXx9PTkEMrWRq1uBI
-	 8UNuaJdpCWxB/fpnvFIJW5YM2VVLdH7nXkRSXRHTeyRhCGRQAlFfrP0684iNyWY3pz
-	 zK+RDB3Q6k1xR3nyG37s5imD22axHTdFaqAdpoXrtQaugje8iVFo1lFp4nAEAOs9cT
-	 2egbEcuTbBBU6WfsKkFhBlLL130t/V3VqFEnCqhNWhnG8WrTkuqoYCK5YbN7WsD60b
-	 jxS/3iDWzefeMq6U4Fr/AdEmLEeEruKsW2AGRbPzMsIY2WKvEY4F/xqoTAOAplHEIp
-	 dXBKIEF0FCieg==
-Date: Tue, 26 Aug 2025 15:09:04 -0500
-From: Rob Herring <robh@kernel.org>
-To: Shenwei Wang <shenwei.wang@nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-imx@nxp.com
-Subject: Re: [PATCH 1/4] dt-bindings: remoteproc: imx_rproc: Add "rpmsg"
- subnode support
-Message-ID: <20250826200904.GA375876-robh@kernel.org>
-References: <20250818204420.794554-1-shenwei.wang@nxp.com>
- <20250818204420.794554-2-shenwei.wang@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tLOvEOPNSb4oR1gmXoxdh8ROdqg5PZXbAsWasZ2r18cHBULN1GvVZ/1uJtgxWxn8zuDlDX5+BNbnVATgGIl8hQBEkFECtuBrSI4USADxe5H+M8dtYeTldUb+29pFZzHOfHKpAscvJIkGFry5YnWXU1N4o2xMoJLvJrsl7DmmEl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LwnRZW/U; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-76e4fc419a9so5681296b3a.0;
+        Tue, 26 Aug 2025 13:12:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756239163; x=1756843963; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yZUUI0yFjx4Drp/i9QRBY6PhrGAJcR8oUaxxKphl128=;
+        b=LwnRZW/UIRjEJvaM2D+NMLMrrjftQtym2R6JXLc1Bg4X5Oz4NMzKzGj0tUGrb9iFL7
+         VyvBGDSqIeARz5unZCI3MzGqytf2bYdEC1GkuGCDGHTMOUFU9QJ41WNju412W0PmtQMw
+         /cBENRgH8chb57gLgaOEO7JGhmc2IYCN9uXF6LwrXmBtlncbRZ6njtr/6RtjXRtJo+bl
+         X0H6p9t9pRA6Xh+Tlq/GCgfsZG2bxroqpTivRzvG0/K0RWvI2uqvgp5/O0VoQKH+7jM8
+         TEhjLZGGBbBFjWlPhiwLYWeNLoVwOkW6i5mQBeuAZ45pDvJqeCsk+sRkiRq2IBl5j7Uv
+         LZUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756239163; x=1756843963;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yZUUI0yFjx4Drp/i9QRBY6PhrGAJcR8oUaxxKphl128=;
+        b=XcZ8XhZVDtG90Y8SjFKxAedW3THdYTEkNrISbA6OPDevQwqQ+4vW6yCJlPxW9G0d3N
+         Wf7OOlu8HsD/fxzCtcGqLzSpRLdA6MUe697vLMIXvE9MoueGLDwmoUNNp4imciWr5D8O
+         Xj8vTOs4LAeudFi4wIfjtLH0FqVjzTi9rtWHvEjA8/fLZuA+phYXUGx3vAeEPjt7t+Hk
+         EO8+9E1x2NlGzexAuBE/qX9KjwvH5b0jiI7XYzpzr7CuEcFrYOZ/u0PQC69AODcHjN74
+         FlfLLLRdfPXsOyxHUm2K+Bw/78dNzJ3OBgtqAJ1C6Z2+DE9PhC46BKc4s5Zp9IVqiy4A
+         Lwrg==
+X-Forwarded-Encrypted: i=1; AJvYcCUjIQ2ah2hjTNWO7R0YNLSL9746DpbL3IOn2iQz/+B6HDKcrh/tDY+uNtgUBXntrkwpBw15cFosluup4Q==@vger.kernel.org, AJvYcCXXahg7f86qGXS+VyCnRI62fvE3ckFT6CLwUl1RiEv67pNW/4Ac/Fe/o4N2ZUTbavTKj09prEbnn7IvRG/z@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMsEGbJDU4KZwA8VXfKnwnk4O9zJWVg189EatfvEgQCxwp8rv8
+	KadgJgb90T2JZ2klAhJ1kEvbtSrSdNoagdWcPDn4pshnbNGGqHCwRYFR
+X-Gm-Gg: ASbGncv8ZK9H4MLNIRULyNTKl6yRXUz4THHJHs7is2RwYq0FXgrTN3WVJalxZuMXlC8
+	Z/LMteYlD6cyAOzzofXjD6cxWjNk29RofCelq6tQDAkRhBVftR76nuUOpPmckRkidNhdMrUezHC
+	cFTMgQ06XXO6YY0Qo0VKG5WnU0Mp3acSQu0vlrPoqV58D4qcdGQfNweFEGtCzFmqHvtITr9Q9EB
+	9NfG8VG+2jB97i5BuoMEqdjcu8a6EgwjhXFC49LNmVvHWlsLHjzcjsnk8lSU6c7HxW8GcyKMJMY
+	klU4/nGJylC9Lt0Ex05L//TSqSrPGK3wGtFRR5iZfRMRBR9fe9WGbnYGsLgBINZ9NSq0JQfaO3C
+	GpREZFkMnJzjdUxsLR1y1CctMUTCT8AOyo2Z4FovSGIbCAYJSBMn31Q==
+X-Google-Smtp-Source: AGHT+IHfG0QyP6TwtbmIGZnRuYGpxFBNC/drydOrZo6w1M6mkbJLwel6gq+DtmZVLKNj9XvXZbR9Og==
+X-Received: by 2002:a05:6a00:194e:b0:769:9f87:1dfa with SMTP id d2e1a72fcca58-7702fae1e6emr18957401b3a.23.1756239163520;
+        Tue, 26 Aug 2025 13:12:43 -0700 (PDT)
+Received: from fedora (c-67-164-59-41.hsd1.ca.comcast.net. [67.164.59.41])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-771f4072ac4sm3631172b3a.34.2025.08.26.13.12.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Aug 2025 13:12:43 -0700 (PDT)
+Date: Tue, 26 Aug 2025 13:12:40 -0700
+From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Justin Sanders <justin@coraid.com>, Jens Axboe <axboe@kernel.dk>,
+	linux-block@vger.kernel.org
+Subject: Re: [PATCH 2/7] aoe: Stop calling page_address() in free_page()
+Message-ID: <aK4VOIlc19qb6_DQ@fedora>
+References: <20250826193258.902608-1-vishal.moola@gmail.com>
+ <20250826193258.902608-3-vishal.moola@gmail.com>
+ <aK4NzxmGZjKvsGz8@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,174 +91,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250818204420.794554-2-shenwei.wang@nxp.com>
+In-Reply-To: <aK4NzxmGZjKvsGz8@casper.infradead.org>
 
-On Mon, Aug 18, 2025 at 03:44:17PM -0500, Shenwei Wang wrote:
-> Remote processors may announce multiple devices (e.g., I2C, GPIO) over
-> an RPMSG channel. These devices may require corresponding device tree
-> nodes, especially when acting as providers, to supply phandles for their
-> consumers.
+On Tue, Aug 26, 2025 at 08:41:03PM +0100, Matthew Wilcox wrote:
+> On Tue, Aug 26, 2025 at 12:32:53PM -0700, Vishal Moola (Oracle) wrote:
+> > free_page() should be used when we only have a virtual address. We
+> > should call __free_page() directly on our page instead.
+> > 
+> > Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
 > 
-> Define an RPMSG node to work as a container for a group of RPMSG channels
-> under the imx_rproc node.
+> Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > 
-> Each subnode within "rpmsg" represents an individual RPMSG channel. The
-> name of each subnode corresponds to the channel name as defined by the
-> remote processor.
-> 
-> All remote devices associated with a given channel are defined as child
-> nodes under the corresponding channel node.
+> Probably should have run ./scripts/get_maintainer.pl drivers/block/aoe/aoecmd.c
+> Adding ccs.
 
-How is each channel addressed? Are they really grouped by type first 
-(i2c, gpio, etc.) then an address within the group? Or is there some 
-flat channel numbering? If the latter, then the addresses in the DT 
-shoulc match the channel number.
+Ah I thought I did that... seems I messed up some formatting and none of
+the ccs got added :/. I'll send out a v2 later today with all the ccs
+added.
 
-> 
-> Signed-off-by: Shenwei Wang <shenwei.wang@nxp.com>
-> ---
->  .../bindings/remoteproc/fsl,imx-rproc.yaml    | 117 ++++++++++++++++++
->  1 file changed, 117 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> index 57d75acb0b5e..a105aac798d0 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> @@ -84,6 +84,86 @@ properties:
->        This property is to specify the resource id of the remote processor in SoC
->        which supports SCFW
->  
-> +  rpmsg:
-> +    type: object
-> +    additionalProperties: false
-> +    description:
-> +      Present a group of RPMSG channel devices.
-> +
-> +    properties:
-> +      '#address-cells':
-> +        const: 1
-> +
-> +      '#size-cells':
-> +        const: 0
-> +
-> +      rpmsg-io-channel:
-> +        type: object
-> +        unevaluatedProperties: false
-> +        properties:
-> +          '#address-cells':
-> +            const: 1
-> +
-> +          '#size-cells':
-> +            const: 0
-> +
-> +        patternProperties:
-> +          "gpio@[0-9a-f]+$":
-> +            type: object
-> +            unevaluatedProperties: false
-> +            properties:
-> +              compatible:
-> +                enum:
-> +                  - fsl,imx-rpmsg-gpio
-> +
-> +              reg:
-> +                maxItems: 1
-> +
-> +            required:
-> +              - compatible
-> +              - reg
-> +
-> +            allOf:
-> +              - $ref: /schemas/gpio/gpio.yaml#
-> +              - $ref: /schemas/interrupt-controller.yaml#
-
-This is not needed nor sufficient. You need to define the cell sizes for 
-gpio and interrupt cells.
-
-> +
-> +        required:
-> +          - '#address-cells'
-> +          - '#size-cells'
-> +
-> +      rpmsg-i2c-channel:
-> +        type: object
-> +        unevaluatedProperties: false
-> +        properties:
-> +          '#address-cells':
-> +            const: 1
-> +
-> +          '#size-cells':
-> +            const: 0
-> +
-> +        patternProperties:
-> +          "i2c@[0-9a-f]+$":
-> +            type: object
-> +            unevaluatedProperties: false
-> +            properties:
-> +              compatible:
-> +                enum:
-> +                  - fsl,imx-rpmsg-i2c
-> +
-> +              reg:
-> +                maxItems: 1
-> +
-> +            required:
-> +              - compatible
-> +              - reg
-> +
-> +            allOf:
-> +              - $ref: /schemas/i2c/i2c-controller.yaml#
-> +
-> +        required:
-> +          - '#address-cells'
-> +          - '#size-cells'
-> +
->  required:
->    - compatible
->  
-> @@ -146,5 +226,42 @@ examples:
->                  &mu 3 1>;
->        memory-region = <&vdev0buffer>, <&vdev0vring0>, <&vdev0vring1>, <&rsc_table>;
->        syscon = <&src>;
-> +
-> +      rpmsg {
-> +        rpmsg-io-channel {
-> +          #address-cells = <1>;
-> +          #size-cells = <0>;
-> +
-> +          gpio@0 {
-> +            compatible = "fsl,imx-rpmsg-gpio";
-> +            reg = <0>;
-> +            gpio-controller;
-> +            #gpio-cells = <2>;
-> +            #interrupt-cells = <2>;
-> +            interrupt-controller;
-> +            interrupt-parent = <&rpmsg_gpioa>;
-> +          };
-> +
-> +          gpio@1 {
-> +            compatible = "fsl,imx-rpmsg-gpio";
-> +            reg = <1>;
-> +            gpio-controller;
-> +            #gpio-cells = <2>;
-> +            #interrupt-cells = <2>;
-> +            interrupt-controller;
-> +            interrupt-parent = <&rpmsg_gpiob>;
-> +          };
-> +        };
-> +
-> +        rpmsg-i2c-channel {
-> +          #address-cells = <1>;
-> +          #size-cells = <0>;
-> +
-> +          i2c@0 {
-> +            compatible = "fsl,imx-rpmsg-i2c";
-> +            reg = <0>;
-> +          };
-> +        };
-> +      };
->      };
->  ...
-> -- 
-> 2.43.0
-> 
+> >  drivers/block/aoe/aoecmd.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/block/aoe/aoecmd.c b/drivers/block/aoe/aoecmd.c
+> > index 6298f8e271e3..a9affb7c264d 100644
+> > --- a/drivers/block/aoe/aoecmd.c
+> > +++ b/drivers/block/aoe/aoecmd.c
+> > @@ -1761,6 +1761,6 @@ aoecmd_exit(void)
+> >  	kfree(kts);
+> >  	kfree(ktiowq);
+> >  
+> > -	free_page((unsigned long) page_address(empty_page));
+> > +	__free_page(empty_page);
+> >  	empty_page = NULL;
+> >  }
+> > -- 
+> > 2.51.0
+> > 
+> > 
 
