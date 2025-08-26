@@ -1,208 +1,112 @@
-Return-Path: <linux-kernel+bounces-786277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E952B3579E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:51:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5C4FB37BEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:37:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE755686D8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:51:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DFC37C2281
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:37:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 248F82FF649;
-	Tue, 26 Aug 2025 08:50:42 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85863D984;
-	Tue, 26 Aug 2025 08:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90BB031984C;
+	Wed, 27 Aug 2025 07:37:31 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E995205E2F
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 07:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756198241; cv=none; b=Oahg9/wf7lNuYa7Vg/Vmw/8NpVQ25pp3i5n9yfhy6sZ2l1PS+3VO9YfrlJY1RETsnt0LmckLLf3qtfZZt/X4HJjgCUtHSM7LsdZdYtofxFkMuP8tewCn/GFQr1sx9sSfuE2qkpQIgq6ElN2ADbewvlUHE2vqN9mzrZchu2t2koo=
+	t=1756280251; cv=none; b=gJdScxMnI/nDjjyV/NijS3l/3RsmcFPI6oP680s/T/MWUcJ6L+dKqVnmlj81E3xGWcSaytWB9EzYztvak6FjX7odhWve5l3TKHfwCJdgIDFnBKd1giwrGtjmmqchCLu1gcaLLaBnU8qxrbJodKm9yZvJ+5kYsYhPtpVKol1Cv5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756198241; c=relaxed/simple;
-	bh=5s3yYeYRZ3QkohcSQgNTeYUyQ5TvPkMMh0AM/N4girU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pcF4aA3a+A9wDkQLtaOH9xbYtxE5C1GXI0yA8PELjRNzy7h6zxx5YGgm8MYtDqiEt6UmjpFFaywivpmOgjKpOQHoi68q3GZ+OorTIW6IVV1Wunba1vPQlSRg/8JCNmdDrpdJ3CE5UgnXHWN9o1IkkTMlxCOpnkSEFX98PFcgUtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4cB1N06r90z9sSZ;
-	Tue, 26 Aug 2025 10:41:04 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 95Os1xD7Erc8; Tue, 26 Aug 2025 10:41:04 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4cB1N05t26z9sSY;
-	Tue, 26 Aug 2025 10:41:04 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id B24528B764;
-	Tue, 26 Aug 2025 10:41:04 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 5Sr4FVgPNX2m; Tue, 26 Aug 2025 10:41:04 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 1576D8B763;
-	Tue, 26 Aug 2025 10:41:04 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Qiang Zhao <qiang.zhao@nxp.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v4] soc: fsl: qe: Change GPIO driver to a proper platform driver
-Date: Tue, 26 Aug 2025 10:40:33 +0200
-Message-ID: <2df36ab4e1ec2af1d383281ed5005a09d28f40e2.1756197491.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <e05a0959d794016bde79e48e25ff71253cf51aae.1756104334.git.christophe.leroy@csgroup.eu>
-References: <e05a0959d794016bde79e48e25ff71253cf51aae.1756104334.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1756280251; c=relaxed/simple;
+	bh=pswIHBZL7/Yj0+tCw0XL6EEuAuOgT4TSIwjz85uTWzA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SMb2pQ5j33EfkObMZAU1xcfsuxSNybsd8+AO+1iq/JssQYQw8stdW60C1IlTJdeQQ+X9j0fU+8ygGSLedTZ5JHwCCGfidmNVPUeAc8gCHbXvP/NMyyXTtUx49Fq7X2MQLGQWkHWOF9wC0Hdj0umPd3UdNEthxVU4Ok67z8xOd+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1urAii-0007Bw-5x; Wed, 27 Aug 2025 09:37:24 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1urAig-002MGk-2q;
+	Wed, 27 Aug 2025 09:37:22 +0200
+Received: from pengutronix.de (unknown [IPv6:2a01:4f8:1c1c:29e9:22:41ff:fe00:1400])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id D3F6E45E20B;
+	Tue, 26 Aug 2025 08:41:05 +0000 (UTC)
+Date: Tue, 26 Aug 2025 10:41:05 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Xichao Zhao <zhao.xichao@vivo.com>
+Cc: rcsekar@samsung.com, mailhol.vincent@wanadoo.fr, 
+	linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] can: m_can: use us_to_ktime() where appropriate
+Message-ID: <20250826-cautious-married-marten-b7bfbe-mkl@pengutronix.de>
+References: <20250825090904.248927-1-zhao.xichao@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756197653; l=3483; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=5s3yYeYRZ3QkohcSQgNTeYUyQ5TvPkMMh0AM/N4girU=; b=I/hgGETiK8FWJI3XxVV6HRRuu9Mq+Y4KxbL8S7c07bgSnbYBq9ioSj3ZZS9Z+O/kSPSSY1Pci nxWqwwiIed3BLFJhGbGLoSuUgPAxoRcWC4vibP61MV8LRTnJhqLSaxk
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="suvg33rbcecgcgws"
+Content-Disposition: inline
+In-Reply-To: <20250825090904.248927-1-zhao.xichao@vivo.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-In order to be able to add interrupts to the GPIOs, first change the
-QE GPIO driver to the proper platform driver in order to allow
-initialisation to be done in the right order, otherwise the GPIOs
-get added before the interrupts are registered.
 
-Removing linux/of.h and linux/property.h which are unused.
+--suvg33rbcecgcgws
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] can: m_can: use us_to_ktime() where appropriate
+MIME-Version: 1.0
 
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
-v4: Removed unused headers
----
- drivers/soc/fsl/qe/gpio.c | 88 +++++++++++++++++++++------------------
- 1 file changed, 47 insertions(+), 41 deletions(-)
+On 25.08.2025 17:09:04, Xichao Zhao wrote:
+> The tx_coalesce_usecs_irq are more suitable for using the
+> us_to_ktime(). This can make the code more concise and
+> enhance readability.
 
-diff --git a/drivers/soc/fsl/qe/gpio.c b/drivers/soc/fsl/qe/gpio.c
-index 8df1e8fa86a5..fece644ce914 100644
---- a/drivers/soc/fsl/qe/gpio.c
-+++ b/drivers/soc/fsl/qe/gpio.c
-@@ -12,13 +12,12 @@
- #include <linux/spinlock.h>
- #include <linux/err.h>
- #include <linux/io.h>
--#include <linux/of.h>
- #include <linux/gpio/legacy-of-mm-gpiochip.h>
- #include <linux/gpio/consumer.h>
- #include <linux/gpio/driver.h>
- #include <linux/slab.h>
- #include <linux/export.h>
--#include <linux/property.h>
-+#include <linux/platform_device.h>
- 
- #include <soc/fsl/qe/qe.h>
- 
-@@ -295,45 +294,52 @@ void qe_pin_set_gpio(struct qe_pin *qe_pin)
- }
- EXPORT_SYMBOL(qe_pin_set_gpio);
- 
--static int __init qe_add_gpiochips(void)
-+static int qe_gpio_probe(struct platform_device *ofdev)
- {
--	struct device_node *np;
--
--	for_each_compatible_node(np, NULL, "fsl,mpc8323-qe-pario-bank") {
--		int ret;
--		struct qe_gpio_chip *qe_gc;
--		struct of_mm_gpio_chip *mm_gc;
--		struct gpio_chip *gc;
--
--		qe_gc = kzalloc(sizeof(*qe_gc), GFP_KERNEL);
--		if (!qe_gc) {
--			ret = -ENOMEM;
--			goto err;
--		}
-+	struct device *dev = &ofdev->dev;
-+	struct device_node *np = dev->of_node;
-+	struct qe_gpio_chip *qe_gc;
-+	struct of_mm_gpio_chip *mm_gc;
-+	struct gpio_chip *gc;
- 
--		spin_lock_init(&qe_gc->lock);
--
--		mm_gc = &qe_gc->mm_gc;
--		gc = &mm_gc->gc;
--
--		mm_gc->save_regs = qe_gpio_save_regs;
--		gc->ngpio = QE_PIO_PINS;
--		gc->direction_input = qe_gpio_dir_in;
--		gc->direction_output = qe_gpio_dir_out;
--		gc->get = qe_gpio_get;
--		gc->set = qe_gpio_set;
--		gc->set_multiple = qe_gpio_set_multiple;
--
--		ret = of_mm_gpiochip_add_data(np, mm_gc, qe_gc);
--		if (ret)
--			goto err;
--		continue;
--err:
--		pr_err("%pOF: registration failed with status %d\n",
--		       np, ret);
--		kfree(qe_gc);
--		/* try others anyway */
--	}
--	return 0;
-+	qe_gc = devm_kzalloc(dev, sizeof(*qe_gc), GFP_KERNEL);
-+	if (!qe_gc)
-+		return -ENOMEM;
-+
-+	spin_lock_init(&qe_gc->lock);
-+
-+	mm_gc = &qe_gc->mm_gc;
-+	gc = &mm_gc->gc;
-+
-+	mm_gc->save_regs = qe_gpio_save_regs;
-+	gc->ngpio = QE_PIO_PINS;
-+	gc->direction_input = qe_gpio_dir_in;
-+	gc->direction_output = qe_gpio_dir_out;
-+	gc->get = qe_gpio_get;
-+	gc->set = qe_gpio_set;
-+	gc->set_multiple = qe_gpio_set_multiple;
-+
-+	return of_mm_gpiochip_add_data(np, mm_gc, qe_gc);
-+}
-+
-+static const struct of_device_id qe_gpio_match[] = {
-+	{
-+		.compatible = "fsl,mpc8323-qe-pario-bank",
-+	},
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, qe_gpio_match);
-+
-+static struct platform_driver qe_gpio_driver = {
-+	.probe		= qe_gpio_probe,
-+	.driver		= {
-+		.name	= "qe-gpio",
-+		.of_match_table	= qe_gpio_match,
-+	},
-+};
-+
-+static int __init qe_gpio_init(void)
-+{
-+	return platform_driver_register(&qe_gpio_driver);
- }
--arch_initcall(qe_add_gpiochips);
-+arch_initcall(qe_gpio_init);
--- 
-2.49.0
+Applied to linux-can-next.
 
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--suvg33rbcecgcgws
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmitcx4ACgkQDHRl3/mQ
+kZzEGwgAjbjcWUHdVnJNioDrCF1psK0ICD6toemt7SW+wNDTVjl4r0kvkvuGs8x6
+OFPjCOyCseyiLrM8t1Xmao43g6L43vOYJ4UVyYcq8Pqnw3/adsVtrMr1+DQOoEFN
+1SKGtHABZZ1x5CfnexQuYoldij9KWKQ+QdMDywCvUn5ux4nReqTg4if3rwTdvNcu
+Dfzjheit8aDuCp+3O+QrdfzYj9TngqXlX9KdhMu9LHCKhjK96qpdmw2t5EF1U8Wr
+wMVN1IFM06tuQLV2elGccxD6aGdyOMJUYgKcj/u5xWA3zuFhHlhAG3ypJi3sD1gP
+TGteVpscddwtWqMjkFyurlBiCz5f7g==
+=G88F
+-----END PGP SIGNATURE-----
+
+--suvg33rbcecgcgws--
 
