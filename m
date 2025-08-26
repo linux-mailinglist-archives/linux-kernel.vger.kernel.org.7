@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-786349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C11AAB358AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:21:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EC0EB358B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:22:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA62B188C530
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:22:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2815A162E0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:22:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4664843ABC;
-	Tue, 26 Aug 2025 09:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06AB7307ACF;
+	Tue, 26 Aug 2025 09:22:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CHmM8nrE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bV3Im/U9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854D124466D;
-	Tue, 26 Aug 2025 09:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4CC42FCBE1;
+	Tue, 26 Aug 2025 09:22:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756200105; cv=none; b=V2FYj1YtLQ97dROToXLbGt/upUDykDII2VH/wqgS6q2RUy9Tgxp3YaDa3kBbDWR8vTRt7IlpSlA0G7lPX9Nnr1yL3iVwy1ObcKwJ3dhcicXfGG+ueK9qGmxowFYzoqhU/hxHb7wlgPWfgsVK5CyL8mePY9qULvrvsSGldZ5H9K0=
+	t=1756200160; cv=none; b=Zl2BDT2KBJqDjD69Spn928aEkErTfYxbbkMUyWgqKVMJKTVumMJOUVb2xUcgybH4sjE0xp/dopww02XIqQPBax6aJEDaL3Q1774WFnpyTWcSULVwM0D6NonHWP0dS5G4JJdj/gXSXtLKUyID7oFJBOwjfqevOf8oIqYliixNdaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756200105; c=relaxed/simple;
-	bh=fgYxCcQtnrWie6H6f2KNxWhqHd60YRbjrj3O8mjjjHU=;
+	s=arc-20240116; t=1756200160; c=relaxed/simple;
+	bh=cgpeH3OJ9IMzHQv7eqVKmXsfFLPmqH7KEzaiB3mfS3k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mWrf43ewWbGLPqEB2HEmdN7BlCzAQtaev1hVCF6pgWG1wRMhAF4lSSqMewQHtJ1CiOh2daNOFv6ZHsqo5b1xTVcnFq03+Hp0zHiMKFetrY2rF6ziDcI9Ic9E4udv6PdJQlsMqpG4DBU899wllWq7t4/WeHxRvgtrT+kA1YpXnoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CHmM8nrE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C15D8C4CEF1;
-	Tue, 26 Aug 2025 09:21:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756200105;
-	bh=fgYxCcQtnrWie6H6f2KNxWhqHd60YRbjrj3O8mjjjHU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CHmM8nrEym2ezc0RrzBuNIWsk401p53jCViZT1CPNm+yQZWHbewqJjUEFtoplXY+D
-	 OGcC4/tMys67WWHqODmXI0G6XQkDxNtSvBxPBPpzPuukIWAqmf8YRN/SaO/erj9pIQ
-	 94fB5hKJlVSdN21gDtKiFkZFiJF4N97ep8O5T7Hrcq/cQ8g6IylExRBnMV9VLoMIvh
-	 AZroA/DulOdnulFESDzcttehhiCzHDHTBgtTIWvCuuGRkByHWq2Oz1lRTjXyepDNTv
-	 IIIJD/uo8RviTBgpgiQYzuAJYVjjr4gVK/IkTFTvfQFJ9jisgMasLeV7qcLo6HIOcl
-	 7ea24Jl5ahL+g==
-Message-ID: <8689a8b4-75cb-4f01-ad6c-0a8367851257@kernel.org>
-Date: Tue, 26 Aug 2025 11:21:39 +0200
+	 In-Reply-To:Content-Type; b=EV+bcyjXvSlcKz0bhouTRM4LgQR8IoHR9S3Xg4J3Ar+7ap/wxxvGHqc68hgegS2iDaM1FcC3qjIKciLBHffwQNfbD5cE0JEjzq0OHSfwb3uimhjIW/seAnMxY9iLa1G9Y5gC4NNjtTPKHC6wIehAJkl3Nwc91LBsTIvVfONTGO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bV3Im/U9; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756200159; x=1787736159;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=cgpeH3OJ9IMzHQv7eqVKmXsfFLPmqH7KEzaiB3mfS3k=;
+  b=bV3Im/U96bmZN2pUWeIes1uSsLc6E+5eocJRj8SgJ59Jwulu3um1fr0O
+   Zv5s1oeA1zaR8KZh0EATSH7IoH4f/5/tolvFjIxvT1YFM24amPMqO9eZA
+   xNxva4oRqFhhnocaY4TBJL/mXaRwfJ7C1pK8JsrQWx/JcRfyrbHhRpw82
+   7vBeMoPcCGA2260jx68y0CsiqovlxvjC0BtbYAmjpSSwb3ddiPKTw1iKm
+   8vdBweRAEcvFxvDCizm66sKYVcQVNR0l/yS9saeU39GPtlc0hJQXnSfCm
+   4c0OX/Zb0FKu/gQ5Jp7MfK1iqnQVlm/eAW6Nm2O15sQzcl3YgMZxQAYO0
+   g==;
+X-CSE-ConnectionGUID: nH9v1KEeRyG1w9kOQK9tHA==
+X-CSE-MsgGUID: 3qm9dteVTUezFLQUOZMSkg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11533"; a="58136510"
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="58136510"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 02:22:37 -0700
+X-CSE-ConnectionGUID: j5KBEwrISP+w4PX/VdVrTQ==
+X-CSE-MsgGUID: DQtltgzwT7Cm44/mBwIF1A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="168738016"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 02:22:32 -0700
+Message-ID: <4306ca85-1dcd-47c1-bb36-b76a2efe061f@linux.intel.com>
+Date: Tue, 26 Aug 2025 17:22:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,100 +66,90 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 7/8] serial: qcom-geni: Enable PM runtime for serial
- driver
-To: Alexey Klimov <alexey.klimov@linaro.org>,
- Praveen Talari <quic_ptalari@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-serial@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org, dmitry.baryshkov@oss.qualcomm.com,
- psodagud@quicinc.com, djaggi@quicinc.com, quic_msavaliy@quicinc.com,
- quic_vtanuku@quicinc.com, quic_arandive@quicinc.com,
- quic_cchiluve@quicinc.com, quic_shazhuss@quicinc.com,
- Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- bryan.odonoghue@linaro.org, neil.armstrong@linaro.org, srini@kernel.org
-References: <20250721174532.14022-1-quic_ptalari@quicinc.com>
- <20250721174532.14022-8-quic_ptalari@quicinc.com>
- <DC0D53ZTNOBU.E8LSD5E5Z8TX@linaro.org>
- <577d05d4-789b-4556-a2d2-d0ad15b2c213@quicinc.com>
- <dcad137d-8ac9-4a0b-9b64-de799536fd32@kernel.org>
- <DCC8WLEKNS8W.9GAJHQGYPZIY@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v9 13/19] KVM: selftests: TDX: Use KVM_TDX_CAPABILITIES to
+ validate TDs' attribute configuration
+To: Sagi Shahar <sagis@google.com>
+Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+ Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>,
+ Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>,
+ Andrew Jones <ajones@ventanamicro.com>,
+ Isaku Yamahata <isaku.yamahata@intel.com>,
+ Erdem Aktas <erdemaktas@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>,
+ "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>,
+ Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny
+ <ira.weiny@intel.com>, Chao Gao <chao.gao@intel.com>,
+ Chenyi Qiang <chenyi.qiang@intel.com>, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org
+References: <20250821042915.3712925-1-sagis@google.com>
+ <20250821042915.3712925-14-sagis@google.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <DCC8WLEKNS8W.9GAJHQGYPZIY@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250821042915.3712925-14-sagis@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 26/08/2025 11:18, Alexey Klimov wrote:
->>> May i know what is testcase which you are running on target?
->>
->> Boot the board?
->>
->>> what is target?
->>
->> It is written in original report. Did you even read it?
->>
->>> Which usecase is this issue occurring in?
->>
->> Boot?
-> 
-> FWIW, what said above by Krzysztof is correct, there is no usecase, just booting the board.
-> 
-12 days and nothing improved, right? if this was not dropped now,
-Alexey, can you send a revert? Author clearly approches stability with a
-very relaxed way and is just happy that patch was thrown over the wall
-and job is done.
 
 
-If you do not want to send revert, let me know, I will do it.
+On 8/21/2025 12:29 PM, Sagi Shahar wrote:
+> From: Isaku Yamahata <isaku.yamahata@intel.com>
+>
+> This also exercises the KVM_TDX_CAPABILITIES ioctl.
 
-Best regards,
-Krzysztof
+That commit message should describe what the patch does instead of relying on
+the title/short log.
+
+>
+> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+> Co-developed-by: Sagi Shahar <sagis@google.com>
+> Signed-off-by: Sagi Shahar <sagis@google.com>
+> ---
+>   .../selftests/kvm/lib/x86/tdx/tdx_util.c        | 17 +++++++++++++++++
+>   1 file changed, 17 insertions(+)
+>
+> diff --git a/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c b/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
+> index 3869756a5641..d8eab99d9333 100644
+> --- a/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
+> +++ b/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
+> @@ -232,6 +232,21 @@ static void vm_tdx_filter_cpuid(struct kvm_vm *vm,
+>   	free(tdx_cap);
+>   }
+>   
+> +static void tdx_check_attributes(struct kvm_vm *vm, uint64_t attributes)
+> +{
+> +	struct kvm_tdx_capabilities *tdx_cap;
+> +
+> +	tdx_cap = tdx_read_capabilities(vm);
+> +
+> +	/* TDX spec: any bits 0 in supported_attrs must be 0 in attributes */
+> +	TEST_ASSERT_EQ(attributes & ~tdx_cap->supported_attrs, 0);
+> +
+> +	/* TDX spec: any bits 1 in attributes must be 1 in supported_attrs */
+
+The comments are not accurate.
+
+The descriptions in TDX spec are for ATTRIBUTES_ FIXED0 and ATTRIBUTES_ FIXED1.
+They are related to tdx_cap->supported_attrs returned by KVM, but they are not
+the same.
+
+
+> +	TEST_ASSERT_EQ(attributes & tdx_cap->supported_attrs, attributes);
+> +
+> +	free(tdx_cap);
+> +}
+> +
+>   void vm_tdx_init_vm(struct kvm_vm *vm, uint64_t attributes)
+>   {
+>   	struct kvm_tdx_init_vm *init_vm;
+> @@ -251,6 +266,8 @@ void vm_tdx_init_vm(struct kvm_vm *vm, uint64_t attributes)
+>   	memcpy(&init_vm->cpuid, cpuid, kvm_cpuid2_size(cpuid->nent));
+>   	free(cpuid);
+>   
+> +	tdx_check_attributes(vm, attributes);
+> +
+>   	init_vm->attributes = attributes;
+>   
+>   	vm_tdx_vm_ioctl(vm, KVM_TDX_INIT_VM, 0, init_vm);
+
 
