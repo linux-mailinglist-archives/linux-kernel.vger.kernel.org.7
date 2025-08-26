@@ -1,63 +1,53 @@
-Return-Path: <linux-kernel+bounces-787362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0550CB37532
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 01:06:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65416B37531
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 01:06:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC51B360E5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 23:06:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 251137C51E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 23:06:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171452F6588;
-	Tue, 26 Aug 2025 23:06:01 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 646822DF6EA;
+	Tue, 26 Aug 2025 23:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="maR/9c+J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA972F6572;
-	Tue, 26 Aug 2025 23:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1562E0409;
+	Tue, 26 Aug 2025 23:05:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756249560; cv=none; b=swJskkITk7NpbDboKsOFH8J7WymGQeYHTnfb8W03n3GKIX61HYjVxYyykhdfkcajJQBF0TcUtO6rR4hLEoOFEcPv8I0DZwkbV2+sPYXDw1yDSwZyXfNAWEYWz59IYG07DHBVTR+9FnYjEhZtta+WB0UlczYs3bwAU4asXn/BEGI=
+	t=1756249554; cv=none; b=ATweAd5xj7dVmGpSXgAloS452ya1+SlduvKqK6MQEz+9zG1mxnuedApbHXaCLlMmd1ZNfhQPNiKRUfCJk9y5D61XZ6DgvwY5oYnmpGuyTIxiGae4VEqwlUeDDtrptTEKMzLrVYh0AbVBKQXK5tqGlacGpw/JMpyhNpgQKo3/lNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756249560; c=relaxed/simple;
-	bh=etPr2X04naESy1hvIvXKnN6BbYwyA7t3PyBkpF74tOQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mZCxxhMxnn8HwYisd1lbuPjxBn4o2ErhK8jqZKRt5LJHBTDaOfztIphjU1C/naBJSYXRNQIcVjrUoWVPUDCGa55lBCezXEQmkiRuaBezNNtuUhiaYzW+4lbZo/WnkSkqiIXKsqF8PtcRowu46OjsF8k6bT1solpkJjGbcwFO06s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98.2)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1ur2jh-000000001si-0q9I;
-	Tue, 26 Aug 2025 23:05:53 +0000
-Date: Wed, 27 Aug 2025 00:05:49 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Hauke Mehrtens <hauke@hauke-m.de>,
-	Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Cc: Andreas Schirm <andreas.schirm@siemens.com>,
-	Lukas Stockmann <lukas.stockmann@siemens.com>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Peter Christen <peter.christen@siemens.com>,
-	Avinash Jayaraman <ajayaraman@maxlinear.com>,
-	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
-	Juraj Povazanec <jpovazanec@maxlinear.com>,
-	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
-	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
-	"Livia M. Rosu" <lrosu@maxlinear.com>,
-	John Crispin <john@phrozen.org>
-Subject: [PATCH net-next v2 2/6] net: dsa: lantiq_gswip: support
- model-specific mac_select_pcs()
-Message-ID: <1291bfe0609de9ce3b54d6c17ac13e39eff26144.1756228750.git.daniel@makrotopia.org>
-References: <cover.1756228750.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1756249554; c=relaxed/simple;
+	bh=TaabfLhWhjplhJQg4SnsjHtvJlDRzRWxgWp1G4NXpcI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=HaRn+FzhTITU+DOmlSI1BD5kwS+O1SyBspkmbDwDJjGthlDg3ujq2JZmZVru/X6f9HDw6JSW3U7oU16fsQffZCUei/gb3NiBIKPhI+FbJaYf9GljiJn0Tr74ZTAX37D80DJaowU29eNQoL5bZR12ZzDd41h9AdFTYPhHW7KbOFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=maR/9c+J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFCE2C4CEF1;
+	Tue, 26 Aug 2025 23:05:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756249554;
+	bh=TaabfLhWhjplhJQg4SnsjHtvJlDRzRWxgWp1G4NXpcI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=maR/9c+J9qJgXLSLlhb+5MqaGpUAFmc/vgRNYIctQyxRbv8UvQaF8ewV2Q5V33FB4
+	 boTGZ8SHRJgS/gKvHhr6KBo5CrEsQmQvBkVZ4Mdq8oMMImujZ3odO8bzY+XYza+Aqn
+	 eEsfEUDVU21YdhMDXQUb5VAjc/j2sIgGCDSvS6VNxIFVkH7xT3cjFfiTE8B+ElQKE0
+	 3xL84KQyJn2GTwFxlVxqoYld0wLIato/nIzx+iSPYxdWj6r/sTexOu8JP/ZfUHdcWx
+	 Rot2jnHh2QQFBPwBzWVHV8q8Oqd36IKXxuTTjnPXoye1axVd0kXtlU97ACTl7PyFMT
+	 cZDuNE61lDOUg==
+Date: Tue, 26 Aug 2025 18:05:52 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Hans Zhang <18255117159@163.com>
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/8] PCI: Replace msleep with fsleep for precise
+ secondary bus reset
+Message-ID: <20250826230552.GA860063@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,75 +56,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1756228750.git.daniel@makrotopia.org>
+In-Reply-To: <20250826170315.721551-3-18255117159@163.com>
 
-Call mac_select_pcs() function if provided in struct gswip_hwinfo.
-The MaxLinear GSW1xx series got one port wired to a SerDes PCS and
-PHY which can do 1000Base-X, 2500Base-X and SGMII. Support for the
-SerDes port will be provided using phylink_pcs, so provide a
-convenient way for mac_select_pcs() to differ based on the hardware
-model.
+On Wed, Aug 27, 2025 at 01:03:09AM +0800, Hans Zhang wrote:
+> The msleep() function with small values (less than 20ms) may not sleep
+> for the exact duration due to the kernel's timer wheel design. According
+> to the comment in kernel/time/sleep_timeout.c:
+> 
+>   "The slack of timers which will end up in level 0 depends on sleep
+>   duration (msecs) and HZ configuration. For example, with HZ=1000 and
+>   a requested sleep of 2ms, the slack can be as high as 50% (1ms) because
+>   the minimum slack is 12.5% but the actual calculation for level 0 timers
+>   is slack = MSECS_PER_TICK / msecs. This means that msleep(2) can
+>   actually take up to 3ms (2ms + 1ms) on a system with HZ=1000."
 
-Signed-off-by: Daniel Golle <daniel@makrotopia.org>
----
-v2: no changes
+I thought I heard something about 20ms being the minimum actual delay
+for small msleeps.  I suppose the error is larger for HZ=100 systems.
 
- drivers/net/dsa/lantiq/lantiq_gswip.c | 19 ++++++++++++++++---
- drivers/net/dsa/lantiq/lantiq_gswip.h |  3 +++
- 2 files changed, 19 insertions(+), 3 deletions(-)
+The fsleep() would turn into something between 2ms and 2.5ms, so if
+we're talking about reducing 3ms to 2.5ms, I have a hard time getting
+worried about that.
 
-diff --git a/drivers/net/dsa/lantiq/lantiq_gswip.c b/drivers/net/dsa/lantiq/lantiq_gswip.c
-index 67919c3935e4..acb6996356e9 100644
---- a/drivers/net/dsa/lantiq/lantiq_gswip.c
-+++ b/drivers/net/dsa/lantiq/lantiq_gswip.c
-@@ -1592,10 +1592,23 @@ static int gswip_get_sset_count(struct dsa_switch *ds, int port, int sset)
- 	return ARRAY_SIZE(gswip_rmon_cnt);
- }
- 
-+static struct phylink_pcs *gswip_phylink_mac_select_pcs(struct phylink_config *config,
-+							phy_interface_t interface)
-+{
-+	struct dsa_port *dp = dsa_phylink_to_port(config);
-+	struct gswip_priv *priv = dp->ds->priv;
-+
-+	if (priv->hw_info->mac_select_pcs)
-+		return priv->hw_info->mac_select_pcs(config, interface);
-+
-+	return NULL;
-+}
-+
- static const struct phylink_mac_ops gswip_phylink_mac_ops = {
--	.mac_config	= gswip_phylink_mac_config,
--	.mac_link_down	= gswip_phylink_mac_link_down,
--	.mac_link_up	= gswip_phylink_mac_link_up,
-+	.mac_config		= gswip_phylink_mac_config,
-+	.mac_link_down		= gswip_phylink_mac_link_down,
-+	.mac_link_up		= gswip_phylink_mac_link_up,
-+	.mac_select_pcs		= gswip_phylink_mac_select_pcs,
- };
- 
- static const struct dsa_switch_ops gswip_switch_ops = {
-diff --git a/drivers/net/dsa/lantiq/lantiq_gswip.h b/drivers/net/dsa/lantiq/lantiq_gswip.h
-index 620c2d560cbe..19bbe6fddf04 100644
---- a/drivers/net/dsa/lantiq/lantiq_gswip.h
-+++ b/drivers/net/dsa/lantiq/lantiq_gswip.h
-@@ -4,6 +4,7 @@
- 
- #include <linux/clk.h>
- #include <linux/mutex.h>
-+#include <linux/phylink.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/reset.h>
-@@ -237,6 +238,8 @@ struct gswip_hw_info {
- 	enum dsa_tag_protocol tag_protocol;
- 	void (*phylink_get_caps)(struct dsa_switch *ds, int port,
- 				 struct phylink_config *config);
-+	struct phylink_pcs *(*mac_select_pcs)(struct phylink_config *config,
-+					      phy_interface_t interface);
- };
- 
- struct gswip_gphy_fw {
--- 
-2.51.0
+And we're going to wait at least 100ms before touching the device
+below the bridge anyway.
+
+> This unnecessary delay can impact system responsiveness during PCI
+> operations, especially since the PCIe r7.0 specification, section
+> 7.5.1.3.13, requires only a minimum Trst of 1ms. We double this to 2ms
+> to ensure we meet the minimum requirement, but using msleep(2) may
+> actually wait longer than needed.
+> 
+> Using fsleep() provides a more precise delay that matches the stated
+> intent of the code. The fsleep() function uses high-resolution timers
+> where available to achieve microsecond precision.
+> 
+> Replace msleep(2 * PCI_T_RST_SEC_BUS_DELAY_MS) with
+> fsleep(2 * PCI_T_RST_SEC_BUS_DELAY_US) to ensure the actual delay is
+> closer to the intended 2ms delay.
+> 
+> Signed-off-by: Hans Zhang <18255117159@163.com>
+> ---
+>  drivers/pci/pci.c | 2 +-
+>  drivers/pci/pci.h | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index c05a4c2fa643..81105dfc2f62 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -4964,7 +4964,7 @@ void pci_reset_secondary_bus(struct pci_dev *dev)
+>  	pci_write_config_word(dev, PCI_BRIDGE_CONTROL, ctrl);
+>  
+>  	/* Double this to 2ms to ensure that we meet the minimum requirement */
+> -	msleep(2 * PCI_T_RST_SEC_BUS_DELAY_MS);
+> +	fsleep(2 * PCI_T_RST_SEC_BUS_DELAY_US);
+>  
+>  	ctrl &= ~PCI_BRIDGE_CTL_BUS_RESET;
+>  	pci_write_config_word(dev, PCI_BRIDGE_CONTROL, ctrl);
+> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> index 4d7e9c3f3453..9d38ef26c6a9 100644
+> --- a/drivers/pci/pci.h
+> +++ b/drivers/pci/pci.h
+> @@ -61,7 +61,7 @@ struct pcie_tlp_log;
+>  #define PCIE_LINK_WAIT_SLEEP_MS		90
+>  
+>  /* PCIe r7.0, sec 7.5.1.3.13, requires minimum Trst of 1ms */
+> -#define PCI_T_RST_SEC_BUS_DELAY_MS	1
+> +#define PCI_T_RST_SEC_BUS_DELAY_US	1000
+>  
+>  /* Message Routing (r[2:0]); PCIe r6.0, sec 2.2.8 */
+>  #define PCIE_MSG_TYPE_R_RC	0
+> -- 
+> 2.25.1
+> 
 
