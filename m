@@ -1,184 +1,139 @@
-Return-Path: <linux-kernel+bounces-786769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3942FB368C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:19:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6601FB36965
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:26:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 845E31BC70E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:11:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B094981B5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:12:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BD7435336C;
-	Tue, 26 Aug 2025 14:09:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82DF3570B6;
+	Tue, 26 Aug 2025 14:09:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CBgx2e8z"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="X6J9OUrQ"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DAAE352077
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 14:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0CA42D0626
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 14:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756217363; cv=none; b=r3TkSxMNrE9arOkjw5V8YbLjfJBaVD8kPhx9Euv662Arrv8SeosNMqwrur4wJ5eFdxRUfhAhmkm+ILtc4OSYVInmnGYHSmou+DTbTQUleQSkaSTx33ZQIO3yYXoQddeGsyfp5rdnnbAYeTLJw5NbkyRc6NYSlU11zr1nfLmrXT8=
+	t=1756217392; cv=none; b=axUQPgU1DQZYMaAwJtf2VWW5MexHhkZKqYgwxCVCvvq5GbL9CWZQPlsPVLc9X8qPt8D2g8wopDK09Zc6os7ZEbKLm/pqAB5hvlMADh+6abDa8MmuIM4/6APkuLBvroDfLYXgcf8jq2D7TOlkpMGgBw76asCOMWDoJ1q+4inodZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756217363; c=relaxed/simple;
-	bh=4Z8sacIFlP/t9bo1OcRvfuKo6GZJTg+94H6GtE2fEzk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Tw5hJoO3/+c20DuIuekg+K35fZVFF1MVrDU82/XChkzO46UMAIPCdH0yCaMLp3Qnu2ThdLn/DKEoPFBLg182U5R+0L3C8gwDCY13GyRP+ljOqQ1iL+9nbnI8+kKC5zrI9t6AU4dlXp7pKbAFNwKWPwbnntYUpWNyQ8q5rLIRzhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CBgx2e8z; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756217360;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=r38Ew10IXp4jVZ4hrFLLc2cPCRDjSFsLCeWhOStjPcs=;
-	b=CBgx2e8zgsvyuPNF9IpuP2p/0UTT2TI1BiSY7PvUs666ZCq1+qnmEIHJ+9C4G1QbxtHww+
-	i0fe7SMcgVj1tC+cJJIY5wQiVcmrxVtm5iICmXzHp5Ld2PkbRmM6wIBR3dnJH8jnebRmK5
-	cJGbAoblZ3jJCOBWvPg6/AFlrT9OeYo=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-687-4nuCuQ3MNNaU1aLyacxBeA-1; Tue, 26 Aug 2025 10:09:18 -0400
-X-MC-Unique: 4nuCuQ3MNNaU1aLyacxBeA-1
-X-Mimecast-MFC-AGG-ID: 4nuCuQ3MNNaU1aLyacxBeA_1756217357
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3c630eea496so2042604f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 07:09:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756217357; x=1756822157;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=r38Ew10IXp4jVZ4hrFLLc2cPCRDjSFsLCeWhOStjPcs=;
-        b=jPFIik7Ov9N2TleRjQoWEBelNQjRe4wpin1eI7eukGPiIQJxNHkdf85ufkDjrQLLje
-         F52INHAlx/RkI4tGwGyFo1Z0ooEj/nXey1V0Z8uFZ02ayEOT3Oy9K/frWVUvQfNbnuCW
-         Lqbm5BdkZ67V2/LADm+sD1uXj7xBveTzPClOyGKdjnnPcnCdBEiomdUkA2ZN2dd8CO3F
-         cjz+IJSg6hFymewfOwMyqqK8z0SVckvTfXN9BtBFhaSCiNKmXeapUabRmXo1C9wE25vM
-         gQsJQBBdyLrKpmMUY+HLOmAy6uY0ksmUcLvBXCtYSeW47u2CHAoz1rlsCtQ6M0t6KGFA
-         ehZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUavqv9g7goblyrKamlpF4B3k3OsmSOnFvgcuOiQ9ohL+gboBnAYpqyFW+8cZe3jp4rTELVgFuQZAt+1Ts=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiaxyIPwjhoRWtoK/edoEjjEjzc0MFnshP4UZyMKYZw1bEEJ2W
-	KsFbCdwr8sGLnvF9cWzk0FIk7XDIOvW+qKffHPhVqDo0vOGQgB3j5WGK9thhI0VuXHD5W159jfB
-	sl9WVZrDZbZS54j3Ps7c/l0YDQq79oja9XP64Hpgy16U4HiTDSN06Z5opwY4QdDSBEQ==
-X-Gm-Gg: ASbGncslv6bVKoACuKl5rjXKVuwI7sCSL9ls0Rj4iAwRtXz2PGZn+xLRqVp2rAB5Ozr
-	Q4PzfaDoTtKS7OmsWnqj1JLISQ0WSuz088rTw2kYbNKYWQqubDaSDpdGKPzPRD4ePTNeBOmmy4z
-	SBUG2GbSrqNnpGXikTdFLi5mDBoUcq/YyH60PGYASxc2pEfskUJgYsaGqzRksfdIUIBCVhfBuWO
-	+q4atnmaybo/8hSv+CP1od5lutMWZnZWyzPriwvtjkxgy/Abxgqa8wkzA+WgSdV/YN/8VrklAx2
-	hmq32NsInJX+da9D6JGYxxaIkbstcJOnLO4zmfxLlFmIMSJSmsi9aSixtbNpLOb+d6wbs1li7w=
-	=
-X-Received: by 2002:a05:6000:401f:b0:3c9:a4b7:da09 with SMTP id ffacd0b85a97d-3c9a4b7de2bmr5506098f8f.31.1756217357348;
-        Tue, 26 Aug 2025 07:09:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHpVnjqNtC8/am/9sMuVxjSqK3ied/VaDZynwsfDDcUj7OQY0t9J9gKlKy5kQIg+ur0P4AuDw==
-X-Received: by 2002:a05:6000:401f:b0:3c9:a4b7:da09 with SMTP id ffacd0b85a97d-3c9a4b7de2bmr5506077f8f.31.1756217356889;
-        Tue, 26 Aug 2025 07:09:16 -0700 (PDT)
-Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c7117d5977sm16676603f8f.51.2025.08.26.07.09.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Aug 2025 07:09:16 -0700 (PDT)
-Message-ID: <53a7bf3d-843d-4e19-b0a3-cc6852fe72c1@redhat.com>
-Date: Tue, 26 Aug 2025 16:09:15 +0200
+	s=arc-20240116; t=1756217392; c=relaxed/simple;
+	bh=mMyPwDOjfGJ9XxPaLebdhglVJdFCi4TTrUM+f9VNxgw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=X3/+AnmSAiQYmnrodNTeaZfEDryNUASbFs4+oZg3K9OSBE4l/wMSscKGfxWIY5UrHg0Aj05lEyE8JSjAUheUib9Lcs/jrQeAvnxWIsjEyAb6KfRdatCyEI4LaagOYxrS8E7pmPdCy/z2x/OyyeHAt1bQWHy5wAbEuH7R4G3+dIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=X6J9OUrQ; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250826140948euoutp010ae92045f66ca367190ff5303236e222~fVmjfMxPm0566405664euoutp01J
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 14:09:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250826140948euoutp010ae92045f66ca367190ff5303236e222~fVmjfMxPm0566405664euoutp01J
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756217388;
+	bh=wBcHbZvVFk9s7ggVtgAQD1SCZ9nQD0upHN+BmMke/4o=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=X6J9OUrQ7BR5debZpJiXGZcozru4A55OVKrgUE78bZXQkcOtUDojIK7rUUwRiN+PP
+	 NppBs+pNEuGrG3XOy6hflYRtDmCXQ2weKnQLFWhrlRueTyxW3IbLm2zxB21B4qNaIo
+	 Ebdt812kxsxIs94sfDA0pQIdu2wdXF/MHncWI65I=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250826140947eucas1p1e89d3b343d1190005a9901f4b5f6189d~fVmjKdmyn1026010260eucas1p1y;
+	Tue, 26 Aug 2025 14:09:47 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250826140946eusmtip1f96cd40ac9cc7376ac863b1e398b0b5e~fVmh-Eunp2654726547eusmtip1N;
+	Tue, 26 Aug 2025 14:09:46 +0000 (GMT)
+Message-ID: <89954593-8236-464e-8848-e7cdcf639c0a@samsung.com>
+Date: Tue, 26 Aug 2025 16:09:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] mm/ksm: Reset KSM counters in mm_struct during fork
-To: Giorgi Tchankvetadze <giorgitchankvetadze1997@gmail.com>,
- donettom@linux.ibm.com
-Cc: aboorvad@linux.ibm.com, akpm@linux-foundation.org,
- chengming.zhou@linux.dev, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- richard.weiyang@gmail.com, ritesh.list@gmail.com, xu.xin16@zte.com.cn
-References: <2e662107e01417bf9af23bc7f52863cd538419be.1756211338.git.donettom@linux.ibm.com>
- <512764a4-611c-42d4-8b4a-2aaca4e519a4@gmail.com>
-From: David Hildenbrand <david@redhat.com>
+User-Agent: Betterbird (Windows)
+Subject: Re: is dma_mapping_error() check necessary for
+ dma_alloc_noncoherent()?
+To: Baochen Qiang <baochen.qiang@oss.qualcomm.com>, Robin Murphy
+	<robin.murphy@arm.com>, Jeff Johnson <jjohnson@kernel.org>
+Cc: iommu@lists.linux.dev, "linux-kernel@vger.kernel.org >> linux-kernel"
+	<linux-kernel@vger.kernel.org>, "ath11k@lists.infradead.org"
+	<ath11k@lists.infradead.org>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <512764a4-611c-42d4-8b4a-2aaca4e519a4@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <ff6c1fe6-820f-4e58-8395-df06aa91706c@oss.qualcomm.com>
 Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20250826140947eucas1p1e89d3b343d1190005a9901f4b5f6189d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250826094453eucas1p178ff4a39db0c655f3505128a5cfb0a6a
+X-EPHeader: CA
+X-CMS-RootMailID: 20250826094453eucas1p178ff4a39db0c655f3505128a5cfb0a6a
+References: <CGME20250826094453eucas1p178ff4a39db0c655f3505128a5cfb0a6a@eucas1p1.samsung.com>
+	<ff6c1fe6-820f-4e58-8395-df06aa91706c@oss.qualcomm.com>
 
-On 26.08.25 15:47, Giorgi Tchankvetadze wrote:
-> What if we only allocate KSM stats when a process actually uses KSM?
-> 
-> struct ksm_mm_stats {
-> 	atomic_long_t merging_pages;
-> 	atomic_long_t rmap_items;
-> 	atomic_long_t zero_pages;
-> };
-> struct ksm_mm_stats *mm->ksm_stats; // NULL until first enter
-> 
-> static inline struct ksm_mm_stats *mm_get_ksm_stats(struct mm_struct *mm)
-> {
-> 	if (likely(mm->ksm_stats))
-> 		return mm->ksm_stats;
-> 	return ksm_alloc_stats_if_needed(mm); // Slow path
-> }
+On 26.08.2025 11:44, Baochen Qiang wrote:
+> Hi guys,
+>
+> I have a driver which allocate noncoherent DMA buffer and get the returned CPU addr tested:
+>
+> 	vaddr_unaligned = dma_alloc_noncoherent(ab->dev, rx_tid->unaligned_size, &paddr,
+> 						DMA_BIDIRECTIONAL, GFP_ATOMIC);
+> 	if (!vaddr_unaligned) {
+> 		spin_unlock_bh(&ab->base_lock);
+> 		return -ENOMEM;
+> 	}
+>
+> while free the buffer
+>
+> 	dma_free_noncoherent(ab->dev, rx_tid->unaligned_size,
+> 			     rx_tid->vaddr_unaligned,
+> 			     rx_tid->paddr_unaligned, DMA_BIDIRECTIONAL);
+>
+> I get below warnings:
+>
+>   DMA-API: ath11k_pci 0000:03:00.0: device driver failed to check map error[device
+> address=0x00000000f3ad7000] [size=639 bytes] [mapped as single]
+>   WARNING: CPU: 15 PID: 64303 at kernel/dma/debug.c:1036 check_unmap+0x7e2/0x950
+>   RIP: 0010:check_unmap+0x7e2/0x950
+>   Call Trace:
+>    <TASK>
+>    ? free_to_partial_list+0x9d/0x350
+>    debug_dma_unmap_page+0xac/0xc0
+>    ? debug_smp_processor_id+0x17/0x20
+>    ? rcu_is_watching+0x13/0x70
+>    dma_free_pages+0x56/0x180
+>    [...]
+>    </TASK>
+>   ---[ end trace 0000000000000000 ]---
+>   DMA-API: Mapped at:
+>    debug_dma_map_page+0x7c/0x140
+>    dma_alloc_pages+0x74/0x220
+>    [...]
+>
+> Checking code gives me the impression that I should do dma_mapping_error() check as well.
+> And indeed with below diff the warning is gone:
+>
+> +       dma_mapping_error(ab->dev, paddr);
+>
+> However this does not make sense to me since IMO testing the CPU address is good enough, I
+> can not imagine a valid case where DMA alloc/map fails while returning a valid CPU
+> address, no?
+>
+> If I was right, should we remove invocation to debug_dma_map_page() in dma_alloc_pages()?
 
-The fork'ed child uses KSM. It just doesn't have any stable rmap entries.
+Simply replace "if (!vaddr_unaligned)" with "if 
+dma_mapping_error(ab->dev, paddr)" and the debug code will be happy.
 
-We have to copy the zero_pages counter such that 
-ksm_might_unmap_zero_page() will do the right thing.
-
-But you're comment made me realize that there is likely another bug:
-
-When copying zero_pages during fork(), we have to increment 
-&ksm_zero_pages as well. Otherwise we will get an underflow later.
-
-@Donet, can you look into that as well?
-
+Best regards
 -- 
-Cheers
-
-David / dhildenb
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
 
