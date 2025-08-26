@@ -1,226 +1,122 @@
-Return-Path: <linux-kernel+bounces-786017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7C9CB35390
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:50:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92C37B3531F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:16:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00FB05E6B1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:50:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 539B33BB048
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:16:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D58C2F068C;
-	Tue, 26 Aug 2025 05:50:44 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B323986342;
-	Tue, 26 Aug 2025 05:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4EDC11CA9;
+	Tue, 26 Aug 2025 05:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JLLz1q1t"
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635B916CD33
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 05:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756187443; cv=none; b=ZiLFMXjDRmUCglzTig46/fNxuKw54FruuyULM1nKEzIi5cV5dFDUo7mW0Ehz9EQbStFqIuHMvl8qx7Plzdsm3AjfA69kRoG+kFO7JxzZPiZeeFWv2MyIbQLaJCIngP1mGzF/QZ5mStmJsQh5creqmGwPsP/ofnDIlvL/oyUxDt4=
+	t=1756185411; cv=none; b=nI7ZY/0f4CGzoozqLZsw/sx73rktMYtkdMakGAxLY7K6k6u67XFpGXODDxoiGINv0wQgRhZM40U6a3IxSrGJU29EvdLeu4fTKoUDrmoOSHa/yu7OVaQNfFP2vzBn8woa4NGXocrEpHcfYXW1hl0FyfC2MQziqTJIt7kG717nTFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756187443; c=relaxed/simple;
-	bh=jVV+oiJM0cYWxoE5qzXOwM2cqZugv66qN003jNJGkJA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tmtQNN+7PldtBaApNPyh+4Ec58y5O1FWcuhuBWF/cHR6no8zeych6k/sEKulNl68B6H01gKPaG6P3HwGIxM6jEXY2PCRkCJrf+OJHHfdj47CHFhlxL5N0p4CYOH3ftC+Y60dVgSRFDGVnkcyUpCE7Exj0bXiIxFtDv53fB5OKo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4c9wqD4n9Lz9sSb;
-	Tue, 26 Aug 2025 07:15:52 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id rpB2O40BvjbE; Tue, 26 Aug 2025 07:15:52 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4c9wqD3f1Fz9sSZ;
-	Tue, 26 Aug 2025 07:15:52 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5FE698B764;
-	Tue, 26 Aug 2025 07:15:52 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id QeAqRAElDkH6; Tue, 26 Aug 2025 07:15:52 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 70BC98B763;
-	Tue, 26 Aug 2025 07:15:50 +0200 (CEST)
-Message-ID: <29c26faf-98da-42fa-9408-0e0d2932bb13@csgroup.eu>
-Date: Tue, 26 Aug 2025 07:15:50 +0200
+	s=arc-20240116; t=1756185411; c=relaxed/simple;
+	bh=3FhjRy2es/oOFZdHwyiS4hthTz3SWQunVt2WiiMiN4A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QRwq1Ey7Zx/XsmLVhY/53vOSlGAbQqmIoc7OChw6NKqGnJdiiTp7n9R4PyncosVeJUYDmaRIXljBmSQNiJ0TqEo237zJ/mRoJDPG0x2WUTIIYxywMz33anW9suJqK7wkaG5JQlu3GFo4MTtnOyPjWgCBRvSGm/7FguYIa45qZB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JLLz1q1t; arc=none smtp.client-ip=209.85.222.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-8920c579f98so1399683241.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 22:16:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1756185407; x=1756790207; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B1JIZerC9XYjkBh/CdzWClGmJGkTit8bSTofkNpBRWI=;
+        b=JLLz1q1tSDgul57Z+7GHbbFTYRsUzrICfInd1EfbwkbWpwgDIlN4Wk/Z3mvM8Z1hXG
+         dsiqljejZE6DGEg1oWKyHuFuuPIXNNrKkLSzDI3TzqxckdJBFgLOkelPyKxZ9MEinJdd
+         tgsN9ETlY0BKxgw0SqqMlt62/tWLh0jZbWzTo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756185407; x=1756790207;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B1JIZerC9XYjkBh/CdzWClGmJGkTit8bSTofkNpBRWI=;
+        b=J14Kor6FSuvYBBORt7/SjvrTEQHDsUeLmE2R7B2USugWfxJ4zBj1IcgUZuJh3JqHfV
+         921dXBvHmApXgfGyBk9YBqKixVSSHdPInaXsve+mXSoEdT9DsyH7NI1HEsfQqHYIZZjl
+         3La0x4wLu8bLorpTzdyv37DaRwLf/5c/FzPDiW6+d1idYBrxrnTEKbTpKT+3cmaE0CrU
+         AZBJz2FIxcX6IfFg6uXEuYMr10Y/fpTHcVNiApGwficEHv9qfo9UdJfAdOg9/dE+x78U
+         NS4HcqkEh+t7gWaUvyP71smhxKxreS/8SIlZN81wHUOnoovrsfKAgn5nLEiUQnZb3n3b
+         tdkg==
+X-Forwarded-Encrypted: i=1; AJvYcCVGrQuCpVTh7yKsio99lUi+Ikx8w5FEip4I4/KavlavGak3fmo65/k6DHcB80lcWFfMB37TAl27JqUChkc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLJGUpWFcRPqozCb7yM0bor1PSv9gHF0CcLfIMjS0qJluvhA1N
+	TXlajZ/JVRQ68YpB98atsg92wlplYJ1AOX63bOoA1o47Au+4CV4my2VujnMNMxDRbD7kqFhhCHd
+	96b4=
+X-Gm-Gg: ASbGncuAe/d88vWgVluwX6AcsF7PZ7KJWmp3YSrqYKjOUJGtzfx7AuV/5nt9OIpRyUV
+	7iG6sQB9RhrFqxsPIEKGK4qls28YcrdbkV2r3c8g1x8fNXZzNRKNWGLlRMHo9ZIhD49J6i32TPQ
+	Uim9wv10SBIxhORi9mulBd06PwGtQo33TfdjQQN6EiKavosme6/QYeT3b7A4kb+L4T+rzI5JMcB
+	RM8JivVGXmioMMKnigw1XY919NqTFttp2axW4OogZsw/K9dTCscHDWwfSDSQ68bBgDi0NTeULps
+	jXc51UqASc7ROZQvb2GOla0DSLMAdS3l4BZKxIk2DjnDJK0bs51x9tG7vwxWXiD2rvFmRy0269u
+	NXH366kIFY9lu7dOz9bQ616hjPhDEA0WojMxKRJ5+4YkMV5ZHhBH3FfiBEA==
+X-Google-Smtp-Source: AGHT+IGSbXFo5OoyYUut8eAsbBbkhLjp/6OQ7NH+K/kEUYJaiQw19n15OB8L7Xp4RQKtrGuNPAwH4Q==
+X-Received: by 2002:a05:6102:3ecd:b0:508:aeba:ac31 with SMTP id ada2fe7eead31-51d0cde26b4mr4185672137.2.1756185407097;
+        Mon, 25 Aug 2025 22:16:47 -0700 (PDT)
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53eda5bb6d0sm2029822e0c.26.2025.08.25.22.16.46
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Aug 2025 22:16:46 -0700 (PDT)
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-50f890eadb9so457682137.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 22:16:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW0feBhq1FyDSIgTT+Iwfv/EoE5Sg23zifnsx7Rxq//47/e7Xtj2fpzV6ku3fL734nvIE1nAkV6laY1pMM=@vger.kernel.org
+X-Received: by 2002:a05:6102:2b84:b0:4e9:9281:85aa with SMTP id
+ ada2fe7eead31-51d0cde292cmr5071231137.1.1756185406133; Mon, 25 Aug 2025
+ 22:16:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 7/8] sched/topology: Unify tl_mc_mask() across core and
- all arch
-To: K Prateek Nayak <kprateek.nayak@amd.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>, linuxppc-dev@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- thomas.weissschuh@linutronix.de, Li Chen <chenl311@chinatelecom.cn>,
- Bibo Mao <maobibo@loongson.cn>, Mete Durlu <meted@linux.ibm.com>,
- Tobias Huschle <huschle@linux.ibm.com>,
- Easwar Hariharan <easwar.hariharan@linux.microsoft.com>,
- Guo Weikang <guoweikang.kernel@gmail.com>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
- Brian Gerst <brgerst@gmail.com>,
- Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
- Swapnil Sapkal <swapnil.sapkal@amd.com>,
- "Yury Norov [NVIDIA]" <yury.norov@gmail.com>,
- Sudeep Holla <sudeep.holla@arm.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Andrea Righi <arighi@nvidia.com>, Yicong Yang <yangyicong@hisilicon.com>,
- Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
- Tim Chen <tim.c.chen@linux.intel.com>,
- Vinicius Costa Gomes <vinicius.gomes@intel.com>
-References: <20250826041319.1284-1-kprateek.nayak@amd.com>
- <20250826041319.1284-8-kprateek.nayak@amd.com>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <20250826041319.1284-8-kprateek.nayak@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250825151111.3696404-1-wenst@chromium.org>
+In-Reply-To: <20250825151111.3696404-1-wenst@chromium.org>
+From: Fei Shao <fshao@chromium.org>
+Date: Tue, 26 Aug 2025 13:16:09 +0800
+X-Gmail-Original-Message-ID: <CAC=S1nhJpGD5ro+QiNTkDn90Nbw49jDQjVvwRT1XFQJbwA=z8A@mail.gmail.com>
+X-Gm-Features: Ac12FXxPVcynR36QGxsqlVXBYl9-P7WGDtVc3IOfN03AppRsLVWt_DvyhTCcM3g
+Message-ID: <CAC=S1nhJpGD5ro+QiNTkDn90Nbw49jDQjVvwRT1XFQJbwA=z8A@mail.gmail.com>
+Subject: Re: [PATCH v2] ASoC: mediatek: common: Switch to for_each_available_child_of_node_scoped()
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-Le 26/08/2025 à 06:13, K Prateek Nayak a écrit :
-> Unify the tl_mc_mask() wrapper around cpu_coregroup_mask() used by core,
-> x86, powerpc, and s390.
-> 
-> No functional changes intended.
-> 
-> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
+On Mon, Aug 25, 2025 at 11:55=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.org> =
+wrote:
+>
+> Using for_each_available_child_of_node_scoped() allows us to get rid of
+> of_node_put() calls from early returns or breaks in the loop. It also
+> fixes issues with missing of_node_put() calls.
+>
+> Switch to for_each_available_child_of_node_scoped() in parse_dai_link_inf=
+o().
+> Also drop the braces around if blocks now that the inner block is just
+> one statement.
+>
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 > ---
->   arch/powerpc/kernel/smp.c      | 7 +------
->   arch/s390/kernel/topology.c    | 7 +------
->   arch/x86/kernel/smpboot.c      | 7 -------
->   include/linux/sched/topology.h | 8 +++++++-
->   kernel/sched/topology.c        | 7 -------
->   5 files changed, 9 insertions(+), 27 deletions(-)
-> 
-> diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
-> index c58ddf84fe63..40719679385b 100644
-> --- a/arch/powerpc/kernel/smp.c
-> +++ b/arch/powerpc/kernel/smp.c
-> @@ -1062,11 +1062,6 @@ const struct cpumask *cpu_coregroup_mask(int cpu)
->   
->   	return cpu_node_mask(cpu);
->   }
-> -
-> -static const struct cpumask *cpu_mc_mask(struct sched_domain_topology_level *tl, int cpu)
-> -{
-> -	return cpu_corgrp_mask(cpu);
-> -}
->   #endif
->   
->   static const struct cpumask *cpu_pkg_mask(struct sched_domain_topology_level *tl, int cpu)
-> @@ -1729,7 +1724,7 @@ static void __init build_sched_topology(void)
->   #ifdef CONFIG_SCHED_MC
->   	if (has_coregroup_support()) {
->   		powerpc_topology[i++] =
-> -			SDTL_INIT(cpu_mc_mask, powerpc_shared_proc_flags, MC);
-> +			SDTL_INIT(tl_mc_mask, powerpc_shared_proc_flags, MC);
->   	}
->   #endif
->   
-> diff --git a/arch/s390/kernel/topology.c b/arch/s390/kernel/topology.c
-> index c88eda847309..8dbf32f362e1 100644
-> --- a/arch/s390/kernel/topology.c
-> +++ b/arch/s390/kernel/topology.c
-> @@ -514,11 +514,6 @@ const struct cpumask *cpu_coregroup_mask(int cpu)
->   	return &cpu_topology[cpu].core_mask;
->   }
->   
-> -static const struct cpumask *cpu_mc_mask(struct sched_domain_topology_level *tl, int cpu)
-> -{
-> -	return &cpu_topology[cpu].core_mask;
-> -}
-> -
->   static const struct cpumask *cpu_book_mask(struct sched_domain_topology_level *tl, int cpu)
->   {
->   	return &cpu_topology[cpu].book_mask;
-> @@ -536,7 +531,7 @@ static const struct cpumask *cpu_pkg_mask(struct sched_domain_topology_level *tl
->   
->   static struct sched_domain_topology_level s390_topology[] = {
->   	SDTL_INIT(tl_smt_mask, cpu_smt_flags, SMT),
-> -	SDTL_INIT(cpu_mc_mask, cpu_core_flags, MC),
-> +	SDTL_INIT(tl_mc_mask, cpu_core_flags, MC),
->   	SDTL_INIT(cpu_book_mask, NULL, BOOK),
->   	SDTL_INIT(cpu_drawer_mask, NULL, DRAWER),
->   	SDTL_INIT(cpu_pkg_mask, NULL, PKG),
-> diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-> index 81a40d777d65..bfbcac9a73d1 100644
-> --- a/arch/x86/kernel/smpboot.c
-> +++ b/arch/x86/kernel/smpboot.c
-> @@ -472,13 +472,6 @@ static int x86_cluster_flags(void)
->   }
->   #endif
->   
-> -#ifdef CONFIG_SCHED_MC
-> -static const struct cpumask *tl_mc_mask(struct sched_domain_topology_level *tl, int cpu)
-> -{
-> -	return cpu_coregroup_mask(cpu);
-> -}
-> -#endif
-> -
->   static const struct cpumask *tl_pkg_mask(struct sched_domain_topology_level *tl, int cpu)
->   {
->   	return cpu_node_mask(cpu);
-> diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
-> index e54501cc8e47..075d1f063668 100644
-> --- a/include/linux/sched/topology.h
-> +++ b/include/linux/sched/topology.h
-> @@ -63,7 +63,13 @@ static inline int cpu_core_flags(void)
->   {
->   	return SD_SHARE_LLC;
->   }
-> -#endif
-> +
-> +static const __maybe_unused
+> Changes since v1:
+> - Dropped unused variable
+> ---
+>  .../mediatek/common/mtk-soundcard-driver.c    | 19 +++++--------------
+>  1 file changed, 5 insertions(+), 14 deletions(-)
 
-Same as the two previous patches, __maybe_unused shouldn't be required.
-
-> +struct cpumask *tl_mc_mask(struct sched_domain_topology_level *tl, int cpu)
-> +{
-> +	return cpu_coregroup_mask(cpu);
-> +}
-> +#endif /* CONFIG_SCHED_MC */
->   
->   #ifdef CONFIG_NUMA
->   static inline int cpu_numa_flags(void)
-> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> index 4530cbad41e1..77d14430c5e1 100644
-> --- a/kernel/sched/topology.c
-> +++ b/kernel/sched/topology.c
-> @@ -1724,13 +1724,6 @@ sd_init(struct sched_domain_topology_level *tl,
->   	return sd;
->   }
->   
-> -#ifdef CONFIG_SCHED_MC
-> -static const struct cpumask *tl_mc_mask(struct sched_domain_topology_level *tl, int cpu)
-> -{
-> -	return cpu_coregroup_mask(cpu);
-> -}
-> -#endif
-> -
->   static const struct cpumask *tl_pkg_mask(struct sched_domain_topology_level *tl, int cpu)
->   {
->   	return cpu_node_mask(cpu);
-
+Reviewed-by: Fei Shao <fshao@chromium.org>
 
