@@ -1,101 +1,155 @@
-Return-Path: <linux-kernel+bounces-787199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2C73B372E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 21:14:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B97FEB372E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 21:15:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A3E374E2A96
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:14:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28A87462928
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:15:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA3A43728BD;
-	Tue, 26 Aug 2025 19:13:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D6A352076;
+	Tue, 26 Aug 2025 19:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hCOl7j/f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OW1W65Nc"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4013931A54F;
-	Tue, 26 Aug 2025 19:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990AD31A546;
+	Tue, 26 Aug 2025 19:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756235639; cv=none; b=HnztPAUpZlt/O/al5Hz5z1iK5SfNHS8E8WmvYNamE1DzwLrA9gBQZn/7yg8zB97IQwMlw6Dgds8YisVVYDsQd7w1rP8ZEWpY0pfDtTrmLW2xmX63ps5hlcCPsHmflrFeP2zq8CyK9qoc6fzfOEPxVCfSkq6SwBtJqDmdKJvRd9Y=
+	t=1756235742; cv=none; b=q8OhXf2uymkiTzNa53FaNQrzGrLesV/VyiWnXR2Q1/bD6tas1hIkGmzOzLJvMmvtFduj943c+GYsb2GMtcw4sfLEYZ0m9u7V/JWJQrY/3fKHY2DprUHusxNmfs/BdTUgDqfsb+31bZ3qpSN1wZ//nvdTiNADhX/U1Zl95cw4d5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756235639; c=relaxed/simple;
-	bh=qA6LwuRKII829imt/04X4B3VJEzTMIdKTGmjgRf6HmU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=FJ12oB00aBF60Pa7Y5jcyUk/RiEzDWqSCqQxRCdVf/UcZrGZzoWCFb0lKIUzqNHgFQeq2E8ea0OOXVbDBZNfil04cT9RQKsXVOQSllXwSGYElMF40hxL5CX2xL7Sc0VstNNAMtU7Yoyxo99suaZnBmm3s/gCA3bIWR7cx7buYvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hCOl7j/f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89692C4CEF1;
-	Tue, 26 Aug 2025 19:13:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756235638;
-	bh=qA6LwuRKII829imt/04X4B3VJEzTMIdKTGmjgRf6HmU=;
-	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
-	b=hCOl7j/fvuCyyFxN097gNMNU+ipgEqxLSxSiyyENojlKftvdwwjOiLRlT309M2UQX
-	 rg/oc157sVW+Md60uDCULmMTsvQplyWvBZLTw/s69Uhq8Zv/lOyDTJ7va9g0d7H+6d
-	 /cRCr3Hzv2B+Bvgkt4RLQXe+7K19Xg4G+3PPbKlsMs/kcF2uTSywpJDDoJ2NKbdbAL
-	 DIHPZU7uRmMYKURhBsapan/6CB7fOt8hldAOcKTHC4gHuC0nw4fP7lPcQbKM1ysaSS
-	 fEbN5mp4uD/nVgkTiRBGUMQl6XFthhepc/+3UEz2jNeuDBFqurHyTpg/JXVcrBVoDT
-	 Hp5BLBSS0Pk4Q==
+	s=arc-20240116; t=1756235742; c=relaxed/simple;
+	bh=4oIbK0dlmTqaUp15Y8918iqdp+r8eysmF0eVjvNdtl8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=M/EttX3FCTsgG+X0Th/c4a4x/M4/CFm3c9LEpjD1rcNn/JciVMTm+2K4dPQRHQ1yKPOs1+cihas5ghEvldhEuAGMKuaoUtHV30hjhAuxictPSLVLYIiEZj0an9gXnT+a2Tk1pt047YkmgsCTlJekwTsjKnvfQoWTZkLEFiCmCls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OW1W65Nc; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45a1b0d231eso36012205e9.3;
+        Tue, 26 Aug 2025 12:15:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756235739; x=1756840539; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=zNzxRNmE/EKiQpaMndjIGmivQbwP1c5FSr/pLiv46ys=;
+        b=OW1W65NcHt6R0g5xl5hbYRTq9XOUauvb1o8+AOIIGF6HIJtj8CjWfV1OTyB6A4AqwZ
+         WKAASO64SsgNHvUdEP1DRUAQKkz8jU+wWQLMPSjsuwzlY+Z7usoPPgM9+RMeXpaYgFs0
+         tLPHuJguQXFoJ48gUeeXklYH71zi5/t2J91+am68Bt2pyLovLbWtvWSebjgDPgThiv8n
+         UNEIrpU+kHI0OajZqjA/PpPlgpJCbyZwJlHl2Mqjiv1zst5AeoR0PS7xPuJuEsbrrC6j
+         dtWEtALOz+Cz4OYZhvn8zhK19s//nJIXr1SiTs6KUL1+C7PXyel78rLR5p/iY1JfAJzl
+         yd+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756235739; x=1756840539;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zNzxRNmE/EKiQpaMndjIGmivQbwP1c5FSr/pLiv46ys=;
+        b=rzCTfCUIeDwkhLkDUeAdEsc1ZsWV8eXtCareseIn7J6gVN5SW0TmFA4gDXUN7UJE0d
+         hkRRETJ+HcbgM+EPdeDCbghLajwS9bBQxH0JUzwyKPUp83EIuguohutCgYEx6FKhCZG4
+         izNWVMTgFSiZ2UIrAVuziOjjN4zKc/S3YJhr0ac8BDMdqBiPm/s2pcHMQPsRmvpS8wv2
+         EguXhVH6lVywmH6W9POWA4IedxHMo7r6sSCRxkKqUuDNoVQ9yiIGQgkgdRP6z6haqmjL
+         z42h+AKYyZntF2Hl/MSb4Xv1S10l4E0GmPUaRgzE7ozRHRgj4ihTJgca27HYx/T9rZO8
+         KS+g==
+X-Forwarded-Encrypted: i=1; AJvYcCVQZnVC2XUBVyHeOXFKOTrL5pxM+I56dwUmdolSxoYyu7WlPgaHdUVDrVymrUCeIk9CatqcWXlfOrIqx/s=@vger.kernel.org, AJvYcCWjonyYbKqGO3Zgc5zrEHUE102u/kHICZ5ouYrpvLJ7QKSIC4F9KKQ/3598puxFUlNlxfe1bcYh@vger.kernel.org
+X-Gm-Message-State: AOJu0Yym47KAMc5+xHNkljiZZ/Yf1B5UgrcTicGeqHFT0tiLVoZ5ySrd
+	BtYTLSHNPpcqRnnZJWWTwyyNi7yLvSNcco3OauJtn5PFFQ5uuwr1rTBI
+X-Gm-Gg: ASbGncuiLv99CaGo4qH7HlzfwVMScuMHxXbP7orpKu1IxzNMNSj+jY1UPZI00qcu61x
+	c0eSgVb4XdwtlEcjWzk2TCGwp6VoORFn/IIO9GUwcYnWMcK8fpugU40Trg9J9vuw79X+2K8fq9x
+	KV3gqaXgMssG+AOT/FyvsI/Rn3BLvL3qiBebztIp4o1jpY3wby+hPIqtkWaDTAPkPSvgTdtl1dm
+	LgqKeg6X9NldFLHwIalMKF1nMHy5anhkKVZrk8cJKdv+mBw0AfECcMTQiFakj5ZiH98Jza6tpGO
+	o787FT6Zyr8f8bpuExmsCPTDo1HNwMx3FMsMQbfBZkZLon2GBqeun9ogBfEIkQeiA3WyitOZvU0
+	Gn4IvwZr9CE74vDVb1pqG5ulI9Wq7VGU0VW7nIXOUi4Byt/FABy3u2RdVTxE10wwoDNb0BCE9QL
+	ql/JIMd+2Oir1odG8RsA1d
+X-Google-Smtp-Source: AGHT+IH7WBCt6pVN3TJd/7YUZla9RJO5wp0JBJSRMHH/wLVRBu+wkAsogHkN5FfzzEJWCNpnC+OaZg==
+X-Received: by 2002:a05:6000:40dd:b0:3c3:973a:fe40 with SMTP id ffacd0b85a97d-3c5de349863mr15117249f8f.58.1756235738577;
+        Tue, 26 Aug 2025 12:15:38 -0700 (PDT)
+Received: from [192.168.1.122] (cpc159313-cmbg20-2-0-cust161.5-4.cable.virginm.net. [82.0.78.162])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6c5cf38fsm3881735e9.12.2025.08.26.12.15.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Aug 2025 12:15:38 -0700 (PDT)
+Message-ID: <7bfb811e-72cf-43c4-81e1-6e63338f6a29@gmail.com>
+Date: Tue, 26 Aug 2025 20:15:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sfc: use kmalloc_array() instead of kmalloc()
+To: Qianfeng Rong <rongqianfeng@vivo.com>, linux-net-drivers@amd.com,
+ Andy Moreton <andy.moreton@amd.com>
+References: <20250825151209.555490-1-rongqianfeng@vivo.com>
+Content-Language: en-GB
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Edward Cree <ecree.xilinx@gmail.com>
+In-Reply-To: <20250825151209.555490-1-rongqianfeng@vivo.com>
 Content-Type: text/plain; charset=UTF-8
-Date: Tue, 26 Aug 2025 21:13:53 +0200
-Message-Id: <DCCLKO6HTCM8.YR8VE8PAXQTM@kernel.org>
-Cc: <akpm@linux-foundation.org>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
- <aliceryhl@google.com>, <tmgross@umich.edu>, <abdiel.janulgue@gmail.com>,
- <acourbot@nvidia.com>, <jgg@ziepe.ca>, <lyude@redhat.com>,
- <robin.murphy@arm.com>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-To: "Daniel Almeida" <daniel.almeida@collabora.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v3 3/5] rust: scatterlist: Add abstraction for sg_table
-References: <20250825132539.122412-1-dakr@kernel.org>
- <20250825132539.122412-4-dakr@kernel.org>
- <6625A8C0-33B2-4AFC-984B-130F8E06113D@collabora.com>
-In-Reply-To: <6625A8C0-33B2-4AFC-984B-130F8E06113D@collabora.com>
+Content-Transfer-Encoding: 7bit
 
-On Tue Aug 26, 2025 at 7:40 PM CEST, Daniel Almeida wrote:
->> On 25 Aug 2025, at 10:24, Danilo Krummrich <dakr@kernel.org> wrote:
->> +// SAFETY: `SGEntry` can be accessed concurrently.
->> +unsafe impl Sync for SGEntry {}
->
-> IMHO all safety comments for Sync must mention how it=E2=80=99s ok to sen=
-d &T to
-> another thread for a given T.
+On 25/08/2025 16:12, Qianfeng Rong wrote:
+> As noted in the kernel documentation [1], open-coded multiplication in
+> allocator arguments is discouraged because it can lead to integer overflow.
+> 
+> Use kmalloc_array() to gain built-in overflow protection, making memory
+> allocation safer when calculating allocation size compared to explicit
+> multiplication.
+> 
+> Link: https://www.kernel.org/doc/html/next/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments #1
+> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
 
-When we say "`T` can be accessed concurrently." it means that it is valid f=
-or
-multiple &T to be accessed concurrently from different tasks.
+This is fine on its own terms, but I would prefer the use of array_size()
+ (as in the existing ef100 code) rather than kmalloc_array(), because the
+ new X4 devices report a buffer size rather than a number of stats to the
+ host, meaning that the common code will need to work in terms of size
+ rather than num when support for stats on X4 is added.
+Looping in AndyM who's been working on said support and can hopefully
+ correct me if I've misstated anything.
 
-I.e. what we care about in this case is interior mutability, where we can h=
-ave
-three cases:
+-ed
 
-  (1) There is no interior mutability, hence the type is Sync.
+> ---
+>  drivers/net/ethernet/sfc/ef10.c      | 4 ++--
+>  drivers/net/ethernet/sfc/ef100_nic.c | 3 ++-
+>  2 files changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/sfc/ef10.c b/drivers/net/ethernet/sfc/ef10.c
+> index fcec81f862ec..311df5467c4a 100644
+> --- a/drivers/net/ethernet/sfc/ef10.c
+> +++ b/drivers/net/ethernet/sfc/ef10.c
+> @@ -1326,8 +1326,8 @@ static int efx_ef10_init_nic(struct efx_nic *efx)
+>  		efx->must_realloc_vis = false;
+>  	}
+>  
+> -	nic_data->mc_stats = kmalloc(efx->num_mac_stats * sizeof(__le64),
+> -				     GFP_KERNEL);
+> +	nic_data->mc_stats = kmalloc_array(efx->num_mac_stats, sizeof(__le64),
+> +					   GFP_KERNEL);
+>  	if (!nic_data->mc_stats)
+>  		return -ENOMEM;
+>  
+> diff --git a/drivers/net/ethernet/sfc/ef100_nic.c b/drivers/net/ethernet/sfc/ef100_nic.c
+> index 3ad95a4c8af2..f4b74381831f 100644
+> --- a/drivers/net/ethernet/sfc/ef100_nic.c
+> +++ b/drivers/net/ethernet/sfc/ef100_nic.c
+> @@ -640,7 +640,8 @@ static size_t ef100_update_stats(struct efx_nic *efx,
+>  				 u64 *full_stats,
+>  				 struct rtnl_link_stats64 *core_stats)
+>  {
+> -	__le64 *mc_stats = kmalloc(array_size(efx->num_mac_stats, sizeof(__le64)), GFP_ATOMIC);
+> +	__le64 *mc_stats = kmalloc_array(efx->num_mac_stats, sizeof(__le64),
+> +					 GFP_ATOMIC);
+>  	struct ef100_nic_data *nic_data = efx->nic_data;
+>  	DECLARE_BITMAP(mask, EF100_STAT_COUNT) = {};
+>  	u64 *stats = nic_data->stats;
 
-  (2) There is interior mutability, but there's also internal mechanisms ta=
-king
-      care of data races, hence the type is Sync.
-
-  (3) There is interior mutability and nothing prevents data races, hence t=
-he
-      type is not Sync.
-
-I feel like only case (2) really needs justification, because it needs to
-explain how those "internal mechanisms" work.
-
-Those abstractions do not have any interior mutability, hence I think what =
-we
-have is enough. Does that make sense?
 
