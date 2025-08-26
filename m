@@ -1,124 +1,168 @@
-Return-Path: <linux-kernel+bounces-786432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0588B359BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:00:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E92B7B359B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F4218188FD29
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:01:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E8F8188E88E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 314FE334723;
-	Tue, 26 Aug 2025 10:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3A8631DD98;
+	Tue, 26 Aug 2025 10:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="n0kV5Wue"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oLE/5hxN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE1833436C;
-	Tue, 26 Aug 2025 10:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09586296BD7;
+	Tue, 26 Aug 2025 10:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756202435; cv=none; b=NL9aD0FI+7HW0iFmeY32swf3gtrbgOFY5gCsm4X3GKas9volwF7pUVan0WISRZLyoijY4kfDTIiyBLnZRoJVaXUkLnvJJx0oiAcedDe+IVhPGs/SzF5bh4leZCo3JDVPSstqLAdDMpm+pySmHe/0HO3vj9fN9WVOev4+xHxAGkI=
+	t=1756202431; cv=none; b=kU615aAwlY1//u0mBDEPamS9Q0eyQJIedYdQLYKk2RxL12pt3yJCATWVbQwwf1bp8EdqWBYoMFHDehujxXCcwADRjO2iM0IInLafNQOPDaEOtCkFQLiM2JQUt6h+nGz4WuAln/bC/CtMUhxM9g08Wqf45u6tj+tQavvg+bBvKMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756202435; c=relaxed/simple;
-	bh=IEQ9SKBYOe82CYg7Kw499Qi1OkwUtfFEjr9cZviAE3w=;
+	s=arc-20240116; t=1756202431; c=relaxed/simple;
+	bh=bfwDVBHz8PappMdmAikeOG04IzZySHLSw/GA5JMjPK8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lP3dvfHjKcrsWYPD1ibutd432ueCt2DxDbcITX2Xw5yRNg7EpVKGJpD+8J8UO0B0dlFF0208BC5zsiXXKSIvBP9VlwuZkgYnhOq4yhymppsxPkVOzXqH5v/Ura+6V6TdAet/noCO40B5hRAuHcWVBShKaCoBZ0WCFH0Hi9glsHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=n0kV5Wue; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=RZH+TwBr6ueQMAaybKrZKRVrDtnXG+g8a3P12eZE8Z0=; b=n0kV5Wue5+lQyR4Jy72DEbGldq
-	VXg3ka9QF87+d0Pz3thNNd5X9pb/WZUrN+hOyyQoS8nDllPli2pceHjzG19BqQqvKyBGiuBlWIgNZ
-	ra25yhVychtVyjcS1314JePUcGb3SXpcI+lT7P7TkWO05fGvQ5vlHVeZqj0eR/uXGhvjLaAzL+XzX
-	Y+mIKuNjRUG2b+XfCK4y8u3N289YbCji4OMwNRNqLBkLjxVvnuoWbvf6hmqlQpHFzXOU3FADb5iGs
-	0Vj6QcqvEYS3loYSnyXMjgbbgr5PjQK6h52wvkADq+FCFvFs9a21yXUPQ1h84W9dA3K9/nG0wEvZI
-	jZ9Ku3OQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uqqT1-00000002Brt-33nE;
-	Tue, 26 Aug 2025 09:59:52 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 87BEE300220; Tue, 26 Aug 2025 11:59:50 +0200 (CEST)
-Date: Tue, 26 Aug 2025 11:59:50 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	linux-s390@vger.kernel.org,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	thomas.weissschuh@linutronix.de, Li Chen <chenl311@chinatelecom.cn>,
-	Bibo Mao <maobibo@loongson.cn>, Mete Durlu <meted@linux.ibm.com>,
-	Tobias Huschle <huschle@linux.ibm.com>,
-	Easwar Hariharan <easwar.hariharan@linux.microsoft.com>,
-	Guo Weikang <guoweikang.kernel@gmail.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Brian Gerst <brgerst@gmail.com>,
-	Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
-	Swapnil Sapkal <swapnil.sapkal@amd.com>,
-	"Yury Norov [NVIDIA]" <yury.norov@gmail.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Andrea Righi <arighi@nvidia.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-	Tim Chen <tim.c.chen@linux.intel.com>,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Subject: Re: [PATCH v7 4/8] powerpc/smp: Introduce CONFIG_SCHED_MC to guard
- MC scheduling bits
-Message-ID: <20250826095950.GI4068168@noisy.programming.kicks-ass.net>
-References: <20250826041319.1284-1-kprateek.nayak@amd.com>
- <20250826041319.1284-5-kprateek.nayak@amd.com>
- <609a980b-cbe3-442b-a492-91722870b156@csgroup.eu>
- <20250826080706.GC3245006@noisy.programming.kicks-ass.net>
- <20250826094358.GG3245006@noisy.programming.kicks-ass.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JtuiN/8whPWkml8XJ9Cn3uN+dP6wf2Cx4TAbmF+PMDhd54BlIL6Yhtbt804KwK6n3R/q83YwbdpzMuHUu7LcR4aF3+vF3ncZZAw308in1N6M71TSeGdfoD9Q/a7lvQpA2iYuMX8MhuaoRXmPIQmrEuiRW/lMassW4hNkK7an58w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oLE/5hxN; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756202429; x=1787738429;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=bfwDVBHz8PappMdmAikeOG04IzZySHLSw/GA5JMjPK8=;
+  b=oLE/5hxNuGeNRZ8WGTAXn+KeIDABQaZ/xIVodS2FY6XTO66yB0r1sh+4
+   VUbpNjQexkaYqObRqsjq+ZIHIJHZ9dUX/pNMgCisgedSpcxS9vI/mNIbM
+   OW4DXZTJKF9w5lsS3cLmLvnoK/smk/ufYnWWT4dhKHQOWVG1bq8bFp4Op
+   oEWgKtykCa2If9gjGYb8Bbt8pSRFMGvDi/7teZ+7ZVzCv6sFLcEMYJBrH
+   Tl4s6KFKdJZvtv3ZgbXb60qOQuE+tyzV+r3GduxNkZryjNvDzz00Ag0MI
+   jl4GbL2rTBhbKOYraWRsokcto/RK9LiXmDM7IIoe5Kv7+2ANPa151xdZ2
+   Q==;
+X-CSE-ConnectionGUID: DUfqB403RlCMIDsx9K4HIw==
+X-CSE-MsgGUID: x/2Ca0cjSvmmp8Rc/n3ULA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11533"; a="69530536"
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="69530536"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 03:00:28 -0700
+X-CSE-ConnectionGUID: l+y6IleFR+2ZGTevaw5e6Q==
+X-CSE-MsgGUID: 8Y4cSfV0R9K9MqxgZJyufw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="169443566"
+Received: from abityuts-desk.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.170])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 03:00:27 -0700
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with ESMTP id DE35711F97F;
+	Tue, 26 Aug 2025 13:00:23 +0300 (EEST)
+Date: Tue, 26 Aug 2025 13:00:23 +0300
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Julien Massot <julien.massot@collabora.com>
+Cc: kernel@collabora.com, Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Sylvain Petinot <sylvain.petinot@foss.st.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: i2c: vgxy61: Report stream using frame descriptors
+Message-ID: <aK2Ft4ODOF2EPgld@kekkonen.localdomain>
+References: <20250704-vgxy61-frame-desc-v1-1-0e62b9c4e260@collabora.com>
+ <aJ7N8tAqEp5KSTGN@kekkonen.localdomain>
+ <442c8ed533e01af213c5fae2dad5ad317872d4d1.camel@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250826094358.GG3245006@noisy.programming.kicks-ass.net>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <442c8ed533e01af213c5fae2dad5ad317872d4d1.camel@collabora.com>
 
-On Tue, Aug 26, 2025 at 11:43:58AM +0200, Peter Zijlstra wrote:
+Hi Julien,
 
-> Now, when I look at unifying those config options (there's a metric ton
-> of crap that's duplicated in the arch/*/Kconfig), I end up with something
-> like the below.
+On Tue, Aug 26, 2025 at 09:21:29AM +0200, Julien Massot wrote:
+> Hi Sakari,
 > 
-> And while that isn't exact, it is the closest I could make it without
-> making a giant mess of things.
+> On Fri, 2025-08-15 at 06:04 +0000, Sakari Ailus wrote:
+> > Hi Julien,
+> > 
+> > On Fri, Jul 04, 2025 at 11:28:24AM +0200, Julien Massot wrote:
+> > > Add support for .get_frame_desc() to report CSI-2 virtual channel
+> > > and data type information. This allows CSI-2 receivers to properly
+> > > interpret the stream without inferring the data type from the pixel
+> > > format.
+> > > 
+> > > Signed-off-by: Julien Massot <julien.massot@collabora.com>
+> > > ---
+> > >  drivers/media/i2c/vgxy61.c | 16 ++++++++++++++++
+> > >  1 file changed, 16 insertions(+)
+> > > 
+> > > diff --git a/drivers/media/i2c/vgxy61.c b/drivers/media/i2c/vgxy61.c
+> > > index
+> > > 5b0479f3a3c0592be430cefe5a1ab9a76812ba84..44d6c8d8fbf8d6182e42d44e129b
+> > > c45945ee0da5 100644
+> > > --- a/drivers/media/i2c/vgxy61.c
+> > > +++ b/drivers/media/i2c/vgxy61.c
+> > > @@ -1181,6 +1181,21 @@ static int vgxy61_s_stream(struct v4l2_subdev
+> > > *sd, int enable)
+> > >  	return ret;
+> > >  }
+> > >  
+> > > +static int vgxy61_get_frame_desc(struct v4l2_subdev *sd, unsigned int
+> > > pad,
+> > > +				 struct v4l2_mbus_frame_desc *fd)
+> > > +{
+> > > +	struct vgxy61_dev *sensor = to_vgxy61_dev(sd);
+> > > +
+> > > +	fd->type = V4L2_MBUS_FRAME_DESC_TYPE_CSI2;
+> > > +	fd->num_entries = 1;
+> > > +	fd->entry[0].pixelcode = sensor->fmt.code;
+> > > +	fd->entry[0].stream = 0;
+> > > +	fd->entry[0].bus.csi2.vc = 0;
+> > > +	fd->entry[0].bus.csi2.dt = get_data_type_by_code(sensor-
+> > > >fmt.code);
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > >  static int vgxy61_set_fmt(struct v4l2_subdev *sd,
+> > >  			  struct v4l2_subdev_state *sd_state,
+> > >  			  struct v4l2_subdev_format *format)
+> > > @@ -1402,6 +1417,7 @@ static const struct v4l2_subdev_pad_ops
+> > > vgxy61_pad_ops = {
+> > >  	.set_fmt = vgxy61_set_fmt,
+> > >  	.get_selection = vgxy61_get_selection,
+> > >  	.enum_frame_size = vgxy61_enum_frame_size,
+> > > +	.get_frame_desc = vgxy61_get_frame_desc,
+> > >  };
+> > >  
+> > >  static const struct v4l2_subdev_ops vgxy61_subdev_ops = {
+> > > 
+> > 
+> > I guess this is correct as such, but does it provide any information
+> > that
+> > isn't already available? I.e. I wouldn't add it just for the sake of it.
+> Perhaps, I missed something. Without the get_frame_desc the CSI receiver
+> have to infers the datatype based on the pixel format.
+
+I think we should have a function in the framework to do that. Oh, we
+actually already do have the function, call_get_mbus_config(), it just
+doesn't get the format yet. Currently receiver drivers handle this by
+themselves but that doesn't scale very well.
+
 > 
-> WDYT?
+> I made this patch because some CSI receivers, such as the upcoming GMSL2
+> framework are relying on the frame desc to update its routing table.
+> So, it will only support sensors implementing the get_frame_desc function.
 
-Anyway, enough tinkering with this for a little bit. Things are here:
+-- 
+Regards,
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git/log/?h=sched/core
-
-For to robots to provide feedback :-)
+Sakari Ailus
 
