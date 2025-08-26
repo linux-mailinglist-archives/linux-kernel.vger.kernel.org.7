@@ -1,149 +1,586 @@
-Return-Path: <linux-kernel+bounces-787080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18F47B37110
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:18:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C568CB37117
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:18:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 893448E4155
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:18:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 395448E443A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A75FE2E2DFB;
-	Tue, 26 Aug 2025 17:18:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D73A32E3AF1;
+	Tue, 26 Aug 2025 17:18:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WhU5Bqvf"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="KSKaUMxq"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2075.outbound.protection.outlook.com [40.107.93.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED8E2D9EC9;
-	Tue, 26 Aug 2025 17:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756228702; cv=none; b=g+pyF9xRDvNF1zvk7V5gUAUTeoqppfHAw4xeRyaqtmtyZnn6xnE/fvbCwLM9K3h1Y0fA7VMSL251keOtpj5qGPfMpSCe7JWJ+EDpNKH7eUCx98BlJ6cFV3KHRrgnBwZpsGN4YJc4RKp8buauaXua6jicuSdVm8wSwpFXlxGVk4o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756228702; c=relaxed/simple;
-	bh=6VbRdo/j5vKqO0M+nXW6ef1zgY50TFQFXYvJ0tGda6E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q5e6n49EWvu8fsMzMgzcckN4g2jthYDdzXxKoIjStVIW6XWxiuzZmnrrYIwdS1tULfozmasUQmDSJLIOy/5pvhpZywso4YS/W0QNDoe0RCyNefVtWSTycK/4vIrPgLGsgx4Wj95VS6NWLh29Nl8ZgF98jAADYpVUDa5EedOCj74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WhU5Bqvf; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756228700; x=1787764700;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=6VbRdo/j5vKqO0M+nXW6ef1zgY50TFQFXYvJ0tGda6E=;
-  b=WhU5BqvfoWdkj70krHIqbXMYBJkhffVgkLwzPVSLUXEMThIBGNXO7bgm
-   oI6Cka1gRCrn7RSvitru3UDeQJ/oXJHoj2oyJTw9DhnT/m5QzojnkWwKq
-   9Zs2ez9cZjF76xgtPRdD+I1CbbBKOodIdIS0cuaVsSIbW49ApcbT+Uj79
-   d0OyTNc2zy7OcMjTGn3y+rZGIGwKM3mwtr0mPY4IAZ+7Ix1/eyg6er2m3
-   +P6yutTZbVIE26JR8ScbbE/2C88ppxiny1ahdhJixkYHp8W+aTA1kiVfW
-   NiPHQ1ZMqQT98kCr/tvzAnO2bBfDuNq3lH71fsfVVTi8/VIc6k7uzi+Qy
-   w==;
-X-CSE-ConnectionGUID: 2L0wW0CvTjOCcxr42V+N0Q==
-X-CSE-MsgGUID: LFINUHJgTxy8tGr6KxRcrA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11534"; a="69842172"
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="69842172"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 10:18:19 -0700
-X-CSE-ConnectionGUID: LsC3meB5S9GzKL/n5a1Vsw==
-X-CSE-MsgGUID: ffZ0OPcHTzOfqkLqutztJQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="174888807"
-Received: from ldmartin-desk2.corp.intel.com (HELO [10.125.109.16]) ([10.125.109.16])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 10:18:18 -0700
-Message-ID: <a578e3b5-9fd3-4f69-943f-9415f4047e19@intel.com>
-Date: Tue, 26 Aug 2025 10:18:17 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D9F246333
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 17:18:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756228726; cv=fail; b=qfjb7wWgWIKttoyfCccBES1o2rmUdLfmBCm3xxYQFG5qaVBpEyPRriHc4VvR8P/NifRYe4Xc1uSwQ11AjPaNxfRIKIeoaaITVqito+KcDfSRXx1/9MTHdYty2BjtBn9K0rp/DcTSsnde5hvDjeuWHQIHVtfB6V9qRRr9yaQNiUQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756228726; c=relaxed/simple;
+	bh=1Z+qRO3hFkRbgPpUx+8NWFOUy86tjpQBXwVynfLj+Fc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=e1YNu++DoLVhIm+x1ahOUGeBj8p9H9n8NmOCmr3VJnHmH8o2/vllJJgqIf8cSsiUgfmIcyt04rFETqBRKE4c5sUdjBtSUP4/Zlzao19gwtbKeQcAnht5eTlXuJhLMkgVrItqTxR3ahQR1mzGir1/gFmFBZvHOlFwjbEYwDt8gxs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=KSKaUMxq; arc=fail smtp.client-ip=40.107.93.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Y1121tmKt6WMXKjFFEwuRTfF/57J4vzMe8nmLt0LX4gdZnX+JPJw/iQKzaMGkLKM5SDZdU2fsgy1pU0c88sMJKea5GWFfKF6334/A9HQEMo6bLN7M0WCzpsi8q2uHYTg6lUDyeaHchaj83IrUCQcpGwaZLgJ0uQR0tjeOwZYMk+Wm9nGeCnFSrckO/YH+LkbvaDvf4XM8UIYcjMmzWcc3geGUnucUpHylaT4CbgjULOUNErVabNoprfFW6GErNXUsN6krYAFfn7HHb8ii6swQEJ4vRRewmxMS/s7VpZZge14yISx1NFai0AAAXq5vy7/fL5wPbvU/PzDkUIufXjGqg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=I67hN73T6MavkXTyGRL4fFAGKCOEwZh3gcpc73Dxfyk=;
+ b=Cmnm+ctPaD9FhSvE6/iMjz46g3o2Br1e7houtQYQk+QH/R4XyCOvEZDCwwYB4EwNAU6xPTmZgtdmgbokJJLR0QDjvYHBvgSXRBj2C4e5fROmgAuqsLWT2ST6o1C3reH+6ZiTyA5IofhCkhW9M3nam0ou7hbIBYjdIkLd0gqEOYq1Hb9rO0wkHL5sOTePdkGCeSYSwL+VQw6doaRmZ/aiS8bXZJ3ejs9vFfej3/bkqHihlKaAVWY3ENO6+C0jA2rYlWKCtBrfGe+p/7T4Uq6eJtP+mSka/zCCcQ+4nDZV+ddYR4knQELgda3zPrDciZpm6zbPLJQ+YmmVut5atNXiJw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=I67hN73T6MavkXTyGRL4fFAGKCOEwZh3gcpc73Dxfyk=;
+ b=KSKaUMxqEw6EHhni4DSjbLT/LRRo2BzZxPoO76BLI+1R3aE5h01A3VoRt3N6i8PSSMCOLX1gy3oaXJLEuCyS61hM5Je3s+3sigV3N4PAqwiA0ffm1tK7Ny90NLMJYiOCIISLCojikBH2nhRsYStKbiWTf6aw1DJNaJjuDDL+xno=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by PH7PR12MB7819.namprd12.prod.outlook.com (2603:10b6:510:27f::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Tue, 26 Aug
+ 2025 17:18:40 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.9052.017; Tue, 26 Aug 2025
+ 17:18:40 +0000
+Message-ID: <a9814644-96e3-456f-90b7-8705a102c938@amd.com>
+Date: Tue, 26 Aug 2025 12:18:37 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V1] accel/amdxdna: Add ioctl DRM_IOCTL_AMDXDNA_GET_ARRAY
+To: Lizhi Hou <lizhi.hou@amd.com>, ogabbay@kernel.org,
+ quic_jhugo@quicinc.com, jacek.lawrynowicz@linux.intel.com,
+ dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org, max.zhen@amd.com, sonal.santan@amd.com
+References: <20250822172319.377848-1-lizhi.hou@amd.com>
+ <2bec1429-4f8c-472c-99a1-420a33a3d316@amd.com>
+ <d6a02baa-3b05-73e6-9c2a-66c257efecc3@amd.com>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <d6a02baa-3b05-73e6-9c2a-66c257efecc3@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SN7PR04CA0172.namprd04.prod.outlook.com
+ (2603:10b6:806:125::27) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 7/7] KVM: TDX: Explicitly do WBINVD when no more TDX
- SEAMCALLs
-To: Sean Christopherson <seanjc@google.com>, Kai Huang <kai.huang@intel.com>
-Cc: bp@alien8.de, tglx@linutronix.de, peterz@infradead.org, mingo@redhat.com,
- hpa@zytor.com, thomas.lendacky@amd.com, x86@kernel.org, kas@kernel.org,
- rick.p.edgecombe@intel.com, dwmw@amazon.co.uk, linux-kernel@vger.kernel.org,
- pbonzini@redhat.com, kvm@vger.kernel.org, reinette.chatre@intel.com,
- isaku.yamahata@intel.com, dan.j.williams@intel.com, ashish.kalra@amd.com,
- nik.borisov@suse.com, chao.gao@intel.com, sagis@google.com,
- farrah.chen@intel.com, Binbin Wu <binbin.wu@linux.intel.com>
-References: <cover.1756161460.git.kai.huang@intel.com>
- <14f91fcb323fbd80158aadb4b9f240fad9f9487e.1756161460.git.kai.huang@intel.com>
- <aK3qfbvkCOaCxWC_@google.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
- LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
- lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
- MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
- IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
- aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
- I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
- E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
- F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
- CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
- P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
- 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
- GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
- MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
- Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
- lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
- 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
- qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
- BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
- 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
- vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
- FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
- l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
- yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
- +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
- asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
- WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
- sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
- KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
- MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
- hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
- vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-In-Reply-To: <aK3qfbvkCOaCxWC_@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|PH7PR12MB7819:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8f51a858-d5ce-4516-0a0b-08dde4c499a2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TzhGSDNFMDh0bThkMkU3a09Pd2xDQXgrUUJ2c0h4T2gxWmRJT0ZWbzJoUktS?=
+ =?utf-8?B?Tnh6S1llc3VGdTROeDE0NndIQUJMMHlrY20vQll6RXdaaGlscHhaM1cxdVFs?=
+ =?utf-8?B?QzRGUzhhQmxESkMyYnVWNG4yVDZNaUUwMFZlT3ppMitXV2djdXE4Y2x2OVVB?=
+ =?utf-8?B?NzNtais4ZllNL29rS2xrcVhvek14VThYZWRYUmJKWGxVN2Vhd253clBVdDJR?=
+ =?utf-8?B?bWwyMEovTFplMkVpTEhWeVA2dVJyZTVSKzk1aDJIZDNtN1lyVUFFdklEMCty?=
+ =?utf-8?B?eksvZmpPKzNmcis4MndnTFg4TmZIUGlrNmxVVjZaRWdzeXhZajE5OFBOd2pr?=
+ =?utf-8?B?MDJJaER5UlRYNWJHT1BURnR0dGZzdXl6ZjFxNUU2VGpHdXUwa09TdTBxd3Np?=
+ =?utf-8?B?YVBvU05JYm9vT1RwWG8xMDYyaC9BQ0lpeEt0eWovRnhLMUF0dFlNK3Q5S1dJ?=
+ =?utf-8?B?dHRZNUFtRmI3Z1pMeXBJUmdqeG55WTdqTXBwTTU0Sm9HWGRaejBWRDZJbkpn?=
+ =?utf-8?B?N1NXWVNxNWZzUWlkWFJnVC9BcW9qRmZnOGxYTzZDS0JCbFkraWdzYzZ3a2hm?=
+ =?utf-8?B?OTk1OWNRckpuU1dPTk1kR2ozc2M5aVBRNS81dUFPd1p0N1lGeUtTZ0ZzRWo1?=
+ =?utf-8?B?MERUKzJtaHhHNUpXK25yVy8zTU9HUERoaFRYWUI0d1lYVTNBN3EzeFVWbEVx?=
+ =?utf-8?B?aTRKdFRGL3NHUUtuaFZ0a2RIU29ZYzNDNUVmUjJDTGVYUFBGK21YNzBXT3Nr?=
+ =?utf-8?B?OFFZTnNoOHFOQUIxdXNWd2k0UWk3Y1RLTkVBYjJCQ0NSdHRQY0lqNUd3bDgw?=
+ =?utf-8?B?SCtINUw0WEgyYklScy91RFlUVnkxWkhoVXlTdTBtZDNUMGxvQ2ZRR2srLzZI?=
+ =?utf-8?B?Z01PVUJSQXBVS2drVHlFdllUZlhxMktTVU5SK3NuVVZ3Q2p2Ymh4Rm4yV1JX?=
+ =?utf-8?B?VmIxNjg1NGkrMDg2UUJPV2lWSGg0NjRDRngxbmRrYTE3MGM0ZnFvNVE1T1No?=
+ =?utf-8?B?UkFGSmhBTHNjVk04Ky8vNHZOY3pPcmg5MkkxSmNMNnc1Z0hTVzVjSUZQclgv?=
+ =?utf-8?B?V1N2c2lIcnZ6TXFiTWxObnhyQUQ5RFlJcGVpa2VPc3htd3NVbHExdzZrYkpQ?=
+ =?utf-8?B?c3Z6SzFjN0s2SU9zajZRdU1OSXIrOEl2TExyTlY1VFllZTRqNDhQRVQ1UWt6?=
+ =?utf-8?B?SWNWOXhLVllmR0VmVGRUTFB0aXExd1RFSFhkVXh3QUpMaUNrNkNNd1A0R0ta?=
+ =?utf-8?B?SHNqWGtsNGlYeXVhUThtR0R1NnFHbDFaeU95cDEyamo0amlOVFdWSE11b0Q3?=
+ =?utf-8?B?S1h0Tk45TXhXd3hkQ2RzNU5SREVFMHl4SEM1Nkx4K0ZwZUlYVjk1RXZhRzND?=
+ =?utf-8?B?MXlDdWlDRjAvTEx2Z3ZwaVhpWlpkM0Vxcy9ISkNSY2xmczBkUDlja0tLZ3RS?=
+ =?utf-8?B?ZWZCaWZHYnBHS1JBRk5FVm9UdU5IYWFMOE84bWR2SFVWYjgyOHdkaHU1OUNi?=
+ =?utf-8?B?UmorcHdsL1lydkt0TGdoaDZMczhSeHA2UzlzbC8yb0JrU2FvS3BuSEpDZjhk?=
+ =?utf-8?B?WnBOc1JBN0pEZklTdGlxRnRhVkZFWWg0RTIvUUlkL1dLbmwvTTlZY1ZsOVV4?=
+ =?utf-8?B?Y3hnNTZIK1JJcnhTdWNiS0M5cDNjY3dyM2hnRGFvbHZpMng4N2lua284Vzkv?=
+ =?utf-8?B?OVFTM0x2Sk5hem9wbDB4THlVV0MzR0pxZGRnYW1URndXdEl4KzA5VTJCcVFx?=
+ =?utf-8?B?VnlzSFVTd3Q0Mk5VK3FsWnk4V0dSOFpvTXEzdlN5L0RtR1BTNmNvZWZyRnYx?=
+ =?utf-8?B?U2MxSnBvUFYxYWxkcWJNVnZ4Y3Ztb1lRMFVBaEVrMHlUeHExemh0QWZXZkpw?=
+ =?utf-8?B?ak8zVWIxOFY4QXcxMVlENUVmL2ZianhsWERJZUo5MDJRd0E9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QkNseVhMTjdKMVhOQUMwb2FqZ2UxUlV0a2tlTlhyOGM4eExISWh2RmdnQUJw?=
+ =?utf-8?B?Ti9XTVM3RmQvQisxZXRkVktsMzNxRi94SW05SC9BcmROM2ZYK3FNa1Z4WUtz?=
+ =?utf-8?B?YU5EejFaUUJqb0dBVnFyQ2VLL0I3QVB0S2F4TnFwVEJ6clNNVFdaZjc5ak8r?=
+ =?utf-8?B?a3ZQeGVOeEo5Vlo5UkRQNDl5WHBPNjd3RVg3YWpLZ0h1bk1ybzVzMTVKYStM?=
+ =?utf-8?B?UjFheGJvOHhwWEM5VjVzSk9vRWgvR1BmSHNCdWxBeThodGxNbXN0YUx3SkJj?=
+ =?utf-8?B?WFZaMTN6RUhXeUhSdG1JRHE1a0Q0YXIwQTJ1RzBDeWdFT0xQakNhNDlBNmRz?=
+ =?utf-8?B?eGJDcHl3MTlGQ2I2RXlDNmdySFFHVUhTZ3huaWRVQkFXR0ExdkRXMzVSNktw?=
+ =?utf-8?B?cVN1d21rQkczWHZNMXBiZUNCcUZtMzkrYUFLcDlmRWdxODhsQnEyWnlNc0FF?=
+ =?utf-8?B?N1drR2J2aFBqdkw1eG9yMGZvRm85bVNBd2t5d1ppbisyTllWWjJVNXJ3NmZ6?=
+ =?utf-8?B?SGw1UVhJRHpLaS9yWE56emxYT3p5S1R2NXY3UTRUNHJQK2dYbUNTOFNuQTR6?=
+ =?utf-8?B?NVUzSU5BOHlYdVY3OUNIWWVnZWpIVU0zRnBmcVZvUWxXdE9jSHFxcEFHN29k?=
+ =?utf-8?B?akVBRkRMUnhvM0tUQmZuNE9WWUpOVFlEa2piWXdhY3VkQmlOakVtUWQzMVhp?=
+ =?utf-8?B?WDF4RUFicERnWnNtK0J6TUc0dUh1dkorVGhYdjNTZE14WmhNcGVDQVVkTXpV?=
+ =?utf-8?B?TElCKzJ4VC9PZjdoeHZEMnEwT3F1blZDalNLelo4eVRMVnltdzRjcXBhcVBW?=
+ =?utf-8?B?aDNmczZLM01yODBUT1FTQUlVcFJpZncxbm0xUHR1UHpscE5zbHZVNnFybHp5?=
+ =?utf-8?B?OGYrdzhXMndLMmpTSnZqenpUWXVrU2x5STlxSEU0elN1clhiOWdaMXgwYzY0?=
+ =?utf-8?B?bXg5TkJ5NmMzbk1EMlFjR3BaT2dybHdFQkthamhkKzAxUE02aDE1aTNDdk1H?=
+ =?utf-8?B?RGM5OGV1YVNQVmloaGhxZUlhbTY4L1JjNDVJWnlnc1J6ZTF1dGlPWGxhV3Yw?=
+ =?utf-8?B?YXpnZEVmdXZYc1E0UkRJUytnUytlSEJERTZDWFFtRVB4TGVaWEhRbHpMcDBy?=
+ =?utf-8?B?cHRTblFaQWtPRmJDSzRFdE1wYWU3c1JlR3JNeGtyamd4eDRZcVdyZkpEV1RR?=
+ =?utf-8?B?N3JKT2lIUGUvMGZNVVhidUdibTVZMDNWVDVZcitPKzVSNEszaXVaWEIvVm8r?=
+ =?utf-8?B?WURybjlRbmZVWUl2d0F4RHBvY3RGYUM4bDR4MHJNS3A0d2laR3d2L1FHUW1I?=
+ =?utf-8?B?MmNYMEJGRVFHeStOZG9YRUl5NkVsOXl6dTRicGVqakRmbGhDTnkzL0tyek9r?=
+ =?utf-8?B?ZVduT0FxZ28wNDl5UHN1TThUdnhkM3ZaN1p3RFA1bjhSZzY4ZHE5ZXQrNHhT?=
+ =?utf-8?B?Zzc1Y2VNUGM3cytMS1hkTnhnWlk5NlJRNy9LVGxXVmxURmJwTXRiVUo3NWFo?=
+ =?utf-8?B?L1Uwc0xsR2d0YmlBcU55dGJCbVRTWnFNWjFoKzhXMlYwSytoSVYxVFMwUHAr?=
+ =?utf-8?B?bDJqcTBjWWMzRjBZM2ZTV3UrdGovQ3pCVkFOMDJZN3pBeEdRbGRWdkpPRUt0?=
+ =?utf-8?B?QWFBanQ3SDN1emxOSlJvTnlkRHUxNnI5UTZEeUVKYUU5RG1ZQmpRZVkwRCs3?=
+ =?utf-8?B?SEMxR0NSMzdvemJWSnFmRmt0VGtxUHpUaUZ4bFBhbjNiRVczdXVZbDhENWNp?=
+ =?utf-8?B?ZVJJanZIaWlEdWIwZ0V6R0tkMDdUY2duemhwcUxKOUltT1RRTkdBWktKODRw?=
+ =?utf-8?B?c2wzZ29tRGw1aFYxT2s3MTNsTjFFUW9uQVFnYk1IbEJrZWpHSFlsdkV2ekxJ?=
+ =?utf-8?B?WGFnYVR2ZXNFeURvZnZxRk15UHBLN1VQV0pveFp2S3ZWb3ZrdjNvbVNEczBZ?=
+ =?utf-8?B?dVZzV3F3NTRiT0FkYkRGNlY2TVdmRjdmS0RCdlkvZGt3d01NbmJNWUZpSVF2?=
+ =?utf-8?B?NXlHeWc0U096TitOQThxNzB0VG5ITTQzNHZ1RGY2SUJMSUpxVVJ1N2V3MXZO?=
+ =?utf-8?B?M1U2c21UbmVRbjJ6SUVkWDBrSzVRWWVXaTBjSFNhbTRwYWhONjBCVE12Ujlu?=
+ =?utf-8?Q?AyUgCal4OLwLUXWgfS6Hp+7Rl?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8f51a858-d5ce-4516-0a0b-08dde4c499a2
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 17:18:40.1033
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ImUbD2eMOdefFbqoFG3ebCJSIvXxGjkblCOxVH6enxk3oASVFlTpBebxTDHcn3eWO2CJN3Myu3dTfsPi1LQbQg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7819
 
-On 8/26/25 10:10, Sean Christopherson wrote:
->> +void tdx_cpu_flush_cache_for_kexec(void)
->> +{
->> +	lockdep_assert_preemption_disabled();
->> +
->> +	if (!this_cpu_read(cache_state_incoherent))
->> +		return;
->> +
-> Can you add a comment here to explain why this is done even if the kernel doesn't
-> support kexec?  I've no objection to the superfluous flushing, but I've spent far
-> too much time deciphering old commits where the changelog says one thing and the
-> code does something else with no explanation.  I don't want to be party to such
-> crimes 🙂
+On 8/25/2025 11:48 PM, Lizhi Hou wrote:
+> 
+> On 8/25/25 14:28, Mario Limonciello wrote:
+>> On 8/22/2025 12:23 PM, Lizhi Hou wrote:
+>>> Add interface for applications to get information array. The application
+>>> provides a buffer pointer along with information type, maximum number of
+>>> entries and maximum size of each entry. The buffer may also contain 
+>>> match
+>>> conditions based on the information type. After the ioctl completes, the
+>>> actual number of entries and entry size are returned.
+>>>
+>>> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+>>
+>> How does userspace discover whether or not the new IOCTL call is 
+>> supported?  Just a test call?
+> The kernel header version will be used to determine whether the 
+> application which uses new IOCTL will be compiled or not.
+> 
 
-You mean as opposed to #ifdef'ing it out?
+But it's not actually an application compile time decision, it's a 
+runtime decision.  IE I can compile an application with the headers on 
+kernel 6.18 that has this, but if I try to run it on 6.15 it's going to 
+barf.
 
-Looking at the code again, I completely agree in concept. The connection
-between TDX, kexec and 'cache_state_incoherent' is totally opaque.
+To some extent that comes with the territory, but I'm wondering if a 
+better solution going forward would be for there to be a dedicated 
+version command that you bump.
+
+That way applications can call the version command and if it fails you 
+know it's an old version pre-version command (and likely pre-this 
+command).  If it responds with a valid number you can know what commands 
+went with what number.
+
+> Thanks,
+> 
+> Lizhi
+> 
+>>
+>>> ---
+>>>   drivers/accel/amdxdna/aie2_pci.c        | 114 ++++++++++++++++++------
+>>>   drivers/accel/amdxdna/amdxdna_pci_drv.c |  21 +++++
+>>>   drivers/accel/amdxdna/amdxdna_pci_drv.h |   1 +
+>>>   include/uapi/drm/amdxdna_accel.h        | 109 ++++++++++++++++++++++
+>>>   4 files changed, 220 insertions(+), 25 deletions(-)
+>>>
+>>> diff --git a/drivers/accel/amdxdna/aie2_pci.c b/drivers/accel/ 
+>>> amdxdna/aie2_pci.c
+>>> index 16ac0cab4f44..b8bfc0700798 100644
+>>> --- a/drivers/accel/amdxdna/aie2_pci.c
+>>> +++ b/drivers/accel/amdxdna/aie2_pci.c
+>>> @@ -785,10 +785,11 @@ static int aie2_get_clock_metadata(struct 
+>>> amdxdna_client *client,
+>>>     static int aie2_hwctx_status_cb(struct amdxdna_hwctx *hwctx, void 
+>>> *arg)
+>>>   {
+>>> -    struct amdxdna_drm_query_hwctx __user *buf, *tmp __free(kfree) = 
+>>> NULL;
+>>> -    struct amdxdna_drm_get_info *get_info_args = arg;
+>>> +    struct amdxdna_drm_hwctx_entry __user *buf, *tmp __free(kfree) = 
+>>> NULL;
+>>> +    struct amdxdna_drm_get_array *array_args = arg;
+>>> +    u32 size;
+>>>   -    if (get_info_args->buffer_size < sizeof(*tmp))
+>>> +    if (!array_args->num_element)
+>>>           return -EINVAL;
+>>>         tmp = kzalloc(sizeof(*tmp), GFP_KERNEL);
+>>> @@ -801,14 +802,23 @@ static int aie2_hwctx_status_cb(struct 
+>>> amdxdna_hwctx *hwctx, void *arg)
+>>>       tmp->num_col = hwctx->num_col;
+>>>       tmp->command_submissions = hwctx->priv->seq;
+>>>       tmp->command_completions = hwctx->priv->completed;
+>>> -
+>>> -    buf = u64_to_user_ptr(get_info_args->buffer);
+>>> -
+>>> -    if (copy_to_user(buf, tmp, sizeof(*tmp)))
+>>> +    tmp->pasid = hwctx->client->pasid;
+>>> +    tmp->priority = hwctx->qos.priority;
+>>> +    tmp->gops = hwctx->qos.gops;
+>>> +    tmp->fps = hwctx->qos.fps;
+>>> +    tmp->dma_bandwidth = hwctx->qos.dma_bandwidth;
+>>> +    tmp->latency = hwctx->qos.latency;
+>>> +    tmp->frame_exec_time = hwctx->qos.frame_exec_time;
+>>> +    tmp->state = AMDXDNA_HWCTX_STATE_ACTIVE;
+>>> +
+>>> +    buf = u64_to_user_ptr(array_args->buffer);
+>>> +    size = min(sizeof(*tmp), array_args->element_size);
+>>> +
+>>> +    if (copy_to_user(buf, tmp, size))
+>>>           return -EFAULT;
+>>>   -    get_info_args->buffer += sizeof(*tmp);
+>>> -    get_info_args->buffer_size -= sizeof(*tmp);
+>>> +    array_args->buffer += size;
+>>> +    array_args->num_element--;
+>>>         return 0;
+>>>   }
+>>> @@ -816,23 +826,24 @@ static int aie2_hwctx_status_cb(struct 
+>>> amdxdna_hwctx *hwctx, void *arg)
+>>>   static int aie2_get_hwctx_status(struct amdxdna_client *client,
+>>>                    struct amdxdna_drm_get_info *args)
+>>>   {
+>>> +    struct amdxdna_drm_get_array array_args;
+>>>       struct amdxdna_dev *xdna = client->xdna;
+>>> -    struct amdxdna_drm_get_info info_args;
+>>>       struct amdxdna_client *tmp_client;
+>>>       int ret;
+>>>         drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
+>>>   -    info_args.buffer = args->buffer;
+>>> -    info_args.buffer_size = args->buffer_size;
+>>> -
+>>> +    array_args.element_size = sizeof(struct amdxdna_drm_query_hwctx);
+>>> +    array_args.buffer = args->buffer;
+>>> +    array_args.num_element = args->buffer_size / 
+>>> array_args.element_size;
+>>>       list_for_each_entry(tmp_client, &xdna->client_list, node) {
+>>> -        ret = amdxdna_hwctx_walk(tmp_client, &info_args, 
+>>> aie2_hwctx_status_cb);
+>>> +        ret = amdxdna_hwctx_walk(tmp_client, &array_args,
+>>> +                     aie2_hwctx_status_cb);
+>>>           if (ret)
+>>>               break;
+>>>       }
+>>>   -    args->buffer_size = (u32)(info_args.buffer - args->buffer);
+>>> +    args->buffer_size -= (u32)(array_args.buffer - args->buffer);
+>>>       return ret;
+>>>   }
+>>>   @@ -876,6 +887,58 @@ static int aie2_get_info(struct amdxdna_client 
+>>> *client, struct amdxdna_drm_get_i
+>>>       return ret;
+>>>   }
+>>>   +static int aie2_query_ctx_status_array(struct amdxdna_client *client,
+>>> +                       struct amdxdna_drm_get_array *args)
+>>> +{
+>>> +    struct amdxdna_drm_get_array array_args;
+>>> +    struct amdxdna_dev *xdna = client->xdna;
+>>> +    struct amdxdna_client *tmp_client;
+>>> +    int ret;
+>>> +
+>>> +    drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
+>>> +
+>>> +    array_args.element_size = min(args->element_size,
+>>> +                      sizeof(struct amdxdna_drm_hwctx_entry));
+>>> +    array_args.buffer = args->buffer;
+>>> +    array_args.num_element = args->num_element * args->element_size /
+>>> +                array_args.element_size;
+>>> +    list_for_each_entry(tmp_client, &xdna->client_list, node) {
+>>> +        ret = amdxdna_hwctx_walk(tmp_client, &array_args,
+>>> +                     aie2_hwctx_status_cb);
+>>> +        if (ret)
+>>> +            break;
+>>> +    }
+>>> +
+>>> +    args->element_size = array_args.element_size;
+>>> +    args->num_element = (u32)((array_args.buffer - args->buffer) /
+>>> +                  args->element_size);
+>>> +
+>>> +    return ret;
+>>> +}
+>>> +
+>>> +static int aie2_get_array(struct amdxdna_client *client,
+>>> +              struct amdxdna_drm_get_array *args)
+>>> +{
+>>> +    struct amdxdna_dev *xdna = client->xdna;
+>>> +    int ret, idx;
+>>> +
+>>> +    if (!drm_dev_enter(&xdna->ddev, &idx))
+>>> +        return -ENODEV;
+>>> +
+>>> +    switch (args->param) {
+>>> +    case DRM_AMDXDNA_HW_CONTEXT_ALL:
+>>> +        ret = aie2_query_ctx_status_array(client, args);
+>>> +        break;
+>>> +    default:
+>>> +        XDNA_ERR(xdna, "Not supported request parameter %u", args- 
+>>> >param);
+>>> +        ret = -EOPNOTSUPP;
+>>> +    }
+>>> +    XDNA_DBG(xdna, "Got param %d", args->param);
+>>> +
+>>> +    drm_dev_exit(idx);
+>>> +    return ret;
+>>> +}
+>>> +
+>>>   static int aie2_set_power_mode(struct amdxdna_client *client,
+>>>                      struct amdxdna_drm_set_state *args)
+>>>   {
+>>> @@ -925,15 +988,16 @@ static int aie2_set_state(struct amdxdna_client 
+>>> *client,
+>>>   }
+>>>     const struct amdxdna_dev_ops aie2_ops = {
+>>> -    .init           = aie2_init,
+>>> -    .fini           = aie2_fini,
+>>> -    .resume         = aie2_hw_resume,
+>>> -    .suspend        = aie2_hw_suspend,
+>>> -    .get_aie_info   = aie2_get_info,
+>>> -    .set_aie_state    = aie2_set_state,
+>>> -    .hwctx_init     = aie2_hwctx_init,
+>>> -    .hwctx_fini     = aie2_hwctx_fini,
+>>> -    .hwctx_config   = aie2_hwctx_config,
+>>> -    .cmd_submit     = aie2_cmd_submit,
+>>> +    .init = aie2_init,
+>>> +    .fini = aie2_fini,
+>>> +    .resume = aie2_hw_resume,
+>>> +    .suspend = aie2_hw_suspend,
+>>> +    .get_aie_info = aie2_get_info,
+>>> +    .set_aie_state = aie2_set_state,
+>>> +    .hwctx_init = aie2_hwctx_init,
+>>> +    .hwctx_fini = aie2_hwctx_fini,
+>>> +    .hwctx_config = aie2_hwctx_config,
+>>> +    .cmd_submit = aie2_cmd_submit,
+>>>       .hmm_invalidate = aie2_hmm_invalidate,
+>>> +    .get_array = aie2_get_array,
+>>>   };
+>>> diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.c b/drivers/accel/ 
+>>> amdxdna/amdxdna_pci_drv.c
+>>> index 8ef5e4f27f5e..ee89485299bc 100644
+>>> --- a/drivers/accel/amdxdna/amdxdna_pci_drv.c
+>>> +++ b/drivers/accel/amdxdna/amdxdna_pci_drv.c
+>>> @@ -164,6 +164,26 @@ static int amdxdna_drm_get_info_ioctl(struct 
+>>> drm_device *dev, void *data, struct
+>>>       return ret;
+>>>   }
+>>>   +static int amdxdna_drm_get_array_ioctl(struct drm_device *dev, 
+>>> void *data,
+>>> +                       struct drm_file *filp)
+>>> +{
+>>> +    struct amdxdna_client *client = filp->driver_priv;
+>>> +    struct amdxdna_dev *xdna = to_xdna_dev(dev);
+>>> +    struct amdxdna_drm_get_array *args = data;
+>>> +    int ret;
+>>> +
+>>> +    if (!xdna->dev_info->ops->get_array)
+>>> +        return -EOPNOTSUPP;
+>>> +
+>>> +    if (args->pad || !args->num_element)
+>>> +        return -EINVAL;
+>>> +
+>>> +    mutex_lock(&xdna->dev_lock);
+>>> +    ret = xdna->dev_info->ops->get_array(client, args);
+>>> +    mutex_unlock(&xdna->dev_lock);
+>>> +    return ret;
+>>> +}
+>>> +
+>>>   static int amdxdna_drm_set_state_ioctl(struct drm_device *dev, void 
+>>> *data, struct drm_file *filp)
+>>>   {
+>>>       struct amdxdna_client *client = filp->driver_priv;
+>>> @@ -195,6 +215,7 @@ static const struct drm_ioctl_desc 
+>>> amdxdna_drm_ioctls[] = {
+>>>       DRM_IOCTL_DEF_DRV(AMDXDNA_EXEC_CMD, 
+>>> amdxdna_drm_submit_cmd_ioctl, 0),
+>>>       /* AIE hardware */
+>>>       DRM_IOCTL_DEF_DRV(AMDXDNA_GET_INFO, amdxdna_drm_get_info_ioctl, 
+>>> 0),
+>>> +    DRM_IOCTL_DEF_DRV(AMDXDNA_GET_ARRAY, 
+>>> amdxdna_drm_get_array_ioctl, 0),
+>>>       DRM_IOCTL_DEF_DRV(AMDXDNA_SET_STATE, 
+>>> amdxdna_drm_set_state_ioctl, DRM_ROOT_ONLY),
+>>>   };
+>>>   diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.h b/drivers/ 
+>>> accel/amdxdna/amdxdna_pci_drv.h
+>>> index b6b3b424d1d5..72d6696d49da 100644
+>>> --- a/drivers/accel/amdxdna/amdxdna_pci_drv.h
+>>> +++ b/drivers/accel/amdxdna/amdxdna_pci_drv.h
+>>> @@ -58,6 +58,7 @@ struct amdxdna_dev_ops {
+>>>       int (*cmd_submit)(struct amdxdna_hwctx *hwctx, struct 
+>>> amdxdna_sched_job *job, u64 *seq);
+>>>       int (*get_aie_info)(struct amdxdna_client *client, struct 
+>>> amdxdna_drm_get_info *args);
+>>>       int (*set_aie_state)(struct amdxdna_client *client, struct 
+>>> amdxdna_drm_set_state *args);
+>>> +    int (*get_array)(struct amdxdna_client *client, struct 
+>>> amdxdna_drm_get_array *args);
+>>>   };
+>>>     /*
+>>> diff --git a/include/uapi/drm/amdxdna_accel.h b/include/uapi/drm/ 
+>>> amdxdna_accel.h
+>>> index ce523e9ccc52..e19e4cd04ffa 100644
+>>> --- a/include/uapi/drm/amdxdna_accel.h
+>>> +++ b/include/uapi/drm/amdxdna_accel.h
+>>> @@ -34,6 +34,7 @@ enum amdxdna_drm_ioctl_id {
+>>>       DRM_AMDXDNA_EXEC_CMD,
+>>>       DRM_AMDXDNA_GET_INFO,
+>>>       DRM_AMDXDNA_SET_STATE,
+>>> +    DRM_AMDXDNA_GET_ARRAY = 10,
+>>>   };
+>>>     /**
+>>> @@ -455,6 +456,110 @@ struct amdxdna_drm_get_info {
+>>>       __u64 buffer; /* in/out */
+>>>   };
+>>>   +#define AMDXDNA_HWCTX_STATE_IDLE    0
+>>> +#define AMDXDNA_HWCTX_STATE_ACTIVE    1
+>>> +
+>>> +/**
+>>> + * struct amdxdna_drm_hwctx_entry - The hardware context array entry
+>>> + */
+>>> +struct amdxdna_drm_hwctx_entry {
+>>> +    /** @context_id: Context ID. */
+>>> +    __u32 context_id;
+>>> +    /** @start_col: Start AIE array column assigned to context. */
+>>> +    __u32 start_col;
+>>> +    /** @num_col: Number of AIE array columns assigned to context. */
+>>> +    __u32 num_col;
+>>> +    /** @hwctx_id: The real hardware context id. */
+>>> +    __u32 hwctx_id;
+>>> +    /** @pid: ID of process which created this context. */
+>>> +    __s64 pid;
+>>> +    /** @command_submissions: Number of commands submitted. */
+>>> +    __u64 command_submissions;
+>>> +    /** @command_completions: Number of commands completed. */
+>>> +    __u64 command_completions;
+>>> +    /** @migrations: Number of times been migrated. */
+>>> +    __u64 migrations;
+>>> +    /** @preemptions: Number of times been preempted. */
+>>> +    __u64 preemptions;
+>>> +    /** @errors: Number of errors happened. */
+>>> +    __u64 errors;
+>>> +    /** @priority: Context priority. */
+>>> +    __u64 priority;
+>>> +    /** @heap_usage: Usage of device heap buffer. */
+>>> +    __u64 heap_usage;
+>>> +    /** @suspensions: Number of times been suspended. */
+>>> +    __u64 suspensions;
+>>> +    /**
+>>> +     * @state: Context state.
+>>> +     * %AMDXDNA_HWCTX_STATE_IDLE
+>>> +     * %AMDXDNA_HWCTX_STATE_ACTIVE
+>>> +     */
+>>> +    __u32 state;
+>>> +    /** @pasid: PASID been bound. */
+>>> +    __u32 pasid;
+>>> +    /** @gops: Giga operations per second. */
+>>> +    __u32 gops;
+>>> +    /** @fps: Frames per second. */
+>>> +    __u32 fps;
+>>> +    /** @dma_bandwidth: DMA bandwidth. */
+>>> +    __u32 dma_bandwidth;
+>>> +    /** @latency: Frame response latency. */
+>>> +    __u32 latency;
+>>> +    /** @frame_exec_time: Frame execution time. */
+>>> +    __u32 frame_exec_time;
+>>> +    /** @txn_op_idx: Index of last control code executed. */
+>>> +    __u32 txn_op_idx;
+>>> +    /** @ctx_pc: Program counter. */
+>>> +    __u32 ctx_pc;
+>>> +    /** @fatal_error_type: Fatal error type if context crashes. */
+>>> +    __u32 fatal_error_type;
+>>> +    /** @fatal_error_exception_type: Firmware exception type. */
+>>> +    __u32 fatal_error_exception_type;
+>>> +    /** @fatal_error_exception_pc: Firmware exception program 
+>>> counter. */
+>>> +    __u32 fatal_error_exception_pc;
+>>> +    /** @fatal_error_app_module: Exception module name. */
+>>> +    __u32 fatal_error_app_module;
+>>> +};
+>>> +
+>>> +#define DRM_AMDXDNA_HW_CONTEXT_ALL    0
+>>> +
+>>> +/**
+>>> + * struct amdxdna_drm_get_array - Get information array.
+>>> + */
+>>> +struct amdxdna_drm_get_array {
+>>> +    /**
+>>> +     * @param:
+>>> +     *
+>>> +     * Supported params:
+>>> +     *
+>>> +     * %DRM_AMDXDNA_HW_CONTEXT_ALL:
+>>> +     * Returns all created hardware contexts.
+>>> +     */
+>>> +    __u32 param;
+>>> +    /**
+>>> +     * @element_size:
+>>> +     *
+>>> +     * Specifies maximum element size and returns the actual element 
+>>> size.
+>>> +     */
+>>> +    __u32 element_size;
+>>> +    /**
+>>> +     * @num_element:
+>>> +     *
+>>> +     * Specifies maximum number of elements and returns the actual 
+>>> number
+>>> +     * of elements.
+>>> +     */
+>>> +    __u32 num_element; /* in/out */
+>>> +    /** @pad: MBZ */
+>>> +    __u32 pad;
+>>> +    /**
+>>> +     * @buffer:
+>>> +     *
+>>> +     * Specifies the match conditions and returns the matched 
+>>> information
+>>> +     * array.
+>>> +     */
+>>> +    __u64 buffer;
+>>> +};
+>>> +
+>>>   enum amdxdna_drm_set_param {
+>>>       DRM_AMDXDNA_SET_POWER_MODE,
+>>>       DRM_AMDXDNA_WRITE_AIE_MEM,
+>>> @@ -519,6 +624,10 @@ struct amdxdna_drm_set_power_mode {
+>>>       DRM_IOWR(DRM_COMMAND_BASE + DRM_AMDXDNA_SET_STATE, \
+>>>            struct amdxdna_drm_set_state)
+>>>   +#define DRM_IOCTL_AMDXDNA_GET_ARRAY \
+>>> +    DRM_IOWR(DRM_COMMAND_BASE + DRM_AMDXDNA_GET_ARRAY, \
+>>> +         struct amdxdna_drm_get_array)
+>>> +
+>>>   #if defined(__cplusplus)
+>>>   } /* extern c end */
+>>>   #endif
+>>
+
 
