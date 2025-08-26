@@ -1,161 +1,379 @@
-Return-Path: <linux-kernel+bounces-787338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC295B374DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 00:20:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1E97B374DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 00:23:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8D5E1B2435B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 22:21:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A2D85E2400
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 22:23:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD5BB28D8E8;
-	Tue, 26 Aug 2025 22:20:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79759288502;
+	Tue, 26 Aug 2025 22:23:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="FiRWB8Qo"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vWH8hwgB"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B132285061
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 22:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7537626AA83
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 22:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756246831; cv=none; b=iaANnScbDX4SoI1LRXsUfwOx/W1h8FRaqkvljMxFxssSraL9RXHDRIMkP8mLIhN2posWjpRINQtnGM6+uhIcOH6msfnFCmURXqdu+zfoCiGCTjTEyPotAOqtWxnDej+Graf2qURU/4cUHPR2UCh4oha4cmb/pSHhWE45/N40ne0=
+	t=1756247024; cv=none; b=QIH065MHmYj/lABXuCl16ymBpDC4EIwGlHvEblcLLhKlATDdpTj3fe+SmNpgyeLGaBxUHX/WOi+rVlngrBPyhBJ3usVzEFggIboG5IajlbO88KcpN3g/GmA/MEajGIHboemGAacZs8I6H5gv0/COthNxmhgvcI+8MMpfb5BBgCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756246831; c=relaxed/simple;
-	bh=e73dqOyKAr7aCy1rumBgO8qBoCQd+jQ2sWMxR1cIDXA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P3ekriNEobBUt2MFOJHXVBnTljnSHTbvURaUDim5+i27zbYuFlLtMbvsmzkgbjGi7eRrMhet48x75Laur/+gV1rGmArT3IY7jHxHPYRzMrl9HCNVX6SMZ/MnduFnkLcVsKOYgXqEpLaWzLJrLli3Hy28KaAVfqmVfWdBKd3uwCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=FiRWB8Qo; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45b5c12dd87so27806085e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 15:20:29 -0700 (PDT)
+	s=arc-20240116; t=1756247024; c=relaxed/simple;
+	bh=ANCeMl+L+Gzjz61oeqU8xcvRBeboNAygm63clmz+rtY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bFa20yY9UnfKgl3fHB430MegEcDUOe4RKKXdJ0+2mUtXG5s3D4No/6C12zGBlI8IAe0F3aARZeG9+35XUw9/diZQ6FY8+nIVVTGGTHks0WpYA9mQyQK6yOYZi1Td0YYr/DPLEql0+bgMNCJsVaS4Ajt+lKEZXAHcjpkIqpbitKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vWH8hwgB; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-618660b684fso4019a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 15:23:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1756246828; x=1756851628; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=e73dqOyKAr7aCy1rumBgO8qBoCQd+jQ2sWMxR1cIDXA=;
-        b=FiRWB8Qo8JQ03J9/ph7Y2FTWmiV7v0ikQeKc+F8vPTbQB3lWSaQf++5a81K0blNgAt
-         QQgCTGUC7eWaIy2ZgaTZhSIXokL1nC3lZDUBa9EjY3XHd7qPcat13NiIy+nCaCDQk0HX
-         C0JghQaJ3Zzs1jU3F9O/nAlN0V8gjuEDGTPQA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756246828; x=1756851628;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1756247021; x=1756851821; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=e73dqOyKAr7aCy1rumBgO8qBoCQd+jQ2sWMxR1cIDXA=;
-        b=dkipdqU10klzOKbiUjY6WFl4MK71PJBbxd7OzQzgdjwodUuzHnA316LeCye9kxdOQC
-         SuMKRPBhu07kU8IWcXLSBbRHR790anGoKPQ6YxQ6QQ9MWIfVQVERjK45lm7tKTsKNbsx
-         4WSjrmArRAvXM2IzU4BdIBigwf66+SmS1ZVVDfrXRoCfNezKn17rxWbyMsUY8j3D6efG
-         GcIzF3BQmM4HhZeJXBAffQHCE5HcXS0pB7CmFGUS6lFBVUb5vkICIRoALubJSWyKcyop
-         IF7FsNNQfhGPhVhjKfdGHTkoJEFysESIyGEEbkuqDvwu5NI1lJLtIf0/D2kM2E8zFFbT
-         FVCg==
-X-Forwarded-Encrypted: i=1; AJvYcCV2ALhb+6zJZipFGchtAI2b6t2/zpxVqYKzES2sM1Zb1dN/m/8N0Sa1IV2DUjm20dlpVo90s7ccMsyHrgo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvHAdCYnl8GSRuo01h0btQSexQn2oNE0MxAiTGU4CpMmNHkCvA
-	B6hJyjwEL2163a8iECtE5QE2PdNcFPR2aVnObCnW3qcf6RVcofsbksxA+5dx69VDD38=
-X-Gm-Gg: ASbGnctZBJ6PGnG+VVCTcn8DCqommGKbfrbEVmGpOpvSRGTpS5YDWmR0kWl/o5fg7ea
-	36DVVZS0PJk4uojlqFTH6uarQgXbqLe8ydgwWuQsyRvkVVl8oWqFBgsJEdt+HTqecrUkUU5NzRj
-	+RttSKwK3CDS2NDVA26o3ZsCybzQfFzhWkQwSlggnHyWuq8XhuA81Hb7dYP+o21N9j8Ls75WsdY
-	JxxHKgBG+QoWMRrC78pTmYlHlox1yoVTbsHowt1hqynngLIAoGTvTpC2oqdzGQLXi6vVcAj3FlE
-	JwZfAVrOyjRq0bZTpCV/lVC39SSbyqrEGX2tN6StADns8QL2vAKwn1LQ7MXWbstsml63AmdRU5h
-	e7GzmkWS9uHjkLH1SXe6S3uK9LC7L05PbXhoPj60o2IFh2+CHtMsTESgraX/Xhen+a3f7
-X-Google-Smtp-Source: AGHT+IGsBgRTDUWy5x4ztvDXqWNYDNjM1gHz4vj487vO6yPrxRRM1lAUWhWpoD2HOw2KfNXdTLCuvQ==
-X-Received: by 2002:a05:600c:154f:b0:456:1560:7c63 with SMTP id 5b1f17b1804b1-45b5179cf31mr146042435e9.3.1756246828491;
-        Tue, 26 Aug 2025 15:20:28 -0700 (PDT)
-Received: from [192.168.1.183] (host-195-149-20-212.as13285.net. [195.149.20.212])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f334c95sm3498925e9.25.2025.08.26.15.20.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Aug 2025 15:20:28 -0700 (PDT)
-Message-ID: <2f84aed4-8da2-4ac0-8714-3fb1aca51515@citrix.com>
-Date: Tue, 26 Aug 2025 23:20:27 +0100
+        bh=HdzAj4hdgXbHM9u8eX6/Ze1u+O9VPPOiYd1/e8bzusU=;
+        b=vWH8hwgBd26yBklQSqFrgEHRgU1RSs+H4wxMMudv8Zzlx7t0rjJMyiI7qHn2OlvtJt
+         C0OyJn5uP1W8DxA1iGdhtq9A/T+jGhR1tDiWNCdhj69Ersi5utizNrCQYlXMyMqnI6aK
+         SwPO4v41rkoCnqJfpnXrtC+HAZg0naB5xXQYP7+VVcZr//MlSs8AoqwL3THGBlg6gfZk
+         Q8uGcS4NvfFf1+avIozmn4/sZyHLXE103GvnSUaoCNoLSddNJl5z5CzgNyt2Ky3HLKFS
+         0CPYDXzo/Kv4d/YTNecbpP65lHu8WzJ7CvMnbVtVA2vGmEkdjL62eVHxNESDikeR03bN
+         UX8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756247021; x=1756851821;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HdzAj4hdgXbHM9u8eX6/Ze1u+O9VPPOiYd1/e8bzusU=;
+        b=b/DaVNfx8sgGqjio1ddyDwN3YvDn3X5/+i3SLOCtRkpnYoyO47zPZmNhNzJ3XpOsn9
+         aA+owSysKAP2u+FRhQbh0AQJxTukeSbqExXsTJFUqaMmVXygtnT0bZEw0YGN2D/wImtf
+         r1fkE5QzLhdyULO8Zjc7+QQQT4B5tOGD4HxuoIc+0Tl3FMzULZR11AazCdA3FeL1rEis
+         BFjaJMAcULiMCSD09glN8OaCditcF8zHZ8zRxILtlzl/Fd9qyeSNApODQKWBePMMSMt3
+         uvOdoeVrhcYnJqyU7yg2PH/XWvSl32RlRdXdhnTJVIGqvHiA4S7s/PNdy3GHp+hoQMT4
+         04CA==
+X-Forwarded-Encrypted: i=1; AJvYcCX0TcJo0l7STc1hRUz3BFqRXGxyrAe70u8XwMGSaKvKQIYviwT4teI8aZDK/2pY2U8DaUl5j2vLNmqM340=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqCzQLz7gR2AxP2GPCoGxKAiduTh0bOIEw94ofQhGdiFISn0at
+	cVR3JpFJ6x4PxJpcF7T9RAUryfzwGG/OUavDAdH4+Ymf8n6vX/kPFsoSy5Nehsa+Vm31j7X4gwz
+	eXyKh3auPvWI17xTH68qBobXEWciQcE0KfecMv03J
+X-Gm-Gg: ASbGncvTfOZW2FsWxdM/LEF7f74bPhGrsFtUtiNlFSlTW3mOqNrpPK+vxNKa1ytW86e
+	ZCrhhE5B2AQNLYXU5nfZ+N+MEltCsvJ0RJKovfHsB5K1nWuf8zTsEKTqhEE566Hw2kzrL6cZ/1T
+	CVYXLNgYhifs9QtgVe2LV1chjgxWlP5LQiAuuk+o/8BJo+zYGCFmPtugs/xLV4GSep0nZa+Zj2Q
+	tg4D+oJL837z6JihFVIg8DFWnbr0QOWD11H+j3yug==
+X-Google-Smtp-Source: AGHT+IH5laHTN2ceQXtx48Rb1PyJw6NCArX3BwpFynb13vIQot7VtB6qXl2BVraBEpEyuBdH6PnHzmOOsPl0buTNmrg=
+X-Received: by 2002:aa7:d817:0:b0:61c:ad8d:eeb3 with SMTP id
+ 4fb4d7f45d1cf-61cad8def77mr105462a12.5.1756247020395; Tue, 26 Aug 2025
+ 15:23:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 06/20] KVM: VMX: Set FRED MSR intercepts
-To: Xin Li <xin@zytor.com>, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org, linux-doc@vger.kernel.org
-Cc: pbonzini@redhat.com, seanjc@google.com, corbet@lwn.net,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, luto@kernel.org,
- peterz@infradead.org, chao.gao@intel.com, hch@infradead.org
-References: <20250821223630.984383-1-xin@zytor.com>
- <20250821223630.984383-7-xin@zytor.com>
- <2dd8c323-7654-4a28-86f1-d743b70d10b1@zytor.com>
- <36e0a671-6463-4bab-b5f1-63499838358d@citrix.com>
- <c44d5ea1-444c-4405-9182-8cd3f6faede4@zytor.com>
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- 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
- 6+ahAA==
-In-Reply-To: <c44d5ea1-444c-4405-9182-8cd3f6faede4@zytor.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <CA+EESO4Z6wtX7ZMdDHQRe5jAAS_bQ-POq5+4aDx5jh2DvY6UHg@mail.gmail.com>
+ <65dd5d54-87ab-49a8-8734-2201a0014feb@lucifer.local>
+In-Reply-To: <65dd5d54-87ab-49a8-8734-2201a0014feb@lucifer.local>
+From: Lokesh Gidra <lokeshgidra@google.com>
+Date: Tue, 26 Aug 2025 15:23:28 -0700
+X-Gm-Features: Ac12FXxHsj5ejTjMAqm2KdWR-My4JCztbeCu5nshJDlgNWqk9Y_R3t6Y32y6-PI
+Message-ID: <CA+EESO5zUO8x21u1KAG5U3Rghaxw8GFGZMhsbM3E2AyeHFYRMw@mail.gmail.com>
+Subject: Re: [DISCUSSION] Unconditionally lock folios when calling rmap_walk()
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: David Hildenbrand <david@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Harry Yoo <harry.yoo@oracle.com>, Zi Yan <ziy@nvidia.com>, Barry Song <21cnbao@gmail.com>, 
+	"open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>, Peter Xu <peterx@redhat.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Kalesh Singh <kaleshsingh@google.com>, 
+	android-mm <android-mm@google.com>, linux-kernel <linux-kernel@vger.kernel.org>, 
+	Jann Horn <jannh@google.com>, Rik van Riel <riel@surriel.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 26/08/2025 11:03 pm, Xin Li wrote:
-> On 8/26/2025 11:50 AM, Andrew Cooper wrote:
->> This distinction only matters for guests, and adding the CET-SS
->> precondition makes things simpler overall for both VMMs and guests.  So
->> can't this just be fixed up before being integrated into the SDM?
+On Tue, Aug 26, 2025 at 8:52=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
 >
-> +1 :)
+> On Fri, Aug 22, 2025 at 10:29:52AM -0700, Lokesh Gidra wrote:
+> > Hi all,
+> >
+> > Currently, some callers of rmap_walk() conditionally avoid try-locking
+> > non-ksm anon folios. This necessitates serialization through anon_vma
+> > write-lock elsewhere when folio->mapping and/or folio->index (fields
+> > involved in rmap_walk()) are to be updated. This hurts scalability due
+> > to coarse granularity of the lock. For instance, when multiple threads
+> > invoke userfaultfd=E2=80=99s MOVE ioctl simultaneously to move distinct=
+ pages
+> > from the same src VMA, they all contend for the corresponding
+> > anon_vma=E2=80=99s lock. Field traces for arm64 android devices reveal =
+over
+> > 30ms of uninterruptible sleep in the main UI thread, leading to janky
+> > user interactions.
+>
+> Can we clarify whether this is simply an example, or rather the entire
+> motivating reason for raising this issue?
+>
+When I started off I thought maybe there are other cases too, but it
+looks like as of now only uffd MOVE updates folio->mapping to a
+different root anon_vma.
 
-I've just realised why these MSRs are tied together in this way.
+> It's important, because it strikes me that this is a very specific use
+> case, and you're now suggesting changing core locking to suit it.
+>
+> While this is a discussion, and I'm glad you raised it, I think it's
+> important in these cases to really exhaustively examine all of the possib=
+le
+> consequences.
+>
+> OK so to clarify:
+>
+> - You want to traverse the rmap entirely without any rmap locks whatsoeve=
+r
+>   for anon, relying solely on the folio lock to serialise, because
+>   otherwise rmap read locks here block other rmap write lock calls.
+>
+There is a misunderstanding. I'm suggesting locking *both* folio as
+well as anon_vma during rmap walk. To avoid any confusion, here are
+the simplifications in mm/rmap.c that I suggest:
 
-As written, the VMX Entry/Exit Load/Save FRED controls do not allow for
-a logical configuration of FRED && !CET-SS.  Both sets of stack pointers
-are treated the same.
+diff --git a/mm/rmap.c b/mm/rmap.c
+index 568198e9efc2..81c177b0cddf 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -547,7 +547,6 @@ struct anon_vma *folio_lock_anon_vma_read(const
+struct folio *folio,
+        struct anon_vma *root_anon_vma;
+        unsigned long anon_mapping;
 
-This is horrible.  I'm less certain if this can simply be fixed by
-changing the SDM.
+-retry:
+        rcu_read_lock();
+        anon_mapping =3D (unsigned long)READ_ONCE(folio->mapping);
+        if ((anon_mapping & FOLIO_MAPPING_FLAGS) !=3D FOLIO_MAPPING_ANON)
+@@ -558,17 +557,6 @@ struct anon_vma *folio_lock_anon_vma_read(const
+struct folio *folio,
+        anon_vma =3D (struct anon_vma *) (anon_mapping - FOLIO_MAPPING_ANON=
+);
+        root_anon_vma =3D READ_ONCE(anon_vma->root);
+        if (down_read_trylock(&root_anon_vma->rwsem)) {
+-               /*
+-                * folio_move_anon_rmap() might have changed the anon_vma a=
+s we
+-                * might not hold the folio lock here.
+-                */
+-               if (unlikely((unsigned long)READ_ONCE(folio->mapping) !=3D
+-                            anon_mapping)) {
+-                       up_read(&root_anon_vma->rwsem);
+-                       rcu_read_unlock();
+-                       goto retry;
+-               }
+-
+                /*
+                 * If the folio is still mapped, then this anon_vma is stil=
+l
+                 * its anon_vma, and holding the mutex ensures that it will
+@@ -603,18 +591,6 @@ struct anon_vma *folio_lock_anon_vma_read(const
+struct folio *folio,
+        rcu_read_unlock();
+        anon_vma_lock_read(anon_vma);
 
-~Andrew
+-       /*
+-        * folio_move_anon_rmap() might have changed the anon_vma as we mig=
+ht
+-        * not hold the folio lock here.
+-        */
+-       if (unlikely((unsigned long)READ_ONCE(folio->mapping) !=3D
+-                    anon_mapping)) {
+-               anon_vma_unlock_read(anon_vma);
+-               put_anon_vma(anon_vma);
+-               anon_vma =3D NULL;
+-               goto retry;
+-       }
+-
+        if (atomic_dec_and_test(&anon_vma->refcount)) {
+                /*
+                 * Oops, we held the last refcount, release the lock
+@@ -1006,7 +982,7 @@ int folio_referenced(struct folio *folio, int is_locke=
+d,
+        if (!folio_raw_mapping(folio))
+                return 0;
+
+-       if (!is_locked && (!folio_test_anon(folio) || folio_test_ksm(folio)=
+)) {
++       if (!is_locked) {
+                we_locked =3D folio_trylock(folio);
+                if (!we_locked)
+                        return 1;
+
+> - You want to unconditionally folio lock all anon and kSM folios for at
+>   least folio_referenced().
+>
+Actually file and KSM folios are always locked today. The anon folios
+are conditionally left out. So my proposal actually standardizes this
+locking, which is an overall simplification.
+
+> In order to resolve a scalability issue specific to a uffd usecase?
+>
+With the requirement of locking anon_vma in write mode, uffd MOVE
+currently is unusable in practice due to poor scalability. The above
+change in mm/rmap.c allows us to make the following improvement to
+MOVE ioctl:
+
+diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+index 45e6290e2e8b..c4fc87d73ab7 100644
+--- a/mm/userfaultfd.c
++++ b/mm/userfaultfd.c
+@@ -1192,7 +1192,6 @@ static int move_pages_pte(struct mm_struct *mm,
+pmd_t *dst_pmd, pmd_t *src_pmd,
+        pmd_t dummy_pmdval;
+        pmd_t dst_pmdval;
+        struct folio *src_folio =3D NULL;
+-       struct anon_vma *src_anon_vma =3D NULL;
+        struct mmu_notifier_range range;
+        int err =3D 0;
+
+@@ -1353,28 +1352,6 @@ static int move_pages_pte(struct mm_struct *mm,
+pmd_t *dst_pmd, pmd_t *src_pmd,
+                        goto retry;
+                }
+
+-               if (!src_anon_vma) {
+-                       /*
+-                        * folio_referenced walks the anon_vma chain
+-                        * without the folio lock. Serialize against it wit=
+h
+-                        * the anon_vma lock, the folio lock is not enough.
+-                        */
+-                       src_anon_vma =3D folio_get_anon_vma(src_folio);
+-                       if (!src_anon_vma) {
+-                               /* page was unmapped from under us */
+-                               err =3D -EAGAIN;
+-                               goto out;
+-                       }
+-                       if (!anon_vma_trylock_write(src_anon_vma)) {
+-                               pte_unmap(src_pte);
+-                               pte_unmap(dst_pte);
+-                               src_pte =3D dst_pte =3D NULL;
+-                               /* now we can block and wait */
+-                               anon_vma_lock_write(src_anon_vma);
+-                               goto retry;
+-                       }
+-               }
+-
+                err =3D move_present_pte(mm,  dst_vma, src_vma,
+                                       dst_addr, src_addr, dst_pte, src_pte=
+,
+                                       orig_dst_pte, orig_src_pte, dst_pmd,
+@@ -1445,10 +1422,6 @@ static int move_pages_pte(struct mm_struct *mm,
+pmd_t *dst_pmd, pmd_t *src_pmd,
+        }
+
+ out:
+-       if (src_anon_vma) {
+-               anon_vma_unlock_write(src_anon_vma);
+-               put_anon_vma(src_anon_vma);
+-       }
+        if (src_folio) {
+                folio_unlock(src_folio);
+                folio_put(src_folio);
+
+
+> Is this the case? Happy to be corrected if I've misinterpreted.
+>
+> I don't see how this could possibly work, unless I'm missing something
+> here, because:
+>
+> 1. When we lock anon_vma's it's at the root which covers all anon_vma's
+>    covering parent/children of forked processes.
+>
+> 2. We do "top down" operations that acquire the rmap lock on the assumpti=
+on
+>    we have exclusive access to the rmapping that have nothing to do with
+>    the folio nor could we even know what the folio is at this point.
+>
+> 3. We manipulate higher level page tables on the basis that the rmap lock
+>    excludes other page table walkers.
+>
+> So this proposal seems to violate all of that?
+>
+> For instance, in many VMA operations we perform:
+>
+> anon_vma_interval_tree_pre_update_vma()
+>
+> and
+>
+> anon_vma_interval_tree_post_update_vma()
+>
+> Which removes _all_ R/B tree mappings.
+>
+> So you can now race with this (it of course doesn't care about folio lock=
+)
+> and then get completely incorrect results?
+>
+> This seems fairly disasterous?
+>
+> In free_pgtables() also we call unlink_anon_vmas() which iterates through
+> the vma->anon_vma_chain and uses the anon lock to tear down higher order
+> page tables which you now might race with and that seems even more
+> disasterous...
+>
+>
+> >
+> > Among all rmap_walk() callers that don=E2=80=99t lock anon folios,
+> > folio_referenced() is the most critical (others are
+> > page_idle_clear_pte_refs(), damon_folio_young(), and
+> > damon_folio_mkold()). The relevant code in folio_referenced() is:
+> >
+> > if (!is_locked && (!folio_test_anon(folio) || folio_test_ksm(folio))) {
+> >         we_locked =3D folio_trylock(folio);
+> >         if (!we_locked)
+> >                 return 1;
+> > }
+> >
+> > It=E2=80=99s unclear why locking anon_vma exclusively (when updating
+> > folio->mapping, like in uffd MOVE) is beneficial over walking rmap
+> > with folio locked. It=E2=80=99s in the reclaim path, so should not be a
+> > critical path that necessitates some special treatment, unless I=E2=80=
+=99m
+> > missing something.
+> > Therefore, I propose simplifying the locking mechanism by ensuring the
+> > folio is locked before calling rmap_walk(). This helps avoid locking
+> > anon_vma when updating folio->mapping, which, for instance, will help
+> > eliminate the uninterruptible sleep observed in the field traces
+> > mentioned earlier. Furthermore, it enables us to simplify the code in
+> > folio_lock_anon_vma_read() by removing the re-check to ensure that the
+> > field hasn=E2=80=99t changed under us.
+>
+>
+> I mean this is why I get confused here though, because you seem to be
+> saying 'don't take rmap lock at all' to referencing
+> folio_lock_anon_vma_read()?
+>
+> Perhaps I misinterpreted (forgive me if so) and indeed you meant this, bu=
+t
+> then I don't see how you impact contention on the anon_vma lock by making
+> this change?
+>
+> I think in general - let's clarify what exactly you intend to do here, an=
+d
+> then we need to delineate what we need to confirm and test to have any
+> confidence in making such a change.
+>
+> anon_vma locks (and rmap locks) are very very sensitive in general and
+> we've had actual security issues come up due to race windows emerging fro=
+m
+> inappropriate handling, not to mention that performance around this
+> obviously matters a great deal.
+
+I couldn't agree more. My changes seemed to simplify, otherwise I
+wouldn't have suggested this. And David's reply yesterday gives
+confidence that it wouldn't negatively affect performance either.
+
+Thanks,
+Lokesh
+>
+> So we must tread carefully here.
+>
+> Thanks, Lorenzo
 
