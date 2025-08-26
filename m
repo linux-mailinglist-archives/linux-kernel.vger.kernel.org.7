@@ -1,189 +1,161 @@
-Return-Path: <linux-kernel+bounces-786829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FAD3B36AFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:42:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A79E5B36CD7
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:02:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 067457B6152
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:40:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28D69567F79
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:42:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7249E34F48B;
-	Tue, 26 Aug 2025 14:38:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA8535FC25;
+	Tue, 26 Aug 2025 14:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="e3GJpXXP"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2044.outbound.protection.outlook.com [40.107.92.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IXlW3t9S"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29A422370D;
-	Tue, 26 Aug 2025 14:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756219128; cv=fail; b=ipMb6XoICDJ5HBcBl/ZJLlsACcQR5lsYzKdZe5m5axoZ0nVNkHQqmuTaZdUoNA0bfwSk1refPBkllfKa9lcDq6zkMHtHyPD/yU4S93H3AS4RVJ+aU5eS4/8LfEbbZey4FFMPqolUzIiDqqRPjv27LAKWctBfCXLV3UN4Iu29FYY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756219128; c=relaxed/simple;
-	bh=zNgx6QFt3ybI/4JfI4jXwU7wNu4DV3GoecM9LMP4T+s=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=gE3WbEE7yIt66iPWT0PjyNzTotol4DPpODe93MWdS1sVWS/pfAAmd5gFAoLUEzRz0WXb1cgl+rvlCYXfS/MnP4/hxpLQqqhNb/Hh5+QOyagC2caY6dTUoamFdOtlBoBSKp6s1/eKwySdZizoxTsxoII253koMJG6V5mQAk/NJ00=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=e3GJpXXP; arc=fail smtp.client-ip=40.107.92.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tAFd/rX/ZyNI7uRoPfyjU41h8QTBVXK9x++Zjsao9l9XA1/UxnUBxadqUvIRpDtlhM/bS8YJ+y3BwRDJeSMh7k802UzW2b8Z89KGhwSDgC17E1xEiBs5Gs74XLjyIi0nqlySwW1dP+lT/EJtFm62RtBo7XFWjdch1fbZG05oCSVJNymPsbuWe375p+yDalF0JF/5ANHpPojVOXABWGmnRjqfEQy5u8G8iE8Y3ZX52gC98mg0F35n35+J1Ay+5D+4GsrlJr7TwrQ1BchPjdN7cBDt1WV6fCJL2rF2Cjccxy+RliBIRoHtsYzbAyyRHAnVpWEa0ROMtSfZhXXUQD3/zw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zNgx6QFt3ybI/4JfI4jXwU7wNu4DV3GoecM9LMP4T+s=;
- b=ATRaPvAL0nJfXfqkpfHzkcJxUTTkUjAZS9EkIHCykBTA6zrLo8rtZ3mFAI9UPehFLnuUdxNSCExR4qmpZIMlNrzi0w3iAgJ7W2SMhYkVyddYumVSFJEPGROfhwLDigwSNrKXOjhRyyChS29JTJZKfNOtvJT2vNs/nLYq1KC//4pT2askZVyyKMK4wOA4SIDEfdE/5vCuKjsL+mfamV3PjORr16wQibSCO2Wf86cc2ECgnDGfrnHUbq3ggW6t4oB96PHAu+s6wcEtsm+Hx6/vlXfOkOUupwgLJ6HViJVdw02cnBvOL4Q4n0ok3fAtsfVO4W/0pfhxCq5AT33JLufpRA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zNgx6QFt3ybI/4JfI4jXwU7wNu4DV3GoecM9LMP4T+s=;
- b=e3GJpXXP8lltJ83BG2dOL+IZnvvbwP+/JbnFkJ8u31XP64LZI6cDIhdXs0DJCMYyr6O6ya2G75j1oVLrCu6KX9Akd4m2rORnk1Ss4qKaDEBhjIu5+3FccgLJtIp9O5PoVA3Kh3S8s5EYa9Fl3/GZRNUPjuAYIlYq9vQ2dYU0N1EOccw8/eG7LOMfvKdpJNaxhiHGxB1MTyFhvD6CWK537/Fasx63IDhG6If2AEDMpmEcNCkPeszxOETygJVyjhbAlodf9O8UuaJDtcVwb/IAiESFGP0OQT2T5R95Pc2XqPdnVHjdxz2JLj+/jMpr9L0vId19IT4T3RUIiTsU9jIS2g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by CY5PR12MB6480.namprd12.prod.outlook.com (2603:10b6:930:33::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.18; Tue, 26 Aug
- 2025 14:38:42 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%3]) with mapi id 15.20.9052.019; Tue, 26 Aug 2025
- 14:38:41 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 26 Aug 2025 23:38:38 +0900
-Message-Id: <DCCFPWZCBAAB.3KP2R8P2C6GPD@nvidia.com>
-Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 4/5] samples: rust: dma: add sample code for SGTable
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Danilo Krummrich" <dakr@kernel.org>, <akpm@linux-foundation.org>,
- <ojeda@kernel.org>, <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>,
- <gary@garyguo.net>, <bjorn3_gh@protonmail.com>, <lossin@kernel.org>,
- <a.hindborg@kernel.org>, <aliceryhl@google.com>, <tmgross@umich.edu>,
- <abdiel.janulgue@gmail.com>, <jgg@ziepe.ca>, <lyude@redhat.com>,
- <robin.murphy@arm.com>, <daniel.almeida@collabora.com>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250825132539.122412-1-dakr@kernel.org>
- <20250825132539.122412-5-dakr@kernel.org>
-In-Reply-To: <20250825132539.122412-5-dakr@kernel.org>
-X-ClientProxiedBy: TY2PR0101CA0009.apcprd01.prod.exchangelabs.com
- (2603:1096:404:92::21) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3E735AAB4;
+	Tue, 26 Aug 2025 14:38:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756219136; cv=none; b=QBWM95UW6iARig6KfFTcucpFnmU4MJD70OTymGq/6yUO2l3gg5Pw3I7ryfojOaSJwx1/8ZU0TS/JA93qT9bBLujxnGa58qHJF30gHqVQ8G8lCGhB76dEAb/412D/my2QlnpxJT/xnSknZIfay2/sKUivZvWAdEyQgQ0aok6/v3g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756219136; c=relaxed/simple;
+	bh=Y6APwQxwvGhqQiU0qnlk9kFVimX4KbrPK3kJnYGAEwQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pe1umEH650eb+9BTA92r+xJJRxEkL+uIMBy4n2/v/hKhG163z3OqaVNrh+ppSQ8ZGYNSo6uee0muHgOniAv8hOjlt6vHHo/wi3i8cXMYengFcfA5NtNzGa6mAGo6MgS41Vqr7/y7WM5XaqHgTlVNMGAGw+R+SyIALsZhr7GsyZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IXlW3t9S; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6188b72d690so898701a12.2;
+        Tue, 26 Aug 2025 07:38:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756219132; x=1756823932; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=d6d4F5lWcv+eLekx7HNLggfgjBWTBT95yOAIkuEoxMk=;
+        b=IXlW3t9SzXp3SmY1cZce//wKOIC4yBgyfIdXatIrR+bGGMnDGcrp+F040dZqsQqx0w
+         UF79BI+DQYWH1Fftxe4j3SznOjof9cra6sg29lMRaGJXBxOwg/Z4kkf07cz0u7qd2VNZ
+         Q+kXSAOHZJ0HXDJQgKYffo894QwINQtmUD8AgdCwguafBIm3xXVrtPqkdsjreJbzGAvP
+         MjPZ9QEdP/l/dlgpjyYoVOGySdbQZTXYDtF7UjEMR0Wr57jk/x59ywYJJMJBYX2jP2dO
+         4zfFvssn67DFqouze09eL9ba33v8u8cspRbe9dmqqTIW2/jRQqfjO/4w1XCTRQKNq4y2
+         97pA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756219132; x=1756823932;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d6d4F5lWcv+eLekx7HNLggfgjBWTBT95yOAIkuEoxMk=;
+        b=E85WC9GlHgHaIv6Af1wZGYwKdcQ31F23Bp5Nq4FnLRxLXAQplrBz2pr4XQUIrXzAFU
+         pw1ZCJ5XIBNh9M02kAqhHXuWxV55BHe2Wr+Bs+CG6rENhN7sEzJ6SrKlAM8hRTuwG4tm
+         EgYkOO4VJ+Pl9SiFlBnEQ4NsVUFgY2q/6IntfdXt9jUptSCQcZwt2NGA49ZEK19Tegdj
+         srAXmUydekmVuOhHBd7ojgI7CWAJeDoJLkImDDWoxFI3QiBU0Uh3gUE677YygMVCQ0ft
+         PMoIJH54L51wKEfebF1O08kgz9kJVhFNqbeFxGDWF19nRvR4wyKxyit8Q+ncHN1PD9hm
+         06qA==
+X-Forwarded-Encrypted: i=1; AJvYcCWTTfsNIIX1lMye/wmRSTmCX4N3EtfJDNvkId6DKisRQP70zjM22cx3Og7QI8pXU60vWbIy3WjFtZZe6wqQ@vger.kernel.org, AJvYcCXL/dzVIN8AmDrKzGkITbn+75WiXwbWXFgQzTqdnsOvvjSkbz4ell6CgQGjYGTcHmDC67nP4yTGH+1A@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/ZW1qUiQmd6/nNF/F1iRyfLk5PKVzhNz/r6xz44PIQ7vmc8nu
+	pLo74bD28it/4CrA5zGb1Ub2+Ep3nsIkUFFyjRb9soVzzoRC0RAo+1DQ
+X-Gm-Gg: ASbGncuZ88LapkbflyAeOdaxRieAwN5FaBy1q8TmApFXueemWlnvsfYDZIbU8wT0qzB
+	DAyuZKgy/IUZTSIOGgfvz9x019qMImWiRhy6f/kGybh7Bez9VvE2lHZCQrP8i1/xbGBngCKUJOU
+	b8Uszw9kvzOMz24jjcvJ19uB9SqW+gAaqmQ6wfxHeXU1VdLqKANUeY/sElDozQn4raHyjXqlOlE
+	p7vx4yHy8PO9PcDNZJkDaKuQ3xfvNbRLD8ea/fI2Sdnp63rvIynaY+DOWx4zf1pvT4kV/jDs5Eh
+	j5cljxy5VZ6KJnA5HwSwoqjQyZIODz/jp5SJDsHk037ljYFBMh56XzA02rwWaIaeWd6jXoHrb30
+	UCw3Fi24eA+ZHWw==
+X-Google-Smtp-Source: AGHT+IETPXxxMpJyeesJWYBnsu+A3CD+BFs8jRFWez5lq7PWwxLL73ZZJjY/I5QKHSkfBf3w4iFvWw==
+X-Received: by 2002:a05:6402:510a:b0:61c:8205:f3d8 with SMTP id 4fb4d7f45d1cf-61c8205f61cmr2116423a12.4.1756219131642;
+        Tue, 26 Aug 2025 07:38:51 -0700 (PDT)
+Received: from skbuf ([2a02:2f04:d005:3b00:63b:fbf0:5e17:81ec])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61c31703d8esm6917552a12.26.2025.08.26.07.38.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Aug 2025 07:38:50 -0700 (PDT)
+Date: Tue, 26 Aug 2025 17:38:47 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Yangfl <mmyangfl@gmail.com>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v6 2/3] net: dsa: tag_yt921x: add support for
+ Motorcomm YT921x tags
+Message-ID: <20250826143847.wwczaqgafl6y7ped@skbuf>
+References: <20250824005116.2434998-1-mmyangfl@gmail.com>
+ <20250824005116.2434998-3-mmyangfl@gmail.com>
+ <20250825221507.vfvnuaxs7hh2jy7d@skbuf>
+ <CAAXyoMNh-6_NtYGBYYBhbiH0UPWCOoiZNhMkgeGqPzKP3HA-_g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|CY5PR12MB6480:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6b563fd9-5071-4c4f-aa45-08dde4ae40a6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|10070799003|7053199007|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Kzg4SVpvd1l6L0VpN2Z5UkRpdFB3NmdtUVlBdWxvWURuRXdSS0Zkb3RKVzZS?=
- =?utf-8?B?Nm1udWRJSmZWZmdTY2sxdlkwV1NhcTJDeWlKYmdxMnZySDR3YmI1aERLVGNT?=
- =?utf-8?B?UVBnaEprUnBjdGZYUWFGRFFFVzFYNlB1ZytFSnpmUjU2OGc4cWRLeEVQaFJP?=
- =?utf-8?B?WGhwSHU2TnBPZ1hLRXdBeHlsclAyUUVlaHFkWHFCcElhdU9aUzdlY0RjT3pK?=
- =?utf-8?B?eHozYnl4RWljWDZwWVhQVHY2bEtHRGVoV0NXTHNpZks3TC81UVpMNTlKNHpY?=
- =?utf-8?B?U3JmSENJZmZwVDNYS2l4Q1M1TnE0bFJyWGdqMTQrcUM2OEhNcHlXZVR1amUw?=
- =?utf-8?B?MCtCZGhhb2ZiOWNEVnRHV1ViS0F0TUczS2R4dDBLOW0vWGQ5M1pvb1pRY2Nz?=
- =?utf-8?B?cHFTYUtaRXFhMGgxR0tEbHlDSmJLQVJLYVNOR1hXcjZWZnNaaDdsdVRxaDlO?=
- =?utf-8?B?WlNPWS8yYnVlQUJmVWtKWmVXa0NKWDZRYTUwckN2R1VBS2dnOEEzbHR0VFpC?=
- =?utf-8?B?UkEvKzJLelUxemlnQ21RZTlhK3pVOGFxblhFRkVmZ0JtNnpkSHliYkZDTHFq?=
- =?utf-8?B?MGFZQjA2Zm5KNWEvdWQvQmJnSXFaQzk3di80NTRnNm5Ld2tYalJzRFUxbXJT?=
- =?utf-8?B?a1NQR3I2WDNlQlNiSWpqcW5qb0pocFFrK0hWRVhQNzZuZlFaVHI0MmJyZ2Nn?=
- =?utf-8?B?U0R1ZW5sQlQ5Z0lZak81YWtmcTBCWjBma3pidXRKUW9NSXFhdVQwYkV3ZGNk?=
- =?utf-8?B?aXpuQWllTklFYTYxYnBPWVB0d3F2VFhEZDR5UENKWjlFOFpVeU9hZkozTk9z?=
- =?utf-8?B?Y0piVFM1S3NwV3h3V1huMmxJMWFaRkhFTzZ1VVlHNTR4bnNLZkVYaWJEUUlV?=
- =?utf-8?B?Qnc1cGtNcFhibEEvbnNCRTdTemR0RU4rdlhxN0pOQnkrOUoveXNuZldrbTBN?=
- =?utf-8?B?TnRiNjNrL0lPUUppTkN1a0tGUmErS2NXcEhPMXhkQll0RVh3TDZWUUdwNmNj?=
- =?utf-8?B?Y2Z3RXNWdU9JTCtKdlh5TjRhcStCMmw3OUVrNHVLMUVtalBXYWhNV1Qza3lr?=
- =?utf-8?B?WmlOR3I5ZkQyTXQvdWt5L1dtSktETXdWb0FDOXo3SlIvVVV4cW9wRHBkZ0o4?=
- =?utf-8?B?ZlBDa2QyQk1GaHBRSDR6cUhFSjVKKzdTRUc2US9seEl5TGlJV1UvWmJNeHkz?=
- =?utf-8?B?aTAyVDM5Q09oWU1sQU1iRVRnUnVZZkV2S3VvbGF5aVJpZ2ZTWldlMzIvZUU5?=
- =?utf-8?B?b0V5V2hQK0tlRTRSRXNXVEZnWEJITVVCS3YxNWdlTTArRHF5QU1uRWVsUnZY?=
- =?utf-8?B?UlA2eXVUeTdaYlpSRlZCbFpoNm05bFNTUUhFNjZHeC84Mjcrc3JMUi9FeWxn?=
- =?utf-8?B?UlltQlhHMXdnVER6bjl0d0VXMFFMVThxellFUVl5SUNMUEFYL3hiZEFIcWI0?=
- =?utf-8?B?SDVERFpEcDFFdGd5SDhKdmNNZ2ZYUzJtWHlOUThzSUw1aDdhcjZVUkplQzQ5?=
- =?utf-8?B?L3pweUJQdVpNZnBWcGVkRHpPUHFxOXJRYmJPdDhkeVNJYnVoUTZUNHhQL1pn?=
- =?utf-8?B?aWdtUlo1OVBlQ2grV0x1b2M1djZPVXZRNlh1bVJNbWk5elBJdndEcGlnZ0NC?=
- =?utf-8?B?Y3UwK3ZOMUZvUHA3eHpSYkJwcWE1NlAzczhaMnJlOUllR3hPc2ZoR1Ezd0hK?=
- =?utf-8?B?ays2WVVPZWVOZGNBY2NGWFgzY2JYRTRRZzBNQjhxYXNUSGh2ejhmRENHdDFq?=
- =?utf-8?B?TUQzc3l6MjdCUGdyS2tXV3paU2dUZnJteHFXMnVmbm1JdUpjSDlHeXVBNVpI?=
- =?utf-8?B?WG43amp3TW5sWW1WWFh3SzhReFdWNnhmbCs4cEQ2a0loMUp2R0VNQ25Sdits?=
- =?utf-8?B?M0RJZDNmcjhFUUdrQkp4T0RDeVUrb2ZRMTAvcUlpWmhHakhZMUVGM0hMRXVD?=
- =?utf-8?B?SHpjaEJxZms3L21SSDBaaUhnTlFhMEtFTGtNS0hFNUhTQitVdG4wSG10WE0r?=
- =?utf-8?B?ZnpuSHB4R2xRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(10070799003)(7053199007)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Ukt3TlNobG1uVDNzZmluZmRZVFg0SFpnRmlXam5YV3d1dmhjbG1ZQ0Q1ODIw?=
- =?utf-8?B?K2Q5RWFnaGw3Nnc1SzEzZDkrSU40V01qK3dvVFo3c2t4ZTlva29IRVl2QUFo?=
- =?utf-8?B?Y0VwTWpIN0lHUTg1aFNyLzFEL1o2MDdEOGludjdyZVB5akNNYjhYdC92V0Jp?=
- =?utf-8?B?anRMVDl3SVNyQ2RuWWpKWGxVNHFXdjJJWFdZQ3dKY1V3ejdVTzY5TFhuUE43?=
- =?utf-8?B?aEgvRldKK091aGlmamVSeGovdXZ1dzFBbXVhZldwS2N0bG13dUhTY1RHSjlq?=
- =?utf-8?B?elNYTVdTQkMzZnF4QXZ2c1Buc1h6SWRDaXEzMUNnejFnOVNOUi9EU2lpSFcz?=
- =?utf-8?B?Ny94bllmVTdBRjVEWjcvdE1DNVJUQ3JQN3NJaUxwTUhCd0Y2a1dQTytFUU1H?=
- =?utf-8?B?SFlZUmNTQjdPS2d3QnYyWEV1bmlnVDhiY3pxUW5sRzlVVGhDUW93UXk1WVg2?=
- =?utf-8?B?bzU5dElCV1drMEZSRC9DemNKaGUva3I1LzRFaGtuMFVkN3prdktqMDdSaU5W?=
- =?utf-8?B?UUlnWTNxQVZSMG4xYTIrM0NVUmRnV2hkWFlhRGptWWlCK2tHYXhldEo2M0xn?=
- =?utf-8?B?dk9ibytuV2V4ZFRsL0lZM1BHYzYxenlHMW5rcEZMNVQyNEo4ZDVwVHFQSnYw?=
- =?utf-8?B?K1hOdEc3bE4vZWErSmNJZEMxbUkrSnlwU1JWNmR5bnV5a0lsNGRHVTcwOUlr?=
- =?utf-8?B?a3k0Q3VHMWtkNWpsNGM1bG5ycUR4WFBQVmRYNHJtMDgyWWJmSUZLWFdQb1Rp?=
- =?utf-8?B?b1JZV092bW1Bb1IxVnhyWG8rNXFLZDFPR2d1REVvVnNnY0pPdnZEd2VNenNC?=
- =?utf-8?B?V25rK3MwMXhOMlc5RlRHR0l1OVVReFEzcDhKVmh3aDRNTXlscnJDaHdFN1Jm?=
- =?utf-8?B?TjZJdWNIaWxXZmlwcUNuRHozOTFaUDFtdkprUkZvZmZrZ3R3MHF6c1AzZ292?=
- =?utf-8?B?VUJndVZhWTcrSUMvdkVabEhSdUNiT3I2TnMya3hDdnlxUmVEUmpxdnFSTkt4?=
- =?utf-8?B?aUI2OVYzQlgwNzVRd3NwaUxiTHAycndrU0J4amFaSXpxaTJtSFdsdmxMQndC?=
- =?utf-8?B?Q1JWY1RaVGFCZ1dTdDBhMjE4eUZ6S2Z0QVBOWHUwREdHY3AraWRTRC9uV2p0?=
- =?utf-8?B?MERiU1drdm1HYWkyZkllZEs3TDVCUFNnRWwvNE83MWhoalZVSjdybDZJSkd2?=
- =?utf-8?B?cFBNNlFQcjZVMVpJWXlQQmZTeGNYTjlRSU43Y3VxMFdvNkM3eU5XWWtnL2Fo?=
- =?utf-8?B?aDZoQkJYYmxTUXFYWXV1aWJub0F4cVN3MzBBN0gxMlBmbTU1YlFrbGxFaWly?=
- =?utf-8?B?blFucks4aVdFN0l0WGxCWHFzNjJIcEFQdUZySE80b2xxMHM4RnAyZTBrTGFG?=
- =?utf-8?B?SHQ3SE1xNTdiN1NNODFYMElBcEdubSt4RVROTnpLRkhPSVpPY1V1WXN6eFBx?=
- =?utf-8?B?QmZlandVdGlwcVlRRXdjNGxzajB4ZmlCQ2w1dS94bmVqTmNHSXRjUmMzMkc1?=
- =?utf-8?B?YjRWVkZwdlNxekJlbUZoWVBRYUY2Y0U0OW80ak1KWlJWbHVBbEtlNElyK1py?=
- =?utf-8?B?aTVTTjZjeE9JSFBTTWJSRFJWRloxQWcwYXg0MUNaYWdZd21taitZRXVRMThq?=
- =?utf-8?B?aWJtalpUTC9aNmVJNHdzY2hBZkpodlNDR3NNOHp0aWJKTkpHa1lHSjFBZjdz?=
- =?utf-8?B?bUJvRUg4VGJHZG1qNVRGYzRCcVpUK1g1cnlyRVlXYURGRkdmM0NScnBLRlk2?=
- =?utf-8?B?MkxEZnJNdkhiWm0vTnU0U1AzQWVnRFFHQXVpa21zZTlzSG12QnlhT2lrdUdM?=
- =?utf-8?B?L2ZoYU5KZCt3WG80bmhBN1c3MFkzN1UwZFNCU01udnVNdExPdjhrQXJlM2lJ?=
- =?utf-8?B?OUsrWHhWcG1IU0pYd2JnYzlWa3ZSSWM2Y2xYWWdSY1Z4NFRTVzBRVENpUnk5?=
- =?utf-8?B?QzRXWGpyUllCL1FHb1hhOGRYZ2tEMGJyMHhmVStKYkhFcVUzbnRlblcxYTZi?=
- =?utf-8?B?VHFhanpBTFYyTXlzcjdrL0VsUktGT3dVeEk5WHdCbGlWQmo0aHdyNXEzYWVD?=
- =?utf-8?B?TmdIWUlIOG1pTTE2MktSKzRlQWFyeVRDaVhYUjlubWRDQ09KYmV4eUFyeE12?=
- =?utf-8?B?clUwaGExWC9KN2FMb3VHNmZWNk9XNHhGdHNUZkQ2QVNaS0NEQm9vZktaZ3dw?=
- =?utf-8?Q?wDp91pFKbXBIHG6nW0Ll0LssQz8Ly4a5j8Wqq03dz6yv?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6b563fd9-5071-4c4f-aa45-08dde4ae40a6
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 14:38:41.8577
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9nfdk2pEW0j5qH4qI26Hhu/P0vGbMkf7uxPDBgwahDchb4FNqDg1+qfgNloiyiFzNCUgqSbHFewXrFx2wFOaCA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6480
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAAXyoMNh-6_NtYGBYYBhbiH0UPWCOoiZNhMkgeGqPzKP3HA-_g@mail.gmail.com>
 
-On Mon Aug 25, 2025 at 10:24 PM JST, Danilo Krummrich wrote:
-> Add sample code for allocating and mapping a scatter-gather table
-> (`SGTable`).
->
-> Co-developed-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-> Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+On Tue, Aug 26, 2025 at 09:47:34AM +0800, Yangfl wrote:
+> > The tag format sort of becomes fixed ABI as soon as user space is able
+> > to run "cat /sys/class/net/eth0/dsa/tagging", see "yt921x", and record
+> > it to a pcap file. Unless the EtherType bears some other meaning rather
+> > than being a fixed value, then if you change it later to some other
+> > value than 0x9988, you'd better also change the protocol name to
+> > distinguish it from "yt921x".
+> 
+> "EtherType" here does not necessarily become EtherType; better to
+> think it is a key to enable port control over the switch. It could be
+> a dynamic random value as long as everyone gets the same value all
+> over the kernel, see the setup process of the switch driver. Ideally
+> only the remaining content of the tag should become the ABI (and is
+> actually enforced by the switch), but making a dynamic "EtherType" is
+> clearly a worse idea so I don't know how to clarify the fact...
+> 
+> > Also, you can _not_ use yt921x_priv :: tag_eth_p, because doing so would
+> > assume that typeof(ds->priv) == struct yt921x_priv. In principle we
+> > would like to be able to run the tagging protocols on the dsa_loop
+> > driver as well, which can be attached to any network interface. Very
+> > few, if any, tagging protocol drivers don't work on dsa_loop.
+> > > +
+> > > +static struct sk_buff *
+> > > +yt921x_tag_rcv(struct sk_buff *skb, struct net_device *netdev)
+> > > +{
+> > > +     unsigned int port;
+> > > +     __be16 *tag;
+> > > +     u16 rx;
+> > > +
+> > > +     if (unlikely(!pskb_may_pull(skb, YT921X_TAG_LEN)))
+> > > +             return NULL;
+> > > +
+> > > +     tag = (__be16 *)skb->data;
+> >
+> > Use dsa_etype_header_pos_rx() and validate the CPU_TAG_TPID_TPID as well.
+> 
+> See the above explanation why rx "EtherType" is not considered part of ABI.
 
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+So what I don't understand is: it's impossible to separate RX from TX in
+current DSA taggers. If TX hardcodes the assumption that the switch was
+configured to use EtherType 0x9988, why would we expect RX to use anything else?
+What valid configuration would we prevent, if we ensured that RX packets
+have the same EtherType?
+
+It should be ok if you documented that the EtherType is self-assigned
+and must be hardcoded to 0x9988 by local convention for the moment, but
+is otherwise configurable, and the meaning of a different value is
+undefined. Even if self-assigned, I suppose you could still add the
+value to include/uapi/linux/if_ether.h to avoid conflicts with other
+uses.
+
+Even better if you clarify the expectations by writing a libpcap
+dissector for the new tagging protocol, which you need to do anyway for
+recent tcpdump versions to work on the conduit interface (otherwise it
+fails with "unsupported protocol"). See
+https://github.com/the-tcpdump-group/libpcap/pull/1463
+The libpcap dissector uses the /sys/class/net/eth0/dsa/tagging text to
+identify the protocol in use, not the EtherType.
 
