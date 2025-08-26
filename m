@@ -1,124 +1,114 @@
-Return-Path: <linux-kernel+bounces-786620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5B2CB35F26
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:33:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF0D6B35F35
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:35:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBDB01BA1D81
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:33:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49BFE684582
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:35:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F4B2475CE;
-	Tue, 26 Aug 2025 12:33:28 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC67137932
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 12:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5270332145E;
+	Tue, 26 Aug 2025 12:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="IJbnUDS5"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5AFA2D060B;
+	Tue, 26 Aug 2025 12:35:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756211607; cv=none; b=cTcylJcWokl/yncMyyu2u0bWTcGW4ML+xMOr5BPOhU+yhgi/nQdzzsZ2eGeZVJ6gASb2UnWeRrItP/b5yMRJsGdFxi7ISQzTZJTUF03Jn+u9so7P957ruhTXQbj/cx9+MLjCfqlA2Uxy3g13+9BbpGb8st59d8mUpfwkFIuaYUY=
+	t=1756211735; cv=none; b=o4QTTkOHQD9XVc0dxJ3sQbxODL7U0Q+agKNGVJVL70+Dw+TJrKFV7dy1fpHNx9Gg5Ylpe2uByjFznSG6BV6vceUql8PeTQCR+KAqVktynE0zTor6jiUpS7l5n8/m1ggogaJre5IqR22SaA7eMrtlEfB+6bcxE4HkrGEwEAUiXcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756211607; c=relaxed/simple;
-	bh=OvUphhKlruNLmE/+Atv0pgtEDg79X0l18KbHUjKmaEY=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=m/9inh9FXLRh3amw0Ds1M0sL7ZrI4r2UuFBTDQH6yVU075OmzaCdhMGdoeJ2wdoBH/LMFhXyQKFObPHoPTlYT7x79VqUAViGk7uytQcFR02KYZaM8mO3HmVMQQ2Fw14BgiNTi49IDdC4T9o4JWn0BhDKH8vPpoeVhTpyOIW5wd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8CxbNKRqa1o91wDAA--.6474S3;
-	Tue, 26 Aug 2025 20:33:21 +0800 (CST)
-Received: from [10.130.10.66] (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowJBxTMGQqa1oDwFqAA--.13153S3;
-	Tue, 26 Aug 2025 20:33:20 +0800 (CST)
-Subject: Re: [RFC PATCH 1/2] objtool/LoongArch: Fix fall through warning about
- efi_boot_kernel()
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Nathan Chancellor
- <nathan@kernel.org>, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250826064631.9617-1-yangtiezhu@loongson.cn>
- <20250826064631.9617-2-yangtiezhu@loongson.cn>
- <CAAhV-H5wW_04NHQ7z+SCPb6-T5Hc__n+x=ykg-u9vn4b4GXuww@mail.gmail.com>
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <487a8149-6cbe-46a7-6771-66aef0045f07@loongson.cn>
-Date: Tue, 26 Aug 2025 20:33:20 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1756211735; c=relaxed/simple;
+	bh=tsg8sofVKU1gAA4xm07JjD4e07ulHOEy2RCaq9LMvzc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oeBPTIO1reBz6NFFgTqyN44FGKY+00ZBTBFwvFihf6mW2LRZAZ8M26N3JDfepxlqV+yI7PjWzp60+jlAhwRUtKObo0gsL6bG/ddN4ETjQw6XCjwpnuorbkDR3f+ApzwUZKlXywiLmIbBONYLrYnhtvA0sBqkJxet9x8xphCyVsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=IJbnUDS5; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4C92840E019C;
+	Tue, 26 Aug 2025 12:35:25 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id OxaYDB8Ybs47; Tue, 26 Aug 2025 12:35:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1756211720; bh=lGSH99NR2GNnJhwGm4yaNbNzgYqDVCmJ+LnXEzv8sS8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IJbnUDS5uwS+oELwj39bMB+KdOyQthhU61envLs3tdr6Shomts7LSH9fQYTHEqm4T
+	 EZV4xddbNcdJaNxXfcuzGHIt2rJt/GDMZH0MZidYoA9FpDV4rGovaXpl2iuPSaFcl0
+	 leEmfSE3WItq4uG8T8NtSpxPh1KR8KX2K1HemAL9WGXhi+qO8J1zLvBsXBe4TvH7ny
+	 KGXu3Im35qsNgRWPdIoALYKMgFLZC9w11CKgWoiAj5sCOoUwy7s7wCKzIXubjxfg1L
+	 N+hGwkwtfmctz+LjXtA6N1hAdar7dmydENHZuXVJxDDZPKCtLUC3XeoJQ99wjJhFKz
+	 LrE/hfh92gd4J+Ecj/UD8ff2nvzBc8bmIQXVX5qTXXtD/YLp/cHKf/Vfl4yWIiXx9T
+	 yqBPhCkGQnrP0ZdN7J2yAkCTSrOMGOamCsEb3F0IXyzOrHQpbEewmVHN2GlIZqrcxQ
+	 Zlln4AddQBayoi23Ygt1eUIEPiteHcI6dwbPTjbGPBSj0+Z5vG1fbDf0LzNx1xdfnr
+	 7v1Fl1JcRMZUGxoIFHV7I6IbTp6CZ4GxJ86G+hV7ytvTPiayh0Vd/rdoqEq6aKfqkt
+	 cCoihtBCQ9wQBYNVYdsyzU3nyghbP0J/G8cTn/dpYPjzNkOqSLwvVNTzKQzrg8q2JI
+	 mJ0dXFPY4yZKzTDVNfPOjAo0=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 94E5640E0288;
+	Tue, 26 Aug 2025 12:35:10 +0000 (UTC)
+Date: Tue, 26 Aug 2025 14:35:03 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: x86@kernel.org, Tony Luck <tony.luck@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+	Smita.KoralahalliChannabasappa@amd.com,
+	Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v5 05/20] x86/mce: Cleanup bank processing on init
+Message-ID: <20250826123503.GEaK2p9-e87SaTMKVv@fat_crate.local>
+References: <20250825-wip-mca-updates-v5-0-865768a2eef8@amd.com>
+ <20250825-wip-mca-updates-v5-5-865768a2eef8@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAAhV-H5wW_04NHQ7z+SCPb6-T5Hc__n+x=ykg-u9vn4b4GXuww@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJBxTMGQqa1oDwFqAA--.13153S3
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7tw45CF4xurWUKFWxKr1Dtwc_yoW8WF17p3
-	W5KFW0krWkZr4Utas7A3ya9FyYqa95K342ga48JryrAanrZan8trs8A3yUKFyvqr109a4S
-	yayfK3sIkayqywcCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUPYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
-	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1q6rW5
-	McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7
-	I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCF
-	x2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUXVWUAwC20s026c02F40E14v26r
-	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij
-	64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr
-	0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF
-	0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07j22NtUUUUU=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250825-wip-mca-updates-v5-5-865768a2eef8@amd.com>
 
-On 2025/8/26 下午4:32, Huacai Chen wrote:
-> On Tue, Aug 26, 2025 at 2:46 PM Tiezhu Yang <yangtiezhu@loongson.cn> wrote:
->>
->> When compiling with LLVM and CONFIG_LTO_CLANG is set, there exists
->> the following objtool warning:
->>
->>    vmlinux.o: warning: objtool: __efistub_efi_boot_kernel()
->>    falls through to next function __efistub_exit_boot_func()
-
-...
-
->> -typedef void __noreturn (*kernel_entry_t)(bool efi, unsigned long cmdline,
->> +typedef void (*kernel_entry_t)(bool efi, unsigned long cmdline,
->>                                            unsigned long systab);
->  From my point of view this is incorrect, this function is indeed a
-> noreturn function, and this modification makes LoongArch different to
-> other architectures.
+On Mon, Aug 25, 2025 at 05:33:02PM +0000, Yazen Ghannam wrote:
+> From: Borislav Petkov <bp@suse.de>
 > 
-> Maybe it is better to let objtool ignore the whole
-> drivers/firmware/efi/libstub directory. Because efistub is discarded
-> at runtime so it is useless for stack unwinder.
+> Unify the bank preparation into __mcheck_cpu_init_clear_banks(), rename
+> that function to what it does now - prepares banks. Do this so that
+> generic and vendor banks init goes first so that settings done during
+> that init can take effect before the first bank polling takes place.
+> 
+> Move __mcheck_cpu_check_banks() into __mcheck_cpu_init_prepare_banks()
+> as it already loops over the banks.
+> 
+> The MCP_DONTLOG flag is no longer needed, since the MCA polling function
+> is now called only if boot-time logging should be done.
+> 
+> Signed-off-by: Borislav Petkov <bp@suse.de>
 
-I tested the following change but there is no effect, the objtool
-warning still exists, this is because OBJECT_FILES_NON_STANDARD
-does not work for link time validation of vmlinux.o according to
-tools/objtool/Documentation/objtool.txt.
+Yeah, when you send someone else's patch, you need to add your SOB underneath.
+I'll add it now.
 
-diff --git a/drivers/firmware/efi/Makefile b/drivers/firmware/efi/Makefile
-index 8efbcf699e4f..f1fff48eea76 100644
---- a/drivers/firmware/efi/Makefile
-+++ b/drivers/firmware/efi/Makefile
-@@ -10,6 +10,8 @@
-  #
-  KASAN_SANITIZE_runtime-wrappers.o      := n
+> Reviewed-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> Reviewed-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+> Tested-by: Tony Luck <tony.luck@intel.com>
+> Reviewed-by: Tony Luck <tony.luck@intel.com>
 
-+OBJECT_FILES_NON_STANDARD              := y
-+
-  obj-$(CONFIG_ACPI_BGRT)                += efi-bgrt.o
-  obj-$(CONFIG_EFI)                      += efi.o vars.o reboot.o 
-memattr.o tpm.o
-  obj-$(CONFIG_EFI)                      += memmap.o
+-- 
+Regards/Gruss,
+    Boris.
 
-Thanks,
-Tiezhu
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
