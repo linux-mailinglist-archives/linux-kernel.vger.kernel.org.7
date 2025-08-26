@@ -1,95 +1,133 @@
-Return-Path: <linux-kernel+bounces-787395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0997B375B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 01:51:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBF2EB375B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 01:51:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6D8A1B66B6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 23:51:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 811205E7D18
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 23:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED05D3093C1;
-	Tue, 26 Aug 2025 23:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B41BF308F39;
+	Tue, 26 Aug 2025 23:51:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vk5n5MEX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bG4+dyz8"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4554523D2BF;
-	Tue, 26 Aug 2025 23:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3F928FD;
+	Tue, 26 Aug 2025 23:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756252257; cv=none; b=SB2s/EGimE9ZG9IjG1ut5Y4E/bJZ1vhNla6p16nkPWoEVg4YFQ2o0yeYqyEWStKvmczgb7XYlhEjUP47nNpFGq493BYvr4/VvwJdbRsowY465eurx6Og3MbwRD9tT1idx3NTPzAZbENL9De+6VF/YMyI32tHC6flrgybsZ6Fhds=
+	t=1756252306; cv=none; b=sTEXGxbWE1YhbQi5EdYRMNZCbWL84TzkRGD2KIsVrBrK5eRNwhRac2f4FUbn+61pIyLjgMAJRvFsbSHnUH/yKkM+YKyF3Gify4Rbvui32dsLdmQNy74St6osmyle7JGZerliE2sHrHoz9k8UlveXO8YOBLexvc24juZYZ4cw1O0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756252257; c=relaxed/simple;
-	bh=lmPIQHj97yNIhaJJlqQ3GFTleKcI3fD/V55DcCosUko=;
+	s=arc-20240116; t=1756252306; c=relaxed/simple;
+	bh=SpXyvaX1NMJmqbPDl1jzs13gIOFuk+UAO1oy0+GjGMo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CifG1asv83CmFueuT8J3MtOixw7/6DGC39u0pUV5THgMBJyZBQppdfXGT5wMTTursFKyAw+SEG6OXHDImmB2nDEnA6/J3QGX2pyns379YleGw9VMm4N2xYij1c3/ls1s5H+uOlv87gUm2N752bNcB8rG0P7UFx9IPbx2iLUiTXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vk5n5MEX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A2D5C4CEF1;
-	Tue, 26 Aug 2025 23:50:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756252256;
-	bh=lmPIQHj97yNIhaJJlqQ3GFTleKcI3fD/V55DcCosUko=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Vk5n5MEXq8hdXCt0OCvzmjK2+0f8EpjvbOxmlYU9r+Tczu7L8ig0isJ0PD0Q8jSw5
-	 I9OsVM/gAVfmv1zvouq1KDeYY+bbKr3cuv84xPQZIRmOKo0+932cmLXyXDgxi3XIRG
-	 DL+2XLb7L8U1xNsD123FZs2loXlUZygdko4qPFErM7k5aJyxi7520QLmNdnCEPsXjK
-	 8PMd1RsXY6MeWqjTCM1GM+q5Z36WiJOL0ZYPcQ6ip+EbbEGXHyUGl2CXbGYuhPIj2l
-	 JSr+0Dd6NfOEP0oJ2GXdu9EmDdJiHpdmkgudbCMGnmKcCCqs4Gw7pqfyW3Dxv7keQ6
-	 6+5vutDGnb4xQ==
-Date: Tue, 26 Aug 2025 18:50:54 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: linux-media@vger.kernel.org,
-	Dikshita Agarwal <quic_dikshita@quicinc.com>,
-	devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Vikash Garodia <quic_vgarodia@quicinc.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Subject: Re: [PATCH] media: dt-bindings: qcom,sm8550-iris: Do not reference
- legacy venus properties
-Message-ID: <175625225420.764544.3673891026777851561.robh@kernel.org>
-References: <20250823155349.22344-2-krzysztof.kozlowski@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nh8++1KLmiO7CY84wPH0f5t3xvJu2c1vJzX390N1U/rx1mk/k0J/CqEQcRgofUpkhtR13xVXSJTG90YlNxB3ZUOdBBGb0MkHMMldL8gENDB9SzY+1O6FoHNIE/cwhPPItDhhvPf1ICW94VX29hIv9k/UjQogMzScn9f1XJr0pLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bG4+dyz8; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2445806df50so48750635ad.1;
+        Tue, 26 Aug 2025 16:51:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756252304; x=1756857104; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ePblVNg9HZRAOQWqKcYLTh/hWYQSO5Q87vhxYG33kNc=;
+        b=bG4+dyz8SHUuPLRofdqK9PCVW+LoX2z7lPp7S5vJV/yVunhxfDThASkAcAoAuN4wZ+
+         vysthJfSr592EtVsFkFMuXVUhPZ1copVPqXJ7mr96BZLyddv+siXDfxhBxzQept5asof
+         w2BVup91xdQL86R5hGADDp5BnMHQk58V41LsTXHBQ1WW0xcd6UAg348zC4gJSaSLz9qs
+         o+M1Iy1l7uYPAAbveT/a8yjJMfoo5i9WLrdN8gBFcxCpW7mARMjJnM+iT1sda/wPBL0V
+         13iAkYqzIoOQRPBq3Y50xKbNsYNGHm9i7uLX8VZC4U+UZjgiSEW+c1jnkXvbcsqpCrMN
+         l9/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756252304; x=1756857104;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ePblVNg9HZRAOQWqKcYLTh/hWYQSO5Q87vhxYG33kNc=;
+        b=EQWDFwZNxZ4+HdLoIOu9ateNNSps8q8BkDP0cSPqwuQMjhykmDTdyP1pHTL4tiANMo
+         qcfvD/lun6XforirrtZds/y17P5/AHYXfB2nLJwrJUtrqyhpX3cWYroCqieviEF8SYGh
+         ifO7oNNQ6kA4HEgeuy4/YfamTvrdCPQULUE6oRniiFLgdw/pTJrc107v+TKa625F93Tv
+         2I4OwuYNe5Hj6JJ7s8rWrMMESMmEIvvOCGZA383XUmE6q59Y1hwQ02ZM+T2oMHpbpjQC
+         C9iUWt2GwobbTVfe4qDKkxrftiLhEDJd7k6eyS63UixqZn8Pgg73K22erCYF3VXZAsP6
+         STHg==
+X-Forwarded-Encrypted: i=1; AJvYcCUctoRaCnr0QOukEPzxhx94Xf8cTpU1/1paljQGplL0+4C9r183uBfMOZPcXrkC9JVBX8/B7AhxQM0+hxA=@vger.kernel.org, AJvYcCUpEY/QwziEWf6Rr5i1OGO/pkKS7SdpefjIugvqzDc5g0qN2fLi0ZOuxjyMpe+RsaCy/WeqPV4m6ZVn4T65VxEi@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMjD4K3DAa5Mrp9DOkxPU4vVVGvKeakhs5keX4rV8s+4LtWB1o
+	U9H14uJa/jVGEsITlPf70O/W1h5Kg7f9Br0J8e5Nl38RCJm4gjcYEKnN
+X-Gm-Gg: ASbGncvn7zhsnp09IIJVRd2A4eaRW2Imdpu1P3akqAv7umAatHM45NqYbY1SOixfOvX
+	uRzrUOrugrg+HPRJ0xKfOtwGXCYdBJ5EbEdXMb/3HWNaXilxtr5xZP6Irp6Nf34ECC+NJ+ZrqXX
+	uB+gLvTsKc2n9SUt8LHkpWlWR9DG5fv1iSAc6dh5EDRaL4t+Jgp+WVh5m4rfZxqfbDPgDn4womr
+	1oTlwp9jIcBStLAMtoRzecj4eLHNyToTT3iiMQAl1sx+5AQj9+ujKhHnP8ULRXxatc35+/YP1dW
+	mWOvBUGnt0NFkh9F9afdjAyXngm2IZBhLQqrMlWa+JqaeQVrePf24MgbHYmInEUqyge6MW4Bxtb
+	GET7VqchvEj8W9qvl/EMigg==
+X-Google-Smtp-Source: AGHT+IFb8KVQRSdRU+uLjRMz6f0hTjcJUJXW9JG6G/8TmE/+OZYW9hjVMMGvhDWh2D9wG3itreKMjw==
+X-Received: by 2002:a17:903:11c5:b0:240:3b9e:dd65 with SMTP id d9443c01a7336-2462ef44573mr206281725ad.38.1756252304007;
+        Tue, 26 Aug 2025 16:51:44 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-246687a5fc5sm106139645ad.52.2025.08.26.16.51.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Aug 2025 16:51:43 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 1228941E4F06; Wed, 27 Aug 2025 06:51:40 +0700 (WIB)
+Date: Wed, 27 Aug 2025 06:51:40 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: bhanuseshukumar <bhanuseshukumar@gmail.com>, tglx@linutronix.de,
+	mingo@redhat.com, shuah@kernel.org
+Cc: peterz@infradead.org, dvhart@infradead.org, dave@stgolabs.net,
+	andrealmeid@igalia.com, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	bigeasy@linutronix.de, colin.i.king@gmail.com
+Subject: Re: [PATCH] selftests: futex; Fix spelling in test messages
+Message-ID: <aK5IjAkVEyDdGpPu@archie.me>
+References: <20250821154103.115110-1-bhanuseshukumar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="KcJKMH3iRoHD8Lg5"
 Content-Disposition: inline
-In-Reply-To: <20250823155349.22344-2-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250821154103.115110-1-bhanuseshukumar@gmail.com>
 
 
-On Sat, 23 Aug 2025 17:53:50 +0200, Krzysztof Kozlowski wrote:
-> The Qualcomm SoC Iris video codec is an evolution of previous Venus and
-> it comes with its own Iris Linux drivers.  These new drivers were
-> accepted under condition they actually improve state of afairs, instead
-> of duplicating old, legacy solutions.
-> 
-> Unfortunately binding still references common parts of Venus without
-> actual need and benefit.  For example Iris does not use fake
-> "video-firmware" device node (fake because there is no actual device
-> underlying it and it was added only to work around some Linux issues
-> with IOMMU mappings).
-> 
-> Stop referencing venus-common schema in the new Qualcomm Iris bindings
-> and move all necessary properties, except unused "video-firmware" (no
-> driver usage, no DTS).
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../devicetree/bindings/media/qcom,sm8550-iris.yaml | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
-> 
+--KcJKMH3iRoHD8Lg5
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+On Thu, Aug 21, 2025 at 09:11:03PM +0530, bhanuseshukumar wrote:
+> -	printf("  -g    Test global hash instead intead local immutable \n");
+> +	printf("  -g    Test global hash instead local immutable\n");
+                                         instead of local immutable
+> -	ksft_test_result(ret =3D=3D 2, "No more auto-resize after manaul settin=
+g, got %d\n",
+> +	ksft_test_result(ret =3D=3D 2, "No more auto-resize after manual settin=
+g, got %d\n",
 
+This one looks OK.
+
+Thanks.=20
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--KcJKMH3iRoHD8Lg5
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaK5IhwAKCRD2uYlJVVFO
+o2/dAP9CPlLCjbClhfPsWjJPq0xEgCHDChtGzkwpBrIRrCf79AEAuCCLeTfsIRN8
+m6FPTCQPwmt2ChZvakiMMycRqp6Mtwg=
+=KwY0
+-----END PGP SIGNATURE-----
+
+--KcJKMH3iRoHD8Lg5--
 
