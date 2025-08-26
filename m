@@ -1,184 +1,237 @@
-Return-Path: <linux-kernel+bounces-787307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BEFBB37457
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 23:24:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80C47B3745C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 23:24:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45CD21BA17CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 21:24:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 701E21BA1653
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 21:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D97F2F9C2C;
-	Tue, 26 Aug 2025 21:24:06 +0000 (UTC)
-Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D183164B0;
+	Tue, 26 Aug 2025 21:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EPLGG/7V"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5E228151E;
-	Tue, 26 Aug 2025 21:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC9D28151E;
+	Tue, 26 Aug 2025 21:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756243446; cv=none; b=kIkniDH1jkuoAy8Jg2297J/qel3lgqMW2H1lvAXtnHDTDsw1EPudpU8qBhMy21xEcLrVvya0mgMrpGCTGVuiaP3hzYy4LFHPn5GPjh54vx6b0h0U1X8Hh3zfTytbQNs3KYs7WMmRQNOwy5Ty9KBNamvRi+dqAOMTCeBNI0uXzvw=
+	t=1756243450; cv=none; b=C3r6buO2OnCWnlWwLFbYf2IUejAnRHWtYNNKb9nJMkxsEbgmKE/FEsqOXGiOMn/4IkqTOoqCsMxpqryGCVsio+kB+85vP++UuU0c/VSlOkFn0R6oFsnYVZIANBp6QNsLnoUOE2elqjGdXbrH2SqeQm+u5GGqmbQnaZWTvZitfKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756243446; c=relaxed/simple;
-	bh=tcKlRdf0OBEu2+100IjXjkXwwlpLL819tePWH4aHQLI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Yq0Ts1tZMdKiERLTaoyOyTen7/cTraVy0GZPvkBMwEvewyoNvjBoQvZ8bjw9Qgf4RAECg7aLoNrueytyJkQ1lVrQ14rf/8jqSt+pcvuCwTxLBD6QImFZvXYS+2xjsjc68uUeWsUzxLarKsqbrhx9jIjzKA6H+QgBL8uPNEsYbvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
-Received: from arnaudlcm-X570-UD.. (unknown [IPv6:2a02:8084:255b:aa00:df1d:d28e:21a2:5325])
-	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id 1943940091;
-	Tue, 26 Aug 2025 21:24:01 +0000 (UTC)
-Authentication-Results: Plesk;
-	spf=pass (sender IP is 2a02:8084:255b:aa00:df1d:d28e:21a2:5325) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=arnaudlcm-X570-UD..
-Received-SPF: pass (Plesk: connection is authenticated)
-From: Arnaud Lecomte <contact@arnaud-lcm.com>
-To: song@kernel.org,
-	yonghong.song@linux.dev,
-	martin.lau@linux.dev
-Cc: andrii@kernel.org,
-	ast@kernel.org,
-	bpf@vger.kernel.org,
-	daniel@iogearbox.net,
-	eddyz87@gmail.com,
-	haoluo@google.com,
-	john.fastabend@gmail.com,
-	jolsa@kernel.org,
-	kpsingh@kernel.org,
-	linux-kernel@vger.kernel.org,
-	sdf@fomichev.me,
-	syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com,
-	Arnaud Lecomte <contact@arnaud-lcm.com>
-Subject: [PATCH bpf-next v5 2/2] bpf: fix stackmap overflow check in
- __bpf_get_stackid()
-Date: Tue, 26 Aug 2025 22:23:52 +0100
-Message-ID: <20250826212352.143299-1-contact@arnaud-lcm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250826212229.143230-1-contact@arnaud-lcm.com>
-References: <20250826212229.143230-1-contact@arnaud-lcm.com>
+	s=arc-20240116; t=1756243450; c=relaxed/simple;
+	bh=l883/XMWp2sJPEUKA3Wy082jQu7V8ivTJMDHeeXauTU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dHbM8VkbkfBjPs1FN5cLJryPP/2JG+8VbetcHsPDaqHAZz9xzDXKcPiOlRsY5bvjZNiS/o88TivvH9OPoi2eOixtO6QkAEcMi64Bp9bRycBXR4mkzNVui16eRIf306ydDn8NAkQPbx/DB9tIp4y4Qf555ORVkhMgN2pGnTrHWc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EPLGG/7V; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756243449; x=1787779449;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=l883/XMWp2sJPEUKA3Wy082jQu7V8ivTJMDHeeXauTU=;
+  b=EPLGG/7V18wNdYewZSMWBjdnxb+DRe71eo3L4m3/+31Y1FFNomap68tU
+   NQMLT2tA9RiVCJ1+azuuKb4eJxkNFO5xu+oTrzujPYjMcMbs0QHg6q946
+   /uhfuafpy2f7QiqD6mbQ11zQvjm2IVRdM7XQiVT5Tzsbwv/9vedKjOuhU
+   QuPNPznunH0CGIs5kCQvi9btNeo/B8PEQKX6jG1BQT50Kqc75IjJm4cmo
+   soVIvbXiLcm0AFafXdxGpSilib/dSSTtT33FH3YvScUU5RMP2cNlCcFPV
+   ByB6H3mZhuQj4FsrU0/lAjAMlIrxiUcfPWMxzXDKouV+mixk6tqGDiWwU
+   w==;
+X-CSE-ConnectionGUID: 2o0t4PlyTgWVBuaH9n42qQ==
+X-CSE-MsgGUID: vUNrkn//SnGI9Y4jeIu7ww==
+X-IronPort-AV: E=McAfee;i="6800,10657,11534"; a="58644683"
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="58644683"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 14:24:08 -0700
+X-CSE-ConnectionGUID: FL09nxxnRhaPH9mjGQ3DxQ==
+X-CSE-MsgGUID: ojYl6mGmTkKBIEZtGn/+eg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="200632650"
+Received: from mgerlach-mobl1.amr.corp.intel.com (HELO localhost) ([10.124.223.116])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 14:24:07 -0700
+Date: Tue, 26 Aug 2025 14:24:05 -0700
+From: David Box <david.e.box@linux.intel.com>
+To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Nirmal Patel <nirmal.patel@linux.intel.com>, 
+	Jonathan Derrick <jonathan.derrick@linux.dev>, Jeff Johnson <jjohnson@kernel.org>, linux-pci@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org, linux-wireless@vger.kernel.org, 
+	ath12k@lists.infradead.org, ath11k@lists.infradead.org, ath10k@lists.infradead.org, 
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH v2 2/8] PCI/ASPM: Fix the behavior of
+ pci_enable_link_state*() APIs
+Message-ID: <qfw7nv53hmy6whxnf4zqfdtvjzkdxkvxn7eghuxzuuojmvxl34@sxw2jvxze4wm>
+References: <20250825-ath-aspm-fix-v2-0-61b2f2db7d89@oss.qualcomm.com>
+ <20250825-ath-aspm-fix-v2-2-61b2f2db7d89@oss.qualcomm.com>
+ <f644fc83-31cc-1f0e-58cf-7c007e6173e4@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: <175624344201.31674.16241940723371382857@Plesk>
-X-PPP-Vhost: arnaud-lcm.com
+In-Reply-To: <f644fc83-31cc-1f0e-58cf-7c007e6173e4@linux.intel.com>
 
-Syzkaller reported a KASAN slab-out-of-bounds write in __bpf_get_stackid()
-when copying stack trace data. The issue occurs when the perf trace
- contains more stack entries than the stack map bucket can hold,
- leading to an out-of-bounds write in the bucket's data array.
+On Tue, Aug 26, 2025 at 03:55:42PM +0300, Ilpo Järvinen wrote:
+> +David
+> 
+> On Mon, 25 Aug 2025, Manivannan Sadhasivam via B4 Relay wrote:
+> 
+> > From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> > 
+> > pci_enable_link_state() and pci_enable_link_state_locked() APIs are
+> > supposed to be symmectric with pci_disable_link_state() and
+> > pci_disable_link_state_locked() APIs.
+> > 
+> > But unfortunately, they are not symmetric. This behavior was mentioned in
+> > the kernel-doc of these APIs:
+> > 
+> > " Clear and set the default device link state..."
+> > 
+> > and
+> > 
+> > "Also note that this does not enable states disabled by
+> > pci_disable_link_state()"
+> > 
+> > These APIs won't enable all the states specified by the 'state' parameter,
+> > but only enable the ones not previously disabled by the
+> > pci_disable_link_state*() APIs. But this behavior doesn't align with the
+> > naming of these APIs, as they give the impression that these APIs will
+> > enable all the specified states.
+> > 
+> > To resolve this ambiguity, allow these APIs to enable the specified states,
+> > regardeless of whether they were previously disabled or not. This is
+> > accomplished by clearing the previously disabled states from the
+> > 'link::aspm_disable' parameter in __pci_enable_link_state() helper. Also,
+> > reword the kernel-doc to reflect this behavior.
+> > 
+> > The current callers of pci_enable_link_state_locked() APIs (vmd and
+> > pcie-qcom) did not disable the ASPM states before calling this API. So it
+> > is evident that they do not depend on the previous behavior of this API and
+> > intend to enable all the specified states.
+> 
+> While it might be "safe" in the sense that ->aspm_disable is not set by 
+> anything, I'm still not sure if overloading this function for two 
+> different use cases is a good idea.
+> 
+> I'd like to hear David's opinion on this as he grasps the ->aspm_default 
+> vs ->aspm_disable thing much better than I do.
 
-Changes in v2:
- - Fixed max_depth names across get stack id
+The concern I see is that this would override the init-time blacklist which is
+set in pcie_aspm_sanity_check() and only consulted during initialization.
+__pci_disable_link_state() doesn't do this. It ORs in bits to aspm_disable.  By
+contrast, this change would clear bits from aspm_disable in the enable path,
+which allows ASPM to be enabled on links that pcie_aspm_sanity_check()
+determined should be disabled.
 
-Changes in v4:
- - Removed unnecessary empty line in __bpf_get_stackid
+But I noticed the sysfs path, aspm_attr_store_common(), already permits this
+override. That may be unintentional though since the comment in
+pcie_aspm_sanity_check() implies the blacklist can only be overridden with
+pcie_aspm=force. At minimum, that needs to be clarified.
 
-Link to v4: https://lore.kernel.org/all/20250813205506.168069-1-contact@arnaud-lcm.com/
+David
 
-Reported-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=c9b724fbb41cf2538b7b
-Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
-Acked-by: Yonghong Song <yonghong.song@linux.dev>
----
- kernel/bpf/stackmap.c | 23 +++++++++++++----------
- 1 file changed, 13 insertions(+), 10 deletions(-)
-
-diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-index 796cc105eacb..ef8269ab8d6f 100644
---- a/kernel/bpf/stackmap.c
-+++ b/kernel/bpf/stackmap.c
-@@ -247,7 +247,7 @@ get_callchain_entry_for_task(struct task_struct *task, u32 max_depth)
- }
- 
- static long __bpf_get_stackid(struct bpf_map *map,
--			      struct perf_callchain_entry *trace, u64 flags)
-+			      struct perf_callchain_entry *trace, u64 flags, u32 max_depth)
- {
- 	struct bpf_stack_map *smap = container_of(map, struct bpf_stack_map, map);
- 	struct stack_map_bucket *bucket, *new_bucket, *old_bucket;
-@@ -263,6 +263,8 @@ static long __bpf_get_stackid(struct bpf_map *map,
- 
- 	trace_nr = trace->nr - skip;
- 	trace_len = trace_nr * sizeof(u64);
-+	trace_nr = min(trace_nr, max_depth - skip);
-+
- 	ips = trace->ip + skip;
- 	hash = jhash2((u32 *)ips, trace_len / sizeof(u32), 0);
- 	id = hash & (smap->n_buckets - 1);
-@@ -322,19 +324,17 @@ static long __bpf_get_stackid(struct bpf_map *map,
- BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
- 	   u64, flags)
- {
--	u32 max_depth = map->value_size / stack_map_data_size(map);
--	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
-+	u32 elem_size = stack_map_data_size(map);
- 	bool user = flags & BPF_F_USER_STACK;
- 	struct perf_callchain_entry *trace;
- 	bool kernel = !user;
-+	u32 max_depth;
- 
- 	if (unlikely(flags & ~(BPF_F_SKIP_FIELD_MASK | BPF_F_USER_STACK |
- 			       BPF_F_FAST_STACK_CMP | BPF_F_REUSE_STACKID)))
- 		return -EINVAL;
- 
--	max_depth += skip;
--	if (max_depth > sysctl_perf_event_max_stack)
--		max_depth = sysctl_perf_event_max_stack;
-+	max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
- 
- 	trace = get_perf_callchain(regs, 0, kernel, user, max_depth,
- 				   false, false);
-@@ -343,7 +343,7 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
- 		/* couldn't fetch the stack trace */
- 		return -EFAULT;
- 
--	return __bpf_get_stackid(map, trace, flags);
-+	return __bpf_get_stackid(map, trace, flags, max_depth);
- }
- 
- const struct bpf_func_proto bpf_get_stackid_proto = {
-@@ -375,6 +375,7 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
- 	bool kernel, user;
- 	__u64 nr_kernel;
- 	int ret;
-+	u32 elem_size, max_depth;
- 
- 	/* perf_sample_data doesn't have callchain, use bpf_get_stackid */
- 	if (!(event->attr.sample_type & PERF_SAMPLE_CALLCHAIN))
-@@ -393,12 +394,13 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
- 		return -EFAULT;
- 
- 	nr_kernel = count_kernel_ip(trace);
--
-+	elem_size = stack_map_data_size(map);
- 	if (kernel) {
- 		__u64 nr = trace->nr;
- 
- 		trace->nr = nr_kernel;
--		ret = __bpf_get_stackid(map, trace, flags);
-+		max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
-+		ret = __bpf_get_stackid(map, trace, flags, max_depth);
- 
- 		/* restore nr */
- 		trace->nr = nr;
-@@ -410,7 +412,8 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
- 			return -EFAULT;
- 
- 		flags = (flags & ~BPF_F_SKIP_FIELD_MASK) | skip;
--		ret = __bpf_get_stackid(map, trace, flags);
-+		max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
-+		ret = __bpf_get_stackid(map, trace, flags, max_depth);
- 	}
- 	return ret;
- }
--- 
-2.43.0
+> 
+> > And the other API, pci_enable_link_state() doesn't have a caller for now,
+> > but will be used by the 'atheros' WLAN drivers in the subsequent commits.
+> > 
+> > Suggested-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> 
+> This tag sound like I'm endorsing this approach which is not the case. I'd 
+> prefer separate functions for each use case, setting aspm_default and 
+> another for the enable state.
+> 
+> -- 
+>  i.
+> 
+> > Co-developed-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> > Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> > ---
+> >  drivers/pci/pcie/aspm.c | 33 ++++++++++++++++++---------------
+> >  1 file changed, 18 insertions(+), 15 deletions(-)
+> > 
+> > diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+> > index be9bd272057c3472f3e31dc9568340b19d52012a..fac46113a90c7fac6c97125e6a7e385045780005 100644
+> > --- a/drivers/pci/pcie/aspm.c
+> > +++ b/drivers/pci/pcie/aspm.c
+> > @@ -1459,6 +1459,7 @@ static int __pci_enable_link_state(struct pci_dev *pdev, int state, bool locked)
+> >  		down_read(&pci_bus_sem);
+> >  	mutex_lock(&aspm_lock);
+> >  	link->aspm_default = pci_calc_aspm_enable_mask(state);
+> > +	link->aspm_disable &= ~state;
+> >  	pcie_config_aspm_link(link, policy_to_aspm_state(link));
+> >  
+> >  	link->clkpm_default = (state & PCIE_LINK_STATE_CLKPM) ? 1 : 0;
+> > @@ -1471,17 +1472,18 @@ static int __pci_enable_link_state(struct pci_dev *pdev, int state, bool locked)
+> >  }
+> >  
+> >  /**
+> > - * pci_enable_link_state - Clear and set the default device link state so that
+> > - * the link may be allowed to enter the specified states. Note that if the
+> > - * BIOS didn't grant ASPM control to the OS, this does nothing because we can't
+> > - * touch the LNKCTL register. Also note that this does not enable states
+> > - * disabled by pci_disable_link_state(). Return 0 or a negative errno.
+> > + * pci_enable_link_state - Enable device's link state
+> > + * @pdev: PCI device
+> > + * @state: Mask of ASPM link states to enable
+> > + *
+> > + * Enable device's link state, so the link will enter the specified states.
+> > + * Note that if the BIOS didn't grant ASPM control to the OS, this does
+> > + * nothing because we can't touch the LNKCTL register.
+> >   *
+> >   * Note: Ensure devices are in D0 before enabling PCI-PM L1 PM Substates, per
+> >   * PCIe r6.0, sec 5.5.4.
+> >   *
+> > - * @pdev: PCI device
+> > - * @state: Mask of ASPM link states to enable
+> > + * Return: 0 on success, a negative errno otherwise.
+> >   */
+> >  int pci_enable_link_state(struct pci_dev *pdev, int state)
+> >  {
+> > @@ -1490,19 +1492,20 @@ int pci_enable_link_state(struct pci_dev *pdev, int state)
+> >  EXPORT_SYMBOL(pci_enable_link_state);
+> >  
+> >  /**
+> > - * pci_enable_link_state_locked - Clear and set the default device link state
+> > - * so that the link may be allowed to enter the specified states. Note that if
+> > - * the BIOS didn't grant ASPM control to the OS, this does nothing because we
+> > - * can't touch the LNKCTL register. Also note that this does not enable states
+> > - * disabled by pci_disable_link_state(). Return 0 or a negative errno.
+> > + * pci_enable_link_state_locked - Enable device's link state
+> > + * @pdev: PCI device
+> > + * @state: Mask of ASPM link states to enable
+> > + *
+> > + * Enable device's link state, so the link will enter the specified states.
+> > + * Note that if the BIOS didn't grant ASPM control to the OS, this does
+> > + * nothing because we can't touch the LNKCTL register.
+> >   *
+> >   * Note: Ensure devices are in D0 before enabling PCI-PM L1 PM Substates, per
+> >   * PCIe r6.0, sec 5.5.4.
+> >   *
+> > - * @pdev: PCI device
+> > - * @state: Mask of ASPM link states to enable
+> > - *
+> >   * Context: Caller holds pci_bus_sem read lock.
+> > + *
+> > + * Return: 0 on success, a negative errno otherwise.
+> >   */
+> >  int pci_enable_link_state_locked(struct pci_dev *pdev, int state)
+> >  {
+> > 
+> > 
 
 
