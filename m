@@ -1,128 +1,88 @@
-Return-Path: <linux-kernel+bounces-786068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C4C8B35496
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:27:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64B61B354A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:30:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E71D246070
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:27:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F38D3B01F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 428352F4A14;
-	Tue, 26 Aug 2025 06:27:47 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382DC2F546C;
+	Tue, 26 Aug 2025 06:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="P31hKE4o";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="43nXdEzQ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C5121A453;
-	Tue, 26 Aug 2025 06:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7278E29D05;
+	Tue, 26 Aug 2025 06:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756189666; cv=none; b=OUDh8o7VF5V3KuPC1dynhzy2J1X80Xs4Yi5R6sYR3rdsTcDnQnZTBC1uMj3yMLyFifxUkDDJm0D/FGrUQdQ3WifETPgFPDXTVmlvA3SmVZ4AfjvHeH5utERA/KRGgwKyPuomOnYw9WlCzPqoLI5kg160bqM4HlFNlSQuB/pfz7U=
+	t=1756189800; cv=none; b=G8o0vdGcdQv6xUCqKPyVYe5O5hoM+mXtDPMc0tAPRhaXYuM5HSiPsdmcuuD8OKRQHpPcLo93ORxhCV6wv0kV+A53fmdPmcS6veRiwftMLW295H9EoCyN+Kn8HM5yLGcnR3MOvK8h+Wh8oMS2rxGXkAPYOdJiuQnW39hfb1fUDnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756189666; c=relaxed/simple;
-	bh=r0h+91TIIPBHTec6V3ZjgapP7MwF3HiLZxw0A69u1oQ=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=bTZJVYxzvGiQ+JM3HIqIXGDySfmCm40t8LCsVCzd54s0p0h8/KMlKzZg0G5gXmb2cxAkfOQhWdOQ0G70MEsav6yFpxLKlaHl29f0HmmjK1sungxY8tqJpQ2LEZJkbG5iay3NkvyVdhBqnrxkqJdxvJjNg+rHZY7VwazDrMO565Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c9yQ55jk9zYQvf1;
-	Tue, 26 Aug 2025 14:27:41 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 557411A084D;
-	Tue, 26 Aug 2025 14:27:40 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgCn8Y3YU61o3MNUAQ--.23294S3;
-	Tue, 26 Aug 2025 14:27:38 +0800 (CST)
-Subject: Re: [PATCH v3 0/2] blk-mq: fix update nr_requests regressions
-To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, bvanassche@acm.org,
- ming.lei@redhat.com, nilay@linux.ibm.com, hare@suse.de
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250821060612.1729939-1-yukuai1@huaweicloud.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <95389918-b809-f81b-5fd0-2e350154ca01@huaweicloud.com>
-Date: Tue, 26 Aug 2025 14:27:35 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1756189800; c=relaxed/simple;
+	bh=qpmfk+xfq/qcYNhcqT9cFC1mP1WvTyD18P6Uq/e6gC0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FLY3ygKv9+W9ZzoB9HCI/oA7QuqyEf+RHLG8xoZE3PCfnKY+UrIF5gNs/n6r3/uXLo7/Oc+1/du+ynqD1G69/GCV/ine2ieVNgmA0gTSSOLFCUk4yMWczWxarYA+0I9pIcoFHcXwTmFFHgBScx9soovyV+exN2ywLfp1DVcBdgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=P31hKE4o; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=43nXdEzQ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 26 Aug 2025 08:29:52 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756189793;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wsqQrehpilHddnDvFR3sXC4btLIz8Vlzv0GVLkTTpNk=;
+	b=P31hKE4o3kX/G/zyz/dlj1MNG+6bFvJrakMcRfGHmbsOSNlD8HfOfkRG34jbCQ901GAg1F
+	o9LGzz4tUm8EfkrAhvVsAnK5GJXlg73fYwFKOWe8+mLP8mhTXImGZMRvcsivJZfn5i42m/
+	bteLNcq5jJAuY6jYbkmGz3RRtd/Wu/SMsm+EFZLHBWdIP77o7fQevPH7lSYjEtM9bNjcGr
+	WXNRVIv0W8fEXQqYAgUOjBPBfJXl+hzY+r9cKGiuNMdRiOLKdhj3N3iim/k3kytyJYTk2J
+	24cGSjB/gh93Jq1HNXRcrw6AlIVob9aGoWAWJMjb89kqGqj1qJyeQXUs6FE83Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756189793;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wsqQrehpilHddnDvFR3sXC4btLIz8Vlzv0GVLkTTpNk=;
+	b=43nXdEzQK0DNDN/8V97czMOpuC3TDyyjWE6PjXwXA7SoMZ7zLV/hvhgsylyBWbg7C4MmQv
+	2NWCiPQ53aQB1pDQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org,
+	virtualization@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] vhost_task: Allow caller to omit handle_sigkill()
+ callback
+Message-ID: <20250826062952.pMTsCcyH@linutronix.de>
+References: <20250826004012.3835150-1-seanjc@google.com>
+ <20250826004012.3835150-3-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250821060612.1729939-1-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCn8Y3YU61o3MNUAQ--.23294S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7KF4rtrWDJryrCrW8Cr45Wrg_yoW8Wry3pr
-	W3tFsIkr18Kr4xXF4fAw17Xr1rAw4kXw15uFsxtw1rJ3s09r1xGF10gF18WF9FqrWSgrsF
-	grn0q34DWw1UArDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUB214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjfU52NtDUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250826004012.3835150-3-seanjc@google.com>
 
-Hi, Jens
+On 2025-08-25 17:40:10 [-0700], Sean Christopherson wrote:
+> Now that vhost_task provides an API to safely wake a task without relying
+> on the caller to react to signalas, make handle_sigkill() optional and
+                                  ^
+Sounds Spanish :)
 
-ÔÚ 2025/08/21 14:06, Yu Kuai Ð´µÀ:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> Changes in v3:
->   - call depth_updated() directly in init_sched() method in patch 1;
->   - fix typos in patch 2;
->   - add review for patch 2;
-> Changes in v2:
->   - instead of refactor and cleanups and fix updating nr_requests
->   thoroughly, fix the regression in patch 2 the easy way, and dealy
->   refactor and cleanups to next merge window.
-> 
-> patch 1 fix regression that elevator async_depth is not updated correctly
-> if nr_requests changes, first from error path and then for mq-deadline,
-> and recently for bfq and kyber.
-> 
-> patch 2 fix regression that if nr_requests grow, kernel will panic due
-> to tags double free.
-> 
-> Yu Kuai (2):
->    blk-mq: fix elevator depth_updated method
->    blk-mq: fix blk_mq_tags double free while nr_requests grown
-> 
->   block/bfq-iosched.c   | 22 +++++-----------------
->   block/blk-mq-sched.h  | 11 +++++++++++
->   block/blk-mq-tag.c    |  1 +
->   block/blk-mq.c        | 23 ++++++++++++-----------
->   block/elevator.h      |  2 +-
->   block/kyber-iosched.c | 19 +++++++++----------
->   block/mq-deadline.c   | 16 +++-------------
->   7 files changed, 42 insertions(+), 52 deletions(-)
-> 
+=E2=80=A6
 
-Friendly ping, please consider this set in this merge window.
-
-BTW, I see that for-6.18/block branch was created, however, I have
-a pending set[1] for the next merge window that will have conflicts with
-this set, not sure if you want to rebase for-6.18/block with block-6.17
-or handle conflicts later for 6.18-rc1.
-
-[1] 
-https://lore.kernel.org/all/20250815080216.410665-1-yukuai1@huaweicloud.com/
-
-Thanks,
-Kuai
-
+Sebastian
 
