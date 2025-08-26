@@ -1,300 +1,124 @@
-Return-Path: <linux-kernel+bounces-786429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23796B359B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:59:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0588B359BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:00:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBAEF1892697
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:00:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F4218188FD29
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:01:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09165322A1E;
-	Tue, 26 Aug 2025 09:59:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 314FE334723;
+	Tue, 26 Aug 2025 10:00:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="H6pRfWAC";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="D6FZDjnb";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="H6pRfWAC";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="D6FZDjnb"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="n0kV5Wue"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB8031AF20
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE1833436C;
+	Tue, 26 Aug 2025 10:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756202386; cv=none; b=ADZgMIX9xz81dnAIoVblaslJ1UME0jVEVugUW/0uDC+O9lhmbycg3wkCPZumoq3RTCms46sRLjqWm7JNtJBMVy5jolidW4nmo1UzX4mZcpAI1ARcH7EeZ+jznRm1bjU03ozLGvly14oPn7ssrjDjDU62+FwKRuffuVwpHPmnx08=
+	t=1756202435; cv=none; b=NL9aD0FI+7HW0iFmeY32swf3gtrbgOFY5gCsm4X3GKas9volwF7pUVan0WISRZLyoijY4kfDTIiyBLnZRoJVaXUkLnvJJx0oiAcedDe+IVhPGs/SzF5bh4leZCo3JDVPSstqLAdDMpm+pySmHe/0HO3vj9fN9WVOev4+xHxAGkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756202386; c=relaxed/simple;
-	bh=geFfM2smiA1cL76SlJ1JGQrp0uSK+mK1slJUy124+dU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z9tSynWMmI25lmWZwM7H0E0B11e4gONUr2mfggGJ/1v1Ya1QQagV6m1/7dPsUR88CsVuHM8Yn+eFtn/UVbXotrN3H1+SVo6exAiLVPXmNp9ugjAclhr4y2dnYVWBQ53rzp8QyvnFLJx1acATwik8G/Tm+9mVgzONkAmc/NMId68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=H6pRfWAC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=D6FZDjnb; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=H6pRfWAC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=D6FZDjnb; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id ACBFD1F449;
-	Tue, 26 Aug 2025 09:59:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756202382; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nLnkaLaHWhifO4yBm8d+LtS+mu5qj07MhWGaW1OLi/4=;
-	b=H6pRfWAChXxpTYcPn/SkA1t9dNK50OYRLK0eswwiufg12Pk5Y+44Cp4zFSZTfOfGiJq1M5
-	ITbrrl2qsp2sdbPIv26Tyzp6UtPoEekEnd0CPK9S/O+cZre57mLQ7HGYd7WmjwQZgLPSZP
-	fhtX2basGMcOLC6PD43AXdA/5x23CqA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756202382;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nLnkaLaHWhifO4yBm8d+LtS+mu5qj07MhWGaW1OLi/4=;
-	b=D6FZDjnbzbl0izyiAagyDx796+uJEZTL0skqhvcmgwODddu7zx//681uViDp47oZOuUJaQ
-	tBxvU3iOfq3CzxDg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756202382; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nLnkaLaHWhifO4yBm8d+LtS+mu5qj07MhWGaW1OLi/4=;
-	b=H6pRfWAChXxpTYcPn/SkA1t9dNK50OYRLK0eswwiufg12Pk5Y+44Cp4zFSZTfOfGiJq1M5
-	ITbrrl2qsp2sdbPIv26Tyzp6UtPoEekEnd0CPK9S/O+cZre57mLQ7HGYd7WmjwQZgLPSZP
-	fhtX2basGMcOLC6PD43AXdA/5x23CqA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756202382;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nLnkaLaHWhifO4yBm8d+LtS+mu5qj07MhWGaW1OLi/4=;
-	b=D6FZDjnbzbl0izyiAagyDx796+uJEZTL0skqhvcmgwODddu7zx//681uViDp47oZOuUJaQ
-	tBxvU3iOfq3CzxDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9275213479;
-	Tue, 26 Aug 2025 09:59:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id LFlpI46FrWhKawAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 26 Aug 2025 09:59:42 +0000
-Message-ID: <95413138-1a9c-4b10-847d-cb37b68ba7c4@suse.cz>
-Date: Tue, 26 Aug 2025 11:59:42 +0200
+	s=arc-20240116; t=1756202435; c=relaxed/simple;
+	bh=IEQ9SKBYOe82CYg7Kw499Qi1OkwUtfFEjr9cZviAE3w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lP3dvfHjKcrsWYPD1ibutd432ueCt2DxDbcITX2Xw5yRNg7EpVKGJpD+8J8UO0B0dlFF0208BC5zsiXXKSIvBP9VlwuZkgYnhOq4yhymppsxPkVOzXqH5v/Ura+6V6TdAet/noCO40B5hRAuHcWVBShKaCoBZ0WCFH0Hi9glsHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=n0kV5Wue; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=RZH+TwBr6ueQMAaybKrZKRVrDtnXG+g8a3P12eZE8Z0=; b=n0kV5Wue5+lQyR4Jy72DEbGldq
+	VXg3ka9QF87+d0Pz3thNNd5X9pb/WZUrN+hOyyQoS8nDllPli2pceHjzG19BqQqvKyBGiuBlWIgNZ
+	ra25yhVychtVyjcS1314JePUcGb3SXpcI+lT7P7TkWO05fGvQ5vlHVeZqj0eR/uXGhvjLaAzL+XzX
+	Y+mIKuNjRUG2b+XfCK4y8u3N289YbCji4OMwNRNqLBkLjxVvnuoWbvf6hmqlQpHFzXOU3FADb5iGs
+	0Vj6QcqvEYS3loYSnyXMjgbbgr5PjQK6h52wvkADq+FCFvFs9a21yXUPQ1h84W9dA3K9/nG0wEvZI
+	jZ9Ku3OQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uqqT1-00000002Brt-33nE;
+	Tue, 26 Aug 2025 09:59:52 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 87BEE300220; Tue, 26 Aug 2025 11:59:50 +0200 (CEST)
+Date: Tue, 26 Aug 2025 11:59:50 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	linux-s390@vger.kernel.org,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	thomas.weissschuh@linutronix.de, Li Chen <chenl311@chinatelecom.cn>,
+	Bibo Mao <maobibo@loongson.cn>, Mete Durlu <meted@linux.ibm.com>,
+	Tobias Huschle <huschle@linux.ibm.com>,
+	Easwar Hariharan <easwar.hariharan@linux.microsoft.com>,
+	Guo Weikang <guoweikang.kernel@gmail.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Brian Gerst <brgerst@gmail.com>,
+	Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
+	Swapnil Sapkal <swapnil.sapkal@amd.com>,
+	"Yury Norov [NVIDIA]" <yury.norov@gmail.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Andrea Righi <arighi@nvidia.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+	Tim Chen <tim.c.chen@linux.intel.com>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Subject: Re: [PATCH v7 4/8] powerpc/smp: Introduce CONFIG_SCHED_MC to guard
+ MC scheduling bits
+Message-ID: <20250826095950.GI4068168@noisy.programming.kicks-ass.net>
+References: <20250826041319.1284-1-kprateek.nayak@amd.com>
+ <20250826041319.1284-5-kprateek.nayak@amd.com>
+ <609a980b-cbe3-442b-a492-91722870b156@csgroup.eu>
+ <20250826080706.GC3245006@noisy.programming.kicks-ass.net>
+ <20250826094358.GG3245006@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 06/14] tools: Add sheaves support to testing
- infrastructure
-Content-Language: en-US
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
- Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
- maple-tree@lists.infradead.org
-References: <20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz>
- <20250723-slub-percpu-caches-v5-6-b792cd830f5d@suse.cz>
- <CAJuCfpEsVE7Jae7PqWvgTtm38C5MPFx43+dDyYzfKLMQFuE_3A@mail.gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <CAJuCfpEsVE7Jae7PqWvgTtm38C5MPFx43+dDyYzfKLMQFuE_3A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	URIBL_BLOCKED(0.00)[suse.cz:mid,imap1.dmz-prg2.suse.org:helo];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[oracle.com,gentwo.org,google.com,linux.dev,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -4.30
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250826094358.GG3245006@noisy.programming.kicks-ass.net>
 
-On 8/22/25 18:56, Suren Baghdasaryan wrote:
->> @@ -270,6 +276,84 @@ __kmem_cache_create_args(const char *name, unsigned int size,
->>         return ret;
->>  }
->>
->> +struct slab_sheaf *
->> +kmem_cache_prefill_sheaf(struct kmem_cache *s, gfp_t gfp, unsigned int size)
->> +{
->> +       struct slab_sheaf *sheaf;
->> +       unsigned int capacity;
->> +
->> +       if (size > s->sheaf_capacity)
->> +               capacity = size;
->> +       else
->> +               capacity = s->sheaf_capacity;
+On Tue, Aug 26, 2025 at 11:43:58AM +0200, Peter Zijlstra wrote:
+
+> Now, when I look at unifying those config options (there's a metric ton
+> of crap that's duplicated in the arch/*/Kconfig), I end up with something
+> like the below.
 > 
-> nit:
-> capacity = max(size, s->sheaf_capacity);
-
-OK
-
->> +
->> +       sheaf = malloc(sizeof(*sheaf) + sizeof(void *) * s->sheaf_capacity * capacity);
+> And while that isn't exact, it is the closest I could make it without
+> making a giant mess of things.
 > 
-> Should this really be `sizeof(void *) * s->sheaf_capacity * capacity`
-> or just `sizeof(void *) * capacity` ?
+> WDYT?
 
-Right, so the whole thing should be:
-sizeof(*sheaf) + sizeof(void *) * capacity
+Anyway, enough tinkering with this for a little bit. Things are here:
 
-> 
->> +       if (!sheaf) {
->> +               return NULL;
->> +       }
->> +
->> +       memset(sheaf, 0, size);
+  https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git/log/?h=sched/core
 
-This is also wrong, so I'm changing it to calloc(1, ...) to get the zeroing
-there.
-
->> +       sheaf->cache = s;
->> +       sheaf->capacity = capacity;
->> +       sheaf->size = kmem_cache_alloc_bulk(s, gfp, size, sheaf->objects);
->> +       if (!sheaf->size) {
->> +               free(sheaf);
->> +               return NULL;
->> +       }
->> +
->> +       return sheaf;
->> +}
->> +
->> +int kmem_cache_refill_sheaf(struct kmem_cache *s, gfp_t gfp,
->> +                struct slab_sheaf **sheafp, unsigned int size)
->> +{
->> +       struct slab_sheaf *sheaf = *sheafp;
->> +       int refill;
->> +
->> +       if (sheaf->size >= size)
->> +               return 0;
->> +
->> +       if (size > sheaf->capacity) {
->> +               sheaf = kmem_cache_prefill_sheaf(s, gfp, size);
->> +               if (!sheaf)
->> +                       return -ENOMEM;
->> +
->> +               kmem_cache_return_sheaf(s, gfp, *sheafp);
->> +               *sheafp = sheaf;
->> +               return 0;
->> +       }
->> +
->> +       refill = kmem_cache_alloc_bulk(s, gfp, size - sheaf->size,
->> +                                      &sheaf->objects[sheaf->size]);
->> +       if (!refill)
->> +               return -ENOMEM;
->> +
->> +       sheaf->size += refill;
->> +       return 0;
->> +}
->> +
->> +void kmem_cache_return_sheaf(struct kmem_cache *s, gfp_t gfp,
->> +                struct slab_sheaf *sheaf)
->> +{
->> +       if (sheaf->size) {
->> +               //s->non_kernel += sheaf->size;
-> 
-> Above comment seems obsolete.
-
-Ack.
-
-> 
->> +               kmem_cache_free_bulk(s, sheaf->size, &sheaf->objects[0]);
->> +       }
->> +       free(sheaf);
->> +}
->> +
->> +void *
->> +kmem_cache_alloc_from_sheaf(struct kmem_cache *s, gfp_t gfp,
->> +               struct slab_sheaf *sheaf)
->> +{
->> +       if (sheaf->size == 0) {
->> +               printf("Nothing left in sheaf!\n");
->> +               return NULL;
->> +       }
->> +
-> 
-> Should we clear sheaf->objects[sheaf->size] for additional safety?
-
-OK.
->> +       return sheaf->objects[--sheaf->size];
->> +}
->> +
->>  /*
->>   * Test the test infrastructure for kem_cache_alloc/free and bulk counterparts.
->>   */
->>
->> --
->> 2.50.1
->>
-
+For to robots to provide feedback :-)
 
