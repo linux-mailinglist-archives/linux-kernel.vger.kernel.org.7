@@ -1,75 +1,100 @@
-Return-Path: <linux-kernel+bounces-786630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02B1FB35F52
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:41:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DFF8B35F57
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:42:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E19C7C3B22
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:40:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38E553BB1F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:42:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB5AA34166C;
-	Tue, 26 Aug 2025 12:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2FDB3375D9;
+	Tue, 26 Aug 2025 12:41:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="cbQYMRuL"
-Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="kW9djHWm"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18552C033C;
-	Tue, 26 Aug 2025 12:39:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94B987DA93
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 12:41:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756212000; cv=none; b=epWH9qr/kOzUn3V4qbeibcxGBMhKTXBrrJY/A839fV4V1LueHg0NP3/XZm1OJxTAgkks62KPvN1ySe7owfWVjtr4hg2/JtyUR1gyZ5cBOg3YtREcatSZvhiBDNTbwKBQQfySgTZM4fta/3xWZETa5/tgYZ8OLlkCqkaf7ELv6ms=
+	t=1756212119; cv=none; b=oe+/6a7LP70ECDXm9HNhd9nwyX7f/8vStZgRO2Q+B94vVH5DzzJBC/aW8WMgZbbwrws73EeGpI7yzvnFUi45r0peX3vcOU4yfwAKZXhkpWeRaZoIw8sv9k+kuZrqiOkuYOPcwreDYTMkabao+snwfEMF5JZNAcQIxvyKngx1bYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756212000; c=relaxed/simple;
-	bh=owvMDeO/rtDHrufbsOnTU4uMOllTaekHA/NSLoICYxE=;
+	s=arc-20240116; t=1756212119; c=relaxed/simple;
+	bh=NvOeEpcXCwTZuKBEM0raiV4vYNrCoK5/TZbsoR30aEE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZdUZC5ckaUWCOgJk0/G90LgqHhqG00V1B4yUWe0nT0IThAYxID6ExPCbmG2zIIFaiuJ4ygw7cr0V6eK/6F4OvZvrn+EVh8aGxJ8XaICtMgFUA63E9hPXLfmMHkGdLT6B+hsRMp9/wo0epRBRMwfXd5V1E/BrPz/nkBFN8L75/qY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=cbQYMRuL; arc=none smtp.client-ip=185.125.25.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4cB6gS6rgVz9FT;
-	Tue, 26 Aug 2025 14:39:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1756211988;
-	bh=r4zF4RcKacPFfRNA+PbpvCuNO0g7TdTS1E1lESdaE7Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cbQYMRuLroBswXOyC1WyYIqvpUevslZjEnsUVdI9SIVI06yhHgz+LzXTD0QhiO2dQ
-	 pfj1DCfCLWP6L7FZ7u1ZA1BNdjenl/N6ulUl9YxWBzupi5bIJR8dFM/BM4fQr69av0
-	 5/8JrhUh0G8E+omTpuztKSqfC4VizJMewcTb5+x0=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4cB6gR6sZbzMtQ;
-	Tue, 26 Aug 2025 14:39:47 +0200 (CEST)
-Date: Tue, 26 Aug 2025 14:39:47 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Jeff Xu <jeffxu@google.com>
-Cc: Andy Lutomirski <luto@amacapital.net>, Jann Horn <jannh@google.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>, 
-	Serge Hallyn <serge@hallyn.com>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
-	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
-	Luca Boccassi <bluca@debian.org>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Robert Waite <rowait@microsoft.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Scott Shell <scottsh@microsoft.com>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
-	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@chromium.org>
-Subject: Re: [RFC PATCH v1 1/2] fs: Add O_DENY_WRITE
-Message-ID: <20250826.eWi6chuayae4@digikod.net>
-References: <20250822170800.2116980-1-mic@digikod.net>
- <20250822170800.2116980-2-mic@digikod.net>
- <CAG48ez1XjUdcFztc_pF2qcoLi7xvfpJ224Ypc=FoGi-Px-qyZw@mail.gmail.com>
- <20250824.Ujoh8unahy5a@digikod.net>
- <CALCETrWwd90qQ3U2nZg9Fhye6CMQ6ZF20oQ4ME6BoyrFd0t88Q@mail.gmail.com>
- <20250825.mahNeel0dohz@digikod.net>
- <CALmYWFv90uzq0J76+xtUFjZxDzR2rYvrFbrr5Jva5zdy_dvoHA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uazw24ZrPddUmZauNLqKHvsS03RWIamWtRR2jkf/RMH+gLYU+dP4SonjUvpQqc8GZ2oqZUpnWkhg+rAt2Pgp6XghMQpjYywLl9KfSp/QRFazz1uj9wCF866Bnu58/LK9cWg6NLFJZYE3H8+EygdSM29ykjCnrfu/bWpn4ZGPIBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=kW9djHWm; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b475dfb4f42so3768081a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 05:41:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1756212117; x=1756816917; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=T84fHSOjtH7H+COR+2RAmmEuuAs5zWdfFcbzGcITMW0=;
+        b=kW9djHWm7kkBKYXkJoN+1JfUYzC0NfxdOu8zEi50Ts0phcxwmumXkG0eivRVpPnbPL
+         PXBWOpHwdh4IfHxnONw3pORGmMq3pT5bVKXWia4f7VsGFuvIj90FqtCRWlE6tkrjpPVY
+         +109ms4E/NF6WreyIWyvdoB7II3rK31LX6ZJ6ewt135jRP/oOOZ1NwE82pAzmqJSLFZh
+         qiJnFp1fzGyDNofMFWqNJfvArh++4//F+gUET+0RqTiZvW8lBAY9znnJdXbVt7uNGH6c
+         5khhRIzSKe00yxRjqaij2ZBDlZq85BvUtVgO1AS5q2klDEkpVtY+FZqZdodzCoA1slt7
+         cLFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756212117; x=1756816917;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=T84fHSOjtH7H+COR+2RAmmEuuAs5zWdfFcbzGcITMW0=;
+        b=FViiuoX6waJTo832yXknmiYy2WDMwVlPg9mFSL105C5Xov8SfjeHHZYS2wm6krjWIZ
+         /hJKSGTcBPoScOTwD03eQI+MiZ9e5JJ31xSsZvdqYYp3bszpl559B0l1B3UjrwMC1ceO
+         gEyDniiU15KjYy3LXRvHmvaFlJGUva1TtjYXu+ORlP1PCk8Vj+LiP2Tn3wLV+HUW52QC
+         d2a6FwHw261ZS9Gvplcyr045AqI2dyg4SkRG/7V6FWXdtqcL2736jD4NfkMtY+98Dt0A
+         5jc+tpSlzTFqD99ivWQ7LbYKmr2sy8bcAB7VBoFrIq/sPD2Qn6R0RmQhhHKd8OZTmU7F
+         iuCA==
+X-Forwarded-Encrypted: i=1; AJvYcCUm1N2C4S2D/2MOd9ORojBjaPjngIPZV3pU5X5A7H8/eB9pEQFt6U9fFyPxZS3NF52wRMSE+N0BOYaqXNc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEGj/ZFQyxvrwsGwF+lrITcHbKgwO0Q77Y0ZDWVG6NUgX0eaZ7
+	HnF7u4Q9tO1AVPSoAyU6WrP0JoxKJSZ+0jHwOkAeMqLOD8Yw3knnDab+Fjkgwu+0hhM=
+X-Gm-Gg: ASbGncu3iw2dRakhYpeFrv7tzsxA7onxCM2HGVSPfMlMXJf8CGEsnT4J4B8ccYtceIx
+	BzD/t0Em8ApJor/L3BSbdfcXkhmM2RIdf37B+dzLvPQZHLMd1POQOyBDbE4e9e/stC9M32lf/VU
+	6qpEciZpgNqo2EJ7z0OSQpbYrrBdzC9cWAKTHh5WKDv3Xgwq7ZtoK60tlVg6X+j6LkqM8w7tsJJ
+	6xXaBJMNRiM/ue/7Y6MhYPU8D4enY2NjT+9NyHCD5omUOKRqJldwdnj7VIva6gwgMgt8QIWpEXA
+	eMQqi85jGfrCLikvEtbWswYZ/g6JjaB6cuXRC00E/M9Gm4bsrr5b8XuvtreBI+WUntylRxFv
+X-Google-Smtp-Source: AGHT+IEf2ObCWqklpLUBYBGCp1bYhdjq0lZf9FXkeM3wbZQ3D6NSnsFJXJkCjceBlS7IcS93bfZjTg==
+X-Received: by 2002:a17:902:d54e:b0:246:a8d7:5bc1 with SMTP id d9443c01a7336-246a8d75c90mr130116235ad.39.1756212116823;
+        Tue, 26 Aug 2025 05:41:56 -0700 (PDT)
+Received: from ziepe.ca ([130.41.10.202])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-246687b4577sm95940715ad.61.2025.08.26.05.41.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Aug 2025 05:41:56 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1uqszr-00000008tSp-1M5u;
+	Tue, 26 Aug 2025 09:41:55 -0300
+Date: Tue, 26 Aug 2025 09:41:55 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+Cc: Nicolas Dufresne <nicolas.dufresne@collabora.com>, joro@8bytes.org,
+	will@kernel.org, robin.murphy@arm.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de,
+	p.zabel@pengutronix.de, mchehab@kernel.org, iommu@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, kernel@collabora.com,
+	linux-media@vger.kernel.org
+Subject: Re: [PATCH v7 4/6] media: verisilicon: AV1: Restore IOMMU context
+ before decoding a frame
+Message-ID: <20250826124155.GD1899851@ziepe.ca>
+References: <20250825153450.150071-1-benjamin.gaignard@collabora.com>
+ <20250825153450.150071-5-benjamin.gaignard@collabora.com>
+ <20250825170531.GA1899851@ziepe.ca>
+ <01c327e8353bb5b986ef6fb1e7311437659aea4a.camel@collabora.com>
+ <20250825183122.GB1899851@ziepe.ca>
+ <441df5ff-8ed4-45ed-8a52-b542c6e7d38c@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,134 +104,58 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALmYWFv90uzq0J76+xtUFjZxDzR2rYvrFbrr5Jva5zdy_dvoHA@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <441df5ff-8ed4-45ed-8a52-b542c6e7d38c@collabora.com>
 
-On Mon, Aug 25, 2025 at 10:57:57AM -0700, Jeff Xu wrote:
-> Hi Mickaël
+On Tue, Aug 26, 2025 at 11:52:37AM +0200, Benjamin Gaignard wrote:
 > 
-> On Mon, Aug 25, 2025 at 2:31 AM Mickaël Salaün <mic@digikod.net> wrote:
-> >
-> > On Sun, Aug 24, 2025 at 11:04:03AM -0700, Andy Lutomirski wrote:
-> > > On Sun, Aug 24, 2025 at 4:03 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > > >
-> > > > On Fri, Aug 22, 2025 at 09:45:32PM +0200, Jann Horn wrote:
-> > > > > On Fri, Aug 22, 2025 at 7:08 PM Mickaël Salaün <mic@digikod.net> wrote:
-> > > > > > Add a new O_DENY_WRITE flag usable at open time and on opened file (e.g.
-> > > > > > passed file descriptors).  This changes the state of the opened file by
-> > > > > > making it read-only until it is closed.  The main use case is for script
-> > > > > > interpreters to get the guarantee that script' content cannot be altered
-> > > > > > while being read and interpreted.  This is useful for generic distros
-> > > > > > that may not have a write-xor-execute policy.  See commit a5874fde3c08
-> > > > > > ("exec: Add a new AT_EXECVE_CHECK flag to execveat(2)")
-> > > > > >
-> > > > > > Both execve(2) and the IOCTL to enable fsverity can already set this
-> > > > > > property on files with deny_write_access().  This new O_DENY_WRITE make
-> > > > >
-> > > > > The kernel actually tried to get rid of this behavior on execve() in
-> > > > > commit 2a010c41285345da60cece35575b4e0af7e7bf44.; but sadly that had
-> > > > > to be reverted in commit 3b832035387ff508fdcf0fba66701afc78f79e3d
-> > > > > because it broke userspace assumptions.
-> > > >
-> > > > Oh, good to know.
-> > > >
-> > > > >
-> > > > > > it widely available.  This is similar to what other OSs may provide
-> > > > > > e.g., opening a file with only FILE_SHARE_READ on Windows.
-> > > > >
-> > > > > We used to have the analogous mmap() flag MAP_DENYWRITE, and that was
-> > > > > removed for security reasons; as
-> > > > > https://man7.org/linux/man-pages/man2/mmap.2.html says:
-> > > > >
-> > > > > |        MAP_DENYWRITE
-> > > > > |               This flag is ignored.  (Long ago—Linux 2.0 and earlier—it
-> > > > > |               signaled that attempts to write to the underlying file
-> > > > > |               should fail with ETXTBSY.  But this was a source of denial-
-> > > > > |               of-service attacks.)"
-> > > > >
-> > > > > It seems to me that the same issue applies to your patch - it would
-> > > > > allow unprivileged processes to essentially lock files such that other
-> > > > > processes can't write to them anymore. This might allow unprivileged
-> > > > > users to prevent root from updating config files or stuff like that if
-> > > > > they're updated in-place.
-> > > >
-> > > > Yes, I agree, but since it is the case for executed files I though it
-> > > > was worth starting a discussion on this topic.  This new flag could be
-> > > > restricted to executable files, but we should avoid system-wide locks
-> > > > like this.  I'm not sure how Windows handle these issues though.
-> > > >
-> > > > Anyway, we should rely on the access control policy to control write and
-> > > > execute access in a consistent way (e.g. write-xor-execute).  Thanks for
-> > > > the references and the background!
-> > >
-> > > I'm confused.  I understand that there are many contexts in which one
-> > > would want to prevent execution of unapproved content, which might
-> > > include preventing a given process from modifying some code and then
-> > > executing it.
-> > >
-> > > I don't understand what these deny-write features have to do with it.
-> > > These features merely prevent someone from modifying code *that is
-> > > currently in use*, which is not at all the same thing as preventing
-> > > modifying code that might get executed -- one can often modify
-> > > contents *before* executing those contents.
-> >
-> > The order of checks would be:
-> > 1. open script with O_DENY_WRITE
-> > 2. check executability with AT_EXECVE_CHECK
-> > 3. read the content and interpret it
-> >
-> I'm not sure about the O_DENY_WRITE approach, but the problem is worth solving.
+> Le 25/08/2025 à 20:31, Jason Gunthorpe a écrit :
+> > On Mon, Aug 25, 2025 at 01:50:16PM -0400, Nicolas Dufresne wrote:
+> > 
+> > > Jason, the point is that the iommu and the VPU are not separate devices, which
+> > > comes with side effects. On RKVDec side, the iommu configuration get resets
+> > > whenever a decoding error leads to a VPU "self reset". I can't remember who from
+> > > the iommu subsystem suggested that, but the empty domain method was agreed to be
+> > IDK, that seems really goofy too me an defiantly needs to be
+> > extensively documented this is restoring the default with some lore
+> > link of the original suggestion.
+> > 
+> > > the least invasive way to workaround that issue. I believe Detlev tried multiple
+> > > time to add APIs for that before the discussion lead to this path.
+> > You mean this:
+> > 
+> > https://lore.kernel.org/linux-iommu/20250318152049.14781-1-detlev.casanova@collabora.com/
+> > 
+> > Which came back with the same remark I would give:
+> > 
+> >   Please have some kind of proper reset notifier mechanism - in fact
+> >   with runtime PM could you not already invoke a suspend/resume cycle
+> >   via the device links?
 > 
-> AT_EXECVE_CHECK is not just for scripting languages. It could also
-> work with bytecodes like Java, for example. If we let the Java runtime
-> call AT_EXECVE_CHECK before loading the bytecode, the LSM could
-> develop a policy based on that.
+> when doing parallel decode suspend/resume are not invoked.
 
-Sure, I'm using "script" to make it simple, but this applies to other
-use cases.
+It was a proposal for an error recovery path.
 
+> > Or another reasonable option:
+> > 
+> >    Or at worst just export a public interface for the other driver to
+> >    invoke rk_iommu_resume() directly.
+> > 
+> > Sigh.
 > 
-> > The deny-write feature was to guarantee that there is no race condition
-> > between step 2 and 3.  All these checks are supposed to be done by a
-> > trusted interpreter (which is allowed to be executed).  The
-> > AT_EXECVE_CHECK call enables the caller to know if the kernel (and
-> > associated security policies) allowed the *current* content of the file
-> > to be executed.  Whatever happen before or after that (wrt.
-> > O_DENY_WRITE) should be covered by the security policy.
-> >
-> Agree, the race problem needs to be solved in order for AT_EXECVE_CHECK.
-> 
-> Enforcing non-write for the path that stores scripts or bytecodes can
-> be challenging due to historical or backward compatibility reasons.
-> Since AT_EXECVE_CHECK provides a mechanism to check the file right
-> before it is used, we can assume it will detect any "problem" that
-> happened before that, (e.g. the file was overwritten). However, that
-> also imposes two additional requirements:
-> 1> the file doesn't change while AT_EXECVE_CHECK does the check.
+> An other solution which is working is to call iommu_flush_iotlb_all()
+> before decoding each frame.
 
-This is already the case, so any kind of LSM checks are good.
+That was already proposed and shot down, it makes no sense at all use
+to use flushing to reset the registers because the HW weirdly lost
+them, and flushing should never happen outside mapping contexts.
 
-> 2>The file content kept by the process remains unchanged after passing
-> the AT_EXECVE_CHECK.
+If the HW is really resetting the iommu registers after every frame
+that is really just painfully broken, and makes me wonder if it really
+should be an iommu subsystem driver at all if it is so tightly coupled
+to the computing HW. :\
 
-The goal of this patch was to avoid such race condition in the case
-where executable files can be updated.  But in most cases it should not
-be a security issue (because processes allowed to write to executable
-files should be trusted), but this could still lead to bugs (because of
-inconsistent file content, half-updated).
+Like we wouldn't try to put a GPU MMU into the iommu subsystem though
+they do fairly similar things.
 
-> 
-> I imagine, the complete solution for AT_EXECVE_CHECK would include
-> those two grantees.
-
-There is no issue directly with AT_EXECVE_CHECK, but according to the
-system configuration, interpreters could read a file that was updated
-after the AT_EXECVE_CHECK.  This should not be an issue for secure
-systems where executable files are only updated with trusted code,
-except if the update mechanism is not atomic.  The main use case for
-this patch series was for generic distros that may not have the
-write-xor-execute guarantees e.g., for developers.
-
-The only viable solution I see would be to have some kind of snapshot of
-files, requested by interpreters, but I'm not sure if it is worth it.
+Jason
 
