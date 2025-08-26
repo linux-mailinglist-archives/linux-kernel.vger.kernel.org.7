@@ -1,213 +1,175 @@
-Return-Path: <linux-kernel+bounces-786569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC2A8B35DF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:50:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD6ABB35DFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:50:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFD521BC17F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:43:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47CD51BA790C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:44:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8FD12BEC52;
-	Tue, 26 Aug 2025 11:43:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB48321438;
+	Tue, 26 Aug 2025 11:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PIijaHyQ"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YYCP3T+L"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C602BE7DD;
-	Tue, 26 Aug 2025 11:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C4122D792;
+	Tue, 26 Aug 2025 11:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756208585; cv=none; b=BXpqwx/DFEL4Jp/tvKCLhdFsapybKH03vgXIZ3eOGowv88AaYwoEuI86eDMvcAai3SR+hYNDsroycN9ENTzBGMuo0ujDvjs1qlAdGkipTj8x4NZwR46n2HRlpxv3noTJ30xmz4IWwlOYV6OF85yg8xznQ8LkgUlTjVa72nSlW9I=
+	t=1756208602; cv=none; b=L3v1HRMYq6GvMEXFiJNiUkshco6WsP7K/ZCBMqq1PPkQUuuFdzsUoOIqCk2Y9JVohUJkGWeQ8UaS4ZkAaSXPkFZdpmJm2sE4KR2GL5CXtWBM5b6T+AdutCVVvEZuPQBbPT6GIWTgA70tUmBOQqJlMpZxo9PDhkHaCpglQdsVIVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756208585; c=relaxed/simple;
-	bh=I6geVZMLLNErI2kLFIfyX//bdSFEL67i0C/QuGTWIsA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=m7jcZVGHecsMEXEc/bO4vU1mghehIgG+3oqKPRJZVB01kGNxznTrl3BOrN54Ujkl0YXzItEs9jqZko+cHc+nZGzbjJ7Zm002TFxxU7AMLd4MWsD3AGptDkvb/Yvp9LrTO/w7AUZKitlroRvEOfurqPx5Fh/8m0owHz4RtltCkcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PIijaHyQ; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b471756592cso3444418a12.3;
-        Tue, 26 Aug 2025 04:43:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756208583; x=1756813383; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5PcgNgrMsWVflwnjgRLXT4uRdSZdm1rxyhY2Rmz1oPc=;
-        b=PIijaHyQ2wKBwnrD8Ttyn3ZQqimnBCEzutNrG15IhHVyn1htYUxgWN/wkOFpjPYGtp
-         8ED4+G+XMFXwT0xhRw2djcIuL5qJ4+cNOLMGmCbi0qHt9cJAT1TjRDQQ/DlOU8nb1rL2
-         92qHUjaJnTEcP/Bm1n+ApVe+ouOPGoX2obShXAtyTLwx48+lJA+Xrpoex3izG8GRcOu+
-         ruxw8mEdyvFdo+1N6EBNGlh/nbJYX7XC4LppytKLXMi4QdENLTLM2k09+dXxrqutZoyp
-         wJvBKHcYGSoxOhPen301FaIaEpZfAeoOC+xd5GKU3D7YbZdNk8sY5Ym7pKHJtEcHla/h
-         bWcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756208583; x=1756813383;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5PcgNgrMsWVflwnjgRLXT4uRdSZdm1rxyhY2Rmz1oPc=;
-        b=CiwDFzaVT+cftzPyXjRVsjrTkVfgKmdV7gRy3VWNknJn40AjZVBrMBx1q8f8dT/M/u
-         xpqe7HmWTh1dlceJGTQNiIQeqlJrXZC/chrPo1d4t9+V//8j9qBiyDc1cqr3PJFPukAU
-         uS2shhWx9urGmp/zVk+gzlY6uqKnrwb6O8mVnt5XBwC83SBYfoVUpceZBbQ45A3SNQI0
-         8tWnz0EaSoSFUozO8+XQZUPhQC0s6vWeaDP9Ef7ih25FP2g7aFw8Wfr51WIb55zSKPEy
-         mtHb9DQJ54QISFQCAA8IHK+1XwR4TdI1dpmRjrWcZn/wB7VXlYdVVEO9FXzK5nC8/2s1
-         W2lQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUuzfVeeoqQEzE7dAg3L77fBPnDKf1U/vh6nJEvEUw1N8Mc2/mQwd0cWX758msgWEl0x7u6LHo7wY9xX+c=@vger.kernel.org, AJvYcCXGLD/7NQAUMXk++79Oh0qXeQe5XbmXDlE8c9Rt0PXph3pD+IZd95yLryiPEWU1ndJgHl0T2DiOUxIy@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPGyW87wjaRhSihjZHckWhJJ6DonfFYdc5SjeqdVsPN0XmbCZt
-	Z1ya1314o7ljJsZGQyFWkFx7dw0GFbxJPTJjSBIR82WDJRti6z5zO9v1
-X-Gm-Gg: ASbGnctW5jNk+NdDJPLfjS3wnAf/T7j6rfWo9GmZQARmN56BpAyf+9xM1GtTtiMHBL5
-	cQW9R9dqLw82vzCllLOrCA5fLxTqkZKJ09Ff9vmwoUZ0usyX1YxglJ4PIC6YD/Txuu2Jjy5Hj6f
-	0g0RRGSUl8Bh6m2Nq1PsP2bRVUU7CMtO4i0lFZ9nusfOinGM6ld9OSo0TnOOFT7VDz8MAIn4H97
-	eu2skc3FFSlCPL1YP88h2WwZt8BCZXFZSvLEcM8TijwLnXZoq33F+08taAjmndQSmsviUE7M9fu
-	2OLvOWyM/6XLUUH4B2vBG1nvXJHZYTqfzayhbsfyBDSIUPzMQ6tHgRjcMxa3BeVBXk+GL1e8+Wc
-	rZFTE5fwuuMiOGEtQlK6l
-X-Google-Smtp-Source: AGHT+IFAI2khfWzDmxFZB6CPMyetALuCiYuk57bfcB4CFzHZAsTItiOxMyzymn/DObmbH8FEZiQ1OQ==
-X-Received: by 2002:a17:90b:388b:b0:325:40a8:56e0 with SMTP id 98e67ed59e1d1-32540a8583amr14217338a91.30.1756208582552;
-        Tue, 26 Aug 2025 04:43:02 -0700 (PDT)
-Received: from rockpi-5b ([45.112.0.216])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4a8b7b301csm5612958a12.35.2025.08.26.04.42.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 04:43:01 -0700 (PDT)
-From: Anand Moon <linux.amoon@gmail.com>
-To: Shawn Guo <shawn.guo@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-pci@vger.kernel.org (open list:PCIE DRIVER FOR HISILICON STB),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCH v1 2/2] PCI: dwc: histb: Simplify reset control handling by using reset_control_bulk*() function
-Date: Tue, 26 Aug 2025 17:12:41 +0530
-Message-ID: <20250826114245.112472-3-linux.amoon@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250826114245.112472-1-linux.amoon@gmail.com>
-References: <20250826114245.112472-1-linux.amoon@gmail.com>
+	s=arc-20240116; t=1756208602; c=relaxed/simple;
+	bh=02P3CixtBdUDcPaD0gm+JuyGHF+OteegFZvZgqJCzIY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TtRBLpDQytcWRT1XbDQxkxs2V9JmBBGEqRjlFvfHbK3YVOL8QIY5YteRS8lmnihnlsGSd/x4BrVtjlKZahNAOB/5VSgoA4N4EfN9s/nc7fDFFzgrkJujzPZCCjiSFBBtEUWfXpJliYV0J0niH1qCRSmyZ7KIV0NUcWM0uAIn2SA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YYCP3T+L; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57QBDJFP007896;
+	Tue, 26 Aug 2025 11:43:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=ASmeNG
+	bOgjCpuey2rron10uxRWK4g6jADKKoq6uItXI=; b=YYCP3T+LzLSwnr0IhR8fZ/
+	8sHI4rKu+EmcI+8i1MPIlJcNj2ektYZmaL7nAeq5gF6Ru7Nzu1phoovZzG2qYg6l
+	xiPg/tWvX1KNvPt8YLRmHF6fq6audyhd8xRmaIA7s3YDy+9rPb2qV90rh8WIHTRe
+	/D8mEtnysdpvJP8S2kDjxfOoRD4lAhgf+Imy1zYFAHAQARECMOOnIf+f+PQ5vaG0
+	wbC3qBCZq0NM7poUTMqxgc8wpsIASVbwh0blewwV0F8bjBrEsK9M/rRZ+znEuldz
+	3tcdzQ7FE3sHzqIQNuJhnNbhsSIBXnBs8flhspC3O0/SIQOfEeldcA+JAjz9hwFA
+	==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48q42hx7r4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Aug 2025 11:43:17 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57QAXQPF007474;
+	Tue, 26 Aug 2025 11:43:16 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 48qqyuapvj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Aug 2025 11:43:16 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57QBhDs616974206
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 26 Aug 2025 11:43:13 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 081482004B;
+	Tue, 26 Aug 2025 11:43:13 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7DAFD20043;
+	Tue, 26 Aug 2025 11:43:12 +0000 (GMT)
+Received: from [9.87.130.24] (unknown [9.87.130.24])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 26 Aug 2025 11:43:12 +0000 (GMT)
+Message-ID: <d91ed0a4-16b2-417d-9b44-6e0d629f65d0@linux.ibm.com>
+Date: Tue, 26 Aug 2025 13:43:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] KVM: s390: Fix access to unavailable adapter indicator
+ pages during postcopy
+To: Thomas Huth <thuth@redhat.com>, Claudio Imbrenda
+ <imbrenda@linux.ibm.com>,
+        kvm@vger.kernel.org
+Cc: Peter Xu <peterx@redhat.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev
+ <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250821152309.847187-1-thuth@redhat.com>
+Content-Language: en-US
+From: Janosch Frank <frankja@linux.ibm.com>
+Autocrypt: addr=frankja@linux.ibm.com; keydata=
+ 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
+In-Reply-To: <20250821152309.847187-1-thuth@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAxMCBTYWx0ZWRfX5BAhRn4lHbLQ
+ bJhHLbQzXcpcNVUcvE3aI+b9f3698RTmRngciT90BZ4fp1dPRTBR9QEM6JtfQMZVw9hHdR3vT6X
+ jBcIePQp51LKb4nCineIKKJo8GNhmhIxf2pimjU3gPML6EZp2rqHdellMvsREgYDofnYGlYRCO5
+ 65E2jRQYExEVtJiq2FvtxCDZbpS8sX6FFqqUdCKWjlLvISvOtJebAJ5j/1lxHEYmxQo0CEQVtCu
+ qpz7ZDW93MYtZkbJ4JUCWRscgsaybmBNNS2GpDCfy45Khn18Z4ETpuVggtnXUIqAODvQXHGd8Gz
+ 96LOVWA5dd8rClV0kg5Ryr+5yPU+hX5rmtDdUaoANnjjAPNXmQEEA3CbflYYcvOc2vibFyPEhvI
+ CrODysB7
+X-Proofpoint-ORIG-GUID: 9L54WpB3tDCrX8AiJg8UbScVmdjltNUo
+X-Proofpoint-GUID: 9L54WpB3tDCrX8AiJg8UbScVmdjltNUo
+X-Authority-Analysis: v=2.4 cv=evffzppX c=1 sm=1 tr=0 ts=68ad9dd5 cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=20KFwNOVAAAA:8 a=C3RHDqs8tSUvgNmTlIQA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-26_02,2025-08-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 adultscore=0 malwarescore=0 spamscore=0 bulkscore=0
+ impostorscore=0 clxscore=1015 priorityscore=1501 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230010
 
-Currently, the driver acquires and asserts/deasserts the resets
-individually thereby making the driver complex to read.
+On 8/21/25 5:23 PM, Thomas Huth wrote:
+> From: Thomas Huth <thuth@redhat.com>
+> 
+> When you run a KVM guest with vhost-net and migrate that guest to
+> another host, and you immediately enable postcopy after starting the
+> migration, there is a big chance that the network connection of the
+> guest won't work anymore on the destination side after the migration.
 
-This can be simplified by using the reset_control_bulk() APIs.
+Do we want to add this?
 
-Use devm_reset_control_bulk_get_exclusive() API to acquire all the resets
-and use reset_control_bulk_{assert/deassert}() APIs to assert/deassert them
-in bulk.
-
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
- drivers/pci/controller/dwc/pcie-histb.c | 57 ++++++++++++-------------
- 1 file changed, 28 insertions(+), 29 deletions(-)
-
-diff --git a/drivers/pci/controller/dwc/pcie-histb.c b/drivers/pci/controller/dwc/pcie-histb.c
-index 4022349e85d2..4ba5c9af63a0 100644
---- a/drivers/pci/controller/dwc/pcie-histb.c
-+++ b/drivers/pci/controller/dwc/pcie-histb.c
-@@ -49,14 +49,20 @@
- #define PCIE_LTSSM_STATE_MASK		GENMASK(5, 0)
- #define PCIE_LTSSM_STATE_ACTIVE		0x11
- 
-+#define PCIE_HISTB_NUM_RESETS   ARRAY_SIZE(histb_pci_rsts)
-+
-+static const char * const histb_pci_rsts[] = {
-+	"soft",
-+	"sys",
-+	"bus",
-+};
-+
- struct histb_pcie {
- 	struct dw_pcie *pci;
- 	struct  clk_bulk_data *clks;
- 	int     num_clks;
- 	struct phy *phy;
--	struct reset_control *soft_reset;
--	struct reset_control *sys_reset;
--	struct reset_control *bus_reset;
-+	struct  reset_control_bulk_data reset[PCIE_HISTB_NUM_RESETS];
- 	void __iomem *ctrl;
- 	struct gpio_desc *reset_gpio;
- 	struct regulator *vpcie;
-@@ -198,9 +204,8 @@ static const struct dw_pcie_host_ops histb_pcie_host_ops = {
- 
- static void histb_pcie_host_disable(struct histb_pcie *hipcie)
- {
--	reset_control_assert(hipcie->soft_reset);
--	reset_control_assert(hipcie->sys_reset);
--	reset_control_assert(hipcie->bus_reset);
-+	reset_control_bulk_assert(PCIE_HISTB_NUM_RESETS,
-+				  hipcie->reset);
- 
- 	clk_bulk_disable_unprepare(hipcie->num_clks, hipcie->clks);
- 
-@@ -236,14 +241,19 @@ static int histb_pcie_host_enable(struct dw_pcie_rp *pp)
- 		goto reg_dis;
- 	}
- 
--	reset_control_assert(hipcie->soft_reset);
--	reset_control_deassert(hipcie->soft_reset);
--
--	reset_control_assert(hipcie->sys_reset);
--	reset_control_deassert(hipcie->sys_reset);
-+	ret = reset_control_bulk_assert(PCIE_HISTB_NUM_RESETS,
-+					hipcie->reset);
-+	if (ret) {
-+		dev_err(dev, "Couldn't assert reset %d\n", ret);
-+		goto reg_dis;
-+	}
- 
--	reset_control_assert(hipcie->bus_reset);
--	reset_control_deassert(hipcie->bus_reset);
-+	ret = reset_control_bulk_deassert(PCIE_HISTB_NUM_RESETS,
-+					  hipcie->reset);
-+	if (ret) {
-+		dev_err(dev, "Couldn't dessert reset %d\n", ret);
-+		goto reg_dis;
-+	}
- 
- 	return 0;
- 
-@@ -321,23 +331,12 @@ static int histb_pcie_probe(struct platform_device *pdev)
- 		return dev_err_probe(dev, hipcie->num_clks,
- 				     "failed to get clocks\n");
- 
--	hipcie->soft_reset = devm_reset_control_get(dev, "soft");
--	if (IS_ERR(hipcie->soft_reset)) {
--		dev_err(dev, "couldn't get soft reset\n");
--		return PTR_ERR(hipcie->soft_reset);
--	}
-+	ret = devm_reset_control_bulk_get_exclusive(dev,
-+						    PCIE_HISTB_NUM_RESETS,
-+						    hipcie->reset);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Cannot get the Core resets\n");
- 
--	hipcie->sys_reset = devm_reset_control_get(dev, "sys");
--	if (IS_ERR(hipcie->sys_reset)) {
--		dev_err(dev, "couldn't get sys reset\n");
--		return PTR_ERR(hipcie->sys_reset);
--	}
--
--	hipcie->bus_reset = devm_reset_control_get(dev, "bus");
--	if (IS_ERR(hipcie->bus_reset)) {
--		dev_err(dev, "couldn't get bus reset\n");
--		return PTR_ERR(hipcie->bus_reset);
--	}
- 
- 	hipcie->phy = devm_phy_get(dev, "phy");
- 	if (IS_ERR(hipcie->phy)) {
--- 
-2.50.1
-
+Fixes: f65470661f36 ("KVM: s390/interrupt: do not pin adapter interrupt 
+pages")
 
