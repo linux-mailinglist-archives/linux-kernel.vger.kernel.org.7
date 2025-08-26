@@ -1,199 +1,156 @@
-Return-Path: <linux-kernel+bounces-786785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FF7EB36A93
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:38:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91609B36A01
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:33:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B1658E7693
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:20:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADCCA5833AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:22:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A3C350D4C;
-	Tue, 26 Aug 2025 14:18:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0C41F4C90;
+	Tue, 26 Aug 2025 14:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VmEZTJ7K"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PNWH1ZIH"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403362C0F60;
-	Tue, 26 Aug 2025 14:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC6ED299A94
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 14:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756217888; cv=none; b=aId51qJsCsIkklRJRRKPFCIgkgQsStU3hldeWxYumycDDPOdH0JFlo8CzfuKtVH48fOk6/KI4EonjNrTrZ7QtGTjinveuvsvNIKWDVg8M6/0P7jnvKRldYMYBcLP/GBGyZJJj6/0SpV5lGUIcFlfTcRZCjGjAtcJ/1jFEbCj9ww=
+	t=1756218082; cv=none; b=UygclkwZXk0VhO3W3L0SpP2mjGl3uEX3STddSSHa5l79GqXhgbWaa1310Ss397nrT+EpfPERc0ac6JKmnldW2J7Zm/xwiMwOrAScSPvwBOgpF3g/6RtJwjuCEYPyoToK65wHD1XzCNuIPJ33HHP75qUh8IJFrhdrkV4KUCQ69jE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756217888; c=relaxed/simple;
-	bh=vAFqRkUVU9nLETZfB79IylLrMizQW+Ict1VoMM7PA8Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Sw37wYgLnefhhoPeULPZk3+Z5GRywGAqDXQ7yeayNYFeXxN6UyymAigxJ0JPiUZSk7knsyp8kRWkGY0uCbAp1HHdCjO9MVn7Sb6nNWhqWx55EJkXIqg37B2u+TeftAhJ4SpAyOHp7OuGs0k3v+rVtOLPOqTcGUDmYBLqIVY5L7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VmEZTJ7K; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <66f3bae8-a386-4205-97b2-7c75bc2ac378@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1756217872;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cfxa6V11+XKXn5kTcarhix2gi4YAWPXrw99RS4I7v7E=;
-	b=VmEZTJ7KSXpFbz7WQgz0lsknA09EhZ1lQco7D88dCcQkDOqPgSmbxn+t9meYZf84jXZ/00
-	m0oA21tzCPQZYk+EMz4QgaLTsXyLmtRrgYyAhsqOaj89s8AYhraz2jRSw/FrIKE1qohl2k
-	8eLtRiRNVGyvPY1fPb1MOAJNpm892Yc=
-Date: Tue, 26 Aug 2025 15:17:28 +0100
+	s=arc-20240116; t=1756218082; c=relaxed/simple;
+	bh=I+VWRhdnTUjnI3XomDtbZckS18oyRmRBoSQJRcxV7jQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BLEDpi+gVFOC6DvZGadS95chYfd4oMZwE8Ecva1t0/0MDf5JKbgstGWDrL1YZfDXjWIT02wT4afyumSZe9pNJVFUOifgEAUtHqa5ZXlmx2vwWaW786Yt2Yw5DeRz7NQr0TabHhKN+BNWqT8oeyaPMgtiFl31yYVx5DPijudBEt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PNWH1ZIH; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3c980bd5f48so2021544f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 07:21:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1756218079; x=1756822879; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=I+VWRhdnTUjnI3XomDtbZckS18oyRmRBoSQJRcxV7jQ=;
+        b=PNWH1ZIHWUdoJQaKIR7jdykr09w/Ei91PtasffFGGjBp3vFAPqCtAtjO9n41bWTIX7
+         xYgUHZkU/H8p/HzinFvN2mDbLOJIWHm/vmy9RIvP127PyL4A63XI4NFcZGqpHo0Qv2vD
+         l9TV7c+AkqprE3Oi981Ib2YUgWkRxa+XxDXj6k9p9iH0Zf5mDSHZ0JZw61Ss0+VOdNni
+         5Xbv6PTW1+2OXgxOTYl1a/1R3t3kSLGB7/1dfkXer3i92sV980wSw/M1dtzP176rUDRJ
+         XZv9hQrFop542ko2U3DWcVbYfh9+5pHkQQHFsO7BcA+RmS4l6dtvx/9l0Mzq7svVlfMN
+         CV3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756218079; x=1756822879;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I+VWRhdnTUjnI3XomDtbZckS18oyRmRBoSQJRcxV7jQ=;
+        b=sjwIIKKwzNfsIRfkfPLHnbfBx4iQDAuT7kND8+44hhNtYILo7O1lC53/kORt7BQud7
+         EekSlgbNp3ndo+MLS/P5Q2ZkDr0wNfpJbYOLMp4q2Inlb00e3rbt/T+BRvA9mxvlwMQi
+         0NL71BNuJqj3eN0BDVHxNjLLAZV1aHIY2ZEKYQly6328PDdyglzXZGTFuDOeJQ01bcUw
+         LJ9SWsnGYopQa3DXiksISsDb9vaQE+bW+GttvIx4fAVE6A6cwYvecoxnjgPO+XTtCoUS
+         fwe/5XhW4nWr6mkqfYdDN4kkoRuIaMICNR/k9Y7VJL4OmZQH6WFVM0P6k3w4xMyXLQ8n
+         3unA==
+X-Forwarded-Encrypted: i=1; AJvYcCWMGIJrEgBBa7Y1N7SBgNufjXMw8IRaTUrQmHtDdGle40krzeDjEzwXQTILqqZ4NnWp55xHf1eBZaAEF7g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8xSFzvo5ZMtcZ/knote0dO1DypAW2nTcXwgSuUV+97n4tB3fT
+	W5sZlORNgvMHxPuFXz4s1SyUDqUB2f9uHA0fZX6n4dx8nEgKjl6t4c/+sqtexpRbnoo=
+X-Gm-Gg: ASbGncv//5v6vJXbU6cZ8eNjFtLj7WnfJlPcsrP0pyHXbeMFt2n6k5fPrml8scRqQ4V
+	L8q9kAf9m3d6nfd7RPE3SsF5OATUEu/jnSmrQBBUdSnjICOZP12o/HuAcYku6GiCbmpfGsMiZP9
+	5aylweMxP93rovLrkh++n8kkMM4Q8QiVHG54ltBtYrVElfrU3BSuh4xAm6+GLi4JscHJinrpiPo
+	jjP8YYM0d2gRTZG8i4jwb3nIGjq0gGuCxOIGInsua6gkI0lgDFonAxsczzjoUwISIj7X7FvDCrp
+	ASrTeELe+PBzbLDw9ZxdyKhFaA0T5Ubu8foVQGs2Dja2D8XhwjwxMeRALPxn3PFM5vrGvUnkIhA
+	bQ3a2lUgESYu/I5A4as8ZU96ChiRAxBaIVEtr1awAT+IG6rcypeG/qQ==
+X-Google-Smtp-Source: AGHT+IF1onmcmCLINy+0Rdj3SUnLle5wvn3JPSHU/RzbuH+Mf9JjVWxvuwon82t0M3+JcME7Da8B9g==
+X-Received: by 2002:a05:6000:24c9:b0:3b7:93d3:f478 with SMTP id ffacd0b85a97d-3c5dce01212mr13313281f8f.51.1756218079134;
+        Tue, 26 Aug 2025 07:21:19 -0700 (PDT)
+Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32760f2686dsm377332a91.0.2025.08.26.07.21.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Aug 2025 07:21:18 -0700 (PDT)
+Date: Tue, 26 Aug 2025 16:20:58 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Maarten Lankhorst <dev@lankhorst.se>
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>, 
+	'Thomas =?utf-8?Q?Hellstr=C3=B6m'?= <thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maxime Ripard <mripard@kernel.org>, Natalie Vock <natalie.vock@gmx.de>, Tejun Heo <tj@kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"'Liam R . Howlett'" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Michal Hocko <mhocko@suse.com>, intel-xe@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
+	linux-mm@kvack.org
+Subject: Re: [RFC 0/3] cgroups: Add support for pinned device memory
+Message-ID: <qd3ioegpvmrrrwdy2qntxznyrnwq3bhe74lmuxio7sy4sjggtt@tm6nqds3pyvj>
+References: <20250819114932.597600-5-dev@lankhorst.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v01 04/12] hinic3: HW capability initialization
-To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
- linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
- Bjorn Helgaas <helgaas@kernel.org>, luosifu <luosifu@huawei.com>,
- Xin Guo <guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>,
- Zhou Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>,
- Shi Jing <shijing34@huawei.com>, Meny Yossefi <meny.yossefi@huawei.com>,
- Gur Stavi <gur.stavi@huawei.com>, Lee Trager <lee@trager.us>,
- Michael Ellerman <mpe@ellerman.id.au>, Suman Ghosh <sumang@marvell.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Joe Damato <jdamato@fastly.com>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-References: <cover.1756195078.git.zhuyikai1@h-partners.com>
- <b0c4ffc4ed52ca0921dc029e6f2fc8459a5df933.1756195078.git.zhuyikai1@h-partners.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <b0c4ffc4ed52ca0921dc029e6f2fc8459a5df933.1756195078.git.zhuyikai1@h-partners.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="n4nu53c6pb6rlauk"
+Content-Disposition: inline
+In-Reply-To: <20250819114932.597600-5-dev@lankhorst.se>
 
-On 26/08/2025 10:05, Fan Gong wrote:
-> Use mailbox to get device capability for initializing driver capability.
-> 
-> Co-developed-by: Xin Guo <guoxin09@huawei.com>
-> Signed-off-by: Xin Guo <guoxin09@huawei.com>
-> Co-developed-by: Zhu Yikai <zhuyikai1@h-partners.com>
-> Signed-off-by: Zhu Yikai <zhuyikai1@h-partners.com>
-> Signed-off-by: Fan Gong <gongfan1@huawei.com>
-> ---
->   .../ethernet/huawei/hinic3/hinic3_hw_cfg.c    | 66 +++++++++++++++++++
->   .../ethernet/huawei/hinic3/hinic3_hw_cfg.h    |  1 +
->   .../ethernet/huawei/hinic3/hinic3_hw_intf.h   | 42 ++++++++++++
->   .../net/ethernet/huawei/hinic3/hinic3_hwdev.c |  6 ++
->   4 files changed, 115 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_hw_cfg.c b/drivers/net/ethernet/huawei/hinic3/hinic3_hw_cfg.c
-> index e7ef450c4971..24b929690f64 100644
-> --- a/drivers/net/ethernet/huawei/hinic3/hinic3_hw_cfg.c
-> +++ b/drivers/net/ethernet/huawei/hinic3/hinic3_hw_cfg.c
-> @@ -8,6 +8,67 @@
->   #include "hinic3_hwif.h"
->   #include "hinic3_mbox.h"
->   
-> +#define HINIC3_CFG_MAX_QP  256
-> +
-> +static void parse_pub_res_cap(struct hinic3_hwdev *hwdev,
-> +			      struct hinic3_dev_cap *cap,
-> +			      const struct cfg_cmd_dev_cap *dev_cap,
-> +			      enum hinic3_func_type type)
-> +{
-> +	cap->port_id = dev_cap->port_id;
-> +	cap->supp_svcs_bitmap = dev_cap->svc_cap_en;
-> +}
-> +
-> +static void parse_l2nic_res_cap(struct hinic3_hwdev *hwdev,
-> +				struct hinic3_dev_cap *cap,
-> +				const struct cfg_cmd_dev_cap *dev_cap,
-> +				enum hinic3_func_type type)
-> +{
-> +	struct hinic3_nic_service_cap *nic_svc_cap = &cap->nic_svc_cap;
-> +
-> +	nic_svc_cap->max_sqs = min(dev_cap->nic_max_sq_id + 1,
-> +				   HINIC3_CFG_MAX_QP);
-> +}
-> +
-> +static void parse_dev_cap(struct hinic3_hwdev *hwdev,
-> +			  const struct cfg_cmd_dev_cap *dev_cap,
-> +			  enum hinic3_func_type type)
-> +{
-> +	struct hinic3_dev_cap *cap = &hwdev->cfg_mgmt->cap;
-> +
-> +	/* Public resource */
-> +	parse_pub_res_cap(hwdev, cap, dev_cap, type);
-> +
-> +	/* L2 NIC resource */
-> +	if (hinic3_support_nic(hwdev))
-> +		parse_l2nic_res_cap(hwdev, cap, dev_cap, type);
-> +}
 
-Could you please prepend local functions with the scope (hinic3) to be
-consistent with naming? Some of functions have pretty common name and
-may potentially overlap with some core functions.
+--n4nu53c6pb6rlauk
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [RFC 0/3] cgroups: Add support for pinned device memory
+MIME-Version: 1.0
 
-> +
-> +static int get_cap_from_fw(struct hinic3_hwdev *hwdev,
-> +			   enum hinic3_func_type type)
-> +{
-> +	struct mgmt_msg_params msg_params = {};
-> +	struct cfg_cmd_dev_cap dev_cap = {};
-> +	int err;
-> +
-> +	dev_cap.func_id = hinic3_global_func_id(hwdev);
-> +
-> +	mgmt_msg_params_init_default(&msg_params, &dev_cap, sizeof(dev_cap));
-> +
-> +	err = hinic3_send_mbox_to_mgmt(hwdev, MGMT_MOD_CFGM,
-> +				       CFG_CMD_GET_DEV_CAP, &msg_params);
-> +	if (err || dev_cap.head.status) {
-> +		dev_err(hwdev->dev,
-> +			"Failed to get capability from FW, err: %d, status: 0x%x\n",
-> +			err, dev_cap.head.status);
-> +		return -EIO;
-> +	}
-> +
-> +	parse_dev_cap(hwdev, &dev_cap, type);
-> +
-> +	return 0;
-> +}
-> +
->   static int hinic3_init_irq_info(struct hinic3_hwdev *hwdev)
->   {
->   	struct hinic3_cfg_mgmt_info *cfg_mgmt = hwdev->cfg_mgmt;
-> @@ -180,6 +241,11 @@ void hinic3_free_irq(struct hinic3_hwdev *hwdev, u32 irq_id)
->   	mutex_unlock(&irq_info->irq_mutex);
->   }
->   
-> +int init_capability(struct hinic3_hwdev *hwdev)
-> +{
-> +	return get_cap_from_fw(hwdev, HINIC3_FUNC_TYPE_VF);
-> +}
-> +
->   bool hinic3_support_nic(struct hinic3_hwdev *hwdev)
->   {
->   	return hwdev->cfg_mgmt->cap.supp_svcs_bitmap &
-> diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_hw_cfg.h b/drivers/net/ethernet/huawei/hinic3/hinic3_hw_cfg.h
-> index 5978cbd56fb2..8900b40e3c42 100644
-> --- a/drivers/net/ethernet/huawei/hinic3/hinic3_hw_cfg.h
-> +++ b/drivers/net/ethernet/huawei/hinic3/hinic3_hw_cfg.h
-> @@ -49,6 +49,7 @@ int hinic3_alloc_irqs(struct hinic3_hwdev *hwdev, u16 num,
->   		      struct msix_entry *alloc_arr, u16 *act_num);
->   void hinic3_free_irq(struct hinic3_hwdev *hwdev, u32 irq_id);
->   
-> +int init_capability(struct hinic3_hwdev *hwdev);
+Hello Maarten.
 
-and especially non-static functions has to be prefixed with the
-scope, please
+On Tue, Aug 19, 2025 at 01:49:33PM +0200, Maarten Lankhorst <dev@lankhorst.=
+se> wrote:
+> Implementation details:
+>=20
+> For each cgroup up until the root cgroup, the 'min' limit is checked
+> against currently effectively pinned value. If the value will go above
+> 'min', the pinning attempt is rejected.
 
->   bool hinic3_support_nic(struct hinic3_hwdev *hwdev);
->   u16 hinic3_func_max_qnum(struct hinic3_hwdev *hwdev);
->   u8 hinic3_physical_port_id(struct hinic3_hwdev *hwdev);
+How is pinning different from setting a 'min' limit (from a user
+perspective)?
 
-[...]
+>=20
+> Pinned memory is handled slightly different and affects calculating
+> effective min/low values. Pinned memory is subtracted from both,
+> and needs to be added afterwards when calculating.
+>=20
+> This is because increasing the amount of pinned memory, the amount of
+> free min/low memory decreases for all cgroups that are part of the
+> hierarchy.
+
+What is supposed to happen with pinned memory after cgroup removal?
+I find the page_counter changes little bit complex without understanding
+of the difference between min and pinned. Should this be conceptually
+similar to memory.stat:unevictable? Or rather mlock(2)? So far neither
+of those needed interaction with min/low values (in memcg).
+
+Thanks,
+Michal
+
+--n4nu53c6pb6rlauk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJEEABYKADkWIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaK3CyBsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQfj0C55Tb+AgF3wD/T7sV0i+cdg06NdkqMGry
+p4ywSWT/m1ixLxww8iCRQjcBAIu13/A09vj6nD3AYjTurMoAlJUuSFWDZE0IA9G4
+7jEP
+=0oC5
+-----END PGP SIGNATURE-----
+
+--n4nu53c6pb6rlauk--
 
