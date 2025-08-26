@@ -1,149 +1,182 @@
-Return-Path: <linux-kernel+bounces-786979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCC81B36FB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:14:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B2DAB36F98
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:11:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58E4C2A732F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:10:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95ACB7B47A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:09:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A68313E10;
-	Tue, 26 Aug 2025 16:10:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B2A30FC25;
+	Tue, 26 Aug 2025 16:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VqI8YPkZ"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="SpCO/+5h"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C1D2C3761
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 16:10:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC6631A54D
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 16:11:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756224640; cv=none; b=C+QVe9sJd6Vn4XMe7kj1yJ3NAivt/PVyh2wt3/UgevPqomb2V/D/63cMYxebGxdivsO1CyXlBs5cvi2wDGKV+VnmPM9s5TFzbKpxCEyGRZSRPruL15PEWGNTh02Q1azxNeGmLtenvgbk/ff55bAqmHKWSB5Gc8HdQMj6Jkq8OXU=
+	t=1756224672; cv=none; b=nvRts8JhyuSvPgUpb/4pfhZgk7JUvHndLgMFt+0+L7XklCS3x/bXnTO6hKWtRVmjbIvG/Aj8S3fyq45iMC/jXslfpCJ4ILnv6zXLTaz/h1CF8gcRMgdl/Axd4bgXY1JFhgkuVOQuR5JI8hmYmw/N7/t0qiGAInaNXVYLLxelflA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756224640; c=relaxed/simple;
-	bh=uUnVxVTDDWqmWBh2MGBUnTCtl2B8bgs4dvqdJBWjcdw=;
+	s=arc-20240116; t=1756224672; c=relaxed/simple;
+	bh=U41H8paY3p/UhGGEDthRVDk09Qo/XemI96p1ae/Gb7Y=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uxWwT5t71at+aRs3fp07bVGTQAtpudRZh9BYfIDSCr1jla3A9SXoOSPSn5mbw/r0hgEKHs7V1FA7rz/boT+PgUDDE6Uznva5DJ6PECLtNVt+hOMtONq9OWcHpJ81fHetHXD4UNdfEXdoDlVdYkXSVyWluQD7UfGgFscPv/hf6M0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VqI8YPkZ; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4b2dc20aebbso530561cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:10:37 -0700 (PDT)
+	 To:Cc:Content-Type; b=KMt4itF/g2mnHLKvWxLNlaCkdXa+osGfuYMa1QRoZHxVWt/1iDSWti6Gv81ZWvzLdEWb9xnVSVZWrLvE/U9CUx57KFOGPLr97dVAAuGdpTjIKn2sR6U0pejBIWJCHTYdhj/zt5kbkj0ti/PavjgRgd2ZznOVAkmdbTEZ0NRwC0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=SpCO/+5h; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7e8706a9839so609019485a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:11:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756224636; x=1756829436; darn=vger.kernel.org;
+        d=soleen.com; s=google; t=1756224669; x=1756829469; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vZ5a9wW/sXjVhC8FVp7iGuvAwGNBd64MKlntfi+5SYs=;
-        b=VqI8YPkZdcakCUIOg0W95u/5xJd46E9f/RukLu7o34XennhQ3iadNtDxw9fkeM9/wV
-         lmdxEbw2+1ga8lAyw/muWK/lmhJiihLxrgxt5/ngmdf9QeXjUqCdHNd+b/pSLBa7VAyP
-         YRc6M/gUkdmxZc9MltIo5EZlUfh1yYJ6lVpugy9WK17E/qPV1CnLwZjOsEOSvZ4woGY9
-         Wsn+HHyCEDgHHuy8MJ0RQge3rVBMlmoBQ95BfluhlDSFrf0nbJPIGVbEO7iFJU891mFt
-         Ayw255a3hBGsnS8ee6lrJUUle9zgqucgUXU942jUh3jWP+lSiwJI+rQ56rr5+yU9f+bF
-         FCvg==
+        bh=BOi2/n6Xz+xQb5GUHHEjvZymVvCpQ6XbmnK9/vs2FEY=;
+        b=SpCO/+5h7oHKpHHcdQSLv1ZaJXrc/q856GDwMewoEniVqyrxUO9w6SlepEU1Ea66w5
+         l/gudFh6Wqzr46glOhQ+9EMJxKUNOstktovwRNPXTFWtYhfHGpjkSaolOtsAE9SCOrsV
+         7LsQWy1ozMGfoaFowgUN3qM3anmWEjw1cdx8LvFonc9RNlDhD4Gos4Hbcav71mbKvblZ
+         zhgMkAwBpOCZeDOjnZPUC1HnzO6DSmTDvWVj2Azt7olrUhBjoMVXXH3MtGhwy6L5/x07
+         cqn8nwznH2CU30DGvFiDoHgLmK9cZgOWGMq0UcR6l9hp2fcdtB9j/gOalt7FX68683WF
+         Vj7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756224636; x=1756829436;
+        d=1e100.net; s=20230601; t=1756224669; x=1756829469;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vZ5a9wW/sXjVhC8FVp7iGuvAwGNBd64MKlntfi+5SYs=;
-        b=LQS4y2yugu3sJKlFmU44sMz0fn7PkxWajI1ICBlnDapKGhwupByD6wmX3+FJ+BhWT4
-         +j6NV1QK1I0grhBB3PHcbIRtAZHtkxHOpkpQUtVzCSfTd7T8V0t5uyfwgs3Afr5XUORJ
-         AkeMDfR5pfkUnYIoJrrAYwe374YvZ0wLWrsq5L2E7JkvpVi4uSGSnrYN8uW4PdDWi3SF
-         qEM7J1g1x0tOKpcEmie+r5sDaTbOqDkU53LRayyMG76ZWb70tc9+Y/f0AV4xF+c79fOV
-         FhUVX0/D8lQYZBEMSNl9b2eX1C8k0pJRnBvq9kVBpVcoXVTrOEjZDoTFh6X2GtBAwURW
-         y7qQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVECDKCc2oR9/D4vqgR3TeyCKq0+HOaqfIAepYbujn03e1J4n7S3pfOo64PPijTQbityaZS7JkBSmYubHM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCd7VVrA/61JsJDvRIP2VVsYv7AUpC04cnNF8WLJO334n4FXNI
-	e8ZDKcOkHDboWICWPxsRm4gCJlOebpGOYPZSeW03g6qVI3ovzjVqMmfNsba8sK/mY0pdEbD+r+K
-	YcSjvuOPUIX+LQve4FAvXPG79dOBiwrKIieA6NHGo
-X-Gm-Gg: ASbGnctgFtkBmrDtzDdyEllhuvPGaz9jWINBw5EpuwmOsuyaa1TxsRxh9JOQexqcmkD
-	6FUyoZnf9WVQJcp6DEJyBiRMY0ws2GCwIgeCFL8Kj3rABZqJDQI7C9fX1EP9OIJGNXJ5noIpXaC
-	hhKCzrpowEaUpvVrCNS8+ItlJ0SQ2VsyyLp8Ejp1vWoRVubeEBOG35W9d2I5LrUmoTHnvRrBqIq
-	pQJ7WfbHrkiFzMWzSkcrL2NJqG2Fo8QMvEI0BLvFHtuog==
-X-Google-Smtp-Source: AGHT+IFWTBnegYsgo4t+bTINOKl+X+5UHJwlAppipz3z1BODi/VrNOUY4vQo1AxTw0v14VFVG4iZb3RcvckoStjmph0=
-X-Received: by 2002:a05:622a:118c:b0:4b2:9d13:e973 with SMTP id
- d75a77b69052e-4b2e1b31275mr6506651cf.0.1756224636084; Tue, 26 Aug 2025
- 09:10:36 -0700 (PDT)
+        bh=BOi2/n6Xz+xQb5GUHHEjvZymVvCpQ6XbmnK9/vs2FEY=;
+        b=YcZt4tKGc/NvEIBEVymeqGDt5AR+7T8W9LtuTTKa4TZsEi8wg2WfGwj38SWGaSoCX6
+         uMrJnWg/C5oQhIXNwlQ8mC9uUduPddu5TdXnTvKr0gW2kms2/JUFjsvc8R2TVaFTcfG0
+         lDPAtjGu782WdBWdJzA7akr7SZNvN5J/5oa0LzrB8ojK3ngDexdkyZM3TPhG8ZFVpubC
+         lHlY+sQ4hTzj8L7XjwzHtJFRzKs69aPvUPmBUtoZn4EFX8kyRgFjVliJvj3FxJNtnaf9
+         2qH0MHvzvpGx76Ox+1m8JxaJIh1jiGqJyoryf+ZPsAzMDLw0NnNDx0X/UvgiINMKQRAh
+         4cOg==
+X-Forwarded-Encrypted: i=1; AJvYcCV+9H1PdEP/Xdfolj8e+ekC5KX0jekYne3dHHqvrcMPtcQoE3MSJCjIIMYiI4DlbQCP/MrQlLJv3WNi3yQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzM3AHvLVJrg1vxknZe4vHqIDAqC4yyfZT6yuuo9qcKg14LQFG3
+	7nWlKJNeOTMmqe80GhMwqwxtv7zdMNs7tRcbHGy1OdjFKpCa6Rk3guD53vFQxPikWX2OcUVAUE6
+	zKG0FOaUOx+s646MBvMPQ/VIvYsi7FXXnYle5fqpbJw==
+X-Gm-Gg: ASbGnct/weKDlIf43RN+NgN8M0K2TmiZ/bVbqWml0/+ARZAHNKLGkvbwf33q1+ux8o8
+	u9lg85jmulWTBOhPkXhVXaT82vHOSkwSzS+m8bW479mmxwnGEmYM8sB9zQ5erqllH+9T6tibStk
+	bdM2I/iYVdSYAmMl7g8jcJAkpafH6rRx86eaXEwjU0S+fpsgBNGlw7B6GYXcWItIAP0ozXsNKJg
+	4Eb
+X-Google-Smtp-Source: AGHT+IHEi3OE7lLiMPp7C5Vv7KNwlvLIH7ud61BnCQRJa7ny6WBbwsORCRR5wSbzLMiP0IHaIOWVGEwTlDbKi+wkxxs=
+X-Received: by 2002:a05:620a:170f:b0:7f6:88d3:1188 with SMTP id
+ af79cd13be357-7f688d31502mr113653485a.86.1756224668510; Tue, 26 Aug 2025
+ 09:11:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250821042915.3712925-1-sagis@google.com> <20250821042915.3712925-9-sagis@google.com>
- <d780a249-ecb2-40e7-9520-19de8728c703@linux.intel.com>
-In-Reply-To: <d780a249-ecb2-40e7-9520-19de8728c703@linux.intel.com>
-From: Sagi Shahar <sagis@google.com>
-Date: Tue, 26 Aug 2025 11:10:24 -0500
-X-Gm-Features: Ac12FXzjoQma6pYvJ2NYaJoeraToE-BsC5fTbwE_cSx2Q5p4AW62eAtBhQOjCPE
-Message-ID: <CAAhR5DHVhS29egfT4aDA5HGnHkM0fQRfU5600ossaVGdvNgCGQ@mail.gmail.com>
-Subject: Re: [PATCH v9 08/19] KVM: selftests: Define structs to pass
- parameters to TDX boot code
-To: Binbin Wu <binbin.wu@linux.intel.com>
-Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
-	Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>, 
-	Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
-	Erdem Aktas <erdemaktas@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	"Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, Reinette Chatre <reinette.chatre@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, Chao Gao <chao.gao@intel.com>, 
-	Chenyi Qiang <chenyi.qiang@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+ <mafs0ms7mxly1.fsf@kernel.org> <CA+CK2bBoLi9tYWHSFyDEHWd_cwvS_hR4q2HMmg-C+SJpQDNs=g@mail.gmail.com>
+ <20250826142406.GE1970008@nvidia.com> <CA+CK2bBrCd8t_BUeE-sVPGjsJwmtk3mCSVhTMGbseTi_Wk+4yQ@mail.gmail.com>
+ <20250826151327.GA2130239@nvidia.com>
+In-Reply-To: <20250826151327.GA2130239@nvidia.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Tue, 26 Aug 2025 16:10:31 +0000
+X-Gm-Features: Ac12FXziiQIerbPv84meuIa4-TsBxggHz0dU1bLBX-hwN0ZHUFz86xiQcWhtMqM
+Message-ID: <CA+CK2bAbqMb0ZYvsC9tsf6w5myfUyqo3N4fUP3CwVA_kUDQteg@mail.gmail.com>
+Subject: Re: [PATCH v3 00/30] Live Update Orchestrator
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Pratyush Yadav <pratyush@kernel.org>, jasonmiu@google.com, graf@amazon.com, 
+	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
+	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
+	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
+	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
+	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
+	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
+	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
+	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
+	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
+	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
+	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, 
+	ajayachandra@nvidia.com, parav@nvidia.com, leonro@nvidia.com, witu@nvidia.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 26, 2025 at 1:52=E2=80=AFAM Binbin Wu <binbin.wu@linux.intel.co=
-m> wrote:
+On Tue, Aug 26, 2025 at 3:13=E2=80=AFPM Jason Gunthorpe <jgg@nvidia.com> wr=
+ote:
 >
+> On Tue, Aug 26, 2025 at 03:02:13PM +0000, Pasha Tatashin wrote:
+> > I'm trying to understand the drawbacks of the PID-based approach.
+> > Could you elaborate on why passing a PID in the RESTORE_FD ioctl is
+> > not a good idea?
 >
+> It will be a major invasive change all over the place in the kernel
+> to change things that assume current to do something else. We should
+> try to avoid this.
 >
-> On 8/21/2025 12:29 PM, Sagi Shahar wrote:
-> [...]
-> > +
-> > +/*
-> > + * Allows each vCPU to be initialized with different eip and esp.
-> > + *
-> > + * __packed is used since the offsets are hardcoded in td_boot.S
-> > + *
-> > + * TODO: Replace hardcoded offsets with OFFSET(). This requires gettin=
-g the
-> > + * neccesry Kbuild scripts working in KVM selftests.
-> neccesry -> necessary
+> > In this flow, the client isn't providing an arbitrary PID; the trusted
+> > luod agent is providing the PID of a process it has an active
+> > connection with.
 >
-> Also, are the comments about "__packed" and "TODO" out dated?
->
+> PIDs are wobbly thing, you can never really trust them unless they are
+> in a pidfd.
 
-Thanks, I forgot to update those.
+Makes, sense, using a PID by value is fragile due to reuse. Luod would
+acquire a pidfd for the client process from its socket connection and
+pass that pidfd to the kernel in the RESTORE_FD ioctl. The kernel
+would then be operating on a stable, secure handle to the target
+process.
 
-> > + */
-> > +struct td_per_vcpu_parameters {
-> > +     uint32_t esp_gva;
-> > +     uint64_t guest_code;
-> > +};
-> > +
-> > +/*
-> > + * Boot parameters for the TD.
-> > + *
-> > + * Unlike a regular VM, KVM cannot set registers such as esp, eip, etc
-> > + * before boot, so to run selftests, these registers' values have to b=
-e
-> > + * initialized by the TD.
-> > + *
-> > + * This struct is loaded in TD private memory at TD_BOOT_PARAMETERS_GP=
-A.
-> > + *
-> > + * The TD boot code will read off parameters from this struct and set =
-up the
-> > + * vCPU for executing selftests.
-> > + *
-> > + * __packed is used since the offsets are hardcoded in td_boot.S
-> Same as above for "__packed".
+> > The idea was to let luod handle the session/security story, and the
+> > kernel handle the core preservation mechanism. Adding sessions to the
+> > kernel, delegates the management and part of the security model into
+> > the kernel. I am not sure if it is necessary, what can be cleanly
+> > managed in userspace should stay in userspace.
 >
-> > + */
-> >
-> [...]
+> session fds were an update imagined to allow the kernel to partition
+> things the session FD it self could be shared with other processes.
+
+I understand the model you're proposing: luod acts as a factory,
+issuing session FDs that are then passed to clients, allowing them to
+perform restore operations within their own context. While we can
+certainly extend the design to support that, I am still trying to
+determine if it's strictly necessary, especially if the same outcome
+(correct resource attribution) can be achieved with less kernel
+complexity. My primary concern is that functionality that can be
+cleanly managed in userspace should remain there.
+
+> I think in the calls the idea was it was reasonable to start without
+> sessions fds at all, but in this case we shouldn't be mucking with
+> pids or current.
+
+The existing interface, with the addition of passing a pidfd, provides
+the necessary flexibility without being invasive. The change would be
+localized to the new code that performs the FD retrieval and wouldn't
+involve spoofing current or making widespread changes.
+For example, to handle cgroup charging for a memfd, the flow inside
+memfd_luo_retrieve() would look something like this:
+
+task =3D get_pid_task(target_pid, PIDTYPE_PID);
+mm =3D get_task_mm(task);
+    // ...
+    folio =3D kho_restore_folio(phys);
+    // Charge to the target mm, not 'current->mm'
+    mem_cgroup_charge(folio, mm, ...);
+mmput(mm);
+put_task_struct(task);
+
+This approach seems quite contained, and does not modify the existing
+interfaces. It avoids the need for the kernel to manage the entire
+session state and its associated security model.
+
+Pasha
 
