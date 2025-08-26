@@ -1,138 +1,239 @@
-Return-Path: <linux-kernel+bounces-785783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3CC5B350FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:27:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC3EBB35100
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:31:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0871C1B2703A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 01:28:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B382C1B23E9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 01:32:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DB9C265CB2;
-	Tue, 26 Aug 2025 01:27:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MPCO9S49"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3CEF1DF970;
+	Tue, 26 Aug 2025 01:31:40 +0000 (UTC)
+Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B51223338;
-	Tue, 26 Aug 2025 01:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9875415D3;
+	Tue, 26 Aug 2025 01:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756171655; cv=none; b=C+unoW/6JmGj3HGwaHh+eGTiKjnaiu17UzYL93De3bJ+qsaGDpQDGqiEBbWwpp7Yuvztf2nonGW2IKaGVFuJuC+Yu9lDqv9j8J0qAOwBcif5OgWRWckENIxUm8+tKn+FRTqeOUfeYiIByAgdWE0lxHgWz0tO5bBgAvmw8fR2/rg=
+	t=1756171900; cv=none; b=oePn3G3bqnqZBhXPUfBX3PZWnImoGfodAoZgGEqb24v3TK2cAv1N4nTSWX5PAAgOxv9A17bwA8UZB7yLPPd+GaiEnYHV0jxqUM7i3gKLlE+Gizipm1+xRHc+VCPnMhzQaqLSEx/ksZj6YMFBWXSkQ4eDjKJtrDX8pCg+qmBEd0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756171655; c=relaxed/simple;
-	bh=AdpUiE/wJBetOMVQkBzJaBKwSBZOYbe+QTmNwnaCSQY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JHh7umgEJP70HMP65shWTGbfGkHUnB6QcUsO9/vqn4B+ckeO9+TGwSEvOdFq/cPmCqzaCdxPpRr1fKZbbiXT2PlkJuLF5+udEUZ7PKh+1wu7DWTnq+EHXTnbbI1i/dV+CuwGl9KU6lawn+Et8BdnFwDvmlEhJEdFOk/p7bPjlsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MPCO9S49; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756171654; x=1787707654;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=AdpUiE/wJBetOMVQkBzJaBKwSBZOYbe+QTmNwnaCSQY=;
-  b=MPCO9S49GZdQsI1kKswkFPkBdualcRdG3yv4qop5eRO7upk3P/PO4rPE
-   Reg+sQbYmMgK7QmN8gzuldAIq4vqIAvwgdVVbGSLBgHQ6rjA8vu2FnOy5
-   oL2qVAXu2v8oyMaWAEnTQ7LzFf4P8nIbUXfY9fUYtcuOZGBhd0q7BWri4
-   yp9U56XV2q83J1ojtkhU5fpsuFnWBRa9JzYRyLY8sXTZ9DARE2IgzUljr
-   LLaTQc9KYh5TOJ/IHHrUcSPSCPGW98uu5JZOFWR8x0lrxY/pYvJRB+p1H
-   e/Viq9z/ceZ3qve4DfYFBYdFT1NQopUk1PBd2xWYLYO2AnBGzxXINn5VA
-   Q==;
-X-CSE-ConnectionGUID: /ee054CfSDOtQj3cDmHDEQ==
-X-CSE-MsgGUID: pLZfGXMeSma8SyJrj8LWog==
-X-IronPort-AV: E=McAfee;i="6800,10657,11533"; a="75847554"
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="75847554"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 18:27:33 -0700
-X-CSE-ConnectionGUID: tIGsR0QISxaWhVKMXaVS4g==
-X-CSE-MsgGUID: znpgCPBKTXW8CYZBlzEZYw==
-X-ExtLoop1: 1
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 18:27:29 -0700
-Message-ID: <b0f613ce-7aad-4b1d-b6a1-4acc1d6c489e@linux.intel.com>
-Date: Tue, 26 Aug 2025 09:25:03 +0800
+	s=arc-20240116; t=1756171900; c=relaxed/simple;
+	bh=2CAfInhMBlEheWI50chGaNttiRjZFFWB2jkfwM/74SA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PBVOZzKTD/3l7aeV5M1C0SuJCzAZ/N4FloQMYw2m5wb/V7E4xJc5+Joyrc44F2kyqWHcbXyauFYrjsfqWpty8A2EepPIpl1am5+10izync6E6v7ooQ/wMvu+/JcM49aq5WrX7LltYz440n6T0KMbL1NhN52FVAaxuswym20QQGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=18.194.254.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: esmtpsz11t1756171875tdaf462a0
+X-QQ-Originating-IP: JG4CTHw+p2KwTkKW/C8uuarVnjApQNroGADEHk0tpcY=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 26 Aug 2025 09:31:13 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 5786060330741140375
+Date: Tue, 26 Aug 2025 09:31:13 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
+	gustavoars@kernel.org, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH net-next v7 4/5] net: rnpgbe: Add basic mbx_fw support
+Message-ID: <82E3BE49DB4195F0+20250826013113.GA6582@nic-Precision-5820-Tower>
+References: <20250822023453.1910972-1-dong100@mucse.com>
+ <20250822023453.1910972-5-dong100@mucse.com>
+ <316f57e3-5953-4db6-84aa-df9278461d30@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] iommu/sva: Invalidate KVA range on kernel TLB
- flush
-To: Dave Hansen <dave.hansen@intel.com>, "Tian, Kevin"
- <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>, Jann Horn <jannh@google.com>,
- Vasant Hegde <vasant.hegde@amd.com>, Alistair Popple <apopple@nvidia.com>,
- Peter Zijlstra <peterz@infradead.org>, Uladzislau Rezki <urezki@gmail.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Andy Lutomirski <luto@kernel.org>, "Lai, Yi1" <yi1.lai@intel.com>,
- "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
- "security@kernel.org" <security@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "stable@vger.kernel.org" <stable@vger.kernel.org>
-References: <20250806052505.3113108-1-baolu.lu@linux.intel.com>
- <d646d434-f680-47a3-b6b9-26f4538c1209@intel.com>
- <20250806155223.GV184255@nvidia.com>
- <d02cb97a-7cea-4ad3-82b3-89754c5278ad@intel.com>
- <20250806160904.GX184255@nvidia.com>
- <62d21545-9e75-41e3-89a3-f21dda15bf16@intel.com>
- <4a8df0e8-bd5a-44e4-acce-46ba75594846@linux.intel.com>
- <20250807195154.GO184255@nvidia.com>
- <BN9PR11MB52762A47B347C99F0C0E4C288C2FA@BN9PR11MB5276.namprd11.prod.outlook.com>
- <87bfc80e-258e-4193-a56c-3096608aec30@linux.intel.com>
- <BN9PR11MB52766165393F7DD8209DA45A8C32A@BN9PR11MB5276.namprd11.prod.outlook.com>
- <e321d374-38a7-4f60-b991-58458a2761b9@linux.intel.com>
- <9a649ff4-55fe-478a-bfd7-f3287534499a@intel.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <9a649ff4-55fe-478a-bfd7-f3287534499a@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <316f57e3-5953-4db6-84aa-df9278461d30@linux.dev>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: OQNQM5UP8StMXU05C0AxZJUxwGUJleeF6slPjPlLNWqCHQtnEEGp2zI4
+	h9bZtMi5wjc39AZuTDu4fQvOKoplGiT9KkbYDuwSBdZw+quPVNXmDiAimhgYLU1hIZcALmd
+	vfqe13vm5SceoXV46PVlI4TGO1MS4Y1Pa5bbJFj+CpO5BdKTDbic48o5n8HWT2zgSVXysux
+	X/14RmUstCRjUst1kQ/AlbUTdc2Uh4al76Re4fTRWFCqQqiDtDUpBQxnUnUF+rFZE5oJz32
+	jpqfHVZPqOFlyWvzs4I7omytuWlGG77XTiSAaKWEz+++Kpi7HIsDP6U6Mr7rY6vN6LVAgEV
+	WnAmzR8Q7J4lVi8Jnq7jKh4RkpupTXVXvSX77hn77nanKOOLHELkjMlwFu3TaWDo9iwocR9
+	BFJXaFhogGQw/XQW9MF+zyouCb66czPnC4Jg8+BPNR0oFeVnvclpA0h8UQrj6Uimi5SrVTp
+	C9QNoohbeHoc6KOcU/nMglTo059UScC4etaqui4nrYrbGbO68lewkdKV7uLjw1Y9iuev94Z
+	DWBQ9ac2SXhLdEJNh1OFfQRIkexPj77mn8qL6X5YwG4a7HDvLehIjyj9RyKINASGWMXP4jk
+	AsF+r0eabP0AURMYoAoLwfCQLBOi8SXv3jJDM6pYuiDQeaMH3u3lemnyKl0m3hoVRMLleNG
+	AEb2J4nlSetu9s4XQooIEK0MAWAvqrPHH3peTSWRdPAjOs+HEP6FDXjdvj2HuNqCeo/6tFI
+	EsgO2LkmjFIwzJO1k0yq5vqsCwETbq+/iN4EUbfQHsCcatKhEFTVUkx21gbm3EMHtU8UPzP
+	OLH0eBjyz9/zd9poybfXIbsrFeVuObsXIk3YuyOvV/qiIvaWv+LjULqTNl28gzWVc1fXttm
+	U160fKexBMtBiNzUviwq4osUpvIt3GqFWqKxlnJJA//Yi13nvy0YKiSY9CskbByKQAA4CgL
+	4kmoFY2fWyAyp93SeNLzgi8hNJu721QwCdcnUkfalAYWutS3BHORoUNjF
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-RECHKSPAM: 0
 
-On 8/26/25 06:36, Dave Hansen wrote:
-> On 8/22/25 20:26, Baolu Lu wrote:
->> +static struct {
->> +    /* list for pagetable_dtor_free() */
->> +    struct list_head dtor;
->> +    /* list for __free_page() */
->> +    struct list_head page;
->> +    /* list for free_pages() */
->> +    struct list_head pages;
->> +    /* protect all the ptdesc lists */
->> +    spinlock_t lock;
->> +    struct work_struct work;
+On Mon, Aug 25, 2025 at 05:37:27PM +0100, Vadim Fedorenko wrote:
+> On 22/08/2025 03:34, Dong Yibo wrote:
 > 
-> Could you explain a bit why this now needs three separate lists? Seems
-> like pure overkill.
+> [...]
+> > +/**
+> > + * mucse_mbx_fw_post_req - Posts a mbx req to firmware and wait reply
+> > + * @hw: pointer to the HW structure
+> > + * @req: pointer to the cmd req structure
+> > + * @cookie: pointer to the req cookie
+> > + *
+> > + * mucse_mbx_fw_post_req posts a mbx req to firmware and wait for the
+> > + * reply. cookie->wait will be set in irq handler.
+> > + *
+> > + * @return: 0 on success, negative on failure
+> > + **/
+> > +static int mucse_mbx_fw_post_req(struct mucse_hw *hw,
+> > +				 struct mbx_fw_cmd_req *req,
+> > +				 struct mbx_req_cookie *cookie)
+> > +{
+> > +	int len = le16_to_cpu(req->datalen);
+> > +	int err;
+> > +
+> > +	cookie->errcode = 0;
+> > +	cookie->done = 0;
+> > +	init_waitqueue_head(&cookie->wait);
+> > +	err = mutex_lock_interruptible(&hw->mbx.lock);
+> > +	if (err)
+> > +		return err;
+> > +	err = mucse_write_mbx_pf(hw, (u32 *)req, len);
+> > +	if (err)
+> > +		goto out;
+> > +	/* if write succeeds, we must wait for firmware response or
+> > +	 * timeout to avoid using the already freed cookie->wait
+> > +	 */
+> > +	err = wait_event_timeout(cookie->wait,
+> > +				 cookie->done == 1,
+> > +				 cookie->timeout_jiffies);
+> 
+> it's unclear to me, what part of the code is managing values of cookie
+> structure? I didn't get the reason why are you putting the address of
+> cookie structure into request which is then directly passed to the FW.
+> Is the FW supposed to change values in cookie?
+> 
 
-Yes, sure.
+cookie will be used in an irq-handler. like this:
+static int rnpgbe_mbx_fw_reply_handler(struct mucse *mucse,
+                                       struct mbx_fw_cmd_reply *reply)
+{
+        struct mbx_req_cookie *cookie;
 
-The three separate lists are needed because we're handling three
-distinct types of page deallocation. Grouping the pages this way allows
-the workqueue handler to free each type using the correct function.
+        cookie = reply->cookie;
 
-- pagetable_dtor_free(): This is for freeing PTE pages, which require
-   specific cleanup of a ptdesc structure.
+        if (cookie->priv_len > 0)
+                memcpy(cookie->priv, reply->data, cookie->priv_len);
+        cookie->done = 1;
+        if (le16_to_cpu(reply->flags) & FLAGS_ERR)
+                cookie->errcode = -EIO;
+        else
+                cookie->errcode = 0;
+        wake_up(&cookie->wait);
+        return 0;
+}
+That is why we must wait for firmware response.
+But irq is not added in this patch series. Maybe I should move all
+cookie relative codes to the patch will add irq?
 
-  - __free_page(): This is for freeing a single page.
+> > +
+> > +	if (!err)
+> > +		err = -ETIMEDOUT;
+> > +	else
+> > +		err = 0;
+> > +	if (!err && cookie->errcode)
+> > +		err = cookie->errcode;
+> > +out:
+> > +	mutex_unlock(&hw->mbx.lock);
+> > +	return err;
+> > +}
+> 
+> [...]
+> 
+> > +struct mbx_fw_cmd_req {
+> > +	__le16 flags;
+> > +	__le16 opcode;
+> > +	__le16 datalen;
+> > +	__le16 ret_value;
+> > +	union {
+> > +		struct {
+> > +			__le32 cookie_lo;
+> > +			__le32 cookie_hi;
+> > +		};
+> > +
+> > +		void *cookie;
+> > +	};
+> > +	__le32 reply_lo;
+> > +	__le32 reply_hi;
+> 
+> what do these 2 fields mean? are you going to provide reply's buffer
+> address directly to FW?
+> 
 
-  - free_pages(): This is for freeing a contiguous block of pages that
-    were allocated together.
+No, this is defined by fw. Some fw can access physical address.
+But I don't use it in this driver.
 
-Using separate lists for each type ensures that every page is handled
-correctly without having to check the page's type at runtime.
+> > +	union {
+> > +		u8 data[32];
+> > +		struct {
+> > +			__le32 version;
+> > +			__le32 status;
+> > +		} ifinsmod;
+> > +		struct {
+> > +			__le32 port_mask;
+> > +			__le32 pfvf_num;
+> > +		} get_mac_addr;
+> > +	};
+> > +} __packed;
+> > +
+> > +struct mbx_fw_cmd_reply {
+> > +	__le16 flags;
+> > +	__le16 opcode;
+> > +	__le16 error_code;
+> > +	__le16 datalen;
+> > +	union {
+> > +		struct {
+> > +			__le32 cookie_lo;
+> > +			__le32 cookie_hi;
+> > +		};
+> > +		void *cookie;
+> > +	};
+> 
+> This part looks like the request, apart from datalen and error_code are
+> swapped in the header. And it actually means that the FW will put back
+> the address of provided cookie into reply, right? If yes, then it
+> doesn't look correct at all...
+> 
 
-This seems like overkill, it was chosen to ensure functional
-correctness. Any better solution?
+It is yes. cookie is used in irq handler as show above.
+Sorry, I didn't understand 'the not correct' point?
 
-Thanks,
-baolu
+> > +	union {
+> > +		u8 data[40];
+> > +		struct mac_addr {
+> > +			__le32 ports;
+> > +			struct _addr {
+> > +				/* for macaddr:01:02:03:04:05:06
+> > +				 * mac-hi=0x01020304 mac-lo=0x05060000
+> > +				 */
+> > +				u8 mac[8];
+> > +			} addrs[4];
+> > +		} mac_addr;
+> > +		struct hw_abilities hw_abilities;
+> > +	};
+> > +} __packed;
+> 
 
