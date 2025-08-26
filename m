@@ -1,112 +1,97 @@
-Return-Path: <linux-kernel+bounces-785761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9536B350C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:08:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F826B350C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:09:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3CF1244FA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 01:08:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D401E487FFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 01:09:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DA2027EFEE;
-	Tue, 26 Aug 2025 01:08:48 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0803E281372;
+	Tue, 26 Aug 2025 01:09:12 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 207331BD9F0;
-	Tue, 26 Aug 2025 01:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D43265623;
+	Tue, 26 Aug 2025 01:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756170528; cv=none; b=AJEC3FzmMFjciBxm8kPiRGMP1N5VozO0iaxGzoXEp4tbGKqmgJELlHPg6+u5e2tj3sN0gBBN2XNTHnYBh+5uRJk1G4PWv658xpEcISpmw6oK+6UV3Y+KtZxnqUiV7Ot6no9SGmHVA1lsFLeOoKhZvdC9lre1PCfSeYZYtMvSRlY=
+	t=1756170551; cv=none; b=WkZSmaW5sDtsYuKrDU/y8OINO2xfDJ7JbbfhGOeRUn7A4wBHNdGrgE9F9cqTehX3teCUJZt1PZHKFO64Toa8kXknoabKHqueUv+O+l3lgvqzghbWYXaPAikyyvVMWSkrSDFBOAwAquBYYRcIe0OXLqqeZZ4OLSMVcyq49QY8dqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756170528; c=relaxed/simple;
-	bh=C2ieMfVSDrwXSZyfJh6OVBPjqfZX0hjWlJVAx3ERtCQ=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=EmhoDpdEWwzbWZTvqMIxuhO1vh/D5/CnHae8Luo5jha7GlaIYkRP9qqB719l6Bj/LBdca5pt5OpQCdLRrsj+q3dgcmqyYuFE4LyWC3smThxnxsplLxJElwEYN9NSQ6g/pQS5P1FkonCQVr9oI6PoGlBEPhHEWgz0rAN96pVTBA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c9qKw3WS3zKHMmc;
-	Tue, 26 Aug 2025 09:08:36 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 19C0C1A126A;
-	Tue, 26 Aug 2025 09:08:36 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgCn8IwRCa1oKUY7AQ--.14338S3;
-	Tue, 26 Aug 2025 09:08:35 +0800 (CST)
-Subject: Re: [PATCH RFC 2/7] md/raid0: convert raid0_handle_discard() to use
- bio_submit_split()
-To: Christoph Hellwig <hch@infradead.org>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: colyli@kernel.org, hare@suse.de, tieren@fnnas.com, axboe@kernel.dk,
- tj@kernel.org, josef@toxicpanda.com, song@kernel.org,
- akpm@linux-foundation.org, neil@brown.name, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
- linux-raid@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- johnny.chenyi@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250825093700.3731633-1-yukuai1@huaweicloud.com>
- <20250825093700.3731633-3-yukuai1@huaweicloud.com>
- <aKxBgNQXphpa1BNt@infradead.org>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <2984b719-f555-7588-fa2a-1f78d2691e8a@huaweicloud.com>
-Date: Tue, 26 Aug 2025 09:08:33 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1756170551; c=relaxed/simple;
+	bh=rGYCICAMdYUKHVW1VWlSGUI+ss2kW4mTJBpUrBFfAqw=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=m3hzFUQRCoFR1f/1qhBWpV5vHjuN2n0ZVwYUm/60ep6Aa+ab0yMKLGgJbRHRwfoy0zzvMq2vPxk+EhCgea5oAXmjthM5RN1WtTW+hUrPhrp06fsZ7p+tPz3tNDHVgQYbYcmgomaahkSMorG5tbTb4JHywKuBbpiH3en710kzavY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4c9qLL4wDvz14MD9;
+	Tue, 26 Aug 2025 09:08:58 +0800 (CST)
+Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0143D180481;
+	Tue, 26 Aug 2025 09:09:05 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 26 Aug 2025 09:09:04 +0800
+Message-ID: <c8d6fd87-c028-40e8-8158-99f636e74538@huawei.com>
+Date: Tue, 26 Aug 2025 09:09:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <aKxBgNQXphpa1BNt@infradead.org>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCn8IwRCa1oKUY7AQ--.14338S3
-X-Coremail-Antispam: 1UD129KBjvdXoWrtr4xJw1UZr1rur17ArW5ZFb_yoWxKwbEg3
-	4SqFWDWrnrG3s7t3ZxtFn8Z395K3s8Kry7XF1UZanrX34kAF9rAFWkJrZrXFn0qr4IyrZ0
-	yryYgryfXr1I9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbfAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7sRidbbtUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+User-Agent: Mozilla Thunderbird
+CC: <shaojijie@huawei.com>
+Subject: Re: [PATCH] net: hns3: use kcalloc() instead of kzalloc()
+To: Qianfeng Rong <rongqianfeng@vivo.com>, Jian Shen <shenjian15@huawei.com>,
+	Salil Mehta <salil.mehta@huawei.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250825142753.534509-1-rongqianfeng@vivo.com>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <20250825142753.534509-1-rongqianfeng@vivo.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemk100013.china.huawei.com (7.202.194.61)
 
-Hi,
 
-ÔÚ 2025/08/25 18:57, Christoph Hellwig Ð´µÀ:
-> On Mon, Aug 25, 2025 at 05:36:55PM +0800, Yu Kuai wrote:
->> +		bio = bio_submit_split(bio,
->> +				zone->zone_end - bio->bi_iter.bi_sector,
->> +				&mddev->bio_set);
-> 
-> Do you know why raid0 and linear use mddev->bio_set for splitting
-> instead of their own split bio_sets like raid1/10/5?  Is this safe?
-> 
-
-I think it's not safe, as mddev->bio_split pool size is just 2, reuse
-this pool to split multiple times before submitting will need greate
-pool size to make this work.
-
-By the way, do you think it's better to increate disk->bio_split pool
-size to 4 and convert all mdraid internal split to use disk->bio_split
-directly?
+on 2025/8/25 22:27, Qianfeng Rong wrote:
+> As noted in the kernel documentation [1], open-coded multiplication in
+> allocator arguments is discouraged because it can lead to integer overflow.
+>
+> Use devm_kcalloc() to gain built-in overflow protection, making memory
+> allocation safer when calculating allocation size compared to explicit
+> multiplication.
+>
+> Link: https://www.kernel.org/doc/html/next/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments #1
+> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+> ---
 
 Thanks,
-Kuai
+Reviewed-by: Jijie Shao <shaojijie@huawei.com>
 
-> Otherwise this looks nice.
-> .
-> 
-
+>   drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c b/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
+> index 0255c8acb744..4cce4f4ba6b0 100644
+> --- a/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
+> +++ b/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
+> @@ -843,7 +843,7 @@ static int hns3_dbg_bd_file_init(struct hnae3_handle *handle, u32 cmd)
+>   
+>   	entry_dir = hns3_dbg_dentry[hns3_dbg_cmd[cmd].dentry].dentry;
+>   	max_queue_num = hns3_get_max_available_channels(handle);
+> -	data = devm_kzalloc(&handle->pdev->dev, max_queue_num * sizeof(*data),
+> +	data = devm_kcalloc(&handle->pdev->dev, max_queue_num, sizeof(*data),
+>   			    GFP_KERNEL);
+>   	if (!data)
+>   		return -ENOMEM;
 
