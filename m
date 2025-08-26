@@ -1,150 +1,155 @@
-Return-Path: <linux-kernel+bounces-787319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72E40B3747B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 23:38:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 676C8B37482
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 23:46:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3303E3B5E77
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 21:38:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25F08361E83
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 21:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE36299923;
-	Tue, 26 Aug 2025 21:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kYNzSa1y"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E54902D23A3;
+	Tue, 26 Aug 2025 21:46:31 +0000 (UTC)
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B5927A11E
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 21:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3193298CA6
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 21:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756244319; cv=none; b=GiWuYtP3IbK3jwhGw69LRssyfzoMSfm5OhQiqPBH9ycwU1ZrB0t+dT2n3JpAvr0XLNRiaTuP8lRroDeqN4IdrT0A749dJk59zvuNGdsdeMlXAT9gCIPq8qS/nB1Han1Cm+lUHlFic5nIoUN1u+KZKUrrX+gkixeNe2FvNSU69WE=
+	t=1756244791; cv=none; b=r9jb6Un3iwoKCDQDbVfJgMycsOR7VYFLG5H4aEZJwcEhOoh07q38dWw3Z6no/CtJ+ZWqQSQUwCde1uVSjXDxIZ9yhBCyQdbkJ+1ROp9UU26COmFH/NCxXGhB5/P/TVEhsfNQYFeRZQGAs9ouvTBPdQcaF3HHhscJJkMBH97ppmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756244319; c=relaxed/simple;
-	bh=tjjntmHYd9yX/bQsKUBCFfyjm57RPvKrOHRwfskNRjE=;
+	s=arc-20240116; t=1756244791; c=relaxed/simple;
+	bh=wxjUVhxbok5IPGUPMxHmf/MxyRnEbApTzZPax+WoJ1s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ha0EFKjIr/to8l0Cs8HRty2XXj9x/1kRQBKola582AaiYSprRyq+0uwaJH8hWQELhaqySjzwHHhQpbzE253ObQC5TQjo+uLWT5Hyqk/IrQeQNN9jsvaPI/zv17mDDA/7Yb8bt8oTvIrsIhMHs+TtkkmcbKsMVtbx2QDgYDpcbdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kYNzSa1y; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4b2dc20aebbso150751cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 14:38:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756244317; x=1756849117; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=89nUNyghQOdbDMTzejcrMWxMjVoZp0QLNZEDRB294gQ=;
-        b=kYNzSa1yl5SEOrAw2kMSyJYcMsEqJqtN2FQ+75SCQp0+JkP7QwFI0Ib7rTsIfXT3Ko
-         3xJvrJ+d0idnSejODRLcyKroSSKeMIN4wWLsh4j+k+Sp8xpiEyEEyiCLW85VHsMVcNrD
-         1v9egOQ/jjN4Ui9Tbz1POJluvCjQYQbcoD5iJJq7kcg2k1oxLNQw/9GArUCge6kEZyLC
-         qH3KbliDM+klvSahqKbeqz4THu6rDJg58tJfJRrL++1uZnlKecZWsGkvZnsVEYZ2uNSd
-         t71TZ8c1F2yTLqrnuWpdruBjmUbyw4q4Tv6j4LI+BJw3Mes4OF4s5p6hGzgPsFEBBpER
-         TvQA==
+	 To:Cc:Content-Type; b=CSoZ7TRhxA+fDRYPYUaxJ6dRYU1qXdqd9UTDlQJGO8kNVi+d8r0aBU0CIEhXRc2gVbMz8PXOrRIGoamAoptEqvpG+2URLt5etAj3wtrz1rr1DCmj8gH8jHOiCjciObCC5Mrjz3Tv/Owcjjph0mJN/NaGr55qNjuywuhrndqrDeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-61ca9a5b41bso703392a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 14:46:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756244317; x=1756849117;
+        d=1e100.net; s=20230601; t=1756244787; x=1756849587;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=89nUNyghQOdbDMTzejcrMWxMjVoZp0QLNZEDRB294gQ=;
-        b=SF9IFwAM2HulAZeGybfdst8k16LYNIDbOVwqMWfa/cFSnAIpDX0fJPYrUdXr03OV4j
-         Dg7xtl3Ljy9FeiQYqG9TNdGR8Qwx75HUV9mA/ThFDSvldFuhqOF4BEPUjB3PWLcFdVlk
-         M0+deQdOtbFECY6U0Ju3OB6BYJQwSooOYLraTTHLg1rwTwBayW7RTUa1SbmxvL5WNImH
-         WCeyXMy6Q5itvqP61pbTVgA8VRdMzHHkRXQ1525mDfp56rI/AqsBpiGs/aE1tjogQDAA
-         ztud1r0x+i8gcJEefeMDhfh8GF+8glrV8Y+ZO/bOzJT2/YhVG6w+cpNo/cypJHlLADT5
-         ki7A==
-X-Forwarded-Encrypted: i=1; AJvYcCUlLM5o4CCPs0qOOlRrQzmPeCsC3Jj9NgWT1kS4cntVcV2eT8uueOiZUzdEHVtluKItATh3IYGU7+PdoK8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymbSSEUxIDNZqixBw4ovKm5u4dUCMGSYgiPykFaVN/LuvdjHho
-	l5zomHcrPseOOndJ30D6rVTlUmMTKfxKBtgGJBSNdk0eDkhXRW5HKLdbbMClgQN4ez1pub11aXZ
-	wOFyVz2UsM3a8NeVfgHZqr7SrzjLTrzOuBiqqT0f7
-X-Gm-Gg: ASbGnctllEEmrh9YmUsjdB+ymzFOLHhsRRpkztC8RZGp89q4DXTjFpyv3T7dz9KuSOI
-	KA63IRWzNsE7YSIiqerebAy/qH2X6/MPxrozPyzPtYT7Mbrv0K97zpIUb4NgGwaZz83lKR4bi4X
-	sEAQd87gTWZ7DWFFn6wZH+Zvni4hh7jtToW/enS5cOkdPdTwryiUFd8X+sQiqC/iIFe1ei0fIiI
-	pcbv49hDnKdTQVO3y505UGmERoGBwHoLJnFgRsZNaucbOjTft/ZiUhKVw==
-X-Google-Smtp-Source: AGHT+IHxeU94g08Uyt0q7MmK7MW0edM6nUge+D9EPJ9mUhKKigCb+AZKXdltlf0UfavBccb1nXT9sGeBu0yaftb6UHI=
-X-Received: by 2002:ac8:7d41:0:b0:4b2:d4cb:be58 with SMTP id
- d75a77b69052e-4b2e2c1b598mr6770261cf.9.1756244316909; Tue, 26 Aug 2025
- 14:38:36 -0700 (PDT)
+        bh=qlR2W8sGPsNFxVXAPLkKkhjl01WcoRvDHaUyBoigeGE=;
+        b=EEhRP7Jy/LXMgNu/3M9ibkQZt+9CYRNwGqcIkkmrS3U/3unO+9RZGvxOvIS9W9rPZe
+         3KXu7mBxIa8Hc31dIEOIRVmwjJ28FvjRXxjArZvnEZzj/+m++wW7GcboqPvOCM2vG8XF
+         rMrI6OKCp1bgdJnoAP5mMlcoA0t/T3RGaS1HlHM3+68Nqm1kFbiWfAqt5nL5gqC1LrXZ
+         5QXdgOMtbfUbNoWCQdPUwBK9ZoB+lY7ucW0Sn/mi8akLTYfXkDlre/zTh1d6eJgDwHmG
+         inETaImSLRNOFqixD89KKWwnKkx/GSFAjCno7GQNDwVEzGkM+5kLEn0ILPdK85gRLrrh
+         f6Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCVe9AR6AW+Nn8Yx4m5n6gYH0U4D+rwzdT12jl9POQV0o3ebgmIPkt4Ny4dNZ+hRaBBbvymqYCmPeIBrxfU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoQDnz7YhwuL1u47p5LhV/ry/n4XkZpYOiAD3xiZcYGq6CG2jZ
+	C/PQUtew9iY8MrpV8P7UC29fhkZkIRnoTy+G+zsFxo28Oexq78y0shDqiHjJ12GA
+X-Gm-Gg: ASbGncvhI8QgtGBX+k3OdjStIxLK+L87Z8+q/vG60Zq+B6FaDkr8OpcbU6zqYmR3eR6
+	p6zSnRdWSAbWB3tjMLESD+feuwyRG/PbCVXbxF4yqv5XFhZ9v+03j3SD9n8dojFLrIcwQ2sWX6m
+	27hmA1qz9GQq41SAC2grnnO+00w9MbAqGvkkQWreT90tu8KtVebKB1hEqXz9DCFZXpxul7hs+2y
+	mTtwXurprcXZh3QCc5bwcXneAZTt82NhV+4AanEOTbZ1/7zUJGim5ZQBSh0eeNk6dFhukb9TcUw
+	DvamBdbGgnKFJiuyvkXjH+8wEUK0kQchb79sXIFufkdeS9rMA4LMBb7nmzgGwmHgVrY4uawAWP+
+	lU5HGJpFrkQK1FNvqQkgxwZQ5tr6vcU/vll1Ja0VMfeEBScBTsYKcUtH+cX0kGY1h+XyhU/ZnR/
+	uW7egjat43CCgiwDhvWQo=
+X-Google-Smtp-Source: AGHT+IHGx9/iXEbj8Lhtvc9OrdoBXibHV8ndElWafZFD0/3aXo+jxuGmAQphqwFsw+DfBht2w9xtwA==
+X-Received: by 2002:a05:6402:2342:b0:618:20c1:7e61 with SMTP id 4fb4d7f45d1cf-61c1b6fb6ebmr17473031a12.27.1756244787208;
+        Tue, 26 Aug 2025 14:46:27 -0700 (PDT)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61c3174f77fsm7720384a12.56.2025.08.26.14.46.26
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Aug 2025 14:46:26 -0700 (PDT)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-6188b72b7caso8275449a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 14:46:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVBVAoNdS4a6YDe3G9C96hpd+P3xbGpwe9QpWtPy1Gpgo/G9ic/pZ+hj+QnmTGou3wbGnTSMyE8lDGcA7o=@vger.kernel.org
+X-Received: by 2002:a05:6402:34d2:b0:61c:979a:e7a1 with SMTP id
+ 4fb4d7f45d1cf-61c979ae911mr2475028a12.16.1756244786336; Tue, 26 Aug 2025
+ 14:46:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250821042915.3712925-1-sagis@google.com> <20250821042915.3712925-16-sagis@google.com>
- <aK3vZ5HuKKeFuuM4@google.com> <68ae1604a387c_300e8f2947e@iweiny-mobl.notmuch>
- <CAAhR5DHPMPOb2XCJodyNMf2RTQfTZpAaCGMg6WeWxSWPLtkO4Q@mail.gmail.com>
- <CAAhR5DGeTQ4G-w2o5YCvNWkZZWFcXe=6rro+RcfhR18-4sT+PQ@mail.gmail.com> <aK4nwZ4FE1r8-GYd@google.com>
-In-Reply-To: <aK4nwZ4FE1r8-GYd@google.com>
-From: Sagi Shahar <sagis@google.com>
-Date: Tue, 26 Aug 2025 16:38:25 -0500
-X-Gm-Features: Ac12FXx43YYHIALem9VlFRybUWvBdHC-shjMO3WBIHuazSzxmrkHbtA3djEtUZc
-Message-ID: <CAAhR5DHLhoY=wz3QQLqjtqhSNewSfFqGk5wonA5TiJwnPmPLsw@mail.gmail.com>
-Subject: Re: [PATCH v9 15/19] KVM: selftests: Hook TDX support to vm and vcpu creation
-To: Sean Christopherson <seanjc@google.com>
-Cc: Ira Weiny <ira.weiny@intel.com>, linux-kselftest@vger.kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
-	Erdem Aktas <erdemaktas@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Roger Wang <runanwang@google.com>, Binbin Wu <binbin.wu@linux.intel.com>, 
-	Oliver Upton <oliver.upton@linux.dev>, "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, 
-	Reinette Chatre <reinette.chatre@intel.com>, Chao Gao <chao.gao@intel.com>, 
-	Chenyi Qiang <chenyi.qiang@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <20250826-dart-t8110-stream-error-v1-1-e33395112014@jannau.net>
+In-Reply-To: <20250826-dart-t8110-stream-error-v1-1-e33395112014@jannau.net>
+From: Neal Gompa <neal@gompa.dev>
+Date: Tue, 26 Aug 2025 17:45:48 -0400
+X-Gmail-Original-Message-ID: <CAEg-Je8F_n9J5aBsTBm6RgAL9DdXKTgyMNxDo_aPOR42GzGUkA@mail.gmail.com>
+X-Gm-Features: Ac12FXwA-HRfgwtoditQ_gzG_vHw6fQHNUVW4nCA0dkeveZIhrlsxxZOpuqsYBc
+Message-ID: <CAEg-Je8F_n9J5aBsTBm6RgAL9DdXKTgyMNxDo_aPOR42GzGUkA@mail.gmail.com>
+Subject: Re: [PATCH] iommu/apple-dart: Clear stream error indicator bits for
+ T8110 DARTs
+To: Janne Grunau <j@jannau.net>
+Cc: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Hector Martin <marcan@marcan.st>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 26, 2025 at 4:31=E2=80=AFPM Sean Christopherson <seanjc@google.=
-com> wrote:
+On Tue, Aug 26, 2025 at 6:57=E2=80=AFAM Janne Grunau <j@jannau.net> wrote:
 >
-> On Tue, Aug 26, 2025, Sagi Shahar wrote:
-> > On Tue, Aug 26, 2025 at 3:29=E2=80=AFPM Sagi Shahar <sagis@google.com> =
-wrote:
-> > >
-> > > On Tue, Aug 26, 2025 at 3:14=E2=80=AFPM Ira Weiny <ira.weiny@intel.co=
-m> wrote:
-> > > >
-> > > > Sean Christopherson wrote:
-> > > > > Ugh.  IMO, this is a KVM bug.  Allowing KVM_CREATE_IRQCHIP for a =
-TDX VM is simply
-> > > > > wrong.  It _can't_ work.  Waiting until KVM_CREATE_VCPU to fail s=
-etup is terrible
-> > > > > ABI.
-> > > > >
-> > > > > If we stretch the meaning of ENOTTY a bit and return that when tr=
-ying to create
-> > > > > a fully in-kernel IRQCHIP for a TDX VM, then the selftests code J=
-ust Works thanks
-> > > > > to the code below, which handles the scenario where KVM was be bu=
-ilt without
-> > > >          ^^^^^^^^^^
-> > > >
-> > > > I'm not following.  Was there supposed to be a patch attached?
-> > > >
-> > >
-> > > I think Sean refers to the original implementation which was out of
-> > > the scope for the git diff so it was left out of the patch:
+> From: Hector Martin <marcan@marcan.st>
 >
-> Yep, exactly.
+> These registers exist and at least on the t602x variant the IRQ only
+> clears when theses are cleared.
+>
+> Signed-off-by: Hector Martin <marcan@marcan.st>
+> Signed-off-by: Janne Grunau <j@jannau.net>
+> ---
+> I've overlooked this change for the 4 level page table / t6020 support
+> series [1]. There are no dependencies to series so this can go in on its
+> own.
+>
+> Janne
+>
+> 1: https://lore.kernel.org/asahi/20250821-apple-dart-4levels-v2-0-e39af79=
+daa37@jannau.net/
+> ---
+>  drivers/iommu/apple-dart.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/drivers/iommu/apple-dart.c b/drivers/iommu/apple-dart.c
+> index 190f28d76615159527649cd288df395a50d950ef..8b1272b7bb44a1ebc03ca4ddf=
+3be43a1e42c97ed 100644
+> --- a/drivers/iommu/apple-dart.c
+> +++ b/drivers/iommu/apple-dart.c
+> @@ -122,6 +122,8 @@
+>  #define DART_T8110_ERROR_ADDR_LO 0x170
+>  #define DART_T8110_ERROR_ADDR_HI 0x174
+>
+> +#define DART_T8110_ERROR_STREAMS 0x1c0
+> +
+>  #define DART_T8110_PROTECT 0x200
+>  #define DART_T8110_UNPROTECT 0x204
+>  #define DART_T8110_PROTECT_LOCK 0x208
+> @@ -1077,6 +1079,9 @@ static irqreturn_t apple_dart_t8110_irq(int irq, vo=
+id *dev)
+>                 error, stream_idx, error_code, fault_name, addr);
+>
+>         writel(error, dart->regs + DART_T8110_ERROR);
+> +       for (int i =3D 0; i < BITS_TO_U32(dart->num_streams); i++)
+> +               writel(U32_MAX, dart->regs + DART_T8110_ERROR_STREAMS + 4=
+ * i);
+> +
+>         return IRQ_HANDLED;
+>  }
+>
+>
+> ---
+> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+> change-id: 20250826-dart-t8110-stream-error-1c2bbbf4fb63
 >
 
-I took a stab at updating the KVM ABI and sent out a small patch [1]
-to fail KVM_CREATE_IRQCHIP with ENOTTY and the test passes without the
-special handling for SPLIT_IRQCHIP for TDX.
+LGTM.
 
-[1] https://lore.kernel.org/lkml/20250826213455.2338722-1-sagis@google.com/
+Reviewed-by: Neal Gompa <neal@gompa.dev>
 
-> > /*
-> >  * Allocate a fully in-kernel IRQ chip by default, but fall back to a
-> >  * split model (x86 only) if that fails (KVM x86 allows compiling out
-> >  * support for KVM_CREATE_IRQCHIP).
-> >  */
-> > r =3D __vm_ioctl(vm, KVM_CREATE_IRQCHIP, NULL);
-> > if (r && errno =3D=3D ENOTTY && kvm_has_cap(KVM_CAP_SPLIT_IRQCHIP))
-> >         vm_enable_cap(vm, KVM_CAP_SPLIT_IRQCHIP, 24);
-> > else
-> >         TEST_ASSERT_VM_VCPU_IOCTL(!r, KVM_CREATE_IRQCHIP, r, vm);
+
+--=20
+=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
+=BC=81/ Always, there's only one truth!
 
