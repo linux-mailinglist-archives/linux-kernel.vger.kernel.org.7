@@ -1,204 +1,314 @@
-Return-Path: <linux-kernel+bounces-787028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2B41B37073
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:34:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE23EB3707A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:34:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C5BF1B2540D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:34:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F6C136801E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:34:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD2D3164CD;
-	Tue, 26 Aug 2025 16:33:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391A835206F;
+	Tue, 26 Aug 2025 16:34:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jsmTrUHG"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TPiUh1RD"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDECC3164D1
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 16:33:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400B834F47D;
+	Tue, 26 Aug 2025 16:34:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756226015; cv=none; b=XVaofX3o5fX1BnD+E8E3RNJWi8ATXTrimg0nuh9d/QZrml943korxq5GY3j01p6PiC5uL/353XU5IV7aNw6kFV9ZNJnnvWVIl32ieht9lHX/yCOvq5tf4ZgEh6dQoDGpB8md40WV3lePwQ1/igKYUETMcVfgTNh4TO3iuxAChFo=
+	t=1756226079; cv=none; b=MqQBC6TrHpUNIURpgrbimw2EsvsyJgG6Dau01KjyyNuwWvC8StjINcGpyiU7Af9lr9ahj7688w0VNWB1XnROD2/Aq+vA8nIKZ19Qieajz9PYd06vtGqgwpR4lNMiRA1eI/juiPmgn4o7RmnOUu2mbm9CVAHom+cuBy8JqAC+lKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756226015; c=relaxed/simple;
-	bh=Cnz7D0UPWrRhgGtUPKfg6pk2BWK8ICoo9Tvq1LmKrVg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l7h+5zDpKMF9lrc4c8P0mZnZRis2PHmLkOjecErtS04x49ZqgcnaWPtbxsikVr4VCiL6WnG/wPTNsFkt5WxFmZm1OX6PRFLvvTb6ikhk6X2zc0SOVLE2snGC4HBJKcuOcKD3aUEyuVe3nqvZN+yks2RB5W5FWPuHSjxHy5JIlhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jsmTrUHG; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57QDf7RO031504
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 16:33:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=o0JNkVhBc++JdNPVvj2G5Tj3
-	VEOgkLl+3jrDv6VD7BE=; b=jsmTrUHGvaBkNoJMv6AJPlvdxeSRoOXScDgdF8H5
-	yXOY6bOIi/t8o01fuV9IO9u0u9bMxb1l21mNd+/Jb30e07scPF6cc/eWbSFWLTFd
-	Q006RaI322lcHeEaHgQsi0TQBWmN+eszFaZZixyp+V3QvFqEJNb1j3LmONws8q4+
-	+VzKEQ3vxORktU3MqJWeQTYwmkY1tNBSC0awih42NN4k7NxJ60O/5t23HT8aLGoO
-	rxJiAeDAImklFPUzmy1ZwWGjzgCKlGXzt2h+HZBYdNfcJruN68YReBM2hNG+Ofx+
-	LnHV77cIJplKO1g4jyBlcstYoQ3Pj5x1HXx1IfWYWGv1nQ==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48se16rnd1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 16:33:33 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-70dd6d2560aso15305076d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:33:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756226012; x=1756830812;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1756226079; c=relaxed/simple;
+	bh=xMVI5V3rKT3fGVSefU1LuwSlQitadfboKFyT1slF4wE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FXOLrqGWLU9mxCUOsd9ko8b0oFMZvRWRl05wIDcMe0d1VMsyzJdP48pRcTewhvIboVgcgJEDaLQtShIFRaud072vDuHXDwGLx/sw8OGZDt9Ionx/e1CG7bCBuQ6ohS0vqTdJpQCxYF+Ns/AkcBUqI21yErjAlDo3x3JTBRT70KM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TPiUh1RD; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-55f39fc7967so2997925e87.1;
+        Tue, 26 Aug 2025 09:34:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756226074; x=1756830874; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=o0JNkVhBc++JdNPVvj2G5Tj3VEOgkLl+3jrDv6VD7BE=;
-        b=AbsC9qXWpcQODFIyPjhM2kyIL0jv/YZ6HZ/GNzMbuVIE4C4qGwPDRBky6iJTW2NZDw
-         P6fRtfdlhXdxCcReu7asgaLbVoCVnNz16blCHsaiWQZtlJhjQIq1T3ly33Rga4pUTKdm
-         ZEVgMQeP3chV1ZRD1koW71DkjTzprcMsv7ie4YMhWcuQI0VjiXPF4rshZPBSHaIenzkG
-         5H//Fsw21MjGzxTn7W76Bwnorw3/ad9Kew9auUEdYf/J1vOabbzLODveUrZWGpJ+LWYB
-         IXXXK12SUE5Lby9rSiaQIFfb71Bmfsh0qzyL1eD2NACpARzSlhp/BmwWQlXEyT2g638D
-         +8Mw==
-X-Forwarded-Encrypted: i=1; AJvYcCUlsC7JRJzHjvKpoF7LLCPeFFmSRcIc+yd6Ri/ksruEAnewSO6Aypdr9Xk87ORGtL9eUEA1P3Q21IYI9CE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0vpy8le9B/Zxab7R0PqhUqSYXRs9C30eDb/5ECiXQAF8UGZze
-	7CHyUwF84YqAGycggJvEQr/mEnYq5SqLzpMYdYnb38piILpNtU1BAl2qBWsad7ajPY1QRuASos2
-	bNpaep/nFjE86iEHOQR13nvx3qH42Zo+gdaVcY4ys335pibTmpMDfjaql3BnrEKkpBRw=
-X-Gm-Gg: ASbGnctXHL59Il3x4pKH1oRcfw3LgQvQdFUsHhlEh789rn8grhzoHJmUsaih7A72+um
-	gQnZLklihA8tKDfpJ2hRBwNuCCCyGdPEV7NcIDYcW0mEH3WytYX+hXe7BerQR/rOChr5Kdev/bI
-	uUOMCFOTaks8XbijvosVuMKI3MDmmnDPWWnbxnYhDaggTcGOAyoHbf/GI4F7hwIcREV3ptPwam/
-	18x0o9rlnMZ1cRyzgsZchqv9cp+tvdNUXpKejopyw7zFdBvMIw4SGYXBs0GMoMzpYHBPU33rC4o
-	rtB0JhqeiXaIC+XilZUjATw4XM3ThBQS/YcoOR9ORDuAkNqiYQ+GmYqXMGNI+6dlIZK+AuHUDNI
-	xrs2HVzWEhA02IUBqtENOhiQL/BKhwSbzywoorhfeGM6jmgZagWj4
-X-Received: by 2002:ad4:5cc1:0:b0:709:ee07:daaf with SMTP id 6a1803df08f44-70d97102f17mr190928346d6.19.1756226011481;
-        Tue, 26 Aug 2025 09:33:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFZ7aaOomBumnrq1rhi9jEEdDGg0wr1dDNic05npTTurzd/gV21cCPu8vrLKpDQ36ehil5Qyg==
-X-Received: by 2002:ad4:5cc1:0:b0:709:ee07:daaf with SMTP id 6a1803df08f44-70d97102f17mr190927636d6.19.1756226010771;
-        Tue, 26 Aug 2025 09:33:30 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f35b27683sm2357303e87.0.2025.08.26.09.33.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 09:33:29 -0700 (PDT)
-Date: Tue, 26 Aug 2025 19:33:28 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>
-Subject: Re: [PATCH v3 27/38] drm/msm/dp: add dp_display_get_panel() to
- initialize DP panel
-Message-ID: <smvfckejheyi7oehubdkhnh6pxokn7yugvlrynraypsu6kssj3@6vinswn4yku4>
-References: <20250825-msm-dp-mst-v3-0-01faacfcdedd@oss.qualcomm.com>
- <20250825-msm-dp-mst-v3-27-01faacfcdedd@oss.qualcomm.com>
+        bh=M1hBrtIW3hGCbr4UlSnjeGexnWAsPob/PvCTNZpOgzw=;
+        b=TPiUh1RDc99lAaVh0G25u1QJYd4eBOy2Zu7CwWrAnE9890Myh68wngSfaUtqWLbie3
+         fe3XbwBeJOAdODbu31SFc117/MhuuuvonmNii5bh5HEVedqND1a6S/qwQINLYBWHEDtm
+         OBzy1IPMWjiAgOwTHmjl4P4/QKplQvxnAcLla1fppMZYx3zO9oIwk/pzM1Vh8aMh10/r
+         U/jHjQxiCW+E1/tiAIiA68kD8yr7/2JHrMoFvfUJUOFjF46OLTkhRBx7Rf0Flh6AKUeU
+         ngyLAIRV3RNqej7QX9Q2F/Z5YJt3J0nUHMUTqJim1+2ajjpTpVNv+NYVJLpAYiIzyA8q
+         ++dQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756226074; x=1756830874;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=M1hBrtIW3hGCbr4UlSnjeGexnWAsPob/PvCTNZpOgzw=;
+        b=hFRkh1HpP/JqM3G51W9mkZFzy0TDRkEJjp3X5i8+s0AiH4fSITjfIWZxF1GhsX0TR5
+         EZaPskNQsXVe6HQg92OkD1QlGsUO3H2uxlWsYpUJBJz/2H2FbOtSwtHfGai9QsIZUisG
+         QYNiLT70ChvrhbTvsTPt1NpZlThKoPhPsepiCqUXxKT0unQnJOv7d0dPFYJ44ew1SpjO
+         Ejas0y0Qt9g9ZhLcBsPpP/u9arL4TQrx0XohS3zVYtrZd330ex5iq7257+p5K7Wa/B5y
+         fVef+iscKk+JYqKj03evIAOnst1xSmbBA4Rfz2OgP8F5IJfYeJJheEd3fx4AcpvFcvsb
+         MLUg==
+X-Forwarded-Encrypted: i=1; AJvYcCVGjEibQ4UaPFXB/vrBcE29PFAy/BNtPYCbgMfawOigdc3HPfTiLnFW9Q3ESRDloXrP4TNJbdF4LZA=@vger.kernel.org, AJvYcCWfJKvHnlfmSfkh2S+subRPKGpp5gWcQfjVhR+r0fYqaDxOhfXGzhVjOjISJO0sK6jfs1ZqPyywUHKwCSdi@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXbgYDp71ZopVveGDdEWVDFkbMhvWoYJ17b37qfLySDzKUUheG
+	S611b//+KqhwjMKL38nxzyMAYZnuxygMQBWoGYbvfwVL89kYJXgQuTUGSW2zAn6GRrXKmH0syIy
+	Swe4CQPhPVEXGT1mjWg+IU1RTODl0f7g=
+X-Gm-Gg: ASbGnctfgE2BcP9erK+aF4If726RMXUrRKbi7HSvMTJMY0SP35juGSFrmzuA24XIKAt
+	66tUu1zyuxQSYrlU/WPYRp7CRtH5ahxbGS3e8D5tWzJYlZ8EBZtk6ZFL1GnsPMy2LqDZ+gWwJzN
+	jP7qswGf39X3FwWszRGqdz+r/+v0i+dmWJnx97s+JJNPLMpPe1cE/I2R09UhGiKTLEproyLc93v
+	x+L1t4ZU7bojHYCqQ==
+X-Google-Smtp-Source: AGHT+IGFg/aVxYAOM3AMKrAHLdQD2NtRNEqtHC495VKYnCKu7sznix/1p8WoGb54DuECWhIuS/YMTUp8uKNGbvQ2wCQ=
+X-Received: by 2002:a05:6512:ac1:b0:55c:c937:1115 with SMTP id
+ 2adb3069b0e04-55f0cd6f1afmr5967202e87.19.1756226073912; Tue, 26 Aug 2025
+ 09:34:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250825-msm-dp-mst-v3-27-01faacfcdedd@oss.qualcomm.com>
-X-Proofpoint-GUID: E3FmDMd3xKkjDo0xiM2c5NFtUhcnAS8b
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI2MDEyMCBTYWx0ZWRfX3OntCsiItxRf
- mOHNgdO1JVKN5ZrTyEvKhbITV57+d/vCI95DsYX9n6JAChVuglPC8130p4BVlc096XA98oeQrsB
- sOagj89yCAVWy+umCliw7KMBFE6tazEItPEkCsePZW0U+xTUPloqqmhFlF0sxRlgGMdRVeThNog
- dLvkLIvBQytP20E3+MpKlkk7h489ltx2u6kJZLf6vW+au4mSG4aymfunC66LopdmowH1igseOtX
- nTKWVeynWENFsDZLaw+H1XUbp7dI85zjVOyJSTjmmXyDewL84h6u2PJo8vX2Xo8bSvBlkjhyGSS
- 3InPYXKgV+O8RcIAVBLapIvPkHs2jYmRverH9paqML5gyXbl+qKqOFYgBWz63R62uIsA8oDrPpY
- /wsKrLNP
-X-Proofpoint-ORIG-GUID: E3FmDMd3xKkjDo0xiM2c5NFtUhcnAS8b
-X-Authority-Analysis: v=2.4 cv=CNYqXQrD c=1 sm=1 tr=0 ts=68ade1dd cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=qYs0ZBLfSisuqDwih3YA:9
- a=CjuIK1q_8ugA:10 a=OIgjcC2v60KrkQgK7BGD:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-26_02,2025-08-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 impostorscore=0 priorityscore=1501 adultscore=0 spamscore=0
- phishscore=0 suspectscore=0 bulkscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508260120
+References: <20250708-efi-default-loglevel-v1-1-12b80db5af16@gmail.com>
+ <CALHNRZ9T0dHzbXBUdBa4hE-Ao8ebeLLPRX+1ThkuLT+Rp8_Jeg@mail.gmail.com>
+ <CAMj1kXEwyaHUkO5aO-sL3YAN=qRoSTuotHMRpBDLX9BhERnN=g@mail.gmail.com>
+ <45692a2c-ba3d-45a2-9ab1-cf6982dbf788@siemens.com> <CAMj1kXG=zG8j+cr0gNMpkKRvdekqMR-EiEkMHiFgRvbaWy9aKg@mail.gmail.com>
+ <09cb03e4-21f3-418c-98f2-66004cc3080f@siemens.com> <CAMj1kXHyw3Oi=c3p+7q75vD4iJ+x642JzL7zHM4jpF4k937Uxg@mail.gmail.com>
+ <CALHNRZ8YUVvQ--Y-EfXW04WYXiKNsj6KSs-OaLMcEnG3_xDMSg@mail.gmail.com>
+ <CAMj1kXE9tNa5R22M9NTmLY8qtnpxbvqMG-Cw0vFpVtr_KoM9bA@mail.gmail.com>
+ <CALHNRZ_Q9XwJenTVDBdk4NQ79m2wWKRyxNS_sV1TLuqunE_NGQ@mail.gmail.com>
+ <2b7e98a3-dc77-4eb3-beba-3bea7febb715@siemens.com> <CAMj1kXGeGG6hCCNKhSxPJppkTzBeZg9jO0py1P8xfi2N3S=vyQ@mail.gmail.com>
+ <CAMj1kXF53U8DUmt8tN75ZYkkQc8wLOcns1eEzNFo=a7F02h3Kg@mail.gmail.com>
+In-Reply-To: <CAMj1kXF53U8DUmt8tN75ZYkkQc8wLOcns1eEzNFo=a7F02h3Kg@mail.gmail.com>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Tue, 26 Aug 2025 11:34:22 -0500
+X-Gm-Features: Ac12FXz6PH3eUrbsR4BsciSdybGnmImGmqU4VO8fZd3QVPL6RaFjsoyibR7mhds
+Message-ID: <CALHNRZ8DJNAd=TrehuoydCad=iDKwUZ3xgEZC1f0+yLHWi3HAQ@mail.gmail.com>
+Subject: Re: [PATCH] efistub: Lower default log level
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Jan Kiszka <jan.kiszka@siemens.com>, linux-efi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 25, 2025 at 10:16:13PM +0800, Yongxing Mou wrote:
-> From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> 
-> Add an API dp_display_get_panel() to initialize and return a DP
-> panel to be used by DP MST module. Since some of the fields of
-> DP panel are private, dp_display module needs to initialize these
-> parts and return the panel back.
-> 
-> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
-> ---
->  drivers/gpu/drm/msm/dp/dp_display.c | 23 +++++++++++++++++++++++
->  drivers/gpu/drm/msm/dp/dp_display.h |  2 ++
->  2 files changed, 25 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
-> index 84df34306fb557341bea288ea8c13b0c81b11919..abcab3ed43b6da5ef898355cf9b7561cd9fe0404 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_display.c
-> +++ b/drivers/gpu/drm/msm/dp/dp_display.c
-> @@ -632,6 +632,29 @@ static int msm_dp_irq_hpd_handle(struct msm_dp_display_private *dp, u32 data)
->  	return 0;
->  }
->  
-> +struct msm_dp_panel *msm_dp_display_get_panel(struct msm_dp *msm_dp_display)
-> +{
-> +	struct msm_dp_display_private *dp;
-> +	struct msm_dp_panel *dp_panel;
+On Tue, Aug 26, 2025 at 7:43=E2=80=AFAM Ard Biesheuvel <ardb@kernel.org> wr=
+ote:
+>
+> On Tue, 26 Aug 2025 at 10:16, Ard Biesheuvel <ardb@kernel.org> wrote:
+> >
+> > On Tue, 26 Aug 2025 at 09:23, Jan Kiszka <jan.kiszka@siemens.com> wrote=
+:
+> > >
+> > > On 26.08.25 00:09, Aaron Kling wrote:
+> > > > On Mon, Aug 25, 2025 at 4:28=E2=80=AFPM Ard Biesheuvel <ardb@kernel=
+.org> wrote:
+> > > >>
+> > > >> On Tue, 26 Aug 2025 at 02:34, Aaron Kling <webgeek1234@gmail.com> =
+wrote:
+> > > >>>
+> > > >>> On Mon, Aug 25, 2025 at 5:44=E2=80=AFAM Ard Biesheuvel <ardb@kern=
+el.org> wrote:
+> > > >>>>
+> > > >>>> On Sun, 24 Aug 2025 at 16:47, Jan Kiszka <jan.kiszka@siemens.com=
+> wrote:
+> > > >>>>>
+> > > >>>>> On 24.08.25 02:31, Ard Biesheuvel wrote:
+> > > >>>>>> On Sat, 16 Aug 2025 at 16:52, Jan Kiszka <jan.kiszka@siemens.c=
+om> wrote:
+> > > >>>>>>>
+> > > >>>>>>> On 15.07.25 03:35, Ard Biesheuvel wrote:
+> > > >>>>>>>> On Tue, 8 Jul 2025 at 17:31, Aaron Kling <webgeek1234@gmail.=
+com> wrote:
+> > > >>>>>>>>>
+> > > >>>>>>>>> On Tue, Jul 8, 2025 at 2:30=E2=80=AFAM Aaron Kling via B4 R=
+elay
+> > > >>>>>>>>> <devnull+webgeek1234.gmail.com@kernel.org> wrote:
+> > > >>>>>>>>>>
+> > > >>>>>>>>>> From: Aaron Kling <webgeek1234@gmail.com>
+> > > >>>>>>>>>>
+> > > >>>>>>>>>> Some uefi implementations will write the efistub logs to t=
+he display
+> > > >>>>>>>>>> over a splash image. This is not desirable for debug and i=
+nfo logs, so
+> > > >>>>>>>>>> lower the default efi log level to exclude them.
+> > > >>>>>>>>>>
+> > > >>>>>>>>>> Suggested-by: Ard Biesheuvel <ardb@kernel.org>
+> > > >>>>>>>>>> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> > > >>>>>>>>>> ---
+> > > >>>>>>>>>>  drivers/firmware/efi/libstub/printk.c | 4 ++--
+> > > >>>>>>>>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > >>>>>>>>>>
+> > > >>>>>>>>>> diff --git a/drivers/firmware/efi/libstub/printk.c b/drive=
+rs/firmware/efi/libstub/printk.c
+> > > >>>>>>>>>> index 3a67a2cea7bdf1aa215d48dbf9ece4ceec6e4c28..bc599212c0=
+5dd746a9c54abbbe61a4bf70f1a8c4 100644
+> > > >>>>>>>>>> --- a/drivers/firmware/efi/libstub/printk.c
+> > > >>>>>>>>>> +++ b/drivers/firmware/efi/libstub/printk.c
+> > > >>>>>>>>>> @@ -5,13 +5,13 @@
+> > > >>>>>>>>>>  #include <linux/ctype.h>
+> > > >>>>>>>>>>  #include <linux/efi.h>
+> > > >>>>>>>>>>  #include <linux/kernel.h>
+> > > >>>>>>>>>> -#include <linux/printk.h> /* For CONSOLE_LOGLEVEL_* */
+> > > >>>>>>>>>> +#include <linux/kern_levels.h>
+> > > >>>>>>>>>>  #include <asm/efi.h>
+> > > >>>>>>>>>>  #include <asm/setup.h>
+> > > >>>>>>>>>>
+> > > >>>>>>>>>>  #include "efistub.h"
+> > > >>>>>>>>>>
+> > > >>>>>>>>>> -int efi_loglevel =3D CONSOLE_LOGLEVEL_DEFAULT;
+> > > >>>>>>>>>> +int efi_loglevel =3D LOGLEVEL_NOTICE;
+> > > >>>>>>>>>>
+> > > >>>>>>>>>>  /**
+> > > >>>>>>>>>>   * efi_char16_puts() - Write a UCS-2 encoded string to th=
+e console
+> > > >>>>>>>>>>
+> > > >>>>>>>>>> ---
+> > > >>>>>>>>>> base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
+> > > >>>>>>>>>> change-id: 20250708-efi-default-loglevel-4da5a36cac87
+> > > >>>>>>>>>>
+> > > >>>>>>>>>> Best regards,
+> > > >>>>>>>>>> --
+> > > >>>>>>>>>> Aaron Kling <webgeek1234@gmail.com>
+> > > >>>>>>>>>
+> > > >>>>>>>>> This patch was originally suggested a few months ago [0], b=
+ut as far
+> > > >>>>>>>>> as I can tell was never queued for merge. Since I'm also hi=
+tting a
+> > > >>>>>>>>> case where this is relevant, I'm sending this in to bring a=
+ttention
+> > > >>>>>>>>> back to it.
+> > > >>>>>>>>>
+> > > >>>>>>>>
+> > > >>>>>>>> I've queued this up now - thanks.
+> > > >>>>>>>>
+> > > >>>>>>>
+> > > >>>>>>> And how can I get back the loglevel info? It seems I can only=
+ choose
+> > > >>>>>>> between notice, silent and debug now. And the latter two only=
+ by also
+> > > >>>>>>> touching the kernel's loglevel.
+> > > >>>>>>>
+> > > >>>>>>> I'm particularly missing [1] in my UART logs now which is hel=
+pful in
+> > > >>>>>>> understanding this essential system state.
+> > > >>>>>>>
+> > > >>>>>>
+> > > >>>>>> Hi Jan,
+> > > >>>>>>
+> > > >>>>>> Is efi=3Ddebug too noisy for you?
+> > > >>>>>
+> > > >>>>> Yes, also because it affects the kernel even more. I'm looking =
+for
+> > > >>>>> "efi=3Dinfo".
+> > > >>>>>
+> > > >>>>> I don't get the reason behind this change anymore as well. If y=
+ou have a
+> > > >>>>> splash screen shown, weren't you booting with "quiet" before al=
+ready,
+> > > >>>>> thus also without any stub messages?
+> > > >>>>>
+> > > >>>>
+> > > >>>> Yeah, good point. IIRC that came up in the discussion but I can'=
+t
+> > > >>>> remember the motivation so it can't have been very convincing.
+> > > >>>>
+> > > >>>> So should we just revert this change?
+> > > >>>
+> > > >>> I'd prefer not to have to set quiet to get a clean splash screen.=
+ That
+> > > >>> doesn't seem like an unreasonable expectation, getting default
+> > > >>> non-debug logs and not having stuff written on top of the splash
+> > > >>> image.
+> > > >>
+> > > >> Perhaps you could remind us why this only applies to the efistub
+> > > >> output, and having the output of the kernel itself corrupting the
+> > > >> splash screen is fine?
+> > > >
+> > > > I'm not greatly knowledgeable about the efi standard and what's
+> > > > happening under the hood, so I will just speak to what I saw in my =
+use
+> > > > case. I'm working on Nvidia Tegra devices, newer generations of whi=
+ch
+> > > > use EDK2 as the last stage bootloader. The target os is Android, wh=
+ich
+> > > > has a pretty strictly controlled defconfig. Prior to this change, t=
+he
+> > > > kernel efistub logs were getting passed to the efi impl, which was
+> > > > then printing those lines to the display. The kernel logs were not
+> > > > being printed to the screen, as none of the console drivers were
+> > > > enabled to do so. So after this change, regardless of the kernel lo=
+g
+> > > > level, the boot splash will remain untouched until the kernel displ=
+ay
+> > > > driver takes over the display and the os renders to it. Because no
+> > > > efistub log lines are being printed.
+> > > >
+> > >
+> > > That makes sense now, and surely don't mind having some build-time or
+> > > runtime configuration switch that allow to tune the system into such
+> > > settings. It's just not so nice to take away the freedom of full-scal=
+e
+> > > loglevel control from the efistub.
+> > >
+> >
+> > Yeah, that would be my fault, I guess. I suggested simplifying this to
+> > the current approach.
+> >
+> > Would it be sufficient to make the EFI stub loglevel a separate
+> > compile time Kconfig option? I'd prefer that over adding more runtime
+> > logic.
+>
+> Would the below work for you Aaron?
+>
+> diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
+> index eb1bff6968a5..f7552f36ab51 100644
+> --- a/drivers/firmware/efi/Kconfig
+> +++ b/drivers/firmware/efi/Kconfig
+> @@ -72,6 +72,11 @@ config EFI_RUNTIME_WRAPPERS
+>  config EFI_GENERIC_STUB
+>         bool
+>
+> +config EFI_STUB_LOGLEVEL
+> +       int "Loglevel for the EFI stub console"
+> +       range 1 15
+> +       default CONSOLE_LOGLEVEL_DEFAULT
 > +
-> +	dp = container_of(msm_dp_display, struct msm_dp_display_private, msm_dp_display);
-> +
-> +	dp_panel = msm_dp_panel_get(&dp->msm_dp_display.pdev->dev, dp->aux, dp->link,
-> +			       dp->link_base, dp->mst2link_base, dp->mst3link_base,
-> +			       dp->pixel_base);
-> +
-> +	if (IS_ERR(dp->panel)) {
-> +		DRM_ERROR("failed to initialize panel\n");
-> +		return NULL;
-> +	}
-> +
-> +	memcpy(dp_panel->dpcd, dp->panel->dpcd, DP_RECEIVER_CAP_SIZE);
-> +	memcpy(&dp_panel->link_info, &dp->panel->link_info,
-> +	       sizeof(dp->panel->link_info));
+>  config EFI_ZBOOT
+>         bool "Enable the generic EFI decompressor"
+>         depends on EFI_GENERIC_STUB && !ARM
+> diff --git a/drivers/firmware/efi/libstub/printk.c
+> b/drivers/firmware/efi/libstub/printk.c
+> index bc599212c05d..782d1330c1cc 100644
+> --- a/drivers/firmware/efi/libstub/printk.c
+> +++ b/drivers/firmware/efi/libstub/printk.c
+> @@ -5,13 +5,12 @@
+>  #include <linux/ctype.h>
+>  #include <linux/efi.h>
+>  #include <linux/kernel.h>
+> -#include <linux/kern_levels.h>
+>  #include <asm/efi.h>
+>  #include <asm/setup.h>
+>
+>  #include "efistub.h"
+>
+> -int efi_loglevel =3D LOGLEVEL_NOTICE;
+> +int efi_loglevel =3D CONFIG_EFI_STUB_LOGLEVEL;
+>
+>  /**
+>   * efi_char16_puts() - Write a UCS-2 encoded string to the console
 
-Both these lines show that link_info and dpcd belong to msm_dp_display
-rather than the panel. The panel should only be describing properties of
-the particular sink.
+The only issue for me is that the Android defconfig is set by Google.
+Specific devices build kernel modules in a device specific manner, but
+the core kernel is fixed. And since efistub is =3Dy, that means vendors
+and third party projects like me cannot change this as a build time
+config. This works for me only if I can convince Google to set the log
+level lower in their defconfig. If this is what you wish to do, I can
+suggest such a change to aosp once they fork the next lts.
 
-> +
-> +	return dp_panel;
-> +}
-> +
->  static void msm_dp_display_deinit_sub_modules(struct msm_dp_display_private *dp)
->  {
->  	msm_dp_audio_put(dp->audio);
-> diff --git a/drivers/gpu/drm/msm/dp/dp_display.h b/drivers/gpu/drm/msm/dp/dp_display.h
-> index b1ea027438d952c94f3ae80725c92e46c631bdb2..d5889b801d190b6f33b180ead898c1e4ebcbf8f3 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_display.h
-> +++ b/drivers/gpu/drm/msm/dp/dp_display.h
-> @@ -65,4 +65,6 @@ void msm_dp_display_unprepare(struct msm_dp *dp);
->  
->  int msm_dp_display_get_active_stream_cnt(struct msm_dp *msm_dp_display);
->  
-> +struct msm_dp_panel *msm_dp_display_get_panel(struct msm_dp *msm_dp_display);
-> +
->  #endif /* _DP_DISPLAY_H_ */
-> 
-> -- 
-> 2.34.1
-> 
-
--- 
-With best wishes
-Dmitry
+Aaron
 
