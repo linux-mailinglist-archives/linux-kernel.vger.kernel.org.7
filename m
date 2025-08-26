@@ -1,131 +1,118 @@
-Return-Path: <linux-kernel+bounces-786861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5812BB36C91
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:57:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE680B36D23
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:08:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F34F64E14DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:57:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7CD95662A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9DA223322;
-	Tue, 26 Aug 2025 14:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 497F6223322;
+	Tue, 26 Aug 2025 14:57:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="eGzcwv8F";
-	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="QM5zKPtG"
-Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="kvfyShh5"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887CF1F872D
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 14:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7560202976
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 14:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756220223; cv=none; b=F2i6R2tLMnqaSY1nlhK9WNBk8GgnUMN4E0iElszFXN5aAisro2Z06lO7C6zv8/eSjEaCxH8cItwDoE4Xrnp13JGoEK/+iro4gPxKgWXm0KZDqcL4afslaT8OGMBCVfzR8l4lKMlgNWHHTGlL0GlfVD4v2r6x0MJ3pRhf/2flfGU=
+	t=1756220272; cv=none; b=A9APvFAEViNd+9hkGt4CeYoDztHQyv02oOUvAdaZIVVA8CXNwWB356b8QMRz0FkSn7oDsI8qwsO16vkZo12oW9UAUpOKhn8K2o0+/TACuhUYl3U+DVa3bFlN1FvdOoCNCAzUJa+AEofoT2fct7/5I+vE/1uyM1JmoGyFtIg4/Sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756220223; c=relaxed/simple;
-	bh=QauaDj0jCrgvgctb9q1Ow+lVmL4ZP34xzKj7rrO7Uk8=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=ua1OZRUylDaRqmgSwOBKs34NgH2SZg5qCrDgWjxsMwqtVmsMpJq1qb+Wbi9rkyuv4O7bVsARtJUNNDifOj+tK4hz54HSb6o4HcGchmD8AQ+WcOJ4R39m/EVYu/k+yNgL7HlN9DG9Mg8Y7W9NctRBimrIoBzDsOhIJM3nEZEzlhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=eGzcwv8F; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=QM5zKPtG; arc=none smtp.client-ip=46.30.212.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1756220213; x=1756825013;
-	d=konsulko.se; s=rsa2;
-	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
-	 subject:mime-version:content-type:from;
-	bh=QauaDj0jCrgvgctb9q1Ow+lVmL4ZP34xzKj7rrO7Uk8=;
-	b=eGzcwv8Fu8Bjldc3VG5ugIT20ar78EMccNQF820p2u+pKzVdhMqP6kmp7uvDz8P+X23EFKvbMCjwx
-	 th9wfzycYtQcB4V2Iup8Nitds9zLRN6j6hBKmdPUA7unIKadP0lLVk+Wr5lTqLubRwMpnVwDLnIv9q
-	 5sDTvzc2iA2+HSM6glAOZcHteSaIYN8eHuutH+U2bpVkGPpZNbR6EG9bmZsKlR5HXInoC3FjDuZIIR
-	 XUnhGdsNn6NFKufvFe6Ry41NQJZUx+OuwFzHFitjfFKMH4yoNmx7zxf+m9oozSzQPVvZv+BBnk/W8V
-	 eRKcwMYDZBixt4242xU/3HzTdtVINFA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1756220213; x=1756825013;
-	d=konsulko.se; s=ed2;
-	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
-	 subject:mime-version:content-type:from;
-	bh=QauaDj0jCrgvgctb9q1Ow+lVmL4ZP34xzKj7rrO7Uk8=;
-	b=QM5zKPtGz1LsmXfWiCV4vIplJh/aFZ3MfOhmPm/fpzEd02l+vkvHnXH+NFd5WmFimc7D91ALZGU4o
-	 79rWK1HBQ==
-X-HalOne-ID: e4e2ffef-828c-11f0-b5cb-d510462faafc
-Received: from smtpclient.apple (unknown [195.250.75.242])
-	by mailrelay4.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
-	id e4e2ffef-828c-11f0-b5cb-d510462faafc;
-	Tue, 26 Aug 2025 14:56:52 +0000 (UTC)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1756220272; c=relaxed/simple;
+	bh=oV66E/FpTLjjTr3Wt2H99na0JCk/nu8E2dyXtOJL8s0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GPkg042fIZFLB8onn7aTWbhbU0Hi/OvWgsCAgyjRZOWL+DV1LTyLxlZu1tzNVEMdhCdUsiya2JhFx3fFSl2+EPa5rnqVW/Fxx8Y7cAFXz8nDq3+UpXiYe70el/w2SE4H9NQESwIaQvI58ZETb+FKJHuefZcH8GjGnmpnaosYFik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=kvfyShh5; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-771e1e64fbbso3058881b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 07:57:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1756220270; x=1756825070; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=p/rODbLEiDc80ZuyhKo3EG6WxWc9OtiTJ41MRtq3bqg=;
+        b=kvfyShh5XCC4RcQQ7IVi9FH4tsglM3Fg8bd/aRFLV8FrVVcZ8TCmUnC9/Re+FEqIJ4
+         dnZk0+UDQUdOktst2oBs54FptXclomwpmhi9I3mrtyPEB1tZLvTlG8kdwNSDXhwXwuqm
+         OhODdcrM2lMmNAF588wwhcKE6AGAftrt8hA+Q16TcQNvfWU19hoSxBtMtBQ9RfCD75he
+         zEVOl3ql+xEPGL9uotaxTLVKYT9nriuYjcQt0QanWfHlKwqlC5SltoQ7aTNRdjEgDqn9
+         i2bIh5C5AVdyAJhPMDMqo+UVHv802Avnr/vL1XLFAZi/l/tTjYxCT36zFplxjxukA/eS
+         3dYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756220270; x=1756825070;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=p/rODbLEiDc80ZuyhKo3EG6WxWc9OtiTJ41MRtq3bqg=;
+        b=ZKiB70QPxBVCXnaGv0BGltD9F1+Upa6goAF39QqIOjzgE5ZCqOtE7uyy/+OAaYikkT
+         rvIqvRwx9GS3QPu++hOAVrUEzrVmFzrAqDUTv1eTdjO9Ktj8OzZHRVex/XLaYrl8YyVL
+         12z/EW99Bnz66D6ucV5Lh69MBRwlYW/JXzrs9NZmfxYasocuhzBkTY3SKQHd6tUlZ961
+         EzUkAEmR79EUFCgkPAPZ6rMvzvc0v4XnVEQL9f5DS1KIyfwpCMw89iE2L5BjlUu7CfDS
+         GdpmltnTlHYvQestWoZa4r2M9BFSxra6XVxC6diXN6qOhvH7Sf1GEgilqsKZPylC92GJ
+         zCNw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1iwyWGiRbFPbAy4DgZnyAChwfR4Y92z2keJ/zg+sgGJ4otAR9dtqZSzkini8BmPkk9oxYz8Gn4lD3fhY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhjVsDW0iTQVoIj2ZqMMtvur9loNK38hToitiHbm8WrOQGEyjJ
+	+x0r1qmUe/rRLKWQO0A0RlahuSMfoyQPMlY3Lgm1jpmdrtiiPkm1RSqo0AEeZtHAhZI=
+X-Gm-Gg: ASbGncvY4RPWYAIuoWphEmxJFcBVWDHAeWqfjI3yQV2gGZY4uG7nrboGQVm2gL0xL36
+	54w9IeQU+WltKwiZqggL7wcvU6ggc2yGc0EGDHu6wrEh0jTOpHRqY9Hvl18479IXvb5fp1P+uaK
+	7SOOsTSltOIvGvzOksTVz2UOm/buHbI0c61ZvDTZTo0v/0PqhV9MJ5SMgB2puqNIjSko+Xuv1Eh
+	heiCyKLIKFwZts31qdffPWm3v45h50ybDZxMBgArM+PHn9XEeUOj6L9f4xlV9zzXqUm0Ln0Ys9s
+	rl+vYr6RDUMcRH3S+/vblazKA+2yMnJqUQAy9afOeb5H6eyokyr0FY0MyTpoMFP2eKm4y4XzZns
+	Sb1Kq+9/nPI4USflrAaVoBanK3hy1T5nuX+j5Oy28SklYnCTV4nTHj+GVdhOiObsfMmY66kqSr0
+	jzbV1HSa2NXLyTzmdaA2iFK5Tjlir8zOSxOSdL2JTCctE=
+X-Google-Smtp-Source: AGHT+IEIXIQmU8wp8qY4XNiR6DcL8rQwXhPcaNjDBrRolp8ux1+qyrgMhseqoKwxG4bdfNPzKoAmDQ==
+X-Received: by 2002:a05:6a00:990:b0:736:a8db:93b4 with SMTP id d2e1a72fcca58-7702f9d24d5mr19346689b3a.2.1756220269806;
+        Tue, 26 Aug 2025 07:57:49 -0700 (PDT)
+Received: from J9GPGXL7NT.bytedance.net ([61.213.176.56])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77059928c5asm7209799b3a.1.2025.08.26.07.57.44
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 26 Aug 2025 07:57:48 -0700 (PDT)
+From: Xu Lu <luxu.kernel@bytedance.com>
+To: paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	ajones@ventanamicro.com,
+	brs@rivosinc.com
+Cc: linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Xu Lu <luxu.kernel@bytedance.com>
+Subject: [RFC PATCH 0/4] riscv: Add Zalasr ISA exntesion support
+Date: Tue, 26 Aug 2025 22:57:36 +0800
+Message-Id: <20250826145740.92276-1-luxu.kernel@bytedance.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.120.41.1.1\))
-Subject: Re: [PATCH v4 0/2] rust: zpool: add abstraction for zpool drivers
-From: Vitaly Wool <vitaly.wool@konsulko.se>
-In-Reply-To: <20250826124454.GA1502@cmpxchg.org>
-Date: Tue, 26 Aug 2025 16:56:46 +0200
-Cc: rust-for-linux <rust-for-linux@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>,
- Uladzislau Rezki <urezki@gmail.com>,
- Danilo Krummrich <dakr@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Vlastimil Babka <vbabka@suse.cz>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- Bjorn Roy Baron <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Trevor Gross <tmgross@umich.edu>,
- Yosry Ahmed <yosry.ahmed@linux.dev>,
- Nhat Pham <nphamcs@gmail.com>,
- linux-mm@kvack.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <CB3E7E9C-2192-4C60-B79A-932AD6CB005A@konsulko.se>
-References: <20250823130420.867133-1-vitaly.wool@konsulko.se>
- <20250826124454.GA1502@cmpxchg.org>
-To: Johannes Weiner <hannes@cmpxchg.org>
-X-Mailer: Apple Mail (2.3696.120.41.1.1)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
+This patch adds support for the Zalasr ISA extension, which supplies the
+real load acquire/store release instructions.
 
+The specification can be found here:
+https://github.com/riscv/riscv-zalasr/blob/main/chapter2.adoc
 
-> On Aug 26, 2025, at 2:44 PM, Johannes Weiner <hannes@cmpxchg.org> =
-wrote:
->=20
-> On Sat, Aug 23, 2025 at 03:04:19PM +0200, Vitaly Wool wrote:
->> Zpool is a common frontend for memory storage pool implementations.
->> These pools are typically used to store compressed memory objects,
->> e. g. for Zswap, the lightweight compressed cache for swap pages.
->>=20
->> This patch provides the interface to use Zpool in Rust kernel code,
->> thus enabling Rust implementations of Zpool allocators for Zswap.
->=20
-> The zpool indirection is on its way out.
->=20
-> When you submitted an alternate allocator backend recently, the
-> resounding feedback from the zswap maintainers was that improvements
-> should happen to zsmalloc incrementally. It is a lot of code and has a
-> lot of features that go beyond allocation strategy. We do not want to
-> fork it and fragment this space again with niche, incomplete backends.
->=20
-> It's frustrating that you not only ignored this, but then went ahead
-> and made other people invest their time and effort into this as well.
->=20
+Xu Lu (4):
+  riscv: add ISA extension parsing for Zalasr
+  dt-bindings: riscv: Add Zalasr ISA extension description
+  riscv: Instroduce Zalasr instructions
+  riscv: Use Zalasr for smp_load_acquire/smp_store_release
 
-I don=E2=80=99t think we have a consensus on that.
+ .../devicetree/bindings/riscv/extensions.yaml |  5 ++
+ arch/riscv/include/asm/barrier.h              | 79 ++++++++++++++++---
+ arch/riscv/include/asm/hwcap.h                |  1 +
+ arch/riscv/include/asm/insn-def.h             | 79 +++++++++++++++++++
+ arch/riscv/kernel/cpufeature.c                |  1 +
+ 5 files changed, 154 insertions(+), 11 deletions(-)
 
-And zblock is, after some additional improvements, just better than =
-zsmalloc in all meaningful aspects, let alone the simplicity. It is fas =
-easier to implement in Rust than zsmalloc, too. Besides, zram is a good =
-candidate to be rewritten in Rust as well and after that is done, zblock =
-will be even safer and faster. So while not being =E2=80=9Cincomplete", =
-it=E2=80=99s zsmalloc that is becoming a niche backend moving forward, =
-and I would argue that it could make more sense to eventually obsolete =
-*it* rather than the zpool API.
+-- 
+2.20.1
 
-~Vitaly=
 
