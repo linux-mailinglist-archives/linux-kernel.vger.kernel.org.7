@@ -1,115 +1,162 @@
-Return-Path: <linux-kernel+bounces-786448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E130AB359F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:18:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0138B359F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:18:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A5492A665C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:18:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D6EE1B6697B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:19:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21BEB2820DC;
-	Tue, 26 Aug 2025 10:17:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D837329D29B;
+	Tue, 26 Aug 2025 10:18:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="DlwsE44T"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qPtLm3/t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201E429C33F
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 10:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316A01EE7B9;
+	Tue, 26 Aug 2025 10:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756203476; cv=none; b=r+1DqsE11T0aXfdbV4tne6r7kgc0IOfrCiIB9+D8DD29RzRKg38j/TPTAqQ+BynnvvS4svssgf9+XrCBoiIGCELJqkKPt+d/39mWcMz5rdYczkJZ0yzcMRQDvTK7Bzd/oxQX4T08vumHbkZ7YUxjGGSjMLpKBHddYPxbB7SGqno=
+	t=1756203512; cv=none; b=p9vgwWPceMWiMYpaHeCPUTGVNvTvnKYKwcTS7xQhoWa6YZN2R9mBHwvqzCGE/KhKht1wuEDTc4neeoVzrA6JQSxApE9ygTndt/VhwkbQTSPHWbkU8bw4Hrewh8W4wo8emhAtzdBUP6ov3hJKW8jMo5y0zevmIRrdebQima84G6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756203476; c=relaxed/simple;
-	bh=6q+vuTcUXvVZNZ5e9dFqPX9cDauBBESomVWRf3zjxYY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QQ/7havw1TvjHYnD0m9qE0EhusXzVXiJVy/NT9I0vrNG+fW/+XZe/UXdP8iW9k8jpeq5k/OFD01W3wjeKxyaNbx7M1LzrN2CsJ4Ux4dbmI0yAMOhH3fznV7D0VPHiL2SL6cXZMM4a4lQMHYcppH47Nai36h8l6spmR4j1xL1I+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=DlwsE44T; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45a1b0d231eso31574085e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 03:17:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756203473; x=1756808273; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UyBee5/lG0iyjNbfsN6MdpA5vjiXdFs/oW+uOE3oHX0=;
-        b=DlwsE44Tp+JAQybWAtHhaJnau2L0skxO3QVhxLf0d2CHhxwct7bk/c93UIy8C8laZ0
-         R6rAVfqvM38q9kk2JfQbAtLB2b3GvJotbGq0FQI+LD0JfKPx93QbGibV7vQca7eYviJL
-         eWMBvEZ/khPxnm8cqh8GerixQxICu4d+CWE7ToxJdyrhBcqX1E3m5/VIwkysuMfZgwtD
-         yQ2kJ4bUPdgYnB3qgWGv9jz1gysOm0j8oBbCJssaqakG7leXHLoMHMVCz/SIvTB+yTtu
-         Ap+rjHrv2SAxp38I8scTUJXDPxb0nZjEpKC9A5Prg1Bd4Y7ozeCGrQW7oFTFJ1jLwa5p
-         3ckA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756203473; x=1756808273;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UyBee5/lG0iyjNbfsN6MdpA5vjiXdFs/oW+uOE3oHX0=;
-        b=DBMRCWVFBu+pTuoKrsG+XdcY1pG0lcICfcTTseINkoc+m9TugGF3F0Ht+1vJus3B6d
-         2BCwzTohIoRZCLlBy06fRfCcYGn3ez4niAyIjeAkXwxAuS/gaiRa35Pseq7BDHEZmH6E
-         v0C4sC8uh68URFidmzFvHCezJmdNcambZGnxKRHRri7WS1r5FYDnDqlNFd1jocf/Vajt
-         jhRqs4fr9Q8700vZHdhIKA7AViYwYg3cFeTRzlYLMt5IgQJhQFk0MenMLORGXqASm7ui
-         +d682QTnQOqCLSMyjF960WyHyEoDqHcZXG1NYzUldbgnvfaYuKYP6vB9ZG8yfuWBltIT
-         weQw==
-X-Gm-Message-State: AOJu0Yx9MpxwKfrKxc88sUvzUWRYaWO6eRpOK1g/1v5rrV5QMaez9eO8
-	KwEFCPPsfFT+oNRc2pKQMiS3rRBpOyS8gkgL7d7KZaeQAUfvDAVpj00ZqliDBI5A7Rb/sW+4XHT
-	Cr39WEXg=
-X-Gm-Gg: ASbGncsqws1DV4iCBuJTTgYDPbvjIKq3lpW8lsiC6Q5NraCmA61fF0T2/26YSFW8ORx
-	WWvVPCQ340tMWBoSXsMvJRRqt6g60/0FPXzmHgFG9izrOQZXqDKvJyZ2M1PY4wrwZwYjikYVcAG
-	5HWzox/ADfv2WoJX+mDmuW3+24jcAArmro1vGDQpWWng8qPNhaDf+tHKhJO01iEFfP8eZ4hPIRk
-	Chq+mR36cj/7YxH+z7aVCp1J+wUN/kscJTxYSiCeyY2OMMIOPAtYfNRUqXACBEHuiU1Eipo5R1G
-	0J9DINRGXKCPOyUK5zVerXVlXc2nUZkyvnMX43A6l/CDBD8gsSK3zrAe7qeXVwywS0id+BkhDRU
-	28aIUNRzMmoubrYjZgA31S44PbKLCTQPW4lo=
-X-Google-Smtp-Source: AGHT+IH1baQ8dv50QBcdonum2RD5GCC5lK6g2hKYNq3INEU13savhIHkHrBcxJgVeloJtotIPnwysg==
-X-Received: by 2002:a05:600c:46d1:b0:43b:ca39:6c75 with SMTP id 5b1f17b1804b1-45b5179d088mr179725745e9.16.1756203472781;
-        Tue, 26 Aug 2025 03:17:52 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:fed4:79fc:9440:6629])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c70e4ba390sm16286582f8f.12.2025.08.26.03.17.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 03:17:52 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: linux-kernel@vger.kernel.org,
-	mun.yew.tham@intel.com,
-	linus.walleij@linaro.org,
-	brgl@bgdev.pl,
-	linux-gpio@vger.kernel.org,
-	adrianhoyin.ng@altera.com
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH] MAINTAINERS: Change Altera-PIO driver maintainer
-Date: Tue, 26 Aug 2025 12:17:51 +0200
-Message-ID: <175620346857.22769.1782746483858887988.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250825071637.40441-1-adrianhoyin.ng@altera.com>
-References: <20250825071637.40441-1-adrianhoyin.ng@altera.com>
+	s=arc-20240116; t=1756203512; c=relaxed/simple;
+	bh=XW94ARsAYWdpvdAcDSjqwuuAwW3+zyLA+n3xm8R6vww=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YcPhgrdW0C3wrmN/CTkhLdU7nCPA0bvCc6R+fkSHQpFigjlCkLqQK9ijbUYqkIv1fTYOitKmDrUjiMf/UlfLCRcpyPIJ1fuK6xomYSQVhX/sF4qOl2QD94tVYnfmnlP4OccpJ3JQhRrNJ56TjWNDhrE9qBkoPcIIoUS8drVSDrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qPtLm3/t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB63DC116D0;
+	Tue, 26 Aug 2025 10:18:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756203511;
+	bh=XW94ARsAYWdpvdAcDSjqwuuAwW3+zyLA+n3xm8R6vww=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=qPtLm3/t0KCfoA+fQ0IaW8dA+DhnsTTxkhpPJ5XPQEQwQo/j750JGyIp2sOeTtTCo
+	 RANtT1wJYrMdhaR04YWep4xlZGIPOjSx5rvbOSWYLPTyZHwxdcObucLZ87zIJcHurR
+	 mMJ12pPRxDYJdTVLF5JjE6i2GFLi+N2i/Mz0SLtjRnC5kULuBMO9JoXmmj9bWC5Tkv
+	 eHPx+46dTcgLwaud8jDqsYHOs7mYvPTErIMAi4YkSK7eFhaLuSbq6X0b9hEDtpNZ6v
+	 Pe2HTrYfEkNyrkWvQ2vbs4qB0BeIb1hTUbigXB2ye5oBOlbuGb1lLrSmqNtfCyhQYI
+	 bc+n6xFRqhhWQ==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-55f3a3f2f60so2314658e87.2;
+        Tue, 26 Aug 2025 03:18:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVVLQZqBzMputDqF3AXUvLsK6OPGWU/u9NKNUAnLO4HMvXbo2oVScpaYX+CkjS8yDyWqLXpKhxG@vger.kernel.org, AJvYcCVcwM5Obow9+Azdfv/q+0BU0RNiyXbwjQhE0hXxnYs2bUdv7oeENHNaldhmISpzHmUl99n4dRe+vZgPuN8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx83AfwJKbkk2OBhbtaZrZA7ItdSB5Z2to3qMVHqQ59UU9ddqMG
+	uck4gT/1GIah9a472iDh7/eiOKsCBXKCytMRAHwRy7CXCW6XtyCbElHP4axsXLy2E4qp1qpQW2O
+	2Jf2nguhnEPbcnwrby9af2W/g3jLnykA=
+X-Google-Smtp-Source: AGHT+IF/0ug3SV/FAX5eoPEUU/Da+VDJuyPoxaddRGepCWv1w/xY4z4BQAzf4549DpJ+aBumgQFf+tT6KaBI6cSKHFY=
+X-Received: by 2002:a05:6512:2282:b0:55f:4f99:f3cb with SMTP id
+ 2adb3069b0e04-55f4f99f618mr290219e87.15.1756203510050; Tue, 26 Aug 2025
+ 03:18:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20250822041526.467434-1-CFSworks@gmail.com> <CAMj1kXH38gOUpDDdarCXPAY3BHBbuFzdD=Dq7Knsg-qHJoNqzQ@mail.gmail.com>
+ <CAH5Ym4gTTLcyucnXjxFtNutVR1HQ0G2k_YBSNO-7G3-4YXUtag@mail.gmail.com> <aK2DV_joOnaU85Tx@J2N7QTR9R3>
+In-Reply-To: <aK2DV_joOnaU85Tx@J2N7QTR9R3>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 26 Aug 2025 12:18:18 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXGWjC3_hNDUxiZWU6UVHoViU=iZuZ2VbCsaqDr-5tMK8w@mail.gmail.com>
+X-Gm-Features: Ac12FXxBzU25zpKnUCQ1ltgebYmqMtG_M6IUTnGxLleVMo1UTZ2tTlc1ZEsKm40
+Message-ID: <CAMj1kXGWjC3_hNDUxiZWU6UVHoViU=iZuZ2VbCsaqDr-5tMK8w@mail.gmail.com>
+Subject: Re: [PATCH] arm64/boot: Zero-initialize idmap PGDs before use
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Sam Edwards <cfsworks@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Anshuman Khandual <anshuman.khandual@arm.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Baruch Siach <baruch@tkos.co.il>, 
+	Kevin Brodsky <kevin.brodsky@arm.com>, Joey Gouly <joey.gouly@arm.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Tue, 26 Aug 2025 at 11:50, Mark Rutland <mark.rutland@arm.com> wrote:
+>
+> On Sat, Aug 23, 2025 at 04:55:44PM -0700, Sam Edwards wrote:
+> > On Sat, Aug 23, 2025 at 3:25=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org=
+> wrote:
+> > >
+> > > Hi Sam,
+> > >
+> > > On Fri, 22 Aug 2025 at 14:15, Sam Edwards <cfsworks@gmail.com> wrote:
+> > > >
+> > > > In early boot, Linux creates identity virtual->physical address map=
+pings
+> > > > so that it can enable the MMU before full memory management is read=
+y.
+> > > > To ensure some available physical memory to back these structures,
+> > > > vmlinux.lds reserves some space (and defines marker symbols) in the
+> > > > middle of the kernel image. However, because they are defined outsi=
+de of
+> > > > PROGBITS sections, they aren't pre-initialized -- at least as far a=
+s ELF
+> > > > is concerned.
+> > > >
+> > > > In the typical case, this isn't actually a problem: the boot image =
+is
+> > > > prepared with objcopy, which zero-fills the gaps, so these structur=
+es
+> > > > are incidentally zero-initialized (an all-zeroes entry is considere=
+d
+> > > > absent, so zero-initialization is appropriate).
+> > > >
+> > > > However, that is just a happy accident: the `vmlinux` ELF output
+> > > > authoritatively represents the state of memory at entry. If the ELF
+> > > > says a region of memory isn't initialized, we must treat it as
+> > > > uninitialized. Indeed, certain bootloaders (e.g. Broadcom CFE) inge=
+st
+> > > > the ELF directly -- sidestepping the objcopy-produced image entirel=
+y --
+> > > > and therefore do not initialize the gaps. This results in the early=
+ boot
+> > > > code crashing when it attempts to create identity mappings.
+> > > >
+> > > > Therefore, add boot-time zero-initialization for the following:
+> > > > - __pi_init_idmap_pg_dir..__pi_init_idmap_pg_end
+> > > > - idmap_pg_dir
+> > > > - reserved_pg_dir
+> > >
+> > > I don't think this is the right approach.
+> > >
+> > > If the ELF representation is inaccurate, it should be fixed, and this
+> > > should be achievable without impacting the binary image at all.
+> >
+> > Hi Ard,
+> >
+> > I don't believe I can declare the ELF output "inaccurate" per se,
+> > since it's the linker's final determination about the state of memory
+> > at kernel entry -- including which regions are not the loader's
+> > responsibility to initialize (and should therefore be initialized at
+> > runtime, e.g. .bss). But, I think I understand your meaning: you would
+> > prefer consistent load-time zero-initialization over run-time. I'm
+> > open to that approach if that's the consensus here, but it will make
+> > `vmlinux` dozens of KBs larger (even though it keeps `Image` the same
+> > size).
+>
+> Our intent was that these are zeroed at build time in the Image. If the
+> vmlinux isn't consistent with that, that's a problem with the way we
+> generate the vmlinux, and hence "the ELF representation is inaccurate".
+>
+> I agree with Ard that it's better to bring the vmlinux into line with
+> that (if we need to handlr this at all), even if that means making the
+> vmlinux a few KB bigger.
+>
 
+Indeed. And actually, it should still be the ELF loader's job to
+zero-initialize NOBITS sections, so ideally, we'd make these NOBITS
+rather than PROGBITS, and the bloat issue should go away.
 
-On Mon, 25 Aug 2025 15:16:37 +0800, adrianhoyin.ng@altera.com wrote:
-> Update Altera-PIO Driver maintainer from <mun.yew.tham@intel.com> to
-> <adrianhoyin.ng@altera.com> as Mun Yew is no longer with Altera.
-> 
-> 
-
-Applied, thanks!
-
-[1/1] MAINTAINERS: Change Altera-PIO driver maintainer
-      https://git.kernel.org/brgl/linux/c/6fe31c8b53003134e5573cfb89aea85f96a43afd
-
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+If the ELF loader in question relies on the executable's startup code
+to clear NOBITS sections, it needs to be fixed in any case. Clearing
+BSS like we do at startup time is really only appropriate for
+bare-metal images such as arm64's Image, but a platform that elects to
+use an ELF loader instead (even though that is not a supported
+bootable format for arm64 Linux) should at least adhere to the ELF
+spec.
 
