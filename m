@@ -1,298 +1,301 @@
-Return-Path: <linux-kernel+bounces-786708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CA31B364FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:43:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9CABB36393
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:31:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64CB95614CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:30:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FECE7A8111
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:29:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD7CE28750C;
-	Tue, 26 Aug 2025 13:29:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B41D026B747;
+	Tue, 26 Aug 2025 13:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="H/pvYz14"
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012061.outbound.protection.outlook.com [52.101.126.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eyQb0ys/"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10ABE29D28A;
-	Tue, 26 Aug 2025 13:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.61
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756214965; cv=fail; b=oI4MaSN8HVEnOjbcKWWGNO0INoxv9wj4HmtcfPLxyjOOrZQAXSauK+rvXgb+vMjLJeR0vzLYd3QKre4/ps3vnVuMGfe6BQu/UkM5X8RzT051QsbxPjpk20PyJ1/DuNv828Xz4aDPMtSKX8VIcDZTOhxo96iNxYZ8WCy0EY8jYfM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756214965; c=relaxed/simple;
-	bh=Si/uhF07+Uyj2P967RXELWIC6adp3YASMXtqebDuIkY=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Teixa3hXhSKk02hOP7C6H1y4ffHji7vp2Oipyd9kaW5ux/2XjRb2M8AP7hIDy7VyN6ChvxtFi1Illr+zedegjAtaHn8wFw34UCITGlsKzhVNrqsZOXOqn4opVduoZovJSVi3Lggq0dNCHPTUUCx6eLsl6Rupnirv8yJpY4voxwY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=H/pvYz14; arc=fail smtp.client-ip=52.101.126.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JvmVhALFoS8Fd69YRhKEw5cpLnrS5PzIBXolhpfFPGEiequxwFvQmsMpogVYmzNiXphV7mw4v3d8ZpLgt6Sz0q8gFT8p6w7lwjdv1N/jeUcN3uLUXam3nlu09QEtHWaO5kV8eFf46zd5NNNgL+LbkW3TvfZMIomFxQwbhFUaCSL2/JlearMoWQCpLgLvO3lWfjXBt94U9eqVGr4O2SpeUo+cqpYeXCMUKLketnyX18ac00Np36wvTTCxBGqNnZL2R6QnCHK9V3aiOtPNQCh988PyRF7BdZVDOqTF7aDmKGWM0eVyf9AnaTHqi4ADfACzatlo+sDv32etGTURcRMDvg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HuTDTVemiwezxFSlMYn1VUizDXjHZql8bOBvb4qRtRg=;
- b=dTTq9MkS7/KV/UkTEwXZBZ6WUYSbyPVDX/+agxaJgqiZnK2q94j1Nvli0jFDCLWfKHiHPQgr5njUXOb64cnt8zEyHFcB3V41OGYTE8OrHA3+buzI+tHp2IHKm/rDx80qOBN4Xa1O0OBuINfXaV66BPFbjlagUW/rRQ5R0mPeApYmMLiSjmD4MhdpRvoiisnaRKl1XLxIgLx7V8wBmNPnwwC8LFVVR4Sj7um7Zc7OOrBSwVBhV2S3wGIFBDPWZBVRRY64a5uOrU4w1XhRrm1Kvpo6VMJDHhKdtkjbvWPLSRjMdKzlpCQ5Lsj7CK++bGWkYs0AVqM9pQlaGYPB4IE7Zg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HuTDTVemiwezxFSlMYn1VUizDXjHZql8bOBvb4qRtRg=;
- b=H/pvYz14HEFQAEzyGBqM9UFrhSh0oxYRtekoDdvO6ASLjEDPi51xjqAT1CAlMRYoWBozYlX+bSMAAqMgcxYE9iI18DwraJMxI/ROEhSdOV7K7gQxZxaqep+VE8guRtQuA6Io+8hwPrb0tfXQ72jbLN/4Hqjzp/+ONvQbi8nSmITJNg2QcrM97PA7LaL99AJhdebzGbHgKNpE1JznHnnh27StStvRGuZdSg7DqulqAsWMdO9/Y2jtQaDOp8sMQCzJQDl2Gx2+I9/us+T6fTa966jhN1yyG5RUR4eleQsHHAdv7jCMUpMxU93rQdy2bxIkT8Knn9sD5gZhWQ7pLfiX6A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
- SEYPR06MB5158.apcprd06.prod.outlook.com (2603:1096:101:5a::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9052.21; Tue, 26 Aug 2025 13:29:18 +0000
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666%5]) with mapi id 15.20.9052.019; Tue, 26 Aug 2025
- 13:29:17 +0000
-From: Qianfeng Rong <rongqianfeng@vivo.com>
-To: Ping-Ke Shih <pkshih@realtek.com>,
-	linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Qianfeng Rong <rongqianfeng@vivo.com>
-Subject: [PATCH] wifi: rtw89: use int type to store negative error codes
-Date: Tue, 26 Aug 2025 21:29:04 +0800
-Message-Id: <20250826132905.501755-1-rongqianfeng@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYBP286CA0023.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:404:ce::35) To SI2PR06MB5140.apcprd06.prod.outlook.com
- (2603:1096:4:1af::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB746322A1E
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 13:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756214989; cv=none; b=euKlvLC34kkZGY4kUz35VT65YKf9HKcBg4tEDyYW98F1Ku0dtipslPh+Grc1XqPIjar44jdC9srjSfxxC22lG5V3/qtFN1Xl+GcU0MzIi+EdxlMmTvdaJY3KjPT4oZ/lI6lh40Lex3u2pZtaRIvYjUeRZDrIVAlBcfVmJd9dB1Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756214989; c=relaxed/simple;
+	bh=R8gGeMSj6+L6lREPzS58a0gP0CzcwK9FgwuKD+f06vk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nBB5gVUtDaajpKhBBCa9zk1M47OP4hef7/SJtmtMhCJR5U0L5Tz/HQBQ0lKtshK97Av0mXL4POXLojNiaK4O3sg/Qj5Rp6YETQaeUZtDpEt9QkBOjHzVebxNP6J0zpO2RvocVAw85HMsabheO8LRnEAAmFxHBT609Zm5Bx1ETX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eyQb0ys/; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3c7ba0f6983so1398392f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 06:29:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756214986; x=1756819786; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wvsKNDuUjmS0VQPWE4YtuWYyDveTbfCbdSn10meZI/Y=;
+        b=eyQb0ys/F1PXu/k15hlzTLKbLwnu9gjaoUdarOZkpcuUokl6u6r/IeR40y+CzkP9m8
+         SgUwTY7jjH+YBYSqq/RgH1158ljipgqP8tgzuhyDeXyUNRTLGjFnTuYVSB3XWrBTIc1l
+         1hcCqsNc8p77H52LPc4VWZWhSvCvjwyuXbnkL26rJUxY+VZ7d9/fcUzd5cGVAWnCbiao
+         ZBezj38IlugH+2CbyA5iJNueiVRnoLEpfFXF39S1xm5fGMIl2JAo7cy5JxBtSXMrVE8e
+         8QJGZ7j7T2xWUDwwQWDcWVbdE0l3dj/yW2Kz39+cYBEewVwlCkeUnvNeDIZOVMLhxkCy
+         i9Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756214986; x=1756819786;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wvsKNDuUjmS0VQPWE4YtuWYyDveTbfCbdSn10meZI/Y=;
+        b=xR4r2SP26dVm+6Pa6ytosslphtLBAcnJJHdJAjhQ8XKHnC5m5Yx1Oq4GxTVMOoz3u3
+         Kf4jHusG9oun7iVLKzpk9P1muNMZ4YnoJIlCxaA+WV1rDAKgYg6rEMysJT8ySgVJSNbh
+         7ODqn30+wAQc7s7eeVhHGgk0t8eLbef462LhLVtks1YFl3Z5O9A1brltRETcfGjAmb6f
+         hkuujR/ldI4/4DDgLQw06DvRQPXrlJgW44rhszIwbazfPbGyez6GUYIm8C4u+3wlzuqE
+         iGJ7m9JGutH5bIy3XFxLM6kzvDIoy3e/+qSPg3wh9DIl8RerUF3YgqY3ocBnOPUvOKMA
+         MlQA==
+X-Forwarded-Encrypted: i=1; AJvYcCVFLSjnvkz/sGulElE5aevGjysmeWLXAGe5CGWM9mjRGALl6tVS1cEqqCrsyA/X/NmoVqSjLaZwd1RcElk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBGFOFEVtmoOPRPEauG42z+/btwHYKtRsTnYgn9OD3byZhpFz7
+	ctrqq/JENqwGwH8rQ7E7d7l8NX9L1WJ08EPcPhteLwMYIIpzFb0M59HI0t2E/9UebiU=
+X-Gm-Gg: ASbGncscR2Cd/qAw8FXEWgSlactCKxvTxYXH0NbDztqQgILw4s/D+8mvNWpqm+cmTYz
+	ihH3AiQnHPP11d/Yo0939LTZmvFrQFaaWfZ+WJcL6LLJqDOnWlLgTRv/qM8iOQUcrxw6eno/7s3
+	mnfSgIqdHf0iw6GQC4LUjwsoTXCVWfjO47aFKPbhYAE7GYS/pn+Uv589zVqbJsu4OwbQjbLVcbU
+	JFkOzgiGk/a6YoKs7g4kWcW3OLkDvsC6ka+0Z+Ljb/fcFUo47TJffHsxGrn3KWY6+aNCf83eSeR
+	AhYBJMFrhCsePwQgFVN7Oe6eoHuDFRF5oFIblLeWkxtsvSQo5YMPQoXiHZMSqdDZevguBzDdhtl
+	oFE2G4RdNUwGDV/CsWnkCKRM4Fnbo7tcmdJXwHw==
+X-Google-Smtp-Source: AGHT+IFWuW9FaUNkD9tIPp6wuI6vkMWmS0zI4RdhCAvwYdRqkj87/TiU6ljHYOFki7P8Tlb1PHy0Gw==
+X-Received: by 2002:a05:6000:2006:b0:3b7:885d:d2ec with SMTP id ffacd0b85a97d-3cbb15ca4c0mr1295584f8f.18.1756214985928;
+        Tue, 26 Aug 2025 06:29:45 -0700 (PDT)
+Received: from [192.168.1.3] ([185.48.76.109])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c7117d5b10sm16175319f8f.47.2025.08.26.06.29.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Aug 2025 06:29:45 -0700 (PDT)
+Message-ID: <8f3a1f75-3476-47e9-a8d6-f396939b3240@linaro.org>
+Date: Tue, 26 Aug 2025 14:29:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|SEYPR06MB5158:EE_
-X-MS-Office365-Filtering-Correlation-Id: c68c8ed9-9b26-43db-33b8-08dde4a48ea3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|52116014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ijOOPTm3Z8DAm92IJdp7VYuh/F8F4AurkaGpLFA/rYoQBXQyLjIDmnznybG8?=
- =?us-ascii?Q?pqzGCSRp3taiT6+eptDWJPp4cazqAmBrjlG4YLv/0g+4MsoSNgVGZWl8xL8V?=
- =?us-ascii?Q?hWsCQq77SMJz08QBIxUxZ9S68NXkZZZdn80GUaFRFGYNrcuHYMG8TmYG9CC6?=
- =?us-ascii?Q?Z/MfAj89MVmhM58+8kzBAqCNeTopecfClgYtzcA9ofSLka0cl+p/AVG+64d0?=
- =?us-ascii?Q?b+AkSmQggt/2PTILGmiwIBsHjXeYU4CqOjFpr2wKH4Gc1hM3TlJL1KMnu51e?=
- =?us-ascii?Q?ujJTFpSR/GJWb9qdrnfRqZoD6DbC7p/WyrfvOY2lJ97WAZX19fdEGTAr7ecJ?=
- =?us-ascii?Q?p/ik/nAhYqdouGSap1OprJzNgW1lZJyRq1+YBcKhSNvLBH6ji5i72kb/o4EB?=
- =?us-ascii?Q?UrU8MKoj1Zo1zPR/9czkC/Lvggq7ec9pacQJSKNjuZ+kG+joDwResFyoe9/J?=
- =?us-ascii?Q?SBVE3DM+RiINs3lOp7kT0H14XYPc3REdTvCttFTps+UzVd/nqKMcmuwX1CzE?=
- =?us-ascii?Q?2zfewSzO3yyh8jN0bfM9S9gLT+KGzGSrkeJRQe52mNnFLbBys472CF+JFT/b?=
- =?us-ascii?Q?kJ3gMphSMQp5e6DoP6SzWOvjkVOKimz9W4bsIMKMBF1RffI9mG41hDl0Rawt?=
- =?us-ascii?Q?ZWugEN99OY2SRp/aijBPTEDwljR1TzUOp52JacGQraIn99AISJPeEnKgY+3k?=
- =?us-ascii?Q?iYRZV9qkn4ps+QfssbTr1s9gvap8ezfBUaRngGjRSEJpqMckrmGLLJwUBfmI?=
- =?us-ascii?Q?kHMfXuswfdgTisPWrwFVHEK6ggahUHbT/w50HZHyCq3KyajyRsyu4JtVgQwV?=
- =?us-ascii?Q?0KpbYvdGPFe1rK9gl/O/NnOBrEdXCKL5/rXp5JqVtVTK25Iz8E/xJV6LLBfN?=
- =?us-ascii?Q?Z6qtf8IrOcHZwQZhgRyrIMyUzkvn++zpIkbLAsHmPj8zKV6lpgh6jxjuNZUX?=
- =?us-ascii?Q?D4OaSKN7w/1KIbYvGhJ9uer0Q4hKVPq7tYNoltJI5HOJHFEmSjF7eo8nubIR?=
- =?us-ascii?Q?80pk1nPCtDlQqkfta5FE7Ba6a9PjO2T8vmhcUOeY7fjkda1SB9HCCHUA3bRv?=
- =?us-ascii?Q?JzLCQcDMbVGVCV+Atg7DiMm1s3YmIAYnpSee23EXZ60fSLsRBox7gsapkiYy?=
- =?us-ascii?Q?IDOAt2vgPdKrcHvuavJexXPprQqN66uZplriP9jPDknqXpSdwiWc7/Dr5SFh?=
- =?us-ascii?Q?vqVO7vzehpUxchWMYaWp6Z8RVD42/du5xVAh6/BifkG5GSKIpjLcbCR2h7uq?=
- =?us-ascii?Q?n8BiRCGYW6qEy8pOjd7ky5pYFJMu5tpI+kKqSRE/G9W00n4cl76xPs0fTU9y?=
- =?us-ascii?Q?zMWfN3rSQByn7Qwg+RitlpGPqBPyN2ryp/beBAEYyP7dSkfokdNT7A1Psgtf?=
- =?us-ascii?Q?IRpC8Zhqx96btbteYNy3VVK+DHvY5SYQ5qiyTCJ7Mg+DOIGNWpxmq0pHmrcJ?=
- =?us-ascii?Q?Iakx9BPXLAkM2MpMdACMyRQQbGtHZ6c9gRkm3fUCyCik8jk5etQ2bQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?9lvXcZZD3ZvYfkrWrRZac02KMvN0bb0MnT+lCiLmSGM0dzaWfEg9G58dysP6?=
- =?us-ascii?Q?5GscUe4jt3O46fnp/UP2AYmNbkzRi2geApE5mrdjqaWA+jD+ElWp1NnbFLcF?=
- =?us-ascii?Q?rntzQqd5ldzKj+XwFhGCHCi94gOHra4QvdvJEq+wkJR6ZgTB1KYSHzUoPuuC?=
- =?us-ascii?Q?TOQhNG4hy+Zcj4p1tFqB3bPVkFj03HwqbEa3A6nfY9bBwPo0qFo7IObK5mYG?=
- =?us-ascii?Q?f/U7O21yd0Et14eSsS6ZDhGg/4c87vl7en1zLe/3/N4+xU7GAUZ5nAaTuE+m?=
- =?us-ascii?Q?+xLE4OpWXAfWJEvd/WIg+xA+NLDs2xJsid9Z/Ae2JZOxH+N2q1zD9zwQVeJR?=
- =?us-ascii?Q?o/QwT+7MWtQYMNUZl8jG0mWLpRtlqf/1r+y7nfJBy6bgcHtGRwPXW7s1r+25?=
- =?us-ascii?Q?BjWZMg5+5a5t/QJtXiYu3ZjBZJVgMbdaDpERKtHdKnAfr6OmFQkTzLeqpP9M?=
- =?us-ascii?Q?x0Dy41jq96NigRumngmV+XSGIihbO1tDnBkLQuOnhkhbhp1hMoSlh8R2rtru?=
- =?us-ascii?Q?62aXEtKtyxzFVTs8mhozi6VRhjXFFMfU6swCIJwjlgY6q8v/TwkdLKumGAqv?=
- =?us-ascii?Q?6xrkEq004P+snLEM2s0jVOmwYzLfxl/9vGCoitXmZDWSk1OpksL5GNoNlWSq?=
- =?us-ascii?Q?dcKxqBPP5BmVSoWFn0p3KcNnRZL6234Fm5tk70ekJygYS3bU9wO4iZC6qPqP?=
- =?us-ascii?Q?sokiqpqiaf/eFi9QwB76ZaY6iue0WVYH4wkVTym9mXCtmYjQMizLENFgW3X8?=
- =?us-ascii?Q?HgsfkKnNyjuZVgAb2uE4cYe7nYMDLE6e1YSnqLeNPvnbn+a3Nt2Fb4v9BjLb?=
- =?us-ascii?Q?/pxbO6qi+48qOxPt7r/xah6pTUsBPga9AwYL0wAYi3yd69ep2p5XKHR30lKU?=
- =?us-ascii?Q?oIXHURbvr7qoxK4aTTZVn935X3sxQQU/9FBG6pamvj1DinVsAwE5DPtrqIE9?=
- =?us-ascii?Q?EuWnk0QXXITP1X0abaZ6sxtPZxHZyr8SZ2ngy0PI4LCJpAEvSpkxHJZgobcr?=
- =?us-ascii?Q?pVaN6FoYg4EeYUjdIj/7RhvyimapHgcGTX4i0js22NNJJ61RC6njTQnCrdTQ?=
- =?us-ascii?Q?m/slcTZbElIXqD8TGh8wry1VEucb0/xOP1zfek+zd5XGCxz5kdU3d/mcNMn3?=
- =?us-ascii?Q?nznnoVpAcYxJJPfmMyHlimUyP7XnanmshPwT8HM+Fjywy2UYqHusEuLmzCjG?=
- =?us-ascii?Q?wRctCAuQYjlLzIA7BKqW2Ocoudg5ZpUZYTqDGQqEu09UD8N9NahgoqCWjM06?=
- =?us-ascii?Q?c8muREZIObo6Prci4aGVoLZAXD2AJ2d011gw+nkUfFf/ScW+LPgIB3nmRSM+?=
- =?us-ascii?Q?ryzNJQGzpl6G+Noco7caFX+HgAdZ1CjrhdKfC8lDkehiNkAOdo0h1IDRLN+q?=
- =?us-ascii?Q?lGMbWO9jtmkacmhEI9C4Zy+2HGdIejeJyycplBmsI8z2X41tSaCeql7rM8Z/?=
- =?us-ascii?Q?PoOVGHezKponea+txqbPRqJ+Ey+IIH1oWxNWkpd4dkqI4j61PZO8PPV3mdGR?=
- =?us-ascii?Q?NWtUWYrP4jl1lGzRHEqLfCf/8Z2gQWzhcCWPwMbM0Sdii+kXwzW013sjKrVm?=
- =?us-ascii?Q?Vcbr2xEwLMox3iJp3eDCT881TgnkWn7xkBUi+XWc?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c68c8ed9-9b26-43db-33b8-08dde4a48ea3
-X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 13:29:17.7480
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 1oylNjDP40sKYqTd50BfKO3m+PJVswdf4yNm/jLrocEDX7VaLFobA8oG4mBktebhCxuK0VHpcMRGBqiNDlX+wQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB5158
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 3/3] coresight: tpda: add sysfs node to flush specific
+ port
+To: Jie Gan <jie.gan@oss.qualcomm.com>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>
+References: <20250826070150.5603-1-jie.gan@oss.qualcomm.com>
+ <20250826070150.5603-4-jie.gan@oss.qualcomm.com>
+ <3ac2954e-5663-4ea0-bc1d-a09e1992af5b@linaro.org>
+ <a6be4d7b-d163-47df-9ab3-ca410f703555@oss.qualcomm.com>
+ <939eb45c-f48e-40ce-86e8-710afa2b5c9b@linaro.org>
+ <5df27be9-0347-49d1-ba1e-21d6a2172314@oss.qualcomm.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <5df27be9-0347-49d1-ba1e-21d6a2172314@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The 'ret' variable stores returns from other functions, which return
-either zero on success or negative error codes on failure.  Storing
-error codes in u32 (an unsigned type) causes no runtime issues but is
-stylistically inconsistent and very ugly.  Change 'ret' from u32 to
-int - this has no runtime impact.
 
-Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
----
- drivers/net/wireless/realtek/rtw89/fw.c  |  7 ++++---
- drivers/net/wireless/realtek/rtw89/mac.c | 16 ++++++++--------
- drivers/net/wireless/realtek/rtw89/pci.c |  4 ++--
- 3 files changed, 14 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/net/wireless/realtek/rtw89/fw.c b/drivers/net/wireless/realtek/rtw89/fw.c
-index 16e59a4a486e..01d53f7c142d 100644
---- a/drivers/net/wireless/realtek/rtw89/fw.c
-+++ b/drivers/net/wireless/realtek/rtw89/fw.c
-@@ -1537,7 +1537,7 @@ static int __rtw89_fw_download_hdr(struct rtw89_dev *rtwdev,
- 	struct rtw89_fw_hdr *fw_hdr;
- 	struct sk_buff *skb;
- 	u32 truncated;
--	u32 ret = 0;
-+	int ret = 0;
- 
- 	skb = rtw89_fw_h2c_alloc_skb_with_hdr(rtwdev, len);
- 	if (!skb) {
-@@ -6826,7 +6826,8 @@ static int rtw89_fw_read_c2h_reg(struct rtw89_dev *rtwdev,
- 	const struct rtw89_chip_info *chip = rtwdev->chip;
- 	struct rtw89_fw_info *fw_info = &rtwdev->fw;
- 	const u32 *c2h_reg = chip->c2h_regs;
--	u32 ret, timeout;
-+	u32 timeout;
-+	int ret;
- 	u8 i, val;
- 
- 	info->id = RTW89_FWCMD_C2HREG_FUNC_NULL;
-@@ -6865,7 +6866,7 @@ int rtw89_fw_msg_reg(struct rtw89_dev *rtwdev,
- 		     struct rtw89_mac_h2c_info *h2c_info,
- 		     struct rtw89_mac_c2h_info *c2h_info)
- {
--	u32 ret;
-+	int ret;
- 
- 	if (h2c_info && h2c_info->id != RTW89_FWCMD_H2CREG_FUNC_GET_FEATURE)
- 		lockdep_assert_wiphy(rtwdev->hw->wiphy);
-diff --git a/drivers/net/wireless/realtek/rtw89/mac.c b/drivers/net/wireless/realtek/rtw89/mac.c
-index 5a5da9d9c0c5..9e4d666f15f7 100644
---- a/drivers/net/wireless/realtek/rtw89/mac.c
-+++ b/drivers/net/wireless/realtek/rtw89/mac.c
-@@ -177,7 +177,7 @@ int rtw89_mac_dle_dfi_qempty_cfg(struct rtw89_dev *rtwdev,
- 				 struct rtw89_mac_dle_dfi_qempty *qempty)
- {
- 	struct rtw89_mac_dle_dfi_ctrl ctrl;
--	u32 ret;
-+	int ret;
- 
- 	ctrl.type = qempty->dle_type;
- 	ctrl.target = DLE_DFI_TYPE_QEMPTY;
-@@ -985,7 +985,7 @@ static int hfc_upd_ch_info(struct rtw89_dev *rtwdev, u8 ch)
- 	struct rtw89_hfc_ch_info *info = param->ch_info;
- 	const struct rtw89_hfc_ch_cfg *cfg = param->ch_cfg;
- 	u32 val;
--	u32 ret;
-+	int ret;
- 
- 	ret = rtw89_mac_check_mac_en(rtwdev, RTW89_MAC_0, RTW89_DMAC_SEL);
- 	if (ret)
-@@ -1177,7 +1177,7 @@ int rtw89_mac_hfc_init(struct rtw89_dev *rtwdev, bool reset, bool en, bool h2c_e
- 	const struct rtw89_chip_info *chip = rtwdev->chip;
- 	u32 dma_ch_mask = chip->dma_ch_mask;
- 	u8 ch;
--	u32 ret = 0;
-+	int ret = 0;
- 
- 	if (reset)
- 		ret = hfc_reset_param(rtwdev);
-@@ -2413,7 +2413,7 @@ static int addr_cam_init_ax(struct rtw89_dev *rtwdev, u8 mac_idx)
- 
- static int scheduler_init_ax(struct rtw89_dev *rtwdev, u8 mac_idx)
- {
--	u32 ret;
-+	int ret;
- 	u32 reg;
- 	u32 val;
- 
-@@ -2954,7 +2954,7 @@ static int rtw89_mac_read_phycap(struct rtw89_dev *rtwdev,
- 	struct rtw89_mac_h2c_info h2c_info = {};
- 	enum rtw89_mac_c2h_type c2h_type;
- 	u8 content_len;
--	u32 ret;
-+	int ret;
- 
- 	if (chip->chip_gen == RTW89_CHIP_AX)
- 		content_len = 0;
-@@ -3105,7 +3105,7 @@ int rtw89_mac_setup_phycap(struct rtw89_dev *rtwdev)
- static int rtw89_hw_sch_tx_en_h2c(struct rtw89_dev *rtwdev, u8 band,
- 				  u16 tx_en_u16, u16 mask_u16)
- {
--	u32 ret;
-+	int ret;
- 	struct rtw89_mac_c2h_info c2h_info = {0};
- 	struct rtw89_mac_h2c_info h2c_info = {0};
- 	struct rtw89_h2creg_sch_tx_en *sch_tx_en = &h2c_info.u.sch_tx_en;
-@@ -6720,7 +6720,7 @@ int rtw89_mac_set_hw_muedca_ctrl(struct rtw89_dev *rtwdev,
- 	u8 mac_idx = rtwvif_link->mac_idx;
- 	u16 set = mac->muedca_ctrl.mask;
- 	u32 reg;
--	u32 ret;
-+	int ret;
- 
- 	ret = rtw89_mac_check_mac_en(rtwdev, mac_idx, RTW89_CMAC_SEL);
- 	if (ret)
-@@ -6862,7 +6862,7 @@ int rtw89_mac_cpu_io_rx(struct rtw89_dev *rtwdev, bool wow_enable)
- {
- 	struct rtw89_mac_h2c_info h2c_info = {};
- 	struct rtw89_mac_c2h_info c2h_info = {};
--	u32 ret;
-+	int ret;
- 
- 	if (RTW89_CHK_FW_FEATURE(NO_WOW_CPU_IO_RX, &rtwdev->fw))
- 		return 0;
-diff --git a/drivers/net/wireless/realtek/rtw89/pci.c b/drivers/net/wireless/realtek/rtw89/pci.c
-index a669f2f843aa..5f58a954ccc7 100644
---- a/drivers/net/wireless/realtek/rtw89/pci.c
-+++ b/drivers/net/wireless/realtek/rtw89/pci.c
-@@ -2725,7 +2725,7 @@ static int rtw89_pci_poll_rxdma_ch_idle_ax(struct rtw89_dev *rtwdev)
- 
- static int rtw89_pci_poll_dma_all_idle(struct rtw89_dev *rtwdev)
- {
--	u32 ret;
-+	int ret;
- 
- 	ret = rtw89_pci_poll_txdma_ch_idle_ax(rtwdev);
- 	if (ret) {
-@@ -4158,7 +4158,7 @@ static int rtw89_pci_lv1rst_stop_dma_ax(struct rtw89_dev *rtwdev)
- 
- static int rtw89_pci_lv1rst_start_dma_ax(struct rtw89_dev *rtwdev)
- {
--	u32 ret;
-+	int ret;
- 
- 	if (rtwdev->chip->chip_id == RTL8852C)
- 		return 0;
--- 
-2.34.1
+On 26/08/2025 1:11 pm, Jie Gan wrote:
+> 
+> 
+> On 8/26/2025 5:54 PM, James Clark wrote:
+>>
+>>
+>> On 26/08/2025 10:39 am, Jie Gan wrote:
+>>>
+>>>
+>>> On 8/26/2025 5:27 PM, James Clark wrote:
+>>>>
+>>>>
+>>>> On 26/08/2025 8:01 am, Jie Gan wrote:
+>>>>> From: Tao Zhang <tao.zhang@oss.qualcomm.com>
+>>>>>
+>>>>> Setting bit i in the TPDA_FLUSH_CR register initiates a flush request
+>>>>> for port i, forcing the data to synchronize and be transmitted to the
+>>>>> sink device.
+>>>>>
+>>>>> Signed-off-by: Tao Zhang <tao.zhang@oss.qualcomm.com>
+>>>>> Co-developed-by: Jie Gan <jie.gan@oss.qualcomm.com>
+>>>>> Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
+>>>>> ---
+>>>>>   .../testing/sysfs-bus-coresight-devices-tpda  |  7 +++
+>>>>>   drivers/hwtracing/coresight/coresight-tpda.c  | 45 ++++++++++++++ 
+>>>>> + ++++
+>>>>>   drivers/hwtracing/coresight/coresight-tpda.h  |  1 +
+>>>>>   3 files changed, 53 insertions(+)
+>>>>>
+>>>>> diff --git a/Documentation/ABI/testing/sysfs-bus-coresight-devices- 
+>>>>> tpda b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpda
+>>>>> index e827396a0fa1..8803158ba42f 100644
+>>>>> --- a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpda
+>>>>> +++ b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpda
+>>>>> @@ -41,3 +41,10 @@ Contact:    Jinlong Mao 
+>>>>> <jinlong.mao@oss.qualcomm.com>, Tao Zhang <tao.zhang@oss.qu
+>>>>>   Description:
+>>>>>           (RW) Configure the CMB/MCMB channel mode for all enabled 
+>>>>> ports.
+>>>>>           Value 0 means raw channel mapping mode. Value 1 means 
+>>>>> channel pair marking mode.
+>>>>> +
+>>>>> +What:        /sys/bus/coresight/devices/<tpda-name>/port_flush_req
+>>>>> +Date:        August 2025
+>>>>> +KernelVersion:    6.17
+>>>>> +Contact:    Jinlong Mao <jinlong.mao@oss.qualcomm.com>, Tao Zhang 
+>>>>> <tao.zhang@oss.qualcomm.com>, Jie Gan <jie.gan@oss.qualcomm.com>
+>>>>> +Description:
+>>>>> +        (RW) Configure the bit i to requests a flush operation of 
+>>>>> port i on the TPDA.
+>>>>> diff --git a/drivers/hwtracing/coresight/coresight-tpda.c b/ 
+>>>>> drivers/ hwtracing/coresight/coresight-tpda.c
+>>>>> index 9e623732d1e7..c5f169facc51 100644
+>>>>> --- a/drivers/hwtracing/coresight/coresight-tpda.c
+>>>>> +++ b/drivers/hwtracing/coresight/coresight-tpda.c
+>>>>> @@ -509,6 +509,50 @@ static ssize_t cmbchan_mode_store(struct 
+>>>>> device *dev,
+>>>>>   }
+>>>>>   static DEVICE_ATTR_RW(cmbchan_mode);
+>>>>> +static ssize_t port_flush_req_show(struct device *dev,
+>>>>> +                   struct device_attribute *attr,
+>>>>> +                   char *buf)
+>>>>> +{
+>>>>> +    struct tpda_drvdata *drvdata = dev_get_drvdata(dev->parent);
+>>>>> +    unsigned long val;
+>>>>> +
+>>>>> +    guard(spinlock)(&drvdata->spinlock);
+>>>>> +    if (!drvdata->csdev->refcnt)
+>>>>> +        return -EPERM;
+>>>>> +
+>>>>> +    val = readl_relaxed(drvdata->base + TPDA_FLUSH_CR);
+>>>>> +    return sysfs_emit(buf, "%lx\n", val);
+>>>>
+>>>> Decimal would be better for a port number that goes from 0 - 127. If 
+>>>> you really want to use hex then don't you need to prefix it with 0x? 
+>>>> Otherwise you can't tell the difference between decimal 10 and hex 
+>>>> 10, and it's not documented that it's hex either.
+>>>>
+>>>
+>>> Got it. I will fix the code here, and update the description in 
+>>> document.
+>>>
+>>>>> +}
+>>>>> +
+>>>>> +static ssize_t port_flush_req_store(struct device *dev,
+>>>>> +                    struct device_attribute *attr,
+>>>>> +                    const char *buf,
+>>>>> +                    size_t size)
+>>>>> +{
+>>>>> +    struct tpda_drvdata *drvdata = dev_get_drvdata(dev->parent);
+>>>>> +    unsigned long val;
+>>>>> +
+>>>>> +    if (kstrtoul(buf, 0, &val))
+>>>>> +        return -EINVAL;
+>>>>> +
+>>>>> +    /* The valid value ranges from 0 to 127 */
+>>>>> +    if (val > 127)
+>>>>> +        return -EINVAL;
+>>>>> +
+>>>>> +    guard(spinlock)(&drvdata->spinlock);
+>>>>> +    if (!drvdata->csdev->refcnt)
+>>>>> +        return -EPERM;
+>>>>> +
+>>>>> +    if (val) {
+>>>>
+>>>> If 0 - 127 are valid don't you want to write 0 too?
+>>>
+>>> It's 1-127 here. 0 may leads to an unexpected issue here.
+>>>
+>>> Thanks,
+>>> Jie
+>>>
+>>
+>> Then can't the above be this:
+>>
+>>    /* The valid value ranges from 1 to 127 */
+>>    if (val < 1 || val > 127)
+>>      return -EINVAL;
+>>
+>> But I'm wondering how you flush port 0?
+>>
+> 
+> BIT(0) represents port 0 with value 1 and the default value 0 means 
+> nothing will be triggered here.
+> 
+>> Isn't the default value 0? So if you never write to port_flush_req 
+>> then you'd flush port 0, but why can't you change it back to 0 after 
+>> writing a different value?
+> 
+> We can change the value back to 0 but I think we shouldn't do this 
+> although I haven't suffer issue after I changed it back to 0(for bit).
+> Because the document mentioned: "Once set, the bit remains set until the 
+> flush operation on port i completes and the bit then clears to 0". So I 
+> think we should let the flush operation finish as expected and clear the 
+> bit by itself? Or may suffer unexpected error when try to interrupt the 
+> flush operation?
+> 
+> Thanks,
+> Jie
+
+Oh I see, I thought this was a port number, not a bit for each port. 
+That changes this and my other comment about changing the output to be 
+decimal then. Hex is probably better but it needs the 0x prefix.
+
+I would also treat 0 as EINVAL. It doesn't do anything different to any 
+other out of range request so it should be treated the same way.
+
+Then comparing to 127 isn't that obvious either. Something like 
+FIELD_FITS() more clearly states that values have to fit into a bitfield 
+rather than be less than some value:
+
+   if (!val || !FIELD_FIT(TPDA_FLUSH_CR_PORTNUM, val))
+	return -EINVAL;
+
+
+>   >>>
+>>>>> +        CS_UNLOCK(drvdata->base);
+>>>>> +        writel_relaxed(val, drvdata->base + TPDA_FLUSH_CR);
+>>>>> +        CS_LOCK(drvdata->base);
+>>>>> +    }
+>>>>> +
+>>>>> +    return size;
+>>>>> +}
+>>>>> +static DEVICE_ATTR_RW(port_flush_req);
+>>>>> +
+>>>>>   static struct attribute *tpda_attrs[] = {
+>>>>>       &dev_attr_trig_async_enable.attr,
+>>>>>       &dev_attr_trig_flag_ts_enable.attr,
+>>>>> @@ -516,6 +560,7 @@ static struct attribute *tpda_attrs[] = {
+>>>>>       &dev_attr_freq_ts_enable.attr,
+>>>>>       &dev_attr_global_flush_req.attr,
+>>>>>       &dev_attr_cmbchan_mode.attr,
+>>>>> +    &dev_attr_port_flush_req.attr,
+>>>>>       NULL,
+>>>>>   };
+>>>>> diff --git a/drivers/hwtracing/coresight/coresight-tpda.h b/ 
+>>>>> drivers/ hwtracing/coresight/coresight-tpda.h
+>>>>> index 00d146960d81..55a18d718357 100644
+>>>>> --- a/drivers/hwtracing/coresight/coresight-tpda.h
+>>>>> +++ b/drivers/hwtracing/coresight/coresight-tpda.h
+>>>>> @@ -10,6 +10,7 @@
+>>>>>   #define TPDA_Pn_CR(n)        (0x004 + (n * 4))
+>>>>>   #define TPDA_FPID_CR        (0x084)
+>>>>>   #define TPDA_SYNCR        (0x08C)
+>>>>> +#define TPDA_FLUSH_CR        (0x090)
+>>>>>   /* Cross trigger FREQ packets timestamp bit */
+>>>>>   #define TPDA_CR_FREQTS        BIT(2)
+>>>>
+>>>>
+>>>
+>>
+>>
+> 
 
 
