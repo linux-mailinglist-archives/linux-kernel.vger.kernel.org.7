@@ -1,74 +1,53 @@
-Return-Path: <linux-kernel+bounces-785902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C937B3524C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:44:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EF19B3526A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:55:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E905E241071
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:44:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7B157ACEED
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:54:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D792D3A70;
-	Tue, 26 Aug 2025 03:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="RYPl0WhF"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E792D4B68;
+	Tue, 26 Aug 2025 03:55:21 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF8323D7EE;
-	Tue, 26 Aug 2025 03:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A3E1C5D5E;
+	Tue, 26 Aug 2025 03:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756179879; cv=none; b=WxdvC1CgMuljeIEPJ57G097VqDcW2f4rSvfoCZlLUmIBSx2tukcOr7mnhUl6f/AgvHSU/Fj/W/98OJfS08kmwcl1ErfYxcPv9Vn/lKQldkbHNelAvUmRfA4BfqRqKSM4ChC171hk959THrBFjXa7iSRKU6kHdoRnOl6TgwJ9y/k=
+	t=1756180521; cv=none; b=hWjoVDAfJ4/Hoq0WGj8uYyitxAlPMnWnCPJDDP295rVN5sxxWdAVwkp/eigZFuiLFq1O1tSDCK/ywc2abT7p9wC7viRrC5p/G2X3NsqLUA+IuFZEVWO3o5rCfFRevHQzBQUDEUnQjv4AOdHHIP7dwTYbTogtE/H7vc3KITHGSN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756179879; c=relaxed/simple;
-	bh=AFbOsv4uJX6MrAOQSsqn1mF5ZkvhtaW1FmyaM43FJI8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iRPIjCHn81681UV1Edx2i28B/L5ePHC0k0KH/BBRCeA5tLF0AbOEv1BwE6hNf7gGx+hi7jZJjU70nLlZDBXGvjY/FDjGa5Cnh8He/+UO8nFfaG5Kon1fUntXTVDGKVibzypkBxV39dm4ahPsJAiFC3X6rOOzbCs4sMgfX5gv4KI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=RYPl0WhF; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1756179878; x=1787715878;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=AFbOsv4uJX6MrAOQSsqn1mF5ZkvhtaW1FmyaM43FJI8=;
-  b=RYPl0WhF57GTMewxeXsRLH7x4UYqZLOW188Fy0HRh4c4i7DmXHPFIzD2
-   /NAQy0a9d7435qeFn4K9WyEDqKf7kUsS5Mk8urPCAClaMWxuvOBlY+ecz
-   Oecjaeh4BACU8ELTcwaMn0NO+sBJ81tO//I5SVYeZD7ty0kO+ci5GjJj6
-   nYvZOCl0vPNWIRsNs0GC4ry7xyRdNiLzyhLlLJAB/yOvYAnB4jM3MXzzu
-   yOw3fpSPyi1W/WumzHNUfLUW4AnOkiXbiCGtZGrw4MuHUwl5vsUcZsjrU
-   e8vB1spB81fdOguvYmDTI5pDiAeAiYLagN/101kUMW0pabGq66ETqkfUB
-   A==;
-X-CSE-ConnectionGUID: h+d7yjNNRfSyxeG5y/G3DA==
-X-CSE-MsgGUID: iSYs/6DwSUW/YbjjXyJoOw==
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="46221620"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Aug 2025 20:44:37 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Mon, 25 Aug 2025 20:44:19 -0700
-Received: from che-dk-ungapp03lx.microchip.com (10.10.85.11) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Mon, 25 Aug 2025 20:44:17 -0700
-From: Rengarajan S <rengarajan.s@microchip.com>
-To: <tharunkumar.pasumarthi@microchip.com>,
-	<kumaravel.thiagarajan@microchip.com>, <UNGLinuxDriver@microchip.com>,
-	<andi.shyti@kernel.org>, <linux-i2c@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <rengarajan.s@microchip.com>
-Subject: [PATCH RESEND v1 i2c-master] i2c: mchp-pci1xxxx: Update minimum bus idle time
-Date: Tue, 26 Aug 2025 09:10:10 +0530
-Message-ID: <20250826034010.8084-2-rengarajan.s@microchip.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250826034010.8084-1-rengarajan.s@microchip.com>
-References: <20250826034010.8084-1-rengarajan.s@microchip.com>
+	s=arc-20240116; t=1756180521; c=relaxed/simple;
+	bh=va+eu6cdZWc24zUsuB0LxwWN+ozjHMlsASTES29Knck=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EUHluHyz60dbmnYX1YcqvFxcNdpeR17yc+Zl5Bfxe83WJrar8f8egJ9MQd7MLa29HMfswCQ9EsNuCvrLiJUiNRK0bwFsk3+SDuNRUMkwrqN4QozDaOPxqYTqWfysiRjYFwhhDynUyH8z1iv68TmdaSP4Q43tDIMbIpZ74rCSahs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c9v2F3KW7zYQvN9;
+	Tue, 26 Aug 2025 11:55:17 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 030961A0B68;
+	Tue, 26 Aug 2025 11:55:16 +0800 (CST)
+Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
+	by APP2 (Coremail) with SMTP id Syh0CgCHsJcQMK1o1ZJFAQ--.52077S2;
+	Tue, 26 Aug 2025 11:55:15 +0800 (CST)
+From: Chen Ridong <chenridong@huaweicloud.com>
+To: tj@kernel.org,
+	hannes@cmpxchg.org,
+	mkoutny@suse.com
+Cc: cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lujialin4@huawei.com,
+	chenridong@huawei.com
+Subject: [PATCH cgroup/for-next 0/3] Improve clarity of cgroup destruction process
+Date: Tue, 26 Aug 2025 03:40:19 +0000
+Message-Id: <20250826034022.1736249-1-chenridong@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,39 +55,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-CM-TRANSID:Syh0CgCHsJcQMK1o1ZJFAQ--.52077S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrZr17AF15Jr4rKFW8Ar15XFb_yoWfZwc_ua
+	4SyFyUtrWxJFW0qay7tFs0qFWY9rWUGFy5JF1ktrWUtF9rXrs8Wan2vrZ8ur10vFs3Jr1D
+	Ar9xCrn7ArnI9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbzkYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij
+	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE
+	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42
+	xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF
+	7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UK2NtUUUUU=
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-The SMBUS controller clock is designed with a 64 MHz clock for the
-MCU, while the PCI1xxxx chip assumes a 31.25 MHz baud clock. SMBUS
-controller register values are calculated considering 1 unit = 32 ns.
-Based on this unit, the BUS_IDLE_MIN register values are updated for
-all supported clock frequencies. Setting the MSB of BUS_IDLE_MIN[7:0]
-register further scales the minimum bus idle time by a factor of 4.
+From: Chen Ridong <chenridong@huawei.com>
 
-Fixes: aa874cdfec07 ("i2c: mchp-pci1xxxx: Update Timing registers")
-Signed-off-by: Rengarajan S <rengarajan.s@microchip.com>
----
- drivers/i2c/busses/i2c-mchp-pci1xxxx.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+This series aims to improve the clarity of the cgroup destruction
+mechanism. Since the destruction process has been split across three
+workqueues, this patch set introduces helper functions and renames
+existing ones to enhance readability. As a result, the logic now follows
+a more straightforward one-to-one correspondence, making the overall flow
+easier to understand. Besides, patch 1 removes the redundancy online_cnt.
 
-diff --git a/drivers/i2c/busses/i2c-mchp-pci1xxxx.c b/drivers/i2c/busses/i2c-mchp-pci1xxxx.c
-index 5ef136c3ecb1..cb9455b38c1d 100644
---- a/drivers/i2c/busses/i2c-mchp-pci1xxxx.c
-+++ b/drivers/i2c/busses/i2c-mchp-pci1xxxx.c
-@@ -190,9 +190,9 @@
-  * Bus Idle Minimum time = BUS_IDLE_MIN[7:0] x Baud_Clock_Period x
-  * (BUS_IDLE_MIN_XK_TICKS[7] ? 4,1)
-  */
--#define BUS_IDLE_MIN_100K_TICKS		36UL
--#define BUS_IDLE_MIN_400K_TICKS		10UL
--#define BUS_IDLE_MIN_1000K_TICKS	4UL
-+#define BUS_IDLE_MIN_100K_TICKS		165
-+#define BUS_IDLE_MIN_400K_TICKS		40
-+#define BUS_IDLE_MIN_1000K_TICKS	16
- 
- /*
-  * CTRL_CUM_TIME_OUT_XK_TICKS defines SMBus Controller Cumulative Time-Out.
+This series is based on 04a4d6c24eef8a1fc89d8b6129ac00ca2f638aff for the
+cgroup/for-next branch.
+
+Chen Ridong (3):
+  cgroup: remove redundancy online_cnt
+  cgroup: add css_free helper
+  cgroup: rename css offline related functions
+
+ include/linux/cgroup-defs.h |  6 ----
+ kernel/cgroup/cgroup.c      | 59 ++++++++++++++++++-------------------
+ kernel/cgroup/debug.c       |  2 +-
+ 3 files changed, 30 insertions(+), 37 deletions(-)
+
 -- 
-2.25.1
+2.34.1
 
 
