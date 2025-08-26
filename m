@@ -1,122 +1,115 @@
-Return-Path: <linux-kernel+bounces-785770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF9A2B350DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:14:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 506FBB350DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:14:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 853C71A81868
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 01:14:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BB067A65DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 01:12:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C3527F195;
-	Tue, 26 Aug 2025 01:14:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="T6hjPgwa"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3CA2288527;
+	Tue, 26 Aug 2025 01:13:49 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E0CEEB3;
-	Tue, 26 Aug 2025 01:13:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F0F6EEB3;
+	Tue, 26 Aug 2025 01:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756170840; cv=none; b=Gw4aSk5S+VPG6t1iZjo7qqHi6mVq0PknvYpJ/b5WorjoztWCSSAH9AThQVWbOYHByEGOTVpRXf1A7IZ/JYVmyHA60tSpXMUoWtbpBYlDmEs2ZGlgrsHBWplX+nYnO9Mga7AoFyt6PmwFNKlJLJ2/FgZsucQLnaTAScccYNtTDRQ=
+	t=1756170829; cv=none; b=DGvIchkI0VJUqTK1tMsUOlWPZiX9hIvEAdAH4o06kyDz7vqJQF1N90rh7kWmVGztjk7X7OiDgALF9jqbtQasOdvjiuCivG5ratHjsU4erNKYK4iyfQuF4TI2z7msvVbj6VTjRKIrReZDm2INcQrU+sQzMIu6WMsRl4GtC/GDEGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756170840; c=relaxed/simple;
-	bh=DSnkrlQap2de5NIIN1j1Qu/t9WNnkMruYXQFGkYVJ30=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g7WcffHqWr2hamLGzuB2dnzheR/DgqjQFrkH92zOwc9QrJMJqA4PxddvIg6CIP9iqBJmQ58usSAPg3QYwGfgiKQg9SbbCk/Q6pmdfzhCd7foQ+96u/gYHJqdo1x/Md65IFD6QAnrPVbCpPhw6NJJmgrYWfySDwyv0z5KFMC51WY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=T6hjPgwa; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=GahGKMyDDWWgzcOoacVh1GqObdQHZAFm0vAPse1Lvgc=; b=T6hjPgwauSAvz2ezFKh/PyMHbd
-	/zvg0/xfZQcNOwdWxylETa7s3AVJSbxho0c2nTbmk34LaHMzeXj+1mldn2Mp6d2f0uBLuxkzAiepb
-	R0icvWn6tUqu+kxWUy655QEiqVk0WnjrwO6toSvK1qNYVU+svqBBQy5q+jvAUYW5b4KMPFyGelNhf
-	xGqE6u+jzP8xGZRJeUfUyL3R9AKfTNTtjGGz9AmnH9u3iH0fFAFTjDBtQa5CqV1WJtaBe63hi9J2w
-	DqxRidDI/ZOFLHYIPazSG25R8Ax0kq1blnQpxcMBiUemYX94HtY8a7ShYZO8WJoqY2bOnwWibi2uH
-	xuVIpBog==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1uqi08-00HGCY-0J;
-	Tue, 26 Aug 2025 09:13:25 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 26 Aug 2025 09:13:24 +0800
-Date: Tue, 26 Aug 2025 09:13:24 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-Cc: Nhat Pham <nphamcs@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-	"yosry.ahmed@linux.dev" <yosry.ahmed@linux.dev>,
-	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
-	"usamaarif642@gmail.com" <usamaarif642@gmail.com>,
-	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
-	"21cnbao@gmail.com" <21cnbao@gmail.com>,
-	"ying.huang@linux.alibaba.com" <ying.huang@linux.alibaba.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"senozhatsky@chromium.org" <senozhatsky@chromium.org>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"clabbe@baylibre.com" <clabbe@baylibre.com>,
-	"ardb@kernel.org" <ardb@kernel.org>,
-	"ebiggers@google.com" <ebiggers@google.com>,
-	"surenb@google.com" <surenb@google.com>,
-	"Accardi, Kristen C" <kristen.c.accardi@intel.com>,
-	"Gomes, Vinicius" <vinicius.gomes@intel.com>,
-	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>,
-	"Gopal, Vinodh" <vinodh.gopal@intel.com>
-Subject: Re: [PATCH v11 00/24] zswap compression batching with optimized
- iaa_crypto driver
-Message-ID: <aK0KNAmQh_JVgnML@gondor.apana.org.au>
-References: <20250801043642.8103-1-kanchana.p.sridhar@intel.com>
- <CAKEwX=Pj30Zymib2fEoDW9UyD1vAwxRKO3p28RPtK9DZWAdv8w@mail.gmail.com>
- <aJ7FSUdvxtZyiHBq@gondor.apana.org.au>
- <PH7PR11MB812143269E98B00ED4E5BE4DC93DA@PH7PR11MB8121.namprd11.prod.outlook.com>
- <aKv28XTvAITuq-p8@gondor.apana.org.au>
- <PH7PR11MB812163C97D4C533F0302FA20C93EA@PH7PR11MB8121.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1756170829; c=relaxed/simple;
+	bh=uYeSPzsHIsxz+8nyRlCJqM83j7Yjqnd/xdIaUxaSMcc=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=JeOXIYM9i+wsZ+90zho2h+jYwKBkAjvtry0hjxfKLewWDneeAaFFhLcO9MyKHbB4ct1CZ+y4hzDSVO6Or6GAI6iVfW/6arlKMt/eHJMFNGAB65hL56S3ekUxZamGiKP6oWAsrYR5GccTqqW3tCcD4SNYlScGvohSM+EJKJ99qu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c9qRr4V7gzYQvyJ;
+	Tue, 26 Aug 2025 09:13:44 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 2A5F01A0F83;
+	Tue, 26 Aug 2025 09:13:43 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgCX4o5FCq1oDbE7AQ--.16416S3;
+	Tue, 26 Aug 2025 09:13:42 +0800 (CST)
+Subject: Re: [PATCH RFC 4/7] md/raid10: convert read/write to use
+ bio_submit_split()
+To: Christoph Hellwig <hch@infradead.org>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: colyli@kernel.org, hare@suse.de, tieren@fnnas.com, axboe@kernel.dk,
+ tj@kernel.org, josef@toxicpanda.com, song@kernel.org,
+ akpm@linux-foundation.org, neil@brown.name, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+ linux-raid@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ johnny.chenyi@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20250825093700.3731633-1-yukuai1@huaweicloud.com>
+ <20250825093700.3731633-5-yukuai1@huaweicloud.com>
+ <aKxCJT6ul_WC94-x@infradead.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <6c6b183a-bce7-b01c-8749-6e0b5a078384@huaweicloud.com>
+Date: Tue, 26 Aug 2025 09:13:41 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PH7PR11MB812163C97D4C533F0302FA20C93EA@PH7PR11MB8121.namprd11.prod.outlook.com>
+In-Reply-To: <aKxCJT6ul_WC94-x@infradead.org>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCX4o5FCq1oDbE7AQ--.16416S3
+X-Coremail-Antispam: 1UD129KBjvdXoW7Gr4rGw1fKFyUuF15tw18Xwb_yoW3Jrg_G3
+	98tryDGryDZ3Z3tay3Krn3A393CFs8CF1j9F4jqw43Z3s0g397AF48WrZ5X343JF1IvF4S
+	g347WFWFyrn29jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbS8FF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7V
+	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
+	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6x
+	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRJPE-UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Mon, Aug 25, 2025 at 06:12:19PM +0000, Sridhar, Kanchana P wrote:
->
-> Thanks Herbert, for reviewing the approach. IIUC, we should follow
-> these constraints:
+Hi,
+
+ÔÚ 2025/08/25 18:59, Christoph Hellwig Ð´µÀ:
+>>   		allow_barrier(conf);
+>> +		bio = bio_submit_split(bio, max_sectors, &conf->bio_split);
+>>   		wait_barrier(conf, false);
+>> +
+>> +		if (!bio) {
+>> +			set_bit(R10BIO_Returned, &r10_bio->state);
+>> +			goto err_handle;
+>> +		}
 > 
-> 1) The folio should be submitted as the source.
+> The NULL return should only happen for REQ_NOWAIT here, so maybe
+> give R10BIO_Returned a more descriptive name?  Also please document
+> the flag in the header.
+
+And also atomic write here, if bio has to split due to badblocks here.
+The flag is refer to raid1. I can add cocument for both raid1 and raid10
+in this case.
+
 > 
-> 2) For the destination, construct an SG list for them and pass that in.
->     The rule should be that the SG list must contain a sufficient number
->     of pages for the compression output based on the given unit size
->     (PAGE_SIZE for zswap).
+> Any maybe yhe code wants a splitting helper instead of open coding
+> setting this flag in multiple places?
+> .
 > 
-> For PMD folios, there would be 512 compression outputs. In this case,
-> would we need to pass in an SG list that can contain 512 compression
-> outputs after calling the acompress API once?
+Yes.
 
-Eventually yes :)
+Thanks,
+Kuai
 
-But for now we're just replicating your current patch-set, so
-the folio should come with an offset and a length restriction,
-and correspondingly the destination SG list should contain the
-same number of pages as there are in your current patch-set.
-
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
