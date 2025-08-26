@@ -1,70 +1,71 @@
-Return-Path: <linux-kernel+bounces-786398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDE3AB35939
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:41:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68C71B35952
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:47:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A71FE17F9AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:41:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDB217AAE6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:46:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 685C53002CA;
-	Tue, 26 Aug 2025 09:41:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1482304BB8;
+	Tue, 26 Aug 2025 09:47:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FjIxHJfe"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="KRkAbXXv"
+Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6300120296A
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D24288CA6
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756201301; cv=none; b=Ixg37ydOGIV8u98zeNKtrR7k2pJRYl7G8zFldTimO9eEPwJLXnW4kr488nAq+US71V6ZRBJKzJlsKF5p+fij8eTyAYP5QQvkA/VNpcBi4nxVof+WYR1dk0H8qaA3+mZk7LRoROfqJmsL63GY1gVYWPRlG7j7tOdlecbSJcZrS9M=
+	t=1756201664; cv=none; b=cEtJaFSDK2aI2VDY+k7/z3dH5tU2p9ATqRPLGacZrpS2U7QbYgdBWsJmAmNB0aNvtLUUatLHhauY4NGujX1ym1S7jdXARjUYxbazs0YmR+IFq3WOPtYANYqjgQU15IAouaHl7ywKB7OzHKpWb7Wup6XCvh3MrJqCVAc/U7QDZvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756201301; c=relaxed/simple;
-	bh=vLjLwr94q3rSj4G25/68U6jKI9ri/x/KD4FRifqWx14=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gW74izGJSgFsL7bpb4xqWCSCCKGPdGdAnINjU62RDO0+QoaODNyHsv93KO9ktWCJP+Y0ERrfxE6gsrtjVreRcdP1woot1J1sjwbvHbtkm20dwO+xStsmIPdBZ0d5Y+2VO8L78QPf0IdOwg5X545A7MYc/iim+y/CJaczoPomW9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FjIxHJfe; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57Q9fGFk1488907;
-	Tue, 26 Aug 2025 04:41:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1756201276;
-	bh=JZgmDGp+9Nh8DudvfY3ViWKUhhZhmNY8uji+3z7DO0g=;
-	h=From:To:CC:Subject:Date;
-	b=FjIxHJfeOSg3YJGpeoA2kTi6hESe3cd8Ywwn0718HaCqYf9Ls3bLqJi/bVw/CHtij
-	 HOhkm3RF2dNCEG26ZT8TsDxcdgNuEMRhKrSSjtL0wZqExBJ1VgKQ2ESjyZT9BOjH7z
-	 V3qnXBfkFSlzZjNYJD8fBJ7t9JNLyTCsLrw+tuVY=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57Q9fFaa1590905
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 26 Aug 2025 04:41:15 -0500
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 26
- Aug 2025 04:41:14 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Tue, 26 Aug 2025 04:41:14 -0500
-Received: from LT5CG31242FY.dhcp.ti.com ([10.250.161.79])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57Q9fAo91229666;
-	Tue, 26 Aug 2025 04:41:11 -0500
-From: Shenghao Ding <shenghao-ding@ti.com>
-To: <tiwai@suse.de>
-CC: <broonie@kernel.org>, <andriy.shevchenko@linux.intel.com>,
-        <13564923607@139.com>, <13916275206@139.com>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        <baojun.xu@ti.com>, <Baojun.Xu@fpt.com>, <jesse-ji@ti.com>,
-        Shenghao Ding <shenghao-ding@ti.com>
-Subject: [PATCH v2] ALSA: hda/tas2781: Fix EFI name for calibration beginning with 1 instead of 0
-Date: Tue, 26 Aug 2025 17:41:05 +0800
-Message-ID: <20250826094105.1325-1-shenghao-ding@ti.com>
-X-Mailer: git-send-email 2.33.0.windows.2
+	s=arc-20240116; t=1756201664; c=relaxed/simple;
+	bh=Dvyw4L5YkTf4Cs6iL3mVRadK6ps+Ubvow2Gpk4VTmT0=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=lyYc+/YuDtS4BW8o65ORYkPErxU9JL/XySzYimsvmcw2BuDGlkA+cGuT2kKLsRJLcjUglxsbIDbwZoBFCOpAkYrgWh+VBNJtqPYPxndrkayTKAKrZCDIBp6KNSX1XIvEfoRCco7nAd3J3mg1bON2EpaFZ63Lf1HhTBWjqDeowRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=KRkAbXXv; arc=none smtp.client-ip=162.62.57.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1756201650; bh=kgGjSxHutqo1KcuV4l83yqC9WrC1QC6nySfChO+fZTQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=KRkAbXXvY1vn/DM0kJvnMxCxomBH8XEo5126Nr5eshBcIgFaiMwHN5P3MMubTcdAR
+	 x5ziEV/3GaCZ+tyYsiJjvxKKu6R5sQueZT42FLd3ujpzN70wNRvQ+CQL6wQyz44pno
+	 F9/HsR5zS+7Fq2CMoa8idljaiJgTzInbNc9v+bdU=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
+	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
+	id A542FC8F; Tue, 26 Aug 2025 17:41:20 +0800
+X-QQ-mid: xmsmtpt1756201280tfo2pafp7
+Message-ID: <tencent_4D33BD9E141B044B6F1BD425FEBA00BB1D08@qq.com>
+X-QQ-XMAILINFO: MZg/qcWmVFFrA3COacdJ5fJUkNec1tN9T/xf2J3Wmt5FeuCusAkNpdaonDD2A8
+	 ihXJGxFBKJj/ZOSn9L5DjcL39SKWsovsqlnTI800UiMRNwp7KMEl4C4rvwwgK+9FdVsZI98uZuG5
+	 SLY8rYFcXmYIfV8xuLljn/h6sQ2zMxhaNCUoADchqcPCoObeENFDHH3nDpafUpv0BbYTRmoNmxDl
+	 i9Qt9KcOoqJCrIPEaWNjKQ1JhIyYCqOOfHFoeM/uQoLcmd3FWMLnL/FCSG+zt8HcHiUjptSpKnat
+	 hTVOPZXd0l7xyNWe92SUVxjp/92fE87mqCKS2NTVZtMBqnVevWf/COrPEAcMapu3/nhI1/gKq5rz
+	 eK/bz3yGJ9BO2Dz6P0TeUWcC/QwfmihriGZa2z/9nc7NJZ4hfN1OURplvtkYwi1sqDOza0o0S9Nv
+	 xcIyk+GGhyW5+nIyW6oPpaBNOnbGI6tqjMMsyRmlZ+p/pDVoUkzv6AWRR2bGhtzl9lMtqS49yfZw
+	 V4uxvIjVzGt38jKukpSaPAp36KncSLOn5dJrVFP1/5WGdZv300FfIx3vxAe9M2V3HyKZgtfCrnab
+	 WWLfrcllfss7ccQzX/N6KDYYooxlpeIIzN8sx9xKeEIHSh42TwkOljtHoPuIl4RX2/QlOaeEu6vq
+	 wAvHsaqmUxwBeldisIm2GZaerrIkGxlhKhDeZkQrMaQsIwqbCX4PK/uiFp7CCcq7tG08o7tsuv+f
+	 Lh+LbNarSHa6S/kvV9rZhMQLKxGKWKnvJi1KCrc2qio9mYFDBFfmArninRVVIz+wAdy0b564xNHe
+	 sgExPMlUQ6OUs8YXGk5OhoedBkQnLK0G5+y2S6gSgVE8ZoiROXGQbAVvn1hfvocVRwoiXGzEVZE0
+	 ba2hJNvGw5EePlh1R26hBiO1v3U5pA7A2NA8ct1HC52QoYbQ+V9aXxL7fIBwedKicqZYmjbie2ZM
+	 dUSn+wvMrW8OGmwxRbyv78cX3SGgwW
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+a25ee9d20d31e483ba7b@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Write in __xfrm_state_delete
+Date: Tue, 26 Aug 2025 17:41:20 +0800
+X-OQ-MSGID: <20250826094119.4174202-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <68ab6633.050a0220.37038e.0079.GAE@google.com>
+References: <68ab6633.050a0220.37038e.0079.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,50 +73,22 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-A bug reported by one of my customers that EFI name beginning with 0
-instead of 1.
+#syz test
 
-Fixes: 4fe238513407 ("ALSA: hda/tas2781: Move and unified the calibrated-data getting function for SPI and I2C into the tas2781_hda lib")
-Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
-
----
-v2:
- - remove unrelated change
-v1:
- - Fix EFI name beginning with 1 instead of 0
- - Add extra comments on EFI name for calibration
- - Remove an extra space
----
- sound/hda/codecs/side-codecs/tas2781_hda_i2c.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c b/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
-index ed7771ab9475..635cbd8820ac 100644
---- a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
-+++ b/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
-@@ -340,7 +340,8 @@ static int tas2563_save_calibration(struct tas2781_hda *h)
- 		data[offset] = i;
- 		offset++;
- 		for (j = 0; j < TASDEV_CALIB_N; ++j) {
--			ret = snprintf(var8, sizeof(var8), vars[j], i);
-+			/* EFI name for calibration started with 1, not 0 */
-+			ret = snprintf(var8, sizeof(var8), vars[j], i + 1);
+diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
+index 78fcbb89cf32..b8b4843f9c6d 100644
+--- a/net/xfrm/xfrm_state.c
++++ b/net/xfrm/xfrm_state.c
+@@ -932,7 +932,8 @@ int xfrm_state_flush(struct net *net, u8 proto, bool task_valid)
+ restart:
+ 		hlist_for_each_entry(x, net->xfrm.state_bydst+i, bydst) {
+ 			if (!xfrm_state_kern(x) &&
+-			    xfrm_id_proto_match(x->id.proto, proto)) {
++			    xfrm_id_proto_match(x->id.proto, proto) &&
++			    x->km.state != XFRM_STATE_DEAD) {
+ 				xfrm_state_hold(x);
+ 				spin_unlock_bh(&net->xfrm.xfrm_state_lock);
  
- 			if (ret < 0 || ret >= sizeof(var8) - 1) {
- 				dev_err(p->dev, "%s: Read %s failed\n",
-@@ -349,7 +350,7 @@ static int tas2563_save_calibration(struct tas2781_hda *h)
- 			}
- 			/*
- 			 * Our variable names are ASCII by construction, but
--			 * EFI names are wide chars.  Convert and zero-pad.
-+			 * EFI names are wide chars. Convert and zero-pad.
- 			 */
- 			memset(efi_name, 0, sizeof(efi_name));
- 			for (k = 0; k < sizeof(var8) && var8[k]; k++)
--- 
-2.43.0
 
 
