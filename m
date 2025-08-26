@@ -1,112 +1,131 @@
-Return-Path: <linux-kernel+bounces-786081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBB4BB354BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:49:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33B52B354CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:53:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FF167A4314
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:47:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA75F1B621C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E112F549D;
-	Tue, 26 Aug 2025 06:49:15 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C123224AE6;
-	Tue, 26 Aug 2025 06:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6B8D2F617B;
+	Tue, 26 Aug 2025 06:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="qWjUerfn"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D6D2882D7;
+	Tue, 26 Aug 2025 06:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756190954; cv=none; b=f1OtQjRZhA72wzDbt92kB9Hck/fiBfmklDnuUJeV6PFAKN8asDIebvVa0gs5gIAQYjqOIrww8sw+eg85t4x7LLtUPYGVfHxCkCd+THkgldE4WbIJQ9OQY14wnGsCq2XntEXsxlS6Y4a64nDDTXLx9IoAjI+ArQVqvSbMZ6NOF1E=
+	t=1756191184; cv=none; b=m5QXxa12z/TAQ/MWqKBV8XUlG2KN8z8bGzWJtDzJUECp54RNmMCNpTTHBG49ydN5OdITBb3r9HtGoWrMKbHhGEdFXzYX2pH6zUVoOpEUQYKXgnG9/Ay1fNgn2q5XFo4lmDpMIHo/AGb8rFyBi9CsXpw2NIp3I6HfZfj62J/AFgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756190954; c=relaxed/simple;
-	bh=WQiyCPe1c9Dqjla1jCqE9LJ4OEHB8M7ZV66fnfHLw20=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QaDSpvTIRWOABa+G4KyBfA9MXO/RiUcGHNHG8Sx6yG2cS8oKNS6q0bfBWU5QAkfI/3MHLjrohN6239MLdroVDecL92lltPIjL6OJf0FC6coDUp/hAiV6UfDiE2DQHS8NCPgesJ6JKst1bcS5xCkvQCcwaJIvE7uFfVI6R4ZLbb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8DxLvDjWK1oh0EDAA--.6264S3;
-	Tue, 26 Aug 2025 14:49:07 +0800 (CST)
-Received: from linux.localdomain (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowJAxE+TiWK1oOGxpAA--.324S2;
-	Tue, 26 Aug 2025 14:49:07 +0800 (CST)
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Hengqi Chen <hengqi.chen@gmail.com>,
-	bpf@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] LoongArch: BPF: Optimize sign-extention mov instructions
-Date: Tue, 26 Aug 2025 14:49:06 +0800
-Message-ID: <20250826064906.10683-1-yangtiezhu@loongson.cn>
-X-Mailer: git-send-email 2.42.0
+	s=arc-20240116; t=1756191184; c=relaxed/simple;
+	bh=jH5bxK6EaSvWBxLcpjk++ZL/7lRyN+YA0ftWMGDqgc4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lcXI3Ijk/EMlzFr9yNHMyVBs51QBAnRNwuDpg3cT5EarIISd+tCBLdbM7Kp8ct7ZRTfAL3o9xDD6aTHFS/n3FN9zhFIP8kDbEBGxLNAwLgHJZkuPav3xKe63lAxhcFGR/uwlSmio+GXBJMyYOaYiEqy3gk66U+L+FRw90eAoqic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=qWjUerfn; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1756191183; x=1787727183;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=jH5bxK6EaSvWBxLcpjk++ZL/7lRyN+YA0ftWMGDqgc4=;
+  b=qWjUerfnj3iM7b8ewKJZXalqSx/LqklC957niFXsBSMXJfKuH+YfQXi8
+   bcGSNSRvuYKw11YTtbRfh7KrD2YabaAzydxnNAEWvCQdLV0Q1xyDUMZwf
+   6hPD4t3ScVyKLIPQsQqWhIJ1lZ1GaIUdxcFc/N+QYfjHprk8LRxI+uSmV
+   qv+mah4x1J860h/M/1ups8Xs7SvomjS0rlckbXr1ESOOvu9AaVluEJkNo
+   SZapjX7s6d0b9jhOkL1o+Vp8vzZ+zorph9SKlR8aUqPdWLJE3JG2acsHb
+   u2iBWj3TYoYfCJNmqOj9KxqeFUbc21OTlz6b3DmBDJsxeAWp4iPOTZLU0
+   g==;
+X-CSE-ConnectionGUID: vjBvharrSgWpaC/5HfU8uA==
+X-CSE-MsgGUID: pdQwCPcSRSGCepZAD+3zLw==
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="277036521"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Aug 2025 23:52:57 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Mon, 25 Aug 2025 23:52:49 -0700
+Received: from localhost (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Mon, 25 Aug 2025 23:52:49 -0700
+Date: Tue, 26 Aug 2025 08:49:18 +0200
+From: Horatiu Vultur - M31836 <Horatiu.Vultur@microchip.com>
+To: Parthiban Veerasooran - I17164 <Parthiban.Veerasooran@microchip.com>
+CC: "andrew@lunn.ch" <andrew@lunn.ch>, "hkallweit1@gmail.com"
+	<hkallweit1@gmail.com>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+	"davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com"
+	<edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>, "richardcochran@gmail.com"
+	<richardcochran@gmail.com>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next v2 2/2] net: phy: micrel: Add PTP support for
+ lan8842
+Message-ID: <20250826064918.xhqwgndlnhbfnvnb@DEN-DL-M31836.microchip.com>
+References: <20250825063136.2884640-1-horatiu.vultur@microchip.com>
+ <20250825063136.2884640-3-horatiu.vultur@microchip.com>
+ <0b754e84-45d0-4d3e-aa14-564ab5528b98@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAxE+TiWK1oOGxpAA--.324S2
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7tFWktw4rZw4xJr17Ar17XFc_yoW8Grykpr
-	ZrCrnYkrWjq347AF1kJa1UWrsFyFsxGr47XFy2q3y8J39xWryqqr1fKw13tFZ5J39YvFWk
-	XFy0kwn0qas8ZagCm3ZEXasCq-sJn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I
-	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1q6rW5McIj6I8E87Iv67AK
-	xVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64
-	vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
-	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2I
-	x0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK
-	8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I
-	0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUcHUqUUUUU
+In-Reply-To: <0b754e84-45d0-4d3e-aa14-564ab5528b98@microchip.com>
 
-For 8-bit and 16-bit sign-extention mov instructions, it can use the native
-instructions ext.w.b and ext.w.h directly, no need to use the temporary t1
-register, just remove the redundant operations.
+The 08/25/2025 09:03, Parthiban Veerasooran - I17164 wrote:
 
-Here are the test results:
+Hi Parthiban,
 
-  # modprobe test_bpf test_range=81,84
-  # dmesg -t | tail -5
-  test_bpf: #81 ALU_MOVSX | BPF_B jited:1 5 PASS
-  test_bpf: #82 ALU_MOVSX | BPF_H jited:1 5 PASS
-  test_bpf: #83 ALU64_MOVSX | BPF_B jited:1 5 PASS
-  test_bpf: #84 ALU64_MOVSX | BPF_H jited:1 5 PASS
-  test_bpf: Summary: 4 PASSED, 0 FAILED, [4/4 JIT'ed]
+> 
+> On 25/08/25 12:01 pm, Horatiu Vultur wrote:
+> > +	/* As the lan8814 and lan8842 has the same IP for the PTP block, the
+> > +	 * only difference is the number of the GPIOs, then make sure that the
+> > +	 * lan8842 initialized also the shared data pointer as this is used in
+> > +	 * all the PTP functions for lan8814. The lan8842 doesn't have multiple
+> > +	 * PHYs in the same package.
+> > +	 */
+> > +	addr = lanphy_read_page_reg(phydev, LAN8814_PAGE_COMMON_REGS,
+> > +				    LAN8842_STRAP_REG);
+> > +	addr &= LAN8842_STRAP_REG_PHYADDR_MASK;
+> > +	if (addr < 0)
+> > +		return addr;
+> > +
+> > +	devm_phy_package_join(&phydev->mdio.dev, phydev, addr,
+> > +			      sizeof(struct lan8814_shared_priv));
+> Shouldn't you check the return value of devm_phy_package_join()?
+> Apologies — I missed to comment in my previous review.
 
-Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
----
- arch/loongarch/net/bpf_jit.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Yes, I should check the return value. I will fix this in the next
+version.
+No worries, thanks for catching this.
 
-diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bpf_jit.c
-index abfdb6bb5c38..7072db18c6cd 100644
---- a/arch/loongarch/net/bpf_jit.c
-+++ b/arch/loongarch/net/bpf_jit.c
-@@ -527,13 +527,11 @@ static int build_insn(const struct bpf_insn *insn, struct jit_ctx *ctx, bool ext
- 			emit_zext_32(ctx, dst, is32);
- 			break;
- 		case 8:
--			move_reg(ctx, t1, src);
--			emit_insn(ctx, extwb, dst, t1);
-+			emit_insn(ctx, extwb, dst, src);
- 			emit_zext_32(ctx, dst, is32);
- 			break;
- 		case 16:
--			move_reg(ctx, t1, src);
--			emit_insn(ctx, extwh, dst, t1);
-+			emit_insn(ctx, extwh, dst, src);
- 			emit_zext_32(ctx, dst, is32);
- 			break;
- 		case 32:
+> 
+> Best regards,
+> Parthiban V
+> > +	if (phy_package_init_once(phydev)) {
+> > +		ret = lan8842_ptp_probe_once(phydev);
+> > +		if (ret)
+> > +			return ret;
+> > +	}
+> > +
+> > +	lan8814_ptp_init(phydev);
+> > +
+> >   	return 0;
+> >   }
+
 -- 
-2.42.0
-
+/Horatiu
 
