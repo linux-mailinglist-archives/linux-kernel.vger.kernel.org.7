@@ -1,102 +1,158 @@
-Return-Path: <linux-kernel+bounces-787054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A903BB370D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:01:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5FDBB370D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:01:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C33931BA2453
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:01:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6893B8E36D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:01:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E39152DC35F;
-	Tue, 26 Aug 2025 17:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60142DAFDF;
+	Tue, 26 Aug 2025 17:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="GstRLxvS"
-Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a+fhu6EO"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4127431A571;
-	Tue, 26 Aug 2025 17:01:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756227690; cv=pass; b=rwOOjG5/Nv2DMvyuq/mKPVpfeUBVrH34eXUKij4eiAlWZURRuP4pdX3DKfM8R4RQsi5OH03EMx44s/bdDlXjOH27A/+jmv9RH7l7rBWRdfsfBeFrOJ0EgqVb8opI9XC5WlP+VKxZQh3QBbJ9aU11mrHhe1YCdkyk9YK6zMTM2Es=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756227690; c=relaxed/simple;
-	bh=qH5jOpgeZOJzHJ5EzIlKig8EB3gQxdUMoHTfIV696J4=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=GT/Pt4Aqvc5lPRLGOs4zIeUpVELiwTheqkEXVzxsr2oV0A3vRiWx/2hCm+wkElzY5aE0VFJ0UuvDLb4rfUE7R1pvT9nijL+brVqzQ0IEuzycLupfpwkh5d9NBedO7yyZflL9qQAqW2KJbtz+ZAWcmxvyw1/TQyiucFuINt1Rn8c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=GstRLxvS; arc=pass smtp.client-ip=136.143.188.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1756227657; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=daJchgAZ1QUXGPzDpUdL3YCjgAfa9irW8dfqDDT83Th96HETmTx96K5TNI61Wy1q76b1oI03/v7kCBB44QeQ/GNjgOZ8LDne26DuoqBmDuKK4GY+olKKgrnp5lL+eDbcw9/QFElHtNwFjG3HcEkcAh66Dbi9r3fRC4ceS8t+aeQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1756227657; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=KDeMMywmvB9WAI4x+qiH6MX7k6fDsjpvKR+qsOi22yI=; 
-	b=kfOv0Pl7VS8LnQTC/X7j1RHPY2PNoo43WTbNeyclknn6klZQH+LbxaHbmwkqV4+di1v6J5z89DlhJ5GbbcxF9SYEcvH6OLyAEoH5PwnucZ9M8zzk3rNr4pmU5mFYwXCQh52aV8hTW3LWw36hT9vu8CxPiOBOofA49/vk1WPV8/E=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
-	dmarc=pass header.from=<safinaskar@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756227657;
-	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=KDeMMywmvB9WAI4x+qiH6MX7k6fDsjpvKR+qsOi22yI=;
-	b=GstRLxvSxSRbHzmo1YjZI+tGHJw7RfL/H1G2eJwem6HdlsJRVPTHlNZEhfK4y0Sg
-	yxSLh61SStKb+jf4BGJTuCrpleVhFZq3bqDCOuHSjmfhwg5lQNi0wqZKOio/t93pBa8
-	QMLVbVwV0Kh6OaZcIRMHW0RV8/J4Hur+T+hSVuwE=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1756227655220931.7736108771608; Tue, 26 Aug 2025 10:00:55 -0700 (PDT)
-Received: from  [212.73.77.104] by mail.zoho.com
-	with HTTP;Tue, 26 Aug 2025 10:00:55 -0700 (PDT)
-Date: Tue, 26 Aug 2025 21:00:55 +0400
-From: Askar Safin <safinaskar@zohomail.com>
-To: "Byron Stanoszek" <gandalf@winds.org>
-Cc: "Christoph Hellwig" <hch@lst.de>, "gregkh" <gregkh@linuxfoundation.org>,
-	"julian.stecklina" <julian.stecklina@cyberus-technology.de>,
-	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"rafael" <rafael@kernel.org>,
-	"torvalds" <torvalds@linux-foundation.org>,
-	"viro" <viro@zeniv.linux.org.uk>,
-	"Gao Xiang" <hsiangkao@linux.alibaba.com>,
-	=?UTF-8?Q?=22Thomas_Wei=C3=9Fschuh=22?= <thomas.weissschuh@linutronix.de>
-Message-ID: <198e7535627.e16dd6a239997.462747272790524454@zohomail.com>
-In-Reply-To: <a54ced51-280e-cc9d-38e4-5b592dd9e77b@winds.org>
-References: <20250321050114.GC1831@lst.de> <20250825182713.2469206-1-safinaskar@zohomail.com> <20250826075910.GA22903@lst.de> <a54ced51-280e-cc9d-38e4-5b592dd9e77b@winds.org>
-Subject: Re: [PATCH] initrd: support erofs as initrd
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9CBB85C4A;
+	Tue, 26 Aug 2025 17:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756227677; cv=none; b=TpnYTWC377tLGpVZGu8stymlFiDxGKy2UchqFq3fSs5qkdjUWY/s7Bdam0nFR8OWuz/stYukRZbyAvNKHB4XPw3UV822qP2w9acQoRFgVQ7p/EThg2jB1FeoG2o8kUrO4XPtWOIp3BRvQpKNWCA6gHLTnf0XIhW13gB89ezlwm4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756227677; c=relaxed/simple;
+	bh=HRifJIP/Z9yEEq8qLSuxjRS6ewHNIcIRi/KyeKw5kpg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Xa6i44oy7PTq4ODGpjmztYQrBnjvLYodq4tbJr+ocRnVxP0mecvissPZSxsrPbzcIaV8tPqHH6CvYSOh0jXoZkor53ursxY2jxbG67QB80zhXur2bEC/70nX1xZ26T3W1Ar8brTI9B2pPuaYNHaIFWvKPuL8tdefjf+il9Ibppg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a+fhu6EO; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7e864c4615aso8781685a.1;
+        Tue, 26 Aug 2025 10:01:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756227669; x=1756832469; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=bRKzh8DIPbKcCybC/7E+dyvw8PR5kUzlHb1wJjTVXtc=;
+        b=a+fhu6EOUkkssIFnz64LMNPclSvAiZrNsQJiNHqNHYh0B39AxdrFMdu341GcHFnSY7
+         IbuWZLk7+yT8hor1VzhdlVQvbrFPw6Q9RF6+ohq4E8j3tr/ARqu0KyQfM0Lg5yMxiiLJ
+         WI6WNgoGPiPOFXRnQs4ADNo93aS37jh0+P0IyX3W1apEkVzVTDjIBdqNP6DsMZb+dmbS
+         lKlf3IAHhVYpNjQNG0xDsG2zTxGyalaJbUBQdQ7alh8KynI48mWOD/Z4bISPgP8JGi2W
+         2enfNaQHI45wS8GdZQKQOBhzrOsGaSZs9WKMBolFSdYLLzuKgbOrNXqzXagCdFecqo1a
+         rYeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756227669; x=1756832469;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bRKzh8DIPbKcCybC/7E+dyvw8PR5kUzlHb1wJjTVXtc=;
+        b=SqDDlQtZfyeCG5QNnvbSXlychxgbBTq7ay2hQgQ+hkJcrNiJB433LhLYn7t1qI7VE+
+         dKvwWz2MgoAi7+tHksa70mH5nDTRSHGHKa1xZ0mHcpIoVvST1F9/xpvm1P1ySl2TBMuu
+         7FnzRnzNw8C2BL6MYItfoiP+XImM9bIinO5hKyZ57D/B6QQnvAX84xHFPeoh2bQdt5et
+         stFoSS1S7OIFvZ64D+yA5WzHhn9EIG4UTziqsxT8iNZCcIT7/S++TMeIZfdCDXOmdGGi
+         8NBG+LY3hQOvZzkWWh/GLVZ7K8CN+SOWD5XwBy0w2ki07eu8li8rTMpjaszTPxMwTTmM
+         qGFA==
+X-Forwarded-Encrypted: i=1; AJvYcCWaWt0cUyx1mkEHOLfdZt8Z1R0zELqvDWpqnW0pAF3M7rfYcVlRdP4wZ1nqpr0CoIB6VOrPGykE@vger.kernel.org, AJvYcCWun2HC6vS5JYTZovlg8qa2bf+dh6WBBiKQ7vJ8++ziIdl9VvFQm5osEAKdbLs/jn8kWLYEOoV4T0gBO24=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoHFApYGjOZZFwEsk7mpiQUGYsmnuqwSbxDiEZBvjfKHovXowW
+	aMRdDjYyg39L9GSag5FGU7PNlg1/yeU1FBYnJjMLdKbmuLQ0q09L7JBT
+X-Gm-Gg: ASbGncuhuFwHhwm2s4So4RlsWM6jXVuXHNb2AfHXSl/EnCf7oBqtXOZ2YS50ZYuc+/D
+	m6kc+NzZ6jbh+JcInInBxJjaOHL99wVjEGLo2frRW9v3KDj9QYiD2h3DmVkbkRzzPX/uXGhnMH8
+	By7cWNkE+DNxxF2SNLN/1Ky4fceMMJIOAi3iW+k5eO8FaS2uXzGGiPDj6FdoPYqiuzQ1/6704Ng
+	ZwqRoyh/n+9YwDcl4DD41HOuXwBb4gcbK6PqtrrKqBx1LISgx90HhFmfu9/rVJWyDooKp78ro3K
+	aPpSBQvLWP608CaJmpEsZiODl+SB0qSF/n7maSOe+LSjYgJY+07+d+fa3PHsA1S3irtNunKw+vb
+	pTpTqLdolRUNMSTa2lLWQgMxuVfXn2Jkte/YVRZe/UDDD3QcGGw==
+X-Google-Smtp-Source: AGHT+IGS31cqYP5qKxZxREBI9B65V6SJqeHAo2pQrB62oGzvSihthY+MMIVPs9uAGaBgVXdtGCuKbA==
+X-Received: by 2002:a05:620a:7101:b0:7ed:92c8:7d16 with SMTP id af79cd13be357-7f58d941f59mr264859585a.31.1756227668309;
+        Tue, 26 Aug 2025 10:01:08 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ebee415f6dsm719225285a.27.2025.08.26.10.01.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Aug 2025 10:01:07 -0700 (PDT)
+Message-ID: <7415b3ac-cff8-4dbc-a4a4-a483e1435564@gmail.com>
+Date: Tue, 26 Aug 2025 10:01:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.4 000/403] 5.4.297-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20250826110905.607690791@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ WlfRzlpjIPmdjgoicA==
+In-Reply-To: <20250826110905.607690791@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
-Feedback-ID: rr08011227420bae0256fdc2a2a92c7337000045cdf6963ab4ff403b055f75489c212f73dd8555d07c3fb39b:zu08011227bd7a5257bc4c91043db4a6ed00002d21e7e806c2decb5ddaad591e26ef4b9cf508a25cc78c8bb6:rf0801122b7104d5b895dd2615aca0c9660000c7bb3e850ea71c4923fe08f1ffb35d14aa7fbe385563e40f02f37d091a:ZohoMail
 
- ---- On Tue, 26 Aug 2025 18:21:50 +0400  Byron Stanoszek <gandalf@winds.org> wrote --- 
- > Well, this makes me a little sad. I run several hundred embedded systems out in
- > the world, and I use a combination of initrd and initramfs for booting. These
- > systems operate entirely in ramdisk form.
+On 8/26/25 04:05, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.297 release.
+> There are 403 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 28 Aug 2025 11:08:17 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.297-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Put your squashfs to initramfs. Then do everything as you did before.
-I. e. in your /sbin/init copy that squashfs to ramdisk (or, better, loop-mount it), etc.
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-If I understand you correctly, this will work after removing of initrd.
-
-I will not remove ramdisks. I will remove initramdisks, i. e.
-special mounting logic in kernel, which automatically loads and mounts
-ramdisk at boot.
-
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
 -- 
-Askar Safin
-https://types.pl/@safinaskar
-
+Florian
 
