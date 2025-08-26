@@ -1,45 +1,80 @@
-Return-Path: <linux-kernel+bounces-786962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67224B36F74
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:06:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC6C0B36F7D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:08:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE88E8E767E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:00:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EED18E3145
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1611D3164C8;
-	Tue, 26 Aug 2025 16:00:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D36223335;
+	Tue, 26 Aug 2025 16:02:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="nRaM+a3e"
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="LpLPbOUx"
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8FB13148DA;
-	Tue, 26 Aug 2025 16:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1075F17D346
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 16:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756224037; cv=none; b=WBJaZKgAdUZyu9ThqqUhTpkVIuZi52FpzbebY7iGydl3OcmTBsoL9siweygZCjuauwr3voYvr+bPEbt00q9hBlPqdI1Fl3XQu7UZpbbBbdNsC/aZ+FwFDdPc0WhKgEPlin0t8drQw1KcFViYWci1C6D3kEWGuCoNWRdSaDnsaUs=
+	t=1756224165; cv=none; b=qTcr4m2hW5HRf1VOvs+qvy2Di2hcd3cyBG8EIFhkgi4Yhz06KyqH8I/e4/dWgbwdV263yac/2lwTDkl+0LaV/y4JMeTZEKFiwh/y+hjsl1nqg987z2BfsPNbHBPVb0Rs9TCQ6Yn7Smn3lE+PNYm2Axs2a4qSU0fXvaT4XtYa6ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756224037; c=relaxed/simple;
-	bh=SW3Udsfg/kC1vWj+EXo2Gp1NsaIYKluIF/RACcf/+pM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=qLe7CglQgrwkfyvP9DRkcKL8ZLVmTfd3UoRyskNKV9eF/bCxCQ3aCDW7zyHGlthny4VlcBNvEdmQ3d4ypu+TRnn74DrqyZkRnh4WNBQ/oE9RMCKGuQSIXJlEuW2ZPUaFOlRAd7vjhPzC4tPAJ5WNCviXuTMYTthmfIipj4G8uEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=nRaM+a3e; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1756224030; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
-	bh=8FC3T6a7dTU/8hV5hjMfJEP0D2lUkVGYSknlTfcOP8w=;
-	b=nRaM+a3eS0hFVsi+EuMrZbxGzULtN0JYRwUak5Spzp3vMvxzTEOPg3fYW+GcA+nPQKHhbqJND3EPFiotjzX9XyJxNAlleeqvSpBzYRHBQ4G7fsfK343sf0R62b7MH5w/MfFWvh+1VGIBdhjh/z21ONR+Qs9E/3xB5/qZTwbzlk0=
-Received: from 30.180.0.242(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WmfRBhu_1756224028 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 27 Aug 2025 00:00:30 +0800
-Message-ID: <9f8bf7f7-3194-4b54-a164-65cbbb261c19@linux.alibaba.com>
-Date: Wed, 27 Aug 2025 00:00:28 +0800
+	s=arc-20240116; t=1756224165; c=relaxed/simple;
+	bh=3UQpnIJPKnKLpAGt26ffAbECgihu3iAliObcW5TWBeU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bfpiNnkjlS76BiAhLJK/vaXrxpGQnn9+LOyZpI/eXKoKc6zCgaDXftwufQ1zoOjwNF4lZGMQIa17DTWm0nrmLhUf3OmqY0hA/zv7PyHocnCNIqI8+s9XsP2Y7o/uOdlR+ipphysJ5QmuBzbDjiNJ9OiqAlbvVhDX2l1fzlzJFRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=LpLPbOUx; arc=none smtp.client-ip=209.85.160.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-30cce8ec298so4434489fac.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:02:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756224162; x=1756828962; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6hKICjV+6/lxNLEk1c9nfVe+ZCE9ECioreCtxFio2KU=;
+        b=LpLPbOUxmF7GImYlxTvLsuZMqiZzQBoaMv+rWsIto8V9hiQoWJowZZxoaqGGbuyoB0
+         CrRDiM3WLugpla/B2rtUWSaOVmJ3oPVO1LMXE0BB3WvbY20nam7TOV4pCY3Trw81y66C
+         lf7RyWf0zkthHoUCa1ZqiLEu3TUDpT8vwYzF+TmuEAHQ3mTFpcoxa92jX3o1Vdo/derL
+         oEkhakGv1Taci5vrLeq7iqh19nTj/pGrJkNt9JOIxvjXRNaqM3xUwceAVR+CgurpioE2
+         nbxsoda/y8Qy6NbAjEsrp1GoZYYJjDvkT90axxjjBJjv/zdbbulPV9PG/V13xpF4fTRv
+         Nz3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756224162; x=1756828962;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6hKICjV+6/lxNLEk1c9nfVe+ZCE9ECioreCtxFio2KU=;
+        b=VK2YyHzy7Cq4VajKs+ZES8mSDDlv5Dq5B6I+vKxb6Kz5dOLVUoEWScUQwaBfeuo6gp
+         6OHWczEE8dSBqbQbKnrmfeFoK9ZgrAxViH9MQG7PP4r79kjMACfnPit30oC+8GpLT0ha
+         p/8FW7HZklnmJ6vDRMrTU1BZvdRJwr3ZEptYWndDRvEPxEcmGJztbCDPhkqmhsWYpmWR
+         GweF2hDOcq0dfglRrEvon/cdaoX2Aw4CXWk7alhbHLbBgttJsNxmCOyfzqM0Tiy98oR+
+         Q3EUF0Fezj+VdPxIMiCtGTaW1H8TljSzCfQlJ1Uppa2GMmS4sWEBE/gjgK7q/w13l3By
+         KLaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX4xnCBIUK/zEEYjeF3he9selHvNUwKAiLGP5n8mxY/qTn3VTpNqdVsFJ2tgtemwOsSjEbflbOArxuhhHo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/IU9S72EHpKAMspF23bTfYKwGYCuGPPII1ydqK/lf25rlrEo2
+	jPzNJze2uXUrGi4EF6eNaHD8M24hzwoGkhNAhpFxdhq/sL56zrFTKGC50rnWEC0M5Xw=
+X-Gm-Gg: ASbGncvXeokEx0NLU15YwewM+6303Bk127X0KjLOaiypQMlhVuFrKVjkamDLx1cFVOg
+	tk/YxbDxD81G3pbFbkDXz2B9qj+N3wF1kem0K66T2YoaELXMOu+yuD4ee9QTJOyLHzn52it/V7m
+	9dJtJG9bdSp+J4OUpGmT3MkETCDaFgZ4oe7sJSrRhTaJz2Nr2YOhiuK2lw212WttNOUUvdsTGxC
+	bECrP3pA91vAKn7nmzD8h0BtektRw8aHMIVhH5F1Hw6LJObLwzGKl1jg4kthfGdF/ImUJxdfUYD
+	Am6GnWNgc2YZFdUyPPWFdDGB+z+8/IahJJBEGarJ92Zq1kUWcZd2tdJBh5fOktt6HeZsZkbihgr
+	Kz7ITwYV07q27Hdf016aijLoXyEd/K7fdxzq0UAwMqi5E41qG3r6hikPSPr+eiYcxgO+SMwtRCU
+	k=
+X-Google-Smtp-Source: AGHT+IH30+gvcYtT1WdKMDYQghSW8SLUW2fPPTOAELgVrWD2i+MlWze4f6hNHUyN3ijUu3eoWuMyWA==
+X-Received: by 2002:a05:6870:ec92:b0:301:eb97:1f7f with SMTP id 586e51a60fabf-314dcc14230mr8054282fac.3.1756224161690;
+        Tue, 26 Aug 2025 09:02:41 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:aa9f:f4cd:76b1:fecb? ([2600:8803:e7e4:1d00:aa9f:f4cd:76b1:fecb])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7450e29b211sm2433761a34.21.2025.08.26.09.02.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Aug 2025 09:02:40 -0700 (PDT)
+Message-ID: <1dcaf589-2ff2-4af1-9177-ee129b403272@baylibre.com>
+Date: Tue, 26 Aug 2025 11:02:39 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,110 +82,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] initrd: support erofs as initrd
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: Byron Stanoszek <gandalf@winds.org>, Christoph Hellwig <hch@lst.de>
-Cc: gregkh@linuxfoundation.org, julian.stecklina@cyberus-technology.de,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- rafael@kernel.org, torvalds@linux-foundation.org, viro@zeniv.linux.org.uk,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
- Christian Brauner <brauner@kernel.org>, Askar Safin <safinaskar@zohomail.com>
-References: <20250321050114.GC1831@lst.de>
- <20250825182713.2469206-1-safinaskar@zohomail.com>
- <20250826075910.GA22903@lst.de>
- <a54ced51-280e-cc9d-38e4-5b592dd9e77b@winds.org>
- <6b77eda9-142e-44fa-9986-77ac0ed5382f@linux.alibaba.com>
-In-Reply-To: <6b77eda9-142e-44fa-9986-77ac0ed5382f@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 4/4] iio: adc: ad7124: add clock output support
+To: Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250825-iio-adc-ad7124-proper-clock-support-v2-0-4dcff9db6b35@baylibre.com>
+ <20250825-iio-adc-ad7124-proper-clock-support-v2-4-4dcff9db6b35@baylibre.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20250825-iio-adc-ad7124-proper-clock-support-v2-4-4dcff9db6b35@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-
-On 2025/8/26 23:32, Gao Xiang wrote:
-> 
-> 
-> On 2025/8/26 22:21, Byron Stanoszek wrote:
->> On Tue, 26 Aug 2025, Christoph Hellwig wrote:
->>
->>> On Mon, Aug 25, 2025 at 09:27:13PM +0300, Askar Safin wrote:
->>>>> We've been trying to kill off initrd in favor of initramfs for about
->>>>> two decades.  I don't think adding new file system support to it is
->>>>> helpful.
->>>>
->>>> I totally agree.
->>>>
->>>> What prevents us from removing initrd right now?
->>>>
->>>> The only reason is lack of volunteers?
->>>>
->>>> If yes, then may I remove initrd?
->>>
->>> Give it a spin and see if anyone shouts.
->>
->> Well, this makes me a little sad. I run several hundred embedded systems out in
->> the world, and I use a combination of initrd and initramfs for booting. These
->> systems operate entirely in ramdisk form.
->>
->> I concatenate a very large .sqfs file onto the end of "vmlinuz", which gets
->> loaded into initrd automatically by the bootloader. Then in my initramfs (cpio
->> archive that's compiled in with the kernel), my /sbin/init executable copies
->> /initrd.image to /dev/ram0, mounts a tmpfs overlay on top of it, then does a
->> pivot root to it.
->>
->> This gives it the appearance of a read-write initramfs filesystem, but the
->> lower layer data remains compressed in RAM. This saves quite a bit of RAM
->> during runtime, which is still yet important on older PCs.
->>
->> If there's a better (more official) way of having a real compressed initramfs
->> that remains compressed during runtime, I'm all for it. But until then, I would
->> like to ask you to please not remove the initrd functionality.
->>
->> (In fact, I was actually thinking about trying this method with erofs as the
->> lower layer filesystem someday soon instead of squashfs. But I would still be
->> using an overlay to mount it, instead of the auto-detect method addressed by
->> this patch.)
-> 
-> Something a bit out of the topic, to quota the previous reply from
-> Christiph:
-> 
->> There is no reason to fake up a block device, just have a version
->> of erofs that directly points to pre-loaded kernel memory instead. 
-> 
-> I completely agree with that point. However, since EROFS is a
-> block-based filesystem (Thanks to strictly block alignment, meta(data)
-> can work efficiently on both block-addressed storage
-> devices and byte-addressed memory devices. Also if the fsblock size
-> is set as the page size, the page cache itself can also be avoided
-> for plain inodes), I think even pre-loaded kernel memory is used,
-> a unified set of block-based kAPIs to access different backends
-> (e.g., block devices, kernel memory, etc.) is useful for block-based
-> filesystems instead of developing another dax_direct_access() path
-> just as pmem-specialized filesystems.
-> 
-> In short, in my opinion, the current bio interfaces fit the
-> requirements well for various storage for block-based filesystems.
-
-refine a bit: for data/metadata direct access, dax_direct_access()
-and page cache apis are simple and efficient enough, but if on-disk
-(meta)data needs to be transformed ((de)compressed or {en,de}crypted),
-a unified bio interface is simplier than working on these individual
-storage.
-
-> 
-> As for EROFS initrd support, I've seen several requests on this,
-> although I think the interesting point is data integrity and
-> security since the golden image can be easier protected compared to
-> tmpfs-based initramfs. It is just my own opinion though, if initrd
-> survives in the foresee future, I do hope initrd could be an
-> intermediate solution to initdax support since it just needs a few
-> line of changes, but if initrd removes soon, just forget what I said.
-> 
-> Thanks,
-> Gao Xiang
-> 
->>
->> Thank you,
->>   -Byron
+On 8/25/25 5:55 PM, David Lechner wrote:
+> Add support for the AD7124's internal clock output. If the #clock-cells
+> property is present, turn on the internal clock output during probe.
 > 
 
+...
+
+> @@ -1164,6 +1168,33 @@ static int ad7124_setup(struct ad7124_state *st)
+>  		}
+>  
+>  		clk_sel = AD7124_ADC_CONTROL_CLK_SEL_INT;
+> +	} else if (!device_property_present(dev, "clocks") &&
+> +		   device_property_present(dev, "clock-names")) {
+
+Found a mistake here. This should be #clock-cells rather than
+clock-names.
 
