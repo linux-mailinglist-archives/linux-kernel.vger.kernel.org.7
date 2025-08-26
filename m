@@ -1,221 +1,154 @@
-Return-Path: <linux-kernel+bounces-786527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15382B35AF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:16:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ED2BB35B11
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:17:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 013811BA082E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:16:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80710164CE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF9C6309DDC;
-	Tue, 26 Aug 2025 11:15:43 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A580277C8C;
-	Tue, 26 Aug 2025 11:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4E6B283FDF;
+	Tue, 26 Aug 2025 11:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="H83eRGoG"
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B7A29BDBA
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 11:16:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756206943; cv=none; b=re484LSf4GhK+ZJkBIAlGMlYP90a01rOyfm+U7EGxCG9YL7JDoQ6evHFE+OcfN1BCa0cSn8gUpk93RzI3ASZJO5vSe8VF+bB8sHP2X1h8M7cketHSCQNN6iI38MWj9Epr48mqAyaAYO9+L9VjCL6C+SN3XLPcvMAB6A5wNujBpI=
+	t=1756207000; cv=none; b=Vsj9e8leBT3McRDAAgJeYmq+cn9LtaJSHZb8HAZ1UOrUS70RYdBR6OD7HfDhhBJciLM5lCGGYuf96JDtuWKlUFv3nBNQ4c7h4EaVKWNSAI4WFDKsPFlgtKvo2d+easVOes3WAthEqPkn1MN0mW4zNyN0jK95lazG2WATvWPt+2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756206943; c=relaxed/simple;
-	bh=OTax/FZOAVkSfXJa1A9gunuHpIZmaqBR9VNEDweSclY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bKnrIfageEddsND/tQbu35XDLl+UdfFKritSwAh9f1ySjBjoTe5to6DgUah9+k67KTxzgvMEsB3wZP5egM+xDyVVgglPuPY9RtiJypax7d0F5XuaQupk6zZ+16RIe/IPnfSj0r5tqrjp1KK+rEVdMRy6ASpG8eGYCUcgofDF/3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0E7AF1A00;
-	Tue, 26 Aug 2025 04:15:32 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 663C13F63F;
-	Tue, 26 Aug 2025 04:15:28 -0700 (PDT)
-Date: Tue, 26 Aug 2025 12:15:23 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: peterz@infradead.org, mingo@redhat.com, will@kernel.org,
-	acme@kernel.org, namhyung@kernel.org,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
-	linux-csky@vger.kernel.org, loongarch@lists.linux.dev,
-	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, dmaengine@vger.kernel.org,
-	linux-fpga@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org, coresight@lists.linaro.org,
-	iommu@lists.linux.dev, linux-amlogic@lists.infradead.org,
-	linux-cxl@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 02/19] perf/hisilicon: Fix group validation
-Message-ID: <aK2XS_GhLw1EQ2ml@J2N7QTR9R3>
-References: <cover.1755096883.git.robin.murphy@arm.com>
- <c7b877e66ba0d34d8558c5af8bbb620e8c0e47d9.1755096883.git.robin.murphy@arm.com>
+	s=arc-20240116; t=1756207000; c=relaxed/simple;
+	bh=yyy+tp7DVsKMlqKjk/ic7QU8sIfNpj2aIPwr9puSl1U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LOatSRZO94l2XNPucSpYIXg9Tq7XN4kmURVR8JaxoRyuyJaWmNT4FlM02TpyzsjzRnR9FjckFap1Z63oTgLMYMCs+CkIWg8uNPBz9sYFFQL5UGldRQtpVLNN8bD6KUID72Zh0Q/vZdBujPVe3dgyAUSM5+/9tvFYKKBvqL7/BbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=H83eRGoG; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-53b17531009so1646068e0c.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 04:16:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1756206996; x=1756811796; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=13+ZKZHSBSlxWn30sItlJ+MHDakals4QsmIVvRoAzjM=;
+        b=H83eRGoGNY278qSQi65SbooVk5gT9LpLTQJvMug50o3zZcqDfnNYDcGowmeNKWlATR
+         l4wZnhn1J7EGUL7vUsc2CxQlQcj+amztcE+ZlXHVpAJ+8sxlrjsIrzYPXGgMMm2z9xED
+         MucM+lan4qmfRce/mA9tvh4/Uq9WrhmP53zwzrn/sBvS15wnWVr3rn61GVm35+ENc3cQ
+         nbWq7UBnDYSV8ccszezxJamFhsHq2Skq2Yy6reyR4Rxz6OM4MYVb0FFgzsUlJmQ3HtlR
+         LIP8IIXP+YdIgpR1BJNRT9UKyQHqduIJAsYsPNk7QHp9ZTgqV8jQ9m8LWBnujpGpdAs6
+         n/Gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756206996; x=1756811796;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=13+ZKZHSBSlxWn30sItlJ+MHDakals4QsmIVvRoAzjM=;
+        b=Q7M7mELA3NmCcRlAE8MCo+izDpxmWWP/5T0zcJkWU5pQr79BSsQuQO7EoE6oLH1XSD
+         AvMqX7OuBISupj7qTYa9EVvWPmVlPAWdtxEVFi/aqPYRgADxofIKHoMGGRoVIdJeePvj
+         2TpC0IajxfdW2kBBPWV9S/KQmnYc2GU4VIte4i1rd4mtjFZoDA5JF7Y6VlavCN9YIRU/
+         3yqjH3DpiOAdOywR2MX6jRC1wBlqfvB0n2uhq1G2+AnUknvoZtuZzmvn4DjfQcGTYAx9
+         vcv5C+cOQEjnB6Ly+1fycE1hhm4pOHKop9cKJnZ4/0go66cPx1hq1g+tawD/3JRrPg6t
+         ynNg==
+X-Gm-Message-State: AOJu0YwQRFSPwRG0d5blK/0czDtogzEmXpCX7Wz++C00ybejO5KTjJPO
+	x0KIHINmgF4m+vJmJnqTSS6rQEKMWV08lnu88ekWfzXQ8j5dsjry0/SBuaaSnncNtBiIAWm9sgc
+	Y+N1qBcLHf6bEa31HVnnMf9Pi6bG/uXunFg3EWcdsFA==
+X-Gm-Gg: ASbGnctVF84t97Yzgf1BHQeH9zS//PfXL2wTstqoG5QdUaWjrS86omgM54EbZojQrAN
+	tskUd6pAm/twE2GNxdU+1xmf5A7sdz+0iQP6IksjIK9YcJTIh7Lb3cexkm4G37ozV8RZ6IikI98
+	gUyoaYW7+JdKEjJS/l8PkSFgQ2Jba5dBaSB6T2Qha+4OVvNRBN/uu98Arxm90+iAa3HkAKj/x/Z
+	pg/EaJFgFpTvaFrrYrJo+o8ySeU
+X-Google-Smtp-Source: AGHT+IGLaaBqvt9XEIIWuswTMJEBdxRtANkhP57jHYijW1XkWUKRdvmPkMfPUDOxuY2T7Sa3m41LxDUj4QvUufum+Qo=
+X-Received: by 2002:a05:6122:181d:b0:531:4041:c4c5 with SMTP id
+ 71dfb90a1353d-53c8a31dcbfmr3724012e0c.7.1756206995825; Tue, 26 Aug 2025
+ 04:16:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c7b877e66ba0d34d8558c5af8bbb620e8c0e47d9.1755096883.git.robin.murphy@arm.com>
+References: <20250825145719.29455-1-linyongting@bytedance.com>
+In-Reply-To: <20250825145719.29455-1-linyongting@bytedance.com>
+From: Yongting Lin <linyongting@bytedance.com>
+Date: Tue, 26 Aug 2025 19:16:24 +0800
+X-Gm-Features: Ac12FXyevGRiMRbSCI3kYQcBRsrIKMzDdG8JNBs40u_qfXYdnjAXQlDzDqSNaHc
+Message-ID: <CAFuXZ_WHC6XtzuiuS-VBpAotOs+e5Z3toHY0jES3+hCXC9AUgw@mail.gmail.com>
+Subject: Re: [PATCH 0/8] Add selftests for mshare
+To: anthony.yznaga@oracle.com, khalid@kernel.org, shuah@kernel.org, 
+	linyongting@bytedance.com
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	akpm@linux-foundation.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 13, 2025 at 06:00:54PM +0100, Robin Murphy wrote:
-> The group validation logic shared by the HiSilicon HNS3/PCIe drivers is
-> a bit off, in that given a software group leader, it will consider that
-> event *in place of* the actual new event being opened. At worst this
-> could theoretically allow an unschedulable group if the software event
-> config happens to look like one of the hardware siblings.
-> 
-> The uncore framework avoids that particular issue,
+Sorry for the mistake! I accidentally sent each individual patch twice,
+except for the cover letter. Please ignore the duplicated ones at the
+bottom.
 
-What is "the uncore framework"? I'm not sure exactly what you're
-referring to, nor how that composes with the problem described above.
+Apologies again for the noise.
 
-> but all 3 also share the common issue of not preventing racy access to
-> the sibling list,
+Yongting Lin.
 
-Can you please elaborate on this racy access to the silbing list? I'm
-not sure exactly what you're referring to.
-
-> and some redundant checks which can be cleaned up.
-> 
-> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-> ---
->  drivers/perf/hisilicon/hisi_pcie_pmu.c   | 17 ++++++-----------
->  drivers/perf/hisilicon/hisi_uncore_pmu.c | 23 +++++++----------------
->  drivers/perf/hisilicon/hns3_pmu.c        | 17 ++++++-----------
->  3 files changed, 19 insertions(+), 38 deletions(-)
-> 
-> diff --git a/drivers/perf/hisilicon/hisi_pcie_pmu.c b/drivers/perf/hisilicon/hisi_pcie_pmu.c
-> index c5394d007b61..3b0b2f7197d0 100644
-> --- a/drivers/perf/hisilicon/hisi_pcie_pmu.c
-> +++ b/drivers/perf/hisilicon/hisi_pcie_pmu.c
-> @@ -338,21 +338,16 @@ static bool hisi_pcie_pmu_validate_event_group(struct perf_event *event)
->  	int counters = 1;
->  	int num;
->  
-> -	event_group[0] = leader;
-> -	if (!is_software_event(leader)) {
-> -		if (leader->pmu != event->pmu)
-> -			return false;
-> +	if (leader == event)
-> +		return true;
->  
-> -		if (leader != event && !hisi_pcie_pmu_cmp_event(leader, event))
-> -			event_group[counters++] = event;
-> -	}
-> +	event_group[0] = event;
-> +	if (leader->pmu == event->pmu && !hisi_pcie_pmu_cmp_event(leader, event))
-> +		event_group[counters++] = leader;
-
-Looking at this, the existing logic to share counters (which
-hisi_pcie_pmu_cmp_event() is trying to permit) looks to be bogus, given
-that the start/stop callbacks will reprogram the HW counters (and hence
-can fight with one another).
-
-I suspect that can be removed *entirely*, and this can be simplified
-down to allocating N counters, without a quadratic event comparison.  We
-don't try to share counters in other PMU drivers, and there was no
-rationale for trying to do this when this wa introduced in commit:
-
-  8404b0fbc7fbd42e ("drivers/perf: hisi: Add driver for HiSilicon PCIe PMU")
-
-The 'link' tag in that comment goes to v13, which doesn't link to prior
-postings, so I'm not going to dig further.
-
-Mark.
-
->  
->  	for_each_sibling_event(sibling, event->group_leader) {
-> -		if (is_software_event(sibling))
-> -			continue;
-> -
->  		if (sibling->pmu != event->pmu)
-> -			return false;
-> +			continue;
->  
->  		for (num = 0; num < counters; num++) {
->  			/*
-> diff --git a/drivers/perf/hisilicon/hisi_uncore_pmu.c b/drivers/perf/hisilicon/hisi_uncore_pmu.c
-> index a449651f79c9..3c531b36cf25 100644
-> --- a/drivers/perf/hisilicon/hisi_uncore_pmu.c
-> +++ b/drivers/perf/hisilicon/hisi_uncore_pmu.c
-> @@ -101,26 +101,17 @@ static bool hisi_validate_event_group(struct perf_event *event)
->  	/* Include count for the event */
->  	int counters = 1;
->  
-> -	if (!is_software_event(leader)) {
-> -		/*
-> -		 * We must NOT create groups containing mixed PMUs, although
-> -		 * software events are acceptable
-> -		 */
-> -		if (leader->pmu != event->pmu)
-> -			return false;
-> +	if (leader == event)
-> +		return true;
->  
-> -		/* Increment counter for the leader */
-> -		if (leader != event)
-> -			counters++;
-> -	}
-> +	/* Increment counter for the leader */
-> +	if (leader->pmu == event->pmu)
-> +		counters++;
->  
->  	for_each_sibling_event(sibling, event->group_leader) {
-> -		if (is_software_event(sibling))
-> -			continue;
-> -		if (sibling->pmu != event->pmu)
-> -			return false;
->  		/* Increment counter for each sibling */
-> -		counters++;
-> +		if (sibling->pmu == event->pmu)
-> +			counters++;
->  	}
->  
->  	/* The group can not count events more than the counters in the HW */
-> diff --git a/drivers/perf/hisilicon/hns3_pmu.c b/drivers/perf/hisilicon/hns3_pmu.c
-> index c157f3572cae..382e469257f9 100644
-> --- a/drivers/perf/hisilicon/hns3_pmu.c
-> +++ b/drivers/perf/hisilicon/hns3_pmu.c
-> @@ -1058,21 +1058,16 @@ static bool hns3_pmu_validate_event_group(struct perf_event *event)
->  	int counters = 1;
->  	int num;
->  
-> -	event_group[0] = leader;
-> -	if (!is_software_event(leader)) {
-> -		if (leader->pmu != event->pmu)
-> -			return false;
-> +	if (leader == event)
-> +		return true;
->  
-> -		if (leader != event && !hns3_pmu_cmp_event(leader, event))
-> -			event_group[counters++] = event;
-> -	}
-> +	event_group[0] = event;
-> +	if (leader->pmu == event->pmu && !hns3_pmu_cmp_event(leader, event))
-> +		event_group[counters++] = leader;
->  
->  	for_each_sibling_event(sibling, event->group_leader) {
-> -		if (is_software_event(sibling))
-> -			continue;
-> -
->  		if (sibling->pmu != event->pmu)
-> -			return false;
-> +			continue;
->  
->  		for (num = 0; num < counters; num++) {
->  			/*
-> -- 
-> 2.39.2.101.g768bb238c484.dirty
-> 
+On Mon, Aug 25, 2025 at 10:57=E2=80=AFPM Yongting Lin <linyongting@bytedanc=
+e.com> wrote:
+>
+> Mshare is a developing feature proposed by Anthony Yznaga and Khalid Aziz
+> that enables sharing of PTEs across processes. The V3 patch set has been
+> posted for review:
+>
+> https://lore.kernel.org/linux-mm/20250820010415.699353-1-anthony.yznaga@o=
+racle.com/
+>
+> This patch set adds selftests to exercise and demonstrate basic
+> functionality of mshare.
+>
+> The initial tests use open, ioctl, and mmap syscalls to establish a share=
+d
+> memory mapping between two processes and verify the expected behavior.
+>
+> Additional tests are included to check interoperability with swap and
+> Transparent Huge Pages.
+>
+> Future work will extend coverage to other use cases such as integration
+> with KVM and more advanced scenarios.
+>
+> This series is intended to be applied on top of mshare V3, which is
+> based on mm-new (2025-08-15).
+>
+> Yongting Lin (8):
+>   mshare: Add selftests
+>   mshare: selftests: Adding config fragment
+>   mshare: selftests: Add some helper function for mshare filesystem
+>   mshare: selftests: Add test case shared memory
+>   mshare: selftests: Add test case ioctl unmap
+>   mshare: selftests: Add some helper functions for reading and
+>     controlling cgroup
+>   mshare: selftests: Add test case to demostrate the swaping of mshare
+>     memory
+>   mshare: selftests: Add test case to demostrate that mshare doesn't
+>     support THP
+>
+>  tools/testing/selftests/mshare/.gitignore |   3 +
+>  tools/testing/selftests/mshare/Makefile   |   7 +
+>  tools/testing/selftests/mshare/basic.c    | 108 ++++++++++
+>  tools/testing/selftests/mshare/config     |   1 +
+>  tools/testing/selftests/mshare/memory.c   |  82 +++++++
+>  tools/testing/selftests/mshare/util.c     | 251 ++++++++++++++++++++++
+>  6 files changed, 452 insertions(+)
+>  create mode 100644 tools/testing/selftests/mshare/.gitignore
+>  create mode 100644 tools/testing/selftests/mshare/Makefile
+>  create mode 100644 tools/testing/selftests/mshare/basic.c
+>  create mode 100644 tools/testing/selftests/mshare/config
+>  create mode 100644 tools/testing/selftests/mshare/memory.c
+>  create mode 100644 tools/testing/selftests/mshare/util.c
+>
+> --
+> 2.20.1
+>
 
