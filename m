@@ -1,126 +1,89 @@
-Return-Path: <linux-kernel+bounces-786355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F8BDB358C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:25:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D059EB358D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:27:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F23C81761B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:25:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E33AB1895D24
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0FAE306D48;
-	Tue, 26 Aug 2025 09:25:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3192318143;
+	Tue, 26 Aug 2025 09:26:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="1YItvuir"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PBALH3cG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE00343ABC;
-	Tue, 26 Aug 2025 09:25:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A03F31812A;
+	Tue, 26 Aug 2025 09:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756200331; cv=none; b=IxtWelvaXcZqRgqF59dIgEIeuNh/rz8HgIo3A3CB1ZokUalycyxZk3MzFvsdTnFMni9CPSkrS/ovgWOP/oKb1fiN4ilmS9k+Dkdwo6iqdAzkVZYWzNdS3EPN4tv//cXq9nlvhEs4bFpaMVhknd+WUShfo7p8na6sQu7vQC1M4eI=
+	t=1756200386; cv=none; b=q8mTFt4ljlgzA923agzvNtfSj4XLb2yyN7yB7zRF26w3pIzgYCl6DQx7LdGlocVAo2cpyZgTqXwNT5OyIoqpreufh0PXFTDyb9QUiXQNo02AsP4dH1TdBKU1nEx43bfutFwBntjfNmIV7tu8NofNfzRMz9X98po4FOriiAmEDrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756200331; c=relaxed/simple;
-	bh=eTQSxVUZfLnGrs829cA+G65lyTgq6NtmbhWpgOfLX9M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=i+oUByDcJO/TGDsjB6rgyt6tMDAOgC4k8QwG9AR8V3QV4JqBdmclUrG63fR8E4qW/PU5o22VWVcpHgM1c6UCcjmh8UG45PdaqsWdqfD446KrDGkm7QhwU42dq+T4POaGZp/4b/EjP/Ni38gWEXJeFSgQMPYQ+6rgn0dkmQtPp8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=1YItvuir; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1756200329; x=1787736329;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=eTQSxVUZfLnGrs829cA+G65lyTgq6NtmbhWpgOfLX9M=;
-  b=1YItvuiroz5uX50jDm33LTnhgZyfv354yHjmVtMkbQeQZsiRly8DZqmW
-   lUsuaWOlHQwZs/tQmKygwfsuBDQTdOwsqsBELvpg5bvyKvM7Q2z1nOu36
-   wXrwYYJMlpKNLm/at4IZn3UzgipeE6w+nUOhlTqErnTlLoBbKrzwBmvs9
-   xkIim/H/7cXs+XUh2xmtTlD0+RixBe5Be5lNsBAYjBvPPJ63ooobyEnrM
-   hhBbd9eCGFZ+nr4dx07ckOTYGWUZTXyYt2XEwUVow9AIjixdP23f9VnWx
-   tEvuTWskUAB8tqUXG/MnMxy/mqmIeFycQ/Y+sY/dy+W6jVigjspaZma9D
-   w==;
-X-CSE-ConnectionGUID: 6F7sYklcQWOyW3hhhwVltA==
-X-CSE-MsgGUID: JTtTiAjcT+C2qy17lJCVZg==
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="51280142"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 26 Aug 2025 02:25:28 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Tue, 26 Aug 2025 02:25:20 -0700
-Received: from [10.159.245.205] (10.10.85.11) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
- Transport; Tue, 26 Aug 2025 02:25:16 -0700
-Message-ID: <cd732d1e-a5e3-4fcd-bfaa-7420803d83e6@microchip.com>
-Date: Tue, 26 Aug 2025 11:25:16 +0200
+	s=arc-20240116; t=1756200386; c=relaxed/simple;
+	bh=uh61s/bC5B+781PVWTw+9HkaMp/uDrruQl7xQ6rplEM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=G/4UIApPKfYF2zSXkJx6Cexzx4hZYuGRCtv/OFj5tTApGQBn5NjF+zgsaslsfVt9gh96unpQ7l3zqy8wzOG0Z91Glr3lx1kw6zwUdAG8Q78e6ERLx/V6ZGPnyppZoQkc1wiCUMPSoEt0ga2zt3ve2qVqbXs/ZHa7ONkmPoJI6B4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PBALH3cG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 369E7C4CEF1;
+	Tue, 26 Aug 2025 09:26:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756200385;
+	bh=uh61s/bC5B+781PVWTw+9HkaMp/uDrruQl7xQ6rplEM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=PBALH3cGlR37gWje6scfrkwLdTqzzawobBgxZXS3K9bT1qpO3mLHG0V5L9qdFx1pI
+	 4wHHhmhPRuPxk0ifUEtfhNZfvb+jpETN/wpX+FUj3uKWGOpO8eLvTYSpNNHnmIJAik
+	 bw8vc2vnIipOdixJ1KvX8EAaga5XuqQ388PmGOqVpmXD4AuxKthFPBOWXZJCgaKsuT
+	 z5pZ+b3z7X9Il9CZYPxu4CeYKmGLhnG8a7L8C0l86r5NvGnzfjfvj2urVj80a7lxEB
+	 rhqsLCvWEE6LApIY2f64xz0mBiArjIcV8VQhZOptx8D5vcaPegXjrYG9EYd2u8E7+J
+	 nRPdym/vSPvTg==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, FUJITA
+ Tomonori <fujita.tomonori@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Frederic Weisbecker
+ <frederic@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, John
+ Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda
+ <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo
+ <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>, Benno
+ Lossin <lossin@kernel.org>, Alice
+ Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo
+ Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH v3 1/2] rust: time: Implement Add<Delta>/Sub<Delta> for
+ Instant
+In-Reply-To: <20250820203704.731588-2-lyude@redhat.com>
+References: <20250820203704.731588-1-lyude@redhat.com>
+ <ZYA3f7DHAJS34iXndClpGH9fcraS3BVuXJmnvcPrq6bBb97Gm7t5fkAVI4_2J35_90bxswSKle6d_MW77pUUKQ==@protonmail.internalid>
+ <20250820203704.731588-2-lyude@redhat.com>
+Date: Tue, 26 Aug 2025 11:25:54 +0200
+Message-ID: <878qj6wi1p.fsf@t14s.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v4 1/5] dt-bindings: net: cdns,macb: allow tsu_clk
- without tx_clk
-To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, Andrew Lunn
-	<andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Claudiu Beznea
-	<claudiu.beznea@tuxon.dev>, Geert Uytterhoeven <geert@linux-m68k.org>, Harini
- Katakam <harini.katakam@xilinx.com>, Richard Cochran
-	<richardcochran@gmail.com>, Russell King <linux@armlinux.org.uk>
-CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Thomas Petazzoni
-	<thomas.petazzoni@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20250820-macb-fixes-v4-0-23c399429164@bootlin.com>
- <20250820-macb-fixes-v4-1-23c399429164@bootlin.com>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Content-Language: en-US, fr
-Organization: microchip
-In-Reply-To: <20250820-macb-fixes-v4-1-23c399429164@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 20/08/2025 at 16:55, Théo Lebrun wrote:
-> Allow providing tsu_clk without a tx_clk as both are optional.
-> 
-> This is about relaxing unneeded constraints. It so happened that in the
-> past HW that needed a tsu_clk always needed a tx_clk.
-> 
-> Fixes: 4e5b6de1f46d ("dt-bindings: net: cdns,macb: Convert to json-schema")
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+"Lyude Paul" <lyude@redhat.com> writes:
 
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+> In order to copy the behavior rust currently follows for basic arithmetic
+> operations and panic if the result of an addition or subtraction results in
+> a value that would violate the invariants of Instant, but only if the
+> kernel has overflow checking for rust enabled.
+>
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
 
-> ---
->   Documentation/devicetree/bindings/net/cdns,macb.yaml | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/cdns,macb.yaml b/Documentation/devicetree/bindings/net/cdns,macb.yaml
-> index 559d0f733e7e7ac2909b87ab759be51d59be51c2..6e20d67e7628cd9dcef6e430b2a49eeedd0991a7 100644
-> --- a/Documentation/devicetree/bindings/net/cdns,macb.yaml
-> +++ b/Documentation/devicetree/bindings/net/cdns,macb.yaml
-> @@ -85,7 +85,7 @@ properties:
->       items:
->         - enum: [ ether_clk, hclk, pclk ]
->         - enum: [ hclk, pclk ]
-> -      - const: tx_clk
-> +      - enum: [ tx_clk, tsu_clk ]
->         - enum: [ rx_clk, tsu_clk ]
->         - const: tsu_clk
-> 
-> 
-> --
-> 2.50.1
-> 
+Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
+
+
+Best regards,
+Andreas Hindborg
+
+
 
 
