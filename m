@@ -1,118 +1,156 @@
-Return-Path: <linux-kernel+bounces-786863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE680B36D23
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:08:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82BDCB36D14
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:07:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7CD95662A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:58:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E5CD583967
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 497F6223322;
-	Tue, 26 Aug 2025 14:57:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60E4D260586;
+	Tue, 26 Aug 2025 14:58:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="kvfyShh5"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="D2XHvLjj"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7560202976
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 14:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9452F237165;
+	Tue, 26 Aug 2025 14:57:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756220272; cv=none; b=A9APvFAEViNd+9hkGt4CeYoDztHQyv02oOUvAdaZIVVA8CXNwWB356b8QMRz0FkSn7oDsI8qwsO16vkZo12oW9UAUpOKhn8K2o0+/TACuhUYl3U+DVa3bFlN1FvdOoCNCAzUJa+AEofoT2fct7/5I+vE/1uyM1JmoGyFtIg4/Sg=
+	t=1756220283; cv=none; b=K6vLivPQki8xxiRsKQyaQuz8Dp/v5B1feLXwiHEseXwqHUGepq/zy5/n7LvBM7yakYDXCvgK7dP48FaTMsVLwOkMEvWjU77U7T7xlJWWUyDPunsvmcybr3ZUmZ4zd6b2pUrVn2Y9b+p4uHyLDpUcfAccDQD/jVHVad4FM64ZhKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756220272; c=relaxed/simple;
-	bh=oV66E/FpTLjjTr3Wt2H99na0JCk/nu8E2dyXtOJL8s0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GPkg042fIZFLB8onn7aTWbhbU0Hi/OvWgsCAgyjRZOWL+DV1LTyLxlZu1tzNVEMdhCdUsiya2JhFx3fFSl2+EPa5rnqVW/Fxx8Y7cAFXz8nDq3+UpXiYe70el/w2SE4H9NQESwIaQvI58ZETb+FKJHuefZcH8GjGnmpnaosYFik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=kvfyShh5; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-771e1e64fbbso3058881b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 07:57:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1756220270; x=1756825070; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=p/rODbLEiDc80ZuyhKo3EG6WxWc9OtiTJ41MRtq3bqg=;
-        b=kvfyShh5XCC4RcQQ7IVi9FH4tsglM3Fg8bd/aRFLV8FrVVcZ8TCmUnC9/Re+FEqIJ4
-         dnZk0+UDQUdOktst2oBs54FptXclomwpmhi9I3mrtyPEB1tZLvTlG8kdwNSDXhwXwuqm
-         OhODdcrM2lMmNAF588wwhcKE6AGAftrt8hA+Q16TcQNvfWU19hoSxBtMtBQ9RfCD75he
-         zEVOl3ql+xEPGL9uotaxTLVKYT9nriuYjcQt0QanWfHlKwqlC5SltoQ7aTNRdjEgDqn9
-         i2bIh5C5AVdyAJhPMDMqo+UVHv802Avnr/vL1XLFAZi/l/tTjYxCT36zFplxjxukA/eS
-         3dYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756220270; x=1756825070;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=p/rODbLEiDc80ZuyhKo3EG6WxWc9OtiTJ41MRtq3bqg=;
-        b=ZKiB70QPxBVCXnaGv0BGltD9F1+Upa6goAF39QqIOjzgE5ZCqOtE7uyy/+OAaYikkT
-         rvIqvRwx9GS3QPu++hOAVrUEzrVmFzrAqDUTv1eTdjO9Ktj8OzZHRVex/XLaYrl8YyVL
-         12z/EW99Bnz66D6ucV5Lh69MBRwlYW/JXzrs9NZmfxYasocuhzBkTY3SKQHd6tUlZ961
-         EzUkAEmR79EUFCgkPAPZ6rMvzvc0v4XnVEQL9f5DS1KIyfwpCMw89iE2L5BjlUu7CfDS
-         GdpmltnTlHYvQestWoZa4r2M9BFSxra6XVxC6diXN6qOhvH7Sf1GEgilqsKZPylC92GJ
-         zCNw==
-X-Forwarded-Encrypted: i=1; AJvYcCU1iwyWGiRbFPbAy4DgZnyAChwfR4Y92z2keJ/zg+sgGJ4otAR9dtqZSzkini8BmPkk9oxYz8Gn4lD3fhY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhjVsDW0iTQVoIj2ZqMMtvur9loNK38hToitiHbm8WrOQGEyjJ
-	+x0r1qmUe/rRLKWQO0A0RlahuSMfoyQPMlY3Lgm1jpmdrtiiPkm1RSqo0AEeZtHAhZI=
-X-Gm-Gg: ASbGncvY4RPWYAIuoWphEmxJFcBVWDHAeWqfjI3yQV2gGZY4uG7nrboGQVm2gL0xL36
-	54w9IeQU+WltKwiZqggL7wcvU6ggc2yGc0EGDHu6wrEh0jTOpHRqY9Hvl18479IXvb5fp1P+uaK
-	7SOOsTSltOIvGvzOksTVz2UOm/buHbI0c61ZvDTZTo0v/0PqhV9MJ5SMgB2puqNIjSko+Xuv1Eh
-	heiCyKLIKFwZts31qdffPWm3v45h50ybDZxMBgArM+PHn9XEeUOj6L9f4xlV9zzXqUm0Ln0Ys9s
-	rl+vYr6RDUMcRH3S+/vblazKA+2yMnJqUQAy9afOeb5H6eyokyr0FY0MyTpoMFP2eKm4y4XzZns
-	Sb1Kq+9/nPI4USflrAaVoBanK3hy1T5nuX+j5Oy28SklYnCTV4nTHj+GVdhOiObsfMmY66kqSr0
-	jzbV1HSa2NXLyTzmdaA2iFK5Tjlir8zOSxOSdL2JTCctE=
-X-Google-Smtp-Source: AGHT+IEIXIQmU8wp8qY4XNiR6DcL8rQwXhPcaNjDBrRolp8ux1+qyrgMhseqoKwxG4bdfNPzKoAmDQ==
-X-Received: by 2002:a05:6a00:990:b0:736:a8db:93b4 with SMTP id d2e1a72fcca58-7702f9d24d5mr19346689b3a.2.1756220269806;
-        Tue, 26 Aug 2025 07:57:49 -0700 (PDT)
-Received: from J9GPGXL7NT.bytedance.net ([61.213.176.56])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77059928c5asm7209799b3a.1.2025.08.26.07.57.44
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 26 Aug 2025 07:57:48 -0700 (PDT)
-From: Xu Lu <luxu.kernel@bytedance.com>
-To: paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	ajones@ventanamicro.com,
-	brs@rivosinc.com
-Cc: linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Xu Lu <luxu.kernel@bytedance.com>
-Subject: [RFC PATCH 0/4] riscv: Add Zalasr ISA exntesion support
-Date: Tue, 26 Aug 2025 22:57:36 +0800
-Message-Id: <20250826145740.92276-1-luxu.kernel@bytedance.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1756220283; c=relaxed/simple;
+	bh=aQA0CmFCT8tixLjVwmeK1GH7nsZwmFyUrLjk71BX4DU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rZtuCKbojBZsO8/MsuYm0JOBe/JmjY7cnYTWY8CwYQYRVTJc4vmfNx8kU/VwG6kxzhwKyT/fyGZhDQbo0FtJEfanaxq6pWnFxg2/vWGo5BZzRu8YfGvHwjwu02OfaR01miwEJTcJE5l92YWaHFlA0/aA1pyPXuc3nUd6SfUFtTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=D2XHvLjj; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=iTrfIIo2NpXSs0VUQcS4tLNwuwhXMeQFQWFcRoLCwVY=; b=D2XHvLjjqX3PhhxJH6SySYYqgB
+	1O9/+hsF1mXfum+scpQEW7fkvGngUSNtC2AEmRJiYeC+WkkdQF/J7Ju63n5qKhNqHRtj/b16BGD5P
+	7B0427PHgn6FBjyUm43hrKpg9xaPP5nj26FNASxX1bI8hG+SKRfprtXLUJ+SmytMLdUlYV/hmMCkX
+	UfESNgDDTa/reqn3EDauXyxzV6Iv7xUqbKnzpfN9ol/OR7LyeciRfLzh3XUxhfLj9iOoWy6viAd5w
+	G4jnOyHlSvK5YiNw3aoPPKr7bNmUtRzjauWPtBP+WEnF/zk1Y5+oFAb4dWB9SNoCiXJ1tRAPTErGt
+	qvk0NCpQ==;
+Received: from [213.244.170.152] (helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1uqv7C-0000eD-0n; Tue, 26 Aug 2025 16:57:38 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Hsun Lai <i@chainsx.cn>, "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>,
+ linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+ Conor Dooley <conor+dt@kernel.org>, Fred Bloggs <f.blogs@napier.co.nz>,
+ linux-arm-kernel@lists.infradead.org,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH v2 0/2] Add support for 100ASK DShanPi A1
+Date: Tue, 26 Aug 2025 16:57:37 +0200
+Message-ID: <12479023.CDJkKcVGEf@phil>
+In-Reply-To: <175621649670.159455.15557432322730951360.robh@kernel.org>
+References:
+ <20250826030818.3485927-1-i@chainsx.cn>
+ <175621649670.159455.15557432322730951360.robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-This patch adds support for the Zalasr ISA extension, which supplies the
-real load acquire/store release instructions.
+Am Dienstag, 26. August 2025, 15:56:43 Mitteleurop=C3=A4ische Sommerzeit sc=
+hrieb Rob Herring (Arm):
+>=20
+> On Tue, 26 Aug 2025 11:08:15 +0800, Hsun Lai wrote:
+> > This series add support for 100ASK DShanPi A1.
+> >=20
+> > Info of device can be found at:
+> > https://wiki.dshanpi.org/en/docs/DshanPi-A1/intro/
+> >=20
+> > Changes in v2:
+> > - Delete the pwm include file (Chukun Pan, v1)
+> > - Fix vcc3v3_pcie gpios (Chukun Pan, v1)
+> > - Adjust the order of some nodes (Chukun Pan, v1)
+> > - Fix sdmmc (Chukun Pan, v1)
+> > - Add phy-supply for u2phy0_otg (Chukun Pan, v1)
+> >=20
+> > Changes in v1:
+> > - Add support for 100ASK DShanPi A1
+> >=20
+> > Hsun Lai (2):
+> >   dt-bindings: arm: rockchip: Add 100ASK DShanPi A1
+> >   arm64: dts: rockchip: add DTs for 100ASK DShanPi A1
+> >=20
+> >  .../devicetree/bindings/arm/rockchip.yaml     |   5 +
+> >  arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+> >  .../dts/rockchip/rk3576-100ask-dshanpi-a1.dts | 838 ++++++++++++++++++
+> >  3 files changed, 844 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/rockchip/rk3576-100ask-dshanpi-=
+a1.dts
+> >=20
+> > --
+> > 2.34.1
+> >=20
+> >=20
+> >=20
+>=20
+>=20
+> My bot found new DTB warnings on the .dts files added or changed in this
+> series.
+>=20
+> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+> are fixed by another series. Ultimately, it is up to the platform
+> maintainer whether these warnings are acceptable or not. No need to reply
+> unless the platform maintainer has comments.
+>=20
+> If you already ran DT checks and didn't see these error(s), then
+> make sure dt-schema is up to date:
+>=20
+>   pip3 install dtschema --upgrade
+>=20
+>=20
+> This patch series was applied (using b4) to base:
+>  Base: attempting to guess base-commit...
+>  Base: tags/v6.17-rc1-22-g7d11b8c260ea (exact match)
+>=20
+> If this is not the correct base, please add 'base-commit' tag
+> (or use b4 which does this automatically)
+>=20
+> New warnings running 'make CHECK_DTBS=3Dy for arch/arm64/boot/dts/rockchi=
+p/' for 20250826030818.3485927-1-i@chainsx.cn:
 
-The specification can be found here:
-https://github.com/riscv/riscv-zalasr/blob/main/chapter2.adoc
+both warnings are not the fault of this board addition, but instead
+come from "unrelated" sources in the main rk3576 dtsi:
 
-Xu Lu (4):
-  riscv: add ISA extension parsing for Zalasr
-  dt-bindings: riscv: Add Zalasr ISA extension description
-  riscv: Instroduce Zalasr instructions
-  riscv: Use Zalasr for smp_load_acquire/smp_store_release
 
- .../devicetree/bindings/riscv/extensions.yaml |  5 ++
- arch/riscv/include/asm/barrier.h              | 79 ++++++++++++++++---
- arch/riscv/include/asm/hwcap.h                |  1 +
- arch/riscv/include/asm/insn-def.h             | 79 +++++++++++++++++++
- arch/riscv/kernel/cpufeature.c                |  1 +
- 5 files changed, 154 insertions(+), 11 deletions(-)
+> arch/arm64/boot/dts/rockchip/rk3576-100ask-dshanpi-a1.dtb: syscon@2603400=
+0 (rockchip,rk3576-dcphy-grf): clocks: False schema does not allow [[21, 49=
+2]]
+> 	from schema $id: http://devicetree.org/schemas/soc/rockchip/grf.yaml#
 
--- 
-2.20.1
+I messed up and forgot to add the new syscon to the clocks-required list.
+Will fix that shortly.
+
+
+> arch/arm64/boot/dts/rockchip/rk3576-100ask-dshanpi-a1.dtb: /soc/dsi@27d80=
+000: failed to match any schema with compatible: ['rockchip,rk3576-mipi-dsi=
+2']
+
+the rk3576 dsi compatible is in drm-misc-next [0], so should
+hit linux-next shortly.
+
+
+[0] https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/f05530bdaf42aa0=
+e6bb4cde76ba6a081cf473d44
+
 
 
