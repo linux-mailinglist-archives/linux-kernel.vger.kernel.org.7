@@ -1,164 +1,214 @@
-Return-Path: <linux-kernel+bounces-787322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5989CB37487
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 23:47:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B9EEB37489
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 23:48:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F2087B266F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 21:45:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06DAB7C474F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 21:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614BB29992A;
-	Tue, 26 Aug 2025 21:47:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07624299943;
+	Tue, 26 Aug 2025 21:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iut+CaEi"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="y/U4lLvN"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20CB51C5D4B;
-	Tue, 26 Aug 2025 21:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED982343BE
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 21:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756244844; cv=none; b=KE5X4+vcdagD1nAv8pTXJb9SRlYmNwwt6h3+z8tLk6y5qZUe7iLJHVOPiGUSOR1aAlavN0Ss/2cCnTiUF91lIfGktm29mFFETinhOX3E7KO/ax/IrQ8jVZC2oxqAwxj6pjRp9cUHZKuCHfbPizqpgwwy6NAljzELll+2MCg6XaM=
+	t=1756244893; cv=none; b=oBkZxT/Z5eWJWS/OhM8AAStkmPWr091x1/dKfNPGAqZEzI9emPVSo9ykByEDoThjq54xijFKcpn1QpKmst/VnUp7V1fb6uweFC4eq+G3Oh/4idziMxGNdM9/jPTrFTYBs+4eCbrAGL1etGmzdLPLId0puqxPA9L5+BMLr0GHxZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756244844; c=relaxed/simple;
-	bh=7rZc4H6brtLrd8ymrzGf1cMDZcvIgN8NA8yiwzAbcNI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ko+kY4GKtZ1yPJgxk9AwvqG7QhEUFpGMrQfV9659AyqJ2Sx5cYJmeMksMrZpA3I6cIBVMNn/WoBXU21gz0qbfEr5FBARRgERCw7VmPnjIVDNfiBIqJzW9RWaqMUw7A+nb4iTcxTkZF7E4egv99e0smtOb4b+qbJ8MMT+Bk9p1sY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iut+CaEi; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4b2b859ab0dso36081231cf.1;
-        Tue, 26 Aug 2025 14:47:22 -0700 (PDT)
+	s=arc-20240116; t=1756244893; c=relaxed/simple;
+	bh=bOwaeI93PSDb0zkaMiT9ewABVodLWy1w5hUTcezg2Eg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=JbZ0LSio7+2MzPJLT+3dRZNuodfCPiwQJ5iS2nM1aYSthr1HJSySeKxXEcdxi9a+AZGGN1PmSNvMP7s+KCH830aDozKKk5WTDWoEbQTmajM0OmFokZ/ZkDAXpJjfwGEZa7ojOM3Qey0wsQp1BU53zUgSXVHqJWS+6PRXtAC2iKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=y/U4lLvN; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32769224506so320832a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 14:48:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756244842; x=1756849642; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XkXCtZkNS4sQ1PyXjfM/RdJFG7EoG62SuYsDVUj0IR4=;
-        b=Iut+CaEi7BgMy8MceXxv9/6HZgjXxspQj/CyB3K+aXubF8hW/Vb8xJe+fhzLspb9cO
-         hzz/QI2R/twwqCjqHXxrdqqPJfVqSKIEd8iM+7weJVQ2B9BGpJ7GS/sT2dtbXfjYbnjs
-         dfiQo1OCJ37zATLZcDWPAb6YJICpUHNyWvok8/yd1R+U39dd3soJ+7SwNlK6PUwc96Pn
-         58pC6Tc01IV1Ivrkklqtc2TIWm/A42qPS5cH+79AWG22dyYkEUqsmXG3yfgVEjD/cQlO
-         Xtf3kvek01R0Y7iKpmNGOP0JxIqf70Riz2FOk7iySzchrbDcsycbfeshOLKn5k8a+n7y
-         AUag==
+        d=google.com; s=20230601; t=1756244890; x=1756849690; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=csobuERBofV5Nepble+8wxFqNjE3upSKLuk+G9nUdh4=;
+        b=y/U4lLvNJ/MerfrBBHu30G/qmSjIvv9fv51NFGoyRrzvtIPkUjHS/H/LUPdJ5tvPFA
+         SNA21+HfrUYzaefxgtFx6Y2hxQGXwwMv79wFiNTEKg5XcQUbqyD+lA6VStlWvn35aaSc
+         pdPvPM/9+Cr8PRb7xoeYLQ1quNdIv4ITFPDB9ga200A9dyWr/5eJN2QgOqnCKopQjisF
+         wOSvhIpmN5OeQr4cC3D2wRGpprWYyUy2LmdRyslx4fV1gxr7ufErKIfnuwN/L9APWxjZ
+         W7QY1KcgZHauHUJcL8yeLba1RcsLQ01S2Pt3PsdwgYNNO2AxrI2Z1Hyoa1qQRCvZbghm
+         2FCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756244842; x=1756849642;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XkXCtZkNS4sQ1PyXjfM/RdJFG7EoG62SuYsDVUj0IR4=;
-        b=j1bP80lTvUyWUwYsujvJy2mEONMHzs7sBdID98rQZhKbkXtJrwrBK+pmmYcHEaNWI8
-         xxy5zhLdoXCFIDk9yQmwNX8KfzTpMIXdAysJno/uoFR/GR/X6xqt5teTwAVYCG+G0R1/
-         u3TDYSpPKYBioeh5KIucLRAu9XC+oxtmrZ8Ik2qCLfZZ9odUPDnze5RIQ6x62KxibesE
-         97HtS55SpWUmFBk/8KL4SRMD+LbGVPyNQSvSfsZ/RBOSxwwsVfuSPXcnsx+5o0R9RyE2
-         KPNV86DLG95r9Ii22cuVr785iPbpOnCms8JoEW+wp1M6Qw87tV26vCD6JbaZgYN4cLO6
-         fyOA==
-X-Forwarded-Encrypted: i=1; AJvYcCUN6/D1HYy12CZll6jtp3P+DBL8a5IgVoZK37yNwszNWGq4h0pWueZfpYb+QC+U3vO29UH2z2ymvvIOoA==@vger.kernel.org, AJvYcCVv9P5HJ3hwEgd+k4TEPgtsBSQXEbvnBl4PQxgXH/9NJe4XH0U/pFHibmo0IUz30JJWwIXYN7QPTR3W@vger.kernel.org, AJvYcCW9XV2J/Omp8xrTQDkBtU3AWvCU/tmQxPmgLi6YALiANnLYvviTCsgMO4KMba7lYELXMQhasFDCZlSetWTw@vger.kernel.org
-X-Gm-Message-State: AOJu0YywFZ2CLev+VsuXNkCCEml2kvNn6ep5W1aMRzUb25OiLAkEuG5t
-	6X17UJtFW5qFTsysFTqO+Sjg9OFHfxKEzFduxK5j9tZYndusgWBFIHh4
-X-Gm-Gg: ASbGncuae3wmgWBHY15G88UM4Zvm1qTTab4Fc8WJUvgVGKUcjC+NwB/ottjZHpcMJvK
-	tHyP58BsJYeyGf+4uRBaEOzNBGXOfG1478/QorbDdfTSSPlLIF7/z1qIqycNRvRDiBIby/7l7Xh
-	NXglyG1a4V8NBmMQcJV0KBeLClKCJFnC53G5z04CWE/UAKroJAksfdohxg7wPGQi6vBj2JLtbSN
-	+uPPC6XwJmC63cfcgRLzgnpX3sKJt/DUsWbJkfPzyMGawmHxorXlYcmUGaAu5taepf+Ga2//TQ2
-	xU6Ff9qA3dAxGZsve3YrLmdVOg/G0ls/VMTwfhzm8/24P0fnicareXEiBdv6zCOWRjI+PbBc8oB
-	hO2bH4yASmuqwR+SGejYhb7AdTHoAn6rULiNNl06N+xPnOKrA
-X-Google-Smtp-Source: AGHT+IH/4BueP1i9uTaGBcioRqKWdWlLPnxhgjhYg/TT045qxzwvPNCGSAOghSI6A+lqXYcoj0Z8VQ==
-X-Received: by 2002:ac8:5f4d:0:b0:4b1:dd3:e397 with SMTP id d75a77b69052e-4b2aab56bacmr177029521cf.62.1756244841768;
-        Tue, 26 Aug 2025 14:47:21 -0700 (PDT)
-Received: from [10.69.40.168] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b2b8de5d37sm77448621cf.34.2025.08.26.14.47.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Aug 2025 14:47:21 -0700 (PDT)
-Message-ID: <e9aa8a07-4ed7-4a7f-a69a-ce496ede48cc@gmail.com>
-Date: Tue, 26 Aug 2025 14:47:30 -0700
+        d=1e100.net; s=20230601; t=1756244890; x=1756849690;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=csobuERBofV5Nepble+8wxFqNjE3upSKLuk+G9nUdh4=;
+        b=LTQfqxm8aMuo/QyMaxY7vZsbfO4CUucBKKz6gIe3sT6LkT0UBp+w3gOzgFH0GOl6Tm
+         wnn4AT2GzX2W6aIJnKWBfSP7aox+MuZAPF+h0lmFnGkGHVeAjYI6fAFSHt/b35xCeHwp
+         waNGbSKIqCi1HwWD88sAUoGhPQEOOoqwWChOKcoR2Xs8K6N0+zNO6UHPLTVf4EkST6RW
+         6uNqwyr0ioXHXXqa/ompcIZ2vNSVdRTTs1pjCkJp/9IKVTFmwBukHi613gsVajNOacKF
+         NGmhMnRmSNU0Z2trPjvt99yXnzqqu/g5aHdz3h7mDE58UKxsNixgBNDFePLYvItrgcaX
+         NlOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWywt0gvL1RxoFmF7AVD/Oy6P1Ldh0GzSfi4YcBuE+Il0cnREwaPotVo48p7Hp5QjO2b8uRcF0kc2wSNPI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4EF9sJuktJGK0UfBJ9I/jlYarUmJwHtF4QTxyAmK3ezIHgpkq
+	snzeVxkK77lrVSGo2fHWkvffIPnyWZLy2PI0DbwDWnL17B8jtFxQZtADLZXqhZ0XV59Ol8sbiRT
+	2elnOQA==
+X-Google-Smtp-Source: AGHT+IFN06e3MQczQrLk326RnPETUX2fqjOe2ujcl7FpqHg8aymnuRt6WEeqpIiIReDvZBv6z8VLbf8Q57A=
+X-Received: from pjbpd18.prod.google.com ([2002:a17:90b:1dd2:b0:325:a8d:a485])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4c8d:b0:31e:f3a4:333
+ with SMTP id 98e67ed59e1d1-32517d19c12mr20302910a91.26.1756244890381; Tue, 26
+ Aug 2025 14:48:10 -0700 (PDT)
+Date: Tue, 26 Aug 2025 14:48:08 -0700
+In-Reply-To: <20250826213455.2338722-1-sagis@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/16] gpio: brcmstb: Use modern PM macros
-To: Jisheng Zhang <jszhang@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, Michael Buesch <m@bues.ch>,
- Hoan Tran <hoan@os.amperecomputing.com>, Andy Shevchenko <andy@kernel.org>,
- Daniel Palmer <daniel@thingy.jp>, Romain Perier <romain.perier@gmail.com>,
- Grygorii Strashko <grygorii.strashko@ti.com>,
- Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>,
- Robert Jarzmik <robert.jarzmik@free.fr>,
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
- Srinivas Neeli <srinivas.neeli@amd.com>, Michal Simek <michal.simek@amd.com>
-Cc: Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, linux-gpio@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-omap@vger.kernel.org, linux@ew.tq-group.com
-References: <20250820154037.22228-1-jszhang@kernel.org>
- <20250820154037.22228-3-jszhang@kernel.org>
-Content-Language: en-US
-From: Doug Berger <opendmb@gmail.com>
-In-Reply-To: <20250820154037.22228-3-jszhang@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250826213455.2338722-1-sagis@google.com>
+Message-ID: <aK4rmD7QpotYXume@google.com>
+Subject: Re: [PATCH] KVM: TDX: Force split irqchip for TDX at irqchip creation time
+From: Sean Christopherson <seanjc@google.com>
+To: Sagi Shahar <sagis@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Binbin Wu <binbin.wu@linux.intel.com>, 
+	Ira Weiny <ira.weiny@intel.com>, "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, x86@kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On 8/20/2025 8:40 AM, Jisheng Zhang wrote:
-> Use the modern PM macros for the suspend and resume functions to be
-> automatically dropped by the compiler when CONFIG_PM or
-> CONFIG_PM_SLEEP are disabled, without having to use #ifdef guards.
+On Tue, Aug 26, 2025, Sagi Shahar wrote:
+> TDX module protects the EOI-bitmap which prevents the use of in-kernel
+> I/O APIC. See more details in the original patch [1]
 > 
-> This has the advantage of always compiling these functions in,
-> independently of any Kconfig option. Thanks to that, bugs and other
-> regressions are subsequently easier to catch.
+> The current implementation already enforces the use of split irqchip for
+> TDX but it does so at the vCPU creation time which is generally to late
+> to fallback to split irqchip.
 > 
-> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+> This patch follows Sean's recomendation from [2] and move the check if
+> I/O APIC is supported for the VM at irqchip creation time.
+> 
+> [1] https://lore.kernel.org/lkml/20250222014757.897978-11-binbin.wu@linux.intel.com/
+> [2] https://lore.kernel.org/lkml/aK3vZ5HuKKeFuuM4@google.com/
+> 
+> Suggested-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Sagi Shahar <sagis@google.com>
 > ---
->   drivers/gpio/gpio-brcmstb.c | 12 +++---------
->   1 file changed, 3 insertions(+), 9 deletions(-)
+>  arch/x86/include/asm/kvm_host.h |  3 +++
+>  arch/x86/kvm/vmx/tdx.c          | 15 ++++++++-------
+>  arch/x86/kvm/x86.c              | 10 ++++++++++
+>  3 files changed, 21 insertions(+), 7 deletions(-)
 > 
-> diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
-> index e29a9589b3cc..0ca3e0d8aa46 100644
-> --- a/drivers/gpio/gpio-brcmstb.c
-> +++ b/drivers/gpio/gpio-brcmstb.c
-> @@ -534,7 +534,6 @@ static void brcmstb_gpio_shutdown(struct platform_device *pdev)
->   	brcmstb_gpio_quiesce(&pdev->dev, false);
->   }
->   
-> -#ifdef CONFIG_PM_SLEEP
->   static void brcmstb_gpio_bank_restore(struct brcmstb_gpio_priv *priv,
->   				      struct brcmstb_gpio_bank *bank)
->   {
-> @@ -573,14 +572,9 @@ static int brcmstb_gpio_resume(struct device *dev)
->   	return 0;
->   }
->   
-> -#else
-> -#define brcmstb_gpio_suspend	NULL
-> -#define brcmstb_gpio_resume	NULL
-> -#endif /* CONFIG_PM_SLEEP */
-> -
->   static const struct dev_pm_ops brcmstb_gpio_pm_ops = {
-> -	.suspend_noirq	= brcmstb_gpio_suspend,
-> -	.resume_noirq = brcmstb_gpio_resume,
-> +	.suspend_noirq = pm_sleep_ptr(brcmstb_gpio_suspend),
-> +	.resume_noirq = pm_sleep_ptr(brcmstb_gpio_resume),
->   };
->   
->   static int brcmstb_gpio_probe(struct platform_device *pdev)
-> @@ -747,7 +741,7 @@ static struct platform_driver brcmstb_gpio_driver = {
->   	.driver = {
->   		.name = "brcmstb-gpio",
->   		.of_match_table = brcmstb_gpio_of_match,
-> -		.pm = &brcmstb_gpio_pm_ops,
-> +		.pm = pm_sleep_ptr(&brcmstb_gpio_pm_ops),
->   	},
->   	.probe = brcmstb_gpio_probe,
->   	.remove = brcmstb_gpio_remove,
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index f19a76d3ca0e..cb22fc48cdec 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -1357,6 +1357,7 @@ struct kvm_arch {
+>  	u8 vm_type;
+>  	bool has_private_mem;
+>  	bool has_protected_state;
+> +	bool has_protected_eoi;
+>  	bool pre_fault_allowed;
+>  	struct hlist_head *mmu_page_hash;
+>  	struct list_head active_mmu_pages;
+> @@ -2284,6 +2285,8 @@ void kvm_configure_mmu(bool enable_tdp, int tdp_forced_root_level,
+>  
+>  #define kvm_arch_has_readonly_mem(kvm) (!(kvm)->arch.has_protected_state)
+>  
+> +#define kvm_arch_has_protected_eoi(kvm) (!(kvm)->arch.has_protected_eoi)
+> +
+>  static inline u16 kvm_read_ldt(void)
+>  {
+>  	u16 ldt;
+> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> index 66744f5768c8..8c270a159692 100644
+> --- a/arch/x86/kvm/vmx/tdx.c
+> +++ b/arch/x86/kvm/vmx/tdx.c
+> @@ -658,6 +658,12 @@ int tdx_vm_init(struct kvm *kvm)
+>  	 */
+>  	kvm->max_vcpus = min_t(int, kvm->max_vcpus, num_present_cpus());
+>  
+> +	/*
+> +	 * TDX Module doesn't allow the hypervisor to modify the EOI-bitmap,
+> +	 * i.e. all EOIs are accelerated and never trigger exits.
+> +	 */
+> +	kvm->arch.has_protected_eoi = true;
+> +
+>  	kvm_tdx->state = TD_STATE_UNINITIALIZED;
+>  
+>  	return 0;
+> @@ -671,13 +677,8 @@ int tdx_vcpu_create(struct kvm_vcpu *vcpu)
+>  	if (kvm_tdx->state != TD_STATE_INITIALIZED)
+>  		return -EIO;
+>  
+> -	/*
+> -	 * TDX module mandates APICv, which requires an in-kernel local APIC.
+> -	 * Disallow an in-kernel I/O APIC, because level-triggered interrupts
+> -	 * and thus the I/O APIC as a whole can't be faithfully emulated in KVM.
+> -	 */
+> -	if (!irqchip_split(vcpu->kvm))
+> -		return -EINVAL;
+> +	/* Split irqchip should be enforced at irqchip creation time. */
+> +	KVM_BUG_ON(irqchip_split(vcpu->kvm), vcpu->kvm);
 
-Acked-by: Doug Berger <opendmb@gmail.com>
+Sadly, the existing check needs to stay, because userspace could simply not create
+any irqchip.  My complaints about KVM_CREATE_IRQCHIP is that KVM is allowing an
+explicit action that is unsupported/invalid.  For lack of an in-kernel local APIC,
+there's no better alternative to enforcing the check at vCPU creation.
+
+>  	fpstate_set_confidential(&vcpu->arch.guest_fpu);
+>  	vcpu->arch.apic->guest_apic_protected = true;
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index a1c49bc681c4..a846dd3dcb23 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -6966,6 +6966,16 @@ int kvm_arch_vm_ioctl(struct file *filp, unsigned int ioctl, unsigned long arg)
+>  		if (irqchip_in_kernel(kvm))
+>  			goto create_irqchip_unlock;
+>  
+> +		/*
+> +		 * Disallow an in-kernel I/O APIC for platforms that has protected
+> +		 * EOI (such as TDX). The hypervisor can't modify the EOI-bitmap
+> +		 * on these platforms which prevents the proper emulation of
+> +		 * level-triggered interrupts.
+> +		 */
+
+Slight tweak to shorten this and to avoid mentioning the EOI-bitmap.  The use of
+a software-controlled EOI-bitmap is a vendor specific detail, and it's not so much
+the inability to modify the bitmap that's problematic, it's that TDX doesn't
+allow intercepting EOIs.  E.g. TDX also requires x2APIC and PICv to be enabled,
+without which EOIs would effectively be intercepted by other means.
+
+		/*
+		 * Disallow an in-kernel I/O APIC if the VM has protected EOIs,
+		 * i.e. if KVM can't intercept EOIs and thus can't properly
+		 * emulate level-triggered interrupts.
+		 */
+
+> +		r = -ENOTTY;
+> +		if (kvm_arch_has_protected_eoi(kvm))
+
+No need for a macro wrapper, just do
+
+		if (kvm->arch.has_protected_eoi)
+
+kvm_arch_has_readonly_mem() and similar accessors exist so that arch-neutral
+code, e.g. check_memory_region_flags() in kvm_main.c, can query arch-specific
+state.  Nothing outside of KVM x86 should care about protected EOI, because that's
+very much an x86-specific detail.
+
+> +			goto create_irqchip_unlock;
+> +
+>  		r = -EINVAL;
+>  		if (kvm->created_vcpus)
+>  			goto create_irqchip_unlock;
+> -- 
+> 2.51.0.261.g7ce5a0a67e-goog
+> 
 
