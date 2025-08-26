@@ -1,165 +1,154 @@
-Return-Path: <linux-kernel+bounces-786195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 520ACB35660
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:06:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36521B35664
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C56518928A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:06:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 454BE18923DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:08:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD7B42857E6;
-	Tue, 26 Aug 2025 08:06:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC6DF286D40;
+	Tue, 26 Aug 2025 08:07:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FKEQw0dT"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="H9DpZjWM"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21299281378;
-	Tue, 26 Aug 2025 08:06:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D1D2853FA;
+	Tue, 26 Aug 2025 08:07:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756195575; cv=none; b=SBMKach3vgftK9Wid8oXoeUDVweP9F2NCg2PkyRiBwwM9zPqEqMzmCDxCEELC6iuJI5pwhbuMZ3sSUw8va/NZKHvw/gfiu94aZqV4I8c6H9JY0ab4Aqi1r+0LRY3B8I+bqa+I9Y6OSfMcV9OMNi4VBOlZzUzpMxqj2sMosN3D8A=
+	t=1756195657; cv=none; b=uQx28LqDt+ItVZpGly2vo8uDLcCJN4Gt6kBoyQd4GpJbTOvBE9ZXYljI1NBiZsKJNT7CJgWeHknQFMXfb2lZdPAQR6S0+U4SH5Q/ACvZ2r/SPsGDF4HpxXmLA6qQvpA7HdEHKJpu2sYbUHaWp0wd2alm328lHwleK6QOWVHWIkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756195575; c=relaxed/simple;
-	bh=McZAuFqJCEkI01Usp8F/y40UxCHUiyXewUgBInoEEF0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R5sD1/i9cJeGQw3ULbPu/bp5GGnT81DesDQVuZcVKZKEkxcknVQ8E0LwQ3ygalmTx5aPjggebuvHTMtz37GZFjQgii1CvjnCURjgn98eldmPSK6LzOqbVUtceTHzlAOxQD1mPRFD5VG2rpUMlMLvCoPpbLisSN16RkJASVOSdXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FKEQw0dT; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-afcb7af30a5so904493666b.3;
-        Tue, 26 Aug 2025 01:06:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756195572; x=1756800372; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7wjbO+/CzvSzhggdBHtlSBiSOrC+TN4SiqbwtSU008o=;
-        b=FKEQw0dTtTi8gzGSRMMHlKkaavQEpUGGoBPUpOhHGHXnPpsjsTBTp1fIG/x0Y0bCay
-         c8i3hhzhzkToyvOg5O8VdtVxDAbbWjMTIKtkDsNTD1ziP+EJBLXOOqd56IHJ5Ie+U5GW
-         pCBk2z7bWIIqjV6SEGA2aYK7sBVW8XLFxHzCBIfJS/CXZ34d41io3yUHeoOJl+9S2AVX
-         2zJvVpqdMwSDqLIh6gBOaObhErFZ2eVGIuWBmobz//43AIyDkLykb6tiFA/CVLAx7Kyg
-         15l3YSab4l0/y/RcYHDoqSigbUZ5N1ELCL45j5wWls2MVK1168UQIkjQvS213q2Z653P
-         hY6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756195572; x=1756800372;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7wjbO+/CzvSzhggdBHtlSBiSOrC+TN4SiqbwtSU008o=;
-        b=Et/tOLYD0IVcl2jnPLc1N71BCzAg/7+0/rwSCdNDZH3bLcVBZgF87YRer9dKEXT81c
-         kuN9UfRgjBZm4gNP+9BIdQLYQJRrm0nKm45E9IJiBvNk1CkSGN7vihQGZ6gVrF/WvgZH
-         Nb3RFhWX+za98AMszCt+yELKyThn5WjRFpoSRut+4QmwsNtxnPuuuplOglqjTsJXC+29
-         qLavwAq1NS97nwMpPmcz1zHaZc7Jdmk/drmI4QSH3Ml6JjZQ1BK8CSue8B+ssuS4gTK9
-         FoQkIMNg9s7UPw5ERFJPXSHgSLnCdwKBAaW38Cv/jGVInn5dzyPzGKKYicC8L8CAWNZe
-         tnZw==
-X-Forwarded-Encrypted: i=1; AJvYcCVykzrzOESl0muxcpzTcVHPHOUVioWCV2d2UA0GJSFFfM9xJd0ohMXrVr8NOJ+DG/7vW/RSW30+lSM=@vger.kernel.org, AJvYcCXxze17CSSeOpeNCZu8LER1yXflG1HTvgQcU4gPAoYaqeaGG2xGlf+QiISLq1UxaQlGqpREZT1eAER5OKCJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaM2FPtdS764/ZikA+tSL3UjlP7cFDCaMKj+w66UQTJSGeMcmJ
-	RKII7Dxwtz6WeHRzHoda14aBKMjmmBrcy0zgH8oIUt5RZwgvZXw/wnR3lhaOQIln3X5xc4dR81Q
-	JgUPzgH/HbH0/4m4CjrfoRoyjRVZ0aUU=
-X-Gm-Gg: ASbGncvZ4lw/XeEZkSnAeu4sbDV8kXndHLAMmv4HBzhZ1Dgi2ymxtVhDfD0VPjLs58b
-	SPxSwrISChhvzvOEfPveCi90MKrD1+W/jECJZf3cyFfx6bxuLmkUHP6ep7QHlX7iI9l0iMR5afN
-	UXzgbyjck8TGvCFWlTjXQkcSg9CR2mTva1m6z40dgDWZ7Y7EJ+Ss5gF3bT83Kaja0VCp1RTbjrb
-	KSagDU=
-X-Google-Smtp-Source: AGHT+IET95gesPsImlWxfCSqXy/xiG2n7VC6emkdon2TKt+AHqmFUOCd9ze1yaM/komtsJdO29Rh9lxV5vuG/ZzJHKo=
-X-Received: by 2002:a17:906:ef05:b0:afe:8761:e77a with SMTP id
- a640c23a62f3a-afe8761fad3mr537764766b.19.1756195572104; Tue, 26 Aug 2025
- 01:06:12 -0700 (PDT)
+	s=arc-20240116; t=1756195657; c=relaxed/simple;
+	bh=iK8bJyugKozpMxKr4N56WGwz38dI4hR+3k1hx+Z8fdg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t8Py2fvdXold7kKd4/BcVXpy54cwlB2ycVJ2zCs0qSzIZTky08/ameN7jDjg8ezTNgEFcabpKzoeiqSpjaUZ99aFWHTz2QepnT/gu2lLX4bdPGxwEp8lJ/K/X80tIfrkMOxJm1stveqOp7oPBlq6nme2JOGO6uUhjfmt6u6gfMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=H9DpZjWM; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=hmFJ8UGHXtcnTXJTD5aZxBfE9vYuZlwcChixuyZ11Qo=; b=H9DpZjWMWHsq6F3BUVy79e5zuz
+	vghIAhY56CI0DpFSVhIibAP4Grh3T4XZmFtAv9N2boiP1jSrrRyqC/Kyt7ZxhkACiCVKZvnDhWzGn
+	F+ALksY6fLI9K8Tyu6NlNbuzKhfPGRQzKlBA3P8Fx6yacNBiheOoJjqewsc39YYjZJomLeyhVWnyW
+	Kl/o1HBVxiUoLvYU+WlcBCjio4gaTu4doNCN9S8XBFZU6oiJbeUQrefhrCPAdIcHB/xBb9uGuXuMh
+	A/wYCGUpUC329jIMJvbiltVIYieOElB91RdrbPNG9oxBQRT7HBz8WT3d8oYoKYEY6YaSFbhpgDYTV
+	Is5pjO7A==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uqohv-00000002AKe-1j30;
+	Tue, 26 Aug 2025 08:07:07 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id E75E73002C5; Tue, 26 Aug 2025 10:07:06 +0200 (CEST)
+Date: Tue, 26 Aug 2025 10:07:06 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	linux-s390@vger.kernel.org,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	thomas.weissschuh@linutronix.de, Li Chen <chenl311@chinatelecom.cn>,
+	Bibo Mao <maobibo@loongson.cn>, Mete Durlu <meted@linux.ibm.com>,
+	Tobias Huschle <huschle@linux.ibm.com>,
+	Easwar Hariharan <easwar.hariharan@linux.microsoft.com>,
+	Guo Weikang <guoweikang.kernel@gmail.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Brian Gerst <brgerst@gmail.com>,
+	Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
+	Swapnil Sapkal <swapnil.sapkal@amd.com>,
+	"Yury Norov [NVIDIA]" <yury.norov@gmail.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Andrea Righi <arighi@nvidia.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+	Tim Chen <tim.c.chen@linux.intel.com>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Subject: Re: [PATCH v7 4/8] powerpc/smp: Introduce CONFIG_SCHED_MC to guard
+ MC scheduling bits
+Message-ID: <20250826080706.GC3245006@noisy.programming.kicks-ass.net>
+References: <20250826041319.1284-1-kprateek.nayak@amd.com>
+ <20250826041319.1284-5-kprateek.nayak@amd.com>
+ <609a980b-cbe3-442b-a492-91722870b156@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250825205235.1766401-1-sakari.ailus@linux.intel.com>
-In-Reply-To: <20250825205235.1766401-1-sakari.ailus@linux.intel.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 26 Aug 2025 11:05:35 +0300
-X-Gm-Features: Ac12FXwdLHPHoVmXYor1LPriFlV0142umbIIkjkJQym6xu1Er8B2ZfjAPn-xRkY
-Message-ID: <CAHp75Vcyr2gQ_Z7BV5nEJCSb1taWnBOfCfTWMQtMG-65Z+D0Dg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/1] iio: dac: Remove redundant pm_runtime_mark_last_busy()
- calls
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, linux-iio@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <609a980b-cbe3-442b-a492-91722870b156@csgroup.eu>
 
-On Mon, Aug 25, 2025 at 11:53=E2=80=AFPM Sakari Ailus
-<sakari.ailus@linux.intel.com> wrote:
->
-> pm_runtime_put_autosuspend(), pm_runtime_put_sync_autosuspend(),
-> pm_runtime_autosuspend() and pm_request_autosuspend() now include a call
-> to pm_runtime_mark_last_busy(). Remove the now-reduntant explicit call to
-> pm_runtime_mark_last_busy().
->
-> Also clean up error handling in stm32_dac_set_enable_state().
+On Tue, Aug 26, 2025 at 06:49:29AM +0200, Christophe Leroy wrote:
+> 
+> 
+> Le 26/08/2025 à 06:13, K Prateek Nayak a écrit :
+> > PowerPC enables the MC scheduling domain by default on systems with
+> > coregroup support without having a SCHED_MC config in Kconfig.
+> > 
+> > The scheduler uses CONFIG_SCHED_MC to introduce the MC domain in the
+> > default topology (core) and to optimize the default CPU selection
+> > routine (sched-ext).
+> > 
+> > Introduce CONFIG_SCHED_MC for powerpc and note that it should be
+> > preferably enabled given the current default behavior. This also ensures
+> > PowerPC is tested during future developments that come to depend on
+> > CONFIG_SCHED_MC.
+> > 
+> > Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
+> > ---
+> >   arch/powerpc/Kconfig           | 9 +++++++++
+> >   arch/powerpc/include/asm/smp.h | 2 ++
+> >   arch/powerpc/kernel/smp.c      | 4 ++++
+> >   3 files changed, 15 insertions(+)
+> > 
+> > diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+> > index 93402a1d9c9f..e954ab3f635f 100644
+> > --- a/arch/powerpc/Kconfig
+> > +++ b/arch/powerpc/Kconfig
+> > @@ -971,6 +971,15 @@ config SCHED_SMT
+> >   	  when dealing with POWER5 cpus at a cost of slightly increased
+> >   	  overhead in some places. If unsure say N here.
+> > +config SCHED_MC
+> > +	bool "Multi-Core Cache (MC) scheduler support"
+> > +	depends on PPC64 && SMP
+> > +	default y
+> > +	help
+> > +	  MC scheduler support improves the CPU scheduler's decision making
+> > +	  when dealing with POWER systems that contain multiple Last Level
+> > +	  Cache instances on the same socket. If unsure say Y here.
+> > +
+> 
+> You shouldn't duplicate CONFIG_SCHED_MC in every architecture, instead you
+> should define a CONFIG_ARCH_HAS_SCHED_MC in arch/Kconfig that gets selected
+> by architectures then have CONFIG_SCHED_MC defined in init/Kconfig or
+> kernel/Kconfig or so.
 
-TL;DR: I think this change makes it harder to follow (due to complex
-conditional).
-
-...
-
->         ret =3D regmap_update_bits(dac->common->regmap, STM32_DAC_CR, msk=
-, en);
->         mutex_unlock(&dac->lock);
-> -       if (ret < 0) {
-> +       if (ret) {
->                 dev_err(&indio_dev->dev, "%s failed\n", str_enable_disabl=
-e(en));
-> -               goto err_put_pm;
-> +               goto err_pm_put;
-
-This is one time use for the label and we know that ret is set here.
-
-Just
-
-  if (enable)
-    pm_runtime_put_autosuspend(dev);
-  return ret;
-
-should work.
-
->         }
-
-...
-
-> -       if (!enable) {
-> -               pm_runtime_mark_last_busy(dev);
-> -               pm_runtime_put_autosuspend(dev);
-> -       }
-> -
-> -       return 0;
-> -
-> -err_put_pm:
-> -       if (enable) {
-> -               pm_runtime_mark_last_busy(dev);
-> +err_pm_put:
-> +       if (!enable || (enable && ret))
->                 pm_runtime_put_autosuspend(dev);
-> -       }
->
->         return ret;
-
-
-And here is as simple as
-
-if (!enable)
-  pm_runtime_put_autosuspend(dev);
-
-return 0;
-
-and remove the unneeded label altogether with the error path.
-
---=20
-With Best Regards,
-Andy Shevchenko
+Let me add this first -- it is currently duplicated. Then I'll see about
+merging the thing across architectures.
 
