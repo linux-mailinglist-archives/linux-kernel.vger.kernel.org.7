@@ -1,131 +1,153 @@
-Return-Path: <linux-kernel+bounces-786222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BE74B356BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:25:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 938E6B356C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:25:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94EE41B66358
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:25:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B80531893CBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:25:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD3E52F8BF1;
-	Tue, 26 Aug 2025 08:25:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4162F8BDF;
+	Tue, 26 Aug 2025 08:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="f8ZYK8FS"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="usCqbP7u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE9F129E6E;
-	Tue, 26 Aug 2025 08:25:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 248892AE8D;
+	Tue, 26 Aug 2025 08:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756196715; cv=none; b=SSS1tHWnSt7ypFOJ1SH3gP7Upg258NSUjWU0CtnfNvk02pynyI2ql7pY5ehYyTzNfEh1in4ZCEIe7f3mL3JmfUMOskwBY4OnsyAU0HjsMP0+xJ2sFN5N1sl0uNH9vYfgSHjrXhakVwhpAyuDwjgZ4YIViDpK2oQgz7MWB1nlQhA=
+	t=1756196729; cv=none; b=Peqqe+TKLsl0op5KN0KKYJ5+jrUA19mEg/BciFtDiOvfefOyuXTJGpflokYmlFqx6lGZDVVMsshO30rP6jo1dl6CBgzwySic9uQO2jcgPLCp+ajb6cM3t8RghR3B7OlVnFK20iPSy13smAPcZuuaM33iIN9pQIBoAXK9yP3JKRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756196715; c=relaxed/simple;
-	bh=M3lwJYmTuFciCOkfBfpRk1F/UtJ1CMI+s6RqEBtEKls=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XXjeRXMmo8CqrxezR9Tf7aWuIW4rkxNgKnLxmCU6PKSzHuNEkKwT10qM78hZDNnm8G7iM8AnsL/v2uW9r+jKx2S4ZFvlKEBjTZIovCdhnjpT92VvBxknfQXXOcIQ6Oq4Mcb8/yfuhaeQq3VsNjSzDXyLtuXCZuk3HZYPESANyXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=f8ZYK8FS; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1756196706;
-	bh=StN559UZpfgPKLYEDGOhWh4BuXWyw9zkeGi3ACermV0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=f8ZYK8FSVBjxxh2z6c0+vAqSC98YVxAgNC6xFPBNSyRTAoOllM2/B+v3kOWESx/zN
-	 02zalRR0pl9nASJtCXut/5I1oiZhmxk4J/JTPkD+CnGFznzyxnTkH1fMccGtl/jzmh
-	 ueJTy7mSA0Hevlnjl5ukqQ8U2ldTEqu5jy0Pu8p15UDDF4893qHuvgvF4Xh0o62ljO
-	 EPHaM1NY83xQIM3Ie/7TTF0EorJcEvDFFtvJY+bzph2XWZ3r4EBunxdJfzVqsD6rHY
-	 CPCWD6zmLlrkB5SRA8SHDytr8UV56AQuYC6VOO9SW+ri/GHzA4f93sGgbXg0Q8FI29
-	 Tm6i715BMsgtA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cB11W41G9z4x3N;
-	Tue, 26 Aug 2025 18:25:03 +1000 (AEST)
-Date: Tue, 26 Aug 2025 18:25:02 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Documentation
- <linux-doc@vger.kernel.org>, Linux Kernel Workflows
- <workflows@vger.kernel.org>, Fox Foster <fox@tardis.ed.ac.uk>, Federico
- Vaga <federico.vaga@vaga.pv.it>, Jonathan =?UTF-8?B?TmV1c2Now6RmZXI=?=
- <j.neuschaefer@gmx.net>, Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH] Documentation: management-style: Correct "know" past
- participle
-Message-ID: <20250826182502.701a3031@canb.auug.org.au>
-In-Reply-To: <2a66319f-63f1-408b-8815-89254d68b90b@gmail.com>
-References: <20250826003437.7695-2-bagasdotme@gmail.com>
-	<87349ed6zj.fsf@trenco.lwn.net>
-	<2a66319f-63f1-408b-8815-89254d68b90b@gmail.com>
+	s=arc-20240116; t=1756196729; c=relaxed/simple;
+	bh=VkeszMZY1ksdwbOs73xgWaFT2kBLSssyVgThE5cmC1k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AsGk6KVALGLQly6syq0a5kf608D4+mjc1bW509WHW2VNNcN1G7iQvmYEmhSpkPu/Ewq1Mr5zUtQE4wOJCb2nxVPx1zokp1e/ygt+Yx1lvl+xKEhzzPb7TPW3nzeeQHYIJBvV7ck1o21j7GnSSyiKrLVHoxrjWKDNeHiYmx0ZW1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=usCqbP7u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2586BC4CEF1;
+	Tue, 26 Aug 2025 08:25:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756196728;
+	bh=VkeszMZY1ksdwbOs73xgWaFT2kBLSssyVgThE5cmC1k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=usCqbP7uRNQ13YBhnWf1Zp3LRYsBKqu9s5ZGGYDjRlye9lEVBvycZ/a1VLH9/QqAS
+	 05y4bWzLtoV7x+7zQ88isnbgga89Ei82D+NnIk/gGnB7BeADgNPnPxGCRw1jIRSpOo
+	 j96cUSDlXjWNJs/al4euZUYjJccKcrQoy9M4N9Ith4QrHWkE9qkuPv2yq7S7JNU0Fb
+	 j/3bUpJMDW4zlVcHH/qfntY4p6sSgDiW8WAoE0Bfv7/mvx4wCpGxqPJNJckF+DfrdW
+	 aaQRM5QUzqmwP4hc2YpG+q+A5UJpgTgZYAtCDoDMlFZRKSE5GL1Tig5J6VAmC48TM3
+	 UDprsaBEvhw4Q==
+Date: Tue, 26 Aug 2025 11:25:24 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+	Andreas.Fuchs@infineon.com, James Prestwood <prestwoj@gmail.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Eric Biggers <ebiggers@kernel.org>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	linux-crypto@vger.kernel.org, Stefan Berger <stefanb@linux.ibm.com>,
+	Lennart Poettering <lennart@poettering.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	open list <linux-kernel@vger.kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH v7 4/5] keys: asymmetric: Add tpm2_key_rsa
+Message-ID: <aK1vdEcuN_xjhjyY@kernel.org>
+References: <20240528210823.28798-1-jarkko@kernel.org>
+ <20240528210823.28798-5-jarkko@kernel.org>
+ <ZmLnyp9j_QoPgj7W@gondor.apana.org.au>
+ <D24EZPFV6DBS.1LZVHIVPITE83@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/RWNzJ=iQHs.zG2UWsz4wr+g";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D24EZPFV6DBS.1LZVHIVPITE83@kernel.org>
 
---Sig_/RWNzJ=iQHs.zG2UWsz4wr+g
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jun 20, 2024 at 03:23:20AM +0300, Jarkko Sakkinen wrote:
+> On Fri Jun 7, 2024 at 1:58 PM EEST, Herbert Xu wrote:
+> > On Wed, May 29, 2024 at 12:08:09AM +0300, Jarkko Sakkinen wrote:
+> > >
+> > > +/*
+> > > + * Sign operation is an encryption using the TPM's private key. With RSA the
+> > > + * only difference between encryption and decryption is where the padding goes.
+> > > + * Since own padding can be used, TPM2_RSA_Decrypt can be repurposed to do
+> > > + * encryption.
+> > > + */
+> > > +static int tpm2_key_rsa_sign(struct tpm_chip *chip, struct tpm2_key *key,
+> > > +			     struct kernel_pkey_params *params,
+> > > +			     const void *in, void *out)
+> > > +{
+> > > +	const off_t o = key->priv_len + 2 + sizeof(*key->desc);
+> > > +	const struct tpm2_rsa_parms *p =
+> > > +		(const struct tpm2_rsa_parms *)&key->data[o];
+> > > +	const u16 mod_size = be16_to_cpu(p->modulus_size);
+> > > +	const struct rsa_asn1_template *asn1;
+> > > +	u32 in_len = params->in_len;
+> > > +	void *asn1_wrapped = NULL;
+> > > +	u8 *padded;
+> > > +	int ret;
+> > > +
+> > > +	if (strcmp(params->encoding, "pkcs1") != 0) {
+> > > +		ret = -ENOPKG;
+> > > +		goto err;
+> > > +	}
+> > > +
+> > > +	if (params->hash_algo) {
+> > > +		asn1 = rsa_lookup_asn1(params->hash_algo);
+> >
+> > Could you please explain why this can't be done through pkcs1pad
+> > instead of going to raw RSA?
+> 
+> Sorry was away couple of weeks from here. I replace this with TPM2_Sign
+> as is done already in the ECDSA module, so I guess that is a "yes".
 
-Hi Bagas,
+Time travelling back to 2024 ;-)
 
-On Tue, 26 Aug 2025 14:40:08 +0700 Bagas Sanjaya <bagasdotme@gmail.com> wro=
-te:
->
-> On 8/26/25 11:47, Jonathan Corbet wrote:
-> >> diff --git a/Documentation/process/management-style.rst b/Documentatio=
-n/process/management-style.rst
-> >> index dfbc69bf49d435..1381b253b19ef4 100644
-> >> --- a/Documentation/process/management-style.rst
-> >> +++ b/Documentation/process/management-style.rst
-> >> @@ -42,7 +42,7 @@ actually true.
-> >>   The name of the game is to **avoid** having to make a decision.  In
-> >>   particular, if somebody tells you "choose (a) or (b), we really need=
- you
-> >>   to decide on this", you're in trouble as a manager.  The people you
-> >> -manage had better know the details better than you, so if they come to
-> >> +manage had better known the details than you, so if they come to
-> >>   you for a technical decision, you're screwed.  You're clearly not =20
-> >=20
-> > This seems actively wrong ... ?
-> >  =20
->=20
-> What I thought on the original wording was that the people (i.e. develope=
-rs) know the (technical) details better than their manager.
-> And yeah, "better" was duplicated.
+I can't recall what I was thining here butI'm glad that I did not put
+the patch set further as now I have much more sane angle to this.
 
-One way to make this clearer would be:
+I realized while working on [1] that I'm better of making this to work
+as API on rsapubkey.asn1 and rsaprivkey.asn1 and matching files for
+ECC and do all steps inside kernel from this:
 
- ... The people you
-manage should know the details better than you ...
+tpm2_createprimary --hierarchy o -G rsa2048 -c owner.txt
+tpm2_evictcontrol -c owner.txt 0x81000001
+tpm2_getcap handles-persistent
+openssl genrsa -out private.pem 2048
+tpm2_import -C 0x81000001 -G rsa -i private.pem -u key.pub -r key.priv
+tpm2_encodeobject -C 0x81000001 -u key.pub -r key.priv -o key.priv.pem
+openssl asn1parse -inform pem -in key.priv.pem -noout -out key.priv.der
 
---=20
-Cheers,
-Stephen Rothwell
+I.e. my test tool does everything else except
 
---Sig_/RWNzJ=iQHs.zG2UWsz4wr+g
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+openssl genrsa -out private.pem 2048
 
------BEGIN PGP SIGNATURE-----
+Im now pretty familiar with import procedure and how to prepare data
+for TPM2_Import and is like the "spirit" of it i.e., take external
+key and store it inside TPM2. That as side effect removes all the
+use of tpm2key.asn1 from the patch set and simplifies flows
+greatly.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmitb14ACgkQAVBC80lX
-0GzQlAgAk4fasyu9S5xB1rat10mRqQ7EFFwaPdwnQPxRamdj3H+rcFv2vbqzyomx
-Mh58WeF51VYyEooFX+HSOjPfq4qkryXj36CLrCPj1wW8v6tK53Se62UOs1oXOgvZ
-9FmyTZQblnzMBHH3e1H9RS4wbVMpTH+HUF0IHWtL0CD9ehkCK0h1oan4KAWnUMXE
-g/k6k4wMUR1Zx4ISX9RipZQWl+qZGP43hsCxWtp4FP3Z2c8kPWzelcIl26C8+o6f
-EJMN1aVI2Eyo7Fq/HNAvjxQeGrn1c6WMOHF1zsjHOtOmBgTIxw9nHO8PqKOE67tV
-9vJUbsXr7ms3kik9FY0YqHlm9HHF8w==
-=M0UH
------END PGP SIGNATURE-----
+And my Rust works help to get the preparation procedure exactly
+right and none of those crazy tools and commands will be needed.
 
---Sig_/RWNzJ=iQHs.zG2UWsz4wr+g--
+The matching C code following TCG Architecture spec  I'll first write in
+user space and then port that kernel crypto APIs
+
+That spans a question tho: should it be its own key type (as it is
+right now or would it be better idea to have parameter/option for
+hardware pre-existing RSA key types, or what would be the best
+direction API wise to approach this?
+
+[1] https://lore.kernel.org/tpm2/aKzaTYCI2GO_UPRB@kernel.org/T/#u
+
+BR, Jarkko
 
