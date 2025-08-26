@@ -1,38 +1,38 @@
-Return-Path: <linux-kernel+bounces-785835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 440BDB351A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:28:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB649B351A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:28:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDBB73AE6F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:28:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5B8A1B60FB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:28:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78876265CB3;
-	Tue, 26 Aug 2025 02:28:35 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 416F4221FDE;
+	Tue, 26 Aug 2025 02:28:30 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C514DEEB3
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 02:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896FFEEB3
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 02:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756175315; cv=none; b=EUXPrfPaZUbwMt5fXGCccJT4GOcSYxm08uQeZbyk7IigFy+woi6QHknI1LW1ZSgruNDTUVczrmsOZAtL3IRuOrRDaSvUGeApFCyJFSWpbHfDZCohD5SzWrrVqORUMbX/mutA4UsAOQ6Vq68VRyHQFK4xqlpDXkQZbiIPYCa47rg=
+	t=1756175309; cv=none; b=nX4t+ojP0AdsgHFvSJOp0y+n5CbRYwRrfozWjcaJLtyWbTrRLiqvFLlkVIPUP2F/St4AgYCY4snJI5JeFPlsD1cdF39A42KpQjav/KL2fWa7Y8175bgEEXJ4K+ysN7nJ5+NRNKTnmo8NA1NM8nt5JYMDTqOpmnsH0Va7DNT7qyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756175315; c=relaxed/simple;
-	bh=EkhkCT4HISQyB5ugDvkgO8cSpWErxyoxZox9mabC1W8=;
+	s=arc-20240116; t=1756175309; c=relaxed/simple;
+	bh=cFEnHF4+/xWHsQQL7qdJKkH63igLXJFmAn0fjzwrTe8=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rBj6PHxXRIOwDvpo7RW4Rh4HUBwq7nisFUt2HIUU0ojzjSwrJdcCW6trR0fa02Po4zzyjNL17ALEW7AZrEinm7poKI3efNEHHnFllphbVmMz2XyQedN6KIWt/+Y1Pu3I4qjnvuaGT3FBd4QLzkb83M11RSIlsVnowoI2G4s8MT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+	 MIME-Version:Content-Type; b=iXtOL6Q7brK3jH3Z5YuIPzAnzS1H1RYJdsVp10A28lS/V3CbTroPT6/8O7VpzbEeazInA++s5Jd8+CI2QDzH4wRUq3FrcI9w8to9pl3FsZrOvyxiUqNS3mwvMdsGjhmOff5pYjfvVIoXBGP29qSG4Z2klX9L8rW+aDJJ1c3aIM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4c9s2c6SRBz2VRYv;
-	Tue, 26 Aug 2025 10:25:28 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4c9s7H5LqFz27jHv;
+	Tue, 26 Aug 2025 10:29:31 +0800 (CST)
 Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id 47A651A016C;
+	by mail.maildlp.com (Postfix) with ESMTPS id 62246140296;
 	Tue, 26 Aug 2025 10:28:25 +0800 (CST)
 Received: from kwepemq100007.china.huawei.com (7.202.195.175) by
  dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
@@ -51,9 +51,9 @@ CC: <liangjian010@huawei.com>, <chenjianmin@huawei.com>,
 	<fengsheng5@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
 	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
 	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 drm-dp 2/4] drm/hisilicon/hibmc: add dp mode valid check
-Date: Tue, 26 Aug 2025 10:17:42 +0800
-Message-ID: <20250826021744.3237574-3-shiyongbang@huawei.com>
+Subject: [PATCH v5 drm-dp 3/4] drm/hisilicon/hibmc: fix no showing problem with loading hibmc manually
+Date: Tue, 26 Aug 2025 10:17:43 +0800
+Message-ID: <20250826021744.3237574-4-shiyongbang@huawei.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20250826021744.3237574-1-shiyongbang@huawei.com>
 References: <20250826021744.3237574-1-shiyongbang@huawei.com>
@@ -70,109 +70,49 @@ X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
 
 From: Baihan Li <libaihan@huawei.com>
 
-If DP is connected, check the DP BW in mode_valid_ctx() to ensure
-that DP's link rate supports high-resolution data transmission.
+When using command rmmod and insmod, there is no showing in second time
+insmoding. Because DP controller won't send HPD signals, if connection
+doesn't change or controller isn't reset. So add reset before unreset
+in hibmc_dp_hw_init().
 
-Fixes: 0ab6ea261c1f ("drm/hisilicon/hibmc: add dp module in hibmc")
+And also need to move the HDCP cfg after DP controller de-resets, so
+that HDCP configuration takes effect.
+
+Fixes: 3c7623fb5bb6 ("drm/hisilicon/hibmc: Enable this hot plug detect of irq feature")
 Signed-off-by: Baihan Li <libaihan@huawei.com>
 Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
 Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 ---
 ChangeLog:
 v4 -> v5:
-  - fix bugfix commit ID, suggested by Dmitry Baryshkov.
+  - combined 9 and 11 patch together, suggested by Dmitry Baryshkov.
 ---
- .../gpu/drm/hisilicon/hibmc/dp/dp_config.h    |  2 ++
- drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c    | 10 ++++++++++
- drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h    |  2 ++
- .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 19 +++++++++++++++++++
- 4 files changed, 33 insertions(+)
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
-index 08f9e1caf7fc..efb30a758475 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
-+++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
-@@ -17,5 +17,7 @@
- #define HIBMC_DP_LINK_RATE_CAL		27
- #define HIBMC_DP_SYNC_DELAY(lanes)	((lanes) == 0x2 ? 86 : 46)
- #define HIBMC_DP_INT_ENABLE		0xc
-+/* HIBMC_DP_LINK_RATE_CAL * 10000 * 80% = 216000 */
-+#define DP_MODE_VALI_CAL		216000
- 
- #endif
 diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
-index 8f0daec7d174..f8e1b437c385 100644
+index f8e1b437c385..25a06da05030 100644
 --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
 +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
-@@ -263,6 +263,16 @@ void hibmc_dp_reset_link(struct hibmc_dp *dp)
- 	dp->dp_dev->link.status.channel_equalized = false;
- }
+@@ -176,13 +176,16 @@ int hibmc_dp_hw_init(struct hibmc_dp *dp)
+ 	dp_dev->link.cap.lanes = 0x2;
+ 	dp_dev->link.cap.link_rate = DP_LINK_BW_8_1;
  
-+u8 hibmc_dp_get_link_rate(struct hibmc_dp *dp)
-+{
-+	return dp->dp_dev->link.cap.link_rate;
-+}
-+
-+u8 hibmc_dp_get_lanes(struct hibmc_dp *dp)
-+{
-+	return dp->dp_dev->link.cap.lanes;
-+}
-+
- static const struct hibmc_dp_color_raw g_rgb_raw[] = {
- 	{CBAR_COLOR_BAR, 0x000, 0x000, 0x000},
- 	{CBAR_WHITE,     0xfff, 0xfff, 0xfff},
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
-index 665f5b166dfb..312cf7920037 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
-+++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
-@@ -60,5 +60,7 @@ void hibmc_dp_reset_link(struct hibmc_dp *dp);
- void hibmc_dp_hpd_cfg(struct hibmc_dp *dp);
- void hibmc_dp_enable_int(struct hibmc_dp *dp);
- void hibmc_dp_disable_int(struct hibmc_dp *dp);
-+u8 hibmc_dp_get_link_rate(struct hibmc_dp *dp);
-+u8 hibmc_dp_get_lanes(struct hibmc_dp *dp);
+-	/* hdcp data */
+-	writel(HIBMC_DP_HDCP, dp_dev->base + HIBMC_DP_HDCP_CFG);
+ 	/* int init */
+ 	writel(0, dp_dev->base + HIBMC_DP_INTR_ENABLE);
+ 	writel(HIBMC_DP_INT_RST, dp_dev->base + HIBMC_DP_INTR_ORIGINAL_STATUS);
+ 	/* rst */
++	writel(0, dp_dev->base + HIBMC_DP_DPTX_RST_CTRL);
++	usleep_range(30, 50);
++	/* de-rst */
+ 	writel(HIBMC_DP_DPTX_RST, dp_dev->base + HIBMC_DP_DPTX_RST_CTRL);
++	/* hdcp data */
++	writel(HIBMC_DP_HDCP, dp_dev->base + HIBMC_DP_HDCP_CFG);
+ 	/* clock enable */
+ 	writel(HIBMC_DP_CLK_EN, dp_dev->base + HIBMC_DP_DPTX_CLK_CTRL);
  
- #endif
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
-index 123372ae2d40..d0d0900121df 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
-+++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
-@@ -13,6 +13,7 @@
- #include "hibmc_drm_drv.h"
- #include "dp/dp_hw.h"
- #include "dp/dp_comm.h"
-+#include "dp/dp_config.h"
- 
- #define DP_MASKED_SINK_HPD_PLUG_INT	BIT(2)
- 
-@@ -49,9 +50,27 @@ static int hibmc_dp_detect(struct drm_connector *connector,
- 	return drm_connector_helper_detect_from_ddc(connector, ctx, force);
- }
- 
-+static int hibmc_dp_mode_valid(struct drm_connector *connector,
-+			       const struct drm_display_mode *mode,
-+			       struct drm_modeset_acquire_ctx *ctx,
-+			       enum drm_mode_status *status)
-+{
-+	struct hibmc_dp *dp = to_hibmc_dp(connector);
-+	u64 cur_val, max_val;
-+
-+	/* check DP link BW */
-+	cur_val = (u64)mode->clock * HIBMC_DP_BPP;
-+	max_val = (u64)hibmc_dp_get_link_rate(dp) * DP_MODE_VALI_CAL * hibmc_dp_get_lanes(dp);
-+
-+	*status = cur_val > max_val ? MODE_CLOCK_HIGH : MODE_OK;
-+
-+	return 0;
-+}
-+
- static const struct drm_connector_helper_funcs hibmc_dp_conn_helper_funcs = {
- 	.get_modes = hibmc_dp_connector_get_modes,
- 	.detect_ctx = hibmc_dp_detect,
-+	.mode_valid_ctx = hibmc_dp_mode_valid,
- };
- 
- static int hibmc_dp_late_register(struct drm_connector *connector)
 -- 
 2.33.0
 
