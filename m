@@ -1,143 +1,258 @@
-Return-Path: <linux-kernel+bounces-786330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE51CB35866
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:14:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68899B3588F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:17:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D910B1BA0067
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:14:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 243E216057C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:14:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F2DF305E00;
-	Tue, 26 Aug 2025 09:13:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 800C03090E2;
+	Tue, 26 Aug 2025 09:13:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="EN5txnML"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f/ZT+FZ5"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39A72FB97D;
-	Tue, 26 Aug 2025 09:13:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BCA030276C
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756199623; cv=none; b=TrvOLXo+ZvpNOhRJz7KFihnkNU5qoTdMAHn+XHdqpmDFWPpg6KZ5d2SJbDnBVUmrw1Y74yhTXahU6OhGrdYSG6OgeJRigOlgRZB7hJOWwCJD3QYYa/3aOyc5it/iho/LnoO300YeoAO3LaoLI88SwgeZjMKw/Ct4sU0Tb9WUs38=
+	t=1756199628; cv=none; b=U8/guaZ6yDgoLKEZoJx4fMz9RM+PP3JIKO3jv5w7HQC0+X8+cqakXfAysPM9BstKbf2A67N3k0oD/31xPoy0x0ldB13IugMgImrSCLyq3QbTBzr8eLlaKKG026+5PLBdpo+ZpUJUTEPfg9egi04fxH+rsumffp+5DxEU8VZMmXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756199623; c=relaxed/simple;
-	bh=7k06+KU4FS2Nl7hFPiL3ggXSFJrFlkWWsqe3DM83IFU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QM9YDwi7rO5MEuEJRDcizv2zhd+Vdn+GqUs65BLtbOFEr2lPyNyfSUqgsuavS0MVRi7H6mg0LAg2GrMBnGdvCakMaAnObzZVvAijV7xTG03wNz3+1LK4AAjoJL+iIia16vLRCTgMwC2SV9fM0C3zOhz690QpUMy9/oC2but35pM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=EN5txnML; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1756199621; x=1787735621;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=7k06+KU4FS2Nl7hFPiL3ggXSFJrFlkWWsqe3DM83IFU=;
-  b=EN5txnML6qGQcRJ2MjzkGEdHYAtsipk07bLA8UVABKRp0FouUZDdw4lF
-   aPT0inI4dMDuPqUGHKXYt4ir/xI+6XLlfLCQ+ivbvzOU9hyNGDYf7jXor
-   Hz4C0hdqiisABArdzJcduFxAMbl4OKOrIL/n8+hWORKM2aPdBaRWUF0rT
-   nitto2uw7RCHPrxuS/7SvBHJqOYG62DDth58BbQ2IbGcfdSP5rdKeB3ul
-   kk8XZlVq/5PRxKpdAa7AdsaCbmQ8eVTAwK4LyYkC0MR3LZXEniAuan2OS
-   C16NPGEXhWuxdZryPT4QL02vMALxOFKJj3dMgtSUUvt89WraDNOse9/7J
-   Q==;
-X-CSE-ConnectionGUID: M1JPlUWoR9q6iYMXOF8AMA==
-X-CSE-MsgGUID: p1l8mJrQR+iVfmrclzS1tw==
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="213074667"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 26 Aug 2025 02:13:39 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
- chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Tue, 26 Aug 2025 02:13:16 -0700
-Received: from [10.159.245.205] (10.10.85.11) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
- Transport; Tue, 26 Aug 2025 02:13:11 -0700
-Message-ID: <3e1c2519-e5b3-4775-bb49-ec8f355ca4b2@microchip.com>
-Date: Tue, 26 Aug 2025 11:13:11 +0200
+	s=arc-20240116; t=1756199628; c=relaxed/simple;
+	bh=gjX9E9EmiPWX+40GzbEyxkzrbiBU9S3aul0vtFeQNGQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Xhi3WtUOPp3bZJnx0S57clPEPKorhy9qaE1cz+R/lwfeTFIJ+YUhpuKwcXJyf4lUdWX76UE+rEp5MSgIPMlCyN8p0zJzsu80K8zMiyKWsfiUvZN72bMiWyZ3W79kuLEsU6wm61tENHN5z/C/Yz8FyckWPwtbC232WQSXF9VxQvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f/ZT+FZ5; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-76e2e614889so4590813b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 02:13:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756199625; x=1756804425; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=znqW7t629WY1D1c5x2OGn1PouDI+EiyaNYCniW4dbvs=;
+        b=f/ZT+FZ5arc5fvJcapNXe+F1jlh9dpXa4KriUO7PhfjzQpHlm8vgzSMVBShOKmlSGk
+         YyJZeyqcirC295+7H1v4YsjPFuWMP/5EP81sG5ytqeWX2WMDWKV4njHBa8ddRT2YC16g
+         QikUeSsPeE1vTfrSTyT3ixfsiftuzuV/Al5VDPGeFdhT2bYwCzE3wvgH97TXxnMQjgaw
+         lFZN4s70eLSsP7pnhGAtJbp0zDpJtPqqzGxIuUt/C0RltrBhqdohev8A4QyPEiE+UULr
+         jCeMJeg8AR3fckUuGRg78JlEFKOZXwu7w1fy2M+dZxNSF2NQbHT3B4/s5ewkXT2VWXoz
+         Zqmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756199625; x=1756804425;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=znqW7t629WY1D1c5x2OGn1PouDI+EiyaNYCniW4dbvs=;
+        b=p6dVqBplOM4lMlqMDHj5i8qc5O6MVTkbNeK5g53DtdD6HycvuIsh6gdbTM1ZD77O2o
+         6M6fcrUMM7fT5F/nOnjxpDcLu9ghEyYrgqpwTIvUkd9qEho2tiIpO4BoP+6SSklJDOCs
+         Ub1s7nXYToUQj4JpYTDxffpBhoEARGkwk3BJUwDpnrIC2yqQRlwWzm/3dp1+yurUJ2T5
+         EuADETV8O1SwzdUVst/Pbs3x3Fplxml7JgsDVQj1pmI/RYJC6JVJ2/96hchIhw0yvphf
+         SMNlHAui9etXah2FWqE+hasRt/FTOVfkXYOfOy/r8q1gekS8psFVdmAjJMQyX7NnaXuu
+         HqiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUY10h1GMWgnruGSCm2oTRZafQDowbpJdaFDCXvyHPlbTGeg+k+hd/uZ0RfqtJF+GMj46qdF+9C9MNjsXQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTtBZ/+7C5Uw6+z+puNs7vwB+5LEzqfWi0C51w9/0zmXIZsVQe
+	j/bdEg96Lwaj9sGryLw3rvTqGLvhQN8UiHi6nYBl/ZwcmcKfo9v80GutN5at030hu91IajmdDs1
+	lxW7TPwbM8dtG1w==
+X-Google-Smtp-Source: AGHT+IEJeR1/GR+N43ubU0gh/gMey5vMfKh200YEtstzt6LIdxaZvucfphjchQJ/CmOBUoz6yCADrHdUEbL35g==
+X-Received: from pfva1.prod.google.com ([2002:a05:6a00:c81:b0:771:3e92:f3aa])
+ (user=davidgow job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a00:a2a:b0:736:8c0f:7758 with SMTP id d2e1a72fcca58-7702fa4f732mr16572148b3a.10.1756199624679;
+ Tue, 26 Aug 2025 02:13:44 -0700 (PDT)
+Date: Tue, 26 Aug 2025 17:13:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] net: cadence: macb: Set upper 32bits of DMA ring
- buffer
-To: Stanimir Varbanov <svarbanov@suse.de>, Jakub Kicinski <kuba@kernel.org>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-rpi-kernel@lists.infradead.org>, Broadcom internal kernel review list
-	<bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Florian
- Fainelli <florian.fainelli@broadcom.com>, Andrea della Porta
-	<andrea.porta@suse.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, Phil
- Elwell <phil@raspberrypi.com>, Jonathan Bell <jonathan@raspberrypi.com>, Dave
- Stevenson <dave.stevenson@raspberrypi.com>, <stable@vger.kernel.org>, Andrew
- Lunn <andrew@lunn.ch>, =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-References: <20250822093440.53941-1-svarbanov@suse.de>
- <20250822093440.53941-2-svarbanov@suse.de>
- <20250825165310.64027275@kernel.org>
- <1ecd4a9a-d685-4bce-ad06-cc8878f0a165@suse.de>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Content-Language: en-US, fr
-Organization: microchip
-In-Reply-To: <1ecd4a9a-d685-4bce-ad06-cc8878f0a165@suse.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.261.g7ce5a0a67e-goog
+Message-ID: <20250826091341.1427123-1-davidgow@google.com>
+Subject: [PATCH v4 0/7] kunit: Refactor and extend KUnit's parameterized
+ testing framework
+From: David Gow <davidgow@google.com>
+To: Marie Zhussupova <marievic@google.com>, marievictoria875@gmail.com, rmoar@google.com, 
+	shuah@kernel.org, brendan.higgins@linux.dev
+Cc: David Gow <davidgow@google.com>, mark.rutland@arm.com, elver@google.com, 
+	dvyukov@google.com, lucas.demarchi@intel.com, 
+	thomas.hellstrom@linux.intel.com, rodrigo.vivi@intel.com, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	kasan-dev@googlegroups.com, intel-xe@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
 
-On 26/08/2025 at 10:35, Stanimir Varbanov wrote:
-> Hi Jakub,
-> 
-> On 8/26/25 2:53 AM, Jakub Kicinski wrote:
->> On Fri, 22 Aug 2025 12:34:36 +0300 Stanimir Varbanov wrote:
->>> In case of rx queue reset and 64bit capable hardware, set the upper
->>> 32bits of DMA ring buffer address.
->>>
->>> Cc: stable@vger.kernel.org # v4.6+
->>> Fixes: 9ba723b081a2 ("net: macb: remove BUG_ON() and reset the queue to handle RX errors")
->>> Credits-to: Phil Elwell <phil@raspberrypi.com>
->>> Credits-to: Jonathan Bell <jonathan@raspberrypi.com>
->>> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
->>> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
->>
->>> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
->>> index ce95fad8cedd..36717e7e5811 100644
->>> --- a/drivers/net/ethernet/cadence/macb_main.c
->>> +++ b/drivers/net/ethernet/cadence/macb_main.c
->>> @@ -1634,7 +1634,11 @@ static int macb_rx(struct macb_queue *queue, struct napi_struct *napi,
->>>               macb_writel(bp, NCR, ctrl & ~MACB_BIT(RE));
->>>
->>>               macb_init_rx_ring(queue);
->>> -            queue_writel(queue, RBQP, queue->rx_ring_dma);
->>> +            queue_writel(queue, RBQP, lower_32_bits(queue->rx_ring_dma));
->>> +#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
->>> +            if (bp->hw_dma_cap & HW_DMA_CAP_64B)
->>> +                    macb_writel(bp, RBQPH, upper_32_bits(queue->rx_ring_dma));
->>> +#endif
->>>
->>>               macb_writel(bp, NCR, ctrl | MACB_BIT(RE));
->>>
->>
->> Looks like a subset of Théo Lebrun's work:
->> https://lore.kernel.org/all/20250820-macb-fixes-v4-0-23c399429164@bootlin.com/
->> let's wait for his patches to get merged instead?
-> 
-> No objections for this patch, it could be postponed. But the others from
-> the series could be applied.
+Hi all,
 
-Some cleanup by Théo, could interfere with sorting of compatibility 
-strings...
-We'll try make all this be queued in order, as Théo was first to send. 
-Sorry for not having realized this earlier.
+This is a new version of Marie's patch series, with a couple of extra
+fixes squashed in, notably:
+- drm/xe/tests: Fix some additional gen_params signatures
+https://lore.kernel.org/linux-kselftest/20250821135447.1618942-1-davidgow@google.com/
+- kunit: Only output a test plan if we're using kunit_array_gen_params
+https://lore.kernel.org/linux-kselftest/20250821135447.1618942-2-davidgow@google.com/
 
-Best regards,
-   Nicolas
+These should fix the issues found in linux-next here:
+https://lore.kernel.org/linux-next/20250818120846.347d64b1@canb.auug.org.au/
+
+These changes only affect patches 3 and 4 of the series, the others are
+unchanged from v3.
+
+Thanks, everyone, and sorry for the inconvenience!
+
+Cheers,
+-- David
+
+---
+
+Hello!
+
+KUnit offers a parameterized testing framework, where tests can be
+run multiple times with different inputs. However, the current
+implementation uses the same `struct kunit` for each parameter run.
+After each run, the test context gets cleaned up, which creates
+the following limitations:
+
+a. There is no way to store resources that are accessible across
+   the individual parameter runs.
+b. It's not possible to pass additional context, besides the previous
+   parameter (and potentially anything else that is stored in the current
+   test context), to the parameter generator function.
+c. Test users are restricted to using pre-defined static arrays
+   of parameter objects or generate_params() to define their
+   parameters. There is no flexibility to make a custom dynamic
+   array without using generate_params(), which can be complex if
+   generating the next parameter depends on more than just the single
+   previous parameter.
+
+This patch series resolves these limitations by:
+
+1. [P 1] Giving each parameterized run its own `struct kunit`. It will
+   remove the need to manage state, such as resetting the `test->priv`
+   field or the `test->status_comment` after every parameter run.
+
+2. [P 1] Introducing parameterized test context available to all
+   parameter runs through the parent pointer of type `struct kunit`.
+   This context won't be used to execute any test logic, but will
+   instead be used for storing shared resources. Each parameter run
+   context will have a reference to that parent instance and thus,
+   have access to those resources.
+
+3. [P 2] Introducing param_init() and param_exit() functions that can
+   initialize and exit the parameterized test context. They will run once
+   before and after the parameterized test. param_init() can be used to add
+   resources to share between parameter runs, pass parameter arrays, and
+   any other setup logic. While param_exit() can be used to clean up
+   resources that were not managed by the parameterized test, and
+   any other teardown logic.
+
+4. [P 3] Passing the parameterized test context as an additional argument
+   to generate_params(). This provides generate_params() with more context,
+   making parameter generation much more flexible. The generate_params()
+   implementations in the KCSAN and drm/xe tests have been adapted to match
+   the new function pointer signature.
+
+5. [P 4] Introducing a `params_array` field in `struct kunit`. This will
+   allow the parameterized test context to have direct storage of the
+   parameter array, enabling features like using dynamic parameter arrays
+   or using context beyond just the previous parameter. This will also
+   enable outputting the KTAP test plan for a parameterized test when the
+   parameter count is available.
+
+Patches 5 and 6 add examples tests to lib/kunit/kunit-example-test.c to
+showcase the new features and patch 7 updates the KUnit documentation
+to reflect all the framework changes.
+
+Thank you!
+-Marie
+
+---
+
+Changes in v4:
+
+Link to v3 of this patch series:
+https://lore.kernel.org/linux-kselftest/20250815103604.3857930-1-marievic@google.com/
+
+- Fixup the signatures of some more gen_params functions in the drm/xe
+  driver.
+- Only print a KTAP test plan if a parameterised test is using the
+  built-in kunit_array_gen_params generating function, fixing the issues
+  with generator functions which skip array elements.
+
+Changes in v3:
+
+Link to v2 of this patch series:
+https://lore.kernel.org/all/20250811221739.2694336-1-marievic@google.com/
+
+- Added logic for skipping the parameter runs and updating the test statistics
+  when parameterized test initialization fails.
+- Minor changes to the documentation.
+- Commit message formatting.
+
+Changes in v2:
+
+Link to v1 of this patch series:
+https://lore.kernel.org/all/20250729193647.3410634-1-marievic@google.com/
+
+- Establish parameterized testing terminology:
+   - "parameterized test" will refer to the group of all runs of a single test
+     function with different parameters.
+   - "parameter run" will refer to the execution of the test case function with
+     a single parameter.
+   - "parameterized test context" is the `struct kunit` that holds the context
+     for the entire parameterized test.
+   - "parameter run context" is the `struct kunit` that holds the context of the
+     individual parameter run.
+   - A test is defined to be a parameterized tests if it was registered with a
+     generator function.
+- Make comment edits to reflect the established terminology.
+- Require users to manually pass kunit_array_gen_params() to
+  KUNIT_CASE_PARAM_WITH_INIT() as the generator function, unless they want to
+  provide their own generator function, if the parameter array was registered
+  in param_init(). This is to be consistent with the definition of a
+  parameterized test, i.e. generate_params() is never NULL if it's
+  a parameterized test.
+- Change name of kunit_get_next_param_and_desc() to
+  kunit_array_gen_params().
+- Other minor function name changes such as removing the "__" prefix in front
+  of internal functions.
+- Change signature of get_description() in `struct params_array` to accept
+  the parameterized test context, as well.
+- Output the KTAP test plan for a parameterized test when the parameter count
+  is available.
+- Cover letter was made more concise.
+- Edits to the example tests.
+- Fix bug of parameterized test init/exit logic being done outside of the
+  parameterized test check.
+- Fix bugs identified by the kernel test robot.
+
+---
+
+Marie Zhussupova (7):
+  kunit: Add parent kunit for parameterized test context
+  kunit: Introduce param_init/exit for parameterized test context
+    management
+  kunit: Pass parameterized test context to generate_params()
+  kunit: Enable direct registration of parameter arrays to a KUnit test
+  kunit: Add example parameterized test with shared resource management
+    using the Resource API
+  kunit: Add example parameterized test with direct dynamic parameter
+    array setup
+  Documentation: kunit: Document new parameterized test features
+
+ Documentation/dev-tools/kunit/usage.rst | 342 +++++++++++++++++++++++-
+ drivers/gpu/drm/xe/tests/xe_pci.c       |  14 +-
+ drivers/gpu/drm/xe/tests/xe_pci_test.h  |   9 +-
+ include/kunit/test.h                    |  95 ++++++-
+ kernel/kcsan/kcsan_test.c               |   2 +-
+ lib/kunit/kunit-example-test.c          | 217 +++++++++++++++
+ lib/kunit/test.c                        |  94 +++++--
+ rust/kernel/kunit.rs                    |   4 +
+ 8 files changed, 740 insertions(+), 37 deletions(-)
+
+-- 
+2.51.0.261.g7ce5a0a67e-goog
 
 
