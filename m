@@ -1,115 +1,131 @@
-Return-Path: <linux-kernel+bounces-787138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 106ACB371DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 20:01:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94427B371E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 20:03:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 288E91BA0E3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:02:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D3277B577B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8472234F47D;
-	Tue, 26 Aug 2025 18:01:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5672128135B;
+	Tue, 26 Aug 2025 18:02:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WbwWflZK"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j1kuqozv"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B5B2E7F25
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 18:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205072A1BF;
+	Tue, 26 Aug 2025 18:02:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756231292; cv=none; b=q9Ch4QfL7F9437xfaGJUAEZSAXlyYzGDfeJKZ2xBCvEBXAxjj7dZZlqN5nJAh5zPCfjR8b3DDUhwN8JrVZRZaZg06ECKZV+AXCpD8sca9Hqme6j0kwoTgr5Q8HumPMIJ7clVAbpsJ8KbIsDoP0WxvK0d8Z8OFnl3OQPHZkgzvQw=
+	t=1756231374; cv=none; b=R/TVkQ2cot8yohKIeTsswhW27Hu9dm9/hCXAufv5kKGbClPS87pbv/sWLiITkxzX5bFbWz5tWU8GxvasNL3sx8ZV6jN4NsDKFW3RXgQ2R7L30naWzN5ArfRsgNLoNPIhmavOsNcpiH4wq9zrSd+S2+NVDaDDZuSiWOY7ELIznfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756231292; c=relaxed/simple;
-	bh=ZsPzngLlhnV8qcl2ZjKKiafuwl2ONmzXJcE69uIuT6U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=exfct/qihLf2G50rs6YHyWlppU1hrm1kfgdr13WWudIUrrwP1gbfZ7PpJ1Qz5W+poxtq+Bd7j14lZE/GcPDeJV55cHKgV7LpIY08WsyiKgHF08vJAkmMwoIGG9416umgnm6gtMq+QuLNUQT/Wncyl3mmezQLFmEvfqdfFNQ/DZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WbwWflZK; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <ef890e96-5c2a-4023-bcb2-7ffd799155be@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1756231287;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NmKY6MkQc3HKzHukHIfBKw9ER0H4ED2SLHs/o7yHr2Y=;
-	b=WbwWflZK374x9tt80LfgBRf+IupQVf/iyXGr7itPyUkuxFOEpIulPZy5irxj2OhFddyewp
-	48ZyQhY8YW43UPn9lr7lxb6cW9QVr9GQoM+Wk+CqjOmpqHpeIKhFrpth1K404H+5bGuROL
-	V7o/TTcag4nyOyd97obXf43b1Zl4yHY=
-Date: Tue, 26 Aug 2025 11:01:21 -0700
+	s=arc-20240116; t=1756231374; c=relaxed/simple;
+	bh=nN+JXGtLv6FAmp7l5uUi9ay3zxxMghgbZJFTQ0VOnA4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h3YwlUH2mLWGiZmSgui1O686+fY7YW4+pn5W0RoYV0MNW1r5iKsjui6rwol7LFr1+crZl8Q3fe7QoU8p+Qt8wH2W5H14vmT2AQSeZfg/jMsl6ID3zYCMWAewUdNVSBMhlIRxAeupyISSQHflPSAIEvG9dI2d7FG0tmueiw3ew1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j1kuqozv; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-61c7942597fso325299a12.0;
+        Tue, 26 Aug 2025 11:02:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756231371; x=1756836171; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=frdIV1iQvKE8YoiaFFUhu1zx8g8gWtw5/3M5juOru80=;
+        b=j1kuqozvd5rkEBYpZiD72zd74iXjzUoWDGvxUIAdOqOe7cRTtRTZTCObTnCYirZOUv
+         OFBgj4WFFSO806BaCVOxq4LN3JU2vI86AltxX72q0Ppdk6hzFa4Xa4qRIWwB9d9mSbhu
+         oZgayRH6HyxjptYmup8QawmjNDPPMJKuGaY15VfbEHrelXDaxBFEb5DgJsoKexNNxoKO
+         Lvqomwi7dEiad18vLuCZWgeNxGv/p7CbiTTny5avU8zEg151KVaGRh/iFHzisjuVtNx6
+         6Gq9CimmpmAcq2Tl7wu9JDvB+mEGsOnFvh3J9kaIM4UIzmAOkULDSdUio8vR8wQB+r3t
+         d3fA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756231371; x=1756836171;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=frdIV1iQvKE8YoiaFFUhu1zx8g8gWtw5/3M5juOru80=;
+        b=B19BDNGZRga+9nauiN7nvHZYN09scQLlceW04VwDaH2YvB2chVIoudz1owbcxQaaVk
+         Bj0cNVhnHPQDSfk7CrruAizB7cfdXiPnYDdfynBVSp2ILnVKpan6H5MNi5Ut/VJW53IK
+         Hs6UoHj3IAOm4W1DEqY0VXuek+th0Yq6ZncEBU29Hd4ABRigozYzqGOir03lL55IqXmB
+         /uCICXVZe5i3rM0LtDPl+U0Bctv33GhYaCAA/9i+MUq02EGA7ON93xooOIbbhNfQXEx2
+         jJyoyhMqdCKgMTmaDLwlKQ1jfgo7kH8dyXmv/JkEylmOtB7c/xlFHIil9VUgAC7i3n0u
+         bC3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVpQl2QGeH4YGTI2X5dMyql42gnMX3MSlF5618Oi6BO2r+Os+e2UwZThgiXTL5SeRuVSx9+7ggIqSmg37Q=@vger.kernel.org, AJvYcCVsmU5h4TnUVpBcUXHPBXaMtaATtzKS6X8kwwbgT4g5QRO8f8JRPhNI2aBphaIDbW7EWDoH2zuBO2f8@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKLOFOKGSNtAVQDUtMT4il8bVzLPBeRpS+L1mPSYWfp8imryDz
+	ofpzn/gboXYR7EaH9tbS8jEPhF5dSNj5x149eSPaJXkO8GSBtxn7L1eXPsFE9UrMmQC9NsD5ihx
+	lWSDXPVi6yKlBKKQVowDnoV+GwA3R5QWwwQ==
+X-Gm-Gg: ASbGncvqV/YY8s4mXwGRmEKYq05Z+GlBKd/oo5OQpIYiQayEvU4lslWbDQBBRRjprab
+	/JKL5IisugZLW4lGorsDxULHUBxVl1th22V3gNVxY6SVQjzd2U0+chWuHprVbgTTxpJqevYdig9
+	V6UamSuQKshFmuk14WZXm37A9VOpZFmxjIAFYjMq8UsuydVqBl/Pkay2mW9RJI/aRHJovkjf8YJ
+	1q4Sg==
+X-Google-Smtp-Source: AGHT+IEvDyteju1wmrBwKOW7zwP6gU8uRbga9lkT7PwM/wFZQpYDC2ejx+oehKqgA/VFrqduChNr1Jym6+elWGaqlqg=
+X-Received: by 2002:a05:6402:1d31:b0:61c:b047:c2ef with SMTP id
+ 4fb4d7f45d1cf-61cb047c362mr94534a12.8.1756231371200; Tue, 26 Aug 2025
+ 11:02:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v1 01/14] mm: introduce bpf struct ops for OOM handling
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Kumar Kartikeya Dwivedi <memxor@gmail.com>, linux-mm@kvack.org,
- bpf@vger.kernel.org, Suren Baghdasaryan <surenb@google.com>,
- Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@suse.com>,
- David Rientjes <rientjes@google.com>,
- Matt Bobrowski <mattbobrowski@google.com>, Song Liu <song@kernel.org>,
- Alexei Starovoitov <ast@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
-References: <20250818170136.209169-1-roman.gushchin@linux.dev>
- <20250818170136.209169-2-roman.gushchin@linux.dev>
- <CAP01T76AUkN_v425s5DjCyOg_xxFGQ=P1jGBDv6XkbL5wwetHA@mail.gmail.com>
- <87ms7tldwo.fsf@linux.dev> <1f2711b1-d809-4063-804b-7b2a3c8d933e@linux.dev>
- <87wm6rwd4d.fsf@linux.dev>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Martin KaFai Lau <martin.lau@linux.dev>
-In-Reply-To: <87wm6rwd4d.fsf@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250826114245.112472-2-linux.amoon@gmail.com> <20250826162522.GA838733@bhelgaas>
+In-Reply-To: <20250826162522.GA838733@bhelgaas>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Tue, 26 Aug 2025 23:32:34 +0530
+X-Gm-Features: Ac12FXySIlLJCXOCO_Avwabf6hGll28sxAWglPGaz4lmIjznEhsDC34m8lSwvj8
+Message-ID: <CANAwSgTLS+fNTUrx4F5G_5BrFwoq9vixDAFervqokDgJxPhP2Q@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] PCI: dwc: histb: Simplify clock handling by using
+ clk_bulk*() functions
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Shawn Guo <shawn.guo@linaro.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, 
+	"open list:PCIE DRIVER FOR HISILICON STB" <linux-pci@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 8/25/25 10:00 AM, Roman Gushchin wrote:
-> Martin KaFai Lau <martin.lau@linux.dev> writes:
-> 
->> On 8/20/25 5:24 PM, Roman Gushchin wrote:
->>>> How is it decided who gets to run before the other? Is it based on
->>>> order of attachment (which can be non-deterministic)?
->>> Yeah, now it's the order of attachment.
->>>
->>>> There was a lot of discussion on something similar for tc progs, and
->>>> we went with specific flags that capture partial ordering constraints
->>>> (instead of priorities that may collide).
->>>> https://lore.kernel.org/all/20230719140858.13224-2-daniel@iogearbox.net
->>>> It would be nice if we can find a way of making this consistent.
->>
->> +1
->>
->> The cgroup bpf prog has recently added the mprog api support also. If
->> the simple order of attachment is not enough and needs to have
->> specific ordering, we should make the bpf struct_ops support the same
->> mprog api instead of asking each subsystem creating its own.
->>
->> fyi, another need for struct_ops ordering is to upgrade the
->> BPF_PROG_TYPE_SOCK_OPS api to struct_ops for easier extension in the
->> future. Slide 13 in
->> https://drive.google.com/file/d/1wjKZth6T0llLJ_ONPAL_6Q_jbxbAjByp/view
-> 
-> Does it mean it's better now to keep it simple in the context of oom
-> patches with the plan to later reuse the generic struct_ops
-> infrastructure?
-> 
-> Honestly, I believe that the simple order of attachment should be
-> good enough for quite a while, so I'd not over-complicate this,
-> unless it's not fixable later.
+Hi Bjorn,
 
-I think the simple attachment ordering is fine. Presumably the current link list 
-in patch 1 can be replaced by the mprog in the future. Other experts can chime 
-in if I have missed things.
+Thanks for your review comments.
+On Tue, 26 Aug 2025 at 21:55, Bjorn Helgaas <helgaas@kernel.org> wrote:
+>
+> In subject, remove "dwc: " to follow historical convention.  (See
+> "git log --oneline")
+>
+Ok I will keep it as per the git history.
 
-Once it needs to have an ordering api in the future, it should probably stay 
-with mprog instead of each subsystem creating its own. The inspection tool 
-(likely a subcmd in bpftool) can also be created to inspect the struct_ops order 
-of a subsystem.
+> On Tue, Aug 26, 2025 at 05:12:40PM +0530, Anand Moon wrote:
+> > Currently, the driver acquires clocks and prepare/enable/disable/unprepare
+> > the clocks individually thereby making the driver complex to read.
+> >
+> > The driver can be simplified by using the clk_bulk*() APIs.
+> >
+> > Use:
+> >   - devm_clk_bulk_get_all() API to acquire all the clocks
+> >   - clk_bulk_prepare_enable() to prepare/enable clocks
+> >   - clk_bulk_disable_unprepare() APIs to disable/unprepare them in bulk
+>
+> I assume this means the order in which we prepare/enable and
+> disable/unprepare will now depend on the order the clocks appear in
+> the device tree instead of the order in the code?  If so, please
+> mention that here and verify that all upstream device trees have the
+> correct order.
+>
+Following is the order in the device tree
+
+       clocks = <&crg HISTB_PCIE_AUX_CLK>,
+                                 <&crg HISTB_PCIE_PIPE_CLK>,
+                                 <&crg HISTB_PCIE_SYS_CLK>,
+                                 <&crg HISTB_PCIE_BUS_CLK>;
+                        clock-names = "aux", "pipe", "sys", "bus";
+
+Ok I will update this in the commit message.
+
+Thanks
+-Anand
 
