@@ -1,104 +1,62 @@
-Return-Path: <linux-kernel+bounces-786193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 705F9B3565A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:06:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D9ADB3564E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:04:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B4AB7AD72C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:04:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E20B1244094
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CFBD286D46;
-	Tue, 26 Aug 2025 08:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ED2D286D46;
+	Tue, 26 Aug 2025 08:04:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q4HwOVcs"
-Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BW7zhk7D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A14A2853FA;
-	Tue, 26 Aug 2025 08:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8670D17B505;
+	Tue, 26 Aug 2025 08:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756195500; cv=none; b=nj0vzpjKDttKTIWAI7D16FIqJYFaKfg8btRYeSIzSES8rc1DcnoWJHt7t7Z8nONldlsYij8PQ0UyoocCAYMhYBrWFwH/yV8MxlGzk4NcaMA7UGVoBS2Bp4mAW+nLMFwh1HQkmJsoNjz2aTCWBuAOf6hUC1QpZb9ypFTSxMNZqCU=
+	t=1756195480; cv=none; b=b+aGK5X1cjyxA9suJuzjKJvM0QnVsdwvZrZe6Bh9jsz5Ja9D0NTrjd/rC5meTTYsoIaep+MGKTHH1pX+tzgxahccqx8CVB9tZxOWNiMnWmDEhq9IQ2uMFMT8YaZ1wuxJ25VDbUva+qD5/EO239KEtyIiXFtPpBpa5sqxz9Lbw2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756195500; c=relaxed/simple;
-	bh=mc4HjBQoj+cY0K8gVaUwo6cJ18WjLYLy5NvRmtEby7w=;
+	s=arc-20240116; t=1756195480; c=relaxed/simple;
+	bh=0wPoe/3MAh9xsVV1QEIy2QbhyZ1GWQaZL32ILILoEsU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MdUhEaKCM9wkPUGCCh8UcfTXXrblOVmmzOFibIL8pOF4XsXq7wzK/yfUe5ly8DZeYwm2ct8WVncwZ5hjsW83rgwZNYLg/7coMCWP4fiZr62wsKBbO+9MLh93/NtTinF3G1mZWKCuuoBjy+nbQ3Co5jpU1efvGK6eBc0b+rgveTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q4HwOVcs; arc=none smtp.client-ip=209.85.214.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-24687a76debso23092885ad.0;
-        Tue, 26 Aug 2025 01:04:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756195498; x=1756800298; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ANo5cUf5hg9N0r5c+hXAraC/9ocQ00QIvjoPiGNkd94=;
-        b=Q4HwOVcs/A5NLavNVwzY1aOAIeBqBiivVxGwf+/uGABDByfdfNp7PJxkS3A+5vBjL9
-         azBM105KVRIBBEuE4iQnUL7F35sy4vJ2W3ygRBi9V7HDTotMN7jExSYWCf+PMLlVzb4I
-         bYgVUuBVuZyX2Rp36kEKZiEaUuzrYTFC7p3Xb28rYLpajAjmgHmdFEMJe6UXNe7rdyA4
-         spi43yquuQghdMzL0XOg0r2mHWtCK8dubKPGxgnjGq4YiKOeR6ts4LiTc5kVQXqprpjq
-         Y7lmD6YGkOPWL0elFHeuXckYXF+LDwysmgbVmxjQ4ZOEdjAG0AU2Dxti2/YX1+BxTvZJ
-         BPzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756195498; x=1756800298;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ANo5cUf5hg9N0r5c+hXAraC/9ocQ00QIvjoPiGNkd94=;
-        b=hn9GJIndgDeulcFPLzCQhNda5uqFsB6pLYcUOMlt2Jr5/9U30Xib7T+EQYEsKjyj1y
-         6GE0Kad4CjG0nRAIJRl0ZeKjzV5PWQXs7A9WmM9s4ah11gwRh0SjzUsNKV3xUZDmhGCz
-         SGDL3nEQaBEuofZ0gHWfB+zFwDWYBpfdpn4raIkzRHaeRlKFaWk10actIZxkWXk0Y44n
-         P3G9G+nvzVxNamELzgOXkMIHN4/SXrmG9tpgRODbXBrb2WUrEXQSpSIeer13Vt/FMNJz
-         ihQQyA1VXzh114asJur5JzxDrKaujV1jkUxCnI0M6nQCOprMQxfcBtl7HeGm9MEjEXCi
-         W9ig==
-X-Forwarded-Encrypted: i=1; AJvYcCVG3jNmOE1ZEr3aUsEkuUUO/1kJ0ha32Ln3IEzDbbS7Z3BhREhIyy5G10tsKF/suqpOMCU=@vger.kernel.org, AJvYcCVHY/ef9J3cp3cdCz8a1aF6Bb0ue97yraNhIT+BxZde1WRhW1ZfDpOw17XerOu/9T3XQav/i50RheUCP9em@vger.kernel.org, AJvYcCWKALxbRwV3Z2qg1bQw9S/jNYy7M8drsJyRhgDqJ7YSdVbscKgUetR0IuPIqPwPQT2lrii4l7Hd/oNzEh0EW4GM@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIuTofss3/3SaHkLMruh9ujM6iy94Ku3MdSiRvUlkeYn6pPEk+
-	lHJPGG8aaQiaCYhYDJtbptKAHy8WbNTd4X4jl1ps4GR85PgDSk0aR0R0
-X-Gm-Gg: ASbGnctbbrARjooUlO9FgWV6fM/EJrGi6VUP6KxZFcayKopa7ORQtjp+QtN0gZrWqzP
-	59JyvHq8KmZeJZfnbEJwEZD82OmafhEt/38cja/l7CMHv4wQgDLIvwA78yXuO6LXTUZlbRuHGoR
-	2OzfJEIPIW6K7lObiayUelWyd8epfY2M5ly6R5LLysVr1eo1BcfhOSdBUmXPZjlYnYt1gFmflD3
-	OwMk4Uwll4pwpfVCoHtbdGErfWjoPqMSTCb2TpsfQt0+OZrqbaei/tF4C+Q3E9x/6aUGj2bV6qz
-	rpEWIOBWzUKgeKiQ5nHpci4MdAXY30mh1Cgk9t9pfyS2jiTuXU/u0sN6vZiT9SVfRS6pU6VzHYn
-	MH1N75VZR34hBGkDoBbBwD50sw2xtPh6nEA==
-X-Google-Smtp-Source: AGHT+IHLWEMFd/v9ow3xzQkAWja8OQHfuqE+Z3SsxYR3vrdyWDSIGD1g1wUGWFc0myCS2X1LrXQOTg==
-X-Received: by 2002:a17:902:e54c:b0:215:6c5f:d142 with SMTP id d9443c01a7336-248753a271amr6505305ad.20.1756195497679;
-        Tue, 26 Aug 2025 01:04:57 -0700 (PDT)
-Received: from 7940hx ([43.129.244.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2466888037fsm88829485ad.125.2025.08.26.01.04.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 01:04:56 -0700 (PDT)
-From: Menglong Dong <menglong8.dong@gmail.com>
-X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
-To: andrii@kernel.org
-Cc: eddyz87@gmail.com,
-	mykolal@fb.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	martin.lau@linux.dev,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	shuah@kernel.org,
-	yikai.lin@vivo.com,
-	memxor@gmail.com,
-	bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH bpf-next v2 3/3] selftests/bpf: add benchmark testing for kprobe-multi-all
-Date: Tue, 26 Aug 2025 16:04:30 +0800
-Message-ID: <20250826080430.79043-4-dongml2@chinatelecom.cn>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250826080430.79043-1-dongml2@chinatelecom.cn>
-References: <20250826080430.79043-1-dongml2@chinatelecom.cn>
+	 MIME-Version; b=MSlTvGIfpy72JDtVaE5W/S4yF4q70nE0yQCqJTYPQ6aTxIj5NRQLmFYFf6ilJ22ht4JxJhW/jrISk2it86Q6kEMXnMVauJDdJZgoJY06rMH4tUgPWkO85FYTbh6fIM1ddbKVIhhIGx0dAAT2FLHxrhhM4elYuFXydP7BHFoZAgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BW7zhk7D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89854C116B1;
+	Tue, 26 Aug 2025 08:04:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756195480;
+	bh=0wPoe/3MAh9xsVV1QEIy2QbhyZ1GWQaZL32ILILoEsU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=BW7zhk7DmCwH3NJL7lurvl/39EkGXAydG1oUYufA1HRHqSqOOfdi7NqnNIAIqcsYv
+	 V6OxMT7A0SlsqCAZdqU7uY3+LMojflpjSkblFFR/TYusHv6e0LHiRTivTOHU66TvNQ
+	 1AQvhKxIVVt6VxF/vwgPt/kQ7weBX9Aj6NlXvJQrP8Q5GbqAJqCFjhelLl/CcUAVp5
+	 HJu/ctRSPtPXQlcswEkUAwnRnmFS+lJdwrr7SGr+VEanhzPMTyuaSbiJ8UCKIab6MC
+	 tUKuYV5KpHu4h9zeQj771iEX0j3xEgHz1cLBNQ9eo+8w95UkrGcW7vwAt3pcwjEJ3Q
+	 U0WmAuIx7KC3g==
+From: Mike Rapoport <rppt@kernel.org>
+To: Dan Williams <dan.j.williams@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>
+Cc: jane.chu@oracle.com,
+	Mike Rapoport <rppt@kernel.org>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Tyler Hicks <code@tyhicks.com>,
+	linux-kernel@vger.kernel.org,
+	nvdimm@lists.linux.dev
+Subject: [PATCH 1/1] nvdimm: allow exposing RAM carveouts as NVDIMM DIMM devices
+Date: Tue, 26 Aug 2025 11:04:30 +0300
+Message-ID: <20250826080430.1952982-2-rppt@kernel.org>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20250826080430.1952982-1-rppt@kernel.org>
+References: <20250826080430.1952982-1-rppt@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -107,174 +65,316 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-For now, the benchmark for kprobe-multi is single, which means there is
-only 1 function is hooked during testing. Add the testing
-"kprobe-multi-all", which will hook all the kernel functions during
-the benchmark. And the "kretprobe-multi-all" is added too.
+From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
 
-Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
----
-v2:
-- use fprintf() instead of printf()
----
- tools/testing/selftests/bpf/bench.c           |  4 ++
- .../selftests/bpf/benchs/bench_trigger.c      | 53 +++++++++++++++++++
- .../selftests/bpf/benchs/run_bench_trigger.sh |  4 +-
- .../selftests/bpf/progs/trigger_bench.c       | 12 +++++
- tools/testing/selftests/bpf/trace_helpers.c   |  1 +
- 5 files changed, 72 insertions(+), 2 deletions(-)
+There are use cases, for example virtual machine hosts, that create
+"persistent" memory regions using memmap= option on x86 or dummy
+pmem-region device tree nodes on DT based systems.
 
-diff --git a/tools/testing/selftests/bpf/bench.c b/tools/testing/selftests/bpf/bench.c
-index ddd73d06a1eb..29dbf937818a 100644
---- a/tools/testing/selftests/bpf/bench.c
-+++ b/tools/testing/selftests/bpf/bench.c
-@@ -510,6 +510,8 @@ extern const struct bench bench_trig_kretprobe;
- extern const struct bench bench_trig_kprobe_multi;
- extern const struct bench bench_trig_kretprobe_multi;
- extern const struct bench bench_trig_fentry;
-+extern const struct bench bench_trig_kprobe_multi_all;
-+extern const struct bench bench_trig_kretprobe_multi_all;
- extern const struct bench bench_trig_fexit;
- extern const struct bench bench_trig_fmodret;
- extern const struct bench bench_trig_tp;
-@@ -578,6 +580,8 @@ static const struct bench *benchs[] = {
- 	&bench_trig_kprobe_multi,
- 	&bench_trig_kretprobe_multi,
- 	&bench_trig_fentry,
-+	&bench_trig_kprobe_multi_all,
-+	&bench_trig_kretprobe_multi_all,
- 	&bench_trig_fexit,
- 	&bench_trig_fmodret,
- 	&bench_trig_tp,
-diff --git a/tools/testing/selftests/bpf/benchs/bench_trigger.c b/tools/testing/selftests/bpf/benchs/bench_trigger.c
-index 82327657846e..b483c6f64444 100644
---- a/tools/testing/selftests/bpf/benchs/bench_trigger.c
-+++ b/tools/testing/selftests/bpf/benchs/bench_trigger.c
-@@ -226,6 +226,57 @@ static void trigger_fentry_setup(void)
- 	attach_bpf(ctx.skel->progs.bench_trigger_fentry);
- }
- 
-+static void attach_ksyms_all(struct bpf_program *empty, bool kretprobe)
-+{
-+	LIBBPF_OPTS(bpf_kprobe_multi_opts, opts);
-+	char **syms = NULL;
-+	size_t cnt = 0;
+Both these options are inflexible because they create static regions and
+the layout of the "persistent" memory cannot be adjusted without reboot
+and sometimes they even require firmware update.
+
+Add a ramdax driver that allows creation of DIMM devices on top of
+E820_TYPE_PRAM regions and devicetree pmem-region nodes.
+
+The DIMMs support label space management on the "device" and provide a
+flexible way to access RAM using fsdax and devdax.
+
+Signed-off-by: Mike Rapoport (Mircosoft) <rppt@kernel.org>
+---
+ drivers/nvdimm/ramdax.c | 281 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 281 insertions(+)
+ create mode 100644 drivers/nvdimm/ramdax.c
+
+diff --git a/drivers/nvdimm/ramdax.c b/drivers/nvdimm/ramdax.c
+new file mode 100644
+index 000000000000..27c5102f600c
+--- /dev/null
++++ b/drivers/nvdimm/ramdax.c
+@@ -0,0 +1,281 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (c) 2015, Mike Rapoport, Microsoft
++ *
++ * Based on e820 pmem driver:
++ * Copyright (c) 2015, Christoph Hellwig.
++ * Copyright (c) 2015, Intel Corporation.
++ */
++#include <linux/platform_device.h>
++#include <linux/memory_hotplug.h>
++#include <linux/libnvdimm.h>
++#include <linux/module.h>
++#include <linux/numa.h>
++#include <linux/slab.h>
++#include <linux/io.h>
++#include <linux/of.h>
 +
-+	if (bpf_get_ksyms(&syms, &cnt, true)) {
-+		fprintf(stderr, "failed to get ksyms\n");
-+		exit(1);
++#include <uapi/linux/ndctl.h>
++
++#define LABEL_AREA_SIZE	SZ_128K
++
++struct ramdax_dimm {
++	struct nvdimm *nvdimm;
++	void *label_area;
++};
++
++static void ramdax_remove(struct platform_device *pdev)
++{
++	struct nvdimm_bus *nvdimm_bus = platform_get_drvdata(pdev);
++
++	/* FIXME: cleanup dimm and region devices */
++
++	nvdimm_bus_unregister(nvdimm_bus);
++}
++
++static int ramdax_register_region(struct resource *res,
++				    struct nvdimm *nvdimm,
++				    struct nvdimm_bus *nvdimm_bus)
++{
++	struct nd_mapping_desc mapping;
++	struct nd_region_desc ndr_desc;
++	struct nd_interleave_set *nd_set;
++	int nid = phys_to_target_node(res->start);
++
++	nd_set = kzalloc(sizeof(*nd_set), GFP_KERNEL);
++	if (!nd_set)
++		return -ENOMEM;
++
++	nd_set->cookie1 = 0xcafebeefcafebeef;
++	nd_set->cookie2 = nd_set->cookie1;
++	nd_set->altcookie = nd_set->cookie1;
++
++	memset(&mapping, 0, sizeof(mapping));
++	mapping.nvdimm = nvdimm;
++	mapping.start = 0;
++	mapping.size = resource_size(res) - LABEL_AREA_SIZE;
++
++	memset(&ndr_desc, 0, sizeof(ndr_desc));
++	ndr_desc.res = res;
++	ndr_desc.numa_node = numa_map_to_online_node(nid);
++	ndr_desc.target_node = nid;
++	ndr_desc.num_mappings = 1;
++	ndr_desc.mapping = &mapping;
++	ndr_desc.nd_set = nd_set;
++
++	if (!nvdimm_pmem_region_create(nvdimm_bus, &ndr_desc))
++		goto err_free_nd_set;
++
++	return 0;
++
++err_free_nd_set:
++	kfree(nd_set);
++	return -ENXIO;
++}
++
++static int ramdax_register_dimm(struct resource *res, void *data)
++{
++	resource_size_t start = res->start;
++	resource_size_t size = resource_size(res);
++	unsigned long flags = 0, cmd_mask = 0;
++	struct nvdimm_bus *nvdimm_bus = data;
++	struct ramdax_dimm *dimm;
++	int err;
++
++	dimm = kzalloc(sizeof(*dimm), GFP_KERNEL);
++	if (!dimm)
++		return -ENOMEM;
++
++	dimm->label_area = memremap(start + size - LABEL_AREA_SIZE,
++				    LABEL_AREA_SIZE, MEMREMAP_WB);
++	if (!dimm->label_area)
++		goto err_free_dimm;
++
++	set_bit(NDD_LABELING, &flags);
++	set_bit(NDD_REGISTER_SYNC, &flags);
++	set_bit(ND_CMD_GET_CONFIG_SIZE, &cmd_mask);
++	set_bit(ND_CMD_GET_CONFIG_DATA, &cmd_mask);
++	set_bit(ND_CMD_SET_CONFIG_DATA, &cmd_mask);
++	dimm->nvdimm = nvdimm_create(nvdimm_bus, dimm,
++				     /* dimm_attribute_groups */ NULL,
++				     flags, cmd_mask, 0, NULL);
++	if (!dimm->nvdimm) {
++		err = -ENOMEM;
++		goto err_unmap_label;
 +	}
 +
-+	opts.syms = (const char **) syms;
-+	opts.cnt = cnt;
-+	opts.retprobe = kretprobe;
-+	/* attach empty to all the kernel functions except bpf_get_numa_node_id. */
-+	if (!bpf_program__attach_kprobe_multi_opts(empty, NULL, &opts)) {
-+		fprintf(stderr, "failed to attach bpf_program__attach_kprobe_multi_opts to all\n");
-+		exit(1);
-+	}
++	err = ramdax_register_region(res, dimm->nvdimm, nvdimm_bus);
++	if (err)
++		goto err_remove_nvdimm;
++
++	return 0;
++
++err_remove_nvdimm:
++	nvdimm_delete(dimm->nvdimm);
++err_unmap_label:
++	memunmap(dimm->label_area);
++err_free_dimm:
++	kfree(dimm);
++	return err;
 +}
 +
-+static void trigger_kprobe_multi_all_setup(void)
++static int ramdax_get_config_size(struct nvdimm *nvdimm, int buf_len,
++				    struct nd_cmd_get_config_size *cmd)
 +{
-+	struct bpf_program *prog, *empty;
++	if (sizeof(*cmd) > buf_len)
++		return -EINVAL;
 +
-+	setup_ctx();
-+	empty = ctx.skel->progs.bench_kprobe_multi_empty;
-+	prog = ctx.skel->progs.bench_trigger_kprobe_multi;
-+	bpf_program__set_autoload(empty, true);
-+	bpf_program__set_autoload(prog, true);
-+	load_ctx();
++	*cmd = (struct nd_cmd_get_config_size){
++		.status = 0,
++		.config_size = LABEL_AREA_SIZE,
++		.max_xfer = 8,
++	};
 +
-+	attach_ksyms_all(empty, false);
-+	attach_bpf(prog);
-+}
-+
-+static void trigger_kretprobe_multi_all_setup(void)
-+{
-+	struct bpf_program *prog, *empty;
-+
-+	setup_ctx();
-+	empty = ctx.skel->progs.bench_kretprobe_multi_empty;
-+	prog = ctx.skel->progs.bench_trigger_kretprobe_multi;
-+	bpf_program__set_autoload(empty, true);
-+	bpf_program__set_autoload(prog, true);
-+	load_ctx();
-+
-+	attach_ksyms_all(empty, true);
-+	attach_bpf(prog);
-+}
-+
- static void trigger_fexit_setup(void)
- {
- 	setup_ctx();
-@@ -512,6 +563,8 @@ BENCH_TRIG_KERNEL(kretprobe, "kretprobe");
- BENCH_TRIG_KERNEL(kprobe_multi, "kprobe-multi");
- BENCH_TRIG_KERNEL(kretprobe_multi, "kretprobe-multi");
- BENCH_TRIG_KERNEL(fentry, "fentry");
-+BENCH_TRIG_KERNEL(kprobe_multi_all, "kprobe-multi-all");
-+BENCH_TRIG_KERNEL(kretprobe_multi_all, "kretprobe-multi-all");
- BENCH_TRIG_KERNEL(fexit, "fexit");
- BENCH_TRIG_KERNEL(fmodret, "fmodret");
- BENCH_TRIG_KERNEL(tp, "tp");
-diff --git a/tools/testing/selftests/bpf/benchs/run_bench_trigger.sh b/tools/testing/selftests/bpf/benchs/run_bench_trigger.sh
-index a690f5a68b6b..f7573708a0c3 100755
---- a/tools/testing/selftests/bpf/benchs/run_bench_trigger.sh
-+++ b/tools/testing/selftests/bpf/benchs/run_bench_trigger.sh
-@@ -6,8 +6,8 @@ def_tests=( \
- 	usermode-count kernel-count syscall-count \
- 	fentry fexit fmodret \
- 	rawtp tp \
--	kprobe kprobe-multi \
--	kretprobe kretprobe-multi \
-+	kprobe kprobe-multi kprobe-multi-all \
-+	kretprobe kretprobe-multi kretprobe-multi-all \
- )
- 
- tests=("$@")
-diff --git a/tools/testing/selftests/bpf/progs/trigger_bench.c b/tools/testing/selftests/bpf/progs/trigger_bench.c
-index 044a6d78923e..3d5f30c29ae3 100644
---- a/tools/testing/selftests/bpf/progs/trigger_bench.c
-+++ b/tools/testing/selftests/bpf/progs/trigger_bench.c
-@@ -97,6 +97,12 @@ int bench_trigger_kprobe_multi(void *ctx)
- 	return 0;
- }
- 
-+SEC("?kprobe.multi/bpf_get_numa_node_id")
-+int bench_kprobe_multi_empty(void *ctx)
-+{
 +	return 0;
 +}
 +
- SEC("?kretprobe.multi/bpf_get_numa_node_id")
- int bench_trigger_kretprobe_multi(void *ctx)
- {
-@@ -104,6 +110,12 @@ int bench_trigger_kretprobe_multi(void *ctx)
- 	return 0;
- }
- 
-+SEC("?kretprobe.multi/bpf_get_numa_node_id")
-+int bench_kretprobe_multi_empty(void *ctx)
++static int ramdax_get_config_data(struct nvdimm *nvdimm, int buf_len,
++				    struct nd_cmd_get_config_data_hdr *cmd)
 +{
++	struct ramdax_dimm *dimm = nvdimm_provider_data(nvdimm);
++
++	if (sizeof(*cmd) > buf_len)
++		return -EINVAL;
++	if (struct_size(cmd, out_buf, cmd->in_length) > buf_len)
++		return -EINVAL;
++	if (cmd->in_offset + cmd->in_length > LABEL_AREA_SIZE)
++		return -EINVAL;
++
++	memcpy(cmd->out_buf, dimm->label_area + cmd->in_offset, cmd->in_length);
++
 +	return 0;
 +}
 +
- SEC("?fentry/bpf_get_numa_node_id")
- int bench_trigger_fentry(void *ctx)
- {
-diff --git a/tools/testing/selftests/bpf/trace_helpers.c b/tools/testing/selftests/bpf/trace_helpers.c
-index 9577979bd84d..171987627f3a 100644
---- a/tools/testing/selftests/bpf/trace_helpers.c
-+++ b/tools/testing/selftests/bpf/trace_helpers.c
-@@ -549,6 +549,7 @@ static const char * const trace_blacklist[] = {
- 	"preempt_count_sub",
- 	"__rcu_read_lock",
- 	"__rcu_read_unlock",
-+	"bpf_get_numa_node_id",
- };
- 
- static bool skip_entry(char *name)
++static int ramdax_set_config_data(struct nvdimm *nvdimm, int buf_len,
++				    struct nd_cmd_set_config_hdr *cmd)
++{
++	struct ramdax_dimm *dimm = nvdimm_provider_data(nvdimm);
++
++	if (sizeof(*cmd) > buf_len)
++		return -EINVAL;
++	if (struct_size(cmd, in_buf, cmd->in_length) > buf_len)
++		return -EINVAL;
++	if (cmd->in_offset + cmd->in_length > LABEL_AREA_SIZE)
++		return -EINVAL;
++
++	memcpy(dimm->label_area + cmd->in_offset, cmd->in_buf, cmd->in_length);
++
++	return 0;
++}
++
++static int ramdax_nvdimm_ctl(struct nvdimm *nvdimm, unsigned int cmd,
++			       void *buf, unsigned int buf_len)
++{
++	unsigned long cmd_mask = nvdimm_cmd_mask(nvdimm);
++
++	if (!test_bit(cmd, &cmd_mask))
++		return -ENOTTY;
++
++	switch (cmd) {
++	case ND_CMD_GET_CONFIG_SIZE:
++		return ramdax_get_config_size(nvdimm, buf_len, buf);
++	case ND_CMD_GET_CONFIG_DATA:
++		return ramdax_get_config_data(nvdimm, buf_len, buf);
++	case ND_CMD_SET_CONFIG_DATA:
++		return ramdax_set_config_data(nvdimm, buf_len, buf);
++	default:
++		return -ENOTTY;
++	}
++}
++
++static int ramdax_ctl(struct nvdimm_bus_descriptor *nd_desc,
++			 struct nvdimm *nvdimm, unsigned int cmd, void *buf,
++			 unsigned int buf_len, int *cmd_rc)
++{
++	/*
++	 * No firmware response to translate, let the transport error
++	 * code take precedence.
++	 */
++	*cmd_rc = 0;
++
++	if (!nvdimm)
++		return -ENOTTY;
++	return ramdax_nvdimm_ctl(nvdimm, cmd, buf, buf_len);
++}
++
++static int ramdax_probe_of(struct platform_device *pdev,
++			     struct nvdimm_bus *bus, struct device_node *np)
++{
++	int err;
++
++	for (int i = 0; i < pdev->num_resources; i++) {
++		err = ramdax_register_dimm(&pdev->resource[i], bus);
++		if (err)
++			goto err_unregister;
++	}
++
++	return 0;
++
++err_unregister:
++	/*
++	 * FIXME: should we unregister the dimms that were registered
++	 * successfully
++	 */
++	return err;
++}
++
++static int ramdax_probe(struct platform_device *pdev)
++{
++	static struct nvdimm_bus_descriptor nd_desc;
++	struct device *dev = &pdev->dev;
++	struct nvdimm_bus *nvdimm_bus;
++	struct device_node *np;
++	int rc = -ENXIO;
++
++	nd_desc.provider_name = "ramdax";
++	nd_desc.module = THIS_MODULE;
++	nd_desc.ndctl = ramdax_ctl;
++	nvdimm_bus = nvdimm_bus_register(dev, &nd_desc);
++	if (!nvdimm_bus)
++		goto err;
++
++	np = dev_of_node(&pdev->dev);
++	if (np)
++		rc = ramdax_probe_of(pdev, nvdimm_bus, np);
++	else
++		rc = walk_iomem_res_desc(IORES_DESC_PERSISTENT_MEMORY_LEGACY,
++					 IORESOURCE_MEM, 0, -1, nvdimm_bus,
++					 ramdax_register_dimm);
++	if (rc)
++		goto err;
++
++	platform_set_drvdata(pdev, nvdimm_bus);
++
++	return 0;
++err:
++	nvdimm_bus_unregister(nvdimm_bus);
++	return rc;
++}
++
++#ifdef CONFIG_OF
++static const struct of_device_id ramdax_of_matches[] = {
++	{ .compatible = "pmem-region", },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, ramdax_of_matches);
++#endif
++
++static struct platform_driver ramdax_driver = {
++	.probe = ramdax_probe,
++	.remove = ramdax_remove,
++	.driver = {
++		.name = "e820_pmem",
++		.of_match_table = of_match_ptr(ramdax_of_matches),
++	},
++};
++
++module_platform_driver(ramdax_driver);
++
++MODULE_DESCRIPTION("NVDIMM support for e820 type-12 memory and OF pmem-region");
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Microsoft Corporation");
 -- 
-2.51.0
+2.50.1
 
 
