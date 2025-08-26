@@ -1,136 +1,178 @@
-Return-Path: <linux-kernel+bounces-785914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5813EB3526D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:59:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7139B35273
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:02:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 275692416C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:59:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD569241A9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960A22D3A9D;
-	Tue, 26 Aug 2025 03:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89FA2BE657;
+	Tue, 26 Aug 2025 04:02:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jtlT+5lK"
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="KEvHDxwV"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB659460
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 03:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B9123506F;
+	Tue, 26 Aug 2025 04:02:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756180761; cv=none; b=ku02jUBcG6lh8KKP01QCfmQCDovmlIHtJJ/ZIZTVMErbMODMhsODYAjg119hMOVVkILdb2YS3k8Nz+FWlYkYle0hSTqr4SK5Re778XVXyCLaZCFpqmiOR2g4JYbIqRZy/Q5JDjdtoCcXo6+jzXsiqbkPoiNndD6L8xEJc7g4Whg=
+	t=1756180948; cv=none; b=h7Gw0Hs2h/eDJscoGj5g5u0FwJJ2QaSPNKXJ0f+/LbqjzAxCSEQPaSUFk/hkhGHH49QkNT/fQYfXavvvsS//nwlvztyjoz6qQVJUH5UEezPMop3iijtEYOab4lIDpKOKVeAsHiSGK/rMzQBmtWCjIOm47mYwY4NPv8VIU/fKdMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756180761; c=relaxed/simple;
-	bh=ku5dJ7mWu2FTM7kxUCxraGoy0CLlKBaMMxyPMUwygcQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q6UycKZyeUomIBnQbk4D4yiLCB2coRB7TnA1lJ7JFrS5UA3Zi7mJPbS140GFbyjTRjnh/7fqkBV76FsEzqiqk6FSWMMZLc8wZjcJmDOI/2tf6Di0NAj0X/Atx91bALsr86LnkHvTVtkejowL8JZyZuWbBxS36Vot5dbaXLS2y9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jtlT+5lK; arc=none smtp.client-ip=209.85.166.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3edcc634157so108665ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 20:59:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756180758; x=1756785558; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Yo9WnTx9CPiI42N/g6zWrAbo0QVqmrz9KkiX1kCO74s=;
-        b=jtlT+5lKN/fDKoQeheJPYvHAVagqyU+JSZvC8lfa6D7sRr5Cqqeu9a5LjvOwrdjH8s
-         2yfgwxYpZX49iRa9M2pUHapFlOe7rKA17Xz7HJBpyMSrdukkfvLutbOT+LoPhHFANyHE
-         kX6dKvA3BFjb7hnZl7/W8ZjYwZOivFoDoQ45ZvkhezsPR3dQpEjubxBbfn/d0CoSj5Gz
-         o6w8+Z8sNVk8HHR3rvC/AwExFmW5Og8p+Ejt3fG3wOt1r+EgDX5ysNvy+rz5efO2eEsy
-         BDS2cf15WMgawERpjq122dIcaxYSkjr97fDduGEuEevjjVBlE9GT/G7/gLdKIB7zDbg8
-         NH3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756180758; x=1756785558;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Yo9WnTx9CPiI42N/g6zWrAbo0QVqmrz9KkiX1kCO74s=;
-        b=or25K+X18rYU6gCTCxFwFN2BTSDZoHqkUbWJgwunmzQB4v47ry+YrB0STEKfULxEsZ
-         V9irk0GBVpDXSO581BWAQZ1NqJCdg0ebxj5r5PmbsedgvvWC4U7fbl86jhNTnzBo9YpB
-         hEBaVstP36LntRjFTFl2Z/21P0h27dK74b3xeNx7ss+ou5tekRLv1uADpam35v49GEiI
-         Yy0mPRia2lh2yThiJfKn5BYzjE6JqAbvggqVEKXVvD6sn8qoJuI2Ymuj01F+L5o+lxz0
-         GyEa+Wh7zAIIRa6aNoVA31uB78+kx2RR/vKImIFzRh16MGI8VcOvqHKPj3ka6ZjLYgsa
-         HaAw==
-X-Forwarded-Encrypted: i=1; AJvYcCWeOq+MxoMC7xWQ35TUA6gVVjF1duc0RvsYHB8LYAphmhaEdxCFP2AUGWCJCCU4m++D8gwSKRScQGJs6zc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywja7TtXn6re846yJh4F+7yb5/CnrHZTys4Otx1oLjZJ+5I/dPp
-	xAn9OcpOeIe71H4gacGBzLhXSFOnlyvIr6FDNas2ISEayzd7yjEXU/fa1rdYzncBMtenP9aztJF
-	SynX3mdqpGbxeJVj3UcnPFpwjFnICqUQ5Qc4o4ANj
-X-Gm-Gg: ASbGncv5lr8dhBew788ww5oiHyDi5bE/kCIrPBLQeZ14Xrv5mD6/ofgb+hYvJXZZGh1
-	obRLIzjg+D2V22xC4K3CRSW35oDYHrkivsK2DzBpnhutdvR0YM5oX3rxx8pvjrHRpb1bfo1otJG
-	AizicyHdlFpQMii4ENEv+QjdCelENfLDmhqTZRPM18JyxvCdy+/Z0JgVv8EozlIhbD7w0X1nzGS
-	PNF0tuUQ+oVDnZ/sWsrpuUAFM5cl6CPbL9swcx2DWzqA0IKj6GAVodKxcvDHTwuzTk7RwQoIR6S
-	0UXQ6C62
-X-Google-Smtp-Source: AGHT+IF1HMxC9ND4cbNs4BiCvmeilneBno3bxqFqiKxWpcNNcNxgC7LaTwMjUts1hDaLIlv9jLrTZ845fGAPRxN//xw=
-X-Received: by 2002:a05:6e02:1fce:b0:3ec:a6bb:b116 with SMTP id
- e9e14a558f8ab-3eea3ff77abmr2110145ab.3.1756180758266; Mon, 25 Aug 2025
- 20:59:18 -0700 (PDT)
+	s=arc-20240116; t=1756180948; c=relaxed/simple;
+	bh=Vkp7bKYS7B836rWMUnkl9DrBLTWbnfbQcktrkquBl00=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g+6QcK7KV9e2f2V4af5JRBbI5b9WO+bcmJe9pcKBvNvDu0+yO/2RqJwIbAKzN+dqbbdkWL6O9ZnJwu1BMsYnZxDs82kGXX9mpM5Dht86cNzSQrcEKSWe3IfMouEW6/FyWqfqgBXuvsKe4uXx2fH7KbdJBLgM43eCJqHJw+SdZUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=KEvHDxwV; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57PMN3vp009468;
+	Tue, 26 Aug 2025 04:02:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=YfeP+O
+	6BaUVB+uLXFLt7iv8l0N49hfo+cNYJaKgKXMs=; b=KEvHDxwVkNiPNd4MQzPzkJ
+	ZfrLzE+d3ulEzkJgkTfxlZkpjADuH7DGoCYWkSN+SrncPe6itC/+y4dSuUs3ZVo4
+	bYDhcOMK05pNwJGxRmVcD4mISI3weUdYQRvRgbW301ei6Gm0RYfUvJetvz2O6YT5
+	dx1N3CaxzcXwcr6GAXuOuER+Aq6XPSgZN/jiaQu5H1CFKdPmj9T+iL6b54tEuT34
+	mCGTgsmqFnkNfMB97N5hTvKixpk1qrFQAG2YPRKLGipZ2VY2vdq+RDCC1UmMJNGf
+	hWYck71xGrfj7PynmLMuZTqAKM6Bs4yM3jpIT64rWTHMragS3+5GRKnuSxOSJiow
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48q42hveae-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Aug 2025 04:02:06 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57Q4258n006480;
+	Tue, 26 Aug 2025 04:02:05 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48q42hveaa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Aug 2025 04:02:05 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57Q40HPY002571;
+	Tue, 26 Aug 2025 04:02:05 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 48qt6m8r4c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Aug 2025 04:02:04 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57Q424Tv11338886
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 26 Aug 2025 04:02:04 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4E91558059;
+	Tue, 26 Aug 2025 04:02:04 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7E6455804B;
+	Tue, 26 Aug 2025 04:02:00 +0000 (GMT)
+Received: from [9.43.67.173] (unknown [9.43.67.173])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 26 Aug 2025 04:02:00 +0000 (GMT)
+Message-ID: <77eb1eb6-6ccc-451b-a8c6-bb05a8fbb309@linux.ibm.com>
+Date: Tue, 26 Aug 2025 09:31:55 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250801034004.3314737-1-guanyulin@google.com>
- <20250801034004.3314737-3-guanyulin@google.com> <2025081326-guileless-lego-ec59@gregkh>
-In-Reply-To: <2025081326-guileless-lego-ec59@gregkh>
-From: Guan-Yu Lin <guanyulin@google.com>
-Date: Tue, 26 Aug 2025 11:59:00 +0800
-X-Gm-Features: Ac12FXyoIUTm8umMVeRWuavw5Mt4DMflONeTo04Ip45unGqnZBeUQSgzyrnb07c
-Message-ID: <CAOuDEK3KZHgY7Z2mBOuEhuUn8eLfjS5BPcx3kaMqVYLUhOavWA@mail.gmail.com>
-Subject: Re: [PATCH v15 2/4] usb: offload: add apis for offload usage tracking
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: mathias.nyman@intel.com, hannelotta@gmail.com, zijun.hu@oss.qualcomm.com, 
-	xu.yang_2@nxp.com, stern@rowland.harvard.edu, 
-	andriy.shevchenko@linux.intel.com, ben@decadent.org.uk, 
-	quic_wcheng@quicinc.com, krzysztof.kozlowski@linaro.org, 
-	dh10.jung@samsung.com, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/11] tools headers: Sync powerpc headers with the kernel
+ source
+To: Namhyung Kim <namhyung@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+References: <20250825215904.2594216-1-namhyung@kernel.org>
+ <20250825215904.2594216-7-namhyung@kernel.org>
+Content-Language: en-US
+From: Madhavan Srinivasan <maddy@linux.ibm.com>
+In-Reply-To: <20250825215904.2594216-7-namhyung@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAxMCBTYWx0ZWRfX6+WJqBmcuEjX
+ LFMCyXpSS1nfnZMm4Go4qgjTKO2MjMWjUyBZGls7alAIDyx6Qy7GuhuQs85DWtsR8/BPJ+iwL0y
+ zRViy0xFOfdmWZmHifhNCiV+cxhvhMeVdlFz1wZ6j3OVUOKBDEj4ZzAcrOC6eXpHKonnqUXRh5j
+ LP6hk7HqkZp9SwqTdZNljh82HGx8gqoqlitMofrt7DNUwaqxgUIrnDC2P5KIA4JvH+fWuK6D5YI
+ wCeFXJvVIXtYRgDMiDySFoXYEXXXudAuT1oslYgWAxz5Xp0I5uaSd8hpl7E2qXRihwY4F6e2wQL
+ pmET4TSF85ev79hLOsfk9ZCszxvlv2f1W0yepFOKzlpfKqW85IYvSxU63IiSW5Rk0JRKIuQ0Bfg
+ LHJjkMri
+X-Proofpoint-ORIG-GUID: WyYRZnz7c_1Ckcqm9GS_H-jZPMC8XZ1W
+X-Proofpoint-GUID: lsKkDTWoiQJ77dGWmuptvpdz28NzaBSw
+X-Authority-Analysis: v=2.4 cv=evffzppX c=1 sm=1 tr=0 ts=68ad31be cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=voM4FWlXAAAA:8
+ a=VwQbUJbxAAAA:8 a=tchKjDB3tBMYg2FPuD4A:9 a=QEXdDO2ut3YA:10
+ a=IC2XNlieTeVoXbcui8wp:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-26_01,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 adultscore=0 malwarescore=0 spamscore=0 bulkscore=0
+ impostorscore=0 clxscore=1011 priorityscore=1501 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230010
 
-On Wed, Aug 13, 2025 at 10:50=E2=80=AFPM Greg KH <gregkh@linuxfoundation.or=
-g> wrote:
->
-> On Fri, Aug 01, 2025 at 03:39:31AM +0000, Guan-Yu Lin wrote:
-> > +
-> > +config USB_OFFLOAD
-> > +     bool "Enable USB offload feature"
->
-> I'm confused, we already have a "USB offload feature" that went into the
-> last kernel release, why do we need a separate config option for this as
-> well?  Shouldn't this code only get built if the drivers that need it
-> select it automatically?  Forcing distros to configure this isn't
-> generally a good idea if at all possible.
->
 
-Based on the discussion in v13, a new, separate USB configuration
-option is required to avoid core USB functions being enabled or
-disabled via an xhci-specific option. The USB offload feature involves
-a sideband entity that can access xhci resources, which, from the USB
-driver's viewpoint, means USB transfers are offloaded to this other
-entity. Therefore, the name "USB_OFFLOAD" was chosen to reflect this
-functionality.
 
->
-> > +     depends on USB
-> > +     depends on USB_XHCI_SIDEBAND_SUSPEND
->
-> Especially because all "desktops" do not want this code selected, so
-> having it in all distros feels like a waste to me.
->
-> thanks,
->
-> greg k-h
+On 8/26/25 3:28 AM, Namhyung Kim wrote:
+> To pick up the changes in this cset:
+> 
+>   69bf2053608423cb powerpc: Drop GPL boilerplate text with obsolete FSF address
+> 
+> This addresses these perf build warnings:
+> 
+>   Warning: Kernel ABI header differences:
+>     diff -u tools/arch/powerpc/include/uapi/asm/kvm.h arch/powerpc/include/uapi/asm/kvm.h
+> 
+> Please see tools/include/uapi/README for further details.
+> 
 
-For the config keywords, we could automatically select USB_OFFLOAD
-once USB_XHCI_SIDEBAND_SUSPEND is selected to reduce configuration
-efforts.
+Nice catch. I missed to remove in tools side. My bad. 
+Thanks for fixing.
 
-Regards,
-Guan-Yu
+Acked-by: Madhavan Srinivasan <maddy@linux.ibm.com>
+
+
+> Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+> Cc: linuxppc-dev@lists.ozlabs.org
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+>  tools/arch/powerpc/include/uapi/asm/kvm.h | 13 -------------
+>  1 file changed, 13 deletions(-)
+> 
+> diff --git a/tools/arch/powerpc/include/uapi/asm/kvm.h b/tools/arch/powerpc/include/uapi/asm/kvm.h
+> index eaeda001784ebb6f..077c5437f5219b05 100644
+> --- a/tools/arch/powerpc/include/uapi/asm/kvm.h
+> +++ b/tools/arch/powerpc/include/uapi/asm/kvm.h
+> @@ -1,18 +1,5 @@
+>  /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  /*
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License, version 2, as
+> - * published by the Free Software Foundation.
+> - *
+> - * This program is distributed in the hope that it will be useful,
+> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> - * GNU General Public License for more details.
+> - *
+> - * You should have received a copy of the GNU General Public License
+> - * along with this program; if not, write to the Free Software
+> - * Foundation, 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+> - *
+>   * Copyright IBM Corp. 2007
+>   *
+>   * Authors: Hollis Blanchard <hollisb@us.ibm.com>
+
 
