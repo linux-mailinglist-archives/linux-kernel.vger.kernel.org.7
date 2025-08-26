@@ -1,148 +1,178 @@
-Return-Path: <linux-kernel+bounces-786490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBC69B35A7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:56:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28AD8B35A81
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:56:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7028C7B30AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:54:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19B131B63EE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:57:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC12301021;
-	Tue, 26 Aug 2025 10:55:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3337D2FDC44;
+	Tue, 26 Aug 2025 10:56:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="XiChvNvb"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="naNR+Ibh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C7D2248A5;
-	Tue, 26 Aug 2025 10:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B0D2248A5
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 10:56:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756205758; cv=none; b=Pj0w3tj1XpuZecTjHn8N+J6ypDhVG4km5y89ZtL6Egyl/G3TuksLS9/7y8TUhPymwM3oegXA4FNxgme+zGPlWeH0mbtZYiEg846HfRKGysWP/I4fR+5CMQpjpbOtyDV8/t/r+TT/f71Mr/5EUIfq3RlU4sHzAmATbAGHmgw8fzs=
+	t=1756205805; cv=none; b=h9WXTGD0eieQEU+RxcKfUWnf1e25cgpeGsaC6mBkrjLA1xYg1sa1uAXKcLQtqe/BFLVwT89EH1CSkie56oLE+H28b72P7bYTmB3X+2JmiVA4M+Ry5MgLDRuVHAOQYCgnF8BYCb0vS5oIwBJH/nDyH6ROtaSgCSisVCr4+evHYMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756205758; c=relaxed/simple;
-	bh=HpMXmXyWiHOCQMwM9m6pUVZyTdiCf8166ZcDeX/hpjk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BbS6P3Woyeg49LEernSzWlLq5hD5JsGZkY2AiV5A8H7u1msbL9Pu4lSSSwBtRqHrrSYccBYgxIp/jFrHcOUze0D5qeEy9m+Y+XkQyBZ024STIaO6UWka22VWolLRjnn6twERNjA8+nL45VnAMz0tSAqeRY+cncSLsLlp7qv5o10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=XiChvNvb; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:Content-Type:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-To:Resent-Cc:
-	Resent-Message-ID:In-Reply-To:References;
-	bh=ZVqiOkm+IDB3wo6ENlUKoe7kWHPIvSPtFHRBKYevkS4=; t=1756205756; x=1757415356; 
-	b=XiChvNvbwtSZXx9+k2GBQIBDeZKMhyxG+uo4TghQ4iWNWiHgFtSSd3ngaBQZ1/pvhRdETiUjMuo
-	JPL2M44PuBkzt+WeUHCWHAHwTHdHzFOQ2LY1mgHQgbCo5+N+I4Ai80UVZr2vTJxdy5N+V1Sfi9GgH
-	DY3tcFoLVcZuuaOAYUTo95Y2p2sLrmP0SqQo4Br+e4/AhQMc4RSWbssskJ4R0YwYNzGeteH67/siS
-	fEHHM4rzeV/ml5xfryGjFreI3cT73PVAL9rKNdARPzeRUFTkx3i0aQBp4W7Uh02rNK5PXeDwuSCbr
-	BapRarIN2kJhIaYx8yGjvv406m80hjSDPdmQ==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1uqrL8-00000003X0e-1m4z;
-	Tue, 26 Aug 2025 12:55:46 +0200
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Pavel Machek <pavel@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH] PM: sleep: annotate RCU list iterations
-Date: Tue, 26 Aug 2025 12:55:31 +0200
-Message-ID: <20250826125541.7143e172c124.I9ecf55da46ccf33778f2c018a82e1819d815b348@changeid>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1756205805; c=relaxed/simple;
+	bh=Cima1+Iqo6LOGJ1YzdhrB4htTTHoYWHnhTCKCHSN8l0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=R4CokdW+TBwvWXPHbFjf8Ov4h0WQMFfeYdQASaMI8EEDH1Rz6CkV3m3TFPNMtJSrlVahlTwTbU8/IMhvjv38uTiLwBgh7I+OesD7gjf6cEy84kQftEWy8pQt4zoxvfpxdysFQe/DzACyUq92gM1AnpamjHyUSsiWjKW8EdvQvxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=naNR+Ibh; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756205803; x=1787741803;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=Cima1+Iqo6LOGJ1YzdhrB4htTTHoYWHnhTCKCHSN8l0=;
+  b=naNR+IbhcvzF5AUEoImvrt2MxfiC4V4T/1k3FruRsVk84Hak7fzo9PiI
+   QnDvthm/x9JjyjaIdONoWEHcJnTt0oyGrWoKyNv073wzh0NrsF+7xucee
+   l2tFb9jyd/NnlpIyKcCqzvSwcNXXey40Cu+Sf7NKS3JS7dNwYzHP0+oC4
+   tHWaeq90S7jdqDkZptxEgs/rr3rHLbtbKlPQW1HnEZRaZTaEg3QV6Fiaz
+   rQr3VFu/s9wpBiNOKXBSkmPZkTJ5giK5fP5XofJrHmBSRAPotDRR3yDkD
+   +To8xaZBLH3ysxhTlXLOtTWBKSobL537WVj8flq9iYmKKP4kaI0javYPS
+   g==;
+X-CSE-ConnectionGUID: LB3xhP7RT3GIZhbIo6HV+w==
+X-CSE-MsgGUID: UYaTPKq+ToK8DUJ4ExWPfA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11533"; a="46011583"
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="46011583"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 03:56:43 -0700
+X-CSE-ConnectionGUID: OBVlZwNiRm2Dws0pyVQv/A==
+X-CSE-MsgGUID: KKJuS7akRC2UpPCyCabZ7w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="169721311"
+Received: from hrotuna-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.97])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 03:56:38 -0700
+From: Jani Nikula <jani.nikula@intel.com>
+To: Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+ linux-kernel@vger.kernel.org
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>, Dibin Moolakadan
+ Subrahmanian <dibin.moolakadan.subrahmanian@intel.com>, Imre Deak
+ <imre.deak@intel.com>, David Laight <david.laight.linux@gmail.com>, Geert
+ Uytterhoeven <geert+renesas@glider.be>, Matt Wagantall
+ <mattw@codeaurora.org>, Dejin Zheng <zhengdejin5@gmail.com>,
+ intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, Andrew
+ Morton <akpm@linux-foundation.org>, Sima Vetter <sima@ffwll.ch>, Dave
+ Airlie <airlied@redhat.com>
+Subject: Re: [PATCH v2 1/4] iopoll: Generalize read_poll_timeout() into
+ poll_timeout_us()
+In-Reply-To: <6509cf62cc5c28e1626a6ee82c9f9caf62a7ef4b@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250702223439.19752-1-ville.syrjala@linux.intel.com>
+ <20250708131634.1524-1-ville.syrjala@linux.intel.com>
+ <aHacCnkuMCwNYin8@intel.com>
+ <6509cf62cc5c28e1626a6ee82c9f9caf62a7ef4b@intel.com>
+Date: Tue, 26 Aug 2025 13:56:34 +0300
+Message-ID: <cd2c7eb2b6877704534620098374075416514ce0@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Johannes Berg <johannes.berg@intel.com>
+On Thu, 31 Jul 2025, Jani Nikula <jani.nikula@intel.com> wrote:
+> On Tue, 15 Jul 2025, Ville Syrj=C3=A4l=C3=A4 <ville.syrjala@linux.intel.c=
+om> wrote:
+>> On Tue, Jul 08, 2025 at 04:16:34PM +0300, Ville Syrjala wrote:
+>>> From: Ville Syrj=C3=A4l=C3=A4 <ville.syrjala@linux.intel.com>
+>>>=20
+>>> While read_poll_timeout() & co. were originally introduced just
+>>> for simple I/O usage scenarios they have since been generalized to
+>>> be useful in more cases.
+>>>=20
+>>> However the interface is very cumbersome to use in the general case.
+>>> Attempt to make it more flexible by combining the 'op', 'var' and
+>>> 'args' parameter into just a single 'op' that the caller can fully
+>>> specify.
+>>>=20
+>>> For example i915 has one case where one might currently
+>>> have to write something like:
+>>> 	ret =3D read_poll_timeout(drm_dp_dpcd_read_byte, err,
+>>> 				err || (status & mask),
+>>> 				0 * 1000, 200 * 1000, false,
+>>> 				aux, DP_FEC_STATUS, &status);
+>>> which is practically illegible, but with the adjusted macro
+>>> we do:
+>>> 	ret =3D poll_timeout_us(err =3D drm_dp_dpcd_read_byte(aux, DP_FEC_STAT=
+US, &status),
+>>> 			      err || (status & mask),
+>>> 			      0 * 1000, 200 * 1000, false);
+>>> which much easier to understand.
+>>>=20
+>>> One could even combine the 'op' and 'cond'  parameters into
+>>> one, but that might make the caller a bit too unwieldly with
+>>> assignments and checks being done on the same statement.
+>>>=20
+>>> This makes poll_timeout_us() closer to the i915 __wait_for()
+>>> macro, with the main difference being that __wait_for() uses
+>>> expenential backoff as opposed to the fixed polling interval
+>>> used by poll_timeout_us(). Eventually we might be able to switch
+>>> (at least most of) i915 to use poll_timeout_us().
+>>>=20
+>>> v2: Fix typos (Jani)
+>>>     Fix delay_us docs for poll_timeout_us_atomic() (Jani)
+>>>=20
+>>> Cc: Lucas De Marchi <lucas.demarchi@intel.com>
+>>> Cc: Dibin Moolakadan Subrahmanian <dibin.moolakadan.subrahmanian@intel.=
+com>
+>>> Cc: Imre Deak <imre.deak@intel.com>
+>>> Cc: David Laight <david.laight.linux@gmail.com>
+>>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>>> Cc: Matt Wagantall <mattw@codeaurora.org>
+>>> Cc: Dejin Zheng <zhengdejin5@gmail.com>
+>>> Cc: intel-gfx@lists.freedesktop.org
+>>> Cc: intel-xe@lists.freedesktop.org
+>>> Cc: linux-kernel@vger.kernel.org
+>>> Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+>>> Signed-off-by: Ville Syrj=C3=A4l=C3=A4 <ville.syrjala@linux.intel.com>
+>>> ---
+>>>  include/linux/iopoll.h | 110 +++++++++++++++++++++++++++++------------
+>>>  1 file changed, 78 insertions(+), 32 deletions(-)
+>>
+>> Any thoughs how we should get this stuff in? Jani will need it for
+>> some i915 stuff once he returns from vacation, so I could just push
+>> it into drm-intel-next...
+>>
+>> Are people OK with that, or is there a better tree that could pick=20
+>> this up?
+>
+> Cc: Andrew
+>
+> The iopoll.h file is not in MAINTAINERS, and previous changes to it
+> appear to have gone through various trees. I'd like to base follow-up
+> work in i915 on this, but who could ack merging the patches via
+> drm-intel-next? Though doesn't look like anyone's acked the earlier
+> changes either...
 
-These iterations require the read lock, otherwise RCU
-lockdep will splat:
+Ville, can you submit this again, please?
 
-=============================
-WARNING: suspicious RCU usage
-6.17.0-rc3-00014-g31419c045d64 #6 Tainted: G           O
------------------------------
-drivers/base/power/main.c:1333 RCU-list traversed in non-reader section!!
+If we don't get any feedback from anyone, I'm just going to merge this
+via drm-intel-next.
 
-other info that might help us debug this:
+Cc: Dave, Sima.
 
-rcu_scheduler_active = 2, debug_locks = 1
-5 locks held by rtcwake/547:
- #0: 00000000643ab418 (sb_writers#6){.+.+}-{0:0}, at: file_start_write+0x2b/0x3a
- #1: 0000000067a0ca88 (&of->mutex#2){+.+.}-{4:4}, at: kernfs_fop_write_iter+0x181/0x24b
- #2: 00000000631eac40 (kn->active#3){.+.+}-{0:0}, at: kernfs_fop_write_iter+0x191/0x24b
- #3: 00000000609a1308 (system_transition_mutex){+.+.}-{4:4}, at: pm_suspend+0xaf/0x30b
- #4: 0000000060c0fdb0 (device_links_srcu){.+.+}-{0:0}, at: device_links_read_lock+0x75/0x98
 
-stack backtrace:
-CPU: 0 UID: 0 PID: 547 Comm: rtcwake Tainted: G           O        6.17.0-rc3-00014-g31419c045d64 #6 VOLUNTARY
-Tainted: [O]=OOT_MODULE
-Stack:
- 223721b3a80 6089eac6 00000001 00000001
- ffffff00 6089eac6 00000535 6086e528
- 721b3ac0 6003c294 00000000 60031fc0
-Call Trace:
- [<600407ed>] show_stack+0x10e/0x127
- [<6003c294>] dump_stack_lvl+0x77/0xc6
- [<6003c2fd>] dump_stack+0x1a/0x20
- [<600bc2f8>] lockdep_rcu_suspicious+0x116/0x13e
- [<603d8ea1>] dpm_async_suspend_superior+0x117/0x17e
- [<603d980f>] device_suspend+0x528/0x541
- [<603da24b>] dpm_suspend+0x1a2/0x267
- [<603da837>] dpm_suspend_start+0x5d/0x72
- [<600ca0c9>] suspend_devices_and_enter+0xab/0x736
- [...]
+BR,
+Jani.
 
-Add the fourth argument to the iteration to annotate
-this and avoid the splat.
 
-Fixes: 06799631d522 ("PM: sleep: Make async suspend handle suppliers like parents")
-Fixes: ed18738fff02 ("PM: sleep: Make async resume handle consumers like children")
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
----
-Honestly, not sure, maybe this should just be without _rcu?
----
- drivers/base/power/main.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-index dbf5456cd891..e80175486be7 100644
---- a/drivers/base/power/main.c
-+++ b/drivers/base/power/main.c
-@@ -675,7 +675,8 @@ static void dpm_async_resume_subordinate(struct device *dev, async_func_t func)
- 	idx = device_links_read_lock();
- 
- 	/* Start processing the device's "async" consumers. */
--	list_for_each_entry_rcu(link, &dev->links.consumers, s_node)
-+	list_for_each_entry_rcu(link, &dev->links.consumers, s_node,
-+				device_links_read_lock_held())
- 		if (READ_ONCE(link->status) != DL_STATE_DORMANT)
- 			dpm_async_with_cleanup(link->consumer, func);
- 
-@@ -1330,7 +1331,8 @@ static void dpm_async_suspend_superior(struct device *dev, async_func_t func)
- 	idx = device_links_read_lock();
- 
- 	/* Start processing the device's "async" suppliers. */
--	list_for_each_entry_rcu(link, &dev->links.suppliers, c_node)
-+	list_for_each_entry_rcu(link, &dev->links.suppliers, c_node,
-+				device_links_read_lock_held())
- 		if (READ_ONCE(link->status) != DL_STATE_DORMANT)
- 			dpm_async_with_cleanup(link->supplier, func);
- 
--- 
-2.51.0
-
+--=20
+Jani Nikula, Intel
 
