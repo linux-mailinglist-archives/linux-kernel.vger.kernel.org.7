@@ -1,444 +1,181 @@
-Return-Path: <linux-kernel+bounces-787173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 822D6B37273
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 20:45:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A3E9B37275
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 20:46:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46D053668FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:45:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 187B636637E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:46:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0212F4A1F;
-	Tue, 26 Aug 2025 18:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6207C2F546E;
+	Tue, 26 Aug 2025 18:46:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XOMpzUWK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gjZSRlT2"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2047.outbound.protection.outlook.com [40.107.95.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677721FE47B;
-	Tue, 26 Aug 2025 18:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756233948; cv=none; b=iolLuMym1g/QKAczCwU0ZE3i4311O/z//Z2nqLrHWXaleMnX/vO5KV+cxbUpG4QDFE9ChARzgnTOHv6DaiZhatAiba2o93kTZto/c5paD+Vd4wTCNhJziQ3auYbGfCQKBO3y5OSAmF+z2uUibzSV1VcGcZ28NS0yloGF+n+qZfw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756233948; c=relaxed/simple;
-	bh=XDFiBhjhLCDbW1y3W6Yfcx3QJxjwOMqbOOsClbuFiQ0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=ItEKzchoJ4meRyB6IhP09nZTHCVr92ctAw6YL9LgA9+9XqE4Ew7N+htENxB0B1PE869lEgXdWFiV9sWCnVYBEvSOaR8LPTwhQRjSegRD8dnSF0JJPbHiXdpNWB4mcF0FZNANtvUMFYBgPbzMXYzME5zadMEY8UE8k5e3817xJEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XOMpzUWK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA268C4CEF1;
-	Tue, 26 Aug 2025 18:45:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756233946;
-	bh=XDFiBhjhLCDbW1y3W6Yfcx3QJxjwOMqbOOsClbuFiQ0=;
-	h=Date:From:Subject:Cc:To:References:In-Reply-To:From;
-	b=XOMpzUWKjz2Fd88DJBgYJpWsA4i797ALFOd/71MUfT1ALiD1R2ivsHe1SgXHbfAzw
-	 yOK1yb46R6u8Yr0ebl5AH5SpUAh9H4xL9wFSLmI8pnHIu40/Qb7foh218StGrTkENI
-	 Ol3sTnboYAQGq8oF4lYiH6/neZ+t7uSir/6m6wNjL7+F21YCAcas0Sp8Jbe7SLweI2
-	 9O9gjthXU/IQ3cGTqw0bJu8NApROlQT8vRN2y/rDuiz+8/mc7MAOr+Yzfjt1OFkYX+
-	 bpOtDCR2I3KLyHjWtFfQIF562YURIVgUmkPowLrOro73oy3UUNWx1znr4kerUYo/F9
-	 DI5mjZBpeXD5Q==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079231FE47B;
+	Tue, 26 Aug 2025 18:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756233979; cv=fail; b=SkhJ0PArZQCVZkTvLsuww9NdJJ29Td/XIdR6rDmyKYOQ2lLut7olNKc3Kh8IiMnA13UT4Zct6tuLgWPRKFs0VbQoOaxGIB4wQG18z7POZOBuPGh3TciplycRTn2H+OmkCnDYj76BZjgC+CfHxf+BNEkaKQMiEAQ7Us/O935aTVI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756233979; c=relaxed/simple;
+	bh=5SZijwEXrDH3N6FoNaOmlERI/Q/E/eRZwSjr26PVsxQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sTWKrSigN6sIjO/IVczpE5aOH2fwg+XDF2yV4sZWX0YNKP0CaGfygtXINsTBzhGfHtuj9lF5jvpFUoDcwu0tKqB9MdW6yTQfGJ0AJ/xpCwSz85IPEkeE7gSZVgLc0/1LUFZ385obb8pd301iMrKYCm3HsptjafVrZXqfyl3wjdg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gjZSRlT2; arc=fail smtp.client-ip=40.107.95.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=E9ldY1qKhRbvcVsGKYB67LTj7K4FMDyrYYlq0WF2YkbGZ2afQxwHsD5CCR/EIWNtnn6A7aZxaNolzQureyBrq2YcFpUDOC272OmU5uU6wm9fQmVC77RHIdxcwWvQAeUfN9YJ/fe9fnn7UWaRuIBoXNPyPaFRorzlYnffdmm8wh3npyhbtOMOeE8AYrnpHTqBayvSMxGkeclQafaEMtU2ykgB+Ze7mKb3uksXXbmnEKas3/ubB2s4rSnXjYtKfVqhZBhpsUxPzyIN0WlB1iQiTA20UaajNUo1U+GzRjRf228HDE/CIBT7jvUnPkhH8CT4ZNgO4kTAnpZCIPPbPVYkBg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5SZijwEXrDH3N6FoNaOmlERI/Q/E/eRZwSjr26PVsxQ=;
+ b=cc2m6+hiKY+B4pFCipWCg7+a9rWoheviomo9tfMZIBsCzcRTaH2MB4EbFGYhSaHcR5wqpx2jy6NHG4NofCGkwV7zEeBD4yCid04TBAjMY+sH6uofyhcttK11dX62I6o0QeI8uDrJzvMlGJif/kukdUKqE6QKGOM85H1sCgxrDF0FX1pvSncSndonSlHn+HLbSU+iVwTofA+v5tYkpY8QaVdRTQOu+nhQVgASChP+e5jXb7XFkb0VDuNbIDBaoh3YwT0p/d1zQvMkPkulKnho/o/7UlbHxcV5m3rDxGjbw9UgbFlOEbmxCuTCxoJgJrskUeeAX9lTPPaJDb88SNZI+A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5SZijwEXrDH3N6FoNaOmlERI/Q/E/eRZwSjr26PVsxQ=;
+ b=gjZSRlT2r+MhCh2grYu3cMrpCxPBm2sZCr+QVgI9xxeFPc5Oy/T9ZcG1tGz/fGTIBJnUU5WQXV9nxGi/5G9YiITiqy4dO8N/ErHDnUUa+03FGFpwpdXiL9I3NImJNqYu2aO00zuUSAv+4q7+Y2hwbfgR61wgpEQ5UG2ayYto4qTCa4zsHKY4VcmesYdzOoPlQYByRpKu2NG6XImGsbTi5zi45fzfeTZPaKySYsMrVNezIOpFmjV0PkG3sjybLimxSPy29gz8dPw6Gy9PrX6PP+JsEK2ItQg7MXhiKXrK7WqqMddVc0bW6UuYDKg6sTQq0fgRdWEXcFYB+Tl9Nj9bXw==
+Received: from SA0PR11CA0160.namprd11.prod.outlook.com (2603:10b6:806:1bb::15)
+ by SN7PR12MB7153.namprd12.prod.outlook.com (2603:10b6:806:2a4::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.21; Tue, 26 Aug
+ 2025 18:46:12 +0000
+Received: from SN1PEPF0002636C.namprd02.prod.outlook.com
+ (2603:10b6:806:1bb:cafe::a1) by SA0PR11CA0160.outlook.office365.com
+ (2603:10b6:806:1bb::15) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.22 via Frontend Transport; Tue,
+ 26 Aug 2025 18:46:12 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ SN1PEPF0002636C.mail.protection.outlook.com (10.167.241.137) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9052.8 via Frontend Transport; Tue, 26 Aug 2025 18:46:12 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 26 Aug
+ 2025 11:45:58 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Tue, 26 Aug 2025 11:45:57 -0700
+Received: from vdi.nvidia.com (10.127.8.11) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Tue, 26 Aug 2025 11:45:56 -0700
+From: Chris Babroski <cbabroski@nvidia.com>
+To: <kuba@kernel.org>
+CC: <andrew+netdev@lunn.ch>, <cbabroski@nvidia.com>, <davem@davemloft.net>,
+	<davthompson@nvidia.com>, <edumazet@google.com>,
+	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<pabeni@redhat.com>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>
+Subject: Re: [PATCH net-next v1] mlxbf_gige: report unknown speed and duplex when link is down
+Date: Tue, 26 Aug 2025 14:45:59 -0400
+Message-ID: <20250826184559.89822-1-cbabroski@nvidia.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250815121102.0653f13f@kernel.org>
+References: <20250815121102.0653f13f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 26 Aug 2025 20:45:41 +0200
-Message-Id: <DCCKZ2VUONAR.R50ZFLTWE4T@kernel.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v10 2/7] rust: debugfs: Add support for read-only files
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Sami Tolvanen" <samitolvanen@google.com>, "Timur
- Tabi" <ttabi@nvidia.com>, "Benno Lossin" <lossin@kernel.org>, "Dirk Beheme"
- <dirk.behme@de.bosch.com>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>
-To: "Matthew Maurer" <mmaurer@google.com>
-References: <20250819-debugfs-rust-v10-0-86e20f3cf3bb@google.com>
- <20250819-debugfs-rust-v10-2-86e20f3cf3bb@google.com>
-In-Reply-To: <20250819-debugfs-rust-v10-2-86e20f3cf3bb@google.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF0002636C:EE_|SN7PR12MB7153:EE_
+X-MS-Office365-Filtering-Correlation-Id: cd4cc1ed-2a44-4688-fff1-08dde4d0d4a6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?aC3Ou0lTHJDIQAY8+po8pTTutGtJzB2SdM46vIj6NQlxRMqdpk3la14jHnrq?=
+ =?us-ascii?Q?f1NpJ1HE1q66LK9XmoFGKLOoh0NcVNZU/KDr6rnokYBLZbo5KbgGHopmmDF6?=
+ =?us-ascii?Q?b1aIormMjceb4Qd/PF0MhxG85aZUa4ridNPg7znB288NcPL6Dov5d80RKtfs?=
+ =?us-ascii?Q?eL9T9MRAQvxqLEeO2V6iUVRXxdIP27LgyNBmSDGv/zXHDNB2P0pemkP5WcOw?=
+ =?us-ascii?Q?9/J4KsCZmJXaBAsimR9R5Ho4JM6CYL3mvsGevYrwwwWgxtPEe1aVWAD5Kk/Z?=
+ =?us-ascii?Q?OIGzM853WLbiGO68IQO0GOq2K/LbkMZUesRJeKSrX/YHuqjPYHRqU2jJzA3h?=
+ =?us-ascii?Q?8QOdd5cfeQkgfnY1M4vNpsKZBioa69GgVtydqjzr561Bki0e3R7JRR96GD6S?=
+ =?us-ascii?Q?ECAgQlU//1nv4BHm83GNrIY0tnrJu02IqKPEeIZCwjbjgnOtCBxKdGpRNz3N?=
+ =?us-ascii?Q?WSGAFUVy112ZGWY1/7Kjj5FNskRn3lloQxuI2yfbBdFo9fJWjPDZCr+8xdhP?=
+ =?us-ascii?Q?ht+6+o76x/YAeQMVlu2OESFNbRYPItcXYizljH2LX4uJp4HXASc3fYhlRji9?=
+ =?us-ascii?Q?k7tuo+kIY6FtY3cytdTbiHBQzBZuSNzup51COKo/Lm6SX0NVbvIDQcu849RX?=
+ =?us-ascii?Q?WuBF0Mjfu7W5gCAIL+iWSDyZc+djQnOHcaSqBwfx4X5r686n0gD9h1esxuvd?=
+ =?us-ascii?Q?nwHtFzrhNrQIlNo2DJ/Kjwa0IK3oCpJI28EPmZXVDvKrlt7df6L7DrVvxKIN?=
+ =?us-ascii?Q?tlAk6Va2e10/Xn1GJsCTegsNqC0d248ZMxJCG4184vV3212VQdTupOqYU7EE?=
+ =?us-ascii?Q?AVugDeSnrzK7m2uAIGGsGXQco+XsBN+d6zddj4ehzvhjY3hlv0H/woINZqrd?=
+ =?us-ascii?Q?MYRSdZRQLids6Z6ubLGqqNh5ys+B+6L70Vs8p/LcTU8oJuEHRWtlf9Jsh1bb?=
+ =?us-ascii?Q?N2Bs5sDvWrg6dqK+WFHzMWdDzbGTZD0fANf0nyKnhwBX1HUlf5On9tnGhvof?=
+ =?us-ascii?Q?5pYHCVncxFPmAeNLHTbhaKolSTX3VbyV9l+qV1hWYKf+SPOxouvu2Qdngx++?=
+ =?us-ascii?Q?Ei4O+JXcrJmuGUrlWupiLg+qcQYpAhace79Ilw8FxtnTnT2lTlYovRHE4X+1?=
+ =?us-ascii?Q?TNcn/7RXTbwtTVJnCx8+ovLIRwS4hPkM86ucD19yjdZr7TTxzZj1smEhg7XT?=
+ =?us-ascii?Q?oPgk803x3zZeJgDkp98o/PE1tOHASiVgdP32lqtaL2KobpjDIIiIy0rFZp2L?=
+ =?us-ascii?Q?Sjvj7UG1qJ38mxFzXyfREMGBzGwInOgIHPBV6hz/Bua1mOMxMv+E9zwAU/h6?=
+ =?us-ascii?Q?EFge6LazTpmF+8gswEqqGiu7GxuMH46Z3v23VYxfTBuWgRRJ58vlcn3Q1f4h?=
+ =?us-ascii?Q?NlJWjJBLhBMzJjU5M8z8NIShzwGatZNie726GbxA7wNniyhkuw47BZiH2bN3?=
+ =?us-ascii?Q?2dd/+szQxNgsa3rBYa3Slb59m1T8594nshrqsT74QUW5DUoCfzOyZKg+NGEZ?=
+ =?us-ascii?Q?gV7x84h1Xwd2eqTTIhIlyuUDCLSJK6z+V/1o?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 18:46:12.7361
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: cd4cc1ed-2a44-4688-fff1-08dde4d0d4a6
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF0002636C.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7153
 
-On Wed Aug 20, 2025 at 12:53 AM CEST, Matthew Maurer wrote:
-> +    /// Creates a DebugFS file which will own the data produced by the i=
-nitializer provided in
-> +    /// `data`.
-> +    fn create_file<'a, T: Sync + 'static, E: 'a, TI: PinInit<T, E> + 'a>=
-(
-> +        &'a self,
-> +        name: &'a CStr,
-> +        data: TI,
+Hi Jakub,
 
-Can you please use `impl PinInit<T, E> + 'a` directly? It's a bit more in l=
-ine
-with how we usually write this and I also think it makes things quite a bit=
- more
-obvious compared to hiding it behind the `TI` generic.
+Thanks for the feedback.
 
-Also, can you please use a where clause when the trait and lifetime bounds =
-are
-getting a bit lengthy? I think for this method this is already justified.
+> If that's the correct thing to do why is
+> phy_ethtool_get_link_ksettings() not doing it?
 
-Obviously, this applies to the whole patch (and likely subsequent ones).
+If I understand correctly, phy_ethtool_get_link_ksettings() reads
+cached values that are updated when phy_read_status() is called by the
+phy state machine. Doing "ifconfig down" will eventually trigger
+phy_stop() in the ndo_stop() handler. This halts the phy state machine
+and sets phydev->link without calling phy_read_status() or explicitly
+setting other values, like speed and duplex.
 
-> +        file_ops: &'static FileOps<T>,
-> +    ) -> impl PinInit<File<T>, E> + 'a {
-> +        let scope =3D Scope::<T>::new(data, move |data| {
-> +            #[cfg(CONFIG_DEBUG_FS)]
-> +            if let Some(parent) =3D &self.0 {
-> +                // SAFETY: Because data derives from a scope, and our en=
-try will be dropped before
-> +                // the data is dropped, it is guaranteed to outlive the =
-entry we return.
-> +                unsafe { Entry::dynamic_file(name, parent.clone(), data,=
- file_ops) }
-> +            } else {
-> +                Entry::empty()
-> +            }
-> +        });
-> +        try_pin_init! {
-> +            File {
-> +                scope <- scope
-> +            } ? E
-> +        }
-> +    }
-> +
->      /// Create a new directory in DebugFS at the root.
->      ///
->      /// # Examples
-> @@ -79,4 +110,113 @@ pub fn new(name: &CStr) -> Self {
->      pub fn subdir(&self, name: &CStr) -> Self {
->          Dir::create(name, Some(self))
->      }
-> +
-> +    /// Creates a read-only file in this directory.
-> +    ///
-> +    /// The file's contents are produced by invoking [`Render::render`] =
-on the value initialized by
-> +    /// `data`.
-> +    ///
-> +    /// # Examples
-> +    ///
-> +    /// ```
-> +    /// # use kernel::c_str;
-> +    /// # use kernel::debugfs::Dir;
-> +    /// # use kernel::prelude::*;
-> +    /// # let dir =3D Dir::new(c_str!("my_debugfs_dir"));
-> +    /// let file =3D KBox::pin_init(dir.read_only_file(c_str!("foo"), 20=
-0), GFP_KERNEL)?;
-> +    /// // "my_debugfs_dir/foo" now contains the number 200.
-> +    /// // The file is removed when `file` is dropped.
-> +    /// # Ok::<(), Error>(())
-> +    /// ```
-> +    pub fn read_only_file<'a, T: Render + Send + Sync + 'static, E: 'a, =
-TI: PinInit<T, E> + 'a>(
-> +        &'a self,
-> +        name: &'a CStr,
-> +        data: TI,
-> +    ) -> impl PinInit<File<T>, E> + 'a {
-> +        let file_ops =3D &<T as ReadFile<_>>::FILE_OPS;
-> +        self.create_file(name, data, file_ops)
-> +    }
-> +}
-> +
-> +#[pin_data]
-> +/// Handle to a DebugFS scope, which allows a variety of DebugFS files/d=
-irectories to hang off a
-> +/// single structure.
-> +pub struct Scope<T> {
+It seems this is expected behavior with phylib, but I'm not familiar
+with the implementation history. CC'd PHY maintainers for additional
+input.
 
-I think this doesn't need the Scope indirection just yet, but fine for me t=
-o add
-it right away.
+> Please explain what makes mlxbf special
 
-However, please make sure to expand the documentation a bit. You probably
-don't want to mention where this is exactly going just yet, since technical=
-ly
-those patches should work out standalone in case the more sophisticated sco=
-pe
-stuff doesn't land.
+BlueField is unique in that the phy is hardwired to an internal switch
+and so the physical link between the phy and link partner is always
+up. This will also affect what link settings are reported by the phy.
 
-But, I think you can still describe a bit more in detail that a debugfs::Sc=
-ope
-handles the lifetime of some private data T for a debugfs::Entry.
+This patch comes from a desire for ethtool output behavior to be the
+same when an administrative link down is issued on the BlueField OOB
+(mlxbf_gige) and NIC (mlx5) interfaces. The mlx5 driver implements
+custom get_link_ksettings() handlers and does not use phylib.
 
-Subsequently I would mention that this is used for file entries only.
-
-> +    // This order is load-bearing for drops - `_entry` must be dropped b=
-efore `data`.
-> +    #[cfg(CONFIG_DEBUG_FS)]
-> +    _entry: Entry,
-> +    #[pin]
-> +    data: T,
-> +    // Even if `T` is `Unpin`, we still can't allow it to be moved.
-> +    #[pin]
-> +    _pin: PhantomPinned,
-> +}
-> +
-> +#[pin_data]
-> +/// Handle to a DebugFS file, owning its backing data.
-> +///
-> +/// When dropped, the DebugFS file will be removed and the attached data=
- will be dropped.
-> +pub struct File<T> {
-> +    #[pin]
-> +    scope: Scope<T>,
-> +}
-> +
-> +#[cfg(not(CONFIG_DEBUG_FS))]
-> +impl<T> Scope<T> {
-> +    fn new<E, TI: PinInit<T, E>, F: for<'a> FnOnce(&'a T)>(
-> +        data: TI,
-> +        init: F,
-> +    ) -> impl PinInit<Self, E> {
-> +        try_pin_init! {
-> +            Self {
-> +                data <- data,
-> +                _pin: PhantomPinned
-> +            } ? E
-> +        }
-> +        .pin_chain(|scope| {
-> +            init(&scope.data);
-> +            Ok(())
-> +        })
-> +    }
-> +}
-> +
-> +#[cfg(CONFIG_DEBUG_FS)]
-> +impl<T> Scope<T> {
-> +    fn entry_mut(self: Pin<&mut Self>) -> &mut Entry {
-> +        // SAFETY: _entry is not structurally pinned
-
-Please end with a period.
-
-> +        unsafe { &mut Pin::into_inner_unchecked(self)._entry }
-> +    }
-
-Missing empty line.
-
-> +    fn new<'b, E: 'b, TI: PinInit<T, E> + 'b, F: for<'a> FnOnce(&'a T) -=
-> Entry + 'b>(
-> +        data: TI,
-> +        init: F,
-> +    ) -> impl PinInit<Self, E> + 'b
-> +    where
-> +        T: 'b,
-> +    {
-> +        try_pin_init! {
-> +            Self {
-> +                _entry: Entry::empty(),
-> +                data <- data,
-> +                _pin: PhantomPinned
-> +            } ? E
-> +        }
-> +        .pin_chain(|scope| {
-> +            *scope.entry_mut() =3D init(&scope.data);
-> +            Ok(())
-> +        })
-> +    }
-> +}
-
-<snip>
-
-> +/// # Invariant
-> +///
-> +/// `FileOps<T>` will always contain an `operations` which is safe to us=
-e for a file backed
-> +/// off an inode which has a pointer to a `T` in its private data that i=
-s safe to convert
-> +/// into a reference.
-> +pub(super) struct FileOps<T> {
-> +    #[cfg(CONFIG_DEBUG_FS)]
-> +    operations: bindings::file_operations,
-> +    #[cfg(CONFIG_DEBUG_FS)]
-> +    mode: u16,
-> +    _phantom: PhantomData<T>,
-> +}
-> +
-> +impl<T> FileOps<T> {
-> +    /// # Safety
-
-Missing empty line.
-
-> +    /// The caller asserts that the provided `operations` is safe to use=
- for a file whose
-> +    /// inode has a pointer to `T` in its private data that is safe to c=
-onvert into a reference.
-> +    const unsafe fn new(operations: bindings::file_operations, mode: u16=
-) -> Self {
-> +        Self {
-> +            #[cfg(CONFIG_DEBUG_FS)]
-> +            operations,
-> +            #[cfg(CONFIG_DEBUG_FS)]
-> +            mode,
-> +            _phantom: PhantomData,
-> +        }
-> +    }
-
-Same here...
-
-> +    #[cfg(CONFIG_DEBUG_FS)]
-> +    pub(crate) const fn mode(&self) -> u16 {
-> +        self.mode
-> +    }
-> +}
-> +
-> +#[cfg(CONFIG_DEBUG_FS)]
-> +impl<T> Deref for FileOps<T> {
-> +    type Target =3D bindings::file_operations;
-
-...and here.
-
-> +    fn deref(&self) -> &Self::Target {
-> +        &self.operations
-> +    }
-> +}
-> +
-> +struct RenderAdapter<T>(T);
-> +
-> +impl<'a, T: Render> Display for RenderAdapter<&'a T> {
-> +    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
-> +        self.0.render(f)
-> +    }
-> +}
-> +
-> +/// Implements `open` for `file_operations` via `single_open` to fill ou=
-t a `seq_file`.
-> +///
-> +/// # Safety
-> +///
-> +/// * `inode`'s private pointer must point to a value of type `T` which =
-will outlive the `inode`
-> +///   and will not have any unique references alias it during the call.
-> +/// * `file` must point to a live, not-yet-initialized file object.
-> +unsafe extern "C" fn render_open<T: Render + Sync>(
-> +    inode: *mut bindings::inode,
-> +    file: *mut bindings::file,
-> +) -> c_int {
-> +    // SAFETY: The caller ensures that `inode` is a valid pointer.
-> +    let data =3D unsafe { (*inode).i_private };
-> +    // SAFETY:
-> +    // * `file` is acceptable by caller precondition.
-> +    // * `print_act` will be called on a `seq_file` with private data se=
-t to the third argument,
-> +    //   so we meet its safety requirements.
-> +    // * The `data` pointer passed in the third argument is a valid `T` =
-pointer that outlives
-> +    //   this call by caller preconditions.
-> +    unsafe { bindings::single_open(file, Some(render_act::<T>), data) }
-> +}
-> +
-> +/// Prints private data stashed in a seq_file to that seq file.
-> +///
-> +/// # Safety
-> +///
-> +/// `seq` must point to a live `seq_file` whose private data is a live p=
-ointer to a `T` which may
-
-We usually say "valid".
-
-> +/// not have any unique references alias it during the call.
-> +unsafe extern "C" fn render_act<T: Render + Sync>(
-> +    seq: *mut bindings::seq_file,
-> +    _: *mut c_void,
-> +) -> c_int {
-> +    // SAFETY: By caller precondition, this pointer is live, points to a=
- value of type `T`, and
-> +    // there are not and will not be any unique references until we are =
-done.
-> +    let data =3D unsafe { &*((*seq).private.cast::<T>()) };
-> +    // SAFETY: By caller precondition, `seq_file` points to a live `seq_=
-file`, so we can lift
-> +    // it.
-> +    let seq_file =3D unsafe { SeqFile::from_raw(seq) };
-> +    seq_print!(seq_file, "{}", RenderAdapter(data));
-> +    0
-> +}
-> +
-> +// Work around lack of generic const items.
-> +pub(crate) trait ReadFile<T> {
-> +    const FILE_OPS: FileOps<T>;
-> +}
-> +
-> +impl<T: Render + Sync> ReadFile<T> for T {
-> +    const FILE_OPS: FileOps<T> =3D {
-> +        let operations =3D bindings::file_operations {
-> +            read: Some(bindings::seq_read),
-> +            llseek: Some(bindings::seq_lseek),
-> +            release: Some(bindings::single_release),
-> +            open: Some(render_open::<Self>),
-> +            // SAFETY: `file_operations` supports zeroes in all fields.
-> +            ..unsafe { core::mem::zeroed() }
-> +        };
-> +        // SAFETY: `operations` is all stock `seq_file` implementations =
-except for `render_open`.
-> +        // `open`'s only requirement beyond what is provided to all open=
- functions is that the
-> +        // inode's data pointer must point to a `T` that will outlive it=
-, which matches the
-> +        // `FileOps` requirements.
-> +        unsafe { FileOps::new(operations, 0o400) }
-> +    };
-> +}
-> diff --git a/rust/kernel/debugfs/traits.rs b/rust/kernel/debugfs/traits.r=
-s
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..2939e18e3dda39571cd725550=
-5e5f605f0e3d154
-> --- /dev/null
-> +++ b/rust/kernel/debugfs/traits.rs
-> @@ -0,0 +1,28 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (C) 2025 Google LLC.
-> +
-> +//! Traits for rendering or updating values exported to DebugFS.
-> +
-> +use crate::sync::Mutex;
-> +use core::fmt::{self, Debug, Formatter};
-> +
-> +/// A trait for types that can be rendered into a string.
-> +///
-> +/// This works very similarly to `Debug`, and is automatically implement=
-ed if `Debug` is
-> +/// implemented for a type. It is also implemented for any renderable ty=
-pe inside a `Mutex`.
-
-I think the blanket impls make sense, but we should probably add a note tha=
-t the
-contents derived via #[derive(Debug)] are not guaranteed to be stable [1].
-
-[1] https://doc.rust-lang.org/std/fmt/trait.Debug.html#stability
-
-> +pub trait Render {
-
-Should we really call this Render? Maybe it'd be better to call it
-debugfs::Writer?
-
-Yes, I know it's called in read(), but that's what the kernel does, it writ=
-es
-on read(). :)
-
-> +    /// Formats the value using the given formatter.
-> +    fn render(&self, f: &mut Formatter<'_>) -> fmt::Result;
-> +}
-> +
-> +impl<T: Render> Render for Mutex<T> {
-> +    fn render(&self, f: &mut Formatter<'_>) -> fmt::Result {
-> +        self.lock().render(f)
-> +    }
-> +}
-> +
-> +impl<T: Debug> Render for T {
-> +    fn render(&self, f: &mut Formatter<'_>) -> fmt::Result {
-> +        writeln!(f, "{self:?}")
-> +    }
-> +}
+Best,
+Chris
 
