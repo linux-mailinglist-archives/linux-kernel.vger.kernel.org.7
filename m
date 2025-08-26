@@ -1,146 +1,172 @@
-Return-Path: <linux-kernel+bounces-786973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFE74B36F77
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:07:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B789B36F9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:12:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20E721BA5588
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:06:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D1B8207BCD
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:07:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076EF30FC0D;
-	Tue, 26 Aug 2025 16:05:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9AB21CC60;
+	Tue, 26 Aug 2025 16:07:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZdotIW7i"
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NR/KC4U3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F53242D9A;
-	Tue, 26 Aug 2025 16:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1241631A550
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 16:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756224343; cv=none; b=mOxnS4dG9psbYRbNAbC8opeOkeHSTMf6S8HkdWuawLdq/izxOgK0ulu1qmUrEii/q2sF5Ua3rfKka46gjtRQ8b2A0ZxhxpZa7fUEWxQ5Jsnn4qDqDHrNEwureDiQH+Buyv3ljkFa1ctBmodR2zRsLUyD3qDPYHzVIzrqqXj+1gg=
+	t=1756224420; cv=none; b=Aso9V0YQWBsrrS4AYwDeH68FXtRyWb7nDNCraJk3ZlJ4JV0Usoj0Aw0SCfsHxDPPVVR5m+dfKFzhWLyMrzVqsPHGglkq5g0+7cp0gCShIPIOLr+sOp6fv+dq6lPfz5xHFSCTfc3infFwKXwG00aesAgWV8++zv/CNOLvAi0JhnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756224343; c=relaxed/simple;
-	bh=FjceF2bXmue3HwrOsvYAV28Qy+mXPtyOsYpBSJrTMMw=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=LEf+TujTp+rRe2ie3kefxVdQvHk9VFLLPL38q4YYa2VQJCye77tqE4SZ3bIStjHkIQCTw8FabDyfmIX6XM8W23ajHD/WHdsku+ujE0fgzZnzjGxxQc9d7OjjYY58oKmkyFr/7ZsW78OCBve12cvR3weFQ+hi0B0yUovu3T3vYqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZdotIW7i; arc=none smtp.client-ip=209.85.217.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-51ea6c8ae03so2328479137.2;
-        Tue, 26 Aug 2025 09:05:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756224340; x=1756829140; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jGNdMOA4rilU8AON0kSO3AFj/6OjCufJ+EO41YUA7F4=;
-        b=ZdotIW7ipKY0sPI3SuqXomReh96PPwHecUDA63W3psIuARwtGHz4EUNEpIDKpSVm3i
-         llip4Bdnr2Q+WD/YSs3865lWTz4pGf7K8WTRaCyemNPXMCg0mYbkFX6WzmqV94yfxZAH
-         nYW4cPoHqz5P70mxxrf820isn1Aph3Tm99nVMp9EMmIQ/qjCNFBh1uJ1FmCSt81xohxu
-         zUnBrUGyQMj4AiVk4vzE7iLiOBygyuTs8ujo33DoF3YVloIzydc2sofFxITRoZgGNue+
-         TbY3sdwcZwWByMaUAEaDE4zxu1cl7m1QGv99stnRk5Q3IZEQcjyiaxMC/sVR7hkUQG0J
-         W82Q==
+	s=arc-20240116; t=1756224420; c=relaxed/simple;
+	bh=NXzXQw4Zt6Em+yckX6q/jojHBegK12Bp1ww6CHFGn3w=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=cy7Es0ifg/7MBx2iGx9E8qfX2DIHnDGoWJONkqVoP3SK1ykuqzRSKS5g3iNZaCrKtiEnlWFrHw6JIeGAafwLUC4d+7BqK1ffk1pgg1wX7hfXpqNX2Ju8PZTSnKZlcCw7Z8TWR+n6p20FjasPVos2XigiDUDbUYdhfcc+0j8h38o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NR/KC4U3; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756224417;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RRIEwoyk6U3gj8I8qpF/P/UU9F7Za9uOXepaDGpaelc=;
+	b=NR/KC4U3fwP3FpDxtXFuRKCWNnac2u6k+bHVZFp3jmcEC83UUvaJ4yxPhnZHMDE6+2iVmS
+	rhB+4J/rzaAY74jw2oV5gAXEPr48rqLDLxs3HJAc65AE/UVGF4/UIV6A07B9ZYcL/eBZA5
+	SeFFfxb/knNgXq47rGH6oK+ueawiDHQ=
+Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
+ [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-657-XF5iBYPCP7W7vzEbPytRlw-1; Tue, 26 Aug 2025 12:06:56 -0400
+X-MC-Unique: XF5iBYPCP7W7vzEbPytRlw-1
+X-Mimecast-MFC-AGG-ID: XF5iBYPCP7W7vzEbPytRlw_1756224416
+Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-72112230256so13139427b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:06:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756224340; x=1756829140;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=jGNdMOA4rilU8AON0kSO3AFj/6OjCufJ+EO41YUA7F4=;
-        b=LzcX3L4lnHNOcaW3Ox7wq9c8meRNhwVnuLv/LR0xHn1nuI9BIKRUY3ytTqNf3Kmii9
-         Ty1OY7yNEy/IJdojGutOVhqirSN9c0RhKshnYcYIOA6q/TV42wR4o6xR3tJ0ks95ZHZJ
-         m3KNHLZoY1vVWvQCV67eA5syDe7iNuXopFrlONP2a8IAdT2mFStgUuCbseLglV2B6otO
-         hvdpI+8EA2nP8F98VWNlJFUPcsVEl/84NExR7m+oBlF/BDwl90sFqWq09dQXmo6+oiqM
-         3GvxVLbJAWXICotYyzACq0CwHpTOW+PBMizi1vciM2KU/dcb56D7eDx5IMkjmMmT+0JY
-         Ac3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ9+6LjVkZw/CR2qjmdNBo5DPx/scddRI+kc0WOGCyJB/GdDDgyJ8/GZJJ+AamvNSmXJ20u+gm@vger.kernel.org, AJvYcCWsVwgFGAVZuSX4hMx1mOR8gSAZCdAVvMgqHuML+w7dwS6V98iSYjQisfW8f9v96eEeTm+j+NueUovg5mA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWkMmWoXpRctC2WS83XBLM+1I9w9bCzoIdmQyUgznu+95XZBzw
-	GJ2C4zYFQk+p1JW0V/GfUc3f88O2H1yMcWl54I+3dn9eQH3Dnv/Lho4k
-X-Gm-Gg: ASbGncs5f5SmW/Tf2lr7UpqrUlneQkXUa2v5JaBDziSobovfgzZSdks0O4ZooTWBf9a
-	8YLqD3PzaoflIsvzoKuryjZdc+qwuz2O9tPlW1JgsU3qep2p8TAGsKYuBmEwkjmoY0RPwyOGLFI
-	iyjwvxjLLtZ9Rbi+in8mLUDrOs5v7tAZ0vhSn9/ff0a+WwIh1SjuoqcqnSrHQSmHP8gf/P1d1FU
-	eWRlFSjIdc0y6JotPJ2fqDA7WE5ByBLwz60WHx/7Prn2maiks6AUp2caADWNMcM0x+r68zt/YNP
-	3d4n5zJGwHB3NEwFzsaz+JSy003oAWowPnCDGobOrtJzFduV5GU+bkciGmtNd9/XKkLijLxDJMm
-	DXmBEv9car4cXJ8uz3MRpBaGScUkRIRqGjHgLnXiHn24mrrOL9Yvk4LkkD7s3NYQI3V5Tt5dF/A
-	65Xg==
-X-Google-Smtp-Source: AGHT+IFj7ZkVh78A/2pvdV5VZOEaGB9H+EbiLlB1J0P88BwFBWhxtHWN6o3UpiDtlkqIrxo6n2BVUw==
-X-Received: by 2002:a05:6102:32c1:b0:519:534a:6c4b with SMTP id ada2fe7eead31-51d0f1ecf95mr5326957137.29.1756224339924;
-        Tue, 26 Aug 2025 09:05:39 -0700 (PDT)
-Received: from gmail.com (141.139.145.34.bc.googleusercontent.com. [34.145.139.141])
-        by smtp.gmail.com with UTF8SMTPSA id a1e0cc1a2514c-89419c5c76fsm40212241.11.2025.08.26.09.05.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 09:05:39 -0700 (PDT)
-Date: Tue, 26 Aug 2025 12:05:38 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Xin Zhao <jackzxcui1989@163.com>, 
- willemdebruijn.kernel@gmail.com, 
- edumazet@google.com, 
- ferenc@fejes.dev
-Cc: davem@davemloft.net, 
- kuba@kernel.org, 
- pabeni@redhat.com, 
- horms@kernel.org, 
- netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-Message-ID: <willemdebruijn.kernel.2d7599ee951fd@gmail.com>
-In-Reply-To: <20250826145347.1309654-1-jackzxcui1989@163.com>
-References: <20250826145347.1309654-1-jackzxcui1989@163.com>
-Subject: Re: [PATCH net-next v7] net: af_packet: Use hrtimer to do the retire
- operation
+        d=1e100.net; s=20230601; t=1756224415; x=1756829215;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RRIEwoyk6U3gj8I8qpF/P/UU9F7Za9uOXepaDGpaelc=;
+        b=F4PIylSxiLjUWkKm20LhQ+yQDQiV2KW6pfWIFtIiTajWdLo3Qv56MaoIbDwi41Qcwq
+         KL2xuWmKaf7tk9IeopIXBo10aJiciQKhnoVbnVcE0zvCqpDIiGDEwvnPHn1gsA8c0i06
+         5VAULAWZPHD96W6R7NgCUiGoLX/YDyExx/7vDE5R9uGq7zs6gDH/BUvxgb2d5ldJQVcz
+         CfxkARddg80vD0y/UxzuUUrQfYwblbz9/FbcE+NiAne+kG2/58jS+Uw4S0fSXtPZgrVL
+         sW+Jj5ufE+sVn+GkqMyXcxTVXqmPDo61lhnef5du9ssHuGOPgJhbEADFiAk5anfdttm5
+         hBqA==
+X-Forwarded-Encrypted: i=1; AJvYcCXNrJVRylhGJ3zUycarJAhLe3xdk+e3pqtgSUV2lvrOBFrlaivkfnthXHrb1ae8biaCA10zHugbvcIHw88=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHl/VTw8cE1eAvHj5NY418xGe7YjIdiaObFODlHxV6k8TyiaXC
+	WmXaJVOBCa+eUibE1rhWTquGs0K1MvBMoPiqONQBbPYkCqthRzuBQJFpZNXtuMuSIe1h0CIqE30
+	Z1rJoLEoZD0xbjA0NNlvTrnyKsW/a8sfWcekmdy3Te/zm1CM5cMjVRleyD2kCub5s0WSMR8PSvA
+	==
+X-Gm-Gg: ASbGncsD9vIC8VspfTVUagLqjgFsHKehv7VTFt0WSbaVFPSUNW6rcFVxM6mSScEjGq2
+	PsyudcvfD19EaH36lYHdjUyvE7WGAMs5OMIGRtvCF819Ir9bG4XkoVcIeKuzE4/h9qF8VpoBMqv
+	tofKYInXXaw3Q/pi7hftbs5Xb5TH6m5c5V3asH8enfZEaGV/M7CEgjXUmA//PMc8kDuSP5H4rJs
+	3++PSY985HawLyOQN081jyKj4uCyA6mci3wSGzDQVx3Q5AX38QMaQ5zMEZSHOv14aOdqGsChn31
+	VItMOA15DC7UOFWX0A2VNE0NVltZkhUedHmB0Vyf2myXDrsxM/Y9xQ0HNTBiSak+8XH0hxnt6gA
+	I76mmznPs1g==
+X-Received: by 2002:a05:690c:9408:b0:71f:ede3:fc40 with SMTP id 00721157ae682-71fede401f9mr124796637b3.40.1756224414527;
+        Tue, 26 Aug 2025 09:06:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEFnKwjMtJb1I/GUzeDWlV9jGDybHVkg/0iCUr2vSxDmHSySyqwLLofo6fDGwKkUM8vVe/X6g==
+X-Received: by 2002:a05:690c:9408:b0:71f:ede3:fc40 with SMTP id 00721157ae682-71fede401f9mr124793067b3.40.1756224408326;
+        Tue, 26 Aug 2025 09:06:48 -0700 (PDT)
+Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-7212cb28226sm5154357b3.15.2025.08.26.09.06.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Aug 2025 09:06:47 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <8907b39b-6d30-4b56-b358-d63f9f625993@redhat.com>
+Date: Tue, 26 Aug 2025 12:06:46 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] sched/core: Skip user_cpus_ptr masking if no online
+ CPU left
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+ Waiman Long <llong@redhat.com>, Chen Ridong <chenridong@huaweicloud.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+ Johannes Weiner <hannes@cmpxchg.org>
+References: <20250718164143.31338-1-longman@redhat.com>
+ <20250718164857.31963-1-longman@redhat.com>
+ <2vpxlzo6kruo23ljelerqkofybovtrxalinbz56wgpek6j47et@om6jyuyqecog>
+ <9bd275be-45df-47f3-9be3-f7e1458815a4@redhat.com>
+ <nqes55hiydw37qpt5mrqwzyhan5nxlzvuoccei4hmjloccr5xr@aqkuqerfwomc>
+Content-Language: en-US
+In-Reply-To: <nqes55hiydw37qpt5mrqwzyhan5nxlzvuoccei4hmjloccr5xr@aqkuqerfwomc>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Xin Zhao wrote:
-> On Tue, 2025-08-25 at 20:54 +0800, Willem wrote:
-> 
-> > > I understand that the additional in_scheduled variable is meant to prevent
-> > > multiple calls to hrtimer_start. However, based on the current logic
-> > > implementation, the only scenario that would cancel the hrtimer is after calling
-> > > prb_shutdown_retire_blk_timer. Therefore, once we have called hrtimer_start in
-> > > prb_setup_retire_blk_timer, we don't need to worry about the hrtimer stopping,
-> > > and we don't need to execute hrtimer_start again or check if the hrtimer is in
-> > > an active state. We can simply update the timeout in the callback.
-> > 
-> > The hrtimer is also canceled when the callback returns
-> > HRTIMER_NORESTART.
-> 
-> In prb_retire_rx_blk_timer_expired function, the only way to return HRTIMER_NORESTART
-> is that the pkc->delete_blk_timer is NOT 0.
-> The delete_blk_timer is only set to 1 in prb_shutdown_retire_blk_timer which is called
-> by packet_set_ring.
-> In my understanding, once packet_set_ring is called and prb_shutdown_retire_blk_timer
-> is executed, the only way to make this af_packet work again is to call packet_set_ring
-> again to execute prb_setup_retire_blk_timer. At that point, hrtimer_start will be
-> called again. Therefore, I feel that there is no need to perform the check in
-> _prb_refresh_rx_retire_blk_timer. Only let prb_setup_retire_blk_timer to hrtimer_start,
-> is that right?
+On 8/26/25 10:25 AM, Michal Koutný wrote:
+> Hi.
+>
+> I had a look after a while (thanks for reminders Ridong).
+>
+> On Mon, Jul 21, 2025 at 11:28:15AM -0400, Waiman Long <llong@redhat.com> wrote:
+>> This corner case as specified in Chen Ridong's patch only happens with a
+>> cpuset v1 environment, but it is still the case that the default cpu
+>> affinity of the root cgroup (with or without CONFIG_CGROUPS) will include
+>> offline CPUs, if present.
+> IIUC, the generic sched_setaffinity(2) is ready for that, simply
+> returning an EINVAL.
 
-Good point.
+The modified code will not be executed when called from 
+sched_setaffiity() as the SCA_USER flag will be set.
 
-Let's clean up the control flow a bit more to make that more clear.
+In the described scenario, sched_setaffinity() was called without 
+failure as the request was valid at the time.
 
-For one, no need for delete_blk_timer. hrtimer_cancel will cancel the
-timer if it is queued. And the callback spends the vast majority of
-its time after the check. So the odds of delete_blk_timer having any
-effect is minimal.
+>
+>> So it still make senses to skip the sched_setaffinity() setting if
+>> there is no online CPU left, though it will be much harder to have
+>> such a condition without using cpuset v1.
+> That sounds like there'd be no issue without cpuset v1 and the source of
+> the warning has quite a telling comment:
+>
+> 	 * fail.  TODO: have a better way to handle failure here
+> 	 */
+> 	WARN_ON_ONCE(set_cpus_allowed_ptr(task, cpus_attach));
+>
+> The trouble is that this is from cpuset_attach() (cgroup_subsys.attach)
+> where no errors are expected. So I'd say the place for the check should
+> be earlier in cpuset_can_attach() [1]. I'm not sure if that's universally
+> immune against cpu offlining but it'd be sufficient for the reported
+> sequential offlining.
 
-And if the callback just restarts itself unconditionally, no need for
-the special refresh_timer and out labels. Or the somewhat complex
-calling flow between _prb_refresh_rx_retire_blk_timer, prb_open_block
-and prb_retire_rx_blk_timer_expired. They all just schedule the next
-timer the fixed computed jiffies/ms from now. The only special case
-is when prb_open_block is called from tpacket_rcv. That would set
-the timeout further into the future than the already queued timer.
-I don't think that an earlier timeout is problematic. No need to
-add complexity to avoid that.
+Cpuset1 has no concept of effective cpumask  that excludes offline CPUs 
+unless "cpuset_v2_mode" mount option is used. So when the cpuset has no 
+CPU left, it will force migrate the tasks to its parent and the 
+__set_cpus_allowed_ptr() function will be invoked. The parent will 
+likely have those offline CPUs in their cpus_allowed list and 
+__set_cpus_allowed_ptr_locked() will be called with only the offline 
+CPUs causing the warning. Migrating to the top_cpuset is probably not 
+needed to illustrate the problem.
+
+Cheers,
+Longman
+
+> HTH,
+> Michal
+>
+> [1] Although the error propagates, it ends up without recovery in
+> remove_tasks_in_empty_cpuset() "only" as an error message. But that's
+> likely all what can be done in this workfn context -- it's better than
+> silently skipping the migration as consequence of this patch.
+
 
