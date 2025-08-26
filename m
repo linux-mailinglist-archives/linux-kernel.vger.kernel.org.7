@@ -1,278 +1,206 @@
-Return-Path: <linux-kernel+bounces-786504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 502CAB35AB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:06:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9250DB35AC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:10:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD83D3A9593
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:06:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A9AF1897818
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:11:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD462BE7D9;
-	Tue, 26 Aug 2025 11:06:05 +0000 (UTC)
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 356582BF00B;
+	Tue, 26 Aug 2025 11:10:50 +0000 (UTC)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC053227599;
-	Tue, 26 Aug 2025 11:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEC8126CE0A;
+	Tue, 26 Aug 2025 11:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756206365; cv=none; b=O9lShujttBI2gKPQQaACZmr1lw/C6wq652ROiL8d1BSv0c+t1/ZUMoqweimwILr9KIw51oJTZULTyBZM9+iWvtBPNr8IBR6fYtFwW2sXf7M8kd/IuDbwuNtSSyEx+LiCCtViVuvSIiDFZty85vkmi6QT+qmPVVzuCUE7zNoXHrs=
+	t=1756206649; cv=none; b=TBSFQyLWctpD5BiCVLZlQAMqJq8udeSO1YEI94s22MX6RmAI7YbyQ0O2hxS+jl9m6w3qeo0F5bXxU/sIavtlq3NRr2pLIyNsr6zYBWSTFShGIFxUaojBe+PKumaf/QOdluDi8yhfLvJr8C7pSOyvOv+/Q0/ivbeeEbhVBDkLQcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756206365; c=relaxed/simple;
-	bh=puUDhC4W4Gr0+K/N7lGMbyHwNybWPdiZJ8MsvVpgv/8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dh9KuxWzQiIXMMQsU/uLoqaRV9i6Z4JrrUiLcPJF8SJ53sCDTDkLnXjkJlnjxpVjSosZV4HHxbCRcrc+lte8AKAxbKTiGwHZCgtaX5ZsxbsYVXWe0sjjZ0eV2ZUCR2PrLl1y6HQN7lmKSVFPGX7z7s8py+2ZZT6ez+kSd7NJR4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.243.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: esmtpgz13t1756206342t345aa432
-X-QQ-Originating-IP: N2q7GcQAvwDoHq1fe0d0NqiL+NXhfi6yxI3W5XwgU2g=
-Received: from localhost ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 26 Aug 2025 19:05:39 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 3791947949160299687
-Date: Tue, 26 Aug 2025 19:05:39 +0800
-From: Yibo Dong <dong100@mucse.com>
-To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
-	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
-	gustavoars@kernel.org, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH net-next v7 4/5] net: rnpgbe: Add basic mbx_fw support
-Message-ID: <8C1007761115185D+20250826110539.GA461663@nic-Precision-5820-Tower>
-References: <20250822023453.1910972-1-dong100@mucse.com>
- <20250822023453.1910972-5-dong100@mucse.com>
- <316f57e3-5953-4db6-84aa-df9278461d30@linux.dev>
- <82E3BE49DB4195F0+20250826013113.GA6582@nic-Precision-5820-Tower>
- <bbdabd48-61c0-46f9-bf33-c49d6d27ffb0@linux.dev>
+	s=arc-20240116; t=1756206649; c=relaxed/simple;
+	bh=EwSSOFLEaoqn36EQQfnKIej8/8zP/dJsuwZQhT68goY=;
+	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
+	 Subject:Content-Type; b=uBAfPpE5HAyocUvty50XFii3ER4o9dU9E90J4WLZEai+FS1PPvpk2rHz7sbEbJEyv0S6vg/8neKRwAwuhzC1S4K34XMpoQ2H3ZMSG6uKhYpX9V9CPsYSy5KlzOSeZp2ygjCFx9J4jYggD21HT1ls1HEiwX0862BADhLnfEqsaUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4cB4hV6kwwz5B1CJ;
+	Tue, 26 Aug 2025 19:10:34 +0800 (CST)
+Received: from xaxapp04.zte.com.cn ([10.99.98.157])
+	by mse-fl1.zte.com.cn with SMTP id 57QB5sao024336;
+	Tue, 26 Aug 2025 19:05:54 +0800 (+08)
+	(envelope-from shao.mingyin@zte.com.cn)
+Received: from mapi (xaxapp05[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Tue, 26 Aug 2025 19:05:57 +0800 (CST)
+Date: Tue, 26 Aug 2025 19:05:57 +0800 (CST)
+X-Zmail-TransId: 2afc68ad9515e3f-afe9e
+X-Mailer: Zmail v1.0
+Message-ID: <20250826190557325q5xnXNQxYGNWk-xXJDRhw@zte.com.cn>
+In-Reply-To: <20250826185643235jApHbqi4zaPaZWVy6_Pot@zte.com.cn>
+References: 20250826185643235jApHbqi4zaPaZWVy6_Pot@zte.com.cn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bbdabd48-61c0-46f9-bf33-c49d6d27ffb0@linux.dev>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: Mf+wQkWJ2TuYoRAc945Q+9sC8ifU9Hx1TRauavHXeevaF+iEinTCc6pI
-	T+avn7OfwJyA74dE7RJakJ5Kk6T0BC8IfB+FPUY8w8mILtnB6V6zQgLFFQq2170myFTgJZy
-	qVIfKT4Miu22IGKqh233zAwsR2LAT1vHsSsLjVTgFYbJK/TziJZodeEFQeN0RAvJup/yYT9
-	bhe8okRPkPR/jA4Z9bv0jNXf2oTTXYyzGVRgOQwdZv94CqtH9zMTE0U77XGirQStWQvaJ4+
-	yOGjaO+VJFTu9pvH7TTiiUzZKNd4PB36WW/yPemcPN/BzQY2WiXrJYq910+U8Oby6AqIf7E
-	BSFaSZuf9yKGPL89o7jO9XE4cWsyESNIsDMUqfDzB4tHJdr5g+tHME87XbUrqors7Uk5cbQ
-	jXZfOBkrMuij0v+1JaCRMcPW/U9H/JShDmf+jMTP3gEtfe1wBUqAwjf/7C9zF6lqD1JJxlV
-	basLrJ3+3kKuBsY7IpnrRs2xRQ/YaYbqEWRSzjN7In1XrOeXPv516QTXOFaZV+2oGJEDRce
-	87C6Ned7XDMgegzfTbAUj/eMoJ6GrEo4d8ZzIqdnhwugimO7tns9irSgvi13DTU6dPwxDy6
-	kkXnjJWzAcuEAQRvHsIXCTrRiUbftKufneSq3AbqOdtiLGQIiBCcdQkzOcrwjXSwZTy0/yW
-	of+eXnx852asUoIKky0nCHN6voVrc85vo72CoUbBnmraA5ksRN46P6sPnzi4kDEjdfZnj80
-	GvmbYOtiAC1rtsNoRq9GzPmlhDMD0cICCRWvSUI890ejARs32xbGgwxsc0n7Bph2IVFXNXq
-	8bHMXZ+IdBV7JeoCMIoNsuyptttzHCWXX4xVs90b1x0CsOIPHQbifpYYzBZ7jwjtz2qh1Su
-	5+MHm3Q2HQBfzob5/Lwpxubz7BtDVw/9L5Gz+cQjAO1C2ORGN6FlGzr9JGwqYuPVNvun+Qc
-	SPJ09W7WgIcMwlxtL3Lhoi5/DBI2NnaZaIWsIbbH4oO6BMQNcrJtn2zPxGSIFuvVVLYSSVp
-	vRfsCMqz54hV1CQQQr
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-X-QQ-RECHKSPAM: 0
+Mime-Version: 1.0
+From: <shao.mingyin@zte.com.cn>
+To: <shao.mingyin@zte.com.cn>
+Cc: <alexs@kernel.org>, <si.yanteng@linux.dev>, <dzm91@hust.edu.cn>,
+        <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <yang.yang29@zte.com.cn>,
+        <xu.xin16@zte.com.cn>, <yang.tao172@zte.com.cn>,
+        <wang.longjie1@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIIHY0IDQvN10gRG9jcy96aF9DTjogVHJhbnNsYXRlIGdmczItdWV2ZW50cy5yc3QgdG8gU2ltcGxpZmllZCBDaGluZXNl?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 57QB5sao024336
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.132 unknown Tue, 26 Aug 2025 19:10:35 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 68AD962A.003/4cB4hV6kwwz5B1CJ
 
-On Tue, Aug 26, 2025 at 11:14:19AM +0100, Vadim Fedorenko wrote:
-> On 26/08/2025 02:31, Yibo Dong wrote:
-> > On Mon, Aug 25, 2025 at 05:37:27PM +0100, Vadim Fedorenko wrote:
-> > > On 22/08/2025 03:34, Dong Yibo wrote:
-> > > 
-> > > [...]
-> > > > +/**
-> > > > + * mucse_mbx_fw_post_req - Posts a mbx req to firmware and wait reply
-> > > > + * @hw: pointer to the HW structure
-> > > > + * @req: pointer to the cmd req structure
-> > > > + * @cookie: pointer to the req cookie
-> > > > + *
-> > > > + * mucse_mbx_fw_post_req posts a mbx req to firmware and wait for the
-> > > > + * reply. cookie->wait will be set in irq handler.
-> > > > + *
-> > > > + * @return: 0 on success, negative on failure
-> > > > + **/
-> > > > +static int mucse_mbx_fw_post_req(struct mucse_hw *hw,
-> > > > +				 struct mbx_fw_cmd_req *req,
-> > > > +				 struct mbx_req_cookie *cookie)
-> > > > +{
-> > > > +	int len = le16_to_cpu(req->datalen);
-> > > > +	int err;
-> > > > +
-> > > > +	cookie->errcode = 0;
-> > > > +	cookie->done = 0;
-> > > > +	init_waitqueue_head(&cookie->wait);
-> > > > +	err = mutex_lock_interruptible(&hw->mbx.lock);
-> > > > +	if (err)
-> > > > +		return err;
-> > > > +	err = mucse_write_mbx_pf(hw, (u32 *)req, len);
-> > > > +	if (err)
-> > > > +		goto out;
-> > > > +	/* if write succeeds, we must wait for firmware response or
-> > > > +	 * timeout to avoid using the already freed cookie->wait
-> > > > +	 */
-> > > > +	err = wait_event_timeout(cookie->wait,
-> > > > +				 cookie->done == 1,
-> > > > +				 cookie->timeout_jiffies);
-> > > 
-> > > it's unclear to me, what part of the code is managing values of cookie
-> > > structure? I didn't get the reason why are you putting the address of
-> > > cookie structure into request which is then directly passed to the FW.
-> > > Is the FW supposed to change values in cookie?
-> > > 
-> > 
-> > cookie will be used in an irq-handler. like this:
-> > static int rnpgbe_mbx_fw_reply_handler(struct mucse *mucse,
-> >                                         struct mbx_fw_cmd_reply *reply)
-> > {
-> >          struct mbx_req_cookie *cookie;
-> > 
-> >          cookie = reply->cookie;
-> > 
-> >          if (cookie->priv_len > 0)
-> >                  memcpy(cookie->priv, reply->data, cookie->priv_len);
-> >          cookie->done = 1;
-> >          if (le16_to_cpu(reply->flags) & FLAGS_ERR)
-> >                  cookie->errcode = -EIO;
-> >          else
-> >                  cookie->errcode = 0;
-> >          wake_up(&cookie->wait);
-> >          return 0;
-> > }
-> > That is why we must wait for firmware response.
-> > But irq is not added in this patch series. Maybe I should move all
-> > cookie relative codes to the patch will add irq?
-> 
-> well, yes, in general it's better to introduce the code as a solid
-> solution. this way it's much easier to review
-> 
+From: Shao Mingyin <shao.mingyin@zte.com.cn>
 
-Ok, I will remove it in this series and add later.
+translate the "gfs2-uevents.rst" into Simplified Chinese.
 
-> > 
-> > > > +
-> > > > +	if (!err)
-> > > > +		err = -ETIMEDOUT;
-> > > > +	else
-> > > > +		err = 0;
-> > > > +	if (!err && cookie->errcode)
-> > > > +		err = cookie->errcode;
-> > > > +out:
-> > > > +	mutex_unlock(&hw->mbx.lock);
-> > > > +	return err;
-> > > > +}
-> > > 
-> > > [...]
-> > > 
-> > > > +struct mbx_fw_cmd_req {
-> > > > +	__le16 flags;
-> > > > +	__le16 opcode;
-> > > > +	__le16 datalen;
-> > > > +	__le16 ret_value;
-> > > > +	union {
-> > > > +		struct {
-> > > > +			__le32 cookie_lo;
-> > > > +			__le32 cookie_hi;
-> > > > +		};
-> > > > +
-> > > > +		void *cookie;
-> > > > +	};
-> > > > +	__le32 reply_lo;
-> > > > +	__le32 reply_hi;
-> > > 
-> > > what do these 2 fields mean? are you going to provide reply's buffer
-> > > address directly to FW?
-> > > 
-> > 
-> > No, this is defined by fw. Some fw can access physical address.
-> > But I don't use it in this driver.
-> 
-> FW can access physical address without previously configuring IOMMU?
-> How can that be?
-> 
+Update to commit 5b7ac27a6e2c("docs: filesystems: convert
+gfs2-uevents.txt to ReST")
 
-memory is allocated by dma_alloc_coherent, and get physical address.
-Then fw use it.
+Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
+Signed-off-by: yang tao <yang.tao172@zte.com.cn>
+---
+v3->v4
+resolve patch damage issues.
+ .../zh_CN/filesystems/gfs2-uevents.rst        | 97 +++++++++++++++++++
+ .../translations/zh_CN/filesystems/index.rst  |  1 +
+ 2 files changed, 98 insertions(+)
+ create mode 100644 Documentation/translations/zh_CN/filesystems/gfs2-uevents.rst
 
-> > 
-> > > > +	union {
-> > > > +		u8 data[32];
-> > > > +		struct {
-> > > > +			__le32 version;
-> > > > +			__le32 status;
-> > > > +		} ifinsmod;
-> > > > +		struct {
-> > > > +			__le32 port_mask;
-> > > > +			__le32 pfvf_num;
-> > > > +		} get_mac_addr;
-> > > > +	};
-> > > > +} __packed;
-> > > > +
-> > > > +struct mbx_fw_cmd_reply {
-> > > > +	__le16 flags;
-> > > > +	__le16 opcode;
-> > > > +	__le16 error_code;
-> > > > +	__le16 datalen;
-> > > > +	union {
-> > > > +		struct {
-> > > > +			__le32 cookie_lo;
-> > > > +			__le32 cookie_hi;
-> > > > +		};
-> > > > +		void *cookie;
-> > > > +	};
-> > > 
-> > > This part looks like the request, apart from datalen and error_code are
-> > > swapped in the header. And it actually means that the FW will put back
-> > > the address of provided cookie into reply, right? If yes, then it
-> > > doesn't look correct at all...
-> > > 
-> > 
-> > It is yes. cookie is used in irq handler as show above.
-> > Sorry, I didn't understand 'the not correct' point?
-> 
-> The example above showed that the irq handler uses some value received
-> from the device as a pointer to kernel memory. That's not safe, you
-> cannot be sure that provided value is valid pointer, and that it points
-> to previously allocated cookie structure. It is a clear way to corrupt
-> memory.
-> 
-
-Yes. It is not safe, so I 'must wait_event_timeout before free cookie'....
-But is there a safe way to do it?
-Maybe:
-->allocate cookie
-  -> map it to an unique id
-    ->set the id to req->cookie
-      ->receive response and check id valid? Then access cookie?
-Please give me some advice... 
-
-> > 
-> > > > +	union {
-> > > > +		u8 data[40];
-> > > > +		struct mac_addr {
-> > > > +			__le32 ports;
-> > > > +			struct _addr {
-> > > > +				/* for macaddr:01:02:03:04:05:06
-> > > > +				 * mac-hi=0x01020304 mac-lo=0x05060000
-> > > > +				 */
-> > > > +				u8 mac[8];
-> > > > +			} addrs[4];
-> > > > +		} mac_addr;
-> > > > +		struct hw_abilities hw_abilities;
-> > > > +	};
-> > > > +} __packed;
-> > > 
-> 
-> 
+diff --git a/Documentation/translations/zh_CN/filesystems/gfs2-uevents.rst b/Documentation/translations/zh_CN/filesystems/gfs2-uevents.rst
+new file mode 100644
+index 000000000000..f5c3337ae9f9
+--- /dev/null
++++ b/Documentation/translations/zh_CN/filesystems/gfs2-uevents.rst
+@@ -0,0 +1,97 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++.. include:: ../disclaimer-zh_CN.rst
++
++:Original: Documentation/filesystems/gfs2-uevents.rst
++
++:翻译:
++
++   邵明寅 Shao Mingyin <shao.mingyin@zte.com.cn>
++
++:校译:
++
++   - 杨涛 yang tao <yang.tao172@zte.com.cn>
++
++===============
++uevents 与 GFS2
++===============
++
++在 GFS2 文件系统的挂载生命周期内，会生成多个 uevent。
++本文档解释了这些事件的含义及其用途（被 gfs2-utils 中的 gfs_controld 使用）。
++
++GFS2 uevents 列表
++=================
++
++1. ADD
++------
++
++ADD 事件发生在挂载时。它始终是新建文件系统生成的第一个 uevent。如果挂载成
++功，随后会生成 ONLINE uevent。如果挂载失败，则随后会生成 REMOVE uevent。
++
++ADD uevent 包含两个环境变量：SPECTATOR=[0|1] 和 RDONLY=[0|1]，分别用
++于指定文件系统的观察者状态（一种未分配日志的只读挂载）和只读状态（已分配日志）。
++
++2. ONLINE
++---------
++
++ONLINE uevent 在成功挂载或重新挂载后生成。它具有与 ADD uevent 相同的环
++境变量。ONLINE uevent 及其用于标识观察者和 RDONLY 状态的两个环境变量是较
++新版本内核引入的功能（2.6.32-rc+ 及以上），旧版本内核不会生成此事件。
++
++3. CHANGE
++---------
++
++CHANGE uevent 在两种场景下使用。一是报告第一个节点成功挂载文件系统时
++（FIRSTMOUNT=Done）。这作为信号告知 gfs_controld，此时集群中其他节点可以
++安全挂载该文件系统。
++
++另一个 CHANGE uevent 用于通知文件系统某个日志的日志恢复已完成。它包含两个
++环境变量：JID= 指定刚恢复的日志 ID，RECOVERY=[Done|Failed] 表示操作成
++功与否。这些 uevent 会在每次日志恢复时生成，无论是在初始挂载过程中，还是
++gfs_controld 通过 /sys/fs/gfs2/<fsname>/lock_module/recovery 文件
++请求特定日志恢复的结果。
++
++由于早期版本的 gfs_controld 使用 CHANGE uevent 时未检查环境变量以确定状
++态，若为其添加新功能，存在用户工具版本过旧导致集群故障的风险。因此，在新增用
++于标识成功挂载或重新挂载的 uevent 时，选择了使用 ONLINE uevent。
++
++4. OFFLINE
++----------
++
++OFFLINE uevent 仅在文件系统发生错误时生成，是 "withdraw" 机制的一部分。
++当前该事件未提供具体错误信息，此问题有待修复。
++
++5. REMOVE
++---------
++
++REMOVE uevent 在挂载失败结束或卸载文件系统时生成。所有 REMOVE uevent
++之前都至少存在同一文件系统的 ADD uevent。与其他 uevent 不同，它由内核的
++kobject 子系统自动生成。
++
++
++所有 GFS2 uevents 的通用信息（uevent 环境变量）
++===============================================
++
++1. LOCKTABLE=
++--------------
++
++LOCKTABLE 是一个字符串，其值来源于挂载命令行（locktable=）或 fstab 文件。
++它用作文件系统标签，并为 lock_dlm 类型的挂载提供加入集群所需的信息。
++
++2. LOCKPROTO=
++-------------
++
++LOCKPROTO 是一个字符串，其值取决于挂载命令行或 fstab 中的设置。其值将是
++lock_nolock 或 lock_dlm。未来可能支持其他锁管理器。
++
++3. JOURNALID=
++-------------
++
++如果文件系统正在使用日志（观察者挂载不分配日志），则所有 GFS2 uevent 中都
++会包含此变量，其值为数字形式的日志 ID。
++
++4. UUID=
++--------
++
++在较新版本的 gfs2-utils 中，mkfs.gfs2 会向文件系统超级块写入 UUID。若存
++在 UUID，所有与该文件系统相关的 uevent 中均会包含此信息。
+diff --git a/Documentation/translations/zh_CN/filesystems/index.rst b/Documentation/translations/zh_CN/filesystems/index.rst
+index 37968fb91f1a..291d7a46e8ab 100644
+--- a/Documentation/translations/zh_CN/filesystems/index.rst
++++ b/Documentation/translations/zh_CN/filesystems/index.rst
+@@ -29,3 +29,4 @@ Linux Kernel中的文件系统
+    ubifs
+    ubifs-authentication
+    gfs2
++   gfs2-uevents
+-- 
+2.25.1
 
