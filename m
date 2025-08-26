@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-785745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6DAFB3505E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:40:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F151B35060
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:41:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DFEB1A87E25
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:41:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F334F2426ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81DE8277C8E;
-	Tue, 26 Aug 2025 00:40:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1FFB28A705;
+	Tue, 26 Aug 2025 00:40:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IsG7c+AB"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="37DUwTTI"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51E625A2A1
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 00:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8915B26AA93
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 00:40:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756168818; cv=none; b=HO+37ucN+tK/sOZyFqdt26F/Qt7SNbLEmG0sWYU6/EjjI9iUbU48oqrOEz9eG6YHooVxU0XbImlbhjObKAniUWn+56fVWv57iAmt5+3D9OWWnt05wBw+/XiratBhlajXANXydu5mRdil/037JnSXgHL+0pO69Ap6nmrPL9+rjZs=
+	t=1756168820; cv=none; b=HQL2/O0yAQeL3cbKcbQzCrbpOxEOk3oN/stvKDZelUhqWMZVBJinKml355t9gaKl5OSS+mdTcBpmqIq3EGh0Lz7xqU1zxVQ65EOiZd0WDsckcCgT6yM/V/TGMb8p3HhXA3l/l32eD6ny3vIo6xtu6TJcEyEYxKamsfqJnk0vN7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756168818; c=relaxed/simple;
-	bh=mkdifJuocRaPeE9/s8dJMI63LfJbJ5RNcEoZFWM/YBw=;
+	s=arc-20240116; t=1756168820; c=relaxed/simple;
+	bh=GVb0pAXSPXdxX83+/OPqswXLmkkoza3EcxtQURZXTX8=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Zvg1uPHGyZevGlasIbTzYEIJ1IodCxA//UmLorrg9WDresWTqXxZkAgJzo7ZA4ClkAYkbWT0JO3ITUUdGuK5YRuCZc3QT2vmyteKdbRzBwHIW1oNHCm89u7VZZQTKHHrR68UsfuKi4BqKZ/EGht54mTOc/nlsYcVgoTJ8z+YD30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IsG7c+AB; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=KKRQ1kG0OfvfIcIPPrD8OWlDigSZ5Vg/Dnolw5kVQ9aUC6iDyBnM7Xqeyivi1uj1CyFpJ/34vLqiB0v+r1DIHY4P9sOXVefyQtQMcaj9A2dWle5je13t0RPWYFun8IYQAiuVkLXlCkz+FggqJu/ZyhnzBV/djoh/td6nX/mMquY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=37DUwTTI; arc=none smtp.client-ip=209.85.215.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-325ce108e16so1712466a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 17:40:16 -0700 (PDT)
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b47174c65b0so8634790a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 17:40:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756168816; x=1756773616; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1756168818; x=1756773618; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=I6OP+E9wowSd53dNHDSrZPahIGECBB8CqlNw/C87dc0=;
-        b=IsG7c+ABcijBf4P4L/dvXKkAiu8kv0GwNarRaAsw09h6hZt4+YPZkwae/TtOXAwtk5
-         Fuv3kPTmJaAKz2pK18iXDk1lPq05zQJzh+nbHQaIJDaDwpIeeYE+utkn/7VcQH4oZVac
-         MMVM3lUc6JPt3p7w9pW+M8e1JszO3TNDbm/6ZNEx2m+MhzojnOM6P8lyhi+5OGyPK1ir
-         5Ked3xffcgTbKAMCLeswczWx7Y9txipEr74ZdC0FqJ8dMURvgNgTpBZzKjS/SWcKtxpt
-         ZgHICWHD4I9pgdTJP86uOAJrqhVBfkW+7sTPdgp7J9d0/Ec27ekg8UrDPTskpOgpyvzI
-         Tkrw==
+        bh=5V06R2YwV4P7mb6bnA7O8amlLNlaQTPU7YQZptgAyaw=;
+        b=37DUwTTIplSHyjXb5oD9D5j+/h/odBr8rm+d0svmhcWkBZu/Mxvy3mSTNMuganlGrX
+         +vwpRrwReIFOv1jSXAywZTNFgfSe1vwtnr7bChqI8e2en3jLvsDjn26gi/UBLwC+Ykw8
+         NTIfnoXN+HRIswB89Fzehs+zFGpb+8q+QH+WqQ7VDjgTWJIFOlo5BpHzJCAmtb21ZnvV
+         HZXRbmYpDq5xsM/BEszskuX18Jtn5hP7XNtVpFSQ2WrvtqYWOdccvV6IAIcsFLwo7zq6
+         4w6DOsuHOh4+qrpBTqWHjJN3POWDNrSy0+1yhK7e5UPrhM+eaZgIdxQ0WohVOV7+ihva
+         7wLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756168816; x=1756773616;
+        d=1e100.net; s=20230601; t=1756168818; x=1756773618;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=I6OP+E9wowSd53dNHDSrZPahIGECBB8CqlNw/C87dc0=;
-        b=D8k6awtrYGWDoSLOwypelHYiLLMbM68+0UaH9XierxTDgO+IdYcbVKVfXqJ04G6nCm
-         KX6CoOipFi9jPo/mFOtk/6DVog5Bjsn4yS0+BBbT4x9G0dteN7Xm+sm4MxFzsX1h7eGJ
-         ApbZpY5OZqelhVgQVkGU1HEw0atmg3Jiv0nzvalWs/gMe+weW3i5NK+ptgSFTElNr7yH
-         15cUJ6SIIjUO7NTdqcE0CaYhg1Gje6tP4JjtREu9GKJzfP/jSBqeDrxjkj41SFhxQYYK
-         NcgarSyE6ODBe/c3BiXwoSOodFXE0Ao0DgEGhsFNnTiGjCvN9lTjcZsRZdKBL6RQNINe
-         dWEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUzosfmdpqvc5OsrG881GDhnpbaN0x5nPNJAWu3t4rg0C2JwFxHUcICzl4vQ4sA3CXEdoMbqydaGksBvJc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5BH/i+eLSrvgEr7TkvFZKbf3HWxTjJplo6MiD54C6lKKLEZBQ
-	xwcIC8uAH0chGY4i2TKNAKe/mfHhVtIFYM5WJFovmedDGsM3FYOqbgmkw36YE2p7TTBh/3UQsoQ
-	Bc9sjtg==
-X-Google-Smtp-Source: AGHT+IHfyEsrfv35hPjuJ4cCkQ67whYQiOrrNcLejtWiTZWgV3y9MtXTxxAf+GtFvnSoCWEA5haSZ544u4g=
-X-Received: from pjbqo12.prod.google.com ([2002:a17:90b:3dcc:b0:325:9f85:b74])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2ccd:b0:312:e731:5a66
- with SMTP id 98e67ed59e1d1-32515ee159bmr16515015a91.3.1756168816120; Mon, 25
- Aug 2025 17:40:16 -0700 (PDT)
+        bh=5V06R2YwV4P7mb6bnA7O8amlLNlaQTPU7YQZptgAyaw=;
+        b=J01Tv1aCmGd75KgZYoG30eq3noQh0HaGxB6uYweOMq7TyK7C8WmWBtRfR0rhznsGj7
+         GJN6aIDP3ict6W+FQ1w/Ex8eFpvPfOBO+oesWvP6j4viskODux3p0hgtQb0uhqdHigty
+         uCs/EAingMtO8r8yK8HDjRjgyElzXBHTHgZ2OqO8LOQ2PGe6I1p2Nf61tG0jii9yqxSX
+         5izIxV/O0KubTxIbYRXezXsmJclv+iyLtS85UMNxN1oQjxjiz5MXrluA9TjEXf0mPwf/
+         b8oPMl5F4L4M5GBkphKVcBSBGt/CIm22g4UY7tXUEjLz7nP639bKu9es/pdiv5GWOEiG
+         IWxw==
+X-Forwarded-Encrypted: i=1; AJvYcCXLeUGBgLMYuNLfTttKNeHhkXmRM0GHPRZ/31zbdxhFpPCEM1TavZNvAvD12jeZeDtbpgkWzYzwk67FNsY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVEELvP8jBB6iXMXkgoCP+mLrHWC7bPgMqLr+0Zuhg39l/R4Sw
+	Tw4NqpOnBQL5oIHqRpeoSW937OQOlg2ge6LW/ugI8q0SN9eLnObe350BNYOijYmyP6AwZ39n4yg
+	G2FjGZw==
+X-Google-Smtp-Source: AGHT+IGvMwOaGiGqZx7k3m6cvaP4kpjaZdVQ4IKIUIbPn0jyCNEVmHY+8BVB6L/MWU98cgfspsjTfnfKiu8=
+X-Received: from pfoo6.prod.google.com ([2002:a05:6a00:1a06:b0:770:5229:752e])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:3282:b0:235:6e1:7017
+ with SMTP id adf61e73a8af0-24340ab113bmr16959785637.4.1756168817903; Mon, 25
+ Aug 2025 17:40:17 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Mon, 25 Aug 2025 17:40:09 -0700
+Date: Mon, 25 Aug 2025 17:40:10 -0700
 In-Reply-To: <20250826004012.3835150-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,9 +75,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250826004012.3835150-1-seanjc@google.com>
 X-Mailer: git-send-email 2.51.0.261.g7ce5a0a67e-goog
-Message-ID: <20250826004012.3835150-2-seanjc@google.com>
-Subject: [PATCH 1/3] vhost_task: KVM: Don't wake KVM x86's recovery thread if
- vhost task was killed
+Message-ID: <20250826004012.3835150-3-seanjc@google.com>
+Subject: [PATCH 2/3] vhost_task: Allow caller to omit handle_sigkill() callback
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
 	"Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>
@@ -86,158 +85,47 @@ Cc: kvm@vger.kernel.org, virtualization@lists.linux.dev,
 	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Content-Type: text/plain; charset="UTF-8"
 
-Add a vhost_task_wake_safe() variant to handle the case where a vhost task
-has exited due to a signal, i.e. before being explicitly stopped by the
-owner of the task, and use the "safe" API in KVM when waking NX hugepage
-recovery tasks.  This fixes a bug where KVM will attempt to wake a task
-that has exited, which ultimately results in all manner of badness, e.g.
+Now that vhost_task provides an API to safely wake a task without relying
+on the caller to react to signalas, make handle_sigkill() optional and
+WARN if the "unsafe" vhost_task_wake() is used without hooking sigkill.
+Requiring the user to react to sigkill adds no meaningful value, e.g. it
+didn't help KVM do anything useful, and adding a sanity check in
+vhost_task_wake() gives developers a hint as to what needs to be done in
+response to sigkill.
 
-  Oops: general protection fault, probably for non-canonical address 0xff0e899fa1566052: 0000 [#1] SMP
-  CPU: 51 UID: 0 PID: 53807 Comm: tee Tainted: G S         O        6.17.0-smp--38183c31756a-next #826 NONE
-  Tainted: [S]=CPU_OUT_OF_SPEC, [O]=OOT_MODULE
-  Hardware name: Google LLC Indus/Indus_QC_03, BIOS 30.110.0 09/13/2024
-  RIP: 0010:queued_spin_lock_slowpath+0x123/0x250
-  Code: ... <48> 89 8c 02 c0 da 47 a2 83 79 08 00 75 08 f3 90 83 79 08 00 74 f8
-  RSP: 0018:ffffbf55cffe7cf8 EFLAGS: 00010006
-  RAX: ff0e899fff0e8562 RBX: 0000000000d00000 RCX: ffffa39b40aefac0
-  RDX: 0000000000000030 RSI: fffffffffffffff8 RDI: ffffa39d0592e68c
-  RBP: 0000000000d00000 R08: 00000000ffffff80 R09: 0000000400000000
-  R10: ffffa36cce4fe401 R11: 0000000000000800 R12: 0000000000000003
-  R13: 0000000000000000 R14: ffffa39d0592e68c R15: ffffa39b9e672000
-  FS:  00007f233b2e9740(0000) GS:ffffa39b9e672000(0000) knlGS:0000000000000000
-  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  CR2: 00007f233b39fda0 CR3: 00000004d031f002 CR4: 00000000007726f0
-  PKRU: 55555554
-  Call Trace:
-   <TASK>
-   _raw_spin_lock_irqsave+0x50/0x60
-   try_to_wake_up+0x4f/0x5d0
-   set_nx_huge_pages+0xe4/0x1c0 [kvm]
-   param_attr_store+0x89/0xf0
-   module_attr_store+0x1e/0x30
-   kernfs_fop_write_iter+0xe4/0x160
-   vfs_write+0x2cb/0x420
-   ksys_write+0x7f/0xf0
-   do_syscall_64+0x6f/0x1f0
-   entry_SYSCALL_64_after_hwframe+0x4b/0x53
-  RIP: 0033:0x7f233b4178b3
-  R13: 0000000000000002 R14: 00000000226ff3d0 R15: 0000000000000002
-   </TASK>
-
-Provide an API in vhost task instead of forcing KVM to solve the problem,
-as KVM would literally just add an equivalent to VHOST_TASK_FLAGS_KILLED,
-along with a new lock to protect said flag.  In general, forcing simple
-usage of vhost task to care about signals _and_ take non-trivial action to
-do the right thing isn't developer friendly, and is likely to lead to
-similar bugs in the future.
-
-Debugged-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Link: https://lore.kernel.org/all/aKkLEtoDXKxAAWju@google.com
-Link: https://lore.kernel.org/all/aJ_vEP2EHj6l0xRT@google.com
-Suggested-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Fixes: d96c77bd4eeb ("KVM: x86: switch hugepage recovery thread to vhost_task")
-Cc: stable@vger.kernel.org
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/mmu/mmu.c           |  2 +-
- include/linux/sched/vhost_task.h |  1 +
- kernel/vhost_task.c              | 42 +++++++++++++++++++++++++++++---
- 3 files changed, 41 insertions(+), 4 deletions(-)
+ kernel/vhost_task.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 6e838cb6c9e1..d11730467fd4 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -7376,7 +7376,7 @@ static void kvm_wake_nx_recovery_thread(struct kvm *kvm)
- 	struct vhost_task *nx_thread = READ_ONCE(kvm->arch.nx_huge_page_recovery_thread);
- 
- 	if (nx_thread)
--		vhost_task_wake(nx_thread);
-+		vhost_task_wake_safe(nx_thread);
- }
- 
- static int get_nx_huge_pages(char *buffer, const struct kernel_param *kp)
-diff --git a/include/linux/sched/vhost_task.h b/include/linux/sched/vhost_task.h
-index 25446c5d3508..5d5c187088f7 100644
---- a/include/linux/sched/vhost_task.h
-+++ b/include/linux/sched/vhost_task.h
-@@ -10,5 +10,6 @@ struct vhost_task *vhost_task_create(bool (*fn)(void *),
- void vhost_task_start(struct vhost_task *vtsk);
- void vhost_task_stop(struct vhost_task *vtsk);
- void vhost_task_wake(struct vhost_task *vtsk);
-+void vhost_task_wake_safe(struct vhost_task *vtsk);
- 
- #endif /* _LINUX_SCHED_VHOST_TASK_H */
 diff --git a/kernel/vhost_task.c b/kernel/vhost_task.c
-index bc738fa90c1d..5aa8ddf88d01 100644
+index 5aa8ddf88d01..e0ec6bfe61e6 100644
 --- a/kernel/vhost_task.c
 +++ b/kernel/vhost_task.c
-@@ -67,18 +67,54 @@ static int vhost_task_fn(void *data)
- 	do_exit(0);
- }
- 
-+static void __vhost_task_wake(struct vhost_task *vtsk)
-+{
-+	wake_up_process(vtsk->task);
-+}
-+
- /**
-  * vhost_task_wake - wakeup the vhost_task
-  * @vtsk: vhost_task to wake
-  *
-- * wake up the vhost_task worker thread
-+ * Wake up the vhost_task worker thread.  The caller is responsible for ensuring
-+ * that the task hasn't exited.
+@@ -59,7 +59,8 @@ static int vhost_task_fn(void *data)
+ 	 */
+ 	if (!test_bit(VHOST_TASK_FLAGS_STOP, &vtsk->flags)) {
+ 		set_bit(VHOST_TASK_FLAGS_KILLED, &vtsk->flags);
+-		vtsk->handle_sigkill(vtsk->data);
++		if (vtsk->handle_sigkill)
++			vtsk->handle_sigkill(vtsk->data);
+ 	}
+ 	mutex_unlock(&vtsk->exit_mutex);
+ 	complete(&vtsk->exited);
+@@ -81,6 +82,13 @@ static void __vhost_task_wake(struct vhost_task *vtsk)
   */
  void vhost_task_wake(struct vhost_task *vtsk)
  {
--	wake_up_process(vtsk->task);
 +	/*
-+	 * Checking VHOST_TASK_FLAGS_KILLED can race with signal delivery, but
-+	 * a race can only result in false negatives and this is just a sanity
-+	 * check, i.e. if KILLED is set, the caller is buggy no matter what.
++	 * Waking the task without taking exit_mutex is safe if and only if the
++	 * implementation hooks sigkill, as that's the only way the caller can
++	 * know if the task has exited prematurely due to a signal.
 +	 */
-+	if (WARN_ON_ONCE(test_bit(VHOST_TASK_FLAGS_KILLED, &vtsk->flags)))
-+		return;
++	WARN_ON_ONCE(!vtsk->handle_sigkill);
 +
-+	__vhost_task_wake(vtsk);
- }
- EXPORT_SYMBOL_GPL(vhost_task_wake);
- 
-+/**
-+ * vhost_task_wake_safe - wakeup the vhost_task if it hasn't been killed
-+ * @vtsk: vhost_task to wake
-+ *
-+ * Wake up the vhost_task worker thread if the task hasn't exited, e.g. due to
-+ * a signal.
-+ */
-+void vhost_task_wake_safe(struct vhost_task *vtsk)
-+{
-+	guard(mutex)(&vtsk->exit_mutex);
-+
-+	/* Attempting to wake a task that has been explicitly stopped is a bug. */
-+	if (WARN_ON_ONCE(test_bit(VHOST_TASK_FLAGS_STOP, &vtsk->flags)))
-+		return;
-+
-+	if (test_bit(VHOST_TASK_FLAGS_KILLED, &vtsk->flags))
-+		return;
-+
-+	__vhost_task_wake(vtsk);
-+}
-+EXPORT_SYMBOL_GPL(vhost_task_wake_safe);
-+
- /**
-  * vhost_task_stop - stop a vhost_task
-  * @vtsk: vhost_task to stop
-@@ -91,7 +127,7 @@ void vhost_task_stop(struct vhost_task *vtsk)
- 	mutex_lock(&vtsk->exit_mutex);
- 	if (!test_bit(VHOST_TASK_FLAGS_KILLED, &vtsk->flags)) {
- 		set_bit(VHOST_TASK_FLAGS_STOP, &vtsk->flags);
--		vhost_task_wake(vtsk);
-+		__vhost_task_wake(vtsk);
- 	}
- 	mutex_unlock(&vtsk->exit_mutex);
- 
+ 	/*
+ 	 * Checking VHOST_TASK_FLAGS_KILLED can race with signal delivery, but
+ 	 * a race can only result in false negatives and this is just a sanity
 -- 
 2.51.0.261.g7ce5a0a67e-goog
 
