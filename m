@@ -1,107 +1,93 @@
-Return-Path: <linux-kernel+bounces-786625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F594B35F3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:38:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34F3FB35F41
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:40:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AEF13BAA3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:38:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BB75365717
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED64E2D060B;
-	Tue, 26 Aug 2025 12:38:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F8C3376A5;
+	Tue, 26 Aug 2025 12:39:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H0duExL8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="XkUpTeyD"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 512A1191F72
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 12:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40F4307484;
+	Tue, 26 Aug 2025 12:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756211902; cv=none; b=A1nLS4CjUaXRhAFSmg2/KHvE6DSg3IFwBpuHGDRFJuh9pakBozZw9WS1cSGRxUBUy4vIih+qxvRXgFVoVN9ANcOso00iAmYmOKMVCWzpe/LlgnKf20idBes8EEOC30zBPujuf9WnElLthSEFa+1kMnjFw6PThNucAwmIpRBjsD4=
+	t=1756211992; cv=none; b=vFpNTNHTSrf4SVzJb9P6v81x1kyjIKXEyOYeTwrcBkMAPKGKMr9CYiXIQl95mf6vmkOtu3FxDsN8PQ7ORGzSa7TwJFipOF6WZg5OuqitBj3jAqQEGEAuutnOK5EKXhRLm3Du+kDuh2rMBwp/qAzRfnKtweRh1kSv+PxojXbxApA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756211902; c=relaxed/simple;
-	bh=eMENLqxHzQQRExGaCUyCzfHRWShUoYDQAQ6JsPXHglU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D7BvDOL890u46gdRKsW0FbjbRsaUVehb51EPh88G1720PrONZ7tfXKUG4APF09pbFtHODhSshLFW2sAMpuUvoCwgEDIDX9mvK10pT1d+XROE+M7KRNXAIOS34B3ruYoWlCuJ8jiNQgKtSM1tqE2RbY0OEc2tLLQSw2GUkIiUtNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H0duExL8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95F13C4CEF1;
-	Tue, 26 Aug 2025 12:38:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756211901;
-	bh=eMENLqxHzQQRExGaCUyCzfHRWShUoYDQAQ6JsPXHglU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=H0duExL81okpSlnLoxs1EG1AhCa+yp/45AQAWEWwP7Z2oxsc6tdDlyY0XRd/cUfJa
-	 Ji51alkHHqhzK+HtwCMwYnCp92/k3M/9XW2NRqE520tCPcw4cn0Z9krYBhxTdNHCBh
-	 l6bVATbp/FW5SxW9sO3Qmte/6N2zttf+cKphDOMiw6KpNDbJmSivqK2gy2eShjTPvs
-	 Gjkhrx9HzO2jI3/HFUGgFUkYsM/Bs/uiysC2YC1hnyHVAkXLc2O83Y8gtcri8bEMZu
-	 +ls7hgta7LSPO3y0spLUHYnEC+ft/XgXV5dYYhHRhxxJ6Al59rDKP0RP86i8busKmm
-	 FOr/DLHl24C0A==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Alexander Graf <graf@amazon.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Changyuan Lyu <changyuanl@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>
-Cc: Pratyush Yadav <pratyush@kernel.org>,
-	kexec@lists.infradead.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] kho: make sure kho_scratch argument is fully consumed
-Date: Tue, 26 Aug 2025 14:38:16 +0200
-Message-ID: <20250826123817.64681-1-pratyush@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1756211992; c=relaxed/simple;
+	bh=dGnNrQX6SngfoB1qpiDdPYhk6mxxMtMJBb9fvgJBWyQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sIiN9+OXwYXUVJCN+6v0GHPvqQE0jyCYvbRI1F/t1t/DXXSgWftlGsNRLfYcxul4A9dNPg2J9173/NsFNkmSF8Q5KE3PQRj8P61k8KgqPwc2XbLqKXf3V5y1CzSK2ftSSs4Y/F2u08CHBif/uaJMJTYb/QOZAUt7T12AoiQH3OU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=XkUpTeyD; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=QkbnYSmWkM3Cx83RhzgKWrax3iNbj9sbt9f1CZxZlq0=; b=XkUpTeyDhuNXtl3P+qO3sjmTHV
+	AfgkITj/OVg/BiD7malHlPDfwTI1ZRY1CFJA8Ic1Ekk//PlTLVyBWgBxUPJ13/0zQ0+cX0eYo39L5
+	/8gNSuA1IsCwfpjesX8tu0OK8oPsuzwIYtksuY4mpvnyohEYwzWFDk3WjjeR2whwT1EY=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uqsx9-0065cW-2s; Tue, 26 Aug 2025 14:39:07 +0200
+Date: Tue, 26 Aug 2025 14:39:07 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Yibo Dong <dong100@mucse.com>
+Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
+	gur.stavi@huawei.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
+	danishanwar@ti.com, lee@trager.us, gongfan1@huawei.com,
+	lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
+	gustavoars@kernel.org, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH net-next v7 4/5] net: rnpgbe: Add basic mbx_fw support
+Message-ID: <bd1d77b2-c218-4dce-bbf6-1cbdecabb30b@lunn.ch>
+References: <20250822023453.1910972-1-dong100@mucse.com>
+ <20250822023453.1910972-5-dong100@mucse.com>
+ <316f57e3-5953-4db6-84aa-df9278461d30@linux.dev>
+ <82E3BE49DB4195F0+20250826013113.GA6582@nic-Precision-5820-Tower>
+ <bbdabd48-61c0-46f9-bf33-c49d6d27ffb0@linux.dev>
+ <8C1007761115185D+20250826110539.GA461663@nic-Precision-5820-Tower>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8C1007761115185D+20250826110539.GA461663@nic-Precision-5820-Tower>
 
-When specifying fixed sized scratch areas, the parser only parses the
-three scratch sizes and ignores the rest of the argument. This means the
-argument can have any bogus trailing characters.
+> Yes. It is not safe, so I 'must wait_event_timeout before free cookie'....
+> But is there a safe way to do it?
+> Maybe:
+> ->allocate cookie
+>   -> map it to an unique id
+>     ->set the id to req->cookie
+>       ->receive response and check id valid? Then access cookie?
 
-For example, "kho_scratch=256M,512M,512Mfoobar" results in successful
-parsing:
+This is part of why adding cookies in a separate patch with a good
+commit message is important.
 
-    [    0.000000] KHO: scratch areas: lowmem: 256MiB global: 512MiB pernode: 512MiB
+Please take a step back. What is the big picture? Why do you need a
+cookie? What is it used for? If you describe what your requirements
+are, we might be able to suggest a better solution, or point you at a
+driver you can copy code from.
 
-It is generally a good idea to parse arguments as strictly as possible.
-In addition, if bogus trailing characters are allowed in the kho_scratch
-argument, it is possible that some people might end up using them and
-later extensions to the argument format will cause unexpected breakages.
-
-Make sure the argument is fully consumed after all three scratch sizes
-are parsed. With this change, the bogus argument
-"kho_scratch=256M,512M,512Mfoobar" results in:
-
-    [    0.000000] Malformed early option 'kho_scratch'
-
-Signed-off-by: Pratyush Yadav <pratyush@kernel.org>
----
- kernel/kexec_handover.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
-index ecd1ac210dbd7..a90d55121a7a0 100644
---- a/kernel/kexec_handover.c
-+++ b/kernel/kexec_handover.c
-@@ -446,6 +446,10 @@ static int __init kho_parse_scratch_size(char *p)
- 		p = endp;
- 	}
- 
-+	/* The string should be fully consumed by now. */
-+	if (*p)
-+		return -EINVAL;
-+
- 	scratch_size_lowmem = sizes[0];
- 	scratch_size_global = sizes[1];
- 	scratch_size_pernode = sizes[2];
--- 
-2.47.3
-
+	Andrew
 
