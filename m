@@ -1,145 +1,322 @@
-Return-Path: <linux-kernel+bounces-785885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49BC4B3522C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:18:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1821FB3522F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:18:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 697AA68245C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:18:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 090951A84811
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0452D12F5;
-	Tue, 26 Aug 2025 03:18:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0DA0285C8F;
+	Tue, 26 Aug 2025 03:18:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="WEgzZL61"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jeAk24JP"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C074B111BF;
-	Tue, 26 Aug 2025 03:18:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42FFC27874A
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 03:18:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756178299; cv=none; b=T2Io7EcLiQ9YuTJEFmw/N5b4/RC6ATLXQ0An3w9rtORx1W0E0DxKFsNHZPmpbuSJBYvcJ34o5fzBdYHvKfbewwfSQoRNCNXUmp6djaDS9z6+VOw/PWEhZJiQaItFDIOjR6ZP5O2nFOeq4RheQD9+sbawkWSmV6qsa1tQDbbwVcc=
+	t=1756178315; cv=none; b=uUURq7UyvEFQmuFxIzhDik3vWG9Ri1g2EhHbKLwnbmdi+SZ599W37OJfE2KnYtUgBLU4RDHwZixfckvQte38AuxzW+bUOefoLzfvPBte5llR0uQsI2ZTGo3io306OzkOELT7HOYUWmpI615fwYQs5qQTKRe+FVGTavfkUintI7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756178299; c=relaxed/simple;
-	bh=+fdzLlFTbMhC+AEjdMzctmVl1NBXABvqWY7Th2eYHI4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vCvVpIaOl5JlxYqggbt177gn8GPZTYewpS1NffvLM9t3fljGsDjkpVnG+ZaRjFQduw4ub5WcubEmyuUNkEEKK1BOQrxC1dXnAm6nFuKUcx2QxSlKgMHoU9SqLiVUc3coCVVMefEPsP1It2Ft6B+CIeZCtiO1xa9+2X2+G/sYqkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=WEgzZL61; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Fs6pzcFRfuk1HEj3n7YIn4AqvWgvz9+8/2xjZTxmZoY=; b=WEgzZL61kJnw32A5oSkohRl/ER
-	OgcFmeG2v/j2w/acUPDqQIctI4nkAWMcJoaGoJTN+DRFJNCd1VLKq9Ks/CLfkD4PsZUuYsGQPNNfJ
-	W1JLMEPpQ1EkC2fJRJnXSKTOjdJEA7RBEVkpZ4fhsGFbBUTgWUlYnExfEz/fOtY6EbjY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uqkC1-0061wJ-02; Tue, 26 Aug 2025 05:17:53 +0200
-Date: Tue, 26 Aug 2025 05:17:52 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jacky Chou <jacky_chou@aspeedtech.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Simon Horman <horms@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Po-Yu Chuang <ratbert@faraday-tech.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-	"taoren@meta.com" <taoren@meta.com>
-Subject: Re: [net-next v2 0/4] Add AST2600 RGMII delay into ftgmac100
-Message-ID: <0c3ab6ae-a013-4d22-a05d-2760c8bca7ff@lunn.ch>
-References: <20250813063301.338851-1-jacky_chou@aspeedtech.com>
- <a9ef3c51-fe35-4949-a041-81af59314522@lunn.ch>
- <SEYPR06MB513431EE31303E834E05704B9D33A@SEYPR06MB5134.apcprd06.prod.outlook.com>
- <3966765c-876e-4433-9c82-8d89c6910490@lunn.ch>
- <SEYPR06MB51342BAA627D12DA4DC32D6E9D39A@SEYPR06MB5134.apcprd06.prod.outlook.com>
+	s=arc-20240116; t=1756178315; c=relaxed/simple;
+	bh=JatW6I3Fu/JQ8nlJDTRagh9D0g8tCpN6qj86u41ro0k=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=KxqSCoO93Be6bCVfT3eM+MrIkDB7MTdbEx8jjNfE7zeqNFodLnPffMYlrD0LJKxfa3Y7qpElmtmLJZW20GWTkJa60vfB5+S1wXWih76e2AA6YWYxoNdafPuI8UVGF3TitMESTKmT6yk6H0TRRE4/0UBP8JIBUCaW3TAoCN3q8gE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--tweek.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jeAk24JP; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--tweek.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-76e8ae86ab3so4863021b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 20:18:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756178312; x=1756783112; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ia25Jaa7IaL0nffY5Ufyltoj6WxAaukUAWgd3CDsn9w=;
+        b=jeAk24JPbhHmDrFSf4ZyCQgzf1uGMVJG3yt3UEWsFGHZtvDMqV7AyGO/S5yqLR4RmO
+         BFmE5HuEUgGbSJJxMvBu+IiiPB00+HRBHc9n9FReEBsewVbsY3+k3pHe0EG0p97ssLIl
+         lrdYXHL6m2vaIAAMakFrinoBlwJVhNBkWgaCte1K+U2ltwGz3HS9quke7JN0+cKUnhUl
+         rBEYtYSpdptTqpphpCZrL9i6jqBXzCUmKnLwh6DHinbOyKHIFBwa7uFDQ7d6ISLzIQnu
+         O4eZFglKsZxml33awCmFAiBGfpILUGRBfZtNKRShGQTn3JKAhFXUNyiLvEJ3Wqw3ahye
+         TxOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756178312; x=1756783112;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ia25Jaa7IaL0nffY5Ufyltoj6WxAaukUAWgd3CDsn9w=;
+        b=QValww1fhbVlxFTLaW1kmAnmqYtcxWbhJlob5W1cDowzQbScJn/jLt//dKrDo8Dm93
+         FJMg7oAgCn4jspMocd0tM6xiGlDYiuRFNdXw41G9i+nea6rr7fJ8pddIxsQ3UOrMZXzR
+         P5HgvzswTJYtJN1D6lIVZ0oaJsqL+YqB1jyn6kMzvawkJEeJwv0uAi3YZBAalxJCbhFV
+         cPaziKVLeoBHoTAx1kq4K7W0pzKEvke3uDKSFb+m4z5tyl78176ijs9gdnAuS4Pqumem
+         K//SmcyWByTOP43m5Ou2ZwMJhRcrVhcOSl7Z+WaX1VV7305F/TVqjNeDMK+EqFISkVRu
+         s54Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUpQ+HR4K5w2YazHkI1mAk6buY34cvpmj7StcsuWB2mu45/dLufO8taQMYwHfRNAUVqVT7aKAveq5SN3t4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUDPMxl7i7ZRf2RMLgoWiEEmrxFNeWgRZeawWmXe0R4apZKshY
+	3VvCClmsRt0EKZHFh65vII513blzPi8eYbin6XYWeb9zSZo07TNBPrM/ZkHgVylQyS3anRnLusC
+	Lig==
+X-Google-Smtp-Source: AGHT+IGXhlqnNu6ddaR+RH2PXtP+vJbdu5PRDLMQSy9xdeU5Lb5NRpAcP1D/ThqTrLRg2ieo22vV8cyK/A==
+X-Received: from pfbcw11.prod.google.com ([2002:a05:6a00:450b:b0:770:58e0:741f])
+ (user=tweek job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:a8e:b0:76c:1eae:fd30
+ with SMTP id d2e1a72fcca58-7702fa02d0fmr18741407b3a.12.1756178312469; Mon, 25
+ Aug 2025 20:18:32 -0700 (PDT)
+Date: Tue, 26 Aug 2025 13:18:24 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SEYPR06MB51342BAA627D12DA4DC32D6E9D39A@SEYPR06MB5134.apcprd06.prod.outlook.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.261.g7ce5a0a67e-goog
+Message-ID: <20250826031824.1227551-1-tweek@google.com>
+Subject: [PATCH] memfd,selinux: call security_inode_init_security_anon
+From: "=?UTF-8?q?Thi=C3=A9baud=20Weksteen?=" <tweek@google.com>
+To: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Hugh Dickins <hughd@google.com>, 
+	Jeff Vander Stoep <jeffv@google.com>, Nick Kralevich <nnk@google.com>, Jeff Xu <jeffxu@google.com>
+Cc: "=?UTF-8?q?Thi=C3=A9baud=20Weksteen?=" <tweek@google.com>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> I would like to discuss with you how we fix the RGMII of AST2600 in this thread.
-> And thank you for your patience in reviewing our code.
-> 
-> Currently, the RGMII delay in AST2600 is configured in U-boot stage, not in Linux.
-> The ftgmac driver will not use the phy-mode to configure the RGMII delay on MAC side.
-> 
-> I list the parts that I think need to be modified.
-> 1. Change the phy-mode to "rgmii-id" in aspeed-ast2600-evb.dts.
-> 2. Add the tx/rx-internal-delay-ps in dts.
-> 3. Add RGMII delay configuration in ftgmac driver. If the tx/rx-internal-delay-ps has not existed,
->   according to the phy-mode to configure default value.
-> 
-> These are the fix items I can think of.
-> Could you point out what I miss or a clear direction to correct the RGMII mode on AST2600?
+Prior to this change, no security hooks were called at the creation of a
+memfd file. It means that, for SELinux as an example, it will receive
+the default type of the filesystem that backs the in-memory inode. In
+most cases, that would be tmpfs, but if MFD_HUGETLB is passed, it will
+be hugetlbfs. Both can be considered implementation details of memfd.
 
-We have to be careful with the assumption u-boot is configuring
-delays. I've seen DT blobs which use 'rgmii-id', which suggests
-something is disabling the MAC delays, maybe because they are using a
-different version of u-boot, or barebox etc.
+It also means that it is not possible to differentiate between a file
+coming from memfd_create and a file coming from a standard tmpfs mount
+point.
 
-You should be able to read what the MAC is doing with delays. You can
-compare this with what the phy-mode is.
+Additionally, no permission is validated at creation, which differs from
+the similar memfd_secret syscall.
 
-* If the MAC is adding delays, and the phy-mode is rgmii-id, disable
-  the MAC delays, pass rgmii-id to the PHY.
+Call security_inode_init_security_anon during creation. This ensures
+that the file is setup similarly to other anonymous inodes. On SELinux,
+it means that the file will receive the security context of its task.
 
-* If the MAC is adding delays, and the phy-mode is rgmii, issue a
-  warning the DT blob is out of date, disable the MAC delays, and pass
-  rgmii-id to the PHY.
+The ability to limit fexecve on memfd has been of interest to avoid
+potential pitfalls where /proc/self/exe or similar would be executed
+[1][2]. Reuse the "execute_no_trans" and "entrypoint" access vectors,
+similarly to the file class. These access vectors may not make sense for
+the existing "anon_inode" class. Therefore, define and assign a new
+class "memfd_file" to support such access vectors.
 
-* If the MAC is not adding delays, and the phy-mode is rgmii-id, pass
-  rmgii-id to the PHY.
+Guard these changes behind a new policy capability named "memfd_class".
 
-* If the MAC is not adding delays, and the phy-mode is rgmii, that
-  suggests the PCB has extra long clock lines, and the board is using
-  a U-boot which has been modified to not enable MAC delays. Pass
-  rgmii to the PHY.
+[1] https://crbug.com/1305267
+[2] https://lore.kernel.org/lkml/20221215001205.51969-1-jeffxu@google.com/
 
-I would also suggest you review all DT blobs in mainline and see if
-any are using rgmii-rxid or rgmii-txid. If not, i would go with KISS
-and return -EINVAL for these, with a comment. Support for these can be
-added when somebody actually needs them.
+Signed-off-by: Thi=C3=A9baud Weksteen <tweek@google.com>
+---
+Changes since RFC:
+- Remove enum argument, simply compare the anon inode name
+- Introduce a policy capability for compatility
+- Add validation of class in selinux_bprm_creds_for_exec
 
-Most boards today will be the second bullet point. With time, they can
-transition to the first. New boards should hopefully be directly the
-first bullet point.
+ include/linux/memfd.h                      |  2 ++
+ mm/memfd.c                                 | 14 +++++++++--
+ security/selinux/hooks.c                   | 27 ++++++++++++++++++----
+ security/selinux/include/classmap.h        |  2 ++
+ security/selinux/include/policycap.h       |  1 +
+ security/selinux/include/policycap_names.h |  1 +
+ security/selinux/include/security.h        |  5 ++++
+ 7 files changed, 46 insertions(+), 6 deletions(-)
 
-Backwards compatibility is however an issue. Anybody with a new DT
-blob won't have working Ethernet with an old kernel if they are using
-the first bullet point. So we should not edit every DT blob in
-mainline and change rgmii to rgmii-id. We want to leave it to the
-board owner to decide it is time to make the warning go away.
+diff --git a/include/linux/memfd.h b/include/linux/memfd.h
+index 6f606d9573c3..cc74de3dbcfe 100644
+--- a/include/linux/memfd.h
++++ b/include/linux/memfd.h
+@@ -4,6 +4,8 @@
+=20
+ #include <linux/file.h>
+=20
++#define MEMFD_ANON_NAME "[memfd]"
++
+ #ifdef CONFIG_MEMFD_CREATE
+ extern long memfd_fcntl(struct file *file, unsigned int cmd, unsigned int =
+arg);
+ struct folio *memfd_alloc_folio(struct file *memfd, pgoff_t idx);
+diff --git a/mm/memfd.c b/mm/memfd.c
+index bbe679895ef6..63b439eb402a 100644
+--- a/mm/memfd.c
++++ b/mm/memfd.c
+@@ -433,6 +433,8 @@ static struct file *alloc_file(const char *name, unsign=
+ed int flags)
+ {
+ 	unsigned int *file_seals;
+ 	struct file *file;
++	struct inode *inode;
++	int err =3D 0;
+=20
+ 	if (flags & MFD_HUGETLB) {
+ 		file =3D hugetlb_file_setup(name, 0, VM_NORESERVE,
+@@ -444,12 +446,20 @@ static struct file *alloc_file(const char *name, unsi=
+gned int flags)
+ 	}
+ 	if (IS_ERR(file))
+ 		return file;
++
++	inode =3D file_inode(file);
++	err =3D security_inode_init_security_anon(inode,
++			&QSTR(MEMFD_ANON_NAME), NULL);
++	if (err) {
++		fput(file);
++		file =3D ERR_PTR(err);
++		return file;
++	}
++
+ 	file->f_mode |=3D FMODE_LSEEK | FMODE_PREAD | FMODE_PWRITE;
+ 	file->f_flags |=3D O_LARGEFILE;
+=20
+ 	if (flags & MFD_NOEXEC_SEAL) {
+-		struct inode *inode =3D file_inode(file);
+-
+ 		inode->i_mode &=3D ~0111;
+ 		file_seals =3D memfd_file_seals_ptr(file);
+ 		if (file_seals) {
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index c95a5874bf7d..429b2269b35a 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -93,6 +93,7 @@
+ #include <linux/fanotify.h>
+ #include <linux/io_uring/cmd.h>
+ #include <uapi/linux/lsm.h>
++#include <linux/memfd.h>
+=20
+ #include "avc.h"
+ #include "objsec.h"
+@@ -2366,9 +2367,12 @@ static int selinux_bprm_creds_for_exec(struct linux_=
+binprm *bprm)
+ 	ad.type =3D LSM_AUDIT_DATA_FILE;
+ 	ad.u.file =3D bprm->file;
+=20
++	if (isec->sclass !=3D SECCLASS_FILE && isec->sclass !=3D SECCLASS_MEMFD_F=
+ILE)
++		return -EPERM;
++
+ 	if (new_tsec->sid =3D=3D old_tsec->sid) {
+-		rc =3D avc_has_perm(old_tsec->sid, isec->sid,
+-				  SECCLASS_FILE, FILE__EXECUTE_NO_TRANS, &ad);
++		rc =3D avc_has_perm(old_tsec->sid, isec->sid, isec->sclass,
++				  FILE__EXECUTE_NO_TRANS, &ad);
+ 		if (rc)
+ 			return rc;
+ 	} else {
+@@ -2378,8 +2382,8 @@ static int selinux_bprm_creds_for_exec(struct linux_b=
+inprm *bprm)
+ 		if (rc)
+ 			return rc;
+=20
+-		rc =3D avc_has_perm(new_tsec->sid, isec->sid,
+-				  SECCLASS_FILE, FILE__ENTRYPOINT, &ad);
++		rc =3D avc_has_perm(new_tsec->sid, isec->sid, isec->sclass,
++				  FILE__ENTRYPOINT, &ad);
+ 		if (rc)
+ 			return rc;
+=20
+@@ -2974,10 +2978,18 @@ static int selinux_inode_init_security_anon(struct =
+inode *inode,
+ 	struct common_audit_data ad;
+ 	struct inode_security_struct *isec;
+ 	int rc;
++	bool is_memfd =3D false;
+=20
+ 	if (unlikely(!selinux_initialized()))
+ 		return 0;
+=20
++	if (name !=3D NULL && name->name !=3D NULL &&
++	    !strcmp(name->name, MEMFD_ANON_NAME)) {
++		if (!selinux_policycap_memfd_class())
++			return 0;
++		is_memfd =3D true;
++	}
++
+ 	isec =3D selinux_inode(inode);
+=20
+ 	/*
+@@ -2996,6 +3008,13 @@ static int selinux_inode_init_security_anon(struct i=
+node *inode,
+=20
+ 		isec->sclass =3D context_isec->sclass;
+ 		isec->sid =3D context_isec->sid;
++	} else if (is_memfd) {
++		isec->sclass =3D SECCLASS_MEMFD_FILE;
++		rc =3D security_transition_sid(
++			sid, sid,
++			isec->sclass, name, &isec->sid);
++		if (rc)
++			return rc;
+ 	} else {
+ 		isec->sclass =3D SECCLASS_ANON_INODE;
+ 		rc =3D security_transition_sid(
+diff --git a/security/selinux/include/classmap.h b/security/selinux/include=
+/classmap.h
+index 5665aa5e7853..3ec85142771f 100644
+--- a/security/selinux/include/classmap.h
++++ b/security/selinux/include/classmap.h
+@@ -179,6 +179,8 @@ const struct security_class_mapping secclass_map[] =3D =
+{
+ 	{ "anon_inode", { COMMON_FILE_PERMS, NULL } },
+ 	{ "io_uring", { "override_creds", "sqpoll", "cmd", "allowed", NULL } },
+ 	{ "user_namespace", { "create", NULL } },
++	{ "memfd_file",
++	  { COMMON_FILE_PERMS, "execute_no_trans", "entrypoint", NULL } },
+ 	/* last one */ { NULL, {} }
+ };
+=20
+diff --git a/security/selinux/include/policycap.h b/security/selinux/includ=
+e/policycap.h
+index 7405154e6c42..dabcc9f14dde 100644
+--- a/security/selinux/include/policycap.h
++++ b/security/selinux/include/policycap.h
+@@ -17,6 +17,7 @@ enum {
+ 	POLICYDB_CAP_NETLINK_XPERM,
+ 	POLICYDB_CAP_NETIF_WILDCARD,
+ 	POLICYDB_CAP_GENFS_SECLABEL_WILDCARD,
++	POLICYDB_CAP_MEMFD_CLASS,
+ 	__POLICYDB_CAP_MAX
+ };
+ #define POLICYDB_CAP_MAX (__POLICYDB_CAP_MAX - 1)
+diff --git a/security/selinux/include/policycap_names.h b/security/selinux/=
+include/policycap_names.h
+index d8962fcf2ff9..8e96f2a816b6 100644
+--- a/security/selinux/include/policycap_names.h
++++ b/security/selinux/include/policycap_names.h
+@@ -20,6 +20,7 @@ const char *const selinux_policycap_names[__POLICYDB_CAP_=
+MAX] =3D {
+ 	"netlink_xperm",
+ 	"netif_wildcard",
+ 	"genfs_seclabel_wildcard",
++	"memfd_class",
+ };
+ /* clang-format on */
+=20
+diff --git a/security/selinux/include/security.h b/security/selinux/include=
+/security.h
+index 8201e6a3ac0f..72c963f54148 100644
+--- a/security/selinux/include/security.h
++++ b/security/selinux/include/security.h
+@@ -209,6 +209,11 @@ static inline bool selinux_policycap_netif_wildcard(vo=
+id)
+ 		selinux_state.policycap[POLICYDB_CAP_NETIF_WILDCARD]);
+ }
+=20
++static inline bool selinux_policycap_memfd_class(void)
++{
++	return READ_ONCE(selinux_state.policycap[POLICYDB_CAP_MEMFD_CLASS]);
++}
++
+ struct selinux_policy_convert_data;
+=20
+ struct selinux_load_state {
+--=20
+2.51.0.261.g7ce5a0a67e-goog
 
-tx/rx-internal-delay-ps are optional. I would not add them yet,
-because it makes the logic more complex. As far as i understand, no
-board has required them so far, so there does not appear to be a need
-for them.
-
-You need good commit messages with these changes. Make it clear there
-could be backwards compatibility issues, but that is the cost of
-fixing up a broken implementation.
-
-	Andrew
 
