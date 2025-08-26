@@ -1,148 +1,97 @@
-Return-Path: <linux-kernel+bounces-785854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 328F3B351D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:42:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2177B351D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:43:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27A351B26B6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:43:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D89A5E75EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18430276058;
-	Tue, 26 Aug 2025 02:42:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A27275B08;
+	Tue, 26 Aug 2025 02:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gOejUMsJ"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O2BJeiOA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16CE1244691;
-	Tue, 26 Aug 2025 02:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 115D6274FC1
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 02:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756176152; cv=none; b=ryxyQIf12q3VdZ3VIARFTi8Ke1/HjK3nHJn/wx3SkoIipHcjex7wUr3m4WWIGLPLHgZ1U6ikGEQsGBVXrQHK0v6aLU2EN5pH35uQALCVqZEf78SQ/wJXiCTumzi3cxBE8n/kKWmUfn2N3mocAky5apmBfb534BR5nYdaycY7b6Q=
+	t=1756176187; cv=none; b=mrvx+rMpjG+2HniUa3e6b7vQ1nBSqwr4GCOzWZqwVelIsEYtMi6GtJTcVI0gAL5P80wXYPMiRoiDjCgDLqnqzXuP5zyaHYDj2FaTkVhqDBfl6cS7I3A7Rq8vKxCWonaAapebXj6dnhqu2RveX0DW5Mq4UEn02ycjxyX5JlTHMa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756176152; c=relaxed/simple;
-	bh=zYkRdlO0U18XSPpspud7s26YJzfHgvzhI+jZoKSfTqU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nf7KFMIDGTjU3asiicro74QoMek8TgVBkRgcRXdJ3rBPXpwxn+fvQ9ZO2g7y7kkXXm7oEWhkCZAEUqYInOcQdT/SbEJeuXVav+z81LrXyKNUn1TntQfPllXEGBhyw2ti92AmpJfgWZua9sZP8yE9iqlTQ2n4Ry8ZMo45EjeC+wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gOejUMsJ; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-771e4378263so1353767b3a.0;
-        Mon, 25 Aug 2025 19:42:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756176150; x=1756780950; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xR6DYc89vuHriP+8uKQP0na1daOwB9mmorwHUhrAVP8=;
-        b=gOejUMsJyMKqXvuTGFSsdqWcOKTX0TZwj0NBjIw1WPLYbAFSppL0P0HgaZfHNL74Lz
-         CTjTILG9dCSMz6wUBx9BYYDjYXC3Ntk5YISmHac/P8ljRwyG94kG6WWZ8R+ksyqON8Qn
-         eiT0sarR4q+jye0hLfa4DHkT5lAIk/MrQEbdZ3E6c87GQeJIWeIn+YNcjU5IOIjJjEri
-         XSKhbzMWkyTWDP6aoJjNqa3YTt0VRZd+donYDZkIUzB7jn/e97ccnNcgWXbNtUYOGZna
-         jdxG0abGcEbxVaeH26V37REiSxkDwTpQGXmEhz5KT5pxnjHsuTPRzEgZAGtSmPONAIfq
-         Zv0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756176150; x=1756780950;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xR6DYc89vuHriP+8uKQP0na1daOwB9mmorwHUhrAVP8=;
-        b=dpivTou03yXDgNeBOubbGcAOym/kump1ozWiHvNjdD2ZoSoB9gIdDHjjtn08PjDPHI
-         0jTP5ZJWzr5+4nXhF/gQIeXD947WWHdsFxuBO3K+Glpkaoc2VKCO3B/mJLCsnvwgcRy5
-         dKaxlNq9Vo34S1CxjAm/T4+gLCTO7XRjuBVtTaVl2LRblvMGjsX56OkUK+evyWH2ZeQv
-         7O8spae+I/ZSynTf6x6CEWCcIAPB+bRO2pQRc/LrT2DhCXuGle5Hmq9ywpZaLrjdokjB
-         oEiTU8ujrd1viaIepuy3Mcqm5/hUtImmhqDl8xgKswFUVST9Y2XUBCrGyiMQnlZ3HkQ4
-         gbzw==
-X-Forwarded-Encrypted: i=1; AJvYcCU28gm6N+4S7zMDbeKu3YVeRKF+Ajntaf1DGzZkBXsfaDC83OWCoCh1XVWVoWoXgf18BHIyRVnw6Bz1dtpagPvXEsQ=@vger.kernel.org, AJvYcCWsXCYp9wTG3BD/ESHpBTlYg+CsODvXW5kQYNmDCrmOWVhwm4MxGJzRZdYWEHNIit4/m+xZHl41fLE=@vger.kernel.org, AJvYcCXXlMQ+bnfgXD9rQZZzSjjKmQZXEaHRV2fUxPWzK03MWCwd1jYyVaVfBCOWT2hSPzjsCXSeYAqy0AzlHGk6@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZLVOxsFC0+WmPfSnAIigQUIfi80Q/+rtWAbbSIoR8bATCkTzC
-	3NjwSzZZOd5UtJRNU/4FdSutlVGxG8shiNeC+l6GQcY1dF376uAKTplP
-X-Gm-Gg: ASbGncvfTmAFIJ4HxWr969I0F+8KdFvEvPNTWiSkFCZiBb7w6LgsDYv8lQkeQE26I2S
-	2Cvxg5gP7FEpinj2iSRCHLHALepOf+u5/FJr3QY06w9jtRfHSMYKZyXo830+pJyjnAH2ZiAqzGB
-	tR2GdYFEen0xWemubyIzjFbOjehYoHdFI2RIv0+g6LzvN0jkUsNw7PBKZT/88lUFsdA4acoQh65
-	Ck8BzKahUSX68mBh5ktusIeSrdnGvqdQKHojouRhKlgJzLNBQt49JrDhSuQmcz1jPKnmF34pDmU
-	JkSigTlKyoE8WCn8bp96gwBe12Qz6HDhyz+rblpHtCNag6PzfmxsS6rc8j/J4etgw1Ll8JwZ+Zo
-	OdbXR+8bZUJ8uzbSxRB7zmRk=
-X-Google-Smtp-Source: AGHT+IFpXXOz6jvKmc98oCi1NCiBQLg+bmp0DWJBuKZIBlouXbVcIiSBZxDk5lZs14cKqzF4SAkDxQ==
-X-Received: by 2002:a05:6a20:258c:b0:23d:ded5:12b9 with SMTP id adf61e73a8af0-24340d91d6fmr19374286637.32.1756176150053;
-        Mon, 25 Aug 2025 19:42:30 -0700 (PDT)
-Received: from dixit ([2401:4900:1c42:3335:1f6f:7d68:6bb2:7634])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b49cb8b4b98sm7835430a12.19.2025.08.25.19.42.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 19:42:29 -0700 (PDT)
-Date: Tue, 26 Aug 2025 08:12:11 +0530
-From: Dixit Parmar <dixitparmar19@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Support Opensource <support.opensource@diasemi.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Haibo Chen <haibo.chen@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Cai Huoqing <cai.huoqing@linux.dev>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Andreas Klinger <ak@it-klinger.de>, Crt Mori <cmo@melexis.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH 00/10] iio: Drop unnecessary -ENOMEM messages
-Message-ID: <aK0fA4QnFKH5AQas@dixit>
-References: <20250822-enomam_logs-v1-0-db87f2974552@gmail.com>
- <20250825093150.3ba23f2a@jic23-huawei>
- <20250825123919.3c228ef7@jic23-huawei>
+	s=arc-20240116; t=1756176187; c=relaxed/simple;
+	bh=1zDaGs/kld2uTzaCMclVfOGPgjO6KdKJRsGrRbmQ8E8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FHMcpbjdwDam0KP+qbv45ic9wBiTzCtP7CVJBFmaTRFaIjI0coX1Im5TG8NYeUwuUdh6Fn9ZskfBE8IE1GExcp6GqvNcj0AaU02DhDbXL6fpFkcDwWSf1ucIRk3Jmonbb3Hac7aPelE+NbR0NvR0mJIMR9z8N86TxdAVTaZcr7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O2BJeiOA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7863BC4AF09
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 02:43:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756176186;
+	bh=1zDaGs/kld2uTzaCMclVfOGPgjO6KdKJRsGrRbmQ8E8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=O2BJeiOARaSX85Eu4LAKke2b4qea2jb9uSRulr5o7pYBqY3xuI4vFfTNjXa3IwUFl
+	 lmTdVG2Gduwh3TI7oTAX6we/c8qXeDxfwuDxI+sHyUmr/0otlsiM33r0IFrJsnFC6s
+	 zLpcBQmtWb9JRdZS5yZqwjBYFOmkta+KC1U1JACboo/BxFJrQOZTL8H+IlEzwNFOUT
+	 6iJ5Xwfe/M9Nitj+7jAPLtg8DZKmYjkmKiOdcCmZLK6U4brTYIzeY3QAT/o+X3O5Fr
+	 cDstThcSuRHycFDxSzolkRHhwKq49yh/72N/2a8L512aVhk3M9iyvG9xRiMjOhaXCn
+	 oIUoOiz+eR+lg==
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-afcb78f5df4so864356166b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 19:43:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWW8h/C1+TfUHO9cJ/R5xBhYNUWeZHHnQBRs50GeDppusdyK921tyBeHylKmWSb0KB2Iv8K1OAjJKWtfn4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEIpSdwDisKCaj8BYQ7kZeIUZ6PUBKu/Ys6kaOy8aIM9NuXqtC
+	Lbnnj1HW18vpeTt6+YR6rJiOKrfTjBKRbUkFqBNxDDWKctDLkb/FKQvl7mQ2vJSZNoTuXl/C5Vw
+	oQEwF6R7GGWzPoffOV67LMUO7QAUxTi4=
+X-Google-Smtp-Source: AGHT+IELGBSyn4V3YUSxBGtgNqVVtTLJrlf9PVG5+RizB7KX2mtoSIrTmH5IxGkcvleBYBDU5dVxI9I6kY5sBsZO1L4=
+X-Received: by 2002:a17:907:6e92:b0:afd:d9e8:47b with SMTP id
+ a640c23a62f3a-afe296e50d5mr1063421366b.64.1756176184988; Mon, 25 Aug 2025
+ 19:43:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250825123919.3c228ef7@jic23-huawei>
+References: <20250805110754.3243432-1-chenhuacai@loongson.cn> <175615793761.2150029.12607347712708724677.b4-ty@kernel.org>
+In-Reply-To: <175615793761.2150029.12607347712708724677.b4-ty@kernel.org>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Tue, 26 Aug 2025 10:42:52 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4eDRUBFyn8Wny1o7uFHHWKF__Vtu+m0bhmUP2rFHkZ+w@mail.gmail.com>
+X-Gm-Features: Ac12FXwj1ylAMykS5rHMW9mw_TXtIO885LHS0_iY9W1N6CdaauP6rPhPTYU5hnI
+Message-ID: <CAAhV-H4eDRUBFyn8Wny1o7uFHHWKF__Vtu+m0bhmUP2rFHkZ+w@mail.gmail.com>
+Subject: Re: [PATCH] LoongArch: Rename GCC_PLUGIN_STACKLEAK to KSTACK_ERASE
+To: Kees Cook <kees@kernel.org>
+Cc: loongarch@lists.linux.dev, Xuefeng Li <lixuefeng@loongson.cn>, 
+	Guo Ren <guoren@kernel.org>, Xuerui Wang <kernel@xen0n.name>, 
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 25, 2025 at 12:39:19PM +0100, Jonathan Cameron wrote:
-> On Mon, 25 Aug 2025 09:31:50 +0100
-> Jonathan Cameron <jic23@kernel.org> wrote:
-> 
-> > On Fri, 22 Aug 2025 09:19:48 +0530
-> > Dixit Parmar <dixitparmar19@gmail.com> wrote:
-> > 
-> > > The drivers do not require their own error messages for error
-> > > -ENOMEM, memory allocation failures. So remove the dev_err
-> > > messages from the probe().
-> > > With these patches, all the iio drivers now has uniform handling
-> > > of the -ENOMEM while device_allocation and trigger_allocation
-> > > calls.
-> > > 
-> > > Signed-off-by: Dixit Parmar <dixitparmar19@gmail.com>  
-> > Series looks fine to me, after the minor tweaks to commit messages
-> > that Andy requested.  However as it touches a lot of drivers
-> > I'd like to leave it on list a little longer.
-> 
-> I changed my mind after taking the dev_err_probe() series earlier.
-> I'm rather too busy at the moment, so clearing this out now will reduce
-> what I need to keep track of.
-> 
-> Fixed up the () that Andy asked for in commit messages and applied
-> to the togreg branch of iio.git, pushed out initially as testing.
-> 
-> There is still the rest of the week (probably) in which I can add
-> tags etc if anyone wants to give them before I push that out as
-> a non rebasing tree.
-> 
-> Thanks,
-> 
-> Jonathan
-Thanks Jonathan.
+On Tue, Aug 26, 2025 at 5:39=E2=80=AFAM Kees Cook <kees@kernel.org> wrote:
+>
+> On Tue, 05 Aug 2025 19:07:54 +0800, Huacai Chen wrote:
+> > Commit 57fbad15c2eee772 ("stackleak: Rename STACKLEAK to KSTACK_ERASE")
+> > misses the stackframe.h part for LoongArch, so fix it.
+> >
+> >
+>
+> Applied to for-linus/hardening, thanks!
+>
+> [1/1] LoongArch: Rename GCC_PLUGIN_STACKLEAK to KSTACK_ERASE
+>       https://git.kernel.org/kees/c/351b51dc16a9
+Unnecessary, it is already in 6.17-rc3 via loongarch tree, thanks.
+
+Huacai
+
+>
+> Take care,
+>
+> --
+> Kees Cook
+>
+>
 
