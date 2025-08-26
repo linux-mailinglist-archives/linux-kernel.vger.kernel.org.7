@@ -1,142 +1,170 @@
-Return-Path: <linux-kernel+bounces-786896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91FD3B36D8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:19:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D7E4B36D93
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:20:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A07BC1741CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:17:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 704711895914
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:19:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1376B26A1A4;
-	Tue, 26 Aug 2025 15:17:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4476248F56;
+	Tue, 26 Aug 2025 15:18:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="k44vpu9O"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KKHxkfAU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EE0F246BB2
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 15:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB481CD1F;
+	Tue, 26 Aug 2025 15:18:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756221441; cv=none; b=orxx6ISslLCGkrBUV/WhP1jlw74Hu2jWZ8ckvhpxCDPnl3vwti/+hjbdQfH1/OTAE6gTW6/iKnNgYYuXQlpKb8Yq6WzpIt47bxZXaPnA2mTA2Lcn4Ms+Pb3OCygL0diUU8mJopCBrYJIGwJtmiEieFS5YGKJimIVx6D1y+kGQeg=
+	t=1756221529; cv=none; b=IxNmYmfMBHgU7cRW7y4WdI3rxeupP0mtIHUCkNYzF5efl60DzmZyybm67EFlkTwW28+GZlBBiZAoLuIm4W4GjGphpsBHCUVy8bAH3BrSF6t10lz0QrM8bteLRgnk3B2GAGRZE08PqOjwPAXYKwmvbPQ8OtNVrA24EbY4Zf6D86Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756221441; c=relaxed/simple;
-	bh=/t5/2CPyPn9o74VgbH9n0A/kTH3YcpV/p0nXJfE3AhM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZFEU7mIn+PgGuqUYBb0QXulPwrEWwJsAYqwFTCod1ytFv9TWclC8MJ/mhMlM3pI96d2IyiCQzEH63K5I08muLCpHUHiCMnLs59MaZZKOzjzuOwPr5HL2BIPLUCoE6HpmQpKCDCh7+GWQ2zEuqGHiPKLz//6b3a87xzcV6gCdskE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=k44vpu9O; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-435de7aebb7so3813128b6e.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 08:17:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756221438; x=1756826238; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PIxs7n+ObMkT2exzwYyVBr1bdO4Qn50p94uuAm4mbWQ=;
-        b=k44vpu9OrrLFMdZOf6lX9lK33IhlVwii0xYtJI+W6cLSh9gGM4eEG8Lhuqc4eGhoOG
-         8MTanivoZbPn2TlAaQuk3vYbi2u5ClhHOYvs5zgpmq2zDFMUQOZZM5qOvoBrrcXec6ru
-         KMmZoB0NMlMTB6RJgs8K/267m/QnQSGr38m+hnux9EkAaAvLk/C53F/aJ3MWZfwWBNNJ
-         2s1m+RaXo921kGsqlOC4CFoUnXKni5kBhsfL4urLQc4YA9THMORMt/PFoY1gnub3jQ5q
-         sAR3KOKz9+L/v7A/7sSBZlYfrC1T/e5fjuzCjUe57JZ3BmmgsDZlarD1wtPxR7tyuLkG
-         Z0Zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756221438; x=1756826238;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PIxs7n+ObMkT2exzwYyVBr1bdO4Qn50p94uuAm4mbWQ=;
-        b=Tk1GNubgtVZJ9Fxnq3sNHcg0N5tOJHUSMBFqMEVFUJLZ854DGE28vRkWfE0+bEbBlQ
-         fTq3uJgg0nw2yL9XkzY9Vw1D8FOJpp+So94Ta3Rr3dpZbzm52v+2N6W0RbvJu1aQsMTR
-         KIHAzgpYRfAlzT97chQprii0bhzlgHtndHf7Vfgo/rEhSrBpHBlx9t8xMI4kPgcEr/aC
-         GGRJyPgl+okiaEaTtz0H7PZLTs6K8yIjLEopk8z6XZsHLNNYWoxwuXId8qjS1Hjv4EJC
-         BWRYRygGWQW+rCEAah72f24zCJqp/gTcpIdLivJ+MhWok/pD1jgRbCznKzem2DDNugUi
-         Co6w==
-X-Forwarded-Encrypted: i=1; AJvYcCXW8upUgUF7vfcj4kceAX4VEh3YlbRtmrZpN8PNWAtgWN7JAYdS+OLAIFrozkeJrs84R4u8AjFkhDswRz8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPa/gM9c5nj0VvgCswL3dCb7LPpJsbOUl9GN1Zs1No/srOZN6f
-	6iUnLIuExfNxqzWkNRZ52XqSrh0ZuYX4Kc6WZ162i0ihq8EkRiZc64Z+yYGqrQ1yoJ4=
-X-Gm-Gg: ASbGncs+nrDUHR1axBtRWOtchLTE024/hxvZ6Jhgq4GlRuuchup3io0rE8pAJ8XdMvV
-	DQCjyoZPOdEM+VpbbAO00+1V40/S3fuo5WWv8OZ9Xg0HpQqGpQM5UUZJ39MXHwFjtIRKgJhFNOJ
-	MgCGv3w6rpEYxmMQQYm52dl9UIW5ClO/sImvVj/ylbgpa4OJn3OHVUGPkaQByLnZ6biOF97sgdz
-	NjFcAFT+dLy0pEhzHUC/FAwKig98E4NenY0ABSMnX4PB9l87SK6XZQfOZtvJKzjYzEEJ8ye6C0b
-	qo4qnlOLVc33LGUAFq39iWoLx6TBx+3yigE7tZ+F3rarMneJoi4hEa4XwEjw/QhPnpK+TnZL9Lk
-	QB09EdFhmBmcXiw3xjXVIX6V8Zc1wlT6lHDXy8SEHOhfqrCZxGLNdaZrPvRKuZoKGKQVgfpzJYy
-	U=
-X-Google-Smtp-Source: AGHT+IHWe648hfWj8bonLMzPtFtFzwlK5tipvqTWGRoiHcKfZbEYoi0qYigzeXZty1AdcPHWdzx37A==
-X-Received: by 2002:a05:6808:2189:b0:437:7577:d458 with SMTP id 5614622812f47-437852880d1mr9248911b6e.44.1756221438463;
-        Tue, 26 Aug 2025 08:17:18 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:aa9f:f4cd:76b1:fecb? ([2600:8803:e7e4:1d00:aa9f:f4cd:76b1:fecb])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-437968f6394sm1522294b6e.28.2025.08.26.08.17.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Aug 2025 08:17:18 -0700 (PDT)
-Message-ID: <7c013171-784d-4acc-b662-189ef568cb1f@baylibre.com>
-Date: Tue, 26 Aug 2025 10:17:17 -0500
+	s=arc-20240116; t=1756221529; c=relaxed/simple;
+	bh=ED8pKdDXE217xxU3fmpfNjr6cCJ+skFHmQ/en4RjX/8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=a5s8J+N3SZiAT4aWL6FAycnFHcUMEBA5LIet82O8n3KVJmmgQk51QJ4UZTKyKzHNUZ+ZajNRWCvHo2KPawTMVjh0UqYNSroJPsB3YDFTOKPVt+xVsRU/dm0vYxklydn6h0ZIL1smoWUqZpAGrrJCpneQawhS+U0yqEgr0dAkPOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KKHxkfAU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6785CC4CEF1;
+	Tue, 26 Aug 2025 15:18:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756221528;
+	bh=ED8pKdDXE217xxU3fmpfNjr6cCJ+skFHmQ/en4RjX/8=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=KKHxkfAU6pnL5cCCL8F13/K9/I3uvus2+zFBLIsKtRncCreaIV9cJTR6OdtCeLUkW
+	 nrDT1Awf3qQQuqZAUg4pOKn4CihD0PljlCTW3MAbE+C7ZRIItbtvQ2i7t/r0AKJV3G
+	 sv6cxSpVhjvt6I0klBlWhJV6TO74dAG85BjmViM+B0sPX6AWt5BxoeFrPiufsrCHvA
+	 oJGz1aX8TN7NIp8sUlHUCPzkc/bCN88gW8spmijSdGmBXsGtWNE9DzLiZweFZ1O0nl
+	 VkgAraEwpb9x9YXC1INjoKgDEZL7dqJ5cNhK30tEWvIZHl6U3d3tZ5s+kQFFH2EOXt
+	 i8O+ng8XQszrQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] iio: adc: ad7124: add external clock support
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250825-iio-adc-ad7124-proper-clock-support-v2-0-4dcff9db6b35@baylibre.com>
- <20250825-iio-adc-ad7124-proper-clock-support-v2-3-4dcff9db6b35@baylibre.com>
- <CAHp75VfBEQAettOACoSix748pu0T2D+ihie0VjNW7U1_AuuB=g@mail.gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <CAHp75VfBEQAettOACoSix748pu0T2D+ihie0VjNW7U1_AuuB=g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Tue, 26 Aug 2025 17:18:42 +0200
+Message-Id: <DCCGKLKK0D08.1VOAVWOJIXIIO@kernel.org>
+Subject: Re: [PATCH v3 3/5] rust: scatterlist: Add abstraction for sg_table
+Cc: <akpm@linux-foundation.org>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
+ <aliceryhl@google.com>, <tmgross@umich.edu>, <abdiel.janulgue@gmail.com>,
+ <jgg@ziepe.ca>, <lyude@redhat.com>, <robin.murphy@arm.com>,
+ <daniel.almeida@collabora.com>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+To: "Alexandre Courbot" <acourbot@nvidia.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250825132539.122412-1-dakr@kernel.org>
+ <20250825132539.122412-4-dakr@kernel.org>
+ <DCCFOGR3BPVC.3OW6B74N372MB@nvidia.com>
+In-Reply-To: <DCCFOGR3BPVC.3OW6B74N372MB@nvidia.com>
 
-On 8/26/25 3:10 AM, Andy Shevchenko wrote:
-> On Tue, Aug 26, 2025 at 1:55 AM David Lechner <dlechner@baylibre.com> wrote:
+On Tue Aug 26, 2025 at 4:36 PM CEST, Alexandre Courbot wrote:
+> On Mon Aug 25, 2025 at 10:24 PM JST, Danilo Krummrich wrote:
+>> Add a safe Rust abstraction for the kernel's scatter-gather list
+>> facilities (`struct scatterlist` and `struct sg_table`).
 >>
->> Add support for an external clock source to the AD7124 ADC driver.
+>> This commit introduces `SGTable<T>`, a wrapper that uses a generic
+>> parameter to provide compile-time guarantees about ownership and lifetim=
+e.
 >>
->> Previously, the driver only supported using the internal clock and had
->> bad devicetree bindings that used a fake clock to essentially select
->> the power mode. This is preserved for backwards compatibility.
+>> The abstraction provides two primary states:
+>> - `SGTable<Owned<P>>`: Represents a table whose resources are fully
+>>   managed by Rust. It takes ownership of a page provider `P`, allocates
+>>   the underlying `struct sg_table`, maps it for DMA, and handles all
+>>   cleanup automatically upon drop. The DMA mapping's lifetime is tied to
+>>   the associated device using `Devres`, ensuring it is correctly unmappe=
+d
+>>   before the device is unbound.
+>> - `SGTable<Borrowed>` (or just `SGTable`): A zero-cost representation of
+>>   an externally managed `struct sg_table`. It is created from a raw
+>>   pointer using `SGTable::as_ref()` and provides a lifetime-bound
+>>   reference (`&'a SGTable`) for operations like iteration.
 >>
->> If the clock is not named "mclk", then we know that the devicetree is
->> using the correct bindings and we can configure the chip to use an
->> external clock source rather than internal.
+>> The API exposes a safe iterator that yields `&SGEntry` references,
+>> allowing drivers to easily access the DMA address and length of each
+>> segment in the list.
 >>
->> Also drop a redundant comment when configuring the register fields
->> instead of adding more.
-> 
-> ...
-> 
->> +                       /*
->> +                        * The external clock may be 4x the nominal clock rate,
->> +                        * in which case the ADC needs to be configured to
->> +                        * divide it by 4. Using MEGA is a bit arbitrary, but
->> +                        * the expected clock rates are either 614.4 kHz or
->> +                        * 2.4576 MHz, so this should work.
->> +                        */
->> +                       if (clk_hz > MEGA)
-> 
-> This is (1 * HZ_PER_MHZ), but as the comment says, this arbitrary
-> check may be improved by using the exact values.
+>> Co-developed-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+>> Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+>> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+>
+> A few minor things below, but:
+>
+> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+>
+> Used successfully on nova-core:
+>
+> Tested-by: Alexandre Courbot <acourbot@nvidia.com>
 
-The datasheet wasn't clear if an exact value was required or if
-there was some tolerance, so this is why I didn't try comparing
-to exact values.
+Thanks for re-testing!
 
-> 
->> +                               clk_sel = AD7124_ADC_CONTROL_CLK_SEL_EXT_DIV4;
->> +                       else
->> +                               clk_sel = AD7124_ADC_CONTROL_CLK_SEL_EXT;
-> 
+> I still see mentions of "type state" in the code (and the commit
+> message), is this on purpose? I still think this is a misleading use of
+> the term, but your call.
+
+I think I changed everything in the commit message, but there are indeed tw=
+o or
+three mentions in the code still.
+
+I'm happy to replace them with "generic parameter", but I do not agree that=
+ the
+term "type state" is misleading.
+
+It may not be the classical typestate pattern, yet we are representing two
+distinct states of a type.
+
+> <snip>
+>> +impl SGEntry {
+>> +    /// Convert a raw `struct scatterlist *` to a `&'a SGEntry`.
+>> +    ///
+>> +    /// # Safety
+>> +    ///
+>> +    /// Callers must ensure that the `struct scatterlist` pointed to by=
+ `ptr` is valid for the
+>> +    /// lifetime `'a`.
+>
+> Shouldn't the scatterlist also have valid a dma_address and dma_len?
+
+I don't think this is safety relevant from the perspective of Rust.
+
+Also note that if we want to provide this guarantee, we need the caller to
+provide the &Device<Bound> in SGTable::iter() the SGTable has been created =
+with.
+
+For the Owned generic parameter this is easy, for the Borrowed one we have =
+no
+way to ensure that the &Device<Bound> matches the device the SGTable has be=
+en
+mapped for.
+
+However, I don't think we have to provide this guarantee, since at this poi=
+nt
+all device resources (such as I/O memory) have been revoked from the driver
+already. So, effectively, even if a driver would attempt to program invalid=
+ DMA
+addresses, the driver would be uncapable of doing so anyways.
+
+> <snip>
+>> +#[repr(transparent)]
+>> +#[pin_data(PinnedDrop)]
+>> +struct RawSGTable {
+>
+> Even if this is for internal use, I think a short comment explaining
+> what this is for, and why it needs to be pinned (pointed to by devres)
+
+That's not the reason this structure needs to be pinned. This is the reason=
+ for
+Devres itself needs to be pinned.
+
+In fact, I think RawSGTable by itself does not need to be pinned.
+
+> would be helpful to people looking at this code.
 
 
