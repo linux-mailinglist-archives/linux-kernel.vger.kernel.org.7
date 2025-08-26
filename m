@@ -1,220 +1,132 @@
-Return-Path: <linux-kernel+bounces-786564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DE2FB35CD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:38:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0599CB35D0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:40:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04EDD7C54D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:38:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 558753B5F77
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E06E34164F;
-	Tue, 26 Aug 2025 11:37:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 450692FD7C8;
+	Tue, 26 Aug 2025 11:39:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jBhzzo8t"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=bob.beckett@collabora.com header.b="JWNY/jY9"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85BE4340DA9
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 11:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756208263; cv=none; b=qGbZwO0WCt2kwjFjtEI7AIvBiODOJbJosBbUs7l4hwHNj7jM8GiRR0beCApL4ZvYf4AVoNmMTPFRljgAeP479qc+/ijgADuRlkBdcTaX5EuzT/jBng77thsbekLl0Q9SxAVi8CY7wQ5X41347jIazpCzyNs3fnHB2O+FFKroKhA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756208263; c=relaxed/simple;
-	bh=53euXAtwAujHlv7egdopqjh6dCpFEsIEATNegkYfzKA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TOTMryMLg7dR0SyRAb1XJh/FGkT3VG5abRx+5Qgh3+7PSHwvUY0QEF60n9WShORdi7p6WFF4H5vltZfVOiMJOijEJvuGJ/by1ID+HD9gN3f98CajF1Da/UWPvtMtc9vvt9CUL9+8lD45JfBmtNQZmUazwzMVf9/wsxsXos8JchE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jBhzzo8t; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <95c43071-c78f-4202-9045-aacc6842b687@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1756208247;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Jo0y3d64j4e034TxOhS9qpewIMDCJA4WpwRw3J79f3s=;
-	b=jBhzzo8tFO14/rVH294ATjBH/tYeq2NhRZlvubY3XR2/SNwZ74ZDvFe7Io7u1PZwJSiPLk
-	vN2Fu1pxJjzRiP2km2CGmFYljeYiqBNk8GwU4OW3UkmLCCuG80xfwryZqyLmlTnp9XCtsg
-	0RKtsQZiL1M30CZLajHB/YexK84fHMw=
-Date: Tue, 26 Aug 2025 12:37:22 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94FDC29D273
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 11:39:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756208391; cv=pass; b=DeqoAr7lvcrIq8CNM3MrP7m5PTUhDQVDJUmHfCwBPdPCMI8kNSrDyfKNFE0pqJcIUl++hF7dAme0zBOzRxMpVySyJE+6WPQ/vLznnRRioqyNK8H5Fpch9jSJcj8lg+n9WjkIzOe3brK1c3AIxzt05bx0kQEbtTLlAQFZs8f3gHs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756208391; c=relaxed/simple;
+	bh=COoVxgfHA8MCBpi6yucVlKYbKVe+CtBebhfveNnP1gQ=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=XJJYKcrGzIx7kj1By0OwZnhUkayhXm2C11PV/OlvW0PAug409GgtiJ9kHOhoBHDK5SD5rAbYiafQfnaPWAnUcDmIUINwI8odNBaoBzfrZP/o1oaICLKepEFDe7Xza4YQOS9zE0Ey7rh6qOSKCxtTJlLFGhy4AKOCGHcdI6S7elg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=bob.beckett@collabora.com header.b=JWNY/jY9; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1756208370; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Rb9xn2fTOKKaWYDTKVtb6tXJcRftlBOsdEJhPIKiwlcSXev+MfNP2sCtFS3Ys/K86r9vwfOaX3rBGNgjJ48t36fkB03crSEnD+eORHec7H5CdtsdpNuXKTy4Z4gAvGZp7q+0Y7HSekphh7W9bQxMpUbNIbWnHErJjMgZGbb87R8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756208370; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=2HU9eUcc8WGG2gaX/M8M9tjRaoa9qsJqLwJNN74sr4M=; 
+	b=LsBJTlzMZu8Iu0jCTvKkH6cyF2JefFj2Y0PfwQopHt2KsGjjLmqkDLUsJEQlz55UTkuvZR2xBKLTLxCe6qEMvdCorS1pOgXAQrVvMp7a8JblWSMCfZ1RuO4UgP6e+2Fd01bRKBkuxNONJdh+6clb3vR+va0uEvvRYcFI3w+GkCc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=bob.beckett@collabora.com;
+	dmarc=pass header.from=<bob.beckett@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756208370;
+	s=zohomail; d=collabora.com; i=bob.beckett@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=2HU9eUcc8WGG2gaX/M8M9tjRaoa9qsJqLwJNN74sr4M=;
+	b=JWNY/jY95QR9At+berP4+i2NTg7PoyEZjJVW+Ey+tiEUa10e0H29Sbf/comqeIw0
+	bEuz0uA+GWzyA+Houh7/Ot2K1oMHkxe+eRu3CEmEo1U2jv7lBqw6VtA0PB9cuo0456g
+	9rGNCm2UKkrpRXP7aV9AQwDsa0fQMJbHhh+yWpXg=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 17562083275301017.6621271839762; Tue, 26 Aug 2025 04:38:47 -0700 (PDT)
+Date: Tue, 26 Aug 2025 12:38:47 +0100
+From: Robert Beckett <bob.beckett@collabora.com>
+To: "Antheas Kapenekakis" <lkml@antheas.dev>
+Cc: "amd-gfx" <amd-gfx@lists.freedesktop.org>,
+	"dri-devel" <dri-devel@lists.freedesktop.org>,
+	"linux-kernel" <linux-kernel@vger.kernel.org>,
+	"philm" <philm@manjaro.org>,
+	"Alex Deucher" <alexander.deucher@amd.com>,
+	=?UTF-8?Q?=22Christian_K=C3=B6nig=22?= <christian.koenig@amd.com>,
+	"Mario Limonciello" <mario.limonciello@amd.com>
+Message-ID: <198e62c6b4d.895a68a41708589.706102196190635345@collabora.com>
+In-Reply-To: <20250824200202.1744335-6-lkml@antheas.dev>
+References: <20250824200202.1744335-1-lkml@antheas.dev> <20250824200202.1744335-6-lkml@antheas.dev>
+Subject: Re: [PATCH v1 5/5] drm: panel-backlight-quirks: Add Steam Decks
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v01 01/12] hinic3: HW initialization
-To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
- linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
- Bjorn Helgaas <helgaas@kernel.org>, luosifu <luosifu@huawei.com>,
- Xin Guo <guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>,
- Zhou Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>,
- Shi Jing <shijing34@huawei.com>, Meny Yossefi <meny.yossefi@huawei.com>,
- Gur Stavi <gur.stavi@huawei.com>, Lee Trager <lee@trager.us>,
- Michael Ellerman <mpe@ellerman.id.au>, Suman Ghosh <sumang@marvell.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Joe Damato <jdamato@fastly.com>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-References: <cover.1756195078.git.zhuyikai1@h-partners.com>
- <5f4589c1ab4f6736545a38096ce15b6569733c91.1756195078.git.zhuyikai1@h-partners.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <5f4589c1ab4f6736545a38096ce15b6569733c91.1756195078.git.zhuyikai1@h-partners.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
 
-On 26/08/2025 10:05, Fan Gong wrote:
-> Add the hardware resource data structures, functions for HW initialization,
-> configuration and releasement.
-> 
-> Co-developed-by: Xin Guo <guoxin09@huawei.com>
-> Signed-off-by: Xin Guo <guoxin09@huawei.com>
-> Co-developed-by: Zhu Yikai <zhuyikai1@h-partners.com>
-> Signed-off-by: Zhu Yikai <zhuyikai1@h-partners.com>
-> Signed-off-by: Fan Gong <gongfan1@huawei.com>
-> ---
->   .../net/ethernet/huawei/hinic3/hinic3_hwdev.c |  67 ++++-
->   .../net/ethernet/huawei/hinic3/hinic3_hwif.c  | 240 ++++++++++++++++++
->   .../net/ethernet/huawei/hinic3/hinic3_hwif.h  |  13 +
->   .../net/ethernet/huawei/hinic3/hinic3_lld.c   |   8 +-
->   .../huawei/hinic3/hinic3_pci_id_tbl.h         |  10 +
->   5 files changed, 334 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_hwdev.c b/drivers/net/ethernet/huawei/hinic3/hinic3_hwdev.c
-> index 6e8788a64925..d145d3b05e19 100644
-> --- a/drivers/net/ethernet/huawei/hinic3/hinic3_hwdev.c
-> +++ b/drivers/net/ethernet/huawei/hinic3/hinic3_hwdev.c
-> @@ -7,15 +7,76 @@
->   #include "hinic3_mbox.h"
->   #include "hinic3_mgmt.h"
->   
-> +#define HINIC3_HWDEV_WQ_NAME    "hinic3_hardware"
-> +#define HINIC3_WQ_MAX_REQ       10
-> +
-> +enum hinic3_hwdev_init_state {
-> +	HINIC3_HWDEV_MBOX_INITED = 2,
-> +	HINIC3_HWDEV_CMDQ_INITED = 3,
-> +};
-> +
-> +static int init_hwdev(struct pci_dev *pdev)
-> +{
-> +	struct hinic3_pcidev *pci_adapter = pci_get_drvdata(pdev);
-> +	struct hinic3_hwdev *hwdev;
-> +
-> +	hwdev = kzalloc(sizeof(*hwdev), GFP_KERNEL);
-> +	if (!hwdev)
-> +		return -ENOMEM;
-> +
-> +	pci_adapter->hwdev = hwdev;
-> +	hwdev->adapter = pci_adapter;
-> +	hwdev->pdev = pci_adapter->pdev;
-> +	hwdev->dev = &pci_adapter->pdev->dev;
-> +	hwdev->func_state = 0;
-> +	memset(hwdev->features, 0, sizeof(hwdev->features));
 
-no need to init values to zeros as you use kzalloc to allocate the
-memory
+ ---- On Sun, 24 Aug 2025 21:02:02 +0100  Antheas Kapenekakis <lkml@antheas.dev> wrote --- 
+ > On the SteamOS kernel, Valve universally makes minimum brightness 0
+ > for all devices. SteamOS is (was?) meant for the Steam Deck, so
+ > enabling it universally is reasonable. However, it causes issues in
+ > certain devices. Therefore, introduce it just for the Steam Deck here.
+ > 
+ > SteamOS kernel does not have a public mirror, but this replaces commit
+ > 806dd74bb225 ("amd/drm: override backlight min value from 12 -> 0")
+ > in the latest, as of this writing, SteamOS kernel (6.11.11-valve24).
+ > See unofficial mirror reconstructed from sources below.
+ > 
+ > Link: https://gitlab.com/evlaV/linux-integration/-/commit/806dd74bb225
+ > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+ > ---
+ >  drivers/gpu/drm/drm_panel_backlight_quirks.c | 17 ++++++++++++++++-
+ >  1 file changed, 16 insertions(+), 1 deletion(-)
+ > 
+ > diff --git a/drivers/gpu/drm/drm_panel_backlight_quirks.c b/drivers/gpu/drm/drm_panel_backlight_quirks.c
+ > index 78c430b07d6a..5c24f4a86519 100644
+ > --- a/drivers/gpu/drm/drm_panel_backlight_quirks.c
+ > +++ b/drivers/gpu/drm/drm_panel_backlight_quirks.c
+ > @@ -73,7 +73,22 @@ static const struct drm_get_panel_backlight_quirk drm_panel_min_backlight_quirks
+ >          .dmi_match_other.field = DMI_PRODUCT_NAME,
+ >          .dmi_match_other.value = "ONEXPLAYER F1 EVA-02",
+ >          .quirk = { .brightness_mask = 3, },
+ > -    }
+ > +    },
+ > +    /* Steam Deck models */
+ > +    {
+ > +        .dmi_match.field = DMI_SYS_VENDOR,
+ > +        .dmi_match.value = "Valve",
+ > +        .dmi_match_other.field = DMI_PRODUCT_NAME,
+ > +        .dmi_match_other.value = "Jupiter",
+ > +        .quirk = { .min_brightness = 1, },
+ > +    },
+ > +    {
+ > +        .dmi_match.field = DMI_SYS_VENDOR,
+ > +        .dmi_match.value = "Valve",
+ > +        .dmi_match_other.field = DMI_PRODUCT_NAME,
+ > +        .dmi_match_other.value = "Galileo",
+ > +        .quirk = { .min_brightness = 1, },
+ > +    },
+ >  };
+ >  
+ >  static bool drm_panel_min_backlight_quirk_matches(
+ > -- 
+ > 2.50.1
+ > 
 
-> +	spin_lock_init(&hwdev->channel_lock);
-> +
-> +	return 0;
-> +}
-> +
->   int hinic3_init_hwdev(struct pci_dev *pdev)
->   {
-> -	/* Completed by later submission due to LoC limit. */
-> -	return -EFAULT;
-> +	struct hinic3_pcidev *pci_adapter = pci_get_drvdata(pdev);
-> +	struct hinic3_hwdev *hwdev;
-> +	int err;
-> +
-> +	err = init_hwdev(pdev);
+Reviewed-by: Robert Beckett <bob.beckett@collabora.com>
+ 
 
-I think there is no reason to have another init function
-
-> +	if (err)
-> +		return err;
-> +
-> +	hwdev = pci_adapter->hwdev;
-> +	err = hinic3_init_hwif(hwdev);
-> +	if (err) {
-> +		dev_err(hwdev->dev, "Failed to init hwif\n");
-> +		goto err_free_hwdev;
-> +	}
-> +
-> +	hwdev->workq = alloc_workqueue(HINIC3_HWDEV_WQ_NAME, WQ_MEM_RECLAIM,
-> +				       HINIC3_WQ_MAX_REQ);
-> +	if (!hwdev->workq) {
-> +		dev_err(hwdev->dev, "Failed to alloc hardware workq\n");
-> +		err = -ENOMEM;
-> +		goto err_free_hwif;
-> +	}
-> +
-> +	return 0;
-> +
-> +err_free_hwif:
-> +	hinic3_free_hwif(hwdev);
-> +
-> +err_free_hwdev:
-> +	pci_adapter->hwdev = NULL;
-> +	kfree(hwdev);
-> +
-> +	return err;
->   }
-
-[...]
-
-> @@ -121,6 +122,7 @@ static int hinic3_attach_aux_devices(struct hinic3_hwdev *hwdev)
->   			goto err_del_adevs;
->   	}
->   	mutex_unlock(&pci_adapter->pdev_mutex);
-> +
->   	return 0;
->   
->   err_del_adevs:
-> @@ -132,6 +134,7 @@ static int hinic3_attach_aux_devices(struct hinic3_hwdev *hwdev)
->   		}
->   	}
->   	mutex_unlock(&pci_adapter->pdev_mutex);
-> +
->   	return -ENOMEM;
->   }
->   
-> @@ -153,6 +156,7 @@ struct hinic3_hwdev *hinic3_adev_get_hwdev(struct auxiliary_device *adev)
->   	struct hinic3_adev *hadev;
->   
->   	hadev = container_of(adev, struct hinic3_adev, adev);
-> +
->   	return hadev->hwdev;
->   }
->   
-> @@ -333,6 +337,7 @@ static int hinic3_probe_func(struct hinic3_pcidev *pci_adapter)
->   
->   err_out:
->   	dev_err(&pdev->dev, "PCIe device probe function failed\n");
-> +
->   	return err;
->   }
->   
-> @@ -365,6 +370,7 @@ static int hinic3_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->   
->   err_out:
->   	dev_err(&pdev->dev, "PCIe device probe failed\n");
-> +
->   	return err;
->   }
->   
-
-not sure it's good to have this empty lines in this particular patch
 
