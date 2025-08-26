@@ -1,257 +1,122 @@
-Return-Path: <linux-kernel+bounces-787039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 133DEB370AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:43:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE7C7B370B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:43:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 209277A5E96
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:41:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC5671B60808
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9446C30ACEA;
-	Tue, 26 Aug 2025 16:42:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6AE4362089;
+	Tue, 26 Aug 2025 16:43:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xRXx8x08"
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HD4uxYKH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E0D2750E6
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 16:42:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0402D12E4
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 16:43:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756226577; cv=none; b=aFnS+7ToGB+NzN+uR+1PiQ+D7zlFfd3se0PZdy3GwsGbvQLbX9z+JoR8fXDVPO9IgiXbFskoh3BLKB4whiQSidBudnffCt6l195uvaPzfaANAnmXeSDXb0Nw8wL2CYB4siUHsU5hFaKmciBx/qKx5yUexiwv8Sj4WfCkSX8RHYY=
+	t=1756226627; cv=none; b=S+7wGCPOPwlLRQLAcQGBqcFgOide2chOgMLKRcfOieIMT17aMxmwZ9Mhhr45M8xJfb4rLvqlu0Bdp+8hwvM0/PgHymKv3ZWWXGN/T9Ps+jip91SIT4pO9mgo9heFQ8InOqyWvoz9KDriPDuR2DugXL/EXcCYBk9YwkDhhJjG0Sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756226577; c=relaxed/simple;
-	bh=X8bX4wqEcG5t8zkKm77FY2KpCA9tiNOlzUzYFahmvEE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c9HWWoBJRxif6vLYZetHFi1StZvvjYZwHMZWgY8b6lBoIg/oBFf96YLP4ok/48joXFAzXvf2iA/jrGA4SyPLjR76x8iYigLHATy9fLB0qTiZi7QJUZnl7E81ZFmqDXHB+vX+1L2QoyM2l9RvMdTxxGFbPI6J6WWIdLs5Vhs0V+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xRXx8x08; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <cf5d9158-4833-4355-8e4d-0894411d0d46@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1756226570;
+	s=arc-20240116; t=1756226627; c=relaxed/simple;
+	bh=MCOer+ksuLi7clca5Mdv+wXA/Dxgt7rsLw5MwHnahTY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mVSNcIx3QWFw0T/7SC0PB/vO93O+44OKIcdmK4m9S41C3jhdwNjUuO9NfI24ThEKDFwbbTyjxSgHnSrQdScvekeJdGk5Eog7TfKvf3Fpvdj1hMXf6zY9kC39X8so8vAvZKE+SWFA1L301P4PNlTl8GqoyJEj11xskB90zPOrz08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HD4uxYKH; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756226624;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oNfkM1W8WaLCBU2U7GOyvpqxcWGzOkoKctUH1gJKV1o=;
-	b=xRXx8x08no8uaEDO9RKzLskCzkj+jB3RwdecNrEvYto75HJcNfWnsedNL/nnHumQIqCqXA
-	U/TkaeHKHd8wsbcOafRfH6C++R2dpVYapKVLlI+X5qvL//Lcva8aF/hSE6Gt+sDZWT2OWP
-	+rphjf0B8i5JTbzQ0xE9drRCQj4SUjg=
-Date: Tue, 26 Aug 2025 17:42:46 +0100
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=z5jJAQ4bl/C1tP3vIQgdQ7NeY1XQOoOjZ8flFIdluW4=;
+	b=HD4uxYKHSI/llasMj6WvOD7Ij62gbljJcaimeEtnwalFDJsyNuScbJeFmr8/h6poVThJNS
+	a4VxMZeIZsBOOuzP8igwzCckm48IQHnN5sE9PiOyj3XOkSb5yFqBFF2Ua18qP6O54vGFdJ
+	5DTfK36/xfidsSCftTo0H+umuJMoSQ8=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-37-b_VB8Hc8Mwyp-OFH4XP3mw-1; Tue,
+ 26 Aug 2025 12:43:40 -0400
+X-MC-Unique: b_VB8Hc8Mwyp-OFH4XP3mw-1
+X-Mimecast-MFC-AGG-ID: b_VB8Hc8Mwyp-OFH4XP3mw_1756226619
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9C92019560AE;
+	Tue, 26 Aug 2025 16:43:38 +0000 (UTC)
+Received: from dba-icx.bos.redhat.com (prarit2023-dbaguest.khw.eng.bos2.dc.redhat.com [10.26.1.94])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 048C519560AB;
+	Tue, 26 Aug 2025 16:43:35 +0000 (UTC)
+From: David Arcari <darcari@redhat.com>
+To: platform-driver-x86@vger.kernel.org
+Cc: David Arcari <darcari@redhat.com>,
+	Hans de Goede <hansg@kernel.org>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Tero Kristo <tero.kristo@linux.intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] platform/x86/intel: power-domains validate domain in tpmi_cpu_online()
+Date: Tue, 26 Aug 2025 12:43:28 -0400
+Message-ID: <20250826164331.1372856-1-darcari@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v01 08/12] hinic3: Queue pair context
- initialization
-To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
- linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
- Bjorn Helgaas <helgaas@kernel.org>, luosifu <luosifu@huawei.com>,
- Xin Guo <guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>,
- Zhou Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>,
- Shi Jing <shijing34@huawei.com>, Meny Yossefi <meny.yossefi@huawei.com>,
- Gur Stavi <gur.stavi@huawei.com>, Lee Trager <lee@trager.us>,
- Michael Ellerman <mpe@ellerman.id.au>, Suman Ghosh <sumang@marvell.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-References: <cover.1756195078.git.zhuyikai1@h-partners.com>
- <fc3dd2c0d29c54332169bc5a2e5be4e4eac77b07.1756195078.git.zhuyikai1@h-partners.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <fc3dd2c0d29c54332169bc5a2e5be4e4eac77b07.1756195078.git.zhuyikai1@h-partners.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On 26/08/2025 10:05, Fan Gong wrote:
-> Initialize queue pair context of hardware interaction.
-> 
-> Co-developed-by: Xin Guo <guoxin09@huawei.com>
-> Signed-off-by: Xin Guo <guoxin09@huawei.com>
-> Co-developed-by: Zhu Yikai <zhuyikai1@h-partners.com>
-> Signed-off-by: Zhu Yikai <zhuyikai1@h-partners.com>
-> Signed-off-by: Fan Gong <gongfan1@huawei.com>
-> ---
+Although tpmi_get_power_domain_mask() calls tpmi_domain_is_valid()
+prior to indexing tpmi_power_domain_mask[], tpmi_cpu_online() does
+not. In the case where a VM creates non-contiguous package ids the
+result can be memory corruption. This can be prevented by adding
+the same validation in tpmi_cpu_online().
 
-a bit of styling nits, but as you still have to do another version it
-would be great to fix.
+Fixes: 17ca2780458c ("platform/x86/intel: TPMI domain id and CPU mapping")
 
-[...]
+Cc: Hans de Goede <hansg@kernel.org>
+Cc: "Ilpo Järvinen" <ilpo.jarvinen@linux.intel.com>
+Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: David Arcari <darcari@redhat.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Tero Kristo <tero.kristo@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: David Arcari <darcari@redhat.com>
+---
+ drivers/platform/x86/intel/tpmi_power_domains.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-> +static int init_sq_ctxts(struct hinic3_nic_dev *nic_dev)
-> +{
-> +	struct hinic3_nic_io *nic_io = nic_dev->nic_io;
-> +	struct hinic3_hwdev *hwdev = nic_dev->hwdev;
-> +	struct hinic3_sq_ctxt_block *sq_ctxt_block;
-> +	u16 q_id, curr_id, max_ctxts, i;
-> +	struct hinic3_sq_ctxt *sq_ctxt;
-> +	struct hinic3_cmd_buf *cmd_buf;
-> +	struct hinic3_io_queue *sq;
-> +	__le64 out_param;
-> +	int err = 0;
-> +
-> +	cmd_buf = hinic3_alloc_cmd_buf(hwdev);
-> +	if (!cmd_buf) {
-> +		dev_err(hwdev->dev, "Failed to allocate cmd buf\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	q_id = 0;
-> +	while (q_id < nic_io->num_qps) {
-> +		sq_ctxt_block = cmd_buf->buf;
-> +		sq_ctxt = sq_ctxt_block->sq_ctxt;
-> +
-> +		max_ctxts = (nic_io->num_qps - q_id) > HINIC3_Q_CTXT_MAX ?
-> +			     HINIC3_Q_CTXT_MAX : (nic_io->num_qps - q_id);
-> +
-> +		hinic3_qp_prepare_cmdq_header(&sq_ctxt_block->cmdq_hdr,
-> +					      HINIC3_QP_CTXT_TYPE_SQ, max_ctxts,
-> +					      q_id);
-> +
-> +		for (i = 0; i < max_ctxts; i++) {
-> +			curr_id = q_id + i;
-> +			sq = &nic_io->sq[curr_id];
-> +			hinic3_sq_prepare_ctxt(sq, curr_id, &sq_ctxt[i]);
-> +		}
-> +
-> +		hinic3_cmdq_buf_swab32(sq_ctxt_block, sizeof(*sq_ctxt_block));
-> +
-> +		cmd_buf->size = cpu_to_le16(SQ_CTXT_SIZE(max_ctxts));
-> +		err = hinic3_cmdq_direct_resp(hwdev, MGMT_MOD_L2NIC,
-> +					      L2NIC_UCODE_CMD_MODIFY_QUEUE_CTX,
-> +					      cmd_buf, &out_param);
-> +		if (err || out_param != 0) {
-
-no need for "!= 0" ...
-
-> +			dev_err(hwdev->dev, "Failed to set SQ ctxts, err: %d, out_param: 0x%llx\n",
-> +				err, out_param);
-> +			err = -EFAULT;
-> +			break;
-> +		}
-> +
-> +		q_id += max_ctxts;
-> +	}
-> +
-> +	hinic3_free_cmd_buf(hwdev, cmd_buf);
-> +
-> +	return err;
-> +}
-> +
-> +static int init_rq_ctxts(struct hinic3_nic_dev *nic_dev)
-> +{
-> +	struct hinic3_nic_io *nic_io = nic_dev->nic_io;
-> +	struct hinic3_hwdev *hwdev = nic_dev->hwdev;
-> +	struct hinic3_rq_ctxt_block *rq_ctxt_block;
-> +	u16 q_id, curr_id, max_ctxts, i;
-> +	struct hinic3_rq_ctxt *rq_ctxt;
-> +	struct hinic3_cmd_buf *cmd_buf;
-> +	struct hinic3_io_queue *rq;
-> +	__le64 out_param;
-> +	int err = 0;
-> +
-> +	cmd_buf = hinic3_alloc_cmd_buf(hwdev);
-> +	if (!cmd_buf) {
-> +		dev_err(hwdev->dev, "Failed to allocate cmd buf\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	q_id = 0;
-> +	while (q_id < nic_io->num_qps) {
-> +		rq_ctxt_block = cmd_buf->buf;
-> +		rq_ctxt = rq_ctxt_block->rq_ctxt;
-> +
-> +		max_ctxts = (nic_io->num_qps - q_id) > HINIC3_Q_CTXT_MAX ?
-> +				HINIC3_Q_CTXT_MAX : (nic_io->num_qps - q_id);
-> +
-> +		hinic3_qp_prepare_cmdq_header(&rq_ctxt_block->cmdq_hdr,
-> +					      HINIC3_QP_CTXT_TYPE_RQ, max_ctxts,
-> +					      q_id);
-> +
-> +		for (i = 0; i < max_ctxts; i++) {
-> +			curr_id = q_id + i;
-> +			rq = &nic_io->rq[curr_id];
-> +			hinic3_rq_prepare_ctxt(rq, &rq_ctxt[i]);
-> +		}
-> +
-> +		hinic3_cmdq_buf_swab32(rq_ctxt_block, sizeof(*rq_ctxt_block));
-> +
-> +		cmd_buf->size = cpu_to_le16(RQ_CTXT_SIZE(max_ctxts));
-> +
-> +		err = hinic3_cmdq_direct_resp(hwdev, MGMT_MOD_L2NIC,
-> +					      L2NIC_UCODE_CMD_MODIFY_QUEUE_CTX,
-> +					      cmd_buf, &out_param);
-> +		if (err || out_param != 0) {
-
-... here as well
-
-> +			dev_err(hwdev->dev, "Failed to set RQ ctxts, err: %d, out_param: 0x%llx\n",
-> +				err, out_param);
-> +			err = -EFAULT;
-> +			break;
-> +		}
-> +
-> +		q_id += max_ctxts;
-> +	}
-> +
-> +	hinic3_free_cmd_buf(hwdev, cmd_buf);
-> +
-> +	return err;
-> +}
-
-[...]
-
-> +static int clean_queue_offload_ctxt(struct hinic3_nic_dev *nic_dev,
-> +				    enum hinic3_qp_ctxt_type ctxt_type)
-> +{
-> +	struct hinic3_nic_io *nic_io = nic_dev->nic_io;
-> +	struct hinic3_hwdev *hwdev = nic_dev->hwdev;
-> +	struct hinic3_clean_queue_ctxt *ctxt_block;
-> +	struct hinic3_cmd_buf *cmd_buf;
-> +	__le64 out_param;
-> +	int err;
-> +
-> +	cmd_buf = hinic3_alloc_cmd_buf(hwdev);
-> +	if (!cmd_buf) {
-> +		dev_err(hwdev->dev, "Failed to allocate cmd buf\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	ctxt_block = cmd_buf->buf;
-> +	ctxt_block->cmdq_hdr.num_queues = cpu_to_le16(nic_io->max_qps);
-> +	ctxt_block->cmdq_hdr.queue_type = cpu_to_le16(ctxt_type);
-> +	ctxt_block->cmdq_hdr.start_qid = 0;
-> +	ctxt_block->cmdq_hdr.rsvd = 0;
-> +	ctxt_block->rsvd = 0;
-> +
-> +	hinic3_cmdq_buf_swab32(ctxt_block, sizeof(*ctxt_block));
-> +
-> +	cmd_buf->size = cpu_to_le16(sizeof(*ctxt_block));
-> +
-> +	err = hinic3_cmdq_direct_resp(hwdev, MGMT_MOD_L2NIC,
-> +				      L2NIC_UCODE_CMD_CLEAN_QUEUE_CTX,
-> +				      cmd_buf, &out_param);
-> +	if ((err) || (out_param)) {
-
-no need for extra parenthesis
-
-> +		dev_err(hwdev->dev, "Failed to clean queue offload ctxts, err: %d,out_param: 0x%llx\n",
-> +			err, out_param);
-> +
-> +		err = -EFAULT;
-> +	}
-> +
-> +	hinic3_free_cmd_buf(hwdev, cmd_buf);
+diff --git a/drivers/platform/x86/intel/tpmi_power_domains.c b/drivers/platform/x86/intel/tpmi_power_domains.c
+index 9d8247bb9cfa..ae5b58679e29 100644
+--- a/drivers/platform/x86/intel/tpmi_power_domains.c
++++ b/drivers/platform/x86/intel/tpmi_power_domains.c
+@@ -194,6 +194,9 @@ static int tpmi_cpu_online(unsigned int cpu)
+ 	if (ret)
+ 		return 0;
+ 
++	if (!tpmi_domain_is_valid(info))
++		return 0;
++
+ 	index = info->pkg_id * MAX_POWER_DOMAINS + info->punit_domain_id;
+ 
+ 	guard(mutex)(&tpmi_lock);
+-- 
+2.50.0
 
 
