@@ -1,188 +1,155 @@
-Return-Path: <linux-kernel+bounces-787006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 912B4B3701D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:23:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87037B3701B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:23:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 515E516D8DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:23:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 434363B1140
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:23:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E06F3164A6;
-	Tue, 26 Aug 2025 16:23:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89942C3761;
+	Tue, 26 Aug 2025 16:23:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mSngglwj"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="KhlEYKzx"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E00C0260586;
-	Tue, 26 Aug 2025 16:23:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76EA217C211;
+	Tue, 26 Aug 2025 16:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756225416; cv=none; b=hQIJjljiY94snnO8g3QC833X+nOnAekhZn9HPoq3SeKyunHl1wFT9TsgrKDbHELugGlXh3wMkhAsjgz50uaz6plZs5Ze1GenVfGikuyZddWD1hqkzWT0Ar7jeOJUvCBhgk6sv/37OGUBXWhGEWw/tn3CojP1UpPgqPa3dQDn3b4=
+	t=1756225409; cv=none; b=IwzfPDeuf4QeBDPIR0fVcglh2ViY3NMh4vbiBof1JwDmo/v4klkm4pq6DRVDys6EoPSYQDjDT1nPdew1HdpvviMTVYPYKeE1pEpNhO3M5evceeh1iX4FlCFHthVNU/71vLGyniFFsLZId9Hf2Iu1DNUntMMZh6NP4FzLZYCyXeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756225416; c=relaxed/simple;
-	bh=Z/fHLdraDHvbPNoiSuB2MHL7U8X5376cBP4TN8AruJI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t9YL46eTf74uQIfaCR/8b9smXjRf8NVA+aeFdnE+0VSj4zsfLl02NLFyRyUvpo/CdYRjv8+CE/t4aWvqm4y+5GGxomNCWhbXngQgbm7YcgQC2D6g33T3OX0e99yV81yCe37vMc08MuUCUKXwQgPbaf+VyS5hd7qlMEQDDreFC6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mSngglwj; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-33663b68b06so20519341fa.1;
-        Tue, 26 Aug 2025 09:23:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756225413; x=1756830213; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6aYFk7sq5CM2dSodTk0DRa46bB7zw/9j1RzjFIhceTA=;
-        b=mSngglwj85+jOeuX8OhxwTDX99A0h23dVpF/4TWskTcUNF2XGNC/NI53FjILWpmqqn
-         6+rf4S3iHa+dGf9C15h+u1N43qEw5uvWpIeuTEQ2o48Zx1a8ogNgCCsTTJcW63HRQKkj
-         vK942bBMlLzrpL+ypjxaFN7eCKw2E5TAyuDDbHEDFYs1PjPmXpUnK+tT/alM38Pk60ci
-         rKDkKz7myM4bb1S/WDpMVYZbKV0Ib0iRO67mcyG2ph0p63N9o9cGNxdCB70YY6R11pRA
-         htRYKBrsivjywXGw+pvSKAfoQoHRc9ctPCL7HwX92imbI89aMa1AJ5EEynk1WThB8NJP
-         00+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756225413; x=1756830213;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6aYFk7sq5CM2dSodTk0DRa46bB7zw/9j1RzjFIhceTA=;
-        b=UGpLgJs5RzFPiUc86GCf5ZR/pOcYVducXUoPPJd9cYVax0XjGusC+v1i4thVfjI0zW
-         T+pVOByzkrHbREcZI9QvwUjDSTVekOWEyVwxaZKcAkTczGs//9TaMK9/zDwke+qP1i2s
-         HPALDcZrZuFqfYNNL3450eetA27vBMnGnHvH1bq3rDD929e3DeW5UAFhow2Rd4cm5uxX
-         pWS7jRUTdhSlwBpQiuz/JJAan90AHo60D/EsK+NXi4KM6lPMNyaaA1C/1jpZCndKR8pw
-         WAa4jVJhhN+po3uF1my6t3ZTL1gS5fbgi1YShTUEmqPONrRYH0V4qHnxLVnqQO3Da1Q0
-         6hQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUizZFUKRO+slX3/y6sS6NqvM3C0XXcE+t1arpi/kbNPgnDs61vMBVqV051cfVAXy9FRPVZ8Gsl0pqMZWw=@vger.kernel.org, AJvYcCX0Ze/KiMzl+IsaZm5QTKNrOhIWUcZW/5KWdZKuECLEtmu4u762fC0z5ScBTcnnjJbXut7wePJ0rH/MPtPm3KpV@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4vmV6tUVmoI8Y5ln2nFgwB6kbRNpNt1HJ7x3FC96PD40noaz2
-	6W7OhdZijQcwsTjiZKxYrdqwQMxOVZb/mPSwc3Rww9quOC0ApYHrRFzqvm0w+vvraC4AOIxlg4T
-	3Co/cn/jvI/Z/wKtx8/wVAGibP3YY2lDUUSGE
-X-Gm-Gg: ASbGncvw6xQcaQDJ6KYVhvfMFdE2sX9beFNCWb4z8LQGs28DqFVjzRDlOvBeC6VdeA/
-	VH21ec9NsdOzrXWW6R5pDx15fbFiTN1TqkHWHQR18sm7bhGG80VWbhZeq6rB86i3J9fz+5mERt+
-	4l8TPyzsjs0B481QHIfLPpxaxifodZo6PmmPv3MoXE2JNYQjdTQJYzxBH9b3c9Na6lUznartbbL
-	KbNreYAduJlIIza4GTfv/Am4NYGLqOYNTocOxTPhw==
-X-Google-Smtp-Source: AGHT+IFY8gu/RrCyr3edgcmpVM4R2w44fG9KMd2O0YJMqKVLqnlWjuRIpRapn1ch7o9iKR+T1hVRKcHiM4nMmDW1D0I=
-X-Received: by 2002:a2e:a54a:0:b0:336:89dd:41ba with SMTP id
- 38308e7fff4ca-33689dd43ebmr8627441fa.9.1756225412701; Tue, 26 Aug 2025
- 09:23:32 -0700 (PDT)
+	s=arc-20240116; t=1756225409; c=relaxed/simple;
+	bh=W5ID3OY7yfWGGgbtnZevjVWj3uINdDq2sxdewYF9kdo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tKvkRBsmr25lLBpy/03Dpm4Wxnk2s0as8pwn8JfWDioYCrfxA0NvEk3hLBN/Qg2BOhFPfIZtZd5d+usPB48In3fhZohjaiETaGEHCmHz2GVyCuJAg3j2LTt4grbI+Pd3MO5PYuc0TK88zKmuIYqE1AWqtXFztEIRYQyR1JigD9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=KhlEYKzx; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1756225404; x=1756830204; i=rwarsow@gmx.de;
+	bh=W5ID3OY7yfWGGgbtnZevjVWj3uINdDq2sxdewYF9kdo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=KhlEYKzxk4eYrMBYwRrxWj97+MeHlwoVlfvRujAqIc1fUApWIHwMiCS2gRRtLVOb
+	 cHxNGyLAGcOLOUYOpip0VInOw7QdqnNJ/qTUjihPrbLoMdGGPz6+UxNz6RGhltBYz
+	 zccUk5igAZvZMgJB54GG3zrtprWWD9t2UF5S5/sMW+bMLLIV7uHlGSspL1mpdPpME
+	 JAdGVvP5sqxO6ywRiabpuLVN5d9V2xEG27lgSIyrr377xws1GmNa9KDjB2H5d3zuz
+	 uimCG4DtT9bhFnS4o68CIJx677JAD3keGGez3Bb8YGuxv6bAYfJ7IovBnYmFW+v1Z
+	 X9W6Zo8SfZkZFHqyrg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.200.20] ([46.142.34.135]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MjS9C-1u7BIc20Rm-00h4FN; Tue, 26
+ Aug 2025 18:23:24 +0200
+Message-ID: <1b282d8b-20ea-4496-925b-759bd4911245@gmx.de>
+Date: Tue, 26 Aug 2025 18:23:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250730142301.6754-1-pranav.tyagi03@gmail.com>
- <CAH4c4jJ8VywRUfn2z8HnA73vNxviZ53DZttcR3JaPULF3JFkQA@mail.gmail.com> <aJOG-IAmYhjoYVf-@x1.local>
-In-Reply-To: <aJOG-IAmYhjoYVf-@x1.local>
-From: Pranav Tyagi <pranav.tyagi03@gmail.com>
-Date: Tue, 26 Aug 2025 21:53:20 +0530
-X-Gm-Features: Ac12FXxDQE7gyOdZYAnPp3w1u4iY3ylCUDIqHFUVWVKzr1Z2KPlM4NdLcQSO8Lw
-Message-ID: <CAH4c4jLsFNzBEhCQVSCT43tZjbf5wp88xU_5BXnN+4t5CxU52A@mail.gmail.com>
-Subject: Re: [PATCH] selftests/mm: use __auto_type in swap() macro
-To: Peter Xu <peterx@redhat.com>
-Cc: akpm@linux-foundation.org, shuah@kernel.org, linux-mm@kvack.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kernel-mentees@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.16 000/457] 6.16.4-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20250826110937.289866482@linuxfoundation.org>
+From: Ronald Warsow <rwarsow@gmx.de>
+Content-Language: de-DE, en-US
+In-Reply-To: <20250826110937.289866482@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:4lrZlQ3LJdUDqEOfFqdPOqwIpBAXjK2+Z0hGYszP6hLx7+mZjMJ
+ D/D30j08qD7z5tbRQj59b3mpSgZWw3zRO+pdcloW7LJ58wAPuYzfSJoDPm763Ndpo6RnlSZ
+ svCbbzZJjBKbCpJyNe1E4qU7LvQD2N0M654QDGwjhsW1PjMirREAL6DEeOCCMUZLJhcnl6x
+ L7YFUqVQGOfDgMROz3KiA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:CnNdA227jjc=;cVqx1pVXcrfPZGEPOp40ESr9UQz
+ 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
+ 917HPkHzJLaLE8lIgTe8UNyYv6Bv
 
-On Wed, Aug 6, 2025 at 10:16=E2=80=AFPM Peter Xu <peterx@redhat.com> wrote:
->
-> On Wed, Aug 06, 2025 at 09:15:50PM +0530, Pranav Tyagi wrote:
-> > On Wed, Jul 30, 2025 at 7:53=E2=80=AFPM Pranav Tyagi <pranav.tyagi03@gm=
-ail.com> wrote:
-> > >
-> > > Replace typeof() with __auto_type in the swap() macro in uffd-stress.=
-c.
-> > > __auto_type was introduced in GCC 4.9 and reduces the compile time fo=
-r
-> > > all compilers. No functional changes intended.
-> > >
-> > > Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
-> > > ---
-> > >  tools/testing/selftests/mm/uffd-stress.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/tools/testing/selftests/mm/uffd-stress.c b/tools/testing=
-/selftests/mm/uffd-stress.c
-> > > index 40af7f67c407..c0f64df5085c 100644
-> > > --- a/tools/testing/selftests/mm/uffd-stress.c
-> > > +++ b/tools/testing/selftests/mm/uffd-stress.c
-> > > @@ -51,7 +51,7 @@ static char *zeropage;
-> > >  pthread_attr_t attr;
-> > >
-> > >  #define swap(a, b) \
-> > > -       do { typeof(a) __tmp =3D (a); (a) =3D (b); (b) =3D __tmp; } w=
-hile (0)
-> > > +       do { __auto_type __tmp =3D (a); (a) =3D (b); (b) =3D __tmp; }=
- while (0)
-> > >
-> > >  const char *examples =3D
-> > >         "# Run anonymous memory test on 100MiB region with 99999 boun=
-ces:\n"
-> > > --
-> > > 2.49.0
-> > >
-> >
-> > Hi,
-> >
-> > Just a gentle follow-up on this cleanup patch. From what I could find,
-> > this is the only use of
-> > typeof() left in the mm selftests, so this should be the only instance
-> > needing this change.
-> >
-> > Thanks for considering!
->
-> Hi,
->
-> Andrew should have queued this one in branch akpm/mm-nonmm-unstable (even
-> though I'm not familiar with the branch).
->
-> Said that, I'm also not familiar with __auto_type.  Looks like it's more
-> efficiently processed by the compiler in some special use cases, however
-> it's also new so maybe some tools (sparse?) may not recognize it.
->
-> Is it the plan that the whole Linux kernel is moving towards __auto_type?
-> I still see quite a few of typeof() usages (not "a few", but 2966 instanc=
-es).
->
-> Thanks,
->
-> --
-> Peter Xu
->
+Hi
 
-Hi Peter,
+no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
 
-Thank you for the feedback and I sincerely apologize for the delayed
-response.
+Thanks
 
-You=E2=80=99re right =E2=80=94 this patch was initially queued under akpm/m=
-m-nonmm-unstable
-and it now lives in the mm-unstable branch.
+Tested-by: Ronald Warsow <rwarsow@gmx.de>
 
-The motivation behind switching to __auto_type is twofold: it reduces compi=
-le
-time across compilers and improves readability. Support for __auto_type has
-been available in GCC since 4.9 (quite some time back) and in sparse since
-v0.6.2 (2020). To the best of my knowledge, it has since been widely adopte=
-d
-by toolchains.
-
-That said, I acknowledge there are still many uses of typeof() in the kerne=
-l,
-as you pointed out. My intent with this patch (and a few related ones I=E2=
-=80=99ve
-submitted) is to encourage more consistent use of __auto_type, starting wit=
-h
-selftests where it is already in use in several places.
-
-Thanks again for your review and for pointing out the current branch status=
-.
-
-Regards
-Pranav Tyagi
 
