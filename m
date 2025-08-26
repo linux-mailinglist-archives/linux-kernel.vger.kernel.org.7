@@ -1,156 +1,135 @@
-Return-Path: <linux-kernel+bounces-787316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DC88B37473
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 23:30:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3477B37476
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 23:31:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68F1E3613EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 21:30:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23A957A284E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 21:30:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 190922F9C39;
-	Tue, 26 Aug 2025 21:30:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 290852797B8;
+	Tue, 26 Aug 2025 21:31:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PjIQ+vab"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GIwnczoE"
 Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F042F8BF1
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 21:30:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F581EDA0B
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 21:31:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756243803; cv=none; b=Jrz6EFMOaTY5AcxAVg/8l13K8oDMxd3m/CGLeZuMbHiTQo8X0XPu9EiFzYFEtDlfVIxM/J8NuGv7bnxTg7GlqJQ43aufTuQx3iNz42sPfA6r94a0u1mplmznwkmjIXV2afE057FkPH2ls9E/tnZEFmVjIzIcdn9MBXl3IyVRSoU=
+	t=1756243909; cv=none; b=p/TdTQmLwcNqWrprOn3hsRYlHb/ifO5FPBBRz/k2C2jEgBZ/su5oywJbmsdxUSVPucG1FtsxJbyULkXxSoR7KsOwEcf5vFmX+6KvOj94tGZeQziYD5PjUJSe6qH8qkeBP4UtQwa11CPpx4dgKnFXj5sCljda584N1/a07AnVOWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756243803; c=relaxed/simple;
-	bh=wORq5psHRnZ8nN1xyCrydBPgYQLdMfpzqAjO7HR6zDI=;
+	s=arc-20240116; t=1756243909; c=relaxed/simple;
+	bh=CTMJf0x9Y4lC1Yx2gqC2G9l6CWMNnCXR8J8HWYvhDRU=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=u4gwIBmclA3pNZUNyfU+F1zBHsMrxRZ2AuD4KoNWxgnSOCcyD2+ul7iwwOs3XJD8vu/FHlfcSTH4gHhplMy3JPiT/yapIEYBz9lPzlO9HC4xYTdl/W1OQLNkIcEyaGlsD6SGZu5XK2jIwEgpOOudT+W6S4GEsBkChjQ2O7uU+3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PjIQ+vab; arc=none smtp.client-ip=209.85.216.73
+	 To:Cc:Content-Type; b=VBA4M/hxHzf2Bfb/E45iYmiQ6RydPSxud7eg/OBWeoEhBvMC6UAsnHHqWdIYdT/QOs9VmiqYOq+C0YWb1KbSwmVDvGIYb9FNzja8pb0JXsFd81OtR6UMtTN9tSrMdYW38OJZ7OWma6tdrY3hKKEfab6GTWJxm0+X+utrEcPgsd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GIwnczoE; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3259ff53c2eso3841084a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 14:30:01 -0700 (PDT)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3275d2cb1cbso937603a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 14:31:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756243801; x=1756848601; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=t0XNYuhFzewq5SpoNE6ECYDEqUR/PdEjHr7BqxomWbo=;
-        b=PjIQ+vabOumHxj/GH39y//tkfjcWcmLqPf94BbTplrjKhBpPIEglePDcwsm1CMDnRZ
-         Gg08Qsvxn2w2sm40QVnsTj2nFPKp8vIpbHkHKIJFCtl37ytu65YEL5se5vAgBYEWRbvJ
-         ZoNiqIdQL9Ofw4SXvnnvoOb/ldhOtWwePAjz9Zaoa1Rb5Z0H2ToEqGlOiJyWpGahfZ4F
-         DCvmS5Ro5Dgyp9KDzIzqXxdGDitRy9TTUort9dHCKzlZQbl/y5gdz50b/EeCuWXhHXdk
-         GZMZ3lYNWhU2khDyrnxiUe5KjOBAt4sPTqdIHSX3v5Tz0OWBePmABdN70cOybWPLw1cC
-         x8JQ==
+        d=google.com; s=20230601; t=1756243907; x=1756848707; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=S6RSfBZbzjlqDZ6g2evZXhO4UN2s2ZcsLX6EZtN8OCU=;
+        b=GIwnczoE6vSGbhKx4pPHdW8DNcPb3hE6jiRj62WriJ857kfOANSbhmPAF6HieYtuNI
+         Tr2WkTcq37maHFsEa2qEP5g5kpcuPT4ZY80bw3b5BtYDAPDVg4xTgogJlJXNyy76CrCB
+         e4OC5Ena8bY/e39VHQBBRc1v6xpGi5fdiLdVPL8fiqN3Bjm7AgCu3rZewVjXE/+EWyLq
+         uNX8NcSa9kCsY1grxTm4uG+Miqr3IN3/jGixsr3BdKB7dIdn6EhlbCf3qtEbFmS1wLFi
+         qHyCMKj+i+DtgQXCpNKHeavEPWSNVJt9ibQ/W7Zfuvaf/8esHb07ZeO6xVCfXe4856gs
+         7rog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756243801; x=1756848601;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=t0XNYuhFzewq5SpoNE6ECYDEqUR/PdEjHr7BqxomWbo=;
-        b=oq6Fnm1x+F4jCOmRsoUPuSAtPHx/9H9X8SnaqfHp2va33Uv2udEHc234+pCVeQqNhl
-         bcV/0cDyrvJtXQIzsnzztqXMFZ2gVME1Jeot8YIWhTkW5Pocrtsw8h/L8dHeI4QiipGz
-         p1vTnlTvKdxwA+QvdNWWBS5I4zNz+4fB8bNxXAA3dCh455aNarTw05tyRhlHci7Fwikc
-         J7QMsXEL1BVwsCO2HrbF8K4rCEHk1Z4vyitqZwskGyYNAhS8GwcDq6fYbxuXvaucnDHZ
-         dUWJOCc3mBY1wA67nYPwZxqaXXGMohT7MKztswSp5X+808e8+Jg3C91Rsq2CSlApEfpT
-         RqHw==
-X-Forwarded-Encrypted: i=1; AJvYcCUu+E6xB3/Dp/xivR37CEewUaFoV3XKG6g8+7RyrfWwRVGN2mayKv5U2YafVHZW3s0Sf/VPaAGN0pkgkdM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwL41F/FSr7PuUaJOnnfERJhWBqrACzsBsFihyXgkR2KNFjTGJ9
-	qisyilJJxNnTtJePFAnKN9qBcyG/h9uRtQCaJ1gpZmYN2ljoa5olbw+9sxKZ1qQIKk/Hi1jG/Pj
-	/N0qL9g==
-X-Google-Smtp-Source: AGHT+IF7MPxNgNaQJ4UlRAoZAcA9biTVvRMSBkz6IDXnOSl5pa+enjNi1lYtcaOBiqr8KYqBgElOkDB/jcY=
-X-Received: from pjqq8.prod.google.com ([2002:a17:90b:5848:b0:325:d07:8343])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:51c6:b0:324:24d:3207
- with SMTP id 98e67ed59e1d1-32515eabb6dmr23253945a91.17.1756243801375; Tue, 26
- Aug 2025 14:30:01 -0700 (PDT)
-Date: Tue, 26 Aug 2025 14:29:59 -0700
-In-Reply-To: <aK4LIj-OZsP_35wc@linux.dev>
+        d=1e100.net; s=20230601; t=1756243907; x=1756848707;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=S6RSfBZbzjlqDZ6g2evZXhO4UN2s2ZcsLX6EZtN8OCU=;
+        b=nGX4J9W0ojnz39CET+AsySHpkbl5XgQdZA9eHH+kI+WMoyLQdwd8ux+YOLA8fJcrFq
+         J/I3WnaF4KIn0z5eLhI0Vd2hOhZDWXRC2yugl3mRpgzRsR9jvsgdr9TX7ueDzhm+HElF
+         f19Pb6sl9v2PVcUQP2w1agoFS02QkDlUIsfdTfYgbho9VNBNLd1tp3LSQrO2udet6jvQ
+         xWqZGcLqjnoVTjRxPwkthBMzFEUo7lPgJ331X4OJbaz/7ffLnkQhtNAYvJW3p1V5RptE
+         OMTWz5VilQjL4sra7NAiGZrhM8yxjfXGMv6KJAl/MnGzMIfyRv620IEuUaTCNB46mN3x
+         /Jzw==
+X-Forwarded-Encrypted: i=1; AJvYcCWsKHl+STR1qeqt+FvUq7uiKSo7EpzYw2Ja1sAs/Gl8Nbwzg4btmoX8Y5EIdZU9nC0erhLo8AA6M38w30k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZeSRGPYZwNx2l13XvWooYkux3iQXPQNCZf1gAaQgOSv0qGu9w
+	czB3t6sgARokOik31vBQPjlSR4p3qdrI+ck+Fj8WiZ0pRb+6XJyKf5u9hXaUpRLqkSuCqmXEniz
+	c+Pws2g==
+X-Google-Smtp-Source: AGHT+IEySkuuhaynZ0m/cSLC1ikqBNNsZdkfvVXazMWOeEnEUTq6/sJ6HZtbncnv+ik+NswQSWFlZWAaBAo=
+X-Received: from pjbsv6.prod.google.com ([2002:a17:90b:5386:b0:31e:d9dc:605f])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1d92:b0:324:f6f8:7701
+ with SMTP id 98e67ed59e1d1-32515e225a5mr23486092a91.4.1756243907485; Tue, 26
+ Aug 2025 14:31:47 -0700 (PDT)
+Date: Tue, 26 Aug 2025 14:31:45 -0700
+In-Reply-To: <CAAhR5DGeTQ4G-w2o5YCvNWkZZWFcXe=6rro+RcfhR18-4sT+PQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250821210042.3451147-1-seanjc@google.com> <20250821210042.3451147-6-seanjc@google.com>
- <aKeeRynpwFTSONfm@linux.dev> <aK4DwtuQtzYvRei-@google.com> <aK4LIj-OZsP_35wc@linux.dev>
-Message-ID: <aK4nVyoEd3hgmxaD@google.com>
-Subject: Re: [RFC PATCH 05/16] KVM: arm64: Introduce "struct kvm_page_fault"
- for tracking abort state
+References: <20250821042915.3712925-1-sagis@google.com> <20250821042915.3712925-16-sagis@google.com>
+ <aK3vZ5HuKKeFuuM4@google.com> <68ae1604a387c_300e8f2947e@iweiny-mobl.notmuch>
+ <CAAhR5DHPMPOb2XCJodyNMf2RTQfTZpAaCGMg6WeWxSWPLtkO4Q@mail.gmail.com> <CAAhR5DGeTQ4G-w2o5YCvNWkZZWFcXe=6rro+RcfhR18-4sT+PQ@mail.gmail.com>
+Message-ID: <aK4nwZ4FE1r8-GYd@google.com>
+Subject: Re: [PATCH v9 15/19] KVM: selftests: Hook TDX support to vm and vcpu creation
 From: Sean Christopherson <seanjc@google.com>
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: Marc Zyngier <maz@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	James Houghton <jthoughton@google.com>
-Content-Type: text/plain; charset="us-ascii"
+To: Sagi Shahar <sagis@google.com>
+Cc: Ira Weiny <ira.weiny@intel.com>, linux-kselftest@vger.kernel.org, 
+	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
+	Erdem Aktas <erdemaktas@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Roger Wang <runanwang@google.com>, Binbin Wu <binbin.wu@linux.intel.com>, 
+	Oliver Upton <oliver.upton@linux.dev>, "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, 
+	Reinette Chatre <reinette.chatre@intel.com>, Chao Gao <chao.gao@intel.com>, 
+	Chenyi Qiang <chenyi.qiang@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 26, 2025, Oliver Upton wrote:
-> On Tue, Aug 26, 2025 at 11:58:10AM -0700, Sean Christopherson wrote:
-> > On Thu, Aug 21, 2025, Oliver Upton wrote:
-> > > > +struct kvm_page_fault {
-> > > > +	const u64 esr;
-> > > > +	const bool exec;
-> > > > +	const bool write;
-> > > > +	const bool is_perm;
-> > > 
-> > > Hmm... these might be better represented as predicates that take a
-> > > pointer to this struct and we just compute it based on ESR. That'd have
-> > > the benefit in the arch-neutral code where 'struct kvm_page_fault' is an
-> > > opaque type and we don't need to align field names/types.
-> > 
-> > We'd need to align function names/types though, so to some extent it's six of one,
-> > half dozen of the other.  My slight preference would be to require kvm_page_fault
-> > to have certain fields, but I'm ok with making kvm_page_fault opaque to generic
-> > code and instead adding arch APIs.  Having a handful of wrappers in x86 isn't the
-> > end of the world, and it would be more familiar for pretty much everyone.
-> 
-> To clarify my earlier point, my actual interest is in using ESR as the
-> source of truth from the arch POV, interface to the arch-neutral code
-> isn't that big of a deal either way.
+On Tue, Aug 26, 2025, Sagi Shahar wrote:
+> On Tue, Aug 26, 2025 at 3:29=E2=80=AFPM Sagi Shahar <sagis@google.com> wr=
+ote:
+> >
+> > On Tue, Aug 26, 2025 at 3:14=E2=80=AFPM Ira Weiny <ira.weiny@intel.com>=
+ wrote:
+> > >
+> > > Sean Christopherson wrote:
+> > > > Ugh.  IMO, this is a KVM bug.  Allowing KVM_CREATE_IRQCHIP for a TD=
+X VM is simply
+> > > > wrong.  It _can't_ work.  Waiting until KVM_CREATE_VCPU to fail set=
+up is terrible
+> > > > ABI.
+> > > >
+> > > > If we stretch the meaning of ENOTTY a bit and return that when tryi=
+ng to create
+> > > > a fully in-kernel IRQCHIP for a TDX VM, then the selftests code Jus=
+t Works thanks
+> > > > to the code below, which handles the scenario where KVM was be buil=
+t without
+> > >          ^^^^^^^^^^
+> > >
+> > > I'm not following.  Was there supposed to be a patch attached?
+> > >
+> >
+> > I think Sean refers to the original implementation which was out of
+> > the scope for the git diff so it was left out of the patch:
 
-Ya, but that would mean having something like
+Yep, exactly.
 
-  static bool kvm_is_exec_fault(struct kvm_page_fault *fault)
-  {
-	return esr_trap_is_iabt(fault->esr) && !esr_abt_iss1tw(fault->esr);
-  }
-
-and
-
-  if (kvm_is_exec_fault(fault))
-
-in arm64 code and then
-
-  if (fault->exec)
-
-in arch-neutral code, which, eww.
-
-I like the idea of having a single source of truth, but that's going to be a
-massive amount of work to do it "right", e.g. O(weeks) if not O(months).  E.g. to
-replace fault->exec with kvm_is_exec_fault(), AFAICT it would require duplicating
-all of kvm_is_write_fault().  Rinse and repeat for 20+ APIs in kvm_emulate.h that
-take a vCPU and pull ESR from vcpu->arch.fault.esr_el2.
-
-As an intermediate state, having that many duplicate APIs is tolerable, but I
-wouldn't want to leave that as the "end" state for any kernel release, and ideally
-not for any given series.  That means adding a pile of esr-based APIs, converting
-_all_ users, then dropping the vcpu-based APIs.  That's a lot of code and patches.
-
-E.g. even if we convert all of kvm_handle_guest_abort(), which itself is a big task,
-there will still be usage of many of the APIs in at least kvm_translate_vncr(),
-io_mem_abort(), and kvm_handle_mmio_return().  Converting all of those is totally
-doable, e.g. through a combination of using kvm_page_fault and local snapshots of
-esr, but it will be a lot of work and churn.
-
-The work+churn itself doesn't bother me, but I would prefer not to block arch-neutral
-usage of kvm_page_fault for months on end, nor do I want to leave KVM arm64 in
-a half-baked state, i.e. I wouldn't feel comfortable converting just
-__kvm_handle_guest_abort() and walking away.
-
-What if we keep the exec, write, and is_perm fields for now, but add proper APIs
-to access kvm_page_fault from common code?  The APIs would be largely duplicate
-code between x86 and arm64 (though I think kvm_get_fault_gpa() would be different,
-so yay), but that's not a big deal.  That way common KVM can start building out
-functionality based on kvm_page_fault, and arm64 can independently convert to
-making fault->esr the single source of truth, without having to worry about
-perturbing common code.
+> /*
+>  * Allocate a fully in-kernel IRQ chip by default, but fall back to a
+>  * split model (x86 only) if that fails (KVM x86 allows compiling out
+>  * support for KVM_CREATE_IRQCHIP).
+>  */
+> r =3D __vm_ioctl(vm, KVM_CREATE_IRQCHIP, NULL);
+> if (r && errno =3D=3D ENOTTY && kvm_has_cap(KVM_CAP_SPLIT_IRQCHIP))
+>         vm_enable_cap(vm, KVM_CAP_SPLIT_IRQCHIP, 24);
+> else
+>         TEST_ASSERT_VM_VCPU_IOCTL(!r, KVM_CREATE_IRQCHIP, r, vm);
 
