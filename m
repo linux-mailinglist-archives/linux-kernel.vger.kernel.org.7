@@ -1,45 +1,72 @@
-Return-Path: <linux-kernel+bounces-787019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C935AB37042
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:29:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1A37B3704B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97A277A7D07
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:27:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 269DE7C1745
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:30:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2AC30FC19;
-	Tue, 26 Aug 2025 16:29:09 +0000 (UTC)
-Received: from mx.gpxsee.org (mx.gpxsee.org [37.205.14.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB5A52D12EA;
+	Tue, 26 Aug 2025 16:30:36 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E087D17C211;
-	Tue, 26 Aug 2025 16:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.14.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB49B2B9A7;
+	Tue, 26 Aug 2025 16:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756225749; cv=none; b=Ui30eFShS3xXmI12+VMURmxx6BVUi0usrTzCl/gkQXDcGYk/OzmSn0zNPByA902fG1mEk8aL+KpBSdypqRxc/gdnFx3zRVgdXyRwQqo4lrUCrZbodN2fne8Zkz2hau/znpkQa0TuwzuPemRqYNMLTf6xd3KmNrFY/JIR7xMrO7k=
+	t=1756225836; cv=none; b=M3L7Obo1s6+OrSxldYxleDXI0VJX9Oe1oA7N8iZixLP3dn+kYrfgKq+vabJMItjYEAuXKBIk/w0lT4JjUgTkzaRfaWIpQGhiH+KTlAtGV90lLO1OYiOnceVQmoQyz19dGBCquKk8eNqlw8IKnfpulPFmEFqo6IjLrzu0R5FS6Aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756225749; c=relaxed/simple;
-	bh=AAcyihQv5XLEctuNaZICT2NIJkI17KX4f1zliLxnpik=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MUs6+2meCwdZ9p4UqHk2eGGHNoQ22QZA73oafDaZQv5KnWC/gvlwEyns0wAOl6g7rruYk4vdXJx8F8YOm3BV0JU65UXwYD7wPDiviclWWDFiHJZK3KEytnRNN/Flxd6smn9+k9gzX2trciwQHA27QeCkg9r976CusRQ7Y5LEbNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gpxsee.org; spf=pass smtp.mailfrom=gpxsee.org; arc=none smtp.client-ip=37.205.14.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gpxsee.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gpxsee.org
-Received: from localhost (unknown [62.77.71.229])
-	by mx.gpxsee.org (Postfix) with ESMTPSA id E39E453EB3;
-	Tue, 26 Aug 2025 18:28:52 +0200 (CEST)
-From: tumic@gpxsee.org
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org,
+	s=arc-20240116; t=1756225836; c=relaxed/simple;
+	bh=yMwNl4e0l3TtPcySpAL6rbOFnmB2yIOLSJ7vpcZI0ws=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=aOTLb0W4XnqeGlDddDdO4JnLsspso6vH4CAZlsvsCbZ5Zd1ztCFwPnt/RlKcie4hLxYoiBtEI1w287ocIlDrjEe2FS4EPCkdgRRkg6oguMOZTEChKf4PZMa1ZGOAkFHIqM6hSiBbLrz/Tz+CVoVGulZnnF63ZEkyii2yE4GDt+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn; spf=pass smtp.mailfrom=isrc.iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=isrc.iscas.ac.cn
+Received: from ROG.lan (unknown [118.251.176.199])
+	by APP-03 (Coremail) with SMTP id rQCowAD3jX8L4a1oBKJmDw--.6398S2;
+	Wed, 27 Aug 2025 00:30:05 +0800 (CST)
+From: Pincheng Wang <pincheng.plct@isrc.iscas.ac.cn>
+To: paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	anup@brainfault.org,
+	pbonzini@redhat.com,
+	shuah@kernel.org,
+	cyan.yang@sifive.com,
+	cleger@rivosinc.com,
+	charlie@rivosinc.com,
+	cuiyunhui@bytedance.com,
+	samuel.holland@sifive.com,
+	namcao@linutronix.de,
+	jesse@rivosinc.com,
+	inochiama@gmail.com,
+	yongxuan.wang@sifive.com,
+	ajones@ventanamicro.com,
+	parri.andrea@gmail.com,
+	mikisabate@gmail.com,
+	yikming2222@gmail.com,
+	thomas.weissschuh@linutronix.de
+Cc: linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Martin=20T=C5=AFma?= <martin.tuma@digiteqautomotive.com>
-Subject: [PATCH v2] media: pci: mgb4: Fix timings comparison in VIDIOC_S_DV_TIMINGS
-Date: Tue, 26 Aug 2025 18:28:29 +0200
-Message-ID: <20250826162829.4434-1-tumic@gpxsee.org>
-X-Mailer: git-send-email 2.51.0
+	linux-doc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org,
+	linux-kselftest@vger.kernel.org,
+	pincheng.plct@isrc.iscas.ac.cn
+Subject: [PATCH v2 0/5] Add Zilsd/Zclsd support in hwprobe and KVM
+Date: Wed, 27 Aug 2025 00:29:34 +0800
+Message-Id: <20250826162939.1494021-1-pincheng.plct@isrc.iscas.ac.cn>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,35 +75,81 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAD3jX8L4a1oBKJmDw--.6398S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7tFyftr1UXr48Cr1DJrW5Jrb_yoW8KrW5pF
+	s5GwnI9r1kJw13CF1fAr48ur1rKan5uws3tF9xtw18WayayFyrZr10k3ZxZF1kAFZ29FyD
+	Z3WrWryI9wnrAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWUuVWrJwAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
+	4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjTRM6wCDUUUU
+X-CM-SenderInfo: pslquxhhqjh1xofwqxxvufhxpvfd2hldfou0/
 
-From: Martin Tůma <martin.tuma@digiteqautomotive.com>
+Hi all,
 
-Compare the whole v4l2_bt_timings struct, not just the width/height when
-setting new timings. Timings with the same resolution and different
-pixelclock can now be properly set.
+This is v2 of a short series that adds kernel support for the ratified
+Zilsd (Load/Store pair) and Zclsd (Compressed Load/Store pair) RISC-V
+ISA extensions. The series enables kernel-side exposure so user-space
+(for example glibc) can detect and use these extensions via hwprobe and
+runtime checks.
 
-Signed-off-by: Martin Tůma <martin.tuma@digiteqautomotive.com>
----
- drivers/media/pci/mgb4/mgb4_vin.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Patches:
+- Patch 1：Add device tree bindings documentation for Zilsd and Zclsd.
+- Patch 2: Extend RISC-V ISA extension string parsing to recognize them.
+- Patch 3: Export Zilsd and Zclsd via riscv_hwprobe.
+- Patch 4: Allow KVM guests to use them.
+- Patch 5: Add KVM selftests.
 
-diff --git a/drivers/media/pci/mgb4/mgb4_vin.c b/drivers/media/pci/mgb4/mgb4_vin.c
-index 989e93f67f75..42c327bc50e1 100644
---- a/drivers/media/pci/mgb4/mgb4_vin.c
-+++ b/drivers/media/pci/mgb4/mgb4_vin.c
-@@ -610,8 +610,7 @@ static int vidioc_s_dv_timings(struct file *file, void *fh,
- 	    timings->bt.height < video_timings_cap.bt.min_height ||
- 	    timings->bt.height > video_timings_cap.bt.max_height)
- 		return -EINVAL;
--	if (timings->bt.width == vindev->timings.bt.width &&
--	    timings->bt.height == vindev->timings.bt.height)
-+	if (v4l2_match_dv_timings(timings, &vindev->timings, 0, false))
- 		return 0;
- 	if (vb2_is_busy(&vindev->queue))
- 		return -EBUSY;
+Changes in v2:
+- Device-tree schema: simplified the rv64 validation for Zilsd by
+  removing a redundant `contais: const: zilsd` in the `if` clause; the
+  simpler `if (riscv, isa-base contains rv64i) then (riscv,
+  isa-extension not contains zilsd)` form is used instead. Behaviour is
+  unchanged, and the logic is cleaner.
+- Device-tree schema: corrected Zclsd dependency to require both Zilsd
+  and Zca (previous `anyOf` was incorrect; now both are enforced).
+- Commit message typo fixed: "dt-bidings" -> "dt-bindings" in the Patch
+  1 commit subject.
 
-base-commit: a75b8d198c55e9eb5feb6f6e155496305caba2dc
+The v2 changes are documentation/schema corrections in extensions.yaml.
+No functional changes were made to ISA parsing, hwprobe syscall, KVM
+guest support or the selftests beyond ensuring the binding correctly
+documents and validates the extension relationships.
+
+Please review v2 and advise if futher changes are needed.
+
+Thanks,
+Pincheng Wang 
+
+Pincheng Wang (5):
+  dt-bindings: riscv: add Zilsd and Zclsd extension descriptions
+  riscv: add ISA extension parsing for Zilsd and Zclsd
+  riscv: hwprobe: export Zilsd and Zclsd ISA extensions
+  riscv: KVM: allow Zilsd and Zclsd extensions for Guest/VM
+  KVM: riscv: selftests: add Zilsd and Zclsd extension to get-reg-list
+    test
+
+ Documentation/arch/riscv/hwprobe.rst          |  8 +++++
+ .../devicetree/bindings/riscv/extensions.yaml | 36 +++++++++++++++++++
+ arch/riscv/include/asm/hwcap.h                |  2 ++
+ arch/riscv/include/uapi/asm/hwprobe.h         |  2 ++
+ arch/riscv/include/uapi/asm/kvm.h             |  2 ++
+ arch/riscv/kernel/cpufeature.c                | 24 +++++++++++++
+ arch/riscv/kernel/sys_hwprobe.c               |  2 ++
+ arch/riscv/kvm/vcpu_onereg.c                  |  2 ++
+ .../selftests/kvm/riscv/get-reg-list.c        |  6 ++++
+ 9 files changed, 84 insertions(+)
+
 -- 
-2.51.0
+2.39.5
 
 
