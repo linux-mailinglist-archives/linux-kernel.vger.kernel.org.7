@@ -1,180 +1,117 @@
-Return-Path: <linux-kernel+bounces-786276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29010B3579B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:50:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF35FB35778
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:43:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE6ED5E4E56
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:50:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 243AB18939E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:43:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3C32FDC24;
-	Tue, 26 Aug 2025 08:50:38 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6CDC3D984;
-	Tue, 26 Aug 2025 08:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD80E2FC881;
+	Tue, 26 Aug 2025 08:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EvcL5yqR";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="T32aPWHZ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC19227D77B;
+	Tue, 26 Aug 2025 08:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756198237; cv=none; b=U+f1fUM5rMm7vnrevd8lk0y4Bw92r3N4M5qOcciTPkaezo5N/LOo3MnPlRrIO8CKNwr0t8RGo6r5bQMwrHuJbbBvYKlEySezvykAwBVp1aL64oNvqQoflJyMR7usYG6/xNUUCyiwoUgDD9pCTWOREEHN9GTWMn1DgvPEa5vwzcE=
+	t=1756197808; cv=none; b=Q9LFk/inLzRiHdNWgvf9IKMozM5L9DXUWCXA6t8HOpeVQifx3iuWia6QBmWQk7IjQUK9iiKu0eTgI/LPc16DHDdJcljMuYoZFQW8BYChycE3hKLco60d9TW0QbNqgqHI9lznJo2NX7N1E3nmJ0DsE2kpmcqjiKbg6D1tw959/9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756198237; c=relaxed/simple;
-	bh=pJ0dqW2GCGa4yWArNPjCeHoPWJICNpv8ipt0j7ASM1Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FOHEP5UyfJzA0HO5ZVkwWZGSLv7spbBzm91KTHiHSw99rkAMvBAs4JtAl+tNN/XoSDP/Y+Rd5h9hRVCbXCK1/4IjB20si0PxXdVoO5e/amiVpj2+lIpy274VnpDHMGBiVm24AwRtX16XdzfKMTp/YkvPapY6DR+PBjEj3NCv5KI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4cB1Np0NmHz9sSd;
-	Tue, 26 Aug 2025 10:41:46 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id voHHKrBq8-UN; Tue, 26 Aug 2025 10:41:45 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4cB1Nn6L1xz9sSc;
-	Tue, 26 Aug 2025 10:41:45 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id C0CCD8B764;
-	Tue, 26 Aug 2025 10:41:40 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id j9M1S24KLE1q; Tue, 26 Aug 2025 10:41:40 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 2D0548B763;
-	Tue, 26 Aug 2025 10:41:40 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Qiang Zhao <qiang.zhao@nxp.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v4] soc: fsl: qe: Add support of IRQ in QE GPIO
-Date: Tue, 26 Aug 2025 10:41:29 +0200
-Message-ID: <ac7c79b3491cb48ef7c193420b9a9e4614b88436.1756197502.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <372550a2633586d2f98b077d3f520f3262ca0e2a.1756104334.git.christophe.leroy@csgroup.eu>
-References: <372550a2633586d2f98b077d3f520f3262ca0e2a.1756104334.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1756197808; c=relaxed/simple;
+	bh=y4dwqQVgtSX6sPHPMwAuaPOfXvlILwfzYILH/VuFM1w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ghkiV2tPuhG2E9Rr90EgWVpQp7UpO1wqngxQKSWBe//6yFoxXsPtw7e+vDttWx6mVaCbVCJTOqyWKTuaOYBepWX3nGQrHaer3BpTsBxYIeL/CpsOke58Mqf6EzlkjepYbGnor9P0hG4vuC2TLQ6uriNokiDTUArDy3hZSjDadAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EvcL5yqR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=T32aPWHZ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 26 Aug 2025 10:43:20 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756197804;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vW0GsgV7Ep6s4XIArheKm/LdDZZmdIK5t24jU+6kggw=;
+	b=EvcL5yqRd2AKS+Y8UMGkM5b9exWowZdlqZLZFId2q0cdJEUZ6rCghtwN2F2RL6mtYmm2BD
+	i+8+vbOBOVH+dQaEBkunBVi3JNeRGkUgQ+KNqcz2chZS1YkSfOzFoUdKhvt5D0OnZQzSxF
+	nTQkh3syh8J7XKjIAuYIpgzGXxanKF5RGamHo3bttlX9HMf2RlUDG1MCwU/eiz/0N6duPz
+	YZPYnd5iUeYHFSy+kSUTLv5EiXIn5oYkR1qXgX3j+hte5JQdtDUSsPqhMSfuyppcG5PCu8
+	iPchwwOW9ixRj+h+8Y7xiRB4BwGYZQeFWF8jDdosveKfYLqhRhluQ0D0gF1xgw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756197804;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vW0GsgV7Ep6s4XIArheKm/LdDZZmdIK5t24jU+6kggw=;
+	b=T32aPWHZdJeTw+a5UJKU3WD36z2iBIV7xYlqQ6KAqP2pHQwPD7bhFhGgVpi2WefMqunUNQ
+	ps8p7jmoDxApSYCg==
+From: Nam Cao <namcao@linutronix.de>
+To: Christian Brauner <brauner@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Xi Ruoyao <xry111@xry111.site>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	John Ogness <john.ogness@linutronix.de>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	linux-rt-users@vger.kernel.org, Joe Damato <jdamato@fastly.com>,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	Jens Axboe <axboe@kernel.dk>
+Cc: stable@vger.kernel.org
+Subject: Re: [PATCH v4 1/1] eventpoll: Replace rwlock with spinlock
+Message-ID: <20250826084320.XeTd6XAK@linutronix.de>
+References: <cover.1752581388.git.namcao@linutronix.de>
+ <ec92458ea357ec503c737ead0f10b2c6e4c37d47.1752581388.git.namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756197697; l=2931; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=pJ0dqW2GCGa4yWArNPjCeHoPWJICNpv8ipt0j7ASM1Y=; b=qXBDjnSeeKD6zixq9hi51WNrEhQvT+wzLU+IvEBZpjXb3EHCSVzw/98Sy6Ghh9g5fyNRHzWIE JBWupobYaCsCVFuqPZds6FTJG7GVp+fHpUTHxKDVXYEvdxzDll2r4CZ
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ec92458ea357ec503c737ead0f10b2c6e4c37d47.1752581388.git.namcao@linutronix.de>
 
-In the QE, a few GPIOs are IRQ capable. Similarly to
-commit 726bd223105c ("powerpc/8xx: Adding support of IRQ in MPC8xx
-GPIO"), add IRQ support to QE GPIO.
+On Tue, Jul 15, 2025 at 02:46:34PM +0200, Nam Cao wrote:
+> The ready event list of an epoll object is protected by read-write
+> semaphore:
+> 
+>   - The consumer (waiter) acquires the write lock and takes items.
+>   - the producer (waker) takes the read lock and adds items.
+> 
+> The point of this design is enabling epoll to scale well with large number
+> of producers, as multiple producers can hold the read lock at the same
+> time.
+> 
+> Unfortunately, this implementation may cause scheduling priority inversion
+> problem. Suppose the consumer has higher scheduling priority than the
+> producer. The consumer needs to acquire the write lock, but may be blocked
+> by the producer holding the read lock. Since read-write semaphore does not
+> support priority-boosting for the readers (even with CONFIG_PREEMPT_RT=y),
+> we have a case of priority inversion: a higher priority consumer is blocked
+> by a lower priority producer. This problem was reported in [1].
+> 
+> Furthermore, this could also cause stall problem, as described in [2].
+> 
+> Fix this problem by replacing rwlock with spinlock.
 
-Add property 'fsl,qe-gpio-irq-mask' similar to
-'fsl,cpm1-gpio-irq-mask' that define which of the GPIOs have IRQs.
+Hi Christian,
 
-Here is an exemple for port B of mpc8323 which has IRQs for
-GPIOs PB7, PB9, PB25 and PB27.
+May I know your plan with this patch? Are you still waiting for something?
 
-	qe_pio_b: gpio-controller@1418 {
-		compatible = "fsl,mpc8323-qe-pario-bank";
-		reg = <0x1418 0x18>;
-		interrupts = <4 5 6 7>;
-		interrupt-parent = <&qepic>;
-		gpio-controller;
-		#gpio-cells = <2>;
-		fsl,qe-gpio-irq-mask = <0x01400050>;
-	};
+You may still understandably be paranoid about epoll due to the last
+regression. But it's been weeks, and this patch is quite simple, so I start
+to wonder if it is forgotten.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
-v4: Using device_property_read_u32() instead of of_property_read_u32()
----
- drivers/soc/fsl/qe/gpio.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
-
-diff --git a/drivers/soc/fsl/qe/gpio.c b/drivers/soc/fsl/qe/gpio.c
-index 5bf073bbaac8..68bcd6048b1c 100644
---- a/drivers/soc/fsl/qe/gpio.c
-+++ b/drivers/soc/fsl/qe/gpio.c
-@@ -12,11 +12,13 @@
- #include <linux/spinlock.h>
- #include <linux/err.h>
- #include <linux/io.h>
-+#include <linux/of_irq.h>
- #include <linux/gpio/consumer.h>
- #include <linux/gpio/driver.h>
- #include <linux/slab.h>
- #include <linux/export.h>
- #include <linux/platform_device.h>
-+#include <linux/property.h>
- 
- #include <soc/fsl/qe/qe.h>
- 
-@@ -30,6 +32,8 @@ struct qe_gpio_chip {
- 
- 	/* saved_regs used to restore dedicated functions */
- 	struct qe_pio_regs saved_regs;
-+
-+	int irq[32];
- };
- 
- static void qe_gpio_save_regs(struct qe_gpio_chip *qe_gc)
-@@ -133,6 +137,13 @@ static int qe_gpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
- 	return 0;
- }
- 
-+static int qe_gpio_to_irq(struct gpio_chip *gc, unsigned int gpio)
-+{
-+	struct qe_gpio_chip *qe_gc = gpiochip_get_data(gc);
-+
-+	return qe_gc->irq[gpio] ? : -ENXIO;
-+}
-+
- struct qe_pin {
- 	/*
- 	 * The qe_gpio_chip name is unfortunate, we should change that to
-@@ -293,6 +304,7 @@ static int qe_gpio_probe(struct platform_device *ofdev)
- 	struct device_node *np = dev->of_node;
- 	struct qe_gpio_chip *qe_gc;
- 	struct gpio_chip *gc;
-+	u32 mask;
- 
- 	qe_gc = devm_kzalloc(dev, sizeof(*qe_gc), GFP_KERNEL);
- 	if (!qe_gc)
-@@ -300,6 +312,14 @@ static int qe_gpio_probe(struct platform_device *ofdev)
- 
- 	spin_lock_init(&qe_gc->lock);
- 
-+	if (!device_property_read_u32(dev, "fsl,qe-gpio-irq-mask", &mask)) {
-+		int i, j;
-+
-+		for (i = 0, j = 0; i < ARRAY_SIZE(qe_gc->irq); i++)
-+			if (mask & (1 << (31 - i)))
-+				qe_gc->irq[i] = irq_of_parse_and_map(np, j++);
-+	}
-+
- 	gc = &qe_gc->gc;
- 
- 	gc->base = -1;
-@@ -309,6 +329,7 @@ static int qe_gpio_probe(struct platform_device *ofdev)
- 	gc->get = qe_gpio_get;
- 	gc->set = qe_gpio_set;
- 	gc->set_multiple = qe_gpio_set_multiple;
-+	gc->to_irq = qe_gpio_to_irq;
- 	gc->parent = dev;
- 	gc->owner = THIS_MODULE;
- 
--- 
-2.49.0
-
+Nam
 
