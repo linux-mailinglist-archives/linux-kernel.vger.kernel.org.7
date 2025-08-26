@@ -1,247 +1,256 @@
-Return-Path: <linux-kernel+bounces-786806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACB8FB36B7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:46:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C82AEB36C0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:51:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A8BB585A2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:31:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A885A037EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:31:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DC7A352067;
-	Tue, 26 Aug 2025 14:28:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED54C35A29E;
+	Tue, 26 Aug 2025 14:29:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gHeFD6Fo"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="LVW10R6m"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC383570A2
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 14:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756218510; cv=none; b=npkD7Cx2Sl/hqa0sHgp4C1hfmR0nGnFXLQpNxS5bx/NWuzga/J6klGH8lv1ica9Pcqi3MCiIPC+7euKTZPzHjVjvgsaMIwkzrSDnQVAWeyjxAND7zDNIcpOGZK0I9HwMYbbye6SKxgdsYyppl37ajue/c3e8znXkAvkMTxkhqP8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756218510; c=relaxed/simple;
-	bh=5IkgTtObWIo/HOE77y+T1mDDKK4C6O5Kl1dDT7OT2m0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y8xVJ3kSeOmtSkt6PWldHzYrTisIS6fvW6b2d0wKrDoorwyQuFM4CAwkz2Z4mjU/ukqMLSipUKPUc529Pr2hfHASLy+63CZJXOjjnLxp9wXf2LWL0jW8yTMkW1wH9L9PAo3UteQTCnyzJyvmNUpcJOSeZj6ALSpryAZahqIAdWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gHeFD6Fo; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756218507;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=qDLf7UHqP/kD/etWBqZtQZ0xB9/zj9AoNH0XrSAyLV0=;
-	b=gHeFD6FogH+OcoI1EOuG+ynk3I5K8MvaEwbTcXfrUrt8RdIUuOD1ZyW5GnVV+vUGxXV7Ju
-	M0+9aW4RSUDE0Sd4K4lwZwQwC9KHY0V/iUfcaVPvmQIhxK0WvSgwrmXu+L4Jrr4eDjqgj/
-	Rhl+XPVQ9mebdMQE9mC53Ojqzue7fwU=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-131-TAqebljKMFCfxbEJ8RXtWQ-1; Tue, 26 Aug 2025 10:28:26 -0400
-X-MC-Unique: TAqebljKMFCfxbEJ8RXtWQ-1
-X-Mimecast-MFC-AGG-ID: TAqebljKMFCfxbEJ8RXtWQ_1756218505
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45a1b0b14daso27863065e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 07:28:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756218505; x=1756823305;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qDLf7UHqP/kD/etWBqZtQZ0xB9/zj9AoNH0XrSAyLV0=;
-        b=byE/OkTpLNgv2Puq1Y8Lv8vaM/dD5t39nwZ4zi2reyQ1CDmmoKHCVF2KABcquwrmPw
-         bsXUhxW0KvkFBzdbUVBZIvyTXcSEBHknNfjv3X+qaFCfUl+LPj8GilpiSHiY/PalakKf
-         W/xwayX5otk0tiXxMJ2d/rSBkGYB7n9yjXQ0/nZjE0dplvBE3uMqavCwv0QmcfnLXjhh
-         tES+CMWL6gcF9uWe23uEwcbw7Yv1m4mAd+p6jMoiPB9aQoOFuopJzF/um84TyxpjbG4+
-         hsg6PXHMK9gA0+YyEN8n72LXyx7v+9kyGMAgE6ku8CjMroxzCICbLT9cAn+epJ0Ilyy5
-         mBQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXjJiM6zNV0LJKi2sGFVeeA2G0ZwyOs6mihm+wDGKs5MsTLJZbX+QHYzRUYfhfWDHmAoKKc7EPPd6tDS94=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjKjaWmv7SNGfxWyWFmg/BbGfynZqkyEFWhUmkd+BfSOmDp/FP
-	o/OMAShobHCG3a1aT2fwBJJ8Z6EQdAo0eksxHmn2Bul3V8E6LsHbyHLKnhNxrK9sZD72fjG/ekJ
-	37qnJfOj+2tNE+TiRtFZL1DMHVRehLhZTJxqZl9JUFhmzwROauYzoEcP/LMsqushxXQ==
-X-Gm-Gg: ASbGncuHs8Tjm4uPkIsGfPO5tnesCk32aM06Y5UgEnviYITu4oPlBNw4jfM4Tc/6ajZ
-	D//Un5gc6pLSplf4DDSprrOjz6XjhR7aFtWoE0FHSydv/mWtQXA7oj473kTha7krd9a4kjdSzTu
-	gRwx0FpFOaz93RQUAf6lyFeQtGXt3KKF9FHruvjczJhIn74ZewOT0Xlw2iMmjTDkGCxwnD0yqkI
-	4ImT0zBQnJtwnTQyGe21pBjaUgxVUIdo+MPdE/+ohXrvVV6JYrtwcJtRuCAqJBPl085shtaET1k
-	Af2D5BLcSerQVNeCI2fxyfJkig5QkdMzhPKB2+/QlEER/E1heHse9H+KuC/vRGu/p675uCM3Qg=
-	=
-X-Received: by 2002:a05:6000:200b:b0:3b9:1444:98b9 with SMTP id ffacd0b85a97d-3c5daefe1a2mr13028647f8f.20.1756218504665;
-        Tue, 26 Aug 2025 07:28:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEesMYr8JzIEF1vgTN54nHPI7cUfVq8ZiROeIcQJ5cCobuevpeofHXLkn08AMqOsb8e/8JJcQ==
-X-Received: by 2002:a05:6000:200b:b0:3b9:1444:98b9 with SMTP id ffacd0b85a97d-3c5daefe1a2mr13028514f8f.20.1756218502957;
-        Tue, 26 Aug 2025 07:28:22 -0700 (PDT)
-Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c711211cdesm16359467f8f.37.2025.08.26.07.28.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Aug 2025 07:28:22 -0700 (PDT)
-Message-ID: <d39e029a-8c12-42fb-8046-8e4a568134dc@redhat.com>
-Date: Tue, 26 Aug 2025 16:28:20 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54DF63568EC;
+	Tue, 26 Aug 2025 14:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756218544; cv=pass; b=VlL4yYihsdyGQVhwXHBUN5RqejJ3pYRGpbJ1vNB9vzU4heBK0btg/kpVM20bEKxuEYjGfLpnHddsa3MLunhj9LyqUhdqvmrEBGhiuL9VaQK74JFuJcvJAD4svSIA/K62D2WhW/NpNYK+DUlTu9rlgcCKGuctd+g2rXnWpoBGoZY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756218544; c=relaxed/simple;
+	bh=adRn9/Uca2BKbogSg1i9nz85G64qzgQBOG9jC9aGPzs=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=uFFOeSGgjIOQ/bodu+gduvHsTI8eirV7w+hoaJrvinXGjjRe31908j3k+UDUQy//poScdwTpCrY4ydzcZjIC0QrtT79E7Y0PtBfOFqowCaeaBV6mfVFxX22X2Ale0MtUEcJsjRfUbzcVWbVJI02+mYkCv1cglUD8MlWF8aXGK+0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=LVW10R6m; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1756218522; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=BjFdXrcJIl95Ug2AaJX8bY/6vOiLaCyNKuE7TBLRVdMv5uu2uu8uao0gewWunbzgjE4GdYAoqmzY6yEEzVzoKAB3zd2qJ1CEIlMGyZQLB59auonX0jlyy7VPz0PDqCfMGHJWTd0Kn8S9ESoQyjhkp/cSOzp2F6uXwD0D672Uh4g=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756218522; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=dYW6VqjJB15mX/lK13ugJyD8uSJtaR/HOtz8vNCXuNU=; 
+	b=Uw6FsFvGKPfW+j/NpF86iIcIyUE/y5N4AdClLs41TXVkr/kEosHvciLN1I+k95rUHeFD3elC2Tw/DxMj8uiae2U2hiUrFjnuMGvZ1eOL1zflcfKG9QH7L6LkNni9G20zrR9Krjxc6R9jHxUcx0SLI4vI3F+VMiuHOuizP5zgreY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756218522;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=dYW6VqjJB15mX/lK13ugJyD8uSJtaR/HOtz8vNCXuNU=;
+	b=LVW10R6mVRr/15Z2qPidNNMIHoTXJwIk66kjGiA1SSi+/C4cye5ylDB5OBOUFd/D
+	ylPVtR3LkXcnAj18kwY5imBEXiytwEro4prMAGwLnav5PKVThlan7Ry+mEXyEVQd5W2
+	fK15OmHsCHbcImBWYefKZdhcL5KoWhnqYHwYF9lg=
+Received: by mx.zohomail.com with SMTPS id 175621851964057.89311874075952;
+	Tue, 26 Aug 2025 07:28:39 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/10] mm: update fork mm->flags initialisation to use
- bitmap
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, "David S . Miller"
- <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski
- <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Kees Cook <kees@kernel.org>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache
- <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
- Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- David Rientjes <rientjes@google.com>, Shakeel Butt <shakeel.butt@linux.dev>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Masami Hiramatsu
- <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
- Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
- Peter Xu <peterx@redhat.com>, Jann Horn <jannh@google.com>,
- Pedro Falcato <pfalcato@suse.de>, Matthew Wilcox <willy@infradead.org>,
- Mateusz Guzik <mjguzik@gmail.com>, linux-s390@vger.kernel.org,
- linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-References: <cover.1755012943.git.lorenzo.stoakes@oracle.com>
- <9fb8954a7a0f0184f012a8e66f8565bcbab014ba.1755012943.git.lorenzo.stoakes@oracle.com>
- <73a39f45-e10c-42f8-819b-7289733eae03@redhat.com>
- <d4f8346d-42eb-48db-962d-6bc0fc348510@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <d4f8346d-42eb-48db-962d-6bc0fc348510@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH v3 2/2] rust: time: Implement basic arithmetic operations
+ for Delta
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250820203704.731588-3-lyude@redhat.com>
+Date: Tue, 26 Aug 2025 11:28:23 -0300
+Cc: rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ FUJITA Tomonori <fujita.tomonori@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ John Stultz <jstultz@google.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <485A6C23-9E6A-45C6-8F3F-377E538F052E@collabora.com>
+References: <20250820203704.731588-1-lyude@redhat.com>
+ <20250820203704.731588-3-lyude@redhat.com>
+To: Lyude Paul <lyude@redhat.com>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-On 26.08.25 16:21, Lorenzo Stoakes wrote:
-> On Tue, Aug 26, 2025 at 03:12:08PM +0200, David Hildenbrand wrote:
->> On 12.08.25 17:44, Lorenzo Stoakes wrote:
->>> We now need to account for flag initialisation on fork. We retain the
->>> existing logic as much as we can, but dub the existing flag mask legacy.
->>>
->>> These flags are therefore required to fit in the first 32-bits of the flags
->>> field.
->>>
->>> However, further flag propagation upon fork can be implemented in mm_init()
->>> on a per-flag basis.
->>>
->>> We ensure we clear the entire bitmap prior to setting it, and use
->>> __mm_flags_get_word() and __mm_flags_set_word() to manipulate these legacy
->>> fields efficiently.
->>>
->>> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->>> ---
->>>    include/linux/mm_types.h | 13 ++++++++++---
->>>    kernel/fork.c            |  7 +++++--
->>>    2 files changed, 15 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
->>> index 38b3fa927997..25577ab39094 100644
->>> --- a/include/linux/mm_types.h
->>> +++ b/include/linux/mm_types.h
->>> @@ -1820,16 +1820,23 @@ enum {
->>>    #define MMF_TOPDOWN		31	/* mm searches top down by default */
->>>    #define MMF_TOPDOWN_MASK	_BITUL(MMF_TOPDOWN)
->>> -#define MMF_INIT_MASK		(MMF_DUMPABLE_MASK | MMF_DUMP_FILTER_MASK |\
->>> +#define MMF_INIT_LEGACY_MASK	(MMF_DUMPABLE_MASK | MMF_DUMP_FILTER_MASK |\
->>>    				 MMF_DISABLE_THP_MASK | MMF_HAS_MDWE_MASK |\
->>>    				 MMF_VM_MERGE_ANY_MASK | MMF_TOPDOWN_MASK)
->>> -static inline unsigned long mmf_init_flags(unsigned long flags)
->>> +/* Legacy flags must fit within 32 bits. */
->>> +static_assert((u64)MMF_INIT_LEGACY_MASK <= (u64)UINT_MAX);
->>
->> Why not use the magic number 32 you are mentioning in the comment? :)
-> 
-> Meh I mean UINT_MAX works as a good 'any bit' mask and this will work on
-> both 32-bit and 64-bit systems.
-> 
->>
->> static_assert((u32)MMF_INIT_LEGACY_MASK != MMF_INIT_LEGACY_MASK);
-> 
-> On 32-bit that'd not work would it?
 
-On 32bit, BIT(32) would exceed the shift width of unsigned long -> 
-undefined behavior.
 
-The compiler should naturally complain.
+> On 20 Aug 2025, at 17:26, Lyude Paul <lyude@redhat.com> wrote:
+>=20
+> While rvkms is only going to be using a few of these, since Deltas are
+> basically the same as i64 it's easy enough to just implement all of =
+the
+> basic arithmetic operations for Delta types.
+>=20
+> Keep in mind there's one quirk here - the kernel has no support for
+> i64 % i64 on 32 bit platforms, the closest we have is i64 % i32 =
+through
+> div_s64_rem(). So, instead of implementing ops::Rem or ops::RemAssign =
+we
+> simply provide Delta::rem_nanos().
+>=20
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+>=20
+> ---
+> V2:
+> * Don't forget to make sure that we inline all of these
+> * Drop ops::Rem and ops::RemAssign implementations for Delta, replace =
+with
+>  Delta::rem_nanos() instead. It turns out that there's actually no way =
+to
+>  perform i64 % i64 on 32 bit platforms in the kernel at the moment, =
+the
+>  closest that we have is div_s64_rem() which only allows a 32 bit =
+divisor.
+> * Actually use the kernel arithmetic helpers for division/remainders =
+so
+>  that this code works on both 32 and 64 bit platforms.
+> V3:
+> * Change the output type for Div to i64, drop DivAssign
+> * Change Mul/MulAssign to accept i64, not another Delta
+> * Fix parameter name in rem_nanos (ns -> dividend)
+>=20
+> rust/kernel/time.rs | 98 +++++++++++++++++++++++++++++++++++++++++++++
+> 1 file changed, 98 insertions(+)
+>=20
+> diff --git a/rust/kernel/time.rs b/rust/kernel/time.rs
+> index 4bd7a8a009f3e..e64c5b13152dd 100644
+> --- a/rust/kernel/time.rs
+> +++ b/rust/kernel/time.rs
+> @@ -265,6 +265,78 @@ pub struct Delta {
+>     nanos: i64,
+> }
+>=20
+> +impl ops::Add for Delta {
+> +    type Output =3D Self;
+> +
+> +    #[inline]
+> +    fn add(self, rhs: Self) -> Self {
+> +        Self {
+> +            nanos: self.nanos + rhs.nanos,
+> +        }
+> +    }
+> +}
+> +
+> +impl ops::AddAssign for Delta {
+> +    #[inline]
+> +    fn add_assign(&mut self, rhs: Self) {
+> +        self.nanos +=3D rhs.nanos;
+> +    }
+> +}
+> +
+> +impl ops::Sub for Delta {
+> +    type Output =3D Self;
+> +
+> +    #[inline]
+> +    fn sub(self, rhs: Self) -> Self::Output {
+> +        Self {
+> +            nanos: self.nanos - rhs.nanos,
+> +        }
+> +    }
+> +}
+> +
+> +impl ops::SubAssign for Delta {
+> +    #[inline]
+> +    fn sub_assign(&mut self, rhs: Self) {
+> +        self.nanos -=3D rhs.nanos;
+> +    }
+> +}
+> +
+> +impl ops::Mul<i64> for Delta {
+> +    type Output =3D Self;
+> +
+> +    #[inline]
+> +    fn mul(self, rhs: i64) -> Self::Output {
+> +        Self {
+> +            nanos: self.nanos * rhs,
+> +        }
+> +    }
+> +}
+> +
+> +impl ops::MulAssign<i64> for Delta {
+> +    #[inline]
+> +    fn mul_assign(&mut self, rhs: i64) {
+> +        self.nanos *=3D rhs;
+> +    }
+> +}
+> +
+> +impl ops::Div for Delta {
+> +    type Output =3D i64;
+> +
+> +    #[inline]
+> +    fn div(self, rhs: Self) -> Self::Output {
+> +        #[cfg(CONFIG_64BIT)]
+> +        {
+> +            self.nanos / rhs.nanos
+> +        }
+> +
+> +        #[cfg(not(CONFIG_64BIT))]
+> +        {
+> +            // SAFETY: This function is always safe to call =
+regardless of the input values
+> +            unsafe { bindings::div64_s64(self.nanos, rhs.nanos) }
+> +        }
+> +    }
+> +}
+> +
+> impl Delta {
+>     /// A span of time equal to zero.
+>     pub const ZERO: Self =3D Self { nanos: 0 };
+> @@ -353,4 +425,30 @@ pub fn as_millis(self) -> i64 {
+>             bindings::ktime_to_ms(self.as_nanos())
+>         }
+>     }
+> +
+> +    /// Return `self % dividend` where `dividend` is in nanoseconds.
+> +    ///
+> +    /// The kernel doesn't have any emulation for `s64 % s64` on 32 =
+bit platforms, so this is
+> +    /// limited to 32 bit dividends.
+> +    #[inline]
+> +    pub fn rem_nanos(self, dividend: i32) -> Self {
+> +        #[cfg(CONFIG_64BIT)]
+> +        {
+> +            Self {
+> +                nanos: self.as_nanos() % i64::from(dividend),
+> +            }
+> +        }
+> +
+> +        #[cfg(not(CONFIG_64BIT))]
+> +        {
+> +            let mut rem =3D 0;
+> +
+> +            // SAFETY: `rem` is in the stack, so we can always =
+provide a valid pointer to it.
+> +            unsafe { bindings::div_s64_rem(self.as_nanos(), dividend, =
+&mut rem) };
+> +
+> +            Self {
+> +                nanos: i64::from(rem),
+> +            }
+> +        }
+> +    }
+> }
+> --=20
+> 2.50.0
+>=20
+>=20
 
--- 
-Cheers
-
-David / dhildenb
-
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>=
 
