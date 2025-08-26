@@ -1,151 +1,113 @@
-Return-Path: <linux-kernel+bounces-785707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0121B34FDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:01:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA795B34FED
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:04:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9294A24011E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:01:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D1CE1B2347C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:05:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223A7EAF9;
-	Tue, 26 Aug 2025 00:01:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB1041E505;
+	Tue, 26 Aug 2025 00:04:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TbRk6If+"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MEaOYgzB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B9D3F9FB;
-	Tue, 26 Aug 2025 00:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3103715D1;
+	Tue, 26 Aug 2025 00:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756166465; cv=none; b=fjAE2hJx+di+cbSbpS+SZhYVxh3nbRXYcta82s6awhHiopCWHgc0+mhzUxYNUtSCSQ7vqqKFAG25z4o/s+4MwjagHHPMQXya/00W88XWg/UO3A34U0nppP74mrhfuWgXdFWR3UjwVxPQ53rtybL2fljE4WnxReNLy8/qZzLZvj4=
+	t=1756166671; cv=none; b=TcIQJbMQHpF3hR29T6cSPYQaq8HBwNDqDXaKXzkp+vTUdg9n+rLv0XC7+HB3IdLYwX3m9pxoqA3GiK3qF81i3co1YdpFjWzuByGPiNM4fXnDr6Pnj4Tk3tvwzpv+86x7c0vIXlmiJRaz+3PsFbHbgCmlwSejLGRlrWNTFdxutE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756166465; c=relaxed/simple;
-	bh=mHFuIXiNmbEkoVbj8VOYF+pRey/xF5VfytxKQHW/a30=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QgblfomdPc9qjeef2teKAeF5mTHEAExFPKgZBZSs0rzu279BBG6h3YZh/3/zVqe4fKF/iv2R+ayZBTw36amI7uYbvLigBWLUU/igGwydv12YLKIR6fP6i9Tt9WHlDFiPPKWlEGvw8IzFSq/2TXB0nWeL6D+lOtpCuEhpnf1xF7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TbRk6If+; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-24646202152so36013825ad.0;
-        Mon, 25 Aug 2025 17:01:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756166463; x=1756771263; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mHFuIXiNmbEkoVbj8VOYF+pRey/xF5VfytxKQHW/a30=;
-        b=TbRk6If+Uz9uVUP68MXYpZLI0LZvytbZjcdd3UtEuY/kqKI8K8XKBQh4iI4fzeYzTk
-         kh6TnJPPDtehpzrhY6c+4Ju9b5Pjr/1wDTLmfJzH2LTIaDLgl3OapiIC26t7/j/kyITR
-         PlZ6wDJr1i4VVNlnZMuhYqrfK0+BHEWTDi8YbFK01nS6rye515fz5N81c3KoXZBZ69Uh
-         yfeJWr1HkiIMftWr6GpeQZgx7gMs6CFy9tL9bk4JuLxiGlcyPhL4ANTrc1QcdfXP/65O
-         QR7WwNkzo5k53j/9Yz3r3S7Z18WOdJ+JyHNYojBv++tSoBi0ysU1V533ouT5MPpd57uC
-         f6hQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756166463; x=1756771263;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mHFuIXiNmbEkoVbj8VOYF+pRey/xF5VfytxKQHW/a30=;
-        b=e3J+0GVPrLgTRbE08QQpR8vByfcwjlxvOWAdc1DmCDrvZK0YtDELtpvhBmuRcDXSRH
-         KTlzKb1NJaFTlClhBwwvF4nS0Up9PhKr/ssjV3Qvm6avgqImfArIn98yZXIZHrQtZrDN
-         91+S4keOF57Cj3JuCGqmq4BqUayI9/oRt8R1ktGBXjPPrR/CL0kcF9hJnsbM3YkNVOp8
-         lkeNz/OWTVx3DTCUThVUJq40muWbzo17Q/IS+pxxO4C2fb+1HgUgs/5XU4AtLdysy85y
-         n6eBFM18s35WvInERFSP6LSOi58yET8+k1M02o+0iE9u55t7C6aOtU76YK+rV3Jc0Ese
-         1Wyg==
-X-Forwarded-Encrypted: i=1; AJvYcCWETXcpUErv0SmXGwowP9uhJjjBHCuKznVTSlMvpm+AME9sCOKcvv+Wh/WeIuH2CATTvZPWVjNAxqhVOqo=@vger.kernel.org, AJvYcCWSr8TSqMNO1GnEef51ENAcdBmsJfD6upKm6rwUS/MFwAdEAJMvAV+VFkSAE2qwGwb7brviJcQJnrmbuJA1ypwx@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxa2hPQpu9RUEDWhJpP6gBk3pWaPySHpd1mibbdBI+Q1buzUpiK
-	zF+o1ZtthafCDPL5CYDoEc+giYrjq3yL05kMH++aWhWOle0v4opEE+Cx
-X-Gm-Gg: ASbGncs2Y/kF2gb+iU2dDvsUS20WQEWMk9vF2rKkgCp92+6T3tKG3uTEcrWAJvd6Icl
-	0zc5aihDcBr0NhOopqMA7ojhnvytI5gpPGvBiOy8r/uplCw36IGzBpIs+mfX8KS1mGoBLGG+vmo
-	fGwvXZnKBD1GLuDAQQfM6+vLIzXxXTDcma1y95+DZHLbQOoa5spVto7AfRF0zohbYD4kHncdTUo
-	xsEBD9VMTuuDIQ4tscF4gZe94JKYiX1ImU+jgg/fiMdNUjd/Ibwz0xN1+ZiJvmII6XYs1oNR9Bj
-	Z+5115tBja6Oo3WgUHvC19Gdtx3b9ZGrBMYdxo2kaM0PugPT+LwCHm2fGIZ54NdFSz8iMPv3629
-	0rn6Jtm1j6qyGtAHusGUqhw==
-X-Google-Smtp-Source: AGHT+IFKcbvwi0kAjgdjFjeLliZLzfUxsoGc6FLH2aqpXBw/4v6OLvxDvjNLeydrT6uV6iibMapBlg==
-X-Received: by 2002:a17:902:c40f:b0:244:99aa:54a1 with SMTP id d9443c01a7336-2462ee0b77emr192667065ad.7.1756166463145;
-        Mon, 25 Aug 2025 17:01:03 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2467e3238fasm70835275ad.104.2025.08.25.17.01.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 17:01:02 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 940E6424E25B; Tue, 26 Aug 2025 07:01:00 +0700 (WIB)
-Date: Tue, 26 Aug 2025 07:01:00 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: "Nikola Z. Ivanov" <zlatistiv@gmail.com>
-Cc: Markus Elfring <Markus.Elfring@web.de>, linux-kselftest@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Eric Biggers <ebiggers@google.com>, Mark Brown <broonie@kernel.org>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH] selftests/arm64: Fix typos in malloc return value check
-Message-ID: <aKz5PJev5HwYcs09@archie.me>
-References: <20250824131647.490439-1-zlatistiv@gmail.com>
- <ed07c6f9-e389-4387-8585-6f1206da1a07@web.de>
- <aKxf1X1u8QHAdvqW@archie.me>
- <u4bv3ypqrdaz5klrvs57ptp7tu25etf7xzvoytrgnz2xohiysj@vua5mcbpznio>
+	s=arc-20240116; t=1756166671; c=relaxed/simple;
+	bh=I2CHa28a+kF5TIQpV0OKhcm8Fy+kJZEGtMvHJ4gzr9s=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nm4MJuraPYfxY5pOdxW6oyLeHLUQUiXXrdmYoyyNb3t4a9p1hYnQifLI4UvYJhDYsK9CaU5+zNBIo7NyD02n0uwFwidz8unMd3grFy79J0+wDtgDpBkY54Jl7tHZ5uI8nhcdKTq4B6tDEvR0VJ1chTgOMhg/NBchDQdd/K+biDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MEaOYgzB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7519EC4CEED;
+	Tue, 26 Aug 2025 00:04:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756166670;
+	bh=I2CHa28a+kF5TIQpV0OKhcm8Fy+kJZEGtMvHJ4gzr9s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MEaOYgzBttpgZxpdWBKXPcRDssOKMfD/qLPuBiERWKDr/1yEelSvY3mYHPWcQc3Bx
+	 +b8SiI7ADgoACDWGAvNtlDi+U6F5ou+fvBLKIHDePIMWukavxuSPrDXIIJpfHz8QEg
+	 eyfupyRuCL2tHESpvywmbxvuOioMUE2tgr4qlqKY5h1eXPYTMxcnFLmXLdb91qsZyv
+	 /lbNIJhcsCHJvCOIqGt3AMntOYS0kh/7/OcLbfZ6vTh3nph0BUpDm5LAp8ur7DGb8J
+	 K6eX3CX3jJPwxX8b2bRuZRY+7OrA4Dzerb7OP+hbnRirL7957izuEg9W8959CVKEG/
+	 8jPGQt1endjeg==
+Date: Mon, 25 Aug 2025 17:04:29 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Raju Rangoju <Raju.Rangoju@amd.com>
+Cc: <netdev@vger.kernel.org>, <andrew+netdev@lunn.ch>,
+ <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+ <richardcochran@gmail.com>, <linux-kernel@vger.kernel.org>,
+ <Shyam-sundar.S-k@amd.com>
+Subject: Re: [PATCH net-next v2] amd-xgbe: Add PPS periodic output support
+Message-ID: <20250825170429.0f08fa1e@kernel.org>
+In-Reply-To: <20250822103831.2044533-1-Raju.Rangoju@amd.com>
+References: <20250822103831.2044533-1-Raju.Rangoju@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="1viLhCQliFWdXD/L"
-Content-Disposition: inline
-In-Reply-To: <u4bv3ypqrdaz5klrvs57ptp7tu25etf7xzvoytrgnz2xohiysj@vua5mcbpznio>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Fri, 22 Aug 2025 16:08:31 +0530 Raju Rangoju wrote:
+> +#define PPSx_MASK(x) ({						\
+> +	unsigned int __x = (x);					\
+> +	GENMASK(PPS_MAXIDX(__x), PPS_MINIDX(__x));		\
+> +})
+> +#define PPSCMDx(x, val) ({					\
+> +	unsigned int __x = (x);					\
+> +	GENMASK(PPS_MINIDX(__x) + 3, PPS_MINIDX(__x)) &		\
+> +	((val) << PPS_MINIDX(__x));				\
+> +})
+> +#define TRGTMODSELx(x, val) ({					\
+> +	unsigned int __x = (x);					\
+> +	GENMASK(PPS_MAXIDX(__x) - 1, PPS_MAXIDX(__x) - 2) &	\
+> +	((val) << (PPS_MAXIDX(__x) - 2));			\
+> +})
 
---1viLhCQliFWdXD/L
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+These macros are way too gnarly, please simplify them.
+For a start I'm not sure why you're making your life harder and try 
+to have a shifted mask. Instead of masking the value before shifting.
 
-On Mon, Aug 25, 2025 at 06:44:23PM +0300, Nikola Z. Ivanov wrote:
-> On Mon, Aug 25, 2025 at 08:06:29PM +0700, Bagas Sanjaya wrote:
-> > On Sun, Aug 24, 2025 at 03:40:44PM +0200, Markus Elfring wrote:
-> > > > Fix double "-ed" in malloc return value check
-> > >=20
-> > > Refine wordings in error message string literals?
-> > >=20
-> >=20
-> > I think what the patch author (Nikola) intends is "The error messages' =
-wording
-> > use parallel structure device, where the second verb should've been in
-> > infinitives form. Correct it."
-> >=20
-> > Thanks.
-> >=20
-> > --=20
-> > An old man doll... just what I always wanted! - Clara
->=20
-> Thanks, I did not expect to get schooled like this (in a good way of
-> course). Should I send v2?
+>  static int xgbe_enable(struct ptp_clock_info *info,
+>  		       struct ptp_clock_request *request, int on)
+>  {
+> -	return -EOPNOTSUPP;
+> +	struct xgbe_prv_data *pdata = container_of(info, struct xgbe_prv_data,
+> +						   ptp_clock_info);
+> +	struct xgbe_pps_config *pps_cfg;
+> +	unsigned long flags;
+> +	int ret;
+> +
+> +	dev_dbg(pdata->dev, "rq->type %d on %d\n", request->type, on);
+> +
+> +	if (request->type != PTP_CLK_REQ_PEROUT)
+> +		return -EOPNOTSUPP;
+> +
+> +	/* Reject requests with unsupported flags */
+> +	if (request->perout.flags)
+> +		return -EOPNOTSUPP;
 
-Sure.
+Are you sure kernel can actually send you any flags here?
+ops->supported_perout_flags exists
 
---=20
-An old man doll... just what I always wanted! - Clara
+> +	/* Validate index against our limit */
+> +	if (request->perout.index >= XGBE_MAX_PPS_OUT)
+> +		return -EINVAL;
 
---1viLhCQliFWdXD/L
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaKz5PAAKCRD2uYlJVVFO
-ozARAP920T/0c5L0WMnc2FkxNDSA5EjC8NhZPcRc40EQJvrbNwD/ayi0OlIl/02c
-o5bAFcYS6XvDl8io8108nSUee23LSws=
-=iJfj
------END PGP SIGNATURE-----
-
---1viLhCQliFWdXD/L--
+Are you sure kernel can send you an index higher than what driver
+registered as supported?
+-- 
+pw-bot: cr
 
