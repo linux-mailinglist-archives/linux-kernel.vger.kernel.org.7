@@ -1,138 +1,126 @@
-Return-Path: <linux-kernel+bounces-785869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2455EB351F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:58:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B754B351FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:59:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 493427B4E64
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:56:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 205B7172D5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D726629D272;
-	Tue, 26 Aug 2025 02:57:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 517532BDC28;
+	Tue, 26 Aug 2025 02:59:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SCMhViO6"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="IsW+t1QE"
+Received: from mx0b-002e3701.pphosted.com (mx0b-002e3701.pphosted.com [148.163.143.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7336029CB2D;
-	Tue, 26 Aug 2025 02:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B7F2777E5;
+	Tue, 26 Aug 2025 02:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.143.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756177077; cv=none; b=GFq8Z4ZVJSNAhQt8Ga6oU7SA2nkD6kKVlxl+HE84gd1uo5q/e8gJLBbK3NBd6M2vuWEksOtgQKMw/3u+18oJwLNRP5DVPInlgltrvaEteWfBhaGEbYzJ4PZM5ivKOcCisF7aeWq8vSEzXNVZlLTdGUWP5ezjAxaYonQ3WzZwbW0=
+	t=1756177145; cv=none; b=CLamcd2bvKElqXpVfLlD7i8aYLIjNzVhUr2NdUN2AIH8Dle9Gs2/lRC1wQQhdBMsPMsLkIYZnfz7/r3fvzGEclUh/la447qFjNaumxtOJRs3hAW+raCa6Ix19zPW0ituk8vFxNgJ+cNzrI6hFxqr8WdA5FYRleQ0EMh6ClHE0io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756177077; c=relaxed/simple;
-	bh=xMx0Id4rv1yLlQ9CuK02yc7ArZoLdXrgx6DQ1v2q8fM=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=LSV66T3rQkFVjWQ6/E1huTjbB0or+0jnlJ9Pk2SlO9xKtZxaZo8pbrQmP+aQwiEdwv7tXnaWwquQbOSPnSlNUqM7jCWfnapF/KRvws3Is5UeqHA11yVMzbc+yWKzOJfOO3Rrdev/es11YNCPL6WEWC6BIySeWz3VI2vpyToyoaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SCMhViO6; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4b2cf656e4fso18357391cf.0;
-        Mon, 25 Aug 2025 19:57:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756177073; x=1756781873; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xMx0Id4rv1yLlQ9CuK02yc7ArZoLdXrgx6DQ1v2q8fM=;
-        b=SCMhViO6evlp86zWT3ewrx7NOkCtQsqSj2rBSpdZcEBehKLkTCHsI9I+5qOIcd6Mhd
-         5Qbc4cnteo9LFRsuCTOxgmqF/6Hv21Zyg5WnHhjKZy2bmwmDO5m9ocayzhTKzS/vv3k6
-         iP2+Lf+CfAxF2QRRSw2jc+HVW+iQmoebOZaHOFTEl+0HvCaVswRudST6Wr907+Xx2Wjs
-         h3lW5S14mlg2X1rcqy79frAS0igpQwJ9aJmOOTbriCuFestEa/Cbc9BDbsRgibMM4cMx
-         yECCQgMpo3qXs4C+VF645TxxqkzVhcV7iNP+5RjEpaeDrZcjvy2k6Vop+sQ1mMw4wmXc
-         vGqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756177073; x=1756781873;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xMx0Id4rv1yLlQ9CuK02yc7ArZoLdXrgx6DQ1v2q8fM=;
-        b=RqenpFWsmuWHG6wAyDwkYnz5DSP2lDJR+M9D31TRUUnnuDN7wWsqu5qbTTs8k4jNPa
-         C/8KsYj6W+TNMqhXbbks6mjRwi+ixxtxc5vp4YnFnLTxjag74pWaTAsTaulcY/dJH0sU
-         Mjh0Qz/3+2BZcNNuzyj2Sxml8T5marGemRaqhFn6j1RNTpn3/aGMqBSFJxCF+Na5Omri
-         IYH+/0P47NPcWSJP/wqj/TNiCHAPSbWT7YHwP2gqqSBnjNclhLHxIxnus+9oq/fM7IoP
-         HEPey9Rco6y2vT7i5xuMN0lEPAtGpvP+5gq6fYm9+5d0Mt2X/SFJkpPS+oiPykDpyxEK
-         rPdg==
-X-Forwarded-Encrypted: i=1; AJvYcCUtmJU2F+p5nNk5osk3O8cy+amEcZdVTj0RevAHHhBvCHpD2lZy1NB07bHnGQ5qQrpPLHxHWdN5v8Mm@vger.kernel.org, AJvYcCVVS158cvb/4QXhVRrVWvs28tuwH0U1UfOg58M9PQhjQicnAyT9I8OA6aIrsJO+qbw0hQqDOltF9UI0kk+Q@vger.kernel.org, AJvYcCVlkORBttYUKQSpzJ1/bOnJlvG+CcRXttMXIbSFALcALa3hMEUJvSJgbDessE2T4liwhkJCj5N21uJZ5Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLDvLF/142BuAQaCayczkstDwVH0jod7BlEzNyrmVsickA/Psw
-	tgiUfZMSAcD7bi1OJ1Uv2pal1akXvStNtTsX1Ykqm+UpSAcGELMfj5WS
-X-Gm-Gg: ASbGncv/JX3erSCID6cMGONsitZefbcWFlmkeY4c4ghEkAaTmXjfmTJWQaNDynl0C1S
-	E+yf60SHxwOMNbJYPFQG3l2JP3LFZA/3fpP6ZJ4QDDkKxIX4AO/yXIIiuSf7uQ5g3Spgvd6QEZr
-	N0cAzHHbeMJW2kFe4ByzskRnqSE00JQYPyl5xlJX+bGs3AQomXjCyZ17F95faaaPF/sRKx6DYD0
-	8KNKh0k/ttZOQIHkLLGSTq//rWsK8DXJRZBHaLBIuCOEIGYM3gQY1OeCdwzzUC5AtMyY/qiL5oJ
-	iwuRoEYC6L4Ka7rBumxD0MeWczl2NEJu3Q4BSNmhnywl0a5MPS9UJ4uRoS0N41TBUZdBOPQo0Za
-	a95sezbuc4OSAvPESFLgPDeLJ88TCNAse3mV3uwoY7b4S+YSNKFWm6miI44l/HUpqhId53A==
-X-Google-Smtp-Source: AGHT+IFSL1BU14escbQl5XZwWz93ijRjNvJS5a/oKopT8JoqYxc5CsMDiOw3dlE6ZXiime4ghGEOmw==
-X-Received: by 2002:a05:622a:1114:b0:4af:202e:8089 with SMTP id d75a77b69052e-4b2e3c0deb6mr8075061cf.20.1756177073129;
-        Mon, 25 Aug 2025 19:57:53 -0700 (PDT)
-Received: from [127.0.0.1] (modemcable197.17-162-184.mc.videotron.ca. [184.162.17.197])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ebed79a712sm600006885a.17.2025.08.25.19.57.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Aug 2025 19:57:52 -0700 (PDT)
-Date: Mon, 25 Aug 2025 22:57:53 -0400
-From: =?ISO-8859-1?Q?Jean-Fran=E7ois_Lessard?= <jefflessard3@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-CC: Andy Shevchenko <andy@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
- =?ISO-8859-1?Q?Andreas_F=E4rber?= <afaerber@suse.de>,
- Conor Dooley <conor.dooley@microchip.com>
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v4_1/6=5D_dt-bindings=3A_vendor-prefixes=3A_?=
- =?US-ASCII?Q?Add_fdhisi=2C_titanmec=2C_princeton=2C_winrise=2C_wxicore?=
-User-Agent: Thunderbird for Android
-In-Reply-To: <aKxq4ngaMDxBdMh7@smile.fi.intel.com>
-References: <20250825033237.60143-1-jefflessard3@gmail.com> <20250825033237.60143-2-jefflessard3@gmail.com> <aKxq4ngaMDxBdMh7@smile.fi.intel.com>
-Message-ID: <4250A35F-C778-4213-AC21-D1B1D145AD62@gmail.com>
+	s=arc-20240116; t=1756177145; c=relaxed/simple;
+	bh=q9o3QoT8lr/AGU0AQv1oBtYFnfwN7uErKAg4OVa4Vbo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nwuYbbaZ9IRG8EwGBNVwG2O6xaGogxcWfHone2LZ0kAN1QYQOBavU3Hi2DtXt+F03uyY9nPECJFMl/2t6DaYwBX69npHllpCHL0y5JC4X+QdNuEO3vsUutqlgmyEyCA2ryQnpwprO3Am2/9ZREACKmUgPf+dOWwaI9GV0zh6wv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=IsW+t1QE; arc=none smtp.client-ip=148.163.143.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
+Received: from pps.filterd (m0134423.ppops.net [127.0.0.1])
+	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57Q22HGZ014836;
+	Tue, 26 Aug 2025 02:58:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pps0720; bh=/l
+	FErksqAO2mqrtk6vYOINrt6RJ5khwuke1lCAx9oRQ=; b=IsW+t1QEHRTHZ7anl9
+	BlpLmsxXdLxUxj0JMJDzCIPOPigvSYgIjtO3cb++dzsEGG+59GTpS8LEw+tFfWAP
+	qV028UNPfuepO/0JQC6BtOoXeEsLN4qo1GieDWlA2QVtKjHsNTxzL4F+BL8Oh78E
+	eSVzbiIdyB/fV69RZwOdfDLVJGdtOpUkrAbRmlUsLYGUZIqu1+GUXXgQieWStRgg
+	PEMs3G6L7UP1y2JgulFZ9G6h4x9T6ipydrTV3lrbUZ45qfl6Bw6OEGS61gLgHG0w
+	2V5FMIIXczRdrYZL4A2yTgxXQCM80Lgs8kUZMwYYU7mhr3AOnSQy1TmKRsHSMtrG
+	lZew==
+Received: from p1lg14880.it.hpe.com ([16.230.97.201])
+	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 48s2djrydj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Aug 2025 02:58:32 +0000 (GMT)
+Received: from mlperfr9.3-rocky.novalocal (unknown [192.58.206.35])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by p1lg14880.it.hpe.com (Postfix) with ESMTPS id DC47B8003B5;
+	Tue, 26 Aug 2025 02:58:31 +0000 (UTC)
+Received: from mlperfr9.3-rocky.novalocal (localhost [127.0.0.1])
+	by mlperfr9.3-rocky.novalocal (Postfix) with ESMTPS id 79C61A0A40A4;
+	Tue, 26 Aug 2025 02:58:17 +0000 (UTC)
+Received: (from rocky@localhost)
+	by mlperfr9.3-rocky.novalocal (8.16.1/8.16.1/Submit) id 57Q2wFAS3715170;
+	Tue, 26 Aug 2025 02:58:15 GMT
+From: Cloud User <rajeevm@hpe.com>
+To: Cloud User <rajeevm@hpe.com>, Yu Kuai <yukuai1@huaweicloud.com>,
+        ming.lei@redhat.com, hch@infradead.org
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
+        yukuai <yukuai3@huawei.com>
+Subject: Re: [PATCH v5] fixed the blok file statx issue
+Date: Tue, 26 Aug 2025 02:58:13 +0000
+Message-ID: <20250826025815.3715160-1-rajeevm@hpe.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <a118e156-36a2-6612-517a-ba22c11fbd1d@huaweicloud.com>
+References: <a118e156-36a2-6612-517a-ba22c11fbd1d@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=WMJ/XmsR c=1 sm=1 tr=0 ts=68ad22d8 cx=c_pps
+ a=A+SOMQ4XYIH4HgQ50p3F5Q==:117 a=A+SOMQ4XYIH4HgQ50p3F5Q==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=P6ybfcUMI3NkiizEEVYA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: cxvBjHSDvEE1W4TQ6LRpkkJ7fcklRZfu
+X-Proofpoint-ORIG-GUID: cxvBjHSDvEE1W4TQ6LRpkkJ7fcklRZfu
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI2MDAyNCBTYWx0ZWRfXxBmhcQxF2uqP
+ c+vwg3x9X+GTi7Ad8xgqxlG09b2Rg5PhQHz2ulnVj43PCJqiJRssaFfHru7/8KYCXO+zHBNsHiT
+ FZwS5jtKYnQCavaQ5q0Rb663s5MV/RsEf+b/BK7U9a4t44KhEStFqM4pWDAp3mh1F66o4VeLGek
+ pTt9J6a92CdnmrSO2mZPXojm4XgFm8rnxpXmjeOvNfPpxfiEB0yS4fW7n3SPJfKtQTaiYX7YJmz
+ 6SST7gZYWAuLNuypig1uxqNREkp0r45yoKOUYbdxCMpW2RjlAfYqqbhM3FESULnlIE7W7mWTv6H
+ fHV9tbUxum9oBgabvEKBev1JzlUg9Jge+dQEQIUhn/i3bT8XW28bDjsJ9atCq4FK6TjGlSMJLPw
+ 0sbh4C3R2VspU0twYvaaJWyDbyRt79O4zptQstctjZvec6O4MFWCbMLUVl6/OaeNSZ9bDPMd
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-26_01,2025-08-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 mlxlogscore=999 impostorscore=0 adultscore=0 clxscore=1015
+ phishscore=0 bulkscore=0 suspectscore=0 malwarescore=0 lowpriorityscore=0
+ spamscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2507300000
+ definitions=main-2508260024
 
-Le 25 ao=C3=BBt 2025 09 h 53 min 38 s HAE, Andy Shevchenko <andriy=2Eshevch=
-enko@intel=2Ecom> a =C3=A9crit=C2=A0:
->On Sun, Aug 24, 2025 at 11:32:27PM -0400, Jean-Fran=C3=A7ois Lessard wrot=
-e:
->> Add vendor prefixes of chip manufacturers supported by the TM16xx 7-seg=
-ment
->> LED matrix display controllers driver:
->> - fdhisi: Fuzhou Fuda Hisi Microelectronics Co=2E, Ltd=2E
->> - titanmec: Shenzhen Titan Micro Electronics Co=2E, Ltd=2E
->> - princeton: Princeton Technology Corp=2E
->> - winrise: Shenzhen Winrise Technology Co=2E, Ltd=2E
->> - wxicore: Wuxi i-Core Electronics Co=2E, Ltd=2E
->>=20
->> The titanmec prefix is based on the company's domain name titanmec=2Eco=
-m=2E
->> The remaining prefixes are based on company names, as these manufacture=
-rs
->> either lack active =2Ecom domains or their =2Ecom domains are occupied =
-by
->> unrelated businesses=2E
->>=20
->> The fdhisi and titanmec prefixes were originally identified by
->> Andreas F=C3=A4rber=2E
+Hi,
+
+在 2025/08/26 6:17, Cloud User 写道:
+> This fixes the statx issue which caused multiple test issue
 >
->=2E=2E=2E
+> Rajeev Mishra (2):
+>    loop: Rename and merge get_size/get_loop_size to lo_calculate_size
+>    loop: use vfs_getattr_nosec for accurate file size
 >
->> CC: Andreas F=C3=A4rber <afaerber@suse=2Ede>
->
->Not a big issue in _this_ case, but I would suggest to keep the Cc: list =
-after
->the '---' line=2E This will have same effect except being removed from th=
-e commit
->messages where it would be an unneeded noise=2E The actual list will be a=
-vailable
->via lore archive in emails=2E
+>   drivers/block/loop.c | 43 +++++++++++++++++++++++++------------------
+>   1 file changed, 25 insertions(+), 18 deletions(-)
 >
 
-Acknowledged=2E Will move to the notes section on the next submission=2E
+There is no need, to late for this now. :(
+>>> Thanks Kuai for your continued support. I just want to make sure the original 
+>>>> fix which calls   vfs_getattr_nosec in lo_calculate_size is not getting
+>>> discarded. Again thanks for your quick response
+
+Thanks,
+Kuai
 
