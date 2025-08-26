@@ -1,216 +1,146 @@
-Return-Path: <linux-kernel+bounces-785759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D131B350BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:05:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBC8EB350B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:05:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0E9A487DD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 01:05:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E573E1A86EA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 01:05:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B007F266B59;
-	Tue, 26 Aug 2025 01:05:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 922232641D8;
+	Tue, 26 Aug 2025 01:05:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="NJIULm2I"
-Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Y8XBmyN0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2BB25F98A
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 01:05:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED39985C4A
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 01:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756170351; cv=none; b=i/kl1qGTCdTWZP7Qx5dKy2VOve/xeERYNohKQC/cQrCQPbDwiuDerkbTzkkBE+YJNNIudD54wTruU/Tn4yeklI89gDDM2rOIniPfKyf6wITdEgKJpD1lmQufq4zxkh+o5T55lfh5PPcKD1DsOKXdNl3ZPm4LWPSFrIARz+jAodc=
+	t=1756170333; cv=none; b=Csy8SjCUs+cmA004gZ2dtSK6L5l1abu7LxkxgeEvCuyhsB9tW8jlXoEiO4AKupqAqbI5rC1x/WvE8zN7rxunw4dHJfa2J1R5h56O2W6Mu1U4zr+GL+OPTSSpKSp0Jska5paoAE/CW8l9oWYGph4tbcXiwN/k1cGV7ciXGVLyo1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756170351; c=relaxed/simple;
-	bh=tB6fppnw+UcRDBN5lEThQWkSnIFpbnjuO084/tD3bU8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FEmEuljVmuvxtuARdnBNGPZLbk6WODfkl9J6VgdqKtIcIBSkx86cRY+yL+YFo25i6ym6Bg1yqJi7XqykS+FDingFTWyCRtPb4dtbt+0XhixP3CyVs7MJwNPvG21+goA47oUWt8+A4evd8SIqUDHavX1vFFAn2KYjr/mgCtiPe94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=NJIULm2I; arc=none smtp.client-ip=54.254.200.128
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1756170260;
-	bh=YFNm4O+HT++w/XhGn19PpWttVXNF4FCXA5kWvgTYm9Y=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=NJIULm2ITw00OlVySf0zjkJbhgXaJ7GfGuEYcZmo4LgA80CpXz+50mmE34KHqy6rp
-	 fBf7RQH6ANXyy2zZIULBEkJ3aAIVHiJQ4ZN1TBDJ6K8wVgPVlroNtlGKXj1Is0+gGx
-	 T3Pp0orsc1ZgJADzSx8nYsZLCmOvuvLjpUhOopks=
-X-QQ-mid: zesmtpsz5t1756170257t506bec28
-X-QQ-Originating-IP: Z9Hix52xyLw0E0FxPAVbErXQgqX6aadOjoYB/9fqoi4=
-Received: from = ( [14.123.253.26])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 26 Aug 2025 09:04:15 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 6597786748243803849
-EX-QQ-RecipientCnt: 23
-Date: Tue, 26 Aug 2025 09:04:15 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Alex Elder <elder@riscstar.com>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>, lee@kernel.org,
-	lgirdwood@gmail.com, broonie@kernel.org,
-	alexandre.belloni@bootlin.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: mat.jonczyk@o2.pl, dlan@gentoo.org, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
-	linux.amoon@gmail.com, troymitchell988@gmail.com,
-	guodong@riscstar.com, linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v12 2/7] mfd: simple-mfd-i2c: add SpacemiT P1 support
-Message-ID: <A90BFF97E4869C5B+aK0ID3oyoCtco3m5@LT-Guozexi>
-References: <20250813024509.2325988-1-elder@riscstar.com>
- <20250813024509.2325988-3-elder@riscstar.com>
- <089D29348F246F2C+aJ6bPgJsp5GjhDs5@LT-Guozexi>
- <b387ebdd-ae5d-4711-9e10-c61cb06f4b5b@riscstar.com>
+	s=arc-20240116; t=1756170333; c=relaxed/simple;
+	bh=9t+LpWoHJIsYPbMjiU2USC8E5Wcpyq+n6+4DJhGHFvo=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=I8xXCWRwRHY/zXqrzxuTEU7/3oRtLB2+5cID4AWlEbIqU/OG4v58CsZAschD6ugMYi9Bw2d9wGJoFZA4yzTnDEaTcJRcU951Qt4NhsJdgsFt3ME1wxCZWLPhupswGNqU3YzMjguJXxvyIzxSL8zZLJzEXS3906rAHnKUYEHMuXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Y8XBmyN0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1935C4CEED;
+	Tue, 26 Aug 2025 01:05:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1756170332;
+	bh=9t+LpWoHJIsYPbMjiU2USC8E5Wcpyq+n6+4DJhGHFvo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Y8XBmyN0f/0MgGjeKimTUShtaB8EhLKUUrrmRMR3IbngvR7S1rg8rHkhnN78HfAhX
+	 DkF1xazVTsIy6tOSICzsHTiycb3Y3thNj93LolbqqMl4AQS5gOJlcJyEdyCIp+1zxZ
+	 rCJn2sE5Sff8NjTQL5EKgcgv+i4W35W228YHKaoo=
+Date: Mon, 25 Aug 2025 18:05:31 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Coiby Xu <coxu@redhat.com>
+Cc: Breno Leitao <leitao@debian.org>, kexec@lists.infradead.org, Ondrej
+ Kozina <okozina@redhat.com>, Milan Broz <gmazyland@gmail.com>, Thomas
+ Staudt <tstaudt@de.ibm.com>, Daniel P . =?ISO-8859-1?Q?Berrang=E9?=
+ <berrange@redhat.com>, Kairui Song <ryncsn@gmail.com>, Pingfan Liu
+ <kernelfans@gmail.com>, Baoquan He <bhe@redhat.com>, Dave Young
+ <dyoung@redhat.com>, linux-kernel@vger.kernel.org, x86@kernel.org, Dave
+ Hansen <dave.hansen@intel.com>, Vitaly Kuznetsov <vkuznets@redhat.com>,
+ Arnaud Lefebvre <arnaud.lefebvre@clever-cloud.com>, Jan Pazdziora
+ <jpazdziora@redhat.com>, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v9 1/8] kexec_file: allow to place kexec_buf randomly
+Message-Id: <20250825180531.94bfb86a26a43127c0a1296f@linux-foundation.org>
+In-Reply-To: <yng55a2z25m5upehczerzhi6zawe3j4ka7amfu4vw4cu27bbg2@x2lgbuk3iqyf>
+References: <20250502011246.99238-1-coxu@redhat.com>
+	<20250502011246.99238-2-coxu@redhat.com>
+	<oninomspajhxp4omtdapxnckxydbk2nzmrix7rggmpukpnzadw@c67o7njgdgm3>
+	<yng55a2z25m5upehczerzhi6zawe3j4ka7amfu4vw4cu27bbg2@x2lgbuk3iqyf>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b387ebdd-ae5d-4711-9e10-c61cb06f4b5b@riscstar.com>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: M9Bxf819/8YCxgr5E0eCTLJr0bZlmzJWwDmRH2FZekU0xn6PD6v6rNoe
-	dP3FI+l5Y2TabLIuZ+pXMq7AqSls/Kb0pqyd/2lP12ecRF5IFegdolFYmdAFGAL5cC7pYtm
-	unYTaEl3D9lb0pvw/2e0yoIvivn8EtqMJivGWgMLbERMQMWAPOX2tJF3FnvzI+dOuhGGVSe
-	FFIKrApyUSVtGNuW+vfBx4GbdryHB4xbh3zbfAskp0+bI/r6lfhzvip9ax1wIPO3EHYa5An
-	cQ/TN3v+wTVK82+Ue5a8wus6wWEXd9y3LU3YmvvCbclID3qa/shf0oF2qd/CeUNez7Tc0cR
-	2bgE55pXaKoFFdcQnMbFURCCoQl4nnNIyF4whrRjnrtjzo14ht2sXoS0MEyn3AfJD8IvZ7T
-	7/GYrSzY75y3IileD8IexRT1UhWqgZs8/7Sb/PLw2K1NZIrMXSrj7+wlXZs//ghHZn8hE5J
-	JU0xiLzXvku3iXb3cOoK06ZYOLhXDl8uNoN45UiJicDXx2a/zMI5HKkRVnqE0yz+VxOb04H
-	nZtAUuTb7Z0lExVKjUPbbvRfZwwc0W3NUDWo1pUvikqZM95ska4ny2w9Qry2/kzt+GBAL23
-	EwSvxYdDp2dZr0E8WopDPOQxqoDu/bQoXpdk5V5PX22VELzEnhDYuY+fM2EQdFOPKDaoA08
-	xQcyiBEfWBpcVJy23BguuauVJNUmUfIbTW2wd0CTtM9RCQKzN/HUPSdv0dSJGDcXkJH0v+D
-	ENtaTttTz/h1RsNYoKQo+PsO/dtZs4wmCFtpfMAgveBSUCdyOq1TGMHKJTmCcHUKR7Ju2f+
-	2Y8C6JHoIerlxI+IH4p8X2VAh4oroH7PHkCDSB4rmDv+b5RMRUtBzH0CIen2DVZZHq7pAes
-	Dhed/+pMY+otrlh/bmSynVv3qpNbqGW6ZI/x8TOvQ/VEDReJUmayesfytyAStECNklmSQd/
-	nF6Z3hNBmH1MZkDjw7PEBAfbsnBybB0e7MwrljOLvmZA4HiGBbbPU+sMzPxLJcGxfr70HYU
-	RwHxLeTDqapmWrajBZ9Xx7JvLV/R7idTrBGlKoY40C8Xw8nsMDvXIpCpV2byc4ZUkKR5roI
-	fObJKo2BPe7i0xC8CsWnmRKvBOLbqqE+g==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 25, 2025 at 11:08:45AM -0500, Alex Elder wrote:
-> On 8/14/25 9:28 PM, Troy Mitchell wrote:
-> > Hi, Alex,
-> > 
-> > I did not find any accesses to the P1 shutdown or reboot registers here.
-> > Does this mean that the current series does not support reboot or shutdown?
-> 
-> Yes, that is correct.
-> 
-> > If so, do you have any plans to support this functionality?
-> 
-> At this time I personally don't have any plans to add this, but
-> it could be added later (by anyone).
-> 
-> I actually attempted to do this initially, but gave up.  The PMIC
-> is accessed via I2C, and I needed to implement a non-blocking
-> version of the I2C register write operation.  I tried that,
-You tried that? so that means you have implemented a non-blocking version
-of the I2C?
-If so, can you give me a source tree to test it?
-> but
-> then found that the shutdown or reboot still did not work reliably.
-ditto.
+On Mon, 25 Aug 2025 09:18:53 +0800 Coiby Xu <coxu@redhat.com> wrote:
 
-                - Troy
+> >diff --git a/arch/arm64/kernel/kexec_image.c b/arch/arm64/kernel/kexec_image.c
+> >index 532d72ea42ee8..287b25e674d76 100644
+> >--- a/arch/arm64/kernel/kexec_image.c
+> >+++ b/arch/arm64/kernel/kexec_image.c
+> >@@ -76,6 +76,7 @@ static void *image_load(struct kimage *image,
+> > 	kbuf.buf_min = 0;
+> > 	kbuf.buf_max = ULONG_MAX;
+> > 	kbuf.top_down = false;
+> >+	kbuf.random = 0;
+> >
+> > 	kbuf.buffer = kernel;
+> > 	kbuf.bufsz = kernel_len;
+> >
+> 
+> And also thanks for posing a fix! The patch LGTM. Can you add a Fixes
+> tag 'Fixes: bf454ec31add ("kexec_file: allow to place kexec_buf
+> randomly")' and then send it to kexec@lists.infradead.org? Thanks!
 
-> As it was, this was more than I originally planned to do, so I just
-> implemented the simple RTC operations instead.
-> 
-> 					-Alex
-> 
-> > If I have misunderstood, please correct me.
-> > 
-> > Best regards,
-> > Troy
-> > 
-> > 
-> > On Tue, Aug 12, 2025 at 09:45:03PM -0500, Alex Elder wrote:
-> > > Enable support for the RTC and regulators found in the SpacemiT P1
-> > > PMIC.  Support is implemented by the simple I2C MFD driver.
-> > > 
-> > > The P1 PMIC is normally implemented with the SpacemiT K1 SoC.  This
-> > > PMIC provides 6 buck converters and 12 LDO regulators.  It also
-> > > implements a switch, watchdog timer, real-time clock, and more.
-> > > Initially its RTC and regulators are supported.
-> > > 
-> > > Signed-off-by: Alex Elder <elder@riscstar.com>
-> > > ---
-> > >   drivers/mfd/Kconfig          | 11 +++++++++++
-> > >   drivers/mfd/simple-mfd-i2c.c | 18 ++++++++++++++++++
-> > >   2 files changed, 29 insertions(+)
-> > > 
-> > > diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> > > index 425c5fba6cb1e..4d6a5a3a27220 100644
-> > > --- a/drivers/mfd/Kconfig
-> > > +++ b/drivers/mfd/Kconfig
-> > > @@ -1238,6 +1238,17 @@ config MFD_QCOM_RPM
-> > >   	  Say M here if you want to include support for the Qualcomm RPM as a
-> > >   	  module. This will build a module called "qcom_rpm".
-> > > +config MFD_SPACEMIT_P1
-> > > +	tristate "SpacemiT P1 PMIC"
-> > > +	depends on I2C
-> > > +	select MFD_SIMPLE_MFD_I2C
-> > > +	help
-> > > +	  This option supports the I2C-based SpacemiT P1 PMIC, which
-> > > +	  contains regulators, a power switch, GPIOs, an RTC, and more.
-> > > +	  This option is selected when any of the supported sub-devices
-> > > +	  is configured.  The basic functionality is implemented by the
-> > > +	  simple MFD I2C driver.
-> > > +
-> > >   config MFD_SPMI_PMIC
-> > >   	tristate "Qualcomm SPMI PMICs"
-> > >   	depends on ARCH_QCOM || COMPILE_TEST
-> > > diff --git a/drivers/mfd/simple-mfd-i2c.c b/drivers/mfd/simple-mfd-i2c.c
-> > > index 22159913bea03..47ffaac035cae 100644
-> > > --- a/drivers/mfd/simple-mfd-i2c.c
-> > > +++ b/drivers/mfd/simple-mfd-i2c.c
-> > > @@ -93,12 +93,30 @@ static const struct simple_mfd_data maxim_mon_max77705 = {
-> > >   	.mfd_cell_size = ARRAY_SIZE(max77705_sensor_cells),
-> > >   };
-> > > +
-> > > +static const struct regmap_config spacemit_p1_regmap_config = {
-> > > +	.reg_bits = 8,
-> > > +	.val_bits = 8,
-> > > +};
-> > > +
-> > > +static const struct mfd_cell spacemit_p1_cells[] = {
-> > > +	{ .name = "spacemit-p1-regulator", },
-> > > +	{ .name = "spacemit-p1-rtc", },
-> > > +};
-> > > +
-> > > +static const struct simple_mfd_data spacemit_p1 = {
-> > > +	.regmap_config = &spacemit_p1_regmap_config,
-> > > +	.mfd_cell = spacemit_p1_cells,
-> > > +	.mfd_cell_size = ARRAY_SIZE(spacemit_p1_cells),
-> > > +};
-> > > +
-> > >   static const struct of_device_id simple_mfd_i2c_of_match[] = {
-> > >   	{ .compatible = "kontron,sl28cpld" },
-> > >   	{ .compatible = "silergy,sy7636a", .data = &silergy_sy7636a},
-> > >   	{ .compatible = "maxim,max5970", .data = &maxim_max5970},
-> > >   	{ .compatible = "maxim,max5978", .data = &maxim_max5970},
-> > >   	{ .compatible = "maxim,max77705-battery", .data = &maxim_mon_max77705},
-> > > +	{ .compatible = "spacemit,p1", .data = &spacemit_p1, },
-> > >   	{}
-> > >   };
-> > >   MODULE_DEVICE_TABLE(of, simple_mfd_i2c_of_match);
-> > > -- 
-> > > 2.48.1
-> > > 
-> > > 
-> > > _______________________________________________
-> > > linux-riscv mailing list
-> > > linux-riscv@lists.infradead.org
-> > > http://lists.infradead.org/mailman/listinfo/linux-riscv
-> 
-> 
+I turned all this into a regular patch and queued it (see below),
+thanks.  No additional actions are needed.
+
+I'm really not liking that code.  I laboriously verified that all
+fields of kexec_buf are now initialized, except for `cma'.  Is that a
+bug?
+
+This function has a call frequency of about 3x per week.  Can we please
+just memset the whole thing so people don't have to worry about this
+any more?
+
+
+From: Breno Leitao <leitao@debian.org>
+Subject: kexec/arm64: initialize the random field of kbuf to zero in the image loader
+Date: Thu Aug 21 04:11:21 2025 -0700
+
+Add an explicit initialization for the random member of the kbuf structure
+within the image_load function in arch/arm64/kernel/kexec_image.c. 
+Setting kbuf.random to zero ensures a deterministic and clean starting
+state for the buffer used during kernel image loading, avoiding this UBSAN
+issue later, when kbuf.random is read.
+
+  [   32.362488] UBSAN: invalid-load in ./include/linux/kexec.h:210:10
+  [   32.362649] load of value 252 is not a valid value for type '_Bool'
+
+Link: https://lkml.kernel.org/r/oninomspajhxp4omtdapxnckxydbk2nzmrix7rggmpukpnzadw@c67o7njgdgm3
+Fixes: bf454ec31add ("kexec_file: allow to place kexec_buf randomly
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Cc: Baoquan He <bhe@redhat.com>
+Cc: Coiby Xu <coxu@redhat.com>
+Cc: "Daniel P. Berrange" <berrange@redhat.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: Kairui Song <ryncsn@gmail.com>
+Cc: Liu Pingfan <kernelfans@gmail.com>
+Cc: Milan Broz <gmazyland@gmail.com>
+Cc: Ondrej Kozina <okozina@redhat.com>
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
+
+ arch/arm64/kernel/kexec_image.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/arch/arm64/kernel/kexec_image.c~kexec-arm64-initialize-the-random-field-of-kbuf-to-zero-in-the-image-loader
++++ a/arch/arm64/kernel/kexec_image.c
+@@ -76,6 +76,7 @@ static void *image_load(struct kimage *i
+ 	kbuf.buf_min = 0;
+ 	kbuf.buf_max = ULONG_MAX;
+ 	kbuf.top_down = false;
++	kbuf.random = 0;
+ 
+ 	kbuf.buffer = kernel;
+ 	kbuf.bufsz = kernel_len;
+_
+
 
