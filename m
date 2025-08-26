@@ -1,237 +1,104 @@
-Return-Path: <linux-kernel+bounces-786721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB817B3661C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:53:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C6F6B367E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:10:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 221F7567980
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:43:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8991A1C282B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C199338F32;
-	Tue, 26 Aug 2025 13:43:28 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446331ACEDA;
-	Tue, 26 Aug 2025 13:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7199352FCC;
+	Tue, 26 Aug 2025 13:58:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bcc.bai.ne.jp header.i=@bcc.bai.ne.jp header.b="LmixlWzC"
+Received: from rmx-c.mailgw.jp (smx-c.mailgw.jp [210.171.6.217])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2541E7C08;
+	Tue, 26 Aug 2025 13:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.6.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756215807; cv=none; b=YLdvFT2dTzEKsfnMgeUqN+Gw78rZpQFml+C33OKcqNYn4zr5p7uQg/kwAJi6bklqbapAq0i/vwldKuW2TdEj47eBmwC/fiy6d4QXUCCM6vZlQ/Crxb411mBrMM9gaVoPCYQdEhm343EDXAcNVLtUphJt7Ps5+zFmHOUBJsokuYU=
+	t=1756216713; cv=none; b=JmnC56n4uDgZsNdtunjXBCR3ss/Wi6WtmEcN+skZBxlgSIIJwyCBNMHTSJ3yrchcF3CEOWvQJWygDWsTmRP3LweljckBXpLaCC629uIYEL4lqF1IrsVbtfG/JWPC3fFt0Qc/W6mzvntfh43vus3CuK8QvnhO93DTiDtQtw3B+h8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756215807; c=relaxed/simple;
-	bh=NSFdsUFlpKhN8H0ekHru05yw4WSdjN+zOrEkvz1mKVQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WVkLxr91RFrGSaBzdALgbmE2/n2dSCsNxWPKBs7kEIbkeu14ey2Qqo88OoKH2EtRNCVflCjcjnWmHvr3Ls1isB8o5ya118iNhPsP4K9PgnkB6YZ/Nz8ubON70M7kn4nu4Kbxps9EmP0HOMvog8npPGiiRIfr8SH86aWkrVZY3nI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5E7311A25;
-	Tue, 26 Aug 2025 06:43:16 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8B8A73F63F;
-	Tue, 26 Aug 2025 06:43:18 -0700 (PDT)
-Date: Tue, 26 Aug 2025 14:43:16 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: peterz@infradead.org, mingo@redhat.com, will@kernel.org,
-	acme@kernel.org, namhyung@kernel.org,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
-	linux-csky@vger.kernel.org, loongarch@lists.linux.dev,
-	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, dmaengine@vger.kernel.org,
-	linux-fpga@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org, coresight@lists.linaro.org,
-	iommu@lists.linux.dev, linux-amlogic@lists.infradead.org,
-	linux-cxl@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 18/19] perf: Introduce positive capability for raw events
-Message-ID: <aK259PrpyxguQzdN@J2N7QTR9R3>
-References: <cover.1755096883.git.robin.murphy@arm.com>
- <542787fd188ea15ef41c53d557989c962ed44771.1755096883.git.robin.murphy@arm.com>
+	s=arc-20240116; t=1756216713; c=relaxed/simple;
+	bh=HfAyxLmtvudUzpYt25poT0KRL89hapJ69x3yWpzOYIQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZjWMadjjYXR0tUmNgfc0CE81aSgpA+8Md3l+8GRL3Vu4a55ZkuEWsIVEyDX4FIuDQmklT77rG51/OFLkY36iqFRJ/g/+hC2ekqh+KFajmGHNkY22Sfh4qzKrEa4lxH+yhLFhS8jw5N1d2jrfpCQqDf7vRBcpNyp1TFaZwMY0nf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bcc.bai.ne.jp; spf=pass smtp.mailfrom=bcc.bai.ne.jp; dkim=pass (2048-bit key) header.d=bcc.bai.ne.jp header.i=@bcc.bai.ne.jp header.b=LmixlWzC; arc=none smtp.client-ip=210.171.6.217
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bcc.bai.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bcc.bai.ne.jp
+Received: from bccml.bai.ne.jp (bccml-a.bai.ne.jp [210.171.3.161])
+	by rmx-c.mailgw.jp  with ESMTP id 57QDlnMh024478-57QDlnMi024478;
+	Tue, 26 Aug 2025 22:47:49 +0900
+Received: from subuntu-desktop.bai.ne.jp (bai859bcd79.bai.ne.jp [133.155.205.121])
+	by bccml.bai.ne.jp (Postfix) with ESMTPA id 758818177B;
+	Tue, 26 Aug 2025 22:47:48 +0900 (JST)
+From: Hide Hako <opi5plus@bcc.bai.ne.jp>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	Hide Hako <opi5plus@bcc.bai.ne.jp>
+Subject: [PATCH v2] arm64: dts: rockchip: Enables sound output from the audio jack on OrangePI5 Plus
+Date: Tue, 26 Aug 2025 22:44:57 +0900
+Message-ID: <20250826134456.9636-2-opi5plus@bcc.bai.ne.jp>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <542787fd188ea15ef41c53d557989c962ed44771.1755096883.git.robin.murphy@arm.com>
+Content-Transfer-Encoding: 8bit
+X-FE-Last-Public-Client-IP: 210.171.3.161
+X-FE-Envelope-From: opi5plus@bcc.bai.ne.jp
+X-FE-Policy-ID: 3:1:23:SYSTEM, 3:1:2:SYSTEM
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; d=bcc.bai.ne.jp; s=20240516; c=relaxed/relaxed;
+ h=from:to:cc:subject:date:message-id:mime-version;
+ bh=suYwX1lPYNA6J6Ueqpvg+LFYiHTraJArpH2l0vR/ubY=;
+ b=LmixlWzCVDA81Kf9yqqXQ7bEBimnLAJZxN/07d1we8P282n2P7cgUGDqJIw1ikGE9YeiynriSRxK
+	fXARS9Yxmor5LScCKSbvQbL69nIm50edBH530vFGUVbRwbAXOT8DZ4J/P7lyDr0putmCdmZqAV+z
+	pSSsG9rquMDXuxTgshitDl3NTum3P5ghimnObeZVySAHLbzDEfXFk5B5U2U5Kt9vlIksxSGWNEzs
+	/Yzmg8DICkkgE5mhQ2ileCjOuMkKqaF7C+PNOQhKczgNSkq1gAxkq1AbZmwvGTSM/4kya16mbzMI
+	BKnpAbuIuQmbGYlxZOwGY40rDWWRDavFgNWAog==
 
-On Wed, Aug 13, 2025 at 06:01:10PM +0100, Robin Murphy wrote:
-> Only a handful of CPU PMUs accept PERF_TYPE_{RAW,HARDWARE,HW_CACHE}
-> events without registering themselves as PERF_TYPE_RAW in the first
-> place. Add an explicit opt-in for these special cases, so that we can
-> make life easier for every other driver (and probably also speed up the
-> slow-path search) by having perf_try_init_event() do the basic type
-> checking to cover the majority of cases.
-> 
-> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+Currently, analog sound is not output from the audio jack.
+This patch allows you to select analog headphones in alsamixer.
+Works with kernel 6.16.1, but not 6.17-rc1.
 
+Points of concern:
+6.16.1 kernel with ubuntu 25.04 Setting -> Sound -> Output Device
+ I select Speakers Built-in Audio, the sound will be output from the audio jack.
 
-To bikeshed a little here, I'm not keen on the PERF_PMU_CAP_RAW_EVENTS
-name, because it's not clear what "RAW" really means, and people will
-definitely read that to mean something else.
+Changes since v1:
+- As pointed out by Jimmy, the file to be modified has been changed
+  from rk3588-orangepi-5.dtsi to rk3588-orangepi-5-plus.dts.
 
-Could we go with something like PERF_PMU_CAP_COMMON_CPU_EVENTS, to make
-it clear that this is about opting into CPU-PMU specific event types (of
-which PERF_TYPE_RAW is one of)?
+Signed-off-by: Hide Hako <opi5plus@bcc.bai.ne.jp>
+---
+ arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-Likewise, s/is_raw_pmu()/pmu_supports_common_cpu_events()/.
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
+index 121e4d1c3..44bb15951 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
+@@ -78,6 +78,7 @@ &analog_sound {
+ 	pinctrl-0 = <&hp_detect>;
+ 	simple-audio-card,aux-devs = <&speaker_amp>, <&headphone_amp>;
+ 	simple-audio-card,hp-det-gpios = <&gpio1 RK_PD3 GPIO_ACTIVE_LOW>;
++	simple-audio-card,pin-switches = "Speaker", "Headphones";
+ 	simple-audio-card,widgets =
+ 		"Microphone", "Onboard Microphone",
+ 		"Microphone", "Microphone Jack",
+-- 
+2.48.1
 
-> ---
-> 
-> A further possibility is to automatically add the cap to PERF_TYPE_RAW
-> PMUs in perf_pmu_register() to have a single point-of-use condition; I'm
-> undecided...
-
-I reckon we don't need to automagically do that, but I reckon that
-is_raw_pmu()/pmu_supports_common_cpu_events() should only check the cap,
-and we don't read anything special into any of
-PERF_TYPE_{RAW,HARDWARE,HW_CACHE}.
-
-> ---
->  arch/s390/kernel/perf_cpum_cf.c    |  1 +
->  arch/s390/kernel/perf_pai_crypto.c |  2 +-
->  arch/s390/kernel/perf_pai_ext.c    |  2 +-
->  arch/x86/events/core.c             |  2 +-
->  drivers/perf/arm_pmu.c             |  1 +
->  include/linux/perf_event.h         |  1 +
->  kernel/events/core.c               | 15 +++++++++++++++
->  7 files changed, 21 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/s390/kernel/perf_cpum_cf.c b/arch/s390/kernel/perf_cpum_cf.c
-> index 1a94e0944bc5..782ab755ddd4 100644
-> --- a/arch/s390/kernel/perf_cpum_cf.c
-> +++ b/arch/s390/kernel/perf_cpum_cf.c
-> @@ -1054,6 +1054,7 @@ static void cpumf_pmu_del(struct perf_event *event, int flags)
->  /* Performance monitoring unit for s390x */
->  static struct pmu cpumf_pmu = {
->  	.task_ctx_nr  = perf_sw_context,
-> +	.capabilities = PERF_PMU_CAP_RAW_EVENTS,
->  	.pmu_enable   = cpumf_pmu_enable,
->  	.pmu_disable  = cpumf_pmu_disable,
->  	.event_init   = cpumf_pmu_event_init,
-
-Tangential, but use of perf_sw_context here looks bogus.
-
-> diff --git a/arch/s390/kernel/perf_pai_crypto.c b/arch/s390/kernel/perf_pai_crypto.c
-> index a64b6b056a21..b5b6d8b5d943 100644
-> --- a/arch/s390/kernel/perf_pai_crypto.c
-> +++ b/arch/s390/kernel/perf_pai_crypto.c
-> @@ -569,7 +569,7 @@ static const struct attribute_group *paicrypt_attr_groups[] = {
->  /* Performance monitoring unit for mapped counters */
->  static struct pmu paicrypt = {
->  	.task_ctx_nr  = perf_hw_context,
-> -	.capabilities = PERF_PMU_CAP_SAMPLING,
-> +	.capabilities = PERF_PMU_CAP_SAMPLING | PERF_PMU_CAP_RAW_EVENTS,
->  	.event_init   = paicrypt_event_init,
->  	.add	      = paicrypt_add,
->  	.del	      = paicrypt_del,
-> diff --git a/arch/s390/kernel/perf_pai_ext.c b/arch/s390/kernel/perf_pai_ext.c
-> index 1261f80c6d52..bcd28c38da70 100644
-> --- a/arch/s390/kernel/perf_pai_ext.c
-> +++ b/arch/s390/kernel/perf_pai_ext.c
-> @@ -595,7 +595,7 @@ static const struct attribute_group *paiext_attr_groups[] = {
->  /* Performance monitoring unit for mapped counters */
->  static struct pmu paiext = {
->  	.task_ctx_nr  = perf_hw_context,
-> -	.capabilities = PERF_PMU_CAP_SAMPLING,
-> +	.capabilities = PERF_PMU_CAP_SAMPLING | PERF_PMU_CAP_RAW_EVENTS,
->  	.event_init   = paiext_event_init,
->  	.add	      = paiext_add,
->  	.del	      = paiext_del,
-> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-> index 789dfca2fa67..764728bb80ae 100644
-> --- a/arch/x86/events/core.c
-> +++ b/arch/x86/events/core.c
-> @@ -2697,7 +2697,7 @@ static bool x86_pmu_filter(struct pmu *pmu, int cpu)
->  }
->  
->  static struct pmu pmu = {
-> -	.capabilities		= PERF_PMU_CAP_SAMPLING,
-> +	.capabilities		= PERF_PMU_CAP_SAMPLING | PERF_PMU_CAP_RAW_EVENTS,
->  
->  	.pmu_enable		= x86_pmu_enable,
->  	.pmu_disable		= x86_pmu_disable,
-> diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
-> index 72d8f38d0aa5..bc772a3bf411 100644
-> --- a/drivers/perf/arm_pmu.c
-> +++ b/drivers/perf/arm_pmu.c
-> @@ -877,6 +877,7 @@ struct arm_pmu *armpmu_alloc(void)
->  		 * specific PMU.
->  		 */
->  		.capabilities	= PERF_PMU_CAP_SAMPLING |
-> +				  PERF_PMU_CAP_RAW_EVENTS |
->  				  PERF_PMU_CAP_EXTENDED_REGS |
->  				  PERF_PMU_CAP_EXTENDED_HW_TYPE,
->  	};
-> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-> index 183b7c48b329..c6ad036c0037 100644
-> --- a/include/linux/perf_event.h
-> +++ b/include/linux/perf_event.h
-> @@ -305,6 +305,7 @@ struct perf_event_pmu_context;
->  #define PERF_PMU_CAP_EXTENDED_HW_TYPE	0x0100
->  #define PERF_PMU_CAP_AUX_PAUSE		0x0200
->  #define PERF_PMU_CAP_AUX_PREFER_LARGE	0x0400
-> +#define PERF_PMU_CAP_RAW_EVENTS		0x0800
->  
->  /**
->   * pmu::scope
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 71b2a6730705..2ecee76d2ae2 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -12556,11 +12556,26 @@ static inline bool has_extended_regs(struct perf_event *event)
->  	       (event->attr.sample_regs_intr & PERF_REG_EXTENDED_MASK);
->  }
->  
-> +static bool is_raw_pmu(const struct pmu *pmu)
-> +{
-> +	return pmu->type == PERF_TYPE_RAW ||
-> +	       pmu->capabilities & PERF_PMU_CAP_RAW_EVENTS;
-> +}
-
-As above, I reckon we should make this:
-
-static bool pmu_supports_common_cpu_events(const struct pmu *pmu)
-{
-	return pmu->capabilities & PERF_PMU_CAP_RAW_EVENTS;
-}
-
-Other than the above, this looks good to me.
-
-Mark.
-
-> +
->  static int perf_try_init_event(struct pmu *pmu, struct perf_event *event)
->  {
->  	struct perf_event_context *ctx = NULL;
->  	int ret;
->  
-> +	/*
-> +	 * Before touching anything, we can safely skip:
-> +	 * - any event for a specific PMU which is not this one
-> +	 * - any common event if this PMU doesn't support them
-> +	 */
-> +	if (event->attr.type != pmu->type &&
-> +	    (event->attr.type >= PERF_TYPE_MAX || is_raw_pmu(pmu)))
-> +		return -ENOENT;
-> +
->  	if (!try_module_get(pmu->module))
->  		return -ENODEV;
->  
-> -- 
-> 2.39.2.101.g768bb238c484.dirty
-> 
 
