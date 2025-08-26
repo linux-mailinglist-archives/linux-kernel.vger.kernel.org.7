@@ -1,151 +1,170 @@
-Return-Path: <linux-kernel+bounces-786005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EE51B3536B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:36:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F599B3536E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:39:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 458A417A79F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:36:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B98F1766AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:39:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C368C2EFD9B;
-	Tue, 26 Aug 2025 05:36:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A022EE617;
+	Tue, 26 Aug 2025 05:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OCZe3bDn"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BB7Lme5P"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF342E54A9
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 05:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D56E011CA9;
+	Tue, 26 Aug 2025 05:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756186572; cv=none; b=iUFeF1IkV3KOqHdQMOcoVcOQrDFm0nbIpmgGEEVEk83su12orXTA+/2MKldmkgG8lp7wxBgVvlnA3is1G0+XB8fwlmMaDea/0P5N3gwUhmmlANr2odBSnbiefpLoy2mO4cx+Bi+21JMIe1uBtyjNvdcxg8NOm8MDihumA4N22ak=
+	t=1756186736; cv=none; b=tYZHE+u92eOKRgboVGU9yPQS5EUn4UtqwxoNoV+Ww3YcmF0AJ5tvilyfOfkcWvaZrd8ewC0nk+C+f1zw8a9ew7ZmqXxaZrvJopeDjtXJkqVPt8J1faFuEOPpU93KJdR26J4cW8JBzL9AtMPhugTBIvwUTibmU6Yo4dlARYOpHmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756186572; c=relaxed/simple;
-	bh=Vc8HqLk1oNkBJVvIOq+E2XUgPQ4z9TxRdkU64UpWBIk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V/TLwdN0QKS6XpEIiwV452RxZ4H0vnBuLRMYDGnl4tXUgXNyQ8HqB11sewvdapBKfhxbxRa3ykplHHNImJef9O9HGzP2ULLZFdcjuSizXFcVEbd2eRwQM8pNVNxqWM7H5d/SKakR86FbqEYeZ9z7CUuzHp3kbCY/hrCJpbDGjkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OCZe3bDn; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b47174c8e45so5076011a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 22:36:09 -0700 (PDT)
+	s=arc-20240116; t=1756186736; c=relaxed/simple;
+	bh=fkEI3+r7fkyCvE6gJngNZ+Zm3/fQ8nxEzZgG4A1l2I4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jPMHcs5y+diGAI5hft9EBtoY4FQphEpMpm/iT8VuOVUbVEikkP7UPNeIotCGJZbx8dAb2btNQJfmzOuOfwzzvc5dN9Qsmira0IyyW0YBXK1ajuFsgtQqz3jGCgo0mio/p5R6iFW+3OlTCduceZDNJG38joaRtC06Qjaw0f20mIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BB7Lme5P; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-24458272c00so60601745ad.3;
+        Mon, 25 Aug 2025 22:38:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756186569; x=1756791369; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+T8E42RqnU9AlmkM6EHxWJjzsznN4WvgoYoMrFYbi0w=;
-        b=OCZe3bDneGBpEZ6VDbisda62W5hTC6i4U/27+v+8qx67MI5qdfNlloEr8QF4XGZ9ua
-         /SZY6tnaifxaLsUuYUCZDjH0x4opJ8hzF+/HgcpPzbc/UCU7iyWv4SUGPYN+W47WqU6b
-         vsH2uKvYlwsHDrJahQEyzoDWNFeUGWRKdntYoDlMlJx7AwipCuJ5dk7p3gNT0xGScDEk
-         q1aD0oBeOw4KurRQ6jsuX91ZRB+1e8LNiK2f+hO9/Zw03e/IzhpQQ/MwkuXFu1v03gwh
-         hE7sXeThdVaqpMuXZM3jypg9W2XejQBIaddpRn8BjE2g4IKiJJcLEmfL40w7OfEg7XRm
-         uPOw==
+        d=gmail.com; s=20230601; t=1756186734; x=1756791534; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Axk4UMbWJGlYVE8LjjJYFMnLZB/ZM8rZIyTcTh59eoY=;
+        b=BB7Lme5PwH/P7dyvtRCeQuP6LHy5RosuwE/pN2nLHEt9B48HIZ98viX8WlNBTZdgJx
+         Q7vgLAsTB3TlBtXOAuuFveQIYG4mFXdyTwTtfLknh7b3HbxG75hFfR2Vh8TBmvyCGszG
+         oRywDG8C76cPmVVlutESFmX7L+vo++9zHslNT+68tt9LodV9Hu4cFim9UR2HlHYVHLbR
+         SJ0Ia4GflUKhtp/RSBwvU8WPNje9F2bK613aF20vXVUsUK5cs46uzzi0dP2iqxo1Cc+P
+         HN9/xWTnch/8iDZXfQqdYv+1c+xbATtpwl3Gf2oyucfEeolZO9SRnPinsx24UCMkoigM
+         ci4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756186569; x=1756791369;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+T8E42RqnU9AlmkM6EHxWJjzsznN4WvgoYoMrFYbi0w=;
-        b=BuU45pFI+htTiW6RgsAF44VPGle1yyDfK90b+UQ6QISmZOwE7BrbBIyYb3zn12ztdp
-         i+8pgWmz6JDixhZM9MCNpHot+fpJv/qieDiwyDPGpIbt+xsYgotTceCQZCyh8Pu/RKND
-         BMhGuWwXfznb1kAdBBOpinI24R6zv21uip004RbulU7w5PpIIgbJew2oiaVi84a0bOO2
-         18921GRCFcEkKyeS7m3zG1eRLJmtq0J1YU1OUKaiM8lUpYZb/02D4f5WVRm/9/oIOw/K
-         TaBdD2RVL62TJDp31xXhoigE+xP1S4vcLlcd77NWXLgP7hf8ww7nuP6R99F6GaVYFr6t
-         1t4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWYesoQwx2wm0R8YyGgdGObDSEhAh4xCdgK0YPcAo/kmlTZoML3Wn7BbwsJgnZ0oIH9wxuwX1+9IukLi5w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiJVcRrIAXebhaN9NdZbr9aGqkbcxP4q1bzzYXKfUQZadZ5bNR
-	FE8Ik28xWIrTsXYcW4F7Hfh+Fuk6gXzsFkhm/+eP3SHyKSLPpbsow2Ue/EI5JSSafoQ=
-X-Gm-Gg: ASbGncv7Q3l5D6zOSu8PIQ9l/jnoscRuWDl/wNkjIAtLOAmppYFmeGio7TYZs5lLWC5
-	7fks7CObkq+qwzigaYUqt3OK5ipkRRJ1wNkas9r2mq9JVg/YyiuDAMJ2ZFh0Em5CXxmeHsa0e+8
-	Xt5grp/9JZHgUf9NOG2BVbEZeWMpiMQI8a/nTzoZ6OnN/j25WczltostMhDpQZ1GmTmmL93HXuq
-	3nHriJ3EhQ8sD+F5e/UDaT77VQqFzWYDnux3qrRtxD5SvjZiwkMIW0Z3xMI9QWhOMiwe0B+aXjR
-	6feN5CoLnOKokj4V3VpuBbtnGuZsXd1H6buOvihyQE96YMjCwAfzPdWBh0+GUf6S9dAsJMGbTrz
-	xsNFJ0Stsrg3o3JLHmYqWId8oA5ui6aYGs08=
-X-Google-Smtp-Source: AGHT+IGfTwYFjftBJaGFXjmow3/nCWDDyflG6zroy2YezNtKf+oppQf+YsobL05QgCGAZlmQXU0dtw==
-X-Received: by 2002:a17:902:c408:b0:240:2281:bd0e with SMTP id d9443c01a7336-2462edecaa4mr206705865ad.2.1756186569430;
-        Mon, 25 Aug 2025 22:36:09 -0700 (PDT)
-Received: from localhost ([122.172.87.165])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-246ed91ee20sm32288035ad.136.2025.08.25.22.36.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 22:36:08 -0700 (PDT)
-Date: Tue, 26 Aug 2025 11:06:06 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
-Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 0/7] OPP: Add support to find OPP for a set of keys
-Message-ID: <20250826053606.zktmwgfdwymizv6k@vireshk-i7>
-References: <20250820-opp_pcie-v4-0-273b8944eed0@oss.qualcomm.com>
- <aKyS0RGZX4bxbjDj@hu-wasimn-hyd.qualcomm.com>
- <20250826052057.lkfvc5njhape56me@vireshk-i7>
+        d=1e100.net; s=20230601; t=1756186734; x=1756791534;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Axk4UMbWJGlYVE8LjjJYFMnLZB/ZM8rZIyTcTh59eoY=;
+        b=NDcfJd1XqqbP6d15TQB7wEd6UYh+c+dNnVpBVp/NBfkpNRHhgkn39+PimHTGD9sQXQ
+         swWbGcb+T/wcz+VmSved7jqvR6MaHKkM1H8qzHby7r9W80zEZZZuFZuObahISI/XxGWK
+         R4AbHHIgVQbvEdtoSmUY7IrwiNJ7nVPOnW0ntGJhTVDDfC2AhOWinkROiYfRoV4NIitQ
+         RcTxNMO8BHVUkTrVrxFh9sDpLk9DPk94YjJK9QHutO8ZiGoTfOxzxJLJrlMok/AnH+4N
+         QwoZp29sfiMEBfTSQKPvdkqggPXTXd+oBeAOmoS/R5vA1G7EwfDkYMctGhOvy1Q5rGEG
+         aHTA==
+X-Forwarded-Encrypted: i=1; AJvYcCW6i6eGtWxTxit30COyvAH91HP3gbXHKWAuzIOKJQZKIxt2Q/aIiiYREKEmd0mH7TF70RXfSg/p@vger.kernel.org, AJvYcCXAqeruvUBPQW6zO5zFGjGTHJyvuCpeLKGLTM1/JQARAlXeCE6W3rr03nI1/QIahiBBsF4GQauJ040DX6U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygJprlPn+sSVla5BQ9mtS0bbD41V6+YFLzK1Sx+CrlrLFn4IiL
+	T5p2ulV8JTgMowL3Rm03KCHDseKtaRLZ2Xe1VGhRIqVIORdYsAiuaV6Ve9QZqstFRSv04eikXKo
+	laE3L+Az0JR7R6awIo11EBOTNiqLbGHs=
+X-Gm-Gg: ASbGncteGuWAh+4vxTMqfkkHRVJ7ohET36qVpckYa0+T6myN2VDCKPXRboPn8HYWG2Z
+	NdUhlZTDhOXKCkatj3EAPmJIOoiKpA/HmTzD9uLkYbysNGgGF6Wt0MZ/62ye0r7H8hoW3peTC1B
+	GpY6rjo801JyJo0Nbi9D5ZO5YGTTn7gG51hI6KRjWOiKKcBSMjg0FTXiIMc+nvJqzM8X9BKuuy4
+	CwHKty1cg==
+X-Google-Smtp-Source: AGHT+IF4WuKBgonA7wU0ychyL9+0BwzHp/2OyDxJKY+LcRtfGkh/0Hes5UCWFkbHCHBvEeIsWBm5YuUo9FxCtDtnwqo=
+X-Received: by 2002:a17:902:d54a:b0:246:eac1:50cf with SMTP id
+ d9443c01a7336-246eac1548cmr69886865ad.12.1756186733913; Mon, 25 Aug 2025
+ 22:38:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250826052057.lkfvc5njhape56me@vireshk-i7>
+References: <20250823182115.1193563-1-aha310510@gmail.com>
+In-Reply-To: <20250823182115.1193563-1-aha310510@gmail.com>
+From: Jeongjun Park <aha310510@gmail.com>
+Date: Tue, 26 Aug 2025 14:38:46 +0900
+X-Gm-Features: Ac12FXzfcd38LF-GMC-8K74D550K73mNo7BnkYALEHmVGNLD52tzBppBnZCL1DI
+Message-ID: <CAO9qdTF1OZRX0mbcG9hQy8m32RvrZaEBa0EWpDREBjfBSqrrYg@mail.gmail.com>
+Subject: Re: [PATCH v2] mm/hugetlb: add missing hugetlb_lock in __unmap_hugepage_range()
+To: muchun.song@linux.dev, osalvador@suse.de, david@redhat.com, 
+	akpm@linux-foundation.org
+Cc: leitao@debian.org, sidhartha.kumar@oracle.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	syzbot+417aeb05fd190f3a6da9@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 26-08-25, 10:50, Viresh Kumar wrote:
-> On 25-08-25, 22:14, Wasim Nazir wrote:
-> > Kernel log:
-> > Unable to handle kernel NULL pointer dereference at virtual address 0000000000000016
-> > ...
-> > Call trace:
-> >  _read_bw+0x0/0x10 (P)
-> >  _find_key+0xb8/0x194
-> >  dev_pm_opp_find_bw_floor+0x54/0x8c
-> >  bwmon_intr_thread+0x84/0x284 [icc_bwmon]
-> >  irq_thread_fn+0x2c/0xa8
-> >  irq_thread+0x174/0x334
-> >  kthread+0x134/0x208
-> >  ret_from_fork+0x10/0x20
-> 
-> Hmm, this happened because it is possible for the `opp` to be invalid
-> (error) even if `_compare_floor()` returned true, if the target key is
-> lower than the lowest freq of the table.
-> 
-> Dropped the patch for now anyway.
+Jeongjun Park <aha310510@gmail.com> wrote:
+>
+> When restoring a reservation for an anonymous page, we need to check to
+> freeing a surplus. However, __unmap_hugepage_range() causes data race
+> because it reads h->surplus_huge_pages without the protection of
+> hugetlb_lock.
+>
+> And adjust_reservation is a boolean variable that indicates whether
+> reservations for anonymous pages in each folio should be restored.
+> Therefore, it should be initialized to false for each round of the loop.
+> However, this variable is not initialized to false except when defining
+> the current adjust_reservation variable.
+>
+> This means that once adjust_reservation is set to true even once within
+> the loop, reservations for anonymous pages will be restored
+> unconditionally in all subsequent rounds, regardless of the folio's state.
+>
+> To fix this, we need to add the missing hugetlb_lock, unlock the
+> page_table_lock earlier so that we don't lock the hugetlb_lock inside the
+> page_table_lock lock, and initialize adjust_reservation to false on each
+> round within the loop.
+>
+> Cc: <stable@vger.kernel.org>
+> Reported-by: syzbot+417aeb05fd190f3a6da9@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=417aeb05fd190f3a6da9
+> Fixes: df7a6d1f6405 ("mm/hugetlb: restore the reservation if needed")
 
-Can you help me testing this over your failing branch please ?
+Reviewed-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
 
-diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-index 81fb7dd7f323..5b24255733b5 100644
---- a/drivers/opp/core.c
-+++ b/drivers/opp/core.c
-@@ -554,10 +554,10 @@ static struct dev_pm_opp *_opp_table_find_key(struct opp_table *opp_table,
-        list_for_each_entry(temp_opp, &opp_table->opp_list, node) {
-                if (temp_opp->available == available) {
-                        if (compare(&opp, temp_opp, read(temp_opp, index), *key)) {
--                               *key = read(opp, index);
--
--                               /* Increment the reference count of OPP */
--                               dev_pm_opp_get(opp);
-+                               if (!IS_ERR(opp)) {
-+                                       *key = read(opp, index);
-+                                       dev_pm_opp_get(opp);
-+                               }
-                                break;
-                        }
-                }
+Sorry, I forgot to add the reviewed-by tag.
 
--- 
-viresh
+> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+> ---
+> v2: Fix issues with changing the page_table_lock unlock location and initializing adjust_reservation
+> - Link to v1: https://lore.kernel.org/all/20250822055857.1142454-1-aha310510@gmail.com/
+> ---
+>  mm/hugetlb.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+>
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index 753f99b4c718..eed59cfb5d21 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -5851,7 +5851,7 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
+>         spinlock_t *ptl;
+>         struct hstate *h = hstate_vma(vma);
+>         unsigned long sz = huge_page_size(h);
+> -       bool adjust_reservation = false;
+> +       bool adjust_reservation;
+>         unsigned long last_addr_mask;
+>         bool force_flush = false;
+>
+> @@ -5944,6 +5944,7 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
+>                                         sz);
+>                 hugetlb_count_sub(pages_per_huge_page(h), mm);
+>                 hugetlb_remove_rmap(folio);
+> +               spin_unlock(ptl);
+>
+>                 /*
+>                  * Restore the reservation for anonymous page, otherwise the
+> @@ -5951,14 +5952,16 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
+>                  * If there we are freeing a surplus, do not set the restore
+>                  * reservation bit.
+>                  */
+> +               adjust_reservation = false;
+> +
+> +               spin_lock_irq(&hugetlb_lock);
+>                 if (!h->surplus_huge_pages && __vma_private_lock(vma) &&
+>                     folio_test_anon(folio)) {
+>                         folio_set_hugetlb_restore_reserve(folio);
+>                         /* Reservation to be adjusted after the spin lock */
+>                         adjust_reservation = true;
+>                 }
+> -
+> -               spin_unlock(ptl);
+> +               spin_unlock_irq(&hugetlb_lock);
+>
+>                 /*
+>                  * Adjust the reservation for the region that will have the
+> --
 
