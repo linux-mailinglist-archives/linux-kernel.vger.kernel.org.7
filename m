@@ -1,170 +1,131 @@
-Return-Path: <linux-kernel+bounces-786228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 887BCB356CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:27:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0CD3B356CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:27:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B97E1889B50
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:27:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E53F17B0BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:27:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09709288C1E;
-	Tue, 26 Aug 2025 08:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D395E2F99A9;
+	Tue, 26 Aug 2025 08:27:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HTkjHKqg"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SR/wCl6v"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE7014A8B;
-	Tue, 26 Aug 2025 08:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D250B2F8BF8
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 08:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756196840; cv=none; b=fvH1fNqe0fyt7MtDoPdZ5EvnXzwksIlD8aX3Vb/yw5gwlaKIM5ByywFWZw56xmyof51pujS9SAtJrjr172CK9P0Kn2A3E4IU871Wg0UX/VK1NN9apk2exzzDZ9K7AjG1+wTt/3GasUzMLr8GnUxbYx6SBKObQnIm0ior3+E96ek=
+	t=1756196826; cv=none; b=mPRk/fHhDVPSiUx9ukZp+aB+n+0zuqmljCGRdSQkIaeIA8UCGCzkG9ZIqHy1GBTe1F0Sw6Jco0nUwAe0zpalSfCwaqFZNEfGkQBHTUN5sdKtXCJloQWGw7l0iDTlzRH21DPxAg19TfnwtxzaVt4Nt/GXHsiUTuBp3nO8zOsa8A4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756196840; c=relaxed/simple;
-	bh=iNAbWuRYqKobddKwX1b9TKa5uBTJVXzw0AZxRaDpRvE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OMDZExn3QXLQzArtPQNRyTfFnEF/fltS3Wna2hHLvikWo79NBXvjGre2j5o20/Sb22OECWjaSP2Y+26ysmPcEy84ZGV1j/eGQfYcXBQvrk/X1NnYVS6iRtiVpKUGZdE/kGud2INFukHq81d0P8XOl/Q7D9xtqdMlX0+AfCZByao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=HTkjHKqg; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57Q8QYjL1490705;
-	Tue, 26 Aug 2025 03:26:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1756196795;
-	bh=Up+ZYBhT8QrHZf6BT7jB0PeZJcHkilAw8/OUTiwhvLA=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=HTkjHKqgBOhYCfjmgZlnluvXZdydWAd0LCYS9qOkZDbddhcqGaZ5Li0nawgQHh0Tf
-	 MKCaXbQP0nCR56AyDoY8OL+CWHYkn44k78UEaPiXPT3KwlEmySi9l2xmfYUB0jDKty
-	 qi6rZ5yco8+Bbx9qLN90tmF60xVuOw4BUR8ZfC0o=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57Q8QYmW2259941
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 26 Aug 2025 03:26:34 -0500
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 26
- Aug 2025 03:26:33 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Tue, 26 Aug 2025 03:26:33 -0500
-Received: from [10.24.68.198] (abhilash-hp.dhcp.ti.com [10.24.68.198])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57Q8QQkQ1132570;
-	Tue, 26 Aug 2025 03:26:27 -0500
-Message-ID: <3b9f6ecc-2152-4385-bbdc-700b7eca94af@ti.com>
-Date: Tue, 26 Aug 2025 13:56:26 +0530
+	s=arc-20240116; t=1756196826; c=relaxed/simple;
+	bh=CmOw9MM62MUmPOH9GRufRxbgMIWxnIxG8qJRDX5brlo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fKXDrXE/+Enl26ECkL3x8K6jy+rpczySzaM043EKahc9DtL8aUhGArucd6wU0KhJNyPqYXMe0WS4PLZSfHWyOyTWYvuNqNkYbBRa+mPYU6BKvCjbsAPMUx8MwzAwtUGigNZF1zdoEF+tmtBMmrlYqkbF3KZ3dQIo7fVC/H69oxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SR/wCl6v; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-24458272c00so62055985ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 01:27:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756196824; x=1756801624; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VltlVNdXca1d/9EeoyeMXnoTiPVWJrYRgV1MAzlI0fQ=;
+        b=SR/wCl6v2M7KXdsxchwPb1r6tpsOusoiJk7yPEzIw4pcdR3K/2NdcMpyNyrYgSdSB/
+         Hf0j5sHxXtLBwI+4aZqOUqLjv2fKE5WJ6YnUi2Y2aEs/SzzeupKP+eLD2c+Cuz8+ODDb
+         EP/Ki4RqhGkzLtBPURANsVXZ3mF1eHN3oVchtlVmJudKiP7yC/JE9IK3aQR7/EbgvSBY
+         v5PUnDdVVBtcZQv376MXELz/9LklRqvm1CUK1IfSy2IqnUxQYkbmwaREKns9G6B920G7
+         FWyCg1SaTAa7wE4IzctfZadTn8Rap6qGLQ/v4Y6wn5oFsS7k9CChQpUkb5BWe4zQf9Cu
+         gb1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756196824; x=1756801624;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VltlVNdXca1d/9EeoyeMXnoTiPVWJrYRgV1MAzlI0fQ=;
+        b=XiytLp1kycpWLLqkvh78oANeIMH3i20fpkAJbELO7MGxPYjptsF1R76VfwqU78hYMv
+         gN+osbhUM2/m+cQWy6WHN8QYl5V+EeynCjcdABN9Z0Cb84y6Tv7eBlKnMHiNR4ife9AM
+         RLvO/ADMbyukP1NZCFf0XwQ7Dx9OTY4BEXwNYeCmBm1DA93Yx5Pz3WnIt/CAgezGSAVW
+         8IXrhKCkCSyALOXezHNEpC+EbhfgH1bWwAH+7ZFRXk9MTXgvIkv/Bw8wdLNf/zDacJpW
+         1XvEjj72Bo1spCUqRJH0taz14cmL020cKrDhPBvQb0cYmHSoiRxG2iiHka+wc3wK5qVi
+         Zt+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWcK0dMKDo0kJfr4lJGQ9EBUZHRsyIH+QJ/A7NuRnW0NL+W7stRuBeorn/hr+N/h6LALKZoz2E7sO5ePMM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPGgTUQROG9YaWZVv5l2IBbxe7YUdLVmk81NutX8wXXuI307Er
+	h2vRpvi9VtTEZEeX3euJRoMvschXTIEaAgsnXEFrdnswBqiXFUczzVU61eTnejpIaWc=
+X-Gm-Gg: ASbGnctzcNfyiM9tRVb+yOYu2h7H6pmjp58zVVnxvcKpa/JV8QRgnYskU4OgFLz423h
+	z7jeXRBi6r5LuR5OjfYxGcugO5+1J3vSHE186St5NZWNRe+WB7ADOhL+q92nkcaC2fIbOnE9lkM
+	RWOqz4sjd6HKkWGp5g7vn5R+GjIK4N+zy6KHlI9dZxxZjyGbWwvJYQMcqQ+I2f4x3JmYmqvRcfS
+	i1SsbP4v+Tp9Za0sThrXGvhjLPdN1nCVGbAayTxx5YA1JNamwv7kGpA4E2DR4lFPVG5Z1w/+9r/
+	txkZrG1vukNf+chqNWwZpSbkycPXdIvigGm//IgWpdfvGjRcjMoBWb+s7pccZBA8pT4AqvcuKYc
+	khISFauhqH+F9rvG1e/vVAxUR
+X-Google-Smtp-Source: AGHT+IECSU/SDSD+0Cr5TrycnubLdgbitEMB4/KAzano/y2obaZMbKPJEOdIDdWn74RnHNtuJKk8kA==
+X-Received: by 2002:a17:903:1b65:b0:246:b1fd:2968 with SMTP id d9443c01a7336-246b1fd2ab8mr81877715ad.9.1756196824113;
+        Tue, 26 Aug 2025 01:27:04 -0700 (PDT)
+Received: from localhost ([122.172.87.165])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2466887fc8dsm89224405ad.122.2025.08.26.01.27.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Aug 2025 01:27:03 -0700 (PDT)
+Date: Tue, 26 Aug 2025 13:57:01 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
+Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 0/7] OPP: Add support to find OPP for a set of keys
+Message-ID: <20250826082701.tv56zzg2hdavy6lq@vireshk-i7>
+References: <20250820-opp_pcie-v4-0-273b8944eed0@oss.qualcomm.com>
+ <aKyS0RGZX4bxbjDj@hu-wasimn-hyd.qualcomm.com>
+ <20250826052057.lkfvc5njhape56me@vireshk-i7>
+ <20250826053606.zktmwgfdwymizv6k@vireshk-i7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 2/4] Revert "media: platform: ti: Remove unused
- vpdma_update_dma_addr"
-To: Krzysztof Kozlowski <krzk@kernel.org>, <mchehab@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <linux@armlinux.org.uk>, <ardb@kernel.org>, <ebiggers@kernel.org>,
-        <geert+renesas@glider.be>, <claudiu.beznea@tuxon.dev>,
-        <bparrot@ti.com>, <andre.draszik@linaro.org>,
-        <kuninori.morimoto.gx@renesas.com>,
-        <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        <heikki.krogerus@linux.intel.com>, <kory.maincent@bootlin.com>,
-        <florian.fainelli@broadcom.com>, <lumag@kernel.org>,
-        <dale@farnsworth.org>, <sbellary@baylibre.com>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <dagriego@biglakesoftware.com>, <u-kumar1@ti.com>
-References: <20250716111912.235157-1-y-abhilashchandra@ti.com>
- <20250716111912.235157-3-y-abhilashchandra@ti.com>
- <c453aadb-afd7-473c-bb39-cab1930c8baa@kernel.org>
-Content-Language: en-US
-From: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
-In-Reply-To: <c453aadb-afd7-473c-bb39-cab1930c8baa@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250826053606.zktmwgfdwymizv6k@vireshk-i7>
 
-Hi Krzysztof,
-Thanks for the review.
-
-On 16/07/25 19:53, Krzysztof Kozlowski wrote:
-> On 16/07/2025 13:19, Yemike Abhilash Chandra wrote:
->> This reverts commit 9314891df119442a6ec1518b3d872c330e2bf1a1.
->>
->> We're adding support for TI VIP driver, so this is no longer unused.
->>
->> Signed-off-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
->> ---
->>   drivers/media/platform/ti/vpe/vpdma.c | 32 +++++++++++++++++++++++++++
->>   drivers/media/platform/ti/vpe/vpdma.h |  3 +++
->>   2 files changed, 35 insertions(+)
->>
->> diff --git a/drivers/media/platform/ti/vpe/vpdma.c b/drivers/media/platform/ti/vpe/vpdma.c
->> index bb8a8bd7980c..da90d7f03f82 100644
->> --- a/drivers/media/platform/ti/vpe/vpdma.c
->> +++ b/drivers/media/platform/ti/vpe/vpdma.c
->> @@ -552,6 +552,38 @@ EXPORT_SYMBOL(vpdma_submit_descs);
->>   
->>   static void dump_dtd(struct vpdma_dtd *dtd);
->>   
+On 26-08-25, 11:06, Viresh Kumar wrote:
+> Can you help me testing this over your failing branch please ?
 > 
-> 
-> Please add kerneldoc.
-> 
+> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> index 81fb7dd7f323..5b24255733b5 100644
+> --- a/drivers/opp/core.c
+> +++ b/drivers/opp/core.c
+> @@ -554,10 +554,10 @@ static struct dev_pm_opp *_opp_table_find_key(struct opp_table *opp_table,
+>         list_for_each_entry(temp_opp, &opp_table->opp_list, node) {
+>                 if (temp_opp->available == available) {
+>                         if (compare(&opp, temp_opp, read(temp_opp, index), *key)) {
+> -                               *key = read(opp, index);
+> -
+> -                               /* Increment the reference count of OPP */
+> -                               dev_pm_opp_get(opp);
+> +                               if (!IS_ERR(opp)) {
+> +                                       *key = read(opp, index);
+> +                                       dev_pm_opp_get(opp);
+> +                               }
 
-I will add kerneldoc in v3. Thanks
+There are other issues too, dropping the patch. Thanks.
 
->> +void vpdma_update_dma_addr(struct vpdma_data *vpdma,
->> +	struct vpdma_desc_list *list, dma_addr_t dma_addr,
->> +	void *write_dtd, int drop, int idx)
->> +{
->> +	struct vpdma_dtd *dtd = list->buf.addr;
->> +	dma_addr_t write_desc_addr;
->> +	int offset;
->> +
->> +	dtd += idx;
->> +	vpdma_unmap_desc_buf(vpdma, &list->buf);
->> +
->> +	dtd->start_addr = dma_addr;
->> +
->> +	/* Calculate write address from the offset of write_dtd from start
->> +	 * of the list->buf
->> +	 */
->> +	offset = (void *)write_dtd - list->buf.addr;
->> +	write_desc_addr = list->buf.dma_addr + offset;
->> +
->> +	if (drop)
->> +		dtd->desc_write_addr = dtd_desc_write_addr(write_desc_addr,
->> +							   1, 1, 0);
->> +	else
->> +		dtd->desc_write_addr = dtd_desc_write_addr(write_desc_addr,
->> +							   1, 0, 0);
->> +
->> +	vpdma_map_desc_buf(vpdma, &list->buf);
->> +
->> +	dump_dtd(dtd);
->> +}
->> +EXPORT_SYMBOL(vpdma_update_dma_addr);
-> 
-> 
-> This has to be GPL
-> 
-
-I will correct this in v3.
-
-Thanks and Regards
-Yemike Abhilash Chandra
-
->> +
->>   void vpdma_set_max_size(struct vpdma_data *vpdma, int reg_addr,
->>   			u32 width, u32 height)
-> 
-> Best regards,
-> Krzysztof
-
+-- 
+viresh
 
