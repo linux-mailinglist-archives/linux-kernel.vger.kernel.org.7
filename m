@@ -1,93 +1,106 @@
-Return-Path: <linux-kernel+bounces-787269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 160B6B373CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 22:27:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76D87B373D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 22:29:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B5C81B2749E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 20:27:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 286E53633D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 20:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866F82E62D8;
-	Tue, 26 Aug 2025 20:27:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F5E52E62D8;
+	Tue, 26 Aug 2025 20:29:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U5hUEyfe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="GcHQRGWn"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFDA022083;
-	Tue, 26 Aug 2025 20:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1C419FA8D;
+	Tue, 26 Aug 2025 20:29:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756240026; cv=none; b=a9yjnRUWLtqgWifOUps2h7UVYQKlnBhLGHl+yGWxNlla7ZEr9yxw/pN6SLIIkm7GUMrEqgTC+DNz02TPikGBd5NTl8qzuwKk0H2sqCzAva1CBTdWmNFlZ4jsUniC7COwCPFM0IY6C9XIUJ8xLcx/+uX6wOtIilDgbiwpgmdGApI=
+	t=1756240177; cv=none; b=p2ZY3ps392LXSW4Wm5pFfSpq8wjqM15gZzvQLeiMkdIFRltpY0t89TINxP0kOuGJnOErEBm+VefWA8DC5jB601PkbGOOO+Kqmk78m41e5AnFjyn07OJlrhjkOKrFv6/zpfnor4Y3jguykph0A6vNWX3+R+DpK/jQjA78A5Kv9WA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756240026; c=relaxed/simple;
-	bh=01/duG/wFn29EcghcT4EgAwqtdDZ9W/d09lk8kLQvRY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=YbtlDRlbkKeq4zPRzdP0kDk8Gq9sevPdf5+exICahiaiC1RJrD7JLeHk4hFi2BTvNHWYnf+/c8ZwPg+OBjDiV7EXOAlTP3/J/aFTiCyRIhM3Gt6oNGAMGyPHOgkss44bn4vWjyT6EX/0v9tyE0NwRT9Zu+15LTiIOVaQH9t17nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U5hUEyfe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14A24C4CEF1;
-	Tue, 26 Aug 2025 20:27:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756240025;
-	bh=01/duG/wFn29EcghcT4EgAwqtdDZ9W/d09lk8kLQvRY=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=U5hUEyfeB59jQ5IZvjpspUVdadmFqYD8FOiXepZuMvOxqCBKI7Ose2zNlhilzPqVH
-	 LhBQJO3VXMq6H/+lRA6LDXfXD1eiGkXWwc6kDTs5hwtDZlxMgR8cZ0kRtLk0FsBVdp
-	 JBtsRMRODu/FkuNqaqyBASU5FtbCtlz8YW+Dnauq7NDl4JmhFmxlBiKz2GDxVMgJmD
-	 3/SEGr2kCChGalUi/gccAgW21I1ERAPLFzq0Rw67aMirQVjtUNjYl+xc8xyCT4p8Bo
-	 eTsgTKidg5uwUgmHJrYkp1FjLCkMPBsu3suqyFfGI9ShCcOuS6ecpRWEtYvMbVc9z1
-	 3nAyyNj2M45JQ==
+	s=arc-20240116; t=1756240177; c=relaxed/simple;
+	bh=IuWqYdocJbqzcN8QHCz0euYVZoPszlClNC1l7YKAmC4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sKK+0Nuhrs7x9Oa4qR0FOFVO0pk4xbnayeA5LoPVeYx52olY/2zStZIzP1/3jmxB7ZQ9bOuKgSNo4xfHjnxcwd0Q/EhxYWQQv5NucZyC9OxQNmKLs8tQzeyqDmYEk8fY/OqPXYD6RtpElOGqUwlOv9ue174vF9jFAhMbhAiMuJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=GcHQRGWn; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 82ECB1026E14E;
+	Tue, 26 Aug 2025 22:29:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1756240164; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=ueU7h2Ggrqx6Kn8QwnWa6YKbvUXUBr9dG1Dh/XCPykA=;
+	b=GcHQRGWnnKdpRgD9XI6vqHb6okKJ44LyBK+HoQHRsFDmERhbPg0BtlMQKjR15nW4nW95A9
+	nTs6JxUgzXjBCnlFstVhhTA6pA/r9AIQC69FvXGa4rCGc4+ZfMmdDcWcoLScYsqKcsOEGE
+	ErLeCnrw2sS8wcD6L9JCESuEa8GOYkGdQRIyLH+o9BQOmTHnpoluEvuA4stkG8rEVA2Tzh
+	hRoMpXgYm1jJZHZSXtFhA0HcijkSoQ1vc9I9I02lRtOSMS9niEXvyE+zwSDeOAgbtTJcCE
+	ZvpcRNjv+0GHoRU0uWfeoDQrBlLG2YdwgGdU6VYojEpdSFVGsv9vxl9ZukL7Kw==
+Date: Tue, 26 Aug 2025 22:29:18 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+	achill@achill.org
+Subject: Re: [PATCH 5.10 000/523] 5.10.241-rc1 review
+Message-ID: <aK4ZHmebgVFn21mR@duo.ucw.cz>
+References: <20250826110924.562212281@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="tvkH+yIFCJ7TPG13"
+Content-Disposition: inline
+In-Reply-To: <20250826110924.562212281@linuxfoundation.org>
+X-Last-TLS-Session-Version: TLSv1.3
+
+
+--tvkH+yIFCJ7TPG13
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 26 Aug 2025 22:27:00 +0200
-Message-Id: <DCCN4NA8LSGD.10TKRH3LRGAEN@kernel.org>
-Subject: Re: [PATCH v3 3/5] rust: scatterlist: Add abstraction for sg_table
-Cc: <akpm@linux-foundation.org>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
- <aliceryhl@google.com>, <tmgross@umich.edu>, <abdiel.janulgue@gmail.com>,
- <acourbot@nvidia.com>, <jgg@ziepe.ca>, <lyude@redhat.com>,
- <robin.murphy@arm.com>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-To: "Daniel Almeida" <daniel.almeida@collabora.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250825132539.122412-1-dakr@kernel.org>
- <20250825132539.122412-4-dakr@kernel.org>
- <6625A8C0-33B2-4AFC-984B-130F8E06113D@collabora.com>
- <DCCLKO6HTCM8.YR8VE8PAXQTM@kernel.org>
- <3BD5A415-CD19-4B8E-A2A3-78F60FCC863A@collabora.com>
-In-Reply-To: <3BD5A415-CD19-4B8E-A2A3-78F60FCC863A@collabora.com>
 
-On Tue Aug 26, 2025 at 10:16 PM CEST, Daniel Almeida wrote:
-> // SAFETY: It is not possible to mutate a `SGEntry` through a shared refe=
-rence,
-> // so it is safe to send a &SGEntry to another task.
->
-> Or any variation of the wording above.
->
-> In any case, I agree that this is splitting hairs a bit and I have nothin=
-g
-> against keeping it as-is, I just thought it be a tad clearer :)
+Hi!
 
-Yeah, that's what I meant. The definition of Sync even says "Types that are=
- not
-Sync are those that have interior mutability in a non-thread-safe form [...=
-]".
-[1].
+> This is the start of the stable review cycle for the 5.10.241 release.
+> There are 523 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-So, both our wordings basically come down to "It's Sync because it's Sync."=
- :)
+CIP testing did not find any problems here:
 
-But don't get me wrong, I'm fine being a bit more verbose about this.
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+5.10.y
 
-[1] https://doc.rust-lang.org/std/marker/trait.Sync.html
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+
+Best regards,
+                                                                Pavel
+--=20
+In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
+Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--tvkH+yIFCJ7TPG13
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaK4ZHgAKCRAw5/Bqldv6
+8uQqAKDAir4XOwQfNx6BDTMuGS5cTECcgwCbBEFvR8HvAA1OdnF6/mH1v+OuhS8=
+=mIT+
+-----END PGP SIGNATURE-----
+
+--tvkH+yIFCJ7TPG13--
 
