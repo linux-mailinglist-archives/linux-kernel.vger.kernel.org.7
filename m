@@ -1,85 +1,94 @@
-Return-Path: <linux-kernel+bounces-787126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC3F1B371C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:52:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EFDAB371A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:47:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65287206F70
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:52:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 880008E6E12
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:47:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB20E2D29B7;
-	Tue, 26 Aug 2025 17:52:47 +0000 (UTC)
-Received: from bregans-0.gladserv.net (bregans-0.gladserv.net [185.128.210.58])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6FB01A76B1;
+	Tue, 26 Aug 2025 17:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q2XFkEO5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647C329DB88;
-	Tue, 26 Aug 2025 17:52:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.128.210.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2227D28135B;
+	Tue, 26 Aug 2025 17:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756230767; cv=none; b=j4ftEHWBvpEaTyd1ZiP22lnjCydLu/Ftwm15FlE1KpsRGm+seQhenTbHm2EzU7o5iwOKXVnkNv967GWug30CCVKNXgsMDr/wt0HVs6LmT2vG8olV33eOWafCEUdOIFtUykqgLBBapaSXq11Quvj4cf1uDdUn9DcM5yGBeWFnrFo=
+	t=1756230444; cv=none; b=rleIoUoe9QSGDIVG6ad7MuboHjMK/YTd1cdWhQlp9R6McAyd+kcuJEzftJoANJxoTGvXpzJc7p1JTWD1tkZKtFZqwbT1jjC6fcpv2/njnZSVzHylBDcngO/x/qxH4BfXmy9j+1DUsFz9tlGaem0iAUjrc7HMrvOCvJ+Z2xfOpHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756230767; c=relaxed/simple;
-	bh=UgsRK12Nu2rYuBYswNUNth/kBrDdZsgxYfz5n5Gg5JM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eTEzQ9rnISfSmpPGlIT9lDX3oXEtvdbOI+1WzcOjETwwEGcsqmwl5hjr6XLYWm5Of2j70Cb9QI9Pe7mrmvjp0sTeM5WGUJTwulm/7MPHlA7kfzvsW3Z0AGeGwlhyg2kBIX6l79aWosleucD0c5kTSrngemRsFQsVn417VHI77gE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=librecast.net; spf=pass smtp.mailfrom=librecast.net; arc=none smtp.client-ip=185.128.210.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=librecast.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=librecast.net
-From: Brett A C Sheffield <bacs@librecast.net>
-To: gregkh@linuxfoundation.org
-Cc: stable@vger.kernel.org,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	hargar@microsoft.com,
-	broonie@kernel.org,
-	achill@achill.org,
-	Brett A C Sheffield <bacs@librecast.net>
-Subject: Re: 5.15.190-rc1 review
-Date: Tue, 26 Aug 2025 17:47:16 +0000
-Message-ID: <20250826174715.29916-2-bacs@librecast.net>
-X-Mailer: git-send-email 2.49.1
-In-Reply-To: <20250826110946.507083938@linuxfoundation.org>
-References: <20250826110946.507083938@linuxfoundation.org>
+	s=arc-20240116; t=1756230444; c=relaxed/simple;
+	bh=QdhdgGupXvzMsxi3UpqcbF6p+Oq4kYam9Hl4IiM7fG0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hcH3t2ZkJ9vXElVp/SYLfrxPcuV96ECJ68cvNALYjB7p27e9bXe+Mbjoo4q2X0m/Ml1/+fn7eaG/Pelzh3z7GmCBHqqTgMyXdEHyty0+aPr5bATRoQpwsuGDcUukk5U9ChvtFtUlasfl9DNOeSmYX42YOZO/BTbcwxF/sy6n6v0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q2XFkEO5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A1C6C4CEF1;
+	Tue, 26 Aug 2025 17:47:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756230443;
+	bh=QdhdgGupXvzMsxi3UpqcbF6p+Oq4kYam9Hl4IiM7fG0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Q2XFkEO5hy3tZUNuy04P05Aej+NwMNzR1V1UUeGsA/fYKNOeEEhmbJcM5+vZ8ng7b
+	 rx7xMK0sab0xgNWwV/j0jDXaGoAEcg/LkNW31RQVhyXVr2hoBBh4wTI2dx0gOjmoDG
+	 QB5kLtfemgBrb79VykIFQHNzIEIz5nFVjEsS4RVJoUPG0yMmzFXvjf/2flk1s7ccBk
+	 pIWbKD5uIpYgoOyTp3VG4sGVRtXQI0CpFhPjp7dFr/pZGlJfychkpuXYewWdrNhgyz
+	 wjt2dO+pj1Mj9oyQHoQzi6e76GYtZcb7WCFH0fYUa62OCUExt4FoTWVjzE5Ea9mRuu
+	 Cux9TYhmvn/8A==
+Date: Tue, 26 Aug 2025 18:47:18 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: panel: lvds: Append
+ ampire,amp19201200b5tzqw-t03 in panel-lvds
+Message-ID: <20250826-fragility-darkish-715589203b6c@spud>
+References: <20250826-drm-misc-next-v1-1-980d0a0592b9@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="9HnhkVHANMCSoXTS"
+Content-Disposition: inline
+In-Reply-To: <20250826-drm-misc-next-v1-1-980d0a0592b9@foss.st.com>
 
-Upstream commit:
-9e30ecf23b1b ("net: ipv4: fix incorrect MTU in broadcast routes")
 
-introduces a regression which breaks IPv4 broadcast, which stops WOL working
-(breaking my CI system), among other things:
+--9HnhkVHANMCSoXTS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-https://lore.kernel.org/regressions/20250822165231.4353-4-bacs@librecast.net
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Mainline fix pending.
+--9HnhkVHANMCSoXTS
+Content-Type: application/pgp-signature; name="signature.asc"
 
-# Librecast Test Results
+-----BEGIN PGP SIGNATURE-----
 
-010/010 [ OK ] libmld
-120/120 [ OK ] liblibrecast
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaK3zJQAKCRB4tDGHoIJi
+0mGVAP9Zv6hXywWIK1K/hJyxUZD1xROsO1NNAjaR7gjBzzzg8QD/TGGd8P9i7J6r
+x3M30PfiUvg1IznscukX12dypHsvAAs=
+=fpYc
+-----END PGP SIGNATURE-----
 
-CPU/kernel: Linux auntie 5.15.190-rc1-00645-ge09f9302f92d #48 SMP Tue Aug 26 11:48:25 -00 2025 x86_64 AMD Ryzen 9 9950X 16-Core Processor AuthenticAMD GNU/Linux
-
-Tested-by: Brett A C Sheffield <bacs@librecast.net>
+--9HnhkVHANMCSoXTS--
 
