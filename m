@@ -1,1160 +1,251 @@
-Return-Path: <linux-kernel+bounces-786681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CDF8B36225
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:16:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F235B36281
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:19:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 335D21BA64A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:13:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8D2E464D45
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:13:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4814A284678;
-	Tue, 26 Aug 2025 13:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1CC2221704;
+	Tue, 26 Aug 2025 13:12:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b="FkfW9wPb"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hyUJefTw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD25231A55
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 13:12:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 780E034320F
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 13:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756213930; cv=none; b=Os9ZA5rxteK1H0kqB+oIyuIN9/XFVPup6I2sVAhhgIeThHYVdYXzlRq9y8GKGIfrVGQB+kHcyRmfo0JUeMg5ZcFid/qZZh20FnrHaDZ9vPgNT5q+hKs1kt9FKq7uTTOno/EqmYqtw0dS/AHyFl3bsNfSpweEstZTqX6A9nxqiQ8=
+	t=1756213943; cv=none; b=tEBS4J4xxU0s31eYMYidYKpj3v4bd5jbusciMOrYWKiv1EQ+BljlOd4mr9ZHdzLwkiArzxzziw9d7mpLRtd6F48TuAOZjWiP+5SSy2uzEckYhR/UXF4JkxCSGAKGJuaGGJCFSOSPy/CXYfeVdtZBvacEZ5sFnm9I3SXT1QP03XU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756213930; c=relaxed/simple;
-	bh=B7hjIRsEln4u369OM1KOcmZPD67zCU+kFySznR+i32c=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=LndrV4QFTnXW1o0Gad9kZ60wvHaA27ZtmYvcXY7vutMjjiYjCYQ9Fbp5tBBJL1rY1+2pGxyQG6xuAzhVX/6P6Rdp03ABwnJVDIFP+uG10krDeVfaaEZXshVgvMiqtLdOXo6MfDZb3Y/6O5IS8mIK74JWlaaoG94byOFe9YobKHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com; spf=none smtp.mailfrom=readmodwrite.com; dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b=FkfW9wPb; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=readmodwrite.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45a1b0cbbbaso49358825e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 06:12:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=readmodwrite-com.20230601.gappssmtp.com; s=20230601; t=1756213925; x=1756818725; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QWnwccwWAHJQu1NB4pszaR/s8cz39BHphAtFOEL4IDo=;
-        b=FkfW9wPbEeUDp1NS/Aa/SKy8fYXMsvLQMRgYRoJAjVXcL1JUD3NH/p6cS97ecLPzee
-         fj7tP+/ETd2sznA5cLiagphbL4gY9HqXWmjF3XAv3ane3u1tv7ni5AMLVXwJn2eOezpq
-         5++9et8hfz7MwE9DyG9TWzcDun11vy5aPC8ot14kmSWm7V4DID65XViJt+y1S2zgme9J
-         GYoxTqJh9o9WHN+eYaEPI4hlqW7FIWcHivhflxJiz2VxYMqJ80pbEdoNEwFYTVsCz+/C
-         I8XOihdoxbGjbZDAvS9NuuOzKi4M72Dpv8Fi+rucaP9PaoXI2jUBFbmb4WXbd+MsTPm2
-         J+CA==
+	s=arc-20240116; t=1756213943; c=relaxed/simple;
+	bh=40QzJLXcV+Rtp4PL9exLUl1txV+EBlDfzHIGkrzY5Ho=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YYYpdOGsIr4A2Aeg/nOxK+Mr2MqepD2EKhviIG3rdOYrNYqjPcZq0Nh0SpT9uH4rVfaDcH7nKFX/BI9H1+UXGM6jtfbCN8/4XPFFb0LDJpRbJ95VIb1InIYS6ivtxg53wVbqZpc3XDTuNcwWRepaleQDOy1Lvk1RvrhrKksN644=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hyUJefTw; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756213940;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=4rHjziWKPYkVa/nL99Zp8lslj9SamBEgj2hG79NTy7E=;
+	b=hyUJefTwSRuFO7KbVnghI8MX1wSZqp1sp3GDGba2Jimfleef7B9wGcevGeRFlBcH3GQCK4
+	t3e2Wrx3TMSIkFd8YEJODPKgZIOmXL6vFc28xqKDaf3x9KVNv9M9Y6gKFHomGz/dPg2sC9
+	qoW3FBe7nnbUELgM246uszsuLsPu/zU=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-378-Gpw2PWHyN-iNEzhJU75gww-1; Tue, 26 Aug 2025 09:12:14 -0400
+X-MC-Unique: Gpw2PWHyN-iNEzhJU75gww-1
+X-Mimecast-MFC-AGG-ID: Gpw2PWHyN-iNEzhJU75gww_1756213933
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3cbd6cd78efso303090f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 06:12:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756213925; x=1756818725;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1756213933; x=1756818733;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=QWnwccwWAHJQu1NB4pszaR/s8cz39BHphAtFOEL4IDo=;
-        b=iN0ZlWP7hf5j8POPAKS4LWrLwPBucyT4MCpAg7Bhu5ptEdWIQ53L5q9cdt4qAMSU5X
-         ozfpwVSLiDRyI3XSyhxm1PlXTEa8OuYSejnTom1yaE1/M+t5gSsUd2PRLoL7pVx99/ON
-         Htqkznf1blT+UHY6pFzi7jnfTgUflxWj5p8PsXjLm6rAswEmINqz9l3RuNjkPhU1ZhYq
-         U+fA6YI2FZj8XSkrZ+RVoJX+keFnhHYY71eRpE2eGIp+ATHYZ+j/XwB9cDJNUt51yZxc
-         x/jBNhSiIIY2UvuVj7WuY4N1kwkvPcTZwG67Cyaqj10VTB2O588K2fgGxw09YjI3wDgE
-         pJkg==
-X-Forwarded-Encrypted: i=1; AJvYcCWKShAcfsPcGdJMsu22Rn+dBKkq0z6IQcMfSV2CdJCbax1GjGlh8Q7cYy3vaQ+sZpDZqdmPvImub6u5VJU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yya6qSDPRXmOD8RnF/inPoem2GW7Go2wVB2pdN3cMXKsTBOk+iS
-	cWUJdVBa7OkF5bPELC4Qth0L8HRzFzCqTp13/LO+jBQUkjwC4tncxG9dEEhWXGZWTCg=
-X-Gm-Gg: ASbGncs6ydTNTUAV7ftgoZScH/Fwe2o5xMa8vhzmEIzy7eOShNDDPHIJM9M23MBUeWv
-	t3ONpskft/8cA/YrCn3NDonLqQYFhf9I+8G6Dd9mWDbaPwAqZIznfGxKmuSI0dJvd51pJUsrtVw
-	MU6p0f0qHj/LJ6+ek0ib6H/MjJ1X5I6yz7ZzCI2rS96Wt/nhuF86qebTnx+W+GqnSYvkp1oFEmG
-	YkuJStqNKDs3LjEEqMAsS1EDvTsVvNR++oKOcdkEtJhB7owjNzTPqsuet1aGF/0hrEkKGY0VD5z
-	a+UNtQnz/lx1GuUM2mLQrxWU3SmbP1vzGCQYpH6aPIyAs5KmrkQftaArBogj9owbnHiuDoLklsT
-	FbNp91XyVfz4E1fti4W4YEqNwcUZV42MYJA==
-X-Google-Smtp-Source: AGHT+IEay8lqTIOvZlCtCUZ9PprZgTvMjpFjt6OC5HX8O4lLhDHwo+9WkbSA7dJap0u8MAMxkqehCA==
-X-Received: by 2002:a05:600c:1c92:b0:458:bfe1:4a81 with SMTP id 5b1f17b1804b1-45b6193c94dmr65137175e9.17.1756213924663;
-        Tue, 26 Aug 2025 06:12:04 -0700 (PDT)
-Received: from matt-Precision-5490.. ([2a09:bac1:2880:f0::3de:4a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c70e4ba078sm17670227f8f.4.2025.08.26.06.12.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 06:12:03 -0700 (PDT)
-From: Matt Fleming <matt@readmodwrite.com>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>
-Cc: Shuah Khan <shuah@kernel.org>,
-	kernel-team@cloudflare.com,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	Martin KaFai Lau <martin.lau@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	netdev@vger.kernel.org,
-	Matt Fleming <mfleming@cloudflare.com>
-Subject: [PATCH bpf-next v4] selftests/bpf: Add LPM trie microbenchmarks
-Date: Tue, 26 Aug 2025 14:11:58 +0100
-Message-Id: <20250826131158.171530-1-matt@readmodwrite.com>
-X-Mailer: git-send-email 2.34.1
+        bh=4rHjziWKPYkVa/nL99Zp8lslj9SamBEgj2hG79NTy7E=;
+        b=DT/LTw+EkHgUgn2lexyvuqsCZ3qP/ENHfMFqqADhe2IpOATfWlr5E/RHuRSntQD3a5
+         NlgR3zpzRW3knoxPVmJ159TyaKuez3jECqnB/81DhuEKmG+6oMDSpmEHuLtfI0cuv9rF
+         H7RVWDrmw+DPOnFTG2rHTNU9+BLEkyx4sX/qFzcLBbdG0r+yKkpa8uD0bzE1K/L6unvw
+         N7+bCvV3GozFp2LJjKPh8Ta/WgouvNnSBPCfNTqrL91j5gtQGTDWQcboV5S+AErXHy2y
+         TgUAAwd5roSzL01sv3Xk/Rqx/MgAkOn5Oo8+jNHgtMUV1wC/ePXGMw6odi8Q/LJFtkrd
+         eDiA==
+X-Forwarded-Encrypted: i=1; AJvYcCUs663SQmo/V0/4iq1tVTDXK6NM15N8uYzPQ9wEA8k+P/VvGz6mKCnGEjP9lV7I04jwgheOiShyz8e5pQ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaMvrT8NGW+wcN7KmI719EHQGNfYLbvNuwvLnrrhj8CzV/YgA3
+	hkHhPO8dJ6/z8GxQsKbZeSFJl2DxVdnNqGoJkYSpfzs8SugUICt/5/d9jWR4//rlTr3fdO7p3jh
+	UvRPIhJMJxAeUKo9Rc9zM1fICpvib/kzjnvh0LZAMq/v/UBDFD5WdyJoADDaUUhyR6g==
+X-Gm-Gg: ASbGncsdwMhkZKHfJuO3SzgJb41vMz2Ude5S55BD5lH5DiNsYSGqKJAoL6AHo+JEFkv
+	75k7Ioy/lu+rg5JZsOcGx1nsbfBSzvJv8xDyCrsiFTC8dwzjsYv00Wm8uezSKT4Su1JyYz0d2lN
+	2tQQ8dNzF5XE4K8dwiek3zMtzGgB4e6/KFOu/v9ykO/Kz1yvb1gRDxzh4aj7ibX+VGb5kLe6tpm
+	6xv1ubD38VZhA5eJZ63IlAuywSrcnUye3EVoLaQ9SGhQtbfSD5YUppeNAEbsgreo23SNyTxkNWz
+	vA/LyoR+aodzUFbhhqt9mlusBweWHXEWPA7XH55k3QANlMNnqHAHaDJeahF1+0brfRWBHH+28w=
+	=
+X-Received: by 2002:a05:6000:248a:b0:3c4:bc55:65e1 with SMTP id ffacd0b85a97d-3c5daefc4bcmr12578684f8f.24.1756213932545;
+        Tue, 26 Aug 2025 06:12:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEh8gAAYqvqZjTfr+OgLA4sqKw/Hb4eb8ARiS4jjSjxrCyW2eLFUtFZa5rL+EHMB8mMqDNPzA==
+X-Received: by 2002:a05:6000:248a:b0:3c4:bc55:65e1 with SMTP id ffacd0b85a97d-3c5daefc4bcmr12578596f8f.24.1756213931748;
+        Tue, 26 Aug 2025 06:12:11 -0700 (PDT)
+Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b5753ac36sm157325205e9.6.2025.08.26.06.12.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Aug 2025 06:12:11 -0700 (PDT)
+Message-ID: <73a39f45-e10c-42f8-819b-7289733eae03@redhat.com>
+Date: Tue, 26 Aug 2025 15:12:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/10] mm: update fork mm->flags initialisation to use
+ bitmap
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, "David S . Miller"
+ <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski
+ <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Kees Cook <kees@kernel.org>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache
+ <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>,
+ Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ David Rientjes <rientjes@google.com>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
+ Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
+ Peter Xu <peterx@redhat.com>, Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>, Matthew Wilcox <willy@infradead.org>,
+ Mateusz Guzik <mjguzik@gmail.com>, linux-s390@vger.kernel.org,
+ linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+References: <cover.1755012943.git.lorenzo.stoakes@oracle.com>
+ <9fb8954a7a0f0184f012a8e66f8565bcbab014ba.1755012943.git.lorenzo.stoakes@oracle.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <9fb8954a7a0f0184f012a8e66f8565bcbab014ba.1755012943.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Matt Fleming <mfleming@cloudflare.com>
+On 12.08.25 17:44, Lorenzo Stoakes wrote:
+> We now need to account for flag initialisation on fork. We retain the
+> existing logic as much as we can, but dub the existing flag mask legacy.
+> 
+> These flags are therefore required to fit in the first 32-bits of the flags
+> field.
+> 
+> However, further flag propagation upon fork can be implemented in mm_init()
+> on a per-flag basis.
+> 
+> We ensure we clear the entire bitmap prior to setting it, and use
+> __mm_flags_get_word() and __mm_flags_set_word() to manipulate these legacy
+> fields efficiently.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> ---
+>   include/linux/mm_types.h | 13 ++++++++++---
+>   kernel/fork.c            |  7 +++++--
+>   2 files changed, 15 insertions(+), 5 deletions(-)
+> 
+> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> index 38b3fa927997..25577ab39094 100644
+> --- a/include/linux/mm_types.h
+> +++ b/include/linux/mm_types.h
+> @@ -1820,16 +1820,23 @@ enum {
+>   #define MMF_TOPDOWN		31	/* mm searches top down by default */
+>   #define MMF_TOPDOWN_MASK	_BITUL(MMF_TOPDOWN)
+>   
+> -#define MMF_INIT_MASK		(MMF_DUMPABLE_MASK | MMF_DUMP_FILTER_MASK |\
+> +#define MMF_INIT_LEGACY_MASK	(MMF_DUMPABLE_MASK | MMF_DUMP_FILTER_MASK |\
+>   				 MMF_DISABLE_THP_MASK | MMF_HAS_MDWE_MASK |\
+>   				 MMF_VM_MERGE_ANY_MASK | MMF_TOPDOWN_MASK)
+>   
+> -static inline unsigned long mmf_init_flags(unsigned long flags)
+> +/* Legacy flags must fit within 32 bits. */
+> +static_assert((u64)MMF_INIT_LEGACY_MASK <= (u64)UINT_MAX);
 
-Add benchmarks for the standard set of operations: LOOKUP, INSERT,
-UPDATE, DELETE. Also include benchmarks to measure the overhead of the
-bench framework itself (NOOP) as well as the overhead of generating keys
-(BASELINE). Lastly, this includes a benchmark for FREE (trie_free())
-which is known to have terrible performance for maps with many entries.
+Why not use the magic number 32 you are mentioning in the comment? :)
 
-Benchmarks operate on tries without gaps in the key range, i.e. each
-test begins or ends with a trie with valid keys in the range [0,
-nr_entries). This is intended to cause maximum branching when traversing
-the trie.
+static_assert((u32)MMF_INIT_LEGACY_MASK != MMF_INIT_LEGACY_MASK);
 
-LOOKUP, UPDATE, DELETE, and FREE fill a BPF LPM trie from userspace
-using bpf_map_update_batch() and run the corresponding benchmark
-operation via bpf_loop(). INSERT starts with an empty map and fills it
-kernel-side from bpf_loop(). FREE records the time to free a filled LPM
-trie by attaching and destroying a BPF prog. NOOP measures the overhead
-of the test harness by running an empty function with bpf_loop().
-BASELINE is similar to NOOP except that the function generates a key.
+> +
+> +/*
+> + * Initialise legacy flags according to masks, propagating selected flags on
+> + * fork. Further flag manipulation can be performed by the caller.
 
-Each operation runs 10,000 times using bpf_loop(). Note that this value
-is intentionally independent of the number of entries in the LPM trie so
-that the stability of the results isn't affected by the number of
-entries.
+It's weird not reading "initialize", but I am afraid the kernel is 
+already tainted :P
 
-For those benchmarks that need to reset the LPM trie once it's full
-(INSERT) or empty (DELETE), throughput and latency results are scaled by
-the fraction of a second the operation actually ran to ignore any time
-spent reinitialising the trie.
+t14s: ~/git/linux nth_page $ git grep "initialise" | wc -l
+1778
+t14s: ~/git/linux nth_page $ git grep "initialize" | wc -l
+22043
 
-By default, benchmarks run using sequential keys in the range [0,
-nr_entries). BASELINE, LOOKUP, and UPDATE can use random keys via the
---random parameter but beware there is a runtime cost involved in
-generating random keys. Other benchmarks are prohibited from using
-random keys because it can skew the results, e.g. when inserting an
-existing key or deleting a missing one.
+Besides the assert simplification
 
-All measurements are recorded from within the kernel to eliminate
-syscall overhead. Most benchmarks run an XDP program to generate stats
-but FREE needs to collect latencies using fentry/fexit on
-map_free_deferred() because it's not possible to use fentry directly on
-lpm_trie.c since commit c83508da5620 ("bpf: Avoid deadlock caused by
-nested kprobe and fentry bpf programs") and there's no way to
-create/destroy a map from within an XDP program.
+Acked-by: David Hildenbrand <david@redhat.com>
 
-Here is example output from an AMD EPYC 9684X 96-Core machine for each
-of the benchmarks using a trie with 10K entries and a 32-bit prefix
-length, e.g.
-
-  $ ./bench lpm-trie-$op \
-  	--prefix_len=32  \
-	--producers=1     \
-	--nr_entries=10000
-
-     noop: throughput   74.417 ± 0.032 M ops/s ( 74.417M ops/prod), latency   13.438 ns/op
- baseline: throughput   70.107 ± 0.171 M ops/s ( 70.107M ops/prod), latency   14.264 ns/op
-   lookup: throughput    8.467 ± 0.047 M ops/s (  8.467M ops/prod), latency  118.109 ns/op
-   insert: throughput    2.440 ± 0.015 M ops/s (  2.440M ops/prod), latency  409.290 ns/op
-   update: throughput    2.806 ± 0.042 M ops/s (  2.806M ops/prod), latency  356.322 ns/op
-   delete: throughput    4.625 ± 0.011 M ops/s (  4.625M ops/prod), latency  215.613 ns/op
-     free: throughput    0.578 ± 0.006 K ops/s (  0.578K ops/prod), latency    1.730 ms/op
-
-And the same benchmarks using random keys:
-
-  $ ./bench lpm-trie-$op \
-  	--prefix_len=32  \
-	--producers=1     \
-	--nr_entries=10000 \
-	--random
-
-     noop: throughput   74.259 ± 0.335 M ops/s ( 74.259M ops/prod), latency   13.466 ns/op
- baseline: throughput   35.150 ± 0.144 M ops/s ( 35.150M ops/prod), latency   28.450 ns/op
-   lookup: throughput    7.119 ± 0.048 M ops/s (  7.119M ops/prod), latency  140.469 ns/op
-   insert: N/A
-   update: throughput    2.736 ± 0.012 M ops/s (  2.736M ops/prod), latency  365.523 ns/op
-   delete: N/A
-     free: N/A
-
-Signed-off-by: Matt Fleming <mfleming@cloudflare.com>
-Signed-off-by: Jesper Dangaard Brouer <hawk@kernel.org>
----
-
-Changes in v4:
-
- - Incorporate Jesper's NOOP and BASELINE benchmarks
- - Remove use of double underscore naming
- - Add --random parameter to use random keys (linear by default)
- - Fractional second reporting to make delete op times accurate
- - Check return value of bpf_map_update_elem()
- - Make latency_free_start a global var and remove hashmap
-
-Changes in v3:
-
- - Replace BPF_CORE_READ() with BPF_CORE_READ_STR_INTO() to avoid
-   gcc-bpf CI build failure
-
-Changes in v2:
-
- - Add Jesper's Tested-by and Revewied-by tags
- - Remove use of atomic_*() in favour of __sync_add_and_fetch()
- - Use a file-local 'deleted_entries' in the DELETE op benchmark and add
-   a comment explaining why non-atomic accesses are safe.
- - Bump 'hits' with the number of bpf_loop() loops actually executed
-
- tools/testing/selftests/bpf/Makefile          |   2 +
- tools/testing/selftests/bpf/bench.c           |  16 +
- tools/testing/selftests/bpf/bench.h           |   1 +
- .../selftests/bpf/benchs/bench_lpm_trie_map.c | 555 ++++++++++++++++++
- tools/testing/selftests/bpf/progs/lpm_trie.h  |  30 +
- .../selftests/bpf/progs/lpm_trie_bench.c      | 230 ++++++++
- .../selftests/bpf/progs/lpm_trie_map.c        |  19 +
- 7 files changed, 853 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/benchs/bench_lpm_trie_map.c
- create mode 100644 tools/testing/selftests/bpf/progs/lpm_trie.h
- create mode 100644 tools/testing/selftests/bpf/progs/lpm_trie_bench.c
- create mode 100644 tools/testing/selftests/bpf/progs/lpm_trie_map.c
-
-diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-index 4863106034df..c6555497372f 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -816,6 +816,7 @@ $(OUTPUT)/bench_bpf_hashmap_lookup.o: $(OUTPUT)/bpf_hashmap_lookup.skel.h
- $(OUTPUT)/bench_htab_mem.o: $(OUTPUT)/htab_mem_bench.skel.h
- $(OUTPUT)/bench_bpf_crypto.o: $(OUTPUT)/crypto_bench.skel.h
- $(OUTPUT)/bench_sockmap.o: $(OUTPUT)/bench_sockmap_prog.skel.h
-+$(OUTPUT)/bench_lpm_trie_map.o: $(OUTPUT)/lpm_trie_bench.skel.h $(OUTPUT)/lpm_trie_map.skel.h
- $(OUTPUT)/bench.o: bench.h testing_helpers.h $(BPFOBJ)
- $(OUTPUT)/bench: LDLIBS += -lm
- $(OUTPUT)/bench: $(OUTPUT)/bench.o \
-@@ -837,6 +838,7 @@ $(OUTPUT)/bench: $(OUTPUT)/bench.o \
- 		 $(OUTPUT)/bench_htab_mem.o \
- 		 $(OUTPUT)/bench_bpf_crypto.o \
- 		 $(OUTPUT)/bench_sockmap.o \
-+		 $(OUTPUT)/bench_lpm_trie_map.o \
- 		 #
- 	$(call msg,BINARY,,$@)
- 	$(Q)$(CC) $(CFLAGS) $(LDFLAGS) $(filter %.a %.o,$^) $(LDLIBS) -o $@
-diff --git a/tools/testing/selftests/bpf/bench.c b/tools/testing/selftests/bpf/bench.c
-index ddd73d06a1eb..23ed6feee0d9 100644
---- a/tools/testing/selftests/bpf/bench.c
-+++ b/tools/testing/selftests/bpf/bench.c
-@@ -284,6 +284,7 @@ extern struct argp bench_htab_mem_argp;
- extern struct argp bench_trigger_batch_argp;
- extern struct argp bench_crypto_argp;
- extern struct argp bench_sockmap_argp;
-+extern struct argp bench_lpm_trie_map_argp;
- 
- static const struct argp_child bench_parsers[] = {
- 	{ &bench_ringbufs_argp, 0, "Ring buffers benchmark", 0 },
-@@ -299,6 +300,7 @@ static const struct argp_child bench_parsers[] = {
- 	{ &bench_trigger_batch_argp, 0, "BPF triggering benchmark", 0 },
- 	{ &bench_crypto_argp, 0, "bpf crypto benchmark", 0 },
- 	{ &bench_sockmap_argp, 0, "bpf sockmap benchmark", 0 },
-+	{ &bench_lpm_trie_map_argp, 0, "LPM trie map benchmark", 0 },
- 	{},
- };
- 
-@@ -558,6 +560,13 @@ extern const struct bench bench_htab_mem;
- extern const struct bench bench_crypto_encrypt;
- extern const struct bench bench_crypto_decrypt;
- extern const struct bench bench_sockmap;
-+extern const struct bench bench_lpm_trie_noop;
-+extern const struct bench bench_lpm_trie_baseline;
-+extern const struct bench bench_lpm_trie_lookup;
-+extern const struct bench bench_lpm_trie_insert;
-+extern const struct bench bench_lpm_trie_update;
-+extern const struct bench bench_lpm_trie_delete;
-+extern const struct bench bench_lpm_trie_free;
- 
- static const struct bench *benchs[] = {
- 	&bench_count_global,
-@@ -625,6 +634,13 @@ static const struct bench *benchs[] = {
- 	&bench_crypto_encrypt,
- 	&bench_crypto_decrypt,
- 	&bench_sockmap,
-+	&bench_lpm_trie_noop,
-+	&bench_lpm_trie_baseline,
-+	&bench_lpm_trie_lookup,
-+	&bench_lpm_trie_insert,
-+	&bench_lpm_trie_update,
-+	&bench_lpm_trie_delete,
-+	&bench_lpm_trie_free,
- };
- 
- static void find_benchmark(void)
-diff --git a/tools/testing/selftests/bpf/bench.h b/tools/testing/selftests/bpf/bench.h
-index 005c401b3e22..bea323820ffb 100644
---- a/tools/testing/selftests/bpf/bench.h
-+++ b/tools/testing/selftests/bpf/bench.h
-@@ -46,6 +46,7 @@ struct bench_res {
- 	unsigned long gp_ns;
- 	unsigned long gp_ct;
- 	unsigned int stime;
-+	unsigned long duration_ns;
- };
- 
- struct bench {
-diff --git a/tools/testing/selftests/bpf/benchs/bench_lpm_trie_map.c b/tools/testing/selftests/bpf/benchs/bench_lpm_trie_map.c
-new file mode 100644
-index 000000000000..246f6cb3387d
---- /dev/null
-+++ b/tools/testing/selftests/bpf/benchs/bench_lpm_trie_map.c
-@@ -0,0 +1,555 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2025 Cloudflare */
-+
-+/*
-+ * All of these benchmarks operate on tries with keys in the range
-+ * [0, args.nr_entries), i.e. there are no gaps or partially filled
-+ * branches of the trie for any key < args.nr_entries.
-+ *
-+ * This gives an idea of worst-case behaviour.
-+ */
-+
-+#include <argp.h>
-+#include <linux/time64.h>
-+#include <linux/if_ether.h>
-+#include "lpm_trie_bench.skel.h"
-+#include "lpm_trie_map.skel.h"
-+#include "bench.h"
-+#include "testing_helpers.h"
-+#include "progs/lpm_trie.h"
-+
-+static struct ctx {
-+	struct lpm_trie_bench *bench;
-+} ctx;
-+
-+static struct {
-+	__u32 nr_entries;
-+	__u32 prefixlen;
-+	bool random;
-+} args = {
-+	.nr_entries = 0,
-+	.prefixlen = 32,
-+	.random = false,
-+};
-+
-+enum {
-+	ARG_NR_ENTRIES = 9000,
-+	ARG_PREFIX_LEN,
-+	ARG_RANDOM,
-+};
-+
-+static const struct argp_option opts[] = {
-+	{ "nr_entries", ARG_NR_ENTRIES, "NR_ENTRIES", 0,
-+	  "Number of unique entries in the LPM trie" },
-+	{ "prefix_len", ARG_PREFIX_LEN, "PREFIX_LEN", 0,
-+	  "Number of prefix bits to use in the LPM trie" },
-+	{ "random", ARG_RANDOM, NULL, 0, "Access random keys during op" },
-+	{},
-+};
-+
-+static error_t lpm_parse_arg(int key, char *arg, struct argp_state *state)
-+{
-+	long ret;
-+
-+	switch (key) {
-+	case ARG_NR_ENTRIES:
-+		ret = strtol(arg, NULL, 10);
-+		if (ret < 1 || ret > UINT_MAX) {
-+			fprintf(stderr, "Invalid nr_entries count.");
-+			argp_usage(state);
-+		}
-+		args.nr_entries = ret;
-+		break;
-+	case ARG_PREFIX_LEN:
-+		ret = strtol(arg, NULL, 10);
-+		if (ret < 1 || ret > UINT_MAX) {
-+			fprintf(stderr, "Invalid prefix_len value.");
-+			argp_usage(state);
-+		}
-+		args.prefixlen = ret;
-+		break;
-+	case ARG_RANDOM:
-+		args.random = true;
-+		break;
-+	default:
-+		return ARGP_ERR_UNKNOWN;
-+	}
-+	return 0;
-+}
-+
-+const struct argp bench_lpm_trie_map_argp = {
-+	.options = opts,
-+	.parser = lpm_parse_arg,
-+};
-+
-+static void validate_common(void)
-+{
-+	if (env.consumer_cnt != 0) {
-+		fprintf(stderr, "benchmark doesn't support consumer\n");
-+		exit(1);
-+	}
-+
-+	if (args.nr_entries == 0) {
-+		fprintf(stderr, "Missing --nr_entries parameter\n");
-+		exit(1);
-+	}
-+
-+	if ((1UL << args.prefixlen) < args.nr_entries) {
-+		fprintf(stderr, "prefix_len value too small for nr_entries\n");
-+		exit(1);
-+	}
-+}
-+
-+static void lpm_insert_validate(void)
-+{
-+	validate_common();
-+
-+	if (env.producer_cnt != 1) {
-+		fprintf(stderr, "lpm-trie-insert requires a single producer\n");
-+		exit(1);
-+	}
-+
-+	if (args.random) {
-+		fprintf(stderr, "lpm-trie-insert does not support --random\n");
-+		exit(1);
-+	}
-+}
-+
-+static void lpm_delete_validate(void)
-+{
-+	validate_common();
-+
-+	if (env.producer_cnt != 1) {
-+		fprintf(stderr, "lpm-trie-delete requires a single producer\n");
-+		exit(1);
-+	}
-+
-+	if (args.random) {
-+		fprintf(stderr, "lpm-trie-delete does not support --random\n");
-+		exit(1);
-+	}
-+}
-+
-+static void lpm_free_validate(void)
-+{
-+	validate_common();
-+
-+	if (env.producer_cnt != 1) {
-+		fprintf(stderr, "lpm-trie-free requires a single producer\n");
-+		exit(1);
-+	}
-+
-+	if (args.random) {
-+		fprintf(stderr, "lpm-trie-free does not support --random\n");
-+		exit(1);
-+	}
-+}
-+
-+static struct trie_key *keys;
-+static __u32 *vals;
-+
-+static void fill_map(int map_fd)
-+{
-+	int err;
-+
-+	DECLARE_LIBBPF_OPTS(bpf_map_batch_opts, opts,
-+		.elem_flags = 0,
-+		.flags = 0,
-+	);
-+
-+	err = bpf_map_update_batch(map_fd, keys, vals, &args.nr_entries, &opts);
-+	if (err) {
-+		fprintf(stderr, "failed to batch update keys to map: %d\n",
-+			-err);
-+		exit(1);
-+	}
-+}
-+
-+static void empty_map(int map_fd)
-+{
-+	int err;
-+
-+	DECLARE_LIBBPF_OPTS(bpf_map_batch_opts, opts,
-+		.elem_flags = 0,
-+		.flags = 0,
-+	);
-+
-+	err = bpf_map_delete_batch(map_fd, keys, &args.nr_entries, &opts);
-+	if (err) {
-+		fprintf(stderr, "failed to batch delete keys for map: %d\n",
-+			-err);
-+		exit(1);
-+	}
-+}
-+
-+static void attach_prog(void)
-+{
-+	int i;
-+
-+	ctx.bench = lpm_trie_bench__open_and_load();
-+	if (!ctx.bench) {
-+		fprintf(stderr, "failed to open skeleton\n");
-+		exit(1);
-+	}
-+
-+	ctx.bench->bss->nr_entries = args.nr_entries;
-+	ctx.bench->bss->prefixlen = args.prefixlen;
-+	ctx.bench->bss->random = args.random;
-+
-+	if (lpm_trie_bench__attach(ctx.bench)) {
-+		fprintf(stderr, "failed to attach skeleton\n");
-+		exit(1);
-+	}
-+
-+	keys = calloc(args.nr_entries, sizeof(*keys));
-+	vals = calloc(args.nr_entries, sizeof(*vals));
-+
-+	for (i = 0; i < args.nr_entries; i++) {
-+		struct trie_key *k = &keys[i];
-+		__u32 *v = &vals[i];
-+
-+		k->prefixlen = args.prefixlen;
-+		k->data = i;
-+		*v = 1;
-+	}
-+}
-+
-+static void attach_prog_and_fill_map(void)
-+{
-+	int fd;
-+
-+	attach_prog();
-+
-+	fd = bpf_map__fd(ctx.bench->maps.trie_map);
-+	fill_map(fd);
-+}
-+
-+static void lpm_noop_setup(void)
-+{
-+	attach_prog();
-+	ctx.bench->bss->op = LPM_OP_NOOP;
-+}
-+
-+static void lpm_baseline_setup(void)
-+{
-+	attach_prog();
-+	ctx.bench->bss->op = LPM_OP_BASELINE;
-+}
-+
-+static void lpm_lookup_setup(void)
-+{
-+	attach_prog_and_fill_map();
-+	ctx.bench->bss->op = LPM_OP_LOOKUP;
-+}
-+
-+static void lpm_insert_setup(void)
-+{
-+	attach_prog();
-+	ctx.bench->bss->op = LPM_OP_INSERT;
-+}
-+
-+static void lpm_update_setup(void)
-+{
-+	attach_prog_and_fill_map();
-+	ctx.bench->bss->op = LPM_OP_UPDATE;
-+}
-+
-+static void lpm_delete_setup(void)
-+{
-+	attach_prog_and_fill_map();
-+	ctx.bench->bss->op = LPM_OP_DELETE;
-+}
-+
-+static void lpm_free_setup(void)
-+{
-+	attach_prog();
-+	ctx.bench->bss->op = LPM_OP_FREE;
-+}
-+
-+static void lpm_measure(struct bench_res *res)
-+{
-+	res->hits = atomic_swap(&ctx.bench->bss->hits, 0);
-+	res->duration_ns = atomic_swap(&ctx.bench->bss->duration_ns, 0);
-+}
-+
-+static void bench_reinit_map(void)
-+{
-+	int fd = bpf_map__fd(ctx.bench->maps.trie_map);
-+
-+	switch (ctx.bench->bss->op) {
-+	case LPM_OP_INSERT:
-+		/* trie_map needs to be emptied */
-+		empty_map(fd);
-+		break;
-+	case LPM_OP_DELETE:
-+		/* trie_map needs to be refilled */
-+		fill_map(fd);
-+		break;
-+	default:
-+		fprintf(stderr, "Unexpected REINIT return code for op %d\n",
-+				ctx.bench->bss->op);
-+		exit(1);
-+	}
-+}
-+
-+/* For NOOP, BASELINE, LOOKUP, INSERT, UPDATE, and DELETE */
-+static void *lpm_producer(void *unused __always_unused)
-+{
-+	int err;
-+	char in[ETH_HLEN]; /* unused */
-+
-+	LIBBPF_OPTS(bpf_test_run_opts, opts, .data_in = in,
-+		    .data_size_in = sizeof(in), .repeat = 1, );
-+
-+	while (true) {
-+		int fd = bpf_program__fd(ctx.bench->progs.run_bench);
-+		err = bpf_prog_test_run_opts(fd, &opts);
-+		if (err) {
-+			fprintf(stderr, "failed to run BPF prog: %d\n", err);
-+			exit(1);
-+		}
-+
-+		/* Check for kernel error code */
-+		if ((int)opts.retval < 0) {
-+			fprintf(stderr, "BPF prog returned error: %d\n",
-+				opts.retval);
-+			exit(1);
-+		}
-+
-+		switch (opts.retval) {
-+		case LPM_BENCH_SUCCESS:
-+			break;
-+		case LPM_BENCH_REINIT_MAP:
-+			bench_reinit_map();
-+			break;
-+		default:
-+			fprintf(stderr, "Unexpected BPF prog return code %d for op %d\n",
-+					opts.retval, ctx.bench->bss->op);
-+			exit(1);
-+		}
-+	}
-+
-+	return NULL;
-+}
-+
-+static void *lpm_free_producer(void *unused __always_unused)
-+{
-+	while (true) {
-+		struct lpm_trie_map *skel;
-+
-+		skel = lpm_trie_map__open_and_load();
-+		if (!skel) {
-+			fprintf(stderr, "failed to open skeleton\n");
-+			exit(1);
-+		}
-+
-+		fill_map(bpf_map__fd(skel->maps.trie_free_map));
-+		lpm_trie_map__destroy(skel);
-+	}
-+
-+	return NULL;
-+}
-+
-+/*
-+ * The standard bench op_report_*() functions assume measurements are
-+ * taken over a 1-second interval but operations that modify the map
-+ * (INSERT, DELETE, and FREE) cannot run indefinitely without
-+ * "resetting" the map to the initial state. Depending on the size of
-+ * the map, this likely needs to happen before the 1-second timer fires.
-+ *
-+ * Calculate the fraction of a second over which the op measurement was
-+ * taken (to ignore any time spent doing the reset) and report the
-+ * throughput results per second.
-+ */
-+static void frac_second_report_progress(int iter, struct bench_res *res,
-+					long delta_ns, double rate_divisor,
-+					char rate)
-+{
-+	double hits_per_sec, hits_per_prod;
-+
-+	hits_per_sec = res->hits / rate_divisor /
-+		(res->duration_ns / (double)NSEC_PER_SEC);
-+	hits_per_prod = hits_per_sec / env.producer_cnt;
-+
-+	printf("Iter %3d (%7.3lfus): ", iter,
-+	       (delta_ns - NSEC_PER_SEC) / 1000.0);
-+	printf("hits %8.3lf%c/s (%7.3lf%c/prod)\n", hits_per_sec, rate,
-+	       hits_per_prod, rate);
-+}
-+
-+static void frac_second_report_final(struct bench_res res[], int res_cnt,
-+				     double lat_divisor, double rate_divisor,
-+				     char rate, const char *unit)
-+{
-+	double hits_mean = 0.0, hits_stddev = 0.0;
-+	double latency = 0.0;
-+	int i;
-+
-+	for (i = 0; i < res_cnt; i++) {
-+		double val = res[i].hits / rate_divisor /
-+			     (res[i].duration_ns / (double)NSEC_PER_SEC);
-+		hits_mean += val / (0.0 + res_cnt);
-+		latency += res[i].duration_ns / res[i].hits / (0.0 + res_cnt);
-+	}
-+
-+	if (res_cnt > 1) {
-+		for (i = 0; i < res_cnt; i++) {
-+			double val =
-+				res[i].hits / rate_divisor /
-+				(res[i].duration_ns / (double)NSEC_PER_SEC);
-+			hits_stddev += (hits_mean - val) * (hits_mean - val) /
-+				       (res_cnt - 1.0);
-+		}
-+
-+		hits_stddev = sqrt(hits_stddev);
-+	}
-+	printf("Summary: throughput %8.3lf \u00B1 %5.3lf %c ops/s (%7.3lf%c ops/prod), ",
-+	       hits_mean, hits_stddev, rate, hits_mean / env.producer_cnt,
-+	       rate);
-+	printf("latency %8.3lf %s/op\n",
-+	       latency / lat_divisor / env.producer_cnt, unit);
-+}
-+
-+static void insert_ops_report_progress(int iter, struct bench_res *res,
-+				       long delta_ns)
-+{
-+	double rate_divisor = 1000000.0;
-+	char rate = 'M';
-+
-+	frac_second_report_progress(iter, res, delta_ns, rate_divisor, rate);
-+}
-+
-+static void delete_ops_report_progress(int iter, struct bench_res *res,
-+				       long delta_ns)
-+{
-+	double rate_divisor = 1000000.0;
-+	char rate = 'M';
-+
-+	frac_second_report_progress(iter, res, delta_ns, rate_divisor, rate);
-+}
-+
-+static void free_ops_report_progress(int iter, struct bench_res *res,
-+				     long delta_ns)
-+{
-+	double rate_divisor = 1000.0;
-+	char rate = 'K';
-+
-+	frac_second_report_progress(iter, res, delta_ns, rate_divisor, rate);
-+}
-+
-+static void insert_ops_report_final(struct bench_res res[], int res_cnt)
-+{
-+	double lat_divisor = 1.0;
-+	double rate_divisor = 1000000.0;
-+	const char *unit = "ns";
-+	char rate = 'M';
-+
-+	frac_second_report_final(res, res_cnt, lat_divisor, rate_divisor, rate,
-+				 unit);
-+}
-+
-+static void delete_ops_report_final(struct bench_res res[], int res_cnt)
-+{
-+	double lat_divisor = 1.0;
-+	double rate_divisor = 1000000.0;
-+	const char *unit = "ns";
-+	char rate = 'M';
-+
-+	frac_second_report_final(res, res_cnt, lat_divisor, rate_divisor, rate,
-+				 unit);
-+}
-+
-+static void free_ops_report_final(struct bench_res res[], int res_cnt)
-+{
-+	double lat_divisor = 1000000.0;
-+	double rate_divisor = 1000.0;
-+	const char *unit = "ms";
-+	char rate = 'K';
-+
-+	frac_second_report_final(res, res_cnt, lat_divisor, rate_divisor, rate,
-+				 unit);
-+}
-+
-+/* noop bench measures harness-overhead */
-+const struct bench bench_lpm_trie_noop = {
-+	.name = "lpm-trie-noop",
-+	.argp = &bench_lpm_trie_map_argp,
-+	.validate = validate_common,
-+	.setup = lpm_noop_setup,
-+	.producer_thread = lpm_producer,
-+	.measure = lpm_measure,
-+	.report_progress = ops_report_progress,
-+	.report_final = ops_report_final,
-+};
-+
-+/* baseline overhead for lookup and update */
-+const struct bench bench_lpm_trie_baseline = {
-+	.name = "lpm-trie-baseline",
-+	.argp = &bench_lpm_trie_map_argp,
-+	.validate = validate_common,
-+	.setup = lpm_baseline_setup,
-+	.producer_thread = lpm_producer,
-+	.measure = lpm_measure,
-+	.report_progress = ops_report_progress,
-+	.report_final = ops_report_final,
-+};
-+
-+/* measure cost of doing a lookup on existing entries in a full trie */
-+const struct bench bench_lpm_trie_lookup = {
-+	.name = "lpm-trie-lookup",
-+	.argp = &bench_lpm_trie_map_argp,
-+	.validate = validate_common,
-+	.setup = lpm_lookup_setup,
-+	.producer_thread = lpm_producer,
-+	.measure = lpm_measure,
-+	.report_progress = ops_report_progress,
-+	.report_final = ops_report_final,
-+};
-+
-+/* measure cost of inserting new entries into an empty trie */
-+const struct bench bench_lpm_trie_insert = {
-+	.name = "lpm-trie-insert",
-+	.argp = &bench_lpm_trie_map_argp,
-+	.validate = lpm_insert_validate,
-+	.setup = lpm_insert_setup,
-+	.producer_thread = lpm_producer,
-+	.measure = lpm_measure,
-+	.report_progress = insert_ops_report_progress,
-+	.report_final = insert_ops_report_final,
-+};
-+
-+/* measure cost of updating existing entries in a full trie */
-+const struct bench bench_lpm_trie_update = {
-+	.name = "lpm-trie-update",
-+	.argp = &bench_lpm_trie_map_argp,
-+	.validate = validate_common,
-+	.setup = lpm_update_setup,
-+	.producer_thread = lpm_producer,
-+	.measure = lpm_measure,
-+	.report_progress = ops_report_progress,
-+	.report_final = ops_report_final,
-+};
-+
-+/* measure cost of deleting existing entries from a full trie */
-+const struct bench bench_lpm_trie_delete = {
-+	.name = "lpm-trie-delete",
-+	.argp = &bench_lpm_trie_map_argp,
-+	.validate = lpm_delete_validate,
-+	.setup = lpm_delete_setup,
-+	.producer_thread = lpm_producer,
-+	.measure = lpm_measure,
-+	.report_progress = delete_ops_report_progress,
-+	.report_final = delete_ops_report_final,
-+};
-+
-+/* measure cost of freeing a full trie */
-+const struct bench bench_lpm_trie_free = {
-+	.name = "lpm-trie-free",
-+	.argp = &bench_lpm_trie_map_argp,
-+	.validate = lpm_free_validate,
-+	.setup = lpm_free_setup,
-+	.producer_thread = lpm_free_producer,
-+	.measure = lpm_measure,
-+	.report_progress = free_ops_report_progress,
-+	.report_final = free_ops_report_final,
-+};
-diff --git a/tools/testing/selftests/bpf/progs/lpm_trie.h b/tools/testing/selftests/bpf/progs/lpm_trie.h
-new file mode 100644
-index 000000000000..76aa5821807f
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/lpm_trie.h
-@@ -0,0 +1,30 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+
-+#ifndef __PROGS_LPM_TRIE_H
-+#define __PROGS_LPM_TRIE_H
-+
-+struct trie_key {
-+	__u32 prefixlen;
-+	__u32 data;
-+};
-+
-+/* Benchmark operations */
-+enum {
-+	LPM_OP_NOOP = 0,
-+	LPM_OP_BASELINE,
-+	LPM_OP_LOOKUP,
-+	LPM_OP_INSERT,
-+	LPM_OP_UPDATE,
-+	LPM_OP_DELETE,
-+	LPM_OP_FREE
-+};
-+
-+/*
-+ * Return values from run_bench.
-+ *
-+ * Negative values are also allowed and represent kernel error codes.
-+ */
-+#define LPM_BENCH_SUCCESS	0
-+#define LPM_BENCH_REINIT_MAP 	1	/* Reset trie to initial state for current op */
-+
-+#endif
-diff --git a/tools/testing/selftests/bpf/progs/lpm_trie_bench.c b/tools/testing/selftests/bpf/progs/lpm_trie_bench.c
-new file mode 100644
-index 000000000000..42e0c0bba07c
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/lpm_trie_bench.c
-@@ -0,0 +1,230 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2025 Cloudflare */
-+
-+#include <vmlinux.h>
-+#include <errno.h>
-+#include <bpf/bpf_tracing.h>
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_core_read.h>
-+#include "bpf_misc.h"
-+#include "bpf_atomic.h"
-+#include "progs/lpm_trie.h"
-+
-+#define BPF_OBJ_NAME_LEN 16U
-+#define MAX_ENTRIES 100000000
-+#define NR_LOOPS 10000
-+
-+char _license[] SEC("license") = "GPL";
-+
-+/* Filled by userspace. See fill_map() in bench_lpm_trie_map.c */
-+struct {
-+	__uint(type, BPF_MAP_TYPE_LPM_TRIE);
-+	__type(key, struct trie_key);
-+	__type(value, __u32);
-+	__uint(map_flags, BPF_F_NO_PREALLOC);
-+	__uint(max_entries, MAX_ENTRIES);
-+} trie_map SEC(".maps");
-+
-+long hits;
-+long duration_ns;
-+
-+/* Configured from userspace */
-+__u32 nr_entries;
-+__u32 prefixlen;
-+bool random;
-+__u8 op;
-+
-+static __u64 latency_free_start;
-+
-+SEC("fentry/bpf_map_free_deferred")
-+int BPF_PROG(trie_free_entry, struct work_struct *work)
-+{
-+	struct bpf_map *map = container_of(work, struct bpf_map, work);
-+	char name[BPF_OBJ_NAME_LEN];
-+	u32 map_type;
-+
-+	map_type = BPF_CORE_READ(map, map_type);
-+	if (map_type != BPF_MAP_TYPE_LPM_TRIE)
-+		return 0;
-+
-+	/*
-+	 * Ideally we'd have access to the map ID but that's already
-+	 * freed before we enter trie_free().
-+	 */
-+	BPF_CORE_READ_STR_INTO(&name, map, name);
-+	if (bpf_strncmp(name, BPF_OBJ_NAME_LEN, "trie_free_map"))
-+		return 0;
-+
-+	latency_free_start = bpf_ktime_get_ns();
-+
-+	return 0;
-+}
-+
-+SEC("fexit/bpf_map_free_deferred")
-+int BPF_PROG(trie_free_exit, struct work_struct *work)
-+{
-+	__u64 val;
-+
-+	if (!latency_free_start)
-+		return 0;
-+
-+	val = bpf_ktime_get_ns() - latency_free_start;
-+	latency_free_start = 0;
-+
-+	__sync_add_and_fetch(&duration_ns, val);
-+	__sync_add_and_fetch(&hits, 1);
-+
-+	return 0;
-+}
-+
-+static __u32 cur_key;
-+
-+static __always_inline void generate_key(struct trie_key *key)
-+{
-+	key->prefixlen = prefixlen;
-+
-+	if (random)
-+		key->data = bpf_get_prandom_u32() % nr_entries;
-+	else
-+		key->data = cur_key++ % nr_entries;
-+}
-+
-+static int noop(__u32 index, __u32 *unused)
-+{
-+	return 0;
-+}
-+
-+static int baseline(__u32 index, __u32 *unused)
-+{
-+	struct trie_key key;
-+	__s64 blackbox;
-+
-+	generate_key(&key);
-+	/* Avoid compiler optimizing out the modulo */
-+	barrier_var(blackbox);
-+	blackbox = READ_ONCE(key.data);
-+
-+	return 0;
-+}
-+
-+static int lookup(__u32 index, int *retval)
-+{
-+	struct trie_key key;
-+
-+	generate_key(&key);
-+	if (!bpf_map_lookup_elem(&trie_map, &key)) {
-+		*retval = -ENOENT;
-+		return 1;
-+	}
-+
-+	return 0;
-+}
-+
-+static int insert(__u32 index, int *retval)
-+{
-+	struct trie_key key;
-+	u32 val = 1;
-+	int err;
-+
-+	generate_key(&key);
-+	err = bpf_map_update_elem(&trie_map, &key, &val, BPF_NOEXIST);
-+	if (err) {
-+		*retval = err;
-+		return 1;
-+	}
-+
-+	/* Is this the last entry? */
-+	if (key.data == nr_entries - 1) {
-+		/* For atomicity concerns, see the comment in delete() */
-+		*retval = LPM_BENCH_REINIT_MAP;
-+		return 1;
-+	}
-+
-+	return 0;
-+}
-+
-+static int update(__u32 index, int *retval)
-+{
-+	struct trie_key key;
-+	u32 val = 1;
-+	int err;
-+
-+	generate_key(&key);
-+	err = bpf_map_update_elem(&trie_map, &key, &val, BPF_EXIST);
-+	if (err) {
-+		*retval = err;
-+		return 1;
-+	}
-+
-+	return 0;
-+}
-+
-+static int delete(__u32 index, int *retval)
-+{
-+	struct trie_key key;
-+	int err;
-+
-+	generate_key(&key);
-+	err = bpf_map_delete_elem(&trie_map, &key);
-+	if (err) {
-+		*retval = err;
-+		return 1;
-+	}
-+
-+	/* Do we need to refill the map? */
-+	if (key.data == nr_entries - 1) {
-+		/*
-+		 * Atomicity isn't required because DELETE only supports
-+		 * one producer running concurrently. What we need is a
-+		 * way to track how many entries have been deleted from
-+		 * the trie between consecutive invocations of the BPF
-+		 * prog because a single bpf_loop() call might not
-+		 * delete all entries, e.g. when NR_LOOPS < nr_entries.
-+		 */
-+		*retval = LPM_BENCH_REINIT_MAP;
-+		return 1;
-+	}
-+
-+	return 0;
-+}
-+
-+SEC("xdp")
-+int BPF_PROG(run_bench)
-+{
-+	int err = LPM_BENCH_SUCCESS;
-+	u64 start, delta;
-+	int loops;
-+
-+	start = bpf_ktime_get_ns();
-+
-+	switch (op) {
-+	case LPM_OP_NOOP:
-+		loops = bpf_loop(NR_LOOPS, noop, NULL, 0);
-+		break;
-+	case LPM_OP_BASELINE:
-+		loops = bpf_loop(NR_LOOPS, baseline, NULL, 0);
-+		break;
-+	case LPM_OP_LOOKUP:
-+		loops = bpf_loop(NR_LOOPS, lookup, &err, 0);
-+		break;
-+	case LPM_OP_INSERT:
-+		loops = bpf_loop(NR_LOOPS, insert, &err, 0);
-+		break;
-+	case LPM_OP_UPDATE:
-+		loops = bpf_loop(NR_LOOPS, update, &err, 0);
-+		break;
-+	case LPM_OP_DELETE:
-+		loops = bpf_loop(NR_LOOPS, delete, &err, 0);
-+		break;
-+	default:
-+		bpf_printk("invalid benchmark operation\n");
-+		return -1;
-+	}
-+
-+	delta = bpf_ktime_get_ns() - start;
-+
-+	__sync_add_and_fetch(&duration_ns, delta);
-+	__sync_add_and_fetch(&hits, loops);
-+
-+	return err;
-+}
-diff --git a/tools/testing/selftests/bpf/progs/lpm_trie_map.c b/tools/testing/selftests/bpf/progs/lpm_trie_map.c
-new file mode 100644
-index 000000000000..2ab43e2cd6c6
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/lpm_trie_map.c
-@@ -0,0 +1,19 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+#include <linux/bpf.h>
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+
-+#define MAX_ENTRIES 100000000
-+
-+struct trie_key {
-+	__u32 prefixlen;
-+	__u32 data;
-+};
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_LPM_TRIE);
-+	__type(key, struct trie_key);
-+	__type(value, __u32);
-+	__uint(map_flags, BPF_F_NO_PREALLOC);
-+	__uint(max_entries, MAX_ENTRIES);
-+} trie_free_map SEC(".maps");
 -- 
-2.34.1
+Cheers
+
+David / dhildenb
 
 
