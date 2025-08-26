@@ -1,125 +1,103 @@
-Return-Path: <linux-kernel+bounces-787208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DAEDB37301
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 21:24:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0298EB37306
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 21:25:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADC7A1B68276
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:24:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1928E1BA5C19
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:25:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 891BA36CC76;
-	Tue, 26 Aug 2025 19:24:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17DBC36CC76;
+	Tue, 26 Aug 2025 19:25:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thiebaut.dev header.i=@thiebaut.dev header.b="HAguUeCU"
-Received: from mail-24421.protonmail.ch (mail-24421.protonmail.ch [109.224.244.21])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LGvR0U5Y"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D6F3164D9
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 19:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52042F0C5E
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 19:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756236248; cv=none; b=SAoAjIKODpUsEw4j0t8arfUbGK1+Jemo/wiKQoP0kP3ac9vxRUJgAexKpPopMoPr6+Q3829LfKkZrkGBii9VR+UPB8emL9AtBQGYJ9F6JAi74svrTjpdI6q7ARlETBQJHfYihzDnMTs5YL6VkW1eqMBvDCTPhUPV6E/l4uTf05Q=
+	t=1756236327; cv=none; b=iw3k9xnMs/A0CZsQDIR71Asupxa4CuZUaOIZLtur/y/ogDwQZnqROvmxDUUbEIVHztFgMlxCfMY1MeYqseXCvyPgV0YpFzWduERpJcKK2z+cstVQ6Tm7FkqW1fhqagEpoOavmQZOqdcgSjMsR1C46OkTspOEbqwVPlo9joxqLlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756236248; c=relaxed/simple;
-	bh=00Q7Hs8jlSNSChMZndYZE2KaWXr25PQNp+p1rSW1QBk=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ZmhFlXiY+dhxbGdhR9UzwABBQKw8/n6r6ytMIaY41dIw0YSnr8209BpwZ+hpxiZ3Wt8gQhwUmVcW91a5CF6AL58Uqs+XxYNhWg54Oc1Nfgpy1bIsyxObtFnqmEWq1QSRvNG6B5sJPH4YBlnqtMN+2FgN63ThN4LNpKWS9yuP36A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thiebaut.dev; spf=pass smtp.mailfrom=thiebaut.dev; dkim=pass (2048-bit key) header.d=thiebaut.dev header.i=@thiebaut.dev header.b=HAguUeCU; arc=none smtp.client-ip=109.224.244.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thiebaut.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thiebaut.dev
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thiebaut.dev;
-	s=protonmail3; t=1756236237; x=1756495437;
-	bh=6n7ZSXtCe9rqZ+HVajqBkrfvKWmKlOKzChZBHFb0bpU=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=HAguUeCUeT/b/nZFHAL6tqJwqow7HzXeK/KXy9xOhm2OKWdpnHtaRZFFYIRcWaVdE
-	 f9HU7GiMpC2b1srG+k4nTHasK0OrmzIpq89BT12+pF2PoLgz42aSpCLLJYCQGiQ71G
-	 oO7vn9lf0aQLFmJKsJKKFXLhv6CSUVLeN5QsOI9hklSIhca6NHYQyCfTb2moO3XNus
-	 GNjjopIojPYfQcMTJXE2IEhYRSk3PBo0/V5/0UWAr/xl1XYIIhvat2BzBzOj8FWNnh
-	 BDnbS89GiJfHn9pVdhupoYxmsrL0w8m/xAL36PjgvWiGe3rNCN4M9vEj5iILbcUpLd
-	 AJxjcQLgEVkgw==
-Date: Tue, 26 Aug 2025 19:23:49 +0000
-To: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, Masahiro Yamada <masahiroy@kernel.org>
-From: Maxime Thiebaut <maxime@thiebaut.dev>
-Cc: "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH] extract-vmlinux: Output used decompression method
-Message-ID: <X6OQ4pHdpreJtlTnf0tFEb4Uxz8T8gFv_7Yw6tpBK4ZBgHYjJr_URwUwCVynpkb-H8Yjk7DdBF01zY-sfqu_7N5trZQfcd6s_4PtdGlHtlA=@thiebaut.dev>
-Feedback-ID: 14194939:user:proton
-X-Pm-Message-ID: 82936b61c33314ae1919a87f4df21c1180443ed6
+	s=arc-20240116; t=1756236327; c=relaxed/simple;
+	bh=TIwen88LojEtqJsmUY7vK8YG0QX4vhduLnEXSKWkIhk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LY0kVV8bNo6PQ/l72WEEDp5Zj4ktdQf/Fjj0w5O8devru6ihjri6c3uORiJiwJ5OkAeOyfdLRIURh6caG3wtCBcocvSU47XMGqqu0IPXQows8MihArpaj8L6e6xLymbaE3w0ld0CdetKaZ0WDqtDPNQ9RioAZkKS0viJlIpAnxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LGvR0U5Y; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 26 Aug 2025 12:24:20 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756236310;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y4qvZnHIq/rLDQqSB4x4EUgaIF9JpQ4JSYMZzNwApLY=;
+	b=LGvR0U5Y3NhPWpyPQSEB//AwQyYyNUfzVXjRtH8g9Du9ppuBHDt72wfrXdvhpiOM4tPIed
+	rdp52ERydTIoS9iACwUc2dSfUGEKEH0jdoateYW1J4DMALl0laMjGEsidf869z12pc1C/B
+	6zoP06K1Q0OqfGd9coZDnqu7bdaLDfQ=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Marc Zyngier <maz@kernel.org>, Sebastian Ott <sebott@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	kvm@vger.kernel.org, kvmarm@lists.linux.dev,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: selftests: fix irqfd_test on arm64
+Message-ID: <aK4J5EA10ufKJZsU@linux.dev>
+References: <20250825155203.71989-1-sebott@redhat.com>
+ <aKy-9eby1OS38uqM@google.com>
+ <87zfbnyvk9.wl-maz@kernel.org>
+ <aKzRgp58vU6h02n6@google.com>
+ <aKzX152737nAo479@linux.dev>
+ <aK4CJnNxB6omPufp@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aK4CJnNxB6omPufp@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-From 3735cd80fa5baf3231f807174395a8252dfb0c4d Mon Sep 17 00:00:00 2001
-From: Maxime Thiebaut <maxime+kernel@thiebaut.dev>
-Date: Fri, 22 Aug 2025 10:40:03 +0200
-Subject: [PATCH] extract-vmlinux: Output used decompression method
+On Tue, Aug 26, 2025 at 11:51:18AM -0700, Sean Christopherson wrote:
+> On Mon, Aug 25, 2025, Oliver Upton wrote:
+> > The majority of selftests don't even need an irqchip anyway.
+> 
+> But it's really, really nice for developers if they can assume a certain level of
+> configuration is done by the infrastructure, i.e. don't have worry about doing
+> what is effectively "basic" VM setup.
 
-When extract-vmlinux succeeds, it doesn't output which decompression method
-was found at which offset. Adding this additional output in check_vmlinux()
-helps troubleshooting and reverse-engineering images.
+The more we pile behind what a "basic" VM configuration is the less
+expressive the tests become. Being able to immediately grok the *intent*
+of a test from reading it first pass is a very good thing. Otherwise I
+need to go figure out what the definition of "basic" means when I need
+to write a test and decide if that is compatible with what I'm trying to
+do.
 
-The last check_vmlinux() call was also quoted to accept spaces.
+vm_create_with_irqchip() is delightfully unambiguous.
 
-Signed-off-by: Maxime Thiebaut <maxime+kernel@thiebaut.dev>
----
- scripts/extract-vmlinux | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+> E.g. x86 selftests creates an IRQCHIP, sets up descriptor tables and exception
+> handlers, and a handful of other "basic" things, and that has eliminated soooo
+> much boilerplate code and the associated friction with having to know/discover
+> that e.g. sending IRQs in a test requires additional setup beyond the obvious
+> steps like wiring up a handler.
 
-diff --git a/scripts/extract-vmlinux b/scripts/extract-vmlinux
-index 189956b5a5c8..266df9bc7a48 100755
---- a/scripts/extract-vmlinux
-+++ b/scripts/extract-vmlinux
-@@ -10,12 +10,15 @@
- #
- # ----------------------------------------------------------------------
-=20
-+me=3D${0##*/}
-+
- check_vmlinux()
- {
- =09if file "$1" | grep -q 'Linux kernel.*boot executable' ||
- =09=09readelf -h "$1" > /dev/null 2>&1
- =09then
- =09=09cat "$1"
-+=09=09echo "$me: Extracted vmlinux using '$2' from offset $3" >&2
- =09=09exit 0
- =09fi
- }
-@@ -30,12 +33,11 @@ try_decompress()
- =09do
- =09=09pos=3D${pos%%:*}
- =09=09tail -c+$pos "$img" | $3 > $tmp 2> /dev/null
--=09=09check_vmlinux $tmp
-+=09=09check_vmlinux $tmp "$3" $pos
- =09done
- }
-=20
- # Check invocation:
--me=3D${0##*/}
- img=3D$1
- if=09[ $# -ne 1 -o ! -s "$img" ]
- then
-@@ -57,7 +59,7 @@ try_decompress '\002!L\030'   xxx   'lz4 -d'
- try_decompress '(\265/\375'   xxx   unzstd
-=20
- # Finally check for uncompressed images or objects:
--check_vmlinux $img
-+check_vmlinux "$img" cat 0
-=20
- # Bail out:
- echo "$me: Cannot find vmlinux." >&2
+That simply isn't going to happen on arm64. On top of the fact that the
+irqchip configuration depends on the intent of the test (e.g. wired IRQs
+v. MSIs), there's a bunch of guest-side initialization that needs to
+happen too.
 
-base-commit: 6da752f55bc48fe2cf12ed208ab10295d796c2dd
---=20
-2.50.1
+We can add an extremely barebones GIC when asked for (although guest
+init isn't addressed) but batteries are not included on this architecture
+and I'd rather not attempt to abstract that.
 
-
+Thanks,
+Oliver
 
