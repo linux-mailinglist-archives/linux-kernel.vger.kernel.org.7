@@ -1,112 +1,124 @@
-Return-Path: <linux-kernel+bounces-787828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5C4FB37BEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:37:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 557B0B35766
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:41:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DFC37C2281
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:37:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E0B42000BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:41:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90BB031984C;
-	Wed, 27 Aug 2025 07:37:31 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C742FB61D;
+	Tue, 26 Aug 2025 08:41:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VWvT3P+z"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E995205E2F
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 07:37:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E129460;
+	Tue, 26 Aug 2025 08:41:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756280251; cv=none; b=gJdScxMnI/nDjjyV/NijS3l/3RsmcFPI6oP680s/T/MWUcJ6L+dKqVnmlj81E3xGWcSaytWB9EzYztvak6FjX7odhWve5l3TKHfwCJdgIDFnBKd1giwrGtjmmqchCLu1gcaLLaBnU8qxrbJodKm9yZvJ+5kYsYhPtpVKol1Cv5E=
+	t=1756197684; cv=none; b=WCklNkYvF2M52oduNVSqs4VjA11RD0i4Sw3lZvd4cRiDVZlVaha2tlG0D8hSR84cdI1XQ2DML9A4BRbv9JvIKbBiVQOArR7gV6iec0gXAeZ4Mogz03I7lHnMja11BkBtSdKLEzkfTWE2gBxbpAqAYLouFFaNIZwM6y1WpTnVPTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756280251; c=relaxed/simple;
-	bh=pswIHBZL7/Yj0+tCw0XL6EEuAuOgT4TSIwjz85uTWzA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SMb2pQ5j33EfkObMZAU1xcfsuxSNybsd8+AO+1iq/JssQYQw8stdW60C1IlTJdeQQ+X9j0fU+8ygGSLedTZ5JHwCCGfidmNVPUeAc8gCHbXvP/NMyyXTtUx49Fq7X2MQLGQWkHWOF9wC0Hdj0umPd3UdNEthxVU4Ok67z8xOd+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1urAii-0007Bw-5x; Wed, 27 Aug 2025 09:37:24 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1urAig-002MGk-2q;
-	Wed, 27 Aug 2025 09:37:22 +0200
-Received: from pengutronix.de (unknown [IPv6:2a01:4f8:1c1c:29e9:22:41ff:fe00:1400])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id D3F6E45E20B;
-	Tue, 26 Aug 2025 08:41:05 +0000 (UTC)
-Date: Tue, 26 Aug 2025 10:41:05 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Xichao Zhao <zhao.xichao@vivo.com>
-Cc: rcsekar@samsung.com, mailhol.vincent@wanadoo.fr, 
-	linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] can: m_can: use us_to_ktime() where appropriate
-Message-ID: <20250826-cautious-married-marten-b7bfbe-mkl@pengutronix.de>
-References: <20250825090904.248927-1-zhao.xichao@vivo.com>
+	s=arc-20240116; t=1756197684; c=relaxed/simple;
+	bh=6lftHUf71DUA4T0bqA8FrTXfH0J6B4vPI5kQZlu3iak=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jShPbh4K15quDsKgP/F5aXnSnc8Z+mjqB4wiHldoRphsJUmc3posUr9MStpX2lwXSxKxCir/VmVkZCSRtRQ9MucQONXiTJKesBzXnQH0BAvTiw6thodbEE2RjxYfN3tjqEdDm+vYcXtZD9SkHaEThoAnvM+yQXDha5SnR6f+LBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VWvT3P+z; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-24617d3f077so7627285ad.0;
+        Tue, 26 Aug 2025 01:41:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756197679; x=1756802479; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WsM/gomFX2MDoPGDhRP46zbnJ36LRge+C6Uha0o94HA=;
+        b=VWvT3P+z0RmQ/4TRGDdKbO9jchZ7AAmuKvm8WN6Fi6Cx8JmtAOYQBNic8ffGcocF+1
+         cE1Qjmug4zqsBk30eQL/6J21qjj4lc+hejfIaJSF3melipRHbqZZS3dRsT4sqocM7LnI
+         Q2NmgidR4Fz8nIVCFW7Vys5AxkRzfPamG4le2/Infh2Iw64eQukSjjAENrjW/SzFZ7B/
+         uE9YyNBhBVU2lGoSPU6JaXIcvCNynzUCYzmrX4XOr7lRU5qrqjDnLvF7EuACKDxjPunE
+         KM0NAg+0XZCC/tjQv8RcP2EO9SYT76WLEV5lt/OjFXMKWljgvNA9q4uwG4CLkHNfHcLr
+         Sshw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756197679; x=1756802479;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WsM/gomFX2MDoPGDhRP46zbnJ36LRge+C6Uha0o94HA=;
+        b=BFghpudzdZKBgupH/LijNNXO4cfDWsyXWTXq6a2fvhpaJFM83v2WGj0L9VRuPyLSp5
+         5+jdghnr7MaY9ke1jbgRBt5OA529v5JybKySNey3COxUGoj4Y1pdVJPeALcLooiphRRS
+         YHYyH3amGaKmbDoQ7XcPdaqBznBljjY6h9NXqVnQt9cKDVonYzbeiBEi0oiKBEcbA7Hg
+         6ywD60oBCpwpNQK0JjPg4ZUM99VTJ8Zacn29z5g4mWOMjbb34LXeHRoHsC1L/sPfoNYv
+         TqKf0QnX5H/98dmfhq8CARB1JjHaDQj2JGzuRVo3m2DaZ4KZjehRIEtyGj0ITAXRkmOp
+         BqcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVBcVjcwsnSgz75YdTccoqqy93WWAU9gneBhyLI+ms/wLj92rg8IrKTs3OJrsFDHhgVPhDa4nAGCuBUt1M=@vger.kernel.org, AJvYcCW7+Ac4GX+8P+HFURWj0WG9HaqRwS6l6bkh0xvMFfST74ZDuzKp5jRY4He3TVGsP/r4xL6IFSWa3VZEFA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzU+TxSZ/KFYDkTYKXSyPry/psCeb1itnIfpd7XP2ndMU9Q1zeS
+	H5VKTDCNh+WXIBPnxNiIjRbpXxNITtDtE+hUrZ3Nemj7+C4mgybkbcgjRTiLCvilRb5oE3+K49G
+	s/FiC7I5zkgycgSvI5o9zduQXEtET8ag=
+X-Gm-Gg: ASbGncvSWarmaEqEfox+yahG/c91lczuZtVlPk3ZawiCuMAYnKjRFLNtRqgILqnS1pU
+	Hr6QoC5yQiz39DPMevzQ/2XD1D3zeOpqA5PXaVNdnkf1wQXW1FZHhr12rDupZHlLOnanvV9OFT5
+	HvXzwUe99p613xLgIlSe+9MA/1BVtZjwxQiDK3X5bUdj3Z5ym1L7VRtEzh/Cpx9sRRZL6kZ6VdN
+	Ka9FC4Wc+hWTdZhehqGMe/j/MmmOv74fm5nrdJnOjlKkZM0DRy7a8K8a2AaE52YAW00jcssoj/3
+	NvCsiqMI2lGjV5L3hc18BRyJmE6unMCUZVev
+X-Google-Smtp-Source: AGHT+IGgUd3cCw5hoPcSqxVJsTVEGdnQtn/6lCN3HNmE+fc6RAadH31yG60gx4CJqcHEUD1Lg9LJODBA+S34cf8KfmM=
+X-Received: by 2002:a17:902:c402:b0:246:7702:dfd9 with SMTP id
+ d9443c01a7336-2467702f08cmr76116925ad.6.1756197679484; Tue, 26 Aug 2025
+ 01:41:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="suvg33rbcecgcgws"
-Content-Disposition: inline
-In-Reply-To: <20250825090904.248927-1-zhao.xichao@vivo.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
-
-
---suvg33rbcecgcgws
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+References: <20250826173041.3140da7b@canb.auug.org.au>
+In-Reply-To: <20250826173041.3140da7b@canb.auug.org.au>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 26 Aug 2025 10:41:06 +0200
+X-Gm-Features: Ac12FXx7-KVTFlOMqBN0AFgfUOGYkYDCZFfOLj9hCpjCtkzCPViNyRbfTme0t1A
+Message-ID: <CANiq72mzK6BifSn+tWK090U1VO2FS2J5WQvX5O48D0MRDiSs2w@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the rust-alloc tree with the
+ mm-unstable tree and Linus' tree.
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Danilo Krummrich <dakr@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Vitaly Wool <vitaly.wool@konsulko.se>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] can: m_can: use us_to_ktime() where appropriate
-MIME-Version: 1.0
 
-On 25.08.2025 17:09:04, Xichao Zhao wrote:
-> The tx_coalesce_usecs_irq are more suitable for using the
-> us_to_ktime(). This can make the code more concise and
-> enhance readability.
+On Tue, Aug 26, 2025 at 9:30=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org=
+.au> wrote:
+>
+> Today's linux-next merge of the rust-alloc tree got a conflict in:
+>
+>   rust/kernel/alloc/allocator_test.rs
+>
+> between commits:
+>
+>   501046225a67 ("rust: alloc: fix missing import needed for `rusttest`")
+>   c8a3b6ec0370 ("rust: add support for NUMA ids in allocations")
+>
+> from the mm-unstable tree and
+>
+>   0f580d5d3d9d ("rust: alloc: fix `rusttest` by providing `Cmalloc::align=
+ed_layout` too")
+>
+> from Linus' tree and commit:
+>
+>   fe927defbb4f ("rust: alloc: remove `allocator_test`")
+>
+> from the rust-alloc tree.
+>
+> I fixed it up (I removed the file) and can carry the fix as
+> necessary.
 
-Applied to linux-can-next.
+That's correct -- the file is going away. Thanks!
 
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---suvg33rbcecgcgws
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmitcx4ACgkQDHRl3/mQ
-kZzEGwgAjbjcWUHdVnJNioDrCF1psK0ICD6toemt7SW+wNDTVjl4r0kvkvuGs8x6
-OFPjCOyCseyiLrM8t1Xmao43g6L43vOYJ4UVyYcq8Pqnw3/adsVtrMr1+DQOoEFN
-1SKGtHABZZ1x5CfnexQuYoldij9KWKQ+QdMDywCvUn5ux4nReqTg4if3rwTdvNcu
-Dfzjheit8aDuCp+3O+QrdfzYj9TngqXlX9KdhMu9LHCKhjK96qpdmw2t5EF1U8Wr
-wMVN1IFM06tuQLV2elGccxD6aGdyOMJUYgKcj/u5xWA3zuFhHlhAG3ypJi3sD1gP
-TGteVpscddwtWqMjkFyurlBiCz5f7g==
-=G88F
------END PGP SIGNATURE-----
-
---suvg33rbcecgcgws--
+Cheers,
+Miguel
 
