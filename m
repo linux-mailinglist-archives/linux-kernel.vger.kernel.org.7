@@ -1,341 +1,205 @@
-Return-Path: <linux-kernel+bounces-787355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27C7AB37523
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 01:03:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EB1EB37526
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 01:04:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D789A7C3849
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 23:03:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CF3C360B44
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 23:04:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04ACF28504D;
-	Tue, 26 Aug 2025 23:03:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B1023D7EE;
+	Tue, 26 Aug 2025 23:04:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="idq8l0hu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30ED636D;
-	Tue, 26 Aug 2025 23:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="JJ0FqdLL"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5331C36D;
+	Tue, 26 Aug 2025 23:04:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756249402; cv=none; b=g4fiChXtnzBg2lUaB8Y/Ax7ybO/Q5kwnBk0IEM7pJ2YPJZkiREKDELlXqCH+pgrYCy4iRYQf71nAjOdsJM4lLstebXSQ2rsmrVByhng8Cuvmoonya9a3Ob4ho9kIux6Gdm36dqDfAUQ8i/AFUIMHziVL23hqMnMYcmxZ/w1jLco=
+	t=1756249459; cv=none; b=f588+kziYTuAncOUANqCIOCpbBu7ZzIvW3z97U++FhHok8Cf8RkoXW7cgeaXOyTDXJId0NMI4f57+Wf4XWuLEvui0qJ3uqcZx4KYAdYuf3ZvPDOSSZmZmnG68gty2FEoYEom+TCJNMloWVosCZvgsWqmtMBuHWQod3QyfXEGAIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756249402; c=relaxed/simple;
-	bh=tf1TFSTtyO1m4AAW3w5VgMDMr3FylT0yQFNw0VkexyM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jtDYmGmwq/xJxK7fFE1uoPpjSbvwmD+OedJsYLwHv5ocvFY/d+xCfwTv3du2xq74xjOuFVJ+kP3gfpYjLlkG6MfWaW3cIxItgKTQ8t6iVWf9AEFtZTZ8KBC6qbTuDheg1QqJ+Fj4sKWRgJy9s4umfwVuKQ45O06EyCYvAZVGvmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=idq8l0hu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 526D4C4CEF1;
-	Tue, 26 Aug 2025 23:03:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756249401;
-	bh=tf1TFSTtyO1m4AAW3w5VgMDMr3FylT0yQFNw0VkexyM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=idq8l0hu1cCpvbkzEa9KUsdyoKI1zI1UQlcynm7WzpdVu7e6BIpPlQMujsIuF7DHK
-	 MFr5GAupniaN1JTy2lbW04wDCnaCH2mKrLWuALH6DVBkVvgZu/W3RJsUzKa16CWrG5
-	 etUOm5C1G+Sn/+yS5hLVkBcbk6MZF2y3RN8lEkpGcQegLlWlT3IPc+X8vbVfo1JW9G
-	 FQRoIFmt7CMteKoZQz4EQJ3UDl+UUA7UmZeMM9Y+ABjJ9ilh45YgtBFmaEShyEfKXZ
-	 QFtBJbNwDz1xy8mZGPMp5JxtKbI2XQf/opv2OysCWOzYlYNx5eNhqF+nB7BX69gEEH
-	 tbe85OZ+k/vTg==
-Date: Tue, 26 Aug 2025 18:03:20 -0500
-From: Rob Herring <robh@kernel.org>
-To: Alexander Kurz <akurz@blala.de>
-Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Dzmitry Sankouski <dsankouski@gmail.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	devicetree@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/9] dt-bindings: mfd: fsl,mc13xxx: convert txt to DT
- schema
-Message-ID: <20250826230320.GA646158-robh@kernel.org>
-References: <20250823144441.12654-1-akurz@blala.de>
- <20250823144441.12654-6-akurz@blala.de>
+	s=arc-20240116; t=1756249459; c=relaxed/simple;
+	bh=f4DFVYcAxdLhkeEGQ/Cw6H7Yt15mnu0+l2YL2kh2N5w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sKRdiaaDcXi1fHxydkgDTWlviFS8J4ULpyvZTYmBW6aBlypTrKcZZdvmxFmnCqGKN30TiD0VgaUCk+VQpmDGu0Ny0Yjm2HbpwnBcRrdkOLIn5GRW49Nd6Ko6hVXp9q3aAjluX9I6mPCvjfhfB+PZpgpS4ZVxXEbUNf856LmDB6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=JJ0FqdLL; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.184.60] (unknown [131.107.160.188])
+	by linux.microsoft.com (Postfix) with ESMTPSA id DEB562019D43;
+	Tue, 26 Aug 2025 16:04:11 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DEB562019D43
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1756249452;
+	bh=8V4Mv65CO8o3WeyNJbdkS5oLwcOoRxGW9k+qEYHM5ug=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JJ0FqdLLZluk24TS2lHjn/uAl8gcDgBFfANRVBzqfRYP76f37SJeWNunkMDWRcM0I
+	 KhFdAGGSm3EACSO7TVs43jkSomeGM3KbIpbmRHfzqHSeR20jARDHNi0kGFndPqCPY3
+	 VdXjqfMJmEKBTrWftorscEr2r/f0V8a7nDk2bF6A=
+Message-ID: <efc06827-e938-42b5-bb45-705b880d11d9@linux.microsoft.com>
+Date: Tue, 26 Aug 2025 16:04:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250823144441.12654-6-akurz@blala.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/hyperv: Export hv_hypercall_pg unconditionally
+To: Peter Zijlstra <peterz@infradead.org>,
+ Naman Jain <namjain@linux.microsoft.com>
+Cc: "K . Y . Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H . Peter Anvin" <hpa@zytor.com>, linux-hyperv@vger.kernel.org,
+ linux-kernel@vger.kernel.org, mhklinux@outlook.com
+References: <20250825055208.238729-1-namjain@linux.microsoft.com>
+ <20250825094247.GU3245006@noisy.programming.kicks-ass.net>
+ <f154d997-f7a6-4379-b7e8-ac4ba990425c@linux.microsoft.com>
+ <20250826120752.GW4067720@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: Roman Kisel <romank@linux.microsoft.com>
+In-Reply-To: <20250826120752.GW4067720@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, Aug 23, 2025 at 02:44:37PM +0000, Alexander Kurz wrote:
-> Convert the txt mc13xxx bindings to DT schema attempting to keep most
-> information. The nodes codec and touchscreen are not part of the new
-> schema since it was only briefly mentioned before.
-> Following the convention, rename led-control to fsl,led-control.
 
-If 'led-control' is already in use, then you can't do that. You could 
-support both, but then the driver has to support both forever which is 
-worse than not matching convention.
+
+On 8/26/2025 5:07 AM, Peter Zijlstra wrote:
+> On Tue, Aug 26, 2025 at 05:00:31PM +0530, Naman Jain wrote:
+
+Peter,
+
+Naman is OOF; genuinely hoping it's not presumptuous of me to reply
+to the thread - seems time sensitive.
+
+[...]
+
 > 
-> Signed-off-by: Alexander Kurz <akurz@blala.de>
-> ---
->  .../devicetree/bindings/mfd/fsl,mc13xxx.yaml  | 214 ++++++++++++++++++
->  .../devicetree/bindings/mfd/mc13xxx.txt       | 156 -------------
->  2 files changed, 214 insertions(+), 156 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/mfd/fsl,mc13xxx.yaml
->  delete mode 100644 Documentation/devicetree/bindings/mfd/mc13xxx.txt
+> I do not know what OpenHCL is. Nor is it clear from the code what NMIs
+> can't happen. Anyway, same can be achieved with breakpoints / kprobes.
+> You can get a trap after setting CR2 and scribble it.
 > 
-> diff --git a/Documentation/devicetree/bindings/mfd/fsl,mc13xxx.yaml b/Documentation/devicetree/bindings/mfd/fsl,mc13xxx.yaml
-> new file mode 100644
-> index 000000000000..94e2f6557376
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/fsl,mc13xxx.yaml
-> @@ -0,0 +1,214 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mfd/fsl,mc13xxx.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Freescale MC13xxx Power Management Integrated Circuits (PMIC)
-> +
-> +maintainers:
-> +  - Alexander Kurz <akurz@blala.de>
-> +
-> +description:
+> You simply cannot use CR2 this way.
+> 
 
-Needs a '>' modifier to preserve formatting.
+The code in question runs with interrupts disabled, and the kernel runs
+without the memory swapping when using that module - the kernel is
+a firmware to host a vTPM for virtual machines. Somewhat similar to SMM.
+That should've been reflected somewhere in the comments and in Kconfig,
+we could do better. All in all, the page fault cannot happen in that
+path thus CR2 won't be trashed.
 
-> +  The MC13xxx PMIC series consists of the three models MC13783, MC13892
-> +  and MC34708 and provide regulators and other features like RTC, ADC,
-> +  LED, touchscreen, codec and input buttons.
-> +
-> +  Link to datasheets
-> +    https://www.nxp.com/docs/en/data-sheet/MC13783.pdf
-> +    https://www.nxp.com/docs/en/data-sheet/MC13892.pdf
-> +    https://www.nxp.com/docs/en/data-sheet/MC34708.pdf
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - fsl,mc13783
-> +      - fsl,mc13892
-> +      - fsl,mc34708
-> +
-> +  reg:
-> +    description: I2C slave address or SPI chip select number.
-> +    maxItems: 1
-> +
-> +  spi-max-frequency: true
-> +
-> +  spi-cs-high: true
-> +
-> +  system-power-controller: true
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  leds:
-> +    type: object
-> +    $ref: /schemas/leds/common.yaml#
-> +    description: |
-> +      Leds
+Nor this kind of code can be stepped through in a self-hosted
+kernel debugger like kgdb. There are other examples of such code iiuc:
+the asm glue code in the interrupt exception entries where the trap
+frames are handled, likely return from the kernel to the user land.
+The thread context-swap code hardly can be stepped through with
+convenience if at all in the self-hosted debugger, too.
 
-Drop the description
+>>> And an rax:rcx return, I though the canonical pair was AX,DX !?!?
+>>
+>> Here, the code uses rax and rcx not as a means to return one 128 bit
+>> value. The code uses them in that way as an ABI.
+> 
+> Still daft. Creating an ABI that goes against pre-existing conventions
+> is weird.
+> 
 
-blank line
+It is weird. It really sucks to have to conform to ABIs introduced a
+decade+ ago when Hyper-V just appeared in the kernel and just for x86.
+As weird as the pair ax:cx looks for anyone who takes joy and pride in
+writing x86 asm code, it still works for the customers, we have to care
+about the backward compat.
 
-> +    properties:
-> +      reg:
-> +        description: |
-> +          One of
-> +          MC13783 LED IDs
-> +            0: Main display
-> +            1: AUX display
-> +            2: Keypad
-> +            3: Red 1
-> +            4: Green 1
-> +            5: Blue 1
-> +            6: Red 2
-> +            7: Green 2
-> +            8: Blue 2
-> +            9: Red 3
-> +            10: Green 3
-> +            11: Blue 3
+ From the discussion, it doesn't appear we can ask for much as you're
+right: the asm chunk looks abominable due to being essentially a
+context-swap with an entity foreign to the Linux/System-V ABI. Same
+must be true for the calls into the UEFI runtime services to a certain
+extent due to different calling conventions.
 
-blank line
+We have a much cleaner story on ARM64 due to no legacy and using
+their calling conventions aka AAPCS64 and other standards everywhere
+(not only in Linux Hyper-V code) to the best of my knowledge.
 
-> +          MC13892 LED IDs
-> +            0: Main display
-> +            1: AUX display
-> +            2: Keypad
-> +            3: Red
-> +            4: Green
-> +            5: Blue
+If nothing of that saves the patches from the death row, maybe it'd be 
+possible to give the patches the experimental status or get some time
+extension to learn what can be improved? I am asking to save the
+time spent by folks reviewing the parts that you don't see as being
+prohibitively bad.
 
-blank line
+>>> Also, that STACK_FRAME_NON_STANDARD() annotation is broken, this must
+>>> not be used for anything that can end up in vmlinux.o -- that is, the
+>>> moment you built-in this driver (=y) this comes unstuck.
+>>>
+>>> The reason you're getting warnings is because you're violating the
+>>> normal calling convention and scribbling BP, we yelled at the TDX guys
+>>> for doing this, now you're getting yelled at. WTF !?!
+>>>
+>>> Please explain how just shutting up objtool makes the unwind work when
+>>> the NMI hits your BP scribble?
+>>
+>> Returning to a lower VTL treats the base pointer register as a general
+>> purpose one and this VTL transition function makes sure to preserve the
+>> bp register due to which the objtool trips over on the assembly touching
+>> the bp register. We considered this warning harmless and thus we are
+>> using this macro. Moreover NMIs are not an issue here as they won't be
+>> coming as mentioned other. If there are alternate approaches that I should
+>> be using, please suggest.
+> 
+> Using BP in an ABI like that is ridiculous and broken. We told the same
+> to the TDX folks when they tried, IIRC TDX was fixed.
+> 
+> It is simply not acceptable to break the regular calling convention with
+> a new ABI.
+> 
+> Again, I can put a breakpoint or kprobe in the region where BP is
+> scribbled.
+> 
+> Basically the argument is really simple: you run in Linux, you play by
+> the Linux rules. Using BP as argument is simply not possible. If your
+> ABI requires that, your ABI is broken and will not be supported. Rev the
+> ABI and try again. Same for CR2, that is not an available register in
+> any way.
+> 
+>> I now understand that as part of your effort to enable IBT config on
+>> x64, you changed the indirect calls to direct calls in Hyper-V.
+> 
+> Yeah, I was cleaning up indirect calls, and this really didn't need to
+> be one.
+> 
+>> As of today, there is no requirement to enable IBT in OpenHCL kernel
+>> as this runs as a paravisor in VTL2 and it does not effect the guest
+>> VMs running
+>> in VTL0.
+> 
+> I do not know what OpenHCL or VTLn means and as such pretty much the
+> whole of your statement makes no sense.
+> 
+> Anyway, AFAICT the whole idea of a hypercall page is to 'abtract' out
+> the VMCALL vs VMMCALL nonsense Intel/AMD inflicted on us. Surely you
+> don't actually need that. HyperV already knows about all the gazillion
+> of ways to do hypercalls.
+> 
+>> I can disable CONFIG_X86_KERNEL_IBT when CONFIG_MSHV_VTL is enabled in
+>> Kconfig in next version.
+> 
+> Or you can just straight up say: "We at microsoft don't care about
+> security." :-/
+> 
+> Doing that will ensure no distro will build your module, most build bots
+> will not build your module, nobody cares about your module.
+> 
+> And no, the problems with BP and CR2 are not related to IBT, that is
+> separate and no less broken. They violate the basic rules of x86_64.
 
-> +          MC34708 LED IDs
-> +            0: Charger Red
-> +            1: Charger Green
-> +        maxItems: 1
+-- 
+Thank you,
+Roman
 
-blank line
-
-> +      fsl,led-control:
-> +        $ref: /schemas/types.yaml#/definitions/uint32-array
-> +        description: |
-> +          Setting for LED-Control register array length depends on model,
-> +          mc13783: 6, mc13892: 4, mc34708: 1
-> +
-> +  regulators:
-> +    type: object
-> +    $ref: /schemas/regulator/regulator.yaml#
-
-This schema applies to the child nodes, not this node. Drop.
-
-       additionalProperties:
-         type: object
-
-
-> +    description: |
-> +      List of child nodes specifying the regulators, depending on chip variant:
-> +      * MC13783: gpo[1-4], pwgt[12]spi, sw[12][ab], sw3, vaudio, vcam, vdig,
-> +      vesim, vgen, viohi, violo, vmmc[12], vrf[12], vrfbg, vrfcp, vrfdig,
-> +      vrfref, vsim and vvib.
-> +      * MC13892: gpo[1-4], pwgt[12]spi, sw[1-4], swbst, vaudio, vcam, vcoincell,
-> +      vdig, vgen[1-3], viohi, vpll, vsd, vusb, vusb2, vvideo.
-> +      Each child node is defined using the standard binding for regulators and
-> +      the optional regulator properties defined below.
-
-Don't duplicate what the schema says below in free-form text.
-
-> +
-> +  fsl,mc13xxx-uses-adc:
-> +    type: boolean
-> +    description: Indicate the ADC is being used
-> +
-> +  fsl,mc13xxx-uses-codec:
-> +    type: boolean
-> +    description: Indicate the Audio Codec is being used
-> +
-> +  fsl,mc13xxx-uses-rtc:
-> +    type: boolean
-> +    description: Indicate the RTC is being used
-> +
-> +  fsl,mc13xxx-uses-touch:
-> +    type: boolean
-> +    description: Indicate the touchscreen controller is being used
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: fsl,mc13783
-> +    then:
-> +      properties:
-> +        leds:
-> +          properties:
-> +            fsl,led-control:
-> +              minItems: 6
-> +              maxItems: 6
-> +        regulators:
-> +          patternProperties:
-> +            "^gpo[1-4]|pwgt[12]spi|sw[12][ab]|sw3|vaudio|vcam|vdig|vesim|vgen|viohi|violo|vmmc[12]|vrf[12]|vrfbg|vrfcp|vrfdig|vrfref|vsim|vvib$":
-> +              type: object
-> +              $ref: /schemas/regulator/regulator.yaml#
-
-                 unevaluatedProperties: false
-
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: fsl,mc13892
-> +    then:
-> +      properties:
-> +        leds:
-> +          properties:
-> +            fsl,led-control:
-> +              minItems: 4
-> +              maxItems: 4
-> +        regulators:
-> +          patternProperties:
-> +            "^gpo[1-4]|pwgt[12]spi|sw[1-4]|swbst|vaudio|vcam|vcoincell|vdig|vgen[1-3]|viohi|vpll|vsd|vusb|vusb2|vvideo$":
-> +              type: object
-> +              $ref: /schemas/regulator/regulator.yaml#
-
-                 unevaluatedProperties: false
-
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: fsl,mc34708
-> +    then:
-> +      properties:
-> +        leds:
-> +          properties:
-> +            fsl,led-control:
-> +              minItems: 1
-> +              maxItems: 1
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    #include <dt-bindings/leds/common.h>
-> +
-> +    spi {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        pmic: mc13892@0 {
-> +            compatible = "fsl,mc13892";
-> +            reg = <0>;
-> +            spi-max-frequency = <1000000>;
-> +            spi-cs-high;
-> +            interrupt-parent = <&gpio0>;
-> +            interrupts = <8 IRQ_TYPE_LEVEL_HIGH>;
-> +            fsl,mc13xxx-uses-rtc;
-> +            fsl,mc13xxx-uses-adc;
-> +
-> +            leds {
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +                fsl,led-control = <0x000 0x000 0x0e0 0x000>;
-> +
-> +                sysled@3 {
-> +                    reg = <3>;
-> +                    label = "system:red:live";
-> +                    linux,default-trigger = "heartbeat";
-> +                };
-> +            };
-> +
-> +            regulators {
-> +                sw1_reg: sw1 {
-> +                    regulator-min-microvolt = <600000>;
-> +                    regulator-max-microvolt = <1375000>;
-> +                    regulator-boot-on;
-> +                    regulator-always-on;
-> +                };
-> +
-> +                sw2_reg: sw2 {
-> +                    regulator-min-microvolt = <900000>;
-> +                    regulator-max-microvolt = <1850000>;
-> +                    regulator-boot-on;
-> +                    regulator-always-on;
-> +                };
-> +            };
-> +        };
-> +    };
 
