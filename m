@@ -1,564 +1,296 @@
-Return-Path: <linux-kernel+bounces-786658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E8A9B3607E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:01:16 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFE59B36061
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:00:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 257724651A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:58:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8AAD34E4245
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:59:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371A11DD0D4;
-	Tue, 26 Aug 2025 12:58:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE8C225390;
+	Tue, 26 Aug 2025 12:59:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YOxAHFI+"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="YvFpZOsA";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="DJRqsuLh"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 528771C860B;
-	Tue, 26 Aug 2025 12:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756213103; cv=none; b=JYiEps+ZTYvLbYf5utMRdZxX/cBDY1BL283Ab+X+tsHXvUg+bQQBj6SLdunMXqWrzOg71fW1rEEebcHEZgel4fSEr2xxLU0lHQQfiDmBfF0BfhDkEuuEBFmerWqES8CTSkvMtW+hA2ODja+Q89lic6jOIoYKw3oqGbBGBRmf/Tg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756213103; c=relaxed/simple;
-	bh=K8co/EFotqaoTkJjc561Sbgqx0UTOJDy+kqxhZXcVEQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G1UYtEFb0eq+XeEeObec3mzpNhy+2aczTuEciM7w8idvnh8T1DUts+3qKR3M3cQkvllgVLr2kl+5c+X+dbDjq/oA+KveSO5JjuRiRsYMQowUEBHAaoksElYc49gSI1Gt6A+BlL+iX379R8xaFATXJzc14K/T8xi3W7tamAT2dJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YOxAHFI+; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-770530175a6so1617420b3a.3;
-        Tue, 26 Aug 2025 05:58:20 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D809F1FBCB1;
+	Tue, 26 Aug 2025 12:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756213177; cv=fail; b=JF9H79DZWQ7YTYcaSi37N/m0+zyEyoM3+gitRKGjLHrCfftnrZmpyWXIK4ypXkVc0vnjxXc3Db88QkR4aG4k8/KNmkilUEf8A3jfFDqUU5W+AEcYxtHtqAfyRGDStK/o1YZes88meeMQRrYYWSMFx1Mwb5VWAgAK9nkSO+F4hAU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756213177; c=relaxed/simple;
+	bh=yHa+OlithOubuhrSbihyV2V95H3FxgT0HoUMZAzrS94=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=SqBS1kpVVO6FDYL0Z7v1GNSmI7qfYMGqounVotv4bLUjt14xwCv+Y7mUxU1Oxjfx4tWPaJ4wXliZ7Mg1pECln013M1LbYzFNL2w+/ZFrZFr23SNh/YV6mCKo3ZqAjhwFkf+12hVPKsinmjlwRB7bCPGvwL0qF789elHoJR1Jd5U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=YvFpZOsA; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=DJRqsuLh; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57QCINpY025999;
+	Tue, 26 Aug 2025 12:58:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=piUYna5MMycQmIIM8f
+	aui5hu33PzFMRFbTlnai+G6Yk=; b=YvFpZOsAgF/iN/3UnMXViA5cgEbkkdG0XN
+	CChd+UUDfhOwtrmwfJGd1+Qi+C21MIZy3WTAzJPKYIw8rlMdFRCwGRcX7BvS/Vio
+	g2Dlp7vjpkSq1slRmQfI0cjb4G3btJAxqf3+Weqe/5KYAJMM4TB8qsGVz3R11i2t
+	y9LdwKm2mnsXbeyz9Xhr78XpKI3gnY7TrSKWdFsV4dPBEaWQDs4CJzJyapAjcxkb
+	MlA8dy2ipa3bFh0hg3Lgba7PEitgVONwLTnf/kQ/8EvHwbYa/HC1QwENtADBrTa4
+	gkOeRidz2RSF9xo67K7lKIA+MHP+sjlkX5cwXekQNeo8Xs13drNg==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48q5pt4e7v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 26 Aug 2025 12:58:28 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57QCVSJD005002;
+	Tue, 26 Aug 2025 12:58:27 GMT
+Received: from sn4pr0501cu005.outbound.protection.outlook.com (mail-southcentralusazon11011010.outbound.protection.outlook.com [40.93.194.10])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48q439p7um-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 26 Aug 2025 12:58:27 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xRgkGSW5MbA+PvCeROUw6P8nlY4Dcmv+JU4MviON1MD1XjryhChyCOoL2Qnr5U7epBOzbH7FMRJzedA8LPpr2BnSAx8uvOzoY00gWPtdIFmSaikS8B4jNE+6C6YqkEpuElCEM+4GdDQm86AzCg6IIFlCXWVnIc4jAXDyV6KIb2/izn1b71Y0Od32Aad+Lx6INRhRlUr0wWd9JjdtOSh3GXQydDVjRCbQyCYomluoirwHEBA+WHgc/uZJdHIJeC+Vgk9qUN3fmgTVx5DfFHW9s+NBB83qkUZbMIi95rz1EAhe4VSk3GxVJgedV+KsbwlT1q0XtvSWTyZN9TZx3QKrdQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=piUYna5MMycQmIIM8faui5hu33PzFMRFbTlnai+G6Yk=;
+ b=wyq0u+zKsdUjaxBfo1JaN+TN8IjbH0hQYIYdMLsr2eK/GuxVHz62UjGmK5NbNUUDMAjdIDzgk3b2oqravsCKrQjP9Ejl7Z3ALmDhULXIYVzgb1K7f6VcFvIm/DOn/FUL6E9KMh80zdB0DnLDKJIWDN6DQEjZSjPdLldUvDtJmdHXelXg4kWadIow/L9c+ymkWp7EtyeDU0DRx+MQzXHSY/zoFUpB6lyBxruPXquOrSN83CNULFy9WtqOhDr+lQBB9o5Jiit116QHLVq2ZboirYWL7n7GUT78eOQ61Bs90wkBhzm8nX/bFZ0M0uhSZEwdOtabQXOpwb82xWrW0a+Daw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756213099; x=1756817899; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/Mqkc3asWBsj3ZoUfnbtbLm+KHj6HQK4S7gc/JmbbU8=;
-        b=YOxAHFI+qnBGm3HYCqedR5A4iDzJ4MpBDAhPV0JlkfWp/D2va1NxZVZB76l/jkJOKy
-         3xz1VwOMVu3UvUnkE+TJLezgtdQ2NbWDzXjonob555UYV3eEKAkVltNf0kUdBiQoEEsS
-         hpDs/1KH8ZtO4yWQOxi0KCXFJSfVeeHMCrFEv49s3ioHEpUqbrgod7DacCNq6vkyUbuN
-         iQgwtbZSfEpI3j9O+8vKPKjV5W3oO5gdCeDrhT89ebp6WVIdUXu2ci31/wnAVwaAid3+
-         HpgsxpbgaKMdf9UHv/J/v0/m6F+6Mi7Q9rQpk7maQDEo4M/0vxYojKbVmPhE7ZhpGyjA
-         F48A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756213099; x=1756817899;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/Mqkc3asWBsj3ZoUfnbtbLm+KHj6HQK4S7gc/JmbbU8=;
-        b=wuf9U1dcJKwKstun8+TPXlttd2H6vYaS8x0VdCeajcLoUMi+EOCQOsUPjntCzb9zB4
-         50pU9nlSjrCYDILcleYIFoEfi9v/3SJ/924IR+Dix0NQwZr5hIp1tDjQ61Arkn0PuQdA
-         zAJhRSIVcVffCIsWWNfCyneu7tlZRWjtKDIyE2wjpcDARwuMoSeccBvnDQCWlIic6euS
-         lyIrGryiHN+6sm0ZuV/tVWcekx2UkdaIX3utKZaSsetXoZL5Mfn/MsuB4cZr4yAjFJC+
-         v42se1BfwLM0irjB0SB8u6lHEQMd5ALCL0/IkUd0oEsSUOBqDdEwtsflMdWykVzqQoBK
-         hEUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVyaOWeJI6CuX8EpbxyqIj6LY1fljm1vBGYKPOUpRAA5Et+7Umjym2biTgWL0RFlqraAC8=@vger.kernel.org, AJvYcCWTIcYOVGSV2IsUTc3FJT/CaSWVd1QnC3M8MZO0uVK9YFKWQtYGX5PkMc0QNWbIbOgF4iNElwGcpDkcjxvE@vger.kernel.org, AJvYcCX5HCqEsivt+TNDxBg6UktJAXD/iYXzrq4hGc++eq+LJhUKI9Agxg4dFnv3U6Z/af/Qpq4w67KUXHQDOgVVjP9j@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFIOksDadCDajLV1tY47bPVt4nAQteHSfSqouuj8BPeVTdPyOq
-	GutHmJZMnYWr20PtsBS4oS4h/Zi6ImtfUIPsj1Kg9cMaV8NZGXCjXYYT
-X-Gm-Gg: ASbGncvyO9ZadijcTCZpbqijYHvmgWXOaHUKvQLjJBJlnt7B/yeZmQ9tbKEnkOniKZj
-	+iFH5WunTyej24KpC+HLeDCesIIBX/HLdzWHTiyxRWMR1PBqmyh4gj7XqsF3g9C7oeji7k7uqm9
-	nj/t+DxGdpusoqiIOx1pB6i5dbXT13MHdqNp+laGn35Te4T55UEJKd1lF6Q15/gBc+dC4xRCb4d
-	4cudok9cyjGJ2s1EeOH1Y+ERgGgellpSppDYeG4XD11n5Jj8MScBfvfropLzLtxMOGatT1l8Xo2
-	XyOOGzbhUQHa6bX6iG7fyj8rA1qbaePX3Rw2nQkXtdjHrtKUUpu3Vt3HBrvT2U4KVL3PaxbLAjF
-	FzNi3t3pjXtA8HeEN6WpQqngN3URO5/Uyry+6T3ra3BMLdXkCmsQlReLIHE7g1ps4cM2dVnAvoe
-	fJW8NdWpbm0kXstDqfS8my5m1e8JXeQv6TuG7a11I2eYO0QcdrV2ZuW8LfsKsrd4r1LbS5Qq6rY
-	HU7xlHLTZtNOA==
-X-Google-Smtp-Source: AGHT+IH0zQAIzzE6Bnj1Gt36vu4GlI5SdtFhHxoSv7js/N9D1yANsisdMeIk4rRNlt5S+LHF+nqKgA==
-X-Received: by 2002:a05:6a00:124c:b0:771:e935:9aa with SMTP id d2e1a72fcca58-771e9352369mr6463071b3a.0.1756213099251;
-        Tue, 26 Aug 2025 05:58:19 -0700 (PDT)
-Received: from slopixelz-hppavilionlaptop15eg3xxx.home.arpa ([117.250.157.213])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-771e814cbfcsm4917061b3a.26.2025.08.26.05.58.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 05:58:18 -0700 (PDT)
-From: slopixelz@gmail.com
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org
-Cc: martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	mykolal@fb.com,
-	shuah@kernel.org,
-	bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Shubham Sharma <slopixelz@gmail.com>
-Subject: [PATCH v2] selftests/bpf: Fix typos and grammar in test sources
-Date: Tue, 26 Aug 2025 18:27:46 +0530
-Message-ID: <20250826125746.17983-1-slopixelz@gmail.com>
-X-Mailer: git-send-email 2.48.1
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=piUYna5MMycQmIIM8faui5hu33PzFMRFbTlnai+G6Yk=;
+ b=DJRqsuLhlRnYTmTiGL2iCwOpTYyvYuwXeabuALehgqvBZdTbSPgUdpY+rkauowIKmTvY5rQ5clpUKzhoexxQii1XihQUgleQnmunl0bWrOUJH6iqVeDF5fNHMTnrFD3xg2VswRE3H4rtJBIkJB/NlMOw0IxxYPiRXba+VtR1Kjk=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by PH0PR10MB5870.namprd10.prod.outlook.com (2603:10b6:510:143::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Tue, 26 Aug
+ 2025 12:58:19 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.9052.019; Tue, 26 Aug 2025
+ 12:58:19 +0000
+Date: Tue, 26 Aug 2025 13:58:15 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Andreas Larsson <andreas@gaisler.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        Kees Cook <kees@kernel.org>, Zi Yan <ziy@nvidia.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+        Xu Xin <xu.xin16@zte.com.cn>,
+        Chengming Zhou <chengming.zhou@linux.dev>,
+        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+        David Rientjes <rientjes@google.com>,
+        Shakeel Butt <shakeel.butt@linux.dev>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
+        Peter Xu <peterx@redhat.com>, Jann Horn <jannh@google.com>,
+        Pedro Falcato <pfalcato@suse.de>, Matthew Wilcox <willy@infradead.org>,
+        Mateusz Guzik <mjguzik@gmail.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH 02/10] mm: convert core mm to mm_flags_*() accessors
+Message-ID: <1e256f98-aaca-4203-b036-a0e5884914c3@lucifer.local>
+References: <cover.1755012943.git.lorenzo.stoakes@oracle.com>
+ <1eb2266f4408798a55bda00cb04545a3203aa572.1755012943.git.lorenzo.stoakes@oracle.com>
+ <c62fe93f-e4f8-4048-81ff-3f01bd64671b@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c62fe93f-e4f8-4048-81ff-3f01bd64671b@redhat.com>
+X-ClientProxiedBy: MM0P280CA0031.SWEP280.PROD.OUTLOOK.COM
+ (2603:10a6:190:b::19) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|PH0PR10MB5870:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5dbfea43-369a-4308-34aa-08dde4a03b2e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|1800799024|366016|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?gOKUvbATKtTMhHBYKaZjowGis2Fr1grcWoPVtr3J34PBrYy03XADFN1Y67xo?=
+ =?us-ascii?Q?svnXttK+btcTZKwe8c5L2X0HIRxPtegwgvFEbgI+eu9Z+q48RTmVQZ4f24oM?=
+ =?us-ascii?Q?V8SXLtuonpKd3+6qQpxl287L7bIx0TlzQm/9poP3rfbr+QU+65HtFTzXxmmO?=
+ =?us-ascii?Q?HwVM6/9PKawImWcmgEtsCIMUW3S1VVusmWwa7Ns3E986ez1zuRma2D37rKCn?=
+ =?us-ascii?Q?ng4g4JLqxQauCOWYWxcEkC7+1GFbRc4H53MJkL5GX2KiS1fufZ5ILdPdqG4k?=
+ =?us-ascii?Q?VtEl7beRZSj8pQIiWJDQm5eazsgcdw6FzfLO/ceU6VkS/AeeMvhj+nWdYsVi?=
+ =?us-ascii?Q?VJSNsoEPNOBqzbQ0yub56uQ1eRpPxl+nNaG95EoueuhDPjY5nsCflVpoUA4x?=
+ =?us-ascii?Q?AhGbnosfkjAvQm5+57f9EgQzzsmCSawPTUrM4eTE/MFWhRUkGkgTFRZNXYgy?=
+ =?us-ascii?Q?o0zjvTOqxvMk3c463tpaNKffYpzTpc6md+2UYlHPgI0iU5k1HUm8ZKPp9Zb1?=
+ =?us-ascii?Q?fZ9bRTR/PybRnm9CUbrKxG03iJQxskm86qpmu3u8dJvY1s9wzhtbzctOBu3J?=
+ =?us-ascii?Q?ALIPeSJ2QvJD9r/gUqhD5tvIQiZ/YlRhyJok6p2FS7G8l1vInaqnwwI7xk4k?=
+ =?us-ascii?Q?FDtTmvmREUNh7SLh8G70tnDM2vXTv1mMtbcsOQRAyhKFZI/FBTbnHAuW0xjp?=
+ =?us-ascii?Q?enjxK4/dn4jvpjTb5alTJ/RYi5nd1eIhDLmIAsOXvPHB/YVHzy+TmoOiiHcr?=
+ =?us-ascii?Q?tjZD5xdZ25xJCsVSy84PNOoG3VXqH95/5QjcIE6QgZtsMcCYJdKaX6cSG1Em?=
+ =?us-ascii?Q?AwBwAe8jWJXDQ47rle8xiOob3IT65w23FG5MRqsdv64F5vxL6EX4XkcW5bH8?=
+ =?us-ascii?Q?XKYOeeUMbP2RhLXm+Oju6yD/yQeIZgorXlBrqUiJmGLL4nkfPJ5SvnUMfqZj?=
+ =?us-ascii?Q?h9KbLnAYUHx/dE1ETWAdIMcLXqpc/KNI1iOHEgU+LI/faW5AnCRkfer8Y3Bo?=
+ =?us-ascii?Q?rzD6MNCvb9gtjlHo4s9Gso8rXwvU7f/w34vjBrpQ+WRCUkGNZhMKilXSKKtc?=
+ =?us-ascii?Q?ruabUrjTjlVhBCP8Al1PuhzyQipz8aiBfWvUTwAXIbblp26RWpkjpKdK41ug?=
+ =?us-ascii?Q?aAM/LJxjh46BD7WgkGual2pW7NyhnDZazDnOskTsFCa2jqqAYGjlIZXoOMxu?=
+ =?us-ascii?Q?wCO6MKCrbUJIyZznZb48yjteCFyrrFnHWPUOwzOr/f8N6kfkDiP1o/RSFCsC?=
+ =?us-ascii?Q?ilHfg4QoE9cVBbrz14hW/NVXkFc6jh7HOeScfAZalPHG7hgKfa9JEAabL2MP?=
+ =?us-ascii?Q?cHozjTzsQNUBWnEimkj0nArPzjQ/2B/7yIpS0v98orVMHKXeBGy79x6Wtc43?=
+ =?us-ascii?Q?xTg9FqMnRX628LPJJk09mPdwSQnMLkzXhEYEii7CIYPrLtr9Gp4vPvZa5BHD?=
+ =?us-ascii?Q?vkg13Qo70OI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?XdayoAqYw4SOSzOmKy/g0QJAW47RZxhZmcjiyaQ5Z1NVvFPxCn7ga/cJevyk?=
+ =?us-ascii?Q?ZUTuzeVc4wZzfT9fOY1wy2tBzWyNXqW0SeL1Jp0NrzTkoGJwTJjSRDobkyU3?=
+ =?us-ascii?Q?8/XZyN9E1zb8+X/3URI09YnhzSMLBhsmBtToGPwpP3v4FQLJ+uLGvZHraM1z?=
+ =?us-ascii?Q?/xwJvqRMgr0yzhR/vDKFxIezfc5Gd+24WT1HPzPdPuAe8HtJlITJ2/khjmbD?=
+ =?us-ascii?Q?fAHRKjf3Ouzckxu6Ym2AQLnP+ULkXvcfGmEYLjwSp67VNnYyrrrULyKB8MwV?=
+ =?us-ascii?Q?ysT7l/Cif97bZkW/zNUa3lel/L9sGCkv0yEI9Mul3mgcEge4DuzMAQP66NBG?=
+ =?us-ascii?Q?5Mcuup/6eiSvrozZWYDjUTrJzXLmi+lcHHnD4y9BmLT6lHlgquEMj4F6YrRC?=
+ =?us-ascii?Q?10/6hEHlerkzTQDq+g0sXzaxhWtoI3yrk30ukflokLrI4Bl2cHYmeSgxdQFa?=
+ =?us-ascii?Q?K6s5XyUAruEfEwrt0X1FVXF1aUAx1AteaMChUg4Y9Os6U+EFmy1f4umhuDAf?=
+ =?us-ascii?Q?eR3+v55BjUwe4iZH29LOGwwji5ByweBl2KxZeAZb52k4XSvwKuK61JMOgZP7?=
+ =?us-ascii?Q?KPE542FynaS5YpSUng6F1/3zPUJdZtLuW9yst/oFcceouZuDDpTRQZZYrXJW?=
+ =?us-ascii?Q?Jq7Q89iR7C2XD5PYFCw9wkgxa8Dadu4uxceEDWG7YNYuO6qt6SdmYMBnBGav?=
+ =?us-ascii?Q?cfMXl96pWWffErmLp2CzvL6QjZHG5HJzoGH47gkaYHNeYZtAmmQYBTxvCfp8?=
+ =?us-ascii?Q?iICge9pCtEWGijalBOaRUnuq9QtO66FlupGp+5VWdJ1BCV8aw40WgB3kIIT8?=
+ =?us-ascii?Q?TbK8XYim45+Ul6QJ+/efYOLkjC3ha0Vxhp8HSdpEQaKhfWK6PXMUHqteoe/y?=
+ =?us-ascii?Q?WF935bQFWECkaT0eyapddG5a1+BDp8aFsmT///Rf+VB1TTR/pW3LhgRha9qA?=
+ =?us-ascii?Q?V5SQkKuRm3dCuogxEZu7lE0hWM9hAQEzgKF0gRrpXOPZzNG3aZuu45SQNhDp?=
+ =?us-ascii?Q?AWv8Sd473I41o010BBRBILrzNi8H3iD2k4X7j76wq3/hNX7Vq2gHbJzPjDIz?=
+ =?us-ascii?Q?JEsFSP4R/RgazGc4mh2d5fNn7U3SsVbTvT9lBNGgIXGxfKKrOBgKREUK5mi2?=
+ =?us-ascii?Q?Cm5uOkEiP7a+Y8gVCHxnS33SABhq26jQsPFYjuEvay+PJsG7N0Jkr+a8WOC4?=
+ =?us-ascii?Q?tdf6+LnX0PKH1crl87tQpHVQ8C4Prl5yVnE7ULLQ+NFrNKG1AMi7qB1KPvXQ?=
+ =?us-ascii?Q?noTcWPLh7k8J8Br5rMw0tauivlFMXbuLxTinTxua7TlKCPJzFbe1XSzAoEl+?=
+ =?us-ascii?Q?8DtzH9o++J4PvZJ5seJrBJU2oxiPy5sfvcWCbgoQ9injKdC+w/jifdI8Xmxx?=
+ =?us-ascii?Q?4FsQEquyQnPe1Poqr4ZmbIuwR/PWW+/TRVzOY5ph2omuqZSo9CX3yCZEm3Ro?=
+ =?us-ascii?Q?iCNrpQqGvSVYRcCSzS3DYzx1hgtz9YOmo1josG392V5pwfKEtnKOKR+LAHux?=
+ =?us-ascii?Q?hVaWbn5Oh3QWfags0dngv/SCaEyXo9WtzFrQlAQVZUGfICLBi8lF5L+l4flu?=
+ =?us-ascii?Q?W47IzYaUr0x68RvTf3VQKQNZ/dS83vlMJQutGPPmUll6rh+1OsJldZJP68uN?=
+ =?us-ascii?Q?gg=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	NxRyQ9WheJiIbTtcJDxfLVTrGBCd1e86OdGVLQK11Kvrh/O6+pJyDMtKv5Yo76woxP6X3QoVpZW8MMRqSxrMNiRE3+VOyw7/sYLoq5Sd1FHq/DX+EcDfbVYVDBS0D8kOG2PLXWgV/QllpSm0nD+PS6HaHPDy8y/gowFMKV1V2fZlVI22FBYj7gMAGyv2FgX0bEpeMud1ktzueMAvyoRiTfC/oeRNSwUgB7n7ASB0pF+cpbpOw4xJyx2xZD/wUy+42iGOLmY1UPOS+jicqTOE5WL4xX32aNK00wAvM+xl0eBb3E9MKk25vuEa8j6gZLsuVjckMRTN4X3rRGsGyY11M8e7pzfMbb093Npxf56F6kQFjPrZbR4+cF9csU3+Gp8nx9lxk8Lz0bwQ2rDMocRjNW5PnP+4iXXryXKspCBuIz2rCyE8aWOo4q4e1BxKUKt933Uca3erE84746aBWes221FA8bSpt/UPsdMpZ2FbeOI8/OnR77errk8Q95uGefBdEbtnLez/HZmVu30o5Ujjx9mkDiIPnQ3xOB4j417Uii0BiueQzMWsQlJjExDXFtXbPL8CTjsPftcKk/ZzLjQLUF5awgIZEUSsujFuz7CmwS0=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5dbfea43-369a-4308-34aa-08dde4a03b2e
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 12:58:19.5964
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: YWqmaSqupHxDLNlosxOdcJrvom9N3zfzTzpR8wVlhdmcrMK3VcMZnK3luYbjZP3Ii08UT/hZq31sbIhEDbCv0zdhG6SdL4RCsT7PdaxS++k=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB5870
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-26_02,2025-08-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0
+ mlxlogscore=999 spamscore=0 suspectscore=0 malwarescore=0 mlxscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2508110000 definitions=main-2508260114
+X-Proofpoint-ORIG-GUID: h_fHNEKZkaBltp6NbJzuKV8R38H3I8lu
+X-Proofpoint-GUID: h_fHNEKZkaBltp6NbJzuKV8R38H3I8lu
+X-Authority-Analysis: v=2.4 cv=EcXIQOmC c=1 sm=1 tr=0 ts=68adaf74 b=1 cx=c_pps
+ a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=20KFwNOVAAAA:8
+ a=SKC4cPUdhrHzPjPfhaEA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMCBTYWx0ZWRfX5cE7jE7jMpqU
+ dYhG9gCOh5dYQ4+oerCYzeNj7VELH8r9M1eY0uiMqQOTtPzXIj/semfu7XqDrXqc20+L2t85iF1
+ NhXUGa+EzVqKPU+3BM4RUuFUEfz9kM1Ov9d5SS7npJf6jHXm2MGI+MgntVFa1IM5psR65Zdjap/
+ nIuS59mSEvN5wlpdyny5qy4wZ1AKNnyA1n8cOUGnfM5L7BG6fUkLesmAprc7LgTWQ3YtoyORLwr
+ X6xFtp9/2DoUWKo+QzNUi6ti2fUtGQJdawW0DauqpU84Jz99nCiGh20eT1D4Bk8TDYzgoudEo4E
+ l1NpUumwqMjxoXFoxX4XXZ4BjhVzBDOFtqlQU995IDG3Gid3GxomplkeOI2nF4Q9TKsm2trq+FE
+ sT5rTlGr
 
-From: Shubham Sharma <slopixelz@gmail.com>
+On Tue, Aug 26, 2025 at 02:50:03PM +0200, David Hildenbrand wrote:
+> On 12.08.25 17:44, Lorenzo Stoakes wrote:
+> > As part of the effort to move to mm->flags becoming a bitmap field, convert
+> > existing users to making use of the mm_flags_*() accessors which will, when
+> > the conversion is complete, be the only means of accessing mm_struct flags.
+> >
+> > This will result in the debug output being that of a bitmap output, which
+> > will result in a minor change here, but since this is for debug only, this
+> > should have no bearing.
+> >
+> > Otherwise, no functional changes intended.
+> >
+> > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> > ---
+>
+>
+> > diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+> > index 25923cfec9c6..17650f0b516e 100644
+> > --- a/mm/oom_kill.c
+> > +++ b/mm/oom_kill.c
+> > @@ -1,7 +1,7 @@
+> >   // SPDX-License-Identifier: GPL-2.0-only
+> >   /*
+> >    *  linux/mm/oom_kill.c
+> > - *
+> > + *
+>
+> ^ unrelated change
 
-Fixed the spelling typo and checked other BPF selftests sources for similar typos.
+Whoops! This is my editor removing trailing space...
 
-Follow-up to patch series 990629
+I mean may as well leave in tbh for this case I think :)
 
-v2:Instead of sending multiple tiny patches for minor comment fixes, combined them into a single pass across the affected files.
+>
+> Acked-by: David Hildenbrand <david@redhat.com>
 
-Signed-off-by: Shubham Sharma <slopixelz@gmail.com>
----
- tools/testing/selftests/bpf/Makefile                      | 2 +-
- tools/testing/selftests/bpf/bench.c                       | 2 +-
- tools/testing/selftests/bpf/prog_tests/btf_dump.c         | 2 +-
- tools/testing/selftests/bpf/prog_tests/fd_array.c         | 2 +-
- .../testing/selftests/bpf/prog_tests/kprobe_multi_test.c  | 2 +-
- tools/testing/selftests/bpf/prog_tests/module_attach.c    | 2 +-
- tools/testing/selftests/bpf/prog_tests/reg_bounds.c       | 4 ++--
- .../selftests/bpf/prog_tests/stacktrace_build_id.c        | 2 +-
- .../selftests/bpf/prog_tests/stacktrace_build_id_nmi.c    | 2 +-
- tools/testing/selftests/bpf/prog_tests/stacktrace_map.c   | 2 +-
- .../selftests/bpf/prog_tests/stacktrace_map_raw_tp.c      | 2 +-
- .../selftests/bpf/prog_tests/stacktrace_map_skip.c        | 2 +-
- tools/testing/selftests/bpf/progs/bpf_cc_cubic.c          | 2 +-
- tools/testing/selftests/bpf/progs/bpf_dctcp.c             | 2 +-
- .../selftests/bpf/progs/freplace_connect_v4_prog.c        | 2 +-
- tools/testing/selftests/bpf/progs/iters_state_safety.c    | 2 +-
- tools/testing/selftests/bpf/progs/rbtree_search.c         | 2 +-
- .../testing/selftests/bpf/progs/struct_ops_kptr_return.c  | 2 +-
- tools/testing/selftests/bpf/progs/struct_ops_refcounted.c | 2 +-
- tools/testing/selftests/bpf/progs/test_cls_redirect.c     | 2 +-
- .../selftests/bpf/progs/test_cls_redirect_dynptr.c        | 2 +-
- tools/testing/selftests/bpf/progs/uretprobe_stack.c       | 4 ++--
- tools/testing/selftests/bpf/progs/verifier_scalar_ids.c   | 2 +-
- tools/testing/selftests/bpf/progs/verifier_var_off.c      | 6 +++---
- tools/testing/selftests/bpf/test_sockmap.c                | 2 +-
- tools/testing/selftests/bpf/verifier/calls.c              | 8 ++++----
- tools/testing/selftests/bpf/xdping.c                      | 2 +-
- tools/testing/selftests/bpf/xsk.h                         | 4 ++--
- 28 files changed, 36 insertions(+), 36 deletions(-)
+Thanks for this + other acks! :)
 
-diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-index 4863106034df..de0418f7a661 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -398,7 +398,7 @@ $(HOST_BPFOBJ): $(wildcard $(BPFDIR)/*.[ch] $(BPFDIR)/Makefile)		       \
- 		    DESTDIR=$(HOST_SCRATCH_DIR)/ prefix= all install_headers
- endif
- 
--# vmlinux.h is first dumped to a temprorary file and then compared to
-+# vmlinux.h is first dumped to a temporary file and then compared to
- # the previous version. This helps to avoid unnecessary re-builds of
- # $(TRUNNER_BPF_OBJS)
- $(INCLUDE_DIR)/vmlinux.h: $(VMLINUX_BTF) $(BPFTOOL) | $(INCLUDE_DIR)
-diff --git a/tools/testing/selftests/bpf/bench.c b/tools/testing/selftests/bpf/bench.c
-index ddd73d06a1eb..3ecc226ea7b2 100644
---- a/tools/testing/selftests/bpf/bench.c
-+++ b/tools/testing/selftests/bpf/bench.c
-@@ -499,7 +499,7 @@ extern const struct bench bench_rename_rawtp;
- extern const struct bench bench_rename_fentry;
- extern const struct bench bench_rename_fexit;
- 
--/* pure counting benchmarks to establish theoretical lmits */
-+/* pure counting benchmarks to establish theoretical limits */
- extern const struct bench bench_trig_usermode_count;
- extern const struct bench bench_trig_syscall_count;
- extern const struct bench bench_trig_kernel_count;
-diff --git a/tools/testing/selftests/bpf/prog_tests/btf_dump.c b/tools/testing/selftests/bpf/prog_tests/btf_dump.c
-index 82903585c870..10cba526d3e6 100644
---- a/tools/testing/selftests/bpf/prog_tests/btf_dump.c
-+++ b/tools/testing/selftests/bpf/prog_tests/btf_dump.c
-@@ -63,7 +63,7 @@ static int test_btf_dump_case(int n, struct btf_dump_test_case *t)
- 
- 	/* tests with t->known_ptr_sz have no "long" or "unsigned long" type,
- 	 * so it's impossible to determine correct pointer size; but if they
--	 * do, it should be 8 regardless of host architecture, becaues BPF
-+	 * do, it should be 8 regardless of host architecture, because BPF
- 	 * target is always 64-bit
- 	 */
- 	if (!t->known_ptr_sz) {
-diff --git a/tools/testing/selftests/bpf/prog_tests/fd_array.c b/tools/testing/selftests/bpf/prog_tests/fd_array.c
-index 241b2c8c6e0f..c534b4d5f9da 100644
---- a/tools/testing/selftests/bpf/prog_tests/fd_array.c
-+++ b/tools/testing/selftests/bpf/prog_tests/fd_array.c
-@@ -293,7 +293,7 @@ static int get_btf_id_by_fd(int btf_fd, __u32 *id)
-  *  1) Create a new btf, it's referenced only by a file descriptor, so refcnt=1
-  *  2) Load a BPF prog with fd_array[0] = btf_fd; now btf's refcnt=2
-  *  3) Close the btf_fd, now refcnt=1
-- * Wait and check that BTF stil exists.
-+ * Wait and check that BTF still exists.
-  */
- static void check_fd_array_cnt__referenced_btfs(void)
- {
-diff --git a/tools/testing/selftests/bpf/prog_tests/kprobe_multi_test.c b/tools/testing/selftests/bpf/prog_tests/kprobe_multi_test.c
-index e19ef509ebf8..f377bea0b82d 100644
---- a/tools/testing/selftests/bpf/prog_tests/kprobe_multi_test.c
-+++ b/tools/testing/selftests/bpf/prog_tests/kprobe_multi_test.c
-@@ -463,7 +463,7 @@ static bool skip_entry(char *name)
- 	return false;
- }
- 
--/* Do comparision by ignoring '.llvm.<hash>' suffixes. */
-+/* Do comparison by ignoring '.llvm.<hash>' suffixes. */
- static int compare_name(const char *name1, const char *name2)
- {
- 	const char *res1, *res2;
-diff --git a/tools/testing/selftests/bpf/prog_tests/module_attach.c b/tools/testing/selftests/bpf/prog_tests/module_attach.c
-index 6d391d95f96e..70fa7ae93173 100644
---- a/tools/testing/selftests/bpf/prog_tests/module_attach.c
-+++ b/tools/testing/selftests/bpf/prog_tests/module_attach.c
-@@ -90,7 +90,7 @@ void test_module_attach(void)
- 
- 	test_module_attach__detach(skel);
- 
--	/* attach fentry/fexit and make sure it get's module reference */
-+	/* attach fentry/fexit and make sure it gets module reference */
- 	link = bpf_program__attach(skel->progs.handle_fentry);
- 	if (!ASSERT_OK_PTR(link, "attach_fentry"))
- 		goto cleanup;
-diff --git a/tools/testing/selftests/bpf/prog_tests/reg_bounds.c b/tools/testing/selftests/bpf/prog_tests/reg_bounds.c
-index e261b0e872db..d93a0c7b1786 100644
---- a/tools/testing/selftests/bpf/prog_tests/reg_bounds.c
-+++ b/tools/testing/selftests/bpf/prog_tests/reg_bounds.c
-@@ -623,7 +623,7 @@ static void range_cond(enum num_t t, struct range x, struct range y,
- 			*newx = range(t, x.a, x.b);
- 			*newy = range(t, y.a + 1, y.b);
- 		} else if (x.a == x.b && x.b == y.b) {
--			/* X is a constant matching rigth side of Y */
-+			/* X is a constant matching right side of Y */
- 			*newx = range(t, x.a, x.b);
- 			*newy = range(t, y.a, y.b - 1);
- 		} else if (y.a == y.b && x.a == y.a) {
-@@ -631,7 +631,7 @@ static void range_cond(enum num_t t, struct range x, struct range y,
- 			*newx = range(t, x.a + 1, x.b);
- 			*newy = range(t, y.a, y.b);
- 		} else if (y.a == y.b && x.b == y.b) {
--			/* Y is a constant matching rigth side of X */
-+			/* Y is a constant matching right side of X */
- 			*newx = range(t, x.a, x.b - 1);
- 			*newy = range(t, y.a, y.b);
- 		} else {
-diff --git a/tools/testing/selftests/bpf/prog_tests/stacktrace_build_id.c b/tools/testing/selftests/bpf/prog_tests/stacktrace_build_id.c
-index b7ba5cd47d96..271b5cc9fc01 100644
---- a/tools/testing/selftests/bpf/prog_tests/stacktrace_build_id.c
-+++ b/tools/testing/selftests/bpf/prog_tests/stacktrace_build_id.c
-@@ -39,7 +39,7 @@ void test_stacktrace_build_id(void)
- 	bpf_map_update_elem(control_map_fd, &key, &val, 0);
- 
- 	/* for every element in stackid_hmap, we can find a corresponding one
--	 * in stackmap, and vise versa.
-+	 * in stackmap, and vice versa.
- 	 */
- 	err = compare_map_keys(stackid_hmap_fd, stackmap_fd);
- 	if (CHECK(err, "compare_map_keys stackid_hmap vs. stackmap",
-diff --git a/tools/testing/selftests/bpf/prog_tests/stacktrace_build_id_nmi.c b/tools/testing/selftests/bpf/prog_tests/stacktrace_build_id_nmi.c
-index 0832fd787457..b277dddd5af7 100644
---- a/tools/testing/selftests/bpf/prog_tests/stacktrace_build_id_nmi.c
-+++ b/tools/testing/selftests/bpf/prog_tests/stacktrace_build_id_nmi.c
-@@ -66,7 +66,7 @@ void test_stacktrace_build_id_nmi(void)
- 	bpf_map_update_elem(control_map_fd, &key, &val, 0);
- 
- 	/* for every element in stackid_hmap, we can find a corresponding one
--	 * in stackmap, and vise versa.
-+	 * in stackmap, and vice versa.
- 	 */
- 	err = compare_map_keys(stackid_hmap_fd, stackmap_fd);
- 	if (CHECK(err, "compare_map_keys stackid_hmap vs. stackmap",
-diff --git a/tools/testing/selftests/bpf/prog_tests/stacktrace_map.c b/tools/testing/selftests/bpf/prog_tests/stacktrace_map.c
-index df59e4ae2951..84a7e405e912 100644
---- a/tools/testing/selftests/bpf/prog_tests/stacktrace_map.c
-+++ b/tools/testing/selftests/bpf/prog_tests/stacktrace_map.c
-@@ -50,7 +50,7 @@ void test_stacktrace_map(void)
- 	bpf_map_update_elem(control_map_fd, &key, &val, 0);
- 
- 	/* for every element in stackid_hmap, we can find a corresponding one
--	 * in stackmap, and vise versa.
-+	 * in stackmap, and vice versa.
- 	 */
- 	err = compare_map_keys(stackid_hmap_fd, stackmap_fd);
- 	if (CHECK(err, "compare_map_keys stackid_hmap vs. stackmap",
-diff --git a/tools/testing/selftests/bpf/prog_tests/stacktrace_map_raw_tp.c b/tools/testing/selftests/bpf/prog_tests/stacktrace_map_raw_tp.c
-index c6ef06f55cdb..e0cb4697b4b3 100644
---- a/tools/testing/selftests/bpf/prog_tests/stacktrace_map_raw_tp.c
-+++ b/tools/testing/selftests/bpf/prog_tests/stacktrace_map_raw_tp.c
-@@ -46,7 +46,7 @@ void test_stacktrace_map_raw_tp(void)
- 	bpf_map_update_elem(control_map_fd, &key, &val, 0);
- 
- 	/* for every element in stackid_hmap, we can find a corresponding one
--	 * in stackmap, and vise versa.
-+	 * in stackmap, and vice versa.
- 	 */
- 	err = compare_map_keys(stackid_hmap_fd, stackmap_fd);
- 	if (CHECK(err, "compare_map_keys stackid_hmap vs. stackmap",
-diff --git a/tools/testing/selftests/bpf/prog_tests/stacktrace_map_skip.c b/tools/testing/selftests/bpf/prog_tests/stacktrace_map_skip.c
-index 1932b1e0685c..dc2ccf6a14d1 100644
---- a/tools/testing/selftests/bpf/prog_tests/stacktrace_map_skip.c
-+++ b/tools/testing/selftests/bpf/prog_tests/stacktrace_map_skip.c
-@@ -40,7 +40,7 @@ void test_stacktrace_map_skip(void)
- 	skel->bss->control = 1;
- 
- 	/* for every element in stackid_hmap, we can find a corresponding one
--	 * in stackmap, and vise versa.
-+	 * in stackmap, and vice versa.
- 	 */
- 	err = compare_map_keys(stackid_hmap_fd, stackmap_fd);
- 	if (!ASSERT_OK(err, "compare_map_keys stackid_hmap vs. stackmap"))
-diff --git a/tools/testing/selftests/bpf/progs/bpf_cc_cubic.c b/tools/testing/selftests/bpf/progs/bpf_cc_cubic.c
-index 1654a530aa3d..4e51785e7606 100644
---- a/tools/testing/selftests/bpf/progs/bpf_cc_cubic.c
-+++ b/tools/testing/selftests/bpf/progs/bpf_cc_cubic.c
-@@ -101,7 +101,7 @@ static void tcp_cwnd_reduction(struct sock *sk, int newly_acked_sacked,
- 	tp->snd_cwnd = pkts_in_flight + sndcnt;
- }
- 
--/* Decide wheather to run the increase function of congestion control. */
-+/* Decide whether to run the increase function of congestion control. */
- static bool tcp_may_raise_cwnd(const struct sock *sk, const int flag)
- {
- 	if (tcp_sk(sk)->reordering > TCP_REORDERING)
-diff --git a/tools/testing/selftests/bpf/progs/bpf_dctcp.c b/tools/testing/selftests/bpf/progs/bpf_dctcp.c
-index 7cd73e75f52a..32c511bcd60b 100644
---- a/tools/testing/selftests/bpf/progs/bpf_dctcp.c
-+++ b/tools/testing/selftests/bpf/progs/bpf_dctcp.c
-@@ -1,7 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- /* Copyright (c) 2019 Facebook */
- 
--/* WARNING: This implemenation is not necessarily the same
-+/* WARNING: This implementation is not necessarily the same
-  * as the tcp_dctcp.c.  The purpose is mainly for testing
-  * the kernel BPF logic.
-  */
-diff --git a/tools/testing/selftests/bpf/progs/freplace_connect_v4_prog.c b/tools/testing/selftests/bpf/progs/freplace_connect_v4_prog.c
-index 544e5ac90461..d09bbd8ae8a8 100644
---- a/tools/testing/selftests/bpf/progs/freplace_connect_v4_prog.c
-+++ b/tools/testing/selftests/bpf/progs/freplace_connect_v4_prog.c
-@@ -12,7 +12,7 @@
- SEC("freplace/connect_v4_prog")
- int new_connect_v4_prog(struct bpf_sock_addr *ctx)
- {
--	// return value thats in invalid range
-+	// return value that's in invalid range
- 	return 255;
- }
- 
-diff --git a/tools/testing/selftests/bpf/progs/iters_state_safety.c b/tools/testing/selftests/bpf/progs/iters_state_safety.c
-index f41257eadbb2..b381ac0c736c 100644
---- a/tools/testing/selftests/bpf/progs/iters_state_safety.c
-+++ b/tools/testing/selftests/bpf/progs/iters_state_safety.c
-@@ -345,7 +345,7 @@ int __naked read_from_iter_slot_fail(void)
- 		"r3 = 1000;"
- 		"call %[bpf_iter_num_new];"
- 
--		/* attemp to leak bpf_iter_num state */
-+		/* attempt to leak bpf_iter_num state */
- 		"r7 = *(u64 *)(r6 + 0);"
- 		"r8 = *(u64 *)(r6 + 8);"
- 
-diff --git a/tools/testing/selftests/bpf/progs/rbtree_search.c b/tools/testing/selftests/bpf/progs/rbtree_search.c
-index 098ef970fac1..b05565d1db0d 100644
---- a/tools/testing/selftests/bpf/progs/rbtree_search.c
-+++ b/tools/testing/selftests/bpf/progs/rbtree_search.c
-@@ -183,7 +183,7 @@ long test_##op##_spinlock_##dolock(void *ctx)		\
- }
- 
- /*
-- * Use a spearate MSG macro instead of passing to TEST_XXX(..., MSG)
-+ * Use a separate MSG macro instead of passing to TEST_XXX(..., MSG)
-  * to ensure the message itself is not in the bpf prog lineinfo
-  * which the verifier includes in its log.
-  * Otherwise, the test_loader will incorrectly match the prog lineinfo
-diff --git a/tools/testing/selftests/bpf/progs/struct_ops_kptr_return.c b/tools/testing/selftests/bpf/progs/struct_ops_kptr_return.c
-index 36386b3c23a1..2b98b7710816 100644
---- a/tools/testing/selftests/bpf/progs/struct_ops_kptr_return.c
-+++ b/tools/testing/selftests/bpf/progs/struct_ops_kptr_return.c
-@@ -9,7 +9,7 @@ void bpf_task_release(struct task_struct *p) __ksym;
- 
- /* This test struct_ops BPF programs returning referenced kptr. The verifier should
-  * allow a referenced kptr or a NULL pointer to be returned. A referenced kptr to task
-- * here is acquried automatically as the task argument is tagged with "__ref".
-+ * here is acquired automatically as the task argument is tagged with "__ref".
-  */
- SEC("struct_ops/test_return_ref_kptr")
- struct task_struct *BPF_PROG(kptr_return, int dummy,
-diff --git a/tools/testing/selftests/bpf/progs/struct_ops_refcounted.c b/tools/testing/selftests/bpf/progs/struct_ops_refcounted.c
-index 76dcb6089d7f..9c0a65466356 100644
---- a/tools/testing/selftests/bpf/progs/struct_ops_refcounted.c
-+++ b/tools/testing/selftests/bpf/progs/struct_ops_refcounted.c
-@@ -9,7 +9,7 @@ __attribute__((nomerge)) extern void bpf_task_release(struct task_struct *p) __k
- 
- /* This is a test BPF program that uses struct_ops to access a referenced
-  * kptr argument. This is a test for the verifier to ensure that it
-- * 1) recongnizes the task as a referenced object (i.e., ref_obj_id > 0), and
-+ * 1) recognizes the task as a referenced object (i.e., ref_obj_id > 0), and
-  * 2) the same reference can be acquired from multiple paths as long as it
-  *    has not been released.
-  */
-diff --git a/tools/testing/selftests/bpf/progs/test_cls_redirect.c b/tools/testing/selftests/bpf/progs/test_cls_redirect.c
-index f344c6835e84..823169fb6e4c 100644
---- a/tools/testing/selftests/bpf/progs/test_cls_redirect.c
-+++ b/tools/testing/selftests/bpf/progs/test_cls_redirect.c
-@@ -129,7 +129,7 @@ typedef uint8_t *net_ptr __attribute__((align_value(8)));
- typedef struct buf {
- 	struct __sk_buff *skb;
- 	net_ptr head;
--	/* NB: tail musn't have alignment other than 1, otherwise
-+	/* NB: tail mustn't have alignment other than 1, otherwise
- 	* LLVM will go and eliminate code, e.g. when checking packet lengths.
- 	*/
- 	uint8_t *const tail;
-diff --git a/tools/testing/selftests/bpf/progs/test_cls_redirect_dynptr.c b/tools/testing/selftests/bpf/progs/test_cls_redirect_dynptr.c
-index d0f7670351e5..dfd4a2710391 100644
---- a/tools/testing/selftests/bpf/progs/test_cls_redirect_dynptr.c
-+++ b/tools/testing/selftests/bpf/progs/test_cls_redirect_dynptr.c
-@@ -494,7 +494,7 @@ static ret_t get_next_hop(struct bpf_dynptr *dynptr, __u64 *offset, encap_header
- 
- 	*offset += sizeof(*next_hop);
- 
--	/* Skip the remainig next hops (may be zero). */
-+	/* Skip the remaining next hops (may be zero). */
- 	return skip_next_hops(offset, encap->unigue.hop_count - encap->unigue.next_hop - 1);
- }
- 
-diff --git a/tools/testing/selftests/bpf/progs/uretprobe_stack.c b/tools/testing/selftests/bpf/progs/uretprobe_stack.c
-index 9fdcf396b8f4..a2951e2f1711 100644
---- a/tools/testing/selftests/bpf/progs/uretprobe_stack.c
-+++ b/tools/testing/selftests/bpf/progs/uretprobe_stack.c
-@@ -26,8 +26,8 @@ int usdt_len;
- SEC("uprobe//proc/self/exe:target_1")
- int BPF_UPROBE(uprobe_1)
- {
--	/* target_1 is recursive wit depth of 2, so we capture two separate
--	 * stack traces, depending on which occurence it is
-+	/* target_1 is recursive with depth of 2, so we capture two separate
-+	 * stack traces, depending on which occurrence it is
- 	 */
- 	static bool recur = false;
- 
-diff --git a/tools/testing/selftests/bpf/progs/verifier_scalar_ids.c b/tools/testing/selftests/bpf/progs/verifier_scalar_ids.c
-index 7c5e5e6d10eb..dba3ca728f6e 100644
---- a/tools/testing/selftests/bpf/progs/verifier_scalar_ids.c
-+++ b/tools/testing/selftests/bpf/progs/verifier_scalar_ids.c
-@@ -349,7 +349,7 @@ __naked void precision_two_ids(void)
- SEC("socket")
- __success __log_level(2)
- __flag(BPF_F_TEST_STATE_FREQ)
--/* check thar r0 and r6 have different IDs after 'if',
-+/* check that r0 and r6 have different IDs after 'if',
-  * collect_linked_regs() can't tie more than 6 registers for a single insn.
-  */
- __msg("8: (25) if r0 > 0x7 goto pc+0         ; R0=scalar(id=1")
-diff --git a/tools/testing/selftests/bpf/progs/verifier_var_off.c b/tools/testing/selftests/bpf/progs/verifier_var_off.c
-index 1d36d01b746e..f345466bca68 100644
---- a/tools/testing/selftests/bpf/progs/verifier_var_off.c
-+++ b/tools/testing/selftests/bpf/progs/verifier_var_off.c
-@@ -114,8 +114,8 @@ __naked void stack_write_priv_vs_unpriv(void)
- }
- 
- /* Similar to the previous test, but this time also perform a read from the
-- * address written to with a variable offset. The read is allowed, showing that,
-- * after a variable-offset write, a priviledged program can read the slots that
-+ * address written to with a variable offet. The read is allowed, showing that,
-+ * after a variable-offset write, a privileged program can read the slots that
-  * were in the range of that write (even if the verifier doesn't actually know if
-  * the slot being read was really written to or not.
-  *
-@@ -157,7 +157,7 @@ __naked void stack_write_followed_by_read(void)
- SEC("socket")
- __description("variable-offset stack write clobbers spilled regs")
- __failure
--/* In the priviledged case, dereferencing a spilled-and-then-filled
-+/* In the privileged case, dereferencing a spilled-and-then-filled
-  * register is rejected because the previous variable offset stack
-  * write might have overwritten the spilled pointer (i.e. we lose track
-  * of the spilled register when we analyze the write).
-diff --git a/tools/testing/selftests/bpf/test_sockmap.c b/tools/testing/selftests/bpf/test_sockmap.c
-index fd2da2234cc9..76568db7a664 100644
---- a/tools/testing/selftests/bpf/test_sockmap.c
-+++ b/tools/testing/selftests/bpf/test_sockmap.c
-@@ -1372,7 +1372,7 @@ static int run_options(struct sockmap_options *options, int cg_fd,  int test)
- 	} else
- 		fprintf(stderr, "unknown test\n");
- out:
--	/* Detatch and zero all the maps */
-+	/* Detach and zero all the maps */
- 	bpf_prog_detach2(bpf_program__fd(progs[3]), cg_fd, BPF_CGROUP_SOCK_OPS);
- 
- 	for (i = 0; i < ARRAY_SIZE(links); i++) {
-diff --git a/tools/testing/selftests/bpf/verifier/calls.c b/tools/testing/selftests/bpf/verifier/calls.c
-index f3492efc8834..c8d640802cce 100644
---- a/tools/testing/selftests/bpf/verifier/calls.c
-+++ b/tools/testing/selftests/bpf/verifier/calls.c
-@@ -1375,7 +1375,7 @@
- 	BPF_JMP_IMM(BPF_JEQ, BPF_REG_0, 0, 1),
- 	/* write into map value */
- 	BPF_ST_MEM(BPF_DW, BPF_REG_0, 0, 0),
--	/* fetch secound map_value_ptr from the stack */
-+	/* fetch second map_value_ptr from the stack */
- 	BPF_LDX_MEM(BPF_DW, BPF_REG_0, BPF_REG_10, -16),
- 	BPF_JMP_IMM(BPF_JEQ, BPF_REG_0, 0, 1),
- 	/* write into map value */
-@@ -1439,7 +1439,7 @@
- 	/* second time with fp-16 */
- 	BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 1, 0, 4),
- 	BPF_JMP_IMM(BPF_JNE, BPF_REG_0, 1, 2),
--	/* fetch secound map_value_ptr from the stack */
-+	/* fetch second map_value_ptr from the stack */
- 	BPF_LDX_MEM(BPF_DW, BPF_REG_0, BPF_REG_7, 0),
- 	/* write into map value */
- 	BPF_ST_MEM(BPF_DW, BPF_REG_0, 0, 0),
-@@ -1493,7 +1493,7 @@
- 	/* second time with fp-16 */
- 	BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 1, 0, 4),
- 	BPF_JMP_IMM(BPF_JNE, BPF_REG_0, 0, 2),
--	/* fetch secound map_value_ptr from the stack */
-+	/* fetch second map_value_ptr from the stack */
- 	BPF_LDX_MEM(BPF_DW, BPF_REG_0, BPF_REG_7, 0),
- 	/* write into map value */
- 	BPF_ST_MEM(BPF_DW, BPF_REG_0, 0, 0),
-@@ -2380,7 +2380,7 @@
- 	 */
- 	BPF_JMP_REG(BPF_JGT, BPF_REG_6, BPF_REG_7, 1),
- 	BPF_MOV64_REG(BPF_REG_9, BPF_REG_8),
--	/* r9 = *r9                ; verifier get's to this point via two paths:
-+	/* r9 = *r9                ; verifier gets to this point via two paths:
- 	 *                         ; (I) one including r9 = r8, verified first;
- 	 *                         ; (II) one excluding r9 = r8, verified next.
- 	 *                         ; After load of *r9 to r9 the frame[0].fp[-24].id == r9.id.
-diff --git a/tools/testing/selftests/bpf/xdping.c b/tools/testing/selftests/bpf/xdping.c
-index 1503a1d2faa0..9ed8c796645d 100644
---- a/tools/testing/selftests/bpf/xdping.c
-+++ b/tools/testing/selftests/bpf/xdping.c
-@@ -155,7 +155,7 @@ int main(int argc, char **argv)
- 	}
- 
- 	if (!server) {
--		/* Only supports IPv4; see hints initiailization above. */
-+		/* Only supports IPv4; see hints initialization above. */
- 		if (getaddrinfo(argv[optind], NULL, &hints, &a) || !a) {
- 			fprintf(stderr, "Could not resolve %s\n", argv[optind]);
- 			return 1;
-diff --git a/tools/testing/selftests/bpf/xsk.h b/tools/testing/selftests/bpf/xsk.h
-index 93c2cc413cfc..48729da142c2 100644
---- a/tools/testing/selftests/bpf/xsk.h
-+++ b/tools/testing/selftests/bpf/xsk.h
-@@ -93,8 +93,8 @@ static inline __u32 xsk_prod_nb_free(struct xsk_ring_prod *r, __u32 nb)
- 	/* Refresh the local tail pointer.
- 	 * cached_cons is r->size bigger than the real consumer pointer so
- 	 * that this addition can be avoided in the more frequently
--	 * executed code that computs free_entries in the beginning of
--	 * this function. Without this optimization it whould have been
-+	 * executed code that computes free_entries in the beginning of
-+	 * this function. Without this optimization it would have been
- 	 * free_entries = r->cached_prod - r->cached_cons + r->size.
- 	 */
- 	r->cached_cons = __atomic_load_n(r->consumer, __ATOMIC_ACQUIRE);
--- 
-2.48.1
+>
+> --
+> Cheers
+>
+> David / dhildenb
+>
 
+Cheers, Lorenzo
 
