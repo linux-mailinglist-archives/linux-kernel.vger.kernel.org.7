@@ -1,148 +1,114 @@
-Return-Path: <linux-kernel+bounces-787066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13BF4B370EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:06:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4432AB370F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:06:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDEFE8E4039
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:06:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A58028E43C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2DDB2E3AE6;
-	Tue, 26 Aug 2025 17:04:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DED32E1C63;
+	Tue, 26 Aug 2025 17:06:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="i6WEPL0p"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CAuxDYdX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05EA82E1C6B
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 17:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 528371C8605;
+	Tue, 26 Aug 2025 17:06:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756227880; cv=none; b=EtDOYtMXDPpGwmp4ofDjG1H7ZBQ1+hvM8MSP8/pCi934Cj5/d3ciuz25Oyzv33n2HruCGV2PHX5Lz86Dh8HdT0qhKjall/fydTkw5VXC4Ynj+NfVP55YfxIio2UYCThMuu1IL5zjYEAeIALYRu/KuUJQzOw1fSGMiIiLcHlp/bQ=
+	t=1756227971; cv=none; b=afxQTVAwXG6stmhUORTjBkAsBVtqZESI+TftZoQ3dCYWVqmMUB/ond+9PRG18Z0r7P0+HPsT0hIvkfawHOy81EaqKlgNce9UTL021WOnWfU7laPVEoafQtBULqvap4g7FpF0axEfiRqwjEbnPBjdyi91vwR4sj/aa1UF3qe6O10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756227880; c=relaxed/simple;
-	bh=4hli9x6NgPwP094pbyA0wxiR+cPcCetA3Wp28EfePcw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UI893p03WJvv71i8uIX58Fm+elI5OysI+R5lhH17MKQPe5Bbho+pvZ0/FPGfDS3/JPONYSqdn+E4zndb1jvmJH38azcjatEOqr2hpCRESFwPMyMQwl0J8hGR2lZvUCrbh8489AQhqk/Sv/KW5Uuqc6kpZvfRp7E33k+DUjiyklQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=i6WEPL0p; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4b2d501db08so27491991cf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 10:04:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1756227877; x=1756832677; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=VjIfaOrofazhAWITCaBIQC/PYR7khvFmaUUyG7Ja/eo=;
-        b=i6WEPL0pn88fDPnRYN45hj7gOcVCBERuZ1htsz9l/CTeeHj2yJkQyh/kwjR7I/du2F
-         OOmppdVKnOz9UtjGaeC/ek8tlU+qZdGkzvtOXJyrhdNduwzOxIaS0Ag2/4hve/uJ27lh
-         6MViq0s1o6dKjb+y/6TEb7+3NZSSELpdY29DxuWprqUoL6MWOaSu2OJql7+Fd/CiYkAK
-         0DQfpzi6kdLrwqWyBkowG5vCTf/oYiOX/6bMmo7DR4xISJkGoUn7rSXHEhqbvjSiggq3
-         M7ss2/L1eit4r9HSSLDmgtCzbYagzLjZboL0DpoeQe2see7mDltPbZ69hIwMafT2bwbH
-         WHLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756227877; x=1756832677;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VjIfaOrofazhAWITCaBIQC/PYR7khvFmaUUyG7Ja/eo=;
-        b=Camavjb+uKK8QpTCMH/VO9VG3b9FDn5cEhIiBws5/NZqoMQltq21GDWKmDmYQFViR2
-         tg9aVip2xOQbE5wBk6eTztbzCgIgjToJYIsbtrfqYSirwT9FqkYnZe7YhZptayOq/Han
-         vXR8DMW/M3WjA8okFFK23jno1rK8HhyxPt3HDtXTBLe7xGV7kjsDaP7xo/EWI5rGai2O
-         jZ9e7uRqamjleF4jT5cSOMxETh0xpZRJLTE32UVJICgNzCj79FRpHGTRsVy/0Af6c/1V
-         ngCr3hVUyMH1tmguP1xVuJ6UbxaZAYI0L8ds1uFpSfPBk02Z+Q9w67INafDQ6+aSmc0O
-         Cc5g==
-X-Forwarded-Encrypted: i=1; AJvYcCW30DuTT0uKU9jmS/YqGymmRtN+SbZ7Cj2UlYYLcsY3dvGDdDyIZ3ezACp0wno24k0s8pDOq/1A2UYdFgk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7EuRUdbILRMlLSpPzKBvhq21N8mT0x/ihVWWEp5bP3UJX80mS
-	B0gxSoYIHcYw7xS5GVzk7X0RDwaxfkEFcRIdFp06qQjqsexXyKt/WRJ3Ff9bTUurqhPAG8eES2U
-	DretYqTxuqyXXolA2GRLEDSiID0Y6S4PRKaGRUqo/eQ==
-X-Gm-Gg: ASbGncuiLL05CE1ZjSl77gB3IPUqkLvbM79W8+YmXZPsfrlV1KjoZcF34pJkgsl+gLE
-	eRJftjHG8PP5+Mx7Gphoe5cznCtAF8t5at1WDisLL1irJ2FZL81J3dXTNaI69xS1Y+aUEhJ6FhP
-	RRiU+WOi3Y4Xlh0Uc0GkcGYHpxMaHC8P1fU8LdXzeMur9rYTVLLDvVH3l7KB7UU+nK5/4ds8ETx
-	YXIGmteLM+mccA=
-X-Google-Smtp-Source: AGHT+IGhz39NCK5Fxfc9IjxwgHAO3YphwmnNvrOuu/ULmHzST7LVx0PTJH1sOUstAe48pYCpPqjEksP24bvYcCphrNY=
-X-Received: by 2002:a05:622a:1213:b0:4b2:edd6:f1a2 with SMTP id
- d75a77b69052e-4b2edd6f516mr4884241cf.63.1756227876536; Tue, 26 Aug 2025
- 10:04:36 -0700 (PDT)
+	s=arc-20240116; t=1756227971; c=relaxed/simple;
+	bh=Mj9egpTW8QvcC822yuVmAghJg+cmMryjaFSykbktxbE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cj3Ptaj8zYRNOMpSlBqOhxNL/rliEAwkH2QUTqsl5cIlM56Pri73huojhJRWQN/a68V5zhjZPGXDg2Tp54a+mj3rYt4QhTWzJbtu3Phla9PIq30ucKu9J7O3ZK1OjFBikkSpPsTDhecqsf3Yi/E0w0Sx7RWZnE81wOODMhMnVoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CAuxDYdX; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756227969; x=1787763969;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Mj9egpTW8QvcC822yuVmAghJg+cmMryjaFSykbktxbE=;
+  b=CAuxDYdX4/PghNEuGeT8wqRWoeunzQTXYXsx/k1ZEyjGCBo+I3FTLmiv
+   ZOwlso6CQYLUAOOmlv1aFHdvGyPy6M0gCH36gKx8fOASVAb1ckL8WjZnb
+   8IXuKv4k2FwIEZLbFY+zS3RaAumOS+H9+cp5XusvB99i63/YzXlmG36BM
+   wxNfolK7my2tAI2Rjjq+DbRqiJzrICkOWsdzCUpNjcvwvhnvrfS2Z7Gjy
+   xkwI7EC/KiU3DYodNwVA5AE5n/E6HUyXDG9crheT2bCtKfYKFC8gK5nd8
+   8si/UJQClYZaSmxSvUBnOPKGBFpXZIgsIw3DhNsvYqTcQp5kMQ3sELKUp
+   g==;
+X-CSE-ConnectionGUID: EBUaeIvnTj6o9jWUFbBcng==
+X-CSE-MsgGUID: aZjMooI9RayryfoTa5JchQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11534"; a="75926124"
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="75926124"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 10:06:08 -0700
+X-CSE-ConnectionGUID: i127+iinTnezUN+yhfa2Qw==
+X-CSE-MsgGUID: UsAkLzssQDyxNOzJo3nNug==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="193295847"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 26 Aug 2025 10:06:06 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uqx7T-000SFD-22;
+	Tue, 26 Aug 2025 17:06:03 +0000
+Date: Wed, 27 Aug 2025 01:05:51 +0800
+From: kernel test robot <lkp@intel.com>
+To: Konrad Leszczynski <konrad.leszczynski@intel.com>, davem@davemloft.net,
+	andrew+netdev@lunn.ch, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, cezary.rojewski@intel.com,
+	sebastian.basierski@intel.com,
+	Karol Jurczenia <karol.jurczenia@intel.com>,
+	Konrad Leszczynski <konrad.leszczynski@intel.com>
+Subject: Re: [PATCH net-next 4/7] net: stmmac: enable ARP Offload on
+ mac_link_up()
+Message-ID: <202508270007.sExKFhrN-lkp@intel.com>
+References: <20250826113247.3481273-5-konrad.leszczynski@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
- <mafs0ms7mxly1.fsf@kernel.org> <CA+CK2bBoLi9tYWHSFyDEHWd_cwvS_hR4q2HMmg-C+SJpQDNs=g@mail.gmail.com>
- <20250826142406.GE1970008@nvidia.com> <CA+CK2bBrCd8t_BUeE-sVPGjsJwmtk3mCSVhTMGbseTi_Wk+4yQ@mail.gmail.com>
- <20250826151327.GA2130239@nvidia.com> <CA+CK2bAbqMb0ZYvsC9tsf6w5myfUyqo3N4fUP3CwVA_kUDQteg@mail.gmail.com>
- <20250826162203.GE2130239@nvidia.com>
-In-Reply-To: <20250826162203.GE2130239@nvidia.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Tue, 26 Aug 2025 17:03:59 +0000
-X-Gm-Features: Ac12FXz3lP2hDCkW5MtqBiPoAwifNenh5414D4bEhipE2lcPWQY4sTh__rhBUIU
-Message-ID: <CA+CK2bB9r_pMzd0VbLsAGTwh8kvV_o3rFM_W--drutewomr1ZQ@mail.gmail.com>
-Subject: Re: [PATCH v3 00/30] Live Update Orchestrator
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Pratyush Yadav <pratyush@kernel.org>, jasonmiu@google.com, graf@amazon.com, 
-	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
-	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
-	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
-	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
-	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
-	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
-	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
-	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
-	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
-	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, 
-	ajayachandra@nvidia.com, parav@nvidia.com, leonro@nvidia.com, witu@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250826113247.3481273-5-konrad.leszczynski@intel.com>
 
-> > The existing interface, with the addition of passing a pidfd, provides
-> > the necessary flexibility without being invasive. The change would be
-> > localized to the new code that performs the FD retrieval and wouldn't
-> > involve spoofing current or making widespread changes.
-> > For example, to handle cgroup charging for a memfd, the flow inside
-> > memfd_luo_retrieve() would look something like this:
-> >
-> > task = get_pid_task(target_pid, PIDTYPE_PID);
-> > mm = get_task_mm(task);
-> >     // ...
-> >     folio = kho_restore_folio(phys);
-> >     // Charge to the target mm, not 'current->mm'
-> >     mem_cgroup_charge(folio, mm, ...);
-> > mmput(mm);
-> > put_task_struct(task);
->
-> Execpt it doesn't work like that in all places, iommufd for example
-> uses GFP_KERNEL_ACCOUNT which relies on current.
+Hi Konrad,
 
-That's a good point. For kernel allocations, I don't see a clean way
-to account for a different process.
+kernel test robot noticed the following build errors:
 
-We should not be doing major allocations during the retrieval process
-itself. Ideally, the kernel would restore an FD using only the
-preserved folio data (that we can cleanly charge), and then let the
-user process perform any subsequent actions that might cause new
-kernel memory allocations. However, I can see how that might not be
-practical for all handlers.
+[auto build test ERROR on net-next/main]
 
-Perhaps, we should add session extensions to the kernel as follow-up
-after this series lands, we would also need to rewrite luod design
-accordingly to move some of the sessions logic into the kernel.
+url:    https://github.com/intel-lab-lkp/linux/commits/Konrad-Leszczynski/net-stmmac-replace-memcpy-with-strscpy-in-ethtool/20250826-193732
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20250826113247.3481273-5-konrad.leszczynski%40intel.com
+patch subject: [PATCH net-next 4/7] net: stmmac: enable ARP Offload on mac_link_up()
+config: arm-randconfig-004-20250826 (https://download.01.org/0day-ci/archive/20250827/202508270007.sExKFhrN-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 10.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250827/202508270007.sExKFhrN-lkp@intel.com/reproduce)
 
-Thank you,
-Pasha
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508270007.sExKFhrN-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+>> ERROR: modpost: "in_dev_finish_destroy" [drivers/net/ethernet/stmicro/stmmac/stmmac.ko] undefined!
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
