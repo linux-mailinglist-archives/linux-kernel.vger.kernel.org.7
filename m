@@ -1,172 +1,122 @@
-Return-Path: <linux-kernel+bounces-786974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B789B36F9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:12:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2EE2B36F9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:11:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D1B8207BCD
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:07:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A1F15E6A3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:07:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9AB21CC60;
-	Tue, 26 Aug 2025 16:07:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C5E30BB98;
+	Tue, 26 Aug 2025 16:07:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NR/KC4U3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PNBDI3/5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1241631A550
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 16:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BF8271448;
+	Tue, 26 Aug 2025 16:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756224420; cv=none; b=Aso9V0YQWBsrrS4AYwDeH68FXtRyWb7nDNCraJk3ZlJ4JV0Usoj0Aw0SCfsHxDPPVVR5m+dfKFzhWLyMrzVqsPHGglkq5g0+7cp0gCShIPIOLr+sOp6fv+dq6lPfz5xHFSCTfc3infFwKXwG00aesAgWV8++zv/CNOLvAi0JhnU=
+	t=1756224461; cv=none; b=Wcf6gP79eOH5LWLfE6ZwzYYbYPZTeiK3Hv+FXD6woXFD/Rk78S6yOQC8F42/yorsH5SLbWteInf+5ZaBizRBayn7+vCm1zoo2Ye7EDNlXk7pwjQymL0yFOk63GeZHlWDseZPFh7Yrbyhl5Nv08A4GFrUO1XdNQjsYqEhyAieYI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756224420; c=relaxed/simple;
-	bh=NXzXQw4Zt6Em+yckX6q/jojHBegK12Bp1ww6CHFGn3w=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=cy7Es0ifg/7MBx2iGx9E8qfX2DIHnDGoWJONkqVoP3SK1ykuqzRSKS5g3iNZaCrKtiEnlWFrHw6JIeGAafwLUC4d+7BqK1ffk1pgg1wX7hfXpqNX2Ju8PZTSnKZlcCw7Z8TWR+n6p20FjasPVos2XigiDUDbUYdhfcc+0j8h38o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NR/KC4U3; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756224417;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RRIEwoyk6U3gj8I8qpF/P/UU9F7Za9uOXepaDGpaelc=;
-	b=NR/KC4U3fwP3FpDxtXFuRKCWNnac2u6k+bHVZFp3jmcEC83UUvaJ4yxPhnZHMDE6+2iVmS
-	rhB+4J/rzaAY74jw2oV5gAXEPr48rqLDLxs3HJAc65AE/UVGF4/UIV6A07B9ZYcL/eBZA5
-	SeFFfxb/knNgXq47rGH6oK+ueawiDHQ=
-Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
- [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-657-XF5iBYPCP7W7vzEbPytRlw-1; Tue, 26 Aug 2025 12:06:56 -0400
-X-MC-Unique: XF5iBYPCP7W7vzEbPytRlw-1
-X-Mimecast-MFC-AGG-ID: XF5iBYPCP7W7vzEbPytRlw_1756224416
-Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-72112230256so13139427b3.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:06:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756224415; x=1756829215;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RRIEwoyk6U3gj8I8qpF/P/UU9F7Za9uOXepaDGpaelc=;
-        b=F4PIylSxiLjUWkKm20LhQ+yQDQiV2KW6pfWIFtIiTajWdLo3Qv56MaoIbDwi41Qcwq
-         KL2xuWmKaf7tk9IeopIXBo10aJiciQKhnoVbnVcE0zvCqpDIiGDEwvnPHn1gsA8c0i06
-         5VAULAWZPHD96W6R7NgCUiGoLX/YDyExx/7vDE5R9uGq7zs6gDH/BUvxgb2d5ldJQVcz
-         CfxkARddg80vD0y/UxzuUUrQfYwblbz9/FbcE+NiAne+kG2/58jS+Uw4S0fSXtPZgrVL
-         sW+Jj5ufE+sVn+GkqMyXcxTVXqmPDo61lhnef5du9ssHuGOPgJhbEADFiAk5anfdttm5
-         hBqA==
-X-Forwarded-Encrypted: i=1; AJvYcCXNrJVRylhGJ3zUycarJAhLe3xdk+e3pqtgSUV2lvrOBFrlaivkfnthXHrb1ae8biaCA10zHugbvcIHw88=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHl/VTw8cE1eAvHj5NY418xGe7YjIdiaObFODlHxV6k8TyiaXC
-	WmXaJVOBCa+eUibE1rhWTquGs0K1MvBMoPiqONQBbPYkCqthRzuBQJFpZNXtuMuSIe1h0CIqE30
-	Z1rJoLEoZD0xbjA0NNlvTrnyKsW/a8sfWcekmdy3Te/zm1CM5cMjVRleyD2kCub5s0WSMR8PSvA
-	==
-X-Gm-Gg: ASbGncsD9vIC8VspfTVUagLqjgFsHKehv7VTFt0WSbaVFPSUNW6rcFVxM6mSScEjGq2
-	PsyudcvfD19EaH36lYHdjUyvE7WGAMs5OMIGRtvCF819Ir9bG4XkoVcIeKuzE4/h9qF8VpoBMqv
-	tofKYInXXaw3Q/pi7hftbs5Xb5TH6m5c5V3asH8enfZEaGV/M7CEgjXUmA//PMc8kDuSP5H4rJs
-	3++PSY985HawLyOQN081jyKj4uCyA6mci3wSGzDQVx3Q5AX38QMaQ5zMEZSHOv14aOdqGsChn31
-	VItMOA15DC7UOFWX0A2VNE0NVltZkhUedHmB0Vyf2myXDrsxM/Y9xQ0HNTBiSak+8XH0hxnt6gA
-	I76mmznPs1g==
-X-Received: by 2002:a05:690c:9408:b0:71f:ede3:fc40 with SMTP id 00721157ae682-71fede401f9mr124796637b3.40.1756224414527;
-        Tue, 26 Aug 2025 09:06:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEFnKwjMtJb1I/GUzeDWlV9jGDybHVkg/0iCUr2vSxDmHSySyqwLLofo6fDGwKkUM8vVe/X6g==
-X-Received: by 2002:a05:690c:9408:b0:71f:ede3:fc40 with SMTP id 00721157ae682-71fede401f9mr124793067b3.40.1756224408326;
-        Tue, 26 Aug 2025 09:06:48 -0700 (PDT)
-Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-7212cb28226sm5154357b3.15.2025.08.26.09.06.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Aug 2025 09:06:47 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <8907b39b-6d30-4b56-b358-d63f9f625993@redhat.com>
-Date: Tue, 26 Aug 2025 12:06:46 -0400
+	s=arc-20240116; t=1756224461; c=relaxed/simple;
+	bh=UxuKFI9Gz6XRsBEgIbEMc2qAqnLEy9QJYLuXH+fSscY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Z/lyNGnLfawij07WL5MRoDmmOfqF8YBGoiHqjapDrcKKyUrSGPl7scfSKJ7GB8ySV0n2W8VVu2tJaVlir9/juDi1dcFVvtuQZEBhemZ+tuFjwkXGgBe6J2wh/BzTaq1SJbjWuau0/HWb2El0UBBcBkQuuA7li6aG6l3peRZNDkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PNBDI3/5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 95743C4CEF1;
+	Tue, 26 Aug 2025 16:07:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756224460;
+	bh=UxuKFI9Gz6XRsBEgIbEMc2qAqnLEy9QJYLuXH+fSscY=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=PNBDI3/53J1sL6A0DDzao4eFz0dzHyzyX9zhXy1rEOfL2rRmAA1gFqUP2WjaIWeR0
+	 hn1LV7J67TtBrAM6g1X8i3/XWAbvJioxz+hZCb5XXFhek4850mckBRU5Wck+Cjpa6P
+	 3zrooSWEtIbpcc6Mdq9Y6W/SAu0Ud/aYeEUH4jmIpa4KCYg7jOWwQOh9fBlATaJ2xI
+	 zj8W7yaMIsgzqh1gKRjpWpgdUU8dX6Xp3v4puR8gaarn3Ip8gue1R8lq4seJKF6o27
+	 yiU3ezmcAEFaHkjAVsKxbWaIhKnkGMyNEmbnXDThSi6KFtPhkMIwDUjTlxEs6At9jE
+	 UFXwTNrD7srZg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85C61CA0FF2;
+	Tue, 26 Aug 2025 16:07:40 +0000 (UTC)
+From: Nathan Lynch via B4 Relay <devnull+nathan.lynch.amd.com@kernel.org>
+Date: Tue, 26 Aug 2025 11:07:38 -0500
+Subject: [PATCH RESEND] dmaengine: Fix dma_async_tx_descriptor->tx_submit
+ documentation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] sched/core: Skip user_cpus_ptr masking if no online
- CPU left
-To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- Waiman Long <llong@redhat.com>, Chen Ridong <chenridong@huaweicloud.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
- Johannes Weiner <hannes@cmpxchg.org>
-References: <20250718164143.31338-1-longman@redhat.com>
- <20250718164857.31963-1-longman@redhat.com>
- <2vpxlzo6kruo23ljelerqkofybovtrxalinbz56wgpek6j47et@om6jyuyqecog>
- <9bd275be-45df-47f3-9be3-f7e1458815a4@redhat.com>
- <nqes55hiydw37qpt5mrqwzyhan5nxlzvuoccei4hmjloccr5xr@aqkuqerfwomc>
-Content-Language: en-US
-In-Reply-To: <nqes55hiydw37qpt5mrqwzyhan5nxlzvuoccei4hmjloccr5xr@aqkuqerfwomc>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250826-dma_async_tx_desc-tx_submit-doc-fix-v1-1-18a4b51697db@amd.com>
+X-B4-Tracking: v=1; b=H4sIAMnbrWgC/x2NMQvCMBBG/0q52YOaagnOdu2go0hIcle9oankq
+ lRK/7vB6fHe8H0rKGdhhVO1QuaPqEypyH5XQXz69GAUKg6mNsfamhZp9M7rN0U3L45YIxbqO4w
+ yI00RB1mwCZZsaIcDxQbK0itzyf+XG1y6a9ef4b5tP2/pqXF9AAAA
+X-Change-ID: 20250826-dma_async_tx_desc-tx_submit-doc-fix-3b8d8b6f4dc3
+To: Vinod Koul <vkoul@kernel.org>, Randy Dunlap <rdunlap@infradead.org>
+Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Dave Jiang <dave.jiang@intel.com>, Nathan Lynch <nathan.lynch@amd.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756224459; l=1773;
+ i=nathan.lynch@amd.com; s=20241010; h=from:subject:message-id;
+ bh=dIS6RoLkC1q3aI/0+NdaHu4Yd3RD9SjlUuZZHRlnaK8=;
+ b=kKd1JVU0GPX4JoS9X5N5yAf9XN3rDuTtvp0R4k3NWvYCBveJlX5Eo2PK+jS4ERpVmfrXOSWjO
+ uYYYnlNiM1EC9UGsIEYBOMW6hSpUb2zhB30IxZK8DxdL0pXMlol+IGy
+X-Developer-Key: i=nathan.lynch@amd.com; a=ed25519;
+ pk=ZR637UTGg5YLDj56cxFeHdYoUjPMMFbcijfOkAmAnbc=
+X-Endpoint-Received: by B4 Relay for nathan.lynch@amd.com/20241010 with
+ auth_id=241
+X-Original-From: Nathan Lynch <nathan.lynch@amd.com>
+Reply-To: nathan.lynch@amd.com
 
-On 8/26/25 10:25 AM, Michal Koutný wrote:
-> Hi.
->
-> I had a look after a while (thanks for reminders Ridong).
->
-> On Mon, Jul 21, 2025 at 11:28:15AM -0400, Waiman Long <llong@redhat.com> wrote:
->> This corner case as specified in Chen Ridong's patch only happens with a
->> cpuset v1 environment, but it is still the case that the default cpu
->> affinity of the root cgroup (with or without CONFIG_CGROUPS) will include
->> offline CPUs, if present.
-> IIUC, the generic sched_setaffinity(2) is ready for that, simply
-> returning an EINVAL.
+From: Nathan Lynch <nathan.lynch@amd.com>
 
-The modified code will not be executed when called from 
-sched_setaffiity() as the SCA_USER flag will be set.
+Commit 790fb9956eea ("linux/dmaengine.h: fix a few kernel-doc
+warnings") inserted new documentation for @desc_free in the middle of
+@tx_submit's description.
 
-In the described scenario, sched_setaffinity() was called without 
-failure as the request was valid at the time.
+Put @tx_submit's description back together, matching the indentation
+style of the rest of the documentation for dma_async_tx_descriptor.
 
->
->> So it still make senses to skip the sched_setaffinity() setting if
->> there is no online CPU left, though it will be much harder to have
->> such a condition without using cpuset v1.
-> That sounds like there'd be no issue without cpuset v1 and the source of
-> the warning has quite a telling comment:
->
-> 	 * fail.  TODO: have a better way to handle failure here
-> 	 */
-> 	WARN_ON_ONCE(set_cpus_allowed_ptr(task, cpus_attach));
->
-> The trouble is that this is from cpuset_attach() (cgroup_subsys.attach)
-> where no errors are expected. So I'd say the place for the check should
-> be earlier in cpuset_can_attach() [1]. I'm not sure if that's universally
-> immune against cpu offlining but it'd be sufficient for the reported
-> sequential offlining.
+Fixes: 790fb9956eea ("linux/dmaengine.h: fix a few kernel-doc warnings")
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+Signed-off-by: Nathan Lynch <nathan.lynch@amd.com>
+---
+Originally sent 12 Mar 2025:
+https://lore.kernel.org/dmaengine/20250312-dma_async_tx_desc-tx_submit-doc-v1-1-16390060264c@amd.com/
+---
+ include/linux/dmaengine.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Cpuset1 has no concept of effective cpumask  that excludes offline CPUs 
-unless "cpuset_v2_mode" mount option is used. So when the cpuset has no 
-CPU left, it will force migrate the tasks to its parent and the 
-__set_cpus_allowed_ptr() function will be invoked. The parent will 
-likely have those offline CPUs in their cpus_allowed list and 
-__set_cpus_allowed_ptr_locked() will be called with only the offline 
-CPUs causing the warning. Migrating to the top_cpuset is probably not 
-needed to illustrate the problem.
+diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
+index 6de7c05d6bd8c99e176fe2fde0a9c3b55d40b37c..99efe2b9b4ea9844ca6161208362ef18ef111d96 100644
+--- a/include/linux/dmaengine.h
++++ b/include/linux/dmaengine.h
+@@ -594,9 +594,9 @@ struct dma_descriptor_metadata_ops {
+  * @phys: physical address of the descriptor
+  * @chan: target channel for this operation
+  * @tx_submit: accept the descriptor, assign ordered cookie and mark the
++ *	descriptor pending. To be pushed on .issue_pending() call
+  * @desc_free: driver's callback function to free a resusable descriptor
+  *	after completion
+- * descriptor pending. To be pushed on .issue_pending() call
+  * @callback: routine to call after this operation is complete
+  * @callback_result: error result from a DMA transaction
+  * @callback_param: general parameter to pass to the callback routine
 
-Cheers,
-Longman
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250826-dma_async_tx_desc-tx_submit-doc-fix-3b8d8b6f4dc3
 
-> HTH,
-> Michal
->
-> [1] Although the error propagates, it ends up without recovery in
-> remove_tasks_in_empty_cpuset() "only" as an error message. But that's
-> likely all what can be done in this workfn context -- it's better than
-> silently skipping the migration as consequence of this patch.
+Best regards,
+-- 
+Nathan Lynch <nathan.lynch@amd.com>
+
 
 
