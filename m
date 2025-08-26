@@ -1,279 +1,137 @@
-Return-Path: <linux-kernel+bounces-785739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11B7FB3504C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:34:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D641B3504E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:34:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA4223B07B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:34:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2625F1A86A66
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:35:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 233C3253355;
-	Tue, 26 Aug 2025 00:34:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78BBD257825;
+	Tue, 26 Aug 2025 00:34:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="NfwHzkoH"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2065.outbound.protection.outlook.com [40.107.101.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lTWWaFF5"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6559E20C00C;
-	Tue, 26 Aug 2025 00:34:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756168449; cv=fail; b=JM0EGJEmkBWFIhLbyuYcKB2HXwhdggzteCphIx1bG6c6v+dMaXGIlkWqa27AnOlbHN4RqMJiWIBKj42m0dDr0iL/7Aw13zq9m1sKDEM0yCWe4yntwWRpIZ7koiX1UMnXFdxxDeVl1K0G6M96tc3396sqy7Dj65kC/mgjnRU/DK4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756168449; c=relaxed/simple;
-	bh=oNKko0shaWNnAe7//s2CnetQz98Go4fe3BYzORxXoCQ=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=CgvWyVASkOjnUP1LaMVb+stI2nsSBnMm0lenL1bq8eHx4rIHYO628GUvqmdN1xBM48IZVR/uQOI4lL2gIWrwDkBfqBdWtQL8LkGPCK1BnmQRnZy6wUmaK7OnAPT35LkpPC6CqpzGnLYOV2tMSSQQJjnIFgVwBnm6leelbqkcNyE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=NfwHzkoH; arc=fail smtp.client-ip=40.107.101.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=md0DVO3aLD/HKcLiE2JGKrYWQHkxeDBq8V7yhX8TfsBYw/cmPdov73etW/ld6YldE+HWB6x7jtD2RtGzCPclw7uE0JGE+GU/6fOyI1+JnANSlfSWQnS0mM/qlN/XpvxAQXlb8ZD6m2vMTqonF5lMO8i9oHT9P9yz08V97rp7DnbR0cCxCSR5y25UBuITAho1YonyA1WhirJAtGiWfolExN1BZh19WbW6QhkZnToOKec1l3Bi5YgEn/QxFxWLhl3uUeOWuhtLfPlBFWm/IjxR37rZ8DzxaUke4AV3RLUp7FcuMjSrfSgegjZvrBwmY2M2apbgSQiCxtUgpPXTcgBg8A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6fmPstK14TdsNlFruRmHqJHPLGN8VPxTfr7eXUjlVX0=;
- b=iPj2bX+Xs5xDwXK/f2g+1NaIdAQ7UzjRNVNnG9eBGAhZQCzgRP6a5CqevdLOukyaolptcqdCngFKzwu/D4jZbP5p1MVyg2PZTZccPXlJZIa5awtfBHWHOthuucHDdFodrhWAIVLb9UiWeC662KdXYM253A/SyTmQ6+senbmS3xEih8hX8f6U9PlnIGv3mH9YyQMvQg9dWCIEbbJrKOYokGo44qIIg6tcQLn/dAuWGk1161a0hI/m50upeB6cDsFY1KfA3YVLYAOyeQOSMt4ZM9fFrZwndNItB0LwnY5+OViO57D/68uxHt91TdzZY+sG5ib8hALYmS+0HAH2JURjdw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
- dkim=pass header.d=altera.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6fmPstK14TdsNlFruRmHqJHPLGN8VPxTfr7eXUjlVX0=;
- b=NfwHzkoHmMK0ApgrjWoDG6ex19FtvfiWG95c9rYnXa5sKq7o6QZUtiN0611iZZiC+15IAzH0eIX1ZfomD/DnyMeKDCm1y6pRPNDasi0Asx12A6JrAOBTCLK7wXp6jxY5Z1z/4sagjCw30khysX3NnSw1SrjNzvZ3Ul26AIGcTKfsd0haHXxRjPHublKrlCowmSasYtd7c58ZrBN6vG7CJYDhOTq/57KtTvYAl3umtG8+bIKOIEvi4uyFwAQtfy4nF5jBqrsrUI1MVBdaZrJ/Dz1EvFwU4lvZYi5+jk98g9wWRcC0rBHn+3HDxZ271UsvFW+NsnJ6PU5gyAgfiwdP9w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=altera.com;
-Received: from MN2PR03MB4927.namprd03.prod.outlook.com (2603:10b6:208:1a8::8)
- by PH0PR03MB6978.namprd03.prod.outlook.com (2603:10b6:510:168::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.12; Tue, 26 Aug
- 2025 00:34:04 +0000
-Received: from MN2PR03MB4927.namprd03.prod.outlook.com
- ([fe80::bfcb:80f5:254c:c419]) by MN2PR03MB4927.namprd03.prod.outlook.com
- ([fe80::bfcb:80f5:254c:c419%4]) with mapi id 15.20.9073.010; Tue, 26 Aug 2025
- 00:34:03 +0000
-From: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
-To: Mark Brown <broonie@kernel.org>,
-	linux-spi@vger.kernel.org (open list:SPI SUBSYSTEM),
-	linux-kernel@vger.kernel.org (open list),
-	Matthew Gerlach <matthew.gerlach@altera.com>,
-	Khairul Anuar Romli <khairul.anuar.romli@altera.com>,
-	Niravkumar L Rabara <nirav.rabara@altera.com>
-Subject: [PATCH v3 1/1] spi: cadence-quadspi: Implement refcount to handle unbind during busy
-Date: Tue, 26 Aug 2025 08:33:58 +0800
-Message-Id: <8704fd6bd2ff4d37bba4a0eacf5eba3ba001079e.1756168074.git.khairul.anuar.romli@altera.com>
-X-Mailer: git-send-email 2.35.3
-In-Reply-To: <cover.1756168074.git.khairul.anuar.romli@altera.com>
-References: <cover.1756168074.git.khairul.anuar.romli@altera.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BYAPR07CA0067.namprd07.prod.outlook.com
- (2603:10b6:a03:60::44) To MN2PR03MB4927.namprd03.prod.outlook.com
- (2603:10b6:208:1a8::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A7520C00C;
+	Tue, 26 Aug 2025 00:34:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756168489; cv=none; b=reQgl+rsvm/3OINHgvO7X4sYqSsAj9etI/GTltqHmwOyn6bzn8VgHUM4Q/QwHF3Y+62h5tcDJeqP3w6zsufvrNZLneQ2LFy8yWTCPzh52NV6Rx+pug2MFclL+9vrMq6qDV2VmHjlFL2j4CoQIC7cGlLWqCrGHth5F6gsPW4zl8g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756168489; c=relaxed/simple;
+	bh=JpJLVvbE54zIuPG5rJ7JHRgT8c9MDiQk9/7EuJ3uJ7U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OoYVQjy1hQOtv7Q6zUH+f+K9L8I4rkjRi7LUFSCTj7EiKQ002ctgW/stUlbZnyB10oePmNF2lsiJuT4PC41kJMAIbXrgG7jbpPnDMpNU5m8HWZKSdEgGjzVm5RyASWLLgIzLpezh+2gT3fuSOXjaf9SX1knay4Gsa46VvTjMJck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lTWWaFF5; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b47174aec0eso3252734a12.2;
+        Mon, 25 Aug 2025 17:34:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756168488; x=1756773288; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=D9SXIwGnPOZR3O9/FNFVDhvPNYl7T7tao6BpXTagVFM=;
+        b=lTWWaFF5PHkAcbzOgWchRLthvNNVsIcjvOChvAj+LopacQs8ZPHr2TnG4nCXQnX393
+         Vpjpt0HB4J6z7Iqj8qeNF1vZgLuaQ6mV/vyzIwyxfy2s0wtI0OHuGx3nrQSGQLZ+ITCk
+         f3GtEw5dFsZ9vzM2e3v6p2LEHLTTIExxi/0WRKUgV0aebe7qyRnRLDykI7IT3sXZn8ls
+         WRdYUJR5KOETZSvFgEglfuUSi6jATIZqNj4OVLighh4yTVkDsfMJhymdXdZ/SXTfosUa
+         TtFGlFHs6YNy6PRqBcgyAH5upFmbmaqUd2bVgcz/X0/oJA9Y4GOly3U7ImUeW3lYLexY
+         AndA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756168488; x=1756773288;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D9SXIwGnPOZR3O9/FNFVDhvPNYl7T7tao6BpXTagVFM=;
+        b=dMo/wrzC7hfgVcN4nbEemtsgQzRAz/d1DQTIFzQKbTrsqlLArBihGAIIls7AsKj115
+         8HB/8mEk+Am1+B8rqzYz5dsYC+sWlAZY4RTuFG9BWQxeuQ+n3yWe6BIlgu/szFn5ojKO
+         AQCNypeiZKp5MIBWDihDiLLW/aIBY/NFBttzbsNT36y/Hh1HO5l9r4Kgle8hi2+aM9i3
+         nNABeisqkl1/6hcVwL21tUMxsXT1whmnMasnpPPQUZbSw/1nNRXnuOB16I/FERG4/by+
+         lEPwfxHh0mC+7UENZHJjySUJkBgOVAuvl6qjnF3Ck0P3pPDRUkp7rf959bsPxZ7jzFWk
+         xSwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUoO+3a/nfNf8hrXN9chXfVYFgZHTd+2V02m+uHoXsonAFEIXeskCxQ3aJKFoy0/mHxbSsvgVUrW4c=@vger.kernel.org, AJvYcCWMUgQNlbT753Ihlt9HRASdnsfLkLOoNl2Ef5w9HpGJtDPXlfxuZEAQEBP9/B/ZJC2NraiKXa9VsVW/@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywf+SSdAxP23ys3iWOHCopNYsklcGHDN4WTKywutuTArYnv0AI+
+	7Q/vIO7Pa+eK0acHROnRef2pkKuoSWuJlYWm0Uhf7FmXEH8qlTJsT9mc
+X-Gm-Gg: ASbGnctK1xOD/czMrl+4SzeHPbDPy6a9pOi4EQBgedP8D3Vbvxb2aX6tBF7t4oHtIAp
+	kOATFi1kZRjO0kcdTddhwyZlGvzJJNmP7kq2Dk4qY168sVJHf1/zLikczKUB0qHggYvqUiO6l+t
+	Xnsqg7/Slw7Gyl/72B2zIJz/G9kfD0itSCb61ebi6wUefcYsHA8kByhLl9cLVzwY90SE9hFcPyP
+	2wZcerRLnscrncQk24LB/AnTRBIBP1EJLloWHF22rnqpN5g+rPYBcaNZbXvAMDewm+L1+aQ9x0A
+	8enIirJhJ3+5vuaRWHivKo1NYXWB0S1zrPNBiRt+vSYIvRxncdpcgMGfaqX86o8v/36m+RcYxNo
+	8kTqa1DtfkZM8p5iPt/ShgksSf0EwVQhg
+X-Google-Smtp-Source: AGHT+IFL3YsPjEXwzj5BwJGTdw5qv3+DWw7IH9L4tk4RaqjYnQRdheJrpGn42LLCQ48hft+VpwJj+A==
+X-Received: by 2002:a17:902:db0c:b0:246:d0b:9dea with SMTP id d9443c01a7336-2462edd7e24mr199049405ad.11.1756168487458;
+        Mon, 25 Aug 2025 17:34:47 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-246687a60besm79637015ad.39.2025.08.25.17.34.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Aug 2025 17:34:46 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id C8B09424E25B; Tue, 26 Aug 2025 07:34:43 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux Kernel Workflows <workflows@vger.kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Bagas Sanjaya <bagasdotme@gmail.com>,
+	Fox Foster <fox@tardis.ed.ac.uk>,
+	Federico Vaga <federico.vaga@vaga.pv.it>,
+	=?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+	Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] Documentation: management-style: Correct "know" past participle
+Date: Tue, 26 Aug 2025 07:34:38 +0700
+Message-ID: <20250826003437.7695-2-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR03MB4927:EE_|PH0PR03MB6978:EE_
-X-MS-Office365-Filtering-Correlation-Id: 332adf82-2f95-4ebb-b81a-08dde43841ea
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?eKRaLjwimbcUt8a1UhincxAKy9jPICTxURBd9Wg45WXx6NMY0EoUgRAsV1g5?=
- =?us-ascii?Q?+XsjCIDmZqSbEBY75lsAowNQBbpVCaaRe7SaLBZkVfG+swRuaHjc+1apeQ+u?=
- =?us-ascii?Q?RTgpPGF+TbHSeNCjCALR3gXgWD51Zqg/b+RpnyRnlYMkGDm2OvNg1cGzQ7AD?=
- =?us-ascii?Q?vpNFuZClMlnid/JAqBUpJ1JiW5/vjbWuU0hdu0QS+Gxj3k5OPSxL6+X5uH+R?=
- =?us-ascii?Q?S+EQgDr+p/Fv2R8q92sQe09sjD2KrZEb1SjH8gxj/TyswiP4xy3sCizHbXYy?=
- =?us-ascii?Q?d+vU7arzuEK9M0rJAkuBeXpELkKTfy3s5ulc1jhKQoVvQGhbu7kCI4H9+3Q1?=
- =?us-ascii?Q?G1Q3BbCRZNf7YWbDCY08zleWQp6ibmh6b+a4GEnj0Dl0pA9p1p8zRh4U5uUN?=
- =?us-ascii?Q?5Op83x/Gg0cJloqf8ltswF7ZtuEkaMCZf1XeJp8g8GN/CCsyejOeam7RvsWm?=
- =?us-ascii?Q?uD60ZET6I7WGkLXMCXTMZyzvKs1DeBdjrFaicA4a8YRZW6fQYu3mmkQHQKvY?=
- =?us-ascii?Q?6DKPHpT+2P57IHVtlrR9Yr7Fk3xj6g2Ai941ltP8YFpFgwzEPBOW3PgNZHrg?=
- =?us-ascii?Q?rqlGsItOZze8N79FCDq9PkiXPFOiR+/dI3Kr2dMUsnqlapyAIz/aKVOpGr3T?=
- =?us-ascii?Q?L7FwTk/ZzcPeQiHr2jRCfQAhCyEUu2W/B5PEZkqhXdZkhMPsOra31bfst6xc?=
- =?us-ascii?Q?pUDODNx5VWpCsTmzcse5cLwmQNU04Jt4nJUNjQElKtOvnGzXc4a6cB+Eblsq?=
- =?us-ascii?Q?O0jp8520IK72+ElV8+RwXSiD045aBs31Nmk3gb5bMu9vFRjZUpwzDV8bQdAq?=
- =?us-ascii?Q?S0zm7wfPnxKmC/a3Q7DGMmFl3nvsy7SLKvGdTRv7fEXJoh7vRkCNDk4dCw3/?=
- =?us-ascii?Q?rkfUlhKr2HVIhwsU1fts/s0KMctrbdsz9zpTRNDSe/qJ31GAPz8XEHz3OnDT?=
- =?us-ascii?Q?Z36o2+Wvyls1WE3hCmmdgy5qi2nCgj06PXjA484uPEFoU4jqzv8+JYY7GzX9?=
- =?us-ascii?Q?8tpNNCGNitp75h2N08/4dVS70pdsPgHLRhBzPm7j20WoV71PcDWdQi6aM72B?=
- =?us-ascii?Q?aMrs1bYhqgAXBb0X3M40Fzua91dyWuBeXpotAD61lTPB9JBDO2fV+nLmJpBQ?=
- =?us-ascii?Q?ZUtas0w1iFwaPTvd2+2ZuIEcT9xOn29iv7+FXwV2Gk+xqgWbRQ9pU7uSsGct?=
- =?us-ascii?Q?6Enyis6PB+qtB4TIuraifaWLuT6xr/rZX3Hw6AnPrinv37AHkdYaK/vzMy5P?=
- =?us-ascii?Q?VkT5HEDmDmKwJbUKKoOETC7PxArNMDnsnLfrm2JadziEkqpsx/eNgZ8Cc04v?=
- =?us-ascii?Q?VpBWw/BnzYDwaEF566KYZGckARl88X2JAzbYjtFPKu8eji3V+Rn9OqnrJyQk?=
- =?us-ascii?Q?rCL66XHcd6Eg0G/hd4EbimbFbLwCqVoCow7ZFco1FY5RPET0iQVcfvGz4rWk?=
- =?us-ascii?Q?e88ysNMszzs=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR03MB4927.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Q8qtrr52b4kxFyDg2s574jrTQqZVB6WN/9E7W76Lg3UpBusm4FHpemvyaCob?=
- =?us-ascii?Q?BPggGJlJEsFWywxc/dpHRFPyItqNWhAReKtfn+GvIuLxOQv3leQGbjTEWmAb?=
- =?us-ascii?Q?+7mDhGIxx8TS8Qp4SViODgmzCKBVdL68TDpLOJVNBxqAMH3rOM5LCOQHcgqW?=
- =?us-ascii?Q?+rZfgU+4GlQZJncaRKFUhdyrKA+x8MzxGNlDxah7I6t+RwtUiorrcBBIg6rD?=
- =?us-ascii?Q?gHiN1YCv82AZx3cLJ9vLrwPuMgVdO8FUwP0yeRTcDCUikXmrT/q5fyDfy+0F?=
- =?us-ascii?Q?vA9DorYBnNZYbS/oZyHRwv8JM6CmjILJKJN2PpYgc/TJc8SPRnb+7ZNHMmhb?=
- =?us-ascii?Q?VeEgD6KgF5DjbY5zIYIFxfehDZOzH+R4PGp6SkkgCXNdQkGJ/LPG557CJmH6?=
- =?us-ascii?Q?8R+xXVK4+QVgUnZjYMq71lLHCrfVqHlwhcaC7RoaMN3uGCweG7rzztTqESVL?=
- =?us-ascii?Q?hl1tf9LVUwqYV2QRdHLuguC/uqDbNHaski0Q/VsnUCDk85LNRXbBEbwgVfyd?=
- =?us-ascii?Q?r4Pfe60b1lO0TKxglWwL2507CkcHVsn2JPsijky56bhCSmELM2P69kA6bVDK?=
- =?us-ascii?Q?vkrPQBRnJGf9vTPVJ+C9NxDpYzG5nOyioCdJVLgMsXkvpY38oGY0Pb8hmE08?=
- =?us-ascii?Q?Ud40CTcg/QHLNFtXkSMgiLx2TTvm9mLIzwlCraVAaCH2PTAZwRbmOKsNGG9u?=
- =?us-ascii?Q?sfnUWLwGR5iHTzm4DBdhpEFWFFm9hlEtkjsWd7gZ9aztWQ0CYOKAENBdb2w1?=
- =?us-ascii?Q?9X0KqAtZKW0FS0C8fyHsgErd7CeEJZq4suaFhD6nQX9xkRDjlq7vd5MJTya+?=
- =?us-ascii?Q?cxz9qcRiqTA5Bw8ujOtQqkHhQbGwXXmlRs0j8BtXBJln0UXYe3bzIlRM4yj6?=
- =?us-ascii?Q?bCA/VKIe/YYqAXY4VAtKtcTJ3WQlOraFdiPrayBeg0eCBGpdhyraswjr60Z1?=
- =?us-ascii?Q?0CC05GaQ3qXvLcPjAINa0Vllbl1hC/585elGsIDBSWL5pp95EUNREF+Zws1M?=
- =?us-ascii?Q?xCLQm5RtuvICFp7YfGHuVEOH07iTjxr+CL/eeLNX0KOp4qXBinKOgvSs2uUv?=
- =?us-ascii?Q?5aZ4yLr+c1GCTcARhMNpaz57bIoU0ePjOQN8u3s2QmquEX9sUnZVBEqmSE6C?=
- =?us-ascii?Q?iScihunz/CWGUVSx21UvdCFpGRPBTcM3TdAlXcw2AVLJbRR6EyHXknqzmusN?=
- =?us-ascii?Q?SZY50IYhnM+AsmvJwLMPzKBFMagr9VtPe67/YjXAKc0EOJLymjdkiUqV9qT9?=
- =?us-ascii?Q?BBZff49h2OurfamuPlH5ch5hS4CFIdcdKH3J8daOnsCbKDWKLKFknmQp3r+O?=
- =?us-ascii?Q?8MftvFnWy6yx6fTROkCkmqKt+nFbVV2WZTHR8YARHK+obrJoZ4mrIUI41gEn?=
- =?us-ascii?Q?OvyY0c60VYr+qwwHKF10Ueip3dwZTA6tUr1yKtGMkLwYmdUp6s+HtfFYnsu8?=
- =?us-ascii?Q?2cZxPtbyNcC1rcu+su5Jj+SI158RVAvfHRdMYOzw9OIQEq2yrS8odnqVvkeC?=
- =?us-ascii?Q?mGZ8yBtHlwIDfiGN1qjlMzNp/Gm52GdyQcipe8rVgQkbTjfhkvTT33dG/yIj?=
- =?us-ascii?Q?QADw6a1jD1jVC0N89cUByTc4neIGDbuuxl+8JVFBePi5aFfbOxIbY0RQw9vP?=
- =?us-ascii?Q?+Q=3D=3D?=
-X-OriginatorOrg: altera.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 332adf82-2f95-4ebb-b81a-08dde43841ea
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR03MB4927.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 00:34:03.5293
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Yumzp3kpBz8u+74YxlTIm1UY08WgqYWXog4jzlqZiSosmYOp5GmC+aN/C7HYGona9WawI8haUN6ETeeV/suSUsH9XUNpNwD8oJsu5ulcg2w=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR03MB6978
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1787; i=bagasdotme@gmail.com; h=from:subject; bh=JpJLVvbE54zIuPG5rJ7JHRgT8c9MDiQk9/7EuJ3uJ7U=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBlr/v9rL7iU6FUZcfs3b7LjUfvHP7ftaJ17K7Nm+tapl /2e9t5u6yhlYRDjYpAVU2SZlMjXdHqXkciF9rWOMHNYmUCGMHBxCsBEms4z/PeNuRF+j9W8zlst drP9Ur0bdo+LM900Sve7/jyU8q9er5ThfwDXAf13R666K690CVC9JcfRsXjfpH7PjskF6r6l7ZX nOAA=
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Transfer-Encoding: 8bit
 
-driver support indirect read and indirect write operation with
-assumption no force device removal(unbind) operation. However
-force device removal(removal) is still available to root superuser.
+Management style docs writes on people under a manager, where they know
+the details better than the manager himself, in past perfect tense. Yet,
+"know" is in infinitive form instead.
 
-Unbinding driver during operation causes kernel crash. This changes
-ensure driver able to handle such operation for indirect read and
-indirect write by implementing refcount to track attached devices
-to the controller and gracefully wait and until attached devices
-remove operation completed before proceed with removal operation.
+Correct the verb form.
 
-Signed-off-by: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
-Reviewed-by: Matthew Gerlach <matthew.gerlach@altera.com>
-Reviewed-by: Niravkumar L Rabara <nirav.rabara@altera.com>
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 ---
-changes in v3:
-	- refactor patch to align with 6.17 mainline kernel.
-	- Add internal reviewer.
-changes in v2:
-	- refactor patch to align with latest mainline kernel.
----
- drivers/spi/spi-cadence-quadspi.c | 33 +++++++++++++++++++++++++++++++
- drivers/spi/spi-cadence-quadspi.c | 33 +++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ Documentation/process/management-style.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/spi/spi-cadence-quadspi.c b/drivers/spi/spi-cadence-quadspi.c
-index 177f9a33f3a2..9bf823348cd3 100644
---- a/drivers/spi/spi-cadence-quadspi.c
-+++ b/drivers/spi/spi-cadence-quadspi.c
-@@ -108,6 +108,8 @@ struct cqspi_st {
+diff --git a/Documentation/process/management-style.rst b/Documentation/process/management-style.rst
+index dfbc69bf49d435..1381b253b19ef4 100644
+--- a/Documentation/process/management-style.rst
++++ b/Documentation/process/management-style.rst
+@@ -42,7 +42,7 @@ actually true.
+ The name of the game is to **avoid** having to make a decision.  In
+ particular, if somebody tells you "choose (a) or (b), we really need you
+ to decide on this", you're in trouble as a manager.  The people you
+-manage had better know the details better than you, so if they come to
++manage had better known the details than you, so if they come to
+ you for a technical decision, you're screwed.  You're clearly not
+ competent to make that decision for them.
  
- 	bool			is_jh7110; /* Flag for StarFive JH7110 SoC */
- 	bool			disable_stig_mode;
-+	refcount_t		refcount;
-+	refcount_t		inflight_ops;
+@@ -115,7 +115,7 @@ sure as hell shouldn't encourage them by promising them that what they
+ work on will be included.  Make them at least think twice before they
+ embark on a big endeavor.
  
- 	const struct cqspi_driver_platdata *ddata;
- };
-@@ -735,6 +737,9 @@ static int cqspi_indirect_read_execute(struct cqspi_flash_pdata *f_pdata,
- 	u8 *rxbuf_end = rxbuf + n_rx;
- 	int ret = 0;
- 
-+	if (!refcount_read(&cqspi->refcount))
-+		return -ENODEV;
-+
- 	writel(from_addr, reg_base + CQSPI_REG_INDIRECTRDSTARTADDR);
- 	writel(remaining, reg_base + CQSPI_REG_INDIRECTRDBYTES);
- 
-@@ -1071,6 +1076,9 @@ static int cqspi_indirect_write_execute(struct cqspi_flash_pdata *f_pdata,
- 	unsigned int write_bytes;
- 	int ret;
- 
-+	if (!refcount_read(&cqspi->refcount))
-+		return -ENODEV;
-+
- 	writel(to_addr, reg_base + CQSPI_REG_INDIRECTWRSTARTADDR);
- 	writel(remaining, reg_base + CQSPI_REG_INDIRECTWRBYTES);
- 
-@@ -1461,12 +1469,26 @@ static int cqspi_exec_mem_op(struct spi_mem *mem, const struct spi_mem_op *op)
- 	struct cqspi_st *cqspi = spi_controller_get_devdata(mem->spi->controller);
- 	struct device *dev = &cqspi->pdev->dev;
- 
-+	if (refcount_read(&cqspi->inflight_ops) == 0)
-+		return -ENODEV;
-+
- 	ret = pm_runtime_resume_and_get(dev);
- 	if (ret) {
- 		dev_err(&mem->spi->dev, "resume failed with %d\n", ret);
- 		return ret;
- 	}
- 
-+	if (!refcount_read(&cqspi->refcount))
-+		return -EBUSY;
-+
-+	refcount_inc(&cqspi->inflight_ops);
-+
-+	if (!refcount_read(&cqspi->refcount)) {
-+		if (refcount_read(&cqspi->inflight_ops))
-+			refcount_dec(&cqspi->inflight_ops);
-+		return -EBUSY;
-+	}
-+
- 	ret = cqspi_mem_process(mem, op);
- 
- 	pm_runtime_put_autosuspend(dev);
-@@ -1474,6 +1496,9 @@ static int cqspi_exec_mem_op(struct spi_mem *mem, const struct spi_mem_op *op)
- 	if (ret)
- 		dev_err(&mem->spi->dev, "operation failed with %d\n", ret);
- 
-+	if (refcount_read(&cqspi->inflight_ops) > 1)
-+		refcount_dec(&cqspi->inflight_ops);
-+
- 	return ret;
- }
- 
-@@ -1925,6 +1950,9 @@ static int cqspi_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	refcount_set(&cqspi->refcount, 1);
-+	refcount_set(&cqspi->inflight_ops, 1);
-+
- 	ret = devm_request_irq(dev, irq, cqspi_irq_handler, 0,
- 			       pdev->name, cqspi);
- 	if (ret) {
-@@ -1987,6 +2015,11 @@ static void cqspi_remove(struct platform_device *pdev)
- {
- 	struct cqspi_st *cqspi = platform_get_drvdata(pdev);
- 
-+	refcount_set(&cqspi->refcount, 0);
-+
-+	if (!refcount_dec_and_test(&cqspi->inflight_ops))
-+		cqspi_wait_idle(cqspi);
-+
- 	spi_unregister_controller(cqspi->host);
- 	cqspi_controller_enable(cqspi, 0);
- 
+-Remember: they'd better know more about the details than you do, and
++Remember: they'd better known more about the details than you do, and
+ they usually already think they have the answer to everything.  The best
+ thing you can do as a manager is not to instill confidence, but rather a
+ healthy dose of critical thinking on what they do.
+
+base-commit: ee9a6691935490dc39605882b41b9452844d5e4e
 -- 
-2.35.3
+An old man doll... just what I always wanted! - Clara
 
 
