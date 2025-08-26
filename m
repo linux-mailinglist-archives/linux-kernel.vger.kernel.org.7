@@ -1,148 +1,185 @@
-Return-Path: <linux-kernel+bounces-786913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A942B36DBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:30:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E5D4B36DBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:31:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7487E1BA364F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:31:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DD0F1B68392
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:31:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 216972BE04F;
-	Tue, 26 Aug 2025 15:30:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 113912C08CA;
+	Tue, 26 Aug 2025 15:30:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gWO9XXl0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KjCsAshE";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="W2KbPuEs";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Kt7ZCUFi";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="HtcJEKdK"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 012EA221FC8;
-	Tue, 26 Aug 2025 15:30:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9BCD2BE638
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 15:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756222248; cv=none; b=Cz7kPKOygxg9U+2kbPD+dEaAnmw6ajh80ImWVWTDSNd0Js3D3J+CuAQ2l2rnTH97Vxi+ibGZgu1tJTzcA0Vtpjltrf0wv3X2rD27nDDHoavbovNMniTbV6v9IJoOmBn/HxpdN+ePnAsRvZRVcOUUQ4dO85RRjPIIZ0hVd54daOE=
+	t=1756222255; cv=none; b=n3eBXoh01M3atpue00xFnfhURxFZyguvWy8teMrmSXduRFIyTeGuaC3D7lDV2okoJBZrbwTphukSdLqwlsSqkt5ezcJwmOXIx6jd+CmwCNIynbjRyhci0Y2AD8JbrVJmEdM6mCOfKj0DNEmpPLd/NwtbIoQ87jwzj0cRh8HhwSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756222248; c=relaxed/simple;
-	bh=DeZTUuTNgAjd9XlyeDu87gsPKiVWAJL6bNkrFjZVfC4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jLf/HJeWg0pHvkTTWQZSsDyFrCUL5w/PTz/YIm4Wy+Z0VXGeln2zXJF4bdwTQxIp2tDNz9AmQ2tJlqCc3ddhO7uNCtiy5VtSLzJWSyQHYrTLt7r8BmjbaHLZQZGm43dglGzgrwJ7VoOC3CQe5EZb7+gzT8SqVNYBs9S511dlbAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gWO9XXl0; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756222248; x=1787758248;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=DeZTUuTNgAjd9XlyeDu87gsPKiVWAJL6bNkrFjZVfC4=;
-  b=gWO9XXl0NyKt+Y3YDrlQzQnQd3/hPAzotdS1vGvWaI5vCu1Rj44fKisl
-   R30y0Cewr+nREtu3hJoQdD4RiCEIbxwXPV0/AuWJKqEBa8ZbPDzwRkjWE
-   uJY0Ju0hDzY1l15we0tTtGLLKyHbFRfb+a8L9s857q//c6+5akGp9xH0s
-   rq4ZgqEF3HdWO2md6uQXZPtb2bV8ULc4tWXBBrN+FwBuR9OxRWvdiwiuA
-   1zdR03bKsRwwKrguYs4DTE5AIcEt/7TAXRBMJIgKq8H2y1/VshANvn9Ni
-   LMCbYVsQQgCsS9odZ0Qrmw4v8kA10Zn8ImJPPPl1KsoP8CjkULBuL9prE
-   Q==;
-X-CSE-ConnectionGUID: tR3DNAKBQKCkVrn+v63XGg==
-X-CSE-MsgGUID: 86sL0V1YS1SdZseVFBgbqA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11534"; a="62105068"
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="62105068"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 08:30:47 -0700
-X-CSE-ConnectionGUID: uLf+w4GuRiW1N+GQKgEVKg==
-X-CSE-MsgGUID: HkERIKD/R6CNSo/sokYITA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="169781095"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 08:30:43 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uqvdB-00000008ocE-15MW;
-	Tue, 26 Aug 2025 18:30:41 +0300
-Date: Tue, 26 Aug 2025 18:30:41 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: =?iso-8859-1?Q?Jean-Fran=E7ois?= Lessard <jefflessard3@gmail.com>
-Cc: Andy Shevchenko <andy@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 5/6] auxdisplay: TM16xx: Add support for I2C-based
- controllers
-Message-ID: <aK3TIVbmFgv1ZiYs@smile.fi.intel.com>
-References: <20250825033237.60143-1-jefflessard3@gmail.com>
- <20250825033237.60143-6-jefflessard3@gmail.com>
- <aKx-w0QOOQPyy9pW@smile.fi.intel.com>
- <951E84EF-4ED7-4882-A5E2-6E3CD63E1E07@gmail.com>
+	s=arc-20240116; t=1756222255; c=relaxed/simple;
+	bh=tyUsBjItZQMaTIBmWCJs4LMl0/k68Qr2JOPz6EVpzvM=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MXAc6o+8bxat3Fzqd0iFxeHCrvjGLqoH62LmZbau97e9MqjPYENYgMOHsYBEvTfGw1rKn8H3cGMpuQvQCei2LwJLdGMZdNxKdqM6qmMjOSjaCa7YY4s3rN0JK0CHTp3kIxQqqijVxfsFv1uGvXRbMIwj03FO1bObaYM1GOl1FVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KjCsAshE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=W2KbPuEs; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Kt7ZCUFi; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=HtcJEKdK; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E0B012119C;
+	Tue, 26 Aug 2025 15:30:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756222252; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D2ulA5rFhGxVZgPAbguwQbAYjHqkpl/zPVZhIWuo/qw=;
+	b=KjCsAshE1Wnw6YjR8OaiLqSfDrrvoXHr2N6HN9DqBuEHrH2wKkGkYRYbJGgfhBe3L3zzZy
+	VS6CsfjnRbi8/ByVkAAiGQTn3z7/7xAt6tIawW8RyGaH1+hndngdd1wqlgc6TNuT3yzpnY
+	zH6gdZiPJeAjZfZV72+PuicE35HIZQ0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756222252;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D2ulA5rFhGxVZgPAbguwQbAYjHqkpl/zPVZhIWuo/qw=;
+	b=W2KbPuEsST5DbQDcA9kFlVZlKRsWOimqsR8fFNTpyq1geDiW6Tr6Ykvmrz+HSGVM/NVJTq
+	a1D5qOnNiRM92wDw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756222251; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D2ulA5rFhGxVZgPAbguwQbAYjHqkpl/zPVZhIWuo/qw=;
+	b=Kt7ZCUFikh7ptdKMFML3d/xTzJCPGRQ5pLjjyxVTV5KaSyQI9rDsWF/mpUU5f5uGDd4eus
+	5M1gxxG2xfqPt4aevnhZ1dmItEwQS618+56I5lS96iAKLawOk2uUBep8LArSApTUPBAI4R
+	VjHjRHVIuYw1JMGIlHNN+HVKqzglDZs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756222251;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D2ulA5rFhGxVZgPAbguwQbAYjHqkpl/zPVZhIWuo/qw=;
+	b=HtcJEKdKp3f3keEsvumqhLgwUyhNp68Okli6IyxZQqCUuFdQI53UgG8w0a3Gr55lo2f3HY
+	cAeE3iZPsoPPJ6Aw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8FCE913A31;
+	Tue, 26 Aug 2025 15:30:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id llkbISvTrWivWwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Tue, 26 Aug 2025 15:30:51 +0000
+Date: Tue, 26 Aug 2025 17:30:51 +0200
+Message-ID: <878qj6gkwk.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Shenghao Ding <shenghao-ding@ti.com>
+Cc: <broonie@kernel.org>,
+	<andriy.shevchenko@linux.intel.com>,
+	<13564923607@139.com>,
+	<13916275206@139.com>,
+	<alsa-devel@alsa-project.org>,
+	<linux-kernel@vger.kernel.org>,
+	<baojun.xu@ti.com>,
+	<Baojun.Xu@fpt.com>,
+	<jesse-ji@ti.com>
+Subject: Re: [PATCH v2] ALSA: hda/tas2781: Fix EFI name for calibration beginning with 1 instead of 0
+In-Reply-To: <20250826094105.1325-1-shenghao-ding@ti.com>
+References: <20250826094105.1325-1-shenghao-ding@ti.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <951E84EF-4ED7-4882-A5E2-6E3CD63E1E07@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[139.com];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,linux.intel.com,139.com,alsa-project.org,vger.kernel.org,ti.com,fpt.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Score: -3.30
 
-On Tue, Aug 26, 2025 at 12:01:57AM -0400, Jean-François Lessard wrote:
-> Le 25 août 2025 11 h 18 min 27 s HAE, Andy Shevchenko <andriy.shevchenko@intel.com> a écrit :
-> >On Sun, Aug 24, 2025 at 11:32:31PM -0400, Jean-François Lessard wrote:
-
-...
-
-> >Can we use regmap for all parts of the driver? Why not?
+On Tue, 26 Aug 2025 11:41:05 +0200,
+Shenghao Ding wrote:
 > 
-> These controllers implement custom 2-wire/3-wire protocols that share
-> sufficient commonalities with I2C/SPI to leverage those subsystems, but are not
-> fully compliant with standard register-based access patterns.
+> A bug reported by one of my customers that EFI name beginning with 0
+> instead of 1.
 > 
-> Specific regmap incompatibilities:
+> Fixes: 4fe238513407 ("ALSA: hda/tas2781: Move and unified the calibrated-data getting function for SPI and I2C into the tas2781_hda lib")
+> Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
 > 
-> I2C protocol:
-> - Dynamic addressing: slave address embedded in command byte (data[0] >> 1)
-
-Isn't this called paging? Or actually we have also non-standard
-(non-power-of-2) regmap implementations, perhaps one of them
-(7 + 9) if exists is what you need?
-
-> - Custom message flags: requires I2C_M_NO_RD_ACK for reads
-
-Hmm... If we have more than one device like this, we might implement the
-support in regmap. Or, perhaps, the custom regmap IO accessors can solve this.
-
-> SPI protocol:
-> - Inter-transfer timing: mandatory TM16XX_SPI_TWAIT_US delay between
-> command/data
-
-One may implement custom regmap IO accessors.
-
-> - CS control: requires cs_change = 0 to maintain assertion across phases
+> ---
+> v2:
+>  - remove unrelated change
+> v1:
+>  - Fix EFI name beginning with 1 instead of 0
+>  - Add extra comments on EFI name for calibration
+>  - Remove an extra space
+> ---
+>  sound/hda/codecs/side-codecs/tas2781_hda_i2c.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 > 
-> Regmap's I2C/SPI bus implementations use fixed addressing and standard transfer
-> patterns without support for these protocol-specific requirements. A custom
-> regmap bus would internally call these same helper functions without providing
-> practical benefit.
+> diff --git a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c b/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
+> index ed7771ab9475..635cbd8820ac 100644
+> --- a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
+> +++ b/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
+> @@ -340,7 +340,8 @@ static int tas2563_save_calibration(struct tas2781_hda *h)
+>  		data[offset] = i;
+>  		offset++;
+>  		for (j = 0; j < TASDEV_CALIB_N; ++j) {
+> -			ret = snprintf(var8, sizeof(var8), vars[j], i);
+> +			/* EFI name for calibration started with 1, not 0 */
+> +			ret = snprintf(var8, sizeof(var8), vars[j], i + 1);
+>  
+>  			if (ret < 0 || ret >= sizeof(var8) - 1) {
+>  				dev_err(p->dev, "%s: Read %s failed\n",
+> @@ -349,7 +350,7 @@ static int tas2563_save_calibration(struct tas2781_hda *h)
+>  			}
+>  			/*
+>  			 * Our variable names are ASCII by construction, but
+> -			 * EFI names are wide chars.  Convert and zero-pad.
+> +			 * EFI names are wide chars. Convert and zero-pad.
+>  			 */
+>  			memset(efi_name, 0, sizeof(efi_name));
+>  			for (k = 0; k < sizeof(var8) && var8[k]; k++)
 
-regmap provides a few benefits on top of the raw implementations. First of all,
-it takes care about synchronisation (and as a side effect enables
-configurations of the multi-functional HW, if ever needed in this case). It also
-gives a debugfs implementation, and paging support (if it's what we need).
-And many more...
-
-> The explicit transfer approach better reflects the actual hardware protocol
-> requirements.
-
-That said, please, try to look into it closer.
-
--- 
-With Best Regards,
-Andy Shevchenko
+Please drop unrelated change and concentrate on the real issue.
 
 
+thanks,
+
+Takashi
 
