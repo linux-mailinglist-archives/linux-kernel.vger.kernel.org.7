@@ -1,226 +1,133 @@
-Return-Path: <linux-kernel+bounces-786539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3784B35B8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:25:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EFFFB35B74
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:24:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBB9A160DA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:21:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8C163B2841
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:24:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753DA31813A;
-	Tue, 26 Aug 2025 11:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C824930F55C;
+	Tue, 26 Aug 2025 11:23:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D5rZ24ux"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ZxBqKiQh"
+Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [83.166.143.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7698338F36
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 11:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF9F8245012
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 11:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756207165; cv=none; b=dgSIPkGTdYIaKc1S4qcjIP0TTmXmuYVB/n7m08iV21/QNWWGZq42iKKZlxwnW1fzBfb7YPXkUF/e26JJLXTTCGzk9+vIEBDOMo823u7Dk6xt1Hbv15Rhm2h0Sj38i1hxA89QS7diWuFvU+/ao2KAHpHtLf3FYtrJNdn9W82VLeU=
+	t=1756207431; cv=none; b=PxftqImxdijEcNJhEJTsTIRPXhYfMtPe8FFfRy2mG1H3E99zbF/SrzB5RURI0T7e2PwrLfm/Ym9BjTCAnTaoWvItLKkf7n9khGf0ZmFpl8yLeX3pchYg+CDLOuQTtH2x9eMun7ZwEp3sqUKTcCoWRbA1AJHCiOeI9TRNeJcgvu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756207165; c=relaxed/simple;
-	bh=D65QWKSM9pN9e8AMIUB748gQGVONPpAN1lsBSYePY+M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NvR5869fBMc9kPbEnMNFSMrjbE0U/cy27WhTuAZjACqbk+8RVPqMLxdJjUihDnk5UBGw4YMs1/fTWapmAXG75exRr9DtLKxjtByLKAEd8JBKV6/Fnbc43sLC2zDsUE8BBYdkk4EhIlvuxO41IetTdpZF2+TB2cB7uNecaP4CoGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D5rZ24ux; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756207162;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pNRKdff2Ys8RanQTtN4VeDxIO5xowx3e0A00ZcmqvdY=;
-	b=D5rZ24uxZD329Y9Tf48CWAw2oOe2pVf/QUVZwx213h7w1eBFAArO2fkGoF3MaT+uBaEgha
-	sUViZ5eeLKTe8WGMFtqKxAEEKLE2zXLOVNtKuenwpOAXp2ITe9lyQ4f8UYqtC+oSbjt1Rl
-	z18088vEvOjW9sQOiahKW4UNa74ZhGg=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-610-bzO-x2C7NUCV4URLtojfSw-1; Tue, 26 Aug 2025 07:19:18 -0400
-X-MC-Unique: bzO-x2C7NUCV4URLtojfSw-1
-X-Mimecast-MFC-AGG-ID: bzO-x2C7NUCV4URLtojfSw_1756207158
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-afe89c157e9so131665966b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 04:19:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756207158; x=1756811958;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pNRKdff2Ys8RanQTtN4VeDxIO5xowx3e0A00ZcmqvdY=;
-        b=WKJAlVkLWxPnxPajEUAPeaLh2tYuRIjBqvSE/Skq804+3hzr4c5cvKrCfdMuUUfZWN
-         wCIf9HXG5Kr+VhgIbtx+qJO141Z+kwjP58x5KwJcdA8K8ZKVnaFCTM9n2o6eSPzReBkn
-         hDTrHtBN6RLmJJg2s6himnqGzjmtdBvR3NZLqe68L0PimCmhEqms+6Xsaf8aecmMOSpj
-         JN8BNNIloceYt5mwojPhNX0twZhPMb8AtbCSH3c8mjkQOz0hHq3bsmRPWHhkm+xJlgf4
-         Mvx0J5zM4mwo87bANdctHOZoAn50f+XcBsa+6moTTgRmT8ly6Vg8/svDPq6NF7TwBpqg
-         V4xA==
-X-Forwarded-Encrypted: i=1; AJvYcCUOkczmS5MyuNClbe05Yx+5UQaFVbF/OV+PbcvqvDc5DNBIenPBxx+aMpJ9tKpr3kKK/W6UHOpAPmdIdgw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyq4E4KOYCbXbd66HmX6ufRqM1M8Bm56cTW1NwXFXArFsLpNcwk
-	SwzGAoN5qD3pb+VDMv0nTCAKS+hEUW7Eb2Zrq/j7lkn0aofRuhMgqeTYUtwrPaXpWnOt2N88pWF
-	vrlJyej/8WeB6E6fD2tKnm6yxLHAHKvk60Xi8wIccYHkScEbinOejR02XGvOSfvkVzPYDJEgbkH
-	D6ERVfxVIQotef13iiKsyDBxQBp4qP0Z9aROiJtN2j
-X-Gm-Gg: ASbGncuVT4NtikP0Eg0k/3xbJCwQ+2gUQ0BeDy6KOG9KJTUm1ar7ODuwh6Qoizd3Swz
-	kaOPBF8W48ilMxIN4OposKJTPE6JMtWMA8tVZGoNSesFBUQzJ3AGJ5SLAN3iodZvt2LFsMk6oba
-	WXE/lEpuTdqZzu8Q8n4HY=
-X-Received: by 2002:a17:907:3e1c:b0:ae7:cb7:9005 with SMTP id a640c23a62f3a-afe296e6cc8mr1268932066b.35.1756207157560;
-        Tue, 26 Aug 2025 04:19:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFao4TulVQAY9LGiYxoOXfzex73euZlH6UjPDCDFtMrMw28PLaLq1IaRySZ5HlunfHtZekdhWXhTBZ9OHwc3pk=
-X-Received: by 2002:a17:907:3e1c:b0:ae7:cb7:9005 with SMTP id
- a640c23a62f3a-afe296e6cc8mr1268929066b.35.1756207157017; Tue, 26 Aug 2025
- 04:19:17 -0700 (PDT)
+	s=arc-20240116; t=1756207431; c=relaxed/simple;
+	bh=a3dONpQbijK8YoaZ/aqqUpqY1ZvBSwtSGl3/rVu/h0o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TDvqniflIRNOH8q5YTVHr1h6NjtWjf+7nNGY38fpPdXLh7VZbeffu8pvCeXEblNtrXohMx5m8dUMLiBzhnYMkYictCzw/UX+yq4D3KDOaOFV6HMGVbjRqW747aol8BtAeb2z8b4eL+QE7QxVtyanVddpUtMzz804xeCnu93nSk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ZxBqKiQh; arc=none smtp.client-ip=83.166.143.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4cB4zb5C65zhCD;
+	Tue, 26 Aug 2025 13:23:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1756207419;
+	bh=Rww2xVuKT9hbmIFkkD7HcWVeLL+qhFltg+bgWOSpLGg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZxBqKiQhUv+Pvrrn1/2CQKD3XT1nzj3AUfxgSMhhQuZD50UOTb9HuJYeEW+zysahz
+	 +B6JqT/YlnN76HwUPjid1Hasw1kpct8gdFLBml/o9qkdlCXMqGR5dSJkexYtSzgQgf
+	 6aykxrpUeddHu6VCgD5BUhF6SSEa7sfB/s2j2q+w=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4cB4zX5hs0zYsS;
+	Tue, 26 Aug 2025 13:23:36 +0200 (CEST)
+Date: Tue, 26 Aug 2025 13:23:36 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Kees Cook <keescook@chromium.org>, 
+	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>, 
+	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
+	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Miklos Szeredi <mszeredi@redhat.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
+	Robert Waite <rowait@microsoft.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Scott Shell <scottsh@microsoft.com>, Steve Dower <steve.dower@python.org>, 
+	Steve Grubb <sgrubb@redhat.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
+Message-ID: <20250826.aig5aiShunga@digikod.net>
+References: <20250822170800.2116980-1-mic@digikod.net>
+ <20250826-skorpion-magma-141496988fdc@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250816031657.906569-1-ysk@kzalloc.com>
-In-Reply-To: <20250816031657.906569-1-ysk@kzalloc.com>
-From: Tomas Glozar <tglozar@redhat.com>
-Date: Tue, 26 Aug 2025 13:19:05 +0200
-X-Gm-Features: Ac12FXzR8e-ZObNfxgNqsGRfcHjsPOiF_earOdPtLBTE-8cWeQFnZ8N63-z04hs
-Message-ID: <CAP4=nvTOE9W+6UtVZ5-5gAoYeEQE8g4cgG602FJDPesNko-Bgw@mail.gmail.com>
-Subject: Re: [WIP] coccinelle: rt: Add coccicheck on sleep in atomic context
- on PREEMPT_RT
-To: Yunseong Kim <ysk@kzalloc.com>
-Cc: Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>, 
-	Easwar Hariharan <eahariha@linux.microsoft.com>, Gal Pressman <gal@nvidia.com>, 
-	Hongbo Li <lihongbo22@huawei.com>, Kees Cook <kees@kernel.org>, cocci@inria.fr, 
-	linux-rt-devel@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250826-skorpion-magma-141496988fdc@brauner>
+X-Infomaniak-Routing: alpha
 
-Hi Yunseong,
+On Tue, Aug 26, 2025 at 11:07:03AM +0200, Christian Brauner wrote:
+> On Fri, Aug 22, 2025 at 07:07:58PM +0200, Mickaël Salaün wrote:
+> > Hi,
+> > 
+> > Script interpreters can check if a file would be allowed to be executed
+> > by the kernel using the new AT_EXECVE_CHECK flag. This approach works
+> > well on systems with write-xor-execute policies, where scripts cannot
+> > be modified by malicious processes. However, this protection may not be
+> > available on more generic distributions.
+> > 
+> > The key difference between `./script.sh` and `sh script.sh` (when using
+> > AT_EXECVE_CHECK) is that execve(2) prevents the script from being opened
+> > for writing while it's being executed. To achieve parity, the kernel
+> > should provide a mechanism for script interpreters to deny write access
+> > during script interpretation. While interpreters can copy script content
+> > into a buffer, a race condition remains possible after AT_EXECVE_CHECK.
+> > 
+> > This patch series introduces a new O_DENY_WRITE flag for use with
+> > open*(2) and fcntl(2). Both interfaces are necessary since script
+> > interpreters may receive either a file path or file descriptor. For
+> > backward compatibility, open(2) with O_DENY_WRITE will not fail on
+> > unsupported systems, while users requiring explicit support guarantees
+> > can use openat2(2).
+> 
+> We've said no to abusing the O_* flag space for that AT_EXECVE_* stuff
+> before and you've been told by Linus as well that this is a nogo.
 
-so 16. 8. 2025 v 6:56 odes=C3=ADlatel Yunseong Kim <ysk@kzalloc.com> napsal=
-:
->
-> I'm working on a new Coccinelle script to detect sleep-in-atomic bugs in
-> PREEMPT_RT kernels. This script identifies calls to sleeping functions
-> (e.g., mutex_lock, msleep, kmalloc with GFP_KERNEL, spin_lock which may
-> sleep in PREEMPT_RT) within atomic contexts (e.g., raw_spin_lock,
-> preempt_disable, bit_spin_lock).
->
-> It supports both direct calls and indirect call chains through
-> inter-procedural analysis using function call graphs. Memory allocations
-> are handled including GFP_ATOMIC/NOWAIT. This is a WIP patch for early
-> feedback. I've tested it with make coccicheck on various subsystems, but
-> there are still issues with position variables sometimes being tuples,
-> leading to "Invalid position info" warnings and incomplete data collectio=
-n.
+Oh, please, don't mix up everything.  First, this is an RFC, and as I
+explained, the goal is to start a discussion with something concrete.
+Second, doing a one-time check on a file and providing guarantees for
+the whole lifetime of an opened file requires different approaches,
+hence this O_ *proposal*.
 
-I can share some of my own experience. I wrote a similar tool for the
-same problem two years ago, called rtlockscope [1], which uses ctags
-to get a list of all functions, CScope to get a function call graph,
-and assigning a summary to each function based on its callees. The
-results could use some improvement, since it reduces control flow to
-an ordering of callees, and assumes that all symbols are global (e.g.
-an ARM-only function is seen as called from x86-only code).
+> 
+> Nothing has changed in that regard and I'm not interested in stuffing
+> the VFS APIs full of special-purpose behavior to work around the fact
+> that this is work that needs to be done in userspace. Change the apps,
+> stop pushing more and more cruft into the VFS that has no business
+> there.
 
-[1] Repo: https://gitlab.com/tglozar/rtlockscope, LPC talk slides:
-https://lpc.events/event/18/contributions/1735/attachments/1428/3051/lpc202=
-4talk.pdf;
-currently I'm focusing on getting more reliable results using automata
-abstractions.
+It would be interesting to know how to patch user space to get the same
+guarantees...  Do you think I would propose a kernel patch otherwise?
 
->
-> The script includes defensive checks, but indirect bugs are not always
-> detected. I'd appreciate any suggestions on improving the Python handling
-> of position variables or the SmPL rules for better matching in complex co=
-de
-> (e.g., macros, inlines). The script is added to scripts/coccinelle/rt/.
->
+> 
+> That's before we get into all the issues that are introduced by this
+> mechanism that magically makes arbitrary files unwritable. It's not just
+> a DoS it's likely to cause breakage in userspace as well. I removed the
+> deny-write from execve because it already breaks various use-cases or
+> leads to spurious failures in e.g., go. We're not spreading this disease
+> as a first-class VFS API.
 
-My tool captures macros, but it reports a lot of false positives via
-various KASAN and printing routines. For example:
-
-Sleeping lock called at:
-__cache_free at mm/slab.c:3617
-___cache_free at mm/slab.c:3378
-do_slab_free at mm/slub.c:3816
-__slab_free at mm/slub.c:3796
-put_cpu_partial at mm/slub.c:3679
-local_lock_irqsave at mm/slub.c:2703
-__local_lock_irqsave at include/linux/local_lock.h:31
-__local_lock at include/linux/local_lock_internal.h:128
-spin_lock at include/linux/local_lock_internal.h:119
-
-preemption disabled at:
-__cache_free at mm/slab.c:3617
-kasan_slab_free at mm/slab.c:3370
-__kasan_slab_free at include/linux/kasan.h:164
-____kasan_slab_free at mm/kasan/common.c:244
-kasan_quarantine_put at mm/kasan/common.c:238
-raw_spin_lock at mm/kasan/quarantine.c:224
-_raw_spin_lock at include/linux/spinlock.h:217
-__raw_spin_lock at kernel/locking/spinlock.c:154
-preempt_disable at include/linux/spinlock_api_smp.h:132
-
-But that might be just because I'm also tracking indirect
-preempt_disable though (see below). I'm not familiar with Coccinelle
-unfortunately, I considered it for a while, but opted for a different
-approach.
-
-> Detects sleep-in-atomic bugs in PREEMPT_RT kernels by identifying imprope=
-r
-> calls to functions that may sleep, such as mutex locks, explicit sleep
-> functions (e.g., msleep), memory allocations and sleepable spinlocks,
-> within atomic contexts created by preempt_disable, raw_spin_lock,
-> irq_disable (e.g. bit_spin_lock).
->
-> 1. Detection of direct calls to sleeping functions in atomic scopes.
-> 2. Analysis of inter-procedural call chains to uncover indirect calls to
->    sleeping functions via function call graphs.
-> 3. Handling of memory allocation functions that may sleep.
->    (including GFP_ATOMIC).
->
-
-If I understand your code properly, you only match on a specific case
-of sleeping in atomic context, where the offending call is directly in
-between "preempt disable" and "preempt enable".
-
-That means that your script only takes indirection into account for
-sleeping functions, not for disabling preemption/atomic context. There
-are some occurrences where custom "lock" functions call
-preempt_disable in the kernel, so this is needed in order not to miss
-those. But it might be better to skip them to prevent flooding the
-output with a lot of false positives, since one unmatched
-preempt_disable will pollute the rest of the function (and every
-function that calls it).
-
-> This cocci script should identify direct and indirect sleep-in-atomic
-> violations, improving PREEMPT_RT compatibility across kernel code.
-> For example:
-> Link: https://lore.kernel.org/linux-rt-devel/7a68c944-0199-468e-a0f2-ae2a=
-9f21225b@kzalloc.com/t/#u
->
-
-There are likely still tens of these bugs across different subsystems,
-I remember fixing one in nvdimm and one in BPF.
-
-There is also a 2018 paper, Effective Detection of
-Sleep-in-Atomic-Context Bugs in the Linux Kernel [2], which covers
-this problem without taking PREEMPT_RT into account. They identify
-three challenges: accurately processing control flow, handling
-function pointers, and handling different code paths. Notably, they
-also use summaries, and handle sleeping in atomic context in interrupt
-handlers. Overall, it looks like it uses the same general approach as
-rtlockscope and your Coccinelle script, just more polished, so you
-might want to have a look at it (if you have not seen it yet). Of
-course, on PREEMPT_RT, there is an additional challenge in
-distinguishing between RT and non-RT paths (like code that sleeps only
-on RT and disables preemption only on non-RT).
-
-[2] https://hal.science/hal-03032244
-
-
-
-Tomas
-
+Jann explained it very well, and the deny-write for execve is still
+there, but let's keep it civil.  I already agreed that this is not a
+good approach, but we could get interesting proposals.
 
