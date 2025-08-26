@@ -1,182 +1,114 @@
-Return-Path: <linux-kernel+bounces-787389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75791B3759A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 01:38:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0064CB3759D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 01:39:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81B567A1EBB
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 23:36:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C64A917F736
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 23:39:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E713090F5;
-	Tue, 26 Aug 2025 23:38:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E54093090F7;
+	Tue, 26 Aug 2025 23:39:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E6QWL+9O"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EzzmgLoy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9771972633;
-	Tue, 26 Aug 2025 23:38:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B35127F171;
+	Tue, 26 Aug 2025 23:39:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756251498; cv=none; b=PH/nD9wsZq8Gdkp4evXhkl+/x4NesssR0yaJUYlDbRZOl99RL+3Id4O2p5g3tQkLExbHdgNL3SeHDBzFAvvJgDyMLlAAeurKSiesmBXZ2Gfz5+GVAlV3NRb2/QkdfbY+fVNYK+a0d0lju9PjeR+Glim2yYeKLE9bTDxdoEvLVbw=
+	t=1756251577; cv=none; b=cTH0Qfrfk4eL26kiZFO7Lr+hagfzk6UDXoAAqbOmR4G4Qj3+8xAm6xAnMAECmxN8HI77qbitaBekNsL04OrLhwnXdC9Ru7szXZjM6k8fMPCQPBbu3EDdGT1fsP9svmu96NxAtWiGSp4S4DpYGgGZRm8ssny+NB7g/mhKnOw7JXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756251498; c=relaxed/simple;
-	bh=kn6ieDwDxZsDgSRi1qDw+jZs8ann+wvttrNfWt18VCY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=Wmv5rAfZZP1RSZTI5AnG5++iVBTjpMiLkHsUibm2jEoD0eGHzc3J7vH8idCIwgi+7kMOoSWoFVG7Mv+NZvgEoUU/lIPdEjLsEf4dD43yQsOxh8h/dggFWa16Wd9FUUqMwKQVESpUsWb3WLQyWum7SwW4TEOU9T/mXbnusKu7Zos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E6QWL+9O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E396BC4CEF1;
-	Tue, 26 Aug 2025 23:38:14 +0000 (UTC)
+	s=arc-20240116; t=1756251577; c=relaxed/simple;
+	bh=8lYyDoqHXEgL2IWQCJY3sD0pn+bTDHWBlah2U7LKa/I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LpZKW8XkO+LaqzOz3cBgKSgz8j9g2vbacjZkIR+Ip5ymUK/6IkTz0Gpup8NxORB6T+0jnHgVrC+gujV4zmyjd9vBBXCqR+ISGgDOfNT98adywkApogflQbfycuLnDjlMblpJFu/OyJLQvh4V2u6rXKpWwgBNq/qsyDv4Lj+78kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EzzmgLoy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11964C4CEF1;
+	Tue, 26 Aug 2025 23:39:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756251498;
-	bh=kn6ieDwDxZsDgSRi1qDw+jZs8ann+wvttrNfWt18VCY=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=E6QWL+9ORdmTU28VciO8c6Xlxg9A2oRj98hu0YZ11ppE8hBl8vCjRXMtn61rGYr1v
-	 MAd025GNlEZ7Tjhd0BLlW7UEf1vZzhPE8Rsg/UP+zN8NVtpw+bpkvnqK1rvFtO17OW
-	 3JhSpJ2I0RCZtjh2xZFiW/9B/ropEwEGNuJ0amT65DewCcETzHVXyQIe/1APInhXtT
-	 MLamOYSmkUezjsOJsCTB68qOqFORdSUmVPq60vwp9N3bl2HEcG/wlRpqi4FKUFDvAt
-	 X3fYFyXyzMsw/VWe7OJzM39kqj74TVSwfOdOm2yh0oh/KYwmME9UQha7J9TSt6d44a
-	 aKSYwScs8XCdQ==
+	s=k20201202; t=1756251576;
+	bh=8lYyDoqHXEgL2IWQCJY3sD0pn+bTDHWBlah2U7LKa/I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EzzmgLoySMhUUrvU4/QhXCdzYach1P/ODyrkxWGigaI283ealyRLPSA/jn+HY4WaP
+	 g4KRPRK2SjKAnFp+r/BO1T7T4fF1ufa4NKiF0nPuJkqRTc1OMf8zu6qD4iqEndFE+b
+	 RuuNJHsLXB32a4lK4o6jCPHTeZPMijTOPTHISSOV0AEqyqFm2ef4134mIjB5EXmoyX
+	 68i4jZ3UMB5q4gdmLNq0Izj91ZyUQX4qu38H+DOIN6Ti1tM7cFwWdjWRfG6RDquun5
+	 laMFC/QRJdizne3DStFLLiDo9BC1TnrRz54yL6RM3fLJj3YUx68lTOvaRNhUusf7v2
+	 VVPGxaPul0vdg==
+Date: Tue, 26 Aug 2025 16:39:34 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, 
+	Peter Zijlstra <peterz@infradead.org>, Nathan Chancellor <nathan@kernel.org>, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 1/2] objtool/LoongArch: Fix fall through warning
+ about efi_boot_kernel()
+Message-ID: <xyrcgkl7ud5pgh4h5yjyejz646bc22fnnwxahaoafqvnqintf3@mdhtfaybai67>
+References: <20250826064631.9617-1-yangtiezhu@loongson.cn>
+ <20250826064631.9617-2-yangtiezhu@loongson.cn>
+ <CAAhV-H5wW_04NHQ7z+SCPb6-T5Hc__n+x=ykg-u9vn4b4GXuww@mail.gmail.com>
+ <487a8149-6cbe-46a7-6771-66aef0045f07@loongson.cn>
+ <CAAhV-H7m-BSqajDiDNMNEq4FY9uoCd9LZySOe0VQ+2Sv1wZZVg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 27 Aug 2025 01:38:13 +0200
-Message-Id: <DCCR71R83O68.11AA6B36TYQ3C@kernel.org>
-Subject: Re: [PATCH v3 3/5] rust: scatterlist: Add abstraction for sg_table
-Cc: <akpm@linux-foundation.org>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
- <aliceryhl@google.com>, <tmgross@umich.edu>, <abdiel.janulgue@gmail.com>,
- <jgg@ziepe.ca>, <lyude@redhat.com>, <robin.murphy@arm.com>,
- <daniel.almeida@collabora.com>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-To: "Alexandre Courbot" <acourbot@nvidia.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250825132539.122412-1-dakr@kernel.org>
- <20250825132539.122412-4-dakr@kernel.org>
- <DCCFOGR3BPVC.3OW6B74N372MB@nvidia.com>
- <DCCGKLKK0D08.1VOAVWOJIXIIO@kernel.org>
-In-Reply-To: <DCCGKLKK0D08.1VOAVWOJIXIIO@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAAhV-H7m-BSqajDiDNMNEq4FY9uoCd9LZySOe0VQ+2Sv1wZZVg@mail.gmail.com>
 
-On Tue Aug 26, 2025 at 5:18 PM CEST, Danilo Krummrich wrote:
-> On Tue Aug 26, 2025 at 4:36 PM CEST, Alexandre Courbot wrote:
->> Even if this is for internal use, I think a short comment explaining
->> what this is for, and why it needs to be pinned (pointed to by devres)
->
-> That's not the reason this structure needs to be pinned. This is the reas=
-on for
-> Devres itself needs to be pinned.
->
-> In fact, I think RawSGTable by itself does not need to be pinned.
+On Tue, Aug 26, 2025 at 09:03:34PM +0800, Huacai Chen wrote:
+> On Tue, Aug 26, 2025 at 8:33 PM Tiezhu Yang <yangtiezhu@loongson.cn> wrote:
+> >
+> > On 2025/8/26 下午4:32, Huacai Chen wrote:
+> > > On Tue, Aug 26, 2025 at 2:46 PM Tiezhu Yang <yangtiezhu@loongson.cn> wrote:
+> > >>
+> > >> When compiling with LLVM and CONFIG_LTO_CLANG is set, there exists
+> > >> the following objtool warning:
+> > >>
+> > >>    vmlinux.o: warning: objtool: __efistub_efi_boot_kernel()
+> > >>    falls through to next function __efistub_exit_boot_func()
+> >
+> > ...
+> >
+> > >> -typedef void __noreturn (*kernel_entry_t)(bool efi, unsigned long cmdline,
+> > >> +typedef void (*kernel_entry_t)(bool efi, unsigned long cmdline,
+> > >>                                            unsigned long systab);
+> > >  From my point of view this is incorrect, this function is indeed a
+> > > noreturn function, and this modification makes LoongArch different to
+> > > other architectures.
+> > >
+> > > Maybe it is better to let objtool ignore the whole
+> > > drivers/firmware/efi/libstub directory. Because efistub is discarded
+> > > at runtime so it is useless for stack unwinder.
+> >
+> > I tested the following change but there is no effect, the objtool
+> > warning still exists, this is because OBJECT_FILES_NON_STANDARD
+> > does not work for link time validation of vmlinux.o according to
+> > tools/objtool/Documentation/objtool.txt.
+> Then I think objtool needs to be improved to handle this case, this
+> problem is not arch specific.
 
-Just to expand on this a bit:
+Yeah, objtool should really be ignoring this code altogether.  On x86,
+that's not a problem because the EFI stub code isn't linked into
+vmlinux.o.  It gets linked in separately:
 
-Eventually it does need to be pinned, because DmaMappedSgt keeps a pointer =
-of
-the underlying struct sg_table. But, this happens in Owned:
+  $ git grep vmlinux-libs
+  arch/x86/boot/compressed/Makefile:vmlinux-libs-$(CONFIG_EFI_STUB) += $(objtree)/drivers/firmware/efi/libstub/lib.a
+  arch/x86/boot/compressed/Makefile:vmlinux-libs-$(CONFIG_X86_64) += $(objtree)/arch/x86/boot/startup/lib.a
+  arch/x86/boot/compressed/Makefile:$(obj)/vmlinux: $(vmlinux-objs-y) $(vmlinux-libs-y) FORCE
 
-	Ok(try_pin_init!(&this in Self {
-	    // SAFETY:
-	    // - `page_vec` is a `KVec` of valid `struct page *` obtained from `pa=
-ges`.
-	    // - The pages contained in `pages` remain valid for the entire lifeti=
-me of the
-	    //   `RawSGTable`.
-	    sgt: unsafe { RawSGTable::new(&mut page_vec, size, max_segment, flags)=
- }?,
-	    dma <- {
-	        // SAFETY: `this` is a valid pointer to uninitialized memory.
-	        let sgt =3D unsafe { &raw mut (*this.as_ptr()).sgt }.cast();
-=09
-	        // SAFETY: `sgt` is guaranteed to be non-null.
-	        let sgt =3D unsafe { NonNull::new_unchecked(sgt) };
-=09
-	        // SAFETY:
-	        // - It is guaranteed that the object returned by `DmaMappedSgt::n=
-ew` won't out-live
-	        //   `sgt`.
-	        // - `sgt` is never DMA unmapped manually.
-	        Devres::new(dev, unsafe { DmaMappedSgt::new(sgt, dev, dir) })
-	    },
-	    _pages: pages,
-	}))
+IMO, the proper fix is to change the loongarch build to do the same.
+vmlinux.o is intended to be proper kernel code.
 
-So, it's fine to move RawSGTable around, *until* we obtain the address for
-DmaMappedSgt (within Owned, Devres<DmaMappedSgt> is dropped before the
-RawSGTable). However, this is an implementation detail of Owned and has not=
-hing
-to do with RawSGTable by itself.
-
-Hence, we could also nuke #[pin_data] for RawSGTable and implement it as:
-
-	/// A transparent wrapper around a `struct sg_table`.
-	///
-	/// While we could also create the `struct sg_table` in the constructor of=
- [`Owned`], we can't tear
-	/// down the `struct sg_table` in [`Owned::drop`]; the drop order in [`Own=
-ed`] matters.
-	#[repr(transparent)]
-	struct RawSGTable(Opaque<bindings::sg_table>);
-
-	impl RawSGTable {
-	    /// # Safety
-	    ///
-	    /// - `pages` must be a slice of valid `struct page *`.
-	    /// - The pages pointed to by `pages` must remain valid for the entire=
- lifetime of the returned
-	    ///   [`RawSGTable`].
-	    unsafe fn new(
-	        pages: &mut [*mut bindings::page],
-	        size: usize,
-	        max_segment: u32,
-	        flags: alloc::Flags,
-	    ) -> Result<Self> {
-	        // `sg_alloc_table_from_pages_segment()` expects at least one page=
-, otherwise it
-	        // produces a NPE.
-	        if pages.is_empty() {
-	            return Err(EINVAL);
-	        }
-=09
-	        let sgt =3D Opaque::zeroed();
-=09
-	        // SAFETY:
-	        // - `sgt.get()` is a valid pointer to uninitialized memory.
-	        // - As by the check above, `pages` is not empty.
-	        error::to_result(unsafe {
-	            bindings::sg_alloc_table_from_pages_segment(
-	                sgt.get(),
-	                pages.as_mut_ptr(),
-	                pages.len().try_into()?,
-	                0,
-	                size,
-	                max_segment,
-	                flags.as_raw(),
-	            )
-	        })?;
-=09
-	        Ok(Self(sgt))
-	    }
-=09
-	    #[inline]
-	    fn as_raw(&self) -> *mut bindings::sg_table {
-	        self.0.get()
-	    }
-	}
-=09
-	impl Drop for RawSGTable {
-	    #[inline]
-	    fn drop(&mut self) {
-	        // SAFETY: `sgt` is a valid and initialized `struct sg_table`.
-	        unsafe { bindings::sg_free_table(self.0.get()) };
-	    }
-	}
+-- 
+Josh
 
