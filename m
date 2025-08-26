@@ -1,113 +1,94 @@
-Return-Path: <linux-kernel+bounces-785749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91060B35074
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:45:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8847AB35077
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:45:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70EBC189D827
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:45:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EB791895BAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED68266EF1;
-	Tue, 26 Aug 2025 00:44:37 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BE091DF994;
+	Tue, 26 Aug 2025 00:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XeFWRknx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04FD53BBF2;
-	Tue, 26 Aug 2025 00:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768671FC8;
+	Tue, 26 Aug 2025 00:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756169077; cv=none; b=R8+cD9v0YaBUSG5XfYvMEBcKV+ldLvcuB2rBVDcIvZ0MSmDJSs1dbsHLD89h4VFDQtpeDQB8mkNHA9Pumzk/+wfm+R6Q5+52w48IheopLCUPeN+FaX5Ik+cx8RnQLfgqxS/oUHgakk3P4XflCtllJKgFOvOe53z0VdZEs0O8XvY=
+	t=1756169143; cv=none; b=iJx6RDUKMjOHzsGRWX4ZgOjYQaAO5RUELa6MWyDkbM22E1mpB7QU+FsNoWcNHwAuXnR4LDLOF/xMlXb4iADXTxlf1sO0FuighQ0b4uTlIcrkJoT5xw2mH1kvJ85pkz/nkOJK1qNWaNR8UW0aXEx1dxkchm503+uubGp/9Dcake4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756169077; c=relaxed/simple;
-	bh=XVEgFqGODfE47rhyZY5ahAo/dKdN2WDtN6jxtG/maos=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=ONA4at94yvqf9kvi84z2ZqnYOC5zHujjzUQLKIhw4GPE37DHTJ2a0qIWrDoLKuwj3IkmkCrvMKCqoV1V6SuunhBMagoSOCwGE8Hyitz9JShsGpSI5bcDrze6SUeWLayQ+wUpLZ1jDIg7mTsGoP/jerqd72c2blzjQTLEW1gznLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c9pp73rxMzKHNPd;
-	Tue, 26 Aug 2025 08:44:31 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 25CC41A0D28;
-	Tue, 26 Aug 2025 08:44:31 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgDnMY5tA61oi1A5AQ--.16236S3;
-	Tue, 26 Aug 2025 08:44:30 +0800 (CST)
-Subject: Re: [PATCH 0/2] Fix the initialization of
- max_hw_wzeroes_unmap_sectors for stacking drivers
-To: Zhang Yi <yi.zhang@huaweicloud.com>, linux-block@vger.kernel.org,
- linux-raid@vger.kernel.org, drbd-dev@lists.linbit.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- john.g.garry@oracle.com, hch@lst.de, martin.petersen@oracle.com,
- axboe@kernel.dk, yi.zhang@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250825083320.797165-1-yi.zhang@huaweicloud.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <18a92f4f-e4e8-4b61-79b1-1b1f116af5fa@huaweicloud.com>
-Date: Tue, 26 Aug 2025 08:44:29 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1756169143; c=relaxed/simple;
+	bh=q/ApEimL52B+G+oVZ7OXV1FFoAOegw1ViaoJS/+MNwc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=e80Xi0O5DV/08O2MmtZvtvJzzxFI1Ty5FUvIQj7gsw5PJJrcfWif4dQZcNrc76BbZtwhH9yfQujXx2aAh0SXiGNAfrEHIr7EVowZZQnfTwTZDkHjUW/G32tPFpVcJ1PFpp0OGnqBvEyuw4ziANsjvKOmoaN9FsCgMBw05lJiYlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XeFWRknx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3D56C4CEED;
+	Tue, 26 Aug 2025 00:45:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756169143;
+	bh=q/ApEimL52B+G+oVZ7OXV1FFoAOegw1ViaoJS/+MNwc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=XeFWRknx/CgQmmppS1Rtba/7nc3xKgrrDbrqRIsjNm76sSC5ssitJPyJA+9jdmqYT
+	 /y1w3s2Z3+CLijpYNUBejPdahHObW9KZESVOZvcq5d2aRf6gcgb5zBTKVfMZR92ry1
+	 H0WIe/NbPWHWfJi0QHSpe/XsBF3zd9izXQH+u1FdWAUbo99DtmuZWCYEs+bvf/qEY9
+	 7D4WCLPHNNEiqWCo5hXYP/lTYvVqh8YJmdK5DLwkja546HjMjaqDrm1GhxXKVtzvig
+	 NLNc2GQJ9kN0vxrJFwDQtbpWlhIIz25ZDiozANlylK5Easv94FoPCvUzZQmh+KB63U
+	 gZFiv5l6M3o1Q==
+Date: Mon, 25 Aug 2025 17:45:42 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Harini Katakam <harini.katakam@xilinx.com>, Neil Mandir
+ <neil.mandir@seco.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>, Nicolas Ferre
+ <nicolas.ferre@microchip.com>
+Subject: Re: [PATCH net] net: macb: Disable clocks once
+Message-ID: <20250825174542.2ece797c@kernel.org>
+In-Reply-To: <20250825165925.679275-1-sean.anderson@linux.dev>
+References: <20250825165925.679275-1-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250825083320.797165-1-yi.zhang@huaweicloud.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDnMY5tA61oi1A5AQ--.16236S3
-X-Coremail-Antispam: 1UD129KBjvdXoWrurW3Cw4DKw1xJryxWFy7Awb_yoW3ZrgEkF
-	1FqFZavw4kCF1SvF15ur1fZry2yay8XF95ury7KayFgayfZFn5G3Wj93s8J3WUAFyqvFWD
-	Ar1kt3yxAryUXjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbaxYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
-	07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
-	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
-	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
-	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
-	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
-	BIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-ÔÚ 2025/08/25 16:33, Zhang Yi Ð´µÀ:
-> From: Zhang Yi <yi.zhang@huawei.com>
+On Mon, 25 Aug 2025 12:59:25 -0400 Sean Anderson wrote:
+> From: Neil Mandir <neil.mandir@seco.com>
 > 
-> Hello,
-> 
-> This series fixes the initialization of max_hw_wzeroes_unmap_sectors in
-> queue_limits for all md raid and drbd drivers, preventing
-> blk_validate_limits() failures on underlying devices that support the
-> unmap write zeroes command.
-> 
-> Best regards,
-> Yi.
-> 
-> Zhang Yi (2):
->    md: init queue_limits->max_hw_wzeroes_unmap_sectors parameter
->    drbd: init queue_limits->max_hw_wzeroes_unmap_sectors parameter
-> 
->   drivers/block/drbd/drbd_nl.c | 1 +
->   drivers/md/md-linear.c       | 1 +
->   drivers/md/raid0.c           | 1 +
->   drivers/md/raid1.c           | 1 +
->   drivers/md/raid10.c          | 1 +
->   drivers/md/raid5.c           | 1 +
->   6 files changed, 6 insertions(+)
-> 
+> When the driver is removed the clocks are twice: once by the driver and a
+> second time by runtime pm. Remove the redundant clock disabling. Disable
+> wakeup so all the clocks are disabled. Always suspend the device as we
+> always set it active in probe.
 
-For this set
-Reviewed-by: Yu Kuai <yukuai3@huawei.com>
+needs a rebase:
 
-Thanks
-
+$ git pw series apply 995325
+Failed to apply patch:
+Applying: net: macb: Disable clocks once
+Using index info to reconstruct a base tree...
+M	drivers/net/ethernet/cadence/macb_main.c
+Falling back to patching base and 3-way merge...
+Auto-merging drivers/net/ethernet/cadence/macb_main.c
+CONFLICT (content): Merge conflict in drivers/net/ethernet/cadence/macb_main.c
+Recorded preimage for 'drivers/net/ethernet/cadence/macb_main.c'
+error: Failed to merge in the changes.
+hint: Use 'git am --show-current-patch=diff' to see the failed patch
+hint: When you have resolved this problem, run "git am --continue".
+hint: If you prefer to skip this patch, run "git am --skip" instead.
+hint: To restore the original branch and stop patching, run "git am --abort".
+hint: Disable this message with "git config set advice.mergeConflict false"
+Patch failed at 0001 net: macb: Disable clocks once
+-- 
+pw-bot: cr
 
