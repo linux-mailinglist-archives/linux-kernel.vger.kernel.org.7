@@ -1,96 +1,115 @@
-Return-Path: <linux-kernel+bounces-787327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41A7EB374B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 00:00:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC240B374BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 00:04:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1417B208062
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 22:00:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E69B51B280D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 22:04:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4817F29B766;
-	Tue, 26 Aug 2025 22:00:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 631552874FA;
+	Tue, 26 Aug 2025 22:04:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="BTelWHQl"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="UhZdsLLH"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43141DB127;
-	Tue, 26 Aug 2025 22:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B5B30CD91;
+	Tue, 26 Aug 2025 22:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756245638; cv=none; b=OeLsBDJay5YO4uYNFpgRg2BvRANINwT5tI+qOVlTzHNF6VCCi8pNSBtke6gpSR+jrSKhXejJgcRgRNKS4VdXt+Ue9Buy6HTq1DRS8srPsUCVpWbfeOhwDxAYqB9Y4gilyqvyUtpilSmkY99xjUEx12nmReUAWUiGHEGkv15G03E=
+	t=1756245857; cv=none; b=jxr8jPq/vnfbxWz8bRONRyIZqGR2Qrqzy0dWm/pAKpCBYFX2N6RUri3lh/mrOkNGcAcZ9+IX+2E06sPWRG5+UYb1lZO4Si6ujRVLH8W2/aYLnyLM5PFFnrxasGwEinC+aDHkyRHD5fJ/8McCIPpQgPe6OrRDKWem+s415+HFLiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756245638; c=relaxed/simple;
-	bh=nlAddIeElMyrZvjWgtWAT8j83cDwciEuvI0QuQmbjsc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=exgeIHuz+mEB9PrJaCi847+VWgAWlMoITbg4Rp9EK5kCNpkrPXTVmTu1Svc7WA1qlwoSmRZo6/LWX3QqnpURobGGZk4aqnp1Cl1746aWVxG2QT8vB87kxAJPUcSrVpFzaqkuVqg/rk1FK8n2+2yJGISAEb87KzaGJ2rxq4et9Yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=BTelWHQl; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Xq6ECnNUFHb2ro/LDs33wQ192q1812d2cTnWy54SPqs=; b=BTelWHQlw8A9q+HpPNkE3W9cPv
-	LFF+M5pw0iZ3F1m4/a2luu5vqVIO0A57WOi6+ZlivXoASkKE8bjtOMeH/OTikJDBKf+2WwZ5DsQIN
-	sFLNJaKPG6MCyLvjh5d0amCFpf2x5D9pHR6nJAJITDOkfpqPl0kkmXIfhukSdWoMuOqbi6npFfdkb
-	CRfa6sGORge5TnyeU/myiy7L6lgmKmalaUspdfJGIT9ij/lX4LhsRRu5EpvIz0qNvVavPs6bXOCpN
-	jkC34h+q2062yq9lUzjoikphbX+4bx/4Z0J/OJ0fIxCswX4Y0PBVNiD5Y5LSSNoYi2TnDbfvRSBPH
-	WGqIMe4g==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ur1iT-00000007qDV-43gA;
-	Tue, 26 Aug 2025 22:00:34 +0000
-Date: Tue, 26 Aug 2025 23:00:33 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Alexander Monakov <amonakov@ispras.ru>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org
-Subject: Re: ETXTBSY window in __fput
-Message-ID: <20250826220033.GW39973@ZenIV>
-References: <6e60aa72-94ef-9de2-a54c-ffd91fcc4711@ispras.ru>
+	s=arc-20240116; t=1756245857; c=relaxed/simple;
+	bh=VnFdHNBG3ysHgXpYeC+QlqKzTyI9INGSEkt0tUHZwds=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iV8TBaATw6S94dlwkrQQ+tgBp8H7bN4YzZYmcSCrjPAYJMm8NPT80cqPdTqQ5bxBO86Np15LHYpi88gBjDAjAnUp6rTvoGwV70MRtW/sRiGgcZapJhTbWfCvdpie7du0TI8G9toBD3eXdeRPgRxtKpkuBVXVOPeuAtgKl278dy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=UhZdsLLH; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 57QM3mVe1289126
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Tue, 26 Aug 2025 15:03:48 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 57QM3mVe1289126
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025082201; t=1756245829;
+	bh=VnFdHNBG3ysHgXpYeC+QlqKzTyI9INGSEkt0tUHZwds=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UhZdsLLHMZR989oGQxEG1vPDF1imt/H7BKUVbAGCl2ivC2WLF2HUGi5gFI2NyS+ZE
+	 IE1uq3DpPnQ2EVIQZDQg73IfmVLvaL484wjVeWjUivU77AkWYu4LDH00QKoRqz69e3
+	 egwk+rz84wVbymIOp+jhrMBlf0IJKspKbkiLEOoQ+GryDhzMoeFOwC3HxOSH8eC1KM
+	 E+MDYgN6vtj3dayogcSc7h/G4JFB01Qt+LGZu726YqHlTgIUnxLd4JgreL0m8T5JDh
+	 2zzhf+hKW7fOvfXP2V8y1BU0bDnkZyCnnUSGNvxXrOqdpn/R+sws2XTvJA3jrrq2TL
+	 4Lj8yx/u5BHPQ==
+Message-ID: <c44d5ea1-444c-4405-9182-8cd3f6faede4@zytor.com>
+Date: Tue, 26 Aug 2025 15:03:47 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6e60aa72-94ef-9de2-a54c-ffd91fcc4711@ispras.ru>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 06/20] KVM: VMX: Set FRED MSR intercepts
+To: Andrew Cooper <andrew.cooper3@citrix.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, linux-doc@vger.kernel.org
+Cc: pbonzini@redhat.com, seanjc@google.com, corbet@lwn.net, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+        x86@kernel.org, hpa@zytor.com, luto@kernel.org, peterz@infradead.org,
+        chao.gao@intel.com, hch@infradead.org
+References: <20250821223630.984383-1-xin@zytor.com>
+ <20250821223630.984383-7-xin@zytor.com>
+ <2dd8c323-7654-4a28-86f1-d743b70d10b1@zytor.com>
+ <36e0a671-6463-4bab-b5f1-63499838358d@citrix.com>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <36e0a671-6463-4bab-b5f1-63499838358d@citrix.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 27, 2025 at 12:05:38AM +0300, Alexander Monakov wrote:
-> Dear fs hackers,
-> 
-> I suspect there's an unfortunate race window in __fput where file locks are
-> dropped (locks_remove_file) prior to decreasing writer refcount
-> (put_file_access). If I'm not mistaken, this window is observable and it
-> breaks a solution to ETXTBSY problem on exec'ing a just-written file, explained
-> in more detail below.
-> 
-> The program demonstrating the problem is attached (a slightly modified version
-> of the demo given by Russ Cox on the Go issue tracker, see URL in first line).
-> It makes 20 threads, each executing an infinite loop doing the following:
-> 
-> 1) open an fd for writing with O_CLOEXEC
-> 2) write executable code into it
-> 3) close it
-> 4) fork
-> 5) in the child, attempt to execve the just-written file
-> 
-> If you compile it with -DNOWAIT, you'll see that execve often fails with
-> ETXTBSY. This happens if another thread forked while we were holding an open fd
-> between steps 1 and 3, our fd "leaked" in that child, and then we reached our
-> step 5 before that child did execve (at which point the leaked fd would be
-> closed thanks to O_CLOEXEC).
+On 8/26/2025 11:50 AM, Andrew Cooper wrote:
+> This distinction only matters for guests, and adding the CET-SS
+> precondition makes things simpler overall for both VMMs and guests.  So
+> can't this just be fixed up before being integrated into the SDM?
 
-Egads...  Let me get it straight - you have a bunch of threads sharing descriptor
-tables and some of them are forking (or cloning without shared descriptor tables)
-while that is going on?
-
-Frankly, in such situation I would spawn a thread for that, did unshare(CLONE_FILES)
-in it, replaced the binary and buggered off, with parent waiting for it to complete.
++1 :)
 
