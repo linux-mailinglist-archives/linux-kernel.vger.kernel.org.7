@@ -1,117 +1,148 @@
-Return-Path: <linux-kernel+bounces-786351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2ED0B358B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:23:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C11AAB358AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:21:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93749164834
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:23:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA62B188C530
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:22:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A273A3093BA;
-	Tue, 26 Aug 2025 09:22:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4664843ABC;
+	Tue, 26 Aug 2025 09:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y/VN1Oj+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CHmM8nrE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C5BE306D48;
-	Tue, 26 Aug 2025 09:22:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854D124466D;
+	Tue, 26 Aug 2025 09:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756200169; cv=none; b=PeQx5v57W3IRNrp6MWCjUWBzyGrr1n127WVM/JDoL7p+vDJT2YsoNMpzcGr0XU/jFX06/hRRocELR/hlT49O7UPXvSO605eaKFoVXXwH1eaQ6GF1m2VFPvH9rAjId0P6KnycKVmlqfBiqKy1JLQwrlio3uC467M5js2M2X7y84A=
+	t=1756200105; cv=none; b=V2FYj1YtLQ97dROToXLbGt/upUDykDII2VH/wqgS6q2RUy9Tgxp3YaDa3kBbDWR8vTRt7IlpSlA0G7lPX9Nnr1yL3iVwy1ObcKwJ3dhcicXfGG+ueK9qGmxowFYzoqhU/hxHb7wlgPWfgsVK5CyL8mePY9qULvrvsSGldZ5H9K0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756200169; c=relaxed/simple;
-	bh=cF/+t7YqCrNDg50jpNmnlCcL8GC0O3MrdFh1V8+gYws=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FxTcXAZ0kVjjlVIzKGCwJ0dqxSFkGPwGZSHHfCzyWk4c58lHNt/BiK6/GXcONQsKrJ0nFERIV+Y5SiNBoJ3EvlQpc7VxSTrwYmhsvGKah455REUOkxVcu9iYOUkr55BXWdhTlp+5KjY2FvUTlmYcDWuuV8wJsZNzHVd77kCezLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y/VN1Oj+; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756200167; x=1787736167;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=cF/+t7YqCrNDg50jpNmnlCcL8GC0O3MrdFh1V8+gYws=;
-  b=Y/VN1Oj+EfUq3C0VMsVVJ1bV2nXbQTo71mebmu5Ox7v7RYcyi/8JCuXZ
-   sqAZeYK2HQZEVIaiXQNxmt/3V3ZggwnGt5yjMKD41V2keCeBsh+b/r732
-   T810TqV2zE3onbpAcwoeXR4avgzjGbGEZkuxEATrEUO9J6Iedm0ncnJEN
-   dc4XSAN8G9hHKK9BFtB1x8xQ3UhMrxvSuJeqKwuDACy0N38YvE5ygc+RV
-   QHIhITub/e6sfKrt/JwDGdVKDdv9ACFAyL1gWLMM56RDYhHF1O46BmxEd
-   /cz7KxVSmYAMIiGmYNYvYPbsFYwPwo+40A4gPy9zbjimREIPDcJlxuDKA
-   A==;
-X-CSE-ConnectionGUID: I9h+OnZgRWWYP7yhLDfZBQ==
-X-CSE-MsgGUID: 1A4S0oG5TxG52+8sO4CAcg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11533"; a="76028112"
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="76028112"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 02:22:46 -0700
-X-CSE-ConnectionGUID: t+UCmRX3T7SPuBu8l9kCaA==
-X-CSE-MsgGUID: x21R8PKZSbaO0g5oh9U2HQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="174830972"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa005.jf.intel.com with ESMTP; 26 Aug 2025 02:22:43 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uqpt0-000OMr-05;
-	Tue, 26 Aug 2025 09:22:41 +0000
-Date: Tue, 26 Aug 2025 17:21:00 +0800
-From: kernel test robot <lkp@intel.com>
-To: David Lechner <dlechner@baylibre.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	David Lechner <dlechner@baylibre.com>
-Subject: Re: [PATCH v2 4/4] iio: adc: ad7124: add clock output support
-Message-ID: <202508261731.33GQLUPx-lkp@intel.com>
-References: <20250825-iio-adc-ad7124-proper-clock-support-v2-4-4dcff9db6b35@baylibre.com>
+	s=arc-20240116; t=1756200105; c=relaxed/simple;
+	bh=fgYxCcQtnrWie6H6f2KNxWhqHd60YRbjrj3O8mjjjHU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mWrf43ewWbGLPqEB2HEmdN7BlCzAQtaev1hVCF6pgWG1wRMhAF4lSSqMewQHtJ1CiOh2daNOFv6ZHsqo5b1xTVcnFq03+Hp0zHiMKFetrY2rF6ziDcI9Ic9E4udv6PdJQlsMqpG4DBU899wllWq7t4/WeHxRvgtrT+kA1YpXnoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CHmM8nrE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C15D8C4CEF1;
+	Tue, 26 Aug 2025 09:21:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756200105;
+	bh=fgYxCcQtnrWie6H6f2KNxWhqHd60YRbjrj3O8mjjjHU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CHmM8nrEym2ezc0RrzBuNIWsk401p53jCViZT1CPNm+yQZWHbewqJjUEFtoplXY+D
+	 OGcC4/tMys67WWHqODmXI0G6XQkDxNtSvBxPBPpzPuukIWAqmf8YRN/SaO/erj9pIQ
+	 94fB5hKJlVSdN21gDtKiFkZFiJF4N97ep8O5T7Hrcq/cQ8g6IylExRBnMV9VLoMIvh
+	 AZroA/DulOdnulFESDzcttehhiCzHDHTBgtTIWvCuuGRkByHWq2Oz1lRTjXyepDNTv
+	 IIIJD/uo8RviTBgpgiQYzuAJYVjjr4gVK/IkTFTvfQFJ9jisgMasLeV7qcLo6HIOcl
+	 7ea24Jl5ahL+g==
+Message-ID: <8689a8b4-75cb-4f01-ad6c-0a8367851257@kernel.org>
+Date: Tue, 26 Aug 2025 11:21:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250825-iio-adc-ad7124-proper-clock-support-v2-4-4dcff9db6b35@baylibre.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 7/8] serial: qcom-geni: Enable PM runtime for serial
+ driver
+To: Alexey Klimov <alexey.klimov@linaro.org>,
+ Praveen Talari <quic_ptalari@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-serial@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-kernel@vger.kernel.org, dmitry.baryshkov@oss.qualcomm.com,
+ psodagud@quicinc.com, djaggi@quicinc.com, quic_msavaliy@quicinc.com,
+ quic_vtanuku@quicinc.com, quic_arandive@quicinc.com,
+ quic_cchiluve@quicinc.com, quic_shazhuss@quicinc.com,
+ Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ bryan.odonoghue@linaro.org, neil.armstrong@linaro.org, srini@kernel.org
+References: <20250721174532.14022-1-quic_ptalari@quicinc.com>
+ <20250721174532.14022-8-quic_ptalari@quicinc.com>
+ <DC0D53ZTNOBU.E8LSD5E5Z8TX@linaro.org>
+ <577d05d4-789b-4556-a2d2-d0ad15b2c213@quicinc.com>
+ <dcad137d-8ac9-4a0b-9b64-de799536fd32@kernel.org>
+ <DCC8WLEKNS8W.9GAJHQGYPZIY@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <DCC8WLEKNS8W.9GAJHQGYPZIY@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi David,
+On 26/08/2025 11:18, Alexey Klimov wrote:
+>>> May i know what is testcase which you are running on target?
+>>
+>> Boot the board?
+>>
+>>> what is target?
+>>
+>> It is written in original report. Did you even read it?
+>>
+>>> Which usecase is this issue occurring in?
+>>
+>> Boot?
+> 
+> FWIW, what said above by Krzysztof is correct, there is no usecase, just booting the board.
+> 
+12 days and nothing improved, right? if this was not dropped now,
+Alexey, can you send a revert? Author clearly approches stability with a
+very relaxed way and is just happy that patch was thrown over the wall
+and job is done.
 
-kernel test robot noticed the following build errors:
 
-[auto build test ERROR on 91812d3843409c235f336f32f1c37ddc790f1e03]
+If you do not want to send revert, let me know, I will do it.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/David-Lechner/dt-bindings-iio-adc-adi-ad7124-fix-clocks-properties/20250826-065924
-base:   91812d3843409c235f336f32f1c37ddc790f1e03
-patch link:    https://lore.kernel.org/r/20250825-iio-adc-ad7124-proper-clock-support-v2-4-4dcff9db6b35%40baylibre.com
-patch subject: [PATCH v2 4/4] iio: adc: ad7124: add clock output support
-config: sparc-randconfig-002-20250826 (https://download.01.org/0day-ci/archive/20250826/202508261731.33GQLUPx-lkp@intel.com/config)
-compiler: sparc64-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250826/202508261731.33GQLUPx-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508261731.33GQLUPx-lkp@intel.com/
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
->> ERROR: modpost: "__clk_hw_register_fixed_rate" [drivers/iio/adc/ad7124.ko] undefined!
->> ERROR: modpost: "of_clk_hw_simple_get" [drivers/iio/adc/ad7124.ko] undefined!
->> ERROR: modpost: "devm_of_clk_add_hw_provider" [drivers/iio/adc/ad7124.ko] undefined!
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best regards,
+Krzysztof
 
