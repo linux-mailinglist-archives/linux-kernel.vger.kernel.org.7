@@ -1,253 +1,171 @@
-Return-Path: <linux-kernel+bounces-786935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 181A1B36F0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:57:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FE51B36F02
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:56:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A86909861AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:52:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BE8F8E5CCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:51:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3BBC36CDED;
-	Tue, 26 Aug 2025 15:49:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9660736C06C;
+	Tue, 26 Aug 2025 15:48:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ddRhb/k2"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g5G1vIfB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB5136CC8F;
-	Tue, 26 Aug 2025 15:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B078350857
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 15:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756223345; cv=none; b=iBZCpx2nKC9/o0IStJUSAuEseGbfMK+jdNspeSRiwZyUhTo0BYxHfAbJjBS50y4OqOkdsqs3S3Qg2zU0qW7JQj9p81nTW3+vSudOFiCcGYF8Fin9hLNeXf5ZJfoREy0Ge5YKckgNvSHF8SAlpw5UmOm2jjbUekxxZLrnJikf2eQ=
+	t=1756223334; cv=none; b=VSV/40w/ehAeB0DbGX61UdWR0bRruS1WvvH+W8sw9SuyRdjw4CsEzKZk2NJ8a5toeMFPMKpkSRiJOjbdcJazHphRZkp644BwnX45BQcxyjmUf+xniRLY3jctvNj4gEINnE8xU4cwFH1j1Wn9SaAFLIXvb/KlD/Vzn3PHzD8Kcn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756223345; c=relaxed/simple;
-	bh=0LmQhv9Q0ton4ODa84rIaQP9cdqSCUOJ7KlcLOy+afk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=rJ5pZSTqGM04B7lYxzyAsxdaUgtaLp4bx1WT+tqh8ULURR5BBmn5W8Qx3cTi6kfE0aSFoPWpBC9l3ZKb33k3nffcO7dELjKTvB5QWyek31nhom6cPaYoTOMOQzSkpdeffwceKaiqmw+iy3Xc3Kc6PBoQwGwC4H/jwTtaQ18f2jE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ddRhb/k2; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
-	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=HKfMf0J2VOT7G6Ud9haPGvWQeKBns+KncbxAImnpDZU=; b=ddRhb/k258x/605MjMoRCCGddu
-	qcTJeEMI/RJK5N8bKk0NA6RFDPFOFLCFJFxPcAogjK2HoN+a/RWMrMiwROW6GjnHGWRX708QYAubd
-	CIl4967BGrBMqUkybbX9vK3bOYhKqG9NPg8cOe/ior7t2ZlL1ZpRqUmpmUsKZSQMdn0W9aw36uGYB
-	0LetN72zrVLKvbOgyfMkZh1mM8TzeBecj8QJUbTxFg2Iqm7gLQrhpR206V1pDr5OBf8HShKB3fxOy
-	JuMj/tHtMUU6skb5ddRtIjsVpjlBC9WBftAGI9z6M0VfBY/8LpKmhLiQLSxZ3c5ftooQIiGXd2WMp
-	SOL7mhsw==;
-Received: from [54.240.197.239] (helo=u09cd745991455d.ant.amazon.com)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uqvuq-00000004tJD-4B7w;
-	Tue, 26 Aug 2025 15:48:57 +0000
-Message-ID: <37c9ae89eb6cf879e5b984d53d590a69bcf1666a.camel@infradead.org>
-Subject: Re: [PATCH] iommu/intel: Fix __domain_mapping()'s usage of
- switch_to_super_page()
-From: David Woodhouse <dwmw2@infradead.org>
-To: Eugene Koira <eugkoira@amazon.com>, iommu@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Cc: baolu.lu@linux.intel.com, joro@8bytes.org, will@kernel.org, 
- robin.murphy@arm.com, longpeng2@huawei.com, graf@amazon.de,
- nsaenz@amazon.com,  nh-open-source@amazon.com, stable@vger.kernel.org
-Date: Tue, 26 Aug 2025 16:48:39 +0100
-In-Reply-To: <20250826143816.38686-1-eugkoira@amazon.com>
-References: <20250826143816.38686-1-eugkoira@amazon.com>
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
-	boundary="=-yDkzNHrAmbkB4YH4AJZP"
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1756223334; c=relaxed/simple;
+	bh=Y0eks1YaOqbzuug07KZLAOR4Y6H+hh0TiHWBe8OcU2k=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AHw/+u5/WfiJN18KlyWi7BErOlxO9k6ytrK+mpMFy3lL9Y/5b80iE+QwQJS8n5CDWTjvfhjTil5MlsVCyrE8Lqhctkf77PHICJl8jKIrgg7B1GqOdaGHIIk42MGGhDqd5Hqeza9/rFtQD9vr7tJWG+zjetKX0lMjTbKBnlHgddU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g5G1vIfB; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756223332;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BHNXd9VyNqrFX2UZhtEPC0je8otxXnW6I6u8evl0zzQ=;
+	b=g5G1vIfBQ8O825IYKAjaDcje7CwwxWSwfWQH8/4xa7qHx4IkOK4lHOenQ86n2S2cXgVBJp
+	RNTKJgU39BMhPWugigjzoGlIMYJXxWMFbF4z04tF2KVB2GGi8O4QM90veqFd1EQ7agiVN6
+	LpTHE/B8kS7BzBB2DJVHqYIuCv5z2c0=
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com
+ [209.85.166.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-101-bqHvPYqsNtqQtVjx2rgdzg-1; Tue, 26 Aug 2025 11:48:50 -0400
+X-MC-Unique: bqHvPYqsNtqQtVjx2rgdzg-1
+X-Mimecast-MFC-AGG-ID: bqHvPYqsNtqQtVjx2rgdzg_1756223330
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3ee5c3c9938so1999735ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 08:48:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756223329; x=1756828129;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BHNXd9VyNqrFX2UZhtEPC0je8otxXnW6I6u8evl0zzQ=;
+        b=Tac7iJp8ZIj5mC+jFwzrmh7Nmxsg7EcJNysgCmgLI6NeUkpx+gkn6zbXKl6BrNNU+i
+         pi0aDbT20URF/HDhEeGdgw542FKZoCEjq3yckTJz+LZLlHrnDkulBJGaa+/xa/t5AYuL
+         xgfio+/bSnBQjxlhXh1p69CG9EitGnuTvmsXqp7FjViF4G+EQ+/nwREw0U+oZgthYuEQ
+         PwQ4cLRM8yyHDXOOu4TYEbRbh2fFWmEy2YlDm9N8i1udYnuA7AuHj4STQYCaao68TakW
+         +Ay5d5g+5Coy+xtVj5dsgD1Utbs6c5wBxJOnS/44hHXmXV9+tU4NJ6cUygVgrMeuRiDH
+         kv+g==
+X-Forwarded-Encrypted: i=1; AJvYcCXry6N/cKBf6Vt2CwNjoPucYg4GN8DXfEGCJss3XV1sIDL+uo5xERoe/a9DpIrABaYKCD3l9Hfp1k2iEp8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJLRQoFZPR2PpqSzZR9a8KXbVztWpjFfgD3D1YUeyyNibwV2Cc
+	iViMKy504yzWa7jYbpEv7yxYcorXMLzACQPiE0i1GeFjiog+xeT2rzDbdptr/7mz8LIK14XCTfo
+	GbnEOk4Sra5SPX1butmf3KU3IU+9bo93kb/IEc5brILD1JABtm95XICVAcYPyKQwXo9m9btCHcA
+	==
+X-Gm-Gg: ASbGnctuqOIYc9U/Nef5lEWV40ICCfq2hIOB5FD8qG/gPMA6ivHmEZ7MU91VbAx+2AI
+	xriD1iOEUuhmY3aoA/O/DN0uYZoK/ujsl9KAsWCbiHuMwBvmCfFciIOcjrmLNIJUPFpiDdsa53e
+	M7r/0AxGyDBh+ilF4Dq+Uz9yA0R5MdLfrwY+ifRGKYMBEiTFZ3qifcpRbDEWY5V6QA28VpU3EOB
+	RwsVGjnDtYnaoH6RGvYUNV/6EKIH/Q67b1cqcgSUOvMZXit8KiZ0ClPYUqA+ZMXxLM1GbgH15Xg
+	3xXFp8uxDvD9ukkA43D0xvxE1zYaq/QvGqbZwlpDvGk=
+X-Received: by 2002:a05:6e02:1a48:b0:3e6:67f9:2061 with SMTP id e9e14a558f8ab-3e91cfae117mr88824205ab.0.1756223329376;
+        Tue, 26 Aug 2025 08:48:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE41ooOBFFuOfcZRxU06TfSGWwzTnjM8fsjevvJOvWhDhebSC+xJEVzKrEMkNTbsTkk0XUw5w==
+X-Received: by 2002:a05:6e02:1a48:b0:3e6:67f9:2061 with SMTP id e9e14a558f8ab-3e91cfae117mr88824085ab.0.1756223328938;
+        Tue, 26 Aug 2025 08:48:48 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3ea4ec1f6d0sm68656065ab.40.2025.08.26.08.48.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Aug 2025 08:48:47 -0700 (PDT)
+Date: Tue, 26 Aug 2025 09:48:45 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Farhan Ali <alifm@linux.ibm.com>
+Cc: linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, helgaas@kernel.org, schnelle@linux.ibm.com,
+ mjrosato@linux.ibm.com
+Subject: Re: [PATCH v2 1/9] PCI: Avoid restoring error values in config
+ space
+Message-ID: <20250826094845.517e0fa7.alex.williamson@redhat.com>
+In-Reply-To: <eb6d05d0-b448-4f4e-a734-50c56078dd9b@linux.ibm.com>
+References: <20250825171226.1602-1-alifm@linux.ibm.com>
+	<20250825171226.1602-2-alifm@linux.ibm.com>
+	<20250825153501.3a1d0f0c.alex.williamson@redhat.com>
+	<eb6d05d0-b448-4f4e-a734-50c56078dd9b@linux.ibm.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Mon, 25 Aug 2025 15:13:00 -0700
+Farhan Ali <alifm@linux.ibm.com> wrote:
 
---=-yDkzNHrAmbkB4YH4AJZP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+> On 8/25/2025 2:35 PM, Alex Williamson wrote:
+> > On Mon, 25 Aug 2025 10:12:18 -0700
+> > Farhan Ali <alifm@linux.ibm.com> wrote:
+> >  
+> >> The current reset process saves the device's config space state before
+> >> reset and restores it afterward. However, when a device is in an error
+> >> state before reset, config space reads may return error values instead of
+> >> valid data. This results in saving corrupted values that get written back
+> >> to the device during state restoration. Add validation to prevent writing
+> >> error values to the device when restoring the config space state after
+> >> reset.
+> >>
+> >> Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
+> >> ---
+> >>   drivers/pci/pci.c | 3 +++
+> >>   1 file changed, 3 insertions(+)
+> >>
+> >> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> >> index b0f4d98036cd..0dd95d782022 100644
+> >> --- a/drivers/pci/pci.c
+> >> +++ b/drivers/pci/pci.c
+> >> @@ -1825,6 +1825,9 @@ static void pci_restore_config_dword(struct pci_dev *pdev, int offset,
+> >>   	if (!force && val == saved_val)
+> >>   		return;
+> >>   
+> >> +	if (PCI_POSSIBLE_ERROR(saved_val))
+> >> +		return;
+> >> +
+> >>   	for (;;) {
+> >>   		pci_dbg(pdev, "restore config %#04x: %#010x -> %#010x\n",
+> >>   			offset, val, saved_val);  
+> >
+> > The commit log makes this sound like more than it is.  We're really
+> > only error checking the first 64 bytes of config space before restore,
+> > the capabilities are not checked.  I suppose skipping the BARs and
+> > whatnot is no worse than writing -1 to them, but this is only a
+> > complete solution in the narrow case where we're relying on vfio-pci to
+> > come in and restore the pre-open device state.
+> >
+> > I had imagined that pci_save_state() might detect the error state of
+> > the device, avoid setting state_saved, but we'd still perform the
+> > restore callouts that only rely on internal kernel state, maybe adding a
+> > fallback to restore the BARs from resource information.  
+> 
+> I initially started with pci_save_state(), and avoid saving the state 
+> altogether. But that would mean we don't go restore the msix state and 
+> for s390 don't call arch_restore_msi_irqs(). Do you prefer to avoid 
+> saving the state at all? This change was small and sufficient enough to 
+> avoid breaking the device in my testing.
 
-On Tue, 2025-08-26 at 14:38 +0000, Eugene Koira wrote:
-> switch_to_super_page() assumes the memory range it's working on is aligne=
-d
-> to the target large page level. Unfortunately, __domain_mapping() doesn't
-> take this into account when using it, and will pass unaligned ranges
-> ultimately freeing a PTE range larger than expected.
->=20
-> Take for example a mapping with the following iov_pfn range [0x3fe400,
-> 0x4c0600], which should be backed by the following mappings:
+If we're only reading -1 from the device anyway, I'm not sure what
+value we're adding to continue to save bogus data from the device.
+There are also various restore sub-functions that don't need that saved
+state, ex. PASID, PRI, ATS, REBAR, AER, MSI, MSIX, ACS, VF REBAR,
+SRIOV.  We could push the state_saved check down into the functions
+that do need the prior device state, add warnings and let the remaining
+function proceed.  We really need to at least pull BAR values from
+resources information for there to be a chance of a functional device
+without relying on vfio-pci to restore that though.  Thanks,
 
-The range is [0x3fe400, 0x4c0600) ?=20
+Alex
 
-> =C2=A0=C2=A0 iov_pfn [0x3fe400, 0x3fffff] covered by 2MiB pages
-> =C2=A0=C2=A0 iov_pfn [0x400000, 0x4bffff] covered by 1GiB pages
-> =C2=A0=C2=A0 iov_pfn [0x4c0000, 0x4c05ff] covered by 2MiB pages
->=20
-> Under this circumstance, __domain_mapping() will pass [0x400000, 0x4c05ff=
-]
-> to switch_to_super_page() at a 1 GiB granularity, which will in turn
-> free PTEs all the way to iov_pfn 0x4fffff.
->=20
-> Mitigate this by rounding down the iov_pfn range passed to
-> switch_to_super_page() in __domain_mapping()
-> to the target large page level.
->=20
-> Additionally add range alignment checks to switch_to_super_page.
->=20
-> Fixes: 9906b9352a35 ("iommu/vt-d: Avoid duplicate removing in __domain_ma=
-pping()")
-> Signed-off-by: Eugene Koira <eugkoira@amazon.com>
-> Cc: stable@vger.kernel.org
-> ---
-> =C2=A0drivers/iommu/intel/iommu.c | 7 ++++++-
-> =C2=A01 file changed, 6 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-> index 9c3ab9d9f69a..dff2d895b8ab 100644
-> --- a/drivers/iommu/intel/iommu.c
-> +++ b/drivers/iommu/intel/iommu.c
-> @@ -1575,6 +1575,10 @@ static void switch_to_super_page(struct dmar_domai=
-n *domain,
-> =C2=A0	unsigned long lvl_pages =3D lvl_to_nr_pages(level);
-> =C2=A0	struct dma_pte *pte =3D NULL;
-> =C2=A0
-> +	if (WARN_ON(!IS_ALIGNED(start_pfn, lvl_pages) ||
-> +		=C2=A0=C2=A0=C2=A0 !IS_ALIGNED(end_pfn + 1, lvl_pages)))
-> +		return;
-> +
-> =C2=A0	while (start_pfn <=3D end_pfn) {
-> =C2=A0		if (!pte)
-> =C2=A0			pte =3D pfn_to_dma_pte(domain, start_pfn, &level,
-> @@ -1650,7 +1654,8 @@ __domain_mapping(struct dmar_domain *domain, unsign=
-ed long iov_pfn,
-> =C2=A0				unsigned long pages_to_remove;
-> =C2=A0
-> =C2=A0				pteval |=3D DMA_PTE_LARGE_PAGE;
-> -				pages_to_remove =3D min_t(unsigned long, nr_pages,
-> +				pages_to_remove =3D min_t(unsigned long,
-> +							round_down(nr_pages, lvl_pages),
-> =C2=A0							nr_pte_to_next_page(pte) * lvl_pages);
-> =C2=A0				end_pfn =3D iov_pfn + pages_to_remove - 1;
-> =C2=A0				switch_to_super_page(domain, iov_pfn, end_pfn, largepage_lvl);
-
-I'm mildly entertained by the fact that the *only* comment in this
-block of code is a lie. Would you care to address that while you're
-here? Maybe the comment could look something like...
-
-			/* If the new mapping is eligible for a large page, then
-			 * remove all smaller pages that the existing pte at this
-			 * level references.
-			 * XX: do we even need to bother calling switch_to_super_page()
-			 * if this PTE wasn't *present* before?
-			 */
-
-I bet it would benefit from one or two other one-line comments to make
-it clearer what's going on, too...
-
-But in general, I think this looks sane even though this code makes my
-brain hurt. Could do with a test case, in an ideal world. Maybe we can
-work on that as part of the generic pagetable support which is coming?
-
---=-yDkzNHrAmbkB4YH4AJZP
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCD9Aw
-ggSOMIIDdqADAgECAhAOmiw0ECVD4cWj5DqVrT9PMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYT
-AlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAi
-BgNVBAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0yNDAxMzAwMDAwMDBaFw0zMTEx
-MDkyMzU5NTlaMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYDVQQDExdWZXJv
-a2V5IFNlY3VyZSBFbWFpbCBHMjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMjvgLKj
-jfhCFqxYyRiW8g3cNFAvltDbK5AzcOaR7yVzVGadr4YcCVxjKrEJOgi7WEOH8rUgCNB5cTD8N/Et
-GfZI+LGqSv0YtNa54T9D1AWJy08ZKkWvfGGIXN9UFAPMJ6OLLH/UUEgFa+7KlrEvMUupDFGnnR06
-aDJAwtycb8yXtILj+TvfhLFhafxroXrflspavejQkEiHjNjtHnwbZ+o43g0/yxjwnarGI3kgcak7
-nnI9/8Lqpq79tLHYwLajotwLiGTB71AGN5xK+tzB+D4eN9lXayrjcszgbOv2ZCgzExQUAIt98mre
-8EggKs9mwtEuKAhYBIP/0K6WsoMnQCcCAwEAAaOCAVwwggFYMBIGA1UdEwEB/wQIMAYBAf8CAQAw
-HQYDVR0OBBYEFIlICOogTndrhuWByNfhjWSEf/xwMB8GA1UdIwQYMBaAFEXroq/0ksuCMS1Ri6en
-IZ3zbcgPMA4GA1UdDwEB/wQEAwIBhjAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIweQYI
-KwYBBQUHAQEEbTBrMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQwYIKwYB
-BQUHMAKGN2h0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RD
-QS5jcnQwRQYDVR0fBD4wPDA6oDigNoY0aHR0cDovL2NybDMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0
-QXNzdXJlZElEUm9vdENBLmNybDARBgNVHSAECjAIMAYGBFUdIAAwDQYJKoZIhvcNAQELBQADggEB
-ACiagCqvNVxOfSd0uYfJMiZsOEBXAKIR/kpqRp2YCfrP4Tz7fJogYN4fxNAw7iy/bPZcvpVCfe/H
-/CCcp3alXL0I8M/rnEnRlv8ItY4MEF+2T/MkdXI3u1vHy3ua8SxBM8eT9LBQokHZxGUX51cE0kwa
-uEOZ+PonVIOnMjuLp29kcNOVnzf8DGKiek+cT51FvGRjV6LbaxXOm2P47/aiaXrDD5O0RF5SiPo6
-xD1/ClkCETyyEAE5LRJlXtx288R598koyFcwCSXijeVcRvBB1cNOLEbg7RMSw1AGq14fNe2cH1HG
-W7xyduY/ydQt6gv5r21mDOQ5SaZSWC/ZRfLDuEYwggWbMIIEg6ADAgECAhAH5JEPagNRXYDiRPdl
-c1vgMA0GCSqGSIb3DQEBCwUAMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYD
-VQQDExdWZXJva2V5IFNlY3VyZSBFbWFpbCBHMjAeFw0yNDEyMzAwMDAwMDBaFw0yODAxMDQyMzU5
-NTlaMB4xHDAaBgNVBAMME2R3bXcyQGluZnJhZGVhZC5vcmcwggIiMA0GCSqGSIb3DQEBAQUAA4IC
-DwAwggIKAoICAQDali7HveR1thexYXx/W7oMk/3Wpyppl62zJ8+RmTQH4yZeYAS/SRV6zmfXlXaZ
-sNOE6emg8WXLRS6BA70liot+u0O0oPnIvnx+CsMH0PD4tCKSCsdp+XphIJ2zkC9S7/yHDYnqegqt
-w4smkqUqf0WX/ggH1Dckh0vHlpoS1OoxqUg+ocU6WCsnuz5q5rzFsHxhD1qGpgFdZEk2/c//ZvUN
-i12vPWipk8TcJwHw9zoZ/ZrVNybpMCC0THsJ/UEVyuyszPtNYeYZAhOJ41vav1RhZJzYan4a1gU0
-kKBPQklcpQEhq48woEu15isvwWh9/+5jjh0L+YNaN0I//nHSp6U9COUG9Z0cvnO8FM6PTqsnSbcc
-0j+GchwOHRC7aP2t5v2stVx3KbptaYEzi4MQHxm/0+HQpMEVLLUiizJqS4PWPU6zfQTOMZ9uLQRR
-ci+c5xhtMEBszlQDOvEQcyEG+hc++fH47K+MmZz21bFNfoBxLP6bjR6xtPXtREF5lLXxp+CJ6KKS
-blPKeVRg/UtyJHeFKAZXO8Zeco7TZUMVHmK0ZZ1EpnZbnAhKE19Z+FJrQPQrlR0gO3lBzuyPPArV
-hvWxjlO7S4DmaEhLzarWi/ze7EGwWSuI2eEa/8zU0INUsGI4ywe7vepQz7IqaAovAX0d+f1YjbmC
-VsAwjhLmveFjNwIDAQABo4IBsDCCAawwHwYDVR0jBBgwFoAUiUgI6iBOd2uG5YHI1+GNZIR//HAw
-HQYDVR0OBBYEFFxiGptwbOfWOtMk5loHw7uqWUOnMDAGA1UdEQQpMCeBE2R3bXcyQGluZnJhZGVh
-ZC5vcmeBEGRhdmlkQHdvb2Rob3Uuc2UwFAYDVR0gBA0wCzAJBgdngQwBBQEBMA4GA1UdDwEB/wQE
-AwIF4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwewYDVR0fBHQwcjA3oDWgM4YxaHR0
-cDovL2NybDMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDA3oDWgM4YxaHR0
-cDovL2NybDQuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDB2BggrBgEFBQcB
-AQRqMGgwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTBABggrBgEFBQcwAoY0
-aHR0cDovL2NhY2VydHMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNydDANBgkq
-hkiG9w0BAQsFAAOCAQEAQXc4FPiPLRnTDvmOABEzkIumojfZAe5SlnuQoeFUfi+LsWCKiB8Uextv
-iBAvboKhLuN6eG/NC6WOzOCppn4mkQxRkOdLNThwMHW0d19jrZFEKtEG/epZ/hw/DdScTuZ2m7im
-8ppItAT6GXD3aPhXkXnJpC/zTs85uNSQR64cEcBFjjoQDuSsTeJ5DAWf8EMyhMuD8pcbqx5kRvyt
-JPsWBQzv1Dsdv2LDPLNd/JUKhHSgr7nbUr4+aAP2PHTXGcEBh8lTeYea9p4d5k969pe0OHYMV5aL
-xERqTagmSetuIwolkAuBCzA9vulg8Y49Nz2zrpUGfKGOD0FMqenYxdJHgDCCBZswggSDoAMCAQIC
-EAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQELBQAwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoT
-B1Zlcm9rZXkxIDAeBgNVBAMTF1Zlcm9rZXkgU2VjdXJlIEVtYWlsIEcyMB4XDTI0MTIzMDAwMDAw
-MFoXDTI4MDEwNDIzNTk1OVowHjEcMBoGA1UEAwwTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJ
-KoZIhvcNAQEBBQADggIPADCCAgoCggIBANqWLse95HW2F7FhfH9bugyT/danKmmXrbMnz5GZNAfj
-Jl5gBL9JFXrOZ9eVdpmw04Tp6aDxZctFLoEDvSWKi367Q7Sg+ci+fH4KwwfQ8Pi0IpIKx2n5emEg
-nbOQL1Lv/IcNiep6Cq3DiyaSpSp/RZf+CAfUNySHS8eWmhLU6jGpSD6hxTpYKye7PmrmvMWwfGEP
-WoamAV1kSTb9z/9m9Q2LXa89aKmTxNwnAfD3Ohn9mtU3JukwILRMewn9QRXK7KzM+01h5hkCE4nj
-W9q/VGFknNhqfhrWBTSQoE9CSVylASGrjzCgS7XmKy/BaH3/7mOOHQv5g1o3Qj/+cdKnpT0I5Qb1
-nRy+c7wUzo9OqydJtxzSP4ZyHA4dELto/a3m/ay1XHcpum1pgTOLgxAfGb/T4dCkwRUstSKLMmpL
-g9Y9TrN9BM4xn24tBFFyL5znGG0wQGzOVAM68RBzIQb6Fz758fjsr4yZnPbVsU1+gHEs/puNHrG0
-9e1EQXmUtfGn4InoopJuU8p5VGD9S3Ikd4UoBlc7xl5yjtNlQxUeYrRlnUSmdlucCEoTX1n4UmtA
-9CuVHSA7eUHO7I88CtWG9bGOU7tLgOZoSEvNqtaL/N7sQbBZK4jZ4Rr/zNTQg1SwYjjLB7u96lDP
-sipoCi8BfR35/ViNuYJWwDCOEua94WM3AgMBAAGjggGwMIIBrDAfBgNVHSMEGDAWgBSJSAjqIE53
-a4blgcjX4Y1khH/8cDAdBgNVHQ4EFgQUXGIam3Bs59Y60yTmWgfDu6pZQ6cwMAYDVR0RBCkwJ4ET
-ZHdtdzJAaW5mcmFkZWFkLm9yZ4EQZGF2aWRAd29vZGhvdS5zZTAUBgNVHSAEDTALMAkGB2eBDAEF
-AQEwDgYDVR0PAQH/BAQDAgXgMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDBDB7BgNVHR8E
-dDByMDegNaAzhjFodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
-Y3JsMDegNaAzhjFodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
-Y3JsMHYGCCsGAQUFBwEBBGowaDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29t
-MEAGCCsGAQUFBzAChjRodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVt
-YWlsRzIuY3J0MA0GCSqGSIb3DQEBCwUAA4IBAQBBdzgU+I8tGdMO+Y4AETOQi6aiN9kB7lKWe5Ch
-4VR+L4uxYIqIHxR7G2+IEC9ugqEu43p4b80LpY7M4KmmfiaRDFGQ50s1OHAwdbR3X2OtkUQq0Qb9
-6ln+HD8N1JxO5nabuKbymki0BPoZcPdo+FeRecmkL/NOzzm41JBHrhwRwEWOOhAO5KxN4nkMBZ/w
-QzKEy4PylxurHmRG/K0k+xYFDO/UOx2/YsM8s138lQqEdKCvudtSvj5oA/Y8dNcZwQGHyVN5h5r2
-nh3mT3r2l7Q4dgxXlovERGpNqCZJ624jCiWQC4ELMD2+6WDxjj03PbOulQZ8oY4PQUyp6djF0keA
-MYIDuzCCA7cCAQEwVTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMX
-VmVyb2tleSBTZWN1cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJYIZIAWUDBAIBBQCg
-ggE3MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDgyNjE1NDgz
-OVowLwYJKoZIhvcNAQkEMSIEIBY8Q4x+x4JZculH7e+zyZC4il1jGOLt6WKaRI7kThSPMGQGCSsG
-AQQBgjcQBDFXMFUwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoTB1Zlcm9rZXkxIDAeBgNVBAMTF1Zl
-cm9rZXkgU2VjdXJlIEVtYWlsIEcyAhAH5JEPagNRXYDiRPdlc1vgMGYGCyqGSIb3DQEJEAILMVeg
-VTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMXVmVyb2tleSBTZWN1
-cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQEBBQAEggIAyLxniW2Q/h4/
-tdWDw1aAL3NhOYr9AJQnfOteND86sPDVVgfe0ue7t5SAXhGvhp8skpOLb02O62p+BHWQAo0LqQyE
-mDfrt/4wdIKnvKW2oqvcVrA3mBGONYVXXy8Uye+s3QtfMF4WwB8PStMh1pskAWi8OZtB0FSjJOFR
-rvID5Vde0wE6vyJ1cBhhmSOBTjQvsN9N2wAvD1TpvDAgABTaH1oFuXZK9TPaJYlOKP2wY9TVEqyM
-aV2GhKf+YK42V+FgRUTxlUzqmSE6i52kYOrxSLff+oYBXOmyjXwlIryM/Cy2rWyHEEswnNEiV/jS
-3wcMX8dbGRymSz/7hpMpdQ8d0OoedhUjwckT2eOHNOvm9VrPqqZyju0s6WAo18j0REYdhNMS9rI2
-S0Y35YGWf9hXVh1i38cHbLHi7QUmaNjTHUOqmmeSEnHE9JTNoVwx4Bnji1gvhKMSKuzyfZdMv/QX
-RibqiQxBSfs2nfDzb2ozSW3bX31gUHo+N0SR0qvybgv5LfJOwM/Rv/2cXlGFwxiwNBvWe1u+cMMy
-f+8TAqyJh52lzgbQLAf43DrSZkWSEg7fnlvtkQUcFXIv13fPztBWhtnumU/aqv4zO5ugVPK1KiI1
-dDGDgcf5D1+qSEfRbb0YxjUyWKHU7JQTPJfV7/sRZxR/3nASMNzJy/GjBdtYflMAAAAAAAA=
-
-
---=-yDkzNHrAmbkB4YH4AJZP--
 
