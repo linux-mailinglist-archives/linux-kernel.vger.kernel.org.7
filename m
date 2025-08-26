@@ -1,112 +1,162 @@
-Return-Path: <linux-kernel+bounces-786609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3FA5B35F12
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:23:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 153F5B35F16
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:25:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15255188D266
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:24:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 107A67B1AF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:23:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B3A5322557;
-	Tue, 26 Aug 2025 12:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A046322557;
+	Tue, 26 Aug 2025 12:25:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="abhboZjJ"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="WERC/HQa"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACDC92C15A8;
-	Tue, 26 Aug 2025 12:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D726721D3C0
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 12:25:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756211026; cv=none; b=qfCZX8c5RP+7RnY1ZGWkKlfeynPMWPl+zq38oFQUPc2cNVDkuHvZoL+Exp/ZZlNDHJTnJk4B7IWtkzd/BzRu95MHa12uuXkoVaaxnXy4JpSYabESiIzXbyINlg5NpvHltSX4NoQehK2PpcJXJSrvKtC+rwmlN1uZNQU/ShFjuZU=
+	t=1756211121; cv=none; b=ZcNA8YOGC27JWsfz/Wm82OioBJNYdmco/eApWOO4yhGAzrfLerbR6QMIQgqoq9udg3IUXjLUD/2PMOse3EXw9IT9HTY8aOKi8Hiqzi3bujCRQX9bC2nMOEgWkG9ggEgqvONCyzHzwUGlNy4OdI3MYneQKRQ8c1PmpUa0zjN+LFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756211026; c=relaxed/simple;
-	bh=zlaA/2aLr0/qJ+QFDrPDb5carJ2Z+6pUwH26wxcn2kI=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=eWyoOYpFFyT9YzeZAgWy3vL/Ksf99jP//MAnvpJrYdsXgA+ioEz7MxiNLBqvkBXiXwriw4OhvzUY5AvFRKENA0Hic5bJhb5uyGRZsTVXVXLkV+HzFvmCLg2+1XwGys7xp49MqfGI0g7Y5chO9xbMZfTlLZvjrB20puBa3IJ9Vj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=abhboZjJ; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b4c1d79bd64so1886491a12.0;
-        Tue, 26 Aug 2025 05:23:44 -0700 (PDT)
+	s=arc-20240116; t=1756211121; c=relaxed/simple;
+	bh=PNMy+OZa+h0ka2tSa42Gsji14Y+mfKOHX6dXlusUKBQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QF8IwxUJEei+k7ck7kZ+gE5FhoQq4Fkx3oqAgb9EjzswNjQYX9hD5tr0GuacSSGQXJjgOZEksrW/aBtIbrAqdW6C1fMaPZX+SDO4klA4YSdp7I/qsIxx2v39GRkbay+uYq5tVuxqULgODx0wdBGewaugosxjWKq6E/oSgSnKSQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=WERC/HQa; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4b1098f9e9eso87377501cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 05:25:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756211024; x=1756815824; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BPn/MDrvW0knyDWxAtqIUJgwCpYh7nd+A1Y/ljsF188=;
-        b=abhboZjJkxV/JFCQi0cRwHiH+pjuSQ91eixKcCTRebj+dYSRtWngWQJelr0Jq0qFDY
-         19Ekxp7kyVGRZdEWmZYL6kXxtQUPDzZ+dBAUR+d0NMqsyTmWwULBaBKO8enk7Yn/k9GR
-         rZ0l18ALvduCbMNaMFS53UvTJIMPC7n82PWVpX4hcIvgf2nddVDL442ZFzQZqM3VClzS
-         N6CxJX248w7p3d1zKMG5i5M2p3BmpOYzOhF0D904SheGFILAn6pKCqX7rYDRzPBBE+hO
-         vTKSLVB0/PbiwpMVFv62UgRffhyrf2EKu0ZNBFmjSicrefvf4/kEokgGDFZHCOZwcX87
-         QRRg==
+        d=fooishbar.org; s=google; t=1756211119; x=1756815919; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4hO3ALaftqFmH4oH4pH+kk6zISTsy/rbnhx2jQsr7Dw=;
+        b=WERC/HQaMzgxeqmk83WLQbl/L8jDyfeOSiK7eN/Lo4NHiZrexkL1JPGVX2xaiajDSE
+         pV9ZC44F1/QrzasdmN8GUJRhyR8fWZ5FOR5pa7mrpvzcIow8c/VQYDzWr2WsaBB2OS/k
+         rvvtWXG8baSNd/UannI5omGFcOqZH2igZlJkJswegyZCm2O/IoL+LkFoBEpompHMVkS7
+         wS1kMZ+lHalh8f5Q5dcv83/0vOlcr5lIfVPe6Ay/7Xg7xCiAux5oqykM+m0VCGVgBrOL
+         t/gHE59PzDonfFrWqwP40V3eiGFOyyP96UcrMr6sbn4fESqW4lDYX+gRgPHS0HOkvI/j
+         tLNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756211024; x=1756815824;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=BPn/MDrvW0knyDWxAtqIUJgwCpYh7nd+A1Y/ljsF188=;
-        b=S2E9ogy7V+RHAB5uWK3HaxCI+5IMb5brw9SU6val+VybQ3L0JEJgg0+Z5Ldn0TatwR
-         tYNGS2rcltRqfJHDEL/W2a7KUxbwKHBbYEZ87OcaFkpL1xOgcBbhZt9EzxsK3NLAgGDX
-         f/W1ZkU8gcEra5y1ctoxz5QgYTVpvohN+U/bSjch2okRlUVN4k/oq0Kp1/wCjU9sSQO9
-         ioVSiEDy2LHvRZVe8Buqjvb3WmTtScA1APLqk5MxehACE50c2GJIOKnV67Y5+kuQgqhY
-         L3hcfMf2KVZukzyfcnhTQElLyUSTyI9YpOtchKofURDD+wnGmXyQMfvcVteRy2tVqpp7
-         Fgug==
-X-Forwarded-Encrypted: i=1; AJvYcCXLoMUCCspee/K4lm3VkVNij53cdBP0TE6CiVD61pCYnEdyMcc+bNc4G+GJxbEteYsBVLuoN0QxLtrc2fI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwPD4ua2tRXHT0DGKmLU6AkZd2mzVWwL66xUrQOIC47Sb+kTl9
-	8uZNi9KbclPxKRcOosIbidhzsE0RvnppAknB53WX9n8r1P1cB7VCqWHQ
-X-Gm-Gg: ASbGnculZVYK40uwIbLYFAo5Pqlj/E4RYaIV8zABAgfogR/gEkDNDbK8rWWrAxkdQvf
-	857d8nydqdyP9wAlf39MfzLA93pKMncMYjVeTZCa877IfDCMq2gRMlQPHldNSZ+uFhB0l0r3zG1
-	BDA2Fwi4JKP7f0qT4k4306qyQlk9xZLAjJwi5W0E5KMtluHuti4twUO2sSAvJ/LRWWppGidxTmz
-	eCryPDDwpvi1VfKBUFFWqYesDaerqF6A+bNAhfpA1ALqrRhzwMemdgljgTwsuXwL41QKbMJSV9d
-	dz/lqE/K+etWbgCkXVemzI2dnbsSGKtfNsyhX9cKLbu/ppPOoyslNaxtfhU6VuUJxiJ6AGQQKAD
-	hCPawJvtVvFBZ0mohcB4al3i26AFSoHXDJrkLJloFbDD3AFRVtyXMM3l7n+QGS/fmgIFFEgyeG5
-	5k
-X-Google-Smtp-Source: AGHT+IEX2gui6OULwsE3JxeSgxoEUBEJy/RoGPRBfBNIgK6CSFXUyOzheKhr2zaT/FB5xiDY4R7yUg==
-X-Received: by 2002:a17:903:1205:b0:248:79d4:93b5 with SMTP id d9443c01a7336-24879d497a4mr12142995ad.33.1756211023782;
-        Tue, 26 Aug 2025 05:23:43 -0700 (PDT)
-Received: from localhost (p5332007-ipxg23901hodogaya.kanagawa.ocn.ne.jp. [180.34.120.7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24668779fb5sm94674995ad.17.2025.08.26.05.23.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 05:23:43 -0700 (PDT)
-Date: Tue, 26 Aug 2025 21:23:28 +0900 (JST)
-Message-Id: <20250826.212328.1387093980490118773.fujita.tomonori@gmail.com>
-To: lyude@redhat.com
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- tglx@linutronix.de, a.hindborg@kernel.org, fujita.tomonori@gmail.com,
- boqun.feng@gmail.com, frederic@kernel.org, anna-maria@linutronix.de,
- jstultz@google.com, sboyd@kernel.org, ojeda@kernel.org,
- alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
- lossin@kernel.org, aliceryhl@google.com, tmgross@umich.edu, dakr@kernel.org
-Subject: Re: [PATCH v3 1/2] rust: time: Implement Add<Delta>/Sub<Delta> for
- Instant
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-In-Reply-To: <20250820203704.731588-2-lyude@redhat.com>
-References: <20250820203704.731588-1-lyude@redhat.com>
-	<20250820203704.731588-2-lyude@redhat.com>
+        d=1e100.net; s=20230601; t=1756211119; x=1756815919;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4hO3ALaftqFmH4oH4pH+kk6zISTsy/rbnhx2jQsr7Dw=;
+        b=CMRj9NVE4vgySdEgCVdyTh6FUuaIDcoS6/mCKyYQxQkGeLLMtaUUBBsbJRanKnpLP+
+         C3py3ONL8dvWxxefeosrsLtZysdONpR62olI1SFw2tDMw4My2iV6NXcRAbDRDz0csGam
+         TgNjpmKoBLFmg93zwETnoZJuHTkcoIbXD1y8CvGwvY6hXu5PTAd9yjO3OCoMlkm/P9G3
+         FB2zK/Fs1SDKDGIe0EP+ug4hmyj1VwsaWEcetezIuJxaMtSwdVJJbg+heY1DGPbq4NYy
+         qeRFSJLMX0hurUQdhsx7Nr7oc9NdqIWBKvdbYca+Q37T29kPlKfQHzrkVgARmWDfepsQ
+         Bsgg==
+X-Forwarded-Encrypted: i=1; AJvYcCXCjiVKrnG9J6vBMbeCRipxzMH3I1jd+6e8eqpgetPdDlFq9+R/e0wlmmq+kbD3Y3IWXxhIeObax1XnReY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFS6qcagYnWArtebLlCcO7FISz7dKtMnWCRUoZLubBiWGfbipL
+	UOPWMjE29MzoZWOkAgJN7QI0oLAkynJsY2PyO6RSWbH2AR8AefXJXF2NYwbfL2hRqYQdD67VTDE
+	G/SZMbR9ce3bQ25o2OVrIXaY9f1dw65IxAErIhgeF7g==
+X-Gm-Gg: ASbGncuXIXiYou/c16y2AzupeYVVpHXYmvIzF936c8O9KYs+sDR2uLWv8yq62R4D3NK
+	+Vg6QPjA+mgIOlZrKgRklePxsNT5N4u+sNE+IgkW6CtpJL6wENWpuspYrbek/tLRvzjw+41INCH
+	kVl581akfgl78bzx++R2AYHGxSLsT6XHPCBQtkWEY0UnrAOI7zYxSWjrlidWjGcW2ppBH+1SqY7
+	itJVMCAsT3WUPnB
+X-Google-Smtp-Source: AGHT+IFgi8Q9hHqPvEtovjl/Iou25u0OhOejPE9XEDWvvY8QwIuVfSOpzRV+vwb4VBRl5Im89zG6tFcD4jX2gBQishU=
+X-Received: by 2002:a05:620a:4149:b0:7e8:6a84:e82e with SMTP id
+ af79cd13be357-7ea10fdbed6mr1861144585a.32.1756211118444; Tue, 26 Aug 2025
+ 05:25:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20250822-mtk-post-blend-color-pipeline-v1-0-a9446d4aca82@collabora.com>
+ <20250822-mtk-post-blend-color-pipeline-v1-1-a9446d4aca82@collabora.com>
+ <CAPj87rPAoD2D99zTdsvJ=9K8+G17mTS2jDYHMPYmXNtUyp2L_Q@mail.gmail.com> <CAFZQkGwotQ6cxVCSgp-BhUi5DaZ7MyVvbnrDJW11Z7ztzqy58g@mail.gmail.com>
+In-Reply-To: <CAFZQkGwotQ6cxVCSgp-BhUi5DaZ7MyVvbnrDJW11Z7ztzqy58g@mail.gmail.com>
+From: Daniel Stone <daniel@fooishbar.org>
+Date: Tue, 26 Aug 2025 13:25:05 +0100
+X-Gm-Features: Ac12FXxHW5zk0HB8cp7qpDLRzhJSLilNkY6mrjMA15E-TnryutF26kuEp3eSmiI
+Message-ID: <CAPj87rMTOD3_tC70QX4xz3G4zdG=tmwt5VgPhq6jNyf8bbW49Q@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/5] drm: Support post-blend color pipeline API
+To: Xaver Hugl <xaver.hugl@gmail.com>
+Cc: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Alex Hung <alex.hung@amd.com>, 
+	wayland-devel@lists.freedesktop.org, harry.wentland@amd.com, leo.liu@amd.com, 
+	ville.syrjala@linux.intel.com, pekka.paalanen@collabora.com, 
+	contact@emersion.fr, mwen@igalia.com, jadahl@redhat.com, 
+	sebastian.wick@redhat.com, shashank.sharma@amd.com, agoins@nvidia.com, 
+	joshua@froggi.es, mdaenzer@redhat.com, aleixpol@kde.org, 
+	victoria@system76.com, uma.shankar@intel.com, quic_naseer@quicinc.com, 
+	quic_cbraga@quicinc.com, quic_abhinavk@quicinc.com, marcan@marcan.st, 
+	Liviu.Dudau@arm.com, sashamcintosh@google.com, 
+	chaitanya.kumar.borah@intel.com, louis.chauvet@bootlin.com, mcanal@igalia.com, 
+	kernel@collabora.com, daniels@collabora.com, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, Simona Vetter <simona.vetter@ffwll.ch>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 20 Aug 2025 16:26:43 -0400
-Lyude Paul <lyude@redhat.com> wrote:
+Hi,
 
-> In order to copy the behavior rust currently follows for basic arithmetic
-> operations and panic if the result of an addition or subtraction results in
-> a value that would violate the invariants of Instant, but only if the
-> kernel has overflow checking for rust enabled.
-> 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
+On Mon, 25 Aug 2025 at 19:45, Xaver Hugl <xaver.hugl@gmail.com> wrote:
+> > > @@ -416,6 +417,24 @@ int drm_mode_object_get_properties(struct drm_mode_object *obj, bool atomic,
+> > > +               if (post_blend_color_pipeline && obj->type == DRM_MODE_OBJECT_CRTC) {
+> > > +                       struct drm_crtc *crtc = obj_to_crtc(obj);
+> > > +                       struct drm_mode_config mode_config = crtc->dev->mode_config;
+> > > +
+> > > +                       if (prop == mode_config.gamma_lut_property ||
+> > > +                           prop == mode_config.degamma_lut_property ||
+> > > +                           prop == mode_config.gamma_lut_size_property ||
+> > > +                           prop == mode_config.ctm_property)
+> > > +                               continue;
+> > > +               }
+> > > +
+> > > +               if (!post_blend_color_pipeline && obj->type == DRM_MODE_OBJECT_CRTC) {
+> > > +                       struct drm_crtc *crtc = obj_to_crtc(obj);
+> > > +
+> > > +                       if (prop == crtc->color_pipeline_property)
+> > > +                               continue;
+> > > +               }
+> >
+> > Hmmm. One issue with this is that it makes things like drm_info
+> > harder: if drm_info opted into the client cap, it would no longer be
+> > able to see any GAMMA_LUT/etc programmed by the prior userspace. So I
+> > think allowing at least read-only access would be reasonable here.
+>
+> FWIW the cap for per-plane pipelines also hides COLOR_RANGE and
+> COLOR_ENCODING properties from the client.
+>
+> From a compositor POV, I slightly prefer hiding the properties
+> entirely, but ignoring them on the compositor side when a color
+> pipeline is available would also be trivial.
 
-Reviewed-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
+It makes it impossible to do smooth transitions from legacy clients,
+as the old (current) properties can't be read back.
 
+I assume the atomic state would also carry the old values (even if the
+drivers are specified to have to ignore them), so there would be an
+odd transition:
+* pre-colorop userspace sets GAMMA_LUT to invert brightness
+* colorop userspace takes over, does not set any colorops on the CRTC,
+brightness is no longer inverted (presumably? depends on what the
+default set of colorops is? and what the drivers do?), but the atomic
+state still carries the old gamma_lut blob
+* pre-colorop userspace takes over, does not touch GAMMA_LUT,
+brightness is inverted as the colorop from the previous atomic state
+is ignored and the pre-atomic one now takes precedence
+
+This isn't necessarily wrong per se, but does seem kind of janky and
+error-prone: like should the old state be reset to zero/bypass for
+commits from colorop-aware clients? Or should we explicitly allow 0
+but no other value?
+
+Cheers,
+Daniel
 
