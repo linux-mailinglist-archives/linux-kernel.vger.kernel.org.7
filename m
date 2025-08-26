@@ -1,122 +1,113 @@
-Return-Path: <linux-kernel+bounces-786662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43830B360ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:05:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88C94B36136
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:07:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B73391BA530A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:02:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDC5B5E127A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD0461C1F12;
-	Tue, 26 Aug 2025 13:02:03 +0000 (UTC)
-Received: from mta20.hihonor.com (mta20.honor.com [81.70.206.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7241A23A4;
-	Tue, 26 Aug 2025 13:02:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.206.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE87D238C07;
+	Tue, 26 Aug 2025 13:03:29 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 338221FBE9B;
+	Tue, 26 Aug 2025 13:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756213323; cv=none; b=LpEYdAA8IGCS6L73GZ+dpFno5lVS4LPHR3tHr/niOEmg+qqggBm95lQQ3mla62cSwE23sQHZaKmoxjZWsdu1G1Kv60hj7Dhdr1hTE5J9xl//a5wgdC4eKuR2pCg7Ssur8qoXb1j6QUvnOfDU7xtcErJ585lvz6LnqVVcYB7VEyE=
+	t=1756213409; cv=none; b=YYKLJLgtX0P9ZjVxnyH1jr/DA9TrgfmLqLlgKF5LQ2rN/gLduE9IYFP4OradlZQpgn5kXXpxUp1aqDTnoYlvMXes78XIapXm7WU4ej4p9fh4ybcIlTYvtAGlLtzZwwqRLSIf39rfmTd+d6n21knZcBq3ZAT3un2F2JFGOlvuE8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756213323; c=relaxed/simple;
-	bh=BZENBkY7KxZXwgQQGETVx76avjGsrNPrRhpl9hyDGBY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qYW4Hya/4OgsKjWqYKWmgwikAiiNLQG7lN/koAbODoS6oEyp8et2TRtfNoGbCnEAowyoVDvdjjeKprGuEbg+lxtcTrez+DwYuwHJTO7Y4QorZ9D5EcrlzUhM+0uP2Ck6VfAuWWOeveEIQcqT21Fvv5DFieruEsV2nJLkRzQ3Zc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.206.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w001.hihonor.com (unknown [10.68.25.235])
-	by mta20.hihonor.com (SkyGuard) with ESMTPS id 4cB78X5XsgzYmVyt;
-	Tue, 26 Aug 2025 21:01:32 +0800 (CST)
-Received: from a018.hihonor.com (10.68.17.250) by w001.hihonor.com
- (10.68.25.235) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 26 Aug
- 2025 21:01:48 +0800
-Received: from localhost.localdomain (10.144.20.219) by a018.hihonor.com
- (10.68.17.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 26 Aug
- 2025 21:01:48 +0800
-From: zhongjinji <zhongjinji@honor.com>
-To: <shakeel.butt@linux.dev>
-CC: <akpm@linux-foundation.org>, <cgroups@vger.kernel.org>,
-	<feng.han@honor.com>, <liam.howlett@oracle.com>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, <liulu.liu@honor.com>,
-	<lorenzo.stoakes@oracle.com>, <mhocko@suse.com>, <rientjes@google.com>,
-	<tglx@linutronix.de>, <zhongjinji@honor.com>
-Subject: Re: [PATCH v5 1/2] mm/oom_kill: Do not delay oom reaper when the victim is frozen
-Date: Tue, 26 Aug 2025 21:01:44 +0800
-Message-ID: <20250826130144.21522-1-zhongjinji@honor.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <jzzdeczuyraup2zrspl6b74muf3bly2a3acejfftcldfmz4ekk@s5mcbeim34my>
-References: <jzzdeczuyraup2zrspl6b74muf3bly2a3acejfftcldfmz4ekk@s5mcbeim34my>
+	s=arc-20240116; t=1756213409; c=relaxed/simple;
+	bh=T9Gkxrj+Jbh4BEF2Xoy+VopdtFjdz7eGQjhjbYkar1Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qtWmARSB3t93ksPeigFaw03FdIV/swq5lerGJxmziRLiCNXa0zyBPkEaQWZ3t1w1Mocd65b8S6Sc2Nd2zoqZbMjQ5Ob/pZ/nqcbk9y/jNbYv53T+nMo1uBRbzckOyruxf53xPKi457Iy+G41tDbMn+Rrp2YFKqoKUBSqPUqQ6i8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 025E02C23;
+	Tue, 26 Aug 2025 06:03:18 -0700 (PDT)
+Received: from raptor (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A5B423F63F;
+	Tue, 26 Aug 2025 06:03:19 -0700 (PDT)
+Date: Tue, 26 Aug 2025 14:03:16 +0100
+From: Alexandru Elisei <alexandru.elisei@arm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Alexander Potapenko <glider@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Brendan Jackman <jackmanb@google.com>,
+	Christoph Lameter <cl@gentwo.org>, Dennis Zhou <dennis@kernel.org>,
+	Dmitry Vyukov <dvyukov@google.com>, dri-devel@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org, iommu@lists.linux.dev,
+	io-uring@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>,
+	Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
+	John Hubbard <jhubbard@nvidia.com>, kasan-dev@googlegroups.com,
+	kvm@vger.kernel.org, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-arm-kernel@axis.com, linux-arm-kernel@lists.infradead.org,
+	linux-crypto@vger.kernel.org, linux-ide@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-mips@vger.kernel.org,
+	linux-mmc@vger.kernel.org, linux-mm@kvack.org,
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Marco Elver <elver@google.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
+	Muchun Song <muchun.song@linux.dev>, netdev@vger.kernel.org,
+	Oscar Salvador <osalvador@suse.de>, Peter Xu <peterx@redhat.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
+	virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
+	wireguard@lists.zx2c4.com, x86@kernel.org, Zi Yan <ziy@nvidia.com>
+Subject: Re: [PATCH RFC 21/35] mm/cma: refuse handing out non-contiguous page
+ ranges
+Message-ID: <aK2wlGYvCaFQXzBm@raptor>
+References: <20250821200701.1329277-1-david@redhat.com>
+ <20250821200701.1329277-22-david@redhat.com>
+ <aK2QZnzS1ErHK5tP@raptor>
+ <ad521f4f-47aa-4728-916f-3704bf01f770@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: w001.hihonor.com (10.68.25.235) To a018.hihonor.com
- (10.68.17.250)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ad521f4f-47aa-4728-916f-3704bf01f770@redhat.com>
 
-> +cgroups
+Hi David,
+
+On Tue, Aug 26, 2025 at 01:04:33PM +0200, David Hildenbrand wrote:
+..
+> > Just so I can better understand the problem being fixed, I guess you can have
+> > two consecutive pfns with non-consecutive associated struct page if you have two
+> > adjacent memory sections spanning the same physical memory region, is that
+> > correct?
 > 
-> On Mon, Aug 25, 2025 at 09:38:54PM +0800, zhongjinji wrote:
-> > The OOM reaper can quickly reap a process's memory when the system
-> > encounters OOM, helping the system recover. If the victim process is
-> > frozen and cannot be unfrozen in time, the reaper delayed by two seconds
-> > will cause the system to fail to recover quickly from the OOM state.
-> > 
-> > When an OOM occurs, if the victim is not unfrozen, delaying the OOM reaper
-> > will keep the system in a bad state for two seconds. Before scheduling the
-> > oom_reaper task, check whether the victim is in a frozen state. If the
-> > victim is frozen, do not delay the OOM reaper.
-> > 
-> > Signed-off-by: zhongjinji <zhongjinji@honor.com>
-> > ---
-> >  mm/oom_kill.c | 40 +++++++++++++++++++++++++++++++++++++++-
-> >  1 file changed, 39 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-> > index 25923cfec9c6..4b4d73b1e00d 100644
-> > --- a/mm/oom_kill.c
-> > +++ b/mm/oom_kill.c
-> > @@ -683,6 +683,41 @@ static void wake_oom_reaper(struct timer_list *timer)
-> >  	wake_up(&oom_reaper_wait);
-> >  }
-> >  
-> > +/*
-> > + * When the victim is frozen, the OOM reaper should not be delayed, because
-> > + * if the victim cannot be unfrozen promptly, it may block the system from
-> > + * quickly recovering from the OOM state.
-> > + */
-> > +static bool should_delay_oom_reap(struct task_struct *tsk)
-> > +{
-> > +	struct mm_struct *mm = tsk->mm;
-> > +	struct task_struct *p;
-> > +	bool ret;
-> > +
+> Exactly. Essentially on SPARSEMEM without SPARSEMEM_VMEMMAP it is not
+> guaranteed that
 > 
-> On v2, shouldn't READ_ONCE(tsk->frozen) be enough instead of mm check
-> and checks insode for_each_process()?
+> 	pfn_to_page(pfn + 1) == pfn_to_page(pfn) + 1
+> 
+> when we cross memory section boundaries.
+> 
+> It can be the case for early boot memory if we allocated consecutive areas
+> from memblock when allocating the memmap (struct pages) per memory section,
+> but it's not guaranteed.
 
-Thank you.
-It is mainly to check the processes created by vfork. I believe no one would
-put them into different cgroups, so I also think that READ_ONCE(tsk->frozen)
-is enough. I will update it.
+Thank you for the explanation, but I'm a bit confused by the last paragraph. I
+think what you're saying is that we can also have the reverse problem, where
+consecutive struct page * represent non-consecutive pfns, because memmap
+allocations happened to return consecutive virtual addresses, is that right?
 
-> > +	if (!mm)
-> > +		return true;
-> > +
-> > +	if (!frozen(tsk))
-> > +		return true;
-> > +
-> > +	if (atomic_read(&mm->mm_users) <= 1)
-> > +		return false;
-> > +
-> > +	rcu_read_lock();
-> > +	for_each_process(p) {
+If that's correct, I don't think that's the case for CMA, which deals out
+contiguous physical memory. Or were you just trying to explain the other side of
+the problem, and I'm just overthinking it?
+
+Thanks,
+Alex
 
