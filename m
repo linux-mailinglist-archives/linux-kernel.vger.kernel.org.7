@@ -1,87 +1,88 @@
-Return-Path: <linux-kernel+bounces-786899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D177B36D95
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:20:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49293B36D99
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:21:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C2367A7684
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:18:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C90F71B255F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A08B2701B1;
-	Tue, 26 Aug 2025 15:19:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0F5D27281E;
+	Tue, 26 Aug 2025 15:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eIgUxzsw"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UoOQfw4i"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB30262FDC
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 15:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264FC1E522
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 15:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756221557; cv=none; b=pvAD10mmRZfbgIqFBOtmJsMz7HWXVvbzWz7fi7wqL6KGO1fgagYl7S5TPBrY3x4Ll52+ULVCnfaoa6GP3FXBOSSldogz8o/cgzJ6eSjyhRBuEdmnICNy/fd8uF7/zINtQaUZQeHExfMOkxbDj+/3lW46bb3nQ0X1CGYR0O8UukA=
+	t=1756221565; cv=none; b=phimGH/PbKlF3TExX0D9awwUOqs5wTrGDCN2pOSNNEQm7d3pZKkAHa0WQaVy1SVU7DJt1iMYLuErzGvS4qo+O4u2AAJq8vNa0QM6QXAa3FicAw1gWnyiA4/epyUC6owV3x/4q+8sBPi7YOk/VAZDtDkxqK9PfHxoRhZnrVrZoNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756221557; c=relaxed/simple;
-	bh=2qMlQd1EHzZMq6k8FmHmnZfMzOsgEOBbXiMatiIDWT4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s51Yv/ntCQtExB77pBpU8irjJut/2iXu7luhS5WWRIpYeUgecKTUs8Be+2EgmGDGChJaOKZvJBsGvGmLTA6AdipVzyGPG3aiGI1UvOzQDZQMesu3UG4f1wEdm9tgBwepKB/ONQ5oH9CMLZwYPcRORcpPzJ03Hx1jr89PTTckMq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eIgUxzsw; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57Q8eGUe019189
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 15:19:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	SwQL66e3Nu9k+2rWN9KxTqPiCmr+WouftcMZ22iOrnk=; b=eIgUxzswlkZHaCJj
-	rnGJn/nm+urEM+YqiKmfCGzN9GianKouzNyZ4SMpX/5oHoXQBdOD92gtcvaJyGHJ
-	HYcIwvtBb3wL+6ClPuis+8ZugT820zeUWhxaAf/J8MFqajlb0f8yyom/5qH5LcMG
-	MPAUcLqG5oXx2rNdeim+dtqRMpnKQN3VNzUkXKaqRqHcyyoEQYQ32v2vAd5GIvcj
-	I/rZmy9gjqo6fhYhEZZ7aPePWpgmlf8i9yjFrk4UWnkuiUfZKWJqX5k3ICVl6duZ
-	fkRGBAvgp9w8u/ByXFJ3YR7qq/jxHiPjhtl5ldeR9VJji7FtqxQDrB7rFCfZIW9A
-	ZrE4EQ==
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5y5h5d1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 15:19:14 +0000 (GMT)
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-3274f7e6c1fso591371a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 08:19:14 -0700 (PDT)
+	s=arc-20240116; t=1756221565; c=relaxed/simple;
+	bh=P61RkLE0BL+T8BpXv/7HUznPFWdSU2dz/8yaIRPK9Yw=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Jag2fk1YKQl+yuIbcizq54jF8f7uZZmpc+VwPLewFz9gcVZ+CQeN/Bat4trBs8Mru9nWkOsVJb6bbEckJdVp54APUildux+Xp+tp7444sSaTsSPhH4uIoRJNz6965BAlbiryttnqVBzB+0Y68FwcaokL2uXFa5ALl+DZJ16qkLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UoOQfw4i; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756221561;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=UXprMiHzASbIr0sIutW4AJHP4d2PgaVuimdefLcGYPc=;
+	b=UoOQfw4iqSXkLC2OjECfof0q4SMWPWThfqy6DnyyvE+zZzgEsvwcEMelZQTgQF4wXOAbtI
+	2sE87kxtQvNkV2oNch54w0LmpDWGyJDOIyI5XTv1IBaubcztC2TvkA/3DjHAAKODOGM0aK
+	KbAgS8ztU84Kh0Uud4Sbn3y8L3dMQnc=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-664-xTMn1dh6MOO4BFPAQ6wM0A-1; Tue, 26 Aug 2025 11:19:18 -0400
+X-MC-Unique: xTMn1dh6MOO4BFPAQ6wM0A-1
+X-Mimecast-MFC-AGG-ID: xTMn1dh6MOO4BFPAQ6wM0A_1756221557
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45a1b05d251so31142955e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 08:19:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756221553; x=1756826353;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SwQL66e3Nu9k+2rWN9KxTqPiCmr+WouftcMZ22iOrnk=;
-        b=JRI9Z7TEMGFCKGUDi9W3bvkLFsqmZLREZ61pg11Z990aV4IOSyqHPC87g+7iUgm1ca
-         cAFwe26wo9awbXvTno3qKxNyvUwi5xglxyfTcTAHdv7d4iIYXLDwyXIIW0jCc06VPunO
-         DpYHxg62Ur7E/luPH4zhh5xDkf7XkSK6MtL6thw5Mbcbhb40jHTlWOSpskfn1/AUYqmt
-         +ub+mmO0K+2hMCvBGLkr0IwSBqBxctEfYWu3nJG38Vek2CDcm9EMwO94EMQaZaWTeWAJ
-         GjYr3rmM582wa5Khyb00q9+jBGWDsSSJDPwgjcrhfLR0YbQjqMJlneBDitQihwQt/diF
-         jlLA==
-X-Forwarded-Encrypted: i=1; AJvYcCWGq/+jlzD7Dls4sf5R2Yem3TWqPjxpzd49ESNvOrGu2wLqOAkyu9YJtNB/hUuQSGTBc+l/nvrP3MzvSro=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6eUAdRl89GYPnBDqxWAeF/L4VF0oGPDyKGo1gh8lcsYVuh3WB
-	oHYR3r2IeqlJ1IrowsatJVRVwpb6mFKkfJkB7Gwm/EJkffqIxeBkKoLUk66cNrIGfg2oPkwUn5z
-	+MHbyn0XGwqlML1fNUKSf8z5DYz2o8LyWVx4LDjYxibBJ/iMTa1dNcin1zDsHiNevtm4=
-X-Gm-Gg: ASbGncvl+sDlaPYTIaIK4hS9Q+/4xA8K/L8qI3/4yaPZdmIR30iwYkI+m5Hr6HAR0cR
-	083dJYozh5tdaWjI4UyCQrthBsC5ui0vOpDvjVDjJdhQUfAff+dFUXCE0LjgMVxSBxPwWR/wznK
-	cviroeNAshUQ1FBByXS0ymVnD8qnDEdM4tznDyvzG08Kh+WkGRGf9z3H08rAMtC5qAgWHjhqdFO
-	wmupRa9JUa9tmbIBwgEXexCA1Mzd+eELRD1nPjV2JnUcmNkVejK9U3fi2scFulCqBdRGI+1oiU6
-	/JBjX98F50je3/jgo8VuNLwvBsKzmrd9WkhP0YZMvoiCy6fxgbuiSt8LTrW+uXk7Ir/1jlqdNVE
-	7SpDxLjnymfyWrXwlYq0=
-X-Received: by 2002:a17:90b:39cf:b0:325:17e1:ab69 with SMTP id 98e67ed59e1d1-32517e1b5a7mr19762813a91.3.1756221553068;
-        Tue, 26 Aug 2025 08:19:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHBFCqB9ocm/fFjwbsOzFsZHFiZH3GbPHYwnLpzF4CEcjFDhaSfsGGNUpwdAdtaM5f+IRrboQ==
-X-Received: by 2002:a17:90b:39cf:b0:325:17e1:ab69 with SMTP id 98e67ed59e1d1-32517e1b5a7mr19762764a91.3.1756221552537;
-        Tue, 26 Aug 2025 08:19:12 -0700 (PDT)
-Received: from [10.227.110.203] (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3254aa708cdsm10154132a91.26.2025.08.26.08.19.10
+        d=1e100.net; s=20230601; t=1756221557; x=1756826357;
+        h=content-transfer-encoding:autocrypt:in-reply-to:content-language
+         :references:cc:to:subject:from:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UXprMiHzASbIr0sIutW4AJHP4d2PgaVuimdefLcGYPc=;
+        b=ZKTt9Q1q892M0b6Ltw0sB968cIYFaemcc79ny46QGCKVun2KsOWM2+XvVc1GLYae9G
+         LvvxvZttziX0GXwoiyi7Veun2sXE2jrez10ZSWvvVzvJac1Rf7nul+gA2LGYoMZSMxUH
+         NpoFsAgia2qZNFkYmAs2ZYClldNh5pEfuEYeu5pltF0MgjCgzZkgk1OckWms84AnQA62
+         tVyVuLtEuJCzxhjwJl8Uhzlm7Bqo56Y74IqnujtFdms5cvfxgf1HdiuUb1+qm4szhyXQ
+         b+emNJ/iDA3lAgIb4KGqzvNFXJEhwdkGF19+P94mWcZmceRxAzlErxgmDje/t0zqxm5H
+         5Xdg==
+X-Forwarded-Encrypted: i=1; AJvYcCWoCAQvDk2MnJJeP2RJ8RtX1ce/nlppYMuac7s1BznNq12EMerRTQ+j7pT4jSMBXVTtWBmEWJEnPX8ufvg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCPvT4pHO3bIT+ewTVx/UDqjUr62WHSNmLE+za5QIt/rWbMvWT
+	nOtlw6XBgrUyEPNGqxL7V6bKLiNXy+xGf7Fxo7KgE7Tz1SBHxJlR8oyxa1J6K6cEIY7kWybX+xG
+	1Dcjdk7sYfcqP6ewysE0n0+O4VJdX2iLt/KRPIDa+nDD3Q4swINHK6gKWJpuhYniBG2Y8oS1lhn
+	58
+X-Gm-Gg: ASbGnctY5HgMfG7KzsrFaD44lmgevC0mF2HNJD9YMB0kU7I1G++g9Md1sCCQBQEnnjc
+	49PKTIDKJi9ENxkuq9aq1a9grYbqEq2bG03dNlFkGmPND9rGnIKjSoFsKeyFwOpwk53r8voKpHB
+	9Ywcx8A/VGwONvuVTjPhr48587cMWsSMyTCArz+hZD4JHFnDlvcVylTawOpRzrBTTrBIQS+s5ol
+	PgAcdEq2bpjE+0pU0q3Wf8Pee2OO3YH2+Jw85e1hSq1b9kyc9QSOTXmCMv2Z4OjqAYxD13Ym8wH
+	MYX3u0YgHBq2CSkOLaTn+aR6IXwvVcQMzqvVMecZsYi3yqerVjJ5JUvUy0xcphifQf9Jw/GS+A=
+	=
+X-Received: by 2002:a05:600c:4692:b0:456:1514:5b04 with SMTP id 5b1f17b1804b1-45b517b9636mr130700075e9.21.1756221557114;
+        Tue, 26 Aug 2025 08:19:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFT+QSPmC9ilBhkXP1iD9bjBtI9e77OcfOWd9ADNWej3NwzIhTOtpef39FZWwpPfcLsGHjxoQ==
+X-Received: by 2002:a05:600c:4692:b0:456:1514:5b04 with SMTP id 5b1f17b1804b1-45b517b9636mr130699535e9.21.1756221556468;
+        Tue, 26 Aug 2025 08:19:16 -0700 (PDT)
+Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b5753528csm153414105e9.3.2025.08.26.08.19.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Aug 2025 08:19:12 -0700 (PDT)
-Message-ID: <0993bd25-3cab-4f96-9398-bf5b5f7770cd@oss.qualcomm.com>
-Date: Tue, 26 Aug 2025 08:19:09 -0700
+        Tue, 26 Aug 2025 08:19:15 -0700 (PDT)
+Message-ID: <763e1fca-e4c4-467e-a1d0-ea911cad4714@redhat.com>
+Date: Tue, 26 Aug 2025 17:19:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,79 +90,678 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/8] PCI/ASPM: Return enabled ASPM states from
- pcie_aspm_enabled() API
-To: manivannan.sadhasivam@oss.qualcomm.com,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Manivannan Sadhasivam
- <mani@kernel.org>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Nirmal Patel <nirmal.patel@linux.intel.com>,
-        Jonathan Derrick <jonathan.derrick@linux.dev>,
-        Jeff Johnson <jjohnson@kernel.org>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-wireless@vger.kernel.org,
-        ath12k@lists.infradead.org, ath11k@lists.infradead.org,
-        ath10k@lists.infradead.org,
-        =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>,
-        Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-References: <20250825-ath-aspm-fix-v2-0-61b2f2db7d89@oss.qualcomm.com>
- <20250825-ath-aspm-fix-v2-5-61b2f2db7d89@oss.qualcomm.com>
-From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+From: David Hildenbrand <david@redhat.com>
+Subject: Re: [v3 02/11] mm/thp: zone_device awareness in THP handling code
+To: Balbir Singh <balbirs@nvidia.com>, dri-devel@lists.freedesktop.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, Zi Yan <ziy@nvidia.com>,
+ Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+ Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
+ Ying Huang <ying.huang@linux.alibaba.com>,
+ Alistair Popple <apopple@nvidia.com>, Oscar Salvador <osalvador@suse.de>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
+ =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
+ Matthew Brost <matthew.brost@intel.com>,
+ Francois Dugast <francois.dugast@intel.com>
+References: <20250812024036.690064-1-balbirs@nvidia.com>
+ <20250812024036.690064-3-balbirs@nvidia.com>
 Content-Language: en-US
-In-Reply-To: <20250825-ath-aspm-fix-v2-5-61b2f2db7d89@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20250812024036.690064-3-balbirs@nvidia.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMyBTYWx0ZWRfX/w4oWvVnuQHY
- 4mmjWAeJomMXRf8sxP8lWpu699VfytiVscoDvpcfmAq/qqeUNXGRXcpQ6QQ9qJCLe+g6yh7auDN
- 56G0xYf9CG14Zkq9EGXe1dwj01KKxM2mBtkI+EH08qYhuQsdOxOMvJtbRaaaAPt/C2pO2XbB5a6
- HL2W+q6iFvwHUb1FtZZbLOQwDYHJijtLpLJbouI/dyaIEvaXNb28fjedNQQBYXLGWonJ7hJ1J4Y
- IDPsICL2F+ni+xqjCnDefdS2BGLPh2h8NYJ9emEXyV3o0460AKsNA122OHuJa3KmpyG2XIbPmJG
- PQzZxzbjKbVzxeoTE/9txJZSx2a2BnY768L5MvtjjCm/rveaZCndaOTnfVaTN/AVsQXnJzGDosy
- ugoeGirB
-X-Authority-Analysis: v=2.4 cv=Lco86ifi c=1 sm=1 tr=0 ts=68add072 cx=c_pps
- a=0uOsjrqzRL749jD1oC5vDA==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=guytT1_IP8q0_Fb2ReoA:9
- a=QEXdDO2ut3YA:10 a=mQ_c8vxmzFEMiUWkPHU9:22
-X-Proofpoint-GUID: ZZsNgytTFmetCIWGem4zlXoZoZecutZO
-X-Proofpoint-ORIG-GUID: ZZsNgytTFmetCIWGem4zlXoZoZecutZO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-26_02,2025-08-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 adultscore=0 clxscore=1015 malwarescore=0 spamscore=0
- suspectscore=0 phishscore=0 priorityscore=1501 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230033
 
-On 8/25/2025 10:44 AM, Manivannan Sadhasivam via B4 Relay wrote:
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -1851,7 +1851,7 @@ int pci_enable_link_state(struct pci_dev *pdev, int state);
->  int pci_enable_link_state_locked(struct pci_dev *pdev, int state);
->  void pcie_no_aspm(void);
->  bool pcie_aspm_support_enabled(void);
-> -bool pcie_aspm_enabled(struct pci_dev *pdev);
-> +u32 pcie_aspm_enabled(struct pci_dev *pdev);
->  #else
->  static inline int pci_disable_link_state(struct pci_dev *pdev, int state)
->  { return 0; }
-> @@ -1863,7 +1863,7 @@ static inline int pci_enable_link_state_locked(struct pci_dev *pdev, int state)
->  { return 0; }
->  static inline void pcie_no_aspm(void) { }
->  static inline bool pcie_aspm_support_enabled(void) { return false; }
-> -static inline bool pcie_aspm_enabled(struct pci_dev *pdev) { return false; }
-> +static inline u32 pcie_aspm_enabled(struct pci_dev *pdev) { return false; }
-
-return 0?
-
->  #endif
->  
->  #ifdef CONFIG_HOTPLUG_PCI
+On 12.08.25 04:40, Balbir Singh wrote:
+> Make THP handling code in the mm subsystem for THP pages aware of zone
+> device pages. Although the code is designed to be generic when it comes
+> to handling splitting of pages, the code is designed to work for THP
+> page sizes corresponding to HPAGE_PMD_NR.
 > 
+> Modify page_vma_mapped_walk() to return true when a zone device huge
+> entry is present, enabling try_to_migrate() and other code migration
+> paths to appropriately process the entry. page_vma_mapped_walk() will
+> return true for zone device private large folios only when
+> PVMW_THP_DEVICE_PRIVATE is passed. This is to prevent locations that are
+> not zone device private pages from having to add awareness.
+
+Please don't if avoidable.
+
+We should already have the same problem with small zone-device private
+pages, and should have proper folio checks in place, no?
+
+
+[...]
+
+This thing is huge and hard to review. Given there are subtle changes in here that
+are likely problematic, this is a problem. Is there any way to split this
+into logical chunks?
+
+Like teaching zap, mprotect, rmap walks .... code separately.
+
+I'm, sure you'll find a way to break this down so I don't walk out of a
+review with an headake ;)
+
+>   
+>   struct page_vma_mapped_walk {
+>   	unsigned long pfn;
+> diff --git a/include/linux/swapops.h b/include/linux/swapops.h
+> index 64ea151a7ae3..2641c01bd5d2 100644
+> --- a/include/linux/swapops.h
+> +++ b/include/linux/swapops.h
+> @@ -563,6 +563,7 @@ static inline int is_pmd_migration_entry(pmd_t pmd)
+>   {
+>   	return is_swap_pmd(pmd) && is_migration_entry(pmd_to_swp_entry(pmd));
+>   }
+> +
+
+^ unrelated change
+
+>   #else  /* CONFIG_ARCH_ENABLE_THP_MIGRATION */
+>   static inline int set_pmd_migration_entry(struct page_vma_mapped_walk *pvmw,
+>   		struct page *page)
+> @@ -594,6 +595,22 @@ static inline int is_pmd_migration_entry(pmd_t pmd)
+>   }
+>   #endif  /* CONFIG_ARCH_ENABLE_THP_MIGRATION */
+>   
+> +#if defined(CONFIG_ZONE_DEVICE) && defined(CONFIG_ARCH_ENABLE_THP_MIGRATION)
+> +
+> +static inline int is_pmd_device_private_entry(pmd_t pmd)
+> +{
+> +	return is_swap_pmd(pmd) && is_device_private_entry(pmd_to_swp_entry(pmd));
+> +}
+> +
+> +#else /* CONFIG_ZONE_DEVICE && CONFIG_ARCH_ENABLE_THP_MIGRATION */
+> +
+> +static inline int is_pmd_device_private_entry(pmd_t pmd)
+> +{
+> +	return 0;
+> +}
+> +
+> +#endif /* CONFIG_ZONE_DEVICE && CONFIG_ARCH_ENABLE_THP_MIGRATION */
+> +
+>   static inline int non_swap_entry(swp_entry_t entry)
+>   {
+>   	return swp_type(entry) >= MAX_SWAPFILES;
+> diff --git a/lib/test_hmm.c b/lib/test_hmm.c
+> index 761725bc713c..297f1e034045 100644
+> --- a/lib/test_hmm.c
+> +++ b/lib/test_hmm.c
+> @@ -1408,7 +1408,7 @@ static vm_fault_t dmirror_devmem_fault(struct vm_fault *vmf)
+>   	 * the mirror but here we use it to hold the page for the simulated
+>   	 * device memory and that page holds the pointer to the mirror.
+>   	 */
+> -	rpage = vmf->page->zone_device_data;
+> +	rpage = folio_page(page_folio(vmf->page), 0)->zone_device_data;
+
+Can we have a wrapper please to give us the zone_device_data for a folio, so
+we have something like
+
+rpage = folio_zone_device_data(page_folio(vmf->page));
+
+>   	dmirror = rpage->zone_device_data;
+>   
+>   	/* FIXME demonstrate how we can adjust migrate range */
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 9c38a95e9f09..2495e3fdbfae 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -1711,8 +1711,11 @@ int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
+>   	if (unlikely(is_swap_pmd(pmd))) {
+>   		swp_entry_t entry = pmd_to_swp_entry(pmd);
+>   
+> -		VM_BUG_ON(!is_pmd_migration_entry(pmd));
+> -		if (!is_readable_migration_entry(entry)) {
+> +		VM_WARN_ON(!is_pmd_migration_entry(pmd) &&
+> +				!is_pmd_device_private_entry(pmd));
+> +
+> +		if (is_migration_entry(entry) &&
+> +			is_writable_migration_entry(entry)) {
+>   			entry = make_readable_migration_entry(
+>   							swp_offset(entry));
+
+Careful: There is is_readable_exclusive_migration_entry(). So don't
+change the !is_readable_migration_entry(entry) to is_writable_migration_entry(entry)(),
+because it's wrong.
+
+>   			pmd = swp_entry_to_pmd(entry);
+> @@ -1722,6 +1725,32 @@ int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
+>   				pmd = pmd_swp_mkuffd_wp(pmd);
+>   			set_pmd_at(src_mm, addr, src_pmd, pmd);
+>   		}
+> +
+> +		if (is_device_private_entry(entry)) {
+
+likely you want "else if" here.
+
+> +			if (is_writable_device_private_entry(entry)) {
+> +				entry = make_readable_device_private_entry(
+> +					swp_offset(entry));
+> +				pmd = swp_entry_to_pmd(entry);
+> +
+> +				if (pmd_swp_soft_dirty(*src_pmd))
+> +					pmd = pmd_swp_mksoft_dirty(pmd);
+> +				if (pmd_swp_uffd_wp(*src_pmd))
+> +					pmd = pmd_swp_mkuffd_wp(pmd);
+> +				set_pmd_at(src_mm, addr, src_pmd, pmd);
+> +			}
+> +
+> +			src_folio = pfn_swap_entry_folio(entry);
+> +			VM_WARN_ON(!folio_test_large(src_folio));
+> +
+> +			folio_get(src_folio);
+> +			/*
+> +			 * folio_try_dup_anon_rmap_pmd does not fail for
+> +			 * device private entries.
+> +			 */
+> +			VM_WARN_ON(folio_try_dup_anon_rmap_pmd(src_folio,
+> +					  &src_folio->page, dst_vma, src_vma));
+> +		}
+
+I would appreciate if this code flow here would resemble more what we have in
+copy_nonpresent_pte(), at least regarding handling of these two cases.
+
+(e.g., dropping the VM_WARN_ON)
+
+> +
+>   		add_mm_counter(dst_mm, MM_ANONPAGES, HPAGE_PMD_NR);
+>   		mm_inc_nr_ptes(dst_mm);
+>   		pgtable_trans_huge_deposit(dst_mm, dst_pmd, pgtable);
+> @@ -2219,15 +2248,22 @@ int zap_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
+>   			folio_remove_rmap_pmd(folio, page, vma);
+>   			WARN_ON_ONCE(folio_mapcount(folio) < 0);
+>   			VM_BUG_ON_PAGE(!PageHead(page), page);
+> -		} else if (thp_migration_supported()) {
+> +		} else if (is_pmd_migration_entry(orig_pmd) ||
+> +				is_pmd_device_private_entry(orig_pmd)) {
+>   			swp_entry_t entry;
+>   
+> -			VM_BUG_ON(!is_pmd_migration_entry(orig_pmd));
+>   			entry = pmd_to_swp_entry(orig_pmd);
+>   			folio = pfn_swap_entry_folio(entry);
+>   			flush_needed = 0;
+> -		} else
+> -			WARN_ONCE(1, "Non present huge pmd without pmd migration enabled!");
+> +
+> +			if (!thp_migration_supported())
+> +				WARN_ONCE(1, "Non present huge pmd without pmd migration enabled!");
+> +
+> +			if (is_pmd_device_private_entry(orig_pmd)) {
+> +				folio_remove_rmap_pmd(folio, &folio->page, vma);
+> +				WARN_ON_ONCE(folio_mapcount(folio) < 0);
+
+Can we jsut move that into the folio_is_device_private() check below.
+
+> +			}
+> +		}
+>   
+>   		if (folio_test_anon(folio)) {
+>   			zap_deposited_table(tlb->mm, pmd);
+> @@ -2247,6 +2283,15 @@ int zap_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
+>   				folio_mark_accessed(folio);
+>   		}
+>   
+> +		/*
+> +		 * Do a folio put on zone device private pages after
+> +		 * changes to mm_counter, because the folio_put() will
+> +		 * clean folio->mapping and the folio_test_anon() check
+> +		 * will not be usable.
+> +		 */
+
+The comment can be dropped: it's simple, don't use "folio" after
+dropping the reference when zapping.
+
+> +		if (folio_is_device_private(folio))
+> +			folio_put(folio);
+
+> +
+>   		spin_unlock(ptl);
+>   		if (flush_needed)
+>   			tlb_remove_page_size(tlb, &folio->page, HPAGE_PMD_SIZE);
+> @@ -2375,7 +2420,8 @@ int change_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
+>   		struct folio *folio = pfn_swap_entry_folio(entry);
+>   		pmd_t newpmd;
+>   
+> -		VM_BUG_ON(!is_pmd_migration_entry(*pmd));
+> +		VM_WARN_ON(!is_pmd_migration_entry(*pmd) &&
+> +			   !folio_is_device_private(folio));
+>   		if (is_writable_migration_entry(entry)) {
+>   			/*
+>   			 * A protection check is difficult so
+> @@ -2388,6 +2434,10 @@ int change_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
+>   			newpmd = swp_entry_to_pmd(entry);
+>   			if (pmd_swp_soft_dirty(*pmd))
+>   				newpmd = pmd_swp_mksoft_dirty(newpmd);
+> +		} else if (is_writable_device_private_entry(entry)) {
+> +			entry = make_readable_device_private_entry(
+> +							swp_offset(entry));
+> +			newpmd = swp_entry_to_pmd(entry);
+>   		} else {
+>   			newpmd = *pmd;
+>   		}
+> @@ -2842,16 +2892,19 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
+>   	struct page *page;
+>   	pgtable_t pgtable;
+>   	pmd_t old_pmd, _pmd;
+> -	bool young, write, soft_dirty, pmd_migration = false, uffd_wp = false;
+> -	bool anon_exclusive = false, dirty = false;
+> +	bool young, write, soft_dirty, uffd_wp = false;
+> +	bool anon_exclusive = false, dirty = false, present = false;
+>   	unsigned long addr;
+>   	pte_t *pte;
+>   	int i;
+> +	swp_entry_t swp_entry;
+>   
+>   	VM_BUG_ON(haddr & ~HPAGE_PMD_MASK);
+>   	VM_BUG_ON_VMA(vma->vm_start > haddr, vma);
+>   	VM_BUG_ON_VMA(vma->vm_end < haddr + HPAGE_PMD_SIZE, vma);
+> -	VM_BUG_ON(!is_pmd_migration_entry(*pmd) && !pmd_trans_huge(*pmd));
+> +
+> +	VM_WARN_ON(!is_pmd_migration_entry(*pmd) && !pmd_trans_huge(*pmd)
+> +			&& !(is_pmd_device_private_entry(*pmd)));
+
+VM_WARN_ON(!is_pmd_migration_entry(*pmd) && !pmd_trans_huge(*pmd) &&
+	   !(is_pmd_device_private_entry(*pmd)));
+
+
+>   
+>   	count_vm_event(THP_SPLIT_PMD);
+>   
+> @@ -2899,18 +2952,45 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
+>   		return __split_huge_zero_page_pmd(vma, haddr, pmd);
+>   	}
+>   
+> -	pmd_migration = is_pmd_migration_entry(*pmd);
+> -	if (unlikely(pmd_migration)) {
+> -		swp_entry_t entry;
+>   
+> +	present = pmd_present(*pmd);
+> +	if (unlikely(!present)) {
+> +		swp_entry = pmd_to_swp_entry(*pmd);
+>   		old_pmd = *pmd;
+> -		entry = pmd_to_swp_entry(old_pmd);
+> -		page = pfn_swap_entry_to_page(entry);
+> -		write = is_writable_migration_entry(entry);
+> -		if (PageAnon(page))
+> -			anon_exclusive = is_readable_exclusive_migration_entry(entry);
+> -		young = is_migration_entry_young(entry);
+> -		dirty = is_migration_entry_dirty(entry);
+> +
+> +		folio = pfn_swap_entry_folio(swp_entry);
+> +		VM_WARN_ON(!is_migration_entry(swp_entry) &&
+> +				!is_device_private_entry(swp_entry));
+> +		page = pfn_swap_entry_to_page(swp_entry);
+> +
+> +		if (is_pmd_migration_entry(old_pmd)) {
+> +			write = is_writable_migration_entry(swp_entry);
+> +			if (PageAnon(page))
+> +				anon_exclusive =
+> +					is_readable_exclusive_migration_entry(
+> +								swp_entry);
+> +			young = is_migration_entry_young(swp_entry);
+> +			dirty = is_migration_entry_dirty(swp_entry);
+> +		} else if (is_pmd_device_private_entry(old_pmd)) {
+> +			write = is_writable_device_private_entry(swp_entry);
+> +			anon_exclusive = PageAnonExclusive(page);
+> +			if (freeze && anon_exclusive &&
+> +			    folio_try_share_anon_rmap_pmd(folio, page))
+> +				freeze = false;
+> +			if (!freeze) {
+> +				rmap_t rmap_flags = RMAP_NONE;
+> +
+> +				if (anon_exclusive)
+> +					rmap_flags |= RMAP_EXCLUSIVE;
+> +
+> +				folio_ref_add(folio, HPAGE_PMD_NR - 1);
+> +				if (anon_exclusive)
+> +					rmap_flags |= RMAP_EXCLUSIVE;
+> +				folio_add_anon_rmap_ptes(folio, page, HPAGE_PMD_NR,
+> +						 vma, haddr, rmap_flags);
+> +			}
+> +		}
+
+This is massive and I'll have to review it with a fresh mind later.
+
+[...]
+	put_page(page);
+> @@ -3058,8 +3157,10 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
+>   void split_huge_pmd_locked(struct vm_area_struct *vma, unsigned long address,
+>   			   pmd_t *pmd, bool freeze)
+>   {
+> +
+
+^ unrelated
+
+>   	VM_WARN_ON_ONCE(!IS_ALIGNED(address, HPAGE_PMD_SIZE));
+> -	if (pmd_trans_huge(*pmd) || is_pmd_migration_entry(*pmd))
+> +	if (pmd_trans_huge(*pmd) || is_pmd_migration_entry(*pmd) ||
+> +			(is_pmd_device_private_entry(*pmd)))
+
+if (pmd_trans_huge(*pmd) || is_pmd_migration_entry(*pmd) ||
+     is_pmd_device_private_entry(*pmd))
+
+>   		__split_huge_pmd_locked(vma, pmd, address, freeze);
+>   }
+>   
+> @@ -3238,6 +3339,9 @@ static void lru_add_split_folio(struct folio *folio, struct folio *new_folio,
+>   	VM_BUG_ON_FOLIO(folio_test_lru(new_folio), folio);
+>   	lockdep_assert_held(&lruvec->lru_lock);
+>   
+> +	if (folio_is_device_private(folio))
+> +		return;
+> +
+>   	if (list) {
+>   		/* page reclaim is reclaiming a huge page */
+>   		VM_WARN_ON(folio_test_lru(folio));
+> @@ -3252,6 +3356,7 @@ static void lru_add_split_folio(struct folio *folio, struct folio *new_folio,
+>   			list_add_tail(&new_folio->lru, &folio->lru);
+>   		folio_set_lru(new_folio);
+>   	}
+> +
+
+^ unrelated
+
+>   }
+>   
+>   /* Racy check whether the huge page can be split */
+> @@ -3727,7 +3832,7 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
+>   
+>   	/* Prevent deferred_split_scan() touching ->_refcount */
+>   	spin_lock(&ds_queue->split_queue_lock);
+> -	if (folio_ref_freeze(folio, 1 + extra_pins)) {
+> +	if (folio_ref_freeze(folio, 1 + folio_expected_ref_count(folio))) {
+
+I think I discussed that with Zi Yan and it's tricky. Such a change should go
+into a separate cleanup patch.
+
+
+>   		struct address_space *swap_cache = NULL;
+>   		struct lruvec *lruvec;
+>   		int expected_refs;
+> @@ -3858,8 +3963,9 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
+>   	if (nr_shmem_dropped)
+>   		shmem_uncharge(mapping->host, nr_shmem_dropped);
+>   
+> -	if (!ret && is_anon)
+> +	if (!ret && is_anon && !folio_is_device_private(folio))
+>   		remap_flags = RMP_USE_SHARED_ZEROPAGE;
+> +
+
+^ unrelated
+
+>   	remap_page(folio, 1 << order, remap_flags);
+>   
+>   	/*
+> @@ -4603,7 +4709,10 @@ int set_pmd_migration_entry(struct page_vma_mapped_walk *pvmw,
+>   		return 0;
+>   
+>   	flush_cache_range(vma, address, address + HPAGE_PMD_SIZE);
+> -	pmdval = pmdp_invalidate(vma, address, pvmw->pmd);
+> +	if (unlikely(is_pmd_device_private_entry(*pvmw->pmd)))
+
+Use pmd_present() instead, please. (just like in the pte code that handles this).
+
+Why do we have to flush? pmd_clear() might be sufficient? In the PTE case we use pte_clear().
+
+[...]
+
+>   		pmde = pmd_mksoft_dirty(pmde);
+>   	if (is_writable_migration_entry(entry))
+> diff --git a/mm/migrate_device.c b/mm/migrate_device.c
+> index e05e14d6eacd..0ed337f94fcd 100644
+> --- a/mm/migrate_device.c
+> +++ b/mm/migrate_device.c
+> @@ -136,6 +136,8 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
+>   			 * page table entry. Other special swap entries are not
+>   			 * migratable, and we ignore regular swapped page.
+>   			 */
+> +			struct folio *folio;
+> +
+>   			entry = pte_to_swp_entry(pte);
+>   			if (!is_device_private_entry(entry))
+>   				goto next;
+> @@ -147,6 +149,51 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
+>   			    pgmap->owner != migrate->pgmap_owner)
+>   				goto next;
+>   
+> +			folio = page_folio(page);
+> +			if (folio_test_large(folio)) {
+> +				struct folio *new_folio;
+> +				struct folio *new_fault_folio = NULL;
+> +
+> +				/*
+> +				 * The reason for finding pmd present with a
+> +				 * device private pte and a large folio for the
+> +				 * pte is partial unmaps. Split the folio now
+> +				 * for the migration to be handled correctly
+> +				 */
+
+There are also other cases, like any VMA splits. Not sure if that makes a difference,
+the folio is PTE mapped.
+
+> +				pte_unmap_unlock(ptep, ptl);
+> +
+> +				folio_get(folio);
+> +				if (folio != fault_folio)
+> +					folio_lock(folio);
+> +				if (split_folio(folio)) {
+> +					if (folio != fault_folio)
+> +						folio_unlock(folio);
+> +					ptep = pte_offset_map_lock(mm, pmdp, addr, &ptl);
+> +					goto next;
+> +				}
+> +
+> +				new_folio = page_folio(page);
+> +				if (fault_folio)
+> +					new_fault_folio = page_folio(migrate->fault_page);
+> +
+> +				/*
+> +				 * Ensure the lock is held on the correct
+> +				 * folio after the split
+> +				 */
+> +				if (!new_fault_folio) {
+> +					folio_unlock(folio);
+> +					folio_put(folio);
+> +				} else if (folio != new_fault_folio) {
+> +					folio_get(new_fault_folio);
+> +					folio_lock(new_fault_folio);
+> +					folio_unlock(folio);
+> +					folio_put(folio);
+> +				}
+> +
+> +				addr = start;
+> +				goto again;
+
+Another thing to revisit with clean mind.
+
+> +			}
+> +
+>   			mpfn = migrate_pfn(page_to_pfn(page)) |
+>   					MIGRATE_PFN_MIGRATE;
+>   			if (is_writable_device_private_entry(entry))
+> diff --git a/mm/page_vma_mapped.c b/mm/page_vma_mapped.c
+> index e981a1a292d2..246e6c211f34 100644
+> --- a/mm/page_vma_mapped.c
+> +++ b/mm/page_vma_mapped.c
+> @@ -250,12 +250,11 @@ bool page_vma_mapped_walk(struct page_vma_mapped_walk *pvmw)
+>   			pvmw->ptl = pmd_lock(mm, pvmw->pmd);
+>   			pmde = *pvmw->pmd;
+>   			if (!pmd_present(pmde)) {
+> -				swp_entry_t entry;
+> +				swp_entry_t entry = pmd_to_swp_entry(pmde);
+>   
+>   				if (!thp_migration_supported() ||
+>   				    !(pvmw->flags & PVMW_MIGRATION))
+>   					return not_found(pvmw);
+> -				entry = pmd_to_swp_entry(pmde);
+>   				if (!is_migration_entry(entry) ||
+>   				    !check_pmd(swp_offset_pfn(entry), pvmw))
+>   					return not_found(pvmw);
+> @@ -277,6 +276,16 @@ bool page_vma_mapped_walk(struct page_vma_mapped_walk *pvmw)
+>   			 * cannot return prematurely, while zap_huge_pmd() has
+>   			 * cleared *pmd but not decremented compound_mapcount().
+>   			 */
+> +			swp_entry_t entry;
+> +
+> +			entry = pmd_to_swp_entry(pmde);
+> +
+> +			if (is_device_private_entry(entry) &&
+> +				(pvmw->flags & PVMW_THP_DEVICE_PRIVATE)) {
+> +				pvmw->ptl = pmd_lock(mm, pvmw->pmd);
+> +				return true;
+> +			}
+> +
+>   			if ((pvmw->flags & PVMW_SYNC) &&
+>   			    thp_vma_suitable_order(vma, pvmw->address,
+>   						   PMD_ORDER) &&
+> diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
+> index 567e2d084071..604e8206a2ec 100644
+> --- a/mm/pgtable-generic.c
+> +++ b/mm/pgtable-generic.c
+> @@ -292,6 +292,12 @@ pte_t *___pte_offset_map(pmd_t *pmd, unsigned long addr, pmd_t *pmdvalp)
+>   		*pmdvalp = pmdval;
+>   	if (unlikely(pmd_none(pmdval) || is_pmd_migration_entry(pmdval)))
+>   		goto nomap;
+> +	if (is_swap_pmd(pmdval)) {
+> +		swp_entry_t entry = pmd_to_swp_entry(pmdval);
+> +
+> +		if (is_device_private_entry(entry))
+> +			goto nomap;
+> +	}
+>   	if (unlikely(pmd_trans_huge(pmdval)))
+>   		goto nomap;
+>   	if (unlikely(pmd_bad(pmdval))) {
+> diff --git a/mm/rmap.c b/mm/rmap.c
+> index b5837075b6e0..f40e45564295 100644
+> --- a/mm/rmap.c
+> +++ b/mm/rmap.c
+> @@ -2285,7 +2285,8 @@ static bool try_to_migrate_one(struct folio *folio, struct vm_area_struct *vma,
+>   		     unsigned long address, void *arg)
+>   {
+>   	struct mm_struct *mm = vma->vm_mm;
+> -	DEFINE_FOLIO_VMA_WALK(pvmw, folio, vma, address, 0);
+> +	DEFINE_FOLIO_VMA_WALK(pvmw, folio, vma, address,
+> +				PVMW_THP_DEVICE_PRIVATE);
+>   	bool anon_exclusive, writable, ret = true;
+>   	pte_t pteval;
+>   	struct page *subpage;
+> @@ -2330,6 +2331,10 @@ static bool try_to_migrate_one(struct folio *folio, struct vm_area_struct *vma,
+>   	while (page_vma_mapped_walk(&pvmw)) {
+>   		/* PMD-mapped THP migration entry */
+>   		if (!pvmw.pte) {
+> +#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
+> +			unsigned long pfn;
+> +#endif
+> +
+>   			if (flags & TTU_SPLIT_HUGE_PMD) {
+>   				split_huge_pmd_locked(vma, pvmw.address,
+>   						      pvmw.pmd, true);
+> @@ -2338,8 +2343,21 @@ static bool try_to_migrate_one(struct folio *folio, struct vm_area_struct *vma,
+>   				break;
+>   			}
+>   #ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
+> -			subpage = folio_page(folio,
+> -				pmd_pfn(*pvmw.pmd) - folio_pfn(folio));
+> +			/*
+> +			 * Zone device private folios do not work well with
+> +			 * pmd_pfn() on some architectures due to pte
+> +			 * inversion.
+> +			 */
+
+Please use the handling for the PTE case as inspiration.
+
+		/*
+		 * Handle PFN swap PTEs, such as device-exclusive ones, that
+		 * actually map pages.
+		 */
+		pteval = ptep_get(pvmw.pte);
+		if (likely(pte_present(pteval))) {
+			pfn = pte_pfn(pteval);
+		} else {
+			pfn = swp_offset_pfn(pte_to_swp_entry(pteval));
+			VM_WARN_ON_FOLIO(folio_test_hugetlb(folio), folio);
+		}
+
+
+So I would expect here something like
+
+		/*
+		 * Handle PFN swap PTEs, such as device-exclusive ones, that
+		 * actually map pages.
+		 */
+		pmdval = pmdp_get(pvmw.pmd);
+		if (likely(pmd_present(pmdval)))
+			pfn = pmd_pfn(pmdval);
+		else
+			pfn = swp_offset_pfn(pmd_to_swp_entry(pmdval));
+
+
+> +			if (is_pmd_device_private_entry(*pvmw.pmd)) {
+> +				swp_entry_t entry = pmd_to_swp_entry(*pvmw.pmd);
+> +
+> +				pfn = swp_offset_pfn(entry);
+> +			} else {
+> +				pfn = pmd_pfn(*pvmw.pmd);
+> +			}
+> +
+> +			subpage = folio_page(folio, pfn - folio_pfn(folio));
+> +
+>   			VM_BUG_ON_FOLIO(folio_test_hugetlb(folio) ||
+>   					!folio_test_pmd_mappable(folio), folio);
+>   
+
+
+-- 
+Cheers
+
+David / dhildenb
 
 
