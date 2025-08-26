@@ -1,93 +1,115 @@
-Return-Path: <linux-kernel+bounces-786626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34F3FB35F41
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:40:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B744AB35F46
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:40:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BB75365717
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:40:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72ED11BA2ECB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F8C3376A5;
-	Tue, 26 Aug 2025 12:39:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B012FDC5C;
+	Tue, 26 Aug 2025 12:39:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="XkUpTeyD"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AC5w6rYO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40F4307484;
-	Tue, 26 Aug 2025 12:39:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91208307484;
+	Tue, 26 Aug 2025 12:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756211992; cv=none; b=vFpNTNHTSrf4SVzJb9P6v81x1kyjIKXEyOYeTwrcBkMAPKGKMr9CYiXIQl95mf6vmkOtu3FxDsN8PQ7ORGzSa7TwJFipOF6WZg5OuqitBj3jAqQEGEAuutnOK5EKXhRLm3Du+kDuh2rMBwp/qAzRfnKtweRh1kSv+PxojXbxApA=
+	t=1756211996; cv=none; b=tjsWynZ4rmPsmiabUhK/dEHk+N0q47gjpHZ9FC7g1hwKWkxzVYSlNtfSRdbQGg+mfVY2YqTOEe5X696erMg0mIMjsjM09+32y/TYdHBa0cBIW4vycScLaTZkZX24s8QHgUy/dlMrWsmYvwkOUdmmEjwHnoGkffIsrTToLcc7Sbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756211992; c=relaxed/simple;
-	bh=dGnNrQX6SngfoB1qpiDdPYhk6mxxMtMJBb9fvgJBWyQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sIiN9+OXwYXUVJCN+6v0GHPvqQE0jyCYvbRI1F/t1t/DXXSgWftlGsNRLfYcxul4A9dNPg2J9173/NsFNkmSF8Q5KE3PQRj8P61k8KgqPwc2XbLqKXf3V5y1CzSK2ftSSs4Y/F2u08CHBif/uaJMJTYb/QOZAUt7T12AoiQH3OU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=XkUpTeyD; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=QkbnYSmWkM3Cx83RhzgKWrax3iNbj9sbt9f1CZxZlq0=; b=XkUpTeyDhuNXtl3P+qO3sjmTHV
-	AfgkITj/OVg/BiD7malHlPDfwTI1ZRY1CFJA8Ic1Ekk//PlTLVyBWgBxUPJ13/0zQ0+cX0eYo39L5
-	/8gNSuA1IsCwfpjesX8tu0OK8oPsuzwIYtksuY4mpvnyohEYwzWFDk3WjjeR2whwT1EY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uqsx9-0065cW-2s; Tue, 26 Aug 2025 14:39:07 +0200
-Date: Tue, 26 Aug 2025 14:39:07 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Yibo Dong <dong100@mucse.com>
-Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
-	gur.stavi@huawei.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
-	danishanwar@ti.com, lee@trager.us, gongfan1@huawei.com,
-	lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
-	gustavoars@kernel.org, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH net-next v7 4/5] net: rnpgbe: Add basic mbx_fw support
-Message-ID: <bd1d77b2-c218-4dce-bbf6-1cbdecabb30b@lunn.ch>
-References: <20250822023453.1910972-1-dong100@mucse.com>
- <20250822023453.1910972-5-dong100@mucse.com>
- <316f57e3-5953-4db6-84aa-df9278461d30@linux.dev>
- <82E3BE49DB4195F0+20250826013113.GA6582@nic-Precision-5820-Tower>
- <bbdabd48-61c0-46f9-bf33-c49d6d27ffb0@linux.dev>
- <8C1007761115185D+20250826110539.GA461663@nic-Precision-5820-Tower>
+	s=arc-20240116; t=1756211996; c=relaxed/simple;
+	bh=FdTxkx27DEI4OddOd/l4Cuq+3wL3DnqDXP41ZxT66wQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=UU8g33Oc2BBUbV8nzl0jZYOCPTc5u4pucTQqf3JGQ0N56r9N7/+BQIybakfXYHEEyNNK/5N+7Nj44NmANBiYWwfIYTxzWxChThVDcw0KyheyEdpn4c0p1i4pVHMNaHzg5LhzBRxqnqgEXiIXPUzjO7I9CToNTiHhj2PURMIjIBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AC5w6rYO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8373C19422;
+	Tue, 26 Aug 2025 12:39:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756211995;
+	bh=FdTxkx27DEI4OddOd/l4Cuq+3wL3DnqDXP41ZxT66wQ=;
+	h=From:Subject:Date:To:Cc:From;
+	b=AC5w6rYOpqfy4A3s3qhmc2ysemAvxx3gKHj/LVVvO4yTPUY9LZaJS/7PuOE4ABjzm
+	 QNX3VZyrsbKxxwnwkR/wqCKsblVBHt1vOngzuGzxE46FcSCSJqfLylAQAtbZ2BqOu0
+	 U3yXcIjvTfiR/kq+cIqy71DeRgHb2bWnknYgvzXvDjKjAvFt6LAcoC6WjcwSXy0YmP
+	 uQd6pIamL2q7yBM/MYfHrfcvSNQvMhTv71QvTKwxLN3kYN2rxBKHQbV2JpcZk+bvXs
+	 uzo7E0gMHsICQDMol7KT6jJSHWWp/s3UNM4tPDEzpXzJcUzsW44OwWvzAoFdxC3G71
+	 KfZDMv3ByteAw==
+From: Benjamin Tissoires <bentiss@kernel.org>
+Subject: [PATCH v2 0/3] HID: hidraw: rework ioctls
+Date: Tue, 26 Aug 2025 14:39:38 +0200
+Message-Id: <20250826-b4-hidraw-ioctls-v2-0-c7726b236719@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8C1007761115185D+20250826110539.GA461663@nic-Precision-5820-Tower>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAqrrWgC/0XMQQ6CMBBA0auQWTukDNCiK+9hXFQYYCK2ZkrUh
+ HB3Gzcu3+L/DRKrcIJTsYHyS5LEkEGHAvrZh4lRhmwgQ63pqMVbg7MM6t8osV+XhNaOdUNHZ2r
+ ykLOn8iif3/JyzR41PnCdlf1/5KrKOOoaV1JX26MlrNBrGM531sBLGXWCff8CvgPp3J0AAAA=
+X-Change-ID: 20250825-b4-hidraw-ioctls-66f34297032a
+To: Jiri Kosina <jikos@kernel.org>, Shuah Khan <shuah@kernel.org>, 
+ Arnd Bergmann <arnd@kernel.org>
+Cc: linux-input@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Benjamin Tissoires <bentiss@kernel.org>, 
+ Arnd Bergmann <arnd@arndb.de>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756211993; l=1497;
+ i=bentiss@kernel.org; s=20230215; h=from:subject:message-id;
+ bh=FdTxkx27DEI4OddOd/l4Cuq+3wL3DnqDXP41ZxT66wQ=;
+ b=Ehpo9uX+I+5To0S/HtUZphec62X4XoCGF1CHNK+99O3EF/JqRZEZuOrRHAYMCDwppr2pPsXwE
+ vn95o49EWksA2kCoco8qmcp8x4NQwQoKh0B37tdwkcoyxgWKVNlHR6q
+X-Developer-Key: i=bentiss@kernel.org; a=ed25519;
+ pk=7D1DyAVh6ajCkuUTudt/chMuXWIJHlv2qCsRkIizvFw=
 
-> Yes. It is not safe, so I 'must wait_event_timeout before free cookie'....
-> But is there a safe way to do it?
-> Maybe:
-> ->allocate cookie
->   -> map it to an unique id
->     ->set the id to req->cookie
->       ->receive response and check id valid? Then access cookie?
+Arnd sent the v1 of the series in July, and it was bogus. So with a
+little help from claude-sonnet I built up the missing ioctls tests and
+tried to figure out a way to apply Arnd's logic without breaking the
+existing ioctls.
 
-This is part of why adding cookies in a separate patch with a good
-commit message is important.
+The end result is in patch 3/3, which makes use of subfunctions to keep
+the main ioctl code path clean.
 
-Please take a step back. What is the big picture? Why do you need a
-cookie? What is it used for? If you describe what your requirements
-are, we might be able to suggest a better solution, or point you at a
-driver you can copy code from.
+Arnd, I kept your From: and SoB fields, please shout if you are unhappy.
 
-	Andrew
+Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
+---
+changes in v2:
+- add new hidraw ioctls tests
+- refactor Arnd's patch to keep the existing error path logic
+- link to v1: https://lore.kernel.org/linux-input/20250711072847.2836962-1-arnd@kernel.org/
+
+---
+
+Jiri, checkpatch.pl complains about my co-develop tag. Did we get some
+consensus for AI-assisted tag?
+
+---
+Arnd Bergmann (1):
+      HID: tighten ioctl command parsing
+
+Benjamin Tissoires (2):
+      selftests/hid: hidraw: add more coverage for hidraw ioctls
+      selftests/hid: hidraw: forge wrong ioctls and tests them
+
+ drivers/hid/hidraw.c                     | 224 ++++++++-------
+ include/uapi/linux/hidraw.h              |   2 +
+ tools/testing/selftests/hid/hid_common.h |   6 +
+ tools/testing/selftests/hid/hidraw.c     | 473 +++++++++++++++++++++++++++++++
+ 4 files changed, 603 insertions(+), 102 deletions(-)
+---
+base-commit: b80a75cf6999fb79971b41eaec7af2bb4b514714
+change-id: 20250825-b4-hidraw-ioctls-66f34297032a
+
+Best regards,
+-- 
+Benjamin Tissoires <bentiss@kernel.org>
+
 
