@@ -1,373 +1,212 @@
-Return-Path: <linux-kernel+bounces-786631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DC33B35F53
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:41:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02B1FB35F52
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:41:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F04FF7C3C9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:40:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E19C7C3B22
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:40:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA5E3451A5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB5AA34166C;
 	Tue, 26 Aug 2025 12:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZvoJeHgY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="cbQYMRuL"
+Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D835E3431FE;
-	Tue, 26 Aug 2025 12:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18552C033C;
+	Tue, 26 Aug 2025 12:39:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756212001; cv=none; b=XVAMs4/gpN7/B8hh3gjIsU04+5tcDZsjD7wkumYk8cAppFTCysZ922DJONkl1sJxGdGqAb/1ZC0k3cwtWe+tPEyYlOfBkXnctxc5LtzyQbtle15n0VM9ehQpjIqykxEdop1dOS9+iPhc96YSY/ym7zsgLjAye4TEQuszNTh+WOY=
+	t=1756212000; cv=none; b=epWH9qr/kOzUn3V4qbeibcxGBMhKTXBrrJY/A839fV4V1LueHg0NP3/XZm1OJxTAgkks62KPvN1ySe7owfWVjtr4hg2/JtyUR1gyZ5cBOg3YtREcatSZvhiBDNTbwKBQQfySgTZM4fta/3xWZETa5/tgYZ8OLlkCqkaf7ELv6ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756212001; c=relaxed/simple;
-	bh=LjmB04QPgjrYgaIwBfEs0zviXWneUfF/3NzneUzlG0E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BuhKvbifgosTHSD/DiibMhBG/sh72JbgRHZOwVPPGN3yWE7INP92a8tYItUBV409hSf5pBh4nDpi0+HEfU5ehNlw/pZ9EG3fBi7BpTFZqjgGmD1vsrBBzOvfUDiZmxmOYxho5O6PH+JQ2xhK7zSZuDx8f7+Oq5O/qOk9rC5YusI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZvoJeHgY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEBC5C19424;
-	Tue, 26 Aug 2025 12:39:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756212000;
-	bh=LjmB04QPgjrYgaIwBfEs0zviXWneUfF/3NzneUzlG0E=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ZvoJeHgYirAothpZ1fo8dpGbuZ1gXoSqup1ue2GphXnmbcwU0BEB+w7JCcjPMlMZO
-	 oX2Jhpy9viJU9FDMbIMh2EVNRfJ8PyPB/m3r/n+kFrhKiK415y5QW3YHxSEtclIUDg
-	 LaTDgC0U1kW/MzKFNvuqrZeuwPNcuoGeolVKUkd4/vpPy+grcSQh3dO5UFbHt69Nf/
-	 r6OKViMBTlttUipH7DvZyGy5mPjUl3Bdf/cckaCAeExA0bPr/c/zV8T/U4bNYQ6/9S
-	 Lkn3Rsyvxvf8wK3oTq05MOu3TqQJcvjkW3pf0dwSWdW8KIKOdzpknl01F/kFg/NERq
-	 NVeW1exRxPCQQ==
-From: bentiss@kernel.org
-Date: Tue, 26 Aug 2025 14:39:41 +0200
-Subject: [PATCH v2 3/3] HID: tighten ioctl command parsing
+	s=arc-20240116; t=1756212000; c=relaxed/simple;
+	bh=owvMDeO/rtDHrufbsOnTU4uMOllTaekHA/NSLoICYxE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZdUZC5ckaUWCOgJk0/G90LgqHhqG00V1B4yUWe0nT0IThAYxID6ExPCbmG2zIIFaiuJ4ygw7cr0V6eK/6F4OvZvrn+EVh8aGxJ8XaICtMgFUA63E9hPXLfmMHkGdLT6B+hsRMp9/wo0epRBRMwfXd5V1E/BrPz/nkBFN8L75/qY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=cbQYMRuL; arc=none smtp.client-ip=185.125.25.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4cB6gS6rgVz9FT;
+	Tue, 26 Aug 2025 14:39:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1756211988;
+	bh=r4zF4RcKacPFfRNA+PbpvCuNO0g7TdTS1E1lESdaE7Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cbQYMRuLroBswXOyC1WyYIqvpUevslZjEnsUVdI9SIVI06yhHgz+LzXTD0QhiO2dQ
+	 pfj1DCfCLWP6L7FZ7u1ZA1BNdjenl/N6ulUl9YxWBzupi5bIJR8dFM/BM4fQr69av0
+	 5/8JrhUh0G8E+omTpuztKSqfC4VizJMewcTb5+x0=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4cB6gR6sZbzMtQ;
+	Tue, 26 Aug 2025 14:39:47 +0200 (CEST)
+Date: Tue, 26 Aug 2025 14:39:47 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Jeff Xu <jeffxu@google.com>
+Cc: Andy Lutomirski <luto@amacapital.net>, Jann Horn <jannh@google.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>, 
+	Serge Hallyn <serge@hallyn.com>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
+	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
+	Luca Boccassi <bluca@debian.org>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Robert Waite <rowait@microsoft.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Scott Shell <scottsh@microsoft.com>, 
+	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
+	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@chromium.org>
+Subject: Re: [RFC PATCH v1 1/2] fs: Add O_DENY_WRITE
+Message-ID: <20250826.eWi6chuayae4@digikod.net>
+References: <20250822170800.2116980-1-mic@digikod.net>
+ <20250822170800.2116980-2-mic@digikod.net>
+ <CAG48ez1XjUdcFztc_pF2qcoLi7xvfpJ224Ypc=FoGi-Px-qyZw@mail.gmail.com>
+ <20250824.Ujoh8unahy5a@digikod.net>
+ <CALCETrWwd90qQ3U2nZg9Fhye6CMQ6ZF20oQ4ME6BoyrFd0t88Q@mail.gmail.com>
+ <20250825.mahNeel0dohz@digikod.net>
+ <CALmYWFv90uzq0J76+xtUFjZxDzR2rYvrFbrr5Jva5zdy_dvoHA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250826-b4-hidraw-ioctls-v2-3-c7726b236719@kernel.org>
-References: <20250826-b4-hidraw-ioctls-v2-0-c7726b236719@kernel.org>
-In-Reply-To: <20250826-b4-hidraw-ioctls-v2-0-c7726b236719@kernel.org>
-To: Jiri Kosina <jikos@kernel.org>, Shuah Khan <shuah@kernel.org>, 
- Arnd Bergmann <arnd@kernel.org>
-Cc: linux-input@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Benjamin Tissoires <bentiss@kernel.org>, 
- Arnd Bergmann <arnd@arndb.de>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756211993; l=9012;
- i=bentiss@kernel.org; s=20230215; h=from:subject:message-id;
- bh=KZHaOS6e7iHYeZyNxItBcY9Qs+NZLFJ6hQpelRnM5kk=;
- b=i380UFR0uXVHXY2lFZNgDq58bgE+nWEzzbVgLo679JKVUyFr402smHWrAgBHwbtLG8yYbE/4e
- PTec60LEg/hDufvUUgcXfJYNvN7fl61CAlqM8jYjvt/uIwWzznmUkV9
-X-Developer-Key: i=bentiss@kernel.org; a=ed25519;
- pk=7D1DyAVh6ajCkuUTudt/chMuXWIJHlv2qCsRkIizvFw=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALmYWFv90uzq0J76+xtUFjZxDzR2rYvrFbrr5Jva5zdy_dvoHA@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Mon, Aug 25, 2025 at 10:57:57AM -0700, Jeff Xu wrote:
+> Hi Mickaël
+> 
+> On Mon, Aug 25, 2025 at 2:31 AM Mickaël Salaün <mic@digikod.net> wrote:
+> >
+> > On Sun, Aug 24, 2025 at 11:04:03AM -0700, Andy Lutomirski wrote:
+> > > On Sun, Aug 24, 2025 at 4:03 AM Mickaël Salaün <mic@digikod.net> wrote:
+> > > >
+> > > > On Fri, Aug 22, 2025 at 09:45:32PM +0200, Jann Horn wrote:
+> > > > > On Fri, Aug 22, 2025 at 7:08 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > > > > > Add a new O_DENY_WRITE flag usable at open time and on opened file (e.g.
+> > > > > > passed file descriptors).  This changes the state of the opened file by
+> > > > > > making it read-only until it is closed.  The main use case is for script
+> > > > > > interpreters to get the guarantee that script' content cannot be altered
+> > > > > > while being read and interpreted.  This is useful for generic distros
+> > > > > > that may not have a write-xor-execute policy.  See commit a5874fde3c08
+> > > > > > ("exec: Add a new AT_EXECVE_CHECK flag to execveat(2)")
+> > > > > >
+> > > > > > Both execve(2) and the IOCTL to enable fsverity can already set this
+> > > > > > property on files with deny_write_access().  This new O_DENY_WRITE make
+> > > > >
+> > > > > The kernel actually tried to get rid of this behavior on execve() in
+> > > > > commit 2a010c41285345da60cece35575b4e0af7e7bf44.; but sadly that had
+> > > > > to be reverted in commit 3b832035387ff508fdcf0fba66701afc78f79e3d
+> > > > > because it broke userspace assumptions.
+> > > >
+> > > > Oh, good to know.
+> > > >
+> > > > >
+> > > > > > it widely available.  This is similar to what other OSs may provide
+> > > > > > e.g., opening a file with only FILE_SHARE_READ on Windows.
+> > > > >
+> > > > > We used to have the analogous mmap() flag MAP_DENYWRITE, and that was
+> > > > > removed for security reasons; as
+> > > > > https://man7.org/linux/man-pages/man2/mmap.2.html says:
+> > > > >
+> > > > > |        MAP_DENYWRITE
+> > > > > |               This flag is ignored.  (Long ago—Linux 2.0 and earlier—it
+> > > > > |               signaled that attempts to write to the underlying file
+> > > > > |               should fail with ETXTBSY.  But this was a source of denial-
+> > > > > |               of-service attacks.)"
+> > > > >
+> > > > > It seems to me that the same issue applies to your patch - it would
+> > > > > allow unprivileged processes to essentially lock files such that other
+> > > > > processes can't write to them anymore. This might allow unprivileged
+> > > > > users to prevent root from updating config files or stuff like that if
+> > > > > they're updated in-place.
+> > > >
+> > > > Yes, I agree, but since it is the case for executed files I though it
+> > > > was worth starting a discussion on this topic.  This new flag could be
+> > > > restricted to executable files, but we should avoid system-wide locks
+> > > > like this.  I'm not sure how Windows handle these issues though.
+> > > >
+> > > > Anyway, we should rely on the access control policy to control write and
+> > > > execute access in a consistent way (e.g. write-xor-execute).  Thanks for
+> > > > the references and the background!
+> > >
+> > > I'm confused.  I understand that there are many contexts in which one
+> > > would want to prevent execution of unapproved content, which might
+> > > include preventing a given process from modifying some code and then
+> > > executing it.
+> > >
+> > > I don't understand what these deny-write features have to do with it.
+> > > These features merely prevent someone from modifying code *that is
+> > > currently in use*, which is not at all the same thing as preventing
+> > > modifying code that might get executed -- one can often modify
+> > > contents *before* executing those contents.
+> >
+> > The order of checks would be:
+> > 1. open script with O_DENY_WRITE
+> > 2. check executability with AT_EXECVE_CHECK
+> > 3. read the content and interpret it
+> >
+> I'm not sure about the O_DENY_WRITE approach, but the problem is worth solving.
+> 
+> AT_EXECVE_CHECK is not just for scripting languages. It could also
+> work with bytecodes like Java, for example. If we let the Java runtime
+> call AT_EXECVE_CHECK before loading the bytecode, the LSM could
+> develop a policy based on that.
 
-The handling for variable-length ioctl commands in hidraw_ioctl() is
-rather complex and the check for the data direction is incomplete.
+Sure, I'm using "script" to make it simple, but this applies to other
+use cases.
 
-Simplify this code by factoring out the various ioctls grouped by dir
-and size, and using a switch() statement with the size masked out, to
-ensure the rest of the command is correctly matched.
+> 
+> > The deny-write feature was to guarantee that there is no race condition
+> > between step 2 and 3.  All these checks are supposed to be done by a
+> > trusted interpreter (which is allowed to be executed).  The
+> > AT_EXECVE_CHECK call enables the caller to know if the kernel (and
+> > associated security policies) allowed the *current* content of the file
+> > to be executed.  Whatever happen before or after that (wrt.
+> > O_DENY_WRITE) should be covered by the security policy.
+> >
+> Agree, the race problem needs to be solved in order for AT_EXECVE_CHECK.
+> 
+> Enforcing non-write for the path that stores scripts or bytecodes can
+> be challenging due to historical or backward compatibility reasons.
+> Since AT_EXECVE_CHECK provides a mechanism to check the file right
+> before it is used, we can assume it will detect any "problem" that
+> happened before that, (e.g. the file was overwritten). However, that
+> also imposes two additional requirements:
+> 1> the file doesn't change while AT_EXECVE_CHECK does the check.
 
-Fixes: 9188e79ec3fd ("HID: add phys and name ioctls to hidraw")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
----
- drivers/hid/hidraw.c        | 224 ++++++++++++++++++++++++--------------------
- include/uapi/linux/hidraw.h |   2 +
- 2 files changed, 124 insertions(+), 102 deletions(-)
+This is already the case, so any kind of LSM checks are good.
 
-diff --git a/drivers/hid/hidraw.c b/drivers/hid/hidraw.c
-index c887f48756f4be2a4bac03128f2885bde96c1e39..bbd6f23bce78951c7d667ff5c1c923cee3509e3f 100644
---- a/drivers/hid/hidraw.c
-+++ b/drivers/hid/hidraw.c
-@@ -394,27 +394,15 @@ static int hidraw_revoke(struct hidraw_list *list)
- 	return 0;
- }
- 
--static long hidraw_ioctl(struct file *file, unsigned int cmd,
--							unsigned long arg)
-+static long hidraw_fixed_size_ioctl(struct file *file, struct hidraw *dev, unsigned int cmd,
-+				    void __user *arg)
- {
--	struct inode *inode = file_inode(file);
--	unsigned int minor = iminor(inode);
--	long ret = 0;
--	struct hidraw *dev;
--	struct hidraw_list *list = file->private_data;
--	void __user *user_arg = (void __user*) arg;
--
--	down_read(&minors_rwsem);
--	dev = hidraw_table[minor];
--	if (!dev || !dev->exist || hidraw_is_revoked(list)) {
--		ret = -ENODEV;
--		goto out;
--	}
-+	struct hid_device *hid = dev->hid;
- 
- 	switch (cmd) {
- 		case HIDIOCGRDESCSIZE:
--			if (put_user(dev->hid->rsize, (int __user *)arg))
--				ret = -EFAULT;
-+			if (put_user(hid->rsize, (int __user *)arg))
-+				return -EFAULT;
- 			break;
- 
- 		case HIDIOCGRDESC:
-@@ -422,113 +410,145 @@ static long hidraw_ioctl(struct file *file, unsigned int cmd,
- 				__u32 len;
- 
- 				if (get_user(len, (int __user *)arg))
--					ret = -EFAULT;
--				else if (len > HID_MAX_DESCRIPTOR_SIZE - 1)
--					ret = -EINVAL;
--				else if (copy_to_user(user_arg + offsetof(
--					struct hidraw_report_descriptor,
--					value[0]),
--					dev->hid->rdesc,
--					min(dev->hid->rsize, len)))
--					ret = -EFAULT;
-+					return -EFAULT;
-+
-+				if (len > HID_MAX_DESCRIPTOR_SIZE - 1)
-+					return -EINVAL;
-+
-+				if (copy_to_user(arg + offsetof(
-+				    struct hidraw_report_descriptor,
-+				    value[0]),
-+				    hid->rdesc,
-+				    min(hid->rsize, len)))
-+					return -EFAULT;
-+
- 				break;
- 			}
- 		case HIDIOCGRAWINFO:
- 			{
- 				struct hidraw_devinfo dinfo;
- 
--				dinfo.bustype = dev->hid->bus;
--				dinfo.vendor = dev->hid->vendor;
--				dinfo.product = dev->hid->product;
--				if (copy_to_user(user_arg, &dinfo, sizeof(dinfo)))
--					ret = -EFAULT;
-+				dinfo.bustype = hid->bus;
-+				dinfo.vendor = hid->vendor;
-+				dinfo.product = hid->product;
-+				if (copy_to_user(arg, &dinfo, sizeof(dinfo)))
-+					return -EFAULT;
- 				break;
- 			}
- 		case HIDIOCREVOKE:
- 			{
--				if (user_arg)
--					ret = -EINVAL;
--				else
--					ret = hidraw_revoke(list);
--				break;
-+				struct hidraw_list *list = file->private_data;
-+
-+				if (arg)
-+					return -EINVAL;
-+
-+				return hidraw_revoke(list);
- 			}
- 		default:
--			{
--				struct hid_device *hid = dev->hid;
--				if (_IOC_TYPE(cmd) != 'H') {
--					ret = -EINVAL;
--					break;
--				}
-+			/*
-+			 * None of the above ioctls can return -EAGAIN, so
-+			 * use it as a marker that we need to check variable
-+			 * length ioctls.
-+			 */
-+			return -EAGAIN;
-+	}
- 
--				if (_IOC_NR(cmd) == _IOC_NR(HIDIOCSFEATURE(0))) {
--					int len = _IOC_SIZE(cmd);
--					ret = hidraw_send_report(file, user_arg, len, HID_FEATURE_REPORT);
--					break;
--				}
--				if (_IOC_NR(cmd) == _IOC_NR(HIDIOCGFEATURE(0))) {
--					int len = _IOC_SIZE(cmd);
--					ret = hidraw_get_report(file, user_arg, len, HID_FEATURE_REPORT);
--					break;
--				}
-+	return 0;
-+}
- 
--				if (_IOC_NR(cmd) == _IOC_NR(HIDIOCSINPUT(0))) {
--					int len = _IOC_SIZE(cmd);
--					ret = hidraw_send_report(file, user_arg, len, HID_INPUT_REPORT);
--					break;
--				}
--				if (_IOC_NR(cmd) == _IOC_NR(HIDIOCGINPUT(0))) {
--					int len = _IOC_SIZE(cmd);
--					ret = hidraw_get_report(file, user_arg, len, HID_INPUT_REPORT);
--					break;
--				}
-+static long hidraw_rw_variable_size_ioctl(struct file *file, struct hidraw *dev, unsigned int cmd,
-+					  void __user *user_arg)
-+{
-+	int len = _IOC_SIZE(cmd);
-+
-+	switch (cmd & ~IOCSIZE_MASK) {
-+	case HIDIOCSFEATURE(0):
-+		return hidraw_send_report(file, user_arg, len, HID_FEATURE_REPORT);
-+	case HIDIOCGFEATURE(0):
-+		return hidraw_get_report(file, user_arg, len, HID_FEATURE_REPORT);
-+	case HIDIOCSINPUT(0):
-+		return hidraw_send_report(file, user_arg, len, HID_INPUT_REPORT);
-+	case HIDIOCGINPUT(0):
-+		return hidraw_get_report(file, user_arg, len, HID_INPUT_REPORT);
-+	case HIDIOCSOUTPUT(0):
-+		return hidraw_send_report(file, user_arg, len, HID_OUTPUT_REPORT);
-+	case HIDIOCGOUTPUT(0):
-+		return hidraw_get_report(file, user_arg, len, HID_OUTPUT_REPORT);
-+	}
- 
--				if (_IOC_NR(cmd) == _IOC_NR(HIDIOCSOUTPUT(0))) {
--					int len = _IOC_SIZE(cmd);
--					ret = hidraw_send_report(file, user_arg, len, HID_OUTPUT_REPORT);
--					break;
--				}
--				if (_IOC_NR(cmd) == _IOC_NR(HIDIOCGOUTPUT(0))) {
--					int len = _IOC_SIZE(cmd);
--					ret = hidraw_get_report(file, user_arg, len, HID_OUTPUT_REPORT);
--					break;
--				}
-+	return -EINVAL;
-+}
- 
--				/* Begin Read-only ioctls. */
--				if (_IOC_DIR(cmd) != _IOC_READ) {
--					ret = -EINVAL;
--					break;
--				}
-+static long hidraw_ro_variable_size_ioctl(struct file *file, struct hidraw *dev, unsigned int cmd,
-+					  void __user *user_arg)
-+{
-+	struct hid_device *hid = dev->hid;
-+	int len = _IOC_SIZE(cmd);
-+	int field_len;
-+
-+	switch (cmd & ~IOCSIZE_MASK) {
-+	case HIDIOCGRAWNAME(0):
-+		field_len = strlen(hid->name) + 1;
-+		if (len > field_len)
-+			len = field_len;
-+		return copy_to_user(user_arg, hid->name, len) ?  -EFAULT : len;
-+	case HIDIOCGRAWPHYS(0):
-+		field_len = strlen(hid->phys) + 1;
-+		if (len > field_len)
-+			len = field_len;
-+		return copy_to_user(user_arg, hid->phys, len) ?  -EFAULT : len;
-+	case HIDIOCGRAWUNIQ(0):
-+		field_len = strlen(hid->uniq) + 1;
-+		if (len > field_len)
-+			len = field_len;
-+		return copy_to_user(user_arg, hid->uniq, len) ?  -EFAULT : len;
-+	}
- 
--				if (_IOC_NR(cmd) == _IOC_NR(HIDIOCGRAWNAME(0))) {
--					int len = strlen(hid->name) + 1;
--					if (len > _IOC_SIZE(cmd))
--						len = _IOC_SIZE(cmd);
--					ret = copy_to_user(user_arg, hid->name, len) ?
--						-EFAULT : len;
--					break;
--				}
-+	return -EINVAL;
-+}
- 
--				if (_IOC_NR(cmd) == _IOC_NR(HIDIOCGRAWPHYS(0))) {
--					int len = strlen(hid->phys) + 1;
--					if (len > _IOC_SIZE(cmd))
--						len = _IOC_SIZE(cmd);
--					ret = copy_to_user(user_arg, hid->phys, len) ?
--						-EFAULT : len;
--					break;
--				}
-+static long hidraw_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-+{
-+	struct inode *inode = file_inode(file);
-+	unsigned int minor = iminor(inode);
-+	struct hidraw *dev;
-+	struct hidraw_list *list = file->private_data;
-+	void __user *user_arg = (void __user *)arg;
-+	int ret;
- 
--				if (_IOC_NR(cmd) == _IOC_NR(HIDIOCGRAWUNIQ(0))) {
--					int len = strlen(hid->uniq) + 1;
--					if (len > _IOC_SIZE(cmd))
--						len = _IOC_SIZE(cmd);
--					ret = copy_to_user(user_arg, hid->uniq, len) ?
--						-EFAULT : len;
--					break;
--				}
--			}
-+	down_read(&minors_rwsem);
-+	dev = hidraw_table[minor];
-+	if (!dev || !dev->exist || hidraw_is_revoked(list)) {
-+		ret = -ENODEV;
-+		goto out;
-+	}
-+
-+	if (_IOC_TYPE(cmd) != 'H') {
-+		ret = -EINVAL;
-+		goto out;
-+	}
- 
-+	if (_IOC_NR(cmd) > HIDIOCTL_LAST || _IOC_NR(cmd) == 0) {
- 		ret = -ENOTTY;
-+		goto out;
- 	}
-+
-+	ret = hidraw_fixed_size_ioctl(file, dev, cmd, user_arg);
-+	if (ret != -EAGAIN)
-+		goto out;
-+
-+	switch (_IOC_DIR(cmd)) {
-+	case (_IOC_READ | _IOC_WRITE):
-+		ret = hidraw_rw_variable_size_ioctl(file, dev, cmd, user_arg);
-+		break;
-+	case _IOC_READ:
-+		ret = hidraw_ro_variable_size_ioctl(file, dev, cmd, user_arg);
-+		break;
-+	default:
-+		/* Any other IOC_DIR is wrong */
-+		ret = -EINVAL;
-+	}
-+
- out:
- 	up_read(&minors_rwsem);
- 	return ret;
-diff --git a/include/uapi/linux/hidraw.h b/include/uapi/linux/hidraw.h
-index d5ee269864e07fcaba481fa285bacbd98739e44f..ebd701b3c18d9d7465880199091933f13f2e1128 100644
---- a/include/uapi/linux/hidraw.h
-+++ b/include/uapi/linux/hidraw.h
-@@ -48,6 +48,8 @@ struct hidraw_devinfo {
- #define HIDIOCGOUTPUT(len)    _IOC(_IOC_WRITE|_IOC_READ, 'H', 0x0C, len)
- #define HIDIOCREVOKE	      _IOW('H', 0x0D, int) /* Revoke device access */
- 
-+#define HIDIOCTL_LAST		_IOC_NR(HIDIOCREVOKE)
-+
- #define HIDRAW_FIRST_MINOR 0
- #define HIDRAW_MAX_DEVICES 64
- /* number of reports to buffer */
+> 2>The file content kept by the process remains unchanged after passing
+> the AT_EXECVE_CHECK.
 
--- 
-2.51.0
+The goal of this patch was to avoid such race condition in the case
+where executable files can be updated.  But in most cases it should not
+be a security issue (because processes allowed to write to executable
+files should be trusted), but this could still lead to bugs (because of
+inconsistent file content, half-updated).
 
+> 
+> I imagine, the complete solution for AT_EXECVE_CHECK would include
+> those two grantees.
+
+There is no issue directly with AT_EXECVE_CHECK, but according to the
+system configuration, interpreters could read a file that was updated
+after the AT_EXECVE_CHECK.  This should not be an issue for secure
+systems where executable files are only updated with trusted code,
+except if the update mechanism is not atomic.  The main use case for
+this patch series was for generic distros that may not have the
+write-xor-execute guarantees e.g., for developers.
+
+The only viable solution I see would be to have some kind of snapshot of
+files, requested by interpreters, but I'm not sure if it is worth it.
 
