@@ -1,148 +1,143 @@
-Return-Path: <linux-kernel+bounces-785856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8DFBB351DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:45:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59F81B351DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:47:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FF1C3B2FDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:45:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45B391B618F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158B02877D4;
-	Tue, 26 Aug 2025 02:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40F7281503;
+	Tue, 26 Aug 2025 02:47:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EFgwSEui"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D98vDBHd"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F26D1F8AC5;
-	Tue, 26 Aug 2025 02:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBEBB1C8610;
+	Tue, 26 Aug 2025 02:47:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756176328; cv=none; b=G9OxAYX7VaqhsYO3Eje/G3g8UZT6xhMwP+7wfZpNgbHvEMbWbnu2qKWNIdQEhTzWN9ecxGR8Qgz98kL8vN+GUGshKmlPgOy8HzNhlrbvVbmtIseps5sd2fd1Dxt3NUJVxswUfOTtqfSTjvp8TlMuZbbzc7EGmDWEDol2uTM3ZCw=
+	t=1756176460; cv=none; b=TBtE9eIEtEnuwUaee1MOlejJ8yzVK9mJsqsEGjEhBmwjDf2LP+G+sLjUAWZGwf6w/g7m2c37DZy7oK/+EsEQWf6Q72PbzHbD5sn+1TDxh0L3+iTgWMrTdqDNnD1oCBsPzNFcklw9eXmfKV1ZMRBlU5vHA3ev0sFTjPjtgFJCcLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756176328; c=relaxed/simple;
-	bh=abnLgTNhG7CaI2gsEnFS2UxypTk09Y2tZlorm1O9M68=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EFREFaBaTUW8VN/kpcAbIYt4fxqyEYxU3wBZMzGnOk92+GGX0XD54WZq4HHyGbXDaH8GHL4y3otJuBGw4WhlZgrxNPtIp0T/8YErzxSAmN3uHlozUelOQyfjiaIVajShwz8H9Uer/oGpMao79o/JpyefOl74j0Sr0FULYTXd8/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EFgwSEui; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-771fa65b0e1so39254b3a.0;
-        Mon, 25 Aug 2025 19:45:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756176324; x=1756781124; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YM05FkQJlEO4i7eReXjUpbYL00uCaHajUI1BGg8LR98=;
-        b=EFgwSEuibOPUIIJnH5ng11HlTebbibnA99jkwBY+JVxOF+irgt2yFSl6jC/hQtjt1/
-         oeLu3S7gngTkNXtmNI06UgelmQ4s9kTAFv5j0QlJkgWQWq9Ek5fIcuS8TjV34RZzK0no
-         TpQ4UuAx6yg8bW2afnHBbUD82Kquf3DFMrpliuBxtEbq+1XxPdS4+xU3RSQVAZj601Tl
-         yFqf5O7gSBtVRtAlFVDSb47Aq/rVtzs8k+M7PT+fpMi2yiBxYlU6ZaaFyWgHzaKIz/Lr
-         i3Sw6TF6g8IsM5MT6VmaH9vnfwjWBIuI7E065poSrF50jEtlZ8rCKUCu2XUxTNZ/OJ/a
-         cHuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756176324; x=1756781124;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YM05FkQJlEO4i7eReXjUpbYL00uCaHajUI1BGg8LR98=;
-        b=NiV3ORGb4pMYVaNTsxYuTX/vUJ2QWJl3sNh7CeO9uC7d/9qT0v+EnbUgPTqhq8fOcn
-         hgTKYzfBqNbQYWmwfMPxXNpCTCsiHCKloHTAnfotWYZYy0Dq6g2Y14g4WX7snmziteIF
-         +sBDi2pb1mFepR8i5oFASMCCWfswzIgEBokZjJPbmwmIwGnAFpY9V0QoevKB1cNUFXVA
-         mfWoSQUpiP2kvRCxNkwuzrfQltODEWnl9koITFl3A+HSsMov4SqQkbPCDkeOCiy/6Xle
-         8YHHYb4f22hHWFedRwkIZhR2J2h2e6ywUIn1lc9sUtt/4ouC0g1hygRLfGBxPmcM9NK+
-         c/zA==
-X-Forwarded-Encrypted: i=1; AJvYcCUiJqGzV1cEPtBiP1wmXTBqxyfxTBzHqc2wa9u6GjyUfuH7exWEwLM4sI8cgDsTnPHBmT9Rgwir@vger.kernel.org, AJvYcCVLBMNlJu5bGzXgzths9KRR2w2cNG/wJKhoMKLr220aYNjUYbumGesLq5NFOINRQNrqX8FW2TWvm6yS@vger.kernel.org, AJvYcCXgJBbhCx7Kh499teaiMNqNCGqI0HDOaQ77N2MAlDBb7wFgyZtmVzgkinAiU/8VLPTUZeJpbwAgMVQSQ4as@vger.kernel.org
-X-Gm-Message-State: AOJu0YySF4nZpuGB160HoGfwO3zGMEJfJbztbJkAgHtFX00g+rXtIFbr
-	GFRhqStplK+hmIOHoFH3qtE//jmhWPa0OyIm9IhNxSwb/q+vyAqmWqbxEHDHIfCl5D0dm7jAZRV
-	IL3sgpbtAFV2nMRVIzMI3Ckev1VqyhPY=
-X-Gm-Gg: ASbGncuuG+/NYHLcITqkHoW9S1seYJV0gvtjakuVIjcVm9TcJZR3EsY5VmnhmWg2svO
-	ML1WGf+DUPGrfuRSrVHtout1AW3uO/sfL4zGCY9Zz3jeFKoXzltc/ylf8nfmtfJPk15+PLMze+g
-	0ZbLTQKDPqvoGlfaVKcuJAQNDCsdG45FFEDaurXNPB9tNwSakPat/eEWDi8TRBFgLj5YWW4V6ha
-	Sgz8YmqPw==
-X-Google-Smtp-Source: AGHT+IFFuv2IUmcx2fHy8lkCEcCKHoqYT3hBJkZ82z5DlB1q+/wf9lyVVMXUYC/y0d0QMkg0yFM3ck61E7kLLjkCDtU=
-X-Received: by 2002:a05:6a20:3c8f:b0:243:78a:82bd with SMTP id
- adf61e73a8af0-24340da245fmr21525743637.55.1756176324223; Mon, 25 Aug 2025
- 19:45:24 -0700 (PDT)
+	s=arc-20240116; t=1756176460; c=relaxed/simple;
+	bh=Wm/2S21Pg6Nmoyskp843r48HknqB72yRjYDtSbAC9eI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OFGNIuHr5E+0ekOUOIx7m3EEkLhT7MZULYkQp3ymQA3w/xz/6wYVaKhVsmZPs8J07Yc1wiJDlMEd/ubuF+qUp3WrZVaNuiDkzyjC5WWfZaiN14OcDyqRG9AvdsQ48tP3aN4ZJdBPmj0Wz1RX3DrJy/1HFvOe6kd9yGgb9l8KdVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D98vDBHd; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756176458; x=1787712458;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Wm/2S21Pg6Nmoyskp843r48HknqB72yRjYDtSbAC9eI=;
+  b=D98vDBHdVQiSsAWdYqa8G9n9+g2+p+qrSIAMoIQR+MDNj8uREv5nzUri
+   wi6qtgINiynikjMY638u2U1uz76pJY8qMHiSZ4jzVN7/m0sKaMpivEd1w
+   Dv9c7yeA9IsvU4Bi8gZ8kARpN8l3/CFPbuNvedc9gh01wgtc38ukSiwG/
+   dx2+q6GYT69tst8fAOBV3nWOB/O4wCdfPcTv+1qKGsgA59O2tXqa7oILo
+   MfeK5VxxaOLNKobEn+6BmCEr0yOsma4vTd92HLAtXbChTEH7AVWsaK10F
+   mlqU2RgC3Us3MPJvI8kneNOygajSo7frSLAdZnO7yRUozKG/oAm3Kgnxj
+   g==;
+X-CSE-ConnectionGUID: VrOeYicPSWm+O9I8dpiacA==
+X-CSE-MsgGUID: 0HV8kHJQTvielMcDZqsvcA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11533"; a="58467741"
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="58467741"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 19:47:37 -0700
+X-CSE-ConnectionGUID: olyZ81apQuaoegO1K0ddNw==
+X-CSE-MsgGUID: gZmNKNo5SPmhtImu+Ik1wg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="173760513"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa005.fm.intel.com with ESMTP; 25 Aug 2025 19:47:32 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uqjic-000OB9-1g;
+	Tue, 26 Aug 2025 02:47:30 +0000
+Date: Tue, 26 Aug 2025 10:47:09 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Darren.Ye" <darren.ye@mediatek.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: oe-kbuild-all@lists.linux.dev, linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
+	Darren Ye <darren.ye@mediatek.com>
+Subject: Re: [PATCH v7 09/10] ASoC: mediatek: mt8196: add machine driver with
+ nau8825
+Message-ID: <202508261004.7adPXk4m-lkp@intel.com>
+References: <20250822125301.12333-10-darren.ye@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250824005116.2434998-1-mmyangfl@gmail.com> <20250824005116.2434998-3-mmyangfl@gmail.com>
- <20250825221507.vfvnuaxs7hh2jy7d@skbuf> <CAAXyoMNh-6_NtYGBYYBhbiH0UPWCOoiZNhMkgeGqPzKP3HA-_g@mail.gmail.com>
- <dd494b15-8173-4b17-a631-f19e9dddf9b1@lunn.ch>
-In-Reply-To: <dd494b15-8173-4b17-a631-f19e9dddf9b1@lunn.ch>
-From: Yangfl <mmyangfl@gmail.com>
-Date: Tue, 26 Aug 2025 10:44:47 +0800
-X-Gm-Features: Ac12FXy1JuzM1gNaaw75TB7Abb-essQ4-jJcdoOE5NaAwqv1TPFAbHwxBGqM0dQ
-Message-ID: <CAAXyoMO9HmNGxsx6nLH0rbgS6Pgmm0XgU=W5ej977+tF032G2A@mail.gmail.com>
-Subject: Re: [PATCH net-next v6 2/3] net: dsa: tag_yt921x: add support for
- Motorcomm YT921x tags
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Vladimir Oltean <olteanv@gmail.com>, netdev@vger.kernel.org, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Simon Horman <horms@kernel.org>, Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250822125301.12333-10-darren.ye@mediatek.com>
 
-On Tue, Aug 26, 2025 at 10:18=E2=80=AFAM Andrew Lunn <andrew@lunn.ch> wrote=
-:
->
-> > > > +static struct sk_buff *
-> > > > +yt921x_tag_xmit(struct sk_buff *skb, struct net_device *netdev)
-> > > > +{
-> > > > +     struct dsa_port *dp =3D dsa_user_to_port(netdev);
-> > > > +     unsigned int port =3D dp->index;
-> > > > +     __be16 *tag;
-> > > > +     u16 tx;
-> > > > +
-> > > > +     skb_push(skb, YT921X_TAG_LEN);
-> > > > +     dsa_alloc_etype_header(skb, YT921X_TAG_LEN);
-> > > > +
-> > > > +     tag =3D dsa_etype_header_pos_tx(skb);
-> > > > +
-> > > > +     /* We might use yt921x_priv::tag_eth_p, but
-> > > > +      * 1. CPU_TAG_TPID could be configured anyway;
-> > > > +      * 2. Are you using the right chip?
-> > >
-> > > The tag format sort of becomes fixed ABI as soon as user space is abl=
-e
-> > > to run "cat /sys/class/net/eth0/dsa/tagging", see "yt921x", and recor=
-d
-> > > it to a pcap file. Unless the EtherType bears some other meaning rath=
-er
-> > > than being a fixed value, then if you change it later to some other
-> > > value than 0x9988, you'd better also change the protocol name to
-> > > distinguish it from "yt921x".
-> > >
-> >
-> > "EtherType" here does not necessarily become EtherType; better to
-> > think it is a key to enable port control over the switch. It could be
-> > a dynamic random value as long as everyone gets the same value all
-> > over the kernel, see the setup process of the switch driver. Ideally
-> > only the remaining content of the tag should become the ABI (and is
-> > actually enforced by the switch), but making a dynamic "EtherType" is
-> > clearly a worse idea so I don't know how to clarify the fact...
->
-> If i remember correctly, the Marvell switches allow you to set the
-> EtherType they use. We just use the reset default value. It has been
-> like this since somewhere around 2008, and nobody has needed another
-> value.
->
-> What use case do you have for using a different value?
->
->         Andrew
+Hi Darren.Ye,
 
-I don't. I'm just giving reasons why EtherType should not be
-considered "fixed ABI" (or it is the reason it can be ABI if all of
-you are fine with the reset default value).
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on broonie-sound/for-next]
+[also build test WARNING on broonie-spi/for-next robh/for-next linus/master v6.17-rc3 next-20250825]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Darren-Ye/ASoC-mediatek-common-modify-mtk-afe-platform-driver-for-mt8196/20250822-210108
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+patch link:    https://lore.kernel.org/r/20250822125301.12333-10-darren.ye%40mediatek.com
+patch subject: [PATCH v7 09/10] ASoC: mediatek: mt8196: add machine driver with nau8825
+config: arm64-randconfig-r131-20250826 (https://download.01.org/0day-ci/archive/20250826/202508261004.7adPXk4m-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project d26ea02060b1c9db751d188b2edb0059a9eb273d)
+reproduce: (https://download.01.org/0day-ci/archive/20250826/202508261004.7adPXk4m-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508261004.7adPXk4m-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> sound/soc/mediatek/mt8196/mt8196-nau8825.c:183:33: sparse: sparse: incorrect type in argument 3 (different base types) @@     expected unsigned int to @@     got restricted snd_pcm_format_t [usertype] @@
+   sound/soc/mediatek/mt8196/mt8196-nau8825.c:183:33: sparse:     expected unsigned int to
+   sound/soc/mediatek/mt8196/mt8196-nau8825.c:183:33: sparse:     got restricted snd_pcm_format_t [usertype]
+
+vim +183 sound/soc/mediatek/mt8196/mt8196-nau8825.c
+
+   175	
+   176	static int mt8196_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
+   177					  struct snd_pcm_hw_params *params)
+   178	{
+   179		dev_info(rtd->dev, "fix format to 32bit\n");
+   180	
+   181		/* fix BE i2s format to 32bit, clean param mask first */
+   182		snd_mask_reset_range(hw_param_mask(params, SNDRV_PCM_HW_PARAM_FORMAT),
+ > 183				     0, SNDRV_PCM_FORMAT_LAST);
+   184	
+   185		params_set_format(params, SNDRV_PCM_FORMAT_S32_LE);
+   186		return 0;
+   187	}
+   188	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
