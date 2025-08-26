@@ -1,301 +1,529 @@
-Return-Path: <linux-kernel+bounces-786709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9CABB36393
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:31:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F64BB364B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:41:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FECE7A8111
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:29:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84A484675A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:32:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B41D026B747;
-	Tue, 26 Aug 2025 13:29:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE6E2D060B;
+	Tue, 26 Aug 2025 13:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eyQb0ys/"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MPjBVNrF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB746322A1E
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 13:29:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69DBA2BE058
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 13:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756214989; cv=none; b=euKlvLC34kkZGY4kUz35VT65YKf9HKcBg4tEDyYW98F1Ku0dtipslPh+Grc1XqPIjar44jdC9srjSfxxC22lG5V3/qtFN1Xl+GcU0MzIi+EdxlMmTvdaJY3KjPT4oZ/lI6lh40Lex3u2pZtaRIvYjUeRZDrIVAlBcfVmJd9dB1Y=
+	t=1756215066; cv=none; b=se3zB9lrad5oFtxxbXGx45QUYeWfvANPEMeSa50K19vMmT3wD+OEaHM9Zpic8qClAR9aHyl1OG1O1T/nJ+fbloT5H7rqy2kMnY3yWfiIYrEYU55Qoyxcl9P3UAzHA/mTPU3lPN7VPmmebvpuy1zDhRgt+dvRfZUtCeqX4KnVpGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756214989; c=relaxed/simple;
-	bh=R8gGeMSj6+L6lREPzS58a0gP0CzcwK9FgwuKD+f06vk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nBB5gVUtDaajpKhBBCa9zk1M47OP4hef7/SJtmtMhCJR5U0L5Tz/HQBQ0lKtshK97Av0mXL4POXLojNiaK4O3sg/Qj5Rp6YETQaeUZtDpEt9QkBOjHzVebxNP6J0zpO2RvocVAw85HMsabheO8LRnEAAmFxHBT609Zm5Bx1ETX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eyQb0ys/; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3c7ba0f6983so1398392f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 06:29:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756214986; x=1756819786; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wvsKNDuUjmS0VQPWE4YtuWYyDveTbfCbdSn10meZI/Y=;
-        b=eyQb0ys/F1PXu/k15hlzTLKbLwnu9gjaoUdarOZkpcuUokl6u6r/IeR40y+CzkP9m8
-         SgUwTY7jjH+YBYSqq/RgH1158ljipgqP8tgzuhyDeXyUNRTLGjFnTuYVSB3XWrBTIc1l
-         1hcCqsNc8p77H52LPc4VWZWhSvCvjwyuXbnkL26rJUxY+VZ7d9/fcUzd5cGVAWnCbiao
-         ZBezj38IlugH+2CbyA5iJNueiVRnoLEpfFXF39S1xm5fGMIl2JAo7cy5JxBtSXMrVE8e
-         8QJGZ7j7T2xWUDwwQWDcWVbdE0l3dj/yW2Kz39+cYBEewVwlCkeUnvNeDIZOVMLhxkCy
-         i9Rw==
+	s=arc-20240116; t=1756215066; c=relaxed/simple;
+	bh=Wz81753XfR8VU3zTn+IaPzh3mKWD4ka6j/OUnf+0vNw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U6l2GiiVU9uL/6EVw8FHDBrPhgwQzYL0K+tzC4+ozV/TPHEYC4B/id8FUSH3X7ccDsSxpkgC1apYUt+XtrewvikvCFbSA3702lKMC5LexT9vdP3f1JPZPKtpIdWK4DnZGVQvwU+ItC73DzBVPXq31CinhWIHDMd9BbhYwcrLm3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MPjBVNrF; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756215063;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ThzqNbFT5eEjjDVJ/O46CUDGi3VRQ7VcMo2GH+SRmsI=;
+	b=MPjBVNrFwCqSQuO3QocItj87D4tNe2cySQYQwsIJvcxMMvmCv2eSAevMJK9spmqWgBvdtr
+	ZAmIvj1bHqbocuOTgJV7ukVC0praqn5jFgLLzOJwL83eKvXHmwRRJe2Ob8RtmDRDZqKUNT
+	S412WMaVS7voHHmdouJ3Nblc5GoPFpk=
+Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com
+ [209.85.219.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-586-ndjRnisDNueF_cQSBcwA1A-1; Tue, 26 Aug 2025 09:31:01 -0400
+X-MC-Unique: ndjRnisDNueF_cQSBcwA1A-1
+X-Mimecast-MFC-AGG-ID: ndjRnisDNueF_cQSBcwA1A_1756215061
+Received: by mail-yb1-f199.google.com with SMTP id 3f1490d57ef6-e953ce56ceaso3169284276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 06:31:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756214986; x=1756819786;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wvsKNDuUjmS0VQPWE4YtuWYyDveTbfCbdSn10meZI/Y=;
-        b=xR4r2SP26dVm+6Pa6ytosslphtLBAcnJJHdJAjhQ8XKHnC5m5Yx1Oq4GxTVMOoz3u3
-         Kf4jHusG9oun7iVLKzpk9P1muNMZ4YnoJIlCxaA+WV1rDAKgYg6rEMysJT8ySgVJSNbh
-         7ODqn30+wAQc7s7eeVhHGgk0t8eLbef462LhLVtks1YFl3Z5O9A1brltRETcfGjAmb6f
-         hkuujR/ldI4/4DDgLQw06DvRQPXrlJgW44rhszIwbazfPbGyez6GUYIm8C4u+3wlzuqE
-         iGJ7m9JGutH5bIy3XFxLM6kzvDIoy3e/+qSPg3wh9DIl8RerUF3YgqY3ocBnOPUvOKMA
-         MlQA==
-X-Forwarded-Encrypted: i=1; AJvYcCVFLSjnvkz/sGulElE5aevGjysmeWLXAGe5CGWM9mjRGALl6tVS1cEqqCrsyA/X/NmoVqSjLaZwd1RcElk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBGFOFEVtmoOPRPEauG42z+/btwHYKtRsTnYgn9OD3byZhpFz7
-	ctrqq/JENqwGwH8rQ7E7d7l8NX9L1WJ08EPcPhteLwMYIIpzFb0M59HI0t2E/9UebiU=
-X-Gm-Gg: ASbGncscR2Cd/qAw8FXEWgSlactCKxvTxYXH0NbDztqQgILw4s/D+8mvNWpqm+cmTYz
-	ihH3AiQnHPP11d/Yo0939LTZmvFrQFaaWfZ+WJcL6LLJqDOnWlLgTRv/qM8iOQUcrxw6eno/7s3
-	mnfSgIqdHf0iw6GQC4LUjwsoTXCVWfjO47aFKPbhYAE7GYS/pn+Uv589zVqbJsu4OwbQjbLVcbU
-	JFkOzgiGk/a6YoKs7g4kWcW3OLkDvsC6ka+0Z+Ljb/fcFUo47TJffHsxGrn3KWY6+aNCf83eSeR
-	AhYBJMFrhCsePwQgFVN7Oe6eoHuDFRF5oFIblLeWkxtsvSQo5YMPQoXiHZMSqdDZevguBzDdhtl
-	oFE2G4RdNUwGDV/CsWnkCKRM4Fnbo7tcmdJXwHw==
-X-Google-Smtp-Source: AGHT+IFWuW9FaUNkD9tIPp6wuI6vkMWmS0zI4RdhCAvwYdRqkj87/TiU6ljHYOFki7P8Tlb1PHy0Gw==
-X-Received: by 2002:a05:6000:2006:b0:3b7:885d:d2ec with SMTP id ffacd0b85a97d-3cbb15ca4c0mr1295584f8f.18.1756214985928;
-        Tue, 26 Aug 2025 06:29:45 -0700 (PDT)
-Received: from [192.168.1.3] ([185.48.76.109])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c7117d5b10sm16175319f8f.47.2025.08.26.06.29.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Aug 2025 06:29:45 -0700 (PDT)
-Message-ID: <8f3a1f75-3476-47e9-a8d6-f396939b3240@linaro.org>
-Date: Tue, 26 Aug 2025 14:29:44 +0100
+        d=1e100.net; s=20230601; t=1756215061; x=1756819861;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ThzqNbFT5eEjjDVJ/O46CUDGi3VRQ7VcMo2GH+SRmsI=;
+        b=hqk77DK8QHj6tIR2RpQZREBPExShjT3UflL7ZatU3l0bL5JXQPf4LLW50sJTk7FbQD
+         dE1O8spKhwtWORcHSinZJPlbcOha7X0zvHxcmbjPVkUAsZ0SFCgiIR73joZJ08gy814C
+         9gEoUl9VQBZIVQ+CX7dW6Xv1Mr4+I+qGXCivh1HfGwTKmNwit1Jv6OZQ+/78z33m8cpw
+         mDRL33N/EKdke5WKW2wAJsHRHKyOX/Pt1Xp3gdRtBmEwadJrwRL5RB58VOQyG1b6fv7J
+         8Nl69SV9IU37hqlCqSCTsT//ZcgqJgIE3AnAvoWfnxyzCb2C99j/tm2vHR5b1DWLHSE3
+         jmDA==
+X-Forwarded-Encrypted: i=1; AJvYcCVi2tBcPsihqkv7bkx+0GtK7JmGN4iVbNyKNb99GrBUJ3T220GjUpl7tZkts0S8I9P+9qEjm4IwxzEEaYQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPXvmaw1bxfAbQWh4RMm5WN3Tom7dL+5m87Ztw3Mn/ulbhe7oj
+	kd+AdacyHFToLi94+wsi84PP2G0/oFzrRf7ZGe988IfGPtQpW6ylHLi6WuDqo1nWBpZWwnfi9Xv
+	MaqGYBGWL3vFUtKg9A3/tlMa/F4E2m6ztiSedZprqCywWIfCUpyDvsvCF8qUcRh3Qk9XCGe0woV
+	y/MZbTCgxatYKYthr7uJ27ROZ8BVQe62oYA+g2HJ/t
+X-Gm-Gg: ASbGncuHwnc2QcBHAyX4suZDZ6XIVP4jQvnjKfPE8kTE488qwwkbwJNoFQO6El6mO4I
+	J0dZtoH4+tN/LcWIWalfnNRP0KBdaNOjnGG1TvqaA1PwZz6KkeF+rtMEUmtzazmMJnpaw4T7FKf
+	TJVljQTwHcCRCdmlrzM+VErWw=
+X-Received: by 2002:a05:6902:1508:b0:e93:494e:9ec1 with SMTP id 3f1490d57ef6-e951c226d3cmr16403732276.19.1756215060223;
+        Tue, 26 Aug 2025 06:31:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFwnjAIyAKhv/avnddORq32kP91AHRB6ucC6WdjDpDx7JPGPfCyoy8rJf6lzWUDJb45Nn1NI45iA1j8g8ls5/U=
+X-Received: by 2002:a05:6902:1508:b0:e93:494e:9ec1 with SMTP id
+ 3f1490d57ef6-e951c226d3cmr16403642276.19.1756215059326; Tue, 26 Aug 2025
+ 06:30:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/3] coresight: tpda: add sysfs node to flush specific
- port
-To: Jie Gan <jie.gan@oss.qualcomm.com>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>
-References: <20250826070150.5603-1-jie.gan@oss.qualcomm.com>
- <20250826070150.5603-4-jie.gan@oss.qualcomm.com>
- <3ac2954e-5663-4ea0-bc1d-a09e1992af5b@linaro.org>
- <a6be4d7b-d163-47df-9ab3-ca410f703555@oss.qualcomm.com>
- <939eb45c-f48e-40ce-86e8-710afa2b5c9b@linaro.org>
- <5df27be9-0347-49d1-ba1e-21d6a2172314@oss.qualcomm.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <5df27be9-0347-49d1-ba1e-21d6a2172314@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250819134205.622806-1-npache@redhat.com> <20250819134205.622806-3-npache@redhat.com>
+ <248d57e5-8cd5-408b-a6c8-970df6876b6c@lucifer.local> <CAA1CXcC-7MudjF06JaJQUvKkNh4vPHTTeoMDBE-devotyFXjkA@mail.gmail.com>
+ <d8932d68-1c43-479e-8167-6ab7b1b92cb6@lucifer.local>
+In-Reply-To: <d8932d68-1c43-479e-8167-6ab7b1b92cb6@lucifer.local>
+From: Nico Pache <npache@redhat.com>
+Date: Tue, 26 Aug 2025 07:30:32 -0600
+X-Gm-Features: Ac12FXwynFJ3OHCwYVCi6LKJzKmqCLxiByf5LM0fU2vuu8ONvv7U6rorcw7ASiQ
+Message-ID: <CAA1CXcDRnCtKRyXKLmxDwRBncw7GzqchwL1XRhHpDWbzttrw+g@mail.gmail.com>
+Subject: Re: [PATCH v10 02/13] introduce collapse_single_pmd to unify
+ khugepaged and madvise_collapse
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com, 
+	Liam.Howlett@oracle.com, ryan.roberts@arm.com, dev.jain@arm.com, 
+	corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org, 
+	mathieu.desnoyers@efficios.com, akpm@linux-foundation.org, baohua@kernel.org, 
+	willy@infradead.org, peterx@redhat.com, wangkefeng.wang@huawei.com, 
+	usamaarif642@gmail.com, sunnanyong@huawei.com, vishal.moola@gmail.com, 
+	thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com, 
+	kirill.shutemov@linux.intel.com, aarcange@redhat.com, raquini@redhat.com, 
+	anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de, 
+	will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org, 
+	jglisse@google.com, surenb@google.com, zokeefe@google.com, hannes@cmpxchg.org, 
+	rientjes@google.com, mhocko@suse.com, rdunlap@infradead.org, hughd@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Aug 22, 2025 at 4:23=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> On Wed, Aug 20, 2025 at 10:35:57AM -0600, Nico Pache wrote:
+> > On Wed, Aug 20, 2025 at 5:22=E2=80=AFAM Lorenzo Stoakes
+> > <lorenzo.stoakes@oracle.com> wrote:
+> > >
+> > > On Tue, Aug 19, 2025 at 07:41:54AM -0600, Nico Pache wrote:
+> > > > The khugepaged daemon and madvise_collapse have two different
+> > > > implementations that do almost the same thing.
+> > > >
+> > > > Create collapse_single_pmd to increase code reuse and create an ent=
+ry
+> > > > point to these two users.
+> > > >
+> > > > Refactor madvise_collapse and collapse_scan_mm_slot to use the new
+> > > > collapse_single_pmd function. This introduces a minor behavioral ch=
+ange
+> > > > that is most likely an undiscovered bug. The current implementation=
+ of
+> > > > khugepaged tests collapse_test_exit_or_disable before calling
+> > > > collapse_pte_mapped_thp, but we weren't doing it in the madvise_col=
+lapse
+> > > > case. By unifying these two callers madvise_collapse now also perfo=
+rms
+> > > > this check.
+> > > >
+> > > > Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> > > > Acked-by: David Hildenbrand <david@redhat.com>
+> > > > Signed-off-by: Nico Pache <npache@redhat.com>
+> > > > ---
+> > > >  mm/khugepaged.c | 94 ++++++++++++++++++++++++++-------------------=
+----
+> > > >  1 file changed, 49 insertions(+), 45 deletions(-)
+> > > >
+> > > > diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> > > > index 0e7bbadf03ee..b7b98aebb670 100644
+> > > > --- a/mm/khugepaged.c
+> > > > +++ b/mm/khugepaged.c
+> > > > @@ -2382,6 +2382,50 @@ static int collapse_scan_file(struct mm_stru=
+ct *mm, unsigned long addr,
+> > > >       return result;
+> > > >  }
+> > > >
+> > > > +/*
+> > > > + * Try to collapse a single PMD starting at a PMD aligned addr, an=
+d return
+> > > > + * the results.
+> > > > + */
+> > > > +static int collapse_single_pmd(unsigned long addr,
+> > > > +                             struct vm_area_struct *vma, bool *mma=
+p_locked,
+> > > > +                             struct collapse_control *cc)
+> > > > +{
+> > > > +     int result =3D SCAN_FAIL;
+> > >
+> > > You assign result in all branches, so this can be uninitialised.
+> > ack, thanks.
+> > >
+> > > > +     struct mm_struct *mm =3D vma->vm_mm;
+> > > > +
+> > > > +     if (!vma_is_anonymous(vma)) {
+> > > > +             struct file *file =3D get_file(vma->vm_file);
+> > > > +             pgoff_t pgoff =3D linear_page_index(vma, addr);
+> > > > +
+> > > > +             mmap_read_unlock(mm);
+> > > > +             *mmap_locked =3D false;
+> > > > +             result =3D collapse_scan_file(mm, addr, file, pgoff, =
+cc);
+> > > > +             fput(file);
+> > > > +             if (result =3D=3D SCAN_PTE_MAPPED_HUGEPAGE) {
+> > > > +                     mmap_read_lock(mm);
+> > > > +                     *mmap_locked =3D true;
+> > > > +                     if (collapse_test_exit_or_disable(mm)) {
+> > > > +                             mmap_read_unlock(mm);
+> > > > +                             *mmap_locked =3D false;
+> > > > +                             result =3D SCAN_ANY_PROCESS;
+> > > > +                             goto end;
+> > >
+> > > Don't love that in e.g. collapse_scan_mm_slot() we are using the mmap=
+ lock being
+> > > disabled as in effect an error code.
+> > >
+> > > Is SCAN_ANY_PROCESS correct here? Because in collapse_scan_mm_slot() =
+you'd
+> > > previously:
+> > https://lore.kernel.org/lkml/a881ed65-351a-469f-b625-a3066d0f1d5c@linux=
+.alibaba.com/
+> > Baolin brought up a good point a while back that if
+> > collapse_test_exit_or_disable returns true we will be breaking out of
+> > the loop and should change the return value to indicate this. So to
+> > combine the madvise breakout and the scan_slot breakout we drop the
+> > lock and return SCAN_ANY_PROCESS.
+>
+> Let's document in commit msg, as Liam's pointed out it's really important=
+ to
+> track things, and part of that as well is detailing in the commit message=
+ what
+> you're doing + why.
+ack! thanks
+>
+> With the THP code being as 'organically grown' as it is shall we say :) i=
+t's
+> even more mportant to be specific.
+>
+> > >
+> > >         if (*result =3D=3D SCAN_PTE_MAPPED_HUGEPAGE) {
+> > >                 mmap_read_lock(mm);
+> > >                 if (collapse_test_exit_or_disable(mm))
+> > >                         goto breakouterloop;
+> > >                 ...
+> > >         }
+> > >
+> > > But now you're setting result =3D SCAN_ANY_PROCESS rather than
+> > > SCAN_PTE_MAPPED_HUGEPAGE in this instance?
+> > >
+> > > You don't mention that you're changing this, or at least explicitly e=
+nough,
+> > > the commit message should state that you're changing this and explain=
+ why
+> > > it's ok.
+> > I do state it but perhaps I need to be more verbose! I will update the
+> > message to state we are also changing the result value too.
+>
+> Thanks!
+>
+> > >
+> > > This whole file is horrid, and it's kinda an aside, but I really wish=
+ we
+> > > had some comment going through each of the scan_result cases and expl=
+aining
+> > > what each one meant.
+> > Yeah its been a huge pain to have to investigate what everything is
+> > supposed to mean, and I often have to go searching to confirm things.
+> > include/trace/events/huge_memory.h has a "good" summary of them
+> > >
+> > > Also I think:
+> > >
+> > >         return SCAN_ANY_PROCESS;
+> > >
+> > > Is better than:
+> > >
+> > >         result =3D SCAN_ANY_PROCESS;
+> > >         goto end;
+> > I agree! I will change that :)
+> > >         ...
+> > > end:
+> > >         return result;
+> > >
+> > > > +                     }
+> > > > +                     result =3D collapse_pte_mapped_thp(mm, addr,
+> > > > +                                                      !cc->is_khug=
+epaged);
+> > >
+> > > Hm another change here, in the original code in collapse_scan_mm_slot=
+()
+> > > this is:
+> > >
+> > >         *result =3D collapse_pte_mapped_thp(mm,
+> > >                 khugepaged_scan.address, false);
+> > >
+> > > Presumably collapse_scan_mm_slot() is only ever invoked with
+> > > cc->is_khugepaged?
+> > Correct, but the madvise_collapse calls this with true, hence why it
+> > now depends on the is_khugepaged variable. No functional change here.
+> > >
+> > > Maybe worth adding a VM_WARN_ON_ONCE(!cc->is_khugepaged) at the top o=
+f
+> > > collapse_scan_mm_slot() to assert this (and other places where your c=
+hange
+> > > assumes this to be the case).
+> > Ok I will investigate doing that but it would take a huge mistake to
+> > hit that assertion.
+> > >
+> > >
+> > > > +                     if (result =3D=3D SCAN_PMD_MAPPED)
+> > > > +                             result =3D SCAN_SUCCEED;
+> > > > +                     mmap_read_unlock(mm);
+> > > > +                     *mmap_locked =3D false;
+> > > > +             }
+> > > > +     } else {
+> > > > +             result =3D collapse_scan_pmd(mm, vma, addr, mmap_lock=
+ed, cc);
+> > > > +     }
+> > > > +     if (cc->is_khugepaged && result =3D=3D SCAN_SUCCEED)
+> > > > +             ++khugepaged_pages_collapsed;
+> > >
+> > > Similarly, presumably because collapse_scan_mm_slot() only ever invok=
+ed
+> > > khugepaged case this didn't have the cc->is_khugepaged check?
+> > Correct, we only increment this when its khugepaged, so we need to
+> > guard it so madvise collapse wont increment this.
+>
+> You know what I'm going to say :) commit message please!
+ack, although this isnt anything new. I just needed to add it because
+madvise collapse doesnt increment this. Still I'll add a blurb.
+>
+> > >
+> > > > +end:
+> > > > +     return result;
+> > > > +}
+> > >
+> > > There's a LOT of nesting going on here, I think we can simplify this =
+a
+> > > lot. If we make the change I noted above re: returning SCAN_ANY_PROCE=
+SS< we
+> > > can move the end label up a bit and avoid a ton of nesting, e.g.:
+> > Ah I like this much more, I will try to implement/test it.
+> > >
+> > > static int collapse_single_pmd(unsigned long addr,
+> > >                                 struct vm_area_struct *vma, bool *mma=
+p_locked,
+> > >                                 struct collapse_control *cc)
+> > > {
+> > >         struct mm_struct *mm =3D vma->vm_mm;
+> > >         struct file *file;
+> > >         pgoff_t pgoff;
+> > >         int result;
+> > >
+> > >         if (vma_is_anonymous(vma)) {
+> > >                 result =3D collapse_scan_pmd(mm, vma, addr, mmap_lock=
+ed, cc);
+> > >                 goto end:
+> > >         }
+> > >
+> > >         file =3D get_file(vma->vm_file);
+> > >         pgoff =3D linear_page_index(vma, addr);
+> > >
+> > >         mmap_read_unlock(mm);
+> > >         *mmap_locked =3D false;
+> > >         result =3D collapse_scan_file(mm, addr, file, pgoff, cc);
+> > >         fput(file);
+> > >         if (result !=3D SCAN_PTE_MAPPED_HUGEPAGE)
+> > >                 goto end;
+> > >
+> > >         mmap_read_lock(mm);
+> > >         *mmap_locked =3D true;
+> > >         if (collapse_test_exit_or_disable(mm)) {
+> > >                 mmap_read_unlock(mm);
+> > >                 *mmap_locked =3D false;
+> > >                 return SCAN_ANY_PROCESS;
+> > >         }
+> > >         result =3D collapse_pte_mapped_thp(mm, addr, !cc->is_khugepag=
+ed);
+> > >         if (result =3D=3D SCAN_PMD_MAPPED)
+> > >                 result =3D SCAN_SUCCEED;
+> > >         mmap_read_unlock(mm);
+> > >         *mmap_locked =3D false;
+> > >
+> > > end:
+> > >         if (cc->is_khugepaged && result =3D=3D SCAN_SUCCEED)
+> > >                 ++khugepaged_pages_collapsed;
+> > >
+> > >         return result;
+> > > }
+> > >
+> > > (untested, thrown together so do double check!)
+>
+> This suggested refactoring work for you?
+Looks correct, I'm going to implement all the changes then test to
+make sure it works as intended.
+>
+> > >
+> > > > +
+> > > >  static unsigned int collapse_scan_mm_slot(unsigned int pages, int =
+*result,
+> > > >                                           struct collapse_control *=
+cc)
+> > > >       __releases(&khugepaged_mm_lock)
+> > > > @@ -2455,34 +2499,9 @@ static unsigned int collapse_scan_mm_slot(un=
+signed int pages, int *result,
+> > > >                       VM_BUG_ON(khugepaged_scan.address < hstart ||
+> > > >                                 khugepaged_scan.address + HPAGE_PMD=
+_SIZE >
+> > > >                                 hend);
+> > > > -                     if (!vma_is_anonymous(vma)) {
+> > > > -                             struct file *file =3D get_file(vma->v=
+m_file);
+> > > > -                             pgoff_t pgoff =3D linear_page_index(v=
+ma,
+> > > > -                                             khugepaged_scan.addre=
+ss);
+> > > > -
+> > > > -                             mmap_read_unlock(mm);
+> > > > -                             mmap_locked =3D false;
+> > > > -                             *result =3D collapse_scan_file(mm,
+> > > > -                                     khugepaged_scan.address, file=
+, pgoff, cc);
+> > > > -                             fput(file);
+> > > > -                             if (*result =3D=3D SCAN_PTE_MAPPED_HU=
+GEPAGE) {
+> > > > -                                     mmap_read_lock(mm);
+> > > > -                                     if (collapse_test_exit_or_dis=
+able(mm))
+> > > > -                                             goto breakouterloop;
+> > > > -                                     *result =3D collapse_pte_mapp=
+ed_thp(mm,
+> > > > -                                             khugepaged_scan.addre=
+ss, false);
+> > > > -                                     if (*result =3D=3D SCAN_PMD_M=
+APPED)
+> > > > -                                             *result =3D SCAN_SUCC=
+EED;
+> > > > -                                     mmap_read_unlock(mm);
+> > > > -                             }
+> > > > -                     } else {
+> > > > -                             *result =3D collapse_scan_pmd(mm, vma=
+,
+> > > > -                                     khugepaged_scan.address, &mma=
+p_locked, cc);
+> > > > -                     }
+> > > > -
+> > > > -                     if (*result =3D=3D SCAN_SUCCEED)
+> > > > -                             ++khugepaged_pages_collapsed;
+> > > >
+> > > > +                     *result =3D collapse_single_pmd(khugepaged_sc=
+an.address,
+> > > > +                                                     vma, &mmap_lo=
+cked, cc);
+> > > >                       /* move to next address */
+> > > >                       khugepaged_scan.address +=3D HPAGE_PMD_SIZE;
+> > > >                       progress +=3D HPAGE_PMD_NR;
+> > > > @@ -2799,34 +2818,19 @@ int madvise_collapse(struct vm_area_struct =
+*vma, unsigned long start,
+> > > >               mmap_assert_locked(mm);
+> > > >               memset(cc->node_load, 0, sizeof(cc->node_load));
+> > > >               nodes_clear(cc->alloc_nmask);
+> > > > -             if (!vma_is_anonymous(vma)) {
+> > > > -                     struct file *file =3D get_file(vma->vm_file);
+> > > > -                     pgoff_t pgoff =3D linear_page_index(vma, addr=
+);
+> > > >
+> > > > -                     mmap_read_unlock(mm);
+> > > > -                     mmap_locked =3D false;
+> > > > -                     result =3D collapse_scan_file(mm, addr, file,=
+ pgoff, cc);
+> > > > -                     fput(file);
+> > > > -             } else {
+> > > > -                     result =3D collapse_scan_pmd(mm, vma, addr,
+> > > > -                                                &mmap_locked, cc);
+> > > > -             }
+> > > > +             result =3D collapse_single_pmd(addr, vma, &mmap_locke=
+d, cc);
+> > > > +
+> > >
+> > > Ack the fact you noted the behaviour change re:
+> > > collapse_test_exit_or_disable() that seems fine.
+> > >
+> > > >               if (!mmap_locked)
+> > > >                       *lock_dropped =3D true;
+> > > >
+> > > > -handle_result:
+> > > >               switch (result) {
+> > > >               case SCAN_SUCCEED:
+> > > >               case SCAN_PMD_MAPPED:
+> > > >                       ++thps;
+> > > >                       break;
+> > > > -             case SCAN_PTE_MAPPED_HUGEPAGE:
+> > > > -                     BUG_ON(mmap_locked);
+> > > > -                     mmap_read_lock(mm);
+> > > > -                     result =3D collapse_pte_mapped_thp(mm, addr, =
+true);
+> > > > -                     mmap_read_unlock(mm);
+> > > > -                     goto handle_result;
+> > >
+> > > One thing that differs with new code her is we filter SCAN_PMD_MAPPED=
+ to
+> > > SCAN_SUCCEED.
+> > >
+> > > I was about to say 'but ++thps - is this correct' but now I realise t=
+his
+> > > was looping back on itself with a goto to do just that... ugh ye gads=
+.
+> > >
+> > > Anwyay that's fine because it doesn't change anything.
+> > >
+> > > Re: switch statement in general, again would be good to always have e=
+ach
+> > > scan possibility in switch statements, but perhaps given so many not
+> > > practical :)
+> >
+> > Yeah it may be worth investigating for future changes I have for
+> > khugepaged (including the new switch statement I implement later and
+> > you commented on)
+>
+> Ack yeah this can be one for the future!
+>
+> > >
+> > > (that way the compiler warns on missing a newly added enum val)
+> > >
+> > > >               /* Whitelisted set of results where continuing OK */
+> > > > +             case SCAN_PTE_MAPPED_HUGEPAGE:
+> > > >               case SCAN_PMD_NULL:
+> > > >               case SCAN_PTE_NON_PRESENT:
+> > > >               case SCAN_PTE_UFFD_WP:
+> > > > --
+> >
+> > Thanks for the review :)
+>
+> No probs, to underline as well - the critique is to make sure we get this=
+ right,
+> my aim here is to get your series landed in as good a form as possible :)
+All critiquing is welcome and appreciated :) The refactoring looks
+much better now too!
 
-
-On 26/08/2025 1:11 pm, Jie Gan wrote:
-> 
-> 
-> On 8/26/2025 5:54 PM, James Clark wrote:
->>
->>
->> On 26/08/2025 10:39 am, Jie Gan wrote:
->>>
->>>
->>> On 8/26/2025 5:27 PM, James Clark wrote:
->>>>
->>>>
->>>> On 26/08/2025 8:01 am, Jie Gan wrote:
->>>>> From: Tao Zhang <tao.zhang@oss.qualcomm.com>
->>>>>
->>>>> Setting bit i in the TPDA_FLUSH_CR register initiates a flush request
->>>>> for port i, forcing the data to synchronize and be transmitted to the
->>>>> sink device.
->>>>>
->>>>> Signed-off-by: Tao Zhang <tao.zhang@oss.qualcomm.com>
->>>>> Co-developed-by: Jie Gan <jie.gan@oss.qualcomm.com>
->>>>> Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
->>>>> ---
->>>>>   .../testing/sysfs-bus-coresight-devices-tpda  |  7 +++
->>>>>   drivers/hwtracing/coresight/coresight-tpda.c  | 45 ++++++++++++++ 
->>>>> + ++++
->>>>>   drivers/hwtracing/coresight/coresight-tpda.h  |  1 +
->>>>>   3 files changed, 53 insertions(+)
->>>>>
->>>>> diff --git a/Documentation/ABI/testing/sysfs-bus-coresight-devices- 
->>>>> tpda b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpda
->>>>> index e827396a0fa1..8803158ba42f 100644
->>>>> --- a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpda
->>>>> +++ b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpda
->>>>> @@ -41,3 +41,10 @@ Contact:    Jinlong Mao 
->>>>> <jinlong.mao@oss.qualcomm.com>, Tao Zhang <tao.zhang@oss.qu
->>>>>   Description:
->>>>>           (RW) Configure the CMB/MCMB channel mode for all enabled 
->>>>> ports.
->>>>>           Value 0 means raw channel mapping mode. Value 1 means 
->>>>> channel pair marking mode.
->>>>> +
->>>>> +What:        /sys/bus/coresight/devices/<tpda-name>/port_flush_req
->>>>> +Date:        August 2025
->>>>> +KernelVersion:    6.17
->>>>> +Contact:    Jinlong Mao <jinlong.mao@oss.qualcomm.com>, Tao Zhang 
->>>>> <tao.zhang@oss.qualcomm.com>, Jie Gan <jie.gan@oss.qualcomm.com>
->>>>> +Description:
->>>>> +        (RW) Configure the bit i to requests a flush operation of 
->>>>> port i on the TPDA.
->>>>> diff --git a/drivers/hwtracing/coresight/coresight-tpda.c b/ 
->>>>> drivers/ hwtracing/coresight/coresight-tpda.c
->>>>> index 9e623732d1e7..c5f169facc51 100644
->>>>> --- a/drivers/hwtracing/coresight/coresight-tpda.c
->>>>> +++ b/drivers/hwtracing/coresight/coresight-tpda.c
->>>>> @@ -509,6 +509,50 @@ static ssize_t cmbchan_mode_store(struct 
->>>>> device *dev,
->>>>>   }
->>>>>   static DEVICE_ATTR_RW(cmbchan_mode);
->>>>> +static ssize_t port_flush_req_show(struct device *dev,
->>>>> +                   struct device_attribute *attr,
->>>>> +                   char *buf)
->>>>> +{
->>>>> +    struct tpda_drvdata *drvdata = dev_get_drvdata(dev->parent);
->>>>> +    unsigned long val;
->>>>> +
->>>>> +    guard(spinlock)(&drvdata->spinlock);
->>>>> +    if (!drvdata->csdev->refcnt)
->>>>> +        return -EPERM;
->>>>> +
->>>>> +    val = readl_relaxed(drvdata->base + TPDA_FLUSH_CR);
->>>>> +    return sysfs_emit(buf, "%lx\n", val);
->>>>
->>>> Decimal would be better for a port number that goes from 0 - 127. If 
->>>> you really want to use hex then don't you need to prefix it with 0x? 
->>>> Otherwise you can't tell the difference between decimal 10 and hex 
->>>> 10, and it's not documented that it's hex either.
->>>>
->>>
->>> Got it. I will fix the code here, and update the description in 
->>> document.
->>>
->>>>> +}
->>>>> +
->>>>> +static ssize_t port_flush_req_store(struct device *dev,
->>>>> +                    struct device_attribute *attr,
->>>>> +                    const char *buf,
->>>>> +                    size_t size)
->>>>> +{
->>>>> +    struct tpda_drvdata *drvdata = dev_get_drvdata(dev->parent);
->>>>> +    unsigned long val;
->>>>> +
->>>>> +    if (kstrtoul(buf, 0, &val))
->>>>> +        return -EINVAL;
->>>>> +
->>>>> +    /* The valid value ranges from 0 to 127 */
->>>>> +    if (val > 127)
->>>>> +        return -EINVAL;
->>>>> +
->>>>> +    guard(spinlock)(&drvdata->spinlock);
->>>>> +    if (!drvdata->csdev->refcnt)
->>>>> +        return -EPERM;
->>>>> +
->>>>> +    if (val) {
->>>>
->>>> If 0 - 127 are valid don't you want to write 0 too?
->>>
->>> It's 1-127 here. 0 may leads to an unexpected issue here.
->>>
->>> Thanks,
->>> Jie
->>>
->>
->> Then can't the above be this:
->>
->>    /* The valid value ranges from 1 to 127 */
->>    if (val < 1 || val > 127)
->>      return -EINVAL;
->>
->> But I'm wondering how you flush port 0?
->>
-> 
-> BIT(0) represents port 0 with value 1 and the default value 0 means 
-> nothing will be triggered here.
-> 
->> Isn't the default value 0? So if you never write to port_flush_req 
->> then you'd flush port 0, but why can't you change it back to 0 after 
->> writing a different value?
-> 
-> We can change the value back to 0 but I think we shouldn't do this 
-> although I haven't suffer issue after I changed it back to 0(for bit).
-> Because the document mentioned: "Once set, the bit remains set until the 
-> flush operation on port i completes and the bit then clears to 0". So I 
-> think we should let the flush operation finish as expected and clear the 
-> bit by itself? Or may suffer unexpected error when try to interrupt the 
-> flush operation?
-> 
-> Thanks,
-> Jie
-
-Oh I see, I thought this was a port number, not a bit for each port. 
-That changes this and my other comment about changing the output to be 
-decimal then. Hex is probably better but it needs the 0x prefix.
-
-I would also treat 0 as EINVAL. It doesn't do anything different to any 
-other out of range request so it should be treated the same way.
-
-Then comparing to 127 isn't that obvious either. Something like 
-FIELD_FITS() more clearly states that values have to fit into a bitfield 
-rather than be less than some value:
-
-   if (!val || !FIELD_FIT(TPDA_FLUSH_CR_PORTNUM, val))
-	return -EINVAL;
-
-
->   >>>
->>>>> +        CS_UNLOCK(drvdata->base);
->>>>> +        writel_relaxed(val, drvdata->base + TPDA_FLUSH_CR);
->>>>> +        CS_LOCK(drvdata->base);
->>>>> +    }
->>>>> +
->>>>> +    return size;
->>>>> +}
->>>>> +static DEVICE_ATTR_RW(port_flush_req);
->>>>> +
->>>>>   static struct attribute *tpda_attrs[] = {
->>>>>       &dev_attr_trig_async_enable.attr,
->>>>>       &dev_attr_trig_flag_ts_enable.attr,
->>>>> @@ -516,6 +560,7 @@ static struct attribute *tpda_attrs[] = {
->>>>>       &dev_attr_freq_ts_enable.attr,
->>>>>       &dev_attr_global_flush_req.attr,
->>>>>       &dev_attr_cmbchan_mode.attr,
->>>>> +    &dev_attr_port_flush_req.attr,
->>>>>       NULL,
->>>>>   };
->>>>> diff --git a/drivers/hwtracing/coresight/coresight-tpda.h b/ 
->>>>> drivers/ hwtracing/coresight/coresight-tpda.h
->>>>> index 00d146960d81..55a18d718357 100644
->>>>> --- a/drivers/hwtracing/coresight/coresight-tpda.h
->>>>> +++ b/drivers/hwtracing/coresight/coresight-tpda.h
->>>>> @@ -10,6 +10,7 @@
->>>>>   #define TPDA_Pn_CR(n)        (0x004 + (n * 4))
->>>>>   #define TPDA_FPID_CR        (0x084)
->>>>>   #define TPDA_SYNCR        (0x08C)
->>>>> +#define TPDA_FLUSH_CR        (0x090)
->>>>>   /* Cross trigger FREQ packets timestamp bit */
->>>>>   #define TPDA_CR_FREQTS        BIT(2)
->>>>
->>>>
->>>
->>
->>
-> 
+Cheers,
+-- Nico
+>
+> >
+> > -- Nico
+> > > > 2.50.1
+> > > >
+> > >
+> >
+>
+> Cheers, Lorenzo
+>
 
 
