@@ -1,240 +1,176 @@
-Return-Path: <linux-kernel+bounces-787068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A639B370F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:06:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A461B370F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:07:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02A718E40CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:06:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8BFF16459C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3607E2D73A2;
-	Tue, 26 Aug 2025 17:06:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB28E2E1C6B;
+	Tue, 26 Aug 2025 17:07:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VhKLsoxy"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eClFM8BX"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D046D19B5B1
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 17:06:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680D12D47E6
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 17:07:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756228011; cv=none; b=jB1rWVwLrv1/4VaaWkCUVEZbpWepezEJYJ0/5bQNGBKeFtNJFE4aqgMtxgZsPJtb3ek6KwK6Hk3QtWlXl6l5TOcLod3UhqF6iSHD+7iE7w4oFTJrBdGAliUMD31dE79Lk+hoYani15PAZMYKbbUg6OK55nyjfdfSh0+9cZFeyyY=
+	t=1756228045; cv=none; b=ULAxUJvy5BRfI4eyBtkQkSIAY6WjxqSOiEG4wREHmbuUv0pa8orpAV2z2K7WDG0rtG6wLFrfKNkM1h9qG+UUgz/RYmMfcYRXIUGWFMEaoHkTm/HdbaD9tLmbklYmseL4Yat+nr/cQgWzKlrnwpCsjCGKhRfq0Ewb/AP/yLua94M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756228011; c=relaxed/simple;
-	bh=GvSTxOPtUE53lmjPHKq/RKUZcYoiENdRBWDD5/B3goo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nzPU7RbVZtX9qU04P+p85J1ggQqKFNeA0VSZKO3QDojkme4oXIN0Bkq6RLXRwh2eOtvMj8xc9XJKdJLk7AN49DqZt2BWAE4Gh7wNanKalkThZAdhmcZH3e7bdNzJ67GL6+wU0lVXNoRTCb8oFKK2WKF30LvkL/IrSVnfiHrTHcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VhKLsoxy; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <53206f29-7da8-4145-aef0-7bdacef3bb55@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1756228006;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lUSGVh5t0eKmU5xZTYGVizH4JYXHlSf3+YcRJVZFWyI=;
-	b=VhKLsoxyO8361/XLlLzAej6W3Csm1Jsf54qsyRxP8Ju0DojLEXeTAMTX/H20GOI2/EEpQV
-	lFSY3Q/DG2Ja+WT2121VswyveUsnt561XxnfRBl4aJ0iKwijXqVYw2gcvawgr5Aitlwb+U
-	HQ4mYATwAL22bGt/+Il5Hd0X6+HtNAc=
-Date: Tue, 26 Aug 2025 18:06:42 +0100
+	s=arc-20240116; t=1756228045; c=relaxed/simple;
+	bh=+GzVzamkuKNwIJ6WvUw9cgc5JdUfyThfIW8HQ2cqMAs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZbyAR7cOsyqh2cKc5OPr1JbRB5aWVQAuSVKntgkzKbrJZ+wf2dgdZLdoZFB1N578yJyQslc/+YOMf70QImPBkzQ9NSLDW8rXmDZTm2uo+6hebkHhge1UGbGEBdBGJhaNcbeyGfkVjZYID1RqoPzuLUOL47uXLESNW11oVRaPcLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eClFM8BX; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-61c51f57224so4199635a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 10:07:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756228042; x=1756832842; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZlLO2MjP0/NuaFssKev7jUfZlE2+YuCvYt9+3w8bnLY=;
+        b=eClFM8BXuhjdIRJnSN0v2XgHqICc8MSZojMs14l029M7cPke+rkAj40PMcGg/XzIuS
+         CyK0pFwMS0HRW06fYlXsdXO1EyOjn6QWLGzBO98zG6xxyxmZoMdZOvKQwJ4P8r/kfpYa
+         4woICf3NQ8eAXdK5ayAyU4gOGu7YlFr7fwkMNZpR5Xxx5SPAzbRqhSGxbCrjhubSxQMf
+         h5p7mNDucxgsHeV+619UhI1u1yEmlNLGsYFb26UPuNZ1QZTYaBEh40TgoXK2Zbcr5KQ8
+         ey4HqlUs11oF0kLzr/7hNd5zOGXRDR/7qefIOcYx3KVnsv45pWOW0t/5F+pLyAU3cf1/
+         Jqfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756228042; x=1756832842;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZlLO2MjP0/NuaFssKev7jUfZlE2+YuCvYt9+3w8bnLY=;
+        b=HY9NFMvt2ABz+iqYSG0m6W3lpWCNmZGYukcbxHWOcd4E5e/ARDfyv5k/6/cRpDHMXP
+         brZ/DNbY7oP4fNMkvYaB/WHvb285tSxRcOIan1wbwK1oPo3myLHZNFMKalHrMgzNkB6q
+         FKYK6wxbdCMmt+s4o+WYLi0fFd98XzfjxD05Qlc0OPsRcrh8QBB3Ls5f5jh1jgyiqTGV
+         05Nd5KmH2DCOnh5MQpTesKxea7NoyICZTSNx79bCM4OeSbYb55tjzx1RYNN2isBbz8jD
+         iUFTm3bKvELytyK0i1wbHvy/RVO93nkZcGayL3S8i7v2hQg4W0pGuBDvKyTVnJGVtMnS
+         KEog==
+X-Forwarded-Encrypted: i=1; AJvYcCV1xhNYcbMIDreUden6JAM5fecxOW9bfZj812QjYZVDK1qtkdXdBNiJygsm1O3s7jOWgvFxomdYAR9n6RE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8h6ALl7DgsHLttXrHyyi1g5bcx8HOg2f6j4sFLe/tmp9Fb+qM
+	Fu6DgGQFIYd0jfm6CBmc8xvEtG1yJG2xXfjfe8pvUEALGWuburT7lnYxLod5bKMVGfvzPD16D2D
+	1SAPhXsmFkMMUmgBaNzp/eqksjbxKMkQLDyKSxdfpVg==
+X-Gm-Gg: ASbGnct45saz3vwjHmsiL2SZXVg6z9F6FNRl0EAc4T0Yp4dHJkR5zgntfQq6wI3vrZY
+	jLDwfHxWOHq7G8MWho8dQt7POvLXMr+6H/Qvelny8RuWwINH+qQM8Rg3AzRDBbSQPUhhSwgDQNX
+	xTPCMkbVInXBgJ3f4JUDiKo5T3hBJMoPQjJPz7NXQkm4/Qfs35x3+iM/J1wRFSrBLx0jcsKEriM
+	ZicSO/6FCXlgko0IzKf6F5mdMgSnRhXKt5h
+X-Google-Smtp-Source: AGHT+IHsOpctQgmVCjjq5dHlSjInR6A/ntZmhGPHMrs80BhSJMw+bnBIclGQfPF1IClLrpJt//57iI/CKy4Pr+clCuc=
+X-Received: by 2002:a05:6402:1e93:b0:61c:374e:d4ac with SMTP id
+ 4fb4d7f45d1cf-61c374ee1bemr10746613a12.5.1756228041612; Tue, 26 Aug 2025
+ 10:07:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v01 10/12] hinic3: Add Rss function
-To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
- linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
- Bjorn Helgaas <helgaas@kernel.org>, luosifu <luosifu@huawei.com>,
- Xin Guo <guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>,
- Zhou Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>,
- Shi Jing <shijing34@huawei.com>, Meny Yossefi <meny.yossefi@huawei.com>,
- Gur Stavi <gur.stavi@huawei.com>, Lee Trager <lee@trager.us>,
- Michael Ellerman <mpe@ellerman.id.au>, Suman Ghosh <sumang@marvell.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-References: <cover.1756195078.git.zhuyikai1@h-partners.com>
- <13ffd1d836eb7aa6563ad93bf5fa5196afdf0053.1756195078.git.zhuyikai1@h-partners.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <13ffd1d836eb7aa6563ad93bf5fa5196afdf0053.1756195078.git.zhuyikai1@h-partners.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250826084854.25956-1-xupengbo@oppo.com>
+In-Reply-To: <20250826084854.25956-1-xupengbo@oppo.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Tue, 26 Aug 2025 19:07:08 +0200
+X-Gm-Features: Ac12FXz41DqtuNy56jAsyjKtPS-SaWIN6JtQzjR4zynSsHstIU9Ay5tJmjPW_Yw
+Message-ID: <CAKfTPtAnXdFp0VTSiOSucU_E4Xj2emjRNn0ySCrgD7hiXP=1sw@mail.gmail.com>
+Subject: Re: [PATCH v4] sched/fair: Fix unfairness caused by stalled
+ tg_load_avg_contrib when the last task migrates out.
+To: xupengbo <xupengbo@oppo.com>
+Cc: ziqianlu@bytedance.com, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Aaron Lu <aaron.lu@intel.com>, 
+	David Vernet <void@manifault.com>, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
+	xupengbo1029@163.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 26/08/2025 10:05, Fan Gong wrote:
-> Initialize rss functions. Configure rss hash data and HW resources.
-> 
-> Co-developed-by: Xin Guo <guoxin09@huawei.com>
-> Signed-off-by: Xin Guo <guoxin09@huawei.com>
-> Co-developed-by: Zhu Yikai <zhuyikai1@h-partners.com>
-> Signed-off-by: Zhu Yikai <zhuyikai1@h-partners.com>
-> Signed-off-by: Fan Gong <gongfan1@huawei.com>
+On Tue, 26 Aug 2025 at 10:49, xupengbo <xupengbo@oppo.com> wrote:
+>
+> When a task is migrated out, there is a probability that the tg->load_avg
+> value will become abnormal. The reason is as follows.
+>
+> 1. Due to the 1ms update period limitation in update_tg_load_avg(), there
+> is a possibility that the reduced load_avg is not updated to tg->load_avg
+> when a task migrates out.
+> 2. Even though __update_blocked_fair() traverses the leaf_cfs_rq_list and
+> calls update_tg_load_avg() for cfs_rqs that are not fully decayed, the key
+> function cfs_rq_is_decayed() does not check whether
+> cfs->tg_load_avg_contrib is null. Consequently, in some cases,
+> __update_blocked_fair() removes cfs_rqs whose avg.load_avg has not been
+> updated to tg->load_avg.
+>
+> I added a check of cfs_rq->tg_load_avg_contrib in cfs_rq_is_decayed(),
+
+s/I added /Add/
+
+> which blocks the case (2.) mentioned above.
+
+s/blocks/ fixes/
+
+> After some preliminary discussion and analysis, I think it is feasible to
+> directly check if cfs_rq->tg_load_avg_contrib is 0 in cfs_rq_is_decay().
+> So patch v3 was submitted.
+
+You can remove the 3 lines above from the commit message. They should
+have been put below with the version Changes.
+
+>
+> Fixes: 1528c661c24b ("sched/fair: Ratelimit update to tg->load_avg")
+> Tested-by: Aaron Lu <ziqianlu@bytedance.com>
+> Reviewed-by: Aaron Lu <ziqianlu@bytedance.com>
+> Signed-off-by: xupengbo <xupengbo@oppo.com>
+
+With the minor comments above
+
+Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
+
 > ---
->   drivers/net/ethernet/huawei/hinic3/Makefile   |   1 +
->   .../net/ethernet/huawei/hinic3/hinic3_main.c  |   9 +-
->   .../huawei/hinic3/hinic3_mgmt_interface.h     |  55 +++
->   .../huawei/hinic3/hinic3_netdev_ops.c         |  18 +
->   .../ethernet/huawei/hinic3/hinic3_nic_dev.h   |   5 +
->   .../net/ethernet/huawei/hinic3/hinic3_rss.c   | 359 ++++++++++++++++++
->   .../net/ethernet/huawei/hinic3/hinic3_rss.h   |  14 +
->   7 files changed, 460 insertions(+), 1 deletion(-)
-[...]
-
-> +static int alloc_rss_resource(struct net_device *netdev)
-> +{
-> +	struct hinic3_nic_dev *nic_dev = netdev_priv(netdev);
-> +	static const u8 default_rss_key[L2NIC_RSS_KEY_SIZE] = {
-> +		0x6d, 0x5a, 0x56, 0xda, 0x25, 0x5b, 0x0e, 0xc2,
-> +		0x41, 0x67, 0x25, 0x3d, 0x43, 0xa3, 0x8f, 0xb0,
-> +		0xd0, 0xca, 0x2b, 0xcb, 0xae, 0x7b, 0x30, 0xb4,
-> +		0x77, 0xcb, 0x2d, 0xa3, 0x80, 0x30, 0xf2, 0x0c,
-> +		0x6a, 0x42, 0xb7, 0x3b, 0xbe, 0xac, 0x01, 0xfa};
+> Changes:
+> v1 -> v2:
+> - Another option to fix the bug. Check cfs_rq->tg_load_avg_contrib in
+> cfs_rq_is_decayed() to avoid early removal from the leaf_cfs_rq_list.
+> - Link to v1 : https://lore.kernel.org/cgroups/20250804130326.57523-1-xupengbo@oppo.com/
+> v2 -> v3:
+> - Check if cfs_rq->tg_load_avg_contrib is 0 derectly.
+> - Link to v2 : https://lore.kernel.org/cgroups/20250805144121.14871-1-xupengbo@oppo.com/
+> v3 -> v4:
+> - fix typo
+> - Link to v3 : https://lore.kernel.org/cgroups/20250826075743.19106-1-xupengbo@oppo.com/
+>
+> Please send emails to a different email address <xupengbo1029@163.com>
+> after September 3, 2025, after that date <xupengbo@oppo.com> will expire
+> for personal reasons.
+>
+> Thanks,
+> Xu Pengbo
+>
+>  kernel/sched/fair.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index b173a059315c..81b7df87f1ce 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -4062,6 +4062,9 @@ static inline bool cfs_rq_is_decayed(struct cfs_rq *cfs_rq)
+>         if (child_cfs_rq_on_list(cfs_rq))
+>                 return false;
+>
+> +       if (cfs_rq->tg_load_avg_contrib)
+> +               return false;
 > +
-> +	nic_dev->rss_hkey = kzalloc(L2NIC_RSS_KEY_SIZE, GFP_KERNEL);
-
-no need to request zero'ed allocation if you are going to overwrite it
-completely on the very next line.
-
-> +	if (!nic_dev->rss_hkey)
-> +		return -ENOMEM;
-> +
-> +	memcpy(nic_dev->rss_hkey, default_rss_key, L2NIC_RSS_KEY_SIZE);
-
-I would better move this line after both allocations when the code flow
-has no way to fail.
-
-> +	nic_dev->rss_indir = kcalloc(L2NIC_RSS_INDIR_SIZE, sizeof(u32),
-> +				     GFP_KERNEL);
-
-why do you allocate L2NIC_RSS_INDIR_SIZE of u32 when the HW table has
-le16 type for the entry?
-
-> +	if (!nic_dev->rss_indir) {
-> +		kfree(nic_dev->rss_hkey);
-> +		nic_dev->rss_hkey = NULL;
-> +		return -ENOMEM;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int hinic3_rss_set_indir_tbl(struct hinic3_hwdev *hwdev,
-> +				    const u32 *indir_table)
-> +{
-> +	struct l2nic_cmd_rss_set_indir_tbl *indir_tbl;
-> +	struct hinic3_cmd_buf *cmd_buf;
-> +	__le64 out_param;
-> +	int err;
-> +	u32 i;
-> +
-> +	cmd_buf = hinic3_alloc_cmd_buf(hwdev);
-> +	if (!cmd_buf) {
-> +		dev_err(hwdev->dev, "Failed to allocate cmd buf\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	cmd_buf->size = cpu_to_le16(sizeof(struct l2nic_cmd_rss_set_indir_tbl));
-> +	indir_tbl = cmd_buf->buf;
-> +	memset(indir_tbl, 0, sizeof(*indir_tbl));
-> +
-> +	for (i = 0; i < L2NIC_RSS_INDIR_SIZE; i++)
-> +		indir_tbl->entry[i] = cpu_to_le16((u16)indir_table[i]);
-> +
-> +	hinic3_cmdq_buf_swab32(indir_tbl, sizeof(*indir_tbl));
-> +
-> +	err = hinic3_cmdq_direct_resp(hwdev, MGMT_MOD_L2NIC,
-> +				      L2NIC_UCODE_CMD_SET_RSS_INDIR_TBL,
-> +				      cmd_buf, &out_param);
-> +	if (err || out_param != 0) {
-
-no need for "!= 0"
-
-> +		dev_err(hwdev->dev, "Failed to set rss indir table\n");
-> +		err = -EFAULT;
-> +	}
-> +
-> +	hinic3_free_cmd_buf(hwdev, cmd_buf);
-> +
-> +	return err;
-> +}
-
-[...]
-
-> +static int hinic3_rss_cfg_hash_key(struct hinic3_hwdev *hwdev, u8 opcode,
-> +				   u8 *key)
-> +{
-> +	struct l2nic_cmd_cfg_rss_hash_key hash_key = {};
-> +	struct mgmt_msg_params msg_params = {};
-> +	int err;
-> +
-> +	hash_key.func_id = hinic3_global_func_id(hwdev);
-> +	hash_key.opcode = opcode;
-> +
-> +	if (opcode == MGMT_MSG_CMD_OP_SET)
-> +		memcpy(hash_key.key, key, L2NIC_RSS_KEY_SIZE);
-
-here you copy hash key to a stack allocated structure ...
-
-> +
-> +	mgmt_msg_params_init_default(&msg_params, &hash_key, sizeof(hash_key));
-
-
-... which is copied to another stack allocated structure ...
-
-> +
-> +	err = hinic3_send_mbox_to_mgmt(hwdev, MGMT_MOD_L2NIC,
-> +				       L2NIC_CMD_CFG_RSS_HASH_KEY, &msg_params);
-> +	if (err || hash_key.msg_head.status) {
-> +		dev_err(hwdev->dev, "Failed to %s hash key, err: %d, status: 0x%x\n",
-> +			opcode == MGMT_MSG_CMD_OP_SET ? "set" : "get",
-> +			err, hash_key.msg_head.status);
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (opcode == MGMT_MSG_CMD_OP_GET)
-> +		memcpy(key, hash_key.key, L2NIC_RSS_KEY_SIZE);
-> +
-> +	return 0;
-> +}
-> +
-> +static int hinic3_rss_set_hash_key(struct hinic3_hwdev *hwdev, const u8 *key)
-> +{
-> +	u8 hash_key[L2NIC_RSS_KEY_SIZE];
-> +
-> +	memcpy(hash_key, key, L2NIC_RSS_KEY_SIZE);
-
-... but it was already copied to stack allocated buffer ...
-
-> +
-> +	return hinic3_rss_cfg_hash_key(hwdev, MGMT_MSG_CMD_OP_SET, hash_key);
-> +}
-> +
-> +static int hinic3_set_hw_rss_parameters(struct net_device *netdev, u8 rss_en)
-> +{
-> +	struct hinic3_nic_dev *nic_dev = netdev_priv(netdev);
-> +	int err;
-> +
-> +	err = hinic3_rss_set_hash_key(nic_dev->hwdev, nic_dev->rss_hkey);
-
-... which is previously copied from static array.
-
-It's 4 copies in total to configure one simple thing. Looks like too
-much of copying with no good reason
-
-
-> +	if (err)
-> +		return err;
-> +
+>         return true;
+>  }
+>
+>
+> base-commit: fab1beda7597fac1cecc01707d55eadb6bbe773c
+> --
+> 2.43.0
+>
 
