@@ -1,178 +1,189 @@
-Return-Path: <linux-kernel+bounces-786018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CED39B35392
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:51:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA8CAB35395
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:52:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E97F243ECA
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:51:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 521A02449B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:52:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97BD12F39C7;
-	Tue, 26 Aug 2025 05:51:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C5E2F0688;
+	Tue, 26 Aug 2025 05:52:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ihfwBdc3"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LZTlWE9y"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614102F0688;
-	Tue, 26 Aug 2025 05:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751B32F1FDB;
+	Tue, 26 Aug 2025 05:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756187506; cv=none; b=iPpeoFyMZgtw9pjxrJMvB74A/CuhiMZcitrY6eDpXLZe0iPw9sFh9x6S7hD4IIhpYN9+/SNNdqNxTdaOmJplG0xoYfsxV2bOYGG7cbXPEr/CDZVkrHHBgZWSoQuIkiD0kRpvBY64xE4RU1gGpSHnNePX3VlyWqDoK4hSl+Ca+8o=
+	t=1756187524; cv=none; b=jQWoiaW4BAhO1Ab/tSXXm11qNhy9QELCSiReIEJq2MPHNEpDSv878mdAiW5ZSnzM9ocWQhxwYzUd31AhDMbh2NE8WZmRpqP861AqXf7CUIfSQZSdIAPFHdCNmfWZVUT+71e0HJOUwUvfgqvpKc1bXK/QzsG0vDB+B7YhjajqfsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756187506; c=relaxed/simple;
-	bh=S8YR0Rk1hMRnRkLxiltLd6vcjaOaMt81cEXJbL0+Kco=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hzib50mQI4CXQ+NzfnyKAwsEikyBjorb5nMI5MUh62FpVrGSW+VB0nciAft//Au/q+lpszUHbNQ+AavhtvcvojzAs69RChB96LEv59C5cTkPG/FJrP1yLxSgMnDc311uOiua4JkCPiES6tbbdlK6fyysfmXdI5a2lWa31HQTKRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ihfwBdc3; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756187505; x=1787723505;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=S8YR0Rk1hMRnRkLxiltLd6vcjaOaMt81cEXJbL0+Kco=;
-  b=ihfwBdc3R6J4AHReXNRv9S2FlTNMumtwVetsU83FsSicmH2JmMyZG0zY
-   0bHytuEBji+eslypOPkCuelxu4PWCUkTBtmAyjx6RMcxSuNFu+SvFTXcM
-   vqJ8+lsVSpnUUAiRFzUEjyajcn+gj7iuyLVQth7HTLCfwj18b6tGDvc3b
-   vvM+Yf3/A2jplzcGTMQTkpa4OLfyxkvxZplGhwjo5e0uxr8P9Jzc7xEiP
-   bGrkHOOoCWsfRoXLHuOg2+MNL0f8GfCmNXplJPDtB7JohqfKSNdzal1pL
-   emsNxD9VVQtIvz5LZRonpr2FNj+pYtliL0sG9lMZFHnf6sDqxiI8VZz42
-   w==;
-X-CSE-ConnectionGUID: ahaMHbbISZeLWg8/xGZOJw==
-X-CSE-MsgGUID: sYUNtaq0RwSV4lLqIpxMzg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11533"; a="68682888"
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="68682888"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 22:51:44 -0700
-X-CSE-ConnectionGUID: Wf7+/qZTRg+fabfNexeY9A==
-X-CSE-MsgGUID: AD1qFAIuTnOnYpqmer9K4w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="170312763"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 22:51:39 -0700
-Message-ID: <176247c7-6801-4e06-860e-4a6b8e77ba20@linux.intel.com>
-Date: Tue, 26 Aug 2025 13:51:36 +0800
+	s=arc-20240116; t=1756187524; c=relaxed/simple;
+	bh=0bP4afbL6bWHRgondaFRoclqPUbYzRAnYCAH0a0F/ec=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZsK2u9XpT9bsCq2yEl4Ca5xvEkM/0L1WNm12AwiUEt6tCjiJqyMy6ypsLNryRxh5JWfG3QaMRil0LeSX3aMgPKWA1UGgn/KNyACFaea55sKHRDoNqvaV8qKRfURFstl2Cm8l4dc8k35/SGruZ5n3mEUkZViHOS+8FJ/ynsslaCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LZTlWE9y; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45b60fd5a1dso13620135e9.2;
+        Mon, 25 Aug 2025 22:52:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756187520; x=1756792320; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oKYQ8pq0BweGc0Hdds105nsygQj88Q8QjXPEB7WbTzk=;
+        b=LZTlWE9y6JqOFs+AvfKrlbamoladzvxMCmkTN9DdRai59qc+vAvOXk4Psah17Md9KV
+         +GdX89pIhll6gw2RmS1Nk/hXn+pGYLNJq6jqEnnzqED960uf7d+9rVP4ZmEjM9+4Dq5S
+         qcD29GCHxhZoEK8Ep9kx1ZyOPS5o7yItKtt3m90JI+jB+tNDHYlQyijp5NDfg6Pad3Z8
+         tTZ0ITq29e0OUu2l+IGV+XSAlbl16HPKDouHlTLM+pUZ1TvBwacDKLeKoEQkIooSFZHw
+         oOE6JEKfTOQxODPsMdf4aB1OyCHu7fl2EU5kmvQ722eA5MGSJiP49lcG4bG4xOKQW4dy
+         zn4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756187520; x=1756792320;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oKYQ8pq0BweGc0Hdds105nsygQj88Q8QjXPEB7WbTzk=;
+        b=fl+dR433n1hHM9op0RIOhKJ3vkeQc4kAKNc7hr9zDBeRXNEBngh1KV4pTFq3Apeq/F
+         8YLtBmQQEi384zKy89KOVOfHvAho2h+UVf+IBnzViUY9Jw20kTltAjolcvNxm97TrhAO
+         t7HVM0qb3gVy8nkNAOOGpv+gl/3IqNK4OWETeoGqLmnbTYQQfgSTiOsV8SKJovmP+mQg
+         g+s/YfveyUTHL4I3r/4I/ViNzs0l+nyLQfRLPxDdyDqcC726x/o3LR0RuJkrQRhceqPx
+         wCZ2CWHH0C1MtGZBHC86uVbfw6YoBx488ISaZdKF53BGbvLvYim9R8bAs2iXK7ZcYXuZ
+         KgjA==
+X-Forwarded-Encrypted: i=1; AJvYcCUmgAeBpOiOlNgRac+l0Hs1oDCsEQ71FpCUi5FHhSWXm6G6g9+BZPkxuLitlmpWHHKj9Rw=@vger.kernel.org, AJvYcCVNrSCvRI//3fUuWNtCgR9wRBefDZQCnAyakG2Ki4ydtunB0Aspy1niZ1QQKb+tN56UE/UXCJzh90R4UbCWSZ5jVk43@vger.kernel.org, AJvYcCWl1e0dkd0RHg/5eHDc1PYzyH+77H/Aw8wEFNIzTOjcH7M5nVeJrVZtBBZJrsA7RsA+j4kjORUAFe1jirxi@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNQCheW4kSp4pFVMOc85fIqERhT4r6qtF/WcL13byLKYCaVAvB
+	9IKTpdx94b0ssEqtrONsQMWJV5Y4XOtMgw2jVoedjP9UAuxzoAp9wtYU
+X-Gm-Gg: ASbGncsjuifdyxo+l1e+Go9Zeyfrnihl4IrbYSEHuaz5Z6eygFTZ6Eq9TFQnM/tXUDt
+	+NsMWPTKVmGxOFFqRRhQ1RyyDfGWg+A2M2VVO5ENhTO/Rk2NlfjbubQYq+01E1CqBH1oXwykAq9
+	HYyLWcrXvtKrpyUXsEeaEDSJ6C5H9R0pygj1GZ6j+Lh/MnYU1/z/kYT3+LiPI4OvsTBjUe5OXxq
+	i2PR3KRCf3sc9Ira47AArTzjAZzHOIPCG6P+eVi4n/u8fTw+VTmRjLn6EyTrnPax9d/LaYpsa9t
+	eAli8pKN1EqPZ6DWcJ3r5FDiO+LcISH82WnGe85P8Dzr9d0iirj+aXpsB4W3wAfu8vcUIscp8IL
+	oZDQ1K0QN4ekIo6F01bevMLrxAagevb+/HeOdb2jonEzKwu2RMSamh00mxBlBV219
+X-Google-Smtp-Source: AGHT+IFtRFES/JoDcwZlDGxdtCq+zEsEUm9Rstfn3B5thVgAWixmcq/XHt8zAsY3q7azZ7wBCJP17A==
+X-Received: by 2002:a05:600c:1c98:b0:456:214f:f78d with SMTP id 5b1f17b1804b1-45b53cfa151mr105833345e9.22.1756187520386;
+        Mon, 25 Aug 2025 22:52:00 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b575929a0sm133289025e9.25.2025.08.25.22.51.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Aug 2025 22:51:59 -0700 (PDT)
+Date: Tue, 26 Aug 2025 06:51:58 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: jolsa@kernel.org, oleg@redhat.com, andrii@kernel.org,
+ mhiramat@kernel.org, linux-kernel@vger.kernel.org, alx@kernel.org,
+ eyal.birger@gmail.com, kees@kernel.org, bpf@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, x86@kernel.org, songliubraving@fb.com,
+ yhs@fb.com, john.fastabend@gmail.com, haoluo@google.com,
+ rostedt@goodmis.org, alan.maguire@oracle.com, David.Laight@ACULAB.COM,
+ thomas@t-8ch.de, mingo@kernel.org, rick.p.edgecombe@intel.com
+Subject: Re: [PATCH 2/6] uprobes/x86: Optimize is_optimize()
+Message-ID: <20250826065158.1b7ad5fc@pumpkin>
+In-Reply-To: <20250821123656.823296198@infradead.org>
+References: <20250821122822.671515652@infradead.org>
+	<20250821123656.823296198@infradead.org>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 05/19] KVM: selftests: Update
- kvm_init_vm_address_properties() for TDX
-To: Sagi Shahar <sagis@google.com>
-Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
- Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>,
- Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>,
- Andrew Jones <ajones@ventanamicro.com>,
- Isaku Yamahata <isaku.yamahata@intel.com>,
- Erdem Aktas <erdemaktas@google.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>,
- "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>,
- Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny
- <ira.weiny@intel.com>, Chao Gao <chao.gao@intel.com>,
- Chenyi Qiang <chenyi.qiang@intel.com>, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>
-References: <20250821042915.3712925-1-sagis@google.com>
- <20250821042915.3712925-6-sagis@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250821042915.3712925-6-sagis@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
+On Thu, 21 Aug 2025 14:28:24 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-
-On 8/21/2025 12:28 PM, Sagi Shahar wrote:
-> From: Isaku Yamahata <isaku.yamahata@intel.com>
->
-> Let kvm_init_vm_address_properties() initialize vm->arch.{s_bit, tag_mask}
-> similar to SEV.
->
-> TDX sets the shared bit based on the guest physical address width and
-> currently supports 48 and 52 widths.
->
-> Co-developed-by: Adrian Hunter <adrian.hunter@intel.com>
-> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
-> Co-developed-by: Sagi Shahar <sagis@google.com>
-> Signed-off-by: Sagi Shahar <sagis@google.com>
+> Make is_optimized() return a tri-state and avoid return through
+> argument. This simplifies things a little.
+> 
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 > ---
->   .../selftests/kvm/include/x86/tdx/tdx_util.h       | 14 ++++++++++++++
->   tools/testing/selftests/kvm/lib/x86/processor.c    | 12 ++++++++++--
->   2 files changed, 24 insertions(+), 2 deletions(-)
->   create mode 100644 tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
->
-> diff --git a/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h b/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
-> new file mode 100644
-> index 000000000000..286d5e3c24b1
-> --- /dev/null
-> +++ b/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
-> @@ -0,0 +1,14 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +#ifndef SELFTESTS_TDX_TDX_UTIL_H
-> +#define SELFTESTS_TDX_TDX_UTIL_H
-> +
-> +#include <stdbool.h>
-> +
-> +#include "kvm_util.h"
-> +
-> +static inline bool is_tdx_vm(struct kvm_vm *vm)
-> +{
-> +	return vm->type == KVM_X86_TDX_VM;
-> +}
+>  arch/x86/kernel/uprobes.c |   34 +++++++++++++---------------------
+>  1 file changed, 13 insertions(+), 21 deletions(-)
+> 
+> --- a/arch/x86/kernel/uprobes.c
+> +++ b/arch/x86/kernel/uprobes.c
+> @@ -1047,7 +1047,7 @@ static bool __is_optimized(uprobe_opcode
+>  	return __in_uprobe_trampoline(vaddr + 5 + call->raddr);
+>  }
+>  
+> -static int is_optimized(struct mm_struct *mm, unsigned long vaddr, bool *optimized)
+> +static int is_optimized(struct mm_struct *mm, unsigned long vaddr)
+>  {
+>  	uprobe_opcode_t insn[5];
+>  	int err;
+> @@ -1055,8 +1055,7 @@ static int is_optimized(struct mm_struct
+>  	err = copy_from_vaddr(mm, vaddr, &insn, 5);
+>  	if (err)
+>  		return err;
+> -	*optimized = __is_optimized((uprobe_opcode_t *)&insn, vaddr);
+> -	return 0;
+> +	return __is_optimized((uprobe_opcode_t *)&insn, vaddr);
+>  }
+>  
+>  static bool should_optimize(struct arch_uprobe *auprobe)
+> @@ -1069,17 +1068,14 @@ int set_swbp(struct arch_uprobe *auprobe
+>  	     unsigned long vaddr)
+>  {
+>  	if (should_optimize(auprobe)) {
+> -		bool optimized = false;
+> -		int err;
+> -
+>  		/*
+>  		 * We could race with another thread that already optimized the probe,
+>  		 * so let's not overwrite it with int3 again in this case.
+>  		 */
+> -		err = is_optimized(vma->vm_mm, vaddr, &optimized);
+> -		if (err)
+> -			return err;
+> -		if (optimized)
+> +		int ret = is_optimized(vma->vm_mm, vaddr);
+> +		if (ret < 0)
+> +			return ret;
+> +		if (ret)
+>  			return 0;
 
-If the branch "vm->type != KVM_X86_TDX_VM" in patch 04/19
-is still needed, this helper could be added earlier and used instead of
-open code.
+Looks like you should swap over 0 and 1.
+That would then be: if (ret <= 0) return ret;
 
-> +
-> +#endif // SELFTESTS_TDX_TDX_UTIL_H
-> diff --git a/tools/testing/selftests/kvm/lib/x86/processor.c b/tools/testing/selftests/kvm/lib/x86/processor.c
-> index 1eae92957456..6dbf40cbbc2a 100644
-> --- a/tools/testing/selftests/kvm/lib/x86/processor.c
-> +++ b/tools/testing/selftests/kvm/lib/x86/processor.c
-> @@ -8,6 +8,7 @@
->   #include "kvm_util.h"
->   #include "processor.h"
->   #include "sev.h"
-> +#include "tdx/tdx_util.h"
->   
->   #ifndef NUM_INTERRUPTS
->   #define NUM_INTERRUPTS 256
-> @@ -1190,12 +1191,19 @@ void kvm_get_cpu_address_width(unsigned int *pa_bits, unsigned int *va_bits)
->   
->   void kvm_init_vm_address_properties(struct kvm_vm *vm)
->   {
-> +	uint32_t gpa_bits = kvm_cpu_property(X86_PROPERTY_GUEST_MAX_PHY_ADDR);
-> +
-> +	vm->arch.sev_fd = -1;
-> +
->   	if (is_sev_vm(vm)) {
->   		vm->arch.sev_fd = open_sev_dev_path_or_exit();
->   		vm->arch.c_bit = BIT_ULL(this_cpu_property(X86_PROPERTY_SEV_C_BIT));
->   		vm->gpa_tag_mask = vm->arch.c_bit;
-> -	} else {
-> -		vm->arch.sev_fd = -1;
-> +	} else if (is_tdx_vm(vm)) {
-> +		TEST_ASSERT(gpa_bits == 48 || gpa_bits == 52,
-> +			    "TDX: bad X86_PROPERTY_GUEST_MAX_PHY_ADDR value: %u", gpa_bits);
-> +		vm->arch.s_bit = 1ULL << (gpa_bits - 1);
+	David
 
-Nit: Use BIT_ULL().
-
-> +		vm->gpa_tag_mask = vm->arch.s_bit;
->   	}
->   }
->   
+>  	}
+>  	return uprobe_write_opcode(auprobe, vma, vaddr, UPROBE_SWBP_INSN,
+> @@ -1090,17 +1086,13 @@ int set_orig_insn(struct arch_uprobe *au
+>  		  unsigned long vaddr)
+>  {
+>  	if (test_bit(ARCH_UPROBE_FLAG_CAN_OPTIMIZE, &auprobe->flags)) {
+> -		struct mm_struct *mm = vma->vm_mm;
+> -		bool optimized = false;
+> -		int err;
+> -
+> -		err = is_optimized(mm, vaddr, &optimized);
+> -		if (err)
+> -			return err;
+> -		if (optimized) {
+> -			err = swbp_unoptimize(auprobe, vma, vaddr);
+> -			WARN_ON_ONCE(err);
+> -			return err;
+> +		int ret = is_optimized(vma->vm_mm, vaddr);
+> +		if (ret < 0)
+> +			return ret;
+> +		if (ret) {
+> +			ret = swbp_unoptimize(auprobe, vma, vaddr);
+> +			WARN_ON_ONCE(ret);
+> +			return ret;
+>  		}
+>  	}
+>  	return uprobe_write_opcode(auprobe, vma, vaddr, *(uprobe_opcode_t *)&auprobe->insn,
+> 
+> 
+> 
 
 
