@@ -1,174 +1,124 @@
-Return-Path: <linux-kernel+bounces-786173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30220B3561B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:50:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B612B355E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:42:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96E16240842
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:50:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A613A2039D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:42:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74EA42F658F;
-	Tue, 26 Aug 2025 07:50:40 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2082F39D7;
+	Tue, 26 Aug 2025 07:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UZNSVWdB"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456FD281531
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 07:50:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAAA51F8723;
+	Tue, 26 Aug 2025 07:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756194640; cv=none; b=nFpOuFI6oGxqTM+HyFVA2fxdI8iQ2GLLKKdXpXUTOftMnmhZMJGzF44SbzeY2Q6vWTtxDro82EK8ENBmtyHZ91tD0DLKmh+eldY+Qasr3IYB1jKZv7wIx1JJVlT1RYNvmpX4B6bf5e6n4lPVcU5vieaHdQ3fceVibTF+sYEGwYw=
+	t=1756194139; cv=none; b=sYZUawsUJuXw73Y9nzN/EXlsLKP2MbiYIuGvuzxRur6H1T+aor+LzsjAp1PsleCyg0u7KPl56/LyqGhnWTy3AbtkORk7oWJeFs20SMu2zyiu6t033/OIBMDGy4MgDAi5KG196WEroc0KcsfOchFRn3mKP+ipYAn+9P8KaZrve40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756194640; c=relaxed/simple;
-	bh=rVjtlyBnUsQbm8iALS+qPonkUkUxTt9CHpXRn2a5krk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Qp5uH9X2fkUXvFPCJDb7kqcKox+FQl4c12sCw+M355O0Ee/1tJF3nPk2XRPyH9rAQ7gpxGc4VDF3PAEpGhJwUfXZQpd5AP/WsfUsQjjlowb4YcwD816ik0/V6TnGobh0slq1crbqAnVnsoAJbCuvxFusbRZqXi3ol7Tvv5s39ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cB0Fn0VnhzYQvWn
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 15:50:37 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 975AF1A0FFA
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 15:50:35 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgDnMY5IZ61oTGJbAQ--.24858S6;
-	Tue, 26 Aug 2025 15:50:35 +0800 (CST)
-From: Zheng Qixing <zhengqixing@huaweicloud.com>
-To: agk@redhat.com,
-	snitzer@kernel.org,
-	mpatocka@redhat.com,
-	axboe@kernel.dk,
-	ming.lei@redhat.com
-Cc: dm-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	yukuai3@huawei.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	houtao1@huawei.com,
-	zhengqixing@huawei.com
-Subject: [PATCH-next 2/2] dm: fix NULL pointer dereference in __dm_suspend()
-Date: Tue, 26 Aug 2025 15:42:04 +0800
-Message-Id: <20250826074204.390111-3-zhengqixing@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250826074204.390111-1-zhengqixing@huaweicloud.com>
-References: <20250826074204.390111-1-zhengqixing@huaweicloud.com>
+	s=arc-20240116; t=1756194139; c=relaxed/simple;
+	bh=8Dnm6LTIYAhJi4bWdvEAqnpRElUivPwL3ZDlM0iDCak=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OYyb/1h8UA7IdHtpJui5QZg9lGcM889lL9RYaUmbPA+LqKIEz62Tw6VJOe1fj4FdDzE7yeayWjRYCuAHfAllCv/STrUlOoSMXhymTCmYFNtS9R4k/W41VoFjEFxUYeouhwxxsVXc7vTEfS2km2llvJceuy2HzSS1RgFUuZApPq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UZNSVWdB; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-244580523a0so51780225ad.1;
+        Tue, 26 Aug 2025 00:42:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756194136; x=1756798936; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5avve5K0r4ZBw/y3B3+9woG9oTDooCG2sxKJy01FS7g=;
+        b=UZNSVWdBEUjmTCYAXSIkoQzCV6oVHudf9/IVpwgCiToZeObU9rXqurZAW+hADFHFYs
+         N9G3SKCsT+/6rx8YEYZjoVWMzrHy1+JpRUY+GLcYdu6vNWhakauKgQ39dA8XO9ujkfWv
+         0RsXO4Uh8RqTXpVHlB6zYq1chZYRdhv6gqgqNJp5JhTpUTfyzp0zfxVPXW1bUHrtfvsR
+         Bhg62aYttPUgJ2kZ1sy7wiUkg9KWg5TyIiAUXweDjH3MDEBJFkBP+6eDFg77JTvAl4Iq
+         b8lMPSJUvxHyAoqiqpkAfCuBYOG81SZcu3fDszPpRU6mTYyDHuwDEqu7GgSs0W0tBE4e
+         UOkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756194136; x=1756798936;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5avve5K0r4ZBw/y3B3+9woG9oTDooCG2sxKJy01FS7g=;
+        b=NVST7cYFNpSX6JHsM9IsjQVlRsjBJ9GaQtv7B9ZSXtv4YnDY+FB78iO2AmDt9T1Wjn
+         mZS/aTsLQbneLIpnovwSyo9FjrZ31fnThlKuGX1HbL3JRu+QJDk5z9dyR/HFzmgCksmh
+         7VdM2IoKrFEIib882NWIxTIOCuMEhLyzzsx6bf9f5+Ocpw8n6N29UDsYAcB1UlPsyyvn
+         uOCrliaQXTKL5CkZO6ihncbki9RzmCoNMOyk2ep6a9fuAWcZOOU1ZmEqRagAdzG3V+2Q
+         02cPySv/XoB+ewikqb4x2xTGOovtU0/Fip3D+CA2pixMkprpgOF8BtUa39kdT7ffBtqB
+         FTEA==
+X-Forwarded-Encrypted: i=1; AJvYcCVA1LeTPPaqz+Tl3ae15obyqhfASFcsZumqE1w9W3zxhvRIkyyCz0I4QKK1Skv2yeamrS6iq0YMjPk=@vger.kernel.org, AJvYcCVxRmg2IotcEfszNYP0bw8sU8nuOYKaj1e7i8CxVwkIROhyrGFX4fZe6d/atN337rCJiUifnad5GQgCvm9K@vger.kernel.org, AJvYcCWAnj8wrPUWWF/GVwLcK0PpNbGf/2WbUtkV0N7Y9cNvi7b+OdesF09ewUVwZ3oc28pv/Xw3VRKcp44v@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzYtRCr3wpbMhvld6ReSjvz/t3Jx9LsirWSpBdVqziD8i71sCX
+	PkLzg71JW3qmEzWN7SfQLO27E0voUSJM9GunZPro5cwebwcKck/yeY7p
+X-Gm-Gg: ASbGncvNdNId5LO/oetWmb9f4uXhdVsFSBtC2G/ABLqlmAS8unTqyv6m08BZGEMpNuq
+	USA6bLbDRX2vYcN7son52n8nshGMuEfzGtUpSFOJB7KSNMXi/GEoqqrdbXSHPRVcEo6fWzoeaO/
+	ANYnn0ztez2EKfQOATDBWcYEGHMMnTMaMsx5Ke/3buuNlg5Yb6UEYGE4rFN8KjFYbS/Whplxa0e
+	EAV9iyvzvE3q2huw+0QWHGFocGck/49cLEH0lwAD4HCZou05MxTq7LuGbhgKtaeJXlQmoDMpt7z
+	ZbcCL+xfeMXs+ntDNAdsnxYwAaCeOTJ4prwK3gWJcMoeN//Z/fWDcFaBo0QUEn2KW25UJ7JuLV5
+	zSDk4+clpIIyQ3t1OHYSfyCrpjz7TcTW7+xoCxp5f
+X-Google-Smtp-Source: AGHT+IEFcZtjLSZdczxv4eS+7pkAGInRGBtMajPGK66kHgxUefbn93THV9SVOhFmR4aQpV2rQTomyw==
+X-Received: by 2002:a17:902:cec2:b0:240:9f9:46a0 with SMTP id d9443c01a7336-2462ef05828mr188106125ad.38.1756194135806;
+        Tue, 26 Aug 2025 00:42:15 -0700 (PDT)
+Received: from [192.168.0.150] ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2467d4030fesm80659035ad.137.2025.08.26.00.42.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Aug 2025 00:42:15 -0700 (PDT)
+Message-ID: <9044fe82-043f-4e45-b7cf-114a8860f650@gmail.com>
+Date: Tue, 26 Aug 2025 14:42:11 +0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDnMY5IZ61oTGJbAQ--.24858S6
-X-Coremail-Antispam: 1UD129KBjvJXoWxXr4xCry8Wr4ktryftrW7twb_yoW5AFWxpa
-	ySgFW5Kw4kWr4vvw4Utayj9Fy2ya93K3y7CryfGr13uw4ayryrJF18tasrXryIkrZ3Ary3
-	WF4jqws8Ww18taUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPFb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUXw
-	A2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMc
-	Ij6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_
-	Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI
-	0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG
-	67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MI
-	IYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E
-	14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJV
-	W8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFSdy
-	UUUUU
-X-CM-SenderInfo: x2kh0wptl0x03j6k3tpzhluzxrxghudrp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Documentation: management-style: Correct "know" past
+ participle
+To: Randy Dunlap <rdunlap@infradead.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Documentation <linux-doc@vger.kernel.org>,
+ Linux Kernel Workflows <workflows@vger.kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Fox Foster <fox@tardis.ed.ac.uk>,
+ Federico Vaga <federico.vaga@vaga.pv.it>,
+ =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+References: <20250826003437.7695-2-bagasdotme@gmail.com>
+ <67d355fc-7ee9-4203-9578-095004c4a7e6@infradead.org>
+Content-Language: en-US
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+In-Reply-To: <67d355fc-7ee9-4203-9578-095004c4a7e6@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Zheng Qixing <zhengqixing@huawei.com>
+On 8/26/25 13:54, Randy Dunlap wrote:
+> 
+> 
+> On 8/25/25 5:34 PM, Bagas Sanjaya wrote:
+>> Management style docs writes on people under a manager, where they know
+>> the details better than the manager himself, in past perfect tense. Yet,
+>> "know" is in infinitive form instead.
+>>
+>> Correct the verb form.
+>>
+> 
+> Hi Bagas,
+> 
+> I don't know about the patch description/argument/justification,
+> but the wording makes no sense to me...
+> 
 
-There is a race condition between dm device suspend and table load that
-can lead to null pointer dereference. The issue occurs when suspend is
-invoked before table load completes:
+Do you mean the original or the patched? Should I left the former as-is?
 
-BUG: kernel NULL pointer dereference, address: 0000000000000054
-Oops: 0000 [#1] PREEMPT SMP PTI
-CPU: 6 PID: 6798 Comm: dmsetup Not tainted 6.6.0-g7e52f5f0ca9b #62
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.1-2.fc37 04/01/2014
-RIP: 0010:blk_mq_wait_quiesce_done+0x0/0x50
-Call Trace:
-  <TASK>
-  blk_mq_quiesce_queue+0x2c/0x50
-  dm_stop_queue+0xd/0x20
-  __dm_suspend+0x130/0x330
-  dm_suspend+0x11a/0x180
-  dev_suspend+0x27e/0x560
-  ctl_ioctl+0x4cf/0x850
-  dm_ctl_ioctl+0xd/0x20
-  vfs_ioctl+0x1d/0x50
-  __se_sys_ioctl+0x9b/0xc0
-  __x64_sys_ioctl+0x19/0x30
-  x64_sys_call+0x2c4a/0x4620
-  do_syscall_64+0x9e/0x1b0
+Confused...
 
-The issue can be triggered as below:
-
-T1 						T2
-dm_suspend					table_load
-__dm_suspend					dm_setup_md_queue
-						dm_mq_init_request_queue
-						blk_mq_init_allocated_queue
-						=> q->mq_ops = set->ops; (1)
-dm_stop_queue / dm_wait_for_completion
-=> q->tag_set NULL pointer!	(2)
-						=> q->tag_set = set; (3)
-
-Fix this by checking if a valid table (map) exists before performing
-request-based suspend and waiting for target I/O. When map is NULL,
-skip these table-dependent suspend steps.
-
-Even when map is NULL, no I/O can reach any target because there is
-no table loaded; I/O submitted in this state will fail early in the
-DM layer. Skipping the table-dependent suspend logic in this case
-is safe and avoids NULL pointer dereferences.
-
-Fixes: c4576aed8d85 ("dm: fix request-based dm's use of dm_wait_for_completion")
-Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
----
- drivers/md/dm.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-index 7222f20c1a83..66dd5f6ce778 100644
---- a/drivers/md/dm.c
-+++ b/drivers/md/dm.c
-@@ -2908,7 +2908,7 @@ static int __dm_suspend(struct mapped_device *md, struct dm_table *map,
- {
- 	bool do_lockfs = suspend_flags & DM_SUSPEND_LOCKFS_FLAG;
- 	bool noflush = suspend_flags & DM_SUSPEND_NOFLUSH_FLAG;
--	int r;
-+	int r = 0;
- 
- 	lockdep_assert_held(&md->suspend_lock);
- 
-@@ -2960,7 +2960,7 @@ static int __dm_suspend(struct mapped_device *md, struct dm_table *map,
- 	 * Stop md->queue before flushing md->wq in case request-based
- 	 * dm defers requests to md->wq from md->queue.
- 	 */
--	if (dm_request_based(md)) {
-+	if (map && dm_request_based(md)) {
- 		dm_stop_queue(md->queue);
- 		set_bit(DMF_QUEUE_STOPPED, &md->flags);
- 	}
-@@ -2972,7 +2972,8 @@ static int __dm_suspend(struct mapped_device *md, struct dm_table *map,
- 	 * We call dm_wait_for_completion to wait for all existing requests
- 	 * to finish.
- 	 */
--	r = dm_wait_for_completion(md, task_state);
-+	if (map)
-+		r = dm_wait_for_completion(md, task_state);
- 	if (!r)
- 		set_bit(dmf_suspended_flag, &md->flags);
- 
 -- 
-2.39.2
-
+An old man doll... just what I always wanted! - Clara
 
