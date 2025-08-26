@@ -1,130 +1,165 @@
-Return-Path: <linux-kernel+bounces-786923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04CDEB36DF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:37:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC40AB36DF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:39:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E153362DE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:37:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B28A177AED
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF2E42C3248;
-	Tue, 26 Aug 2025 15:37:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE9122C0F6F;
+	Tue, 26 Aug 2025 15:39:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="T1RtzjXp"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="X4P3LLgH"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120E52C0F7C
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 15:37:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D90D2116E9
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 15:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756222659; cv=none; b=F6w8Yyht/x6bJxnEolcT5VX1Z/2KF5LXM5SnMICuDBc9Ao9s9tA0ghtrA8VQBJ2VSnTeBA7Jp3ogDKe4iTIH+GnopX9YRmwfcV4Je9/mf9YqP4s0hv2cWCaLA5iyi8vA/ZOg86gykx0NACVB3rSDkxWcJ5nwM6qJEqaVlQe5ROg=
+	t=1756222745; cv=none; b=tpPhaAFdOCk5zii/Yrh7agjrvJStMZ/TOR86pF8tnABfMjchPfCsgOKl9zkGiBfCjip+SW6fA8XM68FDo1mV5a5cfapcBzRDYJHVm1QHml64RYu/1kHxeNFq5yDuoRWwdghshl9DrDLPMMGSNjjnj8BBRsTdoms8qvYMKaAJQbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756222659; c=relaxed/simple;
-	bh=OEA06nTeAUGwpAIDsE1dzLbzSs+2hxTR5wfFGk+yki4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R9ridU2HC8Cr8cFudBGDK4NZBVmjTMaXOEOAfGUM2vgVwwrfF2Di7VVUil0N8DW9yjSKJcIj/Z+5ejIsbmjEEYr7N35H3g2kN3fZeZnALnTMXAxNCuxiTbjJphS08saf35No9NLCQFls12ALXu4/wzBLyrpD/WUELpkk1ZSrl4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=compal.corp-partner.google.com; spf=pass smtp.mailfrom=compal.corp-partner.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=T1RtzjXp; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=compal.corp-partner.google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=compal.corp-partner.google.com
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-70ddadde48fso3163536d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 08:37:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756222657; x=1756827457; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PVabfoeTRalARdFdnvAT75q/NwmfuXUfzr/tmDDydBM=;
-        b=T1RtzjXpDN4CuE3xqOIE6vNDLflVeawOsXty1KZe9zHHAjHKsrKwh4u6B89wOK2cFB
-         93n15bwHjtgUJTZwUhAjNoa18mUz9Gfm4Opf13nkj+ToumHHCng0I05uvE0r/dTvNtA6
-         68lOP6Qcx25bReHt+9N6luG+rQCT0qGQ55HpVuhBcMwJgughGlMOPDjXdepOz8mw2qII
-         2k0/qpPtkKhTHRCnRL91OqQH3ujpb5Iwn1rB8lPIYBXlGIzCP4H07Id/e/I7f2NeVxNh
-         3ln7S4J0BaOBeugfgM0Y8e2kJ8QHC3AcEeAJf1NcXLpgIuutbYlwpbMqV7g0sKhj81+E
-         11zQ==
+	s=arc-20240116; t=1756222745; c=relaxed/simple;
+	bh=bkCkv19S9wHdnx0Kc3+tOj9A6SmyMAB9oyi/16jxTxM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q+k0RFL0sDhodG9t8VfTWhuLYqxpyQ5aDMLjywo70KrxRP+B6WQWtycaW4OwTr7s35wPxJoMtezv1bKKoPkaGh9zZ5jAq3xQRsF2/F3dwPtbJqs92Ju9qkPslrSpGf3rhN0O15zFf2LhENt6iGG5zewy5dsjfgL5QZ6OXZkj+aQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=X4P3LLgH; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57QFLd0V011572
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 15:39:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	1//9ar4mn96BTeRcegh7QawnDMTKdyK81gfdwaa5TQA=; b=X4P3LLgHNPk2C2Jd
+	5x2qMx8myzFcDvd3GsgCO3pcGV7w/koG/tWWh8qqUqFLDyP4Xd3ZwtdBIaPmaidi
+	CONaiwJ1SXb0I/hfrCPY5IUnND3ndfEJ4BbY0/s0gcu3Pdjj53rWqbLM3QetSuDg
+	+PTAZVmBdEg58qEPG1qHl+l5GbRyM65DPxZrLo0x7Vj8RHPm2B+DsNnNOpj+WWAL
+	nssxfJamSDEvzBJMGG6JfRcIIZ1IbW5tIrNFPT4mVAaU9PFInlQq3qkxyP06VT9X
+	WRWT8Y+vIIHPMy4g2iPQf6Erh9HUUZCeuJu0VqcU4h0OTCckdFf9SAEIApRkXmu1
+	OkHQIA==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q615hajd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 15:39:02 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-771f71fa5dcso848960b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 08:39:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756222657; x=1756827457;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PVabfoeTRalARdFdnvAT75q/NwmfuXUfzr/tmDDydBM=;
-        b=Q1kTbMcv4FN5BC5AP7Vh95OMi64/SCGNin/1se2m6gzk3/2NnesIlSd0VrCXlXzk7l
-         eAGmwRlYg2j92kMCSAYbcoGUDbdg42DSAfdAK3I/IfLiYgBZ5kf3Ao+LwFFomVc+ZrvM
-         Epe4jC9qSjKaXTYBZ6xdpm0snyF7RM06fPGA/5ZJ1fR+2lemeJizRVSISBiLQ9l9KwkK
-         9yB1Iq4zD98W4JpGGI8cQsXNvtLqTdgSGfNmxcXa4EAFWm/BWBuUjyHI8WcFgbFwE68N
-         IKDmFTnwfTUhK/KWaUSaRbKcJ/2XoQ2lLft0bzZUqV0NxDci3uxM0ydMO1RWUS90hWK7
-         8f2w==
-X-Gm-Message-State: AOJu0YyF6Q/KdHOqdJefFNQ9WE1JMmYIhacf2Evt7Ay65d1CNe6KH2Dq
-	v/Qo5qHH2i8/9gWjmitPXFsewSkZB3rz3RgjKmSbkLhjmDez279QaFM+966lPq1cwsljqCuSL79
-	jAeIyadidzDDPvhfftyEGJa+f4voSt7kK11oAlIszm2aCay/W2t8auZIp3Q==
-X-Gm-Gg: ASbGncsFVDmEv0D5tA7+awa0A+WpN6yVerTaFcsIReOiyaRW8wyXrH1ANT/9cGFa5UV
-	3vDvAz4YxSTADQIi9c5GyXO9fcZuI/gLVlUvqtrYw6EJa5dRKuCc1N5sSs5JkX3rp+uZx35HqIs
-	xlwtI8j0YVlo6j7RXtw51b37fF9gDmnAqNDdTv+ZCjhdZsAe3OMzPmLVU+MyGg2ytZkKUy7Epgl
-	nFKwJg=
-X-Google-Smtp-Source: AGHT+IGn4/HsaQzBgXtTuWAP/lpgRhFuhANcsb2aUMcUAyUN7Db8Yk7JceHH1d57Q+3kX/MnS38N0ue+12CYe+gWZKk=
-X-Received: by 2002:a05:6214:c65:b0:707:4539:5183 with SMTP id
- 6a1803df08f44-70d970980e6mr168020966d6.5.1756222656452; Tue, 26 Aug 2025
- 08:37:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756222741; x=1756827541;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1//9ar4mn96BTeRcegh7QawnDMTKdyK81gfdwaa5TQA=;
+        b=qhFeR3EkoxFbRRjiHlK8/K9uYtgTOZaN+4zXUsRFPvsmJqjS+BPum+pOhkpIE85zqF
+         LSGJRDyHSOE6U6293+ESkB6FjbRJSWMKLBeAHbNdX509cOzmMc71H+2S9OJ0HeWnCgDj
+         6WYKOi+t9HLsTpIrYmN/XupExMI/SCo7rhi7EgadgKc2MBpt+tGZIA1NmVg82tOaMgD2
+         cTlIPWizAZv9B0kFOWdjcLOTQ9osHaaUfprlXOiUePHtJUYKEXT47QJPnBJI5hSgmzar
+         eWBUUzY9ScmT/7fz3sk6mQ3dAf/uLFt9miBg+fEdBHYy9lbwCskeL3Lv6C5zixN/tkHV
+         zbog==
+X-Forwarded-Encrypted: i=1; AJvYcCUcWeQ3ZSH9ay5YcfALIvtmtpktwdJFmjLpOizGxl069eoKfdNedHZaZhDVw1GJHRU+nSjXknWoKNn1fgU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVS1bm5aCoxqlC4+UQYNQxDosS9ekAZzwJD8GD+Gd4TNj+2yTE
+	pPsqVt6SdkaZmdUrz5UqZC6zlNBP/CLcKJDjUQnVDBsdH9dLq7+ER3fgYp4Mj6yHvxznFtucgIf
+	npFWGH3zRRsgDR/Y41Ktulu/f7o+6dfVccSAtDDT3Bse5qJEmfT2fNyfxLGBu65QsT/U=
+X-Gm-Gg: ASbGncvdLVmr2PSkN2qBUM2Usb+kzhCA+ZopMu+mo3KwrRBtwdq28A8ZGYqRC2gDvYo
+	Vnixhqr/AYD54rryLX+jZnEMyJ+7zKbpaB7ahQmTi7b4mi0V+JlKV92TWlv19ij0qBu8ca+jIOY
+	qCI/kgbltGmJmmgNCTueFzSj4JrBzdYLwW59NUYDyQ4aO8fA0LiNAVYC8QFSaJjExW9JB26H3ot
+	Z9YhVlf2g/K4FkSh1Fdh8xjwK6gdhTQE5AtCMLyyubJt2Yec1W6TP5kXuQ4daoBQMIoc//vdBQD
+	Vzkf20Pf+ED4XeATkH9Qw9jriGroMgYx+VBtZZrl8fzO8vySL32HmgHygG+26E3IkxsZLalMuH0
+	Ct/zoGlzyhzlyG5efVy8=
+X-Received: by 2002:a05:6a20:3d12:b0:243:7cff:6251 with SMTP id adf61e73a8af0-2437cff65ccmr9026059637.26.1756222741343;
+        Tue, 26 Aug 2025 08:39:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEL0KSG01yve3r3qzqiKchOxZo/p+aKsbAcVtQItkNd7vJ4cyfMgvyDRPq539k48rr7cMjN6Q==
+X-Received: by 2002:a05:6a20:3d12:b0:243:7cff:6251 with SMTP id adf61e73a8af0-2437cff65ccmr9026009637.26.1756222740816;
+        Tue, 26 Aug 2025 08:39:00 -0700 (PDT)
+Received: from [10.227.110.203] (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7703ffae973sm10724369b3a.12.2025.08.26.08.38.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Aug 2025 08:39:00 -0700 (PDT)
+Message-ID: <2fab10a7-8758-4a5c-95ff-2bb9a6dea6bf@oss.qualcomm.com>
+Date: Tue, 26 Aug 2025 08:38:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826093725.2432153-1-ajye_huang@compal.corp-partner.google.com>
-In-Reply-To: <20250826093725.2432153-1-ajye_huang@compal.corp-partner.google.com>
-From: Ajye Huang <ajye_huang@compal.corp-partner.google.com>
-Date: Tue, 26 Aug 2025 23:37:23 +0800
-X-Gm-Features: Ac12FXw_ibROh4a5HKwjNDJ18I2fbCE2E5fZrhUQZkVnB9izMMIgm1fAL4Zqo_4
-Message-ID: <CALprXBaHBivkJfEUaMq0zV3nycidSJheGOVXaOhwFTi0iiQhqw@mail.gmail.com>
-Subject: Re: [PATCH v2] ASoC: SOF: Intel: WCL: Add the sdw_process_wakeen op
-To: linux-kernel@vger.kernel.org
-Cc: linux-sound@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, 
-	Bard Liao <yung-chuan.liao@linux.intel.com>, 
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, Jaroslav Kysela <perex@perex.cz>, 
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, Takashi Iwai <tiwai@suse.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
-	Mac Chiang <mac.chiang@intel.com>, alsa-devel@alsa-project.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 6/8] wifi: ath12k: Use
+ pci_{enable/disable}_link_state() APIs to enable/disable ASPM states
+To: manivannan.sadhasivam@oss.qualcomm.com,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Manivannan Sadhasivam
+ <mani@kernel.org>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Nirmal Patel <nirmal.patel@linux.intel.com>,
+        Jonathan Derrick <jonathan.derrick@linux.dev>,
+        Jeff Johnson <jjohnson@kernel.org>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-wireless@vger.kernel.org,
+        ath12k@lists.infradead.org, ath11k@lists.infradead.org,
+        ath10k@lists.infradead.org,
+        =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>,
+        Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Qiang Yu <qiang.yu@oss.qualcomm.com>
+References: <20250825-ath-aspm-fix-v2-0-61b2f2db7d89@oss.qualcomm.com>
+ <20250825-ath-aspm-fix-v2-6-61b2f2db7d89@oss.qualcomm.com>
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <20250825-ath-aspm-fix-v2-6-61b2f2db7d89@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzNCBTYWx0ZWRfXxGbL9/U/D4UN
+ xhdvmXcJnUAOhU4BoOu+H+d922FHOx1czRN1p7DIfhULEGVjOHF4DHscOdEScG/itimAP5R4wQR
+ jFRp1YVlebtoRMCNo4cBx1KIXjT2aWVm9OSBpB4ZAnXTNoags0fa3Qhmnviqq3/H5TVacyJ2Z46
+ QRQ8+SNHxikYqJUUKvOEAQuIL27IOed3+I1oEScIt/kRu8c2pDxq8rf01hQc3uDB1JM/1gQ4v+C
+ N3CFySoLPhiz9zjwHqcZpMUpLm9UgQWsN4JVnAOwFgTBhGQooe6B4xRPDoqFJlWF0Igo9WYjl4F
+ 4O7QQ4h3B6sGw0UnWXzN3ZPYfso3FYwF8OCevEN6XAuN9AxvUsbasp09bhuawcQT1JZRL/Nxomq
+ 6TaDXmlb
+X-Proofpoint-GUID: 0mZKfz5q9DerQzdB8RZDvxUM2j-PXJ2m
+X-Authority-Analysis: v=2.4 cv=K+AiHzWI c=1 sm=1 tr=0 ts=68add516 cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=gMjHX16tY-KYiP7tJ_8A:9
+ a=QEXdDO2ut3YA:10 a=zc0IvFSfCIW2DFIPzwfm:22
+X-Proofpoint-ORIG-GUID: 0mZKfz5q9DerQzdB8RZDvxUM2j-PXJ2m
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-26_02,2025-08-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 suspectscore=0 bulkscore=0 clxscore=1015 adultscore=0
+ impostorscore=0 priorityscore=1501 phishscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230034
 
-Based on the suggestion from version 1,
-I forget to add the tag Acked-by: Peter Ujfalusi
-<peter.ujfalusi@linux.intel.com>  in the v2.
-I will send the v3 later, thanks
+On 8/25/2025 10:44 AM, Manivannan Sadhasivam via B4 Relay wrote:
+> --- a/drivers/net/wireless/ath/ath12k/Kconfig
+> +++ b/drivers/net/wireless/ath/ath12k/Kconfig
+> @@ -1,7 +1,7 @@
+>  # SPDX-License-Identifier: BSD-3-Clause-Clear
+>  config ATH12K
+>  	tristate "Qualcomm Technologies Wi-Fi 7 support (ath12k)"
+> -	depends on MAC80211 && HAS_DMA && PCI
+> +	depends on MAC80211 && HAS_DMA && PCI && PCIEASPM
 
+As you point out in patch 1/8, PCIEASPM is protected by EXPERT.
 
-On Tue, Aug 26, 2025 at 5:37=E2=80=AFPM Ajye Huang
-<ajye_huang@compal.corp-partner.google.com> wrote:
->
-> Add the missing op in the device description to avoid issues with jack
-> detection.
-> Fixes: 6b04629ae97a ("ASoC: SOF: Intel: add initial support for WCL")
->
-> Signed-off-by: Ajye Huang <ajye_huang@compal.corp-partner.google.com>
-> ---
-> v2: Add Fixes: 6b04629ae97a ("ASoC: SOF: Intel: add initial support for W=
-CL")
->
->  sound/soc/sof/intel/ptl.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/sound/soc/sof/intel/ptl.c b/sound/soc/sof/intel/ptl.c
-> index 1bc1f54c470d..4633cd01e7dd 100644
-> --- a/sound/soc/sof/intel/ptl.c
-> +++ b/sound/soc/sof/intel/ptl.c
-> @@ -143,6 +143,7 @@ const struct sof_intel_dsp_desc wcl_chip_info =3D {
->         .read_sdw_lcount =3D  hda_sdw_check_lcount_ext,
->         .check_sdw_irq =3D lnl_dsp_check_sdw_irq,
->         .check_sdw_wakeen_irq =3D lnl_sdw_check_wakeen_irq,
-> +       .sdw_process_wakeen =3D hda_sdw_process_wakeen_common,
->         .check_ipc_irq =3D mtl_dsp_check_ipc_irq,
->         .cl_init =3D mtl_dsp_cl_init,
->         .power_down_dsp =3D mtl_power_down_dsp,
-> --
-> 2.25.1
->
+Won't this prevent the driver from being built (or even showing up in
+menuconfig) if EXPERT is not enabled?
+
+Should we consider having a separate CONFIG item that is used to protect just
+the PCI ASPM interfaces? And then we could split out the ath12k_pci_aspm
+functions into a separate file that is conditionally built based upon that
+config item?
+
+Or am I too paranoid since everyone enables EXPERT?
+
+/jeff
 
