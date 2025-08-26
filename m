@@ -1,94 +1,127 @@
-Return-Path: <linux-kernel+bounces-787121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EFDAB371A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:47:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88790B371AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:48:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 880008E6E12
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:47:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD29A1BA18DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:48:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6FB01A76B1;
-	Tue, 26 Aug 2025 17:47:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C362D0C62;
+	Tue, 26 Aug 2025 17:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q2XFkEO5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="JzF5NGct"
+Received: from smtp-bc0f.mail.infomaniak.ch (smtp-bc0f.mail.infomaniak.ch [45.157.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2227D28135B;
-	Tue, 26 Aug 2025 17:47:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9725464D
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 17:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756230444; cv=none; b=rleIoUoe9QSGDIVG6ad7MuboHjMK/YTd1cdWhQlp9R6McAyd+kcuJEzftJoANJxoTGvXpzJc7p1JTWD1tkZKtFZqwbT1jjC6fcpv2/njnZSVzHylBDcngO/x/qxH4BfXmy9j+1DUsFz9tlGaem0iAUjrc7HMrvOCvJ+Z2xfOpHc=
+	t=1756230462; cv=none; b=HqjFEus1BLIJ0fR3RECAkFmYMudAj6fbSGwF0RjnjlntZn5aysH9qqgHiuvqHANmAZi9imwzc0Fwdap/jU+ZDHma39DqdF5ErzBdCeDWxCR+YTWyoBU/Nr2mnE1Gd7a1L5791fWnDtwRX1VViXnBG8lzGG5/SrAKJGq+5ZFpdVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756230444; c=relaxed/simple;
-	bh=QdhdgGupXvzMsxi3UpqcbF6p+Oq4kYam9Hl4IiM7fG0=;
+	s=arc-20240116; t=1756230462; c=relaxed/simple;
+	bh=sFRIu8Am2jIzlH44DxKpMs4s+3Je74MeBIKW4BmL/IE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hcH3t2ZkJ9vXElVp/SYLfrxPcuV96ECJ68cvNALYjB7p27e9bXe+Mbjoo4q2X0m/Ml1/+fn7eaG/Pelzh3z7GmCBHqqTgMyXdEHyty0+aPr5bATRoQpwsuGDcUukk5U9ChvtFtUlasfl9DNOeSmYX42YOZO/BTbcwxF/sy6n6v0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q2XFkEO5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A1C6C4CEF1;
-	Tue, 26 Aug 2025 17:47:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756230443;
-	bh=QdhdgGupXvzMsxi3UpqcbF6p+Oq4kYam9Hl4IiM7fG0=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=qX70MPEbZr6/bCCuhVY7t0Wqs8fI3RkK2Cuvk0k5zJMPOGeBIkE0pU1e92vBxG8U4irNau4cchTuqE5Ka1ockkZHzMMI4PqSUoQ1PneHWJNuJvn2HVbliIUovl9Chsxzz/H2LQ5fo1nqff1IR244p3cZ2HytEr80fkmM0arf+LM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=JzF5NGct; arc=none smtp.client-ip=45.157.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4cBFVZ6s0YzsK9;
+	Tue, 26 Aug 2025 19:47:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1756230454;
+	bh=z/NUjKchTuxG8z+dgzPttXLaScBMzIR69Ax8SOVBUjA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q2XFkEO5hy3tZUNuy04P05Aej+NwMNzR1V1UUeGsA/fYKNOeEEhmbJcM5+vZ8ng7b
-	 rx7xMK0sab0xgNWwV/j0jDXaGoAEcg/LkNW31RQVhyXVr2hoBBh4wTI2dx0gOjmoDG
-	 QB5kLtfemgBrb79VykIFQHNzIEIz5nFVjEsS4RVJoUPG0yMmzFXvjf/2flk1s7ccBk
-	 pIWbKD5uIpYgoOyTp3VG4sGVRtXQI0CpFhPjp7dFr/pZGlJfychkpuXYewWdrNhgyz
-	 wjt2dO+pj1Mj9oyQHoQzi6e76GYtZcb7WCFH0fYUa62OCUExt4FoTWVjzE5Ea9mRuu
-	 Cux9TYhmvn/8A==
-Date: Tue, 26 Aug 2025 18:47:18 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: panel: lvds: Append
- ampire,amp19201200b5tzqw-t03 in panel-lvds
-Message-ID: <20250826-fragility-darkish-715589203b6c@spud>
-References: <20250826-drm-misc-next-v1-1-980d0a0592b9@foss.st.com>
+	b=JzF5NGctdlftcM1YJwG89Bu/YKhZpb2TC6flRXGDGvSAhwm7E9aTjbdy+MTPNR5Cf
+	 wcuscZ0FG7I5fwGhBzF51K2dbWsjCtZ6LzO0l8iqWC0cfaoHkystxzh+QdA6e4M5Yo
+	 5iaVkRVK9xXxIBIjDfYAAvTB0Ap23RVRVZB8hzag=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4cBFVW0pJ9z4V8;
+	Tue, 26 Aug 2025 19:47:31 +0200 (CEST)
+Date: Tue, 26 Aug 2025 19:47:30 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Kees Cook <keescook@chromium.org>, 
+	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>, 
+	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
+	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Miklos Szeredi <mszeredi@redhat.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
+	Robert Waite <rowait@microsoft.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Scott Shell <scottsh@microsoft.com>, Steve Dower <steve.dower@python.org>, 
+	Steve Grubb <sgrubb@redhat.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
+Message-ID: <20250826.iewie7Et5aiw@digikod.net>
+References: <20250822170800.2116980-1-mic@digikod.net>
+ <20250826-skorpion-magma-141496988fdc@brauner>
+ <20250826.aig5aiShunga@digikod.net>
+ <20250826123041.GB1603531@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="9HnhkVHANMCSoXTS"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250826-drm-misc-next-v1-1-980d0a0592b9@foss.st.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250826123041.GB1603531@mit.edu>
+X-Infomaniak-Routing: alpha
 
+On Tue, Aug 26, 2025 at 08:30:41AM -0400, Theodore Ts'o wrote:
+> Is there a single, unified design and requirements document that
+> describes the threat model, and what you are trying to achieve with
+> AT_EXECVE_CHECK and O_DENY_WRITE?  I've been looking at the cover
+> letters for AT_EXECVE_CHECK and O_DENY_WRITE, and the documentation
+> that has landed for AT_EXECVE_CHECK and it really doesn't describe
+> what *are* the checks that AT_EXECVE_CHECK is trying to achieve:
+> 
+>    "The AT_EXECVE_CHECK execveat(2) flag, and the
+>    SECBIT_EXEC_RESTRICT_FILE and SECBIT_EXEC_DENY_INTERACTIVE
+>    securebits are intended for script interpreters and dynamic linkers
+>    to enforce a consistent execution security policy handled by the
+>    kernel."
 
---9HnhkVHANMCSoXTS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+From the documentation:
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+  Passing the AT_EXECVE_CHECK flag to execveat(2) only performs a check
+  on a regular file and returns 0 if execution of this file would be
+  allowed, ignoring the file format and then the related interpreter
+  dependencies (e.g. ELF libraries, script’s shebang).
 
---9HnhkVHANMCSoXTS
-Content-Type: application/pgp-signature; name="signature.asc"
+> 
+> Um, what security policy?
 
------BEGIN PGP SIGNATURE-----
+Whether the file is allowed to be executed.  This includes file
+permission, mount point option, ACL, LSM policies...
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaK3zJQAKCRB4tDGHoIJi
-0mGVAP9Zv6hXywWIK1K/hJyxUZD1xROsO1NNAjaR7gjBzzzg8QD/TGGd8P9i7J6r
-x3M30PfiUvg1IznscukX12dypHsvAAs=
-=fpYc
------END PGP SIGNATURE-----
+> What checks?
 
---9HnhkVHANMCSoXTS--
+Executability checks?
+
+> What is a sample exploit
+> which is blocked by AT_EXECVE_CHECK?
+
+Executing/interpreting any data: sh script.txt
+
+> 
+> And then on top of it, why can't you do these checks by modifying the
+> script interpreters?
+
+The script interpreter requires modification to use AT_EXECVE_CHECK.
+
+There is no other way for user space to reliably check executability of
+files (taking into account all enforced security
+policies/configurations).
 
