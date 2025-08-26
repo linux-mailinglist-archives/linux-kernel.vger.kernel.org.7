@@ -1,105 +1,103 @@
-Return-Path: <linux-kernel+bounces-786108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15B83B35512
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:14:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C61FB35517
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:15:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEF1A17727D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:14:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 319E83BA359
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E4D62F7443;
-	Tue, 26 Aug 2025 07:14:35 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A262727FB10;
+	Tue, 26 Aug 2025 07:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X1A0r4b0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EBFB2EC55E
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 07:14:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE02927EFFE;
+	Tue, 26 Aug 2025 07:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756192474; cv=none; b=gWO7xsYIOmQxS2BJN85oiUNtWVECPdqZlHP11RNnpYlfLjcymMs4hxfR81EGjplIKpXJm6vdmbK4W+1NBfuiCKflhqy838IXSjAJJoFkFnXR2NhLbnhIUtjzu6eqGJksxkLn6cJoWpqY2Z7+teIYReiElFYOjewQ0w1BXV2vy6w=
+	t=1756192518; cv=none; b=r1HiWD/MHrR9DAzfOqeogM/95mo5TxrmOJR7gXhJyQkI8zPVlL8osA+06JuIyhkuZz3B7inuQl/+cqrYB1Es2LwHVDbxI8Hb/sL9fO37g11CVXCism0m4kT/tMPzdtub6vl2HeE9yKkh4u0arqFmBUorSHq6s32Z5dys9T+QJx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756192474; c=relaxed/simple;
-	bh=GEs+opGn8331c4PiPhRHAxrBOtHlP3VG45cSNShKl5k=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=bA5P+YKixZOWav9zIX/+Z4BmggtZHcTcQtE3O9rD94M6AGwRLkaYHb0sT5iIMUmpAdcmqd/xrr8yKmrVYmMTOOb5WIp+x4tJQvcB35sdVLYMiL8YJaHEsxmRjn94nZeZ52wuWfsKkYjBAKMBa1/ZR9yPIsXp1OOCwnG9fKB7DKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-88432e1630fso495291339f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 00:14:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756192472; x=1756797272;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EIS3KzpbB5EOefn6RkDMRGNPbYPh9SwSUhXZC4mDvPI=;
-        b=rdHR2p4iN4wX3+2QWbJdbL1EF59G5j+RuPDjeisa7VeHb8C8WU3h6XlssXBppfKgin
-         yp4weZWQ1h/LakHpFa3ElRkCtlfQ19zPpPZ0cfbFSb5r1Ol1wPCbbTlUnx1wMvGq/ukI
-         iXmLEUYlf1jAmGprOYxbs1/9cVACucQKP7nXjek7oUa+x0H52ZGXs0l1mQ+EBFatfWDa
-         iKdeuCu3VYFu8B6ptymP/ahxKJ0Qoj5e4++IEy1xdT8TdHKQyGfoopUNeB2qoYUsCydE
-         3uUhZgyHHwLozrgksbzrnR1f3vUycAnsgdwWD6KwNJjQZhvCHNwNhwCQrb2870+tZjms
-         qVbw==
-X-Gm-Message-State: AOJu0Yzhl6Cbu0+KlT1ROqo/sI29tH5EXYwYXOUKyL/y8PYkOTXXR/4G
-	attKEmw5u9nOs2Xm9wvtKp0NQgJBiT2HMlQ/ITNPLt1YhJ3bPr1FCRfhP8BJPbPehtL9aXkYGmM
-	3P6FSmgT8tQqkA2BZIcugzjiU3Jj8yDE9kPom1O8iKjK+GNhv+GgRTfp+wyc=
-X-Google-Smtp-Source: AGHT+IG+XkNNvl86GIWEOFvAl1lvuX+rDfOCQ4m47CfItuZ4mdORa8C2RBY9A3rg8zSUYWyX9CuM5zeIYpWINw/J1qbutGSVHu3P
+	s=arc-20240116; t=1756192518; c=relaxed/simple;
+	bh=aYIVm+aKRLtltfxrMsj38OhXw3B6ZTzRaFrq3NQzEIY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jz5puSip5YqG2AcQ7VM2YOlBgHByAMHFplkeOg661WraJ2fi+QXilhl8Nr59Z6SuuNumeWcKsaJ9LtUKrHivqTCO02DPpjVuGtbSz7i8BtxLpPctIYpEIitDxnzFEJHzZnIvlcu2Mrk2cK+ZIBU+zGu33tYKlELsWFVN9xLOxtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X1A0r4b0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B064C4CEF1;
+	Tue, 26 Aug 2025 07:15:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756192517;
+	bh=aYIVm+aKRLtltfxrMsj38OhXw3B6ZTzRaFrq3NQzEIY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X1A0r4b0I+6n4uHTHmN33PPcN7L5aYBEDvRXzT8XnmI/npegDJXUUigz7LeUBLHsJ
+	 hDRMf0fefK23a2r4GBcTOVRCtUewX4llg5ocpVwB3CAtV8t8ELmpVwnAg8se1xj+mV
+	 PUAB6GAnaGHLye/UFCcydpZo65ZtQb9/9Wc5vrkaQ0WOuyf5rl5G4nDAFvQhHR7NB+
+	 F8/cfgR2IxPZHk/1/I2AmI+sWEvi/CkNVFllayOtYcClDLc0UT9QFNVe6XNk0M8dOo
+	 XroksPuMgDwyU+Hl03PiXe79AGYVX/oN4Pv/iLnbqWS4GBy+y+XrGNVt0g5hpB3Jss
+	 X7zfhbyXG6XsA==
+Date: Tue, 26 Aug 2025 12:45:03 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Saravana Kannan <saravanak@google.com>, linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, Brian Norris <briannorris@chromium.org>
+Subject: Re: [PATCH 4/6] PCI: of: Add an API to get the BDF for the device
+ node
+Message-ID: <jqgvw3u6lkewaz2ycjkozcfqrmdln5gacgrog4lhioazhvk5yz@3ph2z25zwqvj>
+References: <20250819-pci-pwrctrl-perst-v1-0-4b74978d2007@oss.qualcomm.com>
+ <20250819-pci-pwrctrl-perst-v1-4-4b74978d2007@oss.qualcomm.com>
+ <20250822135147.GA3480664-robh@kernel.org>
+ <nphfnyl4ps7y76ra4bvlyhl2rwcaal42zyrspzlmeqqksqa5bi@zzpiolboiomp>
+ <20250825224315.GA771834-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2142:b0:3ea:b64e:6da0 with SMTP id
- e9e14a558f8ab-3eab64e6fd6mr134647085ab.23.1756192472536; Tue, 26 Aug 2025
- 00:14:32 -0700 (PDT)
-Date: Tue, 26 Aug 2025 00:14:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ad5ed8.050a0220.37038e.00b1.GAE@google.com>
-Subject: [syzbot] Monthly media report (Aug 2025)
-From: syzbot <syzbot+list1b1949acf52edc8a00fb@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250825224315.GA771834-robh@kernel.org>
 
-Hello media maintainers/developers,
+On Mon, Aug 25, 2025 at 05:43:15PM GMT, Rob Herring wrote:
+> On Fri, Aug 22, 2025 at 07:57:41PM +0530, Manivannan Sadhasivam wrote:
+> > On Fri, Aug 22, 2025 at 08:51:47AM GMT, Rob Herring wrote:
+> > > On Tue, Aug 19, 2025 at 12:44:53PM +0530, Manivannan Sadhasivam wrote:
+> > > > Bus:Device:Function (BDF) numbers are used to uniquely identify a
+> > > > device/function on a PCI bus. Hence, add an API to get the BDF from the
+> > > > devicetree node of a device.
+> > > 
+> > > For FDT, the bus should always be 0. It doesn't make sense for FDT. The 
+> > > bus number in DT reflects how firmware configured the PCI buses, but 
+> > > there's no firmware configuration of PCI for FDT.
+> > 
+> > This API is targeted for DT platforms only, where it is used to uniquely
+> > identify a devfn. What should I do to make it DT specific and not FDT?
+> 
+> I don't understand. There are FDT and OF (actual OpenFirmware) 
+> platforms. I'm pretty sure you don't care about the latter.
+> 
 
-This is a 31-day syzbot report for the media subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/media
+Sorry, I mixed the terminologies. Yes, I did refer the platforms making use of
+the FDT binary and not OF platforms.
 
-During the period, 2 new issues were detected and 0 were fixed.
-In total, 21 issues are still open and 96 have already been fixed.
+In the DTS, we do use bus number to differentiate between devices, not just
+devfn. But I get your point, bus no other than 0 are not fixed and allocated by
+the OS during runtime or by the firmware.
 
-Some of the still happening issues:
+So how should we uniquely identify a PCIe node here, if not by BDF?
 
-Ref Crashes Repro Title
-<1> 360     No    KASAN: slab-use-after-free Read in em28xx_release_resources
-                  https://syzkaller.appspot.com/bug?extid=16062f26c6480975e5ed
-<2> 237     Yes   KASAN: slab-use-after-free Read in dvb_device_open
-                  https://syzkaller.appspot.com/bug?extid=1eb177ecc3943b883f0a
-<3> 173     Yes   WARNING in smsusb_start_streaming/usb_submit_urb
-                  https://syzkaller.appspot.com/bug?extid=12002a39b8c60510f8fb
-<4> 48      Yes   general protection fault in dvb_usbv2_generic_write
-                  https://syzkaller.appspot.com/bug?extid=f9f5333782a854509322
-<5> 17      No    KASAN: vmalloc-out-of-bounds Write in tpg_fill_plane_buffer (4)
-                  https://syzkaller.appspot.com/bug?extid=dac8f5eaa46837e97b89
-<6> 9       Yes   WARNING in media_create_pad_link (2)
-                  https://syzkaller.appspot.com/bug?extid=701fc9cc0cb44e2b0fe9
-<7> 5       Yes   BUG: corrupted list in az6007_i2c_xfer
-                  https://syzkaller.appspot.com/bug?extid=0192952caa411a3be209
+- Mani
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+-- 
+மணிவண்ணன் சதாசிவம்
 
