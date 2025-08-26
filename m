@@ -1,114 +1,110 @@
-Return-Path: <linux-kernel+bounces-786315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F30BB35833
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:10:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 321A8B35848
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:12:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C403E7B61A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:08:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF5FB3B857B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:10:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8692D6E4A;
-	Tue, 26 Aug 2025 09:07:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A84303C9B;
+	Tue, 26 Aug 2025 09:08:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H7GGlgEd"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hn0WjKxk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778E93090E6;
-	Tue, 26 Aug 2025 09:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F2412F8BE7
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756199266; cv=none; b=F0YXs3439C0iQrl/A18gY5QdcMhZx57FSM4TkhNmTrAMkIh0Yl3slnLEZeg/NoS0IAZG4RW1xPf8RzUamaPiK65lEvC8WvoeicF9Bt2EBNpvK2nnFx99FYpKUmbbEuh3oj2T2W3s1jRXZt6LIsURx+6+fEYhpSx3d2hr8OO6/7c=
+	t=1756199305; cv=none; b=FEvjiVK8/hJIrrZ7gc1DRZ63VD6tlEoEHSQyHR4DHIOCG96d3gY8YT7ciSvMhCjF48sErpwaPj9xXRmU3izpeDX/sUNcch7z/B+mhDnLSIvI8vzvD4gO5SB7L61yCVdxTyUPORHpsV0xUAk5PnR3e/Z5YUPeF0W3YHUJaDFxswQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756199266; c=relaxed/simple;
-	bh=nzBzxwGce3XN2nG/onW7E89qvRfgd9avb1fan3ulgHU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m0+pq+7ymYtzz+r6HPZ8jnkON3wvpbZLItPS1NIr0G+VWWEHpdJkFMDBHN5jgjrTwv9Rkm3X7A/RWocvYjzYq7hd/SaNk4Qf5elWBZdJJ8dkC8wrPJxkDT6vMOICUcCDitmdg4ZWogs3SiFEt2fv5n8eHmMjHxkePH6uly8svvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H7GGlgEd; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-24602f6d8b6so9749405ad.1;
-        Tue, 26 Aug 2025 02:07:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756199264; x=1756804064; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nzBzxwGce3XN2nG/onW7E89qvRfgd9avb1fan3ulgHU=;
-        b=H7GGlgEdhHPH+L7D8gGfhsFLO27OTmW1ZuTX9M+CcwPRmUSDDlZhiHvmeqxSJQS+q4
-         sMbwK2y3tF2nfXH4nGsmlG0MJbch0F73XWDn4oHiEDMXbj6bR3F6WFc7Wo7btbk+rEH5
-         ksRZkmzb5JKJZZCOuEMyncv2cjlMJE7llWeusD4Ldak8n6oPxWmVN3lQsw8ni1O+qEMJ
-         y24UQ+fjbRfEzSwqwsYDSRmepapaClBzB98fapxWDxwillAU6itUVIGCLdX4/VRzz0Kd
-         YMA6nnHOw0K6sLUXeMzxC5sLh8vWcBrmrbJePAYTRiUeZcotP9S8ovx4KD0HY7kJKqcV
-         KUiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756199264; x=1756804064;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nzBzxwGce3XN2nG/onW7E89qvRfgd9avb1fan3ulgHU=;
-        b=XiJ4yUelA1rmNY9X7yTwKdkoL296AZe5Xa6X5i7gKasGQUJtTxVxulVpgipO5DS3yg
-         lXTTMPRwFZniRkF7vmcqTbCNjA3nDSpgqCEwVepiYM18+qi+CwjYXYl18vA1zEfCZ+ar
-         VGkOdBbX4ix5r8HyYWEHagc+JlcQqfSa4zqrff/t9hEXDCFEsM7HpdVQ6nqr9bEErGNA
-         YAr0e2T5OspH2jXaB4bYC6fWdINo2BiXqGbImsfCZWicpFWUP2j/xCxXAvb+1Rxz700R
-         fHBXEd1jMKya1ppXkRwVNpiaLoRvO0rX8jGNWB/7QOaMN4Av/00X2pnVGTSWf1u07UvO
-         nzHw==
-X-Forwarded-Encrypted: i=1; AJvYcCUe8AmCGyGj5l4kGqE4MOWtf4TJ73naCMnz47EPkNdeYVLD3xT+W/Ncvp1aAdSWv7LTD2AOrCXvTQshuwNFPYQ=@vger.kernel.org, AJvYcCWTqEsm5VBtZBWI4uq6m9P0Q3Y1lDVG5LGdxJl1kL/39Hb6IgTect98dZd/7u158wCUnc5/kdQWxvXCnLg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLB2cdv6nXaCPtugubQHEk3kkFYzkBpCH/GQcbUnoab2dIMyFR
-	DWv6IG6mm7goeOeF2ou/ilnM/tDJIYvTGA2oF+faJYi6FuOZzSbgaPOOZj5AqatVenB01Xsl1zm
-	zW+nUfT767rc0Y0zvwTH+yiObnuVDzYL9MVBAyFQ=
-X-Gm-Gg: ASbGncvcSjIgJSOyzU8hmWGqO6Rfn/JO0n1p0waXvLd+GOQkO5rTuIu1f4PP4FtQpBM
-	N8iDcEUOEgBIbN0gZ186AWiaO3wFd1rGXgHzVyCXvFdxovIY/a9QPaAWhKAu4MgmbUaWapP6rT/
-	7eYgqXHlYXiAsz+AsjpbN1Ag18mgDXQzgzv1VP/kRMoj3Ij51Ugm629iroue6SatQRSl8nl3p7u
-	zlAwCK4Giv9ceYqvFbhlisWy0RpF/fChhFtwTAeDbgk9VtOmuy9H1YPw/Y3gRlU0lxyKwjJk6Bu
-	ZWQTovDZnWlFgNfhLxeD0yYNYJJoYfOfK+cM
-X-Google-Smtp-Source: AGHT+IHviai/aWVF6O8hw3ma3Jen/05CjxVkJXrFc/5hzBHEyqZ24YiwmmlLkeIBg3c0OJIEgOO+JqtK29ZKuIznp+c=
-X-Received: by 2002:a17:902:f711:b0:246:5d07:842f with SMTP id
- d9443c01a7336-2465d078881mr91958675ad.1.1756199263652; Tue, 26 Aug 2025
- 02:07:43 -0700 (PDT)
+	s=arc-20240116; t=1756199305; c=relaxed/simple;
+	bh=GN5uQD4JD6djLG9PPbtEplS2jSso9GU5V0zzpg+K9Pc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pbuO1QPSqXWftDHBpiaF9g9jSubMQMiVlUM0tw+nr3DwrUvaheeqhBWas+daPLW23aeuaUamXjJsaQcIY74FfWDinO/xBiZp+9NFXnjL7q3T/SPdNe9miSlJ34JIijEy0ckwmXZxtxNfXz07zl5vfmTq7ZS37KSMNYT86LhPtz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hn0WjKxk; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756199301;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kgK6zVCaewV2AgflcmKRv9pWzRpDi+X/xM0/4eUVBak=;
+	b=hn0WjKxkbnFMdFMepfAR3APH5iA6vBZUUVwM/Bh1qgve0FHN//aTjycN9H9hpaUaqZcl05
+	RupbHJD+nZnOBC9rOgS4CmccMSEvfXGzOP24hF/c6UMVN1Vmhfcwa+4sDkgLg+ZB2YeXJv
+	mJtRxq/I6+Wu2S7EgOEJt9BYIY+n7Dg=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-626-bkekoeDEPDS-J6oAGgdWIQ-1; Tue,
+ 26 Aug 2025 05:08:19 -0400
+X-MC-Unique: bkekoeDEPDS-J6oAGgdWIQ-1
+X-Mimecast-MFC-AGG-ID: bkekoeDEPDS-J6oAGgdWIQ_1756199298
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AB241195419B;
+	Tue, 26 Aug 2025 09:08:17 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.57])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A231919560AB;
+	Tue, 26 Aug 2025 09:08:12 +0000 (UTC)
+Date: Tue, 26 Aug 2025 17:08:05 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-nvme@lists.infradead.org,
+	Nilay Shroff <nilay@linux.ibm.com>, linux-block@vger.kernel.org
+Subject: Re: [blktest/nvme/058] Kernel OOPs while running nvme/058 tests
+Message-ID: <aK15dbUiEyr0O2Ka@fedora>
+References: <3a07b752-06a4-4eee-b302-f4669feb859d@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250818191034.523381-1-shankari.ak0208@gmail.com>
-In-Reply-To: <20250818191034.523381-1-shankari.ak0208@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 26 Aug 2025 11:07:31 +0200
-X-Gm-Features: Ac12FXyJt0_-wAJkRr09YlZ4FwZ2WYoXHlCeUZO0L7ocM5ipSnRCeofa7oCofl8
-Message-ID: <CANiq72ktk6yR7vw7FRKFxEA8Zhc6MA6+EoBGnfQ=wL_t=n4D4w@mail.gmail.com>
-Subject: Re: [PATCH] rust: sync: Update ARef and AlwaysRefCounted imports from sync::aref
-To: Shankari Anand <shankari.ak0208@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3a07b752-06a4-4eee-b302-f4669feb859d@linux.ibm.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Mon, Aug 18, 2025 at 9:11=E2=80=AFPM Shankari Anand
-<shankari.ak0208@gmail.com> wrote:
->
-> Fixes: 07dad44aa9a93 ("rust: kernel: move ARef and AlwaysRefCounted to sy=
-nc::aref")
+On Tue, Aug 26, 2025 at 02:00:56PM +0530, Venkat Rao Bagalkote wrote:
+> Greetings!!!
+> 
+> 
+> IBM CI has reported a kernel OOPs, while running blktest suite(nvme/058
+> test).
+> 
+> 
+> Kernel Repo:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+> 
+> 
+> Traces:
+> 
+> 
+> [37496.800225] BUG: Kernel NULL pointer dereference at 0x00000000
+> [37496.800230] Faulting instruction address: 0xc0000000008a34b0
+> [37496.800235] Oops: Kernel access of bad area, sig: 11 [#1]
 
-> Apologies, I had missed out on changing the in-file reference call for th=
-e modules. This should fix that.
+...
 
-I am not sure if this should count as a fix -- it could have easily
-been an intentional, second patch on top of the move, so that the move
-is minimal to avoid modifying the lines at the same time, which is
-something we typically do/want. :)
+> [37496.800365] GPR28: 0000000000000001 0000000000000001 c0000000b005c400
+> 0000000000000000
+> [37496.800424] NIP [c0000000008a34b0] __rq_qos_done_bio+0x3c/0x88
 
-Thanks!
+It looks regression from 370ac285f23a ("block: avoid cpu_hotplug_lock depedency on freeze_lock"),
+For nvme mpath, same bio crosses two drivers, so QUEUE_FLAG_QOS_ENABLED & q->rq_qos check can't
+be skipped.
 
-Cheers,
-Miguel
+
+Thanks,
+Ming
+
 
