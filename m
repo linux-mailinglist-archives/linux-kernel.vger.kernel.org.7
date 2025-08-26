@@ -1,147 +1,100 @@
-Return-Path: <linux-kernel+bounces-785951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5E69B352D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:46:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A96CFB352D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:47:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0A1D7A846E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:44:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 331CF3BFEA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44CEB2E1745;
-	Tue, 26 Aug 2025 04:45:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E94292E228D;
+	Tue, 26 Aug 2025 04:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="TRNzaXv/"
-Received: from DNSNULL (omta038.useast.a.cloudfilter.net [44.202.169.37])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="Ledbbsfp"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C7A275B01
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 04:45:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802642D3A80;
+	Tue, 26 Aug 2025 04:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756183552; cv=none; b=myuXDkvB4t6Sl3ikskFyYS1oFjq7/JrWWD8GLOEqjbvgirQ1mLXbudA538UauMMOUBCdyaHujbdz9KFRfAHMwlWOi68AEMjPOkmC2KH1pg63WepU325LuUXbpNFE0QP759IMxLzk2l8DKyljIyDagsTNeu+NVbHb8ULlmdAdnxM=
+	t=1756183656; cv=none; b=TOxWqRDkhmGapS5AojlHcXeyINpqf57q2VO2YCsHahHBkm/mbUQ/yhoTXEoxl2YHAZrhZr6PClcdBYlKqIrg8Iz+6qqIfcf8tw+Pm74onCSh1ymCKExp5fnapy7RyOkaURairkeNC9ZhwJpSRNlu/vMPNQTlKAuCpV4TaRDxdyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756183552; c=relaxed/simple;
-	bh=6fpAxUXqlyE93Q/+JD6IIdh4cHWyrM9VR52auhBYhWE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oT+zaJe8Z0Duyes69eDmPeBzC/fjUA/4Ec/zAAWilBWgXvJPWLN1FWH9DxJH3gV1Rvgm1V1uNbi1Q4vCQlPkEykBMOfJ1hCw0F2gwNkJuUj8AgnzkLpU14iUHlk8VsczDB9VDS/csnxQ6MV8tKEROc4qgm7ynFefG4kJ+ygAZ8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=TRNzaXv/; arc=none smtp.client-ip=44.202.169.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-6005b.ext.cloudfilter.net ([10.0.30.162])
-	by cmsmtp with ESMTPS
-	id qjDiuSzKQKfoqqlXaupC3Z; Tue, 26 Aug 2025 04:44:14 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id qlXZum1JAgahDqlXZuov5N; Tue, 26 Aug 2025 04:44:13 +0000
-X-Authority-Analysis: v=2.4 cv=faKty1QF c=1 sm=1 tr=0 ts=68ad3b9d
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=DR2cKC/DEnBA9KqqjaPhpA==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=7T7KSl7uo7wA:10
- a=yNDbeuk1G1CePlwefi4A:9 a=QEXdDO2ut3YA:10 a=xYX6OU9JNrHFPr8prv8u:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=3LEUZooy3cA+r1A+6Q/9oLA+oz/81DPxxeW8Ak9/YpM=; b=TRNzaXv/y0xo5y03+fEnAlaqt2
-	KZpexqG6D79IuXlv6yRe+d54dWiO3xDAPcsFF4z9yrugm3egVG+aUBIicmyl61uXJOUyH5hM4LTr4
-	YvTomCwxl2ExBNOnkDa1ctlokC7b35/CgdxvgB9MccKfmA9ij7g1lTR1I0jil01d4nwfoUi2L9t0+
-	cpnGtj8f1H+++YwZP82wX5XRq8UB3DMP5f4zI9qV03pDgGzf8+11mBlbXI5K2q8o3L0Cu00TYj+g9
-	U4724lFmFDwkKlk8ZHl6xzHcRVApv6s0BAaZS28R2/68zD3ka4kuXtJHCtYVN47OeUjGzmW68ExoQ
-	UcPk2bMQ==;
-Received: from static-243-216-117-93.thenetworkfactory.nl ([93.117.216.243]:36842 helo=[10.94.27.44])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1uqlXY-00000001RSx-0ZQh;
-	Mon, 25 Aug 2025 23:44:12 -0500
-Message-ID: <aa568cd4-3bfc-4eac-8a49-eb4cf7cf7331@embeddedor.com>
-Date: Tue, 26 Aug 2025 06:43:55 +0200
+	s=arc-20240116; t=1756183656; c=relaxed/simple;
+	bh=WaPZVVjMhrpiv+RnuL+4O1L+T8RlvigGHVXnK7YFpts=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Yf9jx0Og+4ekZsmDz2i3gnUPKlV13rP5xb8+u0RLvfy3cR31oVsMZt0IenlY/cQNW0DKdsbtk5W1BC2qofcxmAyHUghdzIapPXAx9sWwUMVMA2SvUa/UKTcPckVLTXviE++wniWDcwUjuWKL9h9LnhK45ybn0Rzs4z4p8iFC+v4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=Ledbbsfp; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net BFA0740AE3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1756183651; bh=a8+hWff1KQlSJOK0qvgkMuuSdA0Yy7c7M21npm8LnhM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Ledbbsfp74ooaF7euWH5BChITt0L5pS3h+6cEY/5/1QAkvt7jyQM36qZu9HjcS4/J
+	 RyjYjbmBy0LBr3iCRRh6nwe3kt7nEoS97rP8vBU5XEPhQCDbLx7rGf6QYrrsOB+Z+2
+	 P3YXaYsaBuW6Z9R0rDIVpKoFlHTfAN+UQ8nbCC2PaizUy80FrDpdabpjoC1daWZ30l
+	 l8euCtwueVZ37hQ23Su4GqU14GKZbP1A9Ba3NmAUsbjx1Acq/KV1zdvf5m91xHepUN
+	 HYbeg7Ax/W2TYRtN2j4UMEvCmh72MAzRcCT7/mpD/WGrHBEo+/h8QjH3N+W6eNSzgv
+	 o4sgAAEQ1kGRA==
+Received: from localhost (mdns.lwn.net [45.79.72.68])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id BFA0740AE3;
+	Tue, 26 Aug 2025 04:47:30 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Documentation
+ <linux-doc@vger.kernel.org>, Linux Kernel Workflows
+ <workflows@vger.kernel.org>
+Cc: Bagas Sanjaya <bagasdotme@gmail.com>, Fox Foster <fox@tardis.ed.ac.uk>,
+ Federico Vaga <federico.vaga@vaga.pv.it>, Jonathan =?utf-8?Q?Neusch=C3=A4?=
+ =?utf-8?Q?fer?=
+ <j.neuschaefer@gmx.net>, Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH] Documentation: management-style: Correct "know" past
+ participle
+In-Reply-To: <20250826003437.7695-2-bagasdotme@gmail.com>
+References: <20250826003437.7695-2-bagasdotme@gmail.com>
+Date: Mon, 25 Aug 2025 22:47:28 -0600
+Message-ID: <87349ed6zj.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2][next] RDMA/cm: Avoid -Wflex-array-member-not-at-end
- warning
-To: Jason Gunthorpe <jgg@nvidia.com>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <aJxnVjItIEW4iYAv@kspp> <20250825172020.GA2077724@nvidia.com>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <20250825172020.GA2077724@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 93.117.216.243
-X-Source-L: No
-X-Exim-ID: 1uqlXY-00000001RSx-0ZQh
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: static-243-216-117-93.thenetworkfactory.nl ([10.94.27.44]) [93.117.216.243]:36842
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfI5b0/ZHzLrEBEZggWz0wnkLMGCJarsXymNLnE5+0pcxhlIURnNmuZQV50JC40x9UFAh0Fz92/8qneJ2nSu+fVdYiscgOK+WYeBWwVXdP2y39i1uxYaq
- xm5Sa8lcX71C2FnMLAeHrzjRK2d2LNjO0O/9TyZ8duaGdzMJro7ZlGkzMZr5LcAuAA3m9U7TN0huw4DTAUvWSMRO3vjKOkwjOfjtWdHo8lCvqcfmX95IGj6H
+Content-Type: text/plain
 
+Bagas Sanjaya <bagasdotme@gmail.com> writes:
 
+> Management style docs writes on people under a manager, where they know
+> the details better than the manager himself, in past perfect tense. Yet,
+> "know" is in infinitive form instead.
+>
+> Correct the verb form.
+>
+> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> ---
+>  Documentation/process/management-style.rst | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/Documentation/process/management-style.rst b/Documentation/process/management-style.rst
+> index dfbc69bf49d435..1381b253b19ef4 100644
+> --- a/Documentation/process/management-style.rst
+> +++ b/Documentation/process/management-style.rst
+> @@ -42,7 +42,7 @@ actually true.
+>  The name of the game is to **avoid** having to make a decision.  In
+>  particular, if somebody tells you "choose (a) or (b), we really need you
+>  to decide on this", you're in trouble as a manager.  The people you
+> -manage had better know the details better than you, so if they come to
+> +manage had better known the details than you, so if they come to
+>  you for a technical decision, you're screwed.  You're clearly not
 
-On 25/08/25 19:20, Jason Gunthorpe wrote:
-> On Wed, Aug 13, 2025 at 07:22:14PM +0900, Gustavo A. R. Silva wrote:
-> 
->> @@ -1866,7 +1872,7 @@ static void cm_process_work(struct cm_id_private *cm_id_priv,
->>   	int ret;
-> 
-> I think if you are going to do this restructing then these lower level
-> functions that never touch the path member should also have their
-> signatures updated to take in the cm_work_hdr not the cm_work struct
-> with the path, and we should never cast from a cm_work_hdr to a
-> cm_work.
-> 
-> Basically we should have more type clarity when the path touches are
-> to be sure the cm_timewait_info version never gets into there.
-> 
-> And to do that properly is going to need a preparing patch to untangle
-> cm_work_handler() a little bit, it shouldn't be the work function for
-> the cm_timewait_handler() which has a different ype.
-> 
-> Also did you look closely at which members needed to be in the hdr?
-> I think with the above it will turn out that some members can be moved
-> to cm_work..
+This seems actively wrong ... ?
 
-I was wondering if we could just move cm_work at the very end of
-struct cm_timewait_info, like this:
-
-  struct cm_timewait_info {
--       struct cm_work work;
-         struct list_head list;
-         struct rb_node remote_qp_node;
-         struct rb_node remote_id_node;
-@@ -204,6 +203,7 @@ struct cm_timewait_info {
-         __be32 remote_qpn;
-         u8 inserted_remote_qp;
-         u8 inserted_remote_id;
-+       struct cm_work work;
-  };
-
-and then I found this commit 09fb406a569b ("RDMA/cm: Add a note explaining
-how the timewait is eventually freed")
-
--Gustavo
+jon
 
