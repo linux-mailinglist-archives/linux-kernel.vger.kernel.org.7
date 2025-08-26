@@ -1,104 +1,96 @@
-Return-Path: <linux-kernel+bounces-786753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C6F6B367E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:10:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4921CB36606
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:52:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8991A1C282B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:01:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C1A98E6B93
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:45:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7199352FCC;
-	Tue, 26 Aug 2025 13:58:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A34F934A30B;
+	Tue, 26 Aug 2025 13:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bcc.bai.ne.jp header.i=@bcc.bai.ne.jp header.b="LmixlWzC"
-Received: from rmx-c.mailgw.jp (smx-c.mailgw.jp [210.171.6.217])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="S7aRCycT"
+Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2541E7C08;
-	Tue, 26 Aug 2025 13:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.6.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CDFB1C3314;
+	Tue, 26 Aug 2025 13:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756216713; cv=none; b=JmnC56n4uDgZsNdtunjXBCR3ss/Wi6WtmEcN+skZBxlgSIIJwyCBNMHTSJ3yrchcF3CEOWvQJWygDWsTmRP3LweljckBXpLaCC629uIYEL4lqF1IrsVbtfG/JWPC3fFt0Qc/W6mzvntfh43vus3CuK8QvnhO93DTiDtQtw3B+h8=
+	t=1756215928; cv=none; b=P6SlXvw3Yp4yzjkYHN/PC6CPjHpDM59mm1mQqcNlIicfifHMRpe/p9fKTXOqFlgyy0KtV77cUkqLRZUMLi8i0El7njvVRJkkATPr4/Rb9e7ddKwmPKKy4kTXdbgS3DTVS+qZkuGlI6APnsIb81I7fM8AT7s/aIsLkjE9i88t2OY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756216713; c=relaxed/simple;
-	bh=HfAyxLmtvudUzpYt25poT0KRL89hapJ69x3yWpzOYIQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZjWMadjjYXR0tUmNgfc0CE81aSgpA+8Md3l+8GRL3Vu4a55ZkuEWsIVEyDX4FIuDQmklT77rG51/OFLkY36iqFRJ/g/+hC2ekqh+KFajmGHNkY22Sfh4qzKrEa4lxH+yhLFhS8jw5N1d2jrfpCQqDf7vRBcpNyp1TFaZwMY0nf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bcc.bai.ne.jp; spf=pass smtp.mailfrom=bcc.bai.ne.jp; dkim=pass (2048-bit key) header.d=bcc.bai.ne.jp header.i=@bcc.bai.ne.jp header.b=LmixlWzC; arc=none smtp.client-ip=210.171.6.217
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bcc.bai.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bcc.bai.ne.jp
-Received: from bccml.bai.ne.jp (bccml-a.bai.ne.jp [210.171.3.161])
-	by rmx-c.mailgw.jp  with ESMTP id 57QDlnMh024478-57QDlnMi024478;
-	Tue, 26 Aug 2025 22:47:49 +0900
-Received: from subuntu-desktop.bai.ne.jp (bai859bcd79.bai.ne.jp [133.155.205.121])
-	by bccml.bai.ne.jp (Postfix) with ESMTPA id 758818177B;
-	Tue, 26 Aug 2025 22:47:48 +0900 (JST)
-From: Hide Hako <opi5plus@bcc.bai.ne.jp>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	Hide Hako <opi5plus@bcc.bai.ne.jp>
-Subject: [PATCH v2] arm64: dts: rockchip: Enables sound output from the audio jack on OrangePI5 Plus
-Date: Tue, 26 Aug 2025 22:44:57 +0900
-Message-ID: <20250826134456.9636-2-opi5plus@bcc.bai.ne.jp>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1756215928; c=relaxed/simple;
+	bh=ujLpd+pLkmK69KjW1Z9e5OVycYRAIFGQcUpYZa/du6U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Pr49BOBUQDzaKRwQR2u3WGab4XkCV8FLFhLnX4M7QOClEeoD6LK2zEPMN4G0tN1z+2495xcgZzLsOe5wPj2p5RtspWdoIcdyL9EWGGtOCBtG+zMwgHbLJLB3Y/ecjDay2IBZN17Ehi+qmlPfeg1rKnv+cEhp+7kH+ulO6jBL0Q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=S7aRCycT; arc=none smtp.client-ip=199.89.3.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 004.mia.mailroute.net (Postfix) with ESMTP id 4cB8790nNlzm174K;
+	Tue, 26 Aug 2025 13:45:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1756215923; x=1758807924; bh=5MKSiEzjkldvDf+0Dulez47A
+	pFhe7CYYC5lZzFYHk+c=; b=S7aRCycTq2cqHYoHO5anNLu0O/qBoyoV3tJPQF5F
+	XN3b8+hAw4/RKQVLV/BJbA57/24LmiUavd6BVbMSP+g+ObT7THGIV9sHTkhKrJdd
+	2tEX6f9FnG2uW7fTOSM79lefOR25+9EQVuoxF1Kp6LGaASnFaTolSTY6v+s3eB83
+	H9lTbnvOCD83IaBulZNtQwtJIuJ7k0Q710oidvWSYhYFZbeqeq4IcG8HzNSOppcB
+	fb0K0Yw75hNfTScwosjVzBk2Oy+GQqXzqqnaXHKZpTt8LhDgAm1yZnrvRM0sb7dt
+	dJJEnWco+QcGYZfw2TtKteSdL9kS/djrGH5A9WQ4WKX1hA==
+X-Virus-Scanned: by MailRoute
+Received: from 004.mia.mailroute.net ([127.0.0.1])
+ by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id GrdjopkJutjx; Tue, 26 Aug 2025 13:45:23 +0000 (UTC)
+Received: from [172.20.6.188] (unknown [208.98.210.68])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4cB8703kWZzm174W;
+	Tue, 26 Aug 2025 13:45:15 +0000 (UTC)
+Message-ID: <c0510108-30ed-4301-ad2f-00bcbba7bf1a@acm.org>
+Date: Tue, 26 Aug 2025 06:45:14 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-FE-Last-Public-Client-IP: 210.171.3.161
-X-FE-Envelope-From: opi5plus@bcc.bai.ne.jp
-X-FE-Policy-ID: 3:1:23:SYSTEM, 3:1:2:SYSTEM
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; d=bcc.bai.ne.jp; s=20240516; c=relaxed/relaxed;
- h=from:to:cc:subject:date:message-id:mime-version;
- bh=suYwX1lPYNA6J6Ueqpvg+LFYiHTraJArpH2l0vR/ubY=;
- b=LmixlWzCVDA81Kf9yqqXQ7bEBimnLAJZxN/07d1we8P282n2P7cgUGDqJIw1ikGE9YeiynriSRxK
-	fXARS9Yxmor5LScCKSbvQbL69nIm50edBH530vFGUVbRwbAXOT8DZ4J/P7lyDr0putmCdmZqAV+z
-	pSSsG9rquMDXuxTgshitDl3NTum3P5ghimnObeZVySAHLbzDEfXFk5B5U2U5Kt9vlIksxSGWNEzs
-	/Yzmg8DICkkgE5mhQ2ileCjOuMkKqaF7C+PNOQhKczgNSkq1gAxkq1AbZmwvGTSM/4kya16mbzMI
-	BKnpAbuIuQmbGYlxZOwGY40rDWWRDavFgNWAog==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] scsi: hisi_sas: Switch to use tasklet over threaded
+ irq handling
+To: Jason Yan <yanaijie@huawei.com>, Yihang Li <liyihang9@h-partners.com>,
+ martin.petersen@oracle.com, James.Bottomley@HansenPartnership.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linuxarm@huawei.com, liuyonglong@huawei.com, prime.zeng@hisilicon.com
+References: <20250822075951.2051639-1-liyihang9@h-partners.com>
+ <f02e9bb8-3477-4fa7-8b20-72bd518407ed@acm.org>
+ <2f2e5534-a368-547d-dedf-78f8ca2fc999@h-partners.com>
+ <41077713-8119-4898-8307-731a0d8f346e@huawei.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <41077713-8119-4898-8307-731a0d8f346e@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Currently, analog sound is not output from the audio jack.
-This patch allows you to select analog headphones in alsamixer.
-Works with kernel 6.16.1, but not 6.17-rc1.
 
-Points of concern:
-6.16.1 kernel with ubuntu 25.04 Setting -> Sound -> Output Device
- I select Speakers Built-in Audio, the sound will be output from the audio jack.
+On 8/26/25 1:47 AM, Jason Yan wrote:
+> It seems the official replacement of tasklets is WQ_BH. However there 
+> are very few users now. I'm not sure if the stability and performance 
+> can meet our requirements.
 
-Changes since v1:
-- As pointed out by Jimmy, the file to be modified has been changed
-  from rk3588-orangepi-5.dtsi to rk3588-orangepi-5-plus.dts.
+I'm not aware of any stability issues related to WQ_BH.
 
-Signed-off-by: Hide Hako <opi5plus@bcc.bai.ne.jp>
----
- arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts | 1 +
- 1 file changed, 1 insertion(+)
+The alternative that I proposed should result in better performance and 
+lower latency than tasklets and shouldn't have the disadvantages of an
+approach based on tasklets.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
-index 121e4d1c3..44bb15951 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
-@@ -78,6 +78,7 @@ &analog_sound {
- 	pinctrl-0 = <&hp_detect>;
- 	simple-audio-card,aux-devs = <&speaker_amp>, <&headphone_amp>;
- 	simple-audio-card,hp-det-gpios = <&gpio1 RK_PD3 GPIO_ACTIVE_LOW>;
-+	simple-audio-card,pin-switches = "Speaker", "Headphones";
- 	simple-audio-card,widgets =
- 		"Microphone", "Onboard Microphone",
- 		"Microphone", "Microphone Jack",
--- 
-2.48.1
-
+Bart.
 
