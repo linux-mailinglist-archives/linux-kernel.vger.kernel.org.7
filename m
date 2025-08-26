@@ -1,81 +1,123 @@
-Return-Path: <linux-kernel+bounces-787123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F326B371B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:49:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2043B371B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:50:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AACD3A712C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:49:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF43D3AF372
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0188299AA3;
-	Tue, 26 Aug 2025 17:49:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA3532D12E4;
+	Tue, 26 Aug 2025 17:50:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cnD9afI1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dEGL/pMe"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5369431A577;
-	Tue, 26 Aug 2025 17:49:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0855275108
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 17:50:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756230580; cv=none; b=Si1qENhG9/c5F/2lVrwzzBG9Bk41TnYufiEDtpCL7MrFDkOC8XwWMnTs+4ofPJjycbYq1TAq/QUd/O95A01gPIb15PPpOCheCbJPsAzJn+a2un+ijr3MWGrU+pqw00zUvpP+9EgwUQIlWq5iwFHBjnywqnAcj+AItw/b/8pufgE=
+	t=1756230651; cv=none; b=tuEQPtwle6mIoTPXQWRdKyJfWhHLA1dHQuyB5bL7+DRc79iDUde/QHdyqgVB5bfBpZ0vg/m/BKtCPiOBM6Cuq5y3vdRYeaxv3L8cdFzOaolPPwZRmW8SDIJr2MBPkNkmAqSfW3mOOAtk/cC4iNkGzL+1uO2P5jJ2YB0lIfY42Zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756230580; c=relaxed/simple;
-	bh=6TMtBzRFBOVX2bHF383YJhY34ok6iHyjIHKEfFFcpIY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QvTKlc/8ZWDrpcAUGMipMpDXjReWPsArECGtxv2AOttbWM1JjedWu7PXGZXyRIeSKzgVmcdA4pMF0PIXPRxJZ9rVeHxE0ntAv3cFEYnv36fpgjj6pXE0mEe9zOYmIOUW8XCw/GboS9dbWq9hfL6yrMWfZp/o4Vbg4qmRpLDbP7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cnD9afI1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECF08C4CEF1;
-	Tue, 26 Aug 2025 17:49:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756230579;
-	bh=6TMtBzRFBOVX2bHF383YJhY34ok6iHyjIHKEfFFcpIY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cnD9afI1IWZDgoRRrVAa/8aSd0Rh24QzMGtIGcX1RUIzd+bSp+ssj7+b1we/mECYk
-	 TCjT1kAGZIwACflpQlmUaMqBrxgNx+A4yFCA+IMIkILs7RE9cYXTPjnubqzQim8vJj
-	 uESnp3zf9k+nxUe275Br+eyoQlIaCbubO5XWBQa1H8ibsfE+Ynz4yrMTzqMMqxcAiJ
-	 0l09EQG0XHAjDxHVQCcm8iORlqMy7Fu0T8lT+rvz3l6IO+QWMwhSLZMznFTP92G5EL
-	 aeKll2Ev0WzeKN9SP+4SIUyVXbZ2uSdHb1l+oxv+t0g67PWKzf2Ev5RVRP+9uwAEhL
-	 8jPG+16eBzi7w==
-Date: Tue, 26 Aug 2025 10:49:38 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Andrew Lunn
- <andrew+netdev@lunn.ch>, linux-doc@vger.kernel.org, Jonathan Corbet
- <corbet@lwn.net>, Bjorn Helgaas <helgaas@kernel.org>, luosifu
- <luosifu@huawei.com>, Xin Guo <guoxin09@huawei.com>, Shen Chenyang
- <shenchenyang1@hisilicon.com>, Zhou Shuai <zhoushuai28@huawei.com>, Wu Like
- <wulike1@huawei.com>, Shi Jing <shijing34@huawei.com>, Meny Yossefi
- <meny.yossefi@huawei.com>, Gur Stavi <gur.stavi@huawei.com>, Lee Trager
- <lee@trager.us>, Michael Ellerman <mpe@ellerman.id.au>, Suman Ghosh
- <sumang@marvell.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH net-next v01 10/12] hinic3: Add Rss function
-Message-ID: <20250826104938.20980ea7@kernel.org>
-In-Reply-To: <53206f29-7da8-4145-aef0-7bdacef3bb55@linux.dev>
-References: <cover.1756195078.git.zhuyikai1@h-partners.com>
-	<13ffd1d836eb7aa6563ad93bf5fa5196afdf0053.1756195078.git.zhuyikai1@h-partners.com>
-	<53206f29-7da8-4145-aef0-7bdacef3bb55@linux.dev>
+	s=arc-20240116; t=1756230651; c=relaxed/simple;
+	bh=SoYGthzvA2DVaEWpuysF3EuzSM+/cYcN3iarEnwgXYA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=tMI/YYh8a2K3yKxhi9n/g5D3W18TI7NGuEjsiA4LoWCDabRTPb17d2+rsFBvQY/NcUjsUyY9XFDqoDh7Sc9XKbISzoa1K21OaBitZNj0nW/Bf3GxbjZD0rd7UE1xbu8XKSG8cchzB1B7eC3za9XOGXoWTVDRdVOKDmm7qALHhw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dEGL/pMe; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32515e8e4cbso9005319a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 10:50:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756230649; x=1756835449; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aUqwFSXiDOoK2Bx2xqLwmy8TEJEoVSK65XNfAilJTJE=;
+        b=dEGL/pMeLlLZNRxFhJnpfUbfn7WnLHi+fkTotuE3A1SiFRYQztcoRvHNlfXXAYtNOr
+         befU9WcC1+ewKKELYp8uooKPfWW0FNOOgX6ciHvwpQLYM0T1zZTFi3rS3AUXXbHYeyMs
+         7Ux7iex6O2d7mbKosWnnBNtnIm64kMDWR0d592OKToGYWwn4ir8Xg+oeW9GEvBg5VqjB
+         2qZSptXatLdKWoNKwL8BJDD/efLEZYXjA9hC6h2JsEf4DMJqaeZPcaBCeh5QwFQ4Rq3m
+         cnV5WXyYOyVMhVaGty4r780+vdBZB/wnld0KTgVxxR4auMxzdJHFLVHLHbkIEb9Fza6c
+         NOUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756230649; x=1756835449;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aUqwFSXiDOoK2Bx2xqLwmy8TEJEoVSK65XNfAilJTJE=;
+        b=P8vLCuQlQzOcg9CFmGkwuSFlxrK5e+/GjIWOiiDk4pEspOAHKTT77f5yXOvYONxOHR
+         1y8+ABf1TN00Be0MVeAZxDYJ1xJIBTRtA2ZvJwflljZ+x1nOMuPL1B5xy09mFqgvGYGy
+         7L1qde48Yv9ew6gSXqpCIHF3z9Pes8goyCAa2OydYdJNruW5zUqkYwICEGQrO/aDAyEG
+         Bc/WVIufZ4TvBr3a3iVulzxrWx5MFBnZ1G8S8m6DAMNH+/D6LHM/JczIUjnPMvJ0IHbY
+         0kr2c0Eq0xwjnv4DPQ9WKsYvNfC8Vt+Yl2ENKvGJzYzIVOknY3J1UNIQBCf1ZX0NAtEf
+         zmZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUeGj8MWabk9QNUODsR0uXHh7Kea9qRFvLX1FOazmT5O2U4JxFnWXRfYEK4w1GX0ys0x96ZGl5413AibsA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxII6uqfd40+QrOSi+Vn7j9elTRN51d1nChQUWuj5V3dgdIPtuf
+	mCV+m09uk5Rlku1OHUV39BPY7teu7nEJvITu3L+DH0y8uFezTMUflDd8ANiOzdjfdul/q0htSbE
+	ApAc7Vg==
+X-Google-Smtp-Source: AGHT+IEd9dJFwfsX/b931ErJNgizvDk6gtbfVhHXFniSsp95TCi8X85PJ+yQnB23nN+wM4R0MogUdHTCO1U=
+X-Received: from pjbrr12.prod.google.com ([2002:a17:90b:2b4c:b0:325:7c49:9cce])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1f91:b0:321:2b89:957c
+ with SMTP id 98e67ed59e1d1-32515ec8d01mr20489624a91.27.1756230649269; Tue, 26
+ Aug 2025 10:50:49 -0700 (PDT)
+Date: Tue, 26 Aug 2025 10:50:47 -0700
+In-Reply-To: <CANypQFbEySjKOFLqtFFf2vrEe=NBr7XJfbkjQhqXuZGg7Rpoxw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <CANypQFbEySjKOFLqtFFf2vrEe=NBr7XJfbkjQhqXuZGg7Rpoxw@mail.gmail.com>
+Message-ID: <aK3z92uBZNcVQGf7@google.com>
+Subject: Re: [Discussion] Undocumented behavior of KVM_SET_PIT2 with count=0
+From: Sean Christopherson <seanjc@google.com>
+To: Jiaming Zhang <r772577952@gmail.com>
+Cc: kvm@vger.kernel.org, pbonzini@redhat.com, linux-kernel@vger.kernel.org, 
+	syzkaller@googlegroups.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, 26 Aug 2025 18:06:42 +0100 Vadim Fedorenko wrote:
-> > +	nic_dev->rss_hkey = kzalloc(L2NIC_RSS_KEY_SIZE, GFP_KERNEL);  
+On Mon, Aug 25, 2025, Jiaming Zhang wrote:
+> Hello KVM maintainers and developers,
 > 
-> no need to request zero'ed allocation if you are going to overwrite it
-> completely on the very next line.
+> I hope this email finds you well.
+> 
+> While fuzzing the KVM subsystem with our modified version of syzkaller
+> on Linux Kernel, I came across an interesting behavior with the
+> KVM_SET_PIT2 and KVM_GET_PIT2 ioctls.
+> 
+> Specifically, when setting kvm_pit_state2.channels[c].count to 0 via
+> KVM_SET_PIT2 and then immediately reading the state back with
+> KVM_GET_PIT2, the returned count is 65536 (0x10000). This behavior
+> might be surprising for developers because, intuitively, the data
+> output via GET should be consistent with the data input via SET. I
+> could not find this special case mentioned in the KVM API
+> documentation (Documentation/virt/kvm/api.rst).
+> 
+> After looking into the kernel source (arch/x86/kvm/i8254.c), I
+> understand this conversion is by design. It correctly emulates the
+> physical i8254 PIT, which treats a programmed count of 0 as its
+> maximum value (2^16). While the hardware emulation is perfectly
+> correct, it may potentially be confusing for users.
+> 
+> To prevent future confusion and improve the API's clarity, I believe
+> it would be beneficial to add a note to the documentation explaining
+> this special handling for count = 0.
+> 
+> I'm bringing this to your attention to ask for your thoughts. If you
+> agree, I would be happy to prepare and submit a documentation patch to
+> clarify this.
 
-exactly, please use kmemdump().
+I have no objection, especially since you're volunteering to do the work of
+actually writing the documentation :-)
+
+Somewhat of a side topic, I expect KVM_SET_LAPIC and KVM_GET_LAPIC have similar
+behavior, as KVM applies fixup on the incoming local APIC state, e.g. to force
+LDR for x2APIC mode according to hardware specs.
+
+I wouldn't be surprised if there are other SET+GET pairs that aren't "pure".
+If you run into more surprises, definitely free to submit documentation patches.
 
