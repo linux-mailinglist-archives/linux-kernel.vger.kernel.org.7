@@ -1,152 +1,228 @@
-Return-Path: <linux-kernel+bounces-787009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 867B5B37029
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:25:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D062B3702E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:25:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42886188EF38
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:25:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9A8C683350
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:25:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C77453164CE;
-	Tue, 26 Aug 2025 16:24:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433693164BB;
+	Tue, 26 Aug 2025 16:25:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="WTkNeWAu"
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cSzEix6g"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E9D13164C9
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 16:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146912BE7DD;
+	Tue, 26 Aug 2025 16:25:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756225472; cv=none; b=Mc0wVgA+vmcdLj32r7Wodykvvsnv0ECn0Jqk/FaCWCejiI4kyXrWwg6USpZJFKrOrpbHHRC+zhKkNoybNtel7NdmdJbI3QprZGF47++sD8EYpqMQwXD8YV3nSc0c73o1NdgxZA+HwscfvgNn5Irv0SM5OySTQhKLamwawI90rzs=
+	t=1756225524; cv=none; b=em1TpklfXeiWyqw2UoIVJ6QjzdgaA0PVC9pRh0aDDsc6p1kPAyZ6aG6LmwQQgwDTKyqu8XBTCO1qlIVdqU/FuHRIbfBxLL0KgbBVVv21yBn3je6sQukH1sK7ui7TBfjtSO5/TuZ2v7KSBCNQ5BiGfZ9IXX6No5QAM63Zg70Yf1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756225472; c=relaxed/simple;
-	bh=i0oEbDi2g1jzL5Dyxh76ow3SjoJVdIVZt3jL05gI6cc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=DSIZ3z4b3LGDdEpQGR7Rqxk0RuP3zWwVAw68+pNar2igP+bUgZRyL9MTLJ3pA1lCUWP7cRcPI6l6xDr3oO/1S9qg5WPI/rL5RCeP5hsB7erxL6S1wl0Ga6F67qxgFAYZ4Vn5fklr06QJZVmllQ4cKIW9t5BYtPiYS0ff7NCy1Q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=WTkNeWAu; arc=none smtp.client-ip=209.85.210.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-743814bcca2so42004a34.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:24:29 -0700 (PDT)
+	s=arc-20240116; t=1756225524; c=relaxed/simple;
+	bh=ke9w2PS1ILArXMo8oJty01ETax0KHAEkfxohtDRM9C0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tjK77XBs7rjn5Vz1/ubOTyS9ri4A3Eh7Z2LVqaASslUShAKqIwvNrKHjJTfK1GJ/BexgRlpVahMrGxxkjJc0+xKkAbs+4LFyfl6acR76P3rhwsFnphCGvEav4XkODCazaf3i02mmnLsMn7utPDp4E18/jF4RvjvKKYoUlBDgyBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cSzEix6g; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-244580523a0so57506225ad.1;
+        Tue, 26 Aug 2025 09:25:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756225468; x=1756830268; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=OxCALq8DDHHpB2BZLfew8o4so3+GwVKkNdqD7LtBjyc=;
-        b=WTkNeWAuvzOLTKhyKT4148aJ5nmrEyBYHIQgC5EsaaMevUjtapdP31mC33L3BQThAb
-         lrKguPcH+XLcZUNdll2WB46wmqFnlttTHafg3CAx8lfyEnQYUZIi1HSmNW0CwKe2Ww0P
-         pw6qp6VDhDUC87zBnEly0VM9y8lagZKUecpFlhcOSKpzhKojsblVI20R2GeDnjshlhjw
-         aiHEzN4cU2x5KRpWf5xuzhVKCOWEEzderDtcrPgp2x6FgUYzYoQf/uCOOlkjG2tNaekv
-         VtMh4qFbgnSlaKkoN2VLUf3Hp8igQOj6C4f4yTrJiGuZLOa1MNjOH3fmNukWdgEfQvGo
-         jDFw==
+        d=gmail.com; s=20230601; t=1756225512; x=1756830312; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fR5vwrJbbj/HV2dnidcan/snaQbDkfj7Zbi5rY84dV4=;
+        b=cSzEix6grDDBi3b9bj9x3NaDfm2ogkPQ5WjtS1t6ufIpZwtCrf720Lg4O14IJv8dpS
+         IyuttY9RJHyYqb3o7YFUQfaUmdqUGYErVusW+p6BUr5/KW7ufi2dw88VOlkSC0aDCVmp
+         vmBnf7+ZE9AfpsT2J8R5EIlgFWzWPOr5ZfLiCKg6ogVMi/2+JdcrONWc7EDePTSEIg/p
+         jDo0NUv8zLIWFrLXHh6waNIL/rtBPPCWAXvChDJlc38SWrqTe2RgyCYq0lYRS24WZ39Z
+         ot6y6/BoVyuCQJuF6H/4IfpOejvpQwCzVw8BDYASLQ4K3Dq/WbIFP9938Xtacbap1qM8
+         wE9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756225468; x=1756830268;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OxCALq8DDHHpB2BZLfew8o4so3+GwVKkNdqD7LtBjyc=;
-        b=iUP/peVHCzQ0RhQ9UMO+MDBkTACcazQMq+OTCFATWib+aZpeXLGLXJhyMLLvalfe8i
-         CgGFuNLAu+sJ74HLNmb+ADCUUazLEXM95TzcEwlL4ijZLx92Go5fVv4eJkTHYSIeFhtS
-         Y6VDaGQXRDGVabZiblsUA5c/6UV3TV2IyRXBbWdeXptS21Vtu+JESBA2LGfC37TWcI/2
-         Qmv8Bq9yKfed0OnZ9CRLYHeL22+4y8KECWhAoeHZln/u3zQqcc3v3HwU27j6d4BWB5wN
-         xfrCNiNjhLLpAGsbrxSlM8VXWfgpKKjl3vj7cih96fs1EGwaH8HBZn/VDQwIaExibtuZ
-         9/8g==
-X-Forwarded-Encrypted: i=1; AJvYcCUg9G4Bid46do4F7LA6UPVR8nY7aAGWxI2+BPViHb8q8tyK/MMDRyqNKglVyUyrELhRTh1UEM8tQvwLbw0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwYpZePglZyIgG/gjjaKZwfhbnagWqGWwEBRaS65tVADJ4wN+c
-	PpoXKfFed99JTS/f/t4zo5JccC+kJWoQNeb+fTaSxstNZoMZFNSe+W68M+PDZBgzquU=
-X-Gm-Gg: ASbGncvcHbhNbWpDLrgJHIMlSCJtQCxT0kAyIlBzoE5gKnf9ag7d0uUUuK0O5v+Or4F
-	qFP9sIXjgleg8ndhUV0o4FbFdjY7N5LMLlJ1cUDMq2IvLVWhlu55YP4FjpGs+mf/Gx1a0F6Pi+2
-	5w8sNG9/4GXYozKju28NR6rTfchzd1QR3uHr/GKINZ2v48u7TfXoDsJpnpiX7CqeMXKjzxpYkyD
-	a/uxyaqYR2AP6Qp2ZjxuWBujlNJUGgSdZfEUgeoMVvLdOADKiYThUNLtTT3aB4YwfLihE1GGJMm
-	1WdQW7hY4MNZ82FjBNCT4t7A+MI+w422kuoHO+ROQEfuSBZqiyz+3l+V73riOIUT6vrAmSD5HCa
-	IQsyJp+6x2jQaHKU52VrSVx6khu1m//p1Jv0WDhji+gtqjDDAgt7yk5lQfVP45cAC8Dbh20EYDF
-	0WjlW/0+jVeA==
-X-Google-Smtp-Source: AGHT+IFfYRdanH4lMvOeslIkzUAsoFW9mKtvAJqYjbyEdJMFQ5DbdT6baaJfteOsGNPMe3IVB9CJtw==
-X-Received: by 2002:a05:6830:258c:b0:741:bf2f:ee87 with SMTP id 46e09a7af769-74535b1935fmr900221a34.0.1756225468382;
-        Tue, 26 Aug 2025 09:24:28 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:aa9f:f4cd:76b1:fecb? ([2600:8803:e7e4:1d00:aa9f:f4cd:76b1:fecb])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7450e2690f3sm2409801a34.8.2025.08.26.09.24.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Aug 2025 09:24:27 -0700 (PDT)
-Message-ID: <82a21a66-409f-4ec8-9351-365031b8646b@baylibre.com>
-Date: Tue, 26 Aug 2025 11:24:26 -0500
+        d=1e100.net; s=20230601; t=1756225512; x=1756830312;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fR5vwrJbbj/HV2dnidcan/snaQbDkfj7Zbi5rY84dV4=;
+        b=rPaN9G/iEo1vxhHqgKT7D3u1pIXIIJXhpGIg8ktG+LmuxuOthAsa78KEK/H9KBK+LQ
+         4B66B23v7cfReNzvNRRVSjVdWtlN6x9ZcTcNcnPbC85Gj80ZaVMV5FbpO/iOYzeps1l3
+         YzBcvv6bjLiEEUDy4Pcgi24Kk9In+9XIi9oOvysTnQbR1A5IKFbVQF3mz9n1lZ2R/1Kx
+         75cXcaMCGId49u3MIP9pVZvtu5HGaTjvW9aULqOwRLoyNiRpKk2mAh/pFaWY4ph0+TpE
+         emlJwsWJqlTosNDdRIr2WWH8dY9mvp7Vw25D5tDGZyI7N9wlKiCvLAkGx1NbGRriNS9D
+         zRpw==
+X-Forwarded-Encrypted: i=1; AJvYcCV4BgXf9mPpJF+twvGLbv6kNqCUPBJh/WRjkcepIQzQ0yxsOH62aK9y2q53MGLLeFT/mIj7pXxXQ9vkYjE=@vger.kernel.org, AJvYcCWwQBLRM44wmXh0/D5w9AlfbsxuDbvbIl8G8O8zPi0f+fsTAZ/wSFctujCUHvWyuI4fSEGwHaXc@vger.kernel.org
+X-Gm-Message-State: AOJu0Yys+Th3jNW+U/ae3Cg+d0eKdcEF5w0fxe5MF1uyZRsHFdgWUpr3
+	U+fCpBBbbEIXKvXmsmN+tuLDiPBJ2ZvHZYHffdTIaQ0oPRLyVh660dU/
+X-Gm-Gg: ASbGnctYaXwVhghjxu+VCKkt/hXgQTMsXDL3wjksPpopZ7gMmFRBgGLgpX8hj4W3vsn
+	D0NvqPGKBZQ1DycvvXcUWMG+gwac8XNf++VxTFeWDujh+nK9H1rTIQXbvkwPhUFb//ANClypc6u
+	0kVHsXmvJ9D0ADrIZ6V9c5GgAeQ0NuK/QviXdtaK4/tOBNL9X6iH5lrhy3xTbqEXQGuTkV9yWoJ
+	nbBDuqitsTy4xBpf4qaXWI5f5kvwIaxikQLxwO+Ums8CFAS4ZLAT+5j01JYyVcBpsTDsclxhpFK
+	s9cmN7TpGKV+cmU4U4zDSh5X+N13qmRFVd4Dlm5/F/wvR1vspYE2C8udYGuJfC25QEV1n5Uyq0F
+	pSeet0dq6iRAJ+ShK7gmhLQpmYU9vUwIg61Bkb//f2j6To3z3PD0pfLZx44ejQM8fLCC6b+h95B
+	bQ
+X-Google-Smtp-Source: AGHT+IGrN0ZWHT5Q17mya96qh+0DIr6EHO/QaLIVBEYM8Df7t9SSax0fsSOgoRV5P/RBv24IT/MdZg==
+X-Received: by 2002:a17:903:8c6:b0:240:3eb9:5363 with SMTP id d9443c01a7336-2462ee7390emr193734845ad.27.1756225512211;
+        Tue, 26 Aug 2025 09:25:12 -0700 (PDT)
+Received: from localhost.localdomain ([222.95.6.55])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2487a5cc611sm13600195ad.114.2025.08.26.09.25.08
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 26 Aug 2025 09:25:11 -0700 (PDT)
+From: qianjiaru77@gmail.com
+To: steffen.klassert@secunet.com,
+	herbert@gondor.apana.org.au,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: horms@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	qianjiaru <qianjiaru77@gmail.com>
+Subject: [PATCH 1/1] Reference Counting Vulnerability in Linux XFRM PolicyManagement
+Date: Wed, 27 Aug 2025 00:25:00 +0800
+Message-ID: <20250826162500.34292-1-qianjiaru77@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/4] Add IIO backend support for AD7779
-To: Ioana Risteiu <Ioana.Risteiu@analog.com>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Ramona Nechita <ramona.nechita@analog.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250825221355.6214-1-Ioana.Risteiu@analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250825221355.6214-1-Ioana.Risteiu@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 8/25/25 5:13 PM, Ioana Risteiu wrote:
->   - Add axi_adc_num_lanes_set in the adi_axi_adc_ops structure to support
->   setting number of lanes used by AXI ADC.
->   - Add the generic io-backends property to the AD7779 binding to enable
->   support for the IIO backend framework.
->   - Add the adi,num-lanes property to set the number of lanes used by
->   AD7779.
->   - Move the initialization specific to communication without iio-backend
->   into a separate setup function.
->   - Add a new functionality to ad7779 driver that streams data through data
->   output interface using IIO backend interface.
+From: qianjiaru <qianjiaru77@gmail.com>
 
-It is more helpful for the cover letter to contain a high-level
-overview of why you want this series included in the kernel. We
-can look at the individual patches to see what they are about, so
-repeating that here isn't especially helpful.
+A reference counting management vulnerability exists in the 
+Linux kernel's XFRM (IPsec Transform) policy subsystem. 
+Based on variant analysis of CVE-2022-36879, this 
+vulnerability involves improper policy object lifecycle
+management in the `__xfrm_policy_check()` function, 
+potentially leading to double free conditions 
+and system instability.
 
-For example, I would write the cover letter for this series like this:
+## Vulnerability Mechanism
 
-The AD7779 ADC chip has a secondary data bus for high-speed data
-transfers. To make use of this bus, it is connected to an FPGA IP
-core [1] which is handled using the IIO backend framework. This IP
-core connects to the data bus lines as well as the data ready signal
-on the ADC. This interface can use 1, 2 or 4 lanes at a time.
+The issue follows the same pattern as CVE-2022-36879 but in a different code path:
 
-This series extends the devicetree bindings to describe these wiring
-configuration, extends the IIO backend framework to allow setting the
-number of lanes that are being used, and extends the ad7779 driver to
-allow using such a backend for reading data in buffered reads.
+1. **Policy Reference Acquired**: 
+`pols[0]` contains a valid policy with acquired reference
+2. **Secondary Lookup Fails**: 
+`xfrm_policy_lookup_bytype()` returns error for `pols[1]`
+3. **Partial Cleanup**: 
+Error path calls `xfrm_pol_put(pols[0])` but doesn't clear policy array state
+4. **Caller Confusion**: 
+Calling function may not be aware that `pols[0]` has already been released
+5. **Double Release Risk**: 
+If caller attempts cleanup based on incomplete state information
 
-[1]: https://analogdevicesinc.github.io/hdl/projects/ad777x_fmcz/index.html
+## Comparison with CVE-2022-36879
 
-> 
-> Ioana Risteiu (4):
->   iio: adc: adi-axi-adc: add axi_adc_num_lanes_set
->   dt-bindings: iio: adc: add IIO backend support
->   iio: adc: extract setup function without backend
->   iio: adc: update ad7779 to use IIO backend
-> 
->  .../bindings/iio/adc/adi,ad7779.yaml          |  44 +++-
->  drivers/iio/adc/ad7779.c                      | 192 ++++++++++++++----
->  drivers/iio/adc/adi-axi-adc.c                 |   1 +
->  3 files changed, 196 insertions(+), 41 deletions(-)
-> 
+**CVE-2022-36879 (Fixed)**: 
+`xfrm_expand_policies()` had double reference counting issues
+```c
+// Original vulnerability pattern (now fixed):
+if (IS_ERR(pols[1])) {
+    xfrm_pols_put(pols, *num_pols);  // Released references
+    return PTR_ERR(pols[1]);         // But didn't set *num_pols = 0
+}
+```
 
-Please include a changelog of what was changed in each revision of
-the series along with links to the previous revisions. Tools like
-b4 can help automate this.
+**This Variant**: 
+Similar reference management issues in different function
+```c
+// Current potential issue:
+if (IS_ERR(pols[1])) {
+    xfrm_pol_put(pols[0]);     // Releases pols[0]
+    return 0;                  // But pols[0] pointer remains unchanged
+}
+```
 
-https://docs.kernel.org/6.16/process/submitting-patches.html
+## Attack Scenario
+
+1. **Policy Lookup**: 
+Network packet triggers `__xfrm_policy_check()` 
+with sub-policy configuration
+2. **Primary Policy Found**: 
+`pols[0]` gets a valid policy reference
+3. **Secondary Lookup Fails**: 
+`xfrm_policy_lookup_bytype()` fails, returns error in `pols[1]`
+4. **Partial Cleanup**: 
+Function releases `pols[0]` reference but doesn't clear the pointer
+5. **Caller Misunderstanding**: 
+Calling function may attempt to use or release `pols[0]` again
+6. **Memory Corruption**: 
+Double free or use-after-free leads to system instability
+
+## Proposed Fix
+
+The vulnerability should be fixed by ensuring 
+complete state cleanup in error paths:
+
+```c
+// Current potentially vulnerable code:
+if (IS_ERR(pols[1])) {
+    XFRM_INC_STATS(net, LINUX_MIB_XFRMINPOLERROR);
+    xfrm_pol_put(pols[0]);
+    return 0;
+}
+
+// Proposed secure fix:
+if (IS_ERR(pols[1])) {
+    XFRM_INC_STATS(net, LINUX_MIB_XFRMINPOLERROR);
+    xfrm_pol_put(pols[0]);
+    pols[0] = NULL;   // Clear pointer to prevent reuse
+    return 0;
+}
+```
+
+### Alternative Comprehensive Fix
+
+If the calling context requires more extensive cleanup:
+
+```c
+if (IS_ERR(pols[1])) {
+    XFRM_INC_STATS(net, LINUX_MIB_XFRMINPOLERROR);
+    xfrm_pol_put(pols[0]);
+    memset(pols, 0, sizeof(pols));  // Clear entire policy array
+    npols = 0;                      // Reset policy count
+    return 0;
+}
+```
+
+## References
+
+- **Original CVE**: 
+CVE-2022-36879 (xfrm_expand_policies double free)
+- **Linux XFRM Documentation**: 
+`Documentation/networking/xfrm_*.txt`
+- **XFRM Source**: 
+`net/xfrm/xfrm_policy.c`
+- **IPsec RFCs**: 
+RFC 4301, RFC 4306
+
+
+Signed-off-by: qianjiaru <qianjiaru77@gmail.com>
+---
+ net/xfrm/xfrm_policy.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/net/xfrm/xfrm_policy.c b/net/xfrm/xfrm_policy.c
+index c5035a9bc..50943fa4e 100644
+--- a/net/xfrm/xfrm_policy.c
++++ b/net/xfrm/xfrm_policy.c
+@@ -3786,6 +3786,7 @@ int __xfrm_policy_check(struct sock *sk, int dir, struct sk_buff *skb,
+ 			if (IS_ERR(pols[1])) {
+ 				XFRM_INC_STATS(net, LINUX_MIB_XFRMINPOLERROR);
+ 				xfrm_pol_put(pols[0]);
++				pols[0] = NULL;           // Clear pointer to prevent reuse
+ 				return 0;
+ 			}
+ 			/* This write can happen from different cpus. */
+-- 
+2.34.1
+
 
