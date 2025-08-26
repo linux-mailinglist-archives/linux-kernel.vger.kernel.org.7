@@ -1,176 +1,121 @@
-Return-Path: <linux-kernel+bounces-787069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A461B370F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:07:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A49C2B370FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:07:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8BFF16459C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:07:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 511318E45EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB28E2E1C6B;
-	Tue, 26 Aug 2025 17:07:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8332E1C78;
+	Tue, 26 Aug 2025 17:07:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eClFM8BX"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680D12D47E6
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 17:07:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="YkKe68Vp"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9275C2DC35F;
+	Tue, 26 Aug 2025 17:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756228045; cv=none; b=ULAxUJvy5BRfI4eyBtkQkSIAY6WjxqSOiEG4wREHmbuUv0pa8orpAV2z2K7WDG0rtG6wLFrfKNkM1h9qG+UUgz/RYmMfcYRXIUGWFMEaoHkTm/HdbaD9tLmbklYmseL4Yat+nr/cQgWzKlrnwpCsjCGKhRfq0Ewb/AP/yLua94M=
+	t=1756228058; cv=none; b=fbWmKIt+pvJ5RX/N9bVUKCQ26EP2dBTfSOtlszhqGiN/smF4S1V7cih27PmUA6sXZkzd+3uGc7mmxcRN5Ws8Paft8sFly3+RAYZRaJq/OQ1i6Jb00+v0Fhluuz/QxVPKtqN+D9D1IHuAqu0AWLrj3RUuN614rAxktb1bS86TC5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756228045; c=relaxed/simple;
-	bh=+GzVzamkuKNwIJ6WvUw9cgc5JdUfyThfIW8HQ2cqMAs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZbyAR7cOsyqh2cKc5OPr1JbRB5aWVQAuSVKntgkzKbrJZ+wf2dgdZLdoZFB1N578yJyQslc/+YOMf70QImPBkzQ9NSLDW8rXmDZTm2uo+6hebkHhge1UGbGEBdBGJhaNcbeyGfkVjZYID1RqoPzuLUOL47uXLESNW11oVRaPcLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eClFM8BX; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-61c51f57224so4199635a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 10:07:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756228042; x=1756832842; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZlLO2MjP0/NuaFssKev7jUfZlE2+YuCvYt9+3w8bnLY=;
-        b=eClFM8BXuhjdIRJnSN0v2XgHqICc8MSZojMs14l029M7cPke+rkAj40PMcGg/XzIuS
-         CyK0pFwMS0HRW06fYlXsdXO1EyOjn6QWLGzBO98zG6xxyxmZoMdZOvKQwJ4P8r/kfpYa
-         4woICf3NQ8eAXdK5ayAyU4gOGu7YlFr7fwkMNZpR5Xxx5SPAzbRqhSGxbCrjhubSxQMf
-         h5p7mNDucxgsHeV+619UhI1u1yEmlNLGsYFb26UPuNZ1QZTYaBEh40TgoXK2Zbcr5KQ8
-         ey4HqlUs11oF0kLzr/7hNd5zOGXRDR/7qefIOcYx3KVnsv45pWOW0t/5F+pLyAU3cf1/
-         Jqfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756228042; x=1756832842;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZlLO2MjP0/NuaFssKev7jUfZlE2+YuCvYt9+3w8bnLY=;
-        b=HY9NFMvt2ABz+iqYSG0m6W3lpWCNmZGYukcbxHWOcd4E5e/ARDfyv5k/6/cRpDHMXP
-         brZ/DNbY7oP4fNMkvYaB/WHvb285tSxRcOIan1wbwK1oPo3myLHZNFMKalHrMgzNkB6q
-         FKYK6wxbdCMmt+s4o+WYLi0fFd98XzfjxD05Qlc0OPsRcrh8QBB3Ls5f5jh1jgyiqTGV
-         05Nd5KmH2DCOnh5MQpTesKxea7NoyICZTSNx79bCM4OeSbYb55tjzx1RYNN2isBbz8jD
-         iUFTm3bKvELytyK0i1wbHvy/RVO93nkZcGayL3S8i7v2hQg4W0pGuBDvKyTVnJGVtMnS
-         KEog==
-X-Forwarded-Encrypted: i=1; AJvYcCV1xhNYcbMIDreUden6JAM5fecxOW9bfZj812QjYZVDK1qtkdXdBNiJygsm1O3s7jOWgvFxomdYAR9n6RE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8h6ALl7DgsHLttXrHyyi1g5bcx8HOg2f6j4sFLe/tmp9Fb+qM
-	Fu6DgGQFIYd0jfm6CBmc8xvEtG1yJG2xXfjfe8pvUEALGWuburT7lnYxLod5bKMVGfvzPD16D2D
-	1SAPhXsmFkMMUmgBaNzp/eqksjbxKMkQLDyKSxdfpVg==
-X-Gm-Gg: ASbGnct45saz3vwjHmsiL2SZXVg6z9F6FNRl0EAc4T0Yp4dHJkR5zgntfQq6wI3vrZY
-	jLDwfHxWOHq7G8MWho8dQt7POvLXMr+6H/Qvelny8RuWwINH+qQM8Rg3AzRDBbSQPUhhSwgDQNX
-	xTPCMkbVInXBgJ3f4JUDiKo5T3hBJMoPQjJPz7NXQkm4/Qfs35x3+iM/J1wRFSrBLx0jcsKEriM
-	ZicSO/6FCXlgko0IzKf6F5mdMgSnRhXKt5h
-X-Google-Smtp-Source: AGHT+IHsOpctQgmVCjjq5dHlSjInR6A/ntZmhGPHMrs80BhSJMw+bnBIclGQfPF1IClLrpJt//57iI/CKy4Pr+clCuc=
-X-Received: by 2002:a05:6402:1e93:b0:61c:374e:d4ac with SMTP id
- 4fb4d7f45d1cf-61c374ee1bemr10746613a12.5.1756228041612; Tue, 26 Aug 2025
- 10:07:21 -0700 (PDT)
+	s=arc-20240116; t=1756228058; c=relaxed/simple;
+	bh=3k8cO5OzLzkuErIIYdeaZZpOurRtdMlnBzr/II5vUtY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YErtZOTGmUBPbm4EDG0ohYJB6fzbpM0WY8UzbQnGAM46Wr2xICB+nFT3L2P8rBGKtzEXMHN7/WblMtqChGGU6oPtB5NFeEgdSO+5bHutOQBH3ycQYTFn3wuHSP7rdzTOk54Dxznv+fFXEC/Uj0ilv6J/21Dd4BNE2apiyPFl/es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=YkKe68Vp; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=I563Bbo31n6nV/SklVskiKt8QsN4DGg0bHSFCTqvWAA=;
+	b=YkKe68VpI+78K70I0zwMocD8Rzx0QIwkcC/C9+gdJXJ7mNoIfhn9rQCqkdxTxp
+	jvjXNoqRrawBb1gK5ayFGmq8X0QCoFML6JDC7gX3wpwRhsiUyo1M2lKVWK3n4kgb
+	5XZ9kuMyibDPZlxdKBcHSxUj8v2yfOzCKFAqQnus/3Lp0=
+Received: from [IPV6:240e:b8f:919b:3100:3980:6173:5059:2d2a] (unknown [])
+	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wCnC4_L6a1orcehEg--.60535S2;
+	Wed, 27 Aug 2025 01:07:24 +0800 (CST)
+Message-ID: <c6efb55c-8ab9-4ccf-84c4-9a2a50102d15@163.com>
+Date: Wed, 27 Aug 2025 01:07:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826084854.25956-1-xupengbo@oppo.com>
-In-Reply-To: <20250826084854.25956-1-xupengbo@oppo.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Tue, 26 Aug 2025 19:07:08 +0200
-X-Gm-Features: Ac12FXz41DqtuNy56jAsyjKtPS-SaWIN6JtQzjR4zynSsHstIU9Ay5tJmjPW_Yw
-Message-ID: <CAKfTPtAnXdFp0VTSiOSucU_E4Xj2emjRNn0ySCrgD7hiXP=1sw@mail.gmail.com>
-Subject: Re: [PATCH v4] sched/fair: Fix unfairness caused by stalled
- tg_load_avg_contrib when the last task migrates out.
-To: xupengbo <xupengbo@oppo.com>
-Cc: ziqianlu@bytedance.com, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Aaron Lu <aaron.lu@intel.com>, 
-	David Vernet <void@manifault.com>, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	xupengbo1029@163.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/7] PCI: Replace short msleep() calls with more
+ precise delay functions
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250822164638.GA687302@bhelgaas>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <20250822164638.GA687302@bhelgaas>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_____wCnC4_L6a1orcehEg--.60535S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Kr1xZw4kAryDWw17Jr1xGrg_yoW8Zryxpa
+	y5Wr1qyw4UJ390kw12va1YkFykKayktayrtry5W34kJr98XrySyF4F9r4j9ryUXrZYya40
+	qayUta95uayYvF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRi0eXUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiQwW1o2it56YxAAAAsl
 
-On Tue, 26 Aug 2025 at 10:49, xupengbo <xupengbo@oppo.com> wrote:
->
-> When a task is migrated out, there is a probability that the tg->load_avg
-> value will become abnormal. The reason is as follows.
->
-> 1. Due to the 1ms update period limitation in update_tg_load_avg(), there
-> is a possibility that the reduced load_avg is not updated to tg->load_avg
-> when a task migrates out.
-> 2. Even though __update_blocked_fair() traverses the leaf_cfs_rq_list and
-> calls update_tg_load_avg() for cfs_rqs that are not fully decayed, the key
-> function cfs_rq_is_decayed() does not check whether
-> cfs->tg_load_avg_contrib is null. Consequently, in some cases,
-> __update_blocked_fair() removes cfs_rqs whose avg.load_avg has not been
-> updated to tg->load_avg.
->
-> I added a check of cfs_rq->tg_load_avg_contrib in cfs_rq_is_decayed(),
 
-s/I added /Add/
 
-> which blocks the case (2.) mentioned above.
+On 2025/8/23 00:46, Bjorn Helgaas wrote:
+> On Fri, Aug 22, 2025 at 11:59:01PM +0800, Hans Zhang wrote:
+>> This series replaces short msleep() calls (less than 20ms) with more
+>> precise delay functions (fsleep() and usleep_range()) throughout the
+>> PCI subsystem.
+>>
+>> The msleep() function with small values can sleep longer than intended
+>> due to timer granularity, which can cause unnecessary delays in PCI
+>> operations such as link status checking, reset handling, and hotplug
+>> operations.
+>>
+>> These changes:
+>> - Use fsleep() for delays that require precise timing (1-2ms).
+>> - Use usleep_range() for delays that can benefit from a small range.
+>> - Add #defines for all delay values with references to PCIe specifications.
+>> - Update comments to reference the latest PCIe r7.0 specification.
+>>
+>> This improves the responsiveness of PCI operations while maintaining
+>> compliance with PCIe specifications.
+> 
+> I would split this a little differently:
+> 
+>    - Add #defines for values from PCIe base spec.  Make the #define
+>      value match the spec value.  If there's adjustment, e.g.,
+>      doubling, do it at the sleep site.  Adjustment like this seems a
+>      little paranoid since the spec should already have some margin
+>      built into it.
+> 
+>    - Change to fsleep() (or usleep_range()) in separate patch.  There
+>      might be discussion about these changes, but the #defines are
+>      desirable regardless.
+> 
+> I'm personally dubious about the places you used usleep_range().
+> These are low-frequency paths (rcar PHY ready, brcmstb link up,
+> hotplug command completion, DPC recover) that don't seem critical.  I
+> think they're all using made-up delays that don't come from any spec
+> or hardware requirement anyway.  I think it's hard to make an argument
+> for precision here.
+> 
 
-s/blocks/ fixes/
+Dear Bjorn,
 
-> After some preliminary discussion and analysis, I think it is feasible to
-> directly check if cfs_rq->tg_load_avg_contrib is 0 in cfs_rq_is_decay().
-> So patch v3 was submitted.
+Thank you very much for your reply.
 
-You can remove the 3 lines above from the commit message. They should
-have been put below with the version Changes.
+I have revised version v3 based on your review comments. Please continue 
+your review. Thank you very much.
 
->
-> Fixes: 1528c661c24b ("sched/fair: Ratelimit update to tg->load_avg")
-> Tested-by: Aaron Lu <ziqianlu@bytedance.com>
-> Reviewed-by: Aaron Lu <ziqianlu@bytedance.com>
-> Signed-off-by: xupengbo <xupengbo@oppo.com>
+Best regards,
+Hans
 
-With the minor comments above
+> Bjorn
 
-Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
-
-> ---
-> Changes:
-> v1 -> v2:
-> - Another option to fix the bug. Check cfs_rq->tg_load_avg_contrib in
-> cfs_rq_is_decayed() to avoid early removal from the leaf_cfs_rq_list.
-> - Link to v1 : https://lore.kernel.org/cgroups/20250804130326.57523-1-xupengbo@oppo.com/
-> v2 -> v3:
-> - Check if cfs_rq->tg_load_avg_contrib is 0 derectly.
-> - Link to v2 : https://lore.kernel.org/cgroups/20250805144121.14871-1-xupengbo@oppo.com/
-> v3 -> v4:
-> - fix typo
-> - Link to v3 : https://lore.kernel.org/cgroups/20250826075743.19106-1-xupengbo@oppo.com/
->
-> Please send emails to a different email address <xupengbo1029@163.com>
-> after September 3, 2025, after that date <xupengbo@oppo.com> will expire
-> for personal reasons.
->
-> Thanks,
-> Xu Pengbo
->
->  kernel/sched/fair.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index b173a059315c..81b7df87f1ce 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -4062,6 +4062,9 @@ static inline bool cfs_rq_is_decayed(struct cfs_rq *cfs_rq)
->         if (child_cfs_rq_on_list(cfs_rq))
->                 return false;
->
-> +       if (cfs_rq->tg_load_avg_contrib)
-> +               return false;
-> +
->         return true;
->  }
->
->
-> base-commit: fab1beda7597fac1cecc01707d55eadb6bbe773c
-> --
-> 2.43.0
->
 
