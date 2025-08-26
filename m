@@ -1,203 +1,146 @@
-Return-Path: <linux-kernel+bounces-786972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BD05B36F75
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:07:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CFE74B36F77
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:07:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C72CF189D021
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:05:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20E721BA5588
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:06:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0F0530FC19;
-	Tue, 26 Aug 2025 16:05:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076EF30FC0D;
+	Tue, 26 Aug 2025 16:05:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MEAqUavN"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZdotIW7i"
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875A631A56E
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 16:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F53242D9A;
+	Tue, 26 Aug 2025 16:05:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756224310; cv=none; b=I15XpHUW6AwZUXlXQPVJhXMD3438egiMViP5DTTSf4KGqEK0Bj54ZGXhJu8d0MxBPRqy3Xg5ZeDtLJAzUNrs3zdRiPPcHe4AERT0k4IF8ybDwzdCnhykfwwFuRmokPbaSSPQzBfby5ubTo524LVbwjUj9VEqtojyzG2MPzcK8lk=
+	t=1756224343; cv=none; b=mOxnS4dG9psbYRbNAbC8opeOkeHSTMf6S8HkdWuawLdq/izxOgK0ulu1qmUrEii/q2sF5Ua3rfKka46gjtRQ8b2A0ZxhxpZa7fUEWxQ5Jsnn4qDqDHrNEwureDiQH+Buyv3ljkFa1ctBmodR2zRsLUyD3qDPYHzVIzrqqXj+1gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756224310; c=relaxed/simple;
-	bh=J9vJ2+9ip+xBDaCuNEKvK4MQijG4RVOmKRiN3vMj1hE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lRnM4u+0yqgo79SLEkFTn+C1O9jHfK/3WE+3ExZ2GWruHzyE1xRNCQAgoyrcoDs5yAzVrH/1hLzG/l/+dGe0aCsU24+dbYxhDfBYEdsLcM8kbOr3Mkf3h5SF022rmjuRN6+lkmgzmIKmCQ8aG9WqcP4fy9XHc7o79IX8q0jPjn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MEAqUavN; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4b29b714f8cso436381cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:05:08 -0700 (PDT)
+	s=arc-20240116; t=1756224343; c=relaxed/simple;
+	bh=FjceF2bXmue3HwrOsvYAV28Qy+mXPtyOsYpBSJrTMMw=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=LEf+TujTp+rRe2ie3kefxVdQvHk9VFLLPL38q4YYa2VQJCye77tqE4SZ3bIStjHkIQCTw8FabDyfmIX6XM8W23ajHD/WHdsku+ujE0fgzZnzjGxxQc9d7OjjYY58oKmkyFr/7ZsW78OCBve12cvR3weFQ+hi0B0yUovu3T3vYqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZdotIW7i; arc=none smtp.client-ip=209.85.217.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-51ea6c8ae03so2328479137.2;
+        Tue, 26 Aug 2025 09:05:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756224307; x=1756829107; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1756224340; x=1756829140; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vLdExvFTYvU58j6WoYulhsR3rHO3T8nQ/1Jf9icS5kU=;
-        b=MEAqUavN2It8aQ0zGPcULUn7IaJxxy30E9JW8oC2yazouZBRnJJ6Afj0YOkfOvy9YZ
-         E6VlAkWwZHTWTyUda4Rb8Zax8OQHwp/UY3m0q+hOUnJKNlr4W3Mq6UpAvVDW0aODJHIi
-         mSE9ylacaps1L2gEVVK/00bFxQOIWdIgX2rq8crre+MSRga2AbeXEJEZdOB4mhC6oNAJ
-         2Ssh3ROVzESdsZd06TYNMpXgnlONZMx10yRQZdAXGdT9MsxJoTKEuXarAwA9AN15x+kK
-         fIEh4qBUJ4qO1i2bqMpaFgxuegV1RP/KJCYnuKwoQrQdGKjaepVVOtQBJEJPWXOelL+k
-         A07g==
+        bh=jGNdMOA4rilU8AON0kSO3AFj/6OjCufJ+EO41YUA7F4=;
+        b=ZdotIW7ipKY0sPI3SuqXomReh96PPwHecUDA63W3psIuARwtGHz4EUNEpIDKpSVm3i
+         llip4Bdnr2Q+WD/YSs3865lWTz4pGf7K8WTRaCyemNPXMCg0mYbkFX6WzmqV94yfxZAH
+         nYW4cPoHqz5P70mxxrf820isn1Aph3Tm99nVMp9EMmIQ/qjCNFBh1uJ1FmCSt81xohxu
+         zUnBrUGyQMj4AiVk4vzE7iLiOBygyuTs8ujo33DoF3YVloIzydc2sofFxITRoZgGNue+
+         TbY3sdwcZwWByMaUAEaDE4zxu1cl7m1QGv99stnRk5Q3IZEQcjyiaxMC/sVR7hkUQG0J
+         W82Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756224307; x=1756829107;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vLdExvFTYvU58j6WoYulhsR3rHO3T8nQ/1Jf9icS5kU=;
-        b=HptBnEzy4BYG+/Sc/HMkfq6+gYu914c3sXqzFlmX+281I1HlQD3feuBPXB2xq3hWec
-         OuADZvv//X9l0/E2ZeG8ckogE+Li+0Vnx2ee+X0MwZ/ZL6ya24bR0bzcfi9663ReSJI7
-         j3q2Kklj42yHQGmwR39Vp1pqgYOyxpEuaccIfJl6TlRoO6AT60FcxRXarrRo5vuPq4WD
-         JVu925bxp9ERc098GZMM/gaRV1kpxHGHDg+Rze5zb5y0Pvaq3Z3ezUIVVwHGH+Kn6nqD
-         34n0vxo/HrsXUM6YpJETO3q5my14xQczJH9L2e8r6P9xJZOc+61ebyQv3rzzH9HiiI1G
-         g0tA==
-X-Forwarded-Encrypted: i=1; AJvYcCWvFFAnKG+WERD/VNr0Za5ZfgL7DmQLbn7biIs8sDx7F0+i1Gau54+Dy/nS6i9FF6nF2rvf9m+5DpCDQo8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywj1L2LJyBldIqJ604ImNVwA/2PzMBqV5PbJuahiJu8O0ghwicI
-	A+ntLlZT/hRhc8E1g7wSFRzxcA94kWae6rz3cXrfLNadLIgsFbvgdSGxev80i+aaE/P78EafnVg
-	Lzxgxnh9vxWTtSq7n5uIZ3OLjoEdPea3RstktCnYN
-X-Gm-Gg: ASbGncs1lfCkgraWQscPk9JZJoNUhVuD0DwP7gjohft61HUUHMdt6OzlUuqUJF4dI24
-	cd452bxAF4aHIZrz4IV3nEdeCb0z1UMud+3qbEw9KfjTo1C7n6m3LcLV21EHtOWwfieOFzf9pZu
-	w84tYVyXTrRMMSGKQshoRtE5DKnVuVR5Wdz4QKbeVLxux37Fil5XQ2H+bT4cKyrGF64ClBdKGL6
-	HvsI+WkdrKsgTdSrmO9PSY66/yoPLNKbgALFMi/ngzP0+EwqRwiG9oHnSIMiqHGbx4=
-X-Google-Smtp-Source: AGHT+IHQofB+0fZiGVyLFKBbZzOTFAlCePKw3setaCLAGa199ccs6HjZuyQer66ydcsQhnpA2pHNLY0XytOvHQwBMHI=
-X-Received: by 2002:ac8:5a49:0:b0:4ae:d2cc:ad51 with SMTP id
- d75a77b69052e-4b2e2b6d63dmr5994341cf.1.1756224306662; Tue, 26 Aug 2025
- 09:05:06 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756224340; x=1756829140;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=jGNdMOA4rilU8AON0kSO3AFj/6OjCufJ+EO41YUA7F4=;
+        b=LzcX3L4lnHNOcaW3Ox7wq9c8meRNhwVnuLv/LR0xHn1nuI9BIKRUY3ytTqNf3Kmii9
+         Ty1OY7yNEy/IJdojGutOVhqirSN9c0RhKshnYcYIOA6q/TV42wR4o6xR3tJ0ks95ZHZJ
+         m3KNHLZoY1vVWvQCV67eA5syDe7iNuXopFrlONP2a8IAdT2mFStgUuCbseLglV2B6otO
+         hvdpI+8EA2nP8F98VWNlJFUPcsVEl/84NExR7m+oBlF/BDwl90sFqWq09dQXmo6+oiqM
+         3GvxVLbJAWXICotYyzACq0CwHpTOW+PBMizi1vciM2KU/dcb56D7eDx5IMkjmMmT+0JY
+         Ac3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ9+6LjVkZw/CR2qjmdNBo5DPx/scddRI+kc0WOGCyJB/GdDDgyJ8/GZJJ+AamvNSmXJ20u+gm@vger.kernel.org, AJvYcCWsVwgFGAVZuSX4hMx1mOR8gSAZCdAVvMgqHuML+w7dwS6V98iSYjQisfW8f9v96eEeTm+j+NueUovg5mA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWkMmWoXpRctC2WS83XBLM+1I9w9bCzoIdmQyUgznu+95XZBzw
+	GJ2C4zYFQk+p1JW0V/GfUc3f88O2H1yMcWl54I+3dn9eQH3Dnv/Lho4k
+X-Gm-Gg: ASbGncs5f5SmW/Tf2lr7UpqrUlneQkXUa2v5JaBDziSobovfgzZSdks0O4ZooTWBf9a
+	8YLqD3PzaoflIsvzoKuryjZdc+qwuz2O9tPlW1JgsU3qep2p8TAGsKYuBmEwkjmoY0RPwyOGLFI
+	iyjwvxjLLtZ9Rbi+in8mLUDrOs5v7tAZ0vhSn9/ff0a+WwIh1SjuoqcqnSrHQSmHP8gf/P1d1FU
+	eWRlFSjIdc0y6JotPJ2fqDA7WE5ByBLwz60WHx/7Prn2maiks6AUp2caADWNMcM0x+r68zt/YNP
+	3d4n5zJGwHB3NEwFzsaz+JSy003oAWowPnCDGobOrtJzFduV5GU+bkciGmtNd9/XKkLijLxDJMm
+	DXmBEv9car4cXJ8uz3MRpBaGScUkRIRqGjHgLnXiHn24mrrOL9Yvk4LkkD7s3NYQI3V5Tt5dF/A
+	65Xg==
+X-Google-Smtp-Source: AGHT+IFj7ZkVh78A/2pvdV5VZOEaGB9H+EbiLlB1J0P88BwFBWhxtHWN6o3UpiDtlkqIrxo6n2BVUw==
+X-Received: by 2002:a05:6102:32c1:b0:519:534a:6c4b with SMTP id ada2fe7eead31-51d0f1ecf95mr5326957137.29.1756224339924;
+        Tue, 26 Aug 2025 09:05:39 -0700 (PDT)
+Received: from gmail.com (141.139.145.34.bc.googleusercontent.com. [34.145.139.141])
+        by smtp.gmail.com with UTF8SMTPSA id a1e0cc1a2514c-89419c5c76fsm40212241.11.2025.08.26.09.05.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Aug 2025 09:05:39 -0700 (PDT)
+Date: Tue, 26 Aug 2025 12:05:38 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Xin Zhao <jackzxcui1989@163.com>, 
+ willemdebruijn.kernel@gmail.com, 
+ edumazet@google.com, 
+ ferenc@fejes.dev
+Cc: davem@davemloft.net, 
+ kuba@kernel.org, 
+ pabeni@redhat.com, 
+ horms@kernel.org, 
+ netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+Message-ID: <willemdebruijn.kernel.2d7599ee951fd@gmail.com>
+In-Reply-To: <20250826145347.1309654-1-jackzxcui1989@163.com>
+References: <20250826145347.1309654-1-jackzxcui1989@163.com>
+Subject: Re: [PATCH net-next v7] net: af_packet: Use hrtimer to do the retire
+ operation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250821042915.3712925-1-sagis@google.com> <20250821042915.3712925-6-sagis@google.com>
- <176247c7-6801-4e06-860e-4a6b8e77ba20@linux.intel.com>
-In-Reply-To: <176247c7-6801-4e06-860e-4a6b8e77ba20@linux.intel.com>
-From: Sagi Shahar <sagis@google.com>
-Date: Tue, 26 Aug 2025 11:04:54 -0500
-X-Gm-Features: Ac12FXyWmbtvC2IZYpCOYC0Y6vnU76B-4TsLAYBi_s7kTMKW6NKMvVulYzN01rA
-Message-ID: <CAAhR5DHbhCaR53GuKotrmLqVDRBzc1zvLN1xX+U2iJT1gEdSbg@mail.gmail.com>
-Subject: Re: [PATCH v9 05/19] KVM: selftests: Update kvm_init_vm_address_properties()
- for TDX
-To: Binbin Wu <binbin.wu@linux.intel.com>
-Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
-	Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>, 
-	Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
-	Erdem Aktas <erdemaktas@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	"Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, Reinette Chatre <reinette.chatre@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, Chao Gao <chao.gao@intel.com>, 
-	Chenyi Qiang <chenyi.qiang@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	Adrian Hunter <adrian.hunter@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 26, 2025 at 12:51=E2=80=AFAM Binbin Wu <binbin.wu@linux.intel.c=
-om> wrote:
->
->
->
-> On 8/21/2025 12:28 PM, Sagi Shahar wrote:
-> > From: Isaku Yamahata <isaku.yamahata@intel.com>
-> >
-> > Let kvm_init_vm_address_properties() initialize vm->arch.{s_bit, tag_ma=
-sk}
-> > similar to SEV.
-> >
-> > TDX sets the shared bit based on the guest physical address width and
-> > currently supports 48 and 52 widths.
-> >
-> > Co-developed-by: Adrian Hunter <adrian.hunter@intel.com>
-> > Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-> > Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
-> > Co-developed-by: Sagi Shahar <sagis@google.com>
-> > Signed-off-by: Sagi Shahar <sagis@google.com>
-> > ---
-> >   .../selftests/kvm/include/x86/tdx/tdx_util.h       | 14 +++++++++++++=
-+
-> >   tools/testing/selftests/kvm/lib/x86/processor.c    | 12 ++++++++++--
-> >   2 files changed, 24 insertions(+), 2 deletions(-)
-> >   create mode 100644 tools/testing/selftests/kvm/include/x86/tdx/tdx_ut=
-il.h
-> >
-> > diff --git a/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h b/t=
-ools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
-> > new file mode 100644
-> > index 000000000000..286d5e3c24b1
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
-> > @@ -0,0 +1,14 @@
-> > +/* SPDX-License-Identifier: GPL-2.0-only */
-> > +#ifndef SELFTESTS_TDX_TDX_UTIL_H
-> > +#define SELFTESTS_TDX_TDX_UTIL_H
-> > +
-> > +#include <stdbool.h>
-> > +
-> > +#include "kvm_util.h"
-> > +
-> > +static inline bool is_tdx_vm(struct kvm_vm *vm)
-> > +{
-> > +     return vm->type =3D=3D KVM_X86_TDX_VM;
-> > +}
->
-> If the branch "vm->type !=3D KVM_X86_TDX_VM" in patch 04/19
-> is still needed, this helper could be added earlier and used instead of
-> open code.
->
+Xin Zhao wrote:
+> On Tue, 2025-08-25 at 20:54 +0800, Willem wrote:
+> 
+> > > I understand that the additional in_scheduled variable is meant to prevent
+> > > multiple calls to hrtimer_start. However, based on the current logic
+> > > implementation, the only scenario that would cancel the hrtimer is after calling
+> > > prb_shutdown_retire_blk_timer. Therefore, once we have called hrtimer_start in
+> > > prb_setup_retire_blk_timer, we don't need to worry about the hrtimer stopping,
+> > > and we don't need to execute hrtimer_start again or check if the hrtimer is in
+> > > an active state. We can simply update the timeout in the callback.
+> > 
+> > The hrtimer is also canceled when the callback returns
+> > HRTIMER_NORESTART.
+> 
+> In prb_retire_rx_blk_timer_expired function, the only way to return HRTIMER_NORESTART
+> is that the pkc->delete_blk_timer is NOT 0.
+> The delete_blk_timer is only set to 1 in prb_shutdown_retire_blk_timer which is called
+> by packet_set_ring.
+> In my understanding, once packet_set_ring is called and prb_shutdown_retire_blk_timer
+> is executed, the only way to make this af_packet work again is to call packet_set_ring
+> again to execute prb_setup_retire_blk_timer. At that point, hrtimer_start will be
+> called again. Therefore, I feel that there is no need to perform the check in
+> _prb_refresh_rx_retire_blk_timer. Only let prb_setup_retire_blk_timer to hrtimer_start,
+> is that right?
 
-I'm dropping the check in 04/19. See my response to Ira.
+Good point.
 
-> > +
-> > +#endif // SELFTESTS_TDX_TDX_UTIL_H
-> > diff --git a/tools/testing/selftests/kvm/lib/x86/processor.c b/tools/te=
-sting/selftests/kvm/lib/x86/processor.c
-> > index 1eae92957456..6dbf40cbbc2a 100644
-> > --- a/tools/testing/selftests/kvm/lib/x86/processor.c
-> > +++ b/tools/testing/selftests/kvm/lib/x86/processor.c
-> > @@ -8,6 +8,7 @@
-> >   #include "kvm_util.h"
-> >   #include "processor.h"
-> >   #include "sev.h"
-> > +#include "tdx/tdx_util.h"
-> >
-> >   #ifndef NUM_INTERRUPTS
-> >   #define NUM_INTERRUPTS 256
-> > @@ -1190,12 +1191,19 @@ void kvm_get_cpu_address_width(unsigned int *pa=
-_bits, unsigned int *va_bits)
-> >
-> >   void kvm_init_vm_address_properties(struct kvm_vm *vm)
-> >   {
-> > +     uint32_t gpa_bits =3D kvm_cpu_property(X86_PROPERTY_GUEST_MAX_PHY=
-_ADDR);
-> > +
-> > +     vm->arch.sev_fd =3D -1;
-> > +
-> >       if (is_sev_vm(vm)) {
-> >               vm->arch.sev_fd =3D open_sev_dev_path_or_exit();
-> >               vm->arch.c_bit =3D BIT_ULL(this_cpu_property(X86_PROPERTY=
-_SEV_C_BIT));
-> >               vm->gpa_tag_mask =3D vm->arch.c_bit;
-> > -     } else {
-> > -             vm->arch.sev_fd =3D -1;
-> > +     } else if (is_tdx_vm(vm)) {
-> > +             TEST_ASSERT(gpa_bits =3D=3D 48 || gpa_bits =3D=3D 52,
-> > +                         "TDX: bad X86_PROPERTY_GUEST_MAX_PHY_ADDR val=
-ue: %u", gpa_bits);
-> > +             vm->arch.s_bit =3D 1ULL << (gpa_bits - 1);
->
-> Nit: Use BIT_ULL().
->
+Let's clean up the control flow a bit more to make that more clear.
 
-ACK, Will update in next version.
+For one, no need for delete_blk_timer. hrtimer_cancel will cancel the
+timer if it is queued. And the callback spends the vast majority of
+its time after the check. So the odds of delete_blk_timer having any
+effect is minimal.
 
-> > +             vm->gpa_tag_mask =3D vm->arch.s_bit;
-> >       }
-> >   }
-> >
->
+And if the callback just restarts itself unconditionally, no need for
+the special refresh_timer and out labels. Or the somewhat complex
+calling flow between _prb_refresh_rx_retire_blk_timer, prb_open_block
+and prb_retire_rx_blk_timer_expired. They all just schedule the next
+timer the fixed computed jiffies/ms from now. The only special case
+is when prb_open_block is called from tpacket_rcv. That would set
+the timeout further into the future than the already queued timer.
+I don't think that an earlier timeout is problematic. No need to
+add complexity to avoid that.
 
