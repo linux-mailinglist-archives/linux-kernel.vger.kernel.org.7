@@ -1,215 +1,149 @@
-Return-Path: <linux-kernel+bounces-786795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9E71B36A3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:35:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 558D8B36A46
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:36:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FBEE581E64
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:25:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FB21585745
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:26:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9E535208B;
-	Tue, 26 Aug 2025 14:23:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8D035AAA3;
+	Tue, 26 Aug 2025 14:23:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="SMoh/1y/"
-Received: from CAN01-YT3-obe.outbound.protection.outlook.com (mail-yt3can01on2104.outbound.protection.outlook.com [40.107.115.104])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="exxnCfz5"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD3D352084
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 14:23:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.115.104
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756218208; cv=fail; b=pKvtVZmiaxZXB9O4Vfh9mcGt0MkLP0ihDTnPTyinesflkknoxpq3JMVi2wtUpqnu1nh/rQTmuEwF0ppbOrgim8S4FHdT4Z08ixQ1xAt/wa41D8msi+G9HnzuuYgUdIjbrs8a/XxQV/5P+alWHdRSFbbs4ABFfZGPTVJlIAck+GI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756218208; c=relaxed/simple;
-	bh=WexRTH1zX66sYHc9rYs1SUVCBpJxZ+pq6p/+9nUjWm0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=H9B0JNJOLTnEb4VoyRMpO22PMBWMjdkx416Y3trBCj6h7cYF68m2HCB4/RY2KgkMqBr3Gi+rzPu8uzS/eD8IqRITkq2X1boQwsqNw9P/kQ1fgbyF5Qx1W47SGu6C1LUKcrrtJgdYxdr8Slj6OSb1PMR7IYXECSB2aztnuXNgcXU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=SMoh/1y/; arc=fail smtp.client-ip=40.107.115.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KJ5hfeNWzBuiFdzM5gT/9q6xKY6l+Hto7Jnn8XQonWAXkLYNwXF6YZD9uy9se4E45xqhIxpCuh8oyozRzPT2tdYwK+yrzEWoyIu7BVDv8ehlOJB0QGkFe87u0MSIVnEVGcbovdUoNaAluBcnQ5VXHxXsqEdFP1Q9bSSjXM4tAYwlRrjP9XjUjolsRacpJNc+aWnOMWqg7UGf7XaTb21UGAWzuNrwS5te4w06Km45R7/h2SBvkMqN/Om0mubgft0K+7rx1LJkHLFWLCI4KV+U75cboS0Lr8Vzq/PFxo4feTS+me0IcS5X2/UPLlRD6igePGLZFbcc5yBlKwiulFLLbw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=u0fuxnZKfYv/tLRS2gKcwm5gl76kwfYlfvTLAwVaTjw=;
- b=iDaugCxE6n0/oLwj84sMY2aRQsPvhMOuKT/XB0OCa76Z1GxkNIFJBgoicUUdeb5Xf8WxCkZneQLCAjFym8UC6YCtuDUdu2yIM4spts0PaQ7E5z+OClbeTtkwiM4d47ELwzoah/z+m73FjTF6osdrS6ALWwarYlYLmTB5bjZLblzae7oVHE2oUYkknzarZGhCv2qnc/exBvmpu8Dp6mIE3GNbrGNBWfVLfj9EwQGNu46Z9hHAl7YI2Rc/UdxIHw3c/++ZFaTma0o+xf2qAIRs4GeeUY8Ez1vmDmjCb2RT8lQm/tjVWASpVqJ8bQ4Z2cXjQFKzg9+pJBu2Rfy/BkrgzA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
- dkim=pass header.d=efficios.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=u0fuxnZKfYv/tLRS2gKcwm5gl76kwfYlfvTLAwVaTjw=;
- b=SMoh/1y/Bqy3hDpfmqHFvW0CL3+X1jwNnQpYjUMGVMK14dleioc8nZHINOlif1sruzUPd+NdlxF3AlhsL8k2TEd7VT/hW4Gj2yQeIZ3B+LLNGfUxRV+k7/S/2F2BcgzYWropRctX7qIjKfFFz89nS5Q8FTZpRIbsp5XnSlRxQRsIp925mniUPw3JefEspEJq+GVdXJEZFTmDadxLtiRaVaiassFPEMGx6EfkpkGPqg0iXjRpI4qw5ajcIlk1OaYpYbVYRh0TJ3juvYWJhi2O6FcIJmhwKhV23+4xBwIciPKTBHwEHlb01kXlQCQWpc1oXCTTbinSgEGvWo+bGzdPHg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=efficios.com;
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
- by YT1PPF63C40F8D3.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b08::543) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Tue, 26 Aug
- 2025 14:23:23 +0000
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4%3]) with mapi id 15.20.9052.021; Tue, 26 Aug 2025
- 14:23:23 +0000
-Message-ID: <4cb4a688-7c81-4d52-ad38-9d93cbfec1ef@efficios.com>
-Date: Tue, 26 Aug 2025 10:23:21 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [patch V2 21/37] rseq: Make exit debugging static branch based
-To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Peter Zijlstra <peterz@infradead.org>,
- "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson
- <seanjc@google.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>, x86@kernel.org,
- Arnd Bergmann <arnd@arndb.de>, Heiko Carstens <hca@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>
-References: <20250823161326.635281786@linutronix.de>
- <20250823161654.612526581@linutronix.de>
-Content-Language: en-US
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-In-Reply-To: <20250823161654.612526581@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YQBPR0101CA0280.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:68::29) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:be::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F66343218
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 14:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756218229; cv=none; b=fSLsEblAYMQilN3GNjQXrOCarDFWTnOH9eSEVtxZEGiGMa2/z4yMRUfz7+v2DkVC0lTsSAlWKTFHtapd0oxzY82UT4tCrU3UZGfdoSw9Ehq8wwMtKr0baiZHgG7JBsas7mHitswPvoYJS/16ZQlf13/L69jfxq1xN5uTjPqOpYE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756218229; c=relaxed/simple;
+	bh=SD1Rkv0S6PHMLGByF520S77rRy4Hnx+nEEIQ7LpCzKo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ilvbf6GmhSx4f7HXSh1LhtmKRa2VSjkiQeHPgh4wL4qtlb9Yt1J9dltzWrTi8zhm/c9pq34rj6fWe7ZuE9CXGzG8mBIFg7xs0dXsoljzjZCrGBT2MFV8ZQfjTgmbYA+7lqRg0AphJi+5Q1v3lCZeA3FOFxxQlyXEhaw8oGHPG7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=exxnCfz5; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3c763484ccdso1951149f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 07:23:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1756218226; x=1756823026; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SD1Rkv0S6PHMLGByF520S77rRy4Hnx+nEEIQ7LpCzKo=;
+        b=exxnCfz5CRhh3zvyhNX+hb09Wkm+MFlJw174YJMBoBIxxzQ+vZU69RPyqA41VAalfO
+         Q+X5R2ENXNBrYUmNmxKWTJSL89WylEOOclFn2XDB7kN80mrzqrZJ+lnBykh3Y+KLKIFF
+         QZIHDNsF9CrpHn/mG9x1E0VTTFmvbR/ZHRuIaGQkJweX8cEdOZ/cFAtAUuYFO9ftCCgN
+         plnwScVAcJP8KEmPPuiLJtRTPeX1ye0pCCgg4V9AKKk+chnkrJfQ3ph+ychUBVcPCIqX
+         dhEZvZ3nyXAb6iVUSAEVVyzHUZZoqABzAE1L/4wTJVLWzKLAAD3wIno5XDLWjibg1Bpl
+         v4XQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756218226; x=1756823026;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SD1Rkv0S6PHMLGByF520S77rRy4Hnx+nEEIQ7LpCzKo=;
+        b=OD76yYHJyt7GMNZQohrw8TbP52hzvtKKY5+ssrmzCOXxNMEfCv5Ac+beoez9msSz7g
+         wOnnBDtLm+BHDcgukY0ziKM0Q3AZr1i0l7t5Hq/ZwHosGasiSGnGt5pzLBgssW7KA5Mr
+         8mY57xUfPEKTNz//8mStbx0OOzgc3ebNNTIfFrNjbh5nOb0BCe+r8duOIAVGUNKnzL6A
+         E5wdx2nnHbnhPfzrRLZUE+B+aFVNCVqlb1o3PVxt1Wu2q404F6XfeB7OFNmn8sb5jXX0
+         9ZpU3v2KgDrl8P+QHf6ND0ViDS0vZjSu/da2emcpWy/78MkWnV0L0X4ZKPzuWfKHtDZH
+         wkrw==
+X-Forwarded-Encrypted: i=1; AJvYcCV7J9QOPV8thIuic0tQCX17/VCECJh2vvduMSbhX0gVTlsVTXOZUWvVbygoOR0qahGMV1RFGIxOhI24ux4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUVPSiaFKjyhPUejUPyKzifMOgMMV6y+voy6FLO+i4ROqWb4ph
+	qNhAtAnECHbp42uvOGUq4KyvMGgB2SDCTbfS6Q6S9YFhPNxY2Feq/ljY+3Ikc2ei9LM=
+X-Gm-Gg: ASbGnctegQN/K5qqYCxu47RcP6HStmnanHHul9OBHR5v4opW0jOiuTLeAgbDMJ9ISSN
+	9a3i44D4sOT+A0IxZfz33zoc/GKG7ZVju1qdbtq6oJ7zOVNQfWdJog1CFB0Uu/CaDmYP2wL09vE
+	c3ugjK/wx/JlbksbqGcFlyKhKytA5EufV7tcaoq6LdIi/e/TOd8+IXjA8EPGRIgAao7sp/79QEL
+	141eb240u+CFx/W28NsQmripL46nJ4cqCXQO5yXqMqYAxMjP4vCOOGakZ3SU61Jovo9u1LDRkVU
+	SX/jdFWNI3tD0hiGcYJJEXkBDvhe1Y8e/eX9Q4p5tYxggAxLC0FbYLRBcf89ga64YIqPxtUIkRo
+	N+gseNJcPC4UZVxdOcg82VKz6esN2p1flnhLW0yMNuPw=
+X-Google-Smtp-Source: AGHT+IHNbU375z1HM3iO0OTASldmwJtv+PMpWsx2AugmIMC46UnJiLI3kABi4oagejSfypZU/JGA8g==
+X-Received: by 2002:a05:6000:4006:b0:3ca:2116:c38c with SMTP id ffacd0b85a97d-3cbb15ca336mr1713006f8f.2.1756218226148;
+        Tue, 26 Aug 2025 07:23:46 -0700 (PDT)
+Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-770402159aesm10800319b3a.82.2025.08.26.07.23.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Aug 2025 07:23:45 -0700 (PDT)
+Date: Tue, 26 Aug 2025 16:23:35 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Chen Ridong <chenridong@huaweicloud.com>
+Cc: longman@redhat.com, tj@kernel.org, hannes@cmpxchg.org, 
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, lujialin4@huawei.com, 
+	chenridong@huawei.com
+Subject: Re: [PATCH -next v5 3/3] cpuset: add helpers for cpus read and
+ cpuset_mutex locks
+Message-ID: <luegqrbloxpshm6niwre2ys3onurhttd5i3dudxbh4xzszo6bo@vqqxdtgrxxsm>
+References: <20250825032352.1703602-1-chenridong@huaweicloud.com>
+ <20250825032352.1703602-4-chenridong@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT1PPF63C40F8D3:EE_
-X-MS-Office365-Filtering-Correlation-Id: 54eca9ea-988c-43cf-ab1f-08dde4ac1d0c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|366016|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UGlDcy9YUUd4VE5nVTZnbUJaUGVSdXVCZnlQZGI0eVhxZnUrZGZmR3FDaHdV?=
- =?utf-8?B?QVJHcWNJYzJ2RUxLSFlEaEVtMTM2T2FqZjJzRGQ1cWNnNHFLY0FxVFQ2ZGtW?=
- =?utf-8?B?djU5VWlBb0thY2l1VGVrWW5ONTh2S3VWWlJ4UzBid3VNQURUMVdZUkQ1VlZF?=
- =?utf-8?B?TzMxZzJ2dWgxREQ5YnlGK2JJZmpac1JyS1NrdU83eWpLNW82dm5lckhxclhH?=
- =?utf-8?B?ZHAyd0FpK3RVWHNXMjhjdmVqT0VSck5KV3VQQUJTUHJmOEMyVjF6blV3RExM?=
- =?utf-8?B?a2RqVXB2M3kvVDYyMkpNbE1ieWVIRXJxQTlmZGlmMmRleHZYWTQ2S0dOTW5X?=
- =?utf-8?B?b1F6WjdjZU1jeU5tamZZTUtRU2NTajFwOXFyUm9OSU93UitueXRSa24wTDNM?=
- =?utf-8?B?YmFvb1UyU3BMRENyZ0w5eUk0dWNHNHA3UXMvbXFXaURYOGR0NjRFZFRCY2tL?=
- =?utf-8?B?dHdMd3laT0oxdFRzR3FxeWF6ZUI1QVZIL2RWcFRSaFRTL2YvaGtSNXhiSlN4?=
- =?utf-8?B?bDIwL3YzanBUM0dhT3hWZGNVSkI5OU9jMGhrT0I1QW5zK0NFNll4T2YwOFdU?=
- =?utf-8?B?RXZVVlJ5ZG81N2FRMGdZR0tGR25MNDcvYVN6TUJOUDNYY1Jna2xtM3pnMDhp?=
- =?utf-8?B?b3MyQWU0dmd2ODJoK0V2R0FhbGFuUUlSaHAzRmZXZUMxeG5SUFpoaEhPOHVV?=
- =?utf-8?B?ZUpYZEF6Z1FENWRXclNJcnozNWpCd0g0WTJleUFlRTF6N0NaZzludlVzM0xS?=
- =?utf-8?B?R0p4YnE2c2E1QllScU5mZFd6SEJQZ0Jjd2t2OG5XdUxRSVoyUytnWVdHZDV1?=
- =?utf-8?B?QjIrT0M2VURFUWcrYjBLMVFNMjNsZitIY0Z6MHZKL1d2aDFmWUxWS3cwOWRl?=
- =?utf-8?B?cExzclJRcjE3VlNURXVoalVWb0h4M3pZNCtQVzRLNEV5QWtzMlBIVjRwamcy?=
- =?utf-8?B?ejdUUkN6ZWFRNnpEL0dhWWRDZWxySjY3aGJnT0NFdU1vWlJCdDhYTlVDMXhY?=
- =?utf-8?B?TnFlQVdMeThxRHBQZ2hsMlFjcHcxZm1MQ3dPc1dwdkJ5RUxZc3VMRzZpbmZW?=
- =?utf-8?B?YUc1U251eDZSZGsrREYycXVGM3JmT0VuK2hqYThvQ3k1K3kyMm1hZjYzcHRN?=
- =?utf-8?B?aVFwTmIvbm1ZL2xxSVZXU2cvcVoydmdwMU5XR2h2TFZSRmdUdHJkdm1yUSsw?=
- =?utf-8?B?WU9aUEFaRFlNY25vRXlxUitpdmpCYlBMQnNJY29RRUdzQXdRZkNoQlkwcUFs?=
- =?utf-8?B?dFF5ODFkRktFK3NJakxrUFBVZ1VRUGJjQkQxK2ZoTnpwTmRKQjFuZW0rTUla?=
- =?utf-8?B?eGRtRGVUSjliVzNWMktHWDhpSlFXRE9kbVRCNlVWVDh5L0VqNXlFczdRRDRp?=
- =?utf-8?B?M0NBcG4rckU4b1dlbXhCVUFwdlBYNnp5M1BTRGp4cDgvVkNkVWkrZE9kd3Jv?=
- =?utf-8?B?M1N5cThMazhtOEc2WS9zY0JDMFNPVHhra3dnaXR0ZnBPa3JyZkZPVDI0MTJR?=
- =?utf-8?B?R1Z4WXVkMTRBQ0hXSmNJSnhxWEU4dFRtbUdFdUp5YnlHUHNOSDh1bm1xT2dK?=
- =?utf-8?B?MHkzZHNwWjkra0lYN1FqWDBMSmVNdlk0dnVpenU0TVdyTGlkeEN0MzQ0ZFUz?=
- =?utf-8?B?OXRpZGYxSTE1Zm42VmkxR2V2ZEx1TjlkR2FiYVExZVZHTDI5WkF3aEZYRGhn?=
- =?utf-8?B?L080K09iR3FaR1k3TnBaMjNVMHgrTEZ0RzR1d1gvL3N4ZTZ1dGNjYzRYajBT?=
- =?utf-8?B?TThaZnhXdFMwNThMbnQzYTNrakV6R2pOY3ZVdUIyb0wrTy9HQ1dic0FXREph?=
- =?utf-8?Q?iSWF9uONhp8HvHCUHD3viH7OIynAUionNUjUw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(376014)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TDVIaXJtRWVQS3RUTG4xMVhFdmY5dGRZN1VEQ2FwRU1Xc1AvaGtObFFGNTVE?=
- =?utf-8?B?WThYYXFFdzM3RzJLMUsxMFg3Ry94Qnd3VUdJVnQzN0ZwaVdRdmorRStoa0E0?=
- =?utf-8?B?YUlsbklUQ0gyYXY0N3hLOVd5Y01YYTRJdGVaNmdyK2JzcDFVVFhOUEZsM1Zn?=
- =?utf-8?B?OE9idmJIZmhTWTlDR0ZxdkhJbXg2TllZQlBSd2hTSWprZFVBeU05VzRNaTZQ?=
- =?utf-8?B?bUxqWVZWdWxOczJhMjNleVRGck43K25ETHpZZUdUZHBTM3JoOEg3cEFqS0J0?=
- =?utf-8?B?M2p2N3hDcG1QR0NtNU4wQU15aFRsWkhhRExPcVRyRmoreW9yRXN5ZUI3U1ZM?=
- =?utf-8?B?ZjlIaVNhUUN2WjI4c202MlFESVk4bnFxS3FtQ2xFbGRPM1QwZ0x3M3dyVUo1?=
- =?utf-8?B?QmNqWlpsMkc3NXN6THBQNks4cjFsTEJ5ZWwwZ0I3TVdyQjFCeDFtbmlSTzZ4?=
- =?utf-8?B?TnJPUGorWkl4Y04xTDNGRjMrN0J4MWRGa2tPcFNHQkttU2Zyd2cvbWFkQUR3?=
- =?utf-8?B?dnpWUVNiV09WVXZsaGlLVXZ4d21aNEdMWFl0b3d2cGN3RU90L05Ca2MrckQv?=
- =?utf-8?B?WE9WMnJzZnhNeWJLREh2enh6dDZQSzkrY0lzN251VmFDYkdweWhvOGlXRGlY?=
- =?utf-8?B?TXo2aWk2TVd3aVFUbGZGdGpEQ0MvVy9XRFIzWDBXODFZVFpYVHN5eXNSMmUx?=
- =?utf-8?B?eWpzNURzbkNDalNqd3pZSDluUEI2SDA4dHYrdmp1cE80MTVhZmJqcWpETFY1?=
- =?utf-8?B?dVFJVnoyMFBmNitGa3BtdVBrdVEyY3J0aWtKalZhZy9nSmlrR3lKbWRkQ3ZD?=
- =?utf-8?B?a3hBUVh3QmFCQk1tMjdGNVFxd3RmVmF1M3FJdXVzNmgzSkhidXpoSytaRXVr?=
- =?utf-8?B?YWN2NDJEaVJmcVV3WWZtQ1dzeUdPcWxNUzFmMXZTRmJGOTA1b3JnU0YxRlF5?=
- =?utf-8?B?aDlUbFdwVHhtSWFGakJvaXJ6cVBDRDdlMTd5Wm03Q0JRVmpyaUtzTGhYVnJE?=
- =?utf-8?B?QW5jWFhwMHQyOWJBd2lldU5KSEhiVzMreWo4N3NCM3pLY01NVTlzTVh0TG5O?=
- =?utf-8?B?VnFMOXo4RXVPbjRUdFdyUnk2S240NmhHbzJvS01LY1hQYVhEb1BrbDJaVXlK?=
- =?utf-8?B?QnIwT2U1Umo5Q0pTQ0JNSjB4bEFYSUxPbzVnekRiTitFTUhlZmdReHlWTkVE?=
- =?utf-8?B?eUFZY0M5MjVXSThVbDVEdGRRY2pMZlFreThOTEhZVExiVTZFcnlSeUY4dFNw?=
- =?utf-8?B?Qk14M0l4K3kvQlNKTVZDbHJFSm44UDJvWXRhWkpySnVwTnRFZnQ5SDcvRS9r?=
- =?utf-8?B?K2Q0dFBZNUZqd3F5cGRrOS9NVHVYeTAwcmFQWDRWQTA5RmhtUlVqWUlVREdk?=
- =?utf-8?B?em90OWM4aTUrbmErYkpRRWdSWHN6ZThNY1I0R3hYMkVPSEJVS2x3T3RBc2s3?=
- =?utf-8?B?b1RkVGlDVUVVVjh3MmdSSklMeHU1dDRhMXB4OVNOd2NLTzc3M0twbzJpOFJW?=
- =?utf-8?B?cjJxMjYvcmJxWlZ6NHZNOVk1SisxWmgxZHVUcExpWENES2pGeVF2NTlDai9v?=
- =?utf-8?B?c08xVEo2Y1RGSUQvSVNqVFRwZ0VwMFE0NlhJODNyOUMvWFZVTEp3ejg0bnpB?=
- =?utf-8?B?QzlncFl6L29XTHltbzJIclcvZG1YRStKVGl5N0dvQkQwaGxUYUFyb01seWQz?=
- =?utf-8?B?T3hqUm1rdlJFdkhZV3lVTmdNQjRkSFMrbUJHNURKcjFPcFQ5c0VYdHJqVjd3?=
- =?utf-8?B?V0xmN1g0bGxtTS9vRzFpZjVTNWNKWHQ0ZVB4WXk5enNxSzRXV2lwZEpnY2Nq?=
- =?utf-8?B?NzAxTEx4aHF0QW1FM2tPQk5xTVhhWXBsQWpGeGw3ZS85SXFKNVJlRTNrUjlR?=
- =?utf-8?B?QXBiZ2Jac1c4MnZXMVNXemlsQmJMaXkvNXdYR1ZlYTZFdlFRbkp3UlIvTENT?=
- =?utf-8?B?SkZCZ2R6bzl3QllBNHd4V0t1ekdLOTF2bHJ1dE1UdU1GS3U2WkdGaEJBTk5U?=
- =?utf-8?B?d0RodmE4RVFvbDNLVVZ6Um5HQnQ4ZURlbDdHN0IvN0hiK05KMVNJdDNSVU5V?=
- =?utf-8?B?ZTNEU3lIQ0grUC9SU1RFVHBGRHAvcXozbDU4RVZXR1BXRmNVUlZpTElqM0t5?=
- =?utf-8?B?OXFtelVtWnVJVE9zT3BFaEVJTU42Mi96L2plb3BsbHJ4dVVWYnNjbm1EWThx?=
- =?utf-8?Q?sgqaXB7QcX+tff2tjgzbJR8=3D?=
-X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 54eca9ea-988c-43cf-ab1f-08dde4ac1d0c
-X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 14:23:23.1068
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ehy3rGq9aberQvsshReLDazxb+gCWCnzZUKnpkZwlKT5df4E8dth/ykkGj3MeyR5Q7s48IbhN4VDnPk20yGlBOlKSpJfwnrL0ugA8YVJsDQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT1PPF63C40F8D3
-
-On 2025-08-23 12:39, Thomas Gleixner wrote:
-> Disconnect it from the config switch and use the static debug branch. This
-> is a temporary measure for validating the rework. At the end this check
-> needs to be hidden behind lockdep as it has nothing to do with the other
-> debug infrastructure, which mainly aids user space debugging by enabling a
-> zoo of checks which terminate misbehaving tasks instead of letting them
-> keep the hard to diagnose pieces.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-
-Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-
-> ---
->   include/linux/rseq_entry.h |    2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> --- a/include/linux/rseq_entry.h
-> +++ b/include/linux/rseq_entry.h
-> @@ -275,7 +275,7 @@ static __always_inline void rseq_exit_to
->   
->   	rseq_stat_inc(rseq_stats.exit);
->   
-> -	if (IS_ENABLED(CONFIG_DEBUG_RSEQ))
-> +	if (static_branch_unlikely(&rseq_debug_enabled))
->   		WARN_ON_ONCE(ev->sched_switch);
->   
->   	/*
-> 
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7bzqvomqxrybdnkq"
+Content-Disposition: inline
+In-Reply-To: <20250825032352.1703602-4-chenridong@huaweicloud.com>
 
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+--7bzqvomqxrybdnkq
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH -next v5 3/3] cpuset: add helpers for cpus read and
+ cpuset_mutex locks
+MIME-Version: 1.0
+
+(I wrote this yesterday before merging but I'm still sending it to give
+my opinion ;-))
+
+On Mon, Aug 25, 2025 at 03:23:52AM +0000, Chen Ridong <chenridong@huaweiclo=
+ud.com> wrote:
+> From: Chen Ridong <chenridong@huawei.com>
+>=20
+> cpuset: add helpers for cpus_read_lock and cpuset_mutex locks.
+>=20
+> Replace repetitive locking patterns with new helpers:
+> - cpuset_full_lock()
+> - cpuset_full_unlock()
+
+I don't see many precedents elsewhere in the kernel for such naming
+(like _lock and _full_lock()). Wouldn't it be more illustrative to have
+cpuset_read_lock() and cpuset_write_lock()? (As I'm looking at current
+users and your accompanying comments which could be substituted with
+the more conventional naming.)
+
+(Also if you decide going this direction, please mention commit
+111cd11bbc548 ("sched/cpuset: Bring back cpuset_mutex") in the message
+so that it doesn't tempt to do further changes.)
+
+
+> This makes the code cleaner and ensures consistent lock ordering.
+
+Lock guards anyone? (When you're touching this and seeking clean code.)
+
+Thanks,
+Michal
+
+--7bzqvomqxrybdnkq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJEEABYKADkWIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaK3DZBsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQfj0C55Tb+AjaDgD7BWwhODnaF23DEYFz1AQE
+g4NAFCp5eUn5EZgaV/iKRuQA/07xZOfgw3gsWo0zYipmhPX/dR80gfIZW2VRCQYP
+RIEG
+=raww
+-----END PGP SIGNATURE-----
+
+--7bzqvomqxrybdnkq--
 
