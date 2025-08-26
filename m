@@ -1,196 +1,82 @@
-Return-Path: <linux-kernel+bounces-787031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D7E3B3709D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:37:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C935AB37042
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:29:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC44217713F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:37:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97A277A7D07
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95533680AA;
-	Tue, 26 Aug 2025 16:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D01DiQUx"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2AC30FC19;
+	Tue, 26 Aug 2025 16:29:09 +0000 (UTC)
+Received: from mx.gpxsee.org (mx.gpxsee.org [37.205.14.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A73313E33;
-	Tue, 26 Aug 2025 16:37:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E087D17C211;
+	Tue, 26 Aug 2025 16:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.14.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756226262; cv=none; b=jukuIGucf2ZeNl9IFsprZD7/LlHDnj+GC4l4VDWMpJnT/DEWT6ppMLPAPV1hjnSyfKKcKX5EOTlNUMKaEOdzZJKHVsu3kYFSOTZLIU/bBAnHfWCyCnQO0OgXf0i2klUohHY3nvAvIkeHHitu++xwjMlTNTx1xTVlHOVSJBUEfvo=
+	t=1756225749; cv=none; b=Ui30eFShS3xXmI12+VMURmxx6BVUi0usrTzCl/gkQXDcGYk/OzmSn0zNPByA902fG1mEk8aL+KpBSdypqRxc/gdnFx3zRVgdXyRwQqo4lrUCrZbodN2fne8Zkz2hau/znpkQa0TuwzuPemRqYNMLTf6xd3KmNrFY/JIR7xMrO7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756226262; c=relaxed/simple;
-	bh=AEdKHjzMg9eUTtDLSUEGj/0UGdfhDJa9ocC7lXKnb8w=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
-	 MIME-Version:Content-Type; b=g9V4AdypVcTZ2wiJCLIzdPhHr2vk3S9dhYEIf7LjDhGateiJJ9WHYGoaW6PcbWBqlCSbAUf0u3Q4RebQash7fyAGCyk+f2rwQsdiRUXn8gb3Stkm4ShTl0h1KIdlvkfIJu24JYoCoNYnJxuUGdaXqA/RZtkApBIajMuTVT3XWVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D01DiQUx; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b49cf21320aso3700509a12.1;
-        Tue, 26 Aug 2025 09:37:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756226261; x=1756831061; darn=vger.kernel.org;
-        h=mime-version:references:message-id:date:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jyPF/dL+2YqZRv98PVCshXGneATY8Fvhth5O4vhMkWc=;
-        b=D01DiQUxNIduTbdm92yf7LYkrPhfjFPZWkW0sBV9zQHJvey3zsAL/81M2tAxk0TTYN
-         dWz3YFqNyWtR2dgwGqX8VAnb7mxp0vHwlYKIwoHObRSePB+3JleS1BU1yJeR6saLVbuL
-         /I/GitxfVVcHL+XJ8j5s7ajtErAjE0jYOOEM3Oj612OYlYpoS00633a5hQFlnlWfzmWS
-         RqNGrUfFgYMiFqE4j6wbkRxw2LseB2OfgK4CuZduKMFrHg2LawKdKj2SE7BxnErx0yDM
-         aw3e6SODrKsjcjGjmdJWqHuZ/vYKYshNozb2jH+PBu6XeDDIazuhHS7SpllpWt+ytUjg
-         R+sA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756226261; x=1756831061;
-        h=mime-version:references:message-id:date:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jyPF/dL+2YqZRv98PVCshXGneATY8Fvhth5O4vhMkWc=;
-        b=lb3okvgrZiWB4QyP+4N6CbybvseEMSy+ZdP5wq3Wb9q3lPZqCZDW3TjebJ9abBTmpq
-         fECURxw+iFXdqoVhEAI6N8nMpBkmaX90i4jQT4k76ktsV5kxAG+c/CMly7i4bUfpppOW
-         UM/HnQm8kp87na9m9VcbLM+8btT7hhFjMPTfqc//dWba6hYW3K4asMSRJfhf0u3iXj/Y
-         WoaG7oinS5ylJK8IlNaRk2zr8xOzuaTNvN1Ak04ruGAXA+ksqLdAP37SGq2Zvm/pe/UU
-         Lp1weyX0u14APWfNsznHcpGUzcJgv6bs9bHcoenNErSxlz5htpYC1Vgu+ljY70VPWHGv
-         5Yjg==
-X-Forwarded-Encrypted: i=1; AJvYcCU9tWjO0Zk8eWiWJDxPy8LhkttKRCVrOpz5T9VxtKRujbANras8QR1ZYQXwROa0FWckSIIEAj2Z4d4tYrGG@vger.kernel.org, AJvYcCV/vNZuTaPPL0v2t/tNqkP9j2CxjW8tZmE90sx/1tSbTsWiS8zQMAya/rziP8VSDhsIrXxUUzWZ/Qnt6ul0@vger.kernel.org
-X-Gm-Message-State: AOJu0YzagvuYcEktylCbn86KnVv5Bh8bPVXG/bm/+J4RGAw09iSvIfQ2
-	uOoVGNWZJRmkc/PahfApKwEqI2W2M8q3NH0RNDBc7qBRIfxABr5HXt0R
-X-Gm-Gg: ASbGncvdXI5bid4izHGWt8glBNobNiOVsDtt8p7fPYP4zlHDwqVFArRICAMkJV0ehk8
-	/S1ns1VUZzzMJDubJxVrfwGpbvtlj2bf71LU/HNW6MxpCb0lFknV1/xTpACu6em3PkQmxQdoyxp
-	1YAFYiJRuvzE+MR7ZEV/5G1dnDIgNceVSYtAxBhaAwtEZGp8VCzP4Ce2ZWz8Agro0FYnFUduBEO
-	pMgSAaxfKjdJgEpnEziFLJZ0atC5jb2KO8Rj7uNKRxwOsj2lVqDWLyqzI1kPlA93oH0KRB6gpro
-	ytx8gvqjH4WP5JhWm5m3kJcv/1kem24HM12+cuIEcC/9/1F3cgHm7Ipc52MDC+HnSmM6g5FubzH
-	wmPch76z7Fm0jDA==
-X-Google-Smtp-Source: AGHT+IHkpBzdMdA7eE7qfwfc1lxqW0m87+LkJnM6/YhAHtUnIYSPMtiSiZLKGMu2nLQJcFkeNv4YGw==
-X-Received: by 2002:a17:903:32c8:b0:248:79d4:939b with SMTP id d9443c01a7336-24879d4978cmr26372675ad.54.1756226260428;
-        Tue, 26 Aug 2025 09:37:40 -0700 (PDT)
-Received: from dw-tp ([171.76.82.15])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-248681adacdsm21450705ad.10.2025.08.26.09.37.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 09:37:39 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, xen-devel@lists.xenproject.org, 
-	linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev, 
-	linuxppc-dev@lists.ozlabs.org, David Hildenbrand <david@redhat.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Juergen Gross <jgross@suse.com>, 
-	Stefano Stabellini <sstabellini@kernel.org>, 
-	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Zi Yan <ziy@nvidia.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Nico Pache <npache@redhat.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
-	Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>, Hugh Dickins <hughd@google.com>, 
-	Oscar Salvador <osalvador@suse.de>, Lance Yang <lance.yang@linux.dev>
-Subject: Re: [PATCH v3 06/11] powerpc/ptdump: rename "struct pgtable_level" to "struct ptdump_pglevel"
-In-Reply-To: <20250811112631.759341-7-david@redhat.com>
-Date: Tue, 26 Aug 2025 21:58:09 +0530
-Message-ID: <87a53mqc86.fsf@gmail.com>
-References: <20250811112631.759341-1-david@redhat.com> <20250811112631.759341-7-david@redhat.com>
+	s=arc-20240116; t=1756225749; c=relaxed/simple;
+	bh=AAcyihQv5XLEctuNaZICT2NIJkI17KX4f1zliLxnpik=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MUs6+2meCwdZ9p4UqHk2eGGHNoQ22QZA73oafDaZQv5KnWC/gvlwEyns0wAOl6g7rruYk4vdXJx8F8YOm3BV0JU65UXwYD7wPDiviclWWDFiHJZK3KEytnRNN/Flxd6smn9+k9gzX2trciwQHA27QeCkg9r976CusRQ7Y5LEbNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gpxsee.org; spf=pass smtp.mailfrom=gpxsee.org; arc=none smtp.client-ip=37.205.14.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gpxsee.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gpxsee.org
+Received: from localhost (unknown [62.77.71.229])
+	by mx.gpxsee.org (Postfix) with ESMTPSA id E39E453EB3;
+	Tue, 26 Aug 2025 18:28:52 +0200 (CEST)
+From: tumic@gpxsee.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Martin=20T=C5=AFma?= <martin.tuma@digiteqautomotive.com>
+Subject: [PATCH v2] media: pci: mgb4: Fix timings comparison in VIDIOC_S_DV_TIMINGS
+Date: Tue, 26 Aug 2025 18:28:29 +0200
+Message-ID: <20250826162829.4434-1-tumic@gpxsee.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-David Hildenbrand <david@redhat.com> writes:
+From: Martin Tůma <martin.tuma@digiteqautomotive.com>
 
-> We want to make use of "pgtable_level" for an enum in core-mm. Other
-> architectures seem to call "struct pgtable_level" either:
-> * "struct pg_level" when not exposed in a header (riscv, arm)
-> * "struct ptdump_pg_level" when expose in a header (arm64)
->
-> So let's follow what arm64 does.
->
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
->  arch/powerpc/mm/ptdump/8xx.c      | 2 +-
->  arch/powerpc/mm/ptdump/book3s64.c | 2 +-
->  arch/powerpc/mm/ptdump/ptdump.h   | 4 ++--
->  arch/powerpc/mm/ptdump/shared.c   | 2 +-
->  4 files changed, 5 insertions(+), 5 deletions(-)
+Compare the whole v4l2_bt_timings struct, not just the width/height when
+setting new timings. Timings with the same resolution and different
+pixelclock can now be properly set.
 
+Signed-off-by: Martin Tůma <martin.tuma@digiteqautomotive.com>
+---
+ drivers/media/pci/mgb4/mgb4_vin.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-As mentioned in commit msg mostly a mechanical change to convert 
-"struct pgtable_level" to "struct ptdump_pg_level" for aforementioned purpose.. 
+diff --git a/drivers/media/pci/mgb4/mgb4_vin.c b/drivers/media/pci/mgb4/mgb4_vin.c
+index 989e93f67f75..42c327bc50e1 100644
+--- a/drivers/media/pci/mgb4/mgb4_vin.c
++++ b/drivers/media/pci/mgb4/mgb4_vin.c
+@@ -610,8 +610,7 @@ static int vidioc_s_dv_timings(struct file *file, void *fh,
+ 	    timings->bt.height < video_timings_cap.bt.min_height ||
+ 	    timings->bt.height > video_timings_cap.bt.max_height)
+ 		return -EINVAL;
+-	if (timings->bt.width == vindev->timings.bt.width &&
+-	    timings->bt.height == vindev->timings.bt.height)
++	if (v4l2_match_dv_timings(timings, &vindev->timings, 0, false))
+ 		return 0;
+ 	if (vb2_is_busy(&vindev->queue))
+ 		return -EBUSY;
 
-The patch looks ok and compiles fine on my book3s64 and ppc32 platform. 
+base-commit: a75b8d198c55e9eb5feb6f6e155496305caba2dc
+-- 
+2.51.0
 
-I think we should fix the subject line.. s/ptdump_pglevel/ptdump_pg_level
-
-Otherwise the changes looks good to me. So please feel free to add - 
-Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-
-
-
->
-> diff --git a/arch/powerpc/mm/ptdump/8xx.c b/arch/powerpc/mm/ptdump/8xx.c
-> index b5c79b11ea3c2..4ca9cf7a90c9e 100644
-> --- a/arch/powerpc/mm/ptdump/8xx.c
-> +++ b/arch/powerpc/mm/ptdump/8xx.c
-> @@ -69,7 +69,7 @@ static const struct flag_info flag_array[] = {
->  	}
->  };
->  
-> -struct pgtable_level pg_level[5] = {
-> +struct ptdump_pg_level pg_level[5] = {
->  	{ /* pgd */
->  		.flag	= flag_array,
->  		.num	= ARRAY_SIZE(flag_array),
-> diff --git a/arch/powerpc/mm/ptdump/book3s64.c b/arch/powerpc/mm/ptdump/book3s64.c
-> index 5ad92d9dc5d10..6b2da9241d4c4 100644
-> --- a/arch/powerpc/mm/ptdump/book3s64.c
-> +++ b/arch/powerpc/mm/ptdump/book3s64.c
-> @@ -102,7 +102,7 @@ static const struct flag_info flag_array[] = {
->  	}
->  };
->  
-> -struct pgtable_level pg_level[5] = {
-> +struct ptdump_pg_level pg_level[5] = {
->  	{ /* pgd */
->  		.flag	= flag_array,
->  		.num	= ARRAY_SIZE(flag_array),
-> diff --git a/arch/powerpc/mm/ptdump/ptdump.h b/arch/powerpc/mm/ptdump/ptdump.h
-> index 154efae96ae09..4232aa4b57eae 100644
-> --- a/arch/powerpc/mm/ptdump/ptdump.h
-> +++ b/arch/powerpc/mm/ptdump/ptdump.h
-> @@ -11,12 +11,12 @@ struct flag_info {
->  	int		shift;
->  };
->  
-> -struct pgtable_level {
-> +struct ptdump_pg_level {
->  	const struct flag_info *flag;
->  	size_t num;
->  	u64 mask;
->  };
->  
-> -extern struct pgtable_level pg_level[5];
-> +extern struct ptdump_pg_level pg_level[5];
->  
->  void pt_dump_size(struct seq_file *m, unsigned long delta);
-> diff --git a/arch/powerpc/mm/ptdump/shared.c b/arch/powerpc/mm/ptdump/shared.c
-> index 39c30c62b7ea7..58998960eb9a4 100644
-> --- a/arch/powerpc/mm/ptdump/shared.c
-> +++ b/arch/powerpc/mm/ptdump/shared.c
-> @@ -67,7 +67,7 @@ static const struct flag_info flag_array[] = {
->  	}
->  };
->  
-> -struct pgtable_level pg_level[5] = {
-> +struct ptdump_pg_level pg_level[5] = {
->  	{ /* pgd */
->  		.flag	= flag_array,
->  		.num	= ARRAY_SIZE(flag_array),
-> -- 
-> 2.50.1
 
