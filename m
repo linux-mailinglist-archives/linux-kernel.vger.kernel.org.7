@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-785721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FDD7B3500B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:12:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A28B2B35012
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:13:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E484C1B25D6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:13:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B79F6164309
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:13:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79202199FB0;
-	Tue, 26 Aug 2025 00:12:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964BE7E107;
+	Tue, 26 Aug 2025 00:12:33 +0000 (UTC)
 Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BFE23AC22;
-	Tue, 26 Aug 2025 00:12:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F0779F2;
+	Tue, 26 Aug 2025 00:12:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756167145; cv=none; b=QpLuC7J9cQTyfcky7q/4aaXTDDH/vFFWCjjPakL0We/9cIUtS+mbgjJmFgW+72qQwfCvM8oo2iMlm8/f1YDVmFMfadwA5xXzzmyNsMPeMMb6Z2yvn+CUiFSVXan3QK1W/TuOdPpZsRUVegKvgP2vxS5oZS6dylvdi2LlxlIIIoE=
+	t=1756167153; cv=none; b=nVJHcMVyhbYjZemkX3S8wyrVkWG8xRJBOKcUw76sjZB78coI/rMcETx0uErucPp4X/zlwhp5vPJALFVbkrflu+nGBzJfKX7kr2Si2aH7KN1fSsT4M8tciF0oZGgNfuAOUoPn+gNDZwP1BgQilTz+jKtFT63fpE3eOgRrH5zENj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756167145; c=relaxed/simple;
-	bh=O6ZkwTJFlV9rQHIBzRni5BKIh4ff0+xxGi0ehaNWY4E=;
+	s=arc-20240116; t=1756167153; c=relaxed/simple;
+	bh=Ch2CNd/1F5stQg+EOkYaSVKSA6ga8d366HCcrTjLPL8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fyguGRblaBfugjHMJ9ZNqKKPaz+rtBNwtyvNa4cLF4xFMNUJKEwACw3lc8lpwAJkkEaPN2Lvk34350Zt10zoaQzSrVv62YKb5vlshujAEzmkqmb9ijFB0bOFNIuR958qJHzR/OCKaWAmYvM/WqWIL+pOgjMRmqomx4FMsUU3llg=
+	 Content-Type:Content-Disposition:In-Reply-To; b=lgtiYPhxephi608s3oEG9pYA/a0OmUqYdXjQuO7Jr1HPg9eLqjAjGwQ6e8FJXnL6rGS1ZNkecAjQeW78dvWGeZaub6ACZfPfSra8aSenJr6s1V/7kVWgzmUBF/xEvw3occlI9dBMb7u5N8RyF1XjucYUJe4gvtD2SY4H36uv77o=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
@@ -32,9 +32,9 @@ Received: from local
 	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
 	 (Exim 4.98.2)
 	(envelope-from <daniel@makrotopia.org>)
-	id 1uqhIJ-000000005jX-346A;
-	Tue, 26 Aug 2025 00:12:11 +0000
-Date: Tue, 26 Aug 2025 01:12:08 +0100
+	id 1uqhIZ-000000005jy-10Sv;
+	Tue, 26 Aug 2025 00:12:27 +0000
+Date: Tue, 26 Aug 2025 01:12:23 +0100
 From: Daniel Golle <daniel@makrotopia.org>
 To: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
 	Vladimir Oltean <olteanv@gmail.com>,
@@ -54,8 +54,9 @@ Cc: Andreas Schirm <andreas.schirm@siemens.com>,
 	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
 	"Livia M. Rosu" <lrosu@maxlinear.com>,
 	John Crispin <john@phrozen.org>
-Subject: [PATCH net-next 1/6] MAINTAINERS: lantiq_gswip: broaden file pattern
-Message-ID: <8c42d29b711287d7aa54be93809fd8cea69b7c06.1756163848.git.daniel@makrotopia.org>
+Subject: [PATCH net-next 3/6] net: dsa: lantiq_gswip: ignore SerDes modes in
+ phylink_mac_config()
+Message-ID: <374cb3a2d857cd6c197d4eabbd4af5cfb0c96935.1756163848.git.daniel@makrotopia.org>
 References: <cover.1756163848.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -67,26 +68,30 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <cover.1756163848.git.daniel@makrotopia.org>
 
-Match all drivers/net/dsa/lantiq_gswip* instead of only lantiq_gswip.c.
+We can safely ignore SerDes interface modes 1000Base-X, 2500Base-X and
+SGMII in phylink_mac_config() as they are being taken care of by the
+PCS.
 
 Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 ---
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/dsa/lantiq_gswip.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index bce96dd254b8..aae3a261d7f1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13801,7 +13801,7 @@ M:	Hauke Mehrtens <hauke@hauke-m.de>
- L:	netdev@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml
--F:	drivers/net/dsa/lantiq_gswip.c
-+F:	drivers/net/dsa/lantiq_gswip*
- F:	drivers/net/dsa/lantiq_pce.h
- F:	drivers/net/ethernet/lantiq_xrx200.c
- F:	net/dsa/tag_gswip.c
+diff --git a/drivers/net/dsa/lantiq_gswip.c b/drivers/net/dsa/lantiq_gswip.c
+index 4822812bba27..7ffaa6481271 100644
+--- a/drivers/net/dsa/lantiq_gswip.c
++++ b/drivers/net/dsa/lantiq_gswip.c
+@@ -1444,6 +1444,10 @@ static void gswip_phylink_mac_config(struct phylink_config *config,
+ 	miicfg |= GSWIP_MII_CFG_LDCLKDIS;
+ 
+ 	switch (state->interface) {
++	case PHY_INTERFACE_MODE_SGMII:
++	case PHY_INTERFACE_MODE_1000BASEX:
++	case PHY_INTERFACE_MODE_2500BASEX:
++		return;
+ 	case PHY_INTERFACE_MODE_MII:
+ 	case PHY_INTERFACE_MODE_INTERNAL:
+ 		miicfg |= GSWIP_MII_CFG_MODE_MIIM;
 -- 
 2.50.1
 
