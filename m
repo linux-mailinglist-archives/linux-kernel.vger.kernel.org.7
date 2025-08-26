@@ -1,99 +1,103 @@
-Return-Path: <linux-kernel+bounces-786221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6340AB356BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:25:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC27FB356B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:24:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F9E83A82C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:24:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 212BA16E04E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 107B62F8BF5;
-	Tue, 26 Aug 2025 08:24:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5DB52877E3;
+	Tue, 26 Aug 2025 08:24:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="p+Q6uFyl"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r/V9QG96"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C675B2F8BC4;
-	Tue, 26 Aug 2025 08:24:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 436632F8BE6
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 08:24:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756196680; cv=none; b=UWKgRoWLmdQh2/qdHtE0thj1mTN0z1azkZarCznkwi3krFfRVndNMhqCOol7XjqdXyYwSZbiVIfFy+i7xpSBcghpqP8fLExHfEby9o29c2LYacVcLl+DAwH20mJOr6bmqohlI8Ne594hpQpbg5c/xUGZL9FWi70tTPuEBTNvhUY=
+	t=1756196669; cv=none; b=oyIgHy7uUAertmphpryYi+Cnx7P20tIuji/0/fVHNBCbU33INRAl6K1L4Yl6gi8TDhbWR1A1WEiSAMHvEm5aOcWwhztWVlTvbkyIui1ovvfI8KnBYsg9xzgxIQPdAuzTapFoXEqpL9ZZ5SIQylnXtVUqmSi2Xp/v62iXvk7ion4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756196680; c=relaxed/simple;
-	bh=nbB61l1pzDl4+a99LzNXebJ8dEqreCMWdwc402CpDlc=;
+	s=arc-20240116; t=1756196669; c=relaxed/simple;
+	bh=zkOhKSUhdYkMOEaqDdeq+hV7jrlqNbHyofVtEE1X+74=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yzxb5petx7oDpo0746hLhIY4PQVkP5DEZBPVsgA9UDhFiMkBQzgmMQQqtkZPV3b1pwodY6sUV+Mj9xDb39MJcxfDVSk7DVG9pSCgoQLXkOPVifdVhs4Au5I0LBH6yCw6h/vvvl8QE0Y2Z2GNSI2EkeiHLr/pRAF8PkgxNQaYeH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=p+Q6uFyl; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=7rF4Z3nFFKjvmRCuB0uyqnPIPVz/DLlRjcPNglDabus=; b=p+Q6uFylxWqCNSMkjEFeg4rdfp
-	QJ5psU8HRDgFK7/NXSdQKPJO2dqVJJFbWPBmr5cq797ldtSP4kAlLzBYWekPI7GCqhu1kOFMcKxkt
-	y6uSzCktiivrZCMhNE6Owbk+vGLsxHeSOCYz6LqZTNsWEguOZUp4iJpX9V3iDn5Iktz2dj3kbeSQt
-	zcCcajnHO2mHJAYqN8NR9E0eM7nGHNiFphhooovRkw6xjXYFq1A1zUkW9wXfc89u27t/ImZzVQCEV
-	CWGJ8TqNVA5DdoOUVRjFmpX1BkZfTo1A9u4Q6IPv8ovGp5lUIUUkRRBtxOg+ysOUON28JLZO5Y1YR
-	SmbYdxNw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uqoyK-0000000F6R7-2qfM;
-	Tue, 26 Aug 2025 08:24:05 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id DAE223002C5; Tue, 26 Aug 2025 10:24:04 +0200 (CEST)
-Date: Tue, 26 Aug 2025 10:24:04 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	linux-s390@vger.kernel.org,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	thomas.weissschuh@linutronix.de, Li Chen <chenl311@chinatelecom.cn>,
-	Bibo Mao <maobibo@loongson.cn>, Mete Durlu <meted@linux.ibm.com>,
-	Tobias Huschle <huschle@linux.ibm.com>,
-	Easwar Hariharan <easwar.hariharan@linux.microsoft.com>,
-	Guo Weikang <guoweikang.kernel@gmail.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Brian Gerst <brgerst@gmail.com>,
-	Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
-	Swapnil Sapkal <swapnil.sapkal@amd.com>,
-	"Yury Norov [NVIDIA]" <yury.norov@gmail.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Andrea Righi <arighi@nvidia.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-	Tim Chen <tim.c.chen@linux.intel.com>,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Subject: Re: [PATCH v7 5/8] sched/topology: Unify tl_smt_mask() across core
- and all arch
-Message-ID: <20250826082404.GF3245006@noisy.programming.kicks-ass.net>
-References: <20250826041319.1284-1-kprateek.nayak@amd.com>
- <20250826041319.1284-6-kprateek.nayak@amd.com>
- <20250826080123.GB3245006@noisy.programming.kicks-ass.net>
- <a506bb53-6e17-4a10-a870-50ce87a4ce06@csgroup.eu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RfT3P9Axje6mIvqw7J6xAfbI4FhnI1XP4+dDGU1SQ/uaQ/eqMxxvNWpVRRIDndKVp3eYCHQGPHiXrKTaBsuDI+6H6ZYKO/+3K8taR1JqhIjzhlOOPdQO/bV4Mk3WIqHLt4w0qh5uATiEwiDczAcX1NZt133lFvwCBLIkDlox4Rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r/V9QG96; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-770593ba164so1828340b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 01:24:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756196667; x=1756801467; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=BVPH5Gl2Q97fpNbb5mZdeF+VpN5uCzs/BvvvIML5Rqo=;
+        b=r/V9QG96KuMwkTogBTFK5on7rVRDUxUw8QoaJRTEl6NrRRstK+V7p7/y7xt/blbIOD
+         RhfxRyhSJBD8De9hpMat3ZOmBSQzGJsrLuWiAzoAZVJqLMMIPIWl1KFCjqlOHEUP8x0a
+         zAOWud0+IT9cfKLxX3KbuNyd8Ygtrf5EEdi5N12ASVGMfWFCj7lBpvg3Yq3S2bJAfluh
+         3xAXDy0pCD9DDSuelt57b5bQLoJ6SOoJ/Qmb3uyQptxIadtu2PTr+a6iHxj1fGBK51KA
+         MHMAylBB8ZiLzg3JTcJittD3+JJRIg7cUN3aCnlVgV7r5wSuM8bk3Xsjq63pb8V2oj5c
+         /avg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756196667; x=1756801467;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BVPH5Gl2Q97fpNbb5mZdeF+VpN5uCzs/BvvvIML5Rqo=;
+        b=xF/UDbjSl9A792aIdVcT8yY3yH4YhRa9F5VUvpeRtgnw15+ie3xJORWp/P/cVrWbjF
+         pVLahKopdFAPKq4F5xX8M7bbthX9fTq/ZDZLFlqmlEiwK2jpscuKy45DEKgNF+o18Sqm
+         OFF6QkglAHBwiAVYc3nZFUsYyIUFOMPZx2yOmofk2RpQvIDgJ5sMbpL0U7e3/QvKzVz0
+         QPzn5YlTqnY+Zqj8zyj1q90rvBXasny7ow/PnGI6PvI199AKDODbIMKJ5azhRi+jmfJp
+         uU30TKJpnp0AxjoYwulFdjy21AA/EKtrFj3do2NZfU3yBk6lVR/WsF0xsW8x5jEOAK02
+         xZ8A==
+X-Forwarded-Encrypted: i=1; AJvYcCXe2xeyVmiNm1ywkXV7p4nHUuts8f8w6Q4qTn3idH8oZ8nm4NqRc3KqXD/aMkQ86AREVK82ZKOAZEeF5Wo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfzZYGnhwY2ES5J617XhLdQPxBFH1JwuoI0YYrqBhXs+reGpp4
+	otSsOVqr/EJvA5SxT/BOJt4kesqAoFUfUBdhNGyoJSbL911IPJkqxtSn7gfayKvf7FE=
+X-Gm-Gg: ASbGnctb/64RuivZhW7vwTPeNdI8ZGcaM5MSGZjwb/bTmNALOIOKJSu2H0NVdV5wwys
+	Im+IsXrfwdxrA3/MgZD43D7r48mCFgmd8+RHra0BkeRVbkXyMvSh1XLolIBLWVzrj3rSxgqPUhR
+	AkFaNy0B5Yp6vgVX6hvzv7PmTdVEV/VnMAqwD1PbYs9YNCEsTbPUEq7MVgMDjAUxkGYZDzRgpbh
+	Tlxd7VFK9igjccGTgfUGpFfSY8t3EsgRuFN5vseNNYUOSdJsQIU2Du5JsxFjWndMzm2VJnvjgvK
+	ynw7XHJH24Kp66cv/T6EJ4UX7RNXZRatIQiWBR+KFt0UP0O8uSttraJEQYcFftv8Vzk5VyC53lP
+	rwK7fUwOWkpE5GAHwCHx9LqfW
+X-Google-Smtp-Source: AGHT+IEZHD4aC/mODzgvmtEKSdmKP/ZP99JsYLoYV/vczHAIOiPdaxjm/pWCet0LfwP2k78AerheMQ==
+X-Received: by 2002:a17:903:24f:b0:242:9bc6:6bc0 with SMTP id d9443c01a7336-2462ef8e7c5mr179683875ad.55.1756196667512;
+        Tue, 26 Aug 2025 01:24:27 -0700 (PDT)
+Received: from localhost ([122.172.87.165])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2466885ed51sm88411645ad.85.2025.08.26.01.24.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Aug 2025 01:24:26 -0700 (PDT)
+Date: Tue, 26 Aug 2025 13:54:24 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 2/7] OPP: Move refcount and key update for readability
+ in _opp_table_find_key()
+Message-ID: <20250826082424.nnma5oafc7axhep6@vireshk-i7>
+References: <20250820-opp_pcie-v4-0-273b8944eed0@oss.qualcomm.com>
+ <20250820-opp_pcie-v4-2-273b8944eed0@oss.qualcomm.com>
+ <CGME20250825135939eucas1p206b6e2b5ba115f51618c773a1f37939c@eucas1p2.samsung.com>
+ <4066c0b4-807f-401e-baaa-25f4891f10ac@samsung.com>
+ <20250826060647.7eerg5blx3xho27p@vireshk-i7>
+ <d8599b11-66dd-486b-89e4-52b82d90f04e@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,45 +107,19 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <a506bb53-6e17-4a10-a870-50ce87a4ce06@csgroup.eu>
+In-Reply-To: <d8599b11-66dd-486b-89e4-52b82d90f04e@samsung.com>
 
-On Tue, Aug 26, 2025 at 10:11:40AM +0200, Christophe Leroy wrote:
-> 
-> 
-> Le 26/08/2025 à 10:01, Peter Zijlstra a écrit :
-> > > diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
-> > > index 602508130c8a..d75fbb7d9667 100644
-> > > --- a/include/linux/sched/topology.h
-> > > +++ b/include/linux/sched/topology.h
-> > > @@ -37,7 +37,13 @@ static inline int cpu_smt_flags(void)
-> > >   {
-> > >   	return SD_SHARE_CPUCAPACITY | SD_SHARE_LLC;
-> > >   }
-> > > -#endif
-> > > +
-> > > +static const __maybe_unused
-> > > +struct cpumask *tl_smt_mask(struct sched_domain_topology_level *tl, int cpu)
-> > > +{
-> > > +	return cpu_smt_mask(cpu);
-> > > +}
-> > > +#endif /* CONFIG_SCHED_SMT */
-> > 
-> > Problem with that __maybe_unused is that you forgot inline.
-> > 
-> > static inline const
-> > struct cpumask *tl_smt_mask(struct sched_domain_topology_level *tl, int cpu)
-> > {
-> > 	return cpu_smt_mask(cpu);
-> > }
-> > 
-> > seems to make it happy.
-> > 
-> 
-> But the function is referenced by SDTL_INIT() macro so there is no real
-> point in declaring it inline. Would be cleaner to have it defined in a C
-> file.
+On 26-08-25, 09:26, Marek Szyprowski wrote:
+> This doesn't help. I've stared a bit at that code and did some tests 
+> and it looks that the issue is caused by _opp_table_find_key() returning 
+> the last opp from opp_list without updating the *key and calling 
+> opp_get() for it (happens when compare() returns false).
 
-Ah, that's what you mean. I was more focussed on getting rid of that
-horrible __maybe_unused and then either works. But yes, perhaps just
-having them in a .c file is best.
+Ahh, right. So `compare()` may never return `true` and in that case we
+returned the last OPP of the table earlier.
+
+Thanks.
+
+-- 
+viresh
 
