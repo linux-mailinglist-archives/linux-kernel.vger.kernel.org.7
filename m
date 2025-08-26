@@ -1,55 +1,42 @@
-Return-Path: <linux-kernel+bounces-786013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DE7EB35380
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:44:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0417B35382
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:45:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2AFE7A2CBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:43:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 738B87A5B9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:43:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF4C2EFD9E;
-	Tue, 26 Aug 2025 05:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="bJknpB5i"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 303772EFDAD;
+	Tue, 26 Aug 2025 05:45:10 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7573742050;
-	Tue, 26 Aug 2025 05:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE6412D3A9D;
+	Tue, 26 Aug 2025 05:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756187076; cv=none; b=X71HJK/Pdklml6jEv884iPsFOnpkPqm/EEFgDV6v38fZrqriWOI3IUNTfD3iD4Kr6YlgoKZS2lQwQaM5Rk+BCREMGlVMWwRUavCRzXZoY6mgL/6ULfqL5AYbvwxwNZqik+9dgEH7vGs/FWaJuk3AJvvzdVQa+SGEGHK6+LhdwEE=
+	t=1756187109; cv=none; b=ZN/NMPMk9CI+Ahl2yoS80VhDaAZDOlIc/eVX4P5lk0rjEasEjtKKuuRKSyA+q1RDknVZ/ksQCzMarLMfnplwp91Q8ptO4J1KUr1tDINhhDqsqAQ0voZf9uuRGV6fc1+L8D1dDwrUDNqMPfuf2gHEEZDIal3obsFjBPP6/gOjO1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756187076; c=relaxed/simple;
-	bh=i48BSItv42uQcJpDTwNauU/hSHxUE5Tcjx6CkhfYgnM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pGdOoIBebvuDryHribvCxruqF6G1uZEUi+ezV8U5XS5jowJLv8IFWxlopSSLyGVNVCcckpEf8XTDzNA6KiAv/nYdi9rvNs6/Ty1NrcD6twJdEUP3oK3uUzrQLyGok3tizUnqGHfkwY0SxuQXrQu3J7Pt66DA+Ce9sJSeX5ivrhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=bJknpB5i; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1756187053; x=1756791853; i=markus.elfring@web.de;
-	bh=oUucUWpDJpA2Qbj6/CgVP6kIrGSApkmPt5XPiLz4UJU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=bJknpB5iVPkY2txpOK5jk91VocSyeK1XGILgYKrQrO+pR5DdDnDnBng2dI9/dH3n
-	 30f0bI+2PtPXlBbICs8R/go1qcx8yor/iNJOHW1i3Dy1vqDinbP49fm1vf4Bpf072
-	 J7VNxvS2nr0Ofk/hY556pT+g4pCUezyw08gIE5JZBU4lGylsgOOyjoKlL6xxo4Zng
-	 5EpxuZGY6mi0orvlwrmbDzELe5wd4IZ0aB0jTa9egV4yh8htWcCUr+VdXm0uUoSyJ
-	 ahkwAJmIAmWhNvcWBYVT9+QCjoZS09AulL32rHmt3nBcjBxo0eTsURY0QfoghV8wx
-	 4puPpK3Wo/zauhWOHg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.219]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N6sBv-1uRsGI2CBr-014CAg; Tue, 26
- Aug 2025 07:44:13 +0200
-Message-ID: <735d62ba-51b5-4dc2-a8e4-0701ffb01f9a@web.de>
-Date: Tue, 26 Aug 2025 07:43:33 +0200
+	s=arc-20240116; t=1756187109; c=relaxed/simple;
+	bh=Xl6VfjCpmBKIbOhvtTRt/qN6bTkAvmzaG29/nSYcRtw=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=nw98XP1edZUcJ6JoZN1SWS9p5+t5S34D4PsSRN2BiKoBpe8BjXDw/zSvgJ10NZJcH9pDzWb0exVxIniJ3RmpOmH5xgv0uYLlsisKrfMm5oNku84pbIsHGbr2mPASJh7gzSMANUEYWpZOK+9u2g/VPt2bpLkovk0ItS+a7hY+9ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.192] (ip5f5af7cb.dynamic.kabel-deutschland.de [95.90.247.203])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id F403A6028826D;
+	Tue, 26 Aug 2025 07:44:37 +0200 (CEST)
+Message-ID: <bdd4c3f0-4ba4-4c86-b1b7-afe3c9834ae0@molgen.mpg.de>
+Date: Tue, 26 Aug 2025 07:44:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,116 +44,414 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] can: m_can: use us_to_ktime() in m_can_set_coalesce()
-To: Xichao Zhao <zhao.xichao@vivo.com>, linux-can@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Chandrasekar Ramakrishnan <rcsekar@samsung.com>,
- Marc Kleine-Budde <mkl@pengutronix.de>,
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-References: <20250826025131.112900-1-zhao.xichao@vivo.com>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250826025131.112900-1-zhao.xichao@vivo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:6rWRGN3yV4GzOLHib38FTMXV9TqOnJKtLOsfL8mzeK/D1Dziyfs
- Zba7Q99bRdMiw6WAWrd9hFRzsAF6c8S8lQm6zcRzcljVt81o1j8jYWDFQy+pLLsZX8Z72sk
- UhZqcd3kVMP1uGEDrj0l1+cbaZRp4E6F/4QXjyqvuQ5OWdjVn9HVC8r5iAEHq0djAAR6MYC
- 8wyjmyYs33OC8Myj0PmvQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:trCDvxehrac=;HlbvQBAMY7wr3sSb1c/J2qujeoM
- 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
+Subject: Re: [PATCH] Bluetooth: remove duplicate h4_recv_buf() in header
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+To: Calvin Owens <calvin@wbinvd.org>
+Cc: linux-kernel@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Sean Wang <sean.wang@mediatek.com>,
+ Amitkumar Karwar <amitkumar.karwar@nxp.com>,
+ Neeraj Kale <neeraj.sanjaykale@nxp.com>, linux-bluetooth@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <be8edf7f8ba8dea6c61272b02fb20a4ac7e1c5a5.1756179634.git.calvin@wbinvd.org>
+ <e9bbe0bb-b70d-445b-a7ff-b0ab2eef6c6f@molgen.mpg.de>
+Content-Language: en-US
+In-Reply-To: <e9bbe0bb-b70d-445b-a7ff-b0ab2eef6c6f@molgen.mpg.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-> Replace the if-else statement with a ternary operator to
-> set cdev->irq_timer_wait. Use us_to_ktime() instead of
-> ns_to_ktime() with NSEC_PER_USEC multiplication. Simplify
-=E2=80=A6
+[Cc: Remove Johan’s bouncing address]
 
-You should occasionally use more than 57 characters in text lines
-of such a change description.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.17-rc3#n638
-
-
-Will an enumeration become helpful here?
-
-
-=E2=80=A6> +++ b/drivers/net/can/m_can/m_can.c
-> @@ -2211,13 +2211,9 @@ static int m_can_set_coalesce(struct net_device *=
-dev,
-=E2=80=A6> +	cdev->irq_timer_wait =3D us_to_ktime(cdev->rx_coalesce_usecs_=
-irq ?
-> +					   cdev->rx_coalesce_usecs_irq :
-> +					   cdev->tx_coalesce_usecs_irq);
-=E2=80=A6
-
-I am curious how coding style preferences will evolve further also for
-the usage of the conditional operator at such a place.
-
-Regards,
-Markus
+Am 26.08.25 um 07:40 schrieb Paul Menzel:
+> Dear Calvin,
+> 
+> 
+> Thank you for your patch.
+> 
+> Am 26.08.25 um 06:11 schrieb Calvin Owens:
+>> The "h4_recv.h" header contains a duplicate h4_recv_buf() that is nearly
+>> but not quite identical to the h4_recv_buf() in hci_h4.c.
+>>
+>> This duplicated header was added in commit 07eb96a5a7b0 ("Bluetooth:
+>> bpa10x: Use separate h4_recv_buf helper"). I wasn't able to find any
+>> explanation for duplicating the code in the discussion:
+>>
+>>      https://lore.kernel.org/all/20180320181855.37297-1-marcel@holtmann.org/
+>>      https://lore.kernel.org/all/20180324091954.73229-2-marcel@holtmann.org/
+>>
+>> Unfortunately, in the years since, several other drivers have come to
+>> also rely on this duplicated function, probably by accident. This is, at
+>> the very least, *extremely* confusing. It's also caused real issues when
+>> it's become out-of-sync, see the following:
+>>
+>>      ef564119ba83 ("Bluetooth: hci_h4: Add support for ISO packets")
+>>      61b27cdf025b ("Bluetooth: hci_h4: Add support for ISO packets in h4_recv.h")
+>>
+>> This is the full diff between the two implementations today:
+>>
+>>      --- orig.c
+>>      +++ copy.c
+>>      @@ -1,117 +1,100 @@
+>>       {
+>>      -    struct hci_uart *hu = hci_get_drvdata(hdev);
+>>      -    u8 alignment = hu->alignment ? hu->alignment : 1;
+>>      -
+>>           /* Check for error from previous call */
+>>           if (IS_ERR(skb))
+>>               skb = NULL;
+>>
+>>           while (count) {
+>>               int i, len;
+>>
+>>      -        /* remove padding bytes from buffer */
+>>      -        for (; hu->padding && count > 0; hu->padding--) {
+>>      -            count--;
+>>      -            buffer++;
+>>      -        }
+>>      -        if (!count)
+>>      -            break;
+>>      -
+>>               if (!skb) {
+>>                   for (i = 0; i < pkts_count; i++) {
+>>                       if (buffer[0] != (&pkts[i])->type)
+>>                           continue;
+>>
+>>                       skb = bt_skb_alloc((&pkts[i])->maxlen,
+>>                                  GFP_ATOMIC);
+>>                       if (!skb)
+>>                           return ERR_PTR(-ENOMEM);
+>>
+>>                       hci_skb_pkt_type(skb) = (&pkts[i])->type;
+>>                       hci_skb_expect(skb) = (&pkts[i])->hlen;
+>>                       break;
+>>                   }
+>>
+>>                   /* Check for invalid packet type */
+>>                   if (!skb)
+>>                       return ERR_PTR(-EILSEQ);
+>>
+>>                   count -= 1;
+>>                   buffer += 1;
+>>               }
+>>
+>>               len = min_t(uint, hci_skb_expect(skb) - skb->len, count);
+>>               skb_put_data(skb, buffer, len);
+>>
+>>               count -= len;
+>>               buffer += len;
+>>
+>>               /* Check for partial packet */
+>>               if (skb->len < hci_skb_expect(skb))
+>>                   continue;
+>>
+>>               for (i = 0; i < pkts_count; i++) {
+>>                   if (hci_skb_pkt_type(skb) == (&pkts[i])->type)
+>>                       break;
+>>               }
+>>
+>>               if (i >= pkts_count) {
+>>                   kfree_skb(skb);
+>>                   return ERR_PTR(-EILSEQ);
+>>               }
+>>
+>>               if (skb->len == (&pkts[i])->hlen) {
+>>                   u16 dlen;
+>>
+>>                   switch ((&pkts[i])->lsize) {
+>>                   case 0:
+>>                       /* No variable data length */
+>>                       dlen = 0;
+>>                       break;
+>>                   case 1:
+>>                       /* Single octet variable length */
+>>                       dlen = skb->data[(&pkts[i])->loff];
+>>                       hci_skb_expect(skb) += dlen;
+>>
+>>                       if (skb_tailroom(skb) < dlen) {
+>>                           kfree_skb(skb);
+>>                           return ERR_PTR(-EMSGSIZE);
+>>                       }
+>>                       break;
+>>                   case 2:
+>>                       /* Double octet variable length */
+>>                       dlen = get_unaligned_le16(skb->data +
+>>                                     (&pkts[i])->loff);
+>>                       hci_skb_expect(skb) += dlen;
+>>
+>>                       if (skb_tailroom(skb) < dlen) {
+>>                           kfree_skb(skb);
+>>                           return ERR_PTR(-EMSGSIZE);
+>>                       }
+>>                       break;
+>>                   default:
+>>                       /* Unsupported variable length */
+>>                       kfree_skb(skb);
+>>                       return ERR_PTR(-EILSEQ);
+>>                   }
+>>
+>>                   if (!dlen) {
+>>      -                hu->padding = (skb->len + 1) % alignment;
+>>      -                hu->padding = (alignment - hu->padding) % alignment;
+>>      -
+>>                       /* No more data, complete frame */
+>>                       (&pkts[i])->recv(hdev, skb);
+>>                       skb = NULL;
+>>                   }
+>>               } else {
+>>      -            hu->padding = (skb->len + 1) % alignment;
+>>      -            hu->padding = (alignment - hu->padding) % alignment;
+>>      -
+>>                   /* Complete frame */
+>>                   (&pkts[i])->recv(hdev, skb);
+>>                   skb = NULL;
+>>               }
+>>           }
+>>
+>>           return skb;
+>>       }
+>>      -EXPORT_SYMBOL_GPL(h4_recv_buf)
+>>
+>> As I read this: If alignment is one, and padding is zero, padding
+>> remains zero throughout the loop. So it seems to me that the two
+>> functions behave strictly identically in that case. All the duplicated
+>> defines are also identical, as is the duplicated h4_recv_pkt structure
+>> declaration.
+>>
+>> All four drivers which use the duplicated function use the default
+>> alignment of one, and the default padding of zero. I therefore conclude
+>> the duplicate function may be safely replaced with the core one.
+>>
+>> I raised this in an RFC a few months ago, and didn't get much interest:
+>>
+>>      https://lore.kernel.org/all/CABBYNZ+ONkYtq2fR-8PtL3X-vetvJ0BdP4MTw9cNpjLDzG3HUQ@mail.gmail.com/
+>>
+>> ...but I'm still wary I've missed something, and I'd really appreciate
+>> more eyeballs on it.
+>>
+>> I tested this successfully on btnxpuart a few months ago, but
+>> unfortunately I no longer have access to that hardware.
+> 
+> Great analysis. Thank you for your time writing this up.
+> 
+>> Cc: Marcel Holtmann <marcel@holtmann.org>
+>> Signed-off-by: Calvin Owens <calvin@wbinvd.org>
+>> ---
+>>   drivers/bluetooth/bpa10x.c    |   2 +-
+>>   drivers/bluetooth/btmtksdio.c |   2 +-
+>>   drivers/bluetooth/btmtkuart.c |   2 +-
+>>   drivers/bluetooth/btnxpuart.c |   2 +-
+>>   drivers/bluetooth/h4_recv.h   | 153 ----------------------------------
+>>   5 files changed, 4 insertions(+), 157 deletions(-)
+>>   delete mode 100644 drivers/bluetooth/h4_recv.h
+>>
+>> diff --git a/drivers/bluetooth/bpa10x.c b/drivers/bluetooth/bpa10x.c
+>> index 8b43dfc755de..b7ba667a3d09 100644
+>> --- a/drivers/bluetooth/bpa10x.c
+>> +++ b/drivers/bluetooth/bpa10x.c
+>> @@ -20,7 +20,7 @@
+>>   #include <net/bluetooth/bluetooth.h>
+>>   #include <net/bluetooth/hci_core.h>
+>> -#include "h4_recv.h"
+>> +#include "hci_uart.h"
+>>   #define VERSION "0.11"
+>> diff --git a/drivers/bluetooth/btmtksdio.c b/drivers/bluetooth/btmtksdio.c
+>> index 4fc673640bfc..50abefba6d04 100644
+>> --- a/drivers/bluetooth/btmtksdio.c
+>> +++ b/drivers/bluetooth/btmtksdio.c
+>> @@ -29,7 +29,7 @@
+>>   #include <net/bluetooth/bluetooth.h>
+>>   #include <net/bluetooth/hci_core.h>
+>> -#include "h4_recv.h"
+>> +#include "hci_uart.h"
+>>   #include "btmtk.h"
+>>   #define VERSION "0.1"
+>> diff --git a/drivers/bluetooth/btmtkuart.c b/drivers/bluetooth/btmtkuart.c
+>> index 76995cfcd534..d9b90ea2ad38 100644
+>> --- a/drivers/bluetooth/btmtkuart.c
+>> +++ b/drivers/bluetooth/btmtkuart.c
+>> @@ -27,7 +27,7 @@
+>>   #include <net/bluetooth/bluetooth.h>
+>>   #include <net/bluetooth/hci_core.h>
+>> -#include "h4_recv.h"
+>> +#include "hci_uart.h"
+>>   #include "btmtk.h"
+>>   #define VERSION "0.2"
+>> diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
+>> index 76e7f857fb7d..d5153fed0518 100644
+>> --- a/drivers/bluetooth/btnxpuart.c
+>> +++ b/drivers/bluetooth/btnxpuart.c
+>> @@ -24,7 +24,7 @@
+>>   #include <net/bluetooth/bluetooth.h>
+>>   #include <net/bluetooth/hci_core.h>
+>> -#include "h4_recv.h"
+>> +#include "hci_uart.h"
+>>   #define MANUFACTURER_NXP        37
+>> diff --git a/drivers/bluetooth/h4_recv.h b/drivers/bluetooth/h4_recv.h
+>> deleted file mode 100644
+>> index 28cf2d8c2d48..000000000000
+>> --- a/drivers/bluetooth/h4_recv.h
+>> +++ /dev/null
+>> @@ -1,153 +0,0 @@
+>> -/* SPDX-License-Identifier: GPL-2.0-or-later */
+>> -/*
+>> - *
+>> - *  Generic Bluetooth HCI UART driver
+>> - *
+>> - *  Copyright (C) 2015-2018  Intel Corporation
+>> - */
+>> -
+>> -#include <linux/unaligned.h>
+>> -
+>> -struct h4_recv_pkt {
+>> -    u8  type;    /* Packet type */
+>> -    u8  hlen;    /* Header length */
+>> -    u8  loff;    /* Data length offset in header */
+>> -    u8  lsize;    /* Data length field size */
+>> -    u16 maxlen;    /* Max overall packet length */
+>> -    int (*recv)(struct hci_dev *hdev, struct sk_buff *skb);
+>> -};
+>> -
+>> -#define H4_RECV_ACL \
+>> -    .type = HCI_ACLDATA_PKT, \
+>> -    .hlen = HCI_ACL_HDR_SIZE, \
+>> -    .loff = 2, \
+>> -    .lsize = 2, \
+>> -    .maxlen = HCI_MAX_FRAME_SIZE \
+>> -
+>> -#define H4_RECV_SCO \
+>> -    .type = HCI_SCODATA_PKT, \
+>> -    .hlen = HCI_SCO_HDR_SIZE, \
+>> -    .loff = 2, \
+>> -    .lsize = 1, \
+>> -    .maxlen = HCI_MAX_SCO_SIZE
+>> -
+>> -#define H4_RECV_EVENT \
+>> -    .type = HCI_EVENT_PKT, \
+>> -    .hlen = HCI_EVENT_HDR_SIZE, \
+>> -    .loff = 1, \
+>> -    .lsize = 1, \
+>> -    .maxlen = HCI_MAX_EVENT_SIZE
+>> -
+>> -#define H4_RECV_ISO \
+>> -    .type = HCI_ISODATA_PKT, \
+>> -    .hlen = HCI_ISO_HDR_SIZE, \
+>> -    .loff = 2, \
+>> -    .lsize = 2, \
+>> -    .maxlen = HCI_MAX_FRAME_SIZE
+>> -
+>> -static inline struct sk_buff *h4_recv_buf(struct hci_dev *hdev,
+>> -                      struct sk_buff *skb,
+>> -                      const unsigned char *buffer,
+>> -                      int count,
+>> -                      const struct h4_recv_pkt *pkts,
+>> -                      int pkts_count)
+>> -{
+>> -    /* Check for error from previous call */
+>> -    if (IS_ERR(skb))
+>> -        skb = NULL;
+>> -
+>> -    while (count) {
+>> -        int i, len;
+>> -
+>> -        if (!skb) {
+>> -            for (i = 0; i < pkts_count; i++) {
+>> -                if (buffer[0] != (&pkts[i])->type)
+>> -                    continue;
+>> -
+>> -                skb = bt_skb_alloc((&pkts[i])->maxlen,
+>> -                           GFP_ATOMIC);
+>> -                if (!skb)
+>> -                    return ERR_PTR(-ENOMEM);
+>> -
+>> -                hci_skb_pkt_type(skb) = (&pkts[i])->type;
+>> -                hci_skb_expect(skb) = (&pkts[i])->hlen;
+>> -                break;
+>> -            }
+>> -
+>> -            /* Check for invalid packet type */
+>> -            if (!skb)
+>> -                return ERR_PTR(-EILSEQ);
+>> -
+>> -            count -= 1;
+>> -            buffer += 1;
+>> -        }
+>> -
+>> -        len = min_t(uint, hci_skb_expect(skb) - skb->len, count);
+>> -        skb_put_data(skb, buffer, len);
+>> -
+>> -        count -= len;
+>> -        buffer += len;
+>> -
+>> -        /* Check for partial packet */
+>> -        if (skb->len < hci_skb_expect(skb))
+>> -            continue;
+>> -
+>> -        for (i = 0; i < pkts_count; i++) {
+>> -            if (hci_skb_pkt_type(skb) == (&pkts[i])->type)
+>> -                break;
+>> -        }
+>> -
+>> -        if (i >= pkts_count) {
+>> -            kfree_skb(skb);
+>> -            return ERR_PTR(-EILSEQ);
+>> -        }
+>> -
+>> -        if (skb->len == (&pkts[i])->hlen) {
+>> -            u16 dlen;
+>> -
+>> -            switch ((&pkts[i])->lsize) {
+>> -            case 0:
+>> -                /* No variable data length */
+>> -                dlen = 0;
+>> -                break;
+>> -            case 1:
+>> -                /* Single octet variable length */
+>> -                dlen = skb->data[(&pkts[i])->loff];
+>> -                hci_skb_expect(skb) += dlen;
+>> -
+>> -                if (skb_tailroom(skb) < dlen) {
+>> -                    kfree_skb(skb);
+>> -                    return ERR_PTR(-EMSGSIZE);
+>> -                }
+>> -                break;
+>> -            case 2:
+>> -                /* Double octet variable length */
+>> -                dlen = get_unaligned_le16(skb->data +
+>> -                              (&pkts[i])->loff);
+>> -                hci_skb_expect(skb) += dlen;
+>> -
+>> -                if (skb_tailroom(skb) < dlen) {
+>> -                    kfree_skb(skb);
+>> -                    return ERR_PTR(-EMSGSIZE);
+>> -                }
+>> -                break;
+>> -            default:
+>> -                /* Unsupported variable length */
+>> -                kfree_skb(skb);
+>> -                return ERR_PTR(-EILSEQ);
+>> -            }
+>> -
+>> -            if (!dlen) {
+>> -                /* No more data, complete frame */
+>> -                (&pkts[i])->recv(hdev, skb);
+>> -                skb = NULL;
+>> -            }
+>> -        } else {
+>> -            /* Complete frame */
+>> -            (&pkts[i])->recv(hdev, skb);
+>> -            skb = NULL;
+>> -        }
+>> -    }
+>> -
+>> -    return skb;
+>> -}
+> 
+> Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+> 
+> 
+> Kind regards,
+> 
+> Paul
 
