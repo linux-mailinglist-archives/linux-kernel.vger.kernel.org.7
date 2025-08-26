@@ -1,190 +1,159 @@
-Return-Path: <linux-kernel+bounces-786077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49338B354B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:40:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F8A1B352F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:02:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18D9E24259A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:40:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2E075E692E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:02:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A702F547F;
-	Tue, 26 Aug 2025 06:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A0D2DECB2;
+	Tue, 26 Aug 2025 05:02:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ov3Af6id"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iJBc691d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7582D6412;
-	Tue, 26 Aug 2025 06:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD692169AD2;
+	Tue, 26 Aug 2025 05:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756190439; cv=none; b=DnjITOkWI9OcPysa6qdXEI+CctMB5qugRFPQDQnIlzcxtz1Z5Eva3/tvz+9CPaPu1x3/oNKjtjke535iSGqqsKGOcdvs7HgCoiEnm7x66rfd0SylhGnj3i+AyK3tWROGjoBnzCVjg3QDSEusOvd3o23PgkYn7eB0AeihT5EG2wY=
+	t=1756184542; cv=none; b=Mn1VABwfqyGsY10PuZalp+mtdz+NS0jQk1vIN6Y1B9IPgFiFHcumkKGfa2g6B1aFU1TsLTPoSe8bygBVWKY6erBgKdKUBWj9SrqoclIAORV7y0A9vNovotShawjH8UxEP+OBJBMkS0USzr1RxHF9i1mMCxgRmEoWgxluFIbZ2xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756190439; c=relaxed/simple;
-	bh=OPeSeeN5sm4B+A5/piocA+tuR6C93uRHpSyGNO+hSSs=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=A8wGSpoVOMrym7ZtqPHyn8Aoq1qmoz6/0oqdHu5yCbIcYWrBLiJG2s2sG89h7/gWu49GoqVb11cUc0Nqhamm8tkrMXFntN4NH49s+w7SP/+ngDr/N9v2QSOQRrEI6TYF7KRt+KKWtLhNkd607FczhadCscwAxHOMWXIQqRecVN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ov3Af6id; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-771fa65b0e1so105837b3a.0;
-        Mon, 25 Aug 2025 23:40:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756190433; x=1756795233; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=oFbku8l3NNlrZ/5pf3rxrWelYCFBeqxIPXUp7eudbew=;
-        b=Ov3Af6idD8tQIllh/4i6kV7Bee+HClfqkikbcbSo5PlThZwFIHNGqSo3LNjX7LJGDi
-         KH25/gcO16P1PQkcx6/qFJjn5WTYoqBc0dnd0bbW15PMys5Fa3yZ6iIyn8Mj7uFv41iP
-         oB3CB5vV1Zo0jzjPorgmjX+uZRTuEAj2eKTjYAHEHODTCsy1j0owoB6ZVSap0bSnukRk
-         QyP2xG06sVUFpjgzq3TjUE5Zy5FtwipGX4N3h4jc2akVnCPdi8ze1JRjFDKuxv9+uH6a
-         Ywqtbit5RfwiBj68Uj12od4NZvZj/tbP/pWH9bOyoejlpNe/CT2dWc4ZvTedvJDwdeXQ
-         73zQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756190433; x=1756795233;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oFbku8l3NNlrZ/5pf3rxrWelYCFBeqxIPXUp7eudbew=;
-        b=ouA2Wtx/IDD5MYaa9udxQb2s13E+v2R8Lj6a0BlzIoT95gdA/bJho8zH1+RKdTqHQe
-         M7BgnYekdO8RSCB5QXJVqiW/AXM9FjNa2xaVbT1IVpYMKgGWbqfcSjsHMQ2BmiKRxDZi
-         nwQrouQVZtaOQTF0iKp5wJ8zr7eoPPq+DCnLdXXRTKZOPgWzLhezHOnmWalZF0vvCF8m
-         m9I+ktls46MgzMAIK6+aQu4UJ0jowmbpXPrzRlWdYOVMps00KkA+xB+EEgIL7Dn8goMp
-         HwDCQw1tOktn6AyjfSCkk5UbKWtxZ3uxSy4NzsqF0pMv0WGZ+NkLtTYNtuMyXMATAGTN
-         tl9A==
-X-Forwarded-Encrypted: i=1; AJvYcCVKoumyIslck1boEpBjL0ZZ9u2rTDKckmwtqHV9TgueSTI15Y/RuLUqSh9cdLnLPIIk+kv72x9gRqgc@vger.kernel.org, AJvYcCW+dHgJzZIQs4jZkStSfrDz7KRGKLdqQeMiwYpy0LYBhVxnkJkhyGJAqnS/YoIbD+knxp09qgrkOKkkDQ==@vger.kernel.org, AJvYcCX6Pmtcj4cahUdfy8UyYKLrwg538wYzeWF89uP+iaXDv3lUe7N0DRmOeBZkQJ3DZYjWbITkV/uRZHjGaYOr@vger.kernel.org, AJvYcCXqZPk3pwWhabd4czNRhY18RLeJ/bWaxeb1SEB26lrmA3LsgjneAYGK5bV49MDjlC6yuQnI3j/smJJmlQ==@vger.kernel.org, AJvYcCXxKxrjRGBo9DzMc1q2hpIxt4+gtJY+y7uw7kXPAB5jFl/lIJJwKGfTjw8CFWNZvqqrCJbXAlskQPgfvQBzSA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfoQAx/X7ZiccCwNY51oAHyKhK9u5g37R13Qj5Tlzatk4cDBm6
-	Y1/CYlOom70tGxURyzFP31Q+uZbsX1HpuB8mI1GaIlSFKmQk3f4DBN/D
-X-Gm-Gg: ASbGncuDmPeJPGGCJzldJU4fdCvCjIMBgKlmYbaNpqNDYiOGx8c7/nagRCOvgzTjaZ3
-	JjQCEPD3mIla9Qk8uqJAosAoH8qcG9psasmBqJRDIg9Jzaq0pl3Kxmysd1pRQIR2m0FO1aWbO5R
-	91rEZf44n6TwLzEJisG7Dr/k+f8fh8K0mNA40jGcoFlbzzXhCAu2DKJUKJ+fEXmvTcSOki609U7
-	SivBYSNASYULWqD+7BDM+U4aK3biNT3EL2fLpTARcxrR7fZ1XPGLrtBS41oVX7MXPSvLaOUTeJG
-	D7zKpFz/DV+FtS0tw01berHYh4hq5A+CV0RVDttjPOIdylJq6OztxvK8rwofyCq1hvkrlU44JVq
-	dIOIjdqEOWmLAyJJ9QDK7uNm4
-X-Google-Smtp-Source: AGHT+IEc+gSdYQ6hfEohMYhEAqp/AIMMOR/OMinFKwRDdz+PsR7qTqufzjT7jd8JoY+/Ftxk3txX0w==
-X-Received: by 2002:a05:6a20:2585:b0:240:ed9:dd0a with SMTP id adf61e73a8af0-24340d11bf2mr20872863637.35.1756190433217;
-        Mon, 25 Aug 2025 23:40:33 -0700 (PDT)
-Received: from dw-tp ([171.76.82.15])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b49cb8ca240sm8255492a12.25.2025.08.25.23.40.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 23:40:32 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: Keith Busch <kbusch@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org, snitzer@kernel.org, axboe@kernel.dk, dw@davidwei.uk, brauner@kernel.org, hch@lst.de, martin.petersen@oracle.com, djwong@kernel.org, linux-xfs@vger.kernel.org, viro@zeniv.linux.org.uk, Jan Kara <jack@suse.com>
-Subject: Re: [PATCHv3 0/8] direct-io: even more flexible io vectors
-In-Reply-To: <aKx485EMthHfBWef@kbusch-mbp>
-Date: Tue, 26 Aug 2025 10:29:58 +0530
-Message-ID: <87cy8ir835.fsf@gmail.com>
-References: <20250819164922.640964-1-kbusch@meta.com> <87a53ra3mb.fsf@gmail.com> <g35u5ugmyldqao7evqfeb3hfcbn3xddvpssawttqzljpigy7u4@k3hehh3grecq> <aKx485EMthHfBWef@kbusch-mbp>
+	s=arc-20240116; t=1756184542; c=relaxed/simple;
+	bh=Hxhmy6RB+z8kvpV21B5aHmme1C4i2b3SIeG6Tj7bea8=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=EuM4WNsVkr2gAn9BaCNQVsG3qSoSZqOV8rqBgamTRcxV5xWJZd44/PAeHvXDhl7VF5fK0Pm8AmQvAmgI4XOPwMfmGNXiob/gqZ7nSk5Th9bEP8z+0mesisdnYeEUP4PlBiVoHV75zeahybKrJmqMLeXBb5HEInEmHQNN74R6xPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iJBc691d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C6A7C4CEF1;
+	Tue, 26 Aug 2025 05:02:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756184542;
+	bh=Hxhmy6RB+z8kvpV21B5aHmme1C4i2b3SIeG6Tj7bea8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=iJBc691doB/lOoG3QXMSL0Kkm5wIm77UE4/tBUj6mbBEzuKrwvhoOB61w3DARzrc+
+	 GNhGzisWqh00iuLzxkwPnCfqu34MHl9wc66TDe9vo5pGmC628FPLErvU00Hb7Pr9MZ
+	 vOTvytXybQZ3WZVOOhc5XN4IGzQrBy7CwtlBykGNvRcRtMwkNDqxrg73g77fbO/XII
+	 GKsesAR1zJALHF4uM2FaIIPnXDiBDyOxum9r/eIXRPVqh9Nkj/jlVXX+sG0iYtJu0D
+	 Iagj8aOabUdrygII2S7hyvI8rjiCV5yEM+ji5EdkXL00LISyC9UPQCCpO5XT+Ogt/I
+	 nkcN6MCCnOnEw==
+Date: Tue, 26 Aug 2025 14:02:17 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Lance Yang <lance.yang@linux.dev>
+Cc: akpm@linux-foundation.org, fthain@linux-m68k.org, geert@linux-m68k.org,
+ senozhatsky@chromium.org, amaindex@outlook.com, anna.schumaker@oracle.com,
+ boqun.feng@gmail.com, ioworker0@gmail.com, joel.granados@kernel.org,
+ jstultz@google.com, kent.overstreet@linux.dev, leonylgao@tencent.com,
+ linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+ longman@redhat.com, mingo@redhat.com, mingzhe.yang@ly.com,
+ oak@helsinkinet.fi, peterz@infradead.org, rostedt@goodmis.org,
+ tfiga@chromium.org, will@kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 1/1] hung_task: fix warnings by enforcing alignment on
+ lock structures
+Message-Id: <20250826140217.7f566d2b404ac5ece8b36fa3@kernel.org>
+In-Reply-To: <20250823074048.92498-1-lance.yang@linux.dev>
+References: <f79735e1-1625-4746-98ce-a3c40123c5af@linux.dev>
+	<20250823074048.92498-1-lance.yang@linux.dev>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Keith Busch <kbusch@kernel.org> writes:
+Hi Lence,
 
-> On Mon, Aug 25, 2025 at 02:07:15PM +0200, Jan Kara wrote:
->> On Fri 22-08-25 18:57:08, Ritesh Harjani wrote:
->> > Keith Busch <kbusch@meta.com> writes:
->> > >
->> > >   - EXT4 falls back to buffered io for writes but not for reads.
->> > 
->> > ++linux-ext4 to get any historical context behind why the difference of
->> > behaviour in reads v/s writes for EXT4 DIO. 
->> 
->> Hum, how did you test? Because in the basic testing I did (with vanilla
->> kernel) I get EINVAL when doing unaligned DIO write in ext4... We should be
->> falling back to buffered IO only if the underlying file itself does not
->> support any kind of direct IO.
->
-> Simple test case (dio-offset-test.c) below.
->
-> I also ran this on vanilla kernel and got these results:
->
->   # mkfs.ext4 /dev/vda
->   # mount /dev/vda /mnt/ext4/
->   # make dio-offset-test
->   # ./dio-offset-test /mnt/ext4/foobar
->   write: Success
->   read: Invalid argument
->
-> I tracked the "write: Success" down to ext4's handling for the "special"
-> -ENOTBLK error after ext4_want_directio_fallback() returns "true".
->
+On Sat, 23 Aug 2025 15:40:48 +0800
+Lance Yang <lance.yang@linux.dev> wrote:
 
-Right. Ext4 has fallback only for dio writes but not for DIO reads... 
+> From: Lance Yang <lance.yang@linux.dev>
+> 
+> The blocker tracking mechanism assumes that lock pointers are at least
+> 4-byte aligned to use their lower bits for type encoding.
+> 
+> However, as reported by Geert Uytterhoeven, some architectures like m68k
+> only guarantee 2-byte alignment of 32-bit values. This breaks the
+> assumption and causes two related WARN_ON_ONCE checks to trigger.
+> 
+> To fix this, enforce a minimum of 4-byte alignment on the core lock
+> structures supported by the blocker tracking mechanism. This ensures the
+> algorithm's alignment assumption now holds true on all architectures.
+> 
+> This patch adds __aligned(4) to the definitions of "struct mutex",
+> "struct semaphore", and "struct rw_semaphore", resolving the warnings.
 
-buffered
-static inline bool ext4_want_directio_fallback(unsigned flags, ssize_t written)
-{
-	/* must be a directio to fall back to buffered */
-	if ((flags & (IOMAP_WRITE | IOMAP_DIRECT)) !=
-		    (IOMAP_WRITE | IOMAP_DIRECT))
-		return false;
+Instead of putting the type flags in the blocker address (pointer),
+can't we record the type information outside? It is hard to enforce
+the alignment to the locks, because it is embedded in the data
+structure. Instead, it is better to record the type as blocker_type
+in current task_struct.
 
-    ...
-}
+Thank you,
 
-So basically the path is ext4_file_[read|write]_iter() -> iomap_dio_rw
-    -> iomap_dio_bio_iter() -> return -EINVAL. i.e. from...
-
-
-	if ((pos | length) & (bdev_logical_block_size(iomap->bdev) - 1) ||
-	    !bdev_iter_is_aligned(iomap->bdev, dio->submit.iter))
-		return -EINVAL;
-
-EXT4 then fallsback to buffered-io only for writes, but not for reads. 
-
-
--ritesh
-
-
-> dio-offset-test.c:
+> 
+> Thanks to Geert for bisecting!
+> 
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Closes: https://lore.kernel.org/lkml/CAMuHMdW7Ab13DdGs2acMQcix5ObJK0O2dG_Fxzr8_g58Rc1_0g@mail.gmail.com
+> Fixes: e711faaafbe5 ("hung_task: replace blocker_mutex with encoded blocker")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Lance Yang <lance.yang@linux.dev>
 > ---
-> #ifndef _GNU_SOURCE
-> #define _GNU_SOURCE
-> #endif
->
-> #include <sys/uio.h>
-> #include <err.h>
-> #include <errno.h>
-> #include <fcntl.h>
-> #include <stdlib.h>
-> #include <stdio.h>
-> #include <unistd.h>
->
-> int main(int argc, char **argv)
-> {
-> 	unsigned int pagesize;
-> 	struct iovec iov[2];
-> 	int ret, fd;
-> 	void *buf;
->
-> 	if (argc < 2)
-> 		err(EINVAL, "usage: %s <file>", argv[0]);
-> 	
-> 	pagesize = sysconf(_SC_PAGE_SIZE);
-> 	ret = posix_memalign((void **)&buf, pagesize, 2 * pagesize);
-> 	if (ret)
-> 		err(errno, "%s: failed to allocate buf", __func__);
-> 	
-> 	fd = open(argv[1], O_RDWR | O_CREAT | O_TRUNC | O_DIRECT);
-> 	if (fd < 0)
-> 		err(errno, "%s: failed to open %s", __func__, argv[1]);
-> 	
-> 	iov[0].iov_base = buf;
-> 	iov[0].iov_len = 256;
-> 	iov[1].iov_base = buf + pagesize;
-> 	iov[1].iov_len = 256;
-> 	ret = pwritev(fd, iov, 2, 0);
-> 	perror("write");
-> 	
-> 	ret = preadv(fd, iov, 2, 0);
-> 	perror("read");
-> 	
-> 	return 0;
-> }
-> --
+>  include/linux/mutex_types.h | 2 +-
+>  include/linux/rwsem.h       | 2 +-
+>  include/linux/semaphore.h   | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/linux/mutex_types.h b/include/linux/mutex_types.h
+> index fdf7f515fde8..de798bfbc4c7 100644
+> --- a/include/linux/mutex_types.h
+> +++ b/include/linux/mutex_types.h
+> @@ -51,7 +51,7 @@ struct mutex {
+>  #ifdef CONFIG_DEBUG_LOCK_ALLOC
+>  	struct lockdep_map	dep_map;
+>  #endif
+> -};
+> +} __aligned(4); /* For hung_task blocker tracking, which encodes type in LSBs */
+>  
+>  #else /* !CONFIG_PREEMPT_RT */
+>  /*
+> diff --git a/include/linux/rwsem.h b/include/linux/rwsem.h
+> index f1aaf676a874..f6ecf4a4710d 100644
+> --- a/include/linux/rwsem.h
+> +++ b/include/linux/rwsem.h
+> @@ -64,7 +64,7 @@ struct rw_semaphore {
+>  #ifdef CONFIG_DEBUG_LOCK_ALLOC
+>  	struct lockdep_map	dep_map;
+>  #endif
+> -};
+> +} __aligned(4); /* For hung_task blocker tracking, which encodes type in LSBs */
+>  
+>  #define RWSEM_UNLOCKED_VALUE		0UL
+>  #define RWSEM_WRITER_LOCKED		(1UL << 0)
+> diff --git a/include/linux/semaphore.h b/include/linux/semaphore.h
+> index 89706157e622..ac9b9c87bfb7 100644
+> --- a/include/linux/semaphore.h
+> +++ b/include/linux/semaphore.h
+> @@ -20,7 +20,7 @@ struct semaphore {
+>  #ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
+>  	unsigned long		last_holder;
+>  #endif
+> -};
+> +} __aligned(4); /* For hung_task blocker tracking, which encodes type in LSBs */
+>  
+>  #ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
+>  #define __LAST_HOLDER_SEMAPHORE_INITIALIZER				\
+> -- 
+> 2.49.0
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
