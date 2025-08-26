@@ -1,62 +1,76 @@
-Return-Path: <linux-kernel+bounces-786562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05467B35D7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:45:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC3ABB35C6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:34:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE262367649
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:37:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A202E1BA4439
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:29:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0549338F2A;
-	Tue, 26 Aug 2025 11:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B4F322A19;
+	Tue, 26 Aug 2025 11:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="XA9RB8WY"
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BUoUrpnD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B763376A5
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 11:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B3F2FF67A;
+	Tue, 26 Aug 2025 11:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756208152; cv=none; b=uAu5CU0/Gxxl3ks0rtGwtwcSAqFWni8soHzOJaZ7sLPqnAlcT7Qpm5RvuU/uxEB1uNQ9xhg89CXatYyeYj0EfemZqFU9s85hkQv3yLoOzd932LYzkxo3ZmoLBJgadItkr8MOO5TlVlijBrhAitgkOpCHTnhnDVAPqljvyMLtseM=
+	t=1756207692; cv=none; b=cH6fUm79zOysYgGsR8KI3OQBPxFB1w9zpEyuP+AYTA54IA0L+9XmTiRvk8Re29/Cs5zKGOBp4HQDVxK9d7R+LzgVUsFMyTPyub9g+FD5hNFi7bPnPv1uzGB1jWFqjUyyE5+0m1Naa+hi4nP/tYO4ZypDGU4eES6ogHXPnMbk7ww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756208152; c=relaxed/simple;
-	bh=VBo1svRdNginrTEbj9qaCPBWiJIBPwa3ORCjnE8hJR4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Om2yAT2PcLU24e2n48BU6WhK2uzZrGzuo7Lq70Nt4GK7+5vcnZYfsdeFOZhgiDIN7uJMLZvoRdJqQr66vlc2zBhbeV9Z2iux4wnjl0nw/KwjuCZ2vu2eCgSLPMYGeneoVe609W6giJKnPhEClCSpvyO38Xk+ogZblqJcxeOirx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=XA9RB8WY; arc=none smtp.client-ip=54.206.34.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1756208114;
-	bh=R3t7Utl+TZovCPDN/hOP+mtqkeQuSJIeGBdP9uvpOi0=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version;
-	b=XA9RB8WY5yMKQNstl8UYDXtL7SpIYiYwsJzQDybnTNXJaiI8ZSFwRCq+9Q2VdsZfV
-	 G/09psUy4sBRGb5E3jJJkqkJXTyjycg9Gqu0J1e5CuzNJE773S5bDma4c855ivD2Yl
-	 nA3TFcXG34GlMkJ9oSfUEJZMBMtGWBaaKvKGraAU=
-X-QQ-mid: zesmtpsz4t1756208106tda2cce22
-X-QQ-Originating-IP: bKB9BJ/INt9s6T+Uy6F38r01fZSmLhamwRrNQE6i5ZY=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 26 Aug 2025 19:35:04 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 9744646128302791925
-EX-QQ-RecipientCnt: 7
-From: Wentao Guan <guanwentao@uniontech.com>
-To: chenhuacai@kernel.org
-Cc: kernel@xen0n.name,
-	xry111@xry111.site,
+	s=arc-20240116; t=1756207692; c=relaxed/simple;
+	bh=snGzQYNQvDQYmyS6qxvd5dXjyUh38x2uCaudcKbJlMU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CicPKH+ZpbbMevtmKG481nIenuSd72Cs5wEA5LxQE9iMaM0h7zeGDA4MlpeSH/XBK+wAqac28+/60moR7ArTwvXm04zKVjpV0R0f+IIjBXwSMuoSnODyZL0Etn0g8WpPryB+R3J3zYnNpJuNSLEYI+NuTrfj0rkcgwNiLQ7nm14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BUoUrpnD; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756207691; x=1787743691;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=snGzQYNQvDQYmyS6qxvd5dXjyUh38x2uCaudcKbJlMU=;
+  b=BUoUrpnDjCMKQre0OHWy/iET4RF3WMN7cx+p1w3x7UA6gKR1TJozTA04
+   jk9EGw7HBMYBw/hSAQv2EB7zYxZpT20gvppW4kW4YVU/bOmZ3k/cUYTA2
+   TkkcTVbpzPFL9Fze+GLNNP0xucGd7g89abp7LzkaXFlltNOGOPeHFpjhh
+   mEumt5LLk3XCMY8BUn0oen0jK7ERkOImf3Caoi5LM6DkvA5VGDFi0qADA
+   HsakeXMZNjP/wVy51cJOELCe8K0PREvxCaSdZuoMfLMxz9LorD12ciIKo
+   +yLN3iAs1xYTs/pIbLk8II3Cw2eoHtqmKcX9h1eq0dMwUoWbcoWI5FIvG
+   Q==;
+X-CSE-ConnectionGUID: RDTEqAjASdyL/GunREIKOQ==
+X-CSE-MsgGUID: L2eiFYUDSIG5f+Y5vkDA+w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62269251"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="62269251"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 04:28:11 -0700
+X-CSE-ConnectionGUID: XfP2nCX9TK2FW6WHbg4ENQ==
+X-CSE-MsgGUID: fS14aHsiRiqxJg1pB/dF4A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="173725751"
+Received: from gklab-kleszczy-dev.igk.intel.com ([10.102.25.215])
+  by orviesa003.jf.intel.com with ESMTP; 26 Aug 2025 04:28:08 -0700
+From: Konrad Leszczynski <konrad.leszczynski@intel.com>
+To: davem@davemloft.net,
+	andrew+netdev@lunn.ch,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	zhanjun@uniontech.com,
-	Wentao Guan <guanwentao@uniontech.com>
-Subject: [PATCH] Loongarch: entry: fix syscall_get_arguments() VS no-bultin-memcpy
-Date: Tue, 26 Aug 2025 19:32:25 +0800
-Message-Id: <20250826113225.406238-1-guanwentao@uniontech.com>
-X-Mailer: git-send-email 2.20.1
+	cezary.rojewski@intel.com,
+	sebastian.basierski@intel.com,
+	Konrad Leszczynski <konrad.leszczynski@intel.com>
+Subject: [PATCH net-next 0/7] net: stmmac: fixes and new features
+Date: Tue, 26 Aug 2025 13:32:40 +0200
+Message-Id: <20250826113247.3481273-1-konrad.leszczynski@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,60 +78,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz5a-0
-X-QQ-XMAILINFO: NmdX3UvlO4h/NP0/GDLA7fNsw+Z5U4f2tYDh378TRAfCcBYXAzUGNhbx
-	n7BIy5bEcQybtQxVIBzWEmFvlidpS7fWOrKfbIblujeYqM/Ol3kPgDwr53ssUWHG+BbSlG6
-	psUwL/hYHCuh3DEjccLOZqfa6KBiGyTGRrbpjHgUru7Pivg7CHMEIsEbOISoEDb6cL7NfpZ
-	SxoBa6nuRQ1671XtC45BlI7YCN8u30xRpGrCIkMAQ0TmVPd/x4ydwW0fyVlZChiSChy6UsG
-	G9MApD0PCmDSvqhRcuGjhvBI/Yf97l9RYhUSGugfo/G/069jTJk187MTKRikshB+zjGXu7Q
-	/uSZh0qbUCrOj8BwxriQ+3tLgsZvFCqgFrcd2DNmjZwYbEa3UBPlubj94FV4P6k6JQqnhkz
-	ThIg6L8HJJ/rgf59vx7+ymB6QKHRjGKq19PYw5ROgzEQQdqXnKft2Qtge6LeU4Kvf/HS3rl
-	aWlH2MhHe2MtDdRC9YxR2yhBTNiTwq8dvZhl7IznGy9p9NpWfjr1cV6wOovlwyAaB3D65ZQ
-	xYTIlCKTGVQIdxMk4zC/1zCq33uO5Qiz+JrKsUcWCBwrDviJDA65smtd2ECV0tc66DEyh3a
-	i0c2qwdnt07XJclu4ktajCvueyAibffKHPTivRN3dA4uKkDEC2bSosVNnrVF6LGET/jU2Tz
-	vnjLsvXhzkiOEyMjbv3a4f+sTk4KZx5BezS4wt5neQfrY9UWW+zM8yLBRqmeZyalBFSY5BG
-	0QgXNUaeKId/zpxzWpViLG2uVTjXAkFh072oGi0STWb+HrV7kbGosL9nboDkvo4lxO9/EWS
-	Nr1BqL/ubuvR4+YqQwPQct5eeX80yflfsYkEIR0TaXKpACPf2IK826l/nQqsbRtlg31x2eL
-	fDtN2yvL8jLCfxXSt8xXw7pVcdBMf3Qb9d51cjO6Sdw9fpxMgaaNGIIuWkkfBzPibk6wVJ6
-	db/x1mHfN3qCkXWvDLWduR6WwQLM7+43G8yvDS4wFeXJ52pFuqDIlyBg7T+VWL5lHdMQi/Z
-	ARxM9ezxlD5F4uYmiaArxURvcgrnBvMuRzTz3QhfY48pVmUfsUNNoj8kqmLAo=
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
 
-Loongarch use -fno-builtin-memcpy in Makefile,
-so cause a extra memcpy in syscall hot path:
+This series starts with three fixes addressing KASAN panic on ethtool
+usage, Enhanced Descriptor printing and flow stop on TC block setup when
+interface down.
+Everything that follows adds new features such as ARP Offload support,
+VLAN protocol detection and TC flower filter support.
 
-syscall_enter_audit
-->syscall_get_arguments->memcpy(__memcpy_fast)
-->audit_syscall_entry
+Karol Jurczenia (4):
+  net: stmmac: check if interface is running before TC block setup
+  net: stmmac: enable ARP Offload on mac_link_up()
+  net: stmmac: set TE/RE bits for ARP Offload when interface down
+  net: stmmac: add TC flower filter support for IP EtherType
 
-Just avoid memcpy() altogether and write the copying of args from regs
-manually, which shows 5% multi core score up in UnixBench syscall.
+Konrad Leszczynski (1):
+  net: stmmac: replace memcpy with strscpy in ethtool
 
-Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
----
- arch/loongarch/include/asm/syscall.h | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Piotr Warpechowski (2):
+  net: stmmac: correct Tx descriptors debugfs prints
+  net: stmmac: enhance VLAN protocol detection for GRO
 
-diff --git a/arch/loongarch/include/asm/syscall.h b/arch/loongarch/include/asm/syscall.h
-index 81d2733f7b94..171af2edd569 100644
---- a/arch/loongarch/include/asm/syscall.h
-+++ b/arch/loongarch/include/asm/syscall.h
-@@ -65,7 +65,11 @@ static inline void syscall_get_arguments(struct task_struct *task,
- 					 unsigned long *args)
- {
- 	args[0] = regs->orig_a0;
--	memcpy(&args[1], &regs->regs[5], 5 * sizeof(long));
-+	args[1] = regs->regs[5];
-+	args[2] = regs->regs[6];
-+	args[3] = regs->regs[7];
-+	args[4] = regs->regs[8];
-+	args[5] = regs->regs[9];
- }
- 
- static inline void syscall_set_arguments(struct task_struct *task,
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h  |  1 +
+ .../ethernet/stmicro/stmmac/stmmac_ethtool.c  |  2 +-
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c | 68 +++++++++++++++----
+ .../net/ethernet/stmicro/stmmac/stmmac_tc.c   | 19 +++++-
+ include/linux/stmmac.h                        |  1 +
+ 5 files changed, 76 insertions(+), 15 deletions(-)
+
 -- 
-2.20.1
+2.34.1
 
 
