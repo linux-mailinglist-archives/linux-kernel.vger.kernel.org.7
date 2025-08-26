@@ -1,98 +1,199 @@
-Return-Path: <linux-kernel+bounces-786784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C0CFB36972
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:27:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FF7EB36A93
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:38:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF0D7565E02
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:19:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B1658E7693
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:20:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7DA3568F4;
-	Tue, 26 Aug 2025 14:17:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A3C350D4C;
+	Tue, 26 Aug 2025 14:18:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="C1Fm3iBD";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uGUNaakf"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VmEZTJ7K"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD36E352FD3
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 14:17:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403362C0F60;
+	Tue, 26 Aug 2025 14:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756217824; cv=none; b=naortSFW3+aP9X6QYVPWXJKr2B3fhGq8Xq1i7qErzeyyyfrL+2LFT1GG+f+hv5DX3DCASLA9WnWKKHbK/UWsRsJYRR2ACwsxdwmaCILJ4uVzEcIdpl4qJnDzMmIsnskbEV28F5pUy9zg0f109YgnQryqv7JQlBzuPI2rwq9n+MY=
+	t=1756217888; cv=none; b=aId51qJsCsIkklRJRRKPFCIgkgQsStU3hldeWxYumycDDPOdH0JFlo8CzfuKtVH48fOk6/KI4EonjNrTrZ7QtGTjinveuvsvNIKWDVg8M6/0P7jnvKRldYMYBcLP/GBGyZJJj6/0SpV5lGUIcFlfTcRZCjGjAtcJ/1jFEbCj9ww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756217824; c=relaxed/simple;
-	bh=ajbBXe5gpy4RdalYFrkw0uSW1IfKiKe+tLxkdfAYVpM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EEvEAcIFhkd16BF531/43pc0sXo1F+vLvVhAciyTU5DsDAX6slkD4solf24H8+aSREnJEqxKz6pmTZwNrqBBEf18KEVltIE1TR3vcpXXtT3dK1DVfknVRRLF7bh4Dc1PK1HOZKodO57Z4hHVK06Bsa5Jd3hIl9ekehN9yvwqrz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=C1Fm3iBD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uGUNaakf; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 26 Aug 2025 16:16:59 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1756217821;
+	s=arc-20240116; t=1756217888; c=relaxed/simple;
+	bh=vAFqRkUVU9nLETZfB79IylLrMizQW+Ict1VoMM7PA8Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Sw37wYgLnefhhoPeULPZk3+Z5GRywGAqDXQ7yeayNYFeXxN6UyymAigxJ0JPiUZSk7knsyp8kRWkGY0uCbAp1HHdCjO9MVn7Sb6nNWhqWx55EJkXIqg37B2u+TeftAhJ4SpAyOHp7OuGs0k3v+rVtOLPOqTcGUDmYBLqIVY5L7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VmEZTJ7K; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <66f3bae8-a386-4205-97b2-7c75bc2ac378@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756217872;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=HPe46R3LdB4q3J/X7XS0kHVmAThKXah3eizvqx2Neb0=;
-	b=C1Fm3iBDTC96Jkf0NwV4jjYOiUOJGF/0ifO3Di64pZ6mR7B2vgXUSoPgahTB55we4Wcjxe
-	+kemMGMsw/AD+8/fzxxZxQ3XndERSGSWu7iFOCesQZXM5SU3bsJAW81kKC7P7puTmdtiq9
-	DViBnaz8nzZl50xvjLkGpkAcWXTJFcMG7Mei1msihFC/s2wHSE9ssDR9iKeDLS9u1TmgrP
-	TwYesAnkj+dl9JpPt9gejIfQJygozmn56F7D65NV7Dpz3drA/MYuHWOfTc4/QkoX9LHS1N
-	fmJO0LGKj75fUKAIRSyUSBg8WYCBriJj5inXwGNLgHMw67U0CVsPKMYtXF2eLg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1756217821;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HPe46R3LdB4q3J/X7XS0kHVmAThKXah3eizvqx2Neb0=;
-	b=uGUNaakff2dieZWb4qqCTXlvE8xYwAtuieH8n4pG1iXtTYMyh/jyawd5dzePif7wQH0kVp
-	aqW5KIgsnJ6dnmAA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: cuiguoqi <cuiguoqi@kylinos.cn>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Clark Williams <clrkwllms@kernel.org>, guoqi0226@163.com,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH] sched: Fix race in rt_mutex_pre_schedule by removing
- non-atomic fetch_and_set
-Message-ID: <20250826141659.VMLwv13e@linutronix.de>
-References: <20250826110833.3274209-1-cuiguoqi@kylinos.cn>
- <20250826095615.14259d90@gandalf.local.home>
+	bh=cfxa6V11+XKXn5kTcarhix2gi4YAWPXrw99RS4I7v7E=;
+	b=VmEZTJ7KSXpFbz7WQgz0lsknA09EhZ1lQco7D88dCcQkDOqPgSmbxn+t9meYZf84jXZ/00
+	m0oA21tzCPQZYk+EMz4QgaLTsXyLmtRrgYyAhsqOaj89s8AYhraz2jRSw/FrIKE1qohl2k
+	8eLtRiRNVGyvPY1fPb1MOAJNpm892Yc=
+Date: Tue, 26 Aug 2025 15:17:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250826095615.14259d90@gandalf.local.home>
+Subject: Re: [PATCH net-next v01 04/12] hinic3: HW capability initialization
+To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+ Bjorn Helgaas <helgaas@kernel.org>, luosifu <luosifu@huawei.com>,
+ Xin Guo <guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>,
+ Zhou Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>,
+ Shi Jing <shijing34@huawei.com>, Meny Yossefi <meny.yossefi@huawei.com>,
+ Gur Stavi <gur.stavi@huawei.com>, Lee Trager <lee@trager.us>,
+ Michael Ellerman <mpe@ellerman.id.au>, Suman Ghosh <sumang@marvell.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Joe Damato <jdamato@fastly.com>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+References: <cover.1756195078.git.zhuyikai1@h-partners.com>
+ <b0c4ffc4ed52ca0921dc029e6f2fc8459a5df933.1756195078.git.zhuyikai1@h-partners.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <b0c4ffc4ed52ca0921dc029e6f2fc8459a5df933.1756195078.git.zhuyikai1@h-partners.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On 2025-08-26 09:56:15 [-0400], Steven Rostedt wrote:
-> Honestly, without adding a READ_ONCE() or barrier() I don't see how your
-> change would prevent the compiler from making the code any different?
-
-Other than that, that flag is supposed to be only set/ cleared by the
-thread itself. There should be no need for it to be atomic.
-
-> It may have "fixed" your issue because the compiler may have done things
-> differently, but this change doesn't guarantee anything.
+On 26/08/2025 10:05, Fan Gong wrote:
+> Use mailbox to get device capability for initializing driver capability.
 > 
-> Also, could you show an example of how current->sched_rt_mutex could be
-> corrupted?
+> Co-developed-by: Xin Guo <guoxin09@huawei.com>
+> Signed-off-by: Xin Guo <guoxin09@huawei.com>
+> Co-developed-by: Zhu Yikai <zhuyikai1@h-partners.com>
+> Signed-off-by: Zhu Yikai <zhuyikai1@h-partners.com>
+> Signed-off-by: Fan Gong <gongfan1@huawei.com>
+> ---
+>   .../ethernet/huawei/hinic3/hinic3_hw_cfg.c    | 66 +++++++++++++++++++
+>   .../ethernet/huawei/hinic3/hinic3_hw_cfg.h    |  1 +
+>   .../ethernet/huawei/hinic3/hinic3_hw_intf.h   | 42 ++++++++++++
+>   .../net/ethernet/huawei/hinic3/hinic3_hwdev.c |  6 ++
+>   4 files changed, 115 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_hw_cfg.c b/drivers/net/ethernet/huawei/hinic3/hinic3_hw_cfg.c
+> index e7ef450c4971..24b929690f64 100644
+> --- a/drivers/net/ethernet/huawei/hinic3/hinic3_hw_cfg.c
+> +++ b/drivers/net/ethernet/huawei/hinic3/hinic3_hw_cfg.c
+> @@ -8,6 +8,67 @@
+>   #include "hinic3_hwif.h"
+>   #include "hinic3_mbox.h"
+>   
+> +#define HINIC3_CFG_MAX_QP  256
+> +
+> +static void parse_pub_res_cap(struct hinic3_hwdev *hwdev,
+> +			      struct hinic3_dev_cap *cap,
+> +			      const struct cfg_cmd_dev_cap *dev_cap,
+> +			      enum hinic3_func_type type)
+> +{
+> +	cap->port_id = dev_cap->port_id;
+> +	cap->supp_svcs_bitmap = dev_cap->svc_cap_en;
+> +}
+> +
+> +static void parse_l2nic_res_cap(struct hinic3_hwdev *hwdev,
+> +				struct hinic3_dev_cap *cap,
+> +				const struct cfg_cmd_dev_cap *dev_cap,
+> +				enum hinic3_func_type type)
+> +{
+> +	struct hinic3_nic_service_cap *nic_svc_cap = &cap->nic_svc_cap;
+> +
+> +	nic_svc_cap->max_sqs = min(dev_cap->nic_max_sq_id + 1,
+> +				   HINIC3_CFG_MAX_QP);
+> +}
+> +
+> +static void parse_dev_cap(struct hinic3_hwdev *hwdev,
+> +			  const struct cfg_cmd_dev_cap *dev_cap,
+> +			  enum hinic3_func_type type)
+> +{
+> +	struct hinic3_dev_cap *cap = &hwdev->cfg_mgmt->cap;
+> +
+> +	/* Public resource */
+> +	parse_pub_res_cap(hwdev, cap, dev_cap, type);
+> +
+> +	/* L2 NIC resource */
+> +	if (hinic3_support_nic(hwdev))
+> +		parse_l2nic_res_cap(hwdev, cap, dev_cap, type);
+> +}
 
-That would be important.
+Could you please prepend local functions with the scope (hinic3) to be
+consistent with naming? Some of functions have pretty common name and
+may potentially overlap with some core functions.
 
-> -- Steve
+> +
+> +static int get_cap_from_fw(struct hinic3_hwdev *hwdev,
+> +			   enum hinic3_func_type type)
+> +{
+> +	struct mgmt_msg_params msg_params = {};
+> +	struct cfg_cmd_dev_cap dev_cap = {};
+> +	int err;
+> +
+> +	dev_cap.func_id = hinic3_global_func_id(hwdev);
+> +
+> +	mgmt_msg_params_init_default(&msg_params, &dev_cap, sizeof(dev_cap));
+> +
+> +	err = hinic3_send_mbox_to_mgmt(hwdev, MGMT_MOD_CFGM,
+> +				       CFG_CMD_GET_DEV_CAP, &msg_params);
+> +	if (err || dev_cap.head.status) {
+> +		dev_err(hwdev->dev,
+> +			"Failed to get capability from FW, err: %d, status: 0x%x\n",
+> +			err, dev_cap.head.status);
+> +		return -EIO;
+> +	}
+> +
+> +	parse_dev_cap(hwdev, &dev_cap, type);
+> +
+> +	return 0;
+> +}
+> +
+>   static int hinic3_init_irq_info(struct hinic3_hwdev *hwdev)
+>   {
+>   	struct hinic3_cfg_mgmt_info *cfg_mgmt = hwdev->cfg_mgmt;
+> @@ -180,6 +241,11 @@ void hinic3_free_irq(struct hinic3_hwdev *hwdev, u32 irq_id)
+>   	mutex_unlock(&irq_info->irq_mutex);
+>   }
+>   
+> +int init_capability(struct hinic3_hwdev *hwdev)
+> +{
+> +	return get_cap_from_fw(hwdev, HINIC3_FUNC_TYPE_VF);
+> +}
+> +
+>   bool hinic3_support_nic(struct hinic3_hwdev *hwdev)
+>   {
+>   	return hwdev->cfg_mgmt->cap.supp_svcs_bitmap &
+> diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_hw_cfg.h b/drivers/net/ethernet/huawei/hinic3/hinic3_hw_cfg.h
+> index 5978cbd56fb2..8900b40e3c42 100644
+> --- a/drivers/net/ethernet/huawei/hinic3/hinic3_hw_cfg.h
+> +++ b/drivers/net/ethernet/huawei/hinic3/hinic3_hw_cfg.h
+> @@ -49,6 +49,7 @@ int hinic3_alloc_irqs(struct hinic3_hwdev *hwdev, u16 num,
+>   		      struct msix_entry *alloc_arr, u16 *act_num);
+>   void hinic3_free_irq(struct hinic3_hwdev *hwdev, u32 irq_id);
+>   
+> +int init_capability(struct hinic3_hwdev *hwdev);
 
-Sebastian
+and especially non-static functions has to be prefixed with the
+scope, please
+
+>   bool hinic3_support_nic(struct hinic3_hwdev *hwdev);
+>   u16 hinic3_func_max_qnum(struct hinic3_hwdev *hwdev);
+>   u8 hinic3_physical_port_id(struct hinic3_hwdev *hwdev);
+
+[...]
 
