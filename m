@@ -1,134 +1,262 @@
-Return-Path: <linux-kernel+bounces-786613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12CDFB35F1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:29:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3CB2B35F1C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:29:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9428365562
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:29:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89BD37C239E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:29:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B6DE3376BE;
-	Tue, 26 Aug 2025 12:29:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD9DE334396;
+	Tue, 26 Aug 2025 12:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SGrhB8D/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="REmBkoOr"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F432F8BCB
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 12:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFD8C2F8BCB
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 12:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756211355; cv=none; b=HMLRHLiU++aVYZOB12s6TuDDAZ5gqpJif/UwMI0G2ho3ta7VOIAaaf6Y0SqQsXw46/xU2tn2LnqZj4bOqyjOS0ITxIpVnRoyLV0OG8UyCsKjXTi64L0gb7M/maoz+/maxhWVWc8r69+5mM0PZCKxQb6YLHaWatiXDXVcUagcn/k=
+	t=1756211362; cv=none; b=ZJpnxITtHRje4qQAuXyPaG7KSBRvIeTGp5rBSzYQm1vcYpCr+AHqBqXdY30v/kHYPVo+FdoMPCzQOsudV72hvEJlTiWoOjjlaoczV+ze59HoxmjOoI0rZJoVs6HftDN9dALqkCcyrwZrR57hntGED9m1gs4ocbLVGMsj2ZiFFno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756211355; c=relaxed/simple;
-	bh=078pPOc4+Mrq2GiBTcZLDoZe5iF+QRu+RYWcOLy3N5M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eqXfP1oR0qa4sYp/A175/SIzAM402+VirJisuL6cC7A+Jgv/BHSk2AJ7xpdZrUJD6E5JOqy44dRZD6uAgNK9WQh+RJKDoMKtX6mDJyafBwkF0V6qCeJ0MO6aPaQqe5trWwbR3kDd+YVlhc+ORTBqVcJYRowIGMqzkhnzgBL+RMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SGrhB8D/; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756211350;
+	s=arc-20240116; t=1756211362; c=relaxed/simple;
+	bh=CVkOsuEBcQncozyL/+9mBjeXl3IiEHZmPGVU+4kspTQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VWN7Ep0Whk824Db6ONuAyw0KkKOZ7R1pnb8Y0dOjgzWvv3ll6H5D746fn2or+k2losvY6uAEBzwJZhz7j+/TE8eLbcGAQJz1jB+6yb2EItsgAym51g96nFW8u2yIjoxRkxhOQrjb8BibEV0nwCaOPBkuyE2Aprgjv2Y22cDRdos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=REmBkoOr; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+Message-ID: <fcf02a2d-66ff-4340-9467-a1e51b880b87@manjaro.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1756211357;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=QDSuqgH2PK79DxalD4iHZQ97YhSiJJlN/fNRNiH/3wE=;
-	b=SGrhB8D/dKSrGwS4Gkf8ZPn6JKN9D7Im7nF5GykO4Mwzs6TTej8ZtQzEnM/pTP54FoAFsA
-	IBy4Uk6QPm6f8m28EH0d1lfBx+268S3xEmE+dIWHJJPnECCWruRrPGOs1bDpwtRkN81I/U
-	91iagim2PiYc28nZ94s8/MpSEImoTo8=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-134-xUirrdLSMv-88RbjdA5VMw-1; Tue, 26 Aug 2025 08:29:09 -0400
-X-MC-Unique: xUirrdLSMv-88RbjdA5VMw-1
-X-Mimecast-MFC-AGG-ID: xUirrdLSMv-88RbjdA5VMw_1756211349
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-70d9a65c355so89805366d6.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 05:29:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756211349; x=1756816149;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QDSuqgH2PK79DxalD4iHZQ97YhSiJJlN/fNRNiH/3wE=;
-        b=TUoPS/ES+tLW90rLzqJ/jSX8OpZ950F2fl7r1QahxbcWlkC4oBhj0Fl3gNSkQdcyQm
-         xUDv/ZP6GejogVv7laIjJ7g1oVXWKy+nkThWPQSKETKmolsDRClhRn+bp6KVxR4vR7r1
-         S7xkAoekTpLzX+CqMcMAGI9/S73Xv0X2Q/jA6YJiGnY/pff4EP7EhLP2DtqfmxDV+cwX
-         aGBbCAqBx839lumPCpArErEAZRPMhpADVyr5a6QkldxgJW5P+NHqLog2+jX0sMExcxF9
-         19LRGr4q2AmqrNoRUPzB/qFfeJLXu3LFDHmeMvDPPp/d7krskhVuyteCzCZNiDDHnUdf
-         W6SQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUSWG2K2QtQTztLIyyGSa7B5hWxViS86VCbWXTU8yDzJ6iyPzFq1ghU6o8AkHk34+Nrd1cnpvCJjYb8X3w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSz4LUU7hx7IsnsZURAHeqomsuNEQqBi7asenQn3v0JgudooNX
-	+QsGgM1yr37h+nNEWxeMESEs/i4L9qXygg3mgUfsySvKPve8E71k3PWv2FkdFoDrH5mjYZxN3NP
-	mEQjJp0Z27GuZC4xMifQHIW2OH5zp9pwgTORTigd45DbP4NkFj7iB42pBO3kPnY78Sw==
-X-Gm-Gg: ASbGncslOqCi2S1WN3jpx1v83HcrNly6THHw/FLSjSkqvszb2QWQCy/Akt5rCsFMume
-	Nk+3XUUo8lo+s+JIYp97xcFBvWvjMFD3otJ8OY5chmcHqHqcL9aB089BWccF0J0h0WrmU0DOfNg
-	KstYbguGtzoi0PErSlqWGqoC+3Q4QcSgiCwfVn0ZUPWOHuFOZil66aYUUUw9/94ovSryiUizPRB
-	OgMAzEJVZQIk7jjN04UezUzzNn8yY9yX7oc+wRJ//MXWGh3grtx29v8w/FoSEvmTsWvph8KoVAv
-	GTr7P11OVJSxF7kv3/sB4N1UcchXgNbu4TWt0jUcXIWHe0hW59U2sgDmfxNeFxR7BXvy2RBSeTL
-	oJZKlUmXhVQ==
-X-Received: by 2002:a05:6214:e4c:b0:70b:ca78:4f52 with SMTP id 6a1803df08f44-70dd59c1084mr12462986d6.14.1756211348864;
-        Tue, 26 Aug 2025 05:29:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHohgBlgoi98YMsIeHajcZi5xUzGFlQJCfrBIsLeUqR6BIOUm9qjIn9QZofOTgx7sTd3jOHZg==
-X-Received: by 2002:a05:6214:e4c:b0:70b:ca78:4f52 with SMTP id 6a1803df08f44-70dd59c1084mr12462676d6.14.1756211348313;
-        Tue, 26 Aug 2025 05:29:08 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e01:ef00:b52:2ad9:f357:f709])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70da72b04a6sm63527046d6.52.2025.08.26.05.29.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 05:29:07 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	Leo Martins <loemra.dev@gmail.com>,
-	linux-btrfs@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] btrfs: move ref-verify of btrfs_init_data_ref under CONFIG_BTRFS_DEBUG
-Date: Tue, 26 Aug 2025 14:29:01 +0200
-Message-ID: <20250826122901.49526-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.50.1
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1rYjndQN7b4L3NuBdX7MdapHjQu5aKVId70OwgE7UGg=;
+	b=REmBkoOrGYNcqKfPUUn2FoUGedc9ZvJ+UqzkCvgFpjmg2qbtiai1uHpVXjqhTpA/l73Tyh
+	96220BAxb12gD5S+lUYc2I76kyvmmLA2RNxPaRjGzznZiDs239tMpR7o+ZaLnKOfDIzduJ
+	ux6osEoi47SqJwb0ek5m0r1uQMnkPJZkW7AnZGSsUfB28dE1aySsYC/iVBFkIpXQp9nARy
+	eepxEEWWFs43ET3BkyOEs5SAmkBrLKa1V6BN5A8zGdkm+AQj9d+FErHcpZ/YFYZc6sfx8F
+	UnC+W9wXVo9Z0KyDTZDX+l0s35mo5ibn4ygRBeFlElxcjwwSZHTXSxqJsYlYrw==
+Date: Tue, 26 Aug 2025 14:29:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH v1 2/5] drm: panel-backlight-quirks: Convert brightness
+ quirk to generic structure
+To: Antheas Kapenekakis <lkml@antheas.dev>, amd-gfx@lists.freedesktop.org
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Mario Limonciello <mario.limonciello@amd.com>
+References: <20250824200202.1744335-1-lkml@antheas.dev>
+ <20250824200202.1744335-3-lkml@antheas.dev>
+Content-Language: en-US
+From: =?UTF-8?Q?Philip_M=C3=BCller?= <philm@manjaro.org>
+Organization: Manjaro Community
+In-Reply-To: <20250824200202.1744335-3-lkml@antheas.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=philm@manjaro.org smtp.mailfrom=philm@manjaro.org
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+On 8/24/25 22:01, Antheas Kapenekakis wrote:
+> Currently, the brightness quirk is limited to minimum brightness only.
+> Refactor it to a structure, so that more quirks can be added in the
+> future. Reserve 0 value for "no quirk", and use u16 to allow minimum
+> brightness up to 255.
+> 
+> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> ---
+>   .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 12 ++++--
+>   .../link/protocols/link_edp_panel_control.c   |  2 +-
+>   drivers/gpu/drm/drm_panel_backlight_quirks.c  | 41 ++++++++++---------
+>   include/drm/drm_utils.h                       |  7 +++-
+>   4 files changed, 36 insertions(+), 26 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> index cd0e2976e268..4ad80ae615a2 100644
+> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> @@ -3612,11 +3612,11 @@ static struct drm_mode_config_helper_funcs amdgpu_dm_mode_config_helperfuncs = {
+>   
+>   static void update_connector_ext_caps(struct amdgpu_dm_connector *aconnector)
+>   {
+> +	const struct drm_panel_backlight_quirk *panel_backlight_quirk;
+>   	struct amdgpu_dm_backlight_caps *caps;
+>   	struct drm_connector *conn_base;
+>   	struct amdgpu_device *adev;
+>   	struct drm_luminance_range_info *luminance_range;
+> -	int min_input_signal_override;
+>   
+>   	if (aconnector->bl_idx == -1 ||
+>   	    aconnector->dc_link->connector_signal != SIGNAL_TYPE_EDP)
+> @@ -3656,9 +3656,13 @@ static void update_connector_ext_caps(struct amdgpu_dm_connector *aconnector)
+>   	else
+>   		caps->aux_min_input_signal = 1;
+>   
+> -	min_input_signal_override = drm_get_panel_min_brightness_quirk(aconnector->drm_edid);
+> -	if (min_input_signal_override >= 0)
+> -		caps->min_input_signal = min_input_signal_override;
+> +	panel_backlight_quirk =
+> +		drm_get_panel_backlight_quirk(aconnector->drm_edid);
+> +	if (!IS_ERR_OR_NULL(panel_backlight_quirk)) {
+> +		if (panel_backlight_quirk->min_brightness)
+> +			caps->min_input_signal =
+> +				panel_backlight_quirk->min_brightness - 1;
+> +	}
+>   }
+>   
+>   DEFINE_FREE(sink_release, struct dc_sink *, if (_T) dc_sink_release(_T))
+> diff --git a/drivers/gpu/drm/amd/display/dc/link/protocols/link_edp_panel_control.c b/drivers/gpu/drm/amd/display/dc/link/protocols/link_edp_panel_control.c
+> index e7927b8f5ba3..a1f37267b85e 100644
+> --- a/drivers/gpu/drm/amd/display/dc/link/protocols/link_edp_panel_control.c
+> +++ b/drivers/gpu/drm/amd/display/dc/link/protocols/link_edp_panel_control.c
+> @@ -201,7 +201,7 @@ bool edp_set_backlight_level_nits(struct dc_link *link,
+>   			return false;
+>   	} else if (link->backlight_control_type == BACKLIGHT_CONTROL_AMD_AUX) {
+>   		struct dpcd_source_backlight_set dpcd_backlight_set;
+> -		*(uint32_t *)&dpcd_backlight_set.backlight_level_millinits = backlight_millinits;
+> +		*(uint32_t *)&dpcd_backlight_set.backlight_level_millinits = backlight_millinits | 3;
+>   		*(uint16_t *)&dpcd_backlight_set.backlight_transition_time_ms = (uint16_t)transition_time_in_ms;
+>   
+>   		uint8_t backlight_control = isHDR ? 1 : 0;
+> diff --git a/drivers/gpu/drm/drm_panel_backlight_quirks.c b/drivers/gpu/drm/drm_panel_backlight_quirks.c
+> index b38b33e26ea5..702726c20ccc 100644
+> --- a/drivers/gpu/drm/drm_panel_backlight_quirks.c
+> +++ b/drivers/gpu/drm/drm_panel_backlight_quirks.c
+> @@ -8,23 +8,23 @@
+>   #include <drm/drm_edid.h>
+>   #include <drm/drm_utils.h>
+>   
+> -struct drm_panel_min_backlight_quirk {
+> +struct drm_get_panel_backlight_quirk {
+>   	struct {
+>   		enum dmi_field field;
+>   		const char * const value;
+>   	} dmi_match;
+>   	struct drm_edid_ident ident;
+> -	u8 min_brightness;
+> +	struct drm_panel_backlight_quirk quirk;
+>   };
+>   
+> -static const struct drm_panel_min_backlight_quirk drm_panel_min_backlight_quirks[] = {
+> +static const struct drm_get_panel_backlight_quirk drm_panel_min_backlight_quirks[] = {
+>   	/* 13 inch matte panel */
+>   	{
+>   		.dmi_match.field = DMI_BOARD_VENDOR,
+>   		.dmi_match.value = "Framework",
+>   		.ident.panel_id = drm_edid_encode_panel_id('B', 'O', 'E', 0x0bca),
+>   		.ident.name = "NE135FBM-N41",
+> -		.min_brightness = 0,
+> +		.quirk = { .min_brightness = 1, },
+>   	},
+>   	/* 13 inch glossy panel */
+>   	{
+> @@ -32,7 +32,7 @@ static const struct drm_panel_min_backlight_quirk drm_panel_min_backlight_quirks
+>   		.dmi_match.value = "Framework",
+>   		.ident.panel_id = drm_edid_encode_panel_id('B', 'O', 'E', 0x095f),
+>   		.ident.name = "NE135FBM-N41",
+> -		.min_brightness = 0,
+> +		.quirk = { .min_brightness = 1, },
+>   	},
+>   	/* 13 inch 2.8k panel */
+>   	{
+> @@ -40,12 +40,13 @@ static const struct drm_panel_min_backlight_quirk drm_panel_min_backlight_quirks
+>   		.dmi_match.value = "Framework",
+>   		.ident.panel_id = drm_edid_encode_panel_id('B', 'O', 'E', 0x0cb4),
+>   		.ident.name = "NE135A1M-NY1",
+> -		.min_brightness = 0,
+> +		.quirk = { .min_brightness = 1, },
+>   	},
+>   };
+>   
+> -static bool drm_panel_min_backlight_quirk_matches(const struct drm_panel_min_backlight_quirk *quirk,
+> -						  const struct drm_edid *edid)
+> +static bool drm_panel_min_backlight_quirk_matches(
+> +	const struct drm_get_panel_backlight_quirk *quirk,
+> +	const struct drm_edid *edid)
+>   {
+>   	if (!dmi_match(quirk->dmi_match.field, quirk->dmi_match.value))
+>   		return false;
+> @@ -57,39 +58,39 @@ static bool drm_panel_min_backlight_quirk_matches(const struct drm_panel_min_bac
+>   }
+>   
+>   /**
+> - * drm_get_panel_min_brightness_quirk - Get minimum supported brightness level for a panel.
+> + * drm_get_panel_backlight_quirk - Get backlight quirks for a panel
+>    * @edid: EDID of the panel to check
+>    *
+>    * This function checks for platform specific (e.g. DMI based) quirks
+>    * providing info on the minimum backlight brightness for systems where this
+> - * cannot be probed correctly from the hard-/firm-ware.
+> + * cannot be probed correctly from the hard-/firm-ware and other sources.
+>    *
+>    * Returns:
+> - * A negative error value or
+> - * an override value in the range [0, 255] representing 0-100% to be scaled to
+> - * the drivers target range.
+> + * a drm_panel_backlight_quirk struct if a quirk was found, otherwise an
+> + * error pointer.
+>    */
+> -int drm_get_panel_min_brightness_quirk(const struct drm_edid *edid)
+> +const struct drm_panel_backlight_quirk *
+> +drm_get_panel_backlight_quirk(const struct drm_edid *edid)
+>   {
+> -	const struct drm_panel_min_backlight_quirk *quirk;
+> +	const struct drm_get_panel_backlight_quirk *quirk;
+>   	size_t i;
+>   
+>   	if (!IS_ENABLED(CONFIG_DMI))
+> -		return -ENODATA;
+> +		return ERR_PTR(-ENODATA);
+>   
+>   	if (!edid)
+> -		return -EINVAL;
+> +		return ERR_PTR(-EINVAL);
+>   
+>   	for (i = 0; i < ARRAY_SIZE(drm_panel_min_backlight_quirks); i++) {
+>   		quirk = &drm_panel_min_backlight_quirks[i];
+>   
+>   		if (drm_panel_min_backlight_quirk_matches(quirk, edid))
+> -			return quirk->min_brightness;
+> +			return &quirk->quirk;
+>   	}
+>   
+> -	return -ENODATA;
+> +	return ERR_PTR(-ENODATA);
+>   }
+> -EXPORT_SYMBOL(drm_get_panel_min_brightness_quirk);
+> +EXPORT_SYMBOL(drm_get_panel_backlight_quirk);
+>   
+>   MODULE_DESCRIPTION("Quirks for panel backlight overrides");
+>   MODULE_LICENSE("GPL");
+> diff --git a/include/drm/drm_utils.h b/include/drm/drm_utils.h
+> index 15fa9b6865f4..82eeee4a58ab 100644
+> --- a/include/drm/drm_utils.h
+> +++ b/include/drm/drm_utils.h
+> @@ -16,7 +16,12 @@ struct drm_edid;
+>   
+>   int drm_get_panel_orientation_quirk(int width, int height);
+>   
+> -int drm_get_panel_min_brightness_quirk(const struct drm_edid *edid);
+> +struct drm_panel_backlight_quirk {
+> +	u16 min_brightness;
+> +};
+> +
+> +const struct drm_panel_backlight_quirk *
+> +drm_get_panel_backlight_quirk(const struct drm_edid *edid);
+>   
+>   signed long drm_timeout_abs_to_jiffies(int64_t timeout_nsec);
+>   
 
-Commit dc9025c1a4d8 ("btrfs: move ref-verify under CONFIG_BTRFS_DEBUG")
-removes config BTRFS_FS_REF_VERIFY and adds its functionality under config
-BTRFS_DEBUG. This change misses a reference to BTRFS_FS_REF_VERIFY in the
-btrfs_init_data_ref() function, though.
-
-Replace this reference to BTRFS_FS_REF_VERIFY in the btrfs_init_data_ref()
-with BTRFS_DEBUG.
-
-Fixes: dc9025c1a4d8 ("btrfs: move ref-verify under CONFIG_BTRFS_DEBUG")
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
- fs/btrfs/delayed-ref.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/btrfs/delayed-ref.c b/fs/btrfs/delayed-ref.c
-index f91062fc1b0b..6170803d8a1b 100644
---- a/fs/btrfs/delayed-ref.c
-+++ b/fs/btrfs/delayed-ref.c
-@@ -969,7 +969,7 @@ void btrfs_init_tree_ref(struct btrfs_ref *generic_ref, int level, u64 mod_root,
- void btrfs_init_data_ref(struct btrfs_ref *generic_ref, u64 ino, u64 offset,
- 			 u64 mod_root, bool skip_qgroup)
- {
--#ifdef CONFIG_BTRFS_FS_REF_VERIFY
-+#ifdef CONFIG_BTRFS_DEBUG
- 	/* If @real_root not set, use @root as fallback */
- 	generic_ref->real_root = mod_root ?: generic_ref->ref_root;
- #endif
--- 
-2.50.1
-
+Tested-by: Philip Müller <philm@manjaro.org>
 
