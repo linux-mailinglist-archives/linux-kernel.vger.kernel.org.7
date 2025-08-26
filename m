@@ -1,77 +1,181 @@
-Return-Path: <linux-kernel+bounces-787092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9215AB37157
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:30:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0732EB3715B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:31:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 089AA5E8524
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:30:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B269D7C1326
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B60E2E7F22;
-	Tue, 26 Aug 2025 17:30:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A282E2DCB;
+	Tue, 26 Aug 2025 17:31:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wfGTXvB8"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="niOLBQaZ"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7838431A57E;
-	Tue, 26 Aug 2025 17:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2171E31A569
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 17:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756229401; cv=none; b=qRzf56LBGcQqyd7zmAshTunZeVfKRvuvOSkZPRpaLMkhKsCuKCPOg3RMIAWIMVZlgxWUVFBLSIVLO6k30953EhPQ2cJS04BliVrn0H4d/0R7nzzCDNNjwP4phKbJ9yKmft/XT6NFV/tqK4TReKfOdH6KdyK+EclxkUBrR97VuZc=
+	t=1756229485; cv=none; b=PliR0KAVwjz+pVGenkmYR4go9TunLvIYrR6Jq430p/10bNBjTwCxZ1jCyUznHmhGXfUreb7Dl71HR84i8RvRGJtZpSvOX8GK2Y8JEzpdMJoV6ZekWJvE5bJvNobaPTHmKPJzwKna+CJwi6Y/UyMty7McsY/bOfn8fbwXOx9vHnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756229401; c=relaxed/simple;
-	bh=F8Nrp5aXQVl7CcBB2xksa3tGA5YohT1DD9rv4P/KdWs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hKZsykpSgozioyXXKryBxM1SQDBNR/xDAhfzHBuqzCJw8QVW0f63eH8udQtqAeE4MicE6r/7ZeCAovnpIY4S7bxmRy279jiug0uS3KlLzihL4Hn5ds9Y20Suo+jX52ncBhzxHdij8CGrAWxez5gLVc37Sk3Yr+3H7Kh54rYo1XY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wfGTXvB8; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <e4cb25cb-2016-4bab-9cc2-333ea9ae9d3a@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1756229396;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F8Nrp5aXQVl7CcBB2xksa3tGA5YohT1DD9rv4P/KdWs=;
-	b=wfGTXvB8GFqwq+ajrR12L/JKcbakLCVWfM8CJmsoCe+A6IRSI156GmmVZmpHKywlnBXbFO
-	GhOjc90Krekp1QqbE4Y1ifAo7IEFk2Sklt1uGO4wR92snBNRnrTVNrtduQBgMSIRFl3Bcx
-	4ow+D7KobG/SywwSbGn+mOk5Zu0+48w=
-Date: Tue, 26 Aug 2025 18:29:53 +0100
+	s=arc-20240116; t=1756229485; c=relaxed/simple;
+	bh=wlXAC48l9HeoETx+1S2JCCMxb76UoHT2HZti0qu21rQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Tq1JsPYXa06DSSjZcT5BbGPL4bFI513wXhVRqZF6zMdIMFJ0O4Py9M/GjGAboS0A74FD0/HrtGIg0F7SAS+wRYjbkXOjVf5nZpDoI/Pz6uJB/T3ZJ1d06P5JOZvnU991G94wyZOtZb6bK6j+can+M3rIMi6eM8HzSC7yjpe69cI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=niOLBQaZ; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-246f49067bdso22673745ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 10:31:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756229481; x=1756834281; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+VkPKEfiEBtNUsHM/Rw/t6rk+QUhjWHCoc9fIKfrHXg=;
+        b=niOLBQaZNqtDIfKZEXfFSq2ZO5l4lhc48q37Yl+ZTwuuB4jUFqPbESUKGTCqqDwbCv
+         SSgXUZKvGl32+z7iYqH/Y0zq/IzO2Fto7qwxgrzaUYw1ZJe1rarZ+Jm49jLrN7Bq/bIx
+         w3PKCZjE0yT6VGC9AgyFxpwYbIKLbpWVrguVWd0r0qU6hga8/VJxFACsdmE5NvIzEKrR
+         Dp5bXv05crnd7JarQJhdYZtlcbsnQ7BCQ6nwjxD3J6bnB2UOWo/X+OajYZ7CWYgJAH74
+         qq2J1tYc/N5ufqoYnggMke8VJMSRlKSXVjy2AiKo63uwOYGz3hYCO6DdOyz9A2YD4aHX
+         bFgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756229481; x=1756834281;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+VkPKEfiEBtNUsHM/Rw/t6rk+QUhjWHCoc9fIKfrHXg=;
+        b=vqDY8oh5oTP+TYUic5lpkVcfLayr7+NEoTBYnLRW3HeAXcig04WoB72fKZUWwGU1f+
+         m+tvseKwESMyy1lty3OyZJW9H+/0gb/8wkFwiLAlg7SZ+L055OBFa608/gwhvNQgnq18
+         K8OOBPMsj604qmTsyju7s/6fEnfPsOdm+H+EWJoswCEr4xG3R9a3KwMJdN0feTQoInvq
+         q91tZm3T+1ogI4bvUVXfzdnAIiiUngvOq3agVTFPU0NuPt++lyMOJ7tl97YzBIULsOOC
+         bMh/9piJrJ+XZXhwG18OQBoWE8SR25TWJHLHp3+Li6+KKE6CDo+qVwQ5Ym6yNE7/eS0H
+         2rlA==
+X-Forwarded-Encrypted: i=1; AJvYcCWoJg7G8QxqagtYTJl69SApNM6Hvwi2Dki1i5lIdf6MsytcUA+Zv6B6nxAASJRPMXW3Qq7/jyFKKVm0NPg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdbcopGLffl0CLnWRvB0EJdYFlUBsK/zDzWZ9VLY6StqZo4hNy
+	FNQRcv+mSl3s0tergJ8p9TgiFfxGkswHSXi/FXYpYcMSoAFP61Kl/evUx6hQkFtNT5rNR6LpDua
+	R1Daakw==
+X-Google-Smtp-Source: AGHT+IHojf4NK4oLugsTS5XfSGTRk4QbLmnqRQLIh2si4edSqQ/wMyzbmJ/fMB8FGp5tmKAFLUAegxOiqZE=
+X-Received: from plcc19.prod.google.com ([2002:a17:902:c1d3:b0:248:8be8:f33])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1b44:b0:246:931e:4db4
+ with SMTP id d9443c01a7336-246931e5571mr153388275ad.45.1756229481211; Tue, 26
+ Aug 2025 10:31:21 -0700 (PDT)
+Date: Tue, 26 Aug 2025 10:31:19 -0700
+In-Reply-To: <20250821042915.3712925-16-sagis@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH net-next 0/7] net: stmmac: fixes and new features
-To: Konrad Leszczynski <konrad.leszczynski@intel.com>, davem@davemloft.net,
- andrew+netdev@lunn.ch, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- cezary.rojewski@intel.com, sebastian.basierski@intel.com
-References: <20250826113247.3481273-1-konrad.leszczynski@intel.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20250826113247.3481273-1-konrad.leszczynski@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+References: <20250821042915.3712925-1-sagis@google.com> <20250821042915.3712925-16-sagis@google.com>
+Message-ID: <aK3vZ5HuKKeFuuM4@google.com>
+Subject: Re: [PATCH v9 15/19] KVM: selftests: Hook TDX support to vm and vcpu creation
+From: Sean Christopherson <seanjc@google.com>
+To: Sagi Shahar <sagis@google.com>
+Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
+	Shuah Khan <shuah@kernel.org>, Ackerley Tng <ackerleytng@google.com>, 
+	Ryan Afranji <afranji@google.com>, Andrew Jones <ajones@ventanamicro.com>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>, Erdem Aktas <erdemaktas@google.com>, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, Roger Wang <runanwang@google.com>, 
+	Binbin Wu <binbin.wu@linux.intel.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	"Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, Reinette Chatre <reinette.chatre@intel.com>, 
+	Ira Weiny <ira.weiny@intel.com>, Chao Gao <chao.gao@intel.com>, 
+	Chenyi Qiang <chenyi.qiang@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On 26/08/2025 12:32, Konrad Leszczynski wrote:
-> This series starts with three fixes addressing KASAN panic on ethtool
-> usage, Enhanced Descriptor printing and flow stop on TC block setup when
-> interface down.
-> Everything that follows adds new features such as ARP Offload support,
-> VLAN protocol detection and TC flower filter support.
+On Wed, Aug 20, 2025, Sagi Shahar wrote:
+> TDX require special handling for VM and VCPU initialization for various
+> reasons:
+> - Special ioctlss for creating VM and VCPU.
+> - TDX registers are inaccessible to KVM.
+> - TDX require special boot code trampoline for loading parameters.
+> - TDX only supports KVM_CAP_SPLIT_IRQCHIP.
 
-Well, mixing fixes and features in one patchset is not a great idea.
-Fixes patches should have Fixes: tags and go to -net tree while features
-should go to net-next. It's better to split series into 2 and provide
-proper tags for the "fixes" part
+Please split this up and elaborate at least a little bit on why each flow needs
+special handling for TDX.  Even for someone like me who is fairly familiar with
+TDX, there's too much "Trust me bro" and not enough explanation of why selftests
+really need all of these special paths for TDX.
+
+At least four patches, one for each of your bullet points.  Probably 5 or 6, as
+I think the CPUID handling warrants its own patch.
+
+> Hook this special handling into __vm_create() and vm_arch_vcpu_add()
+> using the utility functions added in previous patches.
+>
+> Signed-off-by: Sagi Shahar <sagis@google.com>
+> ---
+>  tools/testing/selftests/kvm/lib/kvm_util.c    | 24 ++++++++-
+>  .../testing/selftests/kvm/lib/x86/processor.c | 49 ++++++++++++++-----
+>  2 files changed, 61 insertions(+), 12 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
+> index b4c8702ba4bd..d9f0ff97770d 100644
+> --- a/tools/testing/selftests/kvm/lib/kvm_util.c
+> +++ b/tools/testing/selftests/kvm/lib/kvm_util.c
+> @@ -4,6 +4,7 @@
+>   *
+>   * Copyright (C) 2018, Google LLC.
+>   */
+> +#include "tdx/tdx_util.h"
+>  #include "test_util.h"
+>  #include "kvm_util.h"
+>  #include "processor.h"
+> @@ -465,7 +466,7 @@ void kvm_set_files_rlimit(uint32_t nr_vcpus)
+>  static bool is_guest_memfd_required(struct vm_shape shape)
+>  {
+>  #ifdef __x86_64__
+> -	return shape.type == KVM_X86_SNP_VM;
+> +	return (shape.type == KVM_X86_SNP_VM || shape.type == KVM_X86_TDX_VM);
+>  #else
+>  	return false;
+>  #endif
+> @@ -499,6 +500,12 @@ struct kvm_vm *__vm_create(struct vm_shape shape, uint32_t nr_runnable_vcpus,
+>  	for (i = 0; i < NR_MEM_REGIONS; i++)
+>  		vm->memslots[i] = 0;
+>  
+> +	if (is_tdx_vm(vm)) {
+> +		/* Setup additional mem regions for TDX. */
+> +		vm_tdx_setup_boot_code_region(vm);
+> +		vm_tdx_setup_boot_parameters_region(vm, nr_runnable_vcpus);
+> +	}
+> +
+>  	kvm_vm_elf_load(vm, program_invocation_name);
+>  
+>  	/*
+> @@ -1728,11 +1735,26 @@ void *addr_gpa2alias(struct kvm_vm *vm, vm_paddr_t gpa)
+>  	return (void *) ((uintptr_t) region->host_alias + offset);
+>  }
+>  
+> +static bool is_split_irqchip_required(struct kvm_vm *vm)
+> +{
+> +#ifdef __x86_64__
+> +	return is_tdx_vm(vm);
+> +#else
+> +	return false;
+> +#endif
+> +}
+> +
+>  /* Create an interrupt controller chip for the specified VM. */
+>  void vm_create_irqchip(struct kvm_vm *vm)
+>  {
+>  	int r;
+>  
+> +	if (is_split_irqchip_required(vm)) {
+> +		vm_enable_cap(vm, KVM_CAP_SPLIT_IRQCHIP, 24);
+> +		vm->has_irqchip = true;
+> +		return;
+> +	}
+
+Ugh.  IMO, this is a KVM bug.  Allowing KVM_CREATE_IRQCHIP for a TDX VM is simply
+wrong.  It _can't_ work.  Waiting until KVM_CREATE_VCPU to fail setup is terrible
+ABI.
+
+If we stretch the meaning of ENOTTY a bit and return that when trying to create
+a fully in-kernel IRQCHIP for a TDX VM, then the selftests code Just Works thanks
+to the code below, which handles the scenario where KVM was be built without
+support for in-kernel I/O APIC (and PIC and PIT).
 
