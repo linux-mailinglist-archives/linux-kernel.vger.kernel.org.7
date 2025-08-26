@@ -1,105 +1,193 @@
-Return-Path: <linux-kernel+bounces-786367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 379ECB358F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:30:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17D7FB358F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:31:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5879118991F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:30:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C53205E35E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:31:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 046693093CE;
-	Tue, 26 Aug 2025 09:30:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACC1329AB1A;
+	Tue, 26 Aug 2025 09:31:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s59G+bjG"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="wbZmprk2"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B22C2417C2
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5456393DCA;
+	Tue, 26 Aug 2025 09:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756200627; cv=none; b=QImbqxaQbvnven6iZIWv0BFNd4IJk+Oaf/daK/O3GcVRdYx+HHQ4OFFKt05xXKH6qBVMe5p0dmxu/PDE1BaHKRyBN/ZwWQlrXFUU7S1QqbBiIa4Qfa76G5cLZ+xg0cwrxJbnvQDUAbFwFAM4RDqjB7jc8fMnmy/xrTZZR56jCr0=
+	t=1756200667; cv=none; b=HKQ7wCk9jhwQ4Nxu5WBpFUQQ4Vd4LVeiehoKPhVTd16z1tU6IthOTtGpnWTkfItY/rt4QcLyNG2x3qIcfPQWYSCkWUoxkj5VKauMmaB2UKxbB+bYSFAi5TPxJ2mXqMCIt/1Twmxe8m9hwjv9V3HxLmMcLEzb7wmtKiRtJROwiOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756200627; c=relaxed/simple;
-	bh=OvUbIz95K4JXfdcPlfARC+AizRB3XJUiuZwikQ+/j1E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ttXD6VQ0s2TUOA7Qeg/G/+p28lonKeVNCe2DmXs1FL5QQaqXgZvJl83ESciiGDakpaXegKQ8Sg+CFq0Eq103lMfGRY5xe+clM5rLA3ideKjTpKj+hQ7WCrTX+ExiWcL5GCIS4cKmxCiJk1N6CuEgj41/V80hhgQCinmi/8TLZzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=compal.corp-partner.google.com; spf=pass smtp.mailfrom=compal.corp-partner.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s59G+bjG; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=compal.corp-partner.google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=compal.corp-partner.google.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-70d9eb2e655so44385886d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 02:30:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756200623; x=1756805423; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OvUbIz95K4JXfdcPlfARC+AizRB3XJUiuZwikQ+/j1E=;
-        b=s59G+bjG7OAUIP7IxnZmYpZYjJKTms7pfu6w86fK4vBe4UlOG1Ia8AKE5fyIHPosZO
-         jaqzVRX74rvU0sXuZvt4JunXJ7pyZp7o0ItAndlTBT3ck1VHvcsbZkKT+HNcucUb02I5
-         2j6n5tYMhW0YpKPmevylx5+h2R3RFhjXgCPmOiCJkGLlHSVn/icLQx+BgcqkkwGRmxNw
-         UPGY9x3hYoWmcoQb4DpV9Olv0B5Yqjgub2TFE12/a/ePtDQUXMGtfm0fH2aCBIdYbkBO
-         oIB2Pt6yBvnck1gseO/jTh440WAgWVQWkLKupALx8JRm02gq+1Iz5byzlpnb6ofNQu05
-         crsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756200623; x=1756805423;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OvUbIz95K4JXfdcPlfARC+AizRB3XJUiuZwikQ+/j1E=;
-        b=dX+XZnYCVRfrJ70PuwMcb1R5RfoWqKQWzxRwjZlFQDZYQfFXVeAuBWJONEj8z+vSOP
-         AI1vqI9JloTmoYhgFi9++swGM9XWdci11p0eUJVsLZ0TM1waECbpq6BgMCJoA8cXxwrh
-         rpg1RZ/dJ4DoI/uYH+tUXnmPb/VqNQV3huG84Bz7IqL3jAqKHLnwiyrWDcXMZ80oRqz8
-         qAw6HALmywnGAOiWbU2+V/V0bONvmo82uaMj3bpHECuB/52EWbTVCkD0++3idGYDGiIQ
-         eDiBv1ICG4VyoCOLlm2Id5YApe4bLadSZsNa8WYwyLAACK4UgfYPE8DB3V8P1CjPPqbk
-         YhIw==
-X-Gm-Message-State: AOJu0YwNVE2dunQqjX3HXI1NhZ9klIWblN/4xryaNCkZw+Cde0SZg78A
-	xgqt2Zv48T/2GhhHVtAkz727mgjWag8zZFqkf/e7EZVEKonnriVy6jj6yrQg+wa8zt2vuU5S7Z7
-	0P1EshjA+M7KayGMf3FPKHxO7gPUVbBES+/EdY8hEdQ==
-X-Gm-Gg: ASbGnctglQsit18nmwlUjB14ebky54XYzHCBv/Gf3FpJ+tYVuDIrsfMabPd+20VEFy0
-	yrdr4glCG7lJyMhmof8VcMg9k8Pfh9aPH6MMaEiwvdJcpjPCOiPwEjk7LAAAGLCNT0EgqNyG5TG
-	LwQj35w5bfW7+Cr5Pw+1U9344T1YKO9Loy0r7GBN9t0TscvYtVxQFE3f+98/h+He+TnV7Tflf5s
-	5CI+/o=
-X-Google-Smtp-Source: AGHT+IGmb6aCsOOpnEHv9Gpndnk4Vjl+wnb5OY915aQJlI5lgdEYqe5G/1E/Dq637FnnVD91zJaENT6TRFh3PTA48B0=
-X-Received: by 2002:a05:6214:2526:b0:70d:b80b:70c0 with SMTP id
- 6a1803df08f44-70db80b8896mr80009216d6.51.1756200623362; Tue, 26 Aug 2025
- 02:30:23 -0700 (PDT)
+	s=arc-20240116; t=1756200667; c=relaxed/simple;
+	bh=leHKkqb/0n2GK8S/i5rR/4vR044JN40o2bSSxMQafxM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ubga0tBvS9Z99EBZhhJsideEje7wCkaW6h6c77cM03wW/mFuE/5bye5L5YEttT6QSG0UPVBVi+pyOssynFuvTtbDWG0JsHXTXfxF7x19LxrvG4Xq0I7nyYMcvXHFm07xNaex3wfZfO91apxyiGFrQjWAaF/l3GjBZxqXTYAgxOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=wbZmprk2; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1756200662; x=1787736662;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=leHKkqb/0n2GK8S/i5rR/4vR044JN40o2bSSxMQafxM=;
+  b=wbZmprk2Ycyz/7VpZa2zuqq2CRM4HezPApAXhJhDJKqwLALjajHX0YzT
+   WxTP1yaLl44PrgIDOp6QQoGpTvsnJRdcjFfb1EFcjk6yXBkAlsxShcLZl
+   L3HwKFf0h/2D7pXyulEY0Hu/uVvitNYd1lP7U/LA/EVIfxOe+pfDbRNRp
+   eGzqei/sChkrwwoxjpBce9puG/y8uyaCDpeK9/OqcOGkKJ6jki0ybb/TB
+   MnhAqVVZHJn7wFWV4mlTH+WhKUyfjbevg271x0DYWk8cGf8R1o0Td2XVl
+   p02apR+aYsG0AalGxNHr1OsrB8Fd3M4GF1FkM58u8pLFoP+v5wLzh45gT
+   A==;
+X-CSE-ConnectionGUID: +J9wGsIaTyWt1cmEqfr09w==
+X-CSE-MsgGUID: 2kxjsAuKSAa9L/BqhS45uQ==
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="213075367"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 26 Aug 2025 02:31:00 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Tue, 26 Aug 2025 02:30:55 -0700
+Received: from [10.159.245.205] (10.10.85.11) by chn-vm-ex04.mchp-main.com
+ (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Tue, 26 Aug 2025 02:30:52 -0700
+Message-ID: <2eedec51-d773-4a3f-a936-4752d768702a@microchip.com>
+Date: Tue, 26 Aug 2025 11:30:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826090530.2409509-1-ajye_huang@compal.corp-partner.google.com>
- <431d4cbf-281a-4f93-bda4-767fa6b96c8c@linux.intel.com>
-In-Reply-To: <431d4cbf-281a-4f93-bda4-767fa6b96c8c@linux.intel.com>
-From: Ajye Huang <ajye_huang@compal.corp-partner.google.com>
-Date: Tue, 26 Aug 2025 17:30:12 +0800
-X-Gm-Features: Ac12FXxSXegTC0bZL7M87CxHLjg5Y4MEinlMDORv0H8fnA3ehnPv_o-ljoNpdTU
-Message-ID: <CALprXBaatmypSp=AUDjxYec87XRtnEE3vDc-VKsULPA2W5135w@mail.gmail.com>
-Subject: Re: [PATCH v1] ASoC: SOF: Intel: WCL: Add the sdw_process_wakeen op
-To: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
-	Mark Brown <broonie@kernel.org>, 
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, 
-	Bard Liao <yung-chuan.liao@linux.intel.com>, Jaroslav Kysela <perex@perex.cz>, 
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, Takashi Iwai <tiwai@suse.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
-	Mac Chiang <mac.chiang@intel.com>, alsa-devel@alsa-project.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v4 3/5] net: macb: move ring size computation to
+ functions
+To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, Andrew Lunn
+	<andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Claudiu Beznea
+	<claudiu.beznea@tuxon.dev>, Geert Uytterhoeven <geert@linux-m68k.org>, Harini
+ Katakam <harini.katakam@xilinx.com>, Richard Cochran
+	<richardcochran@gmail.com>, Russell King <linux@armlinux.org.uk>
+CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Thomas Petazzoni
+	<thomas.petazzoni@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>
+References: <20250820-macb-fixes-v4-0-23c399429164@bootlin.com>
+ <20250820-macb-fixes-v4-3-23c399429164@bootlin.com>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Content-Language: en-US, fr
+Organization: microchip
+In-Reply-To: <20250820-macb-fixes-v4-3-23c399429164@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 26, 2025 at 5:11=E2=80=AFPM P=C3=A9ter Ujfalusi
-<peter.ujfalusi@linux.intel.com> wrote:
+On 20/08/2025 at 16:55, Théo Lebrun wrote:
+> The tx/rx ring size calculation is somewhat complex and partially hidden
+> behind a macro. Move that out of the {RX,TX}_RING_BYTES() macros and
+> macb_{alloc,free}_consistent() functions into neat separate functions.
 
-> Can you add these tags and send v2?
-> Fixes: 6b04629ae97a ("ASoC: SOF: Intel: add initial support for WCL")
-> Acked-by: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
->
-> Thank you!
->
-Sure, I will follow it. thank you
+I agree.
+
+> In macb_free_consistent(), we drop the size variable and directly call
+> the size helpers in the arguments list. In macb_alloc_consistent(), we
+> keep the size variable that is used by netdev_dbg() calls.
+> 
+> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+
+> ---
+>   drivers/net/ethernet/cadence/macb_main.c | 27 ++++++++++++++++-----------
+>   1 file changed, 16 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+> index 69325665c766927797ca2e1eb1384105bcde3cb5..d413e8bd4977187fd73f7cc48268baf933aab051 100644
+> --- a/drivers/net/ethernet/cadence/macb_main.c
+> +++ b/drivers/net/ethernet/cadence/macb_main.c
+> @@ -51,14 +51,10 @@ struct sifive_fu540_macb_mgmt {
+>   #define DEFAULT_RX_RING_SIZE   512 /* must be power of 2 */
+>   #define MIN_RX_RING_SIZE       64
+>   #define MAX_RX_RING_SIZE       8192
+> -#define RX_RING_BYTES(bp)      (macb_dma_desc_get_size(bp)     \
+> -                                * (bp)->rx_ring_size)
+> 
+>   #define DEFAULT_TX_RING_SIZE   512 /* must be power of 2 */
+>   #define MIN_TX_RING_SIZE       64
+>   #define MAX_TX_RING_SIZE       4096
+> -#define TX_RING_BYTES(bp)      (macb_dma_desc_get_size(bp)     \
+> -                                * (bp)->tx_ring_size)
+> 
+>   /* level of occupied TX descriptors under which we wake up TX process */
+>   #define MACB_TX_WAKEUP_THRESH(bp)      (3 * (bp)->tx_ring_size / 4)
+> @@ -2466,11 +2462,20 @@ static void macb_free_rx_buffers(struct macb *bp)
+>          }
+>   }
+> 
+> +static unsigned int macb_tx_ring_size_per_queue(struct macb *bp)
+> +{
+> +       return macb_dma_desc_get_size(bp) * bp->tx_ring_size + bp->tx_bd_rd_prefetch;
+> +}
+> +
+> +static unsigned int macb_rx_ring_size_per_queue(struct macb *bp)
+> +{
+> +       return macb_dma_desc_get_size(bp) * bp->rx_ring_size + bp->rx_bd_rd_prefetch;
+> +}
+> +
+>   static void macb_free_consistent(struct macb *bp)
+>   {
+>          struct macb_queue *queue;
+>          unsigned int q;
+> -       int size;
+> 
+>          if (bp->rx_ring_tieoff) {
+>                  dma_free_coherent(&bp->pdev->dev, macb_dma_desc_get_size(bp),
+> @@ -2484,14 +2489,14 @@ static void macb_free_consistent(struct macb *bp)
+>                  kfree(queue->tx_skb);
+>                  queue->tx_skb = NULL;
+>                  if (queue->tx_ring) {
+> -                       size = TX_RING_BYTES(bp) + bp->tx_bd_rd_prefetch;
+> -                       dma_free_coherent(&bp->pdev->dev, size,
+> +                       dma_free_coherent(&bp->pdev->dev,
+> +                                         macb_tx_ring_size_per_queue(bp),
+>                                            queue->tx_ring, queue->tx_ring_dma);
+>                          queue->tx_ring = NULL;
+>                  }
+>                  if (queue->rx_ring) {
+> -                       size = RX_RING_BYTES(bp) + bp->rx_bd_rd_prefetch;
+> -                       dma_free_coherent(&bp->pdev->dev, size,
+> +                       dma_free_coherent(&bp->pdev->dev,
+> +                                         macb_rx_ring_size_per_queue(bp),
+>                                            queue->rx_ring, queue->rx_ring_dma);
+>                          queue->rx_ring = NULL;
+>                  }
+> @@ -2542,7 +2547,7 @@ static int macb_alloc_consistent(struct macb *bp)
+>          int size;
+> 
+>          for (q = 0, queue = bp->queues; q < bp->num_queues; ++q, ++queue) {
+> -               size = TX_RING_BYTES(bp) + bp->tx_bd_rd_prefetch;
+> +               size = macb_tx_ring_size_per_queue(bp);
+>                  queue->tx_ring = dma_alloc_coherent(&bp->pdev->dev, size,
+>                                                      &queue->tx_ring_dma,
+>                                                      GFP_KERNEL);
+> @@ -2560,7 +2565,7 @@ static int macb_alloc_consistent(struct macb *bp)
+>                  if (!queue->tx_skb)
+>                          goto out_err;
+> 
+> -               size = RX_RING_BYTES(bp) + bp->rx_bd_rd_prefetch;
+> +               size = macb_rx_ring_size_per_queue(bp);
+>                  queue->rx_ring = dma_alloc_coherent(&bp->pdev->dev, size,
+>                                                      &queue->rx_ring_dma,
+>                                                      GFP_KERNEL);
+> 
+> --
+> 2.50.1
+> 
+
 
