@@ -1,59 +1,90 @@
-Return-Path: <linux-kernel+bounces-787235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 753F9B37351
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 21:41:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A704AB37362
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 21:46:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99962463902
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:41:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E382C1BA2431
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:46:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF6C830CDA5;
-	Tue, 26 Aug 2025 19:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5655336CC9C;
+	Tue, 26 Aug 2025 19:45:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tLMhM2UN"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RCYFgRkK"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E952A5661;
-	Tue, 26 Aug 2025 19:41:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB922EA170;
+	Tue, 26 Aug 2025 19:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756237270; cv=none; b=kcU6p2ArxRvAtnZLDJRKH+jjrF1neXOlD2deR5w0tl+Y1fXUxajihZyz4xTcjyooQdYoqv/sAeDg3q2ikQvVoJZgfRfiQ1dKQfhhyJWIKb+UjoTu1mkkQDorplSHJOIX55DRooI2mcK6JS2SL0QWJs+hZGbzPFRStjIwH5GbHv8=
+	t=1756237557; cv=none; b=es3OCBF5p6R9FA0q2EPqn4JCAZwK/Zz6JpE4hw0oQ6Eb9H1PC0X2AnoDnar+8wjV8BMhao957KE//YDas8X3XgQ4Xf4qgPGiox7FShCf8vq0Nz1lyOsML3CcMdJk7lpr/ByDVetVBCMHIucwTlcuSUki2HXMACZ0Laiw5a6O5dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756237270; c=relaxed/simple;
-	bh=pB0HN5+AQjHtb2JgkDO+ZgAWnxex9FXJJaeFRpvCmWk=;
+	s=arc-20240116; t=1756237557; c=relaxed/simple;
+	bh=cFWS2QE4iSaLBHJfpDP0+CSDZ4ubcqaQtIbpYGK528I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=grlSm8nbhKEIWcv96tjlykv5YJty0EkXdnxfl9B8w47bUC/ECTkIpv+FcUu4mKXAyLNQI05zOPgoeBaP0pCy79GHbmUIsCSOvDQVvoZzdTWJE073zS5ZyfLYU3c/CeCj1zLrFda0f41DeeV+0Q5HjRswdMt0bGtgblVicM5fg/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=tLMhM2UN; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=CXZHG7FeAOLOdb03rd+3Zpl+8D1DiDY/d4hTHKY6fqE=; b=tLMhM2UN+tFtFq/me9RYX9Ry4N
-	ZLFYOPNJDlPOeXHAENuvC6xLP+OdJYI7lc9H8OEOWi9UiN5RLcky/5CUBRBznFnZ6KHGPMYyeTcS6
-	vV2+YZVbTe3o+lsHsGETnLvtBva1cNmCaV6pdcntMCvIOwUceGiHBoTTWA59pzOb9fSoh7yayjYQW
-	K9wbPXqGA8LG++N7xJ2YyC+SSvQEYwLcO6fa+eBqu6c6BPuZF5i11STRG8+wDnYdzSvu+SKOS2i8K
-	y+V17UBijIjB1jEODonYhpqCAedvVkN+vaxSzzditWefHn+TObeP3XWCKO0s/+kEdQDVzJmqx8Gp1
-	Sm1t0+PA==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uqzXT-00000008f9y-2mU8;
-	Tue, 26 Aug 2025 19:41:03 +0000
-Date: Tue, 26 Aug 2025 20:41:03 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Justin Sanders <justin@coraid.com>, Jens Axboe <axboe@kernel.dk>,
-	linux-block@vger.kernel.org
-Subject: Re: [PATCH 2/7] aoe: Stop calling page_address() in free_page()
-Message-ID: <aK4NzxmGZjKvsGz8@casper.infradead.org>
-References: <20250826193258.902608-1-vishal.moola@gmail.com>
- <20250826193258.902608-3-vishal.moola@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lBJEh6P2raEuiPysaSRMatKqM6Txaz5nx90OtT0C1vTCUMMUNyJNjWgFdxMgIVbk6ZibN1glEKMo8M72EKG/rPNQ0+zx3yqPFHJjyXwH7kojK7k1Q8q+EzUvTbcYZ0qM9OlgrI7AjDav901QJVjfqNrkWrFVxyTKUY9YMiShfuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RCYFgRkK; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756237557; x=1787773557;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=cFWS2QE4iSaLBHJfpDP0+CSDZ4ubcqaQtIbpYGK528I=;
+  b=RCYFgRkK6jM4B7QVK8WLjyEep6BDzykjDgtFz+60kVdkbg9Tx8bDG8Sq
+   nq2/yilwxuj9IDR/hFpTJQkcU10WOwPVoejti1sH9Qkg21mXnF4PnmVD3
+   VaUO3snlRop7uAvd/cStfwB+2SGJs+sAHs4T2B3NsjVRRNznypqAsT4r3
+   Bwaj/uvjwqC1KcxJ7A+CIzQi8gibPC4U+EPA9TVuhSSwSuZAkkeOOYcDv
+   0r6kvVqbrqN8nEFCX4rXhmzDv/MS8Iw2WWMD/aFnnH05w/UxhEhdWf02n
+   rj6lyjXNJZxLbjjVJccmCBiD9LxvUASLcEl9hO6V/DKv73OSMJep1RN7t
+   Q==;
+X-CSE-ConnectionGUID: ajUe3+9DQEGIxDQeCRkyrw==
+X-CSE-MsgGUID: hosl2LoQQ/2diHS1/AHzqw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11534"; a="58196731"
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="58196731"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 12:45:56 -0700
+X-CSE-ConnectionGUID: xxeCi0ckSjyYtDWqUo1YZg==
+X-CSE-MsgGUID: zdxvqFecRxianNLM+C+iZg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="174919769"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa004.fm.intel.com with ESMTP; 26 Aug 2025 12:45:50 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uqzc4-000SLD-1m;
+	Tue, 26 Aug 2025 19:45:48 +0000
+Date: Wed, 27 Aug 2025 03:43:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: Daniel Golle <daniel@makrotopia.org>, Hauke Mehrtens <hauke@hauke-m.de>,
+	Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	Andreas Schirm <andreas.schirm@siemens.com>,
+	Lukas Stockmann <lukas.stockmann@siemens.com>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Peter Christen <peter.christen@siemens.com>,
+	Avinash Jayaraman <ajayaraman@maxlinear.com>,
+	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
+	Juraj Povazanec <jpovazanec@maxlinear.com>,
+	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
+	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
+	"Livia M. Rosu" <lrosu@maxlinear.com>,
+	John Crispin <john@phrozen.org>
+Subject: Re: [PATCH net-next 2/6] net: dsa: lantiq_gswip: support
+ model-specific mac_select_pcs()
+Message-ID: <202508270335.PG3eJBYD-lkp@intel.com>
+References: <7576c237814016ee5e18572b2788f955071a922c.1756163848.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,36 +93,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250826193258.902608-3-vishal.moola@gmail.com>
+In-Reply-To: <7576c237814016ee5e18572b2788f955071a922c.1756163848.git.daniel@makrotopia.org>
 
-On Tue, Aug 26, 2025 at 12:32:53PM -0700, Vishal Moola (Oracle) wrote:
-> free_page() should be used when we only have a virtual address. We
-> should call __free_page() directly on our page instead.
-> 
-> Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+Hi Daniel,
 
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+kernel test robot noticed the following build warnings:
 
-Probably should have run ./scripts/get_maintainer.pl drivers/block/aoe/aoecmd.c
-Adding ccs.
+[auto build test WARNING on net-next/main]
 
->  drivers/block/aoe/aoecmd.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/block/aoe/aoecmd.c b/drivers/block/aoe/aoecmd.c
-> index 6298f8e271e3..a9affb7c264d 100644
-> --- a/drivers/block/aoe/aoecmd.c
-> +++ b/drivers/block/aoe/aoecmd.c
-> @@ -1761,6 +1761,6 @@ aoecmd_exit(void)
->  	kfree(kts);
->  	kfree(ktiowq);
->  
-> -	free_page((unsigned long) page_address(empty_page));
-> +	__free_page(empty_page);
->  	empty_page = NULL;
->  }
-> -- 
-> 2.51.0
-> 
-> 
+url:    https://github.com/intel-lab-lkp/linux/commits/Daniel-Golle/MAINTAINERS-lantiq_gswip-broaden-file-pattern/20250826-081728
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/7576c237814016ee5e18572b2788f955071a922c.1756163848.git.daniel%40makrotopia.org
+patch subject: [PATCH net-next 2/6] net: dsa: lantiq_gswip: support model-specific mac_select_pcs()
+config: alpha-randconfig-r133-20250826 (https://download.01.org/0day-ci/archive/20250827/202508270335.PG3eJBYD-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 8.5.0
+reproduce: (https://download.01.org/0day-ci/archive/20250827/202508270335.PG3eJBYD-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508270335.PG3eJBYD-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/net/dsa/lantiq_gswip.c:1607:30: sparse: sparse: symbol 'gswip_phylink_mac_ops' was not declared. Should it be static?
+
+vim +/gswip_phylink_mac_ops +1607 drivers/net/dsa/lantiq_gswip.c
+
+  1606	
+> 1607	const struct phylink_mac_ops gswip_phylink_mac_ops = {
+  1608		.mac_config		= gswip_phylink_mac_config,
+  1609		.mac_link_down		= gswip_phylink_mac_link_down,
+  1610		.mac_link_up		= gswip_phylink_mac_link_up,
+  1611		.mac_select_pcs		= gswip_phylink_mac_select_pcs,
+  1612	};
+  1613	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
