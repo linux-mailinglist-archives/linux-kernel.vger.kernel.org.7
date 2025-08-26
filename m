@@ -1,553 +1,266 @@
-Return-Path: <linux-kernel+bounces-785832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3123B3519E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:25:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A259B351AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:29:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB48C1B60F7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:25:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD3B12456F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:29:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E94D6266EEA;
-	Tue, 26 Aug 2025 02:25:14 +0000 (UTC)
-Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB6C26A1A4;
+	Tue, 26 Aug 2025 02:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="h24wJEnO"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013027.outbound.protection.outlook.com [40.107.159.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33292206BF;
-	Tue, 26 Aug 2025 02:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756175114; cv=none; b=lycaEQhlVSaZsVcnnZ9UxlL541dwJubl3SEwWVLk0Iq13Ga+aoAWZ9mHQ0L2prZZf/z3GX/7rgiLk/tJKZ7wc+zEvBbtn3M1zQNU20Jnl5Jtw3xSZ3MeMQH7ZK+Y6O/NrtmVhURW+OPWasjpvS6mqc5iaSuKCkK1fhd3MXMKecA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756175114; c=relaxed/simple;
-	bh=T1gASXVnzkZZTMBrtUvPm3t15M7yr3NnhpbaE3tv9L8=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lLWcjEgqkBxzm0mAkz9ERKizoISfUdhZZWZGwF27cDwkehL36lrgvEK4KVReDdg4dAs0btpD0U8K/xk+GuyHEarrjJZZqfmRoYDnOPOlvEbGt/we1u28dXfL4h/w8dOWtPfKZSDxXrrSWeVuwGiuCJcFlnCfA4Gh0cbgycUnrE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 26 Aug
- 2025 10:25:02 +0800
-Received: from mail.aspeedtech.com (192.168.10.13) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Tue, 26 Aug 2025 10:25:02 +0800
-From: Jammy Huang <jammy_huang@aspeedtech.com>
-To: <eajames@linux.ibm.com>, <mchehab@kernel.org>, <joel@jms.id.au>,
-	<andrew@aj.id.au>, <linux-media@vger.kernel.org>, <openbmc@lists.ozlabs.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v8 1/1] media: aspeed: Allow to capture from SoC display (GFX)
-Date: Tue, 26 Aug 2025 10:25:01 +0800
-Message-ID: <20250826022501.2354799-2-jammy_huang@aspeedtech.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250826022501.2354799-1-jammy_huang@aspeedtech.com>
-References: <20250826022501.2354799-1-jammy_huang@aspeedtech.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF11525B1DC;
+	Tue, 26 Aug 2025 02:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.27
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756175332; cv=fail; b=OMKpQcYhUw99EGnSdmmemqVcfv8sHQV1OEIz/Ep33hENw0VONYUtl+Th0Hw8cJ+LD3SHZ1mtTCtRTsbGchmshNsGsI4FgAmS0Utyu2UVbR0EO7JtmQ/a2mELiRwy5fmkuR5l1FmuPRGOS1gvy064Mtpc3nCRMQp19lVcDMoLszc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756175332; c=relaxed/simple;
+	bh=iDSg6BCByaqZz9hZUsCvUdvXjSMiGdX6DHhYeZ5hWJs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=qIfrUUwY7iI/SSXIPIlUnnhCX0nn4F8nYaCd/eMj6GinFKhn8q2Kp/WZLnCPF53tSA7Lqe8Ka6xh4RORodMT6MoF3aNJ5MNliLDDufeaUya+0S5LpVeajBvRN+REYtZYw+fgNFbsG08vpBgqzKvvob+RkIGfsmSE38cdzcsOEx8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=h24wJEnO; arc=fail smtp.client-ip=40.107.159.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Og9zyoU9Me7zvDaRX8q8f5eTu2GJjA5Ne5TJRFmdGfwSlwYqnuxTvFo/vj0UMdiGL1zo44PE1ZqnVWbIMvO3QnAuHos6E4NlNj2AsSKBN/FusSiVaO4SjWa4stbfo6vunc30Ix4rj8i0E94MRhq+LA/CEBJVYmPK/OySoH8/CYyTdFBiCis5c/Up06kMvRLXfr2rB923kHXaaIoAVaguTnA+e2rcJGugJMj5RYdrvZHJMYkfEi8Q/7D1sS0n/kNpKnJiBr4puahk3l8nuvk5kEHwhqUvcBkNRe+T9PUCI4cbc+H2D6UEaFlRwFsJyPY9wDFOU3mJYDmHABj7UB7uVw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iDSg6BCByaqZz9hZUsCvUdvXjSMiGdX6DHhYeZ5hWJs=;
+ b=F9MOxvaLxYWNHY2DkhOVncQ1HGF43CsPAQMEGj/lZDBSYJ3ZNCE6yOOE1QRQrVWuth6KnSWnd2ZkP+4wiKu2M3BoFJF0S7ASACy0j5HsNAI2f2biTtfa+lvMCiJRYAz8Ko/G3KF9gfWKKmRc0Urn5aptLGxASKoj8MAKO+v3NK/fIs/u/CRjyEFg4XY4B7wrO+3X8i9yuOXkQkj5e2VnvuAL0A6Iu6VXrl8TC9bdBJcXpkvaZfY9UOezudHtmF+c5tChplKrlttO081bGidiZg6vJfzoQd25p5d8E5go1QVEK6C3hvbw9EbOZ3NOmHYIC2qVcaJ6YhVGh1nop4XXoQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iDSg6BCByaqZz9hZUsCvUdvXjSMiGdX6DHhYeZ5hWJs=;
+ b=h24wJEnOl6MUZi24MR40AL+ly6XMPN81P2srDBoWMui4YzxLmQjvhiyXWxrz497yvd0hplPnb69KLMTeF4RkyrpQX+MUgUkiZ20agEdLZtSfDE8bVCxCy7wLHTtKGFVpjJ66+MpStcBn/gWIz+3PauMl/An+bq3asLGBno9f9CTZa8I0ST8Prh+7gulP9lvBL9u3FsO1kOVStfkYPnntIAHILWOPHo9mZeinMrXdOFQfAqKlXIn/ufWMt+eLuHFzZRAXYgliFCNTQxFSLYGxi5san612VGiuLj/57JIEF3K/UnAg30ottL4mnVXykr4IuM+Vxq9EZbVnd3u++xQd0Q==
+Received: from DU0PR04MB9496.eurprd04.prod.outlook.com (2603:10a6:10:32d::19)
+ by PA1PR04MB10889.eurprd04.prod.outlook.com (2603:10a6:102:491::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.11; Tue, 26 Aug
+ 2025 02:28:47 +0000
+Received: from DU0PR04MB9496.eurprd04.prod.outlook.com
+ ([fe80::4fa3:7420:14ed:5334]) by DU0PR04MB9496.eurprd04.prod.outlook.com
+ ([fe80::4fa3:7420:14ed:5334%4]) with mapi id 15.20.9073.010; Tue, 26 Aug 2025
+ 02:28:46 +0000
+From: Bough Chen <haibo.chen@nxp.com>
+To: Sherry Sun <sherry.sun@nxp.com>, Peng Fan <peng.fan@nxp.com>, Marc
+ Kleine-Budde <mkl@pengutronix.de>, Vincent Mailhol
+	<mailhol.vincent@wanadoo.fr>, Vinod Koul <vkoul@kernel.org>, Kishon Vijay
+ Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Aswath
+ Govindraju <a-govindraju@ti.com>, Shawn Guo <shawnguo@kernel.org>, Sascha
+ Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+	<kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Frank Li
+	<frank.li@nxp.com>
+CC: "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+	"linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, Peng Fan <peng.fan@nxp.com>
+Subject: RE: [PATCH v2 3/5] arm64: dts: imx95-15x15-evk: Use phys to replace
+ xceiver-supply
+Thread-Topic: [PATCH v2 3/5] arm64: dts: imx95-15x15-evk: Use phys to replace
+ xceiver-supply
+Thread-Index: AQHcFZt4BQdNsJVtLE2c7MgeVFovJrR0NHqAgAACGVA=
+Date: Tue, 26 Aug 2025 02:28:46 +0000
+Message-ID:
+ <DU0PR04MB9496B00796E5B862A10CDF849039A@DU0PR04MB9496.eurprd04.prod.outlook.com>
+References: <20250825-can-v2-0-c461e9fcbc14@nxp.com>
+ <20250825-can-v2-3-c461e9fcbc14@nxp.com>
+ <DB9PR04MB8429631F164C8AE7571AE3CB9239A@DB9PR04MB8429.eurprd04.prod.outlook.com>
+In-Reply-To:
+ <DB9PR04MB8429631F164C8AE7571AE3CB9239A@DB9PR04MB8429.eurprd04.prod.outlook.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DU0PR04MB9496:EE_|PA1PR04MB10889:EE_
+x-ms-office365-filtering-correlation-id: d8869a3f-16bf-422a-6003-08dde44848ce
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|19092799006|7416014|366016|1800799024|38070700018|921020;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?bVBhWWVOVGZsUXJVZFBldngybWhtMk1rNVJ0OFhPRnRhd1VJQXljSS9INk1H?=
+ =?utf-8?B?M2FNWFFWTHl2YXdJWkJ4Q1Rzam1NNWFQa1hFaCszcEtNT2JQUDlSeW5iajQw?=
+ =?utf-8?B?Rkl0SG1mY21vWDdDZ29oc2VHcUpLTG9LSzhwdVl3c0VKd05TN29QQlFScmFF?=
+ =?utf-8?B?YUJSU3NRTTJ4ZmRFd01wYjNnREUzanlpRVNtQUNiSG9udVp6dUJST3dCMExC?=
+ =?utf-8?B?U203OWROSzlTMHEyVEl0SzJsRjRoNWxkU1JIQW1jMTMwYUhxazNlYklwdTJG?=
+ =?utf-8?B?dGxLNkFHMy8zN0pFYkI0dlg2eCtvckNQTlB6Q1Axc3lyVkx2d2x4THNNY3Z6?=
+ =?utf-8?B?UWp0QWxQRGJ5RHowV0NHeXJuME5aaHpXeDc1OWpsZC8yU2VMdFAxeS9xQnVW?=
+ =?utf-8?B?WGxhRGxNZlZwM0hLUkY5Ty95b2pjaFBaYWZ4MlIrRTJTU0RCckRpejUxa0JG?=
+ =?utf-8?B?QzQwVytCV05vSEZBVFh5K1dUL2RQTVF6amlvMjVwM1JZUE5hTUJNb2VZVVlY?=
+ =?utf-8?B?M2U1TkJieGFtQVBGaEI1K3g5S0VnT1FBMnp1YzI0elFSNkxNTnBtN0d3S1pU?=
+ =?utf-8?B?L09VRVFXd21iTUwwNjVyeno2cHQ3OU52cXFmTGk5dUxLVWpXblprK25pR3J0?=
+ =?utf-8?B?RTlvWHJaK2JLL00zS3lQaE13VjJlZlllVHlpS2FETGlrYlNLSDRndHl3T3J3?=
+ =?utf-8?B?ejhENVQzNGp5OUJuUjVlUDhmMVphcXNiaG5Vd0ZpeWVzWVlPaUY0SWloNlpJ?=
+ =?utf-8?B?d1lCc1k3WlN1TC9mL3BhTVlPakl5UTlQZlY5YmFDeUh2eDJLSklDOFpDZVkw?=
+ =?utf-8?B?R0VmaHhBTTVyVmxMc1g1eG5ZTjZpV201aC9Tb1MzTlVvUmYrYU43dTB3VzRX?=
+ =?utf-8?B?dEtCcFVVbncyRk1naDdZNzk4dUpBT3Z2SUhjUTREb1p0RG5FTjJ0QWFuejFR?=
+ =?utf-8?B?T0RZa3dmYnVqQkJRZ2lKYWtHL2ZsZFRqcnVLVTd0NlgyeFJkbUF4R3N2Z1lj?=
+ =?utf-8?B?V1c5N25LNEpIdmhwcUl0MGFxU1ZpaTBTems4UHdnMHUweldTSCtFRjAwTTAy?=
+ =?utf-8?B?bW1Ia0Z4RHhxbWFEWWFrZXhVak5oTERMZ01BUEcwdmpiWXNCdDVnc25ZMXRl?=
+ =?utf-8?B?R05HR2F2NGFZVHloWE5xalVrVnZUazQrR0kxZkYxMm9SNlNzKzNNTHlDZ2hY?=
+ =?utf-8?B?dm9YKzVjQTNPRmRxTkhXS21PejF5eDFId2dobmFKTGRFaFZrWmRyazdEYTJh?=
+ =?utf-8?B?V2ZLbVU0K3NvOWVCUWNrc0xSZVdqNGM3NzVIRldkYWZjNTVDa2U5c1dwRi9j?=
+ =?utf-8?B?TGFFbC9ScmlZNitSWFNXWFpmSXFvZ3MxeGhLUTR6UTVNYTZsMHQ3VTVWSDk3?=
+ =?utf-8?B?ZlgyY254M3VydjdZNVUzL0FnY2VVUDhwek5yR0NXakxjU3I5UlR6MGdwMkRa?=
+ =?utf-8?B?dTlYRkpPUzIzL25UVTZJS0Z0dURPNTZlUkpyNXJBK3J3YmdzUGZla3VrbHFm?=
+ =?utf-8?B?QVUwamYzbVFKN25EcncxUHJ5OVZlSmRKQkhBTXlsNzgveTlOWXFLYlA0aEZF?=
+ =?utf-8?B?cDFqeEdlSTNrazJkai82Q3JvRS8wNm5aQVdMOEI4c3BzQVc1V0twSllDNnVQ?=
+ =?utf-8?B?WHNiZ3JyV2JvYVJpU1BpM3M4WjVCUENySC85cklmZmxsSHBqa21WR081MmF0?=
+ =?utf-8?B?NkVqTVo0cTVMenJldEIySGVQb0cyT3dUNjdZeUNCTU9KeGpjSzJuTnQrRnhG?=
+ =?utf-8?B?VGFNSnovb1hBNWhnZndDQUdTc24vZmFudnFyT3d2Q0VFY1FFTmszamJhYmY4?=
+ =?utf-8?B?ekl4Y2Y5RGora0ZBdHFRMkN2cjByWDMrb25VTDQ1dmhWNU03aVkxRFRuN2dG?=
+ =?utf-8?B?V0F6WnduQzgwUXdpbjRTNE40dmtEQVY0akRWc1NEeHV3ekNNUzVpNkQydytm?=
+ =?utf-8?B?V25IMjJvK3JjaVRXZUsvcmlHM2pzcVYrZCtmN2tBcVdmUE5IS1JLV3o2YllO?=
+ =?utf-8?B?aFZzR1FBM2xZbEltdHdEYWZZWGdqa0J0M3pCZFR0bDdKRHpDc205MVpuR1Zt?=
+ =?utf-8?Q?3Q1HyX?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9496.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(19092799006)(7416014)(366016)(1800799024)(38070700018)(921020);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?YWpoRUlNdlhVaWs3emRrZ09VVFBOMFhWZlRHYjFteTNqUFRDKzJDMFQ0Zmdq?=
+ =?utf-8?B?N05pWStWUGp3N044WGFzeXpxTDVqNTV1RDZWbzd6VHpLTitrLy91eXJ0bHpH?=
+ =?utf-8?B?VzUxQ1FIWXJRdUVic1NhNkwyUTZFTk84T2dYcEVtWnoyT1hZZHk5TGM0WU9X?=
+ =?utf-8?B?MGxONUVwUXpSWFJRYjluZUpHdzhyKzFETkprb0VyTVBiYVFWeW0zamp1NFNE?=
+ =?utf-8?B?R1JyUmwydm94T0h5bmNTUFNlaTg4MU1oYjM1SFh3d2haakJEdDVEV3g3RnR6?=
+ =?utf-8?B?bmJKdGZ2Q1IxRktpSjkwZis4UlVCQlcvaWdEdHFrbjNDdVd5Q1J2dVdJb01R?=
+ =?utf-8?B?Y21aUGlkV2ozQTRha24vUHlvM3R6R2pYaGN2TjloUzFFREpyQXlNS3hFS3R3?=
+ =?utf-8?B?SkxTZ2ZOSWZmckxvSnNhVTg5SlhNc3dPb3BWVnEvZUFscGlPOURkeldITkQr?=
+ =?utf-8?B?TkdEWUxrWjl6ZTZoVUhkMTh1VEdlVy9MVVZlUlN6c3NLbktVblgrSTFLcnhi?=
+ =?utf-8?B?NEFTYkZGaEJ3cTYzNkpaVmROZjRURjhVYUd2eVRWYzlwNUFMMnlKU3ZIdnJ2?=
+ =?utf-8?B?aW9KSDFCQkprR25jbjdsbkwyMXJjSmtWdEV1V3ZxWUlFTnp1ZEIzK3MwdFNJ?=
+ =?utf-8?B?YzFxbTFERy9uT0RSVWEzQWM5VnF2cTMrKzVTNThvamRjWjhBSy9yOGFhSnJU?=
+ =?utf-8?B?SldBdklVdjdVMmVxTGpWSE43Q0FWS0RRM3VPSThPblNZK3dpdjhMUGtWVS9K?=
+ =?utf-8?B?SThQRGtPVUErMkU3elNrNmtoZGRnU0szOGFsdUlxaHZ2RU44OHZtUkkrVTVT?=
+ =?utf-8?B?RXA1dEtpS2NDRHJjcktWMW00OFBZQWhxclN1Z0hKUHo4QVFra2RtWWc0ekRP?=
+ =?utf-8?B?WW54ZjBwYm4xRjBiZ2grUXlleWdibTVQS1c3M0JYSnpwb1VHNXhBbERWa2hw?=
+ =?utf-8?B?OHMwVkZwQ0o5eXN1dDFTcDlPNEo1WXcxdFN5MVpSMlk4V1lpVUFaSGpJZ1Q2?=
+ =?utf-8?B?WWcydllFTEpWUWlTc2pnbjZYQzRES053eDEzVTlzdHBOUnQvcU9jY1ZrYXlh?=
+ =?utf-8?B?cHlrVENBcXhHVXJreEpzc3d5amlyY0ZWQVBXUkcvUTg0MDRWWUhZYXl3eW0z?=
+ =?utf-8?B?eGlEUUlFVmpFVHdsaDRXS3V1dE1vUDZYK3VPbW55YWt4R0x1b3FVNnNOTmUz?=
+ =?utf-8?B?eFk4RitCUitoL0sxR29tS3gxTTdSVHpPUTVzQ2pMUWxBQVh2bEdLcW5pbWcx?=
+ =?utf-8?B?bmVqcGtrNTM3VHNFN0QxRy9ZbHNPTVFYWEt0Rlc4a0JtVkNLaXV3Y1ZZS29Z?=
+ =?utf-8?B?ZEV1YS80bG5CVFNvemVVeWRxVER2dVBFTlltR1FPUCtCVzNPMHVnbzhoVHhJ?=
+ =?utf-8?B?S2E2QUtNTzcrVmVqbjhSeWs1OEdJUnJBRThkWVppU20wUitXTVZXTEFHMis2?=
+ =?utf-8?B?YktveU9LUHh6T3Vhb3RVckRGL1JBcEV2a25KWVNvbVp2R0hNUzBqRit3MHc2?=
+ =?utf-8?B?MXZ3ZXBmTlNLaDQvNFVzdHNscjZQZzFkMmgzN0dhMVBLclNHaUxhRFZyaFR5?=
+ =?utf-8?B?eVNuNWRUWWpPbnhCY3o5RzAzQ3Bwb3BpQjQ4QXZEd0x6VnUycjFwcVhFbFUv?=
+ =?utf-8?B?a21vVW9OSTRiOWJYeVN5V1RnMTFOaW82eVY3MkZVOUpaU0Vnck9rY1lDVUNz?=
+ =?utf-8?B?NnhORG1aaWwrM2I5NWRXWlJNcGt2VFkrR1FTWkRPRTcyZFFBajI1S1dqWDBS?=
+ =?utf-8?B?ZHl1c29XWEpiTFgzWXNOSU9JelRvTEEvNzFjb2lzekVZcHVLaHhMd2F3NStq?=
+ =?utf-8?B?Sm5GS0JWYjNGV21wVEJsUEN5NUd3OWcrTlh6SmFoRjVXNTF2OE9UWkt3VXZH?=
+ =?utf-8?B?YS8zTFhpMGZSaDVXQ2grZ0M1QmhFZW9TZGJYK1kwOEx5NHdSNGFlVjNjYmdE?=
+ =?utf-8?B?SGxvSzZWWDdqWG11dkVoWTZqY2tIZTVUWGkyaTA5T0E5TUFzWVdSOEE4dWVK?=
+ =?utf-8?B?WnpRNmpzNTRZUHJnWHR1UDRHbXVVbEFwakhQQ1FXeWRrM2xsOVhuMng1MUxW?=
+ =?utf-8?B?OW9waGlPMTJFTk5mbjJqZm9taE1zS3NlTWdFZGY0QlZGWU5QK1FXekRBL3pr?=
+ =?utf-8?Q?IrN1W48KVCpiKhFiEcFEntXg0?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9496.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d8869a3f-16bf-422a-6003-08dde44848ce
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Aug 2025 02:28:46.6531
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: zcBCaeCLhUvqQOKuXLZfmmIxYx6XbCJ8lC0HJspnEcNg53N4Awd4P+tLWlpjtGWhWprFjaPXDRjvWL98Uf8C6g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10889
 
-ASPEED BMC IC has 2 different display engines. Please find AST2600's
-datasheet to get detailed information.
-
-1. VGA on PCIe
-2. SoC Display (GFX)
-
-By default, video engine (VE) will capture video from VGA. This patch
-adds an option to capture video from GFX with standard ioctl,
-vidioc_s_input.
-
-An enum, aspeed_video_input, is added for this purpose.
-enum aspeed_video_input {
-	VIDEO_INPUT_VGA = 0,
-	VIDEO_INPUT_GFX,
-	VIDEO_INPUT_MAX
-};
-
-To test this feature, you will need to enable GFX first. Please refer to
-ASPEED's SDK_User_Guide, 6.3.x Soc Display driver, for more information.
-In your application, you will need to use v4l2 ioctl, VIDIOC_S_INPUT, as
-below to select before start streaming.
-
-int rc;
-struct v4l2_input input;
-
-input.index = VIDEO_INPUT_GFX;
-rc = ioctl(fd, VIDIOC_S_INPUT, &input);
-if (rc < 0)
-{
-	...
-}
-
-Link: https://github.com/AspeedTech-BMC/openbmc/releases
-Signed-off-by: Jammy Huang <jammy_huang@aspeedtech.com>
----
- v8 changes:
-  - Add check in aspeed_video_set_input().
- v5 changes:
-  - Simplify aspeed_regmap_lookup.
- v4 changes:
-  - Use scoped/cleanup to make aspeed_regmap_lookup simpler.
- v3 changes:
-  - Update for enum_input.
----
- drivers/media/platform/aspeed/aspeed-video.c | 195 ++++++++++++++++---
- include/uapi/linux/aspeed-video.h            |   7 +
- 2 files changed, 174 insertions(+), 28 deletions(-)
-
-diff --git a/drivers/media/platform/aspeed/aspeed-video.c b/drivers/media/platform/aspeed/aspeed-video.c
-index 54cae0da9aca..669c8b5953d7 100644
---- a/drivers/media/platform/aspeed/aspeed-video.c
-+++ b/drivers/media/platform/aspeed/aspeed-video.c
-@@ -4,6 +4,7 @@
- 
- #include <linux/atomic.h>
- #include <linux/bitfield.h>
-+#include <linux/cleanup.h>
- #include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/device.h>
-@@ -25,6 +26,8 @@
- #include <linux/workqueue.h>
- #include <linux/debugfs.h>
- #include <linux/ktime.h>
-+#include <linux/regmap.h>
-+#include <linux/mfd/syscon.h>
- #include <media/v4l2-ctrls.h>
- #include <media/v4l2-dev.h>
- #include <media/v4l2-device.h>
-@@ -203,6 +206,25 @@
- #define VE_MEM_RESTRICT_START		0x310
- #define VE_MEM_RESTRICT_END		0x314
- 
-+/* SCU's registers */
-+#define SCU_MISC_CTRL			0xC0
-+#define  SCU_DPLL_SOURCE		BIT(20)
-+
-+/* GFX's registers */
-+#define GFX_CTRL			0x60
-+#define  GFX_CTRL_ENABLE		BIT(0)
-+#define  GFX_CTRL_FMT			GENMASK(9, 7)
-+
-+#define GFX_H_DISPLAY			0x70
-+#define  GFX_H_DISPLAY_DE		GENMASK(28, 16)
-+#define  GFX_H_DISPLAY_TOTAL		GENMASK(12, 0)
-+
-+#define GFX_V_DISPLAY			0x78
-+#define  GFX_V_DISPLAY_DE		GENMASK(27, 16)
-+#define  GFX_V_DISPLAY_TOTAL		GENMASK(11, 0)
-+
-+#define GFX_DISPLAY_ADDR		0x80
-+
- /*
-  * VIDEO_MODE_DETECT_DONE:	a flag raised if signal lock
-  * VIDEO_RES_CHANGE:		a flag raised if res_change work on-going
-@@ -262,6 +284,7 @@ struct aspeed_video_perf {
- /*
-  * struct aspeed_video - driver data
-  *
-+ * version:		holds the version of aspeed SoC
-  * res_work:		holds the delayed_work for res-detection if unlock
-  * buffers:		holds the list of buffer queued from user
-  * flags:		holds the state of video
-@@ -273,6 +296,7 @@ struct aspeed_video_perf {
-  * yuv420:		a flag raised if JPEG subsampling is 420
-  * format:		holds the video format
-  * hq_mode:		a flag raised if HQ is enabled. Only for VIDEO_FMT_ASPEED
-+ * input:		holds the video input
-  * frame_rate:		holds the frame_rate
-  * jpeg_quality:	holds jpeq's quality (0~11)
-  * jpeg_hq_quality:	holds hq's quality (1~12) only if hq_mode enabled
-@@ -298,6 +322,9 @@ struct aspeed_video {
- 	struct video_device vdev;
- 	struct mutex video_lock;	/* v4l2 and videobuf2 lock */
- 
-+	struct regmap *scu;
-+	struct regmap *gfx;
-+	u32 version;
- 	u32 jpeg_mode;
- 	u32 comp_size_read;
- 
-@@ -316,6 +343,7 @@ struct aspeed_video {
- 	bool yuv420;
- 	enum aspeed_video_format format;
- 	bool hq_mode;
-+	enum aspeed_video_input input;
- 	unsigned int frame_rate;
- 	unsigned int jpeg_quality;
- 	unsigned int jpeg_hq_quality;
-@@ -331,21 +359,25 @@ struct aspeed_video {
- #define to_aspeed_video(x) container_of((x), struct aspeed_video, v4l2_dev)
- 
- struct aspeed_video_config {
-+	u32 version;
- 	u32 jpeg_mode;
- 	u32 comp_size_read;
- };
- 
- static const struct aspeed_video_config ast2400_config = {
-+	.version = 4,
- 	.jpeg_mode = AST2400_VE_SEQ_CTRL_JPEG_MODE,
- 	.comp_size_read = AST2400_VE_COMP_SIZE_READ_BACK,
- };
- 
- static const struct aspeed_video_config ast2500_config = {
-+	.version = 5,
- 	.jpeg_mode = AST2500_VE_SEQ_CTRL_JPEG_MODE,
- 	.comp_size_read = AST2400_VE_COMP_SIZE_READ_BACK,
- };
- 
- static const struct aspeed_video_config ast2600_config = {
-+	.version = 6,
- 	.jpeg_mode = AST2500_VE_SEQ_CTRL_JPEG_MODE,
- 	.comp_size_read = AST2600_VE_COMP_SIZE_READ_BACK,
- };
-@@ -485,6 +517,7 @@ static const struct v4l2_dv_timings_cap aspeed_video_timings_cap = {
- 
- static const char * const format_str[] = {"Standard JPEG",
- 	"Aspeed JPEG"};
-+static const char * const input_str[] = {"HOST VGA", "BMC GFX"};
- 
- static unsigned int debug;
- 
-@@ -609,6 +642,14 @@ static int aspeed_video_start_frame(struct aspeed_video *video)
- 		aspeed_video_free_buf(video, &video->bcd);
- 	}
- 
-+	if (video->input == VIDEO_INPUT_GFX) {
-+		u32 val;
-+
-+		// update input buffer address as gfx's
-+		regmap_read(video->gfx, GFX_DISPLAY_ADDR, &val);
-+		aspeed_video_write(video, VE_TGS_0, val);
-+	}
-+
- 	spin_lock_irqsave(&video->lock, flags);
- 	buf = list_first_entry_or_null(&video->buffers,
- 				       struct aspeed_video_buffer, link);
-@@ -1026,9 +1067,23 @@ static void aspeed_video_get_timings(struct aspeed_video *v,
- 	}
- }
- 
-+static void aspeed_video_get_resolution_gfx(struct aspeed_video *video,
-+					    struct v4l2_bt_timings *det)
-+{
-+	u32 h_val, v_val;
-+
-+	regmap_read(video->gfx, GFX_H_DISPLAY, &h_val);
-+	regmap_read(video->gfx, GFX_V_DISPLAY, &v_val);
-+
-+	det->width = FIELD_GET(GFX_H_DISPLAY_DE, h_val) + 1;
-+	det->height = FIELD_GET(GFX_V_DISPLAY_DE, v_val) + 1;
-+	video->v4l2_input_status = 0;
-+}
-+
- #define res_check(v) test_and_clear_bit(VIDEO_MODE_DETECT_DONE, &(v)->flags)
- 
--static void aspeed_video_get_resolution(struct aspeed_video *video)
-+static void aspeed_video_get_resolution_vga(struct aspeed_video *video,
-+					    struct v4l2_bt_timings *det)
- {
- 	bool invalid_resolution = true;
- 	int rc;
-@@ -1036,7 +1091,6 @@ static void aspeed_video_get_resolution(struct aspeed_video *video)
- 	u32 mds;
- 	u32 src_lr_edge;
- 	u32 src_tb_edge;
--	struct v4l2_bt_timings *det = &video->detected_timings;
- 
- 	det->width = MIN_WIDTH;
- 	det->height = MIN_HEIGHT;
-@@ -1113,14 +1167,20 @@ static void aspeed_video_get_resolution(struct aspeed_video *video)
- 
- 	aspeed_video_get_timings(video, det);
- 
--	/*
--	 * Enable mode-detect watchdog, resolution-change watchdog and
--	 * automatic compression after frame capture.
--	 */
-+	/* Enable mode-detect watchdog, resolution-change watchdog */
- 	aspeed_video_update(video, VE_INTERRUPT_CTRL, 0,
- 			    VE_INTERRUPT_MODE_DETECT_WD);
--	aspeed_video_update(video, VE_SEQ_CTRL, 0,
--			    VE_SEQ_CTRL_AUTO_COMP | VE_SEQ_CTRL_EN_WATCHDOG);
-+	aspeed_video_update(video, VE_SEQ_CTRL, 0, VE_SEQ_CTRL_EN_WATCHDOG);
-+}
-+
-+static void aspeed_video_get_resolution(struct aspeed_video *video)
-+{
-+	struct v4l2_bt_timings *det = &video->detected_timings;
-+
-+	if (video->input == VIDEO_INPUT_GFX)
-+		aspeed_video_get_resolution_gfx(video, det);
-+	else
-+		aspeed_video_get_resolution_vga(video, det);
- 
- 	v4l2_dbg(1, debug, &video->v4l2_dev, "Got resolution: %dx%d\n",
- 		 det->width, det->height);
-@@ -1156,7 +1216,7 @@ static void aspeed_video_set_resolution(struct aspeed_video *video)
- 	aspeed_video_write(video, VE_SRC_SCANLINE_OFFSET, act->width * 4);
- 
- 	/* Don't use direct mode below 1024 x 768 (irqs don't fire) */
--	if (size < DIRECT_FETCH_THRESHOLD) {
-+	if (video->input == VIDEO_INPUT_VGA && size < DIRECT_FETCH_THRESHOLD) {
- 		v4l2_dbg(1, debug, &video->v4l2_dev, "Capture: Sync Mode\n");
- 		aspeed_video_write(video, VE_TGS_0,
- 				   FIELD_PREP(VE_TGS_FIRST,
-@@ -1171,10 +1231,20 @@ static void aspeed_video_set_resolution(struct aspeed_video *video)
- 				    VE_CTRL_INT_DE | VE_CTRL_DIRECT_FETCH,
- 				    VE_CTRL_INT_DE);
- 	} else {
-+		u32 ctrl, val, bpp;
-+
- 		v4l2_dbg(1, debug, &video->v4l2_dev, "Capture: Direct Mode\n");
-+		ctrl = VE_CTRL_DIRECT_FETCH;
-+		if (video->input == VIDEO_INPUT_GFX) {
-+			regmap_read(video->gfx, GFX_CTRL, &val);
-+			bpp = FIELD_GET(GFX_CTRL_FMT, val) ? 32 : 16;
-+			if (bpp == 16)
-+				ctrl |= VE_CTRL_INT_DE;
-+			aspeed_video_write(video, VE_TGS_1, act->width * (bpp >> 3));
-+		}
- 		aspeed_video_update(video, VE_CTRL,
- 				    VE_CTRL_INT_DE | VE_CTRL_DIRECT_FETCH,
--				    VE_CTRL_DIRECT_FETCH);
-+				    ctrl);
- 	}
- 
- 	size *= 4;
-@@ -1207,6 +1277,22 @@ static void aspeed_video_set_resolution(struct aspeed_video *video)
- 		aspeed_video_free_buf(video, &video->srcs[0]);
- }
- 
-+/*
-+ * Update relative parameters when timing changed.
-+ *
-+ * @video: the struct of aspeed_video
-+ * @timings: the new timings
-+ */
-+static void aspeed_video_update_timings(struct aspeed_video *video, struct v4l2_bt_timings *timings)
-+{
-+	video->active_timings = *timings;
-+	aspeed_video_set_resolution(video);
-+
-+	video->pix_fmt.width = timings->width;
-+	video->pix_fmt.height = timings->height;
-+	video->pix_fmt.sizeimage = video->max_compressed_size;
-+}
-+
- static void aspeed_video_update_regs(struct aspeed_video *video)
- {
- 	u8 jpeg_hq_quality = clamp((int)video->jpeg_hq_quality - 1, 0,
-@@ -1219,6 +1305,8 @@ static void aspeed_video_update_regs(struct aspeed_video *video)
- 	u32 ctrl = 0;
- 	u32 seq_ctrl = 0;
- 
-+	v4l2_dbg(1, debug, &video->v4l2_dev, "input(%s)\n",
-+		 input_str[video->input]);
- 	v4l2_dbg(1, debug, &video->v4l2_dev, "framerate(%d)\n",
- 		 video->frame_rate);
- 	v4l2_dbg(1, debug, &video->v4l2_dev, "jpeg format(%s) subsample(%s)\n",
-@@ -1234,6 +1322,9 @@ static void aspeed_video_update_regs(struct aspeed_video *video)
- 	else
- 		aspeed_video_update(video, VE_BCD_CTRL, VE_BCD_CTRL_EN_BCD, 0);
- 
-+	if (video->input == VIDEO_INPUT_VGA)
-+		ctrl |= VE_CTRL_AUTO_OR_CURSOR;
-+
- 	if (video->frame_rate)
- 		ctrl |= FIELD_PREP(VE_CTRL_FRC, video->frame_rate);
- 
-@@ -1252,7 +1343,9 @@ static void aspeed_video_update_regs(struct aspeed_video *video)
- 	aspeed_video_update(video, VE_SEQ_CTRL,
- 			    video->jpeg_mode | VE_SEQ_CTRL_YUV420,
- 			    seq_ctrl);
--	aspeed_video_update(video, VE_CTRL, VE_CTRL_FRC, ctrl);
-+	aspeed_video_update(video, VE_CTRL,
-+			    VE_CTRL_FRC | VE_CTRL_AUTO_OR_CURSOR |
-+			    VE_CTRL_SOURCE, ctrl);
- 	aspeed_video_update(video, VE_COMP_CTRL,
- 			    VE_COMP_CTRL_DCT_LUM | VE_COMP_CTRL_DCT_CHR |
- 			    VE_COMP_CTRL_EN_HQ | VE_COMP_CTRL_HQ_DCT_LUM |
-@@ -1280,6 +1373,7 @@ static void aspeed_video_init_regs(struct aspeed_video *video)
- 	aspeed_video_write(video, VE_JPEG_ADDR, video->jpeg.dma);
- 
- 	/* Set control registers */
-+	aspeed_video_write(video, VE_SEQ_CTRL, VE_SEQ_CTRL_AUTO_COMP);
- 	aspeed_video_write(video, VE_CTRL, ctrl);
- 	aspeed_video_write(video, VE_COMP_CTRL, VE_COMP_CTRL_RSVD);
- 
-@@ -1311,12 +1405,7 @@ static void aspeed_video_start(struct aspeed_video *video)
- 	aspeed_video_get_resolution(video);
- 
- 	/* Set timings since the device is being opened for the first time */
--	video->active_timings = video->detected_timings;
--	aspeed_video_set_resolution(video);
--
--	video->pix_fmt.width = video->active_timings.width;
--	video->pix_fmt.height = video->active_timings.height;
--	video->pix_fmt.sizeimage = video->max_compressed_size;
-+	aspeed_video_update_timings(video, &video->detected_timings);
- }
- 
- static void aspeed_video_stop(struct aspeed_video *video)
-@@ -1401,10 +1490,10 @@ static int aspeed_video_enum_input(struct file *file, void *fh,
- {
- 	struct aspeed_video *video = video_drvdata(file);
- 
--	if (inp->index)
-+	if (inp->index >= VIDEO_INPUT_MAX)
- 		return -EINVAL;
- 
--	strscpy(inp->name, "Host VGA capture", sizeof(inp->name));
-+	sprintf(inp->name, "%s capture", input_str[inp->index]);
- 	inp->type = V4L2_INPUT_TYPE_CAMERA;
- 	inp->capabilities = V4L2_IN_CAP_DV_TIMINGS;
- 	inp->status = video->v4l2_input_status;
-@@ -1414,16 +1503,53 @@ static int aspeed_video_enum_input(struct file *file, void *fh,
- 
- static int aspeed_video_get_input(struct file *file, void *fh, unsigned int *i)
- {
--	*i = 0;
-+	struct aspeed_video *video = video_drvdata(file);
-+
-+	*i = video->input;
- 
- 	return 0;
- }
- 
- static int aspeed_video_set_input(struct file *file, void *fh, unsigned int i)
- {
--	if (i)
-+	struct aspeed_video *video = video_drvdata(file);
-+
-+	if (i >= VIDEO_INPUT_MAX)
- 		return -EINVAL;
- 
-+	if (i == video->input)
-+		return 0;
-+
-+	if (vb2_is_busy(&video->queue))
-+		return -EBUSY;
-+
-+	if (IS_ERR(video->scu)) {
-+		v4l2_dbg(1, debug, &video->v4l2_dev, "%s: scu isn't ready for input-control\n", __func__);
-+		return -EINVAL;
-+	}
-+
-+	if (IS_ERR(video->gfx) && i == VIDEO_INPUT_GFX) {
-+		v4l2_dbg(1, debug, &video->v4l2_dev, "%s: gfx isn't ready for GFX input\n", __func__);
-+		return -EINVAL;
-+	}
-+
-+	video->input = i;
-+
-+	if (video->version == 6) {
-+		/* modify dpll source per current input */
-+		if (video->input == VIDEO_INPUT_VGA)
-+			regmap_update_bits(video->scu, SCU_MISC_CTRL, SCU_DPLL_SOURCE, 0);
-+		else
-+			regmap_update_bits(video->scu, SCU_MISC_CTRL, SCU_DPLL_SOURCE, SCU_DPLL_SOURCE);
-+	}
-+
-+	aspeed_video_update_regs(video);
-+
-+	/* update signal status */
-+	aspeed_video_get_resolution(video);
-+	if (!video->v4l2_input_status)
-+		aspeed_video_update_timings(video, &video->detected_timings);
-+
- 	return 0;
- }
- 
-@@ -1527,13 +1653,7 @@ static int aspeed_video_set_dv_timings(struct file *file, void *fh,
- 	if (vb2_is_busy(&video->queue))
- 		return -EBUSY;
- 
--	video->active_timings = timings->bt;
--
--	aspeed_video_set_resolution(video);
--
--	video->pix_fmt.width = timings->bt.width;
--	video->pix_fmt.height = timings->bt.height;
--	video->pix_fmt.sizeimage = video->max_compressed_size;
-+	aspeed_video_update_timings(video, &timings->bt);
- 
- 	timings->type = V4L2_DV_BT_656_1120;
- 
-@@ -1909,6 +2029,7 @@ static int aspeed_video_debugfs_show(struct seq_file *s, void *data)
- 	val08 = aspeed_video_read(v, VE_CTRL);
- 	if (FIELD_GET(VE_CTRL_DIRECT_FETCH, val08)) {
- 		seq_printf(s, "  %-20s:\tDirect fetch\n", "Mode");
-+		seq_printf(s, "  %-20s:\t%s\n", "Input", input_str[v->input]);
- 		seq_printf(s, "  %-20s:\t%s\n", "VGA bpp mode",
- 			   FIELD_GET(VE_CTRL_INT_DE, val08) ? "16" : "32");
- 	} else {
-@@ -2068,12 +2189,29 @@ static int aspeed_video_setup_video(struct aspeed_video *video)
- 	return 0;
- }
- 
-+/*
-+ * Get regmap without checking res, such as clk/reset, that could lead to
-+ * conflict.
-+ */
-+static struct regmap *aspeed_regmap_lookup(struct device_node *np, const char *property)
-+{
-+	struct device_node *syscon_np __free(device_node) = of_parse_phandle(np, property, 0);
-+
-+	if (!syscon_np)
-+		return ERR_PTR(-ENODEV);
-+
-+	return device_node_to_regmap(syscon_np);
-+}
-+
- static int aspeed_video_init(struct aspeed_video *video)
- {
- 	int irq;
- 	int rc;
- 	struct device *dev = video->dev;
- 
-+	video->scu = aspeed_regmap_lookup(dev->of_node, "aspeed,scu");
-+	video->gfx = aspeed_regmap_lookup(dev->of_node, "aspeed,gfx");
-+
- 	irq = irq_of_parse_and_map(dev->of_node, 0);
- 	if (!irq) {
- 		dev_err(dev, "Unable to find IRQ\n");
-@@ -2165,6 +2303,7 @@ static int aspeed_video_probe(struct platform_device *pdev)
- 	if (!config)
- 		return -ENODEV;
- 
-+	video->version = config->version;
- 	video->jpeg_mode = config->jpeg_mode;
- 	video->comp_size_read = config->comp_size_read;
- 
-diff --git a/include/uapi/linux/aspeed-video.h b/include/uapi/linux/aspeed-video.h
-index 6586a65548c4..15168e8c931e 100644
---- a/include/uapi/linux/aspeed-video.h
-+++ b/include/uapi/linux/aspeed-video.h
-@@ -8,6 +8,13 @@
- 
- #include <linux/v4l2-controls.h>
- 
-+/* aspeed video's input types */
-+enum aspeed_video_input {
-+	VIDEO_INPUT_VGA = 0,
-+	VIDEO_INPUT_GFX,
-+	VIDEO_INPUT_MAX
-+};
-+
- #define V4L2_CID_ASPEED_HQ_MODE			(V4L2_CID_USER_ASPEED_BASE  + 1)
- #define V4L2_CID_ASPEED_HQ_JPEG_QUALITY		(V4L2_CID_USER_ASPEED_BASE  + 2)
- 
--- 
-2.25.1
-
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTaGVycnkgU3VuIDxzaGVycnku
+c3VuQG54cC5jb20+DQo+IFNlbnQ6IDIwMjXlubQ45pyIMjbml6UgMTA6MTkNCj4gVG86IFBlbmcg
+RmFuIDxwZW5nLmZhbkBueHAuY29tPjsgTWFyYyBLbGVpbmUtQnVkZGUgPG1rbEBwZW5ndXRyb25p
+eC5kZT47DQo+IFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+OyBW
+aW5vZCBLb3VsDQo+IDx2a291bEBrZXJuZWwub3JnPjsgS2lzaG9uIFZpamF5IEFicmFoYW0gSSA8
+a2lzaG9uQGtlcm5lbC5vcmc+OyBSb2IgSGVycmluZw0KPiA8cm9iaEBrZXJuZWwub3JnPjsgS3J6
+eXN6dG9mIEtvemxvd3NraSA8a3J6aytkdEBrZXJuZWwub3JnPjsgQ29ub3IgRG9vbGV5DQo+IDxj
+b25vcitkdEBrZXJuZWwub3JnPjsgQXN3YXRoIEdvdmluZHJhanUgPGEtZ292aW5kcmFqdUB0aS5j
+b20+OyBTaGF3bg0KPiBHdW8gPHNoYXduZ3VvQGtlcm5lbC5vcmc+OyBTYXNjaGEgSGF1ZXIgPHMu
+aGF1ZXJAcGVuZ3V0cm9uaXguZGU+Ow0KPiBQZW5ndXRyb25peCBLZXJuZWwgVGVhbSA8a2VybmVs
+QHBlbmd1dHJvbml4LmRlPjsgRmFiaW8gRXN0ZXZhbQ0KPiA8ZmVzdGV2YW1AZ21haWwuY29tPjsg
+RnJhbmsgTGkgPGZyYW5rLmxpQG54cC5jb20+OyBCb3VnaCBDaGVuDQo+IDxoYWliby5jaGVuQG54
+cC5jb20+DQo+IENjOiBsaW51eC1jYW5Admdlci5rZXJuZWwub3JnOyBsaW51eC1waHlAbGlzdHMu
+aW5mcmFkZWFkLm9yZzsNCj4gZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5l
+bEB2Z2VyLmtlcm5lbC5vcmc7IGlteEBsaXN0cy5saW51eC5kZXY7DQo+IGxpbnV4LWFybS1rZXJu
+ZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsgUGVuZyBGYW4gPHBlbmcuZmFuQG54cC5jb20+DQo+IFN1
+YmplY3Q6IFJFOiBbUEFUQ0ggdjIgMy81XSBhcm02NDogZHRzOiBpbXg5NS0xNXgxNS1ldms6IFVz
+ZSBwaHlzIHRvIHJlcGxhY2UNCj4geGNlaXZlci1zdXBwbHkNCj4gDQo+IA0KPiANCj4gPiAtLS0t
+LU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+IEZyb206IFBlbmcgRmFuIDxwZW5nLmZhbkBueHAu
+Y29tPg0KPiA+IFNlbnQ6IE1vbmRheSwgQXVndXN0IDI1LCAyMDI1IDQ6MzcgUE0NCj4gPiBUbzog
+TWFyYyBLbGVpbmUtQnVkZGUgPG1rbEBwZW5ndXRyb25peC5kZT47IFZpbmNlbnQgTWFpbGhvbA0K
+PiA+IDxtYWlsaG9sLnZpbmNlbnRAd2FuYWRvby5mcj47IFZpbm9kIEtvdWwgPHZrb3VsQGtlcm5l
+bC5vcmc+OyBLaXNob24NCj4gPiBWaWpheSBBYnJhaGFtIEkgPGtpc2hvbkBrZXJuZWwub3JnPjsg
+Um9iIEhlcnJpbmcgPHJvYmhAa2VybmVsLm9yZz47DQo+ID4gS3J6eXN6dG9mIEtvemxvd3NraSA8
+a3J6aytkdEBrZXJuZWwub3JnPjsgQ29ub3IgRG9vbGV5DQo+ID4gPGNvbm9yK2R0QGtlcm5lbC5v
+cmc+OyBBc3dhdGggR292aW5kcmFqdSA8YS1nb3ZpbmRyYWp1QHRpLmNvbT47IFNoYXduDQo+ID4g
+R3VvIDxzaGF3bmd1b0BrZXJuZWwub3JnPjsgU2FzY2hhIEhhdWVyIDxzLmhhdWVyQHBlbmd1dHJv
+bml4LmRlPjsNCj4gPiBQZW5ndXRyb25peCBLZXJuZWwgVGVhbSA8a2VybmVsQHBlbmd1dHJvbml4
+LmRlPjsgRmFiaW8gRXN0ZXZhbQ0KPiA+IDxmZXN0ZXZhbUBnbWFpbC5jb20+OyBGcmFuayBMaSA8
+ZnJhbmsubGlAbnhwLmNvbT47IEJvdWdoIENoZW4NCj4gPiA8aGFpYm8uY2hlbkBueHAuY29tPg0K
+PiA+IENjOiBsaW51eC1jYW5Admdlci5rZXJuZWwub3JnOyBsaW51eC1waHlAbGlzdHMuaW5mcmFk
+ZWFkLm9yZzsNCj4gPiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZn
+ZXIua2VybmVsLm9yZzsNCj4gPiBpbXhAbGlzdHMubGludXguZGV2OyBsaW51eC1hcm0ta2VybmVs
+QGxpc3RzLmluZnJhZGVhZC5vcmc7IFBlbmcgRmFuDQo+ID4gPHBlbmcuZmFuQG54cC5jb20+DQo+
+ID4gU3ViamVjdDogW1BBVENIIHYyIDMvNV0gYXJtNjQ6IGR0czogaW14OTUtMTV4MTUtZXZrOiBV
+c2UgcGh5cyB0bw0KPiA+IHJlcGxhY2UgeGNlaXZlci1zdXBwbHkNCj4gPg0KPiA+IFRoZSBUSkEx
+MDUxVC8zIHVzZWQgb24gaS5NWDk1LTE1eDE1LUVWSyBpcyBhY3R1YWxseSBoaWdoLXNwZWVkIENB
+Tg0KPiA+IHRyYW5zY2VpdmVyLCBub3QgYSByZWd1bGF0b3Igc3VwcGx5LiBTbyB1c2UgcGh5cyB0
+byByZWZsZWN0IHRoZSB0cnV0aC4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFBlbmcgRmFuIDxw
+ZW5nLmZhbkBueHAuY29tPg0KPiA+IC0tLQ0KPiA+ICBhcmNoL2FybTY0L2Jvb3QvZHRzL2ZyZWVz
+Y2FsZS9pbXg5NS0xNXgxNS1ldmsuZHRzIHwgMTMgKysrKysrLS0tLS0tLQ0KPiA+ICAxIGZpbGUg
+Y2hhbmdlZCwgNiBpbnNlcnRpb25zKCspLCA3IGRlbGV0aW9ucygtKQ0KPiA+DQo+ID4gZGlmZiAt
+LWdpdCBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvZnJlZXNjYWxlL2lteDk1LTE1eDE1LWV2ay5kdHMN
+Cj4gPiBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvZnJlZXNjYWxlL2lteDk1LTE1eDE1LWV2ay5kdHMN
+Cj4gPiBpbmRleA0KPiA+DQo+IDQ2ZjZlMGZiZjJiMDkxMDZlNmU3MjZmZjhiNjE1MjJkMTM1OWNm
+YTQuLmY2MTk3YmEzNTZkNDliOTdiZjcyODdjM2YwDQo+ID4gZjg2ZWY4NGY4OWJhYzkgMTAwNjQ0
+DQo+ID4gLS0tIGEvYXJjaC9hcm02NC9ib290L2R0cy9mcmVlc2NhbGUvaW14OTUtMTV4MTUtZXZr
+LmR0cw0KPiA+ICsrKyBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvZnJlZXNjYWxlL2lteDk1LTE1eDE1
+LWV2ay5kdHMNCj4gPiBAQCAtODksMTIgKzg5LDExIEBAIHJlZ19hdWRpb19zd2l0Y2gxOiByZWd1
+bGF0b3ItYXVkaW8tc3dpdGNoMSB7DQo+ID4gIAkJZ3BpbyA9IDwmcGNhbDY1MjQgMCBHUElPX0FD
+VElWRV9MT1c+Ow0KPiA+ICAJfTsNCj4gPg0KPiA+IC0JcmVnX2NhbjJfc3RieTogcmVndWxhdG9y
+LWNhbjItc3RieSB7DQo+ID4gLQkJY29tcGF0aWJsZSA9ICJyZWd1bGF0b3ItZml4ZWQiOw0KPiA+
+IC0JCXJlZ3VsYXRvci1tYXgtbWljcm92b2x0ID0gPDMzMDAwMDA+Ow0KPiA+IC0JCXJlZ3VsYXRv
+ci1taW4tbWljcm92b2x0ID0gPDMzMDAwMDA+Ow0KPiA+IC0JCXJlZ3VsYXRvci1uYW1lID0gImNh
+bjItc3RieSI7DQo+ID4gLQkJZ3BpbyA9IDwmcGNhbDY1MjQgMTQgR1BJT19BQ1RJVkVfTE9XPjsN
+Cj4gPiArCWZsZXhjYW4yX3BoeTogY2FuLXBoeSB7DQo+ID4gKwkJY29tcGF0aWJsZSA9ICJueHAs
+dGphMTA1MSIsICJ0aSx0Y2FuMTA0MyI7DQo+ID4gKwkJI3BoeS1jZWxscyA9IDwwPjsNCj4gPiAr
+CQltYXgtYml0cmF0ZSA9IDwxMDAwMDAwPjsNCj4gDQo+IEhpIFBlbmcsIHNob3VsZG4ndCB0aGUg
+bWF4LWJpdHJhdGUgb2YgVEpBMTA1MSBiZSA1MDAwMDAwPw0KDQpZZXMsIGFjY29yZGluZyB0byB0
+aGUgZGF0YXNoZWV0IG9mIFRKQTEwNTEsIENBTiBGRCBmYXN0IHBoYXNlIGF0IGRhdGEgcmF0ZXMg
+dXAgdG8gNSBNYml0L3MNCmh0dHBzOi8vd3d3Lm54cC5jb20vZG9jcy9lbi9kYXRhLXNoZWV0L1RK
+QTEwNTEucGRmDQoNClBsZWFzZSBjb3JyZWN0IHRoaXMsIGhlcmUgdGhlIG1heC1iaXRyYXRlIGFs
+c28gbGltaXQgdGhlIGRhdGEgYml0cmF0ZS4NCg0KUmVnYXJkcw0KSGFpYm8gQ2hlbg0KPiANCj4g
+QmVzdCBSZWdhcmRzDQo+IFNoZXJyeQ0KPiANCj4gPiArCQlzdGFuZGJ5LWdwaW9zID0gPCZwY2Fs
+NjUyNCAxNCBHUElPX0FDVElWRV9ISUdIPjsNCj4gPiAgCX07DQo+ID4NCj4gPiAgCXJlZ19tMl9w
+d3I6IHJlZ3VsYXRvci1tMi1wd3Igew0KPiA+IEBAIC0zMDAsNyArMjk5LDcgQEAgJmVuZXRjX3Bv
+cnQxIHsNCj4gPiAgJmZsZXhjYW4yIHsNCj4gPiAgCXBpbmN0cmwtMCA9IDwmcGluY3RybF9mbGV4
+Y2FuMj47DQo+ID4gIAlwaW5jdHJsLW5hbWVzID0gImRlZmF1bHQiOw0KPiA+IC0JeGNlaXZlci1z
+dXBwbHkgPSA8JnJlZ19jYW4yX3N0Ynk+Ow0KPiA+ICsJcGh5cyA9IDwmZmxleGNhbjJfcGh5PjsN
+Cj4gPiAgCXN0YXR1cyA9ICJva2F5IjsNCj4gPiAgfTsNCj4gPg0KPiA+DQo+ID4gLS0NCj4gPiAy
+LjM3LjENCj4gPg0KDQo=
 
