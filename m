@@ -1,284 +1,147 @@
-Return-Path: <linux-kernel+bounces-786826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9F18B36ACA
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:40:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C501EB36C4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:54:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4769F7B0C9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:38:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 727761C4677A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:41:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1209035209B;
-	Tue, 26 Aug 2025 14:37:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9337035AAA7;
+	Tue, 26 Aug 2025 14:38:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IWQjBBhn"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="lQaLP7yz"
+Received: from pdx-out-002.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-002.esa.us-west-2.outbound.mail-perimeter.amazon.com [44.246.1.125])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DCC4350825;
-	Tue, 26 Aug 2025 14:37:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ACF1356909;
+	Tue, 26 Aug 2025 14:38:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.246.1.125
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756219054; cv=none; b=IBY632WTEPRVcjG6cGAU6dGqwkzO0EZD0NjVXrHrNS9kITiskQ8Fn/QTsuGr0WLuL31mg+yd1cNxdl6MM2HkWElfZJlr7d4YNqwDQu2t1qDV9eDpyA829YndY436JHWSqUWpdQRVHkA8hAJkZobonq5UdMQeSA/pR2zj7y2H0Jw=
+	t=1756219104; cv=none; b=bw4SbGh4ZGhloh80JXttDjwEb7F5YtimkCkj6CFL0GUnMhYr988QI3eSdaCUlDgJ4+TTMyNDm+2CAUNLr5fwPtltiGb/UKYWrug2tJ9epJS9TOZQZCp6AVYG9z99RjZw8BxQz4SB+kWNUGFzIl4dqWfLGKLN5Z7tzyb5woLBW6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756219054; c=relaxed/simple;
-	bh=sdAcFErMaAvxIj3OAhwQFkrxPJpihi9tsFCYZuFzsvY=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=KK0lUYZb11H048A596V/aIsxHzRpex+l7s0NC5/w9eNCnyz3ijJX4ZEf+yfQg5F8wsAc6ogXWjr8umO9qnCBRMi6Q8KZLaJI5UA6befpAil7vYK6dyP+3G4+xuneQQewk8+AkdNufrf96DSXsvNvGdG5vcb964DWWs91JCxBwlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IWQjBBhn; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-70d9a65c371so38687286d6.2;
-        Tue, 26 Aug 2025 07:37:32 -0700 (PDT)
+	s=arc-20240116; t=1756219104; c=relaxed/simple;
+	bh=DXMxr1RwMg5MgmT6auTJbgNnK3Ha8uV4voztH6nmFhY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YGexjHJXXwtBZDZjnyv2ggGCY5rTCTtBANvxh4bKEMeP/Ok2ul8IIpuxy6a85obApe26H76mmB/eRBoQ2y0STxwyAuQWrOwGe2MGjQH/rfXTwVWMyw1IB2wB3Pu6DW4wPohksqKSvwi7frjt5rBNqW07LmINOS7bpvOAjoUmqbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.nl; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=lQaLP7yz; arc=none smtp.client-ip=44.246.1.125
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.nl
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756219051; x=1756823851; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ES8UZSAXeLNqh3Lam8d3aYOJAro3fOK+7OrQsDbtpKE=;
-        b=IWQjBBhnmTfwkDS4PecwWu+Rg8opzWJWXhxhJIkI7Gt6IGb5r2czVupvnpWSV25tBH
-         Ta4qpXRX8in8LS75mjrfSsaQQRybHdxAT8gdPRKKhY4JV52gkgEF2YQqoxt6e2JUqkzl
-         a/u2jTAFh7Zic48IXzbh0ECPtlJz/Gu/CYXCx6seZN86AW5fkmVhLubRbLG5X0HMNF0x
-         p4W0FVECOPbWbSnyTjI9NiFA4gDd0J8t18wbq0Ud4cjqhkFNypFyz8rye+5/tKrnmC6M
-         4LWPJvAQ0GEKjEFeOdg/WS6B5yfOv+/8RtsZ/kfqcPx+qPaJJ+2noE0ItjgA6nLhz3xQ
-         158w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756219051; x=1756823851;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ES8UZSAXeLNqh3Lam8d3aYOJAro3fOK+7OrQsDbtpKE=;
-        b=khi6GHInb8QdoJb5rA3DPV36Z7sb2UrK1lqvok9CVxuNROv7EAiN9LiEdaMZVTbP7G
-         HTnGArcuSrxZR0xmsAZS2f3/HqfsGaSfjGyAuOExdGJ92mhmYdFOeDzns1HbZT4wvXjH
-         EJeiZxye0iIitOJcu4mWQbNAOBZ76C2gIFHzuxelX631ue029f6ti/ADaIsRR37/sFD9
-         siVg3loOLdqtnNtQe+hkHV2S/9hpDSOtWi106s1UaOyCirGjomyXIUfj9acmgPV3qdwp
-         xE6QZ9NHFOg+cWyrmm/jxYRKqY0nEZsp64ZZjtMyXPt5cXhGUPj3uGI16F1W9BXNeW3H
-         R4Jg==
-X-Forwarded-Encrypted: i=1; AJvYcCU2Q4YnJiNzUGDmBLRF3swvfj3psHpfJcsmgM+VBtv8qfgcWbgh6s72JI3AXiway8EHsNXr3ktofvKp2A==@vger.kernel.org, AJvYcCVCe6i6tdlolTiWAX+cjsJr+WDAf1pRiAQMzcCe8drR7Hd+evh2nq6ZcTYv12eRNI18OSNvXO1RRoN4@vger.kernel.org, AJvYcCWL8v1W5hrxo+O6sypNVjBv/xfYdGscW8j7rj7Qv+CUBgL79+0X5S7H2keT0YgYyE+10RCotlBH+xDjeLQt@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8PkdfO1U72iYQ10IMSSaWXb6DIrRUtkoacUlEM95mGGtdQu2b
-	T9siY2JhU6SZpEXIYV4aU4lg+tHW830Dew61MUE0e5mTf/WX7469PZkrWYJPODG7
-X-Gm-Gg: ASbGncutmb0rLnW2vmCOPXZrl1geFnwYGtA9Q8tNg+yQersbHMu9eZCNDuc9L1kGYKo
-	rRHCwpGG7j8XX9PWASO56hOnV6u6R/LjhpZxngys49kr4kNUJK0N4Y+1iIgmXHRf7pQ9cuwd9Ub
-	PMsjEpeb598RYoxo9nwJYzg7DkzuND+jmUn+mK/WmLF5l0G8tXqBUGWExbk9e3XYDIOIcKm0aoO
-	6Vv4lPZ/tznZSvJGxbNrJX7u1DLmlPOF2ajlEuZm4XRonf8RuXzuPZXFSr39cGX6fxKQFV5zt9W
-	mmEdFtGSF5Y1AoqJ1AltyhPBuk6objqqcfH/oUiq0gdbJvjwZVhC9xxWsqyKzCVYqF8Fdjh5xqu
-	xOtBvt7pGnvlcQiGheEKSqqrwa/d6M07IC6NJI+r0fmFQNA4G4SHBA+G8skLv3SOYfuvVTbYb1p
-	jhPXaD
-X-Google-Smtp-Source: AGHT+IFhkbvyIvr6q1+Yn2QpSuxFtkr6HhRaTDTmME6KiT+mb1YTq2nsdcHZdwXHuGruZM9V0cM8Kw==
-X-Received: by 2002:ad4:5de8:0:b0:70d:c4d7:3731 with SMTP id 6a1803df08f44-70dc4d73853mr68375996d6.34.1756219051181;
-        Tue, 26 Aug 2025 07:37:31 -0700 (PDT)
-Received: from [127.0.0.1] (modemcable197.17-162-184.mc.videotron.ca. [184.162.17.197])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70da72cc195sm65283496d6.63.2025.08.26.07.37.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Aug 2025 07:37:30 -0700 (PDT)
-Date: Tue, 26 Aug 2025 10:37:28 -0400
-From: =?ISO-8859-1?Q?Jean-Fran=E7ois_Lessard?= <jefflessard3@gmail.com>
-To: Rob Herring <robh@kernel.org>
-CC: Andy Shevchenko <andy@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
- devicetree@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v4_2/6=5D_dt-bindings=3A_auxdisp?=
- =?US-ASCII?Q?lay=3A_add_Titan_Micro_Electronics_TM16xx?=
-User-Agent: Thunderbird for Android
-In-Reply-To: <44C925EA-73CF-46C3-86C4-BD8ECD33AE00@gmail.com>
-References: <20250825033237.60143-1-jefflessard3@gmail.com> <20250825033237.60143-3-jefflessard3@gmail.com> <20250825182521.GA4157069-robh@kernel.org> <44C925EA-73CF-46C3-86C4-BD8ECD33AE00@gmail.com>
-Message-ID: <B53D4113-91EE-4B64-AD74-F8F8BF8EFB25@gmail.com>
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1756219103; x=1787755103;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=RnOjmImgu9Zqc8q7j4uUzhidXc03x0+ZINGJ5dF0yBE=;
+  b=lQaLP7yzfSTf1vzBpmJ0zpfSv6AvFtLsWmAKjpAbNbnllsTqdS+q5Hft
+   4W7CneMqEpYnBXabGA+2F10tQg5EceYzI8eu6doYC9HTcO3mkjjmNMrSA
+   oDyIYnfOf95BHblkGZuX88G+7AyNumw6EN34Lm9FzFnCRw044I1M8TCmd
+   Kd9wWtXouDmohvO13XWs4BzW781RjgqwBk8sYF/l5EER5c2ea9v8Ro5iR
+   Pe3FmpIJdYvOTBWlsTPPbdG/HixdStXsf8KeD4iWCpkbYboAjl+1McmFn
+   wQaqsNb6Ue2Hyl2SGOERYYTlyQNiwbZTHJAOsZunr58KljQArR+NcInDq
+   A==;
+X-CSE-ConnectionGUID: rDqMdqHMRBGNZ4CVnSOF0A==
+X-CSE-MsgGUID: MkVkqfW4T4eoXhwL6I+iKA==
+X-IronPort-AV: E=Sophos;i="6.16,202,1744070400"; 
+   d="scan'208";a="1825599"
+Received: from ip-10-5-6-203.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.6.203])
+  by internal-pdx-out-002.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 14:38:21 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.21.151:25577]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.12.13:2525] with esmtp (Farcaster)
+ id 0ef9058f-704c-4a37-ad9a-12fa6f5bd087; Tue, 26 Aug 2025 14:38:20 +0000 (UTC)
+X-Farcaster-Flow-ID: 0ef9058f-704c-4a37-ad9a-12fa6f5bd087
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.17;
+ Tue, 26 Aug 2025 14:38:20 +0000
+Received: from dev-dsk-eugkoira-1b-58cb2f48.eu-west-1.amazon.com
+ (10.253.75.199) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.17; Tue, 26 Aug 2025
+ 14:38:18 +0000
+From: Eugene Koira <eugkoira@amazon.com>
+To: <iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+CC: <dwmw2@infradead.org>, <baolu.lu@linux.intel.com>, <joro@8bytes.org>,
+	<will@kernel.org>, <robin.murphy@arm.com>, <longpeng2@huawei.com>,
+	<graf@amazon.de>, <nsaenz@amazon.com>, <nh-open-source@amazon.com>,
+	<stable@vger.kernel.org>
+Subject: [PATCH] iommu/intel: Fix __domain_mapping()'s usage of switch_to_super_page()
+Date: Tue, 26 Aug 2025 14:38:16 +0000
+Message-ID: <20250826143816.38686-1-eugkoira@amazon.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: EX19D045UWC001.ant.amazon.com (10.13.139.223) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 
-Le 25 ao=C3=BBt 2025 21 h 33 min 58 s HAE, "Jean-Fran=C3=A7ois Lessard" <je=
-fflessard3@gmail=2Ecom> a =C3=A9crit=C2=A0:
->Le 25 ao=C3=BBt 2025 14 h 26 min 57 s HAE, Rob Herring <robh@kernel=2Eorg=
-> a =C3=A9crit=C2=A0:
->>On Sun, Aug 24, 2025 at 11:32:28PM -0400, Jean-Fran=C3=A7ois Lessard wro=
-te:
->>> Add documentation for TM16xx-compatible 7-segment LED display controll=
-ers
->>> with keyscan=2E
->>>=20
->>> Signed-off-by: Jean-Fran=C3=A7ois Lessard <jefflessard3@gmail=2Ecom>
->>> ---
->>>
-=2E=2E=2E
->>>  =2E=2E=2E/bindings/auxdisplay/titanmec,tm16xx=2Eyaml  | 477 +++++++++=
-+++++++++
->>>  MAINTAINERS                                   |   5 +
->>>  2 files changed, 482 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/auxdisplay/titan=
-mec,tm16xx=2Eyaml
->>>=20
->>> diff --git a/Documentation/devicetree/bindings/auxdisplay/titanmec,tm1=
-6xx=2Eyaml b/Documentation/devicetree/bindings/auxdisplay/titanmec,tm16xx=
-=2Eyaml
->>> new file mode 100644
->>> index 000000000=2E=2Ec94556d95
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/auxdisplay/titanmec,tm16xx=2Ey=
-aml
->>> @@ -0,0 +1,477 @@
->>> +# SPDX-License-Identifier: (GPL-2=2E0-only OR BSD-2-Clause)
->>> +%YAML 1=2E2
->>> +---
->>> +$id: http://devicetree=2Eorg/schemas/auxdisplay/titanmec,tm16xx=2Eyam=
-l#
->>> +$schema: http://devicetree=2Eorg/meta-schemas/core=2Eyaml#
->>> +
->>> +title: Auxiliary displays based on TM16xx and compatible LED controll=
-ers
->>> +
-=2E=2E=2E
->>> +
->>> +  digits:
->>> +    type: object
->>> +    description: Container for 7-segment digit group definitions
->>> +    additionalProperties: false
->>> +
->>> +    properties:
->>> +      "#address-cells":
->>> +        const: 1
->>> +      "#size-cells":
->>> +        const: 0
->>> +
->>> +    patternProperties:
->>> +      "^digit@[0-9]+$":
->>> +        type: object
->>> +        unevaluatedProperties: false
->>> +
->>> +        properties:
->>> +          reg:
->>> +            description: Digit position identifier
->>
->>Position is right to left (0 on right)? Please clarify=2E
->>=20
->
->I'll clarify: digit positions are numbered sequentially left-to-right,=20
->with reg=3D0 representing the leftmost digit position as displayed to the=
- user=2E
->
->>> +            maxItems: 1
->>> +
->>> +          segments:
->>> +            $ref: /schemas/types=2Eyaml#/definitions/uint32-matrix
->>> +            description: |
->>> +              Array of grid/segment coordinate pairs for each 7-segme=
-nt position=2E
->>> +              Each entry is <grid segment> mapping to standard 7-segm=
-ent positions
->>> +              in order: a, b, c, d, e, f, g
->>> +
->>> +              Standard 7-segment layout:
->>> +                 aaa
->>> +                f   b
->>> +                f   b
->>> +                 ggg
->>> +                e   c
->>> +                e   c
->>> +                 ddd
->>> +            items:
->>> +              items:
->>> +                - description: Grid index
->>> +                - description: Segment index
->>
->>Can't you do an array instead and make the array index be the grid or=20
->>segment index?
->>
->
->Original design was array-based:
->- titanmec,digits: array of grid indices
->- titanmec,segment-mapping: array of segment indices for a,b,c,d,e,f,g
->- titanmec,transposed: boolean for matrix-transposed cases
->
->The current explicit coordinate approach was adopted based on v2 feedback=
- and
->handles both standard and transposed wiring patterns effectively, where
->manufacturers swap grid/segment relationships:
->- Standard: digit segments use same grid, different segments =20
->- Transposed: digit segments use same segment, different grids
->It also future-proofs potential irregular wiring patterns where individua=
-l
->digits might have different grid/segment relationships=2E
->
->Unless you have strong objections, I prefer to keep this approach to avoi=
-d
->further churn, as it's proven to handle all the real-world board layouts
->encountered=2E
->
->See=20
->ttps://lore=2Ekernel=2Eorg/linux-devicetree/9133F5BC-7F4E-4732-9649-178E5=
-A698273@gmail=2Ecom/
->
+switch_to_super_page() assumes the memory range it's working on is aligned
+to the target large page level. Unfortunately, __domain_mapping() doesn't
+take this into account when using it, and will pass unaligned ranges
+ultimately freeing a PTE range larger than expected.
 
-Diving deeper on your suggestion of using arrays, would this revised desig=
-n be
-acceptable?
+Take for example a mapping with the following iov_pfn range [0x3fe400,
+0x4c0600], which should be backed by the following mappings:
 
-properties:
-  digits:
-    patternProperties:
-      "^digit@[0-9]+$":
-        properties:
-          reg:
-            maxItems: 1
-           =20
-          grids:
-            $ref: /schemas/types=2Eyaml#/definitions/uint32-array
-            description: Grid indices for segments a,b,c,d,e,f,g in order
-            minItems: 7
-            maxItems: 7
-           =20
-          segments:
-            $ref: /schemas/types=2Eyaml#/definitions/uint32-array =20
-            description: Segment indices for segments a,b,c,d,e,f,g in ord=
-er
-            minItems: 7
-            maxItems: 7
+   iov_pfn [0x3fe400, 0x3fffff] covered by 2MiB pages
+   iov_pfn [0x400000, 0x4bffff] covered by 1GiB pages
+   iov_pfn [0x4c0000, 0x4c05ff] covered by 2MiB pages
 
-This approach:
-- Uses arrays as you suggested, indexed by segment position
-- Maintains flexibility for both standard and transpose layouts
-- Keeps the semantic clarity that Krzysztof requested
+Under this circumstance, __domain_mapping() will pass [0x400000, 0x4c05ff]
+to switch_to_super_page() at a 1 GiB granularity, which will in turn
+free PTEs all the way to iov_pfn 0x4fffff.
 
-Example usage would be:
+Mitigate this by rounding down the iov_pfn range passed to
+switch_to_super_page() in __domain_mapping()
+to the target large page level.
 
-digit@0 {
-    reg =3D <0>;
-    grids =3D <4 4 4 4 4 4 4>;     // Standard: all segments use same grid
-    segments =3D <3 4 5 0 1 2 6>;   // Different segment indices
-};
+Additionally add range alignment checks to switch_to_super_page.
 
-// vs transpose case:
-digit@0 {
-    reg =3D <0>;
-    grids =3D <0 1 2 3 4 5 6>;     // Transpose: different grids
-    segments =3D <3 3 3 3 3 3 3>;   // Same segment index
-};
+Fixes: 9906b9352a35 ("iommu/vt-d: Avoid duplicate removing in __domain_mapping()")
+Signed-off-by: Eugene Koira <eugkoira@amazon.com>
+Cc: stable@vger.kernel.org
+---
+ drivers/iommu/intel/iommu.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-Would this better align with your preference for array-based approaches?
+diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+index 9c3ab9d9f69a..dff2d895b8ab 100644
+--- a/drivers/iommu/intel/iommu.c
++++ b/drivers/iommu/intel/iommu.c
+@@ -1575,6 +1575,10 @@ static void switch_to_super_page(struct dmar_domain *domain,
+ 	unsigned long lvl_pages = lvl_to_nr_pages(level);
+ 	struct dma_pte *pte = NULL;
+ 
++	if (WARN_ON(!IS_ALIGNED(start_pfn, lvl_pages) ||
++		    !IS_ALIGNED(end_pfn + 1, lvl_pages)))
++		return;
++
+ 	while (start_pfn <= end_pfn) {
+ 		if (!pte)
+ 			pte = pfn_to_dma_pte(domain, start_pfn, &level,
+@@ -1650,7 +1654,8 @@ __domain_mapping(struct dmar_domain *domain, unsigned long iov_pfn,
+ 				unsigned long pages_to_remove;
+ 
+ 				pteval |= DMA_PTE_LARGE_PAGE;
+-				pages_to_remove = min_t(unsigned long, nr_pages,
++				pages_to_remove = min_t(unsigned long,
++							round_down(nr_pages, lvl_pages),
+ 							nr_pte_to_next_page(pte) * lvl_pages);
+ 				end_pfn = iov_pfn + pages_to_remove - 1;
+ 				switch_to_super_page(domain, iov_pfn, end_pfn, largepage_lvl);
+-- 
+2.47.3
 
-If so, the remaining question is if these needs to be vendor prefixed
-or if they are still generic enough hardware description concept
-applicable to any 7-segment display controller=2E
 
->>> +            minItems: 7
->>> +            maxItems: 7
->>> +
->>> +        required:
->>> +          - reg
->>> +          - segments
->>> +
-=2E=2E=2E
 
-Best Regards
-Jean-Fran=C3=A7ois Lessard
+
+Amazon Development Center (Netherlands) B.V., Johanna Westerdijkplein 1, NL-2521 EN The Hague, Registration No. Chamber of Commerce 56869649, VAT: NL 852339859B01
 
 
