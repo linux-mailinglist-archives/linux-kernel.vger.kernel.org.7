@@ -1,174 +1,218 @@
-Return-Path: <linux-kernel+bounces-785980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96122B3531E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:16:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E37AFB3538E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:50:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D0247B465A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:15:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC4B21B62F18
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DBA323BD04;
-	Tue, 26 Aug 2025 05:16:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tZIXCni+"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99DF11CA9;
-	Tue, 26 Aug 2025 05:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61BF2D9499;
+	Tue, 26 Aug 2025 05:50:38 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FCE186342;
+	Tue, 26 Aug 2025 05:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756185399; cv=none; b=RYDEFMsAmgSlCsJeYPkE6QPzti21+syusYG5ccOO8niZoFWpqhM3wLlYM3pF9Uc9vQEQcPlOhebWdQtQGpzxu6b5X1PVpwkYmMU9Uy+7iS5yINQmthTWX1Rt/0hqz9+tTiYdweTWb6gKd8qCheJvUj8no5s52bhyGt5pCZcGs1M=
+	t=1756187438; cv=none; b=GRkT+kchxx4jGkSpyJl2AF2X6/DeGKShW+YSzMYOvhd7VfgdjsBv+4Hb4x6lwcmwQkwOl9tD4RfUABjlHuk2/4x3ocQ0AWum5acUsMao+v8gg2k8BbF9ICocnpevPt7CWRFmqMlxyusbLHV9TfFbII575vOlQhoB7XJA9iTLNHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756185399; c=relaxed/simple;
-	bh=2jbbXl6GDwJvfi5DE0nXIK0RqpNAJHPFS3yDlEfn2QY=;
+	s=arc-20240116; t=1756187438; c=relaxed/simple;
+	bh=8mr6sAPn1eF1SLloywwiZDdJyQaCjyvAxVz7GjFVWh4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YQXgI96uAF2cc8zdIT0vSGD8UxCh1r0dXBEOETUwU6bQ+4BrAAuzjEH/q+i7kUJSe8YV9SSNLUNYunc+0AKQrvjBdSgcn24yoRqjC8zaX78XK3mNQkXQnG1IukP2HWxVORw8423v9d+ubSX/mvEJg7tNBYpZTOxTshAF18VzlMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tZIXCni+; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <1edc08b2-801f-4968-8198-ebb0d7c3accb@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1756185395;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ci1PdBuzNcOaR7y0193uhT7DsHMGCXsYNxvG0Vv+L28=;
-	b=tZIXCni+4wK0EP62V+S2BZuZBIQQws2yaAgZvU3Iqj4kP9q8pHcuR98QSThIliOFz8mmYN
-	XzdzZG5TMOKZnf63CvCg34Rft41XAaxTCJNEoym1yhUTRb0yum5IlLr0e9D/SkU455HAF8
-	X/kcqfcjs/Oa1OwV1AsjPa0+mB7bBfY=
-Date: Tue, 26 Aug 2025 13:16:25 +0800
+	 In-Reply-To:Content-Type; b=rz26YaSJABOwZajbmKCmacmQFFgRpYIIqMoQ2EsMFc3GKElylPtOrdfFcvhe7w8A52s4Zg8Q1Z/GpK90yxBn4I38+CcBSMFx8EwwEDSxWufuxVy3ZOhvLl3PhOKSf7wLTE9/C9ji92ng1nJEne8LUrgUnkCheV/hK4AQNKNESRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4c9wqw191fz9sSd;
+	Tue, 26 Aug 2025 07:16:28 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 8QBWi60LJ5rv; Tue, 26 Aug 2025 07:16:28 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4c9wqw02g8z9sSc;
+	Tue, 26 Aug 2025 07:16:28 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id DA3DE8B764;
+	Tue, 26 Aug 2025 07:16:27 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id w2QSnjtwcJ6v; Tue, 26 Aug 2025 07:16:27 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 139828B763;
+	Tue, 26 Aug 2025 07:16:26 +0200 (CEST)
+Message-ID: <154fd466-5305-431f-b49a-a5ccec81507a@csgroup.eu>
+Date: Tue, 26 Aug 2025 07:16:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 1/1] hung_task: fix warnings by enforcing alignment on
- lock structures
-Content-Language: en-US
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: akpm@linux-foundation.org, fthain@linux-m68k.org, geert@linux-m68k.org,
- senozhatsky@chromium.org, amaindex@outlook.com, anna.schumaker@oracle.com,
- boqun.feng@gmail.com, ioworker0@gmail.com, joel.granados@kernel.org,
- jstultz@google.com, kent.overstreet@linux.dev, leonylgao@tencent.com,
- linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
- longman@redhat.com, mingo@redhat.com, mingzhe.yang@ly.com,
- oak@helsinkinet.fi, peterz@infradead.org, rostedt@goodmis.org,
- tfiga@chromium.org, will@kernel.org, stable@vger.kernel.org
-References: <f79735e1-1625-4746-98ce-a3c40123c5af@linux.dev>
- <20250823074048.92498-1-lance.yang@linux.dev>
- <20250826140217.7f566d2b404ac5ece8b36fa3@kernel.org>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <20250826140217.7f566d2b404ac5ece8b36fa3@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 8/8] sched/topology: Unify tl_pkg_mask() across core
+ and all arch
+To: K Prateek Nayak <kprateek.nayak@amd.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
+ Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>, linuxppc-dev@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ thomas.weissschuh@linutronix.de, Li Chen <chenl311@chinatelecom.cn>,
+ Bibo Mao <maobibo@loongson.cn>, Mete Durlu <meted@linux.ibm.com>,
+ Tobias Huschle <huschle@linux.ibm.com>,
+ Easwar Hariharan <easwar.hariharan@linux.microsoft.com>,
+ Guo Weikang <guoweikang.kernel@gmail.com>,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+ Brian Gerst <brgerst@gmail.com>,
+ Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
+ Swapnil Sapkal <swapnil.sapkal@amd.com>,
+ "Yury Norov [NVIDIA]" <yury.norov@gmail.com>,
+ Sudeep Holla <sudeep.holla@arm.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Andrea Righi <arighi@nvidia.com>, Yicong Yang <yangyicong@hisilicon.com>,
+ Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+ Tim Chen <tim.c.chen@linux.intel.com>,
+ Vinicius Costa Gomes <vinicius.gomes@intel.com>
+References: <20250826041319.1284-1-kprateek.nayak@amd.com>
+ <20250826041319.1284-9-kprateek.nayak@amd.com>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <20250826041319.1284-9-kprateek.nayak@amd.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
 
 
-On 2025/8/26 13:02, Masami Hiramatsu (Google) wrote:
-> Hi Lence,
+Le 26/08/2025 à 06:13, K Prateek Nayak a écrit :
+> Unify the tl_pkg_mask() wrapper around cpu_nod_mask() across core, x86,
+> powerpc, and s390.
 > 
-> On Sat, 23 Aug 2025 15:40:48 +0800
-> Lance Yang <lance.yang@linux.dev> wrote:
+> No functional changes intended.
 > 
->> From: Lance Yang <lance.yang@linux.dev>
->>
->> The blocker tracking mechanism assumes that lock pointers are at least
->> 4-byte aligned to use their lower bits for type encoding.
->>
->> However, as reported by Geert Uytterhoeven, some architectures like m68k
->> only guarantee 2-byte alignment of 32-bit values. This breaks the
->> assumption and causes two related WARN_ON_ONCE checks to trigger.
->>
->> To fix this, enforce a minimum of 4-byte alignment on the core lock
->> structures supported by the blocker tracking mechanism. This ensures the
->> algorithm's alignment assumption now holds true on all architectures.
->>
->> This patch adds __aligned(4) to the definitions of "struct mutex",
->> "struct semaphore", and "struct rw_semaphore", resolving the warnings.
+> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
+> ---
+>   arch/powerpc/kernel/smp.c      | 7 +------
+>   arch/s390/kernel/topology.c    | 7 +------
+>   arch/x86/kernel/smpboot.c      | 5 -----
+>   include/linux/sched/topology.h | 6 ++++++
+>   kernel/sched/topology.c        | 5 -----
+>   5 files changed, 8 insertions(+), 22 deletions(-)
 > 
-> Instead of putting the type flags in the blocker address (pointer),
-> can't we record the type information outside? It is hard to enforce
+> diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
+> index 40719679385b..8e869c13f7ed 100644
+> --- a/arch/powerpc/kernel/smp.c
+> +++ b/arch/powerpc/kernel/smp.c
+> @@ -1064,11 +1064,6 @@ const struct cpumask *cpu_coregroup_mask(int cpu)
+>   }
+>   #endif
+>   
+> -static const struct cpumask *cpu_pkg_mask(struct sched_domain_topology_level *tl, int cpu)
+> -{
+> -	return cpu_node_mask(cpu);
+> -}
+> -
+>   static int __init init_big_cores(void)
+>   {
+>   	int cpu;
+> @@ -1728,7 +1723,7 @@ static void __init build_sched_topology(void)
+>   	}
+>   #endif
+>   
+> -	powerpc_topology[i++] = SDTL_INIT(cpu_pkg_mask, powerpc_shared_proc_flags, PKG);
+> +	powerpc_topology[i++] = SDTL_INIT(tl_pkg_mask, powerpc_shared_proc_flags, PKG);
+>   
+>   	/* There must be one trailing NULL entry left.  */
+>   	BUG_ON(i >= ARRAY_SIZE(powerpc_topology) - 1);
+> diff --git a/arch/s390/kernel/topology.c b/arch/s390/kernel/topology.c
+> index 8dbf32f362e1..8f5b6ecc055f 100644
+> --- a/arch/s390/kernel/topology.c
+> +++ b/arch/s390/kernel/topology.c
+> @@ -524,17 +524,12 @@ static const struct cpumask *cpu_drawer_mask(struct sched_domain_topology_level
+>   	return &cpu_topology[cpu].drawer_mask;
+>   }
+>   
+> -static const struct cpumask *cpu_pkg_mask(struct sched_domain_topology_level *tl, int cpu)
+> -{
+> -	return cpu_node_mask(cpu);
+> -}
+> -
+>   static struct sched_domain_topology_level s390_topology[] = {
+>   	SDTL_INIT(tl_smt_mask, cpu_smt_flags, SMT),
+>   	SDTL_INIT(tl_mc_mask, cpu_core_flags, MC),
+>   	SDTL_INIT(cpu_book_mask, NULL, BOOK),
+>   	SDTL_INIT(cpu_drawer_mask, NULL, DRAWER),
+> -	SDTL_INIT(cpu_pkg_mask, NULL, PKG),
+> +	SDTL_INIT(tl_pkg_mask, NULL, PKG),
+>   	{ NULL, },
+>   };
+>   
+> diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+> index bfbcac9a73d1..6c0ab30a80e2 100644
+> --- a/arch/x86/kernel/smpboot.c
+> +++ b/arch/x86/kernel/smpboot.c
+> @@ -472,11 +472,6 @@ static int x86_cluster_flags(void)
+>   }
+>   #endif
+>   
+> -static const struct cpumask *tl_pkg_mask(struct sched_domain_topology_level *tl, int cpu)
+> -{
+> -	return cpu_node_mask(cpu);
+> -}
+> -
+>   /*
+>    * Set if a package/die has multiple NUMA nodes inside.
+>    * AMD Magny-Cours, Intel Cluster-on-Die, and Intel
+> diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
+> index 075d1f063668..807603bfe8ff 100644
+> --- a/include/linux/sched/topology.h
+> +++ b/include/linux/sched/topology.h
+> @@ -71,6 +71,12 @@ struct cpumask *tl_mc_mask(struct sched_domain_topology_level *tl, int cpu)
+>   }
+>   #endif /* CONFIG_SCHED_MC */
+>   
+> +static const __maybe_unused
 
-Yes. Of course. The current pointer-encoding is a tricky trade-off ...
+Same as the three previous patches, __maybe_unused shouldn't be required.
 
-> the alignment to the locks, because it is embedded in the data
-> structure. Instead, it is better to record the type as blocker_type
-> in current task_struct.
-
-TODO +1. Separating the type into its own field in task_struct is the
-right long-term solution ;)
-
-Cheers,
-Lance
-
-> 
-> Thank you,
-> 
->>
->> Thanks to Geert for bisecting!
->>
->> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
->> Closes: https://lore.kernel.org/lkml/CAMuHMdW7Ab13DdGs2acMQcix5ObJK0O2dG_Fxzr8_g58Rc1_0g@mail.gmail.com
->> Fixes: e711faaafbe5 ("hung_task: replace blocker_mutex with encoded blocker")
->> Cc: <stable@vger.kernel.org>
->> Signed-off-by: Lance Yang <lance.yang@linux.dev>
->> ---
->>   include/linux/mutex_types.h | 2 +-
->>   include/linux/rwsem.h       | 2 +-
->>   include/linux/semaphore.h   | 2 +-
->>   3 files changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/include/linux/mutex_types.h b/include/linux/mutex_types.h
->> index fdf7f515fde8..de798bfbc4c7 100644
->> --- a/include/linux/mutex_types.h
->> +++ b/include/linux/mutex_types.h
->> @@ -51,7 +51,7 @@ struct mutex {
->>   #ifdef CONFIG_DEBUG_LOCK_ALLOC
->>   	struct lockdep_map	dep_map;
->>   #endif
->> -};
->> +} __aligned(4); /* For hung_task blocker tracking, which encodes type in LSBs */
->>   
->>   #else /* !CONFIG_PREEMPT_RT */
->>   /*
->> diff --git a/include/linux/rwsem.h b/include/linux/rwsem.h
->> index f1aaf676a874..f6ecf4a4710d 100644
->> --- a/include/linux/rwsem.h
->> +++ b/include/linux/rwsem.h
->> @@ -64,7 +64,7 @@ struct rw_semaphore {
->>   #ifdef CONFIG_DEBUG_LOCK_ALLOC
->>   	struct lockdep_map	dep_map;
->>   #endif
->> -};
->> +} __aligned(4); /* For hung_task blocker tracking, which encodes type in LSBs */
->>   
->>   #define RWSEM_UNLOCKED_VALUE		0UL
->>   #define RWSEM_WRITER_LOCKED		(1UL << 0)
->> diff --git a/include/linux/semaphore.h b/include/linux/semaphore.h
->> index 89706157e622..ac9b9c87bfb7 100644
->> --- a/include/linux/semaphore.h
->> +++ b/include/linux/semaphore.h
->> @@ -20,7 +20,7 @@ struct semaphore {
->>   #ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
->>   	unsigned long		last_holder;
->>   #endif
->> -};
->> +} __aligned(4); /* For hung_task blocker tracking, which encodes type in LSBs */
->>   
->>   #ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
->>   #define __LAST_HOLDER_SEMAPHORE_INITIALIZER				\
->> -- 
->> 2.49.0
->>
-> 
-> 
+> +struct cpumask *tl_pkg_mask(struct sched_domain_topology_level *tl, int cpu)
+> +{
+> +	return cpu_node_mask(cpu);
+> +}
+> +
+>   #ifdef CONFIG_NUMA
+>   static inline int cpu_numa_flags(void)
+>   {
+> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+> index 77d14430c5e1..18889bd97e22 100644
+> --- a/kernel/sched/topology.c
+> +++ b/kernel/sched/topology.c
+> @@ -1724,11 +1724,6 @@ sd_init(struct sched_domain_topology_level *tl,
+>   	return sd;
+>   }
+>   
+> -static const struct cpumask *tl_pkg_mask(struct sched_domain_topology_level *tl, int cpu)
+> -{
+> -	return cpu_node_mask(cpu);
+> -}
+> -
+>   /*
+>    * Topology list, bottom-up.
+>    */
 
 
