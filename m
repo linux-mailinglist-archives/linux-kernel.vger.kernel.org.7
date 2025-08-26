@@ -1,95 +1,143 @@
-Return-Path: <linux-kernel+bounces-786855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CED7BB36D21
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:08:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D65F8B36D61
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:14:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CC66567C4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:54:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB1D68E70DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:56:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF9423E340;
-	Tue, 26 Aug 2025 14:54:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE6722F75B;
+	Tue, 26 Aug 2025 14:56:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ldKK1vKN"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D03978F29;
-	Tue, 26 Aug 2025 14:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="MkFRCod7"
+Received: from fra-out-005.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-005.esa.eu-central-1.outbound.mail-perimeter.amazon.com [63.176.194.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1494E2222AC;
+	Tue, 26 Aug 2025 14:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.176.194.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756220073; cv=none; b=s7FkQ1lIaml6ZTHA/PE5EyQXDNOuAo2eBhnAZMPf9KPdIm9WW4UdtFqc23wZQIkh4P99w9WMn4FIb2TgFCHxMxJDYvfYgBlrpcHUvamhelYubNPR6NGSgPD6U+2oKkwIBvaDsmwEHCtHy3oST/r2BQeL8Hs3/FXZ3S7JPJZwLnQ=
+	t=1756220180; cv=none; b=DEAztwwCPZQlTop3oLyAbpyZtH4rxPowZ1w4nerdPL52X9BqKWNv5V9n/dd/69tgu+tAaoKwMORHF73L7hoTwbzpvv+WSV4XwkqmsTR8VA8jqqCfQrp/ity2Ux5DIdNqFwLEenwwlr8majQh20jPq9xh3E7a7OAoUZk5n7jv3qE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756220073; c=relaxed/simple;
-	bh=MvRfvUf6abYymRc7lUVYGV4GWw71Ybb08AnP1PVsQ9g=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kaQx2SN/x0ix2YPsXpOhRhkYrIw64HqugYkysIhiWDKRCPCbCuRO3sXiKzkWJ3oU6k87BInk+CcDHxn2xUngdmVFDOziJbEe2jv0lEs0UNESEZqZPN4fuwsJ3tXig7obHh6922iZfWhfAemJC96MSQD/bYxCnMQOoOLWv/IdnT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ldKK1vKN; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Ys
-	6LaHuKZ2z4U/Mf0q0mRUxc7aDl0tLNA35Pm60bUKI=; b=ldKK1vKN4NVDo2z5Vo
-	L7YFDoLaQ+cb43eXXr52ipytSaRBF4WW1zt4xiCZdS7qR0yrwjF6+RPqG5RHrdox
-	5C1W1nBXVLNpPX9fBzqZmrYHxFKhnWyAjCwHRNl605jOesFwjMUQ0rdHsR0ubjUm
-	b1y4iSpMfQIsTmcE9CI5xOv4Y=
-Received: from zhaoxin-MS-7E12.. (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id PigvCgD3XxV7yq1osnesAg--.35194S2;
-	Tue, 26 Aug 2025 22:53:48 +0800 (CST)
-From: Xin Zhao <jackzxcui1989@163.com>
-To: willemdebruijn.kernel@gmail.com,
-	edumazet@google.com,
-	ferenc@fejes.dev
-Cc: davem@davemloft.net,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v7] net: af_packet: Use hrtimer to do the retire operation
-Date: Tue, 26 Aug 2025 22:53:47 +0800
-Message-Id: <20250826145347.1309654-1-jackzxcui1989@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1756220180; c=relaxed/simple;
+	bh=LI1dCZa4FwieTJrb5lNo+wXzSQ7nbU3b0nB7rDBUhHM=;
+	h=MIME-Version:Content-Type:Date:Message-ID:To:CC:Subject:From:
+	 References:In-Reply-To; b=dxnw46hR0mnxtHaNJpI2YEhAyRQVez+liHHBPkmo5B46zcIPCajdFMx/sMzzNOtxBDMt01fDk+csuKoJmLjyYSAdJjCvr1DT0DoFj4zlHMA9B1zXDzuXj1kosIKVbldHV/CzLqVKPh/U1UMb5fd0Scp5prM+GnnkC4BeEW9G6CU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.es; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=MkFRCod7; arc=none smtp.client-ip=63.176.194.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.es
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1756220177; x=1787756177;
+  h=mime-version:content-transfer-encoding:date:message-id:
+   to:cc:subject:from:references:in-reply-to;
+  bh=6W8m3tqW7TsBzc9bn3jq/EsbNWeFZzmBuJ+k3VQ45Yk=;
+  b=MkFRCod77B5NtIFu9/GDHQxgWaEhs0N8JSTb1otA6TKqzb50FnqoVf1Q
+   BOB5h8K0Ovxa4HMmOGfzQGLsfifPOlgIs0h6VobPz1uzmlc/zwAY3M1t+
+   D8sqOU417nzNV1Hlm2aXiUSl4ucyIoBoFUSUxYzohA7tO3yZalj/czo8y
+   jYzf4IBqhyUoTQBr7twAKJ89c9kaBxj6fcp9yxN4OGzYGAx6Z0rZc70kn
+   O4HV8Ia4a3eJsJkELz/EAzXUtzsYctbdu/K3aApGT/ZCpSPN0DlnT0jCj
+   2Ly8eCPrR0lklm1kfWHBI8oEsSlVreLSXauaDipW45q6GxZnIaKfsL7RG
+   A==;
+X-CSE-ConnectionGUID: asiGzhnzTiCdDQnaKZprlg==
+X-CSE-MsgGUID: R4nyLwQwQJCy5oUT7xGABg==
+X-IronPort-AV: E=Sophos;i="6.18,214,1751241600"; 
+   d="scan'208";a="1210282"
+Received: from ip-10-6-3-216.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.3.216])
+  by internal-fra-out-005.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 14:56:07 +0000
+Received: from EX19MTAEUC002.ant.amazon.com [54.240.197.228:1375]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.11.187:2525] with esmtp (Farcaster)
+ id 2f6f29d2-1acf-4882-b0d8-cf461d27f0a6; Tue, 26 Aug 2025 14:56:07 +0000 (UTC)
+X-Farcaster-Flow-ID: 2f6f29d2-1acf-4882-b0d8-cf461d27f0a6
+Received: from EX19D004EUC001.ant.amazon.com (10.252.51.190) by
+ EX19MTAEUC002.ant.amazon.com (10.252.51.245) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.17;
+ Tue, 26 Aug 2025 14:56:06 +0000
+Received: from localhost (10.13.235.138) by EX19D004EUC001.ant.amazon.com
+ (10.252.51.190) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.17; Tue, 26 Aug 2025
+ 14:56:02 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PigvCgD3XxV7yq1osnesAg--.35194S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7urWfuFyxuw1DurWktFWDArb_yoW8GFW8pr
-	Wjg347Gw1DXw1Igw4xXFs7uFyrCwsxJr15Grs3Wr4SkF95GFyUta1jyFyrWFW3C3Z8Kw47
-	Aw48ZrZ3Aws5JrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UPR67UUUUU=
-X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbiJQW1CmitwjvTYQAAsR
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+Date: Tue, 26 Aug 2025 14:55:58 +0000
+Message-ID: <DCCG3711VAN4.9QEOBBP433L2@amazon.com>
+To: Eugene Koira <eugkoira@amazon.com>, <iommu@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>
+CC: <dwmw2@infradead.org>, <baolu.lu@linux.intel.com>, <joro@8bytes.org>,
+	<will@kernel.org>, <robin.murphy@arm.com>, <longpeng2@huawei.com>,
+	<graf@amazon.de>, <nsaenz@amazon.com>, <nh-open-source@amazon.com>,
+	<stable@vger.kernel.org>
+Subject: Re: [PATCH] iommu/intel: Fix __domain_mapping()'s usage of
+ switch_to_super_page()
+From: Nicolas Saenz Julienne <nsaenz@amazon.com>
+X-Mailer: aerc 0.20.1-125-gabe5bb884bbc-dirty
+References: <20250826143816.38686-1-eugkoira@amazon.com>
+In-Reply-To: <20250826143816.38686-1-eugkoira@amazon.com>
+X-ClientProxiedBy: EX19D032UWB002.ant.amazon.com (10.13.139.190) To
+ EX19D004EUC001.ant.amazon.com (10.252.51.190)
 
-On Tue, 2025-08-25 at 20:54 +0800, Willem wrote:
+On Tue Aug 26, 2025 at 2:38 PM UTC, Eugene Koira wrote:
+> switch_to_super_page() assumes the memory range it's working on is aligne=
+d
+> to the target large page level. Unfortunately, __domain_mapping() doesn't
+> take this into account when using it, and will pass unaligned ranges
+> ultimately freeing a PTE range larger than expected.
+>
+> Take for example a mapping with the following iov_pfn range [0x3fe400,
+> 0x4c0600], which should be backed by the following mappings:
+>
+>    iov_pfn [0x3fe400, 0x3fffff] covered by 2MiB pages
+>    iov_pfn [0x400000, 0x4bffff] covered by 1GiB pages
+>    iov_pfn [0x4c0000, 0x4c05ff] covered by 2MiB pages
+>
+> Under this circumstance, __domain_mapping() will pass [0x400000, 0x4c05ff=
+]
+> to switch_to_super_page() at a 1 GiB granularity, which will in turn
+> free PTEs all the way to iov_pfn 0x4fffff.
+>
+> Mitigate this by rounding down the iov_pfn range passed to
+> switch_to_super_page() in __domain_mapping()
+> to the target large page level.
+>
+> Additionally add range alignment checks to switch_to_super_page.
+>
+> Fixes: 9906b9352a35 ("iommu/vt-d: Avoid duplicate removing in __domain_ma=
+pping()")
+> Signed-off-by: Eugene Koira <eugkoira@amazon.com>
+> Cc: stable@vger.kernel.org
+> ---
 
-> > I understand that the additional in_scheduled variable is meant to prevent
-> > multiple calls to hrtimer_start. However, based on the current logic
-> > implementation, the only scenario that would cancel the hrtimer is after calling
-> > prb_shutdown_retire_blk_timer. Therefore, once we have called hrtimer_start in
-> > prb_setup_retire_blk_timer, we don't need to worry about the hrtimer stopping,
-> > and we don't need to execute hrtimer_start again or check if the hrtimer is in
-> > an active state. We can simply update the timeout in the callback.
-> 
-> The hrtimer is also canceled when the callback returns
-> HRTIMER_NORESTART.
+>  drivers/iommu/intel/iommu.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+> index 9c3ab9d9f69a..dff2d895b8ab 100644
+> --- a/drivers/iommu/intel/iommu.c
+> +++ b/drivers/iommu/intel/iommu.c
+> @@ -1575,6 +1575,10 @@ static void switch_to_super_page(struct dmar_domai=
+n *domain,
+>  	unsigned long lvl_pages =3D lvl_to_nr_pages(level);
+>  	struct dma_pte *pte =3D NULL;
+> =20
+> +	if (WARN_ON(!IS_ALIGNED(start_pfn, lvl_pages) ||
+> +		    !IS_ALIGNED(end_pfn + 1, lvl_pages)))
 
-In prb_retire_rx_blk_timer_expired function, the only way to return HRTIMER_NORESTART
-is that the pkc->delete_blk_timer is NOT 0.
-The delete_blk_timer is only set to 1 in prb_shutdown_retire_blk_timer which is called
-by packet_set_ring.
-In my understanding, once packet_set_ring is called and prb_shutdown_retire_blk_timer
-is executed, the only way to make this af_packet work again is to call packet_set_ring
-again to execute prb_setup_retire_blk_timer. At that point, hrtimer_start will be
-called again. Therefore, I feel that there is no need to perform the check in
-_prb_refresh_rx_retire_blk_timer. Only let prb_setup_retire_blk_timer to hrtimer_start,
-is that right?
+It might make sense to downgrade the warning to WARN_ON_ONCE().
 
+Other than that:
 
-Thanks
-Xin Zhao
+	Reviewed-by: Nicolas Saenz Julienne <nsaenz@amazon.com>
 
+Regards,
+Nicolas
 
