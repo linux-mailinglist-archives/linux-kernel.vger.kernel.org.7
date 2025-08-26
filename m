@@ -1,86 +1,99 @@
-Return-Path: <linux-kernel+bounces-787227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36E92B37334
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 21:35:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E228BB3733A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 21:36:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC9C87C7E03
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:35:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 787A31BA6D80
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 646565661;
-	Tue, 26 Aug 2025 19:34:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD770374265;
+	Tue, 26 Aug 2025 19:34:44 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78E7374276
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 19:34:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3018A1A0BD0;
+	Tue, 26 Aug 2025 19:34:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756236866; cv=none; b=gbogAe/WRapYqKcxfvCtgTauj5rQcwpqhIoVRQ142igpehWTXBcDVcBScP0tEoESZmC0Q0utWaU1og5+ajZ5Usuon2i/wVXV13rLRMLYe5MRdduPtebxotUCV3LsQqRU4IZnASLzUQHaNaxnqx0JkSO1Newk2ObbkfAc6llOOxg=
+	t=1756236884; cv=none; b=Q4Nf/t/Fruj1M6jYsT5yOzCYdTx6/sUKfAI8zstv7QQvRngdRGAilJeN3tPQIfZiUiJUfwB8jM69TwIrER9dYBy5KFUCuo/ny+1hhD+e9QFprlPBWGWvlTcKuMtYgfuXwsnLCWCEdKzYphO1ryK+Lhw1rDUc106NjuVy1INUtdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756236866; c=relaxed/simple;
-	bh=AzsEd20oIKOwqoEREVd/Prk2kxgfE3rwxETRRbq9+Ic=;
+	s=arc-20240116; t=1756236884; c=relaxed/simple;
+	bh=0PIxGqsNu2o5Bjhc/cWLVmkGbMcZXP2uAlg8QoJFphA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pwE8oy4hHfgkKKz7ptM+vfFmupo3+176ZZVnv485qocgTgHA4ZKDsYj9xCtkxvQkasde68arhhfpdlhLd41wDqIsjYbTVC3hA8anWMydjhFFkkpY2Qt8a0Cc4AM0uZdQNMTGxiA8ltP363T2NK/1gWDKWElfF/u+8hU4F72Axbc=
+	 Content-Type:Content-Disposition:In-Reply-To; b=rLKcA4KfYLVI/C+2Rc5C0kPJaAuz5Wc2i0uFXMPXPP19vHeALJJZTJII2PAzZXUv7Hw+UVgp+dvL+iWoXW/if9Y397CgYt39SGxUWWYli99fUWd4Lau5SPkvPcFxeYa2gldXP7Os00rlOPdwkMbmNaExktm6tv/WgYM1nXM1mE8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A0ACC4CEF1;
-	Tue, 26 Aug 2025 19:34:24 +0000 (UTC)
-Date: Tue, 26 Aug 2025 20:34:27 +0100
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D17BC4CEF1;
+	Tue, 26 Aug 2025 19:34:37 +0000 (UTC)
+Date: Tue, 26 Aug 2025 20:34:39 +0100
 From: Catalin Marinas <catalin.marinas@arm.com>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Jinjie Ruan <ruanjinjie@huawei.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <maz@kernel.org>
-Subject: Re: [PATCH] irqchip/gic-v5: Fix kmemleak L2 IST table entries false
- positives
-Message-ID: <aK4MQ3dur0cyluGl@arm.com>
-References: <20250811135001.1333684-1-lpieralisi@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Nam Cao <namcao@linutronix.de>,
+	Russell King <linux@armlinux.org.uk>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Will Deacon <will@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>,
+	Christian Brauner <brauner@kernel.org>,
+	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
+	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-s390@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: Re: [PATCH 10/11] vdso: Drop kconfig GENERIC_VDSO_TIME_NS
+Message-ID: <aK4MTxWGoe461HGb@arm.com>
+References: <20250826-vdso-cleanups-v1-0-d9b65750e49f@linutronix.de>
+ <20250826-vdso-cleanups-v1-10-d9b65750e49f@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250811135001.1333684-1-lpieralisi@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250826-vdso-cleanups-v1-10-d9b65750e49f@linutronix.de>
 
-On Mon, Aug 11, 2025 at 03:50:01PM +0200, Lorenzo Pieralisi wrote:
-> diff --git a/drivers/irqchip/irq-gic-v5-irs.c b/drivers/irqchip/irq-gic-v5-irs.c
-> index ad1435a858a4..e8a576f66366 100644
-> --- a/drivers/irqchip/irq-gic-v5-irs.c
-> +++ b/drivers/irqchip/irq-gic-v5-irs.c
-> @@ -5,6 +5,7 @@
->  
->  #define pr_fmt(fmt)	"GICv5 IRS: " fmt
->  
-> +#include <linux/kmemleak.h>
->  #include <linux/log2.h>
->  #include <linux/of.h>
->  #include <linux/of_address.h>
-> @@ -117,6 +118,7 @@ static int __init gicv5_irs_init_ist_linear(struct gicv5_irs_chip_data *irs_data
->  		kfree(ist);
->  		return ret;
->  	}
-> +	kmemleak_ignore(ist);
+On Tue, Aug 26, 2025 at 08:17:13AM +0200, Thomas Weiﬂschuh wrote:
+> All architectures implementing time-related functionality in the vDSO are
+> using the generic vDSO library which handles time namespaces properly.
+> 
+> Remove the now unnecessary kconfig symbol.
+> 
+> Enables the use of time namespaces on architectures, which use the
+> generic vDSO but did not enable GENERIC_VDSO_TIME_NS, namely MIPS and arm.
+> 
+> Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+> 
+> ---
+> Technically this is still too restrictive, as it prevents architectures
+> without a real vDSO to enable CONFIG_TIME_NS. Right now this restriction
+> only protects the SPARC vDSO. I have patches to drop it completely,
+> as soon as SPARC is usingthe generic vDSO.
+> ---
+>  arch/arm64/Kconfig                   | 1 -
 
-Nit: if you ever respin, please add a short comment on why this is a
-false positive (easier to see it in the code than the git logs).
-
->  
->  	return 0;
->  }
-> @@ -232,6 +234,7 @@ int gicv5_irs_iste_alloc(const u32 lpi)
->  		kfree(l2ist);
->  		return ret;
->  	}
-> +	kmemleak_ignore(l2ist);
-
-Same here.
-
--- 
-Catalin
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
 
