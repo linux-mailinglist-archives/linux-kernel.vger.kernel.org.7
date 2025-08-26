@@ -1,144 +1,199 @@
-Return-Path: <linux-kernel+bounces-786887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44445B36D77
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:16:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E83D7B36D79
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:17:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 753334684B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:11:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4934356340E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:11:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3ED9220F5D;
-	Tue, 26 Aug 2025 15:11:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF07920CCE4;
+	Tue, 26 Aug 2025 15:11:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="coB0yhpF"
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="N64Mc9AD";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PTlGNQVF"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB44268C40
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 15:11:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747981E522
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 15:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756221076; cv=none; b=t4OnsSNvU57BUdOReytcZ5/nRq8HbH/bcZrZIozSjdlu2LdycvXhyMLhx4C28f3ADOt7mpIJe7JYDDMtVVFj+0TIeMsOoxV6QsnRqsPvy/V6j9PIeIDHR9w1EkHFIYXq3SZed0tJAx55y9g0bkGfVOd7s9TZNK6BnkNn3DgpUXQ=
+	t=1756221102; cv=none; b=Mzd9K7w7h2p1LTX643nzIEGvO6cDf5t+UAjAWnE1ja+yqL9n5pvmq8vQcScPKjZR7SZa4/ySHYnZSQKWaxL0NnWn8y+3IH35srxjRfFR421WVaByWPfVYDVMkgz+ciHW4ZoJBqx+JdScW7O63ppmmZSbLgdgzRtXgu03tg0KOmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756221076; c=relaxed/simple;
-	bh=bmG0z1HOhbjPckrji2ukzQh8cHrzhC38DcEeXeKZCBM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bE69DaVjI4DVbGZZk+3bzZfp/ffI0HbCKW004QO7u09tFsv5REZQqxJvLmt2ee2MIe6A9LKQAHlaj71amRDtZSMOAZ/z01S0xYSrkTZTEcR0P8u4qyFo0+Fo7hjB262jvaJVf+YESE6EJuFOstNgstSxkBSLz4YhVKbVMky/6Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=coB0yhpF; arc=none smtp.client-ip=209.85.160.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-30ccebab736so4033768fac.3
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 08:11:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1756221071; x=1756825871; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hLrgdFzlBPbDYpPHO34xWxrjl479AfkvLq/ffp8ncz4=;
-        b=coB0yhpFGSMHHG9xDJO5qN7a40tnTqfJP7Io6QU1NmaQP0+fSw/39GJcwwCTkMh/SJ
-         ZqCLnJoxGR3TznokxxAxiqJ95Pu7eAG7Ue104avddGF4oPACkHcW0PHy81c12qAWVqEQ
-         vVyThwKBb2zzCL9Tw+zcY9/eVdorr2oTjplg7UbHckJXbasIJp2aebq8XDozM3xShXCx
-         cdALq5eMpw76k72mSAvcuuUZJ1zMIeImjvBg+n0EWku7H6hFCc7kB1du7NJ7BJzR3r1a
-         Evk/5VAvx7r5vMZWG6AkY2A4Q99F8rqYBJO4BSwJo64MuHLBPwjZ9zfYLi5SYJog0vc7
-         iyVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756221071; x=1756825871;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hLrgdFzlBPbDYpPHO34xWxrjl479AfkvLq/ffp8ncz4=;
-        b=VNT7CrmLGlF9NGBPXfWdehcfxaE4r6+GBVLKGQmYD8Mmd4dBrbxBIpy7JBTBdDX4fU
-         GfgsxmYhxqNNm2nJBCXoK/FyBgsPB8GoHgnB8r7nIewqHLDWKQmtUmjFXOH8uMWm05K0
-         lzA8144I/f7a5m65C5u+RE7llK0//NeML8Wo1aslAg3vaiewDF/DYpmfZT0BaG4nHnLR
-         18nq3eHBe1PebEXGkFgzeG6S6KdWdKev7wcPs3g72s/IWdTn43mez1rggPW/RKbE0/If
-         4bUanoPLJ+E9vRiRqvnmWzS44MB4koXUR5jnRCxR4Fms6MhuyD29FpIZ/ZztPg/RWRSe
-         V4pw==
-X-Forwarded-Encrypted: i=1; AJvYcCUmliC5gPddjsII8fk2BtPALH8+WvcL4xfPjEWH8zVwpH66PcIbbnAcEeyJAwb09DiyjxuKecfJCumdE4k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2nLnhHBRY4dGwT0byxP8QCTRpqSnYiQteckLLYVp9BtDze/VN
-	qJEJBWuEzYUqzR3VfOk9rA34I2bCLC7YCGvSdqHNY2jQVyDYoXeSAmFVWEgiilfd2t+7GnV+C3K
-	UkNmM
-X-Gm-Gg: ASbGncvmt3OqC136qmL/4ThVwobBcS2yd9TXQVpmAcPvdxLMCjHbE52VHfsRc/fPTTw
-	Z/esWHGYp0Nqy+daQKxz9uQsc1jbu7DAWuladUdNoYmLtfX8kZ2R0Xk0a4O2o/jnqqHUJ1/adCu
-	vw62t6Z6fRYW/M5dqIkq6dF/OV7KJCZ9kZtzYZHm8TGPG4qMqmPhXjc7U58R3X6sSNru3vuTuPy
-	k9icV7gtDrldXK4eZ2weJPNPXcSedmwGVBvbpy53BcsRZRdwX2WbvxPIqKS74C7yeJiGJTaJOnv
-	avRTgIgbiB6lhmpgFtJR9dcQnN/KCaXB7PmuJSUFyqsuIlZQYS4yOSIhMv//Oy4bJF9DScJeYQj
-	GflM2kA56GG8PnQg1Leu5WPx2jGvg+KUQcDkoyw7UpfPUjqZdlFI5sCTlBg1dg6XoeRO2+FAb9p
-	0=
-X-Google-Smtp-Source: AGHT+IHPLPVoTYuyWUPPqegkgvkKkErW94mqeIgVxNaivppxvK7+bTtUe3engtClxePal6B2UlZO9g==
-X-Received: by 2002:a05:6870:32d4:b0:302:5dba:5ae0 with SMTP id 586e51a60fabf-314dcb65a74mr7496856fac.20.1756221070609;
-        Tue, 26 Aug 2025 08:11:10 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:aa9f:f4cd:76b1:fecb? ([2600:8803:e7e4:1d00:aa9f:f4cd:76b1:fecb])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7450e4738b8sm2368838a34.32.2025.08.26.08.11.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Aug 2025 08:11:10 -0700 (PDT)
-Message-ID: <181dafaa-ec04-43cd-b0a4-208da8cd89e9@baylibre.com>
-Date: Tue, 26 Aug 2025 10:11:09 -0500
+	s=arc-20240116; t=1756221102; c=relaxed/simple;
+	bh=VVVCUtyDYZ0buOY+ZdDaiV951AxgSpMaOxc/5ty10GY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Qm1IHOs6Jr/XFu5Qhu4RzsykpB+8t6DA9e8V0xHyj2Qu8bU8hP3BdxyQsksDPyq/4lQBAUxxiaq/AvYZ/Wd+sA92HWfFNDG/wF9C+e7xnIxAY3ImB1F3Gw2HtMjq7k15SdIvJ4pdwFMAdWjz9v11iVJrsET4M0ItxDE4jDJYG7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=N64Mc9AD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PTlGNQVF; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756221093;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=U/yXlfO8Uy4zaE30Fj0arVRS1PTUrfVGm3+QcjZ6aTI=;
+	b=N64Mc9ADHY3q+V4ETWWrYQny5lL4fSh31sdQLk5q+t+zoi0dcD+S4vPK9SNjWYuV2UgsQ2
+	U0jtlU7DlPsEdonOp9g8fUee7TVhrvZqxSSNYvpIKNxjVVP5H09OgkzGSg3nEsjO+Z7spb
+	p+t7UmHoi0FjlijUs67URnUGuaN4Y5l9oODFOxtQ+IMpg8cE01YA0bQHSt+xaQ5GO9085i
+	aAz55tNjJWERbYXuJW93tRWUFWACU4qQOa8azf6ujGYUlAkWenaQ51SrP8yMab76bj4vMs
+	Pb4DWXK7sUbgDGlbLxmwjmBOS1r9OGQLyvqNF4cufhcXAJOZPo5kiUl7v50cUA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756221093;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=U/yXlfO8Uy4zaE30Fj0arVRS1PTUrfVGm3+QcjZ6aTI=;
+	b=PTlGNQVFKfrxKIXPM7WJhU5dmv4vSerF7WYt0qPiIe+nPVdFkKjpRPGGYGmUHsCOQAYUXt
+	249M/og3SWsmRXCQ==
+To: Marcos Paulo de Souza <mpdesouza@suse.com>, Daniel Thompson
+ <daniel@riscstar.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Petr Mladek
+ <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, Sergey
+ Senozhatsky <senozhatsky@chromium.org>, Jason Wessel
+ <jason.wessel@windriver.com>, Daniel Thompson <danielt@kernel.org>,
+ Douglas Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org,
+ kgdb-bugreport@lists.sourceforge.net
+Subject: Re: [PATCH v2 3/3] kdb: Adapt kdb_msg_write to work with NBCON
+ consoles
+In-Reply-To: <6035c35f72eb1ac8817396ca08aae71d097ca42c.camel@suse.com>
+References: <20250811-nbcon-kgdboc-v2-0-c7c72bcdeaf6@suse.com>
+ <20250811-nbcon-kgdboc-v2-3-c7c72bcdeaf6@suse.com>
+ <aJoAYD_r7ygH9AdS@aspen.lan>
+ <6035c35f72eb1ac8817396ca08aae71d097ca42c.camel@suse.com>
+Date: Tue, 26 Aug 2025 17:17:32 +0206
+Message-ID: <84h5xukti3.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] iio: adc: ad7124: add clock output support
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250825-iio-adc-ad7124-proper-clock-support-v2-0-4dcff9db6b35@baylibre.com>
- <20250825-iio-adc-ad7124-proper-clock-support-v2-4-4dcff9db6b35@baylibre.com>
- <CAHp75VeAMNp8gARndVRnh3EwrTb65MNFXL7pCThR+Ghd_+yHDw@mail.gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <CAHp75VeAMNp8gARndVRnh3EwrTb65MNFXL7pCThR+Ghd_+yHDw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 8/26/25 3:13 AM, Andy Shevchenko wrote:
-> On Tue, Aug 26, 2025 at 1:55 AM David Lechner <dlechner@baylibre.com> wrote:
->>
->> Add support for the AD7124's internal clock output. If the #clock-cells
->> property is present, turn on the internal clock output during probe.
->>
->> If both the clocks and #clock-names properties are present (not allowed
->> by devicetree bindings), assume that an external clock is being used so
->> that we don't accidentally have two outputs fighting each other.
-> 
-> ...
-> 
->>  static const int ad7124_master_clk_freq_hz[3] = {
->> -       [AD7124_LOW_POWER] = 76800,
->> -       [AD7124_MID_POWER] = 153600,
->> -       [AD7124_FULL_POWER] = 614400,
->> +       [AD7124_LOW_POWER] = AD7124_INT_CLK_HZ / 8,
->> +       [AD7124_MID_POWER] = AD7124_INT_CLK_HZ / 4,
->> +       [AD7124_FULL_POWER] = AD7124_INT_CLK_HZ,
-> 
-> Perhaps / 1 ?
+On 2025-08-11, Marcos Paulo de Souza <mpdesouza@suse.com> wrote:
+> On Mon, 2025-08-11 at 15:38 +0100, Daniel Thompson wrote:
+>> On Mon, Aug 11, 2025 at 10:32:47AM -0300, Marcos Paulo de Souza
+>> wrote:
+>> > Function kdb_msg_write was calling con->write for any found
+>> > console, but it won't work on NBCON ones. In this case we should
+>> > acquire the ownership of the console using NBCON_PRIO_EMERGENCY,
+>> > since printing kdb messages should only be interrupted by a
+>> > panic. This is done by the nbcon_kdb_{acquire,release} functions.
+>> 
+>> Just wanted to check what it means to be "interrupted by a panic"?
+>> 
+>> kdb is called from the panic handler but, assuming the serial port is
+>> run syncrhonously when "bad things are happening", the serial port
+>> should be quiet when we enter kdb meaning we can still acquire
+>> ownership of the console?
+>
+> TBH I haven't thought about that. I talked with Petr Mladek about it,
+> and we agreed to have something similar to nbcon_device_try_acquire,
+> but with a higher priority, to make sure that we would get the context
+> at this point. But, when thinking about it, since KDB runs on the panic
+> handler, so we I'm not sure even if we need the _enter_unsafe() call at
+> this point, since nobody is going to interrupt either way.
 
-Seems redundant.
+Well, kdb can also run when not in panic. In that case, if a panic
+occurs while using kdb, those panic messages should be printed directly
+on the consoles.
 
-> 
->>  };
-> 
-> ...
-> 
->> +               const char *name __free(kfree) = kasprintf(GFP_KERNEL, "%s-clk",
->> +                       fwnode_get_name(dev_fwnode(dev)));
-> 
-> What's wrong with the %pfwP specifier?
+Also be aware that the kdb interface is using dbg_io_ops->write_char()
+for printing and it will ignore a console that matches
+dbg_io_ops->cons. So there is no concern about the kdb interface
+conflicting with the nbcon console. This is just about the mirrored kdb
+output.
 
-I didn't know about it.
+> About the try_acquire part, I haven't checked about the state of the
+> console devices when the panic happens, if they drop the ownership of
+> the console on non-panic CPUs or not, so I'm not sure if this is needed
+> or not. I'll wait for Petr and/or maybe John to add some info.
 
-> 
->> +               if (!name)
->> +                       return -ENOMEM;
-> 
+If any context owned the console and is in an unsafe section while being
+interrupted by kdb (regardless if panic or not), then
+nbcon_kdb_try_acquire() will fail and the mirrored kdb output will not
+be visible on that console.
 
+I am not sure how important it is that the output is mirrored in this
+case. A hostile takeover is not acceptable. And implementing some sort
+of delay so that the current owner has a chance to release the ownership
+(similar to what was attempted here [0]) is not only complicated, but
+has its own set of problems.
+
+Currently there is no mirrored output for nbcon consoles. With this
+series it is at least possible.
+
+BTW, in order for CPU switching during panic to be able to mirror output
+on nbcon consoles, an additional exception must be added to
+nbcon_context_try_acquire_direct(). It would look like this:
+
+diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
+index 79d8c74378061..2c168eaf378ed 100644
+--- a/kernel/printk/nbcon.c
++++ b/kernel/printk/nbcon.c
+@@ -10,6 +10,7 @@
+ #include <linux/export.h>
+ #include <linux/init.h>
+ #include <linux/irqflags.h>
++#include <linux/kgdb.h>
+ #include <linux/kthread.h>
+ #include <linux/minmax.h>
+ #include <linux/percpu.h>
+@@ -247,6 +248,8 @@ static int nbcon_context_try_acquire_direct(struct nbcon_context *ctxt,
+ 		 * Panic does not imply that the console is owned. However,
+ 		 * since all non-panic CPUs are stopped during panic(), it
+ 		 * is safer to have them avoid gaining console ownership.
++		 * The only exception is if kgdb is active, which may print
++		 * from multiple CPUs during a panic.
+ 		 *
+ 		 * If this acquire is a reacquire (and an unsafe takeover
+ 		 * has not previously occurred) then it is allowed to attempt
+@@ -255,6 +258,7 @@ static int nbcon_context_try_acquire_direct(struct nbcon_context *ctxt,
+ 		 * interrupted by the panic CPU while printing.
+ 		 */
+ 		if (other_cpu_in_panic() &&
++		    atomic_read(&kgdb_active) == -1 &&
+ 		    (!is_reacquire || cur->unsafe_takeover)) {
+ 			return -EPERM;
+ 		}
+
+>> > @@ -605,7 +616,14 @@ static void kdb_msg_write(const char *msg, int msg_len)
+>> > 		 * for this calling context.
+>> > 		 */
+>> > 		++oops_in_progress;
+>> > -		c->write(c, msg, msg_len);
+>> > +		if (flags & CON_NBCON) {
+>> > +			wctxt.outbuf = (char *)msg;
+>> > +			wctxt.len = msg_len;
+>> > +			c->write_atomic(c, &wctxt);
+>> > +			nbcon_kdb_release(&wctxt);
+>> > +		} else {
+>> > +			c->write(c, msg, msg_len);
+>> > +		}
+>> > 		--oops_in_progress;
+>> > 		touch_nmi_watchdog();
+>> > 	}
+>> 
+>> Dumb question, but is the oops_in_progress bump still useful with
+>> atomic consoles? Will the console have any spinlocks to disregard or
+>> will the console ownership code already handled any mutual exclusion
+>> issues meaning there should be no spinlocks taking by the atomic
+>> write handler?
+>
+> IIUC, since we can have multiple consoles, and some of them are NB and
+> others aren't, I believe that this oops_in_progress is still useful.
+
+Correct, but only for legacy consoles. Please move the @oops_in_progress
+increment/decrement to only be around the c->write() call. This makes it
+clear that the hack is only "useful" for the legacy consoles.
+
+John
+
+[0] https://lore.kernel.org/lkml/20210803131301.5588-4-john.ogness@linutronix.de
 
