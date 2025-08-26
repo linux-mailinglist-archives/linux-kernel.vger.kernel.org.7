@@ -1,145 +1,351 @@
-Return-Path: <linux-kernel+bounces-786948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60FE3B36F2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:01:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 486BEB36F52
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:03:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54F6F465CFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:55:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 552C88E5E7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A16C35AAAB;
-	Tue, 26 Aug 2025 15:51:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2545371EA3;
+	Tue, 26 Aug 2025 15:53:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OEhqFXnN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Yta+h5Vc";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="eqdg6xWv"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF76F30BB95;
-	Tue, 26 Aug 2025 15:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756223498; cv=none; b=FNsGfiBDqEBCSJbpR6AWqMZtj/+a3DAjTkGl6PQNsoKn4haF1Ywj+y9H4BqWzGOfx+M93+pVL21cXrZ2xuIJVD9XBzQcYxg1JIFBIhiN/mN+R9+2srb92Biwnve5JnWlxu+o3CZ6FxcOURXhtIri1dL95aVlv/FNBWt2lzi6AZQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756223498; c=relaxed/simple;
-	bh=XjEHAiQqDs5s/HRQ2adlt14ljpMwMHqgW9H3L3VQpUg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=csy7HsGybCq44f4AGltymJKyPuzUlA8CnzfG6da+0ZQijQ7oxbfmhzxXTXpRkzbF4iNrrvb5jmF9DDV3CNxmRghqbUxZiFJ0DL+L60IVSpe4VCACfEIC8dUCUaWPrDXvQsvrnZU2QthNKGW+olMmp8ocU82BGY/ULUG69Ck0Yh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OEhqFXnN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8591FC4CEF1;
-	Tue, 26 Aug 2025 15:51:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756223497;
-	bh=XjEHAiQqDs5s/HRQ2adlt14ljpMwMHqgW9H3L3VQpUg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OEhqFXnNyibelsZJnXJwAuS+wUdvcv+KS2qxW0e4MRKmhaugKSqqN5f9Y37HM+TMG
-	 aU8OJ0rbNO5UC9hZ267XpiwAuzoITTXEOfFczGXsk1/04K73p5OUR78G+Knucbmgnh
-	 Otrrycvt4JJnAw4022C7XAs70oyQPbDmgbJIIXszHxf8Md9udagD1kltw5bogtbSJb
-	 ratITwoXGpXaO/UgMglmCqBYH4X3S7wueaTzi5DOXMf9cG7yBEPzCQsM5CS5d5BVXw
-	 MYOj1PYXHV2rfbEfEBHzk5Thl0YkRuGTGG8WgDjPdxx5bG50QrWs+2CDD5o97d11EP
-	 I7Zyq240Sy2/g==
-Date: Tue, 26 Aug 2025 16:51:31 +0100
-From: Simon Horman <horms@kernel.org>
-To: Paul Menzel <pmenzel@molgen.mpg.de>
-Cc: Kohei Enju <enjuk@amazon.com>, intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	kohei.enju@gmail.com
-Subject: Re: [Intel-wired-lan] [PATCH v1 iwl-next 1/2] igbvf: add
- lbtx_packets and lbtx_bytes to ethtool statistics
-Message-ID: <20250826155131.GB5892@horms.kernel.org>
-References: <20250813075206.70114-1-enjuk@amazon.com>
- <20250813075206.70114-2-enjuk@amazon.com>
- <9b44df93-acec-4416-9f32-f97d0bfaaa7b@molgen.mpg.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4986371E95
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 15:53:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756223589; cv=fail; b=OUTC+oOF1ubWLRuZtUdB202QhUoSKPuC/meWmbBx8B9Ktp/QN603mhXZ58yrwT+PFeHdhIJoRxSHMOvNFXvSGUiq4To4DRb6boaP8qzwaGd2+Fyr8JMun6bq2X/ERmGWNEVzllR3FwT4IVfUpqEv0szjVS6vZu1s15vzLkApcIE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756223589; c=relaxed/simple;
+	bh=OubhfBfnwAhIZUH7V3Evg6aCsjsqi29155Vd7AvFIYI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=GmeDg/epnwW+WhOEAKxn0JLUXgMTuQMu+9Td9N0i+VN79Y27EH0ehLKA42v0ERFBcZjC91Al5CIct77eY+iSvI4kXTARsnaus94jjIxKUM9nwcHKveHZF3aHkvzFYeDJHbkf5HTEDtG/NMeOFGy5G3p0sMumPgTYkRA9DKgE4L8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Yta+h5Vc; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=eqdg6xWv; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57QFCW7T016403;
+	Tue, 26 Aug 2025 15:52:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=R/xuoPN8jET8onMwH0FFSNa60hMfTODJIHCZP9Xiz8U=; b=
+	Yta+h5VcX6W0hahVtr4qDI2w2mgNt2LGgWShCfL25J9xhPxXGbdV7R3KGGUNtszH
+	IxyxSu0AIK2DAzbVAemAxoNTht0e3WqGAbsDcRSaLDzK9GyihLo+DHCcXuGdJQOt
+	3ZmIlb2n1x5tMjrU8izB26+aOQchAXFjxm5MNm2cKll6xq5MwXcQ6ahSkZHnrcU5
+	Eo574o8t0fI2kDgRaXW0D4NKOdxaxdMpTpqLz36issS5WZjm93+bQ0AUdI6INQ7P
+	2HXvJgiT45ItvlDpHYJ9tl86RSpkfccKiJdIDyOaqKCNURY9rNCMHOobIEbnbD86
+	loOHk1Pt6xJMG3CXchz/kw==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48q4e24ukf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 26 Aug 2025 15:52:27 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57QFRTG9014636;
+	Tue, 26 Aug 2025 15:52:26 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12on2081.outbound.protection.outlook.com [40.107.244.81])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 48q439prru-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 26 Aug 2025 15:52:26 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=o5aLeVbc/BnpeGAC2A2Cm/4f7ez+Ki/6LfaqV6mT2D5znPsK00A2vPxWaCbwlgAx26v6y1bS0bwh0XVQXtc1eHlOPbKfZj8z4qhQtRouGwJe8YzI5kwhjdXC4KiizjX9TSAiIlV4Q5XjBEXFfVG7Wa4E5wnY5ijtL49cNq6FIxtaoUrWTjNDiQ5zP5G8rVH3slf0zIprVJz+CsZG2Zbvd2A/NO8fn9k4Hoj473e0WZ+lT+hqQyJi7ffHVPjo8s+us+5CHY5IY/jVU/YyP3GNA7wdMWIEVZWluwxzg62z44u/dQefo4yyu5wDVLZ2nGVj/sQrL0Dqz0cHbZFR0RZBEA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=R/xuoPN8jET8onMwH0FFSNa60hMfTODJIHCZP9Xiz8U=;
+ b=Jip0eLO7VtP1qyFuTAkOaRLY1HYJ1TynNjcogmcknRYiu6NGGdlLlttqDX1PNx03VQAMOsARlJw5etRR8LopyPPHl+k9o/kQf9H0ody3R0HUWLLaregGO+xkejI8l+8SOvjzI4M9QvW5A2cMJTaeV3RYs4TsaJvqSXXSWCHxTqwIDaOgfrU81aXUu13sSGuaeielpQhgfU+SpggkfQtR9/1yD6aCi5xbrLA9XOf5zaCdClHZoQjhT+TAiWrUSPonNrt9b+7DGED0yfwHiomGxwmFo8RaHy3lqdGorLYCdvkI5Nx54HOOG4pwN+xnErSCeCC0jEHb0TCr9RIzVoBF1Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=R/xuoPN8jET8onMwH0FFSNa60hMfTODJIHCZP9Xiz8U=;
+ b=eqdg6xWvQj9m6s1A5jk4Jipks8nRnU5M7l+AWXRg32Pda+a37AGcr+IIWCjFF/B1/t4yjTjqjpxfq/6KUXkHw3kbFex5ji/vL45hFbaV06HHZPKCIP6xsbu7JoBExEVoOw7UL3o9ca2bLbPx1ADcqwS94Bud/+KJ9KJO1YTlXWo=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by DS0PR10MB7456.namprd10.prod.outlook.com (2603:10b6:8:160::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.20; Tue, 26 Aug
+ 2025 15:52:23 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.9052.019; Tue, 26 Aug 2025
+ 15:52:23 +0000
+Date: Tue, 26 Aug 2025 16:52:20 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Lokesh Gidra <lokeshgidra@google.com>
+Cc: David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Harry Yoo <harry.yoo@oracle.com>, Zi Yan <ziy@nvidia.com>,
+        Barry Song <21cnbao@gmail.com>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        Peter Xu <peterx@redhat.com>, Suren Baghdasaryan <surenb@google.com>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        android-mm <android-mm@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Jann Horn <jannh@google.com>, Rik van Riel <riel@surriel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Subject: Re: [DISCUSSION] Unconditionally lock folios when calling rmap_walk()
+Message-ID: <65dd5d54-87ab-49a8-8734-2201a0014feb@lucifer.local>
+References: <CA+EESO4Z6wtX7ZMdDHQRe5jAAS_bQ-POq5+4aDx5jh2DvY6UHg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+EESO4Z6wtX7ZMdDHQRe5jAAS_bQ-POq5+4aDx5jh2DvY6UHg@mail.gmail.com>
+X-ClientProxiedBy: LO4P265CA0219.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:33a::17) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9b44df93-acec-4416-9f32-f97d0bfaaa7b@molgen.mpg.de>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|DS0PR10MB7456:EE_
+X-MS-Office365-Filtering-Correlation-Id: e8d0f4b7-8df8-4325-cb15-08dde4b88c3c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?YzVQUGJwRGNVeDBBQVAzRy9uRTZwS25YeU1DMkFDa2JwaUxUS2E4bGQ0cmdF?=
+ =?utf-8?B?U0VZNkVvVlRhckhjTTNMVi9NZ1krVXkvSkNPNEZ0bGQzandEV1pDdzltN2Q1?=
+ =?utf-8?B?Ty80Um9zeFpkajk0Y0hqMmtzb1J5eE03NTJUZWN0cEFKTFpkN3ZJWndlN3Y3?=
+ =?utf-8?B?R1MzUE92clVJdEJSOEJ1bnRneEhNVmxSTUxEYWNpT0hjQTBiZkNVWi9DMm4x?=
+ =?utf-8?B?bEx4aW52ZFNQa0VDS0RqN2pYWktHc0xOTC9wcVlrVlp2RzQ2VW1nQ1cxdHFq?=
+ =?utf-8?B?YmgvN3hCSXI1dkRwd1ZNVWRTbExHNExTRVV0MWFyV2I0OCtoYTBrV0kxOHZO?=
+ =?utf-8?B?aE1QbFFzVEFBdytrSWNsMm1kSzYxY2dCOXRVZlZNSEh5ZjBkbHlFTytPcXM2?=
+ =?utf-8?B?ZjlMaURBaW93b3RZdkl1eUxDNUp5NEpyU21yWitYWE5DT2p3UDBZSnVLWmJt?=
+ =?utf-8?B?S3FCTjJMTXZ3WDlTM1IvWFBaWTR0SUQyYWZXSFpKR0phODRUd2N6MkN4ejI3?=
+ =?utf-8?B?d3BKblhRZGRHL0I3L1Q4L214MjBSWmhadGZJbC9SOUMzdmtFRE1jZk1NNytW?=
+ =?utf-8?B?U0xWdTVjZUswREFGUVFCcGVMRkw5SFhqaWdtNm1lNVNJaUVvZGxPM0JQVnB5?=
+ =?utf-8?B?NWdBRXBRQWsvUFZ3YzVHcjZYNllWL1lxQXZ2NExQOG0vTldzVE1vSnA1MDJp?=
+ =?utf-8?B?L1BNbDRoUm9IZEpXWWFObFBvVW4vWG9TaFU5L3hQYUNYdTdzQlowcWhpWEpG?=
+ =?utf-8?B?SG95dWxSekFNR1BMMmRJeUFlSmRiYlZNTWluTnppaXNDS2Q1eGY1R0Nab01H?=
+ =?utf-8?B?Q1A5QldDY2l2elRyL2Exa1BkUm16RmNYTGswMTV0NGdGSkhNUkxwK0tMMlc1?=
+ =?utf-8?B?ZTEwdHJLeXo3SURRYlNaZ2t1eFJaZ1FQdHMwSm1wQ2RlWnVySDdKdGtIalZt?=
+ =?utf-8?B?alp1S01GQVM3a3RZT296am5iaHdMYm9sU0MwaU9VSVRIRnhwTHhFN2xxVXBt?=
+ =?utf-8?B?WmQyeWRhT003Rk1EOVhIMER5YlNSK2F4S2ZkSDVpNHl2TlVzNWxGSGI4RG51?=
+ =?utf-8?B?M2ticEpLOVZ4WHYrNkRUbVdZbWVJUDUvQldyUVA5amxabzRTTjI0SG82Y3dI?=
+ =?utf-8?B?VHl2UlZ4Z0tnTDA0VHBCcFJlNmVMVDRrT2oyQmw0YUlHdDZkT3gyUGd0Q1Vm?=
+ =?utf-8?B?MGwwN25LRWxQb3JPRnNuZUlYcjVBYXRuUkd1ZEJuOFFyMExSaTlsaUVhWlRi?=
+ =?utf-8?B?Y1RBbDU1YUgxdWlqaDV5a0JZVkZXNUtJdXVaMEh1c25yNzA3NVdHQkIxMnEx?=
+ =?utf-8?B?Z29qSkJXaW9aMXZHUkNZazF2dkw4ZCsxTGVpenlQNWhoVnpkNWppQ1gyekZ0?=
+ =?utf-8?B?MlQvWDBJdnhvR21wNkdVdVNaZjc5cG5SRXkyOWlBQlpGSWxPRDhNNUU2dWlH?=
+ =?utf-8?B?QWZ2WXM4YWE5cmVpUjEva3RhYjV5bW1lZWJFTStwY1A0M09RdzdpaU5VTW9u?=
+ =?utf-8?B?VW9wMjRUQTk3M0tIa1g2MStFWnNYbkxNQ0ZKNDJ6czMvNWc0S1NIYndGRkRQ?=
+ =?utf-8?B?YVVnZ0Jtc3AxanRWc25PQ0sxYzM1TlpGUGhvWWt4SDN4djhwUHR6WnhzUFdv?=
+ =?utf-8?B?NVlHYzVnakRjZmVrbTBxbDR1dUhEcEI1V1RENkNVa2VNWnRYUzR3VzVwWldW?=
+ =?utf-8?B?a3Q5c3BUSHdsS2R5RGdqcTl3R1N2Ym1DQ0NSekp0NkxRUHZnRmtRRFVaSXpt?=
+ =?utf-8?B?RFN6dnhxUzFUTnl4bEF3ZTdGUlpUUHY0Q3VOWUxpUkpkUTBSenVmUkV2TzZT?=
+ =?utf-8?B?aWxRbUhJZlNvWng0NE9lc3o5WXdJN040bEhoam9jQUVhWjI1ckkxSVFXWnlT?=
+ =?utf-8?B?WG5nS29vOVhJeEd1SDBFakpSS1lnVjJ6YXg4d3lhYUJ6RCt6NVVFQXRhU2h5?=
+ =?utf-8?Q?ppKTZzg6yqk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cnVia1J4TlFGbGhSTFlKT3NkdlBnZUh6YXZ4YXNxRUxIejg3NGJQUDZoaU1j?=
+ =?utf-8?B?VW1lNUhpcXhCWmlXUE5PL1c5c1hZNHlRUGhpS0FTdE85VVowZ082by8xTWRL?=
+ =?utf-8?B?bmpKeHZodGpoQlB6MXlLY01XQUVHdmpwOXVSSytMcVhiSFI1RWVOcFNmOThI?=
+ =?utf-8?B?aDJPTXU2MEdmNXplbklyRDluN1JxVk9YSkhZV0s5QkhLdlhnVnEwSkhKZ292?=
+ =?utf-8?B?QzdtRHhjdTdZektOdmpiZXlzRUxxVWtUTUJhVWhtRVRueEdER3ZnM2c5ckRY?=
+ =?utf-8?B?Y1NTUjZhZnZwMGlITmhnRjR3OVZ0a1g5Y3pIeHFBaW9kdk0wT09LVkh6MDFK?=
+ =?utf-8?B?ZnMzcXRsTEdONHJnZTZrQ1ZtUktCUW5SbFJTM2JXUGcyUHcwZGwvREpXYkVw?=
+ =?utf-8?B?Um9qK1BRTzRUVlMrU1dLMm5CUjM5ME9hSGpBNEVBWGpNbUFSaVZSSWh4TjN6?=
+ =?utf-8?B?eXRYN1QrbExyVngyL2g2NWpIVElhbWpEWjlxaHhLcmZDV005SlVTUVJQb3lk?=
+ =?utf-8?B?ckFUZW5iYkRSNVdNd1NVTXF2M0d5NWEzaGpldExiRGNmcnNGTmozSmp5WGVD?=
+ =?utf-8?B?MlR1bTlCdTNXWXp2QzY5MXo5b3NCRmlUTDU4eWlsM2NITkZyLzMyRE5rTDVu?=
+ =?utf-8?B?cjAxZmlPQ2RhcUlZU1FHYVl5QkNtL2Z2aldzbVFuR0RmejBMQ0V1NDV3WG51?=
+ =?utf-8?B?MFdQTjFSUW1tcUZjQitJV2h2RmNMbXN5ZVlaRTJ2NlZHN0gydFNNK0FhQmZm?=
+ =?utf-8?B?bTBVa1JVTkQ5SnFpdEJZa0lWa2JlQVhRYzFaUDBJY0xYRE9CM2NIYnpTQzF4?=
+ =?utf-8?B?Szg2aTNpaXZtd0NGYnAyRHpFUno4SGdUNmdSMHorWVptMFgvWWVPR1VBMFZs?=
+ =?utf-8?B?azdNTC9hT2RrcnFMNG1OUE94YnByamhlTVRucEIvMkwxOXlYOGFBeHM1T0Mr?=
+ =?utf-8?B?VnAzVW9XL3l4b1A3Ukw5NktHcVVlK1JBeGJnZ0RNdnN4eVJ0THdvR0VsNmwv?=
+ =?utf-8?B?WHVwZ2ljL25MNlc5alFGN29zQzNnQ3BGb0tJUngxVG1zdkdnUFFNWXZ2S28x?=
+ =?utf-8?B?aTR0M3ZmQkYyZHRiK3NyNmJBS3dVVVpJTlBYd2ZNaG9iR1l1UHp1RWxWdGV6?=
+ =?utf-8?B?ZlkyYXJmVGVLVm4xMXpiZnBpUTlvNU1tb1h2VFYvbkhqaktod1BxbTArU28x?=
+ =?utf-8?B?S0Zjek96dWd2L0ZYZEQ4RDJ6MUJ5ZXB1bE1sRFg0akljYjlIaTRzVmM5aUND?=
+ =?utf-8?B?bE1oUUlYS3d6UXI4NWxLSUttMm53TUg1cVdEY2ljNU9rTTVsUjF5bTNWTnFu?=
+ =?utf-8?B?cnhwVS9hOWlYNFVRRURzWUlnYmZaN0FpbjV6WUh1Z0xmbk90eWJsNHZmUXlw?=
+ =?utf-8?B?QTZYRXBRWG9tc2FuMlBQTjVmZXBScnVSUUpsTUJKbVhEdDM4Tm9zbWhLL0ov?=
+ =?utf-8?B?L2RSY0p1Rng4RXNtNnlJbnVCS1JYa1h3UTlaTThLVHdPMmJodDJxRHhaQ2VG?=
+ =?utf-8?B?REE0VGlvZzNTeXNTMTJiQU80TjhXMjRLSGt5QjJFcXRzdXRONjU3SndWYlgv?=
+ =?utf-8?B?LzQ0MGNycWhWM0JHRW9WOWlmemJSMjJydkZKdHhNeTk1TTlhUUk0bU1ONDlz?=
+ =?utf-8?B?NWphR2dGb1F2b0N1QjhxVFQ5NkdjQlVmaFcyYnFUa2JRZ2xrRUdnL3dSOWZS?=
+ =?utf-8?B?MFZDWkRpYVdUUS94c2VQY0VMcmNaNlVOYWxlNHowc3Ftbms5RCtUSThkck5t?=
+ =?utf-8?B?OHlnQVBwTkdkQ3lWRGRzMFQrTXBZcnNGdjhDeEJ1S3VsSnRYREhlemtmdlp4?=
+ =?utf-8?B?cHljcmREb3VDTmswTk9WUFRyN0oxOVlqU3lVSU9NcTRRcWc3bjN4ckVKMDlR?=
+ =?utf-8?B?NTNVQ3cvQVVDK1o2ZEl6dFlQeW5xYXY5YzFzWVJzYS9ZUzJNNVJHQWxDOHNO?=
+ =?utf-8?B?dmdwcjNheTc4MzViS29yaXpLc1NUNEozWmhOZnRtd2JuWFhBY0xFbUhCemNv?=
+ =?utf-8?B?L3AxeS85SDIya0Q2aFFKVWdFdFJkRm5jRy9FNWVrcVFITk51UGZxVEdJbkM0?=
+ =?utf-8?B?ZmpUaEYzT3NFdGU4YVc1Zk5vc1Y4cWJQTVJvWFlKVTFqYlR0VjNROXJ6cmdG?=
+ =?utf-8?B?MWZEWHpkcDJDWSs0bGg5YWtJdkxVU0d2bkI3WUlIN1h5eGNFOERYSlFVNVgw?=
+ =?utf-8?B?NGc9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	u7ZYW1/BeLThOO+L3eCnmHBlRrwC/5zpTjQIbKFp8XbX1jCFWKGPUNUx424uUWNicT/f9kCj+bVmzcpVP+wLoMnVni6ym8gsxANs+3XqSDIW7juHPWM9TTwvQ/24/X61qXT/DlyUSJs3VT8CvT22P3p7XFcLpUyk18UssEqbKp0g+bcb1xtbDTvvd9o22fd0D2L33f+RQG2J1kJRkhYgT3nKu+UnkWYyp1qMb2GztvzWH4iRUiIJ6tP+vmrqKP9KNQZKbiGY5tferZUDkY6jfuO1a9EBSi1SEsPZGWgJGpKPAGjd7EjCTTjJoZ8tLstPb4WlJtf5mQom3H/Lgb3DLxCEdhXLpRBA5K709Uc6ungeoyy/+EaPmYe4GbI3lFXe+sOSqnIjuX5hUjvY/3yfCPRUeXBRTAXUKRZvt8N7Oe5hRwlNhralaIM7WZ7AiJIWjiqf5YFMihf3dKfllGf5hQxTSOA47IBjDGX/VThJ2+S3Qfz+0jA+Wx+8SUGWUopzKZrD3FpbUYccZl0CeF7q2Pkzr2MLyL+gEwkrkXKIb1ssPibWdNC4gvd7qMN82zZMm0Dli7vzc3S5VCWSK+PQnZIRkzH2zRnTYKySoARIOfI=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e8d0f4b7-8df8-4325-cb15-08dde4b88c3c
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 15:52:23.4986
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: frVybtW5xcbedbDnRGPSyfHW+6rBi1IY/e8n+ueLZ2xvu3C+/Hbq3E9nNWjoslU0EBBqyyFq0kExX7OOPSoOKmMb6dLvGW7Mik+5YjMEnyI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB7456
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-26_02,2025-08-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxlogscore=999
+ mlxscore=0 bulkscore=0 phishscore=0 adultscore=0 spamscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2508110000 definitions=main-2508260139
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAxNyBTYWx0ZWRfX0AXmeTadJDBD
+ b/0XVi1fujECOX3fGTBs6UBXjQk+4wicPZ9hTixtmy5d/djyqbyrHUsfDs4O0rCOUqi7rKB2Dmx
+ QMOwqCVqkWT7BQyKinGUJRyIK5Qe1OjYL0+Sm4hokwVvUdYmSSg1qy1zKgGlGyUueewfzsaoMDA
+ OFSkEaCCokAwWJhuvwNe48XoWCfCvChsePzierlyT4NU6hEgBRHEqeHfeCswiCtX892LctSUnfY
+ 3zZbiD7CzakPH12zanVJUCQsGY8LJYCqMdLxpEEESjhGGujM+1R7N1E8x/MywWDtj90qtCIxXhJ
+ RYbKBjxxWfXUlj2lYp5R4bSvPCsOoI0jxitCU4SNzGcMAcK23eSodpAln+7WH/1FCaiq0OjYmi2
+ 8LWpK/nqwJfK1sgf4F8CCL+JhDI5cQ==
+X-Proofpoint-ORIG-GUID: jGMSbkO10DgF-KEcp_zOjAbSA5aFme0h
+X-Proofpoint-GUID: jGMSbkO10DgF-KEcp_zOjAbSA5aFme0h
+X-Authority-Analysis: v=2.4 cv=IauHWXqa c=1 sm=1 tr=0 ts=68add83b b=1 cx=c_pps
+ a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=FSO2O3GXqfr0IAyAxZoA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 cc=ntf awl=host:13602
 
-On Wed, Aug 13, 2025 at 10:18:29AM +0200, Paul Menzel wrote:
-> Dear Kohei,
-> 
-> 
-> Thank you for your patch.
-> 
-> Am 13.08.25 um 09:50 schrieb Kohei Enju:
-> > Currently ethtool shows lbrx_packets and lbrx_bytes (Good RX
-> > Packets/Octets loopback Count), but doesn't show the TX-side equivalents
-> > (lbtx_packets and lbtx_bytes). Add visibility of those missing
-> > statistics by adding them to ethtool statistics.
-> > 
-> > In addition, the order of lbrx_bytes and lbrx_packets is not consistent
-> > with non-loopback statistics (rx_packets, rx_bytes). Therefore, align
-> > the order by swapping positions of lbrx_bytes and lbrx_packets.
-> > 
-> > Tested on Intel Corporation I350 Gigabit Network Connection.
-> > 
-> > Before:
-> >    # ethtool -S ens5 | grep -E "x_(bytes|packets)"
-> >         rx_packets: 135
-> >         tx_packets: 106
-> >         rx_bytes: 16010
-> >         tx_bytes: 12451
-> >         lbrx_bytes: 1148
-> >         lbrx_packets: 12
-> > 
-> > After:
-> >    # ethtool -S ens5 | grep -E "x_(bytes|packets)"
-> >         rx_packets: 748
-> >         tx_packets: 304
-> >         rx_bytes: 81513
-> >         tx_bytes: 33698
-> >         lbrx_packets: 97
-> >         lbtx_packets: 109
-> >         lbrx_bytes: 12090
-> >         lbtx_bytes: 12401
-> > 
-> > Tested-by: Kohei Enju <enjuk@amazon.com>
-> 
-> No need to resend, but I believe, you only add a Tested-by: tag, if the
-> person differs from the author/Signed-off-by: tag.
+On Fri, Aug 22, 2025 at 10:29:52AM -0700, Lokesh Gidra wrote:
+> Hi all,
+>
+> Currently, some callers of rmap_walk() conditionally avoid try-locking
+> non-ksm anon folios. This necessitates serialization through anon_vma
+> write-lock elsewhere when folio->mapping and/or folio->index (fields
+> involved in rmap_walk()) are to be updated. This hurts scalability due
+> to coarse granularity of the lock. For instance, when multiple threads
+> invoke userfaultfd’s MOVE ioctl simultaneously to move distinct pages
+> from the same src VMA, they all contend for the corresponding
+> anon_vma’s lock. Field traces for arm64 android devices reveal over
+> 30ms of uninterruptible sleep in the main UI thread, leading to janky
+> user interactions.
 
-+1
+Can we clarify whether this is simply an example, or rather the entire
+motivating reason for raising this issue?
 
-> 
-> > Signed-off-by: Kohei Enju <enjuk@amazon.com>
-> > ---
-> >   drivers/net/ethernet/intel/igbvf/ethtool.c | 4 +++-
-> >   1 file changed, 3 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/net/ethernet/intel/igbvf/ethtool.c b/drivers/net/ethernet/intel/igbvf/ethtool.c
-> > index 773895c663fd..c6defc495f13 100644
-> > --- a/drivers/net/ethernet/intel/igbvf/ethtool.c
-> > +++ b/drivers/net/ethernet/intel/igbvf/ethtool.c
-> > @@ -30,8 +30,10 @@ static const struct igbvf_stats igbvf_gstrings_stats[] = {
-> >   	{ "rx_bytes", IGBVF_STAT(stats.gorc, stats.base_gorc) },
-> >   	{ "tx_bytes", IGBVF_STAT(stats.gotc, stats.base_gotc) },
-> >   	{ "multicast", IGBVF_STAT(stats.mprc, stats.base_mprc) },
-> > -	{ "lbrx_bytes", IGBVF_STAT(stats.gorlbc, stats.base_gorlbc) },
-> >   	{ "lbrx_packets", IGBVF_STAT(stats.gprlbc, stats.base_gprlbc) },
-> > +	{ "lbtx_packets", IGBVF_STAT(stats.gptlbc, stats.base_gptlbc) },
-> > +	{ "lbrx_bytes", IGBVF_STAT(stats.gorlbc, stats.base_gorlbc) },
-> > +	{ "lbtx_bytes", IGBVF_STAT(stats.gotlbc, stats.base_gotlbc) },
-> >   	{ "tx_restart_queue", IGBVF_STAT(restart_queue, zero_base) },
-> >   	{ "tx_timeout_count", IGBVF_STAT(tx_timeout_count, zero_base) },
-> >   	{ "rx_long_byte_count", IGBVF_STAT(stats.gorc, stats.base_gorc) },
-> 
-> Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+It's important, because it strikes me that this is a very specific use
+case, and you're now suggesting changing core locking to suit it.
 
-Also +1
+While this is a discussion, and I'm glad you raised it, I think it's
+important in these cases to really exhaustively examine all of the possible
+consequences.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+OK so to clarify:
 
+- You want to traverse the rmap entirely without any rmap locks whatsoever
+  for anon, relying solely on the folio lock to serialise, because
+  otherwise rmap read locks here block other rmap write lock calls.
+
+- You want to unconditionally folio lock all anon and kSM folios for at
+  least folio_referenced().
+
+In order to resolve a scalability issue specific to a uffd usecase?
+
+Is this the case? Happy to be corrected if I've misinterpreted.
+
+I don't see how this could possibly work, unless I'm missing something
+here, because:
+
+1. When we lock anon_vma's it's at the root which covers all anon_vma's
+   covering parent/children of forked processes.
+
+2. We do "top down" operations that acquire the rmap lock on the assumption
+   we have exclusive access to the rmapping that have nothing to do with
+   the folio nor could we even know what the folio is at this point.
+
+3. We manipulate higher level page tables on the basis that the rmap lock
+   excludes other page table walkers.
+
+So this proposal seems to violate all of that?
+
+For instance, in many VMA operations we perform:
+
+anon_vma_interval_tree_pre_update_vma()
+
+and
+
+anon_vma_interval_tree_post_update_vma()
+
+Which removes _all_ R/B tree mappings.
+
+So you can now race with this (it of course doesn't care about folio lock)
+and then get completely incorrect results?
+
+This seems fairly disasterous?
+
+In free_pgtables() also we call unlink_anon_vmas() which iterates through
+the vma->anon_vma_chain and uses the anon lock to tear down higher order
+page tables which you now might race with and that seems even more
+disasterous...
+
+
+>
+> Among all rmap_walk() callers that don’t lock anon folios,
+> folio_referenced() is the most critical (others are
+> page_idle_clear_pte_refs(), damon_folio_young(), and
+> damon_folio_mkold()). The relevant code in folio_referenced() is:
+>
+> if (!is_locked && (!folio_test_anon(folio) || folio_test_ksm(folio))) {
+>         we_locked = folio_trylock(folio);
+>         if (!we_locked)
+>                 return 1;
+> }
+>
+> It’s unclear why locking anon_vma exclusively (when updating
+> folio->mapping, like in uffd MOVE) is beneficial over walking rmap
+> with folio locked. It’s in the reclaim path, so should not be a
+> critical path that necessitates some special treatment, unless I’m
+> missing something.
+> Therefore, I propose simplifying the locking mechanism by ensuring the
+> folio is locked before calling rmap_walk(). This helps avoid locking
+> anon_vma when updating folio->mapping, which, for instance, will help
+> eliminate the uninterruptible sleep observed in the field traces
+> mentioned earlier. Furthermore, it enables us to simplify the code in
+> folio_lock_anon_vma_read() by removing the re-check to ensure that the
+> field hasn’t changed under us.
+
+
+I mean this is why I get confused here though, because you seem to be
+saying 'don't take rmap lock at all' to referencing
+folio_lock_anon_vma_read()?
+
+Perhaps I misinterpreted (forgive me if so) and indeed you meant this, but
+then I don't see how you impact contention on the anon_vma lock by making
+this change?
+
+I think in general - let's clarify what exactly you intend to do here, and
+then we need to delineate what we need to confirm and test to have any
+confidence in making such a change.
+
+anon_vma locks (and rmap locks) are very very sensitive in general and
+we've had actual security issues come up due to race windows emerging from
+inappropriate handling, not to mention that performance around this
+obviously matters a great deal.
+
+So we must tread carefully here.
+
+Thanks, Lorenzo
 
