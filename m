@@ -1,134 +1,197 @@
-Return-Path: <linux-kernel+bounces-786072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 716E0B354A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:33:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60DECB354A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:36:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2329E2083EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:33:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B5B93BE5ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:36:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7020321FF29;
-	Tue, 26 Aug 2025 06:33:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D5C274FFC;
+	Tue, 26 Aug 2025 06:36:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F5K8jR+a"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pJQ4iuGp"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C0C17B505
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 06:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D9521D3D3
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 06:36:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756189984; cv=none; b=btB6AP4u8w7vspDRzykhxvSDqXkq+eyBkI9Jx91zI1jguvBWc1R4hQ7qrk9eTA5LNQMRJcUIth2wLMJEJoabdy/1Cmh2Pn1J+QxLN25btZ9N2wbFh1QVQAAmVxNMAR8cyu4TvWRmbJcg4LMukOolyCcFGxMa1nRuQINqFbY9n0E=
+	t=1756190163; cv=none; b=Iluo4AHHKavC3xBrRBnYja50er23DERFXisMvh+wg6xhieouYhTg4kVnIkMJlM9jq5ImCfEfweEeb1Wmch22N3FpMpfY6hsACPN/oL40L/iyS2BubRf0Sf4CDegn7+ONUoFtB/WGdb3IuGZ2fx8xBTVb5zRRS5lajxmXlyoM5Yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756189984; c=relaxed/simple;
-	bh=k1R700Z2+gqjiMvUOhAJnMVBUMz2mNDlbwad6gs5mnY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kWZr6rc4QSr0G6c/Rhyzi453VOe3IQoSpHWa/r/S+Ow+K5F1ddYyv7Pa/eHbXr7p0brAntMoCFe9cXDa1wtMMbvpIJpQNtmFW7PGLfSUJL/RM5JZmbRiN6XH5vtqKelwGtHi4zlCLPpFbaAGlXXB+cN0T2vme61pvHg0O6tqG10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F5K8jR+a; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756189978;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ZbpsP0JVSHBALAr4RXTkvJiiQWMCbeHRvXA5B+Ppf8k=;
-	b=F5K8jR+ay/cwrAAQBP+VJ1qwu2kYwEXQN0es6vze43XI4sA2Seoj9QCHJ0dQrF14KRg8qt
-	0GH8HvfL6HL5cfHCoJyGyinvhj62hcwi89qq2W+v8i1xRC8dYJ/zVlNAsvo3P/HrUu7Peu
-	8HkYLv47vZvyTdGs1S22cOdyae2diII=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-642-o2pmtz37PQi82Gn4Hm9y5Q-1; Tue, 26 Aug 2025 02:32:56 -0400
-X-MC-Unique: o2pmtz37PQi82Gn4Hm9y5Q-1
-X-Mimecast-MFC-AGG-ID: o2pmtz37PQi82Gn4Hm9y5Q_1756189976
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-afcb7338319so475218966b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 23:32:56 -0700 (PDT)
+	s=arc-20240116; t=1756190163; c=relaxed/simple;
+	bh=2BqXMcZnoG8t6tVC4Nu0TiARTMl3Fi3Qmn7b0TTYb0s=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=twDdpEhb1QTvRsfUFuLIwCkE6TDoHDHaIXSH0NM2rsqVH8bZ/VGRz+AQAcCRJMOScXmeEb/ROolethRG9eWJHkYXFoEycnwJr+MngDqeVnEtAtjB99FqYLAY7opPZnxuQAQtcb8z83YNNRzuKhtzHv8F3rvdVOsFShe3/YEslVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pJQ4iuGp; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b47174c3b3fso3116097a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 23:36:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756190161; x=1756794961; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ZCZJrCEqdKPb4Dv2x8k8eTvQ61vGgPIzxIHFjirYy9A=;
+        b=pJQ4iuGpzl+/9WVGNqWob+MbEuWuxbMDHe05LXsFpAnKlkGkR7Y0nHNKU+SwnFWL+g
+         kaljpOgOoVC6WtPsBEftB7NfRRcdyI6/ppLDiFATst28txGiwsY0MMqu+mdv3/hSAxoL
+         JTgYDd/IqJ+GMJl+iZmneCDjzyoQBVG3nV2OErZfRQgBoBIAU2adTEJ5/xw7alqOUqwe
+         8LxARAXGu3QsZZkPevYfpuzOx8rok84UbF2lmyFp/x3O6wO1j8TZTi5rrftW0r77IZJf
+         16E+ZO33p944iWIaNGVt/HVcEWcwL3ORjKwYZ4xH4rD4Rn9Vl6nQt1Ot4HVzApoBkbp7
+         ujFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756189975; x=1756794775;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZbpsP0JVSHBALAr4RXTkvJiiQWMCbeHRvXA5B+Ppf8k=;
-        b=nCsStsjtq9InqhMwE3jjP4/YoTlgKm8etaWfOLmJ3CX0E++GIc1bEuUgG2tuhf2aEK
-         9U8vsLnk7q+5BfiHm1Bd+GHiE3fpVYudKQUZnzVZFLcrbJ0ciQif1znhPv2gytnxQoa7
-         hKWh/SxxETEfESEqRwiG1TLtnt6WtYY4SC/GqT3rJTizD1szCFHSPlnCSdyu3ekoX/lM
-         IhFuJVgSABEn/L7D/vrHLKu1OcNmxYL8YvRxU07bIoNnCSE8xDW7DAq4U4zpEEbC4vPk
-         UbcdNk9ySxmYL5A8N29Ew++uH6ZU46xdS0j+nyOz/49GOF1mIt5YKfMXdS9Cd/+CeD6D
-         ABzg==
-X-Forwarded-Encrypted: i=1; AJvYcCW8vvMB4G6gDO46Fd2bnEzug8nZ4LiylgSgNIy016ncniCTE/PSA0RRIzbJJnmexW/Ip68KEWVdCqNMeHU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynPLZA/g+AaRs6PL9O6RpZcxHDlZPphK/OEW2sNNvFkg8a8f6n
-	QcU5An3OGeTNL3vEp93+PFww30TrhtGkk6qVF5oWGs4ubW80SDfKtXYNWVGNMi5b9vmYFHFxqRu
-	dJ2fVOJMwW9fJu7Glius8/a1lT2vd01KVBBJL6pIA9bGoYm0VrD0igd8wfzp0wIbGJ9MLClo0GA
-	==
-X-Gm-Gg: ASbGncu8718srUPXWo5+wYuTr3hXCpJdFiga8gcePQ3Fg3B9L4WOVEcgoom9YE9Zymn
-	jfNJoHUl2CoNQrk8dmxDILSbu01BU71H8Pd/+jcqTBG5hsF/HGsPwIS4e28qRmVwd8NCT7tmhsm
-	ISfaOsXqp5L0RrzOUaf7fgbE26wemmws9gStPShY653mbhUdH4jj9y/5Kg+shGsK90ZOwNiDi44
-	2qhNKIZzEGZ1VFjo8YNXNAZoMGQ60fim6qbjxTAI29KxtGhc8izvzTPqHjsJA5iDfFgIr95KnT2
-	gNYPZuMYirvyAkSOz+Pkzry2W1w4OpsvOCn3QcheRjzRPokCUcoh6pXcV+3VCz83G9tEGfk6y1v
-	BoBrNHLrVjQ==
-X-Received: by 2002:a17:907:86ab:b0:af4:11e1:f877 with SMTP id a640c23a62f3a-afe28f162a8mr1291526366b.21.1756189975119;
-        Mon, 25 Aug 2025 23:32:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFmSRbT/Wld10PpqjSUmNkXsFiZtdZslyiz4ToZl4XaqIzH5GqNA9prjgy3b7ugqVJ4b3iyig==
-X-Received: by 2002:a17:907:86ab:b0:af4:11e1:f877 with SMTP id a640c23a62f3a-afe28f162a8mr1291523966b.21.1756189974678;
-        Mon, 25 Aug 2025 23:32:54 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e01:ef00:b52:2ad9:f357:f709])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61c3174f806sm6346137a12.52.2025.08.25.23.32.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 23:32:53 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Tomeu Vizoso <tomeu@tomeuvizoso.net>,
-	Oded Gabbay <ogabbay@kernel.org>,
-	dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] MAINTAINERS: adjust file entry in DRM ACCEL DRIVER FOR ROCKCHIP NPU
-Date: Tue, 26 Aug 2025 08:32:48 +0200
-Message-ID: <20250826063248.32153-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.50.1
+        d=1e100.net; s=20230601; t=1756190161; x=1756794961;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZCZJrCEqdKPb4Dv2x8k8eTvQ61vGgPIzxIHFjirYy9A=;
+        b=vFFt3+FKZuIqmQvmqsFE9id7vmm5vvkVinb7PggOymZIo3WDrIbCjXrINCheQCBddL
+         1QufHUHwRlxKRPPOnDN2zTJVC5Umie3ZVOPFRaNjGci4KpaNkOEHbVy61QW5bsa2/O1x
+         dr75LMV6sieTgVpLykqcXE+kzL3997V3mGTFgCfmu54B7ThgSLmtAzs/KhefQ5pvaf8f
+         4W/W7TlZ2PVCacQi9ZcBPd5lp0U+t8lxOeG/TN914E+bMCCBeuO6vt8lMhIS/bgfC7ha
+         zceE5KxqBGc+SkUkcvmb9hntcMfg0bqzPsRmasdBeiQvcaS2j0o/4MDG+7eVwgy47CYv
+         BTRA==
+X-Forwarded-Encrypted: i=1; AJvYcCVG3cxCnhArFloy2hQ1NUnHVyosAzvGR21d/c593Xn0IeFwhKjbswC1fzMamh2cOm87MjSTq2eicLGCEzA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySupem71huPFqkK43BVeLrF2INNk7E9c58Nlnv2E/pmNMzRsPw
+	hpOjLFBYEeZwVdiqqqCgMKyikgmZjSlL3HCfhOMxSUuVGIaO1294AT2VvdwvlJE9lRaPUQmv8Gr
+	uqOGwxQWHjtuL6c/RryChvubGHTAEivaG2KoglpdqDQ==
+X-Gm-Gg: ASbGnctKvT1QUZg0Dg3nvJZUUXskDWAJ8+Mkzcgm67FLOwGsh4/8ZkY+SsQFOaXpYNO
+	dUeib7DAyEj84nF57DEc5IyzQ+S4Uc8JCqBM7TikzOfeeeH1jMrEUYCusl1zWMAXKXqkr51MLWf
+	BeIdc7nR83h2Ec+A2XPot/Z5I7Ju9zuHIqriGsPTS5+Q44AyKaymKkydRQ3RAQvirV4Ue97m1Op
+	tS58e/vGiu3etXrAb9JbcAcf8LhKhUf3ljsL3o=
+X-Google-Smtp-Source: AGHT+IEQn4WiuIgZyEMURTgqGtjunWBRbpXl5so57HtpTznUyYEK7Ey9gxQd0qtxzwA+AVUwTTM+dZG94+sYVO8I9HM=
+X-Received: by 2002:a17:902:f64b:b0:246:7a43:3f82 with SMTP id
+ d9443c01a7336-2467a4378cbmr141502145ad.45.1756190159816; Mon, 25 Aug 2025
+ 23:35:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 26 Aug 2025 12:05:48 +0530
+X-Gm-Features: Ac12FXyuAWdifk3AbEFJtNbFPLOMAyfmI2knp7BoLYQE5klP6No3TL9rR5qjI0I
+Message-ID: <CA+G9fYuR9auMS=hg9Ri+A2SeCQ0jHkW7mN3k9RDG66vE5cfJdQ@mail.gmail.com>
+Subject: next-20250825: arc: seqlock.h:876:2: error: implicit declaration of
+ function 'spin_lock' [-Werror=implicit-function-declaration]
+To: Linux-Arch <linux-arch@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
+Cc: Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Anders Roxell <anders.roxell@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+The following build warnings / errors noticed with arc defconfig with
+gcc-9 toolchain.
 
-Commit a7352c849492 ("dt-bindings: npu: rockchip,rknn: Add bindings") adds
-the device-tree binding rockchip,rk3588-rknn-core.yaml, whereas the commit
-ed98261b4168 ("accel/rocket: Add a new driver for Rockchip's NPU") adds the
-section DRM ACCEL DRIVER FOR ROCKCHIP NPU in MAINTAINERS with a file entry
-referring to rockchip,rknn-core.yaml. Note that the file entry is missing
-the part rk3588, compared to the added file above, which it intends to
-refer to.
+Regression Analysis:
+- New regression? yes
+- Reproducibility? yes
 
-Adjust the file entry to the intended file name.
+Build regression: next-20250825 arc seqlock.h:876:2: error: implicit
+declaration of function 'spin_lock'
+[-Werror=implicit-function-declaration]
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d4bddc462c07..a569828c9f3d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7542,7 +7542,7 @@ L:	dri-devel@lists.freedesktop.org
- S:	Supported
- T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
- F:	Documentation/accel/rocket/
--F:	Documentation/devicetree/bindings/npu/rockchip,rknn-core.yaml
-+F:	Documentation/devicetree/bindings/npu/rockchip,rk3588-rknn-core.yaml
- F:	drivers/accel/rocket/
- F:	include/uapi/drm/rocket_accel.h
- 
--- 
-2.50.1
+arc:
+  build:
+    * gcc-9-allnoconfig
+    * gcc-9-tinyconfig
+    * gcc-9-vdk_hs38_smp_defconfig
+    * gcc-9-defconfig
+    * gcc-9-axs103_defconfig
 
+## Build log
+In file included from include/linux/mmzone.h:17,
+                 from include/linux/gfp.h:7,
+                 from include/linux/mm.h:7,
+                 from arch/arc/include/asm/arcregs.h:149,
+                 from arch/arc/include/asm/irqflags-arcv2.h:9,
+                 from arch/arc/include/asm/irqflags.h:13,
+                 from include/linux/irqflags.h:18,
+                 from include/linux/spinlock.h:59,
+                 from include/linux/sched.h:37,
+                 from arch/arc/kernel/asm-offsets.c:6:
+include/linux/seqlock.h: In function 'write_seqlock':
+include/linux/seqlock.h:876:2: error: implicit declaration of function
+'spin_lock' [-Werror=implicit-function-declaration]
+  876 |  spin_lock(&sl->lock);
+      |  ^~~~~~~~~
+include/linux/seqlock.h: In function 'write_sequnlock':
+include/linux/seqlock.h:890:2: error: implicit declaration of function
+'spin_unlock' [-Werror=implicit-function-declaration]
+  890 |  spin_unlock(&sl->lock);
+      |  ^~~~~~~~~~~
+include/linux/seqlock.h: In function 'write_seqlock_bh':
+include/linux/seqlock.h:902:2: error: implicit declaration of function
+'spin_lock_bh' [-Werror=implicit-function-declaration]
+  902 |  spin_lock_bh(&sl->lock);
+      |  ^~~~~~~~~~~~
+include/linux/seqlock.h: In function 'write_sequnlock_bh':
+include/linux/seqlock.h:917:2: error: implicit declaration of function
+'spin_unlock_bh' [-Werror=implicit-function-declaration]
+  917 |  spin_unlock_bh(&sl->lock);
+      |  ^~~~~~~~~~~~~~
+include/linux/seqlock.h: In function 'write_seqlock_irq':
+include/linux/seqlock.h:929:2: error: implicit declaration of function
+'spin_lock_irq' [-Werror=implicit-function-declaration]
+  929 |  spin_lock_irq(&sl->lock);
+      |  ^~~~~~~~~~~~~
+include/linux/seqlock.h: In function 'write_sequnlock_irq':
+include/linux/seqlock.h:943:2: error: implicit declaration of function
+'spin_unlock_irq'; did you mean 'write_sequnlock_irq'?
+[-Werror=implicit-function-declaration]
+  943 |  spin_unlock_irq(&sl->lock);
+      |  ^~~~~~~~~~~~~~~
+      |  write_sequnlock_irq
+include/linux/seqlock.h: In function '__write_seqlock_irqsave':
+include/linux/seqlock.h:950:2: error: implicit declaration of function
+'spin_lock_irqsave' [-Werror=implicit-function-declaration]
+  950 |  spin_lock_irqsave(&sl->lock, flags);
+      |  ^~~~~~~~~~~~~~~~~
+include/linux/seqlock.h: In function 'write_sequnlock_irqrestore':
+include/linux/seqlock.h:981:2: error: implicit declaration of function
+'spin_unlock_irqrestore'; did you mean 'write_sequnlock_irqrestore'?
+[-Werror=implicit-function-declaration]
+  981 |  spin_unlock_irqrestore(&sl->lock, flags);
+      |  ^~~~~~~~~~~~~~~~~~~~~~
+      |  write_sequnlock_irqrestore
+In file included from include/linux/sched.h:15,
+                 from arch/arc/kernel/asm-offsets.c:6:
+include/linux/rcupdate.h: In function 'rcu_read_lock_sched_held':
+include/linux/preempt.h:227:49: error: implicit declaration of
+function 'irqs_disabled' [-Werror=implicit-function-declaration]
+  227 | #define preemptible() (preempt_count() == 0 && !irqs_disabled())
+      |                                                 ^~~~~~~~~~~~~
+                          ^
+cc1: some warnings being treated as errors
+
+## Source
+* Kernel version: 6.17.0-rc3-next-20250825
+* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
+* Git describe: next-20250825
+* Git commit: 6c68f4c0a147c025ae0b25fab688c7c47964a02f
+* Architectures: arc
+* Toolchains: gcc-9
+* Kconfigs: defconfig
+
+## Build
+* Build log: https://qa-reports.linaro.org/api/testruns/29652436/log_file/
+* Build details:
+https://regressions.linaro.org/lkft/linux-next-master/next-20250825/build/gcc-9-defconfig/
+* Build error details:
+https://regressions.linaro.org/lkft/linux-next-master/next-20250825/log-parser-build-gcc/gcc-compiler-include_asm-generic_getorder_h-error-implicit-declaration-of-function-ilog/
+* Build plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/builds/31lrYki7MzYyqtJKnutAe2oawoq
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/31lrYki7MzYyqtJKnutAe2oawoq/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/31lrYki7MzYyqtJKnutAe2oawoq/config
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
