@@ -1,210 +1,146 @@
-Return-Path: <linux-kernel+bounces-785992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3FEFB35342
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:25:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41730B352DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:50:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AD6F3ADD33
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:25:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 277C61A83A92
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C074E2EBB9E;
-	Tue, 26 Aug 2025 05:25:06 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C72CC1DB95E;
-	Tue, 26 Aug 2025 05:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B342E2DC1;
+	Tue, 26 Aug 2025 04:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AGOU2HDD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60F12D23B6;
+	Tue, 26 Aug 2025 04:49:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756185906; cv=none; b=XC7zzsDks/0QP5+YBqcoMzLkdcK7NKsJX+zGPJOyNssexaeDArc5f74oCrWHf0D6ZDaY9La0Kff6rimZ7u1BarAjZ98a4XiN9lvKFUcIznwFPr1h3BuSsVrM4Y+lYG2q6UU2I9LqCDBomBsi80mSEDmOFBSruT3vEtQH43hBbzw=
+	t=1756183794; cv=none; b=igaSJPwC4b8EMJZh+xzVQigtMBYrnGODS3xj8usMeMKLn/APloLfBF0ubEL/XKOwcM9ZHuwgAJpV6biZXLthvLqtrBZM1RjjAgt73ItMwE5kvybS1Cc3iqPbkqXmmTxtIFHGTriAh0Py6Km0jGeQHJ35iH3PWkmogT1c5UYar8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756185906; c=relaxed/simple;
-	bh=LnW1Xga/wIskvG3PVpiteg7zMuMWtO0WP5WXGqcrkVw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NGw+2hHAtU5jMG7cUxd792gotAythpUulweFVDzWBRc7mmwX7SAjf/dUlN/WcoNe+5NneDPomKcVIVTZZpi0fTWABo0HkuY9DNcxs9sD9T8+dwLnHI3hWFyyRxXJB7tW5BlU5a9xyMIPHcnFNYYCKuNeoaf05FIh8unM3ap/WMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4c9wDs5fW7z9sSH;
-	Tue, 26 Aug 2025 06:49:33 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 9WAMtYgIKbQJ; Tue, 26 Aug 2025 06:49:33 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4c9wDs4Dc9z9sS8;
-	Tue, 26 Aug 2025 06:49:33 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6B3918B764;
-	Tue, 26 Aug 2025 06:49:33 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id cTXo-oIxDOpC; Tue, 26 Aug 2025 06:49:33 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 8219A8B763;
-	Tue, 26 Aug 2025 06:49:31 +0200 (CEST)
-Message-ID: <609a980b-cbe3-442b-a492-91722870b156@csgroup.eu>
-Date: Tue, 26 Aug 2025 06:49:29 +0200
+	s=arc-20240116; t=1756183794; c=relaxed/simple;
+	bh=mrTYfgAhz8yJIWYyD+ab7SDQCpNIYQe9Kn5DqAcQJpU=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=nj+fFi6FFCBkLCFfesav5dc/THiAkAhwqpbT+Rgq8lzNnqOoMqiimz1U9Bi6ILo5IQL435YN3lNnfPC+5QvN25Shf7NpxFUsPZDuQp5rzJDFuJdv81Vygc+ST9pLRgXQWC0VlqnPNAdRefbFbttGcMOX2yoRdL7wVO28Wmi4cEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AGOU2HDD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60EB9C4CEF1;
+	Tue, 26 Aug 2025 04:49:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756183793;
+	bh=mrTYfgAhz8yJIWYyD+ab7SDQCpNIYQe9Kn5DqAcQJpU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=AGOU2HDDCy6d14h/txWFuiD0IdaXRysDk6Dbpw4n4li24LSI+9kVsYYI1nxI4n4m6
+	 SbuIYsohrM1cYPTeY/HyYGVBpxZuBnMPh/BUsP56TuQTZgo7W9pHSOGaeiPOcj3os6
+	 O3BhEqhgjZmfLYkLGPpLZnzdWyMmWNEj1Q98oDoLOki0iyRwGWUiR9+3dIULnXei5X
+	 v6UNkUvGrXvCuJj2pNMX2kUI45+OTM6H6K25uUOj1YET7MGRoLDs5v5qE3GrsNkc2N
+	 m6qaVKhaVtOdx8/lMiVSQDQrzqsrxCC2pssxUTaNj7NnU4sakQD8nLdNDr/0HHhjAc
+	 Lr/FVDTwVp1zA==
+Date: Tue, 26 Aug 2025 13:49:48 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Lance Yang <lance.yang@linux.dev>
+Cc: akpm@linux-foundation.org, fthain@linux-m68k.org, geert@linux-m68k.org,
+ senozhatsky@chromium.org, amaindex@outlook.com, anna.schumaker@oracle.com,
+ boqun.feng@gmail.com, ioworker0@gmail.com, joel.granados@kernel.org,
+ jstultz@google.com, kent.overstreet@linux.dev, leonylgao@tencent.com,
+ linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+ longman@redhat.com, mingo@redhat.com, mingzhe.yang@ly.com,
+ oak@helsinkinet.fi, peterz@infradead.org, rostedt@goodmis.org,
+ tfiga@chromium.org, will@kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 1/1] hung_task: fix warnings caused by unaligned lock
+ pointers
+Message-Id: <20250826134948.4f5f5aa74849e7f56f106c83@kernel.org>
+In-Reply-To: <20250823050036.7748-1-lance.yang@linux.dev>
+References: <f79735e1-1625-4746-98ce-a3c40123c5af@linux.dev>
+	<20250823050036.7748-1-lance.yang@linux.dev>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 4/8] powerpc/smp: Introduce CONFIG_SCHED_MC to guard MC
- scheduling bits
-To: K Prateek Nayak <kprateek.nayak@amd.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>, linuxppc-dev@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- thomas.weissschuh@linutronix.de, Li Chen <chenl311@chinatelecom.cn>,
- Bibo Mao <maobibo@loongson.cn>, Mete Durlu <meted@linux.ibm.com>,
- Tobias Huschle <huschle@linux.ibm.com>,
- Easwar Hariharan <easwar.hariharan@linux.microsoft.com>,
- Guo Weikang <guoweikang.kernel@gmail.com>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
- Brian Gerst <brgerst@gmail.com>,
- Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
- Swapnil Sapkal <swapnil.sapkal@amd.com>,
- "Yury Norov [NVIDIA]" <yury.norov@gmail.com>,
- Sudeep Holla <sudeep.holla@arm.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Andrea Righi <arighi@nvidia.com>, Yicong Yang <yangyicong@hisilicon.com>,
- Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
- Tim Chen <tim.c.chen@linux.intel.com>,
- Vinicius Costa Gomes <vinicius.gomes@intel.com>
-References: <20250826041319.1284-1-kprateek.nayak@amd.com>
- <20250826041319.1284-5-kprateek.nayak@amd.com>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <20250826041319.1284-5-kprateek.nayak@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Sat, 23 Aug 2025 13:00:36 +0800
+Lance Yang <lance.yang@linux.dev> wrote:
 
+> From: Lance Yang <lance.yang@linux.dev>
+> 
+> The blocker tracking mechanism assumes that lock pointers are at least
+> 4-byte aligned to use their lower bits for type encoding.
+> 
+> However, as reported by Geert Uytterhoeven, some architectures like m68k
+> only guarantee 2-byte alignment of 32-bit values. This breaks the
+> assumption and causes two related WARN_ON_ONCE checks to trigger.
+> 
+> To fix this, the runtime checks are adjusted. The first WARN_ON_ONCE in
+> hung_task_set_blocker() is changed to a simple 'if' that returns silently
+> for unaligned pointers. The second, now-invalid WARN_ON_ONCE in
+> hung_task_clear_blocker() is then removed.
+> 
+> Thanks to Geert for bisecting!
+> 
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Closes: https://lore.kernel.org/lkml/CAMuHMdW7Ab13DdGs2acMQcix5ObJK0O2dG_Fxzr8_g58Rc1_0g@mail.gmail.com
+> Fixes: e711faaafbe5 ("hung_task: replace blocker_mutex with encoded blocker")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Lance Yang <lance.yang@linux.dev>
 
-Le 26/08/2025 à 06:13, K Prateek Nayak a écrit :
-> PowerPC enables the MC scheduling domain by default on systems with
-> coregroup support without having a SCHED_MC config in Kconfig.
-> 
-> The scheduler uses CONFIG_SCHED_MC to introduce the MC domain in the
-> default topology (core) and to optimize the default CPU selection
-> routine (sched-ext).
-> 
-> Introduce CONFIG_SCHED_MC for powerpc and note that it should be
-> preferably enabled given the current default behavior. This also ensures
-> PowerPC is tested during future developments that come to depend on
-> CONFIG_SCHED_MC.
-> 
-> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
+Looks good to me. I think we can just ignore it for
+this debugging option.
+
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Thank you,
+
 > ---
->   arch/powerpc/Kconfig           | 9 +++++++++
->   arch/powerpc/include/asm/smp.h | 2 ++
->   arch/powerpc/kernel/smp.c      | 4 ++++
->   3 files changed, 15 insertions(+)
+>  include/linux/hung_task.h | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
 > 
-> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-> index 93402a1d9c9f..e954ab3f635f 100644
-> --- a/arch/powerpc/Kconfig
-> +++ b/arch/powerpc/Kconfig
-> @@ -971,6 +971,15 @@ config SCHED_SMT
->   	  when dealing with POWER5 cpus at a cost of slightly increased
->   	  overhead in some places. If unsure say N here.
->   
-> +config SCHED_MC
-> +	bool "Multi-Core Cache (MC) scheduler support"
-> +	depends on PPC64 && SMP
-> +	default y
-> +	help
-> +	  MC scheduler support improves the CPU scheduler's decision making
-> +	  when dealing with POWER systems that contain multiple Last Level
-> +	  Cache instances on the same socket. If unsure say Y here.
-> +
+> diff --git a/include/linux/hung_task.h b/include/linux/hung_task.h
+> index 34e615c76ca5..69640f266a69 100644
+> --- a/include/linux/hung_task.h
+> +++ b/include/linux/hung_task.h
+> @@ -20,6 +20,10 @@
+>   * always zero. So we can use these bits to encode the specific blocking
+>   * type.
+>   *
+> + * Note that on architectures like m68k with only 2-byte alignment, the
+> + * blocker tracking mechanism gracefully does nothing for any lock that is
+> + * not 4-byte aligned.
+> + *
+>   * Type encoding:
+>   * 00 - Blocked on mutex			(BLOCKER_TYPE_MUTEX)
+>   * 01 - Blocked on semaphore			(BLOCKER_TYPE_SEM)
+> @@ -45,7 +49,7 @@ static inline void hung_task_set_blocker(void *lock, unsigned long type)
+>  	 * If the lock pointer matches the BLOCKER_TYPE_MASK, return
+>  	 * without writing anything.
+>  	 */
+> -	if (WARN_ON_ONCE(lock_ptr & BLOCKER_TYPE_MASK))
+> +	if (lock_ptr & BLOCKER_TYPE_MASK)
+>  		return;
+>  
+>  	WRITE_ONCE(current->blocker, lock_ptr | type);
+> @@ -53,8 +57,6 @@ static inline void hung_task_set_blocker(void *lock, unsigned long type)
+>  
+>  static inline void hung_task_clear_blocker(void)
+>  {
+> -	WARN_ON_ONCE(!READ_ONCE(current->blocker));
+> -
+>  	WRITE_ONCE(current->blocker, 0UL);
+>  }
+>  
+> -- 
+> 2.49.0
+> 
 
-You shouldn't duplicate CONFIG_SCHED_MC in every architecture, instead 
-you should define a CONFIG_ARCH_HAS_SCHED_MC in arch/Kconfig that gets 
-selected by architectures then have CONFIG_SCHED_MC defined in 
-init/Kconfig or kernel/Kconfig or so.
 
->   config PPC_DENORMALISATION
->   	bool "PowerPC denormalisation exception handling"
->   	depends on PPC_BOOK3S_64
-> diff --git a/arch/powerpc/include/asm/smp.h b/arch/powerpc/include/asm/smp.h
-> index 86de4d0dd0aa..9a320d96e891 100644
-> --- a/arch/powerpc/include/asm/smp.h
-> +++ b/arch/powerpc/include/asm/smp.h
-> @@ -148,7 +148,9 @@ static inline const struct cpumask *cpu_smt_mask(int cpu)
->   }
->   #endif /* CONFIG_SCHED_SMT */
->   
-> +#ifdef CONFIG_SCHED_MC
->   extern const struct cpumask *cpu_coregroup_mask(int cpu);
-> +#endif
-
-Why do you need this ifdef ? Leaving it outside #ifdef allows you to do 
-constructs like:
-
-	if (IS_ENABLED(CONFIG_SCHED_MC))
-		cpu_coregroup_mask(cpu);
-
-Otherwise you'll need to ensure all calls to cpu_coregroup_mask() are 
-also inside #ifdefs, which is not the recommended way nowadays.
-
->   
->   /* Since OpenPIC has only 4 IPIs, we use slightly different message numbers.
->    *
-> diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
-> index e623f2864dc4..7f79b853b221 100644
-> --- a/arch/powerpc/kernel/smp.c
-> +++ b/arch/powerpc/kernel/smp.c
-> @@ -1059,6 +1059,7 @@ static bool has_coregroup_support(void)
->   	return coregroup_enabled;
->   }
->   
-> +#ifdef CONFIG_SCHED_MC
->   const struct cpumask *cpu_coregroup_mask(int cpu)
->   {
->   	if (has_coregroup_support())
-> @@ -1071,6 +1072,7 @@ static const struct cpumask *cpu_mc_mask(struct sched_domain_topology_level *tl,
->   {
->   	return cpu_corgrp_mask(cpu);
->   }
-> +#endif
->   
->   static const struct cpumask *cpu_pkg_mask(struct sched_domain_topology_level *tl, int cpu)
->   {
-> @@ -1729,10 +1731,12 @@ static void __init build_sched_topology(void)
->   			SDTL_INIT(shared_cache_mask, powerpc_shared_cache_flags, CACHE);
->   	}
->   
-> +#ifdef CONFIG_SCHED_MC
-
-As I said above, define the function prototype at all time in smp.h and 
-use IS_ENABLED(CONFIG_SCHED_MC) here instead of a #ifdef
-
->   	if (has_coregroup_support()) {
->   		powerpc_topology[i++] =
->   			SDTL_INIT(cpu_mc_mask, powerpc_shared_proc_flags, MC);
->   	}
-> +#endif
->   
->   	powerpc_topology[i++] = SDTL_INIT(cpu_pkg_mask, powerpc_shared_proc_flags, PKG);
->   
-
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
