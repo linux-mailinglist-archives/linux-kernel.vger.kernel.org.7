@@ -1,98 +1,82 @@
-Return-Path: <linux-kernel+bounces-786444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4A98B359E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:14:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07793B359E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:13:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DAD47A982D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:12:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE8B92A53EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:13:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65CD53277A2;
-	Tue, 26 Aug 2025 10:14:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFB4326D43;
+	Tue, 26 Aug 2025 10:13:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZLtc+naJ"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UgvH79YC"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77C5296BD7;
-	Tue, 26 Aug 2025 10:14:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53F7296BD7;
+	Tue, 26 Aug 2025 10:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756203250; cv=none; b=f1XD+mSC4/iQFTn5C0lftBDT1bXKoC8z9HLKs2nLdODYOfcN2Tx2472YWzPrBtOyryoS6s+iuYhmytUxqIOuphZVCmusGSf+BH34OHn+e+SO75Vkd6vn7341eAEQ384XI+qQ5yySp6BSdDRTL0/G6Idvg1nxc3YNSKpSB6Jmb+8=
+	t=1756203230; cv=none; b=MTgjq0sCJiI8P62rnfl00x0eSKP8Qp42ehjHKkwORHz8FnT1GT513qPJu8hwcolxgm4CeCCgUT2Rcvc1To9hpEaWFu78Zjd1HVXyCYToU8EeFC3CU3OFMyoJDVia2v0UtCMo74tCFFg7AOqlFJ919Pyjz1Fp2EOfd/pgZR4+9+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756203250; c=relaxed/simple;
-	bh=GLEcCMDCuBfpEx+ELDjuNbMMvyS89VSiW4Yemj/b0S4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NG7z3EgV3rZZjqM/P8QEeEXr1sm5dzW4f369VJElj4zTzNe5L1N0W1scRxZ2fC7BpX5KErY8+I3zbbxFXjye17n+3bnM/cU4j0rbdNTTQ3CJi3Lk6rzeXnkhLtB6m590c68UPKrGiYf85k/5oilr1UyHKB/p3nTLS6QV42XEPpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZLtc+naJ; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=za2zxrt2zji2QUURdpUEuG/5gEM/xMgnyO1q9m1EUJE=; b=ZLtc+naJjT+TgN7VmDiS+QUrja
-	DPcgOP5Bax7YDsTZZBwFkBVySxGNVLYYxTbZPJ4o5KOGsDC++aUM4Mar0DTkYFny5VA6o1IrdqGFo
-	z/MOPCNtnKiSmPlQnfhYOlliKnLgHvyBHm09TThb/wApc7JC6/ugh0w3ZuQE3q9uHxLPUsqhLrX6p
-	WHU7WHGW6VcpbOzo1aLO2KEKl2WR0zEbwPuraFqX3pbylMU2j+3kKR8M74acMu6tWd8DmAxqU8HSR
-	8MSwHysQFFExHO0Jv4lpWScueQfjp5xX6eN4gS9DEVmyLJpXQsZpVsX2NMSUBFHYbL1UPefnCzVgE
-	jGduk0JQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uqqgD-00000002C0g-2iQ1;
-	Tue, 26 Aug 2025 10:13:30 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 06DE93002C5; Tue, 26 Aug 2025 12:13:29 +0200 (CEST)
-Date: Tue, 26 Aug 2025 12:13:28 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Shrikanth Hegde <sshegde@linux.ibm.com>
-Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	thomas.weissschuh@linutronix.de, Li Chen <chenl311@chinatelecom.cn>,
-	Bibo Mao <maobibo@loongson.cn>, Mete Durlu <meted@linux.ibm.com>,
-	Tobias Huschle <huschle@linux.ibm.com>,
-	Easwar Hariharan <easwar.hariharan@linux.microsoft.com>,
-	Guo Weikang <guoweikang.kernel@gmail.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Brian Gerst <brgerst@gmail.com>,
-	Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
-	Swapnil Sapkal <swapnil.sapkal@amd.com>,
-	"Yury Norov [NVIDIA]" <yury.norov@gmail.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Andrea Righi <arighi@nvidia.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-	Tim Chen <tim.c.chen@linux.intel.com>,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	linux-s390@vger.kernel.org
-Subject: Re: [PATCH v7 0/8] sched/fair: Get rid of sched_domains_curr_level
- hack for tl->cpumask()
-Message-ID: <20250826101328.GV4067720@noisy.programming.kicks-ass.net>
-References: <20250826041319.1284-1-kprateek.nayak@amd.com>
- <b64c820d-084a-40d9-bb4e-82986b9e6482@linux.ibm.com>
+	s=arc-20240116; t=1756203230; c=relaxed/simple;
+	bh=HfhlOUNQCkoaUDkzaVR6DYfxjzrLBnZO5cq3xAbdgQg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=qZugmcOCSAh2K96G2lTLAIt6K7grJm0QBsxcfAflthnId0qsmVl0q/DZ7a8ELGLC7EvQCl3hUqFexryh7EN+Dy8oejJBGZ0JTm4BdIeJ5xFhubGQPlmU/gTWtCoV0w4okeMCdSeS8luZRnZk+caJcHWzsFXPQ/xCJczeEgnHRkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UgvH79YC; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45a1b0c82eeso46332965e9.3;
+        Tue, 26 Aug 2025 03:13:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756203227; x=1756808027; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=e9GUq8tiWVe2q2KBwQ5uL0NJkplThCduW2ScMQxhB7o=;
+        b=UgvH79YCZjNQ9XIXHYbC5COcozOrY/luPU8pU5nH9AQi9cnYaGmvOoEQ4iQXFYx/OO
+         vHggUyYZsq0yvAqrqSXyskSL8v11QBEDHWZA7lug4j+dO3MythmVps0oiOuN0nuLmhJS
+         CwFL8mhjWMwKg9u5HpbR5tS6pzxs4HGep4PCggMLY1pyDdp9Oq1UDFiqweBUcm+OXFwr
+         mjhLh3s/vCRlwLiNkLIop5zNOWoH+YQpHc21LwFWXVnZCUexRI78zydSmF3Z9lbgPF9c
+         /l5BqQMkdSK0HGSxywnPrOpbe4poP6L5/3aeL2k2MEVNfkSO+N3ZWWMSHE8XJ2oBHVJh
+         +9XA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756203227; x=1756808027;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=e9GUq8tiWVe2q2KBwQ5uL0NJkplThCduW2ScMQxhB7o=;
+        b=HEXHCW3BeIVbMQtP0C6Kst117Eo3VWQWKIcrenV+tp/GZIqrZAMqVppceRQ98PPWiI
+         U8pb5iu8z45Z1pnNyEGdmy1CFhQO61ZvrUjlsahKkqKfZtRGk39LsUL2LH71zWha2QSu
+         mvaZ7vtzoLbthS/1Ym4Yw6rUDY9GmbJJsL2uh/95MPr+PLI5M62JTTy67HWfjSb10ES6
+         chtA7RXtVG3SXgmmFKPyjW19LifFPSSxWAxulhM2Z5rAN3W8tUwRcV09z/dERf648ypv
+         rVxUnGeEvirje+fGjqyCbtKN6FFXuEBSRdrpiSIehDn3VI6KtOxn/oD5T8LUW3QFEtSU
+         U4/w==
+X-Forwarded-Encrypted: i=1; AJvYcCVgMgK44AwFoDiT8iw+/mdwXZ4KRQ69dapoiit1l99b74Geyv+78xt3qP5nQYGPr2h90hkwinfKDgv7q2A=@vger.kernel.org, AJvYcCXCZQQkZLEb6L9WLRnp1eS9bMrHYeF6HlKeOzDa1jt9U5ZM8iC6nD6FIfQ2rm2ZVGbIHPmds0YD8bZLXwHM6LA9ohsW@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMNM1kF2fpKnbi1sEqyy2NY4E4XulfzTil0jPrZ1SkRX2iWkhl
+	K0VE1zxx+ubez7yFG7etPcJtRQb1YeOXu1RPpaO+xVrY5HK2l+od1uQ=
+X-Gm-Gg: ASbGncuVM4zI6E6KFUHSgAoOWdeVfvJOUisXmiiSBrWUFuY7CAVsY4As2T7MqKjvSdx
+	KpaB2xu76O1k0rlDAslDfMn/4ffRBM2faK3mIPIyzP3Bs/R/EbLvg98axgV5dxGzsT5yvx+Nw+u
+	QSKaQlU/F4hOs3wjiCWGvZuqj2a1pBtGkuegtB0hkT3OsdULY4YnYO2hHOXdcF0lD5VopBqnbbe
+	fqo6ZEJ1Db0tLdhssgrpjWd9d7UgEPFliZTtlvMGbZSn6Np9vGEyMxXOxjYrThtnjqU4N+ad7Zg
+	IJOyB3vTGpserXO+oXLsdYCFSSHSRs49U8GHsnSsNTpW+u67gTa4Kg/ZAWSF2h5unANntEM/N3F
+	B5Qd68q+Ny3yB23pRns2O6NL8
+X-Google-Smtp-Source: AGHT+IFhAawnX65LOdrWJkscz2oMkvFgIbga0PjDZYqjlN/j/J/rlUmXoIkurpGi05rLX9Zv5OQOpg==
+X-Received: by 2002:a05:600c:524e:b0:45b:6365:794f with SMTP id 5b1f17b1804b1-45b63657ac5mr46011345e9.33.1756203226932;
+        Tue, 26 Aug 2025 03:13:46 -0700 (PDT)
+Received: from vova-pc ([37.122.165.138])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b5757378dsm143780475e9.15.2025.08.26.03.13.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Aug 2025 03:13:46 -0700 (PDT)
+Date: Tue, 26 Aug 2025 12:13:44 +0200
+From: Vladimir Riabchun <ferr.lambarginio@gmail.com>
+To: rostedt@goodmis.org
+Cc: mhiramat@kernel.org, mark.rutland@arm.com, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH] ftrace/samples: Fix function size computation
+Message-ID: <aK2I2IGKRwmkQuIR@vova-pc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,519 +85,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b64c820d-084a-40d9-bb4e-82986b9e6482@linux.ibm.com>
 
-On Tue, Aug 26, 2025 at 03:35:03PM +0530, Shrikanth Hegde wrote:
-> 
-> 
-> On 8/26/25 9:43 AM, K Prateek Nayak wrote:
-> > This version uses Peter's suggestion from [1] as if and incrementally
-> > adds cleanup on top to the arch/ bits. I've tested the x86 side but the
-> > PowerPC and the s390 bits are only build tested. Review and feedback is
-> > greatly appreciated.
-> > 
-> > [1] https://lore.kernel.org/lkml/20250825091910.GT3245006@noisy.programming.kicks-ass.net/
-> > 
-> > Patches are prepared on top of tip:master at commit 4628e5bbca91 ("Merge
-> > branch into tip/master: 'x86/tdx'")
-> > ---
-> > changelog v6..v7:
-> > 
-> > o Fix the s390 and ppc build errors (Intel test robot)
-> > 
-> > o Use Peter's diff as is and incrementally do the cleanup on top. The
-> >    PowerPC part was slightly more extensive due to the lack of
-> >    CONFIG_SCHED_MC in arch/powerpc/Kconfig.
-> > 
-> > v6: https://lore.kernel.org/lkml/20250825120244.11093-1-kprateek.nayak@amd.com/
-> > ---
-> > K Prateek Nayak (7):
-> >    powerpc/smp: Rename cpu_corgroup_* to cpu_corgrp_*
-> >    powerpc/smp: Export cpu_coregroup_mask()
-> >    powerpc/smp: Introduce CONFIG_SCHED_MC to guard MC scheduling bits
-> >    sched/topology: Unify tl_smt_mask() across core and all arch
-> >    sched/topology: Unify tl_cls_mask() across core and x86
-> >    sched/topology: Unify tl_mc_mask() across core and all arch
-> >    sched/topology: Unify tl_pkg_mask() across core and all arch
-> > 
-> > Peter Zijlstra (1):
-> >    sched/fair: Get rid of sched_domains_curr_level hack for tl->cpumask()
-> > 
-> Can the names be standardized to begin with tl_ ?
-> 
-> arch/powerpc/kernel/smp.c:			SDTL_INIT(smallcore_smt_mask, powerpc_smt_flags, SMT);
-> arch/powerpc/kernel/smp.c:			SDTL_INIT(shared_cache_mask, powerpc_shared_cache_flags, CACHE);
-> arch/s390/kernel/topology.c:	SDTL_INIT(cpu_book_mask, NULL, BOOK),
-> arch/s390/kernel/topology.c:	SDTL_INIT(cpu_drawer_mask, NULL, DRAWER),
-> kernel/sched/topology.c:	tl[i++] = SDTL_INIT(sd_numa_mask, NULL, NODE);
-> kernel/sched/topology.c:		tl[i] = SDTL_INIT(sd_numa_mask, cpu_numa_flags, NUMA);
+In my_tramp1 function ASM_RET instruction was placed below
+.size directive, leading to a wrong function size.
 
-Already done :-) My version looks like the below.
-
-I picked up v6 yesterday and this morning started poking at the robot
-fail reported before seeing this v7 thing.
-
-Current pile lives here for the robots:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git/log/?h=sched/core
-
-I thought about doing a /cpu_*_flags/tl_*_flags/ patch as well, but
-figured this was enough for now.
-
+Fixes: 9d907f1ae80b ("samples/ftrace: Fix asm function ELF annotations")
+Signed-off-by: Vladimir Riabchun <ferr.lambarginio@gmail.com>
 ---
-Subject: sched/fair: Get rid of sched_domains_curr_level hack for tl->cpumask()
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Mon, 25 Aug 2025 12:02:44 +0000
+ samples/ftrace/ftrace-direct-modify.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Leon [1] and Vinicius [2] noted a topology_span_sane() warning during
-their testing starting from v6.16-rc1. Debug that followed pointed to
-the tl->mask() for the NODE domain being incorrectly resolved to that of
-the highest NUMA domain.
-
-tl->mask() for NODE is set to the sd_numa_mask() which depends on the
-global "sched_domains_curr_level" hack. "sched_domains_curr_level" is
-set to the "tl->numa_level" during tl traversal in build_sched_domains()
-calling sd_init() but was not reset before topology_span_sane().
-
-Since "tl->numa_level" still reflected the old value from
-build_sched_domains(), topology_span_sane() for the NODE domain trips
-when the span of the last NUMA domain overlaps.
-
-Instead of replicating the "sched_domains_curr_level" hack, get rid of
-it entirely and instead, pass the entire "sched_domain_topology_level"
-object to tl->cpumask() function to prevent such mishap in the future.
-
-sd_numa_mask() now directly references "tl->numa_level" instead of
-relying on the global "sched_domains_curr_level" hack to index into
-sched_domains_numa_masks[].
-
-The original warning was reproducible on the following NUMA topology
-reported by Leon:
-
-    $ sudo numactl -H
-    available: 5 nodes (0-4)
-    node 0 cpus: 0 1
-    node 0 size: 2927 MB
-    node 0 free: 1603 MB
-    node 1 cpus: 2 3
-    node 1 size: 3023 MB
-    node 1 free: 3008 MB
-    node 2 cpus: 4 5
-    node 2 size: 3023 MB
-    node 2 free: 3007 MB
-    node 3 cpus: 6 7
-    node 3 size: 3023 MB
-    node 3 free: 3002 MB
-    node 4 cpus: 8 9
-    node 4 size: 3022 MB
-    node 4 free: 2718 MB
-    node distances:
-    node   0   1   2   3   4
-      0:  10  39  38  37  36
-      1:  39  10  38  37  36
-      2:  38  38  10  37  36
-      3:  37  37  37  10  36
-      4:  36  36  36  36  10
-
-The above topology can be mimicked using the following QEMU cmd that was
-used to reproduce the warning and test the fix:
-
-     sudo qemu-system-x86_64 -enable-kvm -cpu host \
-     -m 20G -smp cpus=10,sockets=10 -machine q35 \
-     -object memory-backend-ram,size=4G,id=m0 \
-     -object memory-backend-ram,size=4G,id=m1 \
-     -object memory-backend-ram,size=4G,id=m2 \
-     -object memory-backend-ram,size=4G,id=m3 \
-     -object memory-backend-ram,size=4G,id=m4 \
-     -numa node,cpus=0-1,memdev=m0,nodeid=0 \
-     -numa node,cpus=2-3,memdev=m1,nodeid=1 \
-     -numa node,cpus=4-5,memdev=m2,nodeid=2 \
-     -numa node,cpus=6-7,memdev=m3,nodeid=3 \
-     -numa node,cpus=8-9,memdev=m4,nodeid=4 \
-     -numa dist,src=0,dst=1,val=39 \
-     -numa dist,src=0,dst=2,val=38 \
-     -numa dist,src=0,dst=3,val=37 \
-     -numa dist,src=0,dst=4,val=36 \
-     -numa dist,src=1,dst=0,val=39 \
-     -numa dist,src=1,dst=2,val=38 \
-     -numa dist,src=1,dst=3,val=37 \
-     -numa dist,src=1,dst=4,val=36 \
-     -numa dist,src=2,dst=0,val=38 \
-     -numa dist,src=2,dst=1,val=38 \
-     -numa dist,src=2,dst=3,val=37 \
-     -numa dist,src=2,dst=4,val=36 \
-     -numa dist,src=3,dst=0,val=37 \
-     -numa dist,src=3,dst=1,val=37 \
-     -numa dist,src=3,dst=2,val=37 \
-     -numa dist,src=3,dst=4,val=36 \
-     -numa dist,src=4,dst=0,val=36 \
-     -numa dist,src=4,dst=1,val=36 \
-     -numa dist,src=4,dst=2,val=36 \
-     -numa dist,src=4,dst=3,val=36 \
-     ...
-
-  [ prateek: Moved common functions to include/linux/sched/topology.h,
-    reuse the common bits for s390 and ppc, commit message ]
-
-Closes: https://lore.kernel.org/lkml/20250610110701.GA256154@unreal/ [1]
-Fixes: ccf74128d66c ("sched/topology: Assert non-NUMA topology masks don't (partially) overlap") # ce29a7da84cd, f55dac1dafb3
-Reported-by: Leon Romanovsky <leon@kernel.org>
-Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lore.kernel.org/lkml/a3de98387abad28592e6ab591f3ff6107fe01dc1.1755893468.git.tim.c.chen@linux.intel.com/ [2]
----
- arch/powerpc/Kconfig                |    4 ++++
- arch/powerpc/include/asm/topology.h |    2 ++
- arch/powerpc/kernel/smp.c           |   27 +++++++++++----------------
- arch/s390/kernel/topology.c         |   20 +++++++-------------
- arch/x86/kernel/smpboot.c           |    8 ++++----
- include/linux/sched/topology.h      |   28 +++++++++++++++++++++++++++-
- include/linux/topology.h            |    2 +-
- kernel/sched/topology.c             |   28 ++++++++++------------------
- 8 files changed, 66 insertions(+), 53 deletions(-)
-
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -971,6 +971,10 @@ config SCHED_SMT
- 	  when dealing with POWER5 cpus at a cost of slightly increased
- 	  overhead in some places. If unsure say N here.
+diff --git a/samples/ftrace/ftrace-direct-modify.c b/samples/ftrace/ftrace-direct-modify.c
+index cfea7a38befb..da3a9f2091f5 100644
+--- a/samples/ftrace/ftrace-direct-modify.c
++++ b/samples/ftrace/ftrace-direct-modify.c
+@@ -75,8 +75,8 @@ asm (
+ 	CALL_DEPTH_ACCOUNT
+ "	call my_direct_func1\n"
+ "	leave\n"
+-"	.size		my_tramp1, .-my_tramp1\n"
+ 	ASM_RET
++"	.size		my_tramp1, .-my_tramp1\n"
  
-+config SCHED_MC
-+	def_bool y
-+	depends on PPC64 && SMP
-+
- config PPC_DENORMALISATION
- 	bool "PowerPC denormalisation exception handling"
- 	depends on PPC_BOOK3S_64
---- a/arch/powerpc/include/asm/topology.h
-+++ b/arch/powerpc/include/asm/topology.h
-@@ -134,6 +134,8 @@ static inline int cpu_to_coregroup_id(in
- #ifdef CONFIG_PPC64
- #include <asm/smp.h>
- 
-+struct cpumask *cpu_coregroup_mask(int cpu);
-+
- #define topology_physical_package_id(cpu)	(cpu_to_chip_id(cpu))
- 
- #define topology_sibling_cpumask(cpu)	(per_cpu(cpu_sibling_map, cpu))
---- a/arch/powerpc/kernel/smp.c
-+++ b/arch/powerpc/kernel/smp.c
-@@ -1028,19 +1028,19 @@ static int powerpc_shared_proc_flags(voi
-  * We can't just pass cpu_l2_cache_mask() directly because
-  * returns a non-const pointer and the compiler barfs on that.
-  */
--static const struct cpumask *shared_cache_mask(int cpu)
-+static const struct cpumask *tl_cache_mask(struct sched_domain_topology_level *tl, int cpu)
- {
- 	return per_cpu(cpu_l2_cache_map, cpu);
- }
- 
- #ifdef CONFIG_SCHED_SMT
--static const struct cpumask *smallcore_smt_mask(int cpu)
-+static const struct cpumask *tl_smallcore_smt_mask(struct sched_domain_topology_level *tl, int cpu)
- {
- 	return cpu_smallcore_mask(cpu);
- }
- #endif
- 
--static struct cpumask *cpu_coregroup_mask(int cpu)
-+struct cpumask *cpu_coregroup_mask(int cpu)
- {
- 	return per_cpu(cpu_coregroup_map, cpu);
- }
-@@ -1054,11 +1054,6 @@ static bool has_coregroup_support(void)
- 	return coregroup_enabled;
- }
- 
--static const struct cpumask *cpu_mc_mask(int cpu)
--{
--	return cpu_coregroup_mask(cpu);
--}
--
- static int __init init_big_cores(void)
- {
- 	int cpu;
-@@ -1448,7 +1443,7 @@ static bool update_mask_by_l2(int cpu, c
- 		return false;
- 	}
- 
--	cpumask_and(*mask, cpu_online_mask, cpu_cpu_mask(cpu));
-+	cpumask_and(*mask, cpu_online_mask, cpu_node_mask(cpu));
- 
- 	/* Update l2-cache mask with all the CPUs that are part of submask */
- 	or_cpumasks_related(cpu, cpu, submask_fn, cpu_l2_cache_mask);
-@@ -1538,7 +1533,7 @@ static void update_coregroup_mask(int cp
- 		return;
- 	}
- 
--	cpumask_and(*mask, cpu_online_mask, cpu_cpu_mask(cpu));
-+	cpumask_and(*mask, cpu_online_mask, cpu_node_mask(cpu));
- 
- 	/* Update coregroup mask with all the CPUs that are part of submask */
- 	or_cpumasks_related(cpu, cpu, submask_fn, cpu_coregroup_mask);
-@@ -1601,7 +1596,7 @@ static void add_cpu_to_masks(int cpu)
- 
- 	/* If chip_id is -1; limit the cpu_core_mask to within PKG */
- 	if (chip_id == -1)
--		cpumask_and(mask, mask, cpu_cpu_mask(cpu));
-+		cpumask_and(mask, mask, cpu_node_mask(cpu));
- 
- 	for_each_cpu(i, mask) {
- 		if (chip_id == cpu_to_chip_id(i)) {
-@@ -1701,22 +1696,22 @@ static void __init build_sched_topology(
- 	if (has_big_cores) {
- 		pr_info("Big cores detected but using small core scheduling\n");
- 		powerpc_topology[i++] =
--			SDTL_INIT(smallcore_smt_mask, powerpc_smt_flags, SMT);
-+			SDTL_INIT(tl_smallcore_smt_mask, powerpc_smt_flags, SMT);
- 	} else {
--		powerpc_topology[i++] = SDTL_INIT(cpu_smt_mask, powerpc_smt_flags, SMT);
-+		powerpc_topology[i++] = SDTL_INIT(tl_smt_mask, powerpc_smt_flags, SMT);
- 	}
- #endif
- 	if (shared_caches) {
- 		powerpc_topology[i++] =
--			SDTL_INIT(shared_cache_mask, powerpc_shared_cache_flags, CACHE);
-+			SDTL_INIT(tl_cache_mask, powerpc_shared_cache_flags, CACHE);
- 	}
- 
- 	if (has_coregroup_support()) {
- 		powerpc_topology[i++] =
--			SDTL_INIT(cpu_mc_mask, powerpc_shared_proc_flags, MC);
-+			SDTL_INIT(tl_mc_mask, powerpc_shared_proc_flags, MC);
- 	}
- 
--	powerpc_topology[i++] = SDTL_INIT(cpu_cpu_mask, powerpc_shared_proc_flags, PKG);
-+	powerpc_topology[i++] = SDTL_INIT(tl_pkg_mask, powerpc_shared_proc_flags, PKG);
- 
- 	/* There must be one trailing NULL entry left.  */
- 	BUG_ON(i >= ARRAY_SIZE(powerpc_topology) - 1);
---- a/arch/s390/kernel/topology.c
-+++ b/arch/s390/kernel/topology.c
-@@ -509,33 +509,27 @@ int topology_cpu_init(struct cpu *cpu)
- 	return rc;
- }
- 
--static const struct cpumask *cpu_thread_mask(int cpu)
--{
--	return &cpu_topology[cpu].thread_mask;
--}
--
--
- const struct cpumask *cpu_coregroup_mask(int cpu)
- {
- 	return &cpu_topology[cpu].core_mask;
- }
- 
--static const struct cpumask *cpu_book_mask(int cpu)
-+static const struct cpumask *tl_book_mask(struct sched_domain_topology_level *tl, int cpu)
- {
- 	return &cpu_topology[cpu].book_mask;
- }
- 
--static const struct cpumask *cpu_drawer_mask(int cpu)
-+static const struct cpumask *tl_drawer_mask(struct sched_domain_topology_level *tl, int cpu)
- {
- 	return &cpu_topology[cpu].drawer_mask;
- }
- 
- static struct sched_domain_topology_level s390_topology[] = {
--	SDTL_INIT(cpu_thread_mask, cpu_smt_flags, SMT),
--	SDTL_INIT(cpu_coregroup_mask, cpu_core_flags, MC),
--	SDTL_INIT(cpu_book_mask, NULL, BOOK),
--	SDTL_INIT(cpu_drawer_mask, NULL, DRAWER),
--	SDTL_INIT(cpu_cpu_mask, NULL, PKG),
-+	SDTL_INIT(tl_smt_mask, cpu_smt_flags, SMT),
-+	SDTL_INIT(tl_mc_mask, cpu_core_flags, MC),
-+	SDTL_INIT(tl_book_mask, NULL, BOOK),
-+	SDTL_INIT(tl_drawer_mask, NULL, DRAWER),
-+	SDTL_INIT(tl_pkg_mask, NULL, PKG),
- 	{ NULL, },
- };
- 
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -479,14 +479,14 @@ static int x86_cluster_flags(void)
- static bool x86_has_numa_in_package;
- 
- static struct sched_domain_topology_level x86_topology[] = {
--	SDTL_INIT(cpu_smt_mask, cpu_smt_flags, SMT),
-+	SDTL_INIT(tl_smt_mask, cpu_smt_flags, SMT),
- #ifdef CONFIG_SCHED_CLUSTER
--	SDTL_INIT(cpu_clustergroup_mask, x86_cluster_flags, CLS),
-+	SDTL_INIT(tl_cls_mask, x86_cluster_flags, CLS),
- #endif
- #ifdef CONFIG_SCHED_MC
--	SDTL_INIT(cpu_coregroup_mask, x86_core_flags, MC),
-+	SDTL_INIT(tl_mc_mask, x86_core_flags, MC),
- #endif
--	SDTL_INIT(cpu_cpu_mask, x86_sched_itmt_flags, PKG),
-+	SDTL_INIT(tl_pkg_mask, x86_sched_itmt_flags, PKG),
- 	{ NULL },
- };
- 
---- a/include/linux/sched/topology.h
-+++ b/include/linux/sched/topology.h
-@@ -30,11 +30,19 @@ struct sd_flag_debug {
- };
- extern const struct sd_flag_debug sd_flag_debug[];
- 
-+struct sched_domain_topology_level;
-+
- #ifdef CONFIG_SCHED_SMT
- static inline int cpu_smt_flags(void)
- {
- 	return SD_SHARE_CPUCAPACITY | SD_SHARE_LLC;
- }
-+
-+static inline const
-+struct cpumask *tl_smt_mask(struct sched_domain_topology_level *tl, int cpu)
-+{
-+	return cpu_smt_mask(cpu);
-+}
- #endif
- 
- #ifdef CONFIG_SCHED_CLUSTER
-@@ -42,6 +50,12 @@ static inline int cpu_cluster_flags(void
- {
- 	return SD_CLUSTER | SD_SHARE_LLC;
- }
-+
-+static inline const
-+struct cpumask *tl_cls_mask(struct sched_domain_topology_level *tl, int cpu)
-+{
-+	return cpu_clustergroup_mask(cpu);
-+}
- #endif
- 
- #ifdef CONFIG_SCHED_MC
-@@ -49,8 +63,20 @@ static inline int cpu_core_flags(void)
- {
- 	return SD_SHARE_LLC;
- }
-+
-+static inline const
-+struct cpumask *tl_mc_mask(struct sched_domain_topology_level *tl, int cpu)
-+{
-+	return cpu_coregroup_mask(cpu);
-+}
- #endif
- 
-+static inline const
-+struct cpumask *tl_pkg_mask(struct sched_domain_topology_level *tl, int cpu)
-+{
-+	return cpu_node_mask(cpu);
-+}
-+
- #ifdef CONFIG_NUMA
- static inline int cpu_numa_flags(void)
- {
-@@ -172,7 +198,7 @@ bool cpus_equal_capacity(int this_cpu, i
- bool cpus_share_cache(int this_cpu, int that_cpu);
- bool cpus_share_resources(int this_cpu, int that_cpu);
- 
--typedef const struct cpumask *(*sched_domain_mask_f)(int cpu);
-+typedef const struct cpumask *(*sched_domain_mask_f)(struct sched_domain_topology_level *tl, int cpu);
- typedef int (*sched_domain_flags_f)(void);
- 
- struct sd_data {
---- a/include/linux/topology.h
-+++ b/include/linux/topology.h
-@@ -260,7 +260,7 @@ static inline bool topology_is_primary_t
- 
- #endif
- 
--static inline const struct cpumask *cpu_cpu_mask(int cpu)
-+static inline const struct cpumask *cpu_node_mask(int cpu)
- {
- 	return cpumask_of_node(cpu_to_node(cpu));
- }
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -1591,7 +1591,6 @@ static void claim_allocations(int cpu, s
- enum numa_topology_type sched_numa_topology_type;
- 
- static int			sched_domains_numa_levels;
--static int			sched_domains_curr_level;
- 
- int				sched_max_numa_distance;
- static int			*sched_domains_numa_distance;
-@@ -1632,14 +1631,7 @@ sd_init(struct sched_domain_topology_lev
- 	int sd_id, sd_weight, sd_flags = 0;
- 	struct cpumask *sd_span;
- 
--#ifdef CONFIG_NUMA
--	/*
--	 * Ugly hack to pass state to sd_numa_mask()...
--	 */
--	sched_domains_curr_level = tl->numa_level;
--#endif
--
--	sd_weight = cpumask_weight(tl->mask(cpu));
-+	sd_weight = cpumask_weight(tl->mask(tl, cpu));
- 
- 	if (tl->sd_flags)
- 		sd_flags = (*tl->sd_flags)();
-@@ -1677,7 +1669,7 @@ sd_init(struct sched_domain_topology_lev
- 	};
- 
- 	sd_span = sched_domain_span(sd);
--	cpumask_and(sd_span, cpu_map, tl->mask(cpu));
-+	cpumask_and(sd_span, cpu_map, tl->mask(tl, cpu));
- 	sd_id = cpumask_first(sd_span);
- 
- 	sd->flags |= asym_cpu_capacity_classify(sd_span, cpu_map);
-@@ -1737,17 +1729,17 @@ sd_init(struct sched_domain_topology_lev
-  */
- static struct sched_domain_topology_level default_topology[] = {
- #ifdef CONFIG_SCHED_SMT
--	SDTL_INIT(cpu_smt_mask, cpu_smt_flags, SMT),
-+	SDTL_INIT(tl_smt_mask, cpu_smt_flags, SMT),
- #endif
- 
- #ifdef CONFIG_SCHED_CLUSTER
--	SDTL_INIT(cpu_clustergroup_mask, cpu_cluster_flags, CLS),
-+	SDTL_INIT(tl_cls_mask, cpu_cluster_flags, CLS),
- #endif
- 
- #ifdef CONFIG_SCHED_MC
--	SDTL_INIT(cpu_coregroup_mask, cpu_core_flags, MC),
-+	SDTL_INIT(tl_mc_mask, cpu_core_flags, MC),
- #endif
--	SDTL_INIT(cpu_cpu_mask, NULL, PKG),
-+	SDTL_INIT(tl_pkg_mask, NULL, PKG),
- 	{ NULL, },
- };
- 
-@@ -1769,9 +1761,9 @@ void __init set_sched_topology(struct sc
- 
- #ifdef CONFIG_NUMA
- 
--static const struct cpumask *sd_numa_mask(int cpu)
-+static const struct cpumask *sd_numa_mask(struct sched_domain_topology_level *tl, int cpu)
- {
--	return sched_domains_numa_masks[sched_domains_curr_level][cpu_to_node(cpu)];
-+	return sched_domains_numa_masks[tl->numa_level][cpu_to_node(cpu)];
- }
- 
- static void sched_numa_warn(const char *str)
-@@ -2411,7 +2403,7 @@ static bool topology_span_sane(const str
- 		 * breaks the linking done for an earlier span.
- 		 */
- 		for_each_cpu(cpu, cpu_map) {
--			const struct cpumask *tl_cpu_mask = tl->mask(cpu);
-+			const struct cpumask *tl_cpu_mask = tl->mask(tl, cpu);
- 			int id;
- 
- 			/* lowest bit set in this mask is used as a unique id */
-@@ -2419,7 +2411,7 @@ static bool topology_span_sane(const str
- 
- 			if (cpumask_test_cpu(id, id_seen)) {
- 				/* First CPU has already been seen, ensure identical spans */
--				if (!cpumask_equal(tl->mask(id), tl_cpu_mask))
-+				if (!cpumask_equal(tl->mask(tl, id), tl_cpu_mask))
- 					return false;
- 			} else {
- 				/* First CPU hasn't been seen before, ensure it's a completely new span */
+ "	.type		my_tramp2, @function\n"
+ "	.globl		my_tramp2\n"
+-- 
+2.43.0
 
 
