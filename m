@@ -1,113 +1,114 @@
-Return-Path: <linux-kernel+bounces-786622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3187B35F2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:35:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BADBAB35F37
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:36:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8151A3BAD20
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:35:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 898E4364F5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 046CC2D060B;
-	Tue, 26 Aug 2025 12:35:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B6A307484;
+	Tue, 26 Aug 2025 12:36:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="DVv3Cy/r"
-Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [45.157.188.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DaY/9TEH"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6968E21D3C0
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 12:35:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E2B528000C
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 12:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756211719; cv=none; b=lmbySlAXNKmq+XY3am5xI5k4ZLjnTgkQdYLCc6v0zSaPC6nwVW8WB/CRZRAuRIvXPMDiS8jyWl/N1horE+37AaX+X+yFTZXiaZRAhfe0Oe8YNlJD6eVzuN9QpUx2Nufg5yrvlIfNi/RxMOJ6sIqy3Y1Ngbx/6RUDZbgV6MfjXyM=
+	t=1756211789; cv=none; b=DNhICVTYDMxufWspuWpmCwjHjzAKnJcLVzxe+tPcLYuwgIzZif9RC/3yuDCtSij8Qfy7GpwtZ3FRTHandmu1YtLDy+c4sU8YdBx/8z+agtc7GH2A2ltpulD428iQ87z7tO3LKkQE6NNef04QJohJyXNexF1m7JZvb/9MQn3oi8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756211719; c=relaxed/simple;
-	bh=rlitfwKw6m8qm0mxEs/6cnYt/upIMsMd+WjUZGJict0=;
+	s=arc-20240116; t=1756211789; c=relaxed/simple;
+	bh=GG0OZ6GLiRlZltpTWxyq0wPNaZPep3i36UPYib9zmGs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ey60KcYt6Td0SRKfFkIZFmLkMkN+VIhGscI8FQds8C7RncDqQvyyo1fMP7MeUlMNS6yCAjjvOoaYbUADWk8wGewryILydXLgNqXO7iyfV3xrMpzRsb1apI/MX1MoQYgF8kftVuqM6KoPAOq0oCi90LMO8bA6Thy2u4vhIv4lk2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=DVv3Cy/r; arc=none smtp.client-ip=45.157.188.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4cB6Z738bNzLcG;
-	Tue, 26 Aug 2025 14:35:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1756211711;
-	bh=R8XQ+qnr9SZ/BmQ7yIcGbNm53gzbfSqxt8B1gBqiUxg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DVv3Cy/rQOpb1FageSeGpGJiQ0vQ9qK2YvEr44f/YXumQ0jgQLQbn01zyRrrPE6Fr
-	 ztkIi3ltRzcLAUKGOSoRq/UYWQx6o+d/49io54LxzL/W9LzI8HgvK9kN3UmFUeBspK
-	 JjbE8yzV9pYsgoKq3TcmYBkfEPA4TM5OCUV87IGQ=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4cB6Z44FXQztlg;
-	Tue, 26 Aug 2025 14:35:08 +0200 (CEST)
-Date: Tue, 26 Aug 2025 14:35:08 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Florian Weimer <fweimer@redhat.com>
-Cc: Andy Lutomirski <luto@amacapital.net>, Jann Horn <jannh@google.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>, 
-	Serge Hallyn <serge@hallyn.com>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
-	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, Jeff Xu <jeffxu@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Miklos Szeredi <mszeredi@redhat.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
-	Robert Waite <rowait@microsoft.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Scott Shell <scottsh@microsoft.com>, Steve Dower <steve.dower@python.org>, 
-	Steve Grubb <sgrubb@redhat.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Jeff Xu <jeffxu@chromium.org>
-Subject: Re: [RFC PATCH v1 1/2] fs: Add O_DENY_WRITE
-Message-ID: <20250826.Lie3ye8to7yo@digikod.net>
-References: <20250822170800.2116980-1-mic@digikod.net>
- <20250822170800.2116980-2-mic@digikod.net>
- <CAG48ez1XjUdcFztc_pF2qcoLi7xvfpJ224Ypc=FoGi-Px-qyZw@mail.gmail.com>
- <20250824.Ujoh8unahy5a@digikod.net>
- <CALCETrWwd90qQ3U2nZg9Fhye6CMQ6ZF20oQ4ME6BoyrFd0t88Q@mail.gmail.com>
- <20250825.mahNeel0dohz@digikod.net>
- <lhuikibbv0g.fsf@oldenburg.str.redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hqTalpmxhgk9C1puMzRXDLAHmv2vtPEYsxKEPErKsczZxfra+2c0h99AqcHgrtsxpEO6kZVBoh07th1twSpUYApIfIGhgms+JZegy1GNHDL4cYsEukCtZk35uvkSrTu72wCvulAIZD55OJIgY6gE3MRE/7kydBhtGFjlfVsqo6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DaY/9TEH; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3c6df24f128so2462670f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 05:36:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756211786; x=1756816586; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gBeiE9LNukLMGwDkFXIG3w4fI05jvJOIyYobYgQIygk=;
+        b=DaY/9TEHVTRCUgEbGSOB0zZ1lsWJfEmtYBiY2B7xdrP9cfKePQn+NgNBycwOuR4oa8
+         CSeYVdGF8nLQIDPD9wnvFnw8FhvPa1DQKODGGXKTom4RT7VoiK8uyDBBzfZFrW99NqJq
+         1O1ofvCjkhp8lShDjII5BmXwkHhaDCObAz37zKi5dVTF6hqBH5KQ/R+vxvobo5f7NZjw
+         S82OlaVwnb1pP12RVStoI2OxUqyTpxkWeGmCy1zHsC1Cs2GPd3GyUDoAwbW44yN17kEh
+         8HFjMEVhGHnXXnOSTSPKdpjsV3/zjdb75kbMxg33gWHCd+c/oQA3ajXdcVeA7Iln3yxy
+         0iJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756211786; x=1756816586;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gBeiE9LNukLMGwDkFXIG3w4fI05jvJOIyYobYgQIygk=;
+        b=PDIPBfvzcTtm8sp2F94Nr+LYRD/3c49nupQWkS/6VvaP7mcTHZDvR1zO+eKEC8Mrmj
+         5wraaHY/67o0iW3BK8JXM2Y6bapNZKXS41FUrl/TQxISriwoz41dph1TC9HH8dqNHFqp
+         H7I9lpStjlRQEAWgP9PFwoblnMsOQKVZa/785sZIaCCPSORDBJC+fxUJdp2WA0a1GOjH
+         0yHffevn1zdXNp2j0v0PclGIxfzfQ+0HjC90mJUnqYPYhz/B7KangiLB4kDANLBnrqsJ
+         Bx9C6NSyzsxoCxFmUkgMV5mgpXmd1qrAz5OW1l4PPMycueusbY1oAFzysLZCkgSTkh5N
+         26kw==
+X-Forwarded-Encrypted: i=1; AJvYcCV+yfUhOdZE8p3b3LrZEI9QdflZQTvPYkgi1c/o8MexOX1eGK1O8y42/c3N7oHo8kP9sR/KHOHVQLGTwdI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz6vcNX24oZ0Wa7e4U0E9LGMuXYokhPota/5LWoCeJZLfqDhyp
+	gp7jTaA/Vi/BRTtV8eknoMi98CyuBb9dz5nJie9DS5Qyw+p8m252axouQ9XyFasxJhg=
+X-Gm-Gg: ASbGncuV99eyzPsU4pJ/YlcvyMQ5//YcyoTtAMMfjziNYUOmJT8PkmCbESqRDskpMJy
+	QypK56l5s4rAv6K1CzJoRLG2j0fOjeWSVqK2CYFCCQIezu4YCtNNuVmd4MwRf1EcTWN1TNBYImG
+	EdG9gA1nbFn9zDm86zKkIwjr9XzWG5NJy/dydC5gzPqcG4Ks/p3xuOy6b28WmI+39li/uvDasVT
+	KVDaT/uY7TpnQOOXwIwav1clO0BWMA8Zf3a2D+Dzxf5sQ2HHZCD2fUkJcYB4sIJwRKgWjRIW99j
+	rvyWzIkILWwOvw4dWKngRutl0c8bkBUrOIMiEUuQM+mgkVLcDctL11ubSf6jLMVE+vobOMgdPbE
+	/RFYVIMbJu0WgO0qUhHxAAQ7XTHUdKfOYKZp7dA==
+X-Google-Smtp-Source: AGHT+IHMe18dV7JNEUnQGXIlUU6xJmQSIHVCHST1ZqMCllJ6NRHrhQ+rT4IdFNx8d/Wdk/LNZf+F8w==
+X-Received: by 2002:a05:6000:240e:b0:3c8:89e9:6aa7 with SMTP id ffacd0b85a97d-3c889e96e2fmr7372053f8f.2.1756211785879;
+        Tue, 26 Aug 2025 05:36:25 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3c7116e1478sm16017950f8f.46.2025.08.26.05.36.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Aug 2025 05:36:25 -0700 (PDT)
+Date: Tue, 26 Aug 2025 15:36:21 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Qianfeng Rong <rongqianfeng@vivo.com>
+Cc: Dave Penkler <dpenkler@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Michael Rubin <matchstick@neverthere.org>,
+	Arnd Bergmann <arnd@arndb.de>, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] staging: gpib: use int type to store negative error
+ codes
+Message-ID: <aK2qRRoXViUS-0HL@stanley.mountain>
+References: <20250826123208.300145-1-rongqianfeng@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <lhuikibbv0g.fsf@oldenburg.str.redhat.com>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <20250826123208.300145-1-rongqianfeng@vivo.com>
 
-On Mon, Aug 25, 2025 at 11:39:11AM +0200, Florian Weimer wrote:
-> * Mickaël Salaün:
+On Tue, Aug 26, 2025 at 08:32:01PM +0800, Qianfeng Rong wrote:
+> The "ret" variable is used to store the return from bb_write() returns
+> either zero on success or negative error codes on failure.  Storing the
+> error codes in size_t which is an unsigned long, doesn't cause an issue
+> at runtime but it's ugly as pants.  Change "ret" from size_t to int
+> type.  No effect on runtime.
 > 
-> > The order of checks would be:
-> > 1. open script with O_DENY_WRITE
-> > 2. check executability with AT_EXECVE_CHECK
-> > 3. read the content and interpret it
-> >
-> > The deny-write feature was to guarantee that there is no race condition
-> > between step 2 and 3.  All these checks are supposed to be done by a
-> > trusted interpreter (which is allowed to be executed).  The
-> > AT_EXECVE_CHECK call enables the caller to know if the kernel (and
-> > associated security policies) allowed the *current* content of the file
-> > to be executed.  Whatever happen before or after that (wrt.
-> > O_DENY_WRITE) should be covered by the security policy.
-> 
-> Why isn't it an improper system configuration if the script file is
-> writable?
+> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+> ---
+> v2: Modified commit message as suggested by Dan.
 
-It is, except if the system only wants to track executions (e.g. record
-checksum of scripts) without restricting file modifications.
+Awesome.  Thanks!
 
-> 
-> In the past, the argument was that making a file (writable and)
-> executable was an auditable even, and that provided enough coverage for
-> those people who are interested in this.
+Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Yes, but in this case there is a race condition that this patch tried to
-fix.
+regards,
+dan carpenter
+
 
