@@ -1,206 +1,190 @@
-Return-Path: <linux-kernel+bounces-786511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9250DB35AC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:10:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 885AFB35AB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:06:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A9AF1897818
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:11:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F9BF3ABBF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:06:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 356582BF00B;
-	Tue, 26 Aug 2025 11:10:50 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEC8126CE0A;
-	Tue, 26 Aug 2025 11:10:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0369D29B8D9;
+	Tue, 26 Aug 2025 11:06:44 +0000 (UTC)
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.76.142.27])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59FBD25F99F;
+	Tue, 26 Aug 2025 11:06:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.76.142.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756206649; cv=none; b=TBSFQyLWctpD5BiCVLZlQAMqJq8udeSO1YEI94s22MX6RmAI7YbyQ0O2hxS+jl9m6w3qeo0F5bXxU/sIavtlq3NRr2pLIyNsr6zYBWSTFShGIFxUaojBe+PKumaf/QOdluDi8yhfLvJr8C7pSOyvOv+/Q0/ivbeeEbhVBDkLQcU=
+	t=1756206403; cv=none; b=LaejObPYbdYChV57Nqf+R2dOBS4DD/Kgvcb/6SbCb7ijWIFDeR7n7U8dMIpWuJy24wbSA6nM/Y0ypODV5BGnhrb/nHWa2iI64dgG24lc21J0YhY0kHK5//gfvdkPGXzCTGZNfeNm1DSkoTNpVUHNMYFVtN2QYLExq1C9I9Bw9aQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756206649; c=relaxed/simple;
-	bh=EwSSOFLEaoqn36EQQfnKIej8/8zP/dJsuwZQhT68goY=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=uBAfPpE5HAyocUvty50XFii3ER4o9dU9E90J4WLZEai+FS1PPvpk2rHz7sbEbJEyv0S6vg/8neKRwAwuhzC1S4K34XMpoQ2H3ZMSG6uKhYpX9V9CPsYSy5KlzOSeZp2ygjCFx9J4jYggD21HT1ls1HEiwX0862BADhLnfEqsaUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4cB4hV6kwwz5B1CJ;
-	Tue, 26 Aug 2025 19:10:34 +0800 (CST)
-Received: from xaxapp04.zte.com.cn ([10.99.98.157])
-	by mse-fl1.zte.com.cn with SMTP id 57QB5sao024336;
-	Tue, 26 Aug 2025 19:05:54 +0800 (+08)
-	(envelope-from shao.mingyin@zte.com.cn)
-Received: from mapi (xaxapp05[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Tue, 26 Aug 2025 19:05:57 +0800 (CST)
-Date: Tue, 26 Aug 2025 19:05:57 +0800 (CST)
-X-Zmail-TransId: 2afc68ad9515e3f-afe9e
-X-Mailer: Zmail v1.0
-Message-ID: <20250826190557325q5xnXNQxYGNWk-xXJDRhw@zte.com.cn>
-In-Reply-To: <20250826185643235jApHbqi4zaPaZWVy6_Pot@zte.com.cn>
-References: 20250826185643235jApHbqi4zaPaZWVy6_Pot@zte.com.cn
+	s=arc-20240116; t=1756206403; c=relaxed/simple;
+	bh=0DD07lInfMmXbGN+5tYxPVIh0qblkS1vxdwi59jO87s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PPSqdOU4rLebWmD/eGCpg/FZSaW+DwAYS74CkBjIwT9ippSCkOKqCWqnKjcC3uGOl6QIE3TvUVzY/cH9s0VFkuLl6iM4P0Et+e9sbJ+fspB5DLZZf4KX62jhv4zzVmyWUxiN21kqpDrkzf3c7hQOFAH4UdXHJYL6yXyIy/QJJVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=13.76.142.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0005152DT.eswin.cn (unknown [10.12.96.41])
+	by app1 (Coremail) with SMTP id TAJkCgC3zg8sla1o3ObDAA--.48651S2;
+	Tue, 26 Aug 2025 19:06:23 +0800 (CST)
+From: dongxuyang@eswincomputing.com
+To: p.zabel@pengutronix.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	huangyifeng@eswincomputing.com,
+	pinkesh.vaghela@einfochips.com,
+	Xuyang Dong <dongxuyang@eswincomputing.com>
+Subject: [PATCH v6 0/2] Add driver support for ESWIN eic7700 SoC reset controller
+Date: Tue, 26 Aug 2025 19:06:10 +0800
+Message-Id: <20250826110610.1338-1-dongxuyang@eswincomputing.com>
+X-Mailer: git-send-email 2.31.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <shao.mingyin@zte.com.cn>
-To: <shao.mingyin@zte.com.cn>
-Cc: <alexs@kernel.org>, <si.yanteng@linux.dev>, <dzm91@hust.edu.cn>,
-        <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <yang.yang29@zte.com.cn>,
-        <xu.xin16@zte.com.cn>, <yang.tao172@zte.com.cn>,
-        <wang.longjie1@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIHY0IDQvN10gRG9jcy96aF9DTjogVHJhbnNsYXRlIGdmczItdWV2ZW50cy5yc3QgdG8gU2ltcGxpZmllZCBDaGluZXNl?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 57QB5sao024336
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.132 unknown Tue, 26 Aug 2025 19:10:35 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 68AD962A.003/4cB4hV6kwwz5B1CJ
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:TAJkCgC3zg8sla1o3ObDAA--.48651S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxtF15WFyrXF1kJFWktr4UCFg_yoW7ArWUpF
+	WUCry7Gr15Xr4xXa93ta1F93WSqanxtr15Gr47Jw47uan8Aa4UJrWrtF45AFyDAr97Xryf
+	XF13uayF9FyjvFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBv14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxkIecxEwVCm-wCF04
+	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
+	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr4
+	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l
+	IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4
+	A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUmjgxUUUUU=
+X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/
 
-From: Shao Mingyin <shao.mingyin@zte.com.cn>
+From: Xuyang Dong <dongxuyang@eswincomputing.com>
 
-translate the "gfs2-uevents.rst" into Simplified Chinese.
+This series depends on the vendor prefix [1] and config option patch [2].
 
-Update to commit 5b7ac27a6e2c("docs: filesystems: convert
-gfs2-uevents.txt to ReST")
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?h=next-20250825&id=ac29e4487aa20a21b7c3facbd1f14f5093835dc9
+[2] https://lore.kernel.org/all/20250825132427.1618089-3-pinkesh.vaghela@einfochips.com/
 
-Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
-Signed-off-by: yang tao <yang.tao172@zte.com.cn>
----
-v3->v4
-resolve patch damage issues.
- .../zh_CN/filesystems/gfs2-uevents.rst        | 97 +++++++++++++++++++
- .../translations/zh_CN/filesystems/index.rst  |  1 +
- 2 files changed, 98 insertions(+)
- create mode 100644 Documentation/translations/zh_CN/filesystems/gfs2-uevents.rst
+Updates:
 
-diff --git a/Documentation/translations/zh_CN/filesystems/gfs2-uevents.rst b/Documentation/translations/zh_CN/filesystems/gfs2-uevents.rst
-new file mode 100644
-index 000000000000..f5c3337ae9f9
---- /dev/null
-+++ b/Documentation/translations/zh_CN/filesystems/gfs2-uevents.rst
-@@ -0,0 +1,97 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+.. include:: ../disclaimer-zh_CN.rst
-+
-+:Original: Documentation/filesystems/gfs2-uevents.rst
-+
-+:翻译:
-+
-+   邵明寅 Shao Mingyin <shao.mingyin@zte.com.cn>
-+
-+:校译:
-+
-+   - 杨涛 yang tao <yang.tao172@zte.com.cn>
-+
-+===============
-+uevents 与 GFS2
-+===============
-+
-+在 GFS2 文件系统的挂载生命周期内，会生成多个 uevent。
-+本文档解释了这些事件的含义及其用途（被 gfs2-utils 中的 gfs_controld 使用）。
-+
-+GFS2 uevents 列表
-+=================
-+
-+1. ADD
-+------
-+
-+ADD 事件发生在挂载时。它始终是新建文件系统生成的第一个 uevent。如果挂载成
-+功，随后会生成 ONLINE uevent。如果挂载失败，则随后会生成 REMOVE uevent。
-+
-+ADD uevent 包含两个环境变量：SPECTATOR=[0|1] 和 RDONLY=[0|1]，分别用
-+于指定文件系统的观察者状态（一种未分配日志的只读挂载）和只读状态（已分配日志）。
-+
-+2. ONLINE
-+---------
-+
-+ONLINE uevent 在成功挂载或重新挂载后生成。它具有与 ADD uevent 相同的环
-+境变量。ONLINE uevent 及其用于标识观察者和 RDONLY 状态的两个环境变量是较
-+新版本内核引入的功能（2.6.32-rc+ 及以上），旧版本内核不会生成此事件。
-+
-+3. CHANGE
-+---------
-+
-+CHANGE uevent 在两种场景下使用。一是报告第一个节点成功挂载文件系统时
-+（FIRSTMOUNT=Done）。这作为信号告知 gfs_controld，此时集群中其他节点可以
-+安全挂载该文件系统。
-+
-+另一个 CHANGE uevent 用于通知文件系统某个日志的日志恢复已完成。它包含两个
-+环境变量：JID= 指定刚恢复的日志 ID，RECOVERY=[Done|Failed] 表示操作成
-+功与否。这些 uevent 会在每次日志恢复时生成，无论是在初始挂载过程中，还是
-+gfs_controld 通过 /sys/fs/gfs2/<fsname>/lock_module/recovery 文件
-+请求特定日志恢复的结果。
-+
-+由于早期版本的 gfs_controld 使用 CHANGE uevent 时未检查环境变量以确定状
-+态，若为其添加新功能，存在用户工具版本过旧导致集群故障的风险。因此，在新增用
-+于标识成功挂载或重新挂载的 uevent 时，选择了使用 ONLINE uevent。
-+
-+4. OFFLINE
-+----------
-+
-+OFFLINE uevent 仅在文件系统发生错误时生成，是 "withdraw" 机制的一部分。
-+当前该事件未提供具体错误信息，此问题有待修复。
-+
-+5. REMOVE
-+---------
-+
-+REMOVE uevent 在挂载失败结束或卸载文件系统时生成。所有 REMOVE uevent
-+之前都至少存在同一文件系统的 ADD uevent。与其他 uevent 不同，它由内核的
-+kobject 子系统自动生成。
-+
-+
-+所有 GFS2 uevents 的通用信息（uevent 环境变量）
-+===============================================
-+
-+1. LOCKTABLE=
-+--------------
-+
-+LOCKTABLE 是一个字符串，其值来源于挂载命令行（locktable=）或 fstab 文件。
-+它用作文件系统标签，并为 lock_dlm 类型的挂载提供加入集群所需的信息。
-+
-+2. LOCKPROTO=
-+-------------
-+
-+LOCKPROTO 是一个字符串，其值取决于挂载命令行或 fstab 中的设置。其值将是
-+lock_nolock 或 lock_dlm。未来可能支持其他锁管理器。
-+
-+3. JOURNALID=
-+-------------
-+
-+如果文件系统正在使用日志（观察者挂载不分配日志），则所有 GFS2 uevent 中都
-+会包含此变量，其值为数字形式的日志 ID。
-+
-+4. UUID=
-+--------
-+
-+在较新版本的 gfs2-utils 中，mkfs.gfs2 会向文件系统超级块写入 UUID。若存
-+在 UUID，所有与该文件系统相关的 uevent 中均会包含此信息。
-diff --git a/Documentation/translations/zh_CN/filesystems/index.rst b/Documentation/translations/zh_CN/filesystems/index.rst
-index 37968fb91f1a..291d7a46e8ab 100644
---- a/Documentation/translations/zh_CN/filesystems/index.rst
-+++ b/Documentation/translations/zh_CN/filesystems/index.rst
-@@ -29,3 +29,4 @@ Linux Kernel中的文件系统
-    ubifs
-    ubifs-authentication
-    gfs2
-+   gfs2-uevents
--- 
-2.25.1
+  dt-bindings: reset: eswin: Documentation for eic7700 SoC
+  v5 -> v6:
+    Add dependencies of vendor prefix and config option patch in cover-letter.
+    Link to v5: https://lore.kernel.org/all/20250725093249.669-1-dongxuyang@eswincomputing.com/
+
+  v4 -> v5:
+    1. Dropped EIC7700_RESET_MAX from bindings.
+    2. Add "Reviewed-by" tag of "Krzysztof Kozlowski" for Patch 1.
+    3. Corrected the link to previous versions.
+    Link to v4: https://lore.kernel.org/all/20250715121427.1466-1-dongxuyang@eswincomputing.com/
+
+  v3 -> v4:
+    1. Remove register offsets in dt-bindings.
+    2. The const value of "#reset-cell" was changed from 2 to 1.
+       Because the offsets were removed from dt-bindings. There are
+       only IDs. And removed the description of it.
+    3. Modify copyright year from 2024 to 2025.
+    4. Redefined the IDs in the dt-bindings and used these to build a
+       reset array in reset driver. Ensure that the reset register and
+       reset value corresponding to the IDs are correct.
+    Link to v3: https://lore.kernel.org/all/20250619075811.1230-1-dongxuyang@eswincomputing.com/
+
+  v2 -> v3:
+    1. Drop syscon and simple-mfd from yaml and code, because these are
+       not necessary.
+    2. Update description to introduce reset controller.
+    3. Add reset control indices for dt-bindings.
+    4. Keep the register offsets in dt-bindings.
+    Link to v2: https://lore.kernel.org/all/20250619075811.1230-1-dongxuyang@eswincomputing.com/
+
+  v1 -> v2:
+    1. Clear warnings/errors for using "make dt_binding_check".
+    2. Update example, change parent node from sys-crg to reset-controller
+       for reset yaml.
+    3. Drop the child node and add '#reset-cells' to the parent node.
+    4. Drop the description, because sys-crg block is changed to reset-
+       controller.
+    5. Change hex numbers to decimal numbers going from 0, and drop the
+       not needed hardware numbers.
+    Link to v1: https://lore.kernel.org/all/20250619075811.1230-1-dongxuyang@eswincomputing.com/
+
+  reset: eswin: Add eic7700 reset driver
+  v5 -> v6:
+    1. Removed platform_set_drvdata() function.
+    2. In probe function, defined struct device *dev = &pdev->dev.
+       Modified &pdev->dev to dev.
+    Link to v5: https://lore.kernel.org/all/20250725093249.669-1-dongxuyang@eswincomputing.com/
+
+  v4 -> v5:
+    1. The value of .max_register is 0x7fffc.
+    2. Converted "to_eswin_reset_data" from macro to inline function.
+    3. Modified EIC7700_RESET_OFFSET to EIC7700_RESET and eic7700_
+       register_offset to eic7700_reset.
+    4. Since EIC7700_RESET_MAX is dropped, used eic7700_reset[] without
+       EIC7700_RESET_MAX.
+    5. Removed function eswin_reset_set, and put regmap_clear_bits in
+       eswin_reset_assert and regmap_set_bits in eswin_reset_deassert.
+    6. Added usleep_range in function eswin_reset_reset which was missed.
+    7. Used ARRAY_SIZE(eic7700_reset) for data->rcdev.nr_resets.
+    8. Use builtin_platform_driver, because reset driver is a reset
+       controller for SoC. Removed eswin_reset_init function.
+    9. Modified eswin_reset_* to eic7700_reset_*.
+    Link to v4: https://lore.kernel.org/all/20250715121427.1466-1-dongxuyang@eswincomputing.com/
+
+  v3 -> v4:
+    1. Add 'const' for the definition. It is 'const struct of_phandle_
+       args *reset_spec = data;'.
+    2. Modify copyright year from 2024 to 2025.
+    3. Included "eswin,eic7700-reset.h" in reset driver.
+    4. Added mapping table for reset IDs.
+    5. Removed of_xlate and idr functions as we are using IDs from DTS.
+    6. Removed .remove function.
+    Link to v3: https://lore.kernel.org/all/20250619075811.1230-1-dongxuyang@eswincomputing.com/
+
+  v2 -> v3:
+    1. Change syscon_node_to_regmap() to MMIO regmap functions, because
+       dropped syscon.
+    2. Add BIT() in function eswin_reset_set() to shift the reset
+       control indices.
+    3. Remove forced type conversions from function eswin_reset_of_
+       xlate_lookup_id().
+    Link to v2: https://lore.kernel.org/all/20250619075811.1230-1-dongxuyang@eswincomputing.com/
+
+  v1 -> v2:
+    1. Modify the code according to the suggestions.
+    2. Use eswin_reset_assert() and eswin_reset_deassert in function
+       eswin_reset_reset().
+    3. Place RESET_EIC7700 in Kconfig and Makefile in order.
+    4. Use dev_err_probe() in probe function.
+    Link to v1: https://lore.kernel.org/all/20250619075811.1230-1-dongxuyang@eswincomputing.com/
+
+Xuyang Dong (2):
+  dt-bindings: reset: eswin: Documentation for eic7700 SoC
+  reset: eswin: Add eic7700 reset driver
+
+ .../bindings/reset/eswin,eic7700-reset.yaml   |  42 ++
+ drivers/reset/Kconfig                         |  10 +
+ drivers/reset/Makefile                        |   1 +
+ drivers/reset/reset-eic7700.c                 | 428 ++++++++++++++++++
+ .../dt-bindings/reset/eswin,eic7700-reset.h   | 298 ++++++++++++
+ 5 files changed, 779 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/reset/eswin,eic7700-reset.yaml
+ create mode 100644 drivers/reset/reset-eic7700.c
+ create mode 100644 include/dt-bindings/reset/eswin,eic7700-reset.h
+
+--
+2.17.1
+
 
