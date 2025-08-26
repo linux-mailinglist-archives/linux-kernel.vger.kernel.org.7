@@ -1,84 +1,62 @@
-Return-Path: <linux-kernel+bounces-787394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA94FB375AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 01:50:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B0997B375B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 01:51:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9BFC1B669E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 23:51:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6D8A1B66B6E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 23:51:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839773093A7;
-	Tue, 26 Aug 2025 23:50:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED05D3093C1;
+	Tue, 26 Aug 2025 23:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ku2eS2aL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vk5n5MEX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B025826D4DD;
-	Tue, 26 Aug 2025 23:50:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4554523D2BF;
+	Tue, 26 Aug 2025 23:50:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756252245; cv=none; b=Q7CW4RzwrX91TF9kjJq8eEbkStdgcxrxMjfv3fjVf50SYC4A9D/+D3t6zKwhjtrtlnxp2cN9fU6Zn1EqSzIj+uPtb/8EsvbVKL/2OtYP4+6BwCk4JASUr53pFpxEcBB6UOsGOyYACTNwGzu7+tGq71DMUV0/ZnLflq4u5co0uyc=
+	t=1756252257; cv=none; b=SB2s/EGimE9ZG9IjG1ut5Y4E/bJZ1vhNla6p16nkPWoEVg4YFQ2o0yeYqyEWStKvmczgb7XYlhEjUP47nNpFGq493BYvr4/VvwJdbRsowY465eurx6Og3MbwRD9tT1idx3NTPzAZbENL9De+6VF/YMyI32tHC6flrgybsZ6Fhds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756252245; c=relaxed/simple;
-	bh=07Ku4luLp6tCckZKvoGpBvBDQ0Ywwcemo2l4BS/xWs0=;
+	s=arc-20240116; t=1756252257; c=relaxed/simple;
+	bh=lmPIQHj97yNIhaJJlqQ3GFTleKcI3fD/V55DcCosUko=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OJaeeNxkprsmccTyyeJIBp56PiKBH6On4kyqx08MY6TqZFwpiv05fpaIs1AyEb19Qzr1lg0nEVI4oCTpMKM87lBoHdWjK3Nvdj+2MwqkaKsB86WhRIZz41T/IZYpY5DRAkV84REITSw9Epsvl7S/GwcAbYDQq5Bch4k/a5kkuQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ku2eS2aL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D91F3C4CEF1;
-	Tue, 26 Aug 2025 23:50:44 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=CifG1asv83CmFueuT8J3MtOixw7/6DGC39u0pUV5THgMBJyZBQppdfXGT5wMTTursFKyAw+SEG6OXHDImmB2nDEnA6/J3QGX2pyns379YleGw9VMm4N2xYij1c3/ls1s5H+uOlv87gUm2N752bNcB8rG0P7UFx9IPbx2iLUiTXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vk5n5MEX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A2D5C4CEF1;
+	Tue, 26 Aug 2025 23:50:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756252245;
-	bh=07Ku4luLp6tCckZKvoGpBvBDQ0Ywwcemo2l4BS/xWs0=;
+	s=k20201202; t=1756252256;
+	bh=lmPIQHj97yNIhaJJlqQ3GFTleKcI3fD/V55DcCosUko=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ku2eS2aLuk2BO85gltgp9fViBt3A7nXYGIzz3ko+3i02BU56tWHBUt7SqU2nURtEN
-	 XBBLjuym5594eRddN8//2A0hIq9YGE3uJyHGblP1kjOj68phQ1DzZczKcjxA+BYH7m
-	 beuxjpqZ1t3NkKzgfPTOjhOisGGViCwrEjzxf5/EchC01qkp/d/r0yRVVVq5e9D4ra
-	 9iyKZSacjOMQZjnsjMUDUS7FZcVzPkmSyZlv8uUTxMLQ55Ro7lB9BFk8KSd1dsWumX
-	 ZZ+S+nCkt7tGurJCOCifKfd1hsdFyeaBfVGIOUwIwszL5KLRmkt2m3Rz7ePoD+ElMf
-	 wfPZvM216LTww==
-Date: Tue, 26 Aug 2025 18:50:43 -0500
+	b=Vk5n5MEXq8hdXCt0OCvzmjK2+0f8EpjvbOxmlYU9r+Tczu7L8ig0isJ0PD0Q8jSw5
+	 I9OsVM/gAVfmv1zvouq1KDeYY+bbKr3cuv84xPQZIRmOKo0+932cmLXyXDgxi3XIRG
+	 DL+2XLb7L8U1xNsD123FZs2loXlUZygdko4qPFErM7k5aJyxi7520QLmNdnCEPsXjK
+	 8PMd1RsXY6MeWqjTCM1GM+q5Z36WiJOL0ZYPcQ6ip+EbbEGXHyUGl2CXbGYuhPIj2l
+	 JSr+0Dd6NfOEP0oJ2GXdu9EmDdJiHpdmkgudbCMGnmKcCCqs4Gw7pqfyW3Dxv7keQ6
+	 6+5vutDGnb4xQ==
+Date: Tue, 26 Aug 2025 18:50:54 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
 To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	linux-watchdog@vger.kernel.org,
-	Mathew McBride <matt@traverse.com.au>,
-	linux-arm-kernel@lists.infradead.org,
-	Michael Walle <mwalle@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Nikita Travkin <nikita@trvn.ru>,
-	Guenter Roeck <groeck@chromium.org>,
+Cc: linux-media@vger.kernel.org,
+	Dikshita Agarwal <quic_dikshita@quicinc.com>,
+	devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
 	Conor Dooley <conor+dt@kernel.org>,
-	linux-mediatek@lists.infradead.org,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Tim Harvey <tharvey@gateworks.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Mark Brown <broonie@kernel.org>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	linux-sound@vger.kernel.org,
-	Cheng-Yi Chiang <cychiang@chromium.org>,
-	linux-hwmon@vger.kernel.org, Tzung-Bi Shih <tzungbi@kernel.org>,
-	Pengyu Luo <mitltlatltl@gmail.com>, linux-gpio@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	Benson Leung <bleung@chromium.org>, Lee Jones <lee@kernel.org>,
-	linux-pwm@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Tinghan Shen <tinghan.shen@mediatek.com>
-Subject: Re: [PATCH v3] dt-bindings: mfd: Move embedded controllers to own
- directory
-Message-ID: <175625224288.764159.13881647192010727208.robh@kernel.org>
-References: <20250825081201.9775-2-krzysztof.kozlowski@linaro.org>
+	linux-kernel@vger.kernel.org,
+	Vikash Garodia <quic_vgarodia@quicinc.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: Re: [PATCH] media: dt-bindings: qcom,sm8550-iris: Do not reference
+ legacy venus properties
+Message-ID: <175625225420.764544.3673891026777851561.robh@kernel.org>
+References: <20250823155349.22344-2-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,71 +65,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250825081201.9775-2-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250823155349.22344-2-krzysztof.kozlowski@linaro.org>
 
 
-On Mon, 25 Aug 2025 10:12:02 +0200, Krzysztof Kozlowski wrote:
-> Move several embedded controller bindings (like ChromeOS EC, Gateworks
-> System Controller and Kontron sl28cpld Board Management) to new
-> subdirectory "embedded-controller" matching their purpose.
+On Sat, 23 Aug 2025 17:53:50 +0200, Krzysztof Kozlowski wrote:
+> The Qualcomm SoC Iris video codec is an evolution of previous Venus and
+> it comes with its own Iris Linux drivers.  These new drivers were
+> accepted under condition they actually improve state of afairs, instead
+> of duplicating old, legacy solutions.
 > 
-> An embedded controller (EC) is a discrete component that contains a
-> microcontroller (i.e. a small CPU running a small firmware without
-> operating system) mounted into a larger computer system running
-> a fully fledged operating system that needs to utilize the embedded
-> controller as part of its operation.
+> Unfortunately binding still references common parts of Venus without
+> actual need and benefit.  For example Iris does not use fake
+> "video-firmware" device node (fake because there is no actual device
+> underlying it and it was added only to work around some Linux issues
+> with IOMMU mappings).
 > 
-> So far the EC bindings were split between "mfd" and "platform"
-> directory.  MFD name comes from Linux, not hardware, and "platform" is a
-> bit too generic.
+> Stop referencing venus-common schema in the new Qualcomm Iris bindings
+> and move all necessary properties, except unused "video-firmware" (no
+> driver usage, no DTS).
 > 
-> Rename Gateworks GSC and Huawei Gaokun filenames to match compatible, as
-> preferred for bindings.
-> 
-> Acked-by: Michael Walle <mwalle@kernel.org> # for sl28cpld
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
-> 
-> Lee,
-> Can you take it via MFD?
-> There is a patch on the lists touching kontron,sl28cpld.
-> 
-> Changes in v3:
-> 1. Move more files from "platform" directory.
-> 2. Grow commit msg, based on feedback from Linus.
-> 3. Add Rb (patch changed, though).
-> 
-> Changes in v2:
-> 1. Correct remaining paths in other schemas ($ref and descriptions).
-> 2. Add Ack.
-> 
-> Cc: Mathew McBride <matt@traverse.com.au>
-> ---
->  .../{platform => embedded-controller}/acer,aspire1-ec.yaml  | 2 +-
->  .../{mfd => embedded-controller}/google,cros-ec.yaml        | 2 +-
->  .../gateworks-gsc.yaml => embedded-controller/gw,gsc.yaml}  | 2 +-
->  .../huawei,gaokun3-ec.yaml}                                 | 2 +-
->  .../{mfd => embedded-controller}/kontron,sl28cpld.yaml      | 2 +-
->  .../lenovo,yoga-c630-ec.yaml                                | 2 +-
->  .../microsoft,surface-sam.yaml                              | 2 +-
->  .../devicetree/bindings/gpio/kontron,sl28cpld-gpio.yaml     | 2 +-
->  .../devicetree/bindings/hwmon/kontron,sl28cpld-hwmon.yaml   | 2 +-
->  .../interrupt-controller/kontron,sl28cpld-intc.yaml         | 2 +-
->  .../devicetree/bindings/pwm/google,cros-ec-pwm.yaml         | 2 +-
->  .../devicetree/bindings/pwm/kontron,sl28cpld-pwm.yaml       | 2 +-
->  Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml   | 4 ++--
->  .../devicetree/bindings/sound/google,cros-ec-codec.yaml     | 2 +-
->  .../devicetree/bindings/watchdog/kontron,sl28cpld-wdt.yaml  | 2 +-
->  MAINTAINERS                                                 | 6 +++---
->  16 files changed, 19 insertions(+), 19 deletions(-)
->  rename Documentation/devicetree/bindings/{platform => embedded-controller}/acer,aspire1-ec.yaml (94%)
->  rename Documentation/devicetree/bindings/{mfd => embedded-controller}/google,cros-ec.yaml (99%)
->  rename Documentation/devicetree/bindings/{mfd/gateworks-gsc.yaml => embedded-controller/gw,gsc.yaml} (98%)
->  rename Documentation/devicetree/bindings/{platform/huawei,gaokun-ec.yaml => embedded-controller/huawei,gaokun3-ec.yaml} (97%)
->  rename Documentation/devicetree/bindings/{mfd => embedded-controller}/kontron,sl28cpld.yaml (97%)
->  rename Documentation/devicetree/bindings/{platform => embedded-controller}/lenovo,yoga-c630-ec.yaml (95%)
->  rename Documentation/devicetree/bindings/{platform => embedded-controller}/microsoft,surface-sam.yaml (92%)
+>  .../devicetree/bindings/media/qcom,sm8550-iris.yaml | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
 > 
 
 Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
