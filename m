@@ -1,39 +1,45 @@
-Return-Path: <linux-kernel+bounces-786917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 268E1B36DDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:32:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DF4AB36DDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:32:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8AD15E5A03
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:32:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAA771BA7ACE
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:33:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939572C21D4;
-	Tue, 26 Aug 2025 15:32:19 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A772264AA;
-	Tue, 26 Aug 2025 15:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755052C1584;
+	Tue, 26 Aug 2025 15:32:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="sAn04JiM"
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6FA26AA91;
+	Tue, 26 Aug 2025 15:32:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756222339; cv=none; b=opCGg10fAlAREVqKL0j/Hs2QClDamzjgCCADGy6gWBeHJrZwigmBEuCXgwTmLjuUiB3NxzPtqabOMEO74RIA3Mius8fQxzUyy47JSjVIFWKG1azssBdhRPSn9QChXAnwyUeCqf8IcSU31uwK6WmpH/XhmLW7p4VId8QU2alm7IM=
+	t=1756222363; cv=none; b=g24R/Ry7FIjbHC4vfG4u5gsnVCHmGuFGfbCp7cUzPJkRXXHWdcQNNp5jzwrMu7buefvQ+XxG/wqiPc89o22W6tRmvN74dDsJq/Fw3/gZU32Pt8dT9pZ4qMXpBUguSET9+1DJ9Bxb8/4fnkEPxmy+kROIwfpzkHlYxrNBM1g/Fco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756222339; c=relaxed/simple;
-	bh=mhPjoaXqk9FeEGRXj1OT9YJtAB1S/b2g99dnNIlN5XU=;
+	s=arc-20240116; t=1756222363; c=relaxed/simple;
+	bh=fC/nU8xaHnvz/PM0mJ+jVeESy5vuXAWVaUN73A7maf0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l2bvDoAzlhljWjVrW4SAwF5CRHOHi3/B+/jt6fMnolseV6kTfd7eMXQQEqKXXESRcszhCTe++Rfnz4T93tu8Sx5whmrrT2TCIxBVT1Bbjs6NsV4hOPziVvzxDcgQ61KErwA2q47Jld+2O2yfuQ8WjI3aRD4kpTKQey1OEAAC2Oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5E872169E;
-	Tue, 26 Aug 2025 08:32:08 -0700 (PDT)
-Received: from [10.57.4.86] (unknown [10.57.4.86])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 893E73F63F;
-	Tue, 26 Aug 2025 08:32:09 -0700 (PDT)
-Message-ID: <6080e45d-032e-48c2-8efc-3d7e5734d705@arm.com>
-Date: Tue, 26 Aug 2025 16:32:07 +0100
+	 In-Reply-To:Content-Type; b=bU1bAi++tdmTiha0N89OzrG6eK82cmDobnAyct8X5Ox1EW01j9ss5pJaZnW5RovzK2TL32ZMJ8o6cuFAZjY+myWDbpsBxQ/QacRYaC/ce8uquJ8uBLsuDAEFsEFkpG7eB3JWE9WDK/iEQ3hTiCorDOICVzZT+PCPrrQY/sDf7as=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=sAn04JiM; arc=none smtp.client-ip=115.124.30.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1756222356; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=4rpybjtb9ce5ONtY50XV5BaMBLLQm41wjVK301PYaWw=;
+	b=sAn04JiMcFcAJU302fp1tYNf5+X7n5CZ0ld++AdEM8XmqVIBtenTpUoDeytB4a0JAMGi7r9Rwzf3/esn9CuscoZTLXqpbLGYhFHqbdXxOLY70ndPpGS2eGTk/Y6+kW5swxHJNx2oeju6Os5ZgXsXe3P0Pdg/jcvsdVAVJh0sago=
+Received: from 30.180.0.242(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WmfIcd9_1756222355 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 26 Aug 2025 23:32:36 +0800
+Message-ID: <6b77eda9-142e-44fa-9986-77ac0ed5382f@linux.alibaba.com>
+Date: Tue, 26 Aug 2025 23:32:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,74 +47,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/19] perf: Ignore event state for group validation
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, will@kernel.org, mark.rutland@arm.com, acme@kernel.org,
- namhyung@kernel.org, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
- irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
- linux-csky@vger.kernel.org, loongarch@lists.linux.dev,
- linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
- sparclinux@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-rockchip@lists.infradead.org, dmaengine@vger.kernel.org,
- linux-fpga@vger.kernel.org, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, coresight@lists.linaro.org,
- iommu@lists.linux.dev, linux-amlogic@lists.infradead.org,
- linux-cxl@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-riscv@lists.infradead.org
-References: <cover.1755096883.git.robin.murphy@arm.com>
- <d6cda4e2999aba5794c8178f043c91068fa8080c.1755096883.git.robin.murphy@arm.com>
- <20250826130329.GX4067720@noisy.programming.kicks-ass.net>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250826130329.GX4067720@noisy.programming.kicks-ass.net>
+Subject: Re: [PATCH] initrd: support erofs as initrd
+To: Byron Stanoszek <gandalf@winds.org>, Christoph Hellwig <hch@lst.de>
+Cc: gregkh@linuxfoundation.org, julian.stecklina@cyberus-technology.de,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ rafael@kernel.org, torvalds@linux-foundation.org, viro@zeniv.linux.org.uk,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ Christian Brauner <brauner@kernel.org>, Askar Safin <safinaskar@zohomail.com>
+References: <20250321050114.GC1831@lst.de>
+ <20250825182713.2469206-1-safinaskar@zohomail.com>
+ <20250826075910.GA22903@lst.de>
+ <a54ced51-280e-cc9d-38e4-5b592dd9e77b@winds.org>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <a54ced51-280e-cc9d-38e4-5b592dd9e77b@winds.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2025-08-26 2:03 pm, Peter Zijlstra wrote:
-> On Wed, Aug 13, 2025 at 06:01:04PM +0100, Robin Murphy wrote:
->> It may have been different long ago, but today it seems wrong for these
->> drivers to skip counting disabled sibling events in group validation,
->> given that perf_event_enable() could make them schedulable again, and
->> thus increase the effective size of the group later. Conversely, if a
->> sibling event is truly dead then it stands to reason that the whole
->> group is dead, so it's not worth going to any special effort to try to
->> squeeze in a new event that's never going to run anyway. Thus, we can
->> simply remove all these checks.
-> 
-> So currently you can do sort of a manual event rotation inside an
-> over-sized group and have it work.
-> 
-> I'm not sure if anybody actually does this, but its possible.
-> 
-> Eg. on a PMU that supports only 4 counters, create a group of 5 and
-> periodically cycle which of the 5 events is off.
-> 
-> So I'm not against changing this, but changing stuff like this always
-> makes me a little fearful -- it wouldn't be the first time that when it
-> finally trickles down to some 'enterprise' user in 5 years someone comes
-> and finally says, oh hey, you broke my shit :-(
 
-Eww, I see what you mean... and I guess that's probably lower-overhead 
-than actually deleting and recreating the sibling event(s) each time, 
-and potentially less bother then wrangling multiple groups for different 
-combinations of subsets when one simply must still approximate a complex 
-metric that requires more counters than the hardware offers.
 
-I'm also not keen to break anything that wasn't already somewhat broken, 
-especially since this patch is only intended as cleanup, so either we 
-could just drop it altogether, or perhaps I can wrap the existing 
-behaviour in a helper that can at least document this assumption and 
-discourage new drivers from copying it. Am I right that only 
-PERF_EVENT_STATE_{OFF,ERROR} would matter for this, though, and my 
-reasoning for state <= PERF_EVENT_STATE_EXIT should still stand? As for 
-the fiddly discrepancy with enable_on_exec between arm_pmu and others 
-I'm not really sure what to think...
+On 2025/8/26 22:21, Byron Stanoszek wrote:
+> On Tue, 26 Aug 2025, Christoph Hellwig wrote:
+> 
+>> On Mon, Aug 25, 2025 at 09:27:13PM +0300, Askar Safin wrote:
+>>>> We've been trying to kill off initrd in favor of initramfs for about
+>>>> two decades.  I don't think adding new file system support to it is
+>>>> helpful.
+>>>
+>>> I totally agree.
+>>>
+>>> What prevents us from removing initrd right now?
+>>>
+>>> The only reason is lack of volunteers?
+>>>
+>>> If yes, then may I remove initrd?
+>>
+>> Give it a spin and see if anyone shouts.
+> 
+> Well, this makes me a little sad. I run several hundred embedded systems out in
+> the world, and I use a combination of initrd and initramfs for booting. These
+> systems operate entirely in ramdisk form.
+> 
+> I concatenate a very large .sqfs file onto the end of "vmlinuz", which gets
+> loaded into initrd automatically by the bootloader. Then in my initramfs (cpio
+> archive that's compiled in with the kernel), my /sbin/init executable copies
+> /initrd.image to /dev/ram0, mounts a tmpfs overlay on top of it, then does a
+> pivot root to it.
+> 
+> This gives it the appearance of a read-write initramfs filesystem, but the
+> lower layer data remains compressed in RAM. This saves quite a bit of RAM
+> during runtime, which is still yet important on older PCs.
+> 
+> If there's a better (more official) way of having a real compressed initramfs
+> that remains compressed during runtime, I'm all for it. But until then, I would
+> like to ask you to please not remove the initrd functionality.
+> 
+> (In fact, I was actually thinking about trying this method with erofs as the
+> lower layer filesystem someday soon instead of squashfs. But I would still be
+> using an overlay to mount it, instead of the auto-detect method addressed by
+> this patch.)
+
+Something a bit out of the topic, to quota the previous reply from
+Christiph:
+
+> There is no reason to fake up a block device, just have a version
+> of erofs that directly points to pre-loaded kernel memory instead. 
+
+I completely agree with that point. However, since EROFS is a
+block-based filesystem (Thanks to strictly block alignment, meta(data)
+can work efficiently on both block-addressed storage
+devices and byte-addressed memory devices. Also if the fsblock size
+is set as the page size, the page cache itself can also be avoided
+for plain inodes), I think even pre-loaded kernel memory is used,
+a unified set of block-based kAPIs to access different backends
+(e.g., block devices, kernel memory, etc.) is useful for block-based
+filesystems instead of developing another dax_direct_access() path
+just as pmem-specialized filesystems.
+
+In short, in my opinion, the current bio interfaces fit the
+requirements well for various storage for block-based filesystems.
+
+As for EROFS initrd support, I've seen several requests on this,
+although I think the interesting point is data integrity and
+security since the golden image can be easier protected compared to
+tmpfs-based initramfs. It is just my own opinion though, if initrd
+survives in the foresee future, I do hope initrd could be an
+intermediate solution to initdax support since it just needs a few
+line of changes, but if initrd removes soon, just forget what I said.
 
 Thanks,
-Robin.
+Gao Xiang
+
+> 
+> Thank you,
+>   -Byron
+
 
