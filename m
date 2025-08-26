@@ -1,221 +1,408 @@
-Return-Path: <linux-kernel+bounces-785848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3AD0B351C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:36:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEED8B351C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:36:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0B163B649D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:35:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 438F91722AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:36:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0EB92741D1;
-	Tue, 26 Aug 2025 02:35:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="FnDZv/um"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010048.outbound.protection.outlook.com [52.101.69.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD4C9223322;
+	Tue, 26 Aug 2025 02:36:28 +0000 (UTC)
+Received: from ssh247.corpemail.net (ssh247.corpemail.net [210.51.61.247])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1705D1F7580;
-	Tue, 26 Aug 2025 02:34:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756175699; cv=fail; b=F2XMcyrgrrB2eP6pGZUNxjBjNHIeFNPm8efMwaQ9XppbLjbS8H52JXQf4vTrp1oHSl9HYC7Fn7XCAqfYulKF8DSoMbCR3ZIKMBKCdBMZrAyVpMkWk0kmvfgUCPpJ+TuWwdubIUQj1XO45yrcKif8DwSscKDHs3PmX+JNGguva0Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756175699; c=relaxed/simple;
-	bh=FT6n1EmvQdGNQWUufR+eyKaeGr8Q8rrWdmoV5L4Xrxw=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F671EEA5D
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 02:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.247
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756175788; cv=none; b=HAvkM9pc7g5RHeP8LYi2nox586Zn71CTxCAVxIAlO/vhSklBB/k63djH2bD+mUQ8TPrgOZIJQjpW5Rbc+JrxNJGykWCwSPgiaCgStuc9Lhfr/e1059/ObZyTSaAh32xVCWnCIy54NUDpULHTLEyC0tojqOSdFvkS9yRpyvAZCB0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756175788; c=relaxed/simple;
+	bh=kI7G4eAIVJ7tpaIhr+tCJ5e1/F3IwrSJiwZo6IBO4ME=;
 	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=PO17M9HNzsios/MRBHegdwlhvJMYJCicWTaij8U3EwAhZzr9+m3pSIoq+XgKR5FneNnYT5xmrbRxo2M5hZE5x/FxZa7GFjPQ+DpNmkIg0mIZJleWtjvq4QcqflvCq5+kPynGdG+2uPa638yE9Iq3eyYCPyZ0G/wAPMtgAartgHI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=FnDZv/um; arc=fail smtp.client-ip=52.101.69.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tePX9aNvDyGQF6VENHbxysLj7Tgy43DcPirSF7ZCiZYBjKbPbMrIxGZfK4ILv9l1m2DQY/7BJ7TBSBEatrTs+ejGK7NbHGk7VdQMm0dtOlPbXrVSh+xfFq+6+D3Pd2teACHfDMGCvkGSPbam23Ct4HdpH3mfa1HKBg3Myz2uMw4ODShD43o3LDCDta/llROOo5OA9GY5FcQIeIqfE/GuibtBT4mGaF5PCwB9zwAj+6FT24dA1Iqsqc8IVdspcA0WyDNjSt5r0E0blTH9YHA2BnssNmcGwj4emPiUFjaAttBLtduqGdEAHrrirhmexcMPF5cvmf6looqei2dWsm9lqg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Str3ujkx1tqh9gXV/Y5HVW41JH62V1IVrWXblTY0A04=;
- b=xNQyUxlPz5X9J/lnbOwgDpEf3cBHAAtYbBcgDBIxIGW+DPkgmHSGd3+zkozq4HJ7z9EE1a379QYHMivzDgKWE//yMduZzK1Py5/8eg3Sp0pV6xfAmtRRwL+6938KnLZn0iWVoXSIUZuvDk6X/tmNv2LiDiq7LZpDomptqVCkeXcGJ2Xjxj1paWbhGq3NuYRSdJ89iR5C8S3/HxnLNGkShWnK8CwCk7nLdL450ScuwriYE6g4hqjAKF1MxPATZDUVNwDK68A4gQaC9W5VxHVOAvI1Ye94GsCA32tLUpbdUhacGNpOv8Gs3xQKv9I8RWVvRH4NlxKdHfHwkPhVSRFuUQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Str3ujkx1tqh9gXV/Y5HVW41JH62V1IVrWXblTY0A04=;
- b=FnDZv/umn7mU5458cGHwGnol8hrG7rnxvfQENGnUKJucsjkKOIpBc2hZCDJxUPuVlFK7agtPwdwx+vab5Rcpcd1Qtx+4nsV+jqdENen7V9dT+s/oFYAgAJiOsPkjeA2X6H5pUFmWS1aYbPbXCQ6koY7ZhCbaEobcz6P4U/XIAzyZvTBrXY/kAUwnw7vE+6wVWD2IpoZFhcCB9d7c6W/E4O2k4AaaOQQgy1s6bD1waYZS/QIwa1GaNmLZxJDa8bI5AkcfAb9tsE25HrOch+UACEMTLcLupHakSxMj/XGMyomcS8vjK6Vmxxx469GWTzsgaR3f8PVSyGHvgelaIMshjQ==
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
- by AM9PR04MB7713.eurprd04.prod.outlook.com (2603:10a6:20b:2d4::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.12; Tue, 26 Aug
- 2025 02:34:55 +0000
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db%5]) with mapi id 15.20.9073.010; Tue, 26 Aug 2025
- 02:34:55 +0000
-From: Wei Fang <wei.fang@nxp.com>
-To: Shenwei Wang <shenwei.wang@nxp.com>
-CC: Clark Wang <xiaoning.wang@nxp.com>, Stanislav Fomichev <sdf@fomichev.me>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>, Andrew Lunn
-	<andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
-	<daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, John
- Fastabend <john.fastabend@gmail.com>
-Subject: RE: [PATCH v2 net-next 4/5] net: fec: add change_mtu to support
- dynamic buffer allocation
-Thread-Topic: [PATCH v2 net-next 4/5] net: fec: add change_mtu to support
- dynamic buffer allocation
-Thread-Index: AQHcEso1Ue9PAAZZWkmtSe1X7IJrlLRubSvAgAIniYCAAg2gwIAAsTQAgADqKtA=
-Date: Tue, 26 Aug 2025 02:34:55 +0000
-Message-ID:
- <PAXPR04MB8510E304CC51FB527B4971608839A@PAXPR04MB8510.eurprd04.prod.outlook.com>
-References: <20250821183336.1063783-1-shenwei.wang@nxp.com>
- <20250821183336.1063783-5-shenwei.wang@nxp.com>
- <PAXPR04MB85102101663ACE21F6D75562883DA@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <PAXPR04MB91850A2E4ED6ED29D45BF27C893CA@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <PAXPR04MB85107C52F0CB3A45943FBEF5883EA@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <PAXPR04MB9185A682B7B3D37E157F4184893EA@PAXPR04MB9185.eurprd04.prod.outlook.com>
-In-Reply-To:
- <PAXPR04MB9185A682B7B3D37E157F4184893EA@PAXPR04MB9185.eurprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
+	 Content-Type:MIME-Version; b=jwJ2m1cgd7DpfLY8hVpZvzZ3WGNLf2s/5e8z93oiMO7zpB3NcNiYvdMGNbpLk/4GtVPpVegIBY7ttrzA2OKvtL0c97Al1mPjJUtbfehJ5SiB15ztgPzLnBrI3nT4/cusulSClVbvRRcSbUrYkSjpvUanWFDx8Jig06Doy68l2F0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.247
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from Jtjnmail201616.home.langchao.com
+        by ssh247.corpemail.net ((D)) with ASMTP (SSL) id 202508261035075847;
+        Tue, 26 Aug 2025 10:35:07 +0800
+Received: from jtjnmail201625.home.langchao.com (10.100.2.35) by
+ Jtjnmail201616.home.langchao.com (10.100.2.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.57; Tue, 26 Aug 2025 10:35:07 +0800
+Received: from jtjnmail201622.home.langchao.com (10.100.2.22) by
+ jtjnmail201625.home.langchao.com (10.100.2.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.57; Tue, 26 Aug 2025 10:35:06 +0800
+Received: from jtjnmail201622.home.langchao.com ([fe80::15c3:8d74:3aa6:25f6])
+ by jtjnmail201622.home.langchao.com ([fe80::15c3:8d74:3aa6:25f6%7]) with mapi
+ id 15.01.2507.057; Tue, 26 Aug 2025 10:35:06 +0800
+From: =?utf-8?B?Qm8gTGl1ICjliJjms6IpLea1qua9ruS/oeaBrw==?=
+	<liubo03@inspur.com>
+To: "hsiangkao@linux.alibaba.com" <hsiangkao@linux.alibaba.com>,
+	"xiang@kernel.org" <xiang@kernel.org>, "chao@kernel.org" <chao@kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-erofs@lists.ozlabs.org" <linux-erofs@lists.ozlabs.org>
+Subject: Re: [PATCH] erofs: Add support for FS_IOC_GETFSLABEL
+Thread-Topic: [PATCH] erofs: Add support for FS_IOC_GETFSLABEL
+Thread-Index: AQHcFbi6Z9avxkNOEkmUEK8mQ5/cJrRzqx4AgACLdxA=
+Date: Tue, 26 Aug 2025 02:35:06 +0000
+Message-ID: <63904ade56634923ba734dcdab3c45d0@inspur.com>
+References: <0bbd64f3599557766ff53c108794355026-8-25linux.alibaba.com@g.corp-email.com>
+ <9251e366-06ea-405d-9980-e90c1a48aaaa@linux.alibaba.com>
+In-Reply-To: <9251e366-06ea-405d-9980-e90c1a48aaaa@linux.alibaba.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: yes
 X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|AM9PR04MB7713:EE_
-x-ms-office365-filtering-correlation-id: 9c0b05a5-3a41-44ce-6950-08dde4492479
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|19092799006|7416014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?xCU6Wq+y+DNDlN6EWowOvJY42nfLWreDcwrNhOQg1GnFupWeN+pB29lY1DSb?=
- =?us-ascii?Q?Nsddr/lHBB/3qrJZCUEp4Kofn28ryb36cc2KFHf5qq2Sk8LTuy5Gjck2vAa9?=
- =?us-ascii?Q?2BFAh52onoKw80yiTqwCAkAAy7rUz4KeSsfy89zcu/oRsv8dUDywmMfgdMI7?=
- =?us-ascii?Q?zImJIJ4xBbDFrq7G5s4/Dw1fbnespbRGqSNIU0A9VNh8lQ9573BXDSFczWzD?=
- =?us-ascii?Q?fDoV2Z8AgwBSUwFSycPoFqAERt2Mpo8CmjNwD1yVWzADmMZA8ExouXwF3ijZ?=
- =?us-ascii?Q?WAcKRa506lQJP+SBlfQs2V0hSdii78jv9r5LfZ+ed20/sTyuYK9IIsIj15Ih?=
- =?us-ascii?Q?lEkhwpSFlzUISgSPm97nG5VPeFESbDVQossQ84VOxRcrWQ+0hPb+2p1yFLDV?=
- =?us-ascii?Q?Qzo99XwQr0sCnbXy+OcgSHElFAhE3sFqw81W4gPC9Jr0gHYqF3cmaj8o7Ko2?=
- =?us-ascii?Q?zLwOxqwvnkytVCcReWEJGo6dxsIyHJW/HKItr6KCknDp8xog1HvyYa6lWBVC?=
- =?us-ascii?Q?d89lJYkzuhG9CHw4sin24o4dFfSG8v3WpxREhc8taeCkk9SshHYHbxfxiK0k?=
- =?us-ascii?Q?9hYbAJ4HKUG9zsESn9RXsrGoPAzezhJEYg5Pxwqbs0TKQogeHx9qA43UWyID?=
- =?us-ascii?Q?EC0rREM/sXqmtKxpMxniOJ8lGkr268570O3xpM+4hWLpvM+Jux72cD1II3eF?=
- =?us-ascii?Q?EwtvJTvJkQvQESdzjEPvot1JT8DQDoLkBGldKvCTRvUiUgCAPisgc/g7PODc?=
- =?us-ascii?Q?1ooId6OPHq5igkrfggpCWsbVcAZJNiHFzf62o7ttjK70cbw9/VEwfeaxh3NK?=
- =?us-ascii?Q?zBGISYJjpf+mhi5gGzhyk/L/sIPpOXye7JVMnYElGFaPtPVXPlXXVnNG82i2?=
- =?us-ascii?Q?U/EOclveYJ8TaP4eDhB+rBOEqPZ+xuhfpKVqb8L0yGPCtlG/Zvx/EIv1YIcf?=
- =?us-ascii?Q?xBiZqFZlyfQjtpJefCfLA1u+evKFDSP1QZjr9BLgH6U1geNUCBTZh6sHy6pZ?=
- =?us-ascii?Q?4/KolKyjF87V+i9nv3wqRz6fg/hdthbNTg9Tx/0kwFi9WjwcB//0v02sKarM?=
- =?us-ascii?Q?Xiq2H7KwJlXyjE+vKz1VSwEBT6TlGEa8jReUSzxwMIi8nnAhBL5ly8VvIuvw?=
- =?us-ascii?Q?DIWh4HqGY9dVhSLyedL0FKXLhn4vCzgLiqY10cgKuuQfQ7nZk/kxH1P1acj4?=
- =?us-ascii?Q?7byW/cRvIQ3PTnfqSAhGVuLWIMJyir3J1qa0IaBhQDiwOc13XQfNn7sm8dJ1?=
- =?us-ascii?Q?QDYzIM3L+u5etV0+FtAfhoBj54C+AIvvZWG/k7QQ7dajlkib/qYV4+NXfYOd?=
- =?us-ascii?Q?qGiMJ8gCy3sChjDQy1QSOAI8WUoSN2Oa20ccVV+SwCqEZQbrfIbybCj1cZT2?=
- =?us-ascii?Q?9R9Y+/JDpmiIm9Jh8++GAG/dmSXGzFciPEGreXctcGbxKdt1PCSwv32cm0BO?=
- =?us-ascii?Q?GbGnOPsiNy6KIrfFu9igEZdcuoC7qp/oJR003Hjj5mYV8uDqFUGhGA=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(19092799006)(7416014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?aXaqnlELyrDfBbi8TMd5BUlCe+HFEXzqOx0GGuaQvmt/TB6N5EBhkFx02xre?=
- =?us-ascii?Q?nSoowQaoUPZowgyYRHf7Six+B6ECtJAy4e7RZPrgflWQHixbS4H+B4s8xB1M?=
- =?us-ascii?Q?e5Rd9RkNcv0m0HuzH2nqhGYsP8SJvYPsKmEo3yNjGRX5pfgID8KCXwPhRA5B?=
- =?us-ascii?Q?uErgCSasnOpqrEyNZTxxvqYJC45OSbqmucwLFr3VhMsmVSG7z+JuWbO+gm5R?=
- =?us-ascii?Q?nUfttimLo7XYycq0RObBxUeIRILtjaJUnHCK0ra/DApmbkI7vJQ8YlucTfzR?=
- =?us-ascii?Q?Pqa0h6rg2Qts+0gbQ6EadIExi3V/tmTaCFQyVy4uq182kavV4Zartb2yX2zP?=
- =?us-ascii?Q?rYru1aa7hD5eoTAjjf9pjGQ2G6D71pMoDhqLZR9ixs6yfADhJWD84GNiZhK+?=
- =?us-ascii?Q?L1dgd2oegWnh7gki3agHHBCa5hlVPMWoNoX8tJ+BHtYMlgfMj3WbgF9OdVje?=
- =?us-ascii?Q?47kn9aOPCRSCGay7MDcPkXLIfoU8YAh/udIvH/nVBRhoVuk1bEWKa7qkTcyu?=
- =?us-ascii?Q?uIEFKIvm0KfruSv4Fkc6zYtmV7kcaNbQgA49xtOJgNxL6j5ff0/jEyKkucGR?=
- =?us-ascii?Q?YpbtUOfI8C14ZXLvDywsYSURkBrMI7Pa05YGKz5QF7CWrHDwQN9cl8uJd4xW?=
- =?us-ascii?Q?jODYWVPXnfX+/H2uXT5HJXPuHOIDxuu16myaEx7NtgWhmd2af2DYJejxo3hD?=
- =?us-ascii?Q?crmVRY3DiOw1XRhjF1uKRNAEEVCjg/BCb9oLsEpItf9whJCqGHkVKlYMbfbc?=
- =?us-ascii?Q?BlH9iGWkxIbqDhoRBYX105mhm8uRYt1INmhkmYgsIYYn3B6vj2IzoVFwC5I5?=
- =?us-ascii?Q?z+spjhHAa3XaXVtNuMUDWW5o6B0nqnWIKNwkuUsoXqAM8en1iYl6pkr6Mulm?=
- =?us-ascii?Q?2A6FZS28gEouvfEhTHvJjg3BPVRO9DPOj5foJ/G4qx/kAykh8IISAnLQ/9Tc?=
- =?us-ascii?Q?rEJik/dF2AoY38Lj+oT7Yyoj76vofCgiGJP9IsGn3IJCdc/Cz6jELuWrp4P4?=
- =?us-ascii?Q?P7T30rd/kQbExus2/056ipxOl0f8vlzHXffoldwIwAfSF5hTXqxIf1aKW/zn?=
- =?us-ascii?Q?5LRBZSEdAYD0Xg8N9k4uueNsWRYBwlAsm5rIPZm79nnrFrAI2vnvBWBmolp/?=
- =?us-ascii?Q?ZjEpOZjgjAJWrV1G18nsxzgjsbYtGGkyJ1IOXUZwPeb54CwpcPPfwBFAMe7s?=
- =?us-ascii?Q?P3BEZYuYiymSCKexWnkACi4PctS6fQhyKLRsYR8F1wv78lmasIVtjCtzjDAz?=
- =?us-ascii?Q?WujCOZHyjdNzyQEj/BR0lIGS7vfIS07LxXXJqYk5JZOFz43rhSnxwcxENP/K?=
- =?us-ascii?Q?mx1VHfQ4Lok80FYpHdWcc8YCSCf5hAJejqchp3BPs9cYBA8WmB7fbUDaR4SV?=
- =?us-ascii?Q?ly+eMfjEO0mg0/8kAYIRJUWb3G8WpB7560LuLqsFUr4QVbHO1OrJRoL2YlzR?=
- =?us-ascii?Q?QTUFeU1D42aKLN4Lah7ibNkv3L2XozJMaFZOUAiSv8cFHcfgHqACe3Bw+xdZ?=
- =?us-ascii?Q?Mms91i7hapLHtagDAR27YVrZuozxPvUJbcj09jbR1V+BKlXEMj+WdmAz9qR8?=
- =?us-ascii?Q?dNf8sMKg2zDiyN+1+1g=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=SHA1;
+	protocol="application/x-pkcs7-signature";
+	boundary="----=_NextPart_000_0025_01DC1675.1629B8D0"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9c0b05a5-3a41-44ce-6950-08dde4492479
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Aug 2025 02:34:55.1627
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: faSSRgOSpYHGWeLqgTnX+rQ8QjWb11tnYrdGKJGvLyMNFKet+Dyp8Z8POZelBpMjy/igVtInu+B4+MfdpVdu9A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB7713
+tUid: 20258261035072844308ecaa04445a43d29367e54b9ee
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-> > > > > +static int fec_change_mtu(struct net_device *ndev, int new_mtu) =
-{
-> > > > > +	struct fec_enet_private *fep =3D netdev_priv(ndev);
-> > > > > +	int order, done;
-> > > > > +	bool running;
-> > > > > +
-> > > > > +	order =3D get_order(new_mtu + ETH_HLEN + ETH_FCS_LEN);
-> > > > > +	if (fep->pagepool_order =3D=3D order) {
-> > > > > +		WRITE_ONCE(ndev->mtu, new_mtu);
-> > > > > +		return 0;
-> > > > > +	}
-> > > > > +
-> > > > > +	fep->pagepool_order =3D order;
-> > > > > +	fep->rx_frame_size =3D (PAGE_SIZE << order) -
-> > > > FEC_ENET_XDP_HEADROOM
-> > > > > +			     - SKB_DATA_ALIGN(sizeof(struct skb_shared_info));
-> > > > > +
-> > > >
-> > > > I think we need to add a check for rx_frame_size, as
-> > > > FEC_R_CNTRL[MAX_FL]
-> > > and
-> > > > FEC_FTRL[TRUNC_FL] only have 14 bits.
-> > >
-> > > That would be redundant, since rx_frame_size cannot exceed
-> > > max_buf_size which value would either be PKT_MAXBUF_SIZE or
-> > > MAX_JUMBO_BUF_SIZE.
-> > >
-> >
-> > Looked at the entire patch set, the rx_frame_size is set to
-> FEC_FTRL[TRUNC_FL]
-> > and FEC_R_CNTRL[MAX_FL], and both TRUNC_FL and MAX_FL are 14 bits, if
-> the
-> > value set exceeds the hardware capability, the driver should return an =
-error.
-> >
-> > For example, the order is 3, so rx_frame_size is 0x7dc0, but MAX_FL wil=
-l be
-> set to
-> > 0x3dc0, that is not correct.
->=20
-> How can you get the order of 3? If the PAGE_SIZE is 4k, the order is no g=
-reater
-> than 2.
->=20
+------=_NextPart_000_0025_01DC1675.1629B8D0
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-I got it, the length has been checked by dev_validate_mtu(), so we
-do not need to check it again.
+On 2025/8/26 10:09, Gao Xiang wrote:
+>On 2025/8/25 20:06, Bo Liu wrote:
+>> From: Bo Liu (OpenAnolis) <liubo03@inspur.com>
+>>
+>> Add support for reading to the erofs volume label from the
+>> FS_IOC_GETFSLABEL ioctls.
+>>
+>> Signed-off-by: Bo Liu (OpenAnolis) <liubo03@inspur.com>
+>> ---
+>>   fs/erofs/Makefile   |  2 +-
+>>   fs/erofs/data.c     |  4 ++++
+>>   fs/erofs/dir.c      |  4 ++++
+>>   fs/erofs/inode.c    |  2 +-
+>>   fs/erofs/internal.h | 10 ++++++++++
+>>   fs/erofs/ioctl.c    | 47
+>+++++++++++++++++++++++++++++++++++++++++++++
+>>   fs/erofs/super.c    |  2 ++
+>>   fs/erofs/zdata.c    | 11 +++++++++++
+>>   8 files changed, 80 insertions(+), 2 deletions(-)
+>>   create mode 100644 fs/erofs/ioctl.c
+>>
+>> diff --git a/fs/erofs/Makefile b/fs/erofs/Makefile index
+>> 549abc424763..5be6cc4acc1c 100644
+>> --- a/fs/erofs/Makefile
+>> +++ b/fs/erofs/Makefile
+>> @@ -1,7 +1,7 @@
+>>   # SPDX-License-Identifier: GPL-2.0-only
+>>
+>>   obj-$(CONFIG_EROFS_FS) += erofs.o
+>> -erofs-objs := super.o inode.o data.o namei.o dir.o sysfs.o
+>> +erofs-objs := super.o inode.o data.o namei.o dir.o sysfs.o ioctl.o
+>>   erofs-$(CONFIG_EROFS_FS_XATTR) += xattr.o
+>>   erofs-$(CONFIG_EROFS_FS_ZIP) += decompressor.o zmap.o zdata.o zutil.o
+>>   erofs-$(CONFIG_EROFS_FS_ZIP_LZMA) += decompressor_lzma.o diff --git
+>> a/fs/erofs/data.c b/fs/erofs/data.c index 3b1ba571c728..8ca29962a3dd
+>> 100644
+>> --- a/fs/erofs/data.c
+>> +++ b/fs/erofs/data.c
+>> @@ -475,6 +475,10 @@ static loff_t erofs_file_llseek(struct file *file, 
+>> loff_t
+>offset, int whence)
+>>   const struct file_operations erofs_file_fops = {
+>>   	.llseek		= erofs_file_llseek,
+>>   	.read_iter	= erofs_file_read_iter,
+>> +	.unlocked_ioctl = erofs_ioctl,
+>> +#ifdef CONFIG_COMPAT
+>> +	.compat_ioctl   = erofs_compat_ioctl,
+>> +#endif
+>>   	.mmap_prepare	= erofs_file_mmap_prepare,
+>>   	.get_unmapped_area = thp_get_unmapped_area,
+>>   	.splice_read	= filemap_splice_read,
+>> diff --git a/fs/erofs/dir.c b/fs/erofs/dir.c index
+>> debf469ad6bd..32b4f5aa60c9 100644
+>> --- a/fs/erofs/dir.c
+>> +++ b/fs/erofs/dir.c
+>> @@ -123,4 +123,8 @@ const struct file_operations erofs_dir_fops = {
+>>   	.llseek		= generic_file_llseek,
+>>   	.read		= generic_read_dir,
+>>   	.iterate_shared	= erofs_readdir,
+>> +	.unlocked_ioctl = erofs_ioctl,
+>> +#ifdef CONFIG_COMPAT
+>> +	.compat_ioctl   = erofs_compat_ioctl,
+>> +#endif
+>>   };
+>> diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c index
+>> 9a2f59721522..9248143e26df 100644
+>> --- a/fs/erofs/inode.c
+>> +++ b/fs/erofs/inode.c
+>> @@ -214,7 +214,7 @@ static int erofs_fill_inode(struct inode *inode)
+>>   	case S_IFREG:
+>>   		inode->i_op = &erofs_generic_iops;
+>>   		if (erofs_inode_is_data_compressed(vi->datalayout))
+>> -			inode->i_fop = &generic_ro_fops;
+>> +			inode->i_fop = &z_erofs_file_fops;
+>
+>Please also just use erofs_file_fops instead and adjust
+>erofs_file_read_iter() for example.
+>
+>>   		else
+>>   			inode->i_fop = &erofs_file_fops;
+>>   		break;
+>> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h index
+>> 4ccc5f0ee8df..2f874b920c8b 100644
+>> --- a/fs/erofs/internal.h
+>> +++ b/fs/erofs/internal.h
+>> @@ -32,6 +32,8 @@ __printf(2, 3) void _erofs_printk(struct super_block *sb,
+>const char *fmt, ...);
+>>   #define DBG_BUGON(x)            ((void)(x))
+>>   #endif	/* !CONFIG_EROFS_FS_DEBUG */
+>>
+>> +#define EROFS_VOLUME_LABEL_LEN	16
+>> +
+>>   /* EROFS_SUPER_MAGIC_V1 to represent the whole file system */
+>>   #define EROFS_SUPER_MAGIC   EROFS_SUPER_MAGIC_V1
+>>
+>> @@ -166,6 +168,9 @@ struct erofs_sb_info {
+>>   	struct erofs_domain *domain;
+>>   	char *fsid;
+>>   	char *domain_id;
+>> +
+>> +	/* volume name */
+>> +	u8 volume_label[EROFS_VOLUME_LABEL_LEN];
+>
+>	char *volume_name;
+>
+>>   };
+>>
+>>   #define EROFS_SB(sb) ((struct erofs_sb_info *)(sb)->s_fs_info) @@
+>> -404,6 +409,7 @@ extern const struct inode_operations erofs_dir_iops;
+>>
+>>   extern const struct file_operations erofs_file_fops;
+>>   extern const struct file_operations erofs_dir_fops;
+>> +extern const struct file_operations z_erofs_file_fops;
+>>
+>>   extern const struct iomap_ops z_erofs_iomap_report_ops;
+>>
+>> @@ -535,6 +541,10 @@ static inline struct bio
+>*erofs_fscache_bio_alloc(struct erofs_map_dev *mdev) {
+>>   static inline void erofs_fscache_submit_bio(struct bio *bio) {}
+>>   #endif
+>>
+>> +long erofs_ioctl(struct file *filp, unsigned int cmd, unsigned long
+>> +arg); long erofs_compat_ioctl(struct file *filp, unsigned int cmd,
+>> +			unsigned long arg);
+>> +
+>>   #define EFSCORRUPTED    EUCLEAN         /* Filesystem is corrupted
+>*/
+>>
+>>   #endif	/* __EROFS_INTERNAL_H */
+>> diff --git a/fs/erofs/ioctl.c b/fs/erofs/ioctl.c new file mode 100644
+>> index 000000000000..10bfd593225f
+>> --- /dev/null
+>> +++ b/fs/erofs/ioctl.c
+>> @@ -0,0 +1,47 @@
+>> +// SPDX-License-Identifier: GPL-2.0-or-later #include <linux/fs.h>
+>> +#include <linux/compat.h> #include <linux/file.h>
+>> +
+>> +#include "erofs_fs.h"
+>> +#include "internal.h"
+>> +
+>> +static int erofs_ioctl_get_volume_label(struct inode *inode, void
+>> +__user *arg) {
+>> +	struct erofs_sb_info *sbi = EROFS_I_SB(inode);
+>> +	size_t len;
+>> +	int ret;
+>> +	char label[EROFS_VOLUME_LABEL_LEN];
+>> +
+>> +	memcpy(label, sbi->volume_label, EROFS_VOLUME_LABEL_LEN);
+>> +
+>> +	len = strnlen(label, EROFS_VOLUME_LABEL_LEN);
+>> +	if (len == EROFS_VOLUME_LABEL_LEN)
+>> +		erofs_err(inode->i_sb, "label is too long, return the first %zu 
+>> bytes",
+>> +			  --len);
+>
+>No needed.
+>
+>> +
+>> +	ret = copy_to_user(arg, label, len);
+>
+>
+>	if (!sbi->volume_name)
+>		ret = clear_user(arg, 1);
+>	else
+>		ret = copy_to_user(arg, sbi->volume_name,
+>				   strlen(sbi->volume_name));
+>	return ret ? -EFAULT : 0;
+>
+>...
+>
+>> +
+>> +	return ret ? -EFAULT : 0;
+>> +}
+>> +
+>> +long erofs_ioctl(struct file *filp, unsigned int cmd, unsigned long
+>> +arg) {
+>> +	struct inode *inode = file_inode(filp);
+>> +	void __user *argp = (void __user *)arg;
+>> +
+>> +	switch (cmd) {
+>> +	case FS_IOC_GETFSLABEL:
+>> +		return erofs_ioctl_get_volume_label(inode, argp);
+>> +	default:
+>> +		return -ENOTTY;
+>> +	}
+>> +}
+>> +
+>> +#ifdef CONFIG_COMPAT
+>> +long erofs_compat_ioctl(struct file *filp, unsigned int cmd,
+>> +			unsigned long arg)
+>> +{
+>> +	return erofs_ioctl(filp, cmd, (unsigned long)compat_ptr(arg)); }
+>> +#endif
+>> diff --git a/fs/erofs/super.c b/fs/erofs/super.c index
+>> 1b529ace4db0..e6ad6cf4ba82 100644
+>> --- a/fs/erofs/super.c
+>> +++ b/fs/erofs/super.c
+>> @@ -343,6 +343,8 @@ static int erofs_read_superblock(struct super_block
+>*sb)
+>>   	sbi->fixed_nsec = le32_to_cpu(dsb->fixed_nsec);
+>>   	super_set_uuid(sb, (void *)dsb->uuid, sizeof(dsb->uuid));
+>>
+>> +	memcpy(sbi->volume_label, dsb->volume_name,
+>EROFS_VOLUME_LABEL_LEN);
+>
+>	if (dsb->volume_name[0]) {
+>		sbi->volume_name = kstrndup(dsb->volume_name,
+>dsb->volume_name, GFP_KERNEL);
+>		if (!sbi->volume_name) {
+>			...
+>		}
+>	}
+>
+>Need to kfree(sbi->volume_name) properly too.
+>
+>Thanks,
+>Gao Xiang
+>
+>> +
+>>   	/* parse on-disk compression configurations */
+>>   	ret = z_erofs_parse_cfgs(sb, dsb);
+>>   	if (ret < 0)
+>> diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c index
+>> 2d73297003d2..b612bf7b2f08 100644
+>> --- a/fs/erofs/zdata.c
+>> +++ b/fs/erofs/zdata.c
+>> @@ -1931,3 +1931,14 @@ const struct address_space_operations
+>z_erofs_aops = {
+>>   	.read_folio = z_erofs_read_folio,
+>>   	.readahead = z_erofs_readahead,
+>>   };
+>> +
+>> +const struct file_operations z_erofs_file_fops = {
+>> +	.llseek		= generic_file_llseek,
+>> +	.read_iter	= generic_file_read_iter,
+>> +	.unlocked_ioctl	= erofs_ioctl,
+>> +#ifdef CONFIG_COMPAT
+>> +	.compat_ioctl	= erofs_compat_ioctl,
+>> +#endif
+>> +	.mmap		= generic_file_readonly_mmap,
+>> +	.splice_read	= filemap_splice_read,
+>> +};
 
+Thanks for your comments.
+I will send the next version of the patch later.
+
+Thanks,
+Bo Liu
+
+------=_NextPart_000_0025_01DC1675.1629B8D0
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+
+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
+hkiG9w0DBzAdBgNVHQ4EFgQUsmXTjDrO/nhxGDpnz5cAr1neWI8wHwYDVR0jBBgwFoAUXlkDprRM
+WGCRTvYetaU5pjLBNWowggEPBgNVHR8EggEGMIIBAjCB/6CB/KCB+YaBumxkYXA6Ly8vQ049SU5T
+UFVSLUNBLENOPUpUQ0EyMDEyLENOPUNEUCxDTj1QdWJsaWMlMjBLZXklMjBTZXJ2aWNlcyxDTj1T
+ZXJ2aWNlcyxDTj1Db25maWd1cmF0aW9uLERDPWhvbWUsREM9bGFuZ2NoYW8sREM9Y29tP2NlcnRp
+ZmljYXRlUmV2b2NhdGlvbkxpc3Q/YmFzZT9vYmplY3RDbGFzcz1jUkxEaXN0cmlidXRpb25Qb2lu
+dIY6aHR0cDovL0pUQ0EyMDEyLmhvbWUubGFuZ2NoYW8uY29tL0NlcnRFbnJvbGwvSU5TUFVSLUNB
+LmNybDCCASwGCCsGAQUFBwEBBIIBHjCCARowgbEGCCsGAQUFBzAChoGkbGRhcDovLy9DTj1JTlNQ
+VVItQ0EsQ049QUlBLENOPVB1YmxpYyUyMEtleSUyMFNlcnZpY2VzLENOPVNlcnZpY2VzLENOPUNv
+bmZpZ3VyYXRpb24sREM9aG9tZSxEQz1sYW5nY2hhbyxEQz1jb20/Y0FDZXJ0aWZpY2F0ZT9iYXNl
+P29iamVjdENsYXNzPWNlcnRpZmljYXRpb25BdXRob3JpdHkwZAYIKwYBBQUHMAKGWGh0dHA6Ly9K
+VENBMjAxMi5ob21lLmxhbmdjaGFvLmNvbS9DZXJ0RW5yb2xsL0pUQ0EyMDEyLmhvbWUubGFuZ2No
+YW8uY29tX0lOU1BVUi1DQSgxKS5jcnQwKQYDVR0lBCIwIAYIKwYBBQUHAwIGCCsGAQUFBwMEBgor
+BgEEAYI3CgMEMDUGCSsGAQQBgjcVCgQoMCYwCgYIKwYBBQUHAwIwCgYIKwYBBQUHAwQwDAYKKwYB
+BAGCNwoDBDBBBgNVHREEOjA4oCIGCisGAQQBgjcUAgOgFAwSbGl1Ym8wM0BpbnNwdXIuY29tgRJs
+aXVibzAzQGluc3B1ci5jb20wUwYJKwYBBAGCNxkCBEYwRKBCBgorBgEEAYI3GQIBoDQEMlMtMS01
+LTIxLTE2MDY5ODA4NDgtNzA2Njk5ODI2LTE4MDE2NzQ1MzEtMjU4ODUyMzQ4MA0GCSqGSIb3DQEB
+CwUAA4IBAQAucjq5s0Qq1UtBIL8Und9mnrfn3azil+rXBoZf/N+DNuZYml+Ct4SDC0tng7F5kSt/
+2zU4vShrkviUh8kjCstCrPyqkxQodvm7reuGuBKZLy9PLZR0oB3S7vD9gUdMCw7UianFwY+mgbG/
+33dY43zujZIY8DMm6od3GMZlIueeqB6VyEESU4+ll2VFPyLXPzUMBK7DLAEnOiPbJSUvR7738lSk
+DPXxdujcFhL9wxTvh/3ghYuY0OCwf+HM7TFBSSFxa1wdkfO8aA9Bl6tY5awZ6bbsr+3+FRf/h1jW
+ZQOCCnEGixEPN0irb1ZjdI2O4u1TlTwZAYXdLVRqmr2vi1KHMYIDkzCCA48CAQEwcDBZMRMwEQYK
+CZImiZPyLGQBGRYDY29tMRgwFgYKCZImiZPyLGQBGRYIbGFuZ2NoYW8xFDASBgoJkiaJk/IsZAEZ
+FgRob21lMRIwEAYDVQQDEwlJTlNQVVItQ0ECE34AA47lMgPE5azBUewAAQADjuUwCQYFKw4DAhoF
+AKCCAfgwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjUwODI2MDIz
+NTA1WjAjBgkqhkiG9w0BCQQxFgQUDwIOCCY9OZSsUWIaWS8URKSiOJ4wfwYJKwYBBAGCNxAEMXIw
+cDBZMRMwEQYKCZImiZPyLGQBGRYDY29tMRgwFgYKCZImiZPyLGQBGRYIbGFuZ2NoYW8xFDASBgoJ
+kiaJk/IsZAEZFgRob21lMRIwEAYDVQQDEwlJTlNQVVItQ0ECE34AA47lMgPE5azBUewAAQADjuUw
+gYEGCyqGSIb3DQEJEAILMXKgcDBZMRMwEQYKCZImiZPyLGQBGRYDY29tMRgwFgYKCZImiZPyLGQB
+GRYIbGFuZ2NoYW8xFDASBgoJkiaJk/IsZAEZFgRob21lMRIwEAYDVQQDEwlJTlNQVVItQ0ECE34A
+A47lMgPE5azBUewAAQADjuUwgZMGCSqGSIb3DQEJDzGBhTCBgjAKBggqhkiG9w0DBzALBglghkgB
+ZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcN
+AwICAUAwBwYFKw4DAhowCwYJYIZIAWUDBAIDMAsGCWCGSAFlAwQCAjALBglghkgBZQMEAgEwDQYJ
+KoZIhvcNAQEBBQAEggEAfXx5hvkorxT41ARaaNXEcyKRuNapQN/1LjlIMjSsLM3Ccl88RXkBoGDS
+cjzIGiwTLqvSGO2Jvx1GJGgNB+MnVAwygDDoRyRo4B8kZSMGGFR8U3YQLRonSb9Kfeai6Hp2vWdH
+RtyDyUihuhBpv5WLs47mJs9S7RN1ooQJamd0FzAVrPmnH71AfDDO0RQ1nwOg34XKqUVDRbQtfoa2
+tXuJdvAAKSBpTXKyqBNvUmB51qFTBlYVq9ocz9DwcN7w4vUzbC/Wy1jjPzePI8Zvt5qYGyNVyMmU
+Dl/xisx70zs3Pjq9538B5nwFUVI7mPfLuvNG5ntWfa+FYWK/MShuJ3Uz6QAAAAAAAA==
+
+------=_NextPart_000_0025_01DC1675.1629B8D0--
 
