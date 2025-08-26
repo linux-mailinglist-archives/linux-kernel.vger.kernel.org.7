@@ -1,154 +1,121 @@
-Return-Path: <linux-kernel+bounces-786423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9005FB359A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:57:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F575B359A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:58:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D8A92A753F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:57:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08D0220271C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:58:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E88503277AA;
-	Tue, 26 Aug 2025 09:56:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3446A2882DD;
+	Tue, 26 Aug 2025 09:58:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="KOWT7ppA"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Pu8tE7UN"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4265A32142F;
-	Tue, 26 Aug 2025 09:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A8532FAC02
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756202179; cv=none; b=rhqRUhzbzotp6Nz9DuZX30TbrJzMSqtPsfdi5d9+Vt/GwKbL35m0jldjQ8XsObiWB3aBcdC0Tg2m5FrfbEFADzI2OOtP8fRtXffwRYJir1MCvbnYVKHSHjvwB9o+zHklW2Dyt5ipDCQJ9ysNs9258m7MfFsDYEXx8it8i5vF2Oc=
+	t=1756202282; cv=none; b=mv6AUes0koCny2BYq10wbgnScs6LgtkBcPeXze+tDATx0mGDNXb4keXah5IhYP1+MvuwfsCGPNrKkvZrcYdo7VrwXLU64FdBUuVtQtIg/1drbA3K+pz96rSx/PA4y66DdJW/bVyYnpmYtPZA4ZQfcRFvlhhazhm/RI37nCWc440=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756202179; c=relaxed/simple;
-	bh=BeJNyWZ1Fie4kRLOY57azxsF0Sg2itRwuOuGejwWzZQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UIoA0gqXRkq4tEcqSJIa6cP/KjbVnwCsX0j8Lk4UWRhaYTX9WBh2fxdoa6y7xTVB2YNKURqYpTUItT2yaAFBHVcxJjbiIPmdwGrizWkuT8aOV93Pkik0zvTMtKIzsh9JaXOrclBE0hxEsWVvcueDhWughrFUxKhY8paJk2mJ888=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=KOWT7ppA; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57Q6Xm9G030141;
-	Tue, 26 Aug 2025 09:56:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=7RtZYH
-	nVw6eX3lNU4nryADRyNuIKrw/WbNMfCfPtBU0=; b=KOWT7ppASrdtjsxjS7aJ0q
-	n+1HtY04sD5BdZn2PGVKhF2RnDEwA6NOaLjfT+Ck4rXtwkpNGFXzhh2iKvCErSEG
-	IVtfSemENLmcAVx4zTkOeVp1IVWgqlpe+1FvUY37CKKkaYXOnsXwhPfZQb3gRYtC
-	s43o13hBZih5j8DetmcFbbi4tAk20+scLTM+0uq0rWtzHAYzHnKMYF31+5JvQFx4
-	QbDyvTjH2fg6+tKZHnxfbxZUwIOseFMW9CE3otx04gvCvKPzbwXXVQ/ygvQgvdp0
-	DfBEPsGVgCfcqLebzbf4nNLm2jd6izIEflVZSj6xVcP9ic8YUeagfktcaGgtLftw
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48s7rvru8h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Aug 2025 09:56:09 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57Q6aa3u007459;
-	Tue, 26 Aug 2025 09:56:08 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 48qqyuac0c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Aug 2025 09:56:08 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57Q9u71I18154228
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 26 Aug 2025 09:56:08 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D301E58063;
-	Tue, 26 Aug 2025 09:56:07 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8FB6258055;
-	Tue, 26 Aug 2025 09:56:05 +0000 (GMT)
-Received: from [9.43.46.213] (unknown [9.43.46.213])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 26 Aug 2025 09:56:05 +0000 (GMT)
-Message-ID: <b877e779-5395-4162-ba87-2a0e07932eb4@linux.ibm.com>
-Date: Tue, 26 Aug 2025 15:26:02 +0530
+	s=arc-20240116; t=1756202282; c=relaxed/simple;
+	bh=Rt1wBuOibWYMf11azApMmPxWPuGaXVXsAWpTctmwPog=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LHhaEGsHRHihDrw+OeQEK0xflOPjAXc3ck5A2QiqxcGAV2iW1Bhc67qDV/97mYx0oPjcWCQlwDpSfYeI8HWakNZxS6lPFWA8CKZF4eWE8atQusbydIdXVlvNETdqE8IRmgWIbBeNQFbont0PePTP6uh/duWCiGp5QAXU1povKCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Pu8tE7UN; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-55f474af957so1786797e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 02:58:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756202279; x=1756807079; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uOUXkb1uF8zQdB/sKiLIuRwWdep4Dp9YFQhPpYg7e7o=;
+        b=Pu8tE7UNSPb/mSu8D8XVNJ1m+w/gr9winhNLMNf5oNNhDIbwDbeoNasGh3h562/Z8G
+         mCXFe1I8ZZxoJtKns/bQCKXoSXmIVoJtI5E19heex3sjrcGxaQU2kfr9wHdob98rL0Jn
+         ly8fbX+5vAcNPWrQMMpcRo7UtVYluLIUCe3bwgfEp8uui5ohvG8u/Pe8Aq4aY9/+AuDM
+         iVaw2BMpWe7M6WpsyOqJyY10Mo9VshFCDvsccyDqpIXKA43ZTVsStftFBfiRih1ZaMsw
+         jGaf0yyIbgu+iiiE0pxmkgHTqTXZmDOFZ98vubSvsTAtcZf13nFmFU/HgXzYBVwJEear
+         JFPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756202279; x=1756807079;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uOUXkb1uF8zQdB/sKiLIuRwWdep4Dp9YFQhPpYg7e7o=;
+        b=qCTVfTxcgo+7jmFace9rlVKJAjd1EIUoI36Kml/EIucAdDqiY/gW2rbutWVkSKbkQN
+         M7so2fjdadEFE8SCqRUvw7nVDaj7UpeMKsyv3rlg7rR1NYKktQUna2PneWoDa1h+uEPu
+         EXGYvzq23dHx1YhHSUtvMCRdsELHxLjDGP8ROKnc5Yw0D0cgljUe+GXe61S6oeu6Bh88
+         FLOG+4WxpwNm2eNSmMakoH/mwW72p+MQ/DjSkxrOJ239OZA/DX2yKN9X92rYOTV/87O1
+         76wg/X6kXQswPUeEmlymxUzzofzd2hnveuJUVzcMKCP8PzkCxSpzIxWIihpOsIqJNdZ8
+         ULcA==
+X-Forwarded-Encrypted: i=1; AJvYcCVrTgI+FBQQNpAUAU4Brc73pFOd5Ocz1GAi+bI1TAUDJVIAlVlZo128CuTFfTm9qxxRbAnZxsv6SzS70qo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmLjQwR1P78HoIh79RDxn1NN7d0emxyT0H+LGu8T6ywf8fhifT
+	CS7CgS0kre0idEJg9y0r+yRlK3gMDROlxs4GvnKUlHwjwQyryg+x91EfhegnzmTT4aevUKNH9LY
+	WQL+gDr4cS/G5UOfEnp1fYGgqi2HrEZTmnDUsBvMfnA==
+X-Gm-Gg: ASbGnctsOdHVE5AH/CEWeLynZ1pbG4sw+mF7SdmR5wnrbTHGKC7/cuc9hNKo2a5ET+4
+	95c08SEnN/vL6bKtV8hWL9YZebk/VB0iZBhvhpCkshJqls4F9GGJx+Cdu7vWJ41K/c8SgGZ3azq
+	77geJPv/UVEhQdP1K3j4k3L0PzalR02wIxzE1XBTjM/aNQsMV1TKOETiibEotzOK+/YjONBovh5
+	wUvXsxxjy7W6xygkXoZOdrYYyvAKNzbd1cdSoUbvGM8yXOX0A==
+X-Google-Smtp-Source: AGHT+IHZlig7uTIvb1Hm0+VQCqd18Uy1yI/ilX78XfwZSj12J+ieVVBnbFx5cn43CrziQFS1Bp5XyB1Kt9NlfkCCxzM=
+X-Received: by 2002:a05:6512:440e:b0:55f:42ca:cc03 with SMTP id
+ 2adb3069b0e04-55f42cacd56mr3019395e87.56.1756202279297; Tue, 26 Aug 2025
+ 02:57:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [blktest/nvme/058] Kernel OOPs while running nvme/058 tests
-To: Ming Lei <ming.lei@redhat.com>,
-        Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org
-References: <3a07b752-06a4-4eee-b302-f4669feb859d@linux.ibm.com>
- <aK15dbUiEyr0O2Ka@fedora>
-Content-Language: en-US
-From: Nilay Shroff <nilay@linux.ibm.com>
-In-Reply-To: <aK15dbUiEyr0O2Ka@fedora>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: i88LFnnQn_h0R8a2H-pHaSAqRmajHcgd
-X-Authority-Analysis: v=2.4 cv=fbCty1QF c=1 sm=1 tr=0 ts=68ad84b9 cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=CtkdCJSX4R_F1qFop-kA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: i88LFnnQn_h0R8a2H-pHaSAqRmajHcgd
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI2MDA1NSBTYWx0ZWRfXyLQG3xQ+rKOS
- 1+ScGmGy8RRDozs/oY0nqPO6WloYOX/pVidR04LeNixUHG8R0xsPyQ7J3GNlRcIiysv0KdxkHcE
- H2ePzI+BhhZdo7+1L5Ncqsd/A7+suKjUCFVkns2H2uFKHcdUS1eEpIguCgM7GqVhBmXqJdZXLtn
- AuJ4FoTpxERbnDZYStpaxdo3IDR26hYTK56+HxqyocT6iOLdqlMk7hzJXeORG5Gyr8Kt709S9/g
- yOdTYCySf1UX5+hnUSLg7m/nViq8PdJGzTxPfI7N+AKtMwfFwIbVv6kKOxZbZ/JsuoZf2KYz3+l
- aIohW3+N5KsoLcRUG2pYztEyXwoUv69vThLM0OD48+aAIoydEPGlRgtD7kVMKMpqRBCFpTL5ufd
- U/K9pU80
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-26_02,2025-08-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 malwarescore=0 bulkscore=0 clxscore=1015 priorityscore=1501
- impostorscore=0 adultscore=0 phishscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508260055
+References: <372550a2633586d2f98b077d3f520f3262ca0e2a.1756104334.git.christophe.leroy@csgroup.eu>
+ <ac7c79b3491cb48ef7c193420b9a9e4614b88436.1756197502.git.christophe.leroy@csgroup.eu>
+In-Reply-To: <ac7c79b3491cb48ef7c193420b9a9e4614b88436.1756197502.git.christophe.leroy@csgroup.eu>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 26 Aug 2025 11:57:47 +0200
+X-Gm-Features: Ac12FXy4Ibm7fbO9KiNfYE73-dyWntHoWbLgchN6hbkj2Va2bGEIGeT9v8x9Fxc
+Message-ID: <CAMRc=MchS5d3RHjtpc-fAVzKyhMchdUhvZCgTNsJ94u5Cc5FWw@mail.gmail.com>
+Subject: Re: [PATCH v4] soc: fsl: qe: Add support of IRQ in QE GPIO
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Qiang Zhao <qiang.zhao@nxp.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Aug 26, 2025 at 10:41=E2=80=AFAM Christophe Leroy
+<christophe.leroy@csgroup.eu> wrote:
+>
+> In the QE, a few GPIOs are IRQ capable. Similarly to
+> commit 726bd223105c ("powerpc/8xx: Adding support of IRQ in MPC8xx
+> GPIO"), add IRQ support to QE GPIO.
+>
+> Add property 'fsl,qe-gpio-irq-mask' similar to
+> 'fsl,cpm1-gpio-irq-mask' that define which of the GPIOs have IRQs.
+>
+> Here is an exemple for port B of mpc8323 which has IRQs for
+> GPIOs PB7, PB9, PB25 and PB27.
+>
+>         qe_pio_b: gpio-controller@1418 {
+>                 compatible =3D "fsl,mpc8323-qe-pario-bank";
+>                 reg =3D <0x1418 0x18>;
+>                 interrupts =3D <4 5 6 7>;
+>                 interrupt-parent =3D <&qepic>;
+>                 gpio-controller;
+>                 #gpio-cells =3D <2>;
+>                 fsl,qe-gpio-irq-mask =3D <0x01400050>;
+>         };
+>
+> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> ---
 
-
-On 8/26/25 2:38 PM, Ming Lei wrote:
-> On Tue, Aug 26, 2025 at 02:00:56PM +0530, Venkat Rao Bagalkote wrote:
->> Greetings!!!
->>
->>
->> IBM CI has reported a kernel OOPs, while running blktest suite(nvme/058
->> test).
->>
->>
->> Kernel Repo:
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
->>
->>
->> Traces:
->>
->>
->> [37496.800225] BUG: Kernel NULL pointer dereference at 0x00000000
->> [37496.800230] Faulting instruction address: 0xc0000000008a34b0
->> [37496.800235] Oops: Kernel access of bad area, sig: 11 [#1]
-> 
-> ...
-> 
->> [37496.800365] GPR28: 0000000000000001 0000000000000001 c0000000b005c400
->> 0000000000000000
->> [37496.800424] NIP [c0000000008a34b0] __rq_qos_done_bio+0x3c/0x88
-> 
-> It looks regression from 370ac285f23a ("block: avoid cpu_hotplug_lock depedency on freeze_lock"),
-> For nvme mpath, same bio crosses two drivers, so QUEUE_FLAG_QOS_ENABLED & q->rq_qos check can't
-> be skipped.
-> 
-Thanks Ming for looking at it. And yes you were correct, we can't skip
-QUEUE_FLAG_QOS_ENABLED & q->rq_qos for NVMe, However this issue only
-manifests with NVMe multipath enabled, as that would create the stacked
-NVMe devices. So shall I send the fix or are you going to send the patch
-with fix?
-
-Thanks,
---Nilay
+Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
