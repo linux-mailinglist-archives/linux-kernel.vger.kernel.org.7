@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-786553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96D2FB35C0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:30:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E289AB35CA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:36:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD4157C09D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:30:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECAAB188EFCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 348D834A317;
-	Tue, 26 Aug 2025 11:28:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1401234AAE3;
+	Tue, 26 Aug 2025 11:28:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ad1zxpXY"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IYFxS+08"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C1D3334375;
-	Tue, 26 Aug 2025 11:28:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C433C34A323;
+	Tue, 26 Aug 2025 11:28:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756207702; cv=none; b=InTRur+mj0w98uJpxRq1HGOyPnrWTod/AeLqccaOKcY+4oNSnRRkx61pOsWQdnRdNIHzaieH2TWKZGg/ayhCSgVU32eCxYZyCOIWdJShSZ+w7qCwP8PokKZirkvFiC147T0106TryAsQgOdCvpS5MBTpatPblx2Q8gSgcx8hpvw=
+	t=1756207705; cv=none; b=hcln1GYSW+ECKnTaY/P1iyKF3wrXiaH+RPI1NuL8mimCn+dm5Fnapw8Uq7Kku/wO9ZRqSeK2P83VdFklIGT/ydm09vYUu6CMx3HCI1w0PC5ZyvcuXnDOL5kFhpY6+jYSIBblaSjoRSYCRMgr2klpEdYgmVl2BoDERViurOLUpHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756207702; c=relaxed/simple;
-	bh=nv4QcLuZQQCjp8kTJkT5bO5LjWqekXnB5tBaUYryBaE=;
+	s=arc-20240116; t=1756207705; c=relaxed/simple;
+	bh=QVZZS4EaKoeW1P1dljej9T+AcX0xYWAlp0bsj+bzMc8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PdUmZ56qB+iPX3rL2J57YyOeHTDZ7uIv+ZKktaDuVLcDpNScHMJllsobKrorMxVwNCt9fB+J6kBAaUpglnshoHIXquR4Xd6aesQFt4uLzvWkGf2J3ZtCl4X+IlMT+RRuJXiJQYH2V9/DBC/bBeIwAEzyDCtOO7exZ7Fyt1xN10c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ad1zxpXY; arc=none smtp.client-ip=198.175.65.14
+	 MIME-Version; b=PqUXH0mR4JzR2/z+Hrdx2i8ln66/t6uaAXAx2ZsKzmre81KAj61T6j36xe3kOv4WhLGg+pXBjV/Xu0+CaYpT1VKHB9Xpz/s2dN1LR+z58phNJcqwuNZ8SN1W5JoUhCDftSqv+qVJv5AArC/K3ODQ9Q3/L7EbTeVqMmm2TSNMioU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IYFxS+08; arc=none smtp.client-ip=198.175.65.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756207702; x=1787743702;
+  t=1756207704; x=1787743704;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=nv4QcLuZQQCjp8kTJkT5bO5LjWqekXnB5tBaUYryBaE=;
-  b=Ad1zxpXYoew5R0Db/6ar+6eTSMrCHWGitFS91aMarggGsiQCXiHBWQM2
-   4bP+e20QlMg/VunFHlf3Q9U2ky0tJ+zdlAVNw/CAMr83t766AAq4Easb8
-   Bq7hWpkL/8O9dMk8pETZKfsqJ753SwXK+CI+1/64BqtkQsygqS2d6CIa1
-   hG1HW3aSGgNpmSjjGszkzyAnWMnMx4YNWLtZmMZgw9gNlG7vme8qJh0zD
-   N6WzRCh1fSSWgqkXYLeuf0CNVqLIyVPtfRZhyMmvL69yp0EzGD8yohV4F
-   Ozile0MXq6EnXLlDi0qh0KChvtjlh+Fz0ZS3RHNuoNJlbSRJGgJMhFAwY
-   g==;
-X-CSE-ConnectionGUID: x3aq9Al6SLOq/5RjKSjd2Q==
-X-CSE-MsgGUID: nrkduwpBR0SL9QFxqoFhGw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62269284"
+  bh=QVZZS4EaKoeW1P1dljej9T+AcX0xYWAlp0bsj+bzMc8=;
+  b=IYFxS+08KketiBYgo1SfmqYip/MMA3jO+RVwu8+OYSJMLlyYZSqMX4y6
+   GHA9hoP/b40eU2z3UqnN/Ry1iK7d/HDVxkbxibwgWFxAd1Fzzp6e/D3Y0
+   E8IGMFcObCZDaMKRvlo8Xe3SzBgu+HshdSc0kQytUiu8tDWzKhaxGxNpr
+   ZMxGa4w6PSqa9citMV8sJicmui0IkAInTaBmFMhM6zhfXK8+h8VgHh05n
+   fMdzH40A8dflSz0RUayT09HqmO49PCtSDpAnlaFPMSkE1Y0B3hVn+wLsK
+   8Ea9ue9LdH82LIcIUZafPvnHLR312OAfufx4nwYIZ6NmRubS2hft2RaHa
+   w==;
+X-CSE-ConnectionGUID: Rr78bWwbSvyzZ8iyBpD1/Q==
+X-CSE-MsgGUID: CLj+21msRzq093cUv39c7w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62269292"
 X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="62269284"
+   d="scan'208";a="62269292"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 04:28:22 -0700
-X-CSE-ConnectionGUID: 5vOBlKTFRLahY/tT/CgV4w==
-X-CSE-MsgGUID: cP7xnXONRRKd+mBUTUGcpg==
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 04:28:24 -0700
+X-CSE-ConnectionGUID: M2VEiX2LT6+6NrHvRnYJPA==
+X-CSE-MsgGUID: rGN5pbGbRtKMC2KiXrj69g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="173725815"
+   d="scan'208";a="173725821"
 Received: from gklab-kleszczy-dev.igk.intel.com ([10.102.25.215])
-  by orviesa003.jf.intel.com with ESMTP; 26 Aug 2025 04:28:18 -0700
+  by orviesa003.jf.intel.com with ESMTP; 26 Aug 2025 04:28:21 -0700
 From: Konrad Leszczynski <konrad.leszczynski@intel.com>
 To: davem@davemloft.net,
 	andrew+netdev@lunn.ch,
@@ -69,9 +69,9 @@ Cc: netdev@vger.kernel.org,
 	sebastian.basierski@intel.com,
 	Karol Jurczenia <karol.jurczenia@intel.com>,
 	Konrad Leszczynski <konrad.leszczynski@intel.com>
-Subject: [PATCH net-next 4/7] net: stmmac: enable ARP Offload on mac_link_up()
-Date: Tue, 26 Aug 2025 13:32:44 +0200
-Message-Id: <20250826113247.3481273-5-konrad.leszczynski@intel.com>
+Subject: [PATCH net-next 5/7] net: stmmac: set TE/RE bits for ARP Offload when interface down
+Date: Tue, 26 Aug 2025 13:32:45 +0200
+Message-Id: <20250826113247.3481273-6-konrad.leszczynski@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250826113247.3481273-1-konrad.leszczynski@intel.com>
 References: <20250826113247.3481273-1-konrad.leszczynski@intel.com>
@@ -85,74 +85,45 @@ Content-Transfer-Encoding: 8bit
 
 From: Karol Jurczenia <karol.jurczenia@intel.com>
 
-Add Address Resolution Protocol (ARP) Offload support in
-stmmac_mac_link_up() to enable ARP Offload beside the selftests.
+When the network interface is brought down and ARP Offload is enabled,
+set the TE (Transmitter Enable) and RE (Receiver Enable) bits.
 
-Introduce STMMAC_FLAG_ARP_OFFLOAD_EN flag, which is used to enable the
-feature with the stmmac_set_arp_offload().
+Ensure that the Network Interface Card (NIC) can continue handling ARP
+responses in hardware even when the interface is down.
 
 Reviewed-by: Konrad Leszczynski <konrad.leszczynski@intel.com>
 Reviewed-by: Sebastian Basierski <sebastian.basierski@intel.com>
 Signed-off-by: Karol Jurczenia <karol.jurczenia@intel.com>
 ---
- .../net/ethernet/stmicro/stmmac/stmmac_main.c   | 17 +++++++++++++++++
- include/linux/stmmac.h                          |  1 +
- 2 files changed, 18 insertions(+)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 9cf7f85c10b6..e000dc7f0349 100644
+index e000dc7f0349..3823432b16f1 100644
 --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
 +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -39,6 +39,7 @@
- #include <linux/phylink.h>
- #include <linux/udp.h>
- #include <linux/bpf_trace.h>
-+#include <linux/inetdevice.h>
- #include <net/page_pool/helpers.h>
- #include <net/pkt_cls.h>
- #include <net/xdp_sock_drv.h>
-@@ -963,6 +964,8 @@ static void stmmac_mac_link_up(struct phylink_config *config,
- 			       bool tx_pause, bool rx_pause)
+@@ -949,7 +949,9 @@ static void stmmac_mac_link_down(struct phylink_config *config,
  {
  	struct stmmac_priv *priv = netdev_priv(to_net_dev(config->dev));
-+	struct in_device *in_dev;
-+	struct in_ifaddr *ifa;
- 	unsigned int flow_ctrl;
- 	u32 old_ctrl, ctrl;
- 	int ret;
-@@ -1075,6 +1078,20 @@ static void stmmac_mac_link_up(struct phylink_config *config,
  
- 	if (priv->plat->flags & STMMAC_FLAG_HWTSTAMP_CORRECT_LATENCY)
- 		stmmac_hwtstamp_correct_latency(priv, priv);
+-	stmmac_mac_set(priv, priv->ioaddr, false);
++	if (!(priv->plat->flags & STMMAC_FLAG_ARP_OFFLOAD_EN))
++		stmmac_mac_set(priv, priv->ioaddr, false);
 +
-+	if (priv->plat->flags & STMMAC_FLAG_ARP_OFFLOAD_EN) {
-+		in_dev = in_dev_get(priv->dev);
-+		if (!in_dev)
-+			return;
-+
-+		ifa = in_dev->ifa_list;
-+		if (!ifa)
-+			return;
-+
-+		stmmac_set_arp_offload(priv, priv->hw, true,
-+				       ntohl(ifa->ifa_address));
-+		in_dev_put(in_dev);
-+	}
- }
+ 	if (priv->dma_cap.eee)
+ 		stmmac_set_eee_pls(priv, priv->hw, false);
  
- static void stmmac_mac_disable_tx_lpi(struct phylink_config *config)
-diff --git a/include/linux/stmmac.h b/include/linux/stmmac.h
-index 26ddf95d23f9..aae522f37710 100644
---- a/include/linux/stmmac.h
-+++ b/include/linux/stmmac.h
-@@ -185,6 +185,7 @@ struct dwmac4_addrs {
- #define STMMAC_FLAG_EN_TX_LPI_CLOCKGATING	BIT(11)
- #define STMMAC_FLAG_EN_TX_LPI_CLK_PHY_CAP	BIT(12)
- #define STMMAC_FLAG_HWTSTAMP_CORRECT_LATENCY	BIT(13)
-+#define STMMAC_FLAG_ARP_OFFLOAD_EN		BIT(14)
+@@ -4178,6 +4180,10 @@ static int stmmac_release(struct net_device *dev)
+ 	/* Release and free the Rx/Tx resources */
+ 	free_dma_desc_resources(priv, &priv->dma_conf);
  
- struct plat_stmmacenet_data {
- 	int bus_id;
++	/* Disable MAC Rx/Tx */
++	stmmac_mac_set(priv, priv->ioaddr, priv->plat->flags &
++					   STMMAC_FLAG_ARP_OFFLOAD_EN);
++
+ 	/* Powerdown Serdes if there is */
+ 	if (priv->plat->serdes_powerdown)
+ 		priv->plat->serdes_powerdown(dev, priv->plat->bsp_priv);
 -- 
 2.34.1
 
