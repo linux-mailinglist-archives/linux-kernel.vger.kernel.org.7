@@ -1,80 +1,103 @@
-Return-Path: <linux-kernel+bounces-786685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78570B36209
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:15:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 445FBB36237
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:16:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0E847BB94A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:13:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF2313B0B53
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:11:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3141834164B;
-	Tue, 26 Aug 2025 13:12:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32C627EFE7;
+	Tue, 26 Aug 2025 13:11:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nT4E0zj2"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ukpuwkX3";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5bD7Uo/p";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ukpuwkX3";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5bD7Uo/p"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3529338F51;
-	Tue, 26 Aug 2025 13:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6584F23817D
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 13:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756213972; cv=none; b=OgR+xsHru5fVriViZWhFvtiM8ahfJ4h+mJmuNUd8yuO8AiuyQpduCa9fhoaDdw4++CPDizlXK8CyKOBkW1agMuBa1owlkR7zZKZT/rOrqPF7ko0QYBu1sJxuIx792iIYuJw4VT6G1S9jeat3rYDMOzHTkip7LffP1xdz+ye5PCk=
+	t=1756213887; cv=none; b=iVMHwhmTzbi4+R+fptYzj3/Cbi5cStUDIjKgUcRhKAhE/AjymbdwzMzaKQj3C+crVCl553Jvg2YeSviaXJ1FsR0zeHp66UwKXoz/Nq9APArT0qr61nIhj01bngfzVin97K5e6QgVCem6Ry8u2M+aCE2f3ncL9Pvwjiy43cqV5UA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756213972; c=relaxed/simple;
-	bh=N5Lv6gxPb1gIs50nNVHbShegReo0NnYRAemVW9LBZAk=;
+	s=arc-20240116; t=1756213887; c=relaxed/simple;
+	bh=BAqP7X7PNCuyXBku8FqJkCVu6dEKYvlnXUqpclgUVzo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m8urdBM4XMUxDJq/Ck9I2YFwHCPsCp0Au8M1pkkHn8p/UM7qu908YF+2DU5JwhBm0Z7aVr9owilb3GHax11HwMl1dNfiEvTI1a2hLBH9PJSzuQMnCYueV8ekB9G14ZrRjVpDXTyGZU9/LDPs9o17Mtp81f/qxk3o8ehqrxUTCG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nT4E0zj2; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756213971; x=1787749971;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=N5Lv6gxPb1gIs50nNVHbShegReo0NnYRAemVW9LBZAk=;
-  b=nT4E0zj254y6b0FrPRmH9icuewWIwJ8C8XRICpVjXv62IYGpXErB/6l0
-   2YdLkqKl5Tmdb2w8pgzr3Ti9ulz/QyA4M02gN5FotjVEhTnX7Wk4q5XIM
-   +bf67szt8nofGhXNYr+EOJtcU7RbyY+V0b5OfhMa0ooNrcfjWT7B35Ag5
-   AYE3MPxNiVkskNL7VQp/eHPuoaqMSjXHuwYSHouK9YuiryTpScgKQb6ZF
-   1ftPIhcGO5DSF8z5uyhQWi/Pc2kc0hZEUu2EadtJsJ5sYS2AHNkXDgkWI
-   EYdPClUCBl6Bo137kceZX/04Yn2ahRHCvttl2GstZBAGgGYByrp4XrM5F
-   Q==;
-X-CSE-ConnectionGUID: OuvhAvHnS26XyeGMMZ4BZA==
-X-CSE-MsgGUID: doBxyOBxSvi/mWDRVzgGDw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11534"; a="58592565"
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="58592565"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 06:12:50 -0700
-X-CSE-ConnectionGUID: PC0eTIDzTAunXwSIbEKgdA==
-X-CSE-MsgGUID: yLW5rj20Q9+thwdV2DfLOQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="200519421"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 26 Aug 2025 06:12:46 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uqtTf-000PgZ-2o;
-	Tue, 26 Aug 2025 13:12:43 +0000
-Date: Tue, 26 Aug 2025 21:10:41 +0800
-From: kernel test robot <lkp@intel.com>
-To: Abhinav Jain <jain.abhinav177@gmail.com>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, lars@metafoo.de,
-	Michael.Hennerich@analog.com, alexandru.ardelean@analog.com,
-	jlc23@kernel.org, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	Marcelo.Schmitt@analog.com, dumitru.ceclan@analog.com,
-	Jonathan.Santos@analog.com, dragos.bogdan@analog.com,
-	Abhinav Jain <jain.abhinav177@gmail.com>
-Subject: Re: [PATCH v1 2/2] iio: adc: Add initial support for MAX22531 ADC
-Message-ID: <202508262023.u2lGZ2mB-lkp@intel.com>
-References: <edc52c93e0d4e08619ba8a98674aeb7d49e6dd1b.1756115378.git.jain.abhinav177@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BPi0Q6sIhs3/9xOj7UQWvhIjU01PntacEaMHbkEAdy+vFEgL2uLFR3CVkhQPshsr+xgM75Vs/tHGSA+mzE4YJ7DHV+jQEO+aMMu0DZKU/PlbhZHccU/t7K/8qQXMEJ8KSrzH+JSVY6pc/hnbRQW7U/MMByokKDzdf5qpV3ko4P8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ukpuwkX3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5bD7Uo/p; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ukpuwkX3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5bD7Uo/p; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 96256211FC;
+	Tue, 26 Aug 2025 13:11:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756213883;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VsK5/Tv+Gky5jivXNK3PJEjWTeh9Qjc7fIj2RjAjYQU=;
+	b=ukpuwkX3EEpFSc/ovhJvNmEwYvWX03k1rfdozog6HXO95N4z0ICnos5tqDhwimE1NOir67
+	GGfvGaimM+uIWy3otPLbhfd4O6mCs1XjMTo0XoKOXp7M12Bqw9OINPzC+GDWZEqmn4UsHp
+	jeqjX/ZcZap47MnAIfiRZtz0Emgrako=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756213883;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VsK5/Tv+Gky5jivXNK3PJEjWTeh9Qjc7fIj2RjAjYQU=;
+	b=5bD7Uo/pG/h8L1+2NHC1Pn+MdObxoB0tqvPIFVWLSpwEyMwPVgJkvdfBNFzN4gOl8QIprt
+	1EVaMN/SMDZ7eeDA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1756213883;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VsK5/Tv+Gky5jivXNK3PJEjWTeh9Qjc7fIj2RjAjYQU=;
+	b=ukpuwkX3EEpFSc/ovhJvNmEwYvWX03k1rfdozog6HXO95N4z0ICnos5tqDhwimE1NOir67
+	GGfvGaimM+uIWy3otPLbhfd4O6mCs1XjMTo0XoKOXp7M12Bqw9OINPzC+GDWZEqmn4UsHp
+	jeqjX/ZcZap47MnAIfiRZtz0Emgrako=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1756213883;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VsK5/Tv+Gky5jivXNK3PJEjWTeh9Qjc7fIj2RjAjYQU=;
+	b=5bD7Uo/pG/h8L1+2NHC1Pn+MdObxoB0tqvPIFVWLSpwEyMwPVgJkvdfBNFzN4gOl8QIprt
+	1EVaMN/SMDZ7eeDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7BFDF13A31;
+	Tue, 26 Aug 2025 13:11:23 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id HZQeHnuyrWgaLAAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Tue, 26 Aug 2025 13:11:23 +0000
+Date: Tue, 26 Aug 2025 15:11:21 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>, Leo Martins <loemra.dev@gmail.com>,
+	linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] btrfs: move ref-verify of btrfs_init_data_ref under
+ CONFIG_BTRFS_DEBUG
+Message-ID: <20250826131121.GB29826@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20250826122901.49526-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,133 +106,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <edc52c93e0d4e08619ba8a98674aeb7d49e6dd1b.1756115378.git.jain.abhinav177@gmail.com>
+In-Reply-To: <20250826122901.49526-1-lukas.bulwahn@redhat.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spamd-Result: default: False [-2.50 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[fb.com,toxicpanda.com,suse.com,gmail.com,vger.kernel.org,redhat.com];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,imap1.dmz-prg2.suse.org:helo];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -2.50
 
-Hi Abhinav,
+On Tue, Aug 26, 2025 at 02:29:01PM +0200, Lukas Bulwahn wrote:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> 
+> Commit dc9025c1a4d8 ("btrfs: move ref-verify under CONFIG_BTRFS_DEBUG")
+> removes config BTRFS_FS_REF_VERIFY and adds its functionality under config
+> BTRFS_DEBUG. This change misses a reference to BTRFS_FS_REF_VERIFY in the
+> btrfs_init_data_ref() function, though.
+> 
+> Replace this reference to BTRFS_FS_REF_VERIFY in the btrfs_init_data_ref()
+> with BTRFS_DEBUG.
+> 
+> Fixes: dc9025c1a4d8 ("btrfs: move ref-verify under CONFIG_BTRFS_DEBUG")
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on 19272b37aa4f83ca52bdf9c16d5d81bdd1354494]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Abhinav-Jain/dt-bindings-iio-adc-Add-device-tree-binding-for-MAX22531-ADC/20250826-052702
-base:   19272b37aa4f83ca52bdf9c16d5d81bdd1354494
-patch link:    https://lore.kernel.org/r/edc52c93e0d4e08619ba8a98674aeb7d49e6dd1b.1756115378.git.jain.abhinav177%40gmail.com
-patch subject: [PATCH v1 2/2] iio: adc: Add initial support for MAX22531 ADC
-config: m68k-allyesconfig (https://download.01.org/0day-ci/archive/20250826/202508262023.u2lGZ2mB-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250826/202508262023.u2lGZ2mB-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508262023.u2lGZ2mB-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/iio/adc/max22531.c: In function 'max22531_reg_read':
->> drivers/iio/adc/max22531.c:76:15: error: implicit declaration of function 'FIELD_PREP' [-Wimplicit-function-declaration]
-      76 |         cmd = FIELD_PREP(MAX22531_REG_ADDR_MASK, reg);
-         |               ^~~~~~~~~~
-   drivers/iio/adc/max22531.c: In function 'max22531_probe':
->> drivers/iio/adc/max22531.c:154:13: error: implicit declaration of function 'FIELD_GET' [-Wimplicit-function-declaration]
-     154 |             FIELD_GET(MAX22531_DEVICE_REV_MSK, prod_id) != MAX22531_DEVICE_REV)
-         |             ^~~~~~~~~
-
-
-vim +/FIELD_PREP +76 drivers/iio/adc/max22531.c
-
-    70	
-    71	static int max22531_reg_read(struct max22531 *adc, unsigned int reg,
-    72				     unsigned int *readval)
-    73	{
-    74		u8 cmd;
-    75	
-  > 76		cmd = FIELD_PREP(MAX22531_REG_ADDR_MASK, reg);
-    77		*readval = spi_w8r16be(adc->spi_dev, cmd);
-    78		if (*readval < 0)
-    79			return *readval;
-    80	
-    81		return 0;
-    82	}
-    83	
-    84	static int max22531_read_raw(struct iio_dev *indio_dev,
-    85				     struct iio_chan_spec const *chan,
-    86				     int *val, int *val2, long mask)
-    87	{
-    88		struct max22531 *adc = iio_priv(indio_dev);
-    89		int ret;
-    90	
-    91		switch (mask) {
-    92		case IIO_CHAN_INFO_RAW:
-    93			ret = max22531_reg_read(adc, MAX22531_REG_ADC_CHAN(chan->channel), val);
-    94			if (ret)
-    95				return ret;
-    96		return IIO_VAL_INT;
-    97	
-    98		case IIO_CHAN_INFO_AVERAGE_RAW:
-    99			ret = max22531_reg_read(adc, MAX22531_REG_FADC_CHAN(chan->channel), val);
-   100			if (ret)
-   101				return ret;
-   102			return IIO_VAL_INT;
-   103	
-   104		case IIO_CHAN_INFO_SCALE:
-   105			*val = MAX22531_VREF_MV;
-   106			*val2 = 12;
-   107	
-   108			return IIO_VAL_FRACTIONAL_LOG2;
-   109	
-   110		default:
-   111			return -EINVAL;
-   112		}
-   113	}
-   114	
-   115	static const struct iio_info max22531_info = {
-   116		.read_raw = max22531_read_raw,
-   117	};
-   118	
-   119	static int max22531_probe(struct spi_device *spi)
-   120	{
-   121		struct iio_dev *indio_dev;
-   122		struct max22531 *adc;
-   123		unsigned int prod_id;
-   124		int ret;
-   125	
-   126		indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*adc));
-   127		if (!indio_dev)
-   128			return -ENOMEM;
-   129	
-   130		adc = iio_priv(indio_dev);
-   131		adc->spi_dev = spi;
-   132		adc->chip_info = spi_get_device_match_data(spi);
-   133		if (!adc->chip_info)
-   134			return dev_err_probe(&spi->dev, -EINVAL,
-   135					"no chip info\n");
-   136	
-   137		indio_dev->name = adc->chip_info->name;
-   138		indio_dev->info = &max22531_info;
-   139		indio_dev->channels = max22531_channels;
-   140		indio_dev->num_channels = ARRAY_SIZE(max22531_channels);
-   141	
-   142		ret = devm_regulator_get_enable(&spi->dev, "vddl");
-   143		if (ret)
-   144			return dev_err_probe(&spi->dev, ret,
-   145			       "Failed to retrieve power logic supply.\n");
-   146	
-   147		ret = devm_regulator_get_enable(&spi->dev, "vddpl");
-   148		if (ret)
-   149			return dev_err_probe(&spi->dev, ret,
-   150			       "Failed to retrieve isolated DC-DC supply.\n");
-   151	
-   152		ret = max22531_reg_read(adc, MAX22531_REG_PROD_ID, &prod_id);
-   153		if (ret ||
- > 154		    FIELD_GET(MAX22531_DEVICE_REV_MSK, prod_id) != MAX22531_DEVICE_REV)
-   155			dev_warn(&spi->dev, "PROD_ID verification failed\n");
-   156	
-   157		return devm_iio_device_register(&spi->dev, indio_dev);
-   158	}
-   159	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks, folded to the patch because it's in the development queue.
 
