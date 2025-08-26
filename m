@@ -1,111 +1,124 @@
-Return-Path: <linux-kernel+bounces-787359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 408BDB3752D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 01:06:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 724FCB3752B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 01:05:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 632411B684B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 23:06:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21B5C1B682E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 23:05:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7DC32F6572;
-	Tue, 26 Aug 2025 23:05:30 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4485B2C0260;
+	Tue, 26 Aug 2025 23:05:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="R6Az0ARi"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 756B92F548C;
-	Tue, 26 Aug 2025 23:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1522220296A;
+	Tue, 26 Aug 2025 23:05:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756249530; cv=none; b=LbNosShot2kIhsaKx/Nr0jRdCTL/Cgs1Uza/+btm9nVIF+f8THubt/HD8lgB/H0tBEVlm9Gh7CDPGJDXnjmwnSH88Gv2rTyzFH8MmGytlAeeTT5OcOU2fRscw7W15KmDoBWfiYPBX341QqIEci/C42ScnLt8TCzltGoSzJHvT0I=
+	t=1756249523; cv=none; b=aIRCnlDoLkiEIeaDaV8gl+/7u/gz4/htlQPLLP0x0MvPfxm9YJlQdb0T2PuiMCyKEyB9LY9uRDCARWbc2fvL1ugFLIpqJIjwHN3CeVcApdNqXfgO3Bjezp9JKlXl6Dw5zCNMpqMmcAESI1otO8mru36hi5plJ4gqLKQVBD7VUHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756249530; c=relaxed/simple;
-	bh=IHJkd22G57+IJb+h1jiPe7v3H6YGX/QkK3NxgEespt4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Uaf+1kJ66zAnQdGoLVvX1OGxD/P9t5wp0ScU4PAk6KQvpk1Xa6MpvcMldUOg3jHl3qyHpv0csynXFred8zUtdky3hyU9rc1DZxHZhpDeuFBPbuk/qErF+LWFoB3zEZWgNjOgBzNuMvPWdHjkoey70IwwbeIeSfhNjjDTWVEm3ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98.2)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1ur2j8-000000001sD-1qrG;
-	Tue, 26 Aug 2025 23:05:18 +0000
-Date: Wed, 27 Aug 2025 00:05:14 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Hauke Mehrtens <hauke@hauke-m.de>,
-	Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Cc: Andreas Schirm <andreas.schirm@siemens.com>,
-	Lukas Stockmann <lukas.stockmann@siemens.com>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Peter Christen <peter.christen@siemens.com>,
-	Avinash Jayaraman <ajayaraman@maxlinear.com>,
-	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
-	Juraj Povazanec <jpovazanec@maxlinear.com>,
-	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
-	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
-	"Livia M. Rosu" <lrosu@maxlinear.com>,
-	John Crispin <john@phrozen.org>
-Subject: [PATCH net-next v2 0/6] net: dsa: lantiq_gswip: prepare for
- supporting MaxLinear GSW1xx
-Message-ID: <cover.1756228750.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1756249523; c=relaxed/simple;
+	bh=Ntf1uv8iqeTVzpcpfPCUovUSPoRWsWezcHFAuAaDnQ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=slq3aKoxO37Nf3Yds6Y5mXAdHIFbgsEu7YeKc4l2+UVmjKj9VAYQfsdHPUfz8+sUYKp7pOSnLhCb9xyvcMJAdObzRjfx97dZhvW+EpIaYtWnQok77OL16lyGA/pIz/4nbMNga1ehcnzDm/h8VmcjiUq0tPsWw5ObCJ5YvwB5pAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=R6Az0ARi; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3cb9268511bso599565f8f.0;
+        Tue, 26 Aug 2025 16:05:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1756249520; x=1756854320; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AZfSjh7i/ntcVqacdlAKOPl4pOi7bpW4S9RgH4BiaRA=;
+        b=R6Az0ARi34nNxrMXyyvyLz+sSFld4z8n9Ml1aCKxY3Bqc22D4jh+UpE7TrdKiLTk4M
+         tSEL1RcC5SGyGg0H/2E1Rmtr/pj6/PMVjKjbMcXTBlbGcztk+b8J8BVUGW14Oj+UYqZK
+         px16gDjHlmEZkWs8Vn7cl6JCrBQ67bJk3SdICedUEx1KXbutX2F41vvdMHfpEgmQhLzE
+         jaoPu69xIkqRBXOABFxRHLP8cnzUvbhIQl6MdvnhU5owek2nR6kI9Z3o5gm+7IhtS2cD
+         mLM5Zr1R0t81FJYmObZKEe3gP5dgXZjZl7EYCtTeCQIOot0nykRcOYKVn9/RJW9GPVOU
+         DenQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756249520; x=1756854320;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AZfSjh7i/ntcVqacdlAKOPl4pOi7bpW4S9RgH4BiaRA=;
+        b=Z9gWiZtHcWutcJPRLkmOseubxKxHao9IAKHeZ9XWUE3VaV5dH3+FkJDqiUAENzGNsE
+         nNVH40Lyf4Y6lWFt8V3VilWykkrwnccg2x88150qs5ROajlvOwd6rnzfae4W4J9W4F3U
+         jXSEcnr1s+vH61QFUF2Na3QuP/Nm25yjLI1GkwwmdSowLPRZtf290OycL7Q3O1QEJKfy
+         piRT5ACtYmnm9t00125YpnKBbaN1W/WIA3FW5wdW0GCL+JnwbwOOUYsHJE7TyPqWGqin
+         Y+7jnDpMwJxuhd1bs7Ejmd6udCXYkTcHJLep+BMpSzU4DDCDqPLK1J9Og1iVGLk3ZSwS
+         ggJA==
+X-Forwarded-Encrypted: i=1; AJvYcCW+tleVbYN8I6MbCY4NWrnpHgf1XCbYnxf44KasA9qg7SE4uvO46fhd5PovwRlPGrZTxRubtDlW@vger.kernel.org, AJvYcCXewezCUERTWKxylEXlijAdQ8iYtGnxDV9i69bT+6bK+Mm02bbg5yj2TVY90RODBpJaiZP0eqqlccHifno=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgtadXK+3RCYg0Riv9OOMVl+kSRrDOnlPp3hQ+0iF5jvSzuk9T
+	WCRx6IBsdMLy9KqoTCzr8mJJXnDtzjtN9Y5ZWvhgpsJg4aAYsi531aY=
+X-Gm-Gg: ASbGnctAzs6IkSXfsKFJWJ6ks/8CusSiV6ruiol0V6PRiaSa9nxp+wmefx3c5C5qWu+
+	ApI4CQqqKQ0o8Ghfppc8vhQhUXQKS0E7ZWPrBycxtyIi/xtxmxtglvT+fO8skN/fd3o+zqtq0ot
+	o/lTv1Wwm7wSVj7NOTI6v+BWNNwxRUEFRPS5eDaMoGAlXBQoLkwECn2ZfMJARCRrM27K3e/wD1i
+	f0DKSc5c9MIYcm3FpTEo6qqVozLS8DKxUTpOto5AXn0qrtQzOvMYo59jOdpta0m13iTI+VZNLpW
+	EjEJUcTDWg8ruyltfEzyVD1qonHn+qqc5D43xdzbhA8TiDPSIGAL6CbH4gbm8vPs2RFUhDvd2yt
+	JhEcb+vGCKQRKUIVQqEUk6RLDQNlHQMlbijRa2kkDvgrZPe5msnAddjk/RG4z7PBqomimVHEGUg
+	==
+X-Google-Smtp-Source: AGHT+IHlfoH3zm/dopGG45e2eJiSTjBOdFRANpue/GnxzPD0rcQZdRsEs1ifItNI1iZFFELob93y4Q==
+X-Received: by 2002:a05:6000:3105:b0:3b9:10c5:bd7d with SMTP id ffacd0b85a97d-3c5da83a6b8mr13874103f8f.10.1756249520171;
+        Tue, 26 Aug 2025 16:05:20 -0700 (PDT)
+Received: from [192.168.1.3] (p5b057219.dip0.t-ipconnect.de. [91.5.114.25])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c70e4ba078sm19710659f8f.4.2025.08.26.16.05.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Aug 2025 16:05:19 -0700 (PDT)
+Message-ID: <7f7b9d4b-ff17-4efc-bc93-699bb417c925@googlemail.com>
+Date: Wed, 27 Aug 2025 01:05:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.16 000/457] 6.16.4-rc1 review
+Content-Language: de-DE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org
+References: <20250826110937.289866482@linuxfoundation.org>
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20250826110937.289866482@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Continue to prepare for supporting the newer standalone MaxLinear GSW1xx
-switch family by extending the existing lantiq_gswip driver to allow it
-to support MII interfaces and MDIO bus of the GSW1xx.
+Am 26.08.2025 um 13:04 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.16.4 release.
+> There are 457 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-This series has been preceded by an RFC series which covers everything
-needed to support the MaxLinear GSW1xx family of switches. Andrew Lunn
-had suggested to split it into a couple of smaller series and start
-with the changes which don't yet make actual functional changes or
-support new features.
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg oddities or regressions found.
 
-Everything has been compile and runtime tested on AVM Fritz!Box 7490
-(GSWIP version 2.1, VR9 v1.2)
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
-Link: https://lore.kernel.org/netdev/aKDhFCNwjDDwRKsI@pidgin.makrotopia.org/
 
-v2: move lantiq_gswip driver to its own folder
-
-Daniel Golle (6):
-  net: dsa: lantiq_gswip: move to dedicated folder
-  net: dsa: lantiq_gswip: support model-specific mac_select_pcs()
-  net: dsa: lantiq_gswip: ignore SerDes modes in phylink_mac_config()
-  net: dsa: lantiq_gswip: support offset of MII registers
-  net: dsa: lantiq_gswip: support standard MDIO node name
-  net: dsa: lantiq_gswip: move MDIO bus registration to .setup()
-
- MAINTAINERS                                 |  3 +-
- drivers/net/dsa/Kconfig                     |  8 +---
- drivers/net/dsa/Makefile                    |  2 +-
- drivers/net/dsa/lantiq/Kconfig              |  7 +++
- drivers/net/dsa/lantiq/Makefile             |  1 +
- drivers/net/dsa/{ => lantiq}/lantiq_gswip.c | 52 ++++++++++++++++-----
- drivers/net/dsa/{ => lantiq}/lantiq_gswip.h |  4 ++
- drivers/net/dsa/{ => lantiq}/lantiq_pce.h   |  0
- 8 files changed, 55 insertions(+), 22 deletions(-)
- create mode 100644 drivers/net/dsa/lantiq/Kconfig
- create mode 100644 drivers/net/dsa/lantiq/Makefile
- rename drivers/net/dsa/{ => lantiq}/lantiq_gswip.c (98%)
- rename drivers/net/dsa/{ => lantiq}/lantiq_gswip.h (98%)
- rename drivers/net/dsa/{ => lantiq}/lantiq_pce.h (100%)
+Beste Grüße,
+Peter Schneider
 
 -- 
-2.51.0
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
+
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
