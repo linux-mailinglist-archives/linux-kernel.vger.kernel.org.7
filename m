@@ -1,115 +1,244 @@
-Return-Path: <linux-kernel+bounces-786443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07793B359E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:13:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09BEAB359EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:15:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE8B92A53EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:13:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF8C81B6185E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:15:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFB4326D43;
-	Tue, 26 Aug 2025 10:13:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A5232143C;
+	Tue, 26 Aug 2025 10:15:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UgvH79YC"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vKi90Lq8"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53F7296BD7;
-	Tue, 26 Aug 2025 10:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F174269D18
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 10:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756203230; cv=none; b=MTgjq0sCJiI8P62rnfl00x0eSKP8Qp42ehjHKkwORHz8FnT1GT513qPJu8hwcolxgm4CeCCgUT2Rcvc1To9hpEaWFu78Zjd1HVXyCYToU8EeFC3CU3OFMyoJDVia2v0UtCMo74tCFFg7AOqlFJ919Pyjz1Fp2EOfd/pgZR4+9+A=
+	t=1756203308; cv=none; b=OSy6z3TBjJ5l3maLtSz/Hd+FNu7R3FTMLDu+B8OHMP2Ef7rdtvhLlANjz3yH9FiyZi2XlcYfrE+X3F5+Z7LJSW7HCTOkazkDor0gjsNVcfjqmA35OtL8wVssZfaxejneiDCWUpFyDOY8h0tsxQvBVfKUC5fT+aNXkr8RPlfjdXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756203230; c=relaxed/simple;
-	bh=HfhlOUNQCkoaUDkzaVR6DYfxjzrLBnZO5cq3xAbdgQg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=qZugmcOCSAh2K96G2lTLAIt6K7grJm0QBsxcfAflthnId0qsmVl0q/DZ7a8ELGLC7EvQCl3hUqFexryh7EN+Dy8oejJBGZ0JTm4BdIeJ5xFhubGQPlmU/gTWtCoV0w4okeMCdSeS8luZRnZk+caJcHWzsFXPQ/xCJczeEgnHRkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UgvH79YC; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45a1b0c82eeso46332965e9.3;
-        Tue, 26 Aug 2025 03:13:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756203227; x=1756808027; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=e9GUq8tiWVe2q2KBwQ5uL0NJkplThCduW2ScMQxhB7o=;
-        b=UgvH79YCZjNQ9XIXHYbC5COcozOrY/luPU8pU5nH9AQi9cnYaGmvOoEQ4iQXFYx/OO
-         vHggUyYZsq0yvAqrqSXyskSL8v11QBEDHWZA7lug4j+dO3MythmVps0oiOuN0nuLmhJS
-         CwFL8mhjWMwKg9u5HpbR5tS6pzxs4HGep4PCggMLY1pyDdp9Oq1UDFiqweBUcm+OXFwr
-         mjhLh3s/vCRlwLiNkLIop5zNOWoH+YQpHc21LwFWXVnZCUexRI78zydSmF3Z9lbgPF9c
-         /l5BqQMkdSK0HGSxywnPrOpbe4poP6L5/3aeL2k2MEVNfkSO+N3ZWWMSHE8XJ2oBHVJh
-         +9XA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756203227; x=1756808027;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=e9GUq8tiWVe2q2KBwQ5uL0NJkplThCduW2ScMQxhB7o=;
-        b=HEXHCW3BeIVbMQtP0C6Kst117Eo3VWQWKIcrenV+tp/GZIqrZAMqVppceRQ98PPWiI
-         U8pb5iu8z45Z1pnNyEGdmy1CFhQO61ZvrUjlsahKkqKfZtRGk39LsUL2LH71zWha2QSu
-         mvaZ7vtzoLbthS/1Ym4Yw6rUDY9GmbJJsL2uh/95MPr+PLI5M62JTTy67HWfjSb10ES6
-         chtA7RXtVG3SXgmmFKPyjW19LifFPSSxWAxulhM2Z5rAN3W8tUwRcV09z/dERf648ypv
-         rVxUnGeEvirje+fGjqyCbtKN6FFXuEBSRdrpiSIehDn3VI6KtOxn/oD5T8LUW3QFEtSU
-         U4/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVgMgK44AwFoDiT8iw+/mdwXZ4KRQ69dapoiit1l99b74Geyv+78xt3qP5nQYGPr2h90hkwinfKDgv7q2A=@vger.kernel.org, AJvYcCXCZQQkZLEb6L9WLRnp1eS9bMrHYeF6HlKeOzDa1jt9U5ZM8iC6nD6FIfQ2rm2ZVGbIHPmds0YD8bZLXwHM6LA9ohsW@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMNM1kF2fpKnbi1sEqyy2NY4E4XulfzTil0jPrZ1SkRX2iWkhl
-	K0VE1zxx+ubez7yFG7etPcJtRQb1YeOXu1RPpaO+xVrY5HK2l+od1uQ=
-X-Gm-Gg: ASbGncuVM4zI6E6KFUHSgAoOWdeVfvJOUisXmiiSBrWUFuY7CAVsY4As2T7MqKjvSdx
-	KpaB2xu76O1k0rlDAslDfMn/4ffRBM2faK3mIPIyzP3Bs/R/EbLvg98axgV5dxGzsT5yvx+Nw+u
-	QSKaQlU/F4hOs3wjiCWGvZuqj2a1pBtGkuegtB0hkT3OsdULY4YnYO2hHOXdcF0lD5VopBqnbbe
-	fqo6ZEJ1Db0tLdhssgrpjWd9d7UgEPFliZTtlvMGbZSn6Np9vGEyMxXOxjYrThtnjqU4N+ad7Zg
-	IJOyB3vTGpserXO+oXLsdYCFSSHSRs49U8GHsnSsNTpW+u67gTa4Kg/ZAWSF2h5unANntEM/N3F
-	B5Qd68q+Ny3yB23pRns2O6NL8
-X-Google-Smtp-Source: AGHT+IFhAawnX65LOdrWJkscz2oMkvFgIbga0PjDZYqjlN/j/J/rlUmXoIkurpGi05rLX9Zv5OQOpg==
-X-Received: by 2002:a05:600c:524e:b0:45b:6365:794f with SMTP id 5b1f17b1804b1-45b63657ac5mr46011345e9.33.1756203226932;
-        Tue, 26 Aug 2025 03:13:46 -0700 (PDT)
-Received: from vova-pc ([37.122.165.138])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b5757378dsm143780475e9.15.2025.08.26.03.13.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 03:13:46 -0700 (PDT)
-Date: Tue, 26 Aug 2025 12:13:44 +0200
-From: Vladimir Riabchun <ferr.lambarginio@gmail.com>
-To: rostedt@goodmis.org
-Cc: mhiramat@kernel.org, mark.rutland@arm.com, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH] ftrace/samples: Fix function size computation
-Message-ID: <aK2I2IGKRwmkQuIR@vova-pc>
+	s=arc-20240116; t=1756203308; c=relaxed/simple;
+	bh=jzCx4AJYjfVdLu4lvm7viYZkDwKumPWXqnVTmygMhf8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uSqpa1qwopVnXXcGQ+aMTftplK6j35WnM5GKhTCQhU+MTd/Ip0THrWZtmdOsoNsHqstPToYO0peudLfbMW3r7T6cZQsVR26Yrm3gdkaUFU3x0V57qAQHtBsr/mAYQ4IjRpjMtwzhqCsdtxIxSQ2yYnghFTPM+g7piDe7UtOIHuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vKi90Lq8; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <bbdabd48-61c0-46f9-bf33-c49d6d27ffb0@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756203292;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=93BSLKjqwuhfuo1d7BbPvsz9FaxJknFZQrYjXgjX3Wc=;
+	b=vKi90Lq8N/rLBoHV/tqnWppuyM5doMlL1lAFpjC9LmAx77dqYYLv2dujjcgkPedcv4S1Z9
+	iMCUV/m4kMoYXj77kIMW/nhAhgV8WbG8og5OB9JvwilZ4AcQrp8cqsIAXz/O0+kuy7o6GX
+	6200GzoLUS2Tj99Sr5Lx6WpG/etTCik=
+Date: Tue, 26 Aug 2025 11:14:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Subject: Re: [PATCH net-next v7 4/5] net: rnpgbe: Add basic mbx_fw support
+To: Yibo Dong <dong100@mucse.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
+ gur.stavi@huawei.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
+ danishanwar@ti.com, lee@trager.us, gongfan1@huawei.com, lorenzo@kernel.org,
+ geert+renesas@glider.be, Parthiban.Veerasooran@microchip.com,
+ lukas.bulwahn@redhat.com, alexanderduyck@fb.com, richardcochran@gmail.com,
+ kees@kernel.org, gustavoars@kernel.org, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <20250822023453.1910972-1-dong100@mucse.com>
+ <20250822023453.1910972-5-dong100@mucse.com>
+ <316f57e3-5953-4db6-84aa-df9278461d30@linux.dev>
+ <82E3BE49DB4195F0+20250826013113.GA6582@nic-Precision-5820-Tower>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <82E3BE49DB4195F0+20250826013113.GA6582@nic-Precision-5820-Tower>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-In my_tramp1 function ASM_RET instruction was placed below
-.size directive, leading to a wrong function size.
+On 26/08/2025 02:31, Yibo Dong wrote:
+> On Mon, Aug 25, 2025 at 05:37:27PM +0100, Vadim Fedorenko wrote:
+>> On 22/08/2025 03:34, Dong Yibo wrote:
+>>
+>> [...]
+>>> +/**
+>>> + * mucse_mbx_fw_post_req - Posts a mbx req to firmware and wait reply
+>>> + * @hw: pointer to the HW structure
+>>> + * @req: pointer to the cmd req structure
+>>> + * @cookie: pointer to the req cookie
+>>> + *
+>>> + * mucse_mbx_fw_post_req posts a mbx req to firmware and wait for the
+>>> + * reply. cookie->wait will be set in irq handler.
+>>> + *
+>>> + * @return: 0 on success, negative on failure
+>>> + **/
+>>> +static int mucse_mbx_fw_post_req(struct mucse_hw *hw,
+>>> +				 struct mbx_fw_cmd_req *req,
+>>> +				 struct mbx_req_cookie *cookie)
+>>> +{
+>>> +	int len = le16_to_cpu(req->datalen);
+>>> +	int err;
+>>> +
+>>> +	cookie->errcode = 0;
+>>> +	cookie->done = 0;
+>>> +	init_waitqueue_head(&cookie->wait);
+>>> +	err = mutex_lock_interruptible(&hw->mbx.lock);
+>>> +	if (err)
+>>> +		return err;
+>>> +	err = mucse_write_mbx_pf(hw, (u32 *)req, len);
+>>> +	if (err)
+>>> +		goto out;
+>>> +	/* if write succeeds, we must wait for firmware response or
+>>> +	 * timeout to avoid using the already freed cookie->wait
+>>> +	 */
+>>> +	err = wait_event_timeout(cookie->wait,
+>>> +				 cookie->done == 1,
+>>> +				 cookie->timeout_jiffies);
+>>
+>> it's unclear to me, what part of the code is managing values of cookie
+>> structure? I didn't get the reason why are you putting the address of
+>> cookie structure into request which is then directly passed to the FW.
+>> Is the FW supposed to change values in cookie?
+>>
+> 
+> cookie will be used in an irq-handler. like this:
+> static int rnpgbe_mbx_fw_reply_handler(struct mucse *mucse,
+>                                         struct mbx_fw_cmd_reply *reply)
+> {
+>          struct mbx_req_cookie *cookie;
+> 
+>          cookie = reply->cookie;
+> 
+>          if (cookie->priv_len > 0)
+>                  memcpy(cookie->priv, reply->data, cookie->priv_len);
+>          cookie->done = 1;
+>          if (le16_to_cpu(reply->flags) & FLAGS_ERR)
+>                  cookie->errcode = -EIO;
+>          else
+>                  cookie->errcode = 0;
+>          wake_up(&cookie->wait);
+>          return 0;
+> }
+> That is why we must wait for firmware response.
+> But irq is not added in this patch series. Maybe I should move all
+> cookie relative codes to the patch will add irq?
 
-Fixes: 9d907f1ae80b ("samples/ftrace: Fix asm function ELF annotations")
-Signed-off-by: Vladimir Riabchun <ferr.lambarginio@gmail.com>
----
- samples/ftrace/ftrace-direct-modify.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+well, yes, in general it's better to introduce the code as a solid
+solution. this way it's much easier to review
 
-diff --git a/samples/ftrace/ftrace-direct-modify.c b/samples/ftrace/ftrace-direct-modify.c
-index cfea7a38befb..da3a9f2091f5 100644
---- a/samples/ftrace/ftrace-direct-modify.c
-+++ b/samples/ftrace/ftrace-direct-modify.c
-@@ -75,8 +75,8 @@ asm (
- 	CALL_DEPTH_ACCOUNT
- "	call my_direct_func1\n"
- "	leave\n"
--"	.size		my_tramp1, .-my_tramp1\n"
- 	ASM_RET
-+"	.size		my_tramp1, .-my_tramp1\n"
- 
- "	.type		my_tramp2, @function\n"
- "	.globl		my_tramp2\n"
--- 
-2.43.0
+> 
+>>> +
+>>> +	if (!err)
+>>> +		err = -ETIMEDOUT;
+>>> +	else
+>>> +		err = 0;
+>>> +	if (!err && cookie->errcode)
+>>> +		err = cookie->errcode;
+>>> +out:
+>>> +	mutex_unlock(&hw->mbx.lock);
+>>> +	return err;
+>>> +}
+>>
+>> [...]
+>>
+>>> +struct mbx_fw_cmd_req {
+>>> +	__le16 flags;
+>>> +	__le16 opcode;
+>>> +	__le16 datalen;
+>>> +	__le16 ret_value;
+>>> +	union {
+>>> +		struct {
+>>> +			__le32 cookie_lo;
+>>> +			__le32 cookie_hi;
+>>> +		};
+>>> +
+>>> +		void *cookie;
+>>> +	};
+>>> +	__le32 reply_lo;
+>>> +	__le32 reply_hi;
+>>
+>> what do these 2 fields mean? are you going to provide reply's buffer
+>> address directly to FW?
+>>
+> 
+> No, this is defined by fw. Some fw can access physical address.
+> But I don't use it in this driver.
+
+FW can access physical address without previously configuring IOMMU?
+How can that be?
+
+> 
+>>> +	union {
+>>> +		u8 data[32];
+>>> +		struct {
+>>> +			__le32 version;
+>>> +			__le32 status;
+>>> +		} ifinsmod;
+>>> +		struct {
+>>> +			__le32 port_mask;
+>>> +			__le32 pfvf_num;
+>>> +		} get_mac_addr;
+>>> +	};
+>>> +} __packed;
+>>> +
+>>> +struct mbx_fw_cmd_reply {
+>>> +	__le16 flags;
+>>> +	__le16 opcode;
+>>> +	__le16 error_code;
+>>> +	__le16 datalen;
+>>> +	union {
+>>> +		struct {
+>>> +			__le32 cookie_lo;
+>>> +			__le32 cookie_hi;
+>>> +		};
+>>> +		void *cookie;
+>>> +	};
+>>
+>> This part looks like the request, apart from datalen and error_code are
+>> swapped in the header. And it actually means that the FW will put back
+>> the address of provided cookie into reply, right? If yes, then it
+>> doesn't look correct at all...
+>>
+> 
+> It is yes. cookie is used in irq handler as show above.
+> Sorry, I didn't understand 'the not correct' point?
+
+The example above showed that the irq handler uses some value received
+from the device as a pointer to kernel memory. That's not safe, you
+cannot be sure that provided value is valid pointer, and that it points
+to previously allocated cookie structure. It is a clear way to corrupt
+memory.
+
+> 
+>>> +	union {
+>>> +		u8 data[40];
+>>> +		struct mac_addr {
+>>> +			__le32 ports;
+>>> +			struct _addr {
+>>> +				/* for macaddr:01:02:03:04:05:06
+>>> +				 * mac-hi=0x01020304 mac-lo=0x05060000
+>>> +				 */
+>>> +				u8 mac[8];
+>>> +			} addrs[4];
+>>> +		} mac_addr;
+>>> +		struct hw_abilities hw_abilities;
+>>> +	};
+>>> +} __packed;
+>>
 
 
