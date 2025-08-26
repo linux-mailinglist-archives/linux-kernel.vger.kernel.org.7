@@ -1,218 +1,207 @@
-Return-Path: <linux-kernel+bounces-786016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E37AFB3538E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:50:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97B3AB35322
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:17:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC4B21B62F18
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:51:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B84D27B4D22
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:16:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61BF2D9499;
-	Tue, 26 Aug 2025 05:50:38 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FCE186342;
-	Tue, 26 Aug 2025 05:50:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABCF6272E56;
+	Tue, 26 Aug 2025 05:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RcOxXkVa"
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6C511CA9;
+	Tue, 26 Aug 2025 05:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756187438; cv=none; b=GRkT+kchxx4jGkSpyJl2AF2X6/DeGKShW+YSzMYOvhd7VfgdjsBv+4Hb4x6lwcmwQkwOl9tD4RfUABjlHuk2/4x3ocQ0AWum5acUsMao+v8gg2k8BbF9ICocnpevPt7CWRFmqMlxyusbLHV9TfFbII575vOlQhoB7XJA9iTLNHM=
+	t=1756185462; cv=none; b=qiYAmJjFC0T6/3W/Iirf5eCqOKHeCe3EDlVICMwgnOi6j9XcgHy6ihhP4r8d0d7w7s7q0tv8LXA7K+8myKO/vGYS5FtA2WYrm9ngbp5EhIq2XuV2ieqKGNd6Yba0wFIClJLP01xDBdNYQdPUAxrr/JyucTr0AjptdHHRAoz5Yds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756187438; c=relaxed/simple;
-	bh=8mr6sAPn1eF1SLloywwiZDdJyQaCjyvAxVz7GjFVWh4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rz26YaSJABOwZajbmKCmacmQFFgRpYIIqMoQ2EsMFc3GKElylPtOrdfFcvhe7w8A52s4Zg8Q1Z/GpK90yxBn4I38+CcBSMFx8EwwEDSxWufuxVy3ZOhvLl3PhOKSf7wLTE9/C9ji92ng1nJEne8LUrgUnkCheV/hK4AQNKNESRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4c9wqw191fz9sSd;
-	Tue, 26 Aug 2025 07:16:28 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 8QBWi60LJ5rv; Tue, 26 Aug 2025 07:16:28 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4c9wqw02g8z9sSc;
-	Tue, 26 Aug 2025 07:16:28 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id DA3DE8B764;
-	Tue, 26 Aug 2025 07:16:27 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id w2QSnjtwcJ6v; Tue, 26 Aug 2025 07:16:27 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 139828B763;
-	Tue, 26 Aug 2025 07:16:26 +0200 (CEST)
-Message-ID: <154fd466-5305-431f-b49a-a5ccec81507a@csgroup.eu>
-Date: Tue, 26 Aug 2025 07:16:25 +0200
+	s=arc-20240116; t=1756185462; c=relaxed/simple;
+	bh=HN4WVMsoJ6aT/HrCyH4VdROYVrIDQAJ31til/XsQxTU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YPPf1s80Vy2FnSlohHedG84rQtGeJLHapOgGcMXEa9S6pPACiQAkYIOKDGNVtzK9t9+VbZz7/myM+TRzIKPoyKHD/pS1xj5IJqIprSv5KKMj5R2hfrKo8E/JKVxq8xN6RVt6RkOXZDJCl7+CIZu9+8CLfuUYgpCt4FZGjMB42YA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RcOxXkVa; arc=none smtp.client-ip=209.85.221.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-53b174f7cf0so3992226e0c.2;
+        Mon, 25 Aug 2025 22:17:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756185459; x=1756790259; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R6KCkaaGO+9Jn63lszeHqOHrKxFsF7u4XrLjmhxlKN4=;
+        b=RcOxXkVagIG6ExyE1gVgeyWtz970qXVAhotkXKvANEy7M3sKkAUplN3464r0+HkrJG
+         ZLZ7yu0fIMgZ3YNdJskRSl6E+S/SCcX2061aSFrF2ZhhDNLnE2fMoGhGGnr2t88SAn4c
+         hxOPHPoj89PSB2mlhbegNqfyosWaJ7jkaoh7OvMR5onxWr0AmW+6tfpPLsOolJ/zYVOB
+         LcbcjKYaRngHQstQ9NmrDLuAPDNSZQ3BJEP+5NXEFlhhsuo9RtWxJs30O6pKEefmKeHQ
+         TRDcsH4AdkB2XzbyBKgcD58rk+/a3c+weZ3jWxuK+P4kYoIk6wWaPoRzjbz2sEcCCfSO
+         MyxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756185459; x=1756790259;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R6KCkaaGO+9Jn63lszeHqOHrKxFsF7u4XrLjmhxlKN4=;
+        b=BUuVePDReYQ7GQ7gEU/i69HOpk1j+GazVOOsEPEgzABZB9lKKZf6TEIjqhXdHCwMuB
+         rRzzYiBWUnC3xMZ3ofAkvIFze6CoRQ1dyJWvp5Fz+EKodeBRTwJTuO5N1u8W2GVb5RQA
+         2SriK5Ra88xgek/X+8nAlc2Me5lptsLG+uKT3BVuh3VG/NU11Gq/kaPK84TUHNP7pZfV
+         0qFu3ba60ZVcxUrEwosJ1tDem+xptijqBPIq5IUMctUk2xbAq52Z11gxOk1fFoFCG8WK
+         8Ya8A1SPVYKgCR9EeqcjURrDuXAf5DIN9DpoTDPifvpVAHVYq3ue1OK+Mkm9+2HdjxEV
+         ZRKw==
+X-Forwarded-Encrypted: i=1; AJvYcCWvdH1TLC18TFyvXI0RxJCHG0+WUFTFYU1LVFuEQ8IpBVHmvlvabFQ5sdBunDGPx/jriyzHur9qJKQeXj4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxweJ+HjCtsob+neb2o4i33NBuIp7Rm+nSHO//dEbND45jHU9EA
+	tRIRTBZ8OUNDHrfoBv/mk+u1e6ERoftgEWeR4AXCFy2CYE/L6R9yahm8kYLTJVY6oeQ52GHdd3q
+	df5NREc+W9v24r31A0ixYwCi8CXqlRlo=
+X-Gm-Gg: ASbGncvb9YGQTxTZQKy+vTS9YUhR9I7noaWDWXzNtqzDwUi4RzHziHuusVIDymA/PBL
+	3Tzhx6NwCR/uMUTnAl00jMNwxgHTlRnUI25ioSqpXw6bXZVcpeJTyxJb52KjWPFrZP1bAowEKNu
+	Sx5zMF+SZSCjGEkfoLDQHm6NO3XwQBfkCjLpB+3PXGbWAAOdmIalPahuGhMcmlDwb/npiXoZsqv
+	u49nk5AaAA4rl8kOg==
+X-Google-Smtp-Source: AGHT+IHW8PFR8+zVJx+H1F//I5Djns1GfxpRAjFWm2T8ulatbw+PZth3H+Z/Iuy2+xO6mHlBSstorcd9X74Q7lUd+ls=
+X-Received: by 2002:a05:6122:3c51:b0:53b:174d:98f2 with SMTP id
+ 71dfb90a1353d-53c8a2afd87mr4059919e0c.3.1756185459220; Mon, 25 Aug 2025
+ 22:17:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 8/8] sched/topology: Unify tl_pkg_mask() across core
- and all arch
-To: K Prateek Nayak <kprateek.nayak@amd.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>, linuxppc-dev@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- thomas.weissschuh@linutronix.de, Li Chen <chenl311@chinatelecom.cn>,
- Bibo Mao <maobibo@loongson.cn>, Mete Durlu <meted@linux.ibm.com>,
- Tobias Huschle <huschle@linux.ibm.com>,
- Easwar Hariharan <easwar.hariharan@linux.microsoft.com>,
- Guo Weikang <guoweikang.kernel@gmail.com>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
- Brian Gerst <brgerst@gmail.com>,
- Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
- Swapnil Sapkal <swapnil.sapkal@amd.com>,
- "Yury Norov [NVIDIA]" <yury.norov@gmail.com>,
- Sudeep Holla <sudeep.holla@arm.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Andrea Righi <arighi@nvidia.com>, Yicong Yang <yangyicong@hisilicon.com>,
- Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
- Tim Chen <tim.c.chen@linux.intel.com>,
- Vinicius Costa Gomes <vinicius.gomes@intel.com>
-References: <20250826041319.1284-1-kprateek.nayak@amd.com>
- <20250826041319.1284-9-kprateek.nayak@amd.com>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <20250826041319.1284-9-kprateek.nayak@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250801043642.8103-1-kanchana.p.sridhar@intel.com>
+ <20250801043642.8103-23-kanchana.p.sridhar@intel.com> <CAGsJ_4xRij-Vz_-dmL44YLvaQrYLKKnw7O_Skedrxj_YxuaT5Q@mail.gmail.com>
+ <PH7PR11MB8121532CE4368DF5BAA6D46DC939A@PH7PR11MB8121.namprd11.prod.outlook.com>
+ <CAGsJ_4xMuLPy3+mAxzOj6SfnFZaDf+B=WkmbrCNqv8gvK080Fw@mail.gmail.com> <PH7PR11MB8121B86E65349F5CF854CA57C939A@PH7PR11MB8121.namprd11.prod.outlook.com>
+In-Reply-To: <PH7PR11MB8121B86E65349F5CF854CA57C939A@PH7PR11MB8121.namprd11.prod.outlook.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Tue, 26 Aug 2025 13:17:26 +0800
+X-Gm-Features: Ac12FXwFLemTCGqls7xpPBf9Ugl5TECSEyLNR8RUZl5ccfrj7g2jmoWvOleOPpM
+Message-ID: <CAGsJ_4zt9zQFh1mz6gpQOCWBOjz1osN9jTd62uKGf865vRwuLA@mail.gmail.com>
+Subject: Re: [PATCH v11 22/24] mm: zswap: Allocate pool batching resources if
+ the compressor supports batching.
+To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"hannes@cmpxchg.org" <hannes@cmpxchg.org>, "yosry.ahmed@linux.dev" <yosry.ahmed@linux.dev>, 
+	"nphamcs@gmail.com" <nphamcs@gmail.com>, "chengming.zhou@linux.dev" <chengming.zhou@linux.dev>, 
+	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "ryan.roberts@arm.com" <ryan.roberts@arm.com>, 
+	"ying.huang@linux.alibaba.com" <ying.huang@linux.alibaba.com>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
+	"senozhatsky@chromium.org" <senozhatsky@chromium.org>, 
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
+	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>, 
+	"clabbe@baylibre.com" <clabbe@baylibre.com>, "ardb@kernel.org" <ardb@kernel.org>, 
+	"ebiggers@google.com" <ebiggers@google.com>, "surenb@google.com" <surenb@google.com>, 
+	"Accardi, Kristen C" <kristen.c.accardi@intel.com>, "Gomes, Vinicius" <vinicius.gomes@intel.com>, 
+	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, "Gopal, Vinodh" <vinodh.gopal@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+> > > > [...]
+> > > > >
+> > > > > +       /*
+> > > > > +        * Set the unit of compress batching for large folios, fo=
+r quick
+> > > > > +        * retrieval in the zswap_compress() fast path:
+> > > > > +        * If the compressor is sequential (@pool->compr_batch_si=
+ze is 1),
+> > > > > +        * large folios will be compressed in batches of
+> > > > ZSWAP_MAX_BATCH_SIZE
+> > > > > +        * pages, where each page in the batch is compressed sequ=
+entially.
+> > > > > +        * We see better performance by processing the folio in b=
+atches of
+> > > > > +        * ZSWAP_MAX_BATCH_SIZE, due to cache locality of working=
+ set
+> > > > > +        * structures.
+> > > > > +        */
+> > > > > +       pool->batch_size =3D (pool->compr_batch_size > 1) ?
+> > > > > +                               pool->compr_batch_size : ZSWAP_MA=
+X_BATCH_SIZE;
+> > > > > +
+> > > > >         zswap_pool_debug("created", pool);
+> > > > >
+> > > > >         return pool;
+> > > > >
+> > > >
+> > > > It=E2=80=99s hard to follow =E2=80=94 you add batch_size and compr_=
+batch_size in this
+> > > > patch, but only use them in another. Could we merge the related cha=
+nges
+> > > > into one patch instead of splitting them into several that don=E2=
+=80=99t work
+> > > > independently?
+> > >
+> > > Hi Barry,
+> > >
+> > > Thanks for reviewing the code and for your comments! Sure, I can merg=
+e
+> > > this patch with the next one. I was trying to keep the changes modula=
+rized
+> > > to a) zswap_cpu_comp_prepare(), b) zswap_store() and c)
+> > zswap_compress()
+> > > so the changes are broken into smaller parts, but I can see how this =
+can
+> > > make the changes appear disjointed.
+> > >
+> > > One thing though: the commit logs for each of the patches will
+> > > also probably need to be merged, since I have tried to explain the
+> > > changes in detail.
+> >
+> > It=E2=80=99s fine to merge the changelog and present the story as a who=
+le. Do we
+>
+> Sure.
+>
+> > really need both pool->batch_size and pool->compr_batch_size? I assume
+> > pool->batch_size =3D pool->compr_batch_size if HW supports batch; other=
+wise
+> > pool->compr_batch_size =3D 1.
+>
+> Actually not exactly. We have found value in compressing in batches of
+> ZSWAP_MAX_BATCH_SIZE even for software compressors. Latency benefits
+> from cache locality of working-set data. Hence the approach that we have
+> settled on is pool->batch_size =3D ZSWAP_MAX_BATCH_SIZE if
+> the compressor does not support batching (i.e., if pool->compr_batch_size=
+ is 1).
+> If it does, then pool->batch_size =3D pool->compr_batch_size.
+
+I understand that even without a hardware batch, you can still
+have some software batching that excludes compression.
+
+However, based on the code below, it looks like
+pool->compr_batch_size is almost always either equal to
+pool->batch_size or 1:
+
++       pool->compr_batch_size =3D min(ZSWAP_MAX_BATCH_SIZE,
++                                    crypto_acomp_batch_size(acomp_ctx->aco=
+mp));
+
++       pool->batch_size =3D (pool->compr_batch_size > 1) ?
++                               pool->compr_batch_size : ZSWAP_MAX_BATCH_SI=
+ZE;
 
 
+It seems one of these two variables may be redundant.
+For instance, no matter if pool->compr_batch_size > 1, could we always trea=
+t
+batch_size as ZSWAP_MAX_BATCH_SIZE?  if we remove
+pool->batch_size, could we just use pool->compr_batch_size as the
+step size for compression no matter if pool->compr_batch_size > 1.
 
-Le 26/08/2025 à 06:13, K Prateek Nayak a écrit :
-> Unify the tl_pkg_mask() wrapper around cpu_nod_mask() across core, x86,
-> powerpc, and s390.
-> 
-> No functional changes intended.
-> 
-> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
-> ---
->   arch/powerpc/kernel/smp.c      | 7 +------
->   arch/s390/kernel/topology.c    | 7 +------
->   arch/x86/kernel/smpboot.c      | 5 -----
->   include/linux/sched/topology.h | 6 ++++++
->   kernel/sched/topology.c        | 5 -----
->   5 files changed, 8 insertions(+), 22 deletions(-)
-> 
-> diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
-> index 40719679385b..8e869c13f7ed 100644
-> --- a/arch/powerpc/kernel/smp.c
-> +++ b/arch/powerpc/kernel/smp.c
-> @@ -1064,11 +1064,6 @@ const struct cpumask *cpu_coregroup_mask(int cpu)
->   }
->   #endif
->   
-> -static const struct cpumask *cpu_pkg_mask(struct sched_domain_topology_level *tl, int cpu)
-> -{
-> -	return cpu_node_mask(cpu);
-> -}
-> -
->   static int __init init_big_cores(void)
->   {
->   	int cpu;
-> @@ -1728,7 +1723,7 @@ static void __init build_sched_topology(void)
->   	}
->   #endif
->   
-> -	powerpc_topology[i++] = SDTL_INIT(cpu_pkg_mask, powerpc_shared_proc_flags, PKG);
-> +	powerpc_topology[i++] = SDTL_INIT(tl_pkg_mask, powerpc_shared_proc_flags, PKG);
->   
->   	/* There must be one trailing NULL entry left.  */
->   	BUG_ON(i >= ARRAY_SIZE(powerpc_topology) - 1);
-> diff --git a/arch/s390/kernel/topology.c b/arch/s390/kernel/topology.c
-> index 8dbf32f362e1..8f5b6ecc055f 100644
-> --- a/arch/s390/kernel/topology.c
-> +++ b/arch/s390/kernel/topology.c
-> @@ -524,17 +524,12 @@ static const struct cpumask *cpu_drawer_mask(struct sched_domain_topology_level
->   	return &cpu_topology[cpu].drawer_mask;
->   }
->   
-> -static const struct cpumask *cpu_pkg_mask(struct sched_domain_topology_level *tl, int cpu)
-> -{
-> -	return cpu_node_mask(cpu);
-> -}
-> -
->   static struct sched_domain_topology_level s390_topology[] = {
->   	SDTL_INIT(tl_smt_mask, cpu_smt_flags, SMT),
->   	SDTL_INIT(tl_mc_mask, cpu_core_flags, MC),
->   	SDTL_INIT(cpu_book_mask, NULL, BOOK),
->   	SDTL_INIT(cpu_drawer_mask, NULL, DRAWER),
-> -	SDTL_INIT(cpu_pkg_mask, NULL, PKG),
-> +	SDTL_INIT(tl_pkg_mask, NULL, PKG),
->   	{ NULL, },
->   };
->   
-> diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-> index bfbcac9a73d1..6c0ab30a80e2 100644
-> --- a/arch/x86/kernel/smpboot.c
-> +++ b/arch/x86/kernel/smpboot.c
-> @@ -472,11 +472,6 @@ static int x86_cluster_flags(void)
->   }
->   #endif
->   
-> -static const struct cpumask *tl_pkg_mask(struct sched_domain_topology_level *tl, int cpu)
-> -{
-> -	return cpu_node_mask(cpu);
-> -}
-> -
->   /*
->    * Set if a package/die has multiple NUMA nodes inside.
->    * AMD Magny-Cours, Intel Cluster-on-Die, and Intel
-> diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
-> index 075d1f063668..807603bfe8ff 100644
-> --- a/include/linux/sched/topology.h
-> +++ b/include/linux/sched/topology.h
-> @@ -71,6 +71,12 @@ struct cpumask *tl_mc_mask(struct sched_domain_topology_level *tl, int cpu)
->   }
->   #endif /* CONFIG_SCHED_MC */
->   
-> +static const __maybe_unused
+for example:
+       pool->compr_batch_size =3D min(ZSWAP_MAX_BATCH_SIZE,
+                                    crypto_acomp_batch_size(acomp_ctx->acom=
+p));
 
-Same as the three previous patches, __maybe_unused shouldn't be required.
+Then batch the zswap store using ZSWAP_MAX_BATCH_SIZE, but set the
+compression step to pool->compr_batch_size.
 
-> +struct cpumask *tl_pkg_mask(struct sched_domain_topology_level *tl, int cpu)
-> +{
-> +	return cpu_node_mask(cpu);
-> +}
-> +
->   #ifdef CONFIG_NUMA
->   static inline int cpu_numa_flags(void)
->   {
-> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> index 77d14430c5e1..18889bd97e22 100644
-> --- a/kernel/sched/topology.c
-> +++ b/kernel/sched/topology.c
-> @@ -1724,11 +1724,6 @@ sd_init(struct sched_domain_topology_level *tl,
->   	return sd;
->   }
->   
-> -static const struct cpumask *tl_pkg_mask(struct sched_domain_topology_level *tl, int cpu)
-> -{
-> -	return cpu_node_mask(cpu);
-> -}
-> -
->   /*
->    * Topology list, bottom-up.
->    */
-
+Thanks
+Barry
 
