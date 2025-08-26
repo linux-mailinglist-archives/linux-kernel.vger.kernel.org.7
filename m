@@ -1,184 +1,257 @@
-Return-Path: <linux-kernel+bounces-787038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3953DB370AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:41:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 133DEB370AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:43:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A06767B4A60
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:39:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 209277A5E96
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:41:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E1C3680B6;
-	Tue, 26 Aug 2025 16:40:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9446C30ACEA;
+	Tue, 26 Aug 2025 16:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="G58DRmbu"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xRXx8x08"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9E4275AF9
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 16:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E0D2750E6
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 16:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756226443; cv=none; b=WeeuDz1rl2qQHFf4uiUTHF05T9U+8MxXoUzWmhwnPkzthw0bO/hARaEsQOrdc0+5w7YxY7u4ifG9GroU93Ahrp+61LPfCl+BcoQ+aIGZGx7fvu1g5ub7KVgbKkJfGlsQiJ37L0nG9ydBguXxyFtGUnmH/zx7E+0bCSi1Q7gbtGk=
+	t=1756226577; cv=none; b=aFnS+7ToGB+NzN+uR+1PiQ+D7zlFfd3se0PZdy3GwsGbvQLbX9z+JoR8fXDVPO9IgiXbFskoh3BLKB4whiQSidBudnffCt6l195uvaPzfaANAnmXeSDXb0Nw8wL2CYB4siUHsU5hFaKmciBx/qKx5yUexiwv8Sj4WfCkSX8RHYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756226443; c=relaxed/simple;
-	bh=J56EJimurRukl3HtUzV6/w+RvxdfQC5smmvRwJRThGk=;
+	s=arc-20240116; t=1756226577; c=relaxed/simple;
+	bh=X8bX4wqEcG5t8zkKm77FY2KpCA9tiNOlzUzYFahmvEE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eZ3H+T2wW42A1CyfPRDYALNCXRzcwuEjKB+t/IrF9SgOXdEv4GtXRsRz+uczuGUqhYiNoL7L8LbIFiZN8Q8QLNwUkKnHJJw3yBprygbtRjN2x35WCAQCLfW458E2MIkC1m4J3EVvDN2GCGOmt13CO45yMTM2YtoGHsZ+KhK5QhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=G58DRmbu; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57QGMV6O030036
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 16:40:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	D8Cf1CJKboWxP5q6R9op8Umbt3K2i/Dw/P1MbHCzwOI=; b=G58DRmbuwEUS4o2h
-	8tV3cbWxBlhGZysuRweeh60AncgOaM3rPSQVPCZoBEAdLGxK60cKoGCIOuJEcL7m
-	Q9mNEve5xv+EfeCXpqc3lWz+dr/U9cV+wYYyO1mPltRPWf2NarpdBrziynk4lUsz
-	NeFX+VrObpy/5frnVlzvuOKGstYpF33J3323wdw/xDs9NC6GxCFqOLKk3aG9gaF/
-	vX/DA3S0beVvqKryKMVJ+L5EZe/2ZKps8tdsnIKx7+EwA68MhxdGvLDSWLRz3R6x
-	YAiQoB857POlABA/DuetPtzzqDFQ7rzMPHPm2rA5kM1xdzqfeXjPaA/ca0Jx3Ly/
-	ju7H9g==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5y5hgnx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 16:40:40 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-246cf6af2f4so47738725ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:40:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756226439; x=1756831239;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=D8Cf1CJKboWxP5q6R9op8Umbt3K2i/Dw/P1MbHCzwOI=;
-        b=i0NNQPuQug6FJ+rPuhdMSRw7khlNcUzhlG5fyaPetGlWFwnJsO8UfsDdBIz248wTqi
-         aDIk3bB+pDQG/mkkyrqbbq5mpYQ4QrM3GpfdVZaoiCkEVsBJ+dlpmN7PP/SzLhWzhgGt
-         5APdnQpQ2EaSaQbitIAVV28h1cm4jpYzETXKZB1IqdIP5NOs0OHk5Yvgoy+kUVNH8bsb
-         43s8ULbHd5vOK3rndBSkEs152ud4sSc6oMLXSVWAQpGgUYrSNKdcdwDdsJmPCUsHs3Rj
-         46Xa1Qdgs9xLR6JxCR7n83t5sf20OHywjo8lTEHUZR2jjHF+G2jN8r7LzkVOqMsx+usc
-         anYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXfOb+QV/xtJaSCe6H9u7nzTaY3ejMIq6vJ/UgryRCgC+wJGA6DCyhGHB3kduoqRPZXH2yCDfoSw2laeUQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4kNpx4ZVa3G9e+haWBA28IPrmQisGPiGfW6Nibj/BCOv1heMD
-	E1DArQvReeJNDIiOI7RQe/1MzawVcWu2Jm14tN+841QHvRERDKPsLKZOozWG02HpqIV3w+j2kw0
-	/5wzqLFKgh+pXV90A098DRkOw3T/jECpMpt8WJoHlTNvUBFCT7jgq9mHEgInmvdZFYvE=
-X-Gm-Gg: ASbGncvtfkd+wys17T1tNMJaTZkBa19rFPqbfYCfNdvzRaNsgsFLKv6z1OrbQNy0MLI
-	KmcWoeKK9F4kkYkchzW0NlCMiLecPr0CkrjLtO1cqbKpYHzzycf1A2Bat9FmztOhyEc0LEyLdFB
-	QHMT14+5RI2KR6Up7qQevIdixoGgQFRMLUHRjl4Cm//JiWXuwotVvbimuxxDdJwK38dZe4xScKG
-	w2NPNk0YFCkphrwLbteaSnygNRcdw1ui7/fPcwIecsOEvAx5uJIHNh3BwgM5+Ttrv7GWUJ1prv/
-	3/JACnByDPVYxql0jXFpY86Li8YSo5yYSacwP0Z8Qgd8YIhDZpsWujSK96Ac5hyLeXBm08sq25d
-	lD15LSvZAjyuxQutGpto=
-X-Received: by 2002:a17:903:187:b0:235:ec11:f0ee with SMTP id d9443c01a7336-2462eded8bbmr208960545ad.14.1756226439412;
-        Tue, 26 Aug 2025 09:40:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEkvFu2SKqaYn2g8jSdQZR+kEMDsbfiuYDSgXyjcnbv8H+hGCJesN+r1R0F9BmVI7ktbx+DaA==
-X-Received: by 2002:a17:903:187:b0:235:ec11:f0ee with SMTP id d9443c01a7336-2462eded8bbmr208960165ad.14.1756226438902;
-        Tue, 26 Aug 2025 09:40:38 -0700 (PDT)
-Received: from [10.227.110.203] (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24668864a4fsm100775575ad.91.2025.08.26.09.40.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Aug 2025 09:40:38 -0700 (PDT)
-Message-ID: <e4178055-f3a6-4cb3-8c86-731130c6f25a@oss.qualcomm.com>
-Date: Tue, 26 Aug 2025 09:40:35 -0700
+	 In-Reply-To:Content-Type; b=c9HWWoBJRxif6vLYZetHFi1StZvvjYZwHMZWgY8b6lBoIg/oBFf96YLP4ok/48joXFAzXvf2iA/jrGA4SyPLjR76x8iYigLHATy9fLB0qTiZi7QJUZnl7E81ZFmqDXHB+vX+1L2QoyM2l9RvMdTxxGFbPI6J6WWIdLs5Vhs0V+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xRXx8x08; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <cf5d9158-4833-4355-8e4d-0894411d0d46@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756226570;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oNfkM1W8WaLCBU2U7GOyvpqxcWGzOkoKctUH1gJKV1o=;
+	b=xRXx8x08no8uaEDO9RKzLskCzkj+jB3RwdecNrEvYto75HJcNfWnsedNL/nnHumQIqCqXA
+	U/TkaeHKHd8wsbcOafRfH6C++R2dpVYapKVLlI+X5qvL//Lcva8aF/hSE6Gt+sDZWT2OWP
+	+rphjf0B8i5JTbzQ0xE9drRCQj4SUjg=
+Date: Tue, 26 Aug 2025 17:42:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/8] wifi: ath12k: Use
- pci_{enable/disable}_link_state() APIs to enable/disable ASPM states
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: manivannan.sadhasivam@oss.qualcomm.com,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Manivannan Sadhasivam
- <mani@kernel.org>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Nirmal Patel <nirmal.patel@linux.intel.com>,
-        Jonathan Derrick <jonathan.derrick@linux.dev>,
-        Jeff Johnson <jjohnson@kernel.org>, linux-pci@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
-        ath11k@lists.infradead.org, ath10k@lists.infradead.org,
-        Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Qiang Yu <qiang.yu@oss.qualcomm.com>
-References: <20250825-ath-aspm-fix-v2-0-61b2f2db7d89@oss.qualcomm.com>
- <20250825-ath-aspm-fix-v2-6-61b2f2db7d89@oss.qualcomm.com>
- <2fab10a7-8758-4a5c-95ff-2bb9a6dea6bf@oss.qualcomm.com>
- <705a4fe5-658e-25ac-9e4d-6b8089abca46@linux.intel.com>
-From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Subject: Re: [PATCH net-next v01 08/12] hinic3: Queue pair context
+ initialization
+To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+ Bjorn Helgaas <helgaas@kernel.org>, luosifu <luosifu@huawei.com>,
+ Xin Guo <guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>,
+ Zhou Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>,
+ Shi Jing <shijing34@huawei.com>, Meny Yossefi <meny.yossefi@huawei.com>,
+ Gur Stavi <gur.stavi@huawei.com>, Lee Trager <lee@trager.us>,
+ Michael Ellerman <mpe@ellerman.id.au>, Suman Ghosh <sumang@marvell.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+References: <cover.1756195078.git.zhuyikai1@h-partners.com>
+ <fc3dd2c0d29c54332169bc5a2e5be4e4eac77b07.1756195078.git.zhuyikai1@h-partners.com>
 Content-Language: en-US
-In-Reply-To: <705a4fe5-658e-25ac-9e4d-6b8089abca46@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMyBTYWx0ZWRfXxQPCfHC9470L
- noOydqaNyXVZGYEwzszFW1k1pf+8ChbmbSkiheErSQi/+ApuxXGv8wRM3QxNbq+HSoTD1f4gvaE
- NrwvtZ8PPu2U6XzcObqzylbLk9iq8V2JnR4wTp7FYZk7cOS5oq6Sux5kA9XSVr3zWyoXlK1zpKe
- qlM0MrynEij2uARZ16ZV6OTwVr362896dxYZv7I4MnJps9FDclR15m+tQ6rf5SkVIMF2Gp/eBb1
- 0RCrFlzaGKe/ES6Ov9sznrNdXEGQYtcLHibd9E/Xh9fb8m88dmie9of8KsZ9j+hqOg0VFb+Xl5K
- pyBnV8r4NH0R19Q0ARZjyBiC3WQVKNKaVsekaw62uOaEw9y/OD/cWmCKuQsdrAPhA21E4/Qasf0
- 6Fruryes
-X-Authority-Analysis: v=2.4 cv=Lco86ifi c=1 sm=1 tr=0 ts=68ade388 cx=c_pps
- a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=8JU3Fd4Pt_mHVKaqA_UA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=GvdueXVYPmCkWapjIL-Q:22
-X-Proofpoint-GUID: WS9L0d8hbfl5KjhuCSgQElfN238KFifQ
-X-Proofpoint-ORIG-GUID: WS9L0d8hbfl5KjhuCSgQElfN238KFifQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-26_02,2025-08-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 adultscore=0 clxscore=1015 malwarescore=0 spamscore=0
- suspectscore=0 phishscore=0 priorityscore=1501 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230033
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <fc3dd2c0d29c54332169bc5a2e5be4e4eac77b07.1756195078.git.zhuyikai1@h-partners.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On 8/26/2025 9:00 AM, Ilpo Järvinen wrote:
-> On Tue, 26 Aug 2025, Jeff Johnson wrote:
+On 26/08/2025 10:05, Fan Gong wrote:
+> Initialize queue pair context of hardware interaction.
 > 
->> On 8/25/2025 10:44 AM, Manivannan Sadhasivam via B4 Relay wrote:
->>> --- a/drivers/net/wireless/ath/ath12k/Kconfig
->>> +++ b/drivers/net/wireless/ath/ath12k/Kconfig
->>> @@ -1,7 +1,7 @@
->>>  # SPDX-License-Identifier: BSD-3-Clause-Clear
->>>  config ATH12K
->>>  	tristate "Qualcomm Technologies Wi-Fi 7 support (ath12k)"
->>> -	depends on MAC80211 && HAS_DMA && PCI
->>> +	depends on MAC80211 && HAS_DMA && PCI && PCIEASPM
->>
->> As you point out in patch 1/8, PCIEASPM is protected by EXPERT.
->>
->> Won't this prevent the driver from being built (or even showing up in
->> menuconfig) if EXPERT is not enabled?
-> 
-> It doesn't work that way, PCIEASPM defaults to y:
-> 
-> $ sed -i -e 's|CONFIG_PCIEASPM=y|CONFIG_PCIEASPM=n|g' .config && make oldconfig && grep -e 'CONFIG_EXPERT ' -e 'CONFIG_PCIEASPM=' .config
-> #
-> # configuration written to .config
-> #
-> # CONFIG_EXPERT is not set
-> CONFIG_PCIEASPM=y
-> 
->> Should we consider having a separate CONFIG item that is used to protect just
->> the PCI ASPM interfaces? And then we could split out the ath12k_pci_aspm
->> functions into a separate file that is conditionally built based upon that
->> config item?
->>
->> Or am I too paranoid since everyone enables EXPERT?
-> 
-> One just cannot control PCIEASPM value if EXPERT is not set. ASPM is 
-> expected to be enabled, or "experts" get to keep the pieces.
-> 
+> Co-developed-by: Xin Guo <guoxin09@huawei.com>
+> Signed-off-by: Xin Guo <guoxin09@huawei.com>
+> Co-developed-by: Zhu Yikai <zhuyikai1@h-partners.com>
+> Signed-off-by: Zhu Yikai <zhuyikai1@h-partners.com>
+> Signed-off-by: Fan Gong <gongfan1@huawei.com>
+> ---
 
-Thanks for the clarification. I now have no issues with the ath driver patches.
+a bit of styling nits, but as you still have to do another version it
+would be great to fix.
 
-/jeff
+[...]
+
+> +static int init_sq_ctxts(struct hinic3_nic_dev *nic_dev)
+> +{
+> +	struct hinic3_nic_io *nic_io = nic_dev->nic_io;
+> +	struct hinic3_hwdev *hwdev = nic_dev->hwdev;
+> +	struct hinic3_sq_ctxt_block *sq_ctxt_block;
+> +	u16 q_id, curr_id, max_ctxts, i;
+> +	struct hinic3_sq_ctxt *sq_ctxt;
+> +	struct hinic3_cmd_buf *cmd_buf;
+> +	struct hinic3_io_queue *sq;
+> +	__le64 out_param;
+> +	int err = 0;
+> +
+> +	cmd_buf = hinic3_alloc_cmd_buf(hwdev);
+> +	if (!cmd_buf) {
+> +		dev_err(hwdev->dev, "Failed to allocate cmd buf\n");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	q_id = 0;
+> +	while (q_id < nic_io->num_qps) {
+> +		sq_ctxt_block = cmd_buf->buf;
+> +		sq_ctxt = sq_ctxt_block->sq_ctxt;
+> +
+> +		max_ctxts = (nic_io->num_qps - q_id) > HINIC3_Q_CTXT_MAX ?
+> +			     HINIC3_Q_CTXT_MAX : (nic_io->num_qps - q_id);
+> +
+> +		hinic3_qp_prepare_cmdq_header(&sq_ctxt_block->cmdq_hdr,
+> +					      HINIC3_QP_CTXT_TYPE_SQ, max_ctxts,
+> +					      q_id);
+> +
+> +		for (i = 0; i < max_ctxts; i++) {
+> +			curr_id = q_id + i;
+> +			sq = &nic_io->sq[curr_id];
+> +			hinic3_sq_prepare_ctxt(sq, curr_id, &sq_ctxt[i]);
+> +		}
+> +
+> +		hinic3_cmdq_buf_swab32(sq_ctxt_block, sizeof(*sq_ctxt_block));
+> +
+> +		cmd_buf->size = cpu_to_le16(SQ_CTXT_SIZE(max_ctxts));
+> +		err = hinic3_cmdq_direct_resp(hwdev, MGMT_MOD_L2NIC,
+> +					      L2NIC_UCODE_CMD_MODIFY_QUEUE_CTX,
+> +					      cmd_buf, &out_param);
+> +		if (err || out_param != 0) {
+
+no need for "!= 0" ...
+
+> +			dev_err(hwdev->dev, "Failed to set SQ ctxts, err: %d, out_param: 0x%llx\n",
+> +				err, out_param);
+> +			err = -EFAULT;
+> +			break;
+> +		}
+> +
+> +		q_id += max_ctxts;
+> +	}
+> +
+> +	hinic3_free_cmd_buf(hwdev, cmd_buf);
+> +
+> +	return err;
+> +}
+> +
+> +static int init_rq_ctxts(struct hinic3_nic_dev *nic_dev)
+> +{
+> +	struct hinic3_nic_io *nic_io = nic_dev->nic_io;
+> +	struct hinic3_hwdev *hwdev = nic_dev->hwdev;
+> +	struct hinic3_rq_ctxt_block *rq_ctxt_block;
+> +	u16 q_id, curr_id, max_ctxts, i;
+> +	struct hinic3_rq_ctxt *rq_ctxt;
+> +	struct hinic3_cmd_buf *cmd_buf;
+> +	struct hinic3_io_queue *rq;
+> +	__le64 out_param;
+> +	int err = 0;
+> +
+> +	cmd_buf = hinic3_alloc_cmd_buf(hwdev);
+> +	if (!cmd_buf) {
+> +		dev_err(hwdev->dev, "Failed to allocate cmd buf\n");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	q_id = 0;
+> +	while (q_id < nic_io->num_qps) {
+> +		rq_ctxt_block = cmd_buf->buf;
+> +		rq_ctxt = rq_ctxt_block->rq_ctxt;
+> +
+> +		max_ctxts = (nic_io->num_qps - q_id) > HINIC3_Q_CTXT_MAX ?
+> +				HINIC3_Q_CTXT_MAX : (nic_io->num_qps - q_id);
+> +
+> +		hinic3_qp_prepare_cmdq_header(&rq_ctxt_block->cmdq_hdr,
+> +					      HINIC3_QP_CTXT_TYPE_RQ, max_ctxts,
+> +					      q_id);
+> +
+> +		for (i = 0; i < max_ctxts; i++) {
+> +			curr_id = q_id + i;
+> +			rq = &nic_io->rq[curr_id];
+> +			hinic3_rq_prepare_ctxt(rq, &rq_ctxt[i]);
+> +		}
+> +
+> +		hinic3_cmdq_buf_swab32(rq_ctxt_block, sizeof(*rq_ctxt_block));
+> +
+> +		cmd_buf->size = cpu_to_le16(RQ_CTXT_SIZE(max_ctxts));
+> +
+> +		err = hinic3_cmdq_direct_resp(hwdev, MGMT_MOD_L2NIC,
+> +					      L2NIC_UCODE_CMD_MODIFY_QUEUE_CTX,
+> +					      cmd_buf, &out_param);
+> +		if (err || out_param != 0) {
+
+... here as well
+
+> +			dev_err(hwdev->dev, "Failed to set RQ ctxts, err: %d, out_param: 0x%llx\n",
+> +				err, out_param);
+> +			err = -EFAULT;
+> +			break;
+> +		}
+> +
+> +		q_id += max_ctxts;
+> +	}
+> +
+> +	hinic3_free_cmd_buf(hwdev, cmd_buf);
+> +
+> +	return err;
+> +}
+
+[...]
+
+> +static int clean_queue_offload_ctxt(struct hinic3_nic_dev *nic_dev,
+> +				    enum hinic3_qp_ctxt_type ctxt_type)
+> +{
+> +	struct hinic3_nic_io *nic_io = nic_dev->nic_io;
+> +	struct hinic3_hwdev *hwdev = nic_dev->hwdev;
+> +	struct hinic3_clean_queue_ctxt *ctxt_block;
+> +	struct hinic3_cmd_buf *cmd_buf;
+> +	__le64 out_param;
+> +	int err;
+> +
+> +	cmd_buf = hinic3_alloc_cmd_buf(hwdev);
+> +	if (!cmd_buf) {
+> +		dev_err(hwdev->dev, "Failed to allocate cmd buf\n");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	ctxt_block = cmd_buf->buf;
+> +	ctxt_block->cmdq_hdr.num_queues = cpu_to_le16(nic_io->max_qps);
+> +	ctxt_block->cmdq_hdr.queue_type = cpu_to_le16(ctxt_type);
+> +	ctxt_block->cmdq_hdr.start_qid = 0;
+> +	ctxt_block->cmdq_hdr.rsvd = 0;
+> +	ctxt_block->rsvd = 0;
+> +
+> +	hinic3_cmdq_buf_swab32(ctxt_block, sizeof(*ctxt_block));
+> +
+> +	cmd_buf->size = cpu_to_le16(sizeof(*ctxt_block));
+> +
+> +	err = hinic3_cmdq_direct_resp(hwdev, MGMT_MOD_L2NIC,
+> +				      L2NIC_UCODE_CMD_CLEAN_QUEUE_CTX,
+> +				      cmd_buf, &out_param);
+> +	if ((err) || (out_param)) {
+
+no need for extra parenthesis
+
+> +		dev_err(hwdev->dev, "Failed to clean queue offload ctxts, err: %d,out_param: 0x%llx\n",
+> +			err, out_param);
+> +
+> +		err = -EFAULT;
+> +	}
+> +
+> +	hinic3_free_cmd_buf(hwdev, cmd_buf);
 
 
