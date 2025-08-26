@@ -1,107 +1,113 @@
-Return-Path: <linux-kernel+bounces-786312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB81BB35836
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:10:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2A3EB35834
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:10:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B24C7C1CE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:08:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6F181898853
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:10:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C98E3126DB;
-	Tue, 26 Aug 2025 09:06:44 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AAAF306D4B;
+	Tue, 26 Aug 2025 09:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s6iE5Y5F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68E53112BC;
-	Tue, 26 Aug 2025 09:06:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD23279798;
+	Tue, 26 Aug 2025 09:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756199204; cv=none; b=ez3bLMLUvB7xshiiZUvdADVGaXn617kl1nwGe0Ici8ZQ8afqncBFNcDTZk8UiX+vMfOhIIGvOoMH5pplpSBIIQN5eA26IWGRlW4pZ6jJb9+sArkz3zZWRk0kRS/EddR2yj99w0dOVTadbpZS1LUSfRe4FCicgmOIgrarSWPiugQ=
+	t=1756199234; cv=none; b=aX5xZVQS0Tbfcq7wItsoxfJLroUuQrd8P8ROMTLInSYg4nRqaY5u4O7fTgF+twxIeIWMYz1VkDkykpyF8ZlsGaQEy4eZxxTiD4O8CiS1xNF19lyQsI+kz3z8YcelBXWSnvmQj82Rson5newDmBbRaZrHWYiosLL8H0Sz/dCKwpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756199204; c=relaxed/simple;
-	bh=gRDviIgZhugWQ/4oS/bkSZnIMfIe7NgTJ0tPvil8e24=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ld+GE4SateRZuUhqe3cfZNm6DDoH/OxySFbnoBGFKkWD7ckhE2wVOKy7PY+bJkARymM+NX49ejsHzMJM1KhMiTH3V71iCjsgbDHfDj4LHIX7hCMXueTvYNXszJU1IzttwjyaIzYCAgJjx87hchQ/lqKXl+Yc8m2ruGhEAbD5t6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4cB1t75Gf7z1R8B5;
-	Tue, 26 Aug 2025 17:03:43 +0800 (CST)
-Received: from kwepemf100013.china.huawei.com (unknown [7.202.181.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7ACF11A0188;
-	Tue, 26 Aug 2025 17:06:39 +0800 (CST)
-Received: from DESKTOP-62GVMTR.china.huawei.com (10.174.189.55) by
- kwepemf100013.china.huawei.com (7.202.181.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 26 Aug 2025 17:06:38 +0800
-From: Fan Gong <gongfan1@huawei.com>
-To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
-	<horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	<linux-doc@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Bjorn Helgaas
-	<helgaas@kernel.org>, luosifu <luosifu@huawei.com>, Xin Guo
-	<guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>, Zhou
- Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>, Shi Jing
-	<shijing34@huawei.com>, Meny Yossefi <meny.yossefi@huawei.com>, Gur Stavi
-	<gur.stavi@huawei.com>, Lee Trager <lee@trager.us>, Michael Ellerman
-	<mpe@ellerman.id.au>, Vadim Fedorenko <vadim.fedorenko@linux.dev>, Suman
- Ghosh <sumang@marvell.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Joe Damato <jdamato@fastly.com>, Christophe JAILLET
-	<christophe.jaillet@wanadoo.fr>
-Subject: [PATCH net-next v01 12/12] hinic3: Fix missing napi->dev in netif_queue_set_napi
-Date: Tue, 26 Aug 2025 17:05:54 +0800
-Message-ID: <7709a13bb106e9a6c3b8294c3018d8f08808771c.1756195078.git.zhuyikai1@h-partners.com>
-X-Mailer: git-send-email 2.51.0.windows.1
-In-Reply-To: <cover.1756195078.git.zhuyikai1@h-partners.com>
-References: <cover.1756195078.git.zhuyikai1@h-partners.com>
+	s=arc-20240116; t=1756199234; c=relaxed/simple;
+	bh=v1CSBcWHPbCnidtHdXODW6dfbip1NV8JwzZFOpqYkck=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cTVnxgcnsdIZal7DaTHMwLgqbPWmM7PAb4Npa08+clNbXGItVAdHskXXIU92zxl9eIZlSi1QFt7xERcr49daad4vAkl1Up2ZraHXgd/TP/oPGDCm1pBhMT2bbkI9gBIrQ1l9sWwdBIiOdoaelh8XkWaUHD5ChJwwTkA8crISVnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s6iE5Y5F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14EB8C4CEF1;
+	Tue, 26 Aug 2025 09:07:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756199234;
+	bh=v1CSBcWHPbCnidtHdXODW6dfbip1NV8JwzZFOpqYkck=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s6iE5Y5FkD/yXMMiE/ghxcC3Oi9Yjk1XRIAqRYCNYsanV38XhW0i9eYf/To0VJW2o
+	 WYQ/ZuC/nsgerBNGvoSmbNWxd920UR2TtKpnCWfGJ0ya5JFfJedNtTwBQQPmb8U4h4
+	 BseIkK0ylDIqzI7SCwbyNOd9sNya7tC+6HO9HPjMmmQbOnK+zruIPEca3JrwtTdrNe
+	 oRTWtlPucmsV8c2at+UAsG81IyPSE2bfpHKs4HQe1qvcsLoiG+/mf1P9GeBoVj6YSx
+	 uaWFXu4OYAr72+8s0T/DoofNbBohK7R7cRZZj7Z1UVMUlyI61q+NGofFGEoEaZ13OJ
+	 F3tqSNVCLSKcg==
+Date: Tue, 26 Aug 2025 11:07:03 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Kees Cook <keescook@chromium.org>, 
+	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>, 
+	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
+	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Miklos Szeredi <mszeredi@redhat.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
+	Robert Waite <rowait@microsoft.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Scott Shell <scottsh@microsoft.com>, Steve Dower <steve.dower@python.org>, 
+	Steve Grubb <sgrubb@redhat.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
+Message-ID: <20250826-skorpion-magma-141496988fdc@brauner>
+References: <20250822170800.2116980-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemf100013.china.huawei.com (7.202.181.12)
+In-Reply-To: <20250822170800.2116980-1-mic@digikod.net>
 
-As netif_queue_set_napi checks napi->dev, if it doesn't have it and
-it will warn_on and return. So we should use netif_napi_add before
-netif_queue_set_napi because netif_napi_add has "napi->dev = dev".
+On Fri, Aug 22, 2025 at 07:07:58PM +0200, Mickaël Salaün wrote:
+> Hi,
+> 
+> Script interpreters can check if a file would be allowed to be executed
+> by the kernel using the new AT_EXECVE_CHECK flag. This approach works
+> well on systems with write-xor-execute policies, where scripts cannot
+> be modified by malicious processes. However, this protection may not be
+> available on more generic distributions.
+> 
+> The key difference between `./script.sh` and `sh script.sh` (when using
+> AT_EXECVE_CHECK) is that execve(2) prevents the script from being opened
+> for writing while it's being executed. To achieve parity, the kernel
+> should provide a mechanism for script interpreters to deny write access
+> during script interpretation. While interpreters can copy script content
+> into a buffer, a race condition remains possible after AT_EXECVE_CHECK.
+> 
+> This patch series introduces a new O_DENY_WRITE flag for use with
+> open*(2) and fcntl(2). Both interfaces are necessary since script
+> interpreters may receive either a file path or file descriptor. For
+> backward compatibility, open(2) with O_DENY_WRITE will not fail on
+> unsupported systems, while users requiring explicit support guarantees
+> can use openat2(2).
 
-Co-developed-by: Xin Guo <guoxin09@huawei.com>
-Signed-off-by: Xin Guo <guoxin09@huawei.com>
-Co-developed-by: Zhu Yikai <zhuyikai1@h-partners.com>
-Signed-off-by: Zhu Yikai <zhuyikai1@h-partners.com>
-Signed-off-by: Fan Gong <gongfan1@huawei.com>
----
- drivers/net/ethernet/huawei/hinic3/hinic3_irq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+We've said no to abusing the O_* flag space for that AT_EXECVE_* stuff
+before and you've been told by Linus as well that this is a nogo.
 
-diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_irq.c b/drivers/net/ethernet/huawei/hinic3/hinic3_irq.c
-index 33eb9080739d..a69b361225e9 100644
---- a/drivers/net/ethernet/huawei/hinic3/hinic3_irq.c
-+++ b/drivers/net/ethernet/huawei/hinic3/hinic3_irq.c
-@@ -42,11 +42,11 @@ static void qp_add_napi(struct hinic3_irq_cfg *irq_cfg)
- {
- 	struct hinic3_nic_dev *nic_dev = netdev_priv(irq_cfg->netdev);
- 
-+	netif_napi_add(nic_dev->netdev, &irq_cfg->napi, hinic3_poll);
- 	netif_queue_set_napi(irq_cfg->netdev, irq_cfg->irq_id,
- 			     NETDEV_QUEUE_TYPE_RX, &irq_cfg->napi);
- 	netif_queue_set_napi(irq_cfg->netdev, irq_cfg->irq_id,
- 			     NETDEV_QUEUE_TYPE_TX, &irq_cfg->napi);
--	netif_napi_add(nic_dev->netdev, &irq_cfg->napi, hinic3_poll);
- 	napi_enable(&irq_cfg->napi);
- }
- 
--- 
-2.43.0
+Nothing has changed in that regard and I'm not interested in stuffing
+the VFS APIs full of special-purpose behavior to work around the fact
+that this is work that needs to be done in userspace. Change the apps,
+stop pushing more and more cruft into the VFS that has no business
+there.
 
+That's before we get into all the issues that are introduced by this
+mechanism that magically makes arbitrary files unwritable. It's not just
+a DoS it's likely to cause breakage in userspace as well. I removed the
+deny-write from execve because it already breaks various use-cases or
+leads to spurious failures in e.g., go. We're not spreading this disease
+as a first-class VFS API.
 
