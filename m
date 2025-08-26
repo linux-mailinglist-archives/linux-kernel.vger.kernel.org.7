@@ -1,103 +1,117 @@
-Return-Path: <linux-kernel+bounces-787164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34BF0B3724C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 20:38:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C5B9B37253
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 20:40:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 455241BA24E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:39:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 315663BF808
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:39:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE56636CDFD;
-	Tue, 26 Aug 2025 18:38:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C464370580;
+	Tue, 26 Aug 2025 18:39:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tw8rO4AX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z10Y9j3F"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6B3299957;
-	Tue, 26 Aug 2025 18:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34AC22E3AF1;
+	Tue, 26 Aug 2025 18:39:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756233521; cv=none; b=rZDkr2dYIVWuLrR8Ckt8SeUpJU/MGIcu26X2odVF5553oR3KYVqjFMQStBAhJf/AEf1KOqpvVmCLtMBs/8DQLCPNhQMPLf6/qIYsoZm5TzJ7ULgkxDmLVqzCwBkJm/1O2RsmpUWxBL06rgkDFIBRivUhOjTzSYivUY7VjnP1R1M=
+	t=1756233592; cv=none; b=VltWvF9HgkgwypCTQA+XyDgdOSU+GcD1KPo6o6Hsrc50HHejl168GDPiA0RPwrvYNGpdNqU84L5K0D+tcda9X+/ruUfkpQYxyfg7VyynjQYeWzQ9gfvbZCJ+OKvSRG9PnImXayj/6PtSNEqcAEHTPAOQN0IufbZHn55eobektIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756233521; c=relaxed/simple;
-	bh=I3ZmJOTeI5U0UWdxXYHroNtLPixbix3GWAcILqmBLz0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NUbHm4i+Qcd3ARKlCU0roowDo1z+q1cH4EW/h3FsBNxPOulnoULcZuvZPy7SMoI8/ntXplz3aTTJm82G2QX3S/4oeQ2BlRMr7VPHwUTETRQ8RF6mu5ZOUdKpAGl+qETdL3YQgzUYRMtlBSlVjLtxqX3o91b1IQv34Njc8h+NHrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tw8rO4AX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05373C4CEF1;
-	Tue, 26 Aug 2025 18:38:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756233520;
-	bh=I3ZmJOTeI5U0UWdxXYHroNtLPixbix3GWAcILqmBLz0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tw8rO4AXOfA8dpc65nMg5u/wXw/WAZjn7kZBMuMnXKjSu2lklLg+zuJBg0HchBIZi
-	 Kau44OkrJIcWM29VFSkyHhd3KJFHlGO3s0Edom62ZIqdclXPnq18DPzHzpdMReCDa6
-	 jCmcTBQznsjABaE1LfJe6J6jUWQH5REodrD28b4wg+1A1YyVFuRRCk9e/5KxBIAvPi
-	 zwj7IVEOBv1Rhr0kdDjyAlecRcJWFNgmiqCwi2zI9zG39AE9/ic9xmmiHy6uEQKUkk
-	 X3kOdXATrvYUpo4WlCK446VJyIlnIIbl2pMklQeOsQ0tYsTDu6lS2JlMkBLdoeDOgG
-	 IKKxtWUtfsC4Q==
-Date: Tue, 26 Aug 2025 11:38:36 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Nicolas Schier <nsc@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>,
-	Christian Brauner <brauner@kernel.org>,
-	Daniel Gomez <da.gomez@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH] scripts/misc-check: update export checks for
- EXPORT_SYMBOL_FOR_MODULES()
-Message-ID: <20250826183836.GA3422853@ax162>
-References: <20250825-export_modules_fix-v1-1-5c331e949538@suse.cz>
- <20250825170710.GC2719297@ax162>
- <aKzFfToXptoHnrxI@levanger>
+	s=arc-20240116; t=1756233592; c=relaxed/simple;
+	bh=eGUKQUHiZt57yd5d71idNY5FQGaqApInZMHVrZxOda0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=Xht7PMhMZQ9Y0g/6UXFrZQ1zweZK03+QK+JNIkfYuU3fSlzyXrSUervZJ6kGp5b1cqCL7LnX9OBbslWjCu1Zzc8dwKQP8G0JmA1QR53vLl0TyfmyGA6rfwOKN79Js0gDDWLeRv+wkV9DMAib54xegLPR0IkYZldFSPXCbo7jNkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z10Y9j3F; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756233590; x=1787769590;
+  h=from:to:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=eGUKQUHiZt57yd5d71idNY5FQGaqApInZMHVrZxOda0=;
+  b=Z10Y9j3F17yt8aoBSJvt1WWWnEXuDZerj0lIMhDXJxgzbX9V4DFg7XvD
+   4JcmRT/p7vZACo5T8u2b4cY1bDQDVnHUqcld3gNRN2VYeSvF07M8pfyB6
+   LkrQMXPcUYTBYbH9lDJnPKbwhsHb23f/RhRfkBPyi4aFFLjHjIzCnc9mG
+   gLRI6+gvqgxvWthIU/BzXquTxYdyhvlxemaQjjmIn0hcNwe6HPScXtCEX
+   0rJZ1t997WeOczsi8ww7KlMUgENXF23X0P5RF+u9PofZNG/7Rx4PcOaDv
+   ywWioVHBfOxObokmE5fxc4bQ4JclR2q+XXYjfGalZIVm1ug4yP5vD6PVD
+   g==;
+X-CSE-ConnectionGUID: CGP0m+SXTcybMNFROw7O+A==
+X-CSE-MsgGUID: kn4l0sWlS+mcJ3AXm/ev2A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11534"; a="69921012"
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="69921012"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 11:39:49 -0700
+X-CSE-ConnectionGUID: lQ5noM8sTEC8huUy4vifQw==
+X-CSE-MsgGUID: S7TqLLpJSNaBU3RyQmDepQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="200537406"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO xpardee-desk.intel.com) ([10.125.109.33])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 11:39:48 -0700
+From: Xi Pardee <xi.pardee@linux.intel.com>
+To: xi.pardee@linux.intel.com,
+	irenic.rajneesh@gmail.com,
+	david.e.box@linux.intel.com,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: [PATCH v1 1/2] platform/x86/intel/pmc: Add Wildcat Lake support to Intel PMC SSRAM Telemetry
+Date: Tue, 26 Aug 2025 11:39:42 -0700
+Message-ID: <20250826183946.802684-1-xi.pardee@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aKzFfToXptoHnrxI@levanger>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 25, 2025 at 10:20:13PM +0200, Nicolas Schier wrote:
-> On Mon, Aug 25, 2025 at 10:07:10AM -0700, Nathan Chancellor wrote:
-> > On Mon, Aug 25, 2025 at 05:00:37PM +0200, Vlastimil Babka wrote:
-> > > The module export checks are looking for EXPORT_SYMBOL_GPL_FOR_MODULES()
-> > > which was renamed to EXPORT_SYMBOL_FOR_MODULES(). Update the checks.
-> > > 
-> > > Fixes: 6d3c3ca4c77e ("module: Rename EXPORT_SYMBOL_GPL_FOR_MODULES to EXPORT_SYMBOL_FOR_MODULES")
-> > > Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> > > ---
-> > > I've missed these new checks when renaming the export macro due to my
-> > > git grep being too narrow. My commit went through Christian's vfs tree
-> > > but seems the script is part of kbuild (which is currently Odd fixes).
-> > 
-> > If this needs to reach Linus's tree to avoid warnings, it could go via
-> > another vfs fixes pull request with our ack or we could ask him to pick
-> > it up directly (as I am not sure we will have a fixes pull request this
-> > cycle). If it is not urgent, I can pick it up via kbuild-next for 6.18.
-> > I have no strong preference.
-> 
-> Hm, you're right, the check will issue false warnings (and misses to
-> warn when it should) without this update.  Therefore I think it would be
-> good to get the patch merged soon - even though the warnings are only
-> issued with W=2.
+Add Wildcat Lake support to Intel PMC SSRAM Telemetry driver.
 
-Oh, I forgot that these warnings were downgraded to W=2 in commit
-a6a7946bd691 ("kbuild: move warnings about linux/export.h from W=1 to
-W=2")... I thought these were in W=1 still.
+Signed-off-by: Xi Pardee <xi.pardee@linux.intel.com>
+---
+ drivers/platform/x86/intel/pmc/core.h            | 3 +++
+ drivers/platform/x86/intel/pmc/ssram_telemetry.c | 1 +
+ 2 files changed, 4 insertions(+)
 
-In that case, I do not think it is really imperative to fast track this
-to mainline. We are not and probably never will be W=2 clean so the
-presence of new or missing warnings is not a big bug to me. I will apply
-this to kbuild-next later today but I can drop it if someone wants to
-fast track it.
+diff --git a/drivers/platform/x86/intel/pmc/core.h b/drivers/platform/x86/intel/pmc/core.h
+index 4a94a4ee031e6..160b175ce7066 100644
+--- a/drivers/platform/x86/intel/pmc/core.h
++++ b/drivers/platform/x86/intel/pmc/core.h
+@@ -306,6 +306,9 @@ enum ppfear_regs {
+ #define PMC_DEVID_PTL_PCDH	0xe37f
+ #define PMC_DEVID_PTL_PCDP	0xe47f
+ 
++/* WCL */
++#define PMC_DEVID_WCL_PCDN	0x4d7f
++
+ /* ARL */
+ #define PMC_DEVID_ARL_SOCM	0x777f
+ #define PMC_DEVID_ARL_SOCS	0xae7f
+diff --git a/drivers/platform/x86/intel/pmc/ssram_telemetry.c b/drivers/platform/x86/intel/pmc/ssram_telemetry.c
+index 93579152188ef..03fad9331fc0c 100644
+--- a/drivers/platform/x86/intel/pmc/ssram_telemetry.c
++++ b/drivers/platform/x86/intel/pmc/ssram_telemetry.c
+@@ -190,6 +190,7 @@ static const struct pci_device_id intel_pmc_ssram_telemetry_pci_ids[] = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PMC_DEVID_LNL_SOCM) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PMC_DEVID_PTL_PCDH) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PMC_DEVID_PTL_PCDP) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PMC_DEVID_WCL_PCDN) },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(pci, intel_pmc_ssram_telemetry_pci_ids);
+-- 
+2.43.0
 
-Cheers,
-Nathan
 
