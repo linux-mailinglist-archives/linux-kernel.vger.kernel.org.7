@@ -1,254 +1,148 @@
-Return-Path: <linux-kernel+bounces-786345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC1F0B358AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:21:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5613FB358A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:20:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3D6D682B4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:18:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61FD67A84C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:18:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F8E306D4D;
-	Tue, 26 Aug 2025 09:18:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vKFu5IyX"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5496426C3A4;
+	Tue, 26 Aug 2025 09:19:56 +0000 (UTC)
+Received: from mail-pf1-f196.google.com (mail-pf1-f196.google.com [209.85.210.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DE52F998D
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:18:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B79F2F6593;
+	Tue, 26 Aug 2025 09:19:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756199900; cv=none; b=FWfFUwS/fSCWAzVMihNSvOO373g2iadzeHBtBeiq9tCIb4dqeD6LiHVWxPMONqE8IrrjprkeYwSqp/4F1eotx7pyMoSyOfCCW1YADgohbYQoyElro72r2jCZ92ocdYdAToKlH/gt5MO43baPSY2Hs3RIBqCKIg49sg+gbwWM+F8=
+	t=1756199996; cv=none; b=JvMnnt+06iHBoozAHg92ij9C92i6T23PyKDmAvG7RuF3h5zmssagft2EyDgnSFAJ9GPeGRCcYnCQg9OdbiLhxiMcxRpGsWBpnVbIVeiQax3xk4EHSRQZ4fThlX8+BCgXZF5qLwa3jw+c094ua3xRQOviGWh+EDZkR/ID/YJmQag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756199900; c=relaxed/simple;
-	bh=TkwVE2JtukWSJCieI0x/e2MinM15H3GeZu1WuQJWONE=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=aHdkWTBjNkWBEUp4OQTcqv3FeUlnZL9RwCmK8yhFbtjyLMVmbjtA4h8ibiG3aO9VjYww/KBZlQZa1aA3YD1p44L1nUragXJHJ0w3vaauaoV9SkJsIhrHsVCOHUylPeaUkpqMoOW8492FkwNs5tEpAAIPANsIE4pM1H/hc+dT0fQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vKFu5IyX; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45b5d49ae47so11656505e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 02:18:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756199896; x=1756804696; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9y82ZcMTvoPNY3nU1FX8UKDNck7AnFMwEFoUX52rQcM=;
-        b=vKFu5IyXgmCUHoNdfRVzChw8Knkq9L4J9tGkkg4vAQ3EjWBrPuIsaXTy5djOTSowX/
-         pLOXVqEojG0DVbPa2m7OG4IEw4zdhCGiFkA4OZ/iH2QrULXRgPLLKVjWqlJU5piIL9B5
-         R81c9NU5bgUiEmxfssH1Es8iH7iTWmKD+gp1RzagC4cKj32g660GBA8ysTwG37X9Jltp
-         pLf8vNhHKbwi+MkRpcJ15fXPXBnINJrTN4DI3B/KeempkcmGOatClOVYhNwwavvdcf/g
-         7GCzUv2474392wlK5YaGS/5Dykg7cJNLPRFMw79InSbfvRjZTfsHjSEI7CanZXlHegxU
-         RoQQ==
+	s=arc-20240116; t=1756199996; c=relaxed/simple;
+	bh=cSVhgzXTN1fIYCAwVwg103cSNkVWu7dW0EFjmdAvC68=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iu71Wgob8CAP/vY2QnsAdzdbimwzNelqznJ8nzknopEJxvXNLlJ/yWxJigYoZqhNH850rSxzJRmcESgP0nnglvsoTzUD+2NPTg72O1N3EF5rCTxOr7YOmRuliT+qlILwmqCxsd+d0cbnmf4dioCeS+DsEVr9TvYJA8FixEcbtjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f196.google.com with SMTP id d2e1a72fcca58-76e2e6038cfso5978974b3a.0;
+        Tue, 26 Aug 2025 02:19:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756199896; x=1756804696;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=9y82ZcMTvoPNY3nU1FX8UKDNck7AnFMwEFoUX52rQcM=;
-        b=rUIg3lLhFI6nD0B3XlH2mAxBvYgLYxfIGAu3Uf04PM1+VP9kNA6wu44v9tq+aceWkF
-         WDtVWwz55tOOoaeAGasFtHrNrxbvXCYjW+pOTAkppnkesl6W4lat1SrHvbBnMsNs4DR0
-         4cbO3C/eShEupBttHVn/YuaVCNhV5TmFUGi2FtrAY2HRNjLuhDLswpqgk9YtluLFSpik
-         ML8DO7W3RnJCWS0vvFgVpHfhpcRqMMgqbBIGEcb2SUFPVrZhSDnTchvLFxvaL10HT/YC
-         a/XbUWPo+OyG4tYTP8jrDj77EPdDsg22UweKEFB79CQ7iSsn1bbF1JWnseBvI7hAAt18
-         npiA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4C5DDQtpcnVAhiBwKruYsQUpcAYkHJjolrS4S2nlwzIeMUAyW8SIZqei/TtHueWtdjLoDYQd4/dBBNfE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/SwA2oQwlKUWJeP/31jG3lmVR1J7FsSrWt8EDeokqzzPpypDk
-	5M0+v/2mGlReTjMIBwPrffUO04B8wHB3aIE//cNHRlHToh7f4S1JVdbhsbAuVWVwT14=
-X-Gm-Gg: ASbGncv57nO3oAaIbIgtNn2X4dYxfe2d5lNwXekDRW0oyuKpxYtvfshV/C8BKKy4sE5
-	1PbT4Y4QItU/4uCimXRfjLCjTy7CSFyUKnqmNsjpNf6T6BS3wsGjdjQypQWJUORV5hclBoqVAfA
-	d7u9jxjWxtvtqR1C4TJFcVuSgFTspFrHGRpKpMGJkmp6TuZGawC+OzmeXB+g+LgUw21hUlzel4z
-	0hlRqyXcP2c4/USU571sPm6sD+UiV3JUwskl3czgwKisr67ec4a9r+xVaBAReXJZI3gkKbFXzFu
-	kCXs8Qkd/vYzCMBxBRbBPpzw8R7q+CcvFqwjZJACgdDkZZ4SlwBmS4takjTrymn2W3+h+mkg1d1
-	U1r+HiV2ZzsdIAhvxTSnrYKsV0/k=
-X-Google-Smtp-Source: AGHT+IHaeN71tfpJgG6c+hKwU5zaiIqic2SJiq3pkNi5jCxctYL6arGbSvZYy9jIMTOStKjZ+u5h9g==
-X-Received: by 2002:a05:600c:a09:b0:459:dfde:332e with SMTP id 5b1f17b1804b1-45b517c2ea6mr85576555e9.29.1756199896087;
-        Tue, 26 Aug 2025 02:18:16 -0700 (PDT)
-Received: from localhost ([2a02:c7c:7259:a00:e633:2c7e:2d3c:f5ec])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b5748798fsm141608355e9.13.2025.08.26.02.18.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Aug 2025 02:18:15 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756199993; x=1756804793;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kiotA2JV4z/aoaoQuJaHJfZjyCmN/l/UIOVo8YNVBQ8=;
+        b=JeSlr0xMxOC8os6X1dhDKGj2zbcpyvTLOJk9Knwu/ZGmOYoruhE81A5j/NXER3LteI
+         HpxFe3Y8XyWiVnIhQB8xYeF8J/rmZ+FjLe7XcdTfREDfrSSOxQx2mr6o3GIAyMtYRcWS
+         26KL5DflpiW/8D6yUh333SX1rjgp5MMzxs3EZNt/13zY8vEWbEbTeutlaVWPI2fCoA/J
+         rHhQyfMRsYd4fCKzfioqxlFyA5v57D6/QqZH/ctP6Z+v3zkFq3P/r5dHDF0Kt8IRbbBF
+         Z8DkrT1zj5hkQKXlTjwiyEzeFH1RtgSqCrCvifEBnuRwX8ghFHpS0fucA2w+5LzJlSI+
+         Virg==
+X-Forwarded-Encrypted: i=1; AJvYcCWS3zl2rk+8h1LN0LvA5/Mgv8KdmETqsJI6sGprcGtpqP9cQYZ5ZHvg5pi7bn3SXV+EJoL9VYypwt1jcBI=@vger.kernel.org, AJvYcCXYeBAxQ6c3oJmSYAGXrsMaC1wSHOPxORL07lfIg/U8j/GVOUA8nsEPVajDGp+qyKqu6KNU/gzF5vM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNrWJzVRYxmIgfWn4wIOuP2ScMLEm2742maHTK1Pjzdrt0edEd
+	zH/XZNL+qAqd4jHKJUftb3Zr0a2F+uyLYLmSJZHTA2A2emOaqn4v7BrfY3n2H+Z8TCs=
+X-Gm-Gg: ASbGnctSX+iuRuuC3bwfb3DtLGbU+1uVjflyXt9JaAfz0QSd/LA2yHGwV4/Qo/pL8rh
+	g2JB52mGsvcPn1d0+t6MmgmhX5hXWeVZ3tXNp2GOtvyyAFxI3HYtisDbgCRDDPfvtSoOVIuhbq+
+	ca7ciPp9INQ3OCltI9tbuYpe+WOro8wZKwSKzpP9L/d2QgsOe4jNaLLHFL2E+CYAn/Lo0Cg1wKc
+	li0iRWCVabv7PrcGXeM9lxRpmEPsEV9+haFbZKytDIggG6LXFlAsrvArAOFjGQmfgy++8XtOC/r
+	ByQQGMgmMBD0J617iMtNN9kOa4ea2kmUPIS6PGeXdZOKlrK/n9dLp1BJ4eba0I1HvrJZHcv7yQx
+	iie3uP6Yc7E7H+LQBwKc2Gqq4MJGwDaZMRdMjlnBKLfftcQ==
+X-Google-Smtp-Source: AGHT+IHH7da/LZmAZnM0fJkvDTf4zlk9MLG128qdfl7Rl/ZDlQrAKSDlDVnlaMHDaf0NYEI0QrOebQ==
+X-Received: by 2002:a05:6a20:4304:b0:243:15b9:7656 with SMTP id adf61e73a8af0-24340d231damr23290148637.48.1756199992578;
+        Tue, 26 Aug 2025 02:19:52 -0700 (PDT)
+Received: from power-ThinkBook-15-G2-ITL.. ([116.128.244.171])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b49cd272648sm8332063a12.27.2025.08.26.02.19.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Aug 2025 02:19:52 -0700 (PDT)
+From: Xueqin Luo <luoxueqin@kylinos.cn>
+To: rafael@kernel.org,
+	pavel@kernel.org,
+	lenb@kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Xueqin Luo <luoxueqin@kylinos.cn>
+Subject: [PATCH] PM: hibernate: make compression threads configurable via kernel parameter
+Date: Tue, 26 Aug 2025 17:19:37 +0800
+Message-ID: <20250826091937.991667-1-luoxueqin@kylinos.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 26 Aug 2025 10:18:13 +0100
-Message-Id: <DCC8WLEKNS8W.9GAJHQGYPZIY@linaro.org>
-Cc: "Krzysztof Kozlowski" <krzk@kernel.org>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
- <dmitry.baryshkov@oss.qualcomm.com>, <psodagud@quicinc.com>,
- <djaggi@quicinc.com>, <quic_msavaliy@quicinc.com>,
- <quic_vtanuku@quicinc.com>, <quic_arandive@quicinc.com>,
- <quic_cchiluve@quicinc.com>, <quic_shazhuss@quicinc.com>, "Jiri Slaby"
- <jirislaby@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
- <devicetree@vger.kernel.org>, <bryan.odonoghue@linaro.org>,
- <neil.armstrong@linaro.org>, <srini@kernel.org>
-Subject: Re: [PATCH v7 7/8] serial: qcom-geni: Enable PM runtime for serial
- driver
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: "Praveen Talari" <quic_ptalari@quicinc.com>, "Bjorn Andersson"
- <andersson@kernel.org>, "Konrad Dybcio" <konradybcio@kernel.org>,
- <linux-arm-msm@vger.kernel.org>, <linux-serial@vger.kernel.org>
-X-Mailer: aerc 0.20.0
-References: <20250721174532.14022-1-quic_ptalari@quicinc.com>
- <20250721174532.14022-8-quic_ptalari@quicinc.com>
- <DC0D53ZTNOBU.E8LSD5E5Z8TX@linaro.org>
- <577d05d4-789b-4556-a2d2-d0ad15b2c213@quicinc.com>
- <dcad137d-8ac9-4a0b-9b64-de799536fd32@kernel.org>
-In-Reply-To: <dcad137d-8ac9-4a0b-9b64-de799536fd32@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi Praveen,
+A new kernel parameter 'cmp_threads=' is introduced to
+allow tuning the number of compression/decompression threads at boot.
 
-Hi Praveen,
+Signed-off-by: Xueqin Luo <luoxueqin@kylinos.cn>
+---
+ kernel/power/swap.c | 22 +++++++++++++++++-----
+ 1 file changed, 17 insertions(+), 5 deletions(-)
 
-On Tue Aug 19, 2025 at 8:16 AM BST, Krzysztof Kozlowski wrote:
-> On 19/08/2025 08:50, Praveen Talari wrote:
->> Hi Alexey.
->>=20
->> Thank you for your patience,
-
-Well, any update on this?
-
-
-
->> On 8/12/2025 3:35 PM, Alexey Klimov wrote:
->>> (c/c Neil and Srini)
->>>
->>> On Mon Jul 21, 2025 at 6:45 PM BST, Praveen Talari wrote:
->>>> The GENI serial driver currently handles power resource management
->>>> through calls to the statically defined geni_serial_resources_on() and
->>>> geni_serial_resources_off() functions. This approach reduces modularit=
-y
->>>> and limits support for platforms with diverse power management
->>>> mechanisms, including resource managed by firmware.
->>>>
->>>> Improve modularity and enable better integration with platform-specifi=
-c
->>>> power management, introduce support for runtime PM. Use
->>>> pm_runtime_resume_and_get() and pm_runtime_put_sync() within the
->>>> qcom_geni_serial_pm() callback to control resource power state
->>>> transitions based on UART power state changes.
->>>>
->>>> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->>>> Signed-off-by: Praveen Talari <quic_ptalari@quicinc.com>
->>>
->>>
->>> This breaks at least RB1 (QRB2210), maybe others.
->>> Currently broken on -master and on linux-next.
->>>
->>> Upon login prompt random parts of kernel seems to be off/failed and
->>> debugging led to udev being stuck:
->>>
->>> [   85.369834] INFO: task kworker/u16:0:12 blocked for more than 42 sec=
-onds.
->>> [   85.376699]       Not tainted 6.17.0-rc1-00004-g53e760d89498 #9
->>> [   85.382660] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disab=
-les this message.
->>> [   85.390547] task:kworker/u16:0   state:D stack:0     pid:12    tgid:=
-12    ppid:2      task_flags:0x4208060 flags:0x00000010
->>> [   85.401748] Workqueue: async async_run_entry_fn
->>> [   85.406349] Call trace:
->>> [   85.408828]  __switch_to+0xe8/0x1a0 (T)
->>> [   85.412724]  __schedule+0x290/0x7c0
->>> [   85.416275]  schedule+0x34/0x118
->>> [   85.419554]  rpm_resume+0x14c/0x66c
->>> [   85.423111]  rpm_resume+0x2a4/0x66c
->>> [   85.426647]  rpm_resume+0x2a4/0x66c
->>> [   85.430188]  rpm_resume+0x2a4/0x66c
->>> [   85.433722]  __pm_runtime_resume+0x50/0x9c
->>> [   85.437869]  __driver_probe_device+0x58/0x120
->>> [   85.442287]  driver_probe_device+0x3c/0x154
->>> [   85.446523]  __driver_attach_async_helper+0x4c/0xc0
->>> [   85.451446]  async_run_entry_fn+0x34/0xe0
->>> [   85.455504]  process_one_work+0x148/0x290
->>> [   85.459565]  worker_thread+0x2c4/0x3e0
->>> [   85.463368]  kthread+0x118/0x1c0
->>> [   85.466651]  ret_from_fork+0x10/0x20
->>> [   85.470337] INFO: task irq/92-4a8c000.:71 blocked for more than 42 s=
-econds.
->>> [   85.477351]       Not tainted 6.17.0-rc1-00004-g53e760d89498 #9
->>> [   85.483323] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disab=
-les this message.
->>> [   85.491195] task:irq/92-4a8c000. state:D stack:0     pid:71    tgid:=
-71    ppid:2      task_flags:0x208040 flags:0x00000010
->>> [   85.502290] Call trace:
->>> [   85.504786]  __switch_to+0xe8/0x1a0 (T)
->>> [   85.508687]  __schedule+0x290/0x7c0
->>> [   85.512231]  schedule+0x34/0x118
->>> [   85.515504]  __synchronize_irq+0x60/0xa0
->>> [   85.519483]  disable_irq+0x3c/0x4c
->>> [   85.522929]  msm_pinmux_set_mux+0x3a8/0x44c
->>> [   85.527167]  pinmux_enable_setting+0x1c4/0x28c
->>> [   85.531665]  pinctrl_commit_state+0xa0/0x260
->>> [   85.535989]  pinctrl_pm_select_default_state+0x4c/0xa0
->>> [   85.541182]  geni_se_resources_on+0xd0/0x15c
->>> [   85.545522]  geni_serial_resource_state+0x8c/0xbc
->>> [   85.550282]  qcom_geni_serial_runtime_resume+0x24/0x3c
->>> [   85.555470]  pm_generic_runtime_resume+0x2c/0x44
->>> [   85.560139]  __rpm_callback+0x48/0x1e0
->>> [   85.563949]  rpm_callback+0x74/0x80
->>> [   85.567494]  rpm_resume+0x39c/0x66c
->>> [   85.571040]  __pm_runtime_resume+0x50/0x9c
->>> [   85.575193]  handle_threaded_wake_irq+0x30/0x80
->>> [   85.579771]  irq_thread_fn+0x2c/0xb0
->>> [   85.583443]  irq_thread+0x16c/0x278
->>> [   85.587003]  kthread+0x118/0x1c0
->>> [   85.590283]  ret_from_fork+0x10/0x20
->>> [   85.593943] INFO: task (udev-worker):228 blocked for more than 42 se=
-conds.
->>> [   85.600873]       Not tainted 6.17.0-rc1-00004-g53e760d89498 #9
->>> [   85.606846] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disab=
-les this message.
->>> [   85.614717] task:(udev-worker)   state:D stack:0     pid:228   tgid:=
-228   ppid:222    task_flags:0x400140 flags:0x00000818
->>> [   85.625823] Call trace:
->>> [   85.628316]  __switch_to+0xe8/0x1a0 (T)
->>> [   85.632217]  __schedule+0x290/0x7c0
->>> [   85.635765]  schedule+0x34/0x118
->>> [   85.639044]  async_synchronize_cookie_domain.part.0+0x50/0xa4
->>> [   85.644854]  async_synchronize_full+0x78/0xa0
->>> [   85.649270]  do_init_module+0x190/0x23c
->>> [   85.653154]  load_module+0x1708/0x1ca0
->>> [   85.656952]  init_module_from_file+0x74/0xa0
->>> [   85.661273]  __arm64_sys_finit_module+0x130/0x2f8
->>> [   85.666023]  invoke_syscall+0x48/0x104
->>> [   85.669842]  el0_svc_common.constprop.0+0xc0/0xe0
->>> [   85.674604]  do_el0_svc+0x1c/0x28
->>> [   85.677973]  el0_svc+0x2c/0x84
->>> [   85.681078]  el0t_64_sync_handler+0xa0/0xe4
->>> [   85.685316]  el0t_64_sync+0x198/0x19c
->>> [   85.689032] INFO: task (udev-worker):229 blocked for more than 42 se=
-conds.
->>>
->>>
->>> Usually wifi, all remoteprocs and anything that depends on lpass/pinctr=
-l fail to probe.
->>=20
->> May i know what is testcase which you are running on target?
->
-> Boot the board?
->
->> what is target?
->
-> It is written in original report. Did you even read it?
->
->> Which usecase is this issue occurring in?
->
-> Boot?
-
-FWIW, what said above by Krzysztof is correct, there is no usecase, just bo=
-oting the board.
-
-Best regards,
-Alexey
+diff --git a/kernel/power/swap.c b/kernel/power/swap.c
+index ad13c461b657..43280e08a4ad 100644
+--- a/kernel/power/swap.c
++++ b/kernel/power/swap.c
+@@ -520,7 +520,8 @@ static int swap_writer_finish(struct swap_map_handle *handle,
+ #define CMP_SIZE	(CMP_PAGES * PAGE_SIZE)
+ 
+ /* Maximum number of threads for compression/decompression. */
+-#define CMP_THREADS	3
++#define CMP_MAX_THREADS	12
++static int cmp_threads = 3
+ 
+ /* Minimum/maximum number of pages for read buffering. */
+ #define CMP_MIN_RD_PAGES	1024
+@@ -585,8 +586,8 @@ struct crc_data {
+ 	wait_queue_head_t go;                     /* start crc update */
+ 	wait_queue_head_t done;                   /* crc update done */
+ 	u32 *crc32;                               /* points to handle's crc32 */
+-	size_t *unc_len[CMP_THREADS];             /* uncompressed lengths */
+-	unsigned char *unc[CMP_THREADS];          /* uncompressed data */
++	size_t *unc_len[CMP_MAX_THREADS];             /* uncompressed lengths */
++	unsigned char *unc[CMP_MAX_THREADS];          /* uncompressed data */
+ };
+ 
+ /*
+@@ -703,7 +704,7 @@ static int save_compressed_image(struct swap_map_handle *handle,
+ 	 * footprint.
+ 	 */
+ 	nr_threads = num_online_cpus() - 1;
+-	nr_threads = clamp_val(nr_threads, 1, CMP_THREADS);
++	nr_threads = clamp_val(nr_threads, 1, cmp_threads);
+ 
+ 	page = (void *)__get_free_page(GFP_NOIO | __GFP_HIGH);
+ 	if (!page) {
+@@ -1223,7 +1224,7 @@ static int load_compressed_image(struct swap_map_handle *handle,
+ 	 * footprint.
+ 	 */
+ 	nr_threads = num_online_cpus() - 1;
+-	nr_threads = clamp_val(nr_threads, 1, CMP_THREADS);
++	nr_threads = clamp_val(nr_threads, 1, cmp_threads);
+ 
+ 	page = vmalloc(array_size(CMP_MAX_RD_PAGES, sizeof(*page)));
+ 	if (!page) {
+@@ -1667,3 +1668,14 @@ static int __init swsusp_header_init(void)
+ }
+ 
+ core_initcall(swsusp_header_init);
++
++static int __init cmp_threads_setup(char *str)
++{
++       int rc = kstrtouint(str, 0, &cmp_threads);
++       if (rc)
++               return rc;
++       return 1;
++
++}
++
++__setup("cmp_threads=", cmp_threads_setup);
+-- 
+2.43.0
 
 
