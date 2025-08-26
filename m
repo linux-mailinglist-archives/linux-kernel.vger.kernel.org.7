@@ -1,158 +1,136 @@
-Return-Path: <linux-kernel+bounces-786437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F70AB359CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:06:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F368AB359D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:08:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BADB45E05C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:06:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4A833B1E49
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:08:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BFE6335BC8;
-	Tue, 26 Aug 2025 10:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549E8334379;
+	Tue, 26 Aug 2025 10:08:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jm8S4ZqK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="r7NlZ/4t"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF9A334371;
-	Tue, 26 Aug 2025 10:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A103090CE
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 10:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756202785; cv=none; b=V0gwhIk8dXwSXGFwlJxVs5N3exzhF0Ne0eH5Txy1Ge/rLLMJAjnV2J6bduN7VXNsAI3aHnSY0W+MxjX1puW5nIC9gVnnkLR464hZCv1bRf0LKZyA9YUdDvMaG89ZyBx5+RQH7IQPc2oh2PYp0UNmJ9NTTFmBHXNqIUEv/1pgs4U=
+	t=1756202918; cv=none; b=DAusxtXR8ZU7Xz4iWEwa0nwrEyqSD4ZL5YOm+xP983v3vWotyvvfOGm7HMiNvoLLCioaAPK9PMSAUiJD7iJVOC17MO5FXLr0zehdds7Em0KKdJ81jfLNnfL2z43mAK7WAGu8K0HIQg67jPXeQy2xDKmHa+dHMB6Qx2UK1+ErsUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756202785; c=relaxed/simple;
-	bh=KjBz8eZZveVAWI6/nBMSthsMwIWSi99UaJB2U/LJYl4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EfPYdhPigFtSe+0dB9hfJ8f/G8UROkuFVY4zbk25U/vgBcBMIOuQT9xUshA1wW2Pus+qt6tmffsYmHBK2DtLZnC1T3h2wlHIdTv1zyQa/CyrvfkLU+K4FBb6QlGT3KB+kpACcx+iJWmmgqduQs45Cl50ZGHJ8HyheRJ13FTmiTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jm8S4ZqK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AC4BC4CEF1;
-	Tue, 26 Aug 2025 10:06:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756202784;
-	bh=KjBz8eZZveVAWI6/nBMSthsMwIWSi99UaJB2U/LJYl4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Jm8S4ZqKuBRTD3dlCGaywYxzVWWdp7rseuKmR6FB+AruCUdxr3wuihkQtgQviL7UM
-	 GWjF0OfzSu0piD/fhGNHtgxfmHs7ZW7oCWyxDkStr7PCSUWgwJpBWGokh2Yi96KV0F
-	 i63EcFz0XeKPx8NIwN9rFreOsJArpXYQReYeEI1xHc+kKjeo/fHvZoY4CJt2P4w7JP
-	 f8ehg2mHgKv+iLgCgADphB9xPcyrb9nIkD9WX2eF4hiKVdAd2JSA2+yXGVKIknqYU2
-	 Kha95yuYA0Gpp/QBLO2mg2RxGlXdYSZWT2dTjuQ+0pIuDURgS5lHl8Qk0pxtIuyqRy
-	 AxWfJk8PSpB2g==
-Message-ID: <890ede8a-c049-4332-8f62-5dce2fa0f77b@kernel.org>
-Date: Tue, 26 Aug 2025 12:06:18 +0200
+	s=arc-20240116; t=1756202918; c=relaxed/simple;
+	bh=gygMN3gMSxZ6Evr4Nrnpma342Igh7n4myrgw/1fPWg4=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=W9NpuSk6OBSt2WkHDztfIUWddqD9XlvWW0MzC4mlL1yjaQbGKVFgSV3iTWKQlX7QubC9BDHfpfW6lVk04gMuDr3BDhT6JQyax4VZEhIN3KcvQGH4H9VXxWDqEoEd+mDmlYOMtdyUp5OUOTC/EdNp1x9GLKThPjP2r7r0TGDbMJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=r7NlZ/4t; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250826100829epoutp0278a4beea13a76b27d81643319f64da20~fST24IhFt0545305453epoutp02W
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 10:08:29 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250826100829epoutp0278a4beea13a76b27d81643319f64da20~fST24IhFt0545305453epoutp02W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756202909;
+	bh=gygMN3gMSxZ6Evr4Nrnpma342Igh7n4myrgw/1fPWg4=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=r7NlZ/4tAu+9H/3P7ZWUKTeFXtGPrnNGXPVGjg+FnDizdhhY2CcucA6jZY56cem/W
+	 +67efryuTeLX78KEo8RXX7wyJn+cGCSiHzt5hSkaHeJF9GbnTAncXUgfih65s/Ru86
+	 AnYJnsVxc+pynbElLONt0wHfZZL3yl6125+xZmlE=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250826100827epcas5p1193525accefc68efcd36c224d01ca9fc~fST10omlf3119231192epcas5p1b;
+	Tue, 26 Aug 2025 10:08:27 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.91]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4cB3Jq08MPz6B9mF; Tue, 26 Aug
+	2025 10:08:27 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250826100826epcas5p24abdd08b355b1a7c1064b086bb9c11ac~fST0MRrip0241602416epcas5p2f;
+	Tue, 26 Aug 2025 10:08:26 +0000 (GMT)
+Received: from FDSFTE196 (unknown [107.116.189.214]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250826100822epsmtip1d21b4e23ad85bcf46748f0d59cda39b5~fSTwTkU862841628416epsmtip1X;
+	Tue, 26 Aug 2025 10:08:21 +0000 (GMT)
+From: "Inbaraj E" <inbaraj.e@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <mturquette@baylibre.com>,
+	<sboyd@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <s.nawrocki@samsung.com>, <s.hauer@pengutronix.de>,
+	<shawnguo@kernel.org>, <cw00.choi@samsung.com>, <rmfrfs@gmail.com>,
+	<laurent.pinchart@ideasonboard.com>, <martink@posteo.de>,
+	<mchehab@kernel.org>, <linux-fsd@tesla.com>, <will@kernel.org>,
+	<catalin.marinas@arm.com>, <pankaj.dubey@samsung.com>,
+	<shradha.t@samsung.com>, <ravi.patel@samsung.com>
+Cc: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <alim.akhtar@samsung.com>,
+	<linux-samsung-soc@vger.kernel.org>, <kernel@puri.sm>,
+	<kernel@pengutronix.de>, <festevam@gmail.com>,
+	<linux-media@vger.kernel.org>, <imx@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <1dfaedc8-88e6-4749-8726-e8f66878e57e@kernel.org>
+Subject: RE: [PATCH v2 04/12] arm64: dts: fsd: Add CSI nodes
+Date: Tue, 26 Aug 2025 15:38:19 +0530
+Message-ID: <019c01dc1671$5c8f6850$15ae38f0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 7/8] serial: qcom-geni: Enable PM runtime for serial
- driver
-To: Alexey Klimov <alexey.klimov@linaro.org>
-Cc: Praveen Talari <quic_ptalari@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-serial@vger.kernel.org, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
- dmitry.baryshkov@oss.qualcomm.com, psodagud@quicinc.com, djaggi@quicinc.com,
- quic_msavaliy@quicinc.com, quic_vtanuku@quicinc.com,
- quic_arandive@quicinc.com, quic_cchiluve@quicinc.com,
- quic_shazhuss@quicinc.com, Jiri Slaby <jirislaby@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- bryan.odonoghue@linaro.org, neil.armstrong@linaro.org, srini@kernel.org
-References: <20250721174532.14022-1-quic_ptalari@quicinc.com>
- <20250721174532.14022-8-quic_ptalari@quicinc.com>
- <DC0D53ZTNOBU.E8LSD5E5Z8TX@linaro.org>
- <577d05d4-789b-4556-a2d2-d0ad15b2c213@quicinc.com>
- <dcad137d-8ac9-4a0b-9b64-de799536fd32@kernel.org>
- <DCC8WLEKNS8W.9GAJHQGYPZIY@linaro.org>
- <8689a8b4-75cb-4f01-ad6c-0a8367851257@kernel.org>
- <DCC9B5C7SSU2.GRI1UY0VUDHF@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <DCC9B5C7SSU2.GRI1UY0VUDHF@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQK5oFMD+tt4mLQU5V9KgVyIDaUIUQE9OnCOAxwEstACXXiXxwGMECOMAYbqfFkCHlK3ygEZONEMslGN25A=
+Content-Language: en-in
+X-CMS-MailID: 20250826100826epcas5p24abdd08b355b1a7c1064b086bb9c11ac
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250814141019epcas5p2f957b934d5b60d4649cf9c6abd6969d5
+References: <20250814140943.22531-1-inbaraj.e@samsung.com>
+	<CGME20250814141019epcas5p2f957b934d5b60d4649cf9c6abd6969d5@epcas5p2.samsung.com>
+	<20250814140943.22531-5-inbaraj.e@samsung.com>
+	<1919de68-99ea-47f7-b3d2-cae4611f9c52@kernel.org>
+	<00d101dc136c$aa037020$fe0a5060$@samsung.com>
+	<41434afa-fecd-4507-bcca-735d358ac925@kernel.org>
+	<016401dc15c0$fc0dcfe0$f4296fa0$@samsung.com>
+	<1dfaedc8-88e6-4749-8726-e8f66878e57e@kernel.org>
 
-On 26/08/2025 11:37, Alexey Klimov wrote:
-> On Tue Aug 26, 2025 at 10:21 AM BST, Krzysztof Kozlowski wrote:
->> On 26/08/2025 11:18, Alexey Klimov wrote:
->>>>> May i know what is testcase which you are running on target?
->>>>
->>>> Boot the board?
->>>>
->>>>> what is target?
->>>>
->>>> It is written in original report. Did you even read it?
->>>>
->>>>> Which usecase is this issue occurring in?
->>>>
->>>> Boot?
->>>
->>> FWIW, what said above by Krzysztof is correct, there is no usecase, just booting the board.
->>>
->> 12 days and nothing improved, right? if this was not dropped now,
->> Alexey, can you send a revert? Author clearly approches stability with a
->> very relaxed way and is just happy that patch was thrown over the wall
->> and job is done.
->>
->>
->> If you do not want to send revert, let me know, I will do it.
-> 
-> I am okay with sending revert, just trying to see if there is any interest
-> in fixing this.
+Hi Krzysztof,
 
-Any interest should have happened after 1 day of reporting linux-next
-breakage. It has been like what? 12 days?
 
-That's typical throw the patch over the wall. Revert.
-Best regards,
-Krzysztof
+ >> Googling for =22MIPI CSIS=22 gives me 0 results, so I still claim this =
+is
+> >> not a generic name.
+> >
+> > I checked other vendors (e.g: freescale), and they are using mipi-csi.
+> > I'll adopt for the same.
+> >
+> >
+>=20
+> Then it is just =22csi=22?=20
+
+For the CSIS MIPI CSI-2 Rx handled by imx-mipi-csis driver, I'll keep node =
+name as =22csi=22
+
+>Except that you have some other different nodes called
+> =22csi=22 as well, so two different devices are =22csi=22?
+
+For CSIS video capture interface which is handled by fsd-csis driver I'll k=
+eep node
+name as =22csis=22.
+ If =22csis =22 and =22csi=22 is kind of confusing in the same dt, then I'l=
+l keep
+as =22video=22.
+
+is it fine?
+
+Regards,
+Inbaraj E
+
 
