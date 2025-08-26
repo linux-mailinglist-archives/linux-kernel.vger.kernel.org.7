@@ -1,126 +1,153 @@
-Return-Path: <linux-kernel+bounces-786865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FFA3B36D0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:06:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08C54B36D04
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:05:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9C211C415E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:58:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C1B31C25045
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE4D241696;
-	Tue, 26 Aug 2025 14:58:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1D75223301;
+	Tue, 26 Aug 2025 14:57:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="gy2ML9na"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iH8mWj2U"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B2624DCE5
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 14:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 742BA1F55F8;
+	Tue, 26 Aug 2025 14:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756220280; cv=none; b=Vbval5P/wEjRJaXzpahGD0oBW4QcPfETqSOn2X0vucB97lXjxh6fBy7+udQAvUXsD8v48jomO070lLOcc9Xwp+GGaPl588NR20qsBoUPPYvHJvMhNtVhmBKV9fjS4vLcpR+TN9FAzFhZ0MxfXUor8POU9xF6M1iKEO+E3OhsZRE=
+	t=1756220262; cv=none; b=VV6J6wk1kWYTj96hN3j2r+ObVWrv5adKTaTVf0X5+qrknQtvreyyJF8AVshYKIo9PcgKU5EDdk6EUy5cc81Dpnm+Wz8k7DK2W4K2q4uT/AvQMEo7lrm9RFq2/UzKP3/9sdUH/CPIB0+/cIShzvGMQvMNiPAd7/cTte+ekahrrIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756220280; c=relaxed/simple;
-	bh=yf12NUbJlr5zt2ZgNH1/MSY3Qsy4n7BrLp67JFo7aRw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uOP0XEttIQJiBohM95CgN2gFW8U2Pye8r1ypKWrRNpCiaBLOyh0YPTlaQcVu3dIy9Br7rg/VeY9pAPcx4aMQYtkosrPCQtP6BY+tjp4Jdw26V/ot3Vg2MDHFGq68ILK+PlGOolXpb9sNi7JRUJSBIjj20rHjVUfWlQ9tUHyXS+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=gy2ML9na; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7704799d798so2348127b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 07:57:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1756220278; x=1756825078; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PM7ZOBxbXaYL3polB/sK+4dHFDAVqr3gYjlAgyAuBEQ=;
-        b=gy2ML9naCcywBUoAjkYEcAXZHY/8FAEYV6GxwH9/S+MrumJ77IZU0P0ifjIHq+aabU
-         Mx8jKaFqYHtg1cTBEgK+saP/spNZ4wE0O12nyvfNE9LfYEFgpYzMRknQ74rSM4SDWNz8
-         WNrAyQDVpdMZugh27gqto7N9YGOeC8862+IYEM7UvjVe3ROBKMuS6YeKjqjAOXalvmHR
-         7brTkWKWuDvypwa5OYOvZgjGtIYhol3635o00YAANnA8PQoB7BjJvxwVX9sDxsv2VNn9
-         n/95mZquNSA3vqOiwZtany1ALjmSKOY1pPIMrghgrghD1GDQKgX63OWHSmPctqKsxAmf
-         /d2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756220278; x=1756825078;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PM7ZOBxbXaYL3polB/sK+4dHFDAVqr3gYjlAgyAuBEQ=;
-        b=nasdR/eDb9Qbg+HryPsCbMR8sPd/NQOu8TlNKOzfO5/cx6eRio1BIRToLyytMe+Wiv
-         v9932h04Bz4lc+xmZyLihGwU9HYbD2h+9XX2otH3b7vJxDfRaBseria8yCf24Cb6jMqE
-         srNZSQqvTLu5Bq4/dPYU7RNJGXvZUQzyMtsdARNFS/MBsvAGCqdyRPUBurQJ9QfxVs6s
-         VI4Li6qcUobaTmR3vZ/Zmny5ETVN2mQxtVSrpju1KNoJyz5L5zfwqj5MAao7C/U7j8Fu
-         S28u5t6MYGHgwnXWjfmv/L397YZ4kMVYKnANWlPxnXAFM1Y/i3hVD2GoMC74FFHWszIg
-         a1ZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWgBXYPOaeiOn1qFSwXZu6jpAUJy+dpNGmKXK0cyhNcbge4KVvWkjTSRFs8KNb+x5GSSQ6mYAGJIZbSDEo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9kPpYN/9/qxWq6729iYEfcG0S/RbueCx5KPXhVbo/V/oUkHwv
-	kDmXB0Sczqg0hSyiZ1kllCjUR9MkQ/QUN2e9obWgLClaHv/aAJBP0/ZL3jvXFwkQXoM=
-X-Gm-Gg: ASbGncv/5RODqB31TLfnER8GT0nE5sfyATKTE/I+LvY2Wat+keylTkIi9O0qfBZgMXy
-	9bJEvMmV1Uj4Pdw5FWUmtdTzscM5XqI9Lqdg/m4NUQ5V3l3MP4/KNWZ9Gs87X3uU5Gwgw/+E07N
-	XXHAbaCivjGNCD/SISzODV+aAieVzIiOBC3l6LmuTCZh78tsXxSgnKdRaxLfy7sdLfc25CxXRip
-	/TkBhZ6p94ESu9xBYBVE5mO8pO2vnd2FWdmJd/JsbcnKsdaW18X2RoOkqba7ocKIFBT219o+i8Q
-	PWAppffH5Tj9tSSZ/cqozV+erEtfWgYj0AInKWpbqVGW2OjlEoUUxoIXnqx7nMjdlMecw+mZmDq
-	NTWEH6QWpYB4Z/znm/VQmUTg4g/LG2tzvA+fkKNo4ftlqQQ9xppseoUdF3axc0KvFCWRuEZB9Ow
-	+pvVObNMS3fIFFNiVjCEVuWip7mmMMhBiE1UiAbN0RUQI=
-X-Google-Smtp-Source: AGHT+IGRZfzmqas8P2qIkEBx55WpUsJls+/G4WI+d+9aViOVixxjip0aXSAjUYjI6b7UbZ8AtePGhA==
-X-Received: by 2002:a05:6a00:1399:b0:770:5544:dc0c with SMTP id d2e1a72fcca58-77055544aabmr13666696b3a.32.1756220278054;
-        Tue, 26 Aug 2025 07:57:58 -0700 (PDT)
-Received: from J9GPGXL7NT.bytedance.net ([61.213.176.56])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77059928c5asm7209799b3a.1.2025.08.26.07.57.54
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 26 Aug 2025 07:57:57 -0700 (PDT)
-From: Xu Lu <luxu.kernel@bytedance.com>
-To: paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	ajones@ventanamicro.com,
-	brs@rivosinc.com
-Cc: linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Xu Lu <luxu.kernel@bytedance.com>
-Subject: [RFC PATCH 2/4] dt-bindings: riscv: Add Zalasr ISA extension description
-Date: Tue, 26 Aug 2025 22:57:38 +0800
-Message-Id: <20250826145740.92276-3-luxu.kernel@bytedance.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250826145740.92276-1-luxu.kernel@bytedance.com>
-References: <20250826145740.92276-1-luxu.kernel@bytedance.com>
+	s=arc-20240116; t=1756220262; c=relaxed/simple;
+	bh=NPGrp4PIJq9p++NBl9nPYj3PiNhQa/M5uji2+s9cYQo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IJGiSodgRJacDfC2AzEigxrmlZXYrE+ftEzO8emAjRkj/EITDlKp5DT7RE9Pz+o+n3y8sxzOPJXneR4wtQrKOUtISEd5vJ7QkE0ndaSSeBE24lGb7lG72Wvyui3VKSkrZNWaAe9zPZic2Pd9Mu4RxGLB9cMlOUn4zopBfdY5GXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iH8mWj2U; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756220262; x=1787756262;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=NPGrp4PIJq9p++NBl9nPYj3PiNhQa/M5uji2+s9cYQo=;
+  b=iH8mWj2UfLUzxvXDjHYM8DG1mMBsiYh+hVxyfWNvDya0fMtTgOU40Bv6
+   9p/jW1oR4dgzzHNUo2rs99d5LBVe552F0juy3ELz7ojgjMAd5kQfuXdaY
+   uMsm+Z6AXM1JMQj6O6tiLEqwFoqjuoPTMhf+iMbJPmqPesg1KE3YU/qef
+   94OBnat2vLnhLeCpTEAMMgX0TgaFgR3jqTb47TAUzKQVck4+3t7vQK+7J
+   CsPvTjqsTn4MJBapGTxuiB62eXFsJlYgeQJgrJlXXhCyJrpBj3WVqG069
+   IM/CCIZVs2X2kUBnCJx9Msvq/0pubiez7vQ4JnKTGxXM5W8WEYWcmiwpX
+   w==;
+X-CSE-ConnectionGUID: aTfehCBHSd2IQhQdLqGS4Q==
+X-CSE-MsgGUID: Bfvk9ZjMSU6WDCVFdVHkPg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11534"; a="69827618"
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="69827618"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 07:57:41 -0700
+X-CSE-ConnectionGUID: XAdhmmn3S+a0JV/GHtEwjg==
+X-CSE-MsgGUID: e9QSuoMKTYKd7lgioe2J0Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="173990072"
+Received: from ldmartin-desk2.corp.intel.com (HELO [10.125.109.16]) ([10.125.109.16])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 07:57:41 -0700
+Message-ID: <9e0e12c7-72e2-4e92-a9c5-765c93053506@intel.com>
+Date: Tue, 26 Aug 2025 07:57:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/1] iommu/sva: Invalidate KVA range on kernel TLB
+ flush
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Baolu Lu <baolu.lu@linux.intel.com>, "Tian, Kevin"
+ <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Jann Horn <jannh@google.com>,
+ Vasant Hegde <vasant.hegde@amd.com>, Alistair Popple <apopple@nvidia.com>,
+ Peter Zijlstra <peterz@infradead.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Andy Lutomirski <luto@kernel.org>, "Lai, Yi1" <yi1.lai@intel.com>,
+ "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+ "security@kernel.org" <security@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>, vishal.moola@gmail.com
+References: <4a8df0e8-bd5a-44e4-acce-46ba75594846@linux.intel.com>
+ <20250807195154.GO184255@nvidia.com>
+ <BN9PR11MB52762A47B347C99F0C0E4C288C2FA@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <87bfc80e-258e-4193-a56c-3096608aec30@linux.intel.com>
+ <BN9PR11MB52766165393F7DD8209DA45A8C32A@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <e321d374-38a7-4f60-b991-58458a2761b9@linux.intel.com>
+ <9a649ff4-55fe-478a-bfd7-f3287534499a@intel.com>
+ <b0f613ce-7aad-4b1d-b6a1-4acc1d6c489e@linux.intel.com>
+ <dde6d861-daa3-49ed-ad4f-ff9dcaf1f2b8@linux.intel.com>
+ <b57d7b97-8110-47c5-9c7a-516b7b535ce9@intel.com>
+ <aK3FsU1Dds4OG79o@casper.infradead.org>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <aK3FsU1Dds4OG79o@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add description for the Zalasr ISA extension
+On 8/26/25 07:33, Matthew Wilcox wrote:
+...
+> One memdesc type already assigned is for page tables.  Maybe iommu page
+> tables are the same
 
-Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
----
- Documentation/devicetree/bindings/riscv/extensions.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Documentation/devicetree/bindings/riscv/extensions.yaml
-index ede6a58ccf534..6b8c21807a2da 100644
---- a/Documentation/devicetree/bindings/riscv/extensions.yaml
-+++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
-@@ -248,6 +248,11 @@ properties:
-             ratified at commit e87412e621f1 ("integrate Zaamo and Zalrsc text
-             (#1304)") of the unprivileged ISA specification.
- 
-+        - const: zalasr
-+          description: |
-+            The standard Zalasr extension for load-acquire/store-release as frozen
-+            at commit 194f0094 ("Version 0.9 for freeze") of riscv-zalasr.
-+
-         - const: zawrs
-           description: |
-             The Zawrs extension for entering a low-power state or for trapping
--- 
-2.20.1
-
+One bit of context: This is an IOMMU problem but the IOMMU is walking
+the normal x86 page tables in this case, specifically kernel page
+tables. There are separate IOMMU page tables, of course, but those
+aren't at issue here.
 
