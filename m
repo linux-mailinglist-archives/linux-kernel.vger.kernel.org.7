@@ -1,101 +1,93 @@
-Return-Path: <linux-kernel+bounces-786106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 977CBB3550E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:14:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E879B35513
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:14:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30D6D5E7EF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:13:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9593C3A19DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AECC32F7462;
-	Tue, 26 Aug 2025 07:13:36 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB4E2F7462;
+	Tue, 26 Aug 2025 07:14:35 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB1F2F6173
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 07:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1DCB2F60CF
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 07:14:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756192416; cv=none; b=rK48KvNk1nVfixWx14gsR5zVWe5UgGaioRkpDrnSlqcinMFmYZ4NFTg5sEuf5iWfXCs+X+2tm53Db67mSUO9Ii+zHCop8xygb2PoC1tPlyZjdd8r0igaY5bRZCWVw2NxvmPsj1PyD06rxe7r7R1CU4J1n4VYXBuBCH3tEoGUoFA=
+	t=1756192475; cv=none; b=PssmMVlvJyOLgDC573CS9lAl4vjqHXe4IlwyLoW0rVLaesc7NsGXSFzVuzgZThW7IVaajXdmR8Lyt4APpjSr1QV9vFkcs57FWhcpUML4J5JANZArNeARfIGYwUdVVfWAYiwmpoPlVPqAqOAPMKmquct3wvz5y+lhsRyPJDZ6xsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756192416; c=relaxed/simple;
-	bh=1FuBkqFIabgtFYenvUjjzRPxZoBYerHuUXc+RO9orlA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=jVB78mu39s+QCBFWrdNxz11LjZ0W5PC2DdJ+R+hKFHZilyKQZdAlPBXvAeZhesv3BBnD/TZe7cqeNghynsq8kPpYSWJPsjbu21tKPc/rIcRPtjcLyUXAC9xv2zEIcdQpzkMH3bdUh210aE/odWRGXgvsRfLCN8sFq4NgBDN9alA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+	s=arc-20240116; t=1756192475; c=relaxed/simple;
+	bh=JcxRRlt+Gecjh5qT0+KSCE0LEECzgZWFhcCe6czvDkU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ksAlZM2gshc0c81chOkOdbU1TRdAg2kUACyB/kOUuD1BMcSGn0678xB1dRyYbo+xuWyCzZcqL1kz75hKB/yc4l/xDShvgvXyDoJhxaMIIGUGTS+dcUQG7tOOGAw9WybwIngm7cgszKNhBb1fruYdqKOvpjSUHlgaL1IEzB8wx2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-886e2e808d0so134649239f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 00:13:34 -0700 (PDT)
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3eea931c037so14081275ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 00:14:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756192414; x=1756797214;
+        d=1e100.net; s=20230601; t=1756192473; x=1756797273;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=jPUJLTCW+VGEQ1LsWf3zUxjP0zIDrdC0uYjAPHNBV3A=;
-        b=O1s7iT6gboYyn7tiqj+E4d6FmIv/83OwiEynfm/RXjNLckz1PvXr7iKprqXeje6DIY
-         YyFi9GjVHJ0FkHlQ+Wp+TTqTS1zblHIpQvxrKb47DnKFxL3QidNK1A/kYtnxgvAfLFSh
-         DUaxrVEzV9C0l6oK9s59RMxHcDk7D7/2Bgfj0A+xNkeYMFJWmrtJRVaerWrwv0fV8Uel
-         /Fq+9CUHbP2enMI8t8E2zwjQsjjVd+2P3aFja6LDpW6IOR/VhqEQ6IlejekNqyJY3h12
-         FgSMQDHVN6yv14JQbNrnr3+bJT3NqAuqxNK2LRXxDhoAh83kpMS+LnKQho6DhDfn3qf/
-         S9Ew==
-X-Forwarded-Encrypted: i=1; AJvYcCUp3+EwgvAvjlTyHRxp+dSXI6HLntI3RiR9U5GGsCeFe6EhEEnYXxQfKomWsY8Lr/gVTk1OgizZeFhMJBA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1unuwMHOkC+EL+Ck68f9fPNd7vqak7oB8IB5E65ifNBRggokA
-	xYCe3ZY6xh4SL9fjA7kD4ahlkV122lmoqJ0FMvNpdtvJrB86LZdiV/47udlBqfj2zKgYt4R5nFq
-	j4xIx1ZND9wM/XOfdaxURGL1KBKKTjShPcC6QsacfrVc7+y7ZSQqr+J53Lhc=
-X-Google-Smtp-Source: AGHT+IHkx0wZd2J60BKpDyIXDeNnPSsA78PqWlgb4F6xOsewL8rjHw4CMigtGvTSdkNr4EX8nidVXCZByFsqispjKvZQY5f+A6pX
+        bh=OmbNPf9Srtguu+B0auyvT+R43TUCKVTg9+DZPZykivs=;
+        b=oNIrGV+2jppjFMykpnSaIiQBXyDuD3s0RC7ux1kk/SPMTTHzztWybRCAoYQDLneqny
+         a5jmm338YRw2k+RJETqSi6fHoAEFFIuXW1bntHFeyiHwp3e6WVisR2vIb9WFA3P33FG3
+         +7861CxONJMOJAbyufBt/sTmtM0ZZjyHcGnScdhHitFA9rcOwSL7h4WUanvG3afcECnb
+         K6+K8fohLVis5FZKg12ee0XAZXfInA/ZrJWNbdRF+IQoOR4VeeGvwhi5wpLOOi/qVAt+
+         /tPXdTWVJEDw4CRlhAIgpu9gBp30I4szEMWbvGTuE3+F02y2UTLi/WarF3BifZGI4S7v
+         rcTw==
+X-Forwarded-Encrypted: i=1; AJvYcCVpOHXkl+yJi5Q+1xEQJuRmf4HmbMFptWfHTAH0pJ7f2NRLj3j9eKM87GOZ40qVJqF2vhB0fbH9CmxeNZ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCPaI9ZacQP+pXPFvIJNKyaHYGtOQ+LUCigLlEyJ1U8JL7/2S1
+	gF54HdB7zBVqSlQQoMDGENx3ToCQNWf3rv7B4NUc8yf38AT+gBL2uZSrlsfJXHFUIQQudipuzcK
+	jXdwqxI/5HEaF7b33LrJGx/JylQ9g90lg9LKRxuscFujptHY9MIxwqFp8KJ0=
+X-Google-Smtp-Source: AGHT+IHFKb21tJy4sBQBipibon24KUW1DwEtdCrIHZ7+rODLav5WBq8j9Jr21TxfM6fIb3Z1Gn0fEdju2ASe85o2qkSaCJH0bsHV
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c268:0:b0:3e5:4631:54a5 with SMTP id
- e9e14a558f8ab-3e921f3be05mr243600775ab.18.1756192413798; Tue, 26 Aug 2025
- 00:13:33 -0700 (PDT)
-Date: Tue, 26 Aug 2025 00:13:33 -0700
+X-Received: by 2002:a05:6e02:3309:b0:3eb:1211:8738 with SMTP id
+ e9e14a558f8ab-3eb121187c5mr114177505ab.21.1756192472760; Tue, 26 Aug 2025
+ 00:14:32 -0700 (PDT)
+Date: Tue, 26 Aug 2025 00:14:32 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ad5e9d.050a0220.37038e.00af.GAE@google.com>
-Subject: [syzbot] Monthly hfs report (Aug 2025)
-From: syzbot <syzbot+listc4fd87023dbf3e7eff58@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+Message-ID: <68ad5ed8.050a0220.37038e.00b2.GAE@google.com>
+Subject: [syzbot] Monthly udf report (Aug 2025)
+From: syzbot <syzbot+list948ee5c65e0b757a7721@syzkaller.appspotmail.com>
+To: jack@suse.com, linux-kernel@vger.kernel.org, 
 	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hello hfs maintainers/developers,
+Hello udf maintainers/developers,
 
-This is a 31-day syzbot report for the hfs subsystem.
+This is a 31-day syzbot report for the udf subsystem.
 All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/hfs
+https://syzkaller.appspot.com/upstream/s/udf
 
-During the period, 2 new issues were detected and 0 were fixed.
-In total, 43 issues are still open and 25 have already been fixed.
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 9 issues are still open and 38 have already been fixed.
 
 Some of the still happening issues:
 
-Ref  Crashes Repro Title
-<1>  106342  Yes   kernel BUG in hfs_write_inode
-                   https://syzkaller.appspot.com/bug?extid=97e301b4b82ae803d21b
-<2>  13601   Yes   possible deadlock in hfsplus_get_block
-                   https://syzkaller.appspot.com/bug?extid=b7ef7c0c8d8098686ae2
-<3>  9699    Yes   KMSAN: uninit-value in hfsplus_cat_case_cmp_key
-                   https://syzkaller.appspot.com/bug?extid=50d8672fea106e5387bb
-<4>  4816    Yes   possible deadlock in hfs_find_init (2)
-                   https://syzkaller.appspot.com/bug?extid=e390d66dda462b51fde1
-<5>  4627    Yes   KMSAN: uninit-value in hfsplus_delete_cat
-                   https://syzkaller.appspot.com/bug?extid=fdedff847a0e5e84c39f
-<6>  4377    Yes   KMSAN: uninit-value in hfsplus_attr_bin_cmp_key
-                   https://syzkaller.appspot.com/bug?extid=c6d8e1bffb0970780d5c
-<7>  3343    Yes   KASAN: slab-out-of-bounds Read in hfsplus_uni2asc
-                   https://syzkaller.appspot.com/bug?extid=076d963e115823c4b9be
-<8>  3050    Yes   KMSAN: uninit-value in hfsplus_lookup
-                   https://syzkaller.appspot.com/bug?extid=91db973302e7b18c7653
-<9>  2736    Yes   WARNING in hfs_bnode_create
-                   https://syzkaller.appspot.com/bug?extid=a19ca73b21fe8bc69101
-<10> 2402    Yes   possible deadlock in hfs_extend_file (3)
-                   https://syzkaller.appspot.com/bug?extid=2a62f58f1a4951a549bb
+Ref Crashes Repro Title
+<1> 13239   Yes   WARNING in udf_truncate_extents
+                  https://syzkaller.appspot.com/bug?extid=43fc5ba6dcb33e3261ca
+<2> 1275    Yes   WARNING in __udf_add_aext (3)
+                  https://syzkaller.appspot.com/bug?extid=799a0e744ac47f928024
+<3> 530     Yes   possible deadlock in udf_free_blocks
+                  https://syzkaller.appspot.com/bug?extid=d472c32c5dd4cd2fb5c5
+<4> 140     Yes   WARNING in __getblk_slow
+                  https://syzkaller.appspot.com/bug?extid=89fa933c2012e808890e
+<5> 98      Yes   WARNING in udf_setsize (2)
+                  https://syzkaller.appspot.com/bug?extid=db6df8c0f578bc11e50e
+<6> 1       Yes   WARNING in udf_fiiter_add_entry
+                  https://syzkaller.appspot.com/bug?extid=969e250fc7983fc7417c
 
 ---
 This report is generated by a bot. It may contain errors.
