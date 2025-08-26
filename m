@@ -1,464 +1,113 @@
-Return-Path: <linux-kernel+bounces-786011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADA77B35379
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:41:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B41FB35372
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:40:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94A231B627A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:41:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40EB71B6271E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 746FF2F1FDB;
-	Tue, 26 Aug 2025 05:40:40 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C91442EFD9B;
+	Tue, 26 Aug 2025 05:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YCLb5Lgo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD6B2F1FDC;
-	Tue, 26 Aug 2025 05:40:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25580226CFD;
+	Tue, 26 Aug 2025 05:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756186839; cv=none; b=r6MKspmqxDdR94cSM+fgVcWjdOWiW8zJ9WOWTzWgf3Cvb2BUI/AQMMurV4t/mr5Td/1qFJS12Yu5pIWTlEYTIsM+VpeaF102tYBg8lXld3Tdb/lxB4lv6AEKFfS3OpHOSyLivO1tjIAyphUr7CB05z+3huZ9SJb+HEjB8pcpEic=
+	t=1756186808; cv=none; b=lGaB6DveRjatVAQGp9Nlti7XfQYdBYpTqzrynGVz+n7qXMDpFsrm8bS61P91vIyRaZITUlWfNDbzX9u0e49HXEZcSnp13Sqx78PsCDTDaO3v70ZH4N9Gu25NFgtq5swt/arhh6KjGfiGO3/f+FaOtf74i1CJS2wNy0/Tu5oS/dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756186839; c=relaxed/simple;
-	bh=9eSCc/1IVWVs30tCSZDdOQB5X7sh8HgtKf8BwoIEIkA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ukQxPyViKXxxmL2JNSs0EjTpiOFMc9KfCT2Rl9h4PcrKzHBFDNpmySZMCPCsFmkTVgIPEcW9wy8JNhcSB0sUTdjWI6P5JUeRR++FBMDpXxIfYpgsY+qXy05dw1S8CnvQJMjy7vcV1gSSKcWL9blULncp7iu/hSLzOrajp/Bu8mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.192] (ip5f5af7cb.dynamic.kabel-deutschland.de [95.90.247.203])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 8DAC56028826D;
-	Tue, 26 Aug 2025 07:40:00 +0200 (CEST)
-Message-ID: <e9bbe0bb-b70d-445b-a7ff-b0ab2eef6c6f@molgen.mpg.de>
-Date: Tue, 26 Aug 2025 07:40:00 +0200
+	s=arc-20240116; t=1756186808; c=relaxed/simple;
+	bh=V7haGWXGYxuDHQzykH2Qfa3866AAjU/I6C4sFCOcY8s=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=D6l85Th//LHLtRZSLZrd3g6QTr+TaKaNqDijaCee3x6027nN2jJ7DY98nK7RO2rmF2VEsYuaiFNLNWPECwmMFu74+h7ZIQKr18Whz1SL5AeCBcY1Wb9FbotSSZYZNDw8RIa/VxbcbUa3xLUYscfRJCDqlGnQI1/2vpd5LwKUWzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YCLb5Lgo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9EF2C4CEF1;
+	Tue, 26 Aug 2025 05:40:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756186806;
+	bh=V7haGWXGYxuDHQzykH2Qfa3866AAjU/I6C4sFCOcY8s=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=YCLb5LgoyGv7/cQj52C0b10RNHeEK5O2Ut103GdaASmZanYZw8jcA9HPJm+ePadvg
+	 stwyZMDp+q2oYtatFQS8Zj7MsGrAhVuKfxH+/z9JtNvpTqZ0gwOV3cX4GtHVuTt8RR
+	 tcYppuAXc0VZtIS4PWH06Cbb4cnxH2LBFXINb02WtfbdKj6w810P01nd/KEsLJSt1S
+	 xd6ajz72LIVDnF7UQC0GjRieq3muZNlsR2pqpIi5xVyiVoooer5QxK2X4/Ep6H+BuK
+	 dFTmWvyNpI8mJC6NeCfK/2ERmz2xRPA9JsE1eKFtNFqPndINIGkzzKv6gaFVCwnikb
+	 oMAFtZ/qhb8jw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADEF1383BF70;
+	Tue, 26 Aug 2025 05:40:15 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Bluetooth: remove duplicate h4_recv_buf() in header
-To: Calvin Owens <calvin@wbinvd.org>
-Cc: linux-kernel@vger.kernel.org, Marcel Holtmann <marcel@holtmann.org>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Sean Wang <sean.wang@mediatek.com>,
- Amitkumar Karwar <amitkumar.karwar@nxp.com>,
- Neeraj Kale <neeraj.sanjaykale@nxp.com>, linux-bluetooth@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- johan.hedberg@intel.com
-References: <be8edf7f8ba8dea6c61272b02fb20a4ac7e1c5a5.1756179634.git.calvin@wbinvd.org>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <be8edf7f8ba8dea6c61272b02fb20a4ac7e1c5a5.1756179634.git.calvin@wbinvd.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH bpf-next v3 0/7] bpf: introduce and use
+ rcu_read_lock_dont_migrate
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175618681450.3665841.12074652835342270974.git-patchwork-notify@kernel.org>
+Date: Tue, 26 Aug 2025 05:40:14 +0000
+References: <20250821090609.42508-1-dongml2@chinatelecom.cn>
+In-Reply-To: <20250821090609.42508-1-dongml2@chinatelecom.cn>
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: ast@kernel.org, paulmck@kernel.org, frederic@kernel.org,
+ neeraj.upadhyay@kernel.org, joelagnelf@nvidia.com, josh@joshtriplett.org,
+ boqun.feng@gmail.com, urezki@gmail.com, rostedt@goodmis.org,
+ mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+ qiang.zhang@linux.dev, daniel@iogearbox.net, john.fastabend@gmail.com,
+ andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, rcu@vger.kernel.org,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org
 
-Dear Calvin,
+Hello:
 
+This series was applied to bpf/bpf-next.git (master)
+by Alexei Starovoitov <ast@kernel.org>:
 
-Thank you for your patch.
+On Thu, 21 Aug 2025 17:06:02 +0800 you wrote:
+> migrate_disable() and rcu_read_lock() are used to together in many case in
+> bpf. However, when PREEMPT_RCU is not enabled, rcu_read_lock() will
+> disable preemption, which indicate migrate_disable(), so we don't need to
+> call it in this case.
+> 
+> In this series, we introduce rcu_read_lock_dont_migrate and
+> rcu_read_unlock_migrate, which will call migrate_disable and
+> migrate_enable only when PREEMPT_RCU enabled. And use
+> rcu_read_lock_dont_migrate in bpf subsystem.
+> 
+> [...]
 
-Am 26.08.25 um 06:11 schrieb Calvin Owens:
-> The "h4_recv.h" header contains a duplicate h4_recv_buf() that is nearly
-> but not quite identical to the h4_recv_buf() in hci_h4.c.
-> 
-> This duplicated header was added in commit 07eb96a5a7b0 ("Bluetooth:
-> bpa10x: Use separate h4_recv_buf helper"). I wasn't able to find any
-> explanation for duplicating the code in the discussion:
-> 
->      https://lore.kernel.org/all/20180320181855.37297-1-marcel@holtmann.org/
->      https://lore.kernel.org/all/20180324091954.73229-2-marcel@holtmann.org/
-> 
-> Unfortunately, in the years since, several other drivers have come to
-> also rely on this duplicated function, probably by accident. This is, at
-> the very least, *extremely* confusing. It's also caused real issues when
-> it's become out-of-sync, see the following:
-> 
->      ef564119ba83 ("Bluetooth: hci_h4: Add support for ISO packets")
->      61b27cdf025b ("Bluetooth: hci_h4: Add support for ISO packets in h4_recv.h")
-> 
-> This is the full diff between the two implementations today:
-> 
->      --- orig.c
->      +++ copy.c
->      @@ -1,117 +1,100 @@
->       {
->      -	struct hci_uart *hu = hci_get_drvdata(hdev);
->      -	u8 alignment = hu->alignment ? hu->alignment : 1;
->      -
->       	/* Check for error from previous call */
->       	if (IS_ERR(skb))
->       		skb = NULL;
-> 
->       	while (count) {
->       		int i, len;
-> 
->      -		/* remove padding bytes from buffer */
->      -		for (; hu->padding && count > 0; hu->padding--) {
->      -			count--;
->      -			buffer++;
->      -		}
->      -		if (!count)
->      -			break;
->      -
->       		if (!skb) {
->       			for (i = 0; i < pkts_count; i++) {
->       				if (buffer[0] != (&pkts[i])->type)
->       					continue;
-> 
->       				skb = bt_skb_alloc((&pkts[i])->maxlen,
->       						   GFP_ATOMIC);
->       				if (!skb)
->       					return ERR_PTR(-ENOMEM);
-> 
->       				hci_skb_pkt_type(skb) = (&pkts[i])->type;
->       				hci_skb_expect(skb) = (&pkts[i])->hlen;
->       				break;
->       			}
-> 
->       			/* Check for invalid packet type */
->       			if (!skb)
->       				return ERR_PTR(-EILSEQ);
-> 
->       			count -= 1;
->       			buffer += 1;
->       		}
-> 
->       		len = min_t(uint, hci_skb_expect(skb) - skb->len, count);
->       		skb_put_data(skb, buffer, len);
-> 
->       		count -= len;
->       		buffer += len;
-> 
->       		/* Check for partial packet */
->       		if (skb->len < hci_skb_expect(skb))
->       			continue;
-> 
->       		for (i = 0; i < pkts_count; i++) {
->       			if (hci_skb_pkt_type(skb) == (&pkts[i])->type)
->       				break;
->       		}
-> 
->       		if (i >= pkts_count) {
->       			kfree_skb(skb);
->       			return ERR_PTR(-EILSEQ);
->       		}
-> 
->       		if (skb->len == (&pkts[i])->hlen) {
->       			u16 dlen;
-> 
->       			switch ((&pkts[i])->lsize) {
->       			case 0:
->       				/* No variable data length */
->       				dlen = 0;
->       				break;
->       			case 1:
->       				/* Single octet variable length */
->       				dlen = skb->data[(&pkts[i])->loff];
->       				hci_skb_expect(skb) += dlen;
-> 
->       				if (skb_tailroom(skb) < dlen) {
->       					kfree_skb(skb);
->       					return ERR_PTR(-EMSGSIZE);
->       				}
->       				break;
->       			case 2:
->       				/* Double octet variable length */
->       				dlen = get_unaligned_le16(skb->data +
->       							  (&pkts[i])->loff);
->       				hci_skb_expect(skb) += dlen;
-> 
->       				if (skb_tailroom(skb) < dlen) {
->       					kfree_skb(skb);
->       					return ERR_PTR(-EMSGSIZE);
->       				}
->       				break;
->       			default:
->       				/* Unsupported variable length */
->       				kfree_skb(skb);
->       				return ERR_PTR(-EILSEQ);
->       			}
-> 
->       			if (!dlen) {
->      -				hu->padding = (skb->len + 1) % alignment;
->      -				hu->padding = (alignment - hu->padding) % alignment;
->      -
->       				/* No more data, complete frame */
->       				(&pkts[i])->recv(hdev, skb);
->       				skb = NULL;
->       			}
->       		} else {
->      -			hu->padding = (skb->len + 1) % alignment;
->      -			hu->padding = (alignment - hu->padding) % alignment;
->      -
->       			/* Complete frame */
->       			(&pkts[i])->recv(hdev, skb);
->       			skb = NULL;
->       		}
->       	}
-> 
->       	return skb;
->       }
->      -EXPORT_SYMBOL_GPL(h4_recv_buf)
-> 
-> As I read this: If alignment is one, and padding is zero, padding
-> remains zero throughout the loop. So it seems to me that the two
-> functions behave strictly identically in that case. All the duplicated
-> defines are also identical, as is the duplicated h4_recv_pkt structure
-> declaration.
-> 
-> All four drivers which use the duplicated function use the default
-> alignment of one, and the default padding of zero. I therefore conclude
-> the duplicate function may be safely replaced with the core one.
-> 
-> I raised this in an RFC a few months ago, and didn't get much interest:
-> 
->      https://lore.kernel.org/all/CABBYNZ+ONkYtq2fR-8PtL3X-vetvJ0BdP4MTw9cNpjLDzG3HUQ@mail.gmail.com/
-> 
-> ...but I'm still wary I've missed something, and I'd really appreciate
-> more eyeballs on it.
-> 
-> I tested this successfully on btnxpuart a few months ago, but
-> unfortunately I no longer have access to that hardware.
+Here is the summary with links:
+  - [bpf-next,v3,1/7] rcu: add rcu_read_lock_dont_migrate()
+    https://git.kernel.org/bpf/bpf-next/c/1b93c03fb319
+  - [bpf-next,v3,2/7] bpf: use rcu_read_lock_dont_migrate() for bpf_cgrp_storage_free()
+    https://git.kernel.org/bpf/bpf-next/c/8c0afc7c9c11
+  - [bpf-next,v3,3/7] bpf: use rcu_read_lock_dont_migrate() for bpf_inode_storage_free()
+    https://git.kernel.org/bpf/bpf-next/c/f2fa9b906911
+  - [bpf-next,v3,4/7] bpf: use rcu_read_lock_dont_migrate() for bpf_iter_run_prog()
+    https://git.kernel.org/bpf/bpf-next/c/68748f0397a3
+  - [bpf-next,v3,5/7] bpf: use rcu_read_lock_dont_migrate() for bpf_task_storage_free()
+    https://git.kernel.org/bpf/bpf-next/c/cf4303b70dfa
+  - [bpf-next,v3,6/7] bpf: use rcu_read_lock_dont_migrate() for bpf_prog_run_array_cg()
+    https://git.kernel.org/bpf/bpf-next/c/427a36bb5504
+  - [bpf-next,v3,7/7] bpf: use rcu_read_lock_dont_migrate() for trampoline.c
+    https://git.kernel.org/bpf/bpf-next/c/8e4f0b1ebcf2
 
-Great analysis. Thank you for your time writing this up.
-
-> Cc: Marcel Holtmann <marcel@holtmann.org>
-> Signed-off-by: Calvin Owens <calvin@wbinvd.org>
-> ---
->   drivers/bluetooth/bpa10x.c    |   2 +-
->   drivers/bluetooth/btmtksdio.c |   2 +-
->   drivers/bluetooth/btmtkuart.c |   2 +-
->   drivers/bluetooth/btnxpuart.c |   2 +-
->   drivers/bluetooth/h4_recv.h   | 153 ----------------------------------
->   5 files changed, 4 insertions(+), 157 deletions(-)
->   delete mode 100644 drivers/bluetooth/h4_recv.h
-> 
-> diff --git a/drivers/bluetooth/bpa10x.c b/drivers/bluetooth/bpa10x.c
-> index 8b43dfc755de..b7ba667a3d09 100644
-> --- a/drivers/bluetooth/bpa10x.c
-> +++ b/drivers/bluetooth/bpa10x.c
-> @@ -20,7 +20,7 @@
->   #include <net/bluetooth/bluetooth.h>
->   #include <net/bluetooth/hci_core.h>
->   
-> -#include "h4_recv.h"
-> +#include "hci_uart.h"
->   
->   #define VERSION "0.11"
->   
-> diff --git a/drivers/bluetooth/btmtksdio.c b/drivers/bluetooth/btmtksdio.c
-> index 4fc673640bfc..50abefba6d04 100644
-> --- a/drivers/bluetooth/btmtksdio.c
-> +++ b/drivers/bluetooth/btmtksdio.c
-> @@ -29,7 +29,7 @@
->   #include <net/bluetooth/bluetooth.h>
->   #include <net/bluetooth/hci_core.h>
->   
-> -#include "h4_recv.h"
-> +#include "hci_uart.h"
->   #include "btmtk.h"
->   
->   #define VERSION "0.1"
-> diff --git a/drivers/bluetooth/btmtkuart.c b/drivers/bluetooth/btmtkuart.c
-> index 76995cfcd534..d9b90ea2ad38 100644
-> --- a/drivers/bluetooth/btmtkuart.c
-> +++ b/drivers/bluetooth/btmtkuart.c
-> @@ -27,7 +27,7 @@
->   #include <net/bluetooth/bluetooth.h>
->   #include <net/bluetooth/hci_core.h>
->   
-> -#include "h4_recv.h"
-> +#include "hci_uart.h"
->   #include "btmtk.h"
->   
->   #define VERSION "0.2"
-> diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
-> index 76e7f857fb7d..d5153fed0518 100644
-> --- a/drivers/bluetooth/btnxpuart.c
-> +++ b/drivers/bluetooth/btnxpuart.c
-> @@ -24,7 +24,7 @@
->   #include <net/bluetooth/bluetooth.h>
->   #include <net/bluetooth/hci_core.h>
->   
-> -#include "h4_recv.h"
-> +#include "hci_uart.h"
->   
->   #define MANUFACTURER_NXP		37
->   
-> diff --git a/drivers/bluetooth/h4_recv.h b/drivers/bluetooth/h4_recv.h
-> deleted file mode 100644
-> index 28cf2d8c2d48..000000000000
-> --- a/drivers/bluetooth/h4_recv.h
-> +++ /dev/null
-> @@ -1,153 +0,0 @@
-> -/* SPDX-License-Identifier: GPL-2.0-or-later */
-> -/*
-> - *
-> - *  Generic Bluetooth HCI UART driver
-> - *
-> - *  Copyright (C) 2015-2018  Intel Corporation
-> - */
-> -
-> -#include <linux/unaligned.h>
-> -
-> -struct h4_recv_pkt {
-> -	u8  type;	/* Packet type */
-> -	u8  hlen;	/* Header length */
-> -	u8  loff;	/* Data length offset in header */
-> -	u8  lsize;	/* Data length field size */
-> -	u16 maxlen;	/* Max overall packet length */
-> -	int (*recv)(struct hci_dev *hdev, struct sk_buff *skb);
-> -};
-> -
-> -#define H4_RECV_ACL \
-> -	.type = HCI_ACLDATA_PKT, \
-> -	.hlen = HCI_ACL_HDR_SIZE, \
-> -	.loff = 2, \
-> -	.lsize = 2, \
-> -	.maxlen = HCI_MAX_FRAME_SIZE \
-> -
-> -#define H4_RECV_SCO \
-> -	.type = HCI_SCODATA_PKT, \
-> -	.hlen = HCI_SCO_HDR_SIZE, \
-> -	.loff = 2, \
-> -	.lsize = 1, \
-> -	.maxlen = HCI_MAX_SCO_SIZE
-> -
-> -#define H4_RECV_EVENT \
-> -	.type = HCI_EVENT_PKT, \
-> -	.hlen = HCI_EVENT_HDR_SIZE, \
-> -	.loff = 1, \
-> -	.lsize = 1, \
-> -	.maxlen = HCI_MAX_EVENT_SIZE
-> -
-> -#define H4_RECV_ISO \
-> -	.type = HCI_ISODATA_PKT, \
-> -	.hlen = HCI_ISO_HDR_SIZE, \
-> -	.loff = 2, \
-> -	.lsize = 2, \
-> -	.maxlen = HCI_MAX_FRAME_SIZE
-> -
-> -static inline struct sk_buff *h4_recv_buf(struct hci_dev *hdev,
-> -					  struct sk_buff *skb,
-> -					  const unsigned char *buffer,
-> -					  int count,
-> -					  const struct h4_recv_pkt *pkts,
-> -					  int pkts_count)
-> -{
-> -	/* Check for error from previous call */
-> -	if (IS_ERR(skb))
-> -		skb = NULL;
-> -
-> -	while (count) {
-> -		int i, len;
-> -
-> -		if (!skb) {
-> -			for (i = 0; i < pkts_count; i++) {
-> -				if (buffer[0] != (&pkts[i])->type)
-> -					continue;
-> -
-> -				skb = bt_skb_alloc((&pkts[i])->maxlen,
-> -						   GFP_ATOMIC);
-> -				if (!skb)
-> -					return ERR_PTR(-ENOMEM);
-> -
-> -				hci_skb_pkt_type(skb) = (&pkts[i])->type;
-> -				hci_skb_expect(skb) = (&pkts[i])->hlen;
-> -				break;
-> -			}
-> -
-> -			/* Check for invalid packet type */
-> -			if (!skb)
-> -				return ERR_PTR(-EILSEQ);
-> -
-> -			count -= 1;
-> -			buffer += 1;
-> -		}
-> -
-> -		len = min_t(uint, hci_skb_expect(skb) - skb->len, count);
-> -		skb_put_data(skb, buffer, len);
-> -
-> -		count -= len;
-> -		buffer += len;
-> -
-> -		/* Check for partial packet */
-> -		if (skb->len < hci_skb_expect(skb))
-> -			continue;
-> -
-> -		for (i = 0; i < pkts_count; i++) {
-> -			if (hci_skb_pkt_type(skb) == (&pkts[i])->type)
-> -				break;
-> -		}
-> -
-> -		if (i >= pkts_count) {
-> -			kfree_skb(skb);
-> -			return ERR_PTR(-EILSEQ);
-> -		}
-> -
-> -		if (skb->len == (&pkts[i])->hlen) {
-> -			u16 dlen;
-> -
-> -			switch ((&pkts[i])->lsize) {
-> -			case 0:
-> -				/* No variable data length */
-> -				dlen = 0;
-> -				break;
-> -			case 1:
-> -				/* Single octet variable length */
-> -				dlen = skb->data[(&pkts[i])->loff];
-> -				hci_skb_expect(skb) += dlen;
-> -
-> -				if (skb_tailroom(skb) < dlen) {
-> -					kfree_skb(skb);
-> -					return ERR_PTR(-EMSGSIZE);
-> -				}
-> -				break;
-> -			case 2:
-> -				/* Double octet variable length */
-> -				dlen = get_unaligned_le16(skb->data +
-> -							  (&pkts[i])->loff);
-> -				hci_skb_expect(skb) += dlen;
-> -
-> -				if (skb_tailroom(skb) < dlen) {
-> -					kfree_skb(skb);
-> -					return ERR_PTR(-EMSGSIZE);
-> -				}
-> -				break;
-> -			default:
-> -				/* Unsupported variable length */
-> -				kfree_skb(skb);
-> -				return ERR_PTR(-EILSEQ);
-> -			}
-> -
-> -			if (!dlen) {
-> -				/* No more data, complete frame */
-> -				(&pkts[i])->recv(hdev, skb);
-> -				skb = NULL;
-> -			}
-> -		} else {
-> -			/* Complete frame */
-> -			(&pkts[i])->recv(hdev, skb);
-> -			skb = NULL;
-> -		}
-> -	}
-> -
-> -	return skb;
-> -}
-
-Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
-Kind regards,
-
-Paul
 
