@@ -1,102 +1,114 @@
-Return-Path: <linux-kernel+bounces-785836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D55A6B351A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:29:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E74AAB3517E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:19:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 940733B29D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:29:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 783B01B6067D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:19:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B466F26D4EE;
-	Tue, 26 Aug 2025 02:28:36 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4639E21C18C;
+	Tue, 26 Aug 2025 02:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="3hp2HnJG"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A38258CF7
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 02:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971B761FCE;
+	Tue, 26 Aug 2025 02:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756175316; cv=none; b=CDMM63UYuHJaciQfUxPemoGLSUJFXR0Fim6JH50K9MPmqn8Oh3hMm5Pzb8n2KiZE+m9XAitt+Lvm0L6gq7rf5CO2sAcbIUnp+3aenVVhZUcBr4xgmHE72iPF2oVl1AQYq9xqwgNUQBI3bS3pdeV+qyQFjHj/Y8qpeRRZ+h4ydG4=
+	t=1756174741; cv=none; b=NwUs/Zfre2MP/EIoMSK3aEU/4Z6Msu3+G0iPJpJie0Ucm5QbdcRDRULyJDq3zdPS513xOxfHnBwJDT1hMQF2ErSRO71wjztWkYmEMniquR+Lvw/GWIRhehAKB9mKhrJGQQWBNWIJO/rxW/2pozKTiw5vylm2z501Xmqwjjcc5dE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756175316; c=relaxed/simple;
-	bh=vO6ciMum3CZfohnbI9+zFdo04WdDxTU4/wzIAUGn6Y8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H1mnx86p3QnJKJ8tmCtm2mfZQtkMIEzMiIInqI3EndSzvqSfxzGJIsCk04eHh1CrjRBfvW6SaDAO1UqdjIQc6f3VieO7Pf62wi8wsWkEj3QM1cGG9HA8pdw5ux62EotF2Adn9XWKsjDyazdQjhAvXx0J0iJCX4SYNZS9RKKz3dA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4c9s2f0y7lz24hvG;
-	Tue, 26 Aug 2025 10:25:30 +0800 (CST)
-Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 10A00140278;
-	Tue, 26 Aug 2025 10:28:26 +0800 (CST)
-Received: from kwepemq100007.china.huawei.com (7.202.195.175) by
- dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 26 Aug 2025 10:28:25 +0800
-Received: from localhost.huawei.com (10.169.71.169) by
- kwepemq100007.china.huawei.com (7.202.195.175) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 26 Aug 2025 10:28:25 +0800
-From: Yongbang Shi <shiyongbang@huawei.com>
-To: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<kong.kongxinwei@hisilicon.com>, <dmitry.baryshkov@oss.qualcomm.com>
-CC: <liangjian010@huawei.com>, <chenjianmin@huawei.com>,
-	<fengsheng5@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
-	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 drm-dp 4/4] drm/hisilicon/hibmc: Adding reset colorbar cfg in dp init.
-Date: Tue, 26 Aug 2025 10:17:44 +0800
-Message-ID: <20250826021744.3237574-5-shiyongbang@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250826021744.3237574-1-shiyongbang@huawei.com>
-References: <20250826021744.3237574-1-shiyongbang@huawei.com>
+	s=arc-20240116; t=1756174741; c=relaxed/simple;
+	bh=76YmnrjD4MciwYymmuQ5KBtrF864lIDkREwJhmkIuwA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qR2HvD0T2B4daOKq3YQRYiUOzo15PwFX246DWjpiM+ukAi4oIHrSCTmWzTwbP6ICteNCIw1Bb9CUyQrJo/ow/17zeDAY5y6WjWxmb5x6tkF5TmlLM7k1tKnCWejc1PdLtkwjyr/u0Fo76etSrfuWcD5NFOhp/fl4AmAbLkvtY1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=3hp2HnJG; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=JxbbNRdx7n85CoL4FK3+Au8xkQY9IwHl0isje+BKaWU=; b=3hp2HnJGp8kYtiT5GQP+O3PM05
+	UN03952Q+e9TWfgpH4sx12EjDx0T/C2F5ReKO9WdlQihdLqdK1xVlyBlqZtOYEFjLASxqjJQ8Lve7
+	odv609CdBhruZCpO6NRFvc4kkqVDtPcU/PhpxyN/jiWe/VfEc9iA99twZhJBOe8Qvez0=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uqjGq-0061Xv-DR; Tue, 26 Aug 2025 04:18:48 +0200
+Date: Tue, 26 Aug 2025 04:18:48 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Yangfl <mmyangfl@gmail.com>
+Cc: Vladimir Oltean <olteanv@gmail.com>, netdev@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v6 2/3] net: dsa: tag_yt921x: add support for
+ Motorcomm YT921x tags
+Message-ID: <dd494b15-8173-4b17-a631-f19e9dddf9b1@lunn.ch>
+References: <20250824005116.2434998-1-mmyangfl@gmail.com>
+ <20250824005116.2434998-3-mmyangfl@gmail.com>
+ <20250825221507.vfvnuaxs7hh2jy7d@skbuf>
+ <CAAXyoMNh-6_NtYGBYYBhbiH0UPWCOoiZNhMkgeGqPzKP3HA-_g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemq100007.china.huawei.com (7.202.195.175)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAAXyoMNh-6_NtYGBYYBhbiH0UPWCOoiZNhMkgeGqPzKP3HA-_g@mail.gmail.com>
 
-From: Baihan Li <libaihan@huawei.com>
+> > > +static struct sk_buff *
+> > > +yt921x_tag_xmit(struct sk_buff *skb, struct net_device *netdev)
+> > > +{
+> > > +     struct dsa_port *dp = dsa_user_to_port(netdev);
+> > > +     unsigned int port = dp->index;
+> > > +     __be16 *tag;
+> > > +     u16 tx;
+> > > +
+> > > +     skb_push(skb, YT921X_TAG_LEN);
+> > > +     dsa_alloc_etype_header(skb, YT921X_TAG_LEN);
+> > > +
+> > > +     tag = dsa_etype_header_pos_tx(skb);
+> > > +
+> > > +     /* We might use yt921x_priv::tag_eth_p, but
+> > > +      * 1. CPU_TAG_TPID could be configured anyway;
+> > > +      * 2. Are you using the right chip?
+> >
+> > The tag format sort of becomes fixed ABI as soon as user space is able
+> > to run "cat /sys/class/net/eth0/dsa/tagging", see "yt921x", and record
+> > it to a pcap file. Unless the EtherType bears some other meaning rather
+> > than being a fixed value, then if you change it later to some other
+> > value than 0x9988, you'd better also change the protocol name to
+> > distinguish it from "yt921x".
+> >
+> 
+> "EtherType" here does not necessarily become EtherType; better to
+> think it is a key to enable port control over the switch. It could be
+> a dynamic random value as long as everyone gets the same value all
+> over the kernel, see the setup process of the switch driver. Ideally
+> only the remaining content of the tag should become the ABI (and is
+> actually enforced by the switch), but making a dynamic "EtherType" is
+> clearly a worse idea so I don't know how to clarify the fact...
 
-Add colorbar disable operation before reset controller, to make sure
-colorbar status is clear in the DP init, so if rmmod the driver and the
-previous colorbar configuration will not affect the next time insmod the
-driver.
+If i remember correctly, the Marvell switches allow you to set the
+EtherType they use. We just use the reset default value. It has been
+like this since somewhere around 2008, and nobody has needed another
+value.
 
-Fixes: 3c7623fb5bb6 ("drm/hisilicon/hibmc: Enable this hot plug detect of irq feature")
-Signed-off-by: Baihan Li <libaihan@huawei.com>
-Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
----
- drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c | 2 ++
- 1 file changed, 2 insertions(+)
+What use case do you have for using a different value?
 
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
-index 25a06da05030..9b4d2d989361 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
-+++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
-@@ -179,6 +179,8 @@ int hibmc_dp_hw_init(struct hibmc_dp *dp)
- 	/* int init */
- 	writel(0, dp_dev->base + HIBMC_DP_INTR_ENABLE);
- 	writel(HIBMC_DP_INT_RST, dp_dev->base + HIBMC_DP_INTR_ORIGINAL_STATUS);
-+	/* clr colorbar */
-+	writel(0, dp_dev->base + HIBMC_DP_COLOR_BAR_CTRL);
- 	/* rst */
- 	writel(0, dp_dev->base + HIBMC_DP_DPTX_RST_CTRL);
- 	usleep_range(30, 50);
--- 
-2.33.0
-
+	Andrew
 
