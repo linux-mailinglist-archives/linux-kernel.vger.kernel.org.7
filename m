@@ -1,48 +1,74 @@
-Return-Path: <linux-kernel+bounces-786910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A0F2B36DB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:26:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1678EB36DB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:27:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C47A1749E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:26:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ED5617346B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:26:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EAA02773C1;
-	Tue, 26 Aug 2025 15:26:24 +0000 (UTC)
-Received: from bregans-0.gladserv.net (bregans-0.gladserv.net [185.128.210.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141B227815F;
+	Tue, 26 Aug 2025 15:26:49 +0000 (UTC)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 271EA1E0DE3;
-	Tue, 26 Aug 2025 15:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.128.210.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2211FF1C4
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 15:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756221983; cv=none; b=Zx996DeRXuOb9jA/qGEmd8l30PcY3UklEfiL/qWWhRt4e4CnCRNoAcad7lObJNTKPeynWjbFiqeMrW+QaqUgJPRbLDIsbYhE5DwW4VVq2WGNdKTwJ+BA1KjrhBXZha5TIFApCTAzJigvywQ0NskVf90sN+nZYWYIb4/8RjfmCMA=
+	t=1756222008; cv=none; b=GYH52EfQ1+Kq5hvuF+sWi3Fjuhony17rqxQYfnFx5zoXQJYV4RftIODOrclE3S3piSIvDOq20HyA4gxtzFDd62KLfeDqsEKHsUMJYvw7Eay88YmiudFtJxmUIGckI4l8HJInaaLXDWB45jh4V02gTnc49wOTOBrkuJ0+Y20Pmw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756221983; c=relaxed/simple;
-	bh=I69FLLJx7uzYRbheD/LN/XcKJl4GwTFQhf5Fm4voQJ8=;
+	s=arc-20240116; t=1756222008; c=relaxed/simple;
+	bh=v1N3I/Gie5yChrhLCZX8ASH+n8v+bYZJx56eFAPyMM0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E5waN0DxgcFUuaBeDiAcYYLWQBZiVrQ0FUAv2Co9+9VbY26zJpCBGwvuEm6mFl1gqiCLQt3S6bycTIrlbn6MBVreqm/9g0sVuaFOvb5/jbrlKTATEjaEU+U0ivlLbQ0k2f5Fq4qHohTQiNhmWp9P99Vnahv76X78FefCWVBgw4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=librecast.net; spf=pass smtp.mailfrom=librecast.net; arc=none smtp.client-ip=185.128.210.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=librecast.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=librecast.net
-Date: Tue, 26 Aug 2025 17:26:10 +0200
-From: Brett Sheffield <bacs@librecast.net>
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Willem de Bruijn <willemb@google.com>
-Subject: Re: [PATCH net-next] selftests: net: add test for ipv6 fragmentation
-Message-ID: <aK3SEhq1GQFOHKzg@karahi.gladserv.com>
-References: <20250825092548.4436-3-bacs@librecast.net>
- <willemdebruijn.kernel.143e90d593cff@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PWbwpUZGFRH0T/9tdYAVtIZQeWBAWKHka3k4JAqMjF4D6pJBUPoRkQ21JuGgV7mxFT0CihNdb9vgnVQo4R+dqQ/8SMs/L0NHIGj/Y4XTgp//0N01U5KyaVQHNZ+QN6ukwHi8mzwRA0OSDa6hsdDfHshPIbe567H7JdrEDMMtc5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-afcb6856dfbso1055767366b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 08:26:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756222005; x=1756826805;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rVkVgsShdpWJsHwAY7c/HqdSCWng8HRKeool7od41Zc=;
+        b=gjQsnIkNQ/QfdCc9MC7wSry5gEhLkvTUMUGtIuaZSSM3Yahk3My3DZdGn9tqFOck11
+         U9ZNbXWbduJWmbZvF7EmkJyuRRTj2yyqbUhB2jaCE8M59Vm9A8xOCjEZnBBunh9VhtCD
+         4PBpi99Ou9rvURojLopuSz7KzRlQFmvLzoVe+h8X8+Xuuidg1qhm27OZVkMrb/ti7ef5
+         5UrS2TjvfUm2s9ql/qy73DcUoY5FgkhyIIabYjxgEUbSUN1POHXalLthU1ravGbcuWOB
+         8IwFbc3joK9LQYVzIWnUp/bDjHL4WTkDH4LF4nWckEug2FDvLNQbCIkEAJFcIUN9G6G8
+         tx0A==
+X-Forwarded-Encrypted: i=1; AJvYcCWgbSuLmZbegC8ugP3sMp+2DWG1+wmsp1fbeuiiE7ywOSRjh3h9wLRZuVHZ3ypv/sD8W5Zloi4/M9Kk0ew=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcjgLWlrpUZ79Q87ulN72huW1h7rP4soEEFSLefNIsxS7eWxy6
+	u8r/A+S5WvWyguYmK7ZwRPEZgyXkOrYeXh/d39mIu5bfPsyvoxrz0jR0
+X-Gm-Gg: ASbGncsuioDS3Tb6plgtffXRqmMhLMmKe6N3IaBoCW29yGh+gfGIlV7+gv7Zp9KT9A9
+	t71jgyQ0llU1m4jh27NWE77q1nH5j+2xZSRHkzduBOxxNDkS56ioQsYDIw6ONTNxVZFwJZiZ6ZN
+	T5rq056oeADnPpOfArdFuHFF0aYTyuknZz3Eo/Lsr9tKtocK4ZhkZKIG+IgIiztKlei3sj+rtUN
+	MjiNYYMTj042MWHkUg5qWTdxPUPuUCg0x7eIv/e0RRMpu/8nyfUjnj/DLIliFBWfaxz91mRmi/s
+	A4APalUZwApS+9pCttyHXZNU21936FsYdkOQqpm/2lQbnqXfhGivJbFZd8mzs5emmQ6r7HvV+AC
+	MUOgt8gSLYf0MKgHyqqktt1rW
+X-Google-Smtp-Source: AGHT+IFywaQm/SYAEkgpvTya1QCs8x+TYb8PSoO8CqBuiJc0HWJDKYF8Wnxptjc0r0Kk2hzhDgRRvQ==
+X-Received: by 2002:a17:907:7ba7:b0:afe:8ae2:a8fe with SMTP id a640c23a62f3a-afeafeca898mr226076366b.14.1756222004741;
+        Tue, 26 Aug 2025 08:26:44 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:72::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe48fae421sm811426966b.26.2025.08.26.08.26.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Aug 2025 08:26:44 -0700 (PDT)
+Date: Tue, 26 Aug 2025 08:26:42 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, bhe@redhat.com, oxu@redhat.com, berrange@redhat.com, 
+	kernel-team@meta.com, Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] arm64: kexec: Initialize kexec_buf struct in image_load()
+Message-ID: <2dq3z3vil5vu2m4kbwdps2enozbqrzbp6fd2utdr6dj6kutzxf@f3vububg3s6j>
+References: <20250826-akpm-v1-1-3c831f0e3799@debian.org>
+ <aK3HVqt6I5KxoHia@J2N7QTR9R3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,154 +77,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <willemdebruijn.kernel.143e90d593cff@gmail.com>
+In-Reply-To: <aK3HVqt6I5KxoHia@J2N7QTR9R3>
 
-Thanks for the review, Willem.
+On Tue, Aug 26, 2025 at 03:40:22PM +0100, Mark Rutland wrote:
+> On Tue, Aug 26, 2025 at 05:08:51AM -0700, Breno Leitao wrote:
+> > The kexec_buf structure was previously declared without initialization
+> > in image_load(). This led to a UBSAN warning when the structure was
+> > expanded and uninitialized fields were accessed [1].
+> 
+> Just to check my understanding, is that only a problem for new fields
+> (e.g. the 'random' field added in [1]), or do we have UBSAN warnigns for
+> any existing fields? I assume there's no problem with existing fields
+> today.
 
-On 2025-08-25 12:16, Willem de Bruijn wrote:
-> Brett A C Sheffield wrote:
-> > Add selftest for the IPv6 fragmentation regression which affected
-> > several stable kernels.
+UBSAN is only complaning for this new field that was added to the
+struct, but only populated in x86, later it is read in in common code,
+causing UBSAN to complain (and even wrong code to be executed depending
+on the garabe that is in the memory during kbuf instantiation.
+
+> > Zero-initializing kexec_buf at declaration ensures all fields are
+> > cleanly set, preventing future instances of uninitialized memory being
+> > used.
 > > 
-> > Commit a18dfa9925b9 ("ipv6: save dontfrag in cork") was backported to
-> > stable without some prerequisite commits.  This caused a regression when
-> > sending IPv6 UDP packets by preventing fragmentation and instead
-> > returning -1 (EMSGSIZE).
+> > Andrew Morton suggested that this function is only called 3x a week[2],
+> > thus, the memset() cost is inexpressive.
 > > 
-> > Add selftest to check for this issue by attempting to send a packet
-> > larger than the interface MTU. The packet will be fragmented on a
-> > working kernel, with sendmsg(2) correctly returning the expected number
-> > of bytes sent.  When the regression is present, sendmsg returns -1 and
-> > sets errno to EMSGSIZE.
-> > 
-> > Signed-off-by: Brett A C Sheffield <bacs@librecast.net>
-> > Link: https://lore.kernel.org/stable/aElivdUXqd1OqgMY@karahi.gladserv.com
+> > Link: https://lore.kernel.org/all/oninomspajhxp4omtdapxnckxydbk2nzmrix7rggmpukpnzadw@c67o7njgdgm3/ [1]
+> > Link: https://lore.kernel.org/all/20250825180531.94bfb86a26a43127c0a1296f@linux-foundation.org/ [2]
+> > Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+> > Signed-off-by: Breno Leitao <leitao@debian.org>
 > 
-> Thanks for adding a regression test for this.
-
-No problem. I wrote a test for myself when bisecting the problem back in June -
-makes sense to convert it to a selftest.
-
-> > +/* we need to set MTU, so do this in a namespace to play nicely */
-> > +static int create_namespace(void)
-> > +{
-> > +	const char *netns_path = "/proc/self/ns/net";
-> > +	int fd;
-> > +
-> > +	if (unshare(CLONE_NEWNET) != 0) {
-> > +		perror("unshare");
-> > +		return -1;
-> > +	}
+> This looks fine to me, but I reckon it should be added to the series
+> which extends kexec_buf, unless there's some reason to avoid that?
 > 
-> Is this not sufficient to move the current process in its own netns?
-
-Yes. Yes it is. Apparently I did not read the man page properly.
-
-> > +	fd = open(netns_path, O_RDONLY);
-> > +	if (fd == -1) {
-> > +		perror("open");
-> > +		return -1;
-> > +	}
-> > +
-> > +	if (setns(fd, CLONE_NEWNET)) {
-> > +		perror("setns");
-> > +		return -1;
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int setup(void)
-> > +{
-> > +	struct ifreq ifr = {0};
-> > +	char ifname[IFNAMSIZ];
-> > +	int fd = -1;
-> > +	int ctl;
-> > +
-> > +	if (create_namespace() == -1)
-> > +		return -1;
-> > +
-> > +	ctl = socket(AF_LOCAL, SOCK_STREAM, 0);
-> > +	if (ctl == -1)
-> > +		return -1;
-> > +
-> > +	memset(ifname, 0, sizeof(ifname));
-> > +	fd = create_interface(ctl, ifname, &ifr);
-> > +	if (fd == -1)
-> > +		goto err_close_ctl;
-> > +	if (disable_dad(ifname) == -1)
-> > +		goto err_close_fd;
-> > +	if (interface_up(ctl, ifname, &ifr) == -1)
-> > +		goto err_close_fd;
-> > +	if (set_mtu(ctl, ifname, &ifr) == -1)
-> > +		goto err_close_fd;
-> > +	usleep(10000); /* give interface a moment to wake up */
+> > ---
+> >  arch/arm64/kernel/kexec_image.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> This may be racy. Wait on a more explicit signal? E.g.,
-> /sys/class/net/$DEV/operstate.
-
-Good thinking. I'll try that.
-
-> > +	struct msghdr msg = {
-> > +		.msg_iov = &iov,
-> > +		.msg_iovlen = 1,
-> > +		.msg_name = (struct sockaddr *)&sa,
-> > +		.msg_namelen = sizeof(sa),
-> > +	};
-> > +	ssize_t rc;
-> > +	int ns_fd;
-> > +	int s;
-> > +
-> > +	printf("Testing IPv6 fragmentation\n");
-> > +	ns_fd = setup();
-> > +	if (ns_fd == -1)
-> > +		return 1;
-> > +	s = socket(AF_INET6, SOCK_DGRAM, 0);
-> > +	msg.msg_name = (struct sockaddr *)&sa;
-> > +	msg.msg_namelen = sizeof(sa);
+> IIUC arch/arm64/kernel/machine_kexec_file.c would need the same
+> treatment in load_other_segments().
 > 
-> nit: duplicate?
+> If other architectures need this, it'd probably make sense to clean that
+> up treewide in one go. It looks like at least riscv and s390 need that
+> from a quick grep:
 
-Well spotted. Will fix.
-
-> Also, no local address is set. This uses the IPv6 auto assigned
-> address?
-
-Correct. The test sends to a link-local scope multicast group from the autoconf
-link-local address.  I'll clarify that in the comments at the top of the test.
-
-> > +	rc = sendmsg(s, &msg, 0);
-> > +	if (rc == -1) {
-> > +		perror("send");
-> > +		return 1;
-> 
-> Probably want to cleanup state both on success and failure.
-
-Ack.
-
-> Could use KSFT_.. exit codes, though 0/1 works just as well for
-> kselftests in practice.
-
-Ok.
-
-> > +	} else if (rc != LARGER_THAN_MTU) {
-> > +		fprintf(stderr, "send() returned %zi\n", rc);
-> > +		return 1;
-> > +	}
-> > +	close(s);
-> > +	close(ns_fd);
-> > +
-> > +	return 0;
-> > +}
-> > -- 
-> > 2.49.1
-> > 
-
-Thanks again - expect a v2 when I have that cleaned up and re-tested.
-
-Cheers,
-
-
-Brett
---
+Agree. Let me send a v2 addressing it on all archicterures.
 
