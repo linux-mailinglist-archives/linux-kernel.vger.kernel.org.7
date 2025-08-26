@@ -1,225 +1,145 @@
-Return-Path: <linux-kernel+bounces-786997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBFC9B36FFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:21:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CC6AB36F71
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:05:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB2A49830CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:17:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEC284629CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:58:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A59F350D7C;
-	Tue, 26 Aug 2025 16:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LXHtXl7J"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1531374274;
-	Tue, 26 Aug 2025 16:14:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE6836932D;
+	Tue, 26 Aug 2025 15:56:00 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ECDE3680AF;
+	Tue, 26 Aug 2025 15:55:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756224867; cv=none; b=EDkICv8ojQPua82egvghVt2p+jh1xpTfjnr5FjPqDjUXRdLj8B0BieepmRtvqqbDoANtkraUHJUfq4hfjYSZXeEki3M2yq6v800BgXBzqORBu25JUu88zVEDrEzsRNQgDgZys/HpYiaJYb2bKQsC9xCLoEtopnpBviQUXwuYrgY=
+	t=1756223760; cv=none; b=Qt4HBc0xM4mZUaAEAo41fCLeJ05mKVj7Ij6ClpueH3FEihL0AyH5byguGwwwAULyDWQgww54UOuQk+Du3P3OAOgikEyNRF5KGYqXK1UOA1Hgdm/3m8pXt40D3TwDg55xsJHcn/nCpZZBaGkIH5zn/0UuOeYnNPexi7kmUI036Y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756224867; c=relaxed/simple;
-	bh=nZtTZePcJLv/YRyNX7vGsbCe1aj4pTMRnNPvHJnXDj4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aZgBPBvn1YEjyp2d5uN9N5IuGdlWhWptMs/I3EBeMEof5ycj+nGj/mf+bP1ihtwwC6kiGw7G7E99n20Je5E0w3l7B31uFm79DK4CgDQv/xvF0pkylNld/2K/3MVcvggeYvmdXpVq0+3TGBFFG9wQpsbwA5ho5jz5bYvrSSDMDxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LXHtXl7J; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756224866; x=1787760866;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=nZtTZePcJLv/YRyNX7vGsbCe1aj4pTMRnNPvHJnXDj4=;
-  b=LXHtXl7JoRMoIWtk2VUXET1Z3JtkZ/k0k6fVMdK+TzupJx6uPPqH8Pxb
-   N1u98cFAR8ewQxIka1gAKkoIMYQdEEq1Tfz6JFjF+mGCJJxNS2UapZ9nN
-   5f4kXS436qcP4059jRGamDIWFSuKQsdINK3bOHrR6ewdmvFTlDuaSCtKD
-   JcWM4H+2ISybwlOMWMoNzDP/PRqolQ/UhuvMUWVyMCnTmjnb/PpCu0Oa8
-   Q5WKJgkE4jmF2o2v2CVHflKjzz7BwnG3sik8Xd9G/ycMSJaG63y25EwIe
-   JbIPhbzfBacvqqRyYx13apg8+fbThfuYsG7H0ubHFg/yPAoa5/7CtVx90
-   g==;
-X-CSE-ConnectionGUID: ISij/YqZQKiDyTtRbM074g==
-X-CSE-MsgGUID: sEAdLbDETd6OOF6Fcoci8Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11534"; a="46045127"
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="46045127"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 09:14:25 -0700
-X-CSE-ConnectionGUID: /XPE5bhdRJC8jFb8LkKBjQ==
-X-CSE-MsgGUID: lsP1l7wTSfucNU1ErUoNew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="200562710"
-Received: from newjersey.igk.intel.com ([10.102.20.203])
-  by orviesa002.jf.intel.com with ESMTP; 26 Aug 2025 09:14:21 -0700
-From: Alexander Lobakin <aleksander.lobakin@intel.com>
-To: intel-wired-lan@lists.osuosl.org
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Michal Kubiak <michal.kubiak@intel.com>,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Simon Horman <horms@kernel.org>,
-	nxne.cnse.osdt.itp.upstreaming@intel.com,
-	bpf@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH iwl-next v5 13/13] idpf: add XDP RSS hash hint
-Date: Tue, 26 Aug 2025 17:55:07 +0200
-Message-ID: <20250826155507.2138401-14-aleksander.lobakin@intel.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250826155507.2138401-1-aleksander.lobakin@intel.com>
-References: <20250826155507.2138401-1-aleksander.lobakin@intel.com>
+	s=arc-20240116; t=1756223760; c=relaxed/simple;
+	bh=jYBq+PgIvySwkPnJ+epoOGBplfR4iCEGkU3hyHU0kTA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GIjlREOUZrDmonqDN5qo2cMkuniab44noHlyO0ehsA8wRIWGxNnZaDB7fqdldWpbskt+GT7mfRaIPLdIrazDPQvYbOYakPjgUxCedyKUc521urMHBTqTq/5H6sWSSfUGoHS936nLA/KHg1UDe/KtnPXQgbpm31g36quD2rnacTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A3F871A25;
+	Tue, 26 Aug 2025 08:55:49 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D7E113F694;
+	Tue, 26 Aug 2025 08:55:51 -0700 (PDT)
+Date: Tue, 26 Aug 2025 16:55:49 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: peterz@infradead.org, mingo@redhat.com, will@kernel.org,
+	acme@kernel.org, namhyung@kernel.org,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	linux-csky@vger.kernel.org, loongarch@lists.linux.dev,
+	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, dmaengine@vger.kernel.org,
+	linux-fpga@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org, coresight@lists.linaro.org,
+	iommu@lists.linux.dev, linux-amlogic@lists.infradead.org,
+	linux-cxl@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 02/19] perf/hisilicon: Fix group validation
+Message-ID: <aK3ZBUQ3QeB2egX7@J2N7QTR9R3>
+References: <cover.1755096883.git.robin.murphy@arm.com>
+ <c7b877e66ba0d34d8558c5af8bbb620e8c0e47d9.1755096883.git.robin.murphy@arm.com>
+ <aK2XS_GhLw1EQ2ml@J2N7QTR9R3>
+ <ab80cb84-42b2-4ce8-aa6c-4ce6be7a12b7@arm.com>
+ <aK3TS3s5_Pczx1nu@J2N7QTR9R3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aK3TS3s5_Pczx1nu@J2N7QTR9R3>
 
-Add &xdp_metadata_ops with a callback to get RSS hash hint from the
-descriptor. Declare the splitq 32-byte descriptor as 4 u64s to parse
-them more efficiently when possible.
+On Tue, Aug 26, 2025 at 04:31:23PM +0100, Mark Rutland wrote:
+> On Tue, Aug 26, 2025 at 03:35:48PM +0100, Robin Murphy wrote:
+> > On 2025-08-26 12:15 pm, Mark Rutland wrote:
+> > > On Wed, Aug 13, 2025 at 06:00:54PM +0100, Robin Murphy wrote:
+> > > > diff --git a/drivers/perf/hisilicon/hisi_pcie_pmu.c b/drivers/perf/hisilicon/hisi_pcie_pmu.c
+> > > > index c5394d007b61..3b0b2f7197d0 100644
+> > > > --- a/drivers/perf/hisilicon/hisi_pcie_pmu.c
+> > > > +++ b/drivers/perf/hisilicon/hisi_pcie_pmu.c
+> > > > @@ -338,21 +338,16 @@ static bool hisi_pcie_pmu_validate_event_group(struct perf_event *event)
+> > > >   	int counters = 1;
+> > > >   	int num;
+> > > > -	event_group[0] = leader;
+> > > > -	if (!is_software_event(leader)) {
+> > > > -		if (leader->pmu != event->pmu)
+> > > > -			return false;
+> > > > +	if (leader == event)
+> > > > +		return true;
+> > > > -		if (leader != event && !hisi_pcie_pmu_cmp_event(leader, event))
+> > > > -			event_group[counters++] = event;
+> > > > -	}
+> > > > +	event_group[0] = event;
+> > > > +	if (leader->pmu == event->pmu && !hisi_pcie_pmu_cmp_event(leader, event))
+> > > > +		event_group[counters++] = leader;
+> > > 
+> > > Looking at this, the existing logic to share counters (which
+> > > hisi_pcie_pmu_cmp_event() is trying to permit) looks to be bogus, given
+> > > that the start/stop callbacks will reprogram the HW counters (and hence
+> > > can fight with one another).
+> > 
+> > Yeah, this had a dodgy smell when I first came across it, but after doing
+> > all the digging I think it does actually work out - the trick seems to be
+> > the group_leader check in hisi_pcie_pmu_get_event_idx(), with the
+> > implication the PMU is going to be stopped while scheduling in/out the whole
+> > group, so assuming hisi_pcie_pmu_del() doesn't clear the counter value in
+> > hardware (even though the first call nukes the rest of the event
+> > configuration), then the events should stay in sync.
+> 
+> I don't think that's sufficient. If nothing else, overflow is handled
+> per-event, and for a group of two identical events, upon overflow
+> hisi_pcie_pmu_irq() will reprogram the shared HW counter when handling
+> the first event, and the second event will see an arbitrary
+> discontinuity. Maybe no-one has spotted that due to the 2^63 counter
+> period that we program, but this is clearly bogus.
+> 
+> In addition, AFAICT the IRQ handler doesn't stop the PMU, so in general
+> groups aren't handled atomically, and snapshots of the counters won't be
+> atomic.
+> 
+> > It does seem somewhat nonsensical to have multiple copies of the same event
+> > in the same group, but I imagine it could happen with some sort of scripted
+> > combination of metrics, and supporting it at this level saves needing
+> > explicit deduplication further up. So even though my initial instinct was to
+> > rip it out too, in the end I concluded that that doesn't seem justified.
+> 
 
-Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
----
- drivers/net/ethernet/intel/idpf/xdp.h | 64 +++++++++++++++++++++++++++
- drivers/net/ethernet/intel/idpf/xdp.c | 28 +++++++++++-
- 2 files changed, 91 insertions(+), 1 deletion(-)
+[...]
 
-diff --git a/drivers/net/ethernet/intel/idpf/xdp.h b/drivers/net/ethernet/intel/idpf/xdp.h
-index db8ecc1843fe..66ad83a0e85e 100644
---- a/drivers/net/ethernet/intel/idpf/xdp.h
-+++ b/drivers/net/ethernet/intel/idpf/xdp.h
-@@ -99,6 +99,70 @@ static inline void idpf_xdp_tx_finalize(void *_xdpsq, bool sent, bool flush)
- 	libeth_xdpsq_unlock(&xdpsq->xdp_lock);
- }
- 
-+struct idpf_xdp_rx_desc {
-+	aligned_u64		qw0;
-+#define IDPF_XDP_RX_BUFQ	BIT_ULL(47)
-+#define IDPF_XDP_RX_GEN		BIT_ULL(46)
-+#define IDPF_XDP_RX_LEN		GENMASK_ULL(45, 32)
-+#define IDPF_XDP_RX_PT		GENMASK_ULL(25, 16)
-+
-+	aligned_u64		qw1;
-+#define IDPF_XDP_RX_BUF		GENMASK_ULL(47, 32)
-+#define IDPF_XDP_RX_EOP		BIT_ULL(1)
-+
-+	aligned_u64		qw2;
-+#define IDPF_XDP_RX_HASH	GENMASK_ULL(31, 0)
-+
-+	aligned_u64		qw3;
-+} __aligned(4 * sizeof(u64));
-+static_assert(sizeof(struct idpf_xdp_rx_desc) ==
-+	      sizeof(struct virtchnl2_rx_flex_desc_adv_nic_3));
-+
-+#define idpf_xdp_rx_bufq(desc)	!!((desc)->qw0 & IDPF_XDP_RX_BUFQ)
-+#define idpf_xdp_rx_gen(desc)	!!((desc)->qw0 & IDPF_XDP_RX_GEN)
-+#define idpf_xdp_rx_len(desc)	FIELD_GET(IDPF_XDP_RX_LEN, (desc)->qw0)
-+#define idpf_xdp_rx_pt(desc)	FIELD_GET(IDPF_XDP_RX_PT, (desc)->qw0)
-+#define idpf_xdp_rx_buf(desc)	FIELD_GET(IDPF_XDP_RX_BUF, (desc)->qw1)
-+#define idpf_xdp_rx_eop(desc)	!!((desc)->qw1 & IDPF_XDP_RX_EOP)
-+#define idpf_xdp_rx_hash(desc)	FIELD_GET(IDPF_XDP_RX_HASH, (desc)->qw2)
-+
-+static inline void
-+idpf_xdp_get_qw0(struct idpf_xdp_rx_desc *desc,
-+		 const struct virtchnl2_rx_flex_desc_adv_nic_3 *rxd)
-+{
-+#ifdef __LIBETH_WORD_ACCESS
-+	desc->qw0 = ((const typeof(desc))rxd)->qw0;
-+#else
-+	desc->qw0 = ((u64)le16_to_cpu(rxd->pktlen_gen_bufq_id) << 32) |
-+		    ((u64)le16_to_cpu(rxd->ptype_err_fflags0) << 16);
-+#endif
-+}
-+
-+static inline void
-+idpf_xdp_get_qw1(struct idpf_xdp_rx_desc *desc,
-+		 const struct virtchnl2_rx_flex_desc_adv_nic_3 *rxd)
-+{
-+#ifdef __LIBETH_WORD_ACCESS
-+	desc->qw1 = ((const typeof(desc))rxd)->qw1;
-+#else
-+	desc->qw1 = ((u64)le16_to_cpu(rxd->buf_id) << 32) |
-+		    rxd->status_err0_qw1;
-+#endif
-+}
-+
-+static inline void
-+idpf_xdp_get_qw2(struct idpf_xdp_rx_desc *desc,
-+		 const struct virtchnl2_rx_flex_desc_adv_nic_3 *rxd)
-+{
-+#ifdef __LIBETH_WORD_ACCESS
-+	desc->qw2 = ((const typeof(desc))rxd)->qw2;
-+#else
-+	desc->qw2 = ((u64)rxd->hash3 << 24) |
-+		    ((u64)rxd->ff2_mirrid_hash2.hash2 << 16) |
-+		    le16_to_cpu(rxd->hash1);
-+#endif
-+}
-+
- void idpf_xdp_set_features(const struct idpf_vport *vport);
- 
- int idpf_xdp(struct net_device *dev, struct netdev_bpf *xdp);
-diff --git a/drivers/net/ethernet/intel/idpf/xdp.c b/drivers/net/ethernet/intel/idpf/xdp.c
-index b6a8304d61f9..89d5735f42f2 100644
---- a/drivers/net/ethernet/intel/idpf/xdp.c
-+++ b/drivers/net/ethernet/intel/idpf/xdp.c
-@@ -342,12 +342,38 @@ int idpf_xdp_xmit(struct net_device *dev, int n, struct xdp_frame **frames,
- 				       idpf_xdp_tx_finalize);
- }
- 
-+static int idpf_xdpmo_rx_hash(const struct xdp_md *ctx, u32 *hash,
-+			      enum xdp_rss_hash_type *rss_type)
-+{
-+	const struct libeth_xdp_buff *xdp = (typeof(xdp))ctx;
-+	struct idpf_xdp_rx_desc desc __uninitialized;
-+	const struct idpf_rx_queue *rxq;
-+	struct libeth_rx_pt pt;
-+
-+	rxq = libeth_xdp_buff_to_rq(xdp, typeof(*rxq), xdp_rxq);
-+
-+	idpf_xdp_get_qw0(&desc, xdp->desc);
-+
-+	pt = rxq->rx_ptype_lkup[idpf_xdp_rx_pt(&desc)];
-+	if (!libeth_rx_pt_has_hash(rxq->xdp_rxq.dev, pt))
-+		return -ENODATA;
-+
-+	idpf_xdp_get_qw2(&desc, xdp->desc);
-+
-+	return libeth_xdpmo_rx_hash(hash, rss_type, idpf_xdp_rx_hash(&desc),
-+				    pt);
-+}
-+
-+static const struct xdp_metadata_ops idpf_xdpmo = {
-+	.xmo_rx_hash		= idpf_xdpmo_rx_hash,
-+};
-+
- void idpf_xdp_set_features(const struct idpf_vport *vport)
- {
- 	if (!idpf_is_queue_model_split(vport->rxq_model))
- 		return;
- 
--	libeth_xdp_set_features_noredir(vport->netdev);
-+	libeth_xdp_set_features_noredir(vport->netdev, &idpf_xdpmo);
- }
- 
- static int idpf_xdp_setup_prog(struct idpf_vport *vport,
--- 
-2.51.0
+> As above, I think it's clearly bogus. I don't think we should have
+> merged it as-is and it's not something I'd like to see others copy.
+> Other PMUs don't do this sort of event deduplication, and in general it
+> should be up to the user or userspace software to do that rather than
+> doing that badly in the kernel.
+> 
+> Given it was implemented with no rationale I think we should rip it out.
+> If that breaks someone's scripting, then we can consider implementing
+> something that actually works.
 
+FWIW, I'm happy to go do that as a follow-up, so if that's a pain, feel
+free to leave that as-is for now.
+
+Mark.
 
