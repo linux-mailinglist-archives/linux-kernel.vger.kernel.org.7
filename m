@@ -1,314 +1,173 @@
-Return-Path: <linux-kernel+bounces-787002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF570B37010
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:21:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 413C5B37007
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:21:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2115B2A70D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:20:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D7481BC17BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:21:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2383B30AABF;
-	Tue, 26 Aug 2025 16:20:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1DF2D239B;
+	Tue, 26 Aug 2025 16:21:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="OFVMUD2F"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2074.outbound.protection.outlook.com [40.107.236.74])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CZ280Pan"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B74F1E5705;
-	Tue, 26 Aug 2025 16:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756225228; cv=fail; b=gqnhXG+mh89AoSOuDSdurPFCU27mRRgmrX7n5k1Y1zDvlty2/QgQtZMBDH5E0MwMbE3TZ1DInFOVo5HAJR1itigoehnlsdYdwPXPcto3fcSPHVof/NIC36VInXi4ZWm6ZVEt015mA4ZRK657uf7IEpQdIQucviErUoQle/ygk/c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756225228; c=relaxed/simple;
-	bh=KBp4s+wQRyQlrFFIxdjKbns4JpfuyZ0lcDBhltY/Rko=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=dvv0W51ba8go5Kz+tPBmlpPBGNPGSTUDCKyb/G00TfykGGf4T3AmPy97vqL03ASqs1dNGRnWzWhbPP5TrFGVmwHBHmfqlrH17N3Q9Q4D+qyBp221ZoZrChXVN0NP3qfiwlECTl4RHzVNF1qmT+WFQzr0opbu+CSBnLm9R5pQBig=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=OFVMUD2F; arc=fail smtp.client-ip=40.107.236.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=J62Rmw61IcrfkXiHP90kateR87CUSZJ20kR0onCc4EkCuHREBbTQuo++7eHKBnMd8L9kYPaRLniA4A6/2NIdiUuibrL/4Xv27aKVkwZ5lKXBjlCS8LUOep3nj15W+lA4IQNrY6KvZDsdOyYQ4jWX9vtcEnB7DdgBZOFr+5q9aKG27sJ6idzZD5acovgqP1QxmdOVn5w3KfWMfhtjlokKYo7DKXkyFBbKFU/zZ7/z2RzorEDW0nMoFM8CAzZlg72iKcZJhy9N4hj1TFBFRRrpk+442QuURfFo0h1xn83xL2bVL4Zsy7qZO6eTXlsnIvW0avLZQBvkA02F10+RBtZIXA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+FIkiO9F9aV0AgrQP0pNzqJtvVUstzyHdQPoIFz6Geg=;
- b=waCgXr9EN7dOl99gpgXdJXKJMeY8Fg3Y59RwZX2uQ5DNXX2bLde5isNnJiaNQCFY8rFylYcuI5MSoXKMPqzqFalfS+Xtzfv3HFSi7Cx2Pxhg4mPx7NqRnYOqJAsYVdCXMHXXS9JBKaNreJ8Be0eW92IVc/JX2iRHo1h0Jl0n3bNo+iIl1q6eNPln4x0/ir9mMZV8Ny98+d94/parVJ02Mc6uhVQT70tQnn4Ok5q1uiYLiJBtuDHeF94ceLLMC62JXBCUXV6V4jvSAApeDm9uzojBRyxmTjwUmUIGCVCBaUw9O0F6u8ygUoMVOLaS9T7VrMTsEWUTGRYKaMQZfkuAUg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+FIkiO9F9aV0AgrQP0pNzqJtvVUstzyHdQPoIFz6Geg=;
- b=OFVMUD2FRj0l/i2LJ1B27Yluuj3mqqALfZCj9e47mgYMtw20tKwObeZcfU70apMREZtCUl+VAvIv3RYFTRHzkfDEVoUsIF8aXwKUvpWqGMvzTcFcncb1UhQevU3gxpK33YhUY+T+eqhtcFKIIWxuAgmfzluCtVccsWk53xHKK+kiMJ1Lu5586/OpNahRSAonZJyPzDXkpWlwxGLvD0e1pq6VwdNBrq16llc7HAO8M2QZoEQDp+J0kMrPSN+FOLMEWSyu2cX8QSz+o6j51eJQfWGCN8rd6XJqXdgMaQWgVEHfmtp5vsoon5PrUiSC7e4BSjen+wkoQtFGbqJaayzt5Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SA1PR12MB8641.namprd12.prod.outlook.com (2603:10b6:806:388::18)
- by SJ0PR12MB6734.namprd12.prod.outlook.com (2603:10b6:a03:478::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.13; Tue, 26 Aug
- 2025 16:20:22 +0000
-Received: from SA1PR12MB8641.namprd12.prod.outlook.com
- ([fe80::9a57:92fa:9455:5bc0]) by SA1PR12MB8641.namprd12.prod.outlook.com
- ([fe80::9a57:92fa:9455:5bc0%4]) with mapi id 15.20.9052.019; Tue, 26 Aug 2025
- 16:20:22 +0000
-Date: Tue, 26 Aug 2025 13:20:19 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
-	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com,
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org,
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com,
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org,
-	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr,
-	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com,
-	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com,
-	vincent.guittot@linaro.org, hannes@cmpxchg.org,
-	dan.j.williams@intel.com, david@redhat.com,
-	joel.granados@kernel.org, rostedt@goodmis.org,
-	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
-	linux@weissschuh.net, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org,
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
-	aleksander.lobakin@intel.com, ira.weiny@intel.com,
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
-	brauner@kernel.org, linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
-	ajayachandra@nvidia.com, parav@nvidia.com, leonro@nvidia.com,
-	witu@nvidia.com
-Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
-Message-ID: <20250826162019.GD2130239@nvidia.com>
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
- <20250807014442.3829950-30-pasha.tatashin@soleen.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250807014442.3829950-30-pasha.tatashin@soleen.com>
-X-ClientProxiedBy: BN0PR04CA0024.namprd04.prod.outlook.com
- (2603:10b6:408:ee::29) To SA1PR12MB8641.namprd12.prod.outlook.com
- (2603:10b6:806:388::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0054279335
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 16:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756225281; cv=none; b=ZtNv064lvMvM2gJtQ8IyBZLiQo61GFrWhDvqA4gXbUBMhxBJQR47RUB0BvBqrCK3CUsGiuDACPrKOzMJdwBlRIa+F51zSpu3THuJvUotnXOTs/T+9snsbuO6lnfLYX/4u7wI+MsTBElnW0gnrDz9pcIDy8cx5lhr4kn58ctdWHc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756225281; c=relaxed/simple;
+	bh=Ak0J7+sowP/63NhPQ0ok6Y12XJOew22DTkxSCjmCxEI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bWOAE7ik8Ii8TDLT59Z5NWYtNRGbqr9u7XFtRAyjogeqQgxHoRCcitmMS5Gv0J0Xvqh1ZvxztgIop4MwuRl5790/30COW3eI2rci2M2qdf1uHn6hIleiHuS+MS59PEr1ifxRm/QWu016y+g9luxzOGfVuJvHijXeZUpXA3KCRfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CZ280Pan; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756225280; x=1787761280;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Ak0J7+sowP/63NhPQ0ok6Y12XJOew22DTkxSCjmCxEI=;
+  b=CZ280PanYZi9yaIquBFC9r6l1NeO30M86locfoKuue+s9WVDShNihnv6
+   FOLMs6rGrHwX/4FAVhNcDriH8IcgNmbalnpy4X7vXJQ6fhedaTxUXWBVn
+   +kLFj4NsMOQryQP25FG4/OVpHxbr5gyvl8JlaD2SKeEegkqr0sbgBUeuu
+   MzsLG7ocHZy6cLBMA0DDZcwtehEnxt85tgwup/NN4hXT0OzLfg5LsGL08
+   NoBRBDLFsVlDwy0u3u751Q7ol96k6McKb3xsj5e+DFskFc8iJubal82cC
+   lfxbU94FYsu6dc6jy6ad3hdV6rxvmgjsZp9Yw+guC3Nw9M5oaBOP6qUDE
+   Q==;
+X-CSE-ConnectionGUID: szfXbGEdSYmSFE3jw6VuFA==
+X-CSE-MsgGUID: E0EwM2bdQeOhB4EjoODf4A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11534"; a="58178241"
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="58178241"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 09:21:19 -0700
+X-CSE-ConnectionGUID: 4bftntHvSDyXCbXfWoeHBA==
+X-CSE-MsgGUID: yT5mFORuQI+yXnTw64zxNA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="169126347"
+Received: from ldmartin-desk2.corp.intel.com (HELO [10.125.109.16]) ([10.125.109.16])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 09:21:18 -0700
+Message-ID: <242057e5-10c0-4cf5-86d8-ace0f19e5760@intel.com>
+Date: Tue, 26 Aug 2025 09:21:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA1PR12MB8641:EE_|SJ0PR12MB6734:EE_
-X-MS-Office365-Filtering-Correlation-Id: 005c5ab1-964e-4f0a-7a23-08dde4bc74b3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?s3mDx/KFVgMua9Uexn/kQFRgmMG/J9G7QbfEJMzZFmSubyWK0XFYnBuV1Zdx?=
- =?us-ascii?Q?EQMjhZSRLTPmqV74G+cFhVk18C55MnjiDM3bh17rcjvtHoCaeW7ftHbtX2JI?=
- =?us-ascii?Q?DZQKqntzXKBWKAh87AKhfvIc9rOOeCi+z3OfYjb/miX/NF7aT3jEbhhghM/K?=
- =?us-ascii?Q?pMRgt958Eq9ddxDyRhyiue8pPyHSV45pPtpxJMqU8lhliYw2Cgzjc/N7dcwu?=
- =?us-ascii?Q?/RfSzdsuRuDCWKQNY5ajqxkpiP1WXl/0L6lvjx4TQkZTLZiHWpreRYg1rsEF?=
- =?us-ascii?Q?suiYSjt8rDsQNdehSgrnDpc3vm2viO1hy8+d704HfCjZbmRNdHGLnQbSy5IK?=
- =?us-ascii?Q?HvliXuJDuWIuhLk1b9nZt7mbHt5Xsqpm8opJv6Cu0FHM18xsI/ZppkoQL9jY?=
- =?us-ascii?Q?BVfapBdBUYPQlLAsbOiMNBA9mYZ1llFZmQ/jyFyeL+MfoqIsR012qFU1oTXf?=
- =?us-ascii?Q?R/X8uYTH0e58+du4T7vky9BVC7HXyilck56xxkJIBrB2dae+BdxshORsHvqR?=
- =?us-ascii?Q?EGxpnXzCFX+/abhPnDvmAGLKlCyjZ0GWKKMXhZN+y6PYqcDsojuxlBu1xNlS?=
- =?us-ascii?Q?GX+/PPxEliceiREbyDBPysQzlyshqfaqxHAYY/ZMVqk8yZ4LrSbGz67p09y6?=
- =?us-ascii?Q?GgEF2Rr9+BArHp6LqlaBKfvAcMK9mZn92Tc/bGn1E3MlEVvZhX4x0d/dL7sz?=
- =?us-ascii?Q?Jw1iTPcjzKJ++dlGq3VvgqC7+jy/N5gyJedpGXs3Zr4HHtFw5QBQF1kRqtvP?=
- =?us-ascii?Q?FxoaeafGBbdLUbMkRJH8PDuXAADSb+4K+BNoyeKc0YlKMFD8pfHBpzGLPQZI?=
- =?us-ascii?Q?IWEdoXWB7XEL0iQ0KBtPa8CCcOXZcxdgCzCkbs14smfV9AhJ0lypdYg6XCQg?=
- =?us-ascii?Q?wgyh5cGk/ZvHkVnLf75AkEUU5p8mN1QYXuyfpL8bICFoJ3gk4SB1eXwcSgjV?=
- =?us-ascii?Q?PIns/z2dcLyHW+p7SGqacQO1J1VtWa/q9b+qvpaurIfrSMyy1MmfoMGRORsH?=
- =?us-ascii?Q?F9VnfJ2wrNl2pg28twnUANsQCCxqUu8DKGv3Y44STGWNCR4+XqTYWDq25+3V?=
- =?us-ascii?Q?DxLAH4BgZ23ZFZA1WlX/3SzLcOmLZg5tLan8Lo61RatTjcr8BNSkk/sA9pHq?=
- =?us-ascii?Q?Hc8eAjvZ+9cfM2yRFwJ2qI9IhvjSxeajuJRDuzJ1IwcdYp/blqerKvJw4r78?=
- =?us-ascii?Q?3cbefJ7VGzgyJQq/FKDuonHiRXpt2uoHyp6rDKoBfMSjawWmta7gt4K1tUwn?=
- =?us-ascii?Q?/jZ+UN+PhaUyO24iyqprg8puBAtP8h7LiFJTMg9mZtjrSsJJwyPxJd9iBLs1?=
- =?us-ascii?Q?c+SWX58YiauBJFBoM2eHfe7uBWdP6xMzu7N+uHl5b2y1dBlPoyfKWsBy1doY?=
- =?us-ascii?Q?YUHx686oZ5cOtfAZ9P5MDFws2YWvtjEpfxAOi+C4e5v6IbPLNw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR12MB8641.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?pW9R4n8DWFiHbDPdfJT0iKnX0SuYKlb5Y5lpY48Exi9TKFE6mRWo+XQVePkA?=
- =?us-ascii?Q?n3mcmNThYk0stl/0VSjiJHa5uXgY2S/WLpNCmmsxgGavGWgz2bgsVL3iPeer?=
- =?us-ascii?Q?ko0eFGQqK5O9YTWPsAXfXFLC+5R+Ws3XrOIC2hkY4Ylol/kBvkeuie1qFC28?=
- =?us-ascii?Q?2ThWqkzbqseL/MQxAlMl5+0PtrDdlWTp5+llZfqxBRLy0M0WVQlxddF4SCYd?=
- =?us-ascii?Q?jHvkfKPuj/rhJ3XSDxqp1uN/VPbl0blrk5lUNU3Haw87hJ5zh+Erp8VrgXaP?=
- =?us-ascii?Q?lZl9gtwjLjQt7ibZmCq/RBfOBTnWyYSWlbePn20d5ryaG4YlcwDxzRMO58vt?=
- =?us-ascii?Q?w9s3ZGZHt2nOaU24EniHNNoiURxgcnIi2dMywuA5F1aKb4V3F/av5RSeusMp?=
- =?us-ascii?Q?QvHJzDNAgDYUru1X3yVvLPSU3w6TWbNwRueTRPMCitLGAwAmzky7wuTczSvJ?=
- =?us-ascii?Q?OhjuxRAb43NX8htbHYZfuWKdBh6Tva9yrGNYaEd/uOiRoq2JHRWGq47gGGMv?=
- =?us-ascii?Q?a3sd7P9vt+hCfFo0Of1VkZ1Kn8LbhDi/ykJ5/ejljv1SFmqzGNgrYclyulLn?=
- =?us-ascii?Q?Pge0N9awU7rqISisz76EhqpmsHAeb63BWyoQv4EM1P2xzrVcJfbBasH20/eC?=
- =?us-ascii?Q?W93Sv9rGbi+TQ0e36phyEtqYra8iaELMP2fH+eiS+tiFtRdDeoen+PVXRZds?=
- =?us-ascii?Q?jkvnsxxLtSTCZ/DnMGNw8b1d2k9IcSAI685ufyxeOanK6NwjwLj1OLdqV0Pf?=
- =?us-ascii?Q?6KOSG2X8SLzT+8DQNr/Jw3NqDMSXY/unkR9lipwmLSRYMqF8fIucwQ2psLIf?=
- =?us-ascii?Q?s7iaYarZzREPJlZdOiLOFu2UvKjZN1Vu6nhmPrPRorJ5YxBoJ6uGg38cyBXk?=
- =?us-ascii?Q?/n+5uV8FEECyCNXjavmJb+54Pn+jXiIhEw3CwK2/I8v01dlTJ81eY87nmXGT?=
- =?us-ascii?Q?2DdJabgDXQ65iyprLeXpeNRIKg7nFYQDVYwPbjrTY+ygKPdkGu0hGdyrznll?=
- =?us-ascii?Q?GZZsluiM1tAiK1YwU9KxXM19e9AlUKd+ov45hMOYI3BA8bxz1M3hR7VZKl0P?=
- =?us-ascii?Q?eMFQJ9y4H6MGNxudAxGIQ+flU1CKrqd8ZcAX5Z/LrXZv44sbIl/MJKnRm6Pa?=
- =?us-ascii?Q?sluMYcQCCDhzDvMnItYw32O//E202UXNxL7Lnhn09AQkeN7Wp22QYoXHKW0y?=
- =?us-ascii?Q?WW1WaBXZyiwqoR3mjEqEDWWaYOziZBIdnnKkfDXBdcTy6n0el74RFGVXsjjx?=
- =?us-ascii?Q?833gXc+/aX0AaHuxvLKHQh/s6Ihsa2JQdHSzYUsO+EHjm6HIvc/05qoBQhnJ?=
- =?us-ascii?Q?+qk01n4YSuFoU64cwuGWSaau9yhYVWMZd2eQae2zpH20KypD2QtsYXIQWhad?=
- =?us-ascii?Q?/ngXOcvrfaua7iM5iAuctbpt/1LHCcaFp0n+igjtW348lEeNOV2KJ1Wbbg76?=
- =?us-ascii?Q?Dp00A6guF/LeNDgS97Gf7mM61mKRANb9bLISiNHHrMCFNgZUYY+0tX+cX5Ve?=
- =?us-ascii?Q?1EUpiiD5KrFqFz1fKP/lWBShI+vomtfFxoZkMAC/0C/CkDFqVaaNa6A6CnAW?=
- =?us-ascii?Q?+0w9lYncFK6lV2VJTzNFaBO998vadQT91ycaE5Kn?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 005c5ab1-964e-4f0a-7a23-08dde4bc74b3
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR12MB8641.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 16:20:22.3929
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: I6WK0SXLKlUcl8PtImwnJAnnMXF4AiNvMztENX9KpYJzH2OhN48+nV54kCAkWKc5
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6734
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/1] iommu/sva: Invalidate KVA range on kernel TLB
+ flush
+To: Baolu Lu <baolu.lu@linux.intel.com>, "Tian, Kevin"
+ <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Jann Horn <jannh@google.com>,
+ Vasant Hegde <vasant.hegde@amd.com>, Alistair Popple <apopple@nvidia.com>,
+ Peter Zijlstra <peterz@infradead.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Andy Lutomirski <luto@kernel.org>, "Lai, Yi1" <yi1.lai@intel.com>,
+ "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+ "security@kernel.org" <security@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250806052505.3113108-1-baolu.lu@linux.intel.com>
+ <d646d434-f680-47a3-b6b9-26f4538c1209@intel.com>
+ <20250806155223.GV184255@nvidia.com>
+ <d02cb97a-7cea-4ad3-82b3-89754c5278ad@intel.com>
+ <20250806160904.GX184255@nvidia.com>
+ <62d21545-9e75-41e3-89a3-f21dda15bf16@intel.com>
+ <4a8df0e8-bd5a-44e4-acce-46ba75594846@linux.intel.com>
+ <20250807195154.GO184255@nvidia.com>
+ <BN9PR11MB52762A47B347C99F0C0E4C288C2FA@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <87bfc80e-258e-4193-a56c-3096608aec30@linux.intel.com>
+ <BN9PR11MB52766165393F7DD8209DA45A8C32A@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <e321d374-38a7-4f60-b991-58458a2761b9@linux.intel.com>
+ <9a649ff4-55fe-478a-bfd7-f3287534499a@intel.com>
+ <b0f613ce-7aad-4b1d-b6a1-4acc1d6c489e@linux.intel.com>
+ <dde6d861-daa3-49ed-ad4f-ff9dcaf1f2b8@linux.intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <dde6d861-daa3-49ed-ad4f-ff9dcaf1f2b8@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 07, 2025 at 01:44:35AM +0000, Pasha Tatashin wrote:
+On 8/25/25 19:49, Baolu Lu wrote:
+> What's strange is that order is almost always 0, except in the path of
+> remove_pmd_table() -> free_hugepage_table(), where order can be greater
+> than 0. However, in this context path, free_hugepage_table() isn't used
+> to free a page table page itself. Instead, it's used to free the actual
+> pages that a leaf PMD is pointing to.
 
-> +	/*
-> +	 * Most of the space should be taken by preserved folios. So take its
-> +	 * size, plus a page for other properties.
-> +	 */
-> +	fdt = memfd_luo_create_fdt(PAGE_ALIGN(preserved_size) + PAGE_SIZE);
-> +	if (!fdt) {
-> +		err = -ENOMEM;
-> +		goto err_unpin;
-> +	}
+When I first read this, I thought you meant that remove_pmd_table() was
+trying to free a high-order page composed of multiple pte pages. I don't
+think it is doing that.
 
-This doesn't seem to have any versioning scheme, it really should..
+Just to be clear: remove_pmd_table() has two modes:
 
-> +	err = fdt_property_placeholder(fdt, "folios", preserved_size,
-> +				       (void **)&preserved_folios);
-> +	if (err) {
-> +		pr_err("Failed to reserve folios property in FDT: %s\n",
-> +		       fdt_strerror(err));
-> +		err = -ENOMEM;
-> +		goto err_free_fdt;
-> +	}
+	1. The pmd_leaf() code that calls free_hugepage_table(). It is
+           removing the memory pointed to by a PMD *entry*. It is *NOT*
+	   removing page tables themselves.
+	2. The !pmd_leaf() code that does remove the pointers to
+	   individual pte pages and frees them via free_pte_table().
 
-Yuk.
+*Neither* of these is freeing high-order page tables pages. It either
+frees plain old kernel data pages or it frees an order-0 page table page.
 
-This really wants some luo helper
+In other words, the pmd_leaf() (mode #1) code is irrelevant to us. Those
+entries are all _PAGE_KERNEL so IOMMU accesses with user privilege can't
+do anything with them.
 
-'luo alloc array'
-'luo restore array'
-'luo free array'
-
-Which would get a linearized list of pages in the vmap to hold the
-array and then allocate some structure to record the page list and
-return back the u64 of the phys_addr of the top of the structure to
-store in whatever.
-
-Getting fdt to allocate the array inside the fds is just not going to
-work for anything of size.
-
-> +	for (; i < nr_pfolios; i++) {
-> +		const struct memfd_luo_preserved_folio *pfolio = &pfolios[i];
-> +		phys_addr_t phys;
-> +		u64 index;
-> +		int flags;
-> +
-> +		if (!pfolio->foliodesc)
-> +			continue;
-> +
-> +		phys = PFN_PHYS(PRESERVED_FOLIO_PFN(pfolio->foliodesc));
-> +		folio = kho_restore_folio(phys);
-> +		if (!folio) {
-> +			pr_err("Unable to restore folio at physical address: %llx\n",
-> +			       phys);
-> +			goto put_file;
-> +		}
-> +		index = pfolio->index;
-> +		flags = PRESERVED_FOLIO_FLAGS(pfolio->foliodesc);
-> +
-> +		/* Set up the folio for insertion. */
-> +		/*
-> +		 * TODO: Should find a way to unify this and
-> +		 * shmem_alloc_and_add_folio().
-> +		 */
-> +		__folio_set_locked(folio);
-> +		__folio_set_swapbacked(folio);
-> 
-> +		ret = mem_cgroup_charge(folio, NULL, mapping_gfp_mask(mapping));
-> +		if (ret) {
-> +			pr_err("shmem: failed to charge folio index %d: %d\n",
-> +			       i, ret);
-> +			goto unlock_folio;
-> +		}
-
-[..]
-
-> +		folio_add_lru(folio);
-> +		folio_unlock(folio);
-> +		folio_put(folio);
-> +	}
-
-Probably some consolidation will be needed to make this less
-duplicated..
-
-But overall I think just using the memfd_luo_preserved_folio as the
-serialization is entirely file, I don't think this needs anything more
-complicated.
-
-What it does need is an alternative to the FDT with versioning.
-
-Which seems to me to be entirely fine as:
-
- struct memfd_luo_v0 {
-    __aligned_u64 size;
-    __aligned_u64 pos;
-    __aligned_u64 folios;
- };
-
- struct memfd_luo_v0 memfd_luo_v0 = {.size = size, pos = file->f_pos, folios = folios};
- luo_store_object(&memfd_luo_v0, sizeof(memfd_luo_v0), <.. identifier for this fd..>, /*version=*/0);
-
-Which also shows the actual data needing to be serialized comes from
-more than one struct and has to be marshaled in code, somehow, to a
-single struct.
-
-Then I imagine a fairly simple forwards/backwards story. If something
-new is needed that is non-optional, lets say you compress the folios
-list to optimize holes:
-
- struct memfd_luo_v1 {
-    __aligned_u64 size;
-    __aligned_u64 pos;
-    __aligned_u64 folios_list_with_holes;
- };
-
-Obviously a v0 kernel cannot parse this, but in this case a v1 aware
-kernel could optionally duplicate and write out the v0 format as well:
-
- luo_store_object(&memfd_luo_v0, sizeof(memfd_luo_v0), <.. identifier for this fd..>, /*version=*/0);
- luo_store_object(&memfd_luo_v1, sizeof(memfd_luo_v1), <.. identifier for this fd..>, /*version=*/1);
-
-Then the rule is fairly simple, when the sucessor kernel goes to
-deserialize it asks luo for the versions it supports:
-
- if (luo_restore_object(&memfd_luo_v1, sizeof(memfd_luo_v1), <.. identifier for this fd..>, /*version=*/1))
-    restore_v1(&memfd_luo_v1)
- else if (luo_restore_object(&memfd_luo_v0, sizeof(memfd_luo_v0), <.. identifier for this fd..>, /*version=*/0))
-    restore_v0(&memfd_luo_v0)
- else
-    luo_failure("Do not understand this");
-
-luo core just manages this list of versioned data per serialized
-object. There is only one version per object.
-
-Jason
+Or have I just horribly confused myself?
 
