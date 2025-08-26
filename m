@@ -1,135 +1,132 @@
-Return-Path: <linux-kernel+bounces-786584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48027B35EC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:05:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DA99B35E9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:00:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 168FB16D382
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:59:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 662623B069F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:00:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1733074AA;
-	Tue, 26 Aug 2025 11:58:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3291930146D;
+	Tue, 26 Aug 2025 12:00:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i1/FgCEr"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N/0uT9Ps"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B21B2FAC02;
-	Tue, 26 Aug 2025 11:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316411B6CE9;
+	Tue, 26 Aug 2025 11:59:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756209534; cv=none; b=ZiAlzhZ3KzoSnVH8XKorAEeXLCJwU+iX2lBsFW5ww5h9aYGuyIFMiQqMiz/cqFNO6hsgDzoMXjrE0NbGoN6Zz6R1N8ib7jkBO0s5SMUMsAn6FVwu8KE8v3Jgvxlbib/Q6AzU7xW0MNdFAK1Rf+vIih9F1y4QPivUMu7jdNlbjAc=
+	t=1756209600; cv=none; b=maNcM9yVFY+pUwiV4ZBvaCqRh2dEFBDKDHoUx74L5OwYYVFTI6pzO7WwKhp16MkYXUr/kUCPp3MmqRBxL76PjqMv7Mx6IdVef1y7As2whnmhF2kNcbHeXJtopnSorDuIwaA/8nqlUfddP7RRxvzB+2/gM+ycSwdrRg9UjQU31hQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756209534; c=relaxed/simple;
-	bh=FiLdpzWIyitQAvUhRt0r7ylePb3Gfbmw/UQAmdcgXEk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LOVlFT9Z+jfkybUgdZ2MO4V8ivCAuucTUPHfstX0B7IxAmZvEcrXhTwJAKjXaETD6ZZRYVDG2O+2xtDPRuOvaJ6DcIi1vYf73VLFnV5nZzglyh7ihVkCkTsJoDHPncGYLb8ZTaBY+D7ZTrbd8Gv83rZzZLByj7sn7Y+IvCOFhsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i1/FgCEr; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756209533; x=1787745533;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=FiLdpzWIyitQAvUhRt0r7ylePb3Gfbmw/UQAmdcgXEk=;
-  b=i1/FgCEr8DpQs5LNQZfjJCJkjALv0x6fcW6E3cRGP+xyXxCQDpZ1iMs8
-   1yG1Nt1Ce4IGAbknuSJH8RqnUCJ2kJE2rBRe8v7/h6e2+2TyHPRerwi1t
-   kBlDJdVY3F2HB+yiKEsFX+gBoYTD8IpACP0J+38Ma0nM9HZVwNRUCrjqT
-   0kGNa4gm2600RO2+KOUNJFyGu54zpoEQTqiSo2U79MWDw+ASPFd4C2MAM
-   17u15evc0u82Tsv4gXKsvR1+UDhvNcJVlR0SscZEsEijPSl0JuG+asWw1
-   f6aAUPqTxgPfK+8P5SODiZr+AGWlz6p7QOnFosSWbsK+bM2YntKKiD2VB
-   Q==;
-X-CSE-ConnectionGUID: lretp7gRSN6w8RUTAsRsPQ==
-X-CSE-MsgGUID: GWYyxSHISW202zhmSKzm1Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62273148"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="62273148"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 04:58:53 -0700
-X-CSE-ConnectionGUID: swsxi+ibRkW6mDaVWnZiAQ==
-X-CSE-MsgGUID: lA8PD4I8St+RXG09a7iRsg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="173955138"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa004.jf.intel.com with ESMTP; 26 Aug 2025 04:58:50 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uqsK7-000PFD-1E;
-	Tue, 26 Aug 2025 11:58:47 +0000
-Date: Tue, 26 Aug 2025 19:58:02 +0800
-From: kernel test robot <lkp@intel.com>
-To: Hans Zhang <18255117159@163.com>, lpieralisi@kernel.org,
-	kwilczynski@kernel.org, bhelgaas@google.com, helgaas@kernel.org,
-	jingoohan1@gmail.com, mani@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, robh@kernel.org,
-	ilpo.jarvinen@linux.intel.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Hans Zhang <18255117159@163.com>
-Subject: Re: [PATCH v2] PCI: endpoint: Implement capability search using PCI
- core APIs
-Message-ID: <202508261929.5s2blqmA-lkp@intel.com>
-References: <20250819145828.438541-1-18255117159@163.com>
+	s=arc-20240116; t=1756209600; c=relaxed/simple;
+	bh=19LSBPHUQsnPLxLO0uJ1B004qvDgLhT0SmAmTMNJxos=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=hCNha3+62SNPbLIuonM4Ez+GO46xv4haTr0/G4csbRMvuZkl8VoYUzdmY6Gb7dmzMAcQJI2PAXur5LDPArxu04mLYzetd17ClLGOftmMIKin1Fm71RACRo5XnofZEFDeu4TfEKDAwjyQl/jxpZWMHSi+qtr8ubnJ0D/TKj2P6Qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N/0uT9Ps; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b4c1ed55930so1923800a12.1;
+        Tue, 26 Aug 2025 04:59:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756209597; x=1756814397; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=19LSBPHUQsnPLxLO0uJ1B004qvDgLhT0SmAmTMNJxos=;
+        b=N/0uT9PsEaUZ5HD2PHTiHHVfj9y76RPnuTfCsvDNXUq2bUavQ6ofdL5HDSPtUQXfaC
+         X43Wc0gu1W1f7ahsHpsichYu+hpjaIpdiOpnG1zclGFIdUFvefgRXtfNwSc0w8j1KvpK
+         YXOkFVposARwvBMQmpyB5myf6/umRKc/t53Je9aSlf1EVN7V0dl3AZSanJrnoSgp9XPT
+         QF7vRK3tzgAhCgjntQGKr7OExylLaWNZFoKZTIfZz3c71EQFXkteNYt2fAgiHeFq0v8s
+         ywK8Ha3yOpNXjsJhEqgfpQc3TzcECCIuogT/g4sjUzlV43gIYJFaDxJcUe/mj5y5ZROg
+         mZng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756209597; x=1756814397;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=19LSBPHUQsnPLxLO0uJ1B004qvDgLhT0SmAmTMNJxos=;
+        b=c9Z9BeNmbW+8J5keE/aVb7V5O36VIHSC/geT79y1c5CA9sx5aeV0Vri2RDe+1fTIsV
+         jCP88/8d8BG3QRoHj8o+/hdt68QiY4sE7GiG4KkAVJo5Wr0Nx7jMp2nmF8W2Oz6fjHBI
+         C3UhbnwmfR0fuQe8fJaUnRqMaovIj6QiJGB+Ys+qAgCh6Ca4KSG1XHASlEXu5TEFC/pK
+         uwa3yJyJM1Fv1gCQ356f+aTxM5pr6EyY55iow3GeWHCo6Wm/YCmjpWp+i32LI91DEIr9
+         Jnkbg2NVOjiJ46/czbeRIQdLgVqFqJXSczdmtZYJu24IAD5ci/VFv1RIQ0vAd83xeI/1
+         z7JQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWFElNOLb8ko1Xhw7gde647xZ1ZAx3UhA23lctPmZuYnQgSfUrrtDjC7hK/CkiaGYRfCyQ2ThMaMKA2ixCLf6I=@vger.kernel.org, AJvYcCX4sqH+YyGA0Wty3SjD7OvzfzXE4hnEoCdc5aomctvZJ/lG5Q6W2EYxScabHvOg+hJxQ7/4YQDtxXLHMuc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykBmIaRlDaQcOR8K6HOQGsVEt+bNJh7TphgEhyrCBOGZvYN+Zg
+	R6RD+kdhm4m0NKoCea+DZIPwbzjkldhwf9OTj6hPPNauAS43/nYoiuYd
+X-Gm-Gg: ASbGnctbWMqVGqvvd5SG1bTgVuP2gbsvbMw3LiqNiixuXUT3eKqnwh/Vidp8YaldMnn
+	RfXIMQcWgy/J7hj8ZP9OZZgo21me04gTGYSRprb8F7rx5c/fUgqD2tLuVHAN7YZYlW/HWoi/fvt
+	3neDfVbeU1qMBNVnRbWdf8E6i401jHFzYsuUu4LkF9iNpthrY5ALNtiqYYsdiUW58nozwLx+OaA
+	kegDKAxskxaLJqxq5n1D3Lvq8Px+YAoJBkDDDYCebiY1wzjzb3s6NfNSe4fiUx0x0DH4S6TQdcm
+	DkSX+LZB8K3vh0TQFH6EXoFGpZILTJZUSe1EuAkzeZSti2RsFUCg67M4GwrsGjN/AGCyDxPTTu5
+	UOZPbf5SmvBdGTxvvfofefgHnz/wNv7aRhKMv/+d0M0JwnW2pwVNQLXPXwMUOtfqT3PWx8fXDO7
+	Aw
+X-Google-Smtp-Source: AGHT+IGw9o/NEVIe3ivChryZIGHUTUQAQ5+1L3wB6SWowOPDKHyu4TGa+ygIiQqXBHD5Dkix86KddQ==
+X-Received: by 2002:a17:903:19cc:b0:246:4077:454b with SMTP id d9443c01a7336-24640774da7mr167013635ad.33.1756209597253;
+        Tue, 26 Aug 2025 04:59:57 -0700 (PDT)
+Received: from localhost (p5332007-ipxg23901hodogaya.kanagawa.ocn.ne.jp. [180.34.120.7])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24668779ffcsm94180485ad.18.2025.08.26.04.59.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Aug 2025 04:59:56 -0700 (PDT)
+Date: Tue, 26 Aug 2025 20:59:41 +0900 (JST)
+Message-Id: <20250826.205941.963904478024459782.fujita.tomonori@gmail.com>
+To: a.hindborg@kernel.org
+Cc: fujita.tomonori@gmail.com, alex.gaynor@gmail.com, ojeda@kernel.org,
+ aliceryhl@google.com, anna-maria@linutronix.de, bjorn3_gh@protonmail.com,
+ boqun.feng@gmail.com, dakr@kernel.org, frederic@kernel.org,
+ gary@garyguo.net, jstultz@google.com, linux-kernel@vger.kernel.org,
+ lossin@kernel.org, lyude@redhat.com, rust-for-linux@vger.kernel.org,
+ sboyd@kernel.org, tglx@linutronix.de, tmgross@umich.edu,
+ acourbot@nvidia.com, daniel.almeida@collabora.com
+Subject: Re: [PATCH v1 1/2] rust: add udelay() function
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+In-Reply-To: <87bjo2witj.fsf@t14s.mail-host-address-is-not-set>
+References: <ub8ohgErgUJB1KWyrSWn18gSQiyiIJ4Py133yi5fMR68ZG2zeWokoP7kULU7voBjry46A7GZUSrHuCQn0C_DZg==@protonmail.internalid>
+	<20250821035710.3692455-2-fujita.tomonori@gmail.com>
+	<87bjo2witj.fsf@t14s.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250819145828.438541-1-18255117159@163.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=iso-8859-7
+Content-Transfer-Encoding: base64
 
-Hi Hans,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on 8742b2d8935f476449ef37e263bc4da3295c7b58]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Hans-Zhang/PCI-endpoint-Implement-capability-search-using-PCI-core-APIs/20250819-231353
-base:   8742b2d8935f476449ef37e263bc4da3295c7b58
-patch link:    https://lore.kernel.org/r/20250819145828.438541-1-18255117159%40163.com
-patch subject: [PATCH v2] PCI: endpoint: Implement capability search using PCI core APIs
-config: x86_64-randconfig-002-20250826 (https://download.01.org/0day-ci/archive/20250826/202508261929.5s2blqmA-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250826/202508261929.5s2blqmA-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508261929.5s2blqmA-lkp@intel.com/
-
-All error/warnings (new ones prefixed by >>):
-
-   drivers/pci/controller/dwc/pcie-designware-ep.c: In function 'dw_pcie_ep_find_capability':
->> drivers/pci/controller/dwc/pcie-designware-ep.c:74:16: error: implicit declaration of function 'PCI_FIND_NEXT_CAP' [-Werror=implicit-function-declaration]
-      74 |         return PCI_FIND_NEXT_CAP(dw_pcie_ep_read_cfg, PCI_CAPABILITY_LIST,
-         |                ^~~~~~~~~~~~~~~~~
->> drivers/pci/controller/dwc/pcie-designware-ep.c:74:34: error: 'dw_pcie_ep_read_cfg' undeclared (first use in this function); did you mean 'dw_pcie_ep_read_dbi'?
-      74 |         return PCI_FIND_NEXT_CAP(dw_pcie_ep_read_cfg, PCI_CAPABILITY_LIST,
-         |                                  ^~~~~~~~~~~~~~~~~~~
-         |                                  dw_pcie_ep_read_dbi
-   drivers/pci/controller/dwc/pcie-designware-ep.c:74:34: note: each undeclared identifier is reported only once for each function it appears in
->> drivers/pci/controller/dwc/pcie-designware-ep.c:76:1: warning: control reaches end of non-void function [-Wreturn-type]
-      76 | }
-         | ^
-   cc1: some warnings being treated as errors
-
-
-vim +/PCI_FIND_NEXT_CAP +74 drivers/pci/controller/dwc/pcie-designware-ep.c
-
-    71	
-    72	static u8 dw_pcie_ep_find_capability(struct dw_pcie_ep *ep, u8 func_no, u8 cap)
-    73	{
-  > 74		return PCI_FIND_NEXT_CAP(dw_pcie_ep_read_cfg, PCI_CAPABILITY_LIST,
-    75					 cap, ep, func_no);
-  > 76	}
-    77	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+T24gVHVlLCAyNiBBdWcgMjAyNSAxMTowOToxMiArMDIwMA0KQW5kcmVhcyBIaW5kYm9yZyA8YS5o
+aW5kYm9yZ0BrZXJuZWwub3JnPiB3cm90ZToNCg0KPj4gKy8vLyBJbnNlcnRzIGEgZGVsYXkgYmFz
+ZWQgb24gbWljcm9zZWNvbmRzIHdpdGggYnVzeSB3YWl0aW5nLg0KPj4gKy8vLw0KPj4gKy8vLyBF
+cXVpdmFsZW50IHRvIHRoZSBDIHNpZGUgW2B1ZGVsYXkoKWBdLCB3aGljaCBkZWxheXMgaW4gbWlj
+cm9zZWNvbmRzLg0KPj4gKy8vLw0KPj4gKy8vLyBgZGVsdGFgIG11c3QgYmUgd2l0aGluIGBbMCwg
+YE1BWF9VREVMQVlfTVNgXWAgaW4gbWlsbGlzZWNvbmRzOw0KPj4gKy8vLyBvdGhlcndpc2UsIGl0
+IGlzIGVycm9uZW91cyBiZWhhdmlvci4gVGhhdCBpcywgaXQgaXMgY29uc2lkZXJlZCBhIGJ1ZyB0
+bw0KPj4gKy8vLyBjYWxsIHRoaXMgZnVuY3Rpb24gd2l0aCBhbiBvdXQtb2YtcmFuZ2UgdmFsdWUs
+IGluIHdoaWNoIGNhc2UgdGhlIGZ1bmN0aW9uDQo+PiArLy8vIHdpbGwgaW5zZXJ0IGEgZGVsYXkg
+Zm9yIGF0IGxlYXN0IHRoZSBtYXhpbXVtIHZhbHVlIGluIHRoZSByYW5nZSBhbmQNCj4+ICsvLy8g
+bWF5IHdhcm4gaW4gdGhlIGZ1dHVyZS4NCj4+ICsvLy8NCj4+ICsvLy8gVGhlIGJlaGF2aW9yIGFi
+b3ZlIGRpZmZlcnMgZnJvbSB0aGUgQyBzaWRlIFtgdWRlbGF5KClgXSBmb3Igd2hpY2ggb3V0LW9m
+LXJhbmdlDQo+PiArLy8vIHZhbHVlcyBjb3VsZCBsZWFkIHRvIGFuIG92ZXJmbG93IGFuZCB1bmV4
+cGVjdGVkIGJlaGF2aW9yLg0KPj4gKy8vLw0KPj4gKy8vLyBbYHVkZWxheSgpYF06IGh0dHBzOi8v
+ZG9jcy5rZXJuZWwub3JnL3RpbWVycy9kZWxheV9zbGVlcF9mdW5jdGlvbnMuaHRtbCNjLnVkZWxh
+eQ0KPj4gK3B1YiBmbiB1ZGVsYXkoZGVsdGE6IERlbHRhKSB7DQo+PiArICAgIGNvbnN0IE1BWF9V
+REVMQVlfREVMVEE6IERlbHRhID0gRGVsdGE6OmZyb21fbWlsbGlzKGJpbmRpbmdzOjpNQVhfVURF
+TEFZX01TIGFzIGk2NCk7DQo+PiArDQo+PiArICAgIGxldCBkZWx0YSA9IGlmIChEZWx0YTo6WkVS
+Ty4uPU1BWF9VREVMQVlfREVMVEEpLmNvbnRhaW5zKCZkZWx0YSkgew0KPj4gKyAgICAgICAgZGVs
+dGENCj4+ICsgICAgfSBlbHNlIHsNCj4+ICsgICAgICAgIC8vIFRPRE86IEFkZCBXQVJOX09OQ0Uo
+KSB3aGVuIGl0J3Mgc3VwcG9ydGVkLg0KPj4gKyAgICAgICAgTUFYX1VERUxBWV9ERUxUQQ0KPj4g
+KyAgICB9Ow0KPj4gKw0KPj4gKyAgICAvLyBTQUZFVFk6IEl0IGlzIGFsd2F5cyBzYWZlIHRvIGNh
+bGwgYHVkZWxheSgpYCB3aXRoIGFueSBkdXJhdGlvbi4NCj4gDQo+IEZ1bmN0aW9uIGRvY3VtZW50
+YXRpb24gc2F5cyBpdCBpcyBvdmVyZmxvdyBhbmQgdW5leHBlY3RlZCBiZWhhdmlvciB0bw0KPiBj
+YWxsIGB1ZGVsYXlgIHdpdGggb3V0IG9mIHJhbmdlIHZhbHVlLCBidXQgYWJvdmUgY29tbWVudCBz
+YXlzIGFueQ0KPiBkdXJhdGlvbiBpcyBzYWZlLiBXaGljaCBpcyBpdD8NCg0KVGhpcyBjYW4gbGVh
+ZCB0byBhbiB1bmV4cGVjdGVkIGRlbGF5IGR1cmF0aW9uLCBidXQgaXQncyBzYWZlIGluIFJ1c3Si
+cw0Kc2Vuc2Ugb2Ygc2FmZXR5Pw0KDQpJZiBub3QsIGhvdyBhYm91dCB0aGUgZm9sbG93aW5ncz8N
+Cg0KLy8gU0FGRVRZOiBgZGVsdGFgIGlzIGNsYW1wZWQgdG8gdGhlIHJhbmdlIFswLCBNQVhfVURF
+TEFZX0RFTFRBXSwNCi8vIHNvIGNhbGxpbmcgYHVkZWxheSgpYCB3aXRoIGl0IGlzIGFsd2F5cyBz
+YWZlLg0K
 
