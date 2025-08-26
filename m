@@ -1,108 +1,124 @@
-Return-Path: <linux-kernel+bounces-786739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C76FFB366EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:01:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B39DB366BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:00:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 180CC98113F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:52:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8813A1C25D4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 199C635207C;
-	Tue, 26 Aug 2025 13:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B90350D62;
+	Tue, 26 Aug 2025 13:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sc6wMYRh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="p6zckXJe"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C91A2FFDEB;
-	Tue, 26 Aug 2025 13:51:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33EA34166C;
+	Tue, 26 Aug 2025 13:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756216278; cv=none; b=M0IMAvxctzFhu8NItdC58hNpv8+RGk1xed1xS87GPGj1eRLkTwOJtQmpUrPEqkUYm97qerG8vnGkv4+nEX4lINBkAg0Fuf8Zk3GY3iSmtIL7fg+aVnSCSqqDAyMEXW5HW5TNqwIPK5pDGZV0BlLXcZ1RjUTIHeXul5xgmwWVE40=
+	t=1756216290; cv=none; b=LXhzanXhRLOi1RRSVr+GhS9r8HP8ANbFqjOz7xCIcy0al8RShnl3vaKVjsc/dKoizXqt1l9VeKnP6kqe/IT7MKEjwK5kSbNlbBUJFBp8NlflyOVbYWgyzcfHHYN/O9hb7v6iIJZ9AsGor28P/cx2kisRGrCNdw9pU9QKsSiX8zA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756216278; c=relaxed/simple;
-	bh=E+JdUlZSCoxiieHGl3mpSbH/9mo3TqI95VAZ0RUIIHY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VsNmn8MwtlHWuUtXYcGmqUgx5Nt7TPEM/SjeRSY49Elu9qJXDHkA9/TT1towbR71A+w8BhRpVJ7Xrb7V42I3Vf9TCTd3BMYhUr2ydvIrI1pS5pZ1KzWy1TaWa6ZD9Z1XF7rg7WLm6H3yURONy+BvEjAmOKpc0aMUwul6QyAfC38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sc6wMYRh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D55BC116B1;
-	Tue, 26 Aug 2025 13:51:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756216278;
-	bh=E+JdUlZSCoxiieHGl3mpSbH/9mo3TqI95VAZ0RUIIHY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Sc6wMYRhwe+2yFmHtb/sAK74i+xU1B1QCVabPKnc4HdJUZPUad0EoQHVzV9d8wrko
-	 9DAt558o6l7RIDXP6iXPGhFJXhcemyvrn7gm5c9J88VmLZhyfujInCNedCBn64rWRU
-	 j3zU2uysz2bSSFTj1Zg60hyApBBgvY9hW45zRYYPHG/WA1sBXyf52y0lbV51P9X+n9
-	 abOYZ4+laK94Y7LugwyC3JdwajQGKDUH1rH7PSMzonlrzgR/m6dWJNzwpscCt4N18I
-	 npmbRUem2eIDEMTC7CWqwBMKtcfu6cry855rU1YjlJM4s9nOC5yizxqjUw7hyDCYxC
-	 8mrtLed+qYRAA==
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-55f527db6f6so69708e87.2;
-        Tue, 26 Aug 2025 06:51:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVvayU37+ZNT7cPmYGE2CliiTUXMWa4lFotuIFeJrznvSBzaWWeGJ+bw8+CsoHNqgACz+BY/OafYeACC63U@vger.kernel.org, AJvYcCWLk9pN2e3LXzv6Q3WUaKDOrbB1JxsTQwKd69X1kKZOu6gCyU8p+a3feMWDFUhpgIgZbFmcDx2BQeESopA=@vger.kernel.org, AJvYcCWss/OtD0niIEsgReoaDjWXn6v1xWFhcVg+A/GvemnD11tJrNyBELp5A55LtETreHGOb8apz8NJrPKxMxmALALb@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFn/LCKuAYZid+2uqS6XaCLnXHnDh9T6Un6KhTBNZqsIP6cTLD
-	YPRJa5ThdLgusGD1SeZHvVxTZYVhGESUme6fK+JGokGAC4A71MnlvPcOo5Js0DspK+s4o041Ht6
-	DGTIabvZ61wCUl75QB2nuIOYVKUBMehk=
-X-Google-Smtp-Source: AGHT+IEyERKJpY0dTTeTMtR+lCc7K9/yDgg91XPe10BR+4CJOA+0bojzARWxfItbUWZV8G72TOeEw7wifxB7E0hNJWU=
-X-Received: by 2002:ac2:51c9:0:b0:55f:445d:e47f with SMTP id
- 2adb3069b0e04-55f445de605mr2110419e87.45.1756216276581; Tue, 26 Aug 2025
- 06:51:16 -0700 (PDT)
+	s=arc-20240116; t=1756216290; c=relaxed/simple;
+	bh=Bn1Ty2oKRyCYeEeV05qgM4L3O4H99orO+wAZwsaw9aQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=lVGbvlf3TG5LDXRzIsZKGknt581vySJJaGr63RAYFhgGzD3i/i7ygHpq9bF0By+grAE8aG/KnpG99fv+3vKXxt5fY0Ya5CZmzRY0W/csFbjOcCv/4Yilmm+0resw7QJ3LCucUj38+eK1QqAooEmNwD/Ui9VwZJ9oiC2vlb6iiRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=p6zckXJe; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1756216286;
+	bh=Bn1Ty2oKRyCYeEeV05qgM4L3O4H99orO+wAZwsaw9aQ=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=p6zckXJeDzd31hPqH/Wt8scivMFgELrZ+U2bWHCqgoyw4+klQqcu7t9dlQV1AXcNk
+	 MezT5TwlaqDVIU2FsoIL6aYZ4EiA4C6FGvxTE40So+A6P+5WJimoR3doV5S4CMAjGr
+	 hms5mRT4RbeBhewbCDFodJiLITGiVb25xIJKesUfM7FRmekg8HS9Dw6hNFmmtmQQm0
+	 Nsvo7tQ7QVQDRZPdOGkn/cmFPnTnRp0pEyUn9cDZkGSWrJ+M5ivAuXxbBndTTwtQMm
+	 IrxvRudntCdpISOfHLxr+bPf9tAscCVBH730+JTa2yLxvHZA8oX5kyNT95w/qFpw8+
+	 26+7t41exZI4w==
+Received: from 2a01cb0892f2d600c8f85cf092d4af51.ipv6.abo.wanadoo.fr (2a01cb0892F2D600c8F85cF092D4aF51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: jmassot)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 138DD17E046C;
+	Tue, 26 Aug 2025 15:51:26 +0200 (CEST)
+Message-ID: <e40f60820ad1a13b2981c65a55babd845349a751.camel@collabora.com>
+Subject: Re: [PATCH 1/3] Input: mtk-pmic-keys - MT6359 has a specific
+ release irq
+From: Julien Massot <julien.massot@collabora.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, AngeloGioacchino Del Regno
+	 <angelogioacchino.delregno@collabora.com>
+Cc: kernel@collabora.com, Matthias Brugger <matthias.bgg@gmail.com>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley	 <conor+dt@kernel.org>, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org
+Date: Tue, 26 Aug 2025 15:51:25 +0200
+In-Reply-To: <akavphbw2wh5vga3eoe6abqdawdssko4cy2sz7oedef4jvzunn@37whg62gmfoh>
+References: <20250801-radxa-nio-12-l-gpio-v1-0-d0840f85d2c8@collabora.com>
+	 <20250801-radxa-nio-12-l-gpio-v1-1-d0840f85d2c8@collabora.com>
+	 <a9cd33f5-cc37-4a1d-b1fd-094761a146ed@collabora.com>
+	 <akavphbw2wh5vga3eoe6abqdawdssko4cy2sz7oedef4jvzunn@37whg62gmfoh>
+Organization: Collabora Ltd.
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6895b041.050a0220.7f033.0058.GAE@google.com> <tencent_B406618996EEF22ED6CC8EA7DF46FD92D206@qq.com>
- <aKBMjQpA9P70EA0z@gondor.apana.org.au>
-In-Reply-To: <aKBMjQpA9P70EA0z@gondor.apana.org.au>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 26 Aug 2025 15:51:04 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXF4aRL02CKnO5T9kKnvSV=BcMDiD=mDW7CKQx5t_HmaHw@mail.gmail.com>
-X-Gm-Features: Ac12FXxgukB0I0sVPP_wpsET2YYNjVapHKDPsCvg_1qYbfuYo-T1sYScgpJ45do
-Message-ID: <CAMj1kXF4aRL02CKnO5T9kKnvSV=BcMDiD=mDW7CKQx5t_HmaHw@mail.gmail.com>
-Subject: Re: [PATCH] crypto: Prevent kernel-infoleak in rng_recvmsg
-To: Herbert Xu <herbert@gondor.apana.org.au>, linux-hardening@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>
-Cc: Edward Adam Davis <eadavis@qq.com>, syzbot+e8bcd7ee3db6cb5cb875@syzkaller.appspotmail.com, 
-	davem@davemloft.net, linux-crypto@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
 
-(cc Kees)
+Hi Dmitry
 
-On Sat, 16 Aug 2025 at 11:17, Herbert Xu <herbert@gondor.apana.org.au> wrote:
->
-> On Sat, Aug 09, 2025 at 05:59:43PM +0800, Edward Adam Davis wrote:
-> > Initialize the intermediary array member to 0 to prevent the kernel from
-> > leaking uninitialized data to user space.
-> >
-> > Reported-by: syzbot+e8bcd7ee3db6cb5cb875@syzkaller.appspotmail.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=e8bcd7ee3db6cb5cb875
-> > Tested-by: syzbot+e8bcd7ee3db6cb5cb875@syzkaller.appspotmail.com
-> > Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-> > ---
-> >  crypto/jitterentropy-kcapi.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/crypto/jitterentropy-kcapi.c b/crypto/jitterentropy-kcapi.c
-> > index c24d4ff2b4a8..9e9e069f55af 100644
-> > --- a/crypto/jitterentropy-kcapi.c
-> > +++ b/crypto/jitterentropy-kcapi.c
-> > @@ -107,7 +107,7 @@ int jent_hash_time(void *hash_state, __u64 time, u8 *addtl,
-> >  {
-> >       struct shash_desc *hash_state_desc = (struct shash_desc *)hash_state;
-> >       SHASH_DESC_ON_STACK(desc, hash_state_desc->tfm);
-> > -     u8 intermediary[SHA3_256_DIGEST_SIZE];
-> > +     u8 intermediary[SHA3_256_DIGEST_SIZE] = { 0 };
->
-> This is not a leak! The stack memroy is hashed and fed into the
-> entropy pool.
+On Wed, 2025-08-06 at 09:49 -0700, Dmitry Torokhov wrote:
+> On Mon, Aug 04, 2025 at 10:05:21AM +0200, AngeloGioacchino Del Regno
+> wrote:
+> > Il 01/08/25 15:16, Julien Massot ha scritto:
+> > > A recent commit in linux-next added support for key events.
+> > > However, the key release event is not properly handled: only key
+> > > press events
+> > > are generated, leaving key states stuck in "pressed".
+> > >=20
+> > > This patch ensures that both key press and key release events are
+> > > properly
+> > > emitted by handling the release logic correctly.
+> > >=20
+> > > Note: the code was introduced in linux-next by commit
+> > > bc25e6bf032e ("Input: mtk-pmic-keys - add support for MT6359 PMIC
+> > > keys")
+> > > and is not yet present in mainline.
+> > >=20
+> > > Signed-off-by: Julien Massot <julien.massot@collabora.com>
+> >=20
+> > Well, you are effectively fixing the commit that you pointed out, so
+> > this needs
+> >=20
+> > Fixes: bc25e6bf032e ("Input: mtk-pmic-keys - add support for MT6359
+> > PMIC keys")
+> >=20
+> > and
+> >=20
+> > Reviewed-by: AngeloGioacchino Del Regno
+> > <angelogioacchino.delregno@collabora.com>
+>=20
+> I am really interested in how exactly this was developed, tested, and
+> reviewed...
+>=20
+> Thanks.
 
-Is there still a point to doing this now that the compiler
-zero-initializes automatic variables? Or does that not apply to u8
-arrays? (asking Kees)
+You are right, the issue comes from my side.
+I prepared the patch against a slightly different tree, which led to the
+discrepancy. I=E2=80=99ll respin it on top of the current linux-next and re=
+-test
+it properly to ensure the fix behaves as expected.
+
+Thanks for catching this, and thanks for your time.
+Julien
 
