@@ -1,352 +1,187 @@
-Return-Path: <linux-kernel+bounces-786509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7FBCB35AC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:10:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54444B35ACD
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:12:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40A75189A8A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:10:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8876D17D7D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:11:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FFAF2BF011;
-	Tue, 26 Aug 2025 11:09:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MNUnQ5X3"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D1312BD00C;
+	Tue, 26 Aug 2025 11:11:35 +0000 (UTC)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5C9199935;
-	Tue, 26 Aug 2025 11:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA30F2BDC00;
+	Tue, 26 Aug 2025 11:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756206594; cv=none; b=e7ml7PzhRsUX725bScvciZ3HkA2HodlQOaAdt6FU8OwinruyJp27lpEf3OydOsRi9t5CLJ16fIcdGSnjyHGVN0RHxepB7B8/FWjz3yW6l0byd4srVM/ABirfOjeFsiuxCpPsA0bU0Ot7tdxTipGTX+5mnWxriI3t1IC0CrlK6Rw=
+	t=1756206695; cv=none; b=EPOX17n+egG4YYgd2E8W6PdUiCxB2AcSHrpHqqBaFwI5mF04Zaet2JAA7P33yieK61xYtEACDwhcssIVWQQszzsOhU49cOGouN5aITFh/JbqJ5ceGzOB7ltCAUjlg7IZj5YN8x+8pbtIiRSDDFpwtz/3D3YRgdwy1TwmWS27hwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756206594; c=relaxed/simple;
-	bh=CkeQv8JCpXRiBeQmeJclVsjkmIRNHeTxVyCEIZHQ8rQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DCElgWg0vkI5zMe0OOvr3EUG4SgBQe/Q0XmVPfPOsBBex1cRdEPBEEZ5PTlPxyLQxdJ3LOM76SUU9K7/MZ3bdGXMyMjT1lgiu2LThS7v0Kk7pz4KNYiCFvkQYh+d5oieJISxKNvArz2GqIIioIHzK/Woq3NRzMdHn/xWnqNB7vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MNUnQ5X3; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57Q5QUxZ013270;
-	Tue, 26 Aug 2025 11:09:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=09+H95LC1jngBr5AC9iW5D
-	m3V6CiAv4To8aTiQJrTxI=; b=MNUnQ5X3rp/xo8H82qRgjQ5/x57h+2rnX3kuUC
-	/8B4pVwZ1k6g3HhpKuXENJ1M4kOLq/ac5Fe4E2DQFcv6VlZxZSrSJSElYDfVSYrr
-	onJgslfjRePHFxixLF1gIZO3nHvNI1GL82+QaaK5B5dmtuDu+ypdscaEmWwHCmRp
-	X478Enjh83ZbCkZfLHJmkJidqVL9hcwNb1TuPcqZxEtEJRG8GG8f0UShrM2GZ4Je
-	olPy/n/Cjgi+F17tGWEOhrUJ3gxccLjPE0k5GjrjBMwQC7JFxAHd1q27LDTz2nAa
-	GnmKEPqdv3fcE4SBsvgL3ATJkOLBO2ul4Ep7w8oErPl6T9eA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5xprphh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Aug 2025 11:09:45 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57QB9j1t012202
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Aug 2025 11:09:45 GMT
-Received: from hu-utiwari-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.24; Tue, 26 Aug 2025 04:09:42 -0700
-From: <quic_utiwari@quicinc.com>
-To: <herbert@gondor.apana.org.au>, <thara.gopinath@gmail.com>,
-        <davem@davemloft.net>
-CC: <linux-crypto@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_neersoni@quicinc.com>,
-        <quic_kuldsing@quicinc.com>, <quic_gaurkash@quicinc.com>
-Subject: [PATCH v2] crypto: qce - Add runtime PM and interconnect bandwidth scaling support
-Date: Tue, 26 Aug 2025 16:39:17 +0530
-Message-ID: <20250826110917.3383061-1-quic_utiwari@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1756206695; c=relaxed/simple;
+	bh=E+HlitpA7D03Mq0ySRI5hB32hPDVxAI8QJ6VDaTbMFg=;
+	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
+	 Subject:Content-Type; b=f5BSZXfqBygDzr3UVvJW1dp9Ky9RMSRAHSjxI2V9bFGmel2xE+qb5yNDadtV9ncE/9c4X6K7xIrZFM4WyJ4VZ0fnL5oRazDRXSmN/HVmJ3vaWsMqVnNR/RViqqJR1EB7FrZzTzirQ0eq8eFJNEPxkkJXHMwCyCOOXyJaPykV8Ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4cB4jV4V3Xz5B1CJ;
+	Tue, 26 Aug 2025 19:11:26 +0800 (CST)
+Received: from xaxapp04.zte.com.cn ([10.99.98.157])
+	by mse-fl1.zte.com.cn with SMTP id 57QB9Z09053463;
+	Tue, 26 Aug 2025 19:09:35 +0800 (+08)
+	(envelope-from shao.mingyin@zte.com.cn)
+Received: from mapi (xaxapp02[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Tue, 26 Aug 2025 19:09:38 +0800 (CST)
+Date: Tue, 26 Aug 2025 19:09:38 +0800 (CST)
+X-Zmail-TransId: 2afa68ad95f2924-bb977
+X-Mailer: Zmail v1.0
+Message-ID: <20250826190938127nbv3PV-juvRbvQHDcjLhq@zte.com.cn>
+In-Reply-To: <20250826185643235jApHbqi4zaPaZWVy6_Pot@zte.com.cn>
+References: 20250826185643235jApHbqi4zaPaZWVy6_Pot@zte.com.cn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=KOlaDEFo c=1 sm=1 tr=0 ts=68ad95f9 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
- a=gfq5eMhS0q4ALXmgQ6sA:9 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: 2ztlS_nzhQaM33PpZ_r-n1R9_lc-9BQn
-X-Proofpoint-ORIG-GUID: 2ztlS_nzhQaM33PpZ_r-n1R9_lc-9BQn
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMyBTYWx0ZWRfX64+Q3TqHQmz1
- X3o10Q8C6eQCiZNDbYTRF2/KdM8W/0SMSSOoq2x3heea+8ZVkr9vXw0C1a9YbaFaxNmeLyv/Kly
- QdzAD/ZzmxM0ZHXSvDyWPtB0hd3dsg4ZaocbaYbcAAA3RIpq0tzQfTNWMPJACCh5GY/8rr/FqOG
- hTjccLMEp8CnzWukqkzD+1Qv7iK6POi0O8rfnmPSJL9GonN3VfmNuwOIUx6sN9o4fTXR2KasfOT
- Wlj2idq+yGe7OR9GmHzTnIrDohOu8fdm8EC8zCyRnF4WEO7MNIg/Ae3GqCk7KtL5apLdz5kaP8f
- om5l3kIcm09hrg/vIDu2m3TyLH9Ht157RpADN4aqDPTWGxTw/+nmQUQKxO7LZkg4ir/lBxv9WWA
- TnMMtIis
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-26_02,2025-08-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 clxscore=1011 bulkscore=0 adultscore=0 phishscore=0
- impostorscore=0 spamscore=0 suspectscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230033
+Mime-Version: 1.0
+From: <shao.mingyin@zte.com.cn>
+To: <shao.mingyin@zte.com.cn>
+Cc: <alexs@kernel.org>, <si.yanteng@linux.dev>, <dzm91@hust.edu.cn>,
+        <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <yang.yang29@zte.com.cn>,
+        <xu.xin16@zte.com.cn>, <yang.tao172@zte.com.cn>,
+        <wang.longjie1@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIIHY0IDYvN10gRG9jcy96aF9DTjogVHJhbnNsYXRlIGRub3RpZnkucnN0IHRvIFNpbXBsaWZpZWQgQ2hpbmVzZQ==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 57QB9Z09053463
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.132 unknown Tue, 26 Aug 2025 19:11:26 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 68AD965E.001/4cB4jV4V3Xz5B1CJ
 
-From: Udit Tiwari <quic_utiwari@quicinc.com>
+From: Wang Longjie <wang.longjie1@zte.com.cn>
 
-The Qualcomm Crypto Engine (QCE) driver currently lacks support for
-runtime power management (PM) and interconnect bandwidth control.
-As a result, the hardware remains fully powered and clocks stay
-enabled even when the device is idle. Additionally, static
-interconnect bandwidth votes are held indefinitely, preventing the
-system from reclaiming unused bandwidth.
+translate the "dnotify.rst" into Simplified Chinese.
 
-Address this by enabling runtime PM and dynamic interconnect
-bandwidth scaling to allow the system to suspend the device when idle
-and scale interconnect usage based on actual demand. Improve overall
-system efficiency by reducing power usage and optimizing interconnect
-resource allocation.
+Update to commit b31763cff488("docs: filesystems: convert dnotify.txt to
+ReST")
 
-Make the following changes as part of this integration:
-
-- Add support for pm_runtime APIs to manage device power state
-  transitions.
-- Implement runtime_suspend() and runtime_resume() callbacks to gate
-  clocks and vote for interconnect bandwidth only when needed.
-- Replace devm_clk_get_optional_enabled() with
-  devm_clk_get_optional() and move clock enabling to the resume path.
-- Register dev_pm_ops with the platform driver to hook into the PM
-  framework.
-
-Tested:
-
-- Verify that ICC votes drop to zero after probe and upon request
-  completion.
-- Confirm that runtime PM usage count increments during active
-  requests and decrements afterward.
-- Observe that the device correctly enters the suspended state when
-  idle.
-
-Signed-off-by: Udit Tiwari <quic_utiwari@quicinc.com>
+Signed-off-by: Wang Longjie <wang.longjie1@zte.com.cn>
+Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
 ---
-Changes in v2:
-- Extend suspend/resume support to include runtime PM and ICC scaling.
-- Register dev_pm_ops and implement runtime_suspend/resume callbacks.
-- Link to v1: https://lore.kernel.org/lkml/20250606105808.2119280-1-quic_utiwari@quicinc.com/
----
- drivers/crypto/qce/core.c | 120 ++++++++++++++++++++++++++++++++++----
- 1 file changed, 108 insertions(+), 12 deletions(-)
+v3->v4
+resolve patch damage issues.
+ .../zh_CN/filesystems/dnotify.rst             | 67 +++++++++++++++++++
+ .../translations/zh_CN/filesystems/index.rst  | 10 +++
+ 2 files changed, 77 insertions(+)
+ create mode 100644 Documentation/translations/zh_CN/filesystems/dnotify.rst
 
-diff --git a/drivers/crypto/qce/core.c b/drivers/crypto/qce/core.c
-index e95e84486d9a..70b9d9e739be 100644
---- a/drivers/crypto/qce/core.c
-+++ b/drivers/crypto/qce/core.c
-@@ -12,6 +12,7 @@
- #include <linux/module.h>
- #include <linux/mod_devicetable.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
- #include <linux/types.h>
- #include <crypto/algapi.h>
- #include <crypto/internal/hash.h>
-@@ -91,22 +92,28 @@ static int qce_handle_queue(struct qce_device *qce,
- 	struct crypto_async_request *async_req, *backlog;
- 	int ret = 0, err;
- 
-+	ret = pm_runtime_get_sync(qce->dev);
-+	if (ret < 0) {
-+		pr_err("error with pm_runtime_get_sync");
-+		pm_runtime_put_noidle(qce->dev);
-+		return ret;
-+	}
+diff --git a/Documentation/translations/zh_CN/filesystems/dnotify.rst b/Documentation/translations/zh_CN/filesystems/dnotify.rst
+new file mode 100644
+index 000000000000..5ab109b9424c
+--- /dev/null
++++ b/Documentation/translations/zh_CN/filesystems/dnotify.rst
+@@ -0,0 +1,67 @@
++.. SPDX-License-Identifier: GPL-2.0
 +
- 	scoped_guard(mutex, &qce->lock) {
- 		if (req)
- 			ret = crypto_enqueue_request(&qce->queue, req);
- 
- 		/* busy, do not dequeue request */
- 		if (qce->req)
--			return ret;
-+			goto qce_suspend;
- 
- 		backlog = crypto_get_backlog(&qce->queue);
- 		async_req = crypto_dequeue_request(&qce->queue);
- 		if (async_req)
- 			qce->req = async_req;
- 	}
--
- 	if (!async_req)
--		return ret;
-+		goto qce_suspend;
- 
- 	if (backlog) {
- 		scoped_guard(mutex, &qce->lock)
-@@ -119,6 +126,8 @@ static int qce_handle_queue(struct qce_device *qce,
- 		schedule_work(&qce->done_work);
- 	}
- 
-+qce_suspend:
-+	pm_runtime_put_autosuspend(qce->dev);
- 	return ret;
- }
- 
-@@ -208,37 +217,43 @@ static int qce_crypto_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		return ret;
- 
--	qce->core = devm_clk_get_optional_enabled(qce->dev, "core");
-+	qce->core = devm_clk_get_optional(dev, "core");
- 	if (IS_ERR(qce->core))
- 		return PTR_ERR(qce->core);
- 
--	qce->iface = devm_clk_get_optional_enabled(qce->dev, "iface");
-+	qce->iface = devm_clk_get_optional(dev, "iface");
- 	if (IS_ERR(qce->iface))
- 		return PTR_ERR(qce->iface);
- 
--	qce->bus = devm_clk_get_optional_enabled(qce->dev, "bus");
-+	qce->bus = devm_clk_get_optional(dev, "bus");
- 	if (IS_ERR(qce->bus))
- 		return PTR_ERR(qce->bus);
- 
--	qce->mem_path = devm_of_icc_get(qce->dev, "memory");
-+	qce->mem_path = devm_of_icc_get(dev, "memory");
- 	if (IS_ERR(qce->mem_path))
- 		return PTR_ERR(qce->mem_path);
- 
--	ret = icc_set_bw(qce->mem_path, QCE_DEFAULT_MEM_BANDWIDTH, QCE_DEFAULT_MEM_BANDWIDTH);
-+	/* Enable runtime PM after clocks and ICC are acquired */
++.. include:: ../disclaimer-zh_CN.rst
 +
-+	ret = devm_pm_runtime_enable(dev);
- 	if (ret)
- 		return ret;
- 
--	ret = devm_qce_dma_request(qce->dev, &qce->dma);
-+	ret = pm_runtime_resume_and_get(dev);
- 	if (ret)
- 		return ret;
- 
-+	ret = devm_qce_dma_request(qce->dev, &qce->dma);
-+	if (ret)
-+		goto err_pm;
++:Original: Documentation/filesystems/dnotify.rst
 +
- 	ret = qce_check_version(qce);
- 	if (ret)
--		return ret;
-+		goto err_pm;
- 
- 	ret = devm_mutex_init(qce->dev, &qce->lock);
- 	if (ret)
--		return ret;
-+		goto err_pm;
- 
- 	INIT_WORK(&qce->done_work, qce_req_done_work);
- 	crypto_init_queue(&qce->queue, QCE_QUEUE_LENGTH);
-@@ -246,9 +261,89 @@ static int qce_crypto_probe(struct platform_device *pdev)
- 	qce->async_req_enqueue = qce_async_request_enqueue;
- 	qce->async_req_done = qce_async_request_done;
- 
--	return devm_qce_register_algs(qce);
-+	ret = devm_qce_register_algs(qce);
-+	if (ret)
-+		goto err_pm;
++:翻译:
 +
-+	/* Configure autosuspend after successful init */
-+	pm_runtime_set_autosuspend_delay(dev, 100);
-+	pm_runtime_use_autosuspend(dev);
-+	pm_runtime_mark_last_busy(dev);
-+	pm_runtime_put_autosuspend(dev);
++   王龙杰 Wang Longjie <wang.longjie1@zte.com.cn>
 +
-+	return 0;
++==============
++Linux 目录通知
++==============
 +
-+err_pm:
-+	pm_runtime_put(dev);
++	   Stephen Rothwell <sfr@canb.auug.org.au>
 +
-+	return ret;
-+}
++目录通知的目的是使用户应用程序能够在目录或目录中的任何文件发生变更时收到通知。基本机制包括应用程序
++通过 fcntl(2) 调用在目录上注册通知，通知本身则通过信号传递。
 +
-+static int qce_runtime_suspend(struct device *dev)
-+{
-+	struct qce_device *qce = dev_get_drvdata(dev);
++应用程序可以决定希望收到哪些 “事件” 的通知。当前已定义的事件如下：
 +
-+	clk_disable_unprepare(qce->bus);
-+	clk_disable_unprepare(qce->iface);
-+	clk_disable_unprepare(qce->core);
-+	icc_disable(qce->mem_path);
++	=========	=====================================
++	DN_ACCESS	目录中的文件被访问（read）
++	DN_MODIFY	目录中的文件被修改（write,truncate）
++	DN_CREATE	目录中创建了文件
++	DN_DELETE	目录中的文件被取消链接
++	DN_RENAME	目录中的文件被重命名
++	DN_ATTRIB	目录中的文件属性被更改（chmod,chown）
++	=========	=====================================
 +
-+	return 0;
-+}
++通常，应用程序必须在每次通知后重新注册，但如果将 DN_MULTISHOT 与事件掩码进行或运算，则注册
++将一直保持有效，直到被显式移除（通过注册为不接收任何事件）。
 +
-+static int qce_runtime_resume(struct device *dev)
-+{
-+	struct qce_device *qce = dev_get_drvdata(dev);
-+	int ret = 0;
++默认情况下，SIGIO 信号将被传递给进程，且不附带其他有用的信息。但是，如果使用 F_SETSIG fcntl(2)
++调用让内核知道要传递哪个信号，一个 siginfo 结构体将被传递给信号处理程序，该结构体的 si_fd 成员将
++包含与发生事件的目录相关联的文件描述符。
 +
-+	ret = icc_enable(qce->mem_path);
-+	if (ret)
-+		return ret;
++应用程序最好选择一个实时信号（SIGRTMIN + <n>），以便通知可以被排队。如果指定了 DN_MULTISHOT，
++这一点尤为重要。注意，SIGRTMIN 通常是被阻塞的，因此最好使用（至少）SIGRTMIN + 1。
 +
-+	ret = icc_set_bw(qce->mem_path, QCE_DEFAULT_MEM_BANDWIDTH, QCE_DEFAULT_MEM_BANDWIDTH);
-+	if (ret)
-+		goto err_icc;
++实现预期（特性与缺陷 :-)）
++--------------------------
 +
-+	ret = clk_prepare_enable(qce->core);
-+	if (ret)
-+		goto err_icc;
++对于文件的任何本地访问，通知都应能正常工作，即使实际文件系统位于远程服务器上。这意味着，对本地用户
++模式服务器提供的文件的远程访问应能触发通知。同样的，对本地内核 NFS 服务器提供的文件的远程访问
++也应能触发通知。
 +
-+	ret = clk_prepare_enable(qce->iface);
-+	if (ret)
-+		goto err_core;
++为了尽可能减小对文件系统代码的影响，文件硬链接的问题已被忽略。因此，如果一个文件（x）存在于两个
++目录（a 和 b）中，通过名称”a/x”对该文件进行的更改应通知给期望接收目录“a”通知的程序，但不会
++通知给期望接收目录“b”通知的程序。
 +
-+	ret = clk_prepare_enable(qce->bus);
-+	if (ret)
-+		goto err_iface;
++此外，取消链接的文件仍会在它们链接到的最后一个目录中触发通知。
 +
-+	return 0;
++配置
++----
 +
-+err_iface:
-+	clk_disable_unprepare(qce->iface);
-+err_core:
-+	clk_disable_unprepare(qce->core);
-+err_icc:
-+	icc_disable(qce->mem_path);
-+	return ret;
- }
- 
-+static int qce_suspend(struct device *dev)
-+{
-+	return qce_runtime_suspend(dev);
-+}
++Dnotify 由 CONFIG_DNOTIFY 配置选项控制。禁用该选项时，fcntl(fd, F_NOTIFY, ...) 将返
++回 -EINVAL。
 +
-+static int qce_resume(struct device *dev)
-+{
-+	return qce_runtime_resume(dev);
-+}
++示例
++----
++具体示例可参见 tools/testing/selftests/filesystems/dnotify_test.c。
 +
-+static const struct dev_pm_ops qce_crypto_pm_ops = {
-+	.runtime_suspend = qce_runtime_suspend,
-+	.runtime_resume  = qce_runtime_resume,
-+	.suspend         = qce_suspend,
-+	.resume          = qce_resume,
-+};
++注意
++----
++从 Linux 2.6.13 开始，dnotify 已被 inotify 取代。有关 inotify 的更多信息，请参见
++Documentation/filesystems/inotify.rst。
+diff --git a/Documentation/translations/zh_CN/filesystems/index.rst b/Documentation/translations/zh_CN/filesystems/index.rst
+index 9f2a8b003778..342b588ada34 100644
+--- a/Documentation/translations/zh_CN/filesystems/index.rst
++++ b/Documentation/translations/zh_CN/filesystems/index.rst
+@@ -15,5 +15,15 @@ Linux Kernel中的文件系统
+ 文件系统（VFS）层以及基于其上的各种文件系统如何工作呈现给大家。当前\
+ 可以看到下面的内容。
+
++核心 VFS 文档
++=============
 +
- static const struct of_device_id qce_crypto_of_match[] = {
- 	{ .compatible = "qcom,crypto-v5.1", },
- 	{ .compatible = "qcom,crypto-v5.4", },
-@@ -262,6 +357,7 @@ static struct platform_driver qce_crypto_driver = {
- 	.driver = {
- 		.name = KBUILD_MODNAME,
- 		.of_match_table = qce_crypto_of_match,
-+		.pm = &qce_crypto_pm_ops,
- 	},
- };
- module_platform_driver(qce_crypto_driver);
++有关 VFS 层本身以及其算法工作方式的文档，请参阅这些手册。
++
++.. toctree::
++   :maxdepth: 1
++
++   dnotify
++
+ 文件系统
+ ========
 -- 
-2.34.1
-
+2.27.0
 
