@@ -1,159 +1,134 @@
-Return-Path: <linux-kernel+bounces-786054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A8AEB35469
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:23:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E1FDB35498
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:28:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 321591B663CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:22:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 857DD246038
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:28:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 259672F90D3;
-	Tue, 26 Aug 2025 06:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eOJ6LFF8"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86312F6160;
+	Tue, 26 Aug 2025 06:27:51 +0000 (UTC)
+Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADEC22F83B2
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 06:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D882F549D;
+	Tue, 26 Aug 2025 06:27:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756189265; cv=none; b=qv0w9kpcQSCvImN7+KZjqzDh+qtPNPTjbOUH+cs9qSYOG6JmpztOSWRM/qZ1GYu6CSAgOCCcqzH+HqY4yHIKklm6erkhBrWw5m7uqAFL7LQDN79wPgy4dhETYcfzW7Bj9PDnLsaVPkRX+6gE3GX7EEgyHob34z6/+ckDwSw9fDE=
+	t=1756189671; cv=none; b=F0lG6GjQM3Lwtx1ZchWnw3DUrc+CH/FmsEgeNAAIOAhcqPeLRccmofN5tEcV1p/ABCqufIB4XItBqnj8a4KzlCBWTGYzGyH10jEzYMpfOJpzqphAy/dakhnLWV9cuDqpDU5TLFMiCiXAtALrL2zjG4qQl/g/krQQo1nZzFbainE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756189265; c=relaxed/simple;
-	bh=S7v/e+cN4Wf16k7rEO/bWPt2ZPC0mpZbm9jUun95K3U=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Ryxggl3tUtQEboN2/x1zwW+M8pLH5da8duUUI3owyGmbGREwgYr0bPAz6BD2JuYXzWIqfEzaT7baDLiQxSatlmq9wGlYVzbic/7AVX6tCDvdZ0X/GkSj3XlUXwg32pCCaZUSO/YudG3+eYfLR5k2gSo4vmz1aUUnKzopVo6eEbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eOJ6LFF8; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-246181827e9so43191145ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 23:21:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756189263; x=1756794063; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=MFYRl1ZFHjhZrd7h6GtCM5LUiRUxEc7ppUKwn5M/+7g=;
-        b=eOJ6LFF8yWpCQP6cJyI1u+rIDWkVNEsBZQc1RGVEll89Mrmjjap7w4D6jH0WpHHQ+G
-         Me8MnNND38sbC+MZfR8SLPhhtXSJeL99MaVqYnXlLhanT2BdaIGJzfJejPwi9+PoYCkZ
-         KjN564k5I3wLq+MgLyfRaR67vx+GSZyOujiUom56HMKwbDk6pP7WxRrT9gwTowtHQ2jE
-         evVtVwufi17xWG7LZA0i2vEY/G05/wvTbRaN1Y30LXQqoj+EycCVg7YJqdLg53cRrvoj
-         UJoDxKxn60OocwkqVRPBFbzchtto+7hSr5WWoHBqOtpiSYI5NyYXUYxxLG0+8y+q2uP/
-         /h9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756189263; x=1756794063;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MFYRl1ZFHjhZrd7h6GtCM5LUiRUxEc7ppUKwn5M/+7g=;
-        b=klMwOpXJTt1gyI0TrZSiQv0FqA4qRXMfCNm2c3zUmGO9u3EUcMZENSrB0EsIjGgPZh
-         xN6HT7yddUOKzliZA96eCLM1EIII96AJDxGnPc4fEm9HMXqXjgVAs95Xwq4zbjAjYrpn
-         rNvY0wW4j7aV5BgSkSioQpR5xth66nWkMzmhE4zQ9BtvCeMVR7yBEGV3cMB3zoHrWYuJ
-         8L6144rNxsdPHG4apEbvCpgifICWeGq/2bWfPQ+Gn1h/Zcpg7goWJsTuoXKGl2i8wUZc
-         HYyABl4fx7zcKGHfGHTIhZ/GmtvFD88mUcPER38V8lnuwnevttWEwhvgRoeV5l5ZiPu5
-         R9vw==
-X-Forwarded-Encrypted: i=1; AJvYcCWZc0Ws8W65/fFHcx6xQust5VvMxq51QENtQFOOXNBx0aIlbViMTTq94b1pv6VAyeuzy6ZFGXFa4TtAXm4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPq5CRrRiOaZHenUF9N2lFOefAAdOc/UcfCXWrL3lxWBkCjlKv
-	4XhzIDDtUuHiaDOlK9PpswLC81rK9ZYwfaOCZj2mm2m18Z4faoEO2eWSRpfa5S6YUbDyrVpWInh
-	0RdFoOwnTa4CC3JTZMbwdWGVqRvaKwdhujdBKqqaFZg==
-X-Gm-Gg: ASbGnctfSFicMyvAm0PS7de6axcqjXAxpiqvFN39M6v+kSHekJzitcdke0YIN83OrWv
-	aB/DDP+jXsm6t9TZxSWz6kWdIigrl6yUlLBgr6Mgw69n4O7xm3YtI8GAlSKTEoNQynGwcdgAKUQ
-	41LVbSw6V02hQxpvo+GIz2aLRroutVFUGNJT+aTqAy3IBg88TEy8kwNaP+fn/dNHQDhO/WDBF+R
-	VzZUlcRgExRPL3wf2/9PwsLKZ5Umzqi1aBliVg=
-X-Google-Smtp-Source: AGHT+IEaOAsyEwvYZhL6gwxls7OPv3CjgiN4RcC1NbjL3gx6dd9cjdG1OkopmuigZ7xW+OLJUx5JyXWtdmH6vWAFnIU=
-X-Received: by 2002:a17:902:d585:b0:246:b41a:bb90 with SMTP id
- d9443c01a7336-246b41ac045mr106384895ad.2.1756189262339; Mon, 25 Aug 2025
- 23:21:02 -0700 (PDT)
+	s=arc-20240116; t=1756189671; c=relaxed/simple;
+	bh=eJdhr9QAnQbhJigRdWkMkHg67d1ZyhomMniXPLkN5oA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kU9PlcVP/9Xa6AexRQzmjyghMkq5HNyD9U2LiI1qL/bV4oykxEf91i/uf0iNah7fMuJsTA/N6dofhAZ53M8mlx5bIgxwIj+wt6ZppcwnKeUtTau6p0OP5kzNTFeKWpxFH+bmU3DKTsXPCKV2cF4ufTk+oh8OekftWI1k9K8VT6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 4063C2C05262;
+	Tue, 26 Aug 2025 08:21:24 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 16EC962C37; Tue, 26 Aug 2025 08:21:24 +0200 (CEST)
+Date: Tue, 26 Aug 2025 08:21:24 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Niklas Schnelle <schnelle@linux.ibm.com>,
+	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+	Linas Vepstas <linasvepstas@gmail.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Peter Oberparleiter <oberpar@linux.ibm.com>,
+	Matthew Rosato <mjrosato@linux.ibm.com>,
+	Oliver O'Halloran <oohall@gmail.com>, Sinan Kaya <okaya@kernel.org>,
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	Keith Busch <kbusch@kernel.org>
+Subject: Re: [PATCH v5 0/3] PCI/ERR: s390/pci: Use pci_uevent_ers() in PCI
+ recovery
+Message-ID: <aK1SZGJBjrOx0s6y@wunner.de>
+References: <20250807-add_err_uevents-v5-0-adf85b0620b0@linux.ibm.com>
+ <20250814210201.GA348169@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Tue, 26 Aug 2025 11:50:50 +0530
-X-Gm-Features: Ac12FXxpo9Z2nstlPDzyogezkDDH4eyaoMNNWqxf1iMYZc7Yw19lKOYzdQTyf50
-Message-ID: <CA+G9fYs2Wp33dq0jeuWqU+67z3VzP2LyHBXSD+SecqqG2OiJfw@mail.gmail.com>
-Subject: next-20250825: riscv: pgtable.h:951:40: error: incompatible type for
- argument 2 of 'page_table_check_pud_clear'
-To: linux-riscv <linux-riscv@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>, 
-	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Anders Roxell <anders.roxell@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814210201.GA348169@bhelgaas>
 
-The following build warnings / errors are noticed with riscv defconfig with
-clang-20 and gcc-13 toolchains.
+On Thu, Aug 14, 2025 at 04:02:01PM -0500, Bjorn Helgaas wrote:
+> On Thu, Aug 07, 2025 at 03:55:37PM +0200, Niklas Schnelle wrote:
+> > Niklas Schnelle (3):
+> >       PCI/AER: Fix missing uevent on recovery when a reset is requested
+> >       PCI/ERR: s390/pci: Use pci_uevent_ers() in PCI recovery
+> >       powerpc/eeh: Use result of error_detected() in uevent
+> > 
+> >  arch/powerpc/kernel/eeh_driver.c | 2 +-
+> >  arch/s390/pci/pci_event.c        | 3 +++
+> >  drivers/pci/pci-driver.c         | 3 ++-
+> >  include/linux/pci.h              | 2 +-
+> >  4 files changed, 7 insertions(+), 3 deletions(-)
+> 
+> Applied on pci/aer for v6.18, thanks!  This on top of Lukas's series:
+> 
+>   https://lore.kernel.org/all/cover.1755008151.git.lukas@wunner.de/
+> 
+> Expect the whole branch to be rebased to add Reviewed-by, etc.
 
-Regression Analysis:
-- New regression? yes
-- Reproducibility? yes
+In case it helps, these are all the tags that were offered for my series
+and that haven't been added to the pci/aer branch yet:
 
-Build regression: next-20250825 riscv pgtable.h:951:40: error:
-incompatible type for argument 2 of 'page_table_check_pud_clear'
+d0a2dee7d458 PCI/AER: Allow drivers to opt in to Bus Reset on Non-Fatal Errors
+  Reviewed-by: Linas Vepstas <linasvepstas@gmail.com>
+  https://lore.kernel.org/r/CAHrUA34fVV48MShC4CrXSmveR9i8MC4KAQxtM+XQY_Ao8joBQw@mail.gmail.com/
+  Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+  https://lore.kernel.org/r/8491adbd-d8e8-465a-971e-3fe50e2561b1@linux.intel.com/
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+1cbc5e25fb70 PCI/ERR: Fix uevent on failure to recover
+  Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+  https://lore.kernel.org/r/f0b59604-ae4d-4afe-8522-a8fbe5568e96@linux.intel.com/
+  Reviewed-by: Linas Vepstas <linasvepstas@gmail.com>
+  https://lore.kernel.org/r/CAHrUA34fVV48MShC4CrXSmveR9i8MC4KAQxtM+XQY_Ao8joBQw@mail.gmail.com/
+  Reviewed-by: Niklas Schnelle <schnelle@linux.ibm.com>
+  https://lore.kernel.org/r/a4419480c3d494a5940e87fea0c7b9864dc3e85b.camel@linux.ibm.com/
 
-riscv:
-  build:
-    * gcc-13-lkftconfig-rcutorture
-    * gcc-13-lkftconfig
-    * gcc-13-allyesconfig
-    * clang-20-lkftconfig
-    * gcc-13-lkftconfig-libgpiod
+9011f0667c93 PCI/ERR: Notify drivers on failure to recover
+  Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+  https://lore.kernel.org/r/fa9f42ab-bced-4c7f-9977-c0b611e92e2e@linux.intel.com/
+  Reviewed-by: Linas Vepstas <linasvepstas@gmail.com>
+  https://lore.kernel.org/r/CAHrUA34fVV48MShC4CrXSmveR9i8MC4KAQxtM+XQY_Ao8joBQw@mail.gmail.com/
 
-## Build log
-In file included from include/linux/pgtable.h:6,
-                 from include/linux/mm.h:31,
-                 from arch/riscv/kernel/asm-offsets.c:8:
-arch/riscv/include/asm/pgtable.h: In function 'pudp_huge_get_and_clear':
-arch/riscv/include/asm/pgtable.h:951:40: error: incompatible type for
-argument 2 of 'page_table_check_pud_clear'
-  951 |         page_table_check_pud_clear(mm, address, pud);
-      |                                        ^~~~~~~
-      |                                        |
-      |                                        long unsigned int
-In file included from arch/riscv/include/asm/pgtable.h:139:
-include/linux/page_table_check.h:125:75: note: expected 'pud_t' but
-argument is of type 'long unsigned int'
-  125 | static inline void page_table_check_pud_clear(struct mm_struct
-*mm, pud_t pud)
-      |
-     ~~~~~~^~~
-arch/riscv/include/asm/pgtable.h:951:9: error: too many arguments to
-function 'page_table_check_pud_clear'
-  951 |         page_table_check_pud_clear(mm, address, pud);
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-include/linux/page_table_check.h:125:20: note: declared here
-  125 | static inline void page_table_check_pud_clear(struct mm_struct
-*mm, pud_t pud)
-      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~
-make[3]: *** [scripts/Makefile.build:182:
-arch/riscv/kernel/asm-offsets.s] Error 1
+45bc82563d55 PCI/ERR: Update device error_state already after reset
+  Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+  https://lore.kernel.org/r/004298f7-ae08-428e-9b98-995fc56e55b1@linux.intel.com/
+  Reviewed-by: Linas Vepstas <linasvepstas@gmail.com>
+  https://lore.kernel.org/r/CAHrUA34fVV48MShC4CrXSmveR9i8MC4KAQxtM+XQY_Ao8joBQw@mail.gmail.com/
 
-## Source
-* Kernel version: 6.17.0-rc3-next-20250825
-* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
-* Git describe: next-20250825
-* Git commit: 6c68f4c0a147c025ae0b25fab688c7c47964a02f
-* Architectures: riscv
-* Toolchains: clang-20 gcc-12
-* Kconfigs: defconfig+lkftconfig
+cc4a7a21e815 PCI/ERR: Remove remnants of .link_reset() callback
+  Reviewed-by: Linas Vepstas <linasvepstas@gmail.com>
+  https://lore.kernel.org/r/CAHrUA34fVV48MShC4CrXSmveR9i8MC4KAQxtM+XQY_Ao8joBQw@mail.gmail.com/
+  Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+  https://lore.kernel.org/r/59308229-24ed-4b8a-b398-cc47c61dfc47@linux.intel.com/
+  Reviewed-by: Justin Tee <justin.tee@broadcom.com>
+  https://lore.kernel.org/r/CABPRKS_Ut8Z+rvM4+-E0YvEwUKbMb0SDpLBdH+g1sYEh+YcxFA@mail.gmail.com/
 
-## Build
-* Build log: https://qa-reports.linaro.org/api/testruns/29652465/log_file/
-* Build details:
-https://regressions.linaro.org/lkft/linux-next-master/next-20250825/build/gcc-13-lkftconfig/
-* Build error details:
-https://regressions.linaro.org/lkft/linux-next-master/next-20250825/log-parser-build-gcc/gcc-compiler-arch_riscv_include_asm_pgtable_h-error-too-many-arguments-to-function-page_table_check_pud_clear/
-* Build plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/builds/31lrb0XugzFZYDePlPNpSIVTzeB
-* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/31lrb0XugzFZYDePlPNpSIVTzeB/
-* Kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/31lrb0XugzFZYDePlPNpSIVTzeB/config
+Thanks!
 
---
-Linaro LKFT
-https://lkft.linaro.org
+Lukas
 
