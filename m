@@ -1,87 +1,81 @@
-Return-Path: <linux-kernel+bounces-786598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7716B35EE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:11:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAAD7B35EE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:13:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D7093A84F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:11:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E73A6177071
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:13:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 572BA312803;
-	Tue, 26 Aug 2025 12:11:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4C6310647;
+	Tue, 26 Aug 2025 12:13:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dLqBO4s7"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OgG+RPgI"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6F1621D3C0
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 12:11:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC90749C;
+	Tue, 26 Aug 2025 12:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756210312; cv=none; b=gqYF4TnXxsDQtuZBffNygMgyJxTEgiDwTWao9k+Conr1V7S+JR83NE9UofKq01K/Bh23KkrnL2h4n71ixYsGBaKjbVGe3FGdJmHP8RH2OnZbCaMJ2qDb71ffuvcwzT5Zhs0ZtJ5m5g0sxsmI3Y99OAgfV7P03DKi1710ebUvU4A=
+	t=1756210397; cv=none; b=QN2x3sMv+OQgz2G/AZDC3UiGZVE36hMstzMjsENF1HRQVXK3tycADqsdfw7Qgt1229jzgLC2tgvNz8wQFS029eLRRzOlFwGEyl7A1XsVxj3Yg/35t6yFrlAmsrwT1FSmbpWyjRBvWNM/0zD6oXJM44AVxjWZaQ3PvXY7ZRG1Ny8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756210312; c=relaxed/simple;
-	bh=C/ncFO0+meiwcT0dGWH6sqW5HyxoBvUGYHPaEyCmDgg=;
+	s=arc-20240116; t=1756210397; c=relaxed/simple;
+	bh=ZVQ546FAApz6UcjEvZFka6hskjqm07TCicK6vy3e3Vw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OaZFCRmDTVbn2g4SYnMfkhZBFjo3smhoKjVDlXry+phYD9BGgK25+XOOc2hfqYugrNbtbdSLGINovAx9WCCSq9LqnC26yw6xRzm4swreURK2Vb1E3VrFh5bXSSWz7dlXFWHLicbGHJWa4Zhn/mEHi8pvlKIvXcTEFv9BpOH9p2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dLqBO4s7; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57Q8rVQm030036
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 12:11:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	paLKss0IUBWc+jaJlEOsMKMsvnxtyXrSg9oZkdly/Ns=; b=dLqBO4s7mv5mKici
-	wuWjk/+jlVhmLhv4egor9qx27Ty0KbfEn1hKUgeeBFT6BZMy+4bInHT/Wo+JXzdO
-	avLuoNj3sF+GK7l+5A/Xb7F869eadzkLT2QJV/0mIuPCB3p1+hFt72zfFTzU77ml
-	OZcvgQqZOqw0wZpHGXZvcbhwuarwdSTe6RgXKjpzF7lnKup3TIGbn4pEdTzqpF4/
-	Mcliv4vFszOGAPGP8F/rTxjl+ijRZ4JM4gyjE0SkSEF/VEFQM3LI8M/f5fV6UXZe
-	kS8ANmcgsNWqE3zFeZEBce9BzO93PiOtucfRz9qk9ncpFrPj/h2M/T9wPY0T8Q6m
-	wrExPQ==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5y5ghqk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 12:11:49 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2461c537540so57787195ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 05:11:49 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=SsA4IbQ8ZYkTQ+d9TWuUM8l3R1bLaCVAwHixiYYbRzO/FguVkcjacQ+66Lhr7sz2XMS18IBhBs6FKHLcRgjIlj6JY2fgqeQrhlnDYeO/Xm8WFTRXtSe4IrYLrCd/1SBL3DBg+3A3AMX3qqS0vl9HCaDJujUexaFmBi9UfBxxoq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OgG+RPgI; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-324eb9cc40aso4139091a91.0;
+        Tue, 26 Aug 2025 05:13:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756210394; x=1756815194; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=zfdsER7M2F2SOBCmhT/Yv94jMTwqsyZqNQBE2tZGyDs=;
+        b=OgG+RPgIvNrOZEKiD2ep4l+l/0UhFBVD0Irvnyj9cVEio5xAdopfZTj11YGNYB97EU
+         oilYDPGVlNOd6vUqpg3uToOgEm0d5rf0jF4G0MkYDT/HQQqr62RCxh6guUWXKj5k2h/m
+         Ray5EBWdFaXMV0ShJBSvMtZL+k3/k9BWAP1SOe2N83CD7BAmv5KBx1LwM5kOt75vaMOw
+         v9/w7ig6q5FilgUdVsAKhs9iIw3NhZZQczSFIFVrhxMYmAiY20vZqeLLxzd//74jnOjD
+         04gttJB3WPr8qXH0vJNQC46L/YiG5ihvdWAry1lYdjQCvF0SQ0rLLn74M60T5pgHNZ1U
+         Tz7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756210308; x=1756815108;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=paLKss0IUBWc+jaJlEOsMKMsvnxtyXrSg9oZkdly/Ns=;
-        b=jm5c2ESbdWQoLzs1p4xR5ehdh47/b4ZTXAfpHKGUX7gEjvunC7IT7nbRgeP2GaABdv
-         DEk4ypD67nM2WKp6ZgG2AF8nEd8942cq/okYk3WWTjFB4FYcq/ApGSTs/f94yOBDlcWN
-         Ev09kNegUG6j935TT2ZZGt8gkaV4tT0yNA+h/l/+J8nrYTmyDVbsw5sGm5ad/kDUqTKF
-         T4QOilmmLSUzXVm+II6od/Oo0bZveHcSnU/ZYlp4ihNJw6t+OvNAh1YxdKmDLg1VBNuX
-         G9UHYDCLmeG5mHsvYzsXjy4NQIYRgnk6GeqvMWa4Blb6ZQwDjdJAQhZ7VfbT7D/HnPAi
-         ZcBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVZ/wwp1EBYPSx/dBbyl3Ap1m99pMeTcMeCNYLKz4cC4G2wlVN+ZkzVADQBWposwveqCjqtI1AjvLf/kCk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7CwUvcoRGMTDuVVgV4aj5R3k+/xtPOzd7iFPYDr20Hkes+tdf
-	xBd+7uuSzFF8nshzACCU45i/5WM6pSRMtwKtKt7lZfTwng2tJPXzVhP4FH5CVzdhMl0R4kFOMR9
-	iKt8isHZYKhczH4zqqkTJYCb7/xEAZkgMwkY08oSaQMBzA7qLD+nK9Nyodq9vsLCfoJY=
-X-Gm-Gg: ASbGnctPB/3lxGgDZfan+qJzV+hHX6z39E8yc9BHi+9vi822UjBrZ82Jsvp170AtjoH
-	1k75NaayC5QiZ2tZtjar3+sua+KjwkavKwnEELjANKfBpmTCjWYlKCcDJ1Nz/T+3A8w+JJeyQ+P
-	KLuBOIU+oHGbfQrQ3QOjyMkKMBdEINYrP6PLwpyeY3Hf6dh6k1yjVkQTw/uh5fnUB1smohKepns
-	f2ODmMO/KErUngsTlK2Hjm98qjOF8EQGiEYa1YWKd9dLSB0OCKZ99lBJXTdOrpibFXVAOMN4WAj
-	iW1VYSblY5f/Uc1swa/4P+z8pB/HCIIxm2PupRmbmT949jT/ueIjwVBXBgZOvnZzxwuyvKoXnEp
-	qyMBZTlfdfmoMxGObkwbCf1PoRGnqLA==
-X-Received: by 2002:a17:903:40d1:b0:246:d00b:4ae3 with SMTP id d9443c01a7336-246d00b549dmr78980195ad.61.1756210307952;
-        Tue, 26 Aug 2025 05:11:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGWt+ZKuYL/s7XdOx51tNH2twlSp1YzsVOyChmLbB+Co/aIapze6oU9D35MvVYX1XhVnb+v5w==
-X-Received: by 2002:a17:903:40d1:b0:246:d00b:4ae3 with SMTP id d9443c01a7336-246d00b549dmr78979735ad.61.1756210307420;
-        Tue, 26 Aug 2025 05:11:47 -0700 (PDT)
-Received: from [10.133.33.155] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-246688645eesm94817945ad.99.2025.08.26.05.11.44
+        d=1e100.net; s=20230601; t=1756210394; x=1756815194;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zfdsER7M2F2SOBCmhT/Yv94jMTwqsyZqNQBE2tZGyDs=;
+        b=LD9y+ObC71/sSJdmX2z+phHmjdWMzikx9koSHMKyCnrvhb0d9tzdYMvAfOvd/ubQg4
+         g2nnA+gb7CIiJ5HCpLobktXyETN6HB0y8VxjO/2IfkdjQoP+VfqdZpWy0dSXw8rpRxz0
+         d4eJYKu1Lwu8ply2bXdv3Nco2cGpxs9Qnds1eKoszTXUMgWk0290usNOFiy6bVn0xGnm
+         3i8HREIutpjthgLEHtyIRK5o292Q59K3M5uVZe7EKg4Hmcj5Lwt11TK2KcFtUCd0uu9B
+         vGhPMc/rT+sm1O3Kek3LCZ6ZJ19pEVeaq4kXfTHUqQ5xXWE2L5F/1AR+6YFAOohBLKQq
+         2YrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWRGl0/lPPgb1ls/rkVQ8U5eAOcYw/4ozsNlqaijVQz9IsreRAyl7ywHxysY6gtuVbux9T2JTUBw48wWA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwU5ctEI4PiG6323nk0x73st0twzuig7IsyYFfyN8PZA81MtUt/
+	t+B94dWsRec/6kFX3MtFgW6/s7trARA6wBEsfPSLw9+O7wQXR6w5RvDQ
+X-Gm-Gg: ASbGncsYVklyqa+iKfaZvjLVnFd4IgeDzXEHkja+InE3ZXg0UcHVxGTfcGuA3jP0j9r
+	kWolF/eTEMnfSp7SUCcrI/T9JsNUTxLyMKHKgVqTpXt63MUvVpS8hYS8m7E92sE9bGYG2F2CsM/
+	2USBZNmJ+7mFRC/tJGebsJrDIZiUIR23CgORkQ2cnbVz1J2bjC7aYxIScgCtIAgcx6/lG0Wcqdm
+	CkgsbiLmseeWLdHwnyc1kLdLe+4mq3HbvOkFK/6NyyKlyjnDD5aCcYowhub6iTEPPSZgM5B2ZWd
+	il1k0OleuCzSPXoi+ia/y3ww1+eJSsvYp4qYLp/9/lvr5ZWgLIvWSPEtTrbyGtiV3zweIlMuyPl
+	KiFgB82p4hl/Hj90dBmXtusvYBsCl71wXesc0NbOdQe3OWLWnmzCCUX1m5aWNYyc0l4r3thE=
+X-Google-Smtp-Source: AGHT+IFTVEJIawrDnKEaMUtkbYOc14Q721TqIQN36vvLto2SFWRAEF2Qyx/hQZBWrLW4EiNpse8EaA==
+X-Received: by 2002:a17:90b:350a:b0:325:6598:30d7 with SMTP id 98e67ed59e1d1-3275085dcf5mr1601263a91.16.1756210394342;
+        Tue, 26 Aug 2025 05:13:14 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-771cd487f90sm5934115b3a.97.2025.08.26.05.13.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Aug 2025 05:11:47 -0700 (PDT)
-Message-ID: <5df27be9-0347-49d1-ba1e-21d6a2172314@oss.qualcomm.com>
-Date: Tue, 26 Aug 2025 20:11:41 +0800
+        Tue, 26 Aug 2025 05:13:13 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <ff8d639d-a9b7-4992-8587-e6b5284c3540@roeck-us.net>
+Date: Tue, 26 Aug 2025 05:13:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,221 +83,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/3] coresight: tpda: add sysfs node to flush specific
- port
-To: James Clark <james.clark@linaro.org>, Jie Gan <jie.gan@oss.qualcomm.com>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
- <mike.leach@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>
-References: <20250826070150.5603-1-jie.gan@oss.qualcomm.com>
- <20250826070150.5603-4-jie.gan@oss.qualcomm.com>
- <3ac2954e-5663-4ea0-bc1d-a09e1992af5b@linaro.org>
- <a6be4d7b-d163-47df-9ab3-ca410f703555@oss.qualcomm.com>
- <939eb45c-f48e-40ce-86e8-710afa2b5c9b@linaro.org>
+Subject: Re: [PATCH] hwmon: Add support for TI ina700 power monitor
+To: Christian Kahr <christian.kahr@sie.at>, jdelvare@suse.com
+Cc: linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org
+References: <a8156dd0-ceff-4ad3-8647-a9c47491b599.98d92f9b-fa19-453e-a7dd-7ac376786b24.5ce0c954-cef9-4788-93e6-ea1d0263884f@emailsignatures365.codetwo.com>
+ <a8156dd0-ceff-4ad3-8647-a9c47491b599.cccb958b-a4df-41b5-b2de-11045d5a9527.4676e9c5-8881-4585-a715-630663ab4f8b@emailsignatures365.codetwo.com>
+ <a8156dd0-ceff-4ad3-8647-a9c47491b599.7b873dd0-16c4-429f-89d5-30f15a3af0d1.660caff0-2d53-4d54-b4b0-b8956c85dd8e@emailsignatures365.codetwo.com>
+ <20250826102351.18166-1-christian.kahr@sie.at>
 Content-Language: en-US
-From: Jie Gan <jie.gan@oss.qualcomm.com>
-In-Reply-To: <939eb45c-f48e-40ce-86e8-710afa2b5c9b@linaro.org>
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <20250826102351.18166-1-christian.kahr@sie.at>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMyBTYWx0ZWRfX1+TWZ5uY+hqJ
- 54WoTk/aazPV0V89EYWyhIWrmtgc6U4vgw56AUZv9lTFQ/GT+BiMN+GQwjxs6NGB1it6MrVJrmy
- ex60ePlRL+B9ySw0vGSbueUZqOY53GlBV3OS7tcB7RGJz8EaGnltZdt7RM2AgkTCdLnkRDeuZxS
- CMs7EoT8R4sQyEC9t+AM3oosLC/hrKWLhXG1+ewVcw8LXlhYNj2HJ/LpNVjGYN3dInFqFoERBU2
- dhfruNIJ2xZr7ZLcSHCw2iD+dMMC3tSOPXVHebjcJnZflK46YPcm70TnRsNW3GoifWlQsXao1QW
- R4K7wtWsD8NBdM8j32g7zdVtTMZ/w3z4fM7RdFGqrjkIRvY/TofBnCQ84ONmvO4drIkWJwGLaVX
- dg7kyQm5
-X-Authority-Analysis: v=2.4 cv=Lco86ifi c=1 sm=1 tr=0 ts=68ada485 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=-hWpzLsPYw3_ZpqOosEA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-GUID: pBzlla03RsmCJjG6lOWCuaDW75dNzsBc
-X-Proofpoint-ORIG-GUID: pBzlla03RsmCJjG6lOWCuaDW75dNzsBc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-26_02,2025-08-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 adultscore=0 clxscore=1015 malwarescore=0 spamscore=0
- suspectscore=0 phishscore=0 priorityscore=1501 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230033
+Content-Transfer-Encoding: 7bit
 
+On 8/26/25 03:23, Christian Kahr wrote:
+> This patch adds a new driver for the Texas Instruments INA700 power monitor.
+> Supporting Bus-Voltage, Current, Temperature and Energy.
+> 
+> Signed-off-by: Christian Kahr <christian.kahr@sie.at>
 
+Almost identical to the chips supported by the ina238 driver.
+Please add support for this chip to that driver.
 
-On 8/26/2025 5:54 PM, James Clark wrote:
-> 
-> 
-> On 26/08/2025 10:39 am, Jie Gan wrote:
->>
->>
->> On 8/26/2025 5:27 PM, James Clark wrote:
->>>
->>>
->>> On 26/08/2025 8:01 am, Jie Gan wrote:
->>>> From: Tao Zhang <tao.zhang@oss.qualcomm.com>
->>>>
->>>> Setting bit i in the TPDA_FLUSH_CR register initiates a flush request
->>>> for port i, forcing the data to synchronize and be transmitted to the
->>>> sink device.
->>>>
->>>> Signed-off-by: Tao Zhang <tao.zhang@oss.qualcomm.com>
->>>> Co-developed-by: Jie Gan <jie.gan@oss.qualcomm.com>
->>>> Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
->>>> ---
->>>>   .../testing/sysfs-bus-coresight-devices-tpda  |  7 +++
->>>>   drivers/hwtracing/coresight/coresight-tpda.c  | 45 +++++++++++++++ 
->>>> ++++
->>>>   drivers/hwtracing/coresight/coresight-tpda.h  |  1 +
->>>>   3 files changed, 53 insertions(+)
->>>>
->>>> diff --git a/Documentation/ABI/testing/sysfs-bus-coresight-devices- 
->>>> tpda b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpda
->>>> index e827396a0fa1..8803158ba42f 100644
->>>> --- a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpda
->>>> +++ b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpda
->>>> @@ -41,3 +41,10 @@ Contact:    Jinlong Mao 
->>>> <jinlong.mao@oss.qualcomm.com>, Tao Zhang <tao.zhang@oss.qu
->>>>   Description:
->>>>           (RW) Configure the CMB/MCMB channel mode for all enabled 
->>>> ports.
->>>>           Value 0 means raw channel mapping mode. Value 1 means 
->>>> channel pair marking mode.
->>>> +
->>>> +What:        /sys/bus/coresight/devices/<tpda-name>/port_flush_req
->>>> +Date:        August 2025
->>>> +KernelVersion:    6.17
->>>> +Contact:    Jinlong Mao <jinlong.mao@oss.qualcomm.com>, Tao Zhang 
->>>> <tao.zhang@oss.qualcomm.com>, Jie Gan <jie.gan@oss.qualcomm.com>
->>>> +Description:
->>>> +        (RW) Configure the bit i to requests a flush operation of 
->>>> port i on the TPDA.
->>>> diff --git a/drivers/hwtracing/coresight/coresight-tpda.c b/drivers/ 
->>>> hwtracing/coresight/coresight-tpda.c
->>>> index 9e623732d1e7..c5f169facc51 100644
->>>> --- a/drivers/hwtracing/coresight/coresight-tpda.c
->>>> +++ b/drivers/hwtracing/coresight/coresight-tpda.c
->>>> @@ -509,6 +509,50 @@ static ssize_t cmbchan_mode_store(struct device 
->>>> *dev,
->>>>   }
->>>>   static DEVICE_ATTR_RW(cmbchan_mode);
->>>> +static ssize_t port_flush_req_show(struct device *dev,
->>>> +                   struct device_attribute *attr,
->>>> +                   char *buf)
->>>> +{
->>>> +    struct tpda_drvdata *drvdata = dev_get_drvdata(dev->parent);
->>>> +    unsigned long val;
->>>> +
->>>> +    guard(spinlock)(&drvdata->spinlock);
->>>> +    if (!drvdata->csdev->refcnt)
->>>> +        return -EPERM;
->>>> +
->>>> +    val = readl_relaxed(drvdata->base + TPDA_FLUSH_CR);
->>>> +    return sysfs_emit(buf, "%lx\n", val);
->>>
->>> Decimal would be better for a port number that goes from 0 - 127. If 
->>> you really want to use hex then don't you need to prefix it with 0x? 
->>> Otherwise you can't tell the difference between decimal 10 and hex 
->>> 10, and it's not documented that it's hex either.
->>>
->>
->> Got it. I will fix the code here, and update the description in document.
->>
->>>> +}
->>>> +
->>>> +static ssize_t port_flush_req_store(struct device *dev,
->>>> +                    struct device_attribute *attr,
->>>> +                    const char *buf,
->>>> +                    size_t size)
->>>> +{
->>>> +    struct tpda_drvdata *drvdata = dev_get_drvdata(dev->parent);
->>>> +    unsigned long val;
->>>> +
->>>> +    if (kstrtoul(buf, 0, &val))
->>>> +        return -EINVAL;
->>>> +
->>>> +    /* The valid value ranges from 0 to 127 */
->>>> +    if (val > 127)
->>>> +        return -EINVAL;
->>>> +
->>>> +    guard(spinlock)(&drvdata->spinlock);
->>>> +    if (!drvdata->csdev->refcnt)
->>>> +        return -EPERM;
->>>> +
->>>> +    if (val) {
->>>
->>> If 0 - 127 are valid don't you want to write 0 too?
->>
->> It's 1-127 here. 0 may leads to an unexpected issue here.
->>
->> Thanks,
->> Jie
->>
-> 
-> Then can't the above be this:
-> 
->    /* The valid value ranges from 1 to 127 */
->    if (val < 1 || val > 127)
->      return -EINVAL;
-> 
-> But I'm wondering how you flush port 0?
-> 
-
-BIT(0) represents port 0 with value 1 and the default value 0 means 
-nothing will be triggered here.
-
-> Isn't the default value 0? So if you never write to port_flush_req then 
-> you'd flush port 0, but why can't you change it back to 0 after writing 
-> a different value?
-
-We can change the value back to 0 but I think we shouldn't do this 
-although I haven't suffer issue after I changed it back to 0(for bit).
-Because the document mentioned: "Once set, the bit remains set until the 
-flush operation on port i completes and the bit then clears to 0". So I 
-think we should let the flush operation finish as expected and clear the 
-bit by itself? Or may suffer unexpected error when try to interrupt the 
-flush operation?
-
-Thanks,
-Jie
-  >>>
->>>> +        CS_UNLOCK(drvdata->base);
->>>> +        writel_relaxed(val, drvdata->base + TPDA_FLUSH_CR);
->>>> +        CS_LOCK(drvdata->base);
->>>> +    }
->>>> +
->>>> +    return size;
->>>> +}
->>>> +static DEVICE_ATTR_RW(port_flush_req);
->>>> +
->>>>   static struct attribute *tpda_attrs[] = {
->>>>       &dev_attr_trig_async_enable.attr,
->>>>       &dev_attr_trig_flag_ts_enable.attr,
->>>> @@ -516,6 +560,7 @@ static struct attribute *tpda_attrs[] = {
->>>>       &dev_attr_freq_ts_enable.attr,
->>>>       &dev_attr_global_flush_req.attr,
->>>>       &dev_attr_cmbchan_mode.attr,
->>>> +    &dev_attr_port_flush_req.attr,
->>>>       NULL,
->>>>   };
->>>> diff --git a/drivers/hwtracing/coresight/coresight-tpda.h b/drivers/ 
->>>> hwtracing/coresight/coresight-tpda.h
->>>> index 00d146960d81..55a18d718357 100644
->>>> --- a/drivers/hwtracing/coresight/coresight-tpda.h
->>>> +++ b/drivers/hwtracing/coresight/coresight-tpda.h
->>>> @@ -10,6 +10,7 @@
->>>>   #define TPDA_Pn_CR(n)        (0x004 + (n * 4))
->>>>   #define TPDA_FPID_CR        (0x084)
->>>>   #define TPDA_SYNCR        (0x08C)
->>>> +#define TPDA_FLUSH_CR        (0x090)
->>>>   /* Cross trigger FREQ packets timestamp bit */
->>>>   #define TPDA_CR_FREQTS        BIT(2)
->>>
->>>
->>
-> 
-> 
+Guenter
 
 
