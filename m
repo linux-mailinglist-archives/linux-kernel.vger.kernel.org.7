@@ -1,451 +1,249 @@
-Return-Path: <linux-kernel+bounces-785946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37FB4B352C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:38:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15F11B352C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:39:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1CD820651B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:38:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C11A368374D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:39:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13D02DFA38;
-	Tue, 26 Aug 2025 04:38:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAD7B2DFA3B;
+	Tue, 26 Aug 2025 04:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="LNPR+FqI"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="gjeuAwTz"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2068.outbound.protection.outlook.com [40.107.92.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944332D4B66
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 04:38:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756183099; cv=none; b=NISz01mGYw58xQN+Bmk0p6BwxHFOgBMW3d1iA8o645HJz0u5u+7miVLYszc/sO6VJnjYBrfBQB+qKcLsabOZfoaPrSNsyxghGmZ3O4lg50DfOdiuWF+rBLLiZN92nrbtiJTB9SM6D00qPIBGAUgV/F0AmU4FR5toswOqGyBXyEc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756183099; c=relaxed/simple;
-	bh=X2421H26tLXUHDTMe41vhjohMOE82E/n39NqynbbubA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ORlZow7WA3fPCBnYjRs0X8aWeoWu50cBsoKXP7Dv5WoshTET2iE1bdD5pR/KAvKUbdUyuv1tjknNqav1V5fE7udAem62wu/zI6iN4L3QqESvdrPmndfAt3Sjw7oueHbi2svlpY5NWAQDqEZO7PdCHY0xZbi5eRaCCh4fgEgGL4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=LNPR+FqI; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4b109912545so67921521cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 21:38:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1756183095; x=1756787895; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pFgnn+/KkXNVaL/+B3uRwl6TtlDHiFj4dBOMY55dlhY=;
-        b=LNPR+FqI6Zhvj78Gt5ad6XYJqXYuZxeewPRFeWU+cseuliJ8SPz2DpYRhfEWHAIopD
-         2Nt9veCVgsvGqC2ilMWe+UX2IU5TlQgVGgtl7/UfUExHtmlSkep4A9iDJw5TV7IYmrLR
-         5k8SgODIxRp9ivp0Vpi9LypfesEJ6t9zrMwjYn7HJ+cKev00EwuAmXVqfwDPLS+9RBib
-         VIUHNkWylgvNl8qw6+2lUZVWtGI9WdS+sHDPPP4e/+A1avLZ4NVvyEP8oKNxHjj29AWJ
-         /ez5Ohkuvk8LDybIf5K+okuNfli1wehE+VmJGbAkn7vhA1QoEeQFI48294St1kEjepCx
-         8hsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756183095; x=1756787895;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pFgnn+/KkXNVaL/+B3uRwl6TtlDHiFj4dBOMY55dlhY=;
-        b=wtlSrS+gPvobaDN+ntB9pXuRBE2PyckhRp0/zB8FsjamSlCJfxyJjZ4nKiXB9eYNDv
-         Yd9Cei4OzjKfYWJZEM7rWZY/RXmHxqd8fH5GG7+0TLjqXNCPvvilhIVVqwn+RMFsJBeB
-         TKcIGfENhHj93EmA/Ii4IioO4z/gFE6Yhve54RbX6Sg9eOujTyr1NNbNl/mi44egSFt+
-         8ZTTjVmHgqroS1RWoQ0ed8Jw/OrKVLjmLQNjEpiDy4orbUfudbh6ms5IDzOuSvRYPlW/
-         1VjXPjbyka3UkIQvGKjAQokpWl62uukb1NPN+xhybNGQIOqlxXBAI2y6yUSwNOwKrWbc
-         BvEg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4Qg43PZJ81b2Ino6XtKanJX6qFtpTH05gAeJKYWo019zZ7iDXjePtHpQpoJzvnAelC5rKjBsBo3ZCvj8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywv4xJKik4kK/I8KG3b2kNjpv511zJaahw120pxnkGlPF2xyObW
-	tI/F/BQPIuuB1cDPYXErczdbV75f65lZ9PG7Qku2c+P5ecMB+S5Ur857YKksMwedxpvtb1ovZPp
-	rCMFu1pGVWu1xFSmclyS60JRYJU85bFHvc1aiAjOkog==
-X-Gm-Gg: ASbGncu5ntlex7fRSmfl8e2gnsfiqLaHpaKcMiuv0lJY61uY1XXDfe8MI7gVvN0izDK
-	dKut8AbhGysTNH2SV4AA0u+G4NwEiAY+5NortNQAfKA8GafAnVDEXB2P8aR0ISsu9jmNup0cAQ1
-	ubUsh47nsY0Vrhnq3ERpNCtfsqiNWSvwubALSf9BFE4w+JvEeBygL97ecKCN7dxkiR8tZMx+pjb
-	jZP
-X-Google-Smtp-Source: AGHT+IHEa8+pSI1Wy0Fw7b+dsO/b6DhMiB4aK96KXN4AsIVMUjL2PWvpxHoNQpi2wUkC4qjdixdxGk6/65/eeyTbpoI=
-X-Received: by 2002:a05:622a:1818:b0:4af:1cd4:d782 with SMTP id
- d75a77b69052e-4b2aaad2b0dmr171048541cf.45.1756183095317; Mon, 25 Aug 2025
- 21:38:15 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DFEF2D23B6;
+	Tue, 26 Aug 2025 04:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756183155; cv=fail; b=jqYYqPyZxvAnXq16I/5S/NBDEAXP0RJlCZD7BmaWGiuaCZxAt7EwQul9IESlstfqQBfmVD2bdPDK6tZh0XSFsFRjIl01atpSSJXgFVNa9yYLZDEr4/f8Q+9dDeqVxsx9XtDzuE3kHQ682gQ4VxnWTQRlNIoZopcVc9w+yzNjoDA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756183155; c=relaxed/simple;
+	bh=UlaH+k2FXm4PYk3xIFfqjDc5FKciZaip5q9RKdbqyOA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tSJRl5QZbwGtdus99GdgTj/GpysMKv98X9PYlZD1vHGI8Pert9sb9GBmzAFWrtO/5cyP4OaKS01K5EblvCFjQ8t5AQ0umN6w5GJX99tn1lx3yRd+B4o9Voy/UJxXHoP+JeAQiXElDLM5+Q+44Zy8L/82PlUSqVC0IbU63tWy7zI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=gjeuAwTz; arc=fail smtp.client-ip=40.107.92.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qLr9JDWvsjR2y+6p+i4SB5FM8AJKjG8FJA8ncU5fUmhYZxrpBArZay86jkhO22L9TQJ5XuKgPcHG8DyKMJv4M/8YD45VQEPTCXJ85Lhm02EZQEmA7xbWLhDs3hqMY+THcQDQNLYfH+shvBoPjR79NFHUDBfWzPYcVK+eYMcZisnfR71H5SDazikFU7VD451S1c/aXsuX7tWXq4hvlYLS+HDs1ZuIR1/4ze2SNvBKOjvwXHQRDH18MJkJ0XZ/QMAyCTjh+QwZ0PbLi5UfwW9ecrBBB7edlKz6SEC0nVclmC2bwcHaP/aGLnRtjuzFa4idOvdebPP9i9a54KTyg8idng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=q8BqBCUXsqAqtN6aKE2b3++ajuiIBm18SPTet2ijIGQ=;
+ b=Bx6KT/F905kh+Nt0zlNvXuIwLuOdYoEV+0iAWJMDEr9V6qRiwddx6UaEDBZxQUCZMnadXsAmTyTBQRHW4DPLWLc+TAcwdtMxrSY+2OVQXJFBP3NxGhl1oZi3DRbaxHe7QraT+EwyPN0dkrub/qQc45nd4bhEvgh6f4twQLDtn5zNzxjeGC+yW/ls5jEdzuPLCOIfR/RtVrEbQxX3r85g15RF3BP5p8JHjghfgm8nEq6aUfkl0dvxQw+4FucNcd7DGt8wJ4bpzrqmMPzqwYUV6KAMG8Dx9uCbl3mxWscoTQjNlDVLBygDSWEcIRn4iB5ZhX5fPYdNyvZepE2KV3+iwA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=arndb.de smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=q8BqBCUXsqAqtN6aKE2b3++ajuiIBm18SPTet2ijIGQ=;
+ b=gjeuAwTz4y5QkafkN7TFu5yQ0zuHqKHM4sE2obSXkY3XhwxiPmwr5ZHEtLm8GgRWqFBKqxX7aw2VoKEyOCcA7NkOlDLQZqQEN2vGxqfpe3kuu0u+DeF+qC9Pz7vju2uHq6vjfKTBvBo2rQgbUx85bpghY84hpjCHT58a5HVmN0Y=
+Received: from BYAPR08CA0007.namprd08.prod.outlook.com (2603:10b6:a03:100::20)
+ by IA1PR12MB6233.namprd12.prod.outlook.com (2603:10b6:208:3e7::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.19; Tue, 26 Aug
+ 2025 04:39:08 +0000
+Received: from MWH0EPF000971E9.namprd02.prod.outlook.com
+ (2603:10b6:a03:100:cafe::4c) by BYAPR08CA0007.outlook.office365.com
+ (2603:10b6:a03:100::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.22 via Frontend Transport; Tue,
+ 26 Aug 2025 04:39:08 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ MWH0EPF000971E9.mail.protection.outlook.com (10.167.243.71) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9052.8 via Frontend Transport; Tue, 26 Aug 2025 04:39:07 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 25 Aug
+ 2025 23:39:02 -0500
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 25 Aug
+ 2025 23:39:02 -0500
+Received: from xhdnipung41x.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Mon, 25 Aug 2025 23:38:57 -0500
+From: Nipun Gupta <nipun.gupta@amd.com>
+To: <arnd@arndb.de>, <gregkh@linuxfoundation.org>,
+	<alex.williamson@redhat.com>, <nikhil.agarwal@amd.com>, <kvm@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <llvm@lists.linux.dev>,
+	<oe-kbuild-all@lists.linux.dev>, <robin.murphy@arm.com>, <krzk@kernel.org>,
+	<tglx@linutronix.de>, <maz@kernel.org>, <linux@weissschuh.net>,
+	<chenqiuji666@gmail.com>, <peterz@infradead.org>, <robh@kernel.org>,
+	<abhijit.gangurde@amd.com>, <nathan@kernel.org>, Nipun Gupta
+	<nipun.gupta@amd.com>, Arnd Bergmann <arnd@kernel.org>
+Subject: [PATCH v4 1/2] cdx: don't select CONFIG_GENERIC_MSI_IRQ
+Date: Tue, 26 Aug 2025 10:08:51 +0530
+Message-ID: <20250826043852.2206008-1-nipun.gupta@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822174715.1269138-1-jesse@rivosinc.com> <20250822174715.1269138-6-jesse@rivosinc.com>
-In-Reply-To: <20250822174715.1269138-6-jesse@rivosinc.com>
-From: Himanshu Chauhan <hchauhan@ventanamicro.com>
-Date: Tue, 26 Aug 2025 10:08:04 +0530
-X-Gm-Features: Ac12FXyOy-huds2B1fJwOJPw53ZPIRvf9djC3OVxcNJyBPYY2odcHNK5kYVsNfY
-Message-ID: <CAPd4Wexw_DtndDqRZzXK0PEOAkb4yWB4x8rf5eRdJOLMS-+8SQ@mail.gmail.com>
-Subject: Re: [PATCH 5/8] riscv: hw_breakpoint: Use icount for single stepping
-To: Jesse Taube <jesse@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Oleg Nesterov <oleg@redhat.com>, Kees Cook <kees@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Liang Kan <kan.liang@linux.intel.com>, Shuah Khan <shuah@kernel.org>, 
-	Charlie Jenkins <charlie@rivosinc.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	Conor Dooley <conor.dooley@microchip.com>, Deepak Gupta <debug@rivosinc.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Atish Patra <atishp@rivosinc.com>, 
-	Anup Patel <apatel@ventanamicro.com>, Mayuresh Chitale <mchitale@ventanamicro.com>, 
-	Evan Green <evan@rivosinc.com>, WangYuli <wangyuli@uniontech.com>, 
-	Huacai Chen <chenhuacai@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Andrew Morton <akpm@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Mike Rapoport (Microsoft)" <rppt@kernel.org>, Nam Cao <namcao@linutronix.de>, 
-	Yunhui Cui <cuiyunhui@bytedance.com>, Joel Granados <joel.granados@kernel.org>, 
-	=?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Celeste Liu <coelacanthushex@gmail.com>, 
-	Chunyan Zhang <zhangchunyan@iscas.ac.cn>, Nylon Chen <nylon.chen@sifive.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
-	Vincenzo Frascino <vincenzo.frascino@arm.com>, Joey Gouly <joey.gouly@arm.com>, 
-	Ravi Bangoria <ravi.bangoria@amd.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-perf-users@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	Joel Stanley <joel@jms.id.au>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB05.amd.com: nipun.gupta@amd.com does not designate
+ permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000971E9:EE_|IA1PR12MB6233:EE_
+X-MS-Office365-Filtering-Correlation-Id: 88b482f1-8b97-4a6a-0af8-08dde45a7ea2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|7416014|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?schMZ+Znq0lK//8myuDjlHXof7uQC5HW6KA/+2s+yQDcpjVeCg0QxXgao06+?=
+ =?us-ascii?Q?3j+rLIwiaT3umcN3Ch35IuNDZmTWDeAVGJQtxg6ftuzhq9y2SfVNZBNpcfUX?=
+ =?us-ascii?Q?sRuVqVMXP0LhfRsig9WfC0n9xNdyemTht2GxILQ8J/BcwLd8PHDxodOdcJ8L?=
+ =?us-ascii?Q?BRelY4d0gYf7zBqqMgCLCPK1JvxO346kFL3uv3pgpKMtc7Ot/ZTDhYeRQ/M4?=
+ =?us-ascii?Q?Hrg97OKLpPqTEfg/XCBDzhoIOTtFlj2zXbjzUBhFxTSqkPNLkKsPoTrZYznG?=
+ =?us-ascii?Q?90QEAVDQxOOA9Qk95lY+ohb/bcGlFdb74ZB/1FxPRYt7ODxE70Lwxs7cLhlJ?=
+ =?us-ascii?Q?xjnq0aBYZy3i31/j0ErEjwcNjZkmqgo+sjcDt54UCvbp2OFg7GcB0feA/u+8?=
+ =?us-ascii?Q?Z4WkWn/p4oefdePCyCV3RDRLLrHPV5HPEIf0jdsY500oKt650UZEmkxhRqyT?=
+ =?us-ascii?Q?kK/qddnmS5+UJFUnUKLfnE7Tj9VHHEutVrTl7DFiz0pS7kx7yZOpf2NcDU6T?=
+ =?us-ascii?Q?jpSCmGhhtYd1gQHr1YUix7lwBBdzJPfIdNTWmtKkCBakcNY/8vdwjbbv3fCW?=
+ =?us-ascii?Q?dVOz3fS2G3FS2fq5sxZA6pD5rZmFhw2m+sNcbG3gLu+n4S9L7FJsm057ymj8?=
+ =?us-ascii?Q?LHL9nPfeE8lWdTT5cvFiNTgSNjlkRGfDuvUBzDMWzNNN9TEUF1eiM8XaBW5o?=
+ =?us-ascii?Q?Ltm/NoBqkM67LWdU8w9H6dLRMUawpAquqBy1TG3EaYEo+nBCb7uch/+2mwmX?=
+ =?us-ascii?Q?7hssrN0TpRXGo1SYRsWpVRPh0u7CQY6PItxwBRC/9PbkZtcDrnxYBXhtFBUh?=
+ =?us-ascii?Q?CrGl9CTchcI/OKWvtee19oGKWuVgS3vfz85gPJlxlFZ/hLY7rWgQlauOLku/?=
+ =?us-ascii?Q?ReBlkJAUMAV6cvPdXUxBichOTx+20sVMF9cOQPwB8fJpUUSQNHei2rLMgXag?=
+ =?us-ascii?Q?ZEUwYQEswotV2Ov6lMy3fAegIgC24wy8VC42j0nomedsLo97GWvsUmiAv5fR?=
+ =?us-ascii?Q?5H2xVph6pPZ0ELTtFBxyFaf55JPzgNCb0BDnycWiD2L5qxEcZijMA+JwQW26?=
+ =?us-ascii?Q?V/hye29i74ECCqDPmBRV1VyITl0uIIahwQlxxW3Eais0Km8c699nUYuWknvs?=
+ =?us-ascii?Q?Pi0QNkILC9spfmYuX9reGwbIx+7d4rFcFxKfRhFbrEyZdW2O04GhXzHCfjdb?=
+ =?us-ascii?Q?n3R3h7umbbnXIC14gKEeiTXufLbcdVEymR9GjwgGSViI116awOcwgSwWBgjf?=
+ =?us-ascii?Q?JOd1jvfjm5S2U3e1Y7s/r3Svc9X416kI2dghjwXTUvAVcwoinn2QcsAwlJUh?=
+ =?us-ascii?Q?EUqDiS9hrUfQAQQEnDBgpQdQ1owAhv0Am9haiTTrZj6gUYeiRu5kCOdg22yp?=
+ =?us-ascii?Q?Apypl0IGs9dHZZIyRjm5YDhtTFiRpWpiKwHpFQ3NxTt8ZSZtu6tnVLnVtxTZ?=
+ =?us-ascii?Q?miV1+v//7aX91T29TzOoTh8O8fAEWBAwYFjCckOE+MnVeVCEN41db2UHvJlr?=
+ =?us-ascii?Q?FAks1bZ3ivj9lCCAZReRDjz7/buYT650J7gu?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(7416014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 04:39:07.7876
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 88b482f1-8b97-4a6a-0af8-08dde45a7ea2
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000971E9.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6233
 
-On Fri, Aug 22, 2025 at 11:17=E2=80=AFPM Jesse Taube <jesse@rivosinc.com> w=
-rote:
->
-> The Sdtrig RISC-V ISA extension does not have a resume flag for
-> returning to and executing the instruction at the breakpoint.
-> To avoid skipping the instruction or looping, it is necessary to remove
-> the hardware breakpoint and single step. Use the icount feature of
-> Sdtrig to accomplish this. Use icount as default with an option to allow
-> software-based single stepping when hardware or SBI does not have
-> icount functionality, as it may cause unwanted side effects when reading
-> the instruction from memory.
+x86 does not use CONFIG_GENERIC_MSI_IRQ, and trying to enable it anyway
+results in a build failure:
 
-Can you please elaborate on this? I remember noticing the absence of
-the resume flag which was causing loops.
+In file included from include/linux/ssb/ssb.h:10,
+                 from drivers/ssb/pcihost_wrapper.c:18:
+include/linux/gpio/driver.h:41:33: error: field 'msiinfo' has incomplete type
+   41 |         msi_alloc_info_t        msiinfo;
+      |                                 ^~~~~~~
+In file included from include/linux/kvm_host.h:19,
+                 from arch/x86/events/intel/core.c:17:
+include/linux/msi.h:528:33: error: field 'alloc_info' has incomplete type
+  528 |         msi_alloc_info_t        alloc_info;
 
->
-> Signed-off-by: Jesse Taube <jesse@rivosinc.com>
-> ---
-> OpenSBI implementation of sbi_debug_read_triggers does not return the
-> updated CSR values. There needs to be a check for working
-> sbi_debug_read_triggers before this works.
->
-> https://lists.riscv.org/g/tech-prs/message/1476
->
-> RFC -> V1:
->  - Add dbtr_mode to rv_init_icount_trigger
->  - Add icount_triggered to check which breakpoint was triggered
->  - Fix typo: s/affects/effects
->  - Move HW_BREAKPOINT_COMPUTE_STEP to Platform type
-> V1 -> V2:
->  - Remove HW_BREAKPOINT_COMPUTE_STEP kconfig option
-> ---
->  arch/riscv/kernel/hw_breakpoint.c | 173 ++++++++++++++++++++++++++----
->  1 file changed, 155 insertions(+), 18 deletions(-)
->
-> diff --git a/arch/riscv/kernel/hw_breakpoint.c b/arch/riscv/kernel/hw_bre=
-akpoint.c
-> index 3f96e744a711..f12306247436 100644
-> --- a/arch/riscv/kernel/hw_breakpoint.c
-> +++ b/arch/riscv/kernel/hw_breakpoint.c
-> @@ -20,6 +20,7 @@
->  #define DBTR_TDATA1_DMODE              BIT_UL(__riscv_xlen - 5)
->
->  #define DBTR_TDATA1_TYPE_MCONTROL      (2UL << DBTR_TDATA1_TYPE_SHIFT)
-> +#define DBTR_TDATA1_TYPE_ICOUNT                (3UL << DBTR_TDATA1_TYPE_=
-SHIFT)
->  #define DBTR_TDATA1_TYPE_MCONTROL6     (6UL << DBTR_TDATA1_TYPE_SHIFT)
->
->  #define DBTR_TDATA1_MCONTROL6_LOAD             BIT(0)
-> @@ -62,6 +63,14 @@
->         (FIELD_PREP(DBTR_TDATA1_MCONTROL_SIZELO_FIELD, lo) | \
->          FIELD_PREP(DBTR_TDATA1_MCONTROL_SIZEHI_FIELD, hi))
->
-> +#define DBTR_TDATA1_ICOUNT_U                   BIT(6)
-> +#define DBTR_TDATA1_ICOUNT_S                   BIT(7)
-> +#define DBTR_TDATA1_ICOUNT_PENDING             BIT(8)
-> +#define DBTR_TDATA1_ICOUNT_M                   BIT(9)
-> +#define DBTR_TDATA1_ICOUNT_COUNT_FIELD         GENMASK(23, 10)
-> +#define DBTR_TDATA1_ICOUNT_VU                  BIT(25)
-> +#define DBTR_TDATA1_ICOUNT_VS                  BIT(26)
-> +
->  enum dbtr_mode {
->         DBTR_MODE_U =3D 0,
->         DBTR_MODE_S,
-> @@ -79,6 +88,7 @@ static DEFINE_PER_CPU(union sbi_dbtr_shmem_entry, sbi_d=
-btr_shmem);
->
->  /* number of debug triggers on this cpu . */
->  static int dbtr_total_num __ro_after_init;
-> +static bool have_icount __ro_after_init;
->  static unsigned long dbtr_type __ro_after_init;
->  static unsigned long dbtr_init __ro_after_init;
->
-> @@ -129,6 +139,7 @@ static int arch_smp_teardown_sbi_shmem(unsigned int c=
-pu)
->  static void init_sbi_dbtr(void)
->  {
->         struct sbiret ret;
-> +       unsigned long dbtr_count =3D 0;
->
->         /*
->          * Called by hw_breakpoint_slots and arch_hw_breakpoint_init.
-> @@ -143,6 +154,19 @@ static void init_sbi_dbtr(void)
->                 return;
->         }
->
-> +       ret =3D sbi_ecall(SBI_EXT_DBTR, SBI_EXT_DBTR_NUM_TRIGGERS,
-> +               DBTR_TDATA1_TYPE_ICOUNT, 0, 0, 0, 0, 0);
-> +       if (ret.error) {
-> +               pr_warn("%s: failed to detect icount triggers. error: %ld=
-.\n",
-> +                       __func__, ret.error);
-> +       } else if (!ret.value) {
-> +               pr_warn("%s: No icount triggers available. "
-> +                       "Falling-back to computing single step address.\n=
-", __func__);
-> +       } else {
-> +               dbtr_count =3D ret.value;
-> +               have_icount =3D true;
-> +       }
-> +
->         ret =3D sbi_ecall(SBI_EXT_DBTR, SBI_EXT_DBTR_NUM_TRIGGERS,
->                         DBTR_TDATA1_TYPE_MCONTROL6, 0, 0, 0, 0, 0);
->         if (ret.error) {
-> @@ -151,7 +175,7 @@ static void init_sbi_dbtr(void)
->         } else if (!ret.value) {
->                 pr_warn("%s: No mcontrol6 triggers available.\n", __func_=
-_);
->         } else {
-> -               dbtr_total_num =3D ret.value;
-> +               dbtr_total_num =3D min_not_zero((unsigned long)ret.value,=
- dbtr_count);
->                 dbtr_type =3D DBTR_TDATA1_TYPE_MCONTROL6;
->                 return;
->         }
-> @@ -166,7 +190,7 @@ static void init_sbi_dbtr(void)
->                 pr_err("%s: No mcontrol triggers available.\n", __func__)=
-;
->                 dbtr_total_num =3D 0;
->         } else {
-> -               dbtr_total_num =3D ret.value;
-> +               dbtr_total_num =3D min_not_zero((unsigned long)ret.value,=
- dbtr_count);
->                 dbtr_type =3D DBTR_TDATA1_TYPE_MCONTROL;
->         }
->  }
-> @@ -320,6 +344,36 @@ static int rv_init_mcontrol6_trigger(const struct pe=
-rf_event_attr *attr,
->         return 0;
->  }
->
-> +static int rv_init_icount_trigger(struct arch_hw_breakpoint *hw, enum db=
-tr_mode mode)
-> +{
-> +       unsigned long tdata1 =3D DBTR_TDATA1_TYPE_ICOUNT;
-> +
-> +       /* Step one instruction */
-> +       tdata1 |=3D FIELD_PREP(DBTR_TDATA1_ICOUNT_COUNT_FIELD, 1);
-> +
-> +       switch (mode) {
-> +       case DBTR_MODE_U:
-> +               tdata1 |=3D DBTR_TDATA1_ICOUNT_U;
-> +               break;
-> +       case DBTR_MODE_S:
-> +               tdata1 |=3D DBTR_TDATA1_ICOUNT_S;
-> +               break;
-> +       case DBTR_MODE_VS:
-> +               tdata1 |=3D DBTR_TDATA1_ICOUNT_VS;
-> +               break;
-> +       case DBTR_MODE_VU:
-> +               tdata1 |=3D DBTR_TDATA1_ICOUNT_VU;
-> +               break;
-> +       default:
-> +               return -EINVAL;
-> +       }
-> +
-> +       hw->tdata1 =3D tdata1;
-> +       hw->tdata2 =3D 0;
-> +
-> +       return 0;
-> +}
-> +
->  int hw_breakpoint_arch_parse(struct perf_event *bp,
->                              const struct perf_event_attr *attr,
->                              struct arch_hw_breakpoint *hw)
-> @@ -372,24 +426,28 @@ static int setup_singlestep(struct perf_event *even=
-t, struct pt_regs *regs)
->         /* Remove breakpoint even if return error as not to loop */
->         arch_uninstall_hw_breakpoint(event);
->
-> -       ret =3D get_insn_nofault(regs, regs->epc, &insn);
-> -       if (ret < 0)
-> -               return ret;
-> +       if (have_icount) {
-> +               rv_init_icount_trigger(bp, DBTR_MODE_U);
-> +       } else {
-> +               ret =3D get_insn_nofault(regs, regs->epc, &insn);
-> +               if (ret < 0)
-> +                       return ret;
->
-> -       next_addr =3D get_step_address(regs, insn);
-> +               next_addr =3D get_step_address(regs, insn);
->
-> -       ret =3D get_insn_nofault(regs, next_addr, &insn);
-> -       if (ret < 0)
-> -               return ret;
-> +               ret =3D get_insn_nofault(regs, next_addr, &insn);
-> +               if (ret < 0)
-> +                       return ret;
->
-> -       bp_insn.bp_type =3D HW_BREAKPOINT_X;
-> -       bp_insn.bp_addr =3D next_addr;
-> -       /* Get the size of the intruction */
-> -       bp_insn.bp_len =3D GET_INSN_LENGTH(insn);
-> +               bp_insn.bp_type =3D HW_BREAKPOINT_X;
-> +               bp_insn.bp_addr =3D next_addr;
-> +               /* Get the size of the intruction */
-> +               bp_insn.bp_len =3D GET_INSN_LENGTH(insn);
->
-> -       ret =3D hw_breakpoint_arch_parse(NULL, &bp_insn, bp);
-> -       if (ret)
-> -               return ret;
-> +               ret =3D hw_breakpoint_arch_parse(NULL, &bp_insn, bp);
-> +               if (ret)
-> +                       return ret;
-> +       }
->
->         ret =3D arch_install_hw_breakpoint(event);
->         if (ret)
-> @@ -400,6 +458,79 @@ static int setup_singlestep(struct perf_event *event=
-, struct pt_regs *regs)
->         return 0;
->  }
->
-> +/**
-> + * icount_triggered - Check if event's icount was triggered.
-> + * @event: Perf event to check
-> + *
-> + * Check the given perf event's icount breakpoint was triggered.
-> + *
-> + * Returns:    1 if icount was triggered.
-> + *             0 if icount was not triggered.
-> + *             negative on failure.
-> + */
-> +static int icount_triggered(struct perf_event *event)
-> +{
-> +       union sbi_dbtr_shmem_entry *shmem =3D this_cpu_ptr(&sbi_dbtr_shme=
-m);
-> +       struct sbiret ret;
-> +       struct perf_event **slot;
-> +       unsigned long tdata1;
-> +       int i;
-> +
-> +       for (i =3D 0; i < dbtr_total_num; i++) {
-> +               slot =3D this_cpu_ptr(&pcpu_hw_bp_events[i]);
-> +
-> +               if (*slot =3D=3D event)
-> +                       break;
-> +       }
-> +
-> +       if (i =3D=3D dbtr_total_num) {
-> +               pr_warn("%s: Breakpoint not installed.\n", __func__);
-> +               return -ENOENT;
-> +       }
-> +
-> +       raw_spin_lock_irqsave(this_cpu_ptr(&ecall_lock),
-> +                             *this_cpu_ptr(&ecall_lock_flags));
-> +
-> +       ret =3D sbi_ecall(SBI_EXT_DBTR, SBI_EXT_DBTR_TRIG_READ,
-> +                       i, 1, 0, 0, 0, 0);
-> +       tdata1 =3D shmem->data.tdata1;
-> +
-> +       raw_spin_unlock_irqrestore(this_cpu_ptr(&ecall_lock),
-> +                                  *this_cpu_ptr(&ecall_lock_flags));
-> +       if (ret.error) {
-> +               pr_warn("%s: failed to read trigger. error: %ld\n", __fun=
-c__, ret.error);
-> +               return sbi_err_map_linux_errno(ret.error);
+Change the driver to actually build without this symbol and remove the
+incorrect 'select' statements.
 
-To avoid a flurry of events or messages, it would probably be good to
-disable the trigger.
+Fixes: e8b18c11731d ("cdx: Fix missing GENERIC_MSI_IRQ on compile test")
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Reviewed-by: Nikhil Agarwal <nikhil.agarwal@amd.com>
+Signed-off-by: Arnd Bergmann <arnd@kernel.org>
+Signed-off-by: Nipun Gupta <nipun.gupta@amd.com>
+---
 
-> +       }
-> +
-> +       /*
-> +        * The RISC-V Debug Specification
-> +        * Tim Newsome, Paul Donahue (Ventana Micro Systems)
-> +        * Version 1.0, Revised 2025-02-21: Ratified
-I think mentioning the version number and section would be enough.
+Changes v1->v2:
+- No change
+Changes v2->v3:
+- add CONFIG_GENERIC_MSI_IRQ while assigning num_msi and setting msi domain
+Changes v3->v4:
+- No change
 
-> +        * 5.7.13. Instruction Count (icount, at 0x7a1)
-> +        * When count is 1 and the trigger matches, then pending becomes =
-set.
-> +        * In addition count will become 0 unless it is hard-wired to 1.
-> +        * When pending is set, the trigger fires just before any further
-> +        * instructions are executed in a mode where the trigger is enabl=
-ed.
-> +        * As the trigger fires, pending is cleared. In addition, if coun=
-t is
-> +        * hard-wired to 1 then m, s, u, vs, and vu are all cleared.
-> +        */
-> +       if (FIELD_GET(DBTR_TDATA1_ICOUNT_COUNT_FIELD, tdata1) =3D=3D 0)
-> +               return 1;
-> +
-> +       if (FIELD_GET(DBTR_TDATA1_ICOUNT_COUNT_FIELD, tdata1) !=3D 1)
-> +               return 0;
-> +
-> +       if (tdata1 & DBTR_TDATA1_ICOUNT_U)
-> +               return 0;
-> +       if (tdata1 & DBTR_TDATA1_ICOUNT_S)
-> +               return 0;
-> +       if (tdata1 & DBTR_TDATA1_ICOUNT_VU)
-> +               return 0;
-> +       if (tdata1 & DBTR_TDATA1_ICOUNT_VU)
-> +               return 0;
-> +       return 1;
-> +}
-> +
->  /*
->   * HW Breakpoint/watchpoint handler
->   */
-> @@ -460,7 +591,10 @@ static int hw_breakpoint_handler(struct pt_regs *reg=
-s)
->
->                 if (bp->in_callback) {
->                         expecting_callback =3D true;
-> -                       if (regs->epc !=3D bp->next_addr) {
-> +                       if (have_icount) {
-> +                               if (icount_triggered(event) !=3D 1)
-> +                                       continue;
-> +                       } else if (regs->epc !=3D bp->next_addr) {
->                                 continue;
->                         }
->
-> @@ -477,7 +611,10 @@ static int hw_breakpoint_handler(struct pt_regs *reg=
-s)
->
->         }
->
-> -       if (expecting_callback) {
-> +       if (expecting_callback && have_icount) {
-> +               pr_err("%s: in_callback was set, but icount was not trigg=
-ered, epc (%lx).\n",
-> +                      __func__, regs->epc);
-> +       } else if (expecting_callback) {
->                 pr_err("%s: in_callback was set, but epc (%lx) was not at=
- next address(%lx).\n",
->                        __func__, regs->epc, bp->next_addr);
->         }
+ drivers/cdx/Kconfig                     | 1 -
+ drivers/cdx/cdx.c                       | 4 ++--
+ drivers/cdx/controller/Kconfig          | 1 -
+ drivers/cdx/controller/cdx_controller.c | 3 ++-
+ 4 files changed, 4 insertions(+), 5 deletions(-)
 
-Is this just for debugging or do you want to commit it?
+diff --git a/drivers/cdx/Kconfig b/drivers/cdx/Kconfig
+index 3af41f51cf38..1f1e360507d7 100644
+--- a/drivers/cdx/Kconfig
++++ b/drivers/cdx/Kconfig
+@@ -8,7 +8,6 @@
+ config CDX_BUS
+ 	bool "CDX Bus driver"
+ 	depends on OF && ARM64 || COMPILE_TEST
+-	select GENERIC_MSI_IRQ
+ 	help
+ 	  Driver to enable Composable DMA Transfer(CDX) Bus. CDX bus
+ 	  exposes Fabric devices which uses composable DMA IP to the
+diff --git a/drivers/cdx/cdx.c b/drivers/cdx/cdx.c
+index 092306ca2541..3d50f8cd9c0b 100644
+--- a/drivers/cdx/cdx.c
++++ b/drivers/cdx/cdx.c
+@@ -310,7 +310,7 @@ static int cdx_probe(struct device *dev)
+ 	 * Setup MSI device data so that generic MSI alloc/free can
+ 	 * be used by the device driver.
+ 	 */
+-	if (cdx->msi_domain) {
++	if (IS_ENABLED(CONFIG_GENERIC_MSI_IRQ) && cdx->msi_domain) {
+ 		error = msi_setup_device_data(&cdx_dev->dev);
+ 		if (error)
+ 			return error;
+@@ -833,7 +833,7 @@ int cdx_device_add(struct cdx_dev_params *dev_params)
+ 		     ((cdx->id << CDX_CONTROLLER_ID_SHIFT) | (cdx_dev->bus_num & CDX_BUS_NUM_MASK)),
+ 		     cdx_dev->dev_num);
+ 
+-	if (cdx->msi_domain) {
++	if (IS_ENABLED(CONFIG_GENERIC_MSI_IRQ) && cdx->msi_domain) {
+ 		cdx_dev->num_msi = dev_params->num_msi;
+ 		dev_set_msi_domain(&cdx_dev->dev, cdx->msi_domain);
+ 	}
+diff --git a/drivers/cdx/controller/Kconfig b/drivers/cdx/controller/Kconfig
+index 0641a4c21e66..a480b62cbd1f 100644
+--- a/drivers/cdx/controller/Kconfig
++++ b/drivers/cdx/controller/Kconfig
+@@ -10,7 +10,6 @@ if CDX_BUS
+ config CDX_CONTROLLER
+ 	tristate "CDX bus controller"
+ 	depends on HAS_DMA
+-	select GENERIC_MSI_IRQ
+ 	select REMOTEPROC
+ 	select RPMSG
+ 	help
+diff --git a/drivers/cdx/controller/cdx_controller.c b/drivers/cdx/controller/cdx_controller.c
+index fca83141e3e6..5e3fd89b6b56 100644
+--- a/drivers/cdx/controller/cdx_controller.c
++++ b/drivers/cdx/controller/cdx_controller.c
+@@ -193,7 +193,8 @@ static int xlnx_cdx_probe(struct platform_device *pdev)
+ 	cdx->ops = &cdx_ops;
+ 
+ 	/* Create MSI domain */
+-	cdx->msi_domain = cdx_msi_domain_init(&pdev->dev);
++	if (IS_ENABLED(CONFIG_GENERIC_MSI_IRQ))
++		cdx->msi_domain = cdx_msi_domain_init(&pdev->dev);
+ 	if (!cdx->msi_domain) {
+ 		ret = dev_err_probe(&pdev->dev, -ENODEV, "cdx_msi_domain_init() failed");
+ 		goto cdx_msi_fail;
+-- 
+2.34.1
 
-Regards
-Himanshu
-> --
-> 2.43.0
->
 
