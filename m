@@ -1,127 +1,81 @@
-Return-Path: <linux-kernel+bounces-787122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88790B371AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:48:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F326B371B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:49:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD29A1BA18DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:48:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AACD3A712C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C362D0C62;
-	Tue, 26 Aug 2025 17:47:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0188299AA3;
+	Tue, 26 Aug 2025 17:49:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="JzF5NGct"
-Received: from smtp-bc0f.mail.infomaniak.ch (smtp-bc0f.mail.infomaniak.ch [45.157.188.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cnD9afI1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9725464D
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 17:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5369431A577;
+	Tue, 26 Aug 2025 17:49:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756230462; cv=none; b=HqjFEus1BLIJ0fR3RECAkFmYMudAj6fbSGwF0RjnjlntZn5aysH9qqgHiuvqHANmAZi9imwzc0Fwdap/jU+ZDHma39DqdF5ErzBdCeDWxCR+YTWyoBU/Nr2mnE1Gd7a1L5791fWnDtwRX1VViXnBG8lzGG5/SrAKJGq+5ZFpdVQ=
+	t=1756230580; cv=none; b=Si1qENhG9/c5F/2lVrwzzBG9Bk41TnYufiEDtpCL7MrFDkOC8XwWMnTs+4ofPJjycbYq1TAq/QUd/O95A01gPIb15PPpOCheCbJPsAzJn+a2un+ijr3MWGrU+pqw00zUvpP+9EgwUQIlWq5iwFHBjnywqnAcj+AItw/b/8pufgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756230462; c=relaxed/simple;
-	bh=sFRIu8Am2jIzlH44DxKpMs4s+3Je74MeBIKW4BmL/IE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qX70MPEbZr6/bCCuhVY7t0Wqs8fI3RkK2Cuvk0k5zJMPOGeBIkE0pU1e92vBxG8U4irNau4cchTuqE5Ka1ockkZHzMMI4PqSUoQ1PneHWJNuJvn2HVbliIUovl9Chsxzz/H2LQ5fo1nqff1IR244p3cZ2HytEr80fkmM0arf+LM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=JzF5NGct; arc=none smtp.client-ip=45.157.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4cBFVZ6s0YzsK9;
-	Tue, 26 Aug 2025 19:47:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1756230454;
-	bh=z/NUjKchTuxG8z+dgzPttXLaScBMzIR69Ax8SOVBUjA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JzF5NGctdlftcM1YJwG89Bu/YKhZpb2TC6flRXGDGvSAhwm7E9aTjbdy+MTPNR5Cf
-	 wcuscZ0FG7I5fwGhBzF51K2dbWsjCtZ6LzO0l8iqWC0cfaoHkystxzh+QdA6e4M5Yo
-	 5iaVkRVK9xXxIBIjDfYAAvTB0Ap23RVRVZB8hzag=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4cBFVW0pJ9z4V8;
-	Tue, 26 Aug 2025 19:47:31 +0200 (CEST)
-Date: Tue, 26 Aug 2025 19:47:30 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Kees Cook <keescook@chromium.org>, 
-	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>, 
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
-	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Miklos Szeredi <mszeredi@redhat.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, 
-	Robert Waite <rowait@microsoft.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Scott Shell <scottsh@microsoft.com>, Steve Dower <steve.dower@python.org>, 
-	Steve Grubb <sgrubb@redhat.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
-Message-ID: <20250826.iewie7Et5aiw@digikod.net>
-References: <20250822170800.2116980-1-mic@digikod.net>
- <20250826-skorpion-magma-141496988fdc@brauner>
- <20250826.aig5aiShunga@digikod.net>
- <20250826123041.GB1603531@mit.edu>
+	s=arc-20240116; t=1756230580; c=relaxed/simple;
+	bh=6TMtBzRFBOVX2bHF383YJhY34ok6iHyjIHKEfFFcpIY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QvTKlc/8ZWDrpcAUGMipMpDXjReWPsArECGtxv2AOttbWM1JjedWu7PXGZXyRIeSKzgVmcdA4pMF0PIXPRxJZ9rVeHxE0ntAv3cFEYnv36fpgjj6pXE0mEe9zOYmIOUW8XCw/GboS9dbWq9hfL6yrMWfZp/o4Vbg4qmRpLDbP7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cnD9afI1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECF08C4CEF1;
+	Tue, 26 Aug 2025 17:49:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756230579;
+	bh=6TMtBzRFBOVX2bHF383YJhY34ok6iHyjIHKEfFFcpIY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cnD9afI1IWZDgoRRrVAa/8aSd0Rh24QzMGtIGcX1RUIzd+bSp+ssj7+b1we/mECYk
+	 TCjT1kAGZIwACflpQlmUaMqBrxgNx+A4yFCA+IMIkILs7RE9cYXTPjnubqzQim8vJj
+	 uESnp3zf9k+nxUe275Br+eyoQlIaCbubO5XWBQa1H8ibsfE+Ynz4yrMTzqMMqxcAiJ
+	 0l09EQG0XHAjDxHVQCcm8iORlqMy7Fu0T8lT+rvz3l6IO+QWMwhSLZMznFTP92G5EL
+	 aeKll2Ev0WzeKN9SP+4SIUyVXbZ2uSdHb1l+oxv+t0g67PWKzf2Ev5RVRP+9uwAEhL
+	 8jPG+16eBzi7w==
+Date: Tue, 26 Aug 2025 10:49:38 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, linux-doc@vger.kernel.org, Jonathan Corbet
+ <corbet@lwn.net>, Bjorn Helgaas <helgaas@kernel.org>, luosifu
+ <luosifu@huawei.com>, Xin Guo <guoxin09@huawei.com>, Shen Chenyang
+ <shenchenyang1@hisilicon.com>, Zhou Shuai <zhoushuai28@huawei.com>, Wu Like
+ <wulike1@huawei.com>, Shi Jing <shijing34@huawei.com>, Meny Yossefi
+ <meny.yossefi@huawei.com>, Gur Stavi <gur.stavi@huawei.com>, Lee Trager
+ <lee@trager.us>, Michael Ellerman <mpe@ellerman.id.au>, Suman Ghosh
+ <sumang@marvell.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH net-next v01 10/12] hinic3: Add Rss function
+Message-ID: <20250826104938.20980ea7@kernel.org>
+In-Reply-To: <53206f29-7da8-4145-aef0-7bdacef3bb55@linux.dev>
+References: <cover.1756195078.git.zhuyikai1@h-partners.com>
+	<13ffd1d836eb7aa6563ad93bf5fa5196afdf0053.1756195078.git.zhuyikai1@h-partners.com>
+	<53206f29-7da8-4145-aef0-7bdacef3bb55@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250826123041.GB1603531@mit.edu>
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 26, 2025 at 08:30:41AM -0400, Theodore Ts'o wrote:
-> Is there a single, unified design and requirements document that
-> describes the threat model, and what you are trying to achieve with
-> AT_EXECVE_CHECK and O_DENY_WRITE?  I've been looking at the cover
-> letters for AT_EXECVE_CHECK and O_DENY_WRITE, and the documentation
-> that has landed for AT_EXECVE_CHECK and it really doesn't describe
-> what *are* the checks that AT_EXECVE_CHECK is trying to achieve:
+On Tue, 26 Aug 2025 18:06:42 +0100 Vadim Fedorenko wrote:
+> > +	nic_dev->rss_hkey = kzalloc(L2NIC_RSS_KEY_SIZE, GFP_KERNEL);  
 > 
->    "The AT_EXECVE_CHECK execveat(2) flag, and the
->    SECBIT_EXEC_RESTRICT_FILE and SECBIT_EXEC_DENY_INTERACTIVE
->    securebits are intended for script interpreters and dynamic linkers
->    to enforce a consistent execution security policy handled by the
->    kernel."
+> no need to request zero'ed allocation if you are going to overwrite it
+> completely on the very next line.
 
-From the documentation:
-
-  Passing the AT_EXECVE_CHECK flag to execveat(2) only performs a check
-  on a regular file and returns 0 if execution of this file would be
-  allowed, ignoring the file format and then the related interpreter
-  dependencies (e.g. ELF libraries, script’s shebang).
-
-> 
-> Um, what security policy?
-
-Whether the file is allowed to be executed.  This includes file
-permission, mount point option, ACL, LSM policies...
-
-> What checks?
-
-Executability checks?
-
-> What is a sample exploit
-> which is blocked by AT_EXECVE_CHECK?
-
-Executing/interpreting any data: sh script.txt
-
-> 
-> And then on top of it, why can't you do these checks by modifying the
-> script interpreters?
-
-The script interpreter requires modification to use AT_EXECVE_CHECK.
-
-There is no other way for user space to reliably check executability of
-files (taking into account all enforced security
-policies/configurations).
+exactly, please use kmemdump().
 
