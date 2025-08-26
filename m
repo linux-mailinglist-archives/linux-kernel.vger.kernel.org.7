@@ -1,77 +1,74 @@
-Return-Path: <linux-kernel+bounces-786467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3470EB35A2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:40:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 198EAB35A31
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:40:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DA8A2A8577
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:40:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43DA83B1845
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:40:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 732D527CB04;
-	Tue, 26 Aug 2025 10:39:54 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE342301486;
-	Tue, 26 Aug 2025 10:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8C5301021;
+	Tue, 26 Aug 2025 10:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hYe94YIw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2AE217332C;
+	Tue, 26 Aug 2025 10:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756204794; cv=none; b=lQWf1Z07aqvsbuG/R6ORyory7q0mmF1mc9Bn46zNu9ofeYN8XUY2QLWMKvYkN++CkWOVP3pKJbYIRuZIUmQcMR1CTWq0uL65Qj47Q2YpALVCsv8EWeYJT51cnq9zLxTQ1MltS6AWq3A8DBiBehoOymUbyIxLCaFUPh2/62mS3Oc=
+	t=1756204806; cv=none; b=kTd+6kvpLEQXOJh+6HL89qHmuidzK/5J5T8U0NHQU72FCI19+NRG7biHg0IVoPD8qxR6QTv0cwMDFzNBPmJfslQLK0AD8QNe9PPSkt/oWCcGG2a45uF998Vyyb9e/B8FmmlkBS4KCs7MTVgKjZTc1Xtye4UfbbTqKG2aPQmNQ5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756204794; c=relaxed/simple;
-	bh=axYdkke8DyT2Uus9AU2yB5PK/ytArhE6ltG77CPIAWQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Sri3YTDJrUpz7sY7tXSm9ehHFujZcJNQyPFhKMdpYHhxq35Brv97UoUr4v5q+D6R/hiTIVqdIQCDcdy3lXHwNXCJA2XGLksr19GTy6yepy3OvFLRp3lD4p6lNU8eDlZdahqc0daxD5YyRNnZ1D9B9gQ2GQ5tW3wQZ693szotCls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 103BF1A00;
-	Tue, 26 Aug 2025 03:39:44 -0700 (PDT)
-Received: from usa.arm.com (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 208F63F694;
-	Tue, 26 Aug 2025 03:39:49 -0700 (PDT)
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Cristian Marussi <cristian.marussi@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Deepti Jaggi <quic_djaggi@quicinc.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel@oss.qualcomm.com,
-	Nikunj Kela <quic_nkela@quicinc.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v6] dt-bindings: firmware: arm,scmi: allow multiple instances
-Date: Tue, 26 Aug 2025 11:39:48 +0100
-Message-Id: <175620475405.1763115.5520957460369024353.b4-ty@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250730-8255-scmi-v6-1-a7d8ba19aded@quicinc.com>
-References: <20250730-8255-scmi-v6-1-a7d8ba19aded@quicinc.com>
+	s=arc-20240116; t=1756204806; c=relaxed/simple;
+	bh=F3NNapuWMmyj349NovOvKMJRb9z/5mKZ0S7SZG+Oaik=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=X+Ewi6aJrxqmm7BcvxpPmFPDn5tuDl9dAGauDvfBPsxm2vEQ4U+Er3urlE7qi935nJXEV4y70KIzhNHWAMCsKy5EuHVFtEUsyx/nZGkF1Sw60OUPf2yN/4qo+8amGAq0HFmhvgCY2TBjl5rCYZHaAQMFpq5V//TBBuVK+MfNhFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hYe94YIw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05821C4CEF1;
+	Tue, 26 Aug 2025 10:40:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756204805;
+	bh=F3NNapuWMmyj349NovOvKMJRb9z/5mKZ0S7SZG+Oaik=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=hYe94YIw+AL22LXaFNX1aMUPbv523AOfriCyJkkk7CJkulj1qkKkTkfg2gAqfmn3G
+	 M0EXzuvPWDQaXDyr+aiFz9lbFN/wkiuDJIzUrsmOi421GzLX47WoiIebqos7QkkgIl
+	 2Ez9NBS29/oTj3L7sTWcKYNIE1KOQIiZEOfLciAQuSWH4dzeBp1EKWx8/j99tKEB1M
+	 c4RTLtfOeAGTEFmIVu2aFZ34FcVqcAYJ3viYz7Gunah4WeVtLIgUsz6/NYmdNrXqW+
+	 A2qU/3Uk4I9xkdYg68JEJTtmksbOWhdsQ1Az9EcFAW6EwdCZbIUkEn+9KeAOjzjs/H
+	 /NcVkm2PAhLAQ==
+Date: Tue, 26 Aug 2025 12:40:02 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: Martin Hilgendorf <martin.hilgendorf@posteo.de>
+cc: Benjamin Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] HID: elecom: add support for ELECOM M-DT2DRBK
+In-Reply-To: <20250802134542.21692-1-martin.hilgendorf@posteo.de>
+Message-ID: <1p4705qo-s11o-6soq-qq96-n10nno2r445r@xreary.bet>
+References: <20250802134542.21692-1-martin.hilgendorf@posteo.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-On Wed, 30 Jul 2025 14:30:00 -0700, Deepti Jaggi wrote:
-> Allow multiple SCMI instances by extending the scmi node name to include
-> an instance number suffix.
+On Sat, 2 Aug 2025, Martin Hilgendorf wrote:
+
+> The DT2DRBK trackball has 8 buttons, but the report descriptor only
+> specifies 5. This patch adds the device ID and performs a similar fixup as
+> for other ELECOM devices to enable the remaining 3 buttons.
 > 
+> Signed-off-by: Martin Hilgendorf <martin.hilgendorf@posteo.de>
 
-Applied to sudeep.holla/linux (for-next/scmi/updates), thanks!
+Applied to hid.git#for-6.17/upstream-fixes, thanks.
 
-[1/1] dt-bindings: firmware: arm,scmi: allow multiple instances
-      https://git.kernel.org/sudeep.holla/c/a4d5f63d4384
---
-Regards,
-Sudeep
+-- 
+Jiri Kosina
+SUSE Labs
 
 
