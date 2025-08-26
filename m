@@ -1,166 +1,132 @@
-Return-Path: <linux-kernel+bounces-786144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9071B35599
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:26:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37755B3559E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:27:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE96E1B65879
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:27:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 695BF189BA31
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D672D3A85;
-	Tue, 26 Aug 2025 07:24:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 885F42F7443;
+	Tue, 26 Aug 2025 07:26:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="aYnLgFZO"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Vmk/4byl"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B802727FB10
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 07:24:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF3D2D0C91
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 07:26:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756193092; cv=none; b=c3nz4TLDqIPNOveETyWO4y53XBVIoISoeEXd0weGxI2blugDGd17ruVBwtRWHaH4V8WtpkNiKP+wz/lYUB73Dl1Yld8/yKstaZ59dODxTIjqYbKNR95kJp9ds4n7NxS18GS4BPeJo3vcuxj3DT6WVYc7sTiPECQltGZXCLFqII4=
+	t=1756193179; cv=none; b=iMiRyR2sX0sMD9DsZXWeSg/D4s3x0KJ9TYOb4slgdt47Ght5h3yPChF/dCcWYLqd9Ai7wkBsHTDhyrQc7x8rRCECCWrQGeVnxsBqZLGDGvsIz6VbrYKRWgBuvA7j+vYPMSuI6ASXxBizB1zn6Rh6YmKr1go0OzxyrTwfJCkO28s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756193092; c=relaxed/simple;
-	bh=fWEaE7rby5BwiPQYp9tM0XRd30FJRyFX8vJJQY21Y+w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pxWDG6DZSQOmDfvTZVCHL0TNM7SIGlMX57IKmUG8x3Nem1kg7COYY91V48M0tltclJkO9sajKG7doQRnlOFY+OZkP+Bo6X51nqy/zU/WwkZtHmGSEBMBiG+YhMasLEwK3XV3D1Z9Nr4jgeLFcXfUSy088eDAoSR0imYPBR8dM0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=aYnLgFZO; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1756193088;
-	bh=fWEaE7rby5BwiPQYp9tM0XRd30FJRyFX8vJJQY21Y+w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aYnLgFZORbFNNctI8Q3e3ZZhulvu+PmnLPh9O8U+0EGX1wwK/x8OCqEJAc4krcxb0
-	 nDVVUSnd+wk+EbUo/MqPkVfykHX+FqydXhz3afU+kWwAyrZxmGG92JAWhLuYtm4w3k
-	 5jsZp15YOK++txRDk6K45WBgKC3rCR4D56f9UsE606MQXziJS6eoijzYkYkmhmZqDE
-	 maotq807ZkxWK3LJpyeYCie3lWxMwvJSo6LLLspfe+jf85T4AYSoOHZVY+OvcW3tC6
-	 iHQdkI1TuHBGxS8MaO3wz3QfrlBrIVmnCYxFZxAczpoRG+xKHiyT7ZdTC7Ht3F3tNC
-	 vms79OQfK2mHA==
-Received: from xpredator (unknown [IPv6:2a02:2f08:eb0b:c00:e88e:21ff:fe65:be18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: mvlad)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id A5DBC17E011A;
-	Tue, 26 Aug 2025 09:24:47 +0200 (CEST)
-Date: Tue, 26 Aug 2025 10:24:46 +0300
-From: Marius Vlad <marius.vlad@collabora.com>
-To: Shengyu Qu <wiagn233@outlook.com>
-Cc: alexander.deucher@amd.com, christian.koenig@amd.com, airlied@gmail.com,
-	simona@ffwll.ch, harry.wentland@amd.com, sunpeng.li@amd.com,
-	siqueira@igalia.com, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, contact@rafaelrc.com,
-	lijo.lazar@amd.com, jesse.zhang@amd.com, tim.huang@amd.com,
-	dark_sylinc@yahoo.com.ar, mario.limonciello@amd.com,
-	alex.hung@amd.com, aurabindo.pillai@amd.com, sunil.khatri@amd.com,
-	chiahsuan.chung@amd.com, mwen@igalia.com, Roman.Li@amd.com,
-	Wayne.Lin@amd.com, dominik.kaszewski@amd.com, alvin.lee2@amd.com,
-	Aric.Cyr@amd.com, Austin.Zheng@amd.com, Sung.Lee@amd.com,
-	PeiChen.Huang@amd.com, dillon.varone@amd.com,
-	Richard.Chiang@amd.com, ryanseto@amd.com, linux@treblig.org,
-	haoping.liu@amd.com, Relja.Vojvodic@amd.com, Yihan.Zhu@amd.com,
-	Samson.Tam@amd.com, amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	wayland-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2 0/2] Add "pixel_encoding" to switch between RGB & YUV
- color modes
-Message-ID: <aK1hPoCmLziaPPOd@xpredator>
-References: <TY4PR01MB14432B688209B2AA416A95228983EA@TY4PR01MB14432.jpnprd01.prod.outlook.com>
+	s=arc-20240116; t=1756193179; c=relaxed/simple;
+	bh=DcMpv+3mgF8aZDoDXRSQ/IQVeWP92JqyekiKkdCx2mQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=tV/RFG1yvwJmyGPk7RXzQJ4g9nOEdiQP2ejYbnB+j0MxCXWtEEgFo3p8V7Oli++QwZNDXw4kjix4ryVw9H7Zo25qpL1Pw/CKcXtvx4QjrGtEQQMLuj+t+vXR3fIA7mKxOsA6sqWFNreNP/MpXgoQzx6+Cn+662eY9fTTbRxyL7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Vmk/4byl; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250826072610euoutp01915e266454dd8cc64ca721e96e327c5e~fQGInzTFl1822418224euoutp018
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 07:26:10 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250826072610euoutp01915e266454dd8cc64ca721e96e327c5e~fQGInzTFl1822418224euoutp018
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1756193170;
+	bh=9i5p2LxvgZLund35hCqkpCnzys4/u1z+zSXgl9PoA5s=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=Vmk/4bylMbV/wtYHG7M1xjRGAt+Lhv3D9zWse1vOVtbeAo5MtxIFj5y/MhBMRbGHg
+	 mC8qDI9JSMhI5zC5p9Xrv0fQidPif8c+fXYbBR2ttKUgtGKmlvRfxJyBWu5gtjHnBV
+	 hVP4BkVJFcvdaK/K2gKsWUaP0Vax20+8zYs8aHoU=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250826072609eucas1p184dfb0642e07f6b843172d9974f16b7f~fQGII8nK-2890728907eucas1p1Z;
+	Tue, 26 Aug 2025 07:26:09 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250826072607eusmtip1479a4e682590dd94ab45dd1f1689d810~fQGGRvVEr1983919839eusmtip12;
+	Tue, 26 Aug 2025 07:26:07 +0000 (GMT)
+Message-ID: <d8599b11-66dd-486b-89e4-52b82d90f04e@samsung.com>
+Date: Tue, 26 Aug 2025 09:26:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="P4ii5dE9RQd4AYRH"
-Content-Disposition: inline
-In-Reply-To: <TY4PR01MB14432B688209B2AA416A95228983EA@TY4PR01MB14432.jpnprd01.prod.outlook.com>
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH v4 2/7] OPP: Move refcount and key update for
+ readability in _opp_table_find_key()
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, Viresh
+	Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd
+	<sboyd@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Manivannan
+	Sadhasivam <mani@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring
+	<robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Bjorn Andersson
+	<andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Krzysztof
+	Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20250826060647.7eerg5blx3xho27p@vireshk-i7>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250826072609eucas1p184dfb0642e07f6b843172d9974f16b7f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250825135939eucas1p206b6e2b5ba115f51618c773a1f37939c
+X-EPHeader: CA
+X-CMS-RootMailID: 20250825135939eucas1p206b6e2b5ba115f51618c773a1f37939c
+References: <20250820-opp_pcie-v4-0-273b8944eed0@oss.qualcomm.com>
+	<20250820-opp_pcie-v4-2-273b8944eed0@oss.qualcomm.com>
+	<CGME20250825135939eucas1p206b6e2b5ba115f51618c773a1f37939c@eucas1p2.samsung.com>
+	<4066c0b4-807f-401e-baaa-25f4891f10ac@samsung.com>
+	<20250826060647.7eerg5blx3xho27p@vireshk-i7>
 
+On 26.08.2025 08:06, Viresh Kumar wrote:
+> Marek,
+>
+> Thanks for the detailed logs. I would need a little more help from
+> you.
+>
+> Can you give this a try over your failing branch (I have already
+> dropped the patch from my tree for now):
+>
+> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> index 81fb7dd7f323..5b24255733b5 100644
+> --- a/drivers/opp/core.c
+> +++ b/drivers/opp/core.c
+> @@ -554,10 +554,10 @@ static struct dev_pm_opp *_opp_table_find_key(struct opp_table *opp_table,
+>          list_for_each_entry(temp_opp, &opp_table->opp_list, node) {
+>                  if (temp_opp->available == available) {
+>                          if (compare(&opp, temp_opp, read(temp_opp, index), *key)) {
+> -                               *key = read(opp, index);
+> -
+> -                               /* Increment the reference count of OPP */
+> -                               dev_pm_opp_get(opp);
+> +                               if (!IS_ERR(opp)) {
+> +                                       *key = read(opp, index);
+> +                                       dev_pm_opp_get(opp);
+> +                               }
+>                                  break;
+>                          }
+>                  }
 
---P4ii5dE9RQd4AYRH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This doesn't help. I've stared a bit at that code and did some tests 
+and it looks that the issue is caused by _opp_table_find_key() returning 
+the last opp from opp_list without updating the *key and calling 
+opp_get() for it (happens when compare() returns false).
 
-Hi,
+> ...
 
-Prior work towards this is/was: https://lore.kernel.org/dri-devel/202401151=
-60554.720247-1-andri@yngvason.is/
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-I have slightly modified version of that, but still working on
-getting another driver (besides amd/i915) working with it.
-
-On Tue, Aug 26, 2025 at 02:39:59AM +0800, Shengyu Qu wrote:
-> Usage:
->  - X11: xrandr --output <output name> --set "pixel encoding" <encoding>
->  - Wayland: proptest -M amdgpu -D <card path> <connector ID> connector
->    <pixel encoding ID> <encoding (ID)>
->  - Kernel Param: amdgpu.pixel_encoding=3D<encoding>
->    or amdgpu.pixel_encoding=3D<monitor>:<encoding>,<monitor>:<encoding>
->=20
-> Supported encodings are: "auto" (0) (Default and original behavior), "rgb"
-> (1), "ycbcr444" (2), "ycbcr422" (4), and "ycbcr420" (8).
->=20
-> This patch series allow users to switch between pixel encodings, which is
-> specially important when auto gets it wrong (probably because of monitor's
-> manufacturer mistake) and needs user intervention.
->=20
-> Changes since v1:
->  - Some cleanup and rebase
->  - Added YUV422 support
->=20
-> Full discussion:
-> https://gitlab.freedesktop.org/drm/amd/-/issues/476#note_2628536
->=20
-> Original patch by Yassine Imounachen, current version is modified based on
-> this patch(was rebased by Rafael Carvalho):
-> https://lists.freedesktop.org/archives/amd-gfx/2024-October/116195.html
->=20
-> Shengyu Qu (2):
->   drm/connector: Add "pixel_encoding" to switch between RGB & YUV color
->     output modes
->   drm/amdgpu: Add "pixel_encoding" DRM connector property support for
->     amdgpu
->=20
->  drivers/gpu/drm/amd/amdgpu/amdgpu_display.c   |  36 +++
->  drivers/gpu/drm/amd/amdgpu/amdgpu_display.h   |   3 +
->  drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h      |   2 +
->  .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 273 +++++++++++++++++-
->  .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h |   1 +
->  drivers/gpu/drm/amd/display/dc/core/dc.c      |   8 +
->  drivers/gpu/drm/amd/display/dc/dc_stream.h    |   2 +
->  drivers/gpu/drm/drm_modes.c                   |  32 ++
->  include/drm/drm_connector.h                   |   7 +
->  9 files changed, 353 insertions(+), 11 deletions(-)
->=20
-> --=20
-> 2.43.0
->=20
-
---P4ii5dE9RQd4AYRH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEcDKHej6x6uPk3J379jQS5glH1u8FAmitYTsACgkQ9jQS5glH
-1u9CLQ//bBIdGbBmI2faqdm8hqyzUUpMMJwHK4kAuv0XE4QId5db+cbUocPYM9nY
-gJPntOSb6/tPD7MyNV/xsR2ezD5tISQBjgwTYKXhf34Y+E+pAqKyyUfjwJ8Z26X1
-qt1ewRDjBtT9DPWFwEr0OHCqxreGWXGU5bMelO2GMyXR+IPT51cIkFOvHXDI91YK
-oj3qi4dJEutYeCRCPT0SAcqwD3WUIXexV0FZzp0bqcAxxDQXcu5J1hx0f0HVAU8T
-NIJ1dDM/f4kqbRZSciU7IRc58EHCyBT1Xd+UquW6hSOPjncK2BDk3Guj3u5ElTUR
-obWFF1j+ieG89bUXI7wa3/BIYrxdw7vqWj7zp0FnYDn6zIFeOTNEVR/igGx/MMde
-PSDhe/52Hwpf00MG0vjE1rja6EHOBW7aUgDhfi4gyAAbiWYW4kJ7b8xKonPv32HP
-RHy1AUq+3mlPX3vjeP4uUftlGUMKJ9lGqIjAunh5SYJ76DLbr5ugGUJnkSOiZHl7
-PAXwEFG/MRjdIIJwdfbn9C1xZSGfwfg0tW/UxGjtUfrrGVPYFNu4WKslQ1ZeusYy
-vYlfiYDMqE63Cs0V2RwyaqsF+xGcywDNafSVp5OtAhiUpxzmFEBhk4QcVlEENgUb
-Du+5qNXmt638fYp80wgdw4mhl4FRe2EArB1QHGij2YkUVTyHtT4=
-=zfJn
------END PGP SIGNATURE-----
-
---P4ii5dE9RQd4AYRH--
 
