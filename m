@@ -1,88 +1,81 @@
-Return-Path: <linux-kernel+bounces-786859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05A3CB36C87
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:57:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E737FB36D2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:09:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F28A97A1551
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:55:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CCE3563CBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2301258CF7;
-	Tue, 26 Aug 2025 14:56:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC7A231A21;
+	Tue, 26 Aug 2025 14:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="qGAEL2F2";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="qGAEL2F2"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="nYTQ268J";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="nYTQ268J"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FBFE2367D9
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 14:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB49265CB3
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 14:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756220186; cv=none; b=FmBJjlU9mGNes3Nk2sgB+1450zyKn3ZZT3yObvww2HcBJPNzeLYKqoVH6FUS2n46HRKJHa97XZxMB7a4YEGuzAm4eDLaNRVMy6pDcXyRkoAmzTRKeTUI4NNaCPdo+68G8tYhBnv3c7KTYTR6dr3z+pdlELK1WmVUdsAHUP1KoiU=
+	t=1756220191; cv=none; b=sl3p37deQZaBFy9m+msWXnS1KwqbaxSe2NS4qLphfShMkh1zZZAmzXbRtDJ6lFfLElePunh99+ZDOK5Ud1wcM2yZSiYts0fIhQ/nX2baGC8a6Xjse9pjZXwHx+aLbbV8ZG+kz5/QMohA7Jch5cN3s6maiZFmQOzCApRXbrBV2tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756220186; c=relaxed/simple;
-	bh=7KrqKDcLezqcXXByoIUmFKnIiK3ZtvA1hu42P7H8wHw=;
+	s=arc-20240116; t=1756220191; c=relaxed/simple;
+	bh=E43UQldvPIXJQkXye2xOeDjT5ILlUuBjtUd7Y9Fa22U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HSYeToQ+1UPagN2s4hwpGtd1iKzLGb+/peR/FVrnlo2cOeBwhenHU3ejO4ZFurSICo2dqzKptOh8gX7a4lsFtqy3Gwbm6qVjh75h4KH8jJfa3KT/9I+t/aa+axL6gVNZJqVg3IQkzVV0LzQigJzGW96xusp1jpyr1VyOmDEUtNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=qGAEL2F2; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=qGAEL2F2; arc=none smtp.client-ip=195.135.223.130
+	 MIME-Version; b=oUW+vl7DFChdmE0lVBX8YaoESCwi2timinj1aY/DRCBa4pZXKH1I96qO2CF9+WnKnloVL6yvUxWU2ogSy8ZwtU46QkJ7l2sC5kZYvCB0iDtiUxF9j+6WpIvGoV12nefR1kmd4BeXSdPB1IEPkwYDY6qvFCbaHqo1lmvCRE9H1EI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=nYTQ268J; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=nYTQ268J; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 702692124E;
-	Tue, 26 Aug 2025 14:56:22 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 1B76F1F38F;
+	Tue, 26 Aug 2025 14:56:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1756220182; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1756220188; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=fgDiJNNiVNaf0p3L3IvjAfpp4z8UuSZA2jh8FWFcSN0=;
-	b=qGAEL2F2BM1z21iYQ7eFD6W4myMjqmCXairXJ3Fj9HEmZrz9iLZkcGs/NUgV2ykp4nvnn7
-	Whzu+U+xkPL2ocWiXUf6xrBAbjp3GvXWbjI1pFERnmx24bEUGaN+Hst3Gn4d2XnKksaMte
-	a/RW1sHpnMY8fQH6607HTh42FMFyh6g=
-Authentication-Results: smtp-out1.suse.de;
+	bh=8GwQoxtVyUUAfeaSlxLGfKSMF6Xm2EeIRDK2kD9x/0s=;
+	b=nYTQ268JOuUNC2VcmCgObTdtpXGddY/9lgjHWgC2DcPcigetNUkmCu3YW5r+wUPBv6PU5H
+	heDvZsh8TahnSPvJwG7ZH40vhyuc2OYPxA3LYH874dIMYWW/LcNli5XSPhlNzCHOJEPTer
+	ozp/hrz3f5glM1IkGOJ8nIm8+VVQmGg=
+Authentication-Results: smtp-out2.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1756220182; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1756220188; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=fgDiJNNiVNaf0p3L3IvjAfpp4z8UuSZA2jh8FWFcSN0=;
-	b=qGAEL2F2BM1z21iYQ7eFD6W4myMjqmCXairXJ3Fj9HEmZrz9iLZkcGs/NUgV2ykp4nvnn7
-	Whzu+U+xkPL2ocWiXUf6xrBAbjp3GvXWbjI1pFERnmx24bEUGaN+Hst3Gn4d2XnKksaMte
-	a/RW1sHpnMY8fQH6607HTh42FMFyh6g=
+	bh=8GwQoxtVyUUAfeaSlxLGfKSMF6Xm2EeIRDK2kD9x/0s=;
+	b=nYTQ268JOuUNC2VcmCgObTdtpXGddY/9lgjHWgC2DcPcigetNUkmCu3YW5r+wUPBv6PU5H
+	heDvZsh8TahnSPvJwG7ZH40vhyuc2OYPxA3LYH874dIMYWW/LcNli5XSPhlNzCHOJEPTer
+	ozp/hrz3f5glM1IkGOJ8nIm8+VVQmGg=
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1279713A31;
-	Tue, 26 Aug 2025 14:56:22 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D646813A31;
+	Tue, 26 Aug 2025 14:56:27 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /ckVAxbLrWi7TwAAD6G6ig
-	(envelope-from <jgross@suse.com>); Tue, 26 Aug 2025 14:56:22 +0000
+	id OwveMhvLrWjDTwAAD6G6ig
+	(envelope-from <jgross@suse.com>); Tue, 26 Aug 2025 14:56:27 +0000
 From: Juergen Gross <jgross@suse.com>
-To: linux-kernel@vger.kernel.org,
-	x86@kernel.org
+To: linux-kernel@vger.kernel.org
 Cc: Juergen Gross <jgross@suse.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
 	Stefano Stabellini <sstabellini@kernel.org>,
 	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
 	xen-devel@lists.xenproject.org
-Subject: [PATCH 2/3] xen: replace XENFEAT_auto_translated_physmap with xen_pv_domain()
-Date: Tue, 26 Aug 2025 16:56:07 +0200
-Message-ID: <20250826145608.10352-3-jgross@suse.com>
+Subject: [PATCH 3/3] drivers/xen/gntdev: use xen_pv_domain() instead of cached value
+Date: Tue, 26 Aug 2025 16:56:08 +0200
+Message-ID: <20250826145608.10352-4-jgross@suse.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250826145608.10352-1-jgross@suse.com>
 References: <20250826145608.10352-1-jgross@suse.com>
@@ -93,402 +86,231 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
 X-Spamd-Result: default: False [-6.80 / 50.00];
 	REPLY(-4.00)[];
 	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
 	R_MISSING_CHARSET(0.50)[];
 	NEURAL_HAM_SHORT(-0.20)[-0.999];
 	MIME_GOOD(-0.10)[text/plain];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid,suse.com:email,imap1.dmz-prg2.suse.org:helo];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_HAS_DN(0.00)[];
 	ARC_NA(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	R_RATELIMIT(0.00)[to_ip_from(RLfdszjqhz8kzzb9uwpzdm8png)];
 	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_FIVE(0.00)[5];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.com:mid,imap1.dmz-prg2.suse.org:helo];
 	RCVD_TLS_ALL(0.00)[]
 X-Spam-Flag: NO
-X-Spam-Level: 
 X-Spam-Score: -6.80
 
-Instead of testing the XENFEAT_auto_translated_physmap feature, just
-use !xen_pv_domain() which is equivalent.
+Eliminate the use_ptemod variable by replacing its use cases with
+xen_pv_domain().
 
-This has the advantage that a kernel not built with CONFIG_XEN_PV
-will be smaller due to dead code elimination.
+Instead of passing the xen_pv_domain() return value to
+gntdev_ioctl_dmabuf_exp_from_refs(), use xen_pv_domain() in that
+function.
 
 Signed-off-by: Juergen Gross <jgross@suse.com>
 ---
- arch/x86/include/asm/xen/page.h    | 14 +++++++-------
- arch/x86/xen/mmu.c                 |  2 +-
- arch/x86/xen/p2m.c                 |  4 ++--
- drivers/xen/balloon.c              |  4 ++--
- drivers/xen/gntdev.c               |  2 +-
- drivers/xen/grant-table.c          |  6 +++---
- drivers/xen/privcmd.c              | 14 ++++++--------
- drivers/xen/unpopulated-alloc.c    |  4 ++--
- drivers/xen/xenbus/xenbus_client.c |  2 +-
- include/xen/grant_table.h          |  4 ++--
- include/xen/mem-reservation.h      |  4 ++--
- include/xen/xen-ops.h              |  7 ++++---
- 12 files changed, 33 insertions(+), 34 deletions(-)
+ drivers/xen/gntdev-dmabuf.c |  7 +++----
+ drivers/xen/gntdev-dmabuf.h |  2 +-
+ drivers/xen/gntdev.c        | 33 ++++++++++++++-------------------
+ 3 files changed, 18 insertions(+), 24 deletions(-)
 
-diff --git a/arch/x86/include/asm/xen/page.h b/arch/x86/include/asm/xen/page.h
-index 85e63d58c074..59f642a94b9d 100644
---- a/arch/x86/include/asm/xen/page.h
-+++ b/arch/x86/include/asm/xen/page.h
-@@ -12,9 +12,9 @@
- #include <asm/extable.h>
- #include <asm/page.h>
+diff --git a/drivers/xen/gntdev-dmabuf.c b/drivers/xen/gntdev-dmabuf.c
+index 82855105ab85..550980dd3b0b 100644
+--- a/drivers/xen/gntdev-dmabuf.c
++++ b/drivers/xen/gntdev-dmabuf.c
+@@ -720,16 +720,15 @@ static void dmabuf_imp_release_all(struct gntdev_dmabuf_priv *priv)
  
-+#include <xen/xen.h>
- #include <xen/interface/xen.h>
- #include <xen/interface/grant_table.h>
--#include <xen/features.h>
+ /* DMA buffer IOCTL support. */
  
- /* Xen machine address */
- typedef struct xmaddr {
-@@ -162,7 +162,7 @@ static inline unsigned long pfn_to_mfn(unsigned long pfn)
- 	 * pfn_to_mfn. This will have to be removed when we figured
- 	 * out which call.
- 	 */
--	if (xen_feature(XENFEAT_auto_translated_physmap))
-+	if (!xen_pv_domain())
- 		return pfn;
- 
- 	mfn = __pfn_to_mfn(pfn);
-@@ -175,7 +175,7 @@ static inline unsigned long pfn_to_mfn(unsigned long pfn)
- 
- static inline int phys_to_machine_mapping_valid(unsigned long pfn)
+-long gntdev_ioctl_dmabuf_exp_from_refs(struct gntdev_priv *priv, int use_ptemod,
++long gntdev_ioctl_dmabuf_exp_from_refs(struct gntdev_priv *priv,
+ 				       struct ioctl_gntdev_dmabuf_exp_from_refs __user *u)
  {
--	if (xen_feature(XENFEAT_auto_translated_physmap))
-+	if (!xen_pv_domain())
- 		return 1;
+ 	struct ioctl_gntdev_dmabuf_exp_from_refs op;
+ 	u32 *refs;
+ 	long ret;
  
- 	return __pfn_to_mfn(pfn) != INVALID_P2M_ENTRY;
-@@ -210,7 +210,7 @@ static inline unsigned long mfn_to_pfn(unsigned long mfn)
- 	 * gfn_to_pfn. This will have to be removed when we figure
- 	 * out which call.
- 	 */
--	if (xen_feature(XENFEAT_auto_translated_physmap))
-+	if (!xen_pv_domain())
- 		return mfn;
- 
- 	pfn = mfn_to_pfn_no_overrides(mfn);
-@@ -242,7 +242,7 @@ static inline xpaddr_t machine_to_phys(xmaddr_t machine)
- /* Pseudo-physical <-> Guest conversion */
- static inline unsigned long pfn_to_gfn(unsigned long pfn)
- {
--	if (xen_feature(XENFEAT_auto_translated_physmap))
-+	if (!xen_pv_domain())
- 		return pfn;
- 	else
- 		return pfn_to_mfn(pfn);
-@@ -250,7 +250,7 @@ static inline unsigned long pfn_to_gfn(unsigned long pfn)
- 
- static inline unsigned long gfn_to_pfn(unsigned long gfn)
- {
--	if (xen_feature(XENFEAT_auto_translated_physmap))
-+	if (!xen_pv_domain())
- 		return gfn;
- 	else
- 		return mfn_to_pfn(gfn);
-@@ -284,7 +284,7 @@ static inline unsigned long bfn_to_local_pfn(unsigned long mfn)
- {
- 	unsigned long pfn;
- 
--	if (xen_feature(XENFEAT_auto_translated_physmap))
-+	if (!xen_pv_domain())
- 		return mfn;
- 
- 	pfn = mfn_to_pfn(mfn);
-diff --git a/arch/x86/xen/mmu.c b/arch/x86/xen/mmu.c
-index c4c479373249..3be45bf4bc79 100644
---- a/arch/x86/xen/mmu.c
-+++ b/arch/x86/xen/mmu.c
-@@ -41,7 +41,7 @@ EXPORT_SYMBOL_GPL(arbitrary_virt_to_machine);
- int xen_unmap_domain_gfn_range(struct vm_area_struct *vma,
- 			       int nr, struct page **pages)
- {
--	if (xen_feature(XENFEAT_auto_translated_physmap))
-+	if (!xen_pv_domain())
- 		return xen_xlate_unmap_gfn_range(vma, nr, pages);
- 
- 	if (!pages)
-diff --git a/arch/x86/xen/p2m.c b/arch/x86/xen/p2m.c
-index 56914e21e303..2dd12b61a230 100644
---- a/arch/x86/xen/p2m.c
-+++ b/arch/x86/xen/p2m.c
-@@ -686,7 +686,7 @@ int set_foreign_p2m_mapping(struct gnttab_map_grant_ref *map_ops,
- 	int i, ret = 0;
- 	pte_t *pte;
- 
--	if (xen_feature(XENFEAT_auto_translated_physmap))
-+	if (!xen_pv_domain())
- 		return 0;
- 
- 	if (kmap_ops) {
-@@ -769,7 +769,7 @@ int clear_foreign_p2m_mapping(struct gnttab_unmap_grant_ref *unmap_ops,
- {
- 	int i, ret = 0;
- 
--	if (xen_feature(XENFEAT_auto_translated_physmap))
-+	if (!xen_pv_domain())
- 		return 0;
- 
- 	for (i = 0; i < count; i++) {
-diff --git a/drivers/xen/balloon.c b/drivers/xen/balloon.c
-index 2de37dcd7556..49c3f9926394 100644
---- a/drivers/xen/balloon.c
-+++ b/drivers/xen/balloon.c
-@@ -302,7 +302,7 @@ static enum bp_state reserve_additional_memory(void)
-          * are not restored since this region is now known not to
-          * conflict with any devices.
-          */ 
--	if (!xen_feature(XENFEAT_auto_translated_physmap)) {
+-	if (use_ptemod) {
+-		pr_debug("Cannot provide dma-buf: use_ptemode %d\n",
+-			 use_ptemod);
 +	if (xen_pv_domain()) {
- 		unsigned long pfn, i;
++		pr_debug("Cannot provide dma-buf in a PV domain\n");
+ 		return -EINVAL;
+ 	}
  
- 		pfn = PFN_DOWN(resource->start);
-@@ -626,7 +626,7 @@ int xen_alloc_ballooned_pages(unsigned int nr_pages, struct page **pages)
- 			 */
- 			BUILD_BUG_ON(XEN_PAGE_SIZE != PAGE_SIZE);
+diff --git a/drivers/xen/gntdev-dmabuf.h b/drivers/xen/gntdev-dmabuf.h
+index 3d9b9cf9d5a1..9adf96ac74d3 100644
+--- a/drivers/xen/gntdev-dmabuf.h
++++ b/drivers/xen/gntdev-dmabuf.h
+@@ -18,7 +18,7 @@ struct gntdev_dmabuf_priv *gntdev_dmabuf_init(struct file *filp);
  
--			if (!xen_feature(XENFEAT_auto_translated_physmap)) {
-+			if (xen_pv_domain()) {
- 				ret = xen_alloc_p2m_entry(page_to_pfn(page));
- 				if (ret < 0)
- 					goto out_undo;
+ void gntdev_dmabuf_fini(struct gntdev_dmabuf_priv *priv);
+ 
+-long gntdev_ioctl_dmabuf_exp_from_refs(struct gntdev_priv *priv, int use_ptemod,
++long gntdev_ioctl_dmabuf_exp_from_refs(struct gntdev_priv *priv,
+ 				       struct ioctl_gntdev_dmabuf_exp_from_refs __user *u);
+ 
+ long gntdev_ioctl_dmabuf_exp_wait_released(struct gntdev_priv *priv,
 diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
-index 1f2160765618..74491967f2ae 100644
+index 74491967f2ae..91ba5078c9d9 100644
 --- a/drivers/xen/gntdev.c
 +++ b/drivers/xen/gntdev.c
-@@ -1183,7 +1183,7 @@ static int __init gntdev_init(void)
+@@ -73,9 +73,6 @@ module_param(limit, uint, 0644);
+ MODULE_PARM_DESC(limit,
+ 	"Maximum number of grants that may be mapped by one mapping request");
+ 
+-/* True in PV mode, false otherwise */
+-static int use_ptemod;
+-
+ static void unmap_grant_pages(struct gntdev_grant_map *map,
+ 			      int offset, int pages);
+ 
+@@ -163,7 +160,7 @@ struct gntdev_grant_map *gntdev_alloc_map(struct gntdev_priv *priv, int count,
+ 	    NULL == add->pages     ||
+ 	    NULL == add->being_removed)
+ 		goto err;
+-	if (use_ptemod) {
++	if (xen_pv_domain()) {
+ 		add->kmap_ops   = kvmalloc_array(count, sizeof(add->kmap_ops[0]),
+ 						 GFP_KERNEL);
+ 		add->kunmap_ops = kvmalloc_array(count, sizeof(add->kunmap_ops[0]),
+@@ -211,7 +208,7 @@ struct gntdev_grant_map *gntdev_alloc_map(struct gntdev_priv *priv, int count,
+ 		add->grants[i].ref = INVALID_GRANT_REF;
+ 		add->map_ops[i].handle = INVALID_GRANT_HANDLE;
+ 		add->unmap_ops[i].handle = INVALID_GRANT_HANDLE;
+-		if (use_ptemod) {
++		if (xen_pv_domain()) {
+ 			add->kmap_ops[i].handle = INVALID_GRANT_HANDLE;
+ 			add->kunmap_ops[i].handle = INVALID_GRANT_HANDLE;
+ 		}
+@@ -268,7 +265,7 @@ void gntdev_put_map(struct gntdev_priv *priv, struct gntdev_grant_map *map)
+ 	if (!refcount_dec_and_test(&map->users))
+ 		return;
+ 
+-	if (map->pages && !use_ptemod) {
++	if (map->pages && !xen_pv_domain()) {
+ 		/*
+ 		 * Increment the reference count.  This ensures that the
+ 		 * subsequent call to unmap_grant_pages() will not wind up
+@@ -298,7 +295,7 @@ void gntdev_put_map(struct gntdev_priv *priv, struct gntdev_grant_map *map)
+ 		 */
+ 	}
+ 
+-	if (use_ptemod && map->notifier_init)
++	if (xen_pv_domain() && map->notifier_init)
+ 		mmu_interval_notifier_remove(&map->notifier);
+ 
+ 	if (map->notify.flags & UNMAP_NOTIFY_SEND_EVENT) {
+@@ -334,7 +331,7 @@ int gntdev_map_grant_pages(struct gntdev_grant_map *map)
+ 	size_t alloced = 0;
+ 	int i, err = 0;
+ 
+-	if (!use_ptemod) {
++	if (!xen_pv_domain()) {
+ 		/* Note: it could already be mapped */
+ 		if (map->map_ops[0].handle != INVALID_GRANT_HANDLE)
+ 			return 0;
+@@ -389,7 +386,7 @@ int gntdev_map_grant_pages(struct gntdev_grant_map *map)
+ 		if (map->flags & GNTMAP_device_map)
+ 			map->unmap_ops[i].dev_bus_addr = map->map_ops[i].dev_bus_addr;
+ 
+-		if (use_ptemod) {
++		if (xen_pv_domain()) {
+ 			if (map->kmap_ops[i].status == GNTST_okay) {
+ 				alloced++;
+ 				map->kunmap_ops[i].handle = map->kmap_ops[i].handle;
+@@ -421,7 +418,7 @@ static void __unmap_grant_pages_done(int result,
+ 			map->unmap_ops[offset+i].handle,
+ 			map->unmap_ops[offset+i].status);
+ 		map->unmap_ops[offset+i].handle = INVALID_GRANT_HANDLE;
+-		if (use_ptemod) {
++		if (xen_pv_domain()) {
+ 			if (map->kunmap_ops[offset + i].status == GNTST_okay &&
+ 			    map->kunmap_ops[offset + i].handle != INVALID_GRANT_HANDLE)
+ 				successful_unmaps++;
+@@ -464,7 +461,7 @@ static void __unmap_grant_pages(struct gntdev_grant_map *map, int offset,
+ 	}
+ 
+ 	map->unmap_data.unmap_ops = map->unmap_ops + offset;
+-	map->unmap_data.kunmap_ops = use_ptemod ? map->kunmap_ops + offset : NULL;
++	map->unmap_data.kunmap_ops = xen_pv_domain() ? map->kunmap_ops + offset : NULL;
+ 	map->unmap_data.pages = map->pages + offset;
+ 	map->unmap_data.count = pages;
+ 	map->unmap_data.done = __unmap_grant_pages_done;
+@@ -1039,7 +1036,7 @@ static long gntdev_ioctl(struct file *flip,
+ 
+ #ifdef CONFIG_XEN_GNTDEV_DMABUF
+ 	case IOCTL_GNTDEV_DMABUF_EXP_FROM_REFS:
+-		return gntdev_ioctl_dmabuf_exp_from_refs(priv, use_ptemod, ptr);
++		return gntdev_ioctl_dmabuf_exp_from_refs(priv, ptr);
+ 
+ 	case IOCTL_GNTDEV_DMABUF_EXP_WAIT_RELEASED:
+ 		return gntdev_ioctl_dmabuf_exp_wait_released(priv, ptr);
+@@ -1086,7 +1083,7 @@ static int gntdev_mmap(struct file *flip, struct vm_area_struct *vma)
+ 
+ 	vm_flags_set(vma, VM_DONTEXPAND | VM_DONTDUMP | VM_MIXEDMAP);
+ 
+-	if (use_ptemod)
++	if (xen_pv_domain())
+ 		vm_flags_set(vma, VM_DONTCOPY);
+ 
+ 	vma->vm_private_data = map;
+@@ -1102,7 +1099,7 @@ static int gntdev_mmap(struct file *flip, struct vm_area_struct *vma)
+ 
+ 	map->pages_vm_start = vma->vm_start;
+ 
+-	if (use_ptemod) {
++	if (xen_pv_domain()) {
+ 		err = mmu_interval_notifier_insert_locked(
+ 			&map->notifier, vma->vm_mm, vma->vm_start,
+ 			vma->vm_end - vma->vm_start, &gntdev_mmu_ops);
+@@ -1113,7 +1110,7 @@ static int gntdev_mmap(struct file *flip, struct vm_area_struct *vma)
+ 	}
+ 	mutex_unlock(&priv->lock);
+ 
+-	if (use_ptemod) {
++	if (xen_pv_domain()) {
+ 		/*
+ 		 * gntdev takes the address of the PTE in find_grant_ptes() and
+ 		 * passes it to the hypervisor in gntdev_map_grant_pages(). The
+@@ -1139,7 +1136,7 @@ static int gntdev_mmap(struct file *flip, struct vm_area_struct *vma)
+ 	if (err)
+ 		goto out_put_map;
+ 
+-	if (!use_ptemod) {
++	if (!xen_pv_domain()) {
+ 		err = vm_map_pages_zero(vma, map->pages, map->count);
+ 		if (err)
+ 			goto out_put_map;
+@@ -1154,7 +1151,7 @@ static int gntdev_mmap(struct file *flip, struct vm_area_struct *vma)
+ out_unlock_put:
+ 	mutex_unlock(&priv->lock);
+ out_put_map:
+-	if (use_ptemod)
++	if (xen_pv_domain())
+ 		unmap_grant_pages(map, 0, map->count);
+ 	gntdev_put_map(priv, map);
+ 	return err;
+@@ -1183,8 +1180,6 @@ static int __init gntdev_init(void)
  	if (!xen_domain())
  		return -ENODEV;
  
--	use_ptemod = !xen_feature(XENFEAT_auto_translated_physmap);
-+	use_ptemod = xen_pv_domain();
- 
+-	use_ptemod = xen_pv_domain();
+-
  	err = misc_register(&gntdev_miscdev);
  	if (err != 0) {
-diff --git a/drivers/xen/grant-table.c b/drivers/xen/grant-table.c
-index 04a6b470b15d..478d2ad725ac 100644
---- a/drivers/xen/grant-table.c
-+++ b/drivers/xen/grant-table.c
-@@ -1449,7 +1449,7 @@ static int gnttab_map(unsigned int start_idx, unsigned int end_idx)
- 	unsigned int nr_gframes = end_idx + 1;
- 	int rc;
- 
--	if (xen_feature(XENFEAT_auto_translated_physmap)) {
-+	if (!xen_pv_domain()) {
- 		struct xen_add_to_physmap xatp;
- 		unsigned int i = end_idx;
- 		rc = 0;
-@@ -1570,7 +1570,7 @@ static int gnttab_setup(void)
- 	if (max_nr_gframes < nr_grant_frames)
- 		return -ENOSYS;
- 
--	if (xen_feature(XENFEAT_auto_translated_physmap) && gnttab_shared.addr == NULL) {
-+	if (!xen_pv_domain() && gnttab_shared.addr == NULL) {
- 		gnttab_shared.addr = xen_auto_xlat_grant_frames.vaddr;
- 		if (gnttab_shared.addr == NULL) {
- 			pr_warn("gnttab share frames is not mapped!\n");
-@@ -1588,7 +1588,7 @@ int gnttab_resume(void)
- 
- int gnttab_suspend(void)
- {
--	if (!xen_feature(XENFEAT_auto_translated_physmap))
-+	if (xen_pv_domain())
- 		gnttab_interface->unmap_frames();
- 	return 0;
- }
-diff --git a/drivers/xen/privcmd.c b/drivers/xen/privcmd.c
-index 13a10f3294a8..f52a457b302d 100644
---- a/drivers/xen/privcmd.c
-+++ b/drivers/xen/privcmd.c
-@@ -271,7 +271,7 @@ static long privcmd_ioctl_mmap(struct file *file, void __user *udata)
- 	struct mmap_gfn_state state;
- 
- 	/* We only support privcmd_ioctl_mmap_batch for non-auto-translated. */
--	if (xen_feature(XENFEAT_auto_translated_physmap))
-+	if (!xen_pv_domain())
- 		return -ENOSYS;
- 
- 	if (copy_from_user(&mmapcmd, udata, sizeof(mmapcmd)))
-@@ -353,7 +353,7 @@ static int mmap_batch_fn(void *data, int nr, void *state)
- 	struct page **cur_pages = NULL;
- 	int ret;
- 
--	if (xen_feature(XENFEAT_auto_translated_physmap))
-+	if (!xen_pv_domain())
- 		cur_pages = &pages[st->index];
- 
- 	BUG_ON(nr < 0);
-@@ -535,7 +535,7 @@ static long privcmd_ioctl_mmap_batch(
- 			ret = -EINVAL;
- 			goto out_unlock;
- 		}
--		if (xen_feature(XENFEAT_auto_translated_physmap)) {
-+		if (!xen_pv_domain()) {
- 			ret = alloc_empty_pages(vma, nr_pages);
- 			if (ret < 0)
- 				goto out_unlock;
-@@ -779,8 +779,7 @@ static long privcmd_ioctl_mmap_resource(struct file *file,
- 		goto out;
- 	}
- 
--	if (IS_ENABLED(CONFIG_XEN_AUTO_XLATE) &&
--	    xen_feature(XENFEAT_auto_translated_physmap)) {
-+	if (IS_ENABLED(CONFIG_XEN_AUTO_XLATE) && !xen_pv_domain()) {
- 		unsigned int nr = DIV_ROUND_UP(kdata.num, XEN_PFN_PER_PAGE);
- 		struct page **pages;
- 		unsigned int i;
-@@ -811,8 +810,7 @@ static long privcmd_ioctl_mmap_resource(struct file *file,
- 	if (rc)
- 		goto out;
- 
--	if (IS_ENABLED(CONFIG_XEN_AUTO_XLATE) &&
--	    xen_feature(XENFEAT_auto_translated_physmap)) {
-+	if (IS_ENABLED(CONFIG_XEN_AUTO_XLATE) && !xen_pv_domain()) {
- 		rc = xen_remap_vma_range(vma, kdata.addr, kdata.num << PAGE_SHIFT);
- 	} else {
- 		unsigned int domid =
-@@ -1591,7 +1589,7 @@ static void privcmd_close(struct vm_area_struct *vma)
- 	int numgfns = (vma->vm_end - vma->vm_start) >> XEN_PAGE_SHIFT;
- 	int rc;
- 
--	if (!xen_feature(XENFEAT_auto_translated_physmap) || !numpgs || !pages)
-+	if (xen_pv_domain() || !numpgs || !pages)
- 		return;
- 
- 	rc = xen_unmap_domain_gfn_range(vma, numgfns, pages);
-diff --git a/drivers/xen/unpopulated-alloc.c b/drivers/xen/unpopulated-alloc.c
-index a39f2d36dd9c..d6fc2aefe264 100644
---- a/drivers/xen/unpopulated-alloc.c
-+++ b/drivers/xen/unpopulated-alloc.c
-@@ -105,7 +105,7 @@ static int fill_list(unsigned int nr_pages)
-          * are not restored since this region is now known not to
-          * conflict with any devices.
-          */
--	if (!xen_feature(XENFEAT_auto_translated_physmap)) {
-+	if (xen_pv_domain()) {
- 		xen_pfn_t pfn = PFN_DOWN(res->start);
- 
- 		for (i = 0; i < alloc_pages; i++) {
-@@ -184,7 +184,7 @@ int xen_alloc_unpopulated_pages(unsigned int nr_pages, struct page **pages)
- 		pages[i] = pg;
- 
- #ifdef CONFIG_XEN_HAVE_PVMMU
--		if (!xen_feature(XENFEAT_auto_translated_physmap)) {
-+		if (xen_pv_domain()) {
- 			ret = xen_alloc_p2m_entry(page_to_pfn(pg));
- 			if (ret < 0) {
- 				unsigned int j;
-diff --git a/drivers/xen/xenbus/xenbus_client.c b/drivers/xen/xenbus/xenbus_client.c
-index e73ec225d4a6..2dc874fb5506 100644
---- a/drivers/xen/xenbus/xenbus_client.c
-+++ b/drivers/xen/xenbus/xenbus_client.c
-@@ -955,7 +955,7 @@ static const struct xenbus_ring_ops ring_ops_hvm = {
- void __init xenbus_ring_ops_init(void)
- {
- #ifdef CONFIG_XEN_PV
--	if (!xen_feature(XENFEAT_auto_translated_physmap))
-+	if (xen_pv_domain())
- 		ring_ops = &ring_ops_pv;
- 	else
- #endif
-diff --git a/include/xen/grant_table.h b/include/xen/grant_table.h
-index e279be353e3f..69ac6d80a006 100644
---- a/include/xen/grant_table.h
-+++ b/include/xen/grant_table.h
-@@ -164,7 +164,7 @@ gnttab_set_map_op(struct gnttab_map_grant_ref *map, phys_addr_t addr,
- {
- 	if (flags & GNTMAP_contains_pte)
- 		map->host_addr = addr;
--	else if (xen_feature(XENFEAT_auto_translated_physmap))
-+	else if (!xen_pv_domain())
- 		map->host_addr = __pa(addr);
- 	else
- 		map->host_addr = addr;
-@@ -181,7 +181,7 @@ gnttab_set_unmap_op(struct gnttab_unmap_grant_ref *unmap, phys_addr_t addr,
- {
- 	if (flags & GNTMAP_contains_pte)
- 		unmap->host_addr = addr;
--	else if (xen_feature(XENFEAT_auto_translated_physmap))
-+	else if (!xen_pv_domain())
- 		unmap->host_addr = __pa(addr);
- 	else
- 		unmap->host_addr = addr;
-diff --git a/include/xen/mem-reservation.h b/include/xen/mem-reservation.h
-index a2ab516fcd2c..3cbe3df0dfd4 100644
---- a/include/xen/mem-reservation.h
-+++ b/include/xen/mem-reservation.h
-@@ -39,7 +39,7 @@ static inline void xenmem_reservation_va_mapping_update(unsigned long count,
- 							xen_pfn_t *frames)
- {
- #ifdef CONFIG_XEN_HAVE_PVMMU
--	if (!xen_feature(XENFEAT_auto_translated_physmap))
-+	if (xen_pv_domain())
- 		__xenmem_reservation_va_mapping_update(count, pages, frames);
- #endif
- }
-@@ -48,7 +48,7 @@ static inline void xenmem_reservation_va_mapping_reset(unsigned long count,
- 						       struct page **pages)
- {
- #ifdef CONFIG_XEN_HAVE_PVMMU
--	if (!xen_feature(XENFEAT_auto_translated_physmap))
-+	if (xen_pv_domain())
- 		__xenmem_reservation_va_mapping_reset(count, pages);
- #endif
- }
-diff --git a/include/xen/xen-ops.h b/include/xen/xen-ops.h
-index 9e2a769b0d96..496e6013c689 100644
---- a/include/xen/xen-ops.h
-+++ b/include/xen/xen-ops.h
-@@ -6,6 +6,7 @@
- #include <linux/notifier.h>
- #include <linux/efi.h>
- #include <linux/virtio_anchor.h>
-+#include <xen/xen.h>
- #include <xen/features.h>
- #include <asm/xen/interface.h>
- #include <xen/interface/vcpu.h>
-@@ -116,7 +117,7 @@ static inline int xen_remap_domain_gfn_array(struct vm_area_struct *vma,
- 					     unsigned int domid,
- 					     struct page **pages)
- {
--	if (xen_feature(XENFEAT_auto_translated_physmap))
-+	if (!xen_pv_domain())
- 		return xen_xlate_remap_gfn_array(vma, addr, gfn, nr, err_ptr,
- 						 prot, domid, pages);
- 
-@@ -150,7 +151,7 @@ static inline int xen_remap_domain_mfn_array(struct vm_area_struct *vma,
- 					     int nr, int *err_ptr,
- 					     pgprot_t prot, unsigned int domid)
- {
--	if (xen_feature(XENFEAT_auto_translated_physmap))
-+	if (!xen_pv_domain())
- 		return -EOPNOTSUPP;
- 
- 	return xen_remap_pfn(vma, addr, mfn, nr, err_ptr, prot, domid,
-@@ -175,7 +176,7 @@ static inline int xen_remap_domain_gfn_range(struct vm_area_struct *vma,
- 					     pgprot_t prot, unsigned int domid,
- 					     struct page **pages)
- {
--	if (xen_feature(XENFEAT_auto_translated_physmap))
-+	if (!xen_pv_domain())
- 		return -EOPNOTSUPP;
- 
- 	return xen_remap_pfn(vma, addr, &gfn, nr, NULL, prot, domid, false);
+ 		pr_err("Could not register gntdev device\n");
 -- 
 2.43.0
 
