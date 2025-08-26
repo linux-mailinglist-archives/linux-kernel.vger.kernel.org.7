@@ -1,87 +1,101 @@
-Return-Path: <linux-kernel+bounces-785958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D044B352EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:57:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85288B352EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:59:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 981637AB5AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:55:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42FAF5E8448
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:59:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE512E2F08;
-	Tue, 26 Aug 2025 04:57:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="R5PlInEp"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC6D72DECB2;
-	Tue, 26 Aug 2025 04:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00FD82E2DCF;
+	Tue, 26 Aug 2025 04:59:25 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B67620551C;
+	Tue, 26 Aug 2025 04:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756184231; cv=none; b=trRSqdWZwgqIL51zZ+ZIS25eB1OtEeBXHN4qFm4NCpodgGEN8aJjdygCcZ8KdCG3rt+Dy5WPecAY3ndKdp9xJznEo/kMNH4NUYNs/emnsWSowFTZ0D2V4RFaNqSmS7FAe9okcFZvBEAYJiuCBhlYdFRNBiebYGcB8OLY7OG+kpw=
+	t=1756184364; cv=none; b=qGlafg58DEnWvDhB5QNT08lNGhbF7XK0YxM9TZcRBm0CvIeN3ZKn7Guvz7s57zZcqc9FTSRlPCZcIXin1DGiJK3FX9K7AkNoaWXDjR2+WhToPBOVa+XZu/JKN5NWx64+SWFAQgPnWMD/FWq2uG0k6l1ZkiI+zUKTq8MdnvyxP2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756184231; c=relaxed/simple;
-	bh=xwMIaGQKz8p0Si+xGqmhBmPMRxKtcpPXxfbp1aDgx/U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UIXdpeTjDgBipRuu1OIe1HducQQ7Ok0yaQcP/qjhX7h6LyShhDSt6f9CIsQfF6T/GjMTx/gtcJw+hSbXAG3pO+oFVbxtlflxVPa2D1whcI5jsaaoa8Ue4If7FUA2qKwwaBDt4jqIigyDTzFfZ/AOzqkO4btKl0tY8ox5NDxbD3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=R5PlInEp; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1127)
-	id 5ACCC211829D; Mon, 25 Aug 2025 21:57:09 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5ACCC211829D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1756184229;
-	bh=1SFbtV4WkD6PXoKrfW4+V58ZRmMRw6Cp+HTFsBe/b9U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R5PlInEp8xIb3pHwGaQkKup92Sl6gUT5NR5COZvZXaLTfEnfE76mfeaHpy14ch4la
-	 nRCWzZDBENIerpuXmpjyriFlrvVGfGSIkxJjKL+iguGAFph78S5tQkQ7eRvYzkB+ea
-	 RH0Ogy98u8JsYR/tjb/+GEePlov1eMyfw6ZSSGGs=
-Date: Mon, 25 Aug 2025 21:57:09 -0700
-From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, pabeni@redhat.com,
-	shradhagupta@linux.microsoft.com, ernis@linux.microsoft.com,
-	dipayanroy@linux.microsoft.com, shirazsaleem@microsoft.com,
-	linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ssengar@microsoft.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH net] net: mana: Remove redundant
- netdev_lock_ops_to_full() calls
-Message-ID: <20250826045709.GA2238@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1756119794-20110-1-git-send-email-ssengar@linux.microsoft.com>
- <20250825174133.30e58c60@kernel.org>
+	s=arc-20240116; t=1756184364; c=relaxed/simple;
+	bh=vtWZCqxOns3+V4/9Z1Du/nZLNLGy4uCskUYcOMcpDp4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=BjXqUC4MGXhrMV4Y2ZLECHPYBfwZi9xmcntr4Ea0+NyPxaQ7/mNgYnjOoK91BvX60K+ysWbBQEyxYdhrbcHXOFOFvT5nzafTYQVckPKBMv2B+0hgr2sUm/1KegKyhw89SLQTHPlLpcpF5FOjsJotitBtHZIZ1dkVOkTIgSgcJTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4c9wMs74THz13NLV;
+	Tue, 26 Aug 2025 12:55:37 +0800 (CST)
+Received: from kwepemk100018.china.huawei.com (unknown [7.202.194.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id B38881402CF;
+	Tue, 26 Aug 2025 12:59:18 +0800 (CST)
+Received: from [10.67.110.48] (10.67.110.48) by kwepemk100018.china.huawei.com
+ (7.202.194.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 26 Aug
+ 2025 12:59:17 +0800
+Message-ID: <97dca868-dc8a-422a-aa47-ce2bb739e640@huawei.com>
+Date: Tue, 26 Aug 2025 12:59:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250825174133.30e58c60@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] slab: support for compiler-assisted type-based slab
+ cache partitioning
+To: Marco Elver <elver@google.com>
+CC: <linux-kernel@vger.kernel.org>, <kasan-dev@googlegroups.com>, "Gustavo A.
+ R. Silva" <gustavoars@kernel.org>, "Liam R. Howlett"
+	<Liam.Howlett@oracle.com>, Alexander Potapenko <glider@google.com>, Andrew
+ Morton <akpm@linux-foundation.org>, Andrey Konovalov <andreyknvl@gmail.com>,
+	David Hildenbrand <david@redhat.com>, David Rientjes <rientjes@google.com>,
+	Dmitry Vyukov <dvyukov@google.com>, Florent Revest <revest@google.com>, Harry
+ Yoo <harry.yoo@oracle.com>, Jann Horn <jannh@google.com>, Kees Cook
+	<kees@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Matteo Rizzo
+	<matteorizzo@google.com>, Michal Hocko <mhocko@suse.com>, Mike Rapoport
+	<rppt@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Roman Gushchin
+	<roman.gushchin@linux.dev>, Suren Baghdasaryan <surenb@google.com>, Vlastimil
+ Babka <vbabka@suse.cz>, <linux-hardening@vger.kernel.org>,
+	<linux-mm@kvack.org>
+References: <20250825154505.1558444-1-elver@google.com>
+Content-Language: en-US
+From: GONG Ruiqi <gongruiqi1@huawei.com>
+In-Reply-To: <20250825154505.1558444-1-elver@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemk100018.china.huawei.com (7.202.194.66)
 
-On Mon, Aug 25, 2025 at 05:41:33PM -0700, Jakub Kicinski wrote:
-> On Mon, 25 Aug 2025 04:03:14 -0700 Saurabh Sengar wrote:
-> > NET_SHAPER is always selected for MANA driver. When NET_SHAPER is enabled,
-> > netdev_lock_ops_to_full() reduces effectively to only an assert for lock,
-> > which is always held in the path when NET_SHAPER is enabled.
-> > 
-> > Remove the redundant netdev_lock_ops_to_full() call.
-> > 
-> > Fixes: d5c8f0e4e0cb ("net: mana: Fix potential deadlocks in mana napi ops")
-> > Cc: stable@vger.kernel.org
+
+On 8/25/2025 11:44 PM, Marco Elver wrote:
+> ...
 > 
-> If the call is a nop why is this a stable-worthy fix?
+> Introduce a new mode, TYPED_KMALLOC_CACHES, which leverages Clang's
+> "allocation tokens" via __builtin_alloc_token_infer [1].
+> 
+> This mechanism allows the compiler to pass a token ID derived from the
+> allocation's type to the allocator. The compiler performs best-effort
+> type inference, and recognizes idioms such as kmalloc(sizeof(T), ...).
+> Unlike RANDOM_KMALLOC_CACHES, this mode deterministically assigns a slab
+> cache to an allocation of type T, regardless of allocation site.
+> 
+> Clang's default token ID calculation is described as [1]:
+> 
+>    TypeHashPointerSplit: This mode assigns a token ID based on the hash
+>    of the allocated type's name, where the top half ID-space is reserved
+>    for types that contain pointers and the bottom half for types that do
+>    not contain pointers.
+> 
 
-I am fine removing CC and fixes tag.
-I can send a V2 for it.
+Is a type's token id always the same across different builds? Or somehow
+predictable? If so, the attacker could probably find out all types that
+end up with the same id, and use some of them to exploit the buggy one.
 
-
-- Saurabh
-
+-Ruiqi
 
