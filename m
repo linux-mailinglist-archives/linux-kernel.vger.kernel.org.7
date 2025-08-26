@@ -1,119 +1,198 @@
-Return-Path: <linux-kernel+bounces-786433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18245B359BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:03:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92AB8B359CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:06:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0DDF3B13F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:03:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FE8A3BB286
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:06:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36586319858;
-	Tue, 26 Aug 2025 10:03:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F142FB97D;
+	Tue, 26 Aug 2025 10:06:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="f2UCS8gX"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PwkFVEvh"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24B802FAC0A
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 10:03:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54922FAC1F;
+	Tue, 26 Aug 2025 10:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756202602; cv=none; b=CseWE13gLA/EJIG7MKwpGsfZvDP3XmqjrWFFmB7CwhnZhOiwYSxqlkmzIq1K3tFbBMwt6Dn9bfpbKPDCk2DyJ5NNT80HezqUIjh+Rvk0kPaNh07KCM7sb1LeQFhym4YDO9uWMj+GCzP/qeK0/1mlEn+OvNfNlm1zvVXMrBK43d8=
+	t=1756202782; cv=none; b=EJtIw5ChXS7YA7dyR8pcL28P1YrWE6o/dFr8dCgMQpZ8jy4qe9SNv/+3wWKCFozodC7y3HgjiEu8AVPrKp/h40skDcNjQJZSg11dHCJBNkmnAPactnSsDSPTWT2iVTzE00Ku1KunEDaxOvesP3EcJlI/MrW3eBtrBgsMpipaPXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756202602; c=relaxed/simple;
-	bh=xevhfAazTddx0rQjEFUdAx6GLBraql1L8NM2pfEwN9I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=igeKYs3XkftDw0SSN8o0mOk2v6r0+WIbvuMgRfDzcB/beYi7xccmuZP5jg6+ZD7eDQJBPI7/anbMrzWg+PSl4I1Cs2lxLIXfKM2CWgaIUajc4awnZOVhFoZlKBraj/rLbek6Lp06SSnB1KhibRstIXE3sthUnnkqiwPoo2cXcDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=f2UCS8gX; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45a1b00797dso43414065e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 03:03:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756202599; x=1756807399; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cBqfnxPgAMrsbBcXZi3Cjt/GmjJIAGmLFwEyWU22RiY=;
-        b=f2UCS8gXWLwmQ50s+/yR8zA7E1NtlXB8KO2r5YSvL0Z/BZjLZJ8GVG1nfRRnnAl6hd
-         87AY4q6/0FwXNBMoVWwFK4L3ymyPgzQ/3W9Xueey1QujBbhDsjaicFjpcSfgfj/DZrou
-         MAYztSGCVfZtn3tAixshr5X521wcEaoe0UXPDqdEOQ+TArTeR5ESHTHeyXEgNbiqy4VQ
-         gli9Ze+JMMSKP4kMNyXBYnwmhiyCc2ZVnhJgEBoCnahkNW92hdy4NpGAgWHuXYqQzlxE
-         e9kYtZ8aGZ0plENB1KxkZWJBscBKGgq+C5xoY1v1DYi2bO4xFRNcMxTXRBXUlQ/WBeKC
-         Gu4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756202599; x=1756807399;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cBqfnxPgAMrsbBcXZi3Cjt/GmjJIAGmLFwEyWU22RiY=;
-        b=sUM5EJd39auECl++bpC4XphMct8IEtfSiIGgnfR8nPtxcpp07IPI2DApNUcB6o2BB9
-         dEkYZKt7Q3i3I6bGlOf/ulwZrs9XQtjC9z57Qng6WOuUTnpP5RkxfuwGanp7Sh3ZjkVj
-         rroMwbKj49Ak7sVvIeSYY92XOKDXDSWpT50ETEzUBFr6iIVg47DjAUQ9FYJl02Dgsdcn
-         E9bwORHJAr1reoxwd5cORp4j5mzL8AXRZ8l1RSsMT6CcWJwtNKbXWwvCOWmTLLFX4cP4
-         fLvJDl1oRm6jMU6oIrHAU0L319iFzDvS8gMRXJ6pTih2okY5BMSmcxypnksnVYgeyVuF
-         +4og==
-X-Forwarded-Encrypted: i=1; AJvYcCUAqk05XQsfUTQr9R3CMdpKd8lz/F83088JYZ6oODQ3Jg7QxEsLCz4sBydRLM10T8HGBeOA+B5CFfz9FWo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfmRiecbqSWTxRVkjUCyYsFXEhIECZf13wjIjA0Ype36MPyQuA
-	1Mckfq84zd+e2lbjU73uqShtWzs1LV5FE4EhxCkIZxg82xRuFSd5W5fzI+glWdu/YPE=
-X-Gm-Gg: ASbGncsOk2qVgo49oOu42ZyGv2jkmKRZ4KoF8uryK59srb8/AzHtVt0IhjivgA8xH00
-	XQn3MAUhLXLNgxg0Fmau0vRIeU6vP5PxAcq5AMh01wSP2TQEVSEVljBw/hgxV18f1nvGe1AzFxr
-	hRrsqp/Gh+BHEXgsDmSnZG7dSETjpxAIpz9aY/XwefYUeU4ghxr9WBNO8eepzXoKOeE3T1gzoLG
-	5au2zsx6MZdeiRZ/5FUw5Efw4tj/SHuDafdijvJGx0ZCHmsD/8wObRFLsaf2e1v/GKyAuvQuWEC
-	Vhq4kMIEtqoJ8N1zfsxqPr88iEObYfS7PPpZxZt0a8V1kPADIsDi4oXMwGAtHb8FqAeI2L4Xyf8
-	km1ac1MD2z2kUT02ShvUNOojH
-X-Google-Smtp-Source: AGHT+IE6TWi8fg6okLLjPcaEFCRB/2mOkzoLagFUTSt4mPmBp6bUoi+XqTJoRHs4NKTP8NhEfIQA9Q==
-X-Received: by 2002:a05:600c:4590:b0:45b:47e1:ef67 with SMTP id 5b1f17b1804b1-45b517e8d46mr98883845e9.34.1756202599397;
-        Tue, 26 Aug 2025 03:03:19 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:fed4:79fc:9440:6629])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b661cb14bsm13613675e9.2.2025.08.26.03.03.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 03:03:18 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Junjie Cao <junjie.cao@intel.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpio: timberdale: fix off-by-one in IRQ type boundary check
-Date: Tue, 26 Aug 2025 12:03:17 +0200
-Message-ID: <175620259460.21991.7139337951107127710.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250825090850.127163-1-junjie.cao@intel.com>
-References: <20250825090850.127163-1-junjie.cao@intel.com>
+	s=arc-20240116; t=1756202782; c=relaxed/simple;
+	bh=ZHDEzLt3ke3YooF7ZHo7o3l+OS3wk+ZeRiPs0mQqst4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Pc/hK4iKSg9jVaBTLR/rt1TtcQR0YjWtyh0qB3wpSj+L3yzFT2887vbeLPKFt3KUzYJBWqyFAElaWhRKr2qMTPTrAFpY7IfFfOFsf6rWPJpw3Z2+10H1xBBihdu9q/ii2g+imWilduXJG2Qy5KNoCchR6Kog1jnPKshkq5jS+bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PwkFVEvh; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57Q98Ol9008931;
+	Tue, 26 Aug 2025 10:05:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=yfEvTd
+	P8OMZx3Uvax13oqPCUxjoe2ObopJrczyfNJ7k=; b=PwkFVEvh8VEr2p5Z89g+G7
+	OcRD8wOk3IHi1D1CAi1JRDiwMgrNq/mH1uMrJ5wrgUtdX5669JIIS2PrordjbLYx
+	r2o6zFyo0G2cQeJHnTPfrt7CVjKR+R/1Zl55Eq27ejW7qVx7gfS7Gfepz6uy+PiM
+	t798RVOKNR0cdyNuIILoe9zahFmALjK3A7KMRNpuF5b580rjISijF05XXU9R7lE+
+	vv+nzdXjYlfmz1GSCVobSSnbvspkIRisRAiuA/VDIRJHo0VHcdjv2aFl72pNsL1x
+	bWmivbCtcj01M0uNXsszMrM1HXfGU1FXKeYIUXAuzROIjYYmppKV/XxhLMiZGmGg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48q5avdswj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Aug 2025 10:05:19 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57QA59qf025127;
+	Tue, 26 Aug 2025 10:05:18 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48q5avdswe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Aug 2025 10:05:18 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57Q7UgP8002543;
+	Tue, 26 Aug 2025 10:05:17 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48qrypj6kk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Aug 2025 10:05:17 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57QA5DIT50594212
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 26 Aug 2025 10:05:13 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3911E20063;
+	Tue, 26 Aug 2025 10:05:13 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7F5CC20040;
+	Tue, 26 Aug 2025 10:05:04 +0000 (GMT)
+Received: from [9.39.23.183] (unknown [9.39.23.183])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 26 Aug 2025 10:05:04 +0000 (GMT)
+Message-ID: <b64c820d-084a-40d9-bb4e-82986b9e6482@linux.ibm.com>
+Date: Tue, 26 Aug 2025 15:35:03 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 0/8] sched/fair: Get rid of sched_domains_curr_level
+ hack for tl->cpumask()
+To: K Prateek Nayak <kprateek.nayak@amd.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+        thomas.weissschuh@linutronix.de, Li Chen <chenl311@chinatelecom.cn>,
+        Bibo Mao <maobibo@loongson.cn>, Mete Durlu <meted@linux.ibm.com>,
+        Tobias Huschle <huschle@linux.ibm.com>,
+        Easwar Hariharan <easwar.hariharan@linux.microsoft.com>,
+        Guo Weikang <guoweikang.kernel@gmail.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
+        Swapnil Sapkal <swapnil.sapkal@amd.com>,
+        "Yury Norov [NVIDIA]" <yury.norov@gmail.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Andrea Righi <arighi@nvidia.com>,
+        Yicong Yang <yangyicong@hisilicon.com>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org
+References: <20250826041319.1284-1-kprateek.nayak@amd.com>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <20250826041319.1284-1-kprateek.nayak@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: uGQuBa1nC4_TybwDa_PF212jwdXWPegi
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAyMSBTYWx0ZWRfXxUR18LG6id+8
+ cifRDYAQOr1tXWx9SgcNQM6dWtDCpd6fZoA9ntMZMFc3a9etCqoFE7WvzJfIpYpPezhSUFgz2Qq
+ wMaFsKnj4v5s/OI0GC1S7TyDdxJa2HFqaEbxkjcoc0P7W5kvLnkJZSpZsgh1kEwBTi5XKTfncVh
+ x4TZUgi6iJedAUGPUI4PpUra8S58w7I/JCreN1vo7yqE7LNa1WzgM69ZI36f1fd9R40XaeDV0Jm
+ wvjjwPsre0pom2Xn1oZtB+qNBFXG13X1cDeG3qjDt1zxKUSywd00dSqKQq26DxqqWXerOxyNp1i
+ 4mxSRZO0qHuBaN71FSfwhkFpXqd9q1S0zH1E8+p9Y9/P706KNzy02GMiorLUtGnrT4fo7cm5/kU
+ 61CxWupl
+X-Proofpoint-ORIG-GUID: yP65Ia-GiOKTqCIl4llIBnzZIDcWEbSZ
+X-Authority-Analysis: v=2.4 cv=SNNCVPvH c=1 sm=1 tr=0 ts=68ad86df cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=WsHKUha7AAAA:8
+ a=zd2uoN0lAAAA:8 a=eqgBTtMHAimxLhlMCKkA:9 a=QEXdDO2ut3YA:10
+ a=H4LAKuo8djmI0KOkngUh:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-26_02,2025-08-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 adultscore=0 bulkscore=0 phishscore=0 clxscore=1015
+ impostorscore=0 malwarescore=0 suspectscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230021
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
-On Mon, 25 Aug 2025 17:08:50 +0800, Junjie Cao wrote:
-> timbgpio_irq_type() currently accepts offset == ngpio, violating
-> gpiolib's [0..ngpio-1] contract. This can lead to undefined behavior
-> when computing '1 << offset', and it is also inconsistent with users
-> that iterate with for_each_set_bit(..., ngpio).
+On 8/26/25 9:43 AM, K Prateek Nayak wrote:
+> This version uses Peter's suggestion from [1] as if and incrementally
+> adds cleanup on top to the arch/ bits. I've tested the x86 side but the
+> PowerPC and the s390 bits are only build tested. Review and feedback is
+> greatly appreciated.
 > 
-> Tighten the upper bound to reject offset == ngpio. No functional change
-> for in-range offsets.
+> [1] https://lore.kernel.org/lkml/20250825091910.GT3245006@noisy.programming.kicks-ass.net/
 > 
-> [...]
+> Patches are prepared on top of tip:master at commit 4628e5bbca91 ("Merge
+> branch into tip/master: 'x86/tdx'")
+> ---
+> changelog v6..v7:
+> 
+> o Fix the s390 and ppc build errors (Intel test robot)
+> 
+> o Use Peter's diff as is and incrementally do the cleanup on top. The
+>    PowerPC part was slightly more extensive due to the lack of
+>    CONFIG_SCHED_MC in arch/powerpc/Kconfig.
+> 
+> v6: https://lore.kernel.org/lkml/20250825120244.11093-1-kprateek.nayak@amd.com/
+> ---
+> K Prateek Nayak (7):
+>    powerpc/smp: Rename cpu_corgroup_* to cpu_corgrp_*
+>    powerpc/smp: Export cpu_coregroup_mask()
+>    powerpc/smp: Introduce CONFIG_SCHED_MC to guard MC scheduling bits
+>    sched/topology: Unify tl_smt_mask() across core and all arch
+>    sched/topology: Unify tl_cls_mask() across core and x86
+>    sched/topology: Unify tl_mc_mask() across core and all arch
+>    sched/topology: Unify tl_pkg_mask() across core and all arch
+> 
+> Peter Zijlstra (1):
+>    sched/fair: Get rid of sched_domains_curr_level hack for tl->cpumask()
+> 
+Can the names be standardized to begin with tl_ ?
 
-Applied, thanks!
-
-[1/1] gpio: timberdale: fix off-by-one in IRQ type boundary check
-      https://git.kernel.org/brgl/linux/c/810e154d90f44127239957b06ee51a55553a5815
-
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+arch/powerpc/kernel/smp.c:			SDTL_INIT(smallcore_smt_mask, powerpc_smt_flags, SMT);
+arch/powerpc/kernel/smp.c:			SDTL_INIT(shared_cache_mask, powerpc_shared_cache_flags, CACHE);
+arch/s390/kernel/topology.c:	SDTL_INIT(cpu_book_mask, NULL, BOOK),
+arch/s390/kernel/topology.c:	SDTL_INIT(cpu_drawer_mask, NULL, DRAWER),
+kernel/sched/topology.c:	tl[i++] = SDTL_INIT(sd_numa_mask, NULL, NODE);
+kernel/sched/topology.c:		tl[i] = SDTL_INIT(sd_numa_mask, cpu_numa_flags, NUMA);
 
