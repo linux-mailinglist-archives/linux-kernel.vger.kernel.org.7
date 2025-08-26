@@ -1,214 +1,86 @@
-Return-Path: <linux-kernel+bounces-786673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60930B361E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:13:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A06F2B361EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:14:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4433517E7A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:08:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C30268A404A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363022F8BCB;
-	Tue, 26 Aug 2025 13:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EqPZWql6"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509D4284678;
+	Tue, 26 Aug 2025 13:08:38 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8836928000C
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 13:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D9126B747
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 13:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756213698; cv=none; b=nbyr6o9ClBA1iI59YKhnOTpjuWIVlt5CGfY2ikkpIQAD0wFYM3LRTx0hDj9nkFT71laDJ5t4sOIRhMSS3jheTje/QYEtQk+RXzE0UPUJudJDNRA7CMMBLn5KjspNvj0O8OyQd44bp7s1H4g3O2ld1isxUZELllzZjgCyvemjU+s=
+	t=1756213717; cv=none; b=F6FwDW5fiFMWzfdcLrWK+4bo0YNjo2LqJQTCpGU6cWbJpBwvWpgjCzLsgiGsYo+lFeYJOBSdLUUikpJ/hbInbWkIOt6ll96sccdTFzTpHcMQOfP4svSKpMPX53pFq55/SFC3VfdjVeHE32P3Z8uzbmuhJ/WQVIIBV+UYPiOQLYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756213698; c=relaxed/simple;
-	bh=96oZjGpBhsGM6T5RqD1Jhcz8DPmt/ETyRKKVXbbqnx8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Va5TyDbqOZaPPgwNzunTMZbHDImYzbJlzs5ZFQYDdCazHpxfiY6+Q7KBlEV/xK/CBiPtj4+EaEV6tzbnHoRnb6s2JALQufwyuxV1Xtq1im/3M7x4QKI4udaZNKMPxum9fcygfEX+1rHrlrw6IVJKfIQNXhWoKB2RBz2RUKIM4T0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EqPZWql6; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756213695;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=+33Ue2Cu5Y5oxJByCwLn3TsnRWViKb51w/F+XvIasfg=;
-	b=EqPZWql64KDxB59p+q4slC/veTjpxGuWK7Wy3CFytfxKsm0zGMCr9ZfZk7ESvvA8DAzCN0
-	c47JMjdHow1OUVRjs3kY5Q/E97KL6sHOr+yYTZFacsSPhZRyciaMHcLaTogGBOvHdQHqCE
-	KLZJGQDcawXlR0bdtJ4AWYVhcWAQwoc=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-411-IXGFfz5CPpyWqJo6QI2GVA-1; Tue, 26 Aug 2025 09:08:13 -0400
-X-MC-Unique: IXGFfz5CPpyWqJo6QI2GVA-1
-X-Mimecast-MFC-AGG-ID: IXGFfz5CPpyWqJo6QI2GVA_1756213692
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45a1b0b2b5cso40594795e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 06:08:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756213692; x=1756818492;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+33Ue2Cu5Y5oxJByCwLn3TsnRWViKb51w/F+XvIasfg=;
-        b=aNBMO9kWoCV4eAOfdtQDftKWthAEtNZVeL5w7pq2+8/9rPMzPusnEcJdCnbZhvTXIm
-         osZPLcQmc3OfOa2tDlmbBePm6hc1nkMeNot0NBsVBxDZXbdUIijlcWgjxQrCp3N9785N
-         +w399fExUe5v7JXGM5OWrXZz3x7uwGwtSsFbo1XcmGHCk93xYX4rIrjJr2Ni93vBv1JP
-         zCLM+tq02ws6iQwQmrW+BGeGqWNbDcEniXTWMdWqajgnH4OkF9M2fVrvhjgLkRjsQt+8
-         axqBjqmvDjIR+PiUyFEq/RfEg2z1i8fOkp4fD0KnXU+WblU20fTaDmd9ufLY4zcjwa6h
-         uo/w==
-X-Gm-Message-State: AOJu0YxNBTvU+TLWiZnKxK7Hb+d0C0hVQ05LuvYwwFqYFT8T47oebLz6
-	5D9Mm+nwR/NTetDqAXh/K4bAP7eDy6R7Qi3+9PH+EfJCUmyTEp8Fp64DJtxdW8eUzdsYZDFYcmq
-	tdD06sGZ2SjxsDCwTtWC7AjG9djWbBIdd9fPhyfRbNWYy178O4IGhYubzOBgjpZjHaQ==
-X-Gm-Gg: ASbGncsqMf+6msXwu646oSB6kPsxNUguz67eN+RUgA9IGEQ1GM9Qm2ScjXO4CEJLnxl
-	SfPOXzPBPh5Ig27I7GXh+vAAmY2YXgiOo75vDqLgUnnDorsZ0FfTiepshR/MMEAcGwZXUPqRGmm
-	O5JTxTgt5qpL6syuS3Ttpbt4WSgtUMG95HTGRJgJkgJwMrLJuT5Q2fg9YiHfmyL35Acf/+HHevM
-	RDcsvSQAYNJR/yS2CkBc2lO9azyPNwwMtsO6iYUmxw1GK7bsIbUlppvcaOZ4cUjrl93pJQ/738Q
-	v2sUdZO0AEZW15typCo3naJc8nKjFOzYQsDoA3zUIavM3g30q6QXF3g9EFPwgdLSEvWau7a4Og=
-	=
-X-Received: by 2002:a05:600c:19cb:b0:458:6733:fb5c with SMTP id 5b1f17b1804b1-45b517d2751mr126238415e9.28.1756213691613;
-        Tue, 26 Aug 2025 06:08:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE0uVvd3bkBu8Q9HfrtdCgTiP652NIGyMgKGC7lB/H2NXiQPCgnz3LGDq701BEdJbsSh2Pm8g==
-X-Received: by 2002:a05:600c:19cb:b0:458:6733:fb5c with SMTP id 5b1f17b1804b1-45b517d2751mr126238015e9.28.1756213691060;
-        Tue, 26 Aug 2025 06:08:11 -0700 (PDT)
-Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b57444963sm165603375e9.3.2025.08.26.06.08.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Aug 2025 06:08:10 -0700 (PDT)
-Message-ID: <ecc599ee-4175-4356-ab66-1d76a75f44f7@redhat.com>
-Date: Tue, 26 Aug 2025 15:08:08 +0200
+	s=arc-20240116; t=1756213717; c=relaxed/simple;
+	bh=g+K/vCZfKU6H6CkGZW8HK6yrquIegUpstQBHJJ3QIog=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CcT7hXDESDFE3MyC8xhAOvYE45aGKYaJ6TRoyad+sb87OG6CGNZZwWKqqsiZum4ymA8rlhO9dDWn6LxAAye/Ozx9rFNvt/7kJSW8c2fjsPUvfxm5ScfZc1j8yxsy228KYr+pz+av2OOayzJb1NUPjZNVy8E60gM6wWgob46uJ38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cB7G21F2Kz6LD9l;
+	Tue, 26 Aug 2025 21:06:18 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3F736140122;
+	Tue, 26 Aug 2025 21:08:31 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 26 Aug
+ 2025 15:08:30 +0200
+Date: Tue, 26 Aug 2025 14:08:29 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Yushan Wang <wangyushan12@huawei.com>
+CC: <will@kernel.org>, <mark.rutland@arm.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<robin.murphy@arm.com>, <yangyicong@huawei.com>, <liuyonglong@huawei.com>,
+	<wanghuiqiang@huawei.com>, <prime.zeng@hisilicon.com>,
+	<hejunhao3@h-partners.com>
+Subject: Re: [PATCH v2 6/9] drivers/perf: hisi: Refactor the event
+ configuration of L3C PMU
+Message-ID: <20250826140829.00002f65@huawei.com>
+In-Reply-To: <20250821135049.2010220-7-wangyushan12@huawei.com>
+References: <20250821135049.2010220-1-wangyushan12@huawei.com>
+	<20250821135049.2010220-7-wangyushan12@huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 21/35] mm/cma: refuse handing out non-contiguous page
- ranges
-To: Alexandru Elisei <alexandru.elisei@arm.com>
-Cc: linux-kernel@vger.kernel.org, Alexander Potapenko <glider@google.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
- Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
- dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- iommu@lists.linux.dev, io-uring@vger.kernel.org,
- Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
- Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
- kasan-dev@googlegroups.com, kvm@vger.kernel.org,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
- linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
- linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-scsi@vger.kernel.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Marco Elver <elver@google.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
- Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
- Muchun Song <muchun.song@linux.dev>, netdev@vger.kernel.org,
- Oscar Salvador <osalvador@suse.de>, Peter Xu <peterx@redhat.com>,
- Robin Murphy <robin.murphy@arm.com>, Suren Baghdasaryan <surenb@google.com>,
- Tejun Heo <tj@kernel.org>, virtualization@lists.linux.dev,
- Vlastimil Babka <vbabka@suse.cz>, wireguard@lists.zx2c4.com, x86@kernel.org,
- Zi Yan <ziy@nvidia.com>
-References: <20250821200701.1329277-1-david@redhat.com>
- <20250821200701.1329277-22-david@redhat.com> <aK2QZnzS1ErHK5tP@raptor>
- <ad521f4f-47aa-4728-916f-3704bf01f770@redhat.com> <aK2wlGYvCaFQXzBm@raptor>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZoEEwEIAEQCGwMCF4ACGQEFCwkIBwICIgIG
- FQoJCAsCBBYCAwECHgcWIQQb2cqtc1xMOkYN/MpN3hD3AP+DWgUCaJzangUJJlgIpAAKCRBN
- 3hD3AP+DWhAxD/9wcL0A+2rtaAmutaKTfxhTP0b4AAp1r/eLxjrbfbCCmh4pqzBhmSX/4z11
- opn2KqcOsueRF1t2ENLOWzQu3Roiny2HOU7DajqB4dm1BVMaXQya5ae2ghzlJN9SIoopTWlR
- 0Af3hPj5E2PYvQhlcqeoehKlBo9rROJv/rjmr2x0yOM8qeTroH/ZzNlCtJ56AsE6Tvl+r7cW
- 3x7/Jq5WvWeudKrhFh7/yQ7eRvHCjd9bBrZTlgAfiHmX9AnCCPRPpNGNedV9Yty2Jnxhfmbv
- Pw37LA/jef8zlCDyUh2KCU1xVEOWqg15o1RtTyGV1nXV2O/mfuQJud5vIgzBvHhypc3p6VZJ
- lEf8YmT+Ol5P7SfCs5/uGdWUYQEMqOlg6w9R4Pe8d+mk8KGvfE9/zTwGg0nRgKqlQXrWRERv
- cuEwQbridlPAoQHrFWtwpgYMXx2TaZ3sihcIPo9uU5eBs0rf4mOERY75SK+Ekayv2ucTfjxr
- Kf014py2aoRJHuvy85ee/zIyLmve5hngZTTe3Wg3TInT9UTFzTPhItam6dZ1xqdTGHZYGU0O
- otRHcwLGt470grdiob6PfVTXoHlBvkWRadMhSuG4RORCDpq89vu5QralFNIf3EysNohoFy2A
- LYg2/D53xbU/aa4DDzBb5b1Rkg/udO1gZocVQWrDh6I2K3+cCs7BTQRVy5+RARAA59fefSDR
- 9nMGCb9LbMX+TFAoIQo/wgP5XPyzLYakO+94GrgfZjfhdaxPXMsl2+o8jhp/hlIzG56taNdt
- VZtPp3ih1AgbR8rHgXw1xwOpuAd5lE1qNd54ndHuADO9a9A0vPimIes78Hi1/yy+ZEEvRkHk
- /kDa6F3AtTc1m4rbbOk2fiKzzsE9YXweFjQvl9p+AMw6qd/iC4lUk9g0+FQXNdRs+o4o6Qvy
- iOQJfGQ4UcBuOy1IrkJrd8qq5jet1fcM2j4QvsW8CLDWZS1L7kZ5gT5EycMKxUWb8LuRjxzZ
- 3QY1aQH2kkzn6acigU3HLtgFyV1gBNV44ehjgvJpRY2cC8VhanTx0dZ9mj1YKIky5N+C0f21
- zvntBqcxV0+3p8MrxRRcgEtDZNav+xAoT3G0W4SahAaUTWXpsZoOecwtxi74CyneQNPTDjNg
- azHmvpdBVEfj7k3p4dmJp5i0U66Onmf6mMFpArvBRSMOKU9DlAzMi4IvhiNWjKVaIE2Se9BY
- FdKVAJaZq85P2y20ZBd08ILnKcj7XKZkLU5FkoA0udEBvQ0f9QLNyyy3DZMCQWcwRuj1m73D
- sq8DEFBdZ5eEkj1dCyx+t/ga6x2rHyc8Sl86oK1tvAkwBNsfKou3v+jP/l14a7DGBvrmlYjO
- 59o3t6inu6H7pt7OL6u6BQj7DoMAEQEAAcLBfAQYAQgAJgIbDBYhBBvZyq1zXEw6Rg38yk3e
- EPcA/4NaBQJonNqrBQkmWAihAAoJEE3eEPcA/4NaKtMQALAJ8PzprBEXbXcEXwDKQu+P/vts
- IfUb1UNMfMV76BicGa5NCZnJNQASDP/+bFg6O3gx5NbhHHPeaWz/VxlOmYHokHodOvtL0WCC
- 8A5PEP8tOk6029Z+J+xUcMrJClNVFpzVvOpb1lCbhjwAV465Hy+NUSbbUiRxdzNQtLtgZzOV
- Zw7jxUCs4UUZLQTCuBpFgb15bBxYZ/BL9MbzxPxvfUQIPbnzQMcqtpUs21CMK2PdfCh5c4gS
- sDci6D5/ZIBw94UQWmGpM/O1ilGXde2ZzzGYl64glmccD8e87OnEgKnH3FbnJnT4iJchtSvx
- yJNi1+t0+qDti4m88+/9IuPqCKb6Stl+s2dnLtJNrjXBGJtsQG/sRpqsJz5x1/2nPJSRMsx9
- 5YfqbdrJSOFXDzZ8/r82HgQEtUvlSXNaXCa95ez0UkOG7+bDm2b3s0XahBQeLVCH0mw3RAQg
- r7xDAYKIrAwfHHmMTnBQDPJwVqxJjVNr7yBic4yfzVWGCGNE4DnOW0vcIeoyhy9vnIa3w1uZ
- 3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
- CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
- qIws/H2t
-In-Reply-To: <aK2wlGYvCaFQXzBm@raptor>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On 26.08.25 15:03, Alexandru Elisei wrote:
-> Hi David,
+On Thu, 21 Aug 2025 21:50:46 +0800
+Yushan Wang <wangyushan12@huawei.com> wrote:
+
+> From: Yicong Yang <yangyicong@hisilicon.com>
 > 
-> On Tue, Aug 26, 2025 at 01:04:33PM +0200, David Hildenbrand wrote:
-> ..
->>> Just so I can better understand the problem being fixed, I guess you can have
->>> two consecutive pfns with non-consecutive associated struct page if you have two
->>> adjacent memory sections spanning the same physical memory region, is that
->>> correct?
->>
->> Exactly. Essentially on SPARSEMEM without SPARSEMEM_VMEMMAP it is not
->> guaranteed that
->>
->> 	pfn_to_page(pfn + 1) == pfn_to_page(pfn) + 1
->>
->> when we cross memory section boundaries.
->>
->> It can be the case for early boot memory if we allocated consecutive areas
->> from memblock when allocating the memmap (struct pages) per memory section,
->> but it's not guaranteed.
+> The event register is configured using hisi_pmu::base directly since
+> only one address space is supported for L3C PMU. We need to extend if
+> events configuration locates in different address space. In order to
+> make preparation for such hardware, extract the event register
+> configuration to separate function using hw_perf_event::event_base as
+> each event's base address.  Implement a private
+> hisi_uncore_ops::get_event_idx() callback for initialize the event_base
+> besides get the hardware index.
 > 
-> Thank you for the explanation, but I'm a bit confused by the last paragraph. I
-> think what you're saying is that we can also have the reverse problem, where
-> consecutive struct page * represent non-consecutive pfns, because memmap
-> allocations happened to return consecutive virtual addresses, is that right?
-
-Exactly, that's something we have to deal with elsewhere [1]. For this 
-code, it's not a problem because we always allocate a contiguous PFN range.
-
+> No functional changes intended.
 > 
-> If that's correct, I don't think that's the case for CMA, which deals out
-> contiguous physical memory. Or were you just trying to explain the other side of
-> the problem, and I'm just overthinking it?
-
-The latter :)
-
-[1] https://lkml.kernel.org/r/20250814064714.56485-2-lizhe.67@bytedance.com
-
--- 
-Cheers
-
-David / dhildenb
-
+> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
+> Signed-off-by: Yushan Wang <wangyushan12@huawei.com>
+Acked-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
