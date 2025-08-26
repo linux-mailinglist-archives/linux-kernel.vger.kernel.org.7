@@ -1,219 +1,170 @@
-Return-Path: <linux-kernel+bounces-786600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38A3FB35EF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:16:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D4A9B35EF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:16:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2A1568532A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:16:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 741C91B64B2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18F4318146;
-	Tue, 26 Aug 2025 12:15:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F94D31355A;
+	Tue, 26 Aug 2025 12:16:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="jVghTZE8"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TgUPSRj3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4169D393DF2;
-	Tue, 26 Aug 2025 12:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEDC02BE653
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 12:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756210557; cv=none; b=BQLM97Wc0qFkZovmVnWn+G14PkRjZ4gW3wZ9WoCbD/AuxHn+YpycPGsYC+q90mKBSUkCqb6Wp16+VOb+kYb3DMQtojiCc/9IP2aoCgy/wtOH9DU1zBEGir1gaumXsypG022n8QdMbVIa1vDLorwrGVOQZrscSEWimnvkWv/v07o=
+	t=1756210599; cv=none; b=bMgc63YLbd9ZDtm+6zgm9V4JPIpHoGLVkRCHo9cPhf5wFyKhzq87uNl2atJuU9mlcW7kSo/bQVr7ohJ3NFdmy0Ub1qRwR0P1YeRExOZ0oJ/CeWMCIBA2u1Ml5udqTriTffRV+ojrEk1at6VsOMNsQOku8EknlSE16gVTTwDBUpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756210557; c=relaxed/simple;
-	bh=wbl6yjohVEHks2t3QFevZb8pAERYhcc8Vu8Ci1A4Er4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vq/PZcrogB+xHmCh94melfmursghL1szkjiQ0B47CQLIXlQ5aCd/c3sTIsdjMH6PTXV3EuFkkMy4PcMd4yROm5X3VlmR7QNcVOtqA3azNm42B2tZBGYrfc37odqKZdMXFumPm7oo0lJjiU6rEAy+VJM37QY4HRknvx2KKFEGmdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=jVghTZE8; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=VkQ3IUe3MTv81pl2iURU52BXuGLBKddet8SzqQ3GLSk=; b=jVghTZE8tODbQCGiJirakhoxn0
-	r/WwPkBNY+5jG53kqv53d2WdIdWMOkKrccVcp6Pl0K4H+WIIU54Sr6Zx7JfYVt0kN/CP97wrSox0t
-	A5f9SJTDFGK8ueD+OdJADK5WHd+2uNzKnCYphtwjot5RkmlosVhAXzEKx0BmppQhpVaM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uqsaV-0065Qd-Mi; Tue, 26 Aug 2025 14:15:43 +0200
-Date: Tue, 26 Aug 2025 14:15:43 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Yangfl <mmyangfl@gmail.com>
-Cc: Vladimir Oltean <olteanv@gmail.com>, netdev@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v6 3/3] net: dsa: yt921x: Add support for
- Motorcomm YT921x
-Message-ID: <6952fd42-f0b1-4509-a91e-b2e43436a873@lunn.ch>
-References: <20250824005116.2434998-1-mmyangfl@gmail.com>
- <20250824005116.2434998-4-mmyangfl@gmail.com>
- <20250825212357.3acgen2qezuy533y@skbuf>
- <CAAXyoMOVY7EvY9CtAphWcZrfNpz+JuUXcTf3M79FSYkbLSTvhg@mail.gmail.com>
+	s=arc-20240116; t=1756210599; c=relaxed/simple;
+	bh=/kBnjHicWLRIMWZ5D1z8Ghfc30Q8BGyIoEzgG5YmKrw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uj22BQgsiGZLMSFfiHrK5KbC13L9XzLZQRARZcQjlKDexw+xYUM9sL49bnUjHpfmDBHjG1k63ovyGdAY3SZvDpBW1TZzeBEw6NawptvHQVbgplCbHJXTSs/cTeSvsV4HgE5CBRuDbzzMoKlEjEJULkCUcuLzmC5AI1SfVZuvkXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TgUPSRj3; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756210596;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=diVEa1Cfz6ig0T6TvL360ugfmN6YpEKzRLn9DgHizSM=;
+	b=TgUPSRj3Mn3qrkr+jYz1C+joq5vreRSIHtW1dbhpLDka7I81jm2OXw5RSOYA896lcKtkmA
+	StFYvWSs4Nf6MuTyEsBIcUsCQOUvz5wa8McdBm8yADi9mn216GAOs76qvvBFZsHs/ijSQx
+	K0FJgRbawY6y7AQpkjQj77XRI4wR2Pk=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-393-_M_EtMOTMZiyU-DHLE9xNg-1; Tue, 26 Aug 2025 08:16:35 -0400
+X-MC-Unique: _M_EtMOTMZiyU-DHLE9xNg-1
+X-Mimecast-MFC-AGG-ID: _M_EtMOTMZiyU-DHLE9xNg_1756210594
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3c7d6923834so1895991f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 05:16:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756210594; x=1756815394;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=diVEa1Cfz6ig0T6TvL360ugfmN6YpEKzRLn9DgHizSM=;
+        b=hvRNncX9T1RSS+NcEI2kfXPc/nTJWFtsGTeBIGx+P162MoRWEflX1dNO8+rNZddEYq
+         A0DVaqBFgdI8W/4OazxXSx+7BH/3rLjZtXAeBWoyjNssCmBkn/+fTQf0rHrZYoSB+mqd
+         w5oPbso+uNDSI4XX2lT+4vTNM8NsO5B+OpqES1UBGEU0icIpdthBFMEVBekXq8FJ46u4
+         KiRT1Hv1zGAILniDc/2ajms6+kb6NGsIyXWjmwrctOgWdzoQzNeA7wCyrbitb5NkCbFK
+         JQF1PvteaubC9vRyL1pfwlA35T1IYe+bKbuaV/2ataJhfmD7WpgQcUl/ABiQtWDhQC16
+         soAg==
+X-Forwarded-Encrypted: i=1; AJvYcCXpeioLRyd8ir4JaqUAg+7qayMv5AcjxKKIAAc2bUDgkU3yQCSSAcMYdSwTVfmgunHtK5mQ8Xk7kFBaJtM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzc8R2c+fgB75tiP3j0evLj2i8bgatZNl6uksBs75GvbSZS7FOu
+	6weZFwmV3OIgCHPOo/yCWKzqhyYr6EBsK2EndQt25bheoRsC+bO/MUkXjsMk/FhryFTmJ5O8qK7
+	mnIrAN3VMcvm92At6s+v3/rdRJt9vhTc+W6LWoul7zDrzHnXdh8UpMlAULP1SQlwqIg==
+X-Gm-Gg: ASbGncsW+M2N1ZjTjYQ4LzB0UQxTAUOV9tHTyIAw0/+PMMTpc/ad6Do4NK52GGtO9JD
+	KZQNlRN+oNcO0Lq2uqpHwemUoHciV+ou8PRsmf5muOxUETw1mvjADCLaiftTnOgXxF8Jy/Ikhfb
+	MtBXzfbjpgUrC9AxKSAiWtIGKtbRQfkvK+ja45brdX5BU0qLd7aPF9Pk1E5HnYR7NiV8nvLL+Ug
+	0364VBuzb2N2PgC5PrgVn9IYEIJIlAFG5gHz778z5ezL9+5tjQZraTLdiJx1+e5SqBbkhTky2Ua
+	sd7C94QPlpBUzEEseSIh5zNoRucRqe547XnH6gLKVn7bsgAo5s4AsupQizAlbhPdCTCaeK5s+SU
+	SuVvP
+X-Received: by 2002:a05:6000:24c2:b0:3ca:43ce:8a60 with SMTP id ffacd0b85a97d-3ca43ce8debmr4253730f8f.56.1756210594120;
+        Tue, 26 Aug 2025 05:16:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF1vwwLGJx7vZzx6yCM2iOBpq2l97oe5wYAIVyLlq0crxa3xO3y2zxEx14ezkHOG7wMX3UUCg==
+X-Received: by 2002:a05:6000:24c2:b0:3ca:43ce:8a60 with SMTP id ffacd0b85a97d-3ca43ce8debmr4253693f8f.56.1756210593333;
+        Tue, 26 Aug 2025 05:16:33 -0700 (PDT)
+Received: from [192.168.0.6] (ltea-047-064-113-247.pools.arcor-ip.net. [47.64.113.247])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c711d9f3a8sm15987904f8f.62.2025.08.26.05.16.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Aug 2025 05:16:32 -0700 (PDT)
+Message-ID: <c9fe5d6e-c280-4480-a522-a99fa5ce7cb2@redhat.com>
+Date: Tue, 26 Aug 2025 14:16:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAAXyoMOVY7EvY9CtAphWcZrfNpz+JuUXcTf3M79FSYkbLSTvhg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] KVM: s390: Fix access to unavailable adapter indicator
+ pages during postcopy
+To: Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org
+Cc: Peter Xu <peterx@redhat.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ David Hildenbrand <david@redhat.com>, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>,
+ linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250821152309.847187-1-thuth@redhat.com>
+ <d91ed0a4-16b2-417d-9b44-6e0d629f65d0@linux.ibm.com>
+From: Thomas Huth <thuth@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=thuth@redhat.com; keydata=
+ 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
+In-Reply-To: <d91ed0a4-16b2-417d-9b44-6e0d629f65d0@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> > > +static int yt921x_fdb_wait(struct yt921x_priv *priv, u32 *valp)
-> > > +{
-> > > +     struct device *dev = to_device(priv);
-> > > +     u32 val;
-> > > +     int res;
-> > > +
-> > > +     res = yt921x_smi_read(priv, YT921X_FDB_RESULT, &val);
-> > > +     if (res)
-> > > +             return res;
-> > > +     if ((val & YT921X_FDB_RESULT_DONE) == 0) {
-> > > +             yt921x_smi_release(priv);
-> >
-> > yuck, why is it ok to release the SMI lock here? What's the point of the
-> > lock in the first place?
-> >
+On 26/08/2025 13.43, Janosch Frank wrote:
+> On 8/21/25 5:23 PM, Thomas Huth wrote:
+>> From: Thomas Huth <thuth@redhat.com>
+>>
+>> When you run a KVM guest with vhost-net and migrate that guest to
+>> another host, and you immediately enable postcopy after starting the
+>> migration, there is a big chance that the network connection of the
+>> guest won't work anymore on the destination side after the migration.
 > 
-> It's the bus lock, not the driver lock. We need to release the bus
-> lock when we want to sleep.
-
-Why do you need to release the lock when you sleep? It is not a
-spinlock, you can sleep while holding it. How do you prevent other fdb
-operations running in parallel if you don't hold the lock?
-
-> > > +static int
-> > > +yt921x_dsa_get_eeprom(struct dsa_switch *ds, struct ethtool_eeprom *eeprom,
-> > > +                   u8 *data)
-> > > +{
-> > > +     struct yt921x_priv *priv = to_yt921x_priv(ds);
-> > > +     unsigned int i = 0;
-> > > +     int res;
-> > > +
-> > > +     yt921x_smi_acquire(priv);
-> > > +     do {
-> > > +             res = yt921x_edata_wait(priv);
-> > > +             if (res)
-> > > +                     break;
-> > > +             for (; i < eeprom->len; i++) {
-> > > +                     unsigned int offset = eeprom->offset + i;
-> > > +
-> > > +                     res = yt921x_edata_read_cont(priv, offset, &data[i]);
-> > > +                     if (res)
-> > > +                             break;
-> > > +             }
-> > > +     } while (0);
-> > > +     yt921x_smi_release(priv);
-> > > +
-> > > +     eeprom->len = i;
-> > > +     return res;
-> >
-> > What is contained in this EEPROM?
-> >
+> Do we want to add this?
 > 
-> No description, sorry.
+> Fixes: f65470661f36 ("KVM: s390/interrupt: do not pin adapter interrupt pages")
 
-Even if you don't have a detailed description, can you tell us what it
-can be used for?
+Yes, that sounds like a good idea, please add it when picking up the patch!
 
-The Marvell switches have a little application specific language which
-allows you to write values into any register, and poll waiting for
-events. It allows you to setup some aspects of the switch without
-software. Using it is not a good idea, because DSA has no idea what
-the EEPROM has done, and it could invalidate the assumptions about
-reset default values.
+  Thanks,
+   Thomas
 
-In theory it is also possible to put code in the EEPROM for the Z80.
-But i've never seen that does, probably because nobody combines DSA
-with using the Z80.
-
-> > I guess you got this snippet from mv88e6xxx_mdios_register(), which is
-> > different from your case because it is an old driver which has to
-> > support older device trees, before conventions changed.
-> >
-> > Please only register the internal MDIO bus if it is present in the
-> > device tree. This simplifies the driver and dt-bindings by having a
-> > single way of describing ports with internal PHYs. Also, remove the
-> > ds->user_mii_bus assignment after you do that.
-> >
-> 
-> How to access internal PHYs without registering the internal MDIO bus?
-
-phy-handle in each port nodes pointing to the PHY. This is standard
-Ethernet DT. It just makes it more verbose.
-
-> > > +     /* chip */
-> > > +     .get_eeprom_len         = yt921x_dsa_get_eeprom_len,
-> > > +     .get_eeprom             = yt921x_dsa_get_eeprom,
-> > > +     .preferred_default_local_cpu_port       = yt921x_dsa_preferred_default_local_cpu_port,
-> > > +     .conduit_state_change   = yt921x_dsa_conduit_state_change,
-> > > +     .setup                  = yt921x_dsa_setup,
-> >
-> > No STP state handling?
-> >
-> 
-> Support for (M)STP was suggested for a future series in previous reviews.
-
-It is a pretty important feature to have, otherwise your network dies
-in a broadcast storm when there are loops. I personally would of added
-STP before VLANS. So please don't wait too long with this feature.
-
-> > > +/******** debug ********/
-> > > +
-> > > +static ssize_t
-> > > +reg_show(struct device *dev, struct device_attribute *attr, char *buf)
-> > > +{
-> > > +     struct yt921x_priv *priv = dev_get_drvdata(dev);
-> > > +
-> > > +     if (!priv->reg_valid)
-> > > +             return sprintf(buf, "0x%x: -\n", priv->reg_addr);
-> > > +
-> > > +     return sprintf(buf, "0x%x: 0x%08x\n", priv->reg_addr, priv->reg_val);
-> > > +}
-> > > +
-> > > +/* Convenience sysfs attribute to read/write switch internal registers, since
-> > > + * user-space tools cannot gain exclusive access to the device, which is
-> > > + * required for any register operations.
-> > > + */
-> > > +static ssize_t
-> > > +reg_store(struct device *dev, struct device_attribute *attr,
-> > > +       const char *buf, size_t count)
-> >
-> > NACK for exposing a sysfs which allows user space to modify switch
-> > registers without the driver updating its internal state.
-> >
-> > For reading -- also not so sure. There are many higher-level debug
-> > interfaces which you should prefer implementing before resorting to raw
-> > register reads. If there's any latching register in hardware, user space
-> > can mess it up. What use case do you have?
-> >
-> 
-> It is not possible to debug the device without a register sysfs, see
-> previous replies for why we need to lock the bus (but not necessarily
-> the MDIO bus). And if they are to modify switch registers, that's what
-> they want.
-> 
-> So it's also kind of development leftover, but if anyone wants to
-> improve the driver, they would come up with pretty the same debug
-> solution as this, thus I consider it useful in the future. If that
-> effort is still not appreciated, it might be wrapped inside a #ifdef
-> DEBUG block so it will not be enabled to end users.
-
-Write access in any form is definitely NACK.
-
-For read access, please look at mv88e6xxx devlink regions, and
-https://github.com/lunn/mv88e6xxx_dump
-
-	Andrew
 
