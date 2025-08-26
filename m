@@ -1,138 +1,137 @@
-Return-Path: <linux-kernel+bounces-786575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09147B35E7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:58:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D424B35E7D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:58:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B08F172C69
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:45:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2CB11BC38D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:49:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 648DC338F51;
-	Tue, 26 Aug 2025 11:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f0S4HpN3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70A02F8BD9;
+	Tue, 26 Aug 2025 11:48:41 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC3FD338F36;
-	Tue, 26 Aug 2025 11:44:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0074286D57;
+	Tue, 26 Aug 2025 11:48:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756208670; cv=none; b=G7DOrlGiFqw1iR37SJc4vVNbOFGPmcYsV/+Q8K4HC/gKhYgzSg9h+ND1xS2Q65AT7lHSLDf4AQ3wEsByeqw0kn+t3cuMz8h9wBVha16MsjoMINbVkib/FMhPDqzIztCMKYN4d1BK6vLLP+hh1YNNHkvQpB1em7foehn4Hk58wtE=
+	t=1756208921; cv=none; b=hXBpKUaM4zRR2sQ/m3lLanXhPvtXrXir+yq7KqW6exHUirF1TvbPKwL//r0m7WCzVOyxoIvupYDu+FxaoOcpQ7jaqvPu0/w2ipBu5j6dvUhycGibtMZNAXs+LAQBLxg2EWvweijOcHDhBwiFrKszD8EdlYKEfsZKwjzsOCboC3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756208670; c=relaxed/simple;
-	bh=wUIvI7r/C/FTiGtXOfZyGuC2DGiVu9RpvXv0p+ogJmE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J6Ex5uaSUNYUDz4AgEwO2SoJxhf4YNVo410NDTmNqI1myJD5pfOXJYZp+DKAbBoOXoqP4mldYvcqQr/Fns9TQi24O6Uufgu7f/FqRNC2IPmeagf8Rg/hXM9P6XbYM4GFoVniRP1mFrUZCHtGq4YD2vMHy3z0+HDziVUgZvyC1Iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f0S4HpN3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87EE8C4CEF4;
-	Tue, 26 Aug 2025 11:44:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756208670;
-	bh=wUIvI7r/C/FTiGtXOfZyGuC2DGiVu9RpvXv0p+ogJmE=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=f0S4HpN3EuAVCDuFCVf9mC8nOZuUDAZaEJDENE42sThSDMZ2/aV/Dt4drP3uHPYBk
-	 m7vAimFzPatB8AEBj90cK5qpvpws4wBj2GpUxUN7eDCOGkYMgMWxhPPgjwISmkTVah
-	 U/dcJ5hZiRiDuQTYSzD0cvWqq/XjVhek5o+RY0o65H28t+cNSmCI25/u77LjqqL4Za
-	 smWK5pOKSkNTtCupvksyY7Ws3zMarmKLfvEa4G+Hz8QMconH3mIya4GpilNIULEj3m
-	 OCJYqHTJFvATIGPAvhBtc4TbPaO5JGzFW46JZNflweVUOaqeWjO+sxr8demTAtfC2t
-	 NPBMmC0F3lpYg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 2310DCE0C4D; Tue, 26 Aug 2025 04:44:30 -0700 (PDT)
-Date: Tue, 26 Aug 2025 04:44:30 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: "A. Sverdlin" <alexander.sverdlin@siemens.com>
-Cc: Marco Elver <elver@google.com>, linux-kernel@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	stable@vger.kernel.org,
-	Adrian Freihofer <adrian.freihofer@siemens.com>
-Subject: Re: [PATCH RESEND] locking/spinlock/debug: Fix data-race in
- do_raw_write_lock
-Message-ID: <7325588b-189c-4825-a87f-5494b1230d7a@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250826102731.52507-1-alexander.sverdlin@siemens.com>
+	s=arc-20240116; t=1756208921; c=relaxed/simple;
+	bh=42pxmjwN5mCb+0AyK7e2qx6qwCHs3L8dSCXcC7dHO4U=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=CEqNZM2N8gRUKtOXi5ZzMf+Ttmtz3A99UwoIIwvUSlvuMe9ZxNlcGnZ7z9cwv7IAa5HFyyYx+W2hw5HXyH7H1nd+l8Fp8NOekark4hw1hgcz2fY3zEb6jJfomjhnk1KRXZI2pE8AzMiB0k3i1g4jex5CY/JMm/ITMmoR/q+aw44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4cB5R25mRHzPqfF;
+	Tue, 26 Aug 2025 19:43:58 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id D8DA8180064;
+	Tue, 26 Aug 2025 19:48:34 +0800 (CST)
+Received: from kwepemq200001.china.huawei.com (7.202.195.16) by
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 26 Aug 2025 19:48:34 +0800
+Received: from [10.67.120.171] (10.67.120.171) by
+ kwepemq200001.china.huawei.com (7.202.195.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 26 Aug 2025 19:48:34 +0800
+Message-ID: <25abfbab-23da-4728-b245-9a8033e7a21a@huawei.com>
+Date: Tue, 26 Aug 2025 19:48:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250826102731.52507-1-alexander.sverdlin@siemens.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/3] crypto: hisilicon - add fallback function for
+ hisilicon accelerater driver
+From: huangchenghai <huangchenghai2@huawei.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+CC: <davem@davemloft.net>, <linux-kernel@vger.kernel.org>,
+	<linux-crypto@vger.kernel.org>, <qianweili@huawei.com>,
+	<linwenkai6@hisilicon.com>, <wangzhou1@hisilicon.com>, <taoqi10@huawei.com>
+References: <20250818065714.1916898-1-huangchenghai2@huawei.com>
+ <aKvoPwhKyoVz8Yta@gondor.apana.org.au>
+ <8896482c-c447-45f1-a59c-998a13119ece@huawei.com>
+In-Reply-To: <8896482c-c447-45f1-a59c-998a13119ece@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemq200001.china.huawei.com (7.202.195.16)
 
-On Tue, Aug 26, 2025 at 12:27:27PM +0200, A. Sverdlin wrote:
-> From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
-> 
-> KCSAN reports:
-> 
-> BUG: KCSAN: data-race in do_raw_write_lock / do_raw_write_lock
-> 
-> write (marked) to 0xffff800009cf504c of 4 bytes by task 1102 on cpu 1:
->  do_raw_write_lock+0x120/0x204
->  _raw_write_lock_irq
->  do_exit
->  call_usermodehelper_exec_async
->  ret_from_fork
-> 
-> read to 0xffff800009cf504c of 4 bytes by task 1103 on cpu 0:
->  do_raw_write_lock+0x88/0x204
->  _raw_write_lock_irq
->  do_exit
->  call_usermodehelper_exec_async
->  ret_from_fork
-> 
-> value changed: 0xffffffff -> 0x00000001
-> 
-> Reported by Kernel Concurrency Sanitizer on:
-> CPU: 0 PID: 1103 Comm: kworker/u4:1 6.1.111
-> 
-> Commit 1a365e822372 ("locking/spinlock/debug: Fix various data races") has
-> adressed most of these races, but seems to be not consistent/not complete.
-> 
-> >From do_raw_write_lock() only debug_write_lock_after() part has been
-> converted to WRITE_ONCE(), but not debug_write_lock_before() part.
-> Do it now.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 1a365e822372 ("locking/spinlock/debug: Fix various data races")
-> Reported-by: Adrian Freihofer <adrian.freihofer@siemens.com>
-> Acked-by: Waiman Long <longman@redhat.com>
-> Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 
-Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+On Tue, Aug 26, 2025 at 09:59 AM +0800, Herbert Xu wrote:
+>
+> 在 2025/8/25 12:36, Herbert Xu 写道:
+>> On Mon, Aug 18, 2025 at 02:57:11PM +0800, Chenghai Huang wrote:
+>>> Support fallback for zip/sec2/hpre when device is busy.
+>>>
+>>> V1: 
+>>> https://lore.kernel.org/all/20250809070829.47204-1-huangchenghai2@huawei.com/
+>>> Updates:
+>>> - Remove unnecessary callback completions.
+>>> - Add CRYPTO_ALG_NEED_FALLBACK to hisi_zip's cra_flags.
+>>>
+>>> Chenghai Huang (1):
+>>>    crypto: hisilicon/zip - support fallback for zip
+>>>
+>>> Qi Tao (1):
+>>>    crypto: hisilicon/sec2 - support skcipher/aead fallback for hardware
+>>>      queue unavailable
+>>>
+>>> Weili Qian (1):
+>>>    crypto: hisilicon/hpre - support the hpre algorithm fallback
+>>>
+>>>   drivers/crypto/hisilicon/Kconfig            |   1 +
+>>>   drivers/crypto/hisilicon/hpre/hpre_crypto.c | 314 
+>>> +++++++++++++++++---
+>>>   drivers/crypto/hisilicon/qm.c               |   4 +-
+>>>   drivers/crypto/hisilicon/sec2/sec_crypto.c  |  62 +++-
+>>>   drivers/crypto/hisilicon/zip/zip_crypto.c   |  52 +++-
+>>>   5 files changed, 360 insertions(+), 73 deletions(-)
+>> Are you mapping one hardware queue to a single tfm object?
+> Yes, in our current implementation, each hardware queue is mapped
+> to a dedicated tfm object.
+>>
+>> Hardware queues should be shared between tfm objects.
+>>
+>> Cheers,
+> Thank you for your suggestion.
+>
+> We currently do not support sharing hardware queues between tfm
+> objects. Our rationale is as follows:
+> a) Queue multiplexing (allowing multiple tfms to share a queue)
+> theoretically improves resource utilization. However, hardware
+> resources are shared among all queues, and performance is also
+> shared. Once the hardware reaches its physical limits, all new
+> services can only queue up in the queue. Therefore, reuse will only
+> make the queue longer, not increase processing speed, and instead
+> increase business waiting latency. In cases of insufficient queues,
+> it is better to directly fallback to software processing.
+>
+> In benchmark tests, only 16 queues or tfms are needed to achieve
+> full hardware bandwidth performance.
+>
+> b) After a queue is initialized by a tfm, if a new tfm has a
+> different algorithm from the original queue, it cannot share the
+> queue. Queue reuse is limited by the type of tfm algorithm.
+>
+> Thanks
+> Chenghai
+Okay, we will decouple the hardware queue constraints from the
+number of tfm to adapt to Crypto.
 
-> ---
-> There are still some inconsistencies remaining IMO:
-> - lock->magic is sometimes accessed with READ_ONCE() even though it's only
-> being plain-written;
-> - debug_spin_unlock() and debug_write_unlock() both do WRITE_ONCE() on
-> lock->owner and lock->owner_cpu, but examine them with plain read accesses.
-> 
->  kernel/locking/spinlock_debug.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/locking/spinlock_debug.c b/kernel/locking/spinlock_debug.c
-> index 87b03d2e41dbb..2338b3adfb55f 100644
-> --- a/kernel/locking/spinlock_debug.c
-> +++ b/kernel/locking/spinlock_debug.c
-> @@ -184,8 +184,8 @@ void do_raw_read_unlock(rwlock_t *lock)
->  static inline void debug_write_lock_before(rwlock_t *lock)
->  {
->  	RWLOCK_BUG_ON(lock->magic != RWLOCK_MAGIC, lock, "bad magic");
-> -	RWLOCK_BUG_ON(lock->owner == current, lock, "recursion");
-> -	RWLOCK_BUG_ON(lock->owner_cpu == raw_smp_processor_id(),
-> +	RWLOCK_BUG_ON(READ_ONCE(lock->owner) == current, lock, "recursion");
-> +	RWLOCK_BUG_ON(READ_ONCE(lock->owner_cpu) == raw_smp_processor_id(),
->  							lock, "cpu recursion");
->  }
->  
-> -- 
-> 2.47.1
-> 
+Thanks
+Chenghai
+
+>
+>
 
