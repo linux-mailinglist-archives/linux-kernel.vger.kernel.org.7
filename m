@@ -1,203 +1,241 @@
-Return-Path: <linux-kernel+bounces-787255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27E55B3739E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 22:09:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E754B373A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 22:09:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25FDC1BA1A28
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 20:09:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BF9E1BA1F2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 20:09:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 578912F7466;
-	Tue, 26 Aug 2025 20:09:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34FFF2F49F2;
+	Tue, 26 Aug 2025 20:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dzvGTmAq"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rsze/N9t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398A4211C;
-	Tue, 26 Aug 2025 20:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 729C5211C;
+	Tue, 26 Aug 2025 20:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756238942; cv=none; b=UYJ4Nb+qIQYR6PjQM8nfGVWdOav0sr/bK+BPu3sNAWwxM78snrDpfo6uwz3J2+savC60IWWFg3rzLXO74WYVrtJt6P8TlWE191pitW11hkrItx7BgwoJkBMAKMaoLwXE+j0woRzlMZEXRNHwoQ3yRspK7MN959FyAIi/qDUh9LY=
+	t=1756238946; cv=none; b=Xw7IMkmTwz0zrGPyv7s5ng1ksxudCCbwySX98qp8u7kQX8icK0gTroZ2D5clff26dvNH4ZpdFekJT2rstwfIgYIepR2UgqUOH/uHYsYeYtmKWz+1/CCtIMQd2qZo+W6A4hPCgub9Uw+XnmrzouWo2gopHBQZfIl/pmOHjoatETE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756238942; c=relaxed/simple;
-	bh=dqJIgmBq3mpr1Hj6QcdqFxmKLNiTO5FZlbH/9RPgvGk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pZvylwsxXqga9P6Kv4Wqh/gkCaKbbyfwjTpssbTCPsEWTmHxowdX4NIOMU3AZN02Gr18yoilwASdduLEgdN8pqWqcftJqjlXa7nBkmw59FVY9gUR43liMjuYHWcDJrVvWOQEr5QYnWi6WYbAYog/XsexIDZoYKtEy9bqXa3nwgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dzvGTmAq; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-3254abaf13dso2556394a91.2;
-        Tue, 26 Aug 2025 13:09:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756238940; x=1756843740; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aISX8qmlYPTfKyY9nd/pgZvE2T4wrpRDpwoB+MUeuqI=;
-        b=dzvGTmAqL0V3fPXIcyY7I+b5p/slStEQ8WHdunUKBoNhSYxRgDYwmu5fygeh/GFX5E
-         DQwpHifP9QFPsbLf9wk50vKe9deUQf1IQEGe6A/j1EL2lcPbsRp4T+6HDGIr7qZ8sAYj
-         vaIE0kPDSiPW+PdLrzudc2DCXQO19vXK+yomEEh59QHrwU0rqF0DMoYULOIDj/HXmYFF
-         WIvKDbhwkBNyrnD4DJW+K5VSjkZQkCX9ajlAhOMR2gf6JXPJXsSva//EcM0H6iVuf0ZG
-         DqZL0BtkoakPOgryM/h/PB2FbXEi5da5r4NnKMBSGmxSwPbwFPoPdwUZkRidvgD3JW72
-         Zj2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756238940; x=1756843740;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aISX8qmlYPTfKyY9nd/pgZvE2T4wrpRDpwoB+MUeuqI=;
-        b=mIcX0jk6okYw2QXWD1l4lf+vAY+RtZcITKRUiiX6QtALRhEgbL/wvIFpSOinGq8UVR
-         Tw4HE+rjD1BmaZPlqorOBWhx4FoRGDpLlg9eFbJgwo818nTR4mkFSoe3pWDub6313YzO
-         fAUWr/59QSZQXj/+DZfUyny4UopfYHzZfHseN09GGnPLrtPCrNmHV6n6yoyDQ94p0kuq
-         0Uwpk+ueUUmQhvDhcY5AkGE4zWqMB7+v0W91N/X1ArWGh15wzTFOsQwgZLDDw6ldh1LG
-         eHeqUuTs5AFFEOyhryqWWKOXZpEUyhAxx7kY/IgpMFZ4z+Bi5qYvVd5rQwIJmVoxEOrq
-         QHXA==
-X-Forwarded-Encrypted: i=1; AJvYcCV8Ia99EqgETwAVU7xz1ws/5ACNuHuOA/10/ujWfAGlHlL599E2PQCFGn58gPtZpgD/nHCpz/9v1w==@vger.kernel.org, AJvYcCVOaudpGQy5RsjelugMqwZpndkofDYU7WMEll5q3BldmNfr7Kn+U8iJcs+ziC84KYV1Ix3p+aDNNcT8DBs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKJCMkNdmvU/Kn/BRoB/MNpOPrhmbuvnvM8sTW9mtPFOrT53q7
-	lDqqPmdGuid4nxXOAv/IIcBblDrZK6j0Qp9e2GG1gz9KDC9zIOMZrprrX3HJwDAhi0mlltZkA9G
-	RJdgvW2dR0L41i0OwTZZCZOuoh4pCg+Q=
-X-Gm-Gg: ASbGnctyR8Tx000QB8tv+EExZP5Cw5uGn4ZuXcboTMLgTcrYZ/PnECnXJswPElVtvPd
-	61mih8e/XM+anEJQxBRRwxHEtgY/L7OHC9QPKySppTcE06L4QnR1y98t/9aDBq2XPXVYSsAOPm1
-	ieQwZKqKBB2TGqk3jTVzp8qfpJWNQgOO2iDEGi41nY2i/AM3HBHbdRjcAEzFYAy8BxAVEP6SdHW
-	gSY4iI=
-X-Google-Smtp-Source: AGHT+IGid88VV+Kr5wHPV5keIr+GWDP7AIXf2F942AueLphuI1otN/rKKjw47NVWYTfJxpiDs5lqs0wqAUWsC7SvhWg=
-X-Received: by 2002:a17:90a:c886:b0:327:6de3:24b6 with SMTP id
- 98e67ed59e1d1-3276de32df7mr316552a91.8.1756238940407; Tue, 26 Aug 2025
- 13:09:00 -0700 (PDT)
+	s=arc-20240116; t=1756238946; c=relaxed/simple;
+	bh=De6tXlh/83GdnOt9bMTPx+Vmn3L3ISZ/uryMZcIrB5w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WBEGLMRc1N/IptR+Hfq9kvKb+0KvAIRGhH49Ti338nsavxok8tmPJ6yjhdLLhgEUe9VtBDJz4QLMG39lv/BpsJw56dCQkewjH414Hh1iCHsdG+yHmWfuXs2nWHYzcS20oum1XbdcJEN/vVP0pgjLohsg8qG5YVFaJCrLyKg/hDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rsze/N9t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BA1AC4CEF1;
+	Tue, 26 Aug 2025 20:09:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756238945;
+	bh=De6tXlh/83GdnOt9bMTPx+Vmn3L3ISZ/uryMZcIrB5w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Rsze/N9tQPzXjNLqiKo/xJtWAqCNAVk3sr4XHPf755WUo82wNXx9PTkEMrWRq1uBI
+	 8UNuaJdpCWxB/fpnvFIJW5YM2VVLdH7nXkRSXRHTeyRhCGRQAlFfrP0684iNyWY3pz
+	 zK+RDB3Q6k1xR3nyG37s5imD22axHTdFaqAdpoXrtQaugje8iVFo1lFp4nAEAOs9cT
+	 2egbEcuTbBBU6WfsKkFhBlLL130t/V3VqFEnCqhNWhnG8WrTkuqoYCK5YbN7WsD60b
+	 jxS/3iDWzefeMq6U4Fr/AdEmLEeEruKsW2AGRbPzMsIY2WKvEY4F/xqoTAOAplHEIp
+	 dXBKIEF0FCieg==
+Date: Tue, 26 Aug 2025 15:09:04 -0500
+From: Rob Herring <robh@kernel.org>
+To: Shenwei Wang <shenwei.wang@nxp.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-imx@nxp.com
+Subject: Re: [PATCH 1/4] dt-bindings: remoteproc: imx_rproc: Add "rpmsg"
+ subnode support
+Message-ID: <20250826200904.GA375876-robh@kernel.org>
+References: <20250818204420.794554-1-shenwei.wang@nxp.com>
+ <20250818204420.794554-2-shenwei.wang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250824130106.35366-1-mittalyugansh1@gmail.com> <20250826172330.44006-1-mittalyugansh1@gmail.com>
-In-Reply-To: <20250826172330.44006-1-mittalyugansh1@gmail.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Tue, 26 Aug 2025 16:08:49 -0400
-X-Gm-Features: Ac12FXx6CxAbdRv2H5agsSD8l8DXHb_XOuskN5WLLuQnENqwpHUtBvrXy0Nwfoo
-Message-ID: <CAEjxPJ4KA+8iijcN0CrgquuXhzJ1e1CaeEaSdaj6_5gfZWeOYg@mail.gmail.com>
-Subject: Re: [PATCH v2] [V2] selinux: restore sleepable revalidation; keep
- fast no-sleep check
-To: Yugansh Mittal <mittalyugansh1@gmail.com>
-Cc: paul@paul-moore.com, selinux@vger.kernel.org, omosnace@redhat.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250818204420.794554-2-shenwei.wang@nxp.com>
 
-On Tue, Aug 26, 2025 at 1:24=E2=80=AFPM Yugansh Mittal <mittalyugansh1@gmai=
-l.com> wrote:
->
-> The prior change made __inode_security_revalidate() always return
+On Mon, Aug 18, 2025 at 03:44:17PM -0500, Shenwei Wang wrote:
+> Remote processors may announce multiple devices (e.g., I2C, GPIO) over
+> an RPMSG channel. These devices may require corresponding device tree
+> nodes, especially when acting as providers, to supply phandles for their
+> consumers.
+> 
+> Define an RPMSG node to work as a container for a group of RPMSG channels
+> under the imx_rproc node.
+> 
+> Each subnode within "rpmsg" represents an individual RPMSG channel. The
+> name of each subnode corresponds to the channel name as defined by the
+> remote processor.
+> 
+> All remote devices associated with a given channel are defined as child
+> nodes under the corresponding channel node.
 
-The prior change wasn't accepted so we wouldn't normally reference it
-in a patch description,
-just in a changelog that would go after the diffstat and not be
-included into the commit message.
+How is each channel addressed? Are they really grouped by type first 
+(i2c, gpio, etc.) then an address within the group? Or is there some 
+flat channel numbering? If the latter, then the addresses in the DT 
+shoulc match the channel number.
 
-> -ECHILD when the inode label appears invalid, avoiding the potential
-> sleep in inode_doinit_with_dentry(). However, not all callers can
-> propagate -ECHILD; only RCU path walk reliably can. This caused
-> cases where the inode could be left with a stale/unlabeled context.
->
-> Fix by:
-
-No need to fix that which is not broken.
-
->   * Keeping an RCU-safe, non-blocking validity check fast path.
->   * Returning -ECHILD only when may_sleep =3D=3D false.
->   * When may_sleep =3D=3D true, performing the blocking revalidation via
->     inode_doinit_with_dentry() as before.
->
-> This preserves non-sleeping behavior in atomic/RCU contexts while
-> maintaining correct reload semantics elsewhere.
->
-> Signed-off-by: Yugansh Mittal <mittalyugansh1@gmail.com>
-
-It is unclear what problem you are trying to solve with the current
-code, but your current patch doesn't compile alone (seems to have a
-dependency on some other patch you haven't posted anywhere I can see).
-Also doesn't pass muster with the ./scripts/checkpatch.pl script.
-See https://github.com/SELinuxProject/selinux-kernel/wiki/Getting-Started
-for tips on how to get started with SELinux development and to prepare
-patches that will be acceptable.
-
+> 
+> Signed-off-by: Shenwei Wang <shenwei.wang@nxp.com>
 > ---
->  security/selinux/hooks.c | 32 +++++++++++++++++++++++---------
->  1 file changed, 23 insertions(+), 9 deletions(-)
->
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index c95a5874b..170ae6d65 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -279,20 +279,34 @@ static int __inode_security_revalidate(struct inode=
- *inode,
->                                        struct dentry *dentry,
->                                        bool may_sleep)
->  {
-> +       struct inode_security_struct *isec;
+>  .../bindings/remoteproc/fsl,imx-rproc.yaml    | 117 ++++++++++++++++++
+>  1 file changed, 117 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> index 57d75acb0b5e..a105aac798d0 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> @@ -84,6 +84,86 @@ properties:
+>        This property is to specify the resource id of the remote processor in SoC
+>        which supports SCFW
+>  
+> +  rpmsg:
+> +    type: object
+> +    additionalProperties: false
+> +    description:
+> +      Present a group of RPMSG channel devices.
 > +
->         if (!selinux_initialized())
->                 return 0;
->
-> -       if (may_sleep)
-> -               might_sleep();
-> -       else
-> -               return -ECHILD;
-> +       /* Fast, non-blocking validity check first */
-> +       rcu_read_lock();
+> +    properties:
+> +      '#address-cells':
+> +        const: 1
+> +
+> +      '#size-cells':
+> +        const: 0
+> +
+> +      rpmsg-io-channel:
+> +        type: object
+> +        unevaluatedProperties: false
+> +        properties:
+> +          '#address-cells':
+> +            const: 1
+> +
+> +          '#size-cells':
+> +            const: 0
+> +
+> +        patternProperties:
+> +          "gpio@[0-9a-f]+$":
+> +            type: object
+> +            unevaluatedProperties: false
+> +            properties:
+> +              compatible:
+> +                enum:
+> +                  - fsl,imx-rpmsg-gpio
+> +
+> +              reg:
+> +                maxItems: 1
+> +
+> +            required:
+> +              - compatible
+> +              - reg
+> +
+> +            allOf:
+> +              - $ref: /schemas/gpio/gpio.yaml#
+> +              - $ref: /schemas/interrupt-controller.yaml#
 
-Why do we need rcu_read_lock() here? We don't take it elsewhere that
-we access isec.
-
-> +       isec =3D selinux_inode(inode);
-> +       if (likely(isec && !is_label_invalid(isec))) {
-
-isec cannot be NULL for an inode when SELinux is enabled, so no need
-to test for it.
-is_label_invalid() is not defined in this patch and no other patch
-from you appears to have been posted.
-
-> +               rcu_read_unlock();
-> +               return 0;   /* valid and no sleeping done */
-> +       }
-> +       rcu_read_unlock();
->
->         /*
-> -        * Check to ensure that an inode's SELinux state is valid and try
-> -        * reloading the inode security label if necessary.  This will fa=
-il if
-> -        * @dentry is NULL and no dentry for this inode can be found; in =
-that
-> -        * case, continue using the old label.
-> -        */
-> +       * Label looks invalid. If we can't sleep, signal caller that a
-> +       * retry in a sleepable context is required. Only contexts like
-> +       * RCU path walk are expected to propagate -ECHILD.
-> +       */
-> +       if (!may_sleep)
-> +       return -ECHILD;
-
-Indentation problem, checkpatch.pl would have caught it.
+This is not needed nor sufficient. You need to define the cell sizes for 
+gpio and interrupt cells.
 
 > +
-> +       /*
-> +       * Sleepable context: reload the label. This may block.
-> +       * If @dentry is NULL and no dentry can be found we'll continue
-> +       * using the old label, consistent with prior behavior.
-> +       */
-> +       might_sleep();
->         inode_doinit_with_dentry(inode, dentry);
->         return 0;
->  }
-
-What makes your patch better than the code that was in place before it?
-Have you compared the resulting assembly and/or run any benchmarks?
-
-> --
+> +        required:
+> +          - '#address-cells'
+> +          - '#size-cells'
+> +
+> +      rpmsg-i2c-channel:
+> +        type: object
+> +        unevaluatedProperties: false
+> +        properties:
+> +          '#address-cells':
+> +            const: 1
+> +
+> +          '#size-cells':
+> +            const: 0
+> +
+> +        patternProperties:
+> +          "i2c@[0-9a-f]+$":
+> +            type: object
+> +            unevaluatedProperties: false
+> +            properties:
+> +              compatible:
+> +                enum:
+> +                  - fsl,imx-rpmsg-i2c
+> +
+> +              reg:
+> +                maxItems: 1
+> +
+> +            required:
+> +              - compatible
+> +              - reg
+> +
+> +            allOf:
+> +              - $ref: /schemas/i2c/i2c-controller.yaml#
+> +
+> +        required:
+> +          - '#address-cells'
+> +          - '#size-cells'
+> +
+>  required:
+>    - compatible
+>  
+> @@ -146,5 +226,42 @@ examples:
+>                  &mu 3 1>;
+>        memory-region = <&vdev0buffer>, <&vdev0vring0>, <&vdev0vring1>, <&rsc_table>;
+>        syscon = <&src>;
+> +
+> +      rpmsg {
+> +        rpmsg-io-channel {
+> +          #address-cells = <1>;
+> +          #size-cells = <0>;
+> +
+> +          gpio@0 {
+> +            compatible = "fsl,imx-rpmsg-gpio";
+> +            reg = <0>;
+> +            gpio-controller;
+> +            #gpio-cells = <2>;
+> +            #interrupt-cells = <2>;
+> +            interrupt-controller;
+> +            interrupt-parent = <&rpmsg_gpioa>;
+> +          };
+> +
+> +          gpio@1 {
+> +            compatible = "fsl,imx-rpmsg-gpio";
+> +            reg = <1>;
+> +            gpio-controller;
+> +            #gpio-cells = <2>;
+> +            #interrupt-cells = <2>;
+> +            interrupt-controller;
+> +            interrupt-parent = <&rpmsg_gpiob>;
+> +          };
+> +        };
+> +
+> +        rpmsg-i2c-channel {
+> +          #address-cells = <1>;
+> +          #size-cells = <0>;
+> +
+> +          i2c@0 {
+> +            compatible = "fsl,imx-rpmsg-i2c";
+> +            reg = <0>;
+> +          };
+> +        };
+> +      };
+>      };
+>  ...
+> -- 
 > 2.43.0
->
+> 
 
