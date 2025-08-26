@@ -1,154 +1,92 @@
-Return-Path: <linux-kernel+bounces-786781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E945B3692E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:23:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 444F9B36997
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:28:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90E321C41112
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:17:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 840C01C41614
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:18:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E76F3570BB;
-	Tue, 26 Aug 2025 14:15:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B62E935A293;
+	Tue, 26 Aug 2025 14:15:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fS7/0m0K"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LwzQTsWT";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="A6j3O2ty"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACFA934DCCB
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 14:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778D535083D;
+	Tue, 26 Aug 2025 14:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756217702; cv=none; b=kVP+Ww0CpiEljHrsXKwLr1jC+LTiiffea6n3/JVPXMFWvNCrgdJmJPD4x8J1krQanCkzjryYnQAOTSfcaOh06mHf3+yil0cWbKjHdqmAdo3NOtBshz/ZiiWXOpMpX8t+w3HaLBe3nLHT3Nh1d2f1XrvpfeLcNzIaf68ATIZMzMQ=
+	t=1756217722; cv=none; b=o1ZnJSOgsaQjcvzEPUVSMITNW1zkFVs5r5yXdkPnoWgjIshBfWuslF/rpIEpJ534ftMXmxXRJznYTj5KNxD1xgsO3AbHdjAyCcHGrGJkaxt7FFj60fdCn63Evx6DU7rFLVQR8s442smQ+KX29Q5PwW6IMbA21HkHXUrCP2lWfQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756217702; c=relaxed/simple;
-	bh=j2v0A0q48Y+rP+Quw56cvQv25ire9TkxoJudb0SCErc=;
+	s=arc-20240116; t=1756217722; c=relaxed/simple;
+	bh=EOBColXHYti+tdwPYRTPX55zWbuLqPbuLsls/+AgNT4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a8ZUjOzHdLApBUa+t9ByBeAX6KfVGCWNM8wHowDn9L73QY3byqPOi//wp6smS9w/e5BD80JW+cVajLxPoOsxK3XzsnSsyjIh3fJoeVkWTGDneeYcgcGMIDT72PCsO/lGh8YFWg/bkMe5Hi4tUdpwmToyq+cP8lYGfqUWjZg6F0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fS7/0m0K; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3c4e9efb88aso3107060f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 07:14:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1756217698; x=1756822498; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=d7ulmsQD4oDI4yv3IfwObO4+vfM4yRrLpoBk1yyAumU=;
-        b=fS7/0m0KgmlWPSmXys7DBPGSw5nPTe6B7sFZTRWnlXS+Hb53YuGa1AeO4KQVhUiO3O
-         Cx13Gj02g/3D01TiOucK90tMKHIL3rsh4gPZrstmupOjdneGlPilH7/AzW7ZR07hR/Q3
-         C6M/4wHv3ZKPOsiDMBzgw3hF2wpBJFAU5i3rvMZ8DwRxJ2YrYFxB645ZbI96odkMP0G8
-         oqHXrIIrryKve6Z9lsR/Ie5VF1HkrnYvNEo5Y3geOpH4d3i+0mAI1zQ50iwKOkaYGQwx
-         fwt6u5gm2U6jkrXl7LHPtUz70YAZzq/eLCMiIeUHooB8N/ekNhVrryole0MNbvzDy5KH
-         CxfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756217698; x=1756822498;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d7ulmsQD4oDI4yv3IfwObO4+vfM4yRrLpoBk1yyAumU=;
-        b=PmQiAc7PvsVTwkykidKXHw3gSvoaHNcX5kurt0dus6HpQ3UtWZPbJdLE3qtBL74t3e
-         vPMxBWYI4+mE1YH2Ixl8V9jqejfjVODMTtUqygOb2gbG8i/nd1XusxIWPAXy6K8Bm7n6
-         PMueFxScsXDJbQEnowkRNgTu6oMcQrOzmwd9O7CzOfMJbM1Ygcf2zxphpxfAChl2Lfn9
-         ewhhJN08SUol9vdXnZ0ObyRkwV+oXTnCuSRSITjvyEYwlPkUfW3u8329dAcXdvuohL6H
-         gMZYeNN8lTU0EDuPXyJXOIhOgcLad/WFzbCVIXxU64scFB1FEp9HLn/YMj721+KQaWu8
-         AhJw==
-X-Forwarded-Encrypted: i=1; AJvYcCVQgfsNRAoS4fBakMu5jlQz+/4safiFhW1DKTEMxpNpuSYhuw4JhIqzN0CUcHWqTKp7WgMUicnJxXAtglQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxb+wO63adDc58hU84cVyx4qgQa1QbTvvEyTynrgEDF24MmJXo7
-	YRrBE6ob5kEBpVRh8wtYOhuGjtp6VHz7XrytuYS6154n4uaqK4AI5+0ZV67iSrueZFA=
-X-Gm-Gg: ASbGncv2rOoF19o3y9zXAjlqlrTYv10QYrkmGWDqZxvdZx/9gz3+ObQDA4y169whNt3
-	waHImpA+guRyMWWyBwBl3lOAJ3AF5zyr9erl+EgmyzqWUUJdeG+Yj137yo7/nrt6UsWWN/TIDjp
-	HbFMg1EZ9x0Pzk6xKaZspOvHFI3NsMa8lwozmiWRRUTKk3TpaCUO3nxbb4ZWltVIW7dVh5Fp4XK
-	6pMCFnwfR5fyY0nrUp7FTp6MMvvtnQnp2+IYAhuEVltgnd9uzj/MIkgNKZXydthMSYCU+wykUN4
-	89R/U+H4UnEpW4LfsyBUZDfVmGoS5+RGNvlfT0x8SNI/xm/NSgTIrey28G+E3zrscJ7iaFeMYSh
-	VH1ihUylb433uAPNuzyIcPdW7Ty/p11aRyHFMgxsWgKg=
-X-Google-Smtp-Source: AGHT+IHY+9mOjFXN8yku9tMcb9AW0UGOczM9gh7nBsRlIIYCfLujOywpKW9tTNOB1kBIpa8Uxt5MFw==
-X-Received: by 2002:a05:6000:2502:b0:3b4:9b82:d432 with SMTP id ffacd0b85a97d-3c5d7ac6ce9mr11774526f8f.0.1756217697872;
-        Tue, 26 Aug 2025 07:14:57 -0700 (PDT)
-Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32549fe6c74sm10082400a91.6.2025.08.26.07.14.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 07:14:57 -0700 (PDT)
-Date: Tue, 26 Aug 2025 16:14:47 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Chen Ridong <chenridong@huaweicloud.com>
-Cc: tj@kernel.org, hannes@cmpxchg.org, cgroups@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, lujialin4@huawei.com, chenridong@huawei.com
-Subject: Re: [PATCH cgroup/for-next 1/3] cgroup: remove redundancy online_cnt
-Message-ID: <zumtn2pez376u2xacibdd6eueeueh6ole5w6pqbgccg2bj7fgd@o2szr644a3om>
-References: <20250826034022.1736249-1-chenridong@huaweicloud.com>
- <20250826034022.1736249-2-chenridong@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DFEBJNx4aeoBtWl9oFBHVgjtvc5vwMYONKVyaQFUABsaug6tUBV24eHPNxJi6+k5KYl8D40kazfgw1EVRURWm+4e5r+1ekE/z7bSmWqqYvrJ5m70vKDLbXz3lB2Czq7+Wj6zSb07zf0BfbkZPc3fIJOLlh+fE38P4gPCXD2KyuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LwzQTsWT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=A6j3O2ty; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 26 Aug 2025 16:15:16 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756217718;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JD9Mbivfzta1IsMjGhVlMntp+L8qXG49mI8iNfMcMUs=;
+	b=LwzQTsWTBoWDx37sRi3tb0PU3Ajs+jz/IKfgLiKgj3SNBo81PY9cpOHKLYzAL7M7X9vCRs
+	FZGI/1VLSRkZcuHln0iZ5qfz+SM1eDSijuB/Vi9uZjAVk0Y33yZKTr4FE/s74aZGZmT4h/
+	O8TAdexVcIbJJkCKyG75v1S+xn56WRN7XgJP0e8vXbA5qQEJ3ucKNNv6VZFFd5o9Oo9v/o
+	XWmC0xk9Js+MZ8isbL1alwMkXPg0W1s3qGoXJrBsrCiu8+nevAS+W5Bu69sGuokDrvlDCp
+	xgZQVQkjEkXrLyta5s3CeLOfEagrmQej97s3+K1uhaWYNuITz22ijE4mbjqPmg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756217718;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JD9Mbivfzta1IsMjGhVlMntp+L8qXG49mI8iNfMcMUs=;
+	b=A6j3O2tyCWBZzBRinhAyFlVtysNem2GxcBdeDD2YKoHgxzqgkyMt4mGki+3QnNz32c7ZgL
+	BbCCPDifu1NpmFBg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Sean Christopherson <seanjc@google.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org,
+	virtualization@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] vhost_task: KVM: Don't wake KVM x86's recovery
+ thread if vhost task was killed
+Message-ID: <20250826141516.f_jWThaV@linutronix.de>
+References: <20250826004012.3835150-1-seanjc@google.com>
+ <20250826004012.3835150-2-seanjc@google.com>
+ <20250826034937-mutt-send-email-mst@kernel.org>
+ <aK2-tQLL-WN7Mqpb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="e37cwfg4njgbpo5x"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250826034022.1736249-2-chenridong@huaweicloud.com>
+In-Reply-To: <aK2-tQLL-WN7Mqpb@google.com>
 
+On 2025-08-26 07:03:33 [-0700], Sean Christopherson wrote:
+> And the call from __vhost_worker_flush() is done while holding a vhost_worker.mutex.
+> That's probably ok?  But there are many paths that lead to __vhost_worker_flush(),
+> which makes it difficult to audit all flows.  So even if there is an easy change
+> for the RCU conflict, I wouldn't be comfortable adding a mutex_lock() to so many
+> flows in a patch that needs to go to stable@.
 
---e37cwfg4njgbpo5x
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH cgroup/for-next 1/3] cgroup: remove redundancy online_cnt
-MIME-Version: 1.0
+If I may throw something else into the mix: If you do "early"
+get_task_struct() on the thread (within the thread), then you could wake
+it even after its do_exit() since the task_struct would remain valid.
+Once you remove it from all structs where it can be found, you would do
+the final put_task_struct().
 
-Hello Ridong.
-
-On Tue, Aug 26, 2025 at 03:40:20AM +0000, Chen Ridong <chenridong@huaweiclo=
-ud.com> wrote:
-> @@ -5949,7 +5944,7 @@ static void css_killed_work_fn(struct work_struct *=
-work)
->  		css_put(css);
->  		/* @css can't go away while we're holding cgroup_mutex */
->  		css =3D css->parent;
-> -	} while (css && atomic_dec_and_test(&css->online_cnt));
-> +	} while (css && css_is_dying(css) && !css->nr_descendants);
-
-Here it's OK...
-
-> =20
->  	cgroup_unlock();
->  }
-> @@ -5960,7 +5955,7 @@ static void css_killed_ref_fn(struct percpu_ref *re=
-f)
->  	struct cgroup_subsys_state *css =3D
->  		container_of(ref, struct cgroup_subsys_state, refcnt);
-> =20
-> -	if (atomic_dec_and_test(&css->online_cnt)) {
-> +	if (!css->nr_descendants) {
->  		INIT_WORK(&css->destroy_work, css_killed_work_fn);
->  		queue_work(cgroup_offline_wq, &css->destroy_work);
->  	}
-
-=2E.. but here in percpu_ref's confirm callback you're accessing
-nr_descendants without cgroup_mutex where the atomic would have
-prevented the data race.
-
-Also the semantics of online_cnt and nr_descendants is slightly
-different -- killed vs offlined. Or can you add a description why
-they're same (after workqueue split)?
-
-Thanks,
-Michal
-
---e37cwfg4njgbpo5x
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJEEABYKADkWIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaK3BVRsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQfj0C55Tb+AhMrAD9HaLehNCEvy9tY5TFCzK1
-fhYL1r/LBmh6LZ69zkiz/coBALFvZYfRRnQz7gf8u6NLbLjSunueITfmuykfyiWJ
-k6QB
-=V09U
------END PGP SIGNATURE-----
-
---e37cwfg4njgbpo5x--
+Sebastian
 
