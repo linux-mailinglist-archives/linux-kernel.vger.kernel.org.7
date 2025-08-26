@@ -1,107 +1,87 @@
-Return-Path: <linux-kernel+bounces-785881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C755B35223
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:16:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AF7EB35227
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:17:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C5C117770C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:16:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCD9A7B02F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2500276057;
-	Tue, 26 Aug 2025 03:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Wmt6NYM1"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A5F111BF;
-	Tue, 26 Aug 2025 03:16:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB5182D24A2;
+	Tue, 26 Aug 2025 03:17:08 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53FD71F4165;
+	Tue, 26 Aug 2025 03:17:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756178182; cv=none; b=ohmHjzvEWHa1n/jH2vn1/cMQYQ0naOkl66knQ3Wjr2vRToVxcbVaDzR04QITlshQ9zPljQxxVotgUZJYAlAkCoQeLCA4IQNgFfkG+Dw/5+S8c52CKeDhoj/y5psXRETGAch74BMZS+AVVZ/BsCpcQ67IhzdFROAxvJ9cjsodrMg=
+	t=1756178228; cv=none; b=YNbGRxfUlUbJrzHDnYV5Wjv3TYyK9PmygAWieuzhA2TGcX6nnkS5ucak/W06msfKnXmhy5S9PcS5sw8oXUf9MAihDzFXp+afWAZcEM3H/tjRG/lA+fLGZlydgvoi6lzwFRq03SkR5gUV+4d0QC7aOh/fKEsj/tlRo7MBZHMu4uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756178182; c=relaxed/simple;
-	bh=9zT4hWxS3/93eiB1fYlXIG8klRDOKyVmSADjtbJ/Sog=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Dtooxv1mcL5ioOtPZ1RvjUC7TQWU2Wmx3WhtAOsuGmfvHh8HAHpZrWsqZAgxbyDVIjm45zAOPo7ecWwuav8aMPizHjp5PqjIZnrXnL6Wbc3Xu2dv+SePQ+SplkJuPwn/8euzo7n+CD9DJCQvXK/6bEyuJRj/4Wptk0XC4xjT+xQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Wmt6NYM1; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=/u
-	/MkC1hJIU5or58FyCsCRK1iVr+/aJ7pfuUQnsJ8uk=; b=Wmt6NYM1HTPl1oKM1r
-	edp2Q2YLqFRVYCJL9eFXeVswve1UACtDQl4Ib/uF04MrGjXyuICyuyJFgKddn9Sj
-	AZwFAFbJqdHDtrAq+ukeTFgdWkuZ/QEP9HN0NpD4bfaMbE4cgcdELqjn0xi+YjEQ
-	48vdC5SuIf/MJnVXGRTtdFLt8=
-Received: from thinkpadx13gen2i.. (unknown [])
-	by gzsmtp5 (Coremail) with SMTP id QCgvCgC3aQveJq1oOSNvAg--.56318S2;
-	Tue, 26 Aug 2025 11:15:43 +0800 (CST)
-From: Zongmin Zhou <min_halo@163.com>
-To: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	shuah@kernel.org
-Cc: netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
+	s=arc-20240116; t=1756178228; c=relaxed/simple;
+	bh=rZZS7XxvYff8UplxWngQ5EOMk9dIwfeqcUkMFXg8E5I=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=M5ZaWjLhpBlddI84P3SrXG6O9NKyKCL2OdeTB21NQ3cYpNmcDiJie3lW0h2XnI4bF2XnutKZSo+TXOJU8bnTOpljkV/IOMPZZwW9cXz4eO5LSszRkBRHS9ihWHD8zPS/xWCBhmncfZgYbD/3cxOg6Ie3VyhHqXFyW/N08wgtaGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 1d7e8f9e822b11f0b29709d653e92f7d-20250826
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:a4c2def1-cbd4-4832-8dc3-a9dcabd11ea7,IP:0,U
+	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-5
+X-CID-META: VersionHash:6493067,CLOUDID:27ec317d6c360ade35356f733918c402,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|83|102|850,TC:nil,Content:0|50,EDM
+	:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0
+	,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 1d7e8f9e822b11f0b29709d653e92f7d-20250826
+Received: from node4.com.cn [(10.44.16.170)] by mailgw.kylinos.cn
+	(envelope-from <tanzheng@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 710774536; Tue, 26 Aug 2025 11:16:53 +0800
+Received: from node4.com.cn (localhost [127.0.0.1])
+	by node4.com.cn (NSMail) with SMTP id A735C160038C0;
+	Tue, 26 Aug 2025 11:16:53 +0800 (CST)
+X-ns-mid: postfix-68AD2725-464022963
+Received: from localhost.localdomain (unknown [10.42.20.101])
+	by node4.com.cn (NSMail) with ESMTPA id EC81516001A03;
+	Tue, 26 Aug 2025 03:16:52 +0000 (UTC)
+From: tanzheng <tanzheng@kylinos.cn>
+To: arend.vanspriel@broadcom.com
+Cc: johannes@sipsolutions.net,
 	linux-kernel@vger.kernel.org,
-	Zongmin Zhou <zhouzongmin@kylinos.cn>
-Subject: [PATCH] selftests: net: avoid memory leak
-Date: Tue, 26 Aug 2025 11:15:40 +0800
-Message-Id: <20250826031540.28010-1-min_halo@163.com>
-X-Mailer: git-send-email 2.34.1
+	linux-wireless@vger.kernel.org,
+	tanzheng@kylinos.cn
+Subject: Re: [PATCH v1] wifi: cfg80211: simplify the code
+Date: Tue, 26 Aug 2025 11:16:52 +0800
+Message-Id: <20250826031652.454464-1-tanzheng@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <11546959-3090-4070-93fa-349bc64f3bdd@broadcom.com>
+References: <11546959-3090-4070-93fa-349bc64f3bdd@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:QCgvCgC3aQveJq1oOSNvAg--.56318S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrZFWktF15uF18Cw1fGFy8Zrb_yoWDCFXE9r
-	Z2vFZ7Gr4vyF1qk3sFg3s5ur93Ka98Crs7JFnrJa13K34jqay5GFZ7C34kAFn3Wan5ta43
-	Z3WfArZ3C3yj9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUj_-P5UUUUU==
-X-CM-SenderInfo: pplqsxxdorqiywtou0bp/xtbBzQu1q2itImCIgAAAsX
+Content-Transfer-Encoding: quoted-printable
 
-From: Zongmin Zhou <zhouzongmin@kylinos.cn>
+Hi Arend,
 
-The buffer be used without free,fix it to avoid memory leak.
+This is my mistake. Here I confused driver name and device name.After you=
+=20
+reviewed the code, I tested it and found that it was wrong.=20
 
-Signed-off-by: Zongmin Zhou <zhouzongmin@kylinos.cn>
----
- tools/testing/selftests/net/cmsg_sender.c | 3 +++
- 1 file changed, 3 insertions(+)
+Thank you for your correction.I will remove the wrongly modified code and=
+=20
+submit a new patch for modification.
 
-diff --git a/tools/testing/selftests/net/cmsg_sender.c b/tools/testing/selftests/net/cmsg_sender.c
-index a825e628aee7..5358aa09ecb9 100644
---- a/tools/testing/selftests/net/cmsg_sender.c
-+++ b/tools/testing/selftests/net/cmsg_sender.c
-@@ -491,6 +491,7 @@ int main(int argc, char *argv[])
- 	if (err) {
- 		fprintf(stderr, "Can't resolve address [%s]:%s\n",
- 			opt.host, opt.service);
-+		free(buf);
- 		return ERN_SOCK_CREATE;
- 	}
- 
-@@ -501,6 +502,7 @@ int main(int argc, char *argv[])
- 	if (fd < 0) {
- 		fprintf(stderr, "Can't open socket: %s\n", strerror(errno));
- 		freeaddrinfo(ai);
-+		free(buf);
- 		return ERN_RESOLVE;
- 	}
- 
-@@ -575,5 +577,6 @@ int main(int argc, char *argv[])
- err_out:
- 	close(fd);
- 	freeaddrinfo(ai);
-+	free(buf);
- 	return err;
- }
--- 
-2.34.1
-
+Best regards,
+Zheng tan
 
