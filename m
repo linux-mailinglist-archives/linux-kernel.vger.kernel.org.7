@@ -1,117 +1,136 @@
-Return-Path: <linux-kernel+bounces-786339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E08E5B35884
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:17:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2A03B358A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:20:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 537891884498
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:16:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D4995E4524
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:16:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 629993126D2;
-	Tue, 26 Aug 2025 09:14:12 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729C63074AA;
+	Tue, 26 Aug 2025 09:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="2PdBgyoO"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3812F8BE7;
-	Tue, 26 Aug 2025 09:14:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391882FE069;
+	Tue, 26 Aug 2025 09:14:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756199652; cv=none; b=aNcxS/xuk1QhTZG/cIaibZoDzNoTfhaU4SEyommjMifPa1Qu2rNmhoBfV+FdFHGObuwTA3JhNfwWW+x7akGXTOrGjIH7NQJWeXWPlZhS5arYC7TEyEa6G3zyh2ON+3pCRL6BOqf8kzTIir7Kf7xCXkrYIzrMF/92NzCWUsSmv3k=
+	t=1756199691; cv=none; b=afpcio4jFrfT8dAq8iqupr75CtI2r4vvA7RYTVXmV/7cTrdId1M3pCmUPpYb9FjKQa/P5Q1+9mnsqKrnnaAdjKNxeQu1wS8xdjEOqQ54PZjq+U7UXzz+Wy/ZjKNRugbKbYm5tWvz4v+d8j7wULCLIbspbt4mdtbmoozt7Bdew0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756199652; c=relaxed/simple;
-	bh=/RgWeAmBiaSdiIAMnSe77oaifrRUTgjomq97aknow6Q=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=slFEDO+tTWo3Whqdf2bbdyuv4aXfPGJcYgFpjpKZPjVcRHcTZIGco2BhbA4V1LXcSwzWZOhPsJr1jU/LahIKWb6pHcWJXyn64XaPWEwZRBYWbrY9KWtt4UaFyncAEdAAGa1uuG0J30a0grfkbfFrHrnQO0UGK9q8nLeVKrZJqFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cB2674Q9KzKHNCV;
-	Tue, 26 Aug 2025 17:14:07 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 39EBE1A0ABF;
-	Tue, 26 Aug 2025 17:14:07 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgDnMY7deq1ocPNhAQ--.26341S3;
-	Tue, 26 Aug 2025 17:14:06 +0800 (CST)
-Subject: Re: [PATCH RFC 4/7] md/raid10: convert read/write to use
- bio_submit_split()
-To: Christoph Hellwig <hch@infradead.org>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: colyli@kernel.org, hare@suse.de, tieren@fnnas.com, axboe@kernel.dk,
- tj@kernel.org, josef@toxicpanda.com, song@kernel.org,
- akpm@linux-foundation.org, neil@brown.name, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
- linux-raid@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- johnny.chenyi@huawei.com, John Garry <john.g.garry@oracle.com>,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250825093700.3731633-1-yukuai1@huaweicloud.com>
- <20250825093700.3731633-5-yukuai1@huaweicloud.com>
- <aKxCJT6ul_WC94-x@infradead.org>
- <6c6b183a-bce7-b01c-8749-6e0b5a078384@huaweicloud.com>
- <aK1ocfvjLrIR_Xf2@infradead.org>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <fe595b6a-8653-d1aa-0ae3-af559107ac5d@huaweicloud.com>
-Date: Tue, 26 Aug 2025 17:14:05 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1756199691; c=relaxed/simple;
+	bh=Lxn6j1kzDkH/WTga4d/2k5vCxhia+Sp6of3N/hIKY/s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=sJildRD5ULu5Y38MAJ9Yi1qcvhhW7XxxGkHTW3GdFu/p9x7A+ziULO5Jp4oeS5UjozAk6YJnsaOWc3d1ATrqgc3TxrFLdao+ShMi5cChg3uAPmUFf4vn4aGC9Lfb4oVsEKwb4VFhRcw5RM4uJUO8o4O8D3SoDjgQ5u3DogEH7Fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=2PdBgyoO; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1756199690; x=1787735690;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Lxn6j1kzDkH/WTga4d/2k5vCxhia+Sp6of3N/hIKY/s=;
+  b=2PdBgyoOHoV6cSjJpGWLXaXxW7Vezpp3hUiDEH8DGKYCAXK5f23ZuJA7
+   sYUJKLxGrXlSdVb8LRKRDgihmyOUplqjMWQvLq5qUGvH0hcIcsrNm4Bkz
+   c56vN3XS2M3ZcezIO0dm0p+Xy+/hTMasB57sKcA/2hgcTjI7xGQitQ1C7
+   GQ5AVuz7Y7P7uxgln1HgZk7SzMjfNrKSI6mawan+MZnS4BBYr8lA1ksRH
+   HKI2fHiCFmX0zWdMQxeqNqgUScIg+hgovPNgk1ANRS1suU69nW2otoRqT
+   MG1fhAy9m/5gmDDYIcYEMLbWhrRw9hfdKpP8lxjSWC2pdhFMSquCi8inw
+   A==;
+X-CSE-ConnectionGUID: oz5noQKVS6yv1ppRAce+jQ==
+X-CSE-MsgGUID: k1iAyTw3SpukqoVYCbsjww==
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="213074774"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 26 Aug 2025 02:14:48 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Tue, 26 Aug 2025 02:14:23 -0700
+Received: from [10.159.245.205] (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Tue, 26 Aug 2025 02:14:19 -0700
+Message-ID: <3bccf773-abd6-4ade-a1c5-99f2a773b723@microchip.com>
+Date: Tue, 26 Aug 2025 11:14:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <aK1ocfvjLrIR_Xf2@infradead.org>
-Content-Type: text/plain; charset=gbk; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] net: cadence: macb: Set upper 32bits of DMA ring
+ buffer
+To: Jakub Kicinski <kuba@kernel.org>, Stanimir Varbanov <svarbanov@suse.de>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-rpi-kernel@lists.infradead.org>, Broadcom internal kernel review list
+	<bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Florian
+ Fainelli <florian.fainelli@broadcom.com>, Andrea della Porta
+	<andrea.porta@suse.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, Phil
+ Elwell <phil@raspberrypi.com>, Jonathan Bell <jonathan@raspberrypi.com>, Dave
+ Stevenson <dave.stevenson@raspberrypi.com>, <stable@vger.kernel.org>, Andrew
+ Lunn <andrew@lunn.ch>, =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+References: <20250822093440.53941-1-svarbanov@suse.de>
+ <20250822093440.53941-2-svarbanov@suse.de>
+ <20250825165310.64027275@kernel.org>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Content-Language: en-US, fr
+Organization: microchip
+In-Reply-To: <20250825165310.64027275@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDnMY7deq1ocPNhAQ--.26341S3
-X-Coremail-Antispam: 1UD129KBjvdXoW7Wr47Xw13CrWrZryDKw17Wrg_yoW3ZrXEg3
-	yqyrnxGwn2qF13A3yrK3ZxGrZ7AF4a9F15u3WUXF4fZ34rur9rCw47C39av3s5JF4jywsI
-	9Fn8WrW5Ar929jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbSkFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UMIIF0xvE
-	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6x
-	kF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7sRi66wtUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hi,
-
-‘⁄ 2025/08/26 15:55, Christoph Hellwig –¥µ¿:
-> On Tue, Aug 26, 2025 at 09:13:41AM +0800, Yu Kuai wrote:
->>> The NULL return should only happen for REQ_NOWAIT here, so maybe
->>> give R10BIO_Returned a more descriptive name?  Also please document
->>> the flag in the header.
+On 26/08/2025 at 01:53, Jakub Kicinski wrote:
+> On Fri, 22 Aug 2025 12:34:36 +0300 Stanimir Varbanov wrote:
+>> In case of rx queue reset and 64bit capable hardware, set the upper
+>> 32bits of DMA ring buffer address.
 >>
->> And also atomic write here, if bio has to split due to badblocks here.
->> The flag is refer to raid1. I can add cocument for both raid1 and raid10
->> in this case.
+>> Cc: stable@vger.kernel.org # v4.6+
+>> Fixes: 9ba723b081a2 ("net: macb: remove BUG_ON() and reset the queue to handle RX errors")
+>> Credits-to: Phil Elwell <phil@raspberrypi.com>
+>> Credits-to: Jonathan Bell <jonathan@raspberrypi.com>
+>> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
+>> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 > 
-> Umm, that's actually a red flag.  If a device guarantees atomic behavior
-> it can't just fail it.  So I think REQ_ATOMIC should be disallowed
-> for md raid with bad block tracking.
-> 
-
-I agree that do not look good, however, John explained while adding this
-that user should retry and fallback without REQ_ATOMIC to make things
-work as usual.
-
-Thanks,
-Kuai
-
+>> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+>> index ce95fad8cedd..36717e7e5811 100644
+>> --- a/drivers/net/ethernet/cadence/macb_main.c
+>> +++ b/drivers/net/ethernet/cadence/macb_main.c
+>> @@ -1634,7 +1634,11 @@ static int macb_rx(struct macb_queue *queue, struct napi_struct *napi,
+>>                macb_writel(bp, NCR, ctrl & ~MACB_BIT(RE));
+>>
+>>                macb_init_rx_ring(queue);
+>> -             queue_writel(queue, RBQP, queue->rx_ring_dma);
+>> +             queue_writel(queue, RBQP, lower_32_bits(queue->rx_ring_dma));
+>> +#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
+>> +             if (bp->hw_dma_cap & HW_DMA_CAP_64B)
+>> +                     macb_writel(bp, RBQPH, upper_32_bits(queue->rx_ring_dma));
+>> +#endif
+>>
+>>                macb_writel(bp, NCR, ctrl | MACB_BIT(RE));
 >>
 > 
-> .
-> 
+> Looks like a subset of Th√©o Lebrun's work:
+> https://lore.kernel.org/all/20250820-macb-fixes-v4-0-23c399429164@bootlin.com/
+> let's wait for his patches to get merged instead?
+
+Yes, we can certainly wait. As RBOPH changes by Th√©o are key, they will 
+probably remove the need for this fix altogether: but I count on you 
+Stanimir to monitor that (as I don't have a 64 bit capable platform at 
+hand).
+
+Best regards,
+   Nicolas
 
 
