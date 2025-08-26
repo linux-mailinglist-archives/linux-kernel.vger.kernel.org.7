@@ -1,108 +1,131 @@
-Return-Path: <linux-kernel+bounces-786664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15E1CB36151
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:08:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24EC3B360DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:04:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0BA63B0C7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:04:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5EFA37B7A29
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:03:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED53526FA57;
-	Tue, 26 Aug 2025 13:03:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC7F23BD1A;
+	Tue, 26 Aug 2025 13:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="s5T3h8Qu"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pY9gpf5H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6B522A4EE;
-	Tue, 26 Aug 2025 13:03:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F161720FA81
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 13:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756213422; cv=none; b=UPNlmMLaJeEZQeg3++4mH1sFExavwuKhCQWINJjrNLCAtMwErxXnyTrOba9dGiI5omeOC/DqLaRt0jKa55qNcue3nMslRS4C+LyRGqMD2qwSEU+Gl9zBnLP8tDsiLNR7PTPdolrLm07GiLRCB17RWrYTgAl4AGrVyVsUIIWy734=
+	t=1756213429; cv=none; b=kHBciPe61m2iF7VuwD9qJ6sagXxdbYBtTHmIYIo/USpgPVCkgOgFyEZsZFrF4jExVHXY88LBm0roV4f54yJitlm+JsZubKO/fLiMrWBM2jv7vkwQonCEBM9MZAq+FraHnqYuKpXVu9nQBkE0gvgS9ezsHS5ZS+wF/NX5y4i3BR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756213422; c=relaxed/simple;
-	bh=pe5SE8cLTPPyLKyF6S5l44TjxJSycuwoPwH53Hc4MBc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R/IhJQReJM/y5yPxstRXY4glIAPG+irhAYQ1Dl/tu+dTBZVHBslYt6eXuUZCHaswxY0AN5C7u5H7XJ+16uaRbaIi/6A2RrMmnEvveP4c5LLWke2z0v58DmzAPLcHdciYpRjRjIYJUZsT5NybQCho4uWpFzRg1MjJkiILdzlpoWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=s5T3h8Qu; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=pe5SE8cLTPPyLKyF6S5l44TjxJSycuwoPwH53Hc4MBc=; b=s5T3h8QunORHMVi1lJq+TueBjc
-	cEFljtvjN5QJ03jRIuUbqZT2dzYWLCkq7EIgZ1HjiZepKSvKZUS4jhIftbJpUomzAxLkXpo4MhYIl
-	ZCvpLQBdWeqllwk2L5LEakNCj50aVxzY1I5n8BnO+qCbmyfysUZaBrevf4ZwX/NHQuj2PrtwGK3Is
-	jhSt6FlQLnGrrRwVWOG3VEhB1mGDJu+1EhbkwSGhAG25rhQM5DyWklhsvsXQh2tW5FYLoYbc8dttl
-	tsa9sX+EEmcEbn/jBCdJY0wOlh7GZntWiVjKPlxT8hw9CmspDWHiAZfhSZSTIR8f/mKGoVnI/OKYV
-	DfymEZ2w==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uqtKk-00000002CWx-1CxP;
-	Tue, 26 Aug 2025 13:03:31 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id E7FAC3002C5; Tue, 26 Aug 2025 15:03:29 +0200 (CEST)
-Date: Tue, 26 Aug 2025 15:03:29 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: mingo@redhat.com, will@kernel.org, mark.rutland@arm.com,
-	acme@kernel.org, namhyung@kernel.org,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
-	linux-csky@vger.kernel.org, loongarch@lists.linux.dev,
-	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, dmaengine@vger.kernel.org,
-	linux-fpga@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org, coresight@lists.linaro.org,
-	iommu@lists.linux.dev, linux-amlogic@lists.infradead.org,
-	linux-cxl@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 12/19] perf: Ignore event state for group validation
-Message-ID: <20250826130329.GX4067720@noisy.programming.kicks-ass.net>
-References: <cover.1755096883.git.robin.murphy@arm.com>
- <d6cda4e2999aba5794c8178f043c91068fa8080c.1755096883.git.robin.murphy@arm.com>
+	s=arc-20240116; t=1756213429; c=relaxed/simple;
+	bh=nk7jhUwWLjxIbwK4I/zNtqt1MsWdQ36uPPgFbuOgopQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T82I29TyY9GFz8z0nZQE0FQmibc6YKU/bfdMpbZht2wpb9qhFNdOo2nvJPGbkhBbB90mD4zOtSa7n+CJFlZuz5VxUAvpxM7ZE1peblw/mhx5/jTOssUDtMVJ3yG1bxM1KN4lab6aMjSc1CxYWFQosXW5uRxcGGOL6PbRT4Vp448=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pY9gpf5H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73D5CC4AF09
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 13:03:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756213428;
+	bh=nk7jhUwWLjxIbwK4I/zNtqt1MsWdQ36uPPgFbuOgopQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=pY9gpf5H0j/3l6C2f4WZsvzR4T92c+qlxdvZMAibHkC+vbdJc4GVKDkUeQ7RXaaLM
+	 lD9O7jaWoO2usnocQHMj7cIs7cvxluZlQ3HHnaS8hKku1z+/8097bVNJq0ptC75717
+	 qyubmht8zCWMlWTJy2i6VqL+pEWdeS3TK3Q7ZW4mSvnGpr98rAcNITcsFTiTguoTTl
+	 o/f81aZGgROkJJ++wQYKZI5Qs2JacT5t2dsPC6+t5XbuBllU9/AoWk5ybZsVp2KUPt
+	 6YwESfLLMLFpClIZt/nqfx0N2VJqW4FaO6dICtTnTodr3QmacO2rAzvl4W8/ka4LPO
+	 Eer9rhlPcEJ0w==
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-6188b6f7f15so6584381a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 06:03:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW7oGXontJJZSZSxZG2A3XU7tHsbKSuE/AhL1WOQ/pMSgIIRr77hgt2zpCTv5lSuwYMVXnBpKSfkVpRHHY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxC0NzIssOK0Uxr5jgomfhLxMs7uL3/tkQOJUoaoio5TntO2xCu
+	kjBzUNae89Esg3MU9lQ6TarzQnqNMDd5U/9v/HGlalu4ATE9E/BMPnTG2YrpbYxMPiD2Uy30tFL
+	4CbtzW+ZzOv+ceF9ewA7tYIbmhMSiA50=
+X-Google-Smtp-Source: AGHT+IE675Ml2VEXdGaR0URYV5LfkjLncmRAXtzDjddNaQF4YVtfzIVT53EfNILVoihSDWLkNi4/+6IxLm6P4iI6ZSs=
+X-Received: by 2002:a05:6402:26d0:b0:61c:5474:ffbf with SMTP id
+ 4fb4d7f45d1cf-61c5474ffdamr7122162a12.33.1756213427061; Tue, 26 Aug 2025
+ 06:03:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d6cda4e2999aba5794c8178f043c91068fa8080c.1755096883.git.robin.murphy@arm.com>
+References: <20250826064631.9617-1-yangtiezhu@loongson.cn> <20250826064631.9617-2-yangtiezhu@loongson.cn>
+ <CAAhV-H5wW_04NHQ7z+SCPb6-T5Hc__n+x=ykg-u9vn4b4GXuww@mail.gmail.com> <487a8149-6cbe-46a7-6771-66aef0045f07@loongson.cn>
+In-Reply-To: <487a8149-6cbe-46a7-6771-66aef0045f07@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Tue, 26 Aug 2025 21:03:34 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H7m-BSqajDiDNMNEq4FY9uoCd9LZySOe0VQ+2Sv1wZZVg@mail.gmail.com>
+X-Gm-Features: Ac12FXznsGPP8wLPZfGYQ1iw7g6utc_zspEM5jjFBXn1rZ2NWCs22HEn7S98enk
+Message-ID: <CAAhV-H7m-BSqajDiDNMNEq4FY9uoCd9LZySOe0VQ+2Sv1wZZVg@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/2] objtool/LoongArch: Fix fall through warning about efi_boot_kernel()
+To: Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Nathan Chancellor <nathan@kernel.org>, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 13, 2025 at 06:01:04PM +0100, Robin Murphy wrote:
-> It may have been different long ago, but today it seems wrong for these
-> drivers to skip counting disabled sibling events in group validation,
-> given that perf_event_enable() could make them schedulable again, and
-> thus increase the effective size of the group later. Conversely, if a
-> sibling event is truly dead then it stands to reason that the whole
-> group is dead, so it's not worth going to any special effort to try to
-> squeeze in a new event that's never going to run anyway. Thus, we can
-> simply remove all these checks.
+On Tue, Aug 26, 2025 at 8:33=E2=80=AFPM Tiezhu Yang <yangtiezhu@loongson.cn=
+> wrote:
+>
+> On 2025/8/26 =E4=B8=8B=E5=8D=884:32, Huacai Chen wrote:
+> > On Tue, Aug 26, 2025 at 2:46=E2=80=AFPM Tiezhu Yang <yangtiezhu@loongso=
+n.cn> wrote:
+> >>
+> >> When compiling with LLVM and CONFIG_LTO_CLANG is set, there exists
+> >> the following objtool warning:
+> >>
+> >>    vmlinux.o: warning: objtool: __efistub_efi_boot_kernel()
+> >>    falls through to next function __efistub_exit_boot_func()
+>
+> ...
+>
+> >> -typedef void __noreturn (*kernel_entry_t)(bool efi, unsigned long cmd=
+line,
+> >> +typedef void (*kernel_entry_t)(bool efi, unsigned long cmdline,
+> >>                                            unsigned long systab);
+> >  From my point of view this is incorrect, this function is indeed a
+> > noreturn function, and this modification makes LoongArch different to
+> > other architectures.
+> >
+> > Maybe it is better to let objtool ignore the whole
+> > drivers/firmware/efi/libstub directory. Because efistub is discarded
+> > at runtime so it is useless for stack unwinder.
+>
+> I tested the following change but there is no effect, the objtool
+> warning still exists, this is because OBJECT_FILES_NON_STANDARD
+> does not work for link time validation of vmlinux.o according to
+> tools/objtool/Documentation/objtool.txt.
+Then I think objtool needs to be improved to handle this case, this
+problem is not arch specific.
 
-So currently you can do sort of a manual event rotation inside an
-over-sized group and have it work.
+Huacai
 
-I'm not sure if anybody actually does this, but its possible.
-
-Eg. on a PMU that supports only 4 counters, create a group of 5 and
-periodically cycle which of the 5 events is off.
-
-So I'm not against changing this, but changing stuff like this always
-makes me a little fearful -- it wouldn't be the first time that when it
-finally trickles down to some 'enterprise' user in 5 years someone comes
-and finally says, oh hey, you broke my shit :-(
-
+>
+> diff --git a/drivers/firmware/efi/Makefile b/drivers/firmware/efi/Makefil=
+e
+> index 8efbcf699e4f..f1fff48eea76 100644
+> --- a/drivers/firmware/efi/Makefile
+> +++ b/drivers/firmware/efi/Makefile
+> @@ -10,6 +10,8 @@
+>   #
+>   KASAN_SANITIZE_runtime-wrappers.o      :=3D n
+>
+> +OBJECT_FILES_NON_STANDARD              :=3D y
+> +
+>   obj-$(CONFIG_ACPI_BGRT)                +=3D efi-bgrt.o
+>   obj-$(CONFIG_EFI)                      +=3D efi.o vars.o reboot.o
+> memattr.o tpm.o
+>   obj-$(CONFIG_EFI)                      +=3D memmap.o
+>
+> Thanks,
+> Tiezhu
+>
+>
 
