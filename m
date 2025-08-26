@@ -1,128 +1,128 @@
-Return-Path: <linux-kernel+bounces-786690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F6ABB362F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:24:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 88642B36325
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:27:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6EA3463AB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:18:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D2402A786A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C97133471E;
-	Tue, 26 Aug 2025 13:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jpp3MwAe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6431DAC95;
-	Tue, 26 Aug 2025 13:16:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB90833EAF2;
+	Tue, 26 Aug 2025 13:18:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3834244667;
+	Tue, 26 Aug 2025 13:18:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756214192; cv=none; b=P1b7BM4M/lazrcefvn/gzHTfYI33nQPHY9ni1B7it4jtsz/ih8djycOSw90+N1Ss6odDMj39CKjISAS8DRS+kFdX9ibbepdL61iG5QGFCFQX3MzxyR6Zqq3SjdSGYRaB/fs5MNEKKQa50wABvXzgADhZMesI5fFHZ9/xeSb+Yqk=
+	t=1756214311; cv=none; b=f40S7/PlAXseEhVZ+fnvjqINMehJxZkZo6PdT4evswX/q8s9wvK3B7/nyOORNr+B/m1f9z7ssksar0K/YFrzu/15UmK7LOyCtREjS+cAxjdoy+Ycy87UJ2ElgI+8JEpPlcAnVpTgpYQ2er2iTFVlgvk2Mvmky0RerQv+/klFAv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756214192; c=relaxed/simple;
-	bh=tFb+Ondpv3Ccm4cT7YJIvIxpPOa3gBZBu7W+KGbSHs4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=h4D2HWv6H/3XrFAAkvZ5Wji2EgLk8bVwlZqHqXA7w2yzpJVd/t7KuhXROwvPvdrxF8A7J+sHHHSKkG3M/pzc6Xznx9+HnvDYCcZyM2hA+NWRcE0wWC/62dH+gkCmrR9cdYkY/ZssU4HFUY7tXt8ZjIkPyQoqK6nvPhFI3rC1hKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jpp3MwAe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73E44C4CEF1;
-	Tue, 26 Aug 2025 13:16:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756214192;
-	bh=tFb+Ondpv3Ccm4cT7YJIvIxpPOa3gBZBu7W+KGbSHs4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=jpp3MwAeRCmcs1UuVWPLSMUBFxGBC6oylqYB3I9Uzi2zxr21OZ6UbVQud/RwJFL5A
-	 JtdjMnl+UTMcT4Vgdm/+7BIHD4iduxJtj78yK3VPvpmhMG8nsPX30DSSTgLWTl+7Ku
-	 BOieUo7gY9Iyv9Bh/2rSCb931n/kxnD0i7kIOvV62Lt7fUpCQnmQtb1TmMedYESuYs
-	 Db2KWn2LhMbIvO2UWMg9WFZqHSbo4onE/E0K417i3qgQHY8Y8da+WdKX2Cy0Mz7GAQ
-	 2eL4A+0PFwJa7uFynssXDVxGSTDsF74paRhslvfyRZw2VMr9oJmDa7gkTB0CBX5fry
-	 ZXrM1hz5JJqzQ==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: pratyush@kernel.org,  jasonmiu@google.com,  graf@amazon.com,
-  changyuanl@google.com,  rppt@kernel.org,  dmatlack@google.com,
-  rientjes@google.com,  corbet@lwn.net,  rdunlap@infradead.org,
-  ilpo.jarvinen@linux.intel.com,  kanie@linux.alibaba.com,
-  ojeda@kernel.org,  aliceryhl@google.com,  masahiroy@kernel.org,
-  akpm@linux-foundation.org,  tj@kernel.org,  yoann.congal@smile.fr,
-  mmaurer@google.com,  roman.gushchin@linux.dev,  chenridong@huawei.com,
-  axboe@kernel.dk,  mark.rutland@arm.com,  jannh@google.com,
-  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
-  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
-  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
-  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
-  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
-  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
-  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
-  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
-  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
-  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
-  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
-  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
-  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
-  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
-  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
-  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com
-Subject: Re: [PATCH v3 00/30] Live Update Orchestrator
-In-Reply-To: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
-Date: Tue, 26 Aug 2025 15:16:22 +0200
-Message-ID: <mafs0ms7mxly1.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1756214311; c=relaxed/simple;
+	bh=BhQw8k5n2wkINEBiBgIRgXJovOh1V3NCnPs6OwLcw6o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TWcH4ucQRlZwOeBOH+JYpfiIClyf+gbmJDsrBBaiHuhZU51CK4P/aqTlopCXCiGRQysM/RSIRJiGuBfW8p8gSxTZYeedTApNGcM5h4siNxXk5Lf3DHrKy3WJ/cSVAeB30QkfBWNTsq6GGc9rjI61iIq3Q2yurE9H4SK2eDgCTUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B0DEB1A25;
+	Tue, 26 Aug 2025 06:18:20 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E10B23F63F;
+	Tue, 26 Aug 2025 06:18:22 -0700 (PDT)
+Date: Tue, 26 Aug 2025 14:18:16 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: peterz@infradead.org, mingo@redhat.com, will@kernel.org,
+	acme@kernel.org, namhyung@kernel.org,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	linux-csky@vger.kernel.org, loongarch@lists.linux.dev,
+	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, dmaengine@vger.kernel.org,
+	linux-fpga@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org, coresight@lists.linaro.org,
+	iommu@lists.linux.dev, linux-amlogic@lists.infradead.org,
+	linux-cxl@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 02/19] perf/hisilicon: Fix group validation
+Message-ID: <aK20GP5g1iu9DGrQ@J2N7QTR9R3>
+References: <cover.1755096883.git.robin.murphy@arm.com>
+ <c7b877e66ba0d34d8558c5af8bbb620e8c0e47d9.1755096883.git.robin.murphy@arm.com>
+ <aK2XS_GhLw1EQ2ml@J2N7QTR9R3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aK2XS_GhLw1EQ2ml@J2N7QTR9R3>
 
-Hi Pasha,
+On Tue, Aug 26, 2025 at 12:15:23PM +0100, Mark Rutland wrote:
+> On Wed, Aug 13, 2025 at 06:00:54PM +0100, Robin Murphy wrote:
+> > The group validation logic shared by the HiSilicon HNS3/PCIe drivers is
+> > a bit off, in that given a software group leader, it will consider that
+> > event *in place of* the actual new event being opened. At worst this
+> > could theoretically allow an unschedulable group if the software event
+> > config happens to look like one of the hardware siblings.
+> > 
+> > The uncore framework avoids that particular issue,
+> 
+> What is "the uncore framework"? I'm not sure exactly what you're
+> referring to, nor how that composes with the problem described above.
+> 
+> > but all 3 also share the common issue of not preventing racy access to
+> > the sibling list,
+> 
+> Can you please elaborate on this racy access to the silbing list? I'm
+> not sure exactly what you're referring to.
 
-On Thu, Aug 07 2025, Pasha Tatashin wrote:
+Ah, I think you're referring to the issue in:
 
-> This series introduces the LUO, a kernel subsystem designed to
-> facilitate live kernel updates with minimal downtime,
-> particularly in cloud delplyoments aiming to update without fully
-> disrupting running virtual machines.
->
-> This series builds upon KHO framework by adding programmatic
-> control over KHO's lifecycle and leveraging KHO for persisting LUO's
-> own metadata across the kexec boundary. The git branch for this series
-> can be found at:
->
-> https://github.com/googleprodkernel/linux-liveupdate/tree/luo/v3
->
-> Changelog from v2:
-> - Addressed comments from Mike Rapoport and Jason Gunthorpe
-> - Only one user agent (LiveupdateD) can open /dev/liveupdate
-> - With the above changes, sessions are not needed, and should be
->   maintained by the user-agent itself, so removed support for
->   sessions.
+  https://lore.kernel.org/linux-arm-kernel/Zg0l642PgQ7T3a8Z@FVFF77S0Q05N/
 
-If all the FDs are restored in the agent's context, this assigns all the
-resources to the agent. For example, if the agent restores a memfd, all
-the memory gets charged to the agent's cgroup, and the client gets none
-of it. This makes it impossible to do any kind of resource limits.
+... where when creatign a new event which is its own group leader,
+lockdep_assert_event_ctx(event) fires in for_each_sibling_event(),
+because the new event's context isn't locked...
 
-This was one of the advantages of being able to pass around sessions
-instead of FDs. The agent can pass on the right session to the right
-client, and then the client does the restore, getting all the resources
-charged to it.
+> > diff --git a/drivers/perf/hisilicon/hisi_uncore_pmu.c b/drivers/perf/hisilicon/hisi_uncore_pmu.c
+> > index a449651f79c9..3c531b36cf25 100644
+> > --- a/drivers/perf/hisilicon/hisi_uncore_pmu.c
+> > +++ b/drivers/perf/hisilicon/hisi_uncore_pmu.c
+> > @@ -101,26 +101,17 @@ static bool hisi_validate_event_group(struct perf_event *event)
+> >  	/* Include count for the event */
+> >  	int counters = 1;
+> >  
+> > -	if (!is_software_event(leader)) {
+> > -		/*
+> > -		 * We must NOT create groups containing mixed PMUs, although
+> > -		 * software events are acceptable
+> > -		 */
+> > -		if (leader->pmu != event->pmu)
+> > -			return false;
+> > +	if (leader == event)
+> > +		return true;
 
-If we don't allow this, I think we will make LUO/LiveupdateD unsuitable
-for many kinds of workloads. Do you have any ideas on how to do proper
-resource attribution with the current patches? If not, then perhaps we
-should reconsider this change?
+... and hence bailing out here avoids that?
 
-[...]
+It's not strictly "racy access to the sibling list", becuase there's
+nothing else accessing the list; it's just that this is the simplest way
+to appease lockdep while avoiding false negatives.
 
--- 
-Regards,
-Pratyush Yadav
+It'd probably be better to say something like "the common issue of
+calling for_each_sibling_event() when initialising a new group leader",
+and maybe to spell that out a bit.
+
+Mark.
 
