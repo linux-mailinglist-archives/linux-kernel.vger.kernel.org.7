@@ -1,127 +1,80 @@
-Return-Path: <linux-kernel+bounces-785747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 478DBB35064
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:41:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0911B3506A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:42:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7E2616B3C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:41:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BFB42069B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:41:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B07832C08A8;
-	Tue, 26 Aug 2025 00:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5961B267386;
+	Tue, 26 Aug 2025 00:41:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R0qYleyY"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r30lphcZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A280F2586CE
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 00:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A597D260582;
+	Tue, 26 Aug 2025 00:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756168823; cv=none; b=TKIGemVkqBbEugnkkYj+kt0No7izO0J3LA6k80Pb9ormFxBfuTGV0r2WhTnQdJttuW+7s4c4x+kDmXOCO/HmYvdw9heUaZwBMxV01FKxhekBTmuNLV4513nnW8ouNjclui+Kg6gnOpOHq7U5kd/gvKllQJ/opI3XjhxkzyjTjqA=
+	t=1756168894; cv=none; b=hO8DrvaY5NmE54vk6H3doxRvz2iifU3PX5+JEPlS9sOLB/Ydwi6R7TiKQkAgRJTkBUndo4xKKa3UbjYI1rxeCaevjTMXsLBhhL3sWwc47E1t+vyBxzBZe73L3VOlYzT4WHTTOUc8Cnfnc+rmUW9KMmVRwIxUVo/6+pvQRooGNv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756168823; c=relaxed/simple;
-	bh=GSD2okLRLxrD4e5YapBpGLuGmP9plExtQIHqvDp2aik=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=uVXoRLvgea0BG8PvsRrGNnl2DwMavKn9rM88wAaijnKb1pIyr3ea2O1fdzzA0iGRhreBWU953Rgofc43Tr0s1Y/G0AXFcg3CdI3DVZilU0TuWaCfM6ZZKAMqS3Gf1MLJw67ZAzE/fPoqyYKO54wtBFnYy9LR2PHYZj57a0jHVX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=R0qYleyY; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2464dc09769so76756695ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 17:40:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756168821; x=1756773621; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ich+F/WfOl90g4mC/WhzhSp8nc7SXERneaucsAgJ2BU=;
-        b=R0qYleyYg9l/UXt6sCk5R8VMWSzWwLUFkwpifLvLNJvVRWZzydXFJQs8B0sfRJ1PV3
-         0MEHY+s4va/3gBCAKA5MIs7i3kNcW0j/JSYVGmS2LWCt5urGYRBZMZs3QbhcS/xD4Y8X
-         /wuI+Wd519AlRbzkADR1eHAk+u6dk0VpRITSsfVWItsbqKzuXjOsoukgCaYROLkljph2
-         owsv+QU0fbFOuDEJcFTXdFn2q09Ire2QqGI8tfpPSu9I/w/2wgrdUt95daY8tAqn6+6e
-         GjjD8KAhBcC46l2Js2oe81PZlwWsxG4AYTV6gaPmvuoGpRlo1NaTYU1vzuO+7sKB7M23
-         qSvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756168821; x=1756773621;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ich+F/WfOl90g4mC/WhzhSp8nc7SXERneaucsAgJ2BU=;
-        b=izK6Svy9mInkY69HrujpQnym9zqSKpWsExXMWPNadB0l+0xBpGXptq+NNwA35yksKU
-         ptgCgwgQcSZFCR7ZzEJKvKDHOeptjB0J48/Yvu3Rnc+Ttx7+INMap4YTK4IwJYMaEut/
-         zEfdqu2QrCEvfWB755HvYDp7dRY6hBZaixVSGD2qaYn9J0pxjiwF69AvUy9Czlr5XPPf
-         uZSz+J5BM5XIR9vESrP5F7NM3FbTQOgE49n7rzSe9xvYfkcdAoDgBYPFnvcr5oOx2wl8
-         II25WwTnRgsTrQD5YWF774mdNRANlCz6QXMeGdlnLkMukW8zLy/smHt5ngT8Mr7/C1Le
-         E3Uw==
-X-Forwarded-Encrypted: i=1; AJvYcCWKkmCNoiOVHMYNnt/bgwfd5AJiYZHWGSegKd5zT1Xjsx9tpM8fJTv1Cqfwc9K5LJmDSBSJRWU3TfXRvDg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx429m6QSPouWfLAcfvGzbNm6QMaNOb2eQx/eOSRrqWj+MzNaXG
-	86cWOfvgOM3/rfMaIX5ahySpBTElCJZWll9BA3C71kGJ/Lncqwjhhz4vyVfKRkESyrfa+wHfC5U
-	H8JqXxw==
-X-Google-Smtp-Source: AGHT+IG4vW/5MigHa/TBX8oRMlCra808eIipbqtMQjYVG19uVixcDoW82lYMlF7bL879fI0AObWue9cr2PY=
-X-Received: from pjyr7.prod.google.com ([2002:a17:90a:e187:b0:312:ea08:fa64])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1a45:b0:246:ddd6:f8b9
- with SMTP id d9443c01a7336-246ddd6fd04mr66484515ad.43.1756168820938; Mon, 25
- Aug 2025 17:40:20 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Mon, 25 Aug 2025 17:40:11 -0700
-In-Reply-To: <20250826004012.3835150-1-seanjc@google.com>
+	s=arc-20240116; t=1756168894; c=relaxed/simple;
+	bh=PHvg8cMhUd35TeLpMoQp4ZbPSJkQAR394vpGl4+tNGQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pxlPwPMEEMwbtWYF7Qd3N03c2Aee7TtpzNPV7mdFvW1WqQeI1EVRsY37J+4tlF+y92XqXHHEWxof+p8Hil1Zix4NO0z1KJfT7Nt89a799jgM2azV04QLfMk6L6IDKoZtOsiwD01KTU+ZSEpZDP1a6GMa7gNV4oTCq2qUGdPcTbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r30lphcZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8882C4CEED;
+	Tue, 26 Aug 2025 00:41:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756168894;
+	bh=PHvg8cMhUd35TeLpMoQp4ZbPSJkQAR394vpGl4+tNGQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=r30lphcZ5VT6rYM1JYCLJTbZUxm+Y3UhppH5XpASIdngmfRTHq4ia5ely1Wv9ylHl
+	 GLVetL522ckX0hoM1eQC2wEzthtQg9ulGkbIOH6aODi3SDwR4wF2/TEPN8rBxlS4zv
+	 WAoCZrkNN9TnPCvzlk/bLIqIBVRMT+/WMFHmuJLFOI757HJA2YP0nY6Y5+9aohcpd2
+	 P7AyX116qX0rM44AONYJuS+F1gvgPxYsdwSVfGusWvrF4+vlqwBnsJOqf4KH+zRAD+
+	 Pg8rxIROTGOY1JRB5mfg3L4Wnbd8HAjV5efwhE27+b9KqTKzM426qbB/vN3+apDaA7
+	 Cf5tOsIrM2xiw==
+Date: Mon, 25 Aug 2025 17:41:33 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Saurabh Sengar <ssengar@linux.microsoft.com>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, shradhagupta@linux.microsoft.com,
+ ernis@linux.microsoft.com, dipayanroy@linux.microsoft.com,
+ shirazsaleem@microsoft.com, linux-hyperv@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ssengar@microsoft.com, stable@vger.kernel.org
+Subject: Re: [PATCH net] net: mana: Remove redundant
+ netdev_lock_ops_to_full() calls
+Message-ID: <20250825174133.30e58c60@kernel.org>
+In-Reply-To: <1756119794-20110-1-git-send-email-ssengar@linux.microsoft.com>
+References: <1756119794-20110-1-git-send-email-ssengar@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250826004012.3835150-1-seanjc@google.com>
-X-Mailer: git-send-email 2.51.0.261.g7ce5a0a67e-goog
-Message-ID: <20250826004012.3835150-4-seanjc@google.com>
-Subject: [PATCH 3/3] KVM: x86/mmu: Don't register a sigkill callback for NX
- hugepage recovery tasks
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>
-Cc: kvm@vger.kernel.org, virtualization@lists.linux.dev, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Don't register a sigkill callback with vhost_task when creating NX hugepage
-recovery threads now that said callback is optional.  In addition to
-removing what is effectively dead code, not registering a sigkill "handler"
-also guards against improper use of vhost_task_wake().
+On Mon, 25 Aug 2025 04:03:14 -0700 Saurabh Sengar wrote:
+> NET_SHAPER is always selected for MANA driver. When NET_SHAPER is enabled,
+> netdev_lock_ops_to_full() reduces effectively to only an assert for lock,
+> which is always held in the path when NET_SHAPER is enabled.
+> 
+> Remove the redundant netdev_lock_ops_to_full() call.
+> 
+> Fixes: d5c8f0e4e0cb ("net: mana: Fix potential deadlocks in mana napi ops")
+> Cc: stable@vger.kernel.org
 
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/mmu/mmu.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
-
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index d11730467fd4..dd90cf8a8170 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -7677,10 +7677,6 @@ static void kvm_recover_nx_huge_pages(struct kvm *kvm)
- 	srcu_read_unlock(&kvm->srcu, rcu_idx);
- }
- 
--static void kvm_nx_huge_page_recovery_worker_kill(void *data)
--{
--}
--
- static bool kvm_nx_huge_page_recovery_worker(void *data)
- {
- 	struct kvm *kvm = data;
-@@ -7713,8 +7709,7 @@ static int kvm_mmu_start_lpage_recovery(struct once *once)
- 	struct vhost_task *nx_thread;
- 
- 	kvm->arch.nx_huge_page_last = get_jiffies_64();
--	nx_thread = vhost_task_create(kvm_nx_huge_page_recovery_worker,
--				      kvm_nx_huge_page_recovery_worker_kill,
-+	nx_thread = vhost_task_create(kvm_nx_huge_page_recovery_worker, NULL,
- 				      kvm, "kvm-nx-lpage-recovery");
- 
- 	if (IS_ERR(nx_thread))
+If the call is a nop why is this a stable-worthy fix?
 -- 
-2.51.0.261.g7ce5a0a67e-goog
-
+pw-bot: cr
 
