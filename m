@@ -1,155 +1,166 @@
-Return-Path: <linux-kernel+bounces-786977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87E36B36F9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:12:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62554B36FA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:13:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D69717C38F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:08:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 131C3365D44
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:09:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E012C3761;
-	Tue, 26 Aug 2025 16:08:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD70F1A76B1;
+	Tue, 26 Aug 2025 16:09:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b="LIQ/38UW"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="c+wKEpVu"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0DF313E09
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 16:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503BE21CA1C
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 16:09:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756224514; cv=none; b=WZKvelMPJwHWzYs51l3PswdSmLtx2TTapc72n+rO2T03IGvWyYhIjq8jmpPjXe7cNpq+2fmHfTqMt6asGDLiZcbmg3oShBznfTZMaTRFmn+M32UOp+DtjLha7HixfJ74nAVw/18KIs5oE0GfhC2lcpSZCa/1w5Mmo2wSnzpApLs=
+	t=1756224554; cv=none; b=GIcsAnkLxXzq8qO9cYj/lC3RTKT5iT/MOCGTy6oAnRqSZvDUXII3otKM07N8boaxAdB9jzU+zed/H12qesnmXRfl5fyFG8X8P+4OvgJF6zg3p0vhcg9KAbIPwgH8ZVNgICJinslv+vrpx/faffMCBO7/OVicl6JcSoOAi8sWGaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756224514; c=relaxed/simple;
-	bh=vjgTUmBptG96Ivs8YmyV7OyA9pvN4OjuURIQOSCcEO4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pttFGFS8ms1agwrAtTU3a8jOUADfXkIOZb9x7aU/Wu/Pl4UcQCI+qXKK7PCGhvzuvNoN7tkrjgEjbCoCtLxOpsUpB0zlIDa4tThXisZTFiGM4mCCND5yrNT13Coo5AEnB/gJvSQmu15KLIclzSWdao2+9KrSiPdStG+mhk9bxXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw; spf=pass smtp.mailfrom=gms.tku.edu.tw; dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b=LIQ/38UW; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gms.tku.edu.tw
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-24687a76debso507675ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:08:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gms-tku-edu-tw.20230601.gappssmtp.com; s=20230601; t=1756224510; x=1756829310; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7lnnKYGUwqSfcJFego4cSUIS6ucMudXKnod8NwY7i8c=;
-        b=LIQ/38UWlOOqneWMvZafuKTdINtNKgnGKwTZJYhfnAFNDGebKaGgUTBSDmR46z+/GZ
-         0mPLpqbOkbbeFZ7Cf/ilDnsfwuWg8wbVhUIAYLnATStHQ1/N3tlLDhRf9EEZYC/dNIWQ
-         O34PfAD25hnQJqXRXu215Mp6Jf1nMRzEvIDLdkuxi95aGy1ZzkoLWkkSkS69zYlkRP8m
-         8OoSXZ1XVvxVVPSxINr6Kc0xKck+r1fpvXx87JvOA77n75iWltcG6q7G6D6mdcp/4xQP
-         xXrIqo6hgvzhVb7yZNr5uftzs+r/rglko+1OCxekqc4mf9qS/rumNhGrRaQtGU2LzhT3
-         Z0EA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756224510; x=1756829310;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7lnnKYGUwqSfcJFego4cSUIS6ucMudXKnod8NwY7i8c=;
-        b=mMzcwEt/Dh2RBvxxAad18A0ywOrt6nWjaZ135YIJilpuHcY+R4T+1U/QiGvsps/Qgz
-         yLPwG0lH3P1z//LRdgvhWYE2tx8CHcqBcoLgCO14Bc7+ny1h4Kgd5lCsCfnp76Cc/c32
-         95BFcFJDcp6HLPOdyTJ/sJEDqc0Lz0uyEW/DtBYP9tRdX6AN5s+CltB0HRpoGw7wsv0T
-         EjQ8HM0b7Vut72pYwLS2bkOp3NpVp5uOovwmmFCmQ+frCDIsaKXS+bM328N8TQCQOUuk
-         c3IVNdcThqrkOYoEqsCRBCj0yu7TMpmJfs2piqXjXwIagORl9LHtur4VNjAzcXAp75T3
-         oCjg==
-X-Forwarded-Encrypted: i=1; AJvYcCWK07Hl84ucLE41IpvjyeWDb3uk2Z8EGjnGeU3l0Hhi87oIxwWZ8D5zapKCYblBz/TO/jXb1MGksf7qHKI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5j2ABpC1pgzWTekP1un1tKpS0JOk3FJ12BGhDSWYjvqsrXn6F
-	9xOTxZhvR0KhfmNOH806GRJmIC4dwrEjthgIZR+I+hkZ3988BM3ID+OUFzsFHdvfuPMw2WEREjH
-	t8hHl
-X-Gm-Gg: ASbGncs1KiBSUjboybZ9RMghv3vI1v0yJOdcLdIVg43kNlXDj0zxax3IcU4YXu/tkwO
-	1copfobH9QrCvGWQAxLUmg7aj5ZZxjeaPWghwrQWcLKgAEYWb+eYs9QK+WyP+IdMn7FXl9TKkyO
-	ymjjZRpaCV1HdVlJeAv1lV7M2oMpqn5km8oCiJJSxMHeUhwtoHftV5ZBJYNFJyUyHwTn1QxE2/G
-	V84XmC3tggAZauXlO7McU/KeATT2NLT6UiP2E8s+xXg356sJimeH3K+P9hzCaMnPQVbSkigUKd6
-	6r6vSevBh5UGn5Q5Rku+p7evWGmo1wgAmRJ+8oVH625JO/XCs+SRe5uOAqPnhTXJbN9dDJkasz4
-	yPfBL6J7cUMzNIC88qDgxWadBNKoNGjEQlXxe7GHBtXTmdOejXOhvQ+W1lQ==
-X-Google-Smtp-Source: AGHT+IHBymnkisdImbt15BBgGxtQ701XAL6YAtQjtL/ST2M9m9uQL0hCOlCTDLJ6oWSnx2iPq8/b4A==
-X-Received: by 2002:a17:903:11c7:b0:246:d5b3:6303 with SMTP id d9443c01a7336-248753a2961mr26432485ad.5.1756224509773;
-        Tue, 26 Aug 2025 09:08:29 -0700 (PDT)
-Received: from wu-Pro-E500-G6-WS720T.. ([2001:288:7001:2703:f8d5:8589:bb53:d71d])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3274fbbeb5csm1904203a91.12.2025.08.26.09.08.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 09:08:29 -0700 (PDT)
-From: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-To: visitorckw@gmail.com
-Cc: 409411716@gms.tku.edu.tw,
-	akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org
-Subject: btree: fix merge logic to use btree_last() return value
-Date: Wed, 27 Aug 2025 00:08:26 +0800
-Message-Id: <20250826160826.686111-1-409411716@gms.tku.edu.tw>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <aKyVQRG9k/CboNRn@visitorckw-System-Product-Name>
-References: <aKyVQRG9k/CboNRn@visitorckw-System-Product-Name>
+	s=arc-20240116; t=1756224554; c=relaxed/simple;
+	bh=JsPCrAShvmrujDQQBA9SPlEujcEeHWEZeiiLzvDO7Y0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=efasTp2A4StiqRNDY1+UwtUoI/ogCqD2EJYMfopNjWDTi0OfM0skjMMzEC/2r82ek0CtCUsLHykuxCAbjxoXK52idLfaRo9zKv3RTWUeJIxqbO62Jsv3KgTNkmEu9gGtiRipMIdNmFRbJD5tnASvW6JQ8R3bobZBXSr+jN3Eb+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=c+wKEpVu; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <d8df76b5-fd6d-4779-b133-18ab2c987ae1@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756224539;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OE4jLvMS6uO3y2vgaMfshtzsi+abCnBQzBD93FRis7A=;
+	b=c+wKEpVucr0QXYUkhDCENcM4dxbVhyHuGs2uKQrpP0yGoYEclDtFg9zdALOROHTGbJ+9qb
+	Tc80Tz7qjAX3TwD/JmRqqb9L23cGjx9pBPqX9hPBDSSzunFC+/XidpGrziHPJXX3jMAlxg
+	xRDy+PbLhkPi0VVESWCN38WErmGCCzU=
+Date: Tue, 26 Aug 2025 17:08:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v01 07/12] hinic3: Queue pair resource
+ initialization
+To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+ Bjorn Helgaas <helgaas@kernel.org>, luosifu <luosifu@huawei.com>,
+ Xin Guo <guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>,
+ Zhou Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>,
+ Shi Jing <shijing34@huawei.com>, Meny Yossefi <meny.yossefi@huawei.com>,
+ Gur Stavi <gur.stavi@huawei.com>, Lee Trager <lee@trager.us>,
+ Michael Ellerman <mpe@ellerman.id.au>, Suman Ghosh <sumang@marvell.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+References: <cover.1756195078.git.zhuyikai1@h-partners.com>
+ <f1be4fdf9c760c29eb53763836796e8bc003bb1c.1756195078.git.zhuyikai1@h-partners.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <f1be4fdf9c760c29eb53763836796e8bc003bb1c.1756195078.git.zhuyikai1@h-partners.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Kuan-Wei,
-
-Thanks for the review.
-
-> On Fri, Aug 22, 2025 at 04:58:51PM +0800, Guan-Chun.Wu wrote:
->> Previously btree_merge() called btree_last() only to test existence,
->> then performed an extra btree_lookup() to fetch the value. This patch
->> changes it to directly use the value returned by btree_last(), avoiding
->> redundant lookups and simplifying the merge loop.
->
-> The code change itself looks correct.
->
-> However, the subject line gives the impression that this patch fixes a
-> bug, while it actually just simplifies the logic. Could you consider
-> updating the subject to better reflect the nature of the change?
-
-Good point. I will update the subject to:
-    btree: simplify merge logic by using btree_last() return value
-
-> BTW, it seems that only the qla2xxx SCSI driver uses the btree
-> library, and that driver doesn't actually call btree_merge(). So in
-> practice, this function is unused in the kernel. Should we consider
-> removing it entirely?
-
-That makes sense. Since btree_merge() is currently unused, maybe it's
-worth considering removal in a follow-up patch.
-
-> Signed-off-by: Guan-Chun.Wu <409411716@gms.tku.edu.tw>
->
-> Is the dot in your real name intentional?
-
-No, it was unintentional. My correct name should be "Guan-Chun Wu"
-(without the dot). I have updated my git config so future submissions
-will use the correct name.
-
-Thanks,
-Guan-Chun
-
+On 26/08/2025 10:05, Fan Gong wrote:
+> Add Tx & Rx queue resources and functions for packet transmission
+> and reception.
+> 
+> Co-developed-by: Xin Guo <guoxin09@huawei.com>
+> Signed-off-by: Xin Guo <guoxin09@huawei.com>
+> Co-developed-by: Zhu Yikai <zhuyikai1@h-partners.com>
+> Signed-off-by: Zhu Yikai <zhuyikai1@h-partners.com>
+> Signed-off-by: Fan Gong <gongfan1@huawei.com>
 > ---
->  lib/btree.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/lib/btree.c b/lib/btree.c
-> index bb81d3393ac5..9c80c0c7bba8 100644
-> --- a/lib/btree.c
-> +++ b/lib/btree.c
-> @@ -653,9 +653,9 @@ int btree_merge(struct btree_head *target, struct btree_head *victim,
->        * walks to remove a single object from the victim.
->        */
->       for (;;) {
-> -         if (!btree_last(victim, geo, key))
-> +         val = btree_last(victim, geo, key);
-> +         if (!val)
->               break;
-> -         val = btree_lookup(victim, geo, key);
->           err = btree_insert(target, geo, key, val, gfp);
->           if (err)
->               return err;
-> -- 
-> 2.34.1
+
+[...]
+
+>   struct hinic3_nic_db {
+> -	u32 db_info;
+> -	u32 pi_hi;
+> +	__le32 db_info;
+> +	__le32 pi_hi;
+>   };
+>   
+>   static inline void hinic3_write_db(struct hinic3_io_queue *queue, int cos,
+> @@ -84,15 +84,25 @@ static inline void hinic3_write_db(struct hinic3_io_queue *queue, int cos,
+>   {
+>   	struct hinic3_nic_db db;
+>   
+> -	db.db_info = DB_INFO_SET(DB_SRC_TYPE, TYPE) |
+> -		     DB_INFO_SET(cflag, CFLAG) |
+> -		     DB_INFO_SET(cos, COS) |
+> -		     DB_INFO_SET(queue->q_id, QID);
+> -	db.pi_hi = DB_PI_HIGH(pi);
+> +	db.db_info =
+> +		cpu_to_le32(DB_INFO_SET(DB_SRC_TYPE, TYPE) |
+> +			    DB_INFO_SET(cflag, CFLAG) |
+> +			    DB_INFO_SET(cos, COS) |
+> +			    DB_INFO_SET(queue->q_id, QID));
+> +	db.pi_hi = cpu_to_le32(DB_PI_HIGH(pi));
+>   
+>   	writeq(*((u64 *)&db), DB_ADDR(queue, pi));
+>   }
+
+[...]
+
+> @@ -66,8 +97,8 @@ static void rq_wqe_buf_set(struct hinic3_io_queue *rq, uint32_t wqe_idx,
+>   	struct hinic3_rq_wqe *rq_wqe;
+>   
+>   	rq_wqe = get_q_element(&rq->wq.qpages, wqe_idx, NULL);
+> -	rq_wqe->buf_hi_addr = upper_32_bits(dma_addr);
+> -	rq_wqe->buf_lo_addr = lower_32_bits(dma_addr);
+> +	rq_wqe->buf_hi_addr = cpu_to_le32(upper_32_bits(dma_addr));
+> +	rq_wqe->buf_lo_addr = cpu_to_le32(lower_32_bits(dma_addr));
+>   }
+[...]
+
+> @@ -27,21 +27,21 @@
+>   
+>   /* RX Completion information that is provided by HW for a specific RX WQE */
+>   struct hinic3_rq_cqe {
+> -	u32 status;
+> -	u32 vlan_len;
+> -	u32 offload_type;
+> -	u32 rsvd3;
+> -	u32 rsvd4;
+> -	u32 rsvd5;
+> -	u32 rsvd6;
+> -	u32 pkt_info;
+> +	__le32 status;
+> +	__le32 vlan_len;
+> +	__le32 offload_type;
+> +	__le32 rsvd3;
+> +	__le32 rsvd4;
+> +	__le32 rsvd5;
+> +	__le32 rsvd6;
+> +	__le32 pkt_info;
+>   };
+>   
+>   struct hinic3_rq_wqe {
+> -	u32 buf_hi_addr;
+> -	u32 buf_lo_addr;
+> -	u32 cqe_hi_addr;
+> -	u32 cqe_lo_addr;
+> +	__le32 buf_hi_addr;
+> +	__le32 buf_lo_addr;
+> +	__le32 cqe_hi_addr;
+> +	__le32 cqe_lo_addr;
+>   };
+
+This patch has a lot of endianess-improvements changes which are
+not stated in the commit message. It's better to move them to a separate
+patch to avoid mixing things.
 
