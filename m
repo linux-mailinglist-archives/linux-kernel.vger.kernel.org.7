@@ -1,134 +1,252 @@
-Return-Path: <linux-kernel+bounces-787196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD85FB372D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 21:07:32 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DE58B372DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 21:09:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 289655E548A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:07:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D112A4E2B00
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:09:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437B13728A6;
-	Tue, 26 Aug 2025 19:07:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bH6gl+pR"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC567372881;
+	Tue, 26 Aug 2025 19:08:57 +0000 (UTC)
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2CFD1F2380;
-	Tue, 26 Aug 2025 19:07:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D992E2D061A
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 19:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756235244; cv=none; b=dX8WlMHMJlzdHPoRdS905D1R9fiQ7rN2+VDkn+AaoM5TuGN/DaccjCGEyn5XxsFKR6e/klGzJ9HZ67qq5tP8qoH8vPejP6xmvojcj0IFi9vGU2xR3Vb6QxTtgzLzeH9dCsL2zx1uVzGp6cFJPKoBXzMaJ95R6m27QA3EUl0ncuE=
+	t=1756235337; cv=none; b=K8aY5XpUAokkKge4KbtuWyI61+yT63PXnLsioJMBh268w1V/oWcIw43g5r7Y6SWuGaWMLusaHenx4++Iqab1p6bAWHjVhKwK4zyKk9klVybtrZhEDQ/FRbmqoKw4uoWgyUjHOZPmFcS/lVo/qF5bjXya3Is6k7TbZ09vlgCllag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756235244; c=relaxed/simple;
-	bh=dzXDeml6LhaeVEW/Cm7+AKped8Y7Fz4TmxTIOd9241g=;
+	s=arc-20240116; t=1756235337; c=relaxed/simple;
+	bh=cXV4TB12PpOovVEA7AhNsgoljyctFjYKQ5z0jrglhGk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CQpebswYMhe/DcYBzUM6jBoFZuMWeFtAbILWxnHix8naBR7JrnyYFTvHO/o+55NvxASw/vWb9akgH/Bd0sdnsa3e2TFqnHPcvSg6UsitoNPANyDbulXby+1Maa9dZmk6ANRWUE3+qNMjknY0hYO4vjf5o0Lu4lpzGVx+m09ikAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bH6gl+pR; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-afe7f50b605so41069466b.0;
-        Tue, 26 Aug 2025 12:07:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756235241; x=1756840041; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=gzIB/UF+2pna+ufI5/Fze+18H1TaH1WQC6eyvlwlp4o=;
-        b=bH6gl+pRr82O17aee7KH2ype2qn3wWLP8S+Uk2yh9fdTThGEaAs+zj3TtGsbA+OxNd
-         vNSsV+KrxOVLeC2wwjdS94GbaIZ9UkZPtUHKKgJkF5uJd8QK4J0H03LPWd2VnX/FNtwk
-         jfaSouUqlypcxh4Jhr6QwFCW5w7tHf3dB+gSBDibxgrOq1snQ910ywu9tPSeL/VTO2D3
-         CeziIjX/cFjmjmSeykgrpbzj5g0+HtLw4DhO7HJ2Ih9bzJjLG0ia+BK9zc+vsv0hptdv
-         IE7J/DKGUd48JQrZv2RdLYUXXzDrRmKO0CtvXsz3cLhultyxkhdh41ZpcbT9DnFWJLF5
-         IjNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756235241; x=1756840041;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gzIB/UF+2pna+ufI5/Fze+18H1TaH1WQC6eyvlwlp4o=;
-        b=E8u6ahXpO5D9d3YNd472OtGS8RnsKHjx/F8EKTD/R52FvkwzqM0Wyd4w9tJ7Sf6w54
-         HChvWBhIrKEeKFqw3p75TzQmDL32vnIRK5imxW5ttrrMEIgJ2i0ETlSIfX4VHfOlBPZs
-         PYZD6LNNbeve+8dVnaUfBWohOSPNpcfpPLCTSPBwYDrpc0sUMbp8s25xAx2bYPd6iFhI
-         jjBD6oEOQBoeE+mHgihy0sbIobRkgEJR3BvWkT0Ufu9uEYHwK4amsJ9PzOPiBbaBBapL
-         os4qx01H0Y7InnAKMRmCO3Ww06fgAArVIwB5JnQAMZx6dlCtmES1M1a3YtzzUX8dyNTY
-         uuWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ9dnkMK3jiw46FXX8cukwWYl5nH1BaVnOJT4FMe1mY09LM7ZmfgxPSB1CE1uW6Xw248fwTBmQ@vger.kernel.org, AJvYcCUYmRkQITgtAoXhO+wVWaz1PCBQ68Ke94fApSMxgLtpIVQMzzrMrrSCvyO1uZpkrRu+XIyJ/Jnq9Trn@vger.kernel.org, AJvYcCXvAE5wBNp1thIXkCPsbm0LY7ygHwYRJ8emXgdna7KYaeHwNjHC9hRzjki0Bh4JaGLcr2EhTNc59P8II5b8@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZUnXNi4JUPF4REi4FT8iLjsWBlSujtKENwP+t5uY9kjiAc3gH
-	Tj6LogCwFjSL4UhAk76GowxR0UrjZg8gDdf7aAaicmC6P+PyrtipXIvQ
-X-Gm-Gg: ASbGncscaiwShyAA8rpynRZvClFG9Yt/P/TdyLEvZh4PH0bYAUXNTqsN4Hvd2nnrcpM
-	yRjl7GLlD9T8DcKpsD4JK/SleG6akKrGicHCHzZ7lnio6I3ZusgSlcrh+AJiSN7bCu/0p2Zp7pP
-	KxICBadqTZw3tRtwRvLocowFlGSVCtfXfZXNG+LYyMBrTpc3Opk5o9UUGuuhN/BHfQqJiBUcKWv
-	JejC2jojVveASo8rwr9Q50aepdWdCyGht5LWzhT6wHkLPqtE+uEgXVgy+9MOxopfdL3qRMXhBx1
-	EGsyNb+IiYxon4lcG8JqG2S/DiCumoXZmTuNYgmwVNGFn4DQrMWJlZGjggfwtK+ILPhrUUqtKzL
-	wi2x0DCEWv+Ym2Ys4gSvJPHw1xw==
-X-Google-Smtp-Source: AGHT+IHAtJyoC6LCpsX+9ixvxn5yPrzcVcxGfg2wMfyxcBXmm1gz09+B0+1LESU0l7oQqz0ECcArmw==
-X-Received: by 2002:a17:907:6d16:b0:af9:3d0a:f379 with SMTP id a640c23a62f3a-afe2875d2f7mr889917866b.0.1756235241024;
-        Tue, 26 Aug 2025 12:07:21 -0700 (PDT)
-Received: from skbuf ([2a02:2f04:d005:3b00:a59a:f42b:5034:e072])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe89bd7acesm417348066b.73.2025.08.26.12.07.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 12:07:20 -0700 (PDT)
-Date: Tue, 26 Aug 2025 22:07:17 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Yangfl <mmyangfl@gmail.com>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>,
-	Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v6 3/3] net: dsa: yt921x: Add support for
- Motorcomm YT921x
-Message-ID: <20250826190717.fkhj3qowvljsuvj6@skbuf>
-References: <20250824005116.2434998-1-mmyangfl@gmail.com>
- <20250824005116.2434998-4-mmyangfl@gmail.com>
- <ad61c240-eee3-4db4-b03e-de07f3efba12@lunn.ch>
- <CAAXyoMP-Z8aYTSZwqJpDYRVcYQ9fzEgmDuAbQd=UEGp+o5Fdjg@mail.gmail.com>
- <aKtWej0nymW-baTC@shell.armlinux.org.uk>
- <CAAXyoMNot+aZ35Xtx=YiTEmGk_c8XT7VGiQ-DUn8T1vPUnO-9Q@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hMAIpsRfCNH5c7C65xpooq+sW+bW7lnS558RQLvh/QLn86Li/1aDQVYKLqAtzoSuFuE1mVMoAe7eb7ZaT2KeyBgrOSeJc0jO0GUrKSFXTUBA0x7afbJO0Li0kIb04n8fTRoE1fuGousDs64uSYR0p0v5DWKpR4wbzYx0K42cfq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=linux.dev; arc=none smtp.client-ip=95.215.58.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 26 Aug 2025 15:08:46 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Ben Collins <bcollins@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, 
+	Antoniu Miclaus <antoniu.miclaus@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 4/5] iio: mcp9600: Add support for IIR filter
+Message-ID: <2025082614-inventive-gharial-c4a3f9@boujee-and-buff>
+Mail-Followup-To: David Lechner <dlechner@baylibre.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Antoniu Miclaus <antoniu.miclaus@analog.com>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250825-mcp9600-iir-v7-0-2ba676a52589@kernel.org>
+ <20250825-mcp9600-iir-v7-4-2ba676a52589@kernel.org>
+ <45170936-3eeb-4b7a-b75b-560660979b72@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAXyoMNot+aZ35Xtx=YiTEmGk_c8XT7VGiQ-DUn8T1vPUnO-9Q@mail.gmail.com>
+In-Reply-To: <45170936-3eeb-4b7a-b75b-560660979b72@baylibre.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Aug 25, 2025 at 10:14:58PM +0800, Yangfl wrote:
-> On Mon, Aug 25, 2025 at 2:14 AM Russell King (Oracle)
-> <linux@armlinux.org.uk> wrote:
-> >
-> > On Mon, Aug 25, 2025 at 12:38:20AM +0800, Yangfl wrote:
-> > > They are used in phylink_get_caps(), since I don't want to declare a
-> > > port which we know it does not exist on some chips. But the info_* set
-> > > might be inlined and removed since it is not used elsewhere.
-> >
-> > The problem is... if you have a port in 0..N that DSA thinks should be
-> > used, but is neither internal or external, DSA's initialisation of it
-> > will fail, because without any caps declared for it, phylink_create()
-> > will return an error, causing dsa_port_phylink_create() to fail,
-> > dsa_shared_port_phylink_register() or dsa_user_phy_setup(),
-> > dsa_shared_port_link_register_of() or dsa_user_create()... etc. It
-> > eventually gets propagated up causing the entire switch probe to fail.
-> >
-> > Again... read the code!
+On Tue, Aug 26, 2025 at 12:20:39PM -0500, David Lechner wrote:
+> On 8/25/25 7:10 PM, Ben Collins wrote:
+> > MCP9600 supports an IIR filter with 7 levels. Add IIR attribute
+> > to allow get/set of this value.
+> > 
+> > Use filter_type[none, ema] for enabling the IIR filter.
+> > 
+> > Signed-off-by: Ben Collins <bcollins@kernel.org>
+> > ---
+> >  drivers/iio/temperature/mcp9600.c | 147 ++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 147 insertions(+)
+> > 
+> > diff --git a/drivers/iio/temperature/mcp9600.c b/drivers/iio/temperature/mcp9600.c
+> > index aa42c2b1a369edbd36e0d6d6d1738ed0069fd990..d3309e30628ae5cdc74378403952ba285990f4c0 100644
+> > --- a/drivers/iio/temperature/mcp9600.c
+> > +++ b/drivers/iio/temperature/mcp9600.c
+> > @@ -31,6 +31,7 @@
+> >  #define MCP9600_STATUS_ALERT(x)		BIT(x)
+> >  #define MCP9600_SENSOR_CFG		0x05
+> >  #define MCP9600_SENSOR_TYPE_MASK	GENMASK(6, 4)
+> > +#define MCP9600_FILTER_MASK		GENMASK(2, 0)
+> >  #define MCP9600_ALERT_CFG1		0x08
+> >  #define MCP9600_ALERT_CFG(x)		(MCP9600_ALERT_CFG1 + (x - 1))
+> >  #define MCP9600_ALERT_CFG_ENABLE	BIT(0)
+> > @@ -94,6 +95,27 @@ static const int mcp9600_tc_types[] = {
+> >  	[THERMOCOUPLE_TYPE_R] = 'R',
+> >  };
+> >  
+> > +enum mcp9600_filter {
+> > +	MCP9600_FILTER_TYPE_NONE,
+> > +	MCP9600_FILTER_TYPE_EMA,
+> > +};
+> > +
+> > +static const char * const mcp9600_filter_type[] = {
+> > +	[MCP9600_FILTER_TYPE_NONE] = "none",
+> > +	[MCP9600_FILTER_TYPE_EMA] = "ema",
+> > +};
+> > +
+> > +static const int mcp_iir_coefficients_avail[7][2] = {
+> > +	/* Level 0 is no filter */
+> > +	{ 0, 524549 },
+> > +	{ 0, 243901 },
+> > +	{ 0, 119994 },
+> > +	{ 0,  59761 },
+> > +	{ 0,  29851 },
+> > +	{ 0,  14922 },
+> > +	{ 0,   7461 },
+> > +};
+> > +
+> >  static const struct iio_event_spec mcp9600_events[] = {
+> >  	{
+> >  		.type = IIO_EV_TYPE_THRESH,
+> > @@ -119,6 +141,8 @@ struct mcp_chip_info {
+> >  struct mcp9600_data {
+> >  	struct i2c_client *client;
+> >  	u32 thermocouple_type;
+> > +	int filter_level;
+> > +	int filter_enabled;
+> >  };
+> >  
+> >  static int mcp9600_config(struct mcp9600_data *data)
+> > @@ -129,6 +153,9 @@ static int mcp9600_config(struct mcp9600_data *data)
+> >  
+> >  	cfg  = FIELD_PREP(MCP9600_SENSOR_TYPE_MASK,
+> >  			  mcp9600_type_map[data->thermocouple_type]);
+> > +	/* The chip understands 0 as "none", and 1-7 as ema filter levels. */
+> > +	if (data->filter_enabled)
+> > +		FIELD_MODIFY(MCP9600_FILTER_MASK, &cfg, data->filter_level + 1);
+> >  
+> >  	ret = i2c_smbus_write_byte_data(client, MCP9600_SENSOR_CFG, cfg);
+> >  	if (ret < 0) {
+> > @@ -146,7 +173,11 @@ static int mcp9600_config(struct mcp9600_data *data)
+> >  			.address = MCP9600_HOT_JUNCTION,		       \
+> >  			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |	       \
+> >  					      BIT(IIO_CHAN_INFO_THERMOCOUPLE_TYPE) | \
+> > +					      BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY) | \
 > 
-> What would you expect when you specify Port 0 in DT when only Port 1,
-> 3, 8 are available on the chip (YT9213NB)? Probe error.
+> Does the filter actually only apply to the hot junction and not the
+> cold junction? There is a mismatch between this being info_mask_separate
+> and the filter_type being IIO_SHARED_BY_ALL.
+> 
+> Not related to this patch, but the comment same applies to
+> IIO_CHAN_INFO_THERMOCOUPLE_TYPE - I missed that in previous reviews.
 
-It depends. Unless the driver has logic which behaves otherwise, the
-setup of user ports can fail and DSA will just skip them and bring up
-the rest. See commit 86f8b1c01a0a ("net: dsa: Do not make user port
-errors fatal"). The shared ports are more important and their setup
-failures do lead to a switch setup abort though.
+The Thermocouple Sensor Configuration register only applies to the
+thermocouple (hot-junction), which is what sets the filter and
+thermocouple configuration.
+
+More specifically, the filter formula applies to T-delta (thermocouple
+hot-junction).
+
+So these are correct.
+
+> >  					      BIT(IIO_CHAN_INFO_SCALE),	       \
+> > +			.info_mask_separate_available =                        \
+> > +					      BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY), \
+> > +			.ext_info = mcp9600_ext_filter,			       \
+> >  			.event_spec = &mcp9600_events[hj_ev_spec_off],	       \
+> >  			.num_event_specs = hj_num_ev,			       \
+> >  		},							       \
+> > @@ -162,6 +193,57 @@ static int mcp9600_config(struct mcp9600_data *data)
+> >  		},							       \
+> >  	}
+> >  
+> > +static int mcp9600_get_filter(struct iio_dev *indio_dev,
+> > +			      struct iio_chan_spec const *chan)
+> > +{
+> > +	struct mcp9600_data *data = iio_priv(indio_dev);
+> > +
+> > +	return data->filter_enabled ? MCP9600_FILTER_TYPE_EMA :
+> > +		MCP9600_FILTER_TYPE_NONE;
+> > +}
+> > +
+> > +static int mcp9600_set_filter(struct iio_dev *indio_dev,
+> > +			      struct iio_chan_spec const *chan,
+> > +			      unsigned int mode)
+> > +{
+> > +	struct mcp9600_data *data = iio_priv(indio_dev);
+> > +	int new_type;
+> 
+> This variable name is a little confusing. It looks like it should
+> rather be:
+> 
+> 	bool new_filter_enabled;
+
+I can change that.
+
+> > +
+> > +	switch (mode) {
+> > +	case MCP9600_FILTER_TYPE_NONE:
+> > +		new_type = 0;
+> > +		break;
+> > +
+> > +	case MCP9600_FILTER_TYPE_EMA:
+> > +		new_type = 1;
+> > +		break;
+> > +
+> > +	default:
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	/* Do not reset the filter if we don't need to. */
+> > +	if (data->filter_enabled == new_type)
+> > +		return 0;
+> > +
+> > +	data->filter_enabled = new_type;
+> > +	return mcp9600_config(data);
+> > +}
+> > +
+> > +static const struct iio_enum mcp9600_filter_enum = {
+> > +	.items = mcp9600_filter_type,
+> > +	.num_items = ARRAY_SIZE(mcp9600_filter_type),
+> > +	.get = mcp9600_get_filter,
+> > +	.set = mcp9600_set_filter,
+> > +};
+> > +
+> > +static const struct iio_chan_spec_ext_info mcp9600_ext_filter[] = {
+> > +	IIO_ENUM("filter_type", IIO_SHARED_BY_ALL, &mcp9600_filter_enum),
+> > +	IIO_ENUM_AVAILABLE("filter_type", IIO_SHARED_BY_ALL,
+> > +			   &mcp9600_filter_enum),
+> > +	{ }
+> > +};
+> > +
+
+I guess I need to make this IIO_SEPARATE/IIO_SHARED_BY_TYPE, but I need
+to make sure it's only for the in_temp_raw and not in_temp_ambient_raw.
+
+> >  static const struct iio_chan_spec mcp9600_channels[][2] = {
+> >  	MCP9600_CHANNELS(0, 0, 0, 0), /* Alerts: - - - - */
+> >  	MCP9600_CHANNELS(1, 0, 0, 0), /* Alerts: 1 - - - */
+> > @@ -216,6 +298,69 @@ static int mcp9600_read_raw(struct iio_dev *indio_dev,
+> >  	case IIO_CHAN_INFO_THERMOCOUPLE_TYPE:
+> >  		*val = mcp9600_tc_types[data->thermocouple_type];
+> >  		return IIO_VAL_CHAR;
+> > +	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
+> > +		if (!data->filter_enabled)
+> > +			return IIO_VAL_EMPTY;
+> 
+> This brings us back to the earlier discussion of what should this
+> be when the filter is disabled. Mathematically, it would be infinite.
+> 
+> I wonder if it would be reasonable to return "inf" here since many
+> floating point parsers will already handle that as a valid value.
+
+I'll defer to the other thread for further discussion on this.
+
+-- 
+ Ben Collins
+ https://libjwt.io
+ https://github.com/benmcollins
+ --
+ 3EC9 7598 1672 961A 1139  173A 5D5A 57C7 242B 22CF
 
