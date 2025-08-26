@@ -1,118 +1,116 @@
-Return-Path: <linux-kernel+bounces-787282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B37F0B37406
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 22:46:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDE92B37412
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 22:53:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E03DD1B2752D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 20:46:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5C371BA4D4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 20:53:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7E87241139;
-	Tue, 26 Aug 2025 20:45:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770EF28751C;
+	Tue, 26 Aug 2025 20:53:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rs/wbgOk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="Q1ARfjwu"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251AC1DC9B3;
-	Tue, 26 Aug 2025 20:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6FD283FD0
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 20:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756241158; cv=none; b=jYsPcdNtIzXp1FqjqK+euEg4OuTS8uya+WKpuWn4AHRVppAjYYWWUok2V1QOY8rLIz+So7ZIupe+QgzL1sJ6RaBDczbQ9IVEXB4NzJz9GbRXnPJ3z4rYmqPq9jZzMQmf2M6rbgHNOpciY2eFBuMiyFEqOyY+UxCPWijWryBC764=
+	t=1756241591; cv=none; b=U7HGvhj9L5Bcn3BQv3uahN/vyXUIQ+9YXkb2NA/0AlETZqme8/HMBhRUmjtVpRjaLCHJh7Y4ZyEJ/bz/bnrlkfIT+j3mFK1rJJDUVnf4dkFuN3Z4N4Q0cl42Ba89PsY0MSNNYxbkKIw9MJ2f13ut1G4/aCrx4sMk42yDVau4fgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756241158; c=relaxed/simple;
-	bh=LPYcNdjWMT5gtus+yEjlqVcxtuCErQDBe3KmbDjEKpo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tuCxG3qS1TCCC5qbn5zD8B4kXxnNHlpVcwER0BWQcleIt95XVpFaMNzVpfAjUA7ijm1aGFKnuwSvqGkLr89nYyW6FRzccCggoMP9EzdFm261rHU+IHUqq4A0xOvg3umT6vULa8nyP1qACiFUxOgaT5sfJp20416Huz8QgtUmh9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rs/wbgOk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8602C4CEF1;
-	Tue, 26 Aug 2025 20:45:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756241157;
-	bh=LPYcNdjWMT5gtus+yEjlqVcxtuCErQDBe3KmbDjEKpo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Rs/wbgOk/M9U4khTkYQrkEcZAAJZPJKgPLyHGVhjpnV3M9gisMAtbAqUd5GImyNY8
-	 nHBrNJcoQEnvmuYFWAlWYukBJ5kHX/OjqCl4XJGfsLWCRB2UNmA5OM940s90utYg6X
-	 iyyl/mCudCgQTQ3b8vv80lksFNaNCjF4ZuPx9IoPC5F4zDAq61m6mnbfuZlKCuKciM
-	 ceVQeQHagtuk5ErmC25DfRFji/YaTDk/jmMyWWMx4mqvUMcABzDN21aCQqJ2CaengG
-	 hDz/q0JuKDd1ycP6euZj7ScVuBMKAT94bCohxTVcFHqB3EK4YBvGggAj9Piyo6qb9w
-	 vIHjU6uNbTiWg==
-Message-ID: <54b19bdc-5d88-4f71-ad8e-886847ccee8a@kernel.org>
-Date: Tue, 26 Aug 2025 22:45:52 +0200
+	s=arc-20240116; t=1756241591; c=relaxed/simple;
+	bh=/gJh2QllT6rTS6ys1eyGslAmvkDqLO+tfVaA0jNRs3E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZrRWVUkZv1eQAPSX0llWoHHlHIszsf1efOKBbQFD5Xx4I8HTODoyGRyBnRei/+ElqDWtvvkNKZUQfQPXGqqLJJQeq3MgQGQIQmdtMHZ0SVZX9yWxRgmSMiehuNLCUMr9F/egsx65KbcPDaoMOCj82qPs+SbAZenSyZnsvM3JK7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=Q1ARfjwu; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-173-48-119-77.bstnma.fios.verizon.net [173.48.119.77])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 57QKowgK005727
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Aug 2025 16:50:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1756241464; bh=v5oDFv0dgAPRpziVWFPx6zdFfgff+kVk8oRL4Pe1b1Y=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=Q1ARfjwu71oSkJlLMRLzzm2JN69hQGM1WvgsY5EY3+q98/n6dom5NJc6+WimJFJ3T
+	 B7TYI4dgHUOuoz0y4mgTXm3/8l821W0KPSA3SC/2uRmT1YRUk6nkig9dXTW98axLsl
+	 PySNicn6h7sntg32HF03DpOtccWEbyJXZxm8NgpAvJa/QJuzX8W1EbKpc+3BsMBXJ6
+	 AXVHDhhbOMvY8uZrpPPT7E8DJZGoldPeeEInngiX8ldxwfjnVFRseaKAv+06eINfSY
+	 icCTfTS3d4PpDP9Zjj7u6ITUPMKycEVz8eAyA4edVAeKl8QwO3/7IILoJ9JQ3PxtPP
+	 aPcAeiSs+hnxQ==
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id DE47D2E00D6; Tue, 26 Aug 2025 16:50:57 -0400 (EDT)
+Date: Tue, 26 Aug 2025 16:50:57 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>,
+        Serge Hallyn <serge@hallyn.com>, Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Christian Heimes <christian@python.org>,
+        Dmitry Vyukov <dvyukov@google.com>, Elliott Hughes <enh@google.com>,
+        Fan Wu <wufan@linux.microsoft.com>,
+        Florian Weimer <fweimer@redhat.com>, Jann Horn <jannh@google.com>,
+        Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Jordan R Abrahams <ajordanr@google.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Luca Boccassi <bluca@debian.org>,
+        Matt Bobrowski <mattbobrowski@google.com>,
+        Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>,
+        Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
+        Robert Waite <rowait@microsoft.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Scott Shell <scottsh@microsoft.com>,
+        Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/2] Add O_DENY_WRITE (complement AT_EXECVE_CHECK)
+Message-ID: <20250826205057.GC1603531@mit.edu>
+References: <20250822170800.2116980-1-mic@digikod.net>
+ <20250826-skorpion-magma-141496988fdc@brauner>
+ <20250826.aig5aiShunga@digikod.net>
+ <20250826123041.GB1603531@mit.edu>
+ <20250826.iewie7Et5aiw@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/5] rust: pci: provide access to PCI Vendor values
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: Alexandre Courbot <acourbot@nvidia.com>,
- Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
- Alistair Popple <apopple@nvidia.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Bjorn Helgaas <bhelgaas@google.com>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- nouveau@lists.freedesktop.org, linux-pci@vger.kernel.org,
- rust-for-linux@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Elle Rhumsaa <elle@weathered-steel.dev>
-References: <20250822020354.357406-1-jhubbard@nvidia.com>
- <20250822020354.357406-3-jhubbard@nvidia.com>
- <DCBIF83RP6G8.1B97Z24RQ0T24@nvidia.com>
- <DCBIPY9UJTT4.ETBXLTRGJWHO@kernel.org>
- <b1cbdc99-317e-454c-bf03-d6793be5b13c@nvidia.com>
-From: Danilo Krummrich <dakr@kernel.org>
-Content-Language: en-US
-In-Reply-To: <b1cbdc99-317e-454c-bf03-d6793be5b13c@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250826.iewie7Et5aiw@digikod.net>
 
-On 8/26/25 10:38 PM, John Hubbard wrote:
-> On 8/25/25 5:47 AM, Danilo Krummrich wrote:
->> On Mon Aug 25, 2025 at 2:33 PM CEST, Alexandre Courbot wrote:
-> ...
->>> Naive question from someone with a device tree background and almost no
->>> PCI experience: one consequence of using `From` here is that if I create
->>> an non-registered Vendor value (e.g. `let vendor =
->>> Vendor::from(0xf0f0)`), then do `vendor.as_raw()`, I won't get the value
->>> passed initially but the one for `UNKNOWN`, e.g. `0xffff`. Are we ok
->>> with this?
->>
->> I think that's fine, since we shouldn't actually hit this. Drivers should only
->> ever use the pre-defined constants of Vendor; consequently the
->> Device::vendor_id() can't return UNKNOWN either.
->>
->> So, I think the From impl is not ideal, since we can't limit its visibility. In
->> order to improve this, I suggest to use Vendor::new() directly in the macro, and
->> make Vendor::new() private. The same goes for Class, I guess.
+On Tue, Aug 26, 2025 at 07:47:30PM +0200, Mickaël Salaün wrote:
 > 
-> Correction: when I went to implement this, I discovered that there is a better
-> way, which addresses both Alex's and your concerns.
-> 
-> The incremental diff below shows how. It provides:
-> 
-> a) .from_raw(), which in this case matches conventions slightly better
->     than new(). (I'm still learning that the Rust way is a bit different
->     that the C++ way! haha).
-> 
-> b) Only the parent module (in this case, that's pci:: ) can call
->     Class::from_raw(). This is exactly what we need. Fully private methods
->     wouldn't work, but leaving it open for any caller to construct a
->     Class item is also a problem.
+>   Passing the AT_EXECVE_CHECK flag to execveat(2) only performs a check
+>   on a regular file and returns 0 if execution of this file would be
+>   allowed, ignoring the file format and then the related interpreter
+>   dependencies (e.g. ELF libraries, script’s shebang).
 
-Sorry, that's on me being not precise. When I said private I meant private to
-the parent module.
+But if that's it, why can't the script interpreter (python, bash,
+etc.) before executing the script, checks for executability via
+faccessat(2) or fstat(2)?
 
-The diff looks good, thanks!
+The whole O_DONY_WRITE dicsussion seemed to imply that AT_EXECVE_CHECK
+was doing more than just the executability check?
 
-Please also make sure to add #[inline] where appropriate and rebase onto
-driver-core-next.
+> There is no other way for user space to reliably check executability of
+> files (taking into account all enforced security
+> policies/configurations).
+
+Why doesn't faccessat(2) or fstat(2) suffice?  This is why having a
+more substantive requirements and design doc might be helpful.  It
+appears you have some assumptions that perhaps other kernel developers
+are not aware.  I certainly seem to be missing something.....
+
+    		  	    	    - Ted
 
