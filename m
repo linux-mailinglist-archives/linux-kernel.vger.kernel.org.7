@@ -1,134 +1,122 @@
-Return-Path: <linux-kernel+bounces-785768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB85CB350D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:10:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF9A2B350DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:14:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FA6E7A9FEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 01:09:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 853C71A81868
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 01:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 777972882D0;
-	Tue, 26 Aug 2025 01:10:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C3527F195;
+	Tue, 26 Aug 2025 01:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TfvwAeti"
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="T6hjPgwa"
+Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F741D416C;
-	Tue, 26 Aug 2025 01:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E0CEEB3;
+	Tue, 26 Aug 2025 01:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756170621; cv=none; b=t9ziuvKsFJRk8kOQRBdwY3J89DH3UzZ0O5q9x4WPagE7PhBUjTN7MUmZt8lRq6E1rFS75N83mzcT7Ih086QBeI75RAj6FRlpfo3mPe+FXcc8j3W+KSBsGx3Y3SVq3lgbU7RMcB62H2znUJ2g5+CKDN0hALBhVTAGo/mjXRX6sQ8=
+	t=1756170840; cv=none; b=Gw4aSk5S+VPG6t1iZjo7qqHi6mVq0PknvYpJ/b5WorjoztWCSSAH9AThQVWbOYHByEGOTVpRXf1A7IZ/JYVmyHA60tSpXMUoWtbpBYlDmEs2ZGlgrsHBWplX+nYnO9Mga7AoFyt6PmwFNKlJLJ2/FgZsucQLnaTAScccYNtTDRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756170621; c=relaxed/simple;
-	bh=BhPG4H+I7zDs8dwab76+BoAR+ozvEKZSdpitJSyJUkw=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WRlFLobthaiCEBOAOtGvjuJ5jqLnUHKz3iaGL27w7Oedj4WCPVT8h6seMqrv6QmYlS+kNIHQd11Z0hjRaGobCF3sPtz6cxC7h7F2As3Asuq0R0tBMkGZwITHqkcb24L80KiXb24HCbL/976M7XNtDh5n5Ps9XjeiRQAq+bn9yEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TfvwAeti; arc=none smtp.client-ip=209.85.167.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-435de5b2f29so1537050b6e.0;
-        Mon, 25 Aug 2025 18:10:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756170618; x=1756775418; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6/Iq+sl3J+lnpf+wc6OQRiTYktTo8qUO7r+bK6zwUBU=;
-        b=TfvwAetiN+TikIiBko5Y1DvrFnFukd4ZGXSuFhw4iOCquFBgay1NmG47AXzBYadcOE
-         4kVqKp+hH+p0XXYuU11BInKOb6+UuE8K8hSn7fbLsBEaRTuuRwx8OyCOlGpSMU/3GFyi
-         OW0DkF7UfnF+KN0NGjMu8AvVfeJVQLJaS4h3QwE2LeP0x94o4eQA35sjQ87v5xR3Sg0c
-         pwDDkBcc1mHszcqihZbvlujqAbYpkbhSSnLxi2I36ylyMoXwQisuDGPDq0MLO7AkwPua
-         BpzeUaOVhOl0TD2dUaHLerjakeHq4CTt9UhhxYtBUBF7JrW+M7OfbPAIRy2JjmcUSgdz
-         Qb8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756170618; x=1756775418;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6/Iq+sl3J+lnpf+wc6OQRiTYktTo8qUO7r+bK6zwUBU=;
-        b=WyX9Hg87Orce8VcPQTnZnKtJBbEdxbdXmbSCTJNlun2nmyaRVVqEulzumdxskkoKx0
-         brW4FND95Y01klQclfq57APN8J+pH1RjDXAFwpy93Cw0ofxI5RPwPpozqrGzPykVtAIt
-         V9C3ESHyQUmSmDhIY+xgU8gXvoiUBWYqlcvdxQK5L+SvTI3n6uoRtK7VoXrBqXMStPG2
-         RYQsywdviEJVpyhYf1zGvglOvxhkO523JSYkXsHIuU+yqaZTmnb+d2MDsllfeWTmuDHX
-         wskwDJl31aYxjwVlXGdBnOTyQnCifvuqfNa+/S1+ky4LjjUnWfbf38hiSmUKmUtMNMJL
-         zFPw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOY25RfB8AyyGuSsagoZvxbVhG8ncJ6szQvT1RExeHTuUlL1DFfB/YxL5IuaOjA3+/867+YerFsLJC0WPM@vger.kernel.org, AJvYcCWukYx4veSpzuX1xGTZCtfWeTWUZ3WvEPuBHtpAS2GmJTg6YfUkxW6Kw0di9AvvsDRhMCg0OB6hGZgj@vger.kernel.org
-X-Gm-Message-State: AOJu0YwV/BfwoztDoM2sPB7KTcRkmjRVpV9y5+yFZrub81QRZBOqKhj/
-	BEXWGq3jlXdfriqHMxn1yeR1oJlzl5zrACHTzP5bYSkKzV0clMnn9str
-X-Gm-Gg: ASbGncsA5VNbch9pVAaxojmVDb46Y4rbLTl21u+GO6VZmSfRZLZBs/aS978s3xFTm49
-	EVdLxx9hi23zoHLbNrI+QI2un9+kvDz8UAfAGjVS5DKo1KiYWmIBpnnNKpaywFNdle7z7Wi7uLb
-	PDJzTbWRmQ9J96DKeuZAHwtyXG72fyB0ZtCOncd2Jk/NfPHsZzj7NNrxOnpvx394CIcjU/5Meuq
-	cOX27BnqE3ywY6lUbk1Lhh7KZJGgEnTkEAPSuiux7iLZxNsl4ueVAnw+Is/zgH0V1/HGIiht1o/
-	4NcTh01LHLIXyB0ogE2BdT7TwVMd9Gp5cLe3WYlHJ4GYm45OpxEgzNS2IZsl3BxLd3HRCZjr7Ka
-	ntui9ryiKkzLvVQp8ByM+icJxs3O7sA2x
-X-Google-Smtp-Source: AGHT+IElnibKn0kJO+4EjW9DXM+SobqgRQIgDWBiXTLfJjdn8m2ppBqLQoVrT6kVdtQvj76aRcVJlg==
-X-Received: by 2002:a05:6808:179a:b0:437:761b:dcd with SMTP id 5614622812f47-437852ad33fmr7337517b6e.44.1756170617942;
-        Mon, 25 Aug 2025 18:10:17 -0700 (PDT)
-Received: from localhost.localdomain ([122.8.183.87])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-437963db10bsm1352616b6e.0.2025.08.25.18.10.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 18:10:17 -0700 (PDT)
-From: Chen Wang <unicornxw@gmail.com>
-To: u.kleine-koenig@baylibre.com,
-	aou@eecs.berkeley.edu,
-	unicorn_wang@outlook.com,
-	conor+dt@kernel.org,
-	inochiama@gmail.com,
-	krzk+dt@kernel.org,
-	looong.bin@gmail.com,
-	palmer@dabbelt.com,
-	paul.walmsley@sifive.com,
-	robh@kernel.org,
-	tglx@linutronix.de,
-	sycamoremoon376@gmail.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	sophgo@lists.linux.dev
-Subject: [PATCH v2 3/3] riscv: sophgo: dts: sg2044: change msi irq type to IRQ_TYPE_EDGE_RISING
-Date: Tue, 26 Aug 2025 09:10:10 +0800
-Message-Id: <579f5bc7d060701cbab1046c3b55ca0bec15eff5.1756169460.git.unicorn_wang@outlook.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1756169460.git.unicorn_wang@outlook.com>
-References: <cover.1756169460.git.unicorn_wang@outlook.com>
+	s=arc-20240116; t=1756170840; c=relaxed/simple;
+	bh=DSnkrlQap2de5NIIN1j1Qu/t9WNnkMruYXQFGkYVJ30=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g7WcffHqWr2hamLGzuB2dnzheR/DgqjQFrkH92zOwc9QrJMJqA4PxddvIg6CIP9iqBJmQ58usSAPg3QYwGfgiKQg9SbbCk/Q6pmdfzhCd7foQ+96u/gYHJqdo1x/Md65IFD6QAnrPVbCpPhw6NJJmgrYWfySDwyv0z5KFMC51WY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=T6hjPgwa; arc=none smtp.client-ip=180.181.231.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=GahGKMyDDWWgzcOoacVh1GqObdQHZAFm0vAPse1Lvgc=; b=T6hjPgwauSAvz2ezFKh/PyMHbd
+	/zvg0/xfZQcNOwdWxylETa7s3AVJSbxho0c2nTbmk34LaHMzeXj+1mldn2Mp6d2f0uBLuxkzAiepb
+	R0icvWn6tUqu+kxWUy655QEiqVk0WnjrwO6toSvK1qNYVU+svqBBQy5q+jvAUYW5b4KMPFyGelNhf
+	xGqE6u+jzP8xGZRJeUfUyL3R9AKfTNTtjGGz9AmnH9u3iH0fFAFTjDBtQa5CqV1WJtaBe63hi9J2w
+	DqxRidDI/ZOFLHYIPazSG25R8Ax0kq1blnQpxcMBiUemYX94HtY8a7ShYZO8WJoqY2bOnwWibi2uH
+	xuVIpBog==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1uqi08-00HGCY-0J;
+	Tue, 26 Aug 2025 09:13:25 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 26 Aug 2025 09:13:24 +0800
+Date: Tue, 26 Aug 2025 09:13:24 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
+Cc: Nhat Pham <nphamcs@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+	"yosry.ahmed@linux.dev" <yosry.ahmed@linux.dev>,
+	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
+	"usamaarif642@gmail.com" <usamaarif642@gmail.com>,
+	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+	"21cnbao@gmail.com" <21cnbao@gmail.com>,
+	"ying.huang@linux.alibaba.com" <ying.huang@linux.alibaba.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"senozhatsky@chromium.org" <senozhatsky@chromium.org>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"clabbe@baylibre.com" <clabbe@baylibre.com>,
+	"ardb@kernel.org" <ardb@kernel.org>,
+	"ebiggers@google.com" <ebiggers@google.com>,
+	"surenb@google.com" <surenb@google.com>,
+	"Accardi, Kristen C" <kristen.c.accardi@intel.com>,
+	"Gomes, Vinicius" <vinicius.gomes@intel.com>,
+	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>,
+	"Gopal, Vinodh" <vinodh.gopal@intel.com>
+Subject: Re: [PATCH v11 00/24] zswap compression batching with optimized
+ iaa_crypto driver
+Message-ID: <aK0KNAmQh_JVgnML@gondor.apana.org.au>
+References: <20250801043642.8103-1-kanchana.p.sridhar@intel.com>
+ <CAKEwX=Pj30Zymib2fEoDW9UyD1vAwxRKO3p28RPtK9DZWAdv8w@mail.gmail.com>
+ <aJ7FSUdvxtZyiHBq@gondor.apana.org.au>
+ <PH7PR11MB812143269E98B00ED4E5BE4DC93DA@PH7PR11MB8121.namprd11.prod.outlook.com>
+ <aKv28XTvAITuq-p8@gondor.apana.org.au>
+ <PH7PR11MB812163C97D4C533F0302FA20C93EA@PH7PR11MB8121.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PH7PR11MB812163C97D4C533F0302FA20C93EA@PH7PR11MB8121.namprd11.prod.outlook.com>
 
-From: Chen Wang <unicorn_wang@outlook.com>
+On Mon, Aug 25, 2025 at 06:12:19PM +0000, Sridhar, Kanchana P wrote:
+>
+> Thanks Herbert, for reviewing the approach. IIUC, we should follow
+> these constraints:
+> 
+> 1) The folio should be submitted as the source.
+> 
+> 2) For the destination, construct an SG list for them and pass that in.
+>     The rule should be that the SG list must contain a sufficient number
+>     of pages for the compression output based on the given unit size
+>     (PAGE_SIZE for zswap).
+> 
+> For PMD folios, there would be 512 compression outputs. In this case,
+> would we need to pass in an SG list that can contain 512 compression
+> outputs after calling the acompress API once?
 
-The latest MSI driver will read the DTS configuration to set the IRQ type,
-so correct the IRQ type in the DTS to the correct value.
+Eventually yes :)
 
-This field in the DTS was not used before.
+But for now we're just replicating your current patch-set, so
+the folio should come with an offset and a length restriction,
+and correspondingly the destination SG list should contain the
+same number of pages as there are in your current patch-set.
 
-Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
----
- arch/riscv/boot/dts/sophgo/sg2044.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/riscv/boot/dts/sophgo/sg2044.dtsi b/arch/riscv/boot/dts/sophgo/sg2044.dtsi
-index 6ec955744b0c..320c4d1d08e6 100644
---- a/arch/riscv/boot/dts/sophgo/sg2044.dtsi
-+++ b/arch/riscv/boot/dts/sophgo/sg2044.dtsi
-@@ -214,7 +214,7 @@ msi: msi-controller@6d50000000 {
- 			reg-names = "clr", "doorbell";
- 			#msi-cells = <0>;
- 			msi-controller;
--			msi-ranges = <&intc 352 IRQ_TYPE_LEVEL_HIGH 512>;
-+			msi-ranges = <&intc 352 IRQ_TYPE_EDGE_RISING 512>;
- 			status = "disabled";
- 		};
- 
+Cheers,
 -- 
-2.34.1
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
