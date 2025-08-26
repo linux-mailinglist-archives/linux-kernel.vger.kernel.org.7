@@ -1,234 +1,107 @@
-Return-Path: <linux-kernel+bounces-786074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B090B354AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:37:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5376B354B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:39:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BF051B60239
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:38:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 592112422CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E527A2877C0;
-	Tue, 26 Aug 2025 06:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="NwpRV8dp"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E2A247283
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 06:37:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC66D2C08B0;
+	Tue, 26 Aug 2025 06:39:21 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D7A1A239D
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 06:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756190254; cv=none; b=VlEImtvpdQKPfE0YbHpFwixm8+/IDpSCanIWveo4wHUwTgZWT2tUQFnOgchpPHmKVuoEURhx2HAwtboaOQOeLS7vLBhQY7zfzwcFgFgaqsCHAb6Wmkt6s7fd+g0vFVa6mkzhZ3o472yKDvIrazoRuO2po4eiYNB9Q+8WanaudX8=
+	t=1756190361; cv=none; b=Nnjx3x3Tlxwe2xt0FR3cZFib1OxnGRHiUX4o8wWJRecewRnad7b85hX158L2gQfSsDWo4FBJ22OHhRzXr3n8+TZTPiI4QkJyDEAi1i+LNtd7xqpN7z9VgW+tVTg5oM8juDq+P3o2IRwTnUuJUAsEcWID7DPM4x5EXexvcaHG32o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756190254; c=relaxed/simple;
-	bh=TmYm7jc4DZVZePqCTvreVPUYaxd2jW7O2/HQPN0NYVM=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=eEtczydVVXa25vULHXYhWyz0j1W3GkKcTiHzTKbVtq5KfGlTs+4yfMB8FUI4ahyRzlzYFji1XbT4/1wpETDpEhwg4woPrVRPsb8f0HximEuaU0QJYeh9cWRNvGSNd6KUeRcK6tvBntukDHroskl56k0j8nShW38U91Phc/LrYxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=NwpRV8dp; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250826063729epoutp0366fc779ca8c023e959884a4c1912273c~fPbo7CJbF0472404724epoutp03J
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 06:37:29 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250826063729epoutp0366fc779ca8c023e959884a4c1912273c~fPbo7CJbF0472404724epoutp03J
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1756190249;
-	bh=WmUdeog4n43JlLPwLzabcivOP3kzq6u9GqxXjjFJfy4=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=NwpRV8dpQsXrqhS60KikOY7MaGduMakQQ8G758Cf91IqQBwawro5WSiQV3XUXOZf6
-	 GqgMDm/pStaDHR9tmWMjcNHJFiV4euJAk6f0xaeV6JIfPTxnRHh1bzOROBGeV8LGIG
-	 Vg27PkGrpBYUCMJ9UhXcHhzbXQdtc0BTMdLfj3Ms=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250826063728epcas5p35aa5aa8be589c61f897a378fe0a9d6f7~fPboM9AQb0070300703epcas5p3T;
-	Tue, 26 Aug 2025 06:37:28 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.94]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4c9ydM5YS8z2SSKf; Tue, 26 Aug
-	2025 06:37:27 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250826063727epcas5p27b42d9103a77296440ed5f47a9dc9b6c~fPbmaKZFJ0989209892epcas5p2_;
-	Tue, 26 Aug 2025 06:37:27 +0000 (GMT)
-Received: from INBRO001840 (unknown [107.122.3.105]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250826063723epsmtip2624718a1eacb328a03895f36f45a703d~fPbjWQ0-82085020850epsmtip2R;
-	Tue, 26 Aug 2025 06:37:23 +0000 (GMT)
-From: "Pritam Manohar Sutar" <pritam.sutar@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>
-Cc: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
-	<andre.draszik@linaro.org>, <peter.griffin@linaro.org>,
-	<kauschluss@disroot.org>, <ivo.ivanov.ivanov1@gmail.com>,
-	<igor.belwon@mentallysanemainliners.org>, <johan@kernel.org>,
-	<m.szyprowski@samsung.com>, <s.nawrocki@samsung.com>,
-	<linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <rosa.pila@samsung.com>,
-	<dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
-	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
-In-Reply-To: <20250824-rough-fresh-orangutan-eecb2f@kuoka>
-Subject: RE: [PATCH v7 5/6] dt-bindings: phy: samsung,usb3-drd-phy: add
- ExynosAutov920 combo ssphy
-Date: Tue, 26 Aug 2025 12:07:22 +0530
-Message-ID: <007501dc1653$e36c3b50$aa44b1f0$@samsung.com>
+	s=arc-20240116; t=1756190361; c=relaxed/simple;
+	bh=Nyeff2EhlQwRc/1f1YoX6APs/57fqdvKWPi4EOXkD+o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Yqo7oABqvSa7X/6nOQAFIm4Hxfhc2PwkumcvpkNfovSheQSTjC9Ou0lohDbYXLHJ3C5mfwFaIDijseJEb8Kjwan19NGLXTCRhHlljOgkKhpTnWQLXoJZj5pqu2FYFmluQura2ul7W8Wrj+QtV9GWnIyiKdsgLYD6vC8TcB6BQME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8Cx6tGNVq1opEADAA--.6216S3;
+	Tue, 26 Aug 2025 14:39:09 +0800 (CST)
+Received: from linux.localdomain (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowJDxQ+SMVq1oo2dpAA--.401S2;
+	Tue, 26 Aug 2025 14:39:09 +0800 (CST)
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] LoongArch: Update help info of config ARCH_STRICT_ALIGN
+Date: Tue, 26 Aug 2025 14:39:08 +0800
+Message-ID: <20250826063908.6615-1-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQGSd8blfqR9gZc/NH28iGAFaSn12QHbdVSHAGa/K48CXY/t+7Tit6wg
-Content-Language: en-in
-X-CMS-MailID: 20250826063727epcas5p27b42d9103a77296440ed5f47a9dc9b6c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250822093022epcas5p42d8c16c851769dab0e1da9d45743ab1f
-References: <20250822093845.1179395-1-pritam.sutar@samsung.com>
-	<CGME20250822093022epcas5p42d8c16c851769dab0e1da9d45743ab1f@epcas5p4.samsung.com>
-	<20250822093845.1179395-6-pritam.sutar@samsung.com>
-	<20250824-rough-fresh-orangutan-eecb2f@kuoka>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJDxQ+SMVq1oo2dpAA--.401S2
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7CrWDZryrKFyDtry8Jr43Jwc_yoW8GF13pw
+	4YkanrGrW0gr1UCFZ0v3s3WFy5ZasFkF43Ww42y34UCr9xZ343ZrWxtFs3JFW7Cws5G3yr
+	WryFk3W2g3WkGacCm3ZEXasCq-sJn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
+	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v2
+	6r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x0EwI
+	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
+	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vIr41lIxAIcVC0I7
+	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k2
+	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
+	AFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8czVUUUUUU==
 
-Hi Krzysztof,=20
+Loongson 3A6000 and 3C6000 CPUs also support unaligned memory access, so
+the current description is out of date to some extent.
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> Sent: 24 August 2025 02:26 PM
-> To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
-> Cc: vkoul=40kernel.org; kishon=40kernel.org; robh=40kernel.org;
-> krzk+dt=40kernel.org; conor+dt=40kernel.org; alim.akhtar=40samsung.com;
-> andre.draszik=40linaro.org; peter.griffin=40linaro.org; kauschluss=40disr=
-oot.org;
-> ivo.ivanov.ivanov1=40gmail.com; igor.belwon=40mentallysanemainliners.org;
-> johan=40kernel.org; m.szyprowski=40samsung.com; s.nawrocki=40samsung.com;
-> linux-phy=40lists.infradead.org; devicetree=40vger.kernel.org; linux-
-> kernel=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; linux-s=
-amsung-
-> soc=40vger.kernel.org; rosa.pila=40samsung.com; dev.tailor=40samsung.com;
-> faraz.ata=40samsung.com; muhammed.ali=40samsung.com;
-> selvarasu.g=40samsung.com
-> Subject: Re: =5BPATCH v7 5/6=5D dt-bindings: phy: samsung,usb3-drd-phy: a=
-dd
-> ExynosAutov920 combo ssphy
->=20
-> On Fri, Aug 22, 2025 at 03:08:44PM +0530, Pritam Manohar Sutar wrote:
-> > This phy supports USB3.1 SSP+(10Gbps) protocol and is backwards
-> > compatible to the USB3.0 SS(5Gbps). It requires two clocks, named
-> > =22phy=22 and =22ref=22. The required supplies for USB3.1 are named as
-> > vdd075_usb30(0.75v), vdd18_usb30(1.8v).
->=20
-> Please do not describe the schema, but hardware. This sentence does not h=
-elp
-> me in my question further.
+Actually, all of Loongson-3 series processors based on LoongArch support
+unaligned memory access, this hardware capability is indicated by the bit
+20 of CPUCFG1 register, update the help info to reflect the reality.
 
-This is a combo phy having Synopsys usb20 and usb30 phys (these 2 phys are =
-totally different).=20
-One PHY only supports usb2.0 and data rates whereas another one does usb3.1=
- ssp+ and usb3.1 ssp
-=09
-This patch only explains about usb30 (since these are two different phys) p=
-hy and omitted inclusion of usb20 reference (added separate patch for this =
-patch no 3).=20
-=09
-Hope this is clear.
+Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+---
+ arch/loongarch/Kconfig | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
->=20
-> >
-> > Add schemas for combo ssphy found on this SoC.
-> >
-> > Signed-off-by: Pritam Manohar Sutar <pritam.sutar=40samsung.com>
-> > ---
-> >  .../bindings/phy/samsung,usb3-drd-phy.yaml    =7C 23 +++++++++++++++++=
-++
-> >  1 file changed, 23 insertions(+)
-> >
-> > diff --git
-> > a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
-> > b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
-> > index f0cfca5736b8..96e5bbb2e42c 100644
-> > --- a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
-> > +++ b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
-> > =40=40 -34,6 +34,7 =40=40 properties:
-> >        - samsung,exynos7870-usbdrd-phy
-> >        - samsung,exynos850-usbdrd-phy
-> >        - samsung,exynos990-usbdrd-phy
-> > +      - samsung,exynosautov920-usb31drd-combo-ssphy
-> >        - samsung,exynosautov920-usbdrd-combo-hsphy
-> >        - samsung,exynosautov920-usbdrd-phy
-> >
-> > =40=40 -118,6 +119,12 =40=40 properties:
-> >    vdd18-usb20-supply:
-> >      description: 1.8V power supply for the USB 2.0 phy.
-> >
-> > +  dvdd075-usb30-supply:
-> > +    description: 0.75V power supply for the USB 3.0 phy.
-> > +
-> > +  vdd18-usb30-supply:
-> > +    description: 1.8V power supply for the USB 3.0 phy.
-> > +
-> >  required:
-> >    - compatible
-> >    - clocks
-> > =40=40 -227,6 +234,7 =40=40 allOf:
-> >                - samsung,exynos7870-usbdrd-phy
-> >                - samsung,exynos850-usbdrd-phy
-> >                - samsung,exynos990-usbdrd-phy
-> > +              - samsung,exynosautov920-usb31drd-combo-ssphy
-> >                - samsung,exynosautov920-usbdrd-combo-hsphy
-> >                - samsung,exynosautov920-usbdrd-phy
-> >      then:
-> > =40=40 -262,6 +270,21 =40=40 allOf:
-> >        properties:
-> >          dvdd075-usb20-supply: false
-> >          vdd18-usb20-supply: false
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            enum:
-> > +              - samsung,exynosautov920-usb31drd-combo-ssphy
-> > +    then:
-> > +      required:
-> > +        - dvdd075-usb30-supply
-> > +        - vdd18-usb30-supply
->=20
-> Why are you adding usb20 and usb30 suffixes to the supplies? These are
-> separate devices, so they do not have both variants at the same time.
-
-This is a combo phy consisting of usb2 and usb3 phys combined.=20
-To drive these separate phys, added suffixes for these supplies respectivel=
-y.
-
-Moreover, gs101 is also using similar convention for its usb20 and dp suppl=
-ies.=20
-Added suffix for usb2 and usb3 as per our last communication https://lore.k=
-ernel.org/linux-phy/6e1c67d2-9bfa-442a-9d53-8c5970a2a9ef=40kernel.org/
-
->=20
-> From this device point of view, the supply is called dvdd075 or vdd18.
-> If you open device datasheet (not SoC datasheet), that's how it will be c=
-alled,
-> most likely.
-
-Yes, Agree. In device datasheet, suffixes are not mentioned, but in our boa=
-rd schematic it is mentioned.=20
-Let me know your suggestion about adding suffixes?
-
->=20
-> Best regards,
-> Krzysztof
-
-
-Thank you.
-
-Regards,
-Pritam
+diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+index f0abc38c40ac..fcf6575b02f8 100644
+--- a/arch/loongarch/Kconfig
++++ b/arch/loongarch/Kconfig
+@@ -563,7 +563,8 @@ config ARCH_STRICT_ALIGN
+ 	  -mstrict-align build parameter to prevent unaligned accesses.
+ 
+ 	  CPUs with h/w unaligned access support:
+-	  Loongson-2K2000/2K3000/3A5000/3C5000/3D5000.
++	  Loongson-2K2000/2K3000 and all of Loongson-3 series processors
++	  based on LoongArch.
+ 
+ 	  CPUs without h/w unaligned access support:
+ 	  Loongson-2K500/2K1000.
+@@ -573,6 +574,9 @@ config ARCH_STRICT_ALIGN
+ 	  to run kernel only on systems with h/w unaligned access support in
+ 	  order to optimise for performance.
+ 
++	  If you want to make sure whether to support unaligned memory access
++	  on your hardware, please read the bit 20 of CPUCFG1 register.
++
+ config CPU_HAS_FPU
+ 	bool
+ 	default y
+-- 
+2.42.0
 
 
