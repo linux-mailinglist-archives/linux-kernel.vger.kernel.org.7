@@ -1,72 +1,55 @@
-Return-Path: <linux-kernel+bounces-785875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32810B3520F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:08:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C86BB35233
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 05:19:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8DB01A8301C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:08:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04EC1682054
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:19:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF2402C3756;
-	Tue, 26 Aug 2025 03:07:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4648F2D12F5;
+	Tue, 26 Aug 2025 03:19:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="tKFXWwIE"
-Received: from out162-62-57-87.mail.qq.com (out162-62-57-87.mail.qq.com [162.62.57.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D947C163;
-	Tue, 26 Aug 2025 03:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.87
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="FvpEa0SX"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFDB111BF;
+	Tue, 26 Aug 2025 03:19:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756177673; cv=none; b=nWb9I/bztjEKL95OjVI9GtLuymSVQcMfrmw0cGvZaRHC7jgd9VeRVB17A0s/SwzHqsHDZhYItsdeEeLbh35gA0cui5SKcfcydwdSEYto0Zr+m5AASnrDX20GIgbO0D9dT7SXKMT9BrWRrtgDMVQPNeFYPkrtlGPFox4Ilfabzak=
+	t=1756178364; cv=none; b=FJB96T5616dHu7bdY6gSpQ8l2KCYB8KTwa3K2boNKEMmUu8vViqzQuQmRmrArNCd5NSy5Yr3xSoolBS3X5oNebYGi9DYYqN7tJSMh2pQJBIqYJuxrpfuoTKpfJr7u5lEHifPgmvQoLvhlDOYZZKSmChLyY07CsaGSDyN4YG9hRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756177673; c=relaxed/simple;
-	bh=gkF7h4EW9M+ZZCmq95GdTkH2Hh4i5+Q4z9JSUPWvlJU=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=DfBml++qY91IPXTsbOtPcMK6TwsoZehLsNkuOl5l0UljE8DF5Fz7+dwA/OC8NIBXXrFZD+PJ2hQV5Fz9fbLY1C7UAAyX/OUee/6UjAsweUqoQuljtq50hy9wYRP/gac3lb3s9gR73f5B2QrRtUtwHS+ibRcunQ6sWBk9ydtVRjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=tKFXWwIE; arc=none smtp.client-ip=162.62.57.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1756177355;
-	bh=L6vibiH8O0qLbC6fD+xvRz4j6mizRgH8G8UJ1+HY44E=;
-	h=From:To:Cc:Subject:Date;
-	b=tKFXWwIE7Tg6w89vHE8cjQgBTGgeQK3cTXGmc2mHj6Fx8wUNncOKZTQHJPXU3mO2r
-	 jr2ImbiSbyikW4gnXzC2CimCULSTxfYsUe7S98TPHCpaZ2fXDv22FJekXqkvdHRVos
-	 SU9Pu/X+agUam4Xxbu2Dq7+yYJdGlQmPoHcFvdJQ=
-Received: from dcitdc.dci.com ([61.220.30.51])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id A1BACAF; Tue, 26 Aug 2025 11:02:33 +0800
-X-QQ-mid: xmsmtpt1756177353t0r09wndo
-Message-ID: <tencent_0FBB187910C3E168E5C9468DDF6764C94308@qq.com>
-X-QQ-XMAILINFO: MqswyhUqVe0CGAD9S6uNOrfJhZmCZ2RVEiu14klpymAMSbyt9d1Qr8CPsKiJLX
-	 kFZ/13IevebNP1cRPfy6HheOFLjysSy1z+XKWGhDPxOcvzALH07aZp67mwuvAaZ/5GcyWf2aZdwB
-	 Prny5md4HsveW59oNstduLYhPxMPBzoB7ilnbhRPpgnMRr/uQP4kIZQCEKIG3MEzZzeUqEJUcuuB
-	 nQgtbnzgx9uYC5bJmG0yw5S8dEvtHxdkKUIJigkcjR+RHUFV6/FPCYOnONyq8GDc9NGbmo5CO2Yb
-	 /7i6T97N50dbV1/MElWacbwcBXOoPn7BCnAxJczNyPT+6x3W46uRRogr2vcigwipPzOvxAuhu+mq
-	 n/WfgZ7Rl0XrROgriYA3j+pbBXMHxsZ3wuo1hna9J9qBXFUHJPVa/OLH8M84Ljtm245A7dB3Np1/
-	 56vfgw60t5G4nZnXNcpMz23XZtKYv2Mm1GfMQN/B/UziM3o1XcBy4tdO5cX3wmr6XSt2bpMNzxV2
-	 iwa5MDxQXM6wENWFVrfN8yvK6Dopu3WNiaBgFShbBN66nLlE8jZ+JF06P6QRgvDQanEL1Q9tu69Z
-	 KPSXeNuTEuqGrxoIVplLAJMdKdMoq8pHLmG41tKChLV1fvHjp5VnJcRUnuDK6ACs/YTWZPq0d8bR
-	 03JcmYEvLSM0euFBpDBnjFw11TclZQMz5lLls5qHkj8C+C0YQCad8Nw8G9pFPa3+NpGiZJZYC90v
-	 kyqZQ0tvDnf7dnSgV2Vu2jQuifT8ZX/AVLNkWcJzrItHDz/WnY9JKVeu7FuJ6zR/kPF4xoSJowU2
-	 FRYmSiL8hIOEsBGaT4Aza6Wj3MoC5h+HEWN5LbLzJ3Rz7EYlVxjgnTUZNjk1rSzdVNVMfIVQWtds
-	 QB27jOsOjkKyV5roHa/oPTxu3y94kl6kros/JRskcupSddQ4gVA4RZYBR6p2f4a/RBk/wsCDxj3O
-	 XGXCuMu0zYveJPYi4nbTV7OF7osIzEMbcIcWZTvUND8Z9Gw3oPx8SZC/79fHx2rM4guGV2FU0=
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-From: "Shang song (Lenovo)" <shangsong2@foxmail.com>
-To: "Rafael J . Wysocki" <rafael@kernel.org>
-Cc: Len Brown <lenb@kernel.org>,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	shangsong2@lenovo.com,
-	"Shang song (Lenovo)" <shangsong2@foxmail.com>
-Subject: [PATCH v2 1/1] ACPI: PRM: Optimize the judgment logic for the PRM handler_address
-Date: Mon, 25 Aug 2025 23:02:29 -0400
-X-OQ-MSGID: <20250826030229.834901-1-shangsong2@foxmail.com>
-X-Mailer: git-send-email 2.43.7
+	s=arc-20240116; t=1756178364; c=relaxed/simple;
+	bh=wi8sbdKRlrXo0kWBOE2JRx8vCNBDwrKiFlY3fNVuc3E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jIMwPtYRRiDf+/02zjn3s5FBuNpTSkWYLYb5xb7IHkyk1Gl8BXNgmyaeTjyIov4JUPo8pBPLFSDSwtLt2dTgUWVFiBlyPnXYFxtI4lFS6Uz9Mi2SPTLl30uXRSDl2zpMtWS9AQa4qxfDBn1Plt+ay6y3i4HtpJg2SrCFKcjE3F4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=FvpEa0SX; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=8U
+	KRPKWH6JXfLDs9LyaWay1d2b/APYWFOa54QlGQgsU=; b=FvpEa0SX45Kdz2xu7W
+	6JFmFOSi27E1gUhtUyZ4XnpJiptQ8/SwL1gBvS9hSL8zKTR6yYn/fpxVhr/ahD0A
+	12sPrA890JOhaZ3LioUNw5nJZcE/+46A9z23ShPnlsbJJs1CeYI+FwryD8cdoNhK
+	B22oBGjXA2im/gsYQiO/UMWK0=
+Received: from zhaoxin-MS-7E12.. (unknown [])
+	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wAn7zcAJK1oxxy_Dw--.24255S2;
+	Tue, 26 Aug 2025 11:03:30 +0800 (CST)
+From: Xin Zhao <jackzxcui1989@163.com>
+To: willemdebruijn.kernel@gmail.com,
+	edumazet@google.com,
+	ferenc@fejes.dev
+Cc: davem@davemloft.net,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v7] net: af_packet: Use hrtimer to do the retire operation
+Date: Tue, 26 Aug 2025 11:03:28 +0800
+Message-Id: <20250826030328.878001-1-jackzxcui1989@163.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,54 +57,95 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wAn7zcAJK1oxxy_Dw--.24255S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxCF1fuF47XryDWFyDGw17Wrg_yoWrGw4kpa
+	yaq347Jr1kZrWIvF1xZa1kXFy5J393AF47Gr1fGF1FywnrCFyxtFWjqFWFgFW7C395twsF
+	vw48XrnxAwnYk37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UqZXrUUUUU=
+X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbibgO1CmitIq0lPwAAsC
 
-If the handler_address or mapped VA is NULL, the related buffer
-address and VA can be ignored.
+On Tue, 2025-08-25 at 0:20 +0800, Willem wrote:
 
-Signed-off-by: Shang song (Lenovo) <shangsong2@foxmail.com>
+> > We cannot use hrtimer_set_expires/hrtimer_forward_now when a hrtimer is
+> > already enqueued.  
+> > The WARN_ON(timer->state & HRTIMER_STATE_ENQUEUED) in hrtimer_forward
+> > already clearly indicates this point. The reason for not adding this
+> > WARN_ON in hrtimer_set_expires is that hrtimer_set_expires is an inline
+> > function, wory about increase code size.
+> > The implementation of perf_mux_hrtimer_restart actually checks whether
+> > the hrtimer is active when restarting the hrtimer.
+> 
+> Perhaps we need to simplify and stop trying to adjust the timer from
+> tpacket_rcv once scheduled. Let the callback handle that.
+> 
 
-Changes in v2: Demote pr_err to pr_info for incorrect handler_address.
----
- drivers/acpi/prmt.c | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
+Okay, I would also like to modify the timeout only within the callback,
+so I think PATCH v7 might be a better solution. Additionally, in terms of
+performance, it should be more efficient than frequently calling
+hrtimer_cancel/hrtimer_start functions to change the timeout outside the
+callback.
 
-diff --git a/drivers/acpi/prmt.c b/drivers/acpi/prmt.c
-index be033bbb126a..6792d4385eee 100644
---- a/drivers/acpi/prmt.c
-+++ b/drivers/acpi/prmt.c
-@@ -150,15 +150,28 @@ acpi_parse_prmt(union acpi_subtable_headers *header, const unsigned long end)
- 		th = &tm->handlers[cur_handler];
- 
- 		guid_copy(&th->guid, (guid_t *)handler_info->handler_guid);
-+
-+		/*
-+		 * Print an error message if handler_address is NULL, the parse of VA also
-+		 * can be skipped.
-+		 */
-+		if (unlikely(!handler_info->handler_address)) {
-+			pr_info("Skipping handler with NULL address for GUID: %pUL",
-+					(guid_t *)handler_info->handler_guid);
-+			continue;
-+		}
-+
- 		th->handler_addr =
- 			(void *)efi_pa_va_lookup(&th->guid, handler_info->handler_address);
- 		/*
--		 * Print a warning message if handler_addr is zero which is not expected to
--		 * ever happen.
-+		 * Print a warning message and skip the parse of VA if handler_addr is zero
-+		 * which is not expected to ever happen.
- 		 */
--		if (unlikely(!th->handler_addr))
-+		if (unlikely(!th->handler_addr)) {
- 			pr_warn("Failed to find VA of handler for GUID: %pUL, PA: 0x%llx",
- 				&th->guid, handler_info->handler_address);
-+			continue;
-+		}
- 
- 		th->static_data_buffer_addr =
- 			efi_pa_va_lookup(&th->guid, handler_info->static_data_buffer_address);
--- 
-2.43.7
+Why do I add the pkc->expire_ktime in PATCH v7?
+
+For example 8ms retire timeout.
+T means the time callback/tpacket_rcv call _prb_refresh_rx_retire_blk_timer.
+T1 means time T plus 1ms, T2 means time T plus 2ms...
+
+timeline: past -----------> -----------> -----------> future
+callback:      T	           T8
+tpacket_rcv:                 T7
+
+Considering the situation in the above diagram, at time T7, the tpacket_rcv
+function processes the network and finds that a new block needs to be opened,
+which requires setting a timeout of T7 + 8ms which is T15ms. However, we
+cannot directly set the timeout within tpacket_rcv, so we use a variable
+expire_ktime to record this value. At time T8, in the hrtimer callback, we
+check that expire_ktime which is T15 is greater than the current timeout of
+the hrtimer, which is T8. Therefore, we simply return from the hrtimer
+callback at T8, the next execution time of the hrtimer callback will be T15.
+This achieves the same effect as executing hrtimer_start in tpacket_rcv
+using a "one shot" approach.
+
+
+> > Do you agree with adding a callback variable to distinguish between
+> > scheduled from tpacket_rcv and scheduled from the callback? I really
+> > couldn't think of a better solution.
+> 
+> Yes, no objections to that if necessary.
+
+So it seems that the logic of 'adding a callback variable to distinguish' in 
+PATCH v7 is OK?
+
+
+> > So, a possible solution may be?
+> > 1. Continue to keep the callback parameter to strictly ensure whether it
+> > is within the callback.
+> > 2. Use hrtimer_set_expires within the callback to update the timeout (the
+> > hrtimer module will enqueue the hrtimer when callback return)
+> > 3. If it is not in callback, call hrtimer_cancel + hrtimer_start to restart
+> > the timer.
+>
+> Instead, I would use an in_scheduled param, as in my previous reply and
+> simply skip trying to schedule if already scheduled.
+
+I understand that the additional in_scheduled variable is meant to prevent
+multiple calls to hrtimer_start. However, based on the current logic
+implementation, the only scenario that would cancel the hrtimer is after calling
+prb_shutdown_retire_blk_timer. Therefore, once we have called hrtimer_start in
+prb_setup_retire_blk_timer, we don't need to worry about the hrtimer stopping,
+and we don't need to execute hrtimer_start again or check if the hrtimer is in
+an active state. We can simply update the timeout in the callback.
+Additionally, we don't need to worry about the situation where packet_set_ring
+is entered twice, leading to multiple calls to hrtimer_start, because there is
+a check for pg_vec before executing init_prb_bdqc in packet_set_ring. If pg_vec
+is non-zero, it will go to the out label.
+
+So is PATCH v7 good to go? Besides I think that ktime_after should be used
+instead of ktime_compare, I haven't noticed any other areas in PATCH v7 that
+need modification. What do you think?
+
+
+Thanks
+Xin Zhao
 
 
