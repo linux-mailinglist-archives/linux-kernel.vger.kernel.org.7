@@ -1,175 +1,105 @@
-Return-Path: <linux-kernel+bounces-786366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA57DB358EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:29:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 379ECB358F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:30:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D0323A1F7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:29:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5879118991F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D8F3074AA;
-	Tue, 26 Aug 2025 09:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 046693093CE;
+	Tue, 26 Aug 2025 09:30:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ixvw8KOs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s59G+bjG"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D141C5D4B;
-	Tue, 26 Aug 2025 09:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B22C2417C2
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756200584; cv=none; b=OZ5yT3R7wRa4IG+qs7cpcWW0cALENgH0U8pDJ9ZREEyGJGI/fqzTFmydcxYSj/kfFr94HyXekaZKNTteJUu1DaDPhH42Yc6v1Hg2tixCX/nRwcpT2gEkmHBNydryqV65Ez6wBAsP+KvnBQWdh7YXP67s5cIQENXbP2fAV7M3BYk=
+	t=1756200627; cv=none; b=QImbqxaQbvnven6iZIWv0BFNd4IJk+Oaf/daK/O3GcVRdYx+HHQ4OFFKt05xXKH6qBVMe5p0dmxu/PDE1BaHKRyBN/ZwWQlrXFUU7S1QqbBiIa4Qfa76G5cLZ+xg0cwrxJbnvQDUAbFwFAM4RDqjB7jc8fMnmy/xrTZZR56jCr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756200584; c=relaxed/simple;
-	bh=hkle6IqEYn4hy4id2cLPEGvDMCFl39nWGmISKmPMZJg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BVACyebA6UB/htSFV9XuO1o3xsGlba9pC8DU2KKz71wVJHwZUzjVCtlPP3Ey/q6a6DKEQxilGjr8+gv3lbd8eftfqhp4LDkYwMGsfcwAJspLGerlmTfIxJbpO5g8XNwjTt/k1oK3Y+2G6fuufB9xvnZseGVQ8/EkLhzWcCd0c20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ixvw8KOs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 240C1C4CEF4;
-	Tue, 26 Aug 2025 09:29:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756200582;
-	bh=hkle6IqEYn4hy4id2cLPEGvDMCFl39nWGmISKmPMZJg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Ixvw8KOsacmvXx9d0BDZSPQTrlDLLwQcZwqkwCaGsdTPVyXE4Accbzu3SuQbM3Z2s
-	 gp2fWl3bAXTq8j5Tbg3PHT72bWe8Exi+7GPlAiacohDNwltzvZ6yh09bFjwjvqUzko
-	 4wdLecrG+QdNRlZYwzYjiMuQLxt2NTfWoKG4T4rVl6v1eXD4EReXPnbGLSgOjRerX1
-	 nOCsO8FhZT4p4n/rdogZ+Ud5X6CCXOOeNZR4hLCPLcO+7OkZ5e6apQvm82xBEmX6QO
-	 cMLM2EUjeINBKsx1U8ntVp+FVjsGgyIpzya6eot9zCra5q2a8BF+7qGBYygctg2Ncg
-	 I50QtLY56yfkg==
-Message-ID: <dfd9cc8b-8103-4fa9-8b3b-c31ae7c4970a@kernel.org>
-Date: Tue, 26 Aug 2025 11:29:37 +0200
+	s=arc-20240116; t=1756200627; c=relaxed/simple;
+	bh=OvUbIz95K4JXfdcPlfARC+AizRB3XJUiuZwikQ+/j1E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ttXD6VQ0s2TUOA7Qeg/G/+p28lonKeVNCe2DmXs1FL5QQaqXgZvJl83ESciiGDakpaXegKQ8Sg+CFq0Eq103lMfGRY5xe+clM5rLA3ideKjTpKj+hQ7WCrTX+ExiWcL5GCIS4cKmxCiJk1N6CuEgj41/V80hhgQCinmi/8TLZzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=compal.corp-partner.google.com; spf=pass smtp.mailfrom=compal.corp-partner.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s59G+bjG; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=compal.corp-partner.google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=compal.corp-partner.google.com
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-70d9eb2e655so44385886d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 02:30:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756200623; x=1756805423; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OvUbIz95K4JXfdcPlfARC+AizRB3XJUiuZwikQ+/j1E=;
+        b=s59G+bjG7OAUIP7IxnZmYpZYjJKTms7pfu6w86fK4vBe4UlOG1Ia8AKE5fyIHPosZO
+         jaqzVRX74rvU0sXuZvt4JunXJ7pyZp7o0ItAndlTBT3ck1VHvcsbZkKT+HNcucUb02I5
+         2j6n5tYMhW0YpKPmevylx5+h2R3RFhjXgCPmOiCJkGLlHSVn/icLQx+BgcqkkwGRmxNw
+         UPGY9x3hYoWmcoQb4DpV9Olv0B5Yqjgub2TFE12/a/ePtDQUXMGtfm0fH2aCBIdYbkBO
+         oIB2Pt6yBvnck1gseO/jTh440WAgWVQWkLKupALx8JRm02gq+1Iz5byzlpnb6ofNQu05
+         crsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756200623; x=1756805423;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OvUbIz95K4JXfdcPlfARC+AizRB3XJUiuZwikQ+/j1E=;
+        b=dX+XZnYCVRfrJ70PuwMcb1R5RfoWqKQWzxRwjZlFQDZYQfFXVeAuBWJONEj8z+vSOP
+         AI1vqI9JloTmoYhgFi9++swGM9XWdci11p0eUJVsLZ0TM1waECbpq6BgMCJoA8cXxwrh
+         rpg1RZ/dJ4DoI/uYH+tUXnmPb/VqNQV3huG84Bz7IqL3jAqKHLnwiyrWDcXMZ80oRqz8
+         qAw6HALmywnGAOiWbU2+V/V0bONvmo82uaMj3bpHECuB/52EWbTVCkD0++3idGYDGiIQ
+         eDiBv1ICG4VyoCOLlm2Id5YApe4bLadSZsNa8WYwyLAACK4UgfYPE8DB3V8P1CjPPqbk
+         YhIw==
+X-Gm-Message-State: AOJu0YwNVE2dunQqjX3HXI1NhZ9klIWblN/4xryaNCkZw+Cde0SZg78A
+	xgqt2Zv48T/2GhhHVtAkz727mgjWag8zZFqkf/e7EZVEKonnriVy6jj6yrQg+wa8zt2vuU5S7Z7
+	0P1EshjA+M7KayGMf3FPKHxO7gPUVbBES+/EdY8hEdQ==
+X-Gm-Gg: ASbGnctglQsit18nmwlUjB14ebky54XYzHCBv/Gf3FpJ+tYVuDIrsfMabPd+20VEFy0
+	yrdr4glCG7lJyMhmof8VcMg9k8Pfh9aPH6MMaEiwvdJcpjPCOiPwEjk7LAAAGLCNT0EgqNyG5TG
+	LwQj35w5bfW7+Cr5Pw+1U9344T1YKO9Loy0r7GBN9t0TscvYtVxQFE3f+98/h+He+TnV7Tflf5s
+	5CI+/o=
+X-Google-Smtp-Source: AGHT+IGmb6aCsOOpnEHv9Gpndnk4Vjl+wnb5OY915aQJlI5lgdEYqe5G/1E/Dq637FnnVD91zJaENT6TRFh3PTA48B0=
+X-Received: by 2002:a05:6214:2526:b0:70d:b80b:70c0 with SMTP id
+ 6a1803df08f44-70db80b8896mr80009216d6.51.1756200623362; Tue, 26 Aug 2025
+ 02:30:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] PCI: qcom: Restrict port parsing only to pci child
- nodes
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Lorenzo Pieralisi
- <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- quic_vbadigan@quicinc.com, quic_mrana@quicinc.com
-References: <20250826-pakala-v2-0-74f1f60676c6@oss.qualcomm.com>
- <20250826-pakala-v2-3-74f1f60676c6@oss.qualcomm.com>
- <rurdrz3buvb7paqgjjr7ethzvaeyvylezexcwshpj73xf7yeec@i52bla6r5tx7>
- <b7529529-9677-4713-920f-bf36863459ca@kernel.org>
- <p6yacm6hkhp4rgtl2xn677kek24ksczvtuersxnou4kmxmp7go@tmoy7gn4hrhx>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <p6yacm6hkhp4rgtl2xn677kek24ksczvtuersxnou4kmxmp7go@tmoy7gn4hrhx>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250826090530.2409509-1-ajye_huang@compal.corp-partner.google.com>
+ <431d4cbf-281a-4f93-bda4-767fa6b96c8c@linux.intel.com>
+In-Reply-To: <431d4cbf-281a-4f93-bda4-767fa6b96c8c@linux.intel.com>
+From: Ajye Huang <ajye_huang@compal.corp-partner.google.com>
+Date: Tue, 26 Aug 2025 17:30:12 +0800
+X-Gm-Features: Ac12FXxSXegTC0bZL7M87CxHLjg5Y4MEinlMDORv0H8fnA3ehnPv_o-ljoNpdTU
+Message-ID: <CALprXBaatmypSp=AUDjxYec87XRtnEE3vDc-VKsULPA2W5135w@mail.gmail.com>
+Subject: Re: [PATCH v1] ASoC: SOF: Intel: WCL: Add the sdw_process_wakeen op
+To: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
+	Mark Brown <broonie@kernel.org>, 
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, 
+	Bard Liao <yung-chuan.liao@linux.intel.com>, Jaroslav Kysela <perex@perex.cz>, 
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, Takashi Iwai <tiwai@suse.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
+	Mac Chiang <mac.chiang@intel.com>, alsa-devel@alsa-project.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 26/08/2025 11:26, Manivannan Sadhasivam wrote:
-> On Tue, Aug 26, 2025 at 10:28:51AM GMT, Krzysztof Kozlowski wrote:
->> On 26/08/2025 08:17, Manivannan Sadhasivam wrote:
->>> On Tue, Aug 26, 2025 at 10:48:19AM GMT, Krishna Chaitanya Chundru wrote:
->>>> The qcom_pcie_parse_ports() function currently iterates over all available
->>>> child nodes of the PCIe controller's device tree node. This can lead to
->>>> attempts to parse unrelated nodes like OPP nodes, resulting in unnecessary
->>>> errors or misconfiguration.
->>>>
->>>
->>> What errors? Errors you are seeing on your setup or you envision?
->>>
->>>> Restrict the parsing logic to only consider child nodes named "pcie" or
->>>> "pci", which are the expected node names for PCIe ports.
->>>>
->>>> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
->>>
->>> Since this is a fix, 'Fixes' tag is needed.
->>>
->>>> ---
->>>>  drivers/pci/controller/dwc/pcie-qcom.c | 2 ++
->>>>  1 file changed, 2 insertions(+)
->>>>
->>>> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
->>>> index 294babe1816e4d0c2b2343fe22d89af72afcd6cd..5dbdb69fbdd1b9b78a3ebba3cd50d78168f2d595 100644
->>>> --- a/drivers/pci/controller/dwc/pcie-qcom.c
->>>> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
->>>> @@ -1740,6 +1740,8 @@ static int qcom_pcie_parse_ports(struct qcom_pcie *pcie)
->>>>  	int ret = -ENOENT;
->>>>  
->>>>  	for_each_available_child_of_node_scoped(dev->of_node, of_port) {
->>>> +		if (!(of_node_name_eq(of_port, "pcie") || of_node_name_eq(of_port, "pci")))
->>>
->>> May I know which platform has 'pci' as the node name for the bridge node? AFAIK,
->>> all platforms defining bridge nodes have 'pcie' as the node name.
->>
->> It does not matter. If I name my node name as "pc" it stops working?
->>
->> No, Qualcomm cannot introduce such hidden ABI.
-> 
-> There is no hidden ABI that Qcom is introducing. We are just trying to reuse the
-> standard node names documented in the devicetree spec. So you are saying that
-> we should not rely on it even though it is documented? Maybe because, the dt
-> tooling is not yet screaming if people put non-standard names in DT?
-> 
+On Tue, Aug 26, 2025 at 5:11=E2=80=AFPM P=C3=A9ter Ujfalusi
+<peter.ujfalusi@linux.intel.com> wrote:
 
-If it is documented, you can use it, but I doubted first the author even
-checked that. Otherwise commit message would say that.
-
-As I mentioned in other response, I still find it discouraged pattern if
-you have (and you do have!) compatibles.
-
-
-Best regards,
-Krzysztof
+> Can you add these tags and send v2?
+> Fixes: 6b04629ae97a ("ASoC: SOF: Intel: add initial support for WCL")
+> Acked-by: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
+>
+> Thank you!
+>
+Sure, I will follow it. thank you
 
