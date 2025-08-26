@@ -1,301 +1,158 @@
-Return-Path: <linux-kernel+bounces-787097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6951EB37164
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:36:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03DDBB37168
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:37:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 264B4365F22
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:36:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADFDD8E1F13
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 778C92D3732;
-	Tue, 26 Aug 2025 17:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF262E888A;
+	Tue, 26 Aug 2025 17:36:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="vFYh8djf"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2087.outbound.protection.outlook.com [40.107.94.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k5D7OuEt"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8FF72264C0
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 17:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756229791; cv=fail; b=BrAWOT1HmOFxT7eJ8WskfU46k8o0qW31pvjzxH7/FiBUW5aSN5T6cJZS7o8Xf4ms7ksR/S5iH45WKrQDYVzXLcMo/lfpclEbBHJrCvK4TuP+lPZOniq6WATLcIX2AEdzcbseYdwe+YM8eFAPp9yH4NnjOZx9I4WyZYYiOw7YGWY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756229791; c=relaxed/simple;
-	bh=wYAmrrSruCSUDLIKlUy1FB9iitXIul4e9HZbRDKV5is=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=tAgR3sV2ujFnqGJdo7kc/G6dx7rhvH8l7O8MBXyp1VjQZRdtx8LDvB6ruCt5UIY3evF5PQ1Hn/CM0aNlEpYTAYpGIiQNuOncTE1PlmVHYGes3hh4sAPCg/js9Yk1O1q0qsTnsQXB9vXyLVZRIcc1tGzj/iUfKNTuGNoi4oyyaT4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=vFYh8djf; arc=fail smtp.client-ip=40.107.94.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gU5nIY25GOxz+YhFCCVAZLobj38uHyjR0CrP5Sme2fUdO/kwOA6K4H9pX5IM24M+8NvHRyfmoo4eWGhmJ3gOck8Mk2LV4JY+520pRPJ9eSP2tzuOCw11Fl/ZVqzGoV9mOGte9qC8dYW5/7GN8+cIhK4RJfpZlKEdmWR6asi3dVkHLJkb0Lv+Qy4MymjydgEHbpqWWOe/aZQI3Hk+J+Dlao8vjTdy5V7j2Vdrlfx/l96OZ60AebEKb2MKjJEIiZhsVPINB4uSNZIPgK0K9HA3ZGOGfQnx7kIEf4zXfyfSE679sGKEvbwDz7UmzglhF86vdUtA+yYCq/Zy3FeKzJ3kDA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ERLjr65d2EA96Qk4n1ZYRigszuyshUOX5/rDkxFCFAg=;
- b=AvciUbMHSZWATnWlOmmqjkqmSAsec+xjtr0Or29q7NgVNAPpmJr8jy7BiOjlpE8GOp9rIx3ymZBKEyMx+86R8RL/lzup4mhRTD1X4hCAKQMutzhIW3jcQy6nzL65L25rP2iqAPIClbIdYUatuOWvTJny1m2mAIhxRo4OSvfsIsukGpPcOXfKqZSU/6Wtmiy75JLygLIUJmK5XAl3aklk+xQ3rlGpF7eK+MQ6h3hsKflI46tlLtLrCXOvWg4SaLu03pIxNXMdgEQsvHJuyCI5i2aDbT6iLqAphuXUbzOEyKmqYWlRe5XgjHkNV5buOVuaTBSf6ZNvMfkRLjRaWSxBwg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ERLjr65d2EA96Qk4n1ZYRigszuyshUOX5/rDkxFCFAg=;
- b=vFYh8djfgvG3unkrzidNiwVRGXfmvD+4FF4/3+ACbcVOvIrYcnDvd0x0FEOsjfvEroVWmABiWPP+ys/kjXp5I87nG7v1QZ7FOCVLZZvE8QXOWa26RyYzW/3vvE5vJOC/LsJUk8lGP6jn5MLoAK4PaNkfAIFCqPYvMKmOyEYA2ZQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM8PR12MB5445.namprd12.prod.outlook.com (2603:10b6:8:24::7) by
- BL3PR12MB6571.namprd12.prod.outlook.com (2603:10b6:208:38e::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.19; Tue, 26 Aug
- 2025 17:36:27 +0000
-Received: from DM8PR12MB5445.namprd12.prod.outlook.com
- ([fe80::a544:caf8:b505:5db6]) by DM8PR12MB5445.namprd12.prod.outlook.com
- ([fe80::a544:caf8:b505:5db6%4]) with mapi id 15.20.9073.010; Tue, 26 Aug 2025
- 17:36:26 +0000
-Message-ID: <85c544d7-b274-4696-9fc0-829033eaccaa@amd.com>
-Date: Tue, 26 Aug 2025 12:36:23 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iommu/amd: Add support for hw_info for iommu capability
- query
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, joro@8bytes.org, kevin.tian@intel.com,
- vasant.hegde@amd.com, iommu@lists.linux.dev, santosh.shukla@amd.com,
- sairaj.arunkodilkar@amd.com, jon.grimm@amd.com, prashanthpra@google.com,
- wvw@google.com, wnliu@google.com, gptran@google.com, kpsingh@google.com
-References: <20250820042533.5962-1-suravee.suthikulpanit@amd.com>
- <20250825134420.GB1970008@nvidia.com>
-Content-Language: en-US
-From: "Suthikulpanit, Suravee" <suravee.suthikulpanit@amd.com>
-In-Reply-To: <20250825134420.GB1970008@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YQZPR01CA0134.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:87::11) To DM8PR12MB5445.namprd12.prod.outlook.com
- (2603:10b6:8:24::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A441C2D3A7B;
+	Tue, 26 Aug 2025 17:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756229813; cv=none; b=UrrHgvlyTA5bW72RI82sHxkyM78r+zsJ4w3tU+qLS1mC+rXIoVJuY7jkcd3mNFu6J+m01CLRxlBhuaTHjS72+LoP5nZbEbv/Fr+sHBKrC+OYqS/aih9rO4f6tsieU4sjs2YeT9VqeCUmgYlAij6lZQd0/9mzugxtE2nM+96oBQE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756229813; c=relaxed/simple;
+	bh=h1hzb6kXNb9sJb6UEdW1dxiFgtKRip9v4zaf7STaU34=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o2MhYVtEebSkHKlS02fB7XN9PkjbMGwXHfPECIGQaFqjIqq+L6QUNT8embhcPPWnoFmFhLapSthqz68XBhWTaqceLTgndzfqGxaEG8UpSRUbowOhjlF8Ep5RSR2e93MsROIqsAZTaFaYkf+PQHweYyDkPejIwHffGlNquF1IhOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k5D7OuEt; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7f04816589bso212767885a.3;
+        Tue, 26 Aug 2025 10:36:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756229810; x=1756834610; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=2bul+sAEYxjTR9TR/KmNbpMJP4z2RV4SuYQGlJPpSwc=;
+        b=k5D7OuEt1psIf9jJUm+EyzTefYSin90/vbtBTG11++UtP1ZXAUX+sHlfUCirdrPNOG
+         Pq9qQie3JtU1xU1OMpHjbMuQhzQ6AXxYIwP0fI0bPSP7KiHNYaua9037AS3+BmrqBgrG
+         K/P3RfQNM7ZCCzbF2U92Z4LOSNKH+XY4E+Ob6tfOK9gl3FOhoRo4HDQIoeLrXytIAJux
+         0PKvWpHp/H46rw64IWa8pl1oQFx8BXhWsVEtf/REZanFdKdNNyj1oTxs3GOx7l3J5Xvi
+         CImPrA5zUT70i2meDhaeqjS69xxYu1IZUwMM6QifsPioXMjDqKjfD1HvYNee8H3V41zh
+         qm+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756229810; x=1756834610;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2bul+sAEYxjTR9TR/KmNbpMJP4z2RV4SuYQGlJPpSwc=;
+        b=jbb6Io+TjJ082F4z1q8JCQTc8eNlWsfVNNks7f5oMXsMwHZ2aQZkeoZab72vyok4sJ
+         pZLP1nmQ9VzEX/EedLz+sNqrCiZ1FWHS1qcCZaVGQJJsv8aFRJPj/YytNZ7BJfpVsOp3
+         WFNyAj2dwctz16+VF/a2GmWo4RDz/JQib7W5KlA4n8M1Fv/2Yv64UcxFz5k1OOq40AVB
+         TARx9nubLrsrgBK8RkiLhBuPfSxvfP2VGxO9S2EJiai24wgcdET9vKU8UQlY9LgLp6hb
+         MseyBdh357YA7mzX0Gtq0MGWqFb8KTCi+UCVBBLbJln6rO6zRp7ziNkFawpvA2t2vyGr
+         yRcg==
+X-Forwarded-Encrypted: i=1; AJvYcCUpQA39b5WqOdVgekqcNCMNnqNFGfL4RwlCbs9gFPUBVzlh5Scb8N0H/js+7fEFIFtKWTqDpNgi@vger.kernel.org, AJvYcCV0aoCr6I60idczB5nCJyS9EuhRGweYzbAv9l/54C+5rm7FOllSITLuaH/j6n7nt2BaF7eVYKE//jG0RLw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywrhl7urCiuC7pp7d2XXki508iyhaBFBE5W2A6OP5UFKcI6oDEm
+	/OvrF4ND+ptl8U/h6HeTVCsu7erhjmllEYiGdmRuwWT+WXKuyncl0a0K
+X-Gm-Gg: ASbGncv8+PEy2Ysmo0kuV88vBXrQvRoIye97F7kWh3Bz7T9TWZT2Rpd4yjRVg48PBnU
+	IMM+ZQzWhddxvQoHVvdSPcQ+0+LcSLFXfmY1jiRnnXSP6MABIh4sphyvnmNX+JDPhdsg1Spu49F
+	s6t4s+px2GGSr6hwtoHwmc92PBR0DNRq79eUUKnq4M0W5qVckieo0moNjLxkh5xUGdtmVC3pf1N
+	Av4YJOecr+M4Fuzp1BXLauWalhfg1ch9kV5oYEyCiN6OundLFxpah/+1fM8os04CuhfBn1BuMdW
+	PlIWh+W3+iccxuX9TL2UZSf12E63jw+wYctyStewj8AVf5bn4u4Ybb3VbotPxaVueO9RMUpd88K
+	VaWfHW8r0lTq0AU+0lVEh6CaIeTE0zt3vadoc++l/LqlkqXmGaQ==
+X-Google-Smtp-Source: AGHT+IGd4yxiaDJ1nN1xxwqrq7CTubcIsmLr29Btgu9rztVhTtyKu+4WSygLfx17nr8zqzbzmsuISA==
+X-Received: by 2002:a05:620a:4245:b0:7e8:54f7:67cd with SMTP id af79cd13be357-7ea1107cdf9mr2125426685a.50.1756229810342;
+        Tue, 26 Aug 2025 10:36:50 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7f0929c268asm452807185a.35.2025.08.26.10.36.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Aug 2025 10:36:49 -0700 (PDT)
+Message-ID: <49147e71-067c-467a-9a04-c1729a0a10a7@gmail.com>
+Date: Tue, 26 Aug 2025 10:36:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM8PR12MB5445:EE_|BL3PR12MB6571:EE_
-X-MS-Office365-Filtering-Correlation-Id: dbcbfc48-20cc-4ee8-4ab2-08dde4c71552
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UTlWNHhJVjRpdmtYVjc3dGtrSnlqRmtKOFc5ZGpURitPY1BMU1FFUlExbGpZ?=
- =?utf-8?B?YldOOHpaVUtHZ1NoUUNFREtZM1ZJeG44TkQ5dnNBdUNxWFVyN2dJOHhtWS8x?=
- =?utf-8?B?MjAwNlhIUks3UzZFaEliaU9COW1DR014UzE1b0lRWUNrYnNEMHhqNkt5Qmhx?=
- =?utf-8?B?NzY5VGFJRDJsWWI3dVE4RDl1WHNVMkkyQ3NSQkQyNkUveklob3lvVERDWEVU?=
- =?utf-8?B?Z0Y1S1dxYWpaUW45OGducFVxN1kyb1lsUjNFaUtuRjVPbXFrR2NJUXd5OUR0?=
- =?utf-8?B?cUUrTklidFhWQUJtRGkzR1V6MnI0MG5LbEtvMlE0S08xTWluZXh0czFnck5G?=
- =?utf-8?B?aEFvUmR6YzFReGlRdkNOWnY5bDlQYVpPQlg0WHZ5dXlwV0MzSis0RjFPT2ZT?=
- =?utf-8?B?ZmVJNVVEay82eFpZSWtnd0R1dVdaZkMwNm9OU2hjcXF3QURxbnpud0lvMVR5?=
- =?utf-8?B?UmNmUGJ3RFpvSkxLVDQwVEJzeUcvMmsrSHo1cE1DMThwcE5TWGtLckpGT210?=
- =?utf-8?B?UEdRK1JtcXhhNWdjWnI0dzJwNlQ1eWhmNmk1VVpiSG1rK0dRaHh2Y0E2UmFa?=
- =?utf-8?B?SXRId2xid3dxOU5Ubm1UVS9Odzl6NXlrMzZpU1c2L0Fqc25mZHFWd3RuTlYw?=
- =?utf-8?B?V0dkWG5sTmo0WmN1MnlzSmVJM2dWcEtObFU1Vml6MHNjYnRJeVM2TWNoMHJ1?=
- =?utf-8?B?WHZQOExCN0I5UG5ueEdPMmNnTno3bm9iRG90dlNFOURmRTBPeVhXNWIwWVdC?=
- =?utf-8?B?MWp4cndteFd3QjZobEVGSXRYSi9XRFhWeTJaeFNuRXczejBaS2lXbW9QR2di?=
- =?utf-8?B?ODVtb1ZMMkk2ZTU4S2xjWENOOXF2VHFhLy8zS0pUNk5maWFrbjd0T04yYjJV?=
- =?utf-8?B?RUNrTzFjd1p2RkhEc0ZOQ0IvUU96b0k2VkMvd0dDYTQwYThoS09neUN1TCtJ?=
- =?utf-8?B?OFJaK0NRQnNSV2FtVVVxSU5scXBvZHUvWDUyNThPMUoxSFhiRkMzZ1IzQW9D?=
- =?utf-8?B?WThWbWtua3ZSSzZiV0hzdTF2V095YjJYTzlWWS9oWmRiYjJsM0I0MVFseG9E?=
- =?utf-8?B?ZkRWdVFRRU5scEd3NjB1TWZ2ZW53K0lOL0VUYmUvUVpwQXdCOFp3YVl2cWwr?=
- =?utf-8?B?aDVrZ2Fucm9VZWFqK0RkMGdLVVB5eVdzVzRCa0s2YzU3dkZPdHJwUkJDKzlm?=
- =?utf-8?B?RkdaV0w4aUhaVnoxU0l1clNlN0VPVFNwcEg1dW41VzJ3Q0xwMlZ0SXVacENX?=
- =?utf-8?B?UHZQTlNnRzJNSGdxc1RqTzFkZ05wOHJDajdEL0FTYVh5eFVlejZybkcxNnl4?=
- =?utf-8?B?T0JDK0hEaTFTM1Z0UTdVdnoxb1hYUGRPRHBoUUxHaEZyMC9CWmRVb3NidGVE?=
- =?utf-8?B?cHcvOWc1TW9hUzE0bE43OXJkTnJaVWliWTBIeFVnamFLSVpqYjhnWlVvWG11?=
- =?utf-8?B?cnl1TnhqTDUyMndkSHJ4TmtNZHZYZmd4WEFtZEI4bCtpQXljWkVLR1ZtZC9I?=
- =?utf-8?B?b1RCSnB1SEdDNC9makZ2R3p5RzV6VVh6L0RHRDZIZ3drZEhMSGRXb3pXNnNz?=
- =?utf-8?B?NFFJT1I2UlNaZXd4eDZqTjFWM1NsNUZlK1FnY2kwRi8rRDcxbk9ocG9VWTZQ?=
- =?utf-8?B?UFZGWmdwQWlvaTd6QWRmdy8wOWV6RkZ0NTlHUGRoR1JFaG5xYW0zSzhRSHh6?=
- =?utf-8?B?WEJ5WjRlOWJyNmRieFJiVXdKcUZJcmgwczN1S1RLZUphZ3EzZTZCclF6bURz?=
- =?utf-8?B?TUowQk1iU0xyQllFMkFROCtQS0NRUngyMVltalZ6YzB6NThjclJCYnJpYkJW?=
- =?utf-8?B?M3d0M3JCc0FpeEliRjVCdE90N2JnTmxuejhubG9VQ1pXTnNDcmRIT2Q2NWdC?=
- =?utf-8?B?THRJUlNNa0M0R1N1Q3JZVThHbkVHcUxka0pHak1tK0Z3STRFcmFFSisxVEtE?=
- =?utf-8?Q?ZrJ+OoAgZSw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR12MB5445.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QjU0ZkJRVUZNc1hyV1JLL0VTdStuekRBQzZjcVZVQXFubHNlMzVVSVBHaEpV?=
- =?utf-8?B?dTJWakYwcDkrbkJrTjBQb0t6WjlrQ1Q1UW03cUJDdnlFdnVINENObC9DbFhU?=
- =?utf-8?B?S0I2THRXblozMkVha2FYVnFHeUFZZnlDNUdUK0QxRGd0Umo2Q3NHSHRNb2Vn?=
- =?utf-8?B?Q2Z1SkNCTXhaTVV6U2dhVXcyYkxsdnB6MWgweU1OMFVNRkpjNk5Xd28zRGNV?=
- =?utf-8?B?S1JWUUVmTURzaS9yNkQzODgrMC9Pa0pPZUorV2RxekxvMnJOeFkrV3pGOEdQ?=
- =?utf-8?B?WEZMQXZBRWE0bkpkSzBCL2tPbHZ1alFlb29sOUxGYkE0R2hEV2Y0N2xFL0px?=
- =?utf-8?B?ODVMS1haQ3dpMGkveGpEWFE4UXAvc252emo0NUVBWHp0NTVXN2JueXJiYkg1?=
- =?utf-8?B?U0dXcTlUZWhKM00xdkUyaU9idCtQTjJ6Nk5xT1NBNGZ6bWRVOER5b1NSZ3lN?=
- =?utf-8?B?RkpyQ000Z2x2ZDRNK3Jld3M0OFIzZytCTTlyWXRuRmpuK2xtK0VTNWhobW5C?=
- =?utf-8?B?YlRMbnhxOUxnRVVsQ1Z2ZWV1SWZOcVdrMEtsc0U4ZEZvTHFNdVhUYVJnRC9G?=
- =?utf-8?B?T3ZsK09FelN3bW1taWl1K3F1QUFBR0Y0V2JFUmo0eVZtWkxmVlhpZC85NVJC?=
- =?utf-8?B?T3dRRFdvYlBtVmhvdGZzTnZjWmpnL0MxR1NMKzVwOEpGRnYxSUlla0x6QlZ0?=
- =?utf-8?B?bFd2c1h5a3FMSDAxSTlvR3FwL0ZITVB0Q2x0RVNqUkJsSEtnTnE4MHB4TVBz?=
- =?utf-8?B?QS9UNWhZNXJGNFdRa0FsWFkxUlJubVgrWnRJZndiVmg5SVpwTkYzeHZJMjdK?=
- =?utf-8?B?WHpzdzEydThaVXk5MkdPYUFZeFhzNEdFcWRyMXdtRk9GYS82Z2diNTkyRjVp?=
- =?utf-8?B?c3djWS9qZkxSRXE5MVYxeWNHQ0YvV2ZTNTdiem9WU24rKzAwVSsvazhJQ09H?=
- =?utf-8?B?MlY0ZElPazNXQ2ducDN4YjFZOVNjSzRkaHA2a1FkejZpWWd6OHk1UXN2MHhE?=
- =?utf-8?B?K0tSbThRQ2VyVzMvZFFnYkZTMDBaUUtKam52Y3pNaGhJdS9sN0tzVzdMZnRt?=
- =?utf-8?B?NWZqSzlUdWEzeVlXZ0VHUFliMmpiWlVjUXoxOVN1NWkyZDBEKzBRTGZjR0p1?=
- =?utf-8?B?S05weWswSzRhK1FVMlVLM2FTUFVpa0FkdnRvR1pWaGZNd3FUbE4ydXhKeWRi?=
- =?utf-8?B?anoyQXNZemZVcmFYcjBVdEE2MXRpZ2s2QW90UXNWWkorWm5JOThtQVdiR0dq?=
- =?utf-8?B?cWsxZHJBSXNPYkNxeE5qaG4vRXl3NnZkWlp2VnlCczJKcTVNcUg4Y000QzVw?=
- =?utf-8?B?aEN6ems5YTAyY1NOb3QrS0xkN3RFVEVGMU1RS0FpWFBRdjlTakJlT3h3MlVC?=
- =?utf-8?B?REhzYzhDZTRkQjZkOFlYYVBuczQzUlIwQjJkZHNrVXNPTlJ0enUvdjMzTmtx?=
- =?utf-8?B?QWVacGYxRWNxcVQ5SFRiTEN1U2IyQk0wSno5ZEhtUk1wL2dBdXdrTCtrNXZL?=
- =?utf-8?B?WEtWOU5IT3h2Z0VYbWZlVmdLcVdvRXI0VDN3Ujg5YmVyajJnZ3JjYWVCVTJq?=
- =?utf-8?B?NmV5Ykd3emdtd1BoeWhkTnlHaDl3YTRMaHphbTlvUGgwbTNsM3R6RXpsTy9V?=
- =?utf-8?B?YUg3MkY1WjZnYzllY1ZXYUhjME1JTGpjNFpoRW0zREQ1MExCZHpSMXRlbUJC?=
- =?utf-8?B?Vit0RTBtQXVrWmRxb0RibUNRV3JnMFQwOFBkUTFDOGxqYWhOTmZCQyt4bG55?=
- =?utf-8?B?ajNWaDYyNlY0WndWVG1xVXZONjBlSUdhV3NoVURta0xtTlNaNGV5UlFhRTc0?=
- =?utf-8?B?RHBUQWV1SDlXUThRVDdkTkt4Q3ZzaGZuMWEwc2J6L0duZGUzNkYrc2VtQ2hu?=
- =?utf-8?B?Nm02WTVTa2xScFB3WGJGVVJ0OVYveXRHcHNOUFBHeHQ4NVNnZ2JjQStNWUJD?=
- =?utf-8?B?M2Q2Q1BEcTNRV3h1eFdpSDdONCtKRkJ5S24rSDZRSzAzWFEzcnpWR2ZlODBC?=
- =?utf-8?B?MlV1bGhzeUpNS2hUVEluRDBSeXo2NlBZbWhFQm1LdmxKRGZJeHd0RWpYeUI0?=
- =?utf-8?B?dlJFZkJZak1kVFBJRktOL203dlVIY1A0OWk2MHFYZjN2cEw5WmFldWVCMVZE?=
- =?utf-8?Q?75fZ81nrv53USotan1VPdTmlG?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dbcbfc48-20cc-4ee8-4ab2-08dde4c71552
-X-MS-Exchange-CrossTenant-AuthSource: DM8PR12MB5445.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 17:36:26.5934
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: M+SR8jiw+TW0FVnbGYs4Hr9kBk+dyHfezzwyS087tK2FEy/x437SfSUWhFzeiYWMR5F5boQ4czEIV1/585yFug==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6571
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.10 000/523] 5.10.241-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20250826110924.562212281@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ WlfRzlpjIPmdjgoicA==
+In-Reply-To: <20250826110924.562212281@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-
-On 8/25/2025 8:44 AM, Jason Gunthorpe wrote:
-> On Wed, Aug 20, 2025 at 04:25:33AM +0000, Suravee Suthikulpanit wrote:
->> AMD IOMMU Extended Feature (EFR) and Extended Feature 2 (EFR2) registers
->> specify features supported by each IOMMU hardware instance.
->> The IOMMU driver checks each feature-specific bits before enabling
->> each feature at run time.
->>
->> For IOMMUFD, the hypervisor determines which IOMMU features to support
->> in the guest, and communicates this information to user-space (e.g. QEMU)
->> via iommufd IOMMU_DEVICE_GET_HW_INFO ioctl.
->>
->> Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
->> ---
->>   drivers/iommu/amd/amd_iommu_types.h |  3 +++
->>   drivers/iommu/amd/iommu.c           | 40 +++++++++++++++++++++++++++++
->>   include/uapi/linux/iommufd.h        | 19 ++++++++++++++
->>   3 files changed, 62 insertions(+)
+On 8/26/25 04:03, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.10.241 release.
+> There are 523 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Can you follow what ARM did and put the iommufd functions in a
-> amd/iommufd.c file? I think that worked pretty good.
-
-Sure, I can put it in the amd/iommufd.c.
-
+> Responses should be made by Thu, 28 Aug 2025 11:08:19 +0000.
+> Anything received after that time might be too late.
 > 
->> diff --git a/drivers/iommu/amd/amd_iommu_types.h b/drivers/iommu/amd/amd_iommu_types.h
->> index 5219d7ddfdaa..efdd0cbda1df 100644
->> --- a/drivers/iommu/amd/amd_iommu_types.h
->> +++ b/drivers/iommu/amd/amd_iommu_types.h
->> @@ -95,9 +95,12 @@
->>   #define FEATURE_HE		BIT_ULL(8)
->>   #define FEATURE_PC		BIT_ULL(9)
->>   #define FEATURE_HATS		GENMASK_ULL(11, 10)
->> +#define FEATURE_GATS_SHIFT	12
->>   #define FEATURE_GATS		GENMASK_ULL(13, 12)
->> +#define FEATURE_GLX_SHIFT	14
->>   #define FEATURE_GLX		GENMASK_ULL(15, 14)
->>   #define FEATURE_GAM_VAPIC	BIT_ULL(21)
->> +#define FEATURE_PASMAX_SHIFT	32
->>   #define FEATURE_PASMAX		GENMASK_ULL(36, 32)
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.241-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> and the diffstat can be found below.
 > 
-> Please no.. FIELD_PREP is how to get the shift, don't add constants.
-
-Good point. Ok
-
->> diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
->> index eb348c63a8d0..ebe1cb9b0807 100644
->> --- a/drivers/iommu/amd/iommu.c
->> +++ b/drivers/iommu/amd/iommu.c
->> @@ -3038,8 +3038,48 @@ static const struct iommu_dirty_ops amd_dirty_ops = {
->>   	.read_and_clear_dirty = amd_iommu_read_and_clear_dirty,
->>   };
->>   
->> +#define AMD_VIOMMU_EFR_GUEST_TRANSLATION_FLAGS \
->> +	(FEATURE_GT | FEATURE_GA | FEATURE_GIOSUP | \
->> +	 FEATURE_PPR | FEATURE_EPHSUP)
->> +
->> +static void _build_efr_guest_translation(struct amd_iommu *iommu, u64 *efr, u64 *efr2)
->> +{
->> +	/*
->> +	 * Build the EFR against the current hardware capabilities
->> +	 *
->> +	 * Also, not all IOMMU features are emulated by KVM.
->> +	 * Therefore, only advertise what KVM can support
->> +	 * or virtualzied by the hardware.
->> +	 */
+> thanks,
 > 
-> What does KVM have to do with iommu features on AMD architecture??
+> greg k-h
 
-Sorry, I meant to say hypervisor.
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
->> +	if (!efr)
->> +		return;
->> +
->> +	*efr |= (amd_iommu_efr & AMD_VIOMMU_EFR_GUEST_TRANSLATION_FLAGS);
->> +	*efr |= (FIELD_GET(FEATURE_GATS, amd_iommu_efr) << FEATURE_GATS_SHIFT);
->> +	*efr |= (FIELD_GET(FEATURE_GLX, amd_iommu_efr) << FEATURE_GLX_SHIFT);
->> +	*efr |= (FIELD_GET(FEATURE_PASMAX, amd_iommu_efr) << FEATURE_PASMAX_SHIFT);
->> +	pr_debug("%s: efr=%#llx\n", __func__, *efr);
->> +}
-> 
-> I'm not sure all this masking is a good idea, how do you intend to
-> handshake upgrades when more features are supported if masking is
-> present?
-> 
-> Nothing sets efr2?
-
-We are planning to extend this function to advertise additional flags in 
-EFR/EFR2 once we add guest support for the corresponded features in the 
-hypervisor in the future.
-
->> +/**
->> + * struct iommu_hw_info_amd - AMD IOMMU device info
->> + *
->> + * @efr : Value of AMD IOMMU Extended Feature Register (EFR)
->> + * @efr2: Value of AMD IOMMU Extended Feature 2 Register (EFR2)
->> + *
->> + * Please See description of these registers in the following sections of
->> + * the AMD I/O Virtualization Technology (IOMMU) Specification.
->> + * (https://www.amd.com/content/dam/amd/en/documents/processor-tech-docs/specifications/48882_IOMMU.pdf)
->> + *
->> + * - MMIO Offset 0030h IOMMU Extended Feature Register
->> + * - MMIO Offset 01A0h IOMMU Extended Feature 2 Register
->> + */
-> 
-> Need to document the masking and explain what the forwards/backwards
-> compatible strategy is here.
-
-Sure, I can add a note that certain EFR/EFR2 are masked based on the 
-available support in the hypervisor.
-
-> I think you should probably just pass the raw HW value through and
-> require the VMM to figure out what bits it needs based on feature
-> flags elsewhere.
-
-The problem is some of the features are virtualized by hardware, which 
-needs enabling from the Linux AMD IOMMU driver. We cannot just provide 
-all flags since VMM would not know if the kernel has the support 
-enabled. Some of these bits are also propagated to guest AMD IOMMU 
-driver. If we don't mask them, the guest would detect and try to enable 
-unsupported features, which would cause failure.
-
-Thanks,
-Suravee
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
