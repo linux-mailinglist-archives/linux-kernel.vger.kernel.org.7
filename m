@@ -1,155 +1,123 @@
-Return-Path: <linux-kernel+bounces-787200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B97FEB372E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 21:15:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D907B372ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 21:17:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28A87462928
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:15:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDCA4462CF0
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:17:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D6A352076;
-	Tue, 26 Aug 2025 19:15:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3FD3164D9;
+	Tue, 26 Aug 2025 19:17:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OW1W65Nc"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ElzPFTtu"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990AD31A546;
-	Tue, 26 Aug 2025 19:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98057274FD0;
+	Tue, 26 Aug 2025 19:17:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756235742; cv=none; b=q8OhXf2uymkiTzNa53FaNQrzGrLesV/VyiWnXR2Q1/bD6tas1hIkGmzOzLJvMmvtFduj943c+GYsb2GMtcw4sfLEYZ0m9u7V/JWJQrY/3fKHY2DprUHusxNmfs/BdTUgDqfsb+31bZ3qpSN1wZ//nvdTiNADhX/U1Zl95cw4d5U=
+	t=1756235843; cv=none; b=FtJraHEoVJHdoQ8yXBROjZkodFeq3AP3s8EA+8lsh++glBX5fdzJyH+Wq7OqRteAr91o5hNTFD5DihCWoGZL37d61Qw3O/O98zATyGAEhq+f9nzCmpb8oCf43CEFk/fzC3hUlSI6wIpRvVt2iPDwsgl/dpxr9jSrrpaZeEjRTqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756235742; c=relaxed/simple;
-	bh=4oIbK0dlmTqaUp15Y8918iqdp+r8eysmF0eVjvNdtl8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=M/EttX3FCTsgG+X0Th/c4a4x/M4/CFm3c9LEpjD1rcNn/JciVMTm+2K4dPQRHQ1yKPOs1+cihas5ghEvldhEuAGMKuaoUtHV30hjhAuxictPSLVLYIiEZj0an9gXnT+a2Tk1pt047YkmgsCTlJekwTsjKnvfQoWTZkLEFiCmCls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OW1W65Nc; arc=none smtp.client-ip=209.85.128.47
+	s=arc-20240116; t=1756235843; c=relaxed/simple;
+	bh=gNMm1ipkA7fYFXUs808DPedAVS4Dx81omm25zB7pYic=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CIoi4RJLYLjgHaPHHaVbOG1VNvjAkOGTyQlXHEHaVDIj3gOg5CVTERO3R/EXjqU0f87uJ/CVd+rcE/6UoqH1SCO04KTK1kCJtvphetQhLPbZvL99ExAZoKLSOfEM5p2odVe/YxyasWKLUXcKKmeOUKogJKF3KdutQiZcnFR4CKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ElzPFTtu; arc=none smtp.client-ip=209.85.210.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45a1b0d231eso36012205e9.3;
-        Tue, 26 Aug 2025 12:15:40 -0700 (PDT)
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-771e987b4e6so2040872b3a.2;
+        Tue, 26 Aug 2025 12:17:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756235739; x=1756840539; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=zNzxRNmE/EKiQpaMndjIGmivQbwP1c5FSr/pLiv46ys=;
-        b=OW1W65NcHt6R0g5xl5hbYRTq9XOUauvb1o8+AOIIGF6HIJtj8CjWfV1OTyB6A4AqwZ
-         WKAASO64SsgNHvUdEP1DRUAQKkz8jU+wWQLMPSjsuwzlY+Z7usoPPgM9+RMeXpaYgFs0
-         tLPHuJguQXFoJ48gUeeXklYH71zi5/t2J91+am68Bt2pyLovLbWtvWSebjgDPgThiv8n
-         UNEIrpU+kHI0OajZqjA/PpPlgpJCbyZwJlHl2Mqjiv1zst5AeoR0PS7xPuJuEsbrrC6j
-         dtWEtALOz+Cz4OYZhvn8zhK19s//nJIXr1SiTs6KUL1+C7PXyel78rLR5p/iY1JfAJzl
-         yd+Q==
+        d=gmail.com; s=20230601; t=1756235838; x=1756840638; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PDBFaIWBg/DMxV3REtEPNJhHpj1jRSoIbPqwKvfDfdA=;
+        b=ElzPFTtuzH2N6I8f+PLuGZl5Vg1uLSwdSCq1UMocKrOyOR6GPFsW4WEqJA1NWwVirg
+         gqKC11yqmpnj/FDRL7iaCnnUTE8/N7OECjBU4dggQ1Sysq8TZzCnGR1cX5/9eT39IoCe
+         aFJhCyImiuagTR+5sZBXrt3XqZSPI2puVMVWzgkRBwW262U7qBrs4vPBFpyQ6IzErxpA
+         JpiRPbbJZdrpbnNwHqFpgNQRrLSw7FciIvvqVd0t7SL4vI2LYSorpRQ35lHBvE55UII4
+         33CyOrMM84uLdTq9242FNipaB5iz8BaiFizj6bXlfC2txazEcH/g0/VzXRlx8c4MLqLO
+         9wsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756235739; x=1756840539;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zNzxRNmE/EKiQpaMndjIGmivQbwP1c5FSr/pLiv46ys=;
-        b=rzCTfCUIeDwkhLkDUeAdEsc1ZsWV8eXtCareseIn7J6gVN5SW0TmFA4gDXUN7UJE0d
-         hkRRETJ+HcbgM+EPdeDCbghLajwS9bBQxH0JUzwyKPUp83EIuguohutCgYEx6FKhCZG4
-         izNWVMTgFSiZ2UIrAVuziOjjN4zKc/S3YJhr0ac8BDMdqBiPm/s2pcHMQPsRmvpS8wv2
-         EguXhVH6lVywmH6W9POWA4IedxHMo7r6sSCRxkKqUuDNoVQ9yiIGQgkgdRP6z6haqmjL
-         z42h+AKYyZntF2Hl/MSb4Xv1S10l4E0GmPUaRgzE7ozRHRgj4ihTJgca27HYx/T9rZO8
-         KS+g==
-X-Forwarded-Encrypted: i=1; AJvYcCVQZnVC2XUBVyHeOXFKOTrL5pxM+I56dwUmdolSxoYyu7WlPgaHdUVDrVymrUCeIk9CatqcWXlfOrIqx/s=@vger.kernel.org, AJvYcCWjonyYbKqGO3Zgc5zrEHUE102u/kHICZ5ouYrpvLJ7QKSIC4F9KKQ/3598puxFUlNlxfe1bcYh@vger.kernel.org
-X-Gm-Message-State: AOJu0Yym47KAMc5+xHNkljiZZ/Yf1B5UgrcTicGeqHFT0tiLVoZ5ySrd
-	BtYTLSHNPpcqRnnZJWWTwyyNi7yLvSNcco3OauJtn5PFFQ5uuwr1rTBI
-X-Gm-Gg: ASbGncuiLv99CaGo4qH7HlzfwVMScuMHxXbP7orpKu1IxzNMNSj+jY1UPZI00qcu61x
-	c0eSgVb4XdwtlEcjWzk2TCGwp6VoORFn/IIO9GUwcYnWMcK8fpugU40Trg9J9vuw79X+2K8fq9x
-	KV3gqaXgMssG+AOT/FyvsI/Rn3BLvL3qiBebztIp4o1jpY3wby+hPIqtkWaDTAPkPSvgTdtl1dm
-	LgqKeg6X9NldFLHwIalMKF1nMHy5anhkKVZrk8cJKdv+mBw0AfECcMTQiFakj5ZiH98Jza6tpGO
-	o787FT6Zyr8f8bpuExmsCPTDo1HNwMx3FMsMQbfBZkZLon2GBqeun9ogBfEIkQeiA3WyitOZvU0
-	Gn4IvwZr9CE74vDVb1pqG5ulI9Wq7VGU0VW7nIXOUi4Byt/FABy3u2RdVTxE10wwoDNb0BCE9QL
-	ql/JIMd+2Oir1odG8RsA1d
-X-Google-Smtp-Source: AGHT+IH7WBCt6pVN3TJd/7YUZla9RJO5wp0JBJSRMHH/wLVRBu+wkAsogHkN5FfzzEJWCNpnC+OaZg==
-X-Received: by 2002:a05:6000:40dd:b0:3c3:973a:fe40 with SMTP id ffacd0b85a97d-3c5de349863mr15117249f8f.58.1756235738577;
-        Tue, 26 Aug 2025 12:15:38 -0700 (PDT)
-Received: from [192.168.1.122] (cpc159313-cmbg20-2-0-cust161.5-4.cable.virginm.net. [82.0.78.162])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6c5cf38fsm3881735e9.12.2025.08.26.12.15.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Aug 2025 12:15:38 -0700 (PDT)
-Message-ID: <7bfb811e-72cf-43c4-81e1-6e63338f6a29@gmail.com>
-Date: Tue, 26 Aug 2025 20:15:37 +0100
+        d=1e100.net; s=20230601; t=1756235838; x=1756840638;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PDBFaIWBg/DMxV3REtEPNJhHpj1jRSoIbPqwKvfDfdA=;
+        b=DR9FjmSKAHKjtvvKesKyPZMqDykqsblxe/HDIWepTigUZUu9GvFybkP7ChKmfa6KLl
+         245OM95ZLR+1FQxx6XGrG7arhTIB5uCfIB5viduFZjCFDPmJ0YCHeh229nkmE37H41yt
+         4Fvo9X4f2fWz8HsrwBBtUCRqtzWawu/lwlGHq/hsyTpBIBQZuH6e8W6DFUMwSThcEfzq
+         /HxRrxBmMP+FJPB0K9e+DNufqIM9PGI1ZVPl/mBFCUUHz3/RtMjTKAeZFsPfp2pCUuh2
+         wa9fTPTgVKZX+/R4+kYCAbQ+Z+5viGRdcy06PfgR4xPLFLn/AVV97n6fHZNi4y9gtGiQ
+         sIow==
+X-Forwarded-Encrypted: i=1; AJvYcCURUAoFjhab4f17XFLMZNTUOL1/fK6Zw/cuDr/I3pFSl71ZS7jAD1E2rZHjgsF91G3AasnGMUJcMls/hTk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHF3fjBhEPJpnNaPS0Cmt/AEYvDwGXXm4M0hdon3ZZGS3L+xU1
+	S9x16NwG+iMYpryTK4VH36sRe+/OliAxeWw9wa48FT4AfytXpAsMUD3f
+X-Gm-Gg: ASbGncvyJcSFPY3FJf65seq+9Y5XeidcqMPC8xNO+nvTr/F8A+VkpE0wjxf73PUJ8Hs
+	HHr2HtysCzi4lQCSclGlIAUfTsETQd86JwOFfF/1h7duHLwVXcvOulCslv8zJGmNONodRGfIpkA
+	jDITF1ckFUmk7xkHjqfglOavr5NFXjuotBHFwfhUMK5a8bobOMgBrKIIqnF9UwiD0+CTxE4R4V5
+	I3anK9UuwB7PyzNhtiF2eHd6v0Fj55DC+cGzSt3MshRXAPKEixnnxfQ0zv47aegzVhoijU1Zh7B
+	ueBz72rG1FSN3XLyzgYNP/2ljw4TpAhyedh16GcRFhZe+c7RUxVj6I2OzxGVLO1VOGuc7GI9Xqy
+	OrcZ3NHP4IVf4D0yh1PSiSY2dJ7J2mYg3hBxBp4cvvMH0f9wusT5MVl5RMVapGddzdnLD7xaO
+X-Google-Smtp-Source: AGHT+IEOTMNZIavUM5Iy5LIhtD1rVyHR5OcbyDpea0cdJbuixhaLMio9pOUj0ms7qn7MPHtCu/uxQg==
+X-Received: by 2002:a05:6a21:329f:b0:23f:f934:19d1 with SMTP id adf61e73a8af0-24340b7ab44mr24060127637.6.1756235837661;
+        Tue, 26 Aug 2025 12:17:17 -0700 (PDT)
+Received: from linux ([223.181.113.247])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b49cbbbbf5asm9754443a12.50.2025.08.26.12.17.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Aug 2025 12:17:16 -0700 (PDT)
+From: I Viswanath <viswanathiyyappan@gmail.com>
+To: shuah@kernel.org
+Cc: linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	I Viswanath <viswanathiyyappan@gmail.com>
+Subject: [PATCH] selftests: update SKIP_TARGETS logic in Makefile to allow running bpf and sched_ext targets
+Date: Wed, 27 Aug 2025 00:46:59 +0530
+Message-ID: <20250826191659.157458-1-viswanathiyyappan@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sfc: use kmalloc_array() instead of kmalloc()
-To: Qianfeng Rong <rongqianfeng@vivo.com>, linux-net-drivers@amd.com,
- Andy Moreton <andy.moreton@amd.com>
-References: <20250825151209.555490-1-rongqianfeng@vivo.com>
-Content-Language: en-GB
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Edward Cree <ecree.xilinx@gmail.com>
-In-Reply-To: <20250825151209.555490-1-rongqianfeng@vivo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 25/08/2025 16:12, Qianfeng Rong wrote:
-> As noted in the kernel documentation [1], open-coded multiplication in
-> allocator arguments is discouraged because it can lead to integer overflow.
-> 
-> Use kmalloc_array() to gain built-in overflow protection, making memory
-> allocation safer when calculating allocation size compared to explicit
-> multiplication.
-> 
-> Link: https://www.kernel.org/doc/html/next/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments #1
-> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+update SKIP_TARGETS logic so that these targets are skipped when
+TARGETS is taken from the Makefile but not when TARGETS is specified
+via the command line
 
-This is fine on its own terms, but I would prefer the use of array_size()
- (as in the existing ef100 code) rather than kmalloc_array(), because the
- new X4 devices report a buffer size rather than a number of stats to the
- host, meaning that the common code will need to work in terms of size
- rather than num when support for stats on X4 is added.
-Looping in AndyM who's been working on said support and can hopefully
- correct me if I've misstated anything.
+Signed-off-by: I Viswanath <viswanathiyyappan@gmail.com>
+---
+Currenly you can't run these targets by overriding the TARGETS variable in command line due to
+how the SKIP_TARGETS logic is implemented, i.e. bpf and sched_ext are always filtered out.
 
--ed
+ tools/testing/selftests/Makefile | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-> ---
->  drivers/net/ethernet/sfc/ef10.c      | 4 ++--
->  drivers/net/ethernet/sfc/ef100_nic.c | 3 ++-
->  2 files changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/sfc/ef10.c b/drivers/net/ethernet/sfc/ef10.c
-> index fcec81f862ec..311df5467c4a 100644
-> --- a/drivers/net/ethernet/sfc/ef10.c
-> +++ b/drivers/net/ethernet/sfc/ef10.c
-> @@ -1326,8 +1326,8 @@ static int efx_ef10_init_nic(struct efx_nic *efx)
->  		efx->must_realloc_vis = false;
->  	}
->  
-> -	nic_data->mc_stats = kmalloc(efx->num_mac_stats * sizeof(__le64),
-> -				     GFP_KERNEL);
-> +	nic_data->mc_stats = kmalloc_array(efx->num_mac_stats, sizeof(__le64),
-> +					   GFP_KERNEL);
->  	if (!nic_data->mc_stats)
->  		return -ENOMEM;
->  
-> diff --git a/drivers/net/ethernet/sfc/ef100_nic.c b/drivers/net/ethernet/sfc/ef100_nic.c
-> index 3ad95a4c8af2..f4b74381831f 100644
-> --- a/drivers/net/ethernet/sfc/ef100_nic.c
-> +++ b/drivers/net/ethernet/sfc/ef100_nic.c
-> @@ -640,7 +640,8 @@ static size_t ef100_update_stats(struct efx_nic *efx,
->  				 u64 *full_stats,
->  				 struct rtnl_link_stats64 *core_stats)
->  {
-> -	__le64 *mc_stats = kmalloc(array_size(efx->num_mac_stats, sizeof(__le64)), GFP_ATOMIC);
-> +	__le64 *mc_stats = kmalloc_array(efx->num_mac_stats, sizeof(__le64),
-> +					 GFP_ATOMIC);
->  	struct ef100_nic_data *nic_data = efx->nic_data;
->  	DECLARE_BITMAP(mask, EF100_STAT_COUNT) = {};
->  	u64 *stats = nic_data->stats;
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index 030da61dbff3..42ff6bb4ea87 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -144,7 +144,10 @@ endif
+ # User can optionally provide a TARGETS skiplist. By default we skip
+ # targets using BPF since it has cutting edge build time dependencies
+ # which require more effort to install.
+-SKIP_TARGETS ?= bpf sched_ext
++ifeq ($(origin TARGETS), file)
++        SKIP_TARGETS ?= bpf sched_ext
++endif
++
+ ifneq ($(SKIP_TARGETS),)
+ 	TMP := $(filter-out $(SKIP_TARGETS), $(TARGETS))
+ 	override TARGETS := $(TMP)
+-- 
+2.50.1
 
 
