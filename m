@@ -1,248 +1,113 @@
-Return-Path: <linux-kernel+bounces-786113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44AD0B3551C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:16:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AD28B3550B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:13:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B6C5245F9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:16:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 822C717855F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:13:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0092F2F6577;
-	Tue, 26 Aug 2025 07:15:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="SnaKPci0"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29A0D2F6571;
+	Tue, 26 Aug 2025 07:13:36 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF5F2EC55E;
-	Tue, 26 Aug 2025 07:15:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5562F2F60CF
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 07:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756192539; cv=none; b=k6wK1fnisLK9/I33Ujl5z8SdLz1ShceTR+lkJXmjdRJN6iOrbMrJsYkUkJqsUpNHTDWi+ZvxTPk1kY6IGjhVglP+ELAloL6yvwTV93FvETTxW4ZbNx1DpkgljUaFeYGHQ6v6r9hYXqSj9Yz/rRyfJYxP4wC40XhmZLJSFhSgSHA=
+	t=1756192415; cv=none; b=n0aMPs4GU1dA+DTr545canpq9Tw1o8GytIH+v1xY6oHkPFa8oc6kbdFyrBkQkjRk4jlJ/iLthDae05oHj+yi9eAeUwD78cTiWWKDhjRAFm+C9qxZsE+jWUAaNoNnhg/A9fbK7gAP/LUxhkogdT5AnBae3+ezY0/lgtTzs7Rbq0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756192539; c=relaxed/simple;
-	bh=S92BXshMpN8Ceo2qQGLk/WhwdK/P331CSIQlwAw9sz8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PX2eBC7PaBAdXtCX8KP9bpbqUKCoZU0fMaIQGx/VyoeGh4FyqW6/+fIBWgSVOeCSHugER+TbI9eNkumioTNrrrl/IoEp8lHq9NtO59NkXa59ao8RgbIiFUltTRmtV/g7rHYJfPFT53oNrVC4gkRVMrTGrTcciwRWXJpOz8nN43w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=SnaKPci0; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1756192536; x=1787728536;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=S92BXshMpN8Ceo2qQGLk/WhwdK/P331CSIQlwAw9sz8=;
-  b=SnaKPci0uNRQ0EOPo7gha2htbDhwMy1+3O4mafHSSOfDGSRzo/TpnzAk
-   DDYe4SJvYZpglzuZVaM9R1C6NX4pQrQv01dIJeGlUcpdUHfBa4hMms+gW
-   sdQlyWJOEPaZu8wYFT503R27m71JcrbDPxsdKEv2VL0RXB9GUW63CVGAn
-   AOiMh68ubGdlJZXO7jnPXwbg5gMKpfOwHFMFdRwMh1XKDgJ4XMFXmQWhv
-   fQJA27Lgm0YVgzh3A2x9TpxdFVcs/rwHiQOMxMyJwLH359ZA0/VfrwM36
-   QeRdSQUK/AmhfzpiPQuGhAyQZOW56yBhSjJuyfs/oDNa2mtsqNL4rwZR4
-   w==;
-X-CSE-ConnectionGUID: 2lrYuWnGTjajXVs08DIvmg==
-X-CSE-MsgGUID: FJNXh2D2QYu2zyfKyjAK8w==
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="45648555"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 26 Aug 2025 00:15:35 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Tue, 26 Aug 2025 00:15:06 -0700
-Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Tue, 26 Aug 2025 00:15:04 -0700
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <richardcochran@gmail.com>,
-	<Parthiban.Veerasooran@microchip.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Horatiu Vultur
-	<horatiu.vultur@microchip.com>
-Subject: [PATCH net-next v3 2/2] net: phy: micrel: Add PTP support for lan8842
-Date: Tue, 26 Aug 2025 09:11:00 +0200
-Message-ID: <20250826071100.334375-3-horatiu.vultur@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250826071100.334375-1-horatiu.vultur@microchip.com>
-References: <20250826071100.334375-1-horatiu.vultur@microchip.com>
+	s=arc-20240116; t=1756192415; c=relaxed/simple;
+	bh=ztmg8NvkeECnbDbIaWKbTAmg7kuu7PJy9Zp6iC3CaIM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=P3d3KTxwZGsyzMUKC9QYRQ4wqW7227I4flZb0FOeGtbQP2l9rypFz3dK2mpBA/IzekskBnbxp0W0GOK8DOK/rJrP5JNqDmuUbczmoXm/wvi4RZTdfAwyH9sEmZqQX4Rl0vuPEQJljLTMcZlFd+fEiNoMXmNoMXXiywx6W0bgHc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-88428cc6d2fso747117539f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 00:13:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756192413; x=1756797213;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BGecIXFYhnQ2n6KxVp+NizCLs7j3DYDA1Kg0vFKuV0o=;
+        b=Kopl3kKDWKNp9MDi6WrGGQcyUDjXrhLEGUGpSW7a9JHBWI4uYsbOHBDmvKMo54ObNN
+         qGBondQpheU9M0porhK9EXLB1iO2HbZR0uxVqs6rLicMyEHCyoI5JOWM27858qsgseZF
+         2hMSs92SSlv+Ul6W+lGdxeZ36cUmnXlql+WC+DjG9UsdC7sOfHTftijG6WwW2KFldb0n
+         ohBK5pYmXCZheVJXNvXG/lCyVH6BV03eD8sWHz1MVAG9c4gsfCn0c0cpp3eEPidP3OuN
+         EQ5fjKuj3Sczybfwo+YfqB3/IDSxT/vDP8na8FE0Homzq25i4zUURH5Vm11ERHRxc+QP
+         Z5OA==
+X-Forwarded-Encrypted: i=1; AJvYcCVwgCqP62lxzDYl5bd8hmKuF81MqUuKArrbqRWDfqaX5ogH4drjfYKJSoP6uWvL+74FKc/coWYp9wCw8TM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYPY33Z+UUwf7m2F7UpslZcPfGwDZbjGXnpYJDt1wJIx8aC/W/
+	tf0jPdLThNPTlaStTfTxlB723zpYKUoiOUF1Dja3pzpZ9V8u4kd45IP9v6sI2vtple++0gni+sV
+	I1MyBWlYLlEQ2rIifhCrEZui/fzK7IIX3K74vuUIdmzUdpreLARdFC4Nn8R8=
+X-Google-Smtp-Source: AGHT+IFFv/ZlXTHe873XhXQC5IZFfNTguk+KAkxQHNL4r1vgGYlw5QhVcScv99RFyH2d0onoX5zpI4/w0ej7wd2M1i6ehtHhVMWc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-Received: by 2002:a05:6e02:470f:b0:3ec:98b9:ebd with SMTP id
+ e9e14a558f8ab-3ef087645camr5440855ab.5.1756192413518; Tue, 26 Aug 2025
+ 00:13:33 -0700 (PDT)
+Date: Tue, 26 Aug 2025 00:13:33 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ad5e9d.050a0220.37038e.00ae.GAE@google.com>
+Subject: [syzbot] Monthly btrfs report (Aug 2025)
+From: syzbot <syzbot+list33243a939288f65f949f@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-It has the same PTP IP block as lan8814, only the number of GPIOs is
-different, all the other functionality is the same. So reuse the same
-functions as lan8814 for lan8842.
-There is a revision of lan8842 called lan8832 which doesn't have the PTP
-IP block. So make sure in that case the PTP is not initialized.
+Hello btrfs maintainers/developers,
 
-Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+This is a 31-day syzbot report for the btrfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/btrfs
+
+During the period, 3 new issues were detected and 0 were fixed.
+In total, 37 issues are still open and 102 have already been fixed.
+
+Some of the still happening issues:
+
+Ref  Crashes Repro Title
+<1>  6554    Yes   kernel BUG in close_ctree
+                   https://syzkaller.appspot.com/bug?extid=2665d678fffcc4608e18
+<2>  4619    Yes   WARNING in btrfs_space_info_update_bytes_may_use
+                   https://syzkaller.appspot.com/bug?extid=8edfa01e46fd9fe3fbfb
+<3>  1803    Yes   BUG: MAX_LOCKDEP_CHAIN_HLOCKS too low! (7)
+                   https://syzkaller.appspot.com/bug?extid=74f79df25c37437e4d5a
+<4>  1023    Yes   WARNING in btrfs_commit_transaction (2)
+                   https://syzkaller.appspot.com/bug?extid=dafbca0e20fbc5946925
+<5>  1008    Yes   WARNING in btrfs_create_pending_block_groups (2)
+                   https://syzkaller.appspot.com/bug?extid=b0643a1387dac0572b27
+<6>  612     Yes   WARNING in btrfs_chunk_alloc
+                   https://syzkaller.appspot.com/bug?extid=e8e56d5d31d38b5b47e7
+<7>  610     Yes   general protection fault in btrfs_root_node
+                   https://syzkaller.appspot.com/bug?extid=9c3e0cdfbfe351b0bc0e
+<8>  467     Yes   WARNING in cleanup_transaction
+                   https://syzkaller.appspot.com/bug?extid=021d10c4d4edc87daa03
+<9>  376     Yes   WARNING in btrfs_remove_chunk
+                   https://syzkaller.appspot.com/bug?extid=e8582cc16881ec70a430
+<10> 163     Yes   WARNING in btrfs_put_block_group
+                   https://syzkaller.appspot.com/bug?extid=e38c6fff39c0d7d6f121
+
 ---
- drivers/net/phy/micrel.c | 97 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 97 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
-index 42af075894bec..ba4ed064a09e2 100644
---- a/drivers/net/phy/micrel.c
-+++ b/drivers/net/phy/micrel.c
-@@ -457,6 +457,9 @@ struct lan8842_phy_stats {
- 
- struct lan8842_priv {
- 	struct lan8842_phy_stats phy_stats;
-+	int rev;
-+	struct phy_device *phydev;
-+	struct kszphy_ptp_priv ptp_priv;
- };
- 
- static const struct kszphy_type lan8814_type = {
-@@ -5786,6 +5789,17 @@ static int ksz9131_resume(struct phy_device *phydev)
- 	return kszphy_resume(phydev);
- }
- 
-+#define LAN8842_PTP_GPIO_NUM 16
-+
-+static int lan8842_ptp_probe_once(struct phy_device *phydev)
-+{
-+	return __lan8814_ptp_probe_once(phydev, "lan8842_ptp_pin",
-+					LAN8842_PTP_GPIO_NUM);
-+}
-+
-+#define LAN8842_STRAP_REG			0 /* 0x0 */
-+#define LAN8842_STRAP_REG_PHYADDR_MASK		GENMASK(4, 0)
-+#define LAN8842_SKU_REG				11 /* 0x0b */
- #define LAN8842_SELF_TEST			14 /* 0x0e */
- #define LAN8842_SELF_TEST_RX_CNT_ENA		BIT(8)
- #define LAN8842_SELF_TEST_TX_CNT_ENA		BIT(4)
-@@ -5793,6 +5807,7 @@ static int ksz9131_resume(struct phy_device *phydev)
- static int lan8842_probe(struct phy_device *phydev)
- {
- 	struct lan8842_priv *priv;
-+	int addr;
- 	int ret;
- 
- 	priv = devm_kzalloc(&phydev->mdio.dev, sizeof(*priv), GFP_KERNEL);
-@@ -5800,6 +5815,7 @@ static int lan8842_probe(struct phy_device *phydev)
- 		return -ENOMEM;
- 
- 	phydev->priv = priv;
-+	priv->phydev = phydev;
- 
- 	/* Similar to lan8814 this PHY has a pin which needs to be pulled down
- 	 * to enable to pass any traffic through it. Therefore use the same
-@@ -5817,6 +5833,41 @@ static int lan8842_probe(struct phy_device *phydev)
- 	if (ret < 0)
- 		return ret;
- 
-+	/* Revision lan8832 doesn't have support for PTP, therefore don't add
-+	 * any PTP clocks
-+	 */
-+	priv->rev = lanphy_read_page_reg(phydev, LAN8814_PAGE_COMMON_REGS,
-+					 LAN8842_SKU_REG);
-+	if (priv->rev < 0)
-+		return priv->rev;
-+	if (priv->rev == 0x8832)
-+		return 0;
-+
-+	/* As the lan8814 and lan8842 has the same IP for the PTP block, the
-+	 * only difference is the number of the GPIOs, then make sure that the
-+	 * lan8842 initialized also the shared data pointer as this is used in
-+	 * all the PTP functions for lan8814. The lan8842 doesn't have multiple
-+	 * PHYs in the same package.
-+	 */
-+	addr = lanphy_read_page_reg(phydev, LAN8814_PAGE_COMMON_REGS,
-+				    LAN8842_STRAP_REG);
-+	addr &= LAN8842_STRAP_REG_PHYADDR_MASK;
-+	if (addr < 0)
-+		return addr;
-+
-+	ret = devm_phy_package_join(&phydev->mdio.dev, phydev, addr,
-+				    sizeof(struct lan8814_shared_priv));
-+	if (ret)
-+		return ret;
-+
-+	if (phy_package_init_once(phydev)) {
-+		ret = lan8842_ptp_probe_once(phydev);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	lan8814_ptp_init(phydev);
-+
- 	return 0;
- }
- 
-@@ -5896,8 +5947,34 @@ static int lan8842_config_inband(struct phy_device *phydev, unsigned int modes)
- 				      enable ? LAN8814_QSGMII_PCS1G_ANEG_CONFIG_ANEG_ENA : 0);
- }
- 
-+static void lan8842_handle_ptp_interrupt(struct phy_device *phydev, u16 status)
-+{
-+	struct kszphy_ptp_priv *ptp_priv;
-+	struct lan8842_priv *priv;
-+
-+	priv = phydev->priv;
-+	ptp_priv = &priv->ptp_priv;
-+
-+	if (status & PTP_TSU_INT_STS_PTP_TX_TS_EN_)
-+		lan8814_get_tx_ts(ptp_priv);
-+
-+	if (status & PTP_TSU_INT_STS_PTP_RX_TS_EN_)
-+		lan8814_get_rx_ts(ptp_priv);
-+
-+	if (status & PTP_TSU_INT_STS_PTP_TX_TS_OVRFL_INT_) {
-+		lan8814_flush_fifo(phydev, true);
-+		skb_queue_purge(&ptp_priv->tx_queue);
-+	}
-+
-+	if (status & PTP_TSU_INT_STS_PTP_RX_TS_OVRFL_INT_) {
-+		lan8814_flush_fifo(phydev, false);
-+		skb_queue_purge(&ptp_priv->rx_queue);
-+	}
-+}
-+
- static irqreturn_t lan8842_handle_interrupt(struct phy_device *phydev)
- {
-+	struct lan8842_priv *priv = phydev->priv;
- 	int ret = IRQ_NONE;
- 	int irq_status;
- 
-@@ -5912,6 +5989,26 @@ static irqreturn_t lan8842_handle_interrupt(struct phy_device *phydev)
- 		ret = IRQ_HANDLED;
- 	}
- 
-+	/* Phy revision lan8832 doesn't have support for PTP threrefore there is
-+	 * not need to check the PTP and GPIO interrupts
-+	 */
-+	if (priv->rev == 0x8832)
-+		goto out;
-+
-+	while (true) {
-+		irq_status = lanphy_read_page_reg(phydev, LAN8814_PAGE_PORT_REGS,
-+						  PTP_TSU_INT_STS);
-+		if (!irq_status)
-+			break;
-+
-+		lan8842_handle_ptp_interrupt(phydev, irq_status);
-+		ret = IRQ_HANDLED;
-+	}
-+
-+	if (!lan8814_handle_gpio_interrupt(phydev, irq_status))
-+		ret = IRQ_HANDLED;
-+
-+out:
- 	return ret;
- }
- 
--- 
-2.34.1
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
