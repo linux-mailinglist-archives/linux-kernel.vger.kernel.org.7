@@ -1,113 +1,121 @@
-Return-Path: <linux-kernel+bounces-786663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88C94B36136
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:07:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A218B360D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:04:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDC5B5E127A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:03:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7CF184E4361
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:04:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE87D238C07;
-	Tue, 26 Aug 2025 13:03:29 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 338221FBE9B;
-	Tue, 26 Aug 2025 13:03:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D2526B771;
+	Tue, 26 Aug 2025 13:03:42 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C86CF1FBE9B
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 13:03:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756213409; cv=none; b=YYKLJLgtX0P9ZjVxnyH1jr/DA9TrgfmLqLlgKF5LQ2rN/gLduE9IYFP4OradlZQpgn5kXXpxUp1aqDTnoYlvMXes78XIapXm7WU4ej4p9fh4ybcIlTYvtAGlLtzZwwqRLSIf39rfmTd+d6n21knZcBq3ZAT3un2F2JFGOlvuE8s=
+	t=1756213422; cv=none; b=MOviwqps6BG9ghC5iOK5Gy2TkS+0EwDzt0Ups0PmjiDWz/tKFySA52b+kFFqwJcyPxQG5dzKq6nY/umvRA5iZjJlQNvthliHTIt3muS8eU7ELHLFpnKCEDqeWXJUM22V0Nr/8/k+xQgJ4FUXv5FmDZg3QI+SmmRdQ4xnEKub6sM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756213409; c=relaxed/simple;
-	bh=T9Gkxrj+Jbh4BEF2Xoy+VopdtFjdz7eGQjhjbYkar1Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qtWmARSB3t93ksPeigFaw03FdIV/swq5lerGJxmziRLiCNXa0zyBPkEaQWZ3t1w1Mocd65b8S6Sc2Nd2zoqZbMjQ5Ob/pZ/nqcbk9y/jNbYv53T+nMo1uBRbzckOyruxf53xPKi457Iy+G41tDbMn+Rrp2YFKqoKUBSqPUqQ6i8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 025E02C23;
-	Tue, 26 Aug 2025 06:03:18 -0700 (PDT)
-Received: from raptor (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A5B423F63F;
-	Tue, 26 Aug 2025 06:03:19 -0700 (PDT)
-Date: Tue, 26 Aug 2025 14:03:16 +0100
-From: Alexandru Elisei <alexandru.elisei@arm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Alexander Potapenko <glider@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Brendan Jackman <jackmanb@google.com>,
-	Christoph Lameter <cl@gentwo.org>, Dennis Zhou <dennis@kernel.org>,
-	Dmitry Vyukov <dvyukov@google.com>, dri-devel@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org, iommu@lists.linux.dev,
-	io-uring@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>,
-	Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
-	John Hubbard <jhubbard@nvidia.com>, kasan-dev@googlegroups.com,
-	kvm@vger.kernel.org, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-arm-kernel@axis.com, linux-arm-kernel@lists.infradead.org,
-	linux-crypto@vger.kernel.org, linux-ide@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-mips@vger.kernel.org,
-	linux-mmc@vger.kernel.org, linux-mm@kvack.org,
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Marco Elver <elver@google.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
-	Muchun Song <muchun.song@linux.dev>, netdev@vger.kernel.org,
-	Oscar Salvador <osalvador@suse.de>, Peter Xu <peterx@redhat.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
-	virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
-	wireguard@lists.zx2c4.com, x86@kernel.org, Zi Yan <ziy@nvidia.com>
-Subject: Re: [PATCH RFC 21/35] mm/cma: refuse handing out non-contiguous page
- ranges
-Message-ID: <aK2wlGYvCaFQXzBm@raptor>
-References: <20250821200701.1329277-1-david@redhat.com>
- <20250821200701.1329277-22-david@redhat.com>
- <aK2QZnzS1ErHK5tP@raptor>
- <ad521f4f-47aa-4728-916f-3704bf01f770@redhat.com>
+	s=arc-20240116; t=1756213422; c=relaxed/simple;
+	bh=Ksw5689Q0+U62P+z9GkJK6Sdi+xI/Cv1Y5y/t2SzC94=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Msu4QCYuT8E9765igNIhf9Djf6F6xXjGKedRyrCoa/my4qBQlfJffonId8PNgTUnErnywpnl4ZaeE7HQh1fTGQb8ZIwBuixwkhiXdnLbmyfpRtkGt076Ao66cbS095AjNU3OVn3my3uqwDsIJv76Pykbbd3T1Ct3IjS5h3PBlYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cB76x0Yb3z6L5C1;
+	Tue, 26 Aug 2025 21:00:09 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 175E21402F3;
+	Tue, 26 Aug 2025 21:03:31 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 26 Aug
+ 2025 15:03:30 +0200
+Date: Tue, 26 Aug 2025 14:03:29 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Yushan Wang <wangyushan12@huawei.com>
+CC: <will@kernel.org>, <mark.rutland@arm.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<robin.murphy@arm.com>, <yangyicong@huawei.com>, <liuyonglong@huawei.com>,
+	<wanghuiqiang@huawei.com>, <prime.zeng@hisilicon.com>,
+	<hejunhao3@h-partners.com>
+Subject: Re: [PATCH v2 1/9] drivers/perf: hisi: Relax the event ID check in
+ the framework
+Message-ID: <20250826140329.0000146c@huawei.com>
+In-Reply-To: <20250821135049.2010220-2-wangyushan12@huawei.com>
+References: <20250821135049.2010220-1-wangyushan12@huawei.com>
+	<20250821135049.2010220-2-wangyushan12@huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ad521f4f-47aa-4728-916f-3704bf01f770@redhat.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Hi David,
+On Thu, 21 Aug 2025 21:50:41 +0800
+Yushan Wang <wangyushan12@huawei.com> wrote:
 
-On Tue, Aug 26, 2025 at 01:04:33PM +0200, David Hildenbrand wrote:
-..
-> > Just so I can better understand the problem being fixed, I guess you can have
-> > two consecutive pfns with non-consecutive associated struct page if you have two
-> > adjacent memory sections spanning the same physical memory region, is that
-> > correct?
+> From: Yicong Yang <yangyicong@hisilicon.com>
 > 
-> Exactly. Essentially on SPARSEMEM without SPARSEMEM_VMEMMAP it is not
-> guaranteed that
+> Event ID is only using the attr::config bit [7, 0] but we check the
+> event range using the whole 64bit field. It blocks the usage of the
+> rest field of attr::config. Relax the check by only using the
+> bit [7, 0].
 > 
-> 	pfn_to_page(pfn + 1) == pfn_to_page(pfn) + 1
+> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
+> Signed-off-by: Yushan Wang <wangyushan12@huawei.com>
+
+Acked-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+
+One comment inline but up to you whether you act on it.
+
+> ---
+>  drivers/perf/hisilicon/hisi_uncore_pmu.c | 2 +-
+>  drivers/perf/hisilicon/hisi_uncore_pmu.h | 3 ++-
+>  2 files changed, 3 insertions(+), 2 deletions(-)
 > 
-> when we cross memory section boundaries.
-> 
-> It can be the case for early boot memory if we allocated consecutive areas
-> from memblock when allocating the memmap (struct pages) per memory section,
-> but it's not guaranteed.
+> diff --git a/drivers/perf/hisilicon/hisi_uncore_pmu.c b/drivers/perf/hisilicon/hisi_uncore_pmu.c
+> index a449651f79c9..6594d64b03a9 100644
+> --- a/drivers/perf/hisilicon/hisi_uncore_pmu.c
+> +++ b/drivers/perf/hisilicon/hisi_uncore_pmu.c
+> @@ -234,7 +234,7 @@ int hisi_uncore_pmu_event_init(struct perf_event *event)
+>  		return -EINVAL;
+>  
+>  	hisi_pmu = to_hisi_pmu(event->pmu);
+> -	if (event->attr.config > hisi_pmu->check_event)
+> +	if ((event->attr.config & HISI_EVENTID_MASK) > hisi_pmu->check_event)
+>  		return -EINVAL;
+>  
+>  	if (hisi_pmu->on_cpu == -1)
+> diff --git a/drivers/perf/hisilicon/hisi_uncore_pmu.h b/drivers/perf/hisilicon/hisi_uncore_pmu.h
+> index 777675838b80..6186b232f454 100644
+> --- a/drivers/perf/hisilicon/hisi_uncore_pmu.h
+> +++ b/drivers/perf/hisilicon/hisi_uncore_pmu.h
+> @@ -43,7 +43,8 @@
+>  		return FIELD_GET(GENMASK_ULL(hi, lo), event->attr.config);  \
+>  	}
+>  
+> -#define HISI_GET_EVENTID(ev) (ev->hw.config_base & 0xff)
+> +#define HISI_EVENTID_MASK	0xff
 
-Thank you for the explanation, but I'm a bit confused by the last paragraph. I
-think what you're saying is that we can also have the reverse problem, where
-consecutive struct page * represent non-consecutive pfns, because memmap
-allocations happened to return consecutive virtual addresses, is that right?
+I'd use GENMASK(7, 0) here but this one is obvious enough that it's not important
+and clearly you are just moving the definition.
 
-If that's correct, I don't think that's the case for CMA, which deals out
-contiguous physical memory. Or were you just trying to explain the other side of
-the problem, and I'm just overthinking it?
+> +#define HISI_GET_EVENTID(ev) ((ev)->hw.config_base & HISI_EVENTID_MASK)
+>  
+>  #define HISI_PMU_EVTYPE_BITS		8
+>  #define HISI_PMU_EVTYPE_SHIFT(idx)	((idx) % 4 * HISI_PMU_EVTYPE_BITS)
 
-Thanks,
-Alex
 
