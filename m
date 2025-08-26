@@ -1,128 +1,243 @@
-Return-Path: <linux-kernel+bounces-786813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28893B36BD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:49:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE4A1B36C3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:53:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E19CF2A4CD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:34:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E1821C417AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:35:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CECA735A2A1;
-	Tue, 26 Aug 2025 14:31:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB702676E9;
+	Tue, 26 Aug 2025 14:32:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hY5gv1km"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GYV0H1x6"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE702135B8;
-	Tue, 26 Aug 2025 14:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E287260586;
+	Tue, 26 Aug 2025 14:32:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756218706; cv=none; b=O6LJedk38soCBgYXi8mIkdPxSJOepbzec1GtNY0u7GwU9I0meujFBWO6TcyOO+WW/5t5ceQu7J4OU71UOFIZc56gUCoq0NKNfYLdN2YRNvLwYMcGFtmMy9nhQ6YGQfT5sunspkSAa9bbkhdaXBv2L11W0zAqx3/eYRzG+UX2IKI=
+	t=1756218727; cv=none; b=rnp3tDkvDj4/iZF0rHLavv0vDBW8jyP3fB6Htjx8rzHq4MG5Y4u5teS0pc6WTybkRe7OuE3Df9j1irfHEzgt/mtwaQQhkDya7ktUCa6Lr8A91r8tCPDOiyqAsFaRmQoWwMY56+8m4lnwovk33sorQ1yEhb5JK6SLgXRrQFKR634=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756218706; c=relaxed/simple;
-	bh=/2HsZ/XIzddkUHUH0J5f1YF3GAgt4K2I1EuGaK5+mTM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HaqvgIebC6l09C2UyYbMZvwDWKZFyrjqrHbS+h8VrqWLZAmmTgysAtgifyrItTLNoaPFS2Pa55YGb8/pVWTACPkZrxZLQLa7/hdDP9UH5M10hqFnIWoa1dEF9RtzGd9rcYQmZZeUJN4F0E8aIK+jRlO+ih0atxL0xTbtc0NRbVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hY5gv1km; arc=none smtp.client-ip=209.85.210.174
+	s=arc-20240116; t=1756218727; c=relaxed/simple;
+	bh=byDMhM9JzVLwSHAn47B5Vm6524i7NauQkzNA65cDxEw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SGglDKgvFF6VHtHAX9SXqHqx1CInyFImYEr0VCwenrQxhQ0Ejmslvboe7PzkXpG3MzpSirrflcnhkgzEBbP7ni3Ji3FA1CM1MnlZqlbHLdjN2ppoYQ+SbSwl+6KTCF9I1bRuh0l8kvck/199cHp8iB47Ad/kchaRktV8vPd4+MY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GYV0H1x6; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-76e39ec6f30so5480500b3a.2;
-        Tue, 26 Aug 2025 07:31:44 -0700 (PDT)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45a1b0c52f3so35189415e9.3;
+        Tue, 26 Aug 2025 07:32:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756218704; x=1756823504; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/2HsZ/XIzddkUHUH0J5f1YF3GAgt4K2I1EuGaK5+mTM=;
-        b=hY5gv1kmjgdKTxlYLJn4A03RAEl8yDBA8AopKwMkPGDcC8G9LRLSHfh7mBotg3st0P
-         hzVhY5t/fRp3ErzbsRaSYbUsY2/ctBZrYhxPYjhPn/VS/M6Rkc9v9ATLJPwZsiDLpJdo
-         Vmg1k6TZJby7gRiO5hRC/ztKEBkxjxUIyKofVSZgn2kRhn/59diMfRYmdDVfI0HsLwLe
-         Te28cQHJrrhGOLItohGQJVbogJlZ/BhQiRjXEGunXB3nkc/MavIvvHneP0k59TF3B0me
-         io5c45nQd3Ju7K1GXYoML9nZEo/+zY/xV3e5xYUm8hBXBV/f86mbnxyRQDSeD6OJy/6g
-         5mdw==
+        d=gmail.com; s=20230601; t=1756218724; x=1756823524; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XK9Usx6Vz4ZTcY7mx64b545nF47Z31E+zXXjKfFYvpQ=;
+        b=GYV0H1x6qH+CYGuCvy8oXwrSRw2fd8tl2uUwZikQgCYgmLoLJTKMEwOLw5xsfAxKGF
+         3ZpdfEwJVr9TVzLr5TrZqEAu/rwVLVUtvPFacsxlwfZw9iTopaI9KxP2J+CCyBjQp8Ll
+         4IpImpvV8aFs3NxvFuac2UOM4gyPr6EHrdg7jILnpLgOtnPUgSYAp9rb86yd0xqiSYGR
+         jH4IZlYMaoIz9f7+C9RfQS+7XPSgrXjSheZXyTV3Skc3qDe7gqOMLL1H5Ol55KXZJla8
+         Ys2FwcjWiTyijGp2irOcxffqnxF2FXq2ZL220p6ojh+O4bb3sHyMh/UW6+lh7AV+PE0i
+         mmsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756218704; x=1756823504;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/2HsZ/XIzddkUHUH0J5f1YF3GAgt4K2I1EuGaK5+mTM=;
-        b=iy2cCDbHff0qswa30YDe9GogA12P3hCz7n6XTfuK1INIfbkpZqZlMbrgMksTRg4akK
-         5lSEgCG0dVeDtinkw2ZXsj3TstFBQLbdzo1vq+hXj1cUiAi3eS51gw3v/tnHUbzNcfbq
-         qBC153foau/olTnqTI9CRFYh/wFdkyXOHDdpRWsctSfx6XwNbT7cexDrwTs9Y4ycmd2D
-         xL/mcl63++KzkgPAyyrPkOMgqgXzaKa1T5UlTPnnUmF4hD9oYKwg9l2x1c7fCq/5cV1x
-         67GqyIWMTPGX3QweYG6BGf+hVsHGXEK3J1ZLEBkbUMNeT8/ON9/Wafw7zDEgC7FXI28E
-         Md1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU6MOtpGE2wf91ApxxJqdU4WYBRQc7Ze6f+M1NEbUEf8TpnXu9ZGEdZICQF4T1CShH0THE=@vger.kernel.org, AJvYcCXVzkX8PQMsviUdRwkRMI+2+xwwtaOQEwUHUUfDyzEW8XyTInII6kQH4X8TU88fhTAfVt9VUiTg0IH4@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsC9ehBqiYj2SX7ls5pXUT8w7cTjnRsXYchNnqOfpdWhLHP7il
-	9CVS2IpcRv+MkeVgYqkkAKd2hKB9OGfvC4oFcgN8K9nnQ2Apj36ku1ue
-X-Gm-Gg: ASbGncuM3WS9xkbxikZuSJKofq+8GpXGZTIMqHyhbKw/HH8S9X/a3FVNaP1mj5BWxnD
-	xO8wC/MNjYzLcgItYo6DnSi7vvxucyqjozjWMK+7IDqSyTOnihfSRpkNjBm2jD0ATHym8mq3nGp
-	mqcexieqvtVpkKNlFC/Qqn5GXpnwrI/Y0x4H19eCsFjMbqQXbwvpM7jp1WeYX/cBlYWttqXBffF
-	s4Bp97vLY/hoCKd1OFYPLb67aG4TgMhH0MZwWklBlAiww5qslX249NPNax3ES0ztx+QX0/peI28
-	lNyun3vqRArFIoU/NlqI+MKRP8CAbXsO+0dw5SBK9M1cGem23JoiLbib2kkrpPDTxVupReq2I3V
-	YxPGt4OaVg8objkiBZzqU2A==
-X-Google-Smtp-Source: AGHT+IFm+XrOlSim9C8ckicCEIkpgvafeXXcgdVuWrC98u30twNdBGpbSt44emTPsPlVfiBYYAcZ0w==
-X-Received: by 2002:a17:903:2f4e:b0:246:b463:cabf with SMTP id d9443c01a7336-246b463dcdemr91050425ad.8.1756218703821;
-        Tue, 26 Aug 2025 07:31:43 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b49cbb9ce58sm9278046a12.40.2025.08.26.07.31.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 07:31:42 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id AB512420BAAE; Tue, 26 Aug 2025 21:31:38 +0700 (WIB)
-Date: Tue, 26 Aug 2025 21:31:38 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Alok Tiwari <alok.a.tiwari@oracle.com>, pbonzini@redhat.com,
-	corbet@lwn.net, kvm@vger.kernel.org, linux-doc@vger.kernel.org,
-	rdunlap@infradead.org
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Documentation: KVM: fix reference for kvm_ppc_resize_hpt
- and various typos
-Message-ID: <aK3FSpONL01-Dexa@archie.me>
-References: <20250824075455.602185-1-alok.a.tiwari@oracle.com>
+        d=1e100.net; s=20230601; t=1756218724; x=1756823524;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XK9Usx6Vz4ZTcY7mx64b545nF47Z31E+zXXjKfFYvpQ=;
+        b=T9yVQeZuDSpIyML9ZtFSGeFc4Ep6cnJ8TzLblIotaH6dz8PrxQ8HZ9jnP1LcIGUc4W
+         vkOlyT7pVe92UbouvAULsyi3KpL3Pwbvm6BqJDhRFhQ3Y6LKJKdCsIw0xXD2NMhvDdcW
+         mu6NlEjCpgLhQnKJ/XNJg8qgY1Ir7po4FkhEVJMjwbcky1bYYAEJH1Ai2krRoP58AZxy
+         bEZUEsnT1/OsFRzaoUg9ApCJyw7bKCBtHurZkvXY/tHjh0IAXgjQenufSDlvAp/o6ApF
+         Gtlp8PBrTdCGhSL91dDUc0VAjZybb3KKaZ31y4sJ6oirO0FWtiTJsM3S4GmQnJH1H7hv
+         2UJg==
+X-Forwarded-Encrypted: i=1; AJvYcCUrn1p8qvILhD5jPcn0tWIlylb/eoeDyLR6yFZdT90fJMp9ytmNaCvbz0hTZLFc6ue9Pk1dxyU3@vger.kernel.org, AJvYcCVkefyvy4X2fxX5S+5gnyrPORM84ajxU5oFvB45eTAmqVQ/H6LcUJaviGpXLf37+hYG4+WIwLMQhj320IY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxl5W+BR58ga1CiR9Gd5IAT/Ta1XlCrEOntXHR9OIVTLDgOB/Kn
+	UkQvnlmYw8drmXje+3BUKslK4H88zZ9KCvjoorR1goMoPB4Au8GX3Ca7
+X-Gm-Gg: ASbGncsnUz8goOLKhmSnSPeZhVEEI1/DivnvPO/4R1MD/ErgqODX8NSnfPTLbrH2HAO
+	lSMbkz2zGhmM5zyBIRs6yQQmVJJ8ms2iyR+kV/vqpDsIFkRTQk3pvhPuTpfmNxoEN55tVSiBbrz
+	cj3Skrq5JVI2n4ltP/+NvmabLhBbKe4UsSfYLjp9nllmMNK3usgX8ftIGPbax31y4WYvnm359mu
+	nPBNaD2/wNZHeftRe9VnhBDnN85KstDMHAfhxBWOyOSdC8M6VAGz7CoYaWpsy85WGOZkHXkdemP
+	12SVmh7jyXLUBj2eliyP13Pv0ou+gfjdFSsLyhHm2+D1wxeL9YALj52T1yVbeUai6DqKzpJmlSK
+	WTMaFPeebI1+YdD8lTtLEAkjwWGNgUXVycCXl1A==
+X-Google-Smtp-Source: AGHT+IHyfNMmF5kP3wsn98iVIjUXNxmbWOYH4YEJSsBVdlPVhNZJG1JRfvSeH6Tttcg6k4KyYpZNCw==
+X-Received: by 2002:a05:600c:470c:b0:456:285b:db29 with SMTP id 5b1f17b1804b1-45b517d416bmr111454305e9.29.1756218723302;
+        Tue, 26 Aug 2025 07:32:03 -0700 (PDT)
+Received: from localhost ([45.10.155.10])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ca6240b4e1sm6444192f8f.21.2025.08.26.07.31.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Aug 2025 07:32:02 -0700 (PDT)
+Message-ID: <a88ee88c-707f-4266-b514-d0390166dedb@gmail.com>
+Date: Tue, 26 Aug 2025 16:31:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="DLPwMqCHcj94pYC/"
-Content-Disposition: inline
-In-Reply-To: <20250824075455.602185-1-alok.a.tiwari@oracle.com>
+Subject: Re: [PATCH net-next v3 3/5] net: gso: restore ids of outer ip headers
+ correctly
+To: Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ horms@kernel.org, corbet@lwn.net, saeedm@nvidia.com, tariqt@nvidia.com,
+ mbloch@nvidia.com, leon@kernel.org, ecree.xilinx@gmail.com,
+ dsahern@kernel.org, ncardwell@google.com, kuniyu@google.com,
+ shuah@kernel.org, sdf@fomichev.me, aleksander.lobakin@intel.com,
+ florian.fainelli@broadcom.com, willemdebruijn.kernel@gmail.com,
+ alexander.duyck@gmail.com, linux-kernel@vger.kernel.org,
+ linux-net-drivers@amd.com
+References: <20250821073047.2091-1-richardbgobert@gmail.com>
+ <20250821073047.2091-4-richardbgobert@gmail.com>
+ <4feda9bd-0aba-4136-a1ca-07e713c991b7@redhat.com>
+ <7935b433-4249-4f3f-bf22-bb377a6f6224@gmail.com>
+ <7edcbbb6-ac6f-4340-9629-c73ef5f12da8@redhat.com>
+From: Richard Gobert <richardbgobert@gmail.com>
+In-Reply-To: <7edcbbb6-ac6f-4340-9629-c73ef5f12da8@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Paolo Abeni wrote:
+> On 8/25/25 3:31 PM, Richard Gobert wrote:
+>> Paolo Abeni wrote:
+>>> On 8/21/25 9:30 AM, Richard Gobert wrote:
+>>>> diff --git a/net/core/dev.c b/net/core/dev.c
+>>>> index 68dc47d7e700..9941c39b5970 100644
+>>>> --- a/net/core/dev.c
+>>>> +++ b/net/core/dev.c
+>>>> @@ -3772,10 +3772,9 @@ static netdev_features_t gso_features_check(const struct sk_buff *skb,
+>>>>  	 * IPv4 header has the potential to be fragmented.
+>>>>  	 */
+>>>>  	if (skb_shinfo(skb)->gso_type & SKB_GSO_TCPV4) {
+>>>> -		struct iphdr *iph = skb->encapsulation ?
+>>>> -				    inner_ip_hdr(skb) : ip_hdr(skb);
+>>>> -
+>>>> -		if (!(iph->frag_off & htons(IP_DF)))
+>>>> +		if (!(ip_hdr(skb)->frag_off & htons(IP_DF)) ||
+>>>> +		    (skb->encapsulation &&
+>>>> +		     !(inner_ip_hdr(skb)->frag_off & htons(IP_DF))))
+>>>>  			features &= ~NETIF_F_TSO_MANGLEID;
+>>>
+>>> FWIW, I think the above is the problematic part causing GSO PARTIAL issues.
+>>>
+>>> By default UDP tunnels do not set the DF bit, and most/all devices
+>>> implementing GSO_PARTIAL clear TSO for encapsulated packet when MANGLEID
+>>> is not available.
+>>>
+>>> I think the following should workaround the problem (assuming my email
+>>> client did not corrupt the diff), but I also fear this change will cause
+>>> very visible regressions in existing setups.
+>>>
+>>
+>> Thanks for the thorough review!
+>>
+>> To solve this issue, we can decide that MANGLEID cannot cause
+>> incrementing IDs to become fixed for outer headers of encapsulated
+>> packets (which is the current behavior), then just revert this diff.
+>> I'll update the documentation in segmentation-offloads.rst to reflect this.
+>> Do you think that would be a good solution?
+> 
+> I'm not sure I read correctly the above, let me rephrase. You are
+> suggesting that devices can set MANGLEID but they must ensure, for
+> encapsulated packets, to keep incrementing IDs for outer IP headers even
+> when MANGLEID is set. It that what you mean?
+> 
+> Note that most device exposing GSO_PARTIAL can't perform the above.
 
---DLPwMqCHcj94pYC/
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I think there are two misunderstandings:
 
-On Sun, Aug 24, 2025 at 12:54:48AM -0700, Alok Tiwari wrote:
-> Fix the incorrect reference to struct kvm_reinject_control and replace
-> it with the correct struct kvm_ppc_resize_hpt in the documentation of
-> the HPT resize ioctl.
->=20
+1. When I'm talking about mangled ids, I'm mostly talking about forwarded
+   packets whose IDs are mangled after being forwarded. You also consider
+   locally generated packets to have mangled IDs if the IDs are modified
+   during segmentation, which is fair.
+2. You say that GSO partial keeps the outer IDs fixed, but AFAICT this isn't
+   the case. (See below)
 
-LGTM, thanks!
+I think you understood me correctly, but I'll explain in more detail.
 
-Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+My understanding is that TSO generates packets with incrementing IDs. Since
+TSO can't promise to keep fixed IDs, if a packet has SKB_GSO_TCP_FIXEDID, TSO
+cannot be used and software GSO must be used instead (this is checked by net_gso_ok).
+If you don't care about mangled IDs, MANGLEID can be set on the device so that
+TSO can still be used.
 
---=20
-An old man doll... just what I always wanted! - Clara
+If MANGLEID is set on the device, then TSO is allowed to generate either incrementing
+or fixed IDs, depending on the device's preference. However, mangling incrementing IDs
+into fixed IDs is a problem when the DF-bit is not set, as the packets might then
+be fragmented and fragments of different packets will share the same ID. To prevent
+this, the check discussed above removes MANGLEID if the DF-bit is not set.
 
---DLPwMqCHcj94pYC/
-Content-Type: application/pgp-signature; name=signature.asc
+Currently, MANGLEID is only relevant for the inner-most header. With my patch,
+MANGLEID explicitly allows the mangling of outer IDs as well, so the check must be
+modified to check both the inner and the outer headers.
 
------BEGIN PGP SIGNATURE-----
+I suggest that we revert the diff so that only the inner-most header is checked,
+allowing TSO even when the DF bit is not set on the outer header. For this to be
+correct, we must explicitly define MANGLEID on the outer header to mean that TSO
+is not allowed to turn incrementing IDs into fixed IDs when the DF bit is not set.
+No code change is required since devices already generate incrementing IDs for the
+outer headers.
 
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaK3FQAAKCRD2uYlJVVFO
-o1lkAQDMiJWsc4VcsMe3oMv646Tp9Hd4gu42IXlJNeyvZAmzywD8C5IOiJx3Vzuw
-R3bu3JNtZyydzXM6eTuqyYiGqy/RoAs=
-=jthh
------END PGP SIGNATURE-----
+> 
+>>> Note that the current status is incorrect - GSO partial devices are
+>>> mangling the outer IP ID for encapsulated packets even when the outer
+>>> header IP DF is not set.
+>>>
+>>> /P
+>>
+>> WDYM? 
+> 
+> In the following setup:
+> 
+> TCP socket -> UDP encap device (without 'df set') -> H/W NIC exposing
+> GSO partial for encap traffic
+> 
+> with the current kernel, if the TCP socket creates a GSO packet with
+> size MSS multiple, the wire packets will have the outer IP header with
+> the DF bit NOT set and will have ID fixed - for all the wire packets
+> corresponding to a given GSO one.
 
---DLPwMqCHcj94pYC/--
+Are you sure? The documentation clearly states that for GSO partial, the device
+drivers must increment outer IDs when the DF-bit is not set. For example, AFAICT,
+this is what ixgbe and i40e do, but I don't have the hardware to verify.
+
+I would think the behavior in the example you provided is undesirable, since
+the packets could potentially be fragmented later.
+
+> 
+> /P
+> 
+>> Currently, when the DF-bit isn't set, it means that the IDs must
+>> be incrementing. Otherwise, the packets wouldn't have been merged by GRO.
+> 
+> Note that GSO packets can be locally generated.
+
+Of course. I was just referring to forwarded packets.
+
+> 
+>> GSO partial (and also regular GSO/TSO) generate incrementing IDs, so the
+>> IDs cannot be mangled. 
+> 
+> AFAIK, most device exposing GSO partial don't increment the outer IP ID
+> for encap packet (the silicon is not able to do that).
+> 
+>> With my patch, if the IDs were originally fixed,
+>> regardless of the DF-bit, TSO/GSO partial will not occur unless MANGLEID
+>> is enabled.
+> 
+> I think the above statement is a lit confusing, S/W segmentation can
+> happen even if MANGLEID is enabled on the egress device: for FIXEDID
+> pkts, with DF bit not set, both the current kernel code and your patch
+> will clear it.
+
+Sorry, I phrased that awkwardly.
+
+> 
+> /P
+> 
+
 
