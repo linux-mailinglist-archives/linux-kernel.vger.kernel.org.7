@@ -1,189 +1,108 @@
-Return-Path: <linux-kernel+bounces-786525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C781B35AEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:15:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29270B35AF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:16:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FEBB1B26BE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:15:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F6B9361285
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 074212FAC1C;
-	Tue, 26 Aug 2025 11:14:48 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E87E2FAC05;
+	Tue, 26 Aug 2025 11:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CSOg0lkx"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F37B2BDC00;
-	Tue, 26 Aug 2025 11:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9472BFC8F
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 11:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756206887; cv=none; b=IwWSfLYEKTheTtR5GsgZUL888DtiFPoIcLibPEjGYjFvSfBQJu+C+UbudbGg0BJx4GBCcHRZTJ+bpZRSp1C0z5MTB8RIDGF9PNnOx0qpo8hm/eg7LjAJj+SQ1Q97kUKAsGCBz7vGcLOm4TXzA1yUlF59jzlzZvKrKllNkH+mBAU=
+	t=1756206903; cv=none; b=M5mJWuZ/xMW81CR+QIAEqrcAYe9L2c1h4F1oX2qQSKThxON7ufbnyJ+rpgZXwMb9yfTnSrsRhpqkRYf7xXkxmXOiznjy2WoQBytMYV69mhkOpA07KlPz95wOtbOoWJy3zcKQLVRJv5lz/fz4ZChKr8aXCrdVteBmGudkRDSmakE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756206887; c=relaxed/simple;
-	bh=YYCt7Gc6NnHuA4McS5w0wYglETGvdtbAtN4HWBSDoDg=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=lTfMBR9immIPEaH59dmpLWJerEIUv3m8n+I0o/5U6PJiMcAbpdjUmzenFVm96JZzmnyV7TVZt4EEFjRiZulM0EFolyTCwELYdTlScLveAZWawitYyaBpOjDpcfnoi2DTTrLjq6hIdu8nVIEtfo1zvEwDwC/kXKmRcucHUxUhju4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4cB4nH0n2nz6G4ST;
-	Tue, 26 Aug 2025 19:14:43 +0800 (CST)
-Received: from xaxapp02.zte.com.cn ([10.88.97.241])
-	by mse-fl2.zte.com.cn with SMTP id 57QBBAdp061289;
-	Tue, 26 Aug 2025 19:11:10 +0800 (+08)
-	(envelope-from shao.mingyin@zte.com.cn)
-Received: from mapi (xaxapp02[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Tue, 26 Aug 2025 19:11:12 +0800 (CST)
-Date: Tue, 26 Aug 2025 19:11:12 +0800 (CST)
-X-Zmail-TransId: 2afa68ad96508e2-bd933
-X-Mailer: Zmail v1.0
-Message-ID: <20250826191112799PiN1_b9G7aw_qXYKVOwF8@zte.com.cn>
-In-Reply-To: <20250826185643235jApHbqi4zaPaZWVy6_Pot@zte.com.cn>
-References: 20250826185643235jApHbqi4zaPaZWVy6_Pot@zte.com.cn
+	s=arc-20240116; t=1756206903; c=relaxed/simple;
+	bh=yNKW1svPWQYfwzN+Mwhz8LUQicThZsVtWpSBP88B/Xg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JTIfdgS4YcsRC4wlcTPEcqk9XKRQvII8HjwOg6V1JNYCJctIrd1mi2dG7YWINYsDN5HdUSDKHOElO4UlMK0bru06UVI6q+S+LQcW4z/j7uJ4txj0KZvMPT346gIjUUq2T4lpEHFLESRtbeDBYNy01xixatBFv+0oTlnGOhe7e9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CSOg0lkx; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-70dd5de762cso2649706d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 04:15:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756206900; x=1756811700; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=yNKW1svPWQYfwzN+Mwhz8LUQicThZsVtWpSBP88B/Xg=;
+        b=CSOg0lkxGipwRoQW3kixw3ZBftbGV1OQTGFBVjxdBLmoDN8vzwiBx4y5uzWFtknz82
+         7qdpSR0hJpM8aFaCMSPfQ1KpnyVcfJYqQlfPBnnbebzEZD6B5QiHUhxDKrB+2vdD+orH
+         y8gqP78OnBLPXa1tf7dcO8AuClfSS7JFqIEmlR5BRNTnCgS45+B4rXzHT2fFP6reMBiO
+         bouB6aVu6Fc6L9xtKzepXcDi1aNRIUFOxjsGS79dTnd7IGv56bhaAQ0eWjlllCm1sDtc
+         PF1xJPCMr8B9KYS6Y1h1sZSDOl8zxWC1Fw5FAcwsEzEfQS9YPXRPMja0NUX0uPXKyJbC
+         aDRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756206900; x=1756811700;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yNKW1svPWQYfwzN+Mwhz8LUQicThZsVtWpSBP88B/Xg=;
+        b=nVuCB5k+ZuPaWHfxbbzoMUhCAoRPOQCliHRZiea4S/Fzu/z8gbMhaMtVZIM2C3aJ+n
+         NlNI5xxzXLrWvRaiesUq8q3bJg0CK5Pnxrrm95hstgq7AQTSTyR9NhZqM4SYJYcn4Qjx
+         PUTEUOE553FSfibkJxtgfL0gliCm8hkYngcw9jqcklFBCyQWi4TejHOajNEba2HuWFI2
+         n3Jov/xoc7WSpYCbU7+XS9k2JwnXCZsG0ojyVYZCE5gYsAKlyj6NeEZZ/Hpo/FxuuB3S
+         jU9am5C7ZbI4b2qgEyr4AxtHMQX3CnMoSfrLD0nygreGaBmOiP+jDeqj4Kb4SvVOQIcI
+         fV3A==
+X-Forwarded-Encrypted: i=1; AJvYcCV8uVfqtA2/Hh9ZfGxGILAxrheqBT+PGbGwKuMIn7HvHDjZYJQN1zt88yTJutWkQsBt2P51DckjRNRpCDA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwreSJbM8ASz06fUhKuAN0YyyVfTED7unw8mCrY9Fu9fX86cfdT
+	JLsaqtExP3N/aVsgOUHbcSod6b1IoXwKJbMPJ38i0x+8lQoEpCaAy/eBxfbFWf4h/waRHB/QH4A
+	D/YF8Xcz8IPhwkauchAsmgcsQyeqIefiYAsxd5ilu
+X-Gm-Gg: ASbGncszUGWFQQSVwgwMNFuwr++yQqImk3KdjKqqUgV6rRMUgHlJAdJlu40/0ejM5Dz
+	R+MIHECKqKHMnUQrL2fqgMEHsNGg4bH36Von+n4C+ymQpYHORHgjnVf4n0KrssEbM+nUupXCHds
+	KXb3OyZdq/MPxDqbv++VmQZEmNqZk4SqZOPjNlKg/2kl/xLyCvUbtqWEUoNQDFwnbL+kmsjzzjh
+	vr51G8EpKCvyXMyTmvldkB5o+JdAmE1kUIhnQIMTd19VOYb6CsoBK4=
+X-Google-Smtp-Source: AGHT+IGipSwQ9H+9lir4i7sthp7jXgbze4rk/DAEYQJrO9h7c1f6+7P3RPCSiB/lbUAJre41WiVi6jclfFNB3YTBRpg=
+X-Received: by 2002:a05:6214:20e6:b0:70d:8665:3c5b with SMTP id
+ 6a1803df08f44-70d970b2b0dmr209892786d6.12.1756206899995; Tue, 26 Aug 2025
+ 04:14:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <shao.mingyin@zte.com.cn>
-To: <shao.mingyin@zte.com.cn>
-Cc: <alexs@kernel.org>, <si.yanteng@linux.dev>, <dzm91@hust.edu.cn>,
-        <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <yang.yang29@zte.com.cn>,
-        <xu.xin16@zte.com.cn>, <yang.tao172@zte.com.cn>,
-        <wang.longjie1@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIHY0IDcvN10gRG9jcy96aF9DTjogVHJhbnNsYXRlIGlub3RpZnkucnN0IHRvIFNpbXBsaWZpZWQgQ2hpbmVzZQ==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 57QBBAdp061289
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.133 unknown Tue, 26 Aug 2025 19:14:43 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 68AD9723.000/4cB4nH0n2nz6G4ST
+MIME-Version: 1.0
+References: <20250825154505.1558444-1-elver@google.com> <aKyT2UKmlznvN2jv@hyeyoo>
+In-Reply-To: <aKyT2UKmlznvN2jv@hyeyoo>
+From: Matteo Rizzo <matteorizzo@google.com>
+Date: Tue, 26 Aug 2025 13:14:48 +0200
+X-Gm-Features: Ac12FXyU3fT-SuKRuDR_nD8uSQNd7DGjj8J1BVXdXRtps1xhjblio7NMt2GtdbY
+Message-ID: <CAHKB1wKZmp2Rpw0zry70i16-c3FVkwtb3-XpLs5P1s4eABDD=A@mail.gmail.com>
+Subject: Re: [PATCH RFC] slab: support for compiler-assisted type-based slab
+ cache partitioning
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: Marco Elver <elver@google.com>, linux-kernel@vger.kernel.org, 
+	kasan-dev@googlegroups.com, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Alexander Potapenko <glider@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andrey Konovalov <andreyknvl@gmail.com>, 
+	David Hildenbrand <david@redhat.com>, David Rientjes <rientjes@google.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Florent Revest <revest@google.com>, 
+	GONG Ruiqi <gongruiqi@huaweicloud.com>, Jann Horn <jannh@google.com>, 
+	Kees Cook <kees@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Suren Baghdasaryan <surenb@google.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, linux-hardening@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Wang Longjie <wang.longjie1@zte.com.cn>
+On Mon, 25 Aug 2025 at 18:49, Harry Yoo <harry.yoo@oracle.com> wrote:
+>
+> Not relevant to this patch, but just wondering if there are
+> any plans for SLAB_VIRTUAL?
 
-translate the "inotify.rst" into Simplified Chinese.
+I'm still working on it, I hope to submit a new version upstream soon.
+There are a few issues with the current version (mainly virtual memory
+exhaustion) that I would like to solve first.
 
-Update to commit de389cf08d47("docs: filesystems: convert inotify.txt to
-ReST")
-
-Signed-off-by: Wang Longjie <wang.longjie1@zte.com.cn>
-Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
----
-v3->v4
-resolve patch damage issues.
- .../translations/zh_CN/filesystems/index.rst  |  1 +
- .../zh_CN/filesystems/inotify.rst             | 80 +++++++++++++++++++
- 2 files changed, 81 insertions(+)
- create mode 100644 Documentation/translations/zh_CN/filesystems/inotify.rst
-
-diff --git a/Documentation/translations/zh_CN/filesystems/index.rst b/Documentation/translations/zh_CN/filesystems/index.rst
-index 4e9b1ca46231..fcc79ff9fdad 100644
---- a/Documentation/translations/zh_CN/filesystems/index.rst
-+++ b/Documentation/translations/zh_CN/filesystems/index.rst
-@@ -41,3 +41,4 @@ Linux Kernel中的文件系统
-    gfs2
-    gfs2-uevents
-    gfs2-glocks
-+   inotify
-diff --git a/Documentation/translations/zh_CN/filesystems/inotify.rst b/Documentation/translations/zh_CN/filesystems/inotify.rst
-new file mode 100644
-index 000000000000..b4d740aca946
---- /dev/null
-+++ b/Documentation/translations/zh_CN/filesystems/inotify.rst
-@@ -0,0 +1,80 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+.. include:: ../disclaimer-zh_CN.rst
-+
-+:Original: Documentation/filesystems/inotify.rst
-+
-+:翻译:
-+
-+   王龙杰 Wang Longjie <wang.longjie1@zte.com.cn>
-+
-+==========================================
-+Inotify - 一个强大且简单的文件变更通知系统
-+==========================================
-+
-+
-+
-+文档由 Robert Love <rml@novell.com> 于 2005 年 3 月 15 日开始撰写
-+
-+文档由 Zhang Zhen <zhenzhang.zhang@huawei.com> 于 2015 年 1 月 4 日更新
-+
-+	- 删除了已废弃的接口，关于用户接口请参考手册页。
-+
-+(i) 基本原理
-+
-+问：
-+   不将监控项与被监控对象打开的文件描述符（fd）绑定，这背后的设计决策是什么？
-+
-+答：
-+   监控项会与打开的 inotify 设备相关联，而非与打开的文件相关联。这解决了 dnotify 的主要问题：
-+   保持文件打开会锁定文件，更糟的是，还会锁定挂载点。因此，dnotify 在带有可移动介质的桌面系统
-+   上难以使用，因为介质将无法被卸载。监控文件不应要求文件处于打开状态。
-+
-+问：
-+   与每个监控项一个文件描述符的方式相比，采用每个实例一个文件描述符的设计决策是出于什么
-+   考虑？
-+
-+答：
-+   每个监控项一个文件描述符会很快的消耗掉超出允许数量的文件描述符，其数量会超出实际可管理的范
-+   围，也会超出 select() 能高效处理的范围。诚然，root 用户可以提高每个进程的文件描述符限制，
-+   用户也可以使用 epoll，但同时要求这两者是不合理且多余的。一个监控项所消耗的内存比一个打开的文
-+   件要少，因此将这两个数量空间分开是合理的。当前的设计正是用户空间开发者所期望的：用户只需初始
-+   化一次 inotify，然后添加 n 个监控项，而这只需要一个文件描述符，无需调整文件描述符限制。初
-+   始化 inotify 实例初始化两千次是很荒谬的。如果我们能够简洁地实现用户空间的偏好——而且我们
-+   确实可以，idr 层让这类事情变得轻而易举——那么我们就应该这么做。
-+
-+   还有其他合理的理由。如果只有一个文件描述符，那就只需要在该描述符上阻塞，它对应着一个事件队列。
-+   这个单一文件描述符会返回所有的监控事件以及任何可能的带外数据。而如果每个文件描述符都是一个独
-+   立的监控项，
-+
-+   - 将无法知晓事件的顺序。文件 foo 和文件 bar 上的事件会触发两个文件描述符上的 poll()，
-+     但无法判断哪个事件先发生。而用单个队列就可以很容易的提供事件的顺序。这种顺序对现有的应用程
-+     序（如 Beagle）至关重要。想象一下，如果“mv a b ; mv b a”这样的事件没有顺序会是什么
-+     情况。
-+
-+   - 我们将不得不维护 n 个文件描述符和 n 个带有状态的内部队列，而不是仅仅一个。这在 kernel 中
-+     会混乱得多。单个线性队列是合理的数据结构。
-+
-+   - 用户空间开发者更青睐当前的 API。例如，Beagle 的开发者们就很喜欢它。相信我，我问过他们。
-+     这并不奇怪：谁会想通过 select 来管理以及阻塞在 1000 个文件描述符上呢？
-+
-+   - 无法获取带外数据。
-+
-+   - 1024 这个数量仍然太少。  ;-)
-+
-+   当要设计一个可扩展到数千个目录的文件变更通知系统时，处理数千个文件描述符似乎并不是合适的接口。
-+   这太繁琐了。
-+
-+   此外，创建多个实例、处理多个队列以及相应的多个文件描述符是可行的。不必是每个进程对应一个文件描
-+   述符；而是每个队列对应一个文件描述符，一个进程完全可能需要多个队列。
-+
-+问：
-+   为什么采用系统调用的方式？
-+
-+答：
-+   糟糕的用户空间接口是 dnotify 的第二大问题。信号对于文件通知来说是一种非常糟糕的接口。其实对
-+   于其他任何事情，信号也都不是好的接口。从各个角度来看，理想的解决方案是基于文件描述符的，它允许
-+   基本的文件 I/O 操作以及 poll/select 操作。获取文件描述符和管理监控项既可以通过设备文件来
-+   实现，也可以通过一系列新的系统调用来实现。我们决定采用一系列系统调用，因为这是提供新的内核接口
-+   的首选方法。两者之间唯一真正的区别在于，我们是想使用 open(2) 和 ioctl(2)，还是想使用几
-+   个新的系统调用。系统调用比 ioctl 更有优势。
--- 
-2.27.0
+Matteo
 
