@@ -1,174 +1,163 @@
-Return-Path: <linux-kernel+bounces-786038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF71FB353F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:12:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18489B35411
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:18:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D92C16FADB
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:12:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9F0B684960
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:18:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD8B2F6577;
-	Tue, 26 Aug 2025 06:11:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053852EA174;
+	Tue, 26 Aug 2025 06:18:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DlFLSu90"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EoHq8It+";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eX2IPWAG"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223E22F60DD;
-	Tue, 26 Aug 2025 06:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800BF22D9F7;
+	Tue, 26 Aug 2025 06:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756188709; cv=none; b=J3wxc0xfCLtRmrKfl93TFH8D5CzENFdjWbE8cvPL3FiyEkMk4QPX2CKS3uYEC05CJNxoi/soup00gVGqyRyWypAr2RDheAhMKPY2ucDufBiXmIZMUn/2la5a8rU3kWKrq1GvHdYEDTjrCnBeDJ5N/bIXkxqjyQzAOhmKSlDgW7k=
+	t=1756189102; cv=none; b=hXwHYIWfohLq7XOqCcqV4QJIr7s7oHxiqwH/9b7DV1NPp8FcvNR0h7cRHJVjP3Wgrh96IGOkjjmK2Q2bLwNy/O14SV6nJptsQi57JZ5tUnGmvhcKC2NKeNaaWylQtvJdducILx+N1d3Rut42quUSD+LLobyQ5e0z0AHXg7qrIRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756188709; c=relaxed/simple;
-	bh=d4ynypXkh046/SxbDpw/eePoh937viG0jPQ5aS67T4s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UGfz2qbVdEk21EgWeYfYHML6+rK+4/0T5AKog4nJwp4gJgIbnWqcr5ZQZqGzxFgFXyrZyy8GndMBqR+1Iox7PR+tr75eewBDhrQ30cfy9k2dZp+cn7AV0NAfkGrcg9AMGxiCZuZhjxRoKggBxtMoEg0kHFPEFEIVAMW3Rc9oLiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DlFLSu90; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-afcb78fb04cso716002766b.1;
-        Mon, 25 Aug 2025 23:11:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756188706; x=1756793506; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FSSbVBx32nx7XwUzK1dRM1mB0T5Zuh+9epMVFQQWvFU=;
-        b=DlFLSu902DQIHtabnf49Cjm8osqd3TnmwiSepSkq1kJXM6xnE3ErNdmTl/pUw4Gso8
-         766rFjMOmM+w2SlkKVB/69+cQYkOqS4AY/4xQxXHt2nG0FYBB7JC8UIV1dK9zBbtThso
-         /LvTrabJPcgmGkHGNnQTXF6rM6KnqZ4bBniocU6DrUGGKGPk4xE81/Okgrj9z10zI/da
-         VQCo6wJvNs/eqwwnHtSxqTLXTfO2j/LfU6ZvFA5qkOgwCLeM0XwUAsgkiBZgeLp+r6ne
-         C2aJ2S9FlePDb66aRBBbRdCFNq6YUYQptZTc1VV9lgviIiM1TBPcE8HrxKeVwlRuUIvM
-         l2Pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756188706; x=1756793506;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FSSbVBx32nx7XwUzK1dRM1mB0T5Zuh+9epMVFQQWvFU=;
-        b=XLQYoANpovBnFtXlB05uOGYdAmlT0yjuWN6iYUWQ3KUxWtF34R6uOsZaEOz/EtGY2f
-         yjvL9TMBHzVvhcpQz9VUhxE5fZdIsZHJmX3wLAu9QfSsxw5yavCEajThcu9KRx3ucWth
-         6pCU5J9V9HIGkS3um3l8+tvFCZixsjyeWBQzpV6OJdT5YHG2XkerQOPUI4N6LtNluMbb
-         xNfGhfHygeR0sxZaiqxH3H11MXAM0rlhYhj9f5ZHPH0SdjA1I5T5Lwh2kejvcMiyiy3F
-         KL6OLb94/frLFWVzRUDkmOfSkQqT67Xq6SLxu3EoCJNfGKykVsOL3w4w2vyinXMvR8pg
-         IKyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVZof9bnecuAUyPuRuRbXsJIlyLMLAz5YynFobWGhy9R8CNKVN50zH69nlXtfDs0kKCDmSJWfe9dZyROiLr@vger.kernel.org, AJvYcCVfLKR5WtzNK4XHr/y/id4RYTtlYUrpk6xpI2JwWbfDFsCEGhjl309C2n3Cvvg6RTGKpaXsMZeL/4g=@vger.kernel.org, AJvYcCWMdEOEFqxQktCVwzezM1fsfGfP6baT7STEOMbjZAoTJIxmZbef3tuKi3XtsoR+0yLM+xbvi2Fkihg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLweptUJG0pYEpI9PgVxb9hXBMLT8SgkAxVabn1ZpidWcjk7aR
-	rxkXwOrnVO3xq30ahoFznyaTLASjeJaN6m9ju0i26o8dCSlzaZkKEBWI
-X-Gm-Gg: ASbGncuRluInrQZFonIigmisRaqOOVoW2SBslUZzO/GocJemJ85l3p2tv/GBOER7QGm
-	Kx69i77uLCGYivPlWg/AtLkbRDzHRcMlQfpc1CsvkPe13Caw7s2sowm4iCYmvag2pJQlXbfGuPp
-	gd2aRx728kBZM+arcRJfmFL31DMWswEZDamivBk92mJARF2iIXUGQWsV96JpVsDB+YtlVFW08OP
-	LonZ4OkHiGeBa10O+/oE1otk4dvLBBI1O9oJf4jxsS1sHPq+wMiXtRyWOblKWyK9B3SBl/+iP7y
-	Iy3OA1QBtxgwRxV+5woXttgdy4LCtT0WKzOqTNsbUCP7E6NHL5bAEc79bgM0RL5EF0kcyFcrFbA
-	RQqOt+3vjeC4gTFyRjpYp8vGK
-X-Google-Smtp-Source: AGHT+IH8JQdJfy8puCT3+blDPER8VT1BAM5UiC30k0R8SZJeszPDVtxqiGOaOymvAdfDzTswaekPRA==
-X-Received: by 2002:a17:907:fd15:b0:af9:68d5:118d with SMTP id a640c23a62f3a-afe296ec584mr1354460366b.58.1756188706227;
-        Mon, 25 Aug 2025 23:11:46 -0700 (PDT)
-Received: from xeon.. ([188.163.112.76])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe492da4b9sm711067966b.63.2025.08.25.23.11.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 23:11:45 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: [PATCH v3 4/4] ARM: tegra: Add DFLL clock support for Tegra114
-Date: Tue, 26 Aug 2025 09:11:17 +0300
-Message-ID: <20250826061117.63643-5-clamor95@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250826061117.63643-1-clamor95@gmail.com>
-References: <20250826061117.63643-1-clamor95@gmail.com>
+	s=arc-20240116; t=1756189102; c=relaxed/simple;
+	bh=OKdbTtNFiNAfKDCNOTVL/ZRLmxAuqZzdXzmwBIqDanM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=pKOmLcAY0FI2gWPf6/qS5dWdp++VOkZsSkGxImaZnZUlo7rxhUPg6JjlIHeHq9mlpIc/fUD8D1/Ti0Er+4WxtIBWvsPIXRzTjOYooMlxnYNlVFos53oU75OwLt1005sHtkIIYBt7pf7/ZVBrBISIwF4jcJwvrMh1quda/zGF0JI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EoHq8It+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eX2IPWAG; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756189098;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=8Qx8zdXwUDEN+QDzIjybGTquRbhLyER4hmo5HtXCS3M=;
+	b=EoHq8It+802uE8/W/ZgT+WU1MhU30ljvVJg6J8CsR2XdSCY1W8iKO/0yhuhlIWg93gjtVN
+	yjsiguKOCe8MXqL7t5b5NeIYigkWxr9EZY2Mkn3x2W0dIf65A5h/s69Jx20ZLL24VmAnXl
+	wWm91dlrX8UnePleqQexNGzu9SWDwlcPXJ8DztYUIGGk65aJetDl/MNeXhull8xcLDd2T/
+	Xdhztn1zm0BL6qd7sdPVV8txFwrP1lt98FW2I+LmBrQOqG2Iv+EpggKyKaF35t2W+WDCO2
+	x4LqgXrpkfrN62Egk6oQBRYWy9iOgErie977mytBr36Yc1c7jJeu3fV2/Qh79g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756189098;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=8Qx8zdXwUDEN+QDzIjybGTquRbhLyER4hmo5HtXCS3M=;
+	b=eX2IPWAG+DvooY6YzvBNYPIk4d7JwL6SQGjcVcR/3nVRkZUD/9wZEdubuxvUX29zgYJ6tr
+	+6ncwJ9ZGLDV8KDQ==
+Subject: [PATCH 00/11] vdso: Various cleanups
+Date: Tue, 26 Aug 2025 08:17:03 +0200
+Message-Id: <20250826-vdso-cleanups-v1-0-d9b65750e49f@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAF9RrWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDCyNT3bKU4nzd5JzUxLzSgmLdtBSztKQkY6O0ZENLJaCegqLUtMwKsHn
+ RsbW1AHxpxT5fAAAA
+X-Change-ID: 20250825-vdso-cleanups-fd6fbb32fc19
+To: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>, Nam Cao <namcao@linutronix.de>, 
+ Russell King <linux@armlinux.org.uk>, Ingo Molnar <mingo@redhat.com>, 
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ Madhavan Srinivasan <maddy@linux.ibm.com>, 
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+ Christophe Leroy <christophe.leroy@csgroup.eu>, 
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+ Alexander Gordeev <agordeev@linux.ibm.com>, 
+ Christian Borntraeger <borntraeger@linux.ibm.com>, 
+ Sven Schnelle <svens@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>, 
+ Christian Brauner <brauner@kernel.org>, Shuah Khan <shuah@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev, 
+ linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+ linux-s390@vger.kernel.org, linux-arch@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, 
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756189098; l=3008;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=OKdbTtNFiNAfKDCNOTVL/ZRLmxAuqZzdXzmwBIqDanM=;
+ b=xXLb28HhyOp2V5PAl7NV8Ih+DLTz+T0EwU3m8mTK7t+YdB+1/WbVwG3q2LXi/d5YbmXMM3lwS
+ UE/A4xDXG50Ay40TUaB+Dz47MZKMYqchu5q89DYuvoo2r9Z3sDlnSRd
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-Add DFLL clock node to common Tegra114 device tree along with clocks
-property to cpu node.
+Various cleanups to the generic vDSO infrastructure and a patch for ARM
+which was never applied.
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+This series has one trivial syntactic conflict with "dso/datastore: Allow
+prefaulting by mlockall()" [0] and a semantic one with "sparc64: vdso:
+Switch to generic vDSO library" [1], which still uses the removed
+GENERIC_VDSO_DATA_STORE.
+
+[0] https://lore.kernel.org/lkml/20250812-vdso-mlockall-v1-0-2f49ba7cf819@linutronix.de/
+[1] https://lore.kernel.org/lkml/20250815-vdso-sparc64-generic-2-v2-0-b5ff80672347@linutronix.de/
+
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 ---
- arch/arm/boot/dts/nvidia/tegra114.dtsi | 33 ++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+Rasmus Villemoes (1):
+      ARM: VDSO: remove cntvct_ok global variable
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra114.dtsi b/arch/arm/boot/dts/nvidia/tegra114.dtsi
-index 4caf2073c556..c429478eb122 100644
---- a/arch/arm/boot/dts/nvidia/tegra114.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra114.dtsi
-@@ -4,6 +4,7 @@
- #include <dt-bindings/memory/tegra114-mc.h>
- #include <dt-bindings/pinctrl/pinctrl-tegra.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/reset/tegra114-car.h>
- #include <dt-bindings/soc/tegra-pmc.h>
- 
- / {
-@@ -693,6 +694,29 @@ mipi: mipi@700e3000 {
- 		#nvidia,mipi-calibrate-cells = <1>;
- 	};
- 
-+	dfll: clock@70110000 {
-+		compatible = "nvidia,tegra114-dfll";
-+		reg = <0x70110000 0x100>, /* DFLL control */
-+		      <0x70110000 0x100>, /* I2C output control */
-+		      <0x70110100 0x100>, /* Integrated I2C controller */
-+		      <0x70110200 0x100>; /* Look-up table RAM */
-+		interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA114_CLK_DFLL_SOC>,
-+			 <&tegra_car TEGRA114_CLK_DFLL_REF>,
-+			 <&tegra_car TEGRA114_CLK_I2C5>;
-+		clock-names = "soc", "ref", "i2c";
-+		resets = <&tegra_car TEGRA114_RST_DFLL_DVCO>;
-+		reset-names = "dvco";
-+		#clock-cells = <0>;
-+		clock-output-names = "dfllCPU_out";
-+		nvidia,droop-ctrl = <0x00000f00>;
-+		nvidia,force-mode = <1>;
-+		nvidia,cf = <10>;
-+		nvidia,ci = <0>;
-+		nvidia,cg = <2>;
-+		status = "disabled";
-+	};
-+
- 	mmc@78000000 {
- 		compatible = "nvidia,tegra114-sdhci";
- 		reg = <0x78000000 0x200>;
-@@ -824,6 +848,15 @@ cpu0: cpu@0 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <0>;
-+
-+			clocks = <&tegra_car TEGRA114_CLK_CCLK_G>,
-+				 <&tegra_car TEGRA114_CLK_CCLK_LP>,
-+				 <&tegra_car TEGRA114_CLK_PLL_X>,
-+				 <&tegra_car TEGRA114_CLK_PLL_P>,
-+				 <&dfll>;
-+			clock-names = "cpu_g", "cpu_lp", "pll_x", "pll_p", "dfll";
-+			/* FIXME: what's the actual transition time? */
-+			clock-latency = <300000>;
- 		};
- 
- 		cpu1: cpu@1 {
+Thomas Weißschuh (10):
+      vdso/datastore: Gate time data behind CONFIG_GENERIC_GETTIMEOFDAY
+      vdso: Move ENABLE_COMPAT_VDSO from core to arm64
+      vdso/gettimeofday: Remove !CONFIG_TIME_NS stubs
+      time: Build generic update_vsyscall() only with generic time vDSO
+      riscv: vdso: Untangle kconfig logic
+      vdso: Drop kconfig GENERIC_VDSO_32
+      vdso: Drop kconfig GENERIC_COMPAT_VDSO
+      vdso: Drop kconfig GENERIC_VDSO_DATA_STORE
+      vdso: Drop kconfig GENERIC_VDSO_TIME_NS
+      vdso: Gate VDSO_GETRANDOM behind HAVE_GENERIC_VDSO
+
+ arch/Kconfig                                      |  2 +-
+ arch/arm/include/asm/vdso/vsyscall.h              |  2 --
+ arch/arm/kernel/vdso.c                            | 10 +++------
+ arch/arm/mm/Kconfig                               |  2 --
+ arch/arm64/Kconfig                                |  3 ---
+ arch/arm64/include/asm/vdso/compat_barrier.h      |  7 +++---
+ arch/arm64/include/asm/vdso/compat_gettimeofday.h |  6 ++---
+ arch/arm64/include/asm/vdso/gettimeofday.h        |  8 +++++++
+ arch/arm64/kernel/vdso32/Makefile                 |  1 -
+ arch/loongarch/Kconfig                            |  2 --
+ arch/mips/Kconfig                                 |  1 -
+ arch/powerpc/Kconfig                              |  2 --
+ arch/riscv/Kconfig                                | 12 +++++-----
+ arch/s390/Kconfig                                 |  2 --
+ arch/x86/Kconfig                                  |  3 ---
+ include/asm-generic/vdso/vsyscall.h               |  4 ----
+ include/vdso/datapage.h                           |  9 +-------
+ init/Kconfig                                      |  2 +-
+ kernel/time/Makefile                              |  2 +-
+ lib/vdso/Kconfig                                  | 25 +--------------------
+ lib/vdso/Makefile                                 |  2 +-
+ lib/vdso/datastore.c                              |  6 ++---
+ lib/vdso/gettimeofday.c                           | 27 -----------------------
+ tools/testing/selftests/pidfd/config              |  1 -
+ 24 files changed, 31 insertions(+), 110 deletions(-)
+---
+base-commit: 3cd1f6bc6aa056cfd32946f9ce0aa3eb3db180e8
+change-id: 20250825-vdso-cleanups-fd6fbb32fc19
+
+Best regards,
 -- 
-2.48.1
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
 
