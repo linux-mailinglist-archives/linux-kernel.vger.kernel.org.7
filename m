@@ -1,157 +1,107 @@
-Return-Path: <linux-kernel+bounces-786711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76DE3B364AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:41:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4336DB3649D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:40:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CE338E3993
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:33:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78F65188E703
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:34:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405BF3090CE;
-	Tue, 26 Aug 2025 13:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nHZo3YFn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41D5833A03C;
+	Tue, 26 Aug 2025 13:32:52 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C35F1E502;
-	Tue, 26 Aug 2025 13:32:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C683376BA;
+	Tue, 26 Aug 2025 13:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756215147; cv=none; b=SLQWl5JFJTRhiutwAzaW6d5OyHoIawOSzRAJGvD9RM2QH1q1Eck24rtTxSWlbzDW26nadEIcpT4DGQRDRjFKpaawfdoaHE1CpIx6wIilEZbF3aIfvQZFen7cc8uZoNCbe2jYsTtRfMHkpkgmyV/FyHdL1c6U296GDON+t6SJp18=
+	t=1756215171; cv=none; b=DY2EJgtWGt4paAdGTwK8huCtDky+ohewix3KB9OQzIssAoTBATO79XSr1vQCLYXrDsEGWy+2/TlmIHenGkTm0IefmIsOqMPpgPKVlwsW05olCJ9YoZ2GWjoqfym2Hs25/eIgN/tldYsLjH0G039lfAPgJlc4hFAzHS3n2jvGnJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756215147; c=relaxed/simple;
-	bh=F9UhdwMQ0hBjRCqK9crNZJh+gxC+eYHn+B/GPo3iBo8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cqwFJPQjhCMbiGsyu8FPGvbpcevdmCRMUZtJieuDX1q+AT6ayTSKcO/hf9jx9TVGzHNaNZudIuwl2jjPfnW8d86M8bj9pb1PJFbhl1Ez4kSlTDUhuF5lizS6UzuAVfycgE3Gd1mfLKSS7GCzAt0h93fHfR5CSd01BJmwQWS+s8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nHZo3YFn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FE0FC4AF09;
-	Tue, 26 Aug 2025 13:32:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756215147;
-	bh=F9UhdwMQ0hBjRCqK9crNZJh+gxC+eYHn+B/GPo3iBo8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=nHZo3YFnADCYJagxhaARX7GB5flz5qYP+VDc2x7XhbArKghjbSi5LZOLxQyJeM+8L
-	 He1MZW2ESHJTzltnW0EuKrXhC6S7bu0elqVazmVDGVsOcZuOpuF+Fo9cWSnXG4n+dD
-	 28kRruUlWzGRnrBH0c8I3p10AMjfRLEfziNrO8p1B53clisi9uVvxXQzASaLCFKkVp
-	 edgjBObImE7y2Cy8Jji7SVid8x/yUyL4qHFffPblE1VIzWCQHn3mIkCao9cpzBaVkV
-	 uQLVvbBiUSuQM6Xqlt1UjVW+JU1Flg3AuJlQjbWP+s+NMt1iSrQ6BakANSJFq6Yym6
-	 r2GZa/EBvtg4w==
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-3367f35d11aso14107711fa.0;
-        Tue, 26 Aug 2025 06:32:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV/1GkIq/WQTIty3f3Cbv9uqN+oblumDLEih4cnlz9HZDGg7/EXX3zj4s1mRuum8iskesino41dHgg=@vger.kernel.org, AJvYcCXSFqYeKyEfmROsH/evP0zEU0Svd0JPD+h0FtcqGqitIXPawvSyqpYyxy2RvkZ4ZGz8wr2mUd0RI4W0wnnF@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzg277dNlWQqkiCL2Kl4ySGsWWbrWNASshauVIEadNzAv8tkO+c
-	xGfT4efsVEoypMF9W54vk3bRLXaYprCMhCROiibr6J8VwtC3V8i6py1z+xRa3UUyN9hI45mNJG7
-	Q8kOl9+3KXS+oQ5ecGkxDZ8hEHERPHiI=
-X-Google-Smtp-Source: AGHT+IH0JU0rh2F2/IGrODV0cITg40GykiWYazxaj+7uUdbok+BkQQ0z2AXH9CyxNwKoJ0DFz3gtVpCAyySkIf/fd7A=
-X-Received: by 2002:a05:6512:4488:b0:55f:486b:7e44 with SMTP id
- 2adb3069b0e04-55f487ac7b1mr1496884e87.37.1756215145733; Tue, 26 Aug 2025
- 06:32:25 -0700 (PDT)
+	s=arc-20240116; t=1756215171; c=relaxed/simple;
+	bh=2P/jEUIrcly5M6ffvXr+n6/JwLUJRxYguv1L+Q/9jP0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qOFiQUn78tQc3rpOhAe9KSDMS2T2UTaI/V2DUwg5usgZOsGwIS86WXsQAijCp1bfjRWmvSOnQ8j4fsi35a5lkF4JvTWd8tEi/xwfHIOLQ7NWVCVl1Xn/HI7Al1/q+jIkLEvxLdN/WytqjVlB7x2NQXTArl3ihLh8WvItIUeXULk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4cB7lQ0x1JzdcGS;
+	Tue, 26 Aug 2025 21:28:18 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id DAC1C18048F;
+	Tue, 26 Aug 2025 21:32:43 +0800 (CST)
+Received: from [10.174.179.113] (10.174.179.113) by
+ dggpemf500002.china.huawei.com (7.185.36.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 26 Aug 2025 21:32:42 +0800
+Message-ID: <ab973374-88cd-4b06-986f-56393b32ce06@huawei.com>
+Date: Tue, 26 Aug 2025 21:32:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250819090802.2258766-1-linan666@huaweicloud.com>
-In-Reply-To: <20250819090802.2258766-1-linan666@huaweicloud.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 26 Aug 2025 15:32:14 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXHvEOTHHshS9uoL4RSZgJZgd9OR9qzPHYJ5xW2Vgeefcg@mail.gmail.com>
-X-Gm-Features: Ac12FXzNlYX0397R9A-yMbFf875GVSnv6G1xxJnODLQnCjpaKIVrANlolXzJWvc
-Message-ID: <CAMj1kXHvEOTHHshS9uoL4RSZgJZgd9OR9qzPHYJ5xW2Vgeefcg@mail.gmail.com>
-Subject: Re: [PATCH v2] efivarfs: Fix slab-out-of-bounds in efivarfs_d_compare
-To: linan666@huaweicloud.com
-Cc: jk@ozlabs.org, linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	yangerkun@huawei.com, yi.zhang@huawei.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] ipv6: annotate data-races around
+ devconf->rpl_seg_enabled
+To: Kuniyuki Iwashima <kuniyu@google.com>
+CC: <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250826025206.303325-1-yuehaibing@huawei.com>
+ <CAAVpQUDA5gCi--n9N7PQZC3rDBxhZxMW8AUFoaGs+09oT6Vebg@mail.gmail.com>
+Content-Language: en-US
+From: Yue Haibing <yuehaibing@huawei.com>
+In-Reply-To: <CAAVpQUDA5gCi--n9N7PQZC3rDBxhZxMW8AUFoaGs+09oT6Vebg@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-On Tue, 19 Aug 2025 at 11:16, <linan666@huaweicloud.com> wrote:
->
-> From: Li Nan <linan122@huawei.com>
->
-> Observed on kernel 6.6 (present on master as well):
->
->   BUG: KASAN: slab-out-of-bounds in memcmp+0x98/0xd0
->   Call trace:
->    kasan_check_range+0xe8/0x190
->    __asan_loadN+0x1c/0x28
->    memcmp+0x98/0xd0
->    efivarfs_d_compare+0x68/0xd8
->    __d_lookup_rcu_op_compare+0x178/0x218
->    __d_lookup_rcu+0x1f8/0x228
->    d_alloc_parallel+0x150/0x648
->    lookup_open.isra.0+0x5f0/0x8d0
->    open_last_lookups+0x264/0x828
->    path_openat+0x130/0x3f8
->    do_filp_open+0x114/0x248
->    do_sys_openat2+0x340/0x3c0
->    __arm64_sys_openat+0x120/0x1a0
->
-> If dentry->d_name.len < EFI_VARIABLE_GUID_LEN , 'guid' can become
-> negative, leadings to oob. The issue can be triggered as below:
->
->   T1                    T2
->   lookup_open
->    ->lookup
->     simple_lookup
->      d_add
->      // invalid dentry is added to hash list
->
->                         lookup_open
->                          d_alloc_parallel
->                           __d_lookup_rcu
->                            __d_lookup_rcu_op_compare
->                             hlist_bl_for_each_entry_rcu
->                             // invalid dentry can be retrieved
->                              ->d_compare
->                               efivarfs_d_compare
->
-> Fix it by checking len before cmp.
->
-> Fixes: da27a24383b2 ("efivarfs: guid part of filenames are case-insensitive")
-> Signed-off-by: Li Nan <linan122@huawei.com>
-> Signed-off-by: Wu Guanghao <wuguanghao3@huawei.com>
-> ---
-> v2: optimize commit message
->
+On 2025/8/26 11:17, Kuniyuki Iwashima wrote:
+> On Mon, Aug 25, 2025 at 7:51 PM Yue Haibing <yuehaibing@huawei.com> wrote:
+>>
+>> devconf->rpl_seg_enabled can be changed concurrently from
+>> /proc/sys/net/ipv6/conf, annotate lockless reads on it.
+>>
+>> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+>> ---
+>>  net/ipv6/exthdrs.c | 6 ++----
+>>  1 file changed, 2 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/net/ipv6/exthdrs.c b/net/ipv6/exthdrs.c
+>> index d1ef9644f826..a23eb8734e15 100644
+>> --- a/net/ipv6/exthdrs.c
+>> +++ b/net/ipv6/exthdrs.c
+>> @@ -494,10 +494,8 @@ static int ipv6_rpl_srh_rcv(struct sk_buff *skb)
+>>
+>>         idev = __in6_dev_get(skb->dev);
+>>
+>> -       accept_rpl_seg = net->ipv6.devconf_all->rpl_seg_enabled;
+>> -       if (accept_rpl_seg > idev->cnf.rpl_seg_enabled)
+>> -               accept_rpl_seg = idev->cnf.rpl_seg_enabled;
+>> -
+>> +       accept_rpl_seg = min(READ_ONCE(net->ipv6.devconf_all->rpl_seg_enabled),
+>> +                            READ_ONCE(idev->cnf.rpl_seg_enabled));
+>>         if (!accept_rpl_seg) {
+> 
+> Orthogonal to this change, but rpl_seg_enabled is missing .extra1/2
+> or this condition should be adjusted like other knobs that recognises
+>  <0 as disabled, .e.g. keep_addr_on_down, etc.
 
-Thanks for the fix, and for the elaborate description.
+Thanks, will add .extra1/2 check for this in v2.
 
-IIUC, two parallel lookups using an invalid filename can reproduce this?
-
->  fs/efivarfs/super.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
-> index 23ff4e873651..c30d758e303a 100644
-> --- a/fs/efivarfs/super.c
-> +++ b/fs/efivarfs/super.c
-> @@ -152,7 +152,7 @@ static int efivarfs_d_compare(const struct dentry *dentry,
->  {
->         int guid = len - EFI_VARIABLE_GUID_LEN;
->
-
-Could we do a separate
-
-if (guid <= 0)
-  return 1;
-
-here, with a comment describing how that condition might become true?
-
-> -       if (name->len != len)
-> +       if (name->len != len || len <= EFI_VARIABLE_GUID_LEN)
-
-... and drop this change.
-
->                 return 1;
->
->         /* Case-sensitive compare for the variable name */
-> --
-> 2.39.2
->
->
+> 
+> 
+>>                 kfree_skb(skb);
+>>                 return -1;
+>> --
+>> 2.34.1
+>>
+> 
 
