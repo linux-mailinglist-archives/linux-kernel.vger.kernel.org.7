@@ -1,96 +1,98 @@
-Return-Path: <linux-kernel+bounces-786733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75F2FB36656
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:56:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 721E9B366DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:01:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39A771C225A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:50:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5313546788C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:50:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05198350D68;
-	Tue, 26 Aug 2025 13:48:27 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8987634F499;
+	Tue, 26 Aug 2025 13:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rmZ9tT8l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13510352061;
-	Tue, 26 Aug 2025 13:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A1A34F48D;
+	Tue, 26 Aug 2025 13:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756216106; cv=none; b=HpGVuf7RSUGshTlm9Y20H/uS5SYzMzGSleY/JzDl6yX+JpGkWBB1v9ppfOMpXfcLfXHNh1txyNyYeIXRUfiRmF4Av46yN99fEv9XCUE2u1A8X3Rfmzp/gahX8vTOJZdT9aA4IpgbESnKL4ZWcW8rdMSwzkLinLK+DOzHiLySDSE=
+	t=1756216155; cv=none; b=Bd+AW3UzKIOlD5hbfojBRIN9EoWy9rpc/y3f946c1Lg00cVdU29vOeLDbJegyvkTUdmgyfyFNDs/pZI9Lbi+EMRYIKPCSXEED60ypjRDYc5dISrdmuYaKinl2MxPS8+R//2/flnFUVsgkaBb6KIbvxMtj+wJO5GA5MIuLHhg5+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756216106; c=relaxed/simple;
-	bh=E4ipHpr8pNgnxzWY7k6+aa5qVF3E++wRzdL05RWYsMM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Q8ImMuNSG22tgmLAxtQ0dHIx/Mo1N0M2s2mutIElOFXw99kvLGZ9RCzgsMUbBg8tbJgF+BOvmw4iMvq2zWr236lmkLS7WbibkzW4+CjIjaopfM0BC2vdGv5UjwVqeYJ3uMykMv4JE8u2ux4NS9ZjfOUp0cLUn7s6BEG61JWTRSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay10.hostedemail.com (Postfix) with ESMTP id EA234C0116;
-	Tue, 26 Aug 2025 13:48:16 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf06.hostedemail.com (Postfix) with ESMTPA id 0630220011;
-	Tue, 26 Aug 2025 13:48:14 +0000 (UTC)
-Date: Tue, 26 Aug 2025 09:48:30 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Vladimir Riabchun <ferr.lambarginio@gmail.com>
-Cc: mhiramat@kernel.org, mark.rutland@arm.com, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: [PATCH] ftrace/samples: Fix function size computation
-Message-ID: <20250826094830.29df8e62@gandalf.local.home>
-In-Reply-To: <aK2I2IGKRwmkQuIR@vova-pc>
-References: <aK2I2IGKRwmkQuIR@vova-pc>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756216155; c=relaxed/simple;
+	bh=uoA1CYUxZEFdCmGeERe6R+Cvcvwqvl/vTuWjK6SwcjE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mWoFJvmJq2twHkX574kxSCxJKllo+Nk0El1oWlx35GgcCPS2N1ONFNtguZ074uattqW5jNcvVx6uuSa7Ku5HGLPfjPOS6AWjbr4Vn5xYQvdGRz2ZXMWgLiSYVqWww0ZkAuMpv6rGuiCfUNg0WGq0o8FwTBF0cY7F5+xvQOS+W1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rmZ9tT8l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A186C113CF;
+	Tue, 26 Aug 2025 13:49:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756216155;
+	bh=uoA1CYUxZEFdCmGeERe6R+Cvcvwqvl/vTuWjK6SwcjE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rmZ9tT8ldgZx6a8CIcCzSPIhmnD+yPipPv9GiBdPv27sOkhzZKqZmV75d5/a8mUy3
+	 4qhZwqqZza72LzVVjNIxnnm4LHMsn/sX+QLLOB9RoR8eFw4EuXeEu80dwb0mKXyXGU
+	 L2OiV13r4iaQcpnQeE0MEhE8EhSeKPufk9QatN5Rrb7ub2mbRqyX8lA+3Kun8c6+D0
+	 egOE3MhysIjs3+Q947cdebqGlltUVVGnvYeFTR4tXSOT84o5MD3kDlK5XHczVocmxM
+	 HsQyXS3VvmEbJfqiX8oqwUSgRCD+NKY86utgHSkT1jqjidM3NNVIEpIe+3ZaKLJujM
+	 8zkrOYUE/iT4w==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1uqu2z-00000000Fao-17rv;
+	Tue, 26 Aug 2025 15:49:13 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-kbuild@vger.kernel.org
+Subject: [PATCH 0/1] add a make target to generate man pages from kernel-doc
+Date: Tue, 26 Aug 2025 15:49:03 +0200
+Message-ID: <cover.1756215924.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 0630220011
-X-Stat-Signature: 1sukhm3gfsgjqyya5su7mshwpyoq6xxc
-X-Rspamd-Server: rspamout02
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX188ZSJlApzxUpGoUKX9eNJ4rZ6Ov4IY9T8=
-X-HE-Tag: 1756216094-40363
-X-HE-Meta: U2FsdGVkX18xZKTODcEQVYL4mEQn1hzbh6po6THk+OH6jYJAWvmgKge/FFmacYved7ZmQOu1GI5KHaCV7ypBZ3yq72m9hVunf8tfAPPzXJfMd1QYsgIlGQA12S+j7fBtUl2vW/TyNTH7FuSD6R2LW9COacm4G4R/UwvT5H2mvIq3sLABp4mLIJ+t0yJHSCYyzUcwGoffezd92Iabs6B7ayfHfHABeccgSOlYjhI0prRHf40JopTxvxGqq3/pATEAuSRkCBKSECXjSXMYNOASqmpYfMFRGdsuWTFnIdfUMR15SMicSqYscHXxMcxqDPYGznEw9A7Pg0kXRJaFSaR+ODZUOuqyzntn
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-On Tue, 26 Aug 2025 12:13:44 +0200
-Vladimir Riabchun <ferr.lambarginio@gmail.com> wrote:
+Currently, generation of manpages is hacky: one needs to run
+kernel-doc over c source files and then use an extra script to
+split results.
 
-> In my_tramp1 function ASM_RET instruction was placed below
-> .size directive, leading to a wrong function size.
+The new kernel-doc tool supports multiple files and even dirs,
+so there's no need to use git ls-files anymore.
 
-Looking at the Fixes commit, it appears that the .size directive was placed
-above the ret instruction ;-)
+Yet, it produces a single output. Change the logic to add, instead
+a target to docs Makefile to produce them, moving the split
+and build logic to sphinx-build-wrapper.
 
--- Steve
+That allows honoring SPHINXDIRS when they point to a subdir,
+while scanning all files by default.
 
+This series comes after:
+    https://lore.kernel.org/linux-doc/cover.1756138805.git.mchehab+huawei@kernel.org/T/#t
 
-> 
-> Fixes: 9d907f1ae80b ("samples/ftrace: Fix asm function ELF annotations")
-> Signed-off-by: Vladimir Riabchun <ferr.lambarginio@gmail.com>
-> ---
->  samples/ftrace/ftrace-direct-modify.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/samples/ftrace/ftrace-direct-modify.c b/samples/ftrace/ftrace-direct-modify.c
-> index cfea7a38befb..da3a9f2091f5 100644
-> --- a/samples/ftrace/ftrace-direct-modify.c
-> +++ b/samples/ftrace/ftrace-direct-modify.c
-> @@ -75,8 +75,8 @@ asm (
->  	CALL_DEPTH_ACCOUNT
->  "	call my_direct_func1\n"
->  "	leave\n"
-> -"	.size		my_tramp1, .-my_tramp1\n"
->  	ASM_RET
-> +"	.size		my_tramp1, .-my_tramp1\n"
->  
->  "	.type		my_tramp2, @function\n"
->  "	.globl		my_tramp2\n"
+Mauro Carvalho Chehab (1):
+  docs: add support to build manpages from kerneldoc output
+
+ Documentation/Makefile                 |  3 +-
+ Documentation/doc-guide/kernel-doc.rst | 19 ++-----
+ Makefile                               |  2 +-
+ scripts/split-man.pl                   | 28 ----------
+ tools/docs/sphinx-build-wrapper        | 77 ++++++++++++++++++++++++--
+ 5 files changed, 80 insertions(+), 49 deletions(-)
+ delete mode 100755 scripts/split-man.pl
+
+-- 
+2.51.0
+
 
 
