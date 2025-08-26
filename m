@@ -1,204 +1,206 @@
-Return-Path: <linux-kernel+bounces-785860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B5CEB351E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:48:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 25D73B351E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:52:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EC653B5DF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:48:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF98868666F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:52:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80F028A1F1;
-	Tue, 26 Aug 2025 02:48:07 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18B028E5F3;
+	Tue, 26 Aug 2025 02:52:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gbUg30/n"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839012877D4
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 02:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71125279346;
+	Tue, 26 Aug 2025 02:51:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756176487; cv=none; b=EbEPp27gOrDthTNzfCmihgi6IexXia0wwAnVpkswE8LpmxJREjofHSmRQ4Wy9IpMxFKuyb9/brTiPZd4iinnNbnDkSPkqt3B6ymcbjIRMJUVjKo18WlXjgVFyr/Yi6b5aSNu512tmVGezenGV0qqOPXNOGoi9axeYolflGIZ1bs=
+	t=1756176721; cv=none; b=EwCRU7e7sYRWVMlmqDp+0FW40egH36xLc/YMYa0gvctWR2nyLGp4Bgc6/4L1NQiUpj90RwWsfZDvIQ0ek2W/5NUEg4guXZ24oHxugoMtWnWxnEba8xO02Sqk+JmtLGIHiwSwjl1XYZuMn8hy5YNkufvmMJT97y6jdUqtUcG66T0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756176487; c=relaxed/simple;
-	bh=IN1a0yewUcS+IfDpY+MtN4m6Kum1Zp33/vix8ukorLo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=SRjARVzt5FqO9kbDclmpJ2FKqHBOchPdBXTOHpFBCGWBWGFhEARVAov0but16a2BPYmSsrzENmGB5L0JcWf8mIttwHRQtCymFt4Gy+fqcIpoTuhr33vs5z/O+Lcc+Euu0iDvYUBA7UMWM5IKNZH39IgXw2ll0ulVBOLdlkzt2QQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3ee05b9a323so12842515ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 19:48:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756176484; x=1756781284;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6dVjRncimMYQRVsn/lRqwwRo7h4nLYoqygCKmIrs+go=;
-        b=HvcgrutLSJYP4f5QArQn7r9DDTVwBsaNTBT5SGhjP2sBzPg7S1IhZ/HNs776IOm4Hu
-         9AoTeW9Gy4mpiq9mpa4HmYTS6k06WDg9RBFXLjWBC4PkjcX95t4sXWHbpntLYQOY+4Pp
-         RxTqzTV60QD5i9MGWapxZPtYxgjVazoKfosTf8EIfsc9mVHoznwsrmXREg0bLLtzplkt
-         9vau8tOtvRLyv6EOseLfj/x0VwTe84IljZHhDNXTYWPXclpsLuiqSYkVNpDo9fnt53AH
-         8hT7xcvIksfYnBW8dGBRKQmvOIZ79B3AEAJfGaIEnDi1glbPGVlifAXG5jko6Sp+JSBC
-         ot5w==
-X-Forwarded-Encrypted: i=1; AJvYcCWL7S/fRdLaigXVjKD2kH8XjxDvL0BRvX1APy4JrtOi6L6DgLyWW1i7O7f7l/vlA/fwtRXJQ0LJv2fFHAA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWQhqa759EF+8xCfj/GrrpcRl8JlnvJ1IpyK7KOU32PqpsfEcL
-	0wdbaRb2Le1R8YsI2mISUI52UOd2fdngluVRvqROTgwSuVO97c+8IHiZulEnoSusGd4t571H7Em
-	BOZpZQSpx9vz/xDNLb2rmhO6v9ptUCES4qOpKwGhRGGqtukh2UV1U6e3hp5I=
-X-Google-Smtp-Source: AGHT+IF3291bKt8EJF5/PoO2EP3BMtBN+sIDTft7rfL0/8/9XYfXJlCMR3rHEPVUQ7uRQSuHffFVAAWJhiXo7tcMkSAI+RsXn4SW
+	s=arc-20240116; t=1756176721; c=relaxed/simple;
+	bh=DMN39XlEXuf7uIgDoXm2mjQcLKXK4t78gZNEvwqiI/E=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=g60omY5znn64KEHn3Rk7tGgW/rF/5EAgIZFwIIOO5j10mcY0wJaRCXdXhs1GW+BdJYTru8+Mje5YDOHvXwywNTPZkdvh+KWXiucMbGnAmc6BqTrIkVZoOdzYl8iER+fO4Hq/VnKaQ4ZBz1x5tZuasOK8uZwD6gEqFfjuwRsXfc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gbUg30/n; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1756176719; x=1787712719;
+  h=message-id:date:mime-version:subject:from:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=DMN39XlEXuf7uIgDoXm2mjQcLKXK4t78gZNEvwqiI/E=;
+  b=gbUg30/nBzq47eQDa+KXlrOD69Sps1U9cCAQUlpw2RanMzoOiWFuT9Bu
+   uMYnT96fxJg6gV3obAl7TT4rsVTlbhgUsDoJWxS/v51HuMarBUPC6g92p
+   Dm/nSEXrujM223c8aFU4JIk2xcTOr9HJq/KiGKCNpPWvs7UW8He3Es1LC
+   iila96JB2LKgVE1qO0DQiEEboG0u0hPbRDUIwTssYm+0zgzKIUYCrStbT
+   ltI+DkRyjSVpbynkX4CTuXvsRghGcnHFUf9o3xXi3SDhTz8N3bj4oIGth
+   V6jD84O/wY6KFSeAKUl2UbXn1aij1b+///Z8nwdHwoWDskkC5l8dgg9DB
+   g==;
+X-CSE-ConnectionGUID: aRZoQ4OnSkOAxh+BxA+tGg==
+X-CSE-MsgGUID: 7hbs4AagRVGlzgramDJSvA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11533"; a="61037366"
+X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
+   d="scan'208";a="61037366"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 19:51:58 -0700
+X-CSE-ConnectionGUID: 7x62P4XgTkGQzHGQufWCTw==
+X-CSE-MsgGUID: sB+U/l7aQHGJChXPsKBrAA==
+X-ExtLoop1: 1
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2025 19:51:54 -0700
+Message-ID: <dde6d861-daa3-49ed-ad4f-ff9dcaf1f2b8@linux.intel.com>
+Date: Tue, 26 Aug 2025 10:49:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3813:b0:3ed:d368:48b0 with SMTP id
- e9e14a558f8ab-3eeb30f7886mr11442445ab.0.1756176484591; Mon, 25 Aug 2025
- 19:48:04 -0700 (PDT)
-Date: Mon, 25 Aug 2025 19:48:04 -0700
-In-Reply-To: <20250826015036.5513-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ad2064.050a0220.37038e.00a0.GAE@google.com>
-Subject: Re: [syzbot] [net?] unregister_netdevice: waiting for DEV to become
- free (8)
-From: syzbot <syzbot+881d65229ca4f9ae8c84@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/1] iommu/sva: Invalidate KVA range on kernel TLB
+ flush
+From: Baolu Lu <baolu.lu@linux.intel.com>
+To: Dave Hansen <dave.hansen@intel.com>, "Tian, Kevin"
+ <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Jann Horn <jannh@google.com>,
+ Vasant Hegde <vasant.hegde@amd.com>, Alistair Popple <apopple@nvidia.com>,
+ Peter Zijlstra <peterz@infradead.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Andy Lutomirski <luto@kernel.org>, "Lai, Yi1" <yi1.lai@intel.com>,
+ "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+ "security@kernel.org" <security@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>
+References: <20250806052505.3113108-1-baolu.lu@linux.intel.com>
+ <d646d434-f680-47a3-b6b9-26f4538c1209@intel.com>
+ <20250806155223.GV184255@nvidia.com>
+ <d02cb97a-7cea-4ad3-82b3-89754c5278ad@intel.com>
+ <20250806160904.GX184255@nvidia.com>
+ <62d21545-9e75-41e3-89a3-f21dda15bf16@intel.com>
+ <4a8df0e8-bd5a-44e4-acce-46ba75594846@linux.intel.com>
+ <20250807195154.GO184255@nvidia.com>
+ <BN9PR11MB52762A47B347C99F0C0E4C288C2FA@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <87bfc80e-258e-4193-a56c-3096608aec30@linux.intel.com>
+ <BN9PR11MB52766165393F7DD8209DA45A8C32A@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <e321d374-38a7-4f60-b991-58458a2761b9@linux.intel.com>
+ <9a649ff4-55fe-478a-bfd7-f3287534499a@intel.com>
+ <b0f613ce-7aad-4b1d-b6a1-4acc1d6c489e@linux.intel.com>
+Content-Language: en-US
+In-Reply-To: <b0f613ce-7aad-4b1d-b6a1-4acc1d6c489e@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 8/26/25 09:25, Baolu Lu wrote:
+> On 8/26/25 06:36, Dave Hansen wrote:
+>> On 8/22/25 20:26, Baolu Lu wrote:
+>>> +static struct {
+>>> +    /* list for pagetable_dtor_free() */
+>>> +    struct list_head dtor;
+>>> +    /* list for __free_page() */
+>>> +    struct list_head page;
+>>> +    /* list for free_pages() */
+>>> +    struct list_head pages;
+>>> +    /* protect all the ptdesc lists */
+>>> +    spinlock_t lock;
+>>> +    struct work_struct work;
+>>
+>> Could you explain a bit why this now needs three separate lists? Seems
+>> like pure overkill.
+> 
+> Yes, sure.
+> 
+> The three separate lists are needed because we're handling three
+> distinct types of page deallocation. Grouping the pages this way allows
+> the workqueue handler to free each type using the correct function.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: use-after-free Read in j1939_netdev_stop
+Please allow me to add more details.
 
-==================================================================
-BUG: KASAN: use-after-free in netdev_get_ml_priv include/linux/netdevice.h:2692 [inline]
-BUG: KASAN: use-after-free in can_get_ml_priv include/linux/can/can-ml.h:71 [inline]
-BUG: KASAN: use-after-free in j1939_priv_set net/can/j1939/main.c:150 [inline]
-BUG: KASAN: use-after-free in __j1939_rx_release net/can/j1939/main.c:221 [inline]
-BUG: KASAN: use-after-free in kref_put_mutex include/linux/kref.h:86 [inline]
-BUG: KASAN: use-after-free in j1939_netdev_stop+0x2df/0x320 net/can/j1939/main.c:312
-Read of size 4 at addr ffff888062a506b0 by task syz.0.17/6467
+> 
+> - pagetable_dtor_free(): This is for freeing PTE pages, which require
+>    specific cleanup of a ptdesc structure.
 
-CPU: 0 UID: 0 PID: 6467 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0xcd/0x630 mm/kasan/report.c:482
- kasan_report+0xe0/0x110 mm/kasan/report.c:595
- netdev_get_ml_priv include/linux/netdevice.h:2692 [inline]
- can_get_ml_priv include/linux/can/can-ml.h:71 [inline]
- j1939_priv_set net/can/j1939/main.c:150 [inline]
- __j1939_rx_release net/can/j1939/main.c:221 [inline]
- kref_put_mutex include/linux/kref.h:86 [inline]
- j1939_netdev_stop+0x2df/0x320 net/can/j1939/main.c:312
- j1939_sk_release+0x5c3/0x8e0 net/can/j1939/socket.c:651
- __sock_release+0xb0/0x270 net/socket.c:649
- sock_close+0x1c/0x30 net/socket.c:1439
- __fput+0x402/0xb70 fs/file_table.c:468
- task_work_run+0x14d/0x240 kernel/task_work.c:227
- exit_task_work include/linux/task_work.h:40 [inline]
- do_exit+0x86f/0x2bf0 kernel/exit.c:961
- do_group_exit+0xd3/0x2a0 kernel/exit.c:1102
- get_signal+0x2673/0x26d0 kernel/signal.c:3034
- arch_do_signal_or_restart+0x8f/0x7d0 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop+0x84/0x110 kernel/entry/common.c:40
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
- syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
- do_syscall_64+0x3f6/0x4c0 arch/x86/entry/syscall_64.c:100
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f15b7b8ebe9
-Code: Unable to access opcode bytes at 0x7f15b7b8ebbf.
-RSP: 002b:00007f15b899d038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: 0000000000000024 RBX: 00007f15b7db5fa0 RCX: 00007f15b7b8ebe9
-RDX: 0000000000000000 RSI: 0000200000000200 RDI: 0000000000000003
-RBP: 00007f15b7c11e19 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f15b7db6038 R14: 00007f15b7db5fa0 R15: 00007ffec48e9178
- </TASK>
+This is used in
 
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x62a50
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000000000 ffffea0001db7008 ffffea00018a9208 0000000000000000
-raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as freed
-page last allocated via order 3, migratetype Unmovable, gfp_mask 0x446dc0(GFP_KERNEL_ACCOUNT|__GFP_ZERO|__GFP_NOWARN|__GFP_RETRY_MAYFAIL|__GFP_COMP), pid 6357, tgid 6357 (syz-executor), ts 118494889601, free_ts 123112554125
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1c0/0x230 mm/page_alloc.c:1851
- prep_new_page mm/page_alloc.c:1859 [inline]
- get_page_from_freelist+0x132b/0x38e0 mm/page_alloc.c:3858
- __alloc_frozen_pages_noprof+0x261/0x23f0 mm/page_alloc.c:5148
- alloc_pages_mpol+0x1fb/0x550 mm/mempolicy.c:2416
- ___kmalloc_large_node+0xed/0x160 mm/slub.c:4306
- __kmalloc_large_node_noprof+0x1c/0x70 mm/slub.c:4337
- __do_kmalloc_node mm/slub.c:4353 [inline]
- __kvmalloc_node_noprof.cold+0xb/0x65 mm/slub.c:5052
- alloc_netdev_mqs+0xd2/0x1530 net/core/dev.c:11812
- rtnl_create_link+0xc08/0xf90 net/core/rtnetlink.c:3633
- vxcan_newlink+0x2f8/0x640 drivers/net/can/vxcan.c:208
- rtnl_newlink_create net/core/rtnetlink.c:3825 [inline]
- __rtnl_newlink net/core/rtnetlink.c:3942 [inline]
- rtnl_newlink+0xc45/0x2000 net/core/rtnetlink.c:4057
- rtnetlink_rcv_msg+0x95b/0xe90 net/core/rtnetlink.c:6946
- netlink_rcv_skb+0x155/0x420 net/netlink/af_netlink.c:2552
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x5aa/0x870 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x8d1/0xdd0 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:714 [inline]
- __sock_sendmsg net/socket.c:729 [inline]
- __sys_sendto+0x4a0/0x520 net/socket.c:2228
-page last free pid 6467 tgid 6466 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1395 [inline]
- __free_frozen_pages+0x7d5/0x10f0 mm/page_alloc.c:2895
- device_release+0xa1/0x240 drivers/base/core.c:2565
- kobject_cleanup lib/kobject.c:689 [inline]
- kobject_release lib/kobject.c:720 [inline]
- kref_put include/linux/kref.h:65 [inline]
- kobject_put+0x1e7/0x5a0 lib/kobject.c:737
- netdev_run_todo+0x7e9/0x1320 net/core/dev.c:11513
- rtnl_unlock net/core/rtnetlink.c:157 [inline]
- rtnl_net_unlock include/linux/rtnetlink.h:135 [inline]
- rtnl_dellink+0x3da/0xa80 net/core/rtnetlink.c:3563
- rtnetlink_rcv_msg+0x95b/0xe90 net/core/rtnetlink.c:6946
- netlink_rcv_skb+0x155/0x420 net/netlink/af_netlink.c:2552
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x5aa/0x870 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x8d1/0xdd0 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:714 [inline]
- __sock_sendmsg net/socket.c:729 [inline]
- ____sys_sendmsg+0xa98/0xc70 net/socket.c:2614
- ___sys_sendmsg+0x134/0x1d0 net/socket.c:2668
- __sys_sendmsg+0x16d/0x220 net/socket.c:2700
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+static inline void pte_free_kernel(struct mm_struct *mm, pte_t *pte)
 
-Memory state around the buggy address:
- ffff888062a50580: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
- ffff888062a50600: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
->ffff888062a50680: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-                                     ^
- ffff888062a50700: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
- ffff888062a50780: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-==================================================================
+and
 
+int pud_free_pmd_page(pud_t *pud, unsigned long addr)
 
-Tested on:
+> 
+>   - __free_page(): This is for freeing a single page.
 
-commit:         fab1beda Merge tag 'devicetree-fixes-for-6.17-1' of gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16049c42580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d4703ac89d9e185a
-dashboard link: https://syzkaller.appspot.com/bug?extid=881d65229ca4f9ae8c84
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=142de862580000
+This is used in
+
+static void cpa_collapse_large_pages(struct cpa_data *cpa)
+{
+         ... ...
+
+	list_for_each_entry_safe(ptdesc, tmp, &pgtables, pt_list) {
+                 list_del(&ptdesc->pt_list);
+                 __free_page(ptdesc_page(ptdesc));
+         }
+}
+
+> 
+>   - free_pages(): This is for freeing a contiguous block of pages that
+>     were allocated together.
+
+This is used in
+
+static void __meminit free_pagetable(struct page *page, int order)
+{
+	... ...
+
+	free_pages((unsigned long)page_address(page), order);
+}
+
+What's strange is that order is almost always 0, except in the path of
+remove_pmd_table() -> free_hugepage_table(), where order can be greater
+than 0. However, in this context path, free_hugepage_table() isn't used
+to free a page table page itself. Instead, it's used to free the actual
+pages that a leaf PMD is pointing to.
+
+static void __meminit
+remove_pmd_table(pmd_t *pmd_start, unsigned long addr, unsigned long end,
+                  bool direct, struct vmem_altmap *altmap)
+{
+         ... ...
+
+         if (pmd_leaf(*pmd)) {
+                 if (IS_ALIGNED(addr, PMD_SIZE) &&
+                     IS_ALIGNED(next, PMD_SIZE)) {
+                         if (!direct)
+                                 free_hugepage_table(pmd_page(*pmd),
+                                                     altmap);
+
+                         spin_lock(&init_mm.page_table_lock);
+                         pmd_clear(pmd);
+                         spin_unlock(&init_mm.page_table_lock);
+                         pages++;
+                 } else if (vmemmap_pmd_is_unused(addr, next)) {
+                                 free_hugepage_table(pmd_page(*pmd),
+                                                     altmap);
+                                 spin_lock(&init_mm.page_table_lock);
+                                 pmd_clear(pmd);
+                                 spin_unlock(&init_mm.page_table_lock);
+                 }
+                 continue;
+
+         ... ...
+}
+
+Is this a misuse of free_pagetable() or anything overlooked?
+
+Thanks,
+baolu
 
 
