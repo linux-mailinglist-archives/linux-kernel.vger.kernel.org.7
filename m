@@ -1,48 +1,96 @@
-Return-Path: <linux-kernel+bounces-786831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB7EFB36B21
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:43:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 862AFB36C8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:57:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B06034E2C59
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:43:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 506142A60E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F4174352FF0;
-	Tue, 26 Aug 2025 14:40:29 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4EE7352FFC
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 14:40:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD9533439F;
+	Tue, 26 Aug 2025 14:41:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WO1bToP9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5FDB34DCED
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 14:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756219229; cv=none; b=BCfqT9zZ0HcnD2qpd5EwCxqZiNknTdob2B3FOy5X8m6XTgSanqDhxixtnvldKJmsj/HRU1h8HzYhgoVKwaBL+nPUXa38VpAJwV91+XNgDiJDoGkX8kAcg4GSuJDTDZ/74Ay9Uziywx5gehDVe5vkzbxI+IFXcuhnjtdhkjewANs=
+	t=1756219260; cv=none; b=QHZGae4dysL/eKKCgSUtcf1s8zhhQbFAd/O/0bzcHwYKdFxuyeeqj/rEaHWEewCUyv1wG3hEVKArbyblIbFHT/UGl4kWPCP0OaxcnPsWdL8/U4kW7X0zYZHP5UbtecMcWcaw5PK1H7Hwso5jOca3PVnTiC0ISac+e16ijMQ/X94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756219229; c=relaxed/simple;
-	bh=kSe13fwo97E00gcXuKHBNqwQgjC0TaeIYw3hj9qfT/U=;
+	s=arc-20240116; t=1756219260; c=relaxed/simple;
+	bh=UV6QsGJaNRCIjLl6uGJScd++GUZtMzgSHcsM6bVx3c4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=al0Gp5oJSpW9BdTCohCQTanf7BxXrkCgjALYsp2I9WQVJ98z4dwcwKi2kgx1/6bNkRzS0/krEZW3XUs4UAGmc5UK/QLjSsWu+AhD0T2EEHwzExhQbiagZEgiymL109jheyMvValgQ1vdAnysX0/jaosIFEpObU1azbuhR9Bfeiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7D29D169E;
-	Tue, 26 Aug 2025 07:40:18 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CD3203F694;
-	Tue, 26 Aug 2025 07:40:24 -0700 (PDT)
-Date: Tue, 26 Aug 2025 15:40:22 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Breno Leitao <leitao@debian.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, kexec@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	bhe@redhat.com, oxu@redhat.com, berrange@redhat.com,
-	kernel-team@meta.com, Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] arm64: kexec: Initialize kexec_buf struct in image_load()
-Message-ID: <aK3HVqt6I5KxoHia@J2N7QTR9R3>
-References: <20250826-akpm-v1-1-3c831f0e3799@debian.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NrcT1z70jTDScypIMij1qOyp/yyArUR444Xg1/FPy9s9dv+qhD7SMxUnrRSLqy9v6UeYsKGsoOUrwqGAEOnIegHg51IrpULV/PtGpSI8FjaY3uEVSE1oKu+3KybX1BglSnsxsKgVlhZBeykRzlYPZ1Z/4dHN1NVaP511T6Ch0D8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WO1bToP9; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756219258;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1ihfy3FuhJ2wqfa7u6CNmaEum1YBa2rsl3CeJYStFWI=;
+	b=WO1bToP91ispJ69P0K21+rAnZVGMY77+QthH1BIJJgmqAwoOvMY4uB/w8v12ILKfUJBHMZ
+	imn1dIOikiNTrqCRxv4OIlTiWgk06bY9LbJ5sYS9qmHGivHesvZfg4voR0yWrmn9owDQjD
+	eUimPDVl9wfco+hxlqBI9fOiP/yCVXM=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-504-K_yzqW-xPLSvG_W_N4MUNw-1; Tue, 26 Aug 2025 10:40:56 -0400
+X-MC-Unique: K_yzqW-xPLSvG_W_N4MUNw-1
+X-Mimecast-MFC-AGG-ID: K_yzqW-xPLSvG_W_N4MUNw_1756219255
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45b51411839so28185185e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 07:40:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756219255; x=1756824055;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1ihfy3FuhJ2wqfa7u6CNmaEum1YBa2rsl3CeJYStFWI=;
+        b=eBtXUBL/T12ClRiN5gQ9HBbWd8nYFVU5/g4d/rJuxb6EQ1XMvgq0XSracBEI4p+3EI
+         fjhjffTP1lt1cElluNVAUAabLELRjvAKET2m3jhGqHxUzSXGOQcwlwzowYDNs9prG3eK
+         YyV+0VqibFfABmmqKXQhPrfB01ocCkN7+LBQKPE14h04dEdwWYwNiNBEutJ783UlNH6g
+         mDLKLT+KfzFppwWxqxpvW7epAlfzBNVdOVkMNeNJ9xD4/OXZ4i7Eihzsm44thSebvy/t
+         vcqY/76YWTQ87X4PGmhyHXDVkB2CyYJMGdWbQIB3aQDUJnKp2vwxZjttudnqyPuhJXz6
+         HvMg==
+X-Forwarded-Encrypted: i=1; AJvYcCUdHCVMwwjOwO3E8p2szpKYvgWtfpe5Wfv7Gh4Ecpo05vUzKa7jEc5ReY/lQ10O1vG2HxafdXzEeSkuQZg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZ+Mb1upg4cyeA0dXhSGSgReVyUang6YPXGxZgM5jyDfqaCZQo
+	uYZGZTG7jSdsjHGs0ixUYGn84dc+AoYFNGbma3gLqQGnD82NcH8XrBKu9YMhdzTEIn7OahwjEaN
+	yKMmmJjFO5I22cJFkOjYO9TziTgSpA98Nm+vGf+S/D7T2lHQsqjHG7qS1sJEmZdjfXw==
+X-Gm-Gg: ASbGncsCBuGo5SNsfLTOfCipohOBhuROTfvj1IMqzKNxDCmOzJGVVSApl41E91UpnRn
+	HhAn9MBrbQAhsdsy2J4zFpkZUGLz8BrHKArOIMLuuccOJ05XNTHzWqJ1CJSa+k9j58srHvTrjQi
+	WekmFGZZ5x+5VPeTy3IANO09ndoh3wYR0LDhjttqrV5T1czBQ1M+2sdIL4BYc7OZfEKcZurfsxv
+	eKHcmxsnkSQwxVabnTo0O9Csfhgh1CW6isZRUU76sTxld14k/MQnzgrQWmPVaju4sxS6rQHJmVN
+	mvfxSoQQznI/QDDoVFt1Kl6mDf1lzLw=
+X-Received: by 2002:a05:600c:5251:b0:455:f380:32e2 with SMTP id 5b1f17b1804b1-45b517ca54cmr149244005e9.18.1756219254594;
+        Tue, 26 Aug 2025 07:40:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHQn6JvvJeT7MlM5vxv7NDmMYfGEo1DRscOYnhsp0L3inuZrfVRfxK+fMUnsbs9Tx6WF6MBXA==
+X-Received: by 2002:a05:600c:5251:b0:455:f380:32e2 with SMTP id 5b1f17b1804b1-45b517ca54cmr149243805e9.18.1756219254143;
+        Tue, 26 Aug 2025 07:40:54 -0700 (PDT)
+Received: from redhat.com ([185.137.39.227])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b5df6b356sm112346715e9.0.2025.08.26.07.40.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Aug 2025 07:40:53 -0700 (PDT)
+Date: Tue, 26 Aug 2025 10:40:50 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Jason Wang <jasowang@redhat.com>,
+	kvm@vger.kernel.org, virtualization@lists.linux.dev,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH 1/3] vhost_task: KVM: Don't wake KVM x86's recovery
+ thread if vhost task was killed
+Message-ID: <20250826103625-mutt-send-email-mst@kernel.org>
+References: <20250826004012.3835150-1-seanjc@google.com>
+ <20250826004012.3835150-2-seanjc@google.com>
+ <20250826034937-mutt-send-email-mst@kernel.org>
+ <aK2-tQLL-WN7Mqpb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,86 +99,122 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250826-akpm-v1-1-3c831f0e3799@debian.org>
+In-Reply-To: <aK2-tQLL-WN7Mqpb@google.com>
 
-On Tue, Aug 26, 2025 at 05:08:51AM -0700, Breno Leitao wrote:
-> The kexec_buf structure was previously declared without initialization
-> in image_load(). This led to a UBSAN warning when the structure was
-> expanded and uninitialized fields were accessed [1].
-
-Just to check my understanding, is that only a problem for new fields
-(e.g. the 'random' field added in [1]), or do we have UBSAN warnigns for
-any existing fields? I assume there's no problem with existing fields
-today.
-
-> Zero-initializing kexec_buf at declaration ensures all fields are
-> cleanly set, preventing future instances of uninitialized memory being
-> used.
+On Tue, Aug 26, 2025 at 07:03:33AM -0700, Sean Christopherson wrote:
+> On Tue, Aug 26, 2025, Michael S. Tsirkin wrote:
+> > On Mon, Aug 25, 2025 at 05:40:09PM -0700, Sean Christopherson wrote:
+> > > Provide an API in vhost task instead of forcing KVM to solve the problem,
+> > > as KVM would literally just add an equivalent to VHOST_TASK_FLAGS_KILLED,
+> > > along with a new lock to protect said flag.  In general, forcing simple
+> > > usage of vhost task to care about signals _and_ take non-trivial action to
+> > > do the right thing isn't developer friendly, and is likely to lead to
+> > > similar bugs in the future.
+> > > 
+> > > Debugged-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> > > Link: https://lore.kernel.org/all/aKkLEtoDXKxAAWju@google.com
+> > > Link: https://lore.kernel.org/all/aJ_vEP2EHj6l0xRT@google.com
+> > > Suggested-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> > > Fixes: d96c77bd4eeb ("KVM: x86: switch hugepage recovery thread to vhost_task")
+> > > Cc: stable@vger.kernel.org
+> > > Signed-off-by: Sean Christopherson <seanjc@google.com>
+> > 
+> > OK but I dislike the API.
 > 
-> Andrew Morton suggested that this function is only called 3x a week[2],
-> thus, the memset() cost is inexpressive.
+> FWIW, I don't love it either.
 > 
-> Link: https://lore.kernel.org/all/oninomspajhxp4omtdapxnckxydbk2nzmrix7rggmpukpnzadw@c67o7njgdgm3/ [1]
-> Link: https://lore.kernel.org/all/20250825180531.94bfb86a26a43127c0a1296f@linux-foundation.org/ [2]
-> Suggested-by: Andrew Morton <akpm@linux-foundation.org>
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-
-This looks fine to me, but I reckon it should be added to the series
-which extends kexec_buf, unless there's some reason to avoid that?
-
-> ---
->  arch/arm64/kernel/kexec_image.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-IIUC arch/arm64/kernel/machine_kexec_file.c would need the same
-treatment in load_other_segments().
-
-If other architectures need this, it'd probably make sense to clean that
-up treewide in one go. It looks like at least riscv and s390 need that
-from a quick grep:
-
-| [mark@lakrids:~/src/linux]% git grep -w 'struct kexec_buf .*;'
-| arch/arm64/kernel/kexec_image.c:        struct kexec_buf kbuf;
-| arch/arm64/kernel/machine_kexec_file.c: struct kexec_buf kbuf;
-| arch/powerpc/include/asm/kexec.h:int arch_kexec_locate_mem_hole(struct kexec_buf *kbuf);
-| arch/powerpc/include/asm/kexec.h:                                 struct kexec_buf *kbuf);
-| arch/riscv/kernel/elf_kexec.c:  struct kexec_buf kbuf;
-| arch/riscv/kernel/elf_kexec.c:  struct kexec_buf kbuf;
-| arch/riscv/kernel/elf_kexec.c:  struct kexec_buf kbuf;
-| arch/s390/kernel/kexec_elf.c:   struct kexec_buf buf;
-| arch/s390/kernel/kexec_image.c: struct kexec_buf buf;
-| arch/s390/kernel/machine_kexec_file.c:  struct kexec_buf buf;
-| arch/s390/kernel/machine_kexec_file.c:  struct kexec_buf buf;
-| arch/s390/kernel/machine_kexec_file.c:  struct kexec_buf buf;
-| include/linux/kexec.h:int kexec_load_purgatory(struct kimage *image, struct kexec_buf *kbuf);
-| include/linux/kexec.h:extern int kexec_add_buffer(struct kexec_buf *kbuf);
-| include/linux/kexec.h:int kexec_locate_mem_hole(struct kexec_buf *kbuf);
-| kernel/kexec_file.c:    struct kexec_buf *kbuf = (struct kexec_buf *)arg;
-
-Mark.
-
+> > Default APIs should be safe. So vhost_task_wake_safe should be
+> > vhost_task_wake
+> > 
+> > This also reduces the changes to kvm.
+> > 
+> > 
+> > It does not look like we need the "unsafe" variant, so pls drop it.
 > 
-> diff --git a/arch/arm64/kernel/kexec_image.c b/arch/arm64/kernel/kexec_image.c
-> index 532d72ea42ee8..b70f4df15a1ae 100644
-> --- a/arch/arm64/kernel/kexec_image.c
-> +++ b/arch/arm64/kernel/kexec_image.c
-> @@ -41,7 +41,7 @@ static void *image_load(struct kimage *image,
->  	struct arm64_image_header *h;
->  	u64 flags, value;
->  	bool be_image, be_kernel;
-> -	struct kexec_buf kbuf;
-> +	struct kexec_buf kbuf = {};
->  	unsigned long text_offset, kernel_segment_number;
->  	struct kexec_segment *kernel_segment;
->  	int ret;
+> vhost_vq_work_queue() calls
 > 
-> ---
-> base-commit: 7a77c6b5ce68a71b9102760a988a4564ff6d4106
-> change-id: 20250826-akpm-18a57e3a39fd
+>   vhost_worker_queue()
+>   |
+>   -> worker->ops->wakeup(worker)
+>      |
+>      -> vhost_task_wakeup()
+>         |
+>         -> vhost_task_wake()
 > 
-> Best regards,
-> --  
-> Breno Leitao <leitao@debian.org>
+> while holding RCU and so can't sleep.
+> 
+> 	rcu_read_lock();
+> 	worker = rcu_dereference(vq->worker);
+> 	if (worker) {
+> 		queued = true;
+> 		vhost_worker_queue(worker, work);
+> 	}
+> 	rcu_read_unlock();
+> 
+> And the call from __vhost_worker_flush() is done while holding a vhost_worker.mutex.
+> That's probably ok?  But there are many paths that lead to __vhost_worker_flush(),
+> which makes it difficult to audit all flows.  So even if there is an easy change
+> for the RCU conflict, I wouldn't be comfortable adding a mutex_lock() to so many
+> flows in a patch that needs to go to stable@.
+> 
+> > If we do need it, it should be called __vhost_task_wake.
+> 
+> I initially had that, but didn't like that vhost_task_wake() wouldn't call
+> __vhost_task_wake(), i.e. wouldn't follow the semi-standard pattern of the
+> no-underscores function being a wrapper for the double-underscores function.
+
+Eh. that's not really a standard. the standard is that __ is an unsafe
+variant.
+
+> I'm definitely not opposed to that though (or any other naming options).  Sans
+> comments, this was my other idea for names:
 > 
 > 
+> static void ____vhost_task_wake(struct vhost_task *vtsk)
+
+That's way too many __. Just vhost_task_wake_up_process will do.
+
+> {
+> 	wake_up_process(vtsk->task);
+> }
+
+
+
+Pls add docs explaining the usage of __vhost_task_wake
+and vhost_task_wake respectively.
+
+> void __vhost_task_wake(struct vhost_task *vtsk)
+> {
+> 	WARN_ON_ONCE(!vtsk->handle_sigkill);
+> 
+> 	if (WARN_ON_ONCE(test_bit(VHOST_TASK_FLAGS_KILLED, &vtsk->flags)))
+> 		return;
+
+Add comments here please explaining why we warn.
+
+> 	____vhost_task_wake(vtsk);
+> }
+> EXPORT_SYMBOL_GPL(__vhost_task_wake);
+
+
+
+> void vhost_task_wake(struct vhost_task *vtsk)
+
+
+> {
+> 	guard(mutex)(&vtsk->exit_mutex);
+> 
+> 	if (WARN_ON_ONCE(test_bit(VHOST_TASK_FLAGS_STOP, &vtsk->flags)))
+
+Add comments here please explaining why we warn.
+
+> 		return;
+> 
+> 	if (test_bit(VHOST_TASK_FLAGS_KILLED, &vtsk->flags))
+> 		return;
+> 
+> 	____vhost_task_wake(vtsk);
+> }
+> EXPORT_SYMBOL_GPL(vhost_task_wake);
+
 
