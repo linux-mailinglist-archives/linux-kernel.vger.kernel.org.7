@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-785720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D008B35006
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:12:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FDD7B3500B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:12:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4991E1B26178
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:12:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E484C1B25D6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4174114883F;
-	Tue, 26 Aug 2025 00:12:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79202199FB0;
+	Tue, 26 Aug 2025 00:12:25 +0000 (UTC)
 Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DBB01E480;
-	Tue, 26 Aug 2025 00:12:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BFE23AC22;
+	Tue, 26 Aug 2025 00:12:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756167143; cv=none; b=kJXC4spLFrlL2COvkTXUfwrFegcruaVtmJDc/tRedj9+IUStUxvq8GHB3kFH7QdSi6v30cB6ve6PfdO20/nbeLt151OqyB52osmNXtGiGgCQ3TRR0lhJoZVkVYT94PtJWC5T0IZGe9158I7hTvNdtsbMjJSDfVSzwC2MmGKQbLs=
+	t=1756167145; cv=none; b=QpLuC7J9cQTyfcky7q/4aaXTDDH/vFFWCjjPakL0We/9cIUtS+mbgjJmFgW+72qQwfCvM8oo2iMlm8/f1YDVmFMfadwA5xXzzmyNsMPeMMb6Z2yvn+CUiFSVXan3QK1W/TuOdPpZsRUVegKvgP2vxS5oZS6dylvdi2LlxlIIIoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756167143; c=relaxed/simple;
-	bh=Pv6q1KzMShRhCU4DX7d28/60wW9q12ne1Vz4QXG+un0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=S7MHDhl59oZ3bQjHbv7yeZ2tAVJfOx/vHBjFsihs3Kr2WzuQ1dfRVSET/P5xU3cGKWlMhOfnNCXK3Z+WhVdXv5/qW6nRkfIrWGxkTvDSDF1v72ogyH3ZCn2X9jwa44fret0EDjhplarAF66T6+PgOyiGZDF2iL7XoeztOCeCiaU=
+	s=arc-20240116; t=1756167145; c=relaxed/simple;
+	bh=O6ZkwTJFlV9rQHIBzRni5BKIh4ff0+xxGi0ehaNWY4E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fyguGRblaBfugjHMJ9ZNqKKPaz+rtBNwtyvNa4cLF4xFMNUJKEwACw3lc8lpwAJkkEaPN2Lvk34350Zt10zoaQzSrVv62YKb5vlshujAEzmkqmb9ijFB0bOFNIuR958qJHzR/OCKaWAmYvM/WqWIL+pOgjMRmqomx4FMsUU3llg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
@@ -32,9 +32,9 @@ Received: from local
 	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
 	 (Exim 4.98.2)
 	(envelope-from <daniel@makrotopia.org>)
-	id 1uqhI9-000000005jB-1Oak;
-	Tue, 26 Aug 2025 00:12:01 +0000
-Date: Tue, 26 Aug 2025 01:11:49 +0100
+	id 1uqhIJ-000000005jX-346A;
+	Tue, 26 Aug 2025 00:12:11 +0000
+Date: Tue, 26 Aug 2025 01:12:08 +0100
 From: Daniel Golle <daniel@makrotopia.org>
 To: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
 	Vladimir Oltean <olteanv@gmail.com>,
@@ -54,9 +54,9 @@ Cc: Andreas Schirm <andreas.schirm@siemens.com>,
 	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
 	"Livia M. Rosu" <lrosu@maxlinear.com>,
 	John Crispin <john@phrozen.org>
-Subject: [PATCH net-next 0/6] net: dsa: lantiq_gswip: prepare for supporting
- MaxLinear GSW1xx
-Message-ID: <cover.1756163848.git.daniel@makrotopia.org>
+Subject: [PATCH net-next 1/6] MAINTAINERS: lantiq_gswip: broaden file pattern
+Message-ID: <8c42d29b711287d7aa54be93809fd8cea69b7c06.1756163848.git.daniel@makrotopia.org>
+References: <cover.1756163848.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,36 +65,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <cover.1756163848.git.daniel@makrotopia.org>
 
-Continue to prepare for supporting the newer standalone MaxLinear GSW1xx
-switch family by extending the existing lantiq_gswip driver to allow it
-to support MII interfaces and MDIO bus of the GSW1xx.
+Match all drivers/net/dsa/lantiq_gswip* instead of only lantiq_gswip.c.
 
-This series has been preceded by an RFC series which covers everything
-needed to support the MaxLinear GSW1xx family of switches. Andrew Lunn
-had suggested to split it into a couple of smaller series and start
-with the changes which don't yet make actual functional changes or
-support new features.
+Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Everything has been compile and runtime tested on AVM Fritz!Box 7490
-(GSWIP version 2.1, VR9 v1.2)
-
-Link: https://lore.kernel.org/netdev/aKDhFCNwjDDwRKsI@pidgin.makrotopia.org/
-
-
-Daniel Golle (6):
-  MAINTAINERS: lantiq_gswip: broaden file pattern
-  net: dsa: lantiq_gswip: support model-specific mac_select_pcs()
-  net: dsa: lantiq_gswip: ignore SerDes modes in phylink_mac_config()
-  net: dsa: lantiq_gswip: support offset of MII registers
-  net: dsa: lantiq_gswip: support standard MDIO node name
-  net: dsa: lantiq_gswip: move MDIO bus registration to .setup()
-
- MAINTAINERS                    |  2 +-
- drivers/net/dsa/lantiq_gswip.c | 54 ++++++++++++++++++++++++++--------
- drivers/net/dsa/lantiq_gswip.h |  4 +++
- 3 files changed, 46 insertions(+), 14 deletions(-)
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index bce96dd254b8..aae3a261d7f1 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13801,7 +13801,7 @@ M:	Hauke Mehrtens <hauke@hauke-m.de>
+ L:	netdev@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml
+-F:	drivers/net/dsa/lantiq_gswip.c
++F:	drivers/net/dsa/lantiq_gswip*
+ F:	drivers/net/dsa/lantiq_pce.h
+ F:	drivers/net/ethernet/lantiq_xrx200.c
+ F:	net/dsa/tag_gswip.c
 -- 
 2.50.1
 
