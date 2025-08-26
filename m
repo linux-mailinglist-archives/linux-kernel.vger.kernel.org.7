@@ -1,193 +1,147 @@
-Return-Path: <linux-kernel+bounces-785950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C02C2B352D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:42:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5E69B352D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:46:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7F661897984
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:42:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0A1D7A846E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069C02DFA22;
-	Tue, 26 Aug 2025 04:42:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44CEB2E1745;
+	Tue, 26 Aug 2025 04:45:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M1MWC0hN"
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="TRNzaXv/"
+Received: from DNSNULL (omta038.useast.a.cloudfilter.net [44.202.169.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3770A2D3A74;
-	Tue, 26 Aug 2025 04:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C7A275B01
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 04:45:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756183345; cv=none; b=swaFfOQ7N8sebdFoCCpnZAlHsik0jcaMHMMh3QCTBceTegWyrTN2fzE6oaxvzZFNX1zns8UEOeYsjP7cT4F+ERuB6TR69CN9T4yGNHe7q70rf7jPKZoBNRYn/Uwab/v0MWOMF1cUv1sZady/lUpLSUb6TgH8vOd6XyqawNS9ESU=
+	t=1756183552; cv=none; b=myuXDkvB4t6Sl3ikskFyYS1oFjq7/JrWWD8GLOEqjbvgirQ1mLXbudA538UauMMOUBCdyaHujbdz9KFRfAHMwlWOi68AEMjPOkmC2KH1pg63WepU325LuUXbpNFE0QP759IMxLzk2l8DKyljIyDagsTNeu+NVbHb8ULlmdAdnxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756183345; c=relaxed/simple;
-	bh=k1bk6VFjDk5I1Z88ppayqh4AH6QAAdHsKpLOUa1Pwtw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ALKbq2Jq/Oo0UDeFAZ1LLGVYXuko/Fc+qCUtLzflE9O11v1fOnI82YIQQgTIo5pjd4EvUCeUQZU5NCe2fX+B9UkLiO7rpq/3ruGUyS23x9VuurPfIwC013jPlcjP1mwKK+6CYnyuXHa0+Jq0rJKTh2nXIjtRKAduPt/S9jiNbFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M1MWC0hN; arc=none smtp.client-ip=209.85.221.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-53b17558b2fso3778007e0c.3;
-        Mon, 25 Aug 2025 21:42:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756183342; x=1756788142; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+QeuOW/tAwdKvRds8hPNWFHvxC5GbUoV3RdzaFP3jJI=;
-        b=M1MWC0hNfbbZcEdvK9Ab6LQnasRLhRFcya2RwxPNcBx1Ex/lAlZM3Nkb0GYi30LUq0
-         J94uGZfJK/Yd4ekL1YVXVbE+EYajDEQ/n95wl1DSNbPLsOdxPHAKVCnK8dnDOT8LT755
-         gk/tCa5IzgHALWhmEclU1kAVzRPUXTiHDm/lT3YMo07RDT2VJiha8n/9qRO6Mngla1Jk
-         RkqnIiLOY25f0FHSKrYTCD4CiZdimGueM1g22Z5WsMhs2g+sxlmcp53mvqGWxVnrm+b5
-         upk2s/mBPJ0C9vXcwxmS2Vxj3dq5H6APuStLp8QV1v0dagc/yIoyevOyr0KzxDaF2/+i
-         yKRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756183342; x=1756788142;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+QeuOW/tAwdKvRds8hPNWFHvxC5GbUoV3RdzaFP3jJI=;
-        b=EO9acTjyCYCOKImDo0No1i6JMsLmZwdsDeQShpvar7vdEVC8zuJH0cGqX4aYgNVdFB
-         MuA5r+pWf0K85MtX+7/ya5s19UANpGg6IULhsS9600YjwH6dZevVavd/LytXMuF4NOdO
-         81OFs8mAiesR2+3lNOiToEYTcKqqEeBx47hEmXM5r3xy8ztsNYuK04eVGS4TGTCSl/mQ
-         oMdV4yN3Dk5jPa2ZqX5kRNPiphdH//U6Ol5ykmb6TbL2rgxVjZI4VQ5dVaSlURz6hngs
-         73VM6y5J1JPZnu6uTEnWx0Vk/eDpuZxPrOn1YnlV6+nmW3MhKyw+LgsWUTGvFGOohvsY
-         fJeg==
-X-Forwarded-Encrypted: i=1; AJvYcCWG/C2MHeOkp8FNT3/6Wxep/QIu+GiVpRF4+szxz7//JzXTmAvXSC0KhDLjzw+hhpodClkv9rdi2QwgzPU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5bAGLN5j3nAoUxMsU0DR/fVe5evDnKpN4MqdtsBxJ2kaUrUDy
-	EqpxG9y0aPRj2b4GZ+p77bm2f66DP8II2woNjAvYGQGWU7sZatPKlcfn6GQvsSYbbbjvB7+QoOL
-	HefjhooSLHBrRyVok9xNrCJ6HG5fP+XQ=
-X-Gm-Gg: ASbGncuQ17zgQeyem85iL+qlvtjs657tjDFZONEkZjc+HpC0TgF++idEFM7Q/BjvbBy
-	0fE7WHjY/4m/KTaNN9pi+TLePH1LgvolN7JfTNDmhLifRDj+F0p2dEOH+/IeOAe/NvjFgGH/2AR
-	05fbLa4042c/KiMQIFs8XUaaiF1pQfTSdAwBTerlHsvlTH7GyL2syuGipWIprZmQdp0MWC29fmo
-	l7DmP6lo5KhAiVgBw==
-X-Google-Smtp-Source: AGHT+IH5b0xCIWtqEG+h9ra5vWc4g5n84Q9ziHeF9o3vOHY8vzNL1C4z2v2bOjHCTTM16yDC4g/RAi16yBCVpf9ru9A=
-X-Received: by 2002:a05:6122:896:b0:53c:6d68:1cd7 with SMTP id
- 71dfb90a1353d-53c8a3f18f2mr4610648e0c.13.1756183341907; Mon, 25 Aug 2025
- 21:42:21 -0700 (PDT)
+	s=arc-20240116; t=1756183552; c=relaxed/simple;
+	bh=6fpAxUXqlyE93Q/+JD6IIdh4cHWyrM9VR52auhBYhWE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oT+zaJe8Z0Duyes69eDmPeBzC/fjUA/4Ec/zAAWilBWgXvJPWLN1FWH9DxJH3gV1Rvgm1V1uNbi1Q4vCQlPkEykBMOfJ1hCw0F2gwNkJuUj8AgnzkLpU14iUHlk8VsczDB9VDS/csnxQ6MV8tKEROc4qgm7ynFefG4kJ+ygAZ8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=TRNzaXv/; arc=none smtp.client-ip=44.202.169.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-6005b.ext.cloudfilter.net ([10.0.30.162])
+	by cmsmtp with ESMTPS
+	id qjDiuSzKQKfoqqlXaupC3Z; Tue, 26 Aug 2025 04:44:14 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id qlXZum1JAgahDqlXZuov5N; Tue, 26 Aug 2025 04:44:13 +0000
+X-Authority-Analysis: v=2.4 cv=faKty1QF c=1 sm=1 tr=0 ts=68ad3b9d
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=DR2cKC/DEnBA9KqqjaPhpA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=7T7KSl7uo7wA:10
+ a=yNDbeuk1G1CePlwefi4A:9 a=QEXdDO2ut3YA:10 a=xYX6OU9JNrHFPr8prv8u:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=3LEUZooy3cA+r1A+6Q/9oLA+oz/81DPxxeW8Ak9/YpM=; b=TRNzaXv/y0xo5y03+fEnAlaqt2
+	KZpexqG6D79IuXlv6yRe+d54dWiO3xDAPcsFF4z9yrugm3egVG+aUBIicmyl61uXJOUyH5hM4LTr4
+	YvTomCwxl2ExBNOnkDa1ctlokC7b35/CgdxvgB9MccKfmA9ij7g1lTR1I0jil01d4nwfoUi2L9t0+
+	cpnGtj8f1H+++YwZP82wX5XRq8UB3DMP5f4zI9qV03pDgGzf8+11mBlbXI5K2q8o3L0Cu00TYj+g9
+	U4724lFmFDwkKlk8ZHl6xzHcRVApv6s0BAaZS28R2/68zD3ka4kuXtJHCtYVN47OeUjGzmW68ExoQ
+	UcPk2bMQ==;
+Received: from static-243-216-117-93.thenetworkfactory.nl ([93.117.216.243]:36842 helo=[10.94.27.44])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1uqlXY-00000001RSx-0ZQh;
+	Mon, 25 Aug 2025 23:44:12 -0500
+Message-ID: <aa568cd4-3bfc-4eac-8a49-eb4cf7cf7331@embeddedor.com>
+Date: Tue, 26 Aug 2025 06:43:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250801043642.8103-1-kanchana.p.sridhar@intel.com>
- <20250801043642.8103-23-kanchana.p.sridhar@intel.com> <CAGsJ_4xRij-Vz_-dmL44YLvaQrYLKKnw7O_Skedrxj_YxuaT5Q@mail.gmail.com>
- <PH7PR11MB8121532CE4368DF5BAA6D46DC939A@PH7PR11MB8121.namprd11.prod.outlook.com>
-In-Reply-To: <PH7PR11MB8121532CE4368DF5BAA6D46DC939A@PH7PR11MB8121.namprd11.prod.outlook.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Tue, 26 Aug 2025 12:42:09 +0800
-X-Gm-Features: Ac12FXwIVh1CBUbWctN1hUqXXVlFsJoqPjkIW5ijU8kZiggqZfat8Ckeul-2aTI
-Message-ID: <CAGsJ_4xMuLPy3+mAxzOj6SfnFZaDf+B=WkmbrCNqv8gvK080Fw@mail.gmail.com>
-Subject: Re: [PATCH v11 22/24] mm: zswap: Allocate pool batching resources if
- the compressor supports batching.
-To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"hannes@cmpxchg.org" <hannes@cmpxchg.org>, "yosry.ahmed@linux.dev" <yosry.ahmed@linux.dev>, 
-	"nphamcs@gmail.com" <nphamcs@gmail.com>, "chengming.zhou@linux.dev" <chengming.zhou@linux.dev>, 
-	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "ryan.roberts@arm.com" <ryan.roberts@arm.com>, 
-	"ying.huang@linux.alibaba.com" <ying.huang@linux.alibaba.com>, 
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
-	"senozhatsky@chromium.org" <senozhatsky@chromium.org>, 
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
-	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>, 
-	"clabbe@baylibre.com" <clabbe@baylibre.com>, "ardb@kernel.org" <ardb@kernel.org>, 
-	"ebiggers@google.com" <ebiggers@google.com>, "surenb@google.com" <surenb@google.com>, 
-	"Accardi, Kristen C" <kristen.c.accardi@intel.com>, "Gomes, Vinicius" <vinicius.gomes@intel.com>, 
-	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, "Gopal, Vinodh" <vinodh.gopal@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2][next] RDMA/cm: Avoid -Wflex-array-member-not-at-end
+ warning
+To: Jason Gunthorpe <jgg@nvidia.com>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <aJxnVjItIEW4iYAv@kspp> <20250825172020.GA2077724@nvidia.com>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <20250825172020.GA2077724@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 93.117.216.243
+X-Source-L: No
+X-Exim-ID: 1uqlXY-00000001RSx-0ZQh
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: static-243-216-117-93.thenetworkfactory.nl ([10.94.27.44]) [93.117.216.243]:36842
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfI5b0/ZHzLrEBEZggWz0wnkLMGCJarsXymNLnE5+0pcxhlIURnNmuZQV50JC40x9UFAh0Fz92/8qneJ2nSu+fVdYiscgOK+WYeBWwVXdP2y39i1uxYaq
+ xm5Sa8lcX71C2FnMLAeHrzjRK2d2LNjO0O/9TyZ8duaGdzMJro7ZlGkzMZr5LcAuAA3m9U7TN0huw4DTAUvWSMRO3vjKOkwjOfjtWdHo8lCvqcfmX95IGj6H
 
-On Tue, Aug 26, 2025 at 12:27=E2=80=AFPM Sridhar, Kanchana P
-<kanchana.p.sridhar@intel.com> wrote:
->
->
->
-> > -----Original Message-----
-> > From: Barry Song <21cnbao@gmail.com>
-> > Sent: Monday, August 25, 2025 8:48 PM
-> > To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
-> > Cc: linux-kernel@vger.kernel.org; linux-mm@kvack.org;
-> > hannes@cmpxchg.org; yosry.ahmed@linux.dev; nphamcs@gmail.com;
-> > chengming.zhou@linux.dev; usamaarif642@gmail.com;
-> > ryan.roberts@arm.com; ying.huang@linux.alibaba.com; akpm@linux-
-> > foundation.org; senozhatsky@chromium.org; linux-crypto@vger.kernel.org;
-> > herbert@gondor.apana.org.au; davem@davemloft.net;
-> > clabbe@baylibre.com; ardb@kernel.org; ebiggers@google.com;
-> > surenb@google.com; Accardi, Kristen C <kristen.c.accardi@intel.com>;
-> > Gomes, Vinicius <vinicius.gomes@intel.com>; Feghali, Wajdi K
-> > <wajdi.k.feghali@intel.com>; Gopal, Vinodh <vinodh.gopal@intel.com>
-> > Subject: Re: [PATCH v11 22/24] mm: zswap: Allocate pool batching resour=
-ces
-> > if the compressor supports batching.
-> >
-> > Hi Kanchana,
-> >
-> >
-> > [...]
-> > >
-> > > +       /*
-> > > +        * Set the unit of compress batching for large folios, for qu=
-ick
-> > > +        * retrieval in the zswap_compress() fast path:
-> > > +        * If the compressor is sequential (@pool->compr_batch_size i=
-s 1),
-> > > +        * large folios will be compressed in batches of
-> > ZSWAP_MAX_BATCH_SIZE
-> > > +        * pages, where each page in the batch is compressed sequenti=
-ally.
-> > > +        * We see better performance by processing the folio in batch=
-es of
-> > > +        * ZSWAP_MAX_BATCH_SIZE, due to cache locality of working set
-> > > +        * structures.
-> > > +        */
-> > > +       pool->batch_size =3D (pool->compr_batch_size > 1) ?
-> > > +                               pool->compr_batch_size : ZSWAP_MAX_BA=
-TCH_SIZE;
-> > > +
-> > >         zswap_pool_debug("created", pool);
-> > >
-> > >         return pool;
-> > >
-> >
-> > It=E2=80=99s hard to follow =E2=80=94 you add batch_size and compr_batc=
-h_size in this
-> > patch, but only use them in another. Could we merge the related changes
-> > into one patch instead of splitting them into several that don=E2=80=99=
-t work
-> > independently?
->
-> Hi Barry,
->
-> Thanks for reviewing the code and for your comments! Sure, I can merge
-> this patch with the next one. I was trying to keep the changes modularize=
-d
-> to a) zswap_cpu_comp_prepare(), b) zswap_store() and c) zswap_compress()
-> so the changes are broken into smaller parts, but I can see how this can
-> make the changes appear disjointed.
->
-> One thing though: the commit logs for each of the patches will
-> also probably need to be merged, since I have tried to explain the
-> changes in detail.
 
-It=E2=80=99s fine to merge the changelog and present the story as a whole. =
-Do we
-really need both pool->batch_size and pool->compr_batch_size? I assume
-pool->batch_size =3D pool->compr_batch_size if HW supports batch; otherwise
-pool->compr_batch_size =3D 1. It seems pool->compr_batch_size should either
-be a bool or be dropped. If we drop it, you can still check whether HW
-supports batch via crypto_acomp_batch_size() when doing compression:
 
-if (crypto_acomp_batch_size() > 1)
-    compress in steps of PAGE_SIZE;
-else
-    compress in steps of batch_size;
+On 25/08/25 19:20, Jason Gunthorpe wrote:
+> On Wed, Aug 13, 2025 at 07:22:14PM +0900, Gustavo A. R. Silva wrote:
+> 
+>> @@ -1866,7 +1872,7 @@ static void cm_process_work(struct cm_id_private *cm_id_priv,
+>>   	int ret;
+> 
+> I think if you are going to do this restructing then these lower level
+> functions that never touch the path member should also have their
+> signatures updated to take in the cm_work_hdr not the cm_work struct
+> with the path, and we should never cast from a cm_work_hdr to a
+> cm_work.
+> 
+> Basically we should have more type clarity when the path touches are
+> to be sure the cm_timewait_info version never gets into there.
+> 
+> And to do that properly is going to need a preparing patch to untangle
+> cm_work_handler() a little bit, it shouldn't be the work function for
+> the cm_timewait_handler() which has a different ype.
+> 
+> Also did you look closely at which members needed to be in the hdr?
+> I think with the above it will turn out that some members can be moved
+> to cm_work..
 
-no ?
+I was wondering if we could just move cm_work at the very end of
+struct cm_timewait_info, like this:
 
-Thanks
-Barry
+  struct cm_timewait_info {
+-       struct cm_work work;
+         struct list_head list;
+         struct rb_node remote_qp_node;
+         struct rb_node remote_id_node;
+@@ -204,6 +203,7 @@ struct cm_timewait_info {
+         __be32 remote_qpn;
+         u8 inserted_remote_qp;
+         u8 inserted_remote_id;
++       struct cm_work work;
+  };
+
+and then I found this commit 09fb406a569b ("RDMA/cm: Add a note explaining
+how the timewait is eventually freed")
+
+-Gustavo
 
