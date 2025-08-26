@@ -1,134 +1,106 @@
-Return-Path: <linux-kernel+bounces-786455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59BEDB35A11
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:28:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3B5EB35A23
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:33:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BC497A8194
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:26:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51FFD2A5C3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:33:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 500112BE7D1;
-	Tue, 26 Aug 2025 10:27:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F09AC2FAC0A;
+	Tue, 26 Aug 2025 10:33:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b="P22KnrD7"
-Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="BMFSLoTS"
+Received: from mail-m49206.qiye.163.com (mail-m49206.qiye.163.com [45.254.49.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BAE0199FAB
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 10:27:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.227
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 214F0283FD9;
+	Tue, 26 Aug 2025 10:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756204068; cv=none; b=ei5MmYcFfb01IvQFHP77TLUMoyIYrU/ZKPSICUoZdCJpezi55//xwqWxq9M+2c6ZVDlBTHGoIvUlO6UWUPCmSaLKFRpp5v5+qScyvE5jUb1unwLJNHF/UdlbTYgJM+D2NlPhP50K8QfK1+KnSB1IL1fJWF5MQIIa0+j2leUXIng=
+	t=1756204410; cv=none; b=OeotXaCTiSmCjxw7OKzBZ1pP1LHHUIi0IFdAZukKlwStgq5LDepsBccHffHY4JS9RNKiRFuRVg2Cq/JDb4COamJ6LfyRdPX15eNvq6RXFDmbl5eojNnyrjCYA4avytLRxpOuxT2a1rI6hY3bhh0k5pY/G9OE+bt3O4NQtQvu8zY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756204068; c=relaxed/simple;
-	bh=IesqIGnB9Ffo5uqYC6nyaFAQHscROhBN/53NzNHTVys=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dOvJhPyT467r5fvCTnR7Ftx/8JX98cWGyql0uNPF1jqHkBzCr1mTzc+Tk1G+Ik4sIVNg5qx5B2rILyRMQw/FNBXNSPWDf1a6Kstaff1zJE07ciWatUjzTLhnQTa7ccCE9gepM19BjYRHLFe9iflC7xcHYUerI2QWg/yf+z/yyXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b=P22KnrD7; arc=none smtp.client-ip=185.136.65.227
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 20250826102741e6a38a615d000207dc
-        for <linux-kernel@vger.kernel.org>;
-        Tue, 26 Aug 2025 12:27:41 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
- d=siemens.com; i=alexander.sverdlin@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=I/4BVzGU//6o8w11JEpBafkAVNTi3A37k7IOe6GBXws=;
- b=P22KnrD7K2eLtlFSFdKekh9i2IMMpIplqPFKWTX0OT22i4CJXQfd39EDkaV/yDKtBnd1gU
- 6Hb2/hcwDuZMwCNB3QhypM/bfUjEflgvTwsaXuixrAvsbdh0k58WhsUNOM4I5TcxXOCsPENM
- xXNnVzVKs7SQcNJuHn3p/TOtA+orgZsqWcW3EN4B3c7cvHrs15t37emEt3BWWQty0HCj2gD0
- 1bBFpG22jKbS8oOb/yAdUmX5y8Sk+Qn6dKH7f2M6lWFbp8ysYY/CCMcMObPY8qtykaWGVmOK
- UN0fT89QKpi32/J0JwfIZA6Md325NSqB8oN88tvcuYqQNWVPC6PC37BQ==;
-From: "A. Sverdlin" <alexander.sverdlin@siemens.com>
-To: Marco Elver <elver@google.com>,
-	linux-kernel@vger.kernel.org
-Cc: Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	stable@vger.kernel.org,
-	Adrian Freihofer <adrian.freihofer@siemens.com>
-Subject: [PATCH RESEND] locking/spinlock/debug: Fix data-race in do_raw_write_lock
-Date: Tue, 26 Aug 2025 12:27:27 +0200
-Message-ID: <20250826102731.52507-1-alexander.sverdlin@siemens.com>
+	s=arc-20240116; t=1756204410; c=relaxed/simple;
+	bh=mCOke6z4Vp1IBz3rwFaXtqftHItJ0eYd5Jx1m2mIi5g=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=Lf2BhFWFqOtE8XWb83g5EtVXpAIXR+drN7RFN2s4zfYcFLTUheHzVnZhOnM9BXbKxEpPfmBYI3cK8vE0tVuPucBaOkmmbXfKMwtsf0yv0gXjeu5ozFXvFdc/CythKqBuavPY5gXx5uQUZuO5ouUq0EIVF2vU4gAYMetXnTUOni4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=BMFSLoTS; arc=none smtp.client-ip=45.254.49.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from localhost.localdomain (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 20a829612;
+	Tue, 26 Aug 2025 18:28:09 +0800 (GMT+08:00)
+From: William Wu <william.wu@rock-chips.com>
+To: gregkh@linuxfoundation.org,
+	stern@rowland.harvard.edu
+Cc: Chris.Wulff@biamp.com,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	william.wu@rock-chips.com,
+	frank.wang@rock-chips.com,
+	jianwei.zheng@rock-chips.com,
+	yue.long@rock-chips.com
+Subject: [PATCH v2] usb: gadget: f_hid: Fix zero length packet transfer
+Date: Tue, 26 Aug 2025 18:28:07 +0800
+Message-Id: <1756204087-26111-1-git-send-email-william.wu@rock-chips.com>
+X-Mailer: git-send-email 2.0.0
+X-HM-Tid: 0a98e5ebbf5009d4kunm056b0d8e1e30a37
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQk9OSVZIGR5OTkhCQ0hIHxhWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=BMFSLoTSQrzB2qd14D+YsLRuZqrL14mi4mWft6QpL0jROP/vvo9AHs4SdjEKgb1ge9glYJBxXtpy5be6krAAsO9AeGQmR4dU9fZinYQrX2znt7b3+3201ZRe6oDVWNEHmmYsqtfpOWErLXYIxRopsuGfSPknmt5vypSkCVsjCHo=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=POoCJLr7koKkSK8ECwifDJVRzPcPrxk5sZPXFgFOKOc=;
+	h=date:mime-version:subject:message-id:from;
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-456497:519-21489:flowmailer
 
-From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+Set the hid req->zero flag of ep0/in_ep to true by default,
+then the UDC drivers can transfer a zero length packet at
+the end if the hid transfer with size divisible to EPs max
+packet size according to the USB 2.0 spec.
 
-KCSAN reports:
-
-BUG: KCSAN: data-race in do_raw_write_lock / do_raw_write_lock
-
-write (marked) to 0xffff800009cf504c of 4 bytes by task 1102 on cpu 1:
- do_raw_write_lock+0x120/0x204
- _raw_write_lock_irq
- do_exit
- call_usermodehelper_exec_async
- ret_from_fork
-
-read to 0xffff800009cf504c of 4 bytes by task 1103 on cpu 0:
- do_raw_write_lock+0x88/0x204
- _raw_write_lock_irq
- do_exit
- call_usermodehelper_exec_async
- ret_from_fork
-
-value changed: 0xffffffff -> 0x00000001
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 0 PID: 1103 Comm: kworker/u4:1 6.1.111
-
-Commit 1a365e822372 ("locking/spinlock/debug: Fix various data races") has
-adressed most of these races, but seems to be not consistent/not complete.
-
-From do_raw_write_lock() only debug_write_lock_after() part has been
-converted to WRITE_ONCE(), but not debug_write_lock_before() part.
-Do it now.
-
-Cc: stable@vger.kernel.org
-Fixes: 1a365e822372 ("locking/spinlock/debug: Fix various data races")
-Reported-by: Adrian Freihofer <adrian.freihofer@siemens.com>
-Acked-by: Waiman Long <longman@redhat.com>
-Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+Signed-off-by: William Wu <william.wu@rock-chips.com>
 ---
-There are still some inconsistencies remaining IMO:
-- lock->magic is sometimes accessed with READ_ONCE() even though it's only
-being plain-written;
-- debug_spin_unlock() and debug_write_unlock() both do WRITE_ONCE() on
-lock->owner and lock->owner_cpu, but examine them with plain read accesses.
+Changelog:
 
- kernel/locking/spinlock_debug.c | 4 ++--
+v2:
+- set req->zero to 1 instead of check whether the length is divisible by the maxpacket
+
+---
+ drivers/usb/gadget/function/f_hid.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/locking/spinlock_debug.c b/kernel/locking/spinlock_debug.c
-index 87b03d2e41dbb..2338b3adfb55f 100644
---- a/kernel/locking/spinlock_debug.c
-+++ b/kernel/locking/spinlock_debug.c
-@@ -184,8 +184,8 @@ void do_raw_read_unlock(rwlock_t *lock)
- static inline void debug_write_lock_before(rwlock_t *lock)
- {
- 	RWLOCK_BUG_ON(lock->magic != RWLOCK_MAGIC, lock, "bad magic");
--	RWLOCK_BUG_ON(lock->owner == current, lock, "recursion");
--	RWLOCK_BUG_ON(lock->owner_cpu == raw_smp_processor_id(),
-+	RWLOCK_BUG_ON(READ_ONCE(lock->owner) == current, lock, "recursion");
-+	RWLOCK_BUG_ON(READ_ONCE(lock->owner_cpu) == raw_smp_processor_id(),
- 							lock, "cpu recursion");
- }
+diff --git a/drivers/usb/gadget/function/f_hid.c b/drivers/usb/gadget/function/f_hid.c
+index 8e1d1e8..307ea56 100644
+--- a/drivers/usb/gadget/function/f_hid.c
++++ b/drivers/usb/gadget/function/f_hid.c
+@@ -511,7 +511,7 @@ static ssize_t f_hidg_write(struct file *file, const char __user *buffer,
+ 	}
  
+ 	req->status   = 0;
+-	req->zero     = 0;
++	req->zero     = 1;
+ 	req->length   = count;
+ 	req->complete = f_hidg_req_complete;
+ 	req->context  = hidg;
+@@ -967,7 +967,7 @@ static int hidg_setup(struct usb_function *f,
+ 	return -EOPNOTSUPP;
+ 
+ respond:
+-	req->zero = 0;
++	req->zero = 1;
+ 	req->length = length;
+ 	status = usb_ep_queue(cdev->gadget->ep0, req, GFP_ATOMIC);
+ 	if (status < 0)
 -- 
-2.47.1
+2.0.0
 
 
