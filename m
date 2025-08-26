@@ -1,132 +1,101 @@
-Return-Path: <linux-kernel+bounces-786714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26E9CB364D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:42:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3440CB36516
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:44:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C900B1BC2362
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:36:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4472565F91
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:37:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E862C246790;
-	Tue, 26 Aug 2025 13:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QtTplz1q"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B28B13FD86;
+	Tue, 26 Aug 2025 13:36:46 +0000 (UTC)
+Received: from bregans-1.gladserv.net (bregans-1.gladserv.net [185.128.211.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1461C4609;
-	Tue, 26 Aug 2025 13:35:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CFCC24DD11;
+	Tue, 26 Aug 2025 13:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.128.211.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756215330; cv=none; b=D3XCa2RYwdBUFj9VWp5dtkwu36E0+95/XUJyAukQ7S3wi150JF0Bzr36uEpktsphnhyXxYda/B6rLJO54XhRrvSoYpN6LNJkWbaryx4rjilQMdm5+dRkGJ4lg3qc7Md95QvzpAcad/b68YPgyMhp2UiDbj6AL7f0pYa5+ALakbs=
+	t=1756215406; cv=none; b=GfW/GPfAdBoR/Y7sAHiXxlO1l3C/9rLYx1uOgRVtyBF8NKUoNtOQ9Kicyl0NL61Qk1cKsP+dF575bYH7n2orPnB6RbYwte1Cf447dyiDoT8GsOvwdHSABBe56qBqaBe4sA18c5795k7BazPGI6XE4ljJ6FjsZ2wP9/Qx/QaQYqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756215330; c=relaxed/simple;
-	bh=4zzOWz3tOCVtj3UxT2pkXPzRk86vf+e/s92XUhn9BKE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=OBY9e1NkmG6bxzswNsr4Umf/VG+8u0slthUy8NZV4V3uFoTzGK+1zc1zKuaXfQy9NP8YihyMCcsPUeR9tWrqBScpkQwnnK46l7ncQCJkypY7c5uPYDlMUdb2zBeT+Xhn9ozqAXbWLEytDApbDjnHEOl3RcQe0wPc95ojcjw4DMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QtTplz1q; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756215329; x=1787751329;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=4zzOWz3tOCVtj3UxT2pkXPzRk86vf+e/s92XUhn9BKE=;
-  b=QtTplz1qpwX6RrhGieS+lbuH33RyoeNwmF0v6wKORQ8vAXMRlrnexrH/
-   dxee+YrqteFJQhfZv5TkAVfIsl5i5Iby6or5GYbjpOliMJaBW7CntHCru
-   HZXDDqShvIg1PRsgXOAk0GJ5GLRQrATzITb0V4cHNVJ6/+cebkXg76SLG
-   2WaQ6j2A5qFVJyoTHzd+6Op2iC4DLfUif7lBjM6wM6wUyOwvANYDe+K/l
-   tuqUtM7WRFSCmGll30vSCWTWP0y+UEY5xF2pXBnP1gFVex328xfv7d9Zu
-   nUdCRQeJd/RhppsNmrm1iGlYzdru7pa7s0kfKXg9wLxJx0/An4d6P4aPS
-   w==;
-X-CSE-ConnectionGUID: yO4GD17hSwWkPt4OnqR+eg==
-X-CSE-MsgGUID: 0Bp5GsydSea+QLKKIoL/lg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11534"; a="46025427"
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="46025427"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 06:35:29 -0700
-X-CSE-ConnectionGUID: iUioBfLQT/eTdGJcwtpAtg==
-X-CSE-MsgGUID: NRItNlDURsiUfHCVIM6bcA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="169951396"
-Received: from spandruv-desk1.amr.corp.intel.com ([10.125.109.13])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 06:35:28 -0700
-Message-ID: <e783088816bdf9ab95b1becde94b6b7bf2a2e93f.camel@linux.intel.com>
-Subject: Re: [PATCH 1/2] hid: intel-thc-hid: intel-quicki2c: Add WCL Device
- IDs
-From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-To: Xinpeng Sun <xinpeng.sun@intel.com>, jikos@kernel.org, bentiss@kernel.org
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 26 Aug 2025 06:35:26 -0700
-In-Reply-To: <20250826072701.991046-1-xinpeng.sun@intel.com>
-References: <20250826072701.991046-1-xinpeng.sun@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1756215406; c=relaxed/simple;
+	bh=1UWT06u+bj5dxWl0pbeFMuoLmQneL0Zs0P3IHjFM1ic=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=epCENXdGc4Dlqj/dUyHgdWP7DVjK0x576eOsN1nFR5IP2xDh8voxR3c997Grx2FQVDJaOUivFQ5FFxzDjTue8RwzeJJY1fAT6C7cOPkycZDg6WD1zDzLIRa53H6Z0gg7ATxGYwVsMXNuu5JVZD8gEj/MELLUQZvZVMCd1/1O+FQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=librecast.net; spf=pass smtp.mailfrom=librecast.net; arc=none smtp.client-ip=185.128.211.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=librecast.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=librecast.net
+Date: Tue, 26 Aug 2025 13:36:22 +0000
+From: Brett A C Sheffield <bacs@librecast.net>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+	achill@achill.org
+Subject: Re: [PATCH 6.6 000/587] 6.6.103-rc1 review
+Message-ID: <aK24VgyXGeUtm-el@auntie>
+References: <20250826110952.942403671@linuxfoundation.org>
+ <aK2rwEQ5hdOQSlLq@auntie>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aK2rwEQ5hdOQSlLq@auntie>
 
-On Tue, 2025-08-26 at 15:27 +0800, Xinpeng Sun wrote:
+On 2025-08-26 12:42, Brett A C Sheffield wrote:
+> Hi Greg,
+> 
+> On 2025-08-26 13:02, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 6.6.103 release.
+> > There are 587 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Thu, 28 Aug 2025 11:08:24 +0000.
+> > Anything received after that time might be too late.
+> 
+> Quick query - should we be backporting a known regression, even if it is in
+> mainline presently, or do we wait until the fix is applied to mainline and
+> *then* backport both patches?
+> 
+> 9e30ecf23b1b ("net: ipv4: fix incorrect MTU in broadcast routes")
+> 
+> introduces a regression which breaks IPv4 broadcast, which stops WOL working
+> (breaking my CI system), among other things:
+> 
+> https://lore.kernel.org/regressions/20250822165231.4353-4-bacs@librecast.net
+> 
+> This regression has *already* been backported to:
+> 
+> - 6.16.3
+> - 6.12.43
+> 
+> so I guess we wait for a fix for these.
+> 
+> However, it is not yet present in the other stable kernels.  The new stable
+> release candidates today would spread the breakage to:
+> 
+> - 6.6.y
+> - 6.1.y
+> - 5.15.y
+> - 5.10.y
 
-Not even a single line of description?
+oops - and 5.4.y
 
-Thanks,
-Srinivas
+My goodness there are a lot of stable trees to keep track of!
 
-> Signed-off-by: Xinpeng Sun <xinpeng.sun@intel.com>
-> ---
-> =C2=A0drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c | 2 ++
-> =C2=A0drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h | 2 ++
-> =C2=A02 files changed, 4 insertions(+)
->=20
-> diff --git a/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
-> b/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
-> index f122fde879b9..17b1f2df8f8a 100644
-> --- a/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
-> +++ b/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
-> @@ -1019,6 +1019,8 @@ static const struct pci_device_id
-> quicki2c_pci_tbl[] =3D {
-> =C2=A0	{ PCI_DEVICE_DATA(INTEL, THC_PTL_H_DEVICE_ID_I2C_PORT2,
-> &ptl_ddata) },
-> =C2=A0	{ PCI_DEVICE_DATA(INTEL, THC_PTL_U_DEVICE_ID_I2C_PORT1,
-> &ptl_ddata) },
-> =C2=A0	{ PCI_DEVICE_DATA(INTEL, THC_PTL_U_DEVICE_ID_I2C_PORT2,
-> &ptl_ddata) },
-> +	{ PCI_DEVICE_DATA(INTEL, THC_WCL_DEVICE_ID_I2C_PORT1,
-> &ptl_ddata) },
-> +	{ PCI_DEVICE_DATA(INTEL, THC_WCL_DEVICE_ID_I2C_PORT2,
-> &ptl_ddata) },
-> =C2=A0	{ }
-> =C2=A0};
-> =C2=A0MODULE_DEVICE_TABLE(pci, quicki2c_pci_tbl);
-> diff --git a/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h
-> b/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h
-> index b78c8864d39e..240492a38c24 100644
-> --- a/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h
-> +++ b/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h
-> @@ -13,6 +13,8 @@
-> =C2=A0#define
-> PCI_DEVICE_ID_INTEL_THC_PTL_H_DEVICE_ID_I2C_PORT2	0xE34A
-> =C2=A0#define
-> PCI_DEVICE_ID_INTEL_THC_PTL_U_DEVICE_ID_I2C_PORT1	0xE448
-> =C2=A0#define
-> PCI_DEVICE_ID_INTEL_THC_PTL_U_DEVICE_ID_I2C_PORT2	0xE44A
-> +#define
-> PCI_DEVICE_ID_INTEL_THC_WCL_DEVICE_ID_I2C_PORT1=C2=A0	0x4D48
-> +#define
-> PCI_DEVICE_ID_INTEL_THC_WCL_DEVICE_ID_I2C_PORT2=C2=A0	0x4D4A
-> =C2=A0
-> =C2=A0/* Packet size value, the unit is 16 bytes */
-> =C2=A0#define MAX_PACKET_SIZE_VALUE_LNL			256
 
+Brett
+-- 
 
