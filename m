@@ -1,120 +1,137 @@
-Return-Path: <linux-kernel+bounces-786703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5AA7B363F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:34:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D68BBB36408
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:35:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 943491BC5344
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:28:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A62561B63776
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:29:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12DC13FD86;
-	Tue, 26 Aug 2025 13:27:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B212F6564;
+	Tue, 26 Aug 2025 13:27:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="xg3UcQFe"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=futuring-girl.com header.i=@futuring-girl.com header.b="r3+VQ1pM"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ECE31A239A
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 13:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A0D2D191E
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 13:27:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756214853; cv=none; b=mkkdsZdQeA0HsSaCFdLmpc1vraNVyHz1Oy6uFBiz5uq4md/Gg0EQxdf8Klzit57bkFge2HXiswt2e7Bp6RvpB1YgUTRKWT5mvImPhjjvh+cXBfikztUCYY8um8qNSg0xLgNXoou1wpkPzuXW9fgi4bS0t9wCyx4sn5faj6TbBxM=
+	t=1756214876; cv=none; b=jAaqvQ/mDb9l4Q685xJQK1RblgPoVCgymq3wfULIcr498qhv/ywc5VKhuVJ7yNodxz4E+L1556I4tYHtTxnPRvf0dqrXSwYYjnAFTsyZPb6Al/KS++w6/1pzk++er3bUH9lRTjVUsa0JcQatxEcWxOBO+6iw8cBpWoduZaNswmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756214853; c=relaxed/simple;
-	bh=m6EtPj0+uVtOuoBi+kY7iqJCwfqPxHH3Tv3BeRWW1Q8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lNFrZnCquKi/FG9aPTPM4/Y6n2KaeEM/+xYsdLpiol9slmLZ4f5IBIujv1UIDMWT5QiBFADOf2bdHDb1t70D1ImrxmlT6khoxynNjMm7orz6rsBwUUQExHXTZmv8BOMP0xqygH8A/xcbuzqUj+8oiEWFbDMJdspCVp2Wi1JGHgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=xg3UcQFe; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3c980bd5f48so1960927f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 06:27:31 -0700 (PDT)
+	s=arc-20240116; t=1756214876; c=relaxed/simple;
+	bh=xPc5VouSLZAk6rtzQm+iCZVTSD4C5Pa1mhNOLz1cBgQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XsgfWVhH8+dOpYeOzlU3yFJgiZS8/Xj4wWl6f+xFuqoq2gVngJuJTtCSCy5WOyfHY/tJyoRBudS6Exg+ByJdYtGic1scsWiLp7rJrqIofsM01QJS55ZsWOEqZgEXp7XtLIiwSBuJDG+8voqnjMjKidPw/sn+biT868vdcZYybao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=futuring-girl.com; spf=pass smtp.mailfrom=futuring-girl.com; dkim=pass (2048-bit key) header.d=futuring-girl.com header.i=@futuring-girl.com header.b=r3+VQ1pM; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=futuring-girl.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=futuring-girl.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b4c1aefa8deso1409883a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 06:27:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756214850; x=1756819650; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=futuring-girl.com; s=google; t=1756214874; x=1756819674; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=r6mCp+F+gxJpSoi77Mk8DTDXwuJqpWFSqV1XbI8Gr38=;
-        b=xg3UcQFeXrYGkLEw3nvaLClVq0TphRDVK5N96G8vGDcome2N8Hq8wkZ6vwHv0iFLVs
-         cGWc6MKgRyVnImgE2tCb4aED30bwnPJH9rIsqrBMkN4Rt44QCWCOytZFYVXMkdewT2pH
-         fD3E2cO8vG7MZVN59fDFEZoD9RYqe+ePoi2u4lg5meANts16N+7M+QN5357RC2n5Op43
-         bBYF8R4Rm7n0WQyaC8++vSu95+Y7br1Z/DFab5dEiMz/TPUTJq+hu7D8D9wBz3G5OEIp
-         cph3G0pcfjTtUa+UfZtigFnxbQ33EiOBNXAqtg7GuKDd8aGkNRQxd4fL7lilZh0dGkEZ
-         CIAw==
+        bh=KVZs1Yt4B+M7h5+3RE2O89FKpxSDOyOXZc0rIy9h7QY=;
+        b=r3+VQ1pMj/yH7w+RPZsZSLj9fEOcw4gGSEO3pFN22urfgv3MtFWaQqv7AycfwSkWKk
+         Y7hPE+k/q2SNsbFMwkDCB+8uoaGMNDqgQs1alS+iBrROAVNeLaMVvwMIN0nVs3Oa0I2I
+         0Xnx3N5GQOFmBTqhC5a1fowVvRsQEclI9Ms0J0v8VMNzWHx14Z0ZXCgh0lxZ+k7l/3Dz
+         Imz4ZmFJEyvoKotmMGYtnwR8PZz/TWFzfq+BNF4M7Dusc627FgZItZVMwVJrnR5IpBS/
+         eguI1CvlZAYLniECnAlZYNYzre4KAdkWojWtIvDwBweR2tBJ9RgUHoQHvXEq52ff8Cxx
+         nw9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756214850; x=1756819650;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1756214874; x=1756819674;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=r6mCp+F+gxJpSoi77Mk8DTDXwuJqpWFSqV1XbI8Gr38=;
-        b=BlI4xwecqLhv6MFjRfNgW3ztWzrg1iPEun08tXqa6OZb+aQ1ETiTnPKrOyb6azrs9l
-         2XGDj838+p9GpO7U9PXQ73JWIVozNnqsYZe8yTeByJuj7oj+OopxTJ1ZaTI4aAaaIvxd
-         B5oVraF55OAzGpAHbHXGKls1bSYed3tHbA163HkWforHznLrH0kaMTvrzhnMKjrQQSFo
-         RqMaxXpv5fymw2nmQ3pOxKFT/u9KKHXd/lo7IUSHpSLdIZH6Flb3weOuPzQPUglU/FAN
-         VfB15qnaqDF2mgBbnh+t/HCv3JEG/cYhZhfNvWRZ4BlEMVIQYfo8KLAt1gUCxkF4rjCP
-         0Fuw==
-X-Forwarded-Encrypted: i=1; AJvYcCVoAOa6TqCSx0sfsV/Y3pq/pfR+ODDyZ4Pbw7HOG4ybkljg4Tiu4JAWC5jDfdLZUEPfnpyL/XRElNQOS8c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyQjK3kuST9gDYyj4+svNxayWsigzJD5S7wNuMuWh4YRYV+E4K
-	UEmDp/tAbuUdDTAxnM5eAiC1ckC2FdgJ1R762yF485coXBJxUmoHLvGGo9yThAppkUA=
-X-Gm-Gg: ASbGncslP64ohm1oSMwLAzvhbds1/L+X+us6CE4PVh3q+5wVrioR9ZBwUhdCPDPH6zC
-	JhudbWALW6fjlaA5cbLfu3jcsAulH4+HMLnKvTICUfDOtbJro6oKUOu27jAx/KgyKAHZRiO6e0f
-	YKucnQOe1omaPVOD6NptelTO+zrQVvI9NoBHHU704t3IGltboTzICoYdPV3yK2TD1Aid0yx2xcx
-	0la5xTIkeM9+o9DeopXHhBSm6FV58tMzwF1nHm8Z5NYhnLg0rKbPxZBqJDp2ASuU26izJs7V5lj
-	t8LmfIn1jZAfF4aexT3PwzC2Tlo5+ZNzLrDmixFIsyik8+WWw60rsi6nki0OhERyOnGRaw7M7qe
-	xCTmzTGcAU9Pqk+pekC8ogjdt
-X-Google-Smtp-Source: AGHT+IEtIkJUDKq6YfUH3OIVgwuCFgy5UnEG3BCV3U9Lc+PLLOQkSw1irNa69/oxZWuy1ZkYx0BZwg==
-X-Received: by 2002:a05:6000:288d:b0:3c7:36f3:c352 with SMTP id ffacd0b85a97d-3c736f3c4c0mr10077934f8f.59.1756214849721;
-        Tue, 26 Aug 2025 06:27:29 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:fed4:79fc:9440:6629])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c712178161sm16133692f8f.67.2025.08.26.06.27.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 06:27:29 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Arnd Bergmann <arnd@kernel.org>,
-	Hans de Goede <hansg@kernel.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-gpio@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] Documentation: gpio: add documentation about using software nodes
-Date: Tue, 26 Aug 2025 15:27:28 +0200
-Message-ID: <175621484579.32185.5463919382812315938.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <tnaaz2qlk5jpbonfle7uy7pb54qx6ixwuczfbkwtxxwpj7hwas@y7a2rwko3k6c>
-References: <tnaaz2qlk5jpbonfle7uy7pb54qx6ixwuczfbkwtxxwpj7hwas@y7a2rwko3k6c>
+        bh=KVZs1Yt4B+M7h5+3RE2O89FKpxSDOyOXZc0rIy9h7QY=;
+        b=PtqxR6yLLqNWDyZ3LTOIfSqffj/lQNx2aaxdLPdzCJ/kjSTBdfqwiuk7WdN/t6oy2B
+         d6Y30BlDN/EU1+uzneT5Adcx3d2u3hz28J3UReFOHWD0IfiTToaBpjhD1BwqJTTUkO9X
+         UeDK1grTozescwxYCKPjKea2RbZJxbbrWTaTDc3Jtj03WEI62pC2WXaTwlOS2EO6fMNT
+         bR/hj5dhjTOck3nMVpcTaJ+ZEuny2tIi7YtGgRT+eFFHYSQnsX7IZuMryQF886omIidn
+         tysDaIynOowtekIOBblfQWK6KRWNgLxV/+MsfPTGJP6N3dgvfwsS6awpEe830p7c4Kd9
+         hcJg==
+X-Forwarded-Encrypted: i=1; AJvYcCUkkm9O989h/wjtfBQHbp/dJ0nSi2/rvNibWWWZTW/KV67HmFzIi0i85jPw62Wpby/801g7QY3yrsIoCfo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+pnOpNlx/c1VlS8yVrD/4zWs37LxyDS+QBnydqHGFY+s2imTN
+	tp/qkop+781+yulEf7mNWfXgfNYkKh+ggh9OQmDPGahFaPgJdVZW/AeeJkICJsZ6kBFlI+cbVoC
+	KGegjvYqJ0FnZOxti3EXgeefccBcdMZ/ZZJmJ6vMFLA==
+X-Gm-Gg: ASbGncsAkmGA17oNPSQ7cHOed3E9IvyB78y2/qJDuzr0ZnfjkAnk8s8sJDDGlmm4amQ
+	WucSwJYisYmiRbGh7bvLDmZcJyivASz6mI7KzbpLXgfQbiZkaa+KEC7N6Ed8N//465IeUC1S828
+	Gqivqup1xE7n1RwBLDPxukRAtXBNR8TYZx4WudRhZZwiCXUZk/jFgQV8IqaEYymn9V/FZ5lUH4v
+	W4SUA4=
+X-Google-Smtp-Source: AGHT+IE2SVk4t97EhOugJmDZ3uaQs0E4tn3j9laRwvd64gm7WJAI+S2PXD6GkLMAVmz/RilHosSphia3Mhafwg0GRug=
+X-Received: by 2002:a17:902:db0a:b0:246:f123:ccdd with SMTP id
+ d9443c01a7336-246f123d18dmr59187785ad.8.1756214873982; Tue, 26 Aug 2025
+ 06:27:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20250826110937.289866482@linuxfoundation.org>
+In-Reply-To: <20250826110937.289866482@linuxfoundation.org>
+From: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
+Date: Tue, 26 Aug 2025 22:27:38 +0900
+X-Gm-Features: Ac12FXzRfFlBpNNsy7AVluxhNzcPDiGjNZum3e6mUgmwnrD5CHykobV1b5JZI_0
+Message-ID: <CAKL4bV6_QsjosQHz-vVzwKBN2Zu=vc7QwEM0djuipP=g77d3_A@mail.gmail.com>
+Subject: Re: [PATCH 6.16 000/457] 6.16.4-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org, achill@achill.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hi Greg
 
+On Tue, Aug 26, 2025 at 8:14=E2=80=AFPM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.16.4 release.
+> There are 457 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 28 Aug 2025 11:08:27 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.16.4-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.16.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-On Sun, 17 Aug 2025 14:30:20 -0700, Dmitry Torokhov wrote:
-> Introduce documentation regarding use of software nodes to describe
-> GPIOs on legacy boards that have not been converted to device tree.
-> 
-> 
+6.16.4-rc1 tested.
 
-Applied, thanks!
+Build successfully completed.
+Boot successfully completed.
+No dmesg regressions.
+Video output normal.
+Sound output normal.
 
-[1/1] Documentation: gpio: add documentation about using software nodes
-      https://git.kernel.org/brgl/linux/c/8003235b10e54c1be57374c6224751b39750f16c
+Lenovo ThinkPad X1 Carbon Gen10(Intel i7-1260P(x86_64) arch linux)
 
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+[    0.000000] Linux version 6.16.4-rc1rv-g2894c4c9dabd
+(takeshi@ThinkPadX1Gen10J0764) (gcc (GCC) 15.2.1 20250813, GNU ld (GNU
+Binutils) 2.45.0) #1 SMP PREEMPT_DYNAMIC Tue Aug 26 21:54:15 JST 2025
+
+Thanks
+
+Tested-by: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
 
