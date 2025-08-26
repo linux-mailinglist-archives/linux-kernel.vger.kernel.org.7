@@ -1,270 +1,554 @@
-Return-Path: <linux-kernel+bounces-785953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E96DB352DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:48:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B799DB352DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 06:48:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A8987B0DC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:46:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F275B7A64D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 04:47:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 286B52E2DCB;
-	Tue, 26 Aug 2025 04:48:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6CC62E265A;
+	Tue, 26 Aug 2025 04:48:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="t/j6O/iu"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2062.outbound.protection.outlook.com [40.107.100.62])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="24jTJE6x"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2062.outbound.protection.outlook.com [40.107.92.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776792D3A80;
-	Tue, 26 Aug 2025 04:48:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD5452641CA
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 04:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.62
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756183691; cv=fail; b=NoceJklJN2iSKfkg6+pR3P5nEqwbK1usdJjM7P8nzSxQDqL2VMCBCHzbHlG3AqP9y7xHV6Qmv5IOjORoYJlHf1CdiSDmpDmdHr1ibT4nMVEtDsuocvdTw7hxRWMqtEeKuwtKZtATa8ISXmlS7p0MyqEwqBdClJUoEx7HeoHAwp4=
+	t=1756183718; cv=fail; b=F3QoevjJFyODDzaUEue+TRtM1mOwXlcjHORsloKntF8nlPOpdDodgVR778w/0wvEPINH3WRcYvFxbSSNIf/ciNCasmgW24+SKHp4NlqtpXkQBB5VezLRg66aqdUGqU5i0PypsEZQX6Z27YpRWoGAbSokdRZN7npkdIxR4YoqLTk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756183691; c=relaxed/simple;
-	bh=3vDN3Ke1e2YKAzNnPVK8KL4nKXe10MvHxQ+zWzhpb/0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=dJjILvwqJMz9rDI2kSmqUwZDr3hgPQgqV2Ccv9e2QOAIV1s9/FCsm3KQDvkW5cUwfOnOwPkBde3PlqQ/LDvJ3c/GCf0ZjxmWLpQCxPA9FBwgR5zSvrMrOtaITfnroiXH3t4eEIsL5Z83VT6IXbBT5htRXPxuDXiPzsD50Hmf8bk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=t/j6O/iu; arc=fail smtp.client-ip=40.107.100.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1756183718; c=relaxed/simple;
+	bh=UcE4d6RjcFkQkhHDMJWl7djD1Qw/y0t+0Gwm4HvSkSA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JiLvX7va87MsqFLQ+BcAp+bbGBXC5X3797poL8WRM/+lcOWctkIS6s94tgZDMSzJpBMpWOEbm/+HlCBRHKcDAu8hHxNJ236A+XHrXuEHtallfJJmIRNbjc1LmWnFSY1oO9J+RxvQ1QJekszC5pgE3ZP43EBKUMBDMN2FYzfB5Z0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=24jTJE6x; arc=fail smtp.client-ip=40.107.92.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=U4uBi+v7BOqLijlfcXO+zcreUe9eB8oY6/Oc82qxI7v18VtQ6Jbd8kMzHAchWEQA0YT1IawTuVsxQaaOwSV1vnRYylM4zwkxiaA10HcLIsvYUqTQHFFBmam/FEdSsP98DqniukY+SeZyfufghICdH9xIphFDghrbEtc29gkzLKAKcm6RA2+IY9LTJMa5hntpkOrfbkKAKT/m6PalYxTFoHAYyfnxIQ7WbgBebMh7WC2HIs+i/LwXu35l3Nq4F69R53bA9xmUDLdxozg9f9RJbr0lsAhmkLwwYTA6gY7QatmEZs2hnkJiWm4QvGZH+XBEAO8ercDZ40SFAx9fwrCw5A==
+ b=nDgeDy89SnLfVdm2hIsSPct/eMNwgbVEr954Fjtz8miIimR3Kvlt7lOog64TjhHkl2skV2XFOmG0TGE4vD2owbRmEPgIbJnLLrn2AXrPnwxYJGDdGCSDgGZSLVhY8g5IMEXIJ65mbcnBJHrGqtFqtDnzccDJR5gGD4H7hH3XSx5kTqpG4QR40krEGwqwjDXhEk+W6ccXEdnQuYqjRuUs26h7vjarkqJkw0KhEtIiTOBfBGe9817hbdFF+AdAAXmLf8mZ1PhlN5vJRKLa9Vdz3xA7t409zXCr6L6C29fVk+NeWoDgrxLKXFNLsaNvDCLOhWK2OIlkN40UXA5flqIDfg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/6JvtKfstlfCbmy5czfPmo66Xd5J1C0AqMdwSOP+e04=;
- b=F8AQfuZhXJAwAhfSCxc0q/ibkj415qcJxhaYhQjd2Z5+4E7Q/9UUD5EojfjYpIGhpbSkcg+LduWfdRrlVUxPr96QNweioQxcbX5KAXCayLb0WoP1ePcfb4i9d3itliVxBFRLg1e+BFpyGEMl2KeJ8lAjheUDNyTTkEonBX3xQ5oBGw/eTgHcMy5lub28jgQRm0AotdaxZ2yut52q98gKpUsYNXC9Q3YdM2dNlK9nFS4tjBIOAB7XyQFF/3zZcFgrFBhLHgpdkM0Zmgcx3IV0QciZQ9AWJLHLHsTXw8yIUpznz0GKLTrqvPdcmOOQeNNMUZ8PXoQyvyaMaeAwhBDH4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ bh=ivgdCpr8gACzqKIIlrbG7x8Mj119nw10kmcHcy5BIXM=;
+ b=Yodx13M6O68o2mmJ37GJ5gg+lUP4+ersYveAFR4hMCDyXbag5kvoW51qJk/iWVvQnURvfxytQ6cPihNuaUJ1wuo/tNUiTWQS/7JMJgeuV/gBPfw1R/lGx5S0uTXIcfdxXwO6An+UGjbwYx/BMLQPT1Q+iao5pfsGWc2nHcwV51sqJ+8ZCkwIdj1hyWjqFrsfjKQXU1gyEqWbz/qVcMCsAjAlo0fjOdKomyF443P8hsFJsl5gSMxtO18w39AT9rSlVd7e9gMJ6sWsKFWHmHxY+cgVmGKgXIvC4ZZ8hwXO65VqTQK/S5Q3o8534O1LpsyRScy2fWDZ4H8Pwsc91FfFnQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/6JvtKfstlfCbmy5czfPmo66Xd5J1C0AqMdwSOP+e04=;
- b=t/j6O/iuFEeqyI2tLEAnclwgX7PpdLW6oBPwKR03VGW/FVK3cq2kbyPo2KS8OwsA5EZcu8DBYK83FonUkGDvUUThRkkzAMvvsqq+yhUo6ya5drc0trekCxyyGa2vi7jeyLN2YPm1DbfusDOo5ZNJ0cr6T01uLzsfmNWToyn0kLc/n5rqyFuajucpILJLYJTVgtTzzS0kBZb/hWMNnvXgcxFk8XV9aSbZsZDmiLD/6heens7dv/OwpJnGPBL2aa+OZW4FzvZWx9vsrb4O2bIi1PyVqYasaHf/HSu8QWn9PTSpZfhfLOWx9wPP/i2Md6mCVo0BXRwKDUzcxHyrMlw13A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM4PR12MB6494.namprd12.prod.outlook.com (2603:10b6:8:ba::19) by
- SA3PR12MB7952.namprd12.prod.outlook.com (2603:10b6:806:316::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9052.19; Tue, 26 Aug 2025 04:48:05 +0000
-Received: from DM4PR12MB6494.namprd12.prod.outlook.com
- ([fe80::346b:2daf:d648:2e11]) by DM4PR12MB6494.namprd12.prod.outlook.com
- ([fe80::346b:2daf:d648:2e11%6]) with mapi id 15.20.9052.019; Tue, 26 Aug 2025
- 04:48:05 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: webgeek1234@gmail.com, Aaron Kling <webgeek1234@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH] cpufreq: tegra186: Default divider to 35 if register read fails
-Date: Tue, 26 Aug 2025 13:48:01 +0900
-Message-ID: <2325429.iZASKD2KPV@senjougahara>
-In-Reply-To:
- <CALHNRZ8oaGaAhMVVzfeNf+M+-OvMnCnMd-fRdffmOSTBZiEXCQ@mail.gmail.com>
-References:
- <20250825-tegra186-cpufreq-ndiv-v1-1-4669bf8f2992@gmail.com>
- <CALHNRZ8oaGaAhMVVzfeNf+M+-OvMnCnMd-fRdffmOSTBZiEXCQ@mail.gmail.com>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TYCP286CA0231.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:3c7::9) To DM4PR12MB6494.namprd12.prod.outlook.com
- (2603:10b6:8:ba::19)
+ bh=ivgdCpr8gACzqKIIlrbG7x8Mj119nw10kmcHcy5BIXM=;
+ b=24jTJE6xBnIOZHR/UfdTzaWcv5mBFgybZ97nuX8sUB/p5nhedoqzBgPgzrRfWzPGw67MMzoce+jAjscs3kJ8ahVaN4zvrn3aUWwDJrflwEqBTAvRigDLmJS8qO7ENEL7W8IavnVGq76FNsmFMi3LHDkbRSd0Upkuy802EK5RicA=
+Received: from BY3PR04CA0003.namprd04.prod.outlook.com (2603:10b6:a03:217::8)
+ by BN7PPF08EEA05B5.namprd12.prod.outlook.com (2603:10b6:40f:fc02::6c5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Tue, 26 Aug
+ 2025 04:48:30 +0000
+Received: from SJ1PEPF00001CDC.namprd05.prod.outlook.com
+ (2603:10b6:a03:217:cafe::3d) by BY3PR04CA0003.outlook.office365.com
+ (2603:10b6:a03:217::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.21 via Frontend Transport; Tue,
+ 26 Aug 2025 04:48:29 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ1PEPF00001CDC.mail.protection.outlook.com (10.167.242.4) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9073.11 via Frontend Transport; Tue, 26 Aug 2025 04:48:29 +0000
+Received: from satlexmb08.amd.com (10.181.42.217) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 25 Aug
+ 2025 23:48:29 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Mon, 25 Aug
+ 2025 21:48:29 -0700
+Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Mon, 25 Aug 2025 23:48:28 -0500
+Message-ID: <d6a02baa-3b05-73e6-9c2a-66c257efecc3@amd.com>
+Date: Mon, 25 Aug 2025 21:48:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH V1] accel/amdxdna: Add ioctl DRM_IOCTL_AMDXDNA_GET_ARRAY
+Content-Language: en-US
+To: Mario Limonciello <mario.limonciello@amd.com>, <ogabbay@kernel.org>,
+	<quic_jhugo@quicinc.com>, <jacek.lawrynowicz@linux.intel.com>,
+	<dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <max.zhen@amd.com>, <sonal.santan@amd.com>
+References: <20250822172319.377848-1-lizhi.hou@amd.com>
+ <2bec1429-4f8c-472c-99a1-420a33a3d316@amd.com>
+From: Lizhi Hou <lizhi.hou@amd.com>
+In-Reply-To: <2bec1429-4f8c-472c-99a1-420a33a3d316@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6494:EE_|SA3PR12MB7952:EE_
-X-MS-Office365-Filtering-Correlation-Id: 76ef34bf-c15a-4b60-b89b-08dde45bbf07
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CDC:EE_|BN7PPF08EEA05B5:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8e28a97b-7e72-4666-59db-08dde45bcd8b
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|10070799003|376014|1800799024|7053199007;
+	BCL:0;ARA:13230040|376014|1800799024|36860700013|82310400026;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RjRjREZNM21vVDdadE9xRWtQQXhTa25zaXhvSVZRZExNSXNNbHFXSG5vQk8v?=
- =?utf-8?B?Z25zellQK0VLdlZVTGVjcGhkaUt6b0MydjY2bHFpUkZUSGJFK2RPdllLbEtK?=
- =?utf-8?B?SkJaSGlJeno1ZUJ0ZGlrK0xSbXFqcURKK3poeXdFWWZMWkdQMWxBeEg5SkZV?=
- =?utf-8?B?VUJjTDl4UVkwMVBYTjhtTmJmK252QmRESllJaXNkSjZSeCtKNkY3c2J2ZnNF?=
- =?utf-8?B?TjRIeHZ5cEg2MHAvRWtJK2hoSk5kQXJ2WUNMd3Z4RHJwSUl2ZjJRbDhWaTQr?=
- =?utf-8?B?c2d1NGpkNUNIUDc2dFc1K3FKbGJWVnEzQkkzUEt3bm1mMjhyME1PbW1acXR0?=
- =?utf-8?B?U0YrZ2h5Z3FZaXpvV21LWmU4K1hyQmZsUGIwR2xxV0dNMTFUZkduMk9wVjNP?=
- =?utf-8?B?VnNmdCtCYjhpdm1pTHM2QXZyNFlGV3FlZ0gvMWI0emVHdHRiQzNBU1NUalVY?=
- =?utf-8?B?a0FsY0Y2YkliMitSeDFCRFhhM1VIQWlET00zak1QL1RPdGlBTTdNcFpNUUhY?=
- =?utf-8?B?dlF6Wm1HaUdac1A5cnBKYnYyVmFWRHdJdmpSbXQrTjJHWFoycnVuVTMwWHpx?=
- =?utf-8?B?Tm5uZEwvbEloN1VCVHVVTEFrQkdncHhzekNTcW1yOUt5UVlxZ0M4TTU2ZWNI?=
- =?utf-8?B?RnpPVDBmQy9CL29FVitxRkhWaXU5SHBiS3FwVzNqK3ZHaitQaTRTaEpkZFk2?=
- =?utf-8?B?Q2FSWmZONS8ydm5JdW9jSm52WDZ3cENvRE5KN0tOV0IydnNuYjVXc2h0SGg1?=
- =?utf-8?B?bVRxYWFvSGE1NExHbXFSUEpkeHo5MzQ4WjM4Y0grcndQUzhKSjdGbURpNUZM?=
- =?utf-8?B?NmhOR04rdHRBWTNON2FuYWVBTDYxRHdFVjhTSlJ3azd5a3oxeHBmckpOQnl4?=
- =?utf-8?B?bXMraEZBMmxvR0lETUVyTmZCMHNrUUJxaXpiY2tLUENzbFN4ajhmNEtTeldw?=
- =?utf-8?B?d3NSeUQyeG5LQjNDR3poajlsNFpKR3ZhdEdDenZkMmJuUlNsNDhKemtkL2dL?=
- =?utf-8?B?SVlKaUQ4ZjhBdW1KNVk3UEFTRFFjSEZoWHIxcm5WSCtzU2FOYW9HYU9ndjF3?=
- =?utf-8?B?ZExnMi8xL0gydm16ZUFhSFI2TmFhcHViUERJQktCempxQ2ZjYW9iTHhWN0Q4?=
- =?utf-8?B?c2t5UmIxSXZKWDQvYitIcU8zNFlCL3FTRVdocGQxMnFyT1NrbzV0YU13U2VR?=
- =?utf-8?B?TUx4SnR4Slo5cUZON3FqNndTSHphMDVseXdIUDNYU1pkWVZlRkw5U3ZVcENh?=
- =?utf-8?B?WW9ITjlpcDJnT2tSSnpmUW5naXVqN1RSQU1TRzBGcnNGQnZmaGQ5d054ZUhD?=
- =?utf-8?B?cW1RVHdvWTgySkJJcVBMdWFLRUY3dWpJVlFhRndpdnVGb2laM25nWkJ3QWlo?=
- =?utf-8?B?OFhLTExJUzAyR1RXKzVYeXFGZ0duL1FFeDU4MEc0RjNjZUo5a1BNNnJCQVNt?=
- =?utf-8?B?Ny9NdmxHNThCOE9DU3lBdGp1K0Zudk9WY2JBMkg1RE9vSTBmQXFDL2h3QTlo?=
- =?utf-8?B?UHJBd1F0Um9wZUVTSmZwN2NZOFlFTjB1bld6VWFVckN6QjBlN1dldWtjMk1U?=
- =?utf-8?B?SjgycEc4Wk9NWHpmZUlxQ3YvbDJpY2s5V25hZzhnTFRiOWo3YlMwTVBoUmk4?=
- =?utf-8?B?S2UxTXQrcHV6SjU5Y25QbTlQSTd6STB6YklDRUhUR2FTWnZINERycG5hb3B5?=
- =?utf-8?B?YVFpN2hGZ2RxVUVDQklUbjkyZHpma3MvL2taQk1sU1dSM29PcnJGYkFsSWZP?=
- =?utf-8?B?emhmaTJBeVl5blowb0ljcWZ6SFk2TzdWTzdpTFhmUFdHK3lkNU9qK0w4YkN3?=
- =?utf-8?B?Y2dzMG96OGpkSWw5aEN1dklWVlp5Wmtpc1ZiWmMrbVcwZVYwRjl2dm5yb2wr?=
- =?utf-8?B?bkY4YmNqWEZBam5nMzMzZXlGM0pXYWFPNHJNNHF2VStzbTBzbTd6d3c0aGZz?=
- =?utf-8?Q?DzXXr5WT0Eg=3D?=
+	=?utf-8?B?Sk9yenZISXBrbGQxTnhWMEQ4NGdidkFhdHhuMitpdHA2SVZwNTRkbTVmQTZx?=
+ =?utf-8?B?RjJsTlZsM0ZNYS9Dc3I2YlhoZnRGMnFnMEVaVVpYOEpWdzUwbXhsTTRhbzZ6?=
+ =?utf-8?B?L3dBUzRycUl1SUxmZk5kazlmaFVtWDAxUitCWlJLTVB5UCtWZUdPckhuNEpy?=
+ =?utf-8?B?RTl5R0QycFVTcVZWdk5SVzdJVTZYelRLT0ZkR1FJWDIwWXgzdGQrOHh4Q2Jt?=
+ =?utf-8?B?WDJNMUovRU9kM2VENTRabWZYQzZLaDVvYnZmcWdNTnJjMWRrekJLclh5b2xh?=
+ =?utf-8?B?d2xCNU96NGxOdDlISVZ4VHREWXM0cmFZdFZoS2RiT25rcU0xUDU5U3VtTHV1?=
+ =?utf-8?B?M1hCQUdqS3lCRis4WjhwMGEyTlp0NHpoaVZZODJxNmRnR1RyUVhPOEgrdmFO?=
+ =?utf-8?B?WlNSTkNqSG5DdWhKRHZvaUczVWVLQmlERml6Uk52aW9SZUpicWVtMmsvbDg4?=
+ =?utf-8?B?SkFuK2pyOUpLOGxhZ21reGE2eUNuYmViNEl1dE9wbEVZelRWWmR1ckhhWXhT?=
+ =?utf-8?B?TUlzck1lR0lWTFB0NG5wUnlOODVsalgyRXdXUEtUMkp5bkY1RHdiS0Jxc0Nu?=
+ =?utf-8?B?QjN1OVVDSnNJUnZoQVZPNk15WGU4Vmd1MXJaa2JKQkFhZ2tpcmVHNlBoV1VL?=
+ =?utf-8?B?L2g0OThaQUdjSlEyd1c3SXRDR2NLR3VTUzZvcko4bUlWUjhINmcwYURxY0xj?=
+ =?utf-8?B?MDk3MU4wZXZrMUhQa0ErMWZBcExPMi9nQks5MWtqZW9sSkx4R0thOE5qUUVR?=
+ =?utf-8?B?cTdlcS92Y2F1MU9JcGNkemFkUnNqdnVXWC80MDNtUkdETTJFRDdkazZmTEFH?=
+ =?utf-8?B?T3RITG9YeW9xUnNuaDBpejFmUmpWUGxIMVV4Vjg4L0ZpS1ZUUXdYdVRaM2No?=
+ =?utf-8?B?VTQrVmFnelNsb29pM0F1TGRJaE1ZMHBGRW83Z05FV3pBMGJnZjFscXA1NXgw?=
+ =?utf-8?B?bXk3Vm5hNGkwblBZMVZJM2hjYzNnc2tIRzl5eTVGSWhqRHRDWDBmaEU4d0ph?=
+ =?utf-8?B?R1QrUUE2RUhIbjFHaGQwaThtZlFDZ3FEbWlzV1BTR016blBwNTlFcnQ4SXpS?=
+ =?utf-8?B?WlRJcDJQbnErV3RxVzZCeXRzSXZOMmZwS2hickFZK2ZWcHRWVk9wT0lubEZV?=
+ =?utf-8?B?Q1g5ekpTWHFsTDErUFJQdWtSYWlJWWsrbkRqajlMeHEzaGpzdDRYcjFJN3dX?=
+ =?utf-8?B?NlRXdWZDZ1JOczQvOXhuT3N5S0dFcG40NDhvcjJYR1ZkZGJUWkxNVnlOanpt?=
+ =?utf-8?B?MmxuSW43TXJBVXFnWkx4YXN2V2VnVXBsT3FKbVlSWkQrc2JPalorYVNQRWFj?=
+ =?utf-8?B?blhjUHozcE45OUZBLzQvaDRkR3RXR3lBV2J1VDJlM2NkWlBTL1ZxbWNBZDFU?=
+ =?utf-8?B?T2VTOE1NbVExakVlVVlUekpPa29aVkplWHh3MDd3dVdZQm16MjR1L29XQng1?=
+ =?utf-8?B?K25LeWtHYnR3SHpsOE45RWw2V085ZXltS004a1dWdU9DWHBhV3RRcU91VVBn?=
+ =?utf-8?B?ZWZEUVNZKzdUOWV3M0NJcytYZElaaWZIMXdwZ1BvMGVwYUhnSHRxOHpSaEZw?=
+ =?utf-8?B?QStpcXh6R3hHK1JUM1VFNGR6d2tRTUd5UjcxTW1QRGhXV1V1aXlncHRGLzNp?=
+ =?utf-8?B?UXZGS1o0NlRMLzllYjd2ZkVSbjljb0prOEhrakM4MHRWelUrdndyWjYzZmht?=
+ =?utf-8?B?YW94L0dpUVYyb1FocTVOOTNtdXZMSEtZWjNWRkd4bXptOFZCL1pBVkJXa0Fn?=
+ =?utf-8?B?Mm5yVGlGMjhvM1pZRGt6NWY0MXBEVDBKY1ZJRzkxdkF2czZYT0srVDhJZllG?=
+ =?utf-8?B?aWxydnVWV01yaUVYVGlVUjRuanQyWm1VcVdKUHNqQmJGTDhVUWJhOFlFNUF1?=
+ =?utf-8?B?dXpPcTRxbjJVTkg5c0UvMHhWWUlIdndiM29VWndyUkQ1Ris4cFBsUDBWU3Fs?=
+ =?utf-8?B?VldFaVBEYy9Qdm8wNXRtdnl0aUpFdE5NMElTcUNhaEhkM3hNS1NHbGRaZ1E5?=
+ =?utf-8?B?N2h5VzZQc3VEa2pXZlBnS1dlSDNldklrUm12R2RGTm5pRVFOeGx3eTNDRnVI?=
+ =?utf-8?Q?GmnyoP?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6494.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(10070799003)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UnN6YmduTDIweFhoUUp5S2FveWt3cHhtcE1jckY2eXRTL3A4Q2lmcmszN2s2?=
- =?utf-8?B?SXBnbWo5YnJyYUptTk9BTnpGRng1eWNJY3hFT0RWbTgwQWk3UXRWUzg4ekdR?=
- =?utf-8?B?cGNxVytiK1lmcHlrdkR1MmdKUXF5enhqVFc1RlRETnJzaXFOZ3Jzc1RkcGs4?=
- =?utf-8?B?UEN3Ty93UmxTUE9rWEtvN1p6cCtsdEpVcEJiMWovSTVPY2c1cUpQMUFiMlc5?=
- =?utf-8?B?SjkwdEk3aU1Qb2tZbFJYMCtJR0syN1JhbEwyNytFSndZdG42RDNZRUxscStI?=
- =?utf-8?B?YnZUWVQ1dEV2OGswSi9jMzZFcWlDUjBCSXFNdWZlYnF4REV5WlBpbmdqOEtM?=
- =?utf-8?B?Umd3RkFTQk9rVG1qcUo2N2Z2OVMwd2FpK3pndDErQllRTUVyVHo4SjFFS0dy?=
- =?utf-8?B?SlFUMGVibTVvTEI3MzFweWhQZCtHcklmS2Z3NFpQeW8xMW54TURnVXpFbDVv?=
- =?utf-8?B?c0lZRGtuMFZOMHJFSng5TEJJeExLZzh4Nm83UnM4VFJiQmpKVHl0N050VU1u?=
- =?utf-8?B?QmV5eGVQT2lVc090bExTYW9yb3htdysrNmQ0MGNBN0s2QUlTd1VrK2loVEhF?=
- =?utf-8?B?UDhjbk1zQkM4aTJtMWRyb2hJbkxyNHlYVEw0RTB0T3JTMlRqOFB2R0luOUlY?=
- =?utf-8?B?czY3UmRaZFpIS1phdnUxRnpGejlVdmN1TGg3UmlqOVVpZzY0OE43QVZ5dnRx?=
- =?utf-8?B?ZkE5eDRxSytMZjl3b2tWNkYxV2MvL3RzTWJlL1RKRkpsU1hUUFdSWnZBcW1K?=
- =?utf-8?B?bk9DWVpOdXozb1BTcFg5VGltbTNMbzJkUW5FcXJEaEVpbDNKRzNYYlpIYkxR?=
- =?utf-8?B?cEkwOE1MMHBhcUp2dFRoM3luZ2Q4cmNwdjZoN1BrU1A2N2wvelFEdE5IdTJO?=
- =?utf-8?B?R0RMdW40Um5LdUdOWC9LZy9PYndueUpXOE15Zjk4U2MwdStJZmh1VWc1eUMy?=
- =?utf-8?B?bDZIczVQVVFqUEkvZjg0a0hXMEZxREFPMktTUVhNTGp0V3hCQ0NlSi9pQi9u?=
- =?utf-8?B?MWcwUUVZZFRTMUM0QTByWGhzRU1sS3kyV2tUL1RWQXNhSmt1YjFDaVNmY0Jx?=
- =?utf-8?B?S0d1MTVTMFdNUHNuUDRoWWdOMG02Ny9aQk9ldjhJQU40a203VWJQWkJGQzha?=
- =?utf-8?B?bjJMaGdNN3pPdllLS1VJVzE3bGczZloyaEQ4SFBHRzJuU3FwNXZCdGRxdkgr?=
- =?utf-8?B?YUIyR2N1MGxQTi91ZzZ6dUY2MkhMd1M3QVllaDY0U3dHSHJhbmtvRjdYMnVC?=
- =?utf-8?B?aTF5R21laVJSL2hnak1adVpPOVJRT3h6eGRNa2J6ajNpVVRqYndSSXBFU2Jy?=
- =?utf-8?B?b3I5SktOSlpFNVVwMVZBNit2U3I5REY1eVd1cjQyL2FvZzNzMUFENHZ1eWNF?=
- =?utf-8?B?SEhFdmtKcURxTU5CaGxRdkhER0NRK3laMFV5eVV1TUhtRVlsTzc3OGZNbjVQ?=
- =?utf-8?B?MjFaRXZpWkd0NWMvdUllMXZ1cldsLzlhK2tRNjlWenlMS2hkMGxXWlhDM1NJ?=
- =?utf-8?B?M1Z5MGVIbmtFcmZpaElrMEtDdWxFN2VzMUUzSVlqOU9OaWduOTRqQTZ4TGhX?=
- =?utf-8?B?cUhwUVMrdnBQZ0JKYkY2QnZvU3k4dGlhakFNWXpkT1lOS1RYMWkrdlFpcWl4?=
- =?utf-8?B?UjJ2K25Wbmdpb0lzZldDcVd3dHd1KytpUmRjKzdBdEpveGV0VFc4KzEzbUIw?=
- =?utf-8?B?NHhRTVJnQitDaVE4TUlJWlNaejRvem5yUlJhVDh5VGVWaVNka09xNHp3VW11?=
- =?utf-8?B?TjNXTTcxMXp2UDdOM0lBWDdKaHJZVzIxaTdNd1NpUzhOUkJzbVBwOTRMMmcy?=
- =?utf-8?B?WDJEZVg1cU9jZWc0ZkN6cEJkNEYwLzhYT1MvbzNIL1BBQWRhZlUvakkvK2Fh?=
- =?utf-8?B?VkxrMTMySCthb0h3ejJrR1lneUdYT3NINkFySlVGMXFXRGdDZ3ZXLzN2TWdH?=
- =?utf-8?B?U1oxZ1YwcFhlcEI4RkhpbjE2M1RJQnczRWxiNU9FbTB5L3RiTngveUxhMmV3?=
- =?utf-8?B?VTdyckExdWI3c0lSamdmV1cvSmNyc055QjhzNVEzQVBJenV0bXhFME5Ybmlk?=
- =?utf-8?B?bnBpWDVnaCtaWmErQ04ybUFoVlpmcEFuY3FHZUovNnlTR29kbncyMkk0cFV5?=
- =?utf-8?B?Vk5uN040L09HYVhHSjNPYmZienMwbzMydnVkaE1tUE1Ec1hsRjRTdlJ1c01W?=
- =?utf-8?B?SGVJUmVMNUJFNzdJOTl1TGFneFFxQVJvdTZ3MHA0OEpwVGVyWUcwdTVJSTd4?=
- =?utf-8?B?TGVQT2g1TStydVhDNmVNek1JazNRPT0=?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 76ef34bf-c15a-4b60-b89b-08dde45bbf07
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6494.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 04:48:05.7326
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 04:48:29.6749
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nqzkHN2m7ABWiu+QY9sk8mCnMmyFVOkrJ5PJ+WKC6aHOlvt8CKVE2z1Bwbz+DamhysmuuvkqatvbCFJWOGa4bA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7952
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8e28a97b-7e72-4666-59db-08dde45bcd8b
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00001CDC.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PPF08EEA05B5
 
-On Monday, August 25, 2025 2:08=E2=80=AFPM Aaron Kling wrote:
-> On Mon, Aug 25, 2025 at 12:03=E2=80=AFAM Aaron Kling via B4 Relay
->=20
-> <devnull+webgeek1234.gmail.com@kernel.org> wrote:
-> > From: Aaron Kling <webgeek1234@gmail.com>
-> >=20
-> > Several of the cores fail to read any registers and thus fail to
-> > initialize cpufreq. With shared policies, this only affects the Denver
 
-By failing to read any registers, do you just mean that they read as 0?
-
-I suspect the issue may be that the EDVD_COREx_VOLT_FREQ registers are just=
-=20
-used to request VF transitions. If no one has requested anything, the regis=
-ter=20
-will be at its reset value, zero.
-
-AIUI, in downstream, the driver retrieves the CPU clock rate by measuring i=
-t=20
-instead of calculating it from an NDIV value, hence it would not run into t=
-his=20
-issue. I think the conclusion would be that if the register reads as zero, =
-we=20
-cannot assume any clock rate. Is it possible to tell the cpufreq framework=
-=20
-that we don't know the rate and it should ask us to set the rate to somethi=
-ng?=20
-Or otherwise at probe time do this by ourselves.
+On 8/25/25 14:28, Mario Limonciello wrote:
+> On 8/22/2025 12:23 PM, Lizhi Hou wrote:
+>> Add interface for applications to get information array. The application
+>> provides a buffer pointer along with information type, maximum number of
+>> entries and maximum size of each entry. The buffer may also contain 
+>> match
+>> conditions based on the information type. After the ioctl completes, the
+>> actual number of entries and entry size are returned.
+>>
+>> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+>
+> How does userspace discover whether or not the new IOCTL call is 
+> supported?  Just a test call?
+The kernel header version will be used to determine whether the 
+application which uses new IOCTL will be compiled or not.
 
 Thanks,
-Mikko
 
-> > cluster, but one of the A57 cores also exhibits this behaviour. If the
-> > value is initialized to match what is read by the downstream vendor
-> > kernel, scaling works as expected. I have never seen this value be
-> > anything other than 35, so it should be a relatively safe assumption.
-> >=20
-> > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > ---
-> >=20
-> >  drivers/cpufreq/tegra186-cpufreq.c | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> >=20
-> > diff --git a/drivers/cpufreq/tegra186-cpufreq.c
-> > b/drivers/cpufreq/tegra186-cpufreq.c index
-> > cbabb726c6645d2e5f1857a47e5643c8552d1933..f017f903c6843f1881e8311753f62=
-69
-> > 637c6bc69 100644 --- a/drivers/cpufreq/tegra186-cpufreq.c
-> > +++ b/drivers/cpufreq/tegra186-cpufreq.c
-> > @@ -115,6 +115,11 @@ static unsigned int tegra186_cpufreq_get(unsigned =
-int
-> > cpu)>=20
-> >         edvd_offset =3D data->cpus[policy->cpu].edvd_offset;
-> >         ndiv =3D readl(data->regs + edvd_offset) &
-> >         EDVD_CORE_VOLT_FREQ_F_MASK;
-> >=20
-> > +       if (ndiv =3D=3D 0) {
-> > +               dev_warn_once(get_cpu_device(policy->cpu),
-> > +                        "Scaling registers invalid, using expected
-> > values"); +               ndiv =3D 35;
-> > +       }
-> >=20
-> >         cluster_id =3D data->cpus[policy->cpu].bpmp_cluster_id;
-> >         cluster =3D &data->clusters[cluster_id];
-> >         cpufreq_cpu_put(policy);
-> >=20
-> > ---
-> > base-commit: 1b237f190eb3d36f52dffe07a40b5eb210280e00
-> > change-id: 20250824-tegra186-cpufreq-ndiv-bc97a22814a9
-> >=20
-> > Best regards,
-> > --
-> > Aaron Kling <webgeek1234@gmail.com>
->=20
-> I tried to open a discussion about this issue on the mailing list [0],
-> but well over two months later, no responses have been given. I know
-> this isn't an ideal solution, but in lieu of better knowledge of
-> what's happening, this is the best I have. And this unblocks scaling
-> the denver cores on tegra186.
->=20
-> Aaron
->=20
-> [0]
-> https://lore.kernel.org/linux-tegra/CALHNRZ98_gh5dKw_GoayG4ieU3TWYAFFt29=
-=3D49
-> 5g4+dNLzwjbg@mail.gmail.com/
+Lizhi
 
-
-
-
+>
+>> ---
+>>   drivers/accel/amdxdna/aie2_pci.c        | 114 ++++++++++++++++++------
+>>   drivers/accel/amdxdna/amdxdna_pci_drv.c |  21 +++++
+>>   drivers/accel/amdxdna/amdxdna_pci_drv.h |   1 +
+>>   include/uapi/drm/amdxdna_accel.h        | 109 ++++++++++++++++++++++
+>>   4 files changed, 220 insertions(+), 25 deletions(-)
+>>
+>> diff --git a/drivers/accel/amdxdna/aie2_pci.c 
+>> b/drivers/accel/amdxdna/aie2_pci.c
+>> index 16ac0cab4f44..b8bfc0700798 100644
+>> --- a/drivers/accel/amdxdna/aie2_pci.c
+>> +++ b/drivers/accel/amdxdna/aie2_pci.c
+>> @@ -785,10 +785,11 @@ static int aie2_get_clock_metadata(struct 
+>> amdxdna_client *client,
+>>     static int aie2_hwctx_status_cb(struct amdxdna_hwctx *hwctx, void 
+>> *arg)
+>>   {
+>> -    struct amdxdna_drm_query_hwctx __user *buf, *tmp __free(kfree) = 
+>> NULL;
+>> -    struct amdxdna_drm_get_info *get_info_args = arg;
+>> +    struct amdxdna_drm_hwctx_entry __user *buf, *tmp __free(kfree) = 
+>> NULL;
+>> +    struct amdxdna_drm_get_array *array_args = arg;
+>> +    u32 size;
+>>   -    if (get_info_args->buffer_size < sizeof(*tmp))
+>> +    if (!array_args->num_element)
+>>           return -EINVAL;
+>>         tmp = kzalloc(sizeof(*tmp), GFP_KERNEL);
+>> @@ -801,14 +802,23 @@ static int aie2_hwctx_status_cb(struct 
+>> amdxdna_hwctx *hwctx, void *arg)
+>>       tmp->num_col = hwctx->num_col;
+>>       tmp->command_submissions = hwctx->priv->seq;
+>>       tmp->command_completions = hwctx->priv->completed;
+>> -
+>> -    buf = u64_to_user_ptr(get_info_args->buffer);
+>> -
+>> -    if (copy_to_user(buf, tmp, sizeof(*tmp)))
+>> +    tmp->pasid = hwctx->client->pasid;
+>> +    tmp->priority = hwctx->qos.priority;
+>> +    tmp->gops = hwctx->qos.gops;
+>> +    tmp->fps = hwctx->qos.fps;
+>> +    tmp->dma_bandwidth = hwctx->qos.dma_bandwidth;
+>> +    tmp->latency = hwctx->qos.latency;
+>> +    tmp->frame_exec_time = hwctx->qos.frame_exec_time;
+>> +    tmp->state = AMDXDNA_HWCTX_STATE_ACTIVE;
+>> +
+>> +    buf = u64_to_user_ptr(array_args->buffer);
+>> +    size = min(sizeof(*tmp), array_args->element_size);
+>> +
+>> +    if (copy_to_user(buf, tmp, size))
+>>           return -EFAULT;
+>>   -    get_info_args->buffer += sizeof(*tmp);
+>> -    get_info_args->buffer_size -= sizeof(*tmp);
+>> +    array_args->buffer += size;
+>> +    array_args->num_element--;
+>>         return 0;
+>>   }
+>> @@ -816,23 +826,24 @@ static int aie2_hwctx_status_cb(struct 
+>> amdxdna_hwctx *hwctx, void *arg)
+>>   static int aie2_get_hwctx_status(struct amdxdna_client *client,
+>>                    struct amdxdna_drm_get_info *args)
+>>   {
+>> +    struct amdxdna_drm_get_array array_args;
+>>       struct amdxdna_dev *xdna = client->xdna;
+>> -    struct amdxdna_drm_get_info info_args;
+>>       struct amdxdna_client *tmp_client;
+>>       int ret;
+>>         drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
+>>   -    info_args.buffer = args->buffer;
+>> -    info_args.buffer_size = args->buffer_size;
+>> -
+>> +    array_args.element_size = sizeof(struct amdxdna_drm_query_hwctx);
+>> +    array_args.buffer = args->buffer;
+>> +    array_args.num_element = args->buffer_size / 
+>> array_args.element_size;
+>>       list_for_each_entry(tmp_client, &xdna->client_list, node) {
+>> -        ret = amdxdna_hwctx_walk(tmp_client, &info_args, 
+>> aie2_hwctx_status_cb);
+>> +        ret = amdxdna_hwctx_walk(tmp_client, &array_args,
+>> +                     aie2_hwctx_status_cb);
+>>           if (ret)
+>>               break;
+>>       }
+>>   -    args->buffer_size = (u32)(info_args.buffer - args->buffer);
+>> +    args->buffer_size -= (u32)(array_args.buffer - args->buffer);
+>>       return ret;
+>>   }
+>>   @@ -876,6 +887,58 @@ static int aie2_get_info(struct amdxdna_client 
+>> *client, struct amdxdna_drm_get_i
+>>       return ret;
+>>   }
+>>   +static int aie2_query_ctx_status_array(struct amdxdna_client *client,
+>> +                       struct amdxdna_drm_get_array *args)
+>> +{
+>> +    struct amdxdna_drm_get_array array_args;
+>> +    struct amdxdna_dev *xdna = client->xdna;
+>> +    struct amdxdna_client *tmp_client;
+>> +    int ret;
+>> +
+>> +    drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
+>> +
+>> +    array_args.element_size = min(args->element_size,
+>> +                      sizeof(struct amdxdna_drm_hwctx_entry));
+>> +    array_args.buffer = args->buffer;
+>> +    array_args.num_element = args->num_element * args->element_size /
+>> +                array_args.element_size;
+>> +    list_for_each_entry(tmp_client, &xdna->client_list, node) {
+>> +        ret = amdxdna_hwctx_walk(tmp_client, &array_args,
+>> +                     aie2_hwctx_status_cb);
+>> +        if (ret)
+>> +            break;
+>> +    }
+>> +
+>> +    args->element_size = array_args.element_size;
+>> +    args->num_element = (u32)((array_args.buffer - args->buffer) /
+>> +                  args->element_size);
+>> +
+>> +    return ret;
+>> +}
+>> +
+>> +static int aie2_get_array(struct amdxdna_client *client,
+>> +              struct amdxdna_drm_get_array *args)
+>> +{
+>> +    struct amdxdna_dev *xdna = client->xdna;
+>> +    int ret, idx;
+>> +
+>> +    if (!drm_dev_enter(&xdna->ddev, &idx))
+>> +        return -ENODEV;
+>> +
+>> +    switch (args->param) {
+>> +    case DRM_AMDXDNA_HW_CONTEXT_ALL:
+>> +        ret = aie2_query_ctx_status_array(client, args);
+>> +        break;
+>> +    default:
+>> +        XDNA_ERR(xdna, "Not supported request parameter %u", 
+>> args->param);
+>> +        ret = -EOPNOTSUPP;
+>> +    }
+>> +    XDNA_DBG(xdna, "Got param %d", args->param);
+>> +
+>> +    drm_dev_exit(idx);
+>> +    return ret;
+>> +}
+>> +
+>>   static int aie2_set_power_mode(struct amdxdna_client *client,
+>>                      struct amdxdna_drm_set_state *args)
+>>   {
+>> @@ -925,15 +988,16 @@ static int aie2_set_state(struct amdxdna_client 
+>> *client,
+>>   }
+>>     const struct amdxdna_dev_ops aie2_ops = {
+>> -    .init           = aie2_init,
+>> -    .fini           = aie2_fini,
+>> -    .resume         = aie2_hw_resume,
+>> -    .suspend        = aie2_hw_suspend,
+>> -    .get_aie_info   = aie2_get_info,
+>> -    .set_aie_state    = aie2_set_state,
+>> -    .hwctx_init     = aie2_hwctx_init,
+>> -    .hwctx_fini     = aie2_hwctx_fini,
+>> -    .hwctx_config   = aie2_hwctx_config,
+>> -    .cmd_submit     = aie2_cmd_submit,
+>> +    .init = aie2_init,
+>> +    .fini = aie2_fini,
+>> +    .resume = aie2_hw_resume,
+>> +    .suspend = aie2_hw_suspend,
+>> +    .get_aie_info = aie2_get_info,
+>> +    .set_aie_state = aie2_set_state,
+>> +    .hwctx_init = aie2_hwctx_init,
+>> +    .hwctx_fini = aie2_hwctx_fini,
+>> +    .hwctx_config = aie2_hwctx_config,
+>> +    .cmd_submit = aie2_cmd_submit,
+>>       .hmm_invalidate = aie2_hmm_invalidate,
+>> +    .get_array = aie2_get_array,
+>>   };
+>> diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.c 
+>> b/drivers/accel/amdxdna/amdxdna_pci_drv.c
+>> index 8ef5e4f27f5e..ee89485299bc 100644
+>> --- a/drivers/accel/amdxdna/amdxdna_pci_drv.c
+>> +++ b/drivers/accel/amdxdna/amdxdna_pci_drv.c
+>> @@ -164,6 +164,26 @@ static int amdxdna_drm_get_info_ioctl(struct 
+>> drm_device *dev, void *data, struct
+>>       return ret;
+>>   }
+>>   +static int amdxdna_drm_get_array_ioctl(struct drm_device *dev, 
+>> void *data,
+>> +                       struct drm_file *filp)
+>> +{
+>> +    struct amdxdna_client *client = filp->driver_priv;
+>> +    struct amdxdna_dev *xdna = to_xdna_dev(dev);
+>> +    struct amdxdna_drm_get_array *args = data;
+>> +    int ret;
+>> +
+>> +    if (!xdna->dev_info->ops->get_array)
+>> +        return -EOPNOTSUPP;
+>> +
+>> +    if (args->pad || !args->num_element)
+>> +        return -EINVAL;
+>> +
+>> +    mutex_lock(&xdna->dev_lock);
+>> +    ret = xdna->dev_info->ops->get_array(client, args);
+>> +    mutex_unlock(&xdna->dev_lock);
+>> +    return ret;
+>> +}
+>> +
+>>   static int amdxdna_drm_set_state_ioctl(struct drm_device *dev, void 
+>> *data, struct drm_file *filp)
+>>   {
+>>       struct amdxdna_client *client = filp->driver_priv;
+>> @@ -195,6 +215,7 @@ static const struct drm_ioctl_desc 
+>> amdxdna_drm_ioctls[] = {
+>>       DRM_IOCTL_DEF_DRV(AMDXDNA_EXEC_CMD, 
+>> amdxdna_drm_submit_cmd_ioctl, 0),
+>>       /* AIE hardware */
+>>       DRM_IOCTL_DEF_DRV(AMDXDNA_GET_INFO, amdxdna_drm_get_info_ioctl, 
+>> 0),
+>> +    DRM_IOCTL_DEF_DRV(AMDXDNA_GET_ARRAY, 
+>> amdxdna_drm_get_array_ioctl, 0),
+>>       DRM_IOCTL_DEF_DRV(AMDXDNA_SET_STATE, 
+>> amdxdna_drm_set_state_ioctl, DRM_ROOT_ONLY),
+>>   };
+>>   diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.h 
+>> b/drivers/accel/amdxdna/amdxdna_pci_drv.h
+>> index b6b3b424d1d5..72d6696d49da 100644
+>> --- a/drivers/accel/amdxdna/amdxdna_pci_drv.h
+>> +++ b/drivers/accel/amdxdna/amdxdna_pci_drv.h
+>> @@ -58,6 +58,7 @@ struct amdxdna_dev_ops {
+>>       int (*cmd_submit)(struct amdxdna_hwctx *hwctx, struct 
+>> amdxdna_sched_job *job, u64 *seq);
+>>       int (*get_aie_info)(struct amdxdna_client *client, struct 
+>> amdxdna_drm_get_info *args);
+>>       int (*set_aie_state)(struct amdxdna_client *client, struct 
+>> amdxdna_drm_set_state *args);
+>> +    int (*get_array)(struct amdxdna_client *client, struct 
+>> amdxdna_drm_get_array *args);
+>>   };
+>>     /*
+>> diff --git a/include/uapi/drm/amdxdna_accel.h 
+>> b/include/uapi/drm/amdxdna_accel.h
+>> index ce523e9ccc52..e19e4cd04ffa 100644
+>> --- a/include/uapi/drm/amdxdna_accel.h
+>> +++ b/include/uapi/drm/amdxdna_accel.h
+>> @@ -34,6 +34,7 @@ enum amdxdna_drm_ioctl_id {
+>>       DRM_AMDXDNA_EXEC_CMD,
+>>       DRM_AMDXDNA_GET_INFO,
+>>       DRM_AMDXDNA_SET_STATE,
+>> +    DRM_AMDXDNA_GET_ARRAY = 10,
+>>   };
+>>     /**
+>> @@ -455,6 +456,110 @@ struct amdxdna_drm_get_info {
+>>       __u64 buffer; /* in/out */
+>>   };
+>>   +#define AMDXDNA_HWCTX_STATE_IDLE    0
+>> +#define AMDXDNA_HWCTX_STATE_ACTIVE    1
+>> +
+>> +/**
+>> + * struct amdxdna_drm_hwctx_entry - The hardware context array entry
+>> + */
+>> +struct amdxdna_drm_hwctx_entry {
+>> +    /** @context_id: Context ID. */
+>> +    __u32 context_id;
+>> +    /** @start_col: Start AIE array column assigned to context. */
+>> +    __u32 start_col;
+>> +    /** @num_col: Number of AIE array columns assigned to context. */
+>> +    __u32 num_col;
+>> +    /** @hwctx_id: The real hardware context id. */
+>> +    __u32 hwctx_id;
+>> +    /** @pid: ID of process which created this context. */
+>> +    __s64 pid;
+>> +    /** @command_submissions: Number of commands submitted. */
+>> +    __u64 command_submissions;
+>> +    /** @command_completions: Number of commands completed. */
+>> +    __u64 command_completions;
+>> +    /** @migrations: Number of times been migrated. */
+>> +    __u64 migrations;
+>> +    /** @preemptions: Number of times been preempted. */
+>> +    __u64 preemptions;
+>> +    /** @errors: Number of errors happened. */
+>> +    __u64 errors;
+>> +    /** @priority: Context priority. */
+>> +    __u64 priority;
+>> +    /** @heap_usage: Usage of device heap buffer. */
+>> +    __u64 heap_usage;
+>> +    /** @suspensions: Number of times been suspended. */
+>> +    __u64 suspensions;
+>> +    /**
+>> +     * @state: Context state.
+>> +     * %AMDXDNA_HWCTX_STATE_IDLE
+>> +     * %AMDXDNA_HWCTX_STATE_ACTIVE
+>> +     */
+>> +    __u32 state;
+>> +    /** @pasid: PASID been bound. */
+>> +    __u32 pasid;
+>> +    /** @gops: Giga operations per second. */
+>> +    __u32 gops;
+>> +    /** @fps: Frames per second. */
+>> +    __u32 fps;
+>> +    /** @dma_bandwidth: DMA bandwidth. */
+>> +    __u32 dma_bandwidth;
+>> +    /** @latency: Frame response latency. */
+>> +    __u32 latency;
+>> +    /** @frame_exec_time: Frame execution time. */
+>> +    __u32 frame_exec_time;
+>> +    /** @txn_op_idx: Index of last control code executed. */
+>> +    __u32 txn_op_idx;
+>> +    /** @ctx_pc: Program counter. */
+>> +    __u32 ctx_pc;
+>> +    /** @fatal_error_type: Fatal error type if context crashes. */
+>> +    __u32 fatal_error_type;
+>> +    /** @fatal_error_exception_type: Firmware exception type. */
+>> +    __u32 fatal_error_exception_type;
+>> +    /** @fatal_error_exception_pc: Firmware exception program 
+>> counter. */
+>> +    __u32 fatal_error_exception_pc;
+>> +    /** @fatal_error_app_module: Exception module name. */
+>> +    __u32 fatal_error_app_module;
+>> +};
+>> +
+>> +#define DRM_AMDXDNA_HW_CONTEXT_ALL    0
+>> +
+>> +/**
+>> + * struct amdxdna_drm_get_array - Get information array.
+>> + */
+>> +struct amdxdna_drm_get_array {
+>> +    /**
+>> +     * @param:
+>> +     *
+>> +     * Supported params:
+>> +     *
+>> +     * %DRM_AMDXDNA_HW_CONTEXT_ALL:
+>> +     * Returns all created hardware contexts.
+>> +     */
+>> +    __u32 param;
+>> +    /**
+>> +     * @element_size:
+>> +     *
+>> +     * Specifies maximum element size and returns the actual element 
+>> size.
+>> +     */
+>> +    __u32 element_size;
+>> +    /**
+>> +     * @num_element:
+>> +     *
+>> +     * Specifies maximum number of elements and returns the actual 
+>> number
+>> +     * of elements.
+>> +     */
+>> +    __u32 num_element; /* in/out */
+>> +    /** @pad: MBZ */
+>> +    __u32 pad;
+>> +    /**
+>> +     * @buffer:
+>> +     *
+>> +     * Specifies the match conditions and returns the matched 
+>> information
+>> +     * array.
+>> +     */
+>> +    __u64 buffer;
+>> +};
+>> +
+>>   enum amdxdna_drm_set_param {
+>>       DRM_AMDXDNA_SET_POWER_MODE,
+>>       DRM_AMDXDNA_WRITE_AIE_MEM,
+>> @@ -519,6 +624,10 @@ struct amdxdna_drm_set_power_mode {
+>>       DRM_IOWR(DRM_COMMAND_BASE + DRM_AMDXDNA_SET_STATE, \
+>>            struct amdxdna_drm_set_state)
+>>   +#define DRM_IOCTL_AMDXDNA_GET_ARRAY \
+>> +    DRM_IOWR(DRM_COMMAND_BASE + DRM_AMDXDNA_GET_ARRAY, \
+>> +         struct amdxdna_drm_get_array)
+>> +
+>>   #if defined(__cplusplus)
+>>   } /* extern c end */
+>>   #endif
+>
 
