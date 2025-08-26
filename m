@@ -1,111 +1,203 @@
-Return-Path: <linux-kernel+bounces-786611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 755D4B35F17
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:27:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5579B35F18
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:28:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CCC01B65718
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:27:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B5377A5480
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:26:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FED8327797;
-	Tue, 26 Aug 2025 12:27:25 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5257031987F
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 12:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 239EA322A1E;
+	Tue, 26 Aug 2025 12:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="YfPqyL7O"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA73F9CB
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 12:28:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756211244; cv=none; b=dSKDuVnGlc86YvIn4AFAhjkvJkB+0gQv9VDknb+ejqw+tN3jl43MDMIcOh7v7s8TySmG316FK3XWqSwU5MFOYRP6PONz0lQOWF3optIzVT2kRn6tiTMzbQh1Ubpj/65bq82y8lMbZNgOhPTX6s2WanP2LJVmddavJzALo53ZFy4=
+	t=1756211302; cv=none; b=LV19wkMJo/oVe9oe/7X9srm4KKIcZiLk3nFWPII0QcLghlvCrVTs1uWmddkIVW3QR8K/hdLe6QQFdy+jeQrs4ZeQ+JNcJf/Mchv2dUvc3FRLuHkQDxyjFu8j8fYoKNrQsCpMIQxydIaN23lOG2qNd76gpv0THyFL21Z73X026LA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756211244; c=relaxed/simple;
-	bh=lr/ktiqN8EGAwxTSlE1IH8BeTaDaJt2Zb2PkjFQqbHY=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=nfHPdIN0EosW9T9JZPvg3RdiG2u2GJTpaGrGWJEjmkuv8KejlJC/HJs31DW5UBqwHYrYknxeZxcMYXZjRRcWtNY5G6cYW12KV43R7A7uQhmQsh3HxwFGBhfltC/I5xjKg729zUI7nKBGNxOogvW/XJkVs/fGY5ZtCHdy1rqRETs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8Dxfb8lqK1oc1wDAA--.5461S3;
-	Tue, 26 Aug 2025 20:27:17 +0800 (CST)
-Received: from [10.130.10.66] (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowJBxzsEhqK1oQ_5pAA--.40668S3;
-	Tue, 26 Aug 2025 20:27:14 +0800 (CST)
-Subject: Re: [RFC PATCH 2/2] objtool/LoongArch: Fix unreachable instruction
- warnings about head.S
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Huacai Chen <chenhuacai@kernel.org>, Josh Poimboeuf
- <jpoimboe@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250826064631.9617-1-yangtiezhu@loongson.cn>
- <20250826064631.9617-3-yangtiezhu@loongson.cn>
- <20250826082057.GE3245006@noisy.programming.kicks-ass.net>
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <8dfe8bde-0095-d6c3-b9ca-cce2bf720ac2@loongson.cn>
-Date: Tue, 26 Aug 2025 20:27:13 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1756211302; c=relaxed/simple;
+	bh=Y133KrGcj/pdCk41XYuYo8MbJHiVfeckcg9eEcUJd34=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j5rCtJ2mQY19o9XKBZKMQWP4t0B3t9GWPfJM1qw9OHpGHH2B3wqq96ubF6dkVdCVWMvlaoV08CneEsbcoYTaQLL8i9ZMiEKs2x5jh+KgcAGGgjTerLeb2RpNDHnLWYmed6dF8YuLxVfyDZs050V6JN/qcQXVSNUndS9dkiTAueQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=YfPqyL7O; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+Message-ID: <a23c8b0b-ec62-437b-b876-3143f132a901@manjaro.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1756211291;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Jfzo9ajTl5pL+DzKVsWq0bNdp3fhVYkJzPkksOiabvA=;
+	b=YfPqyL7Oilke1+Ney2mpRJsYsjvaN741LVUQjgnlVsbJBlJk7SPiSixCkqJYQhRTraBpc+
+	QBCGVgxQb78/gHIl2aP1aPGesM2BwcKRg0MuxMLMeOdU0j49xn+nmj5TDQB3vjtCwYG6L7
+	KY/6wumMLuxwcmwvJlEYb80quSRrMMgkiApm8Ym7FbxPm6m9vi8xRBP1HR/FyFi0fvpCHO
+	PNO9Jrc3uHaA3OxSuSUNyaR6s/3G2sG1g9fLjSI5fYmqpplwttXL2A0hdJ8FlI+oFqHkOf
+	v4vRG7ZKfixmP1mlAva3wsoR0HE3yGs/to5nY/ZEbB8Tb5BMlbfX+N9CE2p8RQ==
+Date: Tue, 26 Aug 2025 14:28:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250826082057.GE3245006@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Subject: Re: [PATCH v1 4/5] drm: panel-backlight-quirks: Add brightness mask
+ quirk
+To: Antheas Kapenekakis <lkml@antheas.dev>, amd-gfx@lists.freedesktop.org
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Mario Limonciello <mario.limonciello@amd.com>
+References: <20250824200202.1744335-1-lkml@antheas.dev>
+ <20250824200202.1744335-5-lkml@antheas.dev>
 Content-Language: en-US
+From: =?UTF-8?Q?Philip_M=C3=BCller?= <philm@manjaro.org>
+Organization: Manjaro Community
+In-Reply-To: <20250824200202.1744335-5-lkml@antheas.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJBxzsEhqK1oQ_5pAA--.40668S3
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoWrZrW7ZF4rCFykXFy3tw1DurX_yoW8JF17pF
-	WUAw40kFZ8Jr1I9a13Ja1fWFyY9FZxXrWfGr1q9rySyayqyayjqr1agr1j9F9Iva9xKFyF
-	vw4DtF909Fn8AagCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
-	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v2
-	6r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67
-	vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAF
-	wI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc4
-	0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AK
-	xVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr
-	1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8vApUUU
-	UUU==
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=philm@manjaro.org smtp.mailfrom=philm@manjaro.org
 
-On 2025/8/26 下午4:20, Peter Zijlstra wrote:
-> On Tue, Aug 26, 2025 at 02:46:31PM +0800, Tiezhu Yang wrote:
->> When compiling with LLVM and CONFIG_LTO_CLANG is set, there exist the
->> following objtool warnings after silencing all of the other warnings:
-
-...
-
->> Just give a proper unwind hint to silence the above warnings. By the way,
->> the previous instructions of kernel_entry+0xf4 and smpboot_entry+0x68 are
->> the 'bl' instructions, the call destination symbols are start_kernel() and
->> start_secondary() which are noreturn functions, then the 'bl' instructions
->> are marked as dead end in annotate_call_site(), so actually ASM_BUG() can
->> be removed due to unnecessary, otherwise there are following warnings:
-
-...
-
->> Link: https://lore.kernel.org/lkml/20250814083651.GR4067720@noisy.programming.kicks-ass.net/
->> Suggested-by: Peter Zijlstra <peterz@infradead.org>
->> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
->> ---
->>   arch/loongarch/kernel/head.S | 8 ++++----
->>   1 file changed, 4 insertions(+), 4 deletions(-)
+On 8/24/25 22:02, Antheas Kapenekakis wrote:
+> Certain OLED devices malfunction on specific brightness levels.
+> Specifically, when DP_SOURCE_BACKLIGHT_LEVEL is written to with
+> the first byte being 0x00 and sometimes 0x01, the panel forcibly
+> turns off until the device sleeps again.
 > 
-> At this point you should also be able to remove that Makefile thing,
-> right?
+> Below are some examples. This was found by iterating over brighness
+> ranges while printing DP_SOURCE_BACKLIGHT_LEVEL. It was found that
+> the screen would malfunction on specific values, and some of them
+> were collected. Summary examples are found below.
+> 
+> This quirk was tested by removing the workarounds and iterating
+> from 0 to 50_000 value ranges with a cadence of 0.2s/it. The
+> range of the panel is 1000...400_000, so the values were slightly
+> interpolated during testing. The custom brightness curve added on
+> 6.15 was disabled.
+> 
+>   86016:  10101000000000000
+>   86272:  10101000100000000
+>   87808:  10101011100000000
+> 251648: 111101011100000000
+> 251649: 111101011100000001
+> 
+>   86144:  10101000010000000
+>   87809:  10101011100000001
+> 251650: 111101011100000010
+> 
+> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3803
+> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> ---
+>   .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |  7 +++++
+>   .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h |  6 ++++
+>   drivers/gpu/drm/drm_panel_backlight_quirks.c  | 29 +++++++++++++++++++
+>   include/drm/drm_utils.h                       |  1 +
+>   4 files changed, 43 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> index 4ad80ae615a2..156f2aae6828 100644
+> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> @@ -3662,6 +3662,9 @@ static void update_connector_ext_caps(struct amdgpu_dm_connector *aconnector)
+>   		if (panel_backlight_quirk->min_brightness)
+>   			caps->min_input_signal =
+>   				panel_backlight_quirk->min_brightness - 1;
+> +		if (panel_backlight_quirk->brightness_mask)
+> +			caps->brightness_mask =
+> +				panel_backlight_quirk->brightness_mask;
+>   	}
+>   }
+>   
+> @@ -4862,6 +4865,10 @@ static void amdgpu_dm_backlight_set_level(struct amdgpu_display_manager *dm,
+>   	brightness = convert_brightness_from_user(caps, dm->brightness[bl_idx]);
+>   	link = (struct dc_link *)dm->backlight_link[bl_idx];
+>   
+> +	/* Apply brightness quirk */
+> +	if (caps->brightness_mask)
+> +		brightness |= caps->brightness_mask;
+> +
+>   	/* Change brightness based on AUX property */
+>   	mutex_lock(&dm->dc_lock);
+>   	if (dm->dc->caps.ips_support && dm->dc->ctx->dmub_srv->idle_allowed) {
+> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
+> index b937da0a4e4a..340f9b5f68eb 100644
+> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
+> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
+> @@ -200,6 +200,12 @@ struct amdgpu_dm_backlight_caps {
+>   	 * @aux_support: Describes if the display supports AUX backlight.
+>   	 */
+>   	bool aux_support;
+> +	/**
+> +	 * @brightness_mask: After deriving brightness, or it with this mask.
+> +	 * This is used to workaround panels that have issues with certain
+> +	 * brightness values.
+> +	 */
+> +	u32 brightness_mask;
+>   	/**
+>   	 * @ac_level: the default brightness if booted on AC
+>   	 */
+> diff --git a/drivers/gpu/drm/drm_panel_backlight_quirks.c b/drivers/gpu/drm/drm_panel_backlight_quirks.c
+> index 3d386a96e50e..78c430b07d6a 100644
+> --- a/drivers/gpu/drm/drm_panel_backlight_quirks.c
+> +++ b/drivers/gpu/drm/drm_panel_backlight_quirks.c
+> @@ -45,6 +45,35 @@ static const struct drm_get_panel_backlight_quirk drm_panel_min_backlight_quirks
+>   		.ident.name = "NE135A1M-NY1",
+>   		.quirk = { .min_brightness = 1, },
+>   	},
+> +	/* Have OLED Panels with brightness issue when last byte is 0/1 */
+> +	{
+> +		.dmi_match.field = DMI_SYS_VENDOR,
+> +		.dmi_match.value = "AYANEO",
+> +		.dmi_match_other.field = DMI_PRODUCT_NAME,
+> +		.dmi_match_other.value = "AYANEO 3",
+> +		.quirk = { .brightness_mask = 3, },
+> +	},
+> +	{
+> +		.dmi_match.field = DMI_SYS_VENDOR,
+> +		.dmi_match.value = "ZOTAC",
+> +		.dmi_match_other.field = DMI_BOARD_NAME,
+> +		.dmi_match_other.value = "G0A1W",
+> +		.quirk = { .brightness_mask = 3, },
+> +	},
+> +	{
+> +		.dmi_match.field = DMI_SYS_VENDOR,
+> +		.dmi_match.value = "ONE-NETBOOK",
+> +		.dmi_match_other.field = DMI_PRODUCT_NAME,
+> +		.dmi_match_other.value = "ONEXPLAYER F1Pro",
+> +		.quirk = { .brightness_mask = 3, },
+> +	},
+> +	{
+> +		.dmi_match.field = DMI_SYS_VENDOR,
+> +		.dmi_match.value = "ONE-NETBOOK",
+> +		.dmi_match_other.field = DMI_PRODUCT_NAME,
+> +		.dmi_match_other.value = "ONEXPLAYER F1 EVA-02",
+> +		.quirk = { .brightness_mask = 3, },
+> +	}
+>   };
+>   
+>   static bool drm_panel_min_backlight_quirk_matches(
+> diff --git a/include/drm/drm_utils.h b/include/drm/drm_utils.h
+> index 82eeee4a58ab..6a46f755daba 100644
+> --- a/include/drm/drm_utils.h
+> +++ b/include/drm/drm_utils.h
+> @@ -18,6 +18,7 @@ int drm_get_panel_orientation_quirk(int width, int height);
+>   
+>   struct drm_panel_backlight_quirk {
+>   	u16 min_brightness;
+> +	u32 brightness_mask;
+>   };
+>   
+>   const struct drm_panel_backlight_quirk *
 
-Yes, you are right, will do it in the next version if this patch
-makes sense.
-
-Thanks,
-Tiezhu
-
+Tested-by: Philip Müller <philm@manjaro.org>
 
