@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-786938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EFF1B36F0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:57:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30B50B36F1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:59:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89136464D4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:52:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E0CD986BC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:53:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3AAA3705AC;
-	Tue, 26 Aug 2025 15:49:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD573164BE;
+	Tue, 26 Aug 2025 15:49:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="lovcWmXU"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kjs/dMGz"
 Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E0536CC9D
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 15:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEBFF36CE0B
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 15:49:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756223358; cv=none; b=ctm7QmgjJDqbB0DUZJKcB+7Kh34009PvCwWRp2VQv1QZssr3jmrQYUtAhcbZjtiSabVWZht9XEx7nT+ZTFlKAKzmQdl1z+AHBd6FjeOVBhIWXkdqJRiSkGK9pnIHFRw2ALx91FLQci9qj9e1u6kld1hKH/r6uAxzE53Y5n50Vp4=
+	t=1756223360; cv=none; b=cgqc26mkaeSHcTTxXTDnV1bRidZWTKaau/C0cKrnN4SC1aaa+HnaVY7AMiXZlEe13rHuYt6fgp6V44OgcnY8B+l1noUzYozvWKjwvtUpZs2mK0LucHw/we1C8NEPyYwWm57WE2wb12N4Q6IdWo/rp1vYDpIuKf2a+1Um896GflQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756223358; c=relaxed/simple;
-	bh=UupRcB6KUt1GHL486o0IBajaAHMWB28U+QfxjkoiYnY=;
+	s=arc-20240116; t=1756223360; c=relaxed/simple;
+	bh=qMPmWBQfwdwsj/YmDdca2wIZXgDMcobiHaM/QV5Mf+k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ixhTBBu5DhH6IZfa1iGRnQj9iG+fkkVALY/2oGkyKlLmxmHxmNWwqUrgTIXbZ364qVb11ZqPpyAqbXWF8SMIS3atoFjR00jfS6XhVVyJ7tI513eYvXqMoN5SAHVWz5UwZUxC/Ux23rWaRbG0ThelmhZKkj0sFY9CZQu9RxK3+uE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=lovcWmXU; arc=none smtp.client-ip=205.220.165.32
+	 MIME-Version; b=hJGzCwmU9z662QeubHrI6/zBVinfN8y1vT45OSnMe3PBr6j5coGowaa0j9f5zedCByoC/lp4yvkSqox4cu41OWaC0whLEnAjk682a/NfoYyNlKzJ3LyvW7jYQld4agVoPh56VJQXSHOmKLPCvaf+8c9H25XhGfiezOb5QfmxKtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=kjs/dMGz; arc=none smtp.client-ip=205.220.165.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57QFDDRP019292;
-	Tue, 26 Aug 2025 15:49:07 GMT
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57QFCBWP005225;
+	Tue, 26 Aug 2025 15:49:08 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
 	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=corp-2025-04-25; bh=nCbt7
-	TS8/hbAOYDRRl6Jn1HXdbKA/WSEYy5d+Ymz4DY=; b=lovcWmXUwB0wti1EjUckN
-	Y5fh5XAXtQv53zGPgDfzcnEUENP6bEiZAaJz+PvFdc0efF1lIoz6+hvc1y6W9XTF
-	EB6v4TxX84MIr4P6MKuFKb+JZoZdFgr5SMn/AZG2TndROFE5jBL+RbuDnISh4FxB
-	bFXlvwq1X7e4pF/PFKS41Myem6glAagYY29reFq39opc+ODsima9UXUWWWSLFuqU
-	glSMUa++ZzVgJuntqSM4RSFgM/fNs0vkOOX3aVG1ATNhqjDa+8zCyeDX5mtcJidG
-	je2FLB8l/LHwPxO37Wnz2qh0uRs94eO4nUNBz8srNcLpBZuXCH3hS5onwV9QYsG2
-	w==
+	:mime-version:references:subject:to; s=corp-2025-04-25; bh=VovS7
+	oIzZ0FP/NCTclA2FR6ftANOeezAkICyLh5RAhA=; b=kjs/dMGz1jmR+xhZstjsw
+	ZvTQcC9kixr0EvX3nuLX3IlOL1VxI4rd89Df7JtQoR6mUDu9IwjEFVq8qgpfKWPz
+	rfasgvRtqIbekndNc76eYllYP66k+YvNm8mBNVCUGEFCXYLZcaMyx7d/XuoScG3s
+	yYbybnu6n4z3eBffosS5wxmhxP0nxJcX5YiDtJM5nmkjqXxISHhTCPug5vPMDKFC
+	vNnXkhiR79/rpYH+KA4vYwpXNoeUixxh4/y6llF3l/af5N+S3khuXLFZOcdlEK3S
+	x1YuN2yo1qlofrcYifFBGxI/UtdMJQbIz8yXOmaPI4rJh8b2sJLZwOcce3VkjABU
+	g==
 Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48r8twbh0v-1
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48q678vrq5-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Tue, 26 Aug 2025 15:49:07 +0000 (GMT)
 Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57QF51On014662;
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57QFZXK7014625;
 	Tue, 26 Aug 2025 15:49:06 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 48q439pn1v-1
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 48q439pn26-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 26 Aug 2025 15:49:05 +0000
+	Tue, 26 Aug 2025 15:49:06 +0000
 Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57QFn4EL020762;
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57QFn4EN020762;
 	Tue, 26 Aug 2025 15:49:05 GMT
 Received: from sidhakum-ubuntu.osdevelopmeniad.oraclevcn.com (sidhakum-ubuntu.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.250.108])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 48q439pn0g-3;
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 48q439pn0g-4;
 	Tue, 26 Aug 2025 15:49:05 +0000
 From: Sidhartha Kumar <sidhartha.kumar@oracle.com>
 To: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
         airlied@gmail.com, simona@ffwll.ch, willy@infradead.org,
         sidhartha.kumar@oracle.com, jani.nikula@linux.intel.com
-Subject: [PATCH v3 2/6] drm: Convert object_name_idr to XArray
-Date: Tue, 26 Aug 2025 15:48:56 +0000
-Message-ID: <20250826154900.405480-3-sidhartha.kumar@oracle.com>
+Subject: [PATCH v3 3/6] drm: Convert syncobj_idr to XArray
+Date: Tue, 26 Aug 2025 15:48:57 +0000
+Message-ID: <20250826154900.405480-4-sidhartha.kumar@oracle.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250826154900.405480-1-sidhartha.kumar@oracle.com>
 References: <20250826154900.405480-1-sidhartha.kumar@oracle.com>
@@ -85,137 +85,170 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 ml
  mlxscore=0 bulkscore=0 phishscore=0 adultscore=0 spamscore=0
  malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2508110000 definitions=main-2508260139
-X-Proofpoint-ORIG-GUID: lURWdUPMT_LxaX6uYt3Qcr3enYji_NOz
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI0MDE4NCBTYWx0ZWRfX7RSRs8OM02+p
- VS3t8OXbd/+s+8XsHRVYAbHpMxhVfTRti8FhT4v3qfcDfTVwlFiv4EFkysxsiYFY4QtP+Dx7xTl
- RCbvfE8gbZ9QU+vyXGIYrS9qcpodf7kDpxQ9LBH+wfoERfzJ26os6Ef/HXY1U83rPrTQwPTy9Bi
- cuQBAs4nWrE0OPRdcasv1w/FIPmcaT3vWG+jELJszC0WHgzZZWr4Cul/Isqggi6eduAvp6PdseV
- I14WLgRe3U59JwNTVDte19xIqu3wqGNVIbCRzk87NRvaJKX1skN9fOzSjsqH/VgT9hCuzXVUMzP
- qQVfkS/p2e7VUOwORU01pOP/M5MfFpEyvBMlfzpBh4GO+StqRjaIdnPyHPyDlh5ifgBXnHtBhBD
- +3RVWxGqN8q+ZWjJvt5UMZhFv+YtWw==
-X-Proofpoint-GUID: lURWdUPMT_LxaX6uYt3Qcr3enYji_NOz
-X-Authority-Analysis: v=2.4 cv=IciHWXqa c=1 sm=1 tr=0 ts=68add773 b=1 cx=c_pps
+X-Proofpoint-GUID: kax5dvk4zpCiQS6AvvmlfOxjXzG42sya
+X-Proofpoint-ORIG-GUID: kax5dvk4zpCiQS6AvvmlfOxjXzG42sya
+X-Authority-Analysis: v=2.4 cv=NrLRc9dJ c=1 sm=1 tr=0 ts=68add773 b=1 cx=c_pps
  a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
- a=2OwXVqhp2XgA:10 a=JfrnYn6hAAAA:8 a=yPCof4ZbAAAA:8 a=DK_Tli1e-HrAiUtdIdsA:9
+ a=2OwXVqhp2XgA:10 a=JfrnYn6hAAAA:8 a=yPCof4ZbAAAA:8 a=2SHY49DYBmSurWS0lVIA:9
  a=1CNFftbPRP8L7MoqJWF3:22 cc=ntf awl=host:13602
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzNSBTYWx0ZWRfX/7X/GH8BcqMx
+ f24jxfI3/4/ln4YHSl5D9wz/MLsSdRPAtFERDLfLbKAxq32GLNC8XGKkyYjFTtkyqjEm6CbAcsJ
+ VGs6GnbFkGgQ7ZK9dIExVUhTR1Lr/7c/uEOJxtiNWAIPapogf9hkFFzMtyBQb/D6BCsxhIto+1w
+ IOXaZ1Aj0s6IbSyrqttlAj2x0ThM2puH9785vzV1jw0aOTKZNRyYLeMijkWwyspNe573WFnJ4g/
+ vl5EAv0JlofFI5yiLhZQMhKiURqEQ+8ZvaEwyMr1dpfl6FtjXLAj5wC5xz/Zr5xorEt5ZidimhY
+ 0eTY7qdfcihV+ePKEjqmnilpB7j2q8mk26WzMCTAhvHw4xyjnuoA2OM+tAtznCbxAal/ZUV2nzj
+ 6jIHx/ibwaWUaw7Po6Txk67uk1eCyg==
 
 From: Matthew Wilcox <willy@infradead.org>
 
 From: Matthew Wilcox <willy@infradead.org>
 
-It's not possible to replace object_name_lock as it protects more
-code than should be reasonably be run under a spinlock, so the xa_lock
-is nested under the object_name_lock.
-
-obj->name and obj is not modified so the indentifier value is unchanged
-after this change.
+Remove syncobj_table_lock by converting the syncobj_idr to an XArray.
+handle and syncobj is not modified in this change so the indentifier value
+remains the same.
 
 Signed-off-by: Matthew Wilcox <willy@infradead.org>
 Signed-off-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
 ---
- drivers/gpu/drm/drm_debugfs.c | 19 ++++++-------------
- drivers/gpu/drm/drm_gem.c     | 11 +++++------
- include/drm/drm_device.h      |  4 ++--
- 3 files changed, 13 insertions(+), 21 deletions(-)
+ drivers/gpu/drm/drm_syncobj.c | 64 +++++++++++------------------------
+ include/drm/drm_file.h        |  6 ++--
+ 2 files changed, 22 insertions(+), 48 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_debugfs.c b/drivers/gpu/drm/drm_debugfs.c
-index 365cf337529f..3e57e3da5115 100644
---- a/drivers/gpu/drm/drm_debugfs.c
-+++ b/drivers/gpu/drm/drm_debugfs.c
-@@ -122,27 +122,20 @@ static int drm_clients_info(struct seq_file *m, void *data)
- 	return 0;
- }
+diff --git a/drivers/gpu/drm/drm_syncobj.c b/drivers/gpu/drm/drm_syncobj.c
+index e1b0fa4000cd..091f43cf11ba 100644
+--- a/drivers/gpu/drm/drm_syncobj.c
++++ b/drivers/gpu/drm/drm_syncobj.c
+@@ -250,14 +250,12 @@ struct drm_syncobj *drm_syncobj_find(struct drm_file *file_private,
+ {
+ 	struct drm_syncobj *syncobj;
  
--static int drm_gem_one_name_info(int id, void *ptr, void *data)
--{
--	struct drm_gem_object *obj = ptr;
--	struct seq_file *m = data;
+-	spin_lock(&file_private->syncobj_table_lock);
 -
--	seq_printf(m, "%6d %8zd %7d %8d\n",
--		   obj->name, obj->size,
--		   obj->handle_count,
--		   kref_read(&obj->refcount));
+-	/* Check if we currently have a reference on the object */
+-	syncobj = idr_find(&file_private->syncobj_idr, handle);
++	/* Get a reference on the object */
++	xa_lock(&file_private->syncobjs);
++	syncobj = xa_load(&file_private->syncobjs, handle);
+ 	if (syncobj)
+ 		drm_syncobj_get(syncobj);
+-
+-	spin_unlock(&file_private->syncobj_table_lock);
++	xa_unlock(&file_private->syncobjs);
+ 
+ 	return syncobj;
+ }
+@@ -598,23 +596,16 @@ int drm_syncobj_get_handle(struct drm_file *file_private,
+ {
+ 	int ret;
+ 
+-	/* take a reference to put in the idr */
++	/* take a reference to put in the XArray */
+ 	drm_syncobj_get(syncobj);
+ 
+-	idr_preload(GFP_KERNEL);
+-	spin_lock(&file_private->syncobj_table_lock);
+-	ret = idr_alloc(&file_private->syncobj_idr, syncobj, 1, 0, GFP_NOWAIT);
+-	spin_unlock(&file_private->syncobj_table_lock);
++	ret = xa_alloc(&file_private->syncobjs, handle, syncobj, xa_limit_31b,
++			GFP_KERNEL);
+ 
+-	idr_preload_end();
+-
+-	if (ret < 0) {
++	if (ret < 0)
+ 		drm_syncobj_put(syncobj);
+-		return ret;
+-	}
+ 
+-	*handle = ret;
 -	return 0;
++	return ret;
+ }
+ EXPORT_SYMBOL(drm_syncobj_get_handle);
+ 
+@@ -638,9 +629,7 @@ static int drm_syncobj_destroy(struct drm_file *file_private,
+ {
+ 	struct drm_syncobj *syncobj;
+ 
+-	spin_lock(&file_private->syncobj_table_lock);
+-	syncobj = idr_remove(&file_private->syncobj_idr, handle);
+-	spin_unlock(&file_private->syncobj_table_lock);
++	syncobj = xa_erase(&file_private->syncobjs, handle);
+ 
+ 	if (!syncobj)
+ 		return -EINVAL;
+@@ -726,16 +715,10 @@ static int drm_syncobj_fd_to_handle(struct drm_file *file_private,
+ 	syncobj = fd_file(f)->private_data;
+ 	drm_syncobj_get(syncobj);
+ 
+-	idr_preload(GFP_KERNEL);
+-	spin_lock(&file_private->syncobj_table_lock);
+-	ret = idr_alloc(&file_private->syncobj_idr, syncobj, 1, 0, GFP_NOWAIT);
+-	spin_unlock(&file_private->syncobj_table_lock);
+-	idr_preload_end();
++	ret = xa_alloc(&file_private->syncobjs, handle, syncobj, xa_limit_31b,
++			GFP_KERNEL);
+ 
+-	if (ret > 0) {
+-		*handle = ret;
+-		ret = 0;
+-	} else
++	if (ret < 0)
+ 		drm_syncobj_put(syncobj);
+ 
+ 	return ret;
+@@ -814,17 +797,7 @@ static int drm_syncobj_export_sync_file(struct drm_file *file_private,
+ void
+ drm_syncobj_open(struct drm_file *file_private)
+ {
+-	idr_init_base(&file_private->syncobj_idr, 1);
+-	spin_lock_init(&file_private->syncobj_table_lock);
 -}
 -
- static int drm_gem_name_info(struct seq_file *m, void *data)
- {
- 	struct drm_debugfs_entry *entry = m->private;
- 	struct drm_device *dev = entry->dev;
-+	struct drm_gem_object *obj;
-+	unsigned long index;
- 
- 	seq_printf(m, "  name     size handles refcount\n");
- 
- 	mutex_lock(&dev->object_name_lock);
--	idr_for_each(&dev->object_name_idr, drm_gem_one_name_info, m);
-+	xa_for_each(&dev->object_names, index, obj) {
-+		seq_printf(m, "%6d %8zd %7d %8d\n", obj->name, obj->size,
-+				obj->handle_count, kref_read(&obj->refcount));
-+	}
- 	mutex_unlock(&dev->object_name_lock);
- 
- 	return 0;
-diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
-index 6a44351e58b7..cef0c5935798 100644
---- a/drivers/gpu/drm/drm_gem.c
-+++ b/drivers/gpu/drm/drm_gem.c
-@@ -97,7 +97,7 @@ drm_gem_init(struct drm_device *dev)
- 	struct drm_vma_offset_manager *vma_offset_manager;
- 
- 	mutex_init(&dev->object_name_lock);
--	idr_init_base(&dev->object_name_idr, 1);
-+	xa_init_flags(&dev->object_names, XA_FLAGS_ALLOC1);
- 
- 	vma_offset_manager = drmm_kzalloc(dev, sizeof(*vma_offset_manager),
- 					  GFP_KERNEL);
-@@ -269,7 +269,7 @@ static void drm_gem_object_handle_free(struct drm_gem_object *obj)
- 
- 	/* Remove any name for this object */
- 	if (obj->name) {
--		idr_remove(&dev->object_name_idr, obj->name);
-+		xa_erase(&dev->object_names, obj->name);
- 		obj->name = 0;
- 	}
- }
-@@ -927,11 +927,10 @@ drm_gem_flink_ioctl(struct drm_device *dev, void *data,
- 	}
- 
- 	if (!obj->name) {
--		ret = idr_alloc(&dev->object_name_idr, obj, 1, 0, GFP_KERNEL);
-+		ret = xa_alloc(&dev->object_names, &obj->name, obj,
-+				xa_limit_32b, GFP_KERNEL);
- 		if (ret < 0)
- 			goto err;
+-static int
+-drm_syncobj_release_handle(int id, void *ptr, void *data)
+-{
+-	struct drm_syncobj *syncobj = ptr;
 -
--		obj->name = ret;
- 	}
+-	drm_syncobj_put(syncobj);
+-	return 0;
++	xa_init_flags(&file_private->syncobjs, XA_FLAGS_ALLOC1);
+ }
  
- 	args->name = (uint64_t) obj->name;
-@@ -967,7 +966,7 @@ drm_gem_open_ioctl(struct drm_device *dev, void *data,
- 		return -EOPNOTSUPP;
+ /**
+@@ -838,9 +811,12 @@ drm_syncobj_release_handle(int id, void *ptr, void *data)
+ void
+ drm_syncobj_release(struct drm_file *file_private)
+ {
+-	idr_for_each(&file_private->syncobj_idr,
+-		     &drm_syncobj_release_handle, file_private);
+-	idr_destroy(&file_private->syncobj_idr);
++	struct drm_syncobj *syncobj;
++	unsigned long index;
++
++	xa_for_each(&file_private->syncobjs, index, syncobj)
++		drm_syncobj_put(syncobj);
++	xa_destroy(&file_private->syncobjs);
+ }
  
- 	mutex_lock(&dev->object_name_lock);
--	obj = idr_find(&dev->object_name_idr, (int) args->name);
-+	obj = xa_load(&dev->object_names, (int) args->name);
- 	if (obj) {
- 		drm_gem_object_get(obj);
- 	} else {
-diff --git a/include/drm/drm_device.h b/include/drm/drm_device.h
-index a33aedd5e9ec..6a28a9b134dd 100644
---- a/include/drm/drm_device.h
-+++ b/include/drm/drm_device.h
-@@ -325,8 +325,8 @@ struct drm_device {
- 	/** @object_name_lock: GEM information */
- 	struct mutex object_name_lock;
+ int
+diff --git a/include/drm/drm_file.h b/include/drm/drm_file.h
+index 115763799625..ee5a16338c86 100644
+--- a/include/drm/drm_file.h
++++ b/include/drm/drm_file.h
+@@ -309,10 +309,8 @@ struct drm_file {
+ 	/** @table_lock: Protects @object_idr. */
+ 	spinlock_t table_lock;
  
--	/** @object_name_idr: GEM information */
--	struct idr object_name_idr;
-+	/** @object_names: GEM information */
-+	struct xarray object_names;
+-	/** @syncobj_idr: Mapping of sync object handles to object pointers. */
+-	struct idr syncobj_idr;
+-	/** @syncobj_table_lock: Protects @syncobj_idr. */
+-	spinlock_t syncobj_table_lock;
++	/** @syncobjs: Mapping of sync object handles to object pointers. */
++	struct xarray syncobjs;
  
- 	/** @vma_offset_manager: GEM information */
- 	struct drm_vma_offset_manager *vma_offset_manager;
+ 	/** @filp: Pointer to the core file structure. */
+ 	struct file *filp;
 -- 
 2.43.0
 
