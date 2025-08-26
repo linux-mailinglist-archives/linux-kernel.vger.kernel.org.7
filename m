@@ -1,166 +1,149 @@
-Return-Path: <linux-kernel+bounces-786978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62554B36FA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:13:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CCC81B36FB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:14:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 131C3365D44
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:09:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58E4C2A732F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:10:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD70F1A76B1;
-	Tue, 26 Aug 2025 16:09:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A68313E10;
+	Tue, 26 Aug 2025 16:10:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="c+wKEpVu"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VqI8YPkZ"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503BE21CA1C
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 16:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C1D2C3761
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 16:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756224554; cv=none; b=GIcsAnkLxXzq8qO9cYj/lC3RTKT5iT/MOCGTy6oAnRqSZvDUXII3otKM07N8boaxAdB9jzU+zed/H12qesnmXRfl5fyFG8X8P+4OvgJF6zg3p0vhcg9KAbIPwgH8ZVNgICJinslv+vrpx/faffMCBO7/OVicl6JcSoOAi8sWGaA=
+	t=1756224640; cv=none; b=C+QVe9sJd6Vn4XMe7kj1yJ3NAivt/PVyh2wt3/UgevPqomb2V/D/63cMYxebGxdivsO1CyXlBs5cvi2wDGKV+VnmPM9s5TFzbKpxCEyGRZSRPruL15PEWGNTh02Q1azxNeGmLtenvgbk/ff55bAqmHKWSB5Gc8HdQMj6Jkq8OXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756224554; c=relaxed/simple;
-	bh=JsPCrAShvmrujDQQBA9SPlEujcEeHWEZeiiLzvDO7Y0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=efasTp2A4StiqRNDY1+UwtUoI/ogCqD2EJYMfopNjWDTi0OfM0skjMMzEC/2r82ek0CtCUsLHykuxCAbjxoXK52idLfaRo9zKv3RTWUeJIxqbO62Jsv3KgTNkmEu9gGtiRipMIdNmFRbJD5tnASvW6JQ8R3bobZBXSr+jN3Eb+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=c+wKEpVu; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <d8df76b5-fd6d-4779-b133-18ab2c987ae1@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1756224539;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OE4jLvMS6uO3y2vgaMfshtzsi+abCnBQzBD93FRis7A=;
-	b=c+wKEpVucr0QXYUkhDCENcM4dxbVhyHuGs2uKQrpP0yGoYEclDtFg9zdALOROHTGbJ+9qb
-	Tc80Tz7qjAX3TwD/JmRqqb9L23cGjx9pBPqX9hPBDSSzunFC+/XidpGrziHPJXX3jMAlxg
-	xRDy+PbLhkPi0VVESWCN38WErmGCCzU=
-Date: Tue, 26 Aug 2025 17:08:55 +0100
+	s=arc-20240116; t=1756224640; c=relaxed/simple;
+	bh=uUnVxVTDDWqmWBh2MGBUnTCtl2B8bgs4dvqdJBWjcdw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uxWwT5t71at+aRs3fp07bVGTQAtpudRZh9BYfIDSCr1jla3A9SXoOSPSn5mbw/r0hgEKHs7V1FA7rz/boT+PgUDDE6Uznva5DJ6PECLtNVt+hOMtONq9OWcHpJ81fHetHXD4UNdfEXdoDlVdYkXSVyWluQD7UfGgFscPv/hf6M0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VqI8YPkZ; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4b2dc20aebbso530561cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:10:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756224636; x=1756829436; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vZ5a9wW/sXjVhC8FVp7iGuvAwGNBd64MKlntfi+5SYs=;
+        b=VqI8YPkZdcakCUIOg0W95u/5xJd46E9f/RukLu7o34XennhQ3iadNtDxw9fkeM9/wV
+         lmdxEbw2+1ga8lAyw/muWK/lmhJiihLxrgxt5/ngmdf9QeXjUqCdHNd+b/pSLBa7VAyP
+         YRc6M/gUkdmxZc9MltIo5EZlUfh1yYJ6lVpugy9WK17E/qPV1CnLwZjOsEOSvZ4woGY9
+         Wsn+HHyCEDgHHuy8MJ0RQge3rVBMlmoBQ95BfluhlDSFrf0nbJPIGVbEO7iFJU891mFt
+         Ayw255a3hBGsnS8ee6lrJUUle9zgqucgUXU942jUh3jWP+lSiwJI+rQ56rr5+yU9f+bF
+         FCvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756224636; x=1756829436;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vZ5a9wW/sXjVhC8FVp7iGuvAwGNBd64MKlntfi+5SYs=;
+        b=LQS4y2yugu3sJKlFmU44sMz0fn7PkxWajI1ICBlnDapKGhwupByD6wmX3+FJ+BhWT4
+         +j6NV1QK1I0grhBB3PHcbIRtAZHtkxHOpkpQUtVzCSfTd7T8V0t5uyfwgs3Afr5XUORJ
+         AkeMDfR5pfkUnYIoJrrAYwe374YvZ0wLWrsq5L2E7JkvpVi4uSGSnrYN8uW4PdDWi3SF
+         qEM7J1g1x0tOKpcEmie+r5sDaTbOqDkU53LRayyMG76ZWb70tc9+Y/f0AV4xF+c79fOV
+         FhUVX0/D8lQYZBEMSNl9b2eX1C8k0pJRnBvq9kVBpVcoXVTrOEjZDoTFh6X2GtBAwURW
+         y7qQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVECDKCc2oR9/D4vqgR3TeyCKq0+HOaqfIAepYbujn03e1J4n7S3pfOo64PPijTQbityaZS7JkBSmYubHM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCd7VVrA/61JsJDvRIP2VVsYv7AUpC04cnNF8WLJO334n4FXNI
+	e8ZDKcOkHDboWICWPxsRm4gCJlOebpGOYPZSeW03g6qVI3ovzjVqMmfNsba8sK/mY0pdEbD+r+K
+	YcSjvuOPUIX+LQve4FAvXPG79dOBiwrKIieA6NHGo
+X-Gm-Gg: ASbGnctgFtkBmrDtzDdyEllhuvPGaz9jWINBw5EpuwmOsuyaa1TxsRxh9JOQexqcmkD
+	6FUyoZnf9WVQJcp6DEJyBiRMY0ws2GCwIgeCFL8Kj3rABZqJDQI7C9fX1EP9OIJGNXJ5noIpXaC
+	hhKCzrpowEaUpvVrCNS8+ItlJ0SQ2VsyyLp8Ejp1vWoRVubeEBOG35W9d2I5LrUmoTHnvRrBqIq
+	pQJ7WfbHrkiFzMWzSkcrL2NJqG2Fo8QMvEI0BLvFHtuog==
+X-Google-Smtp-Source: AGHT+IFWTBnegYsgo4t+bTINOKl+X+5UHJwlAppipz3z1BODi/VrNOUY4vQo1AxTw0v14VFVG4iZb3RcvckoStjmph0=
+X-Received: by 2002:a05:622a:118c:b0:4b2:9d13:e973 with SMTP id
+ d75a77b69052e-4b2e1b31275mr6506651cf.0.1756224636084; Tue, 26 Aug 2025
+ 09:10:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v01 07/12] hinic3: Queue pair resource
- initialization
-To: Fan Gong <gongfan1@huawei.com>, Zhu Yikai <zhuyikai1@h-partners.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
- linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
- Bjorn Helgaas <helgaas@kernel.org>, luosifu <luosifu@huawei.com>,
- Xin Guo <guoxin09@huawei.com>, Shen Chenyang <shenchenyang1@hisilicon.com>,
- Zhou Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>,
- Shi Jing <shijing34@huawei.com>, Meny Yossefi <meny.yossefi@huawei.com>,
- Gur Stavi <gur.stavi@huawei.com>, Lee Trager <lee@trager.us>,
- Michael Ellerman <mpe@ellerman.id.au>, Suman Ghosh <sumang@marvell.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-References: <cover.1756195078.git.zhuyikai1@h-partners.com>
- <f1be4fdf9c760c29eb53763836796e8bc003bb1c.1756195078.git.zhuyikai1@h-partners.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <f1be4fdf9c760c29eb53763836796e8bc003bb1c.1756195078.git.zhuyikai1@h-partners.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250821042915.3712925-1-sagis@google.com> <20250821042915.3712925-9-sagis@google.com>
+ <d780a249-ecb2-40e7-9520-19de8728c703@linux.intel.com>
+In-Reply-To: <d780a249-ecb2-40e7-9520-19de8728c703@linux.intel.com>
+From: Sagi Shahar <sagis@google.com>
+Date: Tue, 26 Aug 2025 11:10:24 -0500
+X-Gm-Features: Ac12FXzjoQma6pYvJ2NYaJoeraToE-BsC5fTbwE_cSx2Q5p4AW62eAtBhQOjCPE
+Message-ID: <CAAhR5DHVhS29egfT4aDA5HGnHkM0fQRfU5600ossaVGdvNgCGQ@mail.gmail.com>
+Subject: Re: [PATCH v9 08/19] KVM: selftests: Define structs to pass
+ parameters to TDX boot code
+To: Binbin Wu <binbin.wu@linux.intel.com>
+Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
+	Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>, 
+	Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
+	Erdem Aktas <erdemaktas@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	"Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, Reinette Chatre <reinette.chatre@intel.com>, 
+	Ira Weiny <ira.weiny@intel.com>, Chao Gao <chao.gao@intel.com>, 
+	Chenyi Qiang <chenyi.qiang@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 26/08/2025 10:05, Fan Gong wrote:
-> Add Tx & Rx queue resources and functions for packet transmission
-> and reception.
-> 
-> Co-developed-by: Xin Guo <guoxin09@huawei.com>
-> Signed-off-by: Xin Guo <guoxin09@huawei.com>
-> Co-developed-by: Zhu Yikai <zhuyikai1@h-partners.com>
-> Signed-off-by: Zhu Yikai <zhuyikai1@h-partners.com>
-> Signed-off-by: Fan Gong <gongfan1@huawei.com>
-> ---
+On Tue, Aug 26, 2025 at 1:52=E2=80=AFAM Binbin Wu <binbin.wu@linux.intel.co=
+m> wrote:
+>
+>
+>
+> On 8/21/2025 12:29 PM, Sagi Shahar wrote:
+> [...]
+> > +
+> > +/*
+> > + * Allows each vCPU to be initialized with different eip and esp.
+> > + *
+> > + * __packed is used since the offsets are hardcoded in td_boot.S
+> > + *
+> > + * TODO: Replace hardcoded offsets with OFFSET(). This requires gettin=
+g the
+> > + * neccesry Kbuild scripts working in KVM selftests.
+> neccesry -> necessary
+>
+> Also, are the comments about "__packed" and "TODO" out dated?
+>
 
-[...]
+Thanks, I forgot to update those.
 
->   struct hinic3_nic_db {
-> -	u32 db_info;
-> -	u32 pi_hi;
-> +	__le32 db_info;
-> +	__le32 pi_hi;
->   };
->   
->   static inline void hinic3_write_db(struct hinic3_io_queue *queue, int cos,
-> @@ -84,15 +84,25 @@ static inline void hinic3_write_db(struct hinic3_io_queue *queue, int cos,
->   {
->   	struct hinic3_nic_db db;
->   
-> -	db.db_info = DB_INFO_SET(DB_SRC_TYPE, TYPE) |
-> -		     DB_INFO_SET(cflag, CFLAG) |
-> -		     DB_INFO_SET(cos, COS) |
-> -		     DB_INFO_SET(queue->q_id, QID);
-> -	db.pi_hi = DB_PI_HIGH(pi);
-> +	db.db_info =
-> +		cpu_to_le32(DB_INFO_SET(DB_SRC_TYPE, TYPE) |
-> +			    DB_INFO_SET(cflag, CFLAG) |
-> +			    DB_INFO_SET(cos, COS) |
-> +			    DB_INFO_SET(queue->q_id, QID));
-> +	db.pi_hi = cpu_to_le32(DB_PI_HIGH(pi));
->   
->   	writeq(*((u64 *)&db), DB_ADDR(queue, pi));
->   }
-
-[...]
-
-> @@ -66,8 +97,8 @@ static void rq_wqe_buf_set(struct hinic3_io_queue *rq, uint32_t wqe_idx,
->   	struct hinic3_rq_wqe *rq_wqe;
->   
->   	rq_wqe = get_q_element(&rq->wq.qpages, wqe_idx, NULL);
-> -	rq_wqe->buf_hi_addr = upper_32_bits(dma_addr);
-> -	rq_wqe->buf_lo_addr = lower_32_bits(dma_addr);
-> +	rq_wqe->buf_hi_addr = cpu_to_le32(upper_32_bits(dma_addr));
-> +	rq_wqe->buf_lo_addr = cpu_to_le32(lower_32_bits(dma_addr));
->   }
-[...]
-
-> @@ -27,21 +27,21 @@
->   
->   /* RX Completion information that is provided by HW for a specific RX WQE */
->   struct hinic3_rq_cqe {
-> -	u32 status;
-> -	u32 vlan_len;
-> -	u32 offload_type;
-> -	u32 rsvd3;
-> -	u32 rsvd4;
-> -	u32 rsvd5;
-> -	u32 rsvd6;
-> -	u32 pkt_info;
-> +	__le32 status;
-> +	__le32 vlan_len;
-> +	__le32 offload_type;
-> +	__le32 rsvd3;
-> +	__le32 rsvd4;
-> +	__le32 rsvd5;
-> +	__le32 rsvd6;
-> +	__le32 pkt_info;
->   };
->   
->   struct hinic3_rq_wqe {
-> -	u32 buf_hi_addr;
-> -	u32 buf_lo_addr;
-> -	u32 cqe_hi_addr;
-> -	u32 cqe_lo_addr;
-> +	__le32 buf_hi_addr;
-> +	__le32 buf_lo_addr;
-> +	__le32 cqe_hi_addr;
-> +	__le32 cqe_lo_addr;
->   };
-
-This patch has a lot of endianess-improvements changes which are
-not stated in the commit message. It's better to move them to a separate
-patch to avoid mixing things.
+> > + */
+> > +struct td_per_vcpu_parameters {
+> > +     uint32_t esp_gva;
+> > +     uint64_t guest_code;
+> > +};
+> > +
+> > +/*
+> > + * Boot parameters for the TD.
+> > + *
+> > + * Unlike a regular VM, KVM cannot set registers such as esp, eip, etc
+> > + * before boot, so to run selftests, these registers' values have to b=
+e
+> > + * initialized by the TD.
+> > + *
+> > + * This struct is loaded in TD private memory at TD_BOOT_PARAMETERS_GP=
+A.
+> > + *
+> > + * The TD boot code will read off parameters from this struct and set =
+up the
+> > + * vCPU for executing selftests.
+> > + *
+> > + * __packed is used since the offsets are hardcoded in td_boot.S
+> Same as above for "__packed".
+>
+> > + */
+> >
+> [...]
 
