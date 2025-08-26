@@ -1,426 +1,326 @@
-Return-Path: <linux-kernel+bounces-786890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF182B36D7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:17:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92CC7B36D7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:17:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4DA816DC7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:12:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EA4D17E74F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:13:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B55A1EDA09;
-	Tue, 26 Aug 2025 15:12:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED85A1EDA09;
+	Tue, 26 Aug 2025 15:12:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KY8JdY/H"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="KAh0FH7I"
+Received: from CAN01-YT3-obe.outbound.protection.outlook.com (mail-yt3can01on2115.outbound.protection.outlook.com [40.107.115.115])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0956A1E522;
-	Tue, 26 Aug 2025 15:12:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756221168; cv=none; b=Zyd8zHxp8BZDAGm66MW0viOSxLwfMCeEHwd0Xxs9gJOAjjM09BYgvMazbcD1S2Ek1aWzBXWwaWCIBR103aZphHYdSAyym5NGYmXifF7eIeu46889ed1/nKsB/4BcvrCFNRqhDa3F5FSCgOvzIEFuerZlZTT3P0l2SuloM3fu/rk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756221168; c=relaxed/simple;
-	bh=poE2bSlhrsZ48YhrGNd+qqoTNdamNKV99qDxtacTcEc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=muNZfvbEynIvTZ2jvCF1TD1KxG/JLhrJWmIAHZVe0JKWOH0fEAuQc6d5M18DeTHlsVKmmgM9JdgxRr84d0SjfWIuUMPpvYN/oFzy7hAhJOC4lC7PCvTfkNBydPHP8xoxqoc3SCDHguR7UOkFfjpVy1QLdligP7K+NVfKDbscf4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KY8JdY/H; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45a1b04f8b5so36378565e9.1;
-        Tue, 26 Aug 2025 08:12:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756221164; x=1756825964; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ONmbW5esqMOez0fXy4tVMfg0Y/iOt+VR1S+OBbiVslc=;
-        b=KY8JdY/HMUfhzwItATF6t/ES0ywtsSZ+wAysYCbZNlgGqgILPBo/6JmVkSTZ5fH6jP
-         R+eVChlqmlk0bLb3369M+rhzBH3pU9yTaNC4OzKpHWXqc2Wz3dEvWKdJgS51brck9Unc
-         yStxDQJBW7aaBCohhRm4FCuSuOPgZ91TT44FMedjZpOiM4CvwZIxH5KbPRqcgPemnIvb
-         LZM2lMtK573KhrZ+SyP33S3p4odq+ggC2anZLhgM4vhaXiuInhe82SVjxWgZ8yzCN41u
-         VVBg+kMCyWBQt76FLLOxPLqTCv/Eve3YdUHGVbtohksfCGF8PmAuEWHF41Lb138i6Bjz
-         38Gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756221164; x=1756825964;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ONmbW5esqMOez0fXy4tVMfg0Y/iOt+VR1S+OBbiVslc=;
-        b=syjZTt8eAstdqSkWjnI1gRoCFyW5wN0zjc4jb0q5AFjvEHpvv/D+Do0ye1xqlvWHKP
-         eVT7toQZmdVmPWw3CJ8mvuIiVf6j1dn3qIZVYDv3nF1WKASLfSOK4a6E/JRGM12dp6mG
-         p9PVNZQyIFAAcMXbhrRSiSlmqE9flOeAYs8lDfdFp+fl7TKxowaBezfKxYbekjFNT3Za
-         iAG0zBFYyKXX5Aiw8ZlBpe/5FWXO1IbCv6y0eEQvvchl+kGbjinesbTs1JYMRwkNyAp/
-         NODP3GnVylrYgc5kVIb/0xvEEw16xI2ZnmryFa8/wyuyu9xbshpSl+YY2OdRh6LjxcdD
-         ua0w==
-X-Forwarded-Encrypted: i=1; AJvYcCVmTReFgcc+b3ndLiSD1SFCSCMO+3SEkTKpOikQQxiep9WEPpfqDXxP80KJiKJzZMI7fJhxwlVC5v4=@vger.kernel.org, AJvYcCWg394pknq+DANZgldw5bAbXKUnP+PcROR/M2Ti3/fKROi+XWKiJSrkJVA8fGhmMOs2Bl1K3aEnKbTAGjsgMGQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyL/MZHZATn810fvJYgHp5MVvq/Epots5SYLaJiiuTWojiD5x4M
-	GwDFFiJhsJmxCeYIkGq3zVcke1pP4N1vVcx4dR7DjVfERX26cz7KNClfUGQVmd42
-X-Gm-Gg: ASbGncsi4+fOzMCQomOe1dVM3r/YkwzFHtDbA/qXA59l9xL5Cq0ZXWUo7jOPv9Mn1Dw
-	blkPsNHJot/OUgIFStbvc1PiL9fucSc0e31zDJBktJkIq7cgNwC5f0veLlKDwLMl4lPTJTU/em0
-	B6kUyOC8U3be2Sa5KEihDkH67b84TxAKXW704ikMFSXqNuwdUOCHwm0Ukcw+RtD/n1/EmGbfWCv
-	NRTaanUlTTY4iQmeAy+L63qlMTGpzdlFMEzC03xpOJKDD1boQdn4Gk4mckovbVNiEf7Rqxoj8DQ
-	X5K7Q9F2AQA/dGQFwN443IFjhavlRWjqnS5I2qQL4lyqpMfKw2NJsIiDVe9NgshNuPkN+rp4/z0
-	LbgZwFz2Len5AlolfB1Y4Q0JQ9ZAtzUasiQkRf12xo2EixTHq4/sOirZF08MohOzYt0uhhXhB
-X-Google-Smtp-Source: AGHT+IGhN4oHbHy//ACajEZKQOIiPiwcrun+5fF5awcgDHHwxh0hLQa5tka7vmRiauTyYXDSv4qenQ==
-X-Received: by 2002:a05:600c:609b:b0:458:a7b6:c683 with SMTP id 5b1f17b1804b1-45b541d1026mr134336525e9.1.1756221164109;
-        Tue, 26 Aug 2025 08:12:44 -0700 (PDT)
-Received: from localhost (cpc1-brnt4-2-0-cust862.4-2.cable.virginm.net. [86.9.131.95])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b57589c42sm154269435e9.17.2025.08.26.08.12.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 08:12:43 -0700 (PDT)
-Date: Tue, 26 Aug 2025 16:12:42 +0100
-From: Stafford Horne <shorne@gmail.com>
-To: ChenMiao <chenmiao.ku@gmail.com>
-Cc: Linux Kernel <linux-kernel@vger.kernel.org>,
-	Linux OpenRISC <linux-openrisc@vger.kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Jonas Bonn <jonas@southpole.se>,
-	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jason Baron <jbaron@akamai.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Sahil Siddiq <sahilcdq0@gmail.com>, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] openrisc: Add jump label support
-Message-ID: <aK3O6kOMqgDb6zZj@antec>
-References: <20250814032717.785395-1-chenmiao.ku@gmail.com>
- <20250814032717.785395-3-chenmiao.ku@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C83262FDC
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 15:12:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.115.115
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756221176; cv=fail; b=oo4GYI3spAYCHEcsfYIR69+Mj/8diQvRFSJAVc2uN2CfQq82arKLxnAn7ggIF0rp34GP9/TsBjUo8lv2/cnu6J8MPRd6rsI+IVwjXXZSZliVuXrgnnBH6pbfPRtHnEFR5+8kBnmHCGqBrQf4WE7+faLeEb0bReEUjQWDeqmcXdk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756221176; c=relaxed/simple;
+	bh=w29m1WTxAwCYBUW6ANJHlgc2WvVYKKRyUORW9tQVFjg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=coc1BXAhyQvaoPhvFZthd7UrA68P2SIWx4IUEp4FBIE/XaX8TebI5OScSUIRfrnkMEKkAt/Zv1dJYzIfwqToqOoKCMMaJgmf9cMLD8KjWiPG8HgPd0C3/1FM6mH0+1RI9P6sdlVwIc121r2gQwsdFsQOL3RCZRo2VQy4WK+UkHc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=KAh0FH7I; arc=fail smtp.client-ip=40.107.115.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dXlzyJNsPpxwMUTanQuR1uNrQNDcwg6l+FJI0ezo7dUAnmfH6+A4bcNTBjxcdZrHYEg46/t/LrFeU1sEmvN6djyly0eYQa8vyyeMF+8KjQA+dPN7jS8QVEd+Er0JDK97Nciefc5MqGqtuHWnLlEGqsmHKS1fkK0BV+zhYKNMnQT7XTTnl5iE2mxSNxCBnKeZnPsb4WqdH8ptBpzL2K7WKzGJchci8UWuBsopce45l3y0oztEetu81BiMcnZiOZhRtl+7+opiHSD7VsBP1a+p+U1X2VSi4ajTYsx3F6/0l4i+ibYEABgg6VjB5f3WXjhp9JbsvUXgA5nTq5tutlah0A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pV+TPI4hhFKsNzoZSaFhdTmkyKkyORQmL92t1LUlPdU=;
+ b=qwXZD4RSHOQ4SMGsTnDSnPzp79CniqO6eEibAr0xmZa+VIs1EZpoo2zYdINmg691OK4r3gIjlsyW3mI+tQoQe+JLigOB8uwk6tSs4XZ5ISaYSPa9VBsUHMgaNHmh/cpxAiIkAnwh0U+t5gc/bp5GbVyB0Q7Fic65Q5iToM8uzuL8yR6GRxliTqgHVQDQBGCxk+J++OJoCffu4DcEyjZxoWqHCYeg6b+sP0Yk4WUDQdqO7Q//8NlXNKAnARdjV6YU22HXcvqdogOFWK+U8ZXHHy2spSeX5tDoMdVugtYIZYdfnZTYRrdipxDcmcS2Qc1oCFkQRqw6vDbiioCkNpIxLA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
+ dkim=pass header.d=efficios.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pV+TPI4hhFKsNzoZSaFhdTmkyKkyORQmL92t1LUlPdU=;
+ b=KAh0FH7I6/jSRe0LuiEDM/PwFEKmYSY4IO6gZemwxhEMmb2IZAGmWC3wY40w6BeoLIeMvjqL7THjpfQnbNf1KGbrOuWemkpEumsSfGFfO/c/lJ6mGN5weSfRy1L4+hAR7Lp/Mq0EY1+d1RmAlHTytoZN2EeqPyibDOhPUCdPMYdunsxpvakm0I8FPBCeFzS83QBxn3bKDn2sFKLJo30P04oZaqwzhBrTJmhzFFZDC/CNe5PZl8utXYxXiFn2WcRKXeJwwaFOC3QNRDQWcQxQU8XvpxxutYmjymKku+ZHDdeTOomgu5ZKfM8i/+GhbryOwfx94qef4NFmuzeBbYA8jA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=efficios.com;
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
+ by YT4PR01MB9880.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:e2::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.22; Tue, 26 Aug
+ 2025 15:12:50 +0000
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4%3]) with mapi id 15.20.9052.021; Tue, 26 Aug 2025
+ 15:12:50 +0000
+Message-ID: <0610d1be-15b4-40a6-8bec-307e62f810bb@efficios.com>
+Date: Tue, 26 Aug 2025 11:12:48 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [patch V2 25/37] rseq: Rework the TIF_NOTIFY handler
+To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Peter Zijlstra <peterz@infradead.org>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson
+ <seanjc@google.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>, x86@kernel.org,
+ Arnd Bergmann <arnd@arndb.de>, Heiko Carstens <hca@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>
+References: <20250823161326.635281786@linutronix.de>
+ <20250823161654.869197102@linutronix.de>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20250823161654.869197102@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YQBPR0101CA0303.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:6d::14) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:be::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814032717.785395-3-chenmiao.ku@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT4PR01MB9880:EE_
+X-MS-Office365-Filtering-Correlation-Id: db74231c-9010-4e43-ce5f-08dde4b305b5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cE8zbGRwcEFYbU9WRnVTRHBZdCtXTnBUZWFLQlJCMms4VUlEVFdQQXVFUXpn?=
+ =?utf-8?B?YXAxcUVPL1VuU1F0ZVlVbmZuZDFGbzBqT2RGYWRhVkFrTFg2ZFlDd1l0UHdC?=
+ =?utf-8?B?S2dnbk1GS0JzOW5lRC9laFBmK2p1NTY3SlFlQ3YwU0FWZ0E4VG5yNldSbEJU?=
+ =?utf-8?B?aTk4Y3RwSmdtUmNPYW1uTkJLRThsM1hpUUNBQmJIOXNRTk5HazNqRi85K1NQ?=
+ =?utf-8?B?RGV5aUJDelc4c3JmdEFSZHBQY0FlNWhUblhvNW5JZXhjZVpEaXFJYWkySkx4?=
+ =?utf-8?B?MnJ2UzNENHd3UTY4YVhhTWVJYzRBczJkNGJZWTlxbXFMcmdFWUhSUDBPVFQ2?=
+ =?utf-8?B?WTQyeUpDZjNRTzk2K0FKY0lQRmpqWGI5Zldtc1BCZFhuUlpUSFZpSVhMaXNk?=
+ =?utf-8?B?L3Uvd0g2V3Nkd2Zidi9qellRWnRPN3diNE8yWjRaOXN1VEVlRjlROU0zQzZj?=
+ =?utf-8?B?dkx3b01EdnJIbzYwZWdkK0FranJMWnJKa3E2Z3kra0p4ZDFZZC9wT0NqTStU?=
+ =?utf-8?B?ZzVBRlJrYlhIV3NUYUFJZE9tQXFYNmVqVXB5ZXQxZXp5b1NzSEpGb1ZTYUp6?=
+ =?utf-8?B?QWRRZFYzdkwzV1d6Nzlza0VHQ2U5L0w3eHBscU9TQWJob01makZaVFRBT0pp?=
+ =?utf-8?B?d0lRaWRsdHR6MmU5VC9Ldm1QTHpNWXh2MVRFOVh5Rm9qK3UvZytac29BOVNL?=
+ =?utf-8?B?QmxQdFFSZERIZElzOFp1YWs0VTlHdUhEOEkxaVIyR0VKK0NNOUdsVWxMTTdD?=
+ =?utf-8?B?NDFwdzN6VWNGVWc4SlJ2M0pqSzNGMXprN2RaOTREc0dtaFV5ODVyS2hySURh?=
+ =?utf-8?B?ZkdYdlhNa1lrVlB0M1piUGR3WGdHMk1FMzZyZzlQeWhWNDFxSmY2QzhGWk5C?=
+ =?utf-8?B?REJpZFZWRVdiRDZ5L29NKzUzdW1FM1VkYUNORVk4VXNucCsyNmlMNndHM3RK?=
+ =?utf-8?B?VGk2TlRuaVhkQXFLMlNLeUpjb0JvQ29JaFZkS2R3RTB6VlEyUU5Wb2d1dkZV?=
+ =?utf-8?B?ajFiOGU5MEpwNUdqbFFGU1VadjhVLzBNTm03QXIrM24yeWYzREdCY0VZZW1H?=
+ =?utf-8?B?TTVESWlEYVVZeVpRNG82eTJpNFdXTm1YcWxQU0Q4VGVhWENGU1hEMDVicmQ0?=
+ =?utf-8?B?amdjZkRFc3NzRENNUDNQL3RvTCtNa1RkZXcydklFTFA5RzI2V2Z4WTRRSTNv?=
+ =?utf-8?B?a1VDQjlIT0FZVEZHdzhQMWFvYzBWWlY3M25iYUFiVy9zcFVHVzVxVEZoZ05V?=
+ =?utf-8?B?dnI0aTZXcFhLTlZmWW1iZHVvWkhyNGg0blU2YjA2Y2N6aitnN05uSXBBNmpQ?=
+ =?utf-8?B?YmZad1llM3EvaTUwRU5EOWV6S3N3d1pVdGVqOXdjU0pnWWc3MGxWaTNtbXBv?=
+ =?utf-8?B?Wk1TTDlWaXNXWTUzcVlRWWFYejFVNkFSa1JzV1U3eE11NCtGY3ZpckQ3ZGNG?=
+ =?utf-8?B?U3ZIbXd6Z0dUM3NiUmtuY3IwK3Z2b3pjK2xxWG82QXlNdXVwVXNFUVBpT3FM?=
+ =?utf-8?B?WU1WaEI4Mk9UTFc4U25yejJ5d2g2UURDQ1h6Y3RvVWxtc0g4aHpVYkorUVZr?=
+ =?utf-8?B?cEEwalRpZ3k1d3pTRWtWWXkwMS9YbVFoMG4vdGI1dDJVUWIwUmRFT216cEV5?=
+ =?utf-8?B?RVdRSnJmc2pqbzhRWTdsTHZxS3hvVGJGQlBUOC84eGZaTlpVY09RL0hpOElo?=
+ =?utf-8?B?bVlSTEZmZXhSUnhCOWhpR2tyMWQ3MzMzc1Z0R0lxMTVTanE3dldpSFNQdk01?=
+ =?utf-8?B?SktLdTJ0TkV0eU5rUVNsaHJnRTRUc05wTkd2RWlsOGhaTWNwdDlGcnRvcU1s?=
+ =?utf-8?Q?yeAIZS3E4uT4CzUphSNfwl7aOSnlPywina0RA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(7053199007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RjQvZEk1ODV5SlhsM3JXdkUvdCticXRxalpheTNsR1g3ZnB2V1lQQWp5a1ps?=
+ =?utf-8?B?eFg1UFdtUG5BZ3VQdURyZFFaT3RRYTNWbXRoVXdpZFZJYUszeXFaSW5DTm9B?=
+ =?utf-8?B?TmdvWXJ6N1RjWjZXN29iMFVZcld6NVl2cXExcTFVTkQ0VEx3UWFiQk9uY1hZ?=
+ =?utf-8?B?Ujl4TjkrbHdpR0FnM0RGS1BvVVFYYjd1U0VCZVV3QUw5b0R0YnJtL0VLM2pH?=
+ =?utf-8?B?R3R4Uncrb1NBbnFCSGcrTjFIM3JRRS8vaXJrZkdxTTBDYmZQakFxOG5hRDRm?=
+ =?utf-8?B?U1lLWFdIU3llb05VNXFyem9UMVBJQngycDlwWGh1Z0VqWjFlZXB0Z3FKa0JV?=
+ =?utf-8?B?Z2EzTGFXZ0R5SjhvZ050THVudkp0LzBJc1NXY1dEa0I3djdvSEtJVVYzcmMr?=
+ =?utf-8?B?MW5lYytWS2RnNkp2MEJxYXVUdytrVk9WM3RsSkthMVZJRENtTmVFK09adGcy?=
+ =?utf-8?B?Sms2WHExVVJlcnNBcDgxc3NMWlB3OFpSelVXbEw0YnZJazdSSVFZR1l3UkQx?=
+ =?utf-8?B?bUZFZ0VtS2FkbDhRejZLQ0ZXUFhIK2JJaEtoU1FQd24rWDRqalk4dENQS0R4?=
+ =?utf-8?B?VWZwbjhQamVFaE9rSG83ZmFpdnlRb3RDcVYzdFBxdFA2YzdYOGxzUEZpVGhu?=
+ =?utf-8?B?VWlJNEhpVGd3M2RWWGRUdDIycGNKU3VJZXJONUZhczZob1BydFMwbnBBWnNL?=
+ =?utf-8?B?SGZtVlhxcXhwSDlpaVpuK3lySnBQSUNWaEdhREl0Vm5DLzE1NFA0dGpSOFJ0?=
+ =?utf-8?B?MXczUTBPVTdMeGNvS2JJZFFUdTJ0blk5MGZYMHNNcnpPMW5MeTU2WGZkQ3dL?=
+ =?utf-8?B?aGg3TVlsQmZQZVB6OGpVYTcyZDV5NmFNM0hkZlEvY2VkZlBEYkt1TUZ4czUr?=
+ =?utf-8?B?S3AvcXZ4bmR4WWdSZk9ldlpiRmdBR3NwSlloY3hOSHlqZXc2TDFLUzFoQnhM?=
+ =?utf-8?B?UTRIOEtDUjd3Z3JNU3R4aXcrUmZnWnpFN1A4S0M4V3FnTzR3WE8xOTBiMXQz?=
+ =?utf-8?B?eDVCdEF2cDN1M29wdHYva1U5S1JFU2JoVE9ZMWpEYm12M2lvSmt1WXVqdG0z?=
+ =?utf-8?B?c2IzendLWWMrQTVQRERqd2hXTDdaZ0R3TXE5MURaV01EU0ZlRElxRi9kdlF1?=
+ =?utf-8?B?dUF1TDc5WmYxS1JselJNVDIwd040NjY2V0l6TDRBS3l4eGZ1dFhiR3FqUVVF?=
+ =?utf-8?B?emdPWFZtWHAxeGFLNzRJWUZGcmpGVVV0WVUxRys4TXJudnJyalp4OHp3d0dq?=
+ =?utf-8?B?ZmpuUThHUFBEYW5yTGlxWVJSZTYwMk13Nk96NXdzZGF3T0thQ0dnTEEzVUhk?=
+ =?utf-8?B?aXhXakRxNWRGTk1uZ3N6WHA2NnR2c1pxdWoxMHVTMnhCaDduQ2l4cERSeFBN?=
+ =?utf-8?B?anRyQlYvZWQza1VtREcrcjJ6MHQzM05TTE5EY1lMKzVITWg2bUNUS2tnUWpQ?=
+ =?utf-8?B?KzkrcDYvVHZyNEN5Ym9yTVBTNUdSYk1QT0hJVldoR1ZUWG1BNEUvRERmVW5P?=
+ =?utf-8?B?MExac0ZmOSs1TG5HT2hHLzZvcy9RcXNieWR2Q0k2R2pIYjJlb0JUTGpQckRK?=
+ =?utf-8?B?cldSRm5MZVdsYlFES3F1ZjErbnBoU0tSQ25SRElCa0s1VUc0SjVDandFTzU3?=
+ =?utf-8?B?NURTdmNZMUxHZVIzV0tCQ1Z4WVVmZnZmQmdlV1pFMmZhbkRsNDhrelVzQ2pp?=
+ =?utf-8?B?RFhGaE94VjFVcU94cVc0M3dxQjEyWHlIZ0NQdjMrOTZZQ0h5REczWVJRMFYz?=
+ =?utf-8?B?VnpOUTNvVTRNYk96bWU3djdiNjlpUkprSzNOT1FwNCtkQjEzWUZ6Mkswa0Vt?=
+ =?utf-8?B?N2NDa3IrU0FuM3phRWdDdFJnQTgwRE9EWUQ2aFhqZmZ1STU2VlpVbTYraklr?=
+ =?utf-8?B?NWVuUzlBRFY2eklpWWZMdFl6OHc5NzJ0WG9rK0MzaVgxM2xyMm1nN2o2Ry9F?=
+ =?utf-8?B?NFNLNzlTMk9Pa3U1OWlLMUNLcWJIUXpmZEo5TVZiMndSRGFuTVRlbmxrSlJn?=
+ =?utf-8?B?OEdtTkE4TjZEYVJaOE1DRHMwT3Q3ZzFWTlp0VXduZjhvWDBpRTBIMU1RQnBa?=
+ =?utf-8?B?cENVUXFBeHE0dlYwQ2tMN0FCQkVBTzZ3UGRmdVAway9mL21DRFlRck5OK1lN?=
+ =?utf-8?B?Snh0YS9EME1ZUzV3ZzN5NjVlQjNBR1FDUTZHWHdzeFlpYzRTNmFxY3pvaFpM?=
+ =?utf-8?Q?hvs0XKlj1te4nC3psbUBXq0=3D?=
+X-OriginatorOrg: efficios.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: db74231c-9010-4e43-ce5f-08dde4b305b5
+X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 15:12:50.4819
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MZbibv8gIZLoJndmIelnX/J6nZSpEzOeXEhagbuJv1s9FlPE1Xp1JE8AromSk2KbwwjgbVjVY7q/8NR6bGL6W4RdVi3Uqo9VWqa/GxHER7E=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT4PR01MB9880
 
-On Thu, Aug 14, 2025 at 03:27:02AM +0000, ChenMiao wrote:
-> From: chenmiao <chenmiao.ku@gmail.com>
+On 2025-08-23 12:40, Thomas Gleixner wrote:
+> Replace the whole logic with the new implementation, which is shared with
+> signal delivery and the upcoming exit fast path.
 > 
-> Implemented the full functionality of jump_label, of course,
-> with text patching supported by just one API.
-
-I am not sure the second part of the statement is relevant.  Perhaps we can
-mention that we use relative labels.
-
-Do you have any details about how this improves performance?
-
-How have you tested this?
-
-We should try to measure boot time or various syscalls or scheduling operations.
-I would like to get some numbers before we queue this for upstream.  I may do
-myself as I think its beneficial.
-
-Other than that I think this is ok, one small comment below.
-
-> Link: https://lore.kernel.org/openrisc/aJIC8o1WmVHol9RY@antec/T/#t
-> 
-> Signed-off-by: chenmiao <chenmiao.ku@gmail.com>
-> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 > ---
-> Changes in V3:
->   - Ensure the two defconfig using the make savedefconfig.
->   - modify the __ASSEMBLY__ to __ASSEMBLER__, modify the
->     __ASM_JUMP_LABEL_H to __ASM_OPENRISC_JUMP_LABEL_H and remove
->     invalid comment.
+>   kernel/rseq.c |   78 +++++++++++++++++++++++++---------------------------------
+>   1 file changed, 34 insertions(+), 44 deletions(-)
 > 
-> Changes in V2:
->   - using the patch_insn_write(void *addr, u32 insn) not the
->     const void *insn.
->   - add new macro OPENRISC_INSN_NOP in insn-def.h to use.
-> 
-> Signed-off-by: chenmiao <chenmiao.ku@gmail.com>
-> ---
->  .../core/jump-labels/arch-support.txt         |  2 +-
->  arch/openrisc/Kconfig                         |  2 +
->  arch/openrisc/configs/or1ksim_defconfig       | 19 ++----
->  arch/openrisc/configs/virt_defconfig          |  2 +-
->  arch/openrisc/include/asm/insn-def.h          |  3 +
->  arch/openrisc/include/asm/jump_label.h        | 68 +++++++++++++++++++
->  arch/openrisc/kernel/Makefile                 |  1 +
->  arch/openrisc/kernel/jump_label.c             | 52 ++++++++++++++
->  arch/openrisc/kernel/setup.c                  |  2 +
->  9 files changed, 137 insertions(+), 14 deletions(-)
->  create mode 100644 arch/openrisc/include/asm/jump_label.h
->  create mode 100644 arch/openrisc/kernel/jump_label.c
-> 
-> diff --git a/Documentation/features/core/jump-labels/arch-support.txt b/Documentation/features/core/jump-labels/arch-support.txt
-> index ccada815569f..683de7c15058 100644
-> --- a/Documentation/features/core/jump-labels/arch-support.txt
-> +++ b/Documentation/features/core/jump-labels/arch-support.txt
-> @@ -17,7 +17,7 @@
->      |  microblaze: | TODO |
->      |        mips: |  ok  |
->      |       nios2: | TODO |
-> -    |    openrisc: | TODO |
-> +    |    openrisc: |  ok  |
->      |      parisc: |  ok  |
->      |     powerpc: |  ok  |
->      |       riscv: |  ok  |
-> diff --git a/arch/openrisc/Kconfig b/arch/openrisc/Kconfig
-> index b38fee299bc4..9156635dd264 100644
-> --- a/arch/openrisc/Kconfig
-> +++ b/arch/openrisc/Kconfig
-> @@ -24,6 +24,8 @@ config OPENRISC
->  	select GENERIC_PCI_IOMAP
->  	select GENERIC_IOREMAP
->  	select GENERIC_CPU_DEVICES
-> +	select HAVE_ARCH_JUMP_LABEL
-> +	select HAVE_ARCH_JUMP_LABEL_RELATIVE
->  	select HAVE_PCI
->  	select HAVE_UID16
->  	select HAVE_PAGE_SIZE_8KB
-> diff --git a/arch/openrisc/configs/or1ksim_defconfig b/arch/openrisc/configs/or1ksim_defconfig
-> index 59fe33cefba2..769705ac24d5 100644
-> --- a/arch/openrisc/configs/or1ksim_defconfig
-> +++ b/arch/openrisc/configs/or1ksim_defconfig
-> @@ -3,26 +3,23 @@ CONFIG_LOG_BUF_SHIFT=14
->  CONFIG_BLK_DEV_INITRD=y
->  # CONFIG_RD_GZIP is not set
->  CONFIG_EXPERT=y
-> -# CONFIG_KALLSYMS is not set
->  # CONFIG_EPOLL is not set
->  # CONFIG_TIMERFD is not set
->  # CONFIG_EVENTFD is not set
->  # CONFIG_AIO is not set
-> -# CONFIG_VM_EVENT_COUNTERS is not set
-> -# CONFIG_COMPAT_BRK is not set
-> -CONFIG_SLUB=y
-> -CONFIG_SLUB_TINY=y
-> -CONFIG_MODULES=y
-> -# CONFIG_BLOCK is not set
-> +# CONFIG_KALLSYMS is not set
->  CONFIG_BUILTIN_DTB_NAME="or1ksim"
->  CONFIG_HZ_100=y
-> +CONFIG_JUMP_LABEL=y
-> +CONFIG_MODULES=y
-> +# CONFIG_BLOCK is not set
-> +CONFIG_SLUB_TINY=y
-> +# CONFIG_COMPAT_BRK is not set
-> +# CONFIG_VM_EVENT_COUNTERS is not set
->  CONFIG_NET=y
->  CONFIG_PACKET=y
->  CONFIG_UNIX=y
->  CONFIG_INET=y
-> -# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
-> -# CONFIG_INET_XFRM_MODE_TUNNEL is not set
-> -# CONFIG_INET_XFRM_MODE_BEET is not set
->  # CONFIG_INET_DIAG is not set
->  CONFIG_TCP_CONG_ADVANCED=y
->  # CONFIG_TCP_CONG_BIC is not set
-> @@ -35,7 +32,6 @@ CONFIG_DEVTMPFS=y
->  CONFIG_DEVTMPFS_MOUNT=y
->  # CONFIG_PREVENT_FIRMWARE_BUILD is not set
->  # CONFIG_FW_LOADER is not set
-> -CONFIG_PROC_DEVICETREE=y
->  CONFIG_NETDEVICES=y
->  CONFIG_ETHOC=y
->  CONFIG_MICREL_PHY=y
-> @@ -53,4 +49,3 @@ CONFIG_SERIAL_OF_PLATFORM=y
->  # CONFIG_DNOTIFY is not set
->  CONFIG_TMPFS=y
->  CONFIG_NFS_FS=y
-> -# CONFIG_ENABLE_MUST_CHECK is not set
-> diff --git a/arch/openrisc/configs/virt_defconfig b/arch/openrisc/configs/virt_defconfig
-> index c1b69166c500..a93a3e1e4f87 100644
-> --- a/arch/openrisc/configs/virt_defconfig
-> +++ b/arch/openrisc/configs/virt_defconfig
-> @@ -12,6 +12,7 @@ CONFIG_NR_CPUS=8
->  CONFIG_SMP=y
->  CONFIG_HZ_100=y
->  # CONFIG_OPENRISC_NO_SPR_SR_DSX is not set
-> +CONFIG_JUMP_LABEL=y
->  # CONFIG_COMPAT_BRK is not set
->  CONFIG_NET=y
->  CONFIG_PACKET=y
-> @@ -55,7 +56,6 @@ CONFIG_DRM=y
->  # CONFIG_DRM_FBDEV_EMULATION is not set
->  CONFIG_DRM_VIRTIO_GPU=y
->  CONFIG_FB=y
-> -CONFIG_FIRMWARE_EDID=y
->  CONFIG_FRAMEBUFFER_CONSOLE=y
->  CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY=y
->  CONFIG_LOGO=y
-> diff --git a/arch/openrisc/include/asm/insn-def.h b/arch/openrisc/include/asm/insn-def.h
-> index dc8d16db1579..2ccdbb37c27c 100644
-> --- a/arch/openrisc/include/asm/insn-def.h
-> +++ b/arch/openrisc/include/asm/insn-def.h
-> @@ -9,4 +9,7 @@
->  /* or1k instructions are always 32 bits. */
->  #define	OPENRISC_INSN_SIZE		4
->  
-> +/* or1k nop instruction code */
-> +#define OPENRISC_INSN_NOP     0x15000000U
-> +
->  #endif /* __ASM_INSN_DEF_H */
-> diff --git a/arch/openrisc/include/asm/jump_label.h b/arch/openrisc/include/asm/jump_label.h
-> new file mode 100644
-> index 000000000000..28dd6c78f8ce
-> --- /dev/null
-> +++ b/arch/openrisc/include/asm/jump_label.h
-> @@ -0,0 +1,68 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (C) 2025 Chen Miao
-> + *
-> + * Based on arch/arm/include/asm/jump_label.h
-> + */
-> +#ifndef __ASM_OPENRISC_JUMP_LABEL_H
-> +#define __ASM_OPENRISC_JUMP_LABEL_H
-> +
-> +#ifndef __ASSEMBLER__
-> +
-> +#include <linux/types.h>
-> +#include <asm/insn-def.h>
-> +
-> +#define HAVE_JUMP_LABEL_BATCH
-> +
-> +#define JUMP_LABEL_NOP_SIZE OPENRISC_INSN_SIZE
-> +
-> +/*
-> + * should aligned 4
-> + * for jump_label relative
-> + * entry.code   = nop.addr - . -> return false
-> + * entry.target = l_yes - .    -> return true
-> + * entry.key	= key - .
-> + */
-
-Perhaps this comment could be expanded a bit?
-
-> +#define JUMP_TABLE_ENTRY(key, label)			\
-> +	".pushsection	__jump_table, \"aw\"	\n\t"	\
-> +	".align 	4 			\n\t"	\
-> +	".long 		1b - ., " label " - .	\n\t"	\
-> +	".long 		" key " - . 		\n\t"	\
-> +	".popsection				\n\t"
-> +
-> +#define ARCH_STATIC_BRANCH_ASM(key, label)		\
-> +	".align		4			\n\t"	\
-> +	"1: l.nop				\n\t"	\
-> +	"    l.nop				\n\t"	\
-> +	JUMP_TABLE_ENTRY(key, label)
-> +
-> +static __always_inline bool arch_static_branch(struct static_key *const key,
-> +					       const bool branch)
-> +{
-> +	asm goto (ARCH_STATIC_BRANCH_ASM("%0", "%l[l_yes]")
-> +		  ::"i"(&((char *)key)[branch])::l_yes);
-> +
-> +	return false;
-> +l_yes:
-> +	return true;
-> +}
-> +
-> +#define ARCH_STATIC_BRANCH_JUMP_ASM(key, label)		\
-> +	".align		4			\n\t"	\
-> +	"1: l.j	" label "			\n\t"	\
-> +	"    l.nop				\n\t"	\
-> +	JUMP_TABLE_ENTRY(key, label)
-> +
-> +static __always_inline bool
-> +arch_static_branch_jump(struct static_key *const key, const bool branch)
-> +{
-> +	asm goto (ARCH_STATIC_BRANCH_JUMP_ASM("%0", "%l[l_yes]")
-> +		  ::"i"(&((char *)key)[branch])::l_yes);
-> +
-> +	return false;
-> +l_yes:
-> +	return true;
-> +}
-> +
-> +#endif /* __ASSEMBLER__ */
-> +#endif /* __ASM_OPENRISC_JUMP_LABEL_H */
-> diff --git a/arch/openrisc/kernel/Makefile b/arch/openrisc/kernel/Makefile
-> index f0957ce16d6b..19e0eb94f2eb 100644
-> --- a/arch/openrisc/kernel/Makefile
-> +++ b/arch/openrisc/kernel/Makefile
-> @@ -9,6 +9,7 @@ obj-y	:= head.o setup.o or32_ksyms.o process.o dma.o \
->  	   traps.o time.o irq.o entry.o ptrace.o signal.o \
->  	   sys_call_table.o unwinder.o cacheinfo.o
->  
-> +obj-$(CONFIG_JUMP_LABEL)	+= jump_label.o
->  obj-$(CONFIG_SMP)		+= smp.o sync-timer.o
->  obj-$(CONFIG_STACKTRACE)	+= stacktrace.o
->  obj-$(CONFIG_MODULES)		+= module.o
-> diff --git a/arch/openrisc/kernel/jump_label.c b/arch/openrisc/kernel/jump_label.c
-> new file mode 100644
-> index 000000000000..071dacad885c
-> --- /dev/null
-> +++ b/arch/openrisc/kernel/jump_label.c
-> @@ -0,0 +1,52 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2025 Chen Miao
-> + *
-> + * Based on arch/arm/kernel/jump_label.c
-> + */
-> +#include <linux/jump_label.h>
-> +#include <linux/kernel.h>
-> +#include <linux/memory.h>
-> +#include <asm/bug.h>
-> +#include <asm/cacheflush.h>
-> +#include <asm/text-patching.h>
-> +
-> +bool arch_jump_label_transform_queue(struct jump_entry *entry,
-> +				     enum jump_label_type type)
-> +{
-> +	void *addr = (void *)jump_entry_code(entry);
-> +	u32 insn;
-> +
-> +	if (type == JUMP_LABEL_JMP) {
-> +		long offset;
-> +
-> +		offset = jump_entry_target(entry) - jump_entry_code(entry);
+> --- a/kernel/rseq.c
+> +++ b/kernel/rseq.c
+> @@ -82,12 +82,6 @@
+>   #define CREATE_TRACE_POINTS
+>   #include <trace/events/rseq.h>
+>   
+> -#ifdef CONFIG_MEMBARRIER
+> -# define RSEQ_EVENT_GUARD	irq
+> -#else
+> -# define RSEQ_EVENT_GUARD	preempt
+> -#endif
+> -
+>   DEFINE_STATIC_KEY_MAYBE(CONFIG_RSEQ_DEBUG_DEFAULT_ENABLE, rseq_debug_enabled);
+>   
+>   static inline void rseq_control_debug(bool on)
+> @@ -236,38 +230,15 @@ static bool rseq_handle_cs(struct task_s
+>   	return rseq_update_user_cs(t, regs, csaddr);
+>   }
+>   
+> -/*
+> - * This resume handler must always be executed between any of:
+> - * - preemption,
+> - * - signal delivery,
+> - * and return to user-space.
+> - *
+> - * This is how we can ensure that the entire rseq critical section
+> - * will issue the commit instruction only if executed atomically with
+> - * respect to other threads scheduled on the same CPU, and with respect
+> - * to signal handlers.
+> - */
+> -void __rseq_handle_notify_resume(struct pt_regs *regs)
+> +static void rseq_slowpath_update_usr(struct pt_regs *regs)
+>   {
+> +	/* Preserve rseq state and user_irq state for exit to user */
+> +	const struct rseq_event evt_mask = { .has_rseq = true, .user_irq = true, };
+>   	struct task_struct *t = current;
+>   	struct rseq_ids ids;
+>   	u32 node_id;
+>   	bool event;
+>   
+> -	/*
+> -	 * If invoked from hypervisors before entering the guest via
+> -	 * resume_user_mode_work(), then @regs is a NULL pointer.
+> -	 *
+> -	 * resume_user_mode_work() clears TIF_NOTIFY_RESUME and re-raises
+> -	 * it before returning from the ioctl() to user space when
+> -	 * rseq_event.sched_switch is set.
+> -	 *
+> -	 * So it's safe to ignore here instead of pointlessly updating it
+> -	 * in the vcpu_run() loop.
+> -	 */
+> -	if (!regs)
+> -		return;
+> -
+>   	if (unlikely(t->flags & PF_EXITING))
+>   		return;
+>   
+> @@ -291,26 +262,45 @@ void __rseq_handle_notify_resume(struct
+>   	 * with the result handed in to allow the detection of
+>   	 * inconsistencies.
+>   	 */
+> -	scoped_guard(RSEQ_EVENT_GUARD) {
+> -		event = t->rseq_event.sched_switch;
+> -		t->rseq_event.sched_switch = false;
+> +	scoped_guard(irq) {
+>   		ids.cpu_id = task_cpu(t);
+>   		ids.mm_cid = task_mm_cid(t);
+> +		event = t->rseq_event.sched_switch;
+> +		t->rseq_event.all &= evt_mask.all;
+>   	}
+>   
+> -	if (!IS_ENABLED(CONFIG_DEBUG_RSEQ) && !event)
+> +	if (!event)
+>   		return;
+>   
+> -	if (!rseq_handle_cs(t, regs))
+> -		goto error;
+> -
+>   	node_id = cpu_to_node(ids.cpu_id);
+> -	if (!rseq_set_uids(t, &ids, node_id))
+> -		goto error;
+> -	return;
+>   
+> -error:
+> -	force_sig(SIGSEGV);
+> +	if (unlikely(!rseq_update_usr(t, regs, &ids, node_id))) {
 > +		/*
-> +		 * The actual maximum range of the l.j instruction's offset is -134,217,728
-> +		 * ~ 134,217,724 (sign 26-bit imm).
-> +		 * For the original jump range, we need to right-shift N by 2 to obtain the
-> +		 * instruction's offset.
+> +		 * Clear the errors just in case this might survive magically, but
+> +		 * leave the rest intact.
 > +		 */
-> +		if (unlikely(offset < -134217728 || offset > 134217724)) {
-> +			WARN_ON_ONCE(true);
-> +		}
-> +		/* 26bit imm mask */
-> +		offset = (offset >> 2) & 0x03ffffff;
-> +
-> +		insn = offset;
-> +	} else {
-> +		insn = OPENRISC_INSN_NOP;
+> +		t->rseq_event.error = 0;
+> +		force_sig(SIGSEGV);
 > +	}
-> +
-> +	if (early_boot_irqs_disabled) {
-> +		copy_to_kernel_nofault(addr, &insn, sizeof(insn));
-> +	} else {
-> +		patch_insn_write(addr, insn);
-> +	}
-> +	return true;
 > +}
 > +
-> +void arch_jump_label_transform_apply(void)
+> +void __rseq_handle_notify_resume(struct pt_regs *regs)
 > +{
-> +	kick_all_cpus_sync();
-> +}
-> diff --git a/arch/openrisc/kernel/setup.c b/arch/openrisc/kernel/setup.c
-> index a9fb9cc6779e..000a9cc10e6f 100644
-> --- a/arch/openrisc/kernel/setup.c
-> +++ b/arch/openrisc/kernel/setup.c
-> @@ -249,6 +249,8 @@ void __init setup_arch(char **cmdline_p)
->  		initrd_below_start_ok = 1;
->  	}
->  #endif
-> +	/* perform jump_table sorting before paging_init locks down read only memory */
-> +	jump_label_init();
->  
->  	/* paging_init() sets up the MMU and marks all pages as reserved */
->  	paging_init();
-> -- 
-> 2.45.2
+> +	/*
+> +	 * If invoked from hypervisors before entering the guest via
+> +	 * resume_user_mode_work(), then @regs is a NULL pointer.
+> +	 *
+> +	 * resume_user_mode_work() clears TIF_NOTIFY_RESUME and re-raises
+> +	 * it before returning from the ioctl() to user space when
+> +	 * rseq_event.sched_switch is set.
+> +	 *
+> +	 * So it's safe to ignore here instead of pointlessly updating it
+> +	 * in the vcpu_run() loop.
+
+I don't think any virt user should expect the userspace fields to be
+updated on the host process while running in guest mode, but it's good
+to clarify that we intend to change this user-visible behavior within
+this series, to spare any unwelcome surprise.
+
+Other than that:
+
+Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+
+Thanks,
+
+Mathieu
+
+> +	 */
+> +	if (!regs)
+> +		return;
+> +
+> +	rseq_slowpath_update_usr(regs);
+>   }
+>   
+>   void __rseq_signal_deliver(int sig, struct pt_regs *regs)
 > 
+
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
