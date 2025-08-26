@@ -1,55 +1,47 @@
-Return-Path: <linux-kernel+bounces-786263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3523CB35774
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:42:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4368B356EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:32:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4AB13A5EBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:42:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 934191723E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:32:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A8A289E36;
-	Tue, 26 Aug 2025 08:42:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5005E283FF5;
+	Tue, 26 Aug 2025 08:32:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="CwuiO2SD"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZwsZyw7D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E0622E004
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 08:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 840B822E004;
+	Tue, 26 Aug 2025 08:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756197740; cv=none; b=WuR+10jLhOg4+MmHN2QWMxvv5qxp3WyfI3gmX9mKNjUtwSSHFeJcHkR9ZfWBLYAQcWG5vtvfRIfRdmoPTCYN+WxSMTdiuqhn91auYMwvajNZNOUyZBS/Y3HiJt1Qem5QF+KCeiBV6hN6WqcN5pxNgUwoGuitO5qjLOAYenjjhGg=
+	t=1756197160; cv=none; b=T2dtQ70mFxeZW/KqgoVaOI3EC0C90VbX9bfLhDCLpoMch4gffLbx3ahUvkG3NatTTcuQ7uQ7jksV8xOHIy+ZvYXaShsCsg+qVZL9+rgEV95xyYqIMvaP5PoymHRl9Ww72+zFMVwRnE4TNlyOtJ08rHAB/QLbvDYGSpoR4ufPZa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756197740; c=relaxed/simple;
-	bh=sj5II3NDwzGyfXJocuRqNFJKdV0WdxRFDHWe6/SGV5U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kdNKz0ps0SgmgNnjPhioH2sNJqSMbGaFf4R6soUCEQ9eTomMdZtmu+GadNrQ+ANs4Mj9VD9GvMlMiL4siUyYoSZnM2dmqMc4WdiUwOPovpDPd1F3IGxHtvdrQaDmfLIfoXWfUbNyHtC6JrPLhbhAzTGIUbmQWhpls9nldgawmns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=CwuiO2SD; arc=none smtp.client-ip=121.127.44.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1756197731;
- bh=jA8sOFGvh2/p8iE2G4NAwGkJrUNoYidwOKdr2bvzY+s=;
- b=CwuiO2SDHqa/G6IJTn+Qm3d3M1fQc+QaVXejAjKGBziX696DVDtNdZvkgKIk6IexPo4lF7JON
- Zuopp7cJdH7jjslyOYbt633Jli04bZJWq53crxyYZBeoYoRnrDpK2kpXE3oExwr1w7qmQELDYc6
- k6zlrYPXrw6m9SsjetaiiPMgWyhyujB74br6kzOQZrq+EPtZp/d4QbsA36TnIklAAb1/62Nku80
- 2tNWOE7IobFfosr62dmfHIfriKm/qdZ4iN7Dr7A0gkymy/Vrtv4LTLS9Ppo3lUNUWpARQeR2JFx
- /EA0CQdh/+QK3+A66vxdmNlDQhX3EnF1WZ4Yp0dZMthA==
-X-Forward-Email-ID: 68ad70d0b1fda674b9411dcb
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 121.127.44.73
-X-Forward-Email-Version: 1.2.9
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <6cf1cf2d-50cb-413d-93c6-79ecd6b0788e@kwiboo.se>
-Date: Tue, 26 Aug 2025 10:31:07 +0200
+	s=arc-20240116; t=1756197160; c=relaxed/simple;
+	bh=MiuO8q0JoSZFbPyzgfQF+TG3+O5EemEXxvBCwfx+rM0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=DQlSzgFW3SDwMnee+8hIZ1+Yq4rQHqwd94w9SKxxXILv8GU5ks+cnE2uRBTKJVtwKnIxPmLdDU2mr8G/pLMsiG0mj6D/a5fVgIJgIMhS2UWnrclwNJ5lAWiDyQD7ptFNhwWDFgi5oMBhOvRl8YNVZl87ofe3rwvuQsSHaU1+9co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZwsZyw7D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F7A0C4CEF1;
+	Tue, 26 Aug 2025 08:32:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756197160;
+	bh=MiuO8q0JoSZFbPyzgfQF+TG3+O5EemEXxvBCwfx+rM0=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=ZwsZyw7Ds2D9OVtPOcmn1MFBADbTyMvLwoD8X/opb6+AkmPLh3a36Cu+rdsmv3opN
+	 W0wnSessFB4o4QuvzgUUnyNlBO55IbEzhZgj3r+YJt7ffihxSeDKsTx/P8363HX6Qu
+	 seUl/cZIzPqfkSeq5nl42mHrRDHuEByUeuwRy3r9dvnhqot7Q/TZ9t/RHtNrt3vYw4
+	 ajrdFX9tXuu4OsaS1ixGNfPEfdl4idJtiLPwhnusZMg5P578KAZmoHOWAXGEatZsg2
+	 h9nPvJ861wb30ZKBnbkZ/pNmM7QpGyr/9D9ffb/FZy7CVYWAGAeYhgIE1bVn/BfY9u
+	 plTzuXjsfutvg==
+Message-ID: <0c732ac6-2d1a-4341-94d4-dc6734bfb959@kernel.org>
+Date: Tue, 26 Aug 2025 10:32:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,90 +49,107 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/6] arm64: dts: rockchip: Add ROCK 2A/2F, Sige1 and
- NanoPi Zero2
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Yao Zi <ziyao@disroot.org>,
- Chukun Pan <amadeus@jmu.edu.cn>,
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
- linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250717103720.2853031-1-jonas@kwiboo.se>
+Subject: Re: [PATCH v2 3/3] PCI: qcom: Restrict port parsing only to pci child
+ nodes
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lorenzo Pieralisi
+ <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
+ <kwilczynski@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, quic_vbadigan@quicinc.com, quic_mrana@quicinc.com
+References: <20250826-pakala-v2-0-74f1f60676c6@oss.qualcomm.com>
+ <20250826-pakala-v2-3-74f1f60676c6@oss.qualcomm.com>
+ <4583bf66-737d-4029-8f14-ce6d6a75def6@kernel.org>
 Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <20250717103720.2853031-1-jonas@kwiboo.se>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <4583bf66-737d-4029-8f14-ce6d6a75def6@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi Heiko,
+On 26/08/2025 10:27, Krzysztof Kozlowski wrote:
+> On 26/08/2025 07:18, Krishna Chaitanya Chundru wrote:
+>> The qcom_pcie_parse_ports() function currently iterates over all available
+>> child nodes of the PCIe controller's device tree node. This can lead to
+>> attempts to parse unrelated nodes like OPP nodes, resulting in unnecessary
+>> errors or misconfiguration.
+>>
+>> Restrict the parsing logic to only consider child nodes named "pcie" or
+>> "pci", which are the expected node names for PCIe ports.
+>>
+>> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+>> ---
+>>  drivers/pci/controller/dwc/pcie-qcom.c | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+>> index 294babe1816e4d0c2b2343fe22d89af72afcd6cd..5dbdb69fbdd1b9b78a3ebba3cd50d78168f2d595 100644
+>> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+>> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+>> @@ -1740,6 +1740,8 @@ static int qcom_pcie_parse_ports(struct qcom_pcie *pcie)
+>>  	int ret = -ENOENT;
+>>  
+>>  	for_each_available_child_of_node_scoped(dev->of_node, of_port) {
+>> +		if (!(of_node_name_eq(of_port, "pcie") || of_node_name_eq(of_port, "pci")))
+> 
+> 
+> Huh? Where is this ABI documented?
 
-On 7/17/2025 12:37 PM, Jonas Karlman wrote:
-> This series adds dt-bindings and initial device tree for the following
-> Rockchip RK3528A boards:
-> - Radxa ROCK 2A/2F
-> - ArmSoM Sige1
-> - FriendlyElec NanoPi Zero2
-> 
-> The bt/wifi_reg_on pins are described in the device tree using
-> rfkill-gpio nodes.
-> 
-> Changes in v4:
-> - Remove disable-wp prop from sdio0
-> - Collect r-b and t-b tags
-> 
-> Changes in v3:
-> - Rename led nodes to led-0/led-1
-> - Remove pinctrl* props from sdio0
-> - Collect a-b tags
-> 
-> Changes in v2:
-> - Limit sdmmc max-frequency to 100 MHz on ROCK 2A/2F
-> - Drop clock-output-names prop from rtc node on Sige1 and NanoPi Zero2
-> - Drop regulator-boot-on from usb 2.0 host regulators on Sige1
-> - Add bluetooth and wifi nodes on Sige1
-> - Collect t-b tag for NanoPi Zero2
-> 
-> These boards can be booted from emmc or sd-card using the U-Boot 2025.07
-> generic-rk3528 target or work-in-progress patches for these boards [1].
-> 
-> For working bluetooth on ArmSoM Sige1 the patch "arm64: dts: rockchip:
-> Fix UART DMA support for RK3528" [2] is required.
-> 
-> [1] https://source.denx.de/u-boot/contributors/kwiboo/u-boot/-/commits/rk3528
-> [2] https://lore.kernel.org/r/20250709210831.3170458-1-jonas@kwiboo.se
-> 
-> Jonas Karlman (6):
->   dt-bindings: arm: rockchip: Add Radxa ROCK 2A/2F
->   arm64: dts: rockchip: Add Radxa ROCK 2A/2F
->   dt-bindings: arm: rockchip: Add ArmSoM Sige1
->   arm64: dts: rockchip: Add ArmSoM Sige1
->   dt-bindings: arm: rockchip: Add FriendlyElec NanoPi Zero2
->   arm64: dts: rockchip: Add FriendlyElec NanoPi Zero2
-> 
->  .../devicetree/bindings/arm/rockchip.yaml     |  17 +
->  arch/arm64/boot/dts/rockchip/Makefile         |   4 +
->  .../boot/dts/rockchip/rk3528-armsom-sige1.dts | 464 ++++++++++++++++++
->  .../boot/dts/rockchip/rk3528-nanopi-zero2.dts | 340 +++++++++++++
->  .../boot/dts/rockchip/rk3528-rock-2.dtsi      | 293 +++++++++++
->  .../boot/dts/rockchip/rk3528-rock-2a.dts      |  82 ++++
->  .../boot/dts/rockchip/rk3528-rock-2f.dts      |  10 +
->  7 files changed, 1210 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-armsom-sige1.dts
->  create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-nanopi-zero2.dts
->  create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-rock-2.dtsi
->  create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-rock-2a.dts
->  create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-rock-2f.dts
+I see it actually might be documented, but you did not mention it at
+all. I doubt you even checked.
 
-Any thoughts on this series? Rebased patches for a possible re-send v5
-contained no changes compared to this v4.
+Please reference exactly where is the ABI, so reviewing will be easier.
 
-I would like to send a v2 on the follow up "rockchip: Add USB 2.0
-support for RK3528" [3] series and was unsure about the state of this
-series before sending that.
-
-[3] https://lore.kernel.org/r/20250723122323.2344916-1-jonas@kwiboo.se
-
-Regards,
-Jonas
+I still think though that it is wrong - we don't want device node names
+to be the ABI if we already have compatibles and the children here
+should have them, right?
+Best regards,
+Krzysztof
 
