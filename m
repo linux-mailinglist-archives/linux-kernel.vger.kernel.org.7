@@ -1,201 +1,205 @@
-Return-Path: <linux-kernel+bounces-786459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D997B35A1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:30:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA1B3B35A20
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:32:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0369E1B6189D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:30:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25AD916D49E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:32:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA9D306D3E;
-	Tue, 26 Aug 2025 10:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A418C2F83C9;
+	Tue, 26 Aug 2025 10:32:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qe8s7COg"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="AZdAOj2p"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6307C29C321;
-	Tue, 26 Aug 2025 10:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50EC27F178;
+	Tue, 26 Aug 2025 10:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756204225; cv=none; b=elA0l8FTJx+O76OiZ19EGCfd1UfivRbFWa2GodSnBYO8D/AfxxrZm/UFa3iXVE8o9ipoAelYM/PMhsgR0aeTpZyANUek02Mnpt9A9Qvt2sqhlP/FSOtsDkuFqzG9vR28j/V4qE0T64fLX8FmeuEGacL1mdcvTOsM855IzN/AIjA=
+	t=1756204335; cv=none; b=E7sv7qj0iQYULvnkqTi6QDAQ0kQ52A3cvM+zKkfORVJkL25pzqNEOUlC20CqTgIH14YaoMXqiWhtgh6IyBC9McNg171rKzXiBJED3IYrolXgDTodbtQldAnHJpnchPTHj9sP9pq8AuywssORfoD0eAHxwMjr1V4zc9LWSAzyVMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756204225; c=relaxed/simple;
-	bh=J5D0c6C1ve2M499aj8JP84xqqBG9d8GhM26AKpp8RW0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ow2+qvUbl93hxeX1WmbzrawX79dk0BZ+rfIJrwBrxlslmMahAUFR981kj3+7pNLAOXBI944vOHbrdOaxwwbJouySLVTjQdYF6ZKQtpdYlnMlPgseFnwYhJCr5K1TgpyTYHeMaY7KevdjLs5fMBreRJuUTzTYXshLtjqGBK+RBF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qe8s7COg; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-afe9f6caf9eso134831866b.3;
-        Tue, 26 Aug 2025 03:30:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756204221; x=1756809021; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uYtuItXnoGP8pupzVnCcRSCCoPPLDL2Fbyp8Wx0/Cqg=;
-        b=Qe8s7COgn4J4DgmXT/zKKtjawgmsjDI48aIdxZcAbUA8I+Zv5QjFWKfo3751ngJnnB
-         atqo8JuSNpf/IfMNIr613+taUwhIfjkAN4WXn3LTzBmhDsA99gl2PvkGAMV7ZtFH0w9T
-         f61mpZOOF0CHFWDKYQdWtiA2NE6z643hzfExZuQuNEjuYL2tCzYtZ54B7hZV9JesN2jg
-         zmZ1sHFi2eZGxAC4hzEbSzjRQGALEH6DgdYCw7yP6wCK3pnh/u+Q6PTYDNjTO2y1WeHI
-         pU0XEM/UfuMiSxAqRVh+dwgLe/EbPcfXCwWAuf39rr5tr2y40eKZQOeEtE0DfJYRlchI
-         SZIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756204221; x=1756809021;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uYtuItXnoGP8pupzVnCcRSCCoPPLDL2Fbyp8Wx0/Cqg=;
-        b=UisBfu9t814qMKywi2y6zWMMUJvGmS+PQzPcle995oS9xkEo/Tf4OOuLRc+LHH3olG
-         XHyY4qOv9oOi2sB5KbU4r7DZa1hoZB8pNAhurgGlmHNYdAUQEBLGoNH1l5cPDeoxcnup
-         J/M4aG2aqYFbxnNgjLRe4VVic4wr+bvTIzLLJPm47u9/2B15unBVFXrb63gwveLjoAUl
-         M1pvW2P8r4P8lcxl3EQJEyalfX3bcr3VHIPSYyEsrbc52INvH8MIflsexeH4qd0CTzdz
-         Rhz8ViBHxPlKDUQFPZFsMD8F2mqynYn67xkNoCEmMDaldHed7vHuCuN4Jh3lwDiwbhxM
-         L5GA==
-X-Forwarded-Encrypted: i=1; AJvYcCUDOH3V1mYapdgpT7vPRh4szDnXuxhZ3H6CXGZZwBgwF1jim8gUtHCCmJhpQfDx4tKGCOz3oscElt7GJ1s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbJPRQUVqqR/p34CYx3BLx7PNu3nGt8imYRxtQXxY8jcwWaOio
-	208KwAl5ybRG/NmFfT9RkFF8f0btetMAkvvGp8nIJLBV+oQhLYYmqGTk3UwhEw==
-X-Gm-Gg: ASbGncte7Pi8St3AYOU77M5YKKhWlsc6gw5KlNHwFwZNQ9FP96TpM2brRIfNh2yVV/5
-	FbumdHezqDkFCeYKYmETc37FxfU9I/DPXg/FHbnknPqTXSdJdna/ZoApLgRPNbjGA9FNxfw4t0H
-	AfrVeMha2FaoslXevMtbCiacuEYkzOOHZkf/m2Am9OYhve/OZNCyKJGkRohTM4h/PqHRUS6Ceg5
-	UxelUBNBU2sbrDjOlpROgukbcQ4Kaf8cLZUPePW98ST7sRE/+tJo+1Yuu2rGm24VdVlcfCgLSwS
-	MnZeNs2WIb89QRSAb57YhOHw8T/4s0YZdHkj32mMBcJSRELBqRTUMNDULlQtGfgz+NqoQCIhU/h
-	JmzuOtmFRO5WyDNA=
-X-Google-Smtp-Source: AGHT+IFi1fUGWXXrzQXgdvKlPV4b/k4v9f0nExJgxLzlllLxkCrL9Lm8RLhyS5/kurH3sZNgiawCcA==
-X-Received: by 2002:a17:907:980e:b0:afc:cbf4:ca7d with SMTP id a640c23a62f3a-afe296e4c0amr1560727166b.54.1756204221350;
-        Tue, 26 Aug 2025 03:30:21 -0700 (PDT)
-Received: from NB-6746.. ([88.201.206.17])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe4936a335sm766732666b.114.2025.08.26.03.30.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 03:30:21 -0700 (PDT)
-From: Artem Shimko <artyom.shimko@gmail.com>
-X-Google-Original-From: Artem Shimko <a.shimko@yadro.com>
-To: dmaengine@vger.kernel.org
-Cc: Artem Shimko <artyom.shimko@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	vkoul@kernel.org,
-	eugeniy.paltsev@synopsys.com
-Subject: [PATCH 1/1] drivers: dma: change pm registration for dw-axi-dmac-platform's suspend
-Date: Tue, 26 Aug 2025 13:30:15 +0300
-Message-ID: <20250826103017.1891990-2-a.shimko@yadro.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250826103017.1891990-1-a.shimko@yadro.com>
-References: <y>
- <20250826103017.1891990-1-a.shimko@yadro.com>
+	s=arc-20240116; t=1756204335; c=relaxed/simple;
+	bh=hCxP00ZaKPPH73WHeC0QAL6Kbr/zc98uKz0OtC0Mxjo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=fxX0SyNuuB6U9nnNe6qY4Nb4EubCsVDjN+k55Z3djhNPectwRPQRQbtbGzyyD+N9o6ymRIAL5pu6DJ7W/d9MmRaDbMyBoVvDS5IELgk2pnqXg6X+UjHiLmV+bLBUF4vXSID8wx9Hh7EFJSWEIWc62HyblQZFGOAJKjqCKggTUqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=AZdAOj2p; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.0.172] (mob-5-90-56-97.net.vodafone.it [5.90.56.97])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8B1DC3002;
+	Tue, 26 Aug 2025 12:30:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1756204260;
+	bh=hCxP00ZaKPPH73WHeC0QAL6Kbr/zc98uKz0OtC0Mxjo=;
+	h=From:Date:Subject:To:Cc:From;
+	b=AZdAOj2p1v8VrCopHNDObIR+ZYTsmEq+w/4QSfx6z9erCSYyqSaZWAoguV5o1yr56
+	 uNTPc/WpyqLQ5wp/hmHw1DDTLuq6GpqARyR2O/7zz3jaOThWdisaMJ36SE5XZnT73C
+	 Mk32T4naOVXXeMkKYC6572L4QgolKD3RymkiZMbU=
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Date: Tue, 26 Aug 2025 12:31:42 +0200
+Subject: [PATCH] media: rzg2l-cru: csi-2: Support RZ/V2H input sizes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250826-rzv2h-cru-sizes-v1-1-dbdfc54bba11@ideasonboard.com>
+X-B4-Tracking: v=1; b=H4sIAA6NrWgC/x3MMQqAMAxA0atIZgNtRS1eRRyKpjaLSoIiFu9uc
+ XzD/xmUhElhqDIIXay8bwW2rmBOYVsJeSkGZ1xrvOtQnsslnOVE5YcUm97G2AbvjbdQqkMo8v0
+ fx+l9P3UwqJdhAAAA
+X-Change-ID: 20250826-rzv2h-cru-sizes-371ff5a88081
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Hans Verkuil <hverkuil@kernel.org>, 
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+ Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
+ Biju Das <biju.das.jz@bp.renesas.com>, 
+ Daniel Scally <dan.scally+renesas@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>, 
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4271;
+ i=jacopo.mondi@ideasonboard.com; h=from:subject:message-id;
+ bh=Asdt69BHgjdc7+ZNVsSduhaiVmujE9JhhYGbhYbMb9o=;
+ b=owEBbQKS/ZANAwAKAXI0Bo8WoVY8AcsmYgBorY0ctSZLjVR3MGSZ/SX0IvbaW/rV5Gdrj4uV2
+ YW7mFVNDauJAjMEAAEKAB0WIQS1xD1IgJogio9YOMByNAaPFqFWPAUCaK2NHAAKCRByNAaPFqFW
+ PMqOD/9G01VIi51GiA/4hk5prWMY61rR3AzyzMk3dvEonCDdlfdCQfQc0ycu+CLXG+WlmIEC9/n
+ eJAYw4nUJUSOck49mN5dcspFtYMNNg+1+IpwRIv9hVRSiGUeykJKtulElrISKwXSuUbQ6ksikl/
+ liv8DfqL75iEKOlYY2x9uQaXjau7UFXWvI5iaXl8LinaJDi4Ko2KMp+oZCKGaZFKw1VJzC5w5+s
+ UVsROO8tqQ23D1TVa4fAJ2JhBIJXtSmmVtJ2EdK54u78ay7rsHYtijMPtpIClvDYbH16r3piTkU
+ oam5UnZv2sIhA/4JbVsklVaiv+dUQwxftvoVuepD20ABMjKpe/OJvUC9jAwY0h80LxYzBXkYrS7
+ cbzxnL+QO7/LVvzM6pVbaVP1tpX74zZ9HjnZXcrMJXhhxfMWYR/VESzL0lC7DvOlplLOEnWrAJh
+ P+cnDbBlTdPFr/Z2fewKaxD0BdNB+OSSmjLHPnSkbCfclp2al5zPu7gDpgBBAeUIXyL4Th6PUFs
+ mjrdvIc+LMvl/Ymg9w27eMJIs4fAoYIcX6yReBXe7dDEvkqEEg7a00ABCm8aU8Mivh5/eXRwfQ2
+ HqtyL+ui//nWVEo4N9w4lzp5IsIgDpaAnWVgvlktURFJSCBaUIPyYgkksSMaaZwrwwR0hW+XcGt
+ SGgFAhhDYCdmCbQ==
+X-Developer-Key: i=jacopo.mondi@ideasonboard.com; a=openpgp;
+ fpr=72392EDC88144A65C701EA9BA5826A2587AD026B
 
-From: Artem Shimko <artyom.shimko@gmail.com>
+From: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
 
-Replaced the deprecated SET_RUNTIME_PM_OPS macro with the
-DEFINE_RUNTIME_DEV_PM_OPS macro for defining device power
-management operations.
+The CRU version on the RZ/V2H SoC supports larger input sizes
+(4096x4096) compared to the version on the RZ/G2L (2800x4095).
 
-The DEFINE_RUNTIME_DEV_PM_OPS macro provides the same functionality
-to support system suspend mode.
+Store the per-SoC min/max sizes in the device match info and use them
+in place of the hardcoded ones.
 
-Signed-off-by: Artem Shimko <artyom.shimko@gmail.com>
+Signed-off-by: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
 ---
- .../dma/dw-axi-dmac/dw-axi-dmac-platform.c    | 31 ++++++-------------
- 1 file changed, 9 insertions(+), 22 deletions(-)
+Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+---
+ .../media/platform/renesas/rzg2l-cru/rzg2l-csi2.c  | 34 ++++++++++++++++++----
+ 1 file changed, 28 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c b/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
-index c8eaa9c14c03..eeba28a1d2c8 100644
---- a/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
-+++ b/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
-@@ -1400,8 +1400,10 @@ static int dma_chan_resume(struct dma_chan *dchan)
- 	return 0;
- }
+diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
+index 1520211e74185fea3bca85f36239254f6b4651db..96d17ae0048f9d88aa73bec916365f3dbc421882 100644
+--- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
++++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
+@@ -101,6 +101,11 @@
+ #define RZG2L_CSI2_MAX_WIDTH		2800
+ #define RZG2L_CSI2_MAX_HEIGHT		4095
  
--static int axi_dma_suspend(struct axi_dma_chip *chip)
-+static int __maybe_unused axi_dma_suspend(struct device *dev)
- {
-+	struct axi_dma_chip *chip = dev_get_drvdata(dev);
++#define RZV2H_CSI2_MIN_WIDTH		320
++#define RZV2H_CSI2_MIN_HEIGHT		240
++#define RZV2H_CSI2_MAX_WIDTH		4096
++#define RZV2H_CSI2_MAX_HEIGHT		4096
 +
- 	axi_dma_irq_disable(chip);
- 	axi_dma_disable(chip);
- 
-@@ -1411,9 +1413,10 @@ static int axi_dma_suspend(struct axi_dma_chip *chip)
- 	return 0;
- }
- 
--static int axi_dma_resume(struct axi_dma_chip *chip)
-+static int __maybe_unused axi_dma_resume(struct device *dev)
- {
- 	int ret;
-+	struct axi_dma_chip *chip = dev_get_drvdata(dev);
- 
- 	ret = clk_prepare_enable(chip->cfgr_clk);
- 	if (ret < 0)
-@@ -1429,20 +1432,6 @@ static int axi_dma_resume(struct axi_dma_chip *chip)
- 	return 0;
- }
- 
--static int __maybe_unused axi_dma_runtime_suspend(struct device *dev)
--{
--	struct axi_dma_chip *chip = dev_get_drvdata(dev);
--
--	return axi_dma_suspend(chip);
--}
--
--static int __maybe_unused axi_dma_runtime_resume(struct device *dev)
--{
--	struct axi_dma_chip *chip = dev_get_drvdata(dev);
--
--	return axi_dma_resume(chip);
--}
--
- static struct dma_chan *dw_axi_dma_of_xlate(struct of_phandle_args *dma_spec,
- 					    struct of_dma *ofdma)
- {
-@@ -1676,7 +1665,7 @@ static int dw_probe(struct platform_device *pdev)
- 	 * driver to work also without Runtime PM.
- 	 */
- 	pm_runtime_get_noresume(chip->dev);
--	ret = axi_dma_resume(chip);
-+	ret = axi_dma_resume(chip->dev);
- 	if (ret < 0)
- 		goto err_pm_disable;
- 
-@@ -1724,7 +1713,7 @@ static void dw_remove(struct platform_device *pdev)
- 	axi_dma_disable(chip);
- 
- 	pm_runtime_disable(chip->dev);
--	axi_dma_suspend(chip);
-+	axi_dma_suspend(chip->dev);
- 
- 	for (i = 0; i < DMAC_MAX_CHANNELS; i++)
- 		if (chip->irq[i] > 0)
-@@ -1739,9 +1728,7 @@ static void dw_remove(struct platform_device *pdev)
- 	}
- }
- 
--static const struct dev_pm_ops dw_axi_dma_pm_ops = {
--	SET_RUNTIME_PM_OPS(axi_dma_runtime_suspend, axi_dma_runtime_resume, NULL)
--};
-+static DEFINE_RUNTIME_DEV_PM_OPS(dw_axi_dma_pm_ops, axi_dma_suspend, axi_dma_resume, NULL);
- 
- static const struct of_device_id dw_dma_of_id_table[] = {
- 	{
-@@ -1766,7 +1753,7 @@ static struct platform_driver dw_driver = {
- 	.driver = {
- 		.name	= KBUILD_MODNAME,
- 		.of_match_table = dw_dma_of_id_table,
--		.pm = &dw_axi_dma_pm_ops,
-+		.pm = pm_ptr(&dw_axi_dma_pm_ops),
- 	},
+ #define RZG2L_CSI2_DEFAULT_WIDTH	RZG2L_CSI2_MIN_WIDTH
+ #define RZG2L_CSI2_DEFAULT_HEIGHT	RZG2L_CSI2_MIN_HEIGHT
+ #define RZG2L_CSI2_DEFAULT_FMT		MEDIA_BUS_FMT_UYVY8_1X16
+@@ -137,6 +142,10 @@ struct rzg2l_csi2_info {
+ 	int (*dphy_enable)(struct rzg2l_csi2 *csi2);
+ 	int (*dphy_disable)(struct rzg2l_csi2 *csi2);
+ 	bool has_system_clk;
++	unsigned int min_width;
++	unsigned int min_height;
++	unsigned int max_width;
++	unsigned int max_height;
  };
- module_platform_driver(dw_driver);
+ 
+ struct rzg2l_csi2_timings {
+@@ -418,6 +427,10 @@ static const struct rzg2l_csi2_info rzg2l_csi2_info = {
+ 	.dphy_enable = rzg2l_csi2_dphy_enable,
+ 	.dphy_disable = rzg2l_csi2_dphy_disable,
+ 	.has_system_clk = true,
++	.min_width = RZG2L_CSI2_MIN_WIDTH,
++	.min_height = RZG2L_CSI2_MIN_HEIGHT,
++	.max_width = RZG2L_CSI2_MAX_WIDTH,
++	.max_height = RZG2L_CSI2_MAX_HEIGHT,
+ };
+ 
+ static int rzg2l_csi2_dphy_setting(struct v4l2_subdev *sd, bool on)
+@@ -542,6 +555,10 @@ static const struct rzg2l_csi2_info rzv2h_csi2_info = {
+ 	.dphy_enable = rzv2h_csi2_dphy_enable,
+ 	.dphy_disable = rzv2h_csi2_dphy_disable,
+ 	.has_system_clk = false,
++	.min_width = RZV2H_CSI2_MIN_WIDTH,
++	.min_height = RZV2H_CSI2_MIN_HEIGHT,
++	.max_width = RZV2H_CSI2_MAX_WIDTH,
++	.max_height = RZV2H_CSI2_MAX_HEIGHT,
+ };
+ 
+ static int rzg2l_csi2_mipi_link_setting(struct v4l2_subdev *sd, bool on)
+@@ -631,6 +648,7 @@ static int rzg2l_csi2_set_format(struct v4l2_subdev *sd,
+ 				 struct v4l2_subdev_state *state,
+ 				 struct v4l2_subdev_format *fmt)
+ {
++	struct rzg2l_csi2 *csi2 = sd_to_csi2(sd);
+ 	struct v4l2_mbus_framefmt *src_format;
+ 	struct v4l2_mbus_framefmt *sink_format;
+ 
+@@ -653,9 +671,11 @@ static int rzg2l_csi2_set_format(struct v4l2_subdev *sd,
+ 	sink_format->ycbcr_enc = fmt->format.ycbcr_enc;
+ 	sink_format->quantization = fmt->format.quantization;
+ 	sink_format->width = clamp_t(u32, fmt->format.width,
+-				     RZG2L_CSI2_MIN_WIDTH, RZG2L_CSI2_MAX_WIDTH);
++				     csi2->info->min_width,
++				     csi2->info->max_width);
+ 	sink_format->height = clamp_t(u32, fmt->format.height,
+-				      RZG2L_CSI2_MIN_HEIGHT, RZG2L_CSI2_MAX_HEIGHT);
++				     csi2->info->min_height,
++				     csi2->info->max_height);
+ 	fmt->format = *sink_format;
+ 
+ 	/* propagate format to source pad */
+@@ -697,16 +717,18 @@ static int rzg2l_csi2_enum_frame_size(struct v4l2_subdev *sd,
+ 				      struct v4l2_subdev_state *sd_state,
+ 				      struct v4l2_subdev_frame_size_enum *fse)
+ {
++	struct rzg2l_csi2 *csi2 = sd_to_csi2(sd);
++
+ 	if (fse->index != 0)
+ 		return -EINVAL;
+ 
+ 	if (!rzg2l_csi2_code_to_fmt(fse->code))
+ 		return -EINVAL;
+ 
+-	fse->min_width = RZG2L_CSI2_MIN_WIDTH;
+-	fse->min_height = RZG2L_CSI2_MIN_HEIGHT;
+-	fse->max_width = RZG2L_CSI2_MAX_WIDTH;
+-	fse->max_height = RZG2L_CSI2_MAX_HEIGHT;
++	fse->min_width = csi2->info->min_width;
++	fse->min_height = csi2->info->min_height;
++	fse->max_width = csi2->info->max_width;
++	fse->max_height = csi2->info->max_height;
+ 
+ 	return 0;
+ }
+
+---
+base-commit: 16428e2449ab96cce27be6ab17b750b404c76c7c
+change-id: 20250826-rzv2h-cru-sizes-371ff5a88081
+
+Best regards,
 -- 
-2.43.0
+Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 
 
