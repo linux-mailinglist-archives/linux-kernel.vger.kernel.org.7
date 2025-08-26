@@ -1,221 +1,286 @@
-Return-Path: <linux-kernel+bounces-785795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED7ECB3511F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:44:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 087F4B35121
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 03:44:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6B70207642
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 01:44:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E2637A3D00
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 01:42:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E7EB1FDE19;
-	Tue, 26 Aug 2025 01:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="iNl3J0M6"
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011020.outbound.protection.outlook.com [40.107.130.20])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E218247299;
+	Tue, 26 Aug 2025 01:44:08 +0000 (UTC)
+Received: from mta21.hihonor.com (mta21.honor.com [81.70.160.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BB21F956;
-	Tue, 26 Aug 2025 01:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756172643; cv=fail; b=REgEP2SDG2ztq4Dmi1iF7y3HbLv+NVnfOCZpPpf4SeLM1jai+6q1nYYLtGxfm6CXaBlxOZ8y1trZXxbq1fIqLAUqI/DUBXHePdtXJdrvzne7k3zkeHztBsntW3X7g5gq02jW8GIcSyNRLrBRM/zRVdS3X81fG8vSXM+j9K5ral8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756172643; c=relaxed/simple;
-	bh=v2CQ3DbtLp8u07XyTRncKz9cG+86wRMkEd2bHL86phk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=fTss3CcGUJdhv2P8Y7TofjOk6LaYghv7qBDpj9Oelx8xabEAJv5CyURrBfKnLr/zeTxXJjD6Vk9MmIptB19Y3JBKoSt+041WK+08L1JupiehObPnIuZZavZp0VNmWjSECJnGYWJh+2OI3iTvcTFVnAJlnI4nJaBrSRBrJqiP9Zk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=iNl3J0M6; arc=fail smtp.client-ip=40.107.130.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CpzjXUvUN/C3S9B7W3IoNVSt7/NdAh5UXHMOSoaA0l44OudmUwkzD5QTGlOaDEPVPTl0N0GXpfD21UvF/WF2CVf8+EZbxggEfOz9JeLZ8AeAqxekBQJoQMhuRk6LFM/GuyN0KLXG8cci7yemTJQqg82NbdvXtWxYScVc1UP91q31SIOcmvx8XyQh1VThL+UJrb7vBM6LtEaKtiwqRd0fJNigbhMp4xbC88UKFLrDmHCl6xZwUmCn0o6VneHoz+5811OzNAEKjp5nkoNe0zdUt/igHTdnlHYoEW2ba2KYg45gyzhpzil9p1jUU+r23dFnnAj66aQhnoym7znCyukeng==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QxQgIXf2MAPNy0cyS00INeRmsn6w4Gp4h0BvNAKXH4Y=;
- b=icEdGLng57sMMp5Osbbyhev3dheyZ2Gtm00dV85tCHJ3NK5/WPCifEd2FFbQLCP1h5yKauqOGSgcNbH0pr+yqMcYA/E5Wu9XHVqD9Wdv+MYbhlEA/52vBwFFSwn4pVm83EJhufeQ4tj0uSqTrrEmpHLKY0OTGrjwX0kKlZzFlsTDXN5X6fzy/YakrXXxyYBx7pOKp19sekdLMXPoF9wym3gXIx1WnM2qVG1q0NFZJU2n6DMMs40JONeEsaI6s3AU/62UlapzpTsb8PqaLb/UpayoERk7zmu+Raeyh02q30vT9m9EPVKkD3FjRXkI+o2d3eVE/GepHw1A/HxmZRhSGQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QxQgIXf2MAPNy0cyS00INeRmsn6w4Gp4h0BvNAKXH4Y=;
- b=iNl3J0M6adtlV8shdoFHSuyvs2VAw2DD0TnYoGQgiJ9QxfBxt9qgXzK3MugSWpk3fuuOMGjAr0fSaD4QP7FztsVjniNTgCJygHT/o6UKovrhHrPAQrS6mBATweXgeViJF0xUYHM0NOmsU8f6YiuNVyYv1iLUEUT+REx+lpNohgCkFKtcw2gA9OwcfMztXwOc5ksAm8a4e0Fhu2pXFcrP1k14v3oAWOyN2BXWvEk6NrCEonDnOkAA0HSIBND0ncqQDO/HYkkpUPNJS3KFnD1ASECegG+1a9eVIw0PZWOJAZt6pv5kemgZnmAPcYErphdyOCmCD1TANYJbe4EyV+oCXw==
-Received: from AM9PR04MB8505.eurprd04.prod.outlook.com (2603:10a6:20b:40a::14)
- by GVXPR04MB10612.eurprd04.prod.outlook.com (2603:10a6:150:225::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.11; Tue, 26 Aug
- 2025 01:43:56 +0000
-Received: from AM9PR04MB8505.eurprd04.prod.outlook.com
- ([fe80::bb21:d7c8:f7f7:7868]) by AM9PR04MB8505.eurprd04.prod.outlook.com
- ([fe80::bb21:d7c8:f7f7:7868%7]) with mapi id 15.20.9052.011; Tue, 26 Aug 2025
- 01:43:56 +0000
-From: Wei Fang <wei.fang@nxp.com>
-To: Shenwei Wang <shenwei.wang@nxp.com>
-CC: Clark Wang <xiaoning.wang@nxp.com>, Stanislav Fomichev <sdf@fomichev.me>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>, Andrew Lunn
-	<andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
-	<daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, John
- Fastabend <john.fastabend@gmail.com>
-Subject: RE: [PATCH v2 net-next 3/5] et: fec: add rx_frame_size to support
- configurable RX length
-Thread-Topic: [PATCH v2 net-next 3/5] et: fec: add rx_frame_size to support
- configurable RX length
-Thread-Index: AQHcEsoyoJ7sYfSghkG8db/Gx4Jg+bRucgcQgAA6/YCAA/kJ0IAArpIAgADa5qA=
-Date: Tue, 26 Aug 2025 01:43:56 +0000
-Message-ID:
- <AM9PR04MB850566622D29C9EBB70B69188839A@AM9PR04MB8505.eurprd04.prod.outlook.com>
-References: <20250821183336.1063783-1-shenwei.wang@nxp.com>
- <20250821183336.1063783-4-shenwei.wang@nxp.com>
- <PAXPR04MB85106B9BAA426968D0C08678883DA@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <PAXPR04MB918588241A96C60E7E7E4FE2893DA@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <PAXPR04MB851035376B94859B359C3A05883EA@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <PAXPR04MB9185FC62D5928E5B265F41DC893EA@PAXPR04MB9185.eurprd04.prod.outlook.com>
-In-Reply-To:
- <PAXPR04MB9185FC62D5928E5B265F41DC893EA@PAXPR04MB9185.eurprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AM9PR04MB8505:EE_|GVXPR04MB10612:EE_
-x-ms-office365-filtering-correlation-id: 0c8cbb16-87a0-4087-405f-08dde4420524
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|7416014|376014|366016|19092799006|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?Dj11jM/KEh6qM8CRvrmHmxCuoIkXSL/CHRg31Nch/bd3eC0BjAO/9fdlmCoc?=
- =?us-ascii?Q?kZTdb/2LVVz6MgeZ4DGkvRC9f8vhTPg/kDtqS3N3H4DgIUQPS4F8JaRs33lM?=
- =?us-ascii?Q?GlYqF6/4EPjOJC/uaOv4t0sweOee2aEZwZIFOPhYj6vk4zoLCyNsCkPI4nmz?=
- =?us-ascii?Q?QgLWrqH6jDZBN0xsDdKujPG/GyT4DRsq+3aSu6UXv98Nt6sgS3HT2ngDdXrg?=
- =?us-ascii?Q?c+tzcQp6z2PVhWyPLMG3ditcQV9T8/uJW+Hida2QEWaUzjw6vTPEaS0soKCW?=
- =?us-ascii?Q?rqBQeDxCapkIgmT26tsNt6Eae7FqYXFfQkxyRyz+rW1J0me9i6TiJPZ1WtQ0?=
- =?us-ascii?Q?NvmFOKcpWDcjNt+yUI/i2u8aLYqrVAVWfK5ueJhHjtZ2VGzhIVzWU6XVqDsJ?=
- =?us-ascii?Q?B6zPmFLqJTfjp3/3/udd4vAsZWYrKMFo2kEalXj92NpHHul5FLXI/DGw7KYz?=
- =?us-ascii?Q?cBx9mtxLCFt1NQIwUgwMu7In4BijZCmeX5ZmAt5nKepEoFndr5tspsSTTdyq?=
- =?us-ascii?Q?DbcaSb73G7RIsPtlREHO/M9peDq8h5+YxHOdfm2XKzSHVS2JMh2lY0HI9N8s?=
- =?us-ascii?Q?oDq1+7yeLxkZUFQ2aEnOZwWElSZEoZ7HQn1CPx7IliPTpSMjfnQVAn4V/o16?=
- =?us-ascii?Q?D+g9HwbpLs2Qgbv3ToezxyrCoZNb8OVhK/x6ZC8J+LUWHFmkcACzErvl3UZC?=
- =?us-ascii?Q?9jufZ7BAxMsXmakgGdsdlzGPyjpegXJeUffX4I/P3L/qWAolasfyDYVaXO6S?=
- =?us-ascii?Q?pKSVOOmay/VgxC9FB88Ejgku8FrhjDIbP5mwXsT2QtmoH+yiU/7lOGc1d3YS?=
- =?us-ascii?Q?xc8U/DIj2uvA1WV7yuLhg9ULqYVDJPkMGmEpTpAaOUjkY6to+pTqQKYIkgNF?=
- =?us-ascii?Q?nN7MFQW9eVgGARWLTqVSeyE9oyqM8AW8Fht7tuxgP8YZmiR1V3KvpKg/tgnJ?=
- =?us-ascii?Q?PlISd/KFiTWTvzSr4GPYJJEtdvSpuOI6wqzNMtbVIWOp+vAnh/WetWxXArdq?=
- =?us-ascii?Q?7eQM0JFsdx8+GVkSGZ+3p+GXaaBgklefaDH/lGIyY5yqWwkQwdOkDKXEy+L4?=
- =?us-ascii?Q?6fbsPbOUcf/iBk32A5l/09+S+b4IUy9V44XLmuNLfGLL/97sMqfaf/jbGzfw?=
- =?us-ascii?Q?p4rmE2lDaB2rMtGEwLB4E4RlJofSa5XM8HCatclUUdqZ7B6J1zhvZx0Iss/7?=
- =?us-ascii?Q?PkPa9QqFBKzZx0kHfm+8TDpgbuD1gRWb2Iz1PZGj1gyY3QyswKl7HnfwCw/8?=
- =?us-ascii?Q?ed07y87fO+5PqyWWedtpHCh/x0vYDa2hIbaP+fBK4yhY2nJOWecnDgZM3EJ0?=
- =?us-ascii?Q?72ItYLV2hq3OnJwT4NHpZjCrfsr5oAWNb2ljri94mtguehnI0Mm263ydWJCB?=
- =?us-ascii?Q?AFmFdtfVs5wMo13Bchh1eI/JAinaUgUID0X+ZoA4K5yyZoMMN+9Zk1kI0KW1?=
- =?us-ascii?Q?iQxczU7/6NAQpyMOopjcd3sJCFua6BD4zo4gFlc6SdnRU0W2w6WrqA=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8505.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(19092799006)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?BHlp5FppqJ6wh3GaEQ/GQW+4OrfDEmfD0iw45kIso9eqBk+O0Vpfc3L8ItJ2?=
- =?us-ascii?Q?1b14/Q10gZX6dgeAUh2PcFhaCsG+tDmR1xlZE/6RkincZ/Vdpk8lUvST1d3v?=
- =?us-ascii?Q?QWJy7WgQKoRRiSme0hyqAM63bqLd+dsSOH18SIdn59mKXcOsViGpa27b32xK?=
- =?us-ascii?Q?6y/wP+N2MJ8XC4i++zsp2zOSJQY67bDhHAnVuxjaw2Tay7RDMFU6RJxNWlIF?=
- =?us-ascii?Q?IOIrBY2c3RrzBV20JJtCpvBWw2NXv8fAAkxlc8Hw+VQHb8VlSgx/9v6mU9lz?=
- =?us-ascii?Q?dNPXxrB1b748YW0wKbT6425C36yJ0e4b6TpKjQn460DqRuVFDAZNatFhKv41?=
- =?us-ascii?Q?/4l5FK/gX80oO3PtGVSNHSsweHf1lbAJkdkb/mpecF84SsoOKEpdWXp5g/tl?=
- =?us-ascii?Q?b5zX0ETd4y76Fq6nuTRnmx8UClfpwAla2/mw7yzbdkQ32Qn9VCG3UXRuoKLY?=
- =?us-ascii?Q?T9sZk+qT5Fl+I7fU53bnaSzqw/wT9HGXb7u6dv4dd5jPMrpg2kT/5L7awm4A?=
- =?us-ascii?Q?ZGHvOExMvZ+ZZsDV0ptwHpm8Z2WyjDBj2cJZbV0NYhkzIBxBtvlq/dN0T3rb?=
- =?us-ascii?Q?JVDTir5Qf3gyMJc/THYVq9cuoksJk7/pcyTvsMPAezEcwkdaLe6hyDYr3iB6?=
- =?us-ascii?Q?h70zqJDuI81+SynK1cMGKrYTo9lyUPbUFPt243VSE/4lyN4CoAqVb0wKKMn5?=
- =?us-ascii?Q?NAzCjrTcqmPSey85H2xTUaE/rxY37JytShCdWBmdNNaE82xUPvOJmSPC0jWb?=
- =?us-ascii?Q?dsbs+Pt2QIjPSiPSpeLy3Wo7BGg5k/UWZmE1/HKPNgPEh1qnC9SatrQ+vFvw?=
- =?us-ascii?Q?zd5ZIHvK73P4WQRrQyG7NLqM2LPHFy9had5NuGmAQ1Gr4C6KVYQc7QblXyWr?=
- =?us-ascii?Q?m3Cg7i4rKzP7poWcLN96cdB6kIF9B3WpWUwbkJpUX28HsffcXU3Ok2U/aWQ6?=
- =?us-ascii?Q?x0B3QXQ6gSeIHdB5P6YBUvO47Mei/BWhgqHJrQv07Lo3to13HVo6qXCnTEZT?=
- =?us-ascii?Q?kftj5xQtayOY2AfK7sr6c6zMf+CtwXzbhUFkBoC/2NUOJom8fm+IR9CZk4v0?=
- =?us-ascii?Q?djCpN+v0AEyEwf1/yU2QYBskvrJX27ynw/XUJmfWCLADZJdIPIq2n8/8Wsqk?=
- =?us-ascii?Q?Hhpg1+QDUjjY3zrsEIXp9pi5VyWl+Wd/tcQg7S3yqmhXnGbny4Y7p+qJEgeF?=
- =?us-ascii?Q?c40XmB/y8BEas/CQugoruHEpryEwuzdNLvjtIvcipxz0EPcZyYo6SsFI18Qh?=
- =?us-ascii?Q?LMaqd2IDhNA73FCT0kRQ7dVjPqppWkmpOiJzRIlC36bhlE9nZegfqvhmdCTZ?=
- =?us-ascii?Q?2RHDXSVaB1a0CiPGOPuPPEPsG5g4FJcUEs+X13UU5donH4OU0vS+V0pdFA6M?=
- =?us-ascii?Q?ymm0ZISscOjH6kOrujnL0LnQIDsHEabaaAnoaRjSTuwNmd7PI/9bfNA+z9Ip?=
- =?us-ascii?Q?B2gXpsQno+zCsc4xseZnWAg3MkpDFQG3/diXS+IxBgko4nCtSo9udd97EPB/?=
- =?us-ascii?Q?GHTsGI6f3IHv/k8gdnj3hnupN6TRSGpc3tzzwcAGOmNisTp5HqfEi85OMNwC?=
- =?us-ascii?Q?lSEqOhjbs67NRB3tguU=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36DAC21FF25
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 01:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.160.142
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756172647; cv=none; b=rkhuHOTtozH2n3lhkWQPzqqpPwqwLGVvqFts7DwHLxoiILSdTEEMaOho/nTY+XwsRuCG1sT+/R5WhdhmSsy3fxo5mq8FtFis8iVLSR7U0oXYwoyK6sBOwMpsP2BwxxGrq244jV5cr7uWmhOtDc/c2brwhIATVI/wqktSEV7Lk5A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756172647; c=relaxed/simple;
+	bh=yheA1pyR67seJmhIEQpioW/zF+7erGKugiGfBqf1x3s=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=op6qbLYaTV+sY6PqfBanTtekTX6cr9r1IyzhXjIrzCYX/MCa0MDFpddsaOiyjDQs8zbhEPyUdll6PrXJWoBWjK4av1su33e8xWkIkGLKsdQvvpfrcx9xbIb4iJKSLVSc5IJq71P8PiyUWACr2GV/52MO1bhNJsnotgZ8rsjjCgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.160.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w013.hihonor.com (unknown [10.68.26.19])
+	by mta21.hihonor.com (SkyGuard) with ESMTPS id 4c9r6V2D9QzYkxr2;
+	Tue, 26 Aug 2025 09:43:46 +0800 (CST)
+Received: from a011.hihonor.com (10.68.31.243) by w013.hihonor.com
+ (10.68.26.19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 26 Aug
+ 2025 09:44:02 +0800
+Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
+ (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 26 Aug
+ 2025 09:44:02 +0800
+From: wangzijie <wangzijie1@honor.com>
+To: <linux-f2fs-devel@lists.sourceforge.net>
+CC: <chao@kernel.org>, <feng.han@honor.com>, <jaegeuk@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <wangzijie1@honor.com>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: reduce nat_tree_lock hold time when flush nat entries
+Date: Tue, 26 Aug 2025 09:44:01 +0800
+Message-ID: <20250826014401.2020583-1-wangzijie1@honor.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <894561d6-c0eb-4f58-ad3e-96797135e89b@kernel.org>
+References: <894561d6-c0eb-4f58-ad3e-96797135e89b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8505.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0c8cbb16-87a0-4087-405f-08dde4420524
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Aug 2025 01:43:56.1455
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: IW7Qbv2HFGkmSB6frN0E5gBCE4+gaV5YTha4iIrbMNNj20v1k6zoAcuLuo+wry2Cq5VuzcvcKcyTjqkU1ZGeTg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10612
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: w003.hihonor.com (10.68.17.88) To a011.hihonor.com
+ (10.68.31.243)
 
-> > > > > @@ -4563,6 +4563,7 @@ fec_probe(struct platform_device *pdev)
-> > > > >  	pinctrl_pm_select_sleep_state(&pdev->dev);
-> > > > >
-> > > > >  	fep->pagepool_order =3D 0;
-> > > > > +	fep->rx_frame_size =3D FEC_ENET_RX_FRSIZE;
-> > > >
-> > > > According to the RM, to allow one maximum size frame per buffer,
-> > > > FEC_R_BUFF_SIZE must be set to FEC_R_CNTRL [MAX_FL] or larger.
-> > > > FEC_ENET_RX_FRSIZE is greater than PKT_MAXBUF_SIZE, I'm not sure
-> > > whether it
-> > > > will cause some unknown issues.
-> > >
-> > > MAX_FL defines the maximum allowable frame length, while TRUNC_FL
-> > > specifies the threshold beyond which frames are truncated. Based on
-> > > this logic, the documentation appears to be incorrect-TRUNC_FL should
-> > > never exceed MAX_FL, as doing so would make the truncation mechanism
-> > > ineffective.
-> > >
-> > > This has been confirmed through testing data.
-> > >
-> >
-> > One obvious issue I can see is that the Rx error statistic would be dou=
-bled the
-> > actual number when the FEC receives jumbo frames.
-> >
-> > For example, the sender sends 1000 jumbo frames (8000 bytes) to the FEC
-> port,
-> > without this patch set, the Rx error statistic of FEC should be 1000, h=
-owever,
-> after
-> > applying this patch set (rx_frame_size is 3520, max_buf_size is 1984), =
-I can see
-> > the Rx error statistic is 2000.
->=20
-> I don't think there is a case that rx_frame_size is 3520 while the max_bu=
-f_size is
-> 1984.
-> With the patch, the rx_frame_size should always less than the max_buf_siz=
-e.
-> Otherwise,
-> the implementation might have a logic bug.
->=20
+> On 8/13/25 12:04, wangzijie wrote:
+> > Sometimes I suffered the nat_tree_lock contention between f2fs_write_checkpoint
+> > and f2fs_get_node_info. Commit a9419b6("f2fs: do not bother checkpoint by
+> > f2fs_get_node_info") also mentioned that situation.
+> > 
+> > My idea is, when flush nat entries, we can use some structures to record nat
+> > pages we may read, and readahead them before hold nat_tree_lock. Before
+> > impletement code, I did some survey and found a submittion in community.
+> > 
+> > Subject: f2fs: use bucket sort to avoid tree lookup and list sort when nat flushing
+> > Link: https://lore.kernel.org/linux-f2fs-devel/20170520122435.17574-2-houpengyang@huawei.com/
+> > This patch aims to improve nat entry set sort by using bucket.
+> > I steal that structure and readahead nat pages contain nat entry set which cannot be moved
+> > to journal according to dirty nat entry set bucket.
+> > 
+> > By doing this, I think there are two benefits to reducing nat_tree_lock hold time when
+> > when flush nat entries.
+> 
+> Zijie,
+> 
+> Can you please figure out some numbers for this patch? something like
+> checkpoint latency or average or extreme time to grab nat_tree_lock...?
+> 
+> > 1. avoid nat set tree lookup and sort
+> > 2. readahead nat pages before holding nat_tree_lock
+> 
+> It may cause performance regression if it races w/ drop_caches?
+> 
+> Thanks,
 
-Actually, I have tested this patch set, that is the problem I'm seeing. You=
- can also
-have a try, do not enable jumbo frame, just use the default configuration.
+Hi, Chao
+Do you mean that it will race with f2fs_try_to_free_nats()?
+In this patch, nat_tree_lock is not held when readahead nat pages, but
+in fact we need it. Am I right?
 
+> > 
+> > Signed-off-by: wangzijie <wangzijie1@honor.com>
+> > ---
+> >  fs/f2fs/f2fs.h |  1 +
+> >  fs/f2fs/node.c | 70 ++++++++++++++++++++++++--------------------------
+> >  fs/f2fs/node.h |  2 +-
+> >  3 files changed, 35 insertions(+), 38 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index 46be75605..b27cc059f 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -975,6 +975,7 @@ struct f2fs_nm_info {
+> >  	struct radix_tree_root nat_set_root;/* root of the nat set cache */
+> >  	struct f2fs_rwsem nat_tree_lock;	/* protect nat entry tree */
+> >  	struct list_head nat_entries;	/* cached nat entry list (clean) */
+> > +	struct list_head nat_dirty_set[NAT_ENTRY_PER_BLOCK + 1];	/* store dirty nat set */
+> >  	spinlock_t nat_list_lock;	/* protect clean nat entry list */
+> >  	unsigned int nat_cnt[MAX_NAT_STATE]; /* the # of cached nat entries */
+> >  	unsigned int nat_blocks;	/* # of nat blocks */
+> > diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> > index 27743b93e..87c975ee8 100644
+> > --- a/fs/f2fs/node.c
+> > +++ b/fs/f2fs/node.c
+> > @@ -244,6 +244,12 @@ static void __del_from_nat_cache(struct f2fs_nm_info *nm_i, struct nat_entry *e)
+> >  	__free_nat_entry(e);
+> >  }
+> >  
+> > +static void __relocate_nat_entry_set(struct f2fs_nm_info *nm_i,
+> > +							struct nat_entry_set *set)
+> > +{
+> > +	list_move_tail(&set->set_list, &nm_i->nat_dirty_set[set->entry_cnt]);
+> > +}
+> > +
+> >  static struct nat_entry_set *__grab_nat_entry_set(struct f2fs_nm_info *nm_i,
+> >  							struct nat_entry *ne)
+> >  {
+> > @@ -260,6 +266,7 @@ static struct nat_entry_set *__grab_nat_entry_set(struct f2fs_nm_info *nm_i,
+> >  		head->set = set;
+> >  		head->entry_cnt = 0;
+> >  		f2fs_radix_tree_insert(&nm_i->nat_set_root, set, head);
+> > +		__relocate_nat_entry_set(nm_i, head);
+> >  	}
+> >  	return head;
+> >  }
+> > @@ -279,8 +286,10 @@ static void __set_nat_cache_dirty(struct f2fs_nm_info *nm_i,
+> >  	 * 2. update old block address to new one;
+> >  	 */
+> >  	if (!new_ne && (get_nat_flag(ne, IS_PREALLOC) ||
+> > -				!get_nat_flag(ne, IS_DIRTY)))
+> > +				!get_nat_flag(ne, IS_DIRTY))) {
+> >  		head->entry_cnt++;
+> > +		__relocate_nat_entry_set(nm_i, head);
+> > +	}
+> >  
+> >  	set_nat_flag(ne, IS_PREALLOC, new_ne);
+> >  
+> > @@ -309,6 +318,7 @@ static void __clear_nat_cache_dirty(struct f2fs_nm_info *nm_i,
+> >  
+> >  	set_nat_flag(ne, IS_DIRTY, false);
+> >  	set->entry_cnt--;
+> > +	__relocate_nat_entry_set(nm_i, set);
+> >  	nm_i->nat_cnt[DIRTY_NAT]--;
+> >  	nm_i->nat_cnt[RECLAIMABLE_NAT]++;
+> >  }
+> > @@ -2976,24 +2986,6 @@ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
+> >  	up_write(&curseg->journal_rwsem);
+> >  }
+> >  
+> > -static void __adjust_nat_entry_set(struct nat_entry_set *nes,
+> > -						struct list_head *head, int max)
+> > -{
+> > -	struct nat_entry_set *cur;
+> > -
+> > -	if (nes->entry_cnt >= max)
+> > -		goto add_out;
+> > -
+> > -	list_for_each_entry(cur, head, set_list) {
+> > -		if (cur->entry_cnt >= nes->entry_cnt) {
+> > -			list_add(&nes->set_list, cur->set_list.prev);
+> > -			return;
+> > -		}
+> > -	}
+> > -add_out:
+> > -	list_add_tail(&nes->set_list, head);
+> > -}
+> > -
+> >  static void __update_nat_bits(struct f2fs_sb_info *sbi, nid_t start_nid,
+> >  		const struct f2fs_nat_block *nat_blk)
+> >  {
+> > @@ -3095,6 +3087,7 @@ static int __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+> >  
+> >  	/* Allow dirty nats by node block allocation in write_begin */
+> >  	if (!set->entry_cnt) {
+> > +		list_del(&set->set_list);
+> >  		radix_tree_delete(&NM_I(sbi)->nat_set_root, set->set);
+> >  		kmem_cache_free(nat_entry_set_slab, set);
+> >  	}
+> > @@ -3109,11 +3102,8 @@ int f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >  	struct f2fs_nm_info *nm_i = NM_I(sbi);
+> >  	struct curseg_info *curseg = CURSEG_I(sbi, CURSEG_HOT_DATA);
+> >  	struct f2fs_journal *journal = curseg->journal;
+> > -	struct nat_entry_set *setvec[NAT_VEC_SIZE];
+> >  	struct nat_entry_set *set, *tmp;
+> > -	unsigned int found;
+> > -	nid_t set_idx = 0;
+> > -	LIST_HEAD(sets);
+> > +	int i;
+> >  	int err = 0;
+> >  
+> >  	/*
+> > @@ -3129,6 +3119,16 @@ int f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >  	if (!nm_i->nat_cnt[DIRTY_NAT])
+> >  		return 0;
+> >  
+> > +	/* readahead sets which cannot be moved to journal */
+> > +	if (!__has_cursum_space(journal, nm_i->nat_cnt[DIRTY_NAT], NAT_JOURNAL)) {
+> > +		for (i = MAX_NAT_JENTRIES(journal); i <= NAT_ENTRY_PER_BLOCK; i++) {
+> > +			list_for_each_entry_safe(set, tmp, &nm_i->nat_dirty_set[i], set_list) {
+> > +				f2fs_ra_meta_pages(sbi, set->set, 1,
+> > +								META_NAT, true);
+> > +			}
+> > +		}
+> > +	}
+> > +
+> >  	f2fs_down_write(&nm_i->nat_tree_lock);
+> >  
+> >  	/*
+> > @@ -3141,21 +3141,13 @@ int f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+> >  			nm_i->nat_cnt[DIRTY_NAT], NAT_JOURNAL))
+> >  		remove_nats_in_journal(sbi);
+> >  
+> > -	while ((found = __gang_lookup_nat_set(nm_i,
+> > -					set_idx, NAT_VEC_SIZE, setvec))) {
+> > -		unsigned idx;
+> > -
+> > -		set_idx = setvec[found - 1]->set + 1;
+> > -		for (idx = 0; idx < found; idx++)
+> > -			__adjust_nat_entry_set(setvec[idx], &sets,
+> > -						MAX_NAT_JENTRIES(journal));
+> > -	}
+> > -
+> >  	/* flush dirty nats in nat entry set */
+> > -	list_for_each_entry_safe(set, tmp, &sets, set_list) {
+> > -		err = __flush_nat_entry_set(sbi, set, cpc);
+> > -		if (err)
+> > -			break;
+> > +	for (i = 0; i <= NAT_ENTRY_PER_BLOCK; i++) {
+> > +		list_for_each_entry_safe(set, tmp, &nm_i->nat_dirty_set[i], set_list) {
+> > +			err = __flush_nat_entry_set(sbi, set, cpc);
+> > +			if (err)
+> > +				break;
+> > +		}
+> >  	}
+> >  
+> >  	f2fs_up_write(&nm_i->nat_tree_lock);
+> > @@ -3249,6 +3241,7 @@ static int init_node_manager(struct f2fs_sb_info *sbi)
+> >  	struct f2fs_nm_info *nm_i = NM_I(sbi);
+> >  	unsigned char *version_bitmap;
+> >  	unsigned int nat_segs;
+> > +	int i;
+> >  	int err;
+> >  
+> >  	nm_i->nat_blkaddr = le32_to_cpu(sb_raw->nat_blkaddr);
+> > @@ -3275,6 +3268,9 @@ static int init_node_manager(struct f2fs_sb_info *sbi)
+> >  	INIT_LIST_HEAD(&nm_i->nat_entries);
+> >  	spin_lock_init(&nm_i->nat_list_lock);
+> >  
+> > +	for (i = 0; i <= NAT_ENTRY_PER_BLOCK; i++)
+> > +		INIT_LIST_HEAD(&nm_i->nat_dirty_set[i]);
+> > +
+> >  	mutex_init(&nm_i->build_lock);
+> >  	spin_lock_init(&nm_i->nid_list_lock);
+> >  	init_f2fs_rwsem(&nm_i->nat_tree_lock);
+> > diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+> > index 030390543..d805d4ce7 100644
+> > --- a/fs/f2fs/node.h
+> > +++ b/fs/f2fs/node.h
+> > @@ -158,7 +158,7 @@ enum mem_type {
+> >  };
+> >  
+> >  struct nat_entry_set {
+> > -	struct list_head set_list;	/* link with other nat sets */
+> > +	struct list_head set_list;	/* link with nat sets which have same entry_cnt */
+> >  	struct list_head entry_list;	/* link with dirty nat entries */
+> >  	nid_t set;			/* set number*/
+> >  	unsigned int entry_cnt;		/* the # of nat entries in set */
 
 
