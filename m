@@ -1,71 +1,51 @@
-Return-Path: <linux-kernel+bounces-786846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D895B36D13
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:07:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26059B36C6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:56:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 769CB5668FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:49:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C12D984910
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:50:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 282CD17E0;
-	Tue, 26 Aug 2025 14:49:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E429517C91;
+	Tue, 26 Aug 2025 14:50:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="frcsbHVr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="2fPU4KQO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CCA83208
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 14:49:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25CD717E0
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 14:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756219766; cv=none; b=We+T68OVNtzMz5gSwRaY0gNu+0EYmDTVJ5/MBU7O6/Gi6B0yhiaUKH+glgzOATJo/+n7UvuFvmwu7aaYeW7TBpjguOHXXJRbBWm7ff4EaeTPpyFB8GXD8Hyb8rGW+XBrIrUXX8a0mvJcjEyeNP1RlyR6L89KzxfiBfq3lpAKAFM=
+	t=1756219801; cv=none; b=Mjpue7pszYC3Ju+ifIabJ0TQmjz+yuukqjo3HVzL/DMQVpS0HcfR7MW67YzecUqqRir9hX83RVca3XhdQXwL00OUA1GtijyC0oTzeBu2fLaVs61I7R91TOiwxat2xmdKzCKokdFRqHXh5PFZ4e6NxgKUOUsDNxEm8smiA1sukD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756219766; c=relaxed/simple;
-	bh=kQGIgreekxtmU8CWKNTHVIY3eTXijSsKKGybEECMRFI=;
+	s=arc-20240116; t=1756219801; c=relaxed/simple;
+	bh=D+Zva5lmwjjzMv61oTaAjEFaDEaH0w9a5G+EsYG6BVw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mm0Pr0qjRmv6t8PsUGpRTezloGD8axrAdnk3eEVHJRtB84Kz6x2LYRs+hFInZUwvBAM1DBVWPZJCUPneblakrIniZ5Xa1lN+gwY3gwZUeJBzYZQ0L5lJ0jLVnLRXulfTnH3sY4qRYo0OOk5lWRVUHi5vmF+r00QvTSqwbWZV/As=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=frcsbHVr; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756219763;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TcDUP+ps63/jrGgAjCJp4o8llbkXnQ4nl0SzsfkEYiU=;
-	b=frcsbHVrPvR8BoLlOE14Ju/Pg8YHbn1EU84LcFDZYLDHDVEDrtS+slqjDcDsN7kH3EfD1s
-	foi/0dMPXpm7xW7ipbAYybHYb4+hrU//N49WAJlW/83keF5hi/z4g+tiDR4qttolEtPN36
-	TB1N8DpFcltbrAqfVrOPupA9ZtSFlYk=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-81-q2KcS3WcN--6jbbez6fBkA-1; Tue,
- 26 Aug 2025 10:49:19 -0400
-X-MC-Unique: q2KcS3WcN--6jbbez6fBkA-1
-X-Mimecast-MFC-AGG-ID: q2KcS3WcN--6jbbez6fBkA_1756219758
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 30CD019560AD;
-	Tue, 26 Aug 2025 14:49:18 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.57])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BEB65180028A;
-	Tue, 26 Aug 2025 14:49:13 +0000 (UTC)
-Date: Tue, 26 Aug 2025 22:49:07 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Nilay Shroff <nilay@linux.ibm.com>
-Cc: Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
-	LKML <linux-kernel@vger.kernel.org>, linux-nvme@lists.infradead.org,
-	linux-block@vger.kernel.org
-Subject: Re: [blktest/nvme/058] Kernel OOPs while running nvme/058 tests
-Message-ID: <aK3JYzj21O5Qcah3@fedora>
-References: <3a07b752-06a4-4eee-b302-f4669feb859d@linux.ibm.com>
- <aK15dbUiEyr0O2Ka@fedora>
- <b877e779-5395-4162-ba87-2a0e07932eb4@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dXemdJhB2pFQQSeTX8+4gOos6qM8AuqrymTKOCg2rx2iGjtdwfdPUREH1AqJBf4AWRRzuqYxS2SF2Ao8SajLfFz1mcTBF/4y5qoFhf+u8TyK8srG/IJlnBEBEqkxFKSaPTdOlbK9EXp7B3S+Ntvl85ozCef7gBUE3CatnHTJ4hE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=2fPU4KQO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA4C1C4CEF1;
+	Tue, 26 Aug 2025 14:49:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1756219800;
+	bh=D+Zva5lmwjjzMv61oTaAjEFaDEaH0w9a5G+EsYG6BVw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=2fPU4KQOwTPJ/itNyKaf3h1sL8k54fx98gPYrGXJRiWqUuegyOhKSNSvcQJs5DHbi
+	 KwUOQyLrK8wTaHOn97KPMtFSl0C34oSjiCS9jNAtPceWdanRUHMVzSr/3pFGX7kw6M
+	 +5sGfzpPy5fQLWKutdWsNfeEnJx1707L8OKiyajo=
+Date: Tue, 26 Aug 2025 16:49:57 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Cheng Yu <serein.chengyu@huawei.com>
+Cc: cve@kernel.org, linux-kernel@vger.kernel.org, tanghui20@huawei.com,
+	zhangqiao22@huawei.com, huangjiale13@h-partners.com
+Subject: Re: [Question] fix CVE-2022-49980 introduces deadlock in linux-5.10.y
+Message-ID: <2025082627-sinuous-ovary-21c9@gregkh>
+References: <2025061820-CVE-2022-49980-982c@gregkh>
+ <20250826142418.961703-1-serein.chengyu@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,52 +54,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b877e779-5395-4162-ba87-2a0e07932eb4@linux.ibm.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+In-Reply-To: <20250826142418.961703-1-serein.chengyu@huawei.com>
 
-On Tue, Aug 26, 2025 at 03:26:02PM +0530, Nilay Shroff wrote:
-> 
-> 
-> On 8/26/25 2:38 PM, Ming Lei wrote:
-> > On Tue, Aug 26, 2025 at 02:00:56PM +0530, Venkat Rao Bagalkote wrote:
-> >> Greetings!!!
-> >>
-> >>
-> >> IBM CI has reported a kernel OOPs, while running blktest suite(nvme/058
-> >> test).
-> >>
-> >>
-> >> Kernel Repo:
-> >> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-> >>
-> >>
-> >> Traces:
-> >>
-> >>
-> >> [37496.800225] BUG: Kernel NULL pointer dereference at 0x00000000
-> >> [37496.800230] Faulting instruction address: 0xc0000000008a34b0
-> >> [37496.800235] Oops: Kernel access of bad area, sig: 11 [#1]
-> > 
-> > ...
-> > 
-> >> [37496.800365] GPR28: 0000000000000001 0000000000000001 c0000000b005c400
-> >> 0000000000000000
-> >> [37496.800424] NIP [c0000000008a34b0] __rq_qos_done_bio+0x3c/0x88
-> > 
-> > It looks regression from 370ac285f23a ("block: avoid cpu_hotplug_lock depedency on freeze_lock"),
-> > For nvme mpath, same bio crosses two drivers, so QUEUE_FLAG_QOS_ENABLED & q->rq_qos check can't
-> > be skipped.
-> > 
-> Thanks Ming for looking at it. And yes you were correct, we can't skip
-> QUEUE_FLAG_QOS_ENABLED & q->rq_qos for NVMe, However this issue only
-> manifests with NVMe multipath enabled, as that would create the stacked
-> NVMe devices. So shall I send the fix or are you going to send the patch
-> with fix?
+On Tue, Aug 26, 2025 at 10:24:18PM +0800, Cheng Yu wrote:
+> Hello,
+> I noticed that the community has assigned CVE-2022-49980.
+> I found that the issue described by this CVE also exists
+> in the linux-5.10.y. Therefore, I attempted to backport
+> the fix patch to the linux-5.10.y, but encountered a
+> potential deadlock after applying the patch.
+> The specific call path is as follows:
+>    usb_add_gadget              [(1) mutex_lock(&udc_lock]
+>      -> device_add
+>        -> kobject_uevent
+>          -> uevent_ops->uevent
+>            -> dev->class->dev_uevent
+>              -> usb_udc_uevent [(2) mutex_lock(&udc_lock)]
+> This results in repeated acquisition of udc_lock, causing
+> a deadlock.
+> Does the community have any suggestions on how to resolve
+> this new deadlock issue introduced by the CVE fix?
 
-Yeah, please go ahead and prepare the fix.
+As you are making a business decision to stay on a very old kernel
+version, I think that business decision includes doing the development
+of fixes for it on your own :)
 
+Seriously, the community doesn't do much, if any, work on older kernels
+like this, especially ones as old as 5.10.y, as we do not even have
+systems that run that kernel anymore.
 
-Thanks,
-Ming
+Why not just move to a newer kernel version instead?  What's preventing
+that from happening today?  You are going to have to do it soon anyway,
+why not use this as a prompt to do so?
 
+thanks,
+
+greg k-h
 
