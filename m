@@ -1,85 +1,79 @@
-Return-Path: <linux-kernel+bounces-786401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD6CBB35949
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:45:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C23CAB3594C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:46:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D048A3A1E45
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:44:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00E981B66D3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:46:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46F331A063;
-	Tue, 26 Aug 2025 09:44:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AC5329AAE3;
+	Tue, 26 Aug 2025 09:45:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="g4+QgYUC"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QvYoJUkN"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702AB319849
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:44:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E15393DE2;
+	Tue, 26 Aug 2025 09:45:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756201491; cv=none; b=JTrzhRtAFZ1bauhDss58PwIcW2HQfM0SDOl1I4EgUhtUwHreYKWO0GyiIBZQhI7PV/jVPwPwXlJArKv8vPQZX056/9VlA8kYj9wB/n5aJvoQ41rKs4kOMSCH9wrsfx0QSIf5t3gCyoYnSErK1C6B0LmM/2xF+hSDXpghsH6zxeI=
+	t=1756201552; cv=none; b=H2yrWm8JoXA7YaT4U6bNN46oUKZKy8HzLSksWQSETFRgQyYLz1mrpd+3Tnz1xjoFhj5oLtTXB7nlTJkvUCYani9v4axkjWgaYpcWseCH0Z3M0t+YrVUryubmbEX4Mi++f+jszaLKqajlttL3usQT7/P8+QIwAulL5z4b+0zzkB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756201491; c=relaxed/simple;
-	bh=bKJ0fjdJCipGCZZemVQf2NFUT5zLKcT9eIte7Z7ZuQc=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=Y0r443MHVO5fiJZkEkvERCykCrRP1wMuoEOCy0rIkBF3vG/yD1zLx3f1BiNiro0JPDFSnn2nzwBMmqLH0ZcnzOs/tEAls62+jTzrlhlZ5WjW2pghV+AJt/FhClgi0rfDR3XHLVqeVj5DjOqZrqVZjVposcZ63FLgXEoY2Hq5+Gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=g4+QgYUC; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57Q8kJVD020022
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:44:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=THXD3tlh8eUkNhfT5PZNJh
-	HY5CcdeoTK49zbedmEjuk=; b=g4+QgYUC8d0fGdy5J1db+XMkqGsk83v8dKbpP0
-	vrEBj3W9YYImfOLv2+Wo8BIyei98A5TR5lp9jvA9M86MqcGtcUEZml27fg2y0Dk2
-	vo3ri2btmuN8mw5Lh4yRN0ZuuKE/J91YsI0ycvr9JNVYrJ//8fMHfZX9lL/uzSpe
-	NUAQuUTQ4oJ/I9jAY+YVa4sE9b/TxXLZq2NiSyDm/G2aW6bX+W0/ZrZRj9uBPQ2Z
-	xS9sOSrStM15Ko4iRccxLqfpAXVhHkVFX9os05DyEIE1jYiwFUUuiILuNO3EJXkl
-	cAl/uvU31ubvcHxGWhEFGvMSxfZsZCx8Y2km9BMOGEkP1JDQ==
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q615g772-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:44:48 +0000 (GMT)
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-76e1ff27cfaso6042201b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 02:44:48 -0700 (PDT)
+	s=arc-20240116; t=1756201552; c=relaxed/simple;
+	bh=6msbRT8PiaSF90DjFMZPcNqnswgMCUAQXyIoLxVUz24=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YYm6Xb25HgcUhN+Lr/ickgx5IFjBbLEGLVPqZ9oFko9TcZDuF26OnHzoI7J1CQNtFfkDI/g6x5tOXGIbcFU0/0b/D56GPcpaDdLn3qUXht8Ad8R9BCV+h1MHsixYh6Tm5Bnp61h7Lm81oIRRiHF3u0YtSvyl33jjsyyTRtR4c6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QvYoJUkN; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b476c67c5easo3545030a12.0;
+        Tue, 26 Aug 2025 02:45:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756201550; x=1756806350; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lDP+RTbtDINd6o1nnOABAkhuWEnh9vV0J6pWo1c0c1E=;
+        b=QvYoJUkN5mj8PPanCoFfdql5qTvzX4kR3uL4MabLgTiPXgaYe+h8f9c1HsWteVXmvX
+         r4UFNEzQLi8tepFvdRconCPIDeCuO4i3Z2aB7BX0vfbPhUf0Wpy86iOB3GgF0GSwewy5
+         TFCiYDa4oACk79+bW8+oUCNa2IfObl2PA9qel+fVfkt6fBV71FRqYhd984t3ni7noa3U
+         LGSHkWmPQSGPxgilLftLfNrmHc9g5uDJfSz5GMTabQz86aRjHe+eARiXzNzxcOuyaiNE
+         d7DKG/nRpmfJM5mA+gIm15k+bLEPE+qW+9Jj/uwN7rZocnPtoVAvwY4kHvq1p2dKLLEk
+         /3cQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756201487; x=1756806287;
-        h=content-transfer-encoding:cc:to:subject:from:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=THXD3tlh8eUkNhfT5PZNJhHY5CcdeoTK49zbedmEjuk=;
-        b=qG7bmR4JZS2W6ZEIAjpwdJe1LjQ1X9pB6/BjQrosB2IH0e5eB0KWod4a9JBewzsh5G
-         S95qpzLFLaoybpWZ6nCqiKhb0IBsYzknmDPyJSNL6PmnzR4s73dytBaql92LPJY/wgwv
-         lNUzj8baZOBNbs7v3iV3g85TduoiZu+CDfXwrjtujXfLHghDqPhDiPYSImA6/z6yTyRP
-         9G0Gcw/HcGlZq8yeiusKLSrV2czJgONYXJ8tiPnHm2siGeJVw5JbK1RjuRpLV7h7EU9n
-         rHaSaS9C9+kovugyAciehbYvBvaHwqyXyrFmN/aGyebShWnRzIJDOt1Qz49UnxBX70Mx
-         8RYg==
-X-Forwarded-Encrypted: i=1; AJvYcCXj4Z+e1nVeepbx7T1/7XJAIjNmVfcl9x9o+41mWqDKIWX825J6OmbElJbEg8GeUoKHWue1VuZu0xCpFdM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOW9PFPkwt3jgFBPRXgoPRx6f6jNewfI+iZoGWAkI66y9Il206
-	+2AoBT+B4YOY49hNJcTqNKy19/9ETZ6mbBo34leWemv/3oSdIJ2Hpvf3v32AL9Uk0B5SSDFfsx2
-	d0+T+ubEtBYysWBfYP6YKMZzYP4Y2nJf0GZhKb/Gmm00I4tHaf5j0zYez3i0gvcUzyhc=
-X-Gm-Gg: ASbGncsO6InZ/4vxzMQPViwAiBUF8O730sZv18qJjoCZ0CH5w2OBlVrMwndF6G+LgcQ
-	OnPENl6hmBWvwL02iyZ8Gb34iUDGL/yeD2nmami4l4if152qwDFtk3gOuAaR4cHjbIBSNv9E08u
-	ZX6Ss2q6Yzulq/o9ZQGWIUGWZZPxwvMQBhw+BTyfs5nlIMlpVt7SKlNHCTG8/K5OZQ9BUzFDDeW
-	pERA1W6K3+NG3XgNd2dWsmTrwuYby6lyZcjgUU1USMgXlI2pe7P4Od7vj/2US4MtzZu1V9M06nG
-	IeQSxJ9bS3EMrD/Gt3zJXBw5kzQdA4u4AVsW6T8x+7DYiWnMI5VH+7IutrgfC1S07pbCAO9l5Ao
-	YEXI2JxuBAM/LYAPi4EtNfU14tw==
-X-Received: by 2002:a05:6a21:9990:b0:1f3:31fe:c1da with SMTP id adf61e73a8af0-2438facc696mr1246054637.11.1756201487020;
-        Tue, 26 Aug 2025 02:44:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFvRL2Fy9sI3oGMG7jx+6nF6YDFCIRE8NYEdNTyKm+HWJTBqahFHayZ4KaRSOkfwszakqi1yw==
-X-Received: by 2002:a05:6a21:9990:b0:1f3:31fe:c1da with SMTP id adf61e73a8af0-2438facc696mr1246024637.11.1756201486520;
-        Tue, 26 Aug 2025 02:44:46 -0700 (PDT)
-Received: from [10.133.33.184] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-771f9f289c3sm1329536b3a.19.2025.08.26.02.44.44
+        d=1e100.net; s=20230601; t=1756201550; x=1756806350;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lDP+RTbtDINd6o1nnOABAkhuWEnh9vV0J6pWo1c0c1E=;
+        b=nJq6+Zfi9OiQpWMXYx2SOdAiNBBpQ+ZwfOAX/1De9oR849A+2yted3Ay+mesvw+/z1
+         nynkuUSt8KUOUaW71++SJC8Ij0t8DLewmpuVE8INhN+n9eNK9xtSArOJgGTbsGz1DxRf
+         yUC28hc6aEP1dpdJB+UKk7ZHwexEp1lldzqtz64bk9K/Br2qUPykyqqlypNEi7dDXkSc
+         X3lLpClMEkOXVrTqDaj4jKegZKho6WjrysaY2TTRYhiQzE59cU47oh4cUAdJ3VONJdZT
+         OyCVmAxTuA1wYGsdXsIuktG4AWPq8LHFDIqrv4l148IPk3NKs9cI1gFqfnlOxj9ldT8J
+         yOhg==
+X-Forwarded-Encrypted: i=1; AJvYcCWUfi+sRHEHooebl89H2Cl/B1eQwH3B0l6nlLmsJERt5Rjh5HlhoXxoQ9kqYP7WpiWpiKW5zH5mNLYUAwc=@vger.kernel.org, AJvYcCWVqLdaLWlqXbfGzP1nmQEWLYHJnYLxvS+te7xQ10T3jSWYhJZ/z7rdtqsIaD+UIhxx5DMcFSq6IBjEN75+hA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxG+A92sSHDaB5V1mwt6NYUcXxxi7gbGSoa0qF+bKCq1lvn3dhr
+	V1GB7x65xDJ9vLFWDFe1YDhkJMTlLVOyyjFwyriARqQ6truwcfljYsVk
+X-Gm-Gg: ASbGncsSjj6Olgw2SKcywWRQgn3UIUcW2PYF69vidVty7TwbbrgGW9xXgJjMA3xjisn
+	vM/cPTQle8k/J9v5iwS0gEGLuGGHAwFHRDEyHWDKK0G7hV/4hjK1aRGR+rmzDbTtgdTELI5vx1E
+	k9WqC25D5lSdXtZC2StmCEq7d0GfOv+GtHOWF5ZayP9VJxP/+we5eG0+uDbpwUBdoKkMs6QNnnL
+	4YjkC6Zcb2QJUr5ZVcydg9/tRZpVBfmOKF/0kqHxTIuklFHiUha65XIDbuyhEMqrU8bVAtbgLUF
+	P0/ziO6ORCw4x+XadHk0bG1HE0y+6ZyY6m9ceItwOSQ42JVitJj5g5AoWKVfFdriXRizRqSAoje
+	lTgXLTNib1Yk7tQai1Nf7gUmCFw==
+X-Google-Smtp-Source: AGHT+IGsULEag2oTed69ifti6hnZe9gYWu+YJL5JNZkpMyF13RhP5hIAh9mJ4pShRS3EOVwLti9UPg==
+X-Received: by 2002:a17:902:db08:b0:242:5f6c:6b4e with SMTP id d9443c01a7336-248753a298amr13496735ad.7.1756201549785;
+        Tue, 26 Aug 2025 02:45:49 -0700 (PDT)
+Received: from [127.0.0.1] ([2a12:a305:4::3008])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24884a629fcsm38185ad.19.2025.08.26.02.45.46
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Aug 2025 02:44:46 -0700 (PDT)
-Message-ID: <ff6c1fe6-820f-4e58-8395-df06aa91706c@oss.qualcomm.com>
-Date: Tue, 26 Aug 2025 17:44:42 +0800
+        Tue, 26 Aug 2025 02:45:48 -0700 (PDT)
+Message-ID: <0d4dd263-cccb-4195-9312-4ac358fb2493@gmail.com>
+Date: Tue, 26 Aug 2025 17:45:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,86 +81,142 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] module: pr_debug when there is no version info
 Content-Language: en-US
-From: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
-Subject: is dma_mapping_error() check necessary for dma_alloc_noncoherent()?
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Jeff Johnson <jjohnson@kernel.org>
-Cc: iommu@lists.linux.dev,
-        "linux-kernel@vger.kernel.org >> linux-kernel"
- <linux-kernel@vger.kernel.org>,
-        "ath11k@lists.infradead.org" <ath11k@lists.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+To: Petr Pavlu <petr.pavlu@suse.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Daniel Gomez <da.gomez@kernel.org>,
+ Sami Tolvanen <samitolvanen@google.com>, linux-kernel@vger.kernel.org,
+ linux-modules@vger.kernel.org
+References: <20250721045224.391745-1-wangjinchao600@gmail.com>
+ <3992b57d-3d8b-4d60-bc4a-f227f712dcca@suse.com>
+ <86062810-ff6b-4181-83b7-dfe443ff4012@gmail.com>
+ <9b768f91-121a-4072-88b2-36cb48be3917@suse.com>
+ <80d7313a-0f0c-494d-b2ad-2662d1992b2b@suse.com>
+From: Jinchao Wang <wangjinchao600@gmail.com>
+In-Reply-To: <80d7313a-0f0c-494d-b2ad-2662d1992b2b@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzNCBTYWx0ZWRfX0cKkk+L7om7q
- hb4ZJtAFlWz5+AIlQWC+WPbqtlBZhbvzMAOyG/M4N24F6V/SiuwqWDVyJKy/RSQguCW8p0qrk1d
- 5w4mImnavnRxIwWmpPpFArJD7d7KSIzOpCAp9edfZcsn0yoYuVFrt0uX80K5Upensb8FhWLiFJc
- ASHGDIFXPTEE2C/53VFisxiacNdzmZdPyf8npSnVQOYFtjMnkj9wqq6qf9eSNs7NxBBYSU1lMoI
- fFcbFl2XZXKLN8rfI64e4uz4g+5bCQMM93S5QGZBazDuZnCIJIXkMhbKCRo3W9k9tCUqoxq9GLx
- CjDN4plCHXrQ90akiWIPmvo7AXGR237ZGUVcMk+rI2Z26kU7kP7jBLZJhUufNnr3znX6va1pVib
- bg0Cw6R3
-X-Proofpoint-GUID: bjKeJhQtm_BlDqBASYzr9Ze3swkuCcaP
-X-Authority-Analysis: v=2.4 cv=K+AiHzWI c=1 sm=1 tr=0 ts=68ad8210 cx=c_pps
- a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=Q74vz0maYr0LruRLZiwA:9
- a=QEXdDO2ut3YA:10 a=2VI0MkxyNR6bbpdq8BZq:22
-X-Proofpoint-ORIG-GUID: bjKeJhQtm_BlDqBASYzr9Ze3swkuCcaP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-26_02,2025-08-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 bulkscore=0 clxscore=1015 adultscore=0
- impostorscore=0 priorityscore=1501 phishscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230034
 
-Hi guys,
+On 8/26/25 15:20, Petr Pavlu wrote:
+> On 7/22/25 10:25 AM, Petr Pavlu wrote:
+>> On 7/22/25 5:08 AM, Wang Jinchao wrote:
+>>> On 7/21/25 22:40, Petr Pavlu wrote:
+>>>> On 7/21/25 6:52 AM, Wang Jinchao wrote:
+>>>>> When there is no version information, modprobe and insmod only
+>>>>> report "invalid format".
+>>>>> Print the actual cause to make it easier to diagnose the issue.
+>>>>> This helps developers quickly identify version-related module
+>>>>> loading failures.
+>>>>> Signed-off-by: Wang Jinchao <wangjinchao600@gmail.com>
+>>>>> ---
+>>>>>    kernel/module/version.c | 4 +++-
+>>>>>    1 file changed, 3 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/kernel/module/version.c b/kernel/module/version.c
+>>>>> index 2beefeba82d9..bc28c697ff3a 100644
+>>>>> --- a/kernel/module/version.c
+>>>>> +++ b/kernel/module/version.c
+>>>>> @@ -42,8 +42,10 @@ int check_version(const struct load_info *info,
+>>>>>        }
+>>>>>          /* No versions at all?  modprobe --force does this. */
+>>>>> -    if (versindex == 0)
+>>>>> +    if (versindex == 0) {
+>>>>> +        pr_debug("No version info for module %s\n", info->name);
+>>>>>            return try_to_force_load(mod, symname) == 0;
+>>>>> +    }
+>>>>>          versions = (void *)sechdrs[versindex].sh_addr;
+>>>>>        num_versions = sechdrs[versindex].sh_size
+>>>>
+>>>> I think it would be better to instead improve the behavior of
+>>>> try_to_force_load(). The function should print the error reason prior to
+>>>> returning -ENOEXEC. This would also help its two other callers,
+>>>> check_modinfo() and check_export_symbol_versions().
+>>>>
+>>>> Additionally, I suggest moving the check to ensure version information
+>>>> is available for imported symbols earlier in the loading process.
+>>>> A suitable place might be check_modstruct_version(). This way the check
+>>>> is performed only once per module.
+>>>>
+>>>> The following is a prototype patch:
+>>>>
+>>>> diff --git a/kernel/module/main.c b/kernel/module/main.c
+>>>> index c2c08007029d..c1ccd343e8c3 100644
+>>>> --- a/kernel/module/main.c
+>>>> +++ b/kernel/module/main.c
+>>>> @@ -1053,6 +1053,7 @@ int try_to_force_load(struct module *mod, const char *reason)
+>>>>        add_taint_module(mod, TAINT_FORCED_MODULE, LOCKDEP_NOW_UNRELIABLE);
+>>>>        return 0;
+>>>>    #else
+>>>> +    pr_err("%s: %s\n", mod->name, reason);
+>>>>        return -ENOEXEC;
+>>>>    #endif
+>>>>    }
+>>>> diff --git a/kernel/module/version.c b/kernel/module/version.c
+>>>> index 2beefeba82d9..4d9ebf0834de 100644
+>>>> --- a/kernel/module/version.c
+>>>> +++ b/kernel/module/version.c
+>>>> @@ -41,9 +41,9 @@ int check_version(const struct load_info *info,
+>>>>            return 1;
+>>>>        }
+>>>>    -    /* No versions at all?  modprobe --force does this. */
+>>>> +    /* No versions? Ok, already tainted in check_modstruct_version(). */
+>>>>        if (versindex == 0)
+>>>> -        return try_to_force_load(mod, symname) == 0;
+>>>> +        return 1;
+>>>>          versions = (void *)sechdrs[versindex].sh_addr;
+>>>>        num_versions = sechdrs[versindex].sh_size
+>>>> @@ -90,6 +90,11 @@ int check_modstruct_version(const struct load_info *info,
+>>>>            have_symbol = find_symbol(&fsa);
+>>>>        BUG_ON(!have_symbol);
+>>>>    +    /* No versions at all?  modprobe --force does this. */
+>>>> +    if (!info->index.vers && !info->index.vers_ext_crc)
+>>>> +        return try_to_force_load(
+>>>> +                   mod, "no versions for imported symbols") == 0;
+>>>> +
+>>>>        return check_version(info, "module_layout", mod, fsa.crc);
+>>>>    }
+>>>>   
+>>>> As a side note, I'm confused why with CONFIG_MODULE_FORCE_LOAD=y, the
+>>>> code treats missing modversions for imported symbols as ok, even without
+>>>> MODULE_INIT_IGNORE_MODVERSIONS. This is at least consistent with the
+>>>> handling of missing vermagic, but it seems this behavior should be
+>>>> stricter.
+>>>>
+>>> When debugging syzkaller, I noticed that the insmod command always reports errors. However, to get the exact information, I need to trace the kernel, so I casually submitted this patch.
+>>>
+>>> Based on your response, I also feel that the meaning of force_load here is somewhat unclear. It would be better to create a mask or a clear list to indicate which fields can be forced and which cannot. Once this is clear, we can create a function named may_force_check().
+>>
+>> I cannot find an explicit reason in the Git history why a missing
+>> vermagic is treated as if the module was loaded with
+>> MODULE_INIT_IGNORE_VERMAGIC, and similarly why missing modversions data
+>> is treated as if the module was loaded with
+>> MODULE_INIT_IGNORE_MODVERSIONS.
+>>
+>> I would argue that a more sensible behavior would be to consider
+>> a missing vermagic as an error and allow loading the module only if
+>> MODULE_INIT_IGNORE_VERMAGIC is explicitly specified. And analogously for
+>> missing modversions and MODULE_INIT_IGNORE_MODVERSIONS.
+>>
+>> Nonetheless, if I understand correctly, this should be mostly separate
+>> from your issue.
+> 
+> To answer my own confusion, the thing that I missed is that the
+> MODULE_INIT_IGNORE_* flags are available only for the finit_module
+> syscall, not for init_module. In the case of init_module, the force
+> logic is handled by kmod in userspace by stripping the relevant
+> modversions and vermagic data. This means that when using init_module,
+> the module loader cannot distinguish between a module that lacks this
+> data and one that has it deliberately removed. When finit_module was
+> introduced in 2012, commit 2f3238aebedb ("module: add flags arg to
+> sys_finit_module()") added the MODULE_INIT_IGNORE_* flags, and they were
+> simply implemented to mirror the kmod behavior.
+> 
+> -- Petr
 
-I have a driver which allocate noncoherent DMA buffer and get the returned CPU addr tested:
+The composition of 'force' and 'ignore' is confusing.
+I learn much from your feedback, thank you very much.
 
-	vaddr_unaligned = dma_alloc_noncoherent(ab->dev, rx_tid->unaligned_size, &paddr,
-						DMA_BIDIRECTIONAL, GFP_ATOMIC);
-	if (!vaddr_unaligned) {
-		spin_unlock_bh(&ab->base_lock);
-		return -ENOMEM;
-	}
-
-while free the buffer
-
-	dma_free_noncoherent(ab->dev, rx_tid->unaligned_size,
-			     rx_tid->vaddr_unaligned,
-			     rx_tid->paddr_unaligned, DMA_BIDIRECTIONAL);
-
-I get below warnings:
-
- DMA-API: ath11k_pci 0000:03:00.0: device driver failed to check map error[device
-address=0x00000000f3ad7000] [size=639 bytes] [mapped as single]
- WARNING: CPU: 15 PID: 64303 at kernel/dma/debug.c:1036 check_unmap+0x7e2/0x950
- RIP: 0010:check_unmap+0x7e2/0x950
- Call Trace:
-  <TASK>
-  ? free_to_partial_list+0x9d/0x350
-  debug_dma_unmap_page+0xac/0xc0
-  ? debug_smp_processor_id+0x17/0x20
-  ? rcu_is_watching+0x13/0x70
-  dma_free_pages+0x56/0x180
-  [...]
-  </TASK>
- ---[ end trace 0000000000000000 ]---
- DMA-API: Mapped at:
-  debug_dma_map_page+0x7c/0x140
-  dma_alloc_pages+0x74/0x220
-  [...]
-
-Checking code gives me the impression that I should do dma_mapping_error() check as well.
-And indeed with below diff the warning is gone:
-
-+       dma_mapping_error(ab->dev, paddr);
-
-However this does not make sense to me since IMO testing the CPU address is good enough, I
-can not imagine a valid case where DMA alloc/map fails while returning a valid CPU
-address, no?
-
-If I was right, should we remove invocation to debug_dma_map_page() in dma_alloc_pages()?
+-- 
+Best regards,
+Jinchao
 
