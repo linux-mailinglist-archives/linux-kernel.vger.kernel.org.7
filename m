@@ -1,125 +1,154 @@
-Return-Path: <linux-kernel+bounces-786780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11C28B369B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:29:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E945B3692E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:23:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68DEA584896
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:16:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90E321C41112
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:17:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC99A34166C;
-	Tue, 26 Aug 2025 14:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E76F3570BB;
+	Tue, 26 Aug 2025 14:15:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="AwvndnXr";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="eZ4SIp9S"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fS7/0m0K"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B99DC2AE68
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 14:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACFA934DCCB
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 14:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756217657; cv=none; b=MV0MgiGVc2rsogZp6+EAVXy+7qP7bCqz9eL2W4zsaviV+Zt33vGcFwemsRBqfuCRr7tG2txxLXKkIxULp5DvSHPJB0In04WyXkL1tuW2WeydvbmLtyZTvmMY5P5UzlyiEfEbOeTvp5/t0NTX7LqBiGmL+AnNz7NgRjU64dB22i4=
+	t=1756217702; cv=none; b=kVP+Ww0CpiEljHrsXKwLr1jC+LTiiffea6n3/JVPXMFWvNCrgdJmJPD4x8J1krQanCkzjryYnQAOTSfcaOh06mHf3+yil0cWbKjHdqmAdo3NOtBshz/ZiiWXOpMpX8t+w3HaLBe3nLHT3Nh1d2f1XrvpfeLcNzIaf68ATIZMzMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756217657; c=relaxed/simple;
-	bh=p8+Q4xnVtqNU++CI5Z/+XoOJlhxyohiMCfmXs3bX974=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=czjooldxJB99dORtATNXhhSDXxH6hrRNOzxzPk/V/3jXzQpR7K19xxXWT+SR8x3qWqB+IMvBlMs+NgYJg0Rf2HCgPhwcyy1wCrG3VTAm9X2L94RAZ/yFDkTn/m3v8y3Za/rR+eKI4ocpAm4kT3FCmHVUfTgY5uj3Ki46CEQMLYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=AwvndnXr; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=eZ4SIp9S reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1756217702; c=relaxed/simple;
+	bh=j2v0A0q48Y+rP+Quw56cvQv25ire9TkxoJudb0SCErc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a8ZUjOzHdLApBUa+t9ByBeAX6KfVGCWNM8wHowDn9L73QY3byqPOi//wp6smS9w/e5BD80JW+cVajLxPoOsxK3XzsnSsyjIh3fJoeVkWTGDneeYcgcGMIDT72PCsO/lGh8YFWg/bkMe5Hi4tUdpwmToyq+cP8lYGfqUWjZg6F0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fS7/0m0K; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3c4e9efb88aso3107060f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 07:14:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1756217655; x=1787753655;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=vntM1/TxhdiVPOOzQR2app5xuX2eIoHoYXzwuHqvn+8=;
-  b=AwvndnXrpg5gtddOsq526cF/Z4xjnR3SoG6TdAZlFcAhTeEfQihxURzA
-   2KYott1W8pOa3ufnMBe23NB2HcnPBXvs6rzakTF5CZVPwMptlPU8orf7h
-   uwaU+o/1IKl1BtOY6CQcKtZEMMzSN2sWvlIS0VDGmIZL2IAFh+6NXe0Gg
-   NbZargI3tqWNRXM+KGx9t5Akx+Vi4BamKKgRd+RiQBVVyq6T3ivhv+HlV
-   FhGQmDm3UpKsKuXMACVuFedbbLv2JW0RoEuXcYkZHu9F/wT6tY1c5+3Me
-   STLSxL4O0CZK9BPJxkEh0aF/kxJx+cgyN2Y2kaS7OLUVt8uQRyVDKRO17
-   w==;
-X-CSE-ConnectionGUID: 2XFV1cqMTSuPx9nJFDp/ww==
-X-CSE-MsgGUID: u5oOWMpiShyES94+GNmoeg==
-X-IronPort-AV: E=Sophos;i="6.18,214,1751234400"; 
-   d="scan'208";a="45917408"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 26 Aug 2025 16:14:12 +0200
-X-CheckPoint: {68ADC134-6-410E8DD8-CEA8F0F8}
-X-MAIL-CPID: 6A3AB291245F51CE0A0472E892044B20_3
-X-Control-Analysis: str=0001.0A002119.68ADC16E.0002,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 21662167192;
-	Tue, 26 Aug 2025 16:14:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1756217648; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=vntM1/TxhdiVPOOzQR2app5xuX2eIoHoYXzwuHqvn+8=;
-	b=eZ4SIp9S8PfNOWl+75CLW7e9jEbyp8gTA1yXWjCF2+dAjO3B/mkcD5ay4hFaMbQzRigbak
-	8AW0QF5xaRiY+tQHHpyZHtdlCdrZVqkoXFS4JjfeQiho2oXfR1zVNtDT2jpysBDjCNnOwX
-	4DvW1whyP0+8Z3Juz29812YXTQ2tLDO3P8gFNzcZhEVGcQPTGg7l3GCVAnI0TBrCHLiOGU
-	uGaw3Q/ScwimACcqs+uCvqwdSv8xd7CgJlchw0wi0xl4YbtLdkXZrFA4LH1eNIsbVxIyVJ
-	juhM+tAagg0UF4mdlQ/iA0aRpH567uJJmQnaifaNyZpMM78Hf7oLz6FMI2ftuQ==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v4 1/1] arm64: defconfig: Enable Marvell WiFi-Ex USB driver
-Date: Tue, 26 Aug 2025 16:13:56 +0200
-Message-ID: <20250826141356.2572830-1-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.43.0
+        d=suse.com; s=google; t=1756217698; x=1756822498; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=d7ulmsQD4oDI4yv3IfwObO4+vfM4yRrLpoBk1yyAumU=;
+        b=fS7/0m0KgmlWPSmXys7DBPGSw5nPTe6B7sFZTRWnlXS+Hb53YuGa1AeO4KQVhUiO3O
+         Cx13Gj02g/3D01TiOucK90tMKHIL3rsh4gPZrstmupOjdneGlPilH7/AzW7ZR07hR/Q3
+         C6M/4wHv3ZKPOsiDMBzgw3hF2wpBJFAU5i3rvMZ8DwRxJ2YrYFxB645ZbI96odkMP0G8
+         oqHXrIIrryKve6Z9lsR/Ie5VF1HkrnYvNEo5Y3geOpH4d3i+0mAI1zQ50iwKOkaYGQwx
+         fwt6u5gm2U6jkrXl7LHPtUz70YAZzq/eLCMiIeUHooB8N/ekNhVrryole0MNbvzDy5KH
+         CxfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756217698; x=1756822498;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d7ulmsQD4oDI4yv3IfwObO4+vfM4yRrLpoBk1yyAumU=;
+        b=PmQiAc7PvsVTwkykidKXHw3gSvoaHNcX5kurt0dus6HpQ3UtWZPbJdLE3qtBL74t3e
+         vPMxBWYI4+mE1YH2Ixl8V9jqejfjVODMTtUqygOb2gbG8i/nd1XusxIWPAXy6K8Bm7n6
+         PMueFxScsXDJbQEnowkRNgTu6oMcQrOzmwd9O7CzOfMJbM1Ygcf2zxphpxfAChl2Lfn9
+         ewhhJN08SUol9vdXnZ0ObyRkwV+oXTnCuSRSITjvyEYwlPkUfW3u8329dAcXdvuohL6H
+         gMZYeNN8lTU0EDuPXyJXOIhOgcLad/WFzbCVIXxU64scFB1FEp9HLn/YMj721+KQaWu8
+         AhJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVQgfsNRAoS4fBakMu5jlQz+/4safiFhW1DKTEMxpNpuSYhuw4JhIqzN0CUcHWqTKp7WgMUicnJxXAtglQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxb+wO63adDc58hU84cVyx4qgQa1QbTvvEyTynrgEDF24MmJXo7
+	YRrBE6ob5kEBpVRh8wtYOhuGjtp6VHz7XrytuYS6154n4uaqK4AI5+0ZV67iSrueZFA=
+X-Gm-Gg: ASbGncv2rOoF19o3y9zXAjlqlrTYv10QYrkmGWDqZxvdZx/9gz3+ObQDA4y169whNt3
+	waHImpA+guRyMWWyBwBl3lOAJ3AF5zyr9erl+EgmyzqWUUJdeG+Yj137yo7/nrt6UsWWN/TIDjp
+	HbFMg1EZ9x0Pzk6xKaZspOvHFI3NsMa8lwozmiWRRUTKk3TpaCUO3nxbb4ZWltVIW7dVh5Fp4XK
+	6pMCFnwfR5fyY0nrUp7FTp6MMvvtnQnp2+IYAhuEVltgnd9uzj/MIkgNKZXydthMSYCU+wykUN4
+	89R/U+H4UnEpW4LfsyBUZDfVmGoS5+RGNvlfT0x8SNI/xm/NSgTIrey28G+E3zrscJ7iaFeMYSh
+	VH1ihUylb433uAPNuzyIcPdW7Ty/p11aRyHFMgxsWgKg=
+X-Google-Smtp-Source: AGHT+IHY+9mOjFXN8yku9tMcb9AW0UGOczM9gh7nBsRlIIYCfLujOywpKW9tTNOB1kBIpa8Uxt5MFw==
+X-Received: by 2002:a05:6000:2502:b0:3b4:9b82:d432 with SMTP id ffacd0b85a97d-3c5d7ac6ce9mr11774526f8f.0.1756217697872;
+        Tue, 26 Aug 2025 07:14:57 -0700 (PDT)
+Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32549fe6c74sm10082400a91.6.2025.08.26.07.14.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Aug 2025 07:14:57 -0700 (PDT)
+Date: Tue, 26 Aug 2025 16:14:47 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Chen Ridong <chenridong@huaweicloud.com>
+Cc: tj@kernel.org, hannes@cmpxchg.org, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lujialin4@huawei.com, chenridong@huawei.com
+Subject: Re: [PATCH cgroup/for-next 1/3] cgroup: remove redundancy online_cnt
+Message-ID: <zumtn2pez376u2xacibdd6eueeueh6ole5w6pqbgccg2bj7fgd@o2szr644a3om>
+References: <20250826034022.1736249-1-chenridong@huaweicloud.com>
+ <20250826034022.1736249-2-chenridong@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="e37cwfg4njgbpo5x"
+Content-Disposition: inline
+In-Reply-To: <20250826034022.1736249-2-chenridong@huaweicloud.com>
 
-MBa91xxCA (imx93-tqma9352-mba91xxca.dts) features a soldered,
-non-pluggable USB attached WiFi module. lsusb says:
- ID 1286:204e Marvell Semiconductor, Inc. Bluetooth and Wireless LAN Composite Device
-Enable the corresponding driver.
 
-To: Shawn Guo <shawnguo@kernel.org>
-To: Fabio Estevam <festevam@gmail.com>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: imx@lists.linux.dev
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
-Changes in v3:
-* Explicitly mention the onn-pluggable USB WiFi module
-* Added Krzysztof's R-b
+--e37cwfg4njgbpo5x
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH cgroup/for-next 1/3] cgroup: remove redundancy online_cnt
+MIME-Version: 1.0
 
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Hello Ridong.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 6be80d07c2f6d..9d86c706bc211 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -441,6 +441,7 @@ CONFIG_IWLMVM=m
- CONFIG_MWIFIEX=m
- CONFIG_MWIFIEX_SDIO=m
- CONFIG_MWIFIEX_PCIE=m
-+CONFIG_MWIFIEX_USB=m
- CONFIG_MT7921E=m
- CONFIG_RSI_91X=m
- CONFIG_WL18XX=m
--- 
-2.43.0
+On Tue, Aug 26, 2025 at 03:40:20AM +0000, Chen Ridong <chenridong@huaweiclo=
+ud.com> wrote:
+> @@ -5949,7 +5944,7 @@ static void css_killed_work_fn(struct work_struct *=
+work)
+>  		css_put(css);
+>  		/* @css can't go away while we're holding cgroup_mutex */
+>  		css =3D css->parent;
+> -	} while (css && atomic_dec_and_test(&css->online_cnt));
+> +	} while (css && css_is_dying(css) && !css->nr_descendants);
 
+Here it's OK...
+
+> =20
+>  	cgroup_unlock();
+>  }
+> @@ -5960,7 +5955,7 @@ static void css_killed_ref_fn(struct percpu_ref *re=
+f)
+>  	struct cgroup_subsys_state *css =3D
+>  		container_of(ref, struct cgroup_subsys_state, refcnt);
+> =20
+> -	if (atomic_dec_and_test(&css->online_cnt)) {
+> +	if (!css->nr_descendants) {
+>  		INIT_WORK(&css->destroy_work, css_killed_work_fn);
+>  		queue_work(cgroup_offline_wq, &css->destroy_work);
+>  	}
+
+=2E.. but here in percpu_ref's confirm callback you're accessing
+nr_descendants without cgroup_mutex where the atomic would have
+prevented the data race.
+
+Also the semantics of online_cnt and nr_descendants is slightly
+different -- killed vs offlined. Or can you add a description why
+they're same (after workqueue split)?
+
+Thanks,
+Michal
+
+--e37cwfg4njgbpo5x
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJEEABYKADkWIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaK3BVRsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQfj0C55Tb+AhMrAD9HaLehNCEvy9tY5TFCzK1
+fhYL1r/LBmh6LZ69zkiz/coBALFvZYfRRnQz7gf8u6NLbLjSunueITfmuykfyiWJ
+k6QB
+=V09U
+-----END PGP SIGNATURE-----
+
+--e37cwfg4njgbpo5x--
 
