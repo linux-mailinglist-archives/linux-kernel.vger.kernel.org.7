@@ -1,121 +1,108 @@
-Return-Path: <linux-kernel+bounces-786665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A218B360D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:04:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15E1CB36151
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:08:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7CF184E4361
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:04:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0BA63B0C7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D2526B771;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED53526FA57;
 	Tue, 26 Aug 2025 13:03:42 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="s5T3h8Qu"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C86CF1FBE9B
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 13:03:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6B522A4EE;
+	Tue, 26 Aug 2025 13:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756213422; cv=none; b=MOviwqps6BG9ghC5iOK5Gy2TkS+0EwDzt0Ups0PmjiDWz/tKFySA52b+kFFqwJcyPxQG5dzKq6nY/umvRA5iZjJlQNvthliHTIt3muS8eU7ELHLFpnKCEDqeWXJUM22V0Nr/8/k+xQgJ4FUXv5FmDZg3QI+SmmRdQ4xnEKub6sM=
+	t=1756213422; cv=none; b=UPNlmMLaJeEZQeg3++4mH1sFExavwuKhCQWINJjrNLCAtMwErxXnyTrOba9dGiI5omeOC/DqLaRt0jKa55qNcue3nMslRS4C+LyRGqMD2qwSEU+Gl9zBnLP8tDsiLNR7PTPdolrLm07GiLRCB17RWrYTgAl4AGrVyVsUIIWy734=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756213422; c=relaxed/simple;
-	bh=Ksw5689Q0+U62P+z9GkJK6Sdi+xI/Cv1Y5y/t2SzC94=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Msu4QCYuT8E9765igNIhf9Djf6F6xXjGKedRyrCoa/my4qBQlfJffonId8PNgTUnErnywpnl4ZaeE7HQh1fTGQb8ZIwBuixwkhiXdnLbmyfpRtkGt076Ao66cbS095AjNU3OVn3my3uqwDsIJv76Pykbbd3T1Ct3IjS5h3PBlYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cB76x0Yb3z6L5C1;
-	Tue, 26 Aug 2025 21:00:09 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 175E21402F3;
-	Tue, 26 Aug 2025 21:03:31 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 26 Aug
- 2025 15:03:30 +0200
-Date: Tue, 26 Aug 2025 14:03:29 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Yushan Wang <wangyushan12@huawei.com>
-CC: <will@kernel.org>, <mark.rutland@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<robin.murphy@arm.com>, <yangyicong@huawei.com>, <liuyonglong@huawei.com>,
-	<wanghuiqiang@huawei.com>, <prime.zeng@hisilicon.com>,
-	<hejunhao3@h-partners.com>
-Subject: Re: [PATCH v2 1/9] drivers/perf: hisi: Relax the event ID check in
- the framework
-Message-ID: <20250826140329.0000146c@huawei.com>
-In-Reply-To: <20250821135049.2010220-2-wangyushan12@huawei.com>
-References: <20250821135049.2010220-1-wangyushan12@huawei.com>
-	<20250821135049.2010220-2-wangyushan12@huawei.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	bh=pe5SE8cLTPPyLKyF6S5l44TjxJSycuwoPwH53Hc4MBc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R/IhJQReJM/y5yPxstRXY4glIAPG+irhAYQ1Dl/tu+dTBZVHBslYt6eXuUZCHaswxY0AN5C7u5H7XJ+16uaRbaIi/6A2RrMmnEvveP4c5LLWke2z0v58DmzAPLcHdciYpRjRjIYJUZsT5NybQCho4uWpFzRg1MjJkiILdzlpoWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=s5T3h8Qu; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=pe5SE8cLTPPyLKyF6S5l44TjxJSycuwoPwH53Hc4MBc=; b=s5T3h8QunORHMVi1lJq+TueBjc
+	cEFljtvjN5QJ03jRIuUbqZT2dzYWLCkq7EIgZ1HjiZepKSvKZUS4jhIftbJpUomzAxLkXpo4MhYIl
+	ZCvpLQBdWeqllwk2L5LEakNCj50aVxzY1I5n8BnO+qCbmyfysUZaBrevf4ZwX/NHQuj2PrtwGK3Is
+	jhSt6FlQLnGrrRwVWOG3VEhB1mGDJu+1EhbkwSGhAG25rhQM5DyWklhsvsXQh2tW5FYLoYbc8dttl
+	tsa9sX+EEmcEbn/jBCdJY0wOlh7GZntWiVjKPlxT8hw9CmspDWHiAZfhSZSTIR8f/mKGoVnI/OKYV
+	DfymEZ2w==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uqtKk-00000002CWx-1CxP;
+	Tue, 26 Aug 2025 13:03:31 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id E7FAC3002C5; Tue, 26 Aug 2025 15:03:29 +0200 (CEST)
+Date: Tue, 26 Aug 2025 15:03:29 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: mingo@redhat.com, will@kernel.org, mark.rutland@arm.com,
+	acme@kernel.org, namhyung@kernel.org,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	linux-csky@vger.kernel.org, loongarch@lists.linux.dev,
+	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, dmaengine@vger.kernel.org,
+	linux-fpga@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org, coresight@lists.linaro.org,
+	iommu@lists.linux.dev, linux-amlogic@lists.infradead.org,
+	linux-cxl@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 12/19] perf: Ignore event state for group validation
+Message-ID: <20250826130329.GX4067720@noisy.programming.kicks-ass.net>
+References: <cover.1755096883.git.robin.murphy@arm.com>
+ <d6cda4e2999aba5794c8178f043c91068fa8080c.1755096883.git.robin.murphy@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d6cda4e2999aba5794c8178f043c91068fa8080c.1755096883.git.robin.murphy@arm.com>
 
-On Thu, 21 Aug 2025 21:50:41 +0800
-Yushan Wang <wangyushan12@huawei.com> wrote:
+On Wed, Aug 13, 2025 at 06:01:04PM +0100, Robin Murphy wrote:
+> It may have been different long ago, but today it seems wrong for these
+> drivers to skip counting disabled sibling events in group validation,
+> given that perf_event_enable() could make them schedulable again, and
+> thus increase the effective size of the group later. Conversely, if a
+> sibling event is truly dead then it stands to reason that the whole
+> group is dead, so it's not worth going to any special effort to try to
+> squeeze in a new event that's never going to run anyway. Thus, we can
+> simply remove all these checks.
 
-> From: Yicong Yang <yangyicong@hisilicon.com>
-> 
-> Event ID is only using the attr::config bit [7, 0] but we check the
-> event range using the whole 64bit field. It blocks the usage of the
-> rest field of attr::config. Relax the check by only using the
-> bit [7, 0].
-> 
-> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
-> Signed-off-by: Yushan Wang <wangyushan12@huawei.com>
+So currently you can do sort of a manual event rotation inside an
+over-sized group and have it work.
 
-Acked-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+I'm not sure if anybody actually does this, but its possible.
 
-One comment inline but up to you whether you act on it.
+Eg. on a PMU that supports only 4 counters, create a group of 5 and
+periodically cycle which of the 5 events is off.
 
-> ---
->  drivers/perf/hisilicon/hisi_uncore_pmu.c | 2 +-
->  drivers/perf/hisilicon/hisi_uncore_pmu.h | 3 ++-
->  2 files changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/perf/hisilicon/hisi_uncore_pmu.c b/drivers/perf/hisilicon/hisi_uncore_pmu.c
-> index a449651f79c9..6594d64b03a9 100644
-> --- a/drivers/perf/hisilicon/hisi_uncore_pmu.c
-> +++ b/drivers/perf/hisilicon/hisi_uncore_pmu.c
-> @@ -234,7 +234,7 @@ int hisi_uncore_pmu_event_init(struct perf_event *event)
->  		return -EINVAL;
->  
->  	hisi_pmu = to_hisi_pmu(event->pmu);
-> -	if (event->attr.config > hisi_pmu->check_event)
-> +	if ((event->attr.config & HISI_EVENTID_MASK) > hisi_pmu->check_event)
->  		return -EINVAL;
->  
->  	if (hisi_pmu->on_cpu == -1)
-> diff --git a/drivers/perf/hisilicon/hisi_uncore_pmu.h b/drivers/perf/hisilicon/hisi_uncore_pmu.h
-> index 777675838b80..6186b232f454 100644
-> --- a/drivers/perf/hisilicon/hisi_uncore_pmu.h
-> +++ b/drivers/perf/hisilicon/hisi_uncore_pmu.h
-> @@ -43,7 +43,8 @@
->  		return FIELD_GET(GENMASK_ULL(hi, lo), event->attr.config);  \
->  	}
->  
-> -#define HISI_GET_EVENTID(ev) (ev->hw.config_base & 0xff)
-> +#define HISI_EVENTID_MASK	0xff
-
-I'd use GENMASK(7, 0) here but this one is obvious enough that it's not important
-and clearly you are just moving the definition.
-
-> +#define HISI_GET_EVENTID(ev) ((ev)->hw.config_base & HISI_EVENTID_MASK)
->  
->  #define HISI_PMU_EVTYPE_BITS		8
->  #define HISI_PMU_EVTYPE_SHIFT(idx)	((idx) % 4 * HISI_PMU_EVTYPE_BITS)
+So I'm not against changing this, but changing stuff like this always
+makes me a little fearful -- it wouldn't be the first time that when it
+finally trickles down to some 'enterprise' user in 5 years someone comes
+and finally says, oh hey, you broke my shit :-(
 
 
