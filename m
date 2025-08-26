@@ -1,128 +1,115 @@
-Return-Path: <linux-kernel+bounces-786691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88642B36325
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:27:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35463B36341
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:28:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D2402A786A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:20:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1C4B8A80C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 13:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB90833EAF2;
-	Tue, 26 Aug 2025 13:18:31 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3834244667;
-	Tue, 26 Aug 2025 13:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC64B343214;
+	Tue, 26 Aug 2025 13:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OaN05jrq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 481423431E7
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 13:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756214311; cv=none; b=f40S7/PlAXseEhVZ+fnvjqINMehJxZkZo6PdT4evswX/q8s9wvK3B7/nyOORNr+B/m1f9z7ssksar0K/YFrzu/15UmK7LOyCtREjS+cAxjdoy+Ycy87UJ2ElgI+8JEpPlcAnVpTgpYQ2er2iTFVlgvk2Mvmky0RerQv+/klFAv8=
+	t=1756214341; cv=none; b=qItC53+QwL0hs7Tx26PCPE9TlTwTbt6Wup29EM0iDiWuOVULhJy4fRI1o8gzMJlukCmAONTv7uAYz+N+0V05Ku6C/5yKgAqo8cQwbdjJlOdxWHzESuxyAFUmLdyOY/b37bmjSXU5SYHTzUCpZJFUQm25V4q62JsvsGEy6YjC0Lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756214311; c=relaxed/simple;
-	bh=BhQw8k5n2wkINEBiBgIRgXJovOh1V3NCnPs6OwLcw6o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TWcH4ucQRlZwOeBOH+JYpfiIClyf+gbmJDsrBBaiHuhZU51CK4P/aqTlopCXCiGRQysM/RSIRJiGuBfW8p8gSxTZYeedTApNGcM5h4siNxXk5Lf3DHrKy3WJ/cSVAeB30QkfBWNTsq6GGc9rjI61iIq3Q2yurE9H4SK2eDgCTUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B0DEB1A25;
-	Tue, 26 Aug 2025 06:18:20 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E10B23F63F;
-	Tue, 26 Aug 2025 06:18:22 -0700 (PDT)
-Date: Tue, 26 Aug 2025 14:18:16 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: peterz@infradead.org, mingo@redhat.com, will@kernel.org,
-	acme@kernel.org, namhyung@kernel.org,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
-	linux-csky@vger.kernel.org, loongarch@lists.linux.dev,
-	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, dmaengine@vger.kernel.org,
-	linux-fpga@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org, coresight@lists.linaro.org,
-	iommu@lists.linux.dev, linux-amlogic@lists.infradead.org,
-	linux-cxl@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 02/19] perf/hisilicon: Fix group validation
-Message-ID: <aK20GP5g1iu9DGrQ@J2N7QTR9R3>
-References: <cover.1755096883.git.robin.murphy@arm.com>
- <c7b877e66ba0d34d8558c5af8bbb620e8c0e47d9.1755096883.git.robin.murphy@arm.com>
- <aK2XS_GhLw1EQ2ml@J2N7QTR9R3>
+	s=arc-20240116; t=1756214341; c=relaxed/simple;
+	bh=ApjG81rInNjF1hqd0jas1HuWqCbxWWM3TdhQAfyik1A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hHB0hZ7wtA8r4nexS4t6Rw5sDcOFAZAiB5rdhvUoA8liojVNFrmONKO6Lzw5q6DjS/xAsTyAs4OyVmbsQMAP9nrn5mcORaT/8WB16tRvgREJ9d5rSY0yssfWS2TURwMHSWzwKpr1AjqW0i2lEbUBG4jyRvl0HjCULNdn8eTqp4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OaN05jrq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 131B9C113CF
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 13:19:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756214341;
+	bh=ApjG81rInNjF1hqd0jas1HuWqCbxWWM3TdhQAfyik1A=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=OaN05jrq4bi1inIfwZLBoKx3WxbZFy61nC/Ox+qKesHiHM6B4L6RWfQ64JcvKeHvv
+	 /EqU5YKXp5d7VS83bfrTVG46y4RQnGER8zHlVVkVoAMMDpnrCl8cNAwQorbMB1xixn
+	 toSpYUzly+7E+/79KvJcMe7eBFMDvQAWahfshq9YyxeKfdXyRcIgD7Lkx9MusAEDsA
+	 b+c1ti+XfMLpGeR427/4gdcTNL5sl+jVKEIxIGF5BR8c7Z+Hf8UhemVq91qqos/UDP
+	 IV09e6418LoxBEv7kdyUg9iZMSSHy7xrYZr8utXhtGCZ+sx9WDQBiUrsDMAw1kBpBV
+	 suB+kG/vNWNFA==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-55f4410f7c9so2283100e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 06:19:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUj/5uDxGsIYL0EM8fSYEBOL0wIpSB3VY9e++3+AuHhp7XNfQDa6xkGP/rNXkHbjewDBgqUuqIo5IHmm1o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9m30cQj0SLNROihq86M6tjZ8Tr0C2jZ7+efciz6Vgq/ePYSPm
+	Zyx+oUex1sArKtaq5qWlAOwAZza3x2YAfiHXqJwNTcJe11Cgm0LDEJTC3wO0MZSiLhIKIBP6/hN
+	COZl1K4jDp1jr9vHHt4t71ybAudVeqmc=
+X-Google-Smtp-Source: AGHT+IHXfrp3kCO8WaAYTKzmpHz9Y3xyqEAYoduTi5fzZtjnKLnhuV4OCEfMD69+6cml/MqmaABjcDK3g2CbLyEpMrk=
+X-Received: by 2002:a05:6512:61d0:20b0:55f:34e8:b1b0 with SMTP id
+ 2adb3069b0e04-55f34e8ca18mr2581628e87.15.1756214339485; Tue, 26 Aug 2025
+ 06:18:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aK2XS_GhLw1EQ2ml@J2N7QTR9R3>
+References: <20250821-bump-min-llvm-ver-15-v2-0-635f3294e5f0@kernel.org>
+ <20250821-bump-min-llvm-ver-15-v2-3-635f3294e5f0@kernel.org>
+ <35178205-7cff-4b4b-abdd-b4cfb9e69dc2@app.fastmail.com> <6b2c0063-1523-4644-a32c-6aa918ad9dd8@app.fastmail.com>
+In-Reply-To: <6b2c0063-1523-4644-a32c-6aa918ad9dd8@app.fastmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 26 Aug 2025 15:18:48 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXEOmvUx8f=_v7_AFhMLobtauSw20t76sEDmzays4NLQnw@mail.gmail.com>
+X-Gm-Features: Ac12FXzs5STcbVyw1zGnE4IpQ5_3OWRNRisWxOHjyZfN8oZRJqnrrFNRfifbWv4
+Message-ID: <CAMj1kXEOmvUx8f=_v7_AFhMLobtauSw20t76sEDmzays4NLQnw@mail.gmail.com>
+Subject: Re: [PATCH v2 03/12] ARM: Clean up definition of ARM_HAS_GROUP_RELOCS
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org, 
+	Kees Cook <kees@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, llvm@lists.linux.dev, 
+	patches@lists.linux.dev, Russell King <linux@armlinux.org.uk>, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Aug 26, 2025 at 12:15:23PM +0100, Mark Rutland wrote:
-> On Wed, Aug 13, 2025 at 06:00:54PM +0100, Robin Murphy wrote:
-> > The group validation logic shared by the HiSilicon HNS3/PCIe drivers is
-> > a bit off, in that given a software group leader, it will consider that
-> > event *in place of* the actual new event being opened. At worst this
-> > could theoretically allow an unschedulable group if the software event
-> > config happens to look like one of the hardware siblings.
-> > 
-> > The uncore framework avoids that particular issue,
-> 
-> What is "the uncore framework"? I'm not sure exactly what you're
-> referring to, nor how that composes with the problem described above.
-> 
-> > but all 3 also share the common issue of not preventing racy access to
-> > the sibling list,
-> 
-> Can you please elaborate on this racy access to the silbing list? I'm
-> not sure exactly what you're referring to.
+On Fri, 22 Aug 2025 at 22:04, Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Fri, Aug 22, 2025, at 09:05, Arnd Bergmann wrote:
+> > On Thu, Aug 21, 2025, at 23:15, Nathan Chancellor wrote:
+> >
+> > Would it be possible to either change the macro or to move
+> > the overflow_stack_ptr closer in order to completely eliminate
+> > the CONFIG_ARM_HAS_GROUP_RELOCS symbol and have VMAP_STACK
+> > enabled for all CONFIG_MMU builds?
+> >
+> > Are there any other build testing issues with ARM_HAS_GROUP_RELOCS
+> > besides the one I saw here?
+>
+> With some more randconfig testing, I did come across a few
+> configurations that each fail with hundreds of errors like
+>
+> arm-linux-gnueabi-ld: drivers/crypto/hifn_795x.o(.text+0x99c): overflow whilst splitting 0x10a61854 for group relocation R_ARM_LDR_PC_G2
+>
+> so I guess we'll have to stick with the current dependency,
+> at least for ARMv6 and below.
+>
 
-Ah, I think you're referring to the issue in:
+This is due to LOAD_SYM_ARMV6() (rather than the ldr_this_cpu_armv6
+asm macro), which is used to implement get_current() on configs that
+use a global variable to store the current task pointer (i.e., non-k
+v6 and older). It eliminates the first of two LDRs, which would
+pollute the D-cache otherwise, as every occurrence of get_current()
+emits a literal into .text carrying the address of the __current
+global variable. The D-cache footprint of each such literal is a
+cacheline, which never contains other useful data.
+(The second LDR is needed and always refers to the same address so it
+does not impact D-cache efficiency)
 
-  https://lore.kernel.org/linux-arm-kernel/Zg0l642PgQ7T3a8Z@FVFF77S0Q05N/
-
-... where when creatign a new event which is its own group leader,
-lockdep_assert_event_ctx(event) fires in for_each_sibling_event(),
-because the new event's context isn't locked...
-
-> > diff --git a/drivers/perf/hisilicon/hisi_uncore_pmu.c b/drivers/perf/hisilicon/hisi_uncore_pmu.c
-> > index a449651f79c9..3c531b36cf25 100644
-> > --- a/drivers/perf/hisilicon/hisi_uncore_pmu.c
-> > +++ b/drivers/perf/hisilicon/hisi_uncore_pmu.c
-> > @@ -101,26 +101,17 @@ static bool hisi_validate_event_group(struct perf_event *event)
-> >  	/* Include count for the event */
-> >  	int counters = 1;
-> >  
-> > -	if (!is_software_event(leader)) {
-> > -		/*
-> > -		 * We must NOT create groups containing mixed PMUs, although
-> > -		 * software events are acceptable
-> > -		 */
-> > -		if (leader->pmu != event->pmu)
-> > -			return false;
-> > +	if (leader == event)
-> > +		return true;
-
-... and hence bailing out here avoids that?
-
-It's not strictly "racy access to the sibling list", becuase there's
-nothing else accessing the list; it's just that this is the simplest way
-to appease lockdep while avoiding false negatives.
-
-It'd probably be better to say something like "the common issue of
-calling for_each_sibling_event() when initialising a new group leader",
-and maybe to spell that out a bit.
-
-Mark.
+The LOAD_SYM_ARMV6() sequence has a range of 256 MiB, which is
+sufficient for any ARM kernel that can be meaningfully used in
+production. However, randconfigs may produce kernels that are larger
+than this, and so we need the COMPILE_TEST check if we are going to
+keep the optimization, and I think it is meaningful enough to do so.
 
