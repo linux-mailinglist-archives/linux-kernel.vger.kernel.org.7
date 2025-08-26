@@ -1,250 +1,231 @@
-Return-Path: <linux-kernel+bounces-786999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81263B36FEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:19:10 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C127FB36FE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:18:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B90991BC2159
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:18:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 878E04E1608
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 16:18:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F15783164C6;
-	Tue, 26 Aug 2025 16:17:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F9F3164B1;
+	Tue, 26 Aug 2025 16:17:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="33ysxJx+"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="lX/WDyEh"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013017.outbound.protection.outlook.com [40.107.162.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F8023164CC
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 16:17:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756225053; cv=none; b=Op5P+ebmiLKk8WIYhDHpUwqCazuq6uhJnxr5Ar7IK4yXqcpFzXIXsKYNrnkIu6/LC9XYyTRVlgcrfE+0tAJe6+u4cIDBLZ+rIQvHK+dCODntmkdVykSzitmI5ppYcsjmSWC/PL1tp+TXrAC1pSAphkaQHG5HmSIpbV0W3uf9EKI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756225053; c=relaxed/simple;
-	bh=++ibIIwSee5BZlw9xsuvyKWduMwmT2ipzEDtn2qX8QI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V09Is+s43fjdGBoHK4kOCq6ikVy6c//AQCVmaxXKgmWxXBLGfLLSXtGS/5mRUh6sm9f1zSOkSfJEU6lkbb/M9iJ1Q8wZKh63tH/Ri26M65sogXOC9orAs30Y2T1ZKbgcBmfllGfUtRJ2llDIYxiFG5feQEvTR4QG+LqnP0dAU9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=33ysxJx+; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4b2dc20aebbso534541cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:17:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756225050; x=1756829850; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YmeOjGewmIYdLLmpSjvv47FTEE8o/XmGhAICPfxGuEg=;
-        b=33ysxJx+GIvGYPgduZI8p7yPsj3lePpLgr2pDIeXw8k+f0kI3XM1UnG1QVZ2PEyFLB
-         W8kXsQPshX1NOGSggP8WZXZdHxaaH+z4yt6/CmM5Z4om+QifGfmhCXU0IVSVbVBuOfGT
-         6PZn49le5EwUxLzfDEAPbkuEO7tN0rixO4qm9tmxs7wBHupuy0a1E4xfQ05sqpVzCKgt
-         5rccP5FJETmUw+UJliN7E+GLZykOHVruBytoOrL3PR4pty93IRebQp26E7RpGNo0duKO
-         IhRNe2AziWBzDqOEIqu/oaF4j7qBlVnpz7f2jHcxFv7tNK6/3MnOGby48lirQc3esxlJ
-         e1HQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756225050; x=1756829850;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YmeOjGewmIYdLLmpSjvv47FTEE8o/XmGhAICPfxGuEg=;
-        b=k8uYCnmhUtpHgSStEonlQsiyUo3kv9J0OfdmURxsZjYFF9OflJhSGX6O6iv3lNh8Ul
-         LU6kIhL6jnaI1ugJV2Z3dHI3ZalZ/K8ZQf0nOMVnjGLUOnqMbdn2ULeevwYXm8Oy8NIn
-         uak1fJDH5fIRZ2FLdhPDUR8KZBXV/usbDXvGoA4x833RUC17EDov9ttZQjO7LbbvSKI8
-         VvgZtktstjp29lYBcjeT3ELdvHntanS3EVx51IwlyQzbMsVgEAPUWyU9OKP2/igdZX51
-         H5iPskogWPF3sSGPSlRCklxiUOXnWX4KeCKS+d3sQkFGARvxfnJ48c1nFZ3n6AmdqxIT
-         e55A==
-X-Forwarded-Encrypted: i=1; AJvYcCWHLlJmZdMqHl7nhWz58JNHP7/BaA+duoMK0KJ75N+ZY4ugzjmBDzPk+ulJDc7T/3PP7U1jXzpVvMJJilE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOagRFNI2SImJ0aexV2HEY5aBIngBlL9hP3zS8kRur27ZfW8Br
-	GBSKUt5kHrlJO8f73wKeu6E/Kwe+NoN1SVuyRVJ7CFXVphtjROIvkKzbymYWi64yBsjsO2PruZ7
-	c4x32quSdvZPVilZknFj/qZWRnjFEUAUg1Ct1DN0J
-X-Gm-Gg: ASbGncux21F2BTLA2EzmPB4OsRmy51XWtWwLnUTWiPApqVaP7szE+LhshgVC2K3H0w9
-	OuELazJl2ZL7HDYX9Xsn7imgeTmjrdxFdE+BP96O+8R1i3NgIEcCOniARBaQ6aiWzsTCGY5at7V
-	fKRPCJ5h9FxaiczuYiuouSP28JESMSJiGZCjD+JifgJzyKkCP+5Ff6GOy/z2v/xPdoFVYkqDjHe
-	GghHtM6lMSQR77/o9qEv+wEmcCi5aNgrCUVGosZoxNpdd+8BdbRA3sL
-X-Google-Smtp-Source: AGHT+IG+wnBefR4Aymc6tYM8lOmHshFcJVJaVe41ASTYpqmV9yU3SdjF11Bbld00ig6mv+c4gYxK9oOnktn+3LIyzAk=
-X-Received: by 2002:a05:622a:311:b0:4a7:1743:106b with SMTP id
- d75a77b69052e-4b2e1c96dbcmr6141361cf.6.1756225049246; Tue, 26 Aug 2025
- 09:17:29 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6979835206F
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 16:17:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756225071; cv=fail; b=ZO6/un+S0GTdkJbaLHVs/h8k4NwLjWtKGJJmjnV1uSrgC2sVoQErONIwgtutoHPKH4l1vo6nc0GSlva1NlKsmp60dCl4bnc7GigUfhKV20zvacoful9DuDHEIyd+xizI/c/bCre5kIzU0TZpdgISIldUY5pNtbhXB13GLssZkZE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756225071; c=relaxed/simple;
+	bh=8UXFLTicoy15r4JM6RnFOuazdGXiNmTm0XTcp08JQNo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=OAiSgC8rQjY+vGmGVuQR2+YxpSr1Im6naJul7H333gPERCwIxrWEXdP5wDDSAZfg3ecE8cPPaJ50/mbZrO0NvwJvVvJXK+jwEW4ndY0EzNY2+v1XGVISYHZQYlXdcx3L6PDES3oceU6L114NnKp6PnBvxYgi/aHDN6v/tJARAz4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=lX/WDyEh; arc=fail smtp.client-ip=40.107.162.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=c0GGbF46+XsH25D2ux0A8FQaqvvQjedLMoEPEgqDr4cpBqTO7eHIe7PO9AsZe35P6EX2wMyEp6d+y8epBHekq6IF1+fTCLOocFeSGY7OP3Wo78KMcgm/ldossguuDfojhNE5rFwDeYWm+FGXHZQoBVNZ1o/J4drargeDCEKarRHratXeGOFEylom7EYtxOnjbsC2eAcJWTNoON3qJiRq52FJQsnhwnP2xjd5c2SoOPhJY96Z1z++N2vkquASpk7h4wZJw5wthL0RsnRpkrVN8z03n1zkKBhXERvxWvRGi/HU1Y2WohEArwBdMI1IJYmPYiX6pxaovXL4YtxQPIJ1ew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NXTK1nEJU6twu8PtwOVereJ9GXqjbfaGLRGYnh5C01A=;
+ b=Fexu8x6fhSxFW4bme6QJ8xI0X/OvrgEfcPugxFbfTvDdp9b20eOdPMKpvKQmLEoCw03VteAfiY2tTfam3K9IRU206v9N7+BBvUnUgRR8tKmg1jVDtCegNg6WOx8l1+8XxnV1yBGYjzFEMda4tYsVXSvscIlrRkDl5+jdFXFpLAOM7QxigFIgp9lMmPZiTStzi+xSPkrodONamRp0OoDAiXhIaXh3k+dY3YCfCpJQr/6ozn6zL9B192avyZ41jCe8u4k1zJBytV+ouCR/5nJINSG1p9CMS0CRN7XRM8FXbCh5DdCvvdS424JqnfLrkuBxfqpFR3iXpGqGxdqWixrfmA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NXTK1nEJU6twu8PtwOVereJ9GXqjbfaGLRGYnh5C01A=;
+ b=lX/WDyEhs6P2IeRi3AjSziGR530aihHznUj1hwyPyYkkEP1tC2D0jxpQrS1GJeCY+mDOzH9yHsncFMrVHBkkjo74lyakJ9BMW7ep8bKhujb1/TkpZwYHGdM5J6enkEkNcNQKhRYmicfwEd0uEE2t0YjxdQUdmoGMmgzBPJf6g3XjERB9Vm0Fn+vRTx0UZgt0sD1YT0HOgzyljppzItdEDv1VNkmpMDV0vSN1Vg9D0w75H30rO9rzyjK8WgRB1kwi1fgijUMFcqi/WsxyJIN1KtRFblEMBvnTWzvMLOv5XtSc4prvUNXfM142eM0U0fVRPj17aXs8658gCvtR7yuNVw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
+ by GV1PR04MB10332.eurprd04.prod.outlook.com (2603:10a6:150:1ca::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.10; Tue, 26 Aug
+ 2025 16:17:41 +0000
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::e81:b393:ebc5:bc3d]) by DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::e81:b393:ebc5:bc3d%5]) with mapi id 15.20.9073.009; Tue, 26 Aug 2025
+ 16:17:41 +0000
+Date: Tue, 26 Aug 2025 12:17:34 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Stanley Chu <stanley.chuys@gmail.com>
+Cc: miquel.raynal@bootlin.com, alexandre.belloni@bootlin.com,
+	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
+	tomer.maimon@nuvoton.com, kwliu@nuvoton.com, yschu@nuvoton.com
+Subject: Re: [PATCH v1] i3c: master: svc: Use manual response for IBI events
+Message-ID: <aK3eHkf31uIw04EH@lizhi-Precision-Tower-5810>
+References: <20250819090831.3009647-1-yschu@nuvoton.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250819090831.3009647-1-yschu@nuvoton.com>
+X-ClientProxiedBy: SJ0PR03CA0036.namprd03.prod.outlook.com
+ (2603:10b6:a03:33e::11) To DB9PR04MB9626.eurprd04.prod.outlook.com
+ (2603:10a6:10:309::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250821042915.3712925-1-sagis@google.com> <20250821042915.3712925-12-sagis@google.com>
- <8437255a-635d-4712-834a-fc8c02890d00@linux.intel.com>
-In-Reply-To: <8437255a-635d-4712-834a-fc8c02890d00@linux.intel.com>
-From: Sagi Shahar <sagis@google.com>
-Date: Tue, 26 Aug 2025 11:17:17 -0500
-X-Gm-Features: Ac12FXzhaotM5fFrAx2rTRNTa2IlCD5CAPNHtJNuxqrdhQix7iWtknaTyf9fbgA
-Message-ID: <CAAhR5DHSQuvDRMvv62Go=xMHpx77F7XRP3VqHmy+HEMSCMASgA@mail.gmail.com>
-Subject: Re: [PATCH v9 11/19] KVM: selftests: Set up TDX boot parameters region
-To: Binbin Wu <binbin.wu@linux.intel.com>
-Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
-	Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>, 
-	Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
-	Erdem Aktas <erdemaktas@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	"Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, Reinette Chatre <reinette.chatre@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, Chao Gao <chao.gao@intel.com>, 
-	Chenyi Qiang <chenyi.qiang@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|GV1PR04MB10332:EE_
+X-MS-Office365-Filtering-Correlation-Id: ccf606d6-dea2-44a8-e2fe-08dde4bc1510
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|19092799006|52116014|376014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?qaCqFOYp2r3xS73k9lDL8P8FFfE2xSnj7RWJBuFRyc50pFxg5Vaq9iwI869r?=
+ =?us-ascii?Q?vU4G/PutxUsdaHuCD74gMx2IhYTergvwF1kB5+9ahwG+YmJVhPJZf/xGvwvp?=
+ =?us-ascii?Q?wodrwL2xaiV7G3IjNJ1HAU2OIrvmyVFZUkBYmpuwvGkkhQgjJ5q6d7Cn4Qfd?=
+ =?us-ascii?Q?c11UFBR+g2TzeKlUo7UFlvdKWuh8jOv+mV/lAeLyOSh3M5ypHJRqXTig7xMs?=
+ =?us-ascii?Q?PeNi0ixptD27tVWv8RvAzOHy7MFVNZh5vvI8ZyFKfoTt53v88uykSm9SJoJW?=
+ =?us-ascii?Q?+PFhyNe3D4WtlMTUphgCxXjg6kBmOrK0JHLdzh0oVS8EDlWJoUF4MJlbIRoL?=
+ =?us-ascii?Q?3kinQtJzGaeZ6cGHg1WnXfMZM9bl2d92kq30VESLuEGmaoOfKZbmDE6T4YtY?=
+ =?us-ascii?Q?tIqRXQPtRvcS2XMb/RKcrAnAVtOg/T0mlkli3RkfOJYnUY2NSVScxjRx0wjb?=
+ =?us-ascii?Q?vTKdFTgPG3ZuSZJJHSIuNimWxdiX6t4yUbf785MZvcmfPbyxlu7lTyTeFW07?=
+ =?us-ascii?Q?DeGrAf8FUIxUBeQa0hEIs4AWAJSDGZ7AuZfBH+dQJHv8ZbK6kiPGRXaAGC5Z?=
+ =?us-ascii?Q?L6NHuDnQk8YW08b73ddRGcHdESzcFN0UVOlt1Pc0wMVW9NPeQRFC8xx0HgzZ?=
+ =?us-ascii?Q?w8nEPAQsCxuzEPUEayQ9jRFedNtLIfEZL+Vo+3h6h5IMpYNtuqh4mzft5X4w?=
+ =?us-ascii?Q?cY40FLrHDkI+sam6O2mL2IwdOMGd1T6A9hCQ5sSsc/tCM2DilxOnrikD0nV/?=
+ =?us-ascii?Q?8ATrSmBGugEYFva8IXGE2KEH0jS4dqEp47azia0Hh3aRfpRPuy30fvxIsftV?=
+ =?us-ascii?Q?9MO+Hec9rrzeoZ6UDe1t2fjxx4Hm63fy2uCfkBsKLK/9EgPdafk5HAUM/8le?=
+ =?us-ascii?Q?dEwV/U/UYIX4tmO7Ok0wdoXhCXo/6azaOM1U62vVSPP0fRUdbo5XkT3iBVBX?=
+ =?us-ascii?Q?CutrmWc3xlCmJv01t1Z9Nh2j78VhswvZIehw3sl4+sKQ/fvMp+MklVfTMpWW?=
+ =?us-ascii?Q?4ew0Eccr3plDf53ldRtyEATAPmg/wK3kRK5Hoy/ehxLIiFPRXuF3zU0ev6l8?=
+ =?us-ascii?Q?PFrsnmBGzIDdFNZz5NLkt2yp8mTIqBU7XWEgh/bgvVZs1QY4NYqmh5xVO7Gu?=
+ =?us-ascii?Q?S/1yWKPCaYK45KPXHATkxZ5hmGe1U6qXAIs0eZ/dThH7cvpr3df1pmCGRUFW?=
+ =?us-ascii?Q?6Xi5oipcm4xMFy9RcCllrQcGWB3gVJTA7fm9HY4tK/TcBeyZh2EnaSQfT4XR?=
+ =?us-ascii?Q?T6hqs1tIdULeAXRbCJJrCybkNkRGSzjIvaXlpsPE7codS9d8FehT1URvIDJ1?=
+ =?us-ascii?Q?r3tLOws2JuAW12MOqWq9cTy7UwQwJUDoYOFZZodt5ysSnZM97Qe0MjaVw+Qh?=
+ =?us-ascii?Q?YYKUbKM7gQfqP76RjgAaGG/hjOP5Br84k4Ru8uepNYL/RiMeZ+EwhaoSoyHs?=
+ =?us-ascii?Q?Hmec7Y/8tiZCwg0fzTCBh5bFgwhJan4aTfK6/U3jGnoyJz3BZuuzKA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(52116014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?jjXYKfL6AuefZ7nD9CwGEs9/NK3f6aeui0mdYed1tEZotd63jjpwcdNznm0J?=
+ =?us-ascii?Q?hyFIwhYXbYFYXwuugL8U3fouVrcl3q0sUG90lrEA0cVO3PeeBi3fbNWJK8L0?=
+ =?us-ascii?Q?cYPeAJ+V3Sp/bbsfCC9VSlar6qxdk3trHi4wuNEYTrVyYM/Ufp5ib2T+2JxU?=
+ =?us-ascii?Q?QyZRyCnC6BX+JZKSLxMn+yZb2vYwDZCOOCjqNP0c4RmC46L8+NURCK78C5ld?=
+ =?us-ascii?Q?ZNoRiULAiebUTIaQCMe7J/xW2rTb8p1qgIQ2UG9InQMD6yfFthv446SEFMst?=
+ =?us-ascii?Q?qkLWIjMrl/TbG+CsKAPBh9FCQyHCy6HqpHwrTZ8iIj9OGcKuzMiD0WM02Kgj?=
+ =?us-ascii?Q?Q/r48kKX+t9yvgF4QDBePMq4j9HPCKdQEEd0unKAPm2J7m006syZU89rL3d0?=
+ =?us-ascii?Q?i3m16ItsySFoQc0ABMPnl4NHuxTN3aZ+8AnPZ+2ScKtMSOPRbD8FUfVdg+3S?=
+ =?us-ascii?Q?DmBcOnVCSvmpWx1ubDfzJ/WZ0P4qZu/6DmWbzh3IxagFdS5ZVg7vcFdL2IpQ?=
+ =?us-ascii?Q?G6g3GPM9ZBXk3HfvmjBr0wGzb5Uk+mhdHYLOTVXGrCFD1cnFpU6XnHZVPIpm?=
+ =?us-ascii?Q?mMG3Shfra2dcKvHwchD2RfwiZpaYE1JcQbX/zX8N+X5m3HhlK+n9UlQx2Eko?=
+ =?us-ascii?Q?81qxTAdEQRvLtVYuGdcXd0P8m/nt+FM8kEgJQP0G+LR8JIqmxRSmnBms9k9W?=
+ =?us-ascii?Q?565SXNjU+hXw+pN9aLgAjfueEY5XbIINM6nn1+VM2YOxs+7CkVBRM8z/CY6M?=
+ =?us-ascii?Q?xKrYwYre4J8PVnN7Jtk97ox32sCVc4YeIpXYfVyoXL34Q1tHPmnpMdwoe/m3?=
+ =?us-ascii?Q?Nj90nmQmjqiYP6DRyfnrZHBxKSsbGQ2NBOF9Vvf8y+R/WbQ23viPT7Os8HJD?=
+ =?us-ascii?Q?ddctopPLOlzyMErqFmUtfx1GLQDu1hYmT9ov7R60EV0CEOl5M7XQH3Z5ws05?=
+ =?us-ascii?Q?tZgGOAb/2/EO4Nv6DNREatBtPT52Tf5Hgli9gmtK3Rgv8npkLLRdwjNFi6Ry?=
+ =?us-ascii?Q?RZPKqa3mS3/s5Fu+o2+/xrBIbXJ5FbruRCqQJ4BnBJNZeTNqrpGdykyiG6zV?=
+ =?us-ascii?Q?Dzxv0YGxnBeE/o/vOj7f/7Rw4RwBmU+7PkuZ+iUlUf9Cdl7GJr/rpOUciKvl?=
+ =?us-ascii?Q?AkkXL2JEMmjk+tt5qC1ybnxuPbU5qot8QQ8LarnwcCtklQsUG1qCksJJnBz7?=
+ =?us-ascii?Q?XhWQKKKAWfM8xV73pRLdlrWQ9mCaRqKAtmFpJgnQjMP96tdJiJVd8BHG40Cj?=
+ =?us-ascii?Q?v+NXsLemHZ2mL/GqcUjnSAYSn2hWaR7Gc4vLHlnk9ihjzMRQZX8DX/Jun1iE?=
+ =?us-ascii?Q?QGnomtiPVQGA8zM5pHmrfW5QD7zD7Ejp2BhHcCeyRGMGYPz1JNd13Zey8xwJ?=
+ =?us-ascii?Q?xXzhKGR2C9rQEjmByyiGwHC+HTzgnzZEelCfU17LWPe7mPNkcenSIPJJgiBK?=
+ =?us-ascii?Q?Kc0wUmcuHzDJ6uElsNo520uxo5wrvxcoTZzm9XTAU2kGXOgvq82EvDXjlcGT?=
+ =?us-ascii?Q?TZymj6rloQbH9LtPZasCepcx/Uq8m7bXQJcT2F5UG5xg3pLgh4W/KE/i0a46?=
+ =?us-ascii?Q?oIc7WiR3YfQXk8CoK04NfsXeI3Rfu4JoVuoXrzF3?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ccf606d6-dea2-44a8-e2fe-08dde4bc1510
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 16:17:41.7441
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WKcUo1zdFS5qlcY3rMtZ1pHO31YSdXOMfk9AsaYYaV6tAHggldJbAl8HxbggmbvtQ/O1pwd+kkDampwjfV4rYw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10332
 
-On Tue, Aug 26, 2025 at 3:36=E2=80=AFAM Binbin Wu <binbin.wu@linux.intel.co=
-m> wrote:
+On Tue, Aug 19, 2025 at 05:08:31PM +0800, Stanley Chu wrote:
+> From: Stanley Chu <yschu@nuvoton.com>
 >
->
->
-> On 8/21/2025 12:29 PM, Sagi Shahar wrote:
-> > Allocate memory for TDX boot parameters and define the utility function=
-s
-> > necessary to fill this memory with the boot parameters.
-> >
-> > Co-developed-by: Ackerley Tng <ackerleytng@google.com>
-> > Signed-off-by: Ackerley Tng <ackerleytng@google.com>
-> > Signed-off-by: Sagi Shahar <sagis@google.com>
-> > ---
-> >   .../selftests/kvm/include/x86/tdx/tdx_util.h  |  4 +
-> >   .../selftests/kvm/lib/x86/tdx/tdx_util.c      | 73 ++++++++++++++++++=
-+
-> >   2 files changed, 77 insertions(+)
-> >
-> > diff --git a/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h b/t=
-ools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
-> > index ec05bcd59145..dafdc7e46abe 100644
-> > --- a/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
-> > +++ b/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
-> > @@ -12,5 +12,9 @@ static inline bool is_tdx_vm(struct kvm_vm *vm)
-> >   }
-> >
-> >   void vm_tdx_setup_boot_code_region(struct kvm_vm *vm);
-> > +void vm_tdx_setup_boot_parameters_region(struct kvm_vm *vm, uint32_t n=
-r_runnable_vcpus);
-> > +void vm_tdx_load_common_boot_parameters(struct kvm_vm *vm);
-> > +void vm_tdx_load_vcpu_boot_parameters(struct kvm_vm *vm, struct kvm_vc=
-pu *vcpu);
-> > +void vm_tdx_set_vcpu_entry_point(struct kvm_vcpu *vcpu, void *guest_co=
-de);
-> >
-> >   #endif // SELFTESTS_TDX_TDX_UTIL_H
-> > diff --git a/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c b/tools=
-/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
-> > index 15833b9eb5d5..52dc25e0cce4 100644
-> > --- a/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
-> > +++ b/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
-> > @@ -5,10 +5,12 @@
-> >   #include "kvm_util.h"
-> >   #include "processor.h"
-> >   #include "tdx/td_boot.h"
-> > +#include "tdx/td_boot_asm.h"
-> >   #include "tdx/tdx_util.h"
-> >
-> >   /* Arbitrarily selected to avoid overlaps with anything else */
-> >   #define TD_BOOT_CODE_SLOT   20
-> > +#define TD_BOOT_PARAMETERS_SLOT      21
-> >
-> >   #define X86_RESET_VECTOR    0xfffffff0ul
-> >   #define X86_RESET_VECTOR_SIZE       16
-> > @@ -52,3 +54,74 @@ void vm_tdx_setup_boot_code_region(struct kvm_vm *vm=
-)
-> >       hva[1] =3D 256 - 2 - TD_BOOT_CODE_SIZE;
-> >       hva[2] =3D 0xcc;
-> >   }
-> > +
-> > +void vm_tdx_setup_boot_parameters_region(struct kvm_vm *vm, uint32_t n=
-r_runnable_vcpus)
-> > +{
-> > +     size_t boot_params_size =3D
-> > +             sizeof(struct td_boot_parameters) +
-> > +             nr_runnable_vcpus * sizeof(struct td_per_vcpu_parameters)=
-;
-> > +     int npages =3D DIV_ROUND_UP(boot_params_size, PAGE_SIZE);
-> > +     vm_paddr_t gpa;
-> > +
-> > +     vm_userspace_mem_region_add(vm, VM_MEM_SRC_ANONYMOUS,
-> > +                                 TD_BOOT_PARAMETERS_GPA,
-> > +                                 TD_BOOT_PARAMETERS_SLOT, npages,
-> > +                                 KVM_MEM_GUEST_MEMFD);
-> > +     gpa =3D vm_phy_pages_alloc(vm, npages, TD_BOOT_PARAMETERS_GPA, TD=
-_BOOT_PARAMETERS_SLOT);
-> > +     TEST_ASSERT(gpa =3D=3D TD_BOOT_PARAMETERS_GPA, "Failed vm_phy_pag=
-es_alloc\n");
-> > +
-> > +     virt_map(vm, TD_BOOT_PARAMETERS_GPA, TD_BOOT_PARAMETERS_GPA, npag=
-es);
-> > +}
-> > +
-> > +void vm_tdx_load_common_boot_parameters(struct kvm_vm *vm)
-> > +{
-> > +     struct td_boot_parameters *params =3D
-> > +             addr_gpa2hva(vm, TD_BOOT_PARAMETERS_GPA);
-> > +     uint32_t cr4;
-> > +
-> > +     TEST_ASSERT_EQ(vm->mode, VM_MODE_PXXV48_4K);
-> > +
-> > +     cr4 =3D kvm_get_default_cr4();
-> > +
-> > +     /* TDX spec 11.6.2: CR4 bit MCE is fixed to 1 */
-> > +     cr4 |=3D X86_CR4_MCE;
-> > +
-> > +     /* Set this because UEFI also sets this up, to handle XMM excepti=
-ons */
-> > +     cr4 |=3D X86_CR4_OSXMMEXCPT;
-> > +
-> > +     /* TDX spec 11.6.2: CR4 bit VMXE and SMXE are fixed to 0 */
-> > +     cr4 &=3D ~(X86_CR4_VMXE | X86_CR4_SMXE);
-> > +
-> > +     /* Set parameters! */
-> > +     params->cr0 =3D kvm_get_default_cr0();
-> > +     params->cr3 =3D vm->pgd;
-> > +     params->cr4 =3D cr4;
-> > +     params->idtr.base =3D vm->arch.idt;
-> > +     params->idtr.limit =3D kvm_get_default_idt_limit();
-> > +     params->gdtr.base =3D vm->arch.gdt;
-> > +     params->gdtr.limit =3D kvm_get_default_gdt_limit();
-> > +
-> > +     TEST_ASSERT(params->cr0 !=3D 0, "cr0 should not be 0");
-> > +     TEST_ASSERT(params->cr3 !=3D 0, "cr3 should not be 0");
-> > +     TEST_ASSERT(params->cr4 !=3D 0, "cr4 should not be 0");
-> > +     TEST_ASSERT(params->gdtr.base !=3D 0, "gdt base address should no=
-t be 0");
-> > +     TEST_ASSERT(params->idtr.base !=3D 0, "idt base address should no=
-t be 0");
-> > +}
-> > +
-> > +void vm_tdx_load_vcpu_boot_parameters(struct kvm_vm *vm, struct kvm_vc=
-pu *vcpu)
-> > +{
-> > +     struct td_boot_parameters *params =3D
-> > +             addr_gpa2hva(vm, TD_BOOT_PARAMETERS_GPA);
-> > +     struct td_per_vcpu_parameters *vcpu_params =3D
-> > +             &params->per_vcpu[vcpu->id];
->
-> Nit: Better to align the style on whether wrap or not due to max characte=
-rs per
-> line
->
+> Using IBIRESP_AUTO causes the hardware to ACK IBI requests even when the
+> target is not in the device list. The svc_i3c_master_nack_ibi() has no
+> effect in such case.
 
-Thanks, going to wrap in both functions.
+how this case can happen since default target's IBI is disabled. Need host
+send IBI enable command to target devices before target pull SDA lower.
 
-> > +
-> > +     vcpu_params->esp_gva =3D kvm_allocate_vcpu_stack(vm);
-> > +}
-> > +
-> > +void vm_tdx_set_vcpu_entry_point(struct kvm_vcpu *vcpu, void *guest_co=
-de)
-> > +{
-> > +     struct td_boot_parameters *params =3D addr_gpa2hva(vcpu->vm, TD_B=
-OOT_PARAMETERS_GPA);
-> > +     struct td_per_vcpu_parameters *vcpu_params =3D &params->per_vcpu[=
-vcpu->id];
-> > +
-> > +     vcpu_params->guest_code =3D (uint64_t)guest_code;
-> > +}
+>
+> AutoIBI has another issue that the controller doesn't quit AutoIBI state
+> after an IBIWON polling timeout. The following sequence is the case:
+> 1. Target pulls SDA low
+> 2. SLVSTART interrupt triggers the IBI ISR
+> 3. Target releases SDA
+> 4. Driver writes AutoIBI request to MCTRL
+> 5. SDA is high, so AutoIBI process does not start
+> 6. IBIWON polling times out
+> 7. Controller state is AutoIBI and doesn't accept EmitStop request
+>
+> Emitting broadcast address with IBIRESP_MANUAL avoids both issues.
+>
+> Signed-off-by: Stanley Chu <yschu@nuvoton.com>
+> ---
+>  drivers/i3c/master/svc-i3c-master.c | 16 +++++++++++-----
+>  1 file changed, 11 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/i3c/master/svc-i3c-master.c b/drivers/i3c/master/svc-i3c-master.c
+> index 701ae165b25b..17644e041b44 100644
+> --- a/drivers/i3c/master/svc-i3c-master.c
+> +++ b/drivers/i3c/master/svc-i3c-master.c
+> @@ -517,9 +517,10 @@ static void svc_i3c_master_ibi_isr(struct svc_i3c_master *master)
+>  	 */
+>  	writel(SVC_I3C_MINT_IBIWON, master->regs + SVC_I3C_MSTATUS);
+>
+> -	/* Acknowledge the incoming interrupt with the AUTOIBI mechanism */
+> -	writel(SVC_I3C_MCTRL_REQUEST_AUTO_IBI |
+> -	       SVC_I3C_MCTRL_IBIRESP_AUTO,
+> +	/* Emit broadcast address for arbitration */
+
+Need comments here why Request_AutoIBI not work. I think it is IP design
+defect to make REQUEST_AUTO_IBI useless.
+
+Only concern here is that svc_i3c_master_ack_ibi() need send in 100us by
+i3c spec requirement.
+
+Frank
+
+> +	writel(SVC_I3C_MCTRL_REQUEST_START_ADDR |
+> +	       SVC_I3C_MCTRL_IBIRESP_MANUAL |
+> +	       SVC_I3C_MCTRL_ADDR(I3C_BROADCAST_ADDR),
+>  	       master->regs + SVC_I3C_MCTRL);
+>
+>  	/* Wait for IBIWON, should take approximately 100us */
+> @@ -539,10 +540,15 @@ static void svc_i3c_master_ibi_isr(struct svc_i3c_master *master)
+>  	switch (ibitype) {
+>  	case SVC_I3C_MSTATUS_IBITYPE_IBI:
+>  		dev = svc_i3c_master_dev_from_addr(master, ibiaddr);
+> -		if (!dev || !is_events_enabled(master, SVC_I3C_EVENT_IBI))
+> +		if (!dev || !is_events_enabled(master, SVC_I3C_EVENT_IBI)) {
+>  			svc_i3c_master_nack_ibi(master);
+> -		else
+> +		} else {
+> +			if (dev->info.bcr & I3C_BCR_IBI_PAYLOAD)
+> +				svc_i3c_master_ack_ibi(master, true);
+> +			else
+> +				svc_i3c_master_ack_ibi(master, false);
+>  			svc_i3c_master_handle_ibi(master, dev);
+> +		}
+>  		break;
+>  	case SVC_I3C_MSTATUS_IBITYPE_HOT_JOIN:
+>  		if (is_events_enabled(master, SVC_I3C_EVENT_HOTJOIN))
+> --
+> 2.34.1
 >
 
