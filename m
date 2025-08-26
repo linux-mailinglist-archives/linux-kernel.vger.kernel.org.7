@@ -1,107 +1,114 @@
-Return-Path: <linux-kernel+bounces-787392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AE8AB375A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 01:44:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E76B0B375B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 01:53:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B1C23B7CA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 23:43:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4EBD1B66C78
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 23:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54DE63093A5;
-	Tue, 26 Aug 2025 23:43:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kGjAYZVI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C08CA307AF9;
+	Tue, 26 Aug 2025 23:53:27 +0000 (UTC)
+Received: from irl.hu (irl.hu [95.85.9.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0DF2797B8;
-	Tue, 26 Aug 2025 23:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2542223D2BF
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 23:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.85.9.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756251832; cv=none; b=Q1E2gMdSCL9WpAsVRKNzz+r0cAVrP8QSa5epKeWlcXXUr/rZ5jZZk8OgLId8xFVWzWM4b8evnyU7me35LP+73TkEU28o44wlOLey8v5l8PVde8WrMM7cDkGWLbAOmMMHLXrFdHavuS63UBqmDiX2HowxoMA/5TScFOcqvhxeeLA=
+	t=1756252407; cv=none; b=l8t7nBMc1WEWcEVUf2ih452D/I5HESoadMMiuSrdLo06NUNibR27bpTOfYPjIlz+4ZCVyJBb77HgJNHP00ov84VC6BssSC/eETb8rROhWkIBI7rmjZIGlrmGKJb0wdtLUmsC7LBVCU7vLo6q8uqwwCgna5dN/jqP3AbXFdSPvts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756251832; c=relaxed/simple;
-	bh=Ibing0HBKI761ifUXKx+K7k21qXVK36s0zvCn0VfQV0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Itcvi6immf07vUtd+p1wxwkrPUczdpmNIUriU7bMm0gRBa1E/KCLhrwSA4IyfUXqFQYQP9KiVK/59wXF4xix9hjNhy/E/keC24YMY+KRf41gJHLMbnlIVsDPiwemx9BD0jFgaXVF7F4PPxBOjtPh5z4LpIqIQ1PoRxPggSZKpZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kGjAYZVI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65EA9C4CEF1;
-	Tue, 26 Aug 2025 23:43:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756251832;
-	bh=Ibing0HBKI761ifUXKx+K7k21qXVK36s0zvCn0VfQV0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kGjAYZVIW8/OouXM4YZ9YfgQLyzCCl5b24LCOvQitsvIIchYTXL9U3bK56556s+yL
-	 /2mCCw0cxg97pbdYC++e2m3K+f0TscVHN1aACS6+6XE9f7rmS+pY8D74jNa3kprcec
-	 HFZ1P4pYL30QsSskzaiTeSOeXJGOWmF/ClmADpW+8FiQ3YeGKA7B+S99QVq32HOJiY
-	 jC487/FGE+q/UV7U8KLPFRYyk8lUkYlY1zbjMgsQdQoSith6UY8dkzybtg55i0ENUT
-	 XeXjuoMG+pYEUICE40ZY2cUubzH52H3VHMrktIMmS0TOgDCMjgDnQU6k5DdDWPFD73
-	 HPhz8wnYWgMtA==
-Date: Tue, 26 Aug 2025 16:43:49 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc: Huacai Chen <chenhuacai@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Nathan Chancellor <nathan@kernel.org>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 2/2] objtool/LoongArch: Fix unreachable instruction
- warnings about head.S
-Message-ID: <l7l2ik5b2inhwbxmlae7ozrlxi7hbdjbrhjsrykjgotlhflah6@jebephhvtxki>
-References: <20250826064631.9617-1-yangtiezhu@loongson.cn>
- <20250826064631.9617-3-yangtiezhu@loongson.cn>
- <CAAhV-H7NNtH-oaqMsN5=2c+EdF0-dy5mxcsO=_KFGWqb-FZj_w@mail.gmail.com>
- <b7551efd-cb5b-7503-c455-b8f22fac81bd@loongson.cn>
+	s=arc-20240116; t=1756252407; c=relaxed/simple;
+	bh=hZd7DMon6nfo9tAnosKX54eivkP18xoOYKwiqLXaORg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Z++VY8bjph1QmYc2wXjylJks/bosdu4hRZmHOnOOrvVFLoCOZbRsumDSXy8zbKmtSkRLJySGOEbfSn6BaP9PZpGif9TAYVNWUN7y605txk8j1ELsebpG8bnucka/lMvbsaO48lP+f948/tdWWlyhHStFQRryOc1Vc3WfDyS68KU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu; spf=pass smtp.mailfrom=irl.hu; arc=none smtp.client-ip=95.85.9.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=irl.hu
+Received: from [192.168.2.4] (51b68eac.dsl.pool.telekom.hu [::ffff:81.182.142.172])
+  (AUTH: CRAM-MD5 soyer@irl.hu, )
+  by irl.hu with ESMTPSA
+  id 0000000000088D34.0000000068AE47BF.00233BCC; Wed, 27 Aug 2025 01:48:15 +0200
+Message-ID: <7d64e317bc748fbc1853bb4bc714cd088450fe02.camel@irl.hu>
+Subject: Re: [PATCH v2] ALSA: hda/tas2781: Fix EFI name for calibration
+ beginning with 1 instead of 0
+From: Gergo Koteles <soyer@irl.hu>
+To: Shenghao Ding <shenghao-ding@ti.com>, tiwai@suse.de
+Cc: broonie@kernel.org, andriy.shevchenko@linux.intel.com,
+  13564923607@139.com, 13916275206@139.com,
+  alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+  baojun.xu@ti.com, Baojun.Xu@fpt.com, jesse-ji@ti.com
+Date: Wed, 27 Aug 2025 01:48:14 +0200
+In-Reply-To: <20250826094105.1325-1-shenghao-ding@ti.com>
+References: <20250826094105.1325-1-shenghao-ding@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b7551efd-cb5b-7503-c455-b8f22fac81bd@loongson.cn>
 
-On Tue, Aug 26, 2025 at 08:30:23PM +0800, Tiezhu Yang wrote:
-> On 2025/8/26 下午4:26, Huacai Chen wrote:
-> > On Tue, Aug 26, 2025 at 2:46 PM Tiezhu Yang <yangtiezhu@loongson.cn> wrote:
-> > > 
-> > > When compiling with LLVM and CONFIG_LTO_CLANG is set, there exist the
-> > > following objtool warnings after silencing all of the other warnings:
-> 
-> ...
-> 
-> > >   arch/loongarch/kernel/head.S | 8 ++++----
-> > >   1 file changed, 4 insertions(+), 4 deletions(-)
-> > > 
-> > > diff --git a/arch/loongarch/kernel/head.S b/arch/loongarch/kernel/head.S
-> > > index e3865e92a917..566a1dbf5fa0 100644
-> > > --- a/arch/loongarch/kernel/head.S
-> > > +++ b/arch/loongarch/kernel/head.S
-> > > @@ -20,6 +20,7 @@
-> > >          __HEAD
-> > > 
-> > >   _head:
-> > > +       UNWIND_HINT_UNDEFINED
-> > >          .word   IMAGE_DOS_SIGNATURE     /* "MZ", MS-DOS header */
-> > >          .org    0x8
-> > >          .dword  _kernel_entry           /* Kernel entry point (physical address) */
-> > > @@ -30,6 +31,7 @@ _head:
-> > >          .long   pe_header - _head       /* Offset to the PE header */
-> > > 
-> > >   pe_header:
-> > > +       UNWIND_HINT_UNDEFINED
-> > >          __EFI_PE_HEADER
-> > The efi header is completely not code, the annotations are very strange.
-> 
-> Yes, I think so too, but the aim is only to not checking for objtool,
-> it seems no other better way.
+Hi Shenghao,
 
-Objtool is only getting confused because there's data in a text section.
-Why not put that in a data section?
+On Tue, 2025-08-26 at 17:41 +0800, Shenghao Ding wrote:
+> A bug reported by one of my customers that EFI name beginning with 0
+> instead of 1.
+>=20
+> Fixes: 4fe238513407 ("ALSA: hda/tas2781: Move and unified the calibrated-=
+data getting function for SPI and I2C into the tas2781_hda lib")
+> Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
+>=20
+> ---
+> v2:
+>  - remove unrelated change
+> v1:
+>  - Fix EFI name beginning with 1 instead of 0
+>  - Add extra comments on EFI name for calibration
+>  - Remove an extra space
+> ---
+>  sound/hda/codecs/side-codecs/tas2781_hda_i2c.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c b/sound/hda/c=
+odecs/side-codecs/tas2781_hda_i2c.c
+> index ed7771ab9475..635cbd8820ac 100644
+> --- a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
+> +++ b/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
+> @@ -340,7 +340,8 @@ static int tas2563_save_calibration(struct tas2781_hd=
+a *h)
+>  		data[offset] =3D i;
+>  		offset++;
+>  		for (j =3D 0; j < TASDEV_CALIB_N; ++j) {
+> -			ret =3D snprintf(var8, sizeof(var8), vars[j], i);
+> +			/* EFI name for calibration started with 1, not 0 */
+> +			ret =3D snprintf(var8, sizeof(var8), vars[j], i + 1);
+> =20
+>  			if (ret < 0 || ret >=3D sizeof(var8) - 1) {
+>  				dev_err(p->dev, "%s: Read %s failed\n",
+> @@ -349,7 +350,7 @@ static int tas2563_save_calibration(struct tas2781_hd=
+a *h)
+>  			}
+>  			/*
+>  			 * Our variable names are ASCII by construction, but
+> -			 * EFI names are wide chars.  Convert and zero-pad.
+> +			 * EFI names are wide chars. Convert and zero-pad.
+>  			 */
+>  			memset(efi_name, 0, sizeof(efi_name));
+>  			for (k =3D 0; k < sizeof(var8) && var8[k]; k++)
 
--- 
-Josh
+The previous tas2781_apply_calib() and tas2563_apply_calib() functions
+performed a big endian conversion on the data readed from the EFI
+variables.
+
+I couldn't find this in either fmwlib or this file.
+Could you please recheck if this happens somewhere?
+
+Thanks,
+Gergo
 
