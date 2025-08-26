@@ -1,123 +1,206 @@
-Return-Path: <linux-kernel+bounces-787124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2043B371B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:50:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DB74B371B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:51:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF43D3AF372
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:50:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED20F1BA0EF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:52:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA3532D12E4;
-	Tue, 26 Aug 2025 17:50:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0451A2D29B7;
+	Tue, 26 Aug 2025 17:51:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dEGL/pMe"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZBIWB8Cf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0855275108
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 17:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568B4214A9E;
+	Tue, 26 Aug 2025 17:51:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756230651; cv=none; b=tuEQPtwle6mIoTPXQWRdKyJfWhHLA1dHQuyB5bL7+DRc79iDUde/QHdyqgVB5bfBpZ0vg/m/BKtCPiOBM6Cuq5y3vdRYeaxv3L8cdFzOaolPPwZRmW8SDIJr2MBPkNkmAqSfW3mOOAtk/cC4iNkGzL+1uO2P5jJ2YB0lIfY42Zs=
+	t=1756230694; cv=none; b=ZxAGbuXwItn59fKU9yD5r6E46sillJqXmflxe4A2/azUz5H6fGR7auc1DNNYC1cK7XRhC/Rsb2Zkx5xFkfJXBc1c9KFnS/8nTfECoHgqaULGb7N1NkdzS+xNAfSyDQoTWNizLa4mxuoF3p+iYbko+jNXx4fMH9hu4KnZpDSAVNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756230651; c=relaxed/simple;
-	bh=SoYGthzvA2DVaEWpuysF3EuzSM+/cYcN3iarEnwgXYA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=tMI/YYh8a2K3yKxhi9n/g5D3W18TI7NGuEjsiA4LoWCDabRTPb17d2+rsFBvQY/NcUjsUyY9XFDqoDh7Sc9XKbISzoa1K21OaBitZNj0nW/Bf3GxbjZD0rd7UE1xbu8XKSG8cchzB1B7eC3za9XOGXoWTVDRdVOKDmm7qALHhw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dEGL/pMe; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32515e8e4cbso9005319a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 10:50:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756230649; x=1756835449; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=aUqwFSXiDOoK2Bx2xqLwmy8TEJEoVSK65XNfAilJTJE=;
-        b=dEGL/pMeLlLZNRxFhJnpfUbfn7WnLHi+fkTotuE3A1SiFRYQztcoRvHNlfXXAYtNOr
-         befU9WcC1+ewKKELYp8uooKPfWW0FNOOgX6ciHvwpQLYM0T1zZTFi3rS3AUXXbHYeyMs
-         7Ux7iex6O2d7mbKosWnnBNtnIm64kMDWR0d592OKToGYWwn4ir8Xg+oeW9GEvBg5VqjB
-         2qZSptXatLdKWoNKwL8BJDD/efLEZYXjA9hC6h2JsEf4DMJqaeZPcaBCeh5QwFQ4Rq3m
-         cnV5WXyYOyVMhVaGty4r780+vdBZB/wnld0KTgVxxR4auMxzdJHFLVHLHbkIEb9Fza6c
-         NOUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756230649; x=1756835449;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aUqwFSXiDOoK2Bx2xqLwmy8TEJEoVSK65XNfAilJTJE=;
-        b=P8vLCuQlQzOcg9CFmGkwuSFlxrK5e+/GjIWOiiDk4pEspOAHKTT77f5yXOvYONxOHR
-         1y8+ABf1TN00Be0MVeAZxDYJ1xJIBTRtA2ZvJwflljZ+x1nOMuPL1B5xy09mFqgvGYGy
-         7L1qde48Yv9ew6gSXqpCIHF3z9Pes8goyCAa2OydYdJNruW5zUqkYwICEGQrO/aDAyEG
-         Bc/WVIufZ4TvBr3a3iVulzxrWx5MFBnZ1G8S8m6DAMNH+/D6LHM/JczIUjnPMvJ0IHbY
-         0kr2c0Eq0xwjnv4DPQ9WKsYvNfC8Vt+Yl2ENKvGJzYzIVOknY3J1UNIQBCf1ZX0NAtEf
-         zmZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUeGj8MWabk9QNUODsR0uXHh7Kea9qRFvLX1FOazmT5O2U4JxFnWXRfYEK4w1GX0ys0x96ZGl5413AibsA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxII6uqfd40+QrOSi+Vn7j9elTRN51d1nChQUWuj5V3dgdIPtuf
-	mCV+m09uk5Rlku1OHUV39BPY7teu7nEJvITu3L+DH0y8uFezTMUflDd8ANiOzdjfdul/q0htSbE
-	ApAc7Vg==
-X-Google-Smtp-Source: AGHT+IEd9dJFwfsX/b931ErJNgizvDk6gtbfVhHXFniSsp95TCi8X85PJ+yQnB23nN+wM4R0MogUdHTCO1U=
-X-Received: from pjbrr12.prod.google.com ([2002:a17:90b:2b4c:b0:325:7c49:9cce])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1f91:b0:321:2b89:957c
- with SMTP id 98e67ed59e1d1-32515ec8d01mr20489624a91.27.1756230649269; Tue, 26
- Aug 2025 10:50:49 -0700 (PDT)
-Date: Tue, 26 Aug 2025 10:50:47 -0700
-In-Reply-To: <CANypQFbEySjKOFLqtFFf2vrEe=NBr7XJfbkjQhqXuZGg7Rpoxw@mail.gmail.com>
+	s=arc-20240116; t=1756230694; c=relaxed/simple;
+	bh=5OG0CFSumhwO6LPpaT7Nwl9tbfKtGy7nJSNDdcsM6Xw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KYFYnjtZeNPTZisHJMLSJ3RhmxuIey1aYRVf00AmJkkM8l4kiTviNRe0wzirRzkfeUwsF7CG15Ev43RRE5CgJEIfUEMaVoExDkWFQGuKsqGRmtxEVjnQnOkYbJWj6WvW84p/T1c6DwLIQo/6p8OldfWzWIXhN/nfR/ohoem4iKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZBIWB8Cf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B72F2C4CEF1;
+	Tue, 26 Aug 2025 17:51:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756230693;
+	bh=5OG0CFSumhwO6LPpaT7Nwl9tbfKtGy7nJSNDdcsM6Xw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZBIWB8CfNuqO2Xt04dr1deTArEr1hsWTPwg3F+HkeDvfDwssE5q+kkFSD6kSTleEN
+	 00d6M0WcGX5tfcuEb1jeRM4FhRpA1iVofSqHon/UJK8jDClHQAHt/XiSWvt6ofRRRV
+	 P54jx5TwCo9IRGFD21Xt7eUWwpkaVRVhov8z8dWtJTjrbv8lQTJr7GxD0uxxNdrITF
+	 Ewpw0B3LnGgv0+qIJeWk+4nwUn6zF7bU71y3GZHEnkWGofxwqw3bATe3mHa1LoUaD+
+	 pBBYsBR2/A7eREM5xY6JjyJQP8jTH46SanN4fy90/GdhJPIgLp+DGPTga2bvrROvZL
+	 +WxtkIB0brobg==
+Date: Tue, 26 Aug 2025 18:51:29 +0100
+From: Conor Dooley <conor@kernel.org>
+To: xianwei.zhao@amlogic.com
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liang Yang <liang.yang@amlogic.com>,
+	Feng Chen <feng.chen@amlogic.com>, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-amlogic@lists.infradead.org
+Subject: Re: [PATCH v3 1/3] spi: dt-bindings: add Amlogic A113L2 SFC
+Message-ID: <20250826-scratch-cleft-a3f7b36a3cb5@spud>
+References: <20250826-spifc-v3-0-7e926041d7f6@amlogic.com>
+ <20250826-spifc-v3-1-7e926041d7f6@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <CANypQFbEySjKOFLqtFFf2vrEe=NBr7XJfbkjQhqXuZGg7Rpoxw@mail.gmail.com>
-Message-ID: <aK3z92uBZNcVQGf7@google.com>
-Subject: Re: [Discussion] Undocumented behavior of KVM_SET_PIT2 with count=0
-From: Sean Christopherson <seanjc@google.com>
-To: Jiaming Zhang <r772577952@gmail.com>
-Cc: kvm@vger.kernel.org, pbonzini@redhat.com, linux-kernel@vger.kernel.org, 
-	syzkaller@googlegroups.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nV4lczYBtuhRtLNv"
+Content-Disposition: inline
+In-Reply-To: <20250826-spifc-v3-1-7e926041d7f6@amlogic.com>
 
-On Mon, Aug 25, 2025, Jiaming Zhang wrote:
-> Hello KVM maintainers and developers,
-> 
-> I hope this email finds you well.
-> 
-> While fuzzing the KVM subsystem with our modified version of syzkaller
-> on Linux Kernel, I came across an interesting behavior with the
-> KVM_SET_PIT2 and KVM_GET_PIT2 ioctls.
-> 
-> Specifically, when setting kvm_pit_state2.channels[c].count to 0 via
-> KVM_SET_PIT2 and then immediately reading the state back with
-> KVM_GET_PIT2, the returned count is 65536 (0x10000). This behavior
-> might be surprising for developers because, intuitively, the data
-> output via GET should be consistent with the data input via SET. I
-> could not find this special case mentioned in the KVM API
-> documentation (Documentation/virt/kvm/api.rst).
-> 
-> After looking into the kernel source (arch/x86/kvm/i8254.c), I
-> understand this conversion is by design. It correctly emulates the
-> physical i8254 PIT, which treats a programmed count of 0 as its
-> maximum value (2^16). While the hardware emulation is perfectly
-> correct, it may potentially be confusing for users.
-> 
-> To prevent future confusion and improve the API's clarity, I believe
-> it would be beneficial to add a note to the documentation explaining
-> this special handling for count = 0.
-> 
-> I'm bringing this to your attention to ask for your thoughts. If you
-> agree, I would be happy to prepare and submit a documentation patch to
-> clarify this.
 
-I have no objection, especially since you're volunteering to do the work of
-actually writing the documentation :-)
+--nV4lczYBtuhRtLNv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Somewhat of a side topic, I expect KVM_SET_LAPIC and KVM_GET_LAPIC have similar
-behavior, as KVM applies fixup on the incoming local APIC state, e.g. to force
-LDR for x2APIC mode according to hardware specs.
+On Tue, Aug 26, 2025 at 10:10:09AM +0800, Xianwei Zhao via B4 Relay wrote:
+> From: Feng Chen <feng.chen@amlogic.com>
+>=20
+> The Flash Controller is derived by adding an SPI path to the original
+> raw NAND controller. This controller supports two modes: raw mode and
+> SPI mode. The raw mode has already been implemented in the community,
+> and the SPI mode is described here.
+>=20
+> Add bindings for Amlogic A113L2 SPI Flash Controller.
+>=20
+> Signed-off-by: Feng Chen <feng.chen@amlogic.com>
+> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+> ---
+>  .../devicetree/bindings/spi/amlogic,a4-spifc.yaml  | 82 ++++++++++++++++=
+++++++
+>  1 file changed, 82 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/spi/amlogic,a4-spifc.yaml =
+b/Documentation/devicetree/bindings/spi/amlogic,a4-spifc.yaml
+> new file mode 100644
+> index 000000000000..80a89408a832
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/spi/amlogic,a4-spifc.yaml
+> @@ -0,0 +1,82 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +# Copyright (C) 2025 Amlogic, Inc. All rights reserved
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/spi/amlogic,a4-spifc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: SPI flash controller for Amlogic ARM SoCs
+> +
+> +maintainers:
+> +  - Liang Yang <liang.yang@amlogic.com>
+> +  - Feng Chen <feng.chen@amlogic.com>
+> +  - Xianwei Zhao <xianwei.zhao@amlogic.com>
+> +
+> +description:
+> +  The Amlogic SPI flash controller is an extended version of the Amlogic=
+ NAND
+> +  flash controller. It supports SPI Nor Flash and SPI NAND Flash(where t=
+he Host
+> +  ECC HW engine could be enabled).
+> +
+> +allOf:
+> +  - $ref: /schemas/spi/spi-controller.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: amlogic,a4-spifc
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: clock apb gate
+> +      - description: clock used for the controller
+> +
+> +  clock-names:
+> +    items:
+> +      - const: gate
+> +      - const: core
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  amlogic,rx-adj:
+> +    description:
+> +      Adjust sample timing for RX, Sampling time move later by 1 bus clo=
+ck.
 
-I wouldn't be surprised if there are other SET+GET pairs that aren't "pure".
-If you run into more surprises, definitely free to submit documentation patches.
+By 1 bus clock? Or by up to 3? I'd suggest rewording this to something
+like "Number of clock cycles by which sampling is delayed" or along
+those lines.
+
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 1, 2, 3]
+> +    default: 0
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    sfc0: spi@fe08d000 {
+> +      compatible =3D "amlogic,a4-spifc";
+> +      reg =3D <0xfe08d000 0x800>;
+> +      clocks =3D <&clkc_periphs 31>,
+> +               <&clkc_periphs 102>;
+> +      clock-names =3D "gate", "core";
+> +
+> +      pinctrl-0 =3D <&spiflash_default>;
+> +      pinctrl-names =3D "default";
+> +
+> +      #address-cells =3D <1>;
+> +      #size-cells =3D <0>;
+> +
+> +      flash@0 {
+> +          compatible =3D "spi-nand";
+> +          reg =3D <0>;
+> +          #address-cells =3D <1>;
+> +          #size-cells =3D <1>;
+> +          nand-ecc-engine =3D <&sfc0>;
+> +          nand-ecc-strength =3D <8>;
+> +          nand-ecc-step-size =3D <512>;
+> +      };
+> +    };
+>=20
+> --=20
+> 2.37.1
+>=20
+>=20
+
+--nV4lczYBtuhRtLNv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaK30IQAKCRB4tDGHoIJi
+0mnBAP9q21gLzy77xyCZZSJg4XByZEMOe0XHyHUr6l/8gLQX/AEA5uxdEN8+9653
+Kjgpi+dqVC4/8HIBfELwg25BaNiapwM=
+=qzT9
+-----END PGP SIGNATURE-----
+
+--nV4lczYBtuhRtLNv--
 
