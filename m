@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-786942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7215CB36F24
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 18:00:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EFF1B36F0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:57:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33596986B9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:53:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89136464D4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C54FA3164CB;
-	Tue, 26 Aug 2025 15:49:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3AAA3705AC;
+	Tue, 26 Aug 2025 15:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="b4t3jOSJ"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="lovcWmXU"
 Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB5136CDFC
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 15:49:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E0536CC9D
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 15:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756223360; cv=none; b=RrdouDlcMXBgMyKYUB8WRMYKOU2UH/70HPJZA7YnL6aZrPfKmfopZ3PHj/yIDmROGOA4XXeVLCYxfIyKwlWuO260I7fED3yYyVo4MRNQmA2OndodEX4zC9bwsS9htt3UW6ZQ50P5cdwcnnEDowE8rCMMYCH5+cafVbMhc+LAQ1w=
+	t=1756223358; cv=none; b=ctm7QmgjJDqbB0DUZJKcB+7Kh34009PvCwWRp2VQv1QZssr3jmrQYUtAhcbZjtiSabVWZht9XEx7nT+ZTFlKAKzmQdl1z+AHBd6FjeOVBhIWXkdqJRiSkGK9pnIHFRw2ALx91FLQci9qj9e1u6kld1hKH/r6uAxzE53Y5n50Vp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756223360; c=relaxed/simple;
-	bh=GRLIw++HXYPYzEg5bup3HIK8/atQ3BKC54yZ8PXsnOM=;
+	s=arc-20240116; t=1756223358; c=relaxed/simple;
+	bh=UupRcB6KUt1GHL486o0IBajaAHMWB28U+QfxjkoiYnY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=b/pujSqGOqVUKsdyB9PBFTQnULlSYynCP7S1qUVCbjs7hPpuPMGmWHJmhyYTwGoVaHdIHgZy3tpymYWZDsXTRommNaDGkru24+cYqgQaUxrihX5o05mPcQ1M1mI2Wdc8uZ01SAbe7t1iy0O491RNo/7xOA5mruTnv98WD/Slbjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=b4t3jOSJ; arc=none smtp.client-ip=205.220.165.32
+	 MIME-Version; b=ixhTBBu5DhH6IZfa1iGRnQj9iG+fkkVALY/2oGkyKlLmxmHxmNWwqUrgTIXbZ364qVb11ZqPpyAqbXWF8SMIS3atoFjR00jfS6XhVVyJ7tI513eYvXqMoN5SAHVWz5UwZUxC/Ux23rWaRbG0ThelmhZKkj0sFY9CZQu9RxK3+uE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=lovcWmXU; arc=none smtp.client-ip=205.220.165.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57QFC50C005030;
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57QFDDRP019292;
 	Tue, 26 Aug 2025 15:49:07 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
 	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=corp-2025-04-25; bh=3sarT
-	GpZXc47YJNelk3lJobSSOUhn3KH00A7S/whZ6c=; b=b4t3jOSJU13m1630m6Yt4
-	htfENrJpCE6zJv5+YcinsYF65Nn2RTOkDohkD2+8lV7ZcgfgdWDwGyhrZl6YOePV
-	8H87h8dlk3CTb7H0Fu5IIY443559mRqpJAGkeDYuCZIboQK/iz4yArWFs2cX0qiH
-	9sg8sjGr4SD3Zc2s8tFRPjTsHIuc+aXIWt0YASXG+oJtPci6U/t7DPGRec3Q6lQR
-	ZgNsBJ2l2s4IJuS4cxOm1X2fc6zMm0qYme2IA8xUupL3+AOU3gbvUDj8vms6Moxh
-	8QDR5vkkQGyu4W1S995h0jRvNv4vf7W4lceUE592AenpNpi5atkvfXhrrCOaNqjU
-	A==
+	:mime-version:references:subject:to; s=corp-2025-04-25; bh=nCbt7
+	TS8/hbAOYDRRl6Jn1HXdbKA/WSEYy5d+Ymz4DY=; b=lovcWmXUwB0wti1EjUckN
+	Y5fh5XAXtQv53zGPgDfzcnEUENP6bEiZAaJz+PvFdc0efF1lIoz6+hvc1y6W9XTF
+	EB6v4TxX84MIr4P6MKuFKb+JZoZdFgr5SMn/AZG2TndROFE5jBL+RbuDnISh4FxB
+	bFXlvwq1X7e4pF/PFKS41Myem6glAagYY29reFq39opc+ODsima9UXUWWWSLFuqU
+	glSMUa++ZzVgJuntqSM4RSFgM/fNs0vkOOX3aVG1ATNhqjDa+8zCyeDX5mtcJidG
+	je2FLB8l/LHwPxO37Wnz2qh0uRs94eO4nUNBz8srNcLpBZuXCH3hS5onwV9QYsG2
+	w==
 Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48q678vrq1-1
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48r8twbh0v-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 26 Aug 2025 15:49:06 +0000 (GMT)
+	Tue, 26 Aug 2025 15:49:07 +0000 (GMT)
 Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57QEhpqo014573;
-	Tue, 26 Aug 2025 15:49:05 GMT
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57QF51On014662;
+	Tue, 26 Aug 2025 15:49:06 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 48q439pn1h-1
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 48q439pn1v-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Tue, 26 Aug 2025 15:49:05 +0000
 Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57QFn4EJ020762;
-	Tue, 26 Aug 2025 15:49:04 GMT
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57QFn4EL020762;
+	Tue, 26 Aug 2025 15:49:05 GMT
 Received: from sidhakum-ubuntu.osdevelopmeniad.oraclevcn.com (sidhakum-ubuntu.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.250.108])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 48q439pn0g-2;
-	Tue, 26 Aug 2025 15:49:04 +0000
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 48q439pn0g-3;
+	Tue, 26 Aug 2025 15:49:05 +0000
 From: Sidhartha Kumar <sidhartha.kumar@oracle.com>
 To: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
         airlied@gmail.com, simona@ffwll.ch, willy@infradead.org,
         sidhartha.kumar@oracle.com, jani.nikula@linux.intel.com
-Subject: [PATCH v3 1/6] drm: Convert aux_idr to XArray
-Date: Tue, 26 Aug 2025 15:48:55 +0000
-Message-ID: <20250826154900.405480-2-sidhartha.kumar@oracle.com>
+Subject: [PATCH v3 2/6] drm: Convert object_name_idr to XArray
+Date: Tue, 26 Aug 2025 15:48:56 +0000
+Message-ID: <20250826154900.405480-3-sidhartha.kumar@oracle.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250826154900.405480-1-sidhartha.kumar@oracle.com>
 References: <20250826154900.405480-1-sidhartha.kumar@oracle.com>
@@ -85,130 +85,137 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 ml
  mlxscore=0 bulkscore=0 phishscore=0 adultscore=0 spamscore=0
  malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2508110000 definitions=main-2508260139
-X-Proofpoint-GUID: hzisO9SJgDKI5xZAYV2Ij-zNR9bgvOLN
-X-Proofpoint-ORIG-GUID: hzisO9SJgDKI5xZAYV2Ij-zNR9bgvOLN
-X-Authority-Analysis: v=2.4 cv=NrLRc9dJ c=1 sm=1 tr=0 ts=68add772 b=1 cx=c_pps
+X-Proofpoint-ORIG-GUID: lURWdUPMT_LxaX6uYt3Qcr3enYji_NOz
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI0MDE4NCBTYWx0ZWRfX7RSRs8OM02+p
+ VS3t8OXbd/+s+8XsHRVYAbHpMxhVfTRti8FhT4v3qfcDfTVwlFiv4EFkysxsiYFY4QtP+Dx7xTl
+ RCbvfE8gbZ9QU+vyXGIYrS9qcpodf7kDpxQ9LBH+wfoERfzJ26os6Ef/HXY1U83rPrTQwPTy9Bi
+ cuQBAs4nWrE0OPRdcasv1w/FIPmcaT3vWG+jELJszC0WHgzZZWr4Cul/Isqggi6eduAvp6PdseV
+ I14WLgRe3U59JwNTVDte19xIqu3wqGNVIbCRzk87NRvaJKX1skN9fOzSjsqH/VgT9hCuzXVUMzP
+ qQVfkS/p2e7VUOwORU01pOP/M5MfFpEyvBMlfzpBh4GO+StqRjaIdnPyHPyDlh5ifgBXnHtBhBD
+ +3RVWxGqN8q+ZWjJvt5UMZhFv+YtWw==
+X-Proofpoint-GUID: lURWdUPMT_LxaX6uYt3Qcr3enYji_NOz
+X-Authority-Analysis: v=2.4 cv=IciHWXqa c=1 sm=1 tr=0 ts=68add773 b=1 cx=c_pps
  a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
- a=2OwXVqhp2XgA:10 a=JfrnYn6hAAAA:8 a=yPCof4ZbAAAA:8 a=bhnSk7d9TMSBOys-tl0A:9
+ a=2OwXVqhp2XgA:10 a=JfrnYn6hAAAA:8 a=yPCof4ZbAAAA:8 a=DK_Tli1e-HrAiUtdIdsA:9
  a=1CNFftbPRP8L7MoqJWF3:22 cc=ntf awl=host:13602
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzNSBTYWx0ZWRfXzfmLh8wFUAtU
- Ue/rtoX2F0eBE/GrlcJEKdpoIbkoZOdEakNNOVhLjNtUGZQJSYcnkgvLCJpocu3+sCDroNjx3Xb
- +7RGch9c16K7SfaTNHdJ/9C+rbupROCzofoMBI7hM976QQ/j2dx5Jf5qyvmnr4v6AapOi0Hvdnb
- 2Pjwv7Mus2UL8EAuYgVg2hVDYbah2HbKSKtqcbqGWfbAyfC5QlRpdldWYbnj4f1QhXhrFywGYJB
- jwgsXlN4W6vjfrNDFHHGhFdrQFYb9VZF3gzITXx/h3HR8zPWsOlKNPlWSCBXfIZzuOa/md5TdHr
- JcoVXzZJe3AC7vpkIK0gDJ5p6HIAc9PfLYOzpIJoUcFRR+59vGSRrlL+SaxHh57BmxOTfvZRIO5
- dxxqTidEMhT2TraG0xY5LePc4x7XwA==
 
 From: Matthew Wilcox <willy@infradead.org>
 
 From: Matthew Wilcox <willy@infradead.org>
 
-Remove aux_idr_mutex by converting aux_idr to an XArray.
-aux_xa->index and aux_dev is not modified so the indentifier value
-is unchanged.
+It's not possible to replace object_name_lock as it protects more
+code than should be reasonably be run under a spinlock, so the xa_lock
+is nested under the object_name_lock.
+
+obj->name and obj is not modified so the indentifier value is unchanged
+after this change.
 
 Signed-off-by: Matthew Wilcox <willy@infradead.org>
 Signed-off-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
 ---
- drivers/gpu/drm/display/drm_dp_aux_dev.c | 38 ++++++++++--------------
- 1 file changed, 15 insertions(+), 23 deletions(-)
+ drivers/gpu/drm/drm_debugfs.c | 19 ++++++-------------
+ drivers/gpu/drm/drm_gem.c     | 11 +++++------
+ include/drm/drm_device.h      |  4 ++--
+ 3 files changed, 13 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/gpu/drm/display/drm_dp_aux_dev.c b/drivers/gpu/drm/display/drm_dp_aux_dev.c
-index 29555b9f03c8..2a29d4b2cda0 100644
---- a/drivers/gpu/drm/display/drm_dp_aux_dev.c
-+++ b/drivers/gpu/drm/display/drm_dp_aux_dev.c
-@@ -52,8 +52,7 @@ struct drm_dp_aux_dev {
- 
- #define DRM_AUX_MINORS	256
- #define AUX_MAX_OFFSET	(1 << 20)
--static DEFINE_IDR(aux_idr);
--static DEFINE_MUTEX(aux_idr_mutex);
-+static DEFINE_XARRAY_ALLOC(aux_xa);
- static struct class *drm_dp_aux_dev_class;
- static int drm_dev_major = -1;
- 
-@@ -61,11 +60,11 @@ static struct drm_dp_aux_dev *drm_dp_aux_dev_get_by_minor(unsigned index)
- {
- 	struct drm_dp_aux_dev *aux_dev = NULL;
- 
--	mutex_lock(&aux_idr_mutex);
--	aux_dev = idr_find(&aux_idr, index);
-+	xa_lock(&aux_xa);
-+	aux_dev = xa_load(&aux_xa, index);
- 	if (aux_dev && !kref_get_unless_zero(&aux_dev->refcount))
- 		aux_dev = NULL;
--	mutex_unlock(&aux_idr_mutex);
-+	xa_unlock(&aux_xa);
- 
- 	return aux_dev;
+diff --git a/drivers/gpu/drm/drm_debugfs.c b/drivers/gpu/drm/drm_debugfs.c
+index 365cf337529f..3e57e3da5115 100644
+--- a/drivers/gpu/drm/drm_debugfs.c
++++ b/drivers/gpu/drm/drm_debugfs.c
+@@ -122,27 +122,20 @@ static int drm_clients_info(struct seq_file *m, void *data)
+ 	return 0;
  }
-@@ -73,7 +72,7 @@ static struct drm_dp_aux_dev *drm_dp_aux_dev_get_by_minor(unsigned index)
- static struct drm_dp_aux_dev *alloc_drm_dp_aux_dev(struct drm_dp_aux *aux)
+ 
+-static int drm_gem_one_name_info(int id, void *ptr, void *data)
+-{
+-	struct drm_gem_object *obj = ptr;
+-	struct seq_file *m = data;
+-
+-	seq_printf(m, "%6d %8zd %7d %8d\n",
+-		   obj->name, obj->size,
+-		   obj->handle_count,
+-		   kref_read(&obj->refcount));
+-	return 0;
+-}
+-
+ static int drm_gem_name_info(struct seq_file *m, void *data)
  {
- 	struct drm_dp_aux_dev *aux_dev;
--	int index;
-+	int err;
+ 	struct drm_debugfs_entry *entry = m->private;
+ 	struct drm_device *dev = entry->dev;
++	struct drm_gem_object *obj;
++	unsigned long index;
  
- 	aux_dev = kzalloc(sizeof(*aux_dev), GFP_KERNEL);
- 	if (!aux_dev)
-@@ -82,14 +81,12 @@ static struct drm_dp_aux_dev *alloc_drm_dp_aux_dev(struct drm_dp_aux *aux)
- 	atomic_set(&aux_dev->usecount, 1);
- 	kref_init(&aux_dev->refcount);
+ 	seq_printf(m, "  name     size handles refcount\n");
  
--	mutex_lock(&aux_idr_mutex);
--	index = idr_alloc(&aux_idr, aux_dev, 0, DRM_AUX_MINORS, GFP_KERNEL);
--	mutex_unlock(&aux_idr_mutex);
--	if (index < 0) {
-+	err = xa_alloc(&aux_xa, &aux_dev->index, aux_dev,
-+		XA_LIMIT(0, DRM_AUX_MINORS - 1), GFP_KERNEL);
-+	if (err < 0) {
- 		kfree(aux_dev);
--		return ERR_PTR(index);
-+		return ERR_PTR(err);
+ 	mutex_lock(&dev->object_name_lock);
+-	idr_for_each(&dev->object_name_idr, drm_gem_one_name_info, m);
++	xa_for_each(&dev->object_names, index, obj) {
++		seq_printf(m, "%6d %8zd %7d %8d\n", obj->name, obj->size,
++				obj->handle_count, kref_read(&obj->refcount));
++	}
+ 	mutex_unlock(&dev->object_name_lock);
+ 
+ 	return 0;
+diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
+index 6a44351e58b7..cef0c5935798 100644
+--- a/drivers/gpu/drm/drm_gem.c
++++ b/drivers/gpu/drm/drm_gem.c
+@@ -97,7 +97,7 @@ drm_gem_init(struct drm_device *dev)
+ 	struct drm_vma_offset_manager *vma_offset_manager;
+ 
+ 	mutex_init(&dev->object_name_lock);
+-	idr_init_base(&dev->object_name_idr, 1);
++	xa_init_flags(&dev->object_names, XA_FLAGS_ALLOC1);
+ 
+ 	vma_offset_manager = drmm_kzalloc(dev, sizeof(*vma_offset_manager),
+ 					  GFP_KERNEL);
+@@ -269,7 +269,7 @@ static void drm_gem_object_handle_free(struct drm_gem_object *obj)
+ 
+ 	/* Remove any name for this object */
+ 	if (obj->name) {
+-		idr_remove(&dev->object_name_idr, obj->name);
++		xa_erase(&dev->object_names, obj->name);
+ 		obj->name = 0;
  	}
--	aux_dev->index = index;
- 
- 	return aux_dev;
  }
-@@ -250,22 +247,19 @@ static const struct file_operations auxdev_fops = {
- 
- static struct drm_dp_aux_dev *drm_dp_aux_dev_get_by_aux(struct drm_dp_aux *aux)
- {
--	struct drm_dp_aux_dev *iter, *aux_dev = NULL;
--	int id;
-+	struct drm_dp_aux_dev *aux_dev;
-+	unsigned long id;
- 
- 	/* don't increase kref count here because this function should only be
- 	 * used by drm_dp_aux_unregister_devnode. Thus, it will always have at
- 	 * least one reference - the one that drm_dp_aux_register_devnode
- 	 * created
- 	 */
--	mutex_lock(&aux_idr_mutex);
--	idr_for_each_entry(&aux_idr, iter, id) {
--		if (iter->aux == aux) {
--			aux_dev = iter;
-+	xa_for_each(&aux_xa, id, aux_dev) {
-+		if (aux_dev->aux == aux)
- 			break;
--		}
+@@ -927,11 +927,10 @@ drm_gem_flink_ioctl(struct drm_device *dev, void *data,
  	}
--	mutex_unlock(&aux_idr_mutex);
-+
- 	return aux_dev;
- }
  
-@@ -284,9 +278,7 @@ void drm_dp_aux_unregister_devnode(struct drm_dp_aux *aux)
- 	 */
- 	aux->drm_dev = NULL;
+ 	if (!obj->name) {
+-		ret = idr_alloc(&dev->object_name_idr, obj, 1, 0, GFP_KERNEL);
++		ret = xa_alloc(&dev->object_names, &obj->name, obj,
++				xa_limit_32b, GFP_KERNEL);
+ 		if (ret < 0)
+ 			goto err;
+-
+-		obj->name = ret;
+ 	}
  
--	mutex_lock(&aux_idr_mutex);
--	idr_remove(&aux_idr, aux_dev->index);
--	mutex_unlock(&aux_idr_mutex);
-+	xa_erase(&aux_xa, aux_dev->index);
+ 	args->name = (uint64_t) obj->name;
+@@ -967,7 +966,7 @@ drm_gem_open_ioctl(struct drm_device *dev, void *data,
+ 		return -EOPNOTSUPP;
  
- 	atomic_dec(&aux_dev->usecount);
- 	wait_var_event(&aux_dev->usecount, !atomic_read(&aux_dev->usecount));
+ 	mutex_lock(&dev->object_name_lock);
+-	obj = idr_find(&dev->object_name_idr, (int) args->name);
++	obj = xa_load(&dev->object_names, (int) args->name);
+ 	if (obj) {
+ 		drm_gem_object_get(obj);
+ 	} else {
+diff --git a/include/drm/drm_device.h b/include/drm/drm_device.h
+index a33aedd5e9ec..6a28a9b134dd 100644
+--- a/include/drm/drm_device.h
++++ b/include/drm/drm_device.h
+@@ -325,8 +325,8 @@ struct drm_device {
+ 	/** @object_name_lock: GEM information */
+ 	struct mutex object_name_lock;
+ 
+-	/** @object_name_idr: GEM information */
+-	struct idr object_name_idr;
++	/** @object_names: GEM information */
++	struct xarray object_names;
+ 
+ 	/** @vma_offset_manager: GEM information */
+ 	struct drm_vma_offset_manager *vma_offset_manager;
 -- 
 2.43.0
 
