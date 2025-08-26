@@ -1,142 +1,146 @@
-Return-Path: <linux-kernel+bounces-786341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEE51B3589F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:20:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1429AB35890
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 11:17:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B10C3174CC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:16:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 703371BA04E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:17:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 560A8306D3E;
-	Tue, 26 Aug 2025 09:16:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0B53176FF;
+	Tue, 26 Aug 2025 09:16:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="coY8G13j"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rdZk414z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391C8305E1F
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 09:16:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE3D3090CD;
+	Tue, 26 Aug 2025 09:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756199765; cv=none; b=ID/M6RTCYjcyb+JOUTdgN/OgW0+m3Hk0eQGLk6Tj4mESAY3dq0f6kkErJL+76pjguZVpW0+UqGj9P1MbCDoFrvlVWaOjIJ9qckrTPezmbDZlL7C6EpE0bUPOBEOfDrm59fKPL0YKy9LejBtkLeEZKWPFsFwU5rhjrIkT9OH4Wf0=
+	t=1756199770; cv=none; b=nAgvWeAI1x3hEb0vYTf8HLSdbdyqmFAVHI7LawgUqlJRaWa1WJTVtyNNu766xbRPbmIfbGY8DX2G43YycmoJAUKLkUV+m8h5sJ1XIkGe3MPgDvprt7ph9Aj7J82XF52aVqSuM08/bCacfQBzQzcKYld0juMxv7JSRrfw4FMfbSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756199765; c=relaxed/simple;
-	bh=1y6xXtnsBfcq1kO8jrl/JBy033EpU/0duq6peYZvdWg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XBgPhvJfRs4K580MDkB9ToahwajQTKvzuV2oZ22K2+B9uP4mNEXLfJHl9Tra+Kb/k3paaC2X2NN2YwJvbLy6o/5NyTD+w79E1NG9rYRlKX7Ksith21Yx3MSlPzsGFoBXJrR+X9BXjcnXJdA89ewKzjAbvMKYEOVexZEGZiU0xXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=coY8G13j; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-24687a76debso23631025ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 02:16:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1756199762; x=1756804562; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2tcYVYvsM6kA2zwY5YJW0abgLUuueK5NNoX+JNJ1avE=;
-        b=coY8G13j08J9SYOCdkQHYVfiUyrieYQA5+xgVtkwKCoxpBEX6orYEdvw4qLLbZJesf
-         g+zMshK67gGsVo/gKdkqLCP1/Bn0sPb18VlxaJXdr5YMtZxTmRV2wrRa4dZOgwCEqz2L
-         Wa+HQHieWdnrfh0LZBPmL+x7xdRFRI8WP4cLI5p3fqsabKkYZEoAooNOl9BDGECTOlbL
-         elKRiX8FFQFKb5rj1DJnASlz2PXTDYq64jV3Hdy6tG8G97kRxfDiv+/45fn6eEsubqe4
-         U1QW4h0KAw04mjl/P8dWAE167PZaSz5UTZx1CcgM4iKUAEAIReid+l2VXiYjfY4dfF7b
-         2anA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756199762; x=1756804562;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2tcYVYvsM6kA2zwY5YJW0abgLUuueK5NNoX+JNJ1avE=;
-        b=aRya4Oxvs9xln+39Q3pheV2St1QCyyNiQ1dQXWu1A1PLPm420G92zZnnQ7o3StVCmG
-         qR49nd37KPqoXedjl/260T0lrOHfpMP0++Vru7y92uC1xQjk/8gqyyZJItSrNl825hJK
-         yhpMocv+v18Hz3awxqCRbT0Gz7Ym3/hXYRLdGYNzMzEe4UIcguVHZ+D9rybc5cacIqMb
-         YVvb16Odil/t5ssI853J/qM4+rpe137xHj5JnN57LrxV7ejkOOSE+YhqDHGaJGVbNArT
-         m83ITlIuOr0yQi9JIYlph3gsoOIx3z9XMtOeQRZsWqyGOys9FwaeKvxUz2laVuS/NFZt
-         q0mg==
-X-Forwarded-Encrypted: i=1; AJvYcCVXDoElglMphArFkBkgYthyrvsQL60mtlijlaGnSrLAHyYlyMUZ/V3UfS9elrg1+OxPf14E/rPBKu/Lwu8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy76BBUzLQY8thi5BPCpYdnI8ZLUvf8A5r3LVQJJQVHdNw6Cqsj
-	V3nJU6mRcFTwPsRkzHG6GbRQvkmNlvPHMTualIc2HiCGMJprQUpJ3OPLSNOSgb5sXg==
-X-Gm-Gg: ASbGncuMZJoxOQHIBG2ifVtajlIEoUVrI0jU/TTKJMo3gIoT+bKHWPj5iiUkN6RUemZ
-	8Z8Y1lXfST5KguPfILBHc67eSzqydDs8fjnRbqA3uIiKk3+pyyYQDaJ7PM0EgI0f32c6LOIPdom
-	MY8K/BkTVZ6O1nOlL/vHuoAZPU18LdRbDfWROFzUd3YDig7gmlrShPJ1I94U1889Uun2PjuT8Dd
-	XC4Oznc9Mj7+p7341ToJKPrtdOoNFc1UmsEnnwpV2MDrTGRR3Qn1sn021P48x+TZBMkQxajI1Xy
-	8cShx8MWlP3PFtjcMnbf3Nsqjs+lqcPwWmz7HU385IA7WguGOQXgnYSnuIuT8hxiaGqIJhmvmWR
-	SakZoH7qxMxbUoEivHbj4dry9zjwHi61Z7PNwEsvC+m8xBos=
-X-Google-Smtp-Source: AGHT+IFKzh36i/RR/bwLCELe7gb/WIrtsSCl8pnqE3wNQlAA5RehW1rSbbJl/QtH9n2qSYJ+QAkpWA==
-X-Received: by 2002:a17:903:1b0c:b0:240:6fc0:3421 with SMTP id d9443c01a7336-248753a27acmr10478495ad.3.1756199762210;
-        Tue, 26 Aug 2025 02:16:02 -0700 (PDT)
-Received: from bytedance ([61.213.176.56])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24692f981c9sm74072675ad.116.2025.08.26.02.15.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 02:16:01 -0700 (PDT)
-Date: Tue, 26 Aug 2025 17:15:51 +0800
-From: Aaron Lu <ziqianlu@bytedance.com>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: Ben Segall <bsegall@google.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
-	Chuyi Zhou <zhouchuyi@bytedance.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Florian Bezdeka <florian.bezdeka@siemens.com>,
-	Songtang Liu <liusongtang@bytedance.com>, Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH v3 4/5] sched/fair: Task based throttle time accounting
-Message-ID: <20250826091551.GC87@bytedance>
-References: <20250715071658.267-1-ziqianlu@bytedance.com>
- <20250715071658.267-5-ziqianlu@bytedance.com>
- <xhsmhbjociso8.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	s=arc-20240116; t=1756199770; c=relaxed/simple;
+	bh=83wIkZOfIMgtYeUo8h7rEJt0HnMOiQqBGtwJQOkoA0E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KHHfACzrh2DwSiLEG15QTIpxr0cc7Xsgw+z6UWrLrjzu0f/U7J31NwpJ1RpZ0iAENLSItrKLe6uunhgO776Tz52FeJtEW4+BVawlFT8Mnjd0bEdkpRXwdTQ5AzCNJfyejzXVXv722LJ7zxJj4cEVJmUWnxEY5z9e/0PN+s1Dvls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rdZk414z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2087CC4CEF4;
+	Tue, 26 Aug 2025 09:16:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756199770;
+	bh=83wIkZOfIMgtYeUo8h7rEJt0HnMOiQqBGtwJQOkoA0E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rdZk414znMjHrZ9HLlCG8c6erTITP2REz5Ek+YQU/4TL1/ROrHA3FoXYuq4eoI4mU
+	 lTmZ3DQ8Y3Pa8UU/6caIr+E4AP8ejL5uSc4M0rjBDLB1PabaJ2jzdacLfK8oC2La4G
+	 A/D7syBorzfA/TbIyETMmrvCnEeTVaOjoDm+XscnTeXOOneo6Wh6GkdllQKE0WW/MK
+	 QQdbcVh6T3EEKO3UX+AJPybNARTBodY5gPsX28zjloTI/U84VMXwry6OTddTNWhMUO
+	 RPCOBxtjrqAD0DJrE4/4IOdnMzEpBIwXb9BYnvtLguKIysrwbabU7Kj+Uv/Q82gn2e
+	 W+7ytrK5Yu/Og==
+Message-ID: <443da26a-0b47-4e68-9fd0-9a155dcdc31a@kernel.org>
+Date: Tue, 26 Aug 2025 11:16:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <xhsmhbjociso8.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/4] dt-bindings: reset: add Tegra114 car header
+To: Mikko Perttunen <mperttunen@nvidia.com>,
+ Svyatoslav Ryhel <clamor95@gmail.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20250826061117.63643-1-clamor95@gmail.com>
+ <20250826061117.63643-2-clamor95@gmail.com>
+ <2ef333b7-2c4c-4c06-b90f-5dfa8af41e36@kernel.org>
+ <3303492.5fSG56mABF@senjougahara>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <3303492.5fSG56mABF@senjougahara>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 18, 2025 at 04:57:27PM +0200, Valentin Schneider wrote:
-> On 15/07/25 15:16, Aaron Lu wrote:
-> > @@ -5287,19 +5287,12 @@ enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
-> >               check_enqueue_throttle(cfs_rq);
-> >               list_add_leaf_cfs_rq(cfs_rq);
-> >  #ifdef CONFIG_CFS_BANDWIDTH
-> > -		if (throttled_hierarchy(cfs_rq)) {
-> > +		if (cfs_rq->pelt_clock_throttled) {
-> >                       struct rq *rq = rq_of(cfs_rq);
-> >
-> > -			if (cfs_rq_throttled(cfs_rq) && !cfs_rq->throttled_clock)
-> > -				cfs_rq->throttled_clock = rq_clock(rq);
-> > -			if (!cfs_rq->throttled_clock_self)
-> > -				cfs_rq->throttled_clock_self = rq_clock(rq);
-> > -
-> > -			if (cfs_rq->pelt_clock_throttled) {
-> > -				cfs_rq->throttled_clock_pelt_time += rq_clock_pelt(rq) -
-> > -					cfs_rq->throttled_clock_pelt;
-> > -				cfs_rq->pelt_clock_throttled = 0;
-> > -			}
-> > +			cfs_rq->throttled_clock_pelt_time += rq_clock_pelt(rq) -
-> > +				cfs_rq->throttled_clock_pelt;
-> > +			cfs_rq->pelt_clock_throttled = 0;
+On 26/08/2025 10:29, Mikko Perttunen wrote:
+> On Tuesday, August 26, 2025 5:21 PM Krzysztof Kozlowski wrote:
+>> On 26/08/2025 08:11, Svyatoslav Ryhel wrote:
+>>> Binding values for special resets that are placed starting from
+>>> software-defined index 160 in line with other chips.
+>>>
+>>> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+>>> ---
+>>>
+>>>  include/dt-bindings/reset/tegra114-car.h | 13 +++++++++++++
+>>
+>> NAK
+>>
+>> You got comments last time and you completely ignored them.
+>>
+>> Best regards,
+>> Krzysztof
 > 
-> This is the only hunk of the patch that affects the PELT stuff; should this
-> have been included in patch 3 which does the rest of the PELT accounting changes?
-> 
+> Thierry explained to you last time why this patch makes sense.
 
-While working on a rebase and staring at this further, this hunk that
-deals with pelt stuff is actually introduced in patch 3 and do not have
-any real changes here. i.e. after throttled_clock related lines are
-removed, pelt stuffs just moved from an inner if to an outer if but it
-didn't have any real changes.
+And each such discussion should be reflected in the commit msg. There is
+nothing like that here.
 
-I hope I've clarified it clear this time, last time my brain stopped
-working...
+But I am not speaking about this and the values here. I am speaking
+about all other comments which were just ignored.
+
+
+Best regards,
+Krzysztof
 
