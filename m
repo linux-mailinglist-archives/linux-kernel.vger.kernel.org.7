@@ -1,106 +1,152 @@
-Return-Path: <linux-kernel+bounces-786166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C76D9B355E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:42:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64D31B355C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 09:39:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 888CF3B0563
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:42:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B39F7A6767
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 07:38:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02F62F7456;
-	Tue, 26 Aug 2025 07:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 324A12F5337;
+	Tue, 26 Aug 2025 07:39:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="UQgnUXh3"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3396821C167;
-	Tue, 26 Aug 2025 07:40:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Vz2RvEQd"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CFA938DD8;
+	Tue, 26 Aug 2025 07:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756194008; cv=none; b=ts857B26rVEbXMyWaOQGIdvpnTwq3zGPwIXn0Pd7wvizIxI3J2BqQ8FcrEY3PEUnXluNdT3oTxbUd7DKPxFESen29NO8XXp1Vyk83vQ0mNekaZWdp6MlxoxmZtJ2V1pZ0nInZRKc3wJoUXQXRi5rChh85QicFbwXRryZR8ntqKA=
+	t=1756193981; cv=none; b=Q8bVZ91RxvOW6jCCe2toFRoMZnrDJaJu0OT5K3evOviUnUXe2GXyjzw6XxI1QpaJyTaAwPIZVaa9kCzPoY7mZyzPcbTEFvkZsm676lWpEXg1bByyPCmEpXICdvrwLq/fIXLquG5Pf10soxNO8HkgxTGgrAWMUKxa6QDzB73620g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756194008; c=relaxed/simple;
-	bh=Gbr+jEBr+Ui7oFx/a1GxRAqZdTd57yGmujsbY9w9Sbk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ib0Etp7fKBnJ+/DGWGNXGiz8MfEe4pb9XEYnm02I84X3Xe171t+FruogkxFS6GHSxI5e17U62ZdByFjSG5iZ3jdlPA2K/G9HipgrH5T4mTxJ/dy/wESLEvKsU176IVGgHwylG/gc/2BiSI1MNWVZjCA37oXUELGuYpSBNkXTTvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=UQgnUXh3; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Km
-	nePVSe1ZPRh2nW+LroC/MoDmAxDrPzlwFp+K6R0bQ=; b=UQgnUXh3l9qu6YJVhm
-	2op7oWnaygQ41sIQUQAjx9aee1sfOaNsyckOBZHvOHGNeB5StB8Y58YK4aCGuPk2
-	iGR9agu8r9QP8+kX29+4VwWspCgYgVsqPjbNnc6hb5iaB0yqul/hbaKJ6KBVpAd0
-	lT9gLT0qhOFd7mNKv4CNBr+uY=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wBXUA2oZK1opPzJDw--.63934S2;
-	Tue, 26 Aug 2025 15:39:22 +0800 (CST)
-From: Feng Yang <yangfeng59949@163.com>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	john.fastabend@gmail.com,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] bpf: Replace kvfree with kfree for kzalloc memory
-Date: Tue, 26 Aug 2025 15:39:20 +0800
-Message-Id: <20250826073920.1215368-1-yangfeng59949@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1756193981; c=relaxed/simple;
+	bh=OXv6h16dfjmKpvPXbWekd18jZy8dArhzITkeeRAJORI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=FhGtOG/y+0b91zZrXa+In6vUMj1S7j91E3+/NSGqwCYLaIGA7/xZ+xkmGZhVauBsKxmPoyW+KQEsoi9Py3dTW2jyUAurEgbLQkL5mb1HFj0PYHM94mg8uN1WnG2tSUPuMOhWDju/sBBe7QRQOTN53NsRpY7aOy4ZuKcyA/MYfig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Vz2RvEQd; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1756193977;
+	bh=OXv6h16dfjmKpvPXbWekd18jZy8dArhzITkeeRAJORI=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Vz2RvEQdkeXiWNn5E9pY+JTxBJN6tYnGg95IpWV4j0HsMPw6mF0YOYS9yOwm3ackm
+	 ieiSWSImeFuZ2A9xET7hXQVWco3je+9E5houg4d4tcW5AZL74CKtPAYCuw381zBLKZ
+	 uAm6Uppm8JkVY0pX/iDl3zYWNpaasr6MpkvkFHETliw3aciigP0b/LN5Udly1AowfO
+	 UxUA0cBwdxSAQpd0DiucRMPzVn+QEaCxyD9PJ/WwvRw8OcBeJJGz/c6dvp7dS8R0Ba
+	 sSywsbE5asDSHHIynRYB0HCedCONAGTQomIVBAsWqbzsBCDrOFet/Mgb8f/NNz111W
+	 nzMdfMt3zV+hw==
+Received: from 2a01cb0892f2d600c8f85cf092d4af51.ipv6.abo.wanadoo.fr (2a01cb0892F2D600C8F85cF092d4AF51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: jmassot)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 89E9417E0985;
+	Tue, 26 Aug 2025 09:39:36 +0200 (CEST)
+From: Julien Massot <julien.massot@collabora.com>
+Subject: [PATCH v3 0/6] MediaTek devicetree/bindings warnings sanitization
+ second round
+Date: Tue, 26 Aug 2025 09:39:33 +0200
+Message-Id: <20250826-mtk-dtb-warnings-v3-0-20e89886a20e@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wBXUA2oZK1opPzJDw--.63934S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7GFWrWw4ruw4fGrWfKr45Wrg_yoWDAFX_C3
-	95Z3W8Kr4UZrs5A3W7C343ur1Ykr1DKF40qws7tFWUArWDJwn8Xr1kXrs3XF98ur4rtr9x
-	JFsxurnrtr4rujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8jhF3UUUUU==
-X-CM-SenderInfo: p1dqww5hqjkmqzuzqiywtou0bp/1tbiZRe1eGitZDoMYQAAsJ
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALVkrWgC/33NQQ7CIBCF4as0rMXAlErjynsYF0CHlljBQIOap
+ neXdmWMcfm/ZL6ZScLoMJFjNZOI2SUXfIl6VxEzKN8jdV1pAgwa1jJOb9OVdpOmDxW9832ivJG
+ dsIYzKyUpZ/eI1j038nwpPbg0hfjaPmS+rn+wzCmjB60EihoESH0yYRyVDlHtTbiRFczwgQD7g
+ UBBjBUSODatFfiNLMvyBvGL2zL5AAAA
+X-Change-ID: 20250801-mtk-dtb-warnings-157d4fc10f77
+To: kernel@collabora.com, Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Ikjoon Jang <ikjn@chromium.org>, 
+ Enric Balletbo i Serra <eballetbo@kernel.org>, 
+ Chen-Yu Tsai <wenst@chromium.org>, Weiyi Lu <weiyi.lu@mediatek.com>, 
+ Eugen Hristev <eugen.hristev@linaro.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Julien Massot <jmassot@collabora.com>, Sean Wang <sean.wang@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, Julien Massot <julien.massot@collabora.com>
+X-Mailer: b4 0.14.2
 
-From: Feng Yang <yangfeng@kylinos.cn>
+This patch series continues the effort to address Device Tree validation
+warnings for MediaTek platforms, with a focus on MT8183. It follows the
+initial cleanup series by Angelo
+(https://www.spinics.net/lists/kernel/msg5780177.html).
 
-Refer to https://lore.kernel.org/bpf/20250811123949.552885-1-rongqianfeng@vivo.com to replace the remaining part.
+The patches in this set eliminate several of the remaining warnings by
+improving or converting DT bindings to DT schema, adding missing properties,
+and updating device tree files accordingly.
 
-Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
+Signed-off-by: Julien Massot <julien.massot@collabora.com>
 ---
- kernel/bpf/verifier.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Changes in v3:
+- Mostly cosmetic updates.
+- Patch 1/6: fixed the commit reference in the 'Fixes' tag.
+- Patch 1/6: not mentioned in v2, but this patch changed quite a lot
+  since v1 after applying Angelo's suggestions, so I dropped Rob's
+  'Acked-by' tag.
+- Renamed commits from "YAML" to "DT schema", and avoided repetition
+  of "bindings".
+- Patch 2/6: switched to the generic node name "audio-controller".
+- Link to v2:
+  https://lore.kernel.org/r/20250820-mtk-dtb-warnings-v2-0-cf4721e58f4e@collabora.com
 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 5c9dd16b2c56..b9394f8fac0e 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -2021,7 +2021,7 @@ static void free_backedges(struct bpf_scc_visit *visit)
- 	for (backedge = visit->backedges; backedge; backedge = next) {
- 		free_verifier_state(&backedge->state, false);
- 		next = backedge->next;
--		kvfree(backedge);
-+		kfree(backedge);
- 	}
- 	visit->backedges = NULL;
- }
-@@ -19651,7 +19651,7 @@ static int is_state_visited(struct bpf_verifier_env *env, int insn_idx)
- 	err = maybe_enter_scc(env, new);
- 	if (err) {
- 		free_verifier_state(new, false);
--		kvfree(new_sl);
-+		kfree(new_sl);
- 		return err;
- 	}
- 
+Merge strategy:
+- Patch 1/6 can be picked up independently.
+- Patch 2/6 is standalone.
+- Patch 3/6 depends on 2/6.
+- Patch 4/6 fixes the DTS node name as expected by 3/6.
+- Patches 5/6 and 6/6 are independent.
+
+Changes in v2:
+
+- Restrict power-domain usage to mediatek,mt8183-mfgcfg only
+- Add the MT8183 AFE binding before audiosys (it is referenced in the example)
+  and include the memory-region property
+- Rename binding files to align with the compatible name
+- Drop former patch 7/9 (already applied via the pinctrl tree)
+- Drop patches 8/9 and 9/9 until we decide how to represent R0 and R1 values
+
+---
+Julien Massot (6):
+      dt-bindings: clock: mediatek: Add power-domains property
+      ASoC: dt-binding: Convert mt8183-afe-pcm to dt-schema
+      dt-bindings: arm: mediatek: Support mt8183-audiosys variant
+      arm64: dts: mt8183: Rename nodes to match audiosys DT schema
+      dt-bindings: sound: Convert MT8183 DA7219 sound card to DT schema
+      ASoC: dt-binding: Convert MediaTek mt8183-mt6358 to DT schema
+
+ .../bindings/arm/mediatek/mediatek,audsys.yaml     |  16 +-
+ .../devicetree/bindings/clock/mediatek,syscon.yaml |  15 ++
+ .../bindings/sound/mediatek,mt8183-audio.yaml      | 228 +++++++++++++++++++++
+ .../bindings/sound/mediatek,mt8183_da7219.yaml     |  49 +++++
+ .../sound/mediatek,mt8183_mt6358_ts3a227.yaml      |  59 ++++++
+ .../devicetree/bindings/sound/mt8183-afe-pcm.txt   |  42 ----
+ .../bindings/sound/mt8183-da7219-max98357.txt      |  21 --
+ .../sound/mt8183-mt6358-ts3a227-max98357.txt       |  25 ---
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi           |   4 +-
+ 9 files changed, 368 insertions(+), 91 deletions(-)
+---
+base-commit: 9df95ca9b379cb29aa0f75c4ca86d7b2293d8bf9
+change-id: 20250801-mtk-dtb-warnings-157d4fc10f77
+
+Best regards,
 -- 
-2.43.0
+Julien Massot <julien.massot@collabora.com>
 
 
