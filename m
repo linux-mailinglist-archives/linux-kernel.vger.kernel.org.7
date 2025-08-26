@@ -1,102 +1,146 @@
-Return-Path: <linux-kernel+bounces-785732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-785733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 472B6B35026
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:20:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36D7DB3502E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 02:27:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC1FE1B245BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:21:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E205F1A853BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 00:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECDED22127D;
-	Tue, 26 Aug 2025 00:20:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 560AD223DD4;
+	Tue, 26 Aug 2025 00:27:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ajA5472H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n4b7hxDj"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515BF1FBE9B;
-	Tue, 26 Aug 2025 00:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A75D221FD0
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 00:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756167608; cv=none; b=BEP7jZlmSfoVDtJsTp8oVrQItoG64XeKe8KWkZvvEbmgd8hRR8jvLiXOhAGgWeNv1ueKT2NoMfFFsH5DDFLqDTm945e8+x9PLGVi3qS/mxcd+zSu9jeOtEmj4TZxbjFDdI0lhmdj6ZMI6C6P0S95592Phy4Lx8MOauvpxKcfXxk=
+	t=1756168040; cv=none; b=mFUcgOTIdv97LR2l6TMejT/0qhTsVUCLj4u0CSITD5lJ3JC997/OkEofTZXmG3JK4wPDSeJlenMGaP7Gp/ziZbDOmAwutd9Ru1WksWNTULnb+7daGQH2s3dS/3Xiqk+on0IGXGj4+9R8b8OOZyQU6bg7wx3jcF8W3fb5suYSGb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756167608; c=relaxed/simple;
-	bh=ufcItHeInVLxDOUg5JkvH/qxMTNuGx9vdAS1KoJUQb0=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=MWHZHUL0JtWurMmEOMgo6GamBx+/j1RSEvL9LiHNincYcWnspf3ie4u7jhbh2AMYBreszTyqhiMz6qrVTqlaHjNfLtAoX4stIbJi6MNoKGFcokjj9bAyY4z96grBxw4DRWd/dUPoCkIlMbmbDmG022F8q9ob5Ao77LQR7EHi9wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ajA5472H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF1FAC4CEED;
-	Tue, 26 Aug 2025 00:20:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756167607;
-	bh=ufcItHeInVLxDOUg5JkvH/qxMTNuGx9vdAS1KoJUQb0=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ajA5472HKMBLoiAjeEtQFR9h3nup9xaJRLk8i8TJY3U07cRA4SlgHNUDe7aS6M1R4
-	 54e4WZcOB0Uw8QRdivq/G/+z9uomlJbYGEhk+l+W862xmGvawyLqBGMi/a9G9eYnSu
-	 e2gS5n2EHWBTZUx+I337Xv9A1I5AWPhlKE7zwWfH6fKZ59ZQDBnIMJss0aB9D/zeP9
-	 ft5USw1y5Fn6ygrS+6pa89QH5iIBCjjh2KS+JmCi+RPKS+vzJCgbLurM9VRH6PbNvQ
-	 KLpOU1PUvJAVqBNsF6ruuXqGm6InSd7O4z/nYkGBll1++jtaYaZolPBVq5Mref45xh
-	 yDcCD1lh9uH2g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAEAE383BF70;
-	Tue, 26 Aug 2025 00:20:16 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1756168040; c=relaxed/simple;
+	bh=5L/BYqW9WfoHeTEgYYwzNBfWpjlpn5EeY5J3QpRZyJ0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Wn46mWlhFTeNpYe5tizylfUMJPS1UMklLl7YfqTh/UcW9aqEzMJbmUrHHOZaO8SJuX8HjaTIQQxBvscm3RcKKtYp+qMgBrq0WOEio1k1FVD40R75/JPctLUXPzgyjujjpX51w97GFBhUKBv8YVSCc9HLHqCF/mW/RkeWHPkdwac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n4b7hxDj; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b49d8b818d2so3100833a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Aug 2025 17:27:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1756168038; x=1756772838; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=U4ctZNwYJMz9+Hk7ge9l8ZiYDw45Y30bqY3Iaj5/gqE=;
+        b=n4b7hxDjBfsYt0uo0RfIS9dGgRYXS/+wwLACNSNY+Xm9lRam3a5GDARVarSgxrejel
+         ktbfj0bz9umQd6oMlGqcS3rqPytnbUyaDxIggjuaF8bL8hv/A40g9pBFTOvlHYwKM5Ye
+         FxgbdtsR6k08cF5FGqqAGN2DrfqEiX5yTq5KYTr3KtyF/oK/a90OzE89CgoWctTwHUaP
+         Uu1DpinhMouJHp+P8+644CuXLhLdlBAGUVCmE6Az0O88+HOt04WcLJNMgxd3FIE65UVF
+         98e8o9ohfeVYsJtqmQUPRLONp8wjpwWffrh2jt4wXAPV/pELpXeGUumV5FkHKeJ+hbJh
+         BR3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756168038; x=1756772838;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=U4ctZNwYJMz9+Hk7ge9l8ZiYDw45Y30bqY3Iaj5/gqE=;
+        b=EG0dXS6UQbxKufVAmLxywhgNyZbQ4OXg+4HkHwM2JbdtsSmSnII2Kj9bcvTIFXIvhd
+         BR/EsWTbvcfdvsudRVPeWsFb2wLLN4NW/rMtpBgOD8nAyFNCGmvPE84q/tuyV3Dq1INN
+         At7Vl1+CeQHrIAufiIFJzQdulzuJQFRvMDfnItlM83RjV8auYBvvYXijYEzVgddUXLy8
+         E3zqgNT7CC3I7C2/DQPvXsexGcTGPWOYlTKny0e47JL9VQzgRo1T1PtI/fEmbRij0/L1
+         XoA7uIcPQXi4cDqHujg55YWhFnpF76VUYbk3GXcQa/CVF2q2JBnRI1ZJKXKj9Ti8HObn
+         9fFg==
+X-Forwarded-Encrypted: i=1; AJvYcCVJYUYlMqzbgSL2/bQZYhF290mkz8SrZOSj8ZGF0tKVtFHJVCuTsBDdbCyjk+PEMLnox6CHdDHGMIaWhxk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy57ehDIebkjq3oulnMBzbZv6ynG941ptoDcdDL732isZvuVpR1
+	EpBboz04urRbdzoWcdHDSe23U5zj+ZpFFbo5ulrGGVP4v+KDMXg3b7MtvV3gIJV8b8Ax5d40EB1
+	0TDf1nQ==
+X-Google-Smtp-Source: AGHT+IFw5Mjf6HTcAUWU+u7CL/B6QAA0945o29LTS2VrhL4i1mL+9cXlmfjB4AEyc0iYoyyJlQoJr1vqexM=
+X-Received: from pjbsp15.prod.google.com ([2002:a17:90b:52cf:b0:30a:7da4:f075])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:a105:b0:230:8b26:9d47
+ with SMTP id adf61e73a8af0-24340ab318emr21164734637.10.1756168038330; Mon, 25
+ Aug 2025 17:27:18 -0700 (PDT)
+Date: Mon, 25 Aug 2025 17:27:16 -0700
+In-Reply-To: <3188ca61-2591-4576-9777-1671689b7235@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v4 1/3] net: phy: mxl-86110: add basic support for
- led_brightness_set op
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175616761549.3604027.13517820939492264088.git-patchwork-notify@kernel.org>
-Date: Tue, 26 Aug 2025 00:20:15 +0000
-References: 
- <58eeefc8c24e06cd2110d3cefbd4236b1a4f44a2.1755884175.git.daniel@makrotopia.org>
-In-Reply-To: 
- <58eeefc8c24e06cd2110d3cefbd4236b1a4f44a2.1755884175.git.daniel@makrotopia.org>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: lxu@maxlinear.com, andrew@lunn.ch, hkallweit1@gmail.com,
- linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+References: <20250825200622.3759571-1-seanjc@google.com> <3188ca61-2591-4576-9777-1671689b7235@linux.microsoft.com>
+Message-ID: <aKz_ZMvvF0e9nwSn@google.com>
+Subject: Re: [PATCH 0/5] Drivers: hv: Fix NEED_RESCHED_LAZY and use common APIs
+From: Sean Christopherson <seanjc@google.com>
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
+	Huacai Chen <chenhuacai@kernel.org>, Anup Patel <anup@brainfault.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
+	Dexuan Cui <decui@microsoft.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Andy Lutomirski <luto@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Frederic Weisbecker <frederic@kernel.org>, Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, Josh Triplett <josh@joshtriplett.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Uladzislau Rezki <urezki@gmail.com>, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	kvm@vger.kernel.org, loongarch@lists.linux.dev, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-hyperv@vger.kernel.org, 
+	rcu@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Fri, 22 Aug 2025 18:38:27 +0100 you wrote:
-> Add support for forcing each connected LED to be always on or always off
-> by implementing the led_brightness_set() op.
-> This is done by modifying the COM_EXT_LED_GEN_CFG register to enable
-> force-mode and forcing the LED either on or off.
-> When calling the led_hw_control_set() force-mode is again disabled for
-> that LED.
-> Implement mxl86110_modify_extended_reg() locked helper instead of
-> manually acquiring and releasing the MDIO bus lock for single
-> __mxl86110_modify_extended_reg() calls.
+On Mon, Aug 25, 2025, Nuno Das Neves wrote:
+> On 8/25/2025 1:06 PM, Sean Christopherson wrote:
+> > Fix a bug where MSHV root partitions don't honor NEED_RESCHED_LAZY, and then
+> > deduplicate the TIF related MSHV code by turning the "kvm" entry APIs into
+> > more generic "virt" APIs (which ideally would have been done when MSHV root
+> > support was added).
+> > 
+> > Assuming all is well, maybe this could go through the tip tree?
+> > 
+> > The Hyper-V stuff and non-x86 architectures are compile-tested only.
+> > 
 > 
-> [...]
+> Thanks Sean, I can test the root partition changes.
+> 
+> A similar change will be needed in mshv_vtl_main.c since it also calls
+> mshv_do_pre_guest_mode_work() (hence the "common" in mshv_common.c).
 
-Here is the summary with links:
-  - [v4,1/3] net: phy: mxl-86110: add basic support for led_brightness_set op
-    https://git.kernel.org/netdev/net-next/c/29c10aeb3160
-  - [v4,2/3] net: phy: mxl-86110: fix indentation in struct phy_driver
-    https://git.kernel.org/netdev/net-next/c/befbdee4ba89
-  - [v4,3/3] net: phy: mxl-86110: add basic support for MxL86111 PHY
-    https://git.kernel.org/netdev/net-next/c/3d1b3f4ffc0a
+Oof, more dependencies.  I suppose the easiest thing would be to send a series
+against
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+  git://git.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git queue
 
+and then route everything through there?
 
+Alternatively, frontload the MSHV fixes (which I'll do regardless) and take those
+through hyperv and the rest through the tip tree?  That seems like an absurd
+amount of juggling though, especially if we want to get the cleanups into 6.18.
+And if none of these lands, it's MSHV that'll suffer the most, so betting it all
+on the hyperv tree doesn't seem terrible.
+
+> Also, is it possible to make all the mshv driver changes in a single patch?
+
+It's certainly possible, but I'd prefer not do to that.
+
+> It seems like it would be cleaner than refactoring it in patches 1 & 2 and
+> then deleting all the refactored code in patch 5.
+
+Only if you don't care about backporting fixes, bisection, or maintaining code.
+
+E.g. if checking NEED_RESCHED_LAZY somehow causes issues, it would be really nice
+for that to bisect to exactly that patch, not a patch that also switches to a
+completely different set of APIs.
+
+And if someone is wants the fixes in a pre-6.18 kernel, they don't need to
+backport all of the KVM and entry code changes just to get the fix.
+
+As for the maintenance headache, see above.
 
