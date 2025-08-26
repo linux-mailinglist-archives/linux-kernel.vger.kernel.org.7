@@ -1,215 +1,353 @@
-Return-Path: <linux-kernel+bounces-786877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3BDFB36D58
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:13:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 619A2B36D55
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 17:13:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 361FF4679D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:06:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55F3E562709
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 15:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A247025784A;
-	Tue, 26 Aug 2025 15:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03EDB255E40;
+	Tue, 26 Aug 2025 15:06:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="LUp9XuX4"
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012040.outbound.protection.outlook.com [52.101.126.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E2xGbu5J"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B921DF75A;
-	Tue, 26 Aug 2025 15:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756220774; cv=fail; b=TQHtIKx0+s4qp7ZURPPL9UbpdJ9GlQIQ+kMyP18CBd8jplx46s4MXIs86cXdGQK+fcJc7RTVeIVWGt1ykwy4ahEAFDB8JARbrb5b4Aprivybx2Y6UywAdQMoDScmGy/xSAKYRoom86Uf0iEDGMP1WsN4L9SnELub+D2FkhXxk4c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756220774; c=relaxed/simple;
-	bh=hGinhzbUY1KUurx8xkefpZV+Tw8mPP/3Zp6WeMWjQEY=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=d0hvg8cGiTV6O1CRh0uYmq1VHuXjmcisrZAF+YD4Qp062E/5oYvfg/R3Ueo9IYZAce4JHf9utALahjSbU+Ujep/NJNawjZj7Ig56tlfrQ7EX7v+NgVuWAJGGyrJzlxJV0xFVWZUq5m3Xfu/n8eWpJUDdqrTGL0AwDgv/I0ACrDg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=LUp9XuX4; arc=fail smtp.client-ip=52.101.126.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=q2dOsED2Ct2Vbe/Bx8y+x2baPGEhUSThY4uhQpawlbaRadxppu80WFpLfS0E9rYeoug/c2+tBW6BWTUrU9WpUEPHNWBGbukQORyFlv4y+rBPhB7iJ8+Llj6ClXWahJZSA0sGlCAMMRUkIuwP1zA3vqQiCOKAy0v1JtXqBMaj6sWe6l6Rhk6+RBep17MytiC35wtt3lG3gOnmrfmlIOz/w0DskqO/jtQ0tj54D0zntQljm/2S8LFrox8TMVsbSfcnwXnBUQ1P83pr+VxKLtfj80eB3JOSl3DiP5ofYK5K6AmNlzU/Z+dUO+6MocRR0R1Z0AIpzAUOs1luY7v+PpVq+w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Xizuh6kl+a7JDK5SZuHJB/wfppPPuLYDLcgIk18o090=;
- b=SCjpI5NYO+VU0fGvuYReVhvkbeKze1rAWBrPQ+mM0w3CNPLZYf6zrDgak2iMl16+s/YxVx9akTEafvvEARoaEcwOw8xSA+76amlFlZTLBbBAnwbsdjAtNoP9pAxUf6HFqhfFu9UwpFF9sKCLwruSBFrX7KB3UZeW8MGSNK7sr+fCjN7DDxzvcAdO+xfWvOsEG814IYNNFpc7jPVsWmDi2nrW53SkC156+ksI+pmJgvXapeFEG3qL99Sj0lMZubvMQjL5ZEXSNdlTSyK14bipVTXdL7ZUDK5vpEez+ecOYkQLrGBfX1BESkuD5AMNgUqyCpyrf7hKK61JQrR9pbPeJQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Xizuh6kl+a7JDK5SZuHJB/wfppPPuLYDLcgIk18o090=;
- b=LUp9XuX4pARMkBoz5z8E9AZMfTD1P80pWHOmInn1qNtD4bSNNjkxwhHYJ05BrF1jQoC3FuzbIxZPOJy/YbosQnRxWXWfkoSGlmgwTIPo4MuSNpj+bqvgoXvdfIvKKFC2TMuEj4dV/xf5HU4Mi87HoiSs+D6tkhThgzE8asvyeyOsDzTDKX7COTwzWvM+N7WMCE/DZvZ8ksyo3AK/16qp2PrIZTMu2eiWXITydhmLKhB0WTtLtwExSSUAk8uPQS5gEY/jWMlCkSxu4/N+xizAgnaexlsj6TowWzHRCm9ChvID5CS11RI6OaXmhQp5nax7jOpRClJoogECdHC+VE4KJQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TY0PR06MB5128.apcprd06.prod.outlook.com (2603:1096:400:1b3::9)
- by SEYPR06MB6981.apcprd06.prod.outlook.com (2603:1096:101:1d3::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.20; Tue, 26 Aug
- 2025 15:06:08 +0000
-Received: from TY0PR06MB5128.apcprd06.prod.outlook.com
- ([fe80::cbca:4a56:fdcc:7f84]) by TY0PR06MB5128.apcprd06.prod.outlook.com
- ([fe80::cbca:4a56:fdcc:7f84%3]) with mapi id 15.20.9052.019; Tue, 26 Aug 2025
- 15:06:08 +0000
-From: Qianfeng Rong <rongqianfeng@vivo.com>
-To: Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Leon Romanovsky <leon@kernel.org>,
-	linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Qianfeng Rong <rongqianfeng@vivo.com>
-Subject: [PATCH] RDMA/rdmavt: Use int type to store negative error codes
-Date: Tue, 26 Aug 2025 23:05:56 +0800
-Message-Id: <20250826150556.541440-1-rongqianfeng@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI1PR02CA0052.apcprd02.prod.outlook.com
- (2603:1096:4:1f5::20) To TY0PR06MB5128.apcprd06.prod.outlook.com
- (2603:1096:400:1b3::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268A423A9B3;
+	Tue, 26 Aug 2025 15:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756220786; cv=none; b=Ff+ZrGaLT+8I+h8Yx8FJJud5Sz5IJRihry+/qlRn83La2S+tgslSSn9rklnsf3e92GRHg6+Ukla/9k6x9Jpvf85ig4bHDdCpl5q5VY+GLENcdDh1EL+3DSyRPf9wL4g0kZqKzMUJw6Y6ciK2RToGnPVBIgdfxr7VSk9NsBcYti0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756220786; c=relaxed/simple;
+	bh=lwb4A6igi9n728qv9j/YTWe0CE4j5dATxHn27zrDcF4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S/AYLTPhF+45e68wzUKqCRpA4tKfVuDs438oGJmE+fA8CE6XwRJ9TrwYEZq6LG6G/sFJAwnI71srPBd1x2ivqb2Yb0//8/Ze5gwReTvd1B6Db8QL3ptlKbw3B1VBQ8P/C81p2vNhQ+Blusr9cdHwf6crQINNpXBBGZBRqjHYlN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E2xGbu5J; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45b4e5c3d0fso13060355e9.2;
+        Tue, 26 Aug 2025 08:06:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756220782; x=1756825582; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9IWqIuZ1z9Jm7Aj+UVUhIFdU7BdxTLHR+9pDx+/y2JA=;
+        b=E2xGbu5JwuhITwvI0qG9CjRQofclukz6joTJGMcqfSExvHDWBXM/J4lnXByCCyK5Z0
+         eiK3GcrzTnrv7JKNFTRAknhitNUlryu5Wb7o2Q7eaxfPiu2EYTHxc1ltTR3LmZ9/C43E
+         C3G+qalDiTumFkawA8d4Z0urODJcLDIc8B6TpYrfkNfz0N7iQk6g2FsBn/7LJ6HTninp
+         CGEsSWNRaNOpvFYlgsQj/GOpgu0w/zq7Bi5ts8fOSbnSivW4mzPnqXq5X9yAki7afOcD
+         iuhmunGBBisy+tpG/5PdcewL34UUd3cFplLR689u7tpCvf2tIfF1c1xz4GzyDGl+s+GJ
+         VLcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756220782; x=1756825582;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9IWqIuZ1z9Jm7Aj+UVUhIFdU7BdxTLHR+9pDx+/y2JA=;
+        b=hLwVbEufgDP08GYoCWoHAG6xgNWqKFhCI9vesGLEuNFsVv7MrsCcQ5qMCr2CdGaXr5
+         RWlmExyFM5zXu/NPwcXAqaTFOSs3saseA97bB0yKdP5wcO3qXYf8GYux9spHSzql2USm
+         epGfQYoAHvHacZlqoMtxLeMwmmU9A/pRWs4liPFZAEL6JXlDNEDO2OMIKLBbgMbDcJ7I
+         Ib+eX1O9v+yYnAWXBpHVUBd8ngPPq+6FA68kAx24G9kVUzamWKmEpI1cKAsgzsEvz5lj
+         rI5X8sn2vi/YqH00qgDI3AyvKbxcvNfoQmdazJRD8jMk1Ke9IpJqIQN8STyEGrkINr1p
+         5FRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW/K96CCuMWZjZujlnTYCE+PpvHlk+R5wfmidpglRaJUMm5+U88BQclWG3gQKrK0iFrGq3q+KY/XTvBOMHcMw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoAAMuWtjBumTAejK18PpWZiLFdJIJREK0SJgkHliIqjXj/u+y
+	5q4FZOK7QbDpI0wl+CluQZBcXqZ94uXA44W+m3LKPcny4RGergh4VUCo
+X-Gm-Gg: ASbGnctOOmNrSbrEO2mqAsMkBH451cKhLMpFZGL1clAxjsktoMi6nkMNpXmGe8BHpy5
+	YGD/+OL0PMPtQoXVmDvMe/1QLUS08DmDAp/rIy44mhP5dzjb+VEM+1WSSJrUOrMfnt6Eikbc03q
+	yrwDaG7phzULDm92DQ+qmXsgdJ2JEoGG4Rbhd99zu598E3RU+AWmu2wehE9axb1TmFW1mof7TId
+	W6a2yHrtNLCXnhnn3nCzbnrmb0Fich58k3VIOwN3EXQ/oPISOgmQNYTW8GibxE4ZqGRwLMhxACp
+	wEdDei7+1dm9OqKERBIgoYgtBUyKmqxyXdL8i70M4GAUeo1y7Mn9GrjeRx7vV9SfD/CkL9MExBn
+	UnVgf5SKICRapA5KIgyd+uEew7KcbWK5zvSeoA3XizPBn1SBDQJ8dKrcUGpTjN0VwFzfBZm7E
+X-Google-Smtp-Source: AGHT+IG3gnib459mobCkTQ7iIEyFmSwSaeqk5fVx58hJLHd6faFwIIL5iFtQRNxReo0JLw4ylyXODw==
+X-Received: by 2002:a05:600c:3223:b0:45b:6269:d25a with SMTP id 5b1f17b1804b1-45b6269d8f3mr36993075e9.37.1756220782203;
+        Tue, 26 Aug 2025 08:06:22 -0700 (PDT)
+Received: from localhost (cpc1-brnt4-2-0-cust862.4-2.cable.virginm.net. [86.9.131.95])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c9c9324dc9sm8164782f8f.3.2025.08.26.08.06.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Aug 2025 08:06:21 -0700 (PDT)
+Date: Tue, 26 Aug 2025 16:06:20 +0100
+From: Stafford Horne <shorne@gmail.com>
+To: ChenMiao <chenmiao.ku@gmail.com>
+Cc: Linux Kernel <linux-kernel@vger.kernel.org>,
+	Linux OpenRISC <linux-openrisc@vger.kernel.org>,
+	Jonas Bonn <jonas@southpole.se>,
+	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+	Arnd Bergmann <arnd@arndb.de>,
+	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Sahil Siddiq <sahilcdq0@gmail.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH v3 1/2] openrisc: Add text patching API support
+Message-ID: <aK3NbFkHn5jx7JJ2@antec>
+References: <20250814032717.785395-1-chenmiao.ku@gmail.com>
+ <20250814032717.785395-2-chenmiao.ku@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY0PR06MB5128:EE_|SEYPR06MB6981:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1e9ea4ec-20eb-44c5-7fab-08dde4b21614
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|366016|1800799024|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?o6x1WAI7UvHqxLdqkTF81IYUCnUadWiLMJb8T28xH47pmIE7KN6jpRsBBpNx?=
- =?us-ascii?Q?SIuHIlcc2BqtzzjJ+iIg5+WdWpeCsJRaVlFwbs7+0UUY5XQthK/q41QMgsy2?=
- =?us-ascii?Q?AYl/VjeGMzWAy8rCkbWt4sfClASI3xwTSRtGDWZXQbFONx58wW3kVUdkoBXP?=
- =?us-ascii?Q?kkUgDPXPCGn9Fweyyd50zSI9GSogLxteSoAzNls1oEhF/LIqNEunRHgCcJ7E?=
- =?us-ascii?Q?FqHpL56ULiGNSy5QkF/9ChFS6biwmhhUXXQWa+y0K+eiETjbOByBtMtn9yom?=
- =?us-ascii?Q?nsSupIkksATM1/aVK4iPCxc2PpZF1+eVnhUMNWSytjHKPvda71jUhF20d+Pc?=
- =?us-ascii?Q?1x+lnelImTXu95AmjSB9bCEQsXHlfqwAvdDlLNo2vYTDHVUQMsYiJBq1u//p?=
- =?us-ascii?Q?C4jygGpoGR9rDp2xXVGH3HAXFRPJRZ4ks/Y67IQsWJqSz/i35MsPQF0MNPCT?=
- =?us-ascii?Q?TwnaRAeA7S+FceFyVJver12+GL7hO6JEeBzf5HwblOJEtvqFVTO0U4h59SCi?=
- =?us-ascii?Q?9J/9bK/Tbu0DQptAHtjuiEwY9uxU59fdho2aO05nloVcke+BNIVOBMIdXcUC?=
- =?us-ascii?Q?6pcEjfCklqj8WUhMtSbLZUSu4S+/L+GC9DT2dIZV7+qNoJ3QQd8bmI/ihtIN?=
- =?us-ascii?Q?kpeJhdGdguFCh9nZkO+qosCV5tdhAyWLMBLRKEaaN9B4BBkTpPSXOFH18jdi?=
- =?us-ascii?Q?p25uhTbEKCsudJxAf/FByy3aTj5qGCJG8nyDp/1P76wgYMUXMjeYlsiSt1b6?=
- =?us-ascii?Q?VoIB77QEWZFTZb/92zTsxbO2npw38Gi/MLyVGKbcTjE79e7K5d0uf2dDWfaR?=
- =?us-ascii?Q?hbNMljvfHzHVl6gCHqJ93PYoukmE4rbIsbjvrWcykqaT1so+vxVgBuUUm0Yf?=
- =?us-ascii?Q?ihAIOTnKwVGNhMh3CtgyhQYqpb6bW10WOCfvRSz7cejmnBnnN7EwBykysV8x?=
- =?us-ascii?Q?GpcVLGBV3WLImfP0B4l4uT/DDdrgrWjKIMeMl8GF0Eo82gmljycYLMPtryQ0?=
- =?us-ascii?Q?Ty0B7e80sJnvUKFRLtktqMsUwCpGBM/TOtb2x2Ygf/DYonF7WXA1A4oetVno?=
- =?us-ascii?Q?3HrI0BTo2BkqumelIPOfCH2NUXkAjelxPqeg2upHmRhcvTuBnT3RWiyZxF8n?=
- =?us-ascii?Q?Emju6lS+BrmhjqdpG2HrHWURHF4zTI7XBhoB7pF6qEsZHl44pXYee63aai1j?=
- =?us-ascii?Q?eYp17y7lvHAqm+AF5NC9UrjZtT2kVDy2/nzJfi8mBjGeXTuuCuopofHR+6V0?=
- =?us-ascii?Q?UQKEPYvTS3C/2sD4NrcMWxQqeieJuoVzQJW7zy+7Vyb1znas8KU/dwyco3bn?=
- =?us-ascii?Q?w7DJSyB48xD7fHUcJXqvuxmlBxXadt12GcSED/kwSHv1DradZdxT5A1FdYDz?=
- =?us-ascii?Q?LcG9M3TEyfjQJDtXUGtaWDuE9C6pb48LOB0ygbFAIUsxqksjlFulqi4IK7Hv?=
- =?us-ascii?Q?aPsRBvlcTdkpqbxO9NbTGHQTumPuNbBBOnDeXVJ1WPz5eJSsKL4ezA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY0PR06MB5128.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?COqIxBtzmKvJRbVReYYC3rduXA7p4eHn0zJF9mx+NHwcKaW4TWXMAQ9Gcl+f?=
- =?us-ascii?Q?51ddj5IjSYUHrqNz36/5xlj4enVXwRf64mc3up+3cQyDGg0s1D7USjr8GXse?=
- =?us-ascii?Q?/FtMNLSdVuYxllc/StpB9OodZslyrNNuFr531eovKFYm0xi0NRd8nMsuJoUN?=
- =?us-ascii?Q?bjhYzTMTtFnF+p4Ji/ZY55wyIFieCJ2yn93ykNK9+nSWaXQN94x3h7kE+Kc4?=
- =?us-ascii?Q?xcTTyXBNmmxqjPMFGce3W625gF+KL4mDIsuw2z/EDkC6CkMvWez/OukVxgX2?=
- =?us-ascii?Q?1Y2eUZram77o7b4p6MqVXWqFGj7R930TemDH5nJVq1o6R+DqawT4jcq0+Hag?=
- =?us-ascii?Q?wzjy3K33ubk941zQOvcfUAJ/TebhK/697vTb1pbmx1IIUdX/NJXCV6fJyJ5D?=
- =?us-ascii?Q?lytbnyYc5RNJQyFj3K9L/PbmTRHZ+ndtuxJBke7RbhUO2v/Mbe4wQirzrhkX?=
- =?us-ascii?Q?OklviVXIOI24nAmP/fzFmkLQBdi/7SXNyWgJkAp0+het7F1uZ/CgZjPKyAX3?=
- =?us-ascii?Q?FduXbE4I46xDFRpDXubdolWUxG9VysvsLJSeVHodJ169CiwqoeqlZksNpAMK?=
- =?us-ascii?Q?eACToSRav1lohvNaysyzHFLpSftoJcxrkAl/dtEWvmMuo3MSlnxlYu1pjpwI?=
- =?us-ascii?Q?WYpHremvCM78hoCXmktDQBf6q5Uywopi3gH0XSe9aIfEEVnkd5W2k0HXrx6c?=
- =?us-ascii?Q?FWGfzHDk4SzBb2vSU2lNZNlQSHcGcLHaBOTR8A8DKpwhfL/rOU2VwjgPW2am?=
- =?us-ascii?Q?j4wZTgNpM+ZIC6CdA/gNbNmxGq09pKQq+Tqmw/wj7uN3SWTznWBpb6AOeRoD?=
- =?us-ascii?Q?W93EA7RM9fewTqgSiJFpcbz7P7Av/06Ir/wPuNFMMhyt0QM19IFsrkQl1vGs?=
- =?us-ascii?Q?lB2uIt0S7jSbUCAXRAEYOaRZCUJmpFEjKiNHlQY+m150uEQgYGBBDpmKMYY5?=
- =?us-ascii?Q?D7g4FCjpamWjJwzDGp+MHw+pPijDCi2C5WvHMUUj4IMujRwvkmsQ636v8jgT?=
- =?us-ascii?Q?DWykdJNv4+ERDKE1kSCyl8SKZz0hFl8xMcoxe+MQ/HByR5ex7l4zbA9YD8NO?=
- =?us-ascii?Q?ic+XulCEVLVr7a9f/UIcKRfBgK2K9n6sk9A7fEKi78pI9k8QEo9vwIxBmuPc?=
- =?us-ascii?Q?xu4iY3eNP5nkLs+6F8oVRS43i6GhurvxNb3/THb1NiC9d9xOtdreKAqIH5QO?=
- =?us-ascii?Q?m2GQ4FbXd2MON320Sw4rR398eEcuy4izzDWCc/vhDmmLcbnR3sbbRi8ScRJJ?=
- =?us-ascii?Q?fut78qHQBl/9fPBMQ5wFRp829ZMg5B048w94Z4wTDNoU2PPYMJJ4aBd+Pgni?=
- =?us-ascii?Q?RQx5rsbKkGITRB3bYSPm2VM5YetIiHreTZWDaCtp0SyknPsB7u5vW2aeHAIo?=
- =?us-ascii?Q?fqLCe+S8s7yNSGbzy2Y+Z8nc4PLMEK4GWaRCh26QNe6YJ5sweoDI6HyttSxQ?=
- =?us-ascii?Q?zcsRc4S2dHjdZipBxhV4gyRMLYrI6mHaqPcZnXi8d686Zo0ObH0h5/MDehy3?=
- =?us-ascii?Q?Sczwj3yw6cqYX2b7wki81XZE8NMXRFD6vO6OCbk1m9wi7m1RdV3gkxUf8CkS?=
- =?us-ascii?Q?YGMspEMSbjgSNW4Dj1IrwnageRZKQfkBu8AcEVm8?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1e9ea4ec-20eb-44c5-7fab-08dde4b21614
-X-MS-Exchange-CrossTenant-AuthSource: TY0PR06MB5128.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 15:06:08.4126
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JuVli2u5JhywFayXUnEO5rykTYBLbtG+J6tIWAxPCJ7YzHuz5hItrmkmEefp7ArRZcCO86gcIOTCKaBEDGpbEQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6981
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814032717.785395-2-chenmiao.ku@gmail.com>
 
-Change 'ret' from u32 to int in alloc_qpn() to store -EINVAL, and remove
-the 'bail' label as it simply returns 'ret'.
+On Thu, Aug 14, 2025 at 03:27:01AM +0000, ChenMiao wrote:
+> From: chenmiao <chenmiao.ku@gmail.com>
+> 
+> We need a text patching mechanism to ensure that in the subsequent
+> implementation of jump_label, the code can be modified to the correct
+> location. Therefore, FIX_TEXT_POKE0 has been added as a mapping area.
+>
+> Among these changes, we implement patch_map and support the
+> patch_insn_write API for single instruction writing.
 
-Storing negative error codes in an u32 causes no runtime issues, but it's
-ugly as pants,  Change 'ret' from u32 to int type - this change has no
-runtime impact.
+I think the description here could be improved a bit.
 
-Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
----
- drivers/infiniband/sw/rdmavt/qp.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+Something like:
 
-diff --git a/drivers/infiniband/sw/rdmavt/qp.c b/drivers/infiniband/sw/rdmavt/qp.c
-index e825e2ef7966..134a79eecfcb 100644
---- a/drivers/infiniband/sw/rdmavt/qp.c
-+++ b/drivers/infiniband/sw/rdmavt/qp.c
-@@ -492,7 +492,7 @@ static int alloc_qpn(struct rvt_dev_info *rdi, struct rvt_qpn_table *qpt,
- {
- 	u32 i, offset, max_scan, qpn;
- 	struct rvt_qpn_map *map;
--	u32 ret;
-+	int ret;
- 	u32 max_qpn = exclude_prefix == RVT_AIP_QP_PREFIX ?
- 		RVT_AIP_QPN_MAX : RVT_QPN_MAX;
- 
-@@ -510,7 +510,8 @@ static int alloc_qpn(struct rvt_dev_info *rdi, struct rvt_qpn_table *qpt,
- 		else
- 			qpt->flags |= n;
- 		spin_unlock(&qpt->lock);
--		goto bail;
-+
-+		return ret;
- 	}
- 
- 	qpn = qpt->last + qpt->incr;
-@@ -530,7 +531,8 @@ static int alloc_qpn(struct rvt_dev_info *rdi, struct rvt_qpn_table *qpt,
- 			if (!test_and_set_bit(offset, map->page)) {
- 				qpt->last = qpn;
- 				ret = qpn;
--				goto bail;
-+
-+				return ret;
- 			}
- 			offset += qpt->incr;
- 			/*
-@@ -565,10 +567,7 @@ static int alloc_qpn(struct rvt_dev_info *rdi, struct rvt_qpn_table *qpt,
- 		qpn = mk_qpn(qpt, map, offset);
- 	}
- 
--	ret = -ENOMEM;
--
--bail:
--	return ret;
-+	return -ENOMEM;
- }
- 
- /**
--- 
-2.34.1
+Add text patching api's to use in subsequent jump_label implementation.  We use
+a new fixmap FIX_TEXT_POKE0 entry to temporarily override MMU mappings to allow
+read only text pages to be written to.
 
+A new function patch_insn_write is exposed to allow single instruction patching.
+
+> Link: https://lore.kernel.org/openrisc/aJIC8o1WmVHol9RY@antec/T/#t
+> 
+> Signed-off-by: chenmiao <chenmiao.ku@gmail.com>
+> 
+> ---
+> Changes in V3:
+>   - Removed the unimplemented and unsupported is_exit_text, added
+>     comments for the set_fixmap modification explaining why __init was
+>     removed, and added new comments for patch_insn_write.
+> 
+> Changes in V2:
+>   - We modify the patch_insn_write(void *addr, const void *insn) API to
+>     patch_insn_write(void *addr, u32 insn), derectly support a single u32
+>     instruction write to map memory.
+>   - Create a new file named insn-def.h to define the or1k insn macro
+>     size and more define in the future.
+> 
+> Signed-off-by: chenmiao <chenmiao.ku@gmail.com>
+> ---
+>  arch/openrisc/include/asm/Kbuild          |  1 -
+>  arch/openrisc/include/asm/fixmap.h        |  1 +
+>  arch/openrisc/include/asm/insn-def.h      | 12 ++++
+>  arch/openrisc/include/asm/text-patching.h | 13 ++++
+>  arch/openrisc/kernel/Makefile             |  1 +
+>  arch/openrisc/kernel/patching.c           | 78 +++++++++++++++++++++++
+>  arch/openrisc/mm/init.c                   | 10 ++-
+>  7 files changed, 114 insertions(+), 2 deletions(-)
+>  create mode 100644 arch/openrisc/include/asm/insn-def.h
+>  create mode 100644 arch/openrisc/include/asm/text-patching.h
+>  create mode 100644 arch/openrisc/kernel/patching.c
+> 
+> diff --git a/arch/openrisc/include/asm/Kbuild b/arch/openrisc/include/asm/Kbuild
+> index 2b1a6b00cdac..cef49d60d74c 100644
+> --- a/arch/openrisc/include/asm/Kbuild
+> +++ b/arch/openrisc/include/asm/Kbuild
+> @@ -9,4 +9,3 @@ generic-y += spinlock.h
+>  generic-y += qrwlock_types.h
+>  generic-y += qrwlock.h
+>  generic-y += user.h
+> -generic-y += text-patching.h
+> diff --git a/arch/openrisc/include/asm/fixmap.h b/arch/openrisc/include/asm/fixmap.h
+> index aaa6a26a3e92..74000215064d 100644
+> --- a/arch/openrisc/include/asm/fixmap.h
+> +++ b/arch/openrisc/include/asm/fixmap.h
+> @@ -28,6 +28,7 @@
+>  
+>  enum fixed_addresses {
+>  	FIX_EARLYCON_MEM_BASE,
+> +	FIX_TEXT_POKE0,
+>  	__end_of_fixed_addresses
+>  };
+>  
+> diff --git a/arch/openrisc/include/asm/insn-def.h b/arch/openrisc/include/asm/insn-def.h
+> new file mode 100644
+> index 000000000000..dc8d16db1579
+> --- /dev/null
+> +++ b/arch/openrisc/include/asm/insn-def.h
+> @@ -0,0 +1,12 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (C) 2025 Chen Miao
+> + */
+> +
+> +#ifndef __ASM_INSN_DEF_H
+> +#define __ASM_INSN_DEF_H
+> +
+> +/* or1k instructions are always 32 bits. */
+> +#define	OPENRISC_INSN_SIZE		4
+> +
+> +#endif /* __ASM_INSN_DEF_H */
+> diff --git a/arch/openrisc/include/asm/text-patching.h b/arch/openrisc/include/asm/text-patching.h
+> new file mode 100644
+> index 000000000000..bffe828288c3
+> --- /dev/null
+> +++ b/arch/openrisc/include/asm/text-patching.h
+> @@ -0,0 +1,13 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (C) 2025 Chen Miao
+> + */
+> +
+> +#ifndef _ASM_PATCHING_H_
+> +#define _ASM_PATCHING_H_
+>
+
+The ifdef here and above a incosistent.  Can you try to use a consistent
+convention to what is already used in openrisc?
+
+Mostly we use: __ASM_OPENRISC_*_H
+
+> +#include <linux/types.h>
+> +
+> +int patch_insn_write(void *addr, u32 insn);
+> +
+> +#endif /* _ASM_PATCHING_H_ */
+> diff --git a/arch/openrisc/kernel/Makefile b/arch/openrisc/kernel/Makefile
+> index 58e6a1b525b7..f0957ce16d6b 100644
+> --- a/arch/openrisc/kernel/Makefile
+> +++ b/arch/openrisc/kernel/Makefile
+> @@ -13,5 +13,6 @@ obj-$(CONFIG_SMP)		+= smp.o sync-timer.o
+>  obj-$(CONFIG_STACKTRACE)	+= stacktrace.o
+>  obj-$(CONFIG_MODULES)		+= module.o
+>  obj-$(CONFIG_OF)		+= prom.o
+> +obj-y	+= patching.o
+>  
+>  clean:
+> diff --git a/arch/openrisc/kernel/patching.c b/arch/openrisc/kernel/patching.c
+> new file mode 100644
+> index 000000000000..73ae449c6c4e
+> --- /dev/null
+> +++ b/arch/openrisc/kernel/patching.c
+> @@ -0,0 +1,78 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/* Copyright (C) 2020 SiFive
+> + * Copyright (C) 2025 Chen Miao
+> + */
+> +
+> +#include <linux/mm.h>
+> +#include <linux/kernel.h>
+> +#include <linux/spinlock.h>
+> +#include <linux/uaccess.h>
+> +
+> +#include <asm/insn-def.h>
+> +#include <asm/cacheflush.h>
+> +#include <asm/page.h>
+> +#include <asm/fixmap.h>
+> +#include <asm/text-patching.h>
+> +#include <asm/sections.h>
+> +
+> +static DEFINE_RAW_SPINLOCK(patch_lock);
+> +
+> +static __always_inline void *patch_map(void *addr, int fixmap)
+> +{
+> +	uintptr_t uaddr = (uintptr_t) addr;
+> +	phys_addr_t phys;
+> +
+> +	if (core_kernel_text(uaddr)) {
+> +		phys = __pa_symbol(addr);
+> +	} else {
+> +		struct page *page = vmalloc_to_page(addr);
+> +		BUG_ON(!page);
+> +		phys = page_to_phys(page) + offset_in_page(addr);
+> +	}
+> +
+> +	return (void *)set_fixmap_offset(fixmap, phys);
+> +}
+> +
+> +static void patch_unmap(int fixmap)
+> +{
+> +	clear_fixmap(fixmap);
+> +}
+> +
+> +static int __patch_insn_write(void *addr, u32 insn)
+> +{
+> +	void *waddr = addr;
+> +	unsigned long flags = 0;
+> +	int ret;
+> +
+> +	raw_spin_lock_irqsave(&patch_lock, flags);
+> +
+> +	waddr = patch_map(addr, FIX_TEXT_POKE0);
+> +
+> +	ret = copy_to_kernel_nofault(waddr, &insn, OPENRISC_INSN_SIZE);
+> +	local_icache_range_inv((unsigned long)waddr,
+> +			       (unsigned long)waddr + OPENRISC_INSN_SIZE);
+> +
+> +	patch_unmap(FIX_TEXT_POKE0);
+> +
+> +	raw_spin_unlock_irqrestore(&patch_lock, flags);
+> +
+> +	return ret;
+> +}
+> +
+> +/* patch_insn_write - Write a single instruction to a specified memory location
+> + * This API provides a single-instruction patching, primarily used for runtime
+> + * code modification.
+> + * By the way, the insn size must be 4 bytes.
+> + */
+
+The commit style is a bit off.  In the kernel multi line comments usually start
+with a lone '/*'. e.g.
+
+/*
+ * patch_insn_write - Write ...
+ * ...
+ */
+
+> +int patch_insn_write(void *addr, u32 insn)
+> +{
+> +	u32 *tp = addr;
+> +	int ret;
+> +
+> +	if ((uintptr_t) tp & 0x3)
+> +		return -EINVAL;
+> +
+> +	ret = __patch_insn_write(tp, insn);
+> +
+> +	return ret;
+> +}
+> diff --git a/arch/openrisc/mm/init.c b/arch/openrisc/mm/init.c
+> index e4904ca6f0a0..ac256c3d9c7a 100644
+> --- a/arch/openrisc/mm/init.c
+> +++ b/arch/openrisc/mm/init.c
+> @@ -226,7 +226,15 @@ static int __init map_page(unsigned long va, phys_addr_t pa, pgprot_t prot)
+>  	return 0;
+>  }
+>  
+> -void __init __set_fixmap(enum fixed_addresses idx,
+> +/* Removing __init is necessary. Before supporting FIX_TEXT_POKE0,
+> + *  __init here indicates that it is valid during the initialization phase
+> + * and is used for FIX_EARLYCON_MEM_BASE. However, attempting to support
+> + * FIX_TEXT_POKE0 would introduce a bug. FIX_TEXT_POKE0 is used after the
+> + * initialization phase, so __init would cause the function to become invalid.
+> + * At that point, using set_fixmap would lead to accessing dirty data,
+> + * which is invalid.
+> + */
+
+The comment about __init does not belong in the source here.  Perhaps your
+comment could mention hwo the __set_fixmap function is used for both EARLYCON
+and TEXT_POKE mappings.  Also, the comment style need to be updated.
+
+> +void __set_fixmap(enum fixed_addresses idx,
+>  			 phys_addr_t phys, pgprot_t prot)
+>  {
+>  	unsigned long address = __fix_to_virt(idx);
+> -- 
+> 2.45.2
+> 
 
