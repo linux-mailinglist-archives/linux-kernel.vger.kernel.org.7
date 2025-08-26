@@ -1,146 +1,148 @@
-Return-Path: <linux-kernel+bounces-786488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 717D0B35A76
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:54:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBC69B35A7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:56:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACCB7200559
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:54:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7028C7B30AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:54:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25596322557;
-	Tue, 26 Aug 2025 10:53:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC12301021;
+	Tue, 26 Aug 2025 10:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AEeClzP4"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="XiChvNvb"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1795F301486;
-	Tue, 26 Aug 2025 10:53:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C7D2248A5;
+	Tue, 26 Aug 2025 10:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756205638; cv=none; b=iFXkeEBrArOgNgOYo4GB1iSe4CfoBz+IqaILTx4sQD8+1eHWZ6xdWAAsYvxHenAE8OQdzEiuH1jvBOJUikfFxk2oDHTckJQqfVcsHHIsDOjSxh2rULJSUS1ynjFwvlykzwtiK2szP/10NaT7kBaGmARs0tcqM+x/HFTMcXmNgOI=
+	t=1756205758; cv=none; b=Pj0w3tj1XpuZecTjHn8N+J6ypDhVG4km5y89ZtL6Egyl/G3TuksLS9/7y8TUhPymwM3oegXA4FNxgme+zGPlWeH0mbtZYiEg846HfRKGysWP/I4fR+5CMQpjpbOtyDV8/t/r+TT/f71Mr/5EUIfq3RlU4sHzAmATbAGHmgw8fzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756205638; c=relaxed/simple;
-	bh=jVjyHzHZyNGXEvhdRTrU+nCu2u4nZzxXGN7Twr7z52Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=TLXIrVUKp+BenGyyd+21shxAEcA04y96qAAF6b2dKRMK2s7yv6QgtihJFCeAMY0OEw2rJRCpbI1TLetwbAuyuv4PpcdNhd5KO7dDz4QS5BTkY1Bj2GkfE1hg1qSt79YLLToWQrhgsFxyUi2jDRDGaXxW3sNOsM0WaDmNryH5F2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AEeClzP4; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57Q3NvCi007563;
-	Tue, 26 Aug 2025 10:53:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	TUfWlbt6ZoojGa9BRgsOhqblnhkLPGS5L6sEbwkYO0E=; b=AEeClzP4W1kLAOv5
-	Qm7h8Efg3emgQUucTJIMzKxTpkfUw9AFUsYjUrJMnIuCB2ChyDGLOIRoMPeR/JGY
-	jfseo7ZIiKSlB/XxY5YJwrIFILQUic6N76uOvQ/eilhIjaWSDOQErRc6SXvOVqtw
-	wjXSEXwxLj7PBMDD0bXGHS0R7TxoUxkMQeFesQfHRIw9i8v76XOwsLdfotoNBe1k
-	d+lJ7l10+kNhyDXYZfVKXNFYKXUYcQoiEd53N5a7Iuheybj3PUEblpG7Yh7j8lgg
-	IOo7zCQs2X7AEyW5PfPkgiiYA6ODHfSv+rDbO4ZrtfYKcEGl4AaGJTpSo0eR1W7v
-	s6pXOg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q6x88hyd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Aug 2025 10:53:54 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57QArreU016950
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Aug 2025 10:53:53 GMT
-Received: from hu-renjiang-sha.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.24; Tue, 26 Aug 2025 03:53:51 -0700
-From: Renjiang Han <quic_renjiang@quicinc.com>
-Date: Tue, 26 Aug 2025 16:23:39 +0530
-Subject: [PATCH v9 2/2] arm64: dts: qcom: qcs615-ride: enable venus node to
- initialize video codec
+	s=arc-20240116; t=1756205758; c=relaxed/simple;
+	bh=HpMXmXyWiHOCQMwM9m6pUVZyTdiCf8166ZcDeX/hpjk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BbS6P3Woyeg49LEernSzWlLq5hD5JsGZkY2AiV5A8H7u1msbL9Pu4lSSSwBtRqHrrSYccBYgxIp/jFrHcOUze0D5qeEy9m+Y+XkQyBZ024STIaO6UWka22VWolLRjnn6twERNjA8+nL45VnAMz0tSAqeRY+cncSLsLlp7qv5o10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=XiChvNvb; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Content-Type:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-To:Resent-Cc:
+	Resent-Message-ID:In-Reply-To:References;
+	bh=ZVqiOkm+IDB3wo6ENlUKoe7kWHPIvSPtFHRBKYevkS4=; t=1756205756; x=1757415356; 
+	b=XiChvNvbwtSZXx9+k2GBQIBDeZKMhyxG+uo4TghQ4iWNWiHgFtSSd3ngaBQZ1/pvhRdETiUjMuo
+	JPL2M44PuBkzt+WeUHCWHAHwTHdHzFOQ2LY1mgHQgbCo5+N+I4Ai80UVZr2vTJxdy5N+V1Sfi9GgH
+	DY3tcFoLVcZuuaOAYUTo95Y2p2sLrmP0SqQo4Br+e4/AhQMc4RSWbssskJ4R0YwYNzGeteH67/siS
+	fEHHM4rzeV/ml5xfryGjFreI3cT73PVAL9rKNdARPzeRUFTkx3i0aQBp4W7Uh02rNK5PXeDwuSCbr
+	BapRarIN2kJhIaYx8yGjvv406m80hjSDPdmQ==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1uqrL8-00000003X0e-1m4z;
+	Tue, 26 Aug 2025 12:55:46 +0200
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Pavel Machek <pavel@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH] PM: sleep: annotate RCU list iterations
+Date: Tue, 26 Aug 2025 12:55:31 +0200
+Message-ID: <20250826125541.7143e172c124.I9ecf55da46ccf33778f2c018a82e1819d815b348@changeid>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250826-enable-venus-for-sm6150-v9-2-486d167639a1@quicinc.com>
-References: <20250826-enable-venus-for-sm6150-v9-0-486d167639a1@quicinc.com>
-In-Reply-To: <20250826-enable-venus-for-sm6150-v9-0-486d167639a1@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Renjiang Han <quic_renjiang@quicinc.com>,
-        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1756205625; l=797;
- i=quic_renjiang@quicinc.com; s=20241001; h=from:subject:message-id;
- bh=jVjyHzHZyNGXEvhdRTrU+nCu2u4nZzxXGN7Twr7z52Y=;
- b=5bl9rYshp5WIDN3IL26hOQEz+qBkmlIZDjriL075h6rHQ9hJqPlGDIZ7FtKQh9E32OpWi74ph
- W4afDwd4cyzBd9+Z7016gRtFTlxZ0PoGYDXjFdPbX5CaF45/YytiOtJ
-X-Developer-Key: i=quic_renjiang@quicinc.com; a=ed25519;
- pk=8N59kMJUiVH++5QxJzTyHB/wh/kG5LxQ44j9zhUvZmw=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: XrIiGJ6X8lMuhUHWsxPgOgEB30m0S4II
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDA0NCBTYWx0ZWRfX4UWv04Ela/Ci
- A/Bk4RCh+fRCdnEUmqnAV3cSIUk7RVtVLozasPVZxwu2GE+mcPPvgjUN7WwFPh9Cebf1j/pXKDR
- 0bOuwti4E0banOsJbg+SVXKoYey8+ArxFBhZkWF7eNtkzXt9EtfH+x6qb06j0LQ3ZWgS+kqtPD1
- Y+kKOE0fjZsXq1ra+tpolWA7I8DSYhNcHm0VDoeRXcXlQyK7H+SJn+2Dh8Bk5Xtj5Ibg7pHaI3V
- UB0atszPiT7Z6F8/h7VKGB9D6RuXhvLQM/LT9bRGBvAGaOfBevLkIxwS6Pp+a9ag6ow2HVvppZ+
- DLH7ietsTpuEidj1XzmqgV919l8OXYQo/S+/HRlg5PNY8vOhF3ckCdsmpw9gtcf5k/hepuF5n+S
- 2snrBAGG
-X-Proofpoint-GUID: XrIiGJ6X8lMuhUHWsxPgOgEB30m0S4II
-X-Authority-Analysis: v=2.4 cv=Ep/SrTcA c=1 sm=1 tr=0 ts=68ad9242 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=QX4gbG5DAAAA:8
- a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=1tseWai4MNHguRGVtBsA:9 a=QEXdDO2ut3YA:10
- a=AbAUZ8qAyYyZVLSsDulk:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-26_02,2025-08-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 spamscore=0 adultscore=0 bulkscore=0 suspectscore=0
- phishscore=0 priorityscore=1501 malwarescore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230044
+Content-Transfer-Encoding: 8bit
 
-Enable the venus node to allow the video codec to start working properly
-by setting its status to "okay".
+From: Johannes Berg <johannes.berg@intel.com>
 
-Acked-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
+These iterations require the read lock, otherwise RCU
+lockdep will splat:
+
+=============================
+WARNING: suspicious RCU usage
+6.17.0-rc3-00014-g31419c045d64 #6 Tainted: G           O
+-----------------------------
+drivers/base/power/main.c:1333 RCU-list traversed in non-reader section!!
+
+other info that might help us debug this:
+
+rcu_scheduler_active = 2, debug_locks = 1
+5 locks held by rtcwake/547:
+ #0: 00000000643ab418 (sb_writers#6){.+.+}-{0:0}, at: file_start_write+0x2b/0x3a
+ #1: 0000000067a0ca88 (&of->mutex#2){+.+.}-{4:4}, at: kernfs_fop_write_iter+0x181/0x24b
+ #2: 00000000631eac40 (kn->active#3){.+.+}-{0:0}, at: kernfs_fop_write_iter+0x191/0x24b
+ #3: 00000000609a1308 (system_transition_mutex){+.+.}-{4:4}, at: pm_suspend+0xaf/0x30b
+ #4: 0000000060c0fdb0 (device_links_srcu){.+.+}-{0:0}, at: device_links_read_lock+0x75/0x98
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 547 Comm: rtcwake Tainted: G           O        6.17.0-rc3-00014-g31419c045d64 #6 VOLUNTARY
+Tainted: [O]=OOT_MODULE
+Stack:
+ 223721b3a80 6089eac6 00000001 00000001
+ ffffff00 6089eac6 00000535 6086e528
+ 721b3ac0 6003c294 00000000 60031fc0
+Call Trace:
+ [<600407ed>] show_stack+0x10e/0x127
+ [<6003c294>] dump_stack_lvl+0x77/0xc6
+ [<6003c2fd>] dump_stack+0x1a/0x20
+ [<600bc2f8>] lockdep_rcu_suspicious+0x116/0x13e
+ [<603d8ea1>] dpm_async_suspend_superior+0x117/0x17e
+ [<603d980f>] device_suspend+0x528/0x541
+ [<603da24b>] dpm_suspend+0x1a2/0x267
+ [<603da837>] dpm_suspend_start+0x5d/0x72
+ [<600ca0c9>] suspend_devices_and_enter+0xab/0x736
+ [...]
+
+Add the fourth argument to the iteration to annotate
+this and avoid the splat.
+
+Fixes: 06799631d522 ("PM: sleep: Make async suspend handle suppliers like parents")
+Fixes: ed18738fff02 ("PM: sleep: Make async resume handle consumers like children")
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 ---
- arch/arm64/boot/dts/qcom/qcs615-ride.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+Honestly, not sure, maybe this should just be without _rcu?
+---
+ drivers/base/power/main.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-index e663343df75d59481786192cde647017a83c4191..705ea71b07a10aea82b5789e8ab9f757683f678a 100644
---- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-@@ -513,3 +513,7 @@ &ufs_mem_phy {
+diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+index dbf5456cd891..e80175486be7 100644
+--- a/drivers/base/power/main.c
++++ b/drivers/base/power/main.c
+@@ -675,7 +675,8 @@ static void dpm_async_resume_subordinate(struct device *dev, async_func_t func)
+ 	idx = device_links_read_lock();
  
- 	status = "okay";
- };
-+
-+&venus {
-+	status = "okay";
-+};
-
+ 	/* Start processing the device's "async" consumers. */
+-	list_for_each_entry_rcu(link, &dev->links.consumers, s_node)
++	list_for_each_entry_rcu(link, &dev->links.consumers, s_node,
++				device_links_read_lock_held())
+ 		if (READ_ONCE(link->status) != DL_STATE_DORMANT)
+ 			dpm_async_with_cleanup(link->consumer, func);
+ 
+@@ -1330,7 +1331,8 @@ static void dpm_async_suspend_superior(struct device *dev, async_func_t func)
+ 	idx = device_links_read_lock();
+ 
+ 	/* Start processing the device's "async" suppliers. */
+-	list_for_each_entry_rcu(link, &dev->links.suppliers, c_node)
++	list_for_each_entry_rcu(link, &dev->links.suppliers, c_node,
++				device_links_read_lock_held())
+ 		if (READ_ONCE(link->status) != DL_STATE_DORMANT)
+ 			dpm_async_with_cleanup(link->supplier, func);
+ 
 -- 
-2.34.1
+2.51.0
 
 
