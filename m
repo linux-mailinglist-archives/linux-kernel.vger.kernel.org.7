@@ -1,63 +1,63 @@
-Return-Path: <linux-kernel+bounces-786603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE2C7B35F03
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:19:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA65DB35F05
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 14:19:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DA323622E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:19:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0D057B2CF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:17:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1E7299920;
-	Tue, 26 Aug 2025 12:19:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F3A33A03C;
+	Tue, 26 Aug 2025 12:19:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ajZWFvyx"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DFRv2vY0"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E8A30F55C
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 12:19:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2AC334723
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 12:19:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756210752; cv=none; b=PlUT8gJ8f89Fa8MfM/gDXIrQ9WTSsSHAPql3FGpg9TOBs6sO+M0khJtd9f1nN20kGa6Dedi7fTJmFWi6ZfPJdGB28zdOXsP3Bkadg4zQ4Tu0GEQSxA5Eu5XsliF8BGTaowy/qyf5ROVul45onNyraRrSkVoLUEEXC7ZPXZIWdJo=
+	t=1756210759; cv=none; b=W8PMOOa2wYfZ80E1Iwh09mbsk5zhM/o+FwnUEN7XRjsdAPnnK6tlzSFxRyPCkNbAFiZRx42toN6lJR9FZpQifjjmfsGRMSDmbFXSNAMJrc+IO0DICVAVZQol4Q8/Um7lCuoKkBYIKXCt6HXhIN8MWQa/g9ftYh1fAo0hQPl4eCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756210752; c=relaxed/simple;
-	bh=0zgeXQuJdsf05VY7VdGlm9Bpq5E/6cmbxc28AzrR2Hc=;
+	s=arc-20240116; t=1756210759; c=relaxed/simple;
+	bh=b3nCQzhaBlwTjBqmII2MrI5Q7LUVWnijB3p5u/DgjxQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DqZt+FQj215ZipgQS/asI64HMHCcqnYt7ewLMIAuyCPUrU0E4MZCmtWBRqd94oeekFfr8mi4mUVSgZWR++gDvZcNwXV4v0v31lRqjTzGBqkZm00eXS2/ghvr+5/t9u5JUf6/aWjFlAuL9h8Arc1SlfcRxKLYUFEcV+oZ2jZR8G8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ajZWFvyx; arc=none smtp.client-ip=198.175.65.15
+	 MIME-Version:Content-Type; b=UHbqpR6sXc2NbUjAyJkjrtjkijaaIaI0Mxnqj6mLV1CtNDsj8/LlCcrjT+vXf/VnTqcXjYN9aGI7D2Oes4QbTk/MPxIHxydM6Z3ARdpWAPcPv4yp/eF0bu4PkALq9P71WrpuAxfsc9zzP0268igpfHZ2O9DdIqnI62qrRKZnmPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DFRv2vY0; arc=none smtp.client-ip=198.175.65.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756210750; x=1787746750;
+  t=1756210755; x=1787746755;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=0zgeXQuJdsf05VY7VdGlm9Bpq5E/6cmbxc28AzrR2Hc=;
-  b=ajZWFvyxcCfG9QDymkLXg/925OuxNG52zm5AVQu7aA34C6Hbbbi9uJxC
-   uyH5QmlMFqMo1RDMKWXqlF2lYBVb1oJRefrVvFa1arJ4lLo8LuP/7tfS4
-   qOFJMH0qCw+LHHXj+Iv5iBWdUEsg5C2kQqBihfiHLMcdQQqo22dLypAyw
-   WEtJPZ/kfIf+iAyQZ2YIP2HVQ9OIop9asVrwyp+A6IJML0/J8srjUNPan
-   6zxgoeV2eQa0fgsk21tKyfafQUbNZZBY4ij7TuMZUUfpVFqsxWw4cvFWD
-   Ito6R1Nbgp8d+vDmOYfIts597XOMHi8+90LViLC6R1iwdAuIoipg9xd2l
-   w==;
-X-CSE-ConnectionGUID: qPktsXfjSZSdrYNwDGdrsg==
-X-CSE-MsgGUID: CV9ppZYxTHi4jTGk4h+KGg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11534"; a="62087785"
+  bh=b3nCQzhaBlwTjBqmII2MrI5Q7LUVWnijB3p5u/DgjxQ=;
+  b=DFRv2vY0crmp1Pzn23swmcH2xAcFfXpS44Wgszh+lV72reSXEP/NzeZ1
+   lMFd7A/zwFW3Eh96RfLTMO2P9csC/mGGtwv7QnXqtKe4yOevK7ZjAfwJq
+   Uop6bwNVMLKlxw+CwYAdtL3VLd01mVQCAf4DXCaJDz/5v/kuUGlzmiiFn
+   H2xNQjaGoRFo8asEAxEkkTExCAyeGP3+JmD2KE4Nd9DX5nuC2R1g9jejF
+   XV9ODGaVMhuNKIYzmFiyC2C/q8K4CV+I3hqN0dr+GJTfT0OWN+IdV7Pe0
+   6ceqol2HnzhGd+e/5qo+FCb1ilMAf78LNrkDr2mkhXHKun3sdJGmZ4yL7
+   Q==;
+X-CSE-ConnectionGUID: VgsbCrv7RzeFCiDTYbju3g==
+X-CSE-MsgGUID: 2ebUL98NSBSAu6n8KDRAng==
+X-IronPort-AV: E=McAfee;i="6800,10657,11534"; a="62087791"
 X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="62087785"
+   d="scan'208";a="62087791"
 Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 05:19:10 -0700
-X-CSE-ConnectionGUID: YYQa0MCXQ72wjTS0rfzQKA==
-X-CSE-MsgGUID: AH1ClqNdSK+ppLqcV1DtUg==
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2025 05:19:15 -0700
+X-CSE-ConnectionGUID: kqFLsmKvQhuPhbLzuHTTDA==
+X-CSE-MsgGUID: 7XhmaORXQdmfGxVz9sQspA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.18,214,1751266800"; 
-   d="scan'208";a="174866528"
+   d="scan'208";a="174866553"
 Received: from sschumil-mobl2.ger.corp.intel.com (HELO stinkbox) ([10.245.245.254])
-  by orviesa005.jf.intel.com with SMTP; 26 Aug 2025 05:19:06 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Tue, 26 Aug 2025 15:19:04 +0300
+  by orviesa005.jf.intel.com with SMTP; 26 Aug 2025 05:19:11 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Tue, 26 Aug 2025 15:19:09 +0300
 From: Ville Syrjala <ville.syrjala@linux.intel.com>
 To: linux-kernel@vger.kernel.org
 Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
@@ -71,9 +71,9 @@ Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
 	intel-xe@lists.freedesktop.org,
 	Jani Nikula <jani.nikula@intel.com>,
 	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>
-Subject: [PATCH v2 2/3] iopoll: Avoid evaluating 'cond' twice in poll_timeout_us()
-Date: Tue, 26 Aug 2025 15:18:58 +0300
-Message-ID: <20250826121859.15497-2-ville.syrjala@linux.intel.com>
+Subject: [PATCH v2 3/3] iopoll: Reorder the timeout handling in poll_timeout_us()
+Date: Tue, 26 Aug 2025 15:18:59 +0300
+Message-ID: <20250826121859.15497-3-ville.syrjala@linux.intel.com>
 X-Mailer: git-send-email 2.49.1
 In-Reply-To: <20250826121859.15497-1-ville.syrjala@linux.intel.com>
 References: <20250826121859.15497-1-ville.syrjala@linux.intel.com>
@@ -88,14 +88,23 @@ Content-Transfer-Encoding: 8bit
 
 From: Ville Syrjälä <ville.syrjala@linux.intel.com>
 
-Currently poll_timeout_us() evaluates 'cond' twice at the end
-of the success case. This not desirable in case 'cond' itself
-is expensive.
+Currently poll_timeout_us() evaluates 'op' and 'cond' twice
+within the loop, once at the start, and a second time after
+the timeout check. While it's probably not a big deal to do
+it twice almost back to back, it does make the macro a bit messy.
 
-Avoid the double evaluation by tracking the return value in
-a variable. Need to use a triple undescore '___ret' name to
-avoid a conflict with an existing double undescore '__ret'
-variable in the regmap code.
+Simplify the implementation to evaluate the timeout at the
+very start, then follow up with 'op'/'cond', and finally
+check if the timeout did in fact happen or not.
+
+For good measure throw in a compiler barrier between the timeout
+and 'op'/'cond' evaluations to make sure the compiler can't reoder
+the operations (which could cause false positive timeouts).
+The similar i915 __wait_for() macro already has the barrier, though
+there it is between the 'op' and 'cond' evaluations, which seems
+like it could still allow 'op' and the timeout evaluations to get
+reordered incorrectly. I suppose the ktime_get() might itself act
+as a sufficient barrier here, but better safe than sorry I guess.
 
 Cc: Lucas De Marchi <lucas.demarchi@intel.com>
 Cc: Dibin Moolakadan Subrahmanian <dibin.moolakadan.subrahmanian@intel.com>
@@ -110,81 +119,61 @@ Cc: linux-kernel@vger.kernel.org
 Reviewed-by: Jani Nikula <jani.nikula@intel.com>
 Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
 ---
- include/linux/iopoll.h | 22 ++++++++++++++++++----
- 1 file changed, 18 insertions(+), 4 deletions(-)
+ include/linux/iopoll.h | 24 +++++++++++-------------
+ 1 file changed, 11 insertions(+), 13 deletions(-)
 
 diff --git a/include/linux/iopoll.h b/include/linux/iopoll.h
-index 440aca5b4b59..d8c801ad68fa 100644
+index d8c801ad68fa..bdd2e0652bc3 100644
 --- a/include/linux/iopoll.h
 +++ b/include/linux/iopoll.h
-@@ -36,23 +36,30 @@
- 	u64 __timeout_us = (timeout_us); \
- 	unsigned long __sleep_us = (sleep_us); \
- 	ktime_t __timeout = ktime_add_us(ktime_get(), __timeout_us); \
-+	int ___ret; \
- 	might_sleep_if((__sleep_us) != 0); \
+@@ -41,18 +41,17 @@
  	if ((sleep_before_op) && __sleep_us) \
  		usleep_range((__sleep_us >> 2) + 1, __sleep_us); \
  	for (;;) { \
++		bool __expired = __timeout_us && \
++			ktime_compare(ktime_get(), __timeout) > 0; \
++		/* guarantee 'op' and 'cond' are evaluated after timeout expired */ \
++		barrier(); \
  		op; \
--		if (cond) \
-+		if (cond) { \
-+			___ret = 0; \
+ 		if (cond) { \
+ 			___ret = 0; \
  			break; \
-+		} \
- 		if (__timeout_us && \
- 		    ktime_compare(ktime_get(), __timeout) > 0) { \
- 			op; \
-+			if (cond) \
-+				___ret = 0; \
-+			else \
-+				___ret = -ETIMEDOUT; \
+ 		} \
+-		if (__timeout_us && \
+-		    ktime_compare(ktime_get(), __timeout) > 0) { \
+-			op; \
+-			if (cond) \
+-				___ret = 0; \
+-			else \
+-				___ret = -ETIMEDOUT; \
++		if (__expired) { \
++			___ret = -ETIMEDOUT; \
  			break; \
  		} \
  		if (__sleep_us) \
- 			usleep_range((__sleep_us >> 2) + 1, __sleep_us); \
- 		cpu_relax(); \
- 	} \
--	(cond) ? 0 : -ETIMEDOUT; \
-+	___ret; \
- })
- 
- /**
-@@ -83,6 +90,7 @@
- 	s64 __left_ns = __timeout_us * NSEC_PER_USEC; \
- 	unsigned long __delay_us = (delay_us); \
- 	u64 __delay_ns = __delay_us * NSEC_PER_USEC; \
-+	int ___ret; \
- 	if ((delay_before_op) && __delay_us) { \
- 		udelay(__delay_us); \
- 		if (__timeout_us) \
-@@ -90,10 +98,16 @@
+@@ -97,17 +96,16 @@
+ 			__left_ns -= __delay_ns; \
  	} \
  	for (;;) { \
++		bool __expired = __timeout_us && __left_ns < 0; \
++		/* guarantee 'op' and 'cond' are evaluated after timeout expired */ \
++		barrier(); \
  		op; \
--		if (cond) \
-+		if (cond) { \
-+			___ret = 0; \
+ 		if (cond) { \
+ 			___ret = 0; \
  			break; \
-+		} \
- 		if (__timeout_us && __left_ns < 0) { \
- 			op; \
-+			if (cond) \
-+				___ret = 0; \
-+			else \
-+				___ret = -ETIMEDOUT; \
+ 		} \
+-		if (__timeout_us && __left_ns < 0) { \
+-			op; \
+-			if (cond) \
+-				___ret = 0; \
+-			else \
+-				___ret = -ETIMEDOUT; \
++		if (__expired) { \
++			___ret = -ETIMEDOUT; \
  			break; \
  		} \
  		if (__delay_us) { \
-@@ -105,7 +119,7 @@
- 		if (__timeout_us) \
- 			__left_ns--; \
- 	} \
--	(cond) ? 0 : -ETIMEDOUT; \
-+	___ret; \
- })
- 
- /**
 -- 
 2.49.1
 
