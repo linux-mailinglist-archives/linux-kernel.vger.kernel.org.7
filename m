@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-787197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DE58B372DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 21:09:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2180B372DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 21:11:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D112A4E2B00
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:09:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3C024628AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 19:11:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC567372881;
-	Tue, 26 Aug 2025 19:08:57 +0000 (UTC)
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4E63728A6;
+	Tue, 26 Aug 2025 19:11:25 +0000 (UTC)
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D992E2D061A
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 19:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634883680AA
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 19:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756235337; cv=none; b=K8aY5XpUAokkKge4KbtuWyI61+yT63PXnLsioJMBh268w1V/oWcIw43g5r7Y6SWuGaWMLusaHenx4++Iqab1p6bAWHjVhKwK4zyKk9klVybtrZhEDQ/FRbmqoKw4uoWgyUjHOZPmFcS/lVo/qF5bjXya3Is6k7TbZ09vlgCllag=
+	t=1756235485; cv=none; b=BwY6ZDcV0iSKj/9Hu3c27f5H+JDLSyRjdY0qkQ8aI+3TfxBeIG+tKy4Q2roSbuVmRjpkgL+bHpn9b3jPl3AvNkMRPzCyNK9R1PNtJFn1T4zZl35reKr6r5ee25fDdmZQd9kpNKsTm+IZ+/4dgl1IwJ9LgXuGhfoibvBXLAqZyfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756235337; c=relaxed/simple;
-	bh=cXV4TB12PpOovVEA7AhNsgoljyctFjYKQ5z0jrglhGk=;
+	s=arc-20240116; t=1756235485; c=relaxed/simple;
+	bh=Uhdzc8EEUYuWN+cZjWFk5mNDLydwMtF2JLNcSZ5LYgA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hMAIpsRfCNH5c7C65xpooq+sW+bW7lnS558RQLvh/QLn86Li/1aDQVYKLqAtzoSuFuE1mVMoAe7eb7ZaT2KeyBgrOSeJc0jO0GUrKSFXTUBA0x7afbJO0Li0kIb04n8fTRoE1fuGousDs64uSYR0p0v5DWKpR4wbzYx0K42cfq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=linux.dev; arc=none smtp.client-ip=95.215.58.178
+	 Content-Type:Content-Disposition:In-Reply-To; b=a5Em4HZNmbVErD/wIL6jmRMvQrbRLD6GiB8QfYuOznzpiedS1QWSoERgyavAcRRlQc7HWhUKonlrVzIyGTgGLzZI1Cu8eLGDb35OK2YOnXeF7qm8f3ud8bh8pXSoFm2Fn6LEWnPprmgo0M9uFezwgqLZEGS5zpy/kn/jUruZOAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=linux.dev; arc=none smtp.client-ip=95.215.58.183
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 26 Aug 2025 15:08:46 -0400
+Date: Tue, 26 Aug 2025 15:11:14 -0400
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: Ben Collins <bcollins@kernel.org>
 To: David Lechner <dlechner@baylibre.com>
@@ -36,16 +36,16 @@ Cc: Jonathan Cameron <jic23@kernel.org>,
 	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, 
 	Antoniu Miclaus <antoniu.miclaus@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, 
 	Michael Hennerich <Michael.Hennerich@analog.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 4/5] iio: mcp9600: Add support for IIR filter
-Message-ID: <2025082614-inventive-gharial-c4a3f9@boujee-and-buff>
+Subject: Re: [PATCH v7 5/5] iio: ad4080: Rework filter_type "none" logic
+Message-ID: <2025082615-striped-crocodile-9cb63f@boujee-and-buff>
 Mail-Followup-To: David Lechner <dlechner@baylibre.com>, 
 	Jonathan Cameron <jic23@kernel.org>, Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
 	Andy Shevchenko <andy@kernel.org>, Antoniu Miclaus <antoniu.miclaus@analog.com>, 
 	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
 	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20250825-mcp9600-iir-v7-0-2ba676a52589@kernel.org>
- <20250825-mcp9600-iir-v7-4-2ba676a52589@kernel.org>
- <45170936-3eeb-4b7a-b75b-560660979b72@baylibre.com>
+ <20250825-mcp9600-iir-v7-5-2ba676a52589@kernel.org>
+ <0f515c35-b2ac-4d23-b8bb-77151ed2eb9f@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,194 +54,99 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <45170936-3eeb-4b7a-b75b-560660979b72@baylibre.com>
+In-Reply-To: <0f515c35-b2ac-4d23-b8bb-77151ed2eb9f@baylibre.com>
 X-Migadu-Flow: FLOW_OUT
 
-On Tue, Aug 26, 2025 at 12:20:39PM -0500, David Lechner wrote:
+On Tue, Aug 26, 2025 at 11:51:56AM -0500, David Lechner wrote:
 > On 8/25/25 7:10 PM, Ben Collins wrote:
-> > MCP9600 supports an IIR filter with 7 levels. Add IIR attribute
-> > to allow get/set of this value.
+> > The filter_type logic for "none" needed to be reworked to be more
+> > general.
 > > 
-> > Use filter_type[none, ema] for enabling the IIR filter.
+> > As documented, return IIO_VAL_EMPTY for sampling rates in "none" type
+> > and EINVAL when there's an attempt to write a rate for "none" type.
+> 
+> This patch breaks usespace, which is something we always must avoid.
+
+I was under the impression there was a need to make the use of
+filter_type "none" more consistent.
+
+I don't disagree with not breaking userspace, but it does create
+ambiguity for other implementations.
+
 > > 
 > > Signed-off-by: Ben Collins <bcollins@kernel.org>
 > > ---
-> >  drivers/iio/temperature/mcp9600.c | 147 ++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 147 insertions(+)
+> >  drivers/iio/adc/ad4080.c | 23 ++++++++++-------------
+> >  1 file changed, 10 insertions(+), 13 deletions(-)
 > > 
-> > diff --git a/drivers/iio/temperature/mcp9600.c b/drivers/iio/temperature/mcp9600.c
-> > index aa42c2b1a369edbd36e0d6d6d1738ed0069fd990..d3309e30628ae5cdc74378403952ba285990f4c0 100644
-> > --- a/drivers/iio/temperature/mcp9600.c
-> > +++ b/drivers/iio/temperature/mcp9600.c
-> > @@ -31,6 +31,7 @@
-> >  #define MCP9600_STATUS_ALERT(x)		BIT(x)
-> >  #define MCP9600_SENSOR_CFG		0x05
-> >  #define MCP9600_SENSOR_TYPE_MASK	GENMASK(6, 4)
-> > +#define MCP9600_FILTER_MASK		GENMASK(2, 0)
-> >  #define MCP9600_ALERT_CFG1		0x08
-> >  #define MCP9600_ALERT_CFG(x)		(MCP9600_ALERT_CFG1 + (x - 1))
-> >  #define MCP9600_ALERT_CFG_ENABLE	BIT(0)
-> > @@ -94,6 +95,27 @@ static const int mcp9600_tc_types[] = {
-> >  	[THERMOCOUPLE_TYPE_R] = 'R',
+> > diff --git a/drivers/iio/adc/ad4080.c b/drivers/iio/adc/ad4080.c
+> > index 6e61787ed3213fe4332bd92b938a7a717dada99f..c7408b9703731ee5d4229a85ffa91ea64b233cd9 100644
+> > --- a/drivers/iio/adc/ad4080.c
+> > +++ b/drivers/iio/adc/ad4080.c
+> > @@ -154,8 +154,6 @@ static const int ad4080_dec_rate_avail[] = {
+> >  	2, 4, 8, 16, 32, 64, 128, 256, 512, 1024,
 > >  };
 > >  
-> > +enum mcp9600_filter {
-> > +	MCP9600_FILTER_TYPE_NONE,
-> > +	MCP9600_FILTER_TYPE_EMA,
-> > +};
-> > +
-> > +static const char * const mcp9600_filter_type[] = {
-> > +	[MCP9600_FILTER_TYPE_NONE] = "none",
-> > +	[MCP9600_FILTER_TYPE_EMA] = "ema",
-> > +};
-> > +
-> > +static const int mcp_iir_coefficients_avail[7][2] = {
-> > +	/* Level 0 is no filter */
-> > +	{ 0, 524549 },
-> > +	{ 0, 243901 },
-> > +	{ 0, 119994 },
-> > +	{ 0,  59761 },
-> > +	{ 0,  29851 },
-> > +	{ 0,  14922 },
-> > +	{ 0,   7461 },
-> > +};
-> > +
-> >  static const struct iio_event_spec mcp9600_events[] = {
-> >  	{
-> >  		.type = IIO_EV_TYPE_THRESH,
-> > @@ -119,6 +141,8 @@ struct mcp_chip_info {
-> >  struct mcp9600_data {
-> >  	struct i2c_client *client;
-> >  	u32 thermocouple_type;
-> > +	int filter_level;
-> > +	int filter_enabled;
+> > -static const int ad4080_dec_rate_none[] = { 1 };
+> > -
+> >  static const char * const ad4080_power_supplies[] = {
+> >  	"vdd33", "vdd11", "vddldo", "iovdd", "vrefin",
 > >  };
-> >  
-> >  static int mcp9600_config(struct mcp9600_data *data)
-> > @@ -129,6 +153,9 @@ static int mcp9600_config(struct mcp9600_data *data)
-> >  
-> >  	cfg  = FIELD_PREP(MCP9600_SENSOR_TYPE_MASK,
-> >  			  mcp9600_type_map[data->thermocouple_type]);
-> > +	/* The chip understands 0 as "none", and 1-7 as ema filter levels. */
-> > +	if (data->filter_enabled)
-> > +		FIELD_MODIFY(MCP9600_FILTER_MASK, &cfg, data->filter_level + 1);
-> >  
-> >  	ret = i2c_smbus_write_byte_data(client, MCP9600_SENSOR_CFG, cfg);
-> >  	if (ret < 0) {
-> > @@ -146,7 +173,11 @@ static int mcp9600_config(struct mcp9600_data *data)
-> >  			.address = MCP9600_HOT_JUNCTION,		       \
-> >  			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |	       \
-> >  					      BIT(IIO_CHAN_INFO_THERMOCOUPLE_TYPE) | \
-> > +					      BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY) | \
-> 
-> Does the filter actually only apply to the hot junction and not the
-> cold junction? There is a mismatch between this being info_mask_separate
-> and the filter_type being IIO_SHARED_BY_ALL.
-> 
-> Not related to this patch, but the comment same applies to
-> IIO_CHAN_INFO_THERMOCOUPLE_TYPE - I missed that in previous reviews.
-
-The Thermocouple Sensor Configuration register only applies to the
-thermocouple (hot-junction), which is what sets the filter and
-thermocouple configuration.
-
-More specifically, the filter formula applies to T-delta (thermocouple
-hot-junction).
-
-So these are correct.
-
-> >  					      BIT(IIO_CHAN_INFO_SCALE),	       \
-> > +			.info_mask_separate_available =                        \
-> > +					      BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY), \
-> > +			.ext_info = mcp9600_ext_filter,			       \
-> >  			.event_spec = &mcp9600_events[hj_ev_spec_off],	       \
-> >  			.num_event_specs = hj_num_ev,			       \
-> >  		},							       \
-> > @@ -162,6 +193,57 @@ static int mcp9600_config(struct mcp9600_data *data)
-> >  		},							       \
-> >  	}
-> >  
-> > +static int mcp9600_get_filter(struct iio_dev *indio_dev,
-> > +			      struct iio_chan_spec const *chan)
-> > +{
-> > +	struct mcp9600_data *data = iio_priv(indio_dev);
-> > +
-> > +	return data->filter_enabled ? MCP9600_FILTER_TYPE_EMA :
-> > +		MCP9600_FILTER_TYPE_NONE;
-> > +}
-> > +
-> > +static int mcp9600_set_filter(struct iio_dev *indio_dev,
-> > +			      struct iio_chan_spec const *chan,
-> > +			      unsigned int mode)
-> > +{
-> > +	struct mcp9600_data *data = iio_priv(indio_dev);
-> > +	int new_type;
-> 
-> This variable name is a little confusing. It looks like it should
-> rather be:
-> 
-> 	bool new_filter_enabled;
-
-I can change that.
-
-> > +
-> > +	switch (mode) {
-> > +	case MCP9600_FILTER_TYPE_NONE:
-> > +		new_type = 0;
-> > +		break;
-> > +
-> > +	case MCP9600_FILTER_TYPE_EMA:
-> > +		new_type = 1;
-> > +		break;
-> > +
-> > +	default:
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	/* Do not reset the filter if we don't need to. */
-> > +	if (data->filter_enabled == new_type)
-> > +		return 0;
-> > +
-> > +	data->filter_enabled = new_type;
-> > +	return mcp9600_config(data);
-> > +}
-> > +
-> > +static const struct iio_enum mcp9600_filter_enum = {
-> > +	.items = mcp9600_filter_type,
-> > +	.num_items = ARRAY_SIZE(mcp9600_filter_type),
-> > +	.get = mcp9600_get_filter,
-> > +	.set = mcp9600_set_filter,
-> > +};
-> > +
-> > +static const struct iio_chan_spec_ext_info mcp9600_ext_filter[] = {
-> > +	IIO_ENUM("filter_type", IIO_SHARED_BY_ALL, &mcp9600_filter_enum),
-> > +	IIO_ENUM_AVAILABLE("filter_type", IIO_SHARED_BY_ALL,
-> > +			   &mcp9600_filter_enum),
-> > +	{ }
-> > +};
-> > +
-
-I guess I need to make this IIO_SEPARATE/IIO_SHARED_BY_TYPE, but I need
-to make sure it's only for the in_temp_raw and not in_temp_ambient_raw.
-
-> >  static const struct iio_chan_spec mcp9600_channels[][2] = {
-> >  	MCP9600_CHANNELS(0, 0, 0, 0), /* Alerts: - - - - */
-> >  	MCP9600_CHANNELS(1, 0, 0, 0), /* Alerts: 1 - - - */
-> > @@ -216,6 +298,69 @@ static int mcp9600_read_raw(struct iio_dev *indio_dev,
-> >  	case IIO_CHAN_INFO_THERMOCOUPLE_TYPE:
-> >  		*val = mcp9600_tc_types[data->thermocouple_type];
-> >  		return IIO_VAL_CHAR;
-> > +	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
-> > +		if (!data->filter_enabled)
+> > @@ -268,13 +266,13 @@ static int ad4080_read_raw(struct iio_dev *indio_dev,
+> >  			*val = st->clk_rate;
+> >  		return IIO_VAL_INT;
+> >  	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
+> > -		if (st->filter_type == FILTER_NONE) {
+> > -			*val = 1;
+> > -		} else {
+> > -			*val = ad4080_get_dec_rate(indio_dev, chan);
+> > -			if (*val < 0)
+> > -				return *val;
+> > -		}
+> > +		if (st->filter_type == FILTER_NONE)
 > > +			return IIO_VAL_EMPTY;
+> > +
+> > +		*val = ad4080_get_dec_rate(indio_dev, chan);
+> > +		if (*val < 0)
+> > +			return *val;
+> > +
+> >  		return IIO_VAL_INT;
+> >  	default:
+> >  		return -EINVAL;
+> > @@ -289,7 +287,7 @@ static int ad4080_write_raw(struct iio_dev *indio_dev,
+> >  
+> >  	switch (mask) {
+> >  	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
+> > -		if (st->filter_type == FILTER_NONE && val > 1)
+> > +		if (st->filter_type == FILTER_NONE)
+> >  			return -EINVAL;
+> >  
+> >  		return ad4080_set_dec_rate(indio_dev, chan, val);
+> > @@ -376,17 +374,16 @@ static int ad4080_read_avail(struct iio_dev *indio_dev,
+> >  	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
+> >  		switch (st->filter_type) {
+> >  		case FILTER_NONE:
+> > -			*vals = ad4080_dec_rate_none;
+> > -			*length = ARRAY_SIZE(ad4080_dec_rate_none);
+> > +			*type = IIO_VAL_EMPTY;
+> >  			break;
+> >  		default:
+> >  			*vals = ad4080_dec_rate_avail;
+> >  			*length = st->filter_type >= SINC_5 ?
+> >  				  (ARRAY_SIZE(ad4080_dec_rate_avail) - 2) :
+> >  				  ARRAY_SIZE(ad4080_dec_rate_avail);
+> > +			*type = IIO_VAL_INT;
+> >  			break;
+> >  		}
+> > -		*type = IIO_VAL_INT;
+> >  		return IIO_AVAIL_LIST;
+> >  	default:
+> >  		return -EINVAL;
+> > 
 > 
-> This brings us back to the earlier discussion of what should this
-> be when the filter is disabled. Mathematically, it would be infinite.
-> 
-> I wonder if it would be reasonable to return "inf" here since many
-> floating point parsers will already handle that as a valid value.
-
-I'll defer to the other thread for further discussion on this.
+> Returning a value of 1 for the oversampling ratio when there is no
+> oversampling going on is perfectly reasonable and mathematically correct.
+> So I don't consider this change an improvement.
 
 -- 
  Ben Collins
