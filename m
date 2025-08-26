@@ -1,90 +1,61 @@
-Return-Path: <linux-kernel+bounces-786454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF3CFB35A0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:26:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59BEDB35A11
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 12:28:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB8541B67E06
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:27:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BC497A8194
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BCF52BE7B3;
-	Tue, 26 Aug 2025 10:26:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 500112BE7D1;
+	Tue, 26 Aug 2025 10:27:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gc2weJaT"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b="P22KnrD7"
+Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C9B2BDC2F;
-	Tue, 26 Aug 2025 10:26:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BAE0199FAB
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 10:27:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756203997; cv=none; b=lt9vqm09eYTXzMOWQBglK9ozbAptBzNEuaagdXdAavLpv8SQz8ijC8STQeF+KBLfbWk3YqWCMdtx8tFYqSk6csOkPBk2ImQXlXbAvWvP/GeG2vAJZmsyjB+F54+ts9ZEH/h2hOGCQhEdPG51aGmHIebq/OyEBrb6WeVXBEUHeic=
+	t=1756204068; cv=none; b=ei5MmYcFfb01IvQFHP77TLUMoyIYrU/ZKPSICUoZdCJpezi55//xwqWxq9M+2c6ZVDlBTHGoIvUlO6UWUPCmSaLKFRpp5v5+qScyvE5jUb1unwLJNHF/UdlbTYgJM+D2NlPhP50K8QfK1+KnSB1IL1fJWF5MQIIa0+j2leUXIng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756203997; c=relaxed/simple;
-	bh=O5QaWL4fC9ZfJKSjodA0MK3AH6Gddyny4ad5oPhmaK8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Edch0sJCFIFvURgZLe/xsQ7jXOfX0geVgRaQ7AaZkR88fbnm5iPh9+yQVaAhPcdPo/ookWy++6gSv6bofQNaC5G6JOgk65MrEQP5KezUQFXYskd1/uxIc+eyLIg8wRLmTkFs9jzqT4X51vtsw1EddbZmXHCjeXN6D+V6y0pOG8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gc2weJaT; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-619487c8865so11242771a12.1;
-        Tue, 26 Aug 2025 03:26:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756203994; x=1756808794; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ds6xAU6+uuVJ+pTYkEOyBSf6qVVVR2jmuQi+4247ivo=;
-        b=Gc2weJaTw4HKhI+dmvTnaU3Cjwz+Ilq69q9gc/Pa2BaRYAfEt7RNHRJTK3Xi5PbJrg
-         PC2KKlAm+wq2QX1VDOTYR5vzFbIJgQi7I/ws6/K1eGt7f47keMr3j3MRfIKKNK7h3uWs
-         3Nam0WE1sUaOLfKEJxhUvU0tyBznfZDTOXRL8uFDHgy1fvrtp9W2DZdK7HKcKzjTsvrr
-         yP+kQ2eEApsSbZlg01fdI/Ds+Xn7WbzmhRGnT9NKDAqP0o/TVnnrKJ7OCtPpS4zW8xv/
-         oOb6i8GSxYqXtWPToa/q0MoTXoSlw2jzZKP1qVM4Fjn5NpyXKtbD/nytyQWpuwbpc6rL
-         V5MA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756203994; x=1756808794;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ds6xAU6+uuVJ+pTYkEOyBSf6qVVVR2jmuQi+4247ivo=;
-        b=H2fsL8QK0B9XiK9VK3++BRmQ5VJZyHA2Bl3D7Fi4fAg1+BLexlOBCTNxXykc9rOYqn
-         XCdocechsu7WzFdG5pv5hb6cXLdFGjozPdGI1674PFHQr0WJPkaWpOf6bfDnXpO00wuP
-         QCtpUDi+HDwzh4s+UbHMi/dCcjXiypNbpGprujlI6iaI8I9zuhpc9rWK6/o3zB08Vllp
-         6r14Cg9JDg6EaJtEI26YyrkxmihKJ6rMyS7GYdc/Mt2Giz2rZtvt4IMudWYlKblV2nUz
-         PXWsw7oHXTFI0l7Uyr4cF+nVupBXI+tlEy4sQ7/tJovQXwHEWM3jzzzv8G3gYhojfuoj
-         NvXg==
-X-Forwarded-Encrypted: i=1; AJvYcCXzWdlou0ahrMbUKFvG3WM+CjhHAE868IobntrckdOQrE/KHoizyU+NOdtXOaEdCs0BdQSbTl9VBp0rjNc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1E1lnJjZahvbtwG2ceCg5kc+FVZUnDOGzcfbZV58UjM5PvNki
-	twKBVVlmYwFUZ0OrQ3/Ls58v1BlL9pykHna+NaAcramvC+189R3R8hpoArnQXA==
-X-Gm-Gg: ASbGncuTthLgIxbzQGomGSWxpZeGwU979KyJUjrc9u0KFNV7BOHpCOpm1vMOfgNIZdD
-	WN3gxisMlXsteAH0b2uxiabwrC1RB4ZqHsW1YiqtoMu81Pu3lDWTm+fWSaxKkoVYNJlbyF0xpFB
-	aClxTscLa0brwCFVryo3UDnwVB6cMVywaGbn0ZsjbixBCOHBAN65l0TpVDTgsRxFs8nATdi+Wfj
-	/jeUp5tccuu2Z5SiuepWGlQg47yiVUrVLVnxaBXg3AaljhHaCAStugG8SIRCbl0ws1gvgp8GcUc
-	7fTcX12PcQFrYAOgXjnkiGl2LuU/QSEIXoh3/zHIpbF0GyUGTFk5h3NNp+FaIErikq8m1+yocnM
-	6BiuxKAPU780Km2URpHbuw1AEfA==
-X-Google-Smtp-Source: AGHT+IHTceCWbmXAuyBrrQ/rdBMT4nvIUTD87nvmQUP/YtdfJBrxaTfJzojq7oJ8BVjGWCSkCrrLzQ==
-X-Received: by 2002:a05:6402:90e:b0:61c:931d:ccce with SMTP id 4fb4d7f45d1cf-61c983b81d2mr876407a12.13.1756203993533;
-        Tue, 26 Aug 2025 03:26:33 -0700 (PDT)
-Received: from NB-6746.. ([88.201.206.17])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61c3119f79asm6687862a12.5.2025.08.26.03.26.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Aug 2025 03:26:33 -0700 (PDT)
-From: Artem Shimko <artyom.shimko@gmail.com>
-X-Google-Original-From: Artem Shimko <a.shimko@yadro.com>
-To: dmaengine@vger.kernel.org
-Cc: Artem Shimko <artyom.shimko@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	vkoul@kernel.org,
-	eugeniy.paltsev@synopsys.com
-Subject: [PATCH 0/1] drivers: dma: change pm registration for dw-axi-dmac-platform's suspend
-Date: Tue, 26 Aug 2025 13:26:27 +0300
-Message-ID: <20250826102631.1891492-1-a.shimko@yadro.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <y>
-References: <y>
+	s=arc-20240116; t=1756204068; c=relaxed/simple;
+	bh=IesqIGnB9Ffo5uqYC6nyaFAQHscROhBN/53NzNHTVys=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dOvJhPyT467r5fvCTnR7Ftx/8JX98cWGyql0uNPF1jqHkBzCr1mTzc+Tk1G+Ik4sIVNg5qx5B2rILyRMQw/FNBXNSPWDf1a6Kstaff1zJE07ciWatUjzTLhnQTa7ccCE9gepM19BjYRHLFe9iflC7xcHYUerI2QWg/yf+z/yyXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b=P22KnrD7; arc=none smtp.client-ip=185.136.65.227
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 20250826102741e6a38a615d000207dc
+        for <linux-kernel@vger.kernel.org>;
+        Tue, 26 Aug 2025 12:27:41 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
+ d=siemens.com; i=alexander.sverdlin@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=I/4BVzGU//6o8w11JEpBafkAVNTi3A37k7IOe6GBXws=;
+ b=P22KnrD7K2eLtlFSFdKekh9i2IMMpIplqPFKWTX0OT22i4CJXQfd39EDkaV/yDKtBnd1gU
+ 6Hb2/hcwDuZMwCNB3QhypM/bfUjEflgvTwsaXuixrAvsbdh0k58WhsUNOM4I5TcxXOCsPENM
+ xXNnVzVKs7SQcNJuHn3p/TOtA+orgZsqWcW3EN4B3c7cvHrs15t37emEt3BWWQty0HCj2gD0
+ 1bBFpG22jKbS8oOb/yAdUmX5y8Sk+Qn6dKH7f2M6lWFbp8ysYY/CCMcMObPY8qtykaWGVmOK
+ UN0fT89QKpi32/J0JwfIZA6Md325NSqB8oN88tvcuYqQNWVPC6PC37BQ==;
+From: "A. Sverdlin" <alexander.sverdlin@siemens.com>
+To: Marco Elver <elver@google.com>,
+	linux-kernel@vger.kernel.org
+Cc: Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	stable@vger.kernel.org,
+	Adrian Freihofer <adrian.freihofer@siemens.com>
+Subject: [PATCH RESEND] locking/spinlock/debug: Fix data-race in do_raw_write_lock
+Date: Tue, 26 Aug 2025 12:27:27 +0200
+Message-ID: <20250826102731.52507-1-alexander.sverdlin@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,30 +63,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-456497:519-21489:flowmailer
 
-From: Artem Shimko <artyom.shimko@gmail.com>
+From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 
-The SET_RUNTIME_PM_OPS macro has been deprecated in favor of
-DEFINE_RUNTIME_DEV_PM_OPS which provides equivalent functionality
-while also supporting system suspend mode.
+KCSAN reports:
 
-This change modernizes the power management implementation by:
-1. Replacing SET_RUNTIME_PM_OPS with DEFINE_RUNTIME_DEV_PM_OPS
-2. Removing wrapper runtime suspend/resume functions
-3. Adding __maybe_unused attribute to PM functions
-4. Converting direct chip access to device-based access in PM functions
-5. Using pm_ptr() for PM ops pointer registration
+BUG: KCSAN: data-race in do_raw_write_lock / do_raw_write_lock
 
-The refactoring maintains all existing functionality while improving
-code maintainability and following current kernel best practices.
+write (marked) to 0xffff800009cf504c of 4 bytes by task 1102 on cpu 1:
+ do_raw_write_lock+0x120/0x204
+ _raw_write_lock_irq
+ do_exit
+ call_usermodehelper_exec_async
+ ret_from_fork
 
-Artem Shimko (1):
-  drivers: dma: change pm registration for dw-axi-dmac-platform's
-    suspend
+read to 0xffff800009cf504c of 4 bytes by task 1103 on cpu 0:
+ do_raw_write_lock+0x88/0x204
+ _raw_write_lock_irq
+ do_exit
+ call_usermodehelper_exec_async
+ ret_from_fork
 
- .../dma/dw-axi-dmac/dw-axi-dmac-platform.c    | 31 ++++++-------------
- 1 file changed, 9 insertions(+), 22 deletions(-)
+value changed: 0xffffffff -> 0x00000001
 
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 0 PID: 1103 Comm: kworker/u4:1 6.1.111
+
+Commit 1a365e822372 ("locking/spinlock/debug: Fix various data races") has
+adressed most of these races, but seems to be not consistent/not complete.
+
+From do_raw_write_lock() only debug_write_lock_after() part has been
+converted to WRITE_ONCE(), but not debug_write_lock_before() part.
+Do it now.
+
+Cc: stable@vger.kernel.org
+Fixes: 1a365e822372 ("locking/spinlock/debug: Fix various data races")
+Reported-by: Adrian Freihofer <adrian.freihofer@siemens.com>
+Acked-by: Waiman Long <longman@redhat.com>
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+---
+There are still some inconsistencies remaining IMO:
+- lock->magic is sometimes accessed with READ_ONCE() even though it's only
+being plain-written;
+- debug_spin_unlock() and debug_write_unlock() both do WRITE_ONCE() on
+lock->owner and lock->owner_cpu, but examine them with plain read accesses.
+
+ kernel/locking/spinlock_debug.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/locking/spinlock_debug.c b/kernel/locking/spinlock_debug.c
+index 87b03d2e41dbb..2338b3adfb55f 100644
+--- a/kernel/locking/spinlock_debug.c
++++ b/kernel/locking/spinlock_debug.c
+@@ -184,8 +184,8 @@ void do_raw_read_unlock(rwlock_t *lock)
+ static inline void debug_write_lock_before(rwlock_t *lock)
+ {
+ 	RWLOCK_BUG_ON(lock->magic != RWLOCK_MAGIC, lock, "bad magic");
+-	RWLOCK_BUG_ON(lock->owner == current, lock, "recursion");
+-	RWLOCK_BUG_ON(lock->owner_cpu == raw_smp_processor_id(),
++	RWLOCK_BUG_ON(READ_ONCE(lock->owner) == current, lock, "recursion");
++	RWLOCK_BUG_ON(READ_ONCE(lock->owner_cpu) == raw_smp_processor_id(),
+ 							lock, "cpu recursion");
+ }
+ 
 -- 
-2.43.0
+2.47.1
+
 
