@@ -1,124 +1,180 @@
-Return-Path: <linux-kernel+bounces-786262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-786276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 557B0B35766
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:41:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29010B3579B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 10:50:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E0B42000BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:41:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE6ED5E4E56
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Aug 2025 08:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C742FB61D;
-	Tue, 26 Aug 2025 08:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VWvT3P+z"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E129460;
-	Tue, 26 Aug 2025 08:41:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3C32FDC24;
+	Tue, 26 Aug 2025 08:50:38 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6CDC3D984;
+	Tue, 26 Aug 2025 08:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756197684; cv=none; b=WCklNkYvF2M52oduNVSqs4VjA11RD0i4Sw3lZvd4cRiDVZlVaha2tlG0D8hSR84cdI1XQ2DML9A4BRbv9JvIKbBiVQOArR7gV6iec0gXAeZ4Mogz03I7lHnMja11BkBtSdKLEzkfTWE2gBxbpAqAYLouFFaNIZwM6y1WpTnVPTc=
+	t=1756198237; cv=none; b=U+f1fUM5rMm7vnrevd8lk0y4Bw92r3N4M5qOcciTPkaezo5N/LOo3MnPlRrIO8CKNwr0t8RGo6r5bQMwrHuJbbBvYKlEySezvykAwBVp1aL64oNvqQoflJyMR7usYG6/xNUUCyiwoUgDD9pCTWOREEHN9GTWMn1DgvPEa5vwzcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756197684; c=relaxed/simple;
-	bh=6lftHUf71DUA4T0bqA8FrTXfH0J6B4vPI5kQZlu3iak=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jShPbh4K15quDsKgP/F5aXnSnc8Z+mjqB4wiHldoRphsJUmc3posUr9MStpX2lwXSxKxCir/VmVkZCSRtRQ9MucQONXiTJKesBzXnQH0BAvTiw6thodbEE2RjxYfN3tjqEdDm+vYcXtZD9SkHaEThoAnvM+yQXDha5SnR6f+LBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VWvT3P+z; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-24617d3f077so7627285ad.0;
-        Tue, 26 Aug 2025 01:41:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756197679; x=1756802479; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WsM/gomFX2MDoPGDhRP46zbnJ36LRge+C6Uha0o94HA=;
-        b=VWvT3P+z0RmQ/4TRGDdKbO9jchZ7AAmuKvm8WN6Fi6Cx8JmtAOYQBNic8ffGcocF+1
-         cE1Qjmug4zqsBk30eQL/6J21qjj4lc+hejfIaJSF3melipRHbqZZS3dRsT4sqocM7LnI
-         Q2NmgidR4Fz8nIVCFW7Vys5AxkRzfPamG4le2/Infh2Iw64eQukSjjAENrjW/SzFZ7B/
-         uE9YyNBhBVU2lGoSPU6JaXIcvCNynzUCYzmrX4XOr7lRU5qrqjDnLvF7EuACKDxjPunE
-         KM0NAg+0XZCC/tjQv8RcP2EO9SYT76WLEV5lt/OjFXMKWljgvNA9q4uwG4CLkHNfHcLr
-         Sshw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756197679; x=1756802479;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WsM/gomFX2MDoPGDhRP46zbnJ36LRge+C6Uha0o94HA=;
-        b=BFghpudzdZKBgupH/LijNNXO4cfDWsyXWTXq6a2fvhpaJFM83v2WGj0L9VRuPyLSp5
-         5+jdghnr7MaY9ke1jbgRBt5OA529v5JybKySNey3COxUGoj4Y1pdVJPeALcLooiphRRS
-         YHYyH3amGaKmbDoQ7XcPdaqBznBljjY6h9NXqVnQt9cKDVonYzbeiBEi0oiKBEcbA7Hg
-         6ywD60oBCpwpNQK0JjPg4ZUM99VTJ8Zacn29z5g4mWOMjbb34LXeHRoHsC1L/sPfoNYv
-         TqKf0QnX5H/98dmfhq8CARB1JjHaDQj2JGzuRVo3m2DaZ4KZjehRIEtyGj0ITAXRkmOp
-         BqcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVBcVjcwsnSgz75YdTccoqqy93WWAU9gneBhyLI+ms/wLj92rg8IrKTs3OJrsFDHhgVPhDa4nAGCuBUt1M=@vger.kernel.org, AJvYcCW7+Ac4GX+8P+HFURWj0WG9HaqRwS6l6bkh0xvMFfST74ZDuzKp5jRY4He3TVGsP/r4xL6IFSWa3VZEFA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzU+TxSZ/KFYDkTYKXSyPry/psCeb1itnIfpd7XP2ndMU9Q1zeS
-	H5VKTDCNh+WXIBPnxNiIjRbpXxNITtDtE+hUrZ3Nemj7+C4mgybkbcgjRTiLCvilRb5oE3+K49G
-	s/FiC7I5zkgycgSvI5o9zduQXEtET8ag=
-X-Gm-Gg: ASbGncvSWarmaEqEfox+yahG/c91lczuZtVlPk3ZawiCuMAYnKjRFLNtRqgILqnS1pU
-	Hr6QoC5yQiz39DPMevzQ/2XD1D3zeOpqA5PXaVNdnkf1wQXW1FZHhr12rDupZHlLOnanvV9OFT5
-	HvXzwUe99p613xLgIlSe+9MA/1BVtZjwxQiDK3X5bUdj3Z5ym1L7VRtEzh/Cpx9sRRZL6kZ6VdN
-	Ka9FC4Wc+hWTdZhehqGMe/j/MmmOv74fm5nrdJnOjlKkZM0DRy7a8K8a2AaE52YAW00jcssoj/3
-	NvCsiqMI2lGjV5L3hc18BRyJmE6unMCUZVev
-X-Google-Smtp-Source: AGHT+IGgUd3cCw5hoPcSqxVJsTVEGdnQtn/6lCN3HNmE+fc6RAadH31yG60gx4CJqcHEUD1Lg9LJODBA+S34cf8KfmM=
-X-Received: by 2002:a17:902:c402:b0:246:7702:dfd9 with SMTP id
- d9443c01a7336-2467702f08cmr76116925ad.6.1756197679484; Tue, 26 Aug 2025
- 01:41:19 -0700 (PDT)
+	s=arc-20240116; t=1756198237; c=relaxed/simple;
+	bh=pJ0dqW2GCGa4yWArNPjCeHoPWJICNpv8ipt0j7ASM1Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=FOHEP5UyfJzA0HO5ZVkwWZGSLv7spbBzm91KTHiHSw99rkAMvBAs4JtAl+tNN/XoSDP/Y+Rd5h9hRVCbXCK1/4IjB20si0PxXdVoO5e/amiVpj2+lIpy274VnpDHMGBiVm24AwRtX16XdzfKMTp/YkvPapY6DR+PBjEj3NCv5KI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cB1Np0NmHz9sSd;
+	Tue, 26 Aug 2025 10:41:46 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id voHHKrBq8-UN; Tue, 26 Aug 2025 10:41:45 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cB1Nn6L1xz9sSc;
+	Tue, 26 Aug 2025 10:41:45 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id C0CCD8B764;
+	Tue, 26 Aug 2025 10:41:40 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id j9M1S24KLE1q; Tue, 26 Aug 2025 10:41:40 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 2D0548B763;
+	Tue, 26 Aug 2025 10:41:40 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Qiang Zhao <qiang.zhao@nxp.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v4] soc: fsl: qe: Add support of IRQ in QE GPIO
+Date: Tue, 26 Aug 2025 10:41:29 +0200
+Message-ID: <ac7c79b3491cb48ef7c193420b9a9e4614b88436.1756197502.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <372550a2633586d2f98b077d3f520f3262ca0e2a.1756104334.git.christophe.leroy@csgroup.eu>
+References: <372550a2633586d2f98b077d3f520f3262ca0e2a.1756104334.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826173041.3140da7b@canb.auug.org.au>
-In-Reply-To: <20250826173041.3140da7b@canb.auug.org.au>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 26 Aug 2025 10:41:06 +0200
-X-Gm-Features: Ac12FXx7-KVTFlOMqBN0AFgfUOGYkYDCZFfOLj9hCpjCtkzCPViNyRbfTme0t1A
-Message-ID: <CANiq72mzK6BifSn+tWK090U1VO2FS2J5WQvX5O48D0MRDiSs2w@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the rust-alloc tree with the
- mm-unstable tree and Linus' tree.
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Danilo Krummrich <dakr@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Vitaly Wool <vitaly.wool@konsulko.se>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1756197697; l=2931; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=pJ0dqW2GCGa4yWArNPjCeHoPWJICNpv8ipt0j7ASM1Y=; b=qXBDjnSeeKD6zixq9hi51WNrEhQvT+wzLU+IvEBZpjXb3EHCSVzw/98Sy6Ghh9g5fyNRHzWIE JBWupobYaCsCVFuqPZds6FTJG7GVp+fHpUTHxKDVXYEvdxzDll2r4CZ
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 26, 2025 at 9:30=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org=
-.au> wrote:
->
-> Today's linux-next merge of the rust-alloc tree got a conflict in:
->
->   rust/kernel/alloc/allocator_test.rs
->
-> between commits:
->
->   501046225a67 ("rust: alloc: fix missing import needed for `rusttest`")
->   c8a3b6ec0370 ("rust: add support for NUMA ids in allocations")
->
-> from the mm-unstable tree and
->
->   0f580d5d3d9d ("rust: alloc: fix `rusttest` by providing `Cmalloc::align=
-ed_layout` too")
->
-> from Linus' tree and commit:
->
->   fe927defbb4f ("rust: alloc: remove `allocator_test`")
->
-> from the rust-alloc tree.
->
-> I fixed it up (I removed the file) and can carry the fix as
-> necessary.
+In the QE, a few GPIOs are IRQ capable. Similarly to
+commit 726bd223105c ("powerpc/8xx: Adding support of IRQ in MPC8xx
+GPIO"), add IRQ support to QE GPIO.
 
-That's correct -- the file is going away. Thanks!
+Add property 'fsl,qe-gpio-irq-mask' similar to
+'fsl,cpm1-gpio-irq-mask' that define which of the GPIOs have IRQs.
 
-Cheers,
-Miguel
+Here is an exemple for port B of mpc8323 which has IRQs for
+GPIOs PB7, PB9, PB25 and PB27.
+
+	qe_pio_b: gpio-controller@1418 {
+		compatible = "fsl,mpc8323-qe-pario-bank";
+		reg = <0x1418 0x18>;
+		interrupts = <4 5 6 7>;
+		interrupt-parent = <&qepic>;
+		gpio-controller;
+		#gpio-cells = <2>;
+		fsl,qe-gpio-irq-mask = <0x01400050>;
+	};
+
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+---
+v4: Using device_property_read_u32() instead of of_property_read_u32()
+---
+ drivers/soc/fsl/qe/gpio.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/drivers/soc/fsl/qe/gpio.c b/drivers/soc/fsl/qe/gpio.c
+index 5bf073bbaac8..68bcd6048b1c 100644
+--- a/drivers/soc/fsl/qe/gpio.c
++++ b/drivers/soc/fsl/qe/gpio.c
+@@ -12,11 +12,13 @@
+ #include <linux/spinlock.h>
+ #include <linux/err.h>
+ #include <linux/io.h>
++#include <linux/of_irq.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/gpio/driver.h>
+ #include <linux/slab.h>
+ #include <linux/export.h>
+ #include <linux/platform_device.h>
++#include <linux/property.h>
+ 
+ #include <soc/fsl/qe/qe.h>
+ 
+@@ -30,6 +32,8 @@ struct qe_gpio_chip {
+ 
+ 	/* saved_regs used to restore dedicated functions */
+ 	struct qe_pio_regs saved_regs;
++
++	int irq[32];
+ };
+ 
+ static void qe_gpio_save_regs(struct qe_gpio_chip *qe_gc)
+@@ -133,6 +137,13 @@ static int qe_gpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
+ 	return 0;
+ }
+ 
++static int qe_gpio_to_irq(struct gpio_chip *gc, unsigned int gpio)
++{
++	struct qe_gpio_chip *qe_gc = gpiochip_get_data(gc);
++
++	return qe_gc->irq[gpio] ? : -ENXIO;
++}
++
+ struct qe_pin {
+ 	/*
+ 	 * The qe_gpio_chip name is unfortunate, we should change that to
+@@ -293,6 +304,7 @@ static int qe_gpio_probe(struct platform_device *ofdev)
+ 	struct device_node *np = dev->of_node;
+ 	struct qe_gpio_chip *qe_gc;
+ 	struct gpio_chip *gc;
++	u32 mask;
+ 
+ 	qe_gc = devm_kzalloc(dev, sizeof(*qe_gc), GFP_KERNEL);
+ 	if (!qe_gc)
+@@ -300,6 +312,14 @@ static int qe_gpio_probe(struct platform_device *ofdev)
+ 
+ 	spin_lock_init(&qe_gc->lock);
+ 
++	if (!device_property_read_u32(dev, "fsl,qe-gpio-irq-mask", &mask)) {
++		int i, j;
++
++		for (i = 0, j = 0; i < ARRAY_SIZE(qe_gc->irq); i++)
++			if (mask & (1 << (31 - i)))
++				qe_gc->irq[i] = irq_of_parse_and_map(np, j++);
++	}
++
+ 	gc = &qe_gc->gc;
+ 
+ 	gc->base = -1;
+@@ -309,6 +329,7 @@ static int qe_gpio_probe(struct platform_device *ofdev)
+ 	gc->get = qe_gpio_get;
+ 	gc->set = qe_gpio_set;
+ 	gc->set_multiple = qe_gpio_set_multiple;
++	gc->to_irq = qe_gpio_to_irq;
+ 	gc->parent = dev;
+ 	gc->owner = THIS_MODULE;
+ 
+-- 
+2.49.0
+
 
