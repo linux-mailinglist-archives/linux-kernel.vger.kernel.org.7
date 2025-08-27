@@ -1,117 +1,115 @@
-Return-Path: <linux-kernel+bounces-787814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6251B37BA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:26:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DED50B37BA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:28:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED42E1B6650A
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:26:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 202B07C02E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:28:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636EB3164DE;
-	Wed, 27 Aug 2025 07:26:07 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE37C3176F4;
+	Wed, 27 Aug 2025 07:27:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ewy8eyed"
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D63930C601
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 07:26:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 311832882CE;
+	Wed, 27 Aug 2025 07:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756279567; cv=none; b=YJC8ooP/kOfLNtuNAtMgto5YvkRvKg/x9z9A2PY72N4HC6ZgmY75YrJrAMQMZHxgX8HlEKuKgcWj7Qh68D5Dt026Qz/GKhT4qW5wbTlgFz6zD3VWYvodel/kzpwfRnp1pzWZ3tmpetQB5czizyBEm5Uen7Xy6y34JlWSnKHVMUI=
+	t=1756279678; cv=none; b=YA2vnsekNcg2J8pg3fDf8KD0m7CnQ21MvMD8ZkPzEENbzsIUeuKRpk7ZP3AsysDNOPAwd66ydYmg+WGbIZjYbSlRgYoMfYjgmJXO1PbyQpRBvTIC3KZWNhUvVHXWOsGHoVNR8GoeBRy8lkpcuARB+HrV7f9HyqPn/vN3IxMQBN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756279567; c=relaxed/simple;
-	bh=M1Fv8zBkm4DQy47QdQG+BPLOCxAofKVgLoxqOA89g3A=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=FmPJkA5mzkpT+pUIUPW+s9nSYKaYbnKJFCsmxKL43OBAO9PaKqqWTnApdIBiV7ILDflQ7LR/JKH4UjP5DBgyILPL+duqC4oNnFwYVjb2pMJ/Obacns25ClScqy/w3OT4fpIeRRMMKdonKu7EpRDL6Jxpll1rcGcpbIdIHGPRPwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3eab737b99cso41369755ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 00:26:05 -0700 (PDT)
+	s=arc-20240116; t=1756279678; c=relaxed/simple;
+	bh=GkzLJZJM11E2120FbVz9u1ftB/pyICWahmZ0vyWueO8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ExnR3/tGMQznZQmoKUB7ul0ARxdq83mXtXlDYNdQt3YgL5FAY7OfHaeWaZvgOi3x2HnbIwuYZ0SZ2XT6nhgfC+ZPW7UX/bk0s0IxxL0IG3YohGX3VkHu3Fvx5RoEZQHWHUNXCPdgvZh4QUnFAH5Ywc64WgPxE3a1bzjvwJHvvGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ewy8eyed; arc=none smtp.client-ip=209.85.221.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-54460c7aea8so356625e0c.0;
+        Wed, 27 Aug 2025 00:27:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756279675; x=1756884475; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cZbkPuGzfCRt7D/2ofNVxknZhe1ERbsBu6YasxpbtgU=;
+        b=Ewy8eyedBecy+o90KBaHm0rUiIJXGiyLyn8YejXQSCDr0XjYkwuFAhAxuRp5OIaDb5
+         jhQP6nP3lbu08/vfYEKFNTUMOqHpacH4iAANRlv9M2+PUnPNPOPjx6CMjE0vHUWuHtat
+         MyxItUWTXtaqH1fLNU5SvJMKVRVBCIjjIeJC6FaLVGWAHFkfoSzxvnNSRzgu/WxfXdHY
+         i4qK0KPIlVRrUOzn3tOk0v/NqzHKvGRYnppAJDq0hi1AP4RsqqXUAJlj1AmjA4J/nbEA
+         L7PYGGluVMu4biigsOLHszcXvHAZ+mODE/YaG/ro4qAnQqBs7GYqgITJrA30yFvCvEJE
+         CkzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756279564; x=1756884364;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SBiTkX+LtWr30x8kXfSExaJcqbSKjWmR0Tbn5ArzxGM=;
-        b=QjfSlu8omhuE3ItCErqtbIFj8hYF3uCHyiRjdIMBPVuabF1ri5lWjygEuCUWE9Sk+z
-         SaZ5XDh3BhNx7UH9Ht++HKyitgVVhDi2ye2DNLiiKHD4G30W1lUOzE0mLyOlc1Z01eLP
-         FjMkH7l/LdruarrKte26HYk4uqFqu5oDSAVmaTFbLVHZhK32nzyos73C1GZ+VpKAGFWh
-         fT5dNM6HSofBqowZmBE1OurfRlmoMdyp0VPHSWT+WyAIJVQ/Eoafl9fyzVNdyOWt/+bL
-         FP1ERAtlpI/C5KX99f0w2qv27UmGse/nymDrglmwzvC8QNyxXbtpBpHZeGEap3pYsjiR
-         qbJw==
-X-Forwarded-Encrypted: i=1; AJvYcCXTGgIJdx/fCYMUqELbPNIqP5492YDQGUqiCuzfLxF0X6uNoR/ijGYoJ0WlzbLO4zNbkeMGAWl9u6LXRFw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzE52Mj9Sk1aDbg7X18yH8QC33lR1HOOh1VAwRyXKtJTe+N6xl
-	TO0Q+lzsq6NqbpdnJJRDPDlsIz/cTxAW+jYZ43uRaW2ISmvxMrfk7buA/NPw+ivBnq1Upb6ahYi
-	NmKkDYAKmgljwgsC3AKnDI3yJI+O+ZYeyRYbM94C9E6yRcvWXD1+0YEW10mg=
-X-Google-Smtp-Source: AGHT+IEZb5d0s2IkpWwHJvc23r9bl2MZsB7DiUHsHaibJ9/mRYBEW1DYdQQS+44E9MZylGS9Mbc7TXlByucUb70rq1xl0TJfRYfK
+        d=1e100.net; s=20230601; t=1756279675; x=1756884475;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cZbkPuGzfCRt7D/2ofNVxknZhe1ERbsBu6YasxpbtgU=;
+        b=C/1vPADpwD85l8NGjZJcu4Q/02vhaiRA7J2vaqseY0nAj4zzPxsO6Ntg0TwDIpFJiT
+         mO8KIeujdOwxtNu/ox8kWwpd5J0CtFEkQAEvstrxv76eYZqXOV6cV7fTbJHQwLmE2qJa
+         TPS44IUOwCAc43iV4Yj/7y3OXwn5yIOjWc+2if9gbgbZPVa2p/+GWoyAw5SAhL4ofrd3
+         6cdzAVUhtJgh3IIgOBO7ghnfWY1nMlhkxHG/0M6jcbRiUBnEi7y2ybzfkZUhT3oFOmgG
+         mziVTHXE0CHRhIucx20TJ9nPgLNgLFVFFoyNWoFMDiRdmupm+TxMTx9BPYsX0MTJcPEh
+         8uwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW/J8fmm/sVNH6Ruqmw0QBFpY80PBKSB0j6v6/DKEczSTD69aJBjTQfsQoXQXoto9o1roaU1Vl7MTQcHw==@vger.kernel.org, AJvYcCW369Y/+eruPmhsjM8rN8CApQCdBi52aClJTeJiPoOOrx7nMr8Y1J1BWVjcCVV+UjN2xbtwOU4MFI8=@vger.kernel.org, AJvYcCXpVmtNiAxKlq1bTp8DmEaZ871FLKBCkMjKBIKrzuIE2qHFcV99rqa5d8E5yXWCaTmi/Ww2in6Ic6ZIVx7L@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyj2f4vqArFBjycTbo2u3Eh1moPAXMG9ZffnUKv2HUdMIlqpENr
+	g8JHnXmKMhj3QOjQ+4HNgn4wDiVCWg6utnv6hIPgqTAm/0Uyk5/VN+ilpKq2dXBBROFKJdTaell
+	hK6SSsvf09Mulud9NAA8Wrgmusqo3tcc=
+X-Gm-Gg: ASbGnctJSTVfr3+YHSApXVEKKXvMH8ifOxb6dqkQyHJSaxrOZ2y+dve6xMpuMRzQ+xv
+	rVdROFQe8rJiAeX/1pV+bur9qfWT0stdNlc4iTgePEf4c5oUchu728KoFnddU7y6EZWuqvppWec
+	w1yUEIICR/nm23nA5RKQdxLmNXkNxIDnOnYMCgKacYUv/HJbiLqMkoDofHIzwGh3xCZ5DqLOFGC
+	Vuah9zuoWaGb7UcY6ZNj2OqgyY/xom0+2iDcteOzhNBwJQo2Q==
+X-Google-Smtp-Source: AGHT+IHYIDFaItotF+Wumw79vgaRlTHzB5TKUl5kILQQ2oVp5v+FDkgYvy8sqgk09JqP+tiG2sWyXaOSKO+UwA3eOKg=
+X-Received: by 2002:a05:6122:4f84:b0:53c:6d68:1d39 with SMTP id
+ 71dfb90a1353d-5438f492b99mr1603225e0c.8.1756279674948; Wed, 27 Aug 2025
+ 00:27:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:214f:b0:3e5:52a3:dade with SMTP id
- e9e14a558f8ab-3e921f3872bmr266156105ab.16.1756279564726; Wed, 27 Aug 2025
- 00:26:04 -0700 (PDT)
-Date: Wed, 27 Aug 2025 00:26:04 -0700
-In-Reply-To: <tencent_1D289EA31B164B411B652567BA75BB2D3308@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68aeb30c.a70a0220.3cafd4.0010.GAE@google.com>
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Write in __xfrm_state_delete
-From: syzbot <syzbot+a25ee9d20d31e483ba7b@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20250827054352.669598-1-alex.t.tran@gmail.com> <87jz2p9rgm.fsf@trenco.lwn.net>
+In-Reply-To: <87jz2p9rgm.fsf@trenco.lwn.net>
+From: Alex Tran <alex.t.tran@gmail.com>
+Date: Wed, 27 Aug 2025 00:27:42 -0700
+X-Gm-Features: Ac12FXxuqHGMHfjCI6ozl7C_5NgFK7o_xk02ZudPSl571FUEa5YeWXaO899lCh4
+Message-ID: <CA+hkOd6H6RZy83zDgzAy4TKiFtOnhcwyqxWZ4KTnKeTHBngKbA@mail.gmail.com>
+Subject: Re: [PATCH] docs: driver-api pinctrl cleanup
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, Aug 27, 2025 at 12:03=E2=80=AFAM Jonathan Corbet <corbet@lwn.net> w=
+rote:
+>
+> Alex Tran <alex.t.tran@gmail.com> writes:
+>
+> > Resource cleanup when using pinctrl.
+> >
+> > Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
+> > ---
+> >  Documentation/driver-api/pin-control.rst | 10 ++++++----
+> >  1 file changed, 6 insertions(+), 4 deletions(-)
+>
+> I hate to complain but ... this patch really needs a changelog saying
+> what you are changing and why.
+>
+> Thanks,
+>
+> jon
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in xfrm_state_fini
+Sorry about that. I'll send in a patch v2 with a better description
+and a changelog.
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 2132 at net/xfrm/xfrm_state.c:3303 xfrm_state_fini+0x26d/0x2f0 net/xfrm/xfrm_state.c:3303
-Modules linked in:
-CPU: 0 UID: 0 PID: 2132 Comm: kworker/u8:7 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Workqueue: netns cleanup_net
-
-RIP: 0010:xfrm_state_fini+0x26d/0x2f0 net/xfrm/xfrm_state.c:3303
-Code: c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 fb b1 00 f8 48 8b 3b 5b 41 5c 41 5d 41 5e 41 5f 5d e9 b9 72 e1 f7 e8 14 46 9d f7 90 <0f> 0b 90 e9 fd fd ff ff e8 06 46 9d f7 90 0f 0b 90 e9 60 fe ff ff
-RSP: 0000:ffffc90004827898 EFLAGS: 00010293
-RAX: ffffffff8a22651c RBX: ffff888023d54880 RCX: ffff888029618000
-RDX: 0000000000000000 RSI: ffffffff8be33660 RDI: ffff888029618000
-RBP: ffffc900048279b0 R08: ffffffff8fa38437 R09: 1ffffffff1f47086
-R10: dffffc0000000000 R11: fffffbfff1f47087 R12: ffffffff8f631480
-R13: 1ffff92000904f40 R14: ffff888023d55d00 R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff888125c1a000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055be456ece28 CR3: 000000007da92000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- xfrm_net_exit+0x2d/0x70 net/xfrm/xfrm_policy.c:4354
- ops_exit_list net/core/net_namespace.c:198 [inline]
- ops_undo_list+0x49a/0x990 net/core/net_namespace.c:251
- cleanup_net+0x4c5/0x800 net/core/net_namespace.c:682
- process_one_work kernel/workqueue.c:3236 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3319
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
- kthread+0x70e/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
-
-Tested on:
-
-commit:         24204116 Merge branch 'ipv6-sr-simplify-and-optimize-h..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=11279ef0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=67b99ceb67d33475
-dashboard link: https://syzkaller.appspot.com/bug?extid=a25ee9d20d31e483ba7b
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10eb9ef0580000
-
+--=20
+Alex Tran
+alex.t.tran@gmail.com | 408-406-2417
 
