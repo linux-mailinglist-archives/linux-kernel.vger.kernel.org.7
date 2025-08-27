@@ -1,120 +1,95 @@
-Return-Path: <linux-kernel+bounces-788618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2037B38756
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:07:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 515FFB3875D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:08:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F21E01B230F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:07:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12DA13A9CE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 545EC3176E3;
-	Wed, 27 Aug 2025 16:07:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE99340D81;
+	Wed, 27 Aug 2025 16:08:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X4QVOu/5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MFmaoO5+"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E9A221543;
-	Wed, 27 Aug 2025 16:07:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1064F3176E3;
+	Wed, 27 Aug 2025 16:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756310830; cv=none; b=W3K9jtdoY+/E0I631+AAzothFUHIuuPKUFOVvTp828QfKlyoCJrjbnkOtR/y86LMaTJgf4+VwtsM6E5xNZVCgDSoB2TZLmoM/PkpJoty2eYAFo1cEnsX01meaSLAblpTUpTkZqdf5rkz2EtLnWPKMiJbtTTY9MYLwrFqDI6IyZg=
+	t=1756310886; cv=none; b=KT2hwtWuylie7mok407gDKkYUG1jcPmF7eA2iFTo6FhDxkNimCNeDzC1RToWU/1O9JL8audujVtEZm0z14M+5bkCgfzQTtyCJWlwellcegKzwnlcA9VWIdu+0Q0vspFT1ZVQ1aRpPoQI+4VF1JRvsWyh5+LaIr0iXMXIi4I+V6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756310830; c=relaxed/simple;
-	bh=8/nHBBY+4VBhT+YC6UcqQvlwOolIbFpQ9L4LggP+E0w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YH1jI9ykMyOoKi7+hKwNhKoGCleFDy4IQobA5ZzpOGzujEuNLD5/JEoXfHHyNvtwtSXIfqJqu94nqc/ZgaUAwrKm2SdHI/9hB2eHtIWlNdhBgf0o+UL402GAGZARD7m2xWLtXubLVj4dsZcigMiUWM0ywhRA75ecUiTMvVmo6fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X4QVOu/5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35D71C4CEEB;
-	Wed, 27 Aug 2025 16:07:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756310830;
-	bh=8/nHBBY+4VBhT+YC6UcqQvlwOolIbFpQ9L4LggP+E0w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=X4QVOu/5Y1nL6frM1iU4gWhATYdfU0A2DDYCR/HCU+tNO4/rv0GSkcWe1bav1YKZS
-	 qQ9atRMkj6ljLH8X6u7yydleAg+yG4d+QuB4R9PB+FsmKZHxZWYZT5clhh/lDkLG5O
-	 6ypIT8ddQeiXDVgm1tRCXvHlGmz09/9B97PucyrKh+CY95TSCS3PyV+bs1LCKbtegx
-	 xCK8S/DKDtQ+GQvVGCdsQAmlNIqDcAHa9h3iYaW+VFn+19EiDRkU4WreLRRBGX3K78
-	 5OQgM0pEeYdx+hlyoKl4p9avrBArAhHYmoJqIXBj61VIx1Uzmy2MLjog6VVU9OZnmF
-	 I2IwA8MCBqDvQ==
-Message-ID: <a89ba427-b174-42c3-b3b4-5e4079942c3c@kernel.org>
-Date: Wed, 27 Aug 2025 18:07:04 +0200
+	s=arc-20240116; t=1756310886; c=relaxed/simple;
+	bh=Eo8mcJx96u8VH4jn7nXN0WzI3pTAqmoosY5GMUzgLRE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FLyoTs9fqdy1fYU7CfsbzyYhBw+siGwQe4ncwqjQXEbfVPivaE863PPQbpzQdobDreDoX/0bAQgoDiG+gTyJCPAaDmxeDi6eEwnA88te6SQ3mya4B1uwDgq9Thczs2FYQbdms6Prd8JJgkh3Pd2JHYws1X2oVHaYCpaceYOytxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MFmaoO5+; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-71d603cebd9so74521267b3.1;
+        Wed, 27 Aug 2025 09:08:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756310884; x=1756915684; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Eo8mcJx96u8VH4jn7nXN0WzI3pTAqmoosY5GMUzgLRE=;
+        b=MFmaoO5+fLMye4h/UhcJYvtYkeHfeU6TgIAVELKkNYf35va7RiUQ1WH2/toWcgMRBP
+         qXfcEdcETUhighjx8zWTL4Pzp7+Jx4UP4qNu04ZKW5S3nBAmmAa6G/CpmnTq8IPAZAST
+         TQkoZMRBQuvWdljNKWrPwToxRXbMA+UWtdfZNAt5XgF3Qn5nyGHyrWwGfC1NgWxE+Rq1
+         GUFoxdfV7XcL1lvniWNseY8vGTIUroxcEMznLClwGrby2TRNCJO7LlRKBag2bmByAnwR
+         9Rsw8omveYdtlYtMbfSnFAcRN17Ztoq8C9rFR4orQXg1Zh+TgNZbTU96vWk5CFR+ZP8u
+         AyQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756310884; x=1756915684;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Eo8mcJx96u8VH4jn7nXN0WzI3pTAqmoosY5GMUzgLRE=;
+        b=asBw/H6yJk8C3jk67skURG+9nhqtO8dhwV0j/A6WMcQNYNVnovzQrH1h41EJjZpLSM
+         ZdLONZF2WqBqOp1RiKDsBKsHOI57RqFdm3ox0rwEVZiJlr4mzL80rw+9DWytjRJoQZLw
+         Az+dnExyQ0fDwMFSR36U7RGDIf8FWm0UyAwPgYMF5t1TiFJ5dW3KlfS4K6BF4cNC22qh
+         kDkZbm1+srata7Jd1MMuSDGCt2BZpRMHpkQuOCE57n0TokPdTdVU1b/dZZgEdNa/o4Db
+         p9OCRJ35lZ3bU6Izgruhv8Vqyl0cj04fisH2nwC6Hhmxbiy8mLbQR24eo/Lv4JMnlJYT
+         rfrw==
+X-Forwarded-Encrypted: i=1; AJvYcCWWBdqN6WWFSplcgL4UrnF0nbdTbc6cUb0BJQ/xuO1sbgAb8QmvKymgmr077JgMqXBxWWlYbaZUl7YMvB2Mqdc=@vger.kernel.org, AJvYcCX+iJKX/btPt5+S6sbXy1cEIFHndxWkZ37KNAksL5Y9KuBOLPypxlFi2ZDH3dgDPG5yPpNzqcHgsx1/Lg==@vger.kernel.org, AJvYcCXyxswLIMdcoJi92gUIi4eIqEYCEfhFfuKRjdRDTRRt5eUVyp/Kmtr5VnF/6hVe+5YMqgJpkhwsc/n129zx@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+vgtZ0fpI6D5C8PeaEfU3aW/EQtX+Hbxp9ouGaRfANgjAGAl2
+	iwZ6QOwXiEj0h0Nz4d1Les7kjLSYn17eWlA2HlB0zGbRtHgXTPwt1f3d8gN9e8cB1yHKPMKVKWC
+	LGGXEqh8KHQRqnPbxc6ppouRgvBVYG8vCOawk
+X-Gm-Gg: ASbGncug8/9RL3sHe618hWdBkBEBIKlUCiI+gAb2DPlBFpB6dxlFu/xFlmcgLht1ADN
+	hVmKTy6CWvMhyGxbUWAUvtxnna4wUo3iOspcp6xx+flhcEVAeD4jlgWql9CHmblVHpUkIUWTXV6
+	vjqnbdzqv/BpExCDtUzwpfl6aITzN50ELmHWYVU2UM5Ln+Y4vRm0o8uiLqcrHlaOmIR13gpVT9a
+	s5SD7nm6m+FKCH8wVs=
+X-Google-Smtp-Source: AGHT+IHhWZApQJf8beg6UJ/2XJqt2rVIO9kFhrGWCFb2fQ3i7gedFrTgbIzKalZ4+LrpLfrbEVLJsP9EpBLFSK6366k=
+X-Received: by 2002:a05:690c:f86:b0:720:5fbc:20c2 with SMTP id
+ 00721157ae682-7205fbc3779mr151770777b3.36.1756310883816; Wed, 27 Aug 2025
+ 09:08:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 01/22] dt-bindings: usb: snps,dwc3: Allow multiple
- iommus
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
- Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
- Neal Gompa <neal@gompa.dev>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>,
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, linux-usb@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-phy@lists.infradead.org
-References: <20250821-atcphy-6-17-v1-0-172beda182b8@kernel.org>
- <20250821-atcphy-6-17-v1-1-172beda182b8@kernel.org>
- <20250822-skinny-clay-harrier-64dc58@kuoka>
- <e4c730d2-6ee1-46d7-850b-8ebbe0a1bfcd@kernel.org>
-Content-Language: en-US
-From: Sven Peter <sven@kernel.org>
-In-Reply-To: <e4c730d2-6ee1-46d7-850b-8ebbe0a1bfcd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <aK6hbQLyQlvlySf8@kspp> <020f8c5c-c9e4-4ad0-8052-a0b182ded92c@suse.de>
+In-Reply-To: <020f8c5c-c9e4-4ad0-8052-a0b182ded92c@suse.de>
+From: Justin Tee <justintee8345@gmail.com>
+Date: Wed, 27 Aug 2025 09:07:41 -0700
+X-Gm-Features: Ac12FXzYmfdpT-7M3izWgMiP6gup4wu_VmM5HZxYKNrgGaT92_htX_7P3pXBtm4
+Message-ID: <CABPRKS_O7HSvb2-R2B7O64SYmy=n+-E6GdViQG5GwGv3S=8iSg@mail.gmail.com>
+Subject: Re: [PATCH v2] scsi: fc: Avoid -Wflex-array-member-not-at-end warnings
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Hannes Reinecke <hare@suse.de>, Justin Tee <justin.tee@broadcom.com>, 
+	James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 24.08.25 10:31, Krzysztof Kozlowski wrote:
-> On 22/08/2025 09:22, Krzysztof Kozlowski wrote:
->> On Thu, Aug 21, 2025 at 03:38:53PM +0000, Sven Peter wrote:
->>> Apple's dwc3 variant requires two iommus.
->>>
->>> Signed-off-by: Sven Peter <sven@kernel.org>
->>> ---
->>>   Documentation/devicetree/bindings/usb/snps,dwc3.yaml | 2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/usb/snps,dwc3.yaml b/Documentation/devicetree/bindings/usb/snps,dwc3.yaml
->>> index 4380bb6fa2f08a475b557e80467abc2861f622e2..6d35dcc605c01977f4fc6fdb6f12976f1cef2b9e 100644
->>> --- a/Documentation/devicetree/bindings/usb/snps,dwc3.yaml
->>> +++ b/Documentation/devicetree/bindings/usb/snps,dwc3.yaml
->>> @@ -60,7 +60,7 @@ properties:
->>>     dma-coherent: true
->>>   
->>>     iommus:
->>> -    maxItems: 1
->>> +    maxItems: 2
->>
->> Never tested. You anyway need specific constraints.
-> I realized that's pretty vague, so clarifying: you changed all bindings
-> to have two iommus and that's unexpected. All other devices have only
-> one IOMMU mapping here, so they need to stay like that. If these IOMMUs
-> differ, you should also list them, but probably that's not the case here.
+Reviewed-by: Justin Tee <justin.tee@broadcom.com>
 
-Makes sense, thanks for the detailed explanation.
-
-I don't quite understand why this controller needs two iommus but they 
-must essentially be programmed to the same mapping for xhci to work.
-All of device mode goes through one of them and xhci buffers are split 
-between the two iommus (iirc I saw the command ring using the first one 
-and the event ring the second one and then just decided to program them 
-the same since anything else would result in a big mess).
-
-
-
-Thanks,
-
-
-Sven
-
+Regards,
+Justin
 
