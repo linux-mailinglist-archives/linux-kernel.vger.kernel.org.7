@@ -1,287 +1,320 @@
-Return-Path: <linux-kernel+bounces-788810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 461E1B38A95
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:58:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99FE7B38A97
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:00:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46F011BA3225
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:58:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A9595E6FD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:00:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 604C62EF678;
-	Wed, 27 Aug 2025 19:58:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A0E2EF678;
+	Wed, 27 Aug 2025 20:00:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DtiXuZ1r"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WVpNwguX"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2051.outbound.protection.outlook.com [40.107.94.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02C327144E
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 19:57:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756324679; cv=none; b=LGv1qXK7DXznwcOQPKu8se//z8xgyr2+0Qr+1XrgwwQGafJjp22p7ByAAhvHuotU71Ns6t5LUtCQY4pBh+VoUbtyOXJcv9HK/O3thvfJSD/QKJDIfllOTC3+VnjA+q8AdA9zLEvofGdgaC1rAJXtsCvuE+5Tvfn3F1t1xqxcCP0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756324679; c=relaxed/simple;
-	bh=tqc7EOF5eomKNHHU7yUgg+YlKF5JE4kiwS9b9etUKfY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JUdXBp0uiDM2BDzRI8wtFaqzQkKAdDVeGuZvIGdZY2jz7V0BMAb+aX/920Iy6dp7vmW3mUNjcN1NmPnJdNJ/7YX7IkYfxTpA/dVgA7DdG6orVKAuduuMuYKUUmXshl0wEsBeP0OuEq5Qz8J2NHr0MYYtzODIeb5JiyJXARLv1X4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DtiXuZ1r; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-24687bbe3aaso358565ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 12:57:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756324677; x=1756929477; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rjV0DwmZIW1py3fMx22hVqowrh1QvW3z5IOWwwuGuQ8=;
-        b=DtiXuZ1rmD0q+4zoCjXMSFZrbL4mxeYf46N76lFGM2zXCs2vCZIx1Zf1z5XRDz870X
-         ZVqEpaCjqTgc7Jk6lZIa/dH4b+zUqL1AMiia2tWIIV5IXQlhnVZNdrv3g6N1XkKvap/l
-         xTiPNsROk++xgd2vVyqNiX97wtKUkCy+TUZ4sqoCILwsjHK/rk4FZYBoSZdWKa/MmAD3
-         qSKVyGSVhqWwtdZDFTWsbICU4DZbrWxwjOFQbYM323hbABJCw7G/nb8FmKmFmsctEhva
-         BmrJRjWMXAamGy0VWdmU2HDOqaHzdjUkhi+Jh1+Pll/htRdhHT6YJWp5N4dFNWeqFTLg
-         9rgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756324677; x=1756929477;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rjV0DwmZIW1py3fMx22hVqowrh1QvW3z5IOWwwuGuQ8=;
-        b=flTwA4PqKs/egqe+WifTDRbdIDLM3v4EPu4jBOihXu8dLjkhGnpnS2zGazBMLOyrfV
-         /9jdwHKkNmzyLlknUYzSIJVZujlEipyNaaTiyVLY/AF/t/kYOys4UXHQKdrqsTH9iTNB
-         fi3TTPDfXJcOQS5syfmhZXARAI/f3GvPfWYG5QxAqMzUptn0yIAKOZ36cilV1SQhn51W
-         AfALKjFpV47tm9HXGjWpN5BYRDUlJFDEOTTuiB729J2ls2pMLKUe8WmsEIjwok4250C+
-         BmtGhOw8/aze2SScgcASOoczo90Q43lutRU04RQEUtxk1Wr1SHeRn11oin5b6+5wBZLV
-         /4xw==
-X-Forwarded-Encrypted: i=1; AJvYcCW6hC42eZ4GdwLZKzcdJDC5mrKWra6MBzxW5gxdoq7c8D679nYkiqgKr5gAYw0U1KQzDlY6CjXJJEtinQI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyo/Esj1JfT0IoxBX5vRSTiob78WXx6C3cgeugGSf4LN/N0QYWM
-	Z1SKz9Ma/qWwpVq/DgJ3zeMj1ef0HF34DyZQ+gj9mL+u7dSrUqbNJaHRHhrqAT/YlZ4jnAJA8Tt
-	1lBAUdgsVQFUqEgXhdi5GTVqWKgeQbBw=
-X-Gm-Gg: ASbGncsHx0A21RXs/omHxk1qG0bIMMs/xBL0QRgNq5PT0b5tvWB40mf+Ql9tzOZ/K3k
-	q7heLc2EQuYhlY7Pssxjy/3DK9Uc5gUWlucDscIPLkx73p0+alYEp70V985QOPWyr5iLFw4cDV6
-	zfXFhiR8GnBzBxL9M8d/HHgWFvC+UkSn+Y1FqStKSkg3HTV1Y0C1VUEc+llg7VT1LjSOqOrxL26
-	G1IlAU=
-X-Google-Smtp-Source: AGHT+IEEV1DocwEWc3jKPYLKt97a8Md11hVsuQXJBA2qHl6dQpH2Wq0GDXOFqg4EKfvaY1b+PH9cdtggpz40TZcPqPY=
-X-Received: by 2002:a17:902:c409:b0:248:a01f:a549 with SMTP id
- d9443c01a7336-248a01fa7aamr20750765ad.11.1756324676898; Wed, 27 Aug 2025
- 12:57:56 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391CD2D480A
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 20:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756324811; cv=fail; b=YdGasO0slfYxDV7mUp2VCxsGVZezSOE3yjCh/BrDStimOBNJx9d6xUjnqub9Y2xHspJDR7FOdYF1SABZgddrvfe/JtC670y/X7VVC/2a8xvipVICgnsSvouNUiTYCO+Wq/8qOi93Ipm0CwGwESxnOs3Xmrr8knUM63xLDfJtNV4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756324811; c=relaxed/simple;
+	bh=pKJ2d27yW9MjnZuSItJt6Ax8YJuQRfWQRK3orIqaoS4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=MfrPZOyYuSdvCfC63iag/b7djzBphYJai1xlp4QKxLBWGRAW2xAn60uiuzqh7SNVjDwJcM0sPT6nhyASFSrgI2OllD/+nSFWvMykMPLpRmP5Ry+39GQkRCc7mNodRuiM/aeePT7fk9J+GbEu05WINRY5vh7gzEpm2spfXZCx1yo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WVpNwguX; arc=fail smtp.client-ip=40.107.94.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yUMSTVsb0IOmInjNvFVmqsM13QS9fZDs+/MrQEiEEXdTc025R1sSoUZ4FNiQ/G2HF+Z+tx1Vi3lXZbFGLV0CWziany7EzjYaqPveSRPQz1R16G8tkBft1gzkV2jmojqUNzyj4kRbtJ1zlW6UMszNTaZLLcoLlvxM8hPYzeJIPuF3ux1DF5VgAttZf+GWBxwuVr8Ffu+1rUJTec6ZNJiaI0J/kaOhmCfjOk/cufs5eHXyvQ1+Ge0/R3JtFU7Ryd6REK0EHTUC2igCKDc4z5sHxlFdQkAlOBZj1lurCpVapjOEiDOORREGWHbsnMHUn+WAeg+HLpkbid5XHGM+Ef13zg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TzNwIa7gpj5ICksPmOkJwZop0idGEfBpg8YtS1SRRkY=;
+ b=snBfWCrEYMc6HMqPPyRKJ+c0BmumqdB2Ni2EM8832GitWLVWtgCAcTwZIW5Vbocz5cbcMQyHYb+r/qKJ2U6UfSxHchDhkV0Pmn7TTmS21bXScRvXO05jJwamggTbSna9Nhdtipjcz5HQnDBVRbiWM2k+rIl2NW1lTH4rGU2pEoRlTDTcRxNKEu5fygpxj2IEljVu6IgSy1lvnQ62sCzuGbCza/Ki5p+ljumY9vOoIawB/sLPp8coEnVZvkJCc7ouUOtZAePCrR3rwFrQV6glsI/kmE/aQXtpTT4bLk/YnYhip7J/VfS3E/8cU2BcsjFRooda6z3iv6ROLI9PfLZUkQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TzNwIa7gpj5ICksPmOkJwZop0idGEfBpg8YtS1SRRkY=;
+ b=WVpNwguXuRGhRCA6z+37ZdubE1jWaf11lGFcjNbQ3PtnUOn9MVc0WDZE296cbfPRdsgLXpV6JrHqXTYC5WgTrFBAxGti3ecH9Wi0gyKY1JJoxawgoRZSjy5dDlGq+rrkpONB6mybzx0Mw6jx7po/L4525l8nrpwoClLueRV0r62M/GcOUGyQpIWaCLIwzZnXAuYVqTMw9Qgh+4g2ZUfq+OIYes8ix/hVDgDPA0Nz66mr8LCqEMcj6I4DUJSAUIRNZXK31cIKXHVxuiWv9DB/NMHMcwrYADXn0NzEj5rpBy5L2WKAYg8LO3cXS0atF2TeXX+WLw9ma9xM5nwiQdV30A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by DS0PR12MB8503.namprd12.prod.outlook.com (2603:10b6:8:15a::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.20; Wed, 27 Aug
+ 2025 20:00:05 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.9052.019; Wed, 27 Aug 2025
+ 20:00:05 +0000
+Date: Wed, 27 Aug 2025 17:00:02 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
+	jean-philippe@linaro.org, miko.lenczewski@arm.com,
+	balbirs@nvidia.com, peterz@infradead.org, smostafa@google.com,
+	kevin.tian@intel.com, praan@google.com, zhangzekun11@huawei.com,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Subject: Re: [PATCH rfcv1 4/8] iommu/arm-smmu-v3: Introduce a per-domain
+ arm_smmu_invs array
+Message-ID: <20250827200002.GD2206304@nvidia.com>
+References: <cover.1755131672.git.nicolinc@nvidia.com>
+ <fbec39124b18c231d19a9b2b05551b131ac14237.1755131672.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fbec39124b18c231d19a9b2b05551b131ac14237.1755131672.git.nicolinc@nvidia.com>
+X-ClientProxiedBy: BY5PR13CA0004.namprd13.prod.outlook.com
+ (2603:10b6:a03:180::17) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250824115051.32988-1-mittalyugansh1@gmail.com>
-In-Reply-To: <20250824115051.32988-1-mittalyugansh1@gmail.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Wed, 27 Aug 2025 15:57:45 -0400
-X-Gm-Features: Ac12FXxqZBGDhYUXeE_2vpNsyc1MPHvuZvg50t-1nPjCv4vA8bIXi2lV2R6gGM0
-Message-ID: <CADnq5_MoWjH2j_VyTEvDmYSKQ2Tfjo-B4som9Fwsb6r_dPo4xA@mail.gmail.com>
-Subject: Re: [PATCH] atomfirmware.h: fix multiple spelling mistakes
-To: Yugansh Mittal <mittalyugansh1@gmail.com>
-Cc: alexander.deucher@amd.com, christian.koenig@amd.com, airlied@gmail.com, 
-	simona@ffwll.ch, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|DS0PR12MB8503:EE_
+X-MS-Office365-Filtering-Correlation-Id: f13331af-14c4-4756-d3c1-08dde5a450ef
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?znxOawn0KroKXJstA9k6r2ebH1V0TVOiBxDLxv3Vznkn4zGmlbGihbO04ic4?=
+ =?us-ascii?Q?B2Wqz25YpSRgPFiObuxWA9tJRLMfXlFUvZA9Cbd5VZCKJegaymkOkQbX37Y6?=
+ =?us-ascii?Q?piMtm10Ac8VZXxfbCXn3e1MZfFQcwrcXlenkK51JTbt1HpdtNh+n4Cc/LIN/?=
+ =?us-ascii?Q?nQgYFFFMakypCPk7Bx2yjdsS981SKmuWE83TlerBY688Gp0bX1SwwrFEnLxX?=
+ =?us-ascii?Q?I+ca7g2Z3ljXH9nbvfSSdwBt+72m+TQOjbOdxr7GaXWvAQLZzer5N8L8DIQB?=
+ =?us-ascii?Q?SVv+6iYgJG3KrHJMjB5eAd2Yaa2VL5/FAPm0peiLWy43ODRhNjTIiQRx28pZ?=
+ =?us-ascii?Q?MsIbUB7huuDNg/aIv8QyrnOiv8Q50TYu413UT7b6KCp4DkZvFvmVEdLSmWZt?=
+ =?us-ascii?Q?1gYdTwEQkKHa1pcRBp+bAtG8TNvM22BcK1IfH3D/Uq/MWK60gcZODJansaHJ?=
+ =?us-ascii?Q?lUP8rEh4WVzDQ0vIU9iNY4+MrGmxjGf5f99THwbcHyMGvK16ya5poz2yHAqQ?=
+ =?us-ascii?Q?Zqa14QH3Aor0bQzSE7dUPMz/dh/7fjolPNHChJHub0J/Xu4EOA5BkTAFco7B?=
+ =?us-ascii?Q?aPEhZiEEjNWQSvYnTA6o/079zLew5fbYUEXEHxQgdAnbJUAxWGuCLLkfaBnF?=
+ =?us-ascii?Q?kxJykak8aiK3lWm0MvDk2YgzM5HkChjzSYIVt5AhsGn1pg+TfDdlDky1YePW?=
+ =?us-ascii?Q?iKNrpCkI4+2DFViOadVypwLqEb2rVq5DUnt6qYGNTCJGuwHUPEn3G52QOCAv?=
+ =?us-ascii?Q?mFWIVgTkMJW5wSBPKXIXLTgTTTAIYCJ4Rp9soevfL+dwqwCFPHsQh2eb8HQ3?=
+ =?us-ascii?Q?s6OzhUxFwCB2nj73Tn8UCbDfLC/Qy+Va87pHM9rI5NjCzRIPMe54ep0dD3I8?=
+ =?us-ascii?Q?FOtI03xqBtgD8LdnAc3rJXdb8Abh7wiTSkepPfdw+DSXzSwSQ+0sbP5h8LbC?=
+ =?us-ascii?Q?XGM19eL07/2wyrdLqQY+YHzO27CjfbZEgwn2EaO7QqXlA10PlQcPXoB5elsP?=
+ =?us-ascii?Q?sEwuI94zih4A+lrK5GI1EE3fjqgvdE/blGx51kxT1vE9zITd8i5u2WmsZj8L?=
+ =?us-ascii?Q?/KhInT4tbukfykN0WY1JD5xV4zAsCYY/b2D+4fqt8DumIbTO+QmnIXnKt9pl?=
+ =?us-ascii?Q?spW+JniTiK+Mb/SHW2jWhQ/e/EvQ4jpW4R9ielm+VTk+ZKam6IhSiKCmVa1U?=
+ =?us-ascii?Q?ODGgEaS4JjlbpJJmdOeY3VvBCvOFLnu6HlnFuGhMNE6hvein3qA05IUNQIIS?=
+ =?us-ascii?Q?7g3tqekOsPtZOTfGTiPWzKjauvNsdDp+RerwY92Zv9OlGmBToshhO3D/OtTD?=
+ =?us-ascii?Q?W08N5Uc4gid7zRHNyoOV8zHr4FBYSGHK+IMz5F8PNtgeAlkrCga6qW6zZYqv?=
+ =?us-ascii?Q?GVZoa52lY36FC+0TyCPM3J84Vo/KzRViLW0HMAokC9scFscruQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?1WWObZOiBWZsIvRpGn4aA3wc8SFXZveRem8KFCd0a/HljLtCXTWmyK5Q8A2g?=
+ =?us-ascii?Q?TAyZJmlhAukikFF2QNmJjvOWzaSstJzVkSdu/wWdN3C8M0sNCG12gDQHYexc?=
+ =?us-ascii?Q?le8Hpfn1cF0bP8QE61+4pJpFSotXSCIK12agsEYQWR1xc2qksU/OjBOLZzG2?=
+ =?us-ascii?Q?8hL3/lC5tADCobNahBmxlLqVPaBcaGERgeh/ZsFRj6c9328X/MpyE7lQodXQ?=
+ =?us-ascii?Q?kodowM/zCgocK3TllF4c/cA3SR4CH4NL78df3OWv5MR2WKzlvLL22ETMM7GC?=
+ =?us-ascii?Q?6hLRTsUZYM/1mIElqcy5DwJ4FWDmo9j7quiTf9doYwogp0aty6uOcUGwS8ni?=
+ =?us-ascii?Q?KzM8ULoJmKsAa5w66he8v6iRgaWRwJ67zgOykcactNzmJVro9XVjjhfZAy+0?=
+ =?us-ascii?Q?jh8q7hzQXs4Ha0IzKdT6ZFNPEwftiXHyoCKrpY06pRwOUEM0rxha2qnnt289?=
+ =?us-ascii?Q?CBODFLc+1P3gCtcTSxqS7T9XgLcritQzIJnWYEFjjaTIV6nYen/XOvLJXVPt?=
+ =?us-ascii?Q?y2xVrYLFsZBpk6ZmPCyTf+1PWXxCb/H5HeAo8PUR3rUmkP9V7pq+NIvB268O?=
+ =?us-ascii?Q?e5U6ZRf1IkIhyZwy/2HVQktzlxcCuEdfKmAbtM4EOVWz0cOyXe2gIQixvXp9?=
+ =?us-ascii?Q?TJUqOIHcrGGPKxwxGd/T/nptckhbeCO/BmsZnomA1zmKrW6mgl4CZB2oFt6W?=
+ =?us-ascii?Q?Rhpa4eqfp+RYjHJsqnn4HLtezp7sKqIq8wg2zxaIVbMAXL23q0fWYljb/Tam?=
+ =?us-ascii?Q?Tcb+9zVuDab+G8zOrF063h6431/kGD6v+mh1Ru64xsqH5EGRTFl5dIjxXKr/?=
+ =?us-ascii?Q?oJ6GZ3TTqb/yk1cBvB6sOi3JbKAMoUcUhVIZIrngLqVYxpeVMiENlLPY0dO0?=
+ =?us-ascii?Q?mKTBzFjeZdYiJ8knLUT6r4zfIy0oxI5KyRdt3BsI8qn1XAicTPJzniabfqpZ?=
+ =?us-ascii?Q?IQmjQemO2b0cAzzZ7JLol5Pxd1wfu4N0qPS151Vl5fCgGSOxSJnlYlO3idjs?=
+ =?us-ascii?Q?+KPYxjj+lXhBLmS73icEvpiK1nyyz490ybB1GVNRqc8ZuPBxgfeq5a0zcNj/?=
+ =?us-ascii?Q?UCI7CqWBrgwxR3T8Hkoev3UHvYPRdacDm4YqPptGk1ybI7sYx6xeHQMcqEqE?=
+ =?us-ascii?Q?EM3Pxye6OzQZgS7tZQfi/nl6mcGeQ3955uZiVyM+fs0zZgQJabncEIKAFD9J?=
+ =?us-ascii?Q?SkUHKjRIf1QGsh+dGQEPlfGXXYa5u9vAPCS/U0RNQVwDeWFnfb4VY9nEkl23?=
+ =?us-ascii?Q?6SO421WlOIX5lIaLEUgePCSn4+6NIB/ahkElFP9qvRepS8SNcgt9rRNsBbiK?=
+ =?us-ascii?Q?nljWg1Dm/mCXUgTLugw6MpK+jxcjYPOVEUQv3Um4smor6/S73RDeORXq98c8?=
+ =?us-ascii?Q?ERt/n2WeusuVP4KxBOykcW8JLkLYTvZJs29IlDq/82kaWkgrVvXZMzZIBcOZ?=
+ =?us-ascii?Q?IneNQrOdy75+eqthAXfxLmdsGJ8ArL63KMYcQVE0LMr1HeYtyg4cpSQRJqhk?=
+ =?us-ascii?Q?a9VuZ/dPiWmzrtp+/7gdnD1A1oEQN2sZBnbqGSrdAaZjLTJhmtRMLDdsPthC?=
+ =?us-ascii?Q?/jwLdeo/woWhQJq1EBLXlB0yOVa/o6M67BKvnsoE?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f13331af-14c4-4756-d3c1-08dde5a450ef
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 20:00:05.4040
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ap3El40LAI7bYvFM4l+n4dZbFWNZ3pambipp07iGoIM01lu4SYpJNP5zma+iCbCj
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8503
 
-Applied.  Thanks!
+On Wed, Aug 13, 2025 at 06:25:35PM -0700, Nicolin Chen wrote:
+> +struct arm_smmu_invs *arm_smmu_invs_add(struct arm_smmu_invs *old_invs,
+> +					struct arm_smmu_invs *add_invs)
+> +{
 
-Alex
+It turns out it is fairly easy and cheap to sort add_invs by sorting
+the ids during probe:
 
-On Sun, Aug 24, 2025 at 7:28=E2=80=AFPM Yugansh Mittal <mittalyugansh1@gmai=
-l.com> wrote:
->
-> This patch corrects several typographical errors in atomfirmware.h.
-> The fixes improve readability and maintain consistency in the codebase.
-> No functional changes are introduced.
->
-> Corrected terms include:
-> - aligment    =E2=86=92 alignment
-> - Offest      =E2=86=92 Offset
-> - defintion   =E2=86=92 definition
-> - swithing    =E2=86=92 switching
-> - calcualted  =E2=86=92 calculated
-> - compability =E2=86=92 compatibility
-> - intenal     =E2=86=92 internal
-> - sequece     =E2=86=92 sequence
-> - indiate     =E2=86=92 indicate
-> - stucture    =E2=86=92 structure
-> - regiser     =E2=86=92 register
->
-> Signed-off-by: Yugansh Mittal <mittalyugansh1@gmail.com>
-> ---
->  drivers/gpu/drm/amd/include/atomfirmware.h | 30 +++++++++++-----------
->  1 file changed, 15 insertions(+), 15 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/include/atomfirmware.h b/drivers/gpu/drm=
-/amd/include/atomfirmware.h
-> index 5c86423c2..3d083010e 100644
-> --- a/drivers/gpu/drm/amd/include/atomfirmware.h
-> +++ b/drivers/gpu/drm/amd/include/atomfirmware.h
-> @@ -211,7 +211,7 @@ atom_bios_string          =3D "ATOM"
->  };
->  */
->
-> -#pragma pack(1)                          /* BIOS data must use byte alig=
-ment*/
-> +#pragma pack(1)                          /* BIOS data must use byte alig=
-nment*/
->
->  enum atombios_image_offset{
->    OFFSET_TO_ATOM_ROM_HEADER_POINTER          =3D 0x00000048,
-> @@ -255,8 +255,8 @@ struct atom_rom_header_v2_2
->    uint16_t subsystem_vendor_id;
->    uint16_t subsystem_id;
->    uint16_t pci_info_offset;
-> -  uint16_t masterhwfunction_offset;      //Offest for SW to get all comm=
-and function offsets, Don't change the position
-> -  uint16_t masterdatatable_offset;       //Offest for SW to get all data=
- table offsets, Don't change the position
-> +  uint16_t masterhwfunction_offset;      //Offset for SW to get all comm=
-and function offsets, Don't change the position
-> +  uint16_t masterdatatable_offset;       //Offset for SW to get all data=
- table offsets, Don't change the position
->    uint16_t reserved;
->    uint32_t pspdirtableoffset;
->  };
-> @@ -453,7 +453,7 @@ struct atom_dtd_format
->    uint8_t   refreshrate;
->  };
->
-> -/* atom_dtd_format.modemiscinfo defintion */
-> +/* atom_dtd_format.modemiscinfo definition */
->  enum atom_dtd_format_modemiscinfo{
->    ATOM_HSYNC_POLARITY    =3D 0x0002,
->    ATOM_VSYNC_POLARITY    =3D 0x0004,
-> @@ -678,7 +678,7 @@ struct lcd_info_v2_1
->    uint32_t reserved1[8];
->  };
->
-> -/* lcd_info_v2_1.panel_misc defintion */
-> +/* lcd_info_v2_1.panel_misc definition */
->  enum atom_lcd_info_panel_misc{
->    ATOM_PANEL_MISC_FPDI            =3D0x0002,
->  };
-> @@ -716,7 +716,7 @@ enum atom_gpio_pin_assignment_gpio_id {
->    /* gpio_id pre-define id for multiple usage */
->    /* GPIO use to control PCIE_VDDC in certain SLT board */
->    PCIE_VDDC_CONTROL_GPIO_PINID =3D 56,
-> -  /* if PP_AC_DC_SWITCH_GPIO_PINID in Gpio_Pin_LutTable, AC/DC swithing =
-feature is enable */
-> +  /* if PP_AC_DC_SWITCH_GPIO_PINID in Gpio_Pin_LutTable, AC/DC switching=
- feature is enable */
->    PP_AC_DC_SWITCH_GPIO_PINID =3D 60,
->    /* VDDC_REGULATOR_VRHOT_GPIO_PINID in Gpio_Pin_LutTable, VRHot feature=
- is enable */
->    VDDC_VRHOT_GPIO_PINID =3D 61,
-> @@ -734,7 +734,7 @@ enum atom_gpio_pin_assignment_gpio_id {
->  struct atom_gpio_pin_lut_v2_1
->  {
->    struct  atom_common_table_header  table_header;
-> -  /*the real number of this included in the structure is calcualted by u=
-sing the (whole structure size - the header size)/size of atom_gpio_pin_lut=
-  */
-> +  /*the real number of this included in the structure is calculated by u=
-sing the (whole structure size - the header size)/size of atom_gpio_pin_lut=
-  */
->    struct  atom_gpio_pin_assignment  gpio_pin[];
->  };
->
-> @@ -997,7 +997,7 @@ enum atom_connector_layout_info_mini_type_def {
->
->  enum atom_display_device_tag_def{
->    ATOM_DISPLAY_LCD1_SUPPORT            =3D 0x0002, //an embedded display=
- is either an LVDS or eDP signal type of display
-> -  ATOM_DISPLAY_LCD2_SUPPORT                           =3D 0x0020, //seco=
-nd edp device tag 0x0020 for backward compability
-> +  ATOM_DISPLAY_LCD2_SUPPORT            =3D 0x0020, //second edp device t=
-ag 0x0020 for backward compatibility
->    ATOM_DISPLAY_DFP1_SUPPORT            =3D 0x0008,
->    ATOM_DISPLAY_DFP2_SUPPORT            =3D 0x0080,
->    ATOM_DISPLAY_DFP3_SUPPORT            =3D 0x0200,
-> @@ -1011,7 +1011,7 @@ struct atom_display_object_path_v2
->  {
->    uint16_t display_objid;                  //Connector Object ID or Misc=
- Object ID
->    uint16_t disp_recordoffset;
-> -  uint16_t encoderobjid;                   //first encoder closer to the=
- connector, could be either an external or intenal encoder
-> +  uint16_t encoderobjid;                   //first encoder closer to the=
- connector, could be either an external or internal encoder
->    uint16_t extencoderobjid;                //2nd encoder after the first=
- encoder, from the connector point of view;
->    uint16_t encoder_recordoffset;
->    uint16_t extencoder_recordoffset;
-> @@ -1023,7 +1023,7 @@ struct atom_display_object_path_v2
->  struct atom_display_object_path_v3 {
->         uint16_t display_objid; //Connector Object ID or Misc Object ID
->         uint16_t disp_recordoffset;
-> -       uint16_t encoderobjid; //first encoder closer to the connector, c=
-ould be either an external or intenal encoder
-> +       uint16_t encoderobjid; //first encoder closer to the connector, c=
-ould be either an external or internal encoder
->         uint16_t reserved1; //only on USBC case, otherwise always =3D 0
->         uint16_t reserved2; //reserved and always =3D 0
->         uint16_t reserved3; //reserved and always =3D 0
-> @@ -3547,7 +3547,7 @@ struct atom_voltage_object_header_v4{
->  enum atom_voltage_object_mode
->  {
->     VOLTAGE_OBJ_GPIO_LUT              =3D  0,        //VOLTAGE and GPIO L=
-ookup table ->atom_gpio_voltage_object_v4
-> -   VOLTAGE_OBJ_VR_I2C_INIT_SEQ       =3D  3,        //VOLTAGE REGULATOR =
-INIT sequece through I2C -> atom_i2c_voltage_object_v4
-> +   VOLTAGE_OBJ_VR_I2C_INIT_SEQ       =3D  3,        //VOLTAGE REGULATOR =
-INIT sequence through I2C -> atom_i2c_voltage_object_v4
->     VOLTAGE_OBJ_PHASE_LUT             =3D  4,        //Set Vregulator Pha=
-se lookup table ->atom_gpio_voltage_object_v4
->     VOLTAGE_OBJ_SVID2                 =3D  7,        //Indicate voltage c=
-ontrol by SVID2 ->atom_svid2_voltage_object_v4
->     VOLTAGE_OBJ_EVV                   =3D  8,
-> @@ -3585,7 +3585,7 @@ struct atom_gpio_voltage_object_v4
->  {
->     struct atom_voltage_object_header_v4 header;  // voltage mode =3D VOL=
-TAGE_OBJ_GPIO_LUT or VOLTAGE_OBJ_PHASE_LUT
->     uint8_t  gpio_control_id;                     // default is 0 which i=
-ndicate control through CG VID mode
-> -   uint8_t  gpio_entry_num;                      // indiate the entry nu=
-mbers of Votlage/Gpio value Look up table
-> +   uint8_t  gpio_entry_num;                      // indicate the entry n=
-umbers of Votlage/Gpio value Look up table
->     uint8_t  phase_delay_us;                      // phase delay in unit =
-of micro second
->     uint8_t  reserved;
->     uint32_t gpio_mask_val;                         // GPIO Mask value
-> @@ -4507,8 +4507,8 @@ struct amd_acpi_description_header{
->  struct uefi_acpi_vfct{
->    struct   amd_acpi_description_header sheader;
->    uint8_t  tableUUID[16];    //0x24
-> -  uint32_t vbiosimageoffset; //0x34. Offset to the first GOP_VBIOS_CONTE=
-NT block from the beginning of the stucture.
-> -  uint32_t lib1Imageoffset;  //0x38. Offset to the first GOP_LIB1_CONTEN=
-T block from the beginning of the stucture.
-> +  uint32_t vbiosimageoffset; //0x34. Offset to the first GOP_VBIOS_CONTE=
-NT block from the beginning of the structure.
-> +  uint32_t lib1Imageoffset;  //0x38. Offset to the first GOP_LIB1_CONTEN=
-T block from the beginning of the structure.
->    uint32_t reserved[4];      //0x3C
->  };
->
-> @@ -4540,7 +4540,7 @@ struct gop_lib1_content {
->  /*
->    **********************************************************************=
-*****
->                     Scratch Register definitions
-> -  Each number below indicates which scratch regiser request, Active and
-> +  Each number below indicates which scratch register request, Active and
->    Connect all share the same definitions as display_device_tag defines
->    **********************************************************************=
-*****
->  */
-> --
-> 2.43.0
->
+@@ -3983,6 +3989,14 @@ static int arm_smmu_init_sid_strtab(struct arm_smmu_device *smmu, u32 sid)
+        return 0;
+ }
+ 
++static int arm_smmu_ids_cmp(const void *_l, const void *_r)
++{
++       const typeof_member(struct iommu_fwspec, ids[0]) *l = _l;
++       const typeof_member(struct iommu_fwspec, ids[0]) *r = _r;
++
++       return cmp_int(*l, *r);
++}
++
+ static int arm_smmu_insert_master(struct arm_smmu_device *smmu,
+                                  struct arm_smmu_master *master)
+ {
+@@ -4011,6 +4025,13 @@ static int arm_smmu_insert_master(struct arm_smmu_device *smmu,
+                return PTR_ERR(master->invs);
+        }
+ 
++       /*
++        * Put the ids into order so that arm_smmu_build_invs() can trivially
++        * generate sorted lists.
++        */
++       sort_nonatomic(fwspec->ids, fwspec->num_ids, sizeof(fwspec->ids[0]),
++                      arm_smmu_ids_cmp, NULL);
++
+        mutex_lock(&smmu->streams_mutex);
+        for (i = 0; i < fwspec->num_ids; i++) {
+                struct arm_smmu_stream *new_stream = &master->streams[i];
+
+Then arm_smmu_build_invs() trivially makes sorted lists.
+
+So if old_invs and add_invs are both sorted list we can use variations
+on a merge algorithm for sorted lists which is both simpler to
+understand and runs faster:
+
+/*
+ * Compare used for merging two sorted lists. Merge compare of two sorted list
+ * items. If one side is past the end of the list then return the other side to
+ * let it run out the iteration.
+ */
+static inline int arm_smmu_invs_merge_cmp(const struct arm_smmu_invs *lhs,
+					  size_t lhs_idx,
+					  const struct arm_smmu_invs *rhs,
+					  size_t rhs_idx)
+{
+	if (lhs_idx != lhs->num_invs && rhs_idx != rhs->num_invs)
+		return arm_smmu_invs_cmp(&lhs->inv[lhs_idx],
+					 &rhs->inv[rhs_idx]);
+	if (lhs_idx != lhs->num_invs)
+		return -1;
+	return 1;
+}
+
+struct arm_smmu_invs *arm_smmu_invs_add(struct arm_smmu_invs *invs,
+					struct arm_smmu_invs *add_invs)
+{
+	struct arm_smmu_invs *new_invs;
+	struct arm_smmu_inv *new;
+	size_t to_add = 0;
+	size_t to_del = 0;
+	size_t i, j;
+
+	for (i = 0, j = 0; i != invs->num_invs || j != add_invs->num_invs;) {
+		int cmp = arm_smmu_invs_merge_cmp(invs, i, add_invs, j);
+
+		if (cmp < 0) {
+			/* not found in add_invs, leave alone */
+			if (refcount_read(&invs->inv[i].users))
+				i++;
+			else
+				to_del++;
+		} else if (cmp == 0) {
+			/* same item */
+			i++;
+			j++;
+		} else {
+			/* unique to add_invs */
+			to_add++;
+			j++;
+		}
+	}
+
+	new_invs = arm_smmu_invs_alloc(invs->num_invs + to_add - to_del);
+	if (IS_ERR(new_invs))
+		return new_invs;
+
+	new = new_invs->inv;
+	for (i = 0, j = 0; i != invs->num_invs || j != add_invs->num_invs;) {
+		int cmp = arm_smmu_invs_merge_cmp(invs, i, add_invs, j);
+
+		if (cmp <= 0 && !refcount_read(&invs->inv[i].users)) {
+			i++;
+			continue;
+		}
+
+		if (cmp < 0) {
+			*new = invs->inv[i];
+			i++;
+		} else if (cmp == 0) {
+			*new = invs->inv[i];
+			refcount_inc(&new->users);
+			i++;
+			j++;
+		} else {
+			*new = add_invs->inv[j];
+			refcount_set(&new->users, 1);
+			j++;
+		}
+		if (arm_smmu_inv_is_ats(new))
+			new_invs->has_ats = true;
+		new++;
+	}
+
+	WARN_ON(new != new_invs->inv + new_invs->num_invs);
+
+	/*
+	 * A sorted array allows batching invalidations together for fewer SYNCs.
+	 * Also, ATS must follow the ASID/VMID invalidation SYNC.
+	 */
+	sort_nonatomic(new_invs->inv, new_invs->num_invs,
+		       sizeof(add_invs->inv[0]), arm_smmu_invs_cmp, NULL);
+	return new_invs;
+}
+
+size_t arm_smmu_invs_dec(struct arm_smmu_invs *invs,
+			 struct arm_smmu_invs *dec_invs)
+{
+	size_t to_del = 0;
+	size_t i, j;
+
+	for (i = 0, j = 0; i != invs->num_invs || j != dec_invs->num_invs;) {
+		int cmp = arm_smmu_invs_merge_cmp(invs, i, dec_invs, j);
+
+		if (cmp < 0) {
+			/* not found in dec_invs, leave alone */
+			i++;
+		} else if (cmp == 0) {
+			/* same item */
+			if (refcount_dec_and_test(&invs->inv[i].users)) {
+				dec_invs->inv[j].todel = true;
+				to_del++;
+			}
+			i++;
+			j++;
+		} else {
+			/* item in dec_invs is not in invs? */
+			WARN_ON(true);
+			j++;
+		}
+	}
+	return to_del;
+}
 
