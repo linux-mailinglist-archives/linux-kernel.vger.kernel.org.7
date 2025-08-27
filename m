@@ -1,224 +1,289 @@
-Return-Path: <linux-kernel+bounces-787955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58906B37E09
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:42:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AFA04B37E0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:44:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F69C1BA3FF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:42:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7B231BA4218
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:44:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFDDA33EAF2;
-	Wed, 27 Aug 2025 08:42:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA10A33EAFF;
+	Wed, 27 Aug 2025 08:44:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="eEc25c3x"
-Received: from mail-ed1-f65.google.com (mail-ed1-f65.google.com [209.85.208.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W8me0m6c"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CBCB2F1FE7
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 08:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464642F1FE7
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 08:44:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756284142; cv=none; b=BFtyjMSY8Mwb9qYAniUhIo0UtGoiXmxxSSmFnslXuzVV+o/XAo4OAlOnecjsjEVDvDpKXQhONBHtH1LqIGIyM2bi0D1zIyn8c8dQ7oQaaIrK0TPTZQGCY62swmYzwGwNxlX6S0R82fDZSIYoIMbuvVi3Gj6dxpwG2f5Qba24SLU=
+	t=1756284245; cv=none; b=tEpmqb0OO+uEkbQbxYc5tmZ9nJtBQAJdwq5E4ZWCP2cCHYiVU5Gqef/effdNDbLVgTQUUTn/IyQjj01k7LgwJzKiu1UOuKpSYDmGmQNMjfNwu5rPxmTd4OT+03QnicFx4EYs/v3tCOGBcQhKnmjy7/R+YdChQpH7HppfvhQEynY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756284142; c=relaxed/simple;
-	bh=C3J5F98SUq/XbJdI5mkH/BowXWLNgIYkLopDpGLXpXI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=VLANtwyjcDy2x45EzxviIcw5OuajuxFpladUewa/yCRZdc9jWUCAy2/hM8rPjAMt2iLDXv3Z5Ctn5n+XH8b9HjqnNfhkIKKjjDFTYSypmrljo672TMV/HzwriHXKvN2U5SE51l70psz5W6u0Nqms4wpZYmzyAlCuLiQOoBR8SV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=eEc25c3x; arc=none smtp.client-ip=209.85.208.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ed1-f65.google.com with SMTP id 4fb4d7f45d1cf-6188b6f501cso7077638a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 01:42:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1756284138; x=1756888938; darn=vger.kernel.org;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ru399StOWX0y3ow8u4rjjmb8WPAPqnIEt4F7fasIcxE=;
-        b=eEc25c3x5PXcT1AHnb/dd/pK0kjfUbP9sm+mbeau8SUzBSmQAFsDjgICcXFHWkCasF
-         CEJRrex62BkT3As7pW65RpznQk6trJexK/QcyJPPoaxomyHKKkjI/PNbOVGnmpfIb8BH
-         auofQ2V/WJi55gqWSb06bITRix7V0pbcrxchJES+jYAlAMh7kqyspAC73bam1RKcYucG
-         w2IoXhXz6KB27jTSfHXmQjFsBR7lfDjWp+Rgr3EPkrPa1QzLnoYo0DRGdV1Pke367wS9
-         VYUFYGGOudjo4onhgVI1wDgcO3esXjZMRoVbSaszfYkj2zM+nQvbOdgN2nGDIl0cavoK
-         KEOQ==
+	s=arc-20240116; t=1756284245; c=relaxed/simple;
+	bh=0xUyTZo1Vxu2SKNX0OEGiXGPuNc8xSp3W99eSmBS3ZI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IUl0qwPd3gkG4Z4UTaLJ/FL4nv+7VdFGDqf8A+jj2DqH4RY/JIsDa4jvw7UqwOyZo4OVfLPUw3kyf+F9Vgmoj17mvUbLjzJ36U3vbqYdn4Qf8GuKYZaHozDuDYkIytkEcrYv6NFzeghqg10jviIrrxXSXxtpEbHPmwrdFQF3xLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W8me0m6c; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756284242;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=IZGxaNmOeSdGHHP71FOt2lqKswNba8+C9FVEuuymca4=;
+	b=W8me0m6ciSv6oe5Z2EfW5YZkBbtjJBO6qM1GuK50sf14IIvQcPJTjRniZ44JKX5njnmOrb
+	1/XvzeH8OlnhZBEp40NvVtvKdKWKpNSkcYkJe0jlvWubVdKGqoJEbf4DF/bQ8eSICq0FaI
+	1MJhqLhzDYjeRUKZTGaSqwnv+u4KfZk=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-459-wxeo6TRwMi2JulI8iimmHg-1; Wed, 27 Aug 2025 04:44:00 -0400
+X-MC-Unique: wxeo6TRwMi2JulI8iimmHg-1
+X-Mimecast-MFC-AGG-ID: wxeo6TRwMi2JulI8iimmHg_1756284239
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45a1b0b46bbso29444545e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 01:44:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756284138; x=1756888938;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Ru399StOWX0y3ow8u4rjjmb8WPAPqnIEt4F7fasIcxE=;
-        b=jGZblgwyRFIBstwKEpUXGRsy2vq2ZrU2BCHrnZtyglwDo/+sh7pH7CYGz3EhmYhANu
-         z06IBOtJY+Eg32RW8wzNXFMIfaN39CZXgsP4Sb3VwyUg6c20iN8pjGrLfZMlvRvpoDQY
-         0ZMnSWAzbkZAVdmPjNM/Q3nxSXEBdofMgDUMxLwQEDh/2sbGVyuI5cNgcvvZdbXaeSI/
-         HxzNADG0QBnhT/1gL/AHu/qhUyHPABSNI3Yt2qoFrVW4NAJcFtz9NkaaI/Ulg3A6YVsJ
-         TpmnE4/U3+sgZtvCWwjnbATiuiXDxIXWeXcUa3DxLq+IKLY75Yg6JXyxcGNGuRC5jP7M
-         o1Gg==
-X-Forwarded-Encrypted: i=1; AJvYcCUsgI8havoFhRQsXwxSl2RIxttxz3Y1SKJ3x5snbpWiElLK1I4Hk84Jla0nwbUALm7miMdBR93S0+qMpJ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdyNiiyh9pvo1omJeSJBXVpUmAtzh4YwpjNVdMZhObRQxJihjT
-	jJxM0gCkkl47TpkTbtjDdmvergfSO1x8MwNMlyQsFVF/mEpRbLctwktsZ5eGpF3oVB4=
-X-Gm-Gg: ASbGnctlmJIMxbOOH8SYUMy+6tdTtcZ1wgEvfWukCUUtuE+kgeI97OijC3VlrWQuO8G
-	2Hj6Ojc8m7MRDIfs/qXOK0JQAD/3uHUeqN7ZMW10s8zyifm53RIwB02uDPJJouOgqXbetKVXx0Z
-	wu8Irg2S2jO1ToMR2xWrjcThMQ8DBrQ8/GdAT4i3FwF/pJqjgvk6a0/0JFrlZSfAkVeybNex7Q3
-	712nPwwlBn70Ud0G19zoVv9EDxsiYcJ6Y1mX0BAoxj1NVOukiUX0jCELtbiIxcHGDucXp7YD9mW
-	vxuN200ixH72ipUD4Tbvw8i9UdMHVsLOdZ42arqHOHaIK45LV10YSmFGSaF1FwJpd8EUaMYSXkY
-	bmYl0ShX1EI7tgOmgh0TepMPFYpzV39hT5u2wgWAoLtb4NBQnrrbJHiHM4hY=
-X-Google-Smtp-Source: AGHT+IE7qHCUmyrseOQu74QlBZCIEPNa9QZI/28Loh0vgbPoaePjhaimKbaEW3VRUGcYdoYW86lRtw==
-X-Received: by 2002:a05:6402:2554:b0:61c:5d76:3a8b with SMTP id 4fb4d7f45d1cf-61c5d7640b7mr8937360a12.32.1756284137573;
-        Wed, 27 Aug 2025 01:42:17 -0700 (PDT)
-Received: from localhost ([213.244.170.152])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61caeb5e77bsm1411780a12.35.2025.08.27.01.42.16
+        d=1e100.net; s=20230601; t=1756284239; x=1756889039;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IZGxaNmOeSdGHHP71FOt2lqKswNba8+C9FVEuuymca4=;
+        b=VRSH3Jqm5irU2yB24Eg3VtsxPBTK7oqHkF0lhlv9afYjVN0XuDaPgLGVLgwxLQNyzq
+         4ZRjE42wgIkotUMjP22s1t8HgbAc8Uel9xUKvHCYyTv0l09WmrE7pTujWKlg1bclvjcq
+         HfnFIgpBv3ExCEkLS1phZhlQgbgdGjTL56Sjjyj2kplLAVXAF8IQP5J4aEHhhT3iEHKn
+         lm2FZEfz3YDpOkHu4pL5dWndjRNmnkcGPqfeaDrVohU9r9vLe0W9/mLVfFaZJburykZx
+         LK/cLsqfqs+sio7+kprDQT36fckFMfDSNCe6AfUqokG/TcH4gYo7couJS90fF1WKpdic
+         EzZA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQiY0RMKn6U5fFZci2yBlnQ05oe7H+L/gm6bAjFQL1JfwZmvH6hSDkd31bIFbnUtNkrzvejWYoUy2RC0s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6ek94/Bw06famwRSbzSeA2AOypKjDSWzu1roxXGPYnlLEttQw
+	NcJRBElBWoZDeUAc8ltmSHaO47KVit5z1CllxcRQvZA1HzjnMA+QRUj9llAcaDZEneG3tpPYQyd
+	cEr1HGoOxBseRXYMR+NhhzenIL64uyLdOCC10LGeSbwqzysJEB5y3Q5LG611hyDV9jA==
+X-Gm-Gg: ASbGncsSziHdKVRt8RtvtO3pPOMHJhwWt5fyYHsdmw802uZgCmM4Ni7sW7KeNolETqy
+	mrBGW3GdXPucmz0Ns8XsDnNG2j0sMZ4A58FP4E554hY+N2i5ex4BhDoe9le2wVWuzCnhGfyWEaJ
+	Cx9RwbVIk6CmbQqYgNqSMIIgtSiGAzKj8M9+D7M97VHCs5Zps2EFOywbueCanr2mTeSk4MQIs5b
+	Jsuvd1rK5Gt0Py7xy0lPNt3gNY9mRQFtlz0qqJAiNSW+Uz690q846WXnh9qdRXaCHEoEq4ch8kh
+	aicG7+7QQktFABlE5JKEKHoVR0ppjPMM4RdldQ/sBzk9wwRKPfu83i7yvfBdJ87qyaZQSaM+hYm
+	uDnXQuifFyj9E9TxbpDK5c0gX7M/yqipIXRG5m5Nq/qc=
+X-Received: by 2002:a05:600c:4f02:b0:45b:6275:42cc with SMTP id 5b1f17b1804b1-45b6275481cmr64897905e9.28.1756284239388;
+        Wed, 27 Aug 2025 01:43:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEHrI5MM5SoEnSBg3O8NCL4GssULf2lMxECXsDSF1mGPL8r1uAZx+y3W0mqCZFKDVyGDdh3nQ==
+X-Received: by 2002:a05:600c:4f02:b0:45b:6275:42cc with SMTP id 5b1f17b1804b1-45b6275481cmr64897615e9.28.1756284238834;
+        Wed, 27 Aug 2025 01:43:58 -0700 (PDT)
+Received: from [10.163.96.123] ([151.95.56.250])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-45b6f0d78b4sm22013625e9.7.2025.08.27.01.43.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Aug 2025 01:42:17 -0700 (PDT)
+        Wed, 27 Aug 2025 01:43:57 -0700 (PDT)
+Message-ID: <87b10d94-dca2-4ecb-a86f-b38c5c90e0cf@redhat.com>
+Date: Wed, 27 Aug 2025 10:43:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 27 Aug 2025 10:42:16 +0200
-Message-Id: <DCD2RLZO62P6.MNAOWRUWVFHK@fairphone.com>
-Subject: Re: [PATCH v2 3/5] drm/sysfb: simpledrm: Add support for
- interconnect paths
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: "Javier Martinez Canillas" <javierm@redhat.com>, "Hans de Goede"
- <hdegoede@redhat.com>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, "Helge Deller" <deller@gmx.de>
-Cc: <linux-fbdev@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250623-simple-drm-fb-icc-v2-0-f69b86cd3d7d@fairphone.com>
- <20250623-simple-drm-fb-icc-v2-3-f69b86cd3d7d@fairphone.com>
- <87qzz5d3le.fsf@minerva.mail-host-address-is-not-set>
- <DB9237QHOXRU.JRJB8SPUX8RO@fairphone.com>
- <874ivjf5gn.fsf@minerva.mail-host-address-is-not-set>
-In-Reply-To: <874ivjf5gn.fsf@minerva.mail-host-address-is-not-set>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v17 00/24] KVM: Enable mmap() for guest_memfd
+To: Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>,
+ Oliver Upton <oliver.upton@linux.dev>
+Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Ira Weiny <ira.weiny@intel.com>, Gavin Shan <gshan@redhat.com>,
+ Shivank Garg <shivankg@amd.com>, Vlastimil Babka <vbabka@suse.cz>,
+ Xiaoyao Li <xiaoyao.li@intel.com>, David Hildenbrand <david@redhat.com>,
+ Fuad Tabba <tabba@google.com>, Ackerley Tng <ackerleytng@google.com>,
+ Tao Chan <chentao@kylinos.cn>, James Houghton <jthoughton@google.com>
+References: <20250729225455.670324-1-seanjc@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <20250729225455.670324-1-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Javier,
+On 7/30/25 00:54, Sean Christopherson wrote:
+> Paolo,
+> 
+> The arm64 patches have been Reviewed-by Marc, and AFAICT the x86 side of
+> things is a go.  Barring a screwup on my end, this just needs your approval.
+> 
+> Assuming everything looks good, it'd be helpful to get this into kvm/next
+> shortly after rc1.  The x86 Kconfig changes in particular create semantic
+> conflicts with in-flight series.
+> 
+> 
+> Add support for host userspace mapping of guest_memfd-backed memory for VM
+> types that do NOT use support KVM_MEMORY_ATTRIBUTE_PRIVATE (which isn't
+> precisely the same thing as CoCo VMs, since x86's SEV-MEM and SEV-ES have
+> no way to detect private vs. shared).
+> 
+> mmap() support paves the way for several evolving KVM use cases:
+> 
+>   * Allows VMMs like Firecracker to run guests entirely backed by
+>     guest_memfd [1]. This provides a unified memory management model for
+>     both confidential and non-confidential guests, simplifying VMM design.
+> 
+>   * Enhanced Security via direct map removal: When combined with Patrick's
+>     series for direct map removal [2], this provides additional hardening
+>     against Spectre-like transient execution attacks by eliminating the
+>     need for host kernel direct maps of guest memory.
+> 
+>   * Lays the groundwork for *restricted* mmap() support for guest_memfd-backed
+>     memory on CoCo platforms [3] that permit in-place
+>     sharing of guest memory with the host.
+> 
+> Based on kvm/queue.
 
-On Fri Jul 11, 2025 at 11:21 AM CEST, Javier Martinez Canillas wrote:
-> "Luca Weiss" <luca.weiss@fairphone.com> writes:
->
-> Hello Luca,
->
->> Hi Javier,
->>
->> On Fri Jun 27, 2025 at 9:51 AM CEST, Javier Martinez Canillas wrote:
->
-> [...]
->
->>>> +static int simpledrm_device_attach_icc(struct simpledrm_device *sdev)
->>>> +{
->>>> +	struct device *dev =3D sdev->sysfb.dev.dev;
->>>> +	int ret, count, i;
->>>> +
->>>> +	count =3D of_count_phandle_with_args(dev->of_node, "interconnects",
->>>> +							 "#interconnect-cells");
->>>> +	if (count < 0)
->>>> +		return 0;
->>>> +
->
-> You are already checking here the number of interconnects phandlers. IIUC
-> this should return -ENOENT if there's no "interconects" property and your
-> logic returns success in that case.
+Applied to kvm/next, thanks!
 
-We shouldn't error out in case there's no interconnects defined for this
-simple-framebuffer though? That'd break all other usages of it?
+Paolo
 
->
-> [...]
->
->>>
->>> You could use dev_err_probe() instead that already handles the -EPROBE_=
-DEFER
->>> case and also will get this message in the /sys/kernel/debug/devices_de=
-ferred
->>> debugfs entry, as the reason why the probe deferral happened.
->>
->> Not quite sure how to implement dev_err_probe, but I think this should
->> be quite okay?
->>
->
-> And of_icc_get_by_index() should only return NULL if CONFIG_INTERCONNECT
-> is disabled but you have ifdef guards already for this so it should not
-> happen.
->
->> 		if (IS_ERR_OR_NULL(sdev->icc_paths[i])) {
->
-> Then here you could just do a IS_ERR() check and not care about being NUL=
-L.
-
-But checking also for NULL shouldn't hurt either, in case the compile
-guards get removed in the future or something?
-
-Quote:
-> * Return: icc_path pointer on success or ERR_PTR() on error. NULL is retu=
-rned
-> * when the API is disabled or the "interconnects" DT property is missing.
-
-
-
->
->> 			ret =3D dev_err_probe(dev, PTR_ERR(sdev->icc_paths[i]),
->> 				      "failed to get interconnect path %u\n", i);
->> 			if (ret =3D=3D -EPROBE_DEFER)
->> 				goto err;
->
-> Why you only want to put the icc_paths get for the probe deferral case? I
-> think that you want to do it for any error?
-
-This is the same logic as e.g. for the regulator code in simpledrm. The
-idea seems to be that in case some regulator (or here interconnect)
-doesn't probe correctly, we still try anyways. Just for EPROBE_DEFER we
-defer and wait until the supplier is available.
-
-So defer -> defer simpledrm probe
-So error -> ignore error and continue probe
-
->
->> 			continue;
->
-> I'm not sure why you need this?
-
-For the above behavior.
-
-I guess there were some original design decisions behind handling it
-this way, so I don't see a reason to handle it differently for
-interconnects.
-
->
->> 		}
->>
->> That would still keep the current behavior for defer vs permanent error
->> while printing when necessary and having it for devices_deferred for the
->> defer case.
->>
->
-> As mentioned I still don't understand why you want the error path to only
-> be called for probe deferral. I would had thought that any failure to get
-> an interconnect would led to an error and cleanup.
-
-See above.
-
-Regards
-Luca
-
->
->> Not sure what the difference between drm_err and dev_err are, but I
->> trust you on that.
->>
->
-> The drm_err() adds DRM specific info but IMO the dev_err_probe() is bette=
-r
-> to avoid printing errors in case of probe deferral and also to have it in
-> the devices_deferred debugfs entry.
+> [1] https://github.com/firecracker-microvm/firecracker/tree/feature/secret-hiding
+> [2] https://lore.kernel.org/all/20250221160728.1584559-1-roypat@amazon.co.uk
+> [3] https://lore.kernel.org/all/20250328153133.3504118-1-tabba@google.com
+> 
+> v17:
+>   - Collect reviews. [Xiaoyao, David H.]
+>   - Write a better changelog for the CONFIG_KVM_GENERIC_PRIVATE_MEM =>
+>     CONFIG_HAVE_KVM_ARCH_GMEM_POPULATE rename. [Xiaoyao]
+>   - Correctly gmem_max_mapping_level()'s '0' return in the right patch. [Xiaoyao]
+>   - Replace call to kvm_gmem_get_pfn() with a WARN_ONCE() in the hugepage
+>     recovery path. [Ackerley]
+>   - Add back "KVM: x86/mmu: Handle guest page faults for guest_memfd with
+>     shared memory". [Ackerley]
+>   - Rework the selftest flags testcase to query MMAP support for a given VM
+>     type instead of hardcoding expectations in the test. [Sean]
+>   - Add a testcase to verify KVM can map guest_memfd memory into the guest
+>     even if the userspace address in the memslot isn't (properly) mmap'd. [Sean]
+> 
+> v16:
+>   - https://lore.kernel.org/all/20250723104714.1674617-1-tabba@google.com
+>   - Rework and simplify Kconfig selection and dependencies.
+>   - Always enable guest_memfd for KVM x86 (64-bit) and arm64, which
+>     simplifies the enablement checks.
+>   - Based on kvm-x86/next: commit 33f843444e28 ("Merge branch 'vmx'").
+> 
+> v15:
+>   - https://lore.kernel.org/all/20250717162731.446579-1-tabba@google.com
+>   - Removed KVM_SW_PROTECTED_VM dependency on KVM_GENERIC_GMEM_POPULATE
+>   - Fixed some commit messages
+> 
+> v14:
+>   - https://lore.kernel.org/all/20250715093350.2584932-1-tabba@google.com
+>   - Fixed handling of guest faults in case of invalidation in arm64
+>   - Handle VNCR_EL2-triggered faults backed by guest_memfd (arm64 nested
+>     virt)
+>   - Applied suggestions from latest feedback
+>   - Rebase on Linux 6.16-rc6
+> 
+> Ackerley Tng (2):
+>    KVM: x86/mmu: Rename .private_max_mapping_level() to
+>      .gmem_max_mapping_level()
+>    KVM: x86/mmu: Handle guest page faults for guest_memfd with shared
+>      memory
+> 
+> Fuad Tabba (15):
+>    KVM: Rename CONFIG_KVM_PRIVATE_MEM to CONFIG_KVM_GUEST_MEMFD
+>    KVM: Rename CONFIG_KVM_GENERIC_PRIVATE_MEM to
+>      CONFIG_HAVE_KVM_ARCH_GMEM_POPULATE
+>    KVM: Rename kvm_slot_can_be_private() to kvm_slot_has_gmem()
+>    KVM: Fix comments that refer to slots_lock
+>    KVM: Fix comment that refers to kvm uapi header path
+>    KVM: x86: Enable KVM_GUEST_MEMFD for all 64-bit builds
+>    KVM: guest_memfd: Add plumbing to host to map guest_memfd pages
+>    KVM: guest_memfd: Track guest_memfd mmap support in memslot
+>    KVM: arm64: Refactor user_mem_abort()
+>    KVM: arm64: Handle guest_memfd-backed guest page faults
+>    KVM: arm64: nv: Handle VNCR_EL2-triggered faults backed by guest_memfd
+>    KVM: arm64: Enable support for guest_memfd backed memory
+>    KVM: Allow and advertise support for host mmap() on guest_memfd files
+>    KVM: selftests: Do not use hardcoded page sizes in guest_memfd test
+>    KVM: selftests: guest_memfd mmap() test when mmap is supported
+> 
+> Sean Christopherson (7):
+>    KVM: x86: Have all vendor neutral sub-configs depend on KVM_X86, not
+>      just KVM
+>    KVM: x86: Select KVM_GENERIC_PRIVATE_MEM directly from
+>      KVM_SW_PROTECTED_VM
+>    KVM: x86: Select TDX's KVM_GENERIC_xxx dependencies iff
+>      CONFIG_KVM_INTEL_TDX=y
+>    KVM: x86/mmu: Hoist guest_memfd max level/order helpers "up" in mmu.c
+>    KVM: x86/mmu: Enforce guest_memfd's max order when recovering
+>      hugepages
+>    KVM: x86/mmu: Extend guest_memfd's max mapping level to shared
+>      mappings
+>    KVM: selftests: Add guest_memfd testcase to fault-in on !mmap()'d
+>      memory
+> 
+>   Documentation/virt/kvm/api.rst                |   9 +
+>   arch/arm64/kvm/Kconfig                        |   1 +
+>   arch/arm64/kvm/mmu.c                          | 203 +++++++++++----
+>   arch/arm64/kvm/nested.c                       |  41 ++-
+>   arch/x86/include/asm/kvm-x86-ops.h            |   2 +-
+>   arch/x86/include/asm/kvm_host.h               |   6 +-
+>   arch/x86/kvm/Kconfig                          |  26 +-
+>   arch/x86/kvm/mmu/mmu.c                        | 142 ++++++-----
+>   arch/x86/kvm/mmu/mmu_internal.h               |   2 +-
+>   arch/x86/kvm/mmu/tdp_mmu.c                    |   2 +-
+>   arch/x86/kvm/svm/sev.c                        |   6 +-
+>   arch/x86/kvm/svm/svm.c                        |   2 +-
+>   arch/x86/kvm/svm/svm.h                        |   4 +-
+>   arch/x86/kvm/vmx/main.c                       |   7 +-
+>   arch/x86/kvm/vmx/tdx.c                        |   5 +-
+>   arch/x86/kvm/vmx/x86_ops.h                    |   2 +-
+>   arch/x86/kvm/x86.c                            |  11 +
+>   include/linux/kvm_host.h                      |  38 +--
+>   include/uapi/linux/kvm.h                      |   2 +
+>   tools/testing/selftests/kvm/Makefile.kvm      |   1 +
+>   .../testing/selftests/kvm/guest_memfd_test.c  | 236 ++++++++++++++++--
+>   virt/kvm/Kconfig                              |  15 +-
+>   virt/kvm/Makefile.kvm                         |   2 +-
+>   virt/kvm/guest_memfd.c                        |  81 +++++-
+>   virt/kvm/kvm_main.c                           |  12 +-
+>   virt/kvm/kvm_mm.h                             |   4 +-
+>   26 files changed, 648 insertions(+), 214 deletions(-)
+> 
+> 
+> base-commit: beafd7ecf2255e8b62a42dc04f54843033db3d24
 
 
