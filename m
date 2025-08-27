@@ -1,121 +1,116 @@
-Return-Path: <linux-kernel+bounces-787608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22F44B37889
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:22:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18532B3788B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:29:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB047365424
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 03:22:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5B4768663C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 03:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD0C3074B7;
-	Wed, 27 Aug 2025 03:22:14 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579A330CD98;
-	Wed, 27 Aug 2025 03:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7243308F32;
+	Wed, 27 Aug 2025 03:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="qFAu9Vch"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 690AA2F60B4;
+	Wed, 27 Aug 2025 03:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756264934; cv=none; b=FbPIRzoaIjFaTisz7OVFK1P+rQlOStBqw9hjbcnerLd0a4fo8TDFWPfV3dOF1ByY/egTPIsL9Eb2Aby8DoJwH3Nz8V7GWDuozEVPqqYEOn7+66U5zCRH0OGsF8hvGFKHIbsdvZB8hbLuX5gpkUo60dqdoqZ9yadANdkPgNzXYfU=
+	t=1756265344; cv=none; b=aeQll/3E6GMDI3BoBJ0KFkecdrFc5irs06tpIJt/90jscwothFARBD0GxxJLMCR3CthqNA8Z+EXBcH7bPaSLhpdz8nhzLDJnrOnJTqQepDwWXHUTv0V1Jxl+c2t1uh/4EqY1mz8V2EW9dZibZxGJeULzinjIAApzkpV0WkAc5Bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756264934; c=relaxed/simple;
-	bh=XfOhz1jxPWqok8rdhjGzlCjQcqFV+0wL+yVgmuQ/ziQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B24kBpSRgcRcpZ0YjGzm87Ly/bgsZBMBqEeQ0BMmzyKLhWEz5aRhCd2seLe7Qydwj3chpQ/pVkiGRrePiVEpZtNnaCup2KHxFpftxiGg3ulFDlHZVoi9aYZHVGBI+mnBOl7Qgu45j4m6nNT2IINItn6zw94xcXi49ByV/EHx6bM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cBVFY6hLdzYQv5q;
-	Wed, 27 Aug 2025 11:22:09 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 734D81A018D;
-	Wed, 27 Aug 2025 11:22:08 +0800 (CST)
-Received: from [10.174.179.247] (unknown [10.174.179.247])
-	by APP4 (Coremail) with SMTP id gCh0CgCn8Izeea5o0qi4AQ--.46201S3;
-	Wed, 27 Aug 2025 11:22:08 +0800 (CST)
-Message-ID: <b5f385bc-5e16-2a79-f997-5fd697f2a38a@huaweicloud.com>
-Date: Wed, 27 Aug 2025 11:22:06 +0800
+	s=arc-20240116; t=1756265344; c=relaxed/simple;
+	bh=nnQv5qVpxeHIq4GcjPz1fWTl4vFpNwQGXWgwRqdOVRE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ied+h4vWnWT7Qu7a768uAnqlnx1XoI/Q3nFuaPJWGWAX7krJ/vxIpFvQfVXnBcNrEKPEJTf39Xj11u724zGGfxRlEvzzxBYHCoL7YqVtDCOpX4k/Vmyn8c3Gnb9RpIVvrvpgiusF3+fW0sUdA8PaRUd6z+qfrDN0s/cLpMrs0f0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=qFAu9Vch; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Ho
+	97x5wVkXo8pnoO/XNqFweCT71Ev+bvIlScmLgdN70=; b=qFAu9VchkaQH/rAj5z
+	3wGfR+cQ1VFnms4kO2HxXwyoNeVKK3Bxx+9qFrZDF3PfPVBK3CHE+iDJMZL3KbxP
+	iRi5hQ+Fdf26IQmBBNBA228Hgs+LXOfp1PKeL7aUE+V8/MuYxTW71D+MAfeQzK84
+	zzv5EkjIGOOdMRzPkqVccn3mk=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wAng6hNe65oUa90Eg--.1751S2;
+	Wed, 27 Aug 2025 11:28:13 +0800 (CST)
+From: Feng Yang <yangfeng59949@163.com>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	john.fastabend@gmail.com,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 bpf-next] bpf: Replace kvfree with kfree for kzalloc memory
+Date: Wed, 27 Aug 2025 11:28:12 +0800
+Message-Id: <20250827032812.498216-1-yangfeng59949@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH] blk-mq: check kobject state_in_sysfs before deleting in
- blk_mq_unregister_hctx
-To: Ming Lei <ming.lei@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: linan666@huaweicloud.com, axboe@kernel.dk, jianchao.w.wang@oracle.com,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yangerkun@huawei.com, yi.zhang@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250826084854.1030545-1-linan666@huaweicloud.com>
- <aK5YH4Jbt3ZNngwR@fedora>
- <3853d5bf-a561-ec2d-e063-5fbe5cf025ca@huaweicloud.com>
- <aK5g-38izFqjPk9v@fedora>
-From: Li Nan <linan666@huaweicloud.com>
-In-Reply-To: <aK5g-38izFqjPk9v@fedora>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCn8Izeea5o0qi4AQ--.46201S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Gry7XFWkAF1xZrWxtF4UXFb_yoW8Jry7pF
-	Z5Ca48Kr1Dtr4293Wjvws7GFyYkrs7Gr43Zr98JryS9wnF9r95tr4xKF4DWFW8Ars7A3WI
-	qa1UXFZ3ZFy8uaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v
-	4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7
-	AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
-	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GF
-	ylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
-	xVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
-	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUQ
-	vtAUUUUU=
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
+X-CM-TRANSID:_____wAng6hNe65oUa90Eg--.1751S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Ww4rCFWkWF15AFW5XFy3XFb_yoW8Gr4UpF
+	sYgrnrKw48JF10gFnrCF4UZFyUXan8Jw4xG34qyw1SvF1rtr4qqryjkryF9FyaqFWIga1F
+	vr12vF4jyw18WFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jjCJQUUUUU=
+X-CM-SenderInfo: p1dqww5hqjkmqzuzqiywtou0bp/1tbiZRe2eGiudCrnlwAAsU
 
+From: Feng Yang <yangfeng@kylinos.cn>
 
+These pointers are allocated by kzalloc.
+Replace kvfree() with kfree() to avoid unnecessary is_vmalloc_addr()
+check in kvfree().
 
-在 2025/8/27 9:35, Ming Lei 写道:
-> On Wed, Aug 27, 2025 at 09:04:45AM +0800, Yu Kuai wrote:
->> Hi,
->>
->> 在 2025/08/27 8:58, Ming Lei 写道:
->>> On Tue, Aug 26, 2025 at 04:48:54PM +0800, linan666@huaweicloud.com wrote:
->>>> From: Li Nan <linan122@huawei.com>
->>>>
->>>> In __blk_mq_update_nr_hw_queues() the return value of
->>>> blk_mq_sysfs_register_hctxs() is not checked. If sysfs creation for hctx
->>>
->>> Looks we should check its return value and handle the failure in both
->>> the call site and blk_mq_sysfs_register_hctxs().
->>
->>  From __blk_mq_update_nr_hw_queues(), the old hctxs is already
->> unregistered, and this function is void, we failed to register new hctxs
->> because of memory allocation failure. I really don't know how to handle
->> the failure here, do you have any suggestions?
-> 
-> It is out of memory, I think it is fine to do whatever to leave queue state
-> intact instead of making it `partial workable`, such as:
-> 
-> - try update nr_hw_queues to 1
-> 
-> - if it still fails, delete disk & mark queue as dead if disk is attached
-> 
+This is the remaining unmodified part from [1].
 
-If we ignore these non-critical sysfs creation failures, the disk remains 
-usable with no loss of functionality. Deleting the disk seems to escalate
-the error?
+[1] https://lore.kernel.org/bpf/20250811123949.552885-1-rongqianfeng@vivo.com.
 
+Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
+---
+Changes in v2:
+- Add commit message, thanks: Daniel Borkmann.
+- Link to v1: https://lore.kernel.org/all/20250826073920.1215368-1-yangfeng59949@163.com/
+---
+ kernel/bpf/verifier.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 5c9dd16b2c56..b9394f8fac0e 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -2021,7 +2021,7 @@ static void free_backedges(struct bpf_scc_visit *visit)
+ 	for (backedge = visit->backedges; backedge; backedge = next) {
+ 		free_verifier_state(&backedge->state, false);
+ 		next = backedge->next;
+-		kvfree(backedge);
++		kfree(backedge);
+ 	}
+ 	visit->backedges = NULL;
+ }
+@@ -19651,7 +19651,7 @@ static int is_state_visited(struct bpf_verifier_env *env, int insn_idx)
+ 	err = maybe_enter_scc(env, new);
+ 	if (err) {
+ 		free_verifier_state(new, false);
+-		kvfree(new_sl);
++		kfree(new_sl);
+ 		return err;
+ 	}
+ 
 -- 
-Thanks,
-Nan
+2.43.0
 
 
