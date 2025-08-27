@@ -1,161 +1,385 @@
-Return-Path: <linux-kernel+bounces-787552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5E32B377B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:27:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E611B377BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:30:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7523D2A56BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:27:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36D8A1B66A09
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 658042737E7;
-	Wed, 27 Aug 2025 02:27:46 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2BEE273811;
+	Wed, 27 Aug 2025 02:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="I8DqSL8B"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2063.outbound.protection.outlook.com [40.107.223.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF37F2737E2
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 02:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756261666; cv=none; b=OdzmxCd7uxcmCsNXpHvar2mQBsXrScNNV8MQd8NR4dDl9LMc7yW3Y/U6Z4vhgrHylbhcf/09K51Rdw+mNl4Tv3OIM02mIgeyQXcRc1kBKqVSaFh1K6nWXIER+6BxNEbIjC69OYTqvDnK5vqBQ8JJNp4mTsiBJNUeRnFYNjSIrRo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756261666; c=relaxed/simple;
-	bh=v+PsSQR/QsnG+yciJsCfKji4W1KkaqrU6lyYY+8cXaU=;
-	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Y2x4/LN621qjikqp2u1MmO7vZr2ZstuTg2SchcXYyuu7Mu/5W43606vt+rs/Dm1iRJkn8Oe4exVDo52GAcoLMs7eaY81ZPbkWi4nBoGFLnU7p9Zp/xlQ0MESlkNNJPEl0UN+Wsb+qUu3hHF7UtokInM4Gm/CzGC+dcOVaz7/deE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4cBSzH3tMBz1R8vx;
-	Wed, 27 Aug 2025 10:24:43 +0800 (CST)
-Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9FF221A0188;
-	Wed, 27 Aug 2025 10:27:39 +0800 (CST)
-Received: from kwepemq200018.china.huawei.com (7.202.195.108) by
- dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 27 Aug 2025 10:27:39 +0800
-Received: from [10.67.121.177] (10.67.121.177) by
- kwepemq200018.china.huawei.com (7.202.195.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 27 Aug 2025 10:27:38 +0800
-CC: <yangyicong@hisilicon.com>, <robin.murphy@arm.com>,
-	<Jonathan.Cameron@huawei.com>, <liuyonglong@huawei.com>,
-	<wanghuiqiang@huawei.com>, <prime.zeng@hisilicon.com>,
-	<hejunhao3@h-partners.com>
-Subject: Re: [PATCH v2 9/9] Documentation: hisi-pmu: Add introduction to
- HiSilicon
-To: Yushan Wang <wangyushan12@huawei.com>, <will@kernel.org>,
-	<mark.rutland@arm.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20250821135049.2010220-1-wangyushan12@huawei.com>
- <20250821135049.2010220-10-wangyushan12@huawei.com>
-From: Yicong Yang <yangyicong@huawei.com>
-Message-ID: <d757a29e-6e13-d528-651b-beff8c2b2c21@huawei.com>
-Date: Wed, 27 Aug 2025 10:27:38 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F2D724466D;
+	Wed, 27 Aug 2025 02:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756261797; cv=fail; b=rKziUlNCRBNcH0Gslgu+0DmGpZFoNvFIbPo7ntfTdjBgbwLxFqVQC+KYlJxl8vyt7n5l5e5aDoP9+puzKiX3TJsyaGZ2d9bXz7mz82IeddQfL1/+4x9MvOpBwtgqFc/v5YJYH0e4xLCHDSxGunbZjVu38836Bo46YLrRNkDpo30=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756261797; c=relaxed/simple;
+	bh=vis1YTE8H1TQPnhGfiP9Hi2F6ThG5ZFr4ZrLORIpXlk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=c6JPisG3+p8y8d5zox7B897sm+jyLHM5mevFZwuDkyC3xtnGjuAQb0hmn4W23EbQkcriFu69qZqRz+HZBdJA4QARhghhKVTDDtKheGwX0+b0XaQyNngZLr4S54TkHKxFFCxqEs4d4Sc7LXx5yDCc2TpoxCqQMqzjJpfLdQaHLLo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=I8DqSL8B; arc=fail smtp.client-ip=40.107.223.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fHLuMNMtkAOPswtugcT/rKu2zgPQdcyrkILx3iBD4J6vvWzeydAq/AAQ7q+DuGPGkrCG7589IB89uO4GacJvNZSnLfaRFXOIdZwArjGMrp4kj2L3EeujUBnD9dRyZyLEcnD7iG0SfisCxlfsdIvFacgaOPkuTxe8WTdOuLOX7cJeAV0Ab26NnkFrZYWfI4VdVNccunSTyLmw3mtGTHiqH+jzPm1/MMLsKKwwWm2v+a4z/2VQWoI+sK0vKv3sLXmpRFDIWD85rwy3tRKuzQ4FfTISt4LGf3SJUKQwOuvlEXTKFiKj4v4UqvpnE/f186xR4QJl2bvAhJ6LixguVIOq5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9/pb5fBmoRhwEOO3IDrNjU3FsHGxN7fRQMg58bhPKk8=;
+ b=utVDjpJeALPm7rZbTqjmdNvJ9gKNqkVZLIGdSnWYn/V8CFP97rswpTihKMhoceiUOT8LGweczpbbpNX4J8bb0tnQg4DPJqFCLGnhqIZyjdA8rVKCfQe02BcyMlFR6N2gScgMRTggE+KxzHeB1pLONyGxH6HT52ybu0MLyTYdgZ4bFC8fH07dwoHZ2wzfIXqE+5tvduWK/K2xkzpSUnYDr8TvP5AULHfHX3cQV72Og0bXBiUGmHY4itjkujRim47KWAuq9ORM6PeUH5hZAH9bpjhwihWBnZKLA2WAGeDE4A4e9gXtwEz4BRM2AybjUl5FdYF1AlyKC2wF8UK/vgOUQw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9/pb5fBmoRhwEOO3IDrNjU3FsHGxN7fRQMg58bhPKk8=;
+ b=I8DqSL8BYfG7HPaH6gds1GJfbBkyMpV8kWVryhBEU8Odl92bUxdV+RUip0TmxsGdm+EpWho07awe/0TcgjFQ+fvAFdzJPENanhvBRkWok7lK9r2zYXt0Wglcq88olbYOKx0jgLVao8dqknhAr5rNBJIi6wyjzAVBoZjY+nvga9/G8VtwBfu+xdIJkfxFNUVxQoOxpdjYJoshZd/Cm4I5RrOjWPRauaBL+nJ908GhCBU0oXuZxTeC1cm2JgxvSfdtMuFlF85MzDKFanOheU0vq4r2u98VeNqMoxrPeVc5PR2XWlu0wy2yUabY9qdKQGmoAqjZyzRHn7pb2hKr3pAfDQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV2PR12MB5968.namprd12.prod.outlook.com (2603:10b6:408:14f::7)
+ by DM4PR12MB6009.namprd12.prod.outlook.com (2603:10b6:8:69::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.20; Wed, 27 Aug
+ 2025 02:29:53 +0000
+Received: from LV2PR12MB5968.namprd12.prod.outlook.com
+ ([fe80::e6dd:1206:6677:f9c4]) by LV2PR12MB5968.namprd12.prod.outlook.com
+ ([fe80::e6dd:1206:6677:f9c4%6]) with mapi id 15.20.9073.010; Wed, 27 Aug 2025
+ 02:29:53 +0000
+Message-ID: <a9467dd4-6551-4ef2-b231-02d7696e2d8f@nvidia.com>
+Date: Tue, 26 Aug 2025 19:29:49 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/8] gpu: nova-core: firmware: process Booter and patch
+ its signature
+To: Alexandre Courbot <acourbot@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Alistair Popple <apopple@nvidia.com>,
+ Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+References: <20250826-nova_firmware-v2-0-93566252fe3a@nvidia.com>
+ <20250826-nova_firmware-v2-3-93566252fe3a@nvidia.com>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <20250826-nova_firmware-v2-3-93566252fe3a@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR03CA0011.namprd03.prod.outlook.com
+ (2603:10b6:a03:33a::16) To LV2PR12MB5968.namprd12.prod.outlook.com
+ (2603:10b6:408:14f::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250821135049.2010220-10-wangyushan12@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemq200018.china.huawei.com (7.202.195.108)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV2PR12MB5968:EE_|DM4PR12MB6009:EE_
+X-MS-Office365-Filtering-Correlation-Id: c9a55ad6-5128-4d06-bfab-08dde5119a8d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?d2ZiTDVwY0YrN0RaYmYzTHZmZi9wMEhFcGZqcmdPV2VvUk1CUW1vZXFFV1Vi?=
+ =?utf-8?B?c0w1WEliUHdKWUNtd0JLd01rZzQxT1kvQm5hNWprelRnVkhlZjgzd3dJN3ly?=
+ =?utf-8?B?Si9lMFNSMmwyR2YvS1phNG5LZUFjbDBRRVN2ZnZESzJ6WS8yd1BuZ3pjQUJ4?=
+ =?utf-8?B?S1VEcWZCaW1wNWxzS2c0VVhqVGFyQjVmUy91dkI0Y21uQnNTaWFodm9GU2tm?=
+ =?utf-8?B?Zmg1Q29ob1NOWUlwWEFiR3JSRXViVGQ3c2ZadmF2a0ErNHFHVzhPazEvWndv?=
+ =?utf-8?B?cXU4c1FJQWFVZFFGWTVVYVBVT3dkTU5YV2hhSGp4S0JzOHBnQ2g2WVg4Ynhk?=
+ =?utf-8?B?QVlUZCs5QTZiL2sxL2h1MTlEU3ppczBzb2Z5bVdzWTJLTnZFYUJ4TDU0V2l5?=
+ =?utf-8?B?Q0cwTTIxNWxpSEl3SGd1Q0dDL3o3bDV0Sk80NzhIay9QSDJIZ0VKZXV5UXFy?=
+ =?utf-8?B?VHIxMDVjaFVRa0JoZG5Ed2VMZ1NBS3B4d2xoV25VckJkcFpkeDd6VXFtUVZN?=
+ =?utf-8?B?S1BFVVpEc1ZzRmFVdHVwRDRmZVJEbEU0RXhuM2dOOXpjb0dWOFRudWYyR2dL?=
+ =?utf-8?B?YUtVRDFJRkxKV3U2cW5xNk05UzA1Ti9HOG1rTUdPYi9hcHl3MURXa2IwdUhE?=
+ =?utf-8?B?VGNKRDhISGNtYk5GNkR0N2NEdHdvb1pnT3ovbjhISCticzU0azZnb3JPem1Q?=
+ =?utf-8?B?dzB5UlBXeGt0R1hkcUx4VmEzM0ljR2hOdWVGb3pyMUpNL3piZFZEVVIvRHZJ?=
+ =?utf-8?B?UDRBVTBvaWtTWjY1TGtmZDlnTmMrY2hLUVFZTnVuYkRMZFI3dXd0QTUyZVZW?=
+ =?utf-8?B?WGoxMUc1d1JsWjJqditiK3YvbUxBRUd2YXFkTWJ3dGFOcmtWOFg4eFpKK1M0?=
+ =?utf-8?B?cWN1bjVtd29qYUJ4RHBiV2x5dTIwRld6eUJzUWhLYzVyZ3dmamlYWVZRNGVD?=
+ =?utf-8?B?RzB1WlBRQUZqd3k2Q1RMQklXSEVET0M1UUF4RVQvdHV5Q0gzT3NVNmw4MTVI?=
+ =?utf-8?B?aUZvUFJ2Mmw3WTVBSDVpZG96ZklHRjdJL2swN1dOejVxR1R6RHZOcjNqK2FN?=
+ =?utf-8?B?Vk54aHRBT0I2TTBSQy9ZaStSRUN5ZEdMVzRkK0xZODI0S29hZ3dvWEVtTndt?=
+ =?utf-8?B?ditwcnN3ZVFGNU1sbnNrcDFIaVRTR0cyejF5SUk3OHFlMkZ1N0hGUm56Smt5?=
+ =?utf-8?B?RHJCa1ZtQ044M3FKekR3R2xVQTVpZlFCUXZYSUpSYTFTWm9HZmlZWDJXUmVG?=
+ =?utf-8?B?Rm1ObjVNSm11WWJlZzBYMVpWSGpZZG9aNE9xazFJUUkxaXk3L0hHV2hHaVp0?=
+ =?utf-8?B?RCtReVNQS3FaWU9DRjEyNEdyU3MxdlQ1dDdZYTUvYXlYdzBPSEcrTTRBcWc2?=
+ =?utf-8?B?bFNyODNaeFdydWdxMG9IZW5oUm9td0RwcUhKdVhIVGtLcEZzRTN5Qy9JNTAr?=
+ =?utf-8?B?MEhwUFR3b0lkanNWM1pHN01VaUpyRWVTckxYaHI1OVNsczBpZFVxQ3VJYndv?=
+ =?utf-8?B?N2lvcVo0NzFqYzhhd2JrUTZUMGFIUlA1cmVSbWd6TWJyTmhDaWxzVWZ0RHpF?=
+ =?utf-8?B?Q3liUWVyQ21sWFdzMGFWQ2Fsc3lCSTh6cTBEYXdlTDhSdDRGM3AxZTlYN3ly?=
+ =?utf-8?B?ODdGZ1QvTU1FV3U1ZVJva3RCdGl3d1ZmZHB3SEZoNjh6L2ZDRTJCSW40WDhI?=
+ =?utf-8?B?WWltTmVJdmFvV3ljK3VtRVZ2dU1BcjlJeDdkWmRDRWhyUGxPQThmczBiMk5w?=
+ =?utf-8?B?Zk01bG1jY25JR2ZXTFQ1MGNYWTk5TzNSODJHMUs2VWYzbEV6dXphV1hlZ2pD?=
+ =?utf-8?B?RGJTRXV3bG5oNmF0dFBZQXp2bU14RFRIWHc0RGJCWEN3K0VnajJiTHZheXRP?=
+ =?utf-8?B?RjdMSnNYVmFxZTFvOEZLc2xndXkvZlIvNGZQNVdQNlljYytwWGhhV0x2S01V?=
+ =?utf-8?B?c1NKdy9hZ2JQM0EzNitnYWRHM1pQMmNlRGh2UmlKVGtEY1VCOTRuMTAwWFlq?=
+ =?utf-8?B?aG0ydFdoL0tRPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5968.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aENGeERET2JNTktjcEhySFpjMnRCbVVqbzNBQ3QyaUxlVEY1NmR0SVkvZWZp?=
+ =?utf-8?B?NzVldXpvcVJUZG00NnRrTDJoQ1N3MFo1eHdGbW1UMGI5VHV0c1FDdlM4dTBw?=
+ =?utf-8?B?UkY0Q1pncVJmUkEyN2pIaUR0cVQ0Y0lyUzdzSzZtdEJvVDJQTnpXQXVkaGQy?=
+ =?utf-8?B?VExRVlVHdk1BSnJWcHFSR1k5Y04zSjJESldaQ1BEeFUvc0E5TlNTWjcxY3Jn?=
+ =?utf-8?B?LzJPSVlVVTk1VTAyWHVDNWpoZEZhNzQwb2NacWpWR0NBdGdIRU5sNWZGL082?=
+ =?utf-8?B?VGMrelZCUmFyMVVJVTlMaUZqSDE0NzFKR24wcEpuUCtPbFpCcU5mVFJ6RUhO?=
+ =?utf-8?B?TFBtcThIUTg4TlprQjJKeEpSdVZsT01USys4MlM2dENMa0gydzNWdkdkdVAz?=
+ =?utf-8?B?aHhISWFQWnQ3My9zcVdhS3gva0RXVWlSRkZSUVA5YzdzcHFCT09GRFVWNU5P?=
+ =?utf-8?B?NkRyYnVPc25ZdVVHVWZCNDFLQkJ5U0FEYnNhZm9COWw1U1o0dUhReGRENjFh?=
+ =?utf-8?B?VmpnUTNnVUdUU0puZHluSnVUTmRjSFVsbzY4MGd3Qkpla3lCQ3l2RnZnOGpj?=
+ =?utf-8?B?WFd0Q0orVS8zS2xQSkJGeVdBM21kSjMyUXozQkphdGtXcGlOaStHUnNxZFVW?=
+ =?utf-8?B?L1drTUN2Y2lnYkpYZ0JIOHo1ejYwcll4RC85ZjlYRmhKNXVJclZ0dDlLN3hB?=
+ =?utf-8?B?b3ZJV1MybXdNNWRaRkdDTXV0Z2JCb1pjZ284SDREcmFQbUY0K2xuQmU2aWNr?=
+ =?utf-8?B?dlNNZG5UZkNqTVkzVWZwMzVKK1l2a0V3WkFzSXM2Z3pyVndEQ0xtMVQ3RHlX?=
+ =?utf-8?B?RVVaQUVLaWU4K0h3SGR0QTVtQ3hUaEZoTzdzS0NmcWNyM2hZRWtiTk42a3kr?=
+ =?utf-8?B?UnJaa0l3NjFEazBrWHlqZENMOStYOHhnMmY5STFuYWJWUHRLRmI2TmFpQXdl?=
+ =?utf-8?B?UzhXTWNpQ0JPMDBjUE50bWdOY05ydjJhUnpabkloaFdxdG9ZdVZpWlVxVWFS?=
+ =?utf-8?B?M3RlYmJzYjNwWUsvKzNSYzJWcmR3ODVhNkZlQ1g2SGtaTElqNzVFMG45amsz?=
+ =?utf-8?B?UEhhM1ptV2MzUW4yd1NmeEtRT2F3TXRFMXpWeEd5TmQyb2o2U09CRmtpRFBn?=
+ =?utf-8?B?MGFPT3hHQkRwZXVWWCtFN1dBdWNORmxaTzl0ZjhQcHI2cWdvRFZiV2k2akNW?=
+ =?utf-8?B?cTBJNGNSVHhUWWFncEdXVE1KemhDdVhseWtneUpJRllLUlBobTNFZG5HTTZm?=
+ =?utf-8?B?KzgvTi9nTmZ3eUdVckQrTG9YcExCV2w2RnRRaWZidEZ0aURVWlBjdlZmQXJT?=
+ =?utf-8?B?YmlmdVVpb1VFNUJLWFlNZmlhMUVoWjlhVlg2cnB2YVgwdERCYXJ0NllmMFh0?=
+ =?utf-8?B?UXUxTE5hanRINkhpc2QxUlIyVUNNKzBTTVpQZjNxckZUeTd6KzdGSlNJN3RX?=
+ =?utf-8?B?Tk9WMUNxbUtTVmVWczBIajJCeEN3ZThWQ0JTSmNCYUxtL0dJSnBsM0M0Vkhh?=
+ =?utf-8?B?QVFxN0pLSzZRZ3pmdmRmQU9jTFpOMjZBRk5YVTVhVEloS2xTemI1bHBDelE3?=
+ =?utf-8?B?UDdudis4ZE1McU9qbnBDQnIyaTl0QlR3WmhXeUl0NW5IRGh0TitlSkQrWFdI?=
+ =?utf-8?B?SmxyTDFRd1ZPMis3RGhTdkZHanVzMERhYVJzeUVXTkRBSWM1S3NXRWxQSXh3?=
+ =?utf-8?B?WVNSajNMblRwZzgrMm1jTFFFTXU0R21OTXlPdnNQTHVQUTFMV0xJQ2g2UThJ?=
+ =?utf-8?B?UnZWQXVZdDgwSERpWEJTeFJJSFY4eW9HT0tGYzY5NGIwY0lLMEVVYW83U1FF?=
+ =?utf-8?B?UEVlZDJ0Q2tVRVJheHpZeFBQVE9vdUJTcVBCcjVVbUFpNVNLVFdQOHhkcGxn?=
+ =?utf-8?B?bGIxWk5Sa0NsRUdGZzc5TWcxOFVTYUlqM2RtV1JKejg2RnNiNk1RK1h6c2Yr?=
+ =?utf-8?B?S3N1QkJLMzM3OE5NNUxKMk5QOThsRU5LV3ZJUlJrVGFiRXVCU01Vam1LcXgy?=
+ =?utf-8?B?ZVhUc2RnTEwxcWJ5d1FKV2VLSGhWS1YyaWNyT05DSjBVLzM4K21kM21uU2dT?=
+ =?utf-8?B?ejRBY2lQNTZMZWFNSzR2NFdWR3FZdzZ2QWN6cXlPUFo2QlVDcjFYSko1RGJv?=
+ =?utf-8?Q?jGWGXj3eX489v9Ty7sBGooUmj?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c9a55ad6-5128-4d06-bfab-08dde5119a8d
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5968.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 02:29:52.8850
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: i1Cl/Dx6/RMvv+cv8W0/OjwagMkKE9dPsh3PfV7NwdcoKfewUaX23/4k2XdTAyuj5PQ6chp7K4RLPatkpR2QOA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6009
 
-Hi Yushan,
+On 8/25/25 9:07 PM, Alexandre Courbot wrote:
+...
+> +/// Signature parameters, as defined in the firmware.
+> +#[repr(C)]
+> +struct HsSignatureParams {
+> +    // Fuse version to use.
+> +    fuse_ver: u32,
+> +    // Mask of engine IDs this firmware applies to.
+> +    engine_id_mask: u32,
+> +    // ID of the microcode.
 
-the subject seems to be truncated? should it be like below?
+Should these three comments use "///" instead of "//" ?
 
-Documentation: hisi-pmu: Add introduction to HiSilicon v3 PMU
+...> +pub(crate) struct BooterFirmware {
+> +    // Load parameters for `IMEM` falcon memory.
+> +    imem_load_target: FalconLoadTarget,
+> +    // Load parameters for `DMEM` falcon memory.
+> +    dmem_load_target: FalconLoadTarget,
+> +    // BROM falcon parameters.
+> +    brom_params: FalconBromParams,
+> +    // Device-mapped firmware image.
+> +    ucode: FirmwareDmaObject<Self, Signed>,
+> +}
+> +
+> +impl FirmwareDmaObject<BooterFirmware, Unsigned> {
+> +    fn new_booter(dev: &device::Device<device::Bound>, data: &[u8]) -> Result<Self> {
+> +        DmaObject::from_data(dev, data).map(|ucode| Self(ucode, PhantomData))
+> +    }
+> +}
+> +
+> +impl BooterFirmware {
+> +    /// Parses the Booter firmware contained in `fw`, and patches the correct signature so it is
+> +    /// ready to be loaded and run on `falcon`.
+> +    pub(crate) fn new(
+> +        dev: &device::Device<device::Bound>,
+> +        fw: &Firmware,
+> +        falcon: &Falcon<<Self as FalconFirmware>::Target>,
+> +        bar: &Bar0,
+> +    ) -> Result<Self> {
+> +        let bin_fw = BinFirmware::new(fw)?;
 
-other comments inline. sorry for the late reply..
+A few newlines for a little visual "vertical relief" would be a
+welcome break from this wall of text. Maybe one before and after
+each comment+line, just for this one time here, if that's not too 
+excessive:
 
-On 2025/8/21 21:50, Yushan Wang wrote:
-> Some of HiSilicon V3 PMU hardware is divided into parts to fulfill the
-> job of monitoring specific parts of a device.  Add description on that
-> as well as the newly added ext operand for L3C PMU.
-> 
-> Signed-off-by: Yushan Wang <wangyushan12@huawei.com>
-> ---
->  Documentation/admin-guide/perf/hisi-pmu.rst | 38 +++++++++++++++++++--
->  1 file changed, 36 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/perf/hisi-pmu.rst b/Documentation/admin-guide/perf/hisi-pmu.rst
-> index a307bce2f5c5..4c7584fe3c1a 100644
-> --- a/Documentation/admin-guide/perf/hisi-pmu.rst
-> +++ b/Documentation/admin-guide/perf/hisi-pmu.rst
-> @@ -12,8 +12,8 @@ The HiSilicon SoC encapsulates multiple CPU and IO dies. Each CPU cluster
->  called Super CPU cluster (SCCL) and is made up of 6 CCLs. Each SCCL has
->  two HHAs (0 - 1) and four DDRCs (0 - 3), respectively.
->  
-> -HiSilicon SoC uncore PMU driver
-> --------------------------------
-> +HiSilicon SoC uncore PMU v1
+here> +        // The binary firmware embeds a Heavy-Secured firmware.
+> +        let hs_fw = HsFirmwareV2::new(&bin_fw)?;
+here> +        // The Heavy-Secured firmware embeds a firmware load descriptor.
+> +        let load_hdr = HsLoadHeaderV2::new(&hs_fw)?;
+here> +        // Offset in `ucode` where to patch the signature.
+> +        let patch_loc = hs_fw.patch_location()?;
+here> +        let sig_params = HsSignatureParams::new(&hs_fw)?;
+> +        let brom_params = FalconBromParams {
+> +            // `load_hdr.os_data_offset` is an absolute index, but `pkc_data_offset` is from the
+> +            // signature patch location.
+> +            pkc_data_offset: patch_loc
+> +                .checked_sub(load_hdr.os_data_offset)
+> +                .ok_or(EINVAL)?,
+> +            engine_id_mask: u16::try_from(sig_params.engine_id_mask).map_err(|_| EINVAL)?,
+> +            ucode_id: u8::try_from(sig_params.ucode_id).map_err(|_| EINVAL)?,
+> +        };
+> +        let app0 = HsLoadHeaderV2App::new(&hs_fw, 0)?;
+> +
+> +        // Object containing the firmware microcode to be signature-patched.
+> +        let ucode = bin_fw
+> +            .data()
+> +            .ok_or(EINVAL)
+> +            .and_then(|data| FirmwareDmaObject::<Self, _>::new_booter(dev, data))?;
+> +
+> +        let ucode_signed = {
 
-these (and below) new sections will break the ordered list of the options. this should not be
-necessary to mention the version, just add the newly added options in the current way and
-mention the introduced version should be enough.
+This ucode_signed variable is misnamed...
 
-> +---------------------------
->  
->  Each device PMU has separate registers for event counting, control and
->  interrupt, and the PMU driver shall register perf PMU drivers like L3C,
-> @@ -56,6 +56,9 @@ Example usage of perf::
->    $# perf stat -a -e hisi_sccl3_l3c0/rd_hit_cpipe/ sleep 5
->    $# perf stat -a -e hisi_sccl3_l3c0/config=0x02/ sleep 5
->  
-> +HiSilicon SoC uncore PMU v2
-> +----------------------------------
+> +            let mut signatures = hs_fw.signatures_iter()?.peekable();
 > +
->  For HiSilicon uncore PMU v2 whose identifier is 0x30, the topology is the same
->  as PMU v1, but some new functions are added to the hardware.
->  
-> @@ -113,6 +116,37 @@ uring channel. It is 2 bits. Some important codes are as follows:
->  - 2'b00: default value, count the events which sent to the both uring and
->    uring_ext channel;
->  
-> +HiSilicon SoC uncore PMU v3
-> +----------------------------------
-> +
-> +For HiSilicon uncore PMU v3 whose identifier is 0x40, some uncore PMUs are
-> +further divided into parts for finer granularity of tracing, each part has its
-> +own dedicated PMU, and all such PMUs together cover the monitoring job of events
-> +on particular uncore device. Such PMUs are described in sysfs with name format
-> +slightly changed::
-> +
-> +/sys/bus/event_source/devices/hisi_sccl{X}_<l3c{Y}_{Z}/ddrc{Y}_{Z}/noc{Y}_{Z}>
-> +
-> +Z is the sub-id, indicating different PMUs for part of hardware device.
-> +
-> +Usage of most PMUs with different sub-ids are identical. Specially, L3C PMU
-> +provides ``ext`` operand to allow exploration of even finer granual statistics
-> +of L3C PMU, L3C PMU driver use that as hint of termination when delivering perf
-> +command to hardware:
-> +
-> +- ext=0: Default, could be used with event names.
-> +- ext=1 and ext=2: Must be used with event codes, event names are not supported.
-> +
-> +An example of perf command could be::
-> +
-> +  $# perf stat -a -e hisi_sccl0_l3c1_0/event=0x1,ext=1/ sleep 5
-> +
-> +or::
-> +
-> +  $# perf stat -a -e hisi_sccl0_l3c1_0/rd_spipe/ sleep 5
-> +
-> +As above, ``hisi_sccl0_l3c1_0`` locates PMU on CPU cluster 0, L3 cache 1 pipe0.
+> +            if signatures.peek().is_none() {
+> +                // If there are no signatures, then the firmware is unsigned.
+> +                ucode.no_patch_signature()
 
-this isn't correct. sccl0 indicates the Super CPU CLuster 0 which is already
-described in the document.
+...as we can see here. :)
 
-thanks.
+> +            } else {
+> +                // Obtain the version from the fuse register, and extract the corresponding
+> +                // signature.
+> +                let reg_fuse_version = falcon.signature_reg_fuse_version(
+
+Oh...I don't want to derail this patch review with a pre-existing problem,
+but let me mention it anyway so I don't forget: .signature_reg_fuse_version()
+appears to be unnecessarily HAL-ified. I think.
+
+SEC2 boot flow only applies to Turing, Ampere, Ada, and so unless Timur
+uncovers a Turing-specific signature_reg_fuse_version(), then I think
+we'd best delete that entire HAL area and call it directly.
+
+Again, nothing to do with this patch, I'm just looking for a quick
+sanity check on my first reading of this situation.
+
+> +                    bar,
+> +                    brom_params.engine_id_mask,
+> +                    brom_params.ucode_id,
+> +                )?;
+> +
+> +                let signature = match reg_fuse_version {
+> +                    // `0` means the last signature should be used.
+> +                    0 => signatures.last(),
+
+Should we provide a global const, to make this concept a little more self-documenting?
+Approximately: 
+
+const FUSE_VERSION_USE_LAST_SIG: u32 = 0;
+
+> +                    // Otherwise hardware fuse version needs to be substracted to obtain the index.
+
+typo: "s/substracted/subtracted/"
+
+> +                    reg_fuse_version => {
+> +                        let Some(idx) = sig_params.fuse_ver.checked_sub(reg_fuse_version) else {
+> +                            dev_err!(dev, "invalid fuse version for Booter firmware\n");
+> +                            return Err(EINVAL);
+> +                        };
+> +                        signatures.nth(idx as usize)
+> +                    }
+> +                }
+> +                .ok_or(EINVAL)?;
+> +
+> +                ucode.patch_signature(&signature, patch_loc as usize)?
+> +            }
+> +        };
+> +
+> +        Ok(Self {
+> +            imem_load_target: FalconLoadTarget {
+> +                src_start: app0.offset,
+> +                dst_start: 0,
+> +                len: app0.len,
+
+Should we check that app0.offset.checked_add(app0.len) doesn't cause an
+out of bounds read?
+
+
+> +            },
+> +            dmem_load_target: FalconLoadTarget {
+> +                src_start: load_hdr.os_data_offset,
+> +                dst_start: 0,
+> +                len: load_hdr.os_data_size,
+> +            },
+> +            brom_params,
+> +            ucode: ucode_signed,
+> +        })
+> +    }
+> +}
+> +
+> +impl FalconLoadParams for BooterFirmware {
+> +    fn imem_load_params(&self) -> FalconLoadTarget {
+> +        self.imem_load_target.clone()
+> +    }
+> +
+> +    fn dmem_load_params(&self) -> FalconLoadTarget {
+> +        self.dmem_load_target.clone()
+> +    }
+> +
+> +    fn brom_params(&self) -> FalconBromParams {
+> +        self.brom_params.clone()
+> +    }
+> +
+> +    fn boot_addr(&self) -> u32 {
+> +        self.imem_load_target.src_start
+> +    }
+> +}
+> +
+> +impl Deref for BooterFirmware {
+> +    type Target = DmaObject;
+> +
+> +    fn deref(&self) -> &Self::Target {
+> +        &self.ucode.0
+> +    }
+> +}
+
+OK, so this allows &BooterFirmware to be used where &DmaObject is expected,
+but it's not immediately obvious that BooterFirmware derefs to its internal
+DMA object. It feels too clever...
+
+Could we do something a little more obvious instead? Sort of like this:
+
+impl BooterFirmware {
+    pub(crate) fn dma_object(&self) -> &DmaObject {
+        &self.ucode.0
+    }
+}
+
+...
+
+I'm out of time today, will work on the other half of the series tomorrow.
+
+thanks,
+-- 
+John Hubbard
 
 
