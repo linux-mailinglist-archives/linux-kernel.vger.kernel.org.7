@@ -1,140 +1,130 @@
-Return-Path: <linux-kernel+bounces-787967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 921A9B37E38
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:58:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BDD0B37E3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:59:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B72F31898516
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:58:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5151F7A7EFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:58:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26464341650;
-	Wed, 27 Aug 2025 08:57:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1DDA340DAC;
+	Wed, 27 Aug 2025 08:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ebY9bhsd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="D3oB+seA"
+Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9BE242D88;
-	Wed, 27 Aug 2025 08:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F981340DA4
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 08:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756285074; cv=none; b=rG9bK60Z6yiEAHMvRFvRp0N0rAyyXfsV9hWmJt6f4VUOqjOJsZYxgFyqKT7rvHlqJ7sO46LP/eaJCYR2DknKydKkZ1jxzHXMMrMEW7XtEVW8FMS2S+zxyEBuLdsh2aTjtj216XhMrxYF4CNXI58LaNEb2/skkFwI+WnhNOElVPo=
+	t=1756285183; cv=none; b=NtArp66e4Klb/Ne8JWAS+wGl+l3dl2qUyx4wgo6qA/BSs1TbSkEElfOl60vh7Aj/C9qseN905jiSW68k4d/GG3uU0fULWbw42LYleIa1AL+ORTpSDToIIj6mUXnds+UGJmlevEMyT1B2k1OXrCzZEBS69XQP8XBmAuWwDt4INKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756285074; c=relaxed/simple;
-	bh=mYjxTPeHhDhT1wm55WOQFjAfq4GLac+lULuomHlutMs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=YdwGt0OuQ8SBnKCfYPhZw/TEuWAixYfcLTPBQJlU1v5xNIUSlPoiAIBj7cSRdArkqdAqlpkGTtOKB2fwROdg9C7ueFmkKpSar2kt4Sd1+Sluyjiy/rlDEs00vTypABtZVCgBuko1Z2xz3+tENfKpPSYibpNv60QPcRvvz0KyItc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ebY9bhsd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAA60C113D0;
-	Wed, 27 Aug 2025 08:57:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756285074;
-	bh=mYjxTPeHhDhT1wm55WOQFjAfq4GLac+lULuomHlutMs=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ebY9bhsdRq+pD/UVwGHl1zn9LC5UKp11mKazk597hex/O7RobaTUKVOJUCih0OF8r
-	 yB68OSjqkx0lVo4WiInWYyxnb0gPYmLvGFvbmzKMphs+yvdIaVHnIqO3TumPSsfgEo
-	 dSFoIeT/Jz5pyd2qXgG+QQJQYwmiqtSVBOMB6GuHeEXj5vN/VU3ukl22LwwFNvynu7
-	 psQw3uj7/PUyEd6sdgaFgfz4FbA8FT55fGnyblEeEzDnkRq335AP6Kjtl+/UqW/qXJ
-	 E/F1r+TbvrqICMxb2Gntn2pvt7vTf81HLA35jTYWhoehesW5ONqoHWUku4TIAUt2XH
-	 SrDmO/30YmH8Q==
-Date: Wed, 27 Aug 2025 10:57:49 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton
- <akpm@linux-foundation.org>, Linux Media Mailing List
- <linux-media@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL for v6.17-rc4] media fixes
-Message-ID: <20250827105749.32f7cc29@foz.lan>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1756285183; c=relaxed/simple;
+	bh=e+VoK9+9ktkhtiSHmZtvrsusXYvPcQRzEfCAaq7ZjnA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Zat8jAeoAv5FnwmQEESxLvE6Td+vCydnSAeWex8tsQxGYqwBWR9G4e8yarmJ9bX444D63hgbceEJU529rUcCIDrpNNZGoOb/uBpXIQUMfLRDdfLVuxgbBLPGTArQ6RKSyKmTW2K9dskON6OEo0FS/yeIiVclw5S3Ysn9uYH3l2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=D3oB+seA; arc=none smtp.client-ip=44.202.169.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5005b.ext.cloudfilter.net ([10.0.29.189])
+	by cmsmtp with ESMTPS
+	id r62Bu8ZzuA1smrC0Ju68DQ; Wed, 27 Aug 2025 08:59:39 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id rC0IuOuDXb6dmrC0IuTtx8; Wed, 27 Aug 2025 08:59:38 +0000
+X-Authority-Analysis: v=2.4 cv=bs9MBFai c=1 sm=1 tr=0 ts=68aec8fa
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=Hjfe3DhCYvkSn7QD38gA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=VOG3LYKgZCMMo+MNkUGKaiRiVRBi5+p1mFmH9vWfY6k=; b=D3oB+seATMeIynAFejlT0dNFkP
+	7J3AFKy6noMCCpGqOGkZyj3IUAvXxNoVq+CnAjsfJc/1yBSGEGnGv9cEWFwyuMmj88J4xhlJK+yMs
+	0EMZwAFvWr15dFWHVF/rtB+Iwp9RKYpwNQKgIY5tFQrjGpoQhgcNe2wyOzwGi4LfVVucpE6Tdfj1s
+	TU9PTB9NN3W2EVycXQmijoCexs3U3wPE+PZriKKSAsstBPiw8erUs2igNpIHeFd8cICta3nfl7b2Z
+	xH9u2EchuVC01aFZ7MHh/qTNUcXKRlfSY1uCTZz+0vhMWf1kCtUUKDLwwXvLJ5vexQk2khoLG1BC5
+	jaNR9TQg==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:57290 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <re@w6rz.net>)
+	id 1urC0H-0000000473b-2Tat;
+	Wed, 27 Aug 2025 02:59:37 -0600
+Message-ID: <d3486309-6615-4754-8944-13e48067d052@w6rz.net>
+Date: Wed, 27 Aug 2025 01:59:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.16 000/457] 6.16.4-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org
+References: <20250826110937.289866482@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20250826110937.289866482@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1urC0H-0000000473b-2Tat
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:57290
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 17
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfBlNOmEPXfjvoiWKGtFcX9jqu5xMN04WGDoH0ZHSdpbAzCERduY6qE8bVVB26yUwNKSPuHq9n2HbvvjTjgRfMD9dlrUV5/saffCmmHQDwH+vijJEkkbT
+ 2oSQ9LrDy83RxUq4I1seuoM+fxzto/XUT6UbSW6a7BThyjhzgWNzekIe5El1ZN0ee4M6YZWll58nMcSdyz3BJ/oFT+gdR26R94M=
 
-Hi Linus,
+On 8/26/25 04:04, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.16.4 release.
+> There are 457 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 28 Aug 2025 11:08:27 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.16.4-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.16.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Please pull from:
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-	git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media.git media/v6.17-2
+Tested-by: Ron Economos <re@w6rz.net>
 
-For:
-  - drop the redundant pm_runtime_mark_last_busy() on rkvdec driver;
-  - fix an error handling in probe at rkvdec driver;
-  - fix an issue affecting lt6911uxe/lt6911uxc related to CSI-2
-    GPIO pins at int3472.
-
-Regards,
-Mauro
-
----
-
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
-
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media.git tags/media/v6.17-2
-
-for you to fetch changes up to 6f6fbd9a0c5a75eee0618c1499cf73cc770b3f52:
-
-  media: Remove redundant pm_runtime_mark_last_busy() calls (2025-08-18 09:55:08 +0200)
-
-----------------------------------------------------------------
-[GIT PULL for v6.17-rc4] media fixes
-
-----------------------------------------------------------------
-Christophe JAILLET (1):
-      media: rkvdec: Fix an error handling path in rkvdec_probe()
-
-Dan Carpenter (1):
-      media: rkvdec: Fix a NULL vs IS_ERR() bug in probe()
-
-Dongcheng Yan (1):
-      platform/x86: int3472: add hpd pin support
-
-Sakari Ailus (2):
-      media: rkvdec: Remove redundant pm_runtime_mark_last_busy() calls
-      media: Remove redundant pm_runtime_mark_last_busy() calls
-
- drivers/media/i2c/alvium-csi2.c                         |  1 -
- drivers/media/i2c/ccs/ccs-core.c                        |  7 +------
- drivers/media/i2c/dw9768.c                              |  1 -
- drivers/media/i2c/gc0308.c                              |  3 ---
- drivers/media/i2c/gc2145.c                              |  3 ---
- drivers/media/i2c/imx219.c                              |  2 --
- drivers/media/i2c/imx283.c                              |  3 ---
- drivers/media/i2c/imx290.c                              |  3 ---
- drivers/media/i2c/imx296.c                              |  1 -
- drivers/media/i2c/imx415.c                              |  1 -
- drivers/media/i2c/mt9m114.c                             |  6 ------
- drivers/media/i2c/ov4689.c                              |  3 ---
- drivers/media/i2c/ov5640.c                              |  4 ----
- drivers/media/i2c/ov5645.c                              |  3 ---
- drivers/media/i2c/ov64a40.c                             |  7 +------
- drivers/media/i2c/ov8858.c                              |  2 --
- drivers/media/i2c/st-mipid02.c                          |  2 --
- drivers/media/i2c/tc358746.c                            |  5 -----
- drivers/media/i2c/thp7312.c                             |  4 ----
- drivers/media/i2c/vd55g1.c                              |  4 ----
- drivers/media/i2c/vd56g3.c                              |  4 ----
- drivers/media/i2c/video-i2c.c                           |  4 ----
- .../media/platform/chips-media/wave5/wave5-vpu-dec.c    |  4 ----
- .../media/platform/chips-media/wave5/wave5-vpu-enc.c    |  5 -----
- drivers/media/platform/nvidia/tegra-vde/h264.c          |  2 --
- drivers/media/platform/qcom/iris/iris_hfi_queue.c       |  1 -
- drivers/media/platform/raspberrypi/pisp_be/pisp_be.c    |  2 --
- drivers/media/platform/rockchip/rkvdec/rkvdec.c         | 17 +++++++++--------
- drivers/media/platform/verisilicon/hantro_drv.c         |  1 -
- drivers/media/rc/gpio-ir-recv.c                         |  4 +---
- drivers/platform/x86/intel/int3472/discrete.c           |  6 ++++++
- include/linux/platform_data/x86/int3472.h               |  1 +
- 32 files changed, 19 insertions(+), 97 deletions(-)
 
