@@ -1,286 +1,219 @@
-Return-Path: <linux-kernel+bounces-788014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B6BBB37ECF
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:27:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 586C8B37ED2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:28:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC6F4362217
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:27:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16743365581
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:28:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE9C32142E;
-	Wed, 27 Aug 2025 09:27:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62CB73451A0;
+	Wed, 27 Aug 2025 09:28:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ap3iInRw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fCtW1Gp2"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6435A276028
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 09:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E443F1D5150;
+	Wed, 27 Aug 2025 09:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756286844; cv=none; b=c55+p9l+zJP3pLk18skSiRQ/PuebPPw3uG1OBkclnq3XcIe+hx/ti0o3rhcxTbYVf9R1OgdvQLfnziqkWP3cyvC/Abvb0GzuzpvoE5qTC56qgifomhCoz7/Iibta9dfVL3OMIOAY6msmuAUi+v6k/G8xOHXHigFK14JYG5jT7xc=
+	t=1756286906; cv=none; b=sqyMFGLTaWIVr+Kk4w0UIm6VOu5Syqi5G0/byVXp0f/DZNrkJ2OlnPjyRRuX6NQ8Hjiz1mkUf44okRZFKs+ljmsFwTM+rkWU89s8Prd226egwdV3s2Tmv732Mzk2LSlIwS3O0LDfsTQn3cfqu7h4e7rFxjQZD/RldLa8dkgqHFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756286844; c=relaxed/simple;
-	bh=Wv36AMBEza3FUF3/2V8wmSPaK8c8A4/g4c5XcF2MTp0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qGiVDxMhr2M75taaXa3TDMx0IXzQVWhu77T6I5YmIZ9EBOC4v1Q2qqkYMlmiS8x3j/4NclHAMU+av05gs+qGxjSmZShfhBXph/Fc9N2VijX0iROqAAaCJ+YK/TZUGiliSQfA3jnKM7YnIIvggynpx0nhQUSGPDmNV56rEOlPHpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ap3iInRw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8982EC4CEEB;
-	Wed, 27 Aug 2025 09:27:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756286843;
-	bh=Wv36AMBEza3FUF3/2V8wmSPaK8c8A4/g4c5XcF2MTp0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ap3iInRwEA21rNPhjtOQcc6nzJrsOESnex35TeWvXMJqA3iSvZCA5J8zFNyYm6hK5
-	 tTZn2NzC7kMEkXNMAWHFXj+c+11RHvDwy1+wqs5KO8emE2g9RT+0u19ChnjbXwzuHf
-	 BUFQl0060mC5JJXa6Qx6eknPHP+0t26a1GqlgXGaHaM62icxrg5AyWfUv1QZqHJ8bZ
-	 GSORvXBAfgJAVHFZnol5ljxC8PBAzvOE7iAdXpfgnACoiAQ9L543Uo3fmyrTUKFnXW
-	 Z3pUurcbFULD2v01lMQmqDtLwn8DGb7dSBS9mMQ+m40IpsyA6iPAFp5v5RRad8ZmBm
-	 ym5T9I7gOg79g==
-Date: Wed, 27 Aug 2025 11:27:21 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Swamil Jain <s-jain1@ti.com>, h-shenoy@ti.com, devarsht@ti.com, 
-	vigneshr@ti.com, praneeth@ti.com, u-kumar1@ti.com, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, jyri.sarha@iki.fi, 
-	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
-	aradhya.bhatia@linux.dev
-Subject: Re: [PATCH v5 2/3] drm/tidss: Remove max_pclk_khz from tidss display
- features
-Message-ID: <20250827-illegal-splendid-coyote-aff8cc@houat>
-References: <20250819192113.2420396-1-s-jain1@ti.com>
- <20250819192113.2420396-3-s-jain1@ti.com>
- <b95b60c3-5988-4238-a8d4-73bd8bbf8779@ideasonboard.com>
+	s=arc-20240116; t=1756286906; c=relaxed/simple;
+	bh=PfxoAIwcb5X5b4fUYMVVmVFZvGyrGoz5/mNQu2gy8P4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M3LcBdzV5ilHpV8wJasQpaOlb5B9cHhRiB7TElj8UwlBl3l7jw9u5+zG01AHWq5bQ2pH9304ZPvQuHGcfxkgqBFkXDzXRhwXylyVLFKfjMS52yRFkZ3vUG7m6f0WlHIyWDN0MAX8WNmZd9D4bPRDD6uM/amml5zOh0rJLzy8DPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fCtW1Gp2; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-61c26f3cf6fso9817413a12.1;
+        Wed, 27 Aug 2025 02:28:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756286903; x=1756891703; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=afRMvMz52lErLIy3TkQ3+HE1dlvb4ERfwloctYrSfu8=;
+        b=fCtW1Gp2RxkSVm4XOotHfDa8NMA11TBIpIRMPA4BdAF327F8/9ySqNSRUOxxaw7yj1
+         1Wn4RvKzSxBnLlzKX4LzxHQ8SJBq9q3YmecIUpBvMbVoFmHcqOp25cmOSxrXkOVYH0r/
+         7H8fcMn3dcxcdDc9MnhpOlHCg+X/q43QdtBoZ0WRmGXEkVP8N30BpnIjAxtaKNcA484v
+         obAVFfVtBUxHtYIwq9fl/ZHp81+pMki6SFoEmIJ2/fAL5y65f1aB7nMY+uRzGP2/iPSX
+         KhqOoNBnvbyWAYeH6N7cOfqOpPkZ8MeQEATdLkqIPeT+beqjMWjvtYg1Z48iM7zJW+Yb
+         iTIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756286903; x=1756891703;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=afRMvMz52lErLIy3TkQ3+HE1dlvb4ERfwloctYrSfu8=;
+        b=TGMqAORxy3vEM+yUuCeZMuFlo1xARfUDebvezn1mN85cFbkhSzJJbkGojYyjGjz5ZV
+         iNJWDi4ScXHHe44GJmflV+eoJhXLlHtcDh16KuciB24p+k0AwTMoom8zAX38kO2vWp32
+         a6GfxtpZccSqTWAu7xR/G7SlkTbRkJOT0ywXugq19Y70L759NNj1834SI7XKJZ+db5Vu
+         Q1UuK4Wf/rwP8hNbn7RHKZ7paP0o57HBg1fLGcQXsFyCVOa8qbF0JkZp/nQrkupqa5SV
+         85JAom0PyAZECyQIl/vfC75zCH/Yk+a64I6LpUiblP3GcwuA1pq/+d+x037nac/L+QAb
+         cDQw==
+X-Forwarded-Encrypted: i=1; AJvYcCVJidUVUxGB5hhD5nqKCJWBT7gxQ5rHYrm9M47NnZckUKH1HxqCthJIiXxOTxy71omYIUvjyyVIY0rCAAIx@vger.kernel.org, AJvYcCVeFk6lBR+4Sn4GIV2xzlmFdWRzomiOmBSIKsRLPK+F9rn3bTzU0ElBaxpawbrAprDdtAKxLgJXMPjzTzcxUQ==@vger.kernel.org, AJvYcCVpwDzVV4MGpBwVwX/La0ka9cgGbco56dTN248liW3sK5/ph7g5E8SaOx+SSO46oFjzMwpWmNcbThIHnvFt@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0gHc/+K15ZpbUsMs/q2Ar/9kYNW5LGy0oWwyz3fHDDgC/wfxZ
+	JKdvB7/E6P6zcaBnljDi5621HRDI/z6E0y+GDK6OPgU9zLq7dmFyJCKx/0HT+nraISG/zDF7mQR
+	CVjpQdd04CekTFFhoU9yeR0ZhwOmeJLI=
+X-Gm-Gg: ASbGncv1QGwdNkU1KpjycecKtdZL3BBtitA4rGgKawmlSdrSzlsFcQ9ZXiPjFZrUGQH
+	8soM+v3G4Bg8ziTrvUm/XNOWPhoJ6fVFP0Y2Tmdfl/aEnLQE+nY/VNEr5vr9x7JPqC/fHr6HxeV
+	7rcTbDymlfLUS7gAdOkPhDebE+1aryigW0A8FGd21DcZO+rRoEb7277dv5DPVhr1jEb7t1qfkfY
+	igPZvo=
+X-Google-Smtp-Source: AGHT+IGPmcUFgcc9N6VZGuWev475Iqh/3cbemwbh7T5FmHXerjzXVncjDuoQZvhgJ1TFiIWjpSflcF4M5su57L0iUWU=
+X-Received: by 2002:a05:6402:13d0:b0:61c:35c0:87ee with SMTP id
+ 4fb4d7f45d1cf-61c35c091b0mr12625331a12.7.1756286903051; Wed, 27 Aug 2025
+ 02:28:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="rpq6tiz433pjehda"
-Content-Disposition: inline
-In-Reply-To: <b95b60c3-5988-4238-a8d4-73bd8bbf8779@ideasonboard.com>
-
-
---rpq6tiz433pjehda
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <20250822-tonyk-overlayfs-v6-0-8b6e9e604fa2@igalia.com>
+ <20250822-tonyk-overlayfs-v6-4-8b6e9e604fa2@igalia.com> <875xeb64ks.fsf@mailhost.krisman.be>
+ <CAOQ4uxiHQx=_d_22RBUvr9FSbtF-+DJMnoRi0QnODXRR=c47gA@mail.gmail.com>
+ <CAOQ4uxgaefXzkjpHgjL0AZrOn_ZMP=b1TKp-KDh53q-4borUZw@mail.gmail.com>
+ <871poz4983.fsf@mailhost.krisman.be> <87plci3lxw.fsf@mailhost.krisman.be>
+ <CAOQ4uxhw26Tf6LMP1fkH=bTD_LXEkUJ1soWwW+BrgoePsuzVww@mail.gmail.com>
+ <87ldn62kjy.fsf@mailhost.krisman.be> <564e46ac-a605-4b20-bb48-444bf7141ab5@igalia.com>
+In-Reply-To: <564e46ac-a605-4b20-bb48-444bf7141ab5@igalia.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 27 Aug 2025 11:28:11 +0200
+X-Gm-Features: Ac12FXwH-ZjnCeErtmUkz32-EBRGSswusBsaCuX6PmlcQ4ri1VqgMyN2js2w0J8
+Message-ID: <CAOQ4uxjOZMq6RYsB5qSVkYPTjd1m4=sr9HbP1kBCD0oLWPwHAQ@mail.gmail.com>
+Subject: Re: [PATCH v6 4/9] ovl: Create ovl_casefold() to support casefolded strncmp()
+To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Cc: Gabriel Krisman Bertazi <krisman@suse.de>, Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>, 
+	linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, kernel-dev@igalia.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 2/3] drm/tidss: Remove max_pclk_khz from tidss display
- features
-MIME-Version: 1.0
 
-On Wed, Aug 27, 2025 at 11:49:22AM +0300, Tomi Valkeinen wrote:
-> On 19/08/2025 22:21, Swamil Jain wrote:
-> > From: Jayesh Choudhary <j-choudhary@ti.com>
-> >=20
-> > TIDSS hardware by itself does not have variable max_pclk for each VP.
-> > The maximum pixel clock is determined by the limiting factor between
-> > the functional clock and the PLL (parent to the VP/pixel clock).
->=20
-> Hmm, this is actually not in the driver, is it? We're not limiting the
-> pclk based on the fclk.
->=20
-> > The limitation that has been modeled till now comes from the clock
-> > (PLL can only be programmed to a particular max value). Instead of
-> > putting it as a constant field in dispc_features, we can query the
-> > DM to see if requested clock can be set or not and use it in
-> > mode_valid().
+On Tue, Aug 26, 2025 at 9:58=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@iga=
+lia.com> wrote:
+>
+>
+>
+> Em 26/08/2025 12:02, Gabriel Krisman Bertazi escreveu:
+> > Amir Goldstein <amir73il@gmail.com> writes:
 > >
-> > Replace constant "max_pclk_khz" in dispc_features with
-> > max_successful_rate and max_attempted_rate, both of these in
-> > tidss_device structure would be modified in runtime. In mode_valid()
-> > call, check if a best frequency match for mode clock can be found or
-> > not using "clk_round_rate()". Based on that, propagate
-> > max_successful_rate and max_attempted_rate and query DM again only if
-> > the requested mode clock is greater than max_attempted_rate. (As the
-> > preferred display mode is usually the max resolution, driver ends up
-> > checking the highest clock the first time itself which is used in
-> > subsequent checks).
-> >=20
-> > Since TIDSS display controller provides clock tolerance of 5%, we use
-> > this while checking the max_successful_rate. Also, move up
-> > "dispc_pclk_diff()" before it is called.
-> >=20
-> > This will make the existing compatibles reusable if DSS features are
-> > same across two SoCs with the only difference being the pixel clock.
-> >=20
-> > Fixes: 7246e0929945 ("drm/tidss: Add OLDI bridge support")
-> > Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
-> > Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
-> > Signed-off-by: Swamil Jain <s-jain1@ti.com>
-> > ---
-> >  drivers/gpu/drm/tidss/tidss_dispc.c | 85 +++++++++++++----------------
-> >  drivers/gpu/drm/tidss/tidss_dispc.h |  1 -
-> >  drivers/gpu/drm/tidss/tidss_drv.h   | 11 +++-
-> >  3 files changed, 47 insertions(+), 50 deletions(-)
-> >=20
-> > diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tids=
-s/tidss_dispc.c
-> > index c0277fa36425..c2c0fe0d4a0f 100644
-> > --- a/drivers/gpu/drm/tidss/tidss_dispc.c
-> > +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
-> > @@ -58,10 +58,6 @@ static const u16 tidss_k2g_common_regs[DISPC_COMMON_=
-REG_TABLE_LEN] =3D {
-> >  const struct dispc_features dispc_k2g_feats =3D {
-> >  	.min_pclk_khz =3D 4375,
-> > =20
-> > -	.max_pclk_khz =3D {
-> > -		[DISPC_VP_DPI] =3D 150000,
-> > -	},
-> > -
-> >  	/*
-> >  	 * XXX According TRM the RGB input buffer width up to 2560 should
-> >  	 *     work on 3 taps, but in practice it only works up to 1280.
-> > @@ -144,11 +140,6 @@ static const u16 tidss_am65x_common_regs[DISPC_COM=
-MON_REG_TABLE_LEN] =3D {
-> >  };
-> > =20
-> >  const struct dispc_features dispc_am65x_feats =3D {
-> > -	.max_pclk_khz =3D {
-> > -		[DISPC_VP_DPI] =3D 165000,
-> > -		[DISPC_VP_OLDI_AM65X] =3D 165000,
-> > -	},
-> > -
-> >  	.scaling =3D {
-> >  		.in_width_max_5tap_rgb =3D 1280,
-> >  		.in_width_max_3tap_rgb =3D 2560,
-> > @@ -244,11 +235,6 @@ static const u16 tidss_j721e_common_regs[DISPC_COM=
-MON_REG_TABLE_LEN] =3D {
-> >  };
-> > =20
-> >  const struct dispc_features dispc_j721e_feats =3D {
-> > -	.max_pclk_khz =3D {
-> > -		[DISPC_VP_DPI] =3D 170000,
-> > -		[DISPC_VP_INTERNAL] =3D 600000,
-> > -	},
-> > -
-> >  	.scaling =3D {
-> >  		.in_width_max_5tap_rgb =3D 2048,
-> >  		.in_width_max_3tap_rgb =3D 4096,
-> > @@ -315,11 +301,6 @@ const struct dispc_features dispc_j721e_feats =3D {
-> >  };
-> > =20
-> >  const struct dispc_features dispc_am625_feats =3D {
-> > -	.max_pclk_khz =3D {
-> > -		[DISPC_VP_DPI] =3D 165000,
-> > -		[DISPC_VP_INTERNAL] =3D 170000,
-> > -	},
-> > -
-> >  	.scaling =3D {
-> >  		.in_width_max_5tap_rgb =3D 1280,
-> >  		.in_width_max_3tap_rgb =3D 2560,
-> > @@ -376,15 +357,6 @@ const struct dispc_features dispc_am625_feats =3D {
-> >  };
-> > =20
-> >  const struct dispc_features dispc_am62a7_feats =3D {
-> > -	/*
-> > -	 * if the code reaches dispc_mode_valid with VP1,
-> > -	 * it should return MODE_BAD.
-> > -	 */
-> > -	.max_pclk_khz =3D {
-> > -		[DISPC_VP_TIED_OFF] =3D 0,
-> > -		[DISPC_VP_DPI] =3D 165000,
-> > -	},
-> > -
-> >  	.scaling =3D {
-> >  		.in_width_max_5tap_rgb =3D 1280,
-> >  		.in_width_max_3tap_rgb =3D 2560,
-> > @@ -441,10 +413,6 @@ const struct dispc_features dispc_am62a7_feats =3D=
- {
-> >  };
-> > =20
-> >  const struct dispc_features dispc_am62l_feats =3D {
-> > -	.max_pclk_khz =3D {
-> > -		[DISPC_VP_DPI] =3D 165000,
-> > -	},
-> > -
-> >  	.subrev =3D DISPC_AM62L,
-> > =20
-> >  	.common =3D "common",
-> > @@ -1347,25 +1315,57 @@ static void dispc_vp_set_default_color(struct d=
-ispc_device *dispc,
-> >  			DISPC_OVR_DEFAULT_COLOR2, (v >> 32) & 0xffff);
-> >  }
-> > =20
-> > +/*
-> > + * Calculate the percentage difference between the requested pixel clo=
-ck rate
-> > + * and the effective rate resulting from calculating the clock divider=
- value.
-> > + */
-> > +unsigned int dispc_pclk_diff(unsigned long rate, unsigned long real_ra=
-te)
-> > +{
-> > +	int r =3D rate / 100, rr =3D real_rate / 100;
-> > +
-> > +	return (unsigned int)(abs(((rr - r) * 100) / r));
-> > +}
-> > +
-> > +static int check_pixel_clock(struct dispc_device *dispc,
-> > +			     u32 hw_videoport, unsigned long clock)
-> > +{
-> > +	unsigned long round_clock;
-> > +
-> > +	if (dispc->tidss->is_ext_vp_clk[hw_videoport])
-> > +		return 0;
-> > +
-> > +	if (clock <=3D dispc->tidss->max_successful_rate[hw_videoport])
-> > +		return 0;
-> > +
-> > +	if (clock < dispc->tidss->max_attempted_rate[hw_videoport])
-> > +		return -EINVAL;
-> > +
-> > +	round_clock =3D clk_round_rate(dispc->vp_clk[hw_videoport], clock);
-> > +
-> > +	if (dispc_pclk_diff(clock, round_clock) > 5)
-> > +		return -EINVAL;
-> > +
-> > +	dispc->tidss->max_successful_rate[hw_videoport] =3D round_clock;
-> > +	dispc->tidss->max_attempted_rate[hw_videoport] =3D clock;
->=20
-> I still don't think this logic is sound. This is trying to find the
-> maximum clock rate, and optimize by avoiding the calls to
-> clk_round_rate() if possible. That makes sense.
->=20
-> But checking for the 5% tolerance breaks it, in my opinion. If we find
-> out that the PLL can do, say, 100M, but we need pclk of 90M, the current
-> maximum is still the 100M, isn't it?
+> >> On Tue, Aug 26, 2025 at 3:34=E2=80=AFAM Gabriel Krisman Bertazi <krism=
+an@suse.de> wrote:
+> >>
+> >>>
+> >>> I was thinking again about this and I suspect I misunderstood your
+> >>> question.  let me try to answer it again:
+> >>>
+> >>> Ext4, f2fs and tmpfs all allow invalid utf8-encoded strings in a
+> >>> casefolded directory when running on non-strict-mode.  They are treat=
+ed
+> >>> as non-encoded byte-sequences, as if they were seen on a case-Sensiti=
+ve
+> >>> directory.  They can't collide with other filenames because they
+> >>> basically "fold" to themselves.
+> >>>
+> >>> Now I suspect there is another problem with this series: I don't see =
+how
+> >>> it implements the semantics of strict mode.  What happens if upper an=
+d
+> >>> lower are in strict mode (which is valid, same encoding_flags) but th=
+ere
+> >>> is an invalid name in the lower?  overlayfs should reject the dentry,
+> >>> because any attempt to create it to the upper will fail.
+> >>
+> >> Ok, so IIUC, one issue is that return value from ovl_casefold() should=
+ be
+> >> conditional to the sb encoding_flags, which was inherited from the
+> >> layers.
+> >
+> > yes, unless you reject mounting strict_mode filesystems, which the best
+> > course of action, in my opinion.
+> >
+> >>
+> >> Again, *IF* I understand correctly, then strict mode ext4 will not all=
+ow
+> >> creating an invalid-encoded name, but will strict mode ext4 allow
+> >> it as a valid lookup result?
+> >
+> > strict mode ext4 will not allow creating an invalid-encoded name. And
+> > even lookups will fail.  Because the kernel can't casefold it, it will
+> > assume the dirent is broken and ignore it during lookup.
+> >
+> > (I just noticed the dirent is ignored and the error is not propagated i=
+n
+> > ext4_match.  That needs improvement.).
+> >
+> >>>
+> >>> Andr=C3=A9, did you consider this scenario?
+> >>
+> >> In general, as I have told Andre from v1, please stick to the most com=
+mon
+> >> configs that people actually need.
+> >>
+> >> We do NOT need to support every possible combination of layers configu=
+rations.
+> >>
+> >> This is why we went with supporting all-or-nothing configs for casefol=
+der dirs.
+> >> Because it is simpler for overlayfs semantics and good enough for what
+> >> users need.
+> >>
+> >> So my question is to you both: do users actually use strict mode for
+> >> wine and such?
+> >> Because if they don't I would rather support the default mode only
+> >> (enforced on mount)
+> >> and add support for strict mode later per actual users demand.
+> >
+> > I doubt we care.  strict mode is a restricted version of casefolding
+> > support with minor advantages.  Basically, with it, you can trust that
+> > if you update the unicode version, there won't be any behavior change i=
+n
+> > casefolding due to newly assigned code-points.  For Wine, that is
+> > irrelevant.
+> >
+> > You can very well reject strict mode and be done with it.
+> >
+>
+> Amir,
+>
+> I think this can be done at ovl_get_layers(), something like:
+>
+> if (sb_has_strict_encoding(sb)) {
+>         pr_err("strict encoding not supported\n");
+>         return -EINVAL;
+> }
+>
 
-5% is pretty large indeed. We've been using .5% in multiple drivers and
-it proved to be pretty ok. I would advise you tu use it too.
+Yap, I've put it into ovl_set_encoding() to warn more accurately
+on upper fs:
 
-It's not clear to me why avoiding a clk_round_rate() call is something
-worth doing though?
+/*
+ * Set the ovl sb encoding as the same one used by the first layer
+ */
+static int ovl_set_encoding(struct super_block *sb, struct super_block *fs_=
+sb)
+{
+        if (!sb_has_encoding(fs_sb))
+                return 0;
 
-Even caching the maximum rate you have been able to reach before is
-pretty fragile: if the PLL changes its rate, or if a sibling clock has
-set some limits on what the PLL can do, your maximum isn't relevant
-anymore.
+#if IS_ENABLED(CONFIG_UNICODE)
+        if (sb_has_strict_encoding(fs_sb)) {
+                pr_err("strict encoding not supported\n");
+                return -EINVAL;
+        }
 
-in other words, what's wrong with simply calling clk_round_rate() and
-checking if it's within a .5% deviation?
+        sb->s_encoding =3D fs_sb->s_encoding;
+        sb->s_encoding_flags =3D fs_sb->s_encoding_flags;
+#endif
+        return 0;
+}
 
-At the very least, this should be explained in comments or the commit
-message.
-
-Maxime
-
---rpq6tiz433pjehda
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaK7PcQAKCRAnX84Zoj2+
-dvY/AYC68Q6d4wqvpMlEECwf3C4mEVdQ9NQxDMI73v63CUc+UuQwKZX0bhxW8ZZq
-S0obvAwBfjsiSD4jX44fQeOf0Vu4DiHmsljRlVmicjF7Jc3dSk9wNAhE60eKyp6v
-rIUQVO5fHA==
-=xvuZ
------END PGP SIGNATURE-----
-
---rpq6tiz433pjehda--
+Thanks,
+Amir.
 
