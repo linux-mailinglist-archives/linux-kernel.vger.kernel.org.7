@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-788982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43847B38F0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 01:19:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5B0EB38F0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 01:19:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B51B1C225F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:19:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EDB7463619
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:19:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0213312801;
-	Wed, 27 Aug 2025 23:18:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E9331282E;
+	Wed, 27 Aug 2025 23:18:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aJrqPaYq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E8cyyx/r"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057A3311591;
-	Wed, 27 Aug 2025 23:18:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F36311979;
+	Wed, 27 Aug 2025 23:18:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756336736; cv=none; b=qp6ImM/HWoK/0iRc8kcY+Ttre7jlKnG8a/cCVPUf/g/0rZsmUpK7oNG5VfzsgiD52+xysRhY9e/Ha3KyLd2yrGjsfroEjeC5gYSQqdeMzQkscSknMkNyQ6UjWAEfEm2MB7XPJv0VNvspPxD5sBAm88fJQu8yK3YFruqvDKy999U=
+	t=1756336736; cv=none; b=PwdMiOvZojBWDjPvWN62HPS+58xP+DEKsA0feSSdypmkNWFftiPsqz0/umz3DW6GOUHTjJq6yXrN1pdQrTSAI+aYKDwqKnwJzLXXs47RGg/oAMwm9jiSguwjRy7FxdeFX81HIm4fCHML9G9bBoHxIVozqVNxrYxMf5YVAUcGqDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1756336736; c=relaxed/simple;
-	bh=Y2qrDmk+8yLfV7UV2eFg+/X7DmZjWSH7Vmf+zCTKOGs=;
+	bh=j8waJiGPLOxyz6bi8Ol4G/oClugFmBhM7jsST0ztxBs=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=TrlOmr32xQWsMlOJqcsGjTXz5yYulQCffWTBuPgXX229Bx4gsaEdFlpePhZWKE/f+ttrg0P4QlGmEs5cvoVwlKkjYgvbMSXSofhLbs5KJKlMCzI+6437DhtD34awu8gupsdLBICwwKdJ2yjqJTmMLZZEya9jnSFchlG7OuxPN5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aJrqPaYq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86637C4CEF5;
-	Wed, 27 Aug 2025 23:18:54 +0000 (UTC)
+	 Message-Id:Subject; b=fYOJeSyxcnBdV/GJl2ghTFu3ZIUsGa+3fSoTzqwnr2DllQr4ehLcS0Mx9Ui03iJxs9DWMvTAX+hPhkr/tHJtjV+BU9br1zwWT7XDQSEY/jucRPbqNKuGWsK4hbBTc90gfXyG2IdSaXe1YrGjD5nY8ZKHZDhY/9tmNohQ3eEKfnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E8cyyx/r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC86DC4CEF6;
+	Wed, 27 Aug 2025 23:18:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756336734;
-	bh=Y2qrDmk+8yLfV7UV2eFg+/X7DmZjWSH7Vmf+zCTKOGs=;
+	s=k20201202; t=1756336735;
+	bh=j8waJiGPLOxyz6bi8Ol4G/oClugFmBhM7jsST0ztxBs=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=aJrqPaYqXepJc2QYhzozJrFuChQhkEYczoQIdR+OTVEco/Sv2CgBKSHunPlx+U2zU
-	 g++vOHLXtEhxywLv2CROk935aIFwnGndcEzmNPjJCspbQjJiTpaLYmZWlbaNjPOiI+
-	 jqdq4qlXL2co1kx7TaGAzqmxi6k+b861Du75+jgmSFQztuU0AsI/UJQT6G8/b+IIX9
-	 mme7YKympzV3Tu9AVp3zgH+hhckFgelpF70qtDI7UpAfvDJUvggmTF9/6cmem4k9wP
-	 JM7RGU2ufLRKA/dKy3Aem4MF9MjVQakKVDbXAMz/0y4/+Yv+EgFW+gxWb2B1tuTZ+c
-	 Hvvs6/7inJTcA==
-Date: Wed, 27 Aug 2025 18:18:53 -0500
+	b=E8cyyx/rwL8EQRPsXH7QQFMg+Bii0icmcov7ZtMo654C+ZEw1jaff3nwGrb5nbU6u
+	 u7f+FLe6L17U3cdW5dVzQ1hwlEF/X679YTv03jter5rBP00nHbKxkoQ0Ls/bF6PP54
+	 o6KHm6mwGYxNKBtfYMjjdyRwFeAIRdIaD8e5P2yJd+nk92Gb/pr1fz8hmOYtEhrDME
+	 tlNxpPgCsxDUvlKa9piu9E0+ykq6h1IAFxlTIj+KkKbuRupvsGkwSBle3F/MlwIvIV
+	 +hgBMXbXir10OUizCPspCRXqmfkXAeu7ouF34xWf+KFzRPi5cBpLGSwJmzeoap+Gy9
+	 5TBGoYzI5ptUQ==
+Date: Wed, 27 Aug 2025 18:18:54 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,65 +50,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, 
- devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>
-To: =?utf-8?q?Eric_Gon=C3=A7alves?= <ghatto404@gmail.com>
-In-Reply-To: <20250827213414.43033-1-ghatto404@gmail.com>
-References: <20250827213414.43033-1-ghatto404@gmail.com>
-Message-Id: <175633665064.3746815.5597832646216452529.robh@kernel.org>
-Subject: Re: [PATCH v8 0/1] arm64: dts: qcom: add initial support for
- Samsung Galaxy S22
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Conor Dooley <conor+dt@kernel.org>, 
+ linux-arm-kernel@lists.infradead.org, Will Deacon <will@kernel.org>, 
+ willmcvicker@google.com, linux-kernel@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Catalin Marinas <catalin.marinas@arm.com>, kernel-team@android.com, 
+ devicetree@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20250827-acpm-dvfs-dt-v2-0-e1d2890d12b4@linaro.org>
+References: <20250827-acpm-dvfs-dt-v2-0-e1d2890d12b4@linaro.org>
+Message-Id: <175633665113.3746832.15304875656374701987.robh@kernel.org>
+Subject: Re: [PATCH v2 0/3] arm64: dts: exynos: gs101: add cpufreq support
 
 
-On Wed, 27 Aug 2025 21:34:07 +0000, Eric Gonçalves wrote:
-> Changes in v8:
-> - Rebase on 'arm64: dts: qcom: sm8450: Flatten usb controller node'
-> - Use real name for sign-offs
-> - Remove device tree binding patch as it's already in the tree, merged by
->  Bjorn
+On Wed, 27 Aug 2025 12:59:45 +0000, Tudor Ambarus wrote:
+> Define the CPU clocks and OPPs.
 > 
-> Changes in v7:
-> - Document the reserved GPIO pins, remove pin 50 as it does not
->  need to be reserved
-> - Clarify the phone isn't limited to USB 2.0 but rather USB 3.0
->  isn't implemented yet
-> - Add a newline before every 'status' node
+> The patch set depends on the bindings sent at:
+> https://lore.kernel.org/linux-samsung-soc/20250827-acpm-clk-v2-1-de5c86b49b64@linaro.org/T/#u
 > 
-> Changes in v6:
-> - Remove debug features (bootargs, etc) that slipped in the v5 DTS
-> - Format and organize nodes correctly based on existing DTS,
->  move "status = "okay";" to the bottom always
-> - Solve "ddr_device_type" and "qcom,rmtfs-mem" warnings, the rest are
->  from existing SoC .dtsi
-> - Disable buttons, ufs and other features for later revision
+> The following error will be seen without the bindings patch:
+> arch/arm64/boot/dts/exynos/google/gs101.dtsi:75.24-25 syntax error
+> FATAL ERROR: Unable to parse input tree
 > 
-> Changes in v5:
-> - Properly format the thread
+> Thanks,
+> ta
 > 
-> Changes in v4:
-> - Try to properly format the thread
-> 
-> Changes in v3:
-> - Removed unnecessary initrd start and end addresses
-> - Make sure r0q is in right order on Makefile
-> - Properly format memory addresses
-> - Set r0q to the correct, alphabetical order in documents
-> 
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> ---
 > Changes in v2:
-> - Attempt to format the patchset thread correctly
+> - acpm node becomes a clock provider.
+> - reword commit message, extend cover letter with info about dependency
+>   on a bindings patch.
+> - Link to v1: https://lore.kernel.org/r/20250819-acpm-dvfs-dt-v1-0-4e38b95408c4@linaro.org
 > 
-> Eric Gonçalves (1):
->   arm64: dts: qcom: add initial support for Samsung Galaxy S22
+> ---
+> Tudor Ambarus (3):
+>       arm64: dts: exynos: gs101: add #clock-cells to the ACPM protocol node
+>       arm64: dts: exynos: gs101: add CPU clocks
+>       arm64: dts: exynos: gs101: add OPPs
 > 
->  arch/arm64/boot/dts/qcom/Makefile             |   1 +
->  .../boot/dts/qcom/sm8450-samsung-r0q.dts      | 145 ++++++++++++++++++
->  2 files changed, 146 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dts
+>  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 284 +++++++++++++++++++++++++++
+>  1 file changed, 284 insertions(+)
+> ---
+> base-commit: c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
+> change-id: 20250819-acpm-dvfs-dt-06bc794bdccd
 > 
+> Best regards,
 > --
-> 2.50.1
+> Tudor Ambarus <tudor.ambarus@linaro.org>
 > 
 > 
 > 
@@ -129,24 +121,49 @@ make sure dt-schema is up to date:
 
 
 This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: tags/next-20250825 (exact match)
+ Base: using specified base-commit c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250827213414.43033-1-ghatto404@gmail.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/exynos/' for 20250827-acpm-dvfs-dt-v2-0-e1d2890d12b4@linaro.org:
 
-arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dtb: clock-controller@aaf0000 (qcom,sm8450-videocc): power-domains: [[98, 6]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/qcom,sm8450-videocc.yaml#
-arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dtb: clock-controller@aaf0000 (qcom,sm8450-videocc): required-opps: [[55]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/qcom,sm8450-videocc.yaml#
-arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dtb: clock-controller@aaf0000 (qcom,sm8450-videocc): Unevaluated properties are not allowed ('power-domains', 'required-opps' were unexpected)
-	from schema $id: http://devicetree.org/schemas/clock/qcom,sm8450-videocc.yaml#
-arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dtb: clock-controller@ade0000 (qcom,sm8450-camcc): power-domains: [[98, 6]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/qcom,sm8450-camcc.yaml#
-arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dtb: clock-controller@ade0000 (qcom,sm8450-camcc): required-opps: [[55]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/qcom,sm8450-camcc.yaml#
+Error: arch/arm64/boot/dts/exynos/google/gs101.dtsi:75.24-25 syntax error
+FATAL ERROR: Unable to parse input tree
+make[4]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/exynos/google/gs101-oriole.dtb] Error 1
+make[3]: *** [scripts/Makefile.build:556: arch/arm64/boot/dts/exynos/google] Error 2
+make[3]: Target 'arch/arm64/boot/dts/exynos/google/gs101-oriole.dtb' not remade because of errors.
+make[2]: *** [scripts/Makefile.build:556: arch/arm64/boot/dts/exynos] Error 2
+make[2]: Target 'arch/arm64/boot/dts/exynos/google/gs101-oriole.dtb' not remade because of errors.
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1480: exynos/google/gs101-oriole.dtb] Error 2
+Error: arch/arm64/boot/dts/exynos/google/gs101.dtsi:75.24-25 syntax error
+FATAL ERROR: Unable to parse input tree
+make[4]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/exynos/google/gs101-raven.dtb] Error 1
+make[3]: *** [scripts/Makefile.build:556: arch/arm64/boot/dts/exynos/google] Error 2
+make[3]: Target 'arch/arm64/boot/dts/exynos/google/gs101-raven.dtb' not remade because of errors.
+make[2]: *** [scripts/Makefile.build:556: arch/arm64/boot/dts/exynos] Error 2
+make[2]: Target 'arch/arm64/boot/dts/exynos/google/gs101-raven.dtb' not remade because of errors.
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1480: exynos/google/gs101-raven.dtb] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
+make: Target 'exynos/exynos8895-dreamlte.dtb' not remade because of errors.
+make: Target 'exynos/exynos2200-g0s.dtb' not remade because of errors.
+make: Target 'exynos/exynos850-e850-96.dtb' not remade because of errors.
+make: Target 'exynos/exynos7870-on7xelte.dtb' not remade because of errors.
+make: Target 'exynos/exynos7885-jackpotlte.dtb' not remade because of errors.
+make: Target 'exynos/exynos990-x1slte.dtb' not remade because of errors.
+make: Target 'exynos/exynos5433-tm2.dtb' not remade because of errors.
+make: Target 'exynos/exynos990-r8s.dtb' not remade because of errors.
+make: Target 'exynos/exynos7-espresso.dtb' not remade because of errors.
+make: Target 'exynos/google/gs101-oriole.dtb' not remade because of errors.
+make: Target 'exynos/google/gs101-raven.dtb' not remade because of errors.
+make: Target 'exynos/exynosautov920-sadk.dtb' not remade because of errors.
+make: Target 'exynos/exynosautov9-sadk.dtb' not remade because of errors.
+make: Target 'exynos/exynos990-c1s.dtb' not remade because of errors.
+make: Target 'exynos/exynos9810-starlte.dtb' not remade because of errors.
+make: Target 'exynos/exynos990-x1s.dtb' not remade because of errors.
+make: Target 'exynos/exynos7870-a2corelte.dtb' not remade because of errors.
+make: Target 'exynos/exynos5433-tm2e.dtb' not remade because of errors.
+make: Target 'exynos/exynos7870-j6lte.dtb' not remade because of errors.
 
 
 
