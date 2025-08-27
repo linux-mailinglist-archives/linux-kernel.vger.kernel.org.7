@@ -1,228 +1,216 @@
-Return-Path: <linux-kernel+bounces-788059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB866B37F45
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:52:16 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79D10B37F47
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:52:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A3FE3B5D19
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:52:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5672C4E274A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:52:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7172ECE91;
-	Wed, 27 Aug 2025 09:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 036A62F3C35;
+	Wed, 27 Aug 2025 09:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oMZF7Wu7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OswuahoZ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F82B1C860B
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 09:52:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA7B91C860B
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 09:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756288329; cv=none; b=qn7tSFkqrHT3iN9dDPP8GxprKbIp4dotLDixBL/E/q4uUWH5xv8JIpG+5lG4FWWY7TOwVhpxqAddMVPZjw+awIoGgzMGncxMq9LIxmXgBUyG3jY86/OiDy1lGdU3uG9/YimRM+txc8a8Lux18BC9/wa/8ck7DD9MhHV6D/tzVkw=
+	t=1756288341; cv=none; b=tDvXx9TzxOKOJzDpJUf6pBSIITnUAhV16QfJvUbcFuacIUOuYUGoBCu/MIxTQzCt0feaU364htmarBzWGiK3i1/c1+pvUfYJYWEl1v7cEtABrJSXWFGmIxsEsd6zSNECfBMvhOt4BtJ2n/nJWG9CjqclXFOlUIgF2dXEE3FTc1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756288329; c=relaxed/simple;
-	bh=LpOqfLYoRw0FyeTEv/gpwk2Xvxc7IYE6DXD3WPBFp7k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ChlA8mDEoiWV9vhLRDjA1j9/QXw/o7tX26rDSDkEOH/pc+LQXJuEr36ATCed6llCWLu6UcPK2ApYici41mPyhwr2v/nEJ3D2Cfo7BI8rC4vd6tPLLl+hOE8aqAAXmzOGFSp/AzVTICk+JLNhb1Rj3bX3TzcRvmXgn8milEj077k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oMZF7Wu7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B83EC4CEEB;
-	Wed, 27 Aug 2025 09:52:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756288328;
-	bh=LpOqfLYoRw0FyeTEv/gpwk2Xvxc7IYE6DXD3WPBFp7k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oMZF7Wu7ZiE49V0oWeffzxtElEq4FVNlBjyzu+wrTIDJKjArePfe+jxi6tSEHaD0z
-	 4bq4IjQfeISBplxRDXBDgn2Z4J1xstl8MY85SwOj4vZ8u3dS3wKaxWGic8eZyPPIWs
-	 XVk1xxwOblK/AOoUTLY89VqphLe+f4/JFSngEOIZjOEQywrMV7m4as9YRZt46CbpHX
-	 xj/ay0qNZ55yGukG99wplWuF8GO8HOvU/D3D9XjiPZwltkV4e2nNO1ZoEHyRBHZHBc
-	 N9v/OmZb9nE4ilJpCRvm5wcK5J1f+JGJEbDRaPf+/8QkcDRPtTpdISIqpcdyxlfvUu
-	 xdcxsMhFn2CUw==
-Date: Wed, 27 Aug 2025 11:52:06 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Jocelyn Falempe <jfalempe@redhat.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Javier Martinez Canillas <javierm@redhat.com>, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 3/3] drm/panic: Add a kconfig option to dump kunits
- results to png
-Message-ID: <20250827-imperial-amigurumi-malkoha-b99a9d@houat>
-References: <20250821095228.648156-1-jfalempe@redhat.com>
- <20250821095228.648156-4-jfalempe@redhat.com>
+	s=arc-20240116; t=1756288341; c=relaxed/simple;
+	bh=daSs5MywIp3VryjquzPKMYZx/u/dDjIB7rSQyXJl2Y0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BxoQ/XJOjygQ2k5K3EA0eyahhYptD4v9RSvwUt65AZ4N5/+6k8aHp1lJ5MTHaQmbD6QLmDHVhVcwUrxNUkaTeUmAyfGisxDqriq/Fb+SxPsKb1zWF+YDTQIXob0vmlSxnj03BysIWfAaqGSMfBHFrniaLgxXwdk2vCBMYWLUfdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OswuahoZ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57R6kI66029322
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 09:52:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	38PuOyK1CwicT9yvnRLkviMk8ANShrxIjK+M3ztAQcI=; b=OswuahoZuzn1yWDT
+	TGeW5cKDT02DhGYS3D5gxHZHc90lsAxbIhepSgDP2H63PoOIldu9xeC2/DRPta1i
+	HCKGwcMo86CO9RDZ5z36YpRwpuRrNk8ze8pB1R44tcyDH6m82sqAFBk+iUc+VRKa
+	czkl1saXIupXon4DvmzlIY7kJp5dGP081+wEJoJShJ0mLB+FRfW6SujKu156LaFQ
+	FCqJ0gBvkP2pR5gRh3Mi2xNsWiDC4to+0VhAUhN2Aca6T/jsRKKSc8JIdDcK5i5w
+	YCdD+vDZ7wMrvnbBxWxVMbBgUxCcCMWi5uoT5W6205bkQqicPzXa5vPA/+H16bgm
+	8pP8sA==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48q5w2vcfs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 09:52:17 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-24456ebed7bso10124145ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 02:52:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756288337; x=1756893137;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=38PuOyK1CwicT9yvnRLkviMk8ANShrxIjK+M3ztAQcI=;
+        b=sHJ+FXqhwhYCHRfxXTHFoG727Me027PCpYJnaRr1ajH8WNGpe/4h+MfY8R6V9ACSWj
+         8Ej5O9QV1wWnIw0XR8MvOgpDIEl50eNR7lMZ+qk2Lh1w8vUaJvOko0GIDl9fWntemkn4
+         t7R4cK6Kl0NreDNgp42bDY3BKAZUfUN6btzSdZFGn/CIUM7n3Y6bqiNwZpfBk7pRGtJn
+         jAnnGdxYLKr3WRkC0hChjCMoJakGS6yWcDXuukem1Z+xktVBANJq+Jx2QXCMj4ThCgPH
+         75p0E+1upFlGcG437GW4ZYpg45GbRmqHr7Wk1yPX+24lEwbDp6z2d56nUbOeRMsezKUO
+         X2lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVazsZK4VP34YoGkDTCz9xivSNQiNMm4qcQvY6goSF5Fysy2ej/57r7iReQWpGzi0x+HOeW725uZNpXKoQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw26OclBYRDr9BJQYIfGvetRou1nIsCb47QzvN2Uvs0XT7PU5C9
+	Tmo70/S4P12DaWBwPUAl3E+DFuwfL9qI4ipzCZJQYlmF5c8hafUuSx+0+zrem/Z2GY8i8BYJQ9n
+	PX1yNi7+PmYknbrrJmuO56iioQecknwK7IVq5HtHcZ/A+KMbpd/aL/SA4pvxi/D+SFPM=
+X-Gm-Gg: ASbGnctP84E3FVdztaGZTtGUZOwkuRJKZcfUnKSDtzjPgX38Fbo/MBMB29+W2Rpp0lc
+	q0bNSc21iyoR6RmDhEBd/xtBm2aKQ7BbAgGEgCi6cKo7n0/aqENd4FOAywdJvFW9XnkQ4orAOlF
+	5ExNGWVzH1KWzdLox5wh+dUECaIKI7eG9fBx9tMRseeehRzVqw/VHcfaFtcEqEhiTn8N01Vy84U
+	klpqqJy54UXnC3AMChtUGRvmPJh8Vf+qDmMkkOK5/C4l57uJkpeKMYZmIhCF/MFyy6BWd47IrXE
+	+5lMT5Gfr7tMpXuSilwNeIeLUz28/M4tJBtiJbXe7jyVZ2P7jU6zN7t2GV0MizHX8/1+xUvloQ1
+	R9NRK4GutRFPy/xR4dlKagVHV/Ft/gw==
+X-Received: by 2002:a17:902:d4c4:b0:246:570:d7dc with SMTP id d9443c01a7336-248753a2586mr57319415ad.29.1756288336797;
+        Wed, 27 Aug 2025 02:52:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEMqpv1EtUmfVYvvw4NyCrb2c6aBD9PYVzjyLEAVHsHsPqYt3z3ozhkmwEkYUHJOXvpnFt2iQ==
+X-Received: by 2002:a17:902:d4c4:b0:246:570:d7dc with SMTP id d9443c01a7336-248753a2586mr57319045ad.29.1756288336077;
+        Wed, 27 Aug 2025 02:52:16 -0700 (PDT)
+Received: from [10.133.33.155] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32745900a2dsm2019828a91.4.2025.08.27.02.52.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Aug 2025 02:52:15 -0700 (PDT)
+Message-ID: <2648f422-6bef-4336-bdda-2d1663bc2807@oss.qualcomm.com>
+Date: Wed, 27 Aug 2025 17:52:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="m4pbn5rycqraharh"
-Content-Disposition: inline
-In-Reply-To: <20250821095228.648156-4-jfalempe@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] coresight: tpda: add logic to configure TPDA_SYNCR
+ register
+To: James Clark <james.clark@linaro.org>, Jie Gan <jie.gan@oss.qualcomm.com>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+ <mike.leach@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>
+References: <20250827042042.6786-1-jie.gan@oss.qualcomm.com>
+ <20250827042042.6786-3-jie.gan@oss.qualcomm.com>
+ <4ca657cf-1c8e-4d51-aba9-c894c32a23b3@linaro.org>
+Content-Language: en-US
+From: Jie Gan <jie.gan@oss.qualcomm.com>
+In-Reply-To: <4ca657cf-1c8e-4d51-aba9-c894c32a23b3@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=Z/vsHGRA c=1 sm=1 tr=0 ts=68aed551 cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=fCV0n7f5gNrMv1PFtk0A:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAzMyBTYWx0ZWRfX3ZAZUs9WDZ2q
+ /KrUAdAHrKcpfwfc0WTC3iSvBaU2+hKruU0Z1nfbLoNevJ126vLRhcduSYrMmkF+Bex8xJzC0Yz
+ SPhpTWbZjXxo1ZBXiBqPjPGqo3V4EczNc9exinxcfKdXtKwXS/C8GmPFjESzSGrXSRk8FL0bYe9
+ qRV00lMLO9YWESF6ZZCZDIuoKsMK+GFlR45UPchVUMnFgEBRT2LOahVL1K11+Is0DQ3Q3OBkM3L
+ hMPVChT9WSt2s5l7DFGYDAC2k9G4mK9nTHnZP+Tam/2obdxofeIW+AzYew4TApZAQlyverqNPim
+ HHIkxF7BVf1cBQyX/Zbss91AKNLPiY6laGh0Ja3v5dDwYFxaX5Iov9hAo8zEygc3F29V/QrRLrR
+ Se7jml7W
+X-Proofpoint-GUID: boy7rdjv8D8GVn3CJT40lEr-bAKBakza
+X-Proofpoint-ORIG-GUID: boy7rdjv8D8GVn3CJT40lEr-bAKBakza
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-27_01,2025-08-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 priorityscore=1501 malwarescore=0 phishscore=0 clxscore=1015
+ suspectscore=0 impostorscore=0 adultscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508230033
 
 
---m4pbn5rycqraharh
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 3/3] drm/panic: Add a kconfig option to dump kunits
- results to png
-MIME-Version: 1.0
 
-Hi,
+On 8/27/2025 5:21 PM, James Clark wrote:
+> 
+> 
+> On 27/08/2025 5:20 am, Jie Gan wrote:
+>> From: Tao Zhang <tao.zhang@oss.qualcomm.com>
+>>
+>> The TPDA_SYNCR register defines the frequency at which TPDA generates
+>> ASYNC packets, enabling userspace tools to accurately parse each valid
+>> packet.
+>>
+>> Signed-off-by: Tao Zhang <tao.zhang@oss.qualcomm.com>
+>> Co-developed-by: Jie Gan <jie.gan@oss.qualcomm.com>
+>> Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
+>> ---
+>>   drivers/hwtracing/coresight/coresight-tpda.c | 7 +++++++
+>>   drivers/hwtracing/coresight/coresight-tpda.h | 6 ++++++
+>>   2 files changed, 13 insertions(+)
+>>
+>> diff --git a/drivers/hwtracing/coresight/coresight-tpda.c b/drivers/ 
+>> hwtracing/coresight/coresight-tpda.c
+>> index 647ab49a98d7..430f76c559f2 100644
+>> --- a/drivers/hwtracing/coresight/coresight-tpda.c
+>> +++ b/drivers/hwtracing/coresight/coresight-tpda.c
+>> @@ -187,6 +187,13 @@ static void tpda_enable_pre_port(struct 
+>> tpda_drvdata *drvdata)
+>>        */
+>>       if (drvdata->trig_flag_ts)
+>>           writel_relaxed(0x0, drvdata->base + TPDA_FPID_CR);
+>> +
+>> +    /* Program the counter value for TPDA_SYNCR */
+>> +    val = readl_relaxed(drvdata->base + TPDA_SYNCR);
+>> +    /* Clear the mode */
+>> +    val &= ~TPDA_SYNCR_MODE_CTRL;
+>> +    val |= FIELD_PREP(TPDA_SYNCR_COUNTER_MASK, 
+>> TPDA_SYNCR_MAX_COUNTER_VAL);
+> 
+> Just use the mask directly if you want to set all the bits. This makes 
+> it seem like the MAX_COUNTER_VAL is something different.
+> 
 
-On Thu, Aug 21, 2025 at 11:49:07AM +0200, Jocelyn Falempe wrote:
-> This is a bit hacky, but very handy if you want to customize the
-> panic screen.
-> It allows to dump the generated images to the logs, and then a python
-> script can convert it to .png files. It makes it easy to check how
-> the panic screen will look on different resolutions, without having
-> to crash a VM.
-> To not pollute the logs, it uses a monochrome framebuffer, compress
-> it with zlib, and base64 encode it.
->=20
-> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
-> ---
->  drivers/gpu/drm/Kconfig.debug          |  14 ++++
->  drivers/gpu/drm/tests/drm_panic_test.c | 111 +++++++++++++++++++++++++
->  scripts/kunitpanic2png.py              |  53 ++++++++++++
->  3 files changed, 178 insertions(+)
->  create mode 100755 scripts/kunitpanic2png.py
->=20
-> diff --git a/drivers/gpu/drm/Kconfig.debug b/drivers/gpu/drm/Kconfig.debug
-> index 05dc43c0b8c5..d8ae85132d32 100644
-> --- a/drivers/gpu/drm/Kconfig.debug
-> +++ b/drivers/gpu/drm/Kconfig.debug
-> @@ -84,6 +84,20 @@ config DRM_KUNIT_TEST
-> =20
->  	  If in doubt, say "N".
-> =20
-> +config DRM_PANIC_KUNIT_TEST_DUMP
-> +	bool "Enable screen dump to logs in KUnit tests for drm_panic"
-> +	default n
-> +	depends on DRM && DRM_PANIC && DRM_KUNIT_TEST
-> +	select ZLIB_DEFLATE
-> +	help
-> +	  This allows to dump the panic screen to the KUnit tests logs.
-> +	  It's possible with a small python script to write pngs from the logs.
-> +
-> +	  This is only to help developers customizing the drm_panic screen,
-> +	  checking the result for different resolutions.
-> +
-> +	  If in doubt, say "N"
-> +
->  config DRM_TTM_KUNIT_TEST
->  	tristate "KUnit tests for TTM" if !KUNIT_ALL_TESTS
->  	default n
-> diff --git a/drivers/gpu/drm/tests/drm_panic_test.c b/drivers/gpu/drm/tes=
-ts/drm_panic_test.c
-> index 46ff3e5e0e5d..8cddb845aea9 100644
-> --- a/drivers/gpu/drm/tests/drm_panic_test.c
-> +++ b/drivers/gpu/drm/tests/drm_panic_test.c
-> @@ -115,24 +115,135 @@ static void drm_test_panic_screen_user_page(struct=
- kunit *test)
->  	kfree(pages);
->  }
-> =20
-> +#ifdef CONFIG_DRM_PANIC_KUNIT_TEST_DUMP
-> +#include <linux/base64.h>
-> +#include <linux/delay.h>
-> +#include <linux/zlib.h>
-> +
-> +#define LINE_LEN 128
-> +
-> +#define COMPR_LEVEL 6
-> +#define WINDOW_BITS 12
-> +#define MEM_LEVEL 4
-> +
-> +static int compress_image(u8 *src, int size, u8 *dst)
-> +{
-> +	struct z_stream_s stream;
-> +
-> +	stream.workspace =3D kmalloc(zlib_deflate_workspacesize(WINDOW_BITS, ME=
-M_LEVEL),
-> +				   GFP_KERNEL);
-> +
-> +	if (zlib_deflateInit2(&stream, COMPR_LEVEL, Z_DEFLATED, WINDOW_BITS,
-> +			      MEM_LEVEL, Z_DEFAULT_STRATEGY) !=3D Z_OK)
-> +		return -EINVAL;
-> +
-> +	stream.next_in =3D src;
-> +	stream.avail_in =3D size;
-> +	stream.total_in =3D 0;
-> +	stream.next_out =3D dst;
-> +	stream.avail_out =3D size;
-> +	stream.total_out =3D 0;
-> +
-> +	if (zlib_deflate(&stream, Z_FINISH) !=3D Z_STREAM_END)
-> +		return -EINVAL;
-> +
-> +	if (zlib_deflateEnd(&stream) !=3D Z_OK)
-> +		return -EINVAL;
-> +
-> +	kfree(stream.workspace);
-> +
-> +	return stream.total_out;
-> +}
-> +
-> +static void dump_image(u8 *fb, unsigned int width, unsigned int height)
-> +{
-> +	int len =3D 0;
-> +	char *dst;
-> +	char *compressed;
-> +	int sent =3D 0;
-> +	int stride =3D DIV_ROUND_UP(width, 8);
-> +	int size =3D stride * height;
-> +
-> +	compressed =3D vzalloc(size);
-> +	if (!compressed)
-> +		return;
-> +	len =3D compress_image(fb, size, compressed);
-> +	if (len < 0) {
-> +		pr_err("Compression failed %d", len);
-> +		return;
-> +	}
-> +
-> +	dst =3D vzalloc(4 * DIV_ROUND_UP(len, 3) + 1);
-> +	if (!dst)
-> +		return;
-> +
-> +	len =3D base64_encode(compressed, len, dst);
-> +
-> +	pr_info("KUNIT PANIC IMAGE DUMP START %dx%d", width, height);
-> +	while (len > 0) {
-> +		char save =3D dst[sent + LINE_LEN];
-> +
-> +		dst[sent + LINE_LEN] =3D 0;
-> +		pr_info("%s", dst + sent);
-> +		dst[sent + LINE_LEN] =3D save;
-> +		sent +=3D LINE_LEN;
-> +		len -=3D LINE_LEN;
-> +	}
-> +	pr_info("KUNIT PANIC IMAGE DUMP END");
+You are right. will fix it.
 
-The kunit test output format is defined, and we should probably use a
-diagnostic line for this:
-https://docs.kernel.org/dev-tools/ktap.html#diagnostic-lines
+> val |= TPDA_SYNCR_COUNTER_MASK
+> 
+>> +    writel_relaxed(val, drvdata->base + TPDA_SYNCR);
+>>   }
+>>   static int tpda_enable_port(struct tpda_drvdata *drvdata, int port)
+>> diff --git a/drivers/hwtracing/coresight/coresight-tpda.h b/drivers/ 
+>> hwtracing/coresight/coresight-tpda.h
+>> index 0be625fb52fd..8e1b66115ad1 100644
+>> --- a/drivers/hwtracing/coresight/coresight-tpda.h
+>> +++ b/drivers/hwtracing/coresight/coresight-tpda.h
+>> @@ -9,6 +9,7 @@
+>>   #define TPDA_CR            (0x000)
+>>   #define TPDA_Pn_CR(n)        (0x004 + (n * 4))
+>>   #define TPDA_FPID_CR        (0x084)
+>> +#define TPDA_SYNCR        (0x08C)
+>>   /* Cross trigger FREQ packets timestamp bit */
+>>   #define TPDA_CR_FREQTS        BIT(2)
+>> @@ -27,6 +28,11 @@
+>>   #define TPDA_Pn_CR_CMBSIZE        GENMASK(7, 6)
+>>   /* Aggregator port DSB data set element size bit */
+>>   #define TPDA_Pn_CR_DSBSIZE        BIT(8)
+>> +/* TPDA_SYNCR mode control bit */
+>> +#define TPDA_SYNCR_MODE_CTRL        BIT(12)
+>> +/* TPDA_SYNCR counter mask */
+>> +#define TPDA_SYNCR_COUNTER_MASK        GENMASK(11, 0)
+>> +#define TPDA_SYNCR_MAX_COUNTER_VAL    (0xFFF)
+> 
+> No need to define a numeric value that's the same as the mask. It also 
+> opens the possibility of making a mistake.
+> 
 
-We should probably cc the kunit maintainers about this too.
+will remove.
 
-Maxime
+Thanks,
+Jie
 
---m4pbn5rycqraharh
-Content-Type: application/pgp-signature; name="signature.asc"
+>>   #define TPDA_MAX_INPORTS    32
+> 
+> 
 
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaK7VRgAKCRAnX84Zoj2+
-drzeAX45PbUY/F0HXyeVyHBnyRMCqJulGBnEHPVlMEVPeu79ECyBP3qAVW4+TVjK
-7KUbZ3IBgMbFMWhd8rEjCMvkcHPFmLCJIz/KJjcp+I/S/VzWya1itYdHnljscRi/
-lfhkdBuQxA==
-=sbbK
------END PGP SIGNATURE-----
-
---m4pbn5rycqraharh--
 
