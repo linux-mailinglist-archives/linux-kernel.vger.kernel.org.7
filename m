@@ -1,226 +1,228 @@
-Return-Path: <linux-kernel+bounces-787685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E0C9B379AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:07:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D8C7B378E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:52:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B38F68819C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:07:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC3E17C210F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 03:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04BBB2E266A;
-	Wed, 27 Aug 2025 05:07:04 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D098309DDC;
+	Wed, 27 Aug 2025 03:52:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W08j5Jq4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8139C26E71C;
-	Wed, 27 Aug 2025 05:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050A330CDA0
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 03:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756271223; cv=none; b=XgzwzV20w73oe8vLtgCIuWdcT/FinPDo/mPsytS6WYzGmVXSGQRA+B9LKbh/p6D8wCsUokSh8FaVVA1YF0FO1igZYyDY83BZLayX5BTCOjH6CbbfakbZ77G0vpa0NkbC3DPUQdhJo3I7iLJXzTHUfmZJodqpvl5AEjOD3D1+plA=
+	t=1756266763; cv=none; b=RpUya8Mb55rLs5M7CMWziG+8XIgdNd6CubmEqYeRa7miHW5s4z0Inuo75L1lfwLcksZJGdZgsDn84zYuE0NEkV/cf7ypwPNcpv8D705EfyWkZGPuMXGouF1uzojGiuz/t9ifa1EzRHx26NPMk/Tz7/M4wXlVOjdMHUDvxjZE07w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756271223; c=relaxed/simple;
-	bh=JI7aOfvbtpkrYD3QrqSIAxy6G2P6kcd830fbhdrC4vM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Y3wSNsQa8SeA3K1UEFhJTN40Kqf7hS3jZJ4P2Chd0kFX+24ukCEZbcGQbSQuA0bB7rBO6Sri6Z+B1/0z4rtlvwhUWztNvowJq739Z/bmru86tbs6srpBMWWRejD0u7bM4Ao21YWv+OpqIc1wiUr3d/bbPbRvNG5hPtHNdv+DsY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: a657db4e830311f0b29709d653e92f7d-20250827
-X-CID-CACHE: Type:Local,Time:202508271301+08,HitQuantity:1
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:bc547704-46f6-4537-bcbe-586d6e61cfdb,IP:0,U
-	RL:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-25
-X-CID-META: VersionHash:6493067,CLOUDID:7871a2c7ca51f2bc02737c897857e02d,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|850,TC:nil,Content:0|50,EDM:-3
-	,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV
-	:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: a657db4e830311f0b29709d653e92f7d-20250827
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 2029553132; Wed, 27 Aug 2025 13:06:54 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id A2772E008FB5;
-	Wed, 27 Aug 2025 11:51:18 +0800 (CST)
-X-ns-mid: postfix-68AE80B6-481635499
-Received: from localhost.localdomain (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 49687E008FB2;
-	Wed, 27 Aug 2025 11:51:01 +0800 (CST)
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-To: "Rafael J . wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Markus Mayer <mmayer@broadcom.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Keerthy <j-keerthy@ti.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: zhenglifeng <zhenglifeng1@huawei.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Len Brown <lenb@kernel.org>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Beata Michalska <beata.michalska@arm.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Pavel Machek <pavel@kernel.org>,
-	Sumit Gupta <sumitg@nvidia.com>,
-	Prasanna Kumar T S M <ptsm@linux.microsoft.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	linux-pm@vger.kernel.org,
-	x86@kernel.org,
-	kvm@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	imx@lists.linux.dev,
-	linux-omap@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Zihuan Zhang <zhangzihuan@kylinos.cn>
-Subject: [PATCH v2 15/18] powercap: dtpm_cpu: Use __free(put_cpufreq_policy) for policy reference
-Date: Wed, 27 Aug 2025 11:50:56 +0800
-Message-Id: <20250827035056.353772-1-zhangzihuan@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250827023202.10310-1-zhangzihuan@kylinos.cn>
-References: <20250827023202.10310-1-zhangzihuan@kylinos.cn>
+	s=arc-20240116; t=1756266763; c=relaxed/simple;
+	bh=ZCSmCHHCWA7zqVYYTgdFOuVi0izDB7p5KH4fBzNM8vg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bRyV072GpyHjJbmJNKRwRrHdguLza7h22JTw4Wd5sOOGlC/NLvb/wZeSLqFmR3vtNdhNmLSIy35d1zIrsMXTgL+PhInDDNA5IBY/zdI3gVkqNtn35072q2ort9flqYvaN/ZiB4cPikNXfdoeYsze13xYn4lKoRJI/qnyRQmJSkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W08j5Jq4; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756266760;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Sv1GyWM+sC/GNWSw17NBq91CsCOpfd89bfoVZTZKtAY=;
+	b=W08j5Jq4vgfE2UsCKhUNWrGfMV8sRzEpYGlD3YFlCH9+tkjw6x5t0PmukuW1EjBK0petN7
+	AAk3jSKrpq5gFs+s70V0dtF1zFSoA+swq4g+7tcKt/pgBM3Xj/t/lamU/2N1UWYaeqMmF6
+	GALQm/6pL5qC+s5PEbtsaOLhJT95s5M=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-638-LFAt1coCM56G21_qlnRySQ-1; Tue,
+ 26 Aug 2025 23:52:35 -0400
+X-MC-Unique: LFAt1coCM56G21_qlnRySQ-1
+X-Mimecast-MFC-AGG-ID: LFAt1coCM56G21_qlnRySQ_1756266753
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A1CC019560B2;
+	Wed, 27 Aug 2025 03:52:32 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.154])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 40574180047F;
+	Wed, 27 Aug 2025 03:52:29 +0000 (UTC)
+Date: Wed, 27 Aug 2025 11:52:15 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Kairui Song <kasong@tencent.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Hugh Dickins <hughd@google.com>, Chris Li <chrisl@kernel.org>,
+	Barry Song <baohua@kernel.org>, Nhat Pham <nphamcs@gmail.com>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Ying Huang <ying.huang@linux.alibaba.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	David Hildenbrand <david@redhat.com>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Zi Yan <ziy@nvidia.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/9] mm, swap: use unified helper for swap cache look up
+Message-ID: <aK6A76NVcV2j+J57@MiWiFi-R3L-srv>
+References: <20250822192023.13477-1-ryncsn@gmail.com>
+ <20250822192023.13477-2-ryncsn@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250822192023.13477-2-ryncsn@gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
-annotation for policy references. This reduces the risk of reference
-counting mistakes and aligns the code with the latest kernel style.
+On 08/23/25 at 03:20am, Kairui Song wrote:
+> From: Kairui Song <kasong@tencent.com>
+......snip...
+> diff --git a/mm/swap_state.c b/mm/swap_state.c
+> index 99513b74b5d8..ff9eb761a103 100644
+> --- a/mm/swap_state.c
+> +++ b/mm/swap_state.c
+> @@ -69,6 +69,21 @@ void show_swap_cache_info(void)
+>  	printk("Total swap = %lukB\n", K(total_swap_pages));
+>  }
+>  
+> +/*
+> + * Lookup a swap entry in the swap cache. A found folio will be returned
 
-No functional change intended.
+Lookup is a noun, we should use 'look up' which is a verb here instead?
 
-Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
----
- drivers/powercap/dtpm_cpu.c | 24 +++++++-----------------
- 1 file changed, 7 insertions(+), 17 deletions(-)
+And all other places in swap code, even though they are not introduced
+by this patchset. Just a nitpick.
 
-diff --git a/drivers/powercap/dtpm_cpu.c b/drivers/powercap/dtpm_cpu.c
-index 99390ec1481f..65117569d0f3 100644
---- a/drivers/powercap/dtpm_cpu.c
-+++ b/drivers/powercap/dtpm_cpu.c
-@@ -144,19 +144,16 @@ static int update_pd_power_uw(struct dtpm *dtpm)
- static void pd_release(struct dtpm *dtpm)
- {
- 	struct dtpm_cpu *dtpm_cpu =3D to_dtpm_cpu(dtpm);
--	struct cpufreq_policy *policy;
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy);
-=20
- 	if (freq_qos_request_active(&dtpm_cpu->qos_req))
- 		freq_qos_remove_request(&dtpm_cpu->qos_req);
-=20
- 	policy =3D cpufreq_cpu_get(dtpm_cpu->cpu);
--	if (policy) {
-+	if (policy)
- 		for_each_cpu(dtpm_cpu->cpu, policy->related_cpus)
- 			per_cpu(dtpm_per_cpu, dtpm_cpu->cpu) =3D NULL;
-=20
--		cpufreq_cpu_put(policy);
--	}
--
- 	kfree(dtpm_cpu);
- }
-=20
-@@ -192,7 +189,7 @@ static int cpuhp_dtpm_cpu_online(unsigned int cpu)
- static int __dtpm_cpu_setup(int cpu, struct dtpm *parent)
- {
- 	struct dtpm_cpu *dtpm_cpu;
--	struct cpufreq_policy *policy;
-+	struct cpufreq_policy *policy __free(put_cpufreq_policy);
- 	struct em_perf_state *table;
- 	struct em_perf_domain *pd;
- 	char name[CPUFREQ_NAME_LEN];
-@@ -207,16 +204,12 @@ static int __dtpm_cpu_setup(int cpu, struct dtpm *p=
-arent)
- 		return 0;
-=20
- 	pd =3D em_cpu_get(cpu);
--	if (!pd || em_is_artificial(pd)) {
--		ret =3D -EINVAL;
--		goto release_policy;
--	}
-+	if (!pd || em_is_artificial(pd))
-+		return -EINVAL;
-=20
- 	dtpm_cpu =3D kzalloc(sizeof(*dtpm_cpu), GFP_KERNEL);
--	if (!dtpm_cpu) {
--		ret =3D -ENOMEM;
--		goto release_policy;
--	}
-+	if (!dtpm_cpu)
-+		return -ENOMEM;
-=20
- 	dtpm_init(&dtpm_cpu->dtpm, &dtpm_ops);
- 	dtpm_cpu->cpu =3D cpu;
-@@ -239,7 +232,6 @@ static int __dtpm_cpu_setup(int cpu, struct dtpm *par=
-ent)
- 	if (ret < 0)
- 		goto out_dtpm_unregister;
-=20
--	cpufreq_cpu_put(policy);
- 	return 0;
-=20
- out_dtpm_unregister:
-@@ -251,8 +243,6 @@ static int __dtpm_cpu_setup(int cpu, struct dtpm *par=
-ent)
- 		per_cpu(dtpm_per_cpu, cpu) =3D NULL;
- 	kfree(dtpm_cpu);
-=20
--release_policy:
--	cpufreq_cpu_put(policy);
- 	return ret;
- }
-=20
---=20
-2.25.1
+> + * unlocked and with its refcount incremented.
+> + *
+> + * Caller must lock the swap device or hold a reference to keep it valid.
+> + */
+> +struct folio *swap_cache_get_folio(swp_entry_t entry)
+> +{
+> +	struct folio *folio = filemap_get_folio(swap_address_space(entry),
+> +						swap_cache_index(entry));
+> +	if (!IS_ERR(folio))
+> +		return folio;
+> +	return NULL;
+> +}
+> +
+>  void *get_shadow_from_swap_cache(swp_entry_t entry)
+>  {
+>  	struct address_space *address_space = swap_address_space(entry);
+> @@ -273,54 +288,40 @@ static inline bool swap_use_vma_readahead(void)
+>  }
+>  
+>  /*
+> - * Lookup a swap entry in the swap cache. A found folio will be returned
+> - * unlocked and with its refcount incremented - we rely on the kernel
+> - * lock getting page table operations atomic even if we drop the folio
+> - * lock before returning.
+> - *
+> - * Caller must lock the swap device or hold a reference to keep it valid.
+> + * Update the readahead statistics of a vma or globally.
+>   */
+> -struct folio *swap_cache_get_folio(swp_entry_t entry,
+> -		struct vm_area_struct *vma, unsigned long addr)
+> +void swap_update_readahead(struct folio *folio,
+> +			   struct vm_area_struct *vma,
+> +			   unsigned long addr)
+>  {
+> -	struct folio *folio;
+> -
+> -	folio = filemap_get_folio(swap_address_space(entry), swap_cache_index(entry));
+> -	if (!IS_ERR(folio)) {
+> -		bool vma_ra = swap_use_vma_readahead();
+> -		bool readahead;
+> +	bool readahead, vma_ra = swap_use_vma_readahead();
+>  
+> -		/*
+> -		 * At the moment, we don't support PG_readahead for anon THP
+> -		 * so let's bail out rather than confusing the readahead stat.
+> -		 */
+> -		if (unlikely(folio_test_large(folio)))
+> -			return folio;
+> -
+> -		readahead = folio_test_clear_readahead(folio);
+> -		if (vma && vma_ra) {
+> -			unsigned long ra_val;
+> -			int win, hits;
+> -
+> -			ra_val = GET_SWAP_RA_VAL(vma);
+> -			win = SWAP_RA_WIN(ra_val);
+> -			hits = SWAP_RA_HITS(ra_val);
+> -			if (readahead)
+> -				hits = min_t(int, hits + 1, SWAP_RA_HITS_MAX);
+> -			atomic_long_set(&vma->swap_readahead_info,
+> -					SWAP_RA_VAL(addr, win, hits));
+> -		}
+> -
+> -		if (readahead) {
+> -			count_vm_event(SWAP_RA_HIT);
+> -			if (!vma || !vma_ra)
+> -				atomic_inc(&swapin_readahead_hits);
+> -		}
+> -	} else {
+> -		folio = NULL;
+> +	/*
+> +	 * At the moment, we don't support PG_readahead for anon THP
+> +	 * so let's bail out rather than confusing the readahead stat.
+> +	 */
+> +	if (unlikely(folio_test_large(folio)))
+> +		return;
+> +
+> +	readahead = folio_test_clear_readahead(folio);
+> +	if (vma && vma_ra) {
+> +		unsigned long ra_val;
+> +		int win, hits;
+> +
+> +		ra_val = GET_SWAP_RA_VAL(vma);
+> +		win = SWAP_RA_WIN(ra_val);
+> +		hits = SWAP_RA_HITS(ra_val);
+> +		if (readahead)
+> +			hits = min_t(int, hits + 1, SWAP_RA_HITS_MAX);
+> +		atomic_long_set(&vma->swap_readahead_info,
+> +				SWAP_RA_VAL(addr, win, hits));
+>  	}
+>  
+> -	return folio;
+> +	if (readahead) {
+> +		count_vm_event(SWAP_RA_HIT);
+> +		if (!vma || !vma_ra)
+> +			atomic_inc(&swapin_readahead_hits);
+> +	}
+>  }
+>  
+>  struct folio *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
+> @@ -336,14 +337,10 @@ struct folio *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
+>  	*new_page_allocated = false;
+>  	for (;;) {
+>  		int err;
+> -		/*
+> -		 * First check the swap cache.  Since this is normally
+> -		 * called after swap_cache_get_folio() failed, re-calling
+> -		 * that would confuse statistics.
+> -		 */
+> -		folio = filemap_get_folio(swap_address_space(entry),
+> -					  swap_cache_index(entry));
+> -		if (!IS_ERR(folio))
+> +
+> +		/* Check the swap cache in case the folio is already there */
+> +		folio = swap_cache_get_folio(entry);
+> +		if (folio)
+>  			goto got_folio;
+>  
+>  		/*
+......
 
 
