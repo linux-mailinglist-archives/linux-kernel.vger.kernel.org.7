@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-788536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97E19B38605
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:15:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 440B5B385FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:14:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DEF97AEACD
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:12:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F40B13658FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:14:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224202765D0;
-	Wed, 27 Aug 2025 15:13:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69B3F284886;
+	Wed, 27 Aug 2025 15:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nxo6kY9s"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qUX6Ffab"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A6427FD6B
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 15:13:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6F6528151E
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 15:13:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756307588; cv=none; b=C47XuedBjR2OSHC78pvWyN9Dqu4mMa6Wx6sGaDovDjBHtJty8A2lXiqBljZAqCfWyY0fkb0yzj3CiquTtyhKaxM2bhpCKMKoX4KtIEN3FDSlisphm/Ov8NrPpYQWWcR5AcbCS1OD4FbnE4rXyeZixk9V5SX16c6Q/SsUxIlEkRM=
+	t=1756307590; cv=none; b=iyy5SnfU9pvxztmGiXJEfTNEgU2/Ebs4r2tqi5mggnasn90ln5/ZurFdyKDeTRukBc5iR3RBgSKJd5H1QkBfMfVPagkjKOlgEGinBPwkivhObuGQKA//j0Df47egrmjGk/AyMUZqhZs5/NXHTtj1tSX18iqyZQ4JMxa2x/e9rFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756307588; c=relaxed/simple;
-	bh=YR/gYRTUbGVsPcXt+qNXfBhGUDKi5WInCy3Qs5bL5Cw=;
+	s=arc-20240116; t=1756307590; c=relaxed/simple;
+	bh=6hD6UxbBlKoYZyHeGn3CyW4PVYW/AoySrOUl6AiF3ic=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SNmvY22ctuDRgtk0BhBktE4e6Bv5rgydn+FjRsXFt5eUSZtX5TJeZCqm56h3SJ+WfZ/66+JqdHe9m+O5mfX2hVKPU4mbMFKtEeANK25tCfvY0C42Jon6uTX3YEjdHZFs/zT5NpUEGwkAltjSyRees1eekpTN6FByzd14zMoLpEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nxo6kY9s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5BC9C4CEEB;
-	Wed, 27 Aug 2025 15:13:07 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=nO4WyK0q6u9nWNMToJ2aY16iUUnu55pXTWUq5let15pNgx4hpa542pK+RwMjZZ2cTqOkgHE/a5fGarB1sa7J2TWqompw2KJVuiOyzRvpO49kpVomy6sWP0iuTEUw9q9K9u1ULaX0xg/a2WM8AECfH7bXBo81qfnwktHULhJjLAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qUX6Ffab; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 386D6C4CEF0;
+	Wed, 27 Aug 2025 15:13:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756307588;
-	bh=YR/gYRTUbGVsPcXt+qNXfBhGUDKi5WInCy3Qs5bL5Cw=;
+	s=k20201202; t=1756307590;
+	bh=6hD6UxbBlKoYZyHeGn3CyW4PVYW/AoySrOUl6AiF3ic=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=nxo6kY9scmEYDx7Cu2pXPuIwgx4qmT1gxiMlpW4N7VpoD9nS3cCKl0bRXjd/DhrJv
-	 LRGY0t7zDLssSZwYJczQv0M/LtIv0wQ4MHqolc6aajhI5HVyoUs5jehn59otX0lXah
-	 0/PUWD+XOwAsFiOgpC5u7H5p0HDqkVLEC+Jb2iYlTxLDdZ2pZCF4GvSUFlGglxlblW
-	 2dYlEH0ZVdrOMoTNVdbdFs7OP7Ma55iuHX0U6Bi5hMI3Vwokt1pXPytwdFtpaNS7WA
-	 +fYMzqAWFPw4wFgGpGfVlk2/EVsjdqvTra1PsxZKtsGRqvBkLfqvTTogHMXe30VReA
-	 AiKTULFxtXAeA==
+	b=qUX6FfabGEBcUa5pVk9bIbE+C1DAS80F5Ep4T1uddeVXIfu9Q3hhlKnlLyymWC6S7
+	 SvVaMgVAnVdUsXSl/pb1XvbT5KzqWq5BLgq8xEV8OCZh+sPD/G5vRW9kQIasc1EQXR
+	 NhEbNe+dklyvGK2f5dZODbctkxRpQidX5/zhp8Rz9JvzmfNewyS+MyLMGee/9jVtw0
+	 jbr8M3jWGnLQr3Hyk0XMTQysegNtUTUw3bCwS2fQVYM5AbgAduoEIUuo/CWJTVJDdR
+	 eWkCFc7Cu2qjdXVS4lh1kDAzJt84yivd4llvd4TfYG5yF3mpJZxXZ638jQaemA8Z4X
+	 5cvF/skwADHjA==
 From: Maxime Ripard <mripard@kernel.org>
-Date: Wed, 27 Aug 2025 17:12:40 +0200
-Subject: [PATCH v3 09/14] drm/tidss: dispc: Switch VID_REG_GET to using a
- mask
+Date: Wed, 27 Aug 2025 17:12:41 +0200
+Subject: [PATCH v3 10/14] drm/tidss: dispc: Switch VID_REG_FLD_MOD to using
+ a mask
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250827-drm-tidss-field-api-v3-9-7689b664cc63@kernel.org>
+Message-Id: <20250827-drm-tidss-field-api-v3-10-7689b664cc63@kernel.org>
 References: <20250827-drm-tidss-field-api-v3-0-7689b664cc63@kernel.org>
 In-Reply-To: <20250827-drm-tidss-field-api-v3-0-7689b664cc63@kernel.org>
 To: Jyri Sarha <jyri.sarha@iki.fi>, 
@@ -63,63 +63,161 @@ To: Jyri Sarha <jyri.sarha@iki.fi>,
 Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
  Maxime Ripard <mripard@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2081; i=mripard@kernel.org;
- h=from:subject:message-id; bh=YR/gYRTUbGVsPcXt+qNXfBhGUDKi5WInCy3Qs5bL5Cw=;
- b=owGbwMvMwCmsHn9OcpHtvjLG02pJDBnrFdLal9a6+K4JSHEpu7znRGjRrAnNi3cx2bVZzpzJv
- jlCbB1vx1QWBmFOBlkxRZYnMmGnl7cvrnKwX/kDZg4rE8gQBi5OAZhI2HbGhtUrF8+tadSt4kos
- uLTHdluCxq7ZZzwNbxodnmep+lyz2kt5w/y9LAfvegvdP3Wq8qvnb8aGZY9Mrs4zlmyI4fn7co/
- 8IZvg/oJ1HBafZb9MY/m37p+R5LO7invv7QthZP25fcLtd9UlAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5234; i=mripard@kernel.org;
+ h=from:subject:message-id; bh=6hD6UxbBlKoYZyHeGn3CyW4PVYW/AoySrOUl6AiF3ic=;
+ b=owGbwMvMwCmsHn9OcpHtvjLG02pJDBnrFdLn3xS4WjR9mpaZ2gq5rJ5qkxdbQvycsz18/LR+T
+ p6x8cGvjqksDMKcDLJiiixPZMJOL29fXOVgv/IHzBxWJpAhDFycAjCRFk7Ghnlc81xPbn3CqbRo
+ 29V5jTsDg9u4feZN3S03rWzNwcIdffV9XwsrYvq5k76x5r9K2fM5hbHhMW9Og6qR6jTH43tfCwW
+ yzHn+X/jHhfkW2T07Eq9PfbpZYqrWfGGltg21Z1bnNvE9nWcCAA==
 X-Developer-Key: i=mripard@kernel.org; a=openpgp;
  fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 
-The VID_REG_GET function takes the start and end bits as parameter and
-will generate a mask out of them.
+The VID_REG_FLD_MOD function takes the start and end bits as parameter
+and will generate a mask out of them.
 
 This makes it difficult to share the masks between callers, since we now
 need two arguments and to keep them consistent.
 
-Let's change VID_REG_GET to take the mask as an argument instead, and
-let the caller create the mask. Eventually, this mask will be moved to a
-define.
+Let's change VID_REG_FLD_MOD to take the mask as an argument instead,
+and let the caller create the mask. Eventually, this mask will be moved
+to a define.
 
 Signed-off-by: Maxime Ripard <mripard@kernel.org>
 ---
- drivers/gpu/drm/tidss/tidss_dispc.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/tidss/tidss_dispc.c | 32 +++++++++++++++++---------------
+ 1 file changed, 17 insertions(+), 15 deletions(-)
 
 diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/tidss_dispc.c
-index 82b038285acc245f86573a6a854da37248c92407..8e2c8ecb9f18c71cb532f1f5cea2bc00a0262ad3 100644
+index 8e2c8ecb9f18c71cb532f1f5cea2bc00a0262ad3..27ac57d770327707c3b6d8bc97a683e4d770cffa 100644
 --- a/drivers/gpu/drm/tidss/tidss_dispc.c
 +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
-@@ -604,13 +604,12 @@ void tidss_disable_oldi(struct tidss_device *tidss, u32 hw_videoport)
- 		u32 _reg = dispc_read(_dispc, _idx);			\
- 		FIELD_MODIFY((mask), &_reg, (val));			\
- 		dispc_write(_dispc, _idx, _reg);			\
+@@ -607,17 +607,17 @@ void tidss_disable_oldi(struct tidss_device *tidss, u32 hw_videoport)
  	})
  
--#define VID_REG_GET(dispc, hw_plane, idx, start, end)			\
--	((u32)FIELD_GET(GENMASK((start), (end)),			\
--			dispc_vid_read((dispc), (hw_plane), (idx))))
-+#define VID_REG_GET(dispc, hw_plane, idx, mask)				\
-+	((u32)FIELD_GET((mask), dispc_vid_read((dispc), (hw_plane), (idx))))
+ #define VID_REG_GET(dispc, hw_plane, idx, mask)				\
+ 	((u32)FIELD_GET((mask), dispc_vid_read((dispc), (hw_plane), (idx))))
  
- #define VID_REG_FLD_MOD(dispc, hw_plane, idx, val, start, end)		\
+-#define VID_REG_FLD_MOD(dispc, hw_plane, idx, val, start, end)		\
++#define VID_REG_FLD_MOD(dispc, hw_plane, idx, val, mask)		\
  	({								\
  		struct dispc_device *_dispc = (dispc);			\
  		u32 _hw_plane = (hw_plane);				\
-@@ -2292,11 +2291,12 @@ void dispc_plane_enable(struct dispc_device *dispc, u32 hw_plane, bool enable)
- 	VID_REG_FLD_MOD(dispc, hw_plane, DISPC_VID_ATTRIBUTES, !!enable, 0, 0);
+ 		u32 _idx = (idx);					\
+ 		u32 _reg = dispc_vid_read(_dispc, _hw_plane, _idx);	\
+-		FIELD_MODIFY(GENMASK((start), (end)), &_reg, (val));	\
++		FIELD_MODIFY((mask), &_reg, (val));			\
+ 		dispc_vid_write(_dispc, _hw_plane, _idx, _reg);		\
+ 	})
+ 
+ #define VP_REG_GET(dispc, vp, idx, start, end)				\
+ 	((u32)FIELD_GET(GENMASK((start), (end)),			\
+@@ -1740,11 +1740,12 @@ static void dispc_vid_csc_setup(struct dispc_device *dispc, u32 hw_plane,
+ }
+ 
+ static void dispc_vid_csc_enable(struct dispc_device *dispc, u32 hw_plane,
+ 				 bool enable)
+ {
+-	VID_REG_FLD_MOD(dispc, hw_plane, DISPC_VID_ATTRIBUTES, !!enable, 9, 9);
++	VID_REG_FLD_MOD(dispc, hw_plane, DISPC_VID_ATTRIBUTES, !!enable,
++			GENMASK(9, 9));
+ }
+ 
+ /* SCALER */
+ 
+ static u32 dispc_calc_fir_inc(u32 in, u32 out)
+@@ -1997,24 +1998,24 @@ static void dispc_vid_set_scaling(struct dispc_device *dispc,
+ 				  u32 hw_plane,
+ 				  struct dispc_scaling_params *sp,
+ 				  u32 fourcc)
+ {
+ 	/* HORIZONTAL RESIZE ENABLE */
+-	VID_REG_FLD_MOD(dispc, hw_plane, DISPC_VID_ATTRIBUTES,
+-			sp->scale_x, 7, 7);
++	VID_REG_FLD_MOD(dispc, hw_plane, DISPC_VID_ATTRIBUTES, sp->scale_x,
++			GENMASK(7, 7));
+ 
+ 	/* VERTICAL RESIZE ENABLE */
+-	VID_REG_FLD_MOD(dispc, hw_plane, DISPC_VID_ATTRIBUTES,
+-			sp->scale_y, 8, 8);
++	VID_REG_FLD_MOD(dispc, hw_plane, DISPC_VID_ATTRIBUTES, sp->scale_y,
++			GENMASK(8, 8));
+ 
+ 	/* Skip the rest if no scaling is used */
+ 	if (!sp->scale_x && !sp->scale_y)
+ 		return;
+ 
+ 	/* VERTICAL 5-TAPS  */
+-	VID_REG_FLD_MOD(dispc, hw_plane, DISPC_VID_ATTRIBUTES,
+-			sp->five_taps, 21, 21);
++	VID_REG_FLD_MOD(dispc, hw_plane, DISPC_VID_ATTRIBUTES, sp->five_taps,
++			GENMASK(21, 21));
+ 
+ 	if (dispc_fourcc_is_yuv(fourcc)) {
+ 		if (sp->scale_x) {
+ 			dispc_vid_write(dispc, hw_plane, DISPC_VID_FIRH2,
+ 					sp->fir_xinc_uv);
+@@ -2100,11 +2101,11 @@ static void dispc_plane_set_pixel_format(struct dispc_device *dispc,
+ 
+ 	for (i = 0; i < ARRAY_SIZE(dispc_color_formats); ++i) {
+ 		if (dispc_color_formats[i].fourcc == fourcc) {
+ 			VID_REG_FLD_MOD(dispc, hw_plane, DISPC_VID_ATTRIBUTES,
+ 					dispc_color_formats[i].dss_code,
+-					6, 1);
++					GENMASK(6, 1));
+ 			return;
+ 		}
+ 	}
+ 
+ 	WARN_ON(1);
+@@ -2278,19 +2279,20 @@ void dispc_plane_setup(struct dispc_device *dispc, u32 hw_plane,
+ 	dispc_vid_write(dispc, hw_plane, DISPC_VID_GLOBAL_ALPHA,
+ 			0xFF & (state->alpha >> 8));
+ 
+ 	if (state->pixel_blend_mode == DRM_MODE_BLEND_PREMULTI)
+ 		VID_REG_FLD_MOD(dispc, hw_plane, DISPC_VID_ATTRIBUTES, 1,
+-				28, 28);
++				GENMASK(28, 28));
+ 	else
+ 		VID_REG_FLD_MOD(dispc, hw_plane, DISPC_VID_ATTRIBUTES, 0,
+-				28, 28);
++				GENMASK(28, 28));
+ }
+ 
+ void dispc_plane_enable(struct dispc_device *dispc, u32 hw_plane, bool enable)
+ {
+-	VID_REG_FLD_MOD(dispc, hw_plane, DISPC_VID_ATTRIBUTES, !!enable, 0, 0);
++	VID_REG_FLD_MOD(dispc, hw_plane, DISPC_VID_ATTRIBUTES, !!enable,
++			GENMASK(0, 0));
  }
  
  static u32 dispc_vid_get_fifo_size(struct dispc_device *dispc, u32 hw_plane)
  {
--	return VID_REG_GET(dispc, hw_plane, DISPC_VID_BUF_SIZE_STATUS, 15, 0);
-+	return VID_REG_GET(dispc, hw_plane, DISPC_VID_BUF_SIZE_STATUS,
-+			   GENMASK(15, 0));
+ 	return VID_REG_GET(dispc, hw_plane, DISPC_VID_BUF_SIZE_STATUS,
+@@ -2355,11 +2357,11 @@ static void dispc_k2g_plane_init(struct dispc_device *dispc)
+ 		 * Prefetch up to fifo high-threshold value to minimize the
+ 		 * possibility of underflows. Note that this means the PRELOAD
+ 		 * register is ignored.
+ 		 */
+ 		VID_REG_FLD_MOD(dispc, hw_plane, DISPC_VID_ATTRIBUTES, 1,
+-				19, 19);
++				GENMASK(19, 19));
+ 	}
  }
  
- static void dispc_vid_set_mflag_threshold(struct dispc_device *dispc,
- 					  u32 hw_plane, u32 low, u32 high)
+ static void dispc_k3_plane_init(struct dispc_device *dispc)
+ {
+@@ -2406,11 +2408,11 @@ static void dispc_k3_plane_init(struct dispc_device *dispc)
+ 
+ 		dispc_vid_write(dispc, hw_plane, DISPC_VID_PRELOAD, preload);
+ 
+ 		/* Prefech up to PRELOAD value */
+ 		VID_REG_FLD_MOD(dispc, hw_plane, DISPC_VID_ATTRIBUTES, 0,
+-				19, 19);
++				GENMASK(19, 19));
+ 	}
+ }
+ 
+ static void dispc_plane_init(struct dispc_device *dispc)
  {
 
 -- 
