@@ -1,117 +1,244 @@
-Return-Path: <linux-kernel+bounces-788320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1FE2B382CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:48:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 68600B382CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:48:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 791B317F51D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:48:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24942461494
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:48:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5030134A32B;
-	Wed, 27 Aug 2025 12:48:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F78310771;
+	Wed, 27 Aug 2025 12:48:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T9pvEGnZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cZV9J1a4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA22301010;
-	Wed, 27 Aug 2025 12:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CDA41A0711
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 12:48:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756298896; cv=none; b=n44aAm4SlVTWcoeRTXjGTcSW34G9kPe+QkGf03vwsHLsSlKwUd+HkbAZdeidWRVKzxXugKzA5xva1lsAV5WmbhqmbHVIUnT6K6b/uscNKSbRNUWfc4iVuFwnrZnRPY9yRg++NCTRXY4AdzSbPjiNemKpJ5F8ibw9zBpIry2O0A4=
+	t=1756298916; cv=none; b=fdjnDBt+5Bf+1EqYy5Bkg47e1e2u7i5dL+03oD0NxPxit/+ug6xDAwb44ZBKLgisZ+magRqbR+Ckdpf2QoMCsJf4s1YQwOZsL3NkIMi50tXSNwek9x3ec9C6k16mEm3EE5hiXaYEgVD34S7whBm792Fib9PcRE8EpytoqWo7KXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756298896; c=relaxed/simple;
-	bh=446GKTdq+eU8SJQb/MXBWHFElhnkbinBcXvD2n46AgI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=emZImyjenX2jcmif5errLMGXp4xhx+2c5KKb4drFyQBfsziofI6sfcgjA16EbJPS1HT4973vENty1roaqojGNVuOBD2IhK43A5eCni/vX0s4id5wT1iR+HBZUhB3y59GhlBLWf3gznL6IDuJKpjS2KTlnP7OrbT20TOnCuotCyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T9pvEGnZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A45E3C4CEEB;
-	Wed, 27 Aug 2025 12:48:13 +0000 (UTC)
+	s=arc-20240116; t=1756298916; c=relaxed/simple;
+	bh=boJHzfZQIJgcM1/GV387QaK5mDcJHs2QxJhzT1rJCUI=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fvNbkKGCrMKlvZObT0ClwCEBPWwx3hCXpFIgwchmaD3/ASESJV4QdXbXBgM068RrO6IpoHTi8T/9YfEufHDchNk+I69WbQbBVaUOZb/h3JMlPgckk08Ght/DWTr95Xjv33MHNvNSE5WFGc48e51JyP+tewVALh2HzhGqA3h1GPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cZV9J1a4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B47D0C4CEEB;
+	Wed, 27 Aug 2025 12:48:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756298896;
-	bh=446GKTdq+eU8SJQb/MXBWHFElhnkbinBcXvD2n46AgI=;
+	s=k20201202; t=1756298915;
+	bh=boJHzfZQIJgcM1/GV387QaK5mDcJHs2QxJhzT1rJCUI=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=T9pvEGnZaV0N2O+kDhv8eOxMG//LUL0MBscniqDhxYB2HeHz0UZ2nA59xykj6oNxt
-	 oY3ops7GHLNecKcwnHfwPcEoLogLQhu3Itv585rf+Te6HwBxpeOODC8oZ9EyY2rN7n
-	 K8RY7WcqioT3zOtbfACpaJUUYH2qmif4eeCa8h+CJt26Jgg/v6HpoLob8OxPgA//RC
-	 SuQYa4ygss8n3JyCJ6KXYPZQKvnZZ0A8iCS6BYKWDfGOpT6v4wwT6fUaJPj8j6/duz
-	 CqmYeQ8jwevZ4odvuZmM50KrM4UxB6JIc2vKMMKzJBQNR1QpxcQpElIM/CgfuMeyd0
-	 PbjQGS//T5nZQ==
-Date: Wed, 27 Aug 2025 14:48:10 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Documentation
- <linux-doc@vger.kernel.org>, Linux Kernel Workflows
- <workflows@vger.kernel.org>, Jonathan =?UTF-8?B?TmV1c2Now6RmZXI=?=
- <j.neuschaefer@gmx.net>, Fox Foster <fox@tardis.ed.ac.uk>, Federico Vaga
- <federico.vaga@vaga.pv.it>, Randy Dunlap <rdunlap@infradead.org>, Stephen
- Rothwell <sfr@canb.auug.org.au>, Konstantin Ryabitsev
- <konstantin@linuxfoundation.org>, Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v2] Documentation: management-style: Reword "had better
- known the details" phrase
-Message-ID: <20250827144757.26599d50@foz.lan>
-In-Reply-To: <877byp9f63.fsf@trenco.lwn.net>
-References: <20250827044848.17374-1-bagasdotme@gmail.com>
-	<87wm6p9v8l.fsf@trenco.lwn.net>
-	<20250827113312.62162725@foz.lan>
-	<877byp9f63.fsf@trenco.lwn.net>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	b=cZV9J1a4H0MDK5HqdlAnjvXs2nUG3jJ5gcnrlsI9cA/ST4QxE5cNYdt4d4uhFFCXV
+	 6BQBgGH/tLhzUJZ35dASi+U+VBloU4nEEKepqPf/Dj/d6UnPR/plob4NN0Z7kuxOWm
+	 VcOG+wXsBi8H2z4yns4c0FKNIjxVBWj6DDyRr+99RH2KOYduCNo8CEqxuZsBEO1xor
+	 XIvWou42GhFk07ZLpGnM0l7nuGAkHUmXUEVDGfkby+AyXhwXWfkUorQHkjAmSKDNvN
+	 mTGJfY8+FSemPNPpIHWDyWmpkqILAqTCiYGjN1AnE9Z6RMRBjuE/PEspCK8NjM1x3i
+	 yupPagpSOaPlg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1urFZp-00000000und-1YJf;
+	Wed, 27 Aug 2025 12:48:33 +0000
+Date: Wed, 27 Aug 2025 13:48:33 +0100
+Message-ID: <86h5xtdj6m.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Koichiro Den <den@valinux.co.jp>
+Cc: linux-arm-kernel@lists.infradead.org,
+	tglx@linutronix.de,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] irqchip/gic-v3-its: Fix invalid wait context lockdep report
+In-Reply-To: <20250827073848.1410315-1-den@valinux.co.jp>
+References: <20250827073848.1410315-1-den@valinux.co.jp>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: den@valinux.co.jp, linux-arm-kernel@lists.infradead.org, tglx@linutronix.de, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Em Wed, 27 Aug 2025 05:28:52 -0600
-Jonathan Corbet <corbet@lwn.net> escreveu:
-
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+On Wed, 27 Aug 2025 08:38:48 +0100,
+Koichiro Den <den@valinux.co.jp> wrote:
 > 
-> > As a non-native English speaker, "had better know" looks really
-> > weird on my eyes, as, at least for me, "know" is a verb.
-> >
-> > Heh, I just discovered today by looking on a dictionary:
-> >
-> > 	https://dictionary.cambridge.org/dictionary/english/know
-> >
-> > That know can informally be used as a noun (a shortcut for
-> > knowledge?).  
+> its_irq_set_vcpu_affinity() always runs under a raw_spin_lock wait
+> context, so calling kcalloc there is not permitted and RT-unsafe since
+> ___slab_alloc() may acquire a local lock. The below is the actual
+> lockdep report observed:
 > 
-> "know" is a verb as used in the sentence in question too.
+>   =============================
+>   [ BUG: Invalid wait context ]
+>   6.16.0-rc3-irqchip-next-7e28bba92c5c+ #1 Tainted: G S
+>   -----------------------------
+>   qemu-system-aar/2129 is trying to lock:
+>   ffff0085b74f2178 (batched_entropy_u32.lock){..-.}-{3:3}, at: get_random_u32+0x9c/0x708
+>   other info that might help us debug this:
+>   context-{5:5}
+>   6 locks held by qemu-system-aar/2129:
+>    #0: ffff0000b84a0738 (&vdev->igate){+.+.}-{4:4}, at: vfio_pci_core_ioctl+0x40c/0x748 [vfio_pci_core]
+>    #1: ffff8000883cef68 (lock#6){+.+.}-{4:4}, at: irq_bypass_register_producer+0x64/0x2f0
+>    #2: ffff0000ac0df960 (&its->its_lock){+.+.}-{4:4}, at: kvm_vgic_v4_set_forwarding+0x224/0x6f0
+>    #3: ffff000086dc4718 (&irq->irq_lock#3){....}-{2:2}, at: kvm_vgic_v4_set_forwarding+0x288/0x6f0
+>    #4: ffff0001356200c8 (&irq_desc_lock_class){-.-.}-{2:2}, at: __irq_get_desc_lock+0xc8/0x158
+>    #5: ffff00009eae4850 (&dev->event_map.vlpi_lock){....}-{2:2}, at: its_irq_set_vcpu_affinity+0x8c/0x528
+>   ...
+>   Call trace:
+>    show_stack+0x30/0x98 (C)
+>    dump_stack_lvl+0x9c/0xd0
+>    dump_stack+0x1c/0x34
+>    __lock_acquire+0x814/0xb40
+>    lock_acquire.part.0+0x16c/0x2a8
+>    lock_acquire+0x8c/0x178
+>    get_random_u32+0xd4/0x708
+>    __get_random_u32_below+0x20/0x80
+>    shuffle_freelist+0x5c/0x1b0
+>    allocate_slab+0x15c/0x348
+>    new_slab+0x48/0x80
+>    ___slab_alloc+0x590/0x8b8
+>    __slab_alloc.isra.0+0x3c/0x80
+>    __kmalloc_noprof+0x174/0x520
+>    its_vlpi_map+0x834/0xce0
+>    its_irq_set_vcpu_affinity+0x21c/0x528
+>    irq_set_vcpu_affinity+0x160/0x1b0
+>    its_map_vlpi+0x90/0x100
+>    kvm_vgic_v4_set_forwarding+0x3c4/0x6f0
+>    kvm_arch_irq_bypass_add_producer+0xac/0x108
+>    __connect+0x138/0x1b0
+>    irq_bypass_register_producer+0x16c/0x2f0
+>    vfio_msi_set_vector_signal+0x2c0/0x5a8 [vfio_pci_core]
+>    vfio_msi_set_block+0x8c/0x120 [vfio_pci_core]
+>    vfio_pci_set_msi_trigger+0x120/0x3d8 [vfio_pci_core]
 
-That's new to me. I would expect that a verb locution like
-that to have the final verb ending with -ing, written in the
-past participle, or have "to" before it. After looking for this 
-particular grammatical construction, it seems that "had better"
-is an exception:
+Huh. I guess this is due to RT not being completely compatible with
+GFP_ATOMIC...  Why you'd want RT and KVM at the same time is beyond
+me, but hey.
 
-	https://teachtranslatetravelrepeat.com/semi-modal-verbs-had-better/
-
-where the main verb remains in infinitive without "to" prefix.
-
-> > For me as a non-native English speaker, when one writes:
-> >
-> > 	They "most likely know"		(know here is a verb)
-> >
-> > or:
-> > 	They "had better knowledge"	(knowledge is a name)
-> >
-> > Things become clearer.  
+>   ...
 > 
-> But neither of those say the same thing.  Read "had better know" as
-> "really should know" and you get a lot closer.  I guess I didn't realize
-> that it was such a strange construction.
+> To avoid this, simply pre-allocate vlpi_maps when creating an ITS v4
+> device with LPIs allcation. The trade-off is some wasted memory
+> depending on nr_lpis, if none of those LPIs are never upgraded to VLPIs.
+>
+> An alternative would be to move the vlpi_maps allocation out of
+> its_map_vlpi() and introduce a two-stage prepare/commit flow, allowing a
+> caller (KVM in the lockdep splat shown above) to do the allocation
+> outside irq_set_vcpu_affinity(). However, this would unnecessarily add
+> complexity.
 
-I bet very few non-native English speaker developers would understand it
-like that.
+That's debatable. It is probably fine for now, but if this was to
+grow, we'd need to revisit this.
+
+> Fixes: d011e4e654d7 ("irqchip/gic-v3-its: Add VLPI map/unmap operations")
+
+No. This code predates RT being merged, and this problem cannot occur
+before RT.
+
+> Signed-off-by: Koichiro Den <den@valinux.co.jp>
+> ---
+>  drivers/irqchip/irq-gic-v3-its.c | 36 ++++++++++++++++++--------------
+>  1 file changed, 20 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+> index 467cb78435a9..b933be8ddc51 100644
+> --- a/drivers/irqchip/irq-gic-v3-its.c
+> +++ b/drivers/irqchip/irq-gic-v3-its.c
+> @@ -1923,19 +1923,10 @@ static int its_vlpi_map(struct irq_data *d, struct its_cmd_info *info)
+>  	if (!info->map)
+>  		return -EINVAL;
+>  
+> -	if (!its_dev->event_map.vm) {
+> -		struct its_vlpi_map *maps;
+> -
+> -		maps = kcalloc(its_dev->event_map.nr_lpis, sizeof(*maps),
+> -			       GFP_ATOMIC);
+> -		if (!maps)
+> -			return -ENOMEM;
+> -
+> +	if (!its_dev->event_map.vm)
+>  		its_dev->event_map.vm = info->map->vm;
+> -		its_dev->event_map.vlpi_maps = maps;
+> -	} else if (its_dev->event_map.vm != info->map->vm) {
+> +	else if (its_dev->event_map.vm != info->map->vm)
+>  		return -EINVAL;
+> -	}
+>  
+>  	/* Get our private copy of the mapping information */
+>  	its_dev->event_map.vlpi_maps[event] = *info->map;
+> @@ -2010,10 +2001,8 @@ static int its_vlpi_unmap(struct irq_data *d)
+>  	 * Drop the refcount and make the device available again if
+>  	 * this was the last VLPI.
+>  	 */
+> -	if (!--its_dev->event_map.nr_vlpis) {
+> +	if (!--its_dev->event_map.nr_vlpis)
+>  		its_dev->event_map.vm = NULL;
+> -		kfree(its_dev->event_map.vlpi_maps);
+> -	}
+>  
+>  	return 0;
+>  }
+> @@ -3469,6 +3458,7 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
+>  {
+>  	struct its_device *dev;
+>  	unsigned long *lpi_map = NULL;
+> +	struct its_vlpi_map *vlpi_maps;
+>  	unsigned long flags;
+>  	u16 *col_map = NULL;
+>  	void *itt;
+> @@ -3497,16 +3487,28 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
+>  
+>  	if (alloc_lpis) {
+>  		lpi_map = its_lpi_alloc(nvecs, &lpi_base, &nr_lpis);
+> -		if (lpi_map)
+> +		if (lpi_map) {
+>  			col_map = kcalloc(nr_lpis, sizeof(*col_map),
+>  					  GFP_KERNEL);
+> +
+> +			/*
+> +			 * Pre-allocate vlpi_maps to avoid slab allocation
+> +			 * under the strict raw spinlock wait context of
+> +			 * irq_set_vcpu_affinity. This could waste memory
+> +			 * if no vlpi map is ever created.
+> +			 */
+> +			if (is_v4(its) && nr_lpis > 0)
+> +				vlpi_maps = kcalloc(nr_lpis, sizeof(*vlpi_maps),
+> +						    GFP_KERNEL);
+> +		}
+>  	} else {
+>  		col_map = kcalloc(nr_ites, sizeof(*col_map), GFP_KERNEL);
+>  		nr_lpis = 0;
+>  		lpi_base = 0;
+>  	}
+>  
+> -	if (!dev || !itt || !col_map || (!lpi_map && alloc_lpis)) {
+> +	if (!dev || !itt || !col_map ||
+> +	    (alloc_lpis && (!lpi_map || (is_v4(its) && !vlpi_maps)))) {
+
+This needs to be collapsed into a single boolean evaluated with the
+pointer being NULL.
+
+>  		kfree(dev);
+>  		itt_free_pool(itt, sz);
+>  		bitmap_free(lpi_map);
+
+Where are you freeing vlpi_maps if on the failure path??
 
 Thanks,
-Mauro
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
