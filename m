@@ -1,119 +1,145 @@
-Return-Path: <linux-kernel+bounces-787993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84BF2B37E89
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:14:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EAFACB37E9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:18:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0A58189BE67
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:15:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5F2A1BA096E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:19:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C741343D87;
-	Wed, 27 Aug 2025 09:14:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="pWsGU5MR"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D61B0343D7E;
-	Wed, 27 Aug 2025 09:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D4F34574F;
+	Wed, 27 Aug 2025 09:17:58 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADD21287252;
+	Wed, 27 Aug 2025 09:17:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756286059; cv=none; b=AaiY8ctbC2TKR8mvUS7NFOHxC/P2DECnzlKeia/YKQ6u7jwEhxR/TDZ3hWik7X5z9uyNn5TyyXtbYG71QdNM9wU8yoxWNaFI+zY4Uacgm8yKyNXCVjMgJilUvZGacy8zxYgvE3ZDLmZkYn/1uuvDtQinulG9QsPHrAhD7rHdcNo=
+	t=1756286278; cv=none; b=n2d+cg45hAZiFojIwdqlVHknhNW8NFKheAF1AJEmRuVT1zyCyfX/je+bN6z3QbFxgGYofuDCjErIk4Z44UUE4Cd0SHYae2DJy7eGPGqtuT2dxVWNgp2QuhF7DCsnqnPX8LSBEZu0rqyR5UQFwyQw1E6Xuh17TFPPS0pf0HASxhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756286059; c=relaxed/simple;
-	bh=5D1RSNh8SPdHigkKTi5kPrSK7v3ph6xdRdhiellMLZc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=owMwBsigcH4lpsj+qhzcOfiYyPXp5cm7MUHClgcERNNQp4Hy9+KulqOx664XS03JSjGnCseEIxntMW4YCixfVnweM+5n+IxwDjbP9vPDD+xXbr66X3ikU2Y13BqzBRU/uLLsMJGBKT9deCkXt3gGBW2rsLd/Ua1ezXwGeolw8fM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=pWsGU5MR; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1756286056;
-	bh=5D1RSNh8SPdHigkKTi5kPrSK7v3ph6xdRdhiellMLZc=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=pWsGU5MRZ2qpbkEohHl6lbG0wwsZ8JKYMT3LgJinrwGS2Mk4kgREOXv3ta0bLBsZp
-	 IRnWDKF4XcYXFw0+3VFGmxYHcruDSLuJA6US/u8hhniXX5r1QdmRQk+FlXHwJZOcoY
-	 Oh1pw+TiQ8K8t/EKT0Acrbnz6YqiTzKLuqoE/AFDrzCEsLUTsjMEjC5di8lj4VElfh
-	 1VUWpNuE6NxcpKhXc2f8EcXOFMgU76GDG0YY0Cu0f6Bhy82k/oiKrM/resVEp3whZt
-	 25+e1Gwg/9irqA5liQxpDcm2kRE8vXxb3/1qwKkr3QZ8tfb12oTPa/uhpnGHUA/vEI
-	 PaiFe9cjl4/Mw==
-Received: from [192.168.1.90] (unknown [82.79.138.60])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id B1FB817E0483;
-	Wed, 27 Aug 2025 11:14:15 +0200 (CEST)
-Message-ID: <5b39ce10-9845-4429-95bb-18b03513cdaf@collabora.com>
-Date: Wed, 27 Aug 2025 12:14:15 +0300
+	s=arc-20240116; t=1756286278; c=relaxed/simple;
+	bh=D6tI8dFPhQO9vi/pFTz+Fl4xZHDFVpijJJzgtBdp4kY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hhqTDRSFlSB5NtvohbFtanbo9B675qZNiNwpPajoRqQnS9inEjyMJHJeFIYFvrVL409DevK+w4aO2HnbPmH+VRqZGcIUZ1ETsBvzEppbPGmMh9UrwpHLtzxAsmd+G71IichAOxtNrv6OldgUVoJkHDYbJfULhL6IAlci9A5js2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A7AA01655;
+	Wed, 27 Aug 2025 02:17:46 -0700 (PDT)
+Received: from bogus (unknown [10.57.57.52])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 588C63F738;
+	Wed, 27 Aug 2025 02:17:41 -0700 (PDT)
+Date: Wed, 27 Aug 2025 10:17:18 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Ben Horgan <ben.horgan@arm.com>
+Cc: Zihuan Zhang <zhangzihuan@kylinos.cn>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	"Rafael J . wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Markus Mayer <mmayer@broadcom.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	zhenglifeng <zhenglifeng1@huawei.com>,
+	"H . Peter Anvin" <hpa@zytor.com>, Zhang Rui <rui.zhang@intel.com>,
+	Len Brown <lenb@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Beata Michalska <beata.michalska@arm.com>,
+	Fabio Estevam <festevam@gmail.com>, Pavel Machek <pavel@kernel.org>,
+	Sumit Gupta <sumitg@nvidia.com>,
+	Prasanna Kumar T S M <ptsm@linux.microsoft.com>,
+	Yicong Yang <yangyicong@hisilicon.com>, linux-pm@vger.kernel.org,
+	x86@kernel.org, kvm@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	imx@lists.linux.dev, linux-omap@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 01/18] arm64: topology: Use __free(put_cpufreq_policy)
+ for policy reference
+Message-ID: <20250827-vegan-blond-marmot-eabf13@sudeepholla>
+References: <20250827023202.10310-1-zhangzihuan@kylinos.cn>
+ <20250827023202.10310-2-zhangzihuan@kylinos.cn>
+ <70f4c2ce-1dbd-4596-af78-bca1cdbbb581@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/18] USB/IP VHCI suspend fix and driver cleanup
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Valentina Manea <valentina.manea.m@gmail.com>,
- Shuah Khan <shuah@kernel.org>, Hongren Zheng <i@zenithal.me>,
- "Brian G. Merrell" <bgmerrell@novell.com>, kernel@collabora.com,
- Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250726-vhci-hcd-suspend-fix-v2-0-189266dfdfaa@collabora.com>
- <2025072637-corny-careless-8523@gregkh>
- <3dd94c4f-0971-4744-91e1-3a5474e1576c@collabora.com>
-Content-Language: en-US
-In-Reply-To: <3dd94c4f-0971-4744-91e1-3a5474e1576c@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <70f4c2ce-1dbd-4596-af78-bca1cdbbb581@arm.com>
 
-On 7/28/25 12:41 PM, Cristian Ciocaltea wrote:
-> Hi Greg,
+On Wed, Aug 27, 2025 at 09:30:13AM +0100, Ben Horgan wrote:
+> Hi Zihuan,
 > 
-> On 7/26/25 9:43 AM, Greg Kroah-Hartman wrote:
->> On Sat, Jul 26, 2025 at 01:08:02AM +0300, Cristian Ciocaltea wrote:
->>> The USB/IP Virtual Host Controller (VHCI) platform driver is expected to
->>> prevent entering system suspend when at least one remote device is
->>> attached to the virtual USB root hub.
->>>
->>> However, in some cases, the detection logic for active USB/IP
->>> connections doesn't seem to work reliably, e.g. when all devices
->>> attached to the virtual hub have been already suspended.  This will
->>> normally lead to a broken suspend state, with unrecoverable resume.
->>>
->>> The first patch of the series provides a workaround to ensure the
->>> virtually attached devices do not enter suspend.  Note this is currently
->>> limited to the client side (vhci_hcd) only, since the server side
->>> (usbip_host) doesn't implement system suspend prevention.
->>>
->>> Additionally, during the investigation I noticed and fixed a bunch of
->>> coding style issues, hence the subsequent patches contain all the
->>> changes needed to make checkpatch happy for the entire driver.
->>
->> You are doing two major things here, fixing suspend, and cleaning up
->> checkpatch issues.  Please make that two different patch sets as those
->> are not logical things to put together at all.  Work on the suspend
->> issue first, and after that is all done and working, then consider
->> checkpatch cleanups, those are not that important overall :)
+> On 8/27/25 03:31, Zihuan Zhang wrote:
+> > Replace the manual cpufreq_cpu_put() with __free(put_cpufreq_policy)
+> > annotation for policy references. This reduces the risk of reference
+> > counting mistakes and aligns the code with the latest kernel style.
+> > 
+> > No functional change intended.
+> > 
+> > Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+> > ---
+> >  arch/arm64/kernel/topology.c | 9 +++------
+> >  1 file changed, 3 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
+> > index 5d07ee85bdae..e3cb6d54f35b 100644
+> > --- a/arch/arm64/kernel/topology.c
+> > +++ b/arch/arm64/kernel/topology.c
+> > @@ -307,17 +307,16 @@ int arch_freq_get_on_cpu(int cpu)
+> >  		 */
+> >  		if (!housekeeping_cpu(cpu, HK_TYPE_TICK) ||
+> >  		    time_is_before_jiffies(last_update + msecs_to_jiffies(AMU_SAMPLE_EXP_MS))) {
+> > -			struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
+> > +			struct cpufreq_policy *policy __free(put_cpufreq_policy);
+> Based on the guidance, in include/linux/cleanup.h, I would expect the
+> assignment to be done on this line.
 > 
-> Yeah, the cleanup part ended up larger than initially anticipated, but I
-> don't really expect further changes on the fixup side.  I can handle the
-> split if another revision would be still required, or would you like me to
-> do this regardless?  I've just made a quick test moving the first patch to
-> the end of the series and it didn't cause any conflicts, hence there won't 
-> be any dependencies between the two patch sets.
+> "...the recommendation is to always define and assign variables in one
+>  * statement and not group variable definitions at the top of the
+>  * function when __free() is used."
+> 
 
-This continues to apply cleanly on recent linux-next, hence I'm not sure if
-there's still a need to resend as two separate patch sets.
+Agreed. I did something similar recently and there was a code path where
+variable wasn't initialised and ended up with freeing unassigned pointer.
+So it is more than just a recommendation sometimes.
 
-Please let me know how should we move further.
-
-Thanks,
-Cristian
-
+-- 
+Regards,
+Sudeep
 
