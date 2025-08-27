@@ -1,142 +1,164 @@
-Return-Path: <linux-kernel+bounces-788984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACDE5B38F20
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 01:22:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 692B7B38F46
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 01:28:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7A237AF3A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:21:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2488C46479A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF1863112A1;
-	Wed, 27 Aug 2025 23:22:37 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5EF83115AD;
+	Wed, 27 Aug 2025 23:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="lLviqIgO"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA273283159
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 23:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 248B9301006
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 23:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756336957; cv=none; b=i7pl1XaSTClelyBtkCAMlcib2ejgFEyMqnpZBroIe1BOYeEFBXIxIV5yoNXeFIriq70Hzf4CNOtHNV+UU281JkqZ4MrylJL2/9YyrqKOXfj4ICpggHEshPzpg2bK2mGznVRfmt+HfkiOc1ruhAa8wD3rUc01IJ/tLJsU6ksbh5Y=
+	t=1756337330; cv=none; b=j1dLJaxF8IJ3A3vq/QDJqG0nG7+1dIntUEaPbNCylQE1QWrOrKcWZ6nPrOZWXnqgEJK3NwYSvwFiEU35McydFcYNVJAC0B2EvsGvdwK0Rxwxs/7HbJLRCLyxWjehtMZvjyA87tOq1P5UD4L67WXR4XeqAZSmTfgx8SYeQ/27jrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756336957; c=relaxed/simple;
-	bh=0GRIOvOeVhXcTpXjeCZTG4Wm6VLWPHRblsRlooK4Ayg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=r7B1W1jzx7PiAM39sQ7wHUXRKJtK9upN7uy7P4dGBxQWX1ORBuby8s1p793Buo56Qo2h8BRDThVOMUO8K0SkUhe79OziaHFpVo+FOnHwJNVjuDl3QjxCIaTXh12vcSCYf2AtiqWZvy8IcjXWwrLowVBy89UyYFh+F/sw/LiDz+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-886b58db928so46937539f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 16:22:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756336955; x=1756941755;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ki+X7udoy2qkKDlMn7tVUFGA43nOQ+o8mdWuhpBpgeA=;
-        b=sXIGW3Nc5tMV4enBpDjC3UzLeOuhH0pZmI82XUVADs8KhKVlsgePKMcJSr/W+w1Hsp
-         jEQu/Sqv2NWD/EWJjPVIi+5mPHbFkLMXkXwBYJjilkTJnM1j6QXsgZF0zpPdjKZ2JWAw
-         RB5wyfQaiTAD/xEjuhpPDl7kkhuatzoyoIxKIpFMm0OuKCOa8ABbxa4spYDq6ccrtkOf
-         Z70keqQoHIQiTNtvV0xoKdMUTRp32IqjJste7R/pyYXEUkVbL6w5SVX9TJa0qdgN5B0b
-         K0q9JtDtjZ5ZxBZPq8t3CynFIBZUX4daQ7mxp4nIh2Y6UwsfqD0KCdrPursLJlBB5rDE
-         8YGg==
-X-Forwarded-Encrypted: i=1; AJvYcCUDKQUsHHswl337oZAVbUp4pQ9irqesndIZOWseEL/PU0FWqDRTN7ueABN5UCsM9B8IkGznEJ+2sHlNvvU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywsn09IilL7OLJLeT/OFFB19IzIofPIhAQTngcIk+jpGIFKSMRJ
-	h9zXgq6Okk1mhY8owV/x9yRD4/eJ46zzr3egoqqwn6973kmRtr8YT7gZzTrF79OExd8eOsdN7rm
-	tn2SMUf8BdZz5olCQTiRwIWsX48vLv2h1yzGm+GdO9NEo8vJASAgNOh7ohXo=
-X-Google-Smtp-Source: AGHT+IH3N1ARNwZGmUjEWCZQJ81oG91H3vhlVBbtDcF1nVYElY3E28RiYQ5MQlN4AKZM4aYUDzUYwQE5O+jjny0YFPioim6so6+G
+	s=arc-20240116; t=1756337330; c=relaxed/simple;
+	bh=+7Ma31QPJuiP41MxYJS91rDyqDomjD/mryM4vXlEuCQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=GEtiPXmcao9nYxrFhJjI9ilF6reSvhA8gPnqNiChcVy+/2umJn3Mgflo2iD6JC2HD+cO5ycw4EMsM37t6wWv3DcbKlg/QjYuenNmJWUYzoMaG9O1RyAXHy5k2cteYVs9OF1/sf9XDBc5tIwwigbyRyj83tCZfWQPWHbiVAIdu04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=lLviqIgO; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 8CC772C03CC;
+	Thu, 28 Aug 2025 11:28:38 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1756337318;
+	bh=+7Ma31QPJuiP41MxYJS91rDyqDomjD/mryM4vXlEuCQ=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+	b=lLviqIgOQ3lY7PbD6MOn2/VbOvR90fp0riV5Dn2uX8qFHIothCBCV4JNJLwOseucl
+	 RMwg0wapvxZSzE3DOHdvp7F09zZJ8rwpv4vIlKDhh/mjW764Lg3yQDJxI8Zcx9x8a4
+	 7ALSayV1pO84jR9h18s7qlLHt4jCHCit6IUXUndRg5KTMGhI6U9XTdatxHS0wV1xwm
+	 WLQTGkVxVZ941hR1+IsjcmWQwRfY42GTtlf8X7EwkrJMiUcjV1WUxkfqRUJ3jU184L
+	 4NNnBxF1Fc24X4TME84K2eIvjv7UQQ+wYwJAst6XVQ3hW5t+eEbLLrKk1p1u1Hb7I2
+	 gLAOFnyYrCO2g==
+Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B68af94a60001>; Thu, 28 Aug 2025 11:28:38 +1200
+Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
+ svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Thu, 28 Aug 2025 11:28:38 +1200
+Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
+ svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
+ 15.02.1544.014; Thu, 28 Aug 2025 11:28:38 +1200
+From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To: Guenter Roeck <linux@roeck-us.net>
+CC: "jdelvare@suse.com" <jdelvare@suse.com>, "robh@kernel.org"
+	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, "linux-hwmon@vger.kernel.org"
+	<linux-hwmon@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] hwmon: (ina238) Add support for INA780
+Thread-Topic: [PATCH v2 2/2] hwmon: (ina238) Add support for INA780
+Thread-Index: AQHcCBFCT9dgOoAuzUOPUPjlGL2uJ7R1/1AAgAB8A4A=
+Date: Wed, 27 Aug 2025 23:28:38 +0000
+Message-ID: <d371f4c2-d328-49ca-a3f3-b23b1fee68ee@alliedtelesis.co.nz>
+References: <20250808030510.552724-1-chris.packham@alliedtelesis.co.nz>
+ <20250808030510.552724-3-chris.packham@alliedtelesis.co.nz>
+ <4381440d-cd92-40df-bf4b-53ba629abc0c@roeck-us.net>
+In-Reply-To: <4381440d-cd92-40df-bf4b-53ba629abc0c@roeck-us.net>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D6DC519EDDC74143BF6F58E8466721F8@alliedtelesis.co.nz>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:2c11:b0:881:87ac:24a with SMTP id
- ca18e2360f4ac-886bd14dd6cmr2927042739f.7.1756336955004; Wed, 27 Aug 2025
- 16:22:35 -0700 (PDT)
-Date: Wed, 27 Aug 2025 16:22:34 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68af933a.a00a0220.2929dc.0007.GAE@google.com>
-Subject: [syzbot] [net?] [usb?] KMSAN: uninit-value in rtl8150_open
-From: syzbot <syzbot+b4d5d8faea6996fd55e3@syzkaller.appspotmail.com>
-To: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, petkan@nucleusys.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=Yo+sRJYX c=1 sm=1 tr=0 ts=68af94a6 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=75chYTbOgJ0A:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=RJhZdRoedsqvXEVZLXIA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-SEG-SpamProfiler-Score: 0
 
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    fab1beda7597 Merge tag 'devicetree-fixes-for-6.17-1' of gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17a9e462580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6ccfdce02093e91f
-dashboard link: https://syzkaller.appspot.com/bug?extid=b4d5d8faea6996fd55e3
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/db03ab9be061/disk-fab1beda.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/465314c75c15/vmlinux-fab1beda.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/02e5480b1de2/bzImage-fab1beda.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b4d5d8faea6996fd55e3@syzkaller.appspotmail.com
-
-usb 1-1: device reset failed
-=====================================================
-BUG: KMSAN: uninit-value in set_carrier drivers/net/usb/rtl8150.c:721 [inline]
-BUG: KMSAN: uninit-value in rtl8150_open+0x1131/0x1360 drivers/net/usb/rtl8150.c:758
- set_carrier drivers/net/usb/rtl8150.c:721 [inline]
- rtl8150_open+0x1131/0x1360 drivers/net/usb/rtl8150.c:758
- __dev_open+0x7e9/0xc60 net/core/dev.c:1682
- __dev_change_flags+0x3a8/0x9f0 net/core/dev.c:9549
- netif_change_flags+0x8d/0x1e0 net/core/dev.c:9612
- dev_change_flags+0x18c/0x320 net/core/dev_api.c:68
- devinet_ioctl+0x1186/0x2500 net/ipv4/devinet.c:1200
- inet_ioctl+0x4c0/0x6f0 net/ipv4/af_inet.c:1001
- sock_do_ioctl+0x9c/0x480 net/socket.c:1238
- sock_ioctl+0x70b/0xd60 net/socket.c:1359
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:598 [inline]
- __se_sys_ioctl+0x23c/0x400 fs/ioctl.c:584
- __x64_sys_ioctl+0x97/0xe0 fs/ioctl.c:584
- x64_sys_call+0x1cbc/0x3e20 arch/x86/include/generated/asm/syscalls_64.h:17
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Local variable tmp created at:
- number+0x8a/0x2200 lib/vsprintf.c:469
- vsnprintf+0xd21/0x1bd0 lib/vsprintf.c:2890
-
-CPU: 1 UID: 0 PID: 5461 Comm: dhcpcd Not tainted syzkaller #0 PREEMPT(none) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-=====================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+SGkgR3VudGVyLA0KDQpPbiAyOC8wOC8yMDI1IDA0OjA0LCBHdWVudGVyIFJvZWNrIHdyb3RlOg0K
+PiBDaGlzLA0KPg0KPiBPbiBGcmksIEF1ZyAwOCwgMjAyNSBhdCAwMzowNToxMFBNICsxMjAwLCBD
+aHJpcyBQYWNraGFtIHdyb3RlOg0KPj4gQWRkIHN1cHBvcnQgZm9yIHRoZSBUSSBJTkE3ODAgRGln
+aXRhbCBQb3dlciBNb25pdG9yLiBUaGUgSU5BNzgwIHVzZXMNCj4+IEVaU2h1bnQodG0pIHRlY2hu
+b2xvZ3ksIHdoaWNoIG1lYW5zIHRoZXJlIGFyZSBmaXhlZCBMU0IgY29udmVyc2lvbnMgZm9yDQo+
+PiBhIG51bWJlciBvZiBmaWVsZHMgcmF0aGVyIHRoYW4gbmVlZGluZyB0byBiZSBjYWxpYnJhdGVk
+Lg0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6IENocmlzIFBhY2toYW0gPGNocmlzLnBhY2toYW1AYWxs
+aWVkdGVsZXNpcy5jby5uej4NCj4gUGxlYXNlIHNlbmQgbWUgYSByZWdpc3RlciBkdW1wIGZvciB0
+aGUgY2hpcCBzbyBJIGNhbiBhZGQgdW5pdCB0ZXN0IGNvZGUNCj4gZm9yIGl0cyBzdXBwb3J0IGJ5
+IHRoZSBkcml2ZXIuDQoNClN1cmUuIEkgdXNlZCB0aGUgZm9sbG93aW5nIHNjcmlwdCB0byBkdW1w
+IHRoZSByZWdpc3RlcnMNCg0KY2F0IDw8RU9GIHwgd2hpbGUgcmVhZCBhZGRyIGxlbjsgZG8gcHJp
+bnRmICIlMng6ICIgJGFkZHI7IGkyY2dldCAteSAtZiAxIA0KMHg0MCAkYWRkciBpICRsZW47IGRv
+bmUNCjB4MCAyDQoweDEgMg0KMHg1IDINCjB4NiAyDQoweDcgMg0KMHg4IDMNCjB4OSA1DQoweGEg
+NQ0KMHhiIDINCjB4YyAyDQoweGQgMg0KMHhlIDMNCjB4ZiAyDQoweDEwIDINCjB4MTEgMg0KMHgz
+ZSAyDQpFT0YNCg0KT24gYW4gdW5jb25maWd1cmVkIElOQTc4MEEgd2l0aCBubyBsb2FkIGp1c3Qg
+YWZ0ZXIgcmVzZXQNCg0KIMKgMDogMHgwMCAweDMwDQogwqAxOiAweGZiIDB4NjgNCiDCoDU6IDB4
+MDAgMHgwMA0KIMKgNjogMHgwYiAweDAwDQogwqA3OiAweDAwIDB4MDANCiDCoDg6IDB4MDAgMHgw
+MCAweDAwDQogwqA5OiAweDAwIDB4MDAgMHgwMCAweDAwIDB4MDANCiDCoGE6IDB4ZmYgMHhmZiAw
+eGZmIDB4ZmYgMHg1Yg0KIMKgYjogMHgwMCAweDAzDQogwqBjOiAweDdmIDB4ZmYNCiDCoGQ6IDB4
+ODAgMHgwMA0KIMKgZTogMHg3ZiAweGZmIDB4ZmYNCiDCoGY6IDB4MDAgMHgwMA0KMTA6IDB4N2Yg
+MHhmMA0KMTE6IDB4ZmYgMHhmZg0KM2U6IDB4NTQgMHg0OQ0KDQpPbiBhIElOQTc4MEEgd2l0aCBu
+byBsb2FkDQoNCiDCoDA6IDB4MDAgMHgzMA0KIMKgMTogMHhmYiAweDZhDQogwqA1OiAweDAwIDB4
+MDANCiDCoDY6IDB4MGIgMHgwMA0KIMKgNzogMHgwMCAweDAwDQogwqA4OiAweDAwIDB4MDAgMHgw
+MA0KIMKgOTogMHgwMCAweDAwIDB4MDAgMHgwMCAweDAwDQogwqBhOiAweGZmIDB4ZmYgMHhmZiAw
+eGZmIDB4ZDgNCiDCoGI6IDB4MjAgMHgwMw0KIMKgYzogMHg3ZiAweGZmDQogwqBkOiAweDgwIDB4
+MDANCiDCoGU6IDB4N2YgMHhmZiAweGZmDQogwqBmOiAweDAwIDB4MDANCjEwOiAweDdmIDB4ZjAN
+CjExOiAweGZmIDB4ZmYNCjNlOiAweDU0IDB4NDkNCg0KY29ycmVzcG9uZGluZyBsbS1zZW5zb3Jz
+IG91dHB1dA0KDQppbmE3ODAtaTJjLTEtNDANCkFkYXB0ZXI6IGkyYy0wLW11eCAoY2hhbl9pZCAw
+KQ0KaW4wOsKgIMKgIMKgIMKgIMKgIMKgMC4wMCBWwqAgKG1pbiA9wqAgKzAuMDAgViwgbWF4ID0g
+KzEwMi40MCBWKQ0KdGVtcDE6wqAgwqAgwqAgwqAgKzIyLjAgQ8KgIChoaWdoID0gKzI1NS45IEMp
+DQpwb3dlcjE6wqAgwqAgwqAgwqAgMC4wMCBXwqAgKG1heCA9wqAgwqAyLjA2IGtXKQ0KZW5lcmd5
+MTrCoCDCoCDCoCDCoDAuMDAgSg0KY3VycjE6wqAgwqAgwqAgwqAgwqAwLjAwIEHCoCAobWluID0g
+LTc4LjY0IEEsIG1heCA9ICs3OC42NA0KDQpPbiBhIElOQTc4MEEgd2l0aCAxMFYsIDRBIGxvYWQN
+Cg0KIMKgMDogMHgwMCAweDMwDQogwqAxOiAweGZiIDB4NmENCiDCoDU6IDB4MGQgMHg3NQ0KIMKg
+NjogMHgwYiAweDIwDQogwqA3OiAweDA2IDB4NWYNCiDCoDg6IDB4MDEgMHg1NyAweDBhDQogwqA5
+OiAweDAwIDB4MDAgMHgwMyAweDk0IDB4Y2QNCiDCoGE6IDB4MDAgMHgwMCAweDExIDB4NGIgMHhh
+YQ0KIMKgYjogMHgyMCAweDAzDQogwqBjOiAweDdmIDB4ZmYNCiDCoGQ6IDB4ODAgMHgwMA0KIMKg
+ZTogMHg3ZiAweGZmIDB4ZmYNCiDCoGY6IDB4MDAgMHgwMA0KMTA6IDB4N2YgMHhmMA0KMTE6IDB4
+ZmYgMHhmZg0KM2U6IDB4NTQgMHg0OQ0KDQpjb3JyZXNwb25kaW5nIGxtLXNlbnNvcnMgb3V0cHV0
+DQoNCmluYTc4MC1pMmMtMS00MA0KQWRhcHRlcjogaTJjLTAtbXV4IChjaGFuX2lkIDApDQppbjA6
+wqAgwqAgwqAgwqAgwqAgMTAuNzcgVsKgIChtaW4gPcKgICswLjAwIFYsIG1heCA9ICsxMDIuNDAg
+VikNCnRlbXAxOsKgIMKgIMKgIMKgICsyMi4yIEPCoCAoaGlnaCA9ICsyNTUuOSBDKQ0KcG93ZXIx
+OsKgIMKgIMKgIMKgNDIuMDYgbVcgKG1heCA9wqAgwqAyLjA2IGtXKQ0KZW5lcmd5MTrCoCDCoCDC
+oCDCoDIuODAgSg0KY3VycjE6wqAgwqAgwqAgwqAgwqAzLjkxIEHCoCAobWluID0gLTc4LjY0IEEs
+IG1heCA9ICs3OC42NCBBKQ0KDQpBbmQgZm9yIGdvb2QgbWVhc3VyZSBhIHdvcmQtd2lzZSBkdW1w
+IChzYW1lIGNvbmZpZyBhbmQgbG9hZCBhcyBhYm92ZSkNCg0KW3Jvb3RAbGludXhib3ggfl0jIGky
+Y2R1bXAgLXkgLWYgMSAweDQwIHcNCiDCoCDCoCDCoDAsOMKgIDEsOcKgIDIsYcKgIDMsYsKgIDQs
+Y8KgIDUsZMKgIDYsZcKgIDcsZg0KMDA6IDMwMDAgNmFmYiBmZmZmIGZmZmYgZmZmZiA3NjBkIDMw
+MGIgNWEwNg0KMDg6IDU1MDEgMDAwMCAwMDAwIDAzMjAgZmY3ZiAwMDgwIGZmN2YgMDAwMA0KMTA6
+IGYwN2YgZmZmZiBmZmZmIGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZg0KMTg6IGZmZmYgZmZmZiBm
+ZmZmIGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZg0KMjA6IGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZm
+ZiBmZmZmIGZmZmYgZmZmZg0KMjg6IGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZiBmZmZmIGZmZmYg
+ZmZmZg0KMzA6IGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZiAwMDAwIGZmZmYgZmZmZg0KMzg6IGZm
+ZmYgZmZmZiBmZmZmIGZmZmYgZmZmZiBmZmZmIDQ5NTQgNjIyNw0KNDA6IDMwMDAgNmFmYiBmZmZm
+IGZmZmYgZmZmZiA3NjBkIDMwMGIgNWEwNg0KNDg6IDU1MDEgMDAwMCAwMDAwIDAzMjAgZmY3ZiAw
+MDgwIGZmN2YgMDAwMA0KNTA6IGYwN2YgZmZmZiBmZmZmIGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZm
+Zg0KNTg6IGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZg0KNjA6IGZmZmYg
+ZmZmZiBmZmZmIGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZg0KNjg6IGZmZmYgZmZmZiBmZmZmIGZm
+ZmYgZmZmZiBmZmZmIGZmZmYgZmZmZg0KNzA6IGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZiAwMDAw
+IGZmZmYgZmZmZg0KNzg6IGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZiBmZmZmIDQ5NTQgNjIyNw0K
+ODA6IDMwMDAgNmFmYiBmZmZmIGZmZmYgZmZmZiA3NjBkIDMwMGIgNWEwNg0KODg6IDU1MDEgMDAw
+MCAwMDAwIDAzMjAgZmY3ZiAwMDgwIGZmN2YgMDAwMA0KOTA6IGYwN2YgZmZmZiBmZmZmIGZmZmYg
+ZmZmZiBmZmZmIGZmZmYgZmZmZg0KOTg6IGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZiBmZmZmIGZm
+ZmYgZmZmZg0KYTA6IGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZg0KYTg6
+IGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZg0KYjA6IGZmZmYgZmZmZiBm
+ZmZmIGZmZmYgZmZmZiAwMDAwIGZmZmYgZmZmZg0KYjg6IGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZm
+ZiBmZmZmIDQ5NTQgNjIyNw0KYzA6IDMwMDAgNmFmYiBmZmZmIGZmZmYgZmZmZiA3NjBkIDMwMGIg
+NWEwNg0KYzg6IDU1MDEgMDAwMCAwMDAwIDAzMjAgZmY3ZiAwMDgwIGZmN2YgMDAwMA0KZDA6IGYw
+N2YgZmZmZiBmZmZmIGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZg0KZDg6IGZmZmYgZmZmZiBmZmZm
+IGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZg0KZTA6IGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZiBm
+ZmZmIGZmZmYgZmZmZg0KZTg6IGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZm
+Zg0KZjA6IGZmZmYgZmZmZiBmZmZmIGZmZmYgZmZmZiAwMDAwIGZmZmYgZmZmZg0KZjg6IGZmZmYg
+ZmZmZiBmZmZmIGZmZmYgZmZmZiBmZmZmIDQ5NTQgNjIyNw0K
 
