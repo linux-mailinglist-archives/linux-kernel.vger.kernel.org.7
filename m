@@ -1,99 +1,123 @@
-Return-Path: <linux-kernel+bounces-787821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62DA2B37BC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:32:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C2CDB37BD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:33:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0854F361CBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:32:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 075A31BA1B58
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:33:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52727318149;
-	Wed, 27 Aug 2025 07:32:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD6D319850;
+	Wed, 27 Aug 2025 07:33:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JZ4/k2a3"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="hoP2Ahk2"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B152E1723;
-	Wed, 27 Aug 2025 07:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F5733EC;
+	Wed, 27 Aug 2025 07:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756279927; cv=none; b=EzMA8A1bEdB/qW6Zfx1/6+/OyOgTu1dvO3H13utfk5MgJBQE1NlnfHN9c7smyVrE7ZzV/osXHftZ0MQe67H8YAGDA+ewx2RNCUtazxaeAx+p0POqSFTAjgWzuR4tuWA4kMOhFAY1JkLSG5MK5nPwswtDf3hewGdL3ctDyUI6MXo=
+	t=1756279984; cv=none; b=uuVETBB6t1r1dlIgO/Tej7QdwOH9f7N/47BvxrLvv8oSjBHTreNWmloJqaHfOCb4D1Q9WcfIknJgB86RvQ5vUQErp+ZNjTmh9o9G8+bMPBZacF1+bGMkUuKZqmc9AeA/tlj4GLPNVcetfFhA5501YHEuizlT26sieaZwrkHQaXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756279927; c=relaxed/simple;
-	bh=m60YP2l0OQVjwwUvCpC26uRwuFUQ8d+ffT/0DA5nFwo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CndKMZIandrtw6IlfhgGGdvXF9qqdU32Ht+KDp4gEphEZli/uVK4g8pS+a+2Wr5y9ggjkBQtWrLSB+8VlD19T4aaawviznyjdw+zwE1yqjdiU5DSOTaKnG7ZJTgkFqeH9UJQKHzUNtprnkSUXbtWuSP9s7KyN4HSczH65iqib5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JZ4/k2a3; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
-	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=/U7TDdgVS0XTpH2wrHd6NGuad3QpZ7xAtceEl+MVTEg=; b=JZ4/k2a3nNOadUbaZYE/D0bAu6
-	mKeQBdWkdOBG+Gqmz49R058h9vKZZsKvN2ablsyK/nrxN4SPF8rTbQHOYsYpVKmQS1RUJNSiwZ5z7
-	3u73+tNJTPsX1CwUJL1gYDote7d1TGUN26gRD30d5/eVdXf7djjgNJs3/XuheiquBQkaOny0cNdkv
-	H0QRKRP0n+0SkwYZ/NhBshQW8y3JM1EAyr6CXNW2RKDG6xv58EWk+M0kUjYABjy59AabK2R/xYrcP
-	n8TW0EfEWpmvAoR3y82jwq8sFf/N5EK21ZRuPZCPb4aCJP0hPDWg3zK73fZuUi/C7UdxY9R91yE6P
-	YoJvugYw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1urAdS-0000000EQpI-3YHJ;
-	Wed, 27 Aug 2025 07:31:58 +0000
-Date: Wed, 27 Aug 2025 00:31:58 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: anthony <antmbox@youngman.org.uk>
-Cc: Yu Kuai <yukuai1@huaweicloud.com>,
-	Christoph Hellwig <hch@infradead.org>, colyli@kernel.org,
-	hare@suse.de, tieren@fnnas.com, axboe@kernel.dk, tj@kernel.org,
-	josef@toxicpanda.com, song@kernel.org, akpm@linux-foundation.org,
-	neil@brown.name, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	linux-raid@vger.kernel.org, yi.zhang@huawei.com,
-	yangerkun@huawei.com, johnny.chenyi@huawei.com,
-	John Garry <john.g.garry@oracle.com>,
-	"yukuai (C)" <yukuai3@huawei.com>
-Subject: Re: [PATCH RFC 4/7] md/raid10: convert read/write to use
- bio_submit_split()
-Message-ID: <aK60bmotWLT50qt5@infradead.org>
-References: <20250825093700.3731633-1-yukuai1@huaweicloud.com>
- <20250825093700.3731633-5-yukuai1@huaweicloud.com>
- <aKxCJT6ul_WC94-x@infradead.org>
- <6c6b183a-bce7-b01c-8749-6e0b5a078384@huaweicloud.com>
- <aK1ocfvjLrIR_Xf2@infradead.org>
- <fe595b6a-8653-d1aa-0ae3-af559107ac5d@huaweicloud.com>
- <835fe512-4cff-4130-8b67-d30b91d95099@youngman.org.uk>
+	s=arc-20240116; t=1756279984; c=relaxed/simple;
+	bh=csfpHjHmYUMd0X65UNDX1fL+H+H1B/gOfT575ffmaGg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kRsJAnymoQtxmTRNk2L7C1eQdIhiSrC6JZj+akL6JYqCD0ffV+9QY03na0TFbpvP8X1uKxgGfqx2/QSmb28IbCH3swrK+x6QtyR8mW691r0OHNpHf0VZmtSQcWCgefK2Tom0E0z3RxB2GhB8M7etg3RX5FJZEOBrepoWNWGVVZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=hoP2Ahk2; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=csfpHjHmYUMd0X65UNDX1fL+H+H1B/gOfT575ffmaGg=; b=hoP2Ahk2JAPZOAkRsNvAGKlrru
+	bFII+CNjGmCnvMOBsIRx6bMU/RJPWf/ru1JqMI7UaSocMEv8Yo4eDu7vViO9rifOWHqa0Y5ZonMgI
+	XuAeSS1HEfelwMRcunyJMEgg07TLO6nBT4LKVKcmMSRkClgtR1gUAAVbCkkeC/SaF3ALB5URggZL4
+	P8wZG4RWoZEzseopv1FU6hZwUt6VEjSkeeDyHSl+yGqqYSXgERRZnLWBuCUM96JeVgmekns8Y+Woi
+	h73tlXiAjfpHoPOmgAnlyu+Cz+XZaw4KQREmmO/vb1Gmr3yV3zz5vNgkd7DpxWEo9qiZJQRlUxgzU
+	faZYj0sA==;
+Received: from [213.244.170.152] (helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1urAdw-0004nS-Rr; Wed, 27 Aug 2025 09:32:28 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Yury Norov <yury.norov@gmail.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Shreeya Patel <shreeya.patel@collabora.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Sandy Huang <hjc@rock-chips.com>,
+ Andy Yan <andy.yan@rock-chips.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Shawn Lin <shawn.lin@rock-chips.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kwilczynski@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Chanwoo Choi <cw00.choi@samsung.com>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>, Qin Jian <qinjian@cqplus1.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
+ linux-sound@vger.kernel.org, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-pci@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, llvm@lists.linux.dev,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Subject:
+ Re: [PATCH v3 11/20] drm/rockchip: inno-hdmi: switch to FIELD_PREP_WM16 macro
+Date: Wed, 27 Aug 2025 09:32:26 +0200
+Message-ID: <5006976.yKVeVyVuyW@phil>
+In-Reply-To: <20250825-byeword-update-v3-11-947b841cdb29@collabora.com>
+References:
+ <20250825-byeword-update-v3-0-947b841cdb29@collabora.com>
+ <20250825-byeword-update-v3-11-947b841cdb29@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <835fe512-4cff-4130-8b67-d30b91d95099@youngman.org.uk>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Tue, Aug 26, 2025 at 06:35:10PM +0100, anthony wrote:
-> On 26/08/2025 10:14, Yu Kuai wrote:
-> > > Umm, that's actually a red flag.  If a device guarantees atomic behavior
-> > > it can't just fail it.  So I think REQ_ATOMIC should be disallowed
-> > > for md raid with bad block tracking.
-> > > 
-> > 
-> > I agree that do not look good, however, John explained while adding this
-> > that user should retry and fallback without REQ_ATOMIC to make things
-> > work as usual.
-> 
-> Whether a device promises atomic write is orthogonal to whether that write
-> succeeds - it could fail for a whole host of reasons, so why can't "this is
-> too big to be atomic" just be another reason for failing?
+Am Montag, 25. August 2025, 10:28:31 Mitteleurop=C3=A4ische Sommerzeit schr=
+ieb Nicolas Frattaroli:
+> The era of hand-rolled HIWORD_UPDATE macros is over, at least for those
+> drivers that use constant masks.
+>=20
+> The inno-hdmi driver's own HIWORD_UPDATE macro is instantiated only
+> twice. Remove it, and replace its uses with FIELD_PREP_WM16. Since
+> FIELD_PREP_WM16 shifts the value for us, we replace using the mask as
+> the value by simply using 1 instead.
+>=20
+> With the new FIELD_PREP_WM16 macro, we gain better error checking and a
+> central shared definition.
+>=20
+> This has been compile-tested only as I lack hardware this old, but the
+> change is trivial enough that I am fairly certain it's equivalent.
+>=20
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
-Too big to be atomic is a valid failure reason.  But the limit needs
-to be documented in the queue limits beforehand.
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+
 
 
