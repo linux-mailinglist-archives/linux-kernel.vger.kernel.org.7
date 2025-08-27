@@ -1,341 +1,254 @@
-Return-Path: <linux-kernel+bounces-788647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00B22B387D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:35:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58A22B387E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:41:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED52D1BA5B72
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:35:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 047BE7A6EFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:40:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E862DEA74;
-	Wed, 27 Aug 2025 16:34:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB292D5C89;
+	Wed, 27 Aug 2025 16:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="mzNGsLP+"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="tWIdsCE1"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2087.outbound.protection.outlook.com [40.107.220.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E6E20A5EA
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 16:34:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756312493; cv=none; b=GB2CNnW/r6hj4Sa321B+/xRWF9f8bTZA8XNc0VGZ+ttIcaAjaOd2VwnHZVwgNwc2agyXYGAUFwedRNoegdvqz2xDD4hcbg7Xrms7JoUx7ayvbfeHLczKbi6q/emWeC3hlBh2SqY1LDUR8BE25J/LYD0UaPZdeLvfkmLECKcJwCQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756312493; c=relaxed/simple;
-	bh=hIdOxF0V/GWmdAeRpodpW7JqSq9MrMJaTYcZSngLWgI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dwzSMTSlPWeufo3uJteggmmugB++2Iw9wmIQMF6f8vgn5y2v7U65Kle9lH5X4FcTgyxiM02jc9w6QSYw3Pi7pgeZUFsYzZ2lqDpMcXKRVSX0UKKe0c61WHhyW+mXleT8UBJJZ99uZPOl69TDt742ueL35FuADuMHoQQY8JDGzMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=mzNGsLP+; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-333f8d1cbcdso304091fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 09:34:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1756312490; x=1756917290; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dYJFvxznS9qH/KLo9mNWDlA9h7eslmU7zn/DFqWipOo=;
-        b=mzNGsLP+DwTz6zz4mOzVbPvmkTkwaOFWU6JNu0li39PchAkuq2dQwvNisfN8xl6gpr
-         6rATK/eTLMpEmEK69WT8/2M+/HK9b4oIblbei2o/POnOBeHcfD+vAa9oR8PKdYEis8PG
-         hQvpsQQMasAEU2GPrilzjnbhmgEqb9M+SS9yb4y7pGKOawjtIKuevc39tIVuIP2Cg0PY
-         +9pBgOrLYpZ8YCc/yAqDM7lqiLiY3C2+HmXSlWPgYWe9adj9rFRj9Gql+KZ2QFTDe5oi
-         Df2c/ZxbjmRRakv1v5/NOzM4inzP9S6vbj6eoqdjEO0oF0WknGPIt7ljLNZZJa5uPUqB
-         fQEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756312490; x=1756917290;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dYJFvxznS9qH/KLo9mNWDlA9h7eslmU7zn/DFqWipOo=;
-        b=Gzpdv6cCAkCFvYp8U+/I4UQWtS3/TyHeDlzksb4ZjRjvcTk2pl3YUlOnrflyDIbmzT
-         uRNnytXzChIFKXDj8Bzigqy+oIEPr00CGm7rJZz/x+w0HjqyBxsDdhiLFEjmB3DEHoG0
-         WAFT440DVlkyXuZQ43sbRLa9ht6SLIGY3yMw/27mfOy4i2OBvnCA9UVuFU5dAglXcp+O
-         +78FujY+tJP8kok3jJ5h81WnH0Ip1/QlyyB25AeTIR1Fh1OSy3iLJwQR8I+P8ncBmXD6
-         cK+Gauk5K39kMVZ5GMU+/pLAJ9t/9mP+ub0jGpqU2FCtIfaymP/eNAgUNAOo+asmdsa5
-         IXtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfWwktFWqwuptybkIdDRcyBN/FP/YoVQ996SgSMrX191jdejX7QfbWmcGoMnnqdI8i542XuJe/D+kIIt8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIBhVwDS19d+pb/fcxqvbTq7N+77lMxTudc/IXyu54yojjSDyX
-	f6HJuEqW68fr8/x5QHTfdD5ArV2JJKCAz2iWmCydXoX5H/LqLyK5tmuduzix011ZIxxbxs/NkR2
-	OwcnjuVcidnpnl+2j+UqE0s8ygzFNmO6FOJKyPUjJKw==
-X-Gm-Gg: ASbGnctc3URAZN38CpNvNnQrUqGOwnhwbK3pEYr/BVfHjF0+ZHUd66VPQtjdIo4Ee5V
-	mY1wpwwi96YWxdUgstS5xksCo1+ToxwE1YSmPU+taZmnlMCyY0J21+RAlzpNEd9q6ZCkGsw7sT9
-	AvSCN1nZDJdcq+gWhK/K5Dm2Rdh6VOI9oMx7w6bV1fV+JsSGuUx7TZQcMlab6s1Jd33gSVojbo6
-	+LZgEGpdUNsqargB4+TryGatjJ6lfAUocsLRaY=
-X-Google-Smtp-Source: AGHT+IEYAM6G7jrQwiVwruO6yosvrhxlh0HPcGpJQY4iz4Lhz2MgtOaLooKmiHE3wnTbkxrjwI2ai0VEsGMyeCbbJ/o=
-X-Received: by 2002:a2e:be1c:0:b0:336:7b66:13a1 with SMTP id
- 38308e7fff4ca-3367b662564mr27772081fa.0.1756312489551; Wed, 27 Aug 2025
- 09:34:49 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79BE914BFA2
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 16:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.87
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756312893; cv=fail; b=EFEAggK2XSXuxVjmKfmchjVID2yaaDKW49YVKbunBtVj3/Ye4HCo7qVdq/ksgMeWqVU9/Qb8JDOjh7otlvLtg1QW+18kw5T6PCSEfp5LuxO9AVcWM5sS5IDUqInxEUvvVkWKY2KAcept5JUEkJ/W7rQB/bGal/dAvsXNgoWVXyE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756312893; c=relaxed/simple;
+	bh=KtE3MPVFnxeTqozcYyCatA9pQ1dyzbvUP2OByiWm56w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TKQTPpdlLBUqrcp3JBgaR04bNhKv51yEG//6XqovrjZyou9liHlsBHc81ReC3wdNlMyIESFP/7dI/TEtq8GtvJVaCovbsyp/Kaeo19f2mAW+THtVSbXSmcvfPWZGlJnsZdG5lLXTr8cIutknXyf6CeJZLPJ+k76Q8D6tn8u81OU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=tWIdsCE1; arc=fail smtp.client-ip=40.107.220.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BkwtbMBhtF+xN2F79f2BoCDoWhd1CfN76MrGA6SpB2lOl1/LyJwqva2JCiR7kcJFjlF57y9wZFgfpTyuII3spaioc6t3hhlwXyAzhaNkJ5NWigpRrspZDrWWso+AW0Z6FM2/IAYf7viMSCX5Gj4g5PS1DV48FeLDVj7e1JUHlXW85cXsSVmxFra73s47kzsD5CW8yE/SVCUA6G1sLmPQAxORjD35gjI8mnBckcskzYH5SoUJ91K/ybRCKx9bheT4mJC/wOQmNcv2P2jzxkJbU7kSEfMqxu9NLbdV9HEYtPQz9gGis5n9Xespca6a/K2mHh/QHyB+NaOeRHRadSnBaA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jeaaiM4dTMay5/1o9dmGebiKV+yrCqqruUamX3tVL0w=;
+ b=PGpYBwlZ6XE/vyf4+yiywrJUoqd8xl5+ys9+AhKGVk1/fFnDjXP5KBDIjdilU7LLcI6WC6o/EHDQQoHWY+MPJPNXzbbg26geEO6uvI7xDor6TourMeNJPpBhoPEQGFwCAwPjctrEyA/RpV7YBk528+J3hAKNsL5t+p2/11eAeb7IO2xZ0JybY1jDoSw/BVZD19yJtL/0zp9/PyNqf4zR01mjNV2ED+ngqRawzMTvBvXzfHHqZlvX3jptIddLHWdSfJ0q51Luqm2bTFwP1WZeybTOWPr5nio+ayKXZ0P+IvjI9ol3uB5QFqDH3Jc4Lgf1QHXzWeqmdi2dSBTd1Z+JJw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jeaaiM4dTMay5/1o9dmGebiKV+yrCqqruUamX3tVL0w=;
+ b=tWIdsCE1vZ8Z2b9pbpQ0iU5ICFF+UoeY0kcBHGjXOUWYC6SkToDWXcFsVnnJHKysMYljcz4OPDalwMj2u2k/nrIJIW4nrubHJt3Xo+YsZVh3Ue3LoaDvBf0lmP4bvXDqZqL/q4Z3kUnBVLUTfgMEig5AoFxTgAe9PsAE7xJfZDY=
+Received: from BY5PR13CA0009.namprd13.prod.outlook.com (2603:10b6:a03:180::22)
+ by MW6PR12MB8833.namprd12.prod.outlook.com (2603:10b6:303:23f::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Wed, 27 Aug
+ 2025 16:41:28 +0000
+Received: from SJ1PEPF0000231F.namprd03.prod.outlook.com
+ (2603:10b6:a03:180:cafe::bd) by BY5PR13CA0009.outlook.office365.com
+ (2603:10b6:a03:180::22) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.5 via Frontend Transport; Wed,
+ 27 Aug 2025 16:41:28 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ SJ1PEPF0000231F.mail.protection.outlook.com (10.167.242.235) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9073.11 via Frontend Transport; Wed, 27 Aug 2025 16:41:28 +0000
+Received: from satlexmb08.amd.com (10.181.42.217) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 27 Aug
+ 2025 11:41:28 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Wed, 27 Aug
+ 2025 09:41:27 -0700
+Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Wed, 27 Aug 2025 11:41:27 -0500
+Message-ID: <492b465b-03d5-e80e-a31a-79ce4b1f83f7@amd.com>
+Date: Wed, 27 Aug 2025 09:41:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250819-pci-pwrctrl-perst-v1-0-4b74978d2007@oss.qualcomm.com> <20250819-pci-pwrctrl-perst-v1-5-4b74978d2007@oss.qualcomm.com>
-In-Reply-To: <20250819-pci-pwrctrl-perst-v1-5-4b74978d2007@oss.qualcomm.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 27 Aug 2025 18:34:38 +0200
-X-Gm-Features: Ac12FXyDhSf2ewNZkMyp76yle-wH_-s-bfKPLfIcpdEFx6e8RooRgknLS6PhU94
-Message-ID: <CAMRc=MdyTOYyeMJa_HBgJVo=ZNxsgdTsw6rhOUmGtNYeSrXLCw@mail.gmail.com>
-Subject: Re: [PATCH 5/6] PCI: qcom: Parse PERST# from all PCIe bridge nodes
-To: manivannan.sadhasivam@oss.qualcomm.com
-Cc: Manivannan Sadhasivam <mani@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Saravana Kannan <saravanak@google.com>, linux-pci@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, 
-	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, Brian Norris <briannorris@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH V1] accel/amdxdna: Add ioctl DRM_IOCTL_AMDXDNA_GET_ARRAY
+Content-Language: en-US
+To: Mario Limonciello <mario.limonciello@amd.com>, <ogabbay@kernel.org>,
+	<quic_jhugo@quicinc.com>, <jacek.lawrynowicz@linux.intel.com>,
+	<dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <max.zhen@amd.com>, <sonal.santan@amd.com>
+References: <20250822172319.377848-1-lizhi.hou@amd.com>
+ <2bec1429-4f8c-472c-99a1-420a33a3d316@amd.com>
+ <d6a02baa-3b05-73e6-9c2a-66c257efecc3@amd.com>
+ <a9814644-96e3-456f-90b7-8705a102c938@amd.com>
+ <2a21100b-2078-a166-0b47-9db6b4446b5a@amd.com>
+ <b758a72f-e30e-42f9-a6aa-6f6297b8cce3@amd.com>
+ <b3874221-5b4f-9625-de8a-4e54dc6884a2@amd.com>
+ <c048645d-480d-4b7f-8dde-efb095b2c2fa@amd.com>
+From: Lizhi Hou <lizhi.hou@amd.com>
+In-Reply-To: <c048645d-480d-4b7f-8dde-efb095b2c2fa@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF0000231F:EE_|MW6PR12MB8833:EE_
+X-MS-Office365-Filtering-Correlation-Id: 57dec3fe-07d5-4775-152d-08dde5889227
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Tm9tTGRlYkVXdndPVDhGUTlBV3MvR0pHTXlCUTlFRHRzeUFqUDRFSmRORnM5?=
+ =?utf-8?B?MzR4TjREMDM3bnJNdURXeXRRSysyd1IyN0hLam1IbUt4OWFOMHIxU0E3cXdS?=
+ =?utf-8?B?WWVoczQyd01MMmdvd0lXVE9LWkNONW16UkVWTGwvM3QwemFrYitHMVBkbnN5?=
+ =?utf-8?B?V3hsWWZwNjNOQzVrUjg3UXRFWDVOTjY0bVZIbGpMM29YZ1JCU2U4NGtKWVVU?=
+ =?utf-8?B?ZGlJWWg4T1ZKajhQbmswbkVKR2MxNWdCd2xnLzVqZHVQdkpvRUVzKzFQZS9W?=
+ =?utf-8?B?NERLbWRUR2VNN053SzQ1SnBubjEzbUIvTVNKSkVpeGNxWUVwWlFFMEEyM1Np?=
+ =?utf-8?B?TGs5RHY5ZlhCL3czRGhKdnl5VDdYeXB6bW5CZHExMnJwalZ0cmg2OC9zZmtX?=
+ =?utf-8?B?WlJBSk5jcmdRazUwYmVyME12Q2h2cGFSdjFKZ0M3cnRCYTROWUtiaGZrMytl?=
+ =?utf-8?B?Vy9kOFoybmtVVFIzb3JJU3FaNVFUakRuWEJNU0JVbVUzbUhPT1owd1F6VkVk?=
+ =?utf-8?B?YUhFRkIyVW9TQmFlWnFYM2pSV0ZoMjhXSWZsVmxNNk0yaEVwVjJQV3JCTVJt?=
+ =?utf-8?B?RWRQWFN6bjUrWDVpTnpXNHhsbVNwYmJ1S3Fhb0V2MTJ3UUcyYWhnNHNDR0hP?=
+ =?utf-8?B?ekJMSEtaSzFTYTNkMUorSm9rTnptREpTQ04yc2txS1ArUklZaEozN0tLQ1Aw?=
+ =?utf-8?B?eUF6Q3ptcEJsZjIrMXgwMUphRzliNGdRVU01bTlqS1Bzb2tZSkkzN1pNakNK?=
+ =?utf-8?B?NWFCdm5IQ0ZOR1JOblhnMGpzcU9Hd1Z6TkdFREZxL0xqTUZWSGJ5VWR0MlRp?=
+ =?utf-8?B?R2ttMnRTaENjSTZSSHUwWVZsbWdVQ2NPaTBhK0pKLzgyczUwU0YzNGp0L1Qv?=
+ =?utf-8?B?ajhja2V2TTRhQVNMejJHUEJhOGNwekJZeVVqbVNUWHpkWWxSeVRmSUt6RCt5?=
+ =?utf-8?B?ajU0OG05S09tdWliRlhqQy9BV2xkaFhpY1kzNVJRKzJlN2VDMXh6bEtJekxt?=
+ =?utf-8?B?elpoQ2VIUThSVDJNNmJXVGkrK05lanBUWitvbCt6THRDWG01aTM5MkIySmV4?=
+ =?utf-8?B?a0JRbEkydUNmUDd5Tzd4L3puVHJEOFNENTlnc3RyMG81NU5kcXdpWlVDVkMr?=
+ =?utf-8?B?bytobzQ3aFlEQTZMOWl6RzZaUWQ1RytUSVFCT1h5cENhTDV1UzEyeGxyRHZX?=
+ =?utf-8?B?QmVvNFJOMTZ4QjBDenFZTTVZRlA5VVpHYm9adVFrdDN4NjJzZDZGelQvYk9o?=
+ =?utf-8?B?Z0dGZElDZmdRcWo5a0xmNndPdHJ3Qk44bFpDczhVblQ0ZHBwK2h0ZjljTTU1?=
+ =?utf-8?B?MXo5aGhtTXBVeVVITG5NVGk2a1RlL1h3N21JMW1NbUdRUnY3WVNaV0NqOERj?=
+ =?utf-8?B?YkJSdllCbVVzaHQ5eXFjWGNWeVE0UjFFK014UmgwYWNFZHZoenJRSjdmSXE1?=
+ =?utf-8?B?bGw0Y1RwTDVKNzRaRElQSnk5bjM3bTFua1hPZHdDYi9mWWcrOW1pWnU4VG9a?=
+ =?utf-8?B?dm1iM25Zb2xTWmFabkV3NVBIRFFueHR6NzRub1lHUm5xM2oyVnVXOHg0YWNZ?=
+ =?utf-8?B?NUlGKzhaRkNJWjlLUVVyK3R2SmovT2RjM0JpRkdOS09RUEZuRjBhR2JDeVlF?=
+ =?utf-8?B?K2hhVUE3bXF3endBU0VsdkFBVU5rYVNxZ08zRlp0NURHbUhhWGl2cXFFd29F?=
+ =?utf-8?B?OSt3akNUbXlzanJickhGeDRGemZYRDVEbERBaGV4RURocHpKc0s5R2tYa0I1?=
+ =?utf-8?B?UTJkWG41Z29DWkNNbjhNZHNQNlVXTzlnL0hVbVJQSU1EbVFweFhtQkhyeHJq?=
+ =?utf-8?B?VVBRcStqYTR4UXVoK1dpemM2eUtvUC8vZ3dPWlNJWFlYd2VSb3VTOHNUSC9D?=
+ =?utf-8?B?eDlFb1hvcDRLdGFwWXk0RTVCa1FaK3Q2WEhTcTNrNjRNMUJZZHdvU3dqTEJ1?=
+ =?utf-8?B?a0FTV3ZyRm1ld3Bicm1vSXR6eDM1QmpCcU1pOVdNU2tzeFk0NUN0cUxkMGts?=
+ =?utf-8?B?Vnp6SXJ5WlZFMkN1RS9xQjZOdEV2WE9jZDdZYVh5cWtZdDhXRXhTTFF4RFN1?=
+ =?utf-8?Q?y6tPWQ?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 16:41:28.5470
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 57dec3fe-07d5-4775-152d-08dde5889227
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF0000231F.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8833
 
-On Tue, Aug 19, 2025 at 9:15=E2=80=AFAM Manivannan Sadhasivam via B4 Relay
-<devnull+manivannan.sadhasivam.oss.qualcomm.com@kernel.org> wrote:
->
-> From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
->
-> Devicetree schema allows the PERST# GPIO to be present in all PCIe bridge
-> nodes, not just in Root Port node. But the current logic parses PERST# on=
-ly
-> from the Root Port node. Though it is not causing any issue on the curren=
-t
-> platforms, the upcoming platforms will have PERST# in PCIe switch
-> downstream ports also. So this requires parsing all the PCIe bridge nodes
-> for the PERST# GPIO.
->
-> Hence, rework the parsing logic to extend to all PCIe bridge nodes starti=
-ng
-> from Root Port node. If the 'reset-gpios' property is found for a node, t=
-he
-> GPIO descriptor will be stored in IDR structure with node BDF as the ID.
->
-> It should be noted that if more than one bridge node has the same GPIO fo=
-r
-> PERST# (shared PERST#), the driver will error out. This is due to the
-> limitation in the GPIOLIB subsystem that allows only exclusive (non-share=
-d)
-> access to GPIOs from consumers. But this is soon going to get fixed. Once
-> that happens, it will get incorporated in this driver.
->
-> So for now, PERST# sharing is not supported.
->
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.=
-com>
-> ---
->  drivers/pci/controller/dwc/pcie-qcom.c | 90 +++++++++++++++++++++++++++-=
-------
->  1 file changed, 73 insertions(+), 17 deletions(-)
->
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/control=
-ler/dwc/pcie-qcom.c
-> index bcd080315d70e64eafdefd852740fe07df3dbe75..5d73c46095af3219687ff77e5=
-922f08bb41e43a9 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> @@ -19,6 +19,7 @@
->  #include <linux/iopoll.h>
->  #include <linux/kernel.h>
->  #include <linux/limits.h>
-> +#include <linux/idr.h>
->  #include <linux/init.h>
->  #include <linux/of.h>
->  #include <linux/of_pci.h>
-> @@ -286,6 +287,7 @@ struct qcom_pcie {
->         const struct qcom_pcie_cfg *cfg;
->         struct dentry *debugfs;
->         struct list_head ports;
-> +       struct idr perst;
->         bool suspended;
->         bool use_pm_opp;
->  };
-> @@ -294,14 +296,15 @@ struct qcom_pcie {
->
->  static void qcom_perst_assert(struct qcom_pcie *pcie, bool assert)
->  {
-> -       struct qcom_pcie_port *port;
->         int val =3D assert ? 1 : 0;
-> +       struct gpio_desc *perst;
-> +       int bdf;
->
-> -       if (list_empty(&pcie->ports))
-> +       if (idr_is_empty(&pcie->perst))
->                 gpiod_set_value_cansleep(pcie->reset, val);
-> -       else
-> -               list_for_each_entry(port, &pcie->ports, list)
-> -                       gpiod_set_value_cansleep(port->reset, val);
-> +
-> +       idr_for_each_entry(&pcie->perst, perst, bdf)
-> +               gpiod_set_value_cansleep(perst, val);
->  }
->
->  static void qcom_ep_reset_assert(struct qcom_pcie *pcie)
-> @@ -1702,20 +1705,58 @@ static const struct pci_ecam_ops pci_qcom_ecam_op=
-s =3D {
->         }
->  };
->
-> -static int qcom_pcie_parse_port(struct qcom_pcie *pcie, struct device_no=
-de *node)
-> +/* Parse PERST# from all nodes in depth first manner starting from @np *=
-/
-> +static int qcom_pcie_parse_perst(struct qcom_pcie *pcie,
-> +                                struct device_node *np)
->  {
->         struct device *dev =3D pcie->pci->dev;
-> -       struct qcom_pcie_port *port;
->         struct gpio_desc *reset;
-> -       struct phy *phy;
->         int ret;
->
-> -       reset =3D devm_fwnode_gpiod_get(dev, of_fwnode_handle(node),
-> -                                     "reset", GPIOD_OUT_HIGH, "PERST#");
-> -       if (IS_ERR(reset))
-> +       if (!of_find_property(np, "reset-gpios", NULL))
-> +               goto parse_child_node;
-> +
-> +       ret =3D of_pci_get_bdf(np);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       reset =3D devm_fwnode_gpiod_get(dev, of_fwnode_handle(np), "reset=
-",
-> +                                     GPIOD_OUT_HIGH, "PERST#");
-> +       if (IS_ERR(reset)) {
-> +               /*
-> +                * FIXME: GPIOLIB currently supports exclusive GPIO acces=
-s only.
-> +                * Non exclusive access is broken. But shared PERST# requ=
-ires
-> +                * non-exclusive access. So once GPIOLIB properly support=
-s it,
-> +                * implement it here.
-> +                */
-> +               if (PTR_ERR(reset) =3D=3D -EBUSY)
-> +                       dev_err(dev, "Shared PERST# is not supported\n");
 
-Then maybe just use the GPIOD_FLAGS_BIT_NONEXCLUSIVE flag for now and
-don't bail-out - it will make it easier to spot it when converting to
-the new solution?
+On 8/26/25 17:31, Mario Limonciello wrote:
+> On 8/26/2025 1:10 PM, Lizhi Hou wrote:
+>>
+>> On 8/26/25 10:58, Mario Limonciello wrote:
+>>> On 8/26/2025 12:55 PM, Lizhi Hou wrote:
+>>>>
+>>>> On 8/26/25 10:18, Mario Limonciello wrote:
+>>>>> On 8/25/2025 11:48 PM, Lizhi Hou wrote:
+>>>>>>
+>>>>>> On 8/25/25 14:28, Mario Limonciello wrote:
+>>>>>>> On 8/22/2025 12:23 PM, Lizhi Hou wrote:
+>>>>>>>> Add interface for applications to get information array. The 
+>>>>>>>> application
+>>>>>>>> provides a buffer pointer along with information type, maximum 
+>>>>>>>> number of
+>>>>>>>> entries and maximum size of each entry. The buffer may also 
+>>>>>>>> contain match
+>>>>>>>> conditions based on the information type. After the ioctl 
+>>>>>>>> completes, the
+>>>>>>>> actual number of entries and entry size are returned.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+>>>>>>>
+>>>>>>> How does userspace discover whether or not the new IOCTL call is 
+>>>>>>> supported?  Just a test call?
+>>>>>> The kernel header version will be used to determine whether the 
+>>>>>> application which uses new IOCTL will be compiled or not.
+>>>>>>
+>>>>>
+>>>>> But it's not actually an application compile time decision, it's a 
+>>>>> runtime decision.  IE I can compile an application with the 
+>>>>> headers on kernel 6.18 that has this, but if I try to run it on 
+>>>>> 6.15 it's going to barf.
+>>>>>
+>>>>> To some extent that comes with the territory, but I'm wondering if 
+>>>>> a better solution going forward would be for there to be a 
+>>>>> dedicated version command that you bump.
+>>>>
+>>>> For in-tree driver, I did not aware a common way for this other 
+>>>> than checking the kernel version.
+>>>>
+>>>> And here is qaic patch of adding a new IOCTL.
+>>>>
+>>>> https://github.com/torvalds/linux/ 
+>>>> commit/217b812364d360e1933d8485f063400e5dda7d66
+>>>>
+>>>>
+>>>> I know there is major, minor, patchlevel in struct drm_driver. And 
+>>>> I think that is not required for in-tree driver.
+>>>>
+>>>> Please let me know if I missed anything.
+>>>>
+>>>> Thanks,
+>>>
+>>> Right; so bump up one of those so that userspace can check it. Maybe 
+>>> "minor"?
+>>
+>> I meant for in-tree driver, is it good enough for userspace to just 
+>> check kernel version?  E.g. The drm driver versions are not used by 
+>> ivpu or qaic.
+>>
+>
+> Just because they don't doesn't mean you shouldn't.
+Ok. :) It does not sound amdxdna specific. Just wondering how the other 
+driver/application under accel subsystem handle this.
+>
+> Take a look at what amdgpu does for user queues earlier this year for 
+> example: 100b6010d7540e
+>
+> This means that a userspace application can look for that minor bump 
+> or newer to know the ioctl supports user queues.
 
-Bart
+As in-tree driver is part of kernel, the userspace application can check 
+kernel version to determine whether a feature is supported or not. Could 
+you share the idea why would user application to check drm driver 
+version for this?
 
-> +
->                 return PTR_ERR(reset);
-> +       }
-> +
-> +       ret =3D idr_alloc(&pcie->perst, reset, ret, 0, GFP_KERNEL);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +parse_child_node:
-> +       for_each_available_child_of_node_scoped(np, child) {
-> +               ret =3D qcom_pcie_parse_perst(pcie, child);
-> +               if (ret)
-> +                       return ret;
-> +       }
-> +
-> +       return 0;
-> +}
->
-> -       phy =3D devm_of_phy_get(dev, node, NULL);
-> +static int qcom_pcie_parse_port(struct qcom_pcie *pcie, struct device_no=
-de *np)
-> +{
-> +       struct device *dev =3D pcie->pci->dev;
-> +       struct qcom_pcie_port *port;
-> +       struct phy *phy;
-> +       int ret;
-> +
-> +       phy =3D devm_of_phy_get(dev, np, NULL);
->         if (IS_ERR(phy))
->                 return PTR_ERR(phy);
->
-> @@ -1727,7 +1768,10 @@ static int qcom_pcie_parse_port(struct qcom_pcie *=
-pcie, struct device_node *node
->         if (ret)
->                 return ret;
->
-> -       port->reset =3D reset;
-> +       ret =3D qcom_pcie_parse_perst(pcie, np);
-> +       if (ret)
-> +               return ret;
-> +
->         port->phy =3D phy;
->         INIT_LIST_HEAD(&port->list);
->         list_add_tail(&port->list, &pcie->ports);
-> @@ -1739,7 +1783,11 @@ static int qcom_pcie_parse_ports(struct qcom_pcie =
-*pcie)
->  {
->         struct device *dev =3D pcie->pci->dev;
->         struct qcom_pcie_port *port, *tmp;
-> -       int ret =3D -ENOENT;
-> +       struct gpio_desc *perst;
-> +       int ret =3D -ENODEV;
-> +       int bdf;
-> +
-> +       idr_init(&pcie->perst);
->
->         for_each_available_child_of_node_scoped(dev->of_node, of_port) {
->                 ret =3D qcom_pcie_parse_port(pcie, of_port);
-> @@ -1750,8 +1798,13 @@ static int qcom_pcie_parse_ports(struct qcom_pcie =
-*pcie)
->         return ret;
->
->  err_port_del:
-> -       list_for_each_entry_safe(port, tmp, &pcie->ports, list)
-> +       list_for_each_entry_safe(port, tmp, &pcie->ports, list) {
-> +               phy_exit(port->phy);
->                 list_del(&port->list);
-> +       }
-> +
-> +       idr_for_each_entry(&pcie->perst, perst, bdf)
-> +               idr_remove(&pcie->perst, bdf);
->
->         return ret;
->  }
-> @@ -1782,12 +1835,13 @@ static int qcom_pcie_probe(struct platform_device=
- *pdev)
->         unsigned long max_freq =3D ULONG_MAX;
->         struct qcom_pcie_port *port, *tmp;
->         struct device *dev =3D &pdev->dev;
-> +       struct gpio_desc *perst;
->         struct dev_pm_opp *opp;
->         struct qcom_pcie *pcie;
->         struct dw_pcie_rp *pp;
->         struct resource *res;
->         struct dw_pcie *pci;
-> -       int ret, irq;
-> +       int ret, irq, bdf;
->         char *name;
->
->         pcie_cfg =3D of_device_get_match_data(dev);
-> @@ -1927,7 +1981,7 @@ static int qcom_pcie_probe(struct platform_device *=
-pdev)
->
->         ret =3D qcom_pcie_parse_ports(pcie);
->         if (ret) {
-> -               if (ret !=3D -ENOENT) {
-> +               if (ret !=3D -ENODEV) {
->                         dev_err_probe(pci->dev, ret,
->                                       "Failed to parse Root Port: %d\n", =
-ret);
->                         goto err_pm_runtime_put;
-> @@ -1989,6 +2043,8 @@ static int qcom_pcie_probe(struct platform_device *=
-pdev)
->         qcom_pcie_phy_exit(pcie);
->         list_for_each_entry_safe(port, tmp, &pcie->ports, list)
->                 list_del(&port->list);
-> +       idr_for_each_entry(&pcie->perst, perst, bdf)
-> +               idr_remove(&pcie->perst, bdf);
->  err_pm_runtime_put:
->         pm_runtime_put(dev);
->         pm_runtime_disable(dev);
->
-> --
-> 2.45.2
->
->
+And amdxdna driver is new added driver which never bumped drm 
+major/minor before. Thus there is not any application use drm versions. 
+Maybe using kernel version directly is good enough in this case?
+
+I am fine to bump minor if it provides better support to user applications.
+
+
+Thanks,
+
+Lizhi
+
 
