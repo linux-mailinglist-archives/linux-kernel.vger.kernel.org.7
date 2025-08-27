@@ -1,98 +1,107 @@
-Return-Path: <linux-kernel+bounces-788443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21E59B38476
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:10:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 943E7B3847B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:10:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C339B5E7303
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:10:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F3F12035E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:10:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D38F435A29C;
-	Wed, 27 Aug 2025 14:10:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C43735A2A1;
+	Wed, 27 Aug 2025 14:10:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="CR+SKdFj"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bs1AvK3M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 556F4298CDE;
-	Wed, 27 Aug 2025 14:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E68AC298CDE;
+	Wed, 27 Aug 2025 14:10:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756303805; cv=none; b=K5eGdW1FHBlig8HgtyzAFb9hZwwX7lLxkw0fGnhvuEYuW579VptcwuD7F0OJlEee06tJmjHsQQjtsP3KNGuvgzFXCeu4ZhHG4Bs6PY21LkPKg1KQmDv0lLb+EAmesP89m0nOf9OLAMsNB3jBfgtocct/H4np20dZTR1uTe8DZRI=
+	t=1756303818; cv=none; b=nYiRQ7RWHiQTAJcOJV7vzSF25sTgx13cK5ESwrsqnw2cdZVJENEFj4ScE2Z1hsOkFFeAX5XqOwDOjaeQ9z4GbURFXtojSzvV3NrCkSCVQBt764hDDihfHVpBSCnWjVS/fwUErWHEpS/Cesjud15PvJzWztUkXkI2AR8MAqDRVOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756303805; c=relaxed/simple;
-	bh=8/Si6s7pD0alaFUOivWul7qGPTzCS3umWpEZiCw7aVU=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=qPQbhIGuBidgjmHwpX5PR/jTJubOnZS7GiSKXnlU5bM0HL9r1nmJ7GbNFk/wp+TKkWh2eHIJhrQt1UZjlRgivWdwZmdZ7ed7YGBgDsDS2ArlHl4Jm6EqEZDyhAG8QP/F1ZWKdbTdEzXjluZTHGQZDW4kMBWddXL34L0yrcRaIOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=CR+SKdFj; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c69:1331:996f:e361:948:c527])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7627D300E;
-	Wed, 27 Aug 2025 16:08:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1756303738;
-	bh=8/Si6s7pD0alaFUOivWul7qGPTzCS3umWpEZiCw7aVU=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=CR+SKdFjPJdWsKZtpgyOrMOxnYNm0/ptxzF+AL5qPF1dQQEjmkUH6gW85nBy33aIu
-	 TAianavEca1x6vXvpnEGbjsQQytvtzn1avU2X8RfR7QdLBPG/LMb4E550l5HnpoeU1
-	 bWnjlIpJtUKvYXpDawYXvPspTZoyNiTbPRuiH7+I=
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1756303818; c=relaxed/simple;
+	bh=2mnJ7BqJjiKjx1k4qNtB2x+XuREt1qIWZU2G+JEvDYA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TcY0YMSLV0qGl8pRF1hAgozrB3Hjy1C2m0U6sTc9YOWx7OG0b1bKwodNwRRNRko7qxah4VAktJ0HaCrHGtNzOCE4HY6Ka9L10EkdSokfjVApHxYPvUendwEc642VblYehl2dMNaXjr5JX7grP7gjDfv1RBfRZcABhTFWKPgZIGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bs1AvK3M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07EC2C4CEEB;
+	Wed, 27 Aug 2025 14:10:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756303817;
+	bh=2mnJ7BqJjiKjx1k4qNtB2x+XuREt1qIWZU2G+JEvDYA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Bs1AvK3MHePNswMm6fIRkInIPsAjmB9ZTarTGIqrbDf6TDRPklhaKpz6KMOzZc0rj
+	 TOWKFa5uGXQKmyx++paphCGl7qMRqyj+3jiYTuzqaAfGqt1NmHeyrceTnmP89GCyAp
+	 2yfKNrvJRCjIZToLvvqvQWVe5fqZufxRk5O7zTlsCS8jYsXtNpi9YQh8aCqd2Vm8ra
+	 SRR7FX7syFNR66wbDiiTPOJL/I1QDr3HDg1ScdMEMvJpeMwgLr0kA0BXIfKRVuSWnT
+	 YnaXRgrVxR23F2Pt9TShg9P1JzIvomO08f6IqC+MKYgDReEcPbkvWkf13JtKb+8Vik
+	 MR4pvvreMt1jg==
+Date: Wed, 27 Aug 2025 15:10:09 +0100
+From: Simon Horman <horms@kernel.org>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?utf-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>,
+	Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	=?utf-8?Q?Nicol=C3=B2?= Veronese <nicveronese@gmail.com>,
+	mwojtas@chromium.org, Antoine Tenart <atenart@kernel.org>,
+	devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Romain Gantois <romain.gantois@bootlin.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+Subject: Re: [PATCH net-next v11 08/16] net: phy: Introduce generic SFP
+ handling for PHY drivers
+Message-ID: <20250827141009.GB5652@horms.kernel.org>
+References: <20250814135832.174911-1-maxime.chevallier@bootlin.com>
+ <20250814135832.174911-9-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <aK8CATf4EdcYcTe-@stanley.mountain>
-References: <aK8CATf4EdcYcTe-@stanley.mountain>
-Subject: Re: [PATCH next] media: ti: j721e-csi2rx: Fix NULL vs IS_ERR() bug in ti_csi2rx_request_max_ppc()
-From: Jai Luthra <jai.luthra@ideasonboard.com>
-Cc: Jai Luthra <jai.luthra@linux.dev>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Hans Verkuil <hverkuil+cisco@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Date: Wed, 27 Aug 2025 19:39:55 +0530
-Message-ID: <175630379558.1633224.13627427442522908758@freya>
-User-Agent: alot/0.12.dev28+gd2c823fe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814135832.174911-9-maxime.chevallier@bootlin.com>
 
-Hi Dan,
+On Thu, Aug 14, 2025 at 03:58:23PM +0200, Maxime Chevallier wrote:
 
-Quoting Dan Carpenter (2025-08-27 18:32:57)
-> The media_entity_remote_source_pad_unique() function never returns NULL,
-> it returns error pointers.  Change this check from a NULL check to an
-> IS_ERR() check.
->=20
-> Fixes: 31f91c5224cd ("media: ti: j721e-csi2rx: Support multiple pixels pe=
-r clock")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c b/driv=
-ers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-> index 3992f8b754b7..b75aa363d1bf 100644
-> --- a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-> +++ b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-> @@ -497,7 +497,7 @@ static void ti_csi2rx_request_max_ppc(struct ti_csi2r=
-x_dev *csi)
->         int ret;
-> =20
->         pad =3D media_entity_remote_source_pad_unique(&csi->vdev.entity);
-> -       if (!pad)
-> +       if (IS_ERR(pad))
+...
 
-Argh, my bad. Thanks for the quick fix.
+> diff --git a/include/linux/phy_port.h b/include/linux/phy_port.h
+> index f47ac5f5ef9e..697721a6239f 100644
+> --- a/include/linux/phy_port.h
+> +++ b/include/linux/phy_port.h
+> @@ -67,6 +67,7 @@ struct phy_port {
+>  	unsigned int not_described:1;
+>  	unsigned int active:1;
+>  	unsigned int is_mii:1;
+> +	unsigned int is_sfp:1;
 
-Reviewed-by: Jai Luthra <jai.luthra@ideasonboard.com>
+nit: Please also add is_spf to the Kernel doc for this structure.
 
->                 return;
-> =20
->         ret =3D cdns_csi2rx_negotiate_ppc(csi->source, pad->index, &ppc);
-> --=20
-> 2.47.2
->
+
+>  };
+>  
+>  struct phy_port *phy_port_alloc(void);
+> -- 
+> 2.49.0
+> 
 
