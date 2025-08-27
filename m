@@ -1,125 +1,303 @@
-Return-Path: <linux-kernel+bounces-788473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D68BCB38514
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:35:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87FD2B3851E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:36:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 039A97C7F39
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:35:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 254C01614BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:36:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B921FCFEF;
-	Wed, 27 Aug 2025 14:35:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B03F520B80A;
+	Wed, 27 Aug 2025 14:36:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JVdAXgtK"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CZCo7ljL"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 903B21C4A2D;
-	Wed, 27 Aug 2025 14:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D581E5B88
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 14:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756305307; cv=none; b=Ez0nJaahoKvdWVae+kJiQ1DpGj8TvjA03YrNqjZQAdMI6orvvLGnLJmplYsvNJN8PjL7Lw4U7etK2oS91hmcy5dz+NRp02lhCeA6H+WQI/jKVpTXcrQiK3fdWjCbiT4SLxOn2M5jvY86ki8yYsHqb/12ikHCcp51LF0VqDSk8iE=
+	t=1756305392; cv=none; b=HaN4eJKSQWq3AvU4DYezy4Eb53Tm7OFK7N0+GHNmKMLUMA/705uwvIvCPYdCAHEtD0ZccfGvj4MBQy39YlrblmcQIRcxSYW9ueppwc3rFMItIKc6XqwX6xgPBjKR9xB/h7sdBUHwjgwUbCPJd/LJ8/3RmGC/EVGn7PXBRJwlM/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756305307; c=relaxed/simple;
-	bh=xJpjm8hurGVZiyhrrXJYAHFNPyJ/Hf2WzKuycTUqhwQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AVvJD+H0k99kZPiVGZ3waCXTM+TDnJOHetRtfm9sem6rzCszPQQE2IfpYfDm2uhLPVFNE5kOVBtV74XUN8GsmYfVhsB2JYpKMWGV188rZx5olW8ST3eJ2Xn9XUTUnYTbCmume8jLpts79dKE6kD6JZkzPQL93bYY2CQoQ+yvXWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JVdAXgtK; arc=none smtp.client-ip=209.85.128.50
+	s=arc-20240116; t=1756305392; c=relaxed/simple;
+	bh=ZzLiY+i5zPaz7lO+nPGOxp9CCzwMtrW5ChFcoule59A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VdLUUlOqBvmUewGndX04rcKWokfIt+ITgGOQOZQIq1u9qBZ0M9QwY8tpaoHbUX0LQK8REZgKyOhPpHQqZZyYmODK5VN6Uxj+4KSdBFwFVqN5xvaM4lXCfXabKOh6t81IOXypheC1Zr0/GkDkjGqoKLPytglq7IIt0mN1Vdwv92M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CZCo7ljL; arc=none smtp.client-ip=209.85.208.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45a20c51c40so53359295e9.3;
-        Wed, 27 Aug 2025 07:35:05 -0700 (PDT)
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-336989ed3a4so4350971fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 07:36:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756305304; x=1756910104; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=F1BUyJVLso5e3sw9oVrEXxJTuPzZqZWk1jkcADSRdMY=;
-        b=JVdAXgtKvt21ladUnNJBCRzifiaWYg7FbZWWOpmhZ51xcVXMEDLFxJsql08H4U7A1h
-         5NNBqHexqKdjAuS9FBYFLCLxo/v3+ZgU/8Qh0jggOwL+gbcpUWzOD3+m6WtcDPWq21nK
-         lv7EV063NwYQNg65JHRvgx7oWp5aET94kAlo7eGsrtKvdj1J/AevQ7lAW34rKWL6J3Nx
-         T32bibPvSMvjGELa1D/U5a5mfGhdGP6AS7VbdOQbqCyKdoV0nBl2Fk1N1efY5EMnDhLL
-         vK39V+p/NY1vzNSlfPKr9rfNXS7VVhpYDI9ca+my7gFABo8/Q+HyMVmuevmMPax+0G9b
-         tiEw==
+        d=gmail.com; s=20230601; t=1756305389; x=1756910189; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yER43C8X788IpQP0esrNVi7SuiWvauhx8PuShr745bA=;
+        b=CZCo7ljL6XzdnqMBiuO+S7C+gIoTw9hIlXaOq8EatwjoAW80Chp66UwsrQVIpmOCTJ
+         lWyzgsuHO4WvskLubjLdtCAdgs3j4GNB+/SEaae1ywquo8BqADk0z42BTF5Krge8z37m
+         ObxNjpv12k3qdvWNpU/Nvbx5948EjJtZkuhoMsgmO6kibXj/kuuCDaHwVM7KnUqiMk5w
+         XsMEwrmGBx14LDErCp4EG9KZ6V0+MhObiw4ujsmo51cZRxuXSrzZ1qTC1TWIW+kEeZFN
+         Pl3duitJMsQMSed4XbFnoxnelg464RtQmBnAz+wyqKiyaOjXwBnPft3cF7l7EX1BQDlg
+         +zMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756305304; x=1756910104;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=F1BUyJVLso5e3sw9oVrEXxJTuPzZqZWk1jkcADSRdMY=;
-        b=RGQvXhi/p/tee/D8/LV9NA0MTXuSCenHB6PCGHxL2KM1VZ5Shv5ENuYjbqNbfBghSq
-         vGZ2useB3qGG0dOkB0dr+O4KoHnDVTTxatK/y8nHHcrt18iaUe6Piot2IGqVti6TrU2Z
-         9fNjFPLFnZ63zljcCZ8tfeIZYN23kCAikRGhFX26guEgTbHF72zuwWCDu6+sG62gWSDE
-         XE4F4QH30qTRfkC1o4yC0xzefNmDth6a6Obhqs095htYX2GV+urARtP1F4OaocL/x5a6
-         bdhoYw3lo+YKAC1hunXDFZgpapoJ3SJ0jTq7oSxv1PzJsG6qoNgpEkAI8yEkOLztv1tQ
-         b2aQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVOhmaHaYhPpa+u9HOEy5l4bGkT1+TgF9UCAUWEw/WY2qCsw1ORPWvDCO4AdQolONPmeFqVJj05+IOu@vger.kernel.org, AJvYcCXTtRjwjCYnbD45J+mVMXagaYmZwZO/NuKGPcPqMWkEJUVFGUaWTrszLKZPeSEW8l78bys+1AxS1iIV3hpo@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlpxnACDjyyJR4AP339x5gHAsKK27SQOe45b6KFjydLMRDu4+8
-	arnEE2wh0uWEgEG1moYOzGRlacA719JaJ8DesSB3SUmnN1kbcbqvvicn
-X-Gm-Gg: ASbGncskCTAZB3EBXdeLDAkGE/9kpt5nRW/g3Vz547L66OjrVGRWKzME0+E8kpTU8oj
-	lharlKCbLGR3o0e0gOcV/pDwPfCom0nNM6piRw4faPHMxMJLp3UUJWxaQ5zuSEnHdj1fiVY8Mus
-	bVKSaLM/hnloFE3tuh8s64RHMSD/qoC3LKrYh05OT2HoDDqygKXLTR2sDouZ7CMlFsKnOFJsVhD
-	sY9MMM0o9YOItOqLkEJTB1Mdzdof1HcqtMyTwVLi+t7ZSa3pi5Ry4/KNkuEA+mXrFqa0JhJXP/u
-	gZ3arvJD5/C5AoYLckLNb5SRlrl5DzZWyu4F6rr1XYqB7gI2Qv0s6ryqlu9Jmsf74T7luWzSXsc
-	giHLlyQpqC3X5x7k5vxo1B9p4d0NZfHDxigmTKEbS8W0/2navj357N0LAM1nVyHqiH2cQ+K264q
-	hUBMd2lRfk3uJW+DAlrWm/iCUKFTVP+ijZP9BLXWxfT8jX2wqCrhcJPECx33CezWA=
-X-Google-Smtp-Source: AGHT+IGkKJ1XhDqK4M+m0K4FkEys/uX4rfEbc6c/Gcwva4PyVBgFs99pGKTiljPLXjMWH46PmsM14Q==
-X-Received: by 2002:a5d:5d08:0:b0:3c5:20d3:6041 with SMTP id ffacd0b85a97d-3c5dc54071emr16944872f8f.41.1756305303612;
-        Wed, 27 Aug 2025 07:35:03 -0700 (PDT)
-Received: from cypher.home.roving-it.com (7.9.7.f.b.1.3.0.b.8.f.0.9.e.0.0.1.8.6.2.1.1.b.f.0.b.8.0.1.0.0.2.ip6.arpa. [2001:8b0:fb11:2681:e9:f8b:31b:f797])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3c70e4ba046sm22750178f8f.1.2025.08.27.07.35.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 07:35:03 -0700 (PDT)
-From: Peter Robinson <pbrobinson@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Diederik de Haas <didi.debian@cknow.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Dragan Simic <dsimic@manjaro.org>,
-	Ondrej Jirman <megi@xff.cz>
-Cc: Peter Robinson <pbrobinson@gmail.com>
-Subject: [PATCH] arm64: dts: rockchip: Add vcc-supply to SPI flash on Pinephone Pro
-Date: Wed, 27 Aug 2025 15:34:58 +0100
-Message-ID: <20250827143501.1646163-1-pbrobinson@gmail.com>
-X-Mailer: git-send-email 2.51.0
+        d=1e100.net; s=20230601; t=1756305389; x=1756910189;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yER43C8X788IpQP0esrNVi7SuiWvauhx8PuShr745bA=;
+        b=f79UpptY1xyR0X+pn+1H4hUYqftlnprrdZqP+ghe7+r7/4+CHJ+ZTHZGEniRj+hWQm
+         XRvrz7Z5H+SIdWRtFOhmi+4u+JWK/5i6tRXVTmjocPIxHry0cHE26QYzIG5hTycdUDXw
+         3eGNKrrCAgwS4N6+vIY4wvHkvJAo65GT+hbSoYjPeMyNVjUW8sHV3TKiFXJQK3tLyiai
+         k34m/FX5GFpvzrWT63mNZWPj9veALYSH6IHbOm/99zN16LnTiEjTgMIhL6pYU5ZSusJ3
+         VnChxpoW15unG1WOiqHSEB5YbBaBkh92GgAntrN2ZiR4ZqwCsEKQeIMqKVXpyq4xPScv
+         DSoA==
+X-Forwarded-Encrypted: i=1; AJvYcCUIYtaXyLNCStlIF6rmjxSfn1/xgk1Yy4vKNBLwZTx1qMKq6/Dcffkp6ckN5Kv5ra3Ne1OxVooKMGmhnIg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRUmLOhh7GK1Gxl0aF/rwlt1vSf+OAI2pd9xb0S36gGfwwfyNy
+	taeN5JobpQ7UrKhce/pySV1z+0IgcipYQN7ejGVoDhoTMxjM4gy4rXA5+DBkUwEYgS9s/7rJ2kw
+	GA9Pd5y0p3m9TcDs7OlamqRZaWDqN8fw=
+X-Gm-Gg: ASbGncuYJdPo/oBST4frSZLVwsEqhpB3N74hgmJjybcYbOvRgkA9y+8nYWfH1/1c2N7
+	y/xfZOvlFxf6TPh/LbYqBO3z3anVnVR8yA+zRKrbN+4KwK5OFm+O1FbJg2OocyV2kYIykQ1NWMm
+	qtQ5nlk57xpE7QrlrIbEnMyljhDD3bBmoLrk26sDy8+fHukeGgyTZ3RexDL/Dwj2LOY+TsBCmDX
+	h7MhAo=
+X-Google-Smtp-Source: AGHT+IEdOj0pKOFhGzu8gBtRzFTYOZWkbszM7Fmdw5DNtYW3ObU2NnNlfYN3QQ35XVly64iYYt24LonYJUdBbferTSA=
+X-Received: by 2002:a2e:b8c2:0:b0:336:74c6:37b with SMTP id
+ 38308e7fff4ca-33674c6093amr32296471fa.22.1756305388609; Wed, 27 Aug 2025
+ 07:36:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250822192023.13477-1-ryncsn@gmail.com> <20250822192023.13477-3-ryncsn@gmail.com>
+ <CAF8kJuO0efOE-os=qi=i5jT1YWxspHYc=Ti1KN=uKgyFpWTRbA@mail.gmail.com>
+In-Reply-To: <CAF8kJuO0efOE-os=qi=i5jT1YWxspHYc=Ti1KN=uKgyFpWTRbA@mail.gmail.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Wed, 27 Aug 2025 22:35:51 +0800
+X-Gm-Features: Ac12FXwm2WfLl0mEmBMmQ0g2aVDQZhjEraUkxB4QSctNwOn_Ntr7pZee2ZGHLyY
+Message-ID: <CAMgjq7AkUc7hKrEL8cQ7jJTeXYBq7WqM55uQ_SZNNY8vJ7+ODQ@mail.gmail.com>
+Subject: Re: [PATCH 2/9] mm, swap: always lock and check the swap cache folio
+ before use
+To: Chris Li <chrisl@kernel.org>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Barry Song <baohua@kernel.org>, 
+	Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-As documented in the PinephonePro-Schematic-V1.0-20211127.pdf,
-page 11, the SPI Flash's VCC pin is connected to VCC_1V8 power
-source. This fixes the following warning:
+On Wed, Aug 27, 2025 at 4:21=E2=80=AFPM Chris Li <chrisl@kernel.org> wrote:
+>
+> On Fri, Aug 22, 2025 at 12:21=E2=80=AFPM Kairui Song <ryncsn@gmail.com> w=
+rote:
+>
+> > diff --git a/mm/shmem.c b/mm/shmem.c
+> > index e9d0d2784cd5..b4d39f2a1e0a 100644
+> > --- a/mm/shmem.c
+> > +++ b/mm/shmem.c
+> > @@ -2379,8 +2379,6 @@ static int shmem_swapin_folio(struct inode *inode=
+, pgoff_t index,
+> >                         count_vm_event(PGMAJFAULT);
+> >                         count_memcg_event_mm(fault_mm, PGMAJFAULT);
+> >                 }
+> > -       } else {
+> > -               swap_update_readahead(folio, NULL, 0);
+>
+> Also this update readahead move to later might have a similar problem.
+> All the bail out in the move will lose the readahead status update.
+>
+> The readahead deed is already done. Missing the status update seems
+> incorrect.
 
-  spi-nor spi1.0: supply vcc not found, using dummy regulator
+Thanks for the detailed review.
 
-Signed-off-by: Peter Robinson <pbrobinson@gmail.com>
----
- arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts | 1 +
- 1 file changed, 1 insertion(+)
+The only change I wanted here is that swap readahead update should be
+done after checking the folio still corresponds to the swap entry
+triggering the swapin. That should have slight to none effect compared
+to before considering the extremely tiny time window. We are only
+following the convention more strictly.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-index be90e049a302c..24e4365a2e588 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-@@ -772,6 +772,7 @@ flash@0 {
- 		compatible = "jedec,spi-nor";
- 		reg = <0>;
- 		spi-max-frequency = <10000000>;
-+		vcc-supply = <&vcc_1v8>;
- 	};
- };
- 
--- 
-2.51.0
+In theory it might even help to reduce false updates: if the folio no
+longer corresponds to the swap entry, we are hitting an unrelated
+folio, doing a readahead update will either mislead vma readahead's
+address hint, or could clean up the readahead flag of an unrelated
+folio without actually using it. If the folio does get hit in the
+future, due to the missing readahead flag, the statistic will go
+wrong.
 
+>
+>
+> >         }
+> >
+> >         if (order > folio_order(folio)) {
+> > @@ -2431,6 +2429,8 @@ static int shmem_swapin_folio(struct inode *inode=
+, pgoff_t index,
+> >                 error =3D -EIO;
+> >                 goto failed;
+> >         }
+> > +       if (!skip_swapcache)
+> > +               swap_update_readahead(folio, NULL, 0);
+> >         folio_wait_writeback(folio);
+> >         nr_pages =3D folio_nr_pages(folio);
+>
+>
+> >
+> > diff --git a/mm/swap.h b/mm/swap.h
+> > index efb6d7ff9f30..bb2adbfd64a9 100644
+> > --- a/mm/swap.h
+> > +++ b/mm/swap.h
+> > @@ -52,6 +52,29 @@ static inline pgoff_t swap_cache_index(swp_entry_t e=
+ntry)
+> >         return swp_offset(entry) & SWAP_ADDRESS_SPACE_MASK;
+> >  }
+> >
+> > +/**
+> > + * folio_contains_swap - Does this folio contain this swap entry?
+> > + * @folio: The folio.
+> > + * @entry: The swap entry to check against.
+> > + *
+> > + * Swap version of folio_contains()
+> > + *
+> > + * Context: The caller should have the folio locked to ensure
+> > + * nothing will move it out of the swap cache.
+> > + * Return: true or false.
+> > + */
+> > +static inline bool folio_contains_swap(struct folio *folio, swp_entry_=
+t entry)
+> > +{
+> > +       pgoff_t offset =3D swp_offset(entry);
+> > +
+> > +       VM_WARN_ON_ONCE(!folio_test_locked(folio));
+> > +       if (unlikely(!folio_test_swapcache(folio)))
+> > +               return false;
+> > +       if (unlikely(swp_type(entry) !=3D swp_type(folio->swap)))
+> > +               return false;
+> > +       return offset - swp_offset(folio->swap) < folio_nr_pages(folio)=
+;
+> > +}
+> > +
+> >  void show_swap_cache_info(void);
+> >  void *get_shadow_from_swap_cache(swp_entry_t entry);
+> >  int add_to_swap_cache(struct folio *folio, swp_entry_t entry,
+> > @@ -144,6 +167,11 @@ static inline pgoff_t swap_cache_index(swp_entry_t=
+ entry)
+> >         return 0;
+> >  }
+> >
+> > +static inline bool folio_contains_swap(struct folio *folio, swp_entry_=
+t entry)
+> > +{
+> > +       return false;
+> > +}
+> > +
+> >  static inline void show_swap_cache_info(void)
+> >  {
+> >  }
+> > diff --git a/mm/swap_state.c b/mm/swap_state.c
+> > index ff9eb761a103..be0d96494dc1 100644
+> > --- a/mm/swap_state.c
+> > +++ b/mm/swap_state.c
+> > @@ -70,10 +70,12 @@ void show_swap_cache_info(void)
+> >  }
+> >
+> >  /*
+> > - * Lookup a swap entry in the swap cache. A found folio will be return=
+ed
+> > - * unlocked and with its refcount incremented.
+> > + * swap_cache_get_folio - Lookup a swap entry in the swap cache.
+> >   *
+> > - * Caller must lock the swap device or hold a reference to keep it val=
+id.
+> > + * A found folio will be returned unlocked and with its refcount incre=
+ased.
+> > + *
+> > + * Context: Caller must ensure @entry is valid and pin the swap device=
+, also
+> Is the "pin" the same as  "lock the swap device or hold a reference"?
+> Not sure why you changed that comment to "pin".
+
+Yes it's the same thing. We don't lock the device though, the device
+can be pinned by the refcounf (get_swap_device) or locking anything
+that is referencing the device (locking PTL the a PTE that contains an
+swap entry pointing to the device, or locking a swap cache folio of a
+swap entry that points to the device). So I juse used the word "pin".
+I added some comments in mm/swap.h in later commits about what the
+"pin" means.
+
+>
+> It seems to me that you want to add the comment for the return value chec=
+k.
+> Is that it?
+
+Right, the caller has to check the folio before use, so I'm trying to
+document this convention.
+
+> > + * check the returned folio after locking it (e.g. folio_swap_contains=
+).
+> >   */
+> >  struct folio *swap_cache_get_folio(swp_entry_t entry)
+> >  {
+> > @@ -338,7 +340,10 @@ struct folio *__read_swap_cache_async(swp_entry_t =
+entry, gfp_t gfp_mask,
+> >         for (;;) {
+> >                 int err;
+> >
+> > -               /* Check the swap cache in case the folio is already th=
+ere */
+> > +               /*
+> > +                * Check the swap cache first, if a cached folio is fou=
+nd,
+> > +                * return it unlocked. The caller will lock and check i=
+t.
+> > +                */
+> >                 folio =3D swap_cache_get_folio(entry);
+> >                 if (folio)
+> >                         goto got_folio;
+> > diff --git a/mm/swapfile.c b/mm/swapfile.c
+> > index 4b8ab2cb49ca..12f2580ebe8d 100644
+> > --- a/mm/swapfile.c
+> > +++ b/mm/swapfile.c
+> > @@ -240,12 +240,12 @@ static int __try_to_reclaim_swap(struct swap_info=
+_struct *si,
+> >          * Offset could point to the middle of a large folio, or folio
+> >          * may no longer point to the expected offset before it's locke=
+d.
+> >          */
+> > -       entry =3D folio->swap;
+> > -       if (offset < swp_offset(entry) || offset >=3D swp_offset(entry)=
+ + nr_pages) {
+> > +       if (!folio_contains_swap(folio, entry)) {
+> >                 folio_unlock(folio);
+> >                 folio_put(folio);
+> >                 goto again;
+> >         }
+> > +       entry =3D folio->swap;
+>
+> Can you also check this as well? The "goto again" will have entries
+> not assigned compared to previously.
+> Too late for me to think straight now if that will cause a problem.
+
+Oh, thanks for pointing this part out. This patch is correct, it's the
+original behaviour that is not correct. If the folio is no longer
+valid (the if check here failed), changing the `entry` value before
+could lead to a wrong look in the next attempt with `goto again`. That
+could lead to reclaim of an unrelated folio. It's a trivial issue
+though, only might marginally slow down the performance. Maybe I
+should make a seperate patch to fix this issue first in case anyone
+wants to backport it.
+
+>
+> To be continued.
+>
+> Chris
+>
 
