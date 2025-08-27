@@ -1,482 +1,332 @@
-Return-Path: <linux-kernel+bounces-787930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F435B37DC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:27:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66AF1B37DCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:28:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 062217C81A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:27:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F4327C8416
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:28:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F463375BF;
-	Wed, 27 Aug 2025 08:26:55 +0000 (UTC)
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64813451A0;
+	Wed, 27 Aug 2025 08:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TdIIFNWJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E4E340DA4
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 08:26:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF7F341ABD;
+	Wed, 27 Aug 2025 08:27:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756283214; cv=none; b=G5X0rglfpaeqsOz4toV8UhpcH4Y5twmN3NlWEDTnO7kmzsPBM6MGAdxPHKrq4EXVClXDyad8jH5Wy361qKn9pv2xHlcdA0O3yQgYPY4o3yrTiS9VezTJk6Wgu2z2I+gH6rWXI94/Q4bKi+u/OrzGMoYKZwJp04Y/BYq+GDAQ/Co=
+	t=1756283222; cv=none; b=hY2Y4l8OVnGECElvil2Fit2x0ZtjnqtZzxt5NsmxYeZu8G2iOmFruuY54MCBcyGhINVvLx/DAbIeOpW7oYm2/7X/b81CDAUPe2mTL2ULBDPj0QhMixsLyTTGk+yJDDi+QLIspcd7ySkpV4nKwHe4hSjvggCCS9jPpaEbv6zJvCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756283214; c=relaxed/simple;
-	bh=OoHQtjdsDQ4TenMxZAvnlo3D7ftRn8V63+9oZX6+ADQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TovZQWQGrdgnrFv6FHOPmEpAivTh5TMu2iMn0AN06/88t4F/CPjwBV+1Su1NIJW7lCUke1gIM/aQDFoxJ3Y955XldLqKnTrwTCqnuSdk2H2CLj0j/A+UsCN8Vf0Zb+DvnztWjWP2/xPE+vIPiGfFhrJZK9eddUTH0V2OVan78J8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5D5521FF21;
-	Wed, 27 Aug 2025 08:26:35 +0000 (UTC)
-Authentication-Results: smtp-out2.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 474AA13310;
-	Wed, 27 Aug 2025 08:26:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 6LsiETvBrmhNfgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 27 Aug 2025 08:26:35 +0000
-From: Vlastimil Babka <vbabka@suse.cz>
-Date: Wed, 27 Aug 2025 10:26:36 +0200
-Subject: [PATCH v6 04/10] slab: sheaf prefilling for guaranteed allocations
+	s=arc-20240116; t=1756283222; c=relaxed/simple;
+	bh=AHXuZr1Diu8xs46wYXTW6iLO5uiucbQ49KiMiUyxeh8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=a87HiW8tNTnBuBpm/sTUAmrqdJfjA20LolBuBjmtSCjHzTmUd8R0BkmsbnRGJj6TUtaelaIH3AIYAoBWDxAmtweJemYVzIHtoMcLRAK5WGD5EPZOc0H2oNW1UOdqSu8sxv/ATT1N4XC3IpK1rI5HdemLIhhHyCGFDjJ3lfuNvZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TdIIFNWJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A9CCC4CEEB;
+	Wed, 27 Aug 2025 08:27:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756283222;
+	bh=AHXuZr1Diu8xs46wYXTW6iLO5uiucbQ49KiMiUyxeh8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=TdIIFNWJSsWUH/3E4Tz4CaZ7bWBtkVRtAOxfMn0lf813rlJnc+lzZUtVD7TJqDRMN
+	 bP2UNYx5aQH1Bl2BGUVpaA/M6p/pcn2yj4CxxhICWV+rX7XyriTwXmCA101WhXuWAz
+	 y+s4WXBJ0HEQUPrfGvi4wpZk6FunXNFq1inBv34qnfA+twfUBM5w3cA/Vib4FQxsES
+	 PPRQA4jW8CdaqxjAww6ZJJRXluGRb6mijqV69AbibQUI92n/dPJSexYI5C1llYVAap
+	 wCYH9bhlW9t2R5ebj2hIywkVu7pbmHq8j7fcehQf8VXFARQ9TTHYqKvCS6oCTGgQ0Z
+	 jrqqH+Ls5y06Q==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1urBUi-00000000uUS-0vKP;
+	Wed, 27 Aug 2025 10:27:00 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Masahiro Yamada <mchehab+huawei@kernel.org>,
+	Miguel Ojeda <mchehab+huawei@kernel.org>,
+	Nathan Chancellor <mchehab+huawei@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Tamir Duberstein <tamird@gmail.com>,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/2] docs: add support to build manpages from kerneldoc output
+Date: Wed, 27 Aug 2025 10:26:37 +0200
+Message-ID: <d880eb9c915a08c25102b7c1b17a01a8ab7e32c3.1756282370.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <cover.1756282370.git.mchehab+huawei@kernel.org>
+References: <cover.1756282370.git.mchehab+huawei@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250827-slub-percpu-caches-v6-4-f0f775a3f73f@suse.cz>
-References: <20250827-slub-percpu-caches-v6-0-f0f775a3f73f@suse.cz>
-In-Reply-To: <20250827-slub-percpu-caches-v6-0-f0f775a3f73f@suse.cz>
-To: Suren Baghdasaryan <surenb@google.com>, 
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>, 
- Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
- maple-tree@lists.infradead.org, vbabka@suse.cz
-X-Mailer: b4 0.14.2
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[]
-X-Rspamd-Queue-Id: 5D5521FF21
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spam-Score: -4.00
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Add functions for efficient guaranteed allocations e.g. in a critical
-section that cannot sleep, when the exact number of allocations is not
-known beforehand, but an upper limit can be calculated.
+Generating man files currently requires running a separate
+script. The target also doesn't appear at the docs Makefile.
 
-kmem_cache_prefill_sheaf() returns a sheaf containing at least given
-number of objects.
+Add support for mandocs at the Makefile, adding the build
+logic inside sphinx-build-wrapper, updating documentation
+and dropping the ancillary script.
 
-kmem_cache_alloc_from_sheaf() will allocate an object from the sheaf
-and is guaranteed not to fail until depleted.
-
-kmem_cache_return_sheaf() is for giving the sheaf back to the slab
-allocator after the critical section. This will also attempt to refill
-it to cache's sheaf capacity for better efficiency of sheaves handling,
-but it's not stricly necessary to succeed.
-
-kmem_cache_refill_sheaf() can be used to refill a previously obtained
-sheaf to requested size. If the current size is sufficient, it does
-nothing. If the requested size exceeds cache's sheaf_capacity and the
-sheaf's current capacity, the sheaf will be replaced with a new one,
-hence the indirect pointer parameter.
-
-kmem_cache_sheaf_size() can be used to query the current size.
-
-The implementation supports requesting sizes that exceed cache's
-sheaf_capacity, but it is not efficient - such "oversize" sheaves are
-allocated fresh in kmem_cache_prefill_sheaf() and flushed and freed
-immediately by kmem_cache_return_sheaf(). kmem_cache_refill_sheaf()
-might be especially ineffective when replacing a sheaf with a new one of
-a larger capacity. It is therefore better to size cache's
-sheaf_capacity accordingly to make oversize sheaves exceptional.
-
-CONFIG_SLUB_STATS counters are added for sheaf prefill and return
-operations. A prefill or return is considered _fast when it is able to
-grab or return a percpu spare sheaf (even if the sheaf needs a refill to
-satisfy the request, as those should amortize over time), and _slow
-otherwise (when the barn or even sheaf allocation/freeing has to be
-involved). sheaf_prefill_oversize is provided to determine how many
-prefills were oversize (counter for oversize returns is not necessary as
-all oversize refills result in oversize returns).
-
-When slub_debug is enabled for a cache with sheaves, no percpu sheaves
-exist for it, but the prefill functionality is still provided simply by
-all prefilled sheaves becoming oversize. If percpu sheaves are not
-created for a cache due to not passing the sheaf_capacity argument on
-cache creation, the prefills also work through oversize sheaves, but
-there's a WARN_ON_ONCE() to indicate the omission.
-
-Reviewed-by: Suren Baghdasaryan <surenb@google.com>
-Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- include/linux/slab.h |  16 ++++
- mm/slub.c            | 265 +++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 281 insertions(+)
+ Documentation/Makefile                 |  3 +-
+ Documentation/doc-guide/kernel-doc.rst | 29 ++++-----
+ Makefile                               |  2 +-
+ scripts/split-man.pl                   | 28 ---------
+ tools/docs/sphinx-build-wrapper        | 81 ++++++++++++++++++++++++--
+ 5 files changed, 95 insertions(+), 48 deletions(-)
+ delete mode 100755 scripts/split-man.pl
 
-diff --git a/include/linux/slab.h b/include/linux/slab.h
-index 49acbcdc6696fd120c402adf757b3f41660ad50a..680193356ac7a22f9df5cd9b71ff8b81e26404ad 100644
---- a/include/linux/slab.h
-+++ b/include/linux/slab.h
-@@ -829,6 +829,22 @@ void *kmem_cache_alloc_node_noprof(struct kmem_cache *s, gfp_t flags,
- 				   int node) __assume_slab_alignment __malloc;
- #define kmem_cache_alloc_node(...)	alloc_hooks(kmem_cache_alloc_node_noprof(__VA_ARGS__))
+diff --git a/Documentation/Makefile b/Documentation/Makefile
+index 3e1cb44a5fbb..22e39e5ed07d 100644
+--- a/Documentation/Makefile
++++ b/Documentation/Makefile
+@@ -53,7 +53,7 @@ ifeq ($(HAVE_SPHINX),0)
+ else # HAVE_SPHINX
  
-+struct slab_sheaf *
-+kmem_cache_prefill_sheaf(struct kmem_cache *s, gfp_t gfp, unsigned int size);
-+
-+int kmem_cache_refill_sheaf(struct kmem_cache *s, gfp_t gfp,
-+		struct slab_sheaf **sheafp, unsigned int size);
-+
-+void kmem_cache_return_sheaf(struct kmem_cache *s, gfp_t gfp,
-+				       struct slab_sheaf *sheaf);
-+
-+void *kmem_cache_alloc_from_sheaf_noprof(struct kmem_cache *cachep, gfp_t gfp,
-+			struct slab_sheaf *sheaf) __assume_slab_alignment __malloc;
-+#define kmem_cache_alloc_from_sheaf(...)	\
-+			alloc_hooks(kmem_cache_alloc_from_sheaf_noprof(__VA_ARGS__))
-+
-+unsigned int kmem_cache_sheaf_size(struct slab_sheaf *sheaf);
-+
- /*
-  * These macros allow declaring a kmem_buckets * parameter alongside size, which
-  * can be compiled out with CONFIG_SLAB_BUCKETS=n so that a large number of call
-diff --git a/mm/slub.c b/mm/slub.c
-index 7492076cf8c388793c09a64496a3b8850ef0d8ec..c8dda640f95e7e738cf2ceb05b98d1176df6e83f 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -401,6 +401,11 @@ enum stat_item {
- 	BARN_GET_FAIL,		/* Failed to get full sheaf from barn */
- 	BARN_PUT,		/* Put full sheaf to barn */
- 	BARN_PUT_FAIL,		/* Failed to put full sheaf to barn */
-+	SHEAF_PREFILL_FAST,	/* Sheaf prefill grabbed the spare sheaf */
-+	SHEAF_PREFILL_SLOW,	/* Sheaf prefill found no spare sheaf */
-+	SHEAF_PREFILL_OVERSIZE,	/* Allocation of oversize sheaf for prefill */
-+	SHEAF_RETURN_FAST,	/* Sheaf return reattached spare sheaf */
-+	SHEAF_RETURN_SLOW,	/* Sheaf return could not reattach spare */
- 	NR_SLUB_STAT_ITEMS
- };
+ # Common documentation targets
+-infodocs texinfodocs latexdocs epubdocs xmldocs pdfdocs linkcheckdocs:
++mandocs infodocs texinfodocs latexdocs epubdocs xmldocs pdfdocs linkcheckdocs:
+ 	$(Q)@$(srctree)/tools/docs/sphinx-pre-install --version-check
+ 	+$(Q)$(PYTHON3) $(BUILD_WRAPPER) $@ \
+ 		--sphinxdirs="$(SPHINXDIRS)" --conf=$(SPHINX_CONF) \
+@@ -104,6 +104,7 @@ dochelp:
+ 	@echo  '  htmldocs        - HTML'
+ 	@echo  '  texinfodocs     - Texinfo'
+ 	@echo  '  infodocs        - Info'
++	@echo  '  mandocs         - Man pages'
+ 	@echo  '  latexdocs       - LaTeX'
+ 	@echo  '  pdfdocs         - PDF'
+ 	@echo  '  epubdocs        - EPUB'
+diff --git a/Documentation/doc-guide/kernel-doc.rst b/Documentation/doc-guide/kernel-doc.rst
+index af9697e60165..4370cc8fbcf5 100644
+--- a/Documentation/doc-guide/kernel-doc.rst
++++ b/Documentation/doc-guide/kernel-doc.rst
+@@ -579,20 +579,23 @@ source.
+ How to use kernel-doc to generate man pages
+ -------------------------------------------
  
-@@ -462,6 +467,8 @@ struct slab_sheaf {
- 	union {
- 		struct rcu_head rcu_head;
- 		struct list_head barn_list;
-+		/* only used for prefilled sheafs */
-+		unsigned int capacity;
- 	};
- 	struct kmem_cache *cache;
- 	unsigned int size;
-@@ -2833,6 +2840,30 @@ static void barn_put_full_sheaf(struct node_barn *barn, struct slab_sheaf *sheaf
- 	spin_unlock_irqrestore(&barn->lock, flags);
- }
+-If you just want to use kernel-doc to generate man pages you can do this
+-from the kernel git tree::
++To generate man pages for all files that contain kernel-doc markups, run::
  
-+static struct slab_sheaf *barn_get_full_or_empty_sheaf(struct node_barn *barn)
-+{
-+	struct slab_sheaf *sheaf = NULL;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&barn->lock, flags);
-+
-+	if (barn->nr_full) {
-+		sheaf = list_first_entry(&barn->sheaves_full, struct slab_sheaf,
-+					barn_list);
-+		list_del(&sheaf->barn_list);
-+		barn->nr_full--;
-+	} else if (barn->nr_empty) {
-+		sheaf = list_first_entry(&barn->sheaves_empty,
-+					 struct slab_sheaf, barn_list);
-+		list_del(&sheaf->barn_list);
-+		barn->nr_empty--;
-+	}
-+
-+	spin_unlock_irqrestore(&barn->lock, flags);
-+
-+	return sheaf;
-+}
-+
- /*
-  * If a full sheaf is available, return it and put the supplied empty one to
-  * barn. We ignore the limit on empty sheaves as the number of sheaves doesn't
-@@ -4962,6 +4993,230 @@ void *kmem_cache_alloc_node_noprof(struct kmem_cache *s, gfp_t gfpflags, int nod
- }
- EXPORT_SYMBOL(kmem_cache_alloc_node_noprof);
+-  $ scripts/kernel-doc -man \
+-    $(git grep -l '/\*\*' -- :^Documentation :^tools) \
+-    | scripts/split-man.pl /tmp/man
++  $ make mandocs
  
-+/*
-+ * returns a sheaf that has at least the requested size
-+ * when prefilling is needed, do so with given gfp flags
-+ *
-+ * return NULL if sheaf allocation or prefilling failed
-+ */
-+struct slab_sheaf *
-+kmem_cache_prefill_sheaf(struct kmem_cache *s, gfp_t gfp, unsigned int size)
-+{
-+	struct slub_percpu_sheaves *pcs;
-+	struct slab_sheaf *sheaf = NULL;
-+
-+	if (unlikely(size > s->sheaf_capacity)) {
-+
-+		/*
-+		 * slab_debug disables cpu sheaves intentionally so all
-+		 * prefilled sheaves become "oversize" and we give up on
-+		 * performance for the debugging. Same with SLUB_TINY.
-+		 * Creating a cache without sheaves and then requesting a
-+		 * prefilled sheaf is however not expected, so warn.
-+		 */
-+		WARN_ON_ONCE(s->sheaf_capacity == 0 &&
-+			     !IS_ENABLED(CONFIG_SLUB_TINY) &&
-+			     !(s->flags & SLAB_DEBUG_FLAGS));
-+
-+		sheaf = kzalloc(struct_size(sheaf, objects, size), gfp);
-+		if (!sheaf)
-+			return NULL;
-+
-+		stat(s, SHEAF_PREFILL_OVERSIZE);
-+		sheaf->cache = s;
-+		sheaf->capacity = size;
-+
-+		if (!__kmem_cache_alloc_bulk(s, gfp, size,
-+					     &sheaf->objects[0])) {
-+			kfree(sheaf);
-+			return NULL;
-+		}
-+
-+		sheaf->size = size;
-+
-+		return sheaf;
-+	}
-+
-+	local_lock(&s->cpu_sheaves->lock);
-+	pcs = this_cpu_ptr(s->cpu_sheaves);
-+
-+	if (pcs->spare) {
-+		sheaf = pcs->spare;
-+		pcs->spare = NULL;
-+		stat(s, SHEAF_PREFILL_FAST);
-+	} else {
-+		stat(s, SHEAF_PREFILL_SLOW);
-+		sheaf = barn_get_full_or_empty_sheaf(pcs->barn);
-+		if (sheaf && sheaf->size)
-+			stat(s, BARN_GET);
-+		else
-+			stat(s, BARN_GET_FAIL);
-+	}
-+
-+	local_unlock(&s->cpu_sheaves->lock);
-+
-+
-+	if (!sheaf)
-+		sheaf = alloc_empty_sheaf(s, gfp);
-+
-+	if (sheaf && sheaf->size < size) {
-+		if (refill_sheaf(s, sheaf, gfp)) {
-+			sheaf_flush_unused(s, sheaf);
-+			free_empty_sheaf(s, sheaf);
-+			sheaf = NULL;
-+		}
-+	}
-+
-+	if (sheaf)
-+		sheaf->capacity = s->sheaf_capacity;
-+
-+	return sheaf;
-+}
-+
-+/*
-+ * Use this to return a sheaf obtained by kmem_cache_prefill_sheaf()
-+ *
-+ * If the sheaf cannot simply become the percpu spare sheaf, but there's space
-+ * for a full sheaf in the barn, we try to refill the sheaf back to the cache's
-+ * sheaf_capacity to avoid handling partially full sheaves.
-+ *
-+ * If the refill fails because gfp is e.g. GFP_NOWAIT, or the barn is full, the
-+ * sheaf is instead flushed and freed.
-+ */
-+void kmem_cache_return_sheaf(struct kmem_cache *s, gfp_t gfp,
-+			     struct slab_sheaf *sheaf)
-+{
-+	struct slub_percpu_sheaves *pcs;
-+	struct node_barn *barn;
-+
-+	if (unlikely(sheaf->capacity != s->sheaf_capacity)) {
-+		sheaf_flush_unused(s, sheaf);
-+		kfree(sheaf);
-+		return;
-+	}
-+
-+	local_lock(&s->cpu_sheaves->lock);
-+	pcs = this_cpu_ptr(s->cpu_sheaves);
-+
-+	if (!pcs->spare) {
-+		pcs->spare = sheaf;
-+		sheaf = NULL;
-+		stat(s, SHEAF_RETURN_FAST);
-+	}
-+
-+	local_unlock(&s->cpu_sheaves->lock);
-+
-+	if (!sheaf)
-+		return;
-+
-+	stat(s, SHEAF_RETURN_SLOW);
-+
-+	/* Accessing pcs->barn outside local_lock is safe. */
-+	barn = pcs->barn;
-+
-+	/*
-+	 * If the barn has too many full sheaves or we fail to refill the sheaf,
-+	 * simply flush and free it.
-+	 */
-+	if (data_race(pcs->barn->nr_full) >= MAX_FULL_SHEAVES ||
-+	    refill_sheaf(s, sheaf, gfp)) {
-+		sheaf_flush_unused(s, sheaf);
-+		free_empty_sheaf(s, sheaf);
-+		return;
-+	}
-+
-+	barn_put_full_sheaf(barn, sheaf);
-+	stat(s, BARN_PUT);
-+}
-+
-+/*
-+ * refill a sheaf previously returned by kmem_cache_prefill_sheaf to at least
-+ * the given size
-+ *
-+ * the sheaf might be replaced by a new one when requesting more than
-+ * s->sheaf_capacity objects if such replacement is necessary, but the refill
-+ * fails (returning -ENOMEM), the existing sheaf is left intact
-+ *
-+ * In practice we always refill to full sheaf's capacity.
-+ */
-+int kmem_cache_refill_sheaf(struct kmem_cache *s, gfp_t gfp,
-+			    struct slab_sheaf **sheafp, unsigned int size)
-+{
-+	struct slab_sheaf *sheaf;
-+
-+	/*
-+	 * TODO: do we want to support *sheaf == NULL to be equivalent of
-+	 * kmem_cache_prefill_sheaf() ?
-+	 */
-+	if (!sheafp || !(*sheafp))
-+		return -EINVAL;
-+
-+	sheaf = *sheafp;
-+	if (sheaf->size >= size)
-+		return 0;
-+
-+	if (likely(sheaf->capacity >= size)) {
-+		if (likely(sheaf->capacity == s->sheaf_capacity))
-+			return refill_sheaf(s, sheaf, gfp);
-+
-+		if (!__kmem_cache_alloc_bulk(s, gfp, sheaf->capacity - sheaf->size,
-+					     &sheaf->objects[sheaf->size])) {
-+			return -ENOMEM;
-+		}
-+		sheaf->size = sheaf->capacity;
-+
-+		return 0;
-+	}
-+
-+	/*
-+	 * We had a regular sized sheaf and need an oversize one, or we had an
-+	 * oversize one already but need a larger one now.
-+	 * This should be a very rare path so let's not complicate it.
-+	 */
-+	sheaf = kmem_cache_prefill_sheaf(s, gfp, size);
-+	if (!sheaf)
-+		return -ENOMEM;
-+
-+	kmem_cache_return_sheaf(s, gfp, *sheafp);
-+	*sheafp = sheaf;
-+	return 0;
-+}
-+
-+/*
-+ * Allocate from a sheaf obtained by kmem_cache_prefill_sheaf()
-+ *
-+ * Guaranteed not to fail as many allocations as was the requested size.
-+ * After the sheaf is emptied, it fails - no fallback to the slab cache itself.
-+ *
-+ * The gfp parameter is meant only to specify __GFP_ZERO or __GFP_ACCOUNT
-+ * memcg charging is forced over limit if necessary, to avoid failure.
-+ */
-+void *
-+kmem_cache_alloc_from_sheaf_noprof(struct kmem_cache *s, gfp_t gfp,
-+				   struct slab_sheaf *sheaf)
-+{
-+	void *ret = NULL;
-+	bool init;
-+
-+	if (sheaf->size == 0)
-+		goto out;
-+
-+	ret = sheaf->objects[--sheaf->size];
-+
-+	init = slab_want_init_on_alloc(gfp, s);
-+
-+	/* add __GFP_NOFAIL to force successful memcg charging */
-+	slab_post_alloc_hook(s, NULL, gfp | __GFP_NOFAIL, 1, &ret, init, s->object_size);
-+out:
-+	trace_kmem_cache_alloc(_RET_IP_, ret, s, gfp, NUMA_NO_NODE);
-+
-+	return ret;
-+}
-+
-+unsigned int kmem_cache_sheaf_size(struct slab_sheaf *sheaf)
-+{
-+	return sheaf->size;
-+}
- /*
-  * To avoid unnecessary overhead, we pass through large allocation requests
-  * directly to the page allocator. We use __GFP_COMP, because we will need to
-@@ -8488,6 +8743,11 @@ STAT_ATTR(BARN_GET, barn_get);
- STAT_ATTR(BARN_GET_FAIL, barn_get_fail);
- STAT_ATTR(BARN_PUT, barn_put);
- STAT_ATTR(BARN_PUT_FAIL, barn_put_fail);
-+STAT_ATTR(SHEAF_PREFILL_FAST, sheaf_prefill_fast);
-+STAT_ATTR(SHEAF_PREFILL_SLOW, sheaf_prefill_slow);
-+STAT_ATTR(SHEAF_PREFILL_OVERSIZE, sheaf_prefill_oversize);
-+STAT_ATTR(SHEAF_RETURN_FAST, sheaf_return_fast);
-+STAT_ATTR(SHEAF_RETURN_SLOW, sheaf_return_slow);
- #endif	/* CONFIG_SLUB_STATS */
+-Some older versions of git do not support some of the variants of syntax for
+-path exclusion.  One of the following commands may work for those versions::
++Or calling ``script-build-wrapper`` directly::
  
- #ifdef CONFIG_KFENCE
-@@ -8588,6 +8848,11 @@ static struct attribute *slab_attrs[] = {
- 	&barn_get_fail_attr.attr,
- 	&barn_put_attr.attr,
- 	&barn_put_fail_attr.attr,
-+	&sheaf_prefill_fast_attr.attr,
-+	&sheaf_prefill_slow_attr.attr,
-+	&sheaf_prefill_oversize_attr.attr,
-+	&sheaf_return_fast_attr.attr,
-+	&sheaf_return_slow_attr.attr,
- #endif
- #ifdef CONFIG_FAILSLAB
- 	&failslab_attr.attr,
-
+-  $ scripts/kernel-doc -man \
+-    $(git grep -l '/\*\*' -- . ':!Documentation' ':!tools') \
+-    | scripts/split-man.pl /tmp/man
++  $ ./tools/docs/sphinx-build-wrapper mandocs
+ 
+-  $ scripts/kernel-doc -man \
+-    $(git grep -l '/\*\*' -- . ":(exclude)Documentation" ":(exclude)tools") \
+-    | scripts/split-man.pl /tmp/man
++The output will be at ``/man`` directory inside the output directory
++(by default: ``Documentation/output``).
++
++Optionally, it is possible to generate a partial set of man pages by
++using SPHINXDIRS:
++
++  $ make SPHINXDIRS=driver-api/media mandocs
++
++.. note::
++
++   When SPHINXDIRS={subdir} is used, it will only generate man pages for
++   the files explicitly inside a ``Documentation/{subdir}/.../*.rst`` file.
+diff --git a/Makefile b/Makefile
+index 6bfe776bf3c5..9bd44afeda26 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1800,7 +1800,7 @@ $(help-board-dirs): help-%:
+ # Documentation targets
+ # ---------------------------------------------------------------------------
+ DOC_TARGETS := xmldocs latexdocs pdfdocs htmldocs epubdocs cleandocs \
+-	       linkcheckdocs dochelp refcheckdocs texinfodocs infodocs
++	       linkcheckdocs dochelp refcheckdocs texinfodocs infodocs mandocs
+ PHONY += $(DOC_TARGETS)
+ $(DOC_TARGETS):
+ 	$(Q)$(MAKE) $(build)=Documentation $@
+diff --git a/scripts/split-man.pl b/scripts/split-man.pl
+deleted file mode 100755
+index 96bd99dc977a..000000000000
+--- a/scripts/split-man.pl
++++ /dev/null
+@@ -1,28 +0,0 @@
+-#!/usr/bin/env perl
+-# SPDX-License-Identifier: GPL-2.0
+-#
+-# Author: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+-#
+-# Produce manpages from kernel-doc.
+-# See Documentation/doc-guide/kernel-doc.rst for instructions
+-
+-if ($#ARGV < 0) {
+-   die "where do I put the results?\n";
+-}
+-
+-mkdir $ARGV[0],0777;
+-$state = 0;
+-while (<STDIN>) {
+-    if (/^\.TH \"[^\"]*\" 9 \"([^\"]*)\"/) {
+-	if ($state == 1) { close OUT }
+-	$state = 1;
+-	$fn = "$ARGV[0]/$1.9";
+-	print STDERR "Creating $fn\n";
+-	open OUT, ">$fn" or die "can't open $fn: $!\n";
+-	print OUT $_;
+-    } elsif ($state != 0) {
+-	print OUT $_;
+-    }
+-}
+-
+-close OUT;
+diff --git a/tools/docs/sphinx-build-wrapper b/tools/docs/sphinx-build-wrapper
+index c884022ad733..932b1b675274 100755
+--- a/tools/docs/sphinx-build-wrapper
++++ b/tools/docs/sphinx-build-wrapper
+@@ -47,6 +47,7 @@ the newer version.
+ import argparse
+ import locale
+ import os
++import re
+ import shlex
+ import shutil
+ import subprocess
+@@ -55,6 +56,7 @@ import sys
+ from concurrent import futures
+ 
+ from lib.python_version import PythonVersion
++from glob import glob
+ 
+ LIB_DIR = "../../scripts/lib"
+ SRC_DIR = os.path.dirname(os.path.realpath(__file__))
+@@ -77,6 +79,7 @@ TARGETS = {
+     "epubdocs":      { "builder": "epub",    "out_dir": "epub" },
+     "texinfodocs":   { "builder": "texinfo", "out_dir": "texinfo" },
+     "infodocs":      { "builder": "texinfo", "out_dir": "texinfo" },
++    "mandocs":       { "builder": "man",     "out_dir": "man" },
+     "latexdocs":     { "builder": "latex",   "out_dir": "latex" },
+     "pdfdocs":       { "builder": "latex",   "out_dir": "latex" },
+     "xmldocs":       { "builder": "xml",     "out_dir": "xml" },
+@@ -455,6 +458,71 @@ class SphinxBuilder:
+             except subprocess.CalledProcessError as e:
+                 sys.exit(f"Error generating info docs: {e}")
+ 
++    def handle_man(self, kerneldoc, docs_dir, src_dir, output_dir):
++        """
++        Create man pages from kernel-doc output
++        """
++
++        re_kernel_doc = re.compile(r"^\.\.\s+kernel-doc::\s*(\S+)")
++        re_man = re.compile(r'^\.TH "[^"]*" (\d+) "([^"]*)"')
++
++        if docs_dir == src_dir:
++            #
++            # Pick the entire set of kernel-doc markups from the entire tree
++            #
++            kdoc_files = set([self.srctree])
++        else:
++            kdoc_files = set()
++
++            for fname in glob(os.path.join(src_dir, "**"), recursive=True):
++                if os.path.isfile(fname) and fname.endswith(".rst"):
++                    with open(fname, "r", encoding="utf-8") as in_fp:
++                        data = in_fp.read()
++
++                    for line in data.split("\n"):
++                        match = re_kernel_doc.match(line)
++                        if match:
++                            if os.path.isfile(match.group(1)):
++                                kdoc_files.add(match.group(1))
++
++        if not kdoc_files:
++                sys.exit(f"Directory {src_dir} doesn't contain kernel-doc tags")
++
++        cmd = [ kerneldoc, "-m" ] + sorted(kdoc_files)
++        try:
++            if self.verbose:
++                print(" ".join(cmd))
++
++            result = subprocess.run(cmd, stdout=subprocess.PIPE, text= True)
++
++            if result.returncode:
++                print(f"Warning: kernel-doc returned {result.returncode} warnings")
++
++        except (OSError, ValueError, subprocess.SubprocessError) as e:
++            sys.exit(f"Failed to create man pages for {src_dir}: {repr(e)}")
++
++        fp = None
++        try:
++            for line in result.stdout.split("\n"):
++                match = re_man.match(line)
++                if not match:
++                    if fp:
++                        fp.write(line + '\n')
++                    continue
++
++                if fp:
++                    fp.close()
++
++                fname = f"{output_dir}/{match.group(2)}.{match.group(1)}"
++
++                if self.verbose:
++                    print(f"Creating {fname}")
++                fp = open(fname, "w", encoding="utf-8")
++                fp.write(line + '\n')
++        finally:
++            if fp:
++                fp.close()
++
+     def cleandocs(self, builder):           # pylint: disable=W0613
+         """Remove documentation output directory"""
+         shutil.rmtree(self.builddir, ignore_errors=True)
+@@ -483,7 +551,7 @@ class SphinxBuilder:
+         # Other targets require sphinx-build, so check if it exists
+         #
+         sphinxbuild = shutil.which(self.sphinxbuild, path=self.env["PATH"])
+-        if not sphinxbuild:
++        if not sphinxbuild and target != "mandocs":
+             sys.exit(f"Error: {self.sphinxbuild} not found in PATH.\n")
+ 
+         if builder == "latex":
+@@ -572,10 +640,13 @@ class SphinxBuilder:
+                 output_dir,
+             ]
+ 
+-            try:
+-                self.run_sphinx(sphinxbuild, build_args, env=self.env)
+-            except (OSError, ValueError, subprocess.SubprocessError) as e:
+-                sys.exit(f"Build failed: {repr(e)}")
++            if target == "mandocs":
++                self.handle_man(kerneldoc, docs_dir, src_dir, output_dir)
++            else:
++                try:
++                    self.run_sphinx(sphinxbuild, build_args, env=self.env)
++                except (OSError, ValueError, subprocess.SubprocessError) as e:
++                    sys.exit(f"Build failed: {repr(e)}")
+ 
+             #
+             # Ensure that each html/epub output will have needed static files
 -- 
 2.51.0
 
