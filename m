@@ -1,113 +1,109 @@
-Return-Path: <linux-kernel+bounces-788819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2D41B38AAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:10:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA50AB38AB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:11:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCD58366E84
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:10:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2904C1C21606
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:11:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E8E2D3228;
-	Wed, 27 Aug 2025 20:10:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2CE2EFD9B;
+	Wed, 27 Aug 2025 20:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="frafN4oT"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jM8ehaLw";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sZiERzK7"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D976927E1D5
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 20:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A9627E1D5;
+	Wed, 27 Aug 2025 20:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756325435; cv=none; b=Zgcq0yQNxWq8Hq1aW5YkJuuOag1X09BWFWtXu2IPAjZ+elOB0zb9eKMyKfZ81NuU28953RtPwd/Ae+elRIxstyawNZjU67ZzRLDcUiZP8me1fq6vVWfqJb40ikNWYZ+GwrutTIWvuFfG0kOuw3NMVgA9ufKok7PPuJF47jtmLTY=
+	t=1756325470; cv=none; b=SzaQ1AQwYj0K18I9yADwyxMyNvxEZEubjwTrwlDK/je05RkOci5LiShbFHzIWPI9hIpIDDfcX1sqiZ9aGo6HbvMEzJhgnWwvktGA88X3surknzzMTCIVru/nR4zkfy0XHAOsVw58pRZITDRAtPzP2YPELR2V43S1ajK7sjHE1mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756325435; c=relaxed/simple;
-	bh=i/vJDjRkU+5JhZayvsiPCU78Z43nE3H660NG9b5Blro=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pv4MpKox8A7DrQoi4Q9jWfxuRiLssssP3nHC0enOIHlarYzOKQr22MVx9YU2euUO4oifLnK6OmbS1LhxZnNUSYvqoIBMIb1jMY3BErkZzca9g0VSSpfu4AuYw7h/sIbJKGerIlTziiw+f3CLRrVkx9V0RI+DWv3J/xBUvPRzkiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=frafN4oT; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=7snkKX1bOycmBGsSmam3krw9hLMbCevZWz6AGkFb1rw=; b=frafN4oTk6CDEZo/0PbsvgHL+z
-	SwD8zAoiyolzKArNExErCueEtfu/m8qPipGkAQ0UKlTt4R29gcla3soDWsq6BQcW5I/rcsUrl7R/3
-	+azXWEERedpx6AHOGAuBfRv+EojaOVMHQt3Jv0rAdu7xFyWBuhNv6stLecteGBeZUwA+cIXYDd8MO
-	JgCEJbPYhgMe0l/EWqNacWAxNp1eGDj+q9l8bgNebfwZK90iX/Fip66uXYn5BXUty/hvjE3fC4HS2
-	ysVZtNiSawoizkVTaDjtt/fdp2i8gXaTIee8DbQBlvWPH/Ua7McUo1PwGezojPPHB8j9ATz1uksIA
-	BZCe1bhQ==;
-Received: from [189.6.13.79] (helo=[192.168.31.42])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1urMTM-002bFn-Vr; Wed, 27 Aug 2025 22:10:21 +0200
-Message-ID: <5e065f3a-9237-4798-9380-11c43b477882@igalia.com>
-Date: Wed, 27 Aug 2025 17:10:14 -0300
+	s=arc-20240116; t=1756325470; c=relaxed/simple;
+	bh=LZ45DdtI2GHR/bNHTXO18pT+29HkQdFkJCBPK2VwrL8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qFLSqsIn2E3RC79l77ZeSu0Yv2+RNV7zv1PX+8/cs557JVdkoqZGAEOiGI1EsRDd3hqX3EtfEgIzcaRnLFgOJ6iPbab///sdc98CljcgGr0BD8boyo05DPg0CgryQpYYom+2gww+GoKohufTqRkd714+iKg/Mz2pvSKh+W4fx6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jM8ehaLw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sZiERzK7; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 27 Aug 2025 22:10:59 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1756325460;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SGw07ZG7T2lSedYqSiQO/eFdzWtQmXmqUlGnClBZxG0=;
+	b=jM8ehaLw6Wa/LdnI2CgQe9JfaXaaMY25WsG9Ni/RzhSvKJ2vTqcmuDz5+eYx7eUlveAgoV
+	GxXIaQf1eGZaFalJAYSyYXbEuljf8oezq7BjWrE2GDiL9q5Qjc4T+qYl1ovwW5Rko6Z7lV
+	kfk4QEwf15bHdsG42rH4ZljzrO2KESN0Kk8u1YYwe5MVHgMKHB3AgZOqyoKVai9k2jGBOJ
+	sHZnvP8Cmzo0AhqSrEBYEoRCqgzrbwlmP2UJWmHJcCmKD0i3kjJoh0XFYqkCbNVX+GicgW
+	vJjHZuP8tHaj4kUieQInSzDpmNnMwkdTY86o1WLRM+OsMFRCwhbnfrQEAgUlDw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1756325460;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SGw07ZG7T2lSedYqSiQO/eFdzWtQmXmqUlGnClBZxG0=;
+	b=sZiERzK7/t0hkZtKQOC6p5Ol/Pm0iO22GMkhgTxsdx+KTyQmYNWrAyS2DnGKpcgO/cCDXv
+	7kxXgEzT4yAiKnBQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org,
+	virtualization@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] vhost_task: Fix a bug where KVM wakes an exited
+ task
+Message-ID: <20250827201059.EmmdDFB_@linutronix.de>
+References: <20250827194107.4142164-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/amd/display: Document num_rmcm_3dluts in
- mpc_color_caps
-To: Alex Deucher <alexdeucher@gmail.com>,
- "Kavithesh A.S" <kavitheshnitt@gmail.com>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
- harry.wentland@amd.com, sunpeng.li@amd.com, siqueira@igalia.com,
- alexander.deucher@amd.com, christian.koenig@amd.com, airlied@gmail.com,
- simona@ffwll.ch
-References: <20250823202540.487616-1-kavitheshnitt@gmail.com>
- <CADnq5_Onr6rR12NVagwMHURPfuQxBoVq8Qhui6heH_m-5eHsXA@mail.gmail.com>
-Content-Language: en-US
-From: Melissa Wen <mwen@igalia.com>
-In-Reply-To: <CADnq5_Onr6rR12NVagwMHURPfuQxBoVq8Qhui6heH_m-5eHsXA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250827194107.4142164-1-seanjc@google.com>
 
+On 2025-08-27 12:41:04 [-0700], Sean Christopherson wrote:
+> Michael,
 
+Sean,
 
-On 27/08/2025 17:02, Alex Deucher wrote:
-> Applied.  Thanks!
->
-> Alex
->
-> On Sat, Aug 23, 2025 at 4:25 PM Kavithesh A.S <kavitheshnitt@gmail.com> wrote:
->> Fix a kernel-doc warning by documenting the num_rmcm_3dluts member of struct mpc_color_caps.
->>
->> This is my first patch submission to the kernel, feedback is welcome
->>
->> Signed-off-by: Kavithesh A.S <kavitheshnitt@gmail.com>
->> ---
->>   drivers/gpu/drm/amd/display/dc/dc.h | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/gpu/drm/amd/display/dc/dc.h b/drivers/gpu/drm/amd/display/dc/dc.h
->> index 59c077561..06f05979b 100644
->> --- a/drivers/gpu/drm/amd/display/dc/dc.h
->> +++ b/drivers/gpu/drm/amd/display/dc/dc.h
->> @@ -234,6 +234,7 @@ struct lut3d_caps {
->>    * @ogam_ram: programmable out gamma LUT
->>    * @ocsc: output color space conversion matrix
->>    * @num_3dluts: MPC 3D LUT; always assumes a preceding shaper LUT
->> + * @num_rmcm_3dluts: number of RMCM 3D LUTS supported
-A bit late to comment, but I think you should keep the "always assumes a 
-preceding shaper LUT" part.
-This info is still very useful and links shaper LUT caps to this attribute.
+would the bellow work by chance? It is a quick shot but it looks
+symmetrical=E2=80=A6
 
-Melissa
+diff --git a/kernel/vhost_task.c b/kernel/vhost_task.c
+index bc738fa90c1d6..27107dcc1cbfe 100644
+--- a/kernel/vhost_task.c
++++ b/kernel/vhost_task.c
+@@ -100,6 +100,7 @@ void vhost_task_stop(struct vhost_task *vtsk)
+ 	 * freeing it below.
+ 	 */
+ 	wait_for_completion(&vtsk->exited);
++	put_task_struct(vtsk->task);
+ 	kfree(vtsk);
+ }
+ EXPORT_SYMBOL_GPL(vhost_task_stop);
+@@ -148,7 +149,7 @@ struct vhost_task *vhost_task_create(bool (*fn)(void *),
+ 		return ERR_CAST(tsk);
+ 	}
+=20
+-	vtsk->task =3D tsk;
++	vtsk->task =3D get_task_struct(tsk);
+ 	return vtsk;
+ }
+ EXPORT_SYMBOL_GPL(vhost_task_create);
 
->>    * @shared_3d_lut: shared 3D LUT flag. Can be either DPP or MPC, but single
->>    * instance
->>    * @ogam_rom_caps: pre-definied curve caps for regamma 1D LUT
->> --
->> 2.43.0
-
+Sebastian
 
