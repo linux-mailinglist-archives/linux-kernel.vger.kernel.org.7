@@ -1,151 +1,108 @@
-Return-Path: <linux-kernel+bounces-788991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B071B38F5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 01:48:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E44BB38F61
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 01:50:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A00BF3655BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:48:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B56A67C1013
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7B421147B;
-	Wed, 27 Aug 2025 23:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF41F30F94E;
+	Wed, 27 Aug 2025 23:50:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aMIT8nuJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pGFpoCR2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4E97260A;
-	Wed, 27 Aug 2025 23:48:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 448F9287272;
+	Wed, 27 Aug 2025 23:50:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756338502; cv=none; b=bTg2In5CbCPfAMfUnu0XEGkwhDYmyZNsFKE9EBY5T6WN4LNtR3f+EpvL/oUNTLGsBfWYMss32tC2+4t1ADNcoZHDrebTOtUPrwQKSIXh8swE73CAK93SRxNcCEujMmLOksdzUZWJWxj2WNe8HlhdPsoVZFLA+hBZWB4eL5ptaP8=
+	t=1756338620; cv=none; b=LzS1pZWp0Z8IElSQe9rAmTcx7HqzWNAk4FasFjmfKcfzf1VP4tzQ1k32lIiF9ScuqrMjTDf4PCHg5FPRVuvHgfakB25n5qYDHUGkVjrvn1nPT+vlqGQ+W//bGpTx6g5ZL/otSNS92rCzrL9wmZlLctrRTI1LrC8+QIlOdCmf6xM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756338502; c=relaxed/simple;
-	bh=HYsAii2/HLSQBeXT+P2UaCT6xr1iko5uLaQwFjvygSw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hkCiHkpD8q2Kh5/LQQa/VynyLCreSXfR3ouHt0Wb2Vbz5avXzYdauqkNXGmZU2H4BCZ307231OIKnzM8iNkqcBA8MYycfuhd6ixJd7By2Nj57JmQANnO0w5+0xwsW98pjEnbDkfnnoK4cuImJoV7SOFziYYvBvvxZhyF06qbAeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aMIT8nuJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB17BC4CEEB;
-	Wed, 27 Aug 2025 23:48:21 +0000 (UTC)
+	s=arc-20240116; t=1756338620; c=relaxed/simple;
+	bh=Sjy4XKwPxjMH22cgtLTe94cAf6zqfoRAYkJo6V+R/v0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XCwKG5+QSshX1/YT7NuWo6Xn8GZcPH27wKqCjQJscsHtTgHUYl4X58Ms+DLyUEUjXsljymQpyt4+EAeoR+um5tnsK+POtcshyw3y5tl5NvOxV7hur2cVgQyREibr55CkmDCB+XMxRn5S53y6wG2FnR8qnXCnNJGIpxXM4ziaxA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pGFpoCR2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8285C4CEF5;
+	Wed, 27 Aug 2025 23:50:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756338502;
-	bh=HYsAii2/HLSQBeXT+P2UaCT6xr1iko5uLaQwFjvygSw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=aMIT8nuJR0oR8XiverHENSD1rBE8lVUzZ/wr8/EHJO1Wf3ss3wnSDeNRA0tvtEWWt
-	 kqv/gXrYdmg3sjgMXGavGYhiSa8FtdQq+OrrruTZ84pEPZBCXBiEVx8XXaQq09T/56
-	 P6IAJqaK6oOxZClyczCUKSMV4LNNwFEvDoGz4yhLgU0LTm3HfqxnESvqxOfoqFruK8
-	 4DzzPXUSRjU6fgiOIv4dpT6Df0nA5QRS4MNqxaB+3Ti2B40kn5MhSzy7HcwFRgtj2k
-	 W4ihyDegNaY3WOCReGaFEDFHqCQrLzSRm9/X3WfJZq6u2keHEwzhPT4TyPhWL1fhR7
-	 CQZRvLBaeg/HQ==
+	s=k20201202; t=1756338619;
+	bh=Sjy4XKwPxjMH22cgtLTe94cAf6zqfoRAYkJo6V+R/v0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pGFpoCR2FfNWOEu7J+r96XKcBGhRGar1p+VF5wTN3S1ZPm0UJlygCJTLus76aX5JC
+	 zrx/hHfddtxbGdH7c+R+PGl7UMTdvSpPHKgpBAwTezJZRc3XLMU830fd/8ZGFT/RG1
+	 HjeDid3FpMjKSPqVFYlJpmGvrMJCtE5t4GH2zELfgYBlDTanMt6OWTQ+b/meoRLvTY
+	 k8FCMoi23sCrCcgsmfxi7cnHfYQrDN6ntH5rrbB4W5hfK7kaHigsXsBH+NrLcxTS4q
+	 O1vcYHJWNmYsvcqQGgBEWZIKIFZwlRVjhLDL3ztXerIxAGAkMqao6o6hHFR6ntYYM5
+	 HIyQUsatn4Ipw==
+Date: Wed, 27 Aug 2025 16:50:17 -0700
 From: Namhyung Kim <namhyung@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [GIT PULL] perf-tools fixes for v6.17-rc4
-Date: Wed, 27 Aug 2025 16:48:17 -0700
-Message-ID: <20250827234817.4156091-1-namhyung@kernel.org>
-X-Mailer: git-send-email 2.51.0.268.g9569e192d0-goog
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patch in the vhost tree
+Message-ID: <aK-Zubfr92yrl3tE@google.com>
+References: <20250827124654.78881028@canb.auug.org.au>
+ <20250827062218-mutt-send-email-mst@kernel.org>
+ <aK8_uOoLxLOniEbR@google.com>
+ <20250827152222-mutt-send-email-mst@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250827152222-mutt-send-email-mst@kernel.org>
 
-Hi Linus,
+On Wed, Aug 27, 2025 at 06:04:20PM -0400, Michael S. Tsirkin wrote:
+> On Wed, Aug 27, 2025 at 10:26:16AM -0700, Namhyung Kim wrote:
+> > Hello,
+> > 
+> > On Wed, Aug 27, 2025 at 06:23:52AM -0400, Michael S. Tsirkin wrote:
+> > > On Wed, Aug 27, 2025 at 12:46:54PM +1000, Stephen Rothwell wrote:
+> > > > Hi all,
+> > > > 
+> > > > The following commit is also in the perf-current tree as a different
+> > > > commit (but the same patch):
+> > > > 
+> > > >   c67e16d30dca ("tools headers: Sync uapi/linux/vhost.h with the kernel source"
+> > > > )
+> > > > 
+> > > > This is commit
+> > > > 
+> > > >   f79a62f4b3c7 ("tools headers: Sync uapi/linux/vhost.h with the kernel source")
+> > > > 
+> > > > in the perf-current tree.
+> > > 
+> > > 
+> > > Hmm.  I could drop mine I guess, but it only really makes sense after:
+> > > 
+> > >     vhost: Fix ioctl # for VHOST_[GS]ET_FORK_FROM_OWNER
+> > >     
+> > > 
+> > > which is not in the perf tree.
+> > 
+> > Yep, so I was waiting for you to send PR with the fix.
+> > It seems you already removed the commit in your tree.
+> > I'll send a PR for perf tools with this change.
+> > 
+> > Thanks,
+> > Namhyung
+> 
+> It's in my tree but I did not want to send it before we agreed what to
+> do. I can drop it, sure.
 
-Please consider pulling the following changes in perf tools for v6.17.
+Just sent out the PR, thanks for your co-operation!
 
-I've noticed a number of test failures when preparing this pull request.
-I didn't notice it since it happens when running the tests in parallel.
-So far git bisect couldn't find the correct bad commit but I don't think
-it belongs to this series.  I'll keep investigating.
-
-Thanks,
 Namhyung
 
-
-The following changes since commit c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9:
-
-  Linux 6.17-rc2 (2025-08-17 15:22:10 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-fixes-for-v6.17-2025-08-27
-
-for you to fetch changes up to 2c369d91d0933aaff96b6b807b22363e6a38a625:
-
-  perf symbol: Add blocking argument to filename__read_build_id (2025-08-25 15:07:18 -0700)
-
-----------------------------------------------------------------
-perf-tools fixes for v6.17-rc4
-
-A list of kernel header sync changes and two build-id fixes.
-
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-
-----------------------------------------------------------------
-Ian Rogers (2):
-      perf symbol-minimal: Fix ehdr reading in filename__read_build_id
-      perf symbol: Add blocking argument to filename__read_build_id
-
-Namhyung Kim (12):
-      perf test: Fix a build error in x86 topdown test
-      tools headers: Sync KVM headers with the kernel source
-      tools headers: Sync linux/bits.h with the kernel source
-      tools headers: Sync linux/cfi_types.h with the kernel source
-      tools headers: Sync x86 headers with the kernel source
-      tools headers: Sync arm64 headers with the kernel source
-      tools headers: Sync powerpc headers with the kernel source
-      tools headers: Sync syscall tables with the kernel source
-      tools headers: Sync uapi/linux/fcntl.h with the kernel source
-      tools headers: Sync uapi/linux/fs.h with the kernel source
-      tools headers: Sync uapi/linux/prctl.h with the kernel source
-      tools headers: Sync uapi/linux/vhost.h with the kernel source
-
- tools/arch/arm64/include/asm/cputype.h             | 28 +++++++
- tools/arch/powerpc/include/uapi/asm/kvm.h          | 13 ----
- tools/arch/x86/include/asm/cpufeatures.h           | 10 ++-
- tools/arch/x86/include/asm/msr-index.h             |  7 ++
- tools/arch/x86/include/uapi/asm/kvm.h              |  8 +-
- tools/include/linux/bits.h                         | 29 ++-----
- tools/include/linux/cfi_types.h                    | 23 ++++++
- tools/include/uapi/asm-generic/unistd.h            |  8 +-
- tools/include/uapi/linux/kvm.h                     | 27 +++++++
- tools/perf/arch/arm/entry/syscalls/syscall.tbl     |  2 +
- .../perf/arch/mips/entry/syscalls/syscall_n64.tbl  |  2 +
- tools/perf/arch/powerpc/entry/syscalls/syscall.tbl |  2 +
- tools/perf/arch/s390/entry/syscalls/syscall.tbl    |  2 +
- tools/perf/arch/sh/entry/syscalls/syscall.tbl      |  2 +
- tools/perf/arch/sparc/entry/syscalls/syscall.tbl   |  2 +
- tools/perf/arch/x86/entry/syscalls/syscall_32.tbl  |  2 +
- tools/perf/arch/x86/entry/syscalls/syscall_64.tbl  |  2 +
- tools/perf/arch/x86/tests/topdown.c                |  1 +
- tools/perf/arch/xtensa/entry/syscalls/syscall.tbl  |  2 +
- tools/perf/bench/inject-buildid.c                  |  2 +-
- tools/perf/builtin-buildid-cache.c                 |  8 +-
- tools/perf/builtin-inject.c                        |  4 +-
- tools/perf/tests/sdt.c                             |  2 +-
- tools/perf/trace/beauty/include/uapi/linux/fcntl.h | 18 +++++
- tools/perf/trace/beauty/include/uapi/linux/fs.h    | 88 ++++++++++++++++++++++
- tools/perf/trace/beauty/include/uapi/linux/prctl.h |  9 ++-
- tools/perf/trace/beauty/include/uapi/linux/vhost.h | 35 +++++++++
- tools/perf/util/build-id.c                         |  4 +-
- tools/perf/util/debuginfo.c                        |  8 +-
- tools/perf/util/dsos.c                             |  4 +-
- tools/perf/util/symbol-elf.c                       |  9 ++-
- tools/perf/util/symbol-minimal.c                   | 59 +++++++--------
- tools/perf/util/symbol.c                           |  8 +-
- tools/perf/util/symbol.h                           |  2 +-
- tools/perf/util/synthetic-events.c                 |  2 +-
- tools/scripts/syscall.tbl                          |  2 +
- 36 files changed, 342 insertions(+), 94 deletions(-)
 
