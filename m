@@ -1,200 +1,122 @@
-Return-Path: <linux-kernel+bounces-788769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7F86B38A19
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:13:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA7BDB38A1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 21:15:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF52D1BA6230
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:14:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 965D65E73AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:15:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4AE52E92B0;
-	Wed, 27 Aug 2025 19:13:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198572DC323;
+	Wed, 27 Aug 2025 19:15:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kolu0rhS"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ABaJO41g"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A491F2DC323;
-	Wed, 27 Aug 2025 19:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5099EDF58;
+	Wed, 27 Aug 2025 19:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756322003; cv=none; b=NY8b65ovfY4D7SW99WtuWFHepd+EYwn4T7OoMrJlkno+/0kM35tSfq1pMbAqrWXS1GJG1Av6TtpAhJZbU6SQ+d22vkwUzZ0c288tVhITqkDnNd+3qhRa8JkYaz+kmSWDcwSMwSHOTFA3aECTw/mhgKTHWuqZuYZ13ZEXTx6m71g=
+	t=1756322099; cv=none; b=IziStnTW5yDhr1EaImWSa/SQZu+f24iBRRlF9LUgsoUpveLo+acMp2nR77SivGFIMa8vvYIwk59Nq2QJCmP3fhwdXxTrGHKekB0hSp25awRzFkzKcDOHwR2/7hve+BfGM1B2V3Hv2VonLVRrT/lyeBL1mb3i10IOcMLU63mB1+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756322003; c=relaxed/simple;
-	bh=HoHb9cBNZlNajJRdDNy4jdYaCrfjkC+H5Sh4n+Bigfw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KsqTDDDCBLjCuZdwjOXKGwLpMkhXImbEakQMwurud9e6UmxYR+TJS05fBL0IMJBn8GczD3144SE18x92fDn0kVKbdM1IZHlxYoHKfLyaibFowiH5a/F4Fb5+WvVx7XMGzdfr82HXpzEhNqjSSnZG8IQYggO5BHykApi2nfGl++I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kolu0rhS; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-246fc803b90so1818075ad.3;
-        Wed, 27 Aug 2025 12:13:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756322001; x=1756926801; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=c0kKHdDELmMaF/8pZgpwfb3E83vE0G448tXMk8cv3x4=;
-        b=Kolu0rhSANAGpLXWCzFoY3gNC4OPM37zLUOAdZlRy8kYd5R5SxArwG1zbPKirarh9m
-         QR0dgmcdD1hgPNrhwTds8oRpncUsKjFTldvGIna4ZWZjGC644zCH7AhRROFwidUAV4Vp
-         ZoVmGJ+8KlxxClZJAW8F8z1xGvtdDDJ2bSDVMmsDyTtZsYw8UhcpAX92Kgz5gkf3/N9w
-         qZb+fYidua5tA8FWX0XceanvG/BGEbr7NcVn/MF7ymbdo2HF++h0iS8zYPcKko2H4WHn
-         8/wuvLvv6vcdQVhnZjEUeZrguXjgFb5c+iIaVKQR4oZZPHvH1XVbPT01z5G+BSwfDYuI
-         V1rA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756322001; x=1756926801;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=c0kKHdDELmMaF/8pZgpwfb3E83vE0G448tXMk8cv3x4=;
-        b=CLH93s1obnv2C84E/KBSFX86HRO/Gcgqpf3UlwLAJn7vDlxt23oYgRv60GrarcL30Z
-         Q6CVxd0+m1fEzhzppkyt6vJxvvdXj9/EShSxKSHsakH60lzi/ahh03O0N+LqGtWzbIbZ
-         vX53irSz+kxJObrjiu3NmNAmo9OybkzSzXIltG74OSgC8fwMw+X54TZ04b1e+fMpNUte
-         2Z0fIQ5EgE+YrnfgFBTXb9ixd0Ujs82fvBaUT9eF+Mf4ZTUGXkIRgxySdAnvQbv93ffo
-         Io9X5NuLozaUgIBkIgz3IXYzL0bFyFuCTIrHAC8OEQXahE4cpVoURT0AhYbBxy8gciRK
-         O3LQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVMDzhzoO48SGBFVDluSLi6JX4F0B+dTZHa6ZO9PmqMUdw3aaWgBfE9lbOggam6P2AlY1Y=@vger.kernel.org, AJvYcCWdsNPrszAq67jWAiHprfrYChd4R6IbaYQRVjPtkp9QQE2+4XmRqdUrRdeAacK3GtyMA2sQQxOdVm5pwaeX@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiIjYdB5mqXXutvnTWN4a4i/yr73JlseLGfUrsRN9ZYUN9o9Ry
-	4ZNxkavr8pNrV6DAa7Orhpvp7ECuU5Yw24xh/Ys6sa36s4hKId3Oxspm
-X-Gm-Gg: ASbGncus3CFgiLC6cZcqAAl9s5GNyK83Rejq+x4p6l1Ca9TKvlixeA2Sq8KwjksptN1
-	6fp72h+K2abssXAhj0u5fAuRCE03+H+6xQrL3ZnrdV7BjG7T2Xb6jAHO0V4rS4Y5QAwMlQIFJyG
-	Wk3ZgZl0vibh70Knm3G3mjJDO667wDeKOUjXRIgNJGyjADRigeAT5c8kDswpGZVUMIiEXNUexxS
-	tw4odkD3ah0zL1hCxzTFR0OFyUgrI7iiiz1IUGbRR6bmd0SiHQVMvpCb2MMchaalDZmLD2Xautg
-	GqdSPO73ri3yUhfHEwNV/4jN/Cf8GH7gOzExUXKzd01rdUwR/r851pDAjbe71UaQy/GbTHC9SR1
-	TGkdDo9wJqhtFiyj04CinnsDAMnE7Bqu4+HCsr+CLReEnv0hw
-X-Google-Smtp-Source: AGHT+IFQ5T+6jmkbhsAVVVVKrLLctdT6LkXlQI+hHafbMFRZ2l6CRC9kKZp4XFN8arv4sP1QlXUlyQ==
-X-Received: by 2002:a17:902:f606:b0:246:e8cc:8cea with SMTP id d9443c01a7336-246e8cc8eb9mr122556095ad.22.1756322000733;
-        Wed, 27 Aug 2025 12:13:20 -0700 (PDT)
-Received: from ?IPv6:2a03:83e0:115c:1:6ed5:bfbc:8f3d:6d63? ([2620:10d:c090:500::4:16a5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-248c97f2f96sm5590275ad.121.2025.08.27.12.13.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 12:13:20 -0700 (PDT)
-Message-ID: <a7bcc333d54501d544821b5feeb82588d3bc06cb.camel@gmail.com>
-Subject: Re: [PATCH] bpf: Mark kfuncs as __noclone
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Yonghong Song <yonghong.song@linux.dev>, Andrea Righi
- <arighi@nvidia.com>,  Alexei Starovoitov	 <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, Andrii Nakryiko	 <andrii@kernel.org>,
- alan.maguire@oracle.com
-Cc: Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>,  Hao Luo <haoluo@google.com>, Jiri
- Olsa <jolsa@kernel.org>, David Vernet <void@manifault.com>, 
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 27 Aug 2025 12:13:17 -0700
-In-Reply-To: <a3dabb42-efb5-4aea-8bf8-b3d5ae26dfa1@linux.dev>
-References: <20250822140553.46273-1-arighi@nvidia.com>
-	 <86de1bf6-83b0-4d31-904b-95af424a398a@linux.dev>
-	 <45c49b4eedc6038d350f61572e5eed9f183b781b.camel@gmail.com>
-	 <a3dabb42-efb5-4aea-8bf8-b3d5ae26dfa1@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1756322099; c=relaxed/simple;
+	bh=2h4vav2QC9xjdDUIwmEajkSGvXHfsNyDqevmRMvPkVk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=DM7/+HPIEn2U1JybQqB2jI9tmApHdXXV1GLyBUmLnUrCVqE4rvQOwez4z3wzf849lNE7XSWBh1SVpRHRSLqMMxArmWlqsXGRCzKbTBjlaw5EjwU3YvYb9CdfWOceLG+lsSDrmSWKxOQ2N25JXlcuS7iR9P4klGCtwcrUTHjABeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ABaJO41g; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57RJEfbm1837415;
+	Wed, 27 Aug 2025 14:14:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1756322082;
+	bh=YNq7FAgo4z92pYyBMMzR/Nsu4N6hHZWc/4w7c520tTQ=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=ABaJO41gCUL5gKb7nixcy0Fq5p22ycOIyf0mY6a/RnwOEz+b+Bj6joJZEGJ5akgeS
+	 TGe3U2KZJNqjDgb3Bew0xgr4ng1ThDgsZT9yxkp2foKg79RY07lrkl8+B8bldY/e6G
+	 WpPmdKHUFtxyIUsfSb7lF3KOps+XLn90ohJAPpqo=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57RJEfai3385684
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 27 Aug 2025 14:14:41 -0500
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 27
+ Aug 2025 14:14:41 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 27 Aug 2025 14:14:41 -0500
+Received: from [128.247.81.19] (uda0506412.dhcp.ti.com [128.247.81.19])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57RJEfHf3567231;
+	Wed, 27 Aug 2025 14:14:41 -0500
+Message-ID: <18fb75ad-aab8-455c-91a7-f8741289191c@ti.com>
+Date: Wed, 27 Aug 2025 14:14:41 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/7] arm64: dts: ti: k3-pinctrl: Add WKUP_EN flag
+To: Markus Schneider-Pargmann <msp@baylibre.com>, Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Vishal Mahaveer <vishalm@ti.com>,
+        Kevin
+ Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>,
+        Sebin Francis
+	<sebin.francis@ti.com>, Akashdeep Kaur <a-kaur@ti.com>
+References: <20250812-topic-am62-dt-partialio-v6-15-v2-0-25352364a0ac@baylibre.com>
+ <20250812-topic-am62-dt-partialio-v6-15-v2-1-25352364a0ac@baylibre.com>
+Content-Language: en-US
+From: Kendall Willis <k-willis@ti.com>
+In-Reply-To: <20250812-topic-am62-dt-partialio-v6-15-v2-1-25352364a0ac@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Wed, 2025-08-27 at 10:00 -0700, Yonghong Song wrote:
->=20
-> On 8/26/25 10:02 PM, Eduard Zingerman wrote:
-> > On Tue, 2025-08-26 at 13:17 -0700, Yonghong Song wrote:
-> >=20
-> > [...]
-> >=20
-> > > I tried with gcc14 and can reproduced the issue described in the abov=
-e.
-> > > I build the kernel like below with gcc14
-> > >     make KCFLAGS=3D'-O3' -j
-> > > and get the following build error
-> > >     WARN: resolve_btfids: unresolved symbol bpf_strnchr
-> > >     make[2]: *** [/home/yhs/work/bpf-next/scripts/Makefile.vmlinux:91=
-: vmlinux] Error 255
-> > >     make[2]: *** Deleting file 'vmlinux'
-> > > Checking the symbol table:
-> > >      22276: ffffffff81b15260   249 FUNC    LOCAL  DEFAULT    1 bpf_st=
-rnchr.cons[...]
-> > >     235128: ffffffff81b1f540   296 FUNC    GLOBAL DEFAULT    1 bpf_st=
-rnchr
-> > > and the disasm code:
-> > >     bpf_strnchr:
-> > >       ...
-> > >=20
-> > >     bpf_strchr:
-> > >       ...
-> > >       bpf_strnchr.constprop.0
-> > >       ...
-> > >=20
-> > > So in symbol table, we have both bpf_strnchr.constprop.0 and bpf_strn=
-chr.
-> > > For such case, pahole will skip func bpf_strnchr hence the above reso=
-lve_btfids
-> > > failure.
-> > >=20
-> > > The solution in this patch can indeed resolve this issue.
-> > It looks like instead of adding __noclone there is an option to
-> > improve pahole's filtering of ambiguous functions.
-> > Abstractly, there is nothing wrong with having a clone of a global
-> > function that has undergone additional optimizations. As long as the
-> > original symbol exists, everything should be fine.
->=20
-> Right. The generated code itself is totally fine. The problem is
-> currently pahole will filter out bpf_strnchr since in the symbol table
-> having both bpf_strnchr and bpf_strnchr.constprop.0. It there is
-> no explicit dwarf-level signature in dwarf for bpf_strnchr.constprop.0.
-> (For this particular .constprop.0 case, it is possible to derive the
->   signature. but it will be hard for other suffixes like .isra).
-> The current pahole will have strip out suffixes so the function
-> name is 'bpf_strnchr' which covers bpf_strnchr and bpf_strnchr.constprop.=
-0.
-> Since two underlying signature is different, the 'bpf_strnchr'
-> will be filtered out.
+On 8/12/25 04:15, Markus Schneider-Pargmann wrote:
+> WKUP_EN is a flag to enable pin wakeup. Any activity will wakeup the SoC
+> in that case.
+> 
+> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
+> ---
+>   arch/arm64/boot/dts/ti/k3-pinctrl.h | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-pinctrl.h b/arch/arm64/boot/dts/ti/k3-pinctrl.h
+> index c0f09be8d3f94a70812b66c3f91626aac35f4026..d3b0ecdf1a4a4de25ee6121ec9e62d1c7df26eb9 100644
+> --- a/arch/arm64/boot/dts/ti/k3-pinctrl.h
+> +++ b/arch/arm64/boot/dts/ti/k3-pinctrl.h
+> @@ -19,6 +19,7 @@
+>   #define DS_OUT_VAL_SHIFT	(26)
+>   #define DS_PULLUD_EN_SHIFT	(27)
+>   #define DS_PULLTYPE_SEL_SHIFT	(28)
+> +#define WKUP_EN_SHIFT		(29)
+>   
+>   /* Schmitt trigger configuration */
+>   #define ST_DISABLE		(0 << ST_EN_SHIFT)
+> @@ -65,6 +66,7 @@
+>   #define PIN_DS_PULLUD_DISABLE		(1 << DS_PULLUD_EN_SHIFT)
+>   #define PIN_DS_PULL_DOWN		(0 << DS_PULLTYPE_SEL_SHIFT)
+>   #define PIN_DS_PULL_UP			(1 << DS_PULLTYPE_SEL_SHIFT)
+> +#define WKUP_EN				(1 << WKUP_EN_SHIFT)
+>   
+>   /* Default mux configuration for gpio-ranges to use with pinctrl */
+>   #define PIN_GPIO_RANGE_IOPAD	(PIN_INPUT | 7)
+> 
 
-Yes, I understand the mechanics. My question is: is it really
-necessary for pahole to go through this process?
-
-It sees two functions: 'bpf_strnchr', 'bpf_strnchr.constprop.0',
-first global, second local, first with DWARF signature, second w/o
-DWARF signature. So, why conflating the two?
-
-For non-lto build the function being global guarantees signature
-correctness, and below you confirm that it is the case for lto builds
-as well. So, it looks like we are just loosing 'bpf_strnchr' for no
-good reason.
-
-> I am actually working to improve such cases in llvm to address
-> like foo() and foo.<...>() functions and they will have their
-> own respective functions. We will discuss with gcc folks
-> about how to implement similar approaches in gcc.
->=20
-> >=20
-> > Since kfuncs are global, this should guarantee that the compiler does n=
-ot
-> > change their signature, correct? Does this also hold for LTO builds?
->=20
-> Yes, the original signature will not changed. This holds for LTO build
-> and global variables/functions will not be renamed.
->=20
-> > If so, when pahole sees a set of symbols like [foo, foo.1, foo.2, ...],
->=20
-> The compiler needs to emit the signature in dwarf for foo.1, foo.2, etc. =
-and this
-> is something I am working on.
->=20
-> > with 'foo' being global and the rest local, then there is no real need
-> > to filter out 'foo'.
->=20
-> I think the current __noclone approach is okay as the full implementation
-> for signature changes (foo, foo.1, ...) might takes a while for both llvm
-> and gcc.
->=20
-> >=20
-> > Wdyt?
-> >=20
-> > [...]
+Reviewed-by: Kendall Willis <k-willis@ti.com>
 
