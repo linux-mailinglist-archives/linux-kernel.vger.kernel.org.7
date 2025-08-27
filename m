@@ -1,243 +1,148 @@
-Return-Path: <linux-kernel+bounces-787951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D139B37DFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:40:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47F15B37DFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:41:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2A0B207D20
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:40:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 868111BA42BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:41:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A02340DA2;
-	Wed, 27 Aug 2025 08:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EAD033EAE4;
+	Wed, 27 Aug 2025 08:40:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2DtpxI1t";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="gJKtCpQW";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2DtpxI1t";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="gJKtCpQW"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Du9Wx1fj"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C0833A00E
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 08:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD12F33A00E;
+	Wed, 27 Aug 2025 08:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756284025; cv=none; b=qEJR2D/bD1oVuOnFFNPjkef+ePe7XGcF5vPC7EI0pncpp0tqvJzZN5iuoVM+DdFW3lIXDnMNxVbO3IHRS34Bc6rw6X57YbUyKRCKdqZsci/AXwKD0bWBPbS8y8LTH5lIO3qxfKh67Chl5nFFcxMRnUEIlGe+RDtFGaGM5oWe6rM=
+	t=1756284054; cv=none; b=btq262pOjSIkyFz4FWdmm7qXAXKz77oARGgK8ayw2TSoVEvTFMOI3FzuYajw0N/1DAp3ddS5buGW8e9xTuc6skZjO/nazDqrjWYt4rMVw8qNmobNTxYT9Ks4YYTlohETnhQP4xo0D+oQXXEeLnd4y/9eEpTberwzVm27MBInjjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756284025; c=relaxed/simple;
-	bh=wGJ4vs4u2pQ6wogbWmRisX42cZBt/j4aVkpYmPmBQdw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aKW5siCytMrZ3gqdhZfmijeAhB2xsgLoErIOMCVMU+VC35oIDVqiw/j3pLVgnHncLtJAYei0HLYBjU/PQCC8jc2iisAc/X9dU8ahxBGQUXaJ0ynK3fZuNYainf729p5DnjKLtf3Ae2sD5wXw6bOnRRvGEzNhnT+E20y6+KrEJU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2DtpxI1t; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=gJKtCpQW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2DtpxI1t; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=gJKtCpQW; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	s=arc-20240116; t=1756284054; c=relaxed/simple;
+	bh=ZmHBWK5BuQNJ31LUGpY4RJ3Mq7uS2nqP8QqNP4OwfuY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eJ/U7UfSuIgBhzBfKDhSp6kAw2WhPeGQ/A+JN3nHeZJ+i+KSSgqAUw/aRr0JhQXclZZ2c5nSPIq2GKZTPkFc4Er58lL+1NFUpmWEpjGIT4eRk9vnnbnEKjZSo/68raEuAEXl97e8sNS3EiGzH80Zeaq0qw0HVJvcaQ4sKqkOvOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Du9Wx1fj; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 55AF540E00DA;
+	Wed, 27 Aug 2025 08:40:50 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id uTmocuXlYplB; Wed, 27 Aug 2025 08:40:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1756284046; bh=BCWF0C0SKwfKYfZP1aAsMkpWwiMtI1Y8p6BoA/+fiug=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Du9Wx1fjBCOil6REbvzTOnu3Z6pIg5wTVUBsZdg7KR4Zq+m3UTP+H274k0HVAG7wE
+	 /Kz7/wRN0uvN0KcTOD5hYPG/Gdj0rt4vWJg9Rx1K8SKpI0wJB+6/AGGhbVSznh32yl
+	 7N9MS7X+8S4IZ3AtQOxfhavsmXJ5WQ8aUow9iwg0yqFm4kKvnCoHDq1l8ctEVuY2at
+	 0NPFTZy4p08smEQrFXaYZiSIIv9SqXkMDna2OEjz8UpTGFtJpLyR1qorIAnJqjAdxX
+	 iERgwN0s+4ZECUN3foQ2KVy6u89DSasdiXYkDuWtvZVmvr0OPQ2+teRA4es0upsIG4
+	 V5O1BMl2lv3OtjKm/Za8rleo9CqdsqK3VSeBSeRrYcAlNp52z2gWeVObFZwDqoXBWW
+	 +egUjNlnknTXlvlH4qFiNFFj1TWdRzFrepIBoeZT+YUDIpgeE8mzzx7a+CKL9Umfrf
+	 zjsUSvwurmBnCB+TmIK9MEY4xfqSWdr2NdKNNCcHJDAEJCoILxvu3clTXh8HaBZokL
+	 Uioua3mTJ3MiW4yKYYkDGXm8rfvYkFKS4napA8xeWjsi6KFZFUzVBV9FPjteSezyBd
+	 aDT09a2/39d28sVrlQMePmaDwtYv18B0WC9NtDYNU0hpBCl5zpBKpp1yxvsZGE2JI8
+	 uVfg/6p+DBo514dDUe8/9i+Q=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A809834241;
-	Wed, 27 Aug 2025 08:40:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756284021; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=M/tOzaXU/v30nyaJclkRa9DTMfAcxqf3+f7uGHrzdOY=;
-	b=2DtpxI1tNUP1aErxnD1LtBf1D+4YFDJD788uwNaFkQfNuuljvMGyzRZjJxgXj9YpuRsoxI
-	9BZu/xdj6ou9K4r7yv3PHFaI1olIewBRhTK+oumwCNl0eomGbxfyfaeuZFs01PBoI82/pn
-	cD3UK5yYxrOmk8sZ9oKkwaVd+PDDuZM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756284021;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=M/tOzaXU/v30nyaJclkRa9DTMfAcxqf3+f7uGHrzdOY=;
-	b=gJKtCpQWW9IlsSW0Cl8FuQd56yskrl1nGy2WyOdSjwPIWlZ1QrXJVrLjPYXMDefs7G5cNb
-	C1NL7e75Y0/9PdCg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756284021; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=M/tOzaXU/v30nyaJclkRa9DTMfAcxqf3+f7uGHrzdOY=;
-	b=2DtpxI1tNUP1aErxnD1LtBf1D+4YFDJD788uwNaFkQfNuuljvMGyzRZjJxgXj9YpuRsoxI
-	9BZu/xdj6ou9K4r7yv3PHFaI1olIewBRhTK+oumwCNl0eomGbxfyfaeuZFs01PBoI82/pn
-	cD3UK5yYxrOmk8sZ9oKkwaVd+PDDuZM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756284021;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=M/tOzaXU/v30nyaJclkRa9DTMfAcxqf3+f7uGHrzdOY=;
-	b=gJKtCpQWW9IlsSW0Cl8FuQd56yskrl1nGy2WyOdSjwPIWlZ1QrXJVrLjPYXMDefs7G5cNb
-	C1NL7e75Y0/9PdCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8EBF713310;
-	Wed, 27 Aug 2025 08:40:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Krt8InXErmhgBAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 27 Aug 2025 08:40:21 +0000
-Message-ID: <fc6f7372-efb4-48e3-b217-c8bec0065b97@suse.cz>
-Date: Wed, 27 Aug 2025 10:40:21 +0200
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 016D340E019C;
+	Wed, 27 Aug 2025 08:40:28 +0000 (UTC)
+Date: Wed, 27 Aug 2025 10:40:28 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-edac@vger.kernel.org, git@amd.com, ptsm@linux.microsoft.com,
+	srivatsa@csail.mit.edu, shubhrajyoti.datta@gmail.com,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>, Nipun Gupta <nipun.gupta@amd.com>,
+	Nikhil Agarwal <nikhil.agarwal@amd.com>
+Subject: Re: [PATCH v8 1/5] cdx: add the headers to include/linux
+Message-ID: <20250827084028.GGaK7EfGLBLeQ-WteX@fat_crate.local>
+References: <20250826052914.2066884-1-shubhrajyoti.datta@amd.com>
+ <20250826052914.2066884-2-shubhrajyoti.datta@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] mm: slub: avoid wake up kswapd in set_track_prepare
-Content-Language: en-US
-To: yangshiguang <yangshiguang1011@163.com>, Harry Yoo <harry.yoo@oracle.com>
-Cc: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org,
- cl@gentwo.org, rientjes@google.com, roman.gushchin@linux.dev,
- glittao@gmail.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- yangshiguang <yangshiguang@xiaomi.com>, stable@vger.kernel.org
-References: <20250825121737.2535732-1-yangshiguang1011@163.com>
- <aKxZp_GgYVzp8Uvt@casper.infradead.org>
- <54d9e5ac-5a51-4901-9b13-4c248aada2d7@suse.cz> <aK6U61xNpJS0qs15@hyeyoo>
- <6e1ab9d8.6595.198ea7d7a78.Coremail.yangshiguang1011@163.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <6e1ab9d8.6595.198ea7d7a78.Coremail.yangshiguang1011@163.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[163.com,gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[163.com,oracle.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[infradead.org,linux-foundation.org,gentwo.org,google.com,linux.dev,gmail.com,kvack.org,vger.kernel.org,xiaomi.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250826052914.2066884-2-shubhrajyoti.datta@amd.com>
 
-On 8/27/25 09:45, yangshiguang wrote:
-> 
-> 
-> 
-> 
-> At 2025-08-27 13:17:31, "Harry Yoo" <harry.yoo@oracle.com> wrote:
->>On Mon, Aug 25, 2025 at 05:42:52PM +0200, Vlastimil Babka wrote:
->>> On 8/25/25 14:40, Matthew Wilcox wrote:
->>> > On Mon, Aug 25, 2025 at 08:17:37PM +0800, yangshiguang1011@163.com wrote:
->>> >> Avoid deadlock caused by implicitly waking up kswapd by
->>> >> passing in allocation flags.
->>> > [...]
->>> >> +	/* Preemption is disabled in ___slab_alloc() */
->>> >> +	gfp_flags &= ~(__GFP_DIRECT_RECLAIM);
->>> > 
->>> > If you don't mean __GFP_KSWAPD_RECLAIM here, the explanation needs to
->>> > be better.
->>> 
->>> It was suggested by Harry here:
->>> https://lore.kernel.org/all/aKKhUoUkRNDkFYYb@harry
->>> 
->>> I think the comment is enough? Disabling preemption means we can't direct
->>> reclaim, but we can wake up kswapd. If the slab caller context is such that
->>> we can't, __GFP_KSWAPD_RECLAIM already won't be in the gfp_flags.
->>
->>To make it a little bit more verbose, this ^^ explanation can be added to the
-> 
->>changelog?
-> 
-> 
-> ok, will be easier to understand.
-> 
->>
->>> But I think we should mask our also __GFP_NOFAIL and add __GFP_NOWARN?
->>
-> 
->>That sounds good.>
->>> (we should get some common helpers for these kinds of gfp flag manipulations
->>> already)
->>
->>Any ideas for its name?
->>
->>gfp_dont_try_too_hard(),
->>gfp_adjust_lightweight(),
->>gfp_adjust_mayfail(),
->>...
->>
->>I'm not good at naming :/
-> 
->>
-> 
-> How about this? 
-> 
->         /* Preemption is disabled in ___slab_alloc() */
-> -       gfp_flags &= ~(__GFP_DIRECT_RECLAIM);
-> +       gfp_flags = (gfp_flags & ~(__GFP_DIRECT_RECLAIM | __GFP_NOFAIL)) |
-> +                                       __GFP_NOWARN;
+On Tue, Aug 26, 2025 at 10:59:10AM +0530, Shubhrajyoti Datta wrote:
+> Subject: Re: [PATCH v8 1/5] cdx: add the headers to include/linux
 
-I'd suggest using gfp_nested_flags() and & ~(__GFP_DIRECT_RECLAIM);
+Make that title more specific:
 
->  >-- 
->>Cheers,
->>Harry / Hyeonggon
+"cdx: Split mcdi.h and reorganize headers"
 
+or so.
+
+> Move `bitfield.h` from the CDX controller directory to
+> `include/linux/cdx` to make them accessible to other drivers.
+> 
+> As part of this refactoring, `mcdi.h` has been split into two headers:
+> - `mcdi.h`: retains interface-level declarations
+> - `mcdid.h`: contains internal definitions and macros
+> 
+> This is in preparation for VersalNET EDAC
+> driver that relies on it.
+> 
+> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+> ---
+> 
+> Changes in v8:
+> - Split `mcdi.h` into `mcdi.h` and `mcdid.h`
+> - Removed common code from CDX headers
+> - Used refactored versions from shared location
+> 
+> Changes in v7:
+> - add a minimal header instead moving them
+> 
+> Changes in v6:
+>  - Patch added
+> 
+>  drivers/cdx/controller/cdx_controller.c       |  2 +-
+>  drivers/cdx/controller/cdx_rpmsg.c            |  2 +-
+>  drivers/cdx/controller/mcdi.c                 |  5 +-
+>  drivers/cdx/controller/mcdi_functions.c       |  1 -
+>  drivers/cdx/controller/mcdi_functions.h       |  3 +-
+>  drivers/cdx/controller/mcdid.h                | 65 +++++++++++++++++++
+>  .../linux/cdx}/bitfield.h                     |  0
+>  .../controller => include/linux/cdx}/mcdi.h   | 52 +--------------
+>  8 files changed, 73 insertions(+), 57 deletions(-)
+>  create mode 100644 drivers/cdx/controller/mcdid.h
+>  rename {drivers/cdx/controller => include/linux/cdx}/bitfield.h (100%)
+>  rename {drivers/cdx/controller => include/linux/cdx}/mcdi.h (74%)
+
+I'd need an Ack from these gents:
+
+Nipun Gupta <nipun.gupta@amd.com> (maintainer:AMD CDX BUS DRIVER)
+Nikhil Agarwal <nikhil.agarwal@amd.com> (maintainer:AMD CDX BUS DRIVER,commit_signer:4/6=67%)
+
+if this is going to go through the EDAC tree.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
