@@ -1,215 +1,107 @@
-Return-Path: <linux-kernel+bounces-788025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD005B37EE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:34:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45936B37EE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:34:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDE3B1BA3721
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:35:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16BE4460AD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:34:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A1473451A2;
-	Wed, 27 Aug 2025 09:34:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE013451A0;
+	Wed, 27 Aug 2025 09:34:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="Mgecbmb3"
-Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YphDKQo9"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938353431E7
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 09:34:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98064342CA3
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 09:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756287286; cv=none; b=pRnf1P9JBcVVd7w67oibIrQvvWz2ns8Re/50BeyXHFAj2ECszoh/LBnFjtX2TOd66L5tYgYZg/jmx2HPG4nKnwz95Li3Mfwwtc/8iA9Ud32AJqTRHbNtQTMOgKidXOAqps7tcxaWOtOFNFZwEcsbk5+gIHc83rc/unpy4Vu9ms0=
+	t=1756287288; cv=none; b=ZesKMKpjwYOsTPkTC/s6rxahxeFrluXskIu4F5LTyDp/chYcq7D/j6CRWvHM6Mm5xD3TF70T/8Q+BCbYkLbZDmouf+VPGSOGXfHu7WPYTdLA17fuzKy+kfcaA9LOOGSsdoBwrkJXbBAGXSWWeasQ/v63uiuStrWCWmwfJd1Joyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756287286; c=relaxed/simple;
-	bh=MQvBfl4kkV2fXT2490Fr950aKJNNuYgYUNBa7ER+5W8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MnAwmEs1Gz3O+UUumKXhgtIUMceSyPvAObjZuYg8WlpCX74mSLOs1SUjOYtx1I4BU/ybuTnWRGLP1F21lfODgV2cViURaOfKinQ3JXE7GrKvangmKF7wLbjq2h/i2tlfQULRHM1xYKK4THhkRnzSNUpIh12Lq0LWl7nLDwnGi/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=Mgecbmb3; arc=none smtp.client-ip=54.254.200.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1756287215;
-	bh=3fghkl2yk9rz5bIVyEjDjhowSDJcsJYAqStEl1qbPDU=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=Mgecbmb3p/PsLbTn+l8oN+uzB7JDNHXI7nd6eH2ypvN+YcsPElYL20phBK57H5wn2
-	 Cz45+X9B71J4Jh6YVMe6tkvaIB5n10rjV76pVgEMi/GZKSki6XhQrmBjfBHPXFwltm
-	 yIfAaW9yD/M4lQrM0cPuJtbQuQ3lmaiGI2AOXX5E=
-X-QQ-mid: zesmtpgz8t1756287213t979e8db4
-X-QQ-Originating-IP: +p5Udl5pLkD5rldse5I0GLOWxX+xPdjNmzEYXYfq1hY=
-Received: from = ( [61.145.255.150])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 27 Aug 2025 17:33:31 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 295757120406263004
-EX-QQ-RecipientCnt: 23
-Date: Wed, 27 Aug 2025 17:33:31 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Alex Elder <elder@riscstar.com>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>, lee@kernel.org,
-	lgirdwood@gmail.com, broonie@kernel.org,
-	alexandre.belloni@bootlin.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: mat.jonczyk@o2.pl, dlan@gentoo.org, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
-	linux.amoon@gmail.com, troymitchell988@gmail.com,
-	guodong@riscstar.com, linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v12 2/7] mfd: simple-mfd-i2c: add SpacemiT P1 support
-Message-ID: <1D7078ABFE5E7BF8+aK7Q60w5Vhy1Wreg@LT-Guozexi>
-References: <20250813024509.2325988-1-elder@riscstar.com>
- <20250813024509.2325988-3-elder@riscstar.com>
- <089D29348F246F2C+aJ6bPgJsp5GjhDs5@LT-Guozexi>
- <b387ebdd-ae5d-4711-9e10-c61cb06f4b5b@riscstar.com>
+	s=arc-20240116; t=1756287288; c=relaxed/simple;
+	bh=u3J1TLK8kFDzptK8CWJHRZ8TxdCzowQEdeLZwKHMyWA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Qc5bmfORGia4VplXhyWF76Qxe0Iy9B8JPpGpfvljKItZTW+p5MPsfXJ3y6Gn9MwR2ipPrDJxJRbHtwDIMRbkoX2qX+4iuoErOZCUvxSKqTE0VCs2Dt9QA7LZI/BDzCZubxo3jxUrIYbO1tgQwdgFBU+ZJn3KCPdBUGJFyrb8W0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YphDKQo9; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <c7e8123c-7acb-4444-ae0d-83cdee0bfb85@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756287274;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YHxIfUpE71HXlOhxuSB1LXolrmZAklp/1sSXRGfAxs8=;
+	b=YphDKQo9vCDeGhDRYD0GfF/B/C53iCFBEDOpfrBELN3ImEt8O+0ZvHe4qV5lv7eCsDG0gd
+	/+vTKsQbBIHiOmwEVkufV0jvEaDESsiwX6Qr4RcJn1/9uB1yVMKm8p3yDKigrz7dY6/w5u
+	Go4vMMWho4sd7irm+TPoiNx1/iWbPzI=
+Date: Wed, 27 Aug 2025 17:34:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b387ebdd-ae5d-4711-9e10-c61cb06f4b5b@riscstar.com>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: Nnd5cAEgLcFhoWAD0Vlb8+NYa6DFeqnWj/tGOR0GIV8AJHK4EuhRKvVH
-	gMHgyGSvwmPDdGjeiI4cBLA9X1WjvSVHxXN9UKhJ+Pbcj7x+QkfssV089eA1OfObBJQweZF
-	85fhpuGWlBUM2Mx/HX3obo0TNtXtr8h2PLxvNvjO5F8f4Z53XMclyxflU7GETUxr2+Siyoc
-	nYYSr+ZNr255gOga6eqowez4VpF6oLSJpM9JsY/WqQhioj1S4TVDKYYjTdLnTNnbWwB1tdk
-	g06LJ+G7P1wcVv4iWIClVuvMLW+0UC/yapanHs3EzZize0wWHbpvKZBv7qlsSkFYUTxfCgu
-	fzLYpCdpcZpGRLEbJb6H/syDdsYEIsSWQlhsp+gV4Rjdy1+U+gyI6GGyLPDBfemWhLLOWvf
-	rD9mzLkGUxx3J7HwOtb2jDdziqjz2KQIE98qiPZNpPSAtWBtBZbHM0h/QkdQKTnVoIKHdRG
-	CxoOuYPRqVF/A1awvaR3BglMOMjmvh4woX4B/q/uMZ+V4f8m984XCPzsSIRH23OMdVTDtBf
-	4puv+J3Nawjr8vcKVyDmjGxRiDA6ju+Ybk0lle6pt3KF/9joVNXssOspuhxhuwsOwbA/hvR
-	E4X/hPDxkNMU+79ikGdBKhFDnRgHr7WGo+BexBEwi3VNPWlwRZeaMcjNIESRbmgG8XmgVdU
-	dJrA7wvfppgDtv2JbNfLfYl75/Hu41cIwYeW72yE4TSgeozjpUI6Q3bFUUnqDKhHZ9bdcgf
-	sYPY1ihQkYcQpV5747ExvDFArYlRAaWW1mHZGRItFG95cRw/gbRtIDLNVOLtusY4mduW7nf
-	5ehwXblmebB0Vo1hNfbgWKnIrWoOyPCD9e6ZWV7ja40+FstVLsoJFQNDBLkj0cu8di6yIHv
-	+ZvmSdjbK0CTASKmEr1KNVIH37Y3qJot6Jm4+y7oWplUfI9fX/HDiCdjVkQybHNBOWL19Fn
-	tFlz2A4/zZVgd/OKc1yI61H7byr3Umihle75evUJnU3wM3f11u10sO77AGHORcf7bu0RPSx
-	Zp/UkqpqPyScDTD9z5UC9dRKbGhd/KcPuPTuGMzRkEsT8FG/thC45RaeUVpHbfQUOag4z98
-	vasK5rLzsgV
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-X-QQ-RECHKSPAM: 0
+Subject: Re: [PATCH] atomic: Specify natural alignment for atomic_t
+Content-Language: en-US
+To: Finn Thain <fthain@linux-m68k.org>
+Cc: David Laight <david.laight.linux@gmail.com>, akpm@linux-foundation.org,
+ geert@linux-m68k.org, linux-kernel@vger.kernel.org, mhiramat@kernel.org,
+ oak@helsinkinet.fi, peterz@infradead.org, stable@vger.kernel.org,
+ will@kernel.org, Lance Yang <ioworker0@gmail.com>
+References: <7d9554bfe2412ed9427bf71ce38a376e06eb9ec4.1756087385.git.fthain@linux-m68k.org>
+ <20250825032743.80641-1-ioworker0@gmail.com>
+ <c8851682-25f1-f594-e30f-5b62e019d37b@linux-m68k.org>
+ <96ae7afc-c882-4c3d-9dea-3e2ae2789caf@linux.dev>
+ <5a44c60b-650a-1f8a-d5cb-abf9f0716817@linux-m68k.org>
+ <4e7e7292-338d-4a57-84ec-ae7427f6ad7c@linux.dev>
+ <20250825130715.3a1141ed@pumpkin>
+ <b199a90c-4a7f-42bf-9d17-d96f63bb5e62@linux.dev>
+ <312ba353-6b4e-c3ef-40ce-a9dddf3275a3@linux-m68k.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <312ba353-6b4e-c3ef-40ce-a9dddf3275a3@linux-m68k.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Aug 25, 2025 at 11:08:45AM -0500, Alex Elder wrote:
-> On 8/14/25 9:28 PM, Troy Mitchell wrote:
-> > Hi, Alex,
-> > 
-> > I did not find any accesses to the P1 shutdown or reboot registers here.
-> > Does this mean that the current series does not support reboot or shutdown?
-> 
-> Yes, that is correct.
-> 
-> > If so, do you have any plans to support this functionality?
-> 
-> At this time I personally don't have any plans to add this, but
-> it could be added later (by anyone).
-> 
-> I actually attempted to do this initially, but gave up.  The PMIC
-> is accessed via I2C, and I needed to implement a non-blocking
-> version of the I2C register write operation.  I tried that, but
-I have implemented a non-blocking version of the I2C driver [1]
 
-Link: 
-https://lore.kernel.org/all/20250827-k1-i2c-atomic-v1-0-e59bea02d680@linux.spacemit.com/
-[1]
 
-                - Troy
-> then found that the shutdown or reboot still did not work reliably.
-> As it was, this was more than I originally planned to do, so I just
-> implemented the simple RTC operations instead.
+On 2025/8/27 16:00, Finn Thain wrote:
 > 
-> 					-Alex
+> On Mon, 25 Aug 2025, Lance Yang wrote:
 > 
-> > If I have misunderstood, please correct me.
-> > 
-> > Best regards,
-> > Troy
-> > 
-> > 
-> > On Tue, Aug 12, 2025 at 09:45:03PM -0500, Alex Elder wrote:
-> > > Enable support for the RTC and regulators found in the SpacemiT P1
-> > > PMIC.  Support is implemented by the simple I2C MFD driver.
-> > > 
-> > > The P1 PMIC is normally implemented with the SpacemiT K1 SoC.  This
-> > > PMIC provides 6 buck converters and 12 LDO regulators.  It also
-> > > implements a switch, watchdog timer, real-time clock, and more.
-> > > Initially its RTC and regulators are supported.
-> > > 
-> > > Signed-off-by: Alex Elder <elder@riscstar.com>
-> > > ---
-> > >   drivers/mfd/Kconfig          | 11 +++++++++++
-> > >   drivers/mfd/simple-mfd-i2c.c | 18 ++++++++++++++++++
-> > >   2 files changed, 29 insertions(+)
-> > > 
-> > > diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> > > index 425c5fba6cb1e..4d6a5a3a27220 100644
-> > > --- a/drivers/mfd/Kconfig
-> > > +++ b/drivers/mfd/Kconfig
-> > > @@ -1238,6 +1238,17 @@ config MFD_QCOM_RPM
-> > >   	  Say M here if you want to include support for the Qualcomm RPM as a
-> > >   	  module. This will build a module called "qcom_rpm".
-> > > +config MFD_SPACEMIT_P1
-> > > +	tristate "SpacemiT P1 PMIC"
-> > > +	depends on I2C
-> > > +	select MFD_SIMPLE_MFD_I2C
-> > > +	help
-> > > +	  This option supports the I2C-based SpacemiT P1 PMIC, which
-> > > +	  contains regulators, a power switch, GPIOs, an RTC, and more.
-> > > +	  This option is selected when any of the supported sub-devices
-> > > +	  is configured.  The basic functionality is implemented by the
-> > > +	  simple MFD I2C driver.
-> > > +
-> > >   config MFD_SPMI_PMIC
-> > >   	tristate "Qualcomm SPMI PMICs"
-> > >   	depends on ARCH_QCOM || COMPILE_TEST
-> > > diff --git a/drivers/mfd/simple-mfd-i2c.c b/drivers/mfd/simple-mfd-i2c.c
-> > > index 22159913bea03..47ffaac035cae 100644
-> > > --- a/drivers/mfd/simple-mfd-i2c.c
-> > > +++ b/drivers/mfd/simple-mfd-i2c.c
-> > > @@ -93,12 +93,30 @@ static const struct simple_mfd_data maxim_mon_max77705 = {
-> > >   	.mfd_cell_size = ARRAY_SIZE(max77705_sensor_cells),
-> > >   };
-> > > +
-> > > +static const struct regmap_config spacemit_p1_regmap_config = {
-> > > +	.reg_bits = 8,
-> > > +	.val_bits = 8,
-> > > +};
-> > > +
-> > > +static const struct mfd_cell spacemit_p1_cells[] = {
-> > > +	{ .name = "spacemit-p1-regulator", },
-> > > +	{ .name = "spacemit-p1-rtc", },
-> > > +};
-> > > +
-> > > +static const struct simple_mfd_data spacemit_p1 = {
-> > > +	.regmap_config = &spacemit_p1_regmap_config,
-> > > +	.mfd_cell = spacemit_p1_cells,
-> > > +	.mfd_cell_size = ARRAY_SIZE(spacemit_p1_cells),
-> > > +};
-> > > +
-> > >   static const struct of_device_id simple_mfd_i2c_of_match[] = {
-> > >   	{ .compatible = "kontron,sl28cpld" },
-> > >   	{ .compatible = "silergy,sy7636a", .data = &silergy_sy7636a},
-> > >   	{ .compatible = "maxim,max5970", .data = &maxim_max5970},
-> > >   	{ .compatible = "maxim,max5978", .data = &maxim_max5970},
-> > >   	{ .compatible = "maxim,max77705-battery", .data = &maxim_mon_max77705},
-> > > +	{ .compatible = "spacemit,p1", .data = &spacemit_p1, },
-> > >   	{}
-> > >   };
-> > >   MODULE_DEVICE_TABLE(of, simple_mfd_i2c_of_match);
-> > > -- 
-> > > 2.48.1
-> > > 
-> > > 
-> > > _______________________________________________
-> > > linux-riscv mailing list
-> > > linux-riscv@lists.infradead.org
-> > > http://lists.infradead.org/mailman/listinfo/linux-riscv
+>>>
+>>> More problematic is that, IIRC, m68k kmalloc() allocates 16bit aligned
+>>> memory. This has broken other things in the past. I doubt that
+>>> increasing the alignment to 32bits would make much difference to the
+>>> kernel memory footprint.
+>>
+>> @Finn Given this new information, how about we just apply the runtime
+>> check fix for now?
 > 
+> New information? No, that's just hear-say.
+
+Emm... I jumped the gun there ;p
+
 > 
+>> Since we plan to remove the entire pointer-encoding scheme later anyway,
+>> a minimal and targeted change could be the logical choice. It's easy and
+>> safe to backport, and it cleanly stops the warnings from all sources
+>> without introducing new risks - exactly what we need for stable kernels.
+>>
+> 
+> Well, that's up to you, of course. If you want my comment, I'd only ask
+> whether or not the bug is theoretical (outside of m68k).
+
+Well, let's apply both this fix and the runtime check fix[1] as Masami
+suggested ;)
+
+[1] https://lore.kernel.org/lkml/20250823050036.7748-1-lance.yang@linux.dev/
 
