@@ -1,252 +1,350 @@
-Return-Path: <linux-kernel+bounces-787717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F5F8B37A2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:11:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B972B37A34
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:13:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E45625E7DC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:11:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 071CE365BA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:13:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0533310784;
-	Wed, 27 Aug 2025 06:11:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0902130F950;
+	Wed, 27 Aug 2025 06:13:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aEJzbIXS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GNyIBn/K"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2802628E7;
-	Wed, 27 Aug 2025 06:10:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0844026A08C
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 06:13:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756275060; cv=none; b=Ngex9Iop19msWLYAyCtIZlcxdl5TIZTfg/NBY+R9uLSx0UgiDYxx8T+UpRlOd/dGQRjJhcFQJt3qbdj9kQaEbZcHz+FiSyroi2YKcY7y73xYpL0GbE/Tc55Lo1/sL4coz+TMB0zMs0SFn9X3C5uHIFGBqfBOvascM6RtDLjz0gk=
+	t=1756275222; cv=none; b=ArsluQtEe3eCrPHNWewbv342jKZ++AhX7Ec0D2HuPvFABSGV/VaYBIWfv3T+YEmBmu2X3tKKtBtGvOKjLrhWHy4JPSGTahcaasqBkRRzf87CNtRDnFceOxEN/UsXUJDByIPizQ8BIwDeFk/MYcsJgB43KGPZ/bGDpCIIJK0Yo5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756275060; c=relaxed/simple;
-	bh=+GN6jtKxkDuSkcNSTpi1Xi9ELLdwSX5uB0MS/o2bNe0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ZYDWWqCrh5OA8LdBQubBwk3UJOXJYyDob8r8J2GGV8e7X5sH3/K/wIpHIAxGo+K/krN++a1x49dmB8V/VK+NbMWx1hKLrEohumnCHqkaY64pAQf25ZxjP8Q613QG0Dz6q1LuBG/tVY3ZQJOY54un4wIh61o/FUJVMoLYyIqG6+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aEJzbIXS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97187C4CEEB;
-	Wed, 27 Aug 2025 06:10:56 +0000 (UTC)
+	s=arc-20240116; t=1756275222; c=relaxed/simple;
+	bh=58IM4CO3GzYGElXulUjCsmon9Noi6X7JoteWvqArny4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BIbLA8bUt5xMRMGxgFUzEqm9WXWhkk9Wneg8gvbwPuMOGbKpVnK+c8ehNLh9Ow6rUzZ5HWGdB8tIutM+BNFEdebG1RTL/xT5GwvaEC7R4OihTs706fQXS+LrjSyEtGSE8Hd3OcVAwZCHEynlTFiavLKgmtZiADu8qWtOpEiyIng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GNyIBn/K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DC7DC4CEEB
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 06:13:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756275059;
-	bh=+GN6jtKxkDuSkcNSTpi1Xi9ELLdwSX5uB0MS/o2bNe0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=aEJzbIXSNAX5Fe5bBerVT3Ij4GUapE7v79aSjBOuGmQCIB/OT1V1MzmOcpuzhCNqS
-	 C11qJjbairy6TcVhdFhM+4T01Ubb8POAdpBwmkAgKNj/XKlRVOt4pdEjgafwT5sxFV
-	 0UBdpJutZev0TSEo0ht3FLhy8bnbVEPxObk30CFbC4xRf/ILUmBzu6CGGLWALB1fBG
-	 S9tibtlJ26enSAW/DddNBC5qR1gXcNl9/m1EUwZpEi1+aT9gOgEBZF9wJDb+EGxFpC
-	 up7V0/P4NUaegaEdkKqKM8N02lW0c3bztoWTsqOHm3sh0awe/k8fjyCE+8DChylybq
-	 ZBZDr4or6okOQ==
-Date: Wed, 27 Aug 2025 08:10:53 +0200
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Justin Tee <justin.tee@broadcom.com>,
-	James Smart <james.smart@broadcom.com>,
-	Dick Kennedy <dick.kennedy@broadcom.com>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Hannes Reinecke <hare@suse.de>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH v2] scsi: fc: Avoid -Wflex-array-member-not-at-end warnings
-Message-ID: <aK6hbQLyQlvlySf8@kspp>
+	s=k20201202; t=1756275221;
+	bh=58IM4CO3GzYGElXulUjCsmon9Noi6X7JoteWvqArny4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=GNyIBn/KRQ/og/VQKH755dpknO2+GXDkzJLCpL3KoWXhhz2LhLZM29MshWyG4D8K8
+	 Uevl4ItL+8+BE6QtpgplXL50evCZHc6gjeKzfOFRAFAleB1Zs45a+LlYtAMbP4L8Mf
+	 K2fGeCQHiRA/Z8ecdQfPk/fzSMTae0hVHk1Dc4aBCZnCskgQInO0CqBgISJGGNLyIw
+	 0+aNpmagrg+ktCWLxrFmJeDHfdCblb00Dc5QP+hpzM8kTFRgvqVu1S3E5gxnbEQU+j
+	 pkqcopQ3CQ4IeDnYwVA6qAguoSiXehOKIrqPeZl7kFIFebAR582mFWAA3zBjXh06IK
+	 MIBFvLyHt2akQ==
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-459fbc92e69so43075e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 23:13:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUQF1/xEiFILxnwQvI/XlJFs2eVQzuQj1P+wGKRsTWltqsRo+6gPNeEInDDSNXjta5Ix9jrbiDNDB4Q4Mk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSi7Tei8ibQxiDBHBJs2dJAuvLnampqRIMDYkxXXNkzH8ho9hY
+	9N6UlImSxYh1P2TSKfPUSOCPMIsbBjNG3uK6B7zN+DhTXZCRc0tZWQsGAyvhiJqiu9LecZ35ze9
+	zarbLT/4zm9iSHvMwMoUlf9j3of1D7kblbvuhwzem
+X-Google-Smtp-Source: AGHT+IF/M5nnBkFj8JCQ/wd31/i7BTMrdvdLwr55gMNN7OSMKTtQEybe9ApR8eFYMcDo9u87NtRAOyds2X9C13tVmGA=
+X-Received: by 2002:a05:600c:8219:b0:45a:2861:3625 with SMTP id
+ 5b1f17b1804b1-45b65ee0f36mr3307965e9.4.1756275219801; Tue, 26 Aug 2025
+ 23:13:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250822192023.13477-1-ryncsn@gmail.com> <20250822192023.13477-3-ryncsn@gmail.com>
+In-Reply-To: <20250822192023.13477-3-ryncsn@gmail.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Tue, 26 Aug 2025 23:13:28 -0700
+X-Gmail-Original-Message-ID: <CAF8kJuMX_WTg7vyACBxskNmDHB4C-ZkowuKYP71gQ8qyKuwAaA@mail.gmail.com>
+X-Gm-Features: Ac12FXx6j9Ld3lDohs75YQOI64HdH5xtgDz7f-SuJOL8YjcKUe9IiesbxU2NYqw
+Message-ID: <CAF8kJuMX_WTg7vyACBxskNmDHB4C-ZkowuKYP71gQ8qyKuwAaA@mail.gmail.com>
+Subject: Re: [PATCH 2/9] mm, swap: always lock and check the swap cache folio
+ before use
+To: Kairui Song <kasong@tencent.com>
+Cc: linux-mm <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Barry Song <baohua@kernel.org>, 
+	Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
--Wflex-array-member-not-at-end has been introduced in GCC-14, and we
-are getting ready to enable it, globally.
+On Fri, Aug 22, 2025 at 12:21=E2=80=AFPM Kairui Song <ryncsn@gmail.com> wro=
+te:
+>
+> From: Kairui Song <kasong@tencent.com>
+>
+> Swap cache lookup is lockless, it only increases the reference count
+> of the returned folio. That's not enough to ensure a folio is stable in
+> the swap cache, so the folio could be removed from the swap cache at any
+> time. The caller always has to lock and check the folio before use.
+>
+> Document this as a comment, and introduce a helper for swap cache folio
+> verification with proper sanity checks.
+>
+> Also, sanitize all current users to use this convention, and use the new
+> helper when possible for easier debugging. Some existing callers won't
+> cause any major problem right now, only trivial issues like incorrect
+> readahead statistic (swapin) or wasted loop (swapoff). It's better to
+> always follow this convention to make things robust.
+>
+> Signed-off-by: Kairui Song <kasong@tencent.com>
+> ---
+>  mm/memory.c     | 28 +++++++++++++---------------
+>  mm/shmem.c      |  4 ++--
+>  mm/swap.h       | 28 ++++++++++++++++++++++++++++
+>  mm/swap_state.c | 13 +++++++++----
+>  mm/swapfile.c   | 10 ++++++++--
+>  5 files changed, 60 insertions(+), 23 deletions(-)
+>
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 10ef528a5f44..9ca8e1873c6e 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -4661,12 +4661,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+>                 goto out;
+>
+>         folio =3D swap_cache_get_folio(entry);
+> -       if (folio) {
+> -               swap_update_readahead(folio, vma, vmf->address);
+> -               page =3D folio_file_page(folio, swp_offset(entry));
+> -       }
+>         swapcache =3D folio;
+> -
 
-So, in order to avoid ending up with a flexible-array member in the
-middle of multiple other structs, we use the `__struct_group()`
-helper to create a new tagged `struct fc_df_desc_fpin_reg_hdr`.
-This structure groups together all the members of the flexible
-`struct fc_df_desc_fpin_reg` except the flexible array.
+Can simplify as:
+           folio =3D swapcache =3D swap_cache_get_folio(entry);
 
-As a result, the array is effectively separated from the rest of the
-members without modifying the memory layout of the flexible structure.
-We then change the type of the middle struct members currently causing
-trouble from `struct fc_df_desc_fpin_reg` to `struct
-fc_df_desc_fpin_reg_hdr`.
+>         if (!folio) {
+>                 if (data_race(si->flags & SWP_SYNCHRONOUS_IO) &&
+>                     __swap_count(entry) =3D=3D 1) {
+> @@ -4735,20 +4730,13 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+>                 ret =3D VM_FAULT_MAJOR;
+>                 count_vm_event(PGMAJFAULT);
+>                 count_memcg_event_mm(vma->vm_mm, PGMAJFAULT);
+> -               page =3D folio_file_page(folio, swp_offset(entry));
+> -       } else if (PageHWPoison(page)) {
+> -               /*
+> -                * hwpoisoned dirty swapcache pages are kept for killing
+> -                * owner processes (which may be unknown at hwpoison time=
+)
+> -                */
+> -               ret =3D VM_FAULT_HWPOISON;
+> -               goto out_release;
 
-We also want to ensure that in case new members need to be added to the
-flexible structure, they are always included within the newly created
-tagged struct. For this, we use `_Static_assert()`. This ensures that
-the memory layout for both the flexible structure and the new tagged
-struct is the same after any changes.
+Here you move the HWPosion(page) bail out from before taking the page
+lock to after the page lock. The HWPosion page should be able to bail
+out without taking the lock.
 
-This approach avoids having to implement `struct fc_df_desc_fpin_reg_hdr`
-as a completely separate structure, thus preventing having to maintain
-two independent but basically identical structures, closing the door
-to potential bugs in the future.
+>         }
+>
+>         ret |=3D folio_lock_or_retry(folio, vmf);
+>         if (ret & VM_FAULT_RETRY)
+>                 goto out_release;
+>
+> +       page =3D folio_file_page(folio, swp_offset(entry));
+>         if (swapcache) {
+>                 /*
+>                  * Make sure folio_free_swap() or swapoff did not release=
+ the
+> @@ -4757,10 +4745,20 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+>                  * swapcache, we need to check that the page's swap has n=
+ot
+>                  * changed.
+>                  */
+> -               if (unlikely(!folio_test_swapcache(folio) ||
+> -                            page_swap_entry(page).val !=3D entry.val))
+> +               if (!folio_contains_swap(folio, entry))
+>                         goto out_page;
+>
+> +               if (PageHWPoison(page)) {
+> +                       /*
+> +                        * hwpoisoned dirty swapcache pages are kept for =
+killing
+> +                        * owner processes (which may be unknown at hwpoi=
+son time)
+> +                        */
+> +                       ret =3D VM_FAULT_HWPOISON;
+> +                       goto out_page;
 
-The above is also done for flexible structures `struct fc_els_rdf` and
-`struct fc_els_rdf_resp`
+It seems you bail out with the page still locked, that seems like a bug to =
+me.
 
-So, with these changes, fix the following warnings:
-drivers/scsi/lpfc/lpfc_hw4.h:4936:41: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/scsi/lpfc/lpfc_hw4.h:4942:41: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/scsi/lpfc/lpfc_hw4.h:4947:41: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+I think this HWPoision() check move order with the page lock is problematic=
+.
 
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
-Changes in v2:
- - Implement the same changes for `struct fc_els_rdf_resp`
- - Fix size calculation in lpfc_issue_els_rdf(). (Justin Tee)
+Can you double check?
 
-v1:
- - Link: https://lore.kernel.org/linux-hardening/aJtMETERd-geyP1q@kspp/
+To be continued.
 
- include/uapi/scsi/fc/fc_els.h | 58 +++++++++++++++++++++++------------
- drivers/scsi/lpfc/lpfc_els.c  |  2 +-
- drivers/scsi/lpfc/lpfc_hw4.h  |  6 ++--
- 3 files changed, 43 insertions(+), 23 deletions(-)
+Chris
 
-diff --git a/include/uapi/scsi/fc/fc_els.h b/include/uapi/scsi/fc/fc_els.h
-index 16782c360de3..019096beb179 100644
---- a/include/uapi/scsi/fc/fc_els.h
-+++ b/include/uapi/scsi/fc/fc_els.h
-@@ -11,6 +11,12 @@
- #include <linux/types.h>
- #include <asm/byteorder.h>
- 
-+#ifdef __KERNEL__
-+#include <linux/stddef.h>	/* for offsetof */
-+#else
-+#include <stddef.h>		/* for offsetof */
-+#endif
-+
- /*
-  * Fibre Channel Switch - Enhanced Link Services definitions.
-  * From T11 FC-LS Rev 1.2 June 7, 2005.
-@@ -1109,12 +1115,15 @@ struct fc_els_fpin {
- 
- /* Diagnostic Function Descriptor - FPIN Registration */
- struct fc_df_desc_fpin_reg {
--	__be32		desc_tag;	/* FPIN Registration (0x00030001) */
--	__be32		desc_len;	/* Length of Descriptor (in bytes).
--					 * Size of descriptor excluding
--					 * desc_tag and desc_len fields.
--					 */
--	__be32		count;		/* Number of desc_tags elements */
-+	/* New members MUST be added within the __struct_group() macro below. */
-+	__struct_group(fc_df_desc_fpin_reg_hdr, __hdr, /* no attrs */,
-+		__be32		desc_tag; /* FPIN Registration (0x00030001) */
-+		__be32		desc_len; /* Length of Descriptor (in bytes).
-+					   * Size of descriptor excluding
-+					   * desc_tag and desc_len fields.
-+					   */
-+		__be32		count;	  /* Number of desc_tags elements */
-+	);
- 	__be32		desc_tags[];	/* Array of Descriptor Tags.
- 					 * Each tag indicates a function
- 					 * supported by the N_Port (request)
-@@ -1124,33 +1133,44 @@ struct fc_df_desc_fpin_reg {
- 					 * See ELS_FN_DTAG_xxx for tag values.
- 					 */
- };
-+_Static_assert(offsetof(struct fc_df_desc_fpin_reg, desc_tags) == sizeof(struct fc_df_desc_fpin_reg_hdr),
-+	      "struct member likely outside of __struct_group()");
- 
- /*
-  * ELS_RDF - Register Diagnostic Functions
-  */
- struct fc_els_rdf {
--	__u8		fpin_cmd;	/* command (0x19) */
--	__u8		fpin_zero[3];	/* specified as zero - part of cmd */
--	__be32		desc_len;	/* Length of Descriptor List (in bytes).
--					 * Size of ELS excluding fpin_cmd,
--					 * fpin_zero and desc_len fields.
--					 */
-+	/* New members MUST be added within the __struct_group() macro below. */
-+	__struct_group(fc_els_rdf_hdr, __hdr, /* no attrs */,
-+		__u8		fpin_cmd;	/* command (0x19) */
-+		__u8		fpin_zero[3];	/* specified as zero - part of cmd */
-+		__be32		desc_len;	/* Length of Descriptor List (in bytes).
-+						 * Size of ELS excluding fpin_cmd,
-+						 * fpin_zero and desc_len fields.
-+						 */
-+	);
- 	struct fc_tlv_desc	desc[];	/* Descriptor list */
- };
-+_Static_assert(offsetof(struct fc_els_rdf, desc) == sizeof(struct fc_els_rdf_hdr),
-+	       "struct member likely outside of __struct_group()");
- 
- /*
-  * ELS RDF LS_ACC Response.
-  */
- struct fc_els_rdf_resp {
--	struct fc_els_ls_acc	acc_hdr;
--	__be32			desc_list_len;	/* Length of response (in
--						 * bytes). Excludes acc_hdr
--						 * and desc_list_len fields.
--						 */
--	struct fc_els_lsri_desc	lsri;
-+	/* New members MUST be added within the __struct_group() macro below. */
-+	__struct_group(fc_els_rdf_resp_hdr, __hdr, /* no attrs */,
-+		struct fc_els_ls_acc	acc_hdr;
-+		__be32			desc_list_len;	/* Length of response (in
-+							 * bytes). Excludes acc_hdr
-+							 * and desc_list_len fields.
-+							 */
-+		struct fc_els_lsri_desc	lsri;
-+	);
- 	struct fc_tlv_desc	desc[];	/* Supported Descriptor list */
- };
--
-+_Static_assert(offsetof(struct fc_els_rdf_resp, desc) == sizeof(struct fc_els_rdf_resp_hdr),
-+	       "struct member likely outside of __struct_group()");
- 
- /*
-  * Diagnostic Capability Descriptors for EDC ELS
-diff --git a/drivers/scsi/lpfc/lpfc_els.c b/drivers/scsi/lpfc/lpfc_els.c
-index fca81e0c7c2e..432761fb49de 100644
---- a/drivers/scsi/lpfc/lpfc_els.c
-+++ b/drivers/scsi/lpfc/lpfc_els.c
-@@ -3762,7 +3762,7 @@ lpfc_issue_els_rdf(struct lpfc_vport *vport, uint8_t retry)
- 	memset(prdf, 0, cmdsize);
- 	prdf->rdf.fpin_cmd = ELS_RDF;
- 	prdf->rdf.desc_len = cpu_to_be32(sizeof(struct lpfc_els_rdf_req) -
--					 sizeof(struct fc_els_rdf));
-+					 sizeof(struct fc_els_rdf_hdr));
- 	prdf->reg_d1.reg_desc.desc_tag = cpu_to_be32(ELS_DTAG_FPIN_REGISTER);
- 	prdf->reg_d1.reg_desc.desc_len = cpu_to_be32(
- 				FC_TLV_DESC_LENGTH_FROM_SZ(prdf->reg_d1));
-diff --git a/drivers/scsi/lpfc/lpfc_hw4.h b/drivers/scsi/lpfc/lpfc_hw4.h
-index bc709786e6af..a7f7ed86d2b0 100644
---- a/drivers/scsi/lpfc/lpfc_hw4.h
-+++ b/drivers/scsi/lpfc/lpfc_hw4.h
-@@ -4909,18 +4909,18 @@ struct send_frame_wqe {
- 
- #define ELS_RDF_REG_TAG_CNT		4
- struct lpfc_els_rdf_reg_desc {
--	struct fc_df_desc_fpin_reg	reg_desc;	/* descriptor header */
-+	struct fc_df_desc_fpin_reg_hdr	reg_desc;	/* descriptor header */
- 	__be32				desc_tags[ELS_RDF_REG_TAG_CNT];
- 							/* tags in reg_desc */
- };
- 
- struct lpfc_els_rdf_req {
--	struct fc_els_rdf		rdf;	   /* hdr up to descriptors */
-+	struct fc_els_rdf_hdr		rdf;	   /* hdr up to descriptors */
- 	struct lpfc_els_rdf_reg_desc	reg_d1;	/* 1st descriptor */
- };
- 
- struct lpfc_els_rdf_rsp {
--	struct fc_els_rdf_resp		rdf_resp;  /* hdr up to descriptors */
-+	struct fc_els_rdf_resp_hdr	rdf_resp;  /* hdr up to descriptors */
- 	struct lpfc_els_rdf_reg_desc	reg_d1;	/* 1st descriptor */
- };
- 
--- 
-2.43.0
-
+> +               }
+> +
+> +               swap_update_readahead(folio, vma, vmf->address);
+> +
+>                 /*
+>                  * KSM sometimes has to copy on read faults, for example,=
+ if
+>                  * folio->index of non-ksm folios would be nonlinear insi=
+de the
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index e9d0d2784cd5..b4d39f2a1e0a 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -2379,8 +2379,6 @@ static int shmem_swapin_folio(struct inode *inode, =
+pgoff_t index,
+>                         count_vm_event(PGMAJFAULT);
+>                         count_memcg_event_mm(fault_mm, PGMAJFAULT);
+>                 }
+> -       } else {
+> -               swap_update_readahead(folio, NULL, 0);
+>         }
+>
+>         if (order > folio_order(folio)) {
+> @@ -2431,6 +2429,8 @@ static int shmem_swapin_folio(struct inode *inode, =
+pgoff_t index,
+>                 error =3D -EIO;
+>                 goto failed;
+>         }
+> +       if (!skip_swapcache)
+> +               swap_update_readahead(folio, NULL, 0);
+>         folio_wait_writeback(folio);
+>         nr_pages =3D folio_nr_pages(folio);
+>
+> diff --git a/mm/swap.h b/mm/swap.h
+> index efb6d7ff9f30..bb2adbfd64a9 100644
+> --- a/mm/swap.h
+> +++ b/mm/swap.h
+> @@ -52,6 +52,29 @@ static inline pgoff_t swap_cache_index(swp_entry_t ent=
+ry)
+>         return swp_offset(entry) & SWAP_ADDRESS_SPACE_MASK;
+>  }
+>
+> +/**
+> + * folio_contains_swap - Does this folio contain this swap entry?
+> + * @folio: The folio.
+> + * @entry: The swap entry to check against.
+> + *
+> + * Swap version of folio_contains()
+> + *
+> + * Context: The caller should have the folio locked to ensure
+> + * nothing will move it out of the swap cache.
+> + * Return: true or false.
+> + */
+> +static inline bool folio_contains_swap(struct folio *folio, swp_entry_t =
+entry)
+> +{
+> +       pgoff_t offset =3D swp_offset(entry);
+> +
+> +       VM_WARN_ON_ONCE(!folio_test_locked(folio));
+> +       if (unlikely(!folio_test_swapcache(folio)))
+> +               return false;
+> +       if (unlikely(swp_type(entry) !=3D swp_type(folio->swap)))
+> +               return false;
+> +       return offset - swp_offset(folio->swap) < folio_nr_pages(folio);
+> +}
+> +
+>  void show_swap_cache_info(void);
+>  void *get_shadow_from_swap_cache(swp_entry_t entry);
+>  int add_to_swap_cache(struct folio *folio, swp_entry_t entry,
+> @@ -144,6 +167,11 @@ static inline pgoff_t swap_cache_index(swp_entry_t e=
+ntry)
+>         return 0;
+>  }
+>
+> +static inline bool folio_contains_swap(struct folio *folio, swp_entry_t =
+entry)
+> +{
+> +       return false;
+> +}
+> +
+>  static inline void show_swap_cache_info(void)
+>  {
+>  }
+> diff --git a/mm/swap_state.c b/mm/swap_state.c
+> index ff9eb761a103..be0d96494dc1 100644
+> --- a/mm/swap_state.c
+> +++ b/mm/swap_state.c
+> @@ -70,10 +70,12 @@ void show_swap_cache_info(void)
+>  }
+>
+>  /*
+> - * Lookup a swap entry in the swap cache. A found folio will be returned
+> - * unlocked and with its refcount incremented.
+> + * swap_cache_get_folio - Lookup a swap entry in the swap cache.
+>   *
+> - * Caller must lock the swap device or hold a reference to keep it valid=
+.
+> + * A found folio will be returned unlocked and with its refcount increas=
+ed.
+> + *
+> + * Context: Caller must ensure @entry is valid and pin the swap device, =
+also
+> + * check the returned folio after locking it (e.g. folio_swap_contains).
+>   */
+>  struct folio *swap_cache_get_folio(swp_entry_t entry)
+>  {
+> @@ -338,7 +340,10 @@ struct folio *__read_swap_cache_async(swp_entry_t en=
+try, gfp_t gfp_mask,
+>         for (;;) {
+>                 int err;
+>
+> -               /* Check the swap cache in case the folio is already ther=
+e */
+> +               /*
+> +                * Check the swap cache first, if a cached folio is found=
+,
+> +                * return it unlocked. The caller will lock and check it.
+> +                */
+>                 folio =3D swap_cache_get_folio(entry);
+>                 if (folio)
+>                         goto got_folio;
+> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> index 4b8ab2cb49ca..12f2580ebe8d 100644
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -240,12 +240,12 @@ static int __try_to_reclaim_swap(struct swap_info_s=
+truct *si,
+>          * Offset could point to the middle of a large folio, or folio
+>          * may no longer point to the expected offset before it's locked.
+>          */
+> -       entry =3D folio->swap;
+> -       if (offset < swp_offset(entry) || offset >=3D swp_offset(entry) +=
+ nr_pages) {
+> +       if (!folio_contains_swap(folio, entry)) {
+>                 folio_unlock(folio);
+>                 folio_put(folio);
+>                 goto again;
+>         }
+> +       entry =3D folio->swap;
+>         offset =3D swp_offset(entry);
+>
+>         need_reclaim =3D ((flags & TTRS_ANYWAY) ||
+> @@ -2150,6 +2150,12 @@ static int unuse_pte_range(struct vm_area_struct *=
+vma, pmd_t *pmd,
+>                 }
+>
+>                 folio_lock(folio);
+> +               if (!folio_contains_swap(folio, entry)) {
+> +                       folio_unlock(folio);
+> +                       folio_put(folio);
+> +                       continue;
+> +               }
+> +
+>                 folio_wait_writeback(folio);
+>                 ret =3D unuse_pte(vma, pmd, addr, entry, folio);
+>                 if (ret < 0) {
+> --
+> 2.51.0
+>
+>
 
