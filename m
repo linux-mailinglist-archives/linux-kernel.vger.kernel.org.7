@@ -1,139 +1,191 @@
-Return-Path: <linux-kernel+bounces-788740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BD2FB38988
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:28:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B93F1B3898C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:29:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCDA0205B58
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:28:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F0355E8155
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 132F52D97A1;
-	Wed, 27 Aug 2025 18:28:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2512D9EE4;
+	Wed, 27 Aug 2025 18:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="br5GY858"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CVob6Jl7"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABED94438B
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 18:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96DC4438B
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 18:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756319323; cv=none; b=JYDYS+xN0fHsRUghOwOJkYc0rqKFuSn4h0G/0677bc1wqCiaFs70hQgWlrFIm0cSi8zrzPOJu2Agd0hRguEcoY6J+Gk46QsVKB+2+uA4zpe/F2Yn6QSIZ5/cpmkDEax998oqqg8C1eIuIpda9YvuhMwKy5+7mGbqxNGCPdGMz+E=
+	t=1756319369; cv=none; b=dmQzm7xgaTy56l/3o3hkrwbqHjWmavV2h9QMoMGVKub9GR8jEjB4KLtN7Hs96OaBTG2VdtqTQju5oxHD8RczKf5KvCv29MLjwM93YZ/eGkAdSCdfAKdrf0nmUGSF0me5MJka9JbJAK0yEy8DicC5BEtSePfpnS4H3eXk+2o1OVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756319323; c=relaxed/simple;
-	bh=41wqfGoUvCOSCwBnkrsV8Al8LdILnHJRjtaAseQQoqo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=V3OQ9w9suYUS6d74pM1fuSykljCfPxMsR9NgY1esAns+1LkSC/KhHb59vnU4ZShY7Gtf+OLLqF34yeea9BBMSGZhL3G07VjomGZGgW821nigd7O3ZsnBc4UoTtvXsf8cq5h5yvpbnhZ1W5/dNhflDeoU2+B+WyTTjg+gCJqLmf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=br5GY858; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1756319318;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=41wqfGoUvCOSCwBnkrsV8Al8LdILnHJRjtaAseQQoqo=;
-	b=br5GY858419c2v32Z6PeVsAhcd4ny8W0OEjE7Dz2x7cAsMc4ZJqVzZvOCCMyBwrVrq+YF8
-	LxtKzhK/A0nyt058rLDOO4MiQNGNYNdOd9QpQpuCYwX7sheyCWlUSVTAg9zJcoXx62I2wk
-	s52wIEOFyTcYY/DopaL8X/Ux9zKB0kU=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Martin KaFai Lau <martin.lau@linux.dev>,  Kumar Kartikeya Dwivedi
- <memxor@gmail.com>,  linux-mm <linux-mm@kvack.org>,  bpf
- <bpf@vger.kernel.org>,  Suren Baghdasaryan <surenb@google.com>,  Johannes
- Weiner <hannes@cmpxchg.org>,  Michal Hocko <mhocko@suse.com>,  David
- Rientjes <rientjes@google.com>,  Matt Bobrowski
- <mattbobrowski@google.com>,  Song Liu <song@kernel.org>,  Alexei
- Starovoitov <ast@kernel.org>,  Andrew Morton <akpm@linux-foundation.org>,
-  LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 01/14] mm: introduce bpf struct ops for OOM handling
-In-Reply-To: <CAADnVQ+LGbXXHHTbBB9b-RjAXO4B6=3Z=G0=7ToZVuH61OONWA@mail.gmail.com>
-	(Alexei Starovoitov's message of "Tue, 26 Aug 2025 12:52:26 -0700")
-References: <20250818170136.209169-1-roman.gushchin@linux.dev>
-	<20250818170136.209169-2-roman.gushchin@linux.dev>
-	<CAP01T76AUkN_v425s5DjCyOg_xxFGQ=P1jGBDv6XkbL5wwetHA@mail.gmail.com>
-	<87ms7tldwo.fsf@linux.dev>
-	<1f2711b1-d809-4063-804b-7b2a3c8d933e@linux.dev>
-	<87wm6rwd4d.fsf@linux.dev>
-	<ef890e96-5c2a-4023-bcb2-7ffd799155be@linux.dev>
-	<CAADnVQ+LGbXXHHTbBB9b-RjAXO4B6=3Z=G0=7ToZVuH61OONWA@mail.gmail.com>
-Date: Wed, 27 Aug 2025 11:28:29 -0700
-Message-ID: <87cy8gty9e.fsf@linux.dev>
+	s=arc-20240116; t=1756319369; c=relaxed/simple;
+	bh=O/LtAwUEJERVnH82qlPKqih1a2GzKNB+Mj6dBnw6pHc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m0m0s9RhmKfRwfw2487d57fM91FGJISLM2JgkUo2q4NY43Bd1sx/2L3vNq0t/ZoTJLPOGI6/1/sKuF4yCjrX6UhetbQZXXqwCy+4J0NTLOQ+/U8nnzebcsbUZMHOVl9pmkBgEUcI18AwPoA+rOPlY5bXVH4HXHIoLmb5X1AeCz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CVob6Jl7; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-24458272c00so1533725ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 11:29:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756319366; x=1756924166; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/V1ASIrDSi0g28DFi0KZDWfzgadLb4GaGK114cw4Lvg=;
+        b=CVob6Jl7mBpZ4/jNDo+4kbKslNL2xljmlJnvTqvfGWQvlfmm1pIw7u5rGS+mhp9WCR
+         xWp9b+ci71KKEpxwsKfeGeHx3JxErlPQt12iOfSArFIGAavlFPSmqX7VYANWYgXuzMqH
+         sjzVYjkEvStlRIcgkIeptR26Gr0dyO6YHchbpg9Iah8bb9FbQbHa0hx5FctIE/XvqbQM
+         dUOrezS6QrCzrEUEWab95Gcqd1zxLbl/ixJ9OMAXtMY2VuVJwxbalzgaDdVMA7NOM8EC
+         F7NZG+V4BM2LBwhWxSiySLau1SMZRCcB4eT19X0lDo681fQsVv7+NNOXc0WPRm/nrAFs
+         74dQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756319366; x=1756924166;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/V1ASIrDSi0g28DFi0KZDWfzgadLb4GaGK114cw4Lvg=;
+        b=dhg9yXt930HwmmI6BRFWLJAqAghB7GHK8dV6HZJCv5HhIpKhVAhv0Sfyp3u2EoXPNX
+         chlzAZqmFNB/lf4w+DAnZrzllFzFAwlIYN1U8GJxwAEYiJljUFUNdfJRYtRUqWRlVq0U
+         V6GhzvayEJdSbrsmsqiEIvwBuZHgK2VAWg1jf+eiKC8b3kch2K/qrnIydpI0NKxyN8A+
+         p+QLN0RBaurFJ3GmMF8WjRNmXggEAuRL7SBG/jde9mZJTWCqQSTbJjkVi3ZV2AMXNIrh
+         Q0EEEsA1+0lUHcvj2TmYtsWTH+HcW3QKtHBxw5FC8C8X/20ZccikfKnnEl090HpSNO2P
+         HEIA==
+X-Forwarded-Encrypted: i=1; AJvYcCVdlt9HVij9ibPBE582JIE1BPy74N3SWVslBa16NbpMzsKHpt6JmE6SC9rKLEIqzrRKDKmyEvS+nReNcTM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjFF1AeaLBcEUGGWbkAoJRDflDyD+ekmtbicQMt9phaTFNTxQz
+	o/YKyDtr7EdCSdEouNyKdU9wNZZubydgVxIDLWt4RK0NLPKHtrlsoaW8
+X-Gm-Gg: ASbGnctvlz07Yo85fZRRS2ElUA3b96g7F71BI0wN5IDgZplUTKVrc3l2/zz9+wokdT6
+	yYqsw5pSRVEJ4XUmZYE20we2HMS5EfRadYNSZUW1rbBQdDdyXrskydoCEkgjQqgg7BdnzmsTTgv
+	AVprniWsfsptL4Zzf9QeIWFR7NJDDUWLI0g3c8aduo7WBDWhXP2GOJ2aqs8bZXZpSqvQpjUxsg4
+	S0EREikZZ5oJDUwsELm1ctqFbXPg29PhalMKUvKuXBU6mGgkOgT8lcdB1jcf6VScCponMn5pR0Q
+	oWs/d4BMxECRJCsAlG4Xz0neJ5AGCYl471KcXGIOpJ61Od2cYm+kylvlrWooj/Td/cwivbD5l0O
+	l8tV81ZPM3jznjekDh2ybIX7rv9v4o2DQA4E57SuNvrtaVz+SLTPvsw==
+X-Google-Smtp-Source: AGHT+IF31+xUc8XH5FHaWxMDYwQHY6yAzaY35BNdjs0sugkpO8may1dby73rGFQR/wb+8akqXlbySQ==
+X-Received: by 2002:a17:903:19ec:b0:248:9e56:e806 with SMTP id d9443c01a7336-2489e56ea30mr41835015ad.12.1756319365980;
+        Wed, 27 Aug 2025 11:29:25 -0700 (PDT)
+Received: from fedora (c-67-164-59-41.hsd1.ca.comcast.net. [67.164.59.41])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2468f5de849sm112338435ad.141.2025.08.27.11.29.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 11:29:24 -0700 (PDT)
+Date: Wed, 27 Aug 2025 11:29:22 -0700
+From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Michael S. Tsirkin" <mst@redhat.com>
+Subject: Re: [PATCH v2 7/7] virtio_balloon: Stop calling page_address() in
+ free_pages()
+Message-ID: <aK9Ogjn71JoOM3w3@fedora>
+References: <20250826205617.1032945-1-vishal.moola@gmail.com>
+ <20250826205617.1032945-8-vishal.moola@gmail.com>
+ <5ee2b684-94d9-40be-b01c-b0538ced33bc@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Migadu-Flow: FLOW_OUT
+Content-Type: multipart/mixed; boundary="vepaSp8giM4exkxF"
+Content-Disposition: inline
+In-Reply-To: <5ee2b684-94d9-40be-b01c-b0538ced33bc@redhat.com>
 
-Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
 
-> On Tue, Aug 26, 2025 at 11:01=E2=80=AFAM Martin KaFai Lau <martin.lau@lin=
-ux.dev> wrote:
->>
->> On 8/25/25 10:00 AM, Roman Gushchin wrote:
->> > Martin KaFai Lau <martin.lau@linux.dev> writes:
->> >
->> >> On 8/20/25 5:24 PM, Roman Gushchin wrote:
->> >>>> How is it decided who gets to run before the other? Is it based on
->> >>>> order of attachment (which can be non-deterministic)?
->> >>> Yeah, now it's the order of attachment.
->> >>>
->> >>>> There was a lot of discussion on something similar for tc progs, and
->> >>>> we went with specific flags that capture partial ordering constrain=
-ts
->> >>>> (instead of priorities that may collide).
->> >>>> https://lore.kernel.org/all/20230719140858.13224-2-daniel@iogearbox=
-.net
->> >>>> It would be nice if we can find a way of making this consistent.
->> >>
->> >> +1
->> >>
->> >> The cgroup bpf prog has recently added the mprog api support also. If
->> >> the simple order of attachment is not enough and needs to have
->> >> specific ordering, we should make the bpf struct_ops support the same
->> >> mprog api instead of asking each subsystem creating its own.
->> >>
->> >> fyi, another need for struct_ops ordering is to upgrade the
->> >> BPF_PROG_TYPE_SOCK_OPS api to struct_ops for easier extension in the
->> >> future. Slide 13 in
->> >> https://drive.google.com/file/d/1wjKZth6T0llLJ_ONPAL_6Q_jbxbAjByp/view
->> >
->> > Does it mean it's better now to keep it simple in the context of oom
->> > patches with the plan to later reuse the generic struct_ops
->> > infrastructure?
->> >
->> > Honestly, I believe that the simple order of attachment should be
->> > good enough for quite a while, so I'd not over-complicate this,
->> > unless it's not fixable later.
->>
->> I think the simple attachment ordering is fine. Presumably the current l=
-ink list
->> in patch 1 can be replaced by the mprog in the future. Other experts can=
- chime
->> in if I have missed things.
->
-> I don't think the proposed approach of:
-> list_for_each_entry_srcu(bpf_oom, &bpf_oom_handlers, node, false) {
-> is extensible without breaking things.
-> Sooner or later people will want bpf-oom handlers to be per
-> container, so we have to think upfront how to do it.
-> I would start with one bpf-oom prog per memcg and extend with mprog later.
-> Effectively placing 'struct bpf_oom_ops *' into oc->memcg,
-> and having one global bpf_oom_ops when oc->memcg =3D=3D NULL.
-> I'm sure other designs are possible, but lets make sure container scope
-> is designed from the beginning.
-> mprog-like multi prog behavior per container can be added later.
+--vepaSp8giM4exkxF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Sounds good to me, will implement something like this in the next version.
+On Wed, Aug 27, 2025 at 02:01:01PM +0200, David Hildenbrand wrote:
+> On 26.08.25 22:56, Vishal Moola (Oracle) wrote:
+> > free_pages() should be used when we only have a virtual address. We
+> > should call __free_pages() directly on our page instead.
+> > 
+> > Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+> > ---
+> >   drivers/virtio/virtio_balloon.c | 3 +--
+> >   1 file changed, 1 insertion(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
+> > index eae65136cdfb..d4e6865ce355 100644
+> > --- a/drivers/virtio/virtio_balloon.c
+> > +++ b/drivers/virtio/virtio_balloon.c
+> > @@ -488,8 +488,7 @@ static unsigned long return_free_pages_to_mm(struct virtio_balloon *vb,
+> >   		page = balloon_page_pop(&vb->free_page_list);
+> >   		if (!page)
+> >   			break;
+> > -		free_pages((unsigned long)page_address(page),
+> > -			   VIRTIO_BALLOON_HINT_BLOCK_ORDER);
+> > +		__free_pages(page, VIRTIO_BALLOON_HINT_BLOCK_ORDER);
+> >   	}
+> >   	vb->num_free_page_blocks -= num_returned;
+> >   	spin_unlock_irq(&vb->free_page_list_lock);
+> 
+> I think you missed another nastiness of similar kind in
+> get_free_page_and_send() where we do
+> 
+> 	p = page_address(page);
+> 
+> Just to call
+> 
+> 	free_pages((unsigned long)p, VIRTIO_BALLOON_HINT_BLOCK_ORDER);
 
-Thanks!
+Thanks for catching that. Andrew can you fold the attached patch into
+this one please? It looks like the page_address() call is needed for other
+things, but since we're changing the file we might as well clean these
+up as well.
+
+I imagine theres more of these lingering in the kernel, but theres so
+many callers and I only looked for the ones that were calling
+page_address() inline :(.
+
+--vepaSp8giM4exkxF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename=0001-virtio_ballon-Call-__free_pages-in-get_free_page_and.patch
+
+From a7d439154c7990418da976e5864b91fce9d49d58 Mon Sep 17 00:00:00 2001
+From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+Date: Wed, 27 Aug 2025 11:10:22 -0700
+Subject: [PATCH] virtio_ballon: Call __free_pages() in
+ get_free_page_and_send()
+
+free_pages() should be used when we only have a virtual address. We
+should call __free_pages() directly on our page instead.
+
+Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+---
+ drivers/virtio/virtio_balloon.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
+index d4e6865ce355..7f3fd72678eb 100644
+--- a/drivers/virtio/virtio_balloon.c
++++ b/drivers/virtio/virtio_balloon.c
+@@ -718,8 +718,7 @@ static int get_free_page_and_send(struct virtio_balloon *vb)
+ 	if (vq->num_free > 1) {
+ 		err = virtqueue_add_inbuf(vq, &sg, 1, p, GFP_KERNEL);
+ 		if (unlikely(err)) {
+-			free_pages((unsigned long)p,
+-				   VIRTIO_BALLOON_HINT_BLOCK_ORDER);
++			__free_pages(page, VIRTIO_BALLOON_HINT_BLOCK_ORDER);
+ 			return err;
+ 		}
+ 		virtqueue_kick(vq);
+@@ -732,7 +731,7 @@ static int get_free_page_and_send(struct virtio_balloon *vb)
+ 		 * The vq has no available entry to add this page block, so
+ 		 * just free it.
+ 		 */
+-		free_pages((unsigned long)p, VIRTIO_BALLOON_HINT_BLOCK_ORDER);
++		__free_pages(page, VIRTIO_BALLOON_HINT_BLOCK_ORDER);
+ 	}
+ 
+ 	return 0;
+-- 
+2.51.0
+
+
+--vepaSp8giM4exkxF--
 
