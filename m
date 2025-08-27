@@ -1,147 +1,188 @@
-Return-Path: <linux-kernel+bounces-788218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C45EB38173
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:41:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0469B38147
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:39:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 895561BA46DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:41:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D7B95E67B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:39:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B26DC31E0EE;
-	Wed, 27 Aug 2025 11:40:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD052D94B0;
+	Wed, 27 Aug 2025 11:38:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="sbyOMa16"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cqxI4d8L"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28122F99B3;
-	Wed, 27 Aug 2025 11:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020EF2C0260
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 11:38:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756294822; cv=none; b=LTDQ0/Q8xUvwXJqr+h+7piDBD2P9KJVu30+l3Ps+HDC0w/EyGDqv3uYfaXESNo7icEe2LVit3Jp0Wil3fVDHDR8TnJYinLuJ5sLgrOh+sLqOwpEj3TTkch5rgYA6CeWpQNJa4m6p3WmGONK+OsGWzNbiOgn2zrR6J4khFvP4ptc=
+	t=1756294731; cv=none; b=Zo7+mP0QS1Px17YmIHA4BObj2CVynZitzjSgN0q2fPgz0fk5H4zBF5vP4GRDoAescQggFY0GhnrwyHHFP+nCR1KkHDAVD5KTfJXGfJzcKpe/6nFYvQkTYHasnFe/+D5CDxL4vILtKhQNX7U1qQ05TIPEIf+x3Hy0fb8Bl1YFKzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756294822; c=relaxed/simple;
-	bh=Iv5KUhAG3p40ND6M+IbaTjk/TNjR2YTNTvlqGZKe7WE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Tox7/KTB/1wI/hQ9HBjWwXF8fkSKsCf8nmoZslzlTp3pa/9q8I10k3FNSjPNOneMGCGLUn0Su9xXiGtRHOR4jwr+KUy+5aVo+FshAxsgXFmnDI4T+PzE2dDIx7nMGaoYnbHJUlmfpbAZuGf5DsjL11to7UMLKdP5xg6TYmadRew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=sbyOMa16; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 980575ec833a11f0b33aeb1e7f16c2b6-20250827
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=BxjyXGHfxzSuJMr1ONRYsHpN3Af1PMpxB+Q48ufPkBQ=;
-	b=sbyOMa16CX3YLEE8sVtXEzdYNUoCt2FAySXv3XO0cHvHTcTSyc5jfCF5vTi8kMmNLyoLj4Q83ZL5ajXL0jtMbeA6RTaWCyj0XjpQ1qjoeoin6Y2ojWt+M+qVg/uH2U/zJYlwyN0/d054dAls2oaVLxXm2eBp3AgyGzd86cswBPk=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.3,REQID:f38bc82b-7796-42c9-8282-bec882c463b3,IP:0,UR
-	L:0,TC:0,Content:100,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:100
-X-CID-META: VersionHash:f1326cf,CLOUDID:84b6ec44-18c5-4075-a135-4c0afe29f9d6,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|801,TC:-5,Content:3|15|50,
-	EDM:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OS
-	A:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 980575ec833a11f0b33aeb1e7f16c2b6-20250827
-Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
-	(envelope-from <jason-jh.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1441510470; Wed, 27 Aug 2025 19:40:13 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Wed, 27 Aug 2025 19:40:10 +0800
-Received: from mtksitap99.mediatek.inc (10.233.130.16) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Wed, 27 Aug 2025 19:40:10 +0800
-From: Jason-JH Lin <jason-jh.lin@mediatek.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Mauro Carvalho Chehab
-	<mchehab@kernel.org>
-CC: Matthias Brugger <matthias.bgg@gmail.com>, Nicolas Dufresne
-	<nicolas@ndufresne.ca>, Jason-JH Lin <jason-jh.lin@mediatek.com>, Nancy Lin
-	<nancy.lin@mediatek.com>, Singo Chang <singo.chang@mediatek.com>, Paul-PL
- Chen <paul-pl.chen@mediatek.com>, Moudy Ho <moudy.ho@mediatek.com>, Xiandong
- Wang <xiandong.wang@mediatek.com>, Sirius Wang <sirius.wang@mediatek.com>,
-	Fei Shao <fshao@chromium.org>, Chen-yu Tsai <wenst@chromium.org>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-media@vger.kernel.org>
-Subject: [PATCH v7 20/20] mailbox: mtk-cmdq: Remove unsued cmdq_get_shift_pa()
-Date: Wed, 27 Aug 2025 19:37:52 +0800
-Message-ID: <20250827114006.3310175-21-jason-jh.lin@mediatek.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250827114006.3310175-1-jason-jh.lin@mediatek.com>
-References: <20250827114006.3310175-1-jason-jh.lin@mediatek.com>
+	s=arc-20240116; t=1756294731; c=relaxed/simple;
+	bh=ERufcbV2jFR0EjEYMYRwpMo6ZtPSDPTI/oWkyg/nab4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YXsH1TXRRybAXHyI9lwfSrnZnREYU/Ge8byM+dvpoLPURuoWEj4/3etzMKJUd7N0YIWoA2FHi7+fVKJjG/2S+5qXlkD7gmrxxhAcVZFAEGmb1OkR4R9TX1XeURfrECaBp7kdRvceI5EpYG1W3Ymlof/kU5Ehqwm5ROWVoIaCD/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cqxI4d8L; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756294728;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4etMjBoHFn+n6erGPScH1pkM2ZUCXCdu4tc4puWCOpw=;
+	b=cqxI4d8LtLtMUqm5L/9FUaV+mZZkpgsBu1gcQcjO1pO74mNjMqA77QN/EdiIQAuERp4mHC
+	Kg19bRSyAhxMgV4pYc9XJVI6haViseRfh8LZDcbtvG08XRbhGvw8hnlVyTByCNwN4swbON
+	YZfu512zn/5YHUb0GOgbxCi/dCNzclY=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-155-qWNPhpUiOlegaE8ds_eWKg-1; Wed,
+ 27 Aug 2025 07:38:45 -0400
+X-MC-Unique: qWNPhpUiOlegaE8ds_eWKg-1
+X-Mimecast-MFC-AGG-ID: qWNPhpUiOlegaE8ds_eWKg_1756294723
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D27CE19560AA;
+	Wed, 27 Aug 2025 11:38:42 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.154])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F06E41955F24;
+	Wed, 27 Aug 2025 11:38:39 +0000 (UTC)
+Date: Wed, 27 Aug 2025 19:38:29 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Coiby Xu <coxu@redhat.com>, Breno Leitao <leitao@debian.org>,
+	kexec@lists.infradead.org, Ondrej Kozina <okozina@redhat.com>,
+	Milan Broz <gmazyland@gmail.com>,
+	Thomas Staudt <tstaudt@de.ibm.com>,
+	Daniel P =?iso-8859-1?Q?=2E_Berrang=E9?= <berrange@redhat.com>,
+	Kairui Song <ryncsn@gmail.com>, Pingfan Liu <kernelfans@gmail.com>,
+	Dave Young <dyoung@redhat.com>, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Dave Hansen <dave.hansen@intel.com>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Arnaud Lefebvre <arnaud.lefebvre@clever-cloud.com>,
+	Jan Pazdziora <jpazdziora@redhat.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v9 1/8] kexec_file: allow to place kexec_buf randomly
+Message-ID: <aK7uNf8n67HQW+hh@MiWiFi-R3L-srv>
+References: <20250502011246.99238-1-coxu@redhat.com>
+ <20250502011246.99238-2-coxu@redhat.com>
+ <oninomspajhxp4omtdapxnckxydbk2nzmrix7rggmpukpnzadw@c67o7njgdgm3>
+ <yng55a2z25m5upehczerzhi6zawe3j4ka7amfu4vw4cu27bbg2@x2lgbuk3iqyf>
+ <20250825180531.94bfb86a26a43127c0a1296f@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250825180531.94bfb86a26a43127c0a1296f@linux-foundation.org>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Since the mailbox driver data can be obtained using cmdq_get_mbox_priv()
-and all CMDQ users have transitioned to cmdq_get_mbox_priv(),
-cmdq_get_shift_pa() can be removed.
+On 08/25/25 at 06:05pm, Andrew Morton wrote:
+> On Mon, 25 Aug 2025 09:18:53 +0800 Coiby Xu <coxu@redhat.com> wrote:
+> 
+> > >diff --git a/arch/arm64/kernel/kexec_image.c b/arch/arm64/kernel/kexec_image.c
+> > >index 532d72ea42ee8..287b25e674d76 100644
+> > >--- a/arch/arm64/kernel/kexec_image.c
+> > >+++ b/arch/arm64/kernel/kexec_image.c
+> > >@@ -76,6 +76,7 @@ static void *image_load(struct kimage *image,
+> > > 	kbuf.buf_min = 0;
+> > > 	kbuf.buf_max = ULONG_MAX;
+> > > 	kbuf.top_down = false;
+> > >+	kbuf.random = 0;
+> > >
+> > > 	kbuf.buffer = kernel;
+> > > 	kbuf.bufsz = kernel_len;
+> > >
+> > 
+> > And also thanks for posing a fix! The patch LGTM. Can you add a Fixes
+> > tag 'Fixes: bf454ec31add ("kexec_file: allow to place kexec_buf
+> > randomly")' and then send it to kexec@lists.infradead.org? Thanks!
+> 
+> I turned all this into a regular patch and queued it (see below),
+> thanks.  No additional actions are needed.
+> 
+> I'm really not liking that code.  I laboriously verified that all
+> fields of kexec_buf are now initialized, except for `cma'.  Is that a
+> bug?
+> 
+> This function has a call frequency of about 3x per week.  Can we please
+> just memset the whole thing so people don't have to worry about this
+> any more?
 
-Fixes: 0858fde496f8 ("mailbox: cmdq: variablize address shift in platform")
-Signed-off-by: Jason-JH Lin <jason-jh.lin@mediatek.com>
----
- drivers/mailbox/mtk-cmdq-mailbox.c       |  8 --------
- include/linux/mailbox/mtk-cmdq-mailbox.h | 12 ------------
- 2 files changed, 20 deletions(-)
+Yeah, adding these trivial patches to mute XXSAN warning is annoying.
+Maybe arm64 can initialize the local variable kbuf like we do in x86_64
+as below, to explicitly set the necessary fields when defining.
 
-diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
-index 316082938977..2d0ad54c519b 100644
---- a/drivers/mailbox/mtk-cmdq-mailbox.c
-+++ b/drivers/mailbox/mtk-cmdq-mailbox.c
-@@ -121,14 +121,6 @@ void cmdq_get_mbox_priv(struct mbox_chan *chan, struct cmdq_mbox_priv *priv)
- }
- EXPORT_SYMBOL(cmdq_get_mbox_priv);
- 
--u8 cmdq_get_shift_pa(struct mbox_chan *chan)
--{
--	struct cmdq *cmdq = container_of(chan->mbox, struct cmdq, mbox);
--
--	return cmdq->pdata->shift;
--}
--EXPORT_SYMBOL(cmdq_get_shift_pa);
--
- static void cmdq_vm_init(struct cmdq *cmdq)
- {
- 	int i;
-diff --git a/include/linux/mailbox/mtk-cmdq-mailbox.h b/include/linux/mailbox/mtk-cmdq-mailbox.h
-index 07c1bfbdb8c4..a42b44d5fd49 100644
---- a/include/linux/mailbox/mtk-cmdq-mailbox.h
-+++ b/include/linux/mailbox/mtk-cmdq-mailbox.h
-@@ -96,16 +96,4 @@ struct cmdq_pkt {
-  */
- void cmdq_get_mbox_priv(struct mbox_chan *chan, struct cmdq_mbox_priv *priv);
- 
--/**
-- * cmdq_get_shift_pa() - get the shift bits of physical address
-- * @chan: mailbox channel
-- *
-- * GCE can only fetch the command buffer address from a 32-bit register.
-- * Some SOCs support more than 32-bit command buffer address for GCE, which
-- * requires some shift bits to make the address fit into the 32-bit register.
-- *
-- * Return: the shift bits of physical address
-- */
--u8 cmdq_get_shift_pa(struct mbox_chan *chan);
--
- #endif /* __MTK_CMDQ_MAILBOX_H__ */
--- 
-2.43.0
+static void *bzImage64_load(struct kimage *image, char *kernel,
+                            unsigned long kernel_len, char *initrd,
+                            unsigned long initrd_len, char *cmdline,
+                            unsigned long cmdline_len)
+{
+......
+        struct kexec_buf kbuf = { .image = image, .buf_max = ULONG_MAX,
+                                  .top_down = true };
+        struct kexec_buf pbuf = { .image = image, .buf_min = MIN_PURGATORY_ADDR,
+                                  .buf_max = ULONG_MAX, .top_down = true };
+.....
+}
+
+> 
+> 
+> From: Breno Leitao <leitao@debian.org>
+> Subject: kexec/arm64: initialize the random field of kbuf to zero in the image loader
+> Date: Thu Aug 21 04:11:21 2025 -0700
+> 
+> Add an explicit initialization for the random member of the kbuf structure
+> within the image_load function in arch/arm64/kernel/kexec_image.c. 
+> Setting kbuf.random to zero ensures a deterministic and clean starting
+> state for the buffer used during kernel image loading, avoiding this UBSAN
+> issue later, when kbuf.random is read.
+> 
+>   [   32.362488] UBSAN: invalid-load in ./include/linux/kexec.h:210:10
+>   [   32.362649] load of value 252 is not a valid value for type '_Bool'
+> 
+> Link: https://lkml.kernel.org/r/oninomspajhxp4omtdapxnckxydbk2nzmrix7rggmpukpnzadw@c67o7njgdgm3
+> Fixes: bf454ec31add ("kexec_file: allow to place kexec_buf randomly
+> Signed-off-by: Breno Leitao <leitao@debian.org>
+> Cc: Baoquan He <bhe@redhat.com>
+> Cc: Coiby Xu <coxu@redhat.com>
+> Cc: "Daniel P. Berrange" <berrange@redhat.com>
+> Cc: Dave Hansen <dave.hansen@intel.com>
+> Cc: Dave Young <dyoung@redhat.com>
+> Cc: Kairui Song <ryncsn@gmail.com>
+> Cc: Liu Pingfan <kernelfans@gmail.com>
+> Cc: Milan Broz <gmazyland@gmail.com>
+> Cc: Ondrej Kozina <okozina@redhat.com>
+> Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> ---
+> 
+>  arch/arm64/kernel/kexec_image.c |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> --- a/arch/arm64/kernel/kexec_image.c~kexec-arm64-initialize-the-random-field-of-kbuf-to-zero-in-the-image-loader
+> +++ a/arch/arm64/kernel/kexec_image.c
+> @@ -76,6 +76,7 @@ static void *image_load(struct kimage *i
+>  	kbuf.buf_min = 0;
+>  	kbuf.buf_max = ULONG_MAX;
+>  	kbuf.top_down = false;
+> +	kbuf.random = 0;
+>  
+>  	kbuf.buffer = kernel;
+>  	kbuf.bufsz = kernel_len;
+> _
+> 
 
 
