@@ -1,233 +1,199 @@
-Return-Path: <linux-kernel+bounces-788849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86BADB38AFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:35:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED60CB38B08
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:37:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51336368817
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:35:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A26243AD6B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:37:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4C12F3638;
-	Wed, 27 Aug 2025 20:35:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD642F39D1;
+	Wed, 27 Aug 2025 20:37:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Z6r/eh33"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2065.outbound.protection.outlook.com [40.107.92.65])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="X/2NIHA+"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43074F4F1
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 20:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756326923; cv=fail; b=XoTONFG9Ty2aVDVnBGtRmvKPTKh+r4ylgSrTe0CaYYvpZwOYVb8AJ57Zjz4XLN1J/DDJPuo6onfmias6tx0GFVo/87Shcwjj2tz0BLbOGr/pEHzNH4dkRyAb7C1BfgzvABPvWLvflf+C9r8dk9Ok0TFHbyCLcj3wzt4x8hUQIkM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756326923; c=relaxed/simple;
-	bh=O2yS7Z/rljPxopRwoOcY6WFUp+0I5t2pGX5id7el/5A=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=PCCLiQJo31CC0KmqA7ndLfodiNAv7vZqUHBFIypTG4hr7ystC0STww7nGnF1zpBhBvAuIOBRLSGiHWGJfjgDMM1sg+IyxHjry3/1c+v1XsDRaOOpuY5nE3WmHneGswjTs7HGIGlR+3o5EyeWcg2N3hRk7X9WIbgZcv4+YU70AfI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Z6r/eh33; arc=fail smtp.client-ip=40.107.92.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JKJgX1HdVBDNL0Rx0ZMBHDsHUZjg6qqpzEnq6jC6mkhQpmeFQhLujVHM7ufoAAPsxBl0y+DXGmAWCzmFSMhCpGlnca8vj3j86LZzsaNeb62qQ06W+dDjoqYWlwFyODKiiI3WsU5Hz+nCh3M/RPJJO/ZgBpT5qftHPQZV0MVfLSjVtba0xFYs1ctLl14AeapWMRoxhxiV0+DAX+BdMggKlhrTkvV7Vg4Rg2C8QEamezQ3lPO1FcDWZh44SCMFJXf0D5coOhtA1B250YkJwpo3t9vY8H5zLrclnsHm4POBslGbVnDmdH9ARaiGGrA27CGhLoy52KSS4MB5Va2Xv+gdDA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iGBSGicHbflGhsd3etAVsVuEYiddXi0FlEk3/ZxRfKs=;
- b=YyIlR+J6JEZZZMN5JWjtysI8dnXlkcX5UWq+P8arLF/+7z+5uvof1QwYjylKMAVhzIfXfBQOse1pPtU/H74Gy5R6HstQD3mszC6vCIuqwFlUJee1bg8Y5XTEzHkYnfzfioGnwBI0Os7nK+KhO3FsxZFno3uwpkASiF7GD5uwW0x0pcTvG4Y3/qIXXP5Xj5cmA3CcMjMnlRN3f8qokOueBtIJcL5hSex6OW++ZbZRnEFEk9EnlRndjIf+8jq7ytmNiEONMzd8kyx2urvTA0LdMJ2RDfn7y4MaHc6edGrE3ihryBg4e2zH4kJ2h4elRGuP2kSW+HpU/RVZWcAH3F8XIQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iGBSGicHbflGhsd3etAVsVuEYiddXi0FlEk3/ZxRfKs=;
- b=Z6r/eh33w8RJOV0GFR+302lZXLRM8aZZ+qyCD8iCtmWJHS5fWNdju1YzadILyEfDk2JcIO2McDLec8/0HEwMe1JTEoVdvn8RGC++Pu3UV8B8hZcrQOtzVpuBFWNC1lIbnxRuqvBvRJsF92x/+cIoFdJx1BisJRg/Q4CGqJwMCc2v5DXL9vzOOYYFEWDTnM1WnoCrgIm1fhdJ3/2Hvy3NdBUu1RECwGUxMZy8iWUye6XftFKX5795BimwwM9Fp0fr2F+02jO85CF679lPeRJH7RHPLSbpJ9kepzgg3D2nOl+yhgF1yDQmkrsJH7GOSJ+2C/TrtZEc09ScRGih7k6/ZA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV2PR12MB5968.namprd12.prod.outlook.com (2603:10b6:408:14f::7)
- by PH0PR12MB8800.namprd12.prod.outlook.com (2603:10b6:510:26f::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.20; Wed, 27 Aug
- 2025 20:35:19 +0000
-Received: from LV2PR12MB5968.namprd12.prod.outlook.com
- ([fe80::e6dd:1206:6677:f9c4]) by LV2PR12MB5968.namprd12.prod.outlook.com
- ([fe80::e6dd:1206:6677:f9c4%6]) with mapi id 15.20.9073.010; Wed, 27 Aug 2025
- 20:35:18 +0000
-Message-ID: <b95522a8-3d92-47dd-a130-b0a85ea841e9@nvidia.com>
-Date: Wed, 27 Aug 2025 13:35:15 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/10] gpu: nova-core: gsp: Add GSP command queue handling
-To: Alistair Popple <apopple@nvidia.com>, dri-devel@lists.freedesktop.org,
- dakr@kernel.org, acourbot@nvidia.com
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
- linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org
-References: <20250827082015.959430-1-apopple@nvidia.com>
- <20250827082015.959430-6-apopple@nvidia.com>
-Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <20250827082015.959430-6-apopple@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BY1P220CA0001.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:a03:59d::14) To LV2PR12MB5968.namprd12.prod.outlook.com
- (2603:10b6:408:14f::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411802D3220;
+	Wed, 27 Aug 2025 20:37:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756327066; cv=none; b=tfDl6hLvMOGwjK6+ePb8gDn7HRxqSwJx6Ueb+1vex6TjAeng1nFlOLsFAZgjor3e3+1RT5oN9Z8uec4STG8GaLHJ6RqGHcx3BJGb9bSeGk8Sm9d1ueskMQR8itOfGRd/EaELyWG6hWQFm4RG5RzZ4bx6RJJXUkcIfr43u/aUvpY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756327066; c=relaxed/simple;
+	bh=7AmZiN2smU+gwIEOHsqoUJ9PRQrK2WNsjJB6SdskA0E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CzNc10WmjYUwJ1zdB1NuBGbDrRVIYRA+9Yhebbn5qGkoubVbPsY7QwnUOOVgRbDeaOweUux6r75CaEDMpE+VY7p4zI+x3w94KaL9wo7KjjlWWkcNzTY1wiVLudMD9R92WEov1Y7bRkXXkC0RtoPV9r9geG/xCVJKk3ybK0ksIO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=X/2NIHA+; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=wZyx7QTDejNp5Lx9hmwKjKcPMV0r7m+t7KQuiDG/eZM=; b=X/2NIHA+idvHlpmmxhYCSHdK/Y
+	Ip1FbvaxaKR7cgEeq5jjV+M2wkYytXYY9cKb4N0+qfXPKIsXCg8lgWEMttytXPVCmKrYpZr69Q/R6
+	eaCiHqKlokxCivUXR1YxE5Waac5/qU/Ig18N00FC8CevQCkQBUCoYV7JNx3PUagmJ6esAgK6KP9iq
+	fkxotaz738hk7cwHIcKp7ZHEPZ5ttz3TvzzQXFHGwjkBupHlNq5oxrQpuyBDul6JTuyUpx/1jikNd
+	aReRi0Ot6Sw7eKtcfWbQXhv1Fj/PkJ5DeH8mXr8sGFqZLRT6gped+6w2c2ODy42uRpxix08mr1TsZ
+	mdtOe8mQ==;
+Received: from [187.57.78.222] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1urMte-002bm5-PL; Wed, 27 Aug 2025 22:37:30 +0200
+Message-ID: <5934fe16-32e7-425a-b4ee-cdcb77dd751a@igalia.com>
+Date: Wed, 27 Aug 2025 17:37:26 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV2PR12MB5968:EE_|PH0PR12MB8800:EE_
-X-MS-Office365-Filtering-Correlation-Id: fc285a2d-1252-4139-75e6-08dde5a93c6e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UzcybVRYSXBublNVUVdSem1XU25OSzVCTHF5ellFMVE3a2dPdmxiSkRTTXVj?=
- =?utf-8?B?MFI0UThsSGY1eFJMK3RFbTJxTUFDZjdPNHZDSkdTNWp0cjlYOUJrZkRRZXI1?=
- =?utf-8?B?RHlQVXNKNlJFam0yeHJ1emo1SmJrcnVvVUw5NjlDZWsyaHJmN3NKYlA1TS9J?=
- =?utf-8?B?YXVPNFJIOEtEQUlNWTI4TjJUa0E4cFQwQWh0QW4xNUVzOWVzRjRhOFZwTU5D?=
- =?utf-8?B?UGhPZkszWjkvZWxoeTN2Z0t0TlpZOFpIaXcvNThqLzJjNXdlWmRnMDJiY2dG?=
- =?utf-8?B?S3M5TGZDT2tLRk1UQW4yNnU4a1FhY2FOSEJnTzZ1QW5XTjN5MVBrV2J5bTFS?=
- =?utf-8?B?VkhkSzZmbjFTdHQrcDdmN0sydzZJMmRmcXM4d1BDaCs2Z3JnaEZLdGdvZHlS?=
- =?utf-8?B?eU5STXJqZ3RZRVMyNVl0eEEyZkhRbTd1UnpzWVV4b2kwNFZ4blE2WVJjdmVW?=
- =?utf-8?B?ZjVIYnBXSXpPbWxHaEpRdGVqR3dLOVowc2RSalhqRXVmWEZ6V21RaEgrbVZT?=
- =?utf-8?B?S3NNa1RJZGhWL0dzRHpwVXFsOTRLTmFZZjhYSTFWRVFNMWtxVDU4N0FjRlZG?=
- =?utf-8?B?bjZvK3daYm9GbFhLOENpMVRmcHczRXA4VXB6ajZZbDQreWRabGdQY0FwSHR5?=
- =?utf-8?B?dmtWTWQvRVcxallJbk5HWVRaSlF4VXhINUZ4UmxMcHRjV0lKRFNuczFZSnZw?=
- =?utf-8?B?V1NtaThuYjcxdmtnYnFSbk5XaHQrVnBqbGxkZFcveGNpUnRrYUFsZzMyNVFH?=
- =?utf-8?B?WmdBZTV5ZWZ6c2xKRit2bGUrNVlKWVk2OGdVZVFpTERENW8xS0xHM1NUbE9I?=
- =?utf-8?B?NXg5azU3YWJiMkNpUjJNQzM2cE5HWnJaK2w4SWZXamNYZ2ZWb0VWbDBKZlJv?=
- =?utf-8?B?cmpDOE1kSUZuYzQyU090NzA2MVVHR2RKQW5BVDI2WmpIR04velNFcmdWcG5i?=
- =?utf-8?B?Tnd3ZUVRY1ZMeWx3U1hCUS8va0ozZTFRdmlhang5emVCL3ZxeEcyODMzWDN1?=
- =?utf-8?B?Nm5MOXkyVzRCbEpONnNXU24rbW1LSlpRaTQ1SmszK2VFek0zenJSTk5pMktW?=
- =?utf-8?B?bHJTa256cW9lNWxlamtmSGp5OVJUOXozMU84RGgyd3QwVWd6WE1ZM2NtbzU2?=
- =?utf-8?B?Qm91L2ozVHRFY2hYaDFtMHl0MHU5YlQyNm5SczBJL3NtSWthb3RNNFpSeit1?=
- =?utf-8?B?b05NQlo0RUZibm1GVDZGcGxQaDZ3VWNVNFVXMTJnOWJsK2dtRHp5WE1YSFpJ?=
- =?utf-8?B?MzRsYkxmbFJrRFd1MVJGT2UwamdiWkVnY0VTQVQwQnBDc2NxaUIrWHN4SXlj?=
- =?utf-8?B?VEtSMVUxQlpwVU4vanBLNEUxMkp3ai9lWSsza2kwdHg0ZzBlc3oyWVQvVjFU?=
- =?utf-8?B?dVF1dXdqNkZaNzJnYmVTOGhrak40L3dabzNlSG9KUWo1UDVMM3AwajhtQUJy?=
- =?utf-8?B?SmF6NW1vbTFrallmS0h1VFdtcnkrMFVkYW5FaTNhbmIyOTNTSWxjRW10WGJ3?=
- =?utf-8?B?ZXVzRUR3RlVVYjJzT2w3WGdKakNhMjZFQm15QnNvZXd5MVFFVlVhY2xndVpB?=
- =?utf-8?B?YVFad1c0aC9FTm5TUHUzbStxalgrWU15WGdGMDRmOXpuYkdJSlpHSVlWcXdQ?=
- =?utf-8?B?TEl0VlBuU29UdWZHc2F0YUg0YXp4MjFuNGdicFVrZm12eW51UnhkYUd4V1h1?=
- =?utf-8?B?MGpzTlFjelp5bmExVFh2dk5rZFdQUmJGRkhVTEM3cDBTNUVaTnp3alJGQTNI?=
- =?utf-8?B?eGNtbk54bDFVSzFNMGNtemNUbHAyK0R5ZXJVTXB2elMxT29XWUVPdmltY1FP?=
- =?utf-8?B?KzVST04vOVdqT1dVM3NZV1pHbjN1ZHR6MXd0a3V3T21WdmdPdFZwSW51MGVZ?=
- =?utf-8?B?ZUo2TkluQVBpMXA5Y05lMHpOeU5aS2lvV256SkU3UThyL0E9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5968.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Vi9NV0NrTzB2UmQ1N243Y3BKY3pUVmpyMHlMRnJ3V21hdmdCWnczOVFOL0lh?=
- =?utf-8?B?Y0krT2V3cTNpdHpQMEk1QjhiOXhjSS9TZXR6WmYyT2FpTVExN0xrWGI0b3ZL?=
- =?utf-8?B?T3h1SUl4UWpNZXB2bzVDdmJXakdqbkhQenY4NGZQY0g5VDVOZDZQUXZnNGk5?=
- =?utf-8?B?bmVjYkhWbHZSR0k5aWtKc05ZQ1NLRjZrV0liRUw4d0NtTjFjZnZkb0ZKY25N?=
- =?utf-8?B?OXNBUzJhaUY1WEU1UUc2ai9Hd25SVlpJRExXNndhdFlEei9XWHFzUEYxQXY2?=
- =?utf-8?B?bnNoOTB6RENodWtLaEVmc0tXR2p4U0orWDQyWkw5RlNtOWZxMndnV1BTTCtZ?=
- =?utf-8?B?clF2cDdSRThDRE03d3IyVUpDc2RyUHR4b2FvejdKd2l3alBZWlhPWmJOYVB4?=
- =?utf-8?B?b2MzYXJZaGkxWm9YbTdKMENNUThoeXJ5K3o3WTBlYWxBWGlabTQwV3JXbUZy?=
- =?utf-8?B?RmdKMklBcStiaGg3N09BczZZTmhRQmtPZGlVdzFyME91bEM0d2pNemUyV2gv?=
- =?utf-8?B?cnRQM2xhNDFGSnY0OEtTQU5WazM4Z3V1c29XMWxBZHN0Q0sycThEZFkzRHJ2?=
- =?utf-8?B?SEhva0ZyS1pBMDYwODNOeDVJaVlOT2p1NjNtUGlpT056LzlINkV1dEMvWHBi?=
- =?utf-8?B?QVM2RENWMzZtd3BOdkRwQmlCVm83d0Y5OVJLWmdGZVZ5OElKN2V3QW1hL3Ji?=
- =?utf-8?B?Y1pxTjAvTGlsWC9EQmgyL21XRTlKV3UxMjFzdG8xZWp4aHpxUXdsKzVGSi9W?=
- =?utf-8?B?VkZ1ZWprQUFaWTU2T0NMYklwMEpFVzFOcHRZNGs4WU5mSnR6Z2RBNFRwZld5?=
- =?utf-8?B?R1V6VC9TNGgvWm1uYnRjdUtQSmlPNkNLcGFNMzQxdjBzYmF0RXZ0OFowTUFT?=
- =?utf-8?B?UjFKeUlURFRKZkVlRWtCaVE3cE1oZy90dW1iN1hyeWNOcGdSQSt5VXNsOEI2?=
- =?utf-8?B?M01zV2ltWG1IcWlIRi9pQm1Nc2JSZVBDR1lQKy9vTm1OclVhc0hpY2lJemxK?=
- =?utf-8?B?KzZkbDd4M1VtM1B1cDE1dEMzZFR0YmwrMlg3Q0dkeVhUQ29kbW0rbVlLKzJR?=
- =?utf-8?B?ZnpqdmV1Y1R4UEhveURVYnFrelp5Zk1HUWxYejZIMHpOVDVsUGlzdS9pMFg3?=
- =?utf-8?B?cWJvblBkWlV2aGoyS0dOa1EzbVhyNTNwaS9sQjN6WitIZ0UvK0JVVHF5N29J?=
- =?utf-8?B?bTEzU2JwWDBlRUVDWlJHdi83bjU5SzAzTC95djN1MGFrM2p4KzhzbU9yZm5y?=
- =?utf-8?B?YmtBbGh1MnBQdHBHaEZyMGJZSGJVRmtSeElKMjJIVGpZekJkN09zbVdreWxi?=
- =?utf-8?B?elVtWkxUYkJXYlUzblNXcmdrdk1vSEJZOGlvZFJBSXNUVUZJOTFUM2RvS01r?=
- =?utf-8?B?ZlJ0VEVkQlZJbFhZSGpLTUg2Q25YQWtxN0ptczJDcFVxRVArWHB2RU9nRkFY?=
- =?utf-8?B?V2NsOTNRZE1zUjBZV1JVUkNHK3JDdjVxdk1SQ1c4cGVQcDlhVDdqR0JKRU1r?=
- =?utf-8?B?QzBtV3dNdm5mbW8xVVlNWnZUQVFDdW5ueEpBQlhCTnZKZGhQcm93SThhOHBv?=
- =?utf-8?B?NHNuR1ZJcHRqQWs1eDI3K25VUTJFYmlLSi94eld4eS9NTkQ1dEEvUUdJVlMx?=
- =?utf-8?B?TWZUTTExL0Y1TXhkZjN1WlBTZ2Rob05HOXYzNTBDQlp4VXA4dnFlZXhnZEc5?=
- =?utf-8?B?V3FNRkhSQlhod3pkcXg5TUZNK25NejhxRkFTVEx1VGZ1NzkxVjhxZ0VZaXo2?=
- =?utf-8?B?aUM3T0F3Z256RE92TUQ2ZGlYZUJzVVROZ0xqWmEzOTdaT0ZuV3ZYcXZKSjNn?=
- =?utf-8?B?SkVkS0RaV3dza243bXA0N0U5RlU1dnNGaFdpOEdtSHZBTDBhUXpoNjArL3B6?=
- =?utf-8?B?UkhYMVFlaEdzM3hhSTZwbDdtU25VUFkyZityU01NNjg4WlE2RDNSeUdNNXB2?=
- =?utf-8?B?U2I2bWhaK3lLUE1sWTRteHEyQzJlL0RhNit5K3pOVHFrb3VBMlRTdWlPTnpM?=
- =?utf-8?B?NGt6MkZSSHJ5S0dVemdvUTQ2SzhURnd0UE9qRkdsVU9CY0VmZFlQZVl1YW9R?=
- =?utf-8?B?czZSWG9PbUlTY2NkK2ZjdlMzSnZ3MG5KTGhMUDNmeFVpZkdRejlsQUlkWXZh?=
- =?utf-8?Q?kwKmfVNlw7+4DbqOvb17XC0Nm?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fc285a2d-1252-4139-75e6-08dde5a93c6e
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5968.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 20:35:18.4930
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GYO5ZPnFMcP+C7mcivGcViQQ9E0vWDO/ENedEjyOGGzg+kkejzWtlqI0qaHciYJcFnSY2Uf0tttsqxy3KVpEWQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 9/9] ovl: Support mounting case-insensitive enabled
+ layers
+To: Amir Goldstein <amir73il@gmail.com>, NeilBrown <neil@brown.name>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>,
+ Gabriel Krisman Bertazi <krisman@kernel.org>, linux-unionfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ kernel-dev@igalia.com
+References: <20250822-tonyk-overlayfs-v6-0-8b6e9e604fa2@igalia.com>
+ <20250822-tonyk-overlayfs-v6-9-8b6e9e604fa2@igalia.com>
+ <CAOQ4uxhWE=5_+DBx7OJ94NVCZXztxf1d4sxyMuakDGKUmbNyTg@mail.gmail.com>
+ <62e60933-1c43-40c2-a166-91dd27b0e581@igalia.com>
+ <CAOQ4uxjgp20vQuMO4GoMxva_8yR+kcW3EJxDuB=T-8KtvDr4kg@mail.gmail.com>
+ <6235a4c0-2b28-4dd6-8f18-4c1f98015de6@igalia.com>
+ <CAOQ4uxgMdeiPt1v4s07fZkGbs5+3sJw5VgcFu33_zH1dZtrSsg@mail.gmail.com>
+ <18704e8c-c734-43f3-bc7c-b8be345e1bf5@igalia.com>
+ <CAOQ4uxj551a7cvjpcYEyTLtsEXw9OxHtTc-VSm170J5pWtwoUQ@mail.gmail.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+In-Reply-To: <CAOQ4uxj551a7cvjpcYEyTLtsEXw9OxHtTc-VSm170J5pWtwoUQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 8/27/25 1:20 AM, Alistair Popple wrote:
-...
+Em 27/08/2025 15:06, Amir Goldstein escreveu:
 
-Hi Alistair,
+[...]
 
-Not a real review yet, but one thing I noticed on a quick first pass:
+> 
+> The reason is this:
+> 
+> static struct dentry *ext4_lookup(...
+> {
+> ...
+>          if (IS_ENABLED(CONFIG_UNICODE) && !inode && IS_CASEFOLDED(dir)) {
+>                  /* Eventually we want to call d_add_ci(dentry, NULL)
+>                   * for negative dentries in the encoding case as
+>                   * well.  For now, prevent the negative dentry
+>                   * from being cached.
+>                   */
+>                  return NULL;
+>          }
+> 
+>          return d_splice_alias(inode, dentry);
+> }
+> 
+> Neil,
+> 
+> Apparently, the assumption that
+> ovl_lookup_temp() => ovl_lookup_upper() => lookup_one()
+> returns a hashed dentry is not always true.
+> 
+> It may be always true for all the filesystems that are currently
+> supported as an overlayfs
+> upper layer fs (?), but it does not look like you can count on this
+> for the wider vfs effort
+> and we should try to come up with a solution for ovl_parent_lock()
+> that will allow enabling
+> casefolding on overlayfs layers.
+> 
+> This patch seems to work. WDYT?
+> 
+> Thanks,
+> Amir.
+> 
 
-> +    pub(crate) fn send_cmd_to_gsp(cmd: GspQueueCommand<'_>, bar: &Bar0) -> Result {
-> +        // Find the start of the message. We could also re-read the HW pointer.
-> +        // SAFETY: The command was previously allocated and initialised on the
-> +        // queue and is therefore not-NULL and aligned.
-> +        let slice_1: &[u8] = unsafe {
-> +            core::slice::from_raw_parts(
-> +                ptr::from_ref(cmd.msg_header).cast::<u8>(),
-> +                size_of::<GspMsgHeader>() + size_of::<GspRpcHeader>() + cmd.slice_1.len(),
-> +            )
-> +        };
+Thank you for the fix!
+
+> commit 5dfcd10378038637648f3f422e3d5097eb6faa5f
+> Author: Amir Goldstein <amir73il@gmail.com>
+> Date:   Wed Aug 27 19:55:26 2025 +0200
+> 
+>      ovl: adapt ovl_parent_lock() to casefolded directories
+> 
+>      e8bd877fb76bb9f3 ("ovl: fix possible double unlink") added a sanity
+
+Just to make checkpatch happy, this should be
+
+Commit e8bd877fb76b ("ovl: fix possible double unlink") added a sanity
+
+>      check of !d_unhashed(child) to try to verify that child dentry was not
+>      unlinked while parent dir was unlocked.
+> 
+>      This "was not unlink" check has a false positive result in the case of
+>      casefolded parent dir, because in that case, ovl_create_temp() returns
+>      an unhashed dentry.
+> 
+>      Change the "was not unlinked" check to use cant_mount(child).
+>      cant_mount(child) means that child was unlinked while we have been
+>      holding a reference to child, so it could not have become negative.
+> 
+>      This fixes the error in ovl_parent_lock() in ovl_check_rename_whiteout()
+>      after ovl_create_temp() and allows mount of overlayfs with casefolding
+>      enabled layers.
+> 
+>      Reported-by: André Almeida <andrealmeid@igalia.com>
+>      Link: https://lore.kernel.org/r/18704e8c-c734-43f3-bc7c-b8be345e1bf5@igalia.com/
+
+I think the correct chain here is:
+
+Reported-by: André Almeida <andrealmeid@igalia.com>
+Closes: 
+https://lore.kernel.org/r/18704e8c-c734-43f3-bc7c-b8be345e1bf5@igalia.com/
+Fixes: e8bd877fb76b ("ovl: fix possible double unlink")
+
+>      Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> 
+
+Reviewed-by: André Almeida <andrealmeid@igalia.com>
+
+> diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+> index bec4a39d1b97c..bffbb59776720 100644
+> --- a/fs/overlayfs/util.c
+> +++ b/fs/overlayfs/util.c
+> @@ -1551,9 +1551,23 @@ void ovl_copyattr(struct inode *inode)
+> 
+>   int ovl_parent_lock(struct dentry *parent, struct dentry *child)
+>   {
+> +       bool is_unlinked;
 > +
-> +        dev_info!(
-> +            &cmd.cmdq.dev,
-> +            "GSP RPC: send: seq# {}, function=0x{:x} ({}), length=0x{:x}\n",
-> +            cmd.cmdq.seq - 1,
-> +            cmd.rpc_header.function,
-> +            decode_gsp_function(cmd.rpc_header.function),
-> +            cmd.rpc_header.length,
-> +        );
-
-Let's please make this (and the corresponding receive) a dev_dbg!().
-Otherwise the driver is too chatty at INFO log levels.
-
-I suspect that I'm to blame here, because I recall pretty-ing up the
-output of these, and I probably set dev_info!() at the same time. doh!
-
-...
-> +        // Log RPC receive with message type decoding
-> +        dev_info!(
-> +            self.dev,
-> +            "GSP RPC: receive: seq# {}, function=0x{:x} ({}), length=0x{:x}\n",
-> +            rpc_header.sequence,
-> +            rpc_header.function,
-> +            decode_gsp_function(rpc_header.function),
-> +            rpc_header.length,
-> +        );
-
-Here also: please use dev_dbg!() for this one.
-
-
-thanks,
--- 
-John Hubbard
+>          inode_lock_nested(parent->d_inode, I_MUTEX_PARENT);
+> -       if (!child ||
+> -           (!d_unhashed(child) && child->d_parent == parent))
+> +       if (!child)
+> +               return 0;
+> +
+> +       /*
+> +        * After re-acquiring parent dir lock, verify that child was not moved
+> +        * to another parent and that it was not unlinked. cant_mount() means
+> +        * that child was unlinked while parent was unlocked. Since we are
+> +        * holding a reference to child, it could not have become negative.
+> +        * d_unhashed(child) is not a strong enough indication for unlinked,
+> +        * because with casefolded parent dir, ovl_create_temp() returns an
+> +        * unhashed dentry.
+> +        */
+> +       is_unlinked = cant_mount(child) || WARN_ON_ONCE(d_is_negative(child));
+> +       if (!is_unlinked && child->d_parent == parent)
+>                  return 0;
+> 
+>          inode_unlock(parent->d_inode);
 
 
