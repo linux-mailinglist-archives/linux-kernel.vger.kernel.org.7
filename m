@@ -1,81 +1,90 @@
-Return-Path: <linux-kernel+bounces-788971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5E8FB38EDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:56:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC3CFB38EE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:58:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC8EF7AF133
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:54:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E96251B22797
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E28F30FC3D;
-	Wed, 27 Aug 2025 22:56:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346D730FF1D;
+	Wed, 27 Aug 2025 22:58:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GEd+fyH5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cPDYWmjo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1752D738E;
-	Wed, 27 Aug 2025 22:56:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8D92BEFF3;
+	Wed, 27 Aug 2025 22:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756335376; cv=none; b=oE+qYJJFX3QOh0vvUOdbCpnmg8HnNm/5ut0GIpTQMMPGv0HUzevcXhJ7Q+6wm/91kOfuFuhttXWAw+N/BbiBUMedDdvXMWeq5cc3hSbAVMn0qsgJccvkSEGO3Am4GLvgRSAMDDoVmy28CwJHL8D7r4LYmEDBHnV6gpJKwOTWOlU=
+	t=1756335500; cv=none; b=Yhwa3O1bWd2sqRycQ0AaThaRh0dksnpxOImsYd1XwJfp6Hx55BHSnZm0GXafX5rkwAq42I7cot0YYtlvzGHv/IP8WLMUTunDhNxf+zJqfAN7ESb+XP4pJZTSvYyU5dCBc0m9Q/fL3bH1+bLqpVwnCdAf5ucVqx98QD3DArH6NPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756335376; c=relaxed/simple;
-	bh=/B1SgrrSnevWQV+pRhc+dhHUQzjFT6VYqbFyFZ1N5h0=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=U5WmdRZ+t0MilhkwV1TOOe55Z3h62+/kSMYpXHEWwUxg9VEqjymdk2DTFsLHaYetVWwlO6zr8Gf+4bi5o5kGV0KQ+kWzVO29I0rFi2S4reAYQLmBsep0dhJsWd17/kCwT40CDY1IESao4ExDDujth/AQOeFIhIuZM+TxrG0xVgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=GEd+fyH5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33FBDC4CEEB;
-	Wed, 27 Aug 2025 22:56:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1756335376;
-	bh=/B1SgrrSnevWQV+pRhc+dhHUQzjFT6VYqbFyFZ1N5h0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GEd+fyH5w0msgOlZWZRibXLjDWfZ0ZYTK/NT/kU2wYtVfsnCceTM2RAIKY6n0oLsj
-	 egh1/x/q+VlvGdpvQF2arxmtPry6aRneHjRuaAcy1YClkPgUC1Oke49AfQL1PdO0um
-	 qdQnuZ7ukbcD25QY0ILI/T23Kiw1Z11Uo63vaVq4=
-Date: Wed, 27 Aug 2025 15:56:14 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
-Cc: shuah@kernel.org, mic@digikod.net, gnoack@google.com, david@redhat.com,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
- rppt@kernel.org, surenb@google.com, mhocko@suse.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
- ming.lei@redhat.com, skhan@linuxfoundation.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-security-module@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 0/2] selftests: Centralize kselftest headers to avoid
- relative includes
-Message-Id: <20250827155614.9e441c45c0612730bcdedcaf@linux-foundation.org>
-In-Reply-To: <20250827144733.82277-1-reddybalavignesh9979@gmail.com>
-References: <20250827144733.82277-1-reddybalavignesh9979@gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756335500; c=relaxed/simple;
+	bh=bE7zXK2epdS1PcPUcz8I2ocXdbtAEedtMJj0bTOPTOA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=RDDqb2fWAVBlaffC5jsZ7dzIbDT6jim/qe7InjwFybbMrzSr5/prKXSZJlqxi9IF7C5Aocg6OoPsjUhxN2+Fcc49MpYdRCTkIkZISu0O5UmwHs2UxeiSc1f0+x+FL/m7SaZgAY9q+10LvT9o63IjKtLLCAvS/YKwRvVIZeJi32w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cPDYWmjo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E586AC4CEF5;
+	Wed, 27 Aug 2025 22:58:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756335500;
+	bh=bE7zXK2epdS1PcPUcz8I2ocXdbtAEedtMJj0bTOPTOA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=cPDYWmjodYV78gD/jjGsiD7Motnh49H8tq86+2InGDu5eIuaxjGPJqjfwXbkhFpu+
+	 cfxUddP3AUp9Kh2OhI0ct1y6+HQmGZf4O/M5KOebo4sNbiZPbrLDpy/EfSDMOVB/MG
+	 WwvvXV2ntn7S7FX5kHu+jTQkeAu+By52XHJGNk9pdj6zc+DfQVStx5sZLUZAKkpwkW
+	 Ymiqee+ke+kgy0ZsDeSPS2H7NC4y+gRDLBDZVdfpZ4W5PMO794J4wSDo0iOxhJOgZQ
+	 sLOKe8V9dROLeJJ23jFy0rYDQaM0780e9cRs6Y0O8wLLfDPY4q//lgSpyPK8+GYWuz
+	 N3lpaxSj3z/qg==
+Date: Wed, 27 Aug 2025 17:58:18 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Marc Zyngier <maz@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Shradha Gupta <shradhagupta@linux.microsoft.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Anders Roxell <anders.roxell@linaro.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Longbin Li <looong.bin@gmail.com>,
+	Linux Kernel Functional Testing <lkft@linaro.org>
+Subject: Re: [PATCH] PCI/MSI: Check MSI_FLAG_PCI_MSI_MASK_PARENT in
+ cond_[startup|shutdown]_parent()
+Message-ID: <20250827225818.GA916741@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <zlhxt6zqvweklyknmmrlheg3ojy4lildosfjoginliggdtdf5x@zent5qnnawvb>
 
-On Wed, 27 Aug 2025 20:17:31 +0530 Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com> wrote:
-
-> This series centralize the handling of kselftest.h and
-> kselftest_harness.h includes in selftests, replacing relative
-> paths with a non-relative approach using shared -I path.
+On Thu, Aug 28, 2025 at 06:52:39AM +0800, Inochi Amaoto wrote:
+> On Wed, Aug 27, 2025 at 01:32:02PM -0500, Bjorn Helgaas wrote:
+> > On Wed, Aug 27, 2025 at 02:29:07PM +0800, Inochi Amaoto wrote:
+> > > For msi controller that only supports MSI_FLAG_PCI_MSI_MASK_PARENT,
+> > > the newly added callback irq_startup() and irq_shutdown() for
+> > > pci_msi[x]_templete will not unmask/mask the interrupt when startup/
+> > > shutdown the interrupt. This will prevent the interrupt from being
+> > > enabled/disabled normally.
+> > 
+> > s/templete/template/
 > 
-> Patch-1 updates the build files (Makefile and lib.mk) and 
-> include CFLAGS in sync/Makefile to resolve not found error
-> Patch-2 applies bulk source change
-> (Patch 2 is large but it is replaced automatically)
+> > AFAICS cond_startup_parent() is used by pci_irq_startup_msi() and
+> > pci_irq_startup_msix() in pci_msi_template; cond_shutdown_parent() is
+> > used by pci_irq_shutdown_msi() and pci_irq_shutdown_msix() in
+> > pci_msix_template.
+> 
+> cond_startup_parent() is used by pci_irq_startup_msi() in
+> pci_msi_template and pci_irq_startup_msix() in pci_msix_template;
+> cond_shutdown_parent() is used by pci_irq_shutdown_msi() in
+> pci_msi_template and pci_irq_shutdown_msix() in pci_msix_template.
 
-Cool, thanks.  I think this is nicer.
-
->  280 files changed, 286 insertions(+), 280 deletions(-)
-
-lol, it's lucky that I so enjoy fixing rejects.
+Right, I really screwed that up when I noticed the "*_template"
+structure names and added them to my description.
 
