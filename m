@@ -1,180 +1,151 @@
-Return-Path: <linux-kernel+bounces-788324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 867E9B382D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:49:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D08BDB382D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:50:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 886291B667D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:49:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A3DD46178B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:50:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F49934DCD8;
-	Wed, 27 Aug 2025 12:49:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC096335BBB;
+	Wed, 27 Aug 2025 12:50:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hNZJL511"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WLlgGSvQ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="xjMmKgE4";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WLlgGSvQ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="xjMmKgE4"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A99E2E2DC1;
-	Wed, 27 Aug 2025 12:49:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A2D29ACF7
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 12:50:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756298946; cv=none; b=PSGhPs7TMqTN+0pbhYXTOhuOs503F0/W/wrCfB+Ch0a5xdceSLZuBdRajxgyo33R1F/X4pg00T8DL9QVNNmA4UqBeeJx74kuJnvu+LFCNTMnnramYnfslPj5KCe51hrNxQUa5wgViFlGn8dcTHrLWKPVI4ruv62gbEGWzuw+JJY=
+	t=1756299010; cv=none; b=Xgiq5aeYF75BJHjkoPNVqaYHyblwZkbz77XVQk/kDwMT1XYimXxsmIeSZo+8Lw4n2GOyu6Vgf13oelYyF17ktT6wqEUl2rX/Qu1yCyiMG6Je+OvrFwvefBz24LFlpE63BFQiKPEBf0jBj547gF9K+8eVpvhmpJw//wxMeI8siLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756298946; c=relaxed/simple;
-	bh=FBo4RbmvBwJYaj/cUiU+/0VAPX3y3i/AlyAKfvOtI0M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g7yj024+IwD8bXwia91ya0JG979LRT1gB+F5Wf0Goljs91y4cSTdt6CcXKBVE2W5nPz91hdMRgqGa7GwBYA3oMBsFwnP1MpmAGgMB1+6IS2+YM6j9XjkMqjmZx6K9TuJcOMEGIm3WIPa9XbQWB/lo1w0f7pw9/zbwzKYgYKRl3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hNZJL511; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3F73C4CEEB;
-	Wed, 27 Aug 2025 12:49:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756298946;
-	bh=FBo4RbmvBwJYaj/cUiU+/0VAPX3y3i/AlyAKfvOtI0M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hNZJL511EAaIdyjnHxN24TaEFmW5tAtSBQOCdkPAYPummTQtDGeDGlXJ6/5h3BAu4
-	 fB5kvVMznekqyZTHYsH2ev5V1dW56BLCfAR9eROxUmI0vw/DPix8i2pRzf/2AKGpi/
-	 FO80oIPwV9DdoqzMQKHIHBf0Mmy+T5KzK6jSNIDhA6D74Zzd02T65+Te79/Bf6Uy2k
-	 rtc7AT8vUlHVOUzX7+iHnIrpFBcbu6ccmvoMIlaKyjDTZI2tke9uNbZb3+LVpWCMi1
-	 /hT8dU9KgFsVTNrCbXGzEKWrytw2yNfjGbXkNOaz2XyH1/aD0SjfHC6ZbHgwh+xXdA
-	 27W0k7pAB3paQ==
-Message-ID: <f093fc68-c783-41eb-b51e-e48a18e6d2cf@kernel.org>
-Date: Wed, 27 Aug 2025 14:48:58 +0200
+	s=arc-20240116; t=1756299010; c=relaxed/simple;
+	bh=XKTOZcfNA5C/e61OoJFgohlt7HAssGalfhSBLI8klas=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b7Wm4rzIC2EuhEwWC2F99gelqOetJEQU3NC46CKiSkAVXKWutcu1JPBCxcjFwgUlmMBY9YhjCMRDigxq8QdCuZLQUWkqRJ61Olou2kOP8bfDPoIPdg5KqOxmEtVAFAN01EEvj/pQHRDv+z6/60v8GiVJnrI8AArDj8eyuuuFtss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WLlgGSvQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=xjMmKgE4; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WLlgGSvQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=xjMmKgE4; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 7ADD922158;
+	Wed, 27 Aug 2025 12:50:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756299006; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v54dIouATmnuSJr9b8zCG6xfHOxa95s8DPKUADFVBJ4=;
+	b=WLlgGSvQdmBmSFqlypFXfova6OT68TCMH+3yNLF8/o7uBtjjqFEFw77UEAR6cfTwx2+l2B
+	fViUzc2WvOhRBXNZXNWE5+k9fyxOtWTQa9k/b170NhVGylQcc6lBvP4MVuPm/RpiuIKD4T
+	Q7dT4rjd4S8/EQBo6vzc2GdTYVNsAFo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756299006;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v54dIouATmnuSJr9b8zCG6xfHOxa95s8DPKUADFVBJ4=;
+	b=xjMmKgE4nXH8y5ipv+22VMpKZxMeY+3yqCPtIXHNUAnDRsMKXmV+u3GC3oqj1OYj6R6nxl
+	86QWtd6KWULJpwBQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1756299006; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v54dIouATmnuSJr9b8zCG6xfHOxa95s8DPKUADFVBJ4=;
+	b=WLlgGSvQdmBmSFqlypFXfova6OT68TCMH+3yNLF8/o7uBtjjqFEFw77UEAR6cfTwx2+l2B
+	fViUzc2WvOhRBXNZXNWE5+k9fyxOtWTQa9k/b170NhVGylQcc6lBvP4MVuPm/RpiuIKD4T
+	Q7dT4rjd4S8/EQBo6vzc2GdTYVNsAFo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1756299006;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v54dIouATmnuSJr9b8zCG6xfHOxa95s8DPKUADFVBJ4=;
+	b=xjMmKgE4nXH8y5ipv+22VMpKZxMeY+3yqCPtIXHNUAnDRsMKXmV+u3GC3oqj1OYj6R6nxl
+	86QWtd6KWULJpwBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D7E9113310;
+	Wed, 27 Aug 2025 12:50:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id MuuRMf3+rmjIWQAAD6G6ig
+	(envelope-from <pfalcato@suse.de>); Wed, 27 Aug 2025 12:50:05 +0000
+Date: Wed, 27 Aug 2025 13:50:09 +0100
+From: Pedro Falcato <pfalcato@suse.de>
+To: Brendan Jackman <jackmanb@google.com>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org, 
+	maple-tree@lists.infradead.org, linux-mm@kvack.org
+Subject: Re: [PATCH 1/3] tools: testing: Allow importing arch headers in
+ shared.mk
+Message-ID: <j2vfxy4sr6wmuovlynvljvmy6as7esevp57hyqkhofxnxnjldf@ul6befrh7eqy>
+References: <20250827-b4-vma-no-atomic-h-v1-0-5d3a94ae670f@google.com>
+ <20250827-b4-vma-no-atomic-h-v1-1-5d3a94ae670f@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] dt-bindings: ethernet: eswin: Document for EIC7700
- SoC
-To: weishangjuan@eswincomputing.com, devicetree@vger.kernel.org,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
- mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
- yong.liang.choong@linux.intel.com, vladimir.oltean@nxp.com,
- rmk+kernel@armlinux.org.uk, faizal.abdul.rahim@linux.intel.com,
- prabhakar.mahadev-lad.rj@bp.renesas.com, inochiama@gmail.com,
- jan.petrous@oss.nxp.com, jszhang@kernel.org, p.zabel@pengutronix.de,
- boon.khai.ng@altera.com, 0x1207@gmail.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
-Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
- lizhi2@eswincomputing.com
-References: <20250827081135.2243-1-weishangjuan@eswincomputing.com>
- <20250827081314.2295-1-weishangjuan@eswincomputing.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250827081314.2295-1-weishangjuan@eswincomputing.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250827-b4-vma-no-atomic-h-v1-1-5d3a94ae670f@google.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-On 27/08/2025 10:13, weishangjuan@eswincomputing.com wrote:
-> +  clocks:
-> +    items:
-> +      - description: GMAC main clock
-> +      - description: Tx clock
-> +      - description: AXI clock
-> +      - description: Configuration clock
-> +
-> +  clock-names:
-> +    contains:
+On Wed, Aug 27, 2025 at 11:04:41AM +0000, Brendan Jackman wrote:
+> There is an arch/ tree under tools. This contains some useful stuff, to
+> make that available, import the necessary Make helper file and then add
+> it to the -I flags.
+> 
+> There still aren't that many headers so also just smush all of them into
+> SHARED_DEPS instead of starting to do any header dependency hocus pocus.
+>
 
-This part did not improve:
-items: instead
+I was a little confused as to why this patchset was safe, and - yeah - i missed
+the arch/ under tools/.
 
-> +      enum:
-> +        - axi
-> +        - cfg
-> +        - stmmaceth
-> +        - tx
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  reset-names:
-> +    items:
-> +      - const: stmmaceth
-> +
-> +  rx-internal-delay-ps:
-> +    enum: [0, 200, 600, 1200, 1600, 1800, 2000, 2200, 2400]
-> +
-> +  tx-internal-delay-ps:
-> +    enum: [0, 200, 600, 1200, 1600, 1800, 2000, 2200, 2400]
-> +
-> +  eswin,hsp-sp-csr:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    items:
-> +      - description: Phandle to HSP(High-Speed Peripheral) device
-> +      - description: Offset of phy control register for internal
-> +                     or external clock selection
-> +      - description: Offset of AXI clock controller Low-Power request
-> +                     register
-> +      - description: Offset of register controlling TX/RX clock delay
-> +    description: |
-> +      A phandle to hsp-sp-csr with three arguments that configure
-> +      HSP(High-Speed Peripheral) device. The argument one is the
-> +      offset of phy control register for internal or external clock
-> +      selection, the argument two is Offset of AXI clock controller
-> +      Low-Power request register, the argument three is Offset of
-> +      register controlling TX/RX clock delay.
+There are asm-generic headers so hopefully those fully take care of !x86? Did
+you check?
 
-Description is mostly redundant - it is already part of items:. Just say
-here "HSP (High Spee....) device needed to configure clock selection,
-clock low-power mode and clock delay." or something similar.
+In any case:
+Acked-by: Pedro Falcato <pfalcato@suse.de>
 
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-Best regards,
-Krzysztof
+-- 
+Pedro
 
