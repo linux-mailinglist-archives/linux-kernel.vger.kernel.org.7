@@ -1,153 +1,140 @@
-Return-Path: <linux-kernel+bounces-788076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 955A9B37F7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:06:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 714F2B37F7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:08:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A922E1895973
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:06:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 926951896792
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:08:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06D87321F31;
-	Wed, 27 Aug 2025 10:05:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC3A1342CB4;
+	Wed, 27 Aug 2025 10:08:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="kp4DUOie"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jV+SY8KV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0BCE27700A
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 10:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223EF2AE90;
+	Wed, 27 Aug 2025 10:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756289154; cv=none; b=aKt61zqf/2T7hpt5Ba4wuOAsIheaIgEuFiKQwJY6NDQw3F2UuPAmsF38LU3APOEjExTLYnOgQUpv416gg8vS6yNiPx3Zc5GCFA25H4qQ3KPBK6ZlWF7C4MpY6A54RGOuXwmYRZWkxTFwdNeo93C/iKlPlycllyK2ytZqPnWHq1s=
+	t=1756289284; cv=none; b=puIBbPL0tc5E9M54D39gFuBekvaPUFQVTWnVFjRYs9rTCGL6EObzGpE6fD6OT+kPuaftd1RzpStBzcthGBNFDLAoMTJWoNadGzd0uzsnPnoh89yqneeX8+a+v0Z9LlRCE5v30/JVXh2zaZ1auSfKJFC5fjMJYVyeOyT/U3ysMLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756289154; c=relaxed/simple;
-	bh=92CTkaQy7d7EzkT6gcawHTzk9/zChgZgG/5T9P750ug=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c5rOJesZVvUJtEzVnZPW10+o698UhElm7EGFkJJx8tZvb3MbMcFkmn5Xw20Eu/to3ZCFxxSCuse0w7Yzls+iF0aee3LE4+hbPQYTxAXI4aWrHe1jTPfqkV9eUiUFLPIrXDtShfixmoWV0E75IRU2WC4IC07XzMfOBSQsfBrGFCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=kp4DUOie; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45a1b05fe23so36734895e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 03:05:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1756289151; x=1756893951; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xdwnwu4m2poY+bhx4tDFQHcHU8/2TAEFrTcsGU13aIo=;
-        b=kp4DUOieG0RUyZC8iV6q1ggajXIPbHmjttPSv080KyhEk3Vbmz59qZHlvvrZYcNOJ3
-         LouUF+bhYidNSu+8+yFjf9Ky5A1zU3r6gvWyA02QFO5yqkLnT+R0FIjRgswY5v1G2o4p
-         kLyU1UOUZ+8XEtLz9TNJZWluIf7KEnIUtwG2YfCsfBA5bxMw2L++5arw7ZfmSy3AUOu7
-         LBxlsCZCmU38rjQvR+g883e6xZBHFE089S7HyaYGN9V9LJacGb/8NvzlF+qEZ6wAijq0
-         6cdqNOPiuvlvrdaM+IN1XsNhKm8s9dozDkdL3bGAjvwdgI0B3QoNVTZdyTydkPOZFYPr
-         VI4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756289151; x=1756893951;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Xdwnwu4m2poY+bhx4tDFQHcHU8/2TAEFrTcsGU13aIo=;
-        b=GDfM0SKPbvp4nieIU0DPRLlS55QyzxBCFLDB0ganS8oD8NG3+WbCBA/zUVINTNzq8o
-         +SMYpzw4t+MFLmiKNFgHdwFzev0ooLTkrRT4bz722P5VugUK6VG8aFlNjNUhsMula0XI
-         JPiCmDku3eBk9Mdw664TQp4TIXE8SlZGg/DJZEIopzZtDsg39uCYrcMCkcbrLZUxSosS
-         JhJJ3y5UaxVQOprcZHmwAbmVTQkNvKaRZimXMgiFOiOnw6FkydKxQRwwPK+h0IRrrnL6
-         w4VPh49a4P8SsQ0Uf/dB8djqlOpNPjDZSFByAo2iyKWv9jjIGXF4Y+GCk+IgheVOfXIm
-         WECQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVv1lj1fYcrJJoCUe9IxuecyPpk5i8sxhpfm2O21Yg1bhTzFR2SL0z87DRDOQmey8L5VFuJxdYs2cJo+hs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbfcmdxciN5TGu27qJvafaqUgbnoRlf4Afs59W9r+mrsdshboi
-	zJpcPsMzIP0ZeTa36aDrDAQeliZZpdSli4GtqSVeWDPMCFz6uddsRcC7hC2XkJeSVXU=
-X-Gm-Gg: ASbGncuNvSv3HsFNAENRaamu15dcQGdgfzzapKABUomnP4V4LprAG69H3yQ5P+jZt9g
-	1l83f5wc/j1R9cM+zqe5naEYGpHOaPu+zyHei7IcOVHawuh6+PpKf6eWhYKfqZlIRIsX38Z3N45
-	TjkYuR6haG/oMXXGrLhnT4LMGOoUMA26/T11fiDjEsrJfMSB/KIU+W4ZT/FMGHATF+I9/DM5Zcm
-	k8rn9L87Eb3QYEETqINCX9GmYunRe4H9or3w17pe8Mi4dbU7X6RaqfoIwDmK1xX/SIOVpYjW5cX
-	WodQpWghsfVsg2Cr86n2fTf6BYkNGLVROsy6BOxUQUIrl/tPnEiJo3iT6kZXK8JBLCdHgK7a8Dv
-	KwOG3K7QQ/iEVFR7yTvxWnjORht6lIg88gEZsffJt20npkoxFF/ECqUu3wttMfsWZg9O1J0ucWJ
-	RUaSX0DuNk+Jz+r27m/gt7biDrio4=
-X-Google-Smtp-Source: AGHT+IEtZ+BXU5M1yHVaebniePLRatXITWo3d6guRg2Xa8Mmbg9iEVO0ljf4M/MaOOS/3BWmeaBxlA==
-X-Received: by 2002:a05:600c:35cb:b0:458:affe:a5c1 with SMTP id 5b1f17b1804b1-45b5179f455mr170821875e9.5.1756289150864;
-        Wed, 27 Aug 2025 03:05:50 -0700 (PDT)
-Received: from claudiu-TUXEDO-InfinityBook-Pro-AMD-Gen9.. ([2a02:2f04:6103:4200:a5a4:15e6:5b6a:a96])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cc7b699d5dsm2818037f8f.48.2025.08.27.03.05.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 03:05:50 -0700 (PDT)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: gregkh@linuxfoundation.org,
-	david.m.ertman@intel.com,
-	ira.weiny@intel.com,
-	leon@kernel.org,
-	rafael@kernel.org,
-	dakr@kernel.org,
-	ulf.hansson@linaro.org
-Cc: claudiu.beznea@tuxon.dev,
-	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH] driver core: auxiliary bus: Drop dev_pm_domain_detach() call
-Date: Wed, 27 Aug 2025 13:05:41 +0300
-Message-ID: <20250827100541.926350-1-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1756289284; c=relaxed/simple;
+	bh=KiGizTKELKsAGoKxMS4KCkY7Hr/uMnzCC5mTyvqi0Oo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V0RxPSVKdKsIgc5FFOZ4oKB/kO5yNdRXXDSDC87nyClhGI5RFiSlpgyM56W4NvOLsdi7nNhHjel807yg1KyHBvqf1NufkSJlo3rGRGRFKRWCiNR+DtDSPYTlN2gZFzeVDUF3RqHkf3VO0UkgSqKjmCu1hLRmYqRfKPS0wqIso+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jV+SY8KV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A057BC4CEEB;
+	Wed, 27 Aug 2025 10:08:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756289282;
+	bh=KiGizTKELKsAGoKxMS4KCkY7Hr/uMnzCC5mTyvqi0Oo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jV+SY8KV71KFJEKgesNxp80Ah9zFR49xaSzd8tlZWma0vjBbVmuJqrw2OBE8KvP6V
+	 rEkr0ieVkjw4D7+c5cSN86mnLzAeNdnOk9Xm24SRbIjVhg/D3okntMJ5ZVHAEUPSz8
+	 CYGUiB9Uhdc9oXhh5v7rx/WvWQSop/2goIs+FHk5GEF68lPV896I6J7nPtTwDCOtze
+	 QKMQ8p7f4/EkRVZJTQTAJL1lpjDeKihjsMjid5N2t7JbqUmmQYsFF0VPCoo5mjw63J
+	 P2llqNumZxtupscpznfMIqrz10cA2QeUUgg/ZeM/+vv1UGDhV4I0rKTygte0raag3u
+	 NjOjOB6mXXFuQ==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1urD4I-000000002dB-166y;
+	Wed, 27 Aug 2025 12:07:50 +0200
+Date: Wed, 27 Aug 2025 12:07:50 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Corentin Labbe <clabbe@baylibre.com>, gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	david@ixit.cz
+Subject: Re: [PATCH v8 1/2] usb: serial: add support for CH348
+Message-ID: <aK7Y9rRIsGBKRFAO@hovoldconsulting.com>
+References: <20250204135842.3703751-1-clabbe@baylibre.com>
+ <20250204135842.3703751-2-clabbe@baylibre.com>
+ <aCHHfY2FkVW2j0ML@hovoldconsulting.com>
+ <CAFBinCAUNNfOp4qvn2p8AETossePv2aL7jBkFxVZV_XzzULgVg@mail.gmail.com>
+ <aINXS813fmWNJh3A@hovoldconsulting.com>
+ <CAFBinCBMTOM-FMgENS-mrnV17HbKzhtPUd44_dDiwnD=+HVMWQ@mail.gmail.com>
+ <aIiXyEuPmWU00hFf@hovoldconsulting.com>
+ <CAFBinCBZhjs7DGEgxhz54Dg8aW3NX9_LdnoZeUZpm5ohaT_-oQ@mail.gmail.com>
+ <aJCoRFe-RFW1MuDk@hovoldconsulting.com>
+ <CAFBinCCYsWHsNwi99kFqvLv+xOYtp9u3omhrPdV-hdH+5Cfyew@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFBinCCYsWHsNwi99kFqvLv+xOYtp9u3omhrPdV-hdH+5Cfyew@mail.gmail.com>
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Mon, Aug 04, 2025 at 11:35:35PM +0200, Martin Blumenstingl wrote:
+> On Mon, Aug 4, 2025 at 2:32 PM Johan Hovold <johan@kernel.org> wrote:
+> > On Tue, Jul 29, 2025 at 10:45:20PM +0200, Martin Blumenstingl wrote:
 
-Starting with commit f99508074e78 ("PM: domains: Detach on
-device_unbind_cleanup()"), there is no longer a need to call
-dev_pm_domain_detach() in the bus remove function. The
-device_unbind_cleanup() function now handles this to avoid
-invoking devres cleanup handlers while the PM domain is
-powered off, which could otherwise lead to failures as
-described in the above-mentioned commit.
+> > > My general flow is:
+> > > - check if we have received THRE - if not: don't transmit more data on this port
+> > > - submit up to two URBs with up to 512 - 3 (CH348_TX_HDRSIZE) bytes to
+> > > not exceed the HW TX FIFO size of 1024 bytes (page 1 in the datasheet)
+> > > if the kfifo has enough data
+> >
+> > If you're going to wait for the device fifo to clear completely you can
+> > just use a single urb with larger (1k) buffer too.
 
-Drop the explicit dev_pm_domain_detach() call and rely instead
-on the flags passed to dev_pm_domain_attach() to power off the
-domain.
+> I set .bulk_out_size = 1024 in struct usb_serial_driver. Writing a 1k
+> buffer immediately results in:
+>    ch348 1-1:1.0: device disconnected
+> 
+> I don't know if I need to set some kind of flag on the URB to have it
+> split or whether the kernel / USB controller does that automatically
+> (as you can tell: I'm not familiar with USB).
+> If not: 512 byte transfers at a time it is.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
- drivers/base/auxiliary.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+The host controller should split the buffer, but apparently this crashes
+the device firmware.
 
-diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
-index 12ffdd843756..f65ba30d0617 100644
---- a/drivers/base/auxiliary.c
-+++ b/drivers/base/auxiliary.c
-@@ -217,17 +217,14 @@ static int auxiliary_bus_probe(struct device *dev)
- 	struct auxiliary_device *auxdev = to_auxiliary_dev(dev);
- 	int ret;
- 
--	ret = dev_pm_domain_attach(dev, PD_FLAG_ATTACH_POWER_ON);
-+	ret = dev_pm_domain_attach(dev, PD_FLAG_ATTACH_POWER_ON |
-+					PD_FLAG_DETACH_POWER_OFF);
- 	if (ret) {
- 		dev_warn(dev, "Failed to attach to PM Domain : %d\n", ret);
- 		return ret;
- 	}
- 
--	ret = auxdrv->probe(auxdev, auxiliary_match_id(auxdrv->id_table, auxdev));
--	if (ret)
--		dev_pm_domain_detach(dev, true);
--
--	return ret;
-+	return auxdrv->probe(auxdev, auxiliary_match_id(auxdrv->id_table, auxdev));
- }
- 
- static void auxiliary_bus_remove(struct device *dev)
-@@ -237,7 +234,6 @@ static void auxiliary_bus_remove(struct device *dev)
- 
- 	if (auxdrv->remove)
- 		auxdrv->remove(auxdev);
--	dev_pm_domain_detach(dev, true);
- }
- 
- static void auxiliary_bus_shutdown(struct device *dev)
--- 
-2.43.0
+> > > > > On my test board the CFG pin is HIGH. From how I understand you, RTS
+> > > > > should at least change (even if DTR is in TNOW mode).
+> > > > > No matter what I do: both pins are always LOW (right after modprobe,
+> > > > > after opening the console, closing the console again, ...).
+> > > > > I even set up the vendor driver to test this: it's the same situation there.
+> > > >
+> > > > I don't think the console code will assert DTR/RTS, you need to open the
+> > > > port as a regular tty.
+> >
+> > Yes, even if the device is configured in hardware for TNOW mode (instead
+> > of DTR function) you should still be able to control RTS (at least as
+> > long as the device is not configured for automatic hardware flow control).
 
+> I think I made it work, sort of.
+> It's a bit annoying because of code I don't understand. It seems that
+> R_4 has the following settings:
+> 0x00 DTR off
+> 0x01 DTR on
+> 0x10 RTS off
+> 0x11 RTS on
+> 0x08 activate (used during port initialization)
+> 0x50 HW flow on
+> 0x51 no RTS / HW flow off
+> 
+> That said, poking 0x00, 0x01, 0x10 and 0x11 by themselves didn't do much.
+> One also has to write 0x06 to the per-port VEN_R register.
+> The vendor driver only does that in .set_termios, which I call
+> questionable until someone calls me out on this and is willing to
+> share a good reason why that's a good idea ;-)
+> 
+> However, I'm unable to control the RTS line of port 1. It works for
+> port 0, port 2 and 3 but not for port 1.
+> Ports 4-7 don't have the TNOW/DTR and RTS lines routed outside the
+> package, so I can't test these.
+
+Sounds like good progress. Have you made sure HW flow isn't just enabled
+by default on port 1 or similar?
+
+Johan
 
