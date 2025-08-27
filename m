@@ -1,159 +1,156 @@
-Return-Path: <linux-kernel+bounces-787703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CC8AB379FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:49:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EE54B37A00
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:49:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BDFB7A46C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:48:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 009FA683E3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:49:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AFC830BBA0;
-	Wed, 27 Aug 2025 05:49:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D1CA30BBA0;
+	Wed, 27 Aug 2025 05:49:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="hw3nvmqY"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Lspj12IP"
+Received: from out162-62-57-137.mail.qq.com (out162-62-57-137.mail.qq.com [162.62.57.137])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5E828E7
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 05:49:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EACF2264A7F
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 05:49:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756273773; cv=none; b=OaWyMOm6KEEuQSejd09o6mFJ8adyAe1qch3bgQzNTlNXXuH0LRv04PinHpepR1uSjBS2yUEr2StWwzs4XAfvXqrYeEhy7wJeJ0khRuPxvw1Qst/Ku7ae2Qs05N52eJL4mwCn2UrIxgiZmOrUJj6wv9DzCNKTpkovsqbKjt4e7ns=
+	t=1756273787; cv=none; b=IU1MlhaSMWlZ2ZnOavB1XiinbRwB2u7lSvj6Voafpb7kzLnSIEjedyl46zqGi2zSAvyQUnWTknZcHZO8xCMaZUhWe0xR3IBk7rJcKJ+VncYkM7FfkhlFGed3wSzuZqy4SAjiydsdH5nRIImPyp100eJMOxqgOJKn5yWUOmHg+jE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756273773; c=relaxed/simple;
-	bh=pUJmrIA2x5LczKe5rphw2E8dq4urzGNQhhsVJS1L7BM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MBUIyjrFtmOVhs3XZ7nDxyC1bbv/SeCU4udaqTYYhtCti2sIsAL/LnFH5/GSYDu43p/tqOE9IxwvkeLm728+h4NspcbuoU7oAkdtPhiweTtXWOsNB9vA5rtH3zBN3saFli8NCMAv0WNRFi3X1NPXNcHnTSNxVypGaGGaRHstobE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=hw3nvmqY; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-771f3f89952so514540b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 22:49:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1756273771; x=1756878571; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AcHF6RnbmpTEQbStJ3Ge4aHFj+SeTRpsf2Mr2iXfDM8=;
-        b=hw3nvmqYNdUSWFIVZBT2gh0NSpOWoBTO7T1t4275kyxqIi0NlKl3HzMn+EMyGEq5X9
-         OpDcz9qdbttpwNNxVLUh05F8nu9QVSOiQI6xALC344lSQjagRPrDPWJ9qjZKfdjvxKZA
-         nA4EUToAfXEu3V37bqA5CusJ4oyv5idntHL6w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756273771; x=1756878571;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AcHF6RnbmpTEQbStJ3Ge4aHFj+SeTRpsf2Mr2iXfDM8=;
-        b=gFBp4BW1rX7Mv2zg+23x9Khspk7cbEzAL5F0U9Wi4QSMvAHKwUYHcpDp1TfAJafSGw
-         zXQWQ2NtQmaLyGr/dUPicld2gh7OvihYwNlfU3wrxvF/sqkfmjD08WhoPJkw+SH8yBlz
-         IWm7b702lsKiZ3h/F1iiAh6PcLO7GhpoV98UVlPcdFx0b/TelZoAe3z+qYntUTMId1CE
-         Ro4WXdan76qN9H7Ktmxq4vuIGpQdD1uShIPx9yQ7XkWP9cWLgGbhXh3YSb2ecrJ/nPrj
-         S55loHEBj99wM1W7fgQOXnpa60Ogj7OcXgLy4Z+m/QN3g2D3KBWT0KMmbdyqRvHZf+jT
-         ukfA==
-X-Forwarded-Encrypted: i=1; AJvYcCU1NErR7C/U73fx9bkTPMbAukW+ndTz83lUPmVCuMlgZDjNHGN7Lzyr90HAex0p3Q50+8wjZJJkZY9fGWg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyo7vbOfZH5x7Xrhv8jzxfrAG551n0MEb3HFjTfjueqyfMb4+Oa
-	idS+JF8o3x8GtanpUNkxJZx9wn03Fzqx9Sr/OEQqIRvEIyo4JlVIGXVjPCET476m/Ys=
-X-Gm-Gg: ASbGncvpF4UFCB1HJiRZkKvZjY13VizHmnw432WUA2jjkWf6j4XLNUgobjHDyiVN3p2
-	Oir0s8sNhXIQaFnnVb+m4qA8sygOWuhostPaKwRstmmoq7JoSYcXzYub4u0S9gl7yEBPQKQU3Vy
-	McL0WgqS+VeyNveWqw4Vsg0+qCnZ07j6iLkXnrUa4j1jzSOU5ncYgHJjA/gwUwgxzOuYFF4PU14
-	B2TvBp3m40aspgjwpN4FvJMAIBuaLDJ7BHm1teDrMononGYp9uuZEZHLGtWuDR29DTWX/hZvy9R
-	2ebtU8PInL21AkK75fNyuFH8bE2n6sfkVY74sHJwGJ3phpFJS/a9RRFTVCxX7oRTN3X5416Fjxs
-	+A7xfTbLEAGjKpAV03NI5VBPGFlDWtZrW6atgjJfeHAdBsiRelMA+Zd1ki6dPyxBN4TDQzDr20x
-	yP3cVsdrRxZjJRhQ==
-X-Google-Smtp-Source: AGHT+IEPRjnzRJoy3RI7aBDNF9oE7mN9+D8p1oqa7z508XWwunVdVtcVLS9rgz2/V4+0jMlyan7bKA==
-X-Received: by 2002:a05:6a20:7490:b0:243:7e4e:3cdd with SMTP id adf61e73a8af0-2438fad29d0mr5907065637.16.1756273771075;
-        Tue, 26 Aug 2025 22:49:31 -0700 (PDT)
-Received: from ?IPV6:2405:201:c017:f074:2f08:3cb7:de48:e39a? ([2405:201:c017:f074:2f08:3cb7:de48:e39a])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3276fbca8d4sm976356a91.28.2025.08.26.22.49.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Aug 2025 22:49:30 -0700 (PDT)
-Message-ID: <b8dbb85b-124b-4d25-b734-069809240e81@linuxfoundation.org>
-Date: Tue, 26 Aug 2025 23:49:26 -0600
+	s=arc-20240116; t=1756273787; c=relaxed/simple;
+	bh=EN6vFn97gMBQaSq/XCZjfW03wPb2vRMwI0o/Enun2Gw=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=NJVXF6iljxe1sQt2gv8XzFmqgJtDdeAw8DXtbarEv6CXCvlVAhDltBFbwlLmfUpJE3ZcjGWI9yArjieuClUKjZcCkygq6LtUiEZE7rIJZtVt/Rt+nuL8FSSJ8pbX+s2N9l0FTECtNnDwzCynlPJbFt6wydOxiDdMLlcmIDWX9Gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Lspj12IP; arc=none smtp.client-ip=162.62.57.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1756273778; bh=qtd7CtVakKa16So2yrWPPc60aKpdTAyiw5Jrl2jnSTY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=Lspj12IP2cCl3N3v8k/2sf8UHGf0/gOk6ukI8JlVnTI/EsDV9shNa0ufa0lbqM4Br
+	 kQXGP346j1qDfzce4iqNRRqDCn26/8+/qkeFZdoL3ZeE81rvQcgBUrTNjMuiMdFwdN
+	 HRHrT49ej5UJjViDOl1ndH16lQhW3J+6J4hS4drc=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
+	by newxmesmtplogicsvrsza56-0.qq.com (NewEsmtp) with SMTP
+	id C64ABC34; Wed, 27 Aug 2025 13:49:36 +0800
+X-QQ-mid: xmsmtpt1756273776tbmr73ubf
+Message-ID: <tencent_CFCFAA0DC325818D879200DDE3DD86193E07@qq.com>
+X-QQ-XMAILINFO: NGZp1yYNf7Y+BVhNUr432huIeyXKGtudE9O40iTYbM+NvX8RXbbS/2GVwP+amg
+	 3BaSruHqdrIuGJcuNc5cCWNYGSVNornwtE/wdt2Z/3dGna+276+QIzTr0oEF9cQyEPdJjOY0OKd6
+	 lZkuqVMTkDuselEc31qEAQoduRaGvjViHuK3Y86C2ARaiSMj2L/HaUfV3cHBk0d2MlAC+Suyj7lv
+	 32PW1tzrXSirno0i3bJb2CsLrqcQPe+/WJau31NOGm+d08yNe95g3OTjZmwQFjlnVTYSc1vMppmy
+	 lMradtRj7jXnIkW652RDGLwk+PZGe/7rh1eNQ88jUNymCckEwx/URfJ2GKyB54FWTrj53QgI8OIy
+	 T9HB/slBLb9C+fADG4q64kHfa2nhRkAdEDS45cEoq7fA9lu1QdDeBgBTP0hrH85Avq0Ve8hGGnxb
+	 Nt36WNubZNsiRcOCjrT78jxNaAoSfXSm5JCqNbRX/Y9407+OekaEcels9vi/4xXIRkv7N7o8UszM
+	 rh0W5WRju2ID2DhPdxKSQjZn+1VKgvdoWT45O+ZeYIerMlY/1U4QArto49QS4Yq4rUcf6WHshYoR
+	 g5wKDbxx70tuzbS7Zn8UsXZH1G6hLxnic4ZCJ4HeTsUNwuxzxD/zCECwvXpcUd9jfGRr3L6LNhKU
+	 nzAoam9hNSZvbAQHNqBQOF7IE49RCFRDG2saqsS4P1Fh/zifynQsS19ANJxynddIuohbBrUZJk9x
+	 mfLze4pRWUhk1t9HQhiW0aZwCEZTNDD4PpakQg6Gp015RIxjfDFXMgtQxgWq2dpzeB6F4oUoesvX
+	 xESZ6+50EodtW1w9fvOSBdkacNfQ+6gd0iEloZaTzCnPcvYUzzInBo7opR/ozcA2HMh9SxyLYE9a
+	 9pANzTyLaPvLScJQIDasywkWde+hACcUq7FC9VVVE+TOszoMoCypXg9PCWAdX76R+k2YQlXN0grm
+	 VWYdzyNbg2TzN1m6HTqdBxXC2210P42gk26B7GDM5yz/rmW3CFJIC4JXzjXOHu
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+a25ee9d20d31e483ba7b@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Write in __xfrm_state_delete
+Date: Wed, 27 Aug 2025 13:49:37 +0800
+X-OQ-MSGID: <20250827054936.536874-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <68ab6633.050a0220.37038e.0079.GAE@google.com>
+References: <68ab6633.050a0220.37038e.0079.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build failure after merge of the kunit-next tree
-To: David Gow <davidgow@google.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Marie Zhussupova <marievic@google.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- KUnit Development <kunit-dev@googlegroups.com>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20250818120846.347d64b1@canb.auug.org.au>
- <1befd7ab-f343-450f-9484-0cef21fe2da8@linuxfoundation.org>
- <CABVgOSm2_FGfjQpUBttuUH5ZrMEqnaGkYVkN6N96wX7Qs8EE2Q@mail.gmail.com>
- <4d5bad8a-6afa-4284-8f78-b52e2cfedbf0@linuxfoundation.org>
- <CABVgOS=groSq6Dcdbb_PxFwikQTDodhA7gCAJBvv3jWzk8jrZQ@mail.gmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <CABVgOS=groSq6Dcdbb_PxFwikQTDodhA7gCAJBvv3jWzk8jrZQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 8/26/25 03:24, David Gow wrote:
-> On Tue, 26 Aug 2025 at 10:15, Shuah Khan <skhan@linuxfoundation.org> wrote:
->>
->> On 8/19/25 01:44, David Gow wrote:
->>> On Tue, 19 Aug 2025 at 00:32, Shuah Khan <skhan@linuxfoundation.org> wrote:
->>>>
->>>> On 8/17/25 20:08, Stephen Rothwell wrote:
->>>>> Hi all,
->>>>>
->>>>> After merging the kunit-next tree, today's linux-next build (x86_64
->>>>> allmodconfig) failed like this:
->>>>
->>>> Thank you Stephen. I did a allmodconfig build on 6.17-rc1 base - didn't
->>>> see the error.
->>>>
->>>> Marie, David, can you take a look this. Looks like conflict with drm
->>>> in next?
->>>>
->>>
->>> Thanks, Shuah. I've managed to reproduce this with:
->>> ./tools/testing/kunit/kunit.py run --arch x86_64 --kunitconfig
->>> drivers/gpu/drm/xe
->>>
->>> These patches fix it (and a corresponding drm/xe test failure):
->>> https://lore.kernel.org/linux-next/20250819073434.1411114-1-davidgow@google.com/T/#t
->>>
->>> Ideally, they'll be squashed into the corresponding patches, as
->>> otherwise there'd be some temporary breakage during bisections. I can
->>> squash these into the original series and re-send it out if that works
->>> best for you.
->>>
->>
->> David,
->>
->> Please squash them and resend - also I see a kernel test robot
->> error in patch 1/2.
->>
->> I was going to squash them, but I saw the kernel test robot error patch.
->>
-> 
-> Thanks, Shuah.
-> 
-> A v2 of the fix series, with the kernel test robot error fixed, is
-> here: https://lore.kernel.org/linux-kselftest/20250821135447.1618942-1-davidgow@google.com/
-> 
-> I've also squashed the fixes into a v4 of the original series here:
-> https://lore.kernel.org/linux-kselftest/20250826091341.1427123-1-davidgow@google.com/
-> 
+#syz test
 
-I applied these to kunit next and ran test:
-
-./tools/testing/kunit/kunit.py run --arch x86_64 --kunitconfig drivers/gpu/drm/xe
-
-Looks good. Hopefully next is happy now.
-
-thanks,
--- Shuah
-
+diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
+index 78fcbb89cf32..137b5b660683 100644
+--- a/net/xfrm/xfrm_state.c
++++ b/net/xfrm/xfrm_state.c
+@@ -929,10 +929,10 @@ int xfrm_state_flush(struct net *net, u8 proto, bool task_valid)
+ 	err = -ESRCH;
+ 	for (i = 0; i <= net->xfrm.state_hmask; i++) {
+ 		struct xfrm_state *x;
+-restart:
+ 		hlist_for_each_entry(x, net->xfrm.state_bydst+i, bydst) {
+ 			if (!xfrm_state_kern(x) &&
+-			    xfrm_id_proto_match(x->id.proto, proto)) {
++			    xfrm_id_proto_match(x->id.proto, proto) &&
++			    x->km.state != XFRM_STATE_DEAD) {
+ 				xfrm_state_hold(x);
+ 				spin_unlock_bh(&net->xfrm.xfrm_state_lock);
+ 
+@@ -940,11 +940,9 @@ int xfrm_state_flush(struct net *net, u8 proto, bool task_valid)
+ 				xfrm_audit_state_delete(x, err ? 0 : 1,
+ 							task_valid);
+ 				xfrm_state_put(x);
+-				if (!err)
+-					cnt++;
++				cnt++;
+ 
+ 				spin_lock_bh(&net->xfrm.xfrm_state_lock);
+-				goto restart;
+ 			}
+ 		}
+ 	}
+diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
+index 78fcbb89cf32..3de1ac70019f 100644
+--- a/net/xfrm/xfrm_state.c
++++ b/net/xfrm/xfrm_state.c
+@@ -929,10 +929,10 @@ int xfrm_state_flush(struct net *net, u8 proto, bool task_valid)
+ 	err = -ESRCH;
+ 	for (i = 0; i <= net->xfrm.state_hmask; i++) {
+ 		struct xfrm_state *x;
+-restart:
+ 		hlist_for_each_entry(x, net->xfrm.state_bydst+i, bydst) {
+ 			if (!xfrm_state_kern(x) &&
+-			    xfrm_id_proto_match(x->id.proto, proto)) {
++			    xfrm_id_proto_match(x->id.proto, proto) &&
++			    x->km.state != XFRM_STATE_DEAD) {
+ 				xfrm_state_hold(x);
+ 				spin_unlock_bh(&net->xfrm.xfrm_state_lock);
+ 
+@@ -940,11 +940,9 @@ int xfrm_state_flush(struct net *net, u8 proto, bool task_valid)
+ 				xfrm_audit_state_delete(x, err ? 0 : 1,
+ 							task_valid);
+ 				xfrm_state_put(x);
+-				if (!err)
+-					cnt++;
++				cnt++;
+ 
+ 				spin_lock_bh(&net->xfrm.xfrm_state_lock);
+-				goto restart;
+ 			}
+ 		}
+ 	}
+@@ -1557,6 +1555,7 @@ xfrm_state_find(const xfrm_address_t *daddr, const xfrm_address_t *saddr,
+ #endif
+ 		if (km_query(x, tmpl, pol) == 0) {
+ 			spin_lock_bh(&net->xfrm.xfrm_state_lock);
++			BUG_ON(x->km.state == XFRM_STATE_DEAD);
+ 			x->km.state = XFRM_STATE_ACQ;
+ 			x->dir = XFRM_SA_DIR_OUT;
+ 			list_add(&x->km.all, &net->xfrm.state_all);
+@@ -1722,6 +1721,7 @@ static void __xfrm_state_insert(struct xfrm_state *x)
+ 	struct net *net = xs_net(x);
+ 	unsigned int h;
+ 
++	BUG_ON(x->km.state == XFRM_STATE_DEAD);
+ 	list_add(&x->km.all, &net->xfrm.state_all);
+ 
+ 	/* Sanitize mark before store */
 
 
