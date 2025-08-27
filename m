@@ -1,185 +1,139 @@
-Return-Path: <linux-kernel+bounces-788739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BA83B38976
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:24:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BD2FB38988
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:28:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA93316E0B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:24:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCDA0205B58
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:28:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB732D978A;
-	Wed, 27 Aug 2025 18:24:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 132F52D97A1;
+	Wed, 27 Aug 2025 18:28:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fNEtiTWp"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="br5GY858"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A4EA244681;
-	Wed, 27 Aug 2025 18:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABED94438B
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 18:28:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756319052; cv=none; b=RYU+UAnfJmO3si/Jlw/LcZj3mW7xn6GgF3WBnPMaStNZXcfwuVCJ2+tC6F2DAieGfzat6EuSb1qJBCVBzJ1dVPfsVMBJc7d3ftJOlAfYZJiD2323JKfXs0elVHNupa1C0ygTy7hGHOwSYwVM9fyk246IhU7qbil7nHCEfIlXBGc=
+	t=1756319323; cv=none; b=JYDYS+xN0fHsRUghOwOJkYc0rqKFuSn4h0G/0677bc1wqCiaFs70hQgWlrFIm0cSi8zrzPOJu2Agd0hRguEcoY6J+Gk46QsVKB+2+uA4zpe/F2Yn6QSIZ5/cpmkDEax998oqqg8C1eIuIpda9YvuhMwKy5+7mGbqxNGCPdGMz+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756319052; c=relaxed/simple;
-	bh=7gy0gNA+mzj7wfMZrPpyDg3I/GMiruLuyNhcAKH4xwE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LQlQ4RSGkx8r0N2ApSil50RWczAcjNPxdOflzVjzwkenZk976JVvLG04t00I/dICTPanoIs7ISBiNnMOqosieLbuc7JVv/sjzqxJo7SA+8fe4qCh3ApnTNxMQav/KtNB8uRrhFIEEkyEwl4XGGjyqVHnp4h0Fs6lhrj09TxV1Qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fNEtiTWp; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6188b6f501cso124973a12.2;
-        Wed, 27 Aug 2025 11:24:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756319049; x=1756923849; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a3hRzazaA/3IwpGGafXhW6Ceja+ayCWMQc3/NmPm1MY=;
-        b=fNEtiTWptlWQbNHgUOtGxLUP5SmuS2uXyNesDEyYZtFuNZzNZ3F7tBQ0bI4yF2AXlE
-         pq0/0m7Dwvd8PtF3kcsz1+YGMnhfm5UdxhH8qqNYh96qslgX/Jz1ZcM7VIF6eTALPVP3
-         llNzo0M8SS2rQf1gozcL4ww1t2GvYYFTNufrdmM7lvD4Fw91M8BdJipBQInABt/L3mum
-         4+dIprOujRRlvM69eROCIF2lDBM1o+WyowvQV/Oo8DTkXn54qOqeisLsKYrTXXqeqr6R
-         GrDIR+eDCk+iqVhdOUOKHGLY+MpyMVn4+pDEF4ZXdmbOCZ1FSFNLSkTf57PUQSC2VHqb
-         vj2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756319049; x=1756923849;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=a3hRzazaA/3IwpGGafXhW6Ceja+ayCWMQc3/NmPm1MY=;
-        b=rR08bpm4zwThlvqA5ajwOEef4IqxXv/ZxeijdunP+UGUaT6K1V5hkqRendcOxAlqIy
-         cKUFKdqxjAN9htFHFxaozi8C3RqApht+O26VSzekeVbkwMl2lVsWAqmt+LFZ/n85En3H
-         2LEdz6zl+TDm6idflkpTo44/4pLy+O5GP2R/qxt3zDbyfOuAWuwTA7bf6DRsAvOENCMM
-         rDz8uHkKuurFiQixfq3sJ9Mgb7OV5gz4VTLtS9N3PsdS3IuX8Z4LOhlCzjjTVZJ8Y+Vv
-         nLEvLkFQgSi/jUV9C8peiLUtM/9RUSSci06MA1GKzoNEunJU4FUlO0NkEZw/7LRrluV3
-         XZQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUFBNYjjeiWDj1bC/vwWU6ILcM32Mc6w/x0u6v0nVGVy/XO4he6cshbVS5D4m/Qttcevex+LzUhbMICx5KQA==@vger.kernel.org, AJvYcCWgx2+7nBhFZuQix7Hh/ia2IxUYj9TXxNuUxkCI6FMapNnC/LWxfiAdzPvexYWtg3B0nDXsu2cyAGDTj+g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqSi2Y1X5gkFcH9J30VDjR1nAA8Vz6ygbsaPuDY6NOXhnAjSTO
-	BEeKaNz/GOdB5cCJarAQzuVrPJHxowJv6GGbZR5evfENS5JqjhH+mH1ibakRpSQoV6NNzdD2ZJV
-	txg5DF362FJO16eej+NLmLKKNTpyzrww=
-X-Gm-Gg: ASbGncsfroXQuvs2PqCobM5deS6qH2N0J/fqICshjtXHznmvCXpobNzpYskaN5HSv0h
-	AKzMoGO+qaJOVkLPE0AOLez7n277yZ054sHxv6pP8K0nTCsDy1jnX2KKD5Htx92FllqdNxD4ECC
-	2aeSbn7iRw6KNZ7b5EZd3f+0aSFY9VaSltbR41rJiqN9wweXg99IoBr9MbFKJf/JpqOYIU6VVbS
-	Ga+Ouc=
-X-Google-Smtp-Source: AGHT+IGRxnnoTkR3Urh1MHCwEgVfEak54J9SrgMyGn3h1Lw9aldmPv4xZlOAb1AYws9YrP071P0ZCwed71+o0nSEX/U=
-X-Received: by 2002:a05:6402:13d0:b0:61c:35c0:87ee with SMTP id
- 4fb4d7f45d1cf-61c35c091b0mr13958688a12.7.1756319049362; Wed, 27 Aug 2025
- 11:24:09 -0700 (PDT)
+	s=arc-20240116; t=1756319323; c=relaxed/simple;
+	bh=41wqfGoUvCOSCwBnkrsV8Al8LdILnHJRjtaAseQQoqo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=V3OQ9w9suYUS6d74pM1fuSykljCfPxMsR9NgY1esAns+1LkSC/KhHb59vnU4ZShY7Gtf+OLLqF34yeea9BBMSGZhL3G07VjomGZGgW821nigd7O3ZsnBc4UoTtvXsf8cq5h5yvpbnhZ1W5/dNhflDeoU2+B+WyTTjg+gCJqLmf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=br5GY858; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1756319318;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=41wqfGoUvCOSCwBnkrsV8Al8LdILnHJRjtaAseQQoqo=;
+	b=br5GY858419c2v32Z6PeVsAhcd4ny8W0OEjE7Dz2x7cAsMc4ZJqVzZvOCCMyBwrVrq+YF8
+	LxtKzhK/A0nyt058rLDOO4MiQNGNYNdOd9QpQpuCYwX7sheyCWlUSVTAg9zJcoXx62I2wk
+	s52wIEOFyTcYY/DopaL8X/Ux9zKB0kU=
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Martin KaFai Lau <martin.lau@linux.dev>,  Kumar Kartikeya Dwivedi
+ <memxor@gmail.com>,  linux-mm <linux-mm@kvack.org>,  bpf
+ <bpf@vger.kernel.org>,  Suren Baghdasaryan <surenb@google.com>,  Johannes
+ Weiner <hannes@cmpxchg.org>,  Michal Hocko <mhocko@suse.com>,  David
+ Rientjes <rientjes@google.com>,  Matt Bobrowski
+ <mattbobrowski@google.com>,  Song Liu <song@kernel.org>,  Alexei
+ Starovoitov <ast@kernel.org>,  Andrew Morton <akpm@linux-foundation.org>,
+  LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 01/14] mm: introduce bpf struct ops for OOM handling
+In-Reply-To: <CAADnVQ+LGbXXHHTbBB9b-RjAXO4B6=3Z=G0=7ToZVuH61OONWA@mail.gmail.com>
+	(Alexei Starovoitov's message of "Tue, 26 Aug 2025 12:52:26 -0700")
+References: <20250818170136.209169-1-roman.gushchin@linux.dev>
+	<20250818170136.209169-2-roman.gushchin@linux.dev>
+	<CAP01T76AUkN_v425s5DjCyOg_xxFGQ=P1jGBDv6XkbL5wwetHA@mail.gmail.com>
+	<87ms7tldwo.fsf@linux.dev>
+	<1f2711b1-d809-4063-804b-7b2a3c8d933e@linux.dev>
+	<87wm6rwd4d.fsf@linux.dev>
+	<ef890e96-5c2a-4023-bcb2-7ffd799155be@linux.dev>
+	<CAADnVQ+LGbXXHHTbBB9b-RjAXO4B6=3Z=G0=7ToZVuH61OONWA@mail.gmail.com>
+Date: Wed, 27 Aug 2025 11:28:29 -0700
+Message-ID: <87cy8gty9e.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAOQ4uxhEzxvgpJ=_a++xdGAptsywc4gLmnJXBA7ipFmM+qHR3g@mail.gmail.com>
- <175555294028.2234665.14790599995742040769@noble.neil.brown.name>
-In-Reply-To: <175555294028.2234665.14790599995742040769@noble.neil.brown.name>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 27 Aug 2025 20:23:58 +0200
-X-Gm-Features: Ac12FXzAhFFnU9aUYuMSbe3wnN0PZmHZGCC9egvSY6RS5FmHjr8JPeJrGlNE0ug
-Message-ID: <CAOQ4uxh_yrq76Rq9RoykGdANZNBWc16UgbSBRjDtXKeLdA7-3Q@mail.gmail.com>
-Subject: Re: [syzbot] [overlayfs?] WARNING in shmem_unlink
-To: NeilBrown <neil@brown.name>, =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Cc: syzbot <syzbot+ec9fab8b7f0386b98a17@syzkaller.appspotmail.com>, 
-	linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Aug 18, 2025 at 11:35=E2=80=AFPM NeilBrown <neil@brown.name> wrote:
+Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
+
+> On Tue, Aug 26, 2025 at 11:01=E2=80=AFAM Martin KaFai Lau <martin.lau@lin=
+ux.dev> wrote:
+>>
+>> On 8/25/25 10:00 AM, Roman Gushchin wrote:
+>> > Martin KaFai Lau <martin.lau@linux.dev> writes:
+>> >
+>> >> On 8/20/25 5:24 PM, Roman Gushchin wrote:
+>> >>>> How is it decided who gets to run before the other? Is it based on
+>> >>>> order of attachment (which can be non-deterministic)?
+>> >>> Yeah, now it's the order of attachment.
+>> >>>
+>> >>>> There was a lot of discussion on something similar for tc progs, and
+>> >>>> we went with specific flags that capture partial ordering constrain=
+ts
+>> >>>> (instead of priorities that may collide).
+>> >>>> https://lore.kernel.org/all/20230719140858.13224-2-daniel@iogearbox=
+.net
+>> >>>> It would be nice if we can find a way of making this consistent.
+>> >>
+>> >> +1
+>> >>
+>> >> The cgroup bpf prog has recently added the mprog api support also. If
+>> >> the simple order of attachment is not enough and needs to have
+>> >> specific ordering, we should make the bpf struct_ops support the same
+>> >> mprog api instead of asking each subsystem creating its own.
+>> >>
+>> >> fyi, another need for struct_ops ordering is to upgrade the
+>> >> BPF_PROG_TYPE_SOCK_OPS api to struct_ops for easier extension in the
+>> >> future. Slide 13 in
+>> >> https://drive.google.com/file/d/1wjKZth6T0llLJ_ONPAL_6Q_jbxbAjByp/view
+>> >
+>> > Does it mean it's better now to keep it simple in the context of oom
+>> > patches with the plan to later reuse the generic struct_ops
+>> > infrastructure?
+>> >
+>> > Honestly, I believe that the simple order of attachment should be
+>> > good enough for quite a while, so I'd not over-complicate this,
+>> > unless it's not fixable later.
+>>
+>> I think the simple attachment ordering is fine. Presumably the current l=
+ink list
+>> in patch 1 can be replaced by the mprog in the future. Other experts can=
+ chime
+>> in if I have missed things.
 >
-> On Mon, 18 Aug 2025, Amir Goldstein wrote:
-> > On Mon, Aug 18, 2025 at 2:34=E2=80=AFAM NeilBrown <neil@brown.name> wro=
-te:
-> > >
-> > > On Mon, 18 Aug 2025, Amir Goldstein wrote:
-> > > > Neil,
-> > > >
-> > > > I will have a look tomorrow.
-> > > > If you have ideas I am open to hear them.
-> > > > The repro is mounting overlayfs all over each other in concurrent t=
-hreads
-> > > > and one of the rmdir of "work" dir triggers this assertion
-> > >
-> > > My guess is that by dropping and retaking the lock, we open the
-> > > possibility of a race so that by the time vfs_unlink() is called the
-> > > dentry has already been unlinked.  In that case it would be unhashed.
-> > > So after retaking the lock we need to check d_unhashed() as well as
-> > > ->d_parent.
-> > >
-> > > So something like
-> > > --- a/fs/overlayfs/util.c
-> > > +++ b/fs/overlayfs/util.c
-> > > @@ -1552,7 +1552,8 @@ void ovl_copyattr(struct inode *inode)
-> > >  int ovl_parent_lock(struct dentry *parent, struct dentry *child)
-> > >  {
-> > >         inode_lock_nested(parent->d_inode, I_MUTEX_PARENT);
-> > > -       if (!child || child->d_parent =3D=3D parent)
-> > > +       if (!child ||
-> > > +           (!d_unhashed(child) && child->d_parent =3D=3D parent))
-> > >                 return 0;
-> > >
-> > >         inode_unlock(parent->d_inode);
-> > >
-> > >
-> > > NeilBrown
-> > >
-> >
-> > Nice!
-> > I pushed this commit to ovl-fixes:
-> >
-> > commit c56976d86e11afcd6b23633395a7f2e6e920e42d (HEAD -> ovl-fixes)
-> > Author: Amir Goldstein <amir73il@gmail.com>
-> > Date:   Mon Aug 18 11:23:55 2025 +0200
-> >
-> >     ovl: fix possible double unlink
-> >
-> >     commit 9d23967b18c6 ("ovl: simplify an error path in
-> >     ovl_copy_up_workdir()") introduced the helper ovl_cleanup_unlocked(=
-),
-> >     which is later used in several following patches to re-acquire the =
-parent
-> >     inode lock and unlink a dentry that was earlier found using lookup.
-> >     This helper was eventually renamed to ovl_cleanup().
-> >
-> >     The helper ovl_parent_lock() is used to re-acquire the parent inode=
- lock.
-> >     After acquiring the parent inode lock, the helper verifies that the
-> >     dentry has not since been moved to another parent, but it failed to
-> >     verify that the dentry wasn't unlinked from the parent.
-> >
-> >     This means that now every call to ovl_cleanup() could potentially
-> >     race with another thread, unlinking the dentry to be cleaned up
-> >     underneath overlayfs and trigger a vfs assertion.
-> >
-> >     Reported-by: syzbot+ec9fab8b7f0386b98a17@syzkaller.appspotmail.com
-> >     Tested-by: syzbot+ec9fab8b7f0386b98a17@syzkaller.appspotmail.com
-> >     Fixes: 9d23967b18c6 ("ovl: simplify an error path in ovl_copy_up_wo=
-rkdir()")
-> >     Suggested-by: NeilBrown <neil@brown.name>
-> >     Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> >
-> > Neil,
-> >
-> > Please review my commit message.
-> > If you want me to assign you ownership please sign off on this commit m=
-essage.
->
-> Looks good to me.  No changes needed.
+> I don't think the proposed approach of:
+> list_for_each_entry_srcu(bpf_oom, &bpf_oom_handlers, node, false) {
+> is extensible without breaking things.
+> Sooner or later people will want bpf-oom handlers to be per
+> container, so we have to think upfront how to do it.
+> I would start with one bpf-oom prog per memcg and extend with mprog later.
+> Effectively placing 'struct bpf_oom_ops *' into oc->memcg,
+> and having one global bpf_oom_ops when oc->memcg =3D=3D NULL.
+> I'm sure other designs are possible, but lets make sure container scope
+> is designed from the beginning.
+> mprog-like multi prog behavior per container can be added later.
 
-We are having some problems with this fix colliding with a new ovl feature =
-[1].
+Sounds good to me, will implement something like this in the next version.
 
-Let's try to test this revised fix:
-
-#syz test: https://github.com/amir73il/linux ovl_casefold
-
-Thanks,
-Amir.
-
-[1] https://lore.kernel.org/linux-unionfs/CAOQ4uxj551a7cvjpcYEyTLtsEXw9OxHt=
-Tc-VSm170J5pWtwoUQ@mail.gmail.com/
+Thanks!
 
