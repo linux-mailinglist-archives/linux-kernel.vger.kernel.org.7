@@ -1,98 +1,168 @@
-Return-Path: <linux-kernel+bounces-788685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E24AB388AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:31:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 507C0B388B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:31:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D6D93BF212
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:31:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE2AD7B7B83
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4FB11EFFB4;
-	Wed, 27 Aug 2025 17:31:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BF9121FF55;
+	Wed, 27 Aug 2025 17:31:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tyR2QNtN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b="QYHrM9qM"
+Received: from www5210.sakura.ne.jp (www5210.sakura.ne.jp [133.167.8.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F1527B323;
-	Wed, 27 Aug 2025 17:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B5443147
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 17:31:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=133.167.8.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756315876; cv=none; b=rJL21VrJYMqxa2JJ6XNbN0RIzxBNJttlqduJVcD6ragkf3NWHI+0gavLVvZwCAV+qBv7GkGFrXrBxJmThYd0es/7MMxILM4Dhhq/Rw+laRiIi3KHQEJMDksqGCyhdiAUJPExatqbp6giTep+ioRQqgFqFUCF3y8M7AfUmLezuAQ=
+	t=1756315903; cv=none; b=MCCUksR8VysNo8BJrWfPGwY0XK6UBevIujvrZ9cFNd7ZZbxYR8RmIjorJBmLZPcN7B5iQKOjBjiwuRnRPjyGO/BmcXRxgxnmmtLLnTSRQSTWwttw+RTcz7FcNg2294L0glsRLdLq13mFSZZOpOoshsTPNzJDrWfz30It/UaE2CQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756315876; c=relaxed/simple;
-	bh=cXxFf40MPDViexLTcqO0ztrjyez1wiDGf0ZJBEGexao=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BGTL2iWTeShh1sdKta9STfvVr2mGmzyT7XAjBKAutACs0hDzaLHWnHS8yvYpnuWtF8BJhrAVhv9MjkQZaczG9oBiaJwQX0TEo/zERHnEK6vWT3Aq1KWFE6mNDdEOSFB8NQJcCXem8tCRYN7lHsyU2f22oSIP160GC/jjRNjWMPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tyR2QNtN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7677EC4CEEB;
-	Wed, 27 Aug 2025 17:31:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756315875;
-	bh=cXxFf40MPDViexLTcqO0ztrjyez1wiDGf0ZJBEGexao=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tyR2QNtN22RvMDohWgsRxKLr4FDC+++nmC+K23QB0czoCoV9wY0GfXKCx6P+xDtW/
-	 ZpCPe49Yu4BqdPI9kZYDJxp4y1dzpN/OrQCtYTlfNu1SFTfGBjJCWlz5Qt0mJaoOCh
-	 5V5ecyHf9IgmKtmyaoOZm47WjmTTPimv+CSUN+toJ2qxd00wwzRpzKoXwLJN0ao5eY
-	 05XOUjLA/cCTP6ENn5rv5r59tJEoE3yfUjWqZiu6Go3M/yFqAVbfFtr4JVSlh5Sg5g
-	 l4sD/2Ko33Vlga370ZkhPXbMhiaZy1lOsdYrovz/unS6m2srqvq3UJkAj3R73vKjyq
-	 9Q78SHoGD+pHQ==
-Date: Wed, 27 Aug 2025 18:31:11 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	Kees Cook <kees@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, llvm@lists.linux.dev,
-	patches@lists.linux.dev, Palmer Dabbelt <palmer@dabbelt.com>,
-	Alexandre Ghiti <alex@ghiti.fr>, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 07/12] riscv: Remove version check for LTO_CLANG
- selects
-Message-ID: <20250827-stick-duly-b40d7e90de1f@spud>
-References: <20250821-bump-min-llvm-ver-15-v2-0-635f3294e5f0@kernel.org>
- <20250821-bump-min-llvm-ver-15-v2-7-635f3294e5f0@kernel.org>
+	s=arc-20240116; t=1756315903; c=relaxed/simple;
+	bh=Yu0b2ioIhJNlFKOfwSCvH6iHtswZKayF/t92VtWSv/c=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ocmAShoMTMOv+9l1Zvj8Gr99xmblb6VY/yeo+zpjOManL38xrJuOxKz1OuA+/XeuVJriwtTAWe4R5VUQBFokTnXi+knwbXPPy+KANzejWP330ynBZG+kQl19+V4eu5MdmfGmkZ/OZve4tzzYJxhjhpgy+CqxufkjVTxf9rGi6e8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mgml.me; spf=pass smtp.mailfrom=mgml.me; dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b=QYHrM9qM; arc=none smtp.client-ip=133.167.8.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mgml.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mgml.me
+Received: from NEET (p4219063-ipxg00p01tokaisakaetozai.aichi.ocn.ne.jp [118.15.52.63])
+	(authenticated bits=0)
+	by www5210.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 57RHVWOS015699
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Thu, 28 Aug 2025 02:31:33 +0900 (JST)
+	(envelope-from k@mgml.me)
+DKIM-Signature: a=rsa-sha256; bh=aXjQSaRY512ZtJAnWWhKa1Tjp7Chw7Itug6zcIc4KWs=;
+        c=relaxed/relaxed; d=mgml.me;
+        h=Message-ID:Date:Subject:To:From;
+        s=rs20250315; t=1756315893; v=1;
+        b=QYHrM9qMQXTBvPYTqp+V5UP24O0XuLIuel7Um8k5+iArWfg2pvNbcNFZzCGS7G7T
+         0+K7h9l0Uqgg7KjLQS2L+55k85cs2R00NbNmg7aij4S4OB7rstgCHb3C10Xtzwja
+         wFxG1FTIXraK59MyX4b3UVejPyTY+ejiY2wNg0qW8/AUUHdmLh32PMrARKpde+dZ
+         JNZAueOlmPkc4CUMLwy8+p0CFdGDbOcy4bcGsioWWgf5PAEq6LpothqjucHVTj5N
+         xeD4/2mxO85GEv6gzv8nnst5XFi/xU+FfQPxkOsRmm5UjH02TVD/vCL8lyW42tkM
+         5txUlLAlt0aTbpbUKSNoMA==
+Message-ID: <66c06ec5-fa22-4020-b5f3-0545c0aaa69a@mgml.me>
+Date: Thu, 28 Aug 2025 02:31:32 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="9hV4SjGmbLMT0uH7"
-Content-Disposition: inline
-In-Reply-To: <20250821-bump-min-llvm-ver-15-v2-7-635f3294e5f0@kernel.org>
+User-Agent: Mozilla Thunderbird
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kenta Akagi <k@mgml.me>
+Subject: Re: [PATCH v2 1/3] md/raid1,raid10: don't broken array on failfast
+ metadata write fails
+To: Li Nan <linan666@huaweicloud.com>, Song Liu <song@kernel.org>,
+        Yu Kuai <yukuai3@huawei.com>, Mariusz Tkaczyk <mtkaczyk@kernel.org>,
+        Guoqing Jiang <jgq516@gmail.com>
+References: <20250817172710.4892-1-k@mgml.me>
+ <20250817172710.4892-2-k@mgml.me>
+ <725043ad-2d50-be78-7cc3-8c565ab364e0@huaweicloud.com>
+Content-Language: en-US
+From: Kenta Akagi <k@mgml.me>
+In-Reply-To: <725043ad-2d50-be78-7cc3-8c565ab364e0@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
---9hV4SjGmbLMT0uH7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 21, 2025 at 02:15:44PM -0700, Nathan Chancellor wrote:
-> Now that the minimum supported version of LLVM for building the kernel
-> has been bumped to 15.0.0, there is no need to check the LLD version
-> before selecting ARCH_SUPPORTS_LTO_CLANG{,_THIN} because it will always
-> be true.
->=20
-> Reviewed-by: Kees Cook <kees@kernel.org>
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+On 2025/08/23 10:54, Li Nan wrote:
+> 
+> 
+> 在 2025/8/18 1:27, Kenta Akagi 写道:
+>> A super_write IO failure with MD_FAILFAST must not cause the array
+>> to fail.
+>>
+>> Because a failfast bio may fail even when the rdev is not broken,
+>> so IO must be retried rather than failing the array when a metadata
+>> write with MD_FAILFAST fails on the last rdev.
+>>
+>> A metadata write with MD_FAILFAST is retried after failure as
+>> follows:
+>>
+>> 1. In super_written, MD_SB_NEED_REWRITE is set in sb_flags.
+>>
+>> 2. In md_super_wait, which is called by the function that
+>> executed md_super_write and waits for completion,
+>> -EAGAIN is returned because MD_SB_NEED_REWRITE is set.
+>>
+>> 3. The caller of md_super_wait (such as md_update_sb)
+>> receives a negative return value and then retries md_super_write.
+>>
+>> 4. The md_super_write function, which is called to perform
+>> the same metadata write, issues a write bio without MD_FAILFAST
+>> this time.
+>>
+>> When a write from super_written without MD_FAILFAST fails,
+>> the array may broken, and MD_BROKEN should be set.
+>>
+>> After commit 9631abdbf406 ("md: Set MD_BROKEN for RAID1 and RAID10"),
+>> calling md_error on the last rdev in RAID1/10 always sets
+>> the MD_BROKEN flag on the array.
+>> As a result, when failfast IO fails on the last rdev, the array
+>> immediately becomes failed.
+>>
+>> This commit prevents MD_BROKEN from being set when a super_write with
+>> MD_FAILFAST fails on the last rdev, ensuring that the array does
+>> not become failed due to failfast IO failures.
+>>
+>> Failfast IO failures on any rdev except the last one are not retried
+>> and are marked as Faulty immediately. This minimizes array IO latency
+>> when an rdev fails.
+>>
+>> Fixes: 9631abdbf406 ("md: Set MD_BROKEN for RAID1 and RAID10")
+>> Signed-off-by: Kenta Akagi <k@mgml.me>
+> 
+> 
+> [...]
+> 
+>> --- a/drivers/md/raid1.c
+>> +++ b/drivers/md/raid1.c
+>> @@ -1746,8 +1746,12 @@ static void raid1_status(struct seq_file *seq, struct mddev *mddev)
+>>    *    - recovery is interrupted.
+>>    *    - &mddev->degraded is bumped.
+>>    *
+>> - * @rdev is marked as &Faulty excluding case when array is failed and
+>> - * &mddev->fail_last_dev is off.
+>> + * If @rdev is marked with &FailfastIOFailure, it means that super_write
+>> + * failed in failfast and will be retried, so the @mddev did not fail.
+>> + *
+>> + * @rdev is marked as &Faulty excluding any cases:
+>> + *    - when @mddev is failed and &mddev->fail_last_dev is off
+>> + *    - when @rdev is last device and &FailfastIOFailure flag is set
+>>    */
+>>   static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
+>>   {
+>> @@ -1758,6 +1762,10 @@ static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
+>>         if (test_bit(In_sync, &rdev->flags) &&
+>>           (conf->raid_disks - mddev->degraded) == 1) {
+>> +        if (test_bit(FailfastIOFailure, &rdev->flags)) {
+>> +            spin_unlock_irqrestore(&conf->device_lock, flags);
+>> +            return;
+>> +        }
+>>           set_bit(MD_BROKEN, &mddev->flags);
+>>             if (!mddev->fail_last_dev) {
+> 
+> At this point, users who try to fail this rdev will get a successful return
+> without Faulty flag. Should we consider it?
+Hi,
+Sorry for the late reply.
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+I will submit a v3 patch that sets the flag just before md_error and 
+modifies raid{1,10}_error to use test_and_clear_bit.
+Therefore, echo "faulty" to dev-*/state should always correctly 
+mark the device as faulty.
 
---9hV4SjGmbLMT0uH7
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
+Akagi
 
------BEGIN PGP SIGNATURE-----
+> 
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaK9A3wAKCRB4tDGHoIJi
-0nSUAQCDJ2G/cZdQFmAmDOl90XeIgL2nlWFCnq0Pv2BL+l+WwQEAlL0ORgY2kcgL
-CJQL4AtmMpjkg5O2g+HksQ80QfPKFgo=
-=KfEH
------END PGP SIGNATURE-----
-
---9hV4SjGmbLMT0uH7--
 
