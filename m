@@ -1,554 +1,388 @@
-Return-Path: <linux-kernel+bounces-787751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2464FB37A98
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:41:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52926B37A9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:42:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 855D57AEC76
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:39:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 065263B945C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:42:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B7CB312831;
-	Wed, 27 Aug 2025 06:41:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9AC31282F;
+	Wed, 27 Aug 2025 06:42:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Ca0RW8/z"
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013069.outbound.protection.outlook.com [52.101.127.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WUXpN5Ff"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A6834CF9;
-	Wed, 27 Aug 2025 06:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756276872; cv=fail; b=XAVO91iyrTiueBochQpTnFlsHXeYOcDujkWzpdPkQvIyOh7+WqRfeigSl7vpvZKXliWvrW/dgWPHPB78OxEwEbc10+2zgNcmQ+3UxiJ2LewOWl2qmtynemSFyUbqqIEp+rwf5rPqTVKvTrK0Ch1PLgTHBHOO79Yq7az9MwM30TQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756276872; c=relaxed/simple;
-	bh=gg9V3HfL0C6mPk71OWUuvALmsVjq/ReSRMS6w3SziPg=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ADbsMvvTKOd7OtEIchfexRqlt5p9fMeCVBE6ztAjNrrCeYp7cUC7Q7TNLqDqO5tKU56FlE9PXssZOTrtPnZMsGqj0LFj4tQhNKyS7T1AuZDGPBXAhdFTnsn00a5nxeFeEN+yjTKNuoPqCA8Cw1mxz5roF9wY/L3Wl2iym9IGPJQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Ca0RW8/z; arc=fail smtp.client-ip=52.101.127.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=o5H4hRC1aTiu8JkLK5hWpI1BMj4MWJypWJ4BkuXDjHVXzeyGWgVcVZ0LQ6NB0NVtr5sNdoOhYIxHKsb+I9Vh4FCDjagWKZPoAskQLFFjZKpm0XremmNsol9n851BXHeZ47LwubzDizt2hEvyPXpcq+HjkgmOSj9Qspwz/jKSag6vN+GldiS/pCIhmVJ4QogGgz3JlXBz+Mp9l7qU8eEg8MmTqDBuHx/nN0qjTmVFUXmzsiBJcQ8dsc7+SN+LB2ux218O3lOfuuVrmZLLeohj3yqg2HkZ0MW9iOIZWjnHVx7iSIEw/8fGC9Tf2CnzaHFYfpEt8vAs35VPue11+vLRuw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8KNp4X1EI/c+gCyueZ9sxH4bsK/pwxYOKQhl2uO41Kw=;
- b=DOquNznxkpr3qElhe3rgTHRJ5Ctsv6uA/NlLISIyfp4ymi0T5mnen0GEujQVtn+nvI8+R5x40dRARBBnCHcrePJdFD7e7WCE4STMzhwgYRZDIFCSEL03xnEd9Z0CU9gIxAmE4gL3U39rbGeBGQp+ZifS5PKuA+QT+yTgnZnlonbhi8FOmWoXfUFf7P1wGsCdBlEbi0HbzeY5fxug3Kxlw41xnm8qw6AzIMOYxoy3naLzPo4u+HdjlfNgA/9I8revGN08T2QzEIQvwK0d7wOY1gXNlvh+dF+mZyeix9Ac7dKIAWVLu7IGAYNXUvKVhMaEbbr/gY6NtfX2hro03+wxiQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8KNp4X1EI/c+gCyueZ9sxH4bsK/pwxYOKQhl2uO41Kw=;
- b=Ca0RW8/zezYLoqefqhgmxCahYvEN6CPF9Ggms8CneWCrTqYBKpXDWGQqCvtRBAFn4cXzLaB9RI260RxEt8Eqgcz9s3uQA+SBZlE+juOQ7InGfNXx8iD86TKh2Zl1qe/3FBazoLsK9x82B+vNxvbbMY5ixKsiQGkXdhINhblXBdXKGAOBHnVWGiQFYpCIXFWSCiwoZWJUMhUqo50gouBQ0fni2Wak7Ymh9lsz/FOY/fY2lJzVA8hHnNLWPu8U5u8Bme5DiI0AVgN5kO3moqJazTVpvxUyGrcXy24qvc48LtZI/Cl/G6mgT456NF75iqBimxB5Eb5tsj7h3T1Xa0HPgQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TY2PPF5421A6930.apcprd06.prod.outlook.com (2603:1096:408::78f)
- by SI2PR06MB4996.apcprd06.prod.outlook.com (2603:1096:4:1a3::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Wed, 27 Aug
- 2025 06:41:06 +0000
-Received: from TY2PPF5421A6930.apcprd06.prod.outlook.com
- ([fe80::6370:9e0a:c891:a1a9]) by TY2PPF5421A6930.apcprd06.prod.outlook.com
- ([fe80::6370:9e0a:c891:a1a9%8]) with mapi id 15.20.9052.014; Wed, 27 Aug 2025
- 06:41:06 +0000
-From: Chenzhi Yang <yang.chenzhi@vivo.com>
-To: slava@dubeyko.com,
-	glaubitz@physik.fu-berlin.de,
-	frank.li@vivo.com
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yang Chenzhi <yang.chenzhi@vivo.com>
-Subject: [RFC PATCH v2] hfs: add return values to hfs_brec_lenoff and hfs_bnode_read to improve robustness
-Date: Wed, 27 Aug 2025 14:40:18 +0800
-Message-Id: <20250827064018.327046-1-yang.chenzhi@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0049.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:2b5::7) To TY2PPF5421A6930.apcprd06.prod.outlook.com
- (2603:1096:408::78f)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4003C133
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 06:42:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756276951; cv=none; b=QdLG5fpcd0+zwO6T8i5pqkzBL8JGJmDMl4LMwUyMlUbGDBSgotBoPRgmtbwU9EhltfZp+MP1GeCGYhTG93SvRERwZ0jHJ45JgB/nRD/rpz8RvpZuIfWrx4H8+suTU0rjude55UbzYqrHq2TC7Up6FF1m47JDJrHn5GE5O0/L2aY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756276951; c=relaxed/simple;
+	bh=QN2W3dvP8dha/wBP+V6kbG0lQVJkXvPwGE4aduyhZfk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ARGaXkeoadKZSroafdF6hy3vz5Z9H3c5u3mBs1BC6BYmX0uxJN4H5lpYPl3BvZqudCcqfMqaoEN35PTGDeA02q4ft8Ucuax1/cTpdwhZEReqPO/vBBsZGn9PXXbi6b+EFFmPw5/tSb9GTQK/FMFqVH0eG0tSAlh0unePfYC40Lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WUXpN5Ff; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-afec56519c4so32648966b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 23:42:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1756276948; x=1756881748; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=N4AF+Z8QELxaFzdK5UESWjmAKEccgiFEItCe+oHlNao=;
+        b=WUXpN5Ff0gaH5nvweD2mb6K/+vhpEFmgkT7dWXJ3jDAZ3aWNY6aoDHW7HikjQgrbu6
+         EFw+w4LCDT4uWPcDKzH7D3Hwrv0aqsxxcScABhgRSzDmgBot/Q3Su3t7hmOpnPYWEqRj
+         EN057kxNWTqce2ylZyGDofCd3f1d3zkXghcr3WM5qiqbHTRAKkMUa5IbeSGJowQbsA9l
+         HbmFhcHmp2hkYMIHu7FZdsPCt2Z1eZLue7020VDgIib1G3iGHzgjQu0+z8L9+ifV4gLy
+         UU3AWYX6BTD6qbR1Gr4IJzLipBDPutIoAFWKZz9Dt2G05BPz8oZyQd4DQg5TITpPe1io
+         NVIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756276948; x=1756881748;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=N4AF+Z8QELxaFzdK5UESWjmAKEccgiFEItCe+oHlNao=;
+        b=X1MUCUJzh65JSWFiLw25s2QDV0z1im/TTYNJzLrHNfIpBa/Fpf5S4cFPReyVnzRByD
+         vu74Le0UximCU18g1EOX9bB+9pWXYy/SAMzcRyf9Ok8LgTSnk09NVYyqYwgdtQRz6XNT
+         2AHektj6brckisrTOThkHpX20+bK7uUfKZKwqcz/C0sfP6PAXsiRxpp6xTFymvnacRpU
+         GF2sN+fBft3Q54db0AvA2puSt4ymNBkOwiZvft0nSyl+MrVHGar7iQHDDxQPEuV/t6mb
+         m12Z+tp6ZDAj0y6VQ2rDyhbnEJhyXmb/plxeKPf3mU5HivWDi5RpIb/nJs+bx41SEubD
+         uQZw==
+X-Gm-Message-State: AOJu0YzHUKAtQK1yvdbGtsrDVavg0DeBNc6aR88QGi0umjPPO5X6sCNy
+	vAO1sjnK9IQ0Sof1+ySbjqwN5jaMeDOiadAfld/ILD9suGSAWSXNoNTDGSdOUeh6D/M=
+X-Gm-Gg: ASbGncvxIvC8vzNVHuV9C5rPgVC6XUayvUojyUTlRD2gqZVUoaWbfnLNwI+o90D+KhN
+	J8uI/+BRIJL+t/aG+3W5iOHFWMaB2zP0sRgAAIvNgiTjkvgD+Toi1YVddj1YFaHqPDClveCLeI1
+	2BUrBwDq5jFWXyXWsDgSJe5nkk4y9OLGwPSQYT63DNLurXT3dcLGl8N/dk3BxPhJat7IMaRz+7i
+	dHrlEZXdeijAdCHjSoIL8IWXKAMlQISVdjND/JhDehpAdy1lVpcqNWMyK5OeCpYYxm52rQLvsEW
+	V/vKqCU5axa4fFJaD/Xi4sCZ79zJoo+2XpWjO8da2i4DBxBWqo+6YsfIOHnrd6HLT4gDGDvOimn
+	KeyhPqsSTT4YN0AQ0q9qF6noAMb8U8g==
+X-Google-Smtp-Source: AGHT+IHPbx6kF83A+w0Q0/C0fjKETavqKUnu7JIyVYNCZOoMZP02b1AqvPznvJa3PXMc/mDqyr/CTg==
+X-Received: by 2002:a17:906:478a:b0:afe:c027:cfd4 with SMTP id a640c23a62f3a-afec027dffcmr146211766b.41.1756276947856;
+        Tue, 26 Aug 2025 23:42:27 -0700 (PDT)
+Received: from [192.168.0.24] ([82.76.24.202])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe73cf6d99sm697061266b.0.2025.08.26.23.42.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Aug 2025 23:42:27 -0700 (PDT)
+Message-ID: <495394bb-6f0a-4300-ac77-e3193eb14ca4@linaro.org>
+Date: Wed, 27 Aug 2025 09:42:26 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY2PPF5421A6930:EE_|SI2PR06MB4996:EE_
-X-MS-Office365-Filtering-Correlation-Id: 68a45eb6-768a-4993-8df2-08dde534b316
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?tcHoBt04hpXIJd6kul1jrHgG0ctSJbiySyEfc62F0B0Odj4l47qbzRKpf/AS?=
- =?us-ascii?Q?WGUWpErk8HrDvFQrMQgBmzt3ynd28A4oxmDnraIsT15A1eGFYzTO1K8uZwE+?=
- =?us-ascii?Q?tuXsWw54+BPDTasBl8aYFabUSe+84TEJ5R57L3YIFf2uIIqUMidF2aT67lM5?=
- =?us-ascii?Q?N4zn1Q8juE8/XkOhKb42YXq0GXLe4+dT6v1xLtv/odZYzGl1TynehCdd5x/E?=
- =?us-ascii?Q?sPE/cxi6jGfpiTDb3JW/cYrPMA0YCZ7pGKVyFX87YiuNyiREA3x9D0RRlInR?=
- =?us-ascii?Q?s1UTBa7Pmg5GgcaYSYGFzml26do+QiuhxGb/K4J28B5aejb1d3/tCegZGAAs?=
- =?us-ascii?Q?FHFF9dL+EKTsgkv3ozDcNI67ZFU2HzLvt8Hu4s1evJb73wTQ3f4g2rxXBqo4?=
- =?us-ascii?Q?0Fj3ghH0ypj+qCyrAgXFs2XtmeOA86W+X7XWlwpptNqizmqogF9Jm+P6S6eK?=
- =?us-ascii?Q?gh+4wzptlhTwfFCbMiiXFjXL2PfuZrhV9lh0U6DwKLbGsRaefvEBvKLLkP3A?=
- =?us-ascii?Q?Hm6YW0CPjPlIluYXQBbzh8m8P7TjfJ7ba8aKiEA8pCkTjgH/d683BQfq1+ZI?=
- =?us-ascii?Q?4enVhhswjPPArLUEuOnTTHhjiEN9YcZBUzkCke9gIAlYMJip2XKsGhnv70a0?=
- =?us-ascii?Q?5SaINhlGO2b35DDBREebv2/6xIr04beldJCYI7KBUNbdwJjjLEpkkFNwMqnp?=
- =?us-ascii?Q?4XVkZs2rI2yUJhhzI3P3Zewz+GQV0Os9L1naeLYosjCR0ax3XbE+Csv7UxE1?=
- =?us-ascii?Q?agYDaa1t70W4ohTO26R3aDpUhmCxvY+pTnhuddJ40BupplhM7SeDNJ8+YfIo?=
- =?us-ascii?Q?uO5jTzDbvUFSE3/SjVQDBjSe6v5aMMKcOyKewbesLIabNn4qfnvHYruTi02o?=
- =?us-ascii?Q?3ZX7Uy6nYMQ4dC+FybPRY2Oz/ieMkSPj+UnX2ACh0iEysiH0kugr+Lke+Wel?=
- =?us-ascii?Q?R5p3rxzucsqQJnW65BFRQ7giunN24SbgiOsiNdVZVs8aFWMv/+9wZwegcRdY?=
- =?us-ascii?Q?7D3ALIKsSFiacC/+L+cssBgfvT1dkFwl7CFhsP/RoZwymBAWsKN0aZ1Wvjs6?=
- =?us-ascii?Q?mxKlEoAfH1tKH7CZSbyL2rrtMeSgGHugNCgJJ/tgyxMms2myd2Gsg72Ipdv0?=
- =?us-ascii?Q?wvnaK1dVGtFBcbUaAoaTRwLjCbdpeJGQPVrA0nd3dGLfkqGYcqYUOcZ7NEz5?=
- =?us-ascii?Q?uBbfkDIcfKgkVm4PQEz9hC77qmr37qopLWF3VzDVswc1rQYQK3EzSC12Mv6e?=
- =?us-ascii?Q?+9WC8cSS4bAMkDsm5ksyucrB1ayZjE0Ep96w8mBDGQAi55nXL9PUfFgq+wWn?=
- =?us-ascii?Q?7LnO9U/+zP/tJlv+CjYanPCkNGD5wIeAuH5WQnLnrYCXBB4mUtxtnD3tV+jo?=
- =?us-ascii?Q?NKoEGe+eouIfC8QVP3Xuv+ZSnRh5Ff2jJyMmQq7EwRl9+Y2AxpLmm7AxzJY2?=
- =?us-ascii?Q?24lKAN55CV8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY2PPF5421A6930.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?X/QOZItaeG4gZSEfYCttTKwIahqpU8urdRVvixwyYJtrjJz9gcJuLlr1GzNx?=
- =?us-ascii?Q?AnrFJBLtVBabDRDAhSnsr8ic3Q7eaz1ZPSDDHZn7tC2sLz89HtqiS63YKGEB?=
- =?us-ascii?Q?VfIzl3HuR/A1CKxJ/aNmn5q/SnLErfUHGSo3nhXfPx4BhCPiO1IHxog4Kcya?=
- =?us-ascii?Q?m7GqgitdSsA1QzA/VWfbwxFpqJO1/EGU1j2iNLPDXPVAsyQJpuLNgX7qJB+P?=
- =?us-ascii?Q?v2nf8/Vq94st2m60UNkyhkSdcedddinEaDJu1498vJGJn5WRagmS4lONq/Zz?=
- =?us-ascii?Q?EryCHXs0dP93ldHQWxjf7nL2ZjM1VGmve3rEjsGCCsYq1HU24dVH+v3MgXjX?=
- =?us-ascii?Q?5McD+uakohpiH/7s/CnYPWQ/QB9W1m/RSCfDgHSzddy/ZMEF2VO0CVG+Ieuf?=
- =?us-ascii?Q?Jjngu74immXUiBGjsFLYiyIW3cSopzbO2hkqj/m7/JxHvpWa0F7qX2+XbV/I?=
- =?us-ascii?Q?Kzvh19vsbC9d7uF9EBAz9gN5rNVHTGwkO/d5EfC/GOdL/91kXCIETgY0/QRq?=
- =?us-ascii?Q?LwjN6j3yap4OTOzsJZK4YIOUzAEMBFIbedw4+Ao7kVjCVySVxVOvJctWXisP?=
- =?us-ascii?Q?C6t9IkR/0Q0BuoxCxfjLGIIJ7meCUNDf78QsceX76A0ijuMgxsDwa+ymzAaS?=
- =?us-ascii?Q?+Iq5PXL0WywMylPfL1BQriu8Sg6RY0huGagevBjg0Vi2u6gNDBLykXNxuy9y?=
- =?us-ascii?Q?Z7arOWtOXHzwDmyIvS+ie89nfceeJ8KomX4MyZ1N3xsCblilSQIYz2tqiHrn?=
- =?us-ascii?Q?3cRyN2l71poj9tzULGEavQJ3/65U/gDqMVIlixUijFXuJVBj20odz31VFQee?=
- =?us-ascii?Q?cnB6X5qgUymZEl33rqnDmAUM/NXcOtWEH4we4sY/gX8LtwinycMiyw0elwuT?=
- =?us-ascii?Q?gYaGKV5wch9hFPx30EI3dWFRajdUc5LACvyuU85vMhSNFYRxw9xYQMKFKTYG?=
- =?us-ascii?Q?oWPCM1ptTRd9C4Kr3B/CtNCnhqwI9G2aa07gCnRhaRS9qu6QvtfDjpoMaeGI?=
- =?us-ascii?Q?JWugGdtwy1Yqo+AIeNc6rKcRzNTl28UmzqWbb2Tp02Og/16rxuvhjWgtaoU+?=
- =?us-ascii?Q?pe87CxQvmbWy/i8jkKHhMHFF5vMTZCdMg2UFLicKGjzQ+sUPLd2s5Jx6UMr8?=
- =?us-ascii?Q?a5qUlFzLCAbQmxGZUuLb47wiyanuD+DzGeI529Jsv81wRE7aRiv30FMwHMUF?=
- =?us-ascii?Q?HEoF16Oz8v3MHIr53BfnNzPNqMSxiVCI4QKhH1sblsJAcdzceouUVNWIo9Ie?=
- =?us-ascii?Q?yZckep9i3XfkgPfDWtiGcNe/g96HJjuakkm38xB8gQlw3Os//aNTLC6g/NB7?=
- =?us-ascii?Q?og4njd0yKq91joN/Wn8+ooFCFiNlRsd1zrYFm6W6qEn8fN6GJZrcNMm9eshr?=
- =?us-ascii?Q?SiVUIjZ8X11ZUjXda2DXeHx4MHBrdKu1oqYH9/10rDbq8OolER3yc4Ugsq0a?=
- =?us-ascii?Q?dzPGyvr70fIXdg31acJoxEwIjIyH9dQYMRPdsJpAvSx39GXtn0Yh6Wac0xfZ?=
- =?us-ascii?Q?/bNhmkuYBefRw7CGOp9Lp8nB9/Zh2ioQtHGj/rzxmdN5VuNQgKmUaY8Z9uRF?=
- =?us-ascii?Q?LYkMI8+9Gsx5wiPgVdYlQwpOqXMbj+xJ3tSPuUzZ?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 68a45eb6-768a-4993-8df2-08dde534b316
-X-MS-Exchange-CrossTenant-AuthSource: TY2PPF5421A6930.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 06:41:06.5139
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: a3qT7EcpQSeyvWM3vPQZ3gaeRchrDO0f/p6fQDn5zRWV7qxS4ob/l+LU4HL3b2f0h5npnTw+upgOjYxeiztfaA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI2PR06MB4996
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC][PATCH v2 00/29] introduce kmemdump
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-mm@kvack.org, tglx@linutronix.de,
+ andersson@kernel.org, pmladek@suse.com,
+ linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
+ corbet@lwn.net, mojha@qti.qualcomm.com, rostedt@goodmis.org,
+ jonechou@google.com, tudor.ambarus@linaro.org
+References: <20250724135512.518487-1-eugen.hristev@linaro.org>
+ <20250826171447.6w77day5wddppy3s@hu-mojha-hyd.qualcomm.com>
+From: Eugen Hristev <eugen.hristev@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20250826171447.6w77day5wddppy3s@hu-mojha-hyd.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Yang Chenzhi <yang.chenzhi@vivo.com>
 
-This patch addresses two issues in the hfs filesystem:
 
-1. out-of-bounds access in hfs_bmap_alloc
+On 8/26/25 20:14, Mukesh Ojha wrote:
+> On Thu, Jul 24, 2025 at 04:54:43PM +0300, Eugen Hristev wrote:
+>> kmemdump is a mechanism which allows the kernel to mark specific memory
+>> areas for dumping or specific backend usage.
+>> Once regions are marked, kmemdump keeps an internal list with the regions
+>> and registers them in the backend.
+>> Further, depending on the backend driver, these regions can be dumped using
+>> firmware or different hardware block.
+>> Regions being marked beforehand, when the system is up and running, there
+>> is no need nor dependency on a panic handler, or a working kernel that can
+>> dump the debug information.
+>> The kmemdump approach works when pstore, kdump, or another mechanism do not.
+>> Pstore relies on persistent storage, a dedicated RAM area or flash, which
+>> has the disadvantage of having the memory reserved all the time, or another
+>> specific non volatile memory. Some devices cannot keep the RAM contents on
+>> reboot so ramoops does not work. Some devices do not allow kexec to run
+>> another kernel to debug the crashed one.
+>> For such devices, that have another mechanism to help debugging, like
+>> firmware, kmemdump is a viable solution.
+>>
+>> kmemdump can create a core image, similar with /proc/vmcore, with only
+>> the registered regions included. This can be loaded into crash tool/gdb and
+>> analyzed.
+>> To have this working, specific information from the kernel is registered,
+>> and this is done at kmemdump init time, no need for the kmemdump user to
+>> do anything.
+>>
+>> This version of the kmemdump patch series includes two backend drivers:
+>> one is the Qualcomm Minidump backend, and the other one is the Debug Kinfo
+>> backend for Android devices, reworked from this source here:
+>> https://android.googlesource.com/kernel/common/+/refs/heads/android-mainline/drivers/android/debug_kinfo.c
+>> written originally by Jone Chou <jonechou@google.com>
+>>
+>> Initial version of kmemdump and discussion is available here:
+>> https://lore.kernel.org/lkml/20250422113156.575971-1-eugen.hristev@linaro.org/
+>>
+>> Kmemdump has been presented and discussed at Linaro Connect 2025,
+>> including motivation, scope, usability and feasability.
+>> Video of the recording is available here for anyone interested:
+>> https://www.youtube.com/watch?v=r4gII7MX9zQ&list=PLKZSArYQptsODycGiE0XZdVovzAwYNwtK&index=14
+>>
+>> The implementation is based on the initial Pstore/directly mapped zones
+>> published as an RFC here:
+>> https://lore.kernel.org/all/20250217101706.2104498-1-eugen.hristev@linaro.org/
+>>
+>> The back-end implementation for qcom_minidump is based on the minidump
+>> patch series and driver written by Mukesh Ojha, thanks:
+>> https://lore.kernel.org/lkml/20240131110837.14218-1-quic_mojha@quicinc.com/
+>>
+>> *** How to use kmemdump with minidump backend on Qualcomm platform guide ***
+>>
+>> Prerequisites:
+>> Crash tool with target=ARM64 and minor changes required for usual crash mode
+>> (minimal mode works without the patch)
+>> A patch can be applied from here https://p.calebs.dev/49a048
+>> This patch will be eventually sent in a reworked way to crash tool.
+>>
+>> Target kernel must be built with :
+>> CONFIG_DEBUG_INFO_REDUCED=n ; this will have vmlinux include all the debugging
+>> information needed for crash tool.
+>>
+>> Otherwise, the kernel requires these as well:
+>> CONFIG_KMEMDUMP, CONFIG_KMEMDUMP_COREIMAGE, and the backend
+>> CONFIG_KMEMDUMP_QCOM_MINIDUMP_BACKEND
+>>
+>> Kernel arguments:
+>> Kernel firmware must be set to mode 'mini' by kernel module parameter
+>> like this : qcom_scm.download_mode=mini
+>>
+>> After the kernel boots, and qcom_minidump module is loaded, everything is ready for
+>> a possible crash.
+>>
+>> Once the crash happens, the firmware will kick in and you will see on
+>> the console the message saying Sahara init, etc, that the firmware is
+>> waiting in download mode. (this is subject to firmware supporting this
+>> mode, I am using sa8775p-ride board)
+>>
+>> Example of log on the console:
+>> "
+>> [...]
+>> B -   1096414 - usb: init start
+>> B -   1100287 - usb: qusb_dci_platform , 0x19
+>> B -   1105686 - usb: usb3phy: PRIM success: lane_A , 0x60
+>> B -   1107455 - usb: usb2phy: PRIM success , 0x4
+>> B -   1112670 - usb: dci, chgr_type_det_err
+>> B -   1117154 - usb: ID:0x260, value: 0x4
+>> B -   1121942 - usb: ID:0x108, value: 0x1d90
+>> B -   1124992 - usb: timer_start , 0x4c4b40
+>> B -   1129140 - usb: vbus_det_pm_unavail
+>> B -   1133136 - usb: ID:0x252, value: 0x4
+>> B -   1148874 - usb: SUPER , 0x900e
+>> B -   1275510 - usb: SUPER , 0x900e
+>> B -   1388970 - usb: ID:0x20d, value: 0x0
+>> B -   1411113 - usb: ENUM success
+>> B -   1411113 - Sahara Init
+>> B -   1414285 - Sahara Open
+>> "
+>>
+>> Once the board is in download mode, you can use the qdl tool (I
+>> personally use edl , have not tried qdl yet), to get all the regions as
+>> separate files.
+>> The tool from the host computer will list the regions in the order they
+>> were downloaded.
+>>
+>> Once you have all the files simply use `cat` to put them all together,
+>> in the order of the indexes.
+>> For my kernel config and setup, here is my cat command : (you can use a script
+>> or something, I haven't done that so far):
+>>
+>> `cat memory/md_KELF1.BIN memory/md_Kvmcorein2.BIN memory/md_Kconfig3.BIN \
+>> memory/md_Kmemsect4.BIN memory/md_Ktotalram5.BIN memory/md_Kcpu_poss6.BIN \
+>> memory/md_Kcpu_pres7.BIN memory/md_Kcpu_onli8.BIN memory/md_Kcpu_acti9.BIN \
+>> memory/md_Kjiffies10.BIN memory/md_Klinux_ba11.BIN memory/md_Knr_threa12.BIN \
+>>  memory/md_Knr_irqs13.BIN memory/md_Ktainted_14.BIN memory/md_Ktaint_fl15.BIN \
+>> memory/md_Kmem_sect16.BIN memory/md_Knode_dat17.BIN memory/md_Knode_sta18.BIN \
+>> memory/md_K__per_cp19.BIN memory/md_Knr_swapf20.BIN memory/md_Kinit_uts21.BIN \
+>> memory/md_Kprintk_r22.BIN memory/md_Kprintk_r23.BIN memory/md_Kprb24.BIN \
+>> memory/md_Kprb_desc25.BIN memory/md_Kprb_info26.BIN memory/md_Kprb_data27.BIN \
+>> memory/md_Krunqueue28.BIN memory/md_Khigh_mem29.BIN memory/md_Kinit_mm30.BIN \
+>> memory/md_Kinit_mm_31.BIN memory/md_Kunknown32.BIN memory/md_Kunknown33.BIN \
+>> memory/md_Kunknown34.BIN  memory/md_Kunknown35.BIN memory/md_Kunknown36.BIN \
+>> memory/md_Kunknown37.BIN memory/md_Kunknown38.BIN memory/md_Kunknown39.BIN \
+>> memory/md_Kunknown40.BIN memory/md_Kunknown41.BIN memory/md_Kunknown42.BIN \
+>> memory/md_Kunknown43.BIN memory/md_Kunknown44.BIN memory/md_Kunknown45.BIN \
+>> memory/md_Kunknown46.BIN memory/md_Kunknown47.BIN  memory/md_Kunknown50.BIN \
+>> memory/md_Kunknown51.BIN memory/md_Kunknown52.BIN \
+>> memory/md_Kunknown53.BIN > ~/minidump_image`
+>>
+>> Once you have the resulted file, use `crash` tool to load it, like this:
+>> `./crash --no_modules --no_panic --no_kmem_cache --zero_excluded vmlinux minidump_image`
+>>
+>> There is also a --minimal mode for ./crash that would work without any patch applied
+>> to crash tool, but you can't inspect symbols, etc.
+> 
+> Unfortunately for me, only with --minimal option, I could see the 'log'.
+> 
+> ./crash --no_modules --no_panic --no_kmem_cache --zero_excluded vmlinux minidump_image
+> 
+> WARNING: kernel version inconsistency between vmlinux and dumpfile
+> 
+> crash: read error: kernel virtual address: ffffff8ed7f380d8  type: "IRQ stack pointer"
+> crash: read error: kernel virtual address: ffffff8ed7f510d8  type: "IRQ stack pointer"
+> crash: read error: kernel virtual address: ffffff8ed7f6a0d8  type: "IRQ stack pointer"
+> crash: read error: kernel virtual address: ffffff8ed7f830d8  type: "IRQ stack pointer"
+> crash: read error: kernel virtual address: ffffff8ed7f9c0d8  type: "IRQ stack pointer"
+> crash: read error: kernel virtual address: ffffff8ed7fb50d8  type: "IRQ stack pointer"
+> crash: read error: kernel virtual address: ffffff8ed7fce0d8  type: "IRQ stack pointer"
+> crash: read error: kernel virtual address: ffffff8ed7fe70d8  type: "IRQ stack pointer"
+> crash: read error: kernel virtual address: ffffffc0817c5d80  type: "maple_init read mt_slots"
+> crash: read error: kernel virtual address: ffffffc0817c5d78  type: "maple_init read mt_pivots"
+> crash: read error: kernel virtual address: ffffff8efb89e2c0  type: "memory section root table"
+> 
+> Looks like something more you are using in your setup to make it work.
 
-Analysis can be found here:
-https://lore.kernel.org/all/20250818141734.8559-2-yang.chenzhi@vivo.com/
+Hello Mukesh,
 
-With specially crafted offsets from syzbot, hfs_brec_lenoff()
-could return invalid offset and length values.
+Thanks for trying this out. Have you applied the indicated patch to the
+crash tool before compiling it ?
+If yes and still facing issues, can you run it with "-d 31" to enable
+debug mode, then send me the output log please.
 
-This patch introduces a return value for hfs_brec_lenoff().
-The function now validates offset and length:
-  - if invalid, it returns an error code;
-  - if valid, it returns 0.
-
-All callers of hfs_brec_lenoff() are updated to check its return
-value before using offset and length, thus preventing out-of-bounds access.
-
-2. potential use of uninitialized memory in hfs_bnode_dump
-
-Related bug report:
-https://syzkaller.appspot.com/bug?extid=f687659f3c2acfa34201
-
-This bug was previously fixed in commit:
-commit a431930c9bac518bf99d6b1da526a7f37ddee8d8
-
-However, a new syzbot report indicated a KMSAN use-uninit-value.
-The root cause is that hfs_bnode_dump() calls hfs_bnode_read_u16()
-with an invalid offset.
-  - hfs_bnode_read() detects the invalid offset and returns immediately;
-  - Back in hfs_bnode_read_u16(), be16_to_cpu() was then called on an
-    uninitialized variable.
-
-To address this, the intended direction is for hfs_bnode_read()
-to return a status code (0 on success, negative errno on failure)
-so that callers can detect errors and exit early, avoiding the use
-of uninitialized memory.
-
-However, hfs_bnode_read() is widely used, this patch does not modify
-it directly. Instead, new __hfs_bnode_read*() helper functions are
-introduced, which mirror the original behavior but add offset/length
-validation and return values.
-
-For now, only the hfs_bnode_dump() code path is updated to use these
-helpers in order to validate the feasibility of this approach.
-
-After applying the patch, the xfstests quick suite was run:
-  - The previously failing generic/113 test now passes;
-  - All other test cases remain unchanged.
-
--------------------------------------------
-
-The main idea of this patch is to:
-Add explicit return values to critical functions so that
-invalid offset/length values are reported via error codes;
-
-Require all callers to check return values, ensuring
-invalid parameters are not propagated further;
-
-Improve the overall robustness of the HFS codebase and
-protect against syzbot-crafted invalid inputs.
-
-RFC: feedback is requested on whether adding return values
-to hfs_brec_lenoff() and hfs_bnode_read() in this manner
-is an acceptable direction, and if such safety improvements
-should be expanded more broadly within the HFS subsystem.
-
-Signed-off-by: Yang Chenzhi <yang.chenzhi@vivo.com>
----
- fs/hfs/bfind.c | 14 ++++----
- fs/hfs/bnode.c | 87 +++++++++++++++++++++++++++++++++++---------------
- fs/hfs/brec.c  | 13 ++++++--
- fs/hfs/btree.c | 21 +++++++++---
- fs/hfs/btree.h | 21 +++++++++++-
- 5 files changed, 116 insertions(+), 40 deletions(-)
-
-diff --git a/fs/hfs/bfind.c b/fs/hfs/bfind.c
-index 34e9804e0f36..aea6edd4d830 100644
---- a/fs/hfs/bfind.c
-+++ b/fs/hfs/bfind.c
-@@ -61,16 +61,16 @@ int __hfs_brec_find(struct hfs_bnode *bnode, struct hfs_find_data *fd)
- 	u16 off, len, keylen;
- 	int rec;
- 	int b, e;
--	int res;
-+	int res, ret;
- 
- 	b = 0;
- 	e = bnode->num_recs - 1;
- 	res = -ENOENT;
- 	do {
- 		rec = (e + b) / 2;
--		len = hfs_brec_lenoff(bnode, rec, &off);
-+		ret = hfs_brec_lenoff(bnode, rec, &off, &len);
- 		keylen = hfs_brec_keylen(bnode, rec);
--		if (keylen == 0) {
-+		if (keylen == 0 || ret) {
- 			res = -EINVAL;
- 			goto fail;
- 		}
-@@ -87,9 +87,9 @@ int __hfs_brec_find(struct hfs_bnode *bnode, struct hfs_find_data *fd)
- 			e = rec - 1;
- 	} while (b <= e);
- 	if (rec != e && e >= 0) {
--		len = hfs_brec_lenoff(bnode, e, &off);
-+		ret = hfs_brec_lenoff(bnode, e, &off, &len);
- 		keylen = hfs_brec_keylen(bnode, e);
--		if (keylen == 0) {
-+		if (keylen == 0 || ret) {
- 			res = -EINVAL;
- 			goto fail;
- 		}
-@@ -223,9 +223,9 @@ int hfs_brec_goto(struct hfs_find_data *fd, int cnt)
- 		fd->record += cnt;
- 	}
- 
--	len = hfs_brec_lenoff(bnode, fd->record, &off);
-+	res = hfs_brec_lenoff(bnode, fd->record, &off, &len);
- 	keylen = hfs_brec_keylen(bnode, fd->record);
--	if (keylen == 0) {
-+	if (keylen == 0 || res) {
- 		res = -EINVAL;
- 		goto out;
- 	}
-diff --git a/fs/hfs/bnode.c b/fs/hfs/bnode.c
-index e8cd1a31f247..b0bbaf016b8d 100644
---- a/fs/hfs/bnode.c
-+++ b/fs/hfs/bnode.c
-@@ -57,26 +57,16 @@ int check_and_correct_requested_length(struct hfs_bnode *node, int off, int len)
- 	return len;
- }
- 
--void hfs_bnode_read(struct hfs_bnode *node, void *buf, int off, int len)
-+int __hfs_bnode_read(struct hfs_bnode *node, void *buf, u16 off, u16 len)
- {
- 	struct page *page;
- 	int pagenum;
- 	int bytes_read;
- 	int bytes_to_read;
- 
--	if (!is_bnode_offset_valid(node, off))
--		return;
--
--	if (len == 0) {
--		pr_err("requested zero length: "
--		       "NODE: id %u, type %#x, height %u, "
--		       "node_size %u, offset %d, len %d\n",
--		       node->this, node->type, node->height,
--		       node->tree->node_size, off, len);
--		return;
--	}
--
--	len = check_and_correct_requested_length(node, off, len);
-+	/* len = 0 is invalid: prevent use of an uninitalized buffer*/
-+	if (!len || !hfs_off_and_len_is_valid(node, off, len))
-+		return -EINVAL;
- 
- 	off += node->page_offset;
- 	pagenum = off >> PAGE_SHIFT;
-@@ -93,6 +83,47 @@ void hfs_bnode_read(struct hfs_bnode *node, void *buf, int off, int len)
- 		pagenum++;
- 		off = 0; /* page offset only applies to the first page */
- 	}
-+
-+	return 0;
-+}
-+
-+static int __hfs_bnode_read_u16(struct hfs_bnode *node, u16* buf, u16 off)
-+{
-+	__be16 data;
-+	int res;
-+
-+	res = __hfs_bnode_read(node, (void*)(&data), off, 2);
-+	if (res)
-+		return res;
-+	*buf = be16_to_cpu(data);
-+	return 0;
-+}
-+
-+
-+static int __hfs_bnode_read_u8(struct hfs_bnode *node, u8* buf, u16 off)
-+{
-+	int res;
-+
-+	res = __hfs_bnode_read(node, (void*)(&buf), off, 2);
-+	if (res)
-+		return res;
-+	return 0;
-+}
-+
-+void hfs_bnode_read(struct hfs_bnode *node, void *buf, int off, int len)
-+{
-+	int res;
-+
-+	len = check_and_correct_requested_length(node, off, len);
-+	res = __hfs_bnode_read(node, buf, (u16)off, (u16)len);
-+	if (res) {
-+		pr_err("hfs_bnode_read error: "
-+		       "NODE: id %u, type %#x, height %u, "
-+		       "node_size %u, offset %d, len %d\n",
-+		       node->this, node->type, node->height,
-+		       node->tree->node_size, off, len);
-+	}
-+	return;
- }
- 
- u16 hfs_bnode_read_u16(struct hfs_bnode *node, int off)
-@@ -241,7 +272,8 @@ void hfs_bnode_dump(struct hfs_bnode *node)
- {
- 	struct hfs_bnode_desc desc;
- 	__be32 cnid;
--	int i, off, key_off;
-+	int i, res;
-+	u16 off, key_off;
- 
- 	hfs_dbg(BNODE_MOD, "bnode: %d\n", node->this);
- 	hfs_bnode_read(node, &desc, 0, sizeof(desc));
-@@ -251,23 +283,28 @@ void hfs_bnode_dump(struct hfs_bnode *node)
- 
- 	off = node->tree->node_size - 2;
- 	for (i = be16_to_cpu(desc.num_recs); i >= 0; off -= 2, i--) {
--		key_off = hfs_bnode_read_u16(node, off);
-+		res = __hfs_bnode_read_u16(node, &key_off, off);
-+		if (res) return;
- 		hfs_dbg_cont(BNODE_MOD, " %d", key_off);
- 		if (i && node->type == HFS_NODE_INDEX) {
--			int tmp;
--
--			if (node->tree->attributes & HFS_TREE_VARIDXKEYS)
--				tmp = (hfs_bnode_read_u8(node, key_off) | 1) + 1;
--			else
-+			u8 tmp, data;
-+			if (node->tree->attributes & HFS_TREE_VARIDXKEYS) {
-+				res = __hfs_bnode_read_u8(node, &data, key_off);
-+				if (res) return;
-+				tmp = (data | 1) + 1;
-+			} else {
- 				tmp = node->tree->max_key_len + 1;
--			hfs_dbg_cont(BNODE_MOD, " (%d,%d",
--				     tmp, hfs_bnode_read_u8(node, key_off));
-+			}
-+			res = __hfs_bnode_read_u8(node, &data, key_off);
-+			if (res) return;
-+			hfs_dbg_cont(BNODE_MOD, " (%d,%d", tmp, data);
- 			hfs_bnode_read(node, &cnid, key_off + tmp, 4);
- 			hfs_dbg_cont(BNODE_MOD, ",%d)", be32_to_cpu(cnid));
- 		} else if (i && node->type == HFS_NODE_LEAF) {
--			int tmp;
-+			u8 tmp;
- 
--			tmp = hfs_bnode_read_u8(node, key_off);
-+			res = __hfs_bnode_read_u8(node, &tmp, key_off);
-+			if (res) return;
- 			hfs_dbg_cont(BNODE_MOD, " (%d)", tmp);
- 		}
- 	}
-diff --git a/fs/hfs/brec.c b/fs/hfs/brec.c
-index 896396554bcc..d7026a3ffeea 100644
---- a/fs/hfs/brec.c
-+++ b/fs/hfs/brec.c
-@@ -16,15 +16,22 @@ static int hfs_brec_update_parent(struct hfs_find_data *fd);
- static int hfs_btree_inc_height(struct hfs_btree *tree);
- 
- /* Get the length and offset of the given record in the given node */
--u16 hfs_brec_lenoff(struct hfs_bnode *node, u16 rec, u16 *off)
-+int hfs_brec_lenoff(struct hfs_bnode *node, u16 rec, u16 *off, u16 *len)
- {
- 	__be16 retval[2];
- 	u16 dataoff;
-+	int res;
- 
- 	dataoff = node->tree->node_size - (rec + 2) * 2;
--	hfs_bnode_read(node, retval, dataoff, 4);
-+	res = __hfs_bnode_read(node, retval, dataoff, 4);
-+	if (res)
-+		return -EINVAL;
- 	*off = be16_to_cpu(retval[1]);
--	return be16_to_cpu(retval[0]) - *off;
-+	*len = be16_to_cpu(retval[0]) - *off;
-+	if (!hfs_off_and_len_is_valid(node, *off, *len) ||
-+			*off < sizeof(struct hfs_bnode_desc))
-+		return -EINVAL;
-+	return 0;
- }
- 
- /* Get the length of the key from a keyed record */
-diff --git a/fs/hfs/btree.c b/fs/hfs/btree.c
-index e86e1e235658..b13582dcc27a 100644
---- a/fs/hfs/btree.c
-+++ b/fs/hfs/btree.c
-@@ -301,7 +301,9 @@ struct hfs_bnode *hfs_bmap_alloc(struct hfs_btree *tree)
- 	node = hfs_bnode_find(tree, nidx);
- 	if (IS_ERR(node))
- 		return node;
--	len = hfs_brec_lenoff(node, 2, &off16);
-+	res = hfs_brec_lenoff(node, 2, &off16, &len);
-+	if (res)
-+		return ERR_PTR(res);
- 	off = off16;
- 
- 	off += node->page_offset;
-@@ -347,7 +349,9 @@ struct hfs_bnode *hfs_bmap_alloc(struct hfs_btree *tree)
- 			return next_node;
- 		node = next_node;
- 
--		len = hfs_brec_lenoff(node, 0, &off16);
-+		res = hfs_brec_lenoff(node, 0, &off16, &len);
-+		if (res)
-+			return ERR_PTR(res);
- 		off = off16;
- 		off += node->page_offset;
- 		pagep = node->page + (off >> PAGE_SHIFT);
-@@ -363,6 +367,7 @@ void hfs_bmap_free(struct hfs_bnode *node)
- 	u16 off, len;
- 	u32 nidx;
- 	u8 *data, byte, m;
-+	int res;
- 
- 	hfs_dbg(BNODE_MOD, "btree_free_node: %u\n", node->this);
- 	tree = node->tree;
-@@ -370,7 +375,9 @@ void hfs_bmap_free(struct hfs_bnode *node)
- 	node = hfs_bnode_find(tree, 0);
- 	if (IS_ERR(node))
- 		return;
--	len = hfs_brec_lenoff(node, 2, &off);
-+	res = hfs_brec_lenoff(node, 2, &off, &len);
-+	if (res)
-+		goto fail;
- 	while (nidx >= len * 8) {
- 		u32 i;
- 
-@@ -394,7 +401,9 @@ void hfs_bmap_free(struct hfs_bnode *node)
- 			hfs_bnode_put(node);
- 			return;
- 		}
--		len = hfs_brec_lenoff(node, 0, &off);
-+		res = hfs_brec_lenoff(node, 0, &off, &len);
-+		if (res)
-+			goto fail;
- 	}
- 	off += node->page_offset + nidx / 8;
- 	page = node->page[off >> PAGE_SHIFT];
-@@ -415,4 +424,8 @@ void hfs_bmap_free(struct hfs_bnode *node)
- 	hfs_bnode_put(node);
- 	tree->free_nodes++;
- 	mark_inode_dirty(tree->inode);
-+	return;
-+fail:
-+	hfs_bnode_put(node);
-+	pr_err("fail to free a bnode due to invalid off or len\n");
- }
-diff --git a/fs/hfs/btree.h b/fs/hfs/btree.h
-index 0e6baee93245..78f228e62a86 100644
---- a/fs/hfs/btree.h
-+++ b/fs/hfs/btree.h
-@@ -94,6 +94,7 @@ extern struct hfs_bnode * hfs_bmap_alloc(struct hfs_btree *);
- extern void hfs_bmap_free(struct hfs_bnode *node);
- 
- /* bnode.c */
-+extern int __hfs_bnode_read(struct hfs_bnode *, void *, u16, u16);
- extern void hfs_bnode_read(struct hfs_bnode *, void *, int, int);
- extern u16 hfs_bnode_read_u16(struct hfs_bnode *, int);
- extern u8 hfs_bnode_read_u8(struct hfs_bnode *, int);
-@@ -116,7 +117,7 @@ extern void hfs_bnode_get(struct hfs_bnode *);
- extern void hfs_bnode_put(struct hfs_bnode *);
- 
- /* brec.c */
--extern u16 hfs_brec_lenoff(struct hfs_bnode *, u16, u16 *);
-+extern int hfs_brec_lenoff(struct hfs_bnode *, u16, u16 *, u16 *);
- extern u16 hfs_brec_keylen(struct hfs_bnode *, u16);
- extern int hfs_brec_insert(struct hfs_find_data *, void *, int);
- extern int hfs_brec_remove(struct hfs_find_data *);
-@@ -170,3 +171,21 @@ struct hfs_btree_header_rec {
- 						   max key length. use din catalog
- 						   b-tree but not in extents
- 						   b-tree (hfsplus). */
-+static inline
-+bool hfs_off_and_len_is_valid(struct hfs_bnode *node, u16 off, u16 len)
-+{
-+	bool ret = true;
-+	if (off > node->tree->node_size ||
-+			off + len > node->tree->node_size)
-+		ret = false;
-+
-+	if (!ret) {
-+		pr_err("requested invalid offset: "
-+		       "NODE: id %u, type %#x, height %u, "
-+		       "node_size %u, offset %u, length %u\n",
-+		       node->this, node->type, node->height,
-+		       node->tree->node_size, off, len);
-+	}
-+
-+	return ret;
-+}
--- 
-2.43.0
+Eugen
+> 
+> -Mukesh
+> 
+>>
+>> Once you load crash you will see something like this :
+>>
+>>    KERNEL: /home/eugen/linux-minidump/vmlinux  [TAINTED]
+>>     DUMPFILE: /home/eugen/new
+>>         CPUS: 8 [OFFLINE: 7]
+>>         DATE: Thu Jan  1 02:00:00 EET 1970
+>>       UPTIME: 00:00:29
+>>        TASKS: 0
+>>     NODENAME: qemuarm64
+>>      RELEASE: 6.16.0-rc7-next-20250721-00029-gf8cffdbf0479-dirty
+>>      VERSION: #5 SMP PREEMPT Tue Jul 22 18:44:57 EEST 2025
+>>      MACHINE: aarch64  (unknown Mhz)
+>>       MEMORY: 34.2 GB
+>>        PANIC: ""
+>> crash> log
+>> [    0.000000] Booting Linux on physical CPU 0x0000000000 [0x410fd4b2]
+>> [    0.000000] Linux version 6.16.0-rc7-next-20250721-00029-gf8cffdbf0479-dirty (eugen@eugen-station) (aarch64-none-linux-gnu-gcc (Arm GNU Toolchain 13.3.Rel1 (Build arm-13.24)) 13.3.1 20240614, GNU ld (Arm GNU Toolchain 13.3.Rel1 (Build arm-13.24)) 2.42.0.20240614) #5 SMP PREEMPT Tue Jul 22 18:44:57 EEST 2025
+>>
+>>
+>> *** Debug Kinfo backend driver ***
+>> I don't have any device to actually test this. So I have not.
+>> I hacked the driver to just use a kmalloc'ed area to save things instead
+>> of the shared memory, and dumped everything there and checked whether it looks
+>> sane. If someone is willing to try it out, thanks ! and let me know.
+>> I know there is no binding documentation for the compatible either.
+>>
+>> Thanks for everyone reviewing and bringing ideas into the discussion.
+>>
+>> Eugen
+>>
+>> Changelog since the v1 of the RFC:
+>> - Reworked the whole minidump implementation based on suggestions from Thomas Gleixner.
+>> This means new API, macros, new way to store the regions inside kmemdump
+>> (ditched the IDR, moved to static allocation, have a static default backend, etc)
+>> - Reworked qcom_minidump driver based on review from Bjorn Andersson
+>> - Reworked printk log buffer registration based on review from Petr Mladek
+>>
+>> I appologize if I missed any review comments. I know there is still lots of work
+>> on this series and hope I will improve it more and more.
+>> Patches are sent on top of next-20250721
+>>
+>> Eugen Hristev (29):
+>>   kmemdump: introduce kmemdump
+>>   Documentation: add kmemdump
+>>   kmemdump: add coreimage ELF layer
+>>   Documentation: kmemdump: add section for coreimage ELF
+>>   kmemdump: introduce qcom-minidump backend driver
+>>   soc: qcom: smem: add minidump device
+>>   init/version: Annotate static information into Kmemdump
+>>   cpu: Annotate static information into Kmemdump
+>>   genirq/irqdesc: Annotate static information into Kmemdump
+>>   panic: Annotate static information into Kmemdump
+>>   sched/core: Annotate static information into Kmemdump
+>>   timers: Annotate static information into Kmemdump
+>>   kernel/fork: Annotate static information into Kmemdump
+>>   mm/page_alloc: Annotate static information into Kmemdump
+>>   mm/init-mm: Annotate static information into Kmemdump
+>>   mm/show_mem: Annotate static information into Kmemdump
+>>   mm/swapfile: Annotate static information into Kmemdump
+>>   mm/percpu: Annotate static information into Kmemdump
+>>   mm/mm_init: Annotate static information into Kmemdump
+>>   printk: Register information into Kmemdump
+>>   kernel/configs: Register dynamic information into Kmemdump
+>>   mm/numa: Register information into Kmemdump
+>>   mm/sparse: Register information into Kmemdump
+>>   kernel/vmcore_info: Register dynamic information into Kmemdump
+>>   kmemdump: Add additional symbols to the coreimage
+>>   init/version: Annotate init uts name separately into Kmemdump
+>>   kallsyms: Annotate static information into Kmemdump
+>>   mm/init-mm: Annotate additional information into Kmemdump
+>>   kmemdump: Add Kinfo backend driver
+>>
+>>  Documentation/debug/index.rst      |  17 ++
+>>  Documentation/debug/kmemdump.rst   | 104 +++++++++
+>>  MAINTAINERS                        |  18 ++
+>>  drivers/Kconfig                    |   4 +
+>>  drivers/Makefile                   |   2 +
+>>  drivers/debug/Kconfig              |  55 +++++
+>>  drivers/debug/Makefile             |   6 +
+>>  drivers/debug/kinfo.c              | 304 +++++++++++++++++++++++++
+>>  drivers/debug/kmemdump.c           | 239 +++++++++++++++++++
+>>  drivers/debug/kmemdump_coreimage.c | 223 ++++++++++++++++++
+>>  drivers/debug/qcom_minidump.c      | 353 +++++++++++++++++++++++++++++
+>>  drivers/soc/qcom/smem.c            |  10 +
+>>  include/asm-generic/vmlinux.lds.h  |  13 ++
+>>  include/linux/kmemdump.h           | 219 ++++++++++++++++++
+>>  init/version.c                     |   6 +
+>>  kernel/configs.c                   |   6 +
+>>  kernel/cpu.c                       |   5 +
+>>  kernel/fork.c                      |   2 +
+>>  kernel/irq/irqdesc.c               |   2 +
+>>  kernel/kallsyms.c                  |  10 +
+>>  kernel/panic.c                     |   4 +
+>>  kernel/printk/printk.c             |  28 ++-
+>>  kernel/sched/core.c                |   2 +
+>>  kernel/time/timer.c                |   3 +-
+>>  kernel/vmcore_info.c               |   3 +
+>>  mm/init-mm.c                       |  12 +
+>>  mm/mm_init.c                       |   2 +
+>>  mm/numa.c                          |   5 +-
+>>  mm/page_alloc.c                    |   2 +
+>>  mm/percpu.c                        |   3 +
+>>  mm/show_mem.c                      |   2 +
+>>  mm/sparse.c                        |  16 +-
+>>  mm/swapfile.c                      |   2 +
+>>  33 files changed, 1670 insertions(+), 12 deletions(-)
+>>  create mode 100644 Documentation/debug/index.rst
+>>  create mode 100644 Documentation/debug/kmemdump.rst
+>>  create mode 100644 drivers/debug/Kconfig
+>>  create mode 100644 drivers/debug/Makefile
+>>  create mode 100644 drivers/debug/kinfo.c
+>>  create mode 100644 drivers/debug/kmemdump.c
+>>  create mode 100644 drivers/debug/kmemdump_coreimage.c
+>>  create mode 100644 drivers/debug/qcom_minidump.c
+>>  create mode 100644 include/linux/kmemdump.h
+>>
+>> -- 
+>> 2.43.0
+>>
+> 
 
 
