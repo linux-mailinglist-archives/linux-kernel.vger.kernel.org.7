@@ -1,225 +1,89 @@
-Return-Path: <linux-kernel+bounces-788379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B787BB38389
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:15:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A9B2B3838C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:16:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5CB56867E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:15:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DB3E687E99
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:15:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64553352FFA;
-	Wed, 27 Aug 2025 13:15:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F31212D83;
+	Wed, 27 Aug 2025 13:15:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="jILYzWPq"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jVcwEi0Z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07C4B2F1FF9
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 13:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 441851BCA07;
+	Wed, 27 Aug 2025 13:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756300504; cv=none; b=aCZM+YuJK6jPbc21rJjl4DNmME2oem4dOxmS1nzTmUfmayjvUhh+vcxZXC+5gxjwlDpBPzPvKSmbDu2HVBkx8mY1ubMElpLdzC8Vlqq2GzUqDgMwhV6cgUmgfYtU4stELm2WXahgL9QyYS3664YxgnHkWpbu+VmQc7Tg+Yewq5s=
+	t=1756300546; cv=none; b=jNz20e1cvAdBdE6MbV6aHY7DzIe4afkeRXIq0UN5KpN8FUZNbPpfHi9egCmOBzACipabrIcktF91plXe3moI9Dhhzr6wyiKKVO54juKghK0TYx3QJPyLkWjb9EwmmpX2KtDtZtjx4EwaUV0YOqBpMJ6lpjfBAHUKYYH0VQ+4oSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756300504; c=relaxed/simple;
-	bh=+sZ77WjHTHt90fhAq699UVhWKshOd6ZBE82anXZEMFE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=LpImjsJ/7xnOKg+aC1FW0CLAL8Xj4Vr9Pedt8RmPEIBVhoAwUPoxKfdkGcwLe7S0Euj0VdmCe+xpBW9j/3LhOG3QoldGGbeiE17D3IGY1JgUFIFZ59zWT716dT+FkFlRU5jn+P5BV02tWw8T6C9tBeskqlAFVj+5lG7xG6jmQcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=jILYzWPq; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-770593ba164so3134762b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 06:15:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1756300500; x=1756905300; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8yoam2Ed8JJCs5sRbaWgfuw9sP/krLyryxA9VsbblUg=;
-        b=jILYzWPqh9mebIBbgS7qVoaACsH9rNBz4OY/1tGlJURf/rgxZbvoDmTFbPuTSFEqe6
-         aqmYjW7aqtI0qR23SpyO5NFlAUUYysoj17bcIwLTr8gcqih1oimDBR/jmxgqnhkiHHvf
-         RDnfb93Og+DOZlbZDXzejK+R7Gxxql1/HL4X8tXfjy/QLhHS0UCsH838g+0tU+pPY3sy
-         S+uXQ0/bTJc7gVlQXKRb1NvTrNnu/N4PAJWlaHKei1I/K9FkzOlCLwRjklV9sbC5m2Pi
-         xNldwHO6rIx6ooqT7Dc/6WH/sVoe232qBSM5JE4XrLaerhn3cXj0z05z6laZDOwxmDtA
-         oGbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756300500; x=1756905300;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8yoam2Ed8JJCs5sRbaWgfuw9sP/krLyryxA9VsbblUg=;
-        b=WxJJVTaftxh2b0CGKjhbJ6Ad9xWayiLx67h5Fe9CGxX/aQ8yiPiw3sTVHs29b5chjW
-         UWlbdUjlN9j6BS3e13mRLKsXRhU0cVSWT6glJ53GCuI6vdmxYQJdnqHDl16FYF3Gogsf
-         blrx0EYWbo6OOFL4PS9t+zWMjFVT1W/oRDKRgFf5DAkNt7++8ZZMexphcGpj+DqGMBBN
-         Ep7yEktcYTw2r2zb4LjF/ENRcBa6DJbKc2SMZvQfUrY4BRTEwKv58uv69ePShMf4YfCc
-         sZ1BEPNDxPWmRT2CUGT4+VCdDZjkcmRbJd9c8+Cw5D4lZy6KbvQbMKLh4nWrBjYUbaqm
-         zTzA==
-X-Forwarded-Encrypted: i=1; AJvYcCXz93BIP5ykq3yD01SMvYhcy2azn58nSADLzp1VL57kMEyzKch8efYcI9toM1oFur/VRZdjw8P/mGk2C3o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwePWh+xW+eONA/a3lJuNWPW+oCa2yYSQC0WAQijM9iS5ABi+6E
-	uKckQZtOW604ktJlBVGaiyLIue8IjL8IyVfPTqqisP9cFIRbEtHDX7OzID3PCmzO8nE=
-X-Gm-Gg: ASbGncv9/XfRGu6ijYZ/ZhxGdg0a+oK0lEHe+Z5SWa0Kch8EXAx6OOURXd1IaxVQzgM
-	f0cb9DzFTKUmD+jGMcZBHDq/BzY8WW/DQohKXJIApRQaahBeuy0j9EyjnWvr9U8LiwTtoeFqLjK
-	suvSHEngjw2h+yMQUA8Zf3iOtDZ2pdoD5zP7x9j05D1ZLkfIFuH2xBCS5TKER133IEXoUp8Fjuv
-	xWJbwe7qEm1c/qLGT76TLPeef+0aX9voq8nQ72gKnXApGXjYG7xpWwfp0u3lXk11kg31GrlypQP
-	yWD1lOidpMdLKCtbBow2xsrpzQfJekcoLdXCCR8NlroqUchsRKW4Lf6nUt1BxshJF/Hv6nFtF/i
-	S9LME5WHqFs6PZWTQhXy/VdhgQ4ZUdbWZ0cDLZF9P5pOyS9roNICg+NUhYQswhoxZP1S8CYo8Ni
-	MW0sbtXSUOlYo9VfLJ3laJ7Yv+5e/1qisjvg1vyVvV6+E=
-X-Google-Smtp-Source: AGHT+IH093oiMDk1IJe8n5AdJKx3X2MU1Aan+sgd1rlVBn2icqsAZZ2z8qfKLqFhQrakcrMJ0Xp7uA==
-X-Received: by 2002:a05:6a00:1893:b0:770:581e:55e8 with SMTP id d2e1a72fcca58-770581e5763mr15686407b3a.27.1756300499864;
-        Wed, 27 Aug 2025 06:14:59 -0700 (PDT)
-Received: from J9GPGXL7NT.bytedance.net ([61.213.176.56])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-772017f538esm3172443b3a.21.2025.08.27.06.14.56
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 27 Aug 2025 06:14:59 -0700 (PDT)
-From: Xu Lu <luxu.kernel@bytedance.com>
-To: paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr
-Cc: linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Xu Lu <luxu.kernel@bytedance.com>
-Subject: [PATCH 2/2] riscv: mm: Clear cpu in mm_cpumask after local_flush_tlb_all_asid
-Date: Wed, 27 Aug 2025 21:14:44 +0800
-Message-Id: <20250827131444.23893-3-luxu.kernel@bytedance.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250827131444.23893-1-luxu.kernel@bytedance.com>
-References: <20250827131444.23893-1-luxu.kernel@bytedance.com>
+	s=arc-20240116; t=1756300546; c=relaxed/simple;
+	bh=z5OIZJ7GhqEF5gl7nMePuYERu1DlOwRV8Fee0JabGL4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=h5K3Zl9fl9Wvx7DifaxG0b9zJ6b9nJfn2mkGbvBlyUP+zggF1PSrqnEomphWLUnKwGhV6NfQttPimHhOycu2M15M4soSghQVDXKDk3ihAlZ49Ko7riDDGgAS9ggSKeqOQpbdBQaYw+YkSvu5F3BtCr5bvDVTpweBxhdNkbKRUZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jVcwEi0Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CFC8C4CEEB;
+	Wed, 27 Aug 2025 13:15:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756300545;
+	bh=z5OIZJ7GhqEF5gl7nMePuYERu1DlOwRV8Fee0JabGL4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=jVcwEi0Z0G12ptig1RDRiybmxCbOub95s0gMZLoKkaxCSCohbLJZ1/klgDQLUUL62
+	 KHTKb9LS866pIQJ/0fKij2SYDnwwNvKcBOjgR7u80RptVwGKGE5M6v8wLV3RuqNz0x
+	 eH4ChTQvoHpiz0Dg7Iv9mLJCEDr5n+9EzVEsrk7kdIidISnu/6VYJC9CqpmB7Ha3Zk
+	 hsO0ejNl7jdaJ44cY6ijcUqorbIulaPNc1wyoTQBA9t4tGES1wNWDAp43Vd1fsJy+n
+	 5N/JNIJW/ACTOk2kZJ688BwaEnS2vkbhNQgBAUkhHtj35lwIMvQnGz07kll6+w0ikC
+	 Q1N6xR8T0t7SA==
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: kwilczynski@kernel.org, kishon@kernel.org, arnd@arndb.de, 
+ gregkh@linuxfoundation.org, shuah@kernel.org, 
+ Christian Bruel <christian.bruel@foss.st.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org
+In-Reply-To: <20250804170916.3212221-1-christian.bruel@foss.st.com>
+References: <20250804170916.3212221-1-christian.bruel@foss.st.com>
+Subject: Re: [PATCH 0/3] Skip IRQ tests if irq legitimately is out of range
+Message-Id: <175630054288.7421.16804697021603479134.b4-ty@kernel.org>
+Date: Wed, 27 Aug 2025 18:45:42 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-Clear corresponding bit of current cpu in mm_cpumask after executing
-local_flush_tlb_all_asid().
 
-This reduces the number of IPI due to tlb flush:
+On Mon, 04 Aug 2025 19:09:13 +0200, Christian Bruel wrote:
+> 'pci_endpoint_test' fails for architectures allowing less than 32 MSI
+> registers and that doesnt support MSI-X, avoid reporting false errors
+> because of out-of-range irqs.
+> 
+> e.g for an EP configured with 8 msi_interrupts and no msix we can have
+> 
+>  ./pci_endpoint_test -t MSI_TEST
+> 
+> [...]
 
-* ltp - mmapstress01
-Before: ~98k
-After: 268
+Applied, thanks!
 
-Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
----
- arch/riscv/mm/tlbflush.c | 41 ++++++++++++++++++++++++----------------
- 1 file changed, 25 insertions(+), 16 deletions(-)
+[1/3] misc: pci_endpoint_test: Skip IRQ tests if irq is out of range
+      commit: cc8e391067164f45f89b6132a5aaa18c33a0e32b
+[2/3] misc: pci_endpoint_test: Cleanup extra 0 initialization
+      commit: 384b1b29481e39aae8eb01240d1edf287c7a4145
+[3/3] selftests: pci_endpoint: Skip IRQ test if irq is out of range.
+      commit: 106fc08b30a2ece49a251b053165a83d41d50fd0
 
-diff --git a/arch/riscv/mm/tlbflush.c b/arch/riscv/mm/tlbflush.c
-index 962db300a1665..571358f385879 100644
---- a/arch/riscv/mm/tlbflush.c
-+++ b/arch/riscv/mm/tlbflush.c
-@@ -17,7 +17,8 @@
-  */
- unsigned long tlb_flush_all_threshold __read_mostly = 64;
- 
--static void local_flush_tlb_range_threshold_asid(unsigned long start,
-+static void local_flush_tlb_range_threshold_asid(struct mm_struct *mm,
-+						 unsigned long start,
- 						 unsigned long size,
- 						 unsigned long stride,
- 						 unsigned long asid)
-@@ -27,6 +28,8 @@ static void local_flush_tlb_range_threshold_asid(unsigned long start,
- 
- 	if (nr_ptes_in_range > tlb_flush_all_threshold) {
- 		local_flush_tlb_all_asid(asid);
-+		if (mm && mm != current->active_mm)
-+			cpumask_clear_cpu(raw_smp_processor_id(), mm_cpumask(mm));
- 		return;
- 	}
- 
-@@ -46,21 +49,28 @@ static void local_flush_tlb_range_threshold_asid(unsigned long start,
- 	}
- }
- 
--static inline void local_flush_tlb_range_asid(unsigned long start,
--		unsigned long size, unsigned long stride, unsigned long asid)
-+static inline void local_flush_tlb_range_mm(struct mm_struct *mm,
-+					    unsigned long start,
-+					    unsigned long size,
-+					    unsigned long stride)
- {
--	if (size <= stride)
-+	unsigned long asid = get_mm_asid(mm);
-+
-+	if (size <= stride) {
- 		local_flush_tlb_page_asid(start, asid);
--	else if (size == FLUSH_TLB_MAX_SIZE)
-+	} else if (size == FLUSH_TLB_MAX_SIZE) {
- 		local_flush_tlb_all_asid(asid);
--	else
--		local_flush_tlb_range_threshold_asid(start, size, stride, asid);
-+		if (mm && mm != current->active_mm)
-+			cpumask_clear_cpu(raw_smp_processor_id(), mm_cpumask(mm));
-+	} else {
-+		local_flush_tlb_range_threshold_asid(mm, start, size, stride, asid);
-+	}
- }
- 
- /* Flush a range of kernel pages without broadcasting */
- void local_flush_tlb_kernel_range(unsigned long start, unsigned long end)
- {
--	local_flush_tlb_range_asid(start, end - start, PAGE_SIZE, FLUSH_TLB_NO_ASID);
-+	local_flush_tlb_range_mm(NULL, start, end - start, PAGE_SIZE);
- }
- 
- static void __ipi_flush_tlb_all(void *info)
-@@ -79,17 +89,17 @@ void flush_tlb_all(void)
- }
- 
- struct flush_tlb_range_data {
--	unsigned long asid;
-+	struct mm_struct *mm;
- 	unsigned long start;
- 	unsigned long size;
- 	unsigned long stride;
- };
- 
--static void __ipi_flush_tlb_range_asid(void *info)
-+static void __ipi_flush_tlb_range_mm(void *info)
- {
- 	struct flush_tlb_range_data *d = info;
- 
--	local_flush_tlb_range_asid(d->start, d->size, d->stride, d->asid);
-+	local_flush_tlb_range_mm(d->mm, d->start, d->size, d->stride);
- }
- 
- static void __flush_tlb_range(struct mm_struct *mm,
-@@ -97,7 +107,6 @@ static void __flush_tlb_range(struct mm_struct *mm,
- 			      unsigned long start, unsigned long size,
- 			      unsigned long stride)
- {
--	unsigned long asid = get_mm_asid(mm);
- 	unsigned int cpu;
- 
- 	if (cpumask_empty(cmask))
-@@ -107,17 +116,17 @@ static void __flush_tlb_range(struct mm_struct *mm,
- 
- 	/* Check if the TLB flush needs to be sent to other CPUs. */
- 	if (cpumask_any_but(cmask, cpu) >= nr_cpu_ids) {
--		local_flush_tlb_range_asid(start, size, stride, asid);
-+		local_flush_tlb_range_mm(mm, start, size, stride);
- 	} else if (riscv_use_sbi_for_rfence()) {
--		sbi_remote_sfence_vma_asid(cmask, start, size, asid);
-+		sbi_remote_sfence_vma_asid(cmask, start, size, get_mm_asid(mm));
- 	} else {
- 		struct flush_tlb_range_data ftd;
- 
--		ftd.asid = asid;
-+		ftd.mm = mm;
- 		ftd.start = start;
- 		ftd.size = size;
- 		ftd.stride = stride;
--		on_each_cpu_mask(cmask, __ipi_flush_tlb_range_asid, &ftd, 1);
-+		on_each_cpu_mask(cmask, __ipi_flush_tlb_range_mm, &ftd, 1);
- 	}
- 
- 	put_cpu();
+Best regards,
 -- 
-2.20.1
+Manivannan Sadhasivam <mani@kernel.org>
 
 
