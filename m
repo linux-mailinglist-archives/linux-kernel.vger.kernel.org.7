@@ -1,137 +1,150 @@
-Return-Path: <linux-kernel+bounces-788825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 838D5B38AC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:23:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91EC6B38AD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:24:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAB4C1BA6F22
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:24:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F24672080D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0EC92EA483;
-	Wed, 27 Aug 2025 20:23:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3BB12F0C76;
+	Wed, 27 Aug 2025 20:24:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="VfGp4OEP"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="euLhcl90"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806B91DE4CA
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 20:23:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383602EA477;
+	Wed, 27 Aug 2025 20:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756326232; cv=none; b=hPpUNwa26ltWpj5Ob38G4eFS21JzwJlm7Tr9kgdX2UewNaO0acKfg9Tl5JY44bV9nr7xMKaA3QL57sPNvLtp4K90OAJuDRLlGpkplJ9d9YR3iQaefifLQWmb7zdzee14GhirIUGreqlcFunCsWuq7MWHC/0uTG724FqlvzgMQRM=
+	t=1756326250; cv=none; b=ojGS0RLQgiBbG9Tk95qvIlnU7ibqMG7uPrkrEWZhVxQCOUQrBic1e6qCfNz8Zi4pRDyzpu/AkO4274ty7OBHuKR/fW6VSKRGaxnriY7usqFhIfBI85YCUA5j9Bquxp+iesBir3xLXM89V220X77hERQrq6KHGa5k/bALtl0yFjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756326232; c=relaxed/simple;
-	bh=ympLIfd6q2uz8sPjeGy9ikp10Y5W46lxVKN2uHOkeSA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lFNgqyS605pdt0GFRk82BmN0zJmBydV4WPxxyx5BjrgUgqo2iowzOKokXHP9/tb8eup4BIPcywAvFHM+7jOMnB02nlEvFP7RdVgLGB2MSyZOjC6j3XGKpan9lgDMlR3KGGrxHdkQw/8zTKAka+DRJOC8Im+S+UX7n5rANbRH7c0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=VfGp4OEP; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4b109912545so3525371cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 13:23:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1756326229; x=1756931029; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tpOEDUkT9ltpYSIW5r16zrEEmzgxmIvdt7bvKP65LEk=;
-        b=VfGp4OEPUkqUAXEYtqxtt5QpayX5o8O2Qr49ZnpVK0ygstT7Du8ecbeBB9mE4AO1B5
-         eGC6fphf1mFXekjOpz7CjDWSV2WTkdr4tFwSBTuFzF8AnkAKdfsweaIGRp3U7f7Sbx9F
-         wZJQYh+p+TZlqfksLeHEKQeyFpJnxce6Li0CsuvlrlhBxV6n8L/doHv4ylkUHM1f8OvT
-         JfqrgBBMD/299d8taAhDGUfV4Bhi33P40ZvNfOtXEmaFCeZmVN/fRNhUuBgYb/MYvF+E
-         TwnaFiUQBJi93l/fgR6iZrS49KT8O8Sbn5UM5G+S69Pn+7ZGseA72wKbhh2PIBFhWaKI
-         IzKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756326229; x=1756931029;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tpOEDUkT9ltpYSIW5r16zrEEmzgxmIvdt7bvKP65LEk=;
-        b=B1x5Sse4PsCelVGUk708xpEjqO43oA/BTelhFD/po2UORdctHNcCgDusdFBYbAHrIl
-         RzEgO66T5UBGCjPc+tjCWiKqB5X0f9OPHsB4Uq/ksKJ5Vp9pCninIgG4wG87BqU4MLAU
-         PZuSqihicagUlTyOmxedMl08czYDICbyg3jSh8+IHNywNPaB5tV2bSTXht5BcqHF5SvS
-         h4ahouGj857Qrzk9eix65LYbHFK+QHaS0oTi6p5xEkWB8iC4Qx/M6xX3EEAuRroOx8tV
-         5Z67C3iDR97HsFWt1MyIKSm8hN07K0BEZDqjnZ+N7D/KkHS76N1AhsM0oPm2IDNhab29
-         Eb0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXA4P49ACsx1nnGksWE30+11Szz0e1yaUeUxhp1LyN71fLH0PfabNlu5l2U9wysunkDF/8/TWfZzflzGg4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHT1NF0nJRqQKanym2q/cDg8vz9t9Nv/YEk55YXI/0gOi8GY6I
-	ez/kUkLEpNdM6ZK0FhT9n34Bgu9ovURYt3iulqvqRo+IFzblQhamBgI+1frxp7+3bpQ=
-X-Gm-Gg: ASbGncuT7zFyH39ZZ29JKWIRIBk1FMAfLwnNbu5gCxMz0GvM9GH6TNrYSH0E8Olst7a
-	BVTnR5NusKIlErkFCrHyezd82+nNCx0q4mENYNzCjJnjfGPgSgPxLK6tL/381nyO78rJ0S45z+T
-	HWEEodEJrr04HaDkMFZq2kHWHXFmzcrnJpA1gr2hwRoIvaOqlhiRaP6UA7pLVEfjsqnKBg5+ghP
-	dH0YvXCeogcPLouNie0NWM/DISp63wDPkIk3/aOr26yT4/Uy4f3UpbsNi1JQayqiq56nv3gb4+Y
-	PWCdfHSu+tD6P/YA8lXLdaOaI3bpzUXfW49zSruarulYcoM6RJRtPNxRGCbtQmHIKq+NWg7aui1
-	0/yd1L/Ijwifcik//IAEAPx5XXxFkIAzCJ7HX6j9qgVzfHSMtjlTU2cOi1SDBNx6LDf+QawwXHJ
-	3NSA==
-X-Google-Smtp-Source: AGHT+IH2jvq0biwVj6G9Lb1igaYWxMehi3WpzeTMyFhLVTHvBbvwK5R7zTgvdDX6KlbQ3p+4Xa/pJA==
-X-Received: by 2002:a05:6214:5098:b0:707:a430:e01b with SMTP id 6a1803df08f44-70d971f7608mr246666016d6.3.1756326229319;
-        Wed, 27 Aug 2025 13:23:49 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-42.washdc.ftas.verizon.net. [96.255.20.42])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70da72ce510sm89559896d6.64.2025.08.27.13.23.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 13:23:48 -0700 (PDT)
-Date: Wed, 27 Aug 2025 16:23:46 -0400
-From: Gregory Price <gourry@gourry.net>
-To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-Cc: linux-cxl@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ALOK TIWARI <alok.a.tiwari@oracle.com>,
-	Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH v4] cxl: docs/driver-api/conventions resolve conflicts
- between CFMWS, LMH, Decoders
-Message-ID: <aK9pUhETnNgs-7UG@gourry-fedora-PF4VCD3F>
-References: <20250820150655.1170975-1-fabio.m.de.francesco@linux.intel.com>
+	s=arc-20240116; t=1756326250; c=relaxed/simple;
+	bh=BozmQ9qzelVF+gtm7pEEW7ElkcXCmdHFmSEyyp0FLTo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cbv+AkVgDwQ5Fr5C3hS0wA8Kc6ddGFb6C5jokXyR3Xx5klVvzfkED08jCF+BAhMlmT3X4dfqviSHmaDUu+sJdvqPyRtCebon3PwMXIhDqk0AqPGgBx3u+BebvQAbgkjnH97ZTCFnCXtaazO5rnDwT/zAUAvWXruRt3JM/ahBbBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=euLhcl90; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57RKNvp81825109;
+	Wed, 27 Aug 2025 15:23:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1756326237;
+	bh=l2kumuCMLlBCJKAinXlyJgLWFRWFnmkwqXm+yzlGKgc=;
+	h=From:To:CC:Subject:Date;
+	b=euLhcl90UmAP6JPogxrdYfsXvuEeQFvw02QsxLt2OGBZroIQoKGO8TVnfgxXSXGMt
+	 FCb99EywBWCegcvpqBOeFU5tFGOeHETl9VDGN7kPSLKeaF2WIpPfpuTQwMikTrqtKJ
+	 icrDy7wX0am3FxxqMk0AdKW2lapiPq+i8pDeEwAE=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57RKNv122382663
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 27 Aug 2025 15:23:57 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 27
+ Aug 2025 15:23:57 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 27 Aug 2025 15:23:56 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57RKNvFS3643386;
+	Wed, 27 Aug 2025 15:23:57 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>, David Airlie
+	<airlied@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Laurent Pinchart
+	<Laurent.pinchart@ideasonboard.com>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>,
+        Robert Nelson <robertcnelson@gmail.com>,
+        Jason Kridner <jkridner@beagleboard.org>, <afd@ti.com>,
+        <tomi.valkeinen@ideasonboard.com>, <devarsht@ti.com>,
+        <dmitry.baryshkov@oss.qualcomm.com>, Nishanth Menon <nm@ti.com>
+Subject: [PATCH V5 0/5] drm/bridge: it66121: Add initial it66122 support
+Date: Wed, 27 Aug 2025 15:23:49 -0500
+Message-ID: <20250827202354.2017972-1-nm@ti.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250820150655.1170975-1-fabio.m.de.francesco@linux.intel.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Wed, Aug 20, 2025 at 05:06:39PM +0200, Fabio M. De Francesco wrote:
-> +
-> +E.g, a real x86 platform with two CFMWS, 384 GB total memory, and LMH
-> +starting at 2 GB:
-> +
-> +Window | CFMWS Base | CFMWS Size | HDM Decoder Base | HDM Decoder Size | Ways | Granularity
-> +  0    |   0 GB     |     2 GB   |      0 GB        |       3 GB       |  12  |    256
-> +  1    |   4 GB     |   380 GB   |      0 GB        |     380 GB       |  12  |    256
-> +
+Hi,
 
-This may be a dumb question, but... how is validation supposed to work?
+Add initial support for IT66122, which seems to be compatible to it66121
+but probably has additional functionality.
 
-Like in theory according to the above something like the following would
-also be valid:
+BeagleY-AI uses this it66122 as the old part is no longer in production
+as far as I understand.
 
-Window | CFMWS Base | CFMWS Size | HDM Decoder Base | HDM Decoder Size
-  0    |   4 GB     |   380 GB   |      2 GB        |     382 GB      
+Now, BeaglePlay uses it66121 at the moment, but at some point, it might
+end up flipping over to the new part. Additionally, it also looks like
+Revision D of BeagleBone Black switched over to it66122 as well.
 
-(ignoring ways/granularity, i didn't adjust those).
+Series is based on next-20250827
 
-The entirety of the CFMWS would be contained within the HDM decoder, but
-with carve-outs on either end.  This would be "allowed" according to the
-logic here.
+Bootlog: BeaglePlay: https://gist.github.com/nmenon/65afb917ee1818979d338cf25732a920
 
-This would effectively allow all HDM decoder base/size values to be valid
-as long as one CFMWS is contained entirely within it.
+Changes in V5:
+* Switched over to ARRAY_SIZE
+* Picked up Andrew's Reviewed-by
 
-As a result, wouldn't it then also be valid to have an HDM Decoder cover
-more than one CFMWS range (two full CFMWS described by a single HDM
-decoder).
+Changes in V4:
+* Added patch to sort the compatibles alpha-numerically
+* vid/pid lookup is done without using the match_data.
+* picked reviews
 
-That seems like it could cause issues.
+Changes in V3:
+Based on Tomi's and Devarsh's reviews, and searching online (and failing
+to find) for a public data sheet, I have refactored the series to:
+a) Detect the ID by matching vid/pid
+b) Introduce it66122 basic support which seems to work based on
+   empirical testing evidence on BeagleY-AI. This allows incremental
+   patches in the future by someone who might have access to the data
+   sheet to add additional features for the chip.
+c) Irritated by checkpatch --strict warnings, added a patch to fix
+   existing warnings as part of this series, but it could probably go
+   in independent of everything else.
+d) Stopped claiming it66122 is drop in replacement of it66121 :)
 
-~Gregory
+Changes in V2:
+* Picked up Krystoff's binding ack
+* Switched over to a vid/pid list
+
+V4: https://lore.kernel.org/all/20250819130807.3322536-1-nm@ti.com/
+V3: https://lore.kernel.org/all/20250815034105.1276548-1-nm@ti.com/
+V2: https://lore.kernel.org/all/20250813204106.580141-1-nm@ti.com/
+V1: https://lore.kernel.org/all/20250813190835.344563-1-nm@ti.com/
+
+Nishanth Menon (5):
+  dt-bindings: display: bridge: it66121: Add compatible string for
+    IT66122
+  drm/bridge: it66121: Drop ftrace like dev_dbg() prints
+  drm/bridge: it66121: Sort the compatibles
+  drm/bridge: it66121: Use vid/pid to detect the type of chip
+  drm/bridge: it66121: Add minimal it66122 support
+
+ .../bindings/display/bridge/ite,it66121.yaml  |  1 +
+ drivers/gpu/drm/bridge/ite-it66121.c          | 68 +++++++++----------
+ 2 files changed, 34 insertions(+), 35 deletions(-)
+
+-- 
+2.47.0
+
 
