@@ -1,62 +1,51 @@
-Return-Path: <linux-kernel+bounces-787606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9032CB37885
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:18:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A6A2B37887
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 05:19:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A60A57A4C36
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 03:17:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3E373649DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 03:19:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39ED307498;
-	Wed, 27 Aug 2025 03:18:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A799B307ADC;
+	Wed, 27 Aug 2025 03:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="iNvjIy7z"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CAyCF73v"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A3430CD98;
-	Wed, 27 Aug 2025 03:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9600A1D9346;
+	Wed, 27 Aug 2025 03:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756264727; cv=none; b=e5pNku363BMJgfIBBSR03+pTtro4G9KeRj2+A2uSQpWNmM0HiJNxPoDn6S4qBaSRY5cIHdSwW+euFdw763CwRQ2Pojbxx/LYoeefvavt4Nxh+A3mSI4JTZo97umENpkMltUJwONwAGC2sYvFRMf/o6mEOFD29z98f1qDbAUzqO4=
+	t=1756264742; cv=none; b=kTw3LOg7uMkbDn1r1S2bvWz+qsGYdDXmOpUTD9J0yIFwQw05KUwDaUdnEQVWNslhgiGYW4nfIDJ2VXpkfAl0WklVzqcwccJdQq5CSCas8OgmI0/VkyCzZ9cEzn4q5qFkAEmiQV9pJd4CJiiH+jfcKakvjMwUG4H8stziSW01e60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756264727; c=relaxed/simple;
-	bh=4hE1oU+4pTsfvlqMOOtDJyxVzsrXq+9cfnki53nuljc=;
+	s=arc-20240116; t=1756264742; c=relaxed/simple;
+	bh=WUWwy5nccQxrS8HQfczhlbKuioAv23XjXIVasA3CJQ0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FN5SOCh8Oc4eLyxYgCoQ1Pmi1JQl1tZdQDRDaM07AOloNewKcA1570bLIOPjN28LGncyEl+MrQnbAsTq7zqncpkyzrWr4HrtfIf+NwYkkcSThRJHTwnBpIhb4TUTynQOoAdi3fbGmP7jv7Y28tQV3OcMsJJ+OUfEcKPp5HVxkN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=iNvjIy7z; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4cBV9c0ljGzlgqyS;
-	Wed, 27 Aug 2025 03:18:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1756264722; x=1758856723; bh=LOEdC127eBsOZiHvCgEzALfT
-	+5Y8etm3iu37IW8m95Y=; b=iNvjIy7zqXJgv/8b7uPw4N9+++8iKyMvyCOoqm4C
-	767ecvmd/crtU+DEADsGQ5wkZ0fhPDa+oTBwCk/4R1dxmroHCR+9Y3ZluDwe8sIK
-	m7OHBJewJLYZmZc44259a6MAaJdlm1zmum/cpWWx24zXS7c9ffX1V7s3DsnN4ZwO
-	bBMOV4ydIwQdCuN+MbPefUyUq3KPgOZ3iGiNZ2FqMO4hnHtNdxBuq47okzBN6O00
-	bCGRMA/wXv9fv9GUc10Z+OV/2MLD7b6VhO2Wmc3bQ4O6owclJIzj4PaUQFLNci9k
-	e45/FcNbfU/VikkmnW6MnOFyPBOomRkRIpIGXAIOX9D7yQ==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id h2E81GhPXYB6; Wed, 27 Aug 2025 03:18:42 +0000 (UTC)
-Received: from [172.20.6.188] (unknown [208.98.210.68])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4cBV9R6XkQzlgn8k;
-	Wed, 27 Aug 2025 03:18:35 +0000 (UTC)
-Message-ID: <bfdffd81-d844-4984-a8dd-ffad3e906f96@acm.org>
-Date: Tue, 26 Aug 2025 20:18:29 -0700
+	 In-Reply-To:Content-Type; b=l1+71Qt8ncQoeJIoNiCYdy63ydFpjE7ZvF3YeKwdKmUlmkp6/XzUtZiSBN64LljzjDNLSOkIODjsrx0pJmaott0kGIAkGaTG4nDqYKBOb9jzkBNuWibvETMRBm7NXHIb5t1dWoLHlkTZz3zDG+qRdb5Ag2Jsg/IOtEGvfHczenU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CAyCF73v; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=A+VnN3ce19ePBWAKL69GvyEbLz34iHfiJ7S4nl+bquc=; b=CAyCF73vjin/UU8OsCA3Ysf206
+	48hv7838JxCqoFmQuyqmmkSHuIxoQj2ehVeg/TDFlUZKyLXouyYX9zCcL+kfYJGGHfE/GQpPXQzMW
+	gqjw2wz4OexYYa8engqNDwwpqabINISV2wvYXpcN7mLcjTOxBWpFiykL4k+gt4nEt0j77WbGnKCz3
+	s9ZktHD8g1481fGBhWLkQ2uvo6iMRV9m6OwPZMmjyW4OQ+Fk9Q2ScLgn/cJNJDbfR9qw7QMoNAsID
+	+xnBktlOpl/zQMgv4/Hi0O5Yq8AzC62sbUwxJ4N6AMXKmJke+GkfiUgubsBsSin//5QspdpBJBKuM
+	OIVfJQuQ==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ur6gc-0000000DowB-0HmH;
+	Wed, 27 Aug 2025 03:18:58 +0000
+Message-ID: <8696a6c8-c555-4523-b8dc-b41ab14b4380@infradead.org>
+Date: Tue, 26 Aug 2025 20:18:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,34 +53,143 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] scsi: hisi_sas: Switch to use tasklet over threaded
- irq handling
-To: Yihang Li <liyihang9@h-partners.com>, martin.petersen@oracle.com,
- James.Bottomley@HansenPartnership.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linuxarm@huawei.com, liuyonglong@huawei.com, prime.zeng@hisilicon.com
-References: <20250822075951.2051639-1-liyihang9@h-partners.com>
- <f02e9bb8-3477-4fa7-8b20-72bd518407ed@acm.org>
- <2f2e5534-a368-547d-dedf-78f8ca2fc999@h-partners.com>
- <62a58038-75da-4976-aec7-016491437735@acm.org>
- <f996d9cd-7be8-876e-680a-acf842afed5b@h-partners.com>
+Subject: Re: [PATCH v2] Documentation: gfs2: Consolidate GFS2 docs into its
+ own subdirectory
+To: Bagas Sanjaya <bagasdotme@gmail.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Documentation <linux-doc@vger.kernel.org>,
+ Linux GFS2 <gfs2@lists.linux.dev>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+ Andreas Gruenbacher <agruenba@redhat.com>,
+ Bjorn Helgaas <bhelgaas@google.com>, "Darrick J. Wong" <djwong@kernel.org>,
+ Jeff Layton <jlayton@kernel.org>, Miklos Szeredi <mszeredi@redhat.com>,
+ Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
+ Chen Linxuan <chenlinxuan@uniontech.com>, James Morse <james.morse@arm.com>,
+ Bernd Schubert <bschubert@ddn.com>, Matthew Wilcox <willy@infradead.org>
+References: <20250827022122.12132-1-bagasdotme@gmail.com>
 Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <f996d9cd-7be8-876e-680a-acf842afed5b@h-partners.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250827022122.12132-1-bagasdotme@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 8/26/25 7:11 PM, Yihang Li wrote:
-> In the interrupt thread context, the main tasks are handling abnormal I/O
-> and calling.task_done()->scsi_done(). I believe these tasks are not
-> suitable for execution in the interrupt context.
 
-Most code that can be used in tasklet context is also safe to use in 
-interrupt context. Does this patch series complete I/O requests from
-tasklet context? Does that mean that it is also possible to complete
-I/O requests from interrupt context? Or am I perhaps missing something?
 
-Thanks,
+On 8/26/25 7:21 PM, Bagas Sanjaya wrote:
+> Documentation for GFS2 is scattered in three docs that are in
+> Documentation/filesystems/ directory. As these docs are standing out as
+> a group, move them into separate gfs2/ subdirectory.
+> 
+> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> ---
+>  Changes since v1 [1]:
+> 
+>    * Strip gfs2- prefix (Matthew)
+> 
+>  [1]: https://lore.kernel.org/linux-doc/20250826023913.14888-1-bagasdotme@gmail.com/
+> 
+>  .../filesystems/{gfs2-glocks.rst => gfs2/glocks.rst} |  0
+>  Documentation/filesystems/gfs2/index.rst             | 12 ++++++++++++
+>  .../filesystems/{gfs2.rst => gfs2/overview.rst}      |  6 +++---
+>  .../{gfs2-uevents.rst => gfs2/uevents.rst}           |  0
+>  Documentation/filesystems/index.rst                  |  4 +---
+>  MAINTAINERS                                          |  2 +-
+>  6 files changed, 17 insertions(+), 7 deletions(-)
+>  rename Documentation/filesystems/{gfs2-glocks.rst => gfs2/glocks.rst} (100%)
+>  create mode 100644 Documentation/filesystems/gfs2/index.rst
+>  rename Documentation/filesystems/{gfs2.rst => gfs2/overview.rst} (96%)
+>  rename Documentation/filesystems/{gfs2-uevents.rst => gfs2/uevents.rst} (100%)
+> 
+> diff --git a/Documentation/filesystems/gfs2-glocks.rst b/Documentation/filesystems/gfs2/glocks.rst
+> similarity index 100%
+> rename from Documentation/filesystems/gfs2-glocks.rst
+> rename to Documentation/filesystems/gfs2/glocks.rst
+> diff --git a/Documentation/filesystems/gfs2/index.rst b/Documentation/filesystems/gfs2/index.rst
+> new file mode 100644
+> index 00000000000000..9d9ca84d45a7ae
+> --- /dev/null
+> +++ b/Documentation/filesystems/gfs2/index.rst
+> @@ -0,0 +1,12 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +====================
+> +Global File System 2
+> +====================
+> +
+> +.. toctree::
+> +   :maxdepth: 1
+> +
+> +   overview
+> +   glocks
+> +   uevents
+> diff --git a/Documentation/filesystems/gfs2.rst b/Documentation/filesystems/gfs2/overview.rst
+> similarity index 96%
+> rename from Documentation/filesystems/gfs2.rst
+> rename to Documentation/filesystems/gfs2/overview.rst
+> index 1bc48a13430c1c..f971353d23611c 100644
+> --- a/Documentation/filesystems/gfs2.rst
+> +++ b/Documentation/filesystems/gfs2/overview.rst
+> @@ -1,8 +1,8 @@
+>  .. SPDX-License-Identifier: GPL-2.0
+>  
+> -====================
+> -Global File System 2
+> -====================
+> +=============
+> +GFS2 Overview
+> +=============
+>  
+>  GFS2 is a cluster file system. It allows a cluster of computers to
+>  simultaneously use a block device that is shared between them (with FC,
+> diff --git a/Documentation/filesystems/gfs2-uevents.rst b/Documentation/filesystems/gfs2/uevents.rst
+> similarity index 100%
+> rename from Documentation/filesystems/gfs2-uevents.rst
+> rename to Documentation/filesystems/gfs2/uevents.rst
+> diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
+> index 11a599387266a4..897eabaa30d65d 100644
+> --- a/Documentation/filesystems/index.rst
+> +++ b/Documentation/filesystems/index.rst
+> @@ -90,9 +90,7 @@ Documentation for filesystem implementations.
+>     ext3
+>     ext4/index
+>     f2fs
+> -   gfs2
+> -   gfs2-uevents
+> -   gfs2-glocks
+> +   gfs2/index
+>     hfs
+>     hfsplus
+>     hpfs
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index dafc1171254406..c685140f78c4e9 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -10335,7 +10335,7 @@ L:	gfs2@lists.linux.dev
+>  S:	Supported
+>  B:	https://bugzilla.kernel.org/enter_bug.cgi?product=File%20System&component=gfs2
+>  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git
+> -F:	Documentation/filesystems/gfs2*
+> +F:	Documentation/filesystems/gfs2/*
 
-Bart.
+I think this should be:
+
+F:	Documentation/filesystems/gfs2/
+
+without the trailing '*'.
+
+See the explanation for F: near the top of the MAINTAINERS file.
+
+>  F:	fs/gfs2/
+>  F:	include/uapi/linux/gfs2_ondisk.h
+>  
+> 
+> base-commit: ee9a6691935490dc39605882b41b9452844d5e4e
+
+
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+
+thanks.
+
+-- 
+~Randy
 
