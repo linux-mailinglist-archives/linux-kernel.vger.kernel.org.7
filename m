@@ -1,143 +1,142 @@
-Return-Path: <linux-kernel+bounces-788110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D978B37FCB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:22:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDCA3B37FC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:22:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A6507AFC50
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:20:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C332F2044A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:22:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88ABF34DCCC;
-	Wed, 27 Aug 2025 10:22:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A7734A334;
+	Wed, 27 Aug 2025 10:22:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CMY73pat"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z6OOsUQD"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48E8341ABD;
-	Wed, 27 Aug 2025 10:22:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 608BA1C860B;
+	Wed, 27 Aug 2025 10:21:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756290125; cv=none; b=iZdXwCjERHlVpibncqnnOf843I/nSxCAiB3VTBur0DwnTj6H1TzctZlOqOlm9WlX6eS/5Yp9tw/S8YXKYxV7HdpvzShpTuPgi+6UWDW1DCyHjy7orCsJfmn6zzf7Iz0xe554ocWHbdP4yH6hAu91al3UehKU6xZdyOXATYy9Bkc=
+	t=1756290120; cv=none; b=JBL9APScf9M4VxBnIzX9K3vmlNtWiq4tpCFnJFBLoGOFQ9Pjeeu3Y/txyTQH+gCnhvLkztPyTG6pyWVFZXnpadhslBxNoCNUHS6XRLcTctEDQTQHK5h4rnArpeUCpm7AExyA7pL1zRHYGrPF2AuMEvmzpfAGXFvqZcWMbTfbbqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756290125; c=relaxed/simple;
-	bh=feIeFoFe/NIkaHWsBJ6sykJyPk/bFO1DqGerlF+Pkfg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TIAF5vVVEpcw/dcgOai/QgLmA7KqcHHwbV/aID8rfPenPu/4J9JKfHNONQdj93JqiyG4j3xkB7Lp98k9POlH00UCKA33fFFIzjOgQmWe1Xwy3yYxafVPx3IaZcZOcGg1qjDcZZ5+4Q88wxAtBszET+R+Nd3qz5sM+3mUF/wesE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CMY73pat; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1E6FC4CEEB;
-	Wed, 27 Aug 2025 10:21:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756290123;
-	bh=feIeFoFe/NIkaHWsBJ6sykJyPk/bFO1DqGerlF+Pkfg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CMY73patfhFBm1cWrO0GjSOUppBTmRm9w9tK3Op5eYvw95EorabzAemE8TKMQjBN0
-	 AFJLkvpc/07xvzw49PtfcXgo1jyfgqSIyA3tv8EQho2HxgcPu5RJ7YIj6+5ZO0Jjfj
-	 ejeS0GRY1n7Mq9lcoiSrFgud7UC1CHzgBEAzXF9wgw4H35uLjqwGgcAgwRdWTSnps4
-	 uVbcQD9zxttmWF0K8GiZTPHDS7eDEZN1k6CLQV5sYnoFYmqneHGPBxowx91U05F03k
-	 g5jrxQjovkqZ6CO/JHFUeS2pHASrfBK5fwYnJi/a4eamilP7bDZYeUuhHoJFoX+o0y
-	 IaB8i4S88yEdA==
-Date: Wed, 27 Aug 2025 11:21:46 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Alexey Klimov <alexey.klimov@linaro.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Sean Wang <sean.wang@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
-	Jacky Bai <ping.bai@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	NXP S32 Linux Team <s32@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Tony Lindgren <tony@atomide.com>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-mm@kvack.org,
-	imx@lists.linux.dev, linux-omap@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Chen-Yu Tsai <wenst@chromium.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v5 00/15] pinctrl: introduce the concept of a GPIO pin
- function category
-Message-ID: <1804d9dc-8814-47d4-af88-c819c3f17bc0@sirena.org.uk>
-References: <20250815-pinctrl-gpio-pinfuncs-v5-0-955de9fd91db@linaro.org>
- <CACRpkdaDGmdhaik+1saRv7Ts4myQ+tg1aQqGU3xQyT7ma8dJFw@mail.gmail.com>
- <CAHp75VephepLq61HrVy=PX2oKUQd5NK2qS-vOC5h_NR65td3Uw@mail.gmail.com>
- <CACRpkda4soRCLF5=W=6R4wnwT3pjk743j022XfJxjTTQzuarAA@mail.gmail.com>
- <534ad082-08fa-42c0-9c24-f0c11af7d5b2@sirena.org.uk>
- <CAMRc=Mdn0_yPXyYq4sbvH4P9-h71vEc4arLPBfSk1PiEFaB7jQ@mail.gmail.com>
+	s=arc-20240116; t=1756290120; c=relaxed/simple;
+	bh=lWGnrKUEhpYeD21CuLeEotP8PCBIr3/OuRbGU8QS7F8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=f64cjHAd5uluq59MUAou0pTA9f42jhq9VZFt3sk99nn9xdLfMgR3U6NQhwYYOCs9Rgj0FH+Bk537dXTl016rBFVmrW9kmnaBMPJzbuPWwlrCG1nQmaM6RWOmxEvJPu26W5Ctm2MxQ/bx7A5tJYv2W/+E1751pTOTwUEOpptbRW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z6OOsUQD; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-771f90a45easo1647422b3a.1;
+        Wed, 27 Aug 2025 03:21:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756290119; x=1756894919; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=aq3fc6aO1OdCHOdewiqMtQD6LH39KbeVaeZG01Zb1Dc=;
+        b=Z6OOsUQDri6ujNWMaWehEawROPwHqB7UPAncR5dFTwFFtXo9eaw+lHwGu72stCUz8H
+         YvY410YbrL6dl9wB+SeQOwd0kLLpBD6BHtLzT6KacMvCwxjzHTYE8dGm66HYUgDSlZyS
+         +BVa+RQUQ+h41x4UIa80z2b9MwgfzO7NnmSTGDWwsMfokJddVH76OZZd5F7/FrlTubO5
+         zxLL3qLeId+zAWE9RJLY5FiptSbKG35kzLzpGAikKLGWyKXe2mBbT3tH1aRAb7bzV6A1
+         2kvKt5OiXODvbdjn5ei2c2eB1yDeg3Gs3zQfzbxzDNsMDn37svV5jq9oQcp2ijn6YXry
+         cV4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756290119; x=1756894919;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aq3fc6aO1OdCHOdewiqMtQD6LH39KbeVaeZG01Zb1Dc=;
+        b=mEq8a7WlZUHK/UsdZq0VykT4ZGOFOhF5yjbI+j0Nhrz37Mw6JGVQj341SNoaOY5W/l
+         M/jWVO/UdsgOwtv6gdWDGEAqeNUaib+WjVVD/tw0xUqEvxgNSsKH83qR8nJSSL/zgzOd
+         spqpCqNnryIBb5IdDOnotRIemDUtEgd1IHyFSTZ2M4bzAlDJs7cALmCu1a9kdXb+hhwd
+         z2sZjL3NGeSqsT86KMycQC4xvXipgq7b/iRKLUmXb9HCs+XCZzPZxQSYKpZs8pT7HfRA
+         Yyx/yiipAbDwHtAzStP10PHxj7lqHf/QE3NQBMOycwvq3wPPVt8+Nw2hagjmTOhwiVUs
+         aJvA==
+X-Forwarded-Encrypted: i=1; AJvYcCU2QZy0Y7ayUHOoW1n/dArrfj9DtW+O0JcJPXXVslynyYuzn/RTqF/BHCXb79f0gcNL0fs=@vger.kernel.org, AJvYcCVFbirJW0NnP6yCunoiY9JAQnrktmUjuEMgtkmd3voDYigQzNf8JMpyiIke7OC9PnjFQo8SzQD5CQQmdFoaeP67@vger.kernel.org, AJvYcCVIfQeXAQLxZCjbaTcIeDX/wEfdvO1ygDaRMlWVaytVKPvlFHL2ZWgJS8rZMlDfjwhy8r11O/sJKOFUiy7X@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywz56ydZKqZPFh+dWN2BJs35oMTWjBIWBAcaT8JTsbBoRNAlB2Q
+	Lk/V8Up1cdNBndOBjA9uWFMZy9dt0JStvedhqvMHPArenu/RgLrfp0rt
+X-Gm-Gg: ASbGncvx1MoIcPgCqtjntay988ODIVRv694jojnmHYZzuTWokWvBa7zOSeVRr0O7Hke
+	OltvjIE1aLLqzjZgc1KcIb5eZvlfcNxvYMx8sxbHGB6heaNU2UEK+kjf6AvHadbfEc0PcNyTGFB
+	goADekRPqysFQYw1vb+GcPpNB6k+CaE4z4zk9w34YPLDf/ATLpEVkEpNeHM8ILQ7PnIAXmtdOc8
+	gCkV7IMr4dNSe2Uls6DRKufQ52lj+PGGsmsm7Zht+kkEJw7OB7AO6hpPY8guZVzY2zjhTF5FYN4
+	NsZqIMLyn4QX6V5eUwVVt3esu0gnlcYLBFpfCSt2g4Jckyb8pFNTGYP8GQsHMSiB9xWeo/v/kAo
+	TlswvFEzsh/t5Vb+wEA==
+X-Google-Smtp-Source: AGHT+IH3WNUVmPqMTukxtKHvHigKxqb3p981KugKiFvNM38h1dKzUOMN7hkmjUIfx2XFxBTJ/6RQWQ==
+X-Received: by 2002:a05:6a00:4095:b0:771:e434:6c80 with SMTP id d2e1a72fcca58-771e43485c6mr10159776b3a.11.1756290118544;
+        Wed, 27 Aug 2025 03:21:58 -0700 (PDT)
+Received: from [192.168.0.56] ([38.34.87.7])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-771fc26aa82sm3865371b3a.104.2025.08.27.03.21.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 03:21:58 -0700 (PDT)
+Message-ID: <79d0e1894ffbfe4945ccf6aff7aa6564334e2600.camel@gmail.com>
+Subject: Re: [PATCH bpf-next] selftests/bpf: Fix the invalid operand for
+ instruction issue
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Feng Yang <yangfeng59949@163.com>
+Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
+ daniel@iogearbox.net, 	haoluo@google.com, john.fastabend@gmail.com,
+ jolsa@kernel.org, kpsingh@kernel.org, 	linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, 	llvm@lists.linux.dev,
+ martin.lau@linux.dev, sdf@fomichev.me, song@kernel.org, 
+	yonghong.song@linux.dev
+Date: Wed, 27 Aug 2025 03:21:54 -0700
+In-Reply-To: <20250827082452.1381181-1-yangfeng59949@163.com>
+References: <2e20aea407140c22d12f89cdf07605c31c61d0fa.camel@gmail.com>
+	 <20250827082452.1381181-1-yangfeng59949@163.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2cfgNcmAX2xoMgwh"
-Content-Disposition: inline
-In-Reply-To: <CAMRc=Mdn0_yPXyYq4sbvH4P9-h71vEc4arLPBfSk1PiEFaB7jQ@mail.gmail.com>
-X-Cookie: Most people prefer certainty to truth.
 
+On Wed, 2025-08-27 at 16:24 +0800, Feng Yang wrote:
 
---2cfgNcmAX2xoMgwh
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[...]
 
-On Tue, Aug 26, 2025 at 08:19:37PM +0200, Bartosz Golaszewski wrote:
-> On Wed, Aug 20, 2025 at 8:41=E2=80=AFPM Mark Brown <broonie@kernel.org> w=
-rote:
-> > On Wed, Aug 20, 2025 at 09:12:49AM +0200, Linus Walleij wrote:
+> I don't know much about assembly language. Could you tell me if the follo=
+wing changes are correct?
 
-> > > The qualcomm 32bit platforms fail in next anyway so I dropped the pat=
-ches
-> > > for now.
+Looks correct, should be similar to verifier_search_pruning.c:short_loop1()=
+.
 
-> > FWIW the i.MX8MP also seems to have been broken by this:
+Unfortunately, I'm afraid that the best source for assembly syntax doc
+are llvm backend tests and sources, e.g.:
+- https://github.com/llvm/llvm-project/blob/main/llvm/test/CodeGen/BPF/asse=
+mbler-disassembler.s
+- https://github.com/llvm/llvm-project/blob/main/llvm/test/CodeGen/BPF/asse=
+mbler-disassembler-v4.s
+- https://github.com/llvm/llvm-project/blob/main/llvm/lib/Target/BPF/BPFIns=
+trInfo.td
 
-> I can't test it unfortunately - would you mind sharing some info on
-> what's failing exactly?
+The directives should gas compatible (subset supported by llvm):
+- https://sourceware.org/binutils/docs/as/8byte.html
 
-I've just got the log I linked above.
-
---2cfgNcmAX2xoMgwh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiu2/8ACgkQJNaLcl1U
-h9AN7gf9EwrkCMDKQJ3+l64opijlSNrt1Fb1YRWh9KvdN/1+7aQ7T/xu5C8tCq/f
-8Egc7c8xmS27/9OO0NDM90NRmoDvRBfCYsrX0yqXzJ/SMQ27wrw9H/OnNqrrq9V1
-OU0NsJVeKrt5FELD7Zd1UbdrMmQXQlJeWx80plpgQDCxBzBliPEFiSg3OkTc+mqd
-Ef9KfjLAlIwsCVBOC1uwPq3Z0vsIDMzbxXq/e9R6nmwhHZMI3puSNp8ZmUBXBSeq
-D8k41vgIAo2YLmAdLfeiepGWT3CcfFlmbEHdeRIRVUS4zoUK0u0/OIedQnCwXknI
-ucg20UGLpA7K1JhJlA678HGIBlpJcg==
-=VNoC
------END PGP SIGNATURE-----
-
---2cfgNcmAX2xoMgwh--
+> diff --git a/tools/testing/selftests/bpf/progs/compute_live_registers.c b=
+/tools/testing/selftests/bpf/progs/compute_live_registers.c
+> index 6884ab99a421..01d73ad76faf 100644
+> --- a/tools/testing/selftests/bpf/progs/compute_live_registers.c
+> +++ b/tools/testing/selftests/bpf/progs/compute_live_registers.c
+> @@ -249,11 +249,13 @@ __naked void if3_jset_bug(void)
+>  	asm volatile (
+>  		"r0 =3D 1;"
+>  		"r2 =3D 2;"
+> -		"if r1 & 0x7 goto +1;"
+> +		".8byte %[jset];" /* same as 'if r1 & 0x7 goto +1;' */
+>  		"exit;"
+>  		"r0 =3D r2;"
+>  		"exit;"
+> -		::: __clobber_all);
+> +		:
+> +		: __imm_insn(jset, BPF_JMP_IMM(BPF_JSET, BPF_REG_1, 0x7, 1))
+> +		: __clobber_all);
+>  }
+>=20
 
