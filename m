@@ -1,178 +1,223 @@
-Return-Path: <linux-kernel+bounces-788044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BCF9B37F1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:44:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FEB4B37F20
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:45:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4ADCA7A6B40
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:43:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DDE51BA3F2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39283451A2;
-	Wed, 27 Aug 2025 09:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B233451A2;
+	Wed, 27 Aug 2025 09:45:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Uc9QU3+L"
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013065.outbound.protection.outlook.com [52.101.127.65])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K2C1AzYi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5131929A33E
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 09:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756287886; cv=fail; b=PjV1LBIXu4IWYW3AEbluiJhHoHRFhDn6GA1I3kF10DHv8yeYt/3Gk88DvkXGV+3Kt9XdOPBksB6O8ZcQCaw3cuS6NhePOlmaPvfnkULVCwRPxhyzgU8pc5ZxKgCSRLrYe2/k4OGTzeWPhUSRTMlzIvc2gV7bQnmDoy0jENQGD9I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756287886; c=relaxed/simple;
-	bh=FM+6Sj7F51iGhvyduRfR2puvkt5CZ/WJAAMfb0sU7BU=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=W2vm0ZrhwmbytxJ1fNdCqmBB4bdoViYqcHit0EbgNeIyG05h7dSmVBI1yspi0z0NtOGl54rVJS7b4Ov1lU7DDPClEKmDN77NMAJSXipy6I3leOOqJJJGLt6ttT4X6nl9/0mf3Wdp2VanBB4cgWqC9pacpqOPpfSvsBR92Q35PIc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Uc9QU3+L; arc=fail smtp.client-ip=52.101.127.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iVaPdnmCLwduxkSbyjVj94O5RKq5r+61RaOitWiITz6mJ+Dl1Kq0PxqZs4Pz8w2cCA1tPq/9fZDnK+yF2TA/141C5iKujW/0VW9FUoEfXHAIu7ZT8Ija4ChZadFACGWUBTM23aZSLkjarUONPPa69G8pUjklyQjJqgSec7VXdT9RK02ZKkahqHYz0KOmy656DsFx1OWvRH7ZhSVNwCfRJr/bHfHy8NsYpeZKW7TVhbsbpBJGUEUew9qaugjrEJaQ3ndh/pqqJY5An2bBZyRE46yumS1wyAqC/Sp6Gz7RcjmpVWvJh7Fz29leGRGnVX13utRmY9baFoIhUYqdRUyu8w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xDqFaGFmIkUYN1NeJBwrEOFCjmRU7Par3tuwKugVdrk=;
- b=R5oQ5IT2cI2kzPz7L6bUoryW6oyUUyo0yTYm/Z7858Xsl51T4tvzNzPNFWm1FguUEy623EyMG/VaqhLsdrpeI5AT5W5QPVfPB1F7MYilWS59GYXdzvRCB/n7KFiOPPqChKgpRpJDZvHWLZ2V7lqrb1V0DgWsAw6RUqp+lZV+g3bga4rr/fd7GXI+D2T0uENlBAMNbT2u+d/exmkx3sHP0qb1+jlxm5qnIjfz/XgL65LroNTrs8DGA+4cDC4HFzic62dIUC+LSkjASqHGnJJOOzY5DWOfgStURGm7OuDO7U6KYrcorVs93SpUX6Via0kMSQzUj/QaXjCHBR+9vQ4U7Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xDqFaGFmIkUYN1NeJBwrEOFCjmRU7Par3tuwKugVdrk=;
- b=Uc9QU3+LAbudq2T2V/RJTojBImnLDN2/FD6rf2mfBkpHEBlFKhnGJkECU0NTsBK9ew3N4ZyV4tuxf7HWvN0RSI+/JXFPoWCAeYHXTxFZZ8KWNOklBGyKMEk5hPVi1kHxkdCtxdBSX7xOzui/jsdyNsq7x04yqiB0UFKyFn2pkBmYbbinZFEheFXmRHW4q6LO+cJQ6fDH50EW2dn6UqSvuJzGuuBdUfOOr7q8mRT92Cxws0ElyEhDTIjqE+yc1wqrWqAHZCPlD1vMlN+FYVgfgKr+dcA38LtU309xJaEOdm2HS1JLYWh3HqR4lpv/szclasIbvo30CuH7heY18V1mZA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from KL1PR06MB6020.apcprd06.prod.outlook.com (2603:1096:820:d8::5)
- by SI2PR06MB5163.apcprd06.prod.outlook.com (2603:1096:4:1ae::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Wed, 27 Aug
- 2025 09:44:42 +0000
-Received: from KL1PR06MB6020.apcprd06.prod.outlook.com
- ([fe80::4ec9:a94d:c986:2ceb]) by KL1PR06MB6020.apcprd06.prod.outlook.com
- ([fe80::4ec9:a94d:c986:2ceb%5]) with mapi id 15.20.9073.010; Wed, 27 Aug 2025
- 09:44:42 +0000
-From: Xichao Zhao <zhao.xichao@vivo.com>
-To: agk@redhat.com,
-	snitzer@kernel.org,
-	mpatocka@redhat.com
-Cc: dm-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Xichao Zhao <zhao.xichao@vivo.com>
-Subject: [PATCH] dm: fix "writen"->"written"
-Date: Wed, 27 Aug 2025 17:44:33 +0800
-Message-Id: <20250827094433.425157-1-zhao.xichao@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR06CA0233.apcprd06.prod.outlook.com
- (2603:1096:4:ac::17) To KL1PR06MB6020.apcprd06.prod.outlook.com
- (2603:1096:820:d8::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9D3342CA2
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 09:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756287900; cv=none; b=FnTGd0flVC7mqZsQRO6o3p5ZFSjkTMQGRtYnrP9i112GTThRsU3O7E8L9I3PjUMHRNAtH2hVSF5FfOWsZJHwE3SAQX8b4SGkNzDveTQpm68IscgFhAPJ5F5K/WvDXgYU5CCAS+ByTNrOLvf86QBkakERG83twgHCEN3ZIj6+7NU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756287900; c=relaxed/simple;
+	bh=IQmmmnOV4AonCKd4nzcG4Jt17mDk0i/CU33Y9/xne9M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mVVIMIsNP2jY2OTOm6FSiZx8L3IfzU8bOAwKI9wzxx9vjhrJgVaufO8c4/i6hNNShigua0n7ehTw8uPLs6D1dybSNQvpo00dBdh8TIPOo8T5ym7gprpey6ieQB10ZLYcwt/GkNxyf2tOSycVc/w8sjQ7xeSLDvaH1mRp9MdXn1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K2C1AzYi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E06FC4CEEB;
+	Wed, 27 Aug 2025 09:44:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756287898;
+	bh=IQmmmnOV4AonCKd4nzcG4Jt17mDk0i/CU33Y9/xne9M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=K2C1AzYi48LmBNWRPCk61Qt80s0JK11EZ7aefmNSO3cxpCsbX5Yzw0ITbrSP/cnlV
+	 Wdmwh99ycI8zE/7KWcn5mxTwO2gdfWZvDPGKiTSXQ60xuzvcY30G39xvfaB5A95Egc
+	 xs45MhmLybsAOnN5/Q01O4fkdKYlV3/EkeJGNnnx2tI556QS9VUrIdemGHAttZTLY5
+	 5TWgNEh07lBTmoYEJLNuwudtgY+fPlKnyjg8Yvqw54qlytSi+QHPwSkoOnqxMcyufS
+	 L3loxfeKqV/gfU+LH7624V4FavYH0aWjy2lHuqkRoM5Ms1Y/l0k4lVQMGPyfUanBiR
+	 swQ3L6pZP8h9A==
+Date: Wed, 27 Aug 2025 11:44:56 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Jocelyn Falempe <jfalempe@redhat.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Javier Martinez Canillas <javierm@redhat.com>, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH 2/3] drm/panic: Add kunit tests for drm_panic
+Message-ID: <20250827-wooden-kakapo-of-defense-0c4273@houat>
+References: <20250821095228.648156-1-jfalempe@redhat.com>
+ <20250821095228.648156-3-jfalempe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR06MB6020:EE_|SI2PR06MB5163:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7175ddbd-5201-4742-a312-08dde54e58c4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|376014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?z88QZqS7OgPtdB3/hstTM0poXx8eGAylau6nEI3b/bwoScZ8P6s3F95aecV7?=
- =?us-ascii?Q?dU5mTeH+wY4myktbquMn1yaXDD8XAC7vVhlaS381T7I7oxPfvU5VvhrOxHja?=
- =?us-ascii?Q?64+Eq4nymYXQZiKpb1snOJUtbIESGKd1xCzg1yN1RjmYTHmfMdMTZUeSkftK?=
- =?us-ascii?Q?U1n+xdOFUkIhsvwh26noyyc37cKu+rbc00xlY0dORzo0n5P4fkrSjlrNdt1m?=
- =?us-ascii?Q?187kktKdq7jv9/47WhKShsM+glFkGetz3wnOIYg/ldp8mKdLBGEV/jzdRD8R?=
- =?us-ascii?Q?NE57ajuYXYUBqSg9wLgnD3dj98c+ACwn/qzQRnfDNGHHRC4nG3nhvZ8a2/1/?=
- =?us-ascii?Q?aRH6SCugIHO/KorNao1L+/zJbqlHAIQ5DlFFvoH6fZhx5A2a9mBqZDNoCNwk?=
- =?us-ascii?Q?ZNJXSatso/CMC3VDeZGwT2VmNTCarQrRu9lUicw1bJqr0oBT1mEM5ohsJzBm?=
- =?us-ascii?Q?FopYo3bNx0IfL/vAXvyNIX1vXVKIH8Ytlgyr7p96xcozDYlp7Yh68psvWDn/?=
- =?us-ascii?Q?4DhfoWQCovcwPH1lSUvZbzywqRlCJlm+uFWW7ozxpIuo1oDSVhRXEp2D5yuZ?=
- =?us-ascii?Q?JSt21ub78tlv7o5a3bWMVXp2LLXVNCZwZCQJrxVHPAx0nwTSYsHR6TfSmc7R?=
- =?us-ascii?Q?kyciGl30SGXI+SnXCxLCl34C4yJexqbHsKkXvUI138W8hxqw8f71gzN74UjX?=
- =?us-ascii?Q?oJqbsiFS42RSq6ZdFWT9WBQW97uSCea57XVfsj8Q2fKg3I0MbmfEpOjqi/3O?=
- =?us-ascii?Q?VDEiMPxw9thkk0xgqxUgLJ1uFccJ9UteEsgcs3LfKrsNloaKm1iKiBlKy9To?=
- =?us-ascii?Q?qBp1UQbhsOPGBfb8EDW2kaaGUxktLYv5IDCXytUiBUlYBpZOf4drE6ED6MUK?=
- =?us-ascii?Q?y9P2f7rR+S82ZLha1QgX0Y4ZxqEtO7NrMXZm+v81IOE5kAFOiZgX1HECTnwX?=
- =?us-ascii?Q?pyv72b3+fyssKFWk7rrEv2bQTyGaUhqiiRE/52nugNEvSRN4RSQg5QhrVFhJ?=
- =?us-ascii?Q?xZ5ThcsMqZbk9qI2hlCDm81u8gKvAVVBNDMpqCPh5GNrroOuGxtGAmUQUqMU?=
- =?us-ascii?Q?wXYF6EMlJRgCup1tTsFaQleSxlrmJHKlO2vwg3S892OUt0RvaZu+wNvJH9Vc?=
- =?us-ascii?Q?L72J6giaGiIkJC2SFiN99lbHgd4GjKybS+LpPO88YcVBrUF+4vEIplEBzuTw?=
- =?us-ascii?Q?6MKbYm5IAUPr2tklp8bU9lloAZc8P8lxS2VgFJj1G0A/PEzDW1uRMB31VoVe?=
- =?us-ascii?Q?3t9ebg28sQ/6wxS62+ifD48qDkeOa9WoXWkzZeVfDpSKsgO4Y/Z8T84vk4q2?=
- =?us-ascii?Q?RdAJV6Ig8rVI6l5aOxwakUQx9/2tlbjJ3i4Q1eq1RslmPdHAxlU+vbJh1OUp?=
- =?us-ascii?Q?5QTcLf3iE8xgPYNKi7Q21uYyZ2Yvx/QB+Lr/McPYS0BpIiiZxFd9o9zhOHwN?=
- =?us-ascii?Q?wvO/+Xxmqd/86Aw0dqtuvP+jDfIc7eezjbI9H5sgdUrD1Ye9wEEKLw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6020.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?yYa13h8o3MtMbVTU1aDnR258Xaro9s4UZSxitjiSLEsFfchmJnsPTGS+N+y3?=
- =?us-ascii?Q?6Yypm8VfyomoS6ZG7dbP5408VY9/FBo7iMh7dyGFh/N12gzK/DqINLYBBgr2?=
- =?us-ascii?Q?R7A9uGWKGieSRb1Hg34lHM3mgreJ9ze3aRg0zM7MxPaJ/XlUSeW23E9FcP9i?=
- =?us-ascii?Q?HPCoImsXzJKmI1jFA4XoShucA0ObbX18bvNkp0y9pfcmjGT6bOuOdn/DaH2I?=
- =?us-ascii?Q?xm0wo+rI/pS7JMfvfhhM2mLI+Fdy5ZYwxpw5/8BkuleYkzkqGWSm2h9uafLg?=
- =?us-ascii?Q?u//8Exm88dXeSqa8umRvBV4Kv/HaWYVNWIhMS4hGTCmioobej30t8173Acbu?=
- =?us-ascii?Q?XNqTs8dMkSpu1EhpQG3WvqaVDwuprECsJc+x/d6PbdjEZUO84H/gFl4npcdb?=
- =?us-ascii?Q?eAaWuXCgiZhfQ1PEmErZpFoq9IiqRehB57cku8UEJ36NvJHazc54C2Zrf+kr?=
- =?us-ascii?Q?uj7UJ0H57nyNZHWA0Z+VyObzksT5JwDQsDPKAEzx0cV0flMgfwYLBYiRrZaA?=
- =?us-ascii?Q?h9J0g5sRxU5MnMcnQ5WPUdHl5dob6l6O7voXg/qrLvifz4o7rbBeNwcFtRiD?=
- =?us-ascii?Q?FjLFp5x2OCgXjvQlSFpP7MsD0IzVQJP2DS1pTU7l2jlExYA2fEIgfCxuH9S6?=
- =?us-ascii?Q?F9izXz5a5zcjie6Sk0wEJSTQmznZ5RSRHlO5SQFunTd5Z9Un3La1+RctBIMS?=
- =?us-ascii?Q?s2+Y3wqQRpK/3sBro4jWvukto+GnfM6tCCZgEyB4DjFYfXS3KfYQ7sIhVeZs?=
- =?us-ascii?Q?M9gWvyijrH/PYm/GxzMp/IfiwlQYojkUnLfS2taLWZRF5a05aIas9jetaGeK?=
- =?us-ascii?Q?scLoYCJ9M2LqeljHIsOQ+JaMreJhQuHitV1fxX/87eBBQCgo66m6J8av9OUO?=
- =?us-ascii?Q?Sx5N8IucMD7GJrb9tsyrBeBFpsk6CMa84Ou3H/VqiKyczjrFm1UzGZrWf3Ly?=
- =?us-ascii?Q?sKmIslcg1N94ol6TSGLowGWShM9Xfn191iuDzY1i8bBUlQveS53NopwJ8ZRZ?=
- =?us-ascii?Q?ddgET8Ftd9bwIuCkIfJ4zFOIQyI4yWA5aiaAh5N747BPtzck84JorpubAiVB?=
- =?us-ascii?Q?5RSqXMtDePdL7NABLJ0IS6gXRx77MqQ+B9b6Yoay9qhm37h4PXQVZXiTdX8b?=
- =?us-ascii?Q?r1rysH8zwuKedTdinZzAkYH07Y8f7VPhpTaQTaIZyM+E0dGG8zyBHIQaSdif?=
- =?us-ascii?Q?O2RhTVVBz//f8z2Dn7QXqk7j7MMdtW1kqI3rkpt/f7urthPyOhXHfrpKH5iM?=
- =?us-ascii?Q?Qp21chtRgvKuokyG9e6Q4vSTa0D5uxTLM7FJ65TmbZnXAX7XvghwRH5RfNTn?=
- =?us-ascii?Q?PRCkGwndYlC6w3939yprauDo1DcvRY4WAIozyPuWfy4DugZoZn1MqzqFBlc5?=
- =?us-ascii?Q?w4bXJZBNx+o07M5+YZ2IdZ8LbvJtbRGjb1ZT+B/4G5tzbWZhwsgboUey0DMp?=
- =?us-ascii?Q?s7qqy+FGv84GFAx14gXzddVIwz8T1xtuGIte9JlodHQxaoQFIlxhnUMtEqON?=
- =?us-ascii?Q?D7ffr1PdQHf+smVpA55g/ExmhlvG9iUHhHiVDZJY/TNwtxosRynYyhAxjWHi?=
- =?us-ascii?Q?sP8RarWY9wiPDf4pCWBy7647ebJteuUm3lq/rP32?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7175ddbd-5201-4742-a312-08dde54e58c4
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6020.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 09:44:41.8473
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: g/QBXznFhrUjonVuoy3gOHHoLvZxKu9jryer1Czk207EX79gZ1Yc7P/Xn5Eu/CkEq+dDpu5v/Sc2fivEum9+XA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI2PR06MB5163
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="howmumtkmtde4tfb"
+Content-Disposition: inline
+In-Reply-To: <20250821095228.648156-3-jfalempe@redhat.com>
 
-Trivial fix to spelling mistake in comment text.
 
-Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
----
- drivers/md/dm-log-writes.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--howmumtkmtde4tfb
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 2/3] drm/panic: Add kunit tests for drm_panic
+MIME-Version: 1.0
 
-diff --git a/drivers/md/dm-log-writes.c b/drivers/md/dm-log-writes.c
-index 679b07dee229..7bb7174f8f4f 100644
---- a/drivers/md/dm-log-writes.c
-+++ b/drivers/md/dm-log-writes.c
-@@ -414,7 +414,7 @@ static int log_super(struct log_writes_c *lc)
- 	}
- 
- 	/*
--	 * Super sector should be writen in-order, otherwise the
-+	 * Super sector should be written in-order, otherwise the
- 	 * nr_entries could be rewritten incorrectly by an old bio.
- 	 */
- 	wait_for_completion_io(&lc->super_done);
--- 
-2.34.1
+Hi,
 
+On Thu, Aug 21, 2025 at 11:49:06AM +0200, Jocelyn Falempe wrote:
+> Add kunit tests for drm_panic.
+> They check that drawing the panic screen doesn't crash, but they
+> don't check the correctness of the resulting image.
+>=20
+> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
+> ---
+>  MAINTAINERS                            |   1 +
+>  drivers/gpu/drm/drm_panic.c            |   4 +
+>  drivers/gpu/drm/tests/drm_panic_test.c | 164 +++++++++++++++++++++++++
+>  3 files changed, 169 insertions(+)
+>  create mode 100644 drivers/gpu/drm/tests/drm_panic_test.c
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index cfa28b3470ab..285d1e27734f 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -8465,6 +8465,7 @@ T:	git https://gitlab.freedesktop.org/drm/misc/kern=
+el.git
+>  F:	drivers/gpu/drm/drm_draw.c
+>  F:	drivers/gpu/drm/drm_draw_internal.h
+>  F:	drivers/gpu/drm/drm_panic*.c
+> +F:	drivers/gpu/drm/tests/drm_panic_test.c
+>  F:	include/drm/drm_panic*
+> =20
+>  DRM PANIC QR CODE
+> diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
+> index 1e06e3a18d09..d89812ff1935 100644
+> --- a/drivers/gpu/drm/drm_panic.c
+> +++ b/drivers/gpu/drm/drm_panic.c
+> @@ -986,3 +986,7 @@ void drm_panic_exit(void)
+>  {
+>  	drm_panic_qr_exit();
+>  }
+> +
+> +#ifdef CONFIG_DRM_KUNIT_TEST
+> +#include "tests/drm_panic_test.c"
+> +#endif
+> diff --git a/drivers/gpu/drm/tests/drm_panic_test.c b/drivers/gpu/drm/tes=
+ts/drm_panic_test.c
+> new file mode 100644
+> index 000000000000..46ff3e5e0e5d
+> --- /dev/null
+> +++ b/drivers/gpu/drm/tests/drm_panic_test.c
+> @@ -0,0 +1,164 @@
+> +// SPDX-License-Identifier: GPL-2.0 or MIT
+> +/*
+> + * Copyright (c) 2025 Red Hat.
+> + * Author: Jocelyn Falempe <jfalempe@redhat.com>
+> + *
+> + * KUNIT tests for drm panic
+> + */
+> +
+> +#include <drm/drm_fourcc.h>
+> +#include <drm/drm_panic.h>
+> +
+> +#include <kunit/test.h>
+> +
+> +#include <linux/units.h>
+> +#include <linux/vmalloc.h>
+> +
+> +struct drm_test_mode {
+> +	const int width;
+> +	const int height;
+> +	const u32 format;
+> +	void (*draw_screen)(struct drm_scanout_buffer *sb);
+> +	const char *fname;
+> +};
+> +
+> +/*
+> + * Run all tests for the 3 panic screens: user, kmsg and qr_code
+> + */
+> +#define DRM_TEST_MODE_LIST(func) \
+> +	DRM_PANIC_TEST_MODE(1024, 768, DRM_FORMAT_XRGB8888, func) \
+> +	DRM_PANIC_TEST_MODE(300, 200, DRM_FORMAT_XRGB8888, func) \
+> +	DRM_PANIC_TEST_MODE(1920, 1080, DRM_FORMAT_XRGB8888, func) \
+> +	DRM_PANIC_TEST_MODE(1024, 768, DRM_FORMAT_RGB565, func) \
+> +	DRM_PANIC_TEST_MODE(1024, 768, DRM_FORMAT_RGB888, func) \
+> +
+> +#define DRM_PANIC_TEST_MODE(w, h, f, name) { \
+> +	.width =3D w, \
+> +	.height =3D h, \
+> +	.format =3D f, \
+> +	.draw_screen =3D draw_panic_screen_##name, \
+> +	.fname =3D #name, \
+> +	}, \
+> +
+> +static const struct drm_test_mode drm_test_modes_cases[] =3D {
+> +	DRM_TEST_MODE_LIST(user)
+> +	DRM_TEST_MODE_LIST(kmsg)
+> +	DRM_TEST_MODE_LIST(qr_code)
+> +};
+> +#undef DRM_PANIC_TEST_MODE
+> +
+> +static int drm_test_panic_init(struct kunit *test)
+> +{
+> +	struct drm_scanout_buffer *priv;
+> +
+> +	priv =3D kunit_kzalloc(test, sizeof(*priv), GFP_KERNEL);
+> +	KUNIT_ASSERT_NOT_NULL(test, priv);
+> +
+> +	test->priv =3D priv;
+> +
+> +	drm_panic_set_description("Kunit testing");
+> +
+> +	return 0;
+> +}
+> +
+> +static void drm_test_panic_screen_user_map(struct kunit *test)
+> +{
+> +	struct drm_scanout_buffer *sb =3D test->priv;
+> +	const struct drm_test_mode *params =3D test->param_value;
+> +	void *fb;
+> +	int fb_size;
+> +
+> +	sb->format =3D drm_format_info(params->format);
+> +	fb_size =3D params->width * params->height * sb->format->cpp[0];
+> +
+> +	fb =3D vmalloc(fb_size);
+> +	KUNIT_ASSERT_NOT_NULL(test, fb);
+> +
+> +	iosys_map_set_vaddr(&sb->map[0], fb);
+> +	sb->width =3D params->width;
+> +	sb->height =3D params->height;
+> +	sb->pitch[0] =3D params->width * sb->format->cpp[0];
+> +
+> +	params->draw_screen(sb);
+> +	vfree(fb);
+> +}
+
+You need to document what you're testing, and what the expected result
+is.
+
+Maxime
+
+--howmumtkmtde4tfb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaK7TlwAKCRAnX84Zoj2+
+dlG7AX9KdrHTzAhHPfeWF3SuY9pZwJOBNx61rGiIuFzhB6mEWf+wF2mBSuNWN+ZI
+EANpL90BgO2BFiQVMoJRJ7+wdlEyfbcNiJ61jntwEAwnRqe5+cDJUU/b5gkNMIWx
+1XLFgWTXbg==
+=ej9Q
+-----END PGP SIGNATURE-----
+
+--howmumtkmtde4tfb--
 
