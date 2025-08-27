@@ -1,233 +1,286 @@
-Return-Path: <linux-kernel+bounces-787526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBC87B3777F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:03:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80457B37780
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 04:04:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D2BC3BBFF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:03:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BAA73AE587
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 02:04:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423E71E5705;
-	Wed, 27 Aug 2025 02:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B121DE8B3;
+	Wed, 27 Aug 2025 02:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="KkNyozVq";
-	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="WUPQf04Y"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aiUEpYj0"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09E130CD91;
-	Wed, 27 Aug 2025 02:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=210.61.82.184
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756260198; cv=fail; b=P/HnmtaVFkYmtzl3OHW/qDIvepDKBtxB9atqje1wn+sHsMzsSp0+eHGhfvK+jWkOMy00DUABli80Nihkb/B9BLzUuVewCbi5OY25UwX8p+SDfl3l+Y/cndgDtOTUDorQz6NfIMq6PS+M9Jzb4iQB12l0wtpS9z6cFfzdRxmQIu4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756260198; c=relaxed/simple;
-	bh=lFfh4Ue+nOLvPgQiMmlNYhuNnrShms2577Snw5Lnb/U=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=majhFuX7KgD1hdNf+gBCB6Xyo1apO+2pQ08/i4wAldkltWLOGPPfcmJaUnA/qQDpiZtuVCptEGQ3hIdApHHQqU92qVmwck5eKumG85BdaXbkP6U4vVU3rJx3WWb+T0qGXQDSiLaAUIeVzH+LobZN4RvUP1O8hQwVJERcmEyhfVA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=KkNyozVq; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=WUPQf04Y; arc=fail smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: f9ee426c82e911f0b33aeb1e7f16c2b6-20250827
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=lFfh4Ue+nOLvPgQiMmlNYhuNnrShms2577Snw5Lnb/U=;
-	b=KkNyozVqY5/aLbjSvE+KuMrrQi5UnP+r5U9TD4tBd9qFvBQWHhwAMjM2lYbJ9Uc1iLa4PlrYDpkhDkA3Wb1ag66EKOhahG2xgN3IGVgeOZ2KVWPiNMQpBzqk25gjTbmyjOUFtooyModKRYurAmgoWm4eZ3Yof1loVYJRhpaNE8I=;
-X-CID-CACHE: Type:Local,Time:202508271000+08,HitQuantity:1
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.3,REQID:8bb74844-aa78-4e47-ba38-57b73a5dc1ac,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:f1326cf,CLOUDID:6e88a56d-c2f4-47a6-876f-59a53e9ecc6e,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102|110|111,TC:-5,Conten
-	t:0|15|50,EDM:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:
-	0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: f9ee426c82e911f0b33aeb1e7f16c2b6-20250827
-Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
-	(envelope-from <ot_cathy.xu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 2115192586; Wed, 27 Aug 2025 10:03:08 +0800
-Received: from mtkmbs10n2.mediatek.inc (172.21.101.183) by
- MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Wed, 27 Aug 2025 10:03:07 +0800
-Received: from OS8PR02CU002.outbound.protection.outlook.com (172.21.101.237)
- by mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Wed, 27 Aug 2025 10:03:07 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CNSyD8RUijfAYJFwxipS+xyOlsGpjUf77lQL6wGKWnqMfKh4+m1xedzhxv1TgRVZZ8iJbgnuxq4gwpKoxU4gFCeoEo9ELgkTtP/U5MNKuIwVfkrWcC2812zubFiiCnp+GrvTJJpGkANKgSGMpsORNSo7MlhGqk8UCeqESRirewcb/XIiq0ycvDbPvppDDfrbTX55mCiw6E44XOW+TSmI6KacATyDzRdSIkdaWWlEPYFECBc6ARddNYwTEt1Vbi6fCZnfkXPj3SI1jdT9w8YtwX/uO8Cy/DuhceKGsW4iZNDOJ2J6OkXyyAAiRVBBMloPrJ9wfDELzRc5+b2kouFnZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lFfh4Ue+nOLvPgQiMmlNYhuNnrShms2577Snw5Lnb/U=;
- b=fw5LMg81BqoyF9GT9zU+Z/HoSORj4CyQHSAShPVhQ5LYF4B7GcIz7B/9jGs6GTqUxtEHASIfmwTihxUME+W2FbFtBRpgfV0MUxoKVurh0mDvDyh0CUpNC6ax1JiV3FaH4bSVAGIyP/hTklmdLVFCfQvDuj0qgnUsOJfYxOGxd9jtgQSq9wzg3mMHdzDDrJe8FPyzYx2Di3DI4fDTsRQagww9vRPAJ5ydV8RQnI4BStbowNTZUIZ8R0x1qkeNPrchlT0q0OPgZ4cnorF/mTHGEwNrkfrvNSQTDBCv9pt7YXyB8sxcxlfmpzDPS6cwyKYJK/nZSp1xORdIYrp6bH1Tfw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
- dkim=pass header.d=mediatek.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A565830CD84
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 02:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756260241; cv=none; b=uftEXpOaIuUQB/6FTzcrNDZ1zFAuBij2+t/Jg6Pz9CJTaqf0DpbAtO3RumS9taw6huyfAhtt3pbnjYWK/wJFPnFZHzfVfZ1AGhcygn8VwqtsNoj951gOsa+de6SuzaI1hZTG6j6znSJ0a/ho+KMjN7NBgztFc8IfrafTpW/pks8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756260241; c=relaxed/simple;
+	bh=GphFMthgSDDmbSJxopXevPsEECgUp1EXbWynI/nyV9g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=Bnxaprog15nlhACcNFFTNl/dG+dCcgYhcj98w0Ue/9H/2OzHB9edKfQEqahmMwB11eWgA0qxXRDgrv2wo8n794tLk/96SjballSEQT+6TvjJhnbkroxhb3CQUR1RxxbUAp7VqEusQKuKqAeALW047DE5Dyri7ydpcr1QVcJMZ7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aiUEpYj0; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4b12b123e48so156011cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 19:03:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lFfh4Ue+nOLvPgQiMmlNYhuNnrShms2577Snw5Lnb/U=;
- b=WUPQf04Y7SyVW05oRbtJjLQ5P6YmF/tAAr5YJSSZ4JfBG3A7KFqPzzl8eKJlKtLgiPGkopxDrRl71WKXV6822Ll5MbfkRM+Sq819dGtm0o7P5gN5a8cfuBOg+yUHbZ/BaP2LcIqhOByU5mY5TIwEynIj+yjVBuG3MriU9Y4JnVs=
-Received: from KL1PR03MB5683.apcprd03.prod.outlook.com (2603:1096:820:70::6)
- by OS8PR03MB8827.apcprd03.prod.outlook.com (2603:1096:604:28c::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Wed, 27 Aug
- 2025 02:03:00 +0000
-Received: from KL1PR03MB5683.apcprd03.prod.outlook.com
- ([fe80::c413:8d96:8ae:370a]) by KL1PR03MB5683.apcprd03.prod.outlook.com
- ([fe80::c413:8d96:8ae:370a%7]) with mapi id 15.20.9052.013; Wed, 27 Aug 2025
- 02:03:00 +0000
-From: =?utf-8?B?Q2F0aHkgWHUgKOiuuOWNjuWptyk=?= <ot_cathy.xu@mediatek.com>
-To: "linus.walleij@linaro.org" <linus.walleij@linaro.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	=?utf-8?B?TGVpIFh1ZSAo6Jab56OKKQ==?= <Lei.Xue@mediatek.com>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	=?utf-8?B?V2VuYmluIE1laSAo5qKF5paH5b2sKQ==?= <Wenbin.Mei@mediatek.com>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	=?utf-8?B?WW9uZyBNYW8gKOavm+WLhyk=?= <yong.mao@mediatek.com>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, "robh@kernel.org"
-	<robh@kernel.org>, "sean.wang@kernel.org" <sean.wang@kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "matthias.bgg@gmail.com"
-	<matthias.bgg@gmail.com>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	=?utf-8?B?QXhlIFlhbmcgKOadqOejiik=?= <Axe.Yang@mediatek.com>
-Subject: Re: [PATCH v2 0/3] pinctrl: mediatek: Add pinctrl driver on mt8189
-Thread-Topic: [PATCH v2 0/3] pinctrl: mediatek: Add pinctrl driver on mt8189
-Thread-Index: AQHb8kiG5A62Ih3Za0arg8T2ss1YBLQ/p5+AgDZhPIA=
-Date: Wed, 27 Aug 2025 02:03:00 +0000
-Message-ID: <c8e0f0cd3bb2d04e57eb74850b95ccb8bc2c00d1.camel@mediatek.com>
-References: <20250711094513.17073-1-ot_cathy.xu@mediatek.com>
-	 <CACRpkdbe-0fQY7rF7u14bn4j_f3Qn7+thRzJQZRZBTadG9pjGQ@mail.gmail.com>
-In-Reply-To: <CACRpkdbe-0fQY7rF7u14bn4j_f3Qn7+thRzJQZRZBTadG9pjGQ@mail.gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mediatek.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: KL1PR03MB5683:EE_|OS8PR03MB8827:EE_
-x-ms-office365-filtering-correlation-id: ace2a86a-f098-4dfa-46f8-08dde50dd974
-x-ld-processed: a7687ede-7a6b-4ef6-bace-642f677fbe31,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?eHl5MjViNzM5VEUrTmtxS29zL2lLTkNZWC9PZnprdStOU2Y0RGJCVXlBemJB?=
- =?utf-8?B?bVVkNlltQVFwemN1Kzl5TE5lZ1hTTi9uRGVPZ1l0UkNZVWplS3djNjlBb3hq?=
- =?utf-8?B?T1gzWWZjcWNWbjR3ZXRVS3JWTGhRSGp0NlFrMjY2U3J1VVdXOUN3ekNHZmZx?=
- =?utf-8?B?dmhoblV1QkpFWi8wbHVDN2dBRmE4TGQ3eDVDNXoxbXFSdEI2M2IycUdlWm02?=
- =?utf-8?B?c0Zxc21DVE1pNlZya2xNdCtXK25xcVNkcC9UVWpqa2pkSlBiVnFUY0oyNWxI?=
- =?utf-8?B?OEhoVFFYSXgzUUdNY0orYXgvc3dyZ09ISHZiazBIcWlkNXpDUlpuUGNrSlg1?=
- =?utf-8?B?VkpVaEtvdmp1cVU4dEkzWlk4OExFRDZzNzlhMnhaK1lhQWh1YTNvcVpOYzJx?=
- =?utf-8?B?aEcxci90MTIvc3JhdlFRVWx5Y3NiWTVFaW5PTVlVQ0kxNUNjRVNOSVlQbTJ2?=
- =?utf-8?B?RUdrQVZNVHVWNXdxRXRaWHVYM2hGbitYOWpnT0NqQ0ZzR1RtcjBkd1VaLzFn?=
- =?utf-8?B?MVpFbHlJTmhPMVZYeVB5SkJ0YkJubzc2aGZoVHRtV2NTOGk2bU9MOVpTNGpz?=
- =?utf-8?B?MTRlbFJLQnVjS2xCaTFYYVVkZ0R1S0tWQVlMRFRoZzNJTEZNZDVRMEJ1aDhX?=
- =?utf-8?B?VFFVT1JLWWZsTVU5QkVpdjZtaVFPTFhYVnlheTNDUUZUZVVONkNuWXlRQVk0?=
- =?utf-8?B?eEFaZjNSOXhpaXFWUmpFdWhJdys5bDFpYWdNR2t4dTZwN2U3bjdpVlhLdW1W?=
- =?utf-8?B?cnVPZGt6T2Z6SmQ1ZFkxbEpZcTFxaTIvbncxc3djQnphT2dPbU13cVVseUZm?=
- =?utf-8?B?YndzQ1pwS1M3OUtxL2lDNHBERWJRVy96TjcxMFg5c2RaQUlMYTZqclZuQWxs?=
- =?utf-8?B?c0tEcFlpMkRLd3U3WjFoQVoySzFhcXJYNGVlYTIzWlA5Yk83QjNURjlFUkoz?=
- =?utf-8?B?VkRsM1F3eFZhdkh6MlRKYkt5ZTMxbHFrckFHM2dHL2NJSy81eGZvejRVaVpr?=
- =?utf-8?B?RkhsT1V3YU9jUkxTckxDekc4VythbEdtOTNUUU5GaUQ3V3RkZHhHMFgwdDhY?=
- =?utf-8?B?K3JhVmY5dWx6eEFhY2dxQTlQTFdXNy94YUlpNXcya0tLYW81ZHNjY0VqMUQy?=
- =?utf-8?B?MGtmemQyMEkyNUFEbFlxSjVZMjVyM1RFWGEyUGFiNk9ETFhhQjBUWEZyblR5?=
- =?utf-8?B?ZGZ2UGs4Nkw0ZElKa2poZlhDQUVpeDdNamtzNkg5OVhiSEtKck92b0JrQmhC?=
- =?utf-8?B?SjNQQnYvYTJYenpHOWhpc2ZjVGVhWndKcE5wTzlBRkNDOFdXU3VlbUdodFVu?=
- =?utf-8?B?WGN6UVFrQzFTQ0FMQ1IrMUErZks4dXZONkVTVDVTdEpVL3NITDBpS1RXZkx3?=
- =?utf-8?B?RmNhVWdTWndSbHlQYjBIOGIyQmpuREtCWlVsNzExYWI4RXZtcHJnZWw3WnNR?=
- =?utf-8?B?YzFsMllQSi9Ka3loV1ZEZ25vcE5WcmhWTVhDeG05ditjVlZTb2hoMU5kdXJq?=
- =?utf-8?B?WTNySXMyVk9LTkVRVWN4Z2NUNkxTTTVpNlJvVjQwMzVCRTRJODRlbWZXQVlo?=
- =?utf-8?B?NTFmd0RObmxBYldUc3V6dCt4TE5IL1F1aGRzYWIwQkQycUtpYU9kR3FqU2ox?=
- =?utf-8?B?aUFaUnRUNDdXT0huTW5WaitaUGZwc0U0WkV6cXNsTENXcXdIMnNhNWc5akQy?=
- =?utf-8?B?Q2FtUUNBTjE2emkxNUU2T2NCdlQ3R3d1MEFRSUlSOElYYzg0UjI1aUdPZkRE?=
- =?utf-8?B?WklENkJieHdKcnNRWEUrZEU4azloS1QrSlFzbUN3TzZoUVNSSlF4VVpPcmto?=
- =?utf-8?B?bHo1WDhvWkJwMjdCallYM2pxc1dLb05OQUZrUDVHd2xlZUM2eHFOdzMyQnlG?=
- =?utf-8?B?TWQ5a0ZsUWNTcU5QUkg1YmlLbDJXbUZIcTQxQ1I3V1gyS240UHFIMXpTZHJa?=
- =?utf-8?B?ODV0V3JkNGVOZWhSZnJncUk2dVpxYnd1bjdua3VSMHY1RTAwTEw1L0V6aUR4?=
- =?utf-8?B?VWt1Z3hSWlhBPT0=?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB5683.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?MHE0TEYvRHlON0Q2c25uNzhDcVdJWEVlYjJwQzhEY3BSRkp5NFB6Q3ZGU0FI?=
- =?utf-8?B?bW1Fd0N5MUtWaG5zNklRbmUxMmsvcFBrM2RBYjgxRGYyS1hMVU5vRE1nOHJz?=
- =?utf-8?B?TW1nbk9DMWpKb21QQUJpTDhxcHgrQ2pudjZ1R01naSs1KzFvVnd5V2FPbVlu?=
- =?utf-8?B?QWZONnR0dEZnZGhWWStyYjJpeDFjZ1JuZDdDdHZVUmdDVHVBK0JYZkVQZlBU?=
- =?utf-8?B?VE93UENrcm9YcVJNSVNEbXFmeXQ4SDRHZlZYZmlWZHhTUHlLUEl5K1ljVDdp?=
- =?utf-8?B?UHJqTytVeSszelpDL3MxaVhSMk5sMEtMb1BJZFd3VHE5NDNXZnpYK1FMR2oz?=
- =?utf-8?B?NFM3S0ttM3lkM08zbWxLYzFPbFVuRWNmNzRVbzh3d3pRSEE2SWJ1SjBNRmRq?=
- =?utf-8?B?WHdOYTBXTkdoam1Gc1JRTlREKzJxRjB0VmxOMHBRKzI2TzF4bGIvNTNyUlpB?=
- =?utf-8?B?eWtaVTU2cnVlU1VkOWlwZ3NqR3BkTHhlQXJuUVZUVzJKQ3ViUFk5ZWE3SVcw?=
- =?utf-8?B?Wkp3TXBmRmJyNmJtKzV1b1ZScGw0WkVEK0lDMndTaHJuNVJ2dlNpWkZBSE9y?=
- =?utf-8?B?OW1EWmpRdWNTYlk3enRmbkZtZXZZbnp2NnZqMUt4dnU2cW5LQjBKdjRKRXF3?=
- =?utf-8?B?SERuR0VhbnBGa0ZlNCtqRmhxbUxWRlBYdG8zcVBoSS9peStkcmZOREJ6RGpl?=
- =?utf-8?B?KzNuUVUySmJPRmpocHRKVGx5ZGdTTmxZN0c1dUpvUG83RVViSEZYVTJXblFQ?=
- =?utf-8?B?QzhVZUlkdEdSQmNjL1BrZ1A2dzUvQ3dScWNMNG5sdDVNT2k0S3NsRnRMcU15?=
- =?utf-8?B?eFlFN1ZPQWFjdHIxUHBIREJndmlpVjBtMVNmVUg0VmQzbHZzV3NsQjR5YXlG?=
- =?utf-8?B?c0dFdnN1ZVZ4ODVlVXBFdkYwS01CY2lFWHdQSXc3MG9RYytnUHZCZkV4Nmlx?=
- =?utf-8?B?dCtFcEtET3FjT0xCTXhIRUVaNHJDZlFzRE12a3FIRURaMDhjUFAvTzY1ZFov?=
- =?utf-8?B?a3VIU1c5UXQwOThhQmhGenhrT2tZSmRRYkJ0bHVpazBuakVTM2tDZjY4d0Fj?=
- =?utf-8?B?NEx2UE5ndytidktxcE9RbTJoUVV4cFpjVkQ3SHZ1ekt4TG1UTEdVWG1JYlBy?=
- =?utf-8?B?VXJiUEdyMnoydDdrUVZXOGVLSjZvYWM4eEoydHloT0VJUVJQcDY3U3BnQmZK?=
- =?utf-8?B?SGtHUzNLamJXejU0NnROakt4eXh1aHBhM2ZlZ0xRcVNLQUc5V2YzS21EaHFt?=
- =?utf-8?B?azc0ak1Ubktkb0dXSWFFWnVaS2JUakVNS3FUelpUck5wV2JGOGNCS216dHRr?=
- =?utf-8?B?Z3pkTU9vRU45NEhkZ0ZDNkt6T1J3cXRPL3pMUm95VHJpQ2xuMHhLbUxGV1Bw?=
- =?utf-8?B?bk9jWjNRWnVBWU4rVFgwUVFuL2hkSnZnSEl2R3RUTlB1L3ZGWUxnNk9ycysx?=
- =?utf-8?B?NTVLL3luMkFwdFN4a0pVQmpMZ2o0N0ZiWFpzVHM5UGI3MHRtdUwxakhUS004?=
- =?utf-8?B?SmhnZWZkL0I0Y1FDYmpNZjVrczdtaGtINjNqbUtidWpCUUt4bkpla0E0VzRI?=
- =?utf-8?B?N21rYXFqeit3WkZQSkN3dGw4Z1R6ZGV5azJyVnF1dmg5ZXZ4R3k2b1ErVVRI?=
- =?utf-8?B?L0tyRDJscmpvU0gxck4zRjQzQ2p5bXQzcHpsTDBZUnAyQXg0NWZNblE4ZER2?=
- =?utf-8?B?WE9LVldvTWRlMlA5UWdoQjVSek9hbDR2dnhRMVdpc2JvNlMrejJBYVdUS0pl?=
- =?utf-8?B?eXNlSEhTbEExUVpMWEExa0JNQ3dva1BWK2pocGRCaEYweC9XVERhOFRBR3JM?=
- =?utf-8?B?Sk9FSFJ6MDhVY0N3cWJsRU01T3ZGK1h2V1Zob1ZtSlpmMVlFdHNXQ3dyd2VH?=
- =?utf-8?B?RVFjMTVVSEhINWxZNE9yUGY1dUFmZysxYndmUFgxUWN3T0pzYnlkQnJvZEhq?=
- =?utf-8?B?M0ZnNjliUkVZZXFRSHBJM2k1N1RoUzBLMG5ybVNwYTE0b1Z3d0VVcGJ2eC9G?=
- =?utf-8?B?cmdwd3ZBWlh2cFRuRGk3am9oSHVlUVluK3RWS3RFdlgvdXRaR2lkMG5PRmhX?=
- =?utf-8?B?TEp3SjNibjJMcG9OZjdSdEVQbWxOZkw1eUQyc2cwcm81cnZBVXJOYmNjblZF?=
- =?utf-8?B?c0VTek5WT1B3ZUcva3lHemxGQzdZeDYwdzdzMEVXU3VXYVRaU2tMRXRvMXBr?=
- =?utf-8?B?SHc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A239B06127A28F40A38B9CD9CD569500@apcprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=google.com; s=20230601; t=1756260238; x=1756865038; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oEVxPCA6kJd9PIc8bhpPohKEpWmPNTYIVsnrA96TQzY=;
+        b=aiUEpYj0XH00pwh10rhv65EDM9i0lQjgZW7XHKFP9hEELoKcjCy7+XkQVqodX4LwhM
+         X51NSb+84AsddNG8NXH3cL8x2f5hdM7FJJTRCxAkW8xs08w0ub9abbuCyUWv9/NafbY8
+         u0pKOTZm134elF7mdjNcQ5dsZRLxIAAm/qaYUibsdJXWPQ7tZ/xZI8ZK8D4ygpa24Fzs
+         CQYM5/dU3zu9FH8+aMOD8VoVpF3RYgGTmRbUbsUF2PMGmdJYOSP/rPrq7upSlsKo3S1y
+         nD3Frea/8NKynxXcdqXfh1VNkkbLHN9GNg74d+UlvAkMOgQBdUIowF1i7DYPIo2J7zx3
+         m5fA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756260238; x=1756865038;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oEVxPCA6kJd9PIc8bhpPohKEpWmPNTYIVsnrA96TQzY=;
+        b=SEeGvX6W0BAAl1N6qECv6+h/T4L/qIv05+eUnkEFOP3IbcTYL04Js63lyiL9qT7R0T
+         jTn7zFsAfnHthi1CatiS58RmcH4+CyD6MPRLAnO3Y+b3qwPb08Dzn3eUQ6DPHHpNEJPs
+         KUh7raXbJED0SC0MjjT6UkLLZL0Tb24k3JNRS1L29X+7DR3pm8paKQN437+1rgBMCzR8
+         Pxnxgn1TDcQllTJKOEhNtz3zcj1V5E0LWqbC2jSjgLjgwg23+OB1aMsgvYnBob6Fu/9r
+         DMrJQdkrxugRdcZZcrcIwVxaKFsPdgvxAER3263mPGL+YgHmeC3UtSRxsVptYyfU2sLs
+         7iVw==
+X-Forwarded-Encrypted: i=1; AJvYcCUesmd2Dt3lUxIrgoa5CpAbEzEqoMXtTrCYiW2L4NYtDvvFVDZaMz6n39siHRHjROnpQq5RwDeLmjjluFk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRF/+k5fVS9pVGtB4Q9j0RgRur5VFrPMxdzsokFWI+t5vhSsiZ
+	oB8M9Fs3WaDUaTUaWB1MxftoS8iCcR4vc14RUD8nUlEoMKvCZt7GAPBr4ATF00WXjCUx5VL81PC
+	o0KEaPMbKZ9++wGXhOU/jG/zXhedplvHXlXIGA03D
+X-Gm-Gg: ASbGncvlgLPlAUqedEPUd1v6yyfWS5Ej4XrxhPUROMDxV8D1+2xS1wzyDfyighfjHyE
+	hdQ2w8O58EUAVHTWsYS6A0BaAlb+qrppDZBYtXVvs/I9Uoh4anSPN5RDiW2CfRfCEnBfK0uTDpG
+	Lnm8tThoGvES8dk+vIA/CCafxlQ1osttZeYmD1WjtgcpAsE+rG17dHYTNIQRmCxdoT5r6YdyFMw
+	R+og+ipCFGdeVTSEBOjxKs=
+X-Google-Smtp-Source: AGHT+IGHtlhh0VeckNbHAmlQ5S3gzzBpECXGOQvdXGjlOYoxZxhVip/09NFraMdVHLQbgCey4/aMUVeZBI1/PDbyvZQ=
+X-Received: by 2002:a05:622a:4a0c:b0:4a7:179e:5fec with SMTP id
+ d75a77b69052e-4b2eac6a173mr5480691cf.15.1756260238092; Tue, 26 Aug 2025
+ 19:03:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB5683.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ace2a86a-f098-4dfa-46f8-08dde50dd974
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Aug 2025 02:03:00.2007
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: lrcQGZ6E35i7qbsF9xqTQlFg4/zlmJsncmA6CaSlrrqQSDXoguEoP6C7vT+eO3OKMcQNKdp7YMnVavh0ze+sGHR/N894nu0pP8wdA2jqrGM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS8PR03MB8827
+References: <20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz>
+ <20250723-slub-percpu-caches-v5-13-b792cd830f5d@suse.cz> <CAJuCfpEjaw+4Ay-Yx=unHev+M4M9FmNmz_PSYmtsFn3EToLBxg@mail.gmail.com>
+ <6rvzsp6i6p6kc63acbg7hmqlsfx5htvyg5rax3llrauwwyzg4e@f436k2inorfe>
+In-Reply-To: <6rvzsp6i6p6kc63acbg7hmqlsfx5htvyg5rax3llrauwwyzg4e@f436k2inorfe>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 26 Aug 2025 19:03:46 -0700
+X-Gm-Features: Ac12FXzSeNiZvXDErfLgt2l37tNkMytOYphilgAYuXMgRYjKC_nzXLjq5XayMtI
+Message-ID: <CAJuCfpGPP_fR2KvcmHxFbUkZY8p4GQOt2X-bU+PY7nUeRg489w@mail.gmail.com>
+Subject: Re: [PATCH v5 13/14] maple_tree: Add single node allocation support
+ to maple state
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
+	Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	rcu@vger.kernel.org, maple-tree@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-T24gV2VkLCAyMDI1LTA3LTIzIGF0IDEzOjM2ICswMjAwLCBMaW51cyBXYWxsZWlqIHdyb3RlOg0K
-PiBFeHRlcm5hbCBlbWFpbCA6IFBsZWFzZSBkbyBub3QgY2xpY2sgbGlua3Mgb3Igb3BlbiBhdHRh
-Y2htZW50cyB1bnRpbA0KPiB5b3UgaGF2ZSB2ZXJpZmllZCB0aGUgc2VuZGVyIG9yIHRoZSBjb250
-ZW50Lg0KPiANCj4gDQo+IE9uIEZyaSwgSnVsIDExLCAyMDI1IGF0IDExOjQ14oCvQU0gQ2F0aHkg
-WHUgPG90X2NhdGh5Lnh1QG1lZGlhdGVrLmNvbT4NCj4gd3JvdGU6DQo+IA0KPiA+IFRoaXMgcGF0
-Y2ggc2VyaWVzIGludHJvZHVjZXMgc3VwcG9ydCBmb3IgdGhlIE1UODE4OSBwaW5jdHJsIGRyaXZl
-ciwNCj4gPiBpbmNsdWRlIHRoZSBkcml2ZXIgaW1wbGVtZW50YXRpb24sIG5ldyBiaW5kaW5nIGRv
-Y3VtZW50IGFuZCBwaW5jdHJsDQo+ID4gaGVhZGVyIGZpbGUuDQo+ID4gQ2F0aHkgWHUgKDMpOg0K
-PiA+ICAgZHQtYmluZGluZ3M6IHBpbmN0cmw6IG1lZGlhdGVrOiBBZGQgc3VwcG9ydCBmb3IgbXQ4
-MTg5DQo+IA0KPiAoLi4uKQ0KPiA+ICAgcGluY3RybDogbWVkaWF0ZWs6IEFkZCBwaW5jdHJsIGRy
-aXZlciBvbiBtdDgxODkNCj4gDQo+IEFwcGxpZWQgdGhlc2UgcGF0Y2hlcywgdGhhbmtzIGZvciBh
-bGwgeW91ciBoYXJkIHdvcmsgYW5kDQo+IHBhdGllbmNlIQ0KPiANCj4gPiAgIGFybTY0OiBkdHM6
-IG1lZGlhdGVrOiBtdDgxODk6IEFkZCBwaW5tdXggbWFjcm8gaGVhZGVyIGZpbGUNCj4gDQo+IFBs
-ZWFzZSBmdW5uZWwgdGhpcyB0aHJvdWdoIHRoZSBtZWRpYXRlayBTb0MgdHJlZS4NCg0KICBPSywg
-SSB3aWxsIGZ1bm5lbCB0aGlzIHRocm91Z2ggdGhlIG1lZGlhdGVrIFNvQyB0cmVlLiBUaGFua3Mu
-DQoNCj4gDQo+IFlvdXJzLA0KPiBMaW51cyBXYWxsZWlqDQo=
+On Tue, Aug 26, 2025 at 8:11=E2=80=AFAM Liam R. Howlett <Liam.Howlett@oracl=
+e.com> wrote:
+>
+> * Suren Baghdasaryan <surenb@google.com> [250822 16:25]:
+> > On Wed, Jul 23, 2025 at 6:35=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz=
+> wrote:
+> > >
+> > > From: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
+> > >
+> > > The fast path through a write will require replacing a single node in
+> > > the tree.  Using a sheaf (32 nodes) is too heavy for the fast path, s=
+o
+> > > special case the node store operation by just allocating one node in =
+the
+> > > maple state.
+> > >
+> > > Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
+> > > Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> > > ---
+> > >  include/linux/maple_tree.h |  4 +++-
+> > >  lib/maple_tree.c           | 47 ++++++++++++++++++++++++++++++++++++=
+++++------
+> > >  2 files changed, 44 insertions(+), 7 deletions(-)
+> > >
+> > > diff --git a/include/linux/maple_tree.h b/include/linux/maple_tree.h
+> > > index 3cf1ae9dde7ce43fa20ae400c01fefad048c302e..61eb5e7d09ad0133978e3=
+ac4b2af66710421e769 100644
+> > > --- a/include/linux/maple_tree.h
+> > > +++ b/include/linux/maple_tree.h
+> > > @@ -443,6 +443,7 @@ struct ma_state {
+> > >         unsigned long min;              /* The minimum index of this =
+node - implied pivot min */
+> > >         unsigned long max;              /* The maximum index of this =
+node - implied pivot max */
+> > >         struct slab_sheaf *sheaf;       /* Allocated nodes for this o=
+peration */
+> > > +       struct maple_node *alloc;       /* allocated nodes */
+> > >         unsigned long node_request;
+> > >         enum maple_status status;       /* The status of the state (a=
+ctive, start, none, etc) */
+> > >         unsigned char depth;            /* depth of tree descent duri=
+ng write */
+> > > @@ -491,8 +492,9 @@ struct ma_wr_state {
+> > >                 .status =3D ma_start,                                =
+     \
+> > >                 .min =3D 0,                                          =
+     \
+> > >                 .max =3D ULONG_MAX,                                  =
+     \
+> > > -               .node_request=3D 0,                                  =
+     \
+> > >                 .sheaf =3D NULL,                                     =
+     \
+> > > +               .alloc =3D NULL,                                     =
+     \
+> > > +               .node_request=3D 0,                                  =
+     \
+> > >                 .mas_flags =3D 0,                                    =
+     \
+> > >                 .store_type =3D wr_invalid,                          =
+     \
+> > >         }
+> > > diff --git a/lib/maple_tree.c b/lib/maple_tree.c
+> > > index 3c3c14a76d98ded3b619c178d64099b464a2ca23..9aa782b1497f224e7366e=
+bbd65f997523ee0c8ab 100644
+> > > --- a/lib/maple_tree.c
+> > > +++ b/lib/maple_tree.c
+> > > @@ -1101,16 +1101,23 @@ static int mas_ascend(struct ma_state *mas)
+> > >   *
+> > >   * Return: A pointer to a maple node.
+> > >   */
+> > > -static inline struct maple_node *mas_pop_node(struct ma_state *mas)
+> > > +static __always_inline struct maple_node *mas_pop_node(struct ma_sta=
+te *mas)
+> > >  {
+> > >         struct maple_node *ret;
+> > >
+> > > +       if (mas->alloc) {
+> > > +               ret =3D mas->alloc;
+> > > +               mas->alloc =3D NULL;
+> > > +               goto out;
+> > > +       }
+> > > +
+> > >         if (WARN_ON_ONCE(!mas->sheaf))
+> > >                 return NULL;
+> > >
+> > >         ret =3D kmem_cache_alloc_from_sheaf(maple_node_cache, GFP_NOW=
+AIT, mas->sheaf);
+> > > -       memset(ret, 0, sizeof(*ret));
+> > >
+> > > +out:
+> > > +       memset(ret, 0, sizeof(*ret));
+> > >         return ret;
+> > >  }
+> > >
+> > > @@ -1121,9 +1128,34 @@ static inline struct maple_node *mas_pop_node(=
+struct ma_state *mas)
+> > >   */
+> > >  static inline void mas_alloc_nodes(struct ma_state *mas, gfp_t gfp)
+> > >  {
+> > > -       if (unlikely(mas->sheaf)) {
+> > > -               unsigned long refill =3D mas->node_request;
+> > > +       if (!mas->node_request)
+> > > +               return;
+> > > +
+> > > +       if (mas->node_request =3D=3D 1) {
+> > > +               if (mas->sheaf)
+> > > +                       goto use_sheaf;
+> > > +
+> > > +               if (mas->alloc)
+> > > +                       return;
+> > >
+> > > +               mas->alloc =3D mt_alloc_one(gfp);
+> > > +               if (!mas->alloc)
+> > > +                       goto error;
+> > > +
+> > > +               mas->node_request =3D 0;
+> > > +               return;
+> > > +       }
+> > > +
+> > > +use_sheaf:
+> > > +       if (unlikely(mas->alloc)) {
+> >
+> > When would this condition happen?
+>
+>
+> This would be the case if we have one node allocated and requested more
+> than one node.  That is, a chained request for nodes that ends up having
+> the alloc set and requesting a sheaf.
+
+Ah, ok. So this is also a recovery case when we thought we need only
+one node and then the situation changed and we need more than one?
+
+>
+> > Do we really need to free mas->alloc
+> > here or it can be reused for the next 1-node allocation?
+>
+> Most calls end in mas_destroy() so that won't happen today.
+>
+> We could reduce the number of allocations requested to the sheaf and let
+> the code find the mas->alloc first and use that.
+>
+> But remember, we are getting into this situation where code did a
+> mas_preallocate() then figured they needed to do something else (error
+> recovery, or changed the vma flags and now it can merge..) and will now
+> need additional nodes.  So this is a rare case, so I figured just free
+> it was the safest thing.
+
+Ok, got it. Both situations would be part of the unusual recovery
+case. Makes sense then. Thanks!
+
+
+>
+>
+> > > +               mt_free_one(mas->alloc);
+> > > +               mas->alloc =3D NULL;
+> > > +       }
+> > > +
+> > > +       if (mas->sheaf) {
+> > > +               unsigned long refill;
+> > > +
+> > > +               refill =3D mas->node_request;
+> > >                 if(kmem_cache_sheaf_size(mas->sheaf) >=3D refill) {
+> > >                         mas->node_request =3D 0;
+> > >                         return;
+> > > @@ -5386,8 +5418,11 @@ void mas_destroy(struct ma_state *mas)
+> > >         mas->node_request =3D 0;
+> > >         if (mas->sheaf)
+> > >                 mt_return_sheaf(mas->sheaf);
+> > > -
+> > >         mas->sheaf =3D NULL;
+> > > +
+> > > +       if (mas->alloc)
+> > > +               mt_free_one(mas->alloc);
+> > > +       mas->alloc =3D NULL;
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(mas_destroy);
+> > >
+> > > @@ -6074,7 +6109,7 @@ bool mas_nomem(struct ma_state *mas, gfp_t gfp)
+> > >                 mas_alloc_nodes(mas, gfp);
+> > >         }
+> > >
+> > > -       if (!mas->sheaf)
+> > > +       if (!mas->sheaf && !mas->alloc)
+> > >                 return false;
+> > >
+> > >         mas->status =3D ma_start;
+> > >
+> > > --
+> > > 2.50.1
+> > >
 
