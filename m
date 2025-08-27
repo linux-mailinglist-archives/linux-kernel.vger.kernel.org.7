@@ -1,196 +1,160 @@
-Return-Path: <linux-kernel+bounces-788975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86202B38EF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 01:08:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7A99B38EF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 01:11:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C17C17BC95
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:08:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A731818890EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:11:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2690D3115AD;
-	Wed, 27 Aug 2025 23:07:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B25FF310783;
+	Wed, 27 Aug 2025 23:10:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eufPEDRG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SvxspZqQ"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CBAF2586C7;
-	Wed, 27 Aug 2025 23:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA112F067F;
+	Wed, 27 Aug 2025 23:10:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756336074; cv=none; b=Cho1caMaw53rY732Cv6UuXzYCnn9LkUgcZWig4HB7f9NlOrARcO7/eXPvrax4VSMOd3AM18gBPRDkHELJdAeD0LbT+V+ehc8Kgbqms0v29r/SmS7L6vZPFDFS5o7LWtFh2nrSKIo91HyxJP3whQplrdUwGQO2qQ+B/jbhJagcSw=
+	t=1756336253; cv=none; b=pXgLzL2XAkIOiODzIGap7Q46DlyYaYtgX6nluQ+/AUpFOYwv2RzXjo1ozYLr0qCKANdOi+/SfPwD0V5Mcy3NOdKNGEc1gschHihrptHkrLJWbcvWAy2Wgh8/vOTuhePJRvLGTKBLdTDCVBuaeWmOAwZL2BvhrqRMvgM28CyDs6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756336074; c=relaxed/simple;
-	bh=XcAJ/8GaS3GChlT54qoyoeJUvpuYoOy8hejJVCtXf94=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OCjkcA6kGKs04Y82e+1AhThQOsC7R+xDle0sbf1+jba8iONfxQm1bIzmNdW2NwEFIxEEv7zYS5Ofxd1mhkY2gNRPyMOD9RXCVPGCghEl6WlWU4eMO+BBwZkcMG2VSon3GkZYdeZsAZ97EvaETnZTaOJDiTrGeghmvaoCoknXPsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eufPEDRG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5811C4CEEB;
-	Wed, 27 Aug 2025 23:07:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756336073;
-	bh=XcAJ/8GaS3GChlT54qoyoeJUvpuYoOy8hejJVCtXf94=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eufPEDRGDjTZmkB1GhOpmGFtYDeboh79e4JTblBKq+sVj+av5cc75fW1GBQCToRuG
-	 hPZvgjNRXV6kHUN8H2QXSbn8YxwxTUpv7g8kIzScm9hJvFJc7Xot8gYXV791Iy80r3
-	 GThANKCr9mgOfDFtKx5WUstEQwj8JKzCXtqGqlnQ6hZKQQtTh14oFYvQyncYEkLlUZ
-	 KgeA9tjN9F1Wr9id1m8/tq4SxOlKR8BwKRqOywvmHNtoXWOhMjeIAz+TTAaRgqVlMR
-	 xT5i6WWuDxWPWyo/ajhwNgS4aoReOkX4O+hRKDibqV6FUpOIlpAsQPwpaoX8i/dg1W
-	 bcDQ1S03E+mOg==
-Date: Wed, 27 Aug 2025 18:07:51 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Richard Cochran <richardcochran@gmail.com>, 
-	kernel@oss.qualcomm.com, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org, 
-	Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-Subject: Re: [PATCH 5/5] arm64: dts: qcom: lemans-evk: Add sound card
-Message-ID: <kckx3uwj2zdc4iagsxhb6osyv2ki7n4qubyldnvwokkkftda77@ixrgr7vapwxj>
-References: <20250826-lemans-evk-bu-v1-0-08016e0d3ce5@oss.qualcomm.com>
- <20250826-lemans-evk-bu-v1-5-08016e0d3ce5@oss.qualcomm.com>
+	s=arc-20240116; t=1756336253; c=relaxed/simple;
+	bh=D1uBYeI6yyHG//TIoDOYhr9aTlJxFP7mh06RYuz+MwM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tiD3V88qvFYevoYgQXG4wtco3gIBR8coMDmuslMSU7+nKDGFUq/xXlcw9t0YLxkmcSydOiiaZ80N/6FzHDxQdIkg61+6EdAWWdAk2pnos9tCvw5lXP9DOl2TPRcueay6tkN8VeggjHZhEuAk7bOv1e52eT8G0epX60ylIZyS6NQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SvxspZqQ; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b47175d02dcso361087a12.3;
+        Wed, 27 Aug 2025 16:10:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756336251; x=1756941051; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hpTGX6D+zEWo2TDoU/huOakyARg4JVK9BfIYOBFF8Fo=;
+        b=SvxspZqQeXxL+hI0FLdUOBM6A7NaO6pMsTxHo5xveRJ1iSiWPWxHlHBlA2gIVPKJbi
+         GuOryZGRAtTIhMo8on4cfIMj6rQ4VsXRnbOEM7YUqgQmfJ0bx4bidz8ir+595xsxoSzL
+         2ULuTQlC6qOELRfDyEfe2IRvwJlmdmxXJECv6aX69pZPylfVxj+oY8sQjv+M0G69jbNl
+         REQrTlbmSkojyFAkf50TnHBusz8FMFHZZAOErk3Vv4D2DfXg1ZAI4huzYXueo8Ldx/BP
+         LzROzcpmig7BC4y3qV6jzCsFb/OEzLmiZH8g3IIQbBn5z3mIpMck7ZMoIh28AnOJHry3
+         TuFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756336251; x=1756941051;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hpTGX6D+zEWo2TDoU/huOakyARg4JVK9BfIYOBFF8Fo=;
+        b=sJEuW3Z8iC0KHj7Jj8KvZEsCH5Y1oUe66cCMyDYzX/rKAD1ZwsqbwRKsfuZTQYNl7s
+         japYuJZEtJwWbrlz7XxatLF/lmxDAK/ysXsX6pwqkSiNI9Uiuc4uWOUsLlWsBgv7GbG/
+         eq0u3gZ5EVsIvTcNhV8NGJY9nnyhWqYXsx5WT83WON6YFoHPWIh92rgy6gTEF5jm6A9d
+         Yoe0GRLvRK7gooSq46XLTb2UWYz0QCHBdFgJfmEnX42RRipTe6M94hmk0Gymy9Ax6Y8u
+         M9r3GusCht8speTtWfW0oCyYVMnTXsSb5h20zCrJvSRSDoOoim+kyPMvrQydNBWdHIK8
+         MiAg==
+X-Forwarded-Encrypted: i=1; AJvYcCVsyJTYLCEF+kI2viv3Iny20iXmZqt2v9tkGLiJfAtF6ylmxK73IPb5IyBzo6A3fxZItiGAsRx/SqFfECI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzW8fybucuonKS8pMtJo+G7r+KoPPBSLNspxOVMmi2SOqPUDmC5
+	US5kQPF07W9kzhFsZJnptHt0zbxr6NbzPyjP48ckY1mp0uw6FPXwmE9u
+X-Gm-Gg: ASbGncuofRBka4S9OIQefEshSUJsoP2pfGKXr2i3N3nCkHssQhqlDuufiOYks6PAYzj
+	bXd7u1VVZ6SjeTfEusxGjippGw4oxEsRvvHQPs0/mtzvkPslwyS39VRTXP4hR98yxXbd9nBWKHH
+	KYN8Gto8FDRrExZUG/0N9LHBRV+cpApIPsPDrdnh+8pO31iZWAUOtk8G6pf7uBJabxU/0kzNkyG
+	0IYp5dGvAH61DzV4T2l2V5/rpspH0iwgCFKJLSkJko1LlnbNkJCjnR7nUblK0bonUVCau8YohTL
+	4uJxLMVcsP94TNEql7SUUv2VPB+xIj375Fn/UgJ0H/qGz7ncgRZ1qDvP8TWoDWKTmqByQQSuqXl
+	mt6sjmIgS3vuxuxFDFuBefF3ohb/0GVxe
+X-Google-Smtp-Source: AGHT+IHxryo3kJsFVbI54HWkyx4jlhELnk+fiqRoyjgbrqoKw8bic27qXRHW7BIUKUhVzP25dhDVqQ==
+X-Received: by 2002:a17:90b:4c02:b0:31e:ec02:229b with SMTP id 98e67ed59e1d1-32515eabb9bmr27912917a91.20.1756336250903;
+        Wed, 27 Aug 2025 16:10:50 -0700 (PDT)
+Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-327ab0dbeecsm332644a91.19.2025.08.27.16.10.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 16:10:50 -0700 (PDT)
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Marc Zyngier <maz@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Shradha Gupta <shradhagupta@linux.microsoft.com>,
+	Chen Wang <unicorn_wang@outlook.com>
+Cc: linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>,
+	Linux Kernel Functional Testing <lkft@linaro.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Wei Fang <wei.fang@nxp.com>,
+	Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH v2] PCI/MSI: Check MSI_FLAG_PCI_MSI_MASK_PARENT in cond_[startup|shutdown]_parent()
+Date: Thu, 28 Aug 2025 07:09:42 +0800
+Message-ID: <20250827230943.17829-1-inochiama@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250826-lemans-evk-bu-v1-5-08016e0d3ce5@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 26, 2025 at 11:51:04PM +0530, Wasim Nazir wrote:
-> From: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-> 
-> Add the sound card node with tested playback over max98357a
-> I2S speakers amplifier and I2S mic.
-> 
-> Introduce HS (High-Speed) MI2S pin control support.
-> The I2S max98357a speaker amplifier is connected via HS0 and I2S
-> microphones utilize the HS2 interface.
+For msi controller that only supports MSI_FLAG_PCI_MSI_MASK_PARENT,
+the newly added callback irq_startup() and irq_shutdown() for
+pci_msi[x]_template will not unmask/mask the interrupt when startup/
+shutdown the interrupt. This will prevent the interrupt from being
+enabled/disabled normally.
 
-Please rewrite this as one fluent description of the hardware, not as 3
-separate things thrown into the same commit message.
+Add the missing check for MSI_FLAG_PCI_MSI_MASK_PARENT in the
+cond_[startup|shutdown]_parent(). So the interrupt can be normally
+unmasked/masked if it does not support MSI_FLAG_PCI_MSI_MASK_PARENT.
 
-Regards,
-Bjorn
+Fixes: 54f45a30c0d0 ("PCI/MSI: Add startup/shutdown for per device domains")
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Closes: https://lore.kernel.org/regressions/aK4O7Hl8NCVEMznB@monster/
+Reported-by: Nathan Chancellor <nathan@kernel.org>
+Closes: https://lore.kernel.org/regressions/20250826220959.GA4119563@ax162/
+Reported-by: Wei Fang <wei.fang@nxp.com>
+Closes: https://lore.kernel.org/all/20250827093911.1218640-1-wei.fang@nxp.com/
+Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+Tested-by: Nathan Chancellor <nathan@kernel.org>
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+---
+Change from v1:
+- https://lore.kernel.org/all/20250827062911.203106-1-inochiama@gmail.com/
+1. Apply Tested-by, Reported-by and Tested-by from original post [1].
+2. update mistake in the comments.
 
-> 
-> Signed-off-by: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-> Signed-off-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/lemans-evk.dts | 52 +++++++++++++++++++++++++++++++++
->  arch/arm64/boot/dts/qcom/lemans.dtsi    | 14 +++++++++
->  2 files changed, 66 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/lemans-evk.dts b/arch/arm64/boot/dts/qcom/lemans-evk.dts
-> index 642b66c4ad1e..4adf0f956580 100644
-> --- a/arch/arm64/boot/dts/qcom/lemans-evk.dts
-> +++ b/arch/arm64/boot/dts/qcom/lemans-evk.dts
-> @@ -7,6 +7,7 @@
->  
->  #include <dt-bindings/gpio/gpio.h>
->  #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
-> +#include <dt-bindings/sound/qcom,q6afe.h>
->  
->  #include "lemans.dtsi"
->  #include "lemans-pmics.dtsi"
-> @@ -26,6 +27,17 @@ chosen {
->  		stdout-path = "serial0:115200n8";
->  	};
->  
-> +	dmic: audio-codec-0 {
-> +		compatible = "dmic-codec";
-> +		#sound-dai-cells = <0>;
-> +		num-channels = <1>;
-> +	};
-> +
-> +	max98357a: audio-codec-1 {
-> +		compatible = "maxim,max98357a";
-> +		#sound-dai-cells = <0>;
-> +	};
-> +
->  	edp0-connector {
->  		compatible = "dp-connector";
->  		label = "EDP0";
-> @@ -73,6 +85,46 @@ vreg_sdc: regulator-vreg-sdc {
->  		states = <1800000 0x1
->  			  2950000 0x0>;
->  	};
-> +
-> +	sound {
-> +		compatible = "qcom,qcs9100-sndcard";
-> +		model = "LEMANS-EVK";
-> +
-> +		pinctrl-0 = <&hs0_mi2s_active>, <&hs2_mi2s_active>;
-> +		pinctrl-names = "default";
-> +
-> +		hs0-mi2s-playback-dai-link {
-> +			link-name = "HS0 MI2S Playback";
-> +
-> +			codec {
-> +				sound-dai = <&max98357a>;
-> +			};
-> +
-> +			cpu {
-> +				sound-dai = <&q6apmbedai PRIMARY_MI2S_RX>;
-> +			};
-> +
-> +			platform {
-> +				sound-dai = <&q6apm>;
-> +			};
-> +		};
-> +
-> +		hs2-mi2s-capture-dai-link {
-> +			link-name = "HS2 MI2S Capture";
-> +
-> +			codec {
-> +				sound-dai = <&dmic>;
-> +			};
-> +
-> +			cpu {
-> +				sound-dai = <&q6apmbedai TERTIARY_MI2S_TX>;
-> +			};
-> +
-> +			platform {
-> +				sound-dai = <&q6apm>;
-> +			};
-> +		};
-> +	};
->  };
->  
->  &apps_rsc {
-> diff --git a/arch/arm64/boot/dts/qcom/lemans.dtsi b/arch/arm64/boot/dts/qcom/lemans.dtsi
-> index 28f0976ab526..c8e6246b6062 100644
-> --- a/arch/arm64/boot/dts/qcom/lemans.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/lemans.dtsi
-> @@ -5047,6 +5047,20 @@ dp1_hot_plug_det: dp1-hot-plug-det-state {
->  				bias-disable;
->  			};
->  
-> +			hs0_mi2s_active: hs0-mi2s-active-state {
-> +				pins = "gpio114", "gpio115", "gpio116", "gpio117";
-> +				function = "hs0_mi2s";
-> +				drive-strength = <8>;
-> +				bias-disable;
-> +			};
-> +
-> +			hs2_mi2s_active: hs2-mi2s-active-state {
-> +				pins = "gpio122", "gpio123", "gpio124", "gpio125";
-> +				function = "hs2_mi2s";
-> +				drive-strength = <8>;
-> +				bias-disable;
-> +			};
-> +
->  			qup_i2c0_default: qup-i2c0-state {
->  				pins = "gpio20", "gpio21";
->  				function = "qup0_se0";
-> 
-> -- 
-> 2.51.0
-> 
+[1] https://lore.kernel.org/regressions/aK4O7Hl8NCVEMznB@monster/
+---
+ drivers/pci/msi/irqdomain.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/pci/msi/irqdomain.c b/drivers/pci/msi/irqdomain.c
+index e0a800f918e8..b11b7f63f0d6 100644
+--- a/drivers/pci/msi/irqdomain.c
++++ b/drivers/pci/msi/irqdomain.c
+@@ -154,6 +154,8 @@ static void cond_shutdown_parent(struct irq_data *data)
+
+ 	if (unlikely(info->flags & MSI_FLAG_PCI_MSI_STARTUP_PARENT))
+ 		irq_chip_shutdown_parent(data);
++	else if (unlikely(info->flags & MSI_FLAG_PCI_MSI_MASK_PARENT))
++		irq_chip_mask_parent(data);
+ }
+
+ static unsigned int cond_startup_parent(struct irq_data *data)
+@@ -162,6 +164,9 @@ static unsigned int cond_startup_parent(struct irq_data *data)
+
+ 	if (unlikely(info->flags & MSI_FLAG_PCI_MSI_STARTUP_PARENT))
+ 		return irq_chip_startup_parent(data);
++	else if (unlikely(info->flags & MSI_FLAG_PCI_MSI_MASK_PARENT))
++		irq_chip_unmask_parent(data);
++
+ 	return 0;
+ }
+
+--
+2.51.0
+
 
