@@ -1,140 +1,104 @@
-Return-Path: <linux-kernel+bounces-788086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E73D1B37F8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:12:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D982B37F8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:13:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D93017D990
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:12:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 911111B26D73
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:14:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA0CB8287E;
-	Wed, 27 Aug 2025 10:12:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE3AB30FC1E;
+	Wed, 27 Aug 2025 10:13:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="AUHUz7qX"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="C6LQ5/wz"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFFD4343D75
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 10:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D990022E406
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 10:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756289569; cv=none; b=NyT20IHxopLXQX0Ae64I5I1xEQYowbGWE9MRmMRdEf05Rdi/D9+9OtbbA4imj+a0nQcRj+ihZB960RJaO7xzu0TjMKhFumVRZN+mzuYicPUE+/Vc5+1gIlmWteOc0VZ/92bXcp3YEa7DLDfDGomo/OPP2Mnk2gVSOyChgmYGKUw=
+	t=1756289629; cv=none; b=dtY6YayHGX9RA7jUF+W9wTyONZ+upKUojLCAjT+jcjfPPnK7EOgWO11IT4C8R9xaFOmXwVIx0rrxfJI+LYqczIEV7g0WU/M2otrcQMyCyiacDd+u1bQL91w9+lzm7Wf2F3kQNqeRaPS7kyg5diUIwWk8G/WaDzcMSnFtJNVibx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756289569; c=relaxed/simple;
-	bh=bY5WwNBO5PYBaHej1taD178LBagbsiubDKZnbEwku/s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nJWDL5Is2Dl03yleUZI+XrMF+GK287lNTF2geBknYK1+Mo5npZLFU/W40nKmzQwNnl64c7EW2EQcWOv40vt8N9zl90HlaA5jlkGtjoNrl0gSNiaKhH/qJntunw6CvLLVthhIMHmMcv+kjt1n/0BxFYUQVP6xLo95p12KHQWWCSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=AUHUz7qX; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3c985f13d45so441004f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 03:12:46 -0700 (PDT)
+	s=arc-20240116; t=1756289629; c=relaxed/simple;
+	bh=xvz3uUjRuvVIHh8nICa0VrN9xloppL7sG2j0TF3CVXY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LRVCawKn63s6AupevAi8XZ7/pAy7WDPoJHVZ3EZyoZ4YLL1CHOQk8085kC66q59Zoop6FdtmqUF8r5gSQMoj48nobj3m2NYBZLxapOGvluH/OavKOoWwh1x/DzbkSkh8VUMZNtRoAh+NUHjhEulFZWv9AWPtEu/LzSmLsqjZ5OA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=C6LQ5/wz; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-afec5651966so87269266b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 03:13:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1756289565; x=1756894365; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zFRtIOMOlVt9quw+Zl7Xq2CuHJgjIAx5v9rbJeyHOIg=;
-        b=AUHUz7qX7k3OX0FZaTiedX7VsKw0X5XwyxbfliHkg/LAQ49166TDpNXFSIK7MraP/1
-         ECSVtWudeDId513sLEUyzTlyGV2Pn+vFPNaMTLVvaUcZwkDFoB8v17CzYfgik+BP/KNM
-         7MyUzt2C/6WutCG6Wg8KiwvNTYJNo7rYmJvFk4A6GGtAvXuh9kdoB6McwNb06+k7ojoi
-         niydO3bp+vazgasMMQTvt7GUGRn0HC0lb84cjrq5iwtjkezy7kGy6KT6kTV36lcJzNPN
-         cyF5+RBdHGLgOKP432e83Rgqbbg5B8DzJKikMqkz/CXUODWmpwLuOO6AkMaGVctDgbYT
-         0MoA==
+        d=ionos.com; s=google; t=1756289625; x=1756894425; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xvz3uUjRuvVIHh8nICa0VrN9xloppL7sG2j0TF3CVXY=;
+        b=C6LQ5/wz0rEtMbPVqu6z6TaxHKE/1evzObj73XTYTAr3X4ukiKgTgfE9ay054w3cH5
+         srDXonfrzLklykFt+CJm7h7iH1uXsBs82Bkn05dpehUc7KSBRZjv0ewtC5jSEnQO3+X6
+         31KxNhTLCRMzxlN2n3II8i6wsvkrf5bcjhoM/U8s5v0e9uvHWzfANhKKrfmfYrxWyhDU
+         WeITHBrR2pQuJpWbDAXZqZWRHj64i9jz9MVUtCwY5Mzdy/sH9GLLxznC4eOVpGQ6tqEj
+         zREL/ywAKgQnG8NlqMomK5cKZRWymF79QNBzH/0eD6W0XgfpwCDyuUc5RxmJFOkNOHS0
+         ddxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756289565; x=1756894365;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zFRtIOMOlVt9quw+Zl7Xq2CuHJgjIAx5v9rbJeyHOIg=;
-        b=orcbPuTytVUQZFe2ToGx3zhJK3io9EUo3K0chKsilVVjcndvRoRCZSFVRFc0l4NaxT
-         djO2D9iLD6s22yZzRFssBVdraM0ioCLMR5AjtJKXZ2aFELLdCRUiPbEYIOwu5BEb5h7v
-         oTHuyHyuLLSpUv/wtPKwBlQ/DAtBhXZtL/tZD8PnfOE6MOPnWc4kjAHM0BM2wXxixFVH
-         bEIAAalor4SGCKEwG0Zi13WGWNjyy1MLBdEDQiBjRgteabEkLEqj9h9suCqAzGV9xu2Q
-         sAiKNzVpWt8V5V01EAwnRGjHJBTAtjT/fKme6r9WrWlOdSaSKUIr1IhR4Q1CCN2W++Eb
-         /dow==
-X-Forwarded-Encrypted: i=1; AJvYcCXUFGtq0BnwrlVH2PqdfvH2qfy4xJL3tej3S7i2LQHbT6QnQHghqUWZutS1Mqt2c8nclWVCwMKhEcvSOfQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+7XVuxKApEY1R6Qyj8ynms6di53kTNCXSyLWnq+Mmwxr9exIs
-	WMcdIqt8K7l4OaYQg/jZACdur65rILJhIbl4BemtfVj4crVHzdOw3mJJ2DnVULEipYU=
-X-Gm-Gg: ASbGncs/1QgoW1wDJWGxqhiZyD1U1QZqDAPCxF5YQlyXs56fc7w6rflRIGL220L9arq
-	+7peZfe81snN9aRawNGIM1l4fRuVLvR1RxD4mA0EC0nGMCEWEdi/L2H3A8Jam6FybwAzaXAk922
-	SOK8rLf3g3+bW04fuyB7JAL3LS1do0KEqHFdBWmQFvQY1/iSNNiT2EjGV8JqAVcV+jqTInbbydV
-	p/lajkcAydYqZvlCy7BOxJ79r4fj07Z0y8KfF7oGOEPSpX7Mx4epmZOIi8tma6YpX+/kDywabxg
-	I97g/aSjww9qE1lzdo3E++ibaadT0Lqb0R2L1VG7lXoP+6m+bDz2pWYUGn+uJx9JBeBugZ2ZFmP
-	CMsVmbXLUdhxTQnQ6hm2YYWNjGb2mWTqm/77UY5CJxdxh6Ry8una2tyfRxnj4ucFM9lVuBbwEuU
-	C8yZLH/w==
-X-Google-Smtp-Source: AGHT+IFzs67UoFo90c1/HL7nb+kD26OHdiYBdB60ODimSjNKeSnFTxsbkfwxtdbIw0bNW/Jnt6XESg==
-X-Received: by 2002:a05:6000:2381:b0:3c2:e033:3994 with SMTP id ffacd0b85a97d-3cbb15cbc3emr3992816f8f.26.1756289564746;
-        Wed, 27 Aug 2025 03:12:44 -0700 (PDT)
-Received: from claudiu-TUXEDO-InfinityBook-Pro-AMD-Gen9.. ([2a02:2f04:6103:4200:a5a4:15e6:5b6a:a96])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3cc890b178bsm2695660f8f.52.2025.08.27.03.12.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 03:12:44 -0700 (PDT)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: ulf.hansson@linaro.org,
-	mathieu.poirier@linaro.org,
-	rafael.j.wysocki@intel.com,
-	wsa+renesas@sang-engineering.com,
-	rafael@kernel.org
-Cc: claudiu.beznea@tuxon.dev,
-	linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH] mmc: sdio: Drop dev_pm_domain_detach() call
-Date: Wed, 27 Aug 2025 13:12:36 +0300
-Message-ID: <20250827101236.927313-1-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1756289625; x=1756894425;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xvz3uUjRuvVIHh8nICa0VrN9xloppL7sG2j0TF3CVXY=;
+        b=G29f8TuKTxKD/m6m61cDLT7HDKl+R70u7UhkobPRggZ2jO7Gnmk7yFj6I70IdC1xEO
+         Yk4bYa/tkLaKl9EbnCirP9Yte3zVAAS0yj5SthwALFBqjNTpOWA1S3pceGkVBKSxFl82
+         rQ92Q9F24cz+04iBK1CNQkVH74MYfBRn/yL5N0YXtlmv1s0V6UdVkWHQbee17/hYo4q7
+         a6XnZyyo/16wZh42Qe7XuofIVtYrw2KYD6w4tyjlV/D4ZI/q3XqspX+lBcTnhtk1l28q
+         Ysl4nNhpUtrtDGIrN3fBdozzA2Lyw8LR6BVyI7+uClfmjBvDsqAWsFwU391KJL1E1gc6
+         lqlA==
+X-Forwarded-Encrypted: i=1; AJvYcCX9b77Np/wh5flW6QaXFrbA6jRYDS+8kwAsT4k/4WnbaQURkqFmEW9refnePG+5xa/Hk9EQOSbRjw05Bow=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBsZ1VE7oAPeoPGM8OrMyjEf6PSaZgcqik3trJO2VfG5YFUEXS
+	d1h9ac4VSg5edkL1vQsSJ6eC1Xn3CYhZmxNhUsoJ54Mqj2W/1Z7OvCE79j7tZwoy4u5zLNJ/liy
+	96TTqx73XNcj/Uz2sbTvSH5VCAg+KGsJk0gnz02lVlA==
+X-Gm-Gg: ASbGnctzJBZQFFhUF2jTPyrKpc7DrnjE1XsRx1SoWA67YBMsFYyb61EiM+q0XbJ4J2t
+	OzxDdoshOLgYVuYlXWNNACcJ83vzEArlBE9uG6Fcx/hX9CSTEZ6klY3/mPVQkjPvDoDyFUncQxT
+	mlveXYgc6anmLyGJut551kROKopv6Qb0X1FUToKS6dgAw2hfnk0rer+72yROiHGRjvY9CdtLMyP
+	SeQ09xtdxNbiAN6pNnzTUqXsDEB/AWEQOM=
+X-Google-Smtp-Source: AGHT+IGlilblub0beLftAWMWI936Ykgkb7W6amQCxE7/3U6ErRHHtfFsJXaGAy/lTybsJEEc8106tAh730j5a9SzDJ0=
+X-Received: by 2002:a17:907:97ca:b0:ade:7c6:498a with SMTP id
+ a640c23a62f3a-afe28f767a7mr1748711666b.10.1756289625193; Wed, 27 Aug 2025
+ 03:13:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250826231626.218675-1-max.kellermann@ionos.com>
+ <20250826185515.7fbe1821713195b170ac1b31@linux-foundation.org>
+ <CAKPOu+9wz9g0VuYDPiNDYdaGG-gdK86h1gGSCmVPsC2a5f-GPA@mail.gmail.com> <e5783c3d-7eeb-41d9-9fe7-730155f9bf17@redhat.com>
+In-Reply-To: <e5783c3d-7eeb-41d9-9fe7-730155f9bf17@redhat.com>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Wed, 27 Aug 2025 12:13:34 +0200
+X-Gm-Features: Ac12FXyu44OsYHZBPwR3H1LV2YZSl9vQxc7lNHNMlVr67uXAXYPJVZpR4sRqqmo
+Message-ID: <CAKPOu+_8_gfko=Sh-YKpbgcMy0aJB=m9yrC5JJKEZm=yeYPOgA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] huge_mm.h: is_huge_zero_folio(NULL) should return false
+To: David Hildenbrand <david@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, lorenzo.stoakes@oracle.com, ziy@nvidia.com, 
+	baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, npache@redhat.com, 
+	ryan.roberts@arm.com, dev.jain@arm.com, baohua@kernel.org, 
+	shikemeng@huaweicloud.com, kasong@tencent.com, nphamcs@gmail.com, 
+	bhe@redhat.com, chrisl@kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Wed, Aug 27, 2025 at 11:36=E2=80=AFAM David Hildenbrand <david@redhat.co=
+m> wrote:
+> Why should it be allowed to pass in garbage (folio =3D=3D NULL) into a
+> function that operates on valid folios?
 
-Starting with commit f99508074e78 ("PM: domains: Detach on
-device_unbind_cleanup()"), there is no longer a need to call
-dev_pm_domain_detach() in the bus remove function. The
-device_unbind_cleanup() function now handles this to avoid
-invoking devres cleanup handlers while the PM domain is
-powered off, which could otherwise lead to failures as
-described in the above-mentioned commit.
-
-Drop the explicit dev_pm_domain_detach() call and rely instead
-on the flags passed to dev_pm_domain_attach() to power off the
-domain.
-
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
- drivers/mmc/core/sdio_bus.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/drivers/mmc/core/sdio_bus.c b/drivers/mmc/core/sdio_bus.c
-index 656601754966..10799772494a 100644
---- a/drivers/mmc/core/sdio_bus.c
-+++ b/drivers/mmc/core/sdio_bus.c
-@@ -200,7 +200,6 @@ static int sdio_bus_probe(struct device *dev)
- 	atomic_dec(&func->card->sdio_funcs_probed);
- 	if (func->card->host->caps & MMC_CAP_POWER_OFF_CARD)
- 		pm_runtime_put_noidle(dev);
--	dev_pm_domain_detach(dev, false);
- 	return ret;
- }
- 
-@@ -231,8 +230,6 @@ static void sdio_bus_remove(struct device *dev)
- 	/* Then undo the runtime PM settings in sdio_bus_probe() */
- 	if (func->card->host->caps & MMC_CAP_POWER_OFF_CARD)
- 		pm_runtime_put_sync(dev);
--
--	dev_pm_domain_detach(dev, false);
- }
- 
- static const struct dev_pm_ops sdio_bus_pm_ops = {
--- 
-2.43.0
-
+This patch isn't about the function parameter but about the global
+variable being NULL.
+(Don't mix up with my other patch.)
 
