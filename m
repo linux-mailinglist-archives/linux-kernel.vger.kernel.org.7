@@ -1,231 +1,182 @@
-Return-Path: <linux-kernel+bounces-788247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EBB4B381CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:55:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9446FB381CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:56:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E07D74600BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:55:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BCFD2061D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:56:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B872FA0F2;
-	Wed, 27 Aug 2025 11:55:47 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB4A2F83B1;
+	Wed, 27 Aug 2025 11:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wx5o7ttt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBDC31EDA09;
-	Wed, 27 Aug 2025 11:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98952F0C66
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 11:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756295747; cv=none; b=Ky1xXpqk1vLWRXVb/24kXIdL1JHlmfxvlDxY3u/kpUqwSpqlgsCq0ESkL9ZVfWpOshLqTOSSf6FOoseJnt5eKjKHcZPSX6L6yPrO2g8A3py6iYUrNtJVRJhXJA3u6Nkc3esmzOSKP7FTiAR9Wqrjczu8Rsf9Q0LP2H2RViXOvdc=
+	t=1756295779; cv=none; b=aEima4k7ORhRk+okfku+qYHswY9sM9g1eV0vMmnzjLxomG3W1Rwst6mF9N7k1OFRfBdQj46vM0iZBygDYp0gPTZTD04y428jSJnRn4arc5gX+vBUTQBwe7fgHbWdPDtrczOhg4e4bx+kbb12vmEF/qEtoGXVUxxTSYlN2jRLT44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756295747; c=relaxed/simple;
-	bh=KhQXv86kQVKGJw8aszaxAC/gVymxYsSpQh5L+SZFkl8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=LjKiheZ/a9vEEguLh99YF+APf13j0AYLnzcu+AIFZhYcD5B4kXXQGqIYREHMbjrStfcpfU4aps6Ux24g2aLUWrsZ0hmEvaeGmutGsJmC0lcFIs0EX7fUyPbvhaXakfiNhPdUmnOCm6pYEGFKPrLB0G8ryc4SLbQ8T4EDyj2VPXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cBjbR5kl2z6M5BG;
-	Wed, 27 Aug 2025 19:53:23 +0800 (CST)
-Received: from frapeml100008.china.huawei.com (unknown [7.182.85.131])
-	by mail.maildlp.com (Postfix) with ESMTPS id 354791400D3;
-	Wed, 27 Aug 2025 19:55:41 +0800 (CST)
-Received: from frapeml500007.china.huawei.com (7.182.85.172) by
- frapeml100008.china.huawei.com (7.182.85.131) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 27 Aug 2025 13:55:40 +0200
-Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
- frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
- Wed, 27 Aug 2025 13:55:40 +0200
-From: Shiju Jose <shiju.jose@huawei.com>
-To: Terry Bowman <terry.bowman@amd.com>, "dave@stgolabs.net"
-	<dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>,
-	"dave.jiang@intel.com" <dave.jiang@intel.com>, "alison.schofield@intel.com"
-	<alison.schofield@intel.com>, "dan.j.williams@intel.com"
-	<dan.j.williams@intel.com>, "bhelgaas@google.com" <bhelgaas@google.com>,
-	"ming.li@zohomail.com" <ming.li@zohomail.com>,
-	"Smita.KoralahalliChannabasappa@amd.com"
-	<Smita.KoralahalliChannabasappa@amd.com>, "rrichter@amd.com"
-	<rrichter@amd.com>, "dan.carpenter@linaro.org" <dan.carpenter@linaro.org>,
-	"PradeepVineshReddy.Kodamati@amd.com" <PradeepVineshReddy.Kodamati@amd.com>,
-	"lukas@wunner.de" <lukas@wunner.de>, "Benjamin.Cheatham@amd.com"
-	<Benjamin.Cheatham@amd.com>, "sathyanarayanan.kuppuswamy@linux.intel.com"
-	<sathyanarayanan.kuppuswamy@linux.intel.com>, "linux-cxl@vger.kernel.org"
-	<linux-cxl@vger.kernel.org>, "alucerop@amd.com" <alucerop@amd.com>,
-	"ira.weiny@intel.com" <ira.weiny@intel.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-Subject: RE: [PATCH v11 13/23] cxl/pci: Unify CXL trace logging for CXL
- Endpoints and CXL Ports
-Thread-Topic: [PATCH v11 13/23] cxl/pci: Unify CXL trace logging for CXL
- Endpoints and CXL Ports
-Thread-Index: AQHcFvNHxFodFG2mWkCAduI7aP/bW7R2YxYg
-Date: Wed, 27 Aug 2025 11:55:40 +0000
-Message-ID: <159c6313b9da45d58d83ca9af8dc9a17@huawei.com>
-References: <20250827013539.903682-1-terry.bowman@amd.com>
- <20250827013539.903682-14-terry.bowman@amd.com>
-In-Reply-To: <20250827013539.903682-14-terry.bowman@amd.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1756295779; c=relaxed/simple;
+	bh=qWNuJq1pI1gUfa8dF93j+5XqoglzDjHXlUFmD/BAW/g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Rv07fp878IguGgnL5DY7WyEd1BsM0cZOgg5l7m9Nh0SG7LZRjmJQ948k74sJd/mVky/QwlQiETv0Q0iV1ePobYDTZuLLMObHDuWbyV+Yd/jgmnHpedrVQsH+hTiEoQZTFnH8SFUJ4H6iJ4j+ihif+tcxPEuWkv9vducrpsyT65o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wx5o7ttt; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756295776;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=UcP+MKIMKTIXme29nP4iQa3HplkH4GbIfVhPmf/w8b4=;
+	b=Wx5o7ttt0tnBE5qCgHCWUMS3bD3hOqWmkbUcayrQlqqcsFHXB/3l/wNT8rUELLpbEXSank
+	NnOEikjS2mJ8HML4mPJfzMV4WE4+yAJYw56tacBL8cx9CXmKJWs/cbrE44H3w2J2EltnkJ
+	snn4+gwogqdUxi5WAzqMn7gq6xTz/lo=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-533-BMnZbrdSPJynBh2Q9leoCg-1; Wed, 27 Aug 2025 07:56:15 -0400
+X-MC-Unique: BMnZbrdSPJynBh2Q9leoCg-1
+X-Mimecast-MFC-AGG-ID: BMnZbrdSPJynBh2Q9leoCg_1756295774
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-70ddd80d02fso9987586d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 04:56:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756295774; x=1756900574;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UcP+MKIMKTIXme29nP4iQa3HplkH4GbIfVhPmf/w8b4=;
+        b=RPt/MJNBh353ZgJqe3CiKUf3I0mlvlJQ28s7twFQDQxkWCv3IGNFvqMhCThgVPyeJX
+         7BVQA2kC5UaqZN6ZQql2x3o1F+I1NcbnYt2OW0d1ijob4q/4227yw45X6j6PijYtobOi
+         IkPE9/siZ0/4CkLPCBAZaZkKl1BGvl3WV+mdd++O4qB1O2OC9uddAmy6ZvQACKRzxW1p
+         4V9ZLP2Dsg3NvjpRVxWW9XClpIyu0LunWAxHz8zFUPSjYjPDwURWyrXLJAEIdUtMf1hB
+         /ukvWwztvR33oGjNhbg8CmQ0VunCNVCd2c1mQuJlWyLKvA56ISRDXu1RBEgOOKkv6ZeH
+         QEUA==
+X-Forwarded-Encrypted: i=1; AJvYcCU1v7aBTN3NcTN7RehEY3W/dRPI49v1HsRVW6IYDA1PvUiWRW/hlcun+vvoHLj0557NxlVQt9w3ozjCXvc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbkQ+XSkkNQYFd764E6S4OTirw/suche1215kjPHN/PBmWEdyV
+	kpi00lT9SSc0/mZ1n+i3ykMWI/N36McuCjRgOMMjG1rog31Pmdkk101+mfak759Dpcm8afzUR1s
+	jYfLmL8EMwX32M4WM7cfvAB6co7yRuEG94H7ElXM4vvEHrHwzGhBEJRPxuwfQ3LRQFg==
+X-Gm-Gg: ASbGncsLexyPfYyDiAt5b634ym3bY82WxCM6WqRXmsmjZrLVNq0Egbu40gCcXqStFHr
+	h3nWkd9VSma9TaOAKwA7R3r0RRcwIKwjWod9CAIqX0yGxn+IgkVR4pif1rzedBkhyojavC+z75E
+	rVcpk5PPo0w3K9AiZCKB+eIWRTb0vMYH+H3i5iDhReDDutXeCl1xgLMGZGRu6g34lIGcw9GRQRd
+	8JtCA4UobImO5T3Du749O7te0f6/AyLalU0GHhOwh9Wdnlq/jIZDg/yC3Y76kCs8PKVPLJ1OMbs
+	+CgFSrlbsi1XJQlsR0/FFZsP2VnOzuoW9a7kWcTRcDXoKSRqtCje0CiIKtMKnQ==
+X-Received: by 2002:a05:6214:1d09:b0:70d:b0d3:e50c with SMTP id 6a1803df08f44-70db0d3f0b8mr164309576d6.3.1756295773992;
+        Wed, 27 Aug 2025 04:56:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGP+7/f9Dza6Dboh0+crUGjlYh2k6wyTyltwaqvnIJ5dLoNHOMhcL4Qv2lqiKTxRR93kuSh9A==
+X-Received: by 2002:a05:6214:1d09:b0:70d:b0d3:e50c with SMTP id 6a1803df08f44-70db0d3f0b8mr164309146d6.3.1756295773424;
+        Wed, 27 Aug 2025 04:56:13 -0700 (PDT)
+Received: from [10.32.64.156] (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70da717df65sm81671596d6.30.2025.08.27.04.56.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Aug 2025 04:56:12 -0700 (PDT)
+Message-ID: <11a5d391-3a13-4376-98f1-34b529d3c583@redhat.com>
+Date: Wed, 27 Aug 2025 13:56:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] huge_mm.h: is_huge_zero_folio(NULL) should return
+ false
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, lorenzo.stoakes@oracle.com,
+ ziy@nvidia.com, baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
+ npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
+ baohua@kernel.org, shikemeng@huaweicloud.com, kasong@tencent.com,
+ nphamcs@gmail.com, bhe@redhat.com, chrisl@kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20250826231626.218675-1-max.kellermann@ionos.com>
+ <20250826185515.7fbe1821713195b170ac1b31@linux-foundation.org>
+ <CAKPOu+9wz9g0VuYDPiNDYdaGG-gdK86h1gGSCmVPsC2a5f-GPA@mail.gmail.com>
+ <e5783c3d-7eeb-41d9-9fe7-730155f9bf17@redhat.com>
+ <CAKPOu+_8_gfko=Sh-YKpbgcMy0aJB=m9yrC5JJKEZm=yeYPOgA@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <CAKPOu+_8_gfko=Sh-YKpbgcMy0aJB=m9yrC5JJKEZm=yeYPOgA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
->-----Original Message-----
->From: Terry Bowman <terry.bowman@amd.com>
->Sent: 27 August 2025 02:35
->To: dave@stgolabs.net; Jonathan Cameron <jonathan.cameron@huawei.com>;
->dave.jiang@intel.com; alison.schofield@intel.com; dan.j.williams@intel.com=
-;
->bhelgaas@google.com; Shiju Jose <shiju.jose@huawei.com>;
->ming.li@zohomail.com; Smita.KoralahalliChannabasappa@amd.com;
->rrichter@amd.com; dan.carpenter@linaro.org;
->PradeepVineshReddy.Kodamati@amd.com; lukas@wunner.de;
->Benjamin.Cheatham@amd.com;
->sathyanarayanan.kuppuswamy@linux.intel.com; linux-cxl@vger.kernel.org;
->alucerop@amd.com; ira.weiny@intel.com
->Cc: linux-kernel@vger.kernel.org; linux-pci@vger.kernel.org
->Subject: [PATCH v11 13/23] cxl/pci: Unify CXL trace logging for CXL Endpoi=
-nts
->and CXL Ports
->
->CXL currently has separate trace routines for CXL Port errors and CXL Endp=
-oint
->errors. This is inconvenient for the user because they must enable
->2 sets of trace routines. Make updates to the trace logging such that a si=
-ngle
->trace routine logs both CXL Endpoint and CXL Port protocol errors.
->
->Keep the trace log fields 'memdev' and 'host'. While these are not accurat=
-e for
->non-Endpoints the fields will remain as-is to prevent breaking userspace R=
-AS
->trace consumers.
->
->Add serial number parameter to the trace logging. This is used for EPs and=
- 0 is
->provided for CXL port devices without a serial number.
->
->Leave the correctable and uncorrectable trace routines' TP_STRUCT__entry()
->unchanged with respect to member data types and order.
->
->Below is output of correctable and uncorrectable protocol error logging.
->CXL Root Port and CXL Endpoint examples are included below.
->
->Root Port:
->cxl_aer_correctable_error: memdev=3D0000:0c:00.0 host=3Dpci0000:0c serial:=
- 0
->status=3D'CRC Threshold Hit'
->cxl_aer_uncorrectable_error: memdev=3D0000:0c:00.0 host=3Dpci0000:0c seria=
-l: 0
->status: 'Cache Byte Enable Parity Error' first_error: 'Cache Byte Enable P=
-arity
->Error'
->
->Endpoint:
->cxl_aer_correctable_error: memdev=3Dmem3 host=3D0000:0f:00.0 serial=3D0
->status=3D'CRC Threshold Hit'
->cxl_aer_uncorrectable_error: memdev=3Dmem3 host=3D0000:0f:00.0 serial: 0 s=
-tatus:
->'Cache Byte Enable Parity Error' first_error: 'Cache Byte Enable Parity Er=
-ror'
->
->Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+On 27.08.25 12:13, Max Kellermann wrote:
+> On Wed, Aug 27, 2025 at 11:36 AM David Hildenbrand <david@redhat.com> wrote:
+>> Why should it be allowed to pass in garbage (folio == NULL) into a
+>> function that operates on valid folios?
+> 
+> This patch isn't about the function parameter but about the global
+> variable being NULL.
+> (Don't mix up with my other patch.)
 
-Reviewed-by: Shiju Jose <shiju.jose@huawei.com>,
-apart from one error below.
+Huh?
 
->
->---
->Changes in v10->v11:
->- Updated CE and UCE trace routines to maintain consistent TP_Struct ABI a=
-nd
->unchanged TP_printk() logging.
->---
-> drivers/cxl/core/ras.c   | 35 +++++++++++----------
-> drivers/cxl/core/trace.h | 68 +++++++---------------------------------
-> 2 files changed, 30 insertions(+), 73 deletions(-)
->
->diff --git a/drivers/cxl/core/ras.c b/drivers/cxl/core/ras.c index
->3454cf1a118d..fda3b0a64dab 100644
->--- a/drivers/cxl/core/ras.c
->+++ b/drivers/cxl/core/ras.c
->@@ -13,7 +13,7 @@ static void cxl_cper_trace_corr_port_prot_err(struct
->pci_dev *pdev,  {
-> 	u32 status =3D ras_cap.cor_status & ~ras_cap.cor_mask;
->
->-	trace_cxl_port_aer_correctable_error(&pdev->dev, status);
->+	trace_cxl_aer_correctable_error(&pdev->dev, status, 0);
-> }
->
-> static void cxl_cper_trace_uncorr_port_prot_err(struct pci_dev *pdev, @@ =
--
->28,8 +28,8 @@ static void cxl_cper_trace_uncorr_port_prot_err(struct pci_d=
-ev
->*pdev,
-> 	else
-> 		fe =3D status;
->
->-	trace_cxl_port_aer_uncorrectable_error(&pdev->dev, status, fe,
->-					       ras_cap.header_log);
->+	trace_cxl_aer_uncorrectable_error(&pdev->dev, status, fe,
->+					  ras_cap.header_log, 0);
-> }
->
-> static void cxl_cper_trace_corr_prot_err(struct cxl_memdev *cxlmd, @@ -37=
-,7
->+37,8 @@ static void cxl_cper_trace_corr_prot_err(struct cxl_memdev *cxlmd=
-,
->{
-> 	u32 status =3D ras_cap.cor_status & ~ras_cap.cor_mask;
->
->-	trace_cxl_aer_correctable_error(cxlmd, status);
->+	trace_cxl_aer_correctable_error(&cxlmd->dev, cxlmd->cxlds->serial,
->+					status);
-Please correct to=20
-             trace_cxl_aer_correctable_error(&cxlmd->dev,  status,=20
-					cxlmd->cxlds->serial);
-> }
->
-> static void
-[...]
->-
-> TRACE_EVENT(cxl_aer_correctable_error,
->-	TP_PROTO(const struct cxl_memdev *cxlmd, u32 status),
->-	TP_ARGS(cxlmd, status),
->+	TP_PROTO(const struct device *cxlmd, u32 status, u64 serial),
->+	TP_ARGS(cxlmd, status, serial),
-> 	TP_STRUCT__entry(
->-		__string(memdev, dev_name(&cxlmd->dev))
->-		__string(host, dev_name(cxlmd->dev.parent))
->+		__string(memdev, dev_name(cxlmd))
->+		__string(host, dev_name(cxlmd->parent))
-> 		__field(u64, serial)
-> 		__field(u32, status)
-> 	),
-> 	TP_fast_assign(
-> 		__assign_str(memdev);
-> 		__assign_str(host);
->-		__entry->serial =3D cxlmd->cxlds->serial;
->+		__entry->serial =3D serial;
-> 		__entry->status =3D status;
-> 	),
-> 	TP_printk("memdev=3D%s host=3D%s serial=3D%lld: status: '%s'",
->--
->2.51.0.rc2.21.ge5ab6b3e5a
+"Calling is_huge_zero_folio(NULL) should not be legal - it makes no
+sense, and a different (theoretical) implementation may dereference
+the pointer."
 
-Thanks,
-Shiju
+And then
+
+"But currently, lacking any explicit documentation, this
+call is legal."
+
+No. It isn't. It never was.
+
+-- 
+Cheers
+
+David / dhildenb
 
 
