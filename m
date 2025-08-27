@@ -1,320 +1,186 @@
-Return-Path: <linux-kernel+bounces-788811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99FE7B38A97
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:00:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5FBEB38A9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:02:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A9595E6FD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:00:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 615D85E1D9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A0E2EF678;
-	Wed, 27 Aug 2025 20:00:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF3A2EE61C;
+	Wed, 27 Aug 2025 20:01:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WVpNwguX"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2051.outbound.protection.outlook.com [40.107.94.51])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dCQmge2z"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391CD2D480A
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 20:00:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756324811; cv=fail; b=YdGasO0slfYxDV7mUp2VCxsGVZezSOE3yjCh/BrDStimOBNJx9d6xUjnqub9Y2xHspJDR7FOdYF1SABZgddrvfe/JtC670y/X7VVC/2a8xvipVICgnsSvouNUiTYCO+Wq/8qOi93Ipm0CwGwESxnOs3Xmrr8knUM63xLDfJtNV4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756324811; c=relaxed/simple;
-	bh=pKJ2d27yW9MjnZuSItJt6Ax8YJuQRfWQRK3orIqaoS4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=MfrPZOyYuSdvCfC63iag/b7djzBphYJai1xlp4QKxLBWGRAW2xAn60uiuzqh7SNVjDwJcM0sPT6nhyASFSrgI2OllD/+nSFWvMykMPLpRmP5Ry+39GQkRCc7mNodRuiM/aeePT7fk9J+GbEu05WINRY5vh7gzEpm2spfXZCx1yo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WVpNwguX; arc=fail smtp.client-ip=40.107.94.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yUMSTVsb0IOmInjNvFVmqsM13QS9fZDs+/MrQEiEEXdTc025R1sSoUZ4FNiQ/G2HF+Z+tx1Vi3lXZbFGLV0CWziany7EzjYaqPveSRPQz1R16G8tkBft1gzkV2jmojqUNzyj4kRbtJ1zlW6UMszNTaZLLcoLlvxM8hPYzeJIPuF3ux1DF5VgAttZf+GWBxwuVr8Ffu+1rUJTec6ZNJiaI0J/kaOhmCfjOk/cufs5eHXyvQ1+Ge0/R3JtFU7Ryd6REK0EHTUC2igCKDc4z5sHxlFdQkAlOBZj1lurCpVapjOEiDOORREGWHbsnMHUn+WAeg+HLpkbid5XHGM+Ef13zg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TzNwIa7gpj5ICksPmOkJwZop0idGEfBpg8YtS1SRRkY=;
- b=snBfWCrEYMc6HMqPPyRKJ+c0BmumqdB2Ni2EM8832GitWLVWtgCAcTwZIW5Vbocz5cbcMQyHYb+r/qKJ2U6UfSxHchDhkV0Pmn7TTmS21bXScRvXO05jJwamggTbSna9Nhdtipjcz5HQnDBVRbiWM2k+rIl2NW1lTH4rGU2pEoRlTDTcRxNKEu5fygpxj2IEljVu6IgSy1lvnQ62sCzuGbCza/Ki5p+ljumY9vOoIawB/sLPp8coEnVZvkJCc7ouUOtZAePCrR3rwFrQV6glsI/kmE/aQXtpTT4bLk/YnYhip7J/VfS3E/8cU2BcsjFRooda6z3iv6ROLI9PfLZUkQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TzNwIa7gpj5ICksPmOkJwZop0idGEfBpg8YtS1SRRkY=;
- b=WVpNwguXuRGhRCA6z+37ZdubE1jWaf11lGFcjNbQ3PtnUOn9MVc0WDZE296cbfPRdsgLXpV6JrHqXTYC5WgTrFBAxGti3ecH9Wi0gyKY1JJoxawgoRZSjy5dDlGq+rrkpONB6mybzx0Mw6jx7po/L4525l8nrpwoClLueRV0r62M/GcOUGyQpIWaCLIwzZnXAuYVqTMw9Qgh+4g2ZUfq+OIYes8ix/hVDgDPA0Nz66mr8LCqEMcj6I4DUJSAUIRNZXK31cIKXHVxuiWv9DB/NMHMcwrYADXn0NzEj5rpBy5L2WKAYg8LO3cXS0atF2TeXX+WLw9ma9xM5nwiQdV30A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by DS0PR12MB8503.namprd12.prod.outlook.com (2603:10b6:8:15a::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.20; Wed, 27 Aug
- 2025 20:00:05 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.9052.019; Wed, 27 Aug 2025
- 20:00:05 +0000
-Date: Wed, 27 Aug 2025 17:00:02 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
-	jean-philippe@linaro.org, miko.lenczewski@arm.com,
-	balbirs@nvidia.com, peterz@infradead.org, smostafa@google.com,
-	kevin.tian@intel.com, praan@google.com, zhangzekun11@huawei.com,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Subject: Re: [PATCH rfcv1 4/8] iommu/arm-smmu-v3: Introduce a per-domain
- arm_smmu_invs array
-Message-ID: <20250827200002.GD2206304@nvidia.com>
-References: <cover.1755131672.git.nicolinc@nvidia.com>
- <fbec39124b18c231d19a9b2b05551b131ac14237.1755131672.git.nicolinc@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fbec39124b18c231d19a9b2b05551b131ac14237.1755131672.git.nicolinc@nvidia.com>
-X-ClientProxiedBy: BY5PR13CA0004.namprd13.prod.outlook.com
- (2603:10b6:a03:180::17) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF704258CF7
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 20:01:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756324915; cv=none; b=bA6UqKMp9rjYB3RmsJ8d234g7mJHNd/5riVcq5IESQLoOzB0LVzNlMjw7b/aSaIcFWRS5GFlRAV9yFiyGalswnwf+nybWPYyepbckprS8ACELk6XWHnPY3dvd0PNBgFG620ehNuzZDkMI43nvAn8PVT2UafQndkxB6K/VfqQyE0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756324915; c=relaxed/simple;
+	bh=D+yMe14Tpf3c/xVv+fARYf5ETFaAbJnlz/bfCvrAoVo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jc4mdhrlINkmwpea5uflnaEaUjwkDMocwPiF+nO4SLKe9LElD2d7cdkVEePWG/DM+FoQlKqJJhoOcbOuRsog2d21MbO8MKVYDq/tLPil2bjU7luw/o5XtaVZ5YwYzHGNypg4nPyDtT82V7XttIXtM9Ugdhd2LNMVUC3Oeko3bkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dCQmge2z; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57REu9Mp000385
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 20:01:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=Mj5+squga8BNTuWWdxANYVJo
+	JH996l1kauWfdJepZFE=; b=dCQmge2zI+S/miJfNaWjec7m+SYfczGuPw35ICh3
+	g/av9RED+72TSbUVoDv9D5/bufDvdPuqfhOqyMBptFUoxkZ+yYhroz0G2SjyAe5y
+	76uJ7FPxHKg/jOkrxZodmFHak2wnraXWdZANqDG94ovrxRIR6InX9wCF9L5EJAo9
+	I51HS4QkzvggMhnulO18zBU0UJJujb9GGMXzan0AyCSi7FDrKiW98k8nQiXcGZTq
+	WwNPmVQ2ALbXM0Wu7lP9fhfdTYNUXq/Fn8P58bVWv36E8SV1s7mSHKF5HU+nPqor
+	7xI19j3BpyWesKhie+i+dvk0wW2AS8jZIu5BJLoQM0QIUQ==
+Received: from mail-ua1-f72.google.com (mail-ua1-f72.google.com [209.85.222.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48t47b8u2h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 20:01:52 +0000 (GMT)
+Received: by mail-ua1-f72.google.com with SMTP id a1e0cc1a2514c-8940ebd2ab8so1139043241.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 13:01:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756324911; x=1756929711;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Mj5+squga8BNTuWWdxANYVJoJH996l1kauWfdJepZFE=;
+        b=OxdUA75HgHq3DbY3p6ateeOIB4sMPdyjGz+ctASxuiMxfqD2gFv8TH8hwwVXtBTiB7
+         dJaK3O5Y9GrdgYbnIbyvZ+9H79b03iyO6/Q4D2V2xlFrvU5YmvLaYtplGgHrEZIR5cDW
+         R/5/WShkgwcY+CYcKieckxKrBb7zP3a2+NnviAYiGblOQAY1z37CJ7203F9TsCnt+YcJ
+         swlsWqPa/EnwQgrjkowWOfnryETp1C335vJERdBZDWiIftdDFXZo2Q5plf1LVNnDnuuY
+         E7APtru6pBgLF7wKkSFdQlattztviJk4/UMcTIqKtwTlTKBbG3JPeRssZa0+LLt4Dw0M
+         WCGw==
+X-Forwarded-Encrypted: i=1; AJvYcCXcyGzYt9evZYOmg9SGh8RK/w+ZFOfTpACS5zjA5LkejTfyKfZlrDGII37pgJ/RNlaWrMP0ndlvO1vjORo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4mEjnjSjgxQUOSSDjIrOPoYhkdjtqDc4gikH7ZqVqJLU9vB/z
+	uGnriB14wgf8Q+JDropnHrSW6K9LPAG/4JNXt3OaBxCvAJT8CtPvDff58OU6rwWJdnamB++EXx0
+	2KbpXLCWK4jj1vEwoZVIt0SgRMc9pDIBybESsrLxh+AkoDneVfx+HbC+HxIO/6O0UaLs=
+X-Gm-Gg: ASbGncu+K9mk3gjX6k7Y39/IE5xADH19WEClZ2vA3AzQPSBYSQi0H4gYp3O9hTKZICL
+	fhmQW5A/h/9xqV8LRa85tJL/p+R7oQhHOW4YQgr1PAx8G+ZuvjHd38LoFpYMb0QshrD4CSTL0Y1
+	O/mJ21szG+xwBbOgK+/t7QnVrv+s41cmJ/htxw5l+ZUeDn8S4Se7hyH3aLNEzegIUAhH8emM5hV
+	hBuTC4EVaUaz/0HU3bbS41wdwFZiHljNYwlFM9pobdT/y2IfXFtXSKOmAA0sIXlOZ+BE8ICbokJ
+	O5ulp/HZa/osGRBXdsojF1gH8xzvii4mkyTLjcsRld8mxGhlDDmy3Gz0BzD/U5fu8057OazfRYZ
+	nullLBwgfORLJW6whkZ+092zlL7G761o1Srq1I369Gy29yXUdaFQW
+X-Received: by 2002:a05:6102:6495:20b0:519:534a:6c36 with SMTP id ada2fe7eead31-5248bbc70bfmr1665701137.14.1756324910403;
+        Wed, 27 Aug 2025 13:01:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHJ/jsGbo/0+zzG2ju1FyxFl38fR1Yik7DRNOp7bX+dkjfU3yg/w7t7cOerSB8W3MKBRSWD6A==
+X-Received: by 2002:a05:6102:6495:20b0:519:534a:6c36 with SMTP id ada2fe7eead31-5248bbc70bfmr1665596137.14.1756324908466;
+        Wed, 27 Aug 2025 13:01:48 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3365e5a5b79sm30873701fa.34.2025.08.27.13.01.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 13:01:46 -0700 (PDT)
+Date: Wed, 27 Aug 2025 23:01:44 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Fange Zhang <fange.zhang@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        xiangxu.yin@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+        Li Liu <li.liu@oss.qualcomm.com>
+Subject: Re: [PATCH v7 2/2] arm64: dts: qcom: Add display support for QCS615
+ RIDE board
+Message-ID: <yutyrfb73wbxlweoq3mc6ezyqr56snzmznw3k6mcbc56fpfayg@3h5jwymlo3ol>
+References: <20250827-add-display-support-for-qcs615-platform-v7-0-917c3de8f9ca@oss.qualcomm.com>
+ <20250827-add-display-support-for-qcs615-platform-v7-2-917c3de8f9ca@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|DS0PR12MB8503:EE_
-X-MS-Office365-Filtering-Correlation-Id: f13331af-14c4-4756-d3c1-08dde5a450ef
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?znxOawn0KroKXJstA9k6r2ebH1V0TVOiBxDLxv3Vznkn4zGmlbGihbO04ic4?=
- =?us-ascii?Q?B2Wqz25YpSRgPFiObuxWA9tJRLMfXlFUvZA9Cbd5VZCKJegaymkOkQbX37Y6?=
- =?us-ascii?Q?piMtm10Ac8VZXxfbCXn3e1MZfFQcwrcXlenkK51JTbt1HpdtNh+n4Cc/LIN/?=
- =?us-ascii?Q?nQgYFFFMakypCPk7Bx2yjdsS981SKmuWE83TlerBY688Gp0bX1SwwrFEnLxX?=
- =?us-ascii?Q?I+ca7g2Z3ljXH9nbvfSSdwBt+72m+TQOjbOdxr7GaXWvAQLZzer5N8L8DIQB?=
- =?us-ascii?Q?SVv+6iYgJG3KrHJMjB5eAd2Yaa2VL5/FAPm0peiLWy43ODRhNjTIiQRx28pZ?=
- =?us-ascii?Q?MsIbUB7huuDNg/aIv8QyrnOiv8Q50TYu413UT7b6KCp4DkZvFvmVEdLSmWZt?=
- =?us-ascii?Q?1gYdTwEQkKHa1pcRBp+bAtG8TNvM22BcK1IfH3D/Uq/MWK60gcZODJansaHJ?=
- =?us-ascii?Q?lUP8rEh4WVzDQ0vIU9iNY4+MrGmxjGf5f99THwbcHyMGvK16ya5poz2yHAqQ?=
- =?us-ascii?Q?Zqa14QH3Aor0bQzSE7dUPMz/dh/7fjolPNHChJHub0J/Xu4EOA5BkTAFco7B?=
- =?us-ascii?Q?aPEhZiEEjNWQSvYnTA6o/079zLew5fbYUEXEHxQgdAnbJUAxWGuCLLkfaBnF?=
- =?us-ascii?Q?kxJykak8aiK3lWm0MvDk2YgzM5HkChjzSYIVt5AhsGn1pg+TfDdlDky1YePW?=
- =?us-ascii?Q?iKNrpCkI4+2DFViOadVypwLqEb2rVq5DUnt6qYGNTCJGuwHUPEn3G52QOCAv?=
- =?us-ascii?Q?mFWIVgTkMJW5wSBPKXIXLTgTTTAIYCJ4Rp9soevfL+dwqwCFPHsQh2eb8HQ3?=
- =?us-ascii?Q?s6OzhUxFwCB2nj73Tn8UCbDfLC/Qy+Va87pHM9rI5NjCzRIPMe54ep0dD3I8?=
- =?us-ascii?Q?FOtI03xqBtgD8LdnAc3rJXdb8Abh7wiTSkepPfdw+DSXzSwSQ+0sbP5h8LbC?=
- =?us-ascii?Q?XGM19eL07/2wyrdLqQY+YHzO27CjfbZEgwn2EaO7QqXlA10PlQcPXoB5elsP?=
- =?us-ascii?Q?sEwuI94zih4A+lrK5GI1EE3fjqgvdE/blGx51kxT1vE9zITd8i5u2WmsZj8L?=
- =?us-ascii?Q?/KhInT4tbukfykN0WY1JD5xV4zAsCYY/b2D+4fqt8DumIbTO+QmnIXnKt9pl?=
- =?us-ascii?Q?spW+JniTiK+Mb/SHW2jWhQ/e/EvQ4jpW4R9ielm+VTk+ZKam6IhSiKCmVa1U?=
- =?us-ascii?Q?ODGgEaS4JjlbpJJmdOeY3VvBCvOFLnu6HlnFuGhMNE6hvein3qA05IUNQIIS?=
- =?us-ascii?Q?7g3tqekOsPtZOTfGTiPWzKjauvNsdDp+RerwY92Zv9OlGmBToshhO3D/OtTD?=
- =?us-ascii?Q?W08N5Uc4gid7zRHNyoOV8zHr4FBYSGHK+IMz5F8PNtgeAlkrCga6qW6zZYqv?=
- =?us-ascii?Q?GVZoa52lY36FC+0TyCPM3J84Vo/KzRViLW0HMAokC9scFscruQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?1WWObZOiBWZsIvRpGn4aA3wc8SFXZveRem8KFCd0a/HljLtCXTWmyK5Q8A2g?=
- =?us-ascii?Q?TAyZJmlhAukikFF2QNmJjvOWzaSstJzVkSdu/wWdN3C8M0sNCG12gDQHYexc?=
- =?us-ascii?Q?le8Hpfn1cF0bP8QE61+4pJpFSotXSCIK12agsEYQWR1xc2qksU/OjBOLZzG2?=
- =?us-ascii?Q?8hL3/lC5tADCobNahBmxlLqVPaBcaGERgeh/ZsFRj6c9328X/MpyE7lQodXQ?=
- =?us-ascii?Q?kodowM/zCgocK3TllF4c/cA3SR4CH4NL78df3OWv5MR2WKzlvLL22ETMM7GC?=
- =?us-ascii?Q?6hLRTsUZYM/1mIElqcy5DwJ4FWDmo9j7quiTf9doYwogp0aty6uOcUGwS8ni?=
- =?us-ascii?Q?KzM8ULoJmKsAa5w66he8v6iRgaWRwJ67zgOykcactNzmJVro9XVjjhfZAy+0?=
- =?us-ascii?Q?jh8q7hzQXs4Ha0IzKdT6ZFNPEwftiXHyoCKrpY06pRwOUEM0rxha2qnnt289?=
- =?us-ascii?Q?CBODFLc+1P3gCtcTSxqS7T9XgLcritQzIJnWYEFjjaTIV6nYen/XOvLJXVPt?=
- =?us-ascii?Q?y2xVrYLFsZBpk6ZmPCyTf+1PWXxCb/H5HeAo8PUR3rUmkP9V7pq+NIvB268O?=
- =?us-ascii?Q?e5U6ZRf1IkIhyZwy/2HVQktzlxcCuEdfKmAbtM4EOVWz0cOyXe2gIQixvXp9?=
- =?us-ascii?Q?TJUqOIHcrGGPKxwxGd/T/nptckhbeCO/BmsZnomA1zmKrW6mgl4CZB2oFt6W?=
- =?us-ascii?Q?Rhpa4eqfp+RYjHJsqnn4HLtezp7sKqIq8wg2zxaIVbMAXL23q0fWYljb/Tam?=
- =?us-ascii?Q?Tcb+9zVuDab+G8zOrF063h6431/kGD6v+mh1Ru64xsqH5EGRTFl5dIjxXKr/?=
- =?us-ascii?Q?oJ6GZ3TTqb/yk1cBvB6sOi3JbKAMoUcUhVIZIrngLqVYxpeVMiENlLPY0dO0?=
- =?us-ascii?Q?mKTBzFjeZdYiJ8knLUT6r4zfIy0oxI5KyRdt3BsI8qn1XAicTPJzniabfqpZ?=
- =?us-ascii?Q?IQmjQemO2b0cAzzZ7JLol5Pxd1wfu4N0qPS151Vl5fCgGSOxSJnlYlO3idjs?=
- =?us-ascii?Q?+KPYxjj+lXhBLmS73icEvpiK1nyyz490ybB1GVNRqc8ZuPBxgfeq5a0zcNj/?=
- =?us-ascii?Q?UCI7CqWBrgwxR3T8Hkoev3UHvYPRdacDm4YqPptGk1ybI7sYx6xeHQMcqEqE?=
- =?us-ascii?Q?EM3Pxye6OzQZgS7tZQfi/nl6mcGeQ3955uZiVyM+fs0zZgQJabncEIKAFD9J?=
- =?us-ascii?Q?SkUHKjRIf1QGsh+dGQEPlfGXXYa5u9vAPCS/U0RNQVwDeWFnfb4VY9nEkl23?=
- =?us-ascii?Q?6SO421WlOIX5lIaLEUgePCSn4+6NIB/ahkElFP9qvRepS8SNcgt9rRNsBbiK?=
- =?us-ascii?Q?nljWg1Dm/mCXUgTLugw6MpK+jxcjYPOVEUQv3Um4smor6/S73RDeORXq98c8?=
- =?us-ascii?Q?ERt/n2WeusuVP4KxBOykcW8JLkLYTvZJs29IlDq/82kaWkgrVvXZMzZIBcOZ?=
- =?us-ascii?Q?IneNQrOdy75+eqthAXfxLmdsGJ8ArL63KMYcQVE0LMr1HeYtyg4cpSQRJqhk?=
- =?us-ascii?Q?a9VuZ/dPiWmzrtp+/7gdnD1A1oEQN2sZBnbqGSrdAaZjLTJhmtRMLDdsPthC?=
- =?us-ascii?Q?/jwLdeo/woWhQJq1EBLXlB0yOVa/o6M67BKvnsoE?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f13331af-14c4-4756-d3c1-08dde5a450ef
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 20:00:05.4040
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ap3El40LAI7bYvFM4l+n4dZbFWNZ3pambipp07iGoIM01lu4SYpJNP5zma+iCbCj
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8503
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250827-add-display-support-for-qcs615-platform-v7-2-917c3de8f9ca@oss.qualcomm.com>
+X-Proofpoint-GUID: oGIkNN5XW_9flXZa9mDsHq-P1-bBjeSX
+X-Authority-Analysis: v=2.4 cv=CYoI5Krl c=1 sm=1 tr=0 ts=68af6431 cx=c_pps
+ a=ULNsgckmlI/WJG3HAyAuOQ==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=NCHn67HwCZdYxv9cn_sA:9 a=CjuIK1q_8ugA:10
+ a=1WsBpfsz9X-RYQiigVTh:22
+X-Proofpoint-ORIG-GUID: oGIkNN5XW_9flXZa9mDsHq-P1-bBjeSX
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI3MDEyOCBTYWx0ZWRfXyzs5jY3oGT34
+ fpf5voHtqKqL76+YhWwuU653f8pPNA6uiNom78YktLxC6gHTC38xIDtfLp8VUXhBlIdGoPKNiIc
+ tP+b8JyvwJk48ccDfB8S5xtxjPo7S8V+IE6UhocRz16gZrAM3eNlKMMg9uu3vDo+ZwMazZR86mB
+ OuLeZGipKgaowfQ8oMeUBPNJUdXEr/4kTGHWkpc2E/F4TErzudlBxOwfT5uOc5SXODYyP2I1GFI
+ K0ORcSk6RrIu9kWuDJDTUpxKp8TxtnP4Pqz2GL/Gxvg7EOkVOSYOm+dVcxo6mUGpFDUK+uqJoZV
+ mGeKNmlSvwedpiSwJaq5Kb0RZ6YJHHmlF0SjXLcNsWJfWVlqOZJCToBEO94NN4bua7awSkmXoVb
+ gfs7L7sM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-27_04,2025-08-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 bulkscore=0 adultscore=0 clxscore=1015 phishscore=0
+ priorityscore=1501 impostorscore=0 suspectscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508270128
 
-On Wed, Aug 13, 2025 at 06:25:35PM -0700, Nicolin Chen wrote:
-> +struct arm_smmu_invs *arm_smmu_invs_add(struct arm_smmu_invs *old_invs,
-> +					struct arm_smmu_invs *add_invs)
-> +{
+On Wed, Aug 27, 2025 at 09:08:39PM +0800, Fange Zhang wrote:
+> From: Li Liu <li.liu@oss.qualcomm.com>
+> 
+> Add display MDSS and DSI configuration for QCS615 RIDE board.
+> QCS615 has a DP port, and DP support will be added in a later patch.
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Signed-off-by: Li Liu <li.liu@oss.qualcomm.com>
+> Signed-off-by: Fange Zhang <fange.zhang@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/qcs615-ride.dts | 150 +++++++++++++++++++++++++++++++
+>  1 file changed, 150 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> index e663343df75d59481786192cde647017a83c4191..f6e0c82cf85459d8989332497ded8b6ea3670c76 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> @@ -39,6 +39,76 @@ xo_board_clk: xo-board-clk {
+>  		};
+>  	};
+>  
+> +	dp-dsi0-connector {
+> +		compatible = "dp-connector";
+> +		label = "DSI0";
+> +		type = "mini";
+> +
+> +		port {
+> +			dp_dsi0_connector_in: endpoint {
+> +				remote-endpoint = <&dsi2dp_bridge_out>;
+> +			};
+> +		};
+> +	};
+> +
+> +	vreg_12p0: vreg-12p0-regulator {
 
-It turns out it is fairly easy and cheap to sort add_invs by sorting
-the ids during probe:
+I should be more carefull when doing reviews. I thought that it was
+pointed out already and didn't some of the obvious things...
 
-@@ -3983,6 +3989,14 @@ static int arm_smmu_init_sid_strtab(struct arm_smmu_device *smmu, u32 sid)
-        return 0;
- }
- 
-+static int arm_smmu_ids_cmp(const void *_l, const void *_r)
-+{
-+       const typeof_member(struct iommu_fwspec, ids[0]) *l = _l;
-+       const typeof_member(struct iommu_fwspec, ids[0]) *r = _r;
-+
-+       return cmp_int(*l, *r);
-+}
-+
- static int arm_smmu_insert_master(struct arm_smmu_device *smmu,
-                                  struct arm_smmu_master *master)
- {
-@@ -4011,6 +4025,13 @@ static int arm_smmu_insert_master(struct arm_smmu_device *smmu,
-                return PTR_ERR(master->invs);
-        }
- 
-+       /*
-+        * Put the ids into order so that arm_smmu_build_invs() can trivially
-+        * generate sorted lists.
-+        */
-+       sort_nonatomic(fwspec->ids, fwspec->num_ids, sizeof(fwspec->ids[0]),
-+                      arm_smmu_ids_cmp, NULL);
-+
-        mutex_lock(&smmu->streams_mutex);
-        for (i = 0; i < fwspec->num_ids; i++) {
-                struct arm_smmu_stream *new_stream = &master->streams[i];
+First of all, the nodes are sorted. By the name, not by the label.
+Second, there are already regulators in this file. Why are the new nodes
+not following the existing pattern and why are they not placed at a
+proper place?
 
-Then arm_smmu_build_invs() trivially makes sorted lists.
 
-So if old_invs and add_invs are both sorted list we can use variations
-on a merge algorithm for sorted lists which is both simpler to
-understand and runs faster:
+[.... skipped all defined regulators ...]
 
-/*
- * Compare used for merging two sorted lists. Merge compare of two sorted list
- * items. If one side is past the end of the list then return the other side to
- * let it run out the iteration.
- */
-static inline int arm_smmu_invs_merge_cmp(const struct arm_smmu_invs *lhs,
-					  size_t lhs_idx,
-					  const struct arm_smmu_invs *rhs,
-					  size_t rhs_idx)
-{
-	if (lhs_idx != lhs->num_invs && rhs_idx != rhs->num_invs)
-		return arm_smmu_invs_cmp(&lhs->inv[lhs_idx],
-					 &rhs->inv[rhs_idx]);
-	if (lhs_idx != lhs->num_invs)
-		return -1;
-	return 1;
-}
+> +	};
+> +
+>  	vreg_conn_1p8: regulator-conn-1p8 {
 
-struct arm_smmu_invs *arm_smmu_invs_add(struct arm_smmu_invs *invs,
-					struct arm_smmu_invs *add_invs)
-{
-	struct arm_smmu_invs *new_invs;
-	struct arm_smmu_inv *new;
-	size_t to_add = 0;
-	size_t to_del = 0;
-	size_t i, j;
+Tadam! It's even a part of the patch.
 
-	for (i = 0, j = 0; i != invs->num_invs || j != add_invs->num_invs;) {
-		int cmp = arm_smmu_invs_merge_cmp(invs, i, add_invs, j);
+>  		compatible = "regulator-fixed";
+>  		regulator-name = "vreg_conn_1p8";
 
-		if (cmp < 0) {
-			/* not found in add_invs, leave alone */
-			if (refcount_read(&invs->inv[i].users))
-				i++;
-			else
-				to_del++;
-		} else if (cmp == 0) {
-			/* same item */
-			i++;
-			j++;
-		} else {
-			/* unique to add_invs */
-			to_add++;
-			j++;
-		}
-	}
-
-	new_invs = arm_smmu_invs_alloc(invs->num_invs + to_add - to_del);
-	if (IS_ERR(new_invs))
-		return new_invs;
-
-	new = new_invs->inv;
-	for (i = 0, j = 0; i != invs->num_invs || j != add_invs->num_invs;) {
-		int cmp = arm_smmu_invs_merge_cmp(invs, i, add_invs, j);
-
-		if (cmp <= 0 && !refcount_read(&invs->inv[i].users)) {
-			i++;
-			continue;
-		}
-
-		if (cmp < 0) {
-			*new = invs->inv[i];
-			i++;
-		} else if (cmp == 0) {
-			*new = invs->inv[i];
-			refcount_inc(&new->users);
-			i++;
-			j++;
-		} else {
-			*new = add_invs->inv[j];
-			refcount_set(&new->users, 1);
-			j++;
-		}
-		if (arm_smmu_inv_is_ats(new))
-			new_invs->has_ats = true;
-		new++;
-	}
-
-	WARN_ON(new != new_invs->inv + new_invs->num_invs);
-
-	/*
-	 * A sorted array allows batching invalidations together for fewer SYNCs.
-	 * Also, ATS must follow the ASID/VMID invalidation SYNC.
-	 */
-	sort_nonatomic(new_invs->inv, new_invs->num_invs,
-		       sizeof(add_invs->inv[0]), arm_smmu_invs_cmp, NULL);
-	return new_invs;
-}
-
-size_t arm_smmu_invs_dec(struct arm_smmu_invs *invs,
-			 struct arm_smmu_invs *dec_invs)
-{
-	size_t to_del = 0;
-	size_t i, j;
-
-	for (i = 0, j = 0; i != invs->num_invs || j != dec_invs->num_invs;) {
-		int cmp = arm_smmu_invs_merge_cmp(invs, i, dec_invs, j);
-
-		if (cmp < 0) {
-			/* not found in dec_invs, leave alone */
-			i++;
-		} else if (cmp == 0) {
-			/* same item */
-			if (refcount_dec_and_test(&invs->inv[i].users)) {
-				dec_invs->inv[j].todel = true;
-				to_del++;
-			}
-			i++;
-			j++;
-		} else {
-			/* item in dec_invs is not in invs? */
-			WARN_ON(true);
-			j++;
-		}
-	}
-	return to_del;
-}
+-- 
+With best wishes
+Dmitry
 
