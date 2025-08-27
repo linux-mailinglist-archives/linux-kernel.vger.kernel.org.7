@@ -1,136 +1,142 @@
-Return-Path: <linux-kernel+bounces-788960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 187A7B38E92
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:43:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 961CBB38E9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:43:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5254A1C2203E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:43:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C3FB3654F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:43:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E137F30F92D;
-	Wed, 27 Aug 2025 22:42:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4CB3310785;
+	Wed, 27 Aug 2025 22:43:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FL6dW/qd"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="MREP9Mkt"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27EF30CD80;
-	Wed, 27 Aug 2025 22:42:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 733B32BEC4A;
+	Wed, 27 Aug 2025 22:43:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756334573; cv=none; b=qCCGYmZz1GBD224sGdCA/+r43458qzbHSbApP+rApixkOiy2v4AREbuVKaPYugLRayhXqpgDWshIpqH7rmpIkDTOzu1Xg9B7PgcHC+UaN0FttS6J9kJljPPrKBt2i/DkAjXjW7AF3w5+JZXnZmj/lDfxIm0nlQzHVCKqCGDZlvA=
+	t=1756334613; cv=none; b=hrXxvq/C9fbxFznw8A71fdAga1lVrCs9ZLcaXQ6p3hwgCehlFP1M9mtrs7WDzkjliQh+T1rHYjmpC+hk56CVsWH6TRTLCwbVwS84XNemD8JoybnzD7p/Tr439iblrr4bkRb+/zHrgGTfxkrcQz/3TIkYYuzdzG84MzuJUaF8piU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756334573; c=relaxed/simple;
-	bh=OMCNLZOTWG6XfuKaKvFt/YwKhh5uV/0qN9XEsfTOj2g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AB5e9EXeZuRJDB8LhI+ALhBDOXkC1oOQQ1ZcuN+zHuh11L7JzQPixKzbVb9AVpxYe3160DQNG7w3U3QauUaDWw7gL5rMilOoR4XVz1X/pnt4bH/6iIMi7JLPfIK9shXZB+rSm3Gd9dR2Rw3VwXgGWzSySTwPrLHaXxMsRQKuBQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FL6dW/qd; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e96fbf400c0so460684276.0;
-        Wed, 27 Aug 2025 15:42:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756334570; x=1756939370; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=H0yzbcHFcSfCY3poqfoWp6u7+jrAbwU2bPd9RYtjzMc=;
-        b=FL6dW/qdOesmNshW1VxzAvshXmAfMetFdpFC9MNjiuZ89l8ULe+sS1peUg/+KoZmeZ
-         7iad6bzX2+ofySDPMelYjVBVL1V2ZGGfMZuFpzaPP/14Sn9nKC5XWrasch3/S32hIAw5
-         03sBGXwBp1n/0x07w/8ptyfTOPavIlzr89A1foVe/95SZ9u0Lk36SLXGj+Aq33D3WPjk
-         PdKvAhhStnlzJRm0s/KEK925e4PttDOK2GCKftVYrnnBMH4mhzkx62lrrXtQDwCR7Xpn
-         zGG23fTxCY1nbMw3Pm5t29THH7L9vNHrhF0njh1eL9pekIESVEeEl3aIY+icalU9WBWt
-         +0Lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756334570; x=1756939370;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H0yzbcHFcSfCY3poqfoWp6u7+jrAbwU2bPd9RYtjzMc=;
-        b=h1l1EtPJA+7RCZDF91+iI8JSdVZnhu5Ch79AlerWVdYCcRxxOsPUquvfs5TImG96wI
-         tmamtYpZ2yZFMzrrYt1/e1UPH/Ee1MkD+I1jVWZxpgA8TnMqkfR12dascL3QevowrE02
-         pNzivrfyqRUKCVOKsfuXv4kmdSPrHx6hKoqQEEU8x0aOLMjDnUTaIydNbahfOwOf/d3J
-         Si5ysNpaWW5kcP99jlacj4SukhQxBXbJvCUodmBhe0Ayhs7bxcb4ZUIEDYrlMGH557Zk
-         9sVrSjEnVK2CgCVZTmGxUYRGyyN4BtnJHC9+tS8Okovg9xk8hfA9XEvz3KmpUF7wqI7z
-         JiCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVYJ25Ic3Dds8OKyb4GRjKucogWEUw57mu3bO6ByuUAdyZnrr2W4r1U8N5xjSuMMCpHAvzN621c5lx8gmY0@vger.kernel.org, AJvYcCXPcXRXqUl2w/u+u+GhhgdMTM9zpGxKRQSBejYydPcEQCPJvPFQ499AjF/kSChi4gCCI/hVDb6SAGNHmTk=@vger.kernel.org, AJvYcCXc5yKtREkgJYjAm0nInIYb2C61S0G03DuKc5axqEFliTV3h4RJjGjK05jstCDLbHdMMXO9zultrshx@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcLdzJ3ZXmNj+9LB0uh6GxuYWhCpk7co48wmj9tIkQXQbMY2Tj
-	dX9X0JZsKTSND1IXIdY8pwkCOe1A3MLgH7q1TNZiD+OvvmDJA6CGc+fM
-X-Gm-Gg: ASbGnctWpbDRIl6Ikrrv0Xxo4kJHrCYUZqcf3AEE88L9p8NfTyup8KMJrdqnjcbiXvm
-	ocinePv+XY6Flm4bbMe0sg6Eh7TH/sH3NWaoZLL7BTiGpwvUoou78tF5toOK68hz55BZ2KJqeel
-	VYf9nGjx1pG0iG0SarchJ8OPOWgkjTOSGTvHck+fnRzoaYk2xOJK0CEX97z/Au1K35QQPBIG9aJ
-	fvxHoPYPM+J/LYipCAjk+upb4JU9TNGhTa60p7T8xF89UFRXjamCvPWjPAFT/k+n24F2tYgTM29
-	82oRoo/6NBgFhIDWlPLD9uPPgsXjSX/v9M8mwKcphbg8mTh4PVHKPwozd8tJqyBy6XyiUXI2WN1
-	bP+5cheklP0a+gy9LRg==
-X-Google-Smtp-Source: AGHT+IHqnfsOZvFsyKVagTm6yyvx16k+MRwlYKlP1gZJRca9O0R6SOizBJ3SLusgKBSDKjFy+FtGeQ==
-X-Received: by 2002:a05:6902:4203:b0:e96:dcb9:d4d5 with SMTP id 3f1490d57ef6-e96e4793683mr6975836276.25.1756334569859;
-        Wed, 27 Aug 2025 15:42:49 -0700 (PDT)
-Received: from raspberrypi ([2600:1700:90:4c80::d])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e96e0567840sm1707837276.4.2025.08.27.15.42.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 15:42:49 -0700 (PDT)
-Date: Wed, 27 Aug 2025 17:42:47 -0500
-From: Grant Peltier <grantpeltier93@gmail.com>
-To: linux@roeck-us.net
-Cc: grant.peltier.jg@renesas.com, robh@kernel.org, conor+dt@kernel.org,
-	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] docs: hwmon: add RAA228244 and RAA228246 info to
- isl68137 documentation
-Message-ID: <ddeaf4d2fd1f9c85302ee9b5bf16cfaecf9b89ad.1756331945.git.grantpeltier93@gmail.com>
-References: <cover.1756331945.git.grantpeltier93@gmail.com>
+	s=arc-20240116; t=1756334613; c=relaxed/simple;
+	bh=M5wBJ5H/Lnxt0nRISLvUE9r5Wrj+wr3mKLmfL7JYRsw=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=iYqEIYYI8PYfuShaO5VzZB8ZNcnuffdHJG/iK1l0t/LbcvQgkyxVlOKRnyJbr2jO7nWzcX96Xlp58I0We6TvJmmk9JVFXdTnJFaRgiKxLgzl6TUAmM9F+tCH2ygE6bZlK0jc7ybYFmRLtlP6eScbHN6Gm03H9T0DpKn8X6iiX3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=MREP9Mkt; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 57RMh0x81916010
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 27 Aug 2025 15:43:01 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 57RMh0x81916010
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025082201; t=1756334582;
+	bh=GlD3nUD4hvTwMTAZekHH9XvHUFOJHjy73HK/6D0khgk=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=MREP9MktjbZSfaJ2jbw6MizbnXzyx0wEHKk7LXZuQKT6t4asZDmO/RizqmXZtqDBa
+	 QvMoAI1/em3pzOzRchmEu9OF3+eQHRz3v/mtUr3yjYQ4919wzBC1/lJLLKAVBq1wGe
+	 DO+b56aJeH54/G7a/AaSp7lpR/uj3JJg/nxxxRC1AU75AkjVhpeQd+CKi2q03sjFK1
+	 HZiBUmFQTVIosZTP2y1+ZlH4oPyRRTrlPCno+HmYMpTLiJT1ugtxWdWhqKxN53H1Eh
+	 w2aNTL9CQksujqdIXXXoFgF2vrthxelUBu+leY9CZ5CjY0F9uDa3nJ7U676N5ZXudR
+	 +wbMZf2Rujlnw==
+Message-ID: <77076b24-c503-40e8-9459-ede808074f0f@zytor.com>
+Date: Wed, 27 Aug 2025 15:43:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1756331945.git.grantpeltier93@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 06/20] KVM: VMX: Set FRED MSR intercepts
+From: Xin Li <xin@zytor.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        linux-doc@vger.kernel.org, pbonzini@redhat.com, corbet@lwn.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        luto@kernel.org, peterz@infradead.org, andrew.cooper3@citrix.com,
+        chao.gao@intel.com, hch@infradead.org
+References: <20250821223630.984383-1-xin@zytor.com>
+ <20250821223630.984383-7-xin@zytor.com>
+ <2dd8c323-7654-4a28-86f1-d743b70d10b1@zytor.com>
+ <aK340-6yIE_qujUm@google.com>
+ <c45a7c91-e393-4f71-8b22-aef6486aaa9e@zytor.com>
+ <aK4yXT9y5YHeEWkb@google.com>
+ <5b1c5f80-bbe1-4294-8ede-5e097e8feda1@zytor.com>
+Content-Language: en-US
+Autocrypt: addr=xin@zytor.com; keydata=
+ xsDNBGUPz1cBDACS/9yOJGojBFPxFt0OfTWuMl0uSgpwk37uRrFPTTLw4BaxhlFL0bjs6q+0
+ 2OfG34R+a0ZCuj5c9vggUMoOLdDyA7yPVAJU0OX6lqpg6z/kyQg3t4jvajG6aCgwSDx5Kzg5
+ Rj3AXl8k2wb0jdqRB4RvaOPFiHNGgXCs5Pkux/qr0laeFIpzMKMootGa4kfURgPhRzUaM1vy
+ bsMsL8vpJtGUmitrSqe5dVNBH00whLtPFM7IbzKURPUOkRRiusFAsw0a1ztCgoFczq6VfAVu
+ raTye0L/VXwZd+aGi401V2tLsAHxxckRi9p3mc0jExPc60joK+aZPy6amwSCy5kAJ/AboYtY
+ VmKIGKx1yx8POy6m+1lZ8C0q9b8eJ8kWPAR78PgT37FQWKYS1uAroG2wLdK7FiIEpPhCD+zH
+ wlslo2ETbdKjrLIPNehQCOWrT32k8vFNEMLP5G/mmjfNj5sEf3IOKgMTMVl9AFjsINLHcxEQ
+ 6T8nGbX/n3msP6A36FDfdSEAEQEAAc0WWGluIExpIDx4aW5Aenl0b3IuY29tPsLBDQQTAQgA
+ NxYhBIUq/WFSDTiOvUIqv2u9DlcdrjdRBQJlD89XBQkFo5qAAhsDBAsJCAcFFQgJCgsFFgID
+ AQAACgkQa70OVx2uN1HUpgv/cM2fsFCQodLArMTX5nt9yqAWgA5t1srri6EgS8W3F+3Kitge
+ tYTBKu6j5BXuXaX3vyfCm+zajDJN77JHuYnpcKKr13VcZi1Swv6Jx1u0II8DOmoDYLb1Q2ZW
+ v83W55fOWJ2g72x/UjVJBQ0sVjAngazU3ckc0TeNQlkcpSVGa/qBIHLfZraWtdrNAQT4A1fa
+ sWGuJrChBFhtKbYXbUCu9AoYmmbQnsx2EWoJy3h7OjtfFapJbPZql+no5AJ3Mk9eE5oWyLH+
+ QWqtOeJM7kKvn/dBudokFSNhDUw06e7EoVPSJyUIMbYtUO7g2+Atu44G/EPP0yV0J4lRO6EA
+ wYRXff7+I1jIWEHpj5EFVYO6SmBg7zF2illHEW31JAPtdDLDHYcZDfS41caEKOQIPsdzQkaQ
+ oW2hchcjcMPAfyhhRzUpVHLPxLCetP8vrVhTvnaZUo0xaVYb3+wjP+D5j/3+hwblu2agPsaE
+ vgVbZ8Fx3TUxUPCAdr/p73DGg57oHjgezsDNBGUPz1gBDAD4Mg7hMFRQqlzotcNSxatlAQNL
+ MadLfUTFz8wUUa21LPLrHBkUwm8RujehJrzcVbPYwPXIO0uyL/F///CogMNx7Iwo6by43KOy
+ g89wVFhyy237EY76j1lVfLzcMYmjBoTH95fJC/lVb5Whxil6KjSN/R/y3jfG1dPXfwAuZ/4N
+ cMoOslWkfZKJeEut5aZTRepKKF54T5r49H9F7OFLyxrC/uI9UDttWqMxcWyCkHh0v1Di8176
+ jjYRNTrGEfYfGxSp+3jYL3PoNceIMkqM9haXjjGl0W1B4BidK1LVYBNov0rTEzyr0a1riUrp
+ Qk+6z/LHxCM9lFFXnqH7KWeToTOPQebD2B/Ah5CZlft41i8L6LOF/LCuDBuYlu/fI2nuCc8d
+ m4wwtkou1Y/kIwbEsE/6RQwRXUZhzO6llfoN96Fczr/RwvPIK5SVMixqWq4QGFAyK0m/1ap4
+ bhIRrdCLVQcgU4glo17vqfEaRcTW5SgX+pGs4KIPPBE5J/ABD6pBnUUAEQEAAcLA/AQYAQgA
+ JhYhBIUq/WFSDTiOvUIqv2u9DlcdrjdRBQJlD89ZBQkFo5qAAhsMAAoJEGu9DlcdrjdR4C0L
+ /RcjolEjoZW8VsyxWtXazQPnaRvzZ4vhmGOsCPr2BPtMlSwDzTlri8BBG1/3t/DNK4JLuwEj
+ OAIE3fkkm+UG4Kjud6aNeraDI52DRVCSx6xff3bjmJsJJMb12mWglN6LjdF6K+PE+OTJUh2F
+ dOhslN5C2kgl0dvUuevwMgQF3IljLmi/6APKYJHjkJpu1E6luZec/lRbetHuNFtbh3xgFIJx
+ 2RpgVDP4xB3f8r0I+y6ua+p7fgOjDLyoFjubRGed0Be45JJQEn7A3CSb6Xu7NYobnxfkwAGZ
+ Q81a2XtvNS7Aj6NWVoOQB5KbM4yosO5+Me1V1SkX2jlnn26JPEvbV3KRFcwV5RnDxm4OQTSk
+ PYbAkjBbm+tuJ/Sm+5Yp5T/BnKz21FoCS8uvTiziHj2H7Cuekn6F8EYhegONm+RVg3vikOpn
+ gao85i4HwQTK9/D1wgJIQkdwWXVMZ6q/OALaBp82vQ2U9sjTyFXgDjglgh00VRAHP7u1Rcu4
+ l75w1xInsg==
+In-Reply-To: <5b1c5f80-bbe1-4294-8ede-5e097e8feda1@zytor.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The Renesas RAA228244 and RAA228246 are recently released digital
-multiphase controllers.
+On 8/27/2025 3:24 PM, Xin Li wrote:
+> On 8/26/2025 3:17 PM, Sean Christopherson wrote:
+>>> +        if (!kvm_cpu_cap_has(X86_FEATURE_SHSTK))
+>>> +            wrmsrns(MSR_IA32_FRED_SSP0, vmx->msr_guest_fred_ssp0);
+>> FWIW, if we can't get an SDM change, don't bother with RDMSR/WRMSRNS, just
+>> configure KVM to intercept accesses.  Then in kvm_set_msr_common(), pivot on
+>> X86_FEATURE_SHSTK, e.g.
+> 
+> 
+> Intercepting is a solid approach: it ensures the guest value is fully
+> virtual and does not affect the hardware FRED SSP0 MSR.  Of course the code
+> is also simplified.
+> 
+> 
+>>
+>>     case MSR_IA32_U_CET:
+>>     case MSR_IA32_PL0_SSP ... MSR_IA32_PL3_SSP:
+>>         if (!kvm_cpu_cap_has(X86_FEATURE_SHSTK)) {
+>>             WARN_ON_ONCE(msr != MSR_IA32_FRED_SSP0);
+>>             vcpu->arch.fred_rsp0_fallback = data;
 
-Signed-off-by: Grant Peltier <grantpeltier93@gmail.com>
----
- Documentation/hwmon/isl68137.rst | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+Putting fred_rsp0_fallback in struct kvm_vcpu_arch reminds me one thing:
 
-diff --git a/Documentation/hwmon/isl68137.rst b/Documentation/hwmon/isl68137.rst
-index 0e71b22047f8..5bc029c98383 100644
---- a/Documentation/hwmon/isl68137.rst
-+++ b/Documentation/hwmon/isl68137.rst
-@@ -374,6 +374,26 @@ Supported chips:
- 
-       Publicly available (after August 2020 launch) at the Renesas website
- 
-+  * Renesas RAA228244
-+
-+    Prefix: 'raa228244'
-+
-+    Addresses scanned: -
-+
-+    Datasheet:
-+
-+      Provided by Renesas upon request and NDA
-+
-+  * Renesas RAA228246
-+
-+    Prefix: 'raa228246'
-+
-+    Addresses scanned: -
-+
-+    Datasheet:
-+
-+      Provided by Renesas upon request and NDA
-+
-   * Renesas RAA229001
- 
-     Prefix: 'raa229001'
--- 
-2.39.5
+We know AMD will do FRED and follow the FRED spec for bare metal, but
+regarding virtualization of FRED, I have no idea how it will be done on
+AMD, so I keep the KVM FRED code in VMX files, e.g., msr_guest_fred_rsp0 is
+defined in struct vcpu_vmx, and saved/restored in vmx.c.
 
+It is a future task to make common KVM FRED code for Intel and AMD.
 
