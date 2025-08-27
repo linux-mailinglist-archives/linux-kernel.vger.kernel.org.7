@@ -1,315 +1,222 @@
-Return-Path: <linux-kernel+bounces-788493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 329F9B38549
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:45:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB9AFB3854D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:45:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 128867B6B68
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:43:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 646C2462815
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 14:45:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9BD8216E32;
-	Wed, 27 Aug 2025 14:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5FF221767D;
+	Wed, 27 Aug 2025 14:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ldqdESlg";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="zX2RfTd/"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TPWSINux"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A4320459A;
-	Wed, 27 Aug 2025 14:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756305850; cv=fail; b=CvoDHzBbY6Xu8MQ2V6fTp9CrVuSgf4o/wo46nltk3W78N/jl9weNec2j1Hrz3LjveDsivEm0aOwjvYeVhAwWXpBlBewetSIE27OEfsVLKl+veDptJNWwgqIwVj2AOROFXRofl/Pyo8vGeqXhPGsG/sxA2E2MSIlnJQLb6RjlbVg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756305850; c=relaxed/simple;
-	bh=KCE7lmPrAd9MgJZZsbKYy0+DL9UC54fsWnh+GQCm+Dg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Yl7Qctu1pzKz8Qt34ph6aCutVJn8g5T32N5yKdMLtNKwxhu3dY4nGpjCxJ32v5gH53rHm7Smi2CjI/QEEOfRJlCgr9fVIapXBEsO79BX85CF+0Aa79NRp3HnJmE3h39lFHTZV3jkFEnvrCHYD8GehIVYiKwQejhsITN1UqSoR8I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ldqdESlg; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=zX2RfTd/; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57R7u7Ev004536;
-	Wed, 27 Aug 2025 14:44:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=hQGCpTiMi/nSasq3s1KU6qQRck9HTf6U+Se7mJ/qB+k=; b=
-	ldqdESlg2PeBWXHy5z32qaTcx1XqGozDLnh1cEiwOg70D17b0DyE/4HbpKw6jlXQ
-	xfASMkFspWz/ViLGo7neIoabllWRNeBoc1AeRx3yXC+ddY5CcQvZVKadQ7bt1NuV
-	1TCpO/QhtDIh6WSIRg+NUF8Uttr9TjdkN+rYq3mG2HevZLePBjCXK+RTa/EvZlTU
-	yh5UDKJVUVTXRHJlTs4SD4ktFovojeA4c0MTXJGd3S2JCo5Drsl05X/4HRqJWhn0
-	boTV8bBvr4eutBx0p6h1d/CKr0CshxF88NfKdM11oKAxTLxWDRjSNAevc/gjbumS
-	W0N0vBbQRLCBHibtJu9ncg==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48q48eppe2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 27 Aug 2025 14:44:00 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57RD6LVl018931;
-	Wed, 27 Aug 2025 14:43:59 GMT
-Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1nam02on2084.outbound.protection.outlook.com [40.107.96.84])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48q43attex-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 27 Aug 2025 14:43:59 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=io2z3nm30HwsIwn49gd/pTCFwXFaa5tI/2wLSugRcnNs/ZqFxRWoCXG6ugBl39nGjmegDpDxha4xoVyQi+Oj7euc4ggriMadRKoSI/DA4bLSgMPyu+3wtwQzNTl3cEPeIG9zE53qiyPH1U0JTeR+TY6lhqa9IOn69h3sMdGYfM39osQqAEyiXWraB0rzRTf77stAs8g/F0ZNPYnB12jHxzcB15APfFUkl09aoUm48KeXJeKwmnjhRQZY7kSAFwJBSAFpd/qhb7nhIcFEytqR7moDwQCEbU5FXFK6CNgASF7iYeGyq+35+NVUL0sAPJjnV+AjpiXDhhohXVDrtyP/tg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hQGCpTiMi/nSasq3s1KU6qQRck9HTf6U+Se7mJ/qB+k=;
- b=yrFzNQhiq5pOK5N7cUl91DJRMF56k1un/hBoG2CGwBkMek1/IhOJfD+H9xKl6qCC8DnWLWXy93NokUV/pRqpoKtNG6Ge681S9k396/6XX9+lp8pX9E0DmyYChs9Yv9xeqHhxDCnJLQOMJvNUiXFeXjganLPB+yvgT2aJoCRet9Rb6NEtccJUFR9x1REUxbIbkLuC1P5Z1n2tN33wdbT/qIXNjX618FcicEYAidTanRIDD24ooSpbAQtdEStaibzXz5QPCnc8rMUfniTVqSg3CBPjZ98h0BfEqRRfiD10R6VeTBWJ1mr4SBKcPU5AvON1plztJ2seg8BkdOIAqBNqNg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF8B21767A
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 14:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756305914; cv=none; b=b0PY48QsAxL8ySDQOTUeI5MN703Aj73DRuAsP+A5mIw2PEmEKZ9dn9X0bGipHuyIji00CON5Ze9qeGGTnxmve17wx/0j6wEQkGKIeVoUjn6tS/2iSHr2d6iL40rq4gJCfBXze9GI9PCTwkWogebkA1J6VD34Hvv/4bb3bmSmSIw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756305914; c=relaxed/simple;
+	bh=Hv6YZaZ21feASXN0Y7K7TnaduLNMdkV8PQ1IS9csDvc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cdRrUDvml3fOl/RBcgGz0Qob8R3yeGqsCoWpID4DLw64qlyuP9FO5b4B+DFMlE3ZFi1OUwO+5Fi6LMBNFUibmZ8v7Jl1Flc7Zf/6vwdblS2toRcV3nYrA787NA5pOFYWoHCCXdTJtg6dWJiATLbouVSp0csNQo2dkdlwk+KOd14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TPWSINux; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-55f348d46e3so158281e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 07:45:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hQGCpTiMi/nSasq3s1KU6qQRck9HTf6U+Se7mJ/qB+k=;
- b=zX2RfTd//e9seXZy88OLCggWW4Y9D+OCsUJRCEUsOSrsSP99U/xd3krFTiJ+LmEfOe7AiuriXcQinv+tkb5uCJFS0UviKHdDWzValYUyXjLIlCaFPOBMgtWebjli7vs01YA3O7iAiooAQ6e1X7lCtqJGehM2n6StJEvEy7mksvk=
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
- by IA1PR10MB6147.namprd10.prod.outlook.com (2603:10b6:208:3a9::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Wed, 27 Aug
- 2025 14:43:56 +0000
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::743a:3154:40da:cf90]) by BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::743a:3154:40da:cf90%3]) with mapi id 15.20.9052.019; Wed, 27 Aug 2025
- 14:43:56 +0000
-Message-ID: <19c94d41-bf0f-47b2-8bbc-36911f5de656@oracle.com>
-Date: Wed, 27 Aug 2025 10:43:53 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] sunrpc: add a Kconfig option to redirect
- dfprintk() output to trace buffer
-To: Jeff Layton <jlayton@kernel.org>, Trond Myklebust <trondmy@kernel.org>,
-        Anna Schumaker <anna@kernel.org>, NeilBrown <neil@brown.name>,
-        Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>,
-        Tom Talpey <tom@talpey.com>, "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-References: <20250822-nfs-testing-v2-0-5f6034b16e46@kernel.org>
- <20250822-nfs-testing-v2-2-5f6034b16e46@kernel.org>
-Content-Language: en-US
-From: Chuck Lever <chuck.lever@oracle.com>
-In-Reply-To: <20250822-nfs-testing-v2-2-5f6034b16e46@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: CH0PR03CA0328.namprd03.prod.outlook.com
- (2603:10b6:610:118::14) To BN0PR10MB5128.namprd10.prod.outlook.com
- (2603:10b6:408:117::24)
+        d=gmail.com; s=20230601; t=1756305910; x=1756910710; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=t5LAEH9vHi7cDSVxQmP6q8/GqdocT71rXV0Hwx9XnXM=;
+        b=TPWSINuxgH4YTn/aNgPy6hjNCwC43BHZJYsHFd/PI16DomG6C65EU8Id55K3Vh2i5r
+         rSCUXLcg+Yh0l2uT6oCcNLa7a41sElwI1529OxJ7GVaDWn2sHVz3u37AnL1ILV44imUW
+         qF1VGask8nJN1m1LchnHwPSwEMBJUe8LeC+oZOgpotmA4AjPuuYlwLxa8FZ/WqpCLY4K
+         pxHFz65l4lyiz7ThPy/dzNyZKhFmG9kXuwv2p3lmXBNXGRlPf7BdkNkYTEBAoRT37i72
+         mdBtWaQIaVGqOXvFR3kLbr2uyRm/GekAnnVC7VdkFRMiXq9mjsOC5jD0EZSTMGd9cuEg
+         E24Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756305910; x=1756910710;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=t5LAEH9vHi7cDSVxQmP6q8/GqdocT71rXV0Hwx9XnXM=;
+        b=Uo32YQ4+urQpQIeCDyUnn+5ACuEPIGgef2D56Dr9+T8gB57BiRbuKhZ/8VCzHuik0o
+         sV89aD2x7rxF79YezO9mU44xX0f+gQ6MUBiPb7Sr37jsVUJKTRjhQitl8icHnNLWZiVV
+         JfNVrcQJaGOhLR9VRRU/VSm0+MebxmwMS2Jhf1TDwMxX+j0kIIMQzOTI7juI0MNgI4Un
+         kccfHSk8Ut+UxghIkmjSbjowK1rJUHASGkFQsRtP4xKhk8qjUm9UJUnhG1O0BLsi9Il/
+         heF+Iihtnun5zjxEflbpnFVj1c4vddgswqxxNLimg5+jIdGalg1sAz60avohnWJDLxjH
+         1dHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVzF53cnzM1lLFJJawooVmLbdEGJa7em86hXkHv62ib+9qMAEgCFIeX2R42MfMqFAs+AMuBM4bKV5xFnW4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlCTmt8U7m+USQJfnhdHActIWWx4Zf9S2VPyFxJIJpJN3TOD6R
+	gF1ZwRCs8FRjUlXCYLaoK1HEZNkWn/ZiKdNlRkiox6uZt05FuhomwD/0
+X-Gm-Gg: ASbGnctBv/ig6mHsivoWMOjhh+EQTPl1+rxiPjhVmm+soEHyBhTLaTriLUMNdiY8o9A
+	HlaOW5nHWIgihHa1TtjxE26IB09RC/C/WK4cqC6bSZq7Rj6piek0PBkvjOj4tJzA7uh9ZjqH3aa
+	96c/u6ImMnAfxovL78M5L01K5N47do0RTsxiPD3T14seVtP4LZ0jTJbsM61QlY3bBYilcMQ+Ee4
+	tZh4BIOfhZrs0uj8uelis+OOXwwv/0uzfwJdacDnfa5RV7ZsNcXV5IHWnkw/Npr6spa7Rl8MDlw
+	vXnRD6oIAdvVUdwSmCWTH/h+83tVCmxlErID/JSnhy8SQ7Hu2SZP/IO+Xtumf7FULzUUx3GJscT
+	fK9rUoblcO6E9LLCL7AL5o8g31nPRxTiZGE6vUwI=
+X-Google-Smtp-Source: AGHT+IFlh1NaHlH+2xlwnY7Qi+fAlBWEVAk4XZOx1L6NVmE3uvh7e0HE7DjJr/IlSfm82zsDaf0oCw==
+X-Received: by 2002:a05:6512:e9c:b0:55f:4bf6:eff7 with SMTP id 2adb3069b0e04-55f4bf6f57bmr1227624e87.6.1756305909663;
+        Wed, 27 Aug 2025 07:45:09 -0700 (PDT)
+Received: from [10.214.35.248] ([80.93.240.68])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55f35c20123sm2856350e87.68.2025.08.27.07.45.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Aug 2025 07:45:09 -0700 (PDT)
+Message-ID: <1cd29a46-3c17-42ca-af41-ed0a645b29c3@gmail.com>
+Date: Wed, 27 Aug 2025 16:45:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN0PR10MB5128:EE_|IA1PR10MB6147:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4ec4ba20-c3f6-476a-6160-08dde5782655
-X-LD-Processed: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|376014|7416014|1800799024|366016|7053199007|921020;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?QXFXWU0yQ1puUnB2WjVJV01EVjUzUkhlUDRxZEN4L2xkSFZDMG1uSmtVNUF0?=
- =?utf-8?B?Rks3UWo5U04vWjJ4RUpHRDI2TjUxZXJ1UXlVMFdOamhZMHZvUUUycWhsY2lD?=
- =?utf-8?B?bGk3VDVQSUdLcUtIOXlBQlBqaWh3R2FhL0ZFRExxU2FMb0JKd1pVanlBK3VP?=
- =?utf-8?B?VGZ6a0t0aS8vWE8zU2l1T2dhWGxSZGVBRjR4a1VqMEczSy9ITDZoMGVPWDg2?=
- =?utf-8?B?eXNCVGQ1MzVvRXZPenNma05QSTYrWXMzTUpZL2w5WTZFeFI3STAxT1ppdlBE?=
- =?utf-8?B?RFBiWURRNithMWhIck9NOGlFdm5QYmMzYkcxZ2dFNVFHak9VZ2hBVTJUeU9Z?=
- =?utf-8?B?d3lNM21NMkxFbW1xa3F5M1hCUTJOT3dYcGFYQWJlNFl3ZVlqdFJOL2lrb2s0?=
- =?utf-8?B?c0NlZUlzQXpUemtWWG00VGlKQlh5M3dsM2c4RE1RNjVSZjRUb3FSU3pHNFUz?=
- =?utf-8?B?RFVuQ3l1ZlJKZUNVSDdxbENMNFVMdWhuVFhQWmxDZnNacDNuRkhORTRvMDRp?=
- =?utf-8?B?ekp2NkdMVEJpZkJYbjhkS0UxU1NlNUZLZW16UmdIOUtKT3BDZFlHdURIakJ1?=
- =?utf-8?B?S3dMN3c5aDN6SkRzaGowY3Z6SnhaSUdGZ2RoeWJLZElDdXU1d0p6ZHdpYTNK?=
- =?utf-8?B?ZVlSWjB0ZjIxcHJxZFNVS3dhVG1mejkxQVIrenVoMmhEUTZqcjRtNzNqUUdC?=
- =?utf-8?B?MXJyYWZTMDRNWnR3MW5HS2l1OEtHQTdPeU1yUE4xN2o3UGx2cktBYU5SVDJl?=
- =?utf-8?B?bWNxNFpEcEhNYnJ0WWVMM2FoM3h3ZElYYkUweGxnN2NoMEN6MzRMTGlmVjVI?=
- =?utf-8?B?OHZib08zbEVoUS9OTVVjYnk4QXlwcWF6cXg4b3BKS3FpU2J4REdJUzlMTnZ2?=
- =?utf-8?B?TzJZNnZ6RStvR2xxeVdUdVNWUkh5aldab1JxQVFzMzMrSnZwODgrdnhtTTZx?=
- =?utf-8?B?bDRVVjNuZHlZeVBiT0ptdFcyUDFHUitkcHhjdEN3TWNVdE1UZk1tVVZtOTRL?=
- =?utf-8?B?Rk1UanFxRDFDS3d3TGIvdDBHb28rQVFwU0FnYkhBODI1VHZQUzZYZ3JDYndR?=
- =?utf-8?B?YjVqWXNDWHcveURpclJ4TmduUGVsSFlQdkd6MTg3S0NKS2FPS1k1WE12TzFS?=
- =?utf-8?B?TmRsLzVmdGJuM2ZXUmlLMFlGVzFCcnZNQUxiQTFhbGtOaHFGVXlBN2hWV25w?=
- =?utf-8?B?TEYyNHNCSi9kSVZHTWRZSFBmTmVqb0ZTaGxHUDRQdVkzUkFLMHVxNmxVd2Vk?=
- =?utf-8?B?T0Y3Zk5RenFheUtmV2t3MGxZcisxWWNLZWoweExTQUtyeG4rV0Nid2t2aE94?=
- =?utf-8?B?cHRjekFaUFd3RStkb0trS08xb2ZJVjlxbVJFRUJKNDk3RTdrQ01sY1VwOE1M?=
- =?utf-8?B?UTZ2aDBENUFYSkZ6Zk0veURRU0dUeTBKY2dXZ0JPVHZGSGlJeG5XT0RQc042?=
- =?utf-8?B?dnRhVWQwWWNDM2pZc0NXaUc3RCtUdXRmSlJ5a3ZhVjZnOUdzbG9pTUp2Q1VR?=
- =?utf-8?B?YlJlU0IwUWhPUHBrY3hIelh6dnc5M1dhQWlITXUvT0EvMXhSSnNzZGNTOFdW?=
- =?utf-8?B?Z0ZzbWFNelhDcFFxd3R4R1o0TUlaV2s3ZzJaWDRqS0lqbmYrRThuRTc3c25T?=
- =?utf-8?B?VVlKTGFwYW9MY2Ryc1dQSFFtRHRBemh5T1owbGlxOGJLdFpCakRsSWcwSyta?=
- =?utf-8?B?MlhrcXI3cDhqTU5lbWw5ZVlLY1Y3QklTNDFJVHhZdTc0S2w3SzBJYzdVU01Y?=
- =?utf-8?B?azBVUktCaUg0WVMzSkFCbHFsT1RoSEFramhLSGV0Mjk5aEtNdkVaeW5ELyty?=
- =?utf-8?B?Rng5blVBT3ppMTZRcTBnL3NnNnpxdzBZSVErdjdpSFdVQnQ3ZkNYYk5KMjF0?=
- =?utf-8?B?QmFhYUNTeTBmOWRZOVM2NFJVZ0tyc1JCNjJIL3FsSHJMaDBXTTFZeTlwaDIx?=
- =?utf-8?B?UGpoSmRNYjN1TE1wU2orRExmZmRVTHVqTDF0NUtSc1NjZ1BFZnRBWW5KckRY?=
- =?utf-8?B?UCtwRUtKajhRPT0=?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(7053199007)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?Mm1CWHVGUHdWdXdiSTIrOFlycFo4OGN0TW1pZ1NSTm5NbHVGVE1KRkJGZ0FR?=
- =?utf-8?B?VFhmdGVNbk9sNWpsRU94VitiaFU3Nmp0ZkpTZkJFTTNDQTJsQWdWemhiaDg1?=
- =?utf-8?B?MFJ1SXpvVnY0SW00STNoZEphVGowMGk2anF0Y1NoSmZrelZNY2ZYbHd5SlVq?=
- =?utf-8?B?ZEl5VjFSY1hVNTNxRW43R1czYXpvT1Y2MXhrRThFYXNWTlQzalVqSGQzOGtY?=
- =?utf-8?B?ZzlyOFZMekZrTzR6dEI0a2U2cGpGWkVxRlBUaEQ4VTJYWi92cTViRElGMU4w?=
- =?utf-8?B?ak1WTlNsVEwzc2NjUVA1UDNMRDFnUy9sOUp2emlRRlkwMElKQ0dEYzJHbjAr?=
- =?utf-8?B?bmNqbEFUV3IyeG5OZms0cDk0YUs3blNkSnVBbFd5WmlqL1U3NUgyd09CeUlE?=
- =?utf-8?B?VHFoVjY2T2N2Y2tUaTlUM0NBVGY3VWx1aTE4V2JqNytTRW1GYUZoOGlSVjBu?=
- =?utf-8?B?MVZ5SDlzWkJSeXMwZVppS3FFaXNEaWxXWkh4elJIYVRDemNkZlpsSVE5ZnQr?=
- =?utf-8?B?T0F1RnlLNHkwb0FqVDh6cmQwT2xDaE1iRWpMTlh1Tm9GQmwzcDlnbzYzMDRD?=
- =?utf-8?B?aEpBbTRiamc3cVVqa0hyMlhybzUvVnplVXVnWXZMcU5ubHUwR2hGL1NESkFs?=
- =?utf-8?B?ckdjV01hZk1haVlrYTFTVmxLVTZrdGNyZGROTEhxbFhZL2FEaUR1dFl3QVNR?=
- =?utf-8?B?RGF6MlJTWDZPVERLRzBLSXpVMC9UUmo5QkJLTnBJSUZ2a281aXF0dVhrZ256?=
- =?utf-8?B?T1M3N2lJaE5iMlQyYUZXeW8reHNVR2g4Y1N5K0JORldUMC8xNTZubGNWNGJE?=
- =?utf-8?B?ZURBQWFDU2lwTGUzRGd4UFFpU2llamcwQUg4RlJBV005ekg0c3ZrNDZzSWor?=
- =?utf-8?B?Mi8yVzM1bDdxYVU4aGFJanhMaEVza0krWUZqRHR1dU9pRGZmR2ViVm9aZi80?=
- =?utf-8?B?eFpsTkxRaGwwNWI4RWxMclJJS280ZWs0MFBraEE4SGRCZGpWdVV3eC9rTmxZ?=
- =?utf-8?B?SlpkUEczdDFON3RmdzMvZEt3ZG54dklXQWNKZ1FGaG5Ha0ZtMFkvVmJ6K1pC?=
- =?utf-8?B?UE4rbjVHeGV5azZXZk0xZHc3blZLbGdndHpueFZrYW94VitQczVKaHR2QWRK?=
- =?utf-8?B?djk4WlY2Qmlhc0pzWXpGYzYydUpQQjFhTG1HUUE2c2JERkdLelkyQ3lOZlZU?=
- =?utf-8?B?Kzh2WElkVHBCREN0Y1RERUhGbi9KSXdobHBldEpySG4wSjVqR2R0SGVQakZR?=
- =?utf-8?B?aExLdlU0NDMrSHFKVVFGOXN5NW02ZEYzV2taUGNGam1vcFdiUDgxcm10c0xq?=
- =?utf-8?B?WTJDV3dzdFB0RDZvbUczUGgrZFBnaVF6ZHlNak9zd2Zya2hSL3QvOWMyVDA3?=
- =?utf-8?B?bURVWjJWc2RyZHhMbVZmVXFzMzVZLzh6bEJTZHdpWkxMbnNSbHZlY1NDQzQ4?=
- =?utf-8?B?bDFvQWE2Z1pXV3grWTVvSnozOVQ2MDNkZVRGSVlqUTBGMGtvZVYxUzBYSnMz?=
- =?utf-8?B?Qlg2Z1RibndPZmRlUzhRT1BiMTBxb1NTOVdwYWdQVnVIRHBaM3IrdGUxVFN2?=
- =?utf-8?B?M0NkWk1rYTYvSHIzanNLZHZEY29VYWpRZlYvMWFoWlljRTR5eVlaWjd1WWl4?=
- =?utf-8?B?cHd4QkpqdDd2dkxkSHRqNUs5QUdYZitBRmpnMUlYWW5zQkRiNkh1SVJDVVBK?=
- =?utf-8?B?M2lmTEI4Z2hnZTZ0VVY3ZHc0UlY4bERzd2Y4RGZPanc3bHlseVd2VWN6UGxT?=
- =?utf-8?B?KythN0FDVGwwckdZUDZ5cEpqdzZzRlNyYUZTVEpvalZjMUgxRWNRODg1eENC?=
- =?utf-8?B?NWhDdFpqRG94TnR1eUVtR21SMmlwUmMxeWVwUTk3VEJnV0Fhd1Y2eTM1a3pH?=
- =?utf-8?B?LzhTdVAyS3pxTm0zZGRhQlFzR3BuUnR5bzhQNmhmdXoreEVEY0MzaGNQVE1s?=
- =?utf-8?B?UjBVTit6THV2N0Nqei9yOFNUQm5Wd1ppUDd5NVZMNzZZQUl5cHp5aTdrV25O?=
- =?utf-8?B?RFVRNzhEME9iQWs1Mnh2UjRKWjY4QWJZSXRIaUlYem85OGNZcGdWVXlmaEZS?=
- =?utf-8?B?ZFBBL09PNnJ3YW1rUDhpRzNxMlhZT29KVXNLTjZvRU1NSnNRbUdTazRiVVJU?=
- =?utf-8?Q?UD+KueYN8Nb/ySQGQaQCSp//0?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	CH7J0HjCf4BsDnDENpyNQkkxJMPGQIxikIEy7rjnc//8OyinqWnnTbKBCJ1oghdmE+hi5oT5g+1W2T31BOw8VIDrCo6MYZHh+nEFE9BS8EoIhY3uwl9WyQATCn1CpCXIEzZ0uRSy7Ec/9J3d+fFJuBYK7Sk8maF71WmdltT7V0mb+Mb1LWfYwDw9p0G8VKseUeGjw657PZmzL8t3sxKqwyQWUMCayw4GhZcmrJlkQS5OmDdpKLhhAS70n+nWhw00v1K99MGwcWkwbUNgvmZAWtWOloC2g34HwGkyqkFpE2JD9qpEhAWeAG4b92tS5LeJMSP8PN891xPu1fmGVMyQ/wstOiLlmBGiT8BBscQ3Nr+eY+gBvUceA5ywWS4H1VnngqWpQ3ft0gMFGwa/p9nMi5/fPLhpGK6JHnj1oKVn8l0Obf9ZylGHM9uXZewJBK4n+wx5mwoIglYSL3p6EbxaXZqtx/TEvWKveMo7oNBG/Uu5k/uyCM5kOIav7fmJS5+sWIoBaw7D94QkvT19tPq8tCsD36JCV4SHetgB1dyEG0tDWO9UqX3MWlM2SDwmx2tAw7WRsLltEb0VN+2I5fzZi2cwy/zc5yblhjFG4vzFhOM=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4ec4ba20-c3f6-476a-6160-08dde5782655
-X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 14:43:55.9558
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CRq7iKADvWMd/ZOk5aw74ByNFEilG/j2vVDBOd3npdi7vm8K+sAmV+862gcLKcLU8ruW8T2pC9JAp0LyILI7dw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR10MB6147
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-27_04,2025-08-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 suspectscore=0
- mlxscore=0 phishscore=0 bulkscore=0 malwarescore=0 spamscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2508110000 definitions=main-2508270126
-X-Proofpoint-GUID: J5b2sXmFK3egxQFSR2F0uiQUAap1roh8
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIzMDAxNCBTYWx0ZWRfXwEKq4eo8pBsw
- tznArdbDiq6RBxh8AtLEKQQfAqtafMzdPi7LBZvKD6OyuNwTJrBXpwt15L42dEb1Y8amVXxWSlT
- UbHAjltB4xnL1W5LUeASpoxcbkT7aPMB0YQCerGzPXiDnET3Isl2+pIQTH3SUeJHknPpd1ekjNS
- bDb8gBuQNPSM8Bd89HcFqEZuzFKMxlsEeZ+OXbsTmTfo7Ke5nCHm7S1abKm0zXBbfXSDnga9pC4
- eBj/NIDjdCyTDYU6HPMg7et99xO/511ocsEmTO8XO0TzD9X2QGLEDaBW/R3oduKQjg9fXqDvhA+
- SQ1e+RCHR8uXkUIosyDfgW+T+lERjOJgfUb9ovRZupmEvp3lfMDBxLTo/NoR1vOA1Zq999zP626
- wyovAz9t
-X-Authority-Analysis: v=2.4 cv=FtgF/3rq c=1 sm=1 tr=0 ts=68af19b0 cx=c_pps
- a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8
- a=kGgM0TLV_l6M7YMG-HoA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: J5b2sXmFK3egxQFSR2F0uiQUAap1roh8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next] x86: Prevent KASAN false positive warnings in
+ __show_regs()
+To: Tengda Wu <wutengda@huaweicloud.com>, x86@kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+ Alexander Potapenko <glider@google.com>,
+ Andrey Konovalov <andreyknvl@gmail.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Dmitry Vyukov
+ <dvyukov@google.com>, Ingo Molnar <mingo@redhat.com>,
+ linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+ Josh Poimboeuf <jpoimboe@redhat.com>
+References: <20250818130715.2904264-1-wutengda@huaweicloud.com>
+Content-Language: en-US
+From: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+In-Reply-To: <20250818130715.2904264-1-wutengda@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 8/22/25 9:19 AM, Jeff Layton wrote:
-> We have a lot of old dprintk() call sites that aren't going anywhere
-> anytime soon. At the same time, turning them up is a serious burden on
-> the host due to the console locking overhead.
+
+
+On 8/18/25 3:07 PM, Tengda Wu wrote:
+> When process A accesses process B's `regs` from stack memory through
+> __show_regs(), the stack of process B keeps changing during runtime.
+> This causes false positives like "stack out-of-bounds" [1] or
+> "out-of-bounds" [2] warnings when reading `regs` contents.
 > 
-> Add a new Kconfig option that redirects dfprintk() output to the trace
-> buffer. This is more efficient than logging to the console and allows
-> for proper interleaving of dprintk and static tracepoint events.
+> Add __no_sanitize_address attribute to __show_regs() to suppress these
+> false positives while maintaining the ability to debug register states
+> across processes.
 > 
-> Since using trace_printk() causes scary warnings to pop at boot time,
-> this new option defaults to "n".
+> [1] https://lore.kernel.org/all/000000000000cb8e3a05c4ed84bb@google.com/
+> [2] A similar KASAN report:
+> [332706.552324] BUG: KASAN: out-of-bounds in __show_regs+0x4b/0x340
+> [332706.552433] Read of size 8 at addr ffff88d24999fb20 by task sysrq_t_test.sh/3977032
+> [332706.552562]
+> [332706.552652] CPU: 36 PID: 3977032 Comm: sysrq_t_test.sh Kdump: loaded Not tainted 6.6.0+ #20
+> [332706.552783] Hardware name: Huawei RH2288H V3/BC11HGSA0, BIOS 3.35 10/20/2016
+> [332706.552906] Call Trace:
+> [332706.552998]  <TASK>
+> [332706.553089]  dump_stack_lvl+0x32/0x50
+> [332706.553193]  print_address_description.constprop.0+0x6b/0x3d0
+> [332706.553303]  print_report+0xbe/0x280
+> [332706.553409]  ? __virt_addr_valid+0xed/0x160
+> [332706.553512]  ? __show_regs+0x4b/0x340
+> [332706.553612]  kasan_report+0xa8/0xe0
+> [332706.553716]  ? __show_regs+0x4b/0x340
+> [332706.553816]  ? asm_exc_page_fault+0x22/0x30
+> [332706.553919]  __show_regs+0x4b/0x340
+> [332706.554021]  ? asm_exc_page_fault+0x22/0x30
+> [332706.554123]  show_trace_log_lvl+0x274/0x3b0
+> [332706.554229]  ? load_elf_binary+0xf6e/0x1610
+> [332706.554330]  ? rep_stos_alternative+0x40/0x80
+> [332706.554439]  sched_show_task+0x211/0x290
+> [332706.554544]  ? __pfx_sched_show_task+0x10/0x10
+> [332706.554648]  ? _find_next_bit+0x6/0xc0
+> [332706.554749]  ? _find_next_bit+0x37/0xc0
+> [332706.554852]  show_state_filter+0x72/0x130
+> [332706.554956]  sysrq_handle_showstate+0x7/0x10
+> [332706.555062]  __handle_sysrq+0x146/0x2d0
+> [332706.555165]  write_sysrq_trigger+0x2f/0x50
+> [332706.555270]  proc_reg_write+0xdd/0x140
+> [332706.555372]  vfs_write+0x1ff/0x5f0
+> [332706.555474]  ? __pfx_vfs_write+0x10/0x10
+> [332706.555576]  ? __pfx___handle_mm_fault+0x10/0x10
+> [332706.555682]  ? __fget_light+0x99/0xf0
+> [332706.555785]  ksys_write+0xb8/0x150
+> [332706.555887]  ? __pfx_ksys_write+0x10/0x10
+> [332706.555989]  ? ktime_get_coarse_real_ts64+0x4e/0x70
+> [332706.556094]  do_syscall_64+0x55/0x100
+> [332706.556196]  entry_SYSCALL_64_after_hwframe+0x78/0xe2
 > 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> Fixes: 3b3fa11bc700 ("x86/dumpstack: Print any pt_regs found on the stack")
+> Signed-off-by: Tengda Wu <wutengda@huaweicloud.com>
 > ---
->  include/linux/sunrpc/debug.h | 10 ++++++++--
->  net/sunrpc/Kconfig           | 14 ++++++++++++++
->  2 files changed, 22 insertions(+), 2 deletions(-)
+>  arch/x86/include/asm/kdebug.h | 2 +-
+>  arch/x86/kernel/process_32.c  | 1 +
+>  arch/x86/kernel/process_64.c  | 1 +
+>  3 files changed, 3 insertions(+), 1 deletion(-)
 > 
-> diff --git a/include/linux/sunrpc/debug.h b/include/linux/sunrpc/debug.h
-> index 99a6fa4a1d6af0b275546a53957f07c9a509f2ac..891f6173c951a6644018237017c845d81b42aa76 100644
-> --- a/include/linux/sunrpc/debug.h
-> +++ b/include/linux/sunrpc/debug.h
-> @@ -30,17 +30,23 @@ extern unsigned int		nlm_debug;
->  #if IS_ENABLED(CONFIG_SUNRPC_DEBUG)
->  # define ifdebug(fac)		if (unlikely(rpc_debug & RPCDBG_##fac))
+> diff --git a/arch/x86/include/asm/kdebug.h b/arch/x86/include/asm/kdebug.h
+> index d1514e70477b..2e0570d75bbc 100644
+> --- a/arch/x86/include/asm/kdebug.h
+> +++ b/arch/x86/include/asm/kdebug.h
+> @@ -36,7 +36,7 @@ extern void die(const char *, struct pt_regs *,long);
+>  void die_addr(const char *str, struct pt_regs *regs, long err, long gp_addr);
+>  extern int __must_check __die(const char *, struct pt_regs *, long);
+>  extern void show_stack_regs(struct pt_regs *regs);
+> -extern void __show_regs(struct pt_regs *regs, enum show_regs_mode,
+> +extern void __no_sanitize_address __show_regs(struct pt_regs *regs, enum show_regs_mode,
+>  			const char *log_lvl);
+>  extern void show_iret_regs(struct pt_regs *regs, const char *log_lvl);
+>  extern unsigned long oops_begin(void);
+> diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
+> index 3ef15c2f152f..1b7ed4dee18b 100644
+> --- a/arch/x86/kernel/process_32.c
+> +++ b/arch/x86/kernel/process_32.c
+> @@ -56,6 +56,7 @@
 >  
-> +# if IS_ENABLED(CONFIG_SUNRPC_DEBUG_TRACE)
-> +#  define __sunrpc_printk(fmt, ...)	trace_printk(fmt, ##__VA_ARGS__)
-> +# else
-> +#  define __sunrpc_printk(fmt, ...)	printk(KERN_DEFAULT fmt, ##__VA_ARGS__)
-> +# endif
-> +
->  # define dfprintk(fac, fmt, ...)					\
->  do {									\
->  	ifdebug(fac)							\
-> -		printk(KERN_DEFAULT fmt, ##__VA_ARGS__);				\
-> +		__sunrpc_printk(fmt, ##__VA_ARGS__);			\
->  } while (0)
+>  #include "process.h"
 >  
->  # define dfprintk_rcu(fac, fmt, ...)					\
->  do {									\
->  	ifdebug(fac) {							\
->  		rcu_read_lock();					\
-> -		printk(KERN_DEFAULT fmt, ##__VA_ARGS__);				\
-> +		__sunrpc_printk(fmt, ##__VA_ARGS__);			\
->  		rcu_read_unlock();					\
->  	}								\
->  } while (0)
-> diff --git a/net/sunrpc/Kconfig b/net/sunrpc/Kconfig
-> index 2d8b67dac7b5b58a8a86c3022dd573746fb22547..a570e7adf270fb8976f751266bbffe39ef696c6a 100644
-> --- a/net/sunrpc/Kconfig
-> +++ b/net/sunrpc/Kconfig
-> @@ -101,6 +101,20 @@ config SUNRPC_DEBUG
+> +__no_sanitize_address
+>  void __show_regs(struct pt_regs *regs, enum show_regs_mode mode,
+>  		 const char *log_lvl)
+>  {
+> diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
+> index 52a5c03c353c..921c96154ce3 100644
+> --- a/arch/x86/kernel/process_64.c
+> +++ b/arch/x86/kernel/process_64.c
+> @@ -66,6 +66,7 @@
+>  #include "process.h"
 >  
->  	  If unsure, say Y.
->  
-> +config SUNRPC_DEBUG_TRACE
-> +	bool "RPC: Send dfprintk() output to the trace buffer"
-> +	depends on SUNRPC_DEBUG && TRACING
-> +	default n
-> +	help
-> +          dprintk() output can be voluminous, which can overwhelm the
-> +          kernel's logging facility as it must be sent to the console.
-> +          This option causes dprintk() output to go to the trace buffer
-> +          instead of the kernel log.
-> +
-> +          This will cause warnings about trace_printk() being used to be
-> +          logged at boot time, so say N unless you are debugging a problem
-> +          with sunrpc-based clients or services.
-> +
->  config SUNRPC_XPRT_RDMA
->  	tristate "RPC-over-RDMA transport"
->  	depends on SUNRPC && INFINIBAND && INFINIBAND_ADDR_TRANS
-> 
-
-Nice and surgical. But I'm on the fence about whether this is a
-good long-term strategy. No real objections, though.
-
-Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
+>  /* Prints also some state that isn't saved in the pt_regs */
+> +__no_sanitize_address
+>  void __show_regs(struct pt_regs *regs, enum show_regs_mode mode,
+>  		 const char *log_lvl)
+>  {
 
 
--- 
-Chuck Lever
+__no_sanitize_address affects only __show_regs() function.
+But the `regs` are passed down in show_iret_regs()->show_ip()->show_opcodes()
+and all these also accesses `regs`
+
+I see several options here:
+
+1. Use kasan_disable_current()/kasan_enable_current() to wrap code accessing `regs`.
+And maybe something like:
+         if (!on_current_stack(regs))
+                 kasan_disable_current();
+
+so we skip kasan reports only if `regs` belong to other task.
+
+2. Sprinkle over __no_sanitize_address all functions accessing `regs`.
+But this disable all memory access checks all the time in these functions.
+
+3. Use READ_ONCE_NOCHECK() to read regs->
+
+4. Introduce memcpy_no_sanitize_address(), and use it to copy snapshot of `regs`
+somewhere (on the stack of current task ?). But pt_regs is 168 bytes, I'm not sure if this
+is acceptable stack usage increment.
 
