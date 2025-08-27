@@ -1,178 +1,143 @@
-Return-Path: <linux-kernel+bounces-788902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E8D2B38C95
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:07:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A7F90B38C6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:06:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D0645E1CD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:06:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6B703BDD65
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:05:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A103148C3;
-	Wed, 27 Aug 2025 22:04:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5949631077A;
+	Wed, 27 Aug 2025 22:04:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WBALU0bE"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d3ar6SK6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205F7310627
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 22:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D1030F95C
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 22:04:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756332291; cv=none; b=gViGO2dWWEP+V/8bSIi0N7vIEqzQD3S1s5QrN3BUrxgBcRrBhN45bndcJ5nhb3B/pp3qfhnIfYCSdQ6wb/0+m79DQUiSnM3bOX/gWKjw1+CUMCkem4N3raYpoTD89PITO87NtqvjBxj3KhewoaUjUIWi3Uzhm1bSbge9cxZ4pXg=
+	t=1756332270; cv=none; b=rCa5QdEsUDCpyysrtfu/pLD28SfYRmSspm5P0WCTf65Ye1OsXG8qPz13M9mG3/SD8foJbQrRcJniZL6LCzt2M2lax/i65C5vfNdFkFpqDh76JFYaayAAaJvA07wH8B/hcyKNqK0aZBx3iPrWgQQ7oYhNkyHtCJuGJgz6aFjPguo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756332291; c=relaxed/simple;
-	bh=5z/hefYMQ7IWt+5WldeJoBO7KPwkXup7iKuyes6TM/E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rawrqNWoacJd/uACz4VB1fNIrSMHZuvvYELb3GCWFPnzN6z5DEThFMD2W0Q5JlzQF1rm7gnDooaihC5vymLZeM1oQBtqDzEQvMTYRLUNlF2ZLymGtfEbVfisAiqE98wVsXJDlGIAeAAZcfQ0P7xjlsLEC7QZ/BSMKQc/fA2fHzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WBALU0bE; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b49d46a8d05so333815a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 15:04:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1756332289; x=1756937089; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uQYJoCHr8UsTe/NWEdR+cbblxqgBEXUC11uzxpt2GJM=;
-        b=WBALU0bEGS3BNkocxx4CbcRPE0jJpa3DwgTjEsMNjvTVtnGUrCk8cFz3vkGwJtCaQE
-         8s52u2P8KbWHBaqH1mptrEoeK0hLg/lFDGSiSJNeg7JEQVrBp9U3rpKxiu4cCtJ30xIk
-         Xh0+W7fccxbRyigk99wdgndAx8kC9M7NYr+ns=
+	s=arc-20240116; t=1756332270; c=relaxed/simple;
+	bh=QBThy5L9kt0vy3Em05+03Bcjn8m4khcRfvF3Hb3pPIM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a0dAek6sBapFBe92wvbEZiVSHc1MioNB61rjehd9Abnsufrp/sbf9Lvljh0gaNIWXvv/CzxZ50sGKN496DJVqGrseLQUmx9MjCEqZp/vl6b3q8eJ1m1fdCv+6QGjafClFlS0DfU08jYRFql9FZ5f4rrIb4VDrABxSNraXvEj6m4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d3ar6SK6; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756332267;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OEFBgFIvCAQPYhXVvclPVAZs38YDchKEl12N56oJND4=;
+	b=d3ar6SK6VoH5zdocbFvPByba7O1hwlVcHvmMKMP3phvoMcY4xsGlG3kI5rKJEAX00hoKap
+	TY6WSFGXxqy37EdNBxkprFHyHL7ukZ4R//4/CyoGWlCRYDvBfdRS7PBwvM9uL6aXTAmIfy
+	p/apR46Bq+5WwilYolUhjy85irQ5YJQ=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-183-6kUj63dyMWyAwHA6J_AWjQ-1; Wed, 27 Aug 2025 18:04:25 -0400
+X-MC-Unique: 6kUj63dyMWyAwHA6J_AWjQ-1
+X-Mimecast-MFC-AGG-ID: 6kUj63dyMWyAwHA6J_AWjQ_1756332264
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3c79f0a5bd5so239815f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 15:04:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756332289; x=1756937089;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uQYJoCHr8UsTe/NWEdR+cbblxqgBEXUC11uzxpt2GJM=;
-        b=dB3aoM4YY92/5/FNfwNZmGPAOaw0azci3pgTrxKpKDHcQ2B4J16LzVl1Ur6j1xePX6
-         bGEXRX0E8DTx9d9Vdv3z6D/VmgPibeGbzuRott7i8/Imu5Ygo41uFK7DIM6Mpkq/2dtg
-         0qJxwyrhbh/iGPePPjlmem4fWKM78m6T/qyUlNJAJibPs/CZmxlq8uqjWDzBk1T2HJew
-         ugTIdn3s6gLeyv4XW5yesKv2JWUQTOhyj6gH+2D+q6iu88nIbhqXS/R6l1uh7aeOBYbf
-         phd0hlXpcz4htGTYG/CXft51LLAKEy+ugahBftIuSVyo99voCd/CmOGAY60pjDr/iJgG
-         pM3g==
-X-Gm-Message-State: AOJu0Yy+bvuzjqDriqh1ZRPzKAfkrIn4a7T4C1xxrDVNPcylyDQVtqH3
-	gM46OmDi84Tdm0E5G60UF26YJJD+R6QMINn1jqSK9oRpxx+5w08uapY6HRWFm73XNw==
-X-Gm-Gg: ASbGncuO4EnR/9uopoMpi9SSsfoz3CVnhLv1FDPXWCOgp85egVRPU2T5FE/SA8fuCJ/
-	yLzSqE7wbYVRgT5Z6Yo/mcklURuw47ByI8Fj+QkCgMubXBFHRWgc+B2k2o7yNotvzJZ5nH1Ceq9
-	QM4KXMa7ty9iQxdX760dcfMYKNZ2+roJNK/s6ha9X5LS9APUKCvdbxItTo6Czq0OfDbKkkJPMT7
-	n12xvqsGy28MCUUzkX31pqcgH0yN5Jkmxwxiz7XJz7lyOWYUPQI65ez0t+pJBZULV8v5vUgoxbv
-	vtlccT4u6Xm1PBDlijpMebvL9aYlSTlgQfTQ4YW311Hkw6wxYBlboPwOjQKMAJShTnijwimamhO
-	QJQbcaa76mVrmhf/gzTxAmO586pcxnwP/MDHtveCoI78fAWuzX9Uy6Cljb8Cj
-X-Google-Smtp-Source: AGHT+IEMjqSQ+fgnoPTouIyunJfw71nzg7Eizpd9nDcGum95CFW4usmdozPBVbnaQPZxtX8XoFntCQ==
-X-Received: by 2002:a17:903:1a2b:b0:242:9d61:2b60 with SMTP id d9443c01a7336-2462edac937mr313050745ad.6.1756332289446;
-        Wed, 27 Aug 2025 15:04:49 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e14:7:36f6:f0a2:9401:263d])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-2466885ed38sm130742425ad.95.2025.08.27.15.04.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Aug 2025 15:04:48 -0700 (PDT)
-From: Brian Norris <briannorris@chromium.org>
-To: Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>
-Cc: linux-kernel@vger.kernel.org,
-	linux-um@lists.infradead.org,
-	David Gow <davidgow@google.com>,
-	Sinan Nalkaya <sardok@gmail.com>,
-	Brian Norris <briannorris@chromium.org>
-Subject: [PATCH v2] um: Support SPARSE_IRQ
-Date: Wed, 27 Aug 2025 15:04:18 -0700
-Message-ID: <20250827220434.1896850-1-briannorris@chromium.org>
-X-Mailer: git-send-email 2.51.0.268.g9569e192d0-goog
+        d=1e100.net; s=20230601; t=1756332263; x=1756937063;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OEFBgFIvCAQPYhXVvclPVAZs38YDchKEl12N56oJND4=;
+        b=MDuZnaAm4kIkCxNLZXlkGbV1UECq6E+hfkaF3ayuJbO+7XqE5BbRF4nbARxrj5t6Em
+         8LphWNQWsWSm1bh5d2wJRY/W1tC9JqpJanAWMIrIPAB9uucVfNTW3pW4M+T/l2LLO69g
+         gE2dmTvZ3TxXfitQyfXJk0exfC+lB0xCh4KXWCcb5+T8KOiibC2RK6KhCXYQiFjFBykv
+         twf+iaIEr2lbHHJK6uvtDhIWrsnxMJK4ZH1Tq1hQIhGQgUbMT0tLsTWG1f3Wq3XsWjE5
+         pEiMiAsBO6vam94k8vwwsaMksvswhUTxo8RoXN378uxG7SIIpuFvVOPraAL2wq+xU+xu
+         Z9vg==
+X-Forwarded-Encrypted: i=1; AJvYcCVcHeluZkg+3hjfvYAAqmx0AzIPzw8kj0/Xg3j6OCof+jnAwbPpDoSAUUzBobW+krG7oHcMJUmfqKAGUUM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+DcDSdSB2ZnauzYSHuCTr4rDInuycyMfY7mv5SRGwxmiIdlUA
+	p6EKNi0/IyAWlp3viA8HHAMuk0rwnmQMq/rjveht2IQzahlMt05KWU7AEHbRIEPhrKUyty87XGN
+	Mw8EQuz9TNIb6zN+Gls6motsaU0LSln/11qoUKIQYISgX6zdy2hSEaqWPfG/EYshyjIQoNMu5OZ
+	k3
+X-Gm-Gg: ASbGncvgYiDLjFpnzPdlq9UvY4zQry0ZlWe0jf5swm5A3OaAYSRa3ZBttCiQ8e3176N
+	gjAAFOyafFCkLoT/I0yuX2XmuWgoY/pBLPJHSxJQFpdZfxHpWlKLQey0g6zvVhctxWasv6VdD3B
+	9MDrVbFKrFX0aXaZZOZyBnW7U2RvhJVs/bSnJA0L9AOYRNBhJXaug2FtDsQ4PCom7L1w1u/7fE7
+	cEFPKIxcwoerW/jk4p1Fa1qf7qh02VlsIoH8hqYNAgywS5OzKmW4re/QHJA17XTt5ssY9yrZEM7
+	uYLpGHFefRIJAtgZy0OMcAoh2PPJuExc
+X-Received: by 2002:a05:600c:4a22:b0:45b:7580:6f29 with SMTP id 5b1f17b1804b1-45b75807bd4mr10021045e9.4.1756332263554;
+        Wed, 27 Aug 2025 15:04:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGeFHIWe1QwfMq5KEErvPK+Alt0w4twa0nXLb2kOIp6Er1rEDYev8pXW2qpNWVXY0MPTcVG0g==
+X-Received: by 2002:a05:600c:4a22:b0:45b:7580:6f29 with SMTP id 5b1f17b1804b1-45b75807bd4mr10020935e9.4.1756332263183;
+        Wed, 27 Aug 2025 15:04:23 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:1515:7300:62e6:253a:2a96:5e3])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3c711211b19sm22668380f8f.39.2025.08.27.15.04.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 15:04:22 -0700 (PDT)
+Date: Wed, 27 Aug 2025 18:04:20 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patch in the vhost tree
+Message-ID: <20250827152222-mutt-send-email-mst@kernel.org>
+References: <20250827124654.78881028@canb.auug.org.au>
+ <20250827062218-mutt-send-email-mst@kernel.org>
+ <aK8_uOoLxLOniEbR@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aK8_uOoLxLOniEbR@google.com>
 
-From: Sinan Nalkaya <sardok@gmail.com>
+On Wed, Aug 27, 2025 at 10:26:16AM -0700, Namhyung Kim wrote:
+> Hello,
+> 
+> On Wed, Aug 27, 2025 at 06:23:52AM -0400, Michael S. Tsirkin wrote:
+> > On Wed, Aug 27, 2025 at 12:46:54PM +1000, Stephen Rothwell wrote:
+> > > Hi all,
+> > > 
+> > > The following commit is also in the perf-current tree as a different
+> > > commit (but the same patch):
+> > > 
+> > >   c67e16d30dca ("tools headers: Sync uapi/linux/vhost.h with the kernel source"
+> > > )
+> > > 
+> > > This is commit
+> > > 
+> > >   f79a62f4b3c7 ("tools headers: Sync uapi/linux/vhost.h with the kernel source")
+> > > 
+> > > in the perf-current tree.
+> > 
+> > 
+> > Hmm.  I could drop mine I guess, but it only really makes sense after:
+> > 
+> >     vhost: Fix ioctl # for VHOST_[GS]ET_FORK_FROM_OWNER
+> >     
+> > 
+> > which is not in the perf tree.
+> 
+> Yep, so I was waiting for you to send PR with the fix.
+> It seems you already removed the commit in your tree.
+> I'll send a PR for perf tools with this change.
+> 
+> Thanks,
+> Namhyung
 
-Motivation: IRQ KUnit tests are going to require CONFIG_SPARSE_IRQ [1] in
-order to:
-(a) reliably allocate additional (fake) IRQs and
-(b) ensure we can test managed affinity, which is only supported with
-    SPARSE_IRQ.
+It's in my tree but I did not want to send it before we agreed what to
+do. I can drop it, sure.
 
-It seems that the only thing necessary for ARCH=um is to tell the genirq
-core to skip over our preallocated NR_IRQS.
-
-Tested with:
-
-  $ ./tools/testing/kunit/kunit.py run
-  [...]
-  [13:55:58] Testing complete. Ran 676 tests: passed: 646, skipped: 30
-  [...]
-
-This compares with pre-patch results:
-
-    Ran 672 tests: passed: 644, skipped: 28
-
-i.e., we no longer skip tests that 'depend on SPARSE_IRQ', and existing
-tests all pass.
-
-[1]
-[PATCH v2 4/6] genirq/test: Depend on SPARSE_IRQ
-https://lore.kernel.org/all/CABVgOSngoD0fh1WEkUCEwSdk0Joypo3dA_Y_SjW+K=nVDnZs3Q@mail.gmail.com/
-
-Signed-off-by: Sinan Nalkaya <sardok@gmail.com>
-[Brian: Adapted Sinan's patch; rewrote commit message]
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Tested-by: David Gow <davidgow@google.com>
----
-This is adapted from Sinan's work at:
-[PATCH 1/1] um: Fix broken IRQs if SPARSE_IRQ is selected
-https://lore.kernel.org/all/1360193940-31504-1-git-send-email-sardok@gmail.com/
-
-Place any blame for errors on me of course.
-
-I'm not much of a UML developer, although I've been developing KUnit
-tests which default to running on ARCH=um.
-
-I also can't quite tell if MAY_HAVE_SPARSE_IRQ or SPARSE_IRQ is a better
-'select' target. Almost every other architecture uses 'select
-SPARSE_IRQ', with the one exception of arch/csky. For my purposes, it's
-better to 'select SPARSE_IRQ', for consistency with other ARCH'es, and
-to make it easier for KUnit builds to get it. But I'm less sure if there
-are good reasons to want to make it user-(un)selectable.
-
-Changes in v2:
- * Drop #ifdef
-
- arch/um/Kconfig      | 1 +
- arch/um/kernel/irq.c | 5 +++++
- 2 files changed, 6 insertions(+)
-
-diff --git a/arch/um/Kconfig b/arch/um/Kconfig
-index 9083bfdb7735..8161cc5ae6f7 100644
---- a/arch/um/Kconfig
-+++ b/arch/um/Kconfig
-@@ -38,6 +38,7 @@ config UML
- 	select HAVE_ARCH_TRACEHOOK
- 	select HAVE_SYSCALL_TRACEPOINTS
- 	select THREAD_INFO_IN_TASK
-+	select SPARSE_IRQ
- 
- config MMU
- 	bool
-diff --git a/arch/um/kernel/irq.c b/arch/um/kernel/irq.c
-index 0dfaf96bb7da..d69d137a0334 100644
---- a/arch/um/kernel/irq.c
-+++ b/arch/um/kernel/irq.c
-@@ -691,6 +691,11 @@ void __init init_IRQ(void)
- 	os_setup_epoll();
- }
- 
-+int __init arch_probe_nr_irqs(void)
-+{
-+	return NR_IRQS;
-+}
-+
- void sigchld_handler(int sig, struct siginfo *unused_si,
- 		     struct uml_pt_regs *regs, void *mc)
- {
 -- 
-2.51.0.268.g9569e192d0-goog
+MST
 
 
