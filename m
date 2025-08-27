@@ -1,154 +1,138 @@
-Return-Path: <linux-kernel+bounces-787722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1A5FB37A43
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:23:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE85CB37A45
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:23:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B211E1B673A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:23:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63A8A721A5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:23:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3850B2D6E7B;
-	Wed, 27 Aug 2025 06:22:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SmGeH2J8"
-Received: from mail-yw1-f196.google.com (mail-yw1-f196.google.com [209.85.128.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92C22DA75A;
+	Wed, 27 Aug 2025 06:23:24 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2211F27AC34;
-	Wed, 27 Aug 2025 06:22:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D8A6EADC;
+	Wed, 27 Aug 2025 06:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756275772; cv=none; b=hjK22/cCc2CMNE1gjBhy3WzEgrt1vCzFo+3G727l/LU6nwyK98mckLU3eov9qfvy4SWKECtOyE4nX+qaOU8fbEpL6IaW2v5lX5alFrItBp/jRd5pAe8mehG8TlUIj1uSq45m8UoKUQKI1udt/I9xANdnnyF+DKjxO9kw9KD/l9E=
+	t=1756275804; cv=none; b=YnUjDSBzILKqESiEp035FdlLbH9PHVRwMrJIWW6EMmg2HKBxPpMHas79HDxbGvUyenbbUWizv57dOXlGYbuffREr2i06HtRbgb9Qmz2Uj0/aiKGgczQNVgwYLsw6Ig8itEQh6BS19RU2TEesDQ3Mppw9h222kiFhnJVhSAB3zRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756275772; c=relaxed/simple;
-	bh=i5Z98JBL4ZRm8ZAAvzrQAdtEJNsiKalwKRWjVaREip4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kTNSb0LIDZUOC4Pfw2aTyH3MpcnqeLS2aXFbiUbMQVNgc1WxMiwNCLkvwTDagqaJk/zyYLaxJTvj99IlSyGtXuVfhDAz9oefHDN9kN8ob49JYpCvR3/KltJXP5Ns15cEgudUKgsLjov3MmInBa+zaer/gJmVFAB7w3L55uLEOTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SmGeH2J8; arc=none smtp.client-ip=209.85.128.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f196.google.com with SMTP id 00721157ae682-71fd55c0320so3767077b3.0;
-        Tue, 26 Aug 2025 23:22:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756275770; x=1756880570; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i5Z98JBL4ZRm8ZAAvzrQAdtEJNsiKalwKRWjVaREip4=;
-        b=SmGeH2J8uMdkR6w0ZcZbYbaYv8TWXVuFgLYeCSCfIkEEDisF2v8zV3FTWcmF/9fHjO
-         D6iMJ6yOkm9EvRixqcA9U7qhUve7HR4bcZEyjZR9gLepLCwUE/xXTMqIJ4dwwW2zESUw
-         Anh8rcuFUvw89bYF4JFeUXZaOexw+wrxNZUhzeAAJnbtse8ucTaj2mNyTcS1LEYsmt/k
-         KfShZDKG7N1uP1sGuSNdy/lPN5fqpIXZ12tNw934c6oB6bbsRBtHsB08TcXoMiCCOEeD
-         hCqOvBiPdY7H2gj6INo5yTt0fpTGmhl/4D5Nt31oI/D+0ELeREmbwthZyXuuDlAaX8Om
-         vesQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756275770; x=1756880570;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=i5Z98JBL4ZRm8ZAAvzrQAdtEJNsiKalwKRWjVaREip4=;
-        b=fyJ645b+nuA4D0jR9HWlWrmTWImf6fa6EkkW30Ny/Xd7rl+Dm/6CtAbaSdzSoJo/cx
-         M2z9z4zLzAV8zNVtVUPm3BhaAglM71aZevb6oX8sbf+EVjsWyvR6+mZwfQ/XiRLCRFz9
-         vxeMF0s8zo2jwctEanUf8CehbUEMoBLR8SS+0De1jQuT1krx43JaIu7S2B93LVM9A6a2
-         pwZebjceDUSiiohPUtV1LIvCBl8xdN3fkePRQjQIAbup4gZRqJ8DLFo1OXFe5OOAYzCT
-         lbrUIpG2CtVwg5pD6KmX2PvL+pZG4kMYK6rRm87zl8KLcD913Y7u38K6gFZKZsEdlA5V
-         1Dug==
-X-Forwarded-Encrypted: i=1; AJvYcCUURnTyDMCMElnv5zB7dl8NDoK8FEFGdel5xa+AtaSWnQDWe4GkQyKD2kQOCncQXdvDwB8NUzx0FhXc4EdZ@vger.kernel.org, AJvYcCUXHmzJcRlkQd6nbDt6lRdcwycDYFmxbpazR/ck1R4zCZ45FmeCCIYob0D8971+D3l3ANE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTXO+qg74q7AP1BYf2Lfl3QDRVELYFha3w45RZaa1vGeWgnt0i
-	GDbuYK6Jxw1ZPCb9L5J157apSiyKHWGKxd3W+FFqX3bPCSV2vuBmDlvJe0YntLSsI8SbamPcQ7/
-	Wny80KrDl1JDJ5GLOM0x4DHILCdnOuQM=
-X-Gm-Gg: ASbGnctfx+t+8WYtpoL+ORcsPzSbEJSqnEoZkL3b+fT6d9AYvCzulmLxBQMDkA7p6gA
-	0c1SMAGpud135O5h8VIdmwmtTUTcsFJp3t/R6E5f+iX6WvKqbHQlYlDMIgu2VIIeLOkaJo+nELv
-	o92YpPQ1G/LyQMBL5AmvXbhRUwi5ZYPw7GAgv8OUF3F/J1HnBjmcivskihqjDNjvMjYfojaituM
-	8Qv0K43/a/7nACOXSxbTA==
-X-Google-Smtp-Source: AGHT+IHg9t6VnHhdv9h9VYHLrojs1PMTbAmMK5L3FruHKEosljEdP4iFL5OoULJEdzUB2UFKSXBcIg9upiAz5I9r5uI=
-X-Received: by 2002:a05:690c:9a91:b0:71c:3e81:cca2 with SMTP id
- 00721157ae682-72132cd73d2mr49513067b3.1.1756275769969; Tue, 26 Aug 2025
- 23:22:49 -0700 (PDT)
+	s=arc-20240116; t=1756275804; c=relaxed/simple;
+	bh=Ke8lXNIdOXkz+jWlK0W2U+rUKizzpn/yCf4X+98NMpU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FdZjZuVyQSDMaxsTlCgWG/NuGXNoNM/JDMg5Htwk59SGYRZW4Q1k+vzOTBAVNVWxb8i6YAaODzrVrb4Zeq+tbACuHov5qGDy1v/IyFWRTKtUrCGVH6hlVvnX60LSnaMA6E1KGk4meYX45oUdosc9SoUaxLX6DOShAc3rJtSj/zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cBZGb6JV9zKHNVw;
+	Wed, 27 Aug 2025 14:23:19 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 85E071A0902;
+	Wed, 27 Aug 2025 14:23:19 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP2 (Coremail) with SMTP id Syh0CgDH75ZWpK5o_ivCAQ--.56900S2;
+	Wed, 27 Aug 2025 14:23:19 +0800 (CST)
+Message-ID: <2b574bb7-0192-4a91-8925-bd4c6cc8a407@huaweicloud.com>
+Date: Wed, 27 Aug 2025 14:23:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250821093807.49750-1-dongml2@chinatelecom.cn>
- <20250821093807.49750-2-dongml2@chinatelecom.cn> <CAADnVQLtvygmqCk5QHmHCURAYiLET6BpCxX7TkqmuAdXZ5trZg@mail.gmail.com>
-In-Reply-To: <CAADnVQLtvygmqCk5QHmHCURAYiLET6BpCxX7TkqmuAdXZ5trZg@mail.gmail.com>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Wed, 27 Aug 2025 14:22:39 +0800
-X-Gm-Features: Ac12FXxYc9Qsprt4i1o2DwC0ZlDsRGXsGvNWnd_bb7-88fUYOME2dQElDiGJ3X8
-Message-ID: <CADxym3ZoAW6Wfn-TYBFeEPnPbb-Xqc=ZWpAmoL4Bzea83UuJnw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] arch: add the macro COMPILE_OFFSETS to all the asm-offsets.c
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Benjamin Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, 
-	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	tzimmermann@suse.de, simona.vetter@ffwll.ch, 
-	Jani Nikula <jani.nikula@intel.com>, LKML <linux-kernel@vger.kernel.org>, 
-	bpf <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next v5 3/3] cpuset: add helpers for cpus read and
+ cpuset_mutex locks
+To: Waiman Long <llong@redhat.com>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
+ <mkoutny@suse.com>
+Cc: tj@kernel.org, hannes@cmpxchg.org, cgroups@vger.kernel.org,
+ linux-kernel@vger.kernel.org, lujialin4@huawei.com, chenridong@huawei.com
+References: <20250825032352.1703602-1-chenridong@huaweicloud.com>
+ <20250825032352.1703602-4-chenridong@huaweicloud.com>
+ <luegqrbloxpshm6niwre2ys3onurhttd5i3dudxbh4xzszo6bo@vqqxdtgrxxsm>
+ <312f3e07-0eb9-4bdf-b5bd-24c84ef5fcc1@redhat.com>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <312f3e07-0eb9-4bdf-b5bd-24c84ef5fcc1@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgDH75ZWpK5o_ivCAQ--.56900S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7tF17XryDtw18CFWDur1Utrb_yoW8Zr4xpF
+	1jgFyUtF1jvF4fuwn7Za4rXw18tw1xKFWDJF97Jw18ZF9rtFW2vryxKanxuw1Fqr1xC3ya
+	va4qgws2934DAFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On Wed, Aug 27, 2025 at 11:04=E2=80=AFAM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On Thu, Aug 21, 2025 at 2:38=E2=80=AFAM Menglong Dong <menglong8.dong@gma=
-il.com> wrote:
-> >
-> > The include/generated/asm-offsets.h is generated in Kbuild during
-> > compiling from arch/SRCARCH/kernel/asm-offsets.c. When we want to
-> > generate another similar offset header file, circular dependency can
-> > happen.
->
-> Is there a way to avoid all this churn?
->
-> > For example, we want to generate a offset file include/generated/test.h=
-,
-> > which is included in include/sched/sched.h. If we generate asm-offsets.=
-h
-> > first, it will fail, as include/sched/sched.h is included in asm-offset=
-s.c
->
-> if so, may be don't add "static inline void migrate_disable()" to sched.h
-> and instead add it to preempt.h and it will avoid this issue?
 
-It's hard to avoid this churn. Take bounds.c for example, it defines
-the macro __GENERATING_BOUNDS_H. For the header files that
-it includes, it will exclude almost all the unnecessary code in
-page-flags.h, mmzone.h if __GENERATING_BOUNDS_H is defined.
-We can't use this approach, as it's hard to decide what to exclude
-in sched.h.
 
-We can't add migrate_disable or __migrate_disable to preempt.h,
-as struct task is used in it, which is not available in preempt.h :/
+On 2025/8/26 22:43, Waiman Long wrote:
+> 
+> On 8/26/25 10:23 AM, Michal Koutný wrote:
+>> (I wrote this yesterday before merging but I'm still sending it to give
+>> my opinion ;-))
+>>
+>> On Mon, Aug 25, 2025 at 03:23:52AM +0000, Chen Ridong <chenridong@huaweicloud.com> wrote:
+>>> From: Chen Ridong <chenridong@huawei.com>
+>>>
+>>> cpuset: add helpers for cpus_read_lock and cpuset_mutex locks.
+>>>
+>>> Replace repetitive locking patterns with new helpers:
+>>> - cpuset_full_lock()
+>>> - cpuset_full_unlock()
+>> I don't see many precedents elsewhere in the kernel for such naming
+>> (like _lock and _full_lock()). Wouldn't it be more illustrative to have
+>> cpuset_read_lock() and cpuset_write_lock()? (As I'm looking at current
+>> users and your accompanying comments which could be substituted with
+>> the more conventional naming.)
+> Good naming is always an issue. Using cpuset_read_lock/cpuset_write_lock will be more confusing as
+> the current locking scheme is exclusive.
+>> (Also if you decide going this direction, please mention commit
+>> 111cd11bbc548 ("sched/cpuset: Bring back cpuset_mutex") in the message
+>> so that it doesn't tempt to do further changes.)
+>>
+>>
+>>> This makes the code cleaner and ensures consistent lock ordering.
+>> Lock guards anyone? (When you're touching this and seeking clean code.)
+> 
+> Yes, I guess we can use lock guards here. You are welcome to send a patch to do that.
+> 
 
-I think this stuff can be reused in the feature if someone wants
-to add such an offset.
+I attempted to define the cpuset_full_lock() macro, but the initial implementation was inconsistent
+with our coding conventions.
+Initial version:
 
-Thanks!
-Menglong Dong
+#define cpuset_full_lock() \
+  guard(cpus_read_lock)(); \
+  guard(mutex)(&cpuset_mutex);
 
->
-> > and include/generated/test.h doesn't exist; If we generate test.h first=
-,
-> > it can't success neither, as include/generated/asm-offsets.h is include=
-d
-> > by it.
-> >
-> > In x86_64, the macro COMPILE_OFFSETS is used to avoid such circular
-> > dependency. We can generate asm-offsets.h first, and if the
-> > COMPILE_OFFSETS is defined, we don't include the "generated/test.h".
-> >
-> > And we define the macro COMPILE_OFFSETS for all the asm-offsets.c for t=
-his
-> > purpose.
+It was suggested to use a do-while construct for proper scoping. but it could not work if we define as:
+
+#define cpuset_full_lock() \
+ do { 			   \
+  guard(cpus_read_lock)(); \
+  guard(mutex)(&cpuset_mutex); \
+ } while(0)
+
+So I sent this patch version.
+
+-- 
+Best regards,
+Ridong
+
 
