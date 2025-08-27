@@ -1,182 +1,255 @@
-Return-Path: <linux-kernel+bounces-788715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75A75B3892B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:00:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 154B2B38934
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 20:01:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08CD13A7A1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:00:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA1CF1C20231
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:01:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1CE02D838B;
-	Wed, 27 Aug 2025 17:59:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1DE278E7C;
+	Wed, 27 Aug 2025 18:01:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HVwOwXQY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="LwMKN5LC"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434C82D7DEB
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 17:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756317541; cv=none; b=cjDV0bFld96n19huly8qt9h9PgZn7HH8c6aBBPNJxcqXbUddwmbF/4c/BD7smmp0rxH916D9J9c8HhcfvBLHIhO6WbcWw6+XdCCRuFQQHTHt9C+vDK5x5F3X46GFo8xDZ6sg8V2f1Pf0YLCWNonJabL4jzaAZfq9IPUgHl/A5HE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756317541; c=relaxed/simple;
-	bh=qM07M6YX83zAu1MJFTJWRYrFha6NM53dS1++QwRW8Xg=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=VwrJd7QH8estFBSNYjRPZ4H3EZ3zoCjWeBEbs5c+7H0+YKc9eDnOD+25PgiQnan6mCnOTgygCQH9r8XUS/smpDaH+lLP72lRA4q3VDbPJsljxKB1cg/Y41gB3ofkENImbDSIzVaiCMUwVG5W9uE58RJXLZO7cfyekdhXSdRO5C4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HVwOwXQY; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756317538;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=68zTd9ybMYa+9LcXDQYMsbuSzuPSYGRrvVBPkMTfky4=;
-	b=HVwOwXQYMpIHat+8S4uYaNfX54HQ+Ey6XHQ24v1ssLwmYMVRCTP2Awc59usiRTS/fxedsR
-	7pYMxvdOwbJFQMcHUclrPPvpJFaYDztzXvcWpEwap3AweUXml8lsRNSf/WeSVQVoNnu1UD
-	sM9MMKcblGB9O/TWndFfvA8PM+PmbzE=
-Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com
- [209.85.128.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-208-SVFADXrOOau7w9dodkgj4A-1; Wed, 27 Aug 2025 13:58:57 -0400
-X-MC-Unique: SVFADXrOOau7w9dodkgj4A-1
-X-Mimecast-MFC-AGG-ID: SVFADXrOOau7w9dodkgj4A_1756317536
-Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-71e7181cddeso638967b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 10:58:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756317534; x=1756922334;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=68zTd9ybMYa+9LcXDQYMsbuSzuPSYGRrvVBPkMTfky4=;
-        b=vIpnvrt8qd1DHwruwbdWG9by7njNnm4Tjus9L+N3jpEJvIXUVTsq8sCpHKuVyAwJjE
-         sNbhDkBI7rmbmOjd0HmoZF8XGStNz6IUWgdGpdieXvouq+H4Wyi5eTWrP5DBeUhaOIPH
-         eVXd8jDQ+EyGjdPqtAnjDOxpVuSfWC2Y/AG0biGEMRi5ZMlEaEsf1pOK/YdT/cR2KgXU
-         mTppdsBjIl9jMtq5kdKNpYJidb6g7Sb2LEkA25zz5T0nitQrWDh0LyhLjxATgZe/5wCt
-         K47ITChRRB4G0rIjwAbCQTf8ZAqkleo1iolHtX2KAmkYBfH8eueTfRt8Z6I9q6q/2S7x
-         FzXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUFNe+Fq0ZjK+A+YzCGNM9Iv2O3VyFs+EePA+176UzBfn1AjM4u81ZYge1nJ4U4pFyrQfgsEHJFwkj1yN0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNexSEFCcWxkPGc4vIhJpTh3fj5aZtO2hqORBvP1f7qIkOgyTc
-	jBqIYO8QUIfhPlFCxZ+R0Hw+jtiE5pJ1/PdnoCHSY9jnPJEVKPAmHQQBVl9srTqvua6aqm/oBVO
-	/nlpMUX/0EIVrUdYskuHk2KROzy1/I01P5isKCEc99rE2vRMq2aZy5vESB+bXnvH3/w==
-X-Gm-Gg: ASbGnctxCnu3qN6Eo+filaf4Sny5TKzOUAm7PBJ1vGnHLv/d3TvcjgF5CuNJFAKXOuG
-	HBAwQGy8x3AIDGmn9Jm1XHz+p6mqisFxwlp7wEVpZ7FWzC9LquGCoNxh2QuPW445PySN22qU3ju
-	DvAnfZPDYlo0256EMIyf80qUuFbBcatoJ3C0YWGsN02r1Gfs00nr47zQKlunUdTFSwQMkyoL9Qm
-	xngoBU0+U9L+vpqSltOzpHH0kxW+f1nhiFH+rt0hp8PliofAPzAeqNXUdW5HWIsC4zvLDmHGUex
-	tEfnYQdE83eDU43kPFyZJNkeHznElyJcoFnH4e0xROWGLw9S4hLVajGw/bFWy4p8Uelqv9rVC47
-	I2zb5C/SZEw==
-X-Received: by 2002:a05:690c:d96:b0:721:1d52:1989 with SMTP id 00721157ae682-7211d523da1mr99240777b3.28.1756317533659;
-        Wed, 27 Aug 2025 10:58:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHdT+RZwBJztTIfOFsLMwmdt6wt8HAm15gYADw5Qx7LUh/r5SyBZcKwlrd4mhwQThimE9Yenw==
-X-Received: by 2002:a05:690c:d96:b0:721:1d52:1989 with SMTP id 00721157ae682-7211d523da1mr99240227b3.28.1756317532998;
-        Wed, 27 Aug 2025 10:58:52 -0700 (PDT)
-Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-721307edf15sm11492567b3.74.2025.08.27.10.58.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Aug 2025 10:58:52 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <9d4c0d27-0ebd-4c6d-af38-d32ef420fde4@redhat.com>
-Date: Wed, 27 Aug 2025 13:58:50 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A9E72D1911;
+	Wed, 27 Aug 2025 18:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756317663; cv=pass; b=OHzU0IrddPQLNTW00oKfWrQgyDxr+70w7QFYs9TBt/giwQEb23HtDdtLSzLaUC4MzE4tmLcT3mcVxcX3ibYHH+hN1U17VAEy3GbhaHihOhOhviAzWv7gPgAjHQTaUCFpXSLqIk8Tckqr4BHi+6+E4kcAuWcZHFmO6Kgq8UuRfSI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756317663; c=relaxed/simple;
+	bh=Bmra0yHDrDmMquqwwRPfDojs8A453BKefFckklWkKO4=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=GUkwMNwrgtSiCeKAngLZNOhDsK5st72RW1vjKMwYyL/JkUIcKPGOTrWMvIEYSICCDMN/wAi9/sfKfs/OnrMgXvodCh+PRmUkPK2MMrYmM4rEAy5CagMAtBW+aO7bE3mo1yWBGKHI9DXdzL7B4ZGAqg76fTUhdOiyIt0/tV/iQhU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=LwMKN5LC; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1756317637; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=m610epDxkvi7Nv/Xlhx/MHA00U6vYUrcyly/TJ4WjlbWQR3qdwW0DlD3CVEVE8rxCxJhQAXv8Om38ynUlcKGG8I4OcVXsl/+G0egJURgnl3n3mo1aPJNbPfYtnc8clyBA0GMcHP2TDGBw21WzD8IuswkEGe9ODUzFWGija/7JRM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756317637; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=5lsJ/CKHYSw2E1OBWMxzWS11bJuOF1wD7BSg69A2WeU=; 
+	b=SvAUrouxUh9BUMKVGK6kTQHkF5dSH6EkJqsVNwpY/tIj50oGiPv+oygdZBR1xkv4FShcu5d/p8ULT75/JM4RANvfLz51SA9RcdbgexEzAqzaOZWVQzrW5E0dkyoMu4vFczRai1hAz1Rw9XXpSPDKX7Upba78mRVECKNm4J/wRl4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756317637;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=5lsJ/CKHYSw2E1OBWMxzWS11bJuOF1wD7BSg69A2WeU=;
+	b=LwMKN5LCuZHFrxpf4+SvsHF95xWBlAXIAMUGBLr76nbpAIhfaL3UezeSgMuf/74w
+	JW7CSmHaVKqd14TDhwqV0z2MxXt7/xHCeAf1pRL1MsImijY0Y3uiMihbAUiwEavAUPz
+	F9/oqFQSU6UHe+KxjQTJuD+XWM3qqU0Qn2kgbXic=
+Received: by mx.zohomail.com with SMTPS id 1756317634865757.1344901121528;
+	Wed, 27 Aug 2025 11:00:34 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests/futex: Fix futex_numa_mpol's memory out of
- range subtest
-To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH v6 17/18] rust: block: add remote completion to `Request`
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250822-rnull-up-v6-16-v6-17-ec65006e2f07@kernel.org>
+Date: Wed, 27 Aug 2025 15:00:19 -0300
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Jens Axboe <axboe@kernel.dk>,
+ Breno Leitao <leitao@debian.org>,
+ linux-block@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
  linux-kernel@vger.kernel.org
-Cc: Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
- Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
- Valentin Schneider <vschneid@redhat.com>, Borislav Petkov <bp@alien8.de>,
- kernel-dev@igalia.com
-References: <20250827154420.1292208-1-andrealmeid@igalia.com>
-Content-Language: en-US
-In-Reply-To: <20250827154420.1292208-1-andrealmeid@igalia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <680BB9D0-3720-44EC-A25D-83806F635D8D@collabora.com>
+References: <20250822-rnull-up-v6-16-v6-0-ec65006e2f07@kernel.org>
+ <20250822-rnull-up-v6-16-v6-17-ec65006e2f07@kernel.org>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
+Hi Andreas,
 
-On 8/27/25 11:44 AM, André Almeida wrote:
-> The "Memory out of range" subtest works by pointing the futex pointer
-> to the memory exactly after the allocated map (futex_ptr + mem_size).
-> This address is out of the allocated range for futex_ptr, but depending
-> on the memory layout, it might be pointing to a valid memory address of
-> the process. In order to make this test deterministic, create a "buffer
-> zone" with PROT_NONE just before allocating the valid futex_ptr memory,
-> to make sure that futex_ptr + mem_size falls into a memory address that
-> will return an invalid access error.
->
-> Fixes: 3163369407ba ("selftests/futex: Add futex_numa_mpol")
-> Signed-off-by: André Almeida <andrealmeid@igalia.com>
+> On 22 Aug 2025, at 09:14, Andreas Hindborg <a.hindborg@kernel.org> =
+wrote:
+>=20
+> Allow users of rust block device driver API to schedule completion of
+> requests via `blk_mq_complete_request_remote`.
+>=20
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
 > ---
-> This patch comes from this series:
-> https://lore.kernel.org/lkml/20250704-tonyk-robust_test_cleanup-v1-13-c0ff4f24c4e1@igalia.com/
-> ---
->   .../futex/functional/futex_numa_mpol.c          | 17 ++++++++++++++++-
->   1 file changed, 16 insertions(+), 1 deletion(-)
->
-> diff --git a/tools/testing/selftests/futex/functional/futex_numa_mpol.c b/tools/testing/selftests/futex/functional/futex_numa_mpol.c
-> index a9ecfb2d3932..1eb3e67d999b 100644
-> --- a/tools/testing/selftests/futex/functional/futex_numa_mpol.c
-> +++ b/tools/testing/selftests/futex/functional/futex_numa_mpol.c
-> @@ -143,7 +143,7 @@ int main(int argc, char *argv[])
->   {
->   	struct futex32_numa *futex_numa;
->   	int mem_size, i;
-> -	void *futex_ptr;
-> +	void *futex_ptr, *buffer_zone;
->   	int c;
->   
->   	while ((c = getopt(argc, argv, "chv:")) != -1) {
-> @@ -168,6 +168,17 @@ int main(int argc, char *argv[])
->   	ksft_set_plan(1);
->   
->   	mem_size = sysconf(_SC_PAGE_SIZE);
+> drivers/block/rnull/rnull.rs       |  9 +++++++++
+> rust/kernel/block/mq.rs            |  6 ++++++
+> rust/kernel/block/mq/operations.rs | 19 +++++++++++++++----
+> rust/kernel/block/mq/request.rs    | 17 +++++++++++++++++
+> 4 files changed, 47 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/block/rnull/rnull.rs =
+b/drivers/block/rnull/rnull.rs
+> index 8255236bc550..a19c55717c4f 100644
+> --- a/drivers/block/rnull/rnull.rs
+> +++ b/drivers/block/rnull/rnull.rs
+> @@ -82,4 +82,13 @@ fn queue_rq(_queue_data: (), rq: =
+ARef<mq::Request<Self>>, _is_last: bool) -> Res
+>     }
+>=20
+>     fn commit_rqs(_queue_data: ()) {}
 > +
-> +	/*
-> +	 * The "Memory out of range" test depends on having a pointer to an
-> +	 * invalid address. To make this test deterministic, and to not depend
-> +	 * on the memory layout of the process, create a "buffer zone" with
-> +	 * PROT_NONE just before the valid memory (*futex_ptr).
-> +	 */
-> +	buffer_zone = mmap(NULL, mem_size, PROT_NONE, MAP_PRIVATE | MAP_ANONYMOUS, 0, 0);
-> +	if (buffer_zone == MAP_FAILED)
-> +		ksft_exit_fail_msg("mmap() for %d bytes failed\n", mem_size);
+> +    fn complete(rq: ARef<mq::Request<Self>>) {
+> +        mq::Request::end_ok(rq)
+> +            .map_err(|_e| kernel::error::code::EIO)
+> +            // We take no refcounts on the request, so we expect to =
+be able to
+> +            // end the request. The request reference must be unique =
+at this
+> +            // point, and so `end_ok` cannot fail.
+> +            .expect("Fatal error - expected to be able to end =
+request");
+> +    }
+> }
+> diff --git a/rust/kernel/block/mq.rs b/rust/kernel/block/mq.rs
+> index 6e546f4f3d1c..c0ec06b84355 100644
+> --- a/rust/kernel/block/mq.rs
+> +++ b/rust/kernel/block/mq.rs
+> @@ -77,6 +77,12 @@
+> //!     }
+> //!
+> //!     fn commit_rqs(_queue_data: ()) {}
+> +//!
+> +//!     fn complete(rq: ARef<Request<Self>>) {
+> +//!         Request::end_ok(rq)
+> +//!             .map_err(|_e| kernel::error::code::EIO)
+> +//!             .expect("Fatal error - expected to be able to end =
+request");
+> +//!     }
+> //! }
+> //!
+> //! let tagset: Arc<TagSet<MyBlkDevice>> =3D
+> diff --git a/rust/kernel/block/mq/operations.rs =
+b/rust/kernel/block/mq/operations.rs
+> index 6fb256f55acc..0fece577de7c 100644
+> --- a/rust/kernel/block/mq/operations.rs
+> +++ b/rust/kernel/block/mq/operations.rs
+> @@ -42,6 +42,9 @@ fn queue_rq(
+>     /// Called by the kernel to indicate that queued requests should =
+be submitted.
+>     fn commit_rqs(queue_data: ForeignBorrowed<'_, Self::QueueData>);
+>=20
+> +    /// Called by the kernel when the request is completed.
+> +    fn complete(rq: ARef<Request<Self>>);
 > +
->   	futex_ptr = mmap(NULL, mem_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, 0, 0);
->   	if (futex_ptr == MAP_FAILED)
->   		ksft_exit_fail_msg("mmap() for %d bytes failed\n", mem_size);
-
-This patch makes the assumption that consecutive mmap() calls will 
-allocate pages consecutively downward from a certain address. I don't 
-know if this assumption will be valid in all cases. I think it will be 
-safer to just allocate the 2-page memory block and then change the 2nd 
-page protection to PROT_NONE to make it a guard page.
-
-Cheers,
-Longman
-
-> @@ -229,6 +240,10 @@ int main(int argc, char *argv[])
->   			}
->   		}
->   	}
+>     /// Called by the kernel to poll the device for completed =
+requests. Only
+>     /// used for poll queues.
+>     fn poll() -> bool {
+> @@ -143,13 +146,21 @@ impl<T: Operations> OperationsVTable<T> {
+>         T::commit_rqs(queue_data)
+>     }
+>=20
+> -    /// This function is called by the C kernel. It is not currently
+> -    /// implemented, and there is no way to exercise this code path.
+> +    /// This function is called by the C kernel. A pointer to this =
+function is
+> +    /// installed in the `blk_mq_ops` vtable for the driver.
+>     ///
+>     /// # Safety
+>     ///
+> -    /// This function may only be called by blk-mq C infrastructure.
+> -    unsafe extern "C" fn complete_callback(_rq: *mut =
+bindings::request) {}
+> +    /// This function may only be called by blk-mq C infrastructure. =
+`rq` must
+> +    /// point to a valid request that has been marked as completed. =
+The pointee
+> +    /// of `rq` must be valid for write for the duration of this =
+function.
+> +    unsafe extern "C" fn complete_callback(rq: *mut =
+bindings::request) {
+> +        // SAFETY: This function can only be dispatched through
+> +        // `Request::complete`. We leaked a refcount then which we =
+pick back up
+> +        // now.
+> +        let aref =3D unsafe { Request::aref_from_raw(rq) };
+> +        T::complete(aref);
+> +    }
+>=20
+>     /// This function is called by the C kernel. A pointer to this =
+function is
+>     /// installed in the `blk_mq_ops` vtable for the driver.
+> diff --git a/rust/kernel/block/mq/request.rs =
+b/rust/kernel/block/mq/request.rs
+> index 3848cfe63f77..f7f757f7459f 100644
+> --- a/rust/kernel/block/mq/request.rs
+> +++ b/rust/kernel/block/mq/request.rs
+> @@ -135,6 +135,23 @@ pub fn end_ok(this: ARef<Self>) -> Result<(), =
+ARef<Self>> {
+>         Ok(())
+>     }
+>=20
+> +    /// Complete the request by scheduling `Operations::complete` for
+> +    /// execution.
+> +    ///
+> +    /// The function may be scheduled locally, via SoftIRQ or =
+remotely via IPMI.
+> +    /// See `blk_mq_complete_request_remote` in [`blk-mq.c`] for =
+details.
+> +    ///
+> +    /// [`blk-mq.c`]: srctree/block/blk-mq.c
+> +    pub fn complete(this: ARef<Self>) {
+> +        let ptr =3D =
+ARef::into_raw(this).cast::<bindings::request>().as_ptr();
+> +        // SAFETY: By type invariant, `self.0` is a valid `struct =
+request`
+> +        if !unsafe { bindings::blk_mq_complete_request_remote(ptr) } =
+{
+> +            // SAFETY: We released a refcount above that we can =
+reclaim here.
+> +            let this =3D unsafe { Request::aref_from_raw(ptr) };
+> +            T::complete(this);
+> +        }
+> +    }
 > +
-> +	munmap(buffer_zone, mem_size);
-> +	munmap(futex_ptr, mem_size);
-> +
->   	ksft_test_result_pass("NUMA MPOL tests passed\n");
->   	ksft_finished();
->   	return 0;
+>     /// Return a pointer to the [`RequestDataWrapper`] stored in the =
+private area
+>     /// of the request structure.
+>     ///
+>=20
+> --=20
+> 2.47.2
+>=20
+>=20
 
+I had another look here. While I do trust your reasoning, perhaps we =
+should
+remove the call to expect()?
+
+If it is not called ever as you said, great, removing the expect() will =
+not
+change the code behavior. If it is, be it because of some minor =
+oversight or
+unexpected condition, we should produce some error output instead of =
+crashing
+the kernel. Maybe we should use a warn() here instead? Or maybe =
+dev/pr_err as
+applicable?
+
+=E2=80=94 Daniel=
 
