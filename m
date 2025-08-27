@@ -1,210 +1,111 @@
-Return-Path: <linux-kernel+bounces-788608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66E00B38736
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:00:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35DBBB38739
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:00:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F27D43A6745
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:00:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D96024616BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C0730749E;
-	Wed, 27 Aug 2025 15:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E031330BB80;
+	Wed, 27 Aug 2025 16:00:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/nKrlgt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ql9NY+1r"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80062302CAC;
-	Wed, 27 Aug 2025 15:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB1F307ACD;
+	Wed, 27 Aug 2025 16:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756310395; cv=none; b=GD49iLBAEABf7k5zbAI6DtWFvD+O5FWCOITD6pnJypqluLFBozhnc8AX39kQUcKITAQX+M7k2ovqjLgpNIPWEQPPADQ1PHRiG0y6ZAoYWgtN00upzAFsxgdGB2rxnJlKo9IkdXktTdbXv+AJ3NtqfW8QpvuDd3OCDHgIrjElmrI=
+	t=1756310430; cv=none; b=WMwERM1omZwG0v2Mj+lBq0qhT4EToZHe8+OKfvGsXbvB6xwwSQFULSfeAwluDNEh8YcXSuaWcsLZAE99gJZCGDrxhcdmSeWfaoENSMQFwBkYNsAIRwTCum6DJgRyC/u0v00XhXg/n4L6gl9R7/SmzR+SZiKcke9l2yg0Q3on5q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756310395; c=relaxed/simple;
-	bh=J5+h5UrziIldL/6ShiAr1mBz3pMe+bEDgeuau7q6E0s=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=OSNTJWiP2IsMYLCpFrUmHLsd4U37hmWFe3Aa/qgF293GX5QCs/dXIbs0jmzg1jPDNd+KJ/7JixkD6rOhTlnM4+HhfWDStkejE30ZNm+j758dX/X4EC2VTMFZmqprOB9rQgHfLKL//GS/XOSpuBhtYC5jf5/khag/vCCmpL8wseM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V/nKrlgt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74664C4CEF0;
-	Wed, 27 Aug 2025 15:59:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756310395;
-	bh=J5+h5UrziIldL/6ShiAr1mBz3pMe+bEDgeuau7q6E0s=;
-	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
-	b=V/nKrlgtdnqj1+XgGOuPsNiHcsH6n/RYGVSCh0CsufP7uQ5rxG7hZ3xRlonzuzx8v
-	 Jr/UF2Lckz6aO+anmWy5Mo6vEN5SyJf8xRF4FNLdFTKef/3ClapU8Q/n1DO/1E4jEC
-	 rO44R+cuU2A9o2Co9egJnAjUjrUNA8unH1v/ccjhvzvBGV57YewafNjg2juzwxodGj
-	 +HNMaUulAd6UPsOqvJh62js65XsTrLD/MQw4AFGdD6JjcpwCSF+eTmipNWaFyiUX6H
-	 LbX9FDQlyKiXNraafiWq4IWQIqJItXP4viGa99FIeCd8nNV0O6YScYKVnm3OLgIDuf
-	 xqvYjxL/ZyYAg==
+	s=arc-20240116; t=1756310430; c=relaxed/simple;
+	bh=5r476QMUTx3iKVF4BmVQx1be6z2MX0MNrxF6wHUQJHU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hnEt0HXu+LZg0vO6ysUyIqCRkg34fVbkF+3qePQ1yC4XNI1pLTEG3ncsuP/dkwwvGh5RsCyrdg/RWhpq2OKed8enKmIHwZMiKFcNZPD26C/q5Y9TYymbl+BSi4a4YAIsg2S77/KPiwLqrmX547Lu+Z+FgOKFRPjhPAuZ4fV/By0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ql9NY+1r; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2445806df50so54906295ad.1;
+        Wed, 27 Aug 2025 09:00:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756310428; x=1756915228; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lqLQY71E8I3ZKdEgscFFUwxTNKe9h7lOzan3Lxwg46k=;
+        b=Ql9NY+1r4OmMclGSZp9qIVywDhF7d42J+azL3EZ4+x8oXdwLxaKNnwmYJss4yp2kco
+         qck2QweKp4de/iNbGXsNGu09jQShWno7QtUERzK6C62e72h3bk743iUxlj4r4WQEwQF4
+         Of0Oj7pDAgaQGVG/vuU6P5BQ40UzdCu7tOO4RJg44gDbgSz3duC1UPM8d9hs4HSSL9Xp
+         j2s0MMMyG+DVLLcxPV/UOd49HSnz0qKN5HOrjrCW+zoCDPkntoJfom2jVYIf0nguacjj
+         7yy7NBk92SGARmUAOo79bNm1pM5krLlX/k0Wz4EnLn5amTTd5R+uRoKt1L34VHG8LeqX
+         cwRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756310428; x=1756915228;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lqLQY71E8I3ZKdEgscFFUwxTNKe9h7lOzan3Lxwg46k=;
+        b=sxS4yIiDpOPtYo0xHOhiMmiSA3bgYeCgGOuaESJv1otSKk71/Y+9zU7eyfSih6Drep
+         Z+6uCzlxb5fH0WtR5JSZYDF2dzIy8Rosal/YVkMNYMdwIgM1pk0qhebV3vyQ5IEzkLuT
+         /IBYGQJ1yO55dnE/V+7KBWlFkYQDcHJ/zFnLtGPfVFFpwzBfjYU4xggB4bgzV0oUCI43
+         ry3VdQ9zzaflFdiz61i/CtqMw5kd5/SW5NiQMz0XwQNsqXSWvMFMeyBu8WDN7QQ/IQdV
+         ry/EL8wDTQcqaXcNVTP3uJcp5RZ2a2nvjbysZIZiA2aoYNB15DgZjI37lYiXoW4ryats
+         cKtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUko5lm24PyNQHc1EhTjVaTdtFKbX5FgR2q7+N8nMrq0wSMUpInMShSkUi5FRyo4pY+ydzIhuv7Xrf12EM3@vger.kernel.org, AJvYcCWQnvObFLCnleue/HE4hbkYssKyCkaWjvpJNsDK/XMuZ7oCBAMC0B+OAUjIEeU6/Gyv5Aa+uC/2PfA=@vger.kernel.org, AJvYcCXSRalwBqJ3yTVkd6V9m6E988mMN+s49xtvPLPr+xpq0y0wyn1eNmHGRdQp9SfomqG9d6j+70uuYQaKc/Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPAjl7Bl9NCWems5GiyxeqfVdpTPEDu/4yMMWdZCGfOp/KAh/a
+	e941LxKY8Y0LHTAUDcsm+k44ddyosyKhWZHplJGpauGTUYV+he32Kwz0
+X-Gm-Gg: ASbGncvoPY3flAPnft49dcDa/PUL74/Q18f9o2hdqkV2wgLl0OZdaGQMOTPEoPe3LWN
+	8Mjd44eWMDeRV+e4a30lYOPAWmi+p3HD6Dz7y5aXc6ndJejdnL/nLUDdNsUL43TekjZ5ozkIoxi
+	wLVErbFWvguQYtf2nHxHKujPyC9auaHdldvQPCN9gpuTkcjzd+GHqkUKQRdSOmCvZbwbNIeeqxR
+	u/s6XJpx/4AJNu04prNI/bRJyspYtrvmOCtkIrwv7/MBID5qCgAT0yLADVK0GRA+CR+1QCJPXsg
+	oxSzfn4UP6ID3iZ4QdFd021BhzubyipUF+pwvfcDphdHPPG9pqQ7rvJL3bZ3s0h7jnwDk7lzNVz
+	XrffbpPIhcvY2+hzHPTsVN5WRnnosM7jvnQU=
+X-Google-Smtp-Source: AGHT+IFQz/HXmGEMAbpydvcRmEbPZ5kPQiz5oyNqxBt9FDFmtWDr2HxANuX2KR6mhMGolifQMhrpDg==
+X-Received: by 2002:a17:902:f78f:b0:246:d383:3951 with SMTP id d9443c01a7336-246d3833b72mr154843215ad.15.1756310427975;
+        Wed, 27 Aug 2025 09:00:27 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-248c97f2f96sm2609385ad.121.2025.08.27.09.00.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 09:00:26 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Wed, 27 Aug 2025 09:00:25 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Debanil Chowdhury <kerneldev@debanilchowdhury.com>
+Cc: ninad@linux.ibm.com, corbet@lwn.net, jdelvare@suse.com,
+	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
+	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] hwmon: crps: Fix typos in crps.rst documentation
+Message-ID: <aef9db31-5504-49b5-8b0f-e776c27a5b17@roeck-us.net>
+References: <20250822132836.5384-1-kerneldev@debanilchowdhury.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 27 Aug 2025 17:59:49 +0200
-Message-Id: <DCDC2M7N28X2.3Q8XYNEDOGK6A@kernel.org>
-To: "Vitaly Wool" <vitaly.wool@konsulko.se>
-Cc: "rust-for-linux" <rust-for-linux@vger.kernel.org>, "LKML"
- <linux-kernel@vger.kernel.org>, "Uladzislau Rezki" <urezki@gmail.com>,
- "Danilo Krummrich" <dakr@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Vlastimil Babka" <vbabka@suse.cz>, "Lorenzo Stoakes"
- <lorenzo.stoakes@oracle.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>,
- "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>, "Bjorn
- Roy Baron" <bjorn3_gh@protonmail.com>, "Andreas Hindborg"
- <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>, "Johannes
- Weiner" <hannes@cmpxchg.org>, "Yosry Ahmed" <yosry.ahmed@linux.dev>, "Nhat
- Pham" <nphamcs@gmail.com>, <linux-mm@kvack.org>
-Subject: Re: [PATCH v4 2/2] rust: zpool: add abstraction for zpool drivers
-From: "Benno Lossin" <lossin@kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250823130420.867133-1-vitaly.wool@konsulko.se>
- <20250823130522.867263-1-vitaly.wool@konsulko.se>
- <DCCIRTHGQFNX.1M8GXO4TYA7DF@kernel.org>
- <DFA3B588-3650-42DA-8875-7AB7D20A2BCA@konsulko.se>
-In-Reply-To: <DFA3B588-3650-42DA-8875-7AB7D20A2BCA@konsulko.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250822132836.5384-1-kerneldev@debanilchowdhury.com>
 
-On Wed Aug 27, 2025 at 4:24 PM CEST, Vitaly Wool wrote:
->
->
->> On Aug 26, 2025, at 7:02 PM, Benno Lossin <lossin@kernel.org> wrote:
->>=20
->> On Sat Aug 23, 2025 at 3:05 PM CEST, Vitaly Wool wrote:
->>> +pub trait ZpoolDriver {
->>> +    /// Opaque Rust representation of `struct zpool`.
->>> +    type Pool: ForeignOwnable;
->>=20
->> I think this is the same question that Danilo asked a few versions ago,
->> but why do we need this? Why can't we just use `Self` instead?
->
-> It=E2=80=99s convenient to use it in the backend implementation, like in =
-the toy example supplied in the documentation part:
->
-> +/// struct MyZpool {
-> +///     name: &'static CStr,
-> +///     bytes_used: AtomicU64,
-> +/// }
-> =E2=80=A6
-> +/// impl ZpoolDriver for MyZpoolDriver {
-> +///     type Pool =3D KBox<MyZpool>;
->
-> Does that make sense?
+On Fri, Aug 22, 2025 at 06:55:02PM +0530, Debanil Chowdhury wrote:
+> Changed a misspelling in crps.rst documentation:
+> "Critial" → "Critical".
+> 
+> Reported-by: codespell
 
-No, why can't it just be like this:
+$ scripts/checkpatch.pl index.html
+ERROR: Unrecognized email address: 'codespell'
+#124:
+Reported-by: codespell
 
-    struct MyZpool {
-        name: &'static CStr,
-        bytes_used: AtomicU64,
-    }
-   =20
-    struct MyZpoolDriver;
-   =20
-    impl ZpoolDriver for MyZpoolDriver {
-        type Error =3D Infallible;
-   =20
-        fn create(name: &'static CStr) -> impl PinInit<Self, Self::Error> {
-            MyZpool { name, bytes_used: AtomicU64::new(0) }
-        }
-   =20
-        fn malloc(&mut self, size: usize, gfp: Flags, _nid: NumaNode) -> Re=
-sult<usize> {
-            let mut pow: usize =3D 0;
-            for n in 6..=3DPAGE_SHIFT {
-                if size <=3D 1 << n {
-                    pow =3D n;
-                    break;
-                }
-            }
-            match pow {
-                0 =3D> Err(EINVAL),
-                _ =3D> {
-                    let vec =3D KVec::<u64>::with_capacity(1 << (pow - 3), =
-gfp)?;
-                    let (ptr, _len, _cap) =3D vec.into_raw_parts();
-                    self.bytes_used.fetch_add(1 << pow, Ordering::Relaxed);
-                    Ok(ptr as usize | (pow - 6))
-                }
-            }
-        }
-   =20
-        unsafe fn free(&self, handle: usize) {
-            let n =3D (handle & 0x3F) + 3;
-            let uptr =3D handle & !0x3F;
-   =20
-            // SAFETY:
-            // - uptr comes from handle which points to the KVec allocation=
- from `alloc`.
-            // - size =3D=3D capacity and is coming from the first 6 bits o=
-f handle.
-            let vec =3D unsafe { KVec::<u64>::from_raw_parts(uptr as *mut u=
-64, 1 << n, 1 << n) };
-            drop(vec);
-            self.bytes_used.fetch_sub(1 << (n + 3), Ordering::Relaxed);
-        }
-   =20
-        unsafe fn read_begin(&self, handle: usize) -> NonNull<u8> {
-            let uptr =3D handle & !0x3F;
-            // SAFETY: uptr points to a memory area allocated by KVec
-            unsafe { NonNull::new_unchecked(uptr as *mut u8) }
-        }
-   =20
-        unsafe fn read_end(&self, _handle: usize, _handle_mem: NonNull<u8>)=
- {}
-   =20
-        unsafe fn write(&self, handle: usize, handle_mem: NonNull<u8>, mem_=
-len: usize) {
-            let uptr =3D handle & !0x3F;
-            // SAFETY: handle_mem is a valid non-null pointer provided by z=
-pool, uptr points to
-            // a KVec allocated in `malloc` and is therefore also valid.
-            unsafe {
-                copy_nonoverlapping(handle_mem.as_ptr().cast(), uptr as *mu=
-t c_void, mem_len)
-            };
-        }
-   =20
-        fn total_pages(&self) -> u64 {
-            self.bytes_used.load(Ordering::Relaxed) >> PAGE_SHIFT
-        }
-    }
+WARNING: Reported-by: should be immediately followed by Closes: with a URL to the report
 
-Also using a `usize` as a handle seems like a bad idea. Use a newtype
-wrapper of usize instead. You can also not implement `Copy` and thus get
-rid of one of the safety requirements of the `free` function. Not sure
-if we can remove the other one as well using more type system magic, but
-we could try.
-
-
->>> +
->>> +    /// Create a pool.
->>> +    fn create(name: &'static CStr, gfp: Flags) -> Result<Self::Pool>;
->>> +
->>> +    /// Destroy the pool.
->>> +    fn destroy(pool: Self::Pool);
->>=20
->> This should just be done via the normal `Drop` trait?
->
-> Let me check if I=E2=80=99m getting you right here. I take what you are s=
-uggesting is that we require that Pool implements Drop trait and then just =
-do something like:
->
->     extern "C" fn destroy_(pool: *mut c_void) {
->         // SAFETY: The pointer originates from an `into_foreign` call.
->         unsafe { drop(T::Pool::from_foreign(pool)) }
->     }
->
-> Is that understanding correct?
-
-Yes, but you don't need to require the type to implement drop.
-
----
-Cheers,
-Benno
+Guenter
 
