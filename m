@@ -1,270 +1,138 @@
-Return-Path: <linux-kernel+bounces-788986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D6A4B38F4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 01:31:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D901B38F4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 01:39:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E8141775D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:31:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03039981368
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:39:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FE5630FF13;
-	Wed, 27 Aug 2025 23:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7D230FC1F;
+	Wed, 27 Aug 2025 23:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XG59mOeT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aHuclbnn"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446F730CDA5;
-	Wed, 27 Aug 2025 23:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1E62F5316
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 23:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756337511; cv=none; b=SWnQusBQoyRCNJZ+iLkRudrPrk3JluxkTU1nuBB0BBsH9INeY/pP1Xfh5Q0LJeUtlS7ojweRx4nHXCBIdjbFhxst360wjDwM0ebzoC81BwuM29TS6a/cbqtVPJNBp25Jo9XOHZ684iKo/kb7SBS/nEE+6+nfguyDxpJ8sZtNvqU=
+	t=1756337937; cv=none; b=ZVixUitcF8cxD9dv8bSkpKkoxI2mNwL3D4NR94xTsRCM9C7maBYh6Vkp3ddN6Yot4juX66cGawgUrQNvHbuBUicGhIxj829Zz0vHB0deYK9U71r8EuE+kmi/yXfCLG94Wp7OK4th2SWYKraH+kx2Eafk+sRmLoW8ihXDbYW2ay8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756337511; c=relaxed/simple;
-	bh=Pr43rHlgjc0vSumPG28l+hqGsoMuQh0VkZmhV6Con9Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A3OkKhzjR91pDHvXRVTApQawYHNfTC8NfNkQFK4EkiQaZNXt84IaUMmkMfMt7MtfQLN541+sphZd0A91fipL8pzekSallknE9QOcAkUEJMv3dQ1W7girLVvx5sh3Atk2/4Fw8ZsJ9+RuNwf2NWjRHJSrKdcmesPgKJgXWVBYaWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XG59mOeT; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1756337509; x=1787873509;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Pr43rHlgjc0vSumPG28l+hqGsoMuQh0VkZmhV6Con9Q=;
-  b=XG59mOeTMQoaR1AKRgM+mBg6/u0UiBLaVpx/T6CFF6j20bm/2Mfjo4eR
-   rRS5JwRrKzKgRndP91r7Kizgl7NFVoPLqnmFxSBDAUJr6pe341czqOAW0
-   QpmUi2/7SmfOHwP1koX9itg8ENVZ7Cr8msGLPApC0FdPRB/IttBo4J5Vd
-   PtBZ3TQt+o9RbNQO/CbQn/bD8EnCHndp6YWPM+QpKWzWu95j+AtxvfxHi
-   d5vx55ERboQG/wT1W/nX2QN+9WUkDxj0bxDDdwzsuuLzZpKhtfiIDmDI0
-   uIYMA7oux1VdXHtGCRwfcgFZ5inXN87a7vhYZU5mSX1I8FYhvKPq/74qA
-   w==;
-X-CSE-ConnectionGUID: jsR7ccOSQ/C/kPiqd7JAgQ==
-X-CSE-MsgGUID: uTMRhxC0QhuAePUJVKNMlA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62435912"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="62435912"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2025 16:31:48 -0700
-X-CSE-ConnectionGUID: zaImdtF3S8OAJ9Z6jJHR+A==
-X-CSE-MsgGUID: I6MVNWUsRsaN0YvnkC6GBA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; 
-   d="scan'208";a="169214043"
-Received: from dwesterg-mobl1.amr.corp.intel.com (HELO [10.125.109.56]) ([10.125.109.56])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2025 16:31:48 -0700
-Message-ID: <400cf9ab-de3f-4e8a-ab0a-4ac68c534bb8@intel.com>
-Date: Wed, 27 Aug 2025 16:31:47 -0700
+	s=arc-20240116; t=1756337937; c=relaxed/simple;
+	bh=MNeQOS0pzr3dprcINe5o9nkq6nNaZGCx++2bS8YcTKM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bLP7WuVHLlGaNOKiHBluS0er1IjIPIsRi9Pv5R5yDM7Y31GiV08w6JQ+XpBtbUxliUzviRlT6V/sOPNIz1K67LQaPe8vJbhqkEsoenLhB4zqVlz/rCBGwUj2qll86hzFpRribQDRFSoRAu6jAdCwncUvtwCV7pD96n1NCUT48FU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=aHuclbnn; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-32326e202e0so337634a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 16:38:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1756337931; x=1756942731; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4COsJov1R6T5+fEFFn1/lYQvnIbPTGcTpVNB4EmSuqU=;
+        b=aHuclbnn5a8gZebPt1zWX/2qqIQzQpnexgouymDJ1Nu6UamXjImIjaQXRi7/A3oIec
+         zoeTBu2Y/ZRWnLT5Nb/Nq3sag14pYhiOJiegFojNrnc6Rq7CEy7jrg3vvGzDBUyBBsOr
+         dijs+WlC5ODkeERJc8UVWyrNLhyN1s5Wrms6A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756337931; x=1756942731;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4COsJov1R6T5+fEFFn1/lYQvnIbPTGcTpVNB4EmSuqU=;
+        b=Cg7y5L6gW9nKKh3hGxv6KEHtkX2aI3+zRnZ+FO7FOO2DLrcUUY6aBf+KskeYtEYwRQ
+         uhu1RtFV3zk4DL5IPraFLV3BoYLTLg6A10L5VXM/4xVZZ0FzYTv/3ITOTPX8javG+ng8
+         A2KskgND0JA8sU4zpb/T+03w73MN/YYtPhmsWnIpxE+BhE8+ggutWuGsHqj8Prgjs64O
+         4cIwrisPCBC2+AYroyxF/xX8DGlXbp5AfYI2RWPoV0N+mbsJOOjENvhxDP+6Zt4nAaBE
+         lppEGuKZTF6ooxCWVF0rGK9j6S0TZeZtV/y1SIUAwIMHUkbM3v9UfoGUTvJKsugB6eMH
+         6o7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUU6fT8w3vNNPkKlT/FMNg6ItnwqUp0mOkSOxXamjGkOER4FbJxToYZa61ds9dFCqDYP1clSN5GB8HGjV0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFMGIG5sR3nyDma27bX391Ra61rjGgAkChdk1YFFnVn/AB5mGE
+	JTahqh+VpBXQEk3bvfeLniXkflga5ol3yhhPtMvyQRwWB7AQPl6JWnajJbMT9IXRolxTCVbpvX+
+	H/nU=
+X-Gm-Gg: ASbGncvlBAUrIoGGX0L9aJQIA+oczuiPG96AAlxAvX+vgHlqsDkHn/0aOtct7mct+Ij
+	tIcSpUKLLawCi+CR1oBKV5wuiN2P3KlzyMR1ri1742U+O3yMjrlrQuOPIAjRB28cBVtQvHUVxBz
+	yoN7O9tlGwuuELkUhJAuzw5BETKBTPW9tCC42bAUJrSCZPvGhmhPiJPr/4PSVelNz1hxpaiBtpy
+	BKvxJvDk3NCdDVNaPfhZso0JaAvWeNiog223GuwqPC/K1MKGOZHgtQLiwywDgsSeTRw1g9yQbvW
+	zRtomev+1w/OmTv7MjeWhHVyGSjy82NuMTPRRJn54/KIYI2PeAXmO1wZnuMd/XGoYJSxg6kvF05
+	72s7lA6a2qVEPO+tV8TgEq8uCgDs8Lr50gzUs8qPhUOBav4/zmFfcK5bsN54vikwq3Q==
+X-Google-Smtp-Source: AGHT+IGZFemKdSYKgqYmaO0mwgcVCAF9yuVJt5HucWW7JtYB8/0vjuVqDXRWxmMpa1fkqFEgulD6eg==
+X-Received: by 2002:a17:90b:1d91:b0:321:59e7:c5c5 with SMTP id 98e67ed59e1d1-325177426fcmr25285603a91.27.1756337930760;
+        Wed, 27 Aug 2025 16:38:50 -0700 (PDT)
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com. [209.85.210.178])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3276f57b227sm3121821a91.6.2025.08.27.16.38.49
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Aug 2025 16:38:49 -0700 (PDT)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-770530175a6so259453b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 16:38:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVgA4BE+bK0xxXsDUbIHR75iGbWcaJ5/KVPM3sqakw4+B6o3JwCHI3pXiTUEUYxZi+KzuAtavSw1DoOQ0s=@vger.kernel.org
+X-Received: by 2002:a17:902:cec2:b0:245:fe27:fe80 with SMTP id
+ d9443c01a7336-2462eeb004cmr295833995ad.26.1756337928476; Wed, 27 Aug 2025
+ 16:38:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] iommu/sva: Invalidate KVA range on kernel TLB
- flush
-To: Baolu Lu <baolu.lu@linux.intel.com>, "Tian, Kevin"
- <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>, Jann Horn <jannh@google.com>,
- Vasant Hegde <vasant.hegde@amd.com>, Alistair Popple <apopple@nvidia.com>,
- Peter Zijlstra <peterz@infradead.org>, Uladzislau Rezki <urezki@gmail.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Andy Lutomirski <luto@kernel.org>, "Lai, Yi1" <yi1.lai@intel.com>,
- "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
- "security@kernel.org" <security@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "stable@vger.kernel.org" <stable@vger.kernel.org>, vishal.moola@gmail.com,
- Matthew Wilcox <willy@infradead.org>
-References: <20250806052505.3113108-1-baolu.lu@linux.intel.com>
- <d646d434-f680-47a3-b6b9-26f4538c1209@intel.com>
- <20250806155223.GV184255@nvidia.com>
- <d02cb97a-7cea-4ad3-82b3-89754c5278ad@intel.com>
- <20250806160904.GX184255@nvidia.com>
- <62d21545-9e75-41e3-89a3-f21dda15bf16@intel.com>
- <4a8df0e8-bd5a-44e4-acce-46ba75594846@linux.intel.com>
- <20250807195154.GO184255@nvidia.com>
- <BN9PR11MB52762A47B347C99F0C0E4C288C2FA@BN9PR11MB5276.namprd11.prod.outlook.com>
- <87bfc80e-258e-4193-a56c-3096608aec30@linux.intel.com>
- <BN9PR11MB52766165393F7DD8209DA45A8C32A@BN9PR11MB5276.namprd11.prod.outlook.com>
- <e321d374-38a7-4f60-b991-58458a2761b9@linux.intel.com>
- <9a649ff4-55fe-478a-bfd7-f3287534499a@intel.com>
- <b0f613ce-7aad-4b1d-b6a1-4acc1d6c489e@linux.intel.com>
- <dde6d861-daa3-49ed-ad4f-ff9dcaf1f2b8@linux.intel.com>
- <b57d7b97-8110-47c5-9c7a-516b7b535ce9@intel.com>
- <c69950ee-660b-4f51-9277-522470d0ce5d@linux.intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <c69950ee-660b-4f51-9277-522470d0ce5d@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <aK8Au3CgZSTvfEJ6@stanley.mountain> <CAD=FV=WEQf=PX52Uv_bjzhnUipKwcNY+BBTOfDHucv=EkBTzgg@mail.gmail.com>
+ <r6q738p1-53o9-273q-0198-327s56qpqn61@xreary.bet>
+In-Reply-To: <r6q738p1-53o9-273q-0198-327s56qpqn61@xreary.bet>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 27 Aug 2025 16:38:35 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=Vqp7zDi=xGmy+gq+jSr1Tq=bRAUbkOVuVcz7C9zFbWXQ@mail.gmail.com>
+X-Gm-Features: Ac12FXyRfmac0GCbxwA7Nta6zibOiKLyJotJFxyDjgBD9G3VZ9lGRLVwg_SFw9Q
+Message-ID: <CAD=FV=Vqp7zDi=xGmy+gq+jSr1Tq=bRAUbkOVuVcz7C9zFbWXQ@mail.gmail.com>
+Subject: Re: [PATCH next] HID: i2c-hid: Fix test in i2c_hid_core_register_panel_follower()
+To: Jiri Kosina <jikos@kernel.org>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, Pin-yen Lin <treapking@chromium.org>, 
+	Benjamin Tissoires <bentiss@kernel.org>, Aleksandrs Vinarskis <alex.vinarskis@gmail.com>, 
+	Wentao Guan <guanwentao@uniontech.com>, 
+	=?UTF-8?Q?Bart=C5=82omiej_Mary=C5=84czak?= <marynczakbartlomiej@gmail.com>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Kenny Levinsen <kl@kl.wtf>, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/27/25 03:58, Baolu Lu wrote:
-> Following the insights above, I wrote the code as follows. Does it look
-> good?
+Hi,
 
-I'd really prefer an actual diff that compiles. Because:
+On Wed, Aug 27, 2025 at 8:39=E2=80=AFAM Jiri Kosina <jikos@kernel.org> wrot=
+e:
+>
+> On Wed, 27 Aug 2025, Doug Anderson wrote:
+>
+> > > Bitwise AND was intended instead of OR.  With the current code the
+> > > condition is always true.
+> > >
+> > > Fixes: cbdd16b818ee ("HID: i2c-hid: Make elan touch controllers power=
+ on after panel is enabled")
+> > > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > > ---
+> > >  drivers/hid/i2c-hid/i2c-hid-core.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > Reviewed-by: Douglas Anderson <dianders@chromium.org
+>
+> This seems to be missing closing bracket :)
 
-> #ifdef CONFIG_ASYNC_PGTABLE_FREE
-> /* a 'struct ptdesc' that needs its destructor run */
-> #define ASYNC_PGTABLE_FREE_DTOR    BIT(NR_PAGEFLAGS)
+Fixed. The tools would probably have caught it, but better to be safe.
+...actually, "b4" fixed it for me. :-P
 
-This doesn't work, does it? Don't you need to _allocate_ a new bit?
-Wouldn't this die a hilariously horrible death if NR_PAGEFLAGS==64? ;)
+> > Jiri / Benjamin: if one of you can give this a quick Ack then I'll
+> > throw it into drm-misc-next with the patch it's fixing.
+>
+> Acked-by: Jiri Kosina <jkosina@suse.com>
 
-Also, I'm pretty sure you can't just go setting random bits in this
-because it aliases with page flags.
+Pushed to drm-misc-next.
 
-...
-> static void kernel_pgtable_work_func(struct work_struct *work)
-> {
->     struct ptdesc *ptdesc, *next;
->     LIST_HEAD(page_list);
-> 
->     spin_lock(&kernel_pgtable_work.lock);
->     list_splice_tail_init(&kernel_pgtable_work.list, &page_list);
->     spin_unlock(&kernel_pgtable_work.lock);
-> 
->     iommu_sva_invalidate_kva_range(0, TLB_FLUSH_ALL);
-> 
->     list_for_each_entry_safe(ptdesc, next, &page_list, pt_list) {
->         list_del(&ptdesc->pt_list);
->         if (ptdesc->__page_flags & ASYNC_PGTABLE_FREE_DTOR)
->             pagetable_dtor_free(ptdesc);
->         else
->             __free_page(ptdesc_page(ptdesc));
->     }
-> }
-What I had in mind was that kernel_pgtable_work_func() only does:
-
-	__free_pages(page, compound_order(page));
-
-All of the things that queue gunk to the list do the legwork of making
-the work_func() simple. This also guides them toward proving a single,
-compound page because _they_ have to do the work if they don't want
-something simple.
-
-> void kernel_pgtable_async_free_dtor(struct ptdesc *ptdesc)
-> {
->     spin_lock(&kernel_pgtable_work.lock);
->     ptdesc->__page_flags |= ASYNC_PGTABLE_FREE_DTOR;
->     list_add(&ptdesc->pt_list, &kernel_pgtable_work.list);
->     spin_unlock(&kernel_pgtable_work.lock);
-> 
->     schedule_work(&kernel_pgtable_work.work);
-> }
-> 
-> void kernel_pgtable_async_free_page_list(struct list_head *list)
-> {
->     spin_lock(&kernel_pgtable_work.lock);
->     list_splice_tail(list, &kernel_pgtable_work.list);
->     spin_unlock(&kernel_pgtable_work.lock);
-> 
->     schedule_work(&kernel_pgtable_work.work);
-> }
-> 
-> void kernel_pgtable_async_free_page(struct page *page)
-> {
->     spin_lock(&kernel_pgtable_work.lock);
->     list_add(&page_ptdesc(page)->pt_list, &kernel_pgtable_work.list);
->     spin_unlock(&kernel_pgtable_work.lock);
-> 
->     schedule_work(&kernel_pgtable_work.work);
-> }
-
-I wouldn't have three of these, I'd have _one_. If you want to free a
-bunch of pages, then just call it a bunch of times. This is not
-performance critical.
-
-Oh, and the ptdesc flag shouldn't be for "I need to be asynchronously
-freed". All kernel PTE pages should ideally set it at allocation so you
-can do this:
-
-static inline void pagetable_free(struct ptdesc *pt)
-{
-        struct page *page = ptdesc_page(pt);
-
-	if (ptdesc->some_field | PTDESC_KERNEL)
-		kernel_pgtable_async_free_page(page);
-	else
-	        __free_pages(page, compound_order(page));
-}
-
-The folks that, today, call pagetable_dtor_free() don't have to do
-_anything_ at free time. They just set the PTDESC_KERNEL bit at
-allocation time.
-
-See how that code reads? "If you have a kernel page table page, you must
-asynchronously free it." That's actually meaningful.
-
-I'm pretty sure the lower 24 bits of ptdesc->__page_type are free. So
-I'd just do this:
-
-#define PTDESC_TYPE_KERNEL BIT(0)
-
-Then, something needs to set:
-
-	ptdesc->__page_type |= PTDESC_TYPE_KERNEL;
-
-That could happen as late as here:
-
-static inline void pte_free_kernel(struct mm_struct *mm, pte_t *pte)
-{
-	struct ptdesc *ptdesc = virt_to_ptdesc(pte);
-
-	// here 	
-
-        pagetable_dtor_free(ptdesc);
-}
-
-Or as early as ptdesc allocation/constructor time. Then you check for
-PTDESC_TYPE_KERNEL in pagetable_free().
+[1/1] HID: i2c-hid: Fix test in i2c_hid_core_register_panel_follower()
+      commit: 5c76c794bf29399394ebacaa5af8436b8bed0d46
 
