@@ -1,101 +1,156 @@
-Return-Path: <linux-kernel+bounces-787848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DAC3B37C27
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:47:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1127EB37C24
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:46:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D6627B61A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:45:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A09AF7C381D
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B58A314A76;
-	Wed, 27 Aug 2025 07:47:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F503164B4;
+	Wed, 27 Aug 2025 07:46:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="LGzVdU1v"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F45265626;
-	Wed, 27 Aug 2025 07:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oFIccRh0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E167F2F617A
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 07:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756280826; cv=none; b=lTfQ75TmeSt9RXTOCU91Vxmnnd4S3C5REVPt695xvD2QwARhjfWHBJm45F5HFgAuSn6hfmHqIDXdS4E8NTc7qfuRvwuhAgIPC6U5+zbAGyhI93nkYrUvo/crvg8QX60TLOEAwM+GW5336e2ui19bQjhST3lRNNiitFkFeok11uY=
+	t=1756280767; cv=none; b=HezRJA6jFMvOSpWbHkOQijIkJZUJDu8a+/HWFXAAIOvsi/S477DyR6am8nrl39o8tmWXSpHkivLPC0gLYd9OtdRm8PD3tvxsqZNfsfTZM+e+3FjHrvnYTeYfAxC8fRdxo+TH95fBrXUhWK6o2s6Y/uQzjmikA9wevZUJ59QdeCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756280826; c=relaxed/simple;
-	bh=0MmrPy+E8embJExjeJmQiky6NuUvRVQ/YGgyEIJXCLY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=jYBT7TLB3HtGI62yQFPn4yLHxOPmwC2pzumhg43+/I7+v33G/L+KPhz8hLXUWOdCOqeYgtvZKBgkRwhdZETCgtcvXS0TI2qbT0WquM/m9liMJNwGaU1xwBaxRMQlhwWkxksPD2ceZkTs1EtUwdBs9lbRGP8g6/f3Xn3me1BKpgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=LGzVdU1v reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=2Q4BVcfMJ9wvZWMC/mZ7cNqnTcVJUHQ74bJz30nxEJQ=; b=L
-	GzVdU1vI/trXXe3VPhkZrntZSiOp0+sLZDHI4PjQh4amNDClKG+uCaNgiaA2K4Gm
-	8hz333L/LBsNFOCPreA2udFPNEnXTkKaebazpgT6JFDVpSuoLZo7xZz0bCIhfa4s
-	MIemJRxq2XaRtDbW1pjFkhOBV8Bqdjx6T46lvhojk4=
-Received: from yangshiguang1011$163.com ( [1.202.162.48] ) by
- ajax-webmail-wmsvr-40-108 (Coremail) ; Wed, 27 Aug 2025 15:45:48 +0800
- (CST)
-Date: Wed, 27 Aug 2025 15:45:48 +0800 (CST)
-From: yangshiguang  <yangshiguang1011@163.com>
-To: "Harry Yoo" <harry.yoo@oracle.com>
-Cc: "Vlastimil Babka" <vbabka@suse.cz>,
-	"Matthew Wilcox" <willy@infradead.org>, akpm@linux-foundation.org,
-	cl@gentwo.org, rientjes@google.com, roman.gushchin@linux.dev,
-	glittao@gmail.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	yangshiguang <yangshiguang@xiaomi.com>, stable@vger.kernel.org
-Subject: Re:Re: [PATCH v3] mm: slub: avoid wake up kswapd in
- set_track_prepare
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20250519(9504565a)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <aK6U61xNpJS0qs15@hyeyoo>
-References: <20250825121737.2535732-1-yangshiguang1011@163.com>
- <aKxZp_GgYVzp8Uvt@casper.infradead.org>
- <54d9e5ac-5a51-4901-9b13-4c248aada2d7@suse.cz> <aK6U61xNpJS0qs15@hyeyoo>
-X-NTES-SC: AL_Qu2eBP6Tv08v7iadbekfmUgRj+k6WsK3s/sn3oNfP5B+jCLp1RAuT3NTGmvR89CDKD2NnQiHYDh85sR+ZaZKQoML7HSsXXB4Qm/WIcirldzZ5g==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1756280767; c=relaxed/simple;
+	bh=ytubK461FniUf2IfwdqKsByFkQ4P0lYinRAgiXXMQSY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eZngYo0Bx/mgjWvMNTvitY1YVnsd4Sy18WS2L2tQ9xRlXEef6yl24fYhF9qEDHD9Sgv0lZXPIDvwnmVdMQ3HXfS/tubOiog6yjTC97M7UCwLBLCY7KVG1r+E7GnQ4FYjOoWIhERJVRA70/n7cHyxyZLlg95QedCz7mgfI9sFWs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oFIccRh0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3FB7C4CEEB;
+	Wed, 27 Aug 2025 07:46:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756280766;
+	bh=ytubK461FniUf2IfwdqKsByFkQ4P0lYinRAgiXXMQSY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oFIccRh0T7Gcu5rUbogq38tukybr1RmrGuforXmNK4SIKXOqQNlmNVDNro+9jy5vy
+	 Sss83LMuf9GuGjIj95Lo6jzcmNtIUnzGuaYx8Rhrprh+ckO6axB51qtTemZYxUxk2n
+	 FkEZZhvE6ToWkXq7N4hl8E/6L+9o9Q3FwPol8E/8e/1YG/aEvDoIUYkjzVZUpaNGr1
+	 HP37jXpN+p4vno5I+RrxtD4/qPiVGAJPIicgbFhsyKrEjvdzdt3rg5CtqVhk7/om4h
+	 Y9OjuTySiwIPW/vrjcvjQPKvW3VX9VAx0IKrPkIpdsQgahAKQxpmdWGD43fyTey3sk
+	 R+B3Ib2RFpZrA==
+Date: Wed, 27 Aug 2025 09:46:03 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Hui Pu <Hui.Pu@gehealthcare.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Dmitry Baryshkov <lumag@kernel.org>
+Subject: Re: [PATCH 2/2] drm/bridge: ti-sn65dsi83: protect device resources
+ on unplug
+Message-ID: <20250827-charming-arcane-stingray-cfb8b6@houat>
+References: <20250808-drm-bridge-atomic-vs-remove-v1-0-a52e933b08a8@bootlin.com>
+ <20250808-drm-bridge-atomic-vs-remove-v1-2-a52e933b08a8@bootlin.com>
+ <l2orbpdoh3cqqgqudbnbdlogo3bd57uu4nv3ax74uoahknzjgr@gbxxuky3huw6>
+ <20250820131302.6a2da5ef@booty>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <6e1ab9d8.6595.198ea7d7a78.Coremail.yangshiguang1011@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:bCgvCgD3v1ett65oVdEiAA--.1986W
-X-CM-SenderInfo: 51dqw25klj3ttqjriiqr6rljoofrz/1tbiEA625WiuiUfH0QAGsV
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="crrk2hz4sf2bauvt"
+Content-Disposition: inline
+In-Reply-To: <20250820131302.6a2da5ef@booty>
 
-CgoKCkF0IDIwMjUtMDgtMjcgMTM6MTc6MzEsICJIYXJyeSBZb28iIDxoYXJyeS55b29Ab3JhY2xl
-LmNvbT4gd3JvdGU6Cj5PbiBNb24sIEF1ZyAyNSwgMjAyNSBhdCAwNTo0Mjo1MlBNICswMjAwLCBW
-bGFzdGltaWwgQmFia2Egd3JvdGU6Cj4+IE9uIDgvMjUvMjUgMTQ6NDAsIE1hdHRoZXcgV2lsY294
-IHdyb3RlOgo+PiA+IE9uIE1vbiwgQXVnIDI1LCAyMDI1IGF0IDA4OjE3OjM3UE0gKzA4MDAsIHlh
-bmdzaGlndWFuZzEwMTFAMTYzLmNvbSB3cm90ZToKPj4gPj4gQXZvaWQgZGVhZGxvY2sgY2F1c2Vk
-IGJ5IGltcGxpY2l0bHkgd2FraW5nIHVwIGtzd2FwZCBieQo+PiA+PiBwYXNzaW5nIGluIGFsbG9j
-YXRpb24gZmxhZ3MuCj4+ID4gWy4uLl0KPj4gPj4gKwkvKiBQcmVlbXB0aW9uIGlzIGRpc2FibGVk
-IGluIF9fX3NsYWJfYWxsb2MoKSAqLwo+PiA+PiArCWdmcF9mbGFncyAmPSB+KF9fR0ZQX0RJUkVD
-VF9SRUNMQUlNKTsKPj4gPiAKPj4gPiBJZiB5b3UgZG9uJ3QgbWVhbiBfX0dGUF9LU1dBUERfUkVD
-TEFJTSBoZXJlLCB0aGUgZXhwbGFuYXRpb24gbmVlZHMgdG8KPj4gPiBiZSBiZXR0ZXIuCj4+IAo+
-PiBJdCB3YXMgc3VnZ2VzdGVkIGJ5IEhhcnJ5IGhlcmU6Cj4+IGh0dHBzOi8vbG9yZS5rZXJuZWwu
-b3JnL2FsbC9hS0toVW9Va1JORGtGWVliQGhhcnJ5Cj4+IAo+PiBJIHRoaW5rIHRoZSBjb21tZW50
-IGlzIGVub3VnaD8gRGlzYWJsaW5nIHByZWVtcHRpb24gbWVhbnMgd2UgY2FuJ3QgZGlyZWN0Cj4+
-IHJlY2xhaW0sIGJ1dCB3ZSBjYW4gd2FrZSB1cCBrc3dhcGQuIElmIHRoZSBzbGFiIGNhbGxlciBj
-b250ZXh0IGlzIHN1Y2ggdGhhdAo+PiB3ZSBjYW4ndCwgX19HRlBfS1NXQVBEX1JFQ0xBSU0gYWxy
-ZWFkeSB3b24ndCBiZSBpbiB0aGUgZ2ZwX2ZsYWdzLgo+Cj5UbyBtYWtlIGl0IGEgbGl0dGxlIGJp
-dCBtb3JlIHZlcmJvc2UsIHRoaXMgXl4gZXhwbGFuYXRpb24gY2FuIGJlIGFkZGVkIHRvIHRoZQoK
-PmNoYW5nZWxvZz8KCgpvaywgd2lsbCBiZSBlYXNpZXIgdG8gdW5kZXJzdGFuZC4KCj4KPj4gQnV0
-IEkgdGhpbmsgd2Ugc2hvdWxkIG1hc2sgb3VyIGFsc28gX19HRlBfTk9GQUlMIGFuZCBhZGQgX19H
-RlBfTk9XQVJOPwo+Cgo+VGhhdCBzb3VuZHMgZ29vZC4+Cj4+ICh3ZSBzaG91bGQgZ2V0IHNvbWUg
-Y29tbW9uIGhlbHBlcnMgZm9yIHRoZXNlIGtpbmRzIG9mIGdmcCBmbGFnIG1hbmlwdWxhdGlvbnMK
-Pj4gYWxyZWFkeSkKPgo+QW55IGlkZWFzIGZvciBpdHMgbmFtZT8KPgo+Z2ZwX2RvbnRfdHJ5X3Rv
-b19oYXJkKCksCj5nZnBfYWRqdXN0X2xpZ2h0d2VpZ2h0KCksCj5nZnBfYWRqdXN0X21heWZhaWwo
-KSwKPi4uLgo+Cj5JJ20gbm90IGdvb2QgYXQgbmFtaW5nIDovCgo+CgpIb3cgYWJvdXQgdGhpcz8g
-CgogICAgICAgIC8qIFByZWVtcHRpb24gaXMgZGlzYWJsZWQgaW4gX19fc2xhYl9hbGxvYygpICov
-Ci0gICAgICAgZ2ZwX2ZsYWdzICY9IH4oX19HRlBfRElSRUNUX1JFQ0xBSU0pOworICAgICAgIGdm
-cF9mbGFncyA9IChnZnBfZmxhZ3MgJiB+KF9fR0ZQX0RJUkVDVF9SRUNMQUlNIHwgX19HRlBfTk9G
-QUlMKSkgfAorICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgX19HRlBfTk9X
-QVJOOwoKID4tLSAKPkNoZWVycywKPkhhcnJ5IC8gSHllb25nZ29uCg==
+
+--crrk2hz4sf2bauvt
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 2/2] drm/bridge: ti-sn65dsi83: protect device resources
+ on unplug
+MIME-Version: 1.0
+
+On Wed, Aug 20, 2025 at 01:13:02PM +0200, Luca Ceresoli wrote:
+> Hello Maxime,
+>=20
+> On Tue, 19 Aug 2025 14:29:32 +0200
+> Maxime Ripard <mripard@kernel.org> wrote:
+>=20
+> > > @@ -1005,7 +1041,24 @@ static void sn65dsi83_remove(struct i2c_client=
+ *client)
+> > >  {
+> > >  	struct sn65dsi83 *ctx =3D i2c_get_clientdata(client);
+> > > =20
+> > > +	drm_bridge_unplug(&ctx->bridge);
+> > >  	drm_bridge_remove(&ctx->bridge); =20
+> >=20
+> > Shouldn't we merge drm_bridge_unplug with the release part of
+> > devm_drm_bridge_alloc?
+>=20
+> I'm not sure I got what you are suggesting here, sorry.
+>=20
+> Do you mean that __devm_drm_bridge_alloc() should add a devres action
+> to call drm_bridge_unplug(), so the unplug is called implicitly and
+> does not need to be called explicitly by all drivers?
+
+Yes
+
+> If that's what you mean, I don't think that would work. Unless I'm
+> missing something, devres actions are always invoked just after the
+> driver .remove callback.
+
+Yes, they are called in reverse order of registration, after remove.
+
+> But we need to call drm_bridge_unplug() at the beginning (or just
+> before) .remove, at least for drivers that need to do something in
+> .remove that cannot be done by devm.
+>=20
+> In pseudocode:
+>=20
+> mybridge_remove()
+> {
+>   drm_bridge_unplug(); <-- explicit call as in my patch
+>   xyz_disable();
+>   drm_bridge_unplug(); <-- implicitly done by devres
+> }
+>=20
+> We want xyz_disable() to be done after drm_bridge_unplug(), so other
+> code paths using drm_bridge_enter/exit() won't mess with xyz.
+
+It's not clear to me why doing it before xyz_disable() is important
+here? If anything, it would prevent from disabling the hardware for
+example, even though you still have your memory mapping, clocks, power
+domains, regulators, etc. to properly disable it.
+
+You're still correct that it's a bad idea though because we want to do
+it before we start freeing all those, so it needs to execute as the
+before the devm actions ...
+
+> devres actions cannot be added to be executed _before_ .remove, AFAIK.
+
+=2E.. and we can't do that either.
+
+Maxime
+
+--crrk2hz4sf2bauvt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaK63uwAKCRAnX84Zoj2+
+dgLcAYCbzeLhpttYGY0jIOvo/NL1UpFAUrqw3LpkYCfx7XLCeWzOJnDcUU+sOaAV
+PQRUGesBgJr8xIO7M9NVXmh8k2lakSPVKLcdG+5v6nlYTP8thl/MHrBT2nsih6oO
+fJVVvVq9Pg==
+=XFdz
+-----END PGP SIGNATURE-----
+
+--crrk2hz4sf2bauvt--
 
