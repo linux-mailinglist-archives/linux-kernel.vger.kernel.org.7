@@ -1,118 +1,169 @@
-Return-Path: <linux-kernel+bounces-788993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04CD2B38F67
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 01:53:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5075AB38F6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 01:56:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB7E5980D57
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:53:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F7EE7ABA21
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:55:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA3C82EA741;
-	Wed, 27 Aug 2025 23:53:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="V+4gzN75"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C4703112A0;
+	Wed, 27 Aug 2025 23:56:30 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E40930CDAD
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 23:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425D11DB127
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 23:56:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756338791; cv=none; b=B1rpeObcehq85ajS5U5YI+Vr8q67RgaGBfEchd/4JI9xrpVBk4LSTlkv3W4qVvwEU64NPf/QWgd9LNVAnwue0JIWg/WxFCUkPK7ZbnJJ/CFqOvADiY2cEP6JGH5vQPsQXvnP5fu2FR+4CcxbTAd3Yig+/mJsrfB76O0qG7DBj1c=
+	t=1756338989; cv=none; b=Ig25MXUDKvFaq2PQ6SejXfuaU+le76TpiDgp2aFORLAbADWBYejODjmqepL8NLQQSvgCvY7TCrMJ34jZSNGs4qZxNyJmbSBNr7nELaBoUGWmhgbt4ETXodXyg0K+LpBVp9ldFdDo061mQtvWEoB18Zhw8Rb76kUKfAc4N26gJ8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756338791; c=relaxed/simple;
-	bh=OiOLYJb2Zd5nJ4kFjVVVoam9t8cIRUYfLzwKKyXHnpk=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=sObN1Iufybl8tEMJ6AXOiTg0lwc1mFnJjdxu7hiKVPINB5OeiXAgfUi97hOBcBfOhEi+LlM6sh6RSp0ZJ7Yvc2+5ZY1hIXWO3l7a7L2qvejtxhtCfq2z3WNQKA1f1NLDOm2lF4kVq8iIQR4Ff4olxp0TddGQP0jHQo6Pj44dqT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=V+4gzN75; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7974C4CEEB;
-	Wed, 27 Aug 2025 23:53:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1756338790;
-	bh=OiOLYJb2Zd5nJ4kFjVVVoam9t8cIRUYfLzwKKyXHnpk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=V+4gzN75/R/uxO0d6n902wfPpwNcKXxYvim8iTOEcOW2FctPSVv/cknX5aKQ+oa2G
-	 0J6K3m12nPnf/tiqge5xDMw6idP0rJmYpq9WZTpO+TGSObxliabGRS8NZBxN+oGfcq
-	 +4X35cjB9q75g/V7gp7bz46O8+/xuYVX6oAPq2tE=
-Date: Wed, 27 Aug 2025 16:53:09 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: david@redhat.com, lorenzo.stoakes@oracle.com, ziy@nvidia.com,
- baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, npache@redhat.com,
- ryan.roberts@arm.com, dev.jain@arm.com, baohua@kernel.org,
- shikemeng@huaweicloud.com, kasong@tencent.com, nphamcs@gmail.com,
- bhe@redhat.com, chrisl@kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] huge_mm.h: disallow is_huge_zero_folio(NULL)
-Message-Id: <20250827165309.44e465ff214e45f1a6665b24@linux-foundation.org>
-In-Reply-To: <20250827150330.280399-1-max.kellermann@ionos.com>
-References: <2aa3f478-9c87-4102-b83e-bf235372d834@redhat.com>
-	<20250827150330.280399-1-max.kellermann@ionos.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1756338989; c=relaxed/simple;
+	bh=hzHwndWEpS0xTFzEybcfdp9UUiSixkUsYAWoAuFCkvw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=LXqQ9BaAi0Y71L0Wm6pB3p4vQt4FVb+HKXyC7cFK6od9+egkKrr87LUFS0w/iOV/hSuK6zquSmrVVTy92FZsWdzNYU6Q2+BlTLd3Gc09wzo7L7On8wehCIPdvk4I/f9t5OUGk16Njt1dk9Yes7XmcRXp4hGedVjrKqRoj0kfbgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-886b58db928so48907739f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 16:56:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756338987; x=1756943787;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XhWQ9iGoM04g6lfAV7PCS2cBnF3cJ7MMLrdxlmgfU58=;
+        b=L4w+WwNSIjAn9S0xkvchcAZaRWGSdPpYXk3a4fmK2NgMV695+BxbFSUN9PZqoHBMWw
+         qn+NpiX1/eqpi1Rajvx3Af/t2lEXT8lb1FcTwUQHSlSxlvy4gDBRfRfSyWcJHliyRGPH
+         irOV6arz5bSC19mAm0xTD/2kChuFaCWo06k4zlMU/jqEJGQ8tbNhDTYOJrXZahMzgReV
+         M+SQ4OB6gsrORhWOwke11FWtp71B/Jf9e6Zh0IvsbWuN5K8bQ8TJJ9MmpdE/paHSr4Lo
+         OXVX1g/PFysIDl+Bo5eJa7JJvLFbUa4CJDh+Bf4BKGLfAqWZOJo0bJcYqEkmUupTards
+         YlMA==
+X-Forwarded-Encrypted: i=1; AJvYcCXvgX42YVRDjcXcQaAcwDCY0pKwRudKv/+oY+T4JDa5zAa56ZbEA+5l5otOeB5VESSCMMljIkih6Xjn6SU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAHpORoy5xKddkcweZ30gr0K/noLMAOYTdtLOedZMmSFLT2AmG
+	8Op1N2P4rC7j9TbxPy4mBVgXLrKiTRj6m4z2fRmOXJLFENnb13kEQN9gLDLZivCe3DsNBiBhHAT
+	fBEU+GbNDm/vAAlMuHd7AQWXcgJKoPh12LTebwNBuVXs4NqZZM3AEtYT0MF4=
+X-Google-Smtp-Source: AGHT+IHYTpCmTA9elqP3yQfROErw/tzlU6n6h5Za5qE+Y2KuAVEcc+6LONSRIgaB18ds0rawccpxgaGQwtGeymsNR5DgDbYgYjeS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:3e02:b0:3ec:2275:244c with SMTP id
+ e9e14a558f8ab-3ec22752632mr192176585ab.0.1756338987431; Wed, 27 Aug 2025
+ 16:56:27 -0700 (PDT)
+Date: Wed, 27 Aug 2025 16:56:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68af9b2b.a00a0220.2929dc.0008.GAE@google.com>
+Subject: [syzbot] [bpf?] [net?] BUG: sleeping function called from invalid
+ context in sock_map_delete_elem
+From: syzbot <syzbot+1f1fbecb9413cdbfbef8@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, davem@davemloft.net, eddyz87@gmail.com, 
+	edumazet@google.com, haoluo@google.com, horms@kernel.org, 
+	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, martin.lau@linux.dev, 
+	netdev@vger.kernel.org, pabeni@redhat.com, sdf@fomichev.me, song@kernel.org, 
+	syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 27 Aug 2025 17:03:30 +0200 Max Kellermann <max.kellermann@ionos.com> wrote:
+Hello,
 
-> Calling is_huge_zero_folio(NULL) should not be legal - it makes no
-> sense, and a different (theoretical) implementation may dereference
-> the pointer.  But currently, lacking any explicit documentation, this
-> call is possible.
-> 
-> But if somebody really passes NULL, the function should not return
-> true - this isn't the huge zero folio after all!  However, if the
-> `huge_zero_folio` hasn't been allocated yet, it's NULL, and
-> is_huge_zero_folio(NULL) just happens to return true, which is a lie.
-> 
-> This weird side effect prevented me from reproducing a kernel crash
-> that occurred when the elements of a folio_batch were NULL - since
-> folios_put_refs() skips huge zero folios, this sometimes causes a
-> crash, but sometimes does not.  For debugging, it is better to reveal
-> such bugs reliably and not hide them behind random preconditions like
-> "has the huge zero folio already been created?"
-> 
-> To improve detection of such bugs, David Hildenbrand suggested adding
-> a VM_WARN_ON_ONCE().
->
-> ...
->
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -2,6 +2,7 @@
->  #ifndef _LINUX_HUGE_MM_H
->  #define _LINUX_HUGE_MM_H
->  
-> +#include <linux/mmdebug.h> // for VM_WARN_ON_ONCE()
->  #include <linux/mm_types.h>
->  
->  #include <linux/fs.h> /* only for vma_is_dax() */
-> @@ -479,6 +480,8 @@ extern unsigned long huge_zero_pfn;
->  
->  static inline bool is_huge_zero_folio(const struct folio *folio)
->  {
-> +	VM_WARN_ON_ONCE(folio == NULL);
-> +
->  	return READ_ONCE(huge_zero_folio) == folio;
->  }
+syzbot found the following issue on:
 
-OK, but it remains the case that we have seen code which calls
-is_huge_zero_folio() prior to the initialization of huge_zero_folio.
+HEAD commit:    8d245acc1e88 Merge tag 'char-misc-6.17-rc3' of git://git.k..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11513062580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e1e1566c7726877e
+dashboard link: https://syzkaller.appspot.com/bug?extid=1f1fbecb9413cdbfbef8
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=109d7062580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=126bea34580000
 
-Is this a bug?  I think so.  Should we be checking for recurrences of
-this bug?
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/096739d8f0ec/disk-8d245acc.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/83a21aa9b978/vmlinux-8d245acc.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7e7f165a3b29/bzImage-8d245acc.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1f1fbecb9413cdbfbef8@syzkaller.appspotmail.com
+
+BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
+in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 6107, name: syz.0.17
+preempt_count: 1, expected: 0
+RCU nest depth: 1, expected: 1
+3 locks held by syz.0.17/6107:
+ #0: ffffffff8d9a8b80 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ #0: ffffffff8d9a8b80 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
+ #0: ffffffff8d9a8b80 (rcu_read_lock){....}-{1:3}, at: bpf_test_timer_enter+0x1a/0x140 net/bpf/test_run.c:40
+ #1: ffffffff8d84a760 (local_bh){.+.+}-{1:3}, at: __local_bh_disable_ip+0xa1/0x400 kernel/softirq.c:163
+ #2: ffff888032e15a98 (&stab->lock){+...}-{3:3}, at: spin_lock_bh include/linux/spinlock_rt.h:88 [inline]
+ #2: ffff888032e15a98 (&stab->lock){+...}-{3:3}, at: __sock_map_delete net/core/sock_map.c:421 [inline]
+ #2: ffff888032e15a98 (&stab->lock){+...}-{3:3}, at: sock_map_delete_elem+0xb7/0x170 net/core/sock_map.c:452
+Preemption disabled at:
+[<ffffffff891fce58>] bpf_test_timer_enter+0xf8/0x140 net/bpf/test_run.c:42
+CPU: 0 UID: 0 PID: 6107 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ __might_resched+0x44b/0x5d0 kernel/sched/core.c:8957
+ __rt_spin_lock kernel/locking/spinlock_rt.c:48 [inline]
+ rt_spin_lock+0xc7/0x2c0 kernel/locking/spinlock_rt.c:57
+ spin_lock_bh include/linux/spinlock_rt.h:88 [inline]
+ __sock_map_delete net/core/sock_map.c:421 [inline]
+ sock_map_delete_elem+0xb7/0x170 net/core/sock_map.c:452
+ bpf_prog_2c29ac5cdc6b1842+0x43/0x4b
+ bpf_dispatcher_nop_func include/linux/bpf.h:1332 [inline]
+ __bpf_prog_run include/linux/filter.h:718 [inline]
+ bpf_prog_run include/linux/filter.h:725 [inline]
+ bpf_prog_run_pin_on_cpu include/linux/filter.h:742 [inline]
+ bpf_flow_dissect+0x132/0x400 net/core/flow_dissector.c:1024
+ bpf_prog_test_run_flow_dissector+0x37c/0x5c0 net/bpf/test_run.c:1416
+ bpf_prog_test_run+0x2ca/0x340 kernel/bpf/syscall.c:4590
+ __sys_bpf+0x581/0x870 kernel/bpf/syscall.c:6047
+ __do_sys_bpf kernel/bpf/syscall.c:6139 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:6137 [inline]
+ __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:6137
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f637004ebe9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fffc4e2e8a8 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+RAX: ffffffffffffffda RBX: 00007f6370275fa0 RCX: 00007f637004ebe9
+RDX: 0000000000000050 RSI: 0000200000000180 RDI: 000000000000000a
+RBP: 00007f63700d1e19 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f6370275fa0 R14: 00007f6370275fa0 R15: 0000000000000003
+ </TASK>
 
 
-Also, sigh.  I do dislike seeing VM_WARN_ON_ONCE() in an inline
-function - heaven knows how much bloat that adds.  Defconfig
-mm/huge_memory.o (which has three calls) grows by 80 bytes so I guess
-that's livable with.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
