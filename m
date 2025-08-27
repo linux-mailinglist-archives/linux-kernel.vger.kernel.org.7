@@ -1,111 +1,89 @@
-Return-Path: <linux-kernel+bounces-788083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 391F5B37F86
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:10:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6DC9B37F88
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:11:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E77F7A5154
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:09:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 873731B26B40
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:11:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19018346A15;
-	Wed, 27 Aug 2025 10:10:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 873BB279324;
+	Wed, 27 Aug 2025 10:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="EnSH9XQv"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="qwkqNK0C"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03EE9346A10
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 10:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D99346A16
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 10:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756289441; cv=none; b=CQkm/vBjdtXfjJ5H/bCCOngbfdzMU9lk+99TepxoR3WzdgGaI2FBdtnegoEhNjY3j+SVixyeL5B6UAiSQOo77ni/1yBSfsrPgab2pyIAec1tQAWHyT+aYFstrTkrqNRf5v5iNhUNpUZTJFEFbW0vOKR8YPw9dF3Wb7o9xAw9V6Y=
+	t=1756289451; cv=none; b=GsGNh+9AbMkUob5JppZ2eyAlDkafjO7yd89ld/XFZskY9djI1csAuX7kAzjIltrnc8fLo4w4m6R/2kIkZTXVtqs9LkbfPYSJngcrQVQg3IbLJ5woZlDdIVxBzYHcsp7zBlZdh813vVSsOmPG8lZ2OYU1k7XmFSxeVAxsyu0WovA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756289441; c=relaxed/simple;
-	bh=ob1mm/QZIvYurNgvoNKtvTajPGjDoJT+DigHtqvCg5Q=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Iy5uT5StYNV/7+30vBOvU/FtPPil7/+ZWz02AeyH8s0K45+YBy5GsNx8vnJVE9dykQhB7Hjg0Qi3iBFDAMLg4ZxJMelmRFvyZkKYETevyYln32yURntB6P82d7TxvZQBkEp6E8sFzpb5uBXwGNGEbu96CHza3CvD3lY77wKxqv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=EnSH9XQv; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-771f3f89952so652017b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 03:10:39 -0700 (PDT)
+	s=arc-20240116; t=1756289451; c=relaxed/simple;
+	bh=b5ipVQxirQj5gbkgpSFwLTpHWhEQ1wqtWZ0y9AiGGTs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eGWLh72hr5ixOprWltO3Wx/kR1FlaaXe+DaZ2MtuMWmEIzKevH3upuy3d23KP2pqxP3omwCvAvn20708NqoGLjVeYvO3oM92cRfv4nrfBcyisaS1/oAJUUdzuixOMsi3ZD9Gl4Gk0XV+L+b2JXbJ0CgJmCyxNOtXerT6odCcpNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=qwkqNK0C; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45b5c12dd87so31577145e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 03:10:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1756289439; x=1756894239; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JM7gSlpkCi+0kyKyklIFOqWTnKhlvxmA1qdlwzNde30=;
-        b=EnSH9XQv1YMXQhBFHrLfMGiqI4mEKdKdB2aK7vuZKSXuXARtQT7rpozk7vMehNT3dw
-         XH+6zuUNxpUWFVe/K7OA4TnJpKwjqgSXuyhHXyLs/0geC3Ten9Y+BKQTq3Oh56kMODS4
-         vp0lU37WyqKWdV+0uNhKhpU0voBOS6ex1188NKesv3U1Z18fmyE07TdZd4NK89T/Odic
-         ZYKEqP2NaEzc4axYmwifp9bEAMo9K9E1CvojpXBvEo8apgqBveW284aD2CtCnuzSOdhK
-         G3TSnReuYAQv9g1Oq0BxIY8JfbZbTWDwcYoGrVv6gSXZPfr8yvQZgXVCoXKuc5EzUXdd
-         QETg==
+        d=tuxon.dev; s=google; t=1756289447; x=1756894247; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TixQBgvEKkMQhE5xKVPB13TcCphpl84uFDbTL0vLvUw=;
+        b=qwkqNK0CGVHu5LJ6HmobzJPrLwyDepRPvHxGHEz+vZcNXz1ns4diuGwvwOAuGQuHLo
+         V2B16wMdj6owhnmv8X/n2pWX4ro5fUfdNlzD8wmwR9+oO2Rpz9l6tXXFw/CD4SUY3N0c
+         qeroIlNTUeWZklENJzTObL4izmjBkEc8SnBkCtMJTSPG+NkNp38DiyhXCgkbXOqKW9KI
+         G/6HvSOtYoXZPkMT0Zt2d7P2YFi6tj8P/JCxGsHb//yQhtPTD9adY46UJaBjLLoZMf71
+         pTpH62eMCYQa5TdA+E3SFWdYWtr+bWROI7gezktWL32VdN5qZdmlPB+nToYg7U3oYJlB
+         rj8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756289439; x=1756894239;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JM7gSlpkCi+0kyKyklIFOqWTnKhlvxmA1qdlwzNde30=;
-        b=Z/c+AzjkZjEF8zDrFX+agKtsIN+M5JTZ3VwH6Vyq6puggHVP2Z8ctUp5DQW/38Q3PV
-         h5HVqFJq4wIajrFfYBTU1bLlsi64Js3xgs7cPZD77+qaj+7mCuUAER63jxHTs3gLSkyY
-         8jb8Q+WfXfaCqnkkbV3YQ7/JJYNGKkVouWBu17R1owFjpRQloXuSefZOPXbwoH7mNEcx
-         O4Eg/36OBBuMblTMPLndiws6nj/bR6qUNv4MAH68BEMPt1541NZ0IEgZ9CE+nvBPqFO3
-         3q/8T2Tx3lf4/db57ji9//5r895K8TTi3FZGW+dFCgoPF/Lptktd9uff2gcBKctT0PTR
-         Yv/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWfHN7uDaTH8LfD9Wt1YB3DHLXLuAI5pUr6zDaOKK1YebmBaDHeInoXRsoU4C3A6W4tiUqsrVhw3TX1fZ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYVgKttdBzA82a1Mj/ik0vqmBnBnt3mEqq/MhOUCD74QrIAJJ5
-	rFQA8zOppaK4kTWtWEKMdlTmkJ995iP4WrpKrwmUOkW5mMJmhQp3gjQOH1E4MtwBj7I=
-X-Gm-Gg: ASbGnctTm/hZpfmYJKO/oL3qajlKk0A/OfLzwNlYt+sJ1rdJsQyooU6xB66PKGaJ79d
-	ZEXTHEpy7CVYXVTc+QwzriCL+LcNaYaRwKOuqOPTdwswhnX7ML2EmwKBoM+Ko+UyeEKN0vtimNs
-	hnoahmnzKae9EQy0Kr3wT+4ChKAurU2jZAnAyXoxecu+6uaKMdeBZv/89EWo1FxKUsXCDdIuJWy
-	MDe2/XHImuBDdkk9aMXdiCy7klmddSGSoO58mnjsA55M64XL/QZ1sqNvoixoHSIEs3zrBe18urH
-	4SuSWzwif/8Y/0IflWXbYHVegcuDAHn+bmdRnDfiUTBYTdIWlw6hQoLL2IIeuT3uYfBzu1nnFsZ
-	W0lzYZ6ic6jJUS2OJOKYA2WPA/n/HvHGn839XQB7+6NNrj1dE8p25WCjHXAjVxkc=
-X-Google-Smtp-Source: AGHT+IGdtKUBscgA9xYMmV3962XLu6gCj63wXPK/4bKpP1nVTjXzqxHi4UVk2L8ckDMtXKsc3B7ldA==
-X-Received: by 2002:aa7:88c2:0:b0:771:e341:ce68 with SMTP id d2e1a72fcca58-771fc292e89mr6337778b3a.5.1756289439091;
-        Wed, 27 Aug 2025 03:10:39 -0700 (PDT)
-Received: from L6YN4KR4K9.bytedance.net ([139.177.225.229])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-770401eb20dsm12813462b3a.79.2025.08.27.03.10.30
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 27 Aug 2025 03:10:38 -0700 (PDT)
-From: Yunhui Cui <cuiyunhui@bytedance.com>
-To: paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	atish.patra@linux.dev,
-	anup@brainfault.org,
-	will@kernel.org,
-	mark.rutland@arm.com,
-	linux-riscv@lists.infradead.org,
+        d=1e100.net; s=20230601; t=1756289447; x=1756894247;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TixQBgvEKkMQhE5xKVPB13TcCphpl84uFDbTL0vLvUw=;
+        b=oYHrDNb8Zs+Vw3ZFIYY+RpF3PODzOMod7COxBIavw+aH7EWZYeCIAkN2ZwEDrDtzJD
+         yEPRUJ4IChd3OMRT3clDdhfvDf7qs+ui8yEQo/wwRH5jOxXtfToaTdLzB7yEiVlsjKDi
+         561bGscgZe9WXqhZLeg1szP0j4WIqUiHHpgjYSnh/EmoC+spAN+7VEZzG3asKSzRJuuK
+         m39k1K5k76+KCou5EGhFCXeYXIgww/CBoQepnz/UTTHU5FU3T/ibU3ojffGIVWx5wuR6
+         hmtg98FKWqAxV7vQnUi8oKMo3UyBpi/NbDTa049jLBp6bSXpd4KEFFCinalvKbkPCfdx
+         rIVw==
+X-Forwarded-Encrypted: i=1; AJvYcCVCJ42RR8tMT4TfrZXHsENT4/mfXvgIlXA0ph/W8d4tEtjQFM2Phmlnt1vDA+IcG9vkJBQVHZ3u8sCMlAc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9wU89SEAWzJYfm5b3JOmiWfqDCa0zUgoImqU9wc8y/zh40K3f
+	/JFnrcTLlVsc6zCvyNqAZJhh2Z9Ft75I9LYu1JoPGDg4+k5ONfHKaPYsVwztUDf7hsU=
+X-Gm-Gg: ASbGncueJECuJ9omI1oLVJdeU+13eJ5bjBR1aheLbGFOJ5BsgwvrdgI3oMHJUMeJiBy
+	zMiaHSpo3SuNTa4mjBHTBDcuRC7quH+ip3sa4y2g/4PK/7a5Nu2hHddJZmtZ5YAYhroRq9sFAvu
+	JkGXuJrjsMiOUz3V6XvNQZNMdmaSrxl4PYrQRg95BnhNN8gKfZfb1+iYcINhwSBo1AY19F+ibpd
+	fP9pahTAUB60iIb+BLBsdCPEIFtocu+5P8kqJ2G0In687qiQ54/POG6EKzXQCTI6yWkjssqLaRA
+	L/bhPWAbGLHRnWt2ocmp/K3ALogiDoHm6U1TVZaGYxptBuICuGcONuhPSDV1kpLf+CAilH79gpJ
+	H6ZuCPDqU89wMBOFE9xv4iMXEDUTiUp4Lq4h4J0dagoZhPV041/DKGgY5fzeQrEfoZelIpJOzcC
+	kiNNNZt+MaIhST38vV
+X-Google-Smtp-Source: AGHT+IETY/no0Ga/lWTRqVqc1LC0xGTolfQ/830wBvuN1CYFKv7YIKqdD72VfxqDZ91vijfk3xVUFA==
+X-Received: by 2002:a05:600c:4f09:b0:45b:6163:c031 with SMTP id 5b1f17b1804b1-45b627826c3mr94650675e9.24.1756289447382;
+        Wed, 27 Aug 2025 03:10:47 -0700 (PDT)
+Received: from claudiu-TUXEDO-InfinityBook-Pro-AMD-Gen9.. ([2a02:2f04:6103:4200:a5a4:15e6:5b6a:a96])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f2ebc62sm24589465e9.24.2025.08.27.03.10.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 03:10:46 -0700 (PDT)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: wsa+renesas@sang-engineering.com,
+	ulf.hansson@linaro.org,
+	rafael@kernel.org
+Cc: claudiu.beznea@tuxon.dev,
+	linux-i2c@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org,
-	catalin.marinas@arm.com,
-	masahiroy@kernel.org,
-	suzuki.poulose@arm.com,
-	cuiyunhui@bytedance.com,
-	maz@kernel.org,
-	zhanjie9@hisilicon.com,
-	yangyicong@hisilicon.com,
-	dianders@chromium.org,
-	mingo@kernel.org,
-	lihuafei1@huawei.com,
-	akpm@linux-foundation.org,
-	jpoimboe@kernel.org,
-	rppt@kernel.org,
-	kees@kernel.org,
-	thomas.weissschuh@linutronix.de
-Subject: [PATCH 2/2] riscv: add HARDLOCKUP_DETECTOR_PERF support
-Date: Wed, 27 Aug 2025 18:09:59 +0800
-Message-Id: <20250827100959.83023-3-cuiyunhui@bytedance.com>
-X-Mailer: git-send-email 2.39.2 (Apple Git-143)
-In-Reply-To: <20250827100959.83023-1-cuiyunhui@bytedance.com>
-References: <20250827100959.83023-1-cuiyunhui@bytedance.com>
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH] i2c: core: Drop dev_pm_domain_detach() call
+Date: Wed, 27 Aug 2025 13:10:42 +0300
+Message-ID: <20250827101042.927030-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -114,63 +92,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Reuse watchdog_hld.c to enable HARDLOCKUP_DETECTOR_PERF and
-add Kconfig selections for RISC-V.
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+Starting with commit f99508074e78 ("PM: domains: Detach on
+device_unbind_cleanup()"), there is no longer a need to call
+dev_pm_domain_detach() in the bus remove function. The
+device_unbind_cleanup() function now handles this to avoid
+invoking devres cleanup handlers while the PM domain is
+powered off, which could otherwise lead to failures as
+described in the above-mentioned commit.
+
+Drop the explicit dev_pm_domain_detach() call and rely instead
+on the flags passed to dev_pm_domain_attach() to power off the
+domain.
+
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- arch/riscv/Kconfig           | 3 +++
- drivers/perf/riscv_pmu_sbi.c | 8 ++++++++
- 2 files changed, 11 insertions(+)
+ drivers/i2c/i2c-core-base.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 451eb23d86c96..214b1ead5781a 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -184,6 +184,9 @@ config RISCV
- 	select HAVE_PAGE_SIZE_4KB
- 	select HAVE_PCI
- 	select HAVE_PERF_EVENTS
-+	select PERF_EVENTS
-+	select HAVE_PERF_EVENTS_NMI if RISCV_SSE && RISCV_PMU_SSE
-+	select HAVE_HARDLOCKUP_DETECTOR_PERF if PERF_EVENTS && HAVE_PERF_EVENTS_NMI
- 	select HAVE_PERF_REGS
- 	select HAVE_PERF_USER_STACK_DUMP
- 	select HAVE_POSIX_CPU_TIMERS_TASK_WORK
-diff --git a/drivers/perf/riscv_pmu_sbi.c b/drivers/perf/riscv_pmu_sbi.c
-index 8c1ac7985df6c..c5423a046d016 100644
---- a/drivers/perf/riscv_pmu_sbi.c
-+++ b/drivers/perf/riscv_pmu_sbi.c
-@@ -22,6 +22,7 @@
- #include <linux/sched/clock.h>
- #include <linux/soc/andes/irq.h>
- #include <linux/workqueue.h>
-+#include <linux/nmi.h>
+diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+index ecca8c006b02..ae7e9c8b65a6 100644
+--- a/drivers/i2c/i2c-core-base.c
++++ b/drivers/i2c/i2c-core-base.c
+@@ -573,7 +573,8 @@ static int i2c_device_probe(struct device *dev)
+ 		goto err_clear_wakeup_irq;
  
- #include <asm/errata_list.h>
- #include <asm/sbi.h>
-@@ -1102,6 +1103,11 @@ static int pmu_sbi_setup_sse(struct riscv_pmu *pmu)
- }
- #endif
+ 	do_power_on = !i2c_acpi_waive_d0_probe(dev);
+-	status = dev_pm_domain_attach(&client->dev, do_power_on ? PD_FLAG_ATTACH_POWER_ON : 0);
++	status = dev_pm_domain_attach(&client->dev, PD_FLAG_DETACH_POWER_OFF |
++				      (do_power_on ? PD_FLAG_ATTACH_POWER_ON : 0));
+ 	if (status)
+ 		goto err_clear_wakeup_irq;
  
-+bool arch_pmu_irq_is_nmi(void)
-+{
-+	return IS_ENABLED(CONFIG_RISCV_PMU_SSE);
-+}
-+
- static int pmu_sbi_starting_cpu(unsigned int cpu, struct hlist_node *node)
- {
- 	struct riscv_pmu *pmu = hlist_entry_safe(node, struct riscv_pmu, node);
-@@ -1525,6 +1531,8 @@ static int __init pmu_sbi_devinit(void)
- 	/* Notify legacy implementation that SBI pmu is available*/
- 	riscv_pmu_legacy_skip_init();
+@@ -581,7 +582,7 @@ static int i2c_device_probe(struct device *dev)
+ 						    GFP_KERNEL);
+ 	if (!client->devres_group_id) {
+ 		status = -ENOMEM;
+-		goto err_detach_pm_domain;
++		goto err_clear_wakeup_irq;
+ 	}
  
-+	lockup_detector_retry_init();
-+
- 	return ret;
- }
- device_initcall(pmu_sbi_devinit)
+ 	client->debugfs = debugfs_create_dir(dev_name(&client->dev),
+@@ -608,8 +609,6 @@ static int i2c_device_probe(struct device *dev)
+ err_release_driver_resources:
+ 	debugfs_remove_recursive(client->debugfs);
+ 	devres_release_group(&client->dev, client->devres_group_id);
+-err_detach_pm_domain:
+-	dev_pm_domain_detach(&client->dev, do_power_on);
+ err_clear_wakeup_irq:
+ 	dev_pm_clear_wake_irq(&client->dev);
+ 	device_init_wakeup(&client->dev, false);
+@@ -636,8 +635,6 @@ static void i2c_device_remove(struct device *dev)
+ 
+ 	devres_release_group(&client->dev, client->devres_group_id);
+ 
+-	dev_pm_domain_detach(&client->dev, true);
+-
+ 	dev_pm_clear_wake_irq(&client->dev);
+ 	device_init_wakeup(&client->dev, false);
+ 
 -- 
-2.39.5
+2.43.0
 
 
