@@ -1,169 +1,309 @@
-Return-Path: <linux-kernel+bounces-788994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5075AB38F6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 01:56:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C1EDB38F6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 01:58:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F7EE7ABA21
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:55:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 728641BA6FD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 23:58:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C4703112A0;
-	Wed, 27 Aug 2025 23:56:30 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27EC6310779;
+	Wed, 27 Aug 2025 23:58:21 +0000 (UTC)
+Received: from neil.brown.name (neil.brown.name [103.29.64.221])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425D11DB127
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 23:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B670A7260A;
+	Wed, 27 Aug 2025 23:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756338989; cv=none; b=Ig25MXUDKvFaq2PQ6SejXfuaU+le76TpiDgp2aFORLAbADWBYejODjmqepL8NLQQSvgCvY7TCrMJ34jZSNGs4qZxNyJmbSBNr7nELaBoUGWmhgbt4ETXodXyg0K+LpBVp9ldFdDo061mQtvWEoB18Zhw8Rb76kUKfAc4N26gJ8Y=
+	t=1756339100; cv=none; b=NVf95q7SiPbpiiEtOSlciN1Mlr5/FTRmy+cxGI6LuFR/u6MoD3WaQ4xcnsl6XOl00Z/m5zc9VNCji8KLHMQTrU2XjRF0mukZ4/qD0nNE4ZBIfT39/VO8q5gUWLTz6CjA+rucvOvwq7un0hgcvVAUmvQoj+zhRNPlKduVcJkF2JM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756338989; c=relaxed/simple;
-	bh=hzHwndWEpS0xTFzEybcfdp9UUiSixkUsYAWoAuFCkvw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=LXqQ9BaAi0Y71L0Wm6pB3p4vQt4FVb+HKXyC7cFK6od9+egkKrr87LUFS0w/iOV/hSuK6zquSmrVVTy92FZsWdzNYU6Q2+BlTLd3Gc09wzo7L7On8wehCIPdvk4I/f9t5OUGk16Njt1dk9Yes7XmcRXp4hGedVjrKqRoj0kfbgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-886b58db928so48907739f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 16:56:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756338987; x=1756943787;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XhWQ9iGoM04g6lfAV7PCS2cBnF3cJ7MMLrdxlmgfU58=;
-        b=L4w+WwNSIjAn9S0xkvchcAZaRWGSdPpYXk3a4fmK2NgMV695+BxbFSUN9PZqoHBMWw
-         qn+NpiX1/eqpi1Rajvx3Af/t2lEXT8lb1FcTwUQHSlSxlvy4gDBRfRfSyWcJHliyRGPH
-         irOV6arz5bSC19mAm0xTD/2kChuFaCWo06k4zlMU/jqEJGQ8tbNhDTYOJrXZahMzgReV
-         M+SQ4OB6gsrORhWOwke11FWtp71B/Jf9e6Zh0IvsbWuN5K8bQ8TJJ9MmpdE/paHSr4Lo
-         OXVX1g/PFysIDl+Bo5eJa7JJvLFbUa4CJDh+Bf4BKGLfAqWZOJo0bJcYqEkmUupTards
-         YlMA==
-X-Forwarded-Encrypted: i=1; AJvYcCXvgX42YVRDjcXcQaAcwDCY0pKwRudKv/+oY+T4JDa5zAa56ZbEA+5l5otOeB5VESSCMMljIkih6Xjn6SU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAHpORoy5xKddkcweZ30gr0K/noLMAOYTdtLOedZMmSFLT2AmG
-	8Op1N2P4rC7j9TbxPy4mBVgXLrKiTRj6m4z2fRmOXJLFENnb13kEQN9gLDLZivCe3DsNBiBhHAT
-	fBEU+GbNDm/vAAlMuHd7AQWXcgJKoPh12LTebwNBuVXs4NqZZM3AEtYT0MF4=
-X-Google-Smtp-Source: AGHT+IHYTpCmTA9elqP3yQfROErw/tzlU6n6h5Za5qE+Y2KuAVEcc+6LONSRIgaB18ds0rawccpxgaGQwtGeymsNR5DgDbYgYjeS
+	s=arc-20240116; t=1756339100; c=relaxed/simple;
+	bh=icCSIWUerQO1Zodn51IfYGAubDfiSnEpwxONW6kQCPg=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=HRcol4NYMjeli338DkPTMFiWBU4F2TcqMfEykSrQEBUuV6tR7RjU3t4gXimenl8wLC0Zg1u4aQgZP9DqwmQpBPtFW0EdL0VgD2rowFu0COURfdCSSawbr/l7cnnYvdt7ZW/z4ipykTSO+R5qsR9S3U+3DZ3Qg4twkP7jvVnxKF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
+Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
+	by neil.brown.name with esmtp (Exim 4.95)
+	(envelope-from <mr@neil.brown.name>)
+	id 1urQ1k-007QC6-7P;
+	Wed, 27 Aug 2025 23:58:05 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3e02:b0:3ec:2275:244c with SMTP id
- e9e14a558f8ab-3ec22752632mr192176585ab.0.1756338987431; Wed, 27 Aug 2025
- 16:56:27 -0700 (PDT)
-Date: Wed, 27 Aug 2025 16:56:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68af9b2b.a00a0220.2929dc.0008.GAE@google.com>
-Subject: [syzbot] [bpf?] [net?] BUG: sleeping function called from invalid
- context in sock_map_delete_elem
-From: syzbot <syzbot+1f1fbecb9413cdbfbef8@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, davem@davemloft.net, eddyz87@gmail.com, 
-	edumazet@google.com, haoluo@google.com, horms@kernel.org, 
-	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, martin.lau@linux.dev, 
-	netdev@vger.kernel.org, pabeni@redhat.com, sdf@fomichev.me, song@kernel.org, 
-	syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
-Content-Type: text/plain; charset="UTF-8"
+From: "NeilBrown" <neil@brown.name>
+To: "Amir Goldstein" <amir73il@gmail.com>
+Cc: =?utf-8?q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>,
+ "Miklos Szeredi" <miklos@szeredi.hu>, "Theodore Tso" <tytso@mit.edu>,
+ "Gabriel Krisman Bertazi" <krisman@kernel.org>, linux-unionfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ kernel-dev@igalia.com
+Subject:
+ Re: [PATCH v6 9/9] ovl: Support mounting case-insensitive enabled layers
+In-reply-to:
+ <CAOQ4uxj551a7cvjpcYEyTLtsEXw9OxHtTc-VSm170J5pWtwoUQ@mail.gmail.com>
+References:
+ <>, <CAOQ4uxj551a7cvjpcYEyTLtsEXw9OxHtTc-VSm170J5pWtwoUQ@mail.gmail.com>
+Date: Thu, 28 Aug 2025 09:58:05 +1000
+Message-id: <175633908557.2234665.14959580663322237611@noble.neil.brown.name>
 
-Hello,
+On Thu, 28 Aug 2025, Amir Goldstein wrote:
+> On Tue, Aug 26, 2025 at 9:01=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@iga=
+lia.com> wrote:
+> >
+> >
+> >
+> > Em 26/08/2025 04:31, Amir Goldstein escreveu:
+> > > On Mon, Aug 25, 2025 at 3:31=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid=
+@igalia.com> wrote:
+> > >>
+> > >> Hi Amir,
+> > >>
+> > >> Em 22/08/2025 16:17, Amir Goldstein escreveu:
+> > >>
+> > >> [...]
+> > >>
+> > >>     /*
+> > >>>>>> -        * Allow filesystems that are case-folding capable but den=
+y composing
+> > >>>>>> -        * ovl stack from case-folded directories.
+> > >>>>>> +        * Exceptionally for layers with casefold, we accept that =
+they have
+> > >>>>>> +        * their own hash and compare operations
+> > >>>>>>             */
+> > >>>>>> -       if (sb_has_encoding(dentry->d_sb))
+> > >>>>>> -               return IS_CASEFOLDED(d_inode(dentry));
+> > >>>>>> +       if (ofs->casefold)
+> > >>>>>> +               return false;
+> > >>>>>
+> > >>>>> I think this is better as:
+> > >>>>>            if (sb_has_encoding(dentry->d_sb))
+> > >>>>>                    return false;
+> > >>>>>
+> > >>>
+> > >>> And this still fails the test "Casefold enabled" for me.
+> > >>>
+> > >>> Maybe you are confused because this does not look like
+> > >>> a test failure. It looks like this:
+> > >>>
+> > >>> generic/999 5s ...  [19:10:21][  150.667994] overlayfs: failed lookup
+> > >>> in lower (ovl-lower/casefold, name=3D'subdir', err=3D-116): parent wr=
+ong
+> > >>> casefold
+> > >>> [  150.669741] overlayfs: failed lookup in lower (ovl-lower/casefold,
+> > >>> name=3D'subdir', err=3D-116): parent wrong casefold
+> > >>> [  150.760644] overlayfs: failed lookup in lower (/ovl-lower,
+> > >>> name=3D'casefold', err=3D-66): child wrong casefold
+> > >>>    [19:10:24] [not run]
+> > >>> generic/999 -- overlayfs does not support casefold enabled layers
+> > >>> Ran: generic/999
+> > >>> Not run: generic/999
+> > >>> Passed all 1 tests
+> > >>>
+> > >>
+> > >> This is how the test output looks before my changes[1] to the test:
+> > >>
+> > >> $ ./run.sh
+> > >> FSTYP         -- ext4
+> > >> PLATFORM      -- Linux/x86_64 archlinux 6.17.0-rc1+ #1174 SMP
+> > >> PREEMPT_DYNAMIC Mon Aug 25 10:18:09 -03 2025
+> > >> MKFS_OPTIONS  -- -F /dev/vdc
+> > >> MOUNT_OPTIONS -- -o acl,user_xattr /dev/vdc /tmp/dir2
+> > >>
+> > >> generic/999 1s ... [not run] overlayfs does not support casefold enabl=
+ed
+> > >> layers
+> > >> Ran: generic/999
+> > >> Not run: generic/999
+> > >> Passed all 1 tests
+> > >>
+> > >>
+> > >> And this is how it looks after my changes[1] to the test:
+> > >>
+> > >> $ ./run.sh
+> > >> FSTYP         -- ext4
+> > >> PLATFORM      -- Linux/x86_64 archlinux 6.17.0-rc1+ #1174 SMP
+> > >> PREEMPT_DYNAMIC Mon Aug 25 10:18:09 -03 2025
+> > >> MKFS_OPTIONS  -- -F /dev/vdc
+> > >> MOUNT_OPTIONS -- -o acl,user_xattr /dev/vdc /tmp/dir2
+> > >>
+> > >> generic/999        1s
+> > >> Ran: generic/999
+> > >> Passed all 1 tests
+> > >>
+> > >> So, as far as I can tell, the casefold enabled is not being skipped
+> > >> after the fix to the test.
+> > >
+> > > Is this how it looks with your v6 or after fixing the bug:
+> > > https://lore.kernel.org/linux-unionfs/68a8c4d7.050a0220.37038e.005c.GAE=
+@google.com/
+> > >
+> > > Because for me this skipping started after fixing this bug
+> > > Maybe we fixed the bug incorrectly, but I did not see what the problem
+> > > was from a quick look.
+> > >
+> > > Can you test with my branch:
+> > > https://github.com/amir73il/linux/commits/ovl_casefold/
+> > >
+> >
+> > Right, our branches have a different base, mine is older and based on
+> > the tag vfs/vfs-6.18.mount.
+> >
+> > I have now tested with your branch, and indeed the test fails with
+> > "overlayfs does not support casefold enabled". I did some debugging and
+> > the missing commit from my branch that is making this difference here is
+> > e8bd877fb76bb9f3 ("ovl: fix possible double unlink"). After reverting it
+> > on top of your branch, the test works. I'm not sure yet why this
+> > prevents the mount, but this is the call trace when the error happens:
+>=20
+> Wow, that is an interesting development race...
+>=20
+> >
+> > TID/PID 860/860 (mount/mount):
+> >
+> >                      entry_SYSCALL_64_after_hwframe+0x77
+> >                      do_syscall_64+0xa2
+> >                      x64_sys_call+0x1bc3
+> >                      __x64_sys_fsconfig+0x46c
+> >                      vfs_cmd_create+0x60
+> >                      vfs_get_tree+0x2e
+> >                      ovl_get_tree+0x19
+> >                      get_tree_nodev+0x70
+> >                      ovl_fill_super+0x53b
+> > !    0us [-EINVAL]  ovl_parent_lock
+> >
+> > And for the ovl_parent_lock() arguments, *parent=3D"work", *child=3D"#7".=
+ So
+> > right now I'm trying to figure out why the dentry for #7 is not hashed.
+> >
+>=20
+> The reason is this:
+>=20
+> static struct dentry *ext4_lookup(...
+> {
+> ...
+>         if (IS_ENABLED(CONFIG_UNICODE) && !inode && IS_CASEFOLDED(dir)) {
+>                 /* Eventually we want to call d_add_ci(dentry, NULL)
+>                  * for negative dentries in the encoding case as
+>                  * well.  For now, prevent the negative dentry
+>                  * from being cached.
+>                  */
+>                 return NULL;
+>         }
+>=20
+>         return d_splice_alias(inode, dentry);
+> }
+>=20
+> Neil,
+>=20
+> Apparently, the assumption that
+> ovl_lookup_temp() =3D> ovl_lookup_upper() =3D> lookup_one()
+> returns a hashed dentry is not always true.
+>=20
+> It may be always true for all the filesystems that are currently
+> supported as an overlayfs
+> upper layer fs (?), but it does not look like you can count on this
+> for the wider vfs effort
+> and we should try to come up with a solution for ovl_parent_lock()
+> that will allow enabling
+> casefolding on overlayfs layers.
+>=20
+> This patch seems to work. WDYT?
+>=20
+> Thanks,
+> Amir.
+>=20
+> commit 5dfcd10378038637648f3f422e3d5097eb6faa5f
+> Author: Amir Goldstein <amir73il@gmail.com>
+> Date:   Wed Aug 27 19:55:26 2025 +0200
+>=20
+>     ovl: adapt ovl_parent_lock() to casefolded directories
+>=20
+>     e8bd877fb76bb9f3 ("ovl: fix possible double unlink") added a sanity
+>     check of !d_unhashed(child) to try to verify that child dentry was not
+>     unlinked while parent dir was unlocked.
+>=20
+>     This "was not unlink" check has a false positive result in the case of
+>     casefolded parent dir, because in that case, ovl_create_temp() returns
+>     an unhashed dentry.
+>=20
+>     Change the "was not unlinked" check to use cant_mount(child).
+>     cant_mount(child) means that child was unlinked while we have been
+>     holding a reference to child, so it could not have become negative.
+>=20
+>     This fixes the error in ovl_parent_lock() in ovl_check_rename_whiteout()
+>     after ovl_create_temp() and allows mount of overlayfs with casefolding
+>     enabled layers.
+>=20
+>     Reported-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
+>     Link: https://lore.kernel.org/r/18704e8c-c734-43f3-bc7c-b8be345e1bf5@ig=
+alia.com/
+>     Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+>=20
+> diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+> index bec4a39d1b97c..bffbb59776720 100644
+> --- a/fs/overlayfs/util.c
+> +++ b/fs/overlayfs/util.c
+> @@ -1551,9 +1551,23 @@ void ovl_copyattr(struct inode *inode)
+>=20
+>  int ovl_parent_lock(struct dentry *parent, struct dentry *child)
+>  {
+> +       bool is_unlinked;
+> +
+>         inode_lock_nested(parent->d_inode, I_MUTEX_PARENT);
+> -       if (!child ||
+> -           (!d_unhashed(child) && child->d_parent =3D=3D parent))
+> +       if (!child)
+> +               return 0;
+> +
+> +       /*
+> +        * After re-acquiring parent dir lock, verify that child was not mo=
+ved
+> +        * to another parent and that it was not unlinked. cant_mount() mea=
+ns
+> +        * that child was unlinked while parent was unlocked. Since we are
+> +        * holding a reference to child, it could not have become negative.
+> +        * d_unhashed(child) is not a strong enough indication for unlinked,
+> +        * because with casefolded parent dir, ovl_create_temp() returns an
+> +        * unhashed dentry.
+> +        */
+> +       is_unlinked =3D cant_mount(child) || WARN_ON_ONCE(d_is_negative(chi=
+ld));
+> +       if (!is_unlinked && child->d_parent =3D=3D parent)
+>                 return 0;
+>=20
+>         inode_unlock(parent->d_inode);
+>=20
 
-syzbot found the following issue on:
+I don't feel comfortable with that.  Letting ovl_parent_lock() succeed
+on an unhashed dentry doesn't work for my longer term plans for locking.
+I would really rather we got that dentry hashed.
 
-HEAD commit:    8d245acc1e88 Merge tag 'char-misc-6.17-rc3' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11513062580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e1e1566c7726877e
-dashboard link: https://syzkaller.appspot.com/bug?extid=1f1fbecb9413cdbfbef8
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=109d7062580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=126bea34580000
+What is happening is :
+  - lookup on non-existent name -> unhashed dentry
+  - vfs_create on that dentry - still unhashed
+  - rename of that unhashed dentry -> confusion in ovl_parent_lock()
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/096739d8f0ec/disk-8d245acc.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/83a21aa9b978/vmlinux-8d245acc.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/7e7f165a3b29/bzImage-8d245acc.xz
+If this were being done from user-space there would be another lookup
+after the create and before the rename, and that would result in a
+hashed dentry.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1f1fbecb9413cdbfbef8@syzkaller.appspotmail.com
+Could ovl_create_real() do a lookup for the name if the dentry isn't
+hashed?  That should result in a dentry that can safely be passed to
+ovl_parent_lock().
 
-BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
-in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 6107, name: syz.0.17
-preempt_count: 1, expected: 0
-RCU nest depth: 1, expected: 1
-3 locks held by syz.0.17/6107:
- #0: ffffffff8d9a8b80 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #0: ffffffff8d9a8b80 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
- #0: ffffffff8d9a8b80 (rcu_read_lock){....}-{1:3}, at: bpf_test_timer_enter+0x1a/0x140 net/bpf/test_run.c:40
- #1: ffffffff8d84a760 (local_bh){.+.+}-{1:3}, at: __local_bh_disable_ip+0xa1/0x400 kernel/softirq.c:163
- #2: ffff888032e15a98 (&stab->lock){+...}-{3:3}, at: spin_lock_bh include/linux/spinlock_rt.h:88 [inline]
- #2: ffff888032e15a98 (&stab->lock){+...}-{3:3}, at: __sock_map_delete net/core/sock_map.c:421 [inline]
- #2: ffff888032e15a98 (&stab->lock){+...}-{3:3}, at: sock_map_delete_elem+0xb7/0x170 net/core/sock_map.c:452
-Preemption disabled at:
-[<ffffffff891fce58>] bpf_test_timer_enter+0xf8/0x140 net/bpf/test_run.c:42
-CPU: 0 UID: 0 PID: 6107 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- __might_resched+0x44b/0x5d0 kernel/sched/core.c:8957
- __rt_spin_lock kernel/locking/spinlock_rt.c:48 [inline]
- rt_spin_lock+0xc7/0x2c0 kernel/locking/spinlock_rt.c:57
- spin_lock_bh include/linux/spinlock_rt.h:88 [inline]
- __sock_map_delete net/core/sock_map.c:421 [inline]
- sock_map_delete_elem+0xb7/0x170 net/core/sock_map.c:452
- bpf_prog_2c29ac5cdc6b1842+0x43/0x4b
- bpf_dispatcher_nop_func include/linux/bpf.h:1332 [inline]
- __bpf_prog_run include/linux/filter.h:718 [inline]
- bpf_prog_run include/linux/filter.h:725 [inline]
- bpf_prog_run_pin_on_cpu include/linux/filter.h:742 [inline]
- bpf_flow_dissect+0x132/0x400 net/core/flow_dissector.c:1024
- bpf_prog_test_run_flow_dissector+0x37c/0x5c0 net/bpf/test_run.c:1416
- bpf_prog_test_run+0x2ca/0x340 kernel/bpf/syscall.c:4590
- __sys_bpf+0x581/0x870 kernel/bpf/syscall.c:6047
- __do_sys_bpf kernel/bpf/syscall.c:6139 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:6137 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:6137
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f637004ebe9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fffc4e2e8a8 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 00007f6370275fa0 RCX: 00007f637004ebe9
-RDX: 0000000000000050 RSI: 0000200000000180 RDI: 000000000000000a
-RBP: 00007f63700d1e19 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f6370275fa0 R14: 00007f6370275fa0 R15: 0000000000000003
- </TASK>
+NeilBrown
 
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
