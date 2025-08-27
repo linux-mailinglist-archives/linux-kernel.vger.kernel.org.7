@@ -1,133 +1,152 @@
-Return-Path: <linux-kernel+bounces-788419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14C44B38415
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:51:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 685C4B3841E
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:52:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F06216A142
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:51:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6B14363875
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:52:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C22703568F6;
-	Wed, 27 Aug 2025 13:51:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8DDD30CD98;
+	Wed, 27 Aug 2025 13:52:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UizGlXP+"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="ilyMGL76"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29D73568E4;
-	Wed, 27 Aug 2025 13:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756302675; cv=none; b=A6G2wzIFOqWC8R3XXqUPBVtolFaZra6jpxRBrQPm/BmyFvlKYhtXlaaz5+d5BKK/9zik+zsUyhmSyR7Gu5td3snjYHmKwzaMTL8ZvFQF8CH//t+3V6aZNgVggaFCuTPFRGihdR+fuHbCXN53h/f/5SPIQcNZStYZef8tNpdHJ1Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756302675; c=relaxed/simple;
-	bh=FDp6JCd4VmqsLTMSNBr3ve+PytzAcHAJUe6Z6k/jtyQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gp+ZuZxUEZHn5129MJSfKImbAeaDnjfqiQFsoqXbsAIe5cYHsPHsLwxH2sBheFWGHQQR+audlDonFJLHqV54gHNlWVVOSZAi9x3tGKXc9RX4GzbYe5/hgfRprWd25Qh0XcnJORnX4RP3BxYVyVsfyudgodxavRz3+EVtsgLEXrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UizGlXP+; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-24457f581aeso52467075ad.0;
-        Wed, 27 Aug 2025 06:51:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756302673; x=1756907473; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WUcA4fP8xyhB0lHPFGrUj/zamcTTqzoLH7svjxY0tDo=;
-        b=UizGlXP+GQ6lNXIrA8dj4HVOabSiZ8Y8BgKbVz1GVzy/qrVsw8vl74sMGzuuwiJ03v
-         T/KLnyBuQ44LZ/NuwPhvu65nFq9bhW2wSdaKo11lgzli8YGa9DmgeqZMr0VuKTzjeSYp
-         Upjqf2a+MmTh4TnajyxgLGm+aK8araDjOBnclLrG7zUwP6aaZGic+YlrwKPZwGnQ3k+y
-         Jk5YWB4sDsstbjxAA1uUE+ac2ErLo6CVG7YZ8Jika31/006KXGaYv/+09EngvnXS/7zw
-         MxEm151InrWsGXo8nuSsFmXT68MNl+y9EGGrBbpfh7fk9Z4B7pf/MPfwn3eMijR77N7s
-         yA1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756302673; x=1756907473;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WUcA4fP8xyhB0lHPFGrUj/zamcTTqzoLH7svjxY0tDo=;
-        b=QAv6QSwnTIR2KtbpPYbNakpPadiNBEI0YE78mSCpg+jEQI5mQW5M+QDUCq5VvwjKcL
-         F2UTdLY2xNYxFN0GnX3dh/ThAQKPx4Awk2J6zJEkQGVWUNar1dzQYzBDMB3ot5E7/50i
-         nBgcK8k4kqCzKgDPXveMfMc/wiHVhfQOH8Tt8pckxWRsq3eVVisT0A4Bhp1kGoP+HhRS
-         lwAf6u0bPC0vUW4vAIxFbxbM0s/fn2dKra3A9+drkcl89LvUAE+hKqPMCLxg3cdymlOK
-         gNrTSuEOs6/LAS8M9nJ6jouj2K/4aPWUDQPFkfohECFWirN8J3zh7io9BDAe9yG4g+oH
-         P3uA==
-X-Forwarded-Encrypted: i=1; AJvYcCVe0YMPeHFxPwylXYd/2fqevNLhJl1nG8TRoRJ46PhNQJsb3m3oervWOKPHp0Ht0zBfK7qx2TS1imMJoBM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFfcC73kCPVkK+vIefoGEFoktPM9AIkiDU4jjalROZGT8CM0yR
-	X4rBOmpeguy2UYN969skP/QZTotEmS6czGge1NTRg4N8rS72P977SjGV
-X-Gm-Gg: ASbGncsGTwSjNqT0bilkClaw6ADpzG1AEB2I8jMkchidsVid51c57WoG4qlOhlxd6VJ
-	qzabR6FoVmL91fB3KsnK2B3gMXz7rfMdmcm7EhpN/A7k4bjrpzUlcMDnEG2/7PYl/hv3gejgzqp
-	sLqhy3heNHOmf420HNp25kIiIGIaaxPhsludhz9Z2hcBCUgeZ7caFvjRgYiM2nyUL5BxE3ylr03
-	+Sb4HXlXUSg9pOHvohvJebq59/dVFlKEzbERscgKuUlZkCqz8sVvVBAGmbOPTYZW64qudyX8s4x
-	vFM91JETUajbt4A6Mz278FzG3Zln3OZiTMcNuvHADhw4rCkWwZ32EEtCixCc33hlGkH8sUxlSPS
-	k2faudM/6BKrQAuS+cKOInwJQ7GFNGx6QeX3v/TI1tQduva1FjGja/1C3s8EC752clo6uSPYBmp
-	+/5w==
-X-Google-Smtp-Source: AGHT+IFif84okb0gHpv6GdHn52xMYcER6a6kVWJvZ+CKvHUoQnE4m3DSbnxjrlJZOUjr3pzzGluEmg==
-X-Received: by 2002:a17:902:d488:b0:246:a4ec:c3a5 with SMTP id d9443c01a7336-246a4ecc618mr185637735ad.25.1756302672907;
-        Wed, 27 Aug 2025 06:51:12 -0700 (PDT)
-Received: from localhost.localdomain ([222.95.34.64])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-246687b0b04sm122790455ad.44.2025.08.27.06.51.07
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 27 Aug 2025 06:51:12 -0700 (PDT)
-From: qianjiaru77@gmail.com
-To: michael.chan@broadcom.com,
-	pavan.chebbi@broadcom.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	andrew+netdev@lunn.ch
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	qianjiaru <qianjiaru77@gmail.com>
-Subject: [PATCH v2 1/1] VF Resource State Inconsistency Vulnerability in Linux bnxt_en Driver
-Date: Wed, 27 Aug 2025 21:51:02 +0800
-Message-ID: <20250827135102.5923-1-qianjiaru77@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B831302CDE
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 13:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756302727; cv=pass; b=SoH1CUtU9RxBcjIU7kUxWK/ezTKaIWB5zcafrcNFoQ+kcFO7p+GuFSink9ZOuh0tk37Cu0ZFbmsN2s2FMaOYUoP4aIeSwrTiHDHp07pjkuO2q4t0G3vIukyICHZAC2fo5NdCPCqPXOexl1TjVmrhorSa5XYnxnaAM4VcXRTjb1I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756302727; c=relaxed/simple;
+	bh=Vxwm7fPLCfOF27s2ioW7LLt2uWYZCG+SENORbSAmjMc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e72tNIMilJWAb0CCKUCYmJqcSLiI8ZDtoGXWDRFg8xHNORMM+i0LnGBp0iL2GCPUVqxfQAHV314Rf64wWTOk7GGwKgOG5GeON1UY9JIEShCfi7f8rkzS/zeX35TCm/xOL5cCMfBe5O7UAf7oZycdxhYoKdJtQLivCwLekBS2fB4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=ilyMGL76; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1756302704; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Yh5Nbo9xBtgQquxT/qctZYSJZhiA10KfgVT77xk+HjndUMVTkx93Y2zWNzscwZC5ZKaV42Jyg5FwFbFL65kxwS+J9lYDm6UbvhBrU9cIIQQCUYi/rZD2IJdA3TjFDcpzWZ/sHv7p23FE0ExsfxJZemTxFF63XyEi2FrsJk8PGZI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756302704; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=EAFsioYoZbKGGEutWEZhd4alxqjm707Aznz1ZWVx3qw=; 
+	b=h+/4Ql/bYUF5tjs9LPqYPrJIwNBzH384Rx2dKLSMkmdm77jBTnQtJlzXRvUaAabuT1f5SVjoMCwl4RWSE6KtgCUF4YCaklYG85OC07WyMPnLHBB/AfKzNmukNGUl20rnRgglXimb0oWrvSf2BPFnFMlDlYglqWxWyaTpXGeSQP8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756302704;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=EAFsioYoZbKGGEutWEZhd4alxqjm707Aznz1ZWVx3qw=;
+	b=ilyMGL76UggPGXRg+vn0XjxklEPTkIjjAKDdHp8p8MwTUFIeBcovPdPpKZlv/Nts
+	g0vuz0yROpkReQNaQf93S7B/1W+UzaTDzVlK0dOyBsxnWHFcnyRPdmaQ/lmqZa2zAHS
+	qUFLQT1723TX5tF05ClP9ZWOaeiuoc9YMBHSErfQ=
+Received: by mx.zohomail.com with SMTPS id 1756302702560280.8524637739665;
+	Wed, 27 Aug 2025 06:51:42 -0700 (PDT)
+Message-ID: <c38fb2bf-15c4-4cee-be0e-59d998cd03ac@collabora.com>
+Date: Wed, 27 Aug 2025 16:51:37 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/virtio: fix host visible memory detection in
+ virtio-gpu
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Honglei Huang <honglei1.huang@amd.com>, David Airlie
+ <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Simona Vetter <simona@ffwll.ch>,
+ Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
+ <olvaffe@gmail.com>, dri-devel@lists.freedesktop.org,
+ virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250827081231.1878248-1-honglei1.huang@amd.com>
+ <9ecf015d-d96a-40ac-a7fb-50e46c4f6e00@collabora.com>
+ <20250827093320-mutt-send-email-mst@kernel.org>
+Content-Language: en-US
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <20250827093320-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-From: qianjiaru <qianjiaru77@gmail.com>
+On 8/27/25 16:33, Michael S. Tsirkin wrote:
+> On Wed, Aug 27, 2025 at 03:52:05PM +0300, Dmitry Osipenko wrote:
+>> On 8/27/25 11:12, Honglei Huang wrote:
+>>> From: Honglei Huang <Honglei1.Huang@amd.com>
+>>>
+>>> Commit 206cc44588f7 ("virtio: reject shm region if length is zero")
+>>> enhanced the validation in virtio_get_shm_region() by adding a check
+>>> for a zero-length shared memory region.
+>>>
+>>> It is performed before the underlying transport's .get_shm_region()
+>>> implementation is called. This creates an issue in the virtio-gpu
+>>> driver, where the `region` struct is part of a larger structure
+>>> that is zero-initialized by drmm_kzalloc().
+>>>
+>>> Consequently, the `len` field is 0 at the time of the check, causing
+>>> virtio_get_shm_region() to return false prematurely. This prevents the
+>>> host visible memory feature from being enabled, even when the device
+>>> supports it.
+>>>
+>>> To resolve this, this patch bypasses the inline helper and calls the
+>>> underlying vdev->config->get_shm_region() function pointer directly.
+>>> This ensures that the region's parameters are checked only after they
+>>> have been populated by the transport, aligning with the intended logic.
+>>>
+>>> Signed-off-by: Honglei Huang <Honglei1.Huang@amd.com>
+>>> ---
+>>>  drivers/gpu/drm/virtio/virtgpu_kms.c | 6 ++++--
+>>>  1 file changed, 4 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/virtio/virtgpu_kms.c b/drivers/gpu/drm/virtio/virtgpu_kms.c
+>>> index 7dfb2006c561..ed5981248302 100644
+>>> --- a/drivers/gpu/drm/virtio/virtgpu_kms.c
+>>> +++ b/drivers/gpu/drm/virtio/virtgpu_kms.c
+>>> @@ -174,8 +174,10 @@ int virtio_gpu_init(struct virtio_device *vdev, struct drm_device *dev)
+>>>  	if (virtio_has_feature(vgdev->vdev, VIRTIO_GPU_F_RESOURCE_BLOB)) {
+>>>  		vgdev->has_resource_blob = true;
+>>>  	}
+>>> -	if (virtio_get_shm_region(vgdev->vdev, &vgdev->host_visible_region,
+>>> -				  VIRTIO_GPU_SHM_ID_HOST_VISIBLE)) {
+>>> +	if (vgdev->vdev->config->get_shm_region &&
+>>> +	    vgdev->vdev->config->get_shm_region(
+>>> +		    vgdev->vdev, &vgdev->host_visible_region,
+>>> +		    VIRTIO_GPU_SHM_ID_HOST_VISIBLE)) {
+>>>  		if (!devm_request_mem_region(&vgdev->vdev->dev,
+>>>  					     vgdev->host_visible_region.addr,
+>>>  					     vgdev->host_visible_region.len,
+>>
+>> Hi, virtio_get_shm_region() change has been reverted by [1]. Don't think
+>> anything else needs to be done.
+>>
+>> [1]
+>> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?h=next-20250827&id=ced17ee32a9988b8a260628e7c31a100d7dc082e
+>>
+>> +cc Michael Tsirkin
+>>
+>> Might be only good to send a stable kernel PR with that revert. I see
+>> patch available only in linux-next, while stable kernels need to be
+>> fixed sooner.
+> 
+> sooner than what?
 
-A state management vulnerability exists in the 
-`bnxt_hwrm_reserve_vf_rings()` function of the Linux kernel's
-bnxt_en network driver. The vulnerability causes incomplete 
-resource state updates in SR-IOV Virtual Function (VF) environments,
-potentially leading to system instability and resource allocation
- failures in virtualized deployments.
+Next 6.17 kernel release. I see patch in the linux-next branch. Often
+there is a -fixes branch for patches that go into RC kernel, but I don't
+see one in your vhost kernel tree. Will the revert land into 6.17-rc4?
+Everything is good if yes.
 
-
-Signed-off-by: qianjiaru <qianjiaru77@gmail.com>
----
- drivers/net/ethernet/broadcom/bnxt/bnxt.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-index 207a8bb36..2d06b0ddc 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -7801,7 +7801,13 @@ bnxt_hwrm_reserve_vf_rings(struct bnxt *bp, struct bnxt_hw_rings *hwr)
- 	int rc;
- 
- 	if (!BNXT_NEW_RM(bp)) {
-+		// Update all relevant resource state, not just TX rings
- 		bp->hw_resc.resv_tx_rings = hwr->tx;
-+		bp->hw_resc.resv_rx_rings = hwr->rx;
-+		bp->hw_resc.resv_vnics = hwr->vnic;
-+		bp->hw_resc.resv_rsscos_ctxs = hwr->rss_ctx;
-+		bp->hw_resc.resv_cp_rings = hwr->cp;
-+		bp->hw_resc.resv_hw_ring_grps = hwr->grp;
- 		return 0;
- 	}
- 
 -- 
-2.34.1
-
+Best regards,
+Dmitry
 
