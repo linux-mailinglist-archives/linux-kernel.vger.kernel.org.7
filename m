@@ -1,261 +1,462 @@
-Return-Path: <linux-kernel+bounces-787746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28CD6B37A83
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:38:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 105AFB37A88
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 08:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1AB73A8B4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:38:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 961BB7A256B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 06:36:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC2530ACED;
-	Wed, 27 Aug 2025 06:37:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B8E31196F;
+	Wed, 27 Aug 2025 06:38:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O0TjZxU2"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gZ5W3wfb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDDBF3002AD
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 06:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7182D2491;
+	Wed, 27 Aug 2025 06:38:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756276674; cv=none; b=hoqWhz5tCp9mjJzH8V+ctLmhjVFtZEIqpU9C2ZyXnc65JgKYuZd8N4NmPm24Y8++dUaZkoVQscgaqw18XERg3reTQ6OxagGDgYHVemamNv+QSBmhahr10ZIRNARSjzdAstbHPSitPryvUmwWVrk2Vs0R+CewrndUREwf+mYxw/w=
+	t=1756276697; cv=none; b=NtlPvpkg/WvErEGGDFTEAIiDX2lyrCWtd+Fi6Qoub/YES455VFdK0ncLCm2BfXynVFpG9paGcVG1Quth3b1QITPq3oGcPC5LxgjvwPFctI6Rd97T4I/UgdsqPD322xwq8taPYKVYuSpE1/ZwZgWtBi9bBQNArJOThDkM762oeTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756276674; c=relaxed/simple;
-	bh=C4sx527vup15bmoLRVM/Mpf+ndgRGGPXRmnHFVz0gHA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gN1I5P5Eot7botOI3/H8kqU7lnHvZ7tHR22N9bfNe12lpdw4vFNdI1Ze2rd3a2AAPti2tnM+8qEwAt8nPWz+K4y2dX7lbGg3nWOaWVITfO1A54LxR/yJwHtg+CB9lm9+LjQNQLuMPAEe4FW4d0PSqjmTEeot/n+FDche3JzLijE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=O0TjZxU2; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-70ddadde494so9593916d6.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Aug 2025 23:37:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756276672; x=1756881472; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=C4sx527vup15bmoLRVM/Mpf+ndgRGGPXRmnHFVz0gHA=;
-        b=O0TjZxU2X7F7N4a9vEWJIde7VOaA57PLMxzTmemP8bhisSNxppMPqmgS+kEhrvgcTN
-         ZaYLWc03YWSq4MH2F1h8hpiJUuX6hhivub21uXLEnszc9GLIRoJz7YsbPrM3J9DtEECd
-         rBf/QFL6WFIMtoS+eSW7WmZfKmfykrSY8krEihF0DR+ipFSbJpQcEf6j+CgcJ1pWOg7V
-         Egr6qpTJOfWMUJ+uHdV6nBCNi6jMS497uqCat80+IKTKv89Ck5zpeBfdhZXPdCKLlMb+
-         wcZ8T6tieT+sKwgmXl0WqtqN44+nVfZ3ObaR0p+yy9VZyUAHmWhWZ9z4YEVHXYi1vxkk
-         m6gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756276672; x=1756881472;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C4sx527vup15bmoLRVM/Mpf+ndgRGGPXRmnHFVz0gHA=;
-        b=WHyP4i+G1XtwX1sUWc3VQYoRKbLnJofIsJi9IGzFfZbI7zehtb83i/S4gxUXyfHc5p
-         ti0D7PNULYXdkpOxjylNbQzmQC80tQTJtHT0PNqkSjbkrne0xhTjpAgNwtHQNBOS44oZ
-         NAQr731MCkdvED/IWByA09jzKcKNX1IxUMHA/ax1qucScyHtHH405rselW6FW5WuZnTj
-         5bISqpZm+b34XexFPYXsEwq30/6IFaLhOSyxskMsiNCn7eEKfX3UHIds+hLSKPqLJBY2
-         Bbb+BrgrNnE5RlVu33jl0EVA8BexqOYTbzMo+XCyvBjeHBogYJIk+/YlPVnrZj4B0P3B
-         a/7A==
-X-Forwarded-Encrypted: i=1; AJvYcCVnGllzxlY0UrqE72GVZbzv6/RZQvBvPUx36aHCYzr+zA0lYWJza3xe7K5SEOMS5sUANs+zHOaeqDOcNoA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyT79PFoDXo69OzJ37BAziYPBqYtSgRpasFbnk9hZnjtf1jbc1C
-	UV9f2Cx3dHdZLZZjKsUvd6IiUVXo2FIN1BLa1uoM7fjXKh4brukrh77NQ0lI39nvNbtH3WAuwD8
-	w6bKCSFPLli3LXrISGqZG7mo/4DPykxRxRkHMDISi
-X-Gm-Gg: ASbGnct79LDVrAHJkUJ0HKENWBEc6qmvd6MNT+U3cczY1Df/u1Ugg92LnqBmE33+K81
-	d6LvdAMO0Jhe8oTd6UCEQCpU/s9S2QZ17pEZJBgCeSRfQIaWBCeBlj5yKFR0EgtT8WvJE/EzO7P
-	gnEYCxZq6+P43ZC9Eed9hrmaW9vD1Bau3wHhnpuWZ860C8er9+ITHCsIgth0ik932kfL51BqiwU
-	HTt/+vVQNE8CTxVqF2iXls=
-X-Google-Smtp-Source: AGHT+IEMlFMMzwbH544jHwYS2DZm0yBWsqXKCjGANAe3jheNkNEH/AMzsgHI3RNY37QXgFtZHYVYq5NfeSWu9RKtmP0=
-X-Received: by 2002:a05:6214:ca9:b0:705:c148:26a0 with SMTP id
- 6a1803df08f44-70d971e4c3cmr206586346d6.31.1756276671550; Tue, 26 Aug 2025
- 23:37:51 -0700 (PDT)
+	s=arc-20240116; t=1756276697; c=relaxed/simple;
+	bh=ypbSldKKIg0u2TzSiWKfGcOi9083+yJHil2HF5x1BAI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=liEu6a6l0rx2oV3jml/Ec45XS+8So8/iwgdEm6IrHvCBgAew/XBNlmu7+MVKVD5mDMKK/m884M+39yXxuD36Vcc3fsCyl5CXnwgK7GNXHsWGpzF8wmmOaXJBPgjBtWF1iSFwg0wWsGTiLdegsMsZH96g8+GV1kVXXwUcI3bE6XY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gZ5W3wfb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64274C4CEEB;
+	Wed, 27 Aug 2025 06:38:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1756276695;
+	bh=ypbSldKKIg0u2TzSiWKfGcOi9083+yJHil2HF5x1BAI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gZ5W3wfbNPKjXAR7FX8pd1xkVXDvLqgLQyWM2ndzAlBMZMaS6M3NB8bZpvIaAZlnI
+	 OH76UwiWwQbjkw+zv8qvKTSDCk56WBv4w/LSIM1Es5dqyxYEk1x5EUm+aXlpYU20Hk
+	 EI8T5G/SPxyGblUdzkQq4S1yafge4kPH8/RmIE4EExkL4mI15AT579pHGgXtRJXxAf
+	 MHLRQGmYoNzR0bQLcZ0cLRa5HzIRVQaBt9Be0WCFgFJiYKEL+Efp4XBCNvjf9r9VIC
+	 wYn6VJMG3+D7SZrMI17Y2QBq1ifG+V678WHQM/1HGnspuQakb1naBrV1YsPuQGzGs4
+	 mMj1KwAeAaiHA==
+Message-ID: <ef3822a5-d3f8-41dc-984c-8c63d60eaec5@kernel.org>
+Date: Wed, 27 Aug 2025 08:38:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250818120846.347d64b1@canb.auug.org.au> <1befd7ab-f343-450f-9484-0cef21fe2da8@linuxfoundation.org>
- <CABVgOSm2_FGfjQpUBttuUH5ZrMEqnaGkYVkN6N96wX7Qs8EE2Q@mail.gmail.com>
- <4d5bad8a-6afa-4284-8f78-b52e2cfedbf0@linuxfoundation.org>
- <CABVgOS=groSq6Dcdbb_PxFwikQTDodhA7gCAJBvv3jWzk8jrZQ@mail.gmail.com> <b8dbb85b-124b-4d25-b734-069809240e81@linuxfoundation.org>
-In-Reply-To: <b8dbb85b-124b-4d25-b734-069809240e81@linuxfoundation.org>
-From: David Gow <davidgow@google.com>
-Date: Wed, 27 Aug 2025 14:37:39 +0800
-X-Gm-Features: Ac12FXwut-nYDIOgwqfj0aP1wyqnEyLyvoUd-gFksJvpoXKLS-bE87vK3fHguTI
-Message-ID: <CABVgOSksaxKbiBz3Va5FLqAzoHXs4RGkC9YXE=5DmGWzLYU=pw@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the kunit-next tree
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Marie Zhussupova <marievic@google.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	KUnit Development <kunit-dev@googlegroups.com>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="0000000000002ccec4063d530790"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] media: samsung: scaler: add scaler driver code
+To: Kisung Lee <kiisung.lee@samsung.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Inki Dae <inki.dae@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org
+References: <20250827044720.3751272-1-kiisung.lee@samsung.com>
+ <CGME20250827045905epcas2p46c8bc31d9c32168f77d1e10808e92b77@epcas2p4.samsung.com>
+ <20250827044720.3751272-3-kiisung.lee@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250827044720.3751272-3-kiisung.lee@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---0000000000002ccec4063d530790
-Content-Type: text/plain; charset="UTF-8"
+On 27/08/2025 06:47, Kisung Lee wrote:
+> +
+> +static int sc_probe(struct platform_device *pdev)
+> +{
+> +	struct sc_dev *sc;
+> +	struct resource *res;
+> +	int ret = 0;
+> +	size_t ivar;
+> +	u32 hwver = 0;
+> +	int irq_num;
+> +
+> +	sc = devm_kzalloc(&pdev->dev, sizeof(struct sc_dev), GFP_KERNEL);
 
-On Wed, 27 Aug 2025 at 13:49, Shuah Khan <skhan@linuxfoundation.org> wrote:
->
-> On 8/26/25 03:24, David Gow wrote:
-> > On Tue, 26 Aug 2025 at 10:15, Shuah Khan <skhan@linuxfoundation.org> wrote:
-> >>
-> >> On 8/19/25 01:44, David Gow wrote:
-> >>> On Tue, 19 Aug 2025 at 00:32, Shuah Khan <skhan@linuxfoundation.org> wrote:
-> >>>>
-> >>>> On 8/17/25 20:08, Stephen Rothwell wrote:
-> >>>>> Hi all,
-> >>>>>
-> >>>>> After merging the kunit-next tree, today's linux-next build (x86_64
-> >>>>> allmodconfig) failed like this:
-> >>>>
-> >>>> Thank you Stephen. I did a allmodconfig build on 6.17-rc1 base - didn't
-> >>>> see the error.
-> >>>>
-> >>>> Marie, David, can you take a look this. Looks like conflict with drm
-> >>>> in next?
-> >>>>
-> >>>
-> >>> Thanks, Shuah. I've managed to reproduce this with:
-> >>> ./tools/testing/kunit/kunit.py run --arch x86_64 --kunitconfig
-> >>> drivers/gpu/drm/xe
-> >>>
-> >>> These patches fix it (and a corresponding drm/xe test failure):
-> >>> https://lore.kernel.org/linux-next/20250819073434.1411114-1-davidgow@google.com/T/#t
-> >>>
-> >>> Ideally, they'll be squashed into the corresponding patches, as
-> >>> otherwise there'd be some temporary breakage during bisections. I can
-> >>> squash these into the original series and re-send it out if that works
-> >>> best for you.
-> >>>
-> >>
-> >> David,
-> >>
-> >> Please squash them and resend - also I see a kernel test robot
-> >> error in patch 1/2.
-> >>
-> >> I was going to squash them, but I saw the kernel test robot error patch.
-> >>
-> >
-> > Thanks, Shuah.
-> >
-> > A v2 of the fix series, with the kernel test robot error fixed, is
-> > here: https://lore.kernel.org/linux-kselftest/20250821135447.1618942-1-davidgow@google.com/
-> >
-> > I've also squashed the fixes into a v4 of the original series here:
-> > https://lore.kernel.org/linux-kselftest/20250826091341.1427123-1-davidgow@google.com/
-> >
->
-> I applied these to kunit next and ran test:
->
-> ./tools/testing/kunit/kunit.py run --arch x86_64 --kunitconfig drivers/gpu/drm/xe
->
-> Looks good. Hopefully next is happy now.
 
-Thanks very much -- this is still passing all of my KUnit test runs
-(save for a couple of preexisting genirq-related test failures on some
-architectures, for which there are already patches en-route to the irq
-folks).
+Oh yeah, 10 year old coding style. Very dissapointing :(
 
--- David
+> +	if (!sc)
+> +		goto err_dev;
+> +
+> +	sc->dev = &pdev->dev;
+> +	spin_lock_init(&sc->ctxlist_lock);
+> +	INIT_LIST_HEAD(&sc->ctx_list_high_prio);
+> +	INIT_LIST_HEAD(&sc->ctx_list_low_prio);
+> +	spin_lock_init(&sc->slock);
+> +	mutex_init(&sc->lock);
+> +	init_waitqueue_head(&sc->wait);
+> +
+> +	sc->fence_context = dma_fence_context_alloc(1);
+> +	spin_lock_init(&sc->fence_lock);
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	pr_err("Resource start: 0x%pa, end: 0x%pa, size: 0x%lx, flags: 0x%lx\n",
 
---0000000000002ccec4063d530790
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+No, drop.
 
-MIIUnQYJKoZIhvcNAQcCoIIUjjCCFIoCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
-ghIEMIIGkTCCBHmgAwIBAgIQfofDAVIq0iZG5Ok+mZCT2TANBgkqhkiG9w0BAQwFADBMMSAwHgYD
-VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSNjETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
-AxMKR2xvYmFsU2lnbjAeFw0yMzA0MTkwMzUzNDdaFw0zMjA0MTkwMDAwMDBaMFQxCzAJBgNVBAYT
-AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
-IFI2IFNNSU1FIENBIDIwMjMwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDYydcdmKyg
-4IBqVjT4XMf6SR2Ix+1ChW2efX6LpapgGIl63csmTdJQw8EcbwU9C691spkltzTASK2Ayi4aeosB
-mk63SPrdVjJNNTkSbTowej3xVVGnYwAjZ6/qcrIgRUNtd/mbtG7j9W80JoP6o2Szu6/mdjb/yxRM
-KaCDlloE9vID2jSNB5qOGkKKvN0x6I5e/B1Y6tidYDHemkW4Qv9mfE3xtDAoe5ygUvKA4KHQTOIy
-VQEFpd/ZAu1yvrEeA/egkcmdJs6o47sxfo9p/fGNsLm/TOOZg5aj5RHJbZlc0zQ3yZt1wh+NEe3x
-ewU5ZoFnETCjjTKz16eJ5RE21EmnCtLb3kU1s+t/L0RUU3XUAzMeBVYBEsEmNnbo1UiiuwUZBWiJ
-vMBxd9LeIodDzz3ULIN5Q84oYBOeWGI2ILvplRe9Fx/WBjHhl9rJgAXs2h9dAMVeEYIYkvW+9mpt
-BIU9cXUiO0bky1lumSRRg11fOgRzIJQsphStaOq5OPTb3pBiNpwWvYpvv5kCG2X58GfdR8SWA+fm
-OLXHcb5lRljrS4rT9MROG/QkZgNtoFLBo/r7qANrtlyAwPx5zPsQSwG9r8SFdgMTHnA2eWCZPOmN
-1Tt4xU4v9mQIHNqQBuNJLjlxvalUOdTRgw21OJAFt6Ncx5j/20Qw9FECnP+B3EPVmQIDAQABo4IB
-ZTCCAWEwDgYDVR0PAQH/BAQDAgGGMDMGA1UdJQQsMCoGCCsGAQUFBwMCBggrBgEFBQcDBAYJKwYB
-BAGCNxUGBgkrBgEEAYI3FQUwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUM7q+o9Q5TSoZ
-18hmkmiB/cHGycYwHwYDVR0jBBgwFoAUrmwFo5MT4qLn4tcc1sfwf8hnU6AwewYIKwYBBQUHAQEE
-bzBtMC4GCCsGAQUFBzABhiJodHRwOi8vb2NzcDIuZ2xvYmFsc2lnbi5jb20vcm9vdHI2MDsGCCsG
-AQUFBzAChi9odHRwOi8vc2VjdXJlLmdsb2JhbHNpZ24uY29tL2NhY2VydC9yb290LXI2LmNydDA2
-BgNVHR8ELzAtMCugKaAnhiVodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL3Jvb3QtcjYuY3JsMBEG
-A1UdIAQKMAgwBgYEVR0gADANBgkqhkiG9w0BAQwFAAOCAgEAVc4mpSLg9A6QpSq1JNO6tURZ4rBI
-MkwhqdLrEsKs8z40RyxMURo+B2ZljZmFLcEVxyNt7zwpZ2IDfk4URESmfDTiy95jf856Hcwzdxfy
-jdwx0k7n4/0WK9ElybN4J95sgeGRcqd4pji6171bREVt0UlHrIRkftIMFK1bzU0dgpgLMu+ykJSE
-0Bog41D9T6Swl2RTuKYYO4UAl9nSjWN6CVP8rZQotJv8Kl2llpe83n6ULzNfe2QT67IB5sJdsrNk
-jIxSwaWjOUNddWvCk/b5qsVUROOuctPyYnAFTU5KY5qhyuiFTvvVlOMArFkStNlVKIufop5EQh6p
-jqDGT6rp4ANDoEWbHKd4mwrMtvrh51/8UzaJrLzj3GjdkJ/sPWkDbn+AIt6lrO8hbYSD8L7RQDqK
-C28FheVr4ynpkrWkT7Rl6npWhyumaCbjR+8bo9gs7rto9SPDhWhgPSR9R1//WF3mdHt8SKERhvtd
-NFkE3zf36V9Vnu0EO1ay2n5imrOfLkOVF3vtAjleJnesM/R7v5tMS0tWoIr39KaQNURwI//WVuR+
-zjqIQVx5s7Ta1GgEL56z0C5GJoNE1LvGXnQDyvDO6QeJVThFNgwkossyvmMAaPOJYnYCrYXiXXle
-A6TpL63Gu8foNftUO0T83JbV/e6J8iCOnGZwZDrubOtYn1QwggWDMIIDa6ADAgECAg5F5rsDgzPD
-hWVI5v9FUTANBgkqhkiG9w0BAQwFADBMMSAwHgYDVQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBS
-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
-jmkLAgMBAAGjggHgMIIB3DAeBgNVHREEFzAVgRNkYXZpZGdvd0Bnb29nbGUuY29tMA4GA1UdDwEB
-/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIwHQYDVR0OBBYEFBp5bTxrTm/d
-WMmRETO8lNkA4c7fMFgGA1UdIARRME8wCQYHZ4EMAQUBAjBCBgorBgEEAaAyCgMDMDQwMgYIKwYB
-BQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAwGA1UdEwEB/wQC
-MAAwgZoGCCsGAQUFBwEBBIGNMIGKMD4GCCsGAQUFBzABhjJodHRwOi8vb2NzcC5nbG9iYWxzaWdu
-LmNvbS9jYS9nc2F0bGFzcjZzbWltZWNhMjAyMzBIBggrBgEFBQcwAoY8aHR0cDovL3NlY3VyZS5n
-bG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3J0MB8GA1UdIwQYMBaA
-FDO6vqPUOU0qGdfIZpJogf3BxsnGMEYGA1UdHwQ/MD0wO6A5oDeGNWh0dHA6Ly9jcmwuZ2xvYmFs
-c2lnbi5jb20vY2EvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3JsMA0GCSqGSIb3DQEBCwUAA4ICAQBF
-tO3/N2l9hTaij/K0xCpLwIlrqpNo0nMAvvG5LPQQjSeHnTh06tWTgsPCOJ65GX+bqWRDwGTu8WTq
-c5ihCNOikBs25j82yeLkfdbeN/tzRGUb2RD+8n9I3CnyMSG49U2s0ZdncsrIVFh47KW2TpHTF7R8
-N1dri01wPg8hw4u0+XoczR2TiBrBOISKmAlkAi+P9ivT31gSHdbopoL4x0V2Ow9IOp0chrQQUZtP
-KBytLhzUzd9wIsE0QMNDbw6jeG8+a4sd17zpXSbBywIGw7sEvPtnBjMaf5ib3kznlOne6tuDVx4y
-QFExTCSrP3OTMUkNbpIdgzg2CHQ2aB8i8YsTZ8Q8Q8ztPJ+xDNsqBUeYxILLjTjxQQovToqipB3f
-6IMyk+lWCdDS+iCLYZULV1BTHSdwp1NM3t4jZ8TMlV+JzAyRqz4lzSl8ptkFhKBJ7w2tDrZ3BEXB
-8ASUByRxeh+pC1Z5/HhqfiWMVPjaWmlRRJVlRk+ObKIv2CblwxMYlo2Mn8rrbEDyfum1RTMW55Z6
-Vumvw5QTHe29TYxSiusovM6OD5y0I+4zaIaYDx/AtF0mMOFXb1MDyynf1CDxhtkgnrBUseHSOU2e
-MYs7IqzRap5xsgpJS+t7cp/P8fdlCNvsXss9zZa279tKwaxR0U2IzGxRGsWKGxDysn1HT6pqMDGC
-Al0wggJZAgEBMGgwVDELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExKjAo
-BgNVBAMTIUdsb2JhbFNpZ24gQXRsYXMgUjYgU01JTUUgQ0EgMjAyMwIQAUXA7LnOuRz2DvkWTeMc
-0TANBglghkgBZQMEAgEFAKCBxzAvBgkqhkiG9w0BCQQxIgQgqVXi0YuXnPDIQ1D08xNZqMOLZQBV
-zCeNdd3NUJgEtxcwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjUw
-ODI3MDYzNzUyWjBcBgkqhkiG9w0BCQ8xTzBNMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJ
-YIZIAWUDBAECMAoGCCqGSIb3DQMHMAsGCSqGSIb3DQEBBzALBglghkgBZQMEAgEwDQYJKoZIhvcN
-AQEBBQAEggEAaERJciqZT9hWVMXAjTBEu8lM8u4Pr0Slje2FP2mCQYwm31u9WmNoCwW53Pq5/xzE
-GTqPmIVhFcpCEU6oylvonYkm8e21NIMoffoleuMsbpyaNPMpzGgcnwafOPPWA00A6VCf3n4GyHDV
-QXBReyXXNkhjyrkJObXmcVxyKjbwfvdw90SxcXyKClIOLKiRaXCKCboGwxgjvztPlTl1z8Hjqdl3
-efvAz+2Vxs3JqT2Ou8xd29CngNPY2neo/r6SeFy2wJjy4SdCSa8mT698qYAee9JRAQ+1v0rEwUb6
-nkjoqm6/wv+qr1OD+dLHTmIUtzQK+Dquv9lVgibgOoDnps29Xw==
---0000000000002ccec4063d530790--
+> +	       &res->start, &res->end,
+> +	       (unsigned long)resource_size(res),
+> +	       (unsigned long)res->flags);
+> +	sc->regs = devm_ioremap_resource(&pdev->dev, res);
+> +	if (IS_ERR(sc->regs)) {
+> +		pr_err("devm_ioremap_resource failed: %pe\n", sc->regs);
+> +		goto err_io_resource;
+> +	}
+> +	dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
+> +
+> +	atomic_set(&sc->wdt.cnt, 0);
+> +	timer_setup(&sc->wdt.timer, sc_watchdog, 0);
+> +
+> +	if (pdev->dev.of_node) {
+> +		sc->dev_id = of_alias_get_id(pdev->dev.of_node, "scaler");
+
+NAK, check my DT talk.
+
+> +		if (sc->dev_id < 0) {
+> +			dev_err(&pdev->dev,
+> +				"Failed to read scaler node id(%d)!\n", sc->dev_id);
+> +			ret = -EINVAL;
+> +			goto err_node_id;
+> +		}
+> +	} else {
+> +		sc->dev_id = pdev->id;
+> +	}
+> +
+> +	platform_set_drvdata(pdev, sc);
+> +
+> +	pm_runtime_enable(&pdev->dev);
+> +
+> +	ret = sc_populate_dt(sc);
+> +	if (ret)
+> +		goto err_dt;
+> +
+> +	ret = sc_register_m2m_device(sc, sc->dev_id);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "failed to register m2m device\n");
+> +		goto err_m2m;
+> +	}
+> +
+> +#if defined(CONFIG_PM_DEVFREQ) && defined(NEVER_DEFINED)
+
+You must be joking?
+
+> +	if (!of_property_read_u32(pdev->dev.of_node, "mscl,int_qos_minlock",
+
+NAK
+
+> +				  (u32 *)&sc->qosreq_int_level)) {
+> +		if (sc->qosreq_int_level > 0) {
+> +			exynos_pm_qos_add_request(&sc->qosreq_int,
+> +						  PM_QOS_DEVICE_THROUGHPUT, 0);
+> +			dev_info(&pdev->dev, "INT Min.Lock Freq. = %u\n",
+> +				 sc->qosreq_int_level);
+> +		}
+> +	}
+> +#endif
+> +	if (of_property_read_u32(pdev->dev.of_node, "mscl,cfw",
+
+Cannot express more: NAK. You cannot add such undocumented ABI.
+
+> +				 (u32 *)&sc->cfw))
+> +		sc->cfw = 0;
+> +
+> +	ret = sc_get_hwversion(sc);
+> +	if (ret < 0) {
+> +		dev_err(&pdev->dev, "%s: failed to get hw version (err %d)\n",
+> +			__func__, ret);
+> +		goto err_m2m;
+> +	} else {
+> +		hwver = ret;
+> +	}
+> +
+> +	for (ivar = 0; ivar < ARRAY_SIZE(sc_variant); ivar++) {
+> +		if (sc->version >= sc_variant[ivar].version) {
+> +			sc->variant = &sc_variant[ivar];
+> +			break;
+> +		}
+> +	}
+> +
+> +	if (sc->version >= SCALER_VERSION(7, 0, 1)) {
+> +		sc->sysreg_offset = SCALER_SYSREG_OFFSET(res->start);
+> +		res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+> +		if (res) {
+> +			sc->sysreg = devm_ioremap_resource(&pdev->dev, res);
+> +			if (IS_ERR(sc->sysreg)) {
+> +				dev_info(&pdev->dev, "SCALER LLC SYSREG is not setted.\n");
+> +			} else {
+> +				writel(SCALER_LLC_NO_HINT, sc->sysreg + sc->sysreg_offset);
+> +				dev_info(&pdev->dev, "SCALER LLC SYSREG is setted with NO_HINT.\n");
+> +			}
+> +		}
+> +	}
+> +
+> +	sc_hwset_soft_reset(sc);
+> +
+> +	if (!IS_ERR(sc->aclk))
+> +		clk_disable_unprepare(sc->aclk);
+> +	if (!IS_ERR(sc->pclk))
+> +		clk_disable_unprepare(sc->pclk);
+> +	pm_runtime_put(&pdev->dev);
+> +
+> +	irq_num = platform_get_irq(pdev, 0);
+> +	if (irq_num < 0) {
+> +		dev_err(&pdev->dev, "failed to get IRQ resource\n");
+
+you just upstream 10 year old code, right?
+
+Please carefully check the slides of my Monday's talk from OSSE25 about
+static analyzers. Look at slides about upstreaming 10 year old vendor
+code (that's a very bad idea).
+
+
+> +		ret = -ENOENT;
+
+Wrong error code.
+
+> +		goto err_get_irq_res;
+> +	}
+> +
+> +	ret = devm_request_irq(&pdev->dev, irq_num, sc_irq_handler, 0,
+> +			       pdev->name, sc);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "failed to install irq\n");
+> +		goto err_request_irq;
+> +	}
+> +
+> +	dev_info(&pdev->dev,
+> +		 "Driver probed successfully(version: %08x(%x))\n",
+> +		 hwver, sc->version);
+
+NAK, don't add such code. Ever.
+
+> +
+> +	return 0;
+> +
+> +err_request_irq:
+> +err_get_irq_res:
+> +err_m2m:
+> +err_dt:
+> +err_node_id:
+> +err_io_resource:
+> +	if (sc)
+> +		devm_kfree(&pdev->dev, sc);
+> +err_dev:
+> +	dev_err(&pdev->dev,
+> +		"Driver probed failed!\n");
+
+
+No, drop. Useless.
+
+> +
+> +	return ret;
+> +}
+> +
+
+
+
+
+...
+
+> +static struct sc_csc_tab sc_y2r = {
+> +	/* REC.601 Narrow */
+> +	{ 0x0254, 0x0000, 0x0331, 0x0254, 0xFF37, 0xFE60, 0x0254, 0x0409, 0x0000 },
+> +	/* REC.601 Wide */
+> +	{ 0x0200, 0x0000, 0x02BE, 0x0200, 0xFF54, 0xFE9B, 0x0200, 0x0377, 0x0000 },
+> +	/* REC.709 Narrow */
+> +	{ 0x0254, 0x0000, 0x0396, 0x0254, 0xFF93, 0xFEEF, 0x0254, 0x043A, 0x0000 },
+> +	/* REC.709 Wide */
+> +	{ 0x0200, 0x0000, 0x0314, 0x0200, 0xFFA2, 0xFF16, 0x0200, 0x03A1, 0x0000 },
+> +	/* BT.2020 Narrow */
+> +	{ 0x0254, 0x0000, 0x035B, 0x0254, 0xFFA0, 0xFEB3, 0x0254, 0x0449, 0x0000 },
+> +	/* BT.2020 Wide */
+> +	{ 0x0200, 0x0000, 0x02E2, 0x0200, 0xFFAE, 0xFEE2, 0x0200, 0x03AE, 0x0000 },
+> +};
+> +
+> +static struct sc_csc_tab sc_r2y = {
+> +	/* REC.601 Narrow */
+> +	{ 0x0083, 0x0102, 0x0032, 0xFFB4, 0xFF6B, 0x00E1, 0x00E1, 0xFF44, 0xFFDB },
+> +	/* REC.601 Wide  */
+> +	{ 0x0099, 0x012D, 0x003A, 0xFFA8, 0xFF53, 0x0106, 0x0106, 0xFF25, 0xFFD5 },
+> +	/* REC.709 Narrow */
+> +	{ 0x005D, 0x013A, 0x0020, 0xFFCC, 0xFF53, 0x00E1, 0x00E1, 0xFF34, 0xFFEB },
+> +	/* REC.709 Wide */
+> +	{ 0x006D, 0x016E, 0x0025, 0xFFC4, 0xFF36, 0x0106, 0x0106, 0xFF12, 0xFFE8 },
+> +	/* BT.2020 Narrow */
+> +	{ 0x0074, 0x012A, 0x001A, 0xFFC1, 0xFF5E, 0x00E1, 0x00E1, 0xFF31, 0xFFEE },
+> +	/* BT.2020 Wide */
+> +	{ 0x0087, 0x015B, 0x001E, 0xFFB7, 0xFF43, 0x0106, 0x0106, 0xFF0F, 0xFFEB },
+> +};
+> +
+> +static struct sc_csc_tab *sc_csc_list[] = {
+> +	[0] = &sc_no_csc,
+> +	[1] = &sc_y2r,
+> +	[2] = &sc_r2y,
+> +};
+> +
+> +static struct sc_bl_op_val sc_bl_op_tbl[] = {
+
+
+Why absolutely nothing here is const?
+
+> +	/* Sc,	 Sa,	Dc,	Da */
+> +	{ZERO,	 ZERO,	ZERO,	ZERO},		/* CLEAR */
+> +	{ ONE,	 ONE,	ZERO,	ZERO},		/* SRC */
+> +	{ZERO,	 ZERO,	ONE,	ONE},		/* DST */
+> +	{ ONE,	 ONE,	INV_SA,	INV_SA},	/* SRC_OVER */
+> +	{INV_DA, ONE,	ONE,	INV_SA},	/* DST_OVER */
+> +	{DST_A,	 DST_A,	ZERO,	ZERO},		/* SRC_IN */
+> +	{ZERO,	 ZERO,	SRC_A,	SRC_A},		/* DST_IN */
+> +	{INV_DA, INV_DA, ZERO,	ZERO},		/* SRC_OUT */
+> +	{ZERO,	 ZERO,	INV_SA,	INV_SA},	/* DST_OUT */
+> +	{DST_A,	 ZERO,	INV_SA,	ONE},		/* SRC_ATOP */
+> +	{INV_DA, ONE,	SRC_A,	ZERO},		/* DST_ATOP */
+> +	{INV_DA, ONE,	INV_SA,	ONE},		/* XOR: need to WA */
+> +	{INV_DA, ONE,	INV_SA,	INV_SA},	/* DARKEN */
+> +	{INV_DA, ONE,	INV_SA,	INV_SA},	/* LIGHTEN */
+> +	{INV_DA, ONE,	INV_SA,	INV_SA},	/* MULTIPLY */
+> +	{ONE,	 ONE,	INV_SC,	INV_SA},	/* SCREEN */
+> +	{ONE,	 ONE,	ONE,	ONE},		/* ADD */
+> +};
+> +
+
+...
+
+> +	yfilter = sc_get_scale_filter(yratio);
+> +	cfilter = sc_get_scale_filter(cratio);
+> +	bit_adj = !sc->variant->pixfmt_10bit;
+> +
+> +	/* reset value of the coefficient registers are the 8:8 table */
+> +	for (phase = 0; phase < 9; phase++) {
+> +		__raw_writel(sc_coef_adj(bit_adj, sc_coef_4t[yfilter][phase][1]),
+> +			     sc->regs + SCALER_YVCOEF + phase * 8);
+> +		__raw_writel(sc_coef_adj(bit_adj, sc_coef_4t[yfilter][phase][0]),
+> +			     sc->regs + SCALER_YVCOEF + phase * 8 + 4);
+> +	}
+> +
+> +	for (phase = 0; phase < 9; phase++) {
+> +		__raw_writel(sc_coef_adj(bit_adj, sc_coef_4t[cfilter][phase][1]),
+> +			     sc->regs + SCALER_CVCOEF + phase * 8);
+> +		__raw_writel(sc_coef_adj(bit_adj, sc_coef_4t[cfilter][phase][0]),
+> +			     sc->regs + SCALER_CVCOEF + phase * 8 + 4);
+> +	}
+> +}
+> +
+> +void sc_get_span(struct sc_frame *frame, u32 *yspan, u32 *cspan)
+> +{
+> +	if (IS_ERR_OR_NULL(frame) || IS_ERR_OR_NULL(yspan) || IS_ERR_OR_NULL(cspan)) {
+
+Sorrry, but what? How each of these can be ERR or NULL? How is it possible?
+
+Please provide exact cases leading to this.
+
+> +		pr_err("[%s] frame(%p) or yspan(%p) or cspan(%p) is wrong\n",
+> +		       __func__, frame, yspan, cspan);
+> +		return;
+> +	}
+> +
+> +	*yspan = frame->width;
+> +
+> +	if (frame->sc_fmt->num_comp == 2) {
+> +		*cspan = frame->width << frame->sc_fmt->cspan;
+> +	} else if (frame->sc_fmt->num_comp == 3) {
+> +		if (sc_fmt_is_ayv12(frame->sc_fmt->pixelformat)) {
+> +			*cspan = ALIGN(frame->width >> 1, 16);
+> +		} else if (sc_fmt_is_yuv420(frame->sc_fmt->pixelformat)) { /* YUV420 */
+> +			if (frame->cspanalign) {
+> +				*cspan = ALIGN(frame->width >> 1,
+> +					       8 << (frame->cspanalign - 1));
+> +			} else {
+> +				*cspan = frame->width >> 1;
+> +			}
+> +		} else if (frame->sc_fmt->cspan) { /* YUV444 */
+> +			*cspan = frame->width;
+> +		} else {
+> +			*cspan = frame->width >> 1;
+> +		}
+> +	} else if (frame->sc_fmt->num_comp == 1) {
+> +		if (sc_fmt_is_rgb888(frame->sc_fmt->pixelformat))
+> +			if (frame->yspanalign)
+> +				*yspan = ALIGN(frame->width,
+> +					       8 << (frame->yspanalign - 1));
+> +		*cspan = 0;
+> +	} else {
+> +		*cspan = 0;
+> +	}
+> +}
+> +
+> +void sc_hwset_src_imgsize(struct sc_dev *sc, struct sc_frame *frame)
+> +{
+> +	u32 yspan = 0, cspan = 0;
+> +
+> +	if (IS_ERR_OR_NULL(sc) || IS_ERR_OR_NULL(frame)) {
+
+How can be ERR or NULL? This looks buggy, like you don't know flow of
+own code.
+
+> +		pr_err("[%s] sc(%p) or frame(%p) is wrong\n", __func__, sc, frame);
+
+dev_err
+
+
+This is terrible driver, poorly coded, using 10 year old coding style,
+repeating many known antipatterns and mistakes. It is very dissapointing
+to see Samsung sending such poor code.
+
+Really poor code.
+
+Best regards,
+Krzysztof
 
