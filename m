@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-788697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 648F7B388D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:47:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B25B1B388DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:47:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D4C35E7EB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:46:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3C345E86E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:47:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 395BB2D8760;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CDE02D9487;
 	Wed, 27 Aug 2025 17:46:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="G9ufTxij"
-Received: from relay12.grserver.gr (relay12.grserver.gr [88.99.38.195])
+	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="H7MrhF69"
+Received: from relay10.grserver.gr (relay10.grserver.gr [37.27.248.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776E02D7DC4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939012D7DE8
 	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 17:46:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.99.38.195
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.27.248.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756316789; cv=none; b=b1I9rP64VuBrNlzrwzrjUHLrisgAbHCtYZhY0CPeXTAxBBhLlY96Uz8knOrH5CkV12pv9UQeKdaSJ55b2JVPW2RLxeuo179UIplBM9PiYQlO77ByJW4BQne19mhxqISIFZjotlX9kHksrrWcFMXWZ3sG+Z9rqJLFrEazYXNIgIU=
+	t=1756316790; cv=none; b=PQokhTAgy7Zn5KkZSXQoqgA3HXcefKSoBEk8Ed3ptJnhUTJYKA6JlEFemmifm0OwS9Pv5MftumSufTltZA8DFzwps/R+4GXukDfeHPcaDjthk/1dGp6rckwQUdtPCgfH6qelpVbXr3v8iMaQX2vFfUt/Z5vSU90QwulS560O03s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756316789; c=relaxed/simple;
-	bh=tADq+Kjvccs23FgXv0epzaPeMJ7rEU95RcN4t/L4u1o=;
+	s=arc-20240116; t=1756316790; c=relaxed/simple;
+	bh=VCRgaXkIsqEb0X+N2N800a5NQOvKOFGZ3FOcy1tKctM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MG8U+X8Cq32uGeM9iI3XSOUINL0XabaOJqkGv4LRNqFbwJY8JhSalF9lNfgIB117mgg16fxt3uO5DHFkobTf95X+XjI6O1l0sdHs/KSJ9Gdrt4ZdWVcx6/Ch2wsZIIYdt7BJ33Acidb9ldC9//Lh+5GP6YfL78jGDF9P/gbgNmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=G9ufTxij; arc=none smtp.client-ip=88.99.38.195
+	 MIME-Version; b=aRxPOidwXk6TSnp+ls2ZSgGSeo6xZnqV5+S6ML6i9ygFM9ddn5gk5g5P8JgHd2JKeEyRiCortp/BTUgTeFugb+ocUuvE6TEX0/CusAzwaQFssSQTYEablJ90OjudP0EW2JErMCwLt3hPrNlZP00j96J0+ikWu1iRXkRC4l336rE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=H7MrhF69; arc=none smtp.client-ip=37.27.248.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from relay12 (localhost [127.0.0.1])
-	by relay12.grserver.gr (Proxmox) with ESMTP id E4E11BDF52;
+Received: from relay10 (localhost.localdomain [127.0.0.1])
+	by relay10.grserver.gr (Proxmox) with ESMTP id D2CCF49367;
 	Wed, 27 Aug 2025 20:46:19 +0300 (EEST)
 Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by relay12.grserver.gr (Proxmox) with ESMTPS id 1234FBDF1D;
-	Wed, 27 Aug 2025 20:46:18 +0300 (EEST)
+	by relay10.grserver.gr (Proxmox) with ESMTPS id 102294936C;
+	Wed, 27 Aug 2025 20:46:19 +0300 (EEST)
 Received: from antheas-z13 (x5996a855.customers.hiper-net.dk [89.150.168.85])
-	by linux3247.grserver.gr (Postfix) with ESMTPSA id 386601FDB98;
-	Wed, 27 Aug 2025 20:46:17 +0300 (EEST)
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id 1FC141FDEA8;
+	Wed, 27 Aug 2025 20:46:18 +0300 (EEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1756316777;
-	bh=3EZ00Z3B+IGWzT6mofKoZRzHf57H2Y8SzBdCp4/um34=; h=From:To:Subject;
-	b=G9ufTxij/6jsSX3CAo3u8LXwJdm8ioa8keIly7q2UiBc3JNbNJ4cxggxsUclFy3Lp
-	 CUo/t2ya8u+TmFYVtweEkCJFBXbHI2W3eBoIvpJYSV1Umkzolw6o0Y1W8XBfl7c8yf
-	 5Mhpp5CVFYucdDqchBK+dgCyAmm7DPvz0W0K0gZSFLXFcFpoyTD8gb4+HeVIY5lk3V
-	 aERE2P2QCXMT8jGVSTls5iupvjKDJUfAnXuFdda/yhbOYJQSeN7D+IWUJFGFgY55Cf
-	 r4Wtopx5naC/sF06i4fNt1deBawcPN7nq12XiNTGTiK/5VbJM6ZveX4j549bZneb5e
-	 YRxa0tKMaoFjg==
+	s=default; t=1756316778;
+	bh=ISfp3kQz5F8NvozgxSjB9Oij0MVFzpiUsAcxlVWnpG4=; h=From:To:Subject;
+	b=H7MrhF6937KuzgwZwR6bOzHDepZVt4vA+hNmsiwgtvG8dUGmhseJbC9NZe4han9gf
+	 OnD4onVQM/+wdcs9zOS3vTYP4uA8ffqMKHrJU9/oUx289K+f6w9jIz/0VS7Xhm8S3H
+	 l7cQ5nXkHB2lS5+T7ZciBBMgHSkHYYIjdFV/QsWAuuR/h/pCmToknRgZaYrr61Lu8b
+	 qgH9dY0ajCzrQPiFP4DmspYQSkpJCXZqF2rkaemHyIpL9cPBmmz+44ebitiUV3DatJ
+	 6qvk0V4FU1bxElSpvRzN9HHNwJz1zLisZAOgK8KEVJrhsQNz0u2IklZ78bYKAK6SIT
+	 FNFs2Kic63bZA==
 Authentication-Results: linux3247.grserver.gr;
 	spf=pass (sender IP is 89.150.168.85) smtp.mailfrom=lkml@antheas.dev smtp.helo=antheas-z13
 Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
@@ -64,9 +64,10 @@ Cc: dri-devel@lists.freedesktop.org,
 	Mario Limonciello <mario.limonciello@amd.com>,
 	Robert Beckett <bob.beckett@collabora.com>,
 	Antheas Kapenekakis <lkml@antheas.dev>
-Subject: [PATCH v2 4/5] drm: panel-backlight-quirks: Add brightness mask quirk
-Date: Wed, 27 Aug 2025 19:43:59 +0200
-Message-ID: <20250827174400.3692549-5-lkml@antheas.dev>
+Subject: [PATCH v2 5/5] drm: panel-backlight-quirks: Add Steam Deck brightness
+ quirk
+Date: Wed, 27 Aug 2025 19:44:00 +0200
+Message-ID: <20250827174400.3692549-6-lkml@antheas.dev>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250827174400.3692549-1-lkml@antheas.dev>
 References: <20250827174400.3692549-1-lkml@antheas.dev>
@@ -76,151 +77,56 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-PPP-Message-ID: 
- <175631677773.1365452.14412117334604153175@linux3247.grserver.gr>
+ <175631677861.1365508.2422182497171344248@linux3247.grserver.gr>
 X-PPP-Vhost: antheas.dev
 X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
 X-Virus-Status: Clean
 
-Certain OLED devices malfunction on specific brightness levels.
-Specifically, when DP_SOURCE_BACKLIGHT_LEVEL is written to with
-the first byte being 0x00 and sometimes 0x01, the panel forcibly
-turns off until the device sleeps again.
+On the SteamOS kernel, Valve universally makes minimum brightness 0
+for all devices. SteamOS is (was?) meant for the Steam Deck, so
+enabling it universally is reasonable. However, it causes issues in
+certain devices. Therefore, introduce it just for the Steam Deck here.
 
-Below are some examples. This was found by iterating over brighness
-ranges while printing DP_SOURCE_BACKLIGHT_LEVEL. It was found that
-the screen would malfunction on specific values, and some of them
-were collected. Summary examples are found below.
+SteamOS kernel does not have a public mirror, but this replaces commit
+806dd74bb225 ("amd/drm: override backlight min value from 12 -> 0")
+in the latest, as of this writing, SteamOS kernel (6.11.11-valve24).
+See unofficial mirror reconstructed from sources below.
 
-This quirk was tested by removing the workarounds and iterating
-from 0 to 50_000 value ranges with a cadence of 0.2s/it. The
-range of the panel is 1000...400_000, so the values were slightly
-interpolated during testing. The custom brightness curve added on
-6.15 was disabled.
-
- 86016:  10101000000000000
- 86272:  10101000100000000
- 87808:  10101011100000000
-251648: 111101011100000000
-251649: 111101011100000001
-
- 86144:  10101000010000000
- 87809:  10101011100000001
-251650: 111101011100000010
-
-Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3803
-Tested-by: Philip Müller <philm@manjaro.org>
+Link: https://gitlab.com/evlaV/linux-integration/-/commit/806dd74bb225
+Reviewed-by: Robert Beckett <bob.beckett@collabora.com>
 Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
 ---
- .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |  7 ++++
- .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h |  6 ++++
- drivers/gpu/drm/drm_panel_backlight_quirks.c  | 36 +++++++++++++++++++
- include/drm/drm_utils.h                       |  1 +
- 4 files changed, 50 insertions(+)
+ drivers/gpu/drm/drm_panel_backlight_quirks.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index b967c6952e11..263f15f6fdea 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -3662,6 +3662,9 @@ static void update_connector_ext_caps(struct amdgpu_dm_connector *aconnector)
- 		if (panel_backlight_quirk->min_brightness)
- 			caps->min_input_signal =
- 				panel_backlight_quirk->min_brightness - 1;
-+		if (panel_backlight_quirk->brightness_mask)
-+			caps->brightness_mask =
-+				panel_backlight_quirk->brightness_mask;
- 	}
- }
- 
-@@ -4862,6 +4865,10 @@ static void amdgpu_dm_backlight_set_level(struct amdgpu_display_manager *dm,
- 	brightness = convert_brightness_from_user(caps, dm->brightness[bl_idx]);
- 	link = (struct dc_link *)dm->backlight_link[bl_idx];
- 
-+	/* Apply brightness quirk */
-+	if (caps->brightness_mask)
-+		brightness |= caps->brightness_mask;
-+
- 	/* Change brightness based on AUX property */
- 	mutex_lock(&dm->dc_lock);
- 	if (dm->dc->caps.ips_support && dm->dc->ctx->dmub_srv->idle_allowed) {
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
-index b937da0a4e4a..340f9b5f68eb 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
-@@ -200,6 +200,12 @@ struct amdgpu_dm_backlight_caps {
- 	 * @aux_support: Describes if the display supports AUX backlight.
- 	 */
- 	bool aux_support;
-+	/**
-+	 * @brightness_mask: After deriving brightness, or it with this mask.
-+	 * This is used to workaround panels that have issues with certain
-+	 * brightness values.
-+	 */
-+	u32 brightness_mask;
- 	/**
- 	 * @ac_level: the default brightness if booted on AC
- 	 */
 diff --git a/drivers/gpu/drm/drm_panel_backlight_quirks.c b/drivers/gpu/drm/drm_panel_backlight_quirks.c
-index 3d386a96e50e..2bdbd5583d32 100644
+index 2bdbd5583d32..69d38c248a0a 100644
 --- a/drivers/gpu/drm/drm_panel_backlight_quirks.c
 +++ b/drivers/gpu/drm/drm_panel_backlight_quirks.c
-@@ -45,6 +45,42 @@ static const struct drm_get_panel_backlight_quirk drm_panel_min_backlight_quirks
- 		.ident.name = "NE135A1M-NY1",
- 		.quirk = { .min_brightness = 1, },
+@@ -81,6 +81,21 @@ static const struct drm_get_panel_backlight_quirk drm_panel_min_backlight_quirks
+ 		.dmi_match_other.value = "ONEXPLAYER F1 EVA-02",
+ 		.quirk = { .brightness_mask = 3, },
  	},
-+	/* Have OLED Panels with brightness issue when last byte is 0/1 */
++	/* Steam Deck models */
 +	{
 +		.dmi_match.field = DMI_SYS_VENDOR,
-+		.dmi_match.value = "AYANEO",
++		.dmi_match.value = "Valve",
 +		.dmi_match_other.field = DMI_PRODUCT_NAME,
-+		.dmi_match_other.value = "AYANEO 3",
-+		.quirk = { .brightness_mask = 3, },
++		.dmi_match_other.value = "Jupiter",
++		.quirk = { .min_brightness = 1, },
 +	},
 +	{
 +		.dmi_match.field = DMI_SYS_VENDOR,
-+		.dmi_match.value = "ZOTAC",
-+		.dmi_match_other.field = DMI_BOARD_NAME,
-+		.dmi_match_other.value = "G0A1W",
-+		.quirk = { .brightness_mask = 3, },
-+	},
-+	{
-+		.dmi_match.field = DMI_SYS_VENDOR,
-+		.dmi_match.value = "ZOTAC",
-+		.dmi_match_other.field = DMI_BOARD_NAME,
-+		.dmi_match_other.value = "G1A1W",
-+		.quirk = { .brightness_mask = 3, },
-+	},
-+	{
-+		.dmi_match.field = DMI_SYS_VENDOR,
-+		.dmi_match.value = "ONE-NETBOOK",
++		.dmi_match.value = "Valve",
 +		.dmi_match_other.field = DMI_PRODUCT_NAME,
-+		.dmi_match_other.value = "ONEXPLAYER F1Pro",
-+		.quirk = { .brightness_mask = 3, },
-+	},
-+	{
-+		.dmi_match.field = DMI_SYS_VENDOR,
-+		.dmi_match.value = "ONE-NETBOOK",
-+		.dmi_match_other.field = DMI_PRODUCT_NAME,
-+		.dmi_match_other.value = "ONEXPLAYER F1 EVA-02",
-+		.quirk = { .brightness_mask = 3, },
++		.dmi_match_other.value = "Galileo",
++		.quirk = { .min_brightness = 1, },
 +	},
  };
  
  static bool drm_panel_min_backlight_quirk_matches(
-diff --git a/include/drm/drm_utils.h b/include/drm/drm_utils.h
-index 82eeee4a58ab..6a46f755daba 100644
---- a/include/drm/drm_utils.h
-+++ b/include/drm/drm_utils.h
-@@ -18,6 +18,7 @@ int drm_get_panel_orientation_quirk(int width, int height);
- 
- struct drm_panel_backlight_quirk {
- 	u16 min_brightness;
-+	u32 brightness_mask;
- };
- 
- const struct drm_panel_backlight_quirk *
 -- 
 2.51.0
 
