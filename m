@@ -1,234 +1,179 @@
-Return-Path: <linux-kernel+bounces-788670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 955ADB38874
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:20:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2021B38873
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:19:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBDF23A6CE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:19:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95A641B24981
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:20:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E788F2BE657;
-	Wed, 27 Aug 2025 17:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Ww3/H8uB"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2078.outbound.protection.outlook.com [40.107.236.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C80E2D0C69;
+	Wed, 27 Aug 2025 17:19:40 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7248C747F
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 17:19:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.78
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756315193; cv=fail; b=Blzu5RLb7JbfnOC6EB+GeECYtYxQ/8lF7vmnbZTeS1fcwEeXNZn4DVZDBJcYPFE73q/QPb/eSSDrOem0j9y8N3wbFKhiFk/xd9235xWtys7vof/EO6jC8DvJEGbJUn+cft+ws/P4dsN+8RdyBRXNKMQJCrSY+oBW8xeJ+WiEKMw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756315193; c=relaxed/simple;
-	bh=EN5WdY8RG9OTzRg2JvOeZiovsIYbqO2X9NND8Ean8Tg=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kZie0yl0NrzTsGzK/rQxKTHPlNR+w8gVQpXcVqLVbINLm5PNKKlH3NL0e4zUSj6QbZszNIPQsqGT1vt52gbKvRS4dYZK4Cm93PoesKwAjRoqeADWZAK+VoakeBtqEcoA9zw3OIL4DzSj48kqA7zDMXDfh70S1ILkjuuqZfNrR0c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Ww3/H8uB; arc=fail smtp.client-ip=40.107.236.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rXPYOCu5D7AcKqQ6wfUeDbkv/IDtW53xjfsjxI7qy5iJ4Dgx0qESdG+JunA31MskcwnwKpQB1ROrxnILYqweqYndPuZXPrW/lmeKt9Ilspa+pQtV6CNf84HFc6FJf232c+7EULl464p5arq+wfYnfjMY4Vap4xz0ajMXlxyStO7vKJECFmsBOC+2rFwwtSKKBqU55cxch2cXUnh8h/frz+/5OQxtIl2/Nh/P7IFBkyPHsItUM+m/xP2miHAOw2vRugG0fxUEoJ/swPs07/Qh+rKtspevRrT5fWuvIW6yIHoeqdas1PqwQgSvLf936qAUnv9o2/jKvrhcJ9Zrg14UxA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fq5tEKR/el8ofAw80T32EP5IOEXunE7GwbNTc4myLMU=;
- b=pEhRTfbzrJEc57//YbRH3XC18pb1tPnbgBzQY1iYSo6hRNeIw5mYnDcmUnG9P5I+Ngy4m2FRshpDXYkUxwn3X2dJTWR5PwaLTtCD08/TlghxbsXfmcdqHwRtTZbLb/yA++XmdtUzJQ2SZLlekkgRm3U2YrFCLw1mk6qe9e6w07d4ZLWZD+toJPdpWcPjwHwQpDhXLrP7JRjl/QBMBRgVbycJX7bnUHCZ19vkgpjNbmNvebgahJMbspuFy/0zj5kRU7Uhs5bIJ34YEm+7HRIjX6WSytwSwJQ3s6a7y1iL/DG8GViJH6zcIKHWa+R+NM9l5N6bIasfyZblSQbiC0EMKw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fq5tEKR/el8ofAw80T32EP5IOEXunE7GwbNTc4myLMU=;
- b=Ww3/H8uB56jk8UPW/s/TFCFxP1l8wI+9Vy+4MldhPRmzVFcAjaeDywsiC4u3HdCPyiIJeondLuCmbHSTY0FqcYry1N8XGrRsItgrEkqMR45i5v4Fp1tU2KVnXPhxIUnkeLJcU3VGcKLcgWm0m7kyLnDmYqFq49Om9TqtK02DJBKTg71knVvhAcT7c17ULQSfFn8FffrkL5gk3gs9IQG1fGiqJsf2gjuUzNHax1vpR9sL6zIuCLlHIdEOPAbdcz1SinFq0x2oBNMm0lucC+HnXJqVw0VQl6bkWYRoAQJUHJKnGcWF2r3NDIpU8PbHIiNy6eb7EXp9ADnwGaGlEPO3TQ==
-Received: from BN0PR04CA0106.namprd04.prod.outlook.com (2603:10b6:408:ec::21)
- by IA0PR12MB7507.namprd12.prod.outlook.com (2603:10b6:208:441::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Wed, 27 Aug
- 2025 17:19:48 +0000
-Received: from BN2PEPF000044A5.namprd04.prod.outlook.com
- (2603:10b6:408:ec:cafe::a1) by BN0PR04CA0106.outlook.office365.com
- (2603:10b6:408:ec::21) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.16 via Frontend Transport; Wed,
- 27 Aug 2025 17:19:48 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BN2PEPF000044A5.mail.protection.outlook.com (10.167.243.104) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9073.11 via Frontend Transport; Wed, 27 Aug 2025 17:19:48 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 27 Aug
- 2025 10:19:21 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 27 Aug
- 2025 10:19:20 -0700
-Received: from Asurada-Nvidia (10.127.8.14) by mail.nvidia.com (10.129.68.6)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Wed, 27 Aug 2025 10:19:19 -0700
-Date: Wed, 27 Aug 2025 10:19:18 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
-	<jean-philippe@linaro.org>, <miko.lenczewski@arm.com>, <balbirs@nvidia.com>,
-	<peterz@infradead.org>, <smostafa@google.com>, <kevin.tian@intel.com>,
-	<praan@google.com>, <zhangzekun11@huawei.com>,
-	<linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <patches@lists.linux.dev>
-Subject: Re: [PATCH rfcv1 4/8] iommu/arm-smmu-v3: Introduce a per-domain
- arm_smmu_invs array
-Message-ID: <aK8+FvkbpB9G9YA+@Asurada-Nvidia>
-References: <cover.1755131672.git.nicolinc@nvidia.com>
- <fbec39124b18c231d19a9b2b05551b131ac14237.1755131672.git.nicolinc@nvidia.com>
- <20250827164804.GA2206304@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E46AB2C11FC
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 17:19:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756315179; cv=none; b=QPsTfBfK1Ugd76R5IpgomyF8hcx/UIDHC2K8Wi/4hfhkl2F6p4F4RuwKX074ZM/Jn7zq5N3oB2dKBZsb1Dfd5by9je7v38nCo8C+/MO85S81uUn5I3vI8Yx8pCptbUN3NvhjR4ldbHT5HIqTtVODkcMM2S4YVFuNcjGmbMq+rac=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756315179; c=relaxed/simple;
+	bh=xc5Gs1BKnZMD2Jn2qmEE5N1BLIigyY6nGB+0F7DakPs=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=csyfpSUkr7eRQNbfFRxml26kHJ/WIuE/NZhqU9CPH26MbI8KrOn4sh/qyF4hGFLeBagLk9KoRQFgZM5l+2xCYJ2WkuQ1NHdqv1L/COq2FNkV9ukGVDj36k/wAbjgT78eb4qqH8Qz51BFEB2lQ8E13NJS8swxp/oKq6Gmq7hH4uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3f0d4ad1c3aso220345ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 10:19:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756315177; x=1756919977;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sjiXdLCfctwMNg9bkhL6n+ycMUPOZUiVReHJWB1zxBw=;
+        b=OZZD0RYoSkmOAHkYxEcVFqhvdS3uAft/kgeQDOr2AoP8YNuZv0BL+T4hotVkb979I7
+         5QBylOxem3uRshPMWl3UN0Qi/mw4H8orlTZTpdXdpbszm+ROkLzvF69liOII3NmRSAsL
+         syz0EkG18Nw65KYZJbcHBBkBgek2/802WnqPi+apYDY0ma4fSRvSn5/8ev8kc43jvoSU
+         TREKtzaU0alq2w/GEkqMpaVq6WNjTjnn1i0dvyetswPH80UF5dhCBnMaEgPwM5vz+0KA
+         flnE02s/ZyxvQZtAyLnAC27ugevf+KkJ7UKzoDU71faqJP3lF6Oem2tOtPWbPHFM+Cl8
+         9kxg==
+X-Forwarded-Encrypted: i=1; AJvYcCUOPj5/+sifW03iBGDFoDvoJE3+ZUF8VsnaUCshjIgShWVwNPfapipuHM+NKZRTA4hYV9w/9E0+4/2SVGY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAUpCr+ULwr8Jbe6M/4NXxDy5gIDzWt+acYRLiKkcGU7kqOUOR
+	CqB3bJtAGPvY9PRUTwLxjcl/iidmWM7AP8ag/HsTKdD/iv+nVuRXfa6XtGrCgzN1uunP4DHQRdI
+	8TCUrHi8TeTFh7sZtsVx/L5x2rj4yB2NxhqFPUhinTVxX7SU4VPhW76LOB9w=
+X-Google-Smtp-Source: AGHT+IEco9XwsvuSdkgVLocpTlpW4+Fen1aDiOmyXkgy8ZvjTrTqKXoicYuvhN5wflACRlNUiPVnS/1w1eA1w1FxJ8vkCZSGXByj
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250827164804.GA2206304@nvidia.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF000044A5:EE_|IA0PR12MB7507:EE_
-X-MS-Office365-Filtering-Correlation-Id: 806d3b85-90f9-4530-81d8-08dde58decf3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|7416014|376014|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?BlhgLRH57j2Fak5wm5aOGhMIedse47lG982ZiaB6WHNhPQ404UakZ9wjJXkD?=
- =?us-ascii?Q?Bq8dZow0RLfjv7nLG5R3PwiSuSEnpDXyhe+Bu5EAS7lGMCrqtl58VVhrs4ed?=
- =?us-ascii?Q?ESbKsifQfyJ64321F+HjHPrFc8XE0J2Hlc00EjxpxEIVlFNjDhaxDW7o96d4?=
- =?us-ascii?Q?CF/1EE9U00XyE7t4mewl0grt9qx9rXSkyKgHOCHzykYFvtioEDpBjcGPuXQh?=
- =?us-ascii?Q?Fw4jN0Hc98/Xi9nxInH14rQm1yxoxIgWo+cyWsRm8GQZw6QeTjcWnXyKG1tD?=
- =?us-ascii?Q?5+MrDxqnxhk1UcvvWgFibsmmoVJBZotXL8Lvv5Of8+zhExH5xEtOGhGgyQMd?=
- =?us-ascii?Q?mcOy2RLXnh6U4qDTFV/xuGMbpQn3zKqEDseODH9QBbUwOMLJTKbMpkR0CwZR?=
- =?us-ascii?Q?tIXo9yAPVzGgSPFrQMWwHh1E9sv2pBkP+/FPlhB60ibE9oplnLUP3Rja3eCq?=
- =?us-ascii?Q?PxZ2U+p/Bo/GSc6tkkL0hLiLg//5ZA+LUHZp/qJOegKFwHADuQX5YC1t0ySs?=
- =?us-ascii?Q?wRlepkT1RmDhpOfOOe1tfDCmChUVi9QrrvNqDRO6RL/nX5G7u5Jd/ZLz2+W3?=
- =?us-ascii?Q?Kpf8Caid8r7FuIQBZPliECRjc9Bc5KeDKKOzLuC2t+lJkgSyHO7/xp5/ksta?=
- =?us-ascii?Q?LUmcP+v/xCM+DUXVzzO1dJQ9NJnf0/wcB55YDpm4aMrlpDB1HRzCEET19ucs?=
- =?us-ascii?Q?+nJSw8DCb0elFTwmCU6fMx7PS/E/KisxwdS3eMgub0NLbwVFg2x2IVLJm+/4?=
- =?us-ascii?Q?t7Kgnc7ymtdHYEJwkaeASAGOU2G05p7gp50GQG1z245T2d5yC46J6xJOttqe?=
- =?us-ascii?Q?FGvcY71buZShpPRhCBh/SswId8yAJl0vzLUoZ3F61eSpcLVZ/O6q5SZtrj8K?=
- =?us-ascii?Q?hpICin4VRHeKQj6xIUBwx/Qq0c7iKV3yyXRtbXOWK1CZwljfVSjfJ0jtED8t?=
- =?us-ascii?Q?Max9Tlk3xHSeH2dgIorR+YFmH6GjJ0HWYUhOrc2rfkCPYX6K8zSofosbKmzi?=
- =?us-ascii?Q?DBflKIz0yEIaVEt3l1pMqRwjFuDQvamlytxPinUpMPFNVWMBDg6kSpz2UYnN?=
- =?us-ascii?Q?xFfqLJVh+0be+8DZhhvik/3FhNpkL5DSba2rLfegAEpEiHJjr5wXKYD5oDKc?=
- =?us-ascii?Q?hVDm+0QcS7Sp0Uk4xlg0l/MDq5sqN2cHpx3oK6vluVLOxivbYCYTh8FeayUk?=
- =?us-ascii?Q?9/m1XaRE0rnLI8IniN9b1wUCgd5bpiJfNiRHZ+6uS+03Dul/8NepL0tUaQHD?=
- =?us-ascii?Q?bpOOxwzFCdtrE72seF8nvbpT784vs75Jy6eETNoW1nEPD1HWsWjmtMSOLyKr?=
- =?us-ascii?Q?55kejS8pge2dNsd9YrewnRGmGkwvxt4WJLWFEMxAhb2VmwGYuNvUgvfaRsv0?=
- =?us-ascii?Q?iwUWSDbLYw4h6p97R92GIUKt7qV4D+6VFpc89jXbzwsZXFqVurUduV51gPKf?=
- =?us-ascii?Q?dBqOOq7fJ4zsyDyzEvnYovKdvUwR8SQ+02incdSF+7FrKK1DThFDQZQNWoCW?=
- =?us-ascii?Q?R9+YcKO2v89y+sXsT7PPiJLzs4HAx9ddoz2P?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2025 17:19:48.1667
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 806d3b85-90f9-4530-81d8-08dde58decf3
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF000044A5.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7507
+X-Received: by 2002:a05:6e02:1988:b0:3e5:51bb:9cd9 with SMTP id
+ e9e14a558f8ab-3e91fc29a4emr287844375ab.8.1756315177086; Wed, 27 Aug 2025
+ 10:19:37 -0700 (PDT)
+Date: Wed, 27 Aug 2025 10:19:37 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68af3e29.a70a0220.3cafd4.002e.GAE@google.com>
+Subject: [syzbot] [hams?] general protection fault in rose_rt_ioctl
+From: syzbot <syzbot+2eb8d1719f7cfcfa6840@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	kuba@kernel.org, linux-hams@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Aug 27, 2025 at 01:48:04PM -0300, Jason Gunthorpe wrote:
-> On Wed, Aug 13, 2025 at 06:25:35PM -0700, Nicolin Chen wrote:
-> > +/**
-> > + * arm_smmu_invs_del() - Remove @del_invs from @old_invs
-> > + * @old_invs: the old invalidation array
-> > + * @del_invs: an array of invlidations to delete
-> > + *
-> > + * Return: a newly allocated and sorted invalidation array on success, or an
-> > + * ERR_PTR.
-> > + *
-> > + * This function must be locked and serialized with arm_smmu_invs_add/dec(),
-> > + * but do not lockdep on any lock for KUNIT test.
-> > + *
-> > + * Caller is resposible for freeing the @old_invs and the returned one.
-> > + *
-> > + * Entries marked as trash will be completely removed in the returned array.
-> > + */
-> > +VISIBLE_IF_KUNIT
-> > +struct arm_smmu_invs *arm_smmu_invs_del(struct arm_smmu_invs *old_invs,
-> > +					struct arm_smmu_invs *del_invs)
-> > +{
-> 
-> Having looked at this more completely, I think we should drop this
-> function.
-> 
-> Just always do decr, then have a simple function to compact the list
-> after the decr:
+Hello,
 
-But the _dec function will always take the write lock, which seems
-to lose the benefit of using an RCU array?
+syzbot found the following issue on:
 
-The complexity of the _dec function wouldn't release the lock very
-quickly. The current version only invokes it upon kmalloc failure,
-which can be seem as a very rare case having a very minimal impact.
+HEAD commit:    ceb951552404 Merge branch 'introduce-refcount_t-for-refere..
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=1038cfbc580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=292f3bc9f654adeb
+dashboard link: https://syzkaller.appspot.com/bug?extid=2eb8d1719f7cfcfa6840
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
 
-> struct arm_smmu_invs *arm_smmu_invs_cleanup(struct arm_smmu_invs *invs,
-> 					    size_t to_del)
-> {
-> 	struct arm_smmu_invs *new_invs;
-> 	size_t i, j;
-> 
-> 	if (WARN_ON(invs->num_invs < to_del))
-> 		return NULL;
-> 
-> 	new_invs = arm_smmu_invs_alloc(invs->num_invs - to_del);
-> 	if (IS_ERR(new_invs))
-> 		return NULL;
-> 
-> 	for (i = 0, j = 0; i != invs->num_invs; i++) {
-> 		if (!refcount_read(&invs->inv[i].users))
-> 			continue;
-> 		new_invs->inv[j] = invs->inv[i];
-> 		j++;
-> 	}
-> 	return new_invs;
-> }
-> 
-> If this returns NULL then just leave the list alone, it is OK to sit
-> there with the 0 users left behind.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Yea, it's better than waiting for the next _add function to compact
-the list.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/7a0a7a3f8dbc/disk-ceb95155.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ec99703c0bdd/vmlinux-ceb95155.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/248da817e5e1/bzImage-ceb95155.xz
 
-> No need for the complex _del function and the _decr function..
-> 
-> This also means the memory doesn't need to be preallocated and it
-> significantly simplifies alot of the logic.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+2eb8d1719f7cfcfa6840@syzkaller.appspotmail.com
 
-By "preallocated" you mean "master->scratch_invs"? I think it will
-be still needed for the "dec_invs" argument in:
-  size_t arm_smmu_invs_dec(struct arm_smmu_invs *invs,
-			   struct arm_smmu_invs *dec_invs);
-?
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000002: 0000 [#1] SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000010-0x0000000000000017]
+CPU: 1 UID: 0 PID: 21085 Comm: syz.4.4642 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+RIP: 0010:rose_clear_routes net/rose/rose_route.c:565 [inline]
+RIP: 0010:rose_rt_ioctl+0x162/0x1250 net/rose/rose_route.c:760
+Code: 3f 31 ff 44 89 fe e8 3d de 52 f7 45 85 ff 74 0a e8 33 db 52 f7 e9 76 02 00 00 48 8b 44 24 28 48 8d 50 10 49 89 d7 49 c1 ef 03 <43> 0f b6 04 2f 84 c0 48 89 54 24 20 0f 85 87 02 00 00 44 0f b6 22
+RSP: 0018:ffffc9000bb77ae0 EFLAGS: 00010202
+RAX: 0000000000000000 RBX: ffff8880529fd800 RCX: 0000000000000000
+RDX: 0000000000000010 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc9000bb77c10 R08: 0000000000000003 R09: 0000000000000004
+R10: dffffc0000000000 R11: fffff5200176ef4c R12: dffffc0000000000
+R13: dffffc0000000000 R14: ffff88804bc15300 R15: 0000000000000002
+FS:  00007f4e974376c0(0000) GS:ffff888125d1b000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b32163fff CR3: 000000006a0fe000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ rose_ioctl+0x3ce/0x8b0 net/rose/af_rose.c:1381
+ sock_do_ioctl+0xd9/0x300 net/socket.c:1238
+ sock_ioctl+0x576/0x790 net/socket.c:1359
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:598 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:584
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4e9658ebe9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f4e97437038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f4e967b5fa0 RCX: 00007f4e9658ebe9
+RDX: 0000000000000000 RSI: 00000000000089e4 RDI: 0000000000000004
+RBP: 00007f4e96611e19 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f4e967b6038 R14: 00007f4e967b5fa0 R15: 00007ffe31b011d8
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:rose_clear_routes net/rose/rose_route.c:565 [inline]
+RIP: 0010:rose_rt_ioctl+0x162/0x1250 net/rose/rose_route.c:760
+Code: 3f 31 ff 44 89 fe e8 3d de 52 f7 45 85 ff 74 0a e8 33 db 52 f7 e9 76 02 00 00 48 8b 44 24 28 48 8d 50 10 49 89 d7 49 c1 ef 03 <43> 0f b6 04 2f 84 c0 48 89 54 24 20 0f 85 87 02 00 00 44 0f b6 22
+RSP: 0018:ffffc9000bb77ae0 EFLAGS: 00010202
+RAX: 0000000000000000 RBX: ffff8880529fd800 RCX: 0000000000000000
+RDX: 0000000000000010 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc9000bb77c10 R08: 0000000000000003 R09: 0000000000000004
+R10: dffffc0000000000 R11: fffff5200176ef4c R12: dffffc0000000000
+R13: dffffc0000000000 R14: ffff88804bc15300 R15: 0000000000000002
+FS:  00007f4e974376c0(0000) GS:ffff888125d1b000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b32163fff CR3: 000000006a0fe000 CR4: 00000000003526f0
+----------------
+Code disassembly (best guess), 1 bytes skipped:
+   0:	31 ff                	xor    %edi,%edi
+   2:	44 89 fe             	mov    %r15d,%esi
+   5:	e8 3d de 52 f7       	call   0xf752de47
+   a:	45 85 ff             	test   %r15d,%r15d
+   d:	74 0a                	je     0x19
+   f:	e8 33 db 52 f7       	call   0xf752db47
+  14:	e9 76 02 00 00       	jmp    0x28f
+  19:	48 8b 44 24 28       	mov    0x28(%rsp),%rax
+  1e:	48 8d 50 10          	lea    0x10(%rax),%rdx
+  22:	49 89 d7             	mov    %rdx,%r15
+  25:	49 c1 ef 03          	shr    $0x3,%r15
+* 29:	43 0f b6 04 2f       	movzbl (%r15,%r13,1),%eax <-- trapping instruction
+  2e:	84 c0                	test   %al,%al
+  30:	48 89 54 24 20       	mov    %rdx,0x20(%rsp)
+  35:	0f 85 87 02 00 00    	jne    0x2c2
+  3b:	44 0f b6 22          	movzbl (%rdx),%r12d
 
-Or you mean the allocation in arm_smmu_invs_del()? Yes, this drops
-the kmalloc in the detach path.
 
-Thanks
-Nicolin
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
