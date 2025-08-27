@@ -1,272 +1,192 @@
-Return-Path: <linux-kernel+bounces-788625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9B50B38776
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:10:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FA00B3878B
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:12:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B32F188B2F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:10:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 923AE1732DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ECC8346A15;
-	Wed, 27 Aug 2025 16:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n5lLe0Ex"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077F533EB16;
+	Wed, 27 Aug 2025 16:12:06 +0000 (UTC)
+Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E935335BBB;
-	Wed, 27 Aug 2025 16:09:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E5F20C00E;
+	Wed, 27 Aug 2025 16:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756310971; cv=none; b=Yylw7d6Ma1Bs7ijqOH5Wxw59KYDo35RSOW0+tfrPrs0FRnDawmcENhRQT8wx1bQE4LHxiKstW5wiVGtJ8rVXrRTvrmTUJp0amMve3ZyF3LLBz2JtPjXCMIhf6VZthJSAxYCl5b1SHM5fg1ZvrXlrwglsGe797WO3LsRMQw7CJ60=
+	t=1756311125; cv=none; b=Z4JNsqeo48/K9iI1Z/PhGXfSOBrZaM18BWqvzl/+GVMWVG7EAlbVH/m9TzMWCoGDtnidspOZGtIt8Rvx1BiIkL2kwbf26MOy8ekERkQyLm1atvmIPqhgC27zZAZj5+0wmz6tVd3AUfXgxmiEdrGYGO93c/arFAu8YiB8THx3DRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756310971; c=relaxed/simple;
-	bh=3nnatlP1fBqIs79HM6dGWG8y2mvb98rMjnvORo80/yw=;
+	s=arc-20240116; t=1756311125; c=relaxed/simple;
+	bh=i9u4ueMDOCYd4PdWvQmBlID8NKYd3eHGKqj1Gu30cYc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iAs5GSR9mAUDs7hYZbEJYauwrpfzu1Cp36e3Yr2i5OCJ9UaFvUU6lhWEUPCRRIjnpJFmDJ+QQy3cRY7QHZbiSxNnvbk3EF+0gWqsr+iqqYNoEDC8l97/01ruJ2KqLpyJUCig7DDWG52KupJWoBhzZlyCBEEa22YIZNmbrMn81tU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n5lLe0Ex; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C9A3C4CEEB;
-	Wed, 27 Aug 2025 16:09:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756310970;
-	bh=3nnatlP1fBqIs79HM6dGWG8y2mvb98rMjnvORo80/yw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n5lLe0ExCpNJcx9HD9+tHMs62ZPzPN3LolGxkVKXQbJnWWS+XfzG94xy9mOVxPclM
-	 HQqAMveFN9XExZ9p3AIDq5sozf2Mevy/+VgZCxtSXnT8dyZkUPdQeh3rcfaFPDDHT1
-	 7ibnZyK5damlUHv89OJckYLCakpe9guaEu4LhezAyhUbzAoMKc/LiBX9tKs8FjJvAz
-	 9kuKy4W92TU3RwtW2EdAwMyeGaDaAa3/EC+nzWHggFCfTPlV60caTOuJcKLUE0m2u1
-	 5U1U/9H6NeSG14yeaNvQF81XaoiqOODVhsJLWqSQ6inXoG2eFEw4vSQpgB82wSex/8
-	 tGDmSFT0+OMVw==
-Date: Wed, 27 Aug 2025 12:09:29 -0400
-From: Mike Snitzer <snitzer@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Ritesh Harjani <ritesh.list@gmail.com>, Keith Busch <kbusch@kernel.org>,
-	Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-ext4@vger.kernel.org, axboe@kernel.dk, dw@davidwei.uk,
-	brauner@kernel.org, hch@lst.de, martin.petersen@oracle.com,
-	djwong@kernel.org, linux-xfs@vger.kernel.org,
-	viro@zeniv.linux.org.uk, Jan Kara <jack@suse.com>,
-	Brian Foster <bfoster@redhat.com>
-Subject: Re: [PATCHv3 0/8] direct-io: even more flexible io vectors
-Message-ID: <aK8tuTnuHbD8VOyo@kernel.org>
-References: <20250819164922.640964-1-kbusch@meta.com>
- <87a53ra3mb.fsf@gmail.com>
- <g35u5ugmyldqao7evqfeb3hfcbn3xddvpssawttqzljpigy7u4@k3hehh3grecq>
- <aKx485EMthHfBWef@kbusch-mbp>
- <87cy8ir835.fsf@gmail.com>
- <ua7ib34kk5s6yfthqkgy3m2pnbk33a34g7prezmwl7hfwv6lwq@fljhjaogd6gq>
+	 Content-Type:Content-Disposition:In-Reply-To; b=asDBLpUevaW6xEtzpyaJr3VkkMKY9fhNsXPn8gLvoLNEwvdLu9Pa9zs2UuNquNy3UTtmdItIdTeh6dPhBL0hFriAm8/HsvBoLXCLCCJPqtGlj9thpLW2dVO2CWCwpaAkwZHJxPwhBA3r7JKRljH52AuYBq5DQVqMkZep0I1ETZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
+Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
+	by leonov.paulk.fr (Postfix) with ESMTPS id 110751F00062;
+	Wed, 27 Aug 2025 16:11:55 +0000 (UTC)
+Received: by laika.paulk.fr (Postfix, from userid 65534)
+	id DB3ADB020DD; Wed, 27 Aug 2025 16:11:53 +0000 (UTC)
+X-Spam-Level: 
+Received: from shepard (unknown [192.168.1.1])
+	by laika.paulk.fr (Postfix) with ESMTPSA id AB57FB020D6;
+	Wed, 27 Aug 2025 16:11:52 +0000 (UTC)
+Date: Wed, 27 Aug 2025 18:11:50 +0200
+From: Paul Kocialkowski <paulk@sys-base.io>
+To: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: Re: [PATCH] media: verisilicon: Explicitly disable all encoder
+ ioctls for decoders
+Message-ID: <aK8uRrlbMWZsA88Q@shepard>
+References: <20250826190416.1287089-1-paulk@sys-base.io>
+ <ee7416c9db2128ab1a8c1bbdc7cd231da21e5b53.camel@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="C71n5l9ay7s/mv82"
 Content-Disposition: inline
-In-Reply-To: <ua7ib34kk5s6yfthqkgy3m2pnbk33a34g7prezmwl7hfwv6lwq@fljhjaogd6gq>
+In-Reply-To: <ee7416c9db2128ab1a8c1bbdc7cd231da21e5b53.camel@collabora.com>
 
-Hi Jan,
 
-On Wed, Aug 27, 2025 at 05:20:53PM +0200, Jan Kara wrote:
-> On Tue 26-08-25 10:29:58, Ritesh Harjani wrote:
-> > Keith Busch <kbusch@kernel.org> writes:
-> > 
-> > > On Mon, Aug 25, 2025 at 02:07:15PM +0200, Jan Kara wrote:
-> > >> On Fri 22-08-25 18:57:08, Ritesh Harjani wrote:
-> > >> > Keith Busch <kbusch@meta.com> writes:
-> > >> > >
-> > >> > >   - EXT4 falls back to buffered io for writes but not for reads.
-> > >> > 
-> > >> > ++linux-ext4 to get any historical context behind why the difference of
-> > >> > behaviour in reads v/s writes for EXT4 DIO. 
-> > >> 
-> > >> Hum, how did you test? Because in the basic testing I did (with vanilla
-> > >> kernel) I get EINVAL when doing unaligned DIO write in ext4... We should be
-> > >> falling back to buffered IO only if the underlying file itself does not
-> > >> support any kind of direct IO.
-> > >
-> > > Simple test case (dio-offset-test.c) below.
-> > >
-> > > I also ran this on vanilla kernel and got these results:
-> > >
-> > >   # mkfs.ext4 /dev/vda
-> > >   # mount /dev/vda /mnt/ext4/
-> > >   # make dio-offset-test
-> > >   # ./dio-offset-test /mnt/ext4/foobar
-> > >   write: Success
-> > >   read: Invalid argument
-> > >
-> > > I tracked the "write: Success" down to ext4's handling for the "special"
-> > > -ENOTBLK error after ext4_want_directio_fallback() returns "true".
-> > >
-> > 
-> > Right. Ext4 has fallback only for dio writes but not for DIO reads... 
-> > 
-> > buffered
-> > static inline bool ext4_want_directio_fallback(unsigned flags, ssize_t written)
-> > {
-> > 	/* must be a directio to fall back to buffered */
-> > 	if ((flags & (IOMAP_WRITE | IOMAP_DIRECT)) !=
-> > 		    (IOMAP_WRITE | IOMAP_DIRECT))
-> > 		return false;
-> > 
-> >     ...
-> > }
-> > 
-> > So basically the path is ext4_file_[read|write]_iter() -> iomap_dio_rw
-> >     -> iomap_dio_bio_iter() -> return -EINVAL. i.e. from...
-> > 
-> > 
-> > 	if ((pos | length) & (bdev_logical_block_size(iomap->bdev) - 1) ||
-> > 	    !bdev_iter_is_aligned(iomap->bdev, dio->submit.iter))
-> > 		return -EINVAL;
-> > 
-> > EXT4 then fallsback to buffered-io only for writes, but not for reads. 
-> 
-> Right. And the fallback for writes was actually inadvertedly "added" by
-> commit bc264fea0f6f "iomap: support incremental iomap_iter advances". That
-> changed the error handling logic. Previously if iomap_dio_bio_iter()
-> returned EINVAL, it got propagated to userspace regardless of what
-> ->iomap_end() returned. After this commit if ->iomap_end() returns error
-> (which is ENOTBLK in ext4 case), it gets propagated to userspace instead of
-> the error returned by iomap_dio_bio_iter().
-> 
-> Now both the old and new behavior make some sense so I won't argue that the
-> new iomap_iter() behavior is wrong. But I think we should change ext4 back
-> to the old behavior of failing unaligned dio writes instead of them falling
-> back to buffered IO. I think something like the attached patch should do
-> the trick - it makes unaligned dio writes fail again while writes to holes
-> of indirect-block mapped files still correctly fall back to buffered IO.
-> Once fstests run completes, I'll do a proper submission...
-> 
-> 
-> 								Honza
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+--C71n5l9ay7s/mv82
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> From ce6da00a09647a03013c3f420c2e7ef7489c3de8 Mon Sep 17 00:00:00 2001
-> From: Jan Kara <jack@suse.cz>
-> Date: Wed, 27 Aug 2025 14:55:19 +0200
-> Subject: [PATCH] ext4: Fail unaligned direct IO write with EINVAL
-> 
-> Commit bc264fea0f6f ("iomap: support incremental iomap_iter advances")
-> changed the error handling logic in iomap_iter(). Previously any error
-> from iomap_dio_bio_iter() got propagated to userspace, after this commit
-> if ->iomap_end returns error, it gets propagated to userspace instead of
-> an error from iomap_dio_bio_iter(). This results in unaligned writes to
-> ext4 to silently fallback to buffered IO instead of erroring out.
-> 
-> Now returning ENOTBLK for DIO writes from ext4_iomap_end() seems
-> unnecessary these days. It is enough to return ENOTBLK from
-> ext4_iomap_begin() when we don't support DIO write for that particular
-> file offset (due to hole).
+Hi Nicolas,
 
-Any particular reason for ext4 still returning -ENOTBLK for unaligned
-DIO?
+On Wed 27 Aug 25, 10:30, Nicolas Dufresne wrote:
+> Hi Paul,
+>=20
+> Le mardi 26 ao=C3=BBt 2025 =C3=A0 21:04 +0200, Paul Kocialkowski a =C3=A9=
+crit=C2=A0:
+> > Call the dedicated v4l2_disable_ioctl helper instead of manually
+> > checking whether the current context is an encoder for the selection
+> > ioctls.
+> >=20
+> > Signed-off-by: Paul Kocialkowski <paulk@sys-base.io>
+> > ---
+> > =C2=A0drivers/media/platform/verisilicon/hantro_drv.c=C2=A0 | 2 ++
+> > =C2=A0drivers/media/platform/verisilicon/hantro_v4l2.c | 6 ++----
+> > =C2=A02 files changed, 4 insertions(+), 4 deletions(-)
+> >=20
+> > diff --git a/drivers/media/platform/verisilicon/hantro_drv.c
+> > b/drivers/media/platform/verisilicon/hantro_drv.c
+> > index 4cc9d00fd293..6fb28a6293e7 100644
+> > --- a/drivers/media/platform/verisilicon/hantro_drv.c
+> > +++ b/drivers/media/platform/verisilicon/hantro_drv.c
+> > @@ -916,6 +916,8 @@ static int hantro_add_func(struct hantro_dev *vpu,
+> > unsigned int funcid)
+> > =C2=A0		vpu->decoder =3D func;
+> > =C2=A0		v4l2_disable_ioctl(vfd, VIDIOC_TRY_ENCODER_CMD);
+> > =C2=A0		v4l2_disable_ioctl(vfd, VIDIOC_ENCODER_CMD);
+> > +		v4l2_disable_ioctl(vfd, VIDIOC_G_SELECTION);
+> > +		v4l2_disable_ioctl(vfd, VIDIOC_S_SELECTION);
+>=20
+> Disabling this IOCTL for JPEG is fine, but for VP8, H.264, HEVC, VP9 and =
+AV1, it
+> is pretty much mandatory. Otherwise your stream will advertise the padded
+> dimentions and there would be no way to tell it that what is the cropping=
+ window
+> for bitstream generation purpose.
 
-In my experience XFS returns -EINVAL when failing unaligned DIO (but
-maybe there are edge cases where that isn't always the case?)
+Maybe the lack of context around the patch doesn't make it clear, but this =
+is
+to disable the ioctls for decoders (not encoders), which don't need to use =
+the
+selection API. This keeps the ioctls enabled and available for all encoders.
 
-Would be nice to have consistency across filesystems for what is
-returned when failing unaligned DIO.
+> Considering you are looking forward adding H.264 encoding, do you really =
+want
+> to apply this fix ?
 
-The iomap code returns -ENOTBLK as "the magic error code to fall back
-to buffered I/O".  But that seems only for page cache invalidation
-failure, _not_ for unaligned DIO.
+I am well aware that this is required to setup the crop in the coded bitstr=
+eam
+and I am definitely using it in my encoding work :)
 
-(Anyway, __iomap_dio_rw's WRITE handling can return -ENOTBLK if page
-cache invalidation fails during DIO write. So it seems higher-level
-code, like I've added to NFS/NFSD to check for unaligned DIO failure,
-should check for both -EINVAL and -ENOTBLK).
+Cheers,
 
-Thanks,
-Mike
+Paul
 
-ps. ENOTBLK is actually much less easily confused with other random
-uses of EINVAL (EINVAL use is generally way too overloaded, rendering
-it a pretty unhelpful error).  But switching XFS to use ENOTBLK
-instead of EINVAL seems like disruptive interface breakage (I suppose
-same could be said for ext4 if it were to now return EINVAL for
-unaligned DIO, but ext4 flip-flopping on how it handles unaligned DIO
-prompted me to ask these questions now)
+>=20
+> Nicolas
+>=20
+> > =C2=A0	}
+> > =C2=A0
+> > =C2=A0	video_set_drvdata(vfd, vpu);
+> > diff --git a/drivers/media/platform/verisilicon/hantro_v4l2.c
+> > b/drivers/media/platform/verisilicon/hantro_v4l2.c
+> > index 6bcd892e7bb4..fcf3bd9bcda2 100644
+> > --- a/drivers/media/platform/verisilicon/hantro_v4l2.c
+> > +++ b/drivers/media/platform/verisilicon/hantro_v4l2.c
+> > @@ -663,8 +663,7 @@ static int vidioc_g_selection(struct file *file, vo=
+id
+> > *priv,
+> > =C2=A0	struct hantro_ctx *ctx =3D file_to_ctx(file);
+> > =C2=A0
+> > =C2=A0	/* Crop only supported on source. */
+> > -	if (!ctx->is_encoder ||
+> > -	=C2=A0=C2=A0=C2=A0 sel->type !=3D V4L2_BUF_TYPE_VIDEO_OUTPUT)
+> > +	if (sel->type !=3D V4L2_BUF_TYPE_VIDEO_OUTPUT)
+> > =C2=A0		return -EINVAL;
+> > =C2=A0
+> > =C2=A0	switch (sel->target) {
+> > @@ -696,8 +695,7 @@ static int vidioc_s_selection(struct file *file, vo=
+id
+> > *priv,
+> > =C2=A0	struct vb2_queue *vq;
+> > =C2=A0
+> > =C2=A0	/* Crop only supported on source. */
+> > -	if (!ctx->is_encoder ||
+> > -	=C2=A0=C2=A0=C2=A0 sel->type !=3D V4L2_BUF_TYPE_VIDEO_OUTPUT)
+> > +	if (sel->type !=3D V4L2_BUF_TYPE_VIDEO_OUTPUT)
+> > =C2=A0		return -EINVAL;
+> > =C2=A0
+> > =C2=A0	/* Change not allowed if the queue is streaming. */
 
-> ---
->  fs/ext4/file.c  |  2 --
->  fs/ext4/inode.c | 35 -----------------------------------
->  2 files changed, 37 deletions(-)
-> 
-> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-> index 93240e35ee36..cf39f57d21e9 100644
-> --- a/fs/ext4/file.c
-> +++ b/fs/ext4/file.c
-> @@ -579,8 +579,6 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
->  		iomap_ops = &ext4_iomap_overwrite_ops;
->  	ret = iomap_dio_rw(iocb, from, iomap_ops, &ext4_dio_write_ops,
->  			   dio_flags, NULL, 0);
-> -	if (ret == -ENOTBLK)
-> -		ret = 0;
->  	if (extend) {
->  		/*
->  		 * We always perform extending DIO write synchronously so by
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 5b7a15db4953..c3b23c90fd11 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -3872,47 +3872,12 @@ static int ext4_iomap_overwrite_begin(struct inode *inode, loff_t offset,
->  	return ret;
->  }
->  
-> -static inline bool ext4_want_directio_fallback(unsigned flags, ssize_t written)
-> -{
-> -	/* must be a directio to fall back to buffered */
-> -	if ((flags & (IOMAP_WRITE | IOMAP_DIRECT)) !=
-> -		    (IOMAP_WRITE | IOMAP_DIRECT))
-> -		return false;
-> -
-> -	/* atomic writes are all-or-nothing */
-> -	if (flags & IOMAP_ATOMIC)
-> -		return false;
-> -
-> -	/* can only try again if we wrote nothing */
-> -	return written == 0;
-> -}
-> -
-> -static int ext4_iomap_end(struct inode *inode, loff_t offset, loff_t length,
-> -			  ssize_t written, unsigned flags, struct iomap *iomap)
-> -{
-> -	/*
-> -	 * Check to see whether an error occurred while writing out the data to
-> -	 * the allocated blocks. If so, return the magic error code for
-> -	 * non-atomic write so that we fallback to buffered I/O and attempt to
-> -	 * complete the remainder of the I/O.
-> -	 * For non-atomic writes, any blocks that may have been
-> -	 * allocated in preparation for the direct I/O will be reused during
-> -	 * buffered I/O. For atomic write, we never fallback to buffered-io.
-> -	 */
-> -	if (ext4_want_directio_fallback(flags, written))
-> -		return -ENOTBLK;
-> -
-> -	return 0;
-> -}
-> -
->  const struct iomap_ops ext4_iomap_ops = {
->  	.iomap_begin		= ext4_iomap_begin,
-> -	.iomap_end		= ext4_iomap_end,
->  };
->  
->  const struct iomap_ops ext4_iomap_overwrite_ops = {
->  	.iomap_begin		= ext4_iomap_overwrite_begin,
-> -	.iomap_end		= ext4_iomap_end,
->  };
->  
->  static int ext4_iomap_begin_report(struct inode *inode, loff_t offset,
-> -- 
-> 2.43.0
-> 
 
+
+--=20
+Paul Kocialkowski,
+
+Independent contractor - sys-base - https://www.sys-base.io/
+Free software developer - https://www.paulk.fr/
+
+Expert in multimedia, graphics and embedded hardware support with Linux.
+
+--C71n5l9ay7s/mv82
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAmivLkYACgkQhP3B6o/u
+lQxk1A/9ELY5RTuo/mlmxWE7Lq+eC0ax4KNowasbC3RE5o9RQ18n2yDBD1TCeXlv
+4ZAQVTjE/oBy4/tQ43FH7vt3xgMLjvZ09+XUefXvT00ITtMekW4POd+oqeEaNyWi
+jfr128LANaLTRODiDIeuufVOK9KTlcIpR7aZjA/FXgq8iOtibWzQxWBQV1JiWwTS
+fwiTRfkSYAxyIIHRBYbLh/lhorl34uDp44i4vZdmg7Dy77RVzn7zwz4al5Gsut7w
+WGWgsUPX1UDMvJ6jXEHw99JRAhR168M1VSo8zAD3iC2I8hxH7HSHaY5zZXraolEL
+8pBysbXDWNV8AjxcyIDdykgnlLqrY6fhctQA7x6cOF0ls1Z/tO7yc8YckjK/Scnw
+/cBPAxbalXEGeB+8AEIFiJAe6WE/ciyq28cm75xadkkIc9iBLw7KJD1aDVF7g9kC
+yVV0LHoeNlVBR82MsxFAzIRyPvSnjqF92gBLmFqU5tgygxMtLTse44Hvq3drlc3M
+/vcZqfdRMZFkrkcw5D1HPxirPPuF+nv2XPlF/PBOTSxexg73PpZLfzJYD5MQGNHD
+YIlhOOpmBEJLhD5kQswvACua6Av3wbeO2/nGFk9ZZuF2BHYGsRKL2gxOmqe07beG
+1WRv8r+M0hHzKYC/MnjZWgPMWnCp0J/H8WnrLktVIrlv2L/zNyM=
+=87s1
+-----END PGP SIGNATURE-----
+
+--C71n5l9ay7s/mv82--
 
