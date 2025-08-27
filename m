@@ -1,162 +1,188 @@
-Return-Path: <linux-kernel+bounces-788675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9084CB3888C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:27:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF8DDB38895
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 19:28:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9EC51B61DB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:27:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B49DC1B62393
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 17:28:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 260362D640E;
-	Wed, 27 Aug 2025 17:27:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F5772D7380;
+	Wed, 27 Aug 2025 17:28:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fnt7Pfmc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PBB1hUDx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EAD293C44;
-	Wed, 27 Aug 2025 17:27:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFCD221FF55;
+	Wed, 27 Aug 2025 17:28:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756315624; cv=none; b=PjRgYeSdM7EK8N8fq143VETLt+7vvnZAledqtB3Rout6TDwgKzkAyb4hd26UT2FqHhOPABlUaUl5SzN2d7dHOKZ3k5/buROJOOHRQrW1JfYCICeECo14GiBp/uaQ/LpkmPna4T0O1YLMKlDysDQwpWVWHYb1jKR+GHlUurykCGs=
+	t=1756315684; cv=none; b=VkBvYIUFkmeSFJkhzHXOlkE9nj7Sjsoot2Hcpj3VLXF0NVEBwVKSJeKv0sfLZ4ak6hdyXKZ0vfDVUKQSiYPLfXI9tVYf/jvnagPQ9bOTQdnYh0B1ZGkeMyhcH5GvswYNi3+mta/OJ1jknyM9b7EKcOdk2/zJAfbg84f2u7VYnyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756315624; c=relaxed/simple;
-	bh=R02be9EuV+jgifoEisvGEy2S81lZDpDwRAcvnCKgS7Q=;
+	s=arc-20240116; t=1756315684; c=relaxed/simple;
+	bh=eCrM59PsVPe9Woe+deQYZBGnEzzCSKoFCj9LLnGZrP4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UQWxn78ZfteLCjsRmraVS8+s3KAnEp1/hdVA6ArKfVBjgErM5cxqoSm//r5cwNwb1anzhnHSf3nI/B44tKhqsJgAJXOS1+I9y/xmbPigq2qGFosEEelS8xO0fyObQwiqyTmhqSRzvWJFFfips3DJQcfB0nnCn2aN3S//0RvqHh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fnt7Pfmc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01C15C4CEF0;
-	Wed, 27 Aug 2025 17:27:01 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=HwoqRaAIpk6W0UrZ5N3b4JXdd3iEqg0+8Cq+jtsxw3uil2LrNqnE7oEWjq+e9DIr7AKnGDkrxgjvCS+/pdAqkxTNeHZfTb5xcjBHw68AfKxHcmxcx7RycRc0G3998F8TDtvmQSD5KVVgyUdjC1l92tiB05e5dYy15HXPi+D0juw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PBB1hUDx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78F59C4CEEB;
+	Wed, 27 Aug 2025 17:28:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756315624;
-	bh=R02be9EuV+jgifoEisvGEy2S81lZDpDwRAcvnCKgS7Q=;
+	s=k20201202; t=1756315684;
+	bh=eCrM59PsVPe9Woe+deQYZBGnEzzCSKoFCj9LLnGZrP4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Fnt7Pfmc/sg4F8vwC9cZpLIUnH24jiAwB+Tj1/VTcNjuwlgIVHSLV0mqjRl0EBKi1
-	 PWO051Xqx0wC5v1NOz8X6ZI//B+TUFDwbZe/abmA0hK4T8nWBay6B91GX+UMZ9znmO
-	 OC8aXHTdNmb1YZui+2C+fnU8JFYe5MmZ2iXiLkWxWT9wdfg26KqQXhqKvKwVhlHLCP
-	 +3JnucJTo6G1CvzhiQPqEJCKZF29xFBFGV0dTWHwfSkl3va/sdaYfKajYApZvhSz8/
-	 mJz8R8Z1ZYD9zbLSueDqLcakES3CxFXJKB874SQdUXfKiLhXr2aqpLeXeRnFQH0r3a
-	 Utdl0V1lmZ9Kw==
-Date: Wed, 27 Aug 2025 18:26:59 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Srinivas Kandagatla <srini@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ciprian Costea <ciprianmarian.costea@nxp.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	NXP S32 Linux Team <s32@nxp.com>, linaro-s32@linaro.org
-Subject: Re: [PATCH V2 1/3] dt-bindings: nvmem: Add the nxp,s32g-ocotp yaml
- file
-Message-ID: <20250827-buckle-humbling-45ec6a4c0c16@spud>
-References: <cover.1756219848.git.dan.carpenter@linaro.org>
- <eabdbf4c0b74136b77e16eaca5d5e64d5c4a97a0.1756219848.git.dan.carpenter@linaro.org>
+	b=PBB1hUDxBn6uuVKrLdq9g3OvYfgdRcoE8pfxvTvd5i+/nr94RSe7bWL9r5hJZp+x5
+	 m/evoylqvqOugK9Oe1gRtnPuVUzeGdToQ5PkHU0sSfPH0heDr+w50X7gJ+1tmx48Wp
+	 At9FeVVcfTfwLPlJQ/EItqwGAtS0YGa/JtRKPxxzXwDXTwfu4+wmcc2kDYpvn80njR
+	 66RuSyqxm3/c/OZxUFrDLzMZsOb04rh0lO5nz+Pi1YzQDrjmVgtqwdyUrb8Y3X94LM
+	 oC5yc3+TzYjmnrkAq+22X2uVSuYAN/AabHDM5wuSZNunted097IZ2QuJRqgjd5mMMd
+	 YF7eFoqjdmbMw==
+Date: Wed, 27 Aug 2025 22:57:57 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: manivannan.sadhasivam@oss.qualcomm.com, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Saravana Kannan <saravanak@google.com>, linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, Brian Norris <briannorris@chromium.org>
+Subject: Re: [PATCH 5/6] PCI: qcom: Parse PERST# from all PCIe bridge nodes
+Message-ID: <gcrf4q45gpcmnvdz55qoga6sc7mxrizzhnb4h6afwgk4cmamp4@mggbezcfivff>
+References: <20250819-pci-pwrctrl-perst-v1-0-4b74978d2007@oss.qualcomm.com>
+ <20250819-pci-pwrctrl-perst-v1-5-4b74978d2007@oss.qualcomm.com>
+ <CAMRc=MdyTOYyeMJa_HBgJVo=ZNxsgdTsw6rhOUmGtNYeSrXLCw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4HV4zPw9LvC33tZP"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <eabdbf4c0b74136b77e16eaca5d5e64d5c4a97a0.1756219848.git.dan.carpenter@linaro.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=MdyTOYyeMJa_HBgJVo=ZNxsgdTsw6rhOUmGtNYeSrXLCw@mail.gmail.com>
 
+On Wed, Aug 27, 2025 at 06:34:38PM GMT, Bartosz Golaszewski wrote:
+> On Tue, Aug 19, 2025 at 9:15 AM Manivannan Sadhasivam via B4 Relay
+> <devnull+manivannan.sadhasivam.oss.qualcomm.com@kernel.org> wrote:
+> >
+> > From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> >
+> > Devicetree schema allows the PERST# GPIO to be present in all PCIe bridge
+> > nodes, not just in Root Port node. But the current logic parses PERST# only
+> > from the Root Port node. Though it is not causing any issue on the current
+> > platforms, the upcoming platforms will have PERST# in PCIe switch
+> > downstream ports also. So this requires parsing all the PCIe bridge nodes
+> > for the PERST# GPIO.
+> >
+> > Hence, rework the parsing logic to extend to all PCIe bridge nodes starting
+> > from Root Port node. If the 'reset-gpios' property is found for a node, the
+> > GPIO descriptor will be stored in IDR structure with node BDF as the ID.
+> >
+> > It should be noted that if more than one bridge node has the same GPIO for
+> > PERST# (shared PERST#), the driver will error out. This is due to the
+> > limitation in the GPIOLIB subsystem that allows only exclusive (non-shared)
+> > access to GPIOs from consumers. But this is soon going to get fixed. Once
+> > that happens, it will get incorporated in this driver.
+> >
+> > So for now, PERST# sharing is not supported.
+> >
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> > ---
+> >  drivers/pci/controller/dwc/pcie-qcom.c | 90 +++++++++++++++++++++++++++-------
+> >  1 file changed, 73 insertions(+), 17 deletions(-)
+> >
+> > diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> > index bcd080315d70e64eafdefd852740fe07df3dbe75..5d73c46095af3219687ff77e5922f08bb41e43a9 100644
+> > --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> > @@ -19,6 +19,7 @@
+> >  #include <linux/iopoll.h>
+> >  #include <linux/kernel.h>
+> >  #include <linux/limits.h>
+> > +#include <linux/idr.h>
+> >  #include <linux/init.h>
+> >  #include <linux/of.h>
+> >  #include <linux/of_pci.h>
+> > @@ -286,6 +287,7 @@ struct qcom_pcie {
+> >         const struct qcom_pcie_cfg *cfg;
+> >         struct dentry *debugfs;
+> >         struct list_head ports;
+> > +       struct idr perst;
+> >         bool suspended;
+> >         bool use_pm_opp;
+> >  };
+> > @@ -294,14 +296,15 @@ struct qcom_pcie {
+> >
+> >  static void qcom_perst_assert(struct qcom_pcie *pcie, bool assert)
+> >  {
+> > -       struct qcom_pcie_port *port;
+> >         int val = assert ? 1 : 0;
+> > +       struct gpio_desc *perst;
+> > +       int bdf;
+> >
+> > -       if (list_empty(&pcie->ports))
+> > +       if (idr_is_empty(&pcie->perst))
+> >                 gpiod_set_value_cansleep(pcie->reset, val);
+> > -       else
+> > -               list_for_each_entry(port, &pcie->ports, list)
+> > -                       gpiod_set_value_cansleep(port->reset, val);
+> > +
+> > +       idr_for_each_entry(&pcie->perst, perst, bdf)
+> > +               gpiod_set_value_cansleep(perst, val);
+> >  }
+> >
+> >  static void qcom_ep_reset_assert(struct qcom_pcie *pcie)
+> > @@ -1702,20 +1705,58 @@ static const struct pci_ecam_ops pci_qcom_ecam_ops = {
+> >         }
+> >  };
+> >
+> > -static int qcom_pcie_parse_port(struct qcom_pcie *pcie, struct device_node *node)
+> > +/* Parse PERST# from all nodes in depth first manner starting from @np */
+> > +static int qcom_pcie_parse_perst(struct qcom_pcie *pcie,
+> > +                                struct device_node *np)
+> >  {
+> >         struct device *dev = pcie->pci->dev;
+> > -       struct qcom_pcie_port *port;
+> >         struct gpio_desc *reset;
+> > -       struct phy *phy;
+> >         int ret;
+> >
+> > -       reset = devm_fwnode_gpiod_get(dev, of_fwnode_handle(node),
+> > -                                     "reset", GPIOD_OUT_HIGH, "PERST#");
+> > -       if (IS_ERR(reset))
+> > +       if (!of_find_property(np, "reset-gpios", NULL))
+> > +               goto parse_child_node;
+> > +
+> > +       ret = of_pci_get_bdf(np);
+> > +       if (ret < 0)
+> > +               return ret;
+> > +
+> > +       reset = devm_fwnode_gpiod_get(dev, of_fwnode_handle(np), "reset",
+> > +                                     GPIOD_OUT_HIGH, "PERST#");
+> > +       if (IS_ERR(reset)) {
+> > +               /*
+> > +                * FIXME: GPIOLIB currently supports exclusive GPIO access only.
+> > +                * Non exclusive access is broken. But shared PERST# requires
+> > +                * non-exclusive access. So once GPIOLIB properly supports it,
+> > +                * implement it here.
+> > +                */
+> > +               if (PTR_ERR(reset) == -EBUSY)
+> > +                       dev_err(dev, "Shared PERST# is not supported\n");
+> 
+> Then maybe just use the GPIOD_FLAGS_BIT_NONEXCLUSIVE flag for now and
+> don't bail-out - it will make it easier to spot it when converting to
+> the new solution?
+> 
 
---4HV4zPw9LvC33tZP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+But that gives the impression that shared PERST# is supported, but in reality it
+is not.
 
-On Tue, Aug 26, 2025 at 07:38:03PM +0300, Dan Carpenter wrote:
-> From: Ciprian Costea <ciprianmarian.costea@nxp.com>
->=20
-> Add bindings to expose the On Chip One-Time Programmable Controller
-> (OCOTP) for the NXP s32g chipset.  There are three versions of this
-> chip but they're compatible so we can fall back to the nxp,s32g2-ocotp
-> compatible.
->=20
-> Signed-off-by: Ciprian Costea <ciprianmarian.costea@nxp.com>
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> v2: dt_binding_check DT_SCHEMA_FILES=3Dnxp,s32g-ocotp-nvmem.yaml is clean
->     make CHECK_DTBS=3Dy freescale/*.dtb is clean.  Particularly the
->       freescale/s32g274a-evb.dtb file which Rob mentioned.
->     remove bogus include file
->     remove redundant "reg" description
->     remove #address-cells and #size-cells since they are already in
->     nvmem.yaml
->     Fix email From header
->=20
->  .../bindings/nvmem/nxp,s32g-ocotp-nvmem.yaml  | 45 +++++++++++++++++++
->  1 file changed, 45 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/nvmem/nxp,s32g-ocot=
-p-nvmem.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/nvmem/nxp,s32g-ocotp-nvmem=
-=2Eyaml b/Documentation/devicetree/bindings/nvmem/nxp,s32g-ocotp-nvmem.yaml
-> new file mode 100644
-> index 000000000000..01adc6093c68
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/nvmem/nxp,s32g-ocotp-nvmem.yaml
-> @@ -0,0 +1,45 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/nvmem/nxp,s32g-ocotp-nvmem.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NXP S32G OCOTP NVMEM driver
-> +
-> +maintainers:
-> +  - Ciprian Costea <ciprianmarian.costea@nxp.com>
-> +
-> +description: |
-> +  The drivers provides an interface to access One Time
-> +  Programmable memory pages, such as TMU fuse values.
-> +
-> +allOf:
-> +  - $ref: nvmem.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - enum:
-> +          - nxp,s32g2-ocotp
-> +      - items:
-> +          - enum:
-> +              - nxp,s32r45-ocotp
-> +              - nxp,s32g3-ocotp
-> +          - const: nxp,s32g2-ocotp
-> +  reg:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    ocotp: nvmem@400a4000 {
+- Mani
 
-If you respin, drop the "ocotp" label, since the example doesn't use it.
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-
---4HV4zPw9LvC33tZP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaK8/4wAKCRB4tDGHoIJi
-0sR7AQD1QrPZKoUn+AwYQlHkr2HlzFt0/lW32LVbF05Z1USMYgD/cDqDM7Au+T5/
-luXQ3BHByPV2meLHIQ+qqkj6hB7sJAs=
-=KyxJ
------END PGP SIGNATURE-----
-
---4HV4zPw9LvC33tZP--
+-- 
+மணிவண்ணன் சதாசிவம்
 
