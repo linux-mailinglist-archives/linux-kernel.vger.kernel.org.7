@@ -1,166 +1,267 @@
-Return-Path: <linux-kernel+bounces-788611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 439D7B3873F
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:01:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B2E4B38741
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 18:02:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A27147B737E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:00:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3F043B9609
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 16:02:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C5830FC38;
-	Wed, 27 Aug 2025 16:01:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18DC730277F;
+	Wed, 27 Aug 2025 16:02:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="joSbDcAx"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="NflHh8OM"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12olkn2056.outbound.protection.outlook.com [40.92.23.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACEF12AD04
-	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 16:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756310491; cv=none; b=JL154Hw4FfdeB99eOFDbICQdy5CUhJgi9cyuYIKvM8mLn2VgAz2JJ5+4rkJj1IqfHfJzBBPIlBdTCK9YWa+MBCOAYZNRMnRh5DB2TFEKZsHjvdXy2q05ltAKS/nXJEpc90OkJ1KL7aNTp/lXEZx34KUkNSOomEEXtJEAnVBics4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756310491; c=relaxed/simple;
-	bh=nc3e8kEsbLpVLgiGqT6OlZiM0Ugt7rKJ9+rmdukZ9n8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=p+Z7853ZK/yZoYH2t3xdN9pgA4aOWz+U0otw/pmQvXhQ1HdUSQQ3QlTZNwrVbUgZZOj4tm5YuvLC6ZRVA7jjhA6XXEi7VWoqYU5LYuvXU/DGrpdFKLCZw1ubRrgsWZZVbFeOPA5BTFsadDFgzIqLrQeygAsm3l0PlYSsYHqWSOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=joSbDcAx; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7720f231103so26937b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 09:01:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1756310489; x=1756915289; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XNn3oBnzUviCor8j9vwLNJGK9RvbnNRy8Itw1smJX24=;
-        b=joSbDcAxybJJukKD7AdJFODHjeCvmlYILNrq3QC+TAmju1lELCZkWXCmdn8cXmQiY7
-         DMu2jyVONiqTE2anoEkylHPSMSU5IViq94b/OhkTVcwK7PmlEw5JGm0sDEl27m8KBeo8
-         +QNaCfxzR4CDHsLQkKFV5ruiBL7c9JYHaZLRr3SmyDEy0BW/nnsEkzIQXawsB9/cJBLd
-         tKxA7Hin9qFBehhjlPc8PtzcSVkGGrdLExELMQvLRfk2r7wPS8fXI/ezFH58iyAkSlKY
-         Kft4SYI8+1O2IplyQ46Uwxh1W7qnevTnWxucKKV/OgV/S6YfzlmzmChOSql+lsneriiC
-         1tYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756310489; x=1756915289;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XNn3oBnzUviCor8j9vwLNJGK9RvbnNRy8Itw1smJX24=;
-        b=FVrJxZrPzW4OgCU/lOobAYBHlTXESAXIJj19zPEOjdY6pt7dLOqcY/htM9JupcN3sw
-         /6iAyy21f/ceqkz+kF3s3b+jJ2adkF7W38oLLQTrSszbFDfSX6wr8Hp0T59zr48fZ4oS
-         K8uqn6r6LlO7IW+7lKSDQK+WtC8ieN/5gh+xK3ai5X953H67WNYpqupqm79Ht0G+qjaP
-         RTeYuiDhzXHNctrKb0x3V4xUUyPs3HL4sGExDrnQ0W/Uw5y6pMrW8XEGMw04e6YxaOXB
-         lgrU5/097qJr8vK0zFRvVKeSyisC3d9dx3DWasY4xsBzNBl2ld0sIlFFvAej0yOnwDFk
-         Dl+g==
-X-Forwarded-Encrypted: i=1; AJvYcCWsBqBx80uOmX/donaLANXMjnnejO82nXWY8bSZ7SVHUtdDMg2NOXpxHyG2ZpjXDjJxU9iShwiqH+vKT6E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8/dmiXruLXBPKGvl2Kc3vFMLQfrnhrry0w2iMPNxw+N13iEkI
-	fIKXvWBKzandFmv/YyGqXeFeOMJitUSviB6YvhDnJWgP3CDmJNHmSavMd1m0r3i1+jLjTbvLv+Y
-	C1e0tYg==
-X-Google-Smtp-Source: AGHT+IGfXcW+ZtXZL+XK3iEVs8Sxo/zDD1i/skcxqmUfvEK+HLI/XM5vZ3/WKZOmNWWC6w3e8UGwRabmkGA=
-X-Received: from pfwz26.prod.google.com ([2002:a05:6a00:1d9a:b0:772:13b2:f328])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:4b4e:b0:771:ed83:557c
- with SMTP id d2e1a72fcca58-771ed835a5dmr11874598b3a.2.1756310488667; Wed, 27
- Aug 2025 09:01:28 -0700 (PDT)
-Date: Wed, 27 Aug 2025 09:01:27 -0700
-In-Reply-To: <20250827152754.12481-1-lifei.shirley@bytedance.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31727218ADD;
+	Wed, 27 Aug 2025 16:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.23.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756310519; cv=fail; b=fdXF4u8uqekHm6icX1L9Fk1/UbKDbucq7SjKSKfgMmPMLm7W3Z2q8rbtzA9nY94lq027Lj0e5IjSULq9RkFFKwbXc93r48iMcrWe7Dsk1HxVqLio0s+vxSSIoM6at6q0cIF4dmQV2iOI5hwcTASRPrPrVnLWSU5PIC85IfTc52k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756310519; c=relaxed/simple;
+	bh=osFvS7nu9r0CGqZlwomUupE0DrBLS7+rqCukgksMqlY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ehDo3Uf4DergFz3ZKUmKodYIWZNJESv0ZiP4JBF3I4F7cVUx1rBF2X5lMUTJHEPX2DP9/3MW+eVQA81lgc7HSb3CH1339cJMkKgjufRg8LznNxA7S/vuePG/1a6FsVRa4Hphb37ecPk5agbWq2oE9U5o1EpA1qxa1fhCsAIJVdM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=NflHh8OM; arc=fail smtp.client-ip=40.92.23.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hyuC19Ix9VYh4lBqdJHiTzsBa/w7Cgz+Uw+XkBpXcqM6rqcCrVIf78YO8+hm6/9SrxS2wJz56SWPhhsJku0XxleTvQzaPBA92l/hjxpsa/ITw6nNj77BJTOZxiFmjQILdTeNPTYoxa9WRiHeLba54z10ekHs5XkO27Xq4tfeo8GYgq18ahhjBg+k/JSHWsDHa57NtDn/Zh8TatxwD4exCDUnkYZ6L4xu+7WoXLa16AZZs9yzGwxn6PQi+GIvj7eMz8VigBmeAU5ISBZ+oFV8IgKENgvnH1m9q6q2foJkn5VNnDK2PuLGCVPxVu9YLN68KectDTyXnSgABB4Wz79vHg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3tvFhpBgw4NhDc/hFLgki/wlcqt7MlSXpIQEdlQAzNk=;
+ b=tsVQTS/jByvbfJEb8+XP1ZMclAXt67YrOIY/C1xnckjh4Oz7V8IaZKGXq1M/rDmQE/2IhJdtYKrTSWX17J1U/GpMPUpW/Z9BkqX6BY11hKAuN73k/LaeHMTg4YrTB8YMGvDTNKoKFFMZ4ZDcF7OyghNKYApq4mr5jRvNWRHrxYBdNPU/wOLp04T7vLVcCV0IKndLNcP+ObbrM/OCzOTjpuGw9uLrQYDmHJy7OSKpRs0Zz2vYn4bg9oz4ue16Vkw2Pc2C/4t25yyByXjiKFE5/mP4fnlt2LzuBjyMm3BM7fjGzNbHwP8k/WEyPqpVcgl4Twj0L75lalFmeHLWCZAXsg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3tvFhpBgw4NhDc/hFLgki/wlcqt7MlSXpIQEdlQAzNk=;
+ b=NflHh8OMjg+2wjQLQXKyQnXV0EVQK3N6krRBDbNMib6mw2ljkRJ81TvsvJ0wQwmBEbt3g6fva6gSQ8pmqEGHUJkTSgNeh22qpKD+QaBMLXq3GCmLPpyXXTo76gKFHC21RkKaOEmO4JBF6Y18IUBjp40otI2WEgw1znBIQyDiQTmAn5HAZGEZA8hxQqYTCGX1PUxvfPT/ZQdtOmDsma1P31Zm0U5XSueoEX8sXxKY0q8cJXWJwsRcnp3+0mPlK/FfjLneF3sooemBXEq4b0O7/RcGMuBWU6wr0QXpPpR/fZ/nTNPD8H4ZlO2a+O3mZRdgjQpRKfldK/3nfd1liNqrIw==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by DS0PR02MB8949.namprd02.prod.outlook.com (2603:10b6:8:ca::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Wed, 27 Aug
+ 2025 16:01:55 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%4]) with mapi id 15.20.9052.019; Wed, 27 Aug 2025
+ 16:01:55 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Vitaly Kuznetsov <vkuznets@redhat.com>, "linux-hyperv@vger.kernel.org"
+	<linux-hyperv@vger.kernel.org>
+CC: "K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang
+	<haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui
+	<decui@microsoft.com>, "x86@kernel.org" <x86@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nuno Das Neves
+	<nunodasneves@linux.microsoft.com>, Tianyu Lan <tiala@microsoft.com>, Li Tian
+	<litian@redhat.com>, Philipp Rudo <prudo@redhat.com>
+Subject: RE: [PATCH v3] x86/hyperv: Fix kdump on Azure CVMs
+Thread-Topic: [PATCH v3] x86/hyperv: Fix kdump on Azure CVMs
+Thread-Index: AQHcEq6v/wxOnnc70EyB0UK7l4yekbR1oNMwgADcNgCAACqWEA==
+Date: Wed, 27 Aug 2025 16:01:55 +0000
+Message-ID:
+ <SN6PR02MB4157D37EF081A7CC2E70425BD438A@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <20250821151655.3051386-1-vkuznets@redhat.com>
+ <SN6PR02MB4157581777244FE17DA3C7C2D438A@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <878qj5dj2z.fsf@redhat.com>
+In-Reply-To: <878qj5dj2z.fsf@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|DS0PR02MB8949:EE_
+x-ms-office365-filtering-correlation-id: b36dc2e6-ed2a-4328-7827-08dde5830baf
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|8062599012|8060799015|41001999006|19110799012|13091999003|13031999003|461199028|31061999003|15080799012|3412199025|40105399003|440099028|102099032;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?SPKZGyPQtSGPd/Nr5AMJUQjz9cc2Hd/1jyz5MNOFgbZjDeVYfMM0sANCUU44?=
+ =?us-ascii?Q?/fD0NElZfTpoDAefZwuIbhnGuUPS5FZqvgvbh6IVaZSpDRRyQein7jRm5wQe?=
+ =?us-ascii?Q?KJG8fF4ubE3GuWXYDBh53G7HIILD7I+EUjZrZiCqzSgkp9wM+AqD9tsDJZ49?=
+ =?us-ascii?Q?LsQqMqLFEh8zS4OHfz0qGHa73N1k81DQsK6jvltX+iaNEd3BUDCYO2X0r1Oa?=
+ =?us-ascii?Q?EeB0h323ynaY0JRjghrVh22spcpW34RDd1dB2EL9howqc891w3MKdVoJo13T?=
+ =?us-ascii?Q?emoKzVMgdEWOSw6/IEgaERjOgsunsAFJ6FULKSZrQhACu8McMqgmMJZ8RNtw?=
+ =?us-ascii?Q?eLFT3x8nZmWKoXUgDDvVA4usEuT0i2quBV39ndLtrUIWXcEWRqLwPIQUEYuQ?=
+ =?us-ascii?Q?hn7HkdycYpewq8nkenIV4Wa/XtTlb6C1kTYCAZjleKqmXmy5nV0Exl7EICRL?=
+ =?us-ascii?Q?/RRw5vXZIpuz0NTwdbVtlSOm+rz9DvuIMuySCYe6CSsDQrTjc65pY1zOVQFe?=
+ =?us-ascii?Q?bdqwIWujLfgVP3G5Lf49xsFQXDBTcIE6fUqA29SqgAc6tdF4Ht/LgXJZh/76?=
+ =?us-ascii?Q?eqNdx8cypFCEpoSzvJ+cKGCLZdwb9nBbuzKAjrCCQJuLE4BsUfzX31q2XZ73?=
+ =?us-ascii?Q?U0Rlul1GgWpDLXwAOq1HqvmKi8XCE+gvTtxresb1mq0dNDlZVP17DkmJj+9q?=
+ =?us-ascii?Q?qwJjhLUqguR3nfOjUvjda0tnZxVhUSrcSMcCutQZj3UrXrsTY0BxXrxsREF3?=
+ =?us-ascii?Q?7JftlyOZ8JHRmSEScQVbW2971+nK/jHvSuLWDiyIE/d6E4fBscQ8kPTgropQ?=
+ =?us-ascii?Q?A0dS2Hq1dLjlEgu8eTaMgX/0dp4HKQrkgQrDwi1HrSQZuk8n9FJLlRy6R0qS?=
+ =?us-ascii?Q?F447pJnl+2zBYL7AcFRBKJsQtXJli9tFfuPTiwGgA57ffnFHGF4LGuKQtXgj?=
+ =?us-ascii?Q?xE0IdiEQue7m8k2vTL1dzDDZGDon0Iah7LXj/Du8ksvVUBSEx0DXM1U/ZXXh?=
+ =?us-ascii?Q?WrEIwcnEVxNPPi95a2hTHwWW5qfkKaOgShjXLYYYGhD7DFoP8RUvKl0OhlYT?=
+ =?us-ascii?Q?1lLGwsdlMjMsO/0CTK4ssBBk+h8XJR0U/HmgqJJNdDzXksf4c9sbv8jG4XAU?=
+ =?us-ascii?Q?uNXd9uXr0pCN6iwo3sSn8Et16Cd2k3Tt35naVigLkvJmXITYrr/64rm2AaKP?=
+ =?us-ascii?Q?3yBJZnbesorQ8xI8XcHdzCF7XU45QsnjLJH7g1zvUGBZEqnR5YgpM6c7mUk/?=
+ =?us-ascii?Q?4MRcenV7GJEBME7bmWZ4?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?VR9HACEYzHgmD2YAeq4sfWzjj9L0AQ/0AZFII7Pv2ScAqmS4cM0SBRG96RjR?=
+ =?us-ascii?Q?ksOLuYZxkQFIOn2OLLy3qOYkduWbQNxA9rmTVJJCJd0jcIjxhYxn2RGwRrNw?=
+ =?us-ascii?Q?diU+6zfFGCZUeAEOejbFIB6cXQSgtZqTAaOj0TyiYPPb0bjk/Xqy7db8h1xO?=
+ =?us-ascii?Q?dO0p4gXeh1V70RsG2KxIpG7sEW8BL5JpK0J8euI3hZiA+1Ypg9ai3k2WMfD/?=
+ =?us-ascii?Q?AZIC0kNClMLnDhKMCQ+2+TZXn5DKhlmnjOuRiO8Bw/ZbglAgjevyx0Q4//sZ?=
+ =?us-ascii?Q?KeqBhbhqweefDOs9OAMBE1zHWD8RVSekVMSouZHbfSo7+hO9lZrfbnhe/LgL?=
+ =?us-ascii?Q?PcfI5Lgk3iACw/cAHNlLuo2G0fIc9ssSkdAsE+hl43OuTNmsq4gXLZ44O6oc?=
+ =?us-ascii?Q?TF2hs0GvMhJ1FoppZ8suz5lwuDHCTqmROA6bqOGH3pWTjqQW7Df55FCj6SiJ?=
+ =?us-ascii?Q?drAuW/bnyEevcLxIl1D5G8jX3c5WP15cDkaO7Z5qpifter6qPqU2AA/mWJbW?=
+ =?us-ascii?Q?rgd9kZvEM80zT0DdxzqTYDoxw6+k3fdJTKwB8ztJIZh0NxMH1AesjLRbuFDz?=
+ =?us-ascii?Q?duF48OZWVUwdJGOFSq9eKnD/vJgALf7AvyMWkmxkbjAtbInSrvGVinLuRpU2?=
+ =?us-ascii?Q?n2JgKqa1IXBQ0P+TuYxv08f50Xh6o0WO4ew1txxFiyVh4kuiMEULMkz0DTO7?=
+ =?us-ascii?Q?j2/xJiJmBK694uPzvACcFqSqnaMYhIbplSa0ZQyYWZfibNuDwYZ0T/hqVU8W?=
+ =?us-ascii?Q?I5L7GGXW8WgOr27u3UCycm+Pq36bM613rbAoNJ0kDZgpAmX52d9x4IdYuRiM?=
+ =?us-ascii?Q?S9Wa3lk5+N800A98KbdlG7hsES3CfdRYjIH5S598p0+D6FvokrE9axlxv+4a?=
+ =?us-ascii?Q?VaZ4WLX/Uvqi6TK31fFzTSLk+JOh56Fhe8yNboNNVQpVxbc8U7nxR9FV5fo+?=
+ =?us-ascii?Q?CX6LLDRKbVVqj0JxvypFbuBNsAcRPzYG93Y1NJQkCpISV/qZBCucBEW1qvhJ?=
+ =?us-ascii?Q?46LFdkKndl9fg7WuHcWwrI9U3QZDcqhKojXKm1Y8TXaWluThHb3F0nySK/x3?=
+ =?us-ascii?Q?YnBs+MLDdGxc8fdHMCgYIyxe+SpUy00wGt75hht1mehAKT8BZRTC7XN4wTfg?=
+ =?us-ascii?Q?ILQQ45X6gfX8TPlTrm+T4eh9OowGtLxVaSmvKxrXBxuGrV2cWw/5IWQ572L+?=
+ =?us-ascii?Q?+k+jTfbZF9+pn96Dvt1UKWJ1uYzNvbxr5+bQs4DTHOeYIX72+qN8HTGRiZM?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250827152754.12481-1-lifei.shirley@bytedance.com>
-Message-ID: <aK8r11trXDjBnRON@google.com>
-Subject: Re: [PATCH] KVM: x86: Latch INITs only in specific CPU states in KVM_SET_VCPU_EVENTS
-From: Sean Christopherson <seanjc@google.com>
-To: Fei Li <lifei.shirley@bytedance.com>
-Cc: pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, liran.alon@oracle.com, hpa@zytor.com, 
-	wanpeng.li@hotmail.com, kvm@vger.kernel.org, x86@kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: b36dc2e6-ed2a-4328-7827-08dde5830baf
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Aug 2025 16:01:55.5429
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR02MB8949
 
-On Wed, Aug 27, 2025, Fei Li wrote:
-> Commit ff90afa75573 ("KVM: x86: Evaluate latched_init in
-> KVM_SET_VCPU_EVENTS when vCPU not in SMM") changes KVM_SET_VCPU_EVENTS
-> handler to set pending LAPIC INIT event regardless of if vCPU is in
-> SMM mode or not.
-> 
-> However, latch INIT without checking CPU state exists race condition,
-> which causes the loss of INIT event. This is fatal during the VM
-> startup process because it will cause some AP to never switch to
-> non-root mode. Just as commit f4ef19108608 ("KVM: X86: Fix loss of
-> pending INIT due to race") said:
->       BSP                          AP
->                      kvm_vcpu_ioctl_x86_get_vcpu_events
->                        events->smi.latched_init = 0
-> 
->                      kvm_vcpu_block
->                        kvm_vcpu_check_block
->                          schedule
-> 
-> send INIT to AP
->                      kvm_vcpu_ioctl_x86_set_vcpu_events
->                      (e.g. `info registers -a` when VM starts/reboots)
->                        if (events->smi.latched_init == 0)
->                          clear INIT in pending_events
+From: Vitaly Kuznetsov <vkuznets@redhat.com> Sent: Wednesday, August 27, 20=
+25 5:51 AM
+>=20
+> Michael Kelley <mhklinux@outlook.com> writes:
+>=20
+> > From: Vitaly Kuznetsov <vkuznets@redhat.com> Sent: Thursday, August 21,=
+ 2025 8:17 AM
+> >>
 
-This is a QEMU bug, no?  IIUC, it's invoking kvm_vcpu_ioctl_x86_set_vcpu_events()
-with stale data.  I'm also a bit confused as to how QEMU is even gaining control
-of the vCPU to emit KVM_SET_VCPU_EVENTS if the vCPU is in kvm_vcpu_block().
+[snip]
 
->                      kvm_apic_accept_events
->                        test_bit(KVM_APIC_INIT, &pe) == false
->                          vcpu->arch.mp_state maintains UNINITIALIZED
-> 
-> send SIPI to AP
->                      kvm_apic_accept_events
->                        test_bit(KVM_APIC_SIPI, &pe) == false
->                          vcpu->arch.mp_state will never change to RUNNABLE
->                          (defy: UNINITIALIZED => INIT_RECEIVED => RUNNABLE)
->                            AP will never switch to non-root operation
-> 
-> In such race result, VM hangs. E.g., BSP loops in SeaBIOS's SMPLock and
-> AP will never be reset, and qemu hmp "info registers -a" shows:
-> CPU#0
-> EAX=00000002 EBX=00000002 ECX=00000000 EDX=00020000
-> ESI=00000000 EDI=00000000 EBP=00000008 ESP=00006c6c
-> EIP=000ef570 EFL=00000002 [-------] CPL=0 II=0 A20=1 SMM=0 HLT=0
-> ......
-> CPU#1
-> EAX=00000000 EBX=00000000 ECX=00000000 EDX=00080660
-> ESI=00000000 EDI=00000000 EBP=00000000 ESP=00000000
-> EIP=0000fff0 EFL=00000002 [-------] CPL=0 II=0 A20=1 SMM=0 HLT=0
-> ES =0000 00000000 0000ffff 00009300
-> CS =f000 ffff0000 0000ffff 00009b00
-> ......
-> 
-> Fix this by handling latched INITs only in specific CPU states (SMM,
-> VMX non-root mode, SVM with GIF=0) in KVM_SET_VCPU_EVENTS.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: ff90afa75573 ("KVM: x86: Evaluate latched_init in KVM_SET_VCPU_EVENTS when vCPU not in SMM")
-> Signed-off-by: Fei Li <lifei.shirley@bytedance.com>
-> ---
->  arch/x86/kvm/x86.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index a1c49bc681c46..7001b2af00ed1 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -5556,7 +5556,7 @@ static int kvm_vcpu_ioctl_x86_set_vcpu_events(struct kvm_vcpu *vcpu,
->  			return -EINVAL;
->  #endif
->  
-> -		if (lapic_in_kernel(vcpu)) {
-> +		if (!kvm_apic_init_sipi_allowed(vcpu) && lapic_in_kernel(vcpu)) {
->  			if (events->smi.latched_init)
->  				set_bit(KVM_APIC_INIT, &vcpu->arch.apic->pending_events);
->  			else
-> -- 
-> 2.39.2 (Apple Git-143)
-> 
+> >
+> > I seem to recall that some separate work has been done
+> > to support kexec/kdump for the more generic SEV-SNP and
+> > TDX cases where there's no paravisor mediating. I haven't
+> > gone looking for that code to see when it runs.
+> > hv_ivm_clear_host_access() is needed to update the
+> > paravisor records about the page state, but if other code
+> > has already updated the hypervisor/processor state, that
+> > might be problematic. If this runs first, then the more
+> > generic code will presumably find nothing to do, which
+> > should be OK.
+> >
+> > I'll try to go look further at this situation, unless you already
+> > have. If necessary, this function could be gated to run
+> > only when a paravisor is present.
+>=20
+> Yes, there are SEV-SNP and TDX specific
+> snp_kexec_finish()/tdx_kexec_finish() which do memory unsharing but I
+> convinced myself that these are not called on Azure CVM which uses
+> paravisor. In particular, for SEV-SNP 'sme_me_mask =3D=3D 0' in
+> sme_early_init().
+
+Thanks for the pointer to snp_kexec_finish() and tdx_kexec_finish().
+Yes, I agree they won't get called in the Hyper-V paravisor case.
+
+>=20
+> I have to admit I've never seen an Azure/Hyper-V CVM without a
+> paravisor, but I agree it may make sense to hide all this tracking and
+> cleanup logic under 'if (hyperv_paravisor_present)' (or even 'if
+> (hv_is_isolation_supported() && hyperv_paravisor_present)').
+
+I think this patch should be plugged into the .enc_kexec_begin and
+.enc_kexec_finish mechanism. By using .enc_kexec_begin similarly
+to snp/tdx_kexec_begin(), synchronizing with in-progress private<->shared
+conversions is done in the kexec() case, though not in the panic/kdump
+case. That machinery is there, and the Hyper-V paravisor case can use it.
+hv_ivm_clear_host_access() should be the .enc_kexec_finish function,
+and it will get invoked at the right time without having to be
+explicitly called in hyperv_cleanup().
+
+Hyper-V *does* support running SNP and TDX in what Microsoft
+internally calls the "fully enlightened" case, where the guest OS does
+everything necessary to operate in SNP or TDX mode, without
+depending on a paravisor. In such a case, sme_me_mask will be
+non-zero in SNP mode, for example. But I'm unsure if Microsoft has kept
+the Linux guest support on Hyper-V up-to-date enough for this to actually
+work in practice. I thought at one point there was an internal use case
+for SNP without a paravisor, but it's been nearly two years now
+since I retired, and so I don't really know anymore. For running on
+Hyper-V in TDX mode without a paravisor, I know there's one Linux
+patch missing that is needed by the netvsc driver. That patch would
+provide the TDX support for set_memory_encrypted/decrypted() to work
+on a vmalloc area where the underlying physical memory is not
+contiguous. SNP has the support, but it's a known gap for TDX.
+
+If you wire up the .enc_kexec_begin and .enc_kexec_finish functions
+in hv_vtom_init() along with the other x86_platform.guest.enc_*
+functions, then you don't need to test for a paravisor being present
+because hv_vtom_init() is called only when a paravisor is present.
+The non-paravisor cases on Hyper-V will fall back to the existing
+snp/tdx_kexec_being/finish() functions, and everything *should*
+just work. If it doesn't just work, that's a different problem for
+the Microsoft folks to look at if they care.
+
+I will ping my contacts on the Microsoft side to see if the "no
+paravisor" case is still of interest, and if so, whether someone
+can test it. My only test environment is as a normal Azure user,
+so like you, I don't have a way to do such a test.
+
+>=20
+> >
+> >> +
+> >> +	raw_spin_lock_irqsave(&hv_list_enc_lock, flags);
+> >
+> > Since this function is now called after other CPUs have
+> > been stopped, the spin lock is no longer necessary, unless
+> > you were counting on it to provide the interrupt disable
+> > needed for accessing the per-cpu hypercall argument page.
+> > But even then, I'd suggest just doing the interrupt disable
+> > instead of the spin lock so there's no chance of the
+> > panic or kexec path getting hung waiting on the spin lock.
+>=20
+> Makes sense, will do.
+>=20
+> >
+> > There's also a potentially rare problem if other CPUs are
+> > stopped while hv_list_enc_add() or hv_list_nec_remove()
+> > is being executed. The list might be inconsistent, or not
+> > fully reflect what the paravisor and hypervisor think about
+> > the private/shared state of the page. But I don't think there's
+> > anything we can do about that. Again, I'd suggest a code
+> > comment acknowledging this case, and that there's nothing
+> > that can be done.
+>=20
+> True, will add a comment. Just like with a lot of other corner cases in
+> panic, it's hard to guarantee correctness in ALL cases as the system can
+> be in any state (e.g. if the panic is caused by memory corruption -- who
+> knows what's corrupted?). I'm hoping that with the newly added logic
+> we're covering the most common kdump case and it'll 'generally work' on
+> Azure CVMs.
+
+As noted above, in a non-panic kexec(), the synchronization with
+in-progress private<->shared conversions can be solved.
+
+Michael
 
