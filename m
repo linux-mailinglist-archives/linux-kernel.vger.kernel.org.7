@@ -1,137 +1,210 @@
-Return-Path: <linux-kernel+bounces-788151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 943FFB3806C
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:57:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6B30B38069
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 12:57:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 484EC7C011E
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:57:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1DC0169E93
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 10:57:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA95F30CD9F;
-	Wed, 27 Aug 2025 10:57:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BeDkd7CM"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C39334DCC3;
+	Wed, 27 Aug 2025 10:57:08 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C34D434A331;
-	Wed, 27 Aug 2025 10:57:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43AD930CD9F;
+	Wed, 27 Aug 2025 10:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756292255; cv=none; b=n2jMfizIouZ07IDuAQ4LqM7uQnv0ynSIupnMXNTaH1OxXKyAaebfKNXTJUtrlZTP9XBKNhVF41s7WScJrbS/A7SaECv1GdtE0Ng0GvunxYLQ8xobMKPnPN3WekZnoUrudjBS0PumchGAhkaygw1nCFvMSNUBwMrg2gaKS6jWHE0=
+	t=1756292227; cv=none; b=C/SQULVum33kLs8Jelo/qGYwCkaxXUmy7lE1nsW9DiASt50D6Q5cTLDN5Ffb0CDGwE9qAa3j0wlpiLycsuayWxnhBtPTG4K5mC0Sn+rNDXjrbA9lkK3iBcKptWKQLWNEJ3nO7Au3xzw7j7u5678w/tlHXR0TJfVz3J+TApPdWYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756292255; c=relaxed/simple;
-	bh=0ZpmIIN0uu5nMw2RHk2QulZtCu0yMzmZ0nU8Is5Q9z0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UEB5z0xQTQGM2/HlU7FtFNqXiAOuL9OwyALNymmpGQghLIzn1hA2Ui4tBCS/HLbjx2taZxmovHNeEo78HfAVfzDLK3G7wnzMuvYvdXYaQqrbStAECjDprogZgGcSBVIyLtnayRdMxHRMW1BoWQPMBTnATmrTg/E/1AY5REK7nV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BeDkd7CM; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-76e4fc419a9so6224912b3a.0;
-        Wed, 27 Aug 2025 03:57:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756292252; x=1756897052; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=l2EpUNUryTNGX6oXQWNBchEosjC3dsxwJWjqftVi2/I=;
-        b=BeDkd7CMEUW/9wDgdC18lRwyOtsHpmqb9E3s8sW6IQWIhUkUKyvMmr3N+Vi9LH0vkI
-         Y+JoC2NWckb96Tj96WSi5dmD9i5lSLvcO74llC2HXXn9rq3jWC9jmJkfvdZcoBKw935X
-         XhypXFBattdHlZJ7eyw3pijB6lf7+QyfohFNdhi5Vq3B2RqxTQ04Y885r9d7z2MQEqH0
-         NVldPlb1PXjyr/QxIqVkqaMlo6hYdy3bIWclucUYVznfIMKjWt6tC01woJCCx9CLyjKk
-         PBVSjCPy+6cRhUMCnvht2bwMpshV8QcKiy4uwqrtMqfvpKMEx7ncguJAV6uzHRMqx0bB
-         XGnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756292252; x=1756897052;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=l2EpUNUryTNGX6oXQWNBchEosjC3dsxwJWjqftVi2/I=;
-        b=RU8QLnyU92zCTWNQbafJimZN5uDDxLeY5ctToRwdf7kvKXL3MmSq/zpWafjJLYYjYS
-         02q1OKdj2ZthdG0n3EOKmx/lzY2TzqNretM2TeyzRwXqRf4w1PgUCxggCc8d2DlZ9AWT
-         iwvbIrU+21Zvy/ZDss4Tn7ipRCsL5OUyQHAjaueoAfgsXmIMzPRUwBHV7vY+2bGzm+OV
-         lxzPzLcvQbvASCSF+mMG9mCCeLT3pW69NF5z6tZ9RUW0hZXFqv/HeP6JyYB7yPDe63Wh
-         mG6MEZkkfkAY6VUn/SZasuE2BSfbzFL7dbacqgiHKxk7e/RHUjt3cFerwx50zLnW+pZn
-         EYiw==
-X-Forwarded-Encrypted: i=1; AJvYcCV3Hr7gAmW1F0ksT+GkZFthlW60exgvaRuzaM1wz6Y9+O4F3sQ8c5ysgcQBWuTWxCGMGmsCaoRpUhU2BnQKEHv5@vger.kernel.org, AJvYcCW4QSv43SvdKRk2e2DaemotoaDGjy8ub2CicI3Tx6gxZYGDCIFRfpFhppUQ7snfXEW3XIprVRNxuVrwjDM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5wV2uNEt+7ctmjlrI75Huqos9RpKnQP+fHpBiFW/LA8PXfzl5
-	mrLCW+hbG/xN+4iK7CccWh26Al/fUTiuo0r5RMcEyEHO9SOh5ZTsgjo70aKYYiRo
-X-Gm-Gg: ASbGnculX96EYFeck8FglyHn5by7++BGmaJWJ0DnY4/lBgGRynf5oi3WocUVmTAizbu
-	azxX9dAQ9+B0zs7dcjjndIckbXbO+oMPcNo+E66/bqSGKtoXn6WTLG2Nzz0ZvJTa1WDin3SYeto
-	c07RBFmIAxlS3npOtJGMi5hZ1yhCCaOVMVxQWnGGYe2ng+kkEozVBblW2inNiUDQuZg3w4a6l0v
-	7f09XrdmBFgAg7kkTQCLkHi+Lc5hwFwHjL3p9M/eybq7f/WsabVN4JPdF6hMVIb/kYdGcrC3ddx
-	OwuCPKdEVZ70kPCyHihg6vODo/pBfEIj7ES8Ee+onm7WTLhV06ySzKwA4hINpjgYp8XRjufUSG2
-	10vx5536otoqhjR39tWXbhFtMZlKMDQWfnOcJKw==
-X-Google-Smtp-Source: AGHT+IFKSW5R5mt5f2yEqDcsOKOhySbivHHOjFqhMtMCcpw9s1O1H1GZwsOhvMfu5vBPWSHS4aXAlw==
-X-Received: by 2002:a17:902:d2d1:b0:240:48f4:40f7 with SMTP id d9443c01a7336-2462ef423e2mr265865735ad.39.1756292251960;
-        Wed, 27 Aug 2025 03:57:31 -0700 (PDT)
-Received: from ti-am64x-sdk.. ([152.57.137.11])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-248b6a16ae3sm4277095ad.137.2025.08.27.03.57.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 03:57:31 -0700 (PDT)
-From: bhanuseshukumar <bhanuseshukumar@gmail.com>
-To: tglx@linutronix.de,
-	mingo@redhat.com,
-	shuah@kernel.org
-Cc: peterz@infradead.org,
-	dvhart@infradead.org,
-	dave@stgolabs.net,
-	andrealmeid@igalia.com,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	bigeasy@linutronix.de,
-	colin.i.king@gmail.com,
-	bhanuseshukumar@gmail.com
-Subject: [PATCH v2] selftests: futex; Fix spelling in test messages
-Date: Wed, 27 Aug 2025 16:26:39 +0530
-Message-Id: <20250827105639.19156-1-bhanuseshukumar@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1756292227; c=relaxed/simple;
+	bh=71TjIHXaemnR5GSOcFGJQ0u9QJZgPjfVehYXuruYTns=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G0BCmTxFjd4SVuiXLlEwcjQawmzwgo8T1/04Cujb5rTZwbiuJQ+/Uc34VnZZm3RcUkWE1TNnMgi4X/qyLTcvMOZ6jpMZe93mN2Q6dZuvwTumQI8qkMCBLIIJLo9lPCJY/KEc8v9tHTEsctXe2UgIbCxz5AiCf4cChXwn1bKdTnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.2.202] (p5b13a549.dip0.t-ipconnect.de [91.19.165.73])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id D3D0260213B1E;
+	Wed, 27 Aug 2025 12:56:50 +0200 (CEST)
+Message-ID: <a261ed13-4c0b-43cf-b177-d33272626d25@molgen.mpg.de>
+Date: Wed, 27 Aug 2025 12:56:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Bluetooth: hci_h5: implement CRC data integrity
+To: Javier Nieto <jgnieto@cs.stanford.edu>
+Cc: luiz.dentz@gmail.com, marcel@holtmann.org,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250827043254.26611-1-jgnieto@cs.stanford.edu>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20250827043254.26611-1-jgnieto@cs.stanford.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-    Correct few spelling mistakes in selftest output messages to improve
-    readability
+Dear Javier,
 
-Signed-off-by: bhanuseshukumar <bhanuseshukumar@gmail.com>
----
- This fix is part of kselftest pre-requisite task for kernel mentorship fall 2025.
 
- --changes in v2 to v1
-     grammar fix : instead -> instead of
-     v1: https://lore.kernel.org/all/20250821154103.115110-1-bhanuseshukumar@gmail.com/      
- tools/testing/selftests/futex/functional/futex_priv_hash.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thank you very much for the patch. Great work!
 
-diff --git a/tools/testing/selftests/futex/functional/futex_priv_hash.c b/tools/testing/selftests/futex/functional/futex_priv_hash.c
-index aea001ac4946..8a5735391f2e 100644
---- a/tools/testing/selftests/futex/functional/futex_priv_hash.c
-+++ b/tools/testing/selftests/futex/functional/futex_priv_hash.c
-@@ -132,7 +132,7 @@ static void usage(char *prog)
- {
- 	printf("Usage: %s\n", prog);
- 	printf("  -c    Use color\n");
--	printf("  -g    Test global hash instead intead local immutable \n");
-+	printf("  -g    Test global hash instead of local immutable \n");
- 	printf("  -h    Display this help message\n");
- 	printf("  -v L  Verbosity level: %d=QUIET %d=CRITICAL %d=INFO\n",
- 	       VQUIET, VCRITICAL, VINFO);
-@@ -267,7 +267,7 @@ int main(int argc, char *argv[])
- 	join_max_threads();
- 
- 	ret = futex_hash_slots_get();
--	ksft_test_result(ret == 2, "No more auto-resize after manaul setting, got %d\n",
-+	ksft_test_result(ret == 2, "No more auto-resize after manual setting, got %d\n",
- 			 ret);
- 
- 	futex_hash_slots_set_must_fail(1 << 29);
--- 
-2.34.1
+Am 27.08.25 um 06:32 schrieb Javier Nieto:
+> The UART-based H5 protocol supports CRC data integrity checks for
+> reliable packets. The host sets bit 5 in the configuration field of the
+> CONFIG link control message to indicate that CRC is supported. The
+> controller sets the same bit in the CONFIG RESPONSE message to indicate
+> that CRC may be used from then on.
+> 
+> Signed-off-by: Javier Nieto <jgnieto@cs.stanford.edu>
+> ---
+> 
+> Tested on a MangoPi MQ-Pro with a Realtek RTL8723DS Bluetooth controller
+> using the tip of the bluetooth-next tree.
 
+Any btmon trace?
+
+I’d add the above to the proper commit message.
+
+> It would be nice to have this feature available for somewhat more reliable
+> communication over UART, especially if RTS/CTS is disabled, as this is the
+> primary benefit of the H5 protocol. Thanks!
+> 
+> ---
+>   drivers/bluetooth/hci_h5.c | 42 ++++++++++++++++++++++++++++++++++----
+>   1 file changed, 38 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/bluetooth/hci_h5.c b/drivers/bluetooth/hci_h5.c
+> index d0d4420c1a0f..7faafc62666b 100644
+> --- a/drivers/bluetooth/hci_h5.c
+> +++ b/drivers/bluetooth/hci_h5.c
+> @@ -7,6 +7,8 @@
+>    */
+>   
+>   #include <linux/acpi.h>
+> +#include <linux/bitrev.h>
+> +#include <linux/crc-ccitt.h>
+>   #include <linux/errno.h>
+>   #include <linux/gpio/consumer.h>
+>   #include <linux/kernel.h>
+> @@ -58,6 +60,7 @@ enum {
+>   	H5_TX_ACK_REQ,		/* Pending ack to send */
+>   	H5_WAKEUP_DISABLE,	/* Device cannot wake host */
+>   	H5_HW_FLOW_CONTROL,	/* Use HW flow control */
+> +	H5_CRC,			/* Use CRC */
+>   };
+>   
+>   struct h5 {
+> @@ -141,8 +144,8 @@ static void h5_link_control(struct hci_uart *hu, const void *data, size_t len)
+>   
+>   static u8 h5_cfg_field(struct h5 *h5)
+>   {
+> -	/* Sliding window size (first 3 bits) */
+> -	return h5->tx_win & 0x07;
+> +	/* Sliding window size (first 3 bits) and CRC request (fifth bit). */
+> +	return (h5->tx_win & 0x07) | 0x10;
+
+Could a macro be defined for the CRC request bit?
+
+>   }
+>   
+>   static void h5_timed_event(struct timer_list *t)
+> @@ -360,8 +363,10 @@ static void h5_handle_internal_rx(struct hci_uart *hu)
+>   		h5_link_control(hu, conf_rsp, 2);
+>   		h5_link_control(hu, conf_req, 3);
+>   	} else if (memcmp(data, conf_rsp, 2) == 0) {
+> -		if (H5_HDR_LEN(hdr) > 2)
+> +		if (H5_HDR_LEN(hdr) > 2) {
+>   			h5->tx_win = (data[2] & 0x07);
+> +			assign_bit(H5_CRC, &h5->flags, data[2] & 0x10);
+> +		}
+>   		BT_DBG("Three-wire init complete. tx_win %u", h5->tx_win);
+>   		h5->state = H5_ACTIVE;
+>   		hci_uart_init_ready(hu);
+> @@ -425,7 +430,24 @@ static void h5_complete_rx_pkt(struct hci_uart *hu)
+>   
+>   static int h5_rx_crc(struct hci_uart *hu, unsigned char c)
+>   {
+> -	h5_complete_rx_pkt(hu);
+> +	struct h5 *h5 = hu->priv;
+> +	const unsigned char *hdr = h5->rx_skb->data;
+> +	u16 crc;
+> +	__be16 crc_be;
+> +
+> +	crc = crc_ccitt(0xffff, hdr, 4 + H5_HDR_LEN(hdr));
+> +	crc = bitrev16(crc);
+> +
+> +	crc_be = cpu_to_be16(crc);
+> +
+> +	if (memcmp(&crc_be, hdr + 4 + H5_HDR_LEN(hdr), 2) != 0) {
+> +		bt_dev_err(hu->hdev, "Received packet with invalid CRC");
+> +		h5_reset_rx(h5);
+> +	} else {
+> +		/* Remove CRC bytes */
+> +		skb_trim(h5->rx_skb, 4 + H5_HDR_LEN(hdr));
+> +		h5_complete_rx_pkt(hu);
+> +	}
+>   
+>   	return 0;
+>   }
+> @@ -556,6 +578,7 @@ static void h5_reset_rx(struct h5 *h5)
+>   	h5->rx_func = h5_rx_delimiter;
+>   	h5->rx_pending = 0;
+>   	clear_bit(H5_RX_ESC, &h5->flags);
+> +	clear_bit(H5_CRC, &h5->flags);
+>   }
+>   
+>   static int h5_recv(struct hci_uart *hu, const void *data, int count)
+> @@ -686,6 +709,7 @@ static struct sk_buff *h5_prepare_pkt(struct hci_uart *hu, u8 pkt_type,
+>   	struct h5 *h5 = hu->priv;
+>   	struct sk_buff *nskb;
+>   	u8 hdr[4];
+> +	u16 crc;
+>   	int i;
+>   
+>   	if (!valid_packet_type(pkt_type)) {
+> @@ -713,6 +737,7 @@ static struct sk_buff *h5_prepare_pkt(struct hci_uart *hu, u8 pkt_type,
+>   	/* Reliable packet? */
+>   	if (pkt_type == HCI_ACLDATA_PKT || pkt_type == HCI_COMMAND_PKT) {
+>   		hdr[0] |= 1 << 7;
+> +		hdr[0] |= (test_bit(H5_CRC, &h5->flags) && 1) << 6;
+>   		hdr[0] |= h5->tx_seq;
+>   		h5->tx_seq = (h5->tx_seq + 1) % 8;
+>   	}
+> @@ -732,6 +757,15 @@ static struct sk_buff *h5_prepare_pkt(struct hci_uart *hu, u8 pkt_type,
+>   	for (i = 0; i < len; i++)
+>   		h5_slip_one_byte(nskb, data[i]);
+>   
+> +	if (H5_HDR_CRC(hdr)) {
+> +		crc = crc_ccitt(0xffff, hdr, 4);
+> +		crc = crc_ccitt(crc, data, len);
+> +		crc = bitrev16(crc);
+> +
+> +		h5_slip_one_byte(nskb, (crc >> 8) & 0xff);
+> +		h5_slip_one_byte(nskb, crc & 0xff);
+> +	}
+> +
+>   	h5_slip_delim(nskb);
+>   
+>   	return nskb;
+
+The diff looks good. Feel free to carry:
+
+Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+
+
+Kind regards,
+
+Paul
 
