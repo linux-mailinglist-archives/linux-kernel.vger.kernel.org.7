@@ -1,121 +1,110 @@
-Return-Path: <linux-kernel+bounces-788957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29D56B38E88
-	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:36:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62775B38E8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 28 Aug 2025 00:40:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CF41165F11
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:36:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78A131892442
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 22:41:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB6D30F929;
-	Wed, 27 Aug 2025 22:36:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B922030F92F;
+	Wed, 27 Aug 2025 22:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DUpxeAZt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JkioK8Uv"
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA3704438B;
-	Wed, 27 Aug 2025 22:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43704438B;
+	Wed, 27 Aug 2025 22:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756334169; cv=none; b=QDggZiLqi8kJNimMoCLdNCDFT6jgIhCcST7tCPT4a+i9cYs1Pks/oT3Fd+qt4aThe93oOGE663bV1ezvbt3RPLD0SxeejvlxyWXXXFH2/1ULrsnYoW1wE1rx2Iaxm982WortLHTmebSaKPY7lEGMsfJINZz4VbgaG8zw8fnL2J4=
+	t=1756334437; cv=none; b=BFNHjK2hFCmraE2PT4WRyWId9lcWzxmiRBA+ek8zwEMrYW/CrWFnqH0U3NAdohfkPX7gjGz+3fnlfN53/ygPVQGoHmOEXMtAE7sfTrGRSu85J2pEVCE0DBM5BVKkY3UPHDvSZOEzTyQNofBMYMEtyBchc11lwppQWnQcphI805Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756334169; c=relaxed/simple;
-	bh=SuvtG9zPU1paS6zdtAQLH1EmQzS92Y488uepGCslfWI=;
+	s=arc-20240116; t=1756334437; c=relaxed/simple;
+	bh=ZURRfcRYgFsQtv89kZESAEWYeb8gpIk6x9g9l4FgzQI=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=FANBEHsYc+JZAcAgVqyNA+ReDGEuKt0Ah7/hf+bqGxWM7BpFfzRTvZgQr14mz6fAfvRX08wUyjgEmxB5Vy0+nsxhxKjn+LAS/m8WxQ3Y4gR11WV0iaGWqhAUFDNEGTm3Sw486jybZDpMsHrwDRcueNuKi/3FfmjgNXF24HbV2K0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DUpxeAZt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C3EBC4CEEB;
-	Wed, 27 Aug 2025 22:36:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1756334168;
-	bh=SuvtG9zPU1paS6zdtAQLH1EmQzS92Y488uepGCslfWI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=DUpxeAZt3sd2SF+CHF9cOy/FaqwBpkfO3QmQLN4WtjqYJww1JgdN330EJgtOo7awf
-	 xyWVC65Ik9s82mLjd16u/fsvSuu23dv4M1YBxCe8bO6CXWEgzoRLhpV3WDHPmP25aY
-	 MN84rM34MoHWDkORX0/iiQ1n3JoUADeR5wXKbBAovlj1sAMI5uZeJDeOfTYi0lz+zn
-	 V5/DUusNTXr35xQCbizoSyjKjZgXsropAj0Da/2jC4EKIm5VEVn251opw5aNwUVvou
-	 RRsuPYOe7vPF9M/TvmOxlhhB1X2T3hVX9lRk7L3x0iNPNnhqbMmQokcb4oci+E0njx
-	 QPfbX1CvuOzSQ==
-Date: Wed, 27 Aug 2025 17:36:06 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
-Cc: Andreas Larsson <andreas@gaisler.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-	linux-pci@vger.kernel.org, sparclinux@vger.kernel.org,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-	Yinghai Lu <yinghai@kernel.org>,
-	Igor Mammedov <imammedo@redhat.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	linux-kernel@vger.kernel.org,
-	=?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>,
-	linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 00/24] PCI: Bridge window selection improvements
-Message-ID: <20250827223606.GA915856@bhelgaas>
+	 Content-Disposition; b=lR0BuDhDtAGk+S+0AkUZEVDOSumwu1sa/nvt2S7fI1J9TlvW1SWgWVknxDFqBOgz/6/XmJtTbRZ2wcwdVnbJOCgdvL6nTcKlrPnhPtHAz21A2T+h0/O4F6lYz2phJpU8qmyI5YTr4MSpyNX/td4APK1Vzaa991cWKyzXMVCi/ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JkioK8Uv; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-71ff2b20039so2745497b3.3;
+        Wed, 27 Aug 2025 15:40:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756334435; x=1756939235; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QXrd8df4wtNv11hw/FqJByLBF9OE616o+lduhmz5nt0=;
+        b=JkioK8Uvwf3Q3P4z74pAPFrQ1aVgAZJQF8j4aq2UapXAkNH4JmSZZA1HJHnCl/0iyr
+         wD5mZ/AuQqZwI3vAeXVyEbynUW23yc0cSxeBWbGBMPA4w437wTHA+V6gJFer2zKJzQwJ
+         ZXnHfD5u1oCxSSjbT6AiAuhb1WF0XMNI1zydYDz7mGx/BsQXwnc9WwZbkp4XtA7CaCCQ
+         yH42T7xowaT3upFwxneAsBGy0Wt7GnH3Z1fAnK4KA/0acYsxjbRFDHURrVPPf1fwZgO3
+         KXWo3UckNbogYwL4uwx2dW/YVxfr7QR/HDpDvFT86usCupNmC1icUncjd9nW7SNrvEQ7
+         Wcdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756334435; x=1756939235;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QXrd8df4wtNv11hw/FqJByLBF9OE616o+lduhmz5nt0=;
+        b=wvvoAgeGyRKEN7ggsZHUAdolEEpAL1xM6tF2jX1IJDqvuOpZnsOsXBpywUc8N58YTR
+         7yLcOBuiJwe2TRl9Ur2aKsRPyryopP4s+ovHxqToJ1YSvCTlRyFYhB0SWR39empVz4dj
+         ajKg7e9rLWbu1RaWjHGJzoSRsi+k/ej2pJUZmRncqsw2CkZsRuVhZuxlBVqDMJI2YjSc
+         HguzZewV+O0OKYAAoBpBgYob33D1Doi7rvTBsvNnEOivBLrerQ5R3YqCoLGtdesmzm6d
+         qdzZa/P2lQ01d8Xvvq/Jv/OM8Kz9EdPNSZFolxGkIZqgSNNmLZaR9Wu3m+1c4stUHnqU
+         7JNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU2DiY9ESZ7ClAFXdkygLPU7j5r7Pm1JTd2dYb+6q4zRBLwtR6ew10Zsa0qlXE8b8nToGQ4KEo76n5naf9Y@vger.kernel.org, AJvYcCWsqdLayzej7eAqfII4ZeV95i+kLwfkUQNSfosOcb3Ez3oeSL6vR/WEuFZxKzYw5e3ycmpGZwRqQ1Sc@vger.kernel.org, AJvYcCXA1QXTRchxqipUawCBtqH45z1/mINwLLWZPAAcgfgrOhiTIrvJEJuOBMFrCXnPc51B7v5X/Y2w0D8NeO8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTtyakHiKiHVzZssDRfjD0diKmJY5e2xU2nlkcY9z8b5Z3PNCz
+	KvZIl/tOBNj/VaY9M2I2KxN6viGLS1FVS8jzcP0sV9/2LgJX58RaJL5t
+X-Gm-Gg: ASbGncvg9zQMi6kHS0pBVSes14GpK2r2GPcqPXN9I8xPOKQZoisMgeHj5UgUCXBcHVE
+	u9xfWL6CQO9I1eQZcoLbTPg7zI17IRVnXtUDXUwa8W1J8+K+s+SEdAzWv6CTtNNPylvQfDC4YlE
+	fCfZSVhLpln1kmRZWg097ziVSwbFvBNLXxRjZib993ctxGkxeG/RbrV+gdVA3A/uoDcuqTa3JhP
+	NKvBGl+oE8j6HzrksWIYN5dk27Evxi0cjF0IXYyyDDLAwM7vSS0WYMCdMC9e17Fv8oZanyGjKqQ
+	HRmbM0LVT0xn7SG/r8lqDgKtYkC6t5qTcNxXT9bAniOx3GYp6U6Tl0ZRp+JinB9tBHl8yV5BN8r
+	rXn3wT/A=
+X-Google-Smtp-Source: AGHT+IHRztpk0yVGrsngNCAgBOHNf3fObYToyFfHmQGgO4/sQoO23177TbXsgJRAiCNm4ktg0g8Dcg==
+X-Received: by 2002:a05:690c:fcc:b0:720:b6a:ff2d with SMTP id 00721157ae682-7200b6b83cfmr153596487b3.14.1756334434520;
+        Wed, 27 Aug 2025 15:40:34 -0700 (PDT)
+Received: from raspberrypi ([2600:1700:90:4c80::d])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-71ff1703e64sm34287997b3.14.2025.08.27.15.40.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 15:40:34 -0700 (PDT)
+Date: Wed, 27 Aug 2025 17:40:32 -0500
+From: Grant Peltier <grantpeltier93@gmail.com>
+To: linux@roeck-us.net
+Cc: grant.peltier.jg@renesas.com, robh@kernel.org, conor+dt@kernel.org,
+	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] Add support for RAA228244 and RAA228246
+Message-ID: <cover.1756331945.git.grantpeltier93@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250822145605.18172-1-ilpo.jarvinen@linux.intel.com>
 
-On Fri, Aug 22, 2025 at 05:55:41PM +0300, Ilpo Järvinen wrote:
-> This series is based on top of the three resource fitting and
-> assignment algorithm fixes (v3).
-> 
-> PCI resource fitting and assignment code needs to find the bridge
-> window a resource belongs to in multiple places, yet, no common
-> function for that exists. Thus, each site has its own version of
-> the decision, each with their own corner cases, misbehaviors, and
-> some resulting in complex interfaces between internal functions.
-> ...
+The RAA228244 and RAA228246 are both recently released dual-output
+digital multiphase PWM controllers. Datasheets for both devices are not
+publicly available but can be supplied by Renesas upon request and NDA.
 
-> I've tried to look out for any trouble that code under arch/ could
-> cause after the flags start to behave differently and therefore ended
-> up consolidating arch/ code to use pci_enable_resources(). My
-> impression is that strictly speaking only the MIPS code would break
-> similar to PCI core's copy of pci_enable_resources(), the others were
-> much more lax in checking so they'd likely keep working but
-> consolidation seemed still the best approach there as the enable checks
-> seemed diverging for no apparent reason.
-> ...
+Grant Peltier (3):
+  hwmon: (pmbus/isl68137) add support for Renesas RAA228244 and
+    RAA228246
+  docs: hwmon: add RAA228244 and RAA228246 info to isl68137
+    documentation
+  dt-bindings: hwmon: (pmbus/isl68137) add RAA228244 and RAA228246
+    support
 
->   m68k/PCI: Use pci_enable_resources() in pcibios_enable_device()
->   sparc/PCI: Remove pcibios_enable_device() as they do nothing extra
->   MIPS: PCI: Use pci_enable_resources()
-> ...
+ .../bindings/hwmon/pmbus/isil,isl68137.yaml   |  2 ++
+ Documentation/hwmon/isl68137.rst              | 20 +++++++++++++++++++
+ drivers/hwmon/pmbus/isl68137.c                |  6 ++++++
+ 3 files changed, 28 insertions(+)
 
->  arch/m68k/kernel/pcibios.c   |  39 +-
->  arch/mips/pci/pci-legacy.c   |  38 +-
->  arch/sparc/kernel/leon_pci.c |  27 --
->  arch/sparc/kernel/pci.c      |  27 --
->  arch/sparc/kernel/pcic.c     |  27 --
-> ...
+-- 
+2.39.5
 
-I love the fact that you're doing so much cleanup.  Thanks for all the
-work in this!
-
-Obviously all this code is quite sensitive, so I put it on
-pci/resource to get more exposure in -next.  If it turns out that we
-trip over things or just don't feel comfortable yet for v6.18, we can
-always defer this part until the next cycle.
-
-I will also watch for acks from the m68k, mips, and sparc maintainers
-for those pieces.
-
-Bjorn
 
