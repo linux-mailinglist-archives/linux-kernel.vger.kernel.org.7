@@ -1,122 +1,117 @@
-Return-Path: <linux-kernel+bounces-787816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-787814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3836AB37BAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:28:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6251B37BA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 09:26:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76A7F7C1307
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:28:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED42E1B6650A
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 07:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765F731813F;
-	Wed, 27 Aug 2025 07:28:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="KerKK3pP"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636EB3164DE;
+	Wed, 27 Aug 2025 07:26:07 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277A93176ED;
-	Wed, 27 Aug 2025 07:28:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D63930C601
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 07:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756279695; cv=none; b=F9LyveywYtsQAOEf3LuT2adZLqEuW8RTW0sfN8EFEhaCzLkseOxOB9sdMmMA+mW/2S5ULPbbJpdEzq5kVBpb4V2DhiS83kg6GWGFJyaTRjTf/77YpxOPstyswed7DyhYTXBqVVkghSvyy9RwOm3tBaa1ix6Z1px2TPZGqW0U6Uo=
+	t=1756279567; cv=none; b=YJC8ooP/kOfLNtuNAtMgto5YvkRvKg/x9z9A2PY72N4HC6ZgmY75YrJrAMQMZHxgX8HlEKuKgcWj7Qh68D5Dt026Qz/GKhT4qW5wbTlgFz6zD3VWYvodel/kzpwfRnp1pzWZ3tmpetQB5czizyBEm5Uen7Xy6y34JlWSnKHVMUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756279695; c=relaxed/simple;
-	bh=EZOJWExa5qLVEsPq3j8HydiA2WaZ9eh1caYD7hcSf6o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dhfY1dI4Vlf7meFT/RVzTxKwmqYZBDNQcvTEsmqwUJn9dWDXoqgZsHjmiC/ryH+2E+2fgxGXscKjp63KAuu8JfgIPfVrhuOg1PENDkyIdYTN9qMW9/i/pFTRU6+b74i0FeoludVAEXdkfU+8iO+NRoz45APO1kaatR+XRjgVzQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=KerKK3pP; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=EZOJWExa5qLVEsPq3j8HydiA2WaZ9eh1caYD7hcSf6o=; b=KerKK3pP0fv1hWcFkf5UpwwS+n
-	DyQX+x1U4BG5PeUL9KWfsYEO6fuQjo/YxabrfldV/H3A2mt8I4eYKIuyAC4eO0xkUkBGwK0VGv585
-	VfJseMvGcO2e0TjLYtji/No56lZU93TOZXLeXSjv8Y++0qW918oMas8lhpPQD0C6XgSVBfexzDiNc
-	l6T0oulWEpXVtAplOBjGdeI/zsh+6p/65C4UrnexkWP8Mc8GzNrDa8PD1xre5axw3aDFwjsQA9Y+7
-	/KGjGCtsHQtDf3+4RYdeIMp8KrYdqiy6Qj4EC3hgFn8uTgVZLt3JaBYS1DsW9MKByBNdqENelR31X
-	kzLC0Vuw==;
-Received: from [213.244.170.152] (helo=phil.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1urAXL-0000X5-Vt; Wed, 27 Aug 2025 09:25:40 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Yury Norov <yury.norov@gmail.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Jaehoon Chung <jh80.chung@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>,
- Shreeya Patel <shreeya.patel@collabora.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Sandy Huang <hjc@rock-chips.com>,
- Andy Yan <andy.yan@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Shawn Lin <shawn.lin@rock-chips.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kwilczynski@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Chanwoo Choi <cw00.choi@samsung.com>,
- MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>, Qin Jian <qinjian@cqplus1.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
- linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
- linux-sound@vger.kernel.org, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-pci@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, llvm@lists.linux.dev,
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Subject:
- Re: [PATCH v3 09/20] phy: rockchip-samsung-dcphy: switch to FIELD_PREP_WM16
- macro
-Date: Wed, 27 Aug 2025 09:25:38 +0200
-Message-ID: <5502100.jE0xQCEvom@phil>
-In-Reply-To: <20250825-byeword-update-v3-9-947b841cdb29@collabora.com>
-References:
- <20250825-byeword-update-v3-0-947b841cdb29@collabora.com>
- <20250825-byeword-update-v3-9-947b841cdb29@collabora.com>
+	s=arc-20240116; t=1756279567; c=relaxed/simple;
+	bh=M1Fv8zBkm4DQy47QdQG+BPLOCxAofKVgLoxqOA89g3A=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=FmPJkA5mzkpT+pUIUPW+s9nSYKaYbnKJFCsmxKL43OBAO9PaKqqWTnApdIBiV7ILDflQ7LR/JKH4UjP5DBgyILPL+duqC4oNnFwYVjb2pMJ/Obacns25ClScqy/w3OT4fpIeRRMMKdonKu7EpRDL6Jxpll1rcGcpbIdIHGPRPwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3eab737b99cso41369755ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 00:26:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756279564; x=1756884364;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SBiTkX+LtWr30x8kXfSExaJcqbSKjWmR0Tbn5ArzxGM=;
+        b=QjfSlu8omhuE3ItCErqtbIFj8hYF3uCHyiRjdIMBPVuabF1ri5lWjygEuCUWE9Sk+z
+         SaZ5XDh3BhNx7UH9Ht++HKyitgVVhDi2ye2DNLiiKHD4G30W1lUOzE0mLyOlc1Z01eLP
+         FjMkH7l/LdruarrKte26HYk4uqFqu5oDSAVmaTFbLVHZhK32nzyos73C1GZ+VpKAGFWh
+         fT5dNM6HSofBqowZmBE1OurfRlmoMdyp0VPHSWT+WyAIJVQ/Eoafl9fyzVNdyOWt/+bL
+         FP1ERAtlpI/C5KX99f0w2qv27UmGse/nymDrglmwzvC8QNyxXbtpBpHZeGEap3pYsjiR
+         qbJw==
+X-Forwarded-Encrypted: i=1; AJvYcCXTGgIJdx/fCYMUqELbPNIqP5492YDQGUqiCuzfLxF0X6uNoR/ijGYoJ0WlzbLO4zNbkeMGAWl9u6LXRFw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzE52Mj9Sk1aDbg7X18yH8QC33lR1HOOh1VAwRyXKtJTe+N6xl
+	TO0Q+lzsq6NqbpdnJJRDPDlsIz/cTxAW+jYZ43uRaW2ISmvxMrfk7buA/NPw+ivBnq1Upb6ahYi
+	NmKkDYAKmgljwgsC3AKnDI3yJI+O+ZYeyRYbM94C9E6yRcvWXD1+0YEW10mg=
+X-Google-Smtp-Source: AGHT+IEZb5d0s2IkpWwHJvc23r9bl2MZsB7DiUHsHaibJ9/mRYBEW1DYdQQS+44E9MZylGS9Mbc7TXlByucUb70rq1xl0TJfRYfK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+X-Received: by 2002:a05:6e02:214f:b0:3e5:52a3:dade with SMTP id
+ e9e14a558f8ab-3e921f3872bmr266156105ab.16.1756279564726; Wed, 27 Aug 2025
+ 00:26:04 -0700 (PDT)
+Date: Wed, 27 Aug 2025 00:26:04 -0700
+In-Reply-To: <tencent_1D289EA31B164B411B652567BA75BB2D3308@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68aeb30c.a70a0220.3cafd4.0010.GAE@google.com>
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Write in __xfrm_state_delete
+From: syzbot <syzbot+a25ee9d20d31e483ba7b@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Am Montag, 25. August 2025, 10:28:29 Mitteleurop=C3=A4ische Sommerzeit schr=
-ieb Nicolas Frattaroli:
-> The era of hand-rolled HIWORD_UPDATE macros is over, at least for those
-> drivers that use constant masks.
->=20
-> phy-rockchip-samsung-dcphy is actually an exemplary example, where the
-> similarities to FIELD_PREP were spotted and the driver local macro has
-> the same semantics as the new FIELD_PREP_WM16 hw_bitfield.h macro.
->=20
-> Still, get rid of FIELD_PREP_HIWORD now that a shared implementation
-> exists, replacing the two instances of it with FIELD_PREP_WM16. This
-> gives us slightly better error checking; the value is now checked to fit
-> in 16 bits.
->=20
-> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Hello,
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in xfrm_state_fini
 
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 2132 at net/xfrm/xfrm_state.c:3303 xfrm_state_fini+0x26d/0x2f0 net/xfrm/xfrm_state.c:3303
+Modules linked in:
+CPU: 0 UID: 0 PID: 2132 Comm: kworker/u8:7 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Workqueue: netns cleanup_net
+
+RIP: 0010:xfrm_state_fini+0x26d/0x2f0 net/xfrm/xfrm_state.c:3303
+Code: c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 fb b1 00 f8 48 8b 3b 5b 41 5c 41 5d 41 5e 41 5f 5d e9 b9 72 e1 f7 e8 14 46 9d f7 90 <0f> 0b 90 e9 fd fd ff ff e8 06 46 9d f7 90 0f 0b 90 e9 60 fe ff ff
+RSP: 0000:ffffc90004827898 EFLAGS: 00010293
+RAX: ffffffff8a22651c RBX: ffff888023d54880 RCX: ffff888029618000
+RDX: 0000000000000000 RSI: ffffffff8be33660 RDI: ffff888029618000
+RBP: ffffc900048279b0 R08: ffffffff8fa38437 R09: 1ffffffff1f47086
+R10: dffffc0000000000 R11: fffffbfff1f47087 R12: ffffffff8f631480
+R13: 1ffff92000904f40 R14: ffff888023d55d00 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff888125c1a000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055be456ece28 CR3: 000000007da92000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ xfrm_net_exit+0x2d/0x70 net/xfrm/xfrm_policy.c:4354
+ ops_exit_list net/core/net_namespace.c:198 [inline]
+ ops_undo_list+0x49a/0x990 net/core/net_namespace.c:251
+ cleanup_net+0x4c5/0x800 net/core/net_namespace.c:682
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3319
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+ kthread+0x70e/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+
+Tested on:
+
+commit:         24204116 Merge branch 'ipv6-sr-simplify-and-optimize-h..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=11279ef0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=67b99ceb67d33475
+dashboard link: https://syzkaller.appspot.com/bug?extid=a25ee9d20d31e483ba7b
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=10eb9ef0580000
 
 
