@@ -1,101 +1,133 @@
-Return-Path: <linux-kernel+bounces-788416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7439B3840B
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:50:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1BAEB38413
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 15:51:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99B653B75A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:50:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33C0F7B1F38
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:49:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4327C3568E4;
-	Wed, 27 Aug 2025 13:50:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C7903570D1;
+	Wed, 27 Aug 2025 13:50:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="sY5nVMfX"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bjmvlq7l"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97773342C92;
-	Wed, 27 Aug 2025 13:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04BCA2EACEF;
+	Wed, 27 Aug 2025 13:50:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756302626; cv=none; b=cL4YqtB8W5C6WpTguPXUnukcIxm4s/gNvGMwip+6bEmbvZ7GVwXXp6m0X4yv5bufJA5EYT7FKmJG3fn8BSbtaCInFFqVSi2knjYFQkGV1NAOCHG/GRXgl9X/nrvuO1G7RUThaMjCFCMudaR5GwLiuws4jxAd2fuTrDuCnSrxceo=
+	t=1756302639; cv=none; b=qutQnf7NTu9rpsjh7y953hQTdBwM4mH5HBOD6H4N9IPgzlbaUQK0MVaNHqqXoiOzq5qALQC6UNfWwc0obLZornUhWVBKuVrxjB7o0Sh4kLmAx4mYL9oFP1ua2kOAhpOySiIK3FlA0vKot6CsorT4RmdCHksE/r1uraAQcHC+yJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756302626; c=relaxed/simple;
-	bh=WNl6MYR9rNqQEB6pJqeDUpDq4nhgXnNkqkm0DWk19LY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gAQuJHjighvefToMMC3MpayRviON0fgL2p575Y1yWt/eRtt13c/KByDBJTKRXbLynOL4q5+BzeOP2iegeL41wM85ag4kubU3Jtq7u4Q9B60wEWhjL4EOdTX2W5MnvbqgajV6ikIv4tDiVvP48W/INH5DrcObvarc83+c8LvTBaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=sY5nVMfX; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4cBmBH2tnvz9ty9;
-	Wed, 27 Aug 2025 15:50:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1756302615; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xq7djjTrndkPysRUhthmE0pGPVdil1mhiHwibAnEooo=;
-	b=sY5nVMfXQvsefqhG5hrlz5fRXu5SfI/+U54PX6DUIm+HWva1miogWC0r1gTz3rhtPFNb8k
-	IFUVHitI7m8fF2iz3C5FnWxUF6MYmAdfqD5Q+zjXmUedz53qO1KvKi7geYS7yvh9AcO0gX
-	amnil/ELi7sWpxPNV6+W3AE18IcQfIsAT42GZgZ3WjUFs2tPQMn6pojpcSXFyzHgu2OCvK
-	Y1K/ySJvrjXSfc5vMAKOZL9h9S8apgDgXhe/Uai++6tMPc1V49BYEibikL3W6rkhwHJhuF
-	/phOF95bmJucT1aivDAaJ4ZWwUKCRtrGtaXsJTX5v8/+r/KqDGAu80NOJ1AOtw==
-Message-ID: <09ef0b44eef45a534fc3230e9dfaeebb36a08e44.camel@mailbox.org>
-Subject: Re: [PATCH v3] block: mtip32xx: Remove excess code in mtip_pci_probe
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Zhang Heng <zhangheng@kylinos.cn>, axboe@kernel.dk, phasta@kernel.org, 
- andriy.shevchenko@linux.intel.com, broonie@kernel.org, lizetao1@huawei.com,
-  viro@zeniv.linux.org.uk, fourier.thomas@gmail.com, anuj20.g@samsung.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 27 Aug 2025 15:50:10 +0200
-In-Reply-To: <20250827131228.2826678-1-zhangheng@kylinos.cn>
-References: <20250827131228.2826678-1-zhangheng@kylinos.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1756302639; c=relaxed/simple;
+	bh=/CxF26f7IY0gzBYXUQvlyigPUysQMgswZzfFi3tBp14=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QCoKYOuJ7kZXJn6Xfxl7ZzgLrgObdy/zzKmz5sLEsA3vtrzzpdwHofTNZgGQf7VbEU6/cpOSoKdCoYmAzbjn18id/Bhpda9nJw9Ultm2xk2NdFXo8IEkbahkhhVcpUljg32qhTmoMr017kUE6Hb2dTRkFJqYKmOPONYZ8+hvIpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bjmvlq7l; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-324eb9cc40aso782897a91.0;
+        Wed, 27 Aug 2025 06:50:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756302637; x=1756907437; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zHvHAd+WcxCB4dlz78++SYO8j8Zl7cNSriJo6KrI3ho=;
+        b=bjmvlq7lbaSl6YGgJ7a+1z7QLPq3SBaXSYW+0dsceaXOsXRmvybapuoOrTZqPwf/an
+         d1tlqHvmuma/D7pcvd66VK0nIwLaHrNxzmdr4n1xGVqVfm/B5THatMR79YYdMaIl1pvj
+         ydYGs1e+Rt7xjfZfpHHR2sRuw9QkToD4uWhbsg9g+tsJmeYP8GUqL/JW7SC8w/3eXD4M
+         DQqTRAwvR96Y6xDShcEyynVzk58/5e0w9Knnwa5ENfQj2wnTPFxq5WMA0g4J2s8aAcLV
+         TA8oACjcifJuCyZGVM3uSfRjLtyxlUa/B1yFvNpza49BliaM2WeI4HtMTq6vWUXF4lHm
+         5pPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756302637; x=1756907437;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zHvHAd+WcxCB4dlz78++SYO8j8Zl7cNSriJo6KrI3ho=;
+        b=ZANP2dx4ro4vlr1o/rliLYH5eGucDlTopHYUL6d3XGOBz/ysQOhgtKQFCxZnMYFFvy
+         GkpGqB0VlqQ+9GHcT9EXCCl9lhupJzLT00dy1F/V45c/IixKArkvSUw7MbwW8UK+tAIJ
+         6BMXCtyO9LENZqMfoIrmuT2+CHYzF2xeX7WZB5F4kfxPWq4cved8/0Mte5nYFMHZyeZV
+         52bAwgEEBi8QoesaQZa7Ft/K2rzhlm0pyevUdSXq61TlJTj3FCIBB5E2jZhbXu2Rxg3X
+         nbs0dWL37LTgXIdD8ScHqrYPi8LBM9eK7klwXbEV+nXU0utS59DVUXe0hMMhWB1dBhHJ
+         T7/g==
+X-Forwarded-Encrypted: i=1; AJvYcCXJcRMQuHsDfcIcXPPtH6ijo/J+I6uKzdGanCxFJ2GosUbVBiACNcrwjkd0iYEX/BN4UldkkFpS9cw9ko8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4DRm6TEkGGSWV0UJagAvcSiyPrJY9wYO5data5Ch4fLgQpwUp
+	p8SaoevOw24LgFK/Gv7pouByxpCl/4dB2S+H+tfvgAKdfSOnJY202Add
+X-Gm-Gg: ASbGnctcKf7RW20KhGDI19vPLYJFAmXPpMgafdr1ePq2Req5uobdtQzJ4yqCbvNDBfG
+	78StbLj6uCM4XWneH5QO/ZdPn5OydIFIaRv3Q5VT/CyRnCR3x7Av9WMbnaqReb9t0RJEPz4QhBr
+	BgSkV0aNr+N32oo73fiknUlpTytHxcXgj7zEbxo7Pi5hQxCU7AhAFf9PZ+yCPh0mghLsPKxsLE1
+	4FF5oyzwphvAKr+KKfL2cBXN2GI+pxBnlLqGYBnxs47zcI3n1SjssxEKSdBS79QSb+YSniVIZ4H
+	MiLce8qnHr4f7S/850tQfjWcE5svd3HJXh1EyeImWh5+SEZoB2/iXHWCwXe6K5C2MwiRA49ZoJm
+	PkkIJC9ABl6Wewbxndp7vLUJ0XXkvPyT3nYgJPU+qWE3EmIO2Qrp40AfH8f3BN+BqQkPYv7NzWy
+	0dIFu+YVHdRXQ6
+X-Google-Smtp-Source: AGHT+IEKgDN/ZBcwEn87KjLNUNyqjBkpE8EGUUYNqeRgHERjmZuT6UdvYUjXs54tgL3WSG2ZB11oWQ==
+X-Received: by 2002:a17:90b:390f:b0:327:8fb4:5140 with SMTP id 98e67ed59e1d1-3278fb452a6mr1209899a91.10.1756302637106;
+        Wed, 27 Aug 2025 06:50:37 -0700 (PDT)
+Received: from localhost.localdomain ([222.95.34.64])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-772017f538esm3247052b3a.21.2025.08.27.06.50.32
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 27 Aug 2025 06:50:36 -0700 (PDT)
+From: qianjiaru77@gmail.com
+To: michael.chan@broadcom.com,
+	pavan.chebbi@broadcom.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	andrew+netdev@lunn.ch
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	qianjiaru <qianjiaru77@gmail.com>
+Subject: [PATCH v2 1/1] RFS Capability Bypass Vulnerability in Linux bnxt_en Driver
+Date: Wed, 27 Aug 2025 21:50:21 +0800
+Message-ID: <20250827135021.5882-1-qianjiaru77@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-META: jmaydpqrntpb93yqagc63dkczaknj4ei
-X-MBO-RS-ID: 381079d6b0d0c6983af
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2025-08-27 at 21:12 +0800, Zhang Heng wrote:
-> In the error exit function of the iomap_err in mtip_pci_probe,
-> pci_set_drvdata(pdev, NULL) and return can be removed without
-> affecting the code execution
->=20
-> Signed-off-by: Zhang Heng <zhangheng@kylinos.cn>
+From: qianjiaru <qianjiaru77@gmail.com>
 
-Reviewed-by: Philipp Stanner <phasta@kernel.org>
+A logic vulnerability exists in the `bnxt_rfs_capable()` function of the 
+Linux kernel's bnxt_en network driver. The vulnerability allows the driver
+to incorrectly report RFS (Receive Flow Steering) capability on older 
+firmware versions without performing necessary resource validation, 
+potentially leading to system crashes when RFS features are enabled.
+The vulnerability exists in the RFS capability check logic where older 
+firmware versions bypass essential resource validation. 
 
-> ---
-> =C2=A0drivers/block/mtip32xx/mtip32xx.c | 2 --
-> =C2=A01 file changed, 2 deletions(-)
->=20
-> diff --git a/drivers/block/mtip32xx/mtip32xx.c b/drivers/block/mtip32xx/m=
-tip32xx.c
-> index 8fc7761397bd..2c33c1dfc39d 100644
-> --- a/drivers/block/mtip32xx/mtip32xx.c
-> +++ b/drivers/block/mtip32xx/mtip32xx.c
-> @@ -3840,8 +3840,6 @@ static int mtip_pci_probe(struct pci_dev *pdev,
-> =C2=A0
-> =C2=A0iomap_err:
-> =C2=A0	kfree(dd);
-> -	pci_set_drvdata(pdev, NULL);
-> -	return rv;
-> =C2=A0done:
-> =C2=A0	return rv;
-> =C2=A0}
+Signed-off-by: qianjiaru <qianjiaru77@gmail.com>
+---
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+index 207a8bb36..b59ce7f45 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -13610,8 +13610,11 @@ bool bnxt_rfs_capable(struct bnxt *bp, bool new_rss_ctx)
+ 		return false;
+ 	}
+ 
+-	if (!BNXT_NEW_RM(bp))
+-		return true;
++    // FIXED: Apply consistent validation for all firmware versions
++    if (!BNXT_NEW_RM(bp)) {
++        // Basic validation even for old firmware
++        return (hwr.vnic <= max_vnics && hwr.rss_ctx <= max_rss_ctxs);
++    }
+ 
+ 	/* Do not reduce VNIC and RSS ctx reservations.  There is a FW
+ 	 * issue that will mess up the default VNIC if we reduce the
+-- 
+2.34.1
 
 
