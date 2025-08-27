@@ -1,156 +1,165 @@
-Return-Path: <linux-kernel+bounces-788194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-788195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EB8EB38118
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:33:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61E9DB3811C
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 13:33:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 057135E5867
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:33:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEA967B5F96
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Aug 2025 11:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BAC52BE7D0;
-	Wed, 27 Aug 2025 11:32:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD3E2BE7D0;
+	Wed, 27 Aug 2025 11:33:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YvHbhYDD"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="HNdXhQOe"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14421298CAB;
-	Wed, 27 Aug 2025 11:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4281C283FD9
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 11:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756294374; cv=none; b=iuPcdAqYBTSnduKg26f7m6bYsEGMuUVaUTqfNbK34BAUqk4lKv4CwazS4Z/5pS4bkNk4vlNEtfN1gUnf1RlUKGzhS8FIELAaVB48GqM0DwW1Pqo/G+Gj28v47HfW6v2wvhJhXrmJ2yFxkKbc2JWVmztW4SrIj+ab+H/g80zuAyA=
+	t=1756294382; cv=none; b=qNXJ6z/hQ7x1NALLnm4vQ7iQPAiL5EkqkYevq0HsoNKjkXZLLHDQH7kC9VWns9rfwo+lh4iVgHswWj4jnizZl7gTJNc271npnZq7ZKdMV3C8roSSZo5dwU3UmgDLIki7Rb0cxoQNVy3qgSk0JlmoK6BUR9Of5n933SXmv1U716U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756294374; c=relaxed/simple;
-	bh=u9OTU4Xk2A7POXiZ76mfiEEhC3Lzb8hnkPR7i69yNfA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=L1hIoQ9CBsAfjtdW8ry0yrwqfi53i1T2dEkihtY3qFXCf19/3FmFbfMD+eZ7ypVRwuULMHUZwTi63DLwB9w1dydhdAniduJAHBpbhwCOZKvNe6iNWkMrn7Bd2T+GwY1uq4lyoNTzyR1WvVGGVobTWDWf3gzjiTYqxda1P3NKGx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YvHbhYDD; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-771e4378263so2769203b3a.0;
-        Wed, 27 Aug 2025 04:32:51 -0700 (PDT)
+	s=arc-20240116; t=1756294382; c=relaxed/simple;
+	bh=Z3y4v46ZF7X8g5ThZrHBlGjNn21i+MtQxtbp82F3kG8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IOnscBz7cIrt6UjH8yyPQxfZq0G4Unlflqp7ckCA8rO8A3/qFZFOpCYxIcIkqxrFIgbyliE1xDwJlHxioo9nE2dru2WBVVnPLGcEJAJ2HRFeyu8m+pCYLUBKPoMulSWKHoF95Bw34Mrc6YnFmeGzYmWvL9GgCjzp5j7a+9pIyHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=HNdXhQOe; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7f84c17078fso26520985a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 27 Aug 2025 04:33:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756294371; x=1756899171; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CpcO0FpzfQ6tP5e2Bv81hhnFr9+a71IHnO4egieaRJ4=;
-        b=YvHbhYDD9RCxUyXNj1sD+XdT45IfYw+sNfpbJNcHXIq2g4/ITDKR89rD6R7uVVeT41
-         ElIgfzaxZWF6Ozp+yJD2B8GLyWC+oRqUHSyHakCDmbn/wDffYznJLoFg9o1MyeGSgZCZ
-         crEXcGpCQbjNry/6/cLQ1JyCpjz40Tt1tkJdTK3fluQ/pqhWODTQHN63Cqex9RcWW8tk
-         pM52MNZTh7lGDYYFpiVKvCPL5kZaByOoYbwAhoZ21zCDL/+2wCYbQlbM/AJxTvZFCyEE
-         fTzQxk5UgMP9HFSH+TsedZUf21spDe1I14nZ4+jLHG6C0qiHFMHbepnS1sJpb/ilH4YF
-         wBMg==
+        d=fooishbar.org; s=google; t=1756294380; x=1756899180; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z3y4v46ZF7X8g5ThZrHBlGjNn21i+MtQxtbp82F3kG8=;
+        b=HNdXhQOekTiVizzX+KROjuokstP4vQl+MZG8d8qJHVvYIi10UtnPr4IKq7CsWJ84o6
+         8Guhkq2OB4UIsbjIdVsR6/5Ylt8GvIezX2jKWggNhnggI6LS8gpuSeI9FTjt9OdxKcm+
+         FRFydhGF4JQMvFfYbMuPnzKW+yZhMaN/ezKRbTS7s3yIkce8ngrQEU4jSoB+SekconJ7
+         Dj6GhOM9zLVpAbUb/F9KWscEbG6Tz6FGzx+9h9DRhFLzfWKsJOLglIkOBOZtvf9hyr1E
+         qKyPvNw2mfa8ZBpz0/lqG/fX3jo9NRFL5wMOacEZ5ZpBFVSRK8F4MWB4u3jMFqO55zYX
+         9KGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756294371; x=1756899171;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CpcO0FpzfQ6tP5e2Bv81hhnFr9+a71IHnO4egieaRJ4=;
-        b=GVKztMlNqvaS2yQy1bziRTlutqa5fFTc+QaDPTJtgv/qmlHlF8HqCYWBoQ829CR4xb
-         3Xw521QUMr9T/K6VoB+I75dZA3zJk4HgVZfS3XQgUndF8noQOJ1a6lT5ihX9zwLpOR6I
-         NJpnw3jgnqTn0PqVYgISVwwWmJfyVkioF8XtfSxugs/vpFd64wcWpidJtXof/3frZE4g
-         eiOnvxQ4YxUPWKRwFo5cv2pjMP3NntA3iC6OGW122kjca/3Nfbd39MtSIVZI0D4HboX4
-         jNXgy6JY7zb2a4aLqB9j09tn3rQN1eexTTF5xuWWD/T3oZP0goRpEKC84FUSD6cChw8U
-         Bxzw==
-X-Forwarded-Encrypted: i=1; AJvYcCVaN9QGUfPJbhT1kVPcQQ6xfN7SBO6ofyTUF3J6WFJGifCUrBYVTQLhO+lHkSPec0GnS6a5DGaEWJAdjfo=@vger.kernel.org, AJvYcCVf4ALh8oYmLsQ4D/m1dGRqi0me55IHT8H8h4Dpnlkf774qe40Cpw145AJ4O5qsNpH7Di1ZmVt1wTZ6/vpxoHh7@vger.kernel.org
-X-Gm-Message-State: AOJu0YxllqxG7AEnuoqn45+CNi52buh6KynLskHWXWbNW1QIGD0qA4kY
-	rFJsmeuLToEQW8Eo8CO/bd26yvysmGSiEX3SIlGLLYU2g76mrzVvup5v
-X-Gm-Gg: ASbGncvODJrZSOG9YulAAC+69jAgAbaxT/n17SSO1iluDKFPqHQA6LQc2l0ZJoTZzi9
-	mSQ8a/W5Ub3V7dpAUN9Y4mpq8koN5W2Tle2tR/VCogW5kGi3s4QT1bM2JIjaUVIWmbsyJ+3MLLi
-	0JaZ6f7l1z7fsUZs5WmRR1X+l6DtCP8OUuLboZlOC6kAySb110TXwlVAmXmmI6/ZyrjxK40zIl2
-	odYxoHgDFw7V7Y0Icf/a4B4iUR0ZeAzKOR6Z/kaHF3SksKQQ9UJ4SdyPKUOJPTETAHw3K3JIv1Y
-	+lJ9JqJtJidbXVViZQAlfp9YEvW9lWbbUxFV0egHjpWCYtImrh+zCw5lY57N6xKlM/z53yCwn5R
-	VR2Ij+Zpw/qgW70cWdAFqLr2t3qTvtlxh2X5rIqReOBw2w2VT0WRZ732/MHllnlm4GeVkR0/q/1
-	lbF6FAtdyfhLJA0nyzni0khvQ1kFud
-X-Google-Smtp-Source: AGHT+IG4UV2HHnp/tCD+4rPlaCvAmsTvqXKJsbede+fSOHhgxu+Jba4EKmBftuPTHICWnTxtmzA/bg==
-X-Received: by 2002:a17:903:1b4b:b0:245:fbf8:dd0b with SMTP id d9443c01a7336-2462efd4ec2mr256304915ad.57.1756294371251;
-        Wed, 27 Aug 2025 04:32:51 -0700 (PDT)
-Received: from server.. ([103.251.57.213])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-248a043de2asm12565345ad.27.2025.08.27.04.32.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 04:32:50 -0700 (PDT)
-From: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
-To: shuah@kernel.org
-Cc: brauner@kernel.org,
-	amir73il@gmail.com,
-	jhubbard@nvidia.com,
-	mszeredi@redhat.com,
-	jack@suse.cz,
-	skhan@linuxfoundation.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>,
-	kernel test robot <oliver.sang@intel.com>
-Subject: [PATCH] selftests: filesystems: mount-notify: remove kernel_fsid_t
-Date: Wed, 27 Aug 2025 17:02:42 +0530
-Message-ID: <20250827113242.6106-1-reddybalavignesh9979@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1756294380; x=1756899180;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Z3y4v46ZF7X8g5ThZrHBlGjNn21i+MtQxtbp82F3kG8=;
+        b=WsuuGWG56Ggu2ZFAC2QCs1Zxsxja1GNDs/Re1o5p4DmusgaC8wYP9GJN/ZZuo86fif
+         qgbOOCK/nrVx7FTtFFjRWeE0NY0EioxusUCaU+YdhsdWci3KItmqe+6d6XrwDLKzcDfq
+         rkwJRqgl/rls0cCQQWL9xCc1PCQ3J1myTtGeuuL67Vb76jByFh7j8KjmS5DAnIW52kyi
+         Id+Ftccp1+Ki6xw/1OV9hMH4hl4w2Bj+rh11TMEQTRMXYKFk0Df2P+BL66zKZBWBmPLm
+         9jtzVvboifZHbtwsyuSppm7kBWq5uh9K2s2A5qBuwDPVAu0Qu5U8hzgwRKs0ZuE2UNSa
+         /Wgg==
+X-Forwarded-Encrypted: i=1; AJvYcCX75y1N53tChBOzYvD8mdcf1lSBLuKhOok/9cYMt/Aw2EwyEKyVkIcnlO3/rsgCSwnWCWkCCiabcJc/aIY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZDqmrZwoPXKU3D6YfM+JopkO1/IF+VnHmBJL69Z/sutuBSRbR
+	acBfuJrid9SqnL2LM10mFNxyUK8/wEuEZjQzzMFeR6EvQujDIgQFDe1wZ5A6JAHpO66obnpEtr5
+	XCYAvhoD4wYKso/fVzehZgjIVsiIOfkHG41MlZTEcgA==
+X-Gm-Gg: ASbGncur7lSE/BqNFOdN0jlH145JuYefkItqD1zfzuwFfrTQsqviyEBDg74eJ8A4fDn
+	aGj7Tu/2OF4D1BBCJfAea0RC7x38H7s6Yg7hN7oh2hgWPxVtpL2x3sewgJ0KPLu1khPO2XsYzqC
+	cn30WkSR/EEsI8X2CNC0tD0iYfPQnl4Zin/g1734jLWGvuGNKVFCozMixtqoeugbw7OJcrMOqb8
+	6ClJqmDn6oTYmwr
+X-Google-Smtp-Source: AGHT+IGmmuxWMn1RQng0MqU7LfWDmGXD9wRFwAweLJvIB7bsSHwPntqlQ+JKaDysNEyaOvC876Q504deR3IuVc5pgao=
+X-Received: by 2002:a05:620a:2804:b0:7e8:1718:daf4 with SMTP id
+ af79cd13be357-7ea10fc7a07mr2104471485a.16.1756294379779; Wed, 27 Aug 2025
+ 04:32:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250822-mtk-post-blend-color-pipeline-v1-0-a9446d4aca82@collabora.com>
+ <20250822-mtk-post-blend-color-pipeline-v1-1-a9446d4aca82@collabora.com> <DCD62EFHFCEB.XEOPUPKZQ5XW@redhat.com>
+In-Reply-To: <DCD62EFHFCEB.XEOPUPKZQ5XW@redhat.com>
+From: Daniel Stone <daniel@fooishbar.org>
+Date: Wed, 27 Aug 2025 12:32:48 +0100
+X-Gm-Features: Ac12FXz3D5zUTg3Df1XjwtCpaINdk3SCVFUs0YESiGpt04Vrw7Xa6CeoI-p4LK4
+Message-ID: <CAPj87rMDvaj28+h9fHkH+bZYH43N-dS_XHu9eomDphjXmPqArA@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/5] drm: Support post-blend color pipeline API
+To: Sebastian Wick <sebastian.wick@redhat.com>
+Cc: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Alex Hung <alex.hung@amd.com>, 
+	wayland-devel@lists.freedesktop.org, harry.wentland@amd.com, leo.liu@amd.com, 
+	ville.syrjala@linux.intel.com, pekka.paalanen@collabora.com, 
+	contact@emersion.fr, mwen@igalia.com, jadahl@redhat.com, 
+	shashank.sharma@amd.com, agoins@nvidia.com, joshua@froggi.es, 
+	mdaenzer@redhat.com, aleixpol@kde.org, xaver.hugl@gmail.com, 
+	victoria@system76.com, uma.shankar@intel.com, quic_naseer@quicinc.com, 
+	quic_cbraga@quicinc.com, quic_abhinavk@quicinc.com, marcan@marcan.st, 
+	Liviu.Dudau@arm.com, sashamcintosh@google.com, 
+	chaitanya.kumar.borah@intel.com, louis.chauvet@bootlin.com, mcanal@igalia.com, 
+	kernel@collabora.com, daniels@collabora.com, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, Simona Vetter <simona.vetter@ffwll.ch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Build kselftests casues compile error:
-error: conflicting types for ‘__kernel_fsid_t’;
-have ‘struct <anonymous>’
-   22 | } __kernel_fsid_t;
+Hey,
 
-This removes the declaration of kernel_fsid_t.
+On Wed, 27 Aug 2025 at 12:17, Sebastian Wick <sebastian.wick@redhat.com> wr=
+ote:
+> On Fri Aug 22, 2025 at 8:36 PM CEST, N=C3=ADcolas F. R. A. Prado wrote:
+> > Introduce support for a post-blend color pipeline API analogous to the
+> > pre-blend color pipeline API. While the pre-blend color pipeline was
+> > configured through a COLOR_PIPELINE property attached to a drm_plane,
+> > the post-blend color pipeline is configured through a COLOR_PIPELINE
+> > property on the drm_crtc.
+> >
+> > Since colorops can now be attached to either a drm_plane or a drm_crtc,
+> > rework the helpers to account for both cases.
+> >
+> > Also introduce a new cap, DRM_CLIENT_CAP_POST_BLEND_COLOR_PIPELINE, to
+> > enable support for post-blend color pipelines, and prevent the now
+> > legacy GAMMA_LUT, DEGAMMA_LUT, GAMMA_LUT_SIZE and CTM properties from
+> > being exposed.
+>
+> Please note that you'll also have to deprecate the semi-standard
+> Broadcast RGB property. It serves two purposes at once: it changes the
+> values between the color range (similar to COLOR_RANGE but at the other
+> end) and informats the sink of the range as well.
+>
+> So the post blending color pipeline will need something like an inverse
+> COLOR_RANGE op.
+>
+> We will also need a new connector property where user space can select
+> the color range, which does not change the pixel values, and only
+> exposes options that can be achieved (default sink behavior, full range
+> infoframe, limited range infoframe).
 
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202508110628.65069d92-lkp@intel.com
+As a note to others, the follow-up is on the 'pixel_encoding' property
+thread here:
+https://lore.kernel.org/all/DCD5VIFRKFB9.1KHIZI3ASID2I@redhat.com/
 
-Signed-off-by: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
----
- .../filesystems/mount-notify/mount-notify_test.c          | 8 --------
- .../filesystems/mount-notify/mount-notify_test_ns.c       | 8 --------
- 2 files changed, 16 deletions(-)
+I think we should keep discussion of those properties there. :)
 
-diff --git a/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c b/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c
-index 63ce708d93ed..a853671f2505 100644
---- a/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c
-+++ b/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c
-@@ -14,14 +14,6 @@
- #include "../../kselftest_harness.h"
- #include "../statmount/statmount.h"
- #include "../utils.h"
--
--// Needed for linux/fanotify.h
--#ifndef __kernel_fsid_t
--typedef struct {
--	int	val[2];
--} __kernel_fsid_t;
--#endif
--
- #include <sys/fanotify.h>
- 
- static const char root_mntpoint_templ[] = "/tmp/mount-notify_test_root.XXXXXX";
-diff --git a/tools/testing/selftests/filesystems/mount-notify/mount-notify_test_ns.c b/tools/testing/selftests/filesystems/mount-notify/mount-notify_test_ns.c
-index 090a5ca65004..2ca867687a60 100644
---- a/tools/testing/selftests/filesystems/mount-notify/mount-notify_test_ns.c
-+++ b/tools/testing/selftests/filesystems/mount-notify/mount-notify_test_ns.c
-@@ -15,14 +15,6 @@
- #include "../../pidfd/pidfd.h"
- #include "../statmount/statmount.h"
- #include "../utils.h"
--
--// Needed for linux/fanotify.h
--#ifndef __kernel_fsid_t
--typedef struct {
--	int	val[2];
--} __kernel_fsid_t;
--#endif
--
- #include <sys/fanotify.h>
- 
- static const char root_mntpoint_templ[] = "/tmp/mount-notify_test_root.XXXXXX";
--- 
-2.43.0
+Also strongly related is the proposal to add range/encoding properties
+to writeback connectors; analagous to the inbound properties:
+https://lore.kernel.org/all/20250813170542.331206-1-robert.mader@collabora.=
+com/
 
+I've talked myself around into thinking that the writeback-connector
+property is better than trying to use colorops to do the transform. On
+the hardware I've seen, whilst the CRTC output pipeline does have
+colour-transform properties, the final yard of the encoding (YUV/RGB,
+full/limited range, primaries, etc) is in fact a per-connector
+property, so I think it makes more sense there, as that allows
+usecases like RGB display output whilst streaming to YUV writeback so
+you can push it directly into an encoder without an intermediate
+RGB->YUV conversion step. But again, I think conversation about that
+would be better on that thread rather than here.
+
+Thanks!
+
+Cheers,
+Daniel
 
